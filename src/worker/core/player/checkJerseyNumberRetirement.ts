@@ -230,7 +230,7 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 		}
 
 		t.retiredJerseyNumbers = t.retiredJerseyNumbers.filter(
-			row => row !== worstRetiredJersey,
+			(row) => row !== worstRetiredJersey,
 		);
 	}
 
@@ -238,7 +238,7 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 
 	// Last season player played for team
 	const seasonTeamInfo =
-		p.stats.findLast(row => row.tid === t.tid)?.season ?? seasonRetired;
+		p.stats.findLast((row) => row.tid === t.tid)?.season ?? seasonRetired;
 
 	t.retiredJerseyNumbers.push({
 		number,

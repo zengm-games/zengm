@@ -73,7 +73,9 @@ const Leaders = ({
 
 	const totals = statType === "totals" && isSport("basketball");
 
-	const noQualifiedLeaders = categories.every(cat => cat.leaders.length === 0);
+	const noQualifiedLeaders = categories.every(
+		(cat) => cat.leaders.length === 0,
+	);
 
 	return (
 		<>
@@ -90,7 +92,7 @@ const Leaders = ({
 				<p>No data yet.</p>
 			) : (
 				<div className="row" style={{ marginTop: -14 }}>
-					{categories.map(cat => {
+					{categories.map((cat) => {
 						const cols = getCols(["#", "Name", `stat:${cat.stat}`]);
 						const statCol = cols[2];
 						if (cat.titleOverride === statCol.desc) {

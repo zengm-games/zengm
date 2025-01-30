@@ -478,11 +478,11 @@ const getLeaderRequirements = () => {
 		},
 		hockey: {
 			pm: {
-				filter: p => p.ratings.pos !== "G",
+				filter: (p) => p.ratings.pos !== "G",
 			},
 			shft: {},
 			min: {
-				filter: p => p.ratings.pos !== "G",
+				filter: (p) => p.ratings.pos !== "G",
 			},
 			svPct: {
 				minStats: { sv: 800 },

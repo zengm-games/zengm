@@ -25,7 +25,7 @@ export const parseJSON = () => {
 	const transformStream = new TransformStream(
 		{
 			start(controller) {
-				parser = new JSONParserText(value => {
+				parser = new JSONParserText((value) => {
 					// This function was adapted from JSONStream, particularly the part where row.value is set to undefind at the bottom, that is important!
 
 					// The key on the root of the object is in the stack if we're nested, or is just parser.key if we're not

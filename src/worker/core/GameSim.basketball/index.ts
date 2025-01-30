@@ -132,7 +132,7 @@ const pickPlayer = (
 
 	// Special case for all 0 rated players - randomly pick one
 	if (sum === 0) {
-		const candidates = range(ratios.length).filter(i => i !== exempt);
+		const candidates = range(ratios.length).filter((i) => i !== exempt);
 		return random.choice(candidates);
 	}
 
@@ -159,7 +159,7 @@ const getSortedIndexes = (ovrs: number[]) => {
 	const ovrsSortedDesc = [...ovrs].sort((a, b) => b - a);
 	const usedIndexes = new Set();
 	const sortedIndexes = ovrsSortedDesc
-		.map(ovr => {
+		.map((ovr) => {
 			let index = ovrs.indexOf(ovr);
 			while (usedIndexes.has(index)) {
 				index += 1;
@@ -494,11 +494,11 @@ class GameSim extends GameSimBase {
 			clock: this.t,
 		});
 
-		const shooters = teamNums.map(t => {
+		const shooters = teamNums.map((t) => {
 			// Find best shooter - slight bias towards high usage players
 			return maxBy(
 				this.team[t].player,
-				p =>
+				(p) =>
 					p.compositeRating.shootingThreePointer +
 					0.2 * p.compositeRating.usage -
 					(p.injured ? 1000 : 0),
@@ -558,7 +558,7 @@ class GameSim extends GameSimBase {
 	}
 
 	jumpBall() {
-		const jumpers = teamNums.map(t => {
+		const jumpers = teamNums.map((t) => {
 			const ratios = this.ratingArray("jumpBall", t);
 			const maxRatio = Math.max(...ratios);
 			let ind = ratios.indexOf(maxRatio);
@@ -1053,7 +1053,7 @@ class GameSim extends GameSimBase {
 				ovrs = getOvrs(true);
 			}
 
-			const ovrsOnCourt = this.playersOnCourt[t].map(p => ovrs[p]);
+			const ovrsOnCourt = this.playersOnCourt[t].map((p) => ovrs[p]);
 
 			// Sub off the lowest ovr guy first
 			for (const pp of getSortedIndexes(ovrsOnCourt)) {

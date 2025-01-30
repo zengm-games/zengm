@@ -60,7 +60,7 @@ export const dropPlayers = async (
 		// Should be impossible, but just in case, include all players except K/P
 		if (validPositions.length === 0) {
 			validPositions = Object.keys(POSITION_COUNTS).filter(
-				pos => pos !== "K" && pos !== "P",
+				(pos) => pos !== "K" && pos !== "P",
 			);
 		}
 	}

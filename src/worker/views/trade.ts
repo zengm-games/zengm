@@ -18,7 +18,7 @@ export const getSummary = async (teams: TradeTeams) => {
 				teams[1].dpids.length > 0),
 		warning: summary.warning,
 		warningAmount: summary.warningAmount,
-		teams: [0, 1].map(i => {
+		teams: [0, 1].map((i) => {
 			return {
 				name: summary.teams[i].name,
 				ovrAfter: summary.teams[i].ovrAfter,
@@ -49,10 +49,12 @@ const validateTeams = async () => {
 	}
 
 	const allTeams = await idb.cache.teams.getAll();
-	const t1 = allTeams.find(t => t.tid === teams[1].tid);
+	const t1 = allTeams.find((t) => t.tid === teams[1].tid);
 	if (!t1 || teams[1].tid === g.get("userTid") || t1.disabled) {
 		// Invalid trading partner
-		const newT1 = allTeams.find(t => t.tid !== g.get("userTid") && !t.disabled);
+		const newT1 = allTeams.find(
+			(t) => t.tid !== g.get("userTid") && !t.disabled,
+		);
 		if (newT1) {
 			teams[1] = {
 				tid: newT1.tid,
@@ -75,7 +77,7 @@ const validateTeams = async () => {
 			undefined,
 			g.get("userTid"),
 		)
-		.then(dv => {
+		.then((dv) => {
 			console.log(dv);
 		});
 
@@ -132,7 +134,7 @@ const updateTrade = async () => {
 	}
 
 	const userPicks2 = await Promise.all(
-		userPicks.map(async dp => {
+		userPicks.map(async (dp) => {
 			return {
 				...dp,
 				desc: await helpers.pickDesc(dp, "short"),
@@ -191,7 +193,7 @@ const updateTrade = async () => {
 	}
 
 	const otherPicks2 = await Promise.all(
-		otherPicks.map(async dp => {
+		otherPicks.map(async (dp) => {
 			return {
 				...dp,
 				desc: await helpers.pickDesc(dp, "short"),
@@ -208,8 +210,8 @@ const updateTrade = async () => {
 		region: string;
 		tid: number;
 	}[] = (await idb.cache.teams.getAll())
-		.filter(t => !t.disabled && t.tid !== g.get("userTid"))
-		.map(t => ({
+		.filter((t) => !t.disabled && t.tid !== g.get("userTid"))
+		.map((t) => ({
 			name: t.name,
 			region: t.region,
 			tid: t.tid,

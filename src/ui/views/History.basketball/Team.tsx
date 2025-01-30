@@ -41,7 +41,7 @@ const Teams = ({
 	let content;
 
 	if (nested) {
-		content = team.map(t => {
+		content = team.map((t) => {
 			if (t.players.length === 0) {
 				return null;
 			}
@@ -64,7 +64,9 @@ const Teams = ({
 	} else {
 		content = team
 			.filter(Boolean)
-			.map(p => <Player key={p.pid} p={p} season={season} userTid={userTid} />);
+			.map((p) => (
+				<Player key={p.pid} p={p} season={season} userTid={userTid} />
+			));
 	}
 
 	return (

@@ -21,7 +21,7 @@ const processTeamInfo = async (
 	const eventLogTexts: string[] = [];
 
 	const teams = await idb.cache.teams.getAll();
-	const t = teams.find(t2 => t2.tid === info.tid);
+	const t = teams.find((t2) => t2.tid === info.tid);
 	if (!t) {
 		throw new Error(`No team found in scheduled event: ${info.tid}`);
 	}
@@ -47,7 +47,7 @@ const processTeamInfo = async (
 
 	// Make sure this didn't fuck up the cid somehow, such as if the user moved a team to a new conference, but then the scheduled event only has the div because it assumes conference didn't change. THIS WOULD BE LESS LIKELY TO HAPPEN IF NEW DIVS/CONFS WERE NOT CREATED BEFORE TEAM DID/CID VALUES WERE UPDATED! https://mail.google.com/mail/u/0/#inbox/FMfcgxwKkRDqKPHCkJdLXcZvNCxhbGzn
 	const divs = g.get("divs");
-	const div = divs.find(div => div.did === t.did) ?? divs[0];
+	const div = divs.find((div) => div.did === t.did) ?? divs[0];
 	if (div) {
 		t.did = div.did;
 		t.cid = div.cid;
@@ -128,7 +128,7 @@ const processTeamInfo = async (
 	}
 
 	await league.setGameAttributes({
-		teamInfoCache: teams.map(t => ({
+		teamInfoCache: teams.map((t) => ({
 			abbrev: t.abbrev,
 			disabled: t.disabled,
 			imgURL: t.imgURL,
@@ -367,7 +367,7 @@ const processExpansionDraft = async (
 			: g.get("minRosterSize") - info.teams.length;
 
 	const teams = await idb.cache.teams.getAll();
-	const expansionTeams = info.teams.filter(t => {
+	const expansionTeams = info.teams.filter((t) => {
 		if (t.tid === undefined) {
 			return true;
 		}

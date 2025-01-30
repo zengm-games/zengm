@@ -13,7 +13,7 @@ export const getResponsiveValue = (
 	windowWidth: number,
 ) => {
 	if (Array.isArray(val)) {
-		return val.findLast(row => windowWidth >= row.minWidth)!.text;
+		return val.findLast((row) => windowWidth >= row.minWidth)!.text;
 	}
 
 	return val;
@@ -77,7 +77,7 @@ const Select = ({
 		}
 
 		// Use one media query per cutoff. At the time of writing, there is only ever one, at 768px. This is more efficient than listening for the window resize event and updating every time it changes.
-		const mediaQueryLists = Array.from(widthsToCheck).map(widthToCheck => {
+		const mediaQueryLists = Array.from(widthsToCheck).map((widthToCheck) => {
 			const mediaQueryList = window.matchMedia(
 				`(min-width: ${widthToCheck}px)`,
 			);
@@ -109,13 +109,13 @@ const Select = ({
 
 	let buttons = null;
 	if (showButtons) {
-		const currentItem = options.find(option => option.key === value);
+		const currentItem = options.find((option) => option.key === value);
 
 		buttons = (
 			<NextPrevButtons
 				currentItem={currentItem}
 				items={options}
-				onChange={newItem => {
+				onChange={(newItem) => {
 					handleChange(newItem.key);
 				}}
 				reverse={field.startsWith("seasons")}
@@ -130,12 +130,12 @@ const Select = ({
 			<select
 				value={value}
 				className="dropdown-select"
-				onChange={event => {
+				onChange={(event) => {
 					handleChange(event.currentTarget.value);
 				}}
 				style={style}
 			>
-				{options.map(opt => {
+				{options.map((opt) => {
 					return (
 						<option key={opt.key} value={opt.key}>
 							{getResponsiveValue2(opt.value)}
@@ -186,7 +186,7 @@ const Dropdown = ({ customOptions, customURL, fields, view }: Props) => {
 						key={key}
 						field={key}
 						value={values[i]}
-						handleChange={value => handleChange(i, value)}
+						handleChange={(value) => handleChange(i, value)}
 					/>
 				);
 			})}

@@ -65,7 +65,7 @@ export const genView = (
 				"Pick",
 				"Peak Ovr",
 				"Team",
-				...stats.map(stat => `stat:${stat}`),
+				...stats.map((stat) => `stat:${stat}`),
 			],
 			{
 				Retired: {
@@ -74,7 +74,7 @@ export const genView = (
 			},
 		);
 
-		const rows: DataTableRow[] = infos.map(c => {
+		const rows: DataTableRow[] = infos.map((c) => {
 			const p = c.p;
 
 			const abbrev = teamInfoCache[p.legacyTid]?.abbrev;
@@ -153,7 +153,7 @@ export const genView = (
 							"table-info": p.legacyTid === userTid,
 						},
 					},
-					...stats.map(stat => helpers.roundStat(p.careerStats[stat], stat)),
+					...stats.map((stat) => helpers.roundStat(p.careerStats[stat], stat)),
 				],
 			};
 		});

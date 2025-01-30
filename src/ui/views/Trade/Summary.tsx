@@ -143,7 +143,7 @@ export const SummaryTeam = ({
 		<>
 			<h4 className="fw-bold mb-1">{t.name} receive:</h4>
 			<ul className="list-unstyled mb-0">
-				{summary.teams[t.other].trade.map(p => {
+				{summary.teams[t.other].trade.map((p) => {
 					return (
 						<li key={p.pid}>
 							<div className="d-flex">
@@ -190,7 +190,7 @@ export const SummaryTeam = ({
 						</li>
 					);
 				})}
-				{summary.teams[t.other].picks.map(pick => (
+				{summary.teams[t.other].picks.map((pick) => (
 					<li key={pick.dpid} className="d-flex">
 						<SafeHtml dirty={pick.desc} />
 						{handleRemove ? (

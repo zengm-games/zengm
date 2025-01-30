@@ -89,7 +89,7 @@ const getSeconds = (time: string | undefined) => {
 		return 0;
 	}
 
-	const parts = time.split(":").map(x => Number.parseInt(x));
+	const parts = time.split(":").map((x) => Number.parseInt(x));
 	if (parts.length === 0) {
 		return 0;
 	}
@@ -247,7 +247,7 @@ const PlayByPlay = ({
 				scrollMarginTop: 174,
 			}}
 		>
-			{entries.map(entry => (
+			{entries.map((entry) => (
 				<PlayByPlayEntry key={entry.key} boxScore={boxScore} entry={entry} />
 			))}
 		</div>
@@ -415,7 +415,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 				if (!pausedRef.current) {
 					setTimeout(() => {
 						processToNextPause();
-						setPlayIndex(prev => prev + 1);
+						setPlayIndex((prev) => prev + 1);
 					}, speedToMs(speedRef.current));
 				}
 			} else {
@@ -490,7 +490,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 			events.current = events2;
 			setTimeout(() => {
 				processToNextPause();
-				setPlayIndex(prev => prev + 1);
+				setPlayIndex((prev) => prev + 1);
 			}, speedToMs(DEFAULT_SPEED));
 		},
 		[processToNextPause],
@@ -524,12 +524,12 @@ export const LiveGame = (props: View<"liveGame">) => {
 			processToNextPause();
 		}
 
-		setPlayIndex(prev => prev + 1);
+		setPlayIndex((prev) => prev + 1);
 	}, [processToNextPause]);
 
 	const handleNextPlay = useCallback(() => {
 		processToNextPause(true);
-		setPlayIndex(prev => prev + 1);
+		setPlayIndex((prev) => prev + 1);
 	}, [processToNextPause]);
 
 	const fastForwardMenuItems = useMemo(() => {
@@ -555,7 +555,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 					break;
 				}
 			}
-			setPlayIndex(prev => prev + numPlays);
+			setPlayIndex((prev) => prev + numPlays);
 		};
 
 		const playUntilLastTwoMinutes = () => {
@@ -587,7 +587,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 				processToNextPause(true);
 				numPlays += 1;
 			}
-			setPlayIndex(prev => prev + numPlays);
+			setPlayIndex((prev) => prev + numPlays);
 		};
 
 		const playUntilNextScore = () => {
@@ -605,7 +605,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 					boxScore.current.teams[0].pts + boxScore.current.teams[1].pts;
 				numPlays += 1;
 			}
-			setPlayIndex(prev => prev + numPlays);
+			setPlayIndex((prev) => prev + numPlays);
 		};
 
 		const playUntilChangeOfPossession = () => {
@@ -625,7 +625,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 				numPlays += 1;
 			}
 
-			setPlayIndex(prev => prev + numPlays);
+			setPlayIndex((prev) => prev + numPlays);
 		};
 
 		// elamTarget check is because clock is set to Infinity in Elam ending, so we can't skip ahead minutes
@@ -706,7 +706,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 										}
 									}
 
-									setPlayIndex(prev => prev + numPlays);
+									setPlayIndex((prev) => prev + numPlays);
 								},
 							},
 							{
@@ -717,7 +717,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 										sportState.current as typeof DEFAULT_SPORT_STATE_BASEBALL;
 									const initialBases = sportStateBaseball.bases ?? [];
 									const initialBaserunners = new Set(
-										initialBases.filter(pid => pid !== undefined),
+										initialBases.filter((pid) => pid !== undefined),
 									);
 
 									const initialHR =
@@ -731,13 +731,15 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 										// Any new baserunner -> stop
 										const baserunners = (sportStateBaseball.bases ?? []).filter(
-											pid => pid !== undefined,
+											(pid) => pid !== undefined,
 										);
 										if (baserunners.length === 0) {
 											// Handle case where it's a new inning and the same guy gets on base
 											initialBaserunners.clear();
 										}
-										if (baserunners.some(pid => !initialBaserunners.has(pid))) {
+										if (
+											baserunners.some((pid) => !initialBaserunners.has(pid))
+										) {
 											break;
 										}
 
@@ -750,7 +752,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 										}
 									}
 
-									setPlayIndex(prev => prev + numPlays);
+									setPlayIndex((prev) => prev + numPlays);
 								},
 							},
 							{
@@ -772,7 +774,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 										}
 									}
 
-									setPlayIndex(prev => prev + numPlays);
+									setPlayIndex((prev) => prev + numPlays);
 								},
 							},
 							{
@@ -795,7 +797,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 										}
 									}
 
-									setPlayIndex(prev => prev + numPlays);
+									setPlayIndex((prev) => prev + numPlays);
 								},
 							},
 							...(getNumSidesSoFar() <= (boxScore.current.numPeriods - 1) * 2
@@ -815,7 +817,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 													numPlays += 1;
 												}
 
-												setPlayIndex(prev => prev + numPlays);
+												setPlayIndex((prev) => prev + numPlays);
 											},
 										},
 									]

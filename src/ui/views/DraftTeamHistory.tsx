@@ -73,12 +73,12 @@ const DraftTeamHistory = ({
 		"Ovr",
 		"Pot",
 		"Skills",
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
 	]);
 
-	const teamInfoCache = useLocal(state => state.teamInfoCache);
+	const teamInfoCache = useLocal((state) => state.teamInfoCache);
 
-	const rows: DataTableRow[] = players.map(p => {
+	const rows: DataTableRow[] = players.map((p) => {
 		const showRatings = !challengeNoRatings || p.currentTid === PLAYER.RETIRED;
 
 		return {
@@ -154,7 +154,7 @@ const DraftTeamHistory = ({
 				<span className="skills-alone">
 					<SkillsBlock skills={p.peakSkills} />
 				</span>,
-				...stats.map(stat => helpers.roundStat(p.careerStats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.careerStats[stat], stat)),
 			],
 			classNames: {
 				"table-danger": p.hof,

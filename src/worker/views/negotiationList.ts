@@ -11,8 +11,8 @@ export const getNegotiationPids = async (tid: number) => {
 	// Need to check tid for Multi Team Mode, might have other team's negotiations going on
 	return new Set(
 		negotiations
-			.filter(negotiation => negotiation.tid === tid)
-			.map(negotiation => negotiation.pid),
+			.filter((negotiation) => negotiation.tid === tid)
+			.map((negotiation) => negotiation.pid),
 	);
 };
 
@@ -30,7 +30,7 @@ const updateNegotiationList = async () => {
 	const playersAll = await addMood(
 		(
 			await idb.cache.players.indexGetAll("playersByTid", PLAYER.FREE_AGENT)
-		).filter(p => negotiationPids.has(p.pid)),
+		).filter((p) => negotiationPids.has(p.pid)),
 	);
 
 	const players = addFirstNameShort(

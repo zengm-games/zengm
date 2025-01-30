@@ -30,7 +30,7 @@ const PlayMenu = ({
 				!event.isComposing &&
 				!event.metaKey
 			) {
-				const option = options.find(option2 => option2.code === event.code);
+				const option = options.find((option2) => option2.code === event.code);
 
 				if (!option) {
 					return;

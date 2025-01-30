@@ -50,17 +50,17 @@ const StatsTable = ({
 	t: Team;
 }) => {
 	const stats = PLAYER_GAME_STATS[type].stats;
-	const cols = getCols(stats.map(stat => `stat:${stat}`));
+	const cols = getCols(stats.map((stat) => `stat:${stat}`));
 
 	const [sortBys, setSortBys] = useState(() => {
 		return PLAYER_GAME_STATS[type].sortBy.map(
-			stat => [stats.indexOf(stat), "desc"] as SortBy,
+			(stat) => [stats.indexOf(stat), "desc"] as SortBy,
 		);
 	});
 
 	const onClick = (event: MouseEvent, i: number) => {
 		setSortBys(
-			prevSortBys =>
+			(prevSortBys) =>
 				updateSortBys({
 					cols,
 					event,
@@ -71,13 +71,13 @@ const StatsTable = ({
 	};
 
 	const players = t.players
-		.map(p => {
+		.map((p) => {
 			return {
 				...p,
 				processed: processPlayerStats(p, stats),
 			};
 		})
-		.filter(p => filterPlayerStats(p, stats, type))
+		.filter((p) => filterPlayerStats(p, stats, type))
 		.sort(sortByStats(stats, undefined, sortBys));
 
 	const showFooter = players.length > 1;
@@ -103,7 +103,9 @@ const StatsTable = ({
 	}
 
 	const sortable = players.length > 1;
-	const highlightCols = sortable ? sortBys.map(sortBy => sortBy[0]) : undefined;
+	const highlightCols = sortable
+		? sortBys.map((sortBy) => sortBy[0])
+		: undefined;
 
 	return (
 		<div className="mb-3">
@@ -138,7 +140,7 @@ const StatsTable = ({
 						<tfoot>
 							<tr>
 								<th colSpan={2}>Total</th>
-								{stats.map(stat => (
+								{stats.map((stat) => (
 									<th key={stat}>
 										{stat === "pm"
 											? null
@@ -343,7 +345,7 @@ const BoxScore = ({
 							{t.season !== undefined ? `${t.season} ` : null}
 							{t.region} {t.name}
 						</h2>
-						{["Skaters", "Goalies"].map(title => (
+						{["Skaters", "Goalies"].map((title) => (
 							<StatsTable
 								key={title}
 								Row={Row}

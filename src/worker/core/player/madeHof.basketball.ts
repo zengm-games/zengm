@@ -20,7 +20,7 @@ const madeHof = (
 	let earliestSeason = Infinity;
 
 	// Average together WS and EWA
-	const winShares = p.stats.map(ps => {
+	const winShares = p.stats.map((ps) => {
 		let sum = 0;
 
 		if (typeof ps.dws === "number") {

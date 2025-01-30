@@ -127,7 +127,7 @@ const getPlayerStats = async (
 
 			// Show row from max ovr season
 			if (p.ratings) {
-				p.ratings = maxBy(p.ratings, row => row.ovr);
+				p.ratings = maxBy(p.ratings, (row) => row.ovr);
 			}
 		}
 	}
@@ -169,7 +169,7 @@ const getPlayerStats = async (
 		// Ensure some non-zero stat for this position
 		const onlyShowIf = statsTable.onlyShowIf;
 
-		players = players.filter(p => {
+		players = players.filter((p) => {
 			for (const stat of onlyShowIf) {
 				// Array check is for byPos stats
 				if (

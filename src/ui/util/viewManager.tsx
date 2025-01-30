@@ -54,7 +54,7 @@ export const useViewData = create<
 			reset: (state: State) => void;
 		};
 	}
->(set => ({
+>((set) => ({
 	Component: undefined,
 	loading: false,
 	idLoaded: undefined,
@@ -137,7 +137,7 @@ class ViewManager {
 
 	fromRealtimeUpdate(action: Action) {
 		// Return a promise because sometimes we want to wait for an update to process before continuing. For example, when simming multiple games, we want to update the UI between each day.
-		return new Promise<void>(resolve => {
+		return new Promise<void>((resolve) => {
 			let navigationEvent = false;
 			if (action.url) {
 				// It's a "navigation event" if it is moving to a new page, rather than just changing some parameter of a page (like abbrev or season). So we need to get the id of this url and compare it to idLoaded.
@@ -319,7 +319,7 @@ class ViewManager {
 
 		if (vars.data && vars.data.redirectUrl !== undefined) {
 			// Wait a tick, otherwise there is a race condition on new page loads (such as reloading live_game box score) where initView is called and updates viewInfo while the local.subscribe subscription below is unsubscribed due to updatePage changing.
-			await new Promise<void>(resolve => {
+			await new Promise<void>((resolve) => {
 				setTimeout(() => {
 					resolve();
 				}, 0);

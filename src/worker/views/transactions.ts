@@ -30,13 +30,13 @@ const updateEventLog = async (
 
 		if (inputs.abbrev !== "all") {
 			events = events.filter(
-				event => event.tids !== undefined && event.tids.includes(inputs.tid),
+				(event) => event.tids !== undefined && event.tids.includes(inputs.tid),
 			);
 		}
 
 		if (inputs.eventType === "all") {
 			events = events.filter(
-				event =>
+				(event) =>
 					event.type === "reSigned" ||
 					event.type === "release" ||
 					event.type === "trade" ||
@@ -44,7 +44,7 @@ const updateEventLog = async (
 					event.type === "draft",
 			);
 		} else {
-			events = events.filter(event => event.type === inputs.eventType);
+			events = events.filter((event) => event.type === inputs.eventType);
 		}
 
 		const events2 = [];

@@ -47,7 +47,7 @@ const PlayPauseNext = ({
 				) {
 					if (paused) {
 						const option = fastForwards?.find(
-							option2 => `Key${option2.key}` === event.code,
+							(option2) => `Key${option2.key}` === event.code,
 						);
 
 						if (option) {

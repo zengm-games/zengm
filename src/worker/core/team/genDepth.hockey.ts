@@ -60,10 +60,10 @@ const getPlayersInLines = <
 		},
 	};
 
-	const maxLength = Math.max(...Object.values(info).map(x => x.minLength));
+	const maxLength = Math.max(...Object.values(info).map((x) => x.minLength));
 
 	// Set starters (in lines)
-	const playersUsed = new Set<typeof players[number]>();
+	const playersUsed = new Set<(typeof players)[number]>();
 	for (let i = 0; i < maxLength; i++) {
 		for (const pos of ["G", "C", "D", "W"] as const) {
 			const { selected, minLength, sorted } = info[pos];
@@ -103,7 +103,7 @@ const genDepth = async (
 
 	// Can't use getCopies in exhibition game, and also want to ignore fuzz, so just keep these two code paths
 	if (local.exhibitionGamePlayers) {
-		players = playersRaw.map(p => {
+		players = playersRaw.map((p) => {
 			const ratings = p.ratings.at(-1)!;
 			return {
 				pid: p.pid,
@@ -135,7 +135,7 @@ const genDepth = async (
 			// than them without otherwise disturbing the order of the depth chart. This is useful for adding free agents to
 			// the user's team - start them if they're better, but otherwise don't fuck with the user's depth chart.
 			const playersNotInDepth = players.filter(
-				p => !depth[pos2].includes(p.pid),
+				(p) => !depth[pos2].includes(p.pid),
 			);
 
 			for (const p of playersNotInDepth) {
@@ -147,7 +147,7 @@ const genDepth = async (
 					let added = false;
 
 					for (let i = 0; i < depth[pos2].length; i++) {
-						const p2 = players.find(p3 => p3.pid === depth[depthPos][i]);
+						const p2 = players.find((p3) => p3.pid === depth[depthPos][i]);
 
 						if (!p2 || pScore > score(p2, scorePos)) {
 							depth[depthPos].splice(i, 0, p.pid);
@@ -177,12 +177,12 @@ const genDepth = async (
 						depth.F[11],
 					];
 
-					const scoresStartingC = startingC.map(pid => {
-						const p2 = players.find(p3 => p3.pid === pid);
+					const scoresStartingC = startingC.map((pid) => {
+						const p2 = players.find((p3) => p3.pid === pid);
 						return p2 ? score(p2, "C") : -Infinity;
 					});
-					const scoresStartingW = startingW.map(pid => {
-						const p2 = players.find(p3 => p3.pid === pid);
+					const scoresStartingW = startingW.map((pid) => {
+						const p2 = players.find((p3) => p3.pid === pid);
 						return p2 ? score(p2, "W") : -Infinity;
 					});
 
@@ -229,14 +229,14 @@ const genDepth = async (
 							startingW[7],
 						];
 
-						depth.F.push(...oldDepth.filter(pid => !depth.F.includes(pid)));
+						depth.F.push(...oldDepth.filter((pid) => !depth.F.includes(pid)));
 					} else {
 						// Add somewhere to the end, based on scoreC
 						addToDepth("F", "C");
 					}
 
 					// Just in case...
-					depth.F = depth.F.filter(p => p !== undefined);
+					depth.F = depth.F.filter((p) => p !== undefined);
 				}
 			}
 		} else {
@@ -244,9 +244,9 @@ const genDepth = async (
 
 			if (pos2 === "G" || pos2 === "D") {
 				const { selected, sorted } = info[pos2];
-				depth[pos2].push(...selected.map(p => p.pid));
+				depth[pos2].push(...selected.map((p) => p.pid));
 				depth[pos2].push(
-					...sorted.filter(p => !selected.includes(p)).map(p => p.pid),
+					...sorted.filter((p) => !selected.includes(p)).map((p) => p.pid),
 				);
 			} else {
 				const playersUsed = new Set();
@@ -277,7 +277,7 @@ const genDepth = async (
 				}
 
 				depth[pos2].push(
-					...info.C.sorted.filter(p => !playersUsed.has(p)).map(p => p.pid),
+					...info.C.sorted.filter((p) => !playersUsed.has(p)).map((p) => p.pid),
 				);
 			}
 		}

@@ -23,7 +23,7 @@ const injury = (healthLevel: number): PlayerInjury => {
 	}
 
 	const rand = random.uniform(0, cumSums.at(-1)!);
-	const i = cumSums.findIndex(cs => cs >= rand);
+	const i = cumSums.findIndex((cs) => cs >= rand);
 	const gamesRemaining = Math.round(
 		(1 + healthEffect(healthLevel)) *
 			random.uniform(0.25, 1.75) *

@@ -47,7 +47,7 @@ const UpcomingFreeAgents = ({
 		"Age",
 		"Ovr",
 		"Pot",
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
 		"Mood",
 		"Mood",
 		...(phase === PHASE.RESIGN_PLAYERS ? [] : ["Current Contract"]),
@@ -56,7 +56,7 @@ const UpcomingFreeAgents = ({
 	cols[6 + stats.length].title = "Your Team";
 	cols[7 + stats.length].title = "Current Team";
 
-	const rows: DataTableRow[] = players.map(p => {
+	const rows: DataTableRow[] = players.map((p) => {
 		return {
 			key: p.pid,
 			metadata: {
@@ -83,7 +83,7 @@ const UpcomingFreeAgents = ({
 				p.age,
 				!challengeNoRatings ? p.ratings.ovr : null,
 				!challengeNoRatings ? p.ratings.pot : null,
-				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.stats[stat], stat)),
 				dataTableWrappedMood({
 					defaultType: "user",
 					maxWidth: true,

@@ -54,7 +54,7 @@ export const makeMatchups = (
 ) => {
 	const seeds = genPlayoffSeeds(numPlayoffTeams, numPlayoffByes);
 
-	const round = seeds.map(matchup => {
+	const round = seeds.map((matchup) => {
 		const home = genTeam(teams[matchup[0]], matchup[0] + 1);
 		const away =
 			matchup[1] !== undefined
@@ -180,7 +180,7 @@ export const genPlayoffSeriesFromTeams = async (
 			for (const conf of g.get("confs", "current")) {
 				const cid = conf.cid;
 				const teamsConf: MyTeam[] = teams.filter(
-					t => t.seasonAttrs.cid === cid,
+					(t) => t.seasonAttrs.cid === cid,
 				);
 
 				if (teamsConf.length >= numPlayoffTeams / 2) {
@@ -206,7 +206,7 @@ export const genPlayoffSeriesFromTeams = async (
 			for (const conf of g.get("confs", "current")) {
 				const cid = conf.cid;
 				const teamsConf: MyTeam[] = teams.filter(
-					t => t.seasonAttrs.cid === cid,
+					(t) => t.seasonAttrs.cid === cid,
 				);
 				if (teamsConf.length > 0) {
 					// This sort determines conference champ. Sort inside makeMatchups call will determine overall #1 seed
@@ -247,7 +247,7 @@ export const genPlayoffSeriesFromTeams = async (
 
 	const tidPlayIn = getTidPlayIns(playIns);
 	const tidPlayoffs = getTidPlayoffs(series).filter(
-		tid => !tidPlayIn.includes(tid),
+		(tid) => !tidPlayIn.includes(tid),
 	);
 
 	for (const matchup of series[0]) {

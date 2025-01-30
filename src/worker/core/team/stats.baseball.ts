@@ -74,13 +74,13 @@ const stats = {
 		"min",
 		...rawAndOpp,
 		...rawAndOpp.map(
-			stat => `opp${helpers.upperCaseFirstLetter(stat)}` as const,
+			(stat) => `opp${helpers.upperCaseFirstLetter(stat)}` as const,
 		),
 	] as const,
 	byPos: [
 		...byPosAndOpp,
 		...byPosAndOpp.map(
-			stat => `opp${helpers.upperCaseFirstLetter(stat)}` as const,
+			(stat) => `opp${helpers.upperCaseFirstLetter(stat)}` as const,
 		),
 	] as const,
 };

@@ -6,7 +6,7 @@ const getScript = (url: string): Promise<void> => {
 		script.async = true;
 		script.type = "text/javascript";
 
-		script.onerror = error => {
+		script.onerror = (error) => {
 			reject(error);
 		};
 

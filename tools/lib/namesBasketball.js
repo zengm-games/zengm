@@ -8,7 +8,7 @@ const namesBasketball = () => {
 	// $ wget --mirror --convert-links --adjust-extension --no-parent http://www.draftexpress.com
 	const folder = "/media/external/BBGM/www.draftexpress.com/profile";
 
-	const upperCaseFirst = str => str.charAt(0).toUpperCase() + str.slice(1);
+	const upperCaseFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 	const getName = (untrimmedName, file) => {
 		const name = untrimmedName.trim().replaceAll(/\s\s+/g, " "); // Condense whitespace to just single spaces

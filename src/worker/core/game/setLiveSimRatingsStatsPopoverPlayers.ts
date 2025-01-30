@@ -16,7 +16,7 @@ export const setLiveSimRatingsStatsPopoverPlayers = async (
 	}
 
 	const players = (await idb.getCopies.players({ pids }, "noCopyCache")).map(
-		p => {
+		(p) => {
 			// Rather than cloning the entire object, just clone the part that we care about remaining constant (current stats row, and also ratings in case of injury)
 			const currentStats = helpers.deepCopy(p.stats.at(-1));
 

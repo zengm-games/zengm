@@ -18,7 +18,7 @@ const PopText = ({
 	}
 
 	if (tid >= 0) {
-		const t = teams.find(t2 => t2.tid === tid);
+		const t = teams.find((t2) => t2.tid === tid);
 		if (t) {
 			let size;
 			if (t.popRank <= Math.ceil((3 / 30) * numActiveTeams)) {

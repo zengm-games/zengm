@@ -18,7 +18,7 @@ export const getUpcoming = async ({
 }) => {
 	let schedule = await season.getSchedule(oneDay);
 	if (day !== undefined) {
-		schedule = schedule.filter(game => game.day === day);
+		schedule = schedule.filter((game) => game.day === day);
 	}
 
 	const teams = await idb.getCopies.teamsPlus(
@@ -36,7 +36,7 @@ export const getUpcoming = async ({
 		Infinity,
 	]);
 	const healthyPlayers = await idb.getCopies.playersPlus(
-		playersRaw.filter(p => p.injury.gamesRemaining === 0),
+		playersRaw.filter((p) => p.injury.gamesRemaining === 0),
 		{
 			attrs: ["tid", "pid", "value"],
 			ratings: ["ovr", "pos", "ovrs"],
@@ -58,7 +58,7 @@ export const getUpcoming = async ({
 		let ovr = ovrsCache.get(tid);
 		if (ovr === undefined) {
 			ovr = team.ovr(
-				healthyPlayers.filter(p => p.tid === tid),
+				healthyPlayers.filter((p) => p.tid === tid),
 				{
 					playoffs: g.get("phase") === PHASE.PLAYOFFS,
 				},
@@ -95,7 +95,7 @@ export const getUpcoming = async ({
 			}
 		}
 
-		const t = teams.find(t2 => t2.tid === tid);
+		const t = teams.find((t2) => t2.tid === tid);
 
 		if (!t) {
 			throw new Error(`No team found for tid ${tid}`);
@@ -114,7 +114,7 @@ export const getUpcoming = async ({
 
 	const filteredSchedule = schedule
 		.filter(
-			game =>
+			(game) =>
 				tid === undefined ||
 				tid === game.homeTid ||
 				tid === game.awayTid ||
@@ -162,7 +162,7 @@ const updateUpcoming = async (
 		if (upcoming.length > 0) {
 			const scheduleToday = await season.getSchedule(true);
 			canLiveSimFirstGame = scheduleToday.some(
-				game => game.gid === upcoming[0].gid,
+				(game) => game.gid === upcoming[0].gid,
 			);
 		}
 
@@ -195,7 +195,7 @@ export const getTopPlayers = async (
 
 		const playersRaw = orderBy(
 			await idb.cache.players.indexGetAll("playersByTid", tid),
-			t => {
+			(t) => {
 				const ratings = t.ratings.at(-1)!;
 				const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
 				return ovr;

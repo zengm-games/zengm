@@ -308,7 +308,7 @@ const optionsTmp = bySport({
 });
 
 const awardOptions: any = {};
-optionsTmp.forEach(o => {
+optionsTmp.forEach((o) => {
 	awardOptions[o.key] = o.val;
 });
 
@@ -362,19 +362,19 @@ function getPlayerAwards(p: LocalPlayer, awardType: string) {
 	}
 
 	const getTeam = (season: number) => {
-		const stats = p.stats.filter(s => s.season === season);
+		const stats = p.stats.filter((s) => s.season === season);
 
 		return stats.at(-1)?.abbrev ?? "???";
 	};
 
 	const awards = p.awards.filter(filter);
-	const years = awards.map(a => {
+	const years = awards.map((a) => {
 		return {
 			team: getTeam(a.season),
 			season: a.season,
 		};
 	});
-	const lastYear = Math.max(...years.map(y => y.season));
+	const lastYear = Math.max(...years.map((y) => y.season));
 	return {
 		firstName: p.firstName,
 		lastName: p.lastName,
@@ -400,7 +400,7 @@ const updateAwardsRecords = async (
 		const playersAll = await idb.getCopies.players(
 			{
 				activeAndRetired: true,
-				filter: p => p.awards.length > 0,
+				filter: (p) => p.awards.length > 0,
 			},
 			"noCopyCache",
 		);
@@ -419,7 +419,9 @@ const updateAwardsRecords = async (
 		}
 
 		const awardsRecords = addFirstNameShort(
-			players.map(p => getPlayerAwards(p, awardType)).filter(o => o.count > 0),
+			players
+				.map((p) => getPlayerAwards(p, awardType))
+				.filter((o) => o.count > 0),
 		);
 
 		return {

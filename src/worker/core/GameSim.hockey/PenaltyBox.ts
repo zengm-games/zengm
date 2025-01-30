@@ -3,7 +3,7 @@ import type { PlayerGameSim, TeamNum } from "./types";
 
 type PenaltyBoxEntry = {
 	p: PlayerGameSim;
-	penalty: typeof penalties[number];
+	penalty: (typeof penalties)[number];
 	minutesLeft: number;
 	ppo: number;
 };
@@ -27,7 +27,7 @@ class PenaltyBox {
 		this.players = [[], []];
 	}
 
-	add(t: TeamNum, p: PlayerGameSim, penalty: typeof penalties[number]) {
+	add(t: TeamNum, p: PlayerGameSim, penalty: (typeof penalties)[number]) {
 		const penaltyType = penaltyTypes[penalty.type];
 
 		this.players[t].push({
@@ -45,11 +45,11 @@ class PenaltyBox {
 	}
 
 	has(t: TeamNum, p: PlayerGameSim) {
-		return this.players[t].some(entry => entry.p === p);
+		return this.players[t].some((entry) => entry.p === p);
 	}
 
 	getPowerPlayTeam() {
-		const counts = teamNums.map(t => this.count(t));
+		const counts = teamNums.map((t) => this.count(t));
 		let powerPlayTeam: TeamNum | undefined;
 		if (counts[0] > counts[1]) {
 			powerPlayTeam = 1;
@@ -134,7 +134,7 @@ class PenaltyBox {
 
 	checkIfPenaltiesOver() {
 		for (const t of [0, 1] as const) {
-			this.players[t] = this.players[t].filter(entry => {
+			this.players[t] = this.players[t].filter((entry) => {
 				if (entry.minutesLeft > 0) {
 					return true;
 				}

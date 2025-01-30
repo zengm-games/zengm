@@ -18,7 +18,7 @@ const useTradeOffersSwitch = () => {
 					className="form-select"
 					style={{ width: 100 }}
 					value={value}
-					onChange={event => {
+					onChange={(event) => {
 						setValue(event.target.value as any);
 					}}
 				>

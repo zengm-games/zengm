@@ -23,10 +23,10 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			g.get("phase") !== PHASE.EXPANSION_DRAFT &&
 			draftPicks.length > 2 * g.get("numActiveTeams")
 		) {
-			const draftPicks2 = draftPicks.filter(dp => dp.pick > 0);
+			const draftPicks2 = draftPicks.filter((dp) => dp.pick > 0);
 
 			if (draftPicks2.length === 2 * g.get("numActiveTeams")) {
-				const toDelete = draftPicks.filter(dp => dp.pick === 0);
+				const toDelete = draftPicks.filter((dp) => dp.pick === 0);
 
 				for (const dp of toDelete) {
 					await idb.cache.draftPicks.delete(dp.dpid);
@@ -39,7 +39,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		// DIRTY QUICK FIX FOR https://github.com/zengm-games/zengm/issues/246
 		// Not sure why this is needed! Maybe related to lottery running before the phase change?
 		if (
-			draftPicks.some(dp => dp.pick === 0) &&
+			draftPicks.some((dp) => dp.pick === 0) &&
 			g.get("draftType") !== "freeAgents"
 		) {
 			await draft.genOrder();
@@ -59,7 +59,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				0,
 				Infinity,
 			]);
-			drafted = drafted.filter(p => p.draft.year === g.get("season"));
+			drafted = drafted.filter((p) => p.draft.year === g.get("season"));
 			drafted.sort(
 				(a, b) =>
 					100 * a.draft.round +
@@ -122,7 +122,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			});
 			undrafted = (
 				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity])
-			).filter(p => expansionDraft.availablePids.includes(p.pid));
+			).filter((p) => expansionDraft.availablePids.includes(p.pid));
 
 			if (expansionDraft.numPerTeam !== undefined) {
 				// Keep logic in sync with runPicks.ts
@@ -138,10 +138,10 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 				if (tidsOverLimit.length > 0) {
 					const numPlayersBefore = undrafted.length;
-					undrafted = undrafted.filter(p => !tidsOverLimit.includes(p.tid));
+					undrafted = undrafted.filter((p) => !tidsOverLimit.includes(p.tid));
 					if (undrafted.length !== numPlayersBefore) {
 						const abbrevs = tidsOverLimit
-							.map(tid => helpers.getAbbrev(tid))
+							.map((tid) => helpers.getAbbrev(tid))
 							.sort();
 						expansionDraftFilteredTeamsMessage = `Players from some teams (${abbrevs.join(
 							", ",
@@ -158,7 +158,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					[g.get("season")],
 					[g.get("season"), Infinity],
 				])
-			).filter(p => p.tid === PLAYER.UNDRAFTED);
+			).filter((p) => p.tid === PLAYER.UNDRAFTED);
 
 			// DIRTY QUICK FIX FOR v10 db upgrade bug - eventually remove
 			// This isn't just for v10 db upgrade! Needed the same fix for http://www.reddit.com/r/BasketballGM/comments/2tf5ya/draft_bug/cnz58m2?context=3 - draft class not always generated with the correct seasons

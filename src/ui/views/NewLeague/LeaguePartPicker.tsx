@@ -37,23 +37,23 @@ const LeaguePartPicker = ({
 		return null;
 	}
 
-	const keysSorted = Object.keys(leaguePartDescriptions).filter(key =>
+	const keysSorted = Object.keys(leaguePartDescriptions).filter((key) =>
 		allKeys.includes(key),
 	);
-	keysSorted.push(...allKeys.filter(key => !keysSorted.includes(key)));
+	keysSorted.push(...allKeys.filter((key) => !keysSorted.includes(key)));
 
 	return (
 		<div className="mb-3">
 			<label className="form-label">Use from selected league:</label>
 
-			{keysSorted.map(key => (
+			{keysSorted.map((key) => (
 				<div key={key} className="form-check">
 					<label className="form-check-label">
 						<input
 							className="form-check-input"
 							onChange={() => {
 								if (keptKeys.includes(key)) {
-									setKeptKeys(keptKeys.filter(key2 => key2 !== key));
+									setKeptKeys(keptKeys.filter((key2) => key2 !== key));
 								} else {
 									setKeptKeys([...keptKeys, key]);
 								}
@@ -69,7 +69,7 @@ const LeaguePartPicker = ({
 			<div className="mt-1">
 				<button
 					className="btn btn-link p-0"
-					onClick={event => {
+					onClick={(event) => {
 						event.preventDefault();
 						setKeptKeys([...allKeys]);
 					}}
@@ -79,7 +79,7 @@ const LeaguePartPicker = ({
 				|{" "}
 				<button
 					className="btn btn-link p-0"
-					onClick={event => {
+					onClick={(event) => {
 						event.preventDefault();
 						setKeptKeys([]);
 					}}

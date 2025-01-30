@@ -14,7 +14,7 @@ const NUM_BALLS_PER_RACK = 5;
 const doneRoundShots = (racks: ThreeResult["racks"]) => {
 	return (
 		racks.length === NUM_RACKS &&
-		racks.every(rack => rack.length === NUM_BALLS_PER_RACK)
+		racks.every((rack) => rack.length === NUM_BALLS_PER_RACK)
 	);
 };
 

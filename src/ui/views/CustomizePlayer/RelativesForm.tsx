@@ -104,7 +104,7 @@ const RelativesForm = ({
 							{i === 0 ? <label className="form-label">Type</label> : null}
 							<select
 								className="form-select"
-								onChange={event => {
+								onChange={(event) => {
 									handleRelativesChange(i, "type", event.target.value);
 								}}
 								value={type}
@@ -126,11 +126,11 @@ const RelativesForm = ({
 							<SelectMultiple
 								value={playersByPid[pid]}
 								options={candidateRelatives}
-								onChange={p => {
+								onChange={(p) => {
 									handleRelativesChange(i, "pid", String(p!.pid));
 								}}
-								getOptionLabel={p => formatName(p)}
-								getOptionValue={p => String(p.pid)}
+								getOptionLabel={(p) => formatName(p)}
+								getOptionValue={(p) => String(p.pid)}
 								disabled={!godMode}
 								loading={allPlayersState === "loading"}
 								isClearable={false}

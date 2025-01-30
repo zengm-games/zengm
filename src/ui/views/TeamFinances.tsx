@@ -179,7 +179,7 @@ const FinancesForm = ({
 
 	useEffect(() => {
 		if (!state.dirty) {
-			setState(state2 => ({
+			setState((state2) => ({
 				...state2,
 				coaching: String(t.budget.coaching),
 				facilities: String(t.budget.facilities),
@@ -196,7 +196,7 @@ const FinancesForm = ({
 		name: Exclude<keyof typeof state, "dirty" | "saving">,
 		value: any,
 	) => {
-		setState(state2 => ({
+		setState((state2) => ({
 			...state2,
 			dirty: true,
 			[name]: value,
@@ -216,7 +216,7 @@ const FinancesForm = ({
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 
-		setState(state2 => ({ ...state2, saving: true }));
+		setState((state2) => ({ ...state2, saving: true }));
 
 		const budgetAmounts = {
 			// Convert from [millions of dollars] to [thousands of dollars] rounded to the nearest $10k
@@ -263,7 +263,7 @@ const FinancesForm = ({
 			saveToDb: false,
 		});
 
-		setState(state2 => ({
+		setState((state2) => ({
 			...state2,
 			dirty: false,
 			saving: false,
@@ -303,7 +303,7 @@ const FinancesForm = ({
 		? autoTicketPrice
 		: helpers.localeParseFloat(state.ticketPrice);
 	const ticketPriceRankIndex = otherTeamTicketPrices.findIndex(
-		price => price < ticketPriceForRank,
+		(price) => price < ticketPriceForRank,
 	);
 	const ticketPriceRank =
 		ticketPriceRankIndex < 0
@@ -346,7 +346,7 @@ const FinancesForm = ({
 				</HelpPopover>
 			</h2>
 			<div className="d-flex flex-column gap-3">
-				{expenseCategories.map(expenseCategory => {
+				{expenseCategories.map((expenseCategory) => {
 					const level = state[expenseCategory.key];
 					const levelInt = helpers.bound(
 						Math.round(helpers.localeParseFloat(state[expenseCategory.key])),
@@ -750,7 +750,7 @@ const TeamFinances = ({
 	const { gameSimInProgress } = useLocalPartial(["gameSimInProgress"]);
 
 	const cols = getCols(["Pos", "Name"]).concat(
-		salariesSeasons.map(season => {
+		salariesSeasons.map((season) => {
 			return {
 				title: String(season),
 				sortSequence: ["desc", "asc"],
@@ -799,18 +799,18 @@ const TeamFinances = ({
 	const footer = [
 		["", "Totals"].concat(
 			// @ts-expect-error
-			contractTotals.map(amount => highlightZeroNegative(amount)),
+			contractTotals.map((amount) => highlightZeroNegative(amount)),
 		),
 		salaryCapType === "none"
 			? ["", "Under Luxury Tax"].concat(
 					// @ts-expect-error
-					contractTotals.map(amount =>
+					contractTotals.map((amount) =>
 						highlightZeroNegative(luxuryPayroll - amount),
 					),
 				)
 			: ["", "Free Cap Space"].concat(
 					// @ts-expect-error
-					contractTotals.map(amount =>
+					contractTotals.map((amount) =>
 						highlightZeroNegative(salaryCap - amount),
 					),
 				),
@@ -855,7 +855,7 @@ const TeamFinances = ({
 						<BarGraph
 							data={barData}
 							y={["won"]}
-							tooltip={row => `${row.season}: ${row.won}${champSuffix(row)}`}
+							tooltip={(row) => `${row.season}: ${row.won}${champSuffix(row)}`}
 							ylim={[0, numGames]}
 							classNameOverride={classNameOverride}
 						/>
@@ -876,7 +876,7 @@ const TeamFinances = ({
 						<BarGraph
 							data={barData}
 							y={["hype"]}
-							tooltip={row =>
+							tooltip={(row) =>
 								`${row.season}: ${row.hype.toFixed(2)}${champSuffix(row)}`
 							}
 							ylim={[0, 1]}
@@ -890,7 +890,7 @@ const TeamFinances = ({
 						<BarGraph
 							data={barData}
 							y={["pop"]}
-							tooltip={row =>
+							tooltip={(row) =>
 								`${row.season}: ${row.pop.toFixed(1)}M${champSuffix(row)}`
 							}
 							ylim={[0, 20]}
@@ -904,7 +904,7 @@ const TeamFinances = ({
 						<BarGraph
 							data={barData}
 							y={["att"]}
-							tooltip={row =>
+							tooltip={(row) =>
 								`${row.season}: ${helpers.numberWithCommas(
 									Math.round(row.att),
 								)}${champSuffix(row)}`
@@ -987,7 +987,7 @@ const TeamFinances = ({
 							<BarGraph
 								data={barData}
 								y={["cash"]}
-								tooltip={row =>
+								tooltip={(row) =>
 									`${row.season}: ${helpers.formatCurrency(
 										row.cash,
 										"M",

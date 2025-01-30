@@ -108,7 +108,7 @@ const getMostXPlayers = async ({
 		const bestSeasonOverride = p.most?.extra?.bestSeasonOverride;
 		if (bestSeasonOverride !== undefined) {
 			p.awards = (p.awards as any[]).filter(
-				row => row.season === bestSeasonOverride,
+				(row) => row.season === bestSeasonOverride,
 			);
 		}
 	}
@@ -226,7 +226,7 @@ const updatePlayers = async (
 				}
 			}
 
-			filter = p =>
+			filter = (p) =>
 				p.tid !== PLAYER.UNDRAFTED &&
 				p.draft.round === round &&
 				p.draft.pick === pick;
@@ -239,8 +239,8 @@ const updatePlayers = async (
 				colName: "Games",
 			});
 
-			filter = p => p.injuries.length > 0;
-			getValue = p => {
+			filter = (p) => p.injuries.length > 0;
+			getValue = (p) => {
 				let sum = 0;
 				for (const ps of p.injuries) {
 					sum += ps.games;
@@ -252,9 +252,9 @@ const updatePlayers = async (
 			description =
 				"These are the players who played the most career games while never making the playoffs.";
 
-			filter = p =>
-				p.stats.length > 0 && p.stats.filter(ps => ps.playoffs).length === 0;
-			getValue = p => {
+			filter = (p) =>
+				p.stats.length > 0 && p.stats.filter((ps) => ps.playoffs).length === 0;
+			getValue = (p) => {
 				let sum = 0;
 				for (const ps of p.stats) {
 					sum += ps.gp;
@@ -314,10 +314,12 @@ const updatePlayers = async (
 
 			getValue = (p: Player<MinimalPlayerRatings>) => {
 				const seasons = Array.from(
-					new Set(p.stats.filter(row => !row.playoffs).map(row => row.season)),
+					new Set(
+						p.stats.filter((row) => !row.playoffs).map((row) => row.season),
+					),
 				);
 
-				return seasons.flatMap(season => {
+				return seasons.flatMap((season) => {
 					try {
 						const value = goatFormula.evaluate(p, undefined, {
 							type: "season",
@@ -343,8 +345,8 @@ const updatePlayers = async (
 				colName: "# Teams",
 			});
 
-			getValue = p => {
-				const tids = p.stats.filter(s => s.gp > 0).map(s => s.tid);
+			getValue = (p) => {
+				const tids = p.stats.filter((s) => s.gp > 0).map((s) => s.tid);
 				return { value: new Set(tids).size };
 			};
 		} else if (type === "oldest_former_players") {
@@ -365,7 +367,7 @@ const updatePlayers = async (
 				},
 			);
 
-			getValue = p => {
+			getValue = (p) => {
 				const age =
 					typeof p.diedYear === "number"
 						? p.diedYear - p.born.year
@@ -377,14 +379,15 @@ const updatePlayers = async (
 			description =
 				"These are the best players who never won a league championship.";
 
-			filter = p => p.awards.every(award => award.type !== "Won Championship");
+			filter = (p) =>
+				p.awards.every((award) => award.type !== "Won Championship");
 			getValue = playerValue;
 		} else if (type === "no_mvp") {
 			title = "Best Players Without an MVP";
 			description = "These are the best players who never won an MVP award.";
 
-			filter = p =>
-				p.awards.every(award => award.type !== "Most Valuable Player");
+			filter = (p) =>
+				p.awards.every((award) => award.type !== "Most Valuable Player");
 			getValue = playerValue;
 		} else if (type === "progs") {
 			title = "Best Progs";
@@ -408,10 +411,10 @@ const updatePlayers = async (
 				},
 			);
 
-			filter = p =>
+			filter = (p) =>
 				p.ratings.length > 1 &&
 				(!g.get("challengeNoRatings") || p.tid === PLAYER.RETIRED);
-			getValue = p => {
+			getValue = (p) => {
 				// Handle duplicate entries, like due to injury - we only want the first one
 				const seasonsSeen = new Set<number>();
 
@@ -463,10 +466,10 @@ const updatePlayers = async (
 				},
 			);
 
-			filter = p =>
+			filter = (p) =>
 				p.ratings.length > 1 &&
 				(!g.get("challengeNoRatings") || p.tid === PLAYER.RETIRED);
-			getValue = p => {
+			getValue = (p) => {
 				let maxProg = -Infinity;
 				let maxSeason = p.ratings[0].season;
 				const ovr0 = player.fuzzRating(p.ratings[0].ovr, p.ratings[0].fuzz);
@@ -495,12 +498,12 @@ const updatePlayers = async (
 				colName: "Team",
 			});
 
-			filter = p =>
+			filter = (p) =>
 				p.draft.round === 1 &&
 				p.draft.pick <= 5 &&
 				g.get("season") - p.draft.year >= 5 &&
 				p.draft.year >= g.get("startingSeason") - 3;
-			getValue = p => {
+			getValue = (p) => {
 				const value = playerValue(p).value;
 
 				return {
@@ -526,7 +529,7 @@ const updatePlayers = async (
 				colName: "Team",
 			});
 
-			filter = p =>
+			filter = (p) =>
 				p.draft.round === 0 ||
 				bySport({
 					baseball: p.draft.round >= 5,
@@ -534,7 +537,7 @@ const updatePlayers = async (
 					football: p.draft.round >= 5,
 					hockey: p.draft.round >= 3,
 				});
-			getValue = p => {
+			getValue = (p) => {
 				const value = playerValue(p).value;
 
 				return {
@@ -552,7 +555,7 @@ const updatePlayers = async (
 				colName: "Amount",
 			});
 
-			getValue = p => {
+			getValue = (p) => {
 				let sum = 0;
 				for (const salary of p.salaries) {
 					sum += salary.amount;
@@ -564,14 +567,14 @@ const updatePlayers = async (
 			description =
 				"These are the best retired players who did not make the Hall of Fame.";
 
-			filter = p => p.retiredYear < Infinity && !p.hof;
+			filter = (p) => p.retiredYear < Infinity && !p.hof;
 			getValue = playerValue;
 		} else if (type === "hall_of_shame") {
 			title = "Hall of Shame";
 			description =
 				"These are the worst players who actually got enough playing time to show it.";
 
-			getValue = p => {
+			getValue = (p) => {
 				let min = 0;
 				let valueTimesMin = 0;
 				for (const ps of p.stats) {
@@ -595,11 +598,11 @@ const updatePlayers = async (
 				colName: "# Trades",
 			});
 
-			getValue = p => {
+			getValue = (p) => {
 				if (!p.transactions) {
 					return;
 				}
-				const value = p.transactions.filter(t => t.type === "trade").length;
+				const value = p.transactions.filter((t) => t.type === "trade").length;
 				if (value === 0) {
 					return;
 				}
@@ -623,17 +626,17 @@ const updatePlayers = async (
 				colName: "Team",
 			});
 
-			getValue = p => {
+			getValue = (p) => {
 				let maxNumSeasons = 0;
 				let maxTid;
 				let maxGP;
 				let maxSeason; // Last season, for historical abbrev computation
 				const statsByTid = groupBy(
-					p.stats.filter(ps => !ps.playoffs),
-					ps => ps.tid,
+					p.stats.filter((ps) => !ps.playoffs),
+					(ps) => ps.tid,
 				);
 				for (const tid of Object.keys(statsByTid)) {
-					const numSeasons = new Set(statsByTid[tid].map(row => row.season))
+					const numSeasons = new Set(statsByTid[tid].map((row) => row.season))
 						.size;
 					if (numSeasons > maxNumSeasons) {
 						maxNumSeasons = numSeasons;
@@ -679,7 +682,7 @@ const updatePlayers = async (
 				colName: "Ovr",
 			});
 
-			getValue = p => {
+			getValue = (p) => {
 				let maxAge = 0;
 				let season: number | undefined;
 				let tid: number | undefined;
@@ -699,7 +702,7 @@ const updatePlayers = async (
 				}
 
 				let ovr: number | undefined;
-				const ratings = p.ratings.find(pr => pr.season === season);
+				const ratings = p.ratings.find((pr) => pr.season === season);
 				if (ratings) {
 					ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
 				}
@@ -743,7 +746,7 @@ const updatePlayers = async (
 				["desc", "desc"],
 			];
 
-			getValue = p => {
+			getValue = (p) => {
 				if (p.ratings.length < 5) {
 					return;
 				}
@@ -831,10 +834,10 @@ const updatePlayers = async (
 				colName: "Ovr Drop",
 			});
 
-			filter = p =>
+			filter = (p) =>
 				p.injuries.length > 0 &&
 				(!g.get("challengeNoRatings") || p.tid === PLAYER.RETIRED);
-			getValue = p => {
+			getValue = (p) => {
 				let maxOvrDrop = 0;
 				let injuryType;
 				let injurySeason;
@@ -867,7 +870,7 @@ const updatePlayers = async (
 				["frivolities", "jersey_numbers"],
 			)}">Other jersey numbers.</a>`;
 
-			filter = p => helpers.getJerseyNumber(p, "mostCommon") === arg;
+			filter = (p) => helpers.getJerseyNumber(p, "mostCommon") === arg;
 			getValue = playerValue;
 		} else if (type === "country") {
 			if (arg === undefined) {
@@ -879,7 +882,7 @@ const updatePlayers = async (
 				["frivolities", "countries"],
 			)}">Other countries.</a>`;
 
-			filter = p => helpers.getCountry(p.born.loc) === arg;
+			filter = (p) => helpers.getCountry(p.born.loc) === arg;
 			getValue = playerValue;
 		} else if (type === "college") {
 			if (arg === undefined) {
@@ -891,7 +894,7 @@ const updatePlayers = async (
 				["frivolities", "colleges"],
 			)}">Other colleges.</a>`;
 
-			filter = p => {
+			filter = (p) => {
 				const college = p.college && p.college !== "" ? p.college : "None";
 				return college === arg;
 			};
@@ -914,14 +917,14 @@ const updatePlayers = async (
 				},
 			);
 
-			filter = p =>
+			filter = (p) =>
 				p.stats.length > 1 && p.stats[0].season === p.draft.year + 1;
-			getValue = p => {
+			getValue = (p) => {
 				const row = p.stats[0];
 				const value = getValueStatsRow(row);
 
 				const rookieRatings = p.ratings.find(
-					row2 => row2.season === row?.season,
+					(row2) => row2.season === row?.season,
 				);
 				const rookieOvr = rookieRatings
 					? player.fuzzRating(rookieRatings.ovr, rookieRatings.fuzz)

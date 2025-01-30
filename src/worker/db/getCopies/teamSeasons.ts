@@ -27,7 +27,7 @@ const getCopies = async (
 			await idb.cache.teamSeasons.getAll(),
 			"teamSeasons",
 			type,
-		).filter(row => row.noteBool === 1);
+		).filter((row) => row.noteBool === 1);
 	}
 
 	if (tid !== undefined && season !== undefined) {

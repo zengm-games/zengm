@@ -124,7 +124,7 @@ const RatingsForm = ({
 											return (
 												<Fragment key={title}>
 													<h3>{title}</h3>
-													{ratings.map(rating => {
+													{ratings.map((rating) => {
 														return (
 															<div key={rating} className="mb-3">
 																<label className="form-label">
@@ -133,7 +133,7 @@ const RatingsForm = ({
 																<input
 																	type="text"
 																	className="form-control"
-																	onChange={event => {
+																	onChange={(event) => {
 																		handleChange("rating", rating, event);
 																	}}
 																	value={fuzzRating(ratingsRow, rating)}
@@ -156,7 +156,7 @@ const RatingsForm = ({
 			<div className="form-check mb-3">
 				<input
 					className="form-check-input"
-					onChange={event => {
+					onChange={(event) => {
 						handleChange("rating", "locked", event);
 					}}
 					type="checkbox"

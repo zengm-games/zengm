@@ -35,7 +35,7 @@ if ("serviceWorker" in navigator) {
 		}
 	};
 
-	wb.addEventListener("activated", event => {
+	wb.addEventListener("activated", (event) => {
 		if (event.isExternal || updateAvailableNotificationShowing) {
 			// Maybe another tab? Or (for reasons I don't understand) the first tab opened, if it was only opened once, even though clientsClaim is used in the sw and controlling event fires, and then an update happens
 			window.location.reload();
@@ -57,7 +57,7 @@ if ("serviceWorker" in navigator) {
 	});
 
 	// Should only happen when a new service worker takes over for a previous one, which should only happen in response to clicking the refresh button in response to the "waiting" event
-	wb.addEventListener("controlling", event => {
+	wb.addEventListener("controlling", (event) => {
 		if (
 			event.isUpdate ||
 			event.isExternal ||

@@ -67,7 +67,7 @@ const ImportButton = ({
 			type="file"
 			style={IMPORT_FILE_STYLE}
 			onClick={resetFileInput}
-			onChange={async event => {
+			onChange={async (event) => {
 				if (!event.target.files) {
 					return;
 				}
@@ -156,12 +156,12 @@ const Controls = ({
 
 	const addCountry = (newCountry: CountryRow) => {
 		if (position === "top") {
-			setInfoState(data => ({
+			setInfoState((data) => ({
 				...data,
 				countries: [newCountry, ...data.countries],
 			}));
 		} else {
-			setInfoState(data => ({
+			setInfoState((data) => ({
 				...data,
 				countries: [...data.countries, newCountry],
 			}));
@@ -169,10 +169,10 @@ const Controls = ({
 	};
 
 	const currentCountryNames = new Set(
-		infoState.countries.map(row => row.country),
+		infoState.countries.map((row) => row.country),
 	);
 	const defaultCountriesAvailable = defaultsState.countries.filter(
-		row => !currentCountryNames.has(row.country),
+		(row) => !currentCountryNames.has(row.country),
 	);
 
 	return (
@@ -219,7 +219,7 @@ const Controls = ({
 							>
 								Custom
 							</Dropdown.Item>
-							{defaultCountriesAvailable.map(row => (
+							{defaultCountriesAvailable.map((row) => (
 								<Dropdown.Item
 									key={row.id}
 									onClick={() => {
@@ -250,7 +250,7 @@ const Controls = ({
 							</Dropdown.Item>
 							<Dropdown.Item
 								onClick={() => {
-									setInfoState(data => ({
+									setInfoState((data) => ({
 										...data,
 										countries: [],
 									}));
@@ -269,11 +269,11 @@ const Controls = ({
 							} else {
 								countries = orderBy(
 									infoState.countries,
-									row => Number.parseInt(row.frequency),
+									(row) => Number.parseInt(row.frequency),
 									direction,
 								);
 							}
-							setInfoState(data => ({
+							setInfoState((data) => ({
 								...data,
 								countries,
 							}));
@@ -424,7 +424,7 @@ export const CountriesEditor = ({
 										/>
 									</div>
 									{(["names", "colleges", "races", "flag"] as const).map(
-										key => {
+										(key) => {
 											const onClickCustom = () => {
 												setPageInfoWrapper({
 													name: key,
@@ -525,7 +525,7 @@ export const CountriesEditor = ({
 								<PlayerBioInfoRowButton
 									className="text-reset"
 									onClick={() => {
-										setInfoState(data => {
+										setInfoState((data) => {
 											const countries = [...data.countries];
 
 											const newCountry = {
@@ -547,9 +547,11 @@ export const CountriesEditor = ({
 								<PlayerBioInfoRowButton
 									className="text-danger"
 									onClick={() => {
-										setInfoState(data => ({
+										setInfoState((data) => ({
 											...data,
-											countries: data.countries.filter(row => row !== country),
+											countries: data.countries.filter(
+												(row) => row !== country,
+											),
 										}));
 									}}
 									title="Delete"

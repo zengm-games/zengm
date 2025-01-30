@@ -9,7 +9,7 @@ const advStatsSave = async (
 	const keys = Object.keys(updatedStats);
 	await Promise.all(
 		players.map(async ({ pid }, i) => {
-			const p = playersRaw.find(p2 => p2.pid === pid);
+			const p = playersRaw.find((p2) => p2.pid === pid);
 
 			if (p) {
 				const ps = p.stats.at(-1);

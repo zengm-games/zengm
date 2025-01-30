@@ -36,7 +36,7 @@ import getPlayoffsByConf from "../core/season/getPlayoffsByConf";
 export const getLeagues = async () => {
 	const leagues = await idb.meta.getAll("leagues");
 	return leagues
-		.map(league => ({
+		.map((league) => ({
 			lid: league.lid,
 			name: league.name,
 		}))
@@ -116,10 +116,10 @@ const getSeasonInfoLeague = async ({
 
 	let pid = pidOffset;
 
-	const players = (await getPlayersActiveSeason(league, season)).filter(p => {
+	const players = (await getPlayersActiveSeason(league, season)).filter((p) => {
 		// Keep players who ended the season on this team. Not perfect, will miss released players
 		const seasonStats = p.stats
-			.filter(row => row.season === season && !row.playoffs)
+			.filter((row) => row.season === season && !row.playoffs)
 			.at(-1);
 		if (!seasonStats) {
 			return false;
@@ -127,7 +127,9 @@ const getSeasonInfoLeague = async ({
 		p.stats = [seasonStats];
 
 		// Also filter ratings here, why  not
-		const seasonRatings = p.ratings.filter(row => row.season === season).at(-1);
+		const seasonRatings = p.ratings
+			.filter((row) => row.season === season)
+			.at(-1);
 		if (!seasonRatings) {
 			return false;
 		}
@@ -135,14 +137,14 @@ const getSeasonInfoLeague = async ({
 
 		return true;
 	});
-	const playersByTid = groupBy(players, p => p.stats[0].tid);
+	const playersByTid = groupBy(players, (p) => p.stats[0].tid);
 
 	const playoffSeries = await league
 		.transaction("playoffSeries")
 		.store.get(season);
 
 	const exhibitionTeams: ExhibitionTeamWithPop[] = await Promise.all(
-		teamSeasons.map(async teamSeason => {
+		teamSeasons.map(async (teamSeason) => {
 			const tid = teamSeason.tid;
 			const t = teams[tid];
 
@@ -216,7 +218,7 @@ const getSeasonInfoLeague = async ({
 					// Reset rosterOrder for past seasons, since we don't store it
 					if (isSport("basketball")) {
 						const rosterOrderByPid = getRosterOrderByPid(
-							teamPlayers.map(p => ({
+							teamPlayers.map((p) => ({
 								pid: p.pid,
 								valueNoPot: p.valueNoPot,
 								valueNoPotFuzz: p.valueNoPotFuzz,
@@ -246,8 +248,8 @@ const getSeasonInfoLeague = async ({
 					}
 
 					(depth as any)[key] = pids
-						.filter(pid => translatePids[pid] !== undefined)
-						.map(pid => translatePids[pid]);
+						.filter((pid) => translatePids[pid] !== undefined)
+						.map((pid) => translatePids[pid]);
 				}
 
 				return depth;
@@ -333,9 +335,9 @@ export const getSeasonInfo = async (
 	}
 
 	for (const t of teams) {
-		t.players = orderBy(t.players, p => p.ratings.at(-1).ovr, "desc");
+		t.players = orderBy(t.players, (p) => p.ratings.at(-1).ovr, "desc");
 		t.ovr = team.ovr(
-			t.players.map(p => ({
+			t.players.map((p) => ({
 				pid: p.pid,
 				value: p.value,
 				ratings: {

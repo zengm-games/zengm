@@ -19,7 +19,7 @@ const frames = (
 	isUnicodeSupported
 		? ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
 		: ["-", "\\", "|", "/"]
-).map(frame => styleText("cyan", frame));
+).map((frame) => styleText("cyan", frame));
 
 const interval = 80;
 
@@ -157,7 +157,7 @@ class Spinners<Key extends string = string> {
 
 		// If no statuses are spinning, stop rendering. Or if now a status is spinning, start rendering.
 		if (
-			this.keys.every(key => {
+			this.keys.every((key) => {
 				const status = this.info[key]?.status;
 				return status !== "spin";
 			})
@@ -219,7 +219,7 @@ class Spinners<Key extends string = string> {
 		}
 
 		let string = this.keys
-			.map(key => {
+			.map((key) => {
 				const info = this.info[key]!;
 
 				let symbol: string;

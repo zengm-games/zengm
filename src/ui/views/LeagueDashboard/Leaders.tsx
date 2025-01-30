@@ -58,14 +58,14 @@ const Leaders = ({
 	<>
 		<h2>Team Leaders</h2>
 		<p>
-			{teamLeaders.map(leader => (
+			{teamLeaders.map((leader) => (
 				<Leader key={leader.stat} {...leader} />
 			))}
 			<a href={helpers.leagueUrl(["roster"])}>» Full Roster</a>
 		</p>
 		<h2>League Leaders</h2>
 		<p>
-			{leagueLeaders.map(leader => (
+			{leagueLeaders.map((leader) => (
 				<Leader key={leader.stat} {...leader} />
 			))}
 			<a href={helpers.leagueUrl(["leaders"])}>» League Leaders</a>

@@ -139,7 +139,7 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 		"Links",
 	]);
 
-	const rows = allAllStars.map(row => {
+	const rows = allAllStars.map((row) => {
 		const classNamesCaptain1 =
 			row.captain1 && row.captain1.tid === userTid ? "table-info" : "";
 		const classNamesCaptain2 =

@@ -36,8 +36,8 @@ const MultiTeamMode = ({
 	const handleChange = useCallback(
 		async (event: ChangeEvent<HTMLSelectElement>) => {
 			const newUserTids = Array.from(event.target.selectedOptions)
-				.map(o => Number.parseInt(o.value))
-				.filter(n => !Number.isNaN(n));
+				.map((o) => Number.parseInt(o.value))
+				.filter((n) => !Number.isNaN(n));
 
 			if (newUserTids.length < 1) {
 				return;
@@ -145,7 +145,7 @@ const MultiTeamMode = ({
 					className="btn btn-light-bordered me-2"
 					onClick={async () => {
 						await toWorker("main", "updateMultiTeamMode", {
-							userTids: teams.map(t => t.tid),
+							userTids: teams.map((t) => t.tid),
 						});
 						showNotification();
 					}}
@@ -176,7 +176,7 @@ const MultiTeamMode = ({
 						size={teams.length}
 						value={userTids.map(String)}
 					>
-						{orderBy(teams, ["region", "name", "tid"]).map(t => (
+						{orderBy(teams, ["region", "name", "tid"]).map((t) => (
 							<option key={t.tid} value={t.tid}>
 								{t.region} {t.name}
 							</option>

@@ -8,9 +8,9 @@ const getBestPlayerBoxScore = (players: any[]) => {
 	}
 
 	const withFactors = (factors: [string, number][]) => {
-		const stats = factors.map(factor => factor[0]);
+		const stats = factors.map((factor) => factor[0]);
 
-		const scores = players.map(p => {
+		const scores = players.map((p) => {
 			const processedStats = processPlayerStats(p, stats);
 
 			const components: [string, number][] = factors.map(([stat, weight]) => [
@@ -41,7 +41,7 @@ const getBestPlayerBoxScore = (players: any[]) => {
 		// Sort to be same order as `factors` above
 		const statTextsSorted = orderBy(
 			statTexts,
-			stat => factors.findIndex(row => row[0] === stat),
+			(stat) => factors.findIndex((row) => row[0] === stat),
 			"asc",
 		);
 

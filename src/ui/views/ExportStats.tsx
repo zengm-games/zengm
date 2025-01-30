@@ -90,7 +90,7 @@ const ExportStats = ({ seasons }: View<"exportStats">) => {
 				</div>
 				<div className="col-auto">
 					<select className="form-select" onChange={resetState}>
-						{seasons.map(s => {
+						{seasons.map((s) => {
 							return (
 								<option key={s.key} value={s.key}>
 									{s.val}

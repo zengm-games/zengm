@@ -238,7 +238,7 @@ const NewTeam = ({
 		submitText = tid === userTid ? "Turn Down Job Offers" : "Accept New Job";
 	}
 
-	const t = teams.find(t => t.tid === tid);
+	const t = teams.find((t) => t.tid === tid);
 
 	return (
 		<>
@@ -253,7 +253,7 @@ const NewTeam = ({
 					onChange={handleTidChange}
 					value={tid}
 				>
-					{teams.map(t => {
+					{teams.map((t) => {
 						return (
 							<option key={t.tid} value={t.tid}>
 								{(expansion || otherTeamsWantToHire) && t.tid === userTid

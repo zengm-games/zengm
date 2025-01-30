@@ -56,7 +56,7 @@ export const ContractExp = ({
 }) => {
 	const justDrafted = useJustDrafted(p);
 
-	const season = useLocal(state => state.season);
+	const season = useLocal((state) => state.season);
 	const expiring = season === p.contract.exp;
 
 	return (

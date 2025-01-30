@@ -285,7 +285,7 @@ const getRowInfo = (
 		lastTitle,
 		...tallyAwards(
 			tid,
-			seasonAttrs.map(x => x.season),
+			seasonAttrs.map((x) => x.season),
 			awards,
 			allStars,
 		),
@@ -428,7 +428,7 @@ const updateTeamRecords = async (
 		for (const t of teamsAll) {
 			const seasonAttrsFiltered =
 				filter === "your_teams"
-					? t.seasonAttrs.filter(ts => t.tid === g.get("userTid", ts.season))
+					? t.seasonAttrs.filter((ts) => t.tid === g.get("userTid", ts.season))
 					: t.seasonAttrs;
 
 			// Root object
@@ -497,11 +497,11 @@ const updateTeamRecords = async (
 		}
 
 		if (byType === "by_conf") {
-			teams = g.get("confs", "current").map(conf =>
+			teams = g.get("confs", "current").map((conf) =>
 				sumRecordsFor(
 					conf.name,
-					teams.filter(t => {
-						const t2 = teamsAll.find(t2 => t2.tid === t.tid);
+					teams.filter((t) => {
+						const t2 = teamsAll.find((t2) => t2.tid === t.tid);
 						if (!t2) {
 							return false;
 						}
@@ -510,11 +510,11 @@ const updateTeamRecords = async (
 				),
 			);
 		} else if (byType === "by_div") {
-			teams = g.get("divs", "current").map(div => {
+			teams = g.get("divs", "current").map((div) => {
 				let confName;
 				const conf = g
 					.get("confs", "current")
-					.find(conf => conf.cid === div.cid);
+					.find((conf) => conf.cid === div.cid);
 				if (conf) {
 					confName = conf.name;
 				}
@@ -522,8 +522,8 @@ const updateTeamRecords = async (
 				return {
 					...sumRecordsFor(
 						div.name,
-						teams.filter(t => {
-							const t2 = teamsAll.find(t2 => t2.tid === t.tid);
+						teams.filter((t) => {
+							const t2 = teamsAll.find((t2) => t2.tid === t.tid);
 							if (!t2) {
 								return false;
 							}

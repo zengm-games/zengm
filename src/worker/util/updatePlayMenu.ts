@@ -192,7 +192,7 @@ const updatePlayMenu = async () => {
 			!g.get("spectator")
 		) {
 			keys = ["viewDraft"];
-		} else if (draftPicks.some(dp => g.get("userTids").includes(dp.tid))) {
+		} else if (draftPicks.some((dp) => g.get("userTids").includes(dp.tid))) {
 			keys = ["onePick", "untilYourNextPick", "viewDraft"];
 		} else {
 			keys = ["onePick", "untilEnd", "viewDraft"];
@@ -208,10 +208,10 @@ const updatePlayMenu = async () => {
 
 		const schedule = await season.getSchedule();
 		const tradeDeadlineIndex = schedule.findIndex(
-			game => game.awayTid === -3 && game.homeTid === -3,
+			(game) => game.awayTid === -3 && game.homeTid === -3,
 		);
 		const allStarIndex = schedule.findIndex(
-			game => game.awayTid === -2 && game.homeTid === -1,
+			(game) => game.awayTid === -2 && game.homeTid === -1,
 		);
 
 		// > rather than >= because if it's the next game already, no need to "play until"
@@ -273,21 +273,21 @@ const updatePlayMenu = async () => {
 		// If playoff contains no rounds with more than one game, then untilEndOfRound is not needed
 		const maxGames = Math.max(...g.get("numGamesPlayoffSeries", "current"));
 		if (maxGames <= 1) {
-			keys = keys.filter(key => key !== "untilEndOfRound");
+			keys = keys.filter((key) => key !== "untilEndOfRound");
 		}
 
 		if (g.get("playIn")) {
 			const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 			if (!playoffSeries || playoffSeries.currentRound > -1) {
-				keys = keys.filter(key => key !== "untilEndOfPlayIn");
+				keys = keys.filter((key) => key !== "untilEndOfPlayIn");
 			}
 		} else {
-			keys = keys.filter(key => key !== "untilEndOfPlayIn");
+			keys = keys.filter((key) => key !== "untilEndOfPlayIn");
 		}
 
 		const schedule = await season.getSchedule();
 		const allStarIndex = schedule.findIndex(
-			game => game.awayTid === -2 && game.homeTid === -1,
+			(game) => game.awayTid === -2 && game.homeTid === -1,
 		);
 		if (allStarIndex === 0) {
 			keys.unshift("viewAllStar");
@@ -370,7 +370,7 @@ const updatePlayMenu = async () => {
 		keys = ["stopAuto"];
 	}
 
-	const someOptions: Option[] = keys.map(id => {
+	const someOptions: Option[] = keys.map((id) => {
 		let code;
 		// @ts-expect-error
 		if (allOptions[id].key) {

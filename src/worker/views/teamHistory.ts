@@ -178,14 +178,14 @@ export const getHistory = async (
 	});
 
 	// Not sure why this is necessary, but sometimes statsTids gets an entry but ratings doesn't
-	players = players.filter(p => p.careerStats.gp > 0);
+	players = players.filter((p) => p.careerStats.gp > 0);
 
 	players = addFirstNameShort(players);
 
 	const champSeasons = new Set(
 		teamHistory.history
-			.filter(row => row.playoffRoundsWon >= row.numPlayoffRounds)
-			.map(row => row.season),
+			.filter((row) => row.playoffRoundsWon >= row.numPlayoffRounds)
+			.map((row) => row.season),
 	);
 
 	for (const p of players) {
@@ -243,8 +243,8 @@ const updateTeamHistory = async (
 		);
 
 		const retiredJerseyNumbers = await Promise.all(
-			(t.retiredJerseyNumbers || []).map(async row => {
-				const ts = teamSeasons.find(ts => ts.season === row.seasonTeamInfo);
+			(t.retiredJerseyNumbers || []).map(async (row) => {
+				const ts = teamSeasons.find((ts) => ts.season === row.seasonTeamInfo);
 				const teamInfo = {
 					colors: ts ? ts.colors : t.colors,
 					name: ts ? ts.name : t.name,
@@ -294,7 +294,7 @@ const updateTeamHistory = async (
 			statsTid: inputs.tid,
 		});
 		for (const p of players) {
-			p.stats = p.stats.filter(row => row.tid === inputs.tid);
+			p.stats = p.stats.filter((row) => row.tid === inputs.tid);
 			const retirableJerseyNumbers: Record<string, string[]> = {};
 			(p as any).retirableJerseyNumbers = retirableJerseyNumbers;
 			for (const { jerseyNumber, playoffs, season } of p.stats) {
@@ -319,7 +319,7 @@ const updateTeamHistory = async (
 		);
 
 		const playersByPid = groupByUnique(history.players, "pid");
-		const retiredJerseyNumbers2 = retiredJerseyNumbers.map(row => {
+		const retiredJerseyNumbers2 = retiredJerseyNumbers.map((row) => {
 			let numRings = 0;
 			if (row.pid !== undefined) {
 				numRings = playersByPid[row.pid]?.numRings ?? 0;

@@ -77,9 +77,9 @@ export const getRosterOrderByPid = (
 	}
 
 	// Shuffle array so that position conditions are met - 2 G and 2 F/C in starting lineup, at most one pure C
-	const positions = players.map(p => p.ratings.pos);
+	const positions = players.map((p) => p.ratings.pos);
 	const starters = findStarters(positions);
-	const newPlayers = starters.map(i => players[i]);
+	const newPlayers = starters.map((i) => players[i]);
 
 	for (let i = 0; i < players.length; i++) {
 		if (!starters.includes(i)) {

@@ -419,7 +419,7 @@ const genJerseyNumber = async (
 		if (p.tid >= 0) {
 			const teammates = (
 				await idb.cache.players.indexGetAll("playersByTid", p.tid)
-			).filter(p2 => p2.pid !== p.pid);
+			).filter((p2) => p2.pid !== p.pid);
 			for (const teammate of teammates) {
 				if (teammate.stats.length > 0) {
 					const teamJerseyNumber = teammate.stats.at(-1).jerseyNumber;
@@ -438,7 +438,7 @@ const genJerseyNumber = async (
 		const t = await idb.cache.teams.get(p.tid);
 		if (t?.retiredJerseyNumbers) {
 			retiredJerseyNumbers.push(
-				...t.retiredJerseyNumbers.map(row => row.number),
+				...t.retiredJerseyNumbers.map((row) => row.number),
 			);
 		}
 	}
@@ -447,11 +447,11 @@ const genJerseyNumber = async (
 	if (prefix === undefined) {
 		validJerseyNumbers = VALID_JERSEY_NUMBERS;
 	} else {
-		validJerseyNumbers = range(0, 100).map(i => String(prefix * 100 + i));
+		validJerseyNumbers = range(0, 100).map((i) => String(prefix * 100 + i));
 	}
 
 	const candidates = validJerseyNumbers.filter(
-		jerseyNumber =>
+		(jerseyNumber) =>
 			!teamJerseyNumbers.includes(jerseyNumber) &&
 			!retiredJerseyNumbers.includes(jerseyNumber),
 	);

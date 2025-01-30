@@ -19,8 +19,8 @@ async function simSeason() {
 	await bbgm.game.play(100); // Playoffs
 
 	const playoffSeries = await bbgm.idb.cache.playoffSeries.get(bbgm.g.season);
-	return playoffSeries.series.map(round =>
-		round.map(matchup =>
+	return playoffSeries.series.map((round) =>
+		round.map((matchup) =>
 			matchup.home.won > matchup.away.won
 				? matchup.home.seed
 				: matchup.away.seed,

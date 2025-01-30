@@ -128,7 +128,7 @@ const processAttrs = (
 		} else if (attr === "salary") {
 			output.salary = getSalary();
 		} else if (attr === "salaries") {
-			output.salaries = helpers.deepCopy(p.salaries).map(salary => {
+			output.salaries = helpers.deepCopy(p.salaries).map((salary) => {
 				salary.amount /= 1000;
 				return salary;
 			});
@@ -143,17 +143,17 @@ const processAttrs = (
 			Object.assign(output, trade.isUntradable(p));
 		} else if (attr === "numBrothers") {
 			output.numBrothers = p.relatives.filter(
-				rel => rel.type === "brother",
+				(rel) => rel.type === "brother",
 			).length;
 		} else if (attr === "numFathers") {
 			output.numFathers = p.relatives.filter(
-				rel => rel.type === "father",
+				(rel) => rel.type === "father",
 			).length;
 		} else if (attr === "numSons") {
-			output.numSons = p.relatives.filter(rel => rel.type === "son").length;
+			output.numSons = p.relatives.filter((rel) => rel.type === "son").length;
 		} else if (attr === "numAllStar") {
 			output.numAllStar = p.awards.filter(
-				a =>
+				(a) =>
 					a.type === "All-Star" &&
 					(season === undefined || a.season <= season) &&
 					(seasonRange === undefined ||
@@ -276,9 +276,9 @@ const processRatings = (
 	// If we're returning all seasons for a specific team, filter ratings to match stats
 	if (season === undefined && tid !== undefined) {
 		const statsSeasons = p.stats
-			.filter(ps => ps.tid === tid)
-			.map(ps => ps.season);
-		playerRatings = playerRatings.filter(pr =>
+			.filter((ps) => ps.tid === tid)
+			.map((ps) => ps.season);
+		playerRatings = playerRatings.filter((pr) =>
 			statsSeasons.includes(pr.season),
 		);
 	}
@@ -309,7 +309,7 @@ const processRatings = (
 		];
 	}
 
-	output.ratings = playerRatings.map(pr => {
+	output.ratings = playerRatings.map((pr) => {
 		const row: any = {};
 
 		for (const attr of ratings) {
@@ -468,7 +468,7 @@ const reduceCareerStats = (
 
 	return careerStats
 		.filter(
-			cs =>
+			(cs) =>
 				((cs.playoffs === "combined" && seasonType === "combined") ||
 					(cs.playoffs === true && seasonType === "playoffs") ||
 					(cs.playoffs === false && seasonType === "regularSeason")) &&
@@ -526,7 +526,7 @@ const getPlayerStats = (
 	mergeStats: PlayersPlusOptionsRequired["mergeStats"],
 ) => {
 	const rows = helpers.deepCopy(
-		playerStats.filter(ps => {
+		playerStats.filter((ps) => {
 			// Not sure why this is needed, but might fix an error someone reported
 			if (!ps) {
 				return false;
@@ -672,7 +672,7 @@ const getPlayerStats = (
 		if (mergeStats === "totAndTeams" && seasonType !== "combined") {
 			// Return individual stats rows and the merged row
 			return [
-				...rowsToMerge.map(row => ({
+				...rowsToMerge.map((row) => ({
 					...row,
 					hasTot: true,
 				})),
@@ -685,7 +685,7 @@ const getPlayerStats = (
 	};
 
 	if (thereAreRowsToMerge) {
-		return seasonInfos.flatMap(seasonInfo =>
+		return seasonInfos.flatMap((seasonInfo) =>
 			seasonInfo.rows.length > 1
 				? getMerged(seasonInfo.rows, seasonInfo.seasonType)
 				: seasonInfo.rows,
@@ -787,7 +787,7 @@ const processStats = (
 	}
 
 	const careerStats: any[] = [];
-	output.stats = playerStats.map(ps => {
+	output.stats = playerStats.map((ps) => {
 		if (season === undefined) {
 			careerStats.push(ps);
 		}
@@ -892,7 +892,7 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
 		seasonRange === undefined
 			? p.ratings
 			: p.ratings.filter(
-					r => r.season >= seasonRange[0] && r.season <= seasonRange[1],
+					(r) => r.season >= seasonRange[0] && r.season <= seasonRange[1],
 				);
 	if (playerRatings.length === 0) {
 		return;
@@ -901,14 +901,14 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
 		seasonRange === undefined
 			? p.stats
 			: p.stats.filter(
-					r => r.season >= seasonRange[0] && r.season <= seasonRange[1],
+					(r) => r.season >= seasonRange[0] && r.season <= seasonRange[1],
 				);
 
 	const output: any = {};
 
 	if (ratings.length > 0 && season !== undefined) {
 		const hasRatingsSeason = playerRatings.some(
-			r =>
+			(r) =>
 				r.season === season ||
 				(r.season === season + 1 && g.get("phase") > PHASE.DRAFT),
 		);
@@ -1032,8 +1032,8 @@ const getCopies = async (
 	};
 
 	return players
-		.map(p => processPlayer(p, options))
-		.filter(p => p !== undefined);
+		.map((p) => processPlayer(p, options))
+		.filter((p) => p !== undefined);
 };
 
 export default getCopies;

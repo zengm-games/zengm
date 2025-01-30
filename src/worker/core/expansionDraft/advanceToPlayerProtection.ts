@@ -66,7 +66,7 @@ const advanceToPlayerProtection = async (
 		let tids: number[] | undefined;
 		if (userTids.length > 1) {
 			tid = g.get("userTid");
-			tids = [...userTids, ...takeControlTeams.map(t => t.tid)];
+			tids = [...userTids, ...takeControlTeams.map((t) => t.tid)];
 		} else {
 			const t = takeControlTeams.at(-1)!;
 			tid = t.tid;

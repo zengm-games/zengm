@@ -17,7 +17,7 @@ import esbuildConfig from "./lib/esbuildConfig.ts";
 
 const names = ["ui", "worker"] as const;
 await Promise.all(
-	names.map(async name => {
+	names.map(async (name) => {
 		await esbuild.build({
 			...esbuildConfig({
 				name,

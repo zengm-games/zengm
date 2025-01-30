@@ -15,7 +15,7 @@ export const expandFieldingStats = ({
 	// When this is undefined, assume stats are in root object
 	statsProperty?: string;
 }): any[] => {
-	return rows.flatMap(row => {
+	return rows.flatMap((row) => {
 		const rowStats = statsProperty !== undefined ? row[statsProperty] : row;
 
 		let posIndexes;
@@ -34,7 +34,7 @@ export const expandFieldingStats = ({
 			}
 		}
 
-		return posIndexes.map(posIndex => {
+		return posIndexes.map((posIndex) => {
 			let newRow;
 
 			if (statsProperty !== undefined) {

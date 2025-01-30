@@ -74,7 +74,7 @@ const useSettingsFormState = ({
 				value = event.target.value;
 			}
 
-			setState(prevState => ({
+			setState((prevState) => ({
 				...prevState,
 				[name]: value,
 			}));
@@ -87,7 +87,7 @@ const useSettingsFormState = ({
 	const handleChangeRaw =
 		<Name extends SpecialStateOthers>(name: Name) =>
 		(value: State[Name]) => {
-			setState(prevState => ({
+			setState((prevState) => ({
 				...prevState,
 				[name]: value,
 			}));
@@ -105,7 +105,7 @@ const useSettingsFormState = ({
 			presetsString[key] = String(value);
 		}
 
-		setState(prevState => ({
+		setState((prevState) => ({
 			...prevState,
 			...presetsString,
 		}));

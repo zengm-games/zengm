@@ -356,7 +356,7 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 	});
 
 	if (onlyStat) {
-		categories = categories.filter(row => row.stat === onlyStat);
+		categories = categories.filter((row) => row.stat === onlyStat);
 		if (categories.length === 0) {
 			throw new Error(`Invalid stat "${onlyStat}"`);
 		}
@@ -364,7 +364,7 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 
 	const leaderRequirements = season.getLeaderRequirements();
 
-	const augmentedCategories = categories.map(category => {
+	const augmentedCategories = categories.map((category) => {
 		if (leaderRequirements[category.stat]) {
 			return {
 				...category,
@@ -539,7 +539,7 @@ export const iterateAllPlayers = async (
 
 	const applyCB = async (p: Player<MinimalPlayerRatings>) => {
 		if (season === "all") {
-			const seasons = new Set(p.stats.map(row => row.season));
+			const seasons = new Set(p.stats.map((row) => row.season));
 			for (const season of seasons) {
 				await cb(p, season);
 			}
@@ -715,7 +715,7 @@ export const leadersAddFirstNameShort = <
 >(
 	rows: T[],
 ) =>
-	rows.map(row => ({
+	rows.map((row) => ({
 		...row,
 		leaders: addFirstNameShort(row.leaders),
 	}));
@@ -738,7 +738,7 @@ const updateLeaders = async (
 	) {
 		const { categories, stats } = getCategoriesAndStats();
 
-		const outputCategories = categories.map(category => ({
+		const outputCategories = categories.map((category) => ({
 			titleOverride: category.titleOverride,
 			stat: category.stat,
 			leaders: [] as Leader[],

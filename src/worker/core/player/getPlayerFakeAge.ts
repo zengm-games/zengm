@@ -7,7 +7,7 @@ const getPlayerFakeAge = <
 			loc: string;
 		};
 		real?: boolean;
-	}
+	},
 >(
 	players: T[],
 ): T | void => {
@@ -46,9 +46,9 @@ const getPlayerFakeAge = <
 
 	// Only young random players can have a fake age, and players from high risk countries have 40x risk
 	const youngPlayers = players
-		.filter(p => g.get("season") - p.born.year <= 22)
-		.filter(p => !p.real);
-	const weights = youngPlayers.map(p => {
+		.filter((p) => g.get("season") - p.born.year <= 22)
+		.filter((p) => !p.real);
+	const weights = youngPlayers.map((p) => {
 		return highRiskCountries.includes(p.born.loc) ? 40 : 1;
 	});
 	const sum = weights.reduce((total, current) => current + total, 0);

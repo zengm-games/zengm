@@ -77,7 +77,7 @@ const Dialog = ({
 				<p>Enter your password below to confirm.</p>
 				<form
 					className="mt-3"
-					onSubmit={event => {
+					onSubmit={(event) => {
 						event.preventDefault();
 						deleteAccount();
 					}}
@@ -88,7 +88,7 @@ const Dialog = ({
 						className={clsx("form-control", {
 							"is-invalid": invalidPassword,
 						})}
-						onChange={event => {
+						onChange={(event) => {
 							setPassword(event.target.value);
 						}}
 						placeholder="Password"
@@ -165,7 +165,7 @@ const DeleteAccountForm = ({
 			<Dialog
 				show={showDialog}
 				username={username}
-				cancel={errorMessage => {
+				cancel={(errorMessage) => {
 					if (errorMessage) {
 						setErrorMessage(errorMessage);
 					}

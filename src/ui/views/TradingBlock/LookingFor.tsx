@@ -23,7 +23,7 @@ const LookingFor = ({
 			<ResponsiveTableWrapper>
 				<table>
 					<tbody>
-						{helpers.keys(categories).map(categoryKey => {
+						{helpers.keys(categories).map((categoryKey) => {
 							const category = categories[categoryKey];
 							return (
 								<tr className="pt-2" key={categoryKey}>
@@ -31,7 +31,7 @@ const LookingFor = ({
 										{category.name}
 									</td>
 									<td className="p-0 ps-2 pt-2 d-flex gap-3">
-										{category.options.map(option => {
+										{category.options.map((option) => {
 											const toggleButton = (
 												<label
 													key={option.key}
@@ -48,7 +48,7 @@ const LookingFor = ({
 														disabled={disabled}
 														checked={state[categoryKey][option.key]}
 														onChange={() => {
-															setState(state => {
+															setState((state) => {
 																const checked = !state[categoryKey][option.key];
 
 																const newState = {

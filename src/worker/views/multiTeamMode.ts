@@ -14,8 +14,8 @@ const updateMultiTeamMode = async (
 		const teamsAll = await idb.cache.teams.getAll();
 
 		const teams = teamsAll
-			.filter(t => !t.disabled)
-			.map(t => ({
+			.filter((t) => !t.disabled)
+			.map((t) => ({
 				tid: t.tid,
 				region: t.region,
 				name: t.name,

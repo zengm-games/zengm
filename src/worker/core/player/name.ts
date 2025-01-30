@@ -4,7 +4,7 @@ import { loadNames, local, random } from "../../util";
 
 const getFromCumSumArray = <T extends string>(array: [T, number][]) => {
 	const rand = random.uniform(0, array.at(-1)![1]);
-	const foundRow = array.find(row => row[1] >= rand);
+	const foundRow = array.find((row) => row[1] >= rand);
 
 	if (foundRow === undefined) {
 		throw new Error(`Undefined foundRow (rand=${rand}`);
@@ -67,7 +67,7 @@ const usaStateFrequencies = isSport("hockey")
 			"West Virginia": 1060,
 			Wisconsin: 17697,
 			Wyoming: 1810,
-	  }
+		}
 	: {
 			Alabama: 4779736,
 			Alaska: 710231,
@@ -120,7 +120,7 @@ const usaStateFrequencies = isSport("hockey")
 			"West Virginia": 1852994,
 			Wisconsin: 5686986,
 			Wyoming: 563626,
-	  };
+		};
 
 // 2016 census populations
 const canadaProvinceFrequencies = {

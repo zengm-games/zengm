@@ -42,8 +42,8 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 		"Team",
 		"Year",
 		"Age",
-		...stats.map(stat => `stat:${stat}`),
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
 		"Details",
 	]);
 
@@ -82,10 +82,10 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 				</a>,
 				p.diedYear,
 				p.ageAtDeath,
-				...stats.map(stat =>
+				...stats.map((stat) =>
 					lastStats ? helpers.roundStat(lastStats[stat], stat) : null,
 				),
-				...stats.map(stat => helpers.roundStat(p.careerStats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.careerStats[stat], stat)),
 				<SafeHtml dirty={p.details} />,
 			],
 			classNames: {

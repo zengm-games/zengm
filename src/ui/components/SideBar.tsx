@@ -49,9 +49,9 @@ const MenuGroup = ({
 			{title ? (
 				<a
 					className="sidebar-heading"
-					onClick={event => {
+					onClick={(event) => {
 						event.preventDefault();
-						setOpen(prev => !prev);
+						setOpen((prev) => !prev);
 					}}
 				>
 					<CollapseArrow open={open} /> {title}
@@ -205,7 +205,7 @@ const MenuItem = ({
 					root={false}
 				/>
 			))
-			.filter(element => element !== null);
+			.filter((element) => element !== null);
 
 		if (children.length === 0) {
 			return null;

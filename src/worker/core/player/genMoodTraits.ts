@@ -8,7 +8,7 @@ const genMoodTraits = () => {
 	const moodTraits: MoodTrait[] = [random.choice(MOOD_TRAIT_KEYS)];
 	if (Math.random() < 0.5) {
 		moodTraits.push(
-			random.choice(MOOD_TRAIT_KEYS.filter(trait => trait !== moodTraits[0])),
+			random.choice(MOOD_TRAIT_KEYS.filter((trait) => trait !== moodTraits[0])),
 		);
 	}
 	moodTraits.sort();

@@ -18,7 +18,7 @@ test("works", () => {
 		KR: [1, 2, 3, 4],
 		PR: [3, 2],
 	};
-	const players = [1, 2, 3].map(pid => {
+	const players = [1, 2, 3].map((pid) => {
 		return {
 			pid,
 		};
@@ -46,7 +46,7 @@ test("works", () => {
 
 	for (const pos of helpers.keys(output)) {
 		assert.deepStrictEqual(
-			output[pos].map(p => p.pid),
+			output[pos].map((p) => p.pid),
 			(target as any)[pos],
 		);
 	}

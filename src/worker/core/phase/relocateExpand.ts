@@ -12,21 +12,21 @@ const upcomingScheduledEventBlocksRelocateExpand = async () => {
 		undefined,
 		"noCopyCache",
 	);
-	return scheduledEvents.some(event => {
+	return scheduledEvents.some((event) => {
 		return event.type === "teamInfo" || event.type === "expansionDraft";
 	});
 };
 
 const getTeams = async (disabledTeamsCountAsUnused: boolean) => {
 	const currentTeams = await idb.cache.teams.getAll();
-	const activeTeams = currentTeams.filter(t => !t.disabled);
+	const activeTeams = currentTeams.filter((t) => !t.disabled);
 
 	const candidateAbbrevs = getUnusedAbbrevs(
 		currentTeams,
 		disabledTeamsCountAsUnused,
 	);
 	const allCandidateTeams = getTeamInfos(
-		candidateAbbrevs.map(abbrev => {
+		candidateAbbrevs.map((abbrev) => {
 			return {
 				tid: -1,
 				cid: -1,
@@ -68,7 +68,9 @@ const getNorthAmericaOnly = ({
 	// For naFirst - northAmericaOnly if all current teams are inside NA and there are enough candidate teams available inside NA
 
 	if (
-		activeTeams.some(t => geographicCoordinates[t.region]?.outsideNorthAmerica)
+		activeTeams.some(
+			(t) => geographicCoordinates[t.region]?.outsideNorthAmerica,
+		)
 	) {
 		return false;
 	}
@@ -94,7 +96,7 @@ const getCandidateTeams = <T extends { region: string }>(
 	allCandidateTeams: T[],
 	northAmericaOnly: boolean,
 ) => {
-	return allCandidateTeams.filter(t => {
+	return allCandidateTeams.filter((t) => {
 		if (!northAmericaOnly) {
 			return true;
 		}
@@ -131,11 +133,11 @@ export const doRelocate = async () => {
 		return;
 	}
 
-	const currentTeam = random.choice(activeTeams, t => 1 / (t.pop ?? 1));
+	const currentTeam = random.choice(activeTeams, (t) => 1 / (t.pop ?? 1));
 
 	const newTeam = random.choice(
-		candidateTeams.filter(t => t.region !== currentTeam.region),
-		t => t.pop,
+		candidateTeams.filter((t) => t.region !== currentTeam.region),
+		(t) => t.pop,
 	);
 
 	// Could happen if the region check results in no candidate teams working
@@ -146,7 +148,7 @@ export const doRelocate = async () => {
 	const getRealignedDivs = () => {
 		// We can only automatically realign divisions if we know where every region is
 		const canRealign = activeTeams.every(
-			t => !!geographicCoordinates[t.region] || t.tid === currentTeam.tid,
+			(t) => !!geographicCoordinates[t.region] || t.tid === currentTeam.tid,
 		);
 
 		if (!canRealign) {
@@ -158,10 +160,10 @@ export const doRelocate = async () => {
 
 		const divs = g.get("divs");
 		const numTeamsPerDiv = divs.map(
-			div => activeTeams.filter(t => t.did === div.did).length,
+			(div) => activeTeams.filter((t) => t.did === div.did).length,
 		);
 
-		const coordinates = activeTeams.map(temp => {
+		const coordinates = activeTeams.map((temp) => {
 			const t = temp.tid === currentTeam.tid ? newTeam : temp;
 			return [
 				geographicCoordinates[t.region].latitude,
@@ -179,7 +181,7 @@ export const doRelocate = async () => {
 			const pointIndexes = clusters[i].pointIndexes;
 			if (pointIndexes) {
 				// Map to tids
-				realigned[i] = pointIndexes.map(i => activeTeams[i].tid);
+				realigned[i] = pointIndexes.map((i) => activeTeams[i].tid);
 			}
 		}
 
@@ -187,7 +189,7 @@ export const doRelocate = async () => {
 			// If, for whatever reason, we can't sort clusters geographically (like knowing the location of Atlantic vs Pacific), then try to keep as many teams in the same division as they were previously. Ideally we would test all permutations, but for many divisions that would be slow, so do it a shittier way.
 			const original = divs.map(() => [] as number[]);
 			for (const t of activeTeams) {
-				const divIndex = divs.findIndex(div => t.did === div.did);
+				const divIndex = divs.findIndex((div) => t.did === div.did);
 				original[divIndex].push(t.tid);
 			}
 
@@ -222,7 +224,7 @@ export const doRelocate = async () => {
 
 				return {
 					did: bestDid,
-					divIndex: divs.findIndex(div => div.did === bestDid),
+					divIndex: divs.findIndex((div) => div.did === bestDid),
 					score: bestScore2,
 				};
 			};
@@ -330,8 +332,8 @@ export const doExpand = async () => {
 
 	const newTeams = [];
 	while (newTeams.length < autoExpandNumTeams) {
-		const newTeam = random.choice(candidateTeams, t => t.pop);
-		candidateTeams = candidateTeams.filter(t => t !== newTeam);
+		const newTeam = random.choice(candidateTeams, (t) => t.pop);
+		candidateTeams = candidateTeams.filter((t) => t !== newTeam);
 		newTeams.push(newTeam);
 	}
 
@@ -343,7 +345,7 @@ export const doExpand = async () => {
 	await league.setGameAttributes({
 		autoExpand: {
 			phase: "vote",
-			abbrevs: newTeams.map(t => t.abbrev),
+			abbrevs: newTeams.map((t) => t.abbrev),
 		},
 	});
 

@@ -82,7 +82,7 @@ export const applyRealTeamInfos = <
 		return teams;
 	}
 
-	return teams.map(t => {
+	return teams.map((t) => {
 		if (t.srID && realTeamInfo[t.srID]) {
 			const t2 = helpers.deepCopy(t);
 
@@ -118,14 +118,16 @@ const initKeptKeys = ({
 	oldKeptKeys?: string[];
 	oldAllKeys?: string[];
 }) => {
-	const allKeys = newAllKeys.filter(key => key !== "version" && key !== "meta");
+	const allKeys = newAllKeys.filter(
+		(key) => key !== "version" && key !== "meta",
+	);
 
 	let keptKeys;
 	if (!oldKeptKeys || !oldAllKeys) {
 		keptKeys = allKeys;
 	} else {
 		// If any were unchecked before, keep them unchecked now
-		keptKeys = allKeys.filter(key => {
+		keptKeys = allKeys.filter((key) => {
 			if (!oldAllKeys.includes(key)) {
 				return true;
 			}
@@ -322,7 +324,7 @@ type Action =
 	  };
 
 const getTeamRegionName = (teams: NewLeagueTeam[], tid: number) => {
-	const t = teams.find(t => t.tid === tid);
+	const t = teams.find((t) => t.tid === tid);
 	if (!t) {
 		return "";
 	}
@@ -331,18 +333,18 @@ const getTeamRegionName = (teams: NewLeagueTeam[], tid: number) => {
 
 const getNewTid = (prevTeamRegionName: string, newTeams: NewLeagueTeam[]) => {
 	const newTeamsSorted = orderBy(
-		newTeams.filter(t => !t.disabled),
+		newTeams.filter((t) => !t.disabled),
 		["region", "name"],
 	);
 
 	// First look for exact match
 	let closestNewTeam = newTeamsSorted.find(
-		t => prevTeamRegionName === `${t.region} ${t.name}`,
+		(t) => prevTeamRegionName === `${t.region} ${t.name}`,
 	);
 
 	// Second look for exact region match
 	if (!closestNewTeam) {
-		closestNewTeam = newTeamsSorted.find(t =>
+		closestNewTeam = newTeamsSorted.find((t) =>
 			prevTeamRegionName.startsWith(t.region),
 		);
 	}
@@ -350,7 +352,7 @@ const getNewTid = (prevTeamRegionName: string, newTeams: NewLeagueTeam[]) => {
 	// Fallback, just get me something close
 	if (!closestNewTeam) {
 		closestNewTeam = newTeamsSorted.find(
-			t => prevTeamRegionName <= `${t.region} ${t.name}`,
+			(t) => prevTeamRegionName <= `${t.region} ${t.name}`,
 		);
 	}
 
@@ -504,7 +506,7 @@ const reducer = (state: State, action: Action): State => {
 		}
 
 		case "setTid": {
-			const t = state.teams.find(t => t.tid === action.tid);
+			const t = state.teams.find((t) => t.tid === action.tid);
 			const tid = t ? t.tid : state.teams.length > 0 ? state.teams[0].tid : 0;
 
 			return {
@@ -555,7 +557,7 @@ const reducer = (state: State, action: Action): State => {
 				keptKeys,
 				confs,
 				divs,
-				teams: action.teams.filter(t => !t.disabled),
+				teams: action.teams.filter((t) => !t.disabled),
 				tid: getNewTid(prevTeamRegionName, action.teams),
 				settings: newSettings,
 			};
@@ -597,7 +599,9 @@ const reducer = (state: State, action: Action): State => {
 
 			let tid;
 			if (state.rebuildAbbrevPending) {
-				const t = action.teams.find(t => t.srID === state.rebuildAbbrevPending);
+				const t = action.teams.find(
+					(t) => t.srID === state.rebuildAbbrevPending,
+				);
 				if (t) {
 					tid = t.tid;
 				}
@@ -1129,7 +1133,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					onCancel={() => {
 						setCurrentScreen("default");
 					}}
-					onSave={async settings => {
+					onSave={async (settings) => {
 						await createLeague(settings);
 					}}
 					initial={{
@@ -1197,7 +1201,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					initial="left"
 					animate="visible"
 					exit="left"
-					onSubmit={async event => {
+					onSubmit={async (event) => {
 						event.preventDefault();
 						await createLeague();
 					}}
@@ -1228,7 +1232,7 @@ const NewLeague = (props: View<"newLeague">) => {
 									className="form-control"
 									type="text"
 									value={state.name}
-									onChange={event => {
+									onChange={(event) => {
 										dispatch({
 											type: "setName",
 											name: event.target.value,
@@ -1251,7 +1255,7 @@ const NewLeague = (props: View<"newLeague">) => {
 										className="form-control"
 										type="text"
 										value={startingSeason}
-										onChange={event => {
+										onChange={(event) => {
 											setStartingSeason(event.target.value);
 										}}
 										inputMode="numeric"
@@ -1296,7 +1300,7 @@ const NewLeague = (props: View<"newLeague">) => {
 
 												return leagueInfo;
 											}}
-											onLoading={value => {
+											onLoading={(value) => {
 												const season = Number.parseInt(value);
 												dispatch({ type: "setSeason", season });
 											}}
@@ -1311,7 +1315,7 @@ const NewLeague = (props: View<"newLeague">) => {
 											]}
 											value2={state.phase}
 											values2={phases}
-											onNewValue2={phase => {
+											onNewValue2={(phase) => {
 												dispatch({
 													type: "setPhase",
 													phase,
@@ -1337,7 +1341,7 @@ const NewLeague = (props: View<"newLeague">) => {
 									<LeagueMenu
 										value={state.legend}
 										values={legends}
-										getLeagueInfo={async value => {
+										getLeagueInfo={async (value) => {
 											const leagueInfo = await toWorker(
 												"main",
 												"getLeagueInfo",
@@ -1349,10 +1353,10 @@ const NewLeague = (props: View<"newLeague">) => {
 
 											return leagueInfo;
 										}}
-										onLoading={legend => {
+										onLoading={(legend) => {
 											dispatch({ type: "setLegend", legend });
 										}}
-										onDone={info => {
+										onDone={(info) => {
 											handleNewLeagueInfo({
 												...info,
 												randomization: "debuts",
@@ -1368,10 +1372,10 @@ const NewLeague = (props: View<"newLeague">) => {
 								</label>
 								<NextPrevButtons
 									currentItem={sortedDisplayedTeams.find(
-										t => t.tid === state.tid,
+										(t) => t.tid === state.tid,
 									)}
 									items={sortedDisplayedTeams}
-									onChange={newTeam => {
+									onChange={(newTeam) => {
 										dispatch({
 											type: "setTid",
 											tid: newTeam.tid,
@@ -1385,14 +1389,14 @@ const NewLeague = (props: View<"newLeague">) => {
 										className="form-select"
 										disabled={disableWhileLoadingLeagueFile}
 										value={state.tid}
-										onChange={event => {
+										onChange={(event) => {
 											dispatch({
 												type: "setTid",
 												tid: Number.parseInt(event.target.value),
 											});
 										}}
 									>
-										{sortedDisplayedTeams.map(t => {
+										{sortedDisplayedTeams.map((t) => {
 											return (
 												<option key={t.tid} value={t.tid}>
 													{showLoadingIndicator
@@ -1484,7 +1488,7 @@ const NewLeague = (props: View<"newLeague">) => {
 								<select
 									id="new-league-difficulty"
 									className="form-select mb-1"
-									onChange={event => {
+									onChange={(event) => {
 										dispatch({
 											type: "setDifficulty",
 											difficulty: event.target.value,
@@ -1659,7 +1663,7 @@ const NewLeague = (props: View<"newLeague">) => {
 											<div className="mb-3">
 												<select
 													className="form-select"
-													onChange={event => {
+													onChange={(event) => {
 														const newCustomize = event.target.value as any;
 														dispatch({
 															type: "setCustomize",
@@ -1732,7 +1736,7 @@ const NewLeague = (props: View<"newLeague">) => {
 											<LeaguePartPicker
 												allKeys={state.allKeys}
 												keptKeys={state.keptKeys}
-												setKeptKeys={keptKeys => {
+												setKeptKeys={(keptKeys) => {
 													dispatch({ type: "setKeptKeys", keptKeys });
 												}}
 											/>

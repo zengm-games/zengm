@@ -72,7 +72,7 @@ const updateDraftTeamHistory = async (
 			);
 			if (draftLottery) {
 				const lotteryRowIndex = draftLottery.result.findIndex(
-					row => row.pick === p.draft.pick,
+					(row) => row.pick === p.draft.pick,
 				);
 				if (lotteryRowIndex >= 0) {
 					preLotteryRank = lotteryRowIndex + 1;

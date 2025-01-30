@@ -42,8 +42,8 @@ const checkChanges = async (conditions: Conditions) => {
 				const links = changes[i].links;
 				if (links) {
 					const link =
-						links.find(link => link.startsWith("/blog/")) ??
-						links.find(link => link.includes(SUBREDDIT_NAME)) ??
+						links.find((link) => link.startsWith("/blog/")) ??
+						links.find((link) => link.includes(SUBREDDIT_NAME)) ??
 						links[0];
 					if (link) {
 						let url;

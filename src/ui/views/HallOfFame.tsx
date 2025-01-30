@@ -32,11 +32,11 @@ const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
 		"Peak Ovr",
 		"Year",
 		"Team",
-		...stats.map(stat => `stat:${stat}`),
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
 	]);
 
-	const rows: DataTableRow[] = players.map(p => {
+	const rows: DataTableRow[] = players.map((p) => {
 		return {
 			key: p.pid,
 			metadata: {
@@ -67,8 +67,8 @@ const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
 				>
 					{p.bestStats.abbrev}
 				</a>,
-				...stats.map(stat => helpers.roundStat(p.bestStats[stat], stat)),
-				...stats.map(stat => helpers.roundStat(p.careerStats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.bestStats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.careerStats[stat], stat)),
 			],
 			classNames: {
 				"table-danger": p.legacyTid === userTid,

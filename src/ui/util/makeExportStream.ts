@@ -108,7 +108,7 @@ const makeExportStream = async (
 	};
 
 	const stores = storesInput.filter(
-		store => store !== "teamSeasons" && store !== "teamStats",
+		(store) => store !== "teamSeasons" && store !== "teamStats",
 	);
 	const includeTeamSeasonsAndStats = stores.length !== storesInput.length;
 
@@ -205,7 +205,7 @@ const makeExportStream = async (
 				if (store === "gameAttributes") {
 					// gameAttributes is special because we need to convert it into an object
 					let rows = (await leagueDB.getAll(store)).filter(
-						row => !gameAttributesCache.includes(row.key),
+						(row) => !gameAttributesCache.includes(row.key),
 					);
 
 					if (filter[store]) {
@@ -215,7 +215,7 @@ const makeExportStream = async (
 					// No need to include settings that don't apply to this sport
 
 					rows = rows.filter(
-						row => !gameAttributesKeysOtherSports.has(row.key),
+						(row) => !gameAttributesKeysOtherSports.has(row.key),
 					);
 
 					if (forEach[store]) {
@@ -384,7 +384,7 @@ const makeExportStream = async (
 				}
 			},
 			cancel() {
-				return new Promise(resolve => {
+				return new Promise((resolve) => {
 					cancelCallback = resolve;
 				});
 			},

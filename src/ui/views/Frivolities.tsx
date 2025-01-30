@@ -182,7 +182,7 @@ export const frivolities = {
 						description:
 							"Worst players who actually got some playing time to show how bad they are.",
 					},
-			  ]
+				]
 			: []),
 		{
 			urlParts: ["most", "games_injured"],
@@ -302,7 +302,7 @@ const Frivolities = () => {
 							<Fragment key={category}>
 								<h3 className={`ms-1${i > 0 ? " mt-3" : ""}`}>{category}</h3>
 								<div className="list-group">
-									{frivolities[category].map(frivolity => (
+									{frivolities[category].map((frivolity) => (
 										<a
 											key={frivolity.name}
 											href={helpers.leagueUrl([

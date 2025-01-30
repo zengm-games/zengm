@@ -12,7 +12,7 @@ let defaultTeams: {
 }[];
 
 beforeAll(() => {
-	defaultTeams = helpers.getTeamsDefault().map(t => ({
+	defaultTeams = helpers.getTeamsDefault().map((t) => ({
 		// Don't need tid to start at 0, could be disabled teams!
 		tid: t.tid + 2,
 		seasonAttrs: {
@@ -64,8 +64,8 @@ test("schedule each team two home games against every team in the same division"
 	const home: Record<number, Record<number, number>> = {};
 
 	for (let i = 0; i < tids.length; i++) {
-		const t0 = defaultTeams.find(t => t.tid === tids[i][0]);
-		const t1 = defaultTeams.find(t => t.tid === tids[i][1]);
+		const t0 = defaultTeams.find((t) => t.tid === tids[i][0]);
+		const t1 = defaultTeams.find((t) => t.tid === tids[i][1]);
 		if (!t0 || !t1) {
 			console.log(tids[i]);
 			throw new Error("Team not found");

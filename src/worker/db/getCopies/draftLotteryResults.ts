@@ -13,7 +13,7 @@ const getCopies = async (
 	if (season !== undefined) {
 		const draftLotteryResults = mergeByPk(
 			await idb.league.getAll("draftLotteryResults", season),
-			(await idb.cache.draftLotteryResults.getAll()).filter(event => {
+			(await idb.cache.draftLotteryResults.getAll()).filter((event) => {
 				return event.season === season;
 			}),
 			"draftLotteryResults",

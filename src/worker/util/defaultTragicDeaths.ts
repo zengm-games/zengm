@@ -59,4 +59,4 @@ if (isSport("basketball")) {
 	);
 }
 
-export default reasons.map(reason => ({ reason, frequency: 1 }));
+export default reasons.map((reason) => ({ reason, frequency: 1 }));

@@ -60,7 +60,7 @@ const showEvent = ({
 
 		// Persistent notifications are very rare and should stop game sim when displayed. Run async for performance
 		if (persistent) {
-			toWorker("main", "getLocal", "autoPlayUntil").then(autoPlayUntil => {
+			toWorker("main", "getLocal", "autoPlayUntil").then((autoPlayUntil) => {
 				if (!autoPlayUntil) {
 					toWorker("main", "lockSet", ["stopGameSim", true]);
 				}

@@ -13,7 +13,7 @@ export const getNextRoundType = (contest: {
 		tiebreaker?: boolean;
 	}[];
 }) => {
-	const baseRounds = contest.rounds.filter(round => !round.tiebreaker);
+	const baseRounds = contest.rounds.filter((round) => !round.tiebreaker);
 
 	const numRoundsTotal = getNumRounds(contest);
 
@@ -32,7 +32,7 @@ export const getNextRoundType = (contest: {
 		? dunkContest.getRoundResults
 		: threeContest.getRoundResults;
 
-	const resultsByRound = currentRoundAndTiebreakers.map(round =>
+	const resultsByRound = currentRoundAndTiebreakers.map((round) =>
 		orderBy(getRoundResults(round as any), "score", "desc"),
 	);
 
@@ -57,14 +57,14 @@ export const getNextRoundType = (contest: {
 			const tiedValue = round[numWinnersLeftToFind].score;
 
 			// Find players ranked above the tied players - they go to next round automatically
-			const playersToNextRound = round.filter(p => p.score > tiedValue);
+			const playersToNextRound = round.filter((p) => p.score > tiedValue);
 			for (const p of playersToNextRound) {
 				numWinnersLeftToFind -= 1;
 				indexesForNextRound.push(p.index);
 			}
 
-			const tied = round.filter(p => p.score === tiedValue);
-			indexesForNextTiebreaker = tied.map(p => p.index);
+			const tied = round.filter((p) => p.score === tiedValue);
+			indexesForNextTiebreaker = tied.map((p) => p.index);
 
 			outcome = "tiebreakerRound";
 		}

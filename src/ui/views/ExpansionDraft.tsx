@@ -140,7 +140,7 @@ const ExpansionDraft = ({
 		event.preventDefault();
 
 		const newTeam =
-			builtInTeams.find(t => t.abbrev === addTeamAbbrev) || defaultTeam;
+			builtInTeams.find((t) => t.abbrev === addTeamAbbrev) || defaultTeam;
 
 		await setTeams([...teams, helpers.deepCopy(newTeam)]);
 		setAddTeamAbbrev("");
@@ -199,11 +199,11 @@ const ExpansionDraft = ({
 			await setTeams(newTeams);
 		};
 
-	const currentAbbrevs = teams.map(t => t.abbrev);
+	const currentAbbrevs = teams.map((t) => t.abbrev);
 
 	// If user is taking control of team, don't let them pick the number of protected players - too easy!
 	const disableNumProtectedPlayersChange =
-		teams.some(t => t.takeControl) && !godMode;
+		teams.some((t) => t.takeControl) && !godMode;
 	const defaultNumProtectedPlayersValue = String(
 		defaultNumProtectedPlayers - teams.length,
 	);
@@ -311,16 +311,16 @@ const ExpansionDraft = ({
 									className="form-select me-2"
 									style={{ maxWidth: 300 }}
 									value={addTeamAbbrev}
-									onChange={event => {
+									onChange={(event) => {
 										setAddTeamAbbrev(event.target.value);
 									}}
 								>
 									<option value="">Blank Team</option>
 									<TeamsSplitNorthAmericaWorld
 										teams={builtInTeams.filter(
-											t => !currentAbbrevs.includes(t.abbrev),
+											(t) => !currentAbbrevs.includes(t.abbrev),
 										)}
-										option={t => (
+										option={(t) => (
 											<option key={t.abbrev} value={t.abbrev}>
 												{t.region} {t.name}
 												{t.tid !== undefined ? " (inactive)" : ""}
@@ -351,7 +351,7 @@ const ExpansionDraft = ({
 							type="text"
 							className="form-control"
 							disabled={disableNumProtectedPlayersChange}
-							onChange={async event => {
+							onChange={async (event) => {
 								await setNumProtectedPlayers(event.target.value);
 							}}
 							value={numProtectedPlayers}
@@ -367,7 +367,7 @@ const ExpansionDraft = ({
 							type="text"
 							className="form-control"
 							disabled={disableNumProtectedPlayersChange}
-							onChange={async event => {
+							onChange={async (event) => {
 								await setNumPerTeam(event.target.value);
 							}}
 							value={numPerTeam}

@@ -119,7 +119,11 @@ const getRatingsByPositions = (positions: string[]) => {
 		},
 	})();
 
-	return ["ovr", "pot", ...RATINGS.filter(rating => sportSpecific.has(rating))];
+	return [
+		"ovr",
+		"pot",
+		...RATINGS.filter((rating) => sportSpecific.has(rating)),
+	];
 };
 
 const getStatsByPositions = (positions: string[]) => {
@@ -301,7 +305,7 @@ const updateComparePlayers = async (
 		updateEvents.includes("firstRun") ||
 		hasPlayerInfoChanged(inputs.players, state.players)
 	) {
-		const currentPlayers = (await idb.cache.players.getAll()).filter(p => {
+		const currentPlayers = (await idb.cache.players.getAll()).filter((p) => {
 			// Don't include far future players
 			if (p.tid === PLAYER.UNDRAFTED && p.draft.year > g.get("season") + 2) {
 				return false;
@@ -316,7 +320,7 @@ const updateComparePlayers = async (
 		while (playersToShow.length < 2) {
 			let found = false;
 
-			const pidsToShow = new Set(playersToShow.map(p => p.pid));
+			const pidsToShow = new Set(playersToShow.map((p) => p.pid));
 
 			shuffle(currentPlayers);
 			for (const p of currentPlayers) {
@@ -329,7 +333,7 @@ const updateComparePlayers = async (
 
 				// Current season, if possible
 				const season =
-					p.ratings.findLast(row => row.season === g.get("season"))?.season ??
+					p.ratings.findLast((row) => row.season === g.get("season"))?.season ??
 					p.ratings.at(-1)!.season;
 
 				playersToShow.push({
@@ -400,7 +404,7 @@ const updateComparePlayers = async (
 						teamInfo = await getTeamInfoBySeason(p.tid, p.ratings.season);
 					} else {
 						p.awards = (p.awards as any[]).filter(
-							award => award.season === season,
+							(award) => award.season === season,
 						);
 						teamInfo = await getTeamInfoBySeason(p.tid, season);
 					}
@@ -422,7 +426,7 @@ const updateComparePlayers = async (
 		}
 
 		// In summary table show ratings/stats relevant to these players' positions
-		const positions = players.map(p => p.p.ratings.pos);
+		const positions = players.map((p) => p.p.ratings.pos);
 		const ratings = getRatingsByPositions(positions);
 		const stats = getStatsByPositions(positions);
 

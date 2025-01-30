@@ -246,7 +246,7 @@ const ScoreBox = memo(
 							)}
 						</div>
 					) : allStarGame && !final ? (
-						[1, 2].map(i => (
+						[1, 2].map((i) => (
 							<div
 								className={clsx("d-flex align-items-center", {
 									"score-box-all-star": !small,
@@ -264,7 +264,7 @@ const ScoreBox = memo(
 							</div>
 						))
 					) : (
-						[1, 0].map(i => {
+						[1, 0].map((i) => {
 							const t = game.teams[i];
 							let scoreClass;
 							let scoreClassForceWin;

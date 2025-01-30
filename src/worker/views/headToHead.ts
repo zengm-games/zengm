@@ -54,7 +54,7 @@ const updateHeadToHead = async (
 				type,
 				season,
 			},
-			info => {
+			(info) => {
 				const current = infoByTid.get(info.tid);
 				if (current) {
 					for (const key of simpleSums) {
@@ -80,8 +80,8 @@ const updateHeadToHead = async (
 			"noCopyCache",
 		);
 
-		const teams = Array.from(infoByTid.values()).map(info => {
-			const t = teamInfos.find(t => t.tid === info.tid);
+		const teams = Array.from(infoByTid.values()).map((info) => {
+			const t = teamInfos.find((t) => t.tid === info.tid);
 			if (!t) {
 				throw new Error("Team not found");
 			}

@@ -43,7 +43,7 @@ const News = ({
 	return (
 		<>
 			<div className="mt-1" style={{ marginLeft: "-0.5rem" }}>
-				{helpers.keys(categories).map(category => {
+				{helpers.keys(categories).map((category) => {
 					const info = categories[category];
 					return (
 						<div
@@ -56,7 +56,7 @@ const News = ({
 								checked={showCategories[category]}
 								id={`news-${category}`}
 								onChange={() => {
-									setShowCategories(show => ({
+									setShowCategories((show) => ({
 										...show,
 										[category]: !show[category],
 									}));
@@ -76,7 +76,7 @@ const News = ({
 			<div className="mb-3">
 				<button
 					className="btn btn-link p-0"
-					onClick={event => {
+					onClick={(event) => {
 						event.preventDefault();
 						const show = { ...showCategories };
 						for (const key of helpers.keys(show)) {
@@ -90,7 +90,7 @@ const News = ({
 				|{" "}
 				<button
 					className="btn btn-link p-0"
-					onClick={event => {
+					onClick={(event) => {
 						event.preventDefault();
 						const show = { ...showCategories };
 						for (const key of helpers.keys(show)) {
@@ -105,14 +105,14 @@ const News = ({
 
 			<div className="row">
 				{events
-					.filter(event => {
+					.filter((event) => {
 						const type = types[event.type];
 						if (type) {
 							return showCategories[type.category] === true;
 						}
 						return true;
 					})
-					.map(event => {
+					.map((event) => {
 						return (
 							<div
 								key={event.eid}

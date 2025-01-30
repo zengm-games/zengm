@@ -89,7 +89,7 @@ const assessPayrollMinLuxury = async () => {
 			: g.get("salaryCap");
 
 	const payteams = Object.values(payrolls).filter(
-		x => x !== undefined && x <= payrollCutoff,
+		(x) => x !== undefined && x <= payrollCutoff,
 	);
 
 	if (payteams.length > 0 && collectedTax > 0) {

@@ -87,7 +87,7 @@ const ImportButton = <Type extends "injuries" | "tragicDeaths">({
 			type="file"
 			style={IMPORT_FILE_STYLE}
 			onClick={resetFileInput}
-			onChange={event => {
+			onChange={(event) => {
 				if (!event.target.files) {
 					return;
 				}
@@ -101,7 +101,7 @@ const ImportButton = <Type extends "injuries" | "tragicDeaths">({
 				const reader = new window.FileReader();
 				reader.readAsText(file);
 
-				reader.onload = event2 => {
+				reader.onload = (event2) => {
 					try {
 						// @ts-expect-error
 						const rows = csvParse(event2.currentTarget.result);
@@ -188,9 +188,9 @@ const Controls = <Type extends "injuries" | "tragicDeaths">({
 										};
 
 							if (position === "top") {
-								setRows(rows => [newRow as any, ...rows]);
+								setRows((rows) => [newRow as any, ...rows]);
 							} else {
-								setRows(rows => [...rows, newRow as any]);
+								setRows((rows) => [...rows, newRow as any]);
 							}
 						}}
 					>
@@ -376,7 +376,7 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 		(key: "name" | "frequency" | "games" | "reason", i: number) =>
 		(event: ChangeEvent<HTMLInputElement>) => {
 			setRows(
-				rows =>
+				(rows) =>
 					rows.map((row, j) => {
 						if (i !== j) {
 							return row;
@@ -548,8 +548,8 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 										<button
 											className="text-danger btn btn-link ps-2 pe-0 border-0"
 											onClick={() => {
-												setRows(rows =>
-													(rows as any[]).filter(row2 => row2 !== row),
+												setRows((rows) =>
+													(rows as any[]).filter((row2) => row2 !== row),
 												);
 											}}
 											style={{ fontSize: 20 }}

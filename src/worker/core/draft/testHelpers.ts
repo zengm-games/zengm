@@ -10,7 +10,7 @@ const getDraftTids = async () => {
 	await draft.genOrder();
 	const draftPicks = await draft.getOrder();
 	assert.strictEqual(draftPicks.length, 60);
-	return draftPicks.map(d => d.originalTid);
+	return draftPicks.map((d) => d.originalTid);
 };
 
 const loadTeamSeasons = async () => {
@@ -34,7 +34,7 @@ const loadTeamSeasons = async () => {
 			initialBudget: partialT.budget,
 		} as Team;
 
-		const teamSeasons = seasons.map(teamSeason => ({
+		const teamSeasons = seasons.map((teamSeason) => ({
 			...teamSeason,
 			tid: t.tid,
 			tied: 0,

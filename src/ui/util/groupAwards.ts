@@ -125,7 +125,7 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 
 	const seen = new Set();
 	const awardsGrouped = [];
-	const awardsGroupedTemp = groupBy(awards, award => getType(award.type));
+	const awardsGroupedTemp = groupBy(awards, (award) => getType(award.type));
 
 	for (const originalType of awardsOrder) {
 		const type = getType(originalType);
@@ -136,7 +136,9 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 				type,
 				long,
 				count: awardsGroupedTemp[type].length,
-				seasons: helpers.yearRanges(awardsGroupedTemp[type].map(a => a.season)),
+				seasons: helpers.yearRanges(
+					awardsGroupedTemp[type].map((a) => a.season),
+				),
 			});
 			seen.add(type);
 		}
@@ -150,7 +152,9 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 				type,
 				long: originalType,
 				count: awardsGroupedTemp[type].length,
-				seasons: helpers.yearRanges(awardsGroupedTemp[type].map(a => a.season)),
+				seasons: helpers.yearRanges(
+					awardsGroupedTemp[type].map((a) => a.season),
+				),
 			});
 			seen.add(type);
 		}

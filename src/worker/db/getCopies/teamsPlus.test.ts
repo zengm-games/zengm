@@ -13,8 +13,8 @@ beforeAll(async () => {
 	await testHelpers.resetCache({
 		players: [player.generate(4, 30, 2010, true, DEFAULT_LEVEL)],
 		teams: teamsDefault.map(team.generate),
-		teamSeasons: teamsDefault.map(t => team.genSeasonRow(t)),
-		teamStats: teamsDefault.map(t => team.genStatsRow(t.tid)),
+		teamSeasons: teamsDefault.map((t) => team.genSeasonRow(t)),
+		teamStats: teamsDefault.map((t) => team.genStatsRow(t.tid)),
 	});
 
 	const teamStats = await idb.cache.teamStats.indexGet(

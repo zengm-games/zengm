@@ -235,7 +235,7 @@ const EditAwards = ({
 			return;
 		}
 
-		return players.find(p2 => p2.pid === p.pid);
+		return players.find((p2) => p2.pid === p.pid);
 	};
 
 	const getOptionLabel = (award: string) => (p: any) => {
@@ -262,7 +262,7 @@ const EditAwards = ({
 		return (
 			<form onSubmit={handleFormSubmit}>
 				<div className="row">
-					{SIMPLE_AWARDS.map(key => (
+					{SIMPLE_AWARDS.map((key) => (
 						<div key={key} className="col-lg-4 col-md-6 mb-3">
 							<label className="form-label">{AWARD_NAMES[key]}</label>
 							<SelectMultiple
@@ -270,7 +270,7 @@ const EditAwards = ({
 								key={season}
 								value={getPlayer(aws[key])}
 								getOptionLabel={getOptionLabel(key)}
-								getOptionValue={p => String(p.pid)}
+								getOptionValue={(p) => String(p.pid)}
 								onChange={handleChange(key)}
 							/>
 						</div>
@@ -278,7 +278,7 @@ const EditAwards = ({
 					{isSport("basketball") ? (
 						<div className="col-lg-4 col-md-6 mb-3">
 							<label className="form-label">{AWARD_NAMES.sfmvp}s</label>
-							{range(2).map(i => {
+							{range(2).map((i) => {
 								const player = aws.sfmvp[i];
 								return (
 									<div className="d-flex" key={i}>
@@ -289,7 +289,7 @@ const EditAwards = ({
 												key={season}
 												value={getPlayer(player)}
 												getOptionLabel={getOptionLabel("sfmvp")}
-												getOptionValue={p => String(p.pid)}
+												getOptionValue={(p) => String(p.pid)}
 												onChange={handleChange("sfmvp", undefined, i)}
 											/>
 										</div>
@@ -313,7 +313,7 @@ const EditAwards = ({
 														options={players}
 														value={getPlayer(player)}
 														getOptionLabel={getOptionLabel("allLeague")}
-														getOptionValue={p => String(p.pid)}
+														getOptionValue={(p) => String(p.pid)}
 														onChange={handleChange("allLeague", i, j)}
 													/>
 												</div>
@@ -343,7 +343,7 @@ const EditAwards = ({
 													options={players}
 													value={getPlayer(player)}
 													getOptionLabel={getOptionLabel("allDefensive")}
-													getOptionValue={p => String(p.pid)}
+													getOptionValue={(p) => String(p.pid)}
 													onChange={handleChange("allDefensive", i, j)}
 												/>
 											</div>
@@ -375,7 +375,7 @@ const EditAwards = ({
 													key={season}
 													value={getPlayer(player)}
 													getOptionLabel={getOptionLabel("allOffense")}
-													getOptionValue={p => String(p.pid)}
+													getOptionValue={(p) => String(p.pid)}
 													onChange={handleChange("allOffense", undefined, i)}
 												/>
 											</div>
@@ -396,7 +396,7 @@ const EditAwards = ({
 													key={season}
 													value={getPlayer(player)}
 													getOptionLabel={getOptionLabel("allDefense")}
-													getOptionValue={p => String(p.pid)}
+													getOptionValue={(p) => String(p.pid)}
 													onChange={handleChange("allDefense", undefined, i)}
 												/>
 											</div>
@@ -419,7 +419,7 @@ const EditAwards = ({
 											key={season}
 											value={getPlayer(player)}
 											getOptionLabel={getOptionLabel("allRookie")}
-											getOptionValue={p => String(p.pid)}
+											getOptionValue={(p) => String(p.pid)}
 											onChange={handleChange("allRookie", undefined, i)}
 										/>
 									</div>

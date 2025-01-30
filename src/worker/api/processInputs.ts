@@ -27,7 +27,7 @@ export const validateAbbrev = (
 		}
 
 		{
-			const tid = g.get("teamInfoCache").findIndex(t => t.abbrev === abbrev);
+			const tid = g.get("teamInfoCache").findIndex((t) => t.abbrev === abbrev);
 			if (tid >= 0) {
 				return [tid, abbrev];
 			}
@@ -586,7 +586,7 @@ const playerFeats = (params: Params) => {
 
 	if (
 		params.abbrev !== undefined &&
-		g.get("teamInfoCache").some(t => t.abbrev === params.abbrev)
+		g.get("teamInfoCache").some((t) => t.abbrev === params.abbrev)
 	) {
 		abbrev = params.abbrev;
 	} else {
@@ -985,7 +985,7 @@ const comparePlayers = (params: Params) => {
 	const info = params.info;
 	if (info !== undefined) {
 		players.push(
-			...info.split(",").map(pidSeasonPlayoffs => {
+			...info.split(",").map((pidSeasonPlayoffs) => {
 				const parts = pidSeasonPlayoffs.split("-");
 				return {
 					pid: Number.parseInt(parts[0]),
@@ -1013,7 +1013,7 @@ const advancedPlayerSearch = (params: Params) => {
 	let filters: AdvancedPlayerSearchFilter[];
 	try {
 		const parsed = JSON.parse(params.filters!) as any[][];
-		filters = parsed.map(row => {
+		filters = parsed.map((row) => {
 			return {
 				category: row[0],
 				key: row[1],

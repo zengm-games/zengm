@@ -67,7 +67,7 @@ const navigationRoute = new NavigationRoute(handler, {
 });
 registerRoute(navigationRoute);
 
-self.addEventListener("message", event => {
+self.addEventListener("message", (event) => {
 	if (event.data === "getSWVersion") {
 		event.ports[0].postMessage("REV_GOES_HERE");
 	}

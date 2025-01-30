@@ -65,7 +65,7 @@ describe("choice", () => {
 		};
 
 		for (let i = 0; i < 10; i++) {
-			const choice = random.choice(helpers.keys(values), key => values[key]);
+			const choice = random.choice(helpers.keys(values), (key) => values[key]);
 			assert(helpers.keys(values).includes(choice));
 		}
 	});

@@ -17,7 +17,7 @@ const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		);
 		messages.reverse();
 		return {
-			messages: messages.map(message => ({
+			messages: messages.map((message) => ({
 				mid: message.mid,
 				read: message.read,
 				year: message.year,
@@ -126,7 +126,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			},
 			"noCopyCache",
 		);
-		const t = teams.find(t2 => t2.tid === g.get("userTid"));
+		const t = teams.find((t2) => t2.tid === g.get("userTid"));
 		const cid = t !== undefined ? t.seasonAttrs.cid : undefined;
 		let att = 0;
 		let rank = 1;
@@ -140,7 +140,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}[] = [];
 
 		const teamsConf = await orderTeams(
-			teams.filter(t => t.seasonAttrs.cid === cid),
+			teams.filter((t) => t.seasonAttrs.cid === cid),
 			teams,
 		);
 
@@ -170,7 +170,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 			for (let j = 0; j < teams.length; j++) {
 				if (teams[j].tid === g.get("userTid")) {
-					const entry = teamStats.find(teamStat => teamStat.stat === stat);
+					const entry = teamStats.find((teamStat) => teamStat.stat === stat);
 
 					if (entry) {
 						entry.rank = j + 1;
@@ -269,7 +269,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		const userPlayers = addFirstNameShort(
 			await idb.getCopies.playersPlus(
-				playersAll.filter(p => p.tid === g.get("userTid")),
+				playersAll.filter((p) => p.tid === g.get("userTid")),
 				{
 					attrs: [
 						"pid",
@@ -348,8 +348,8 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					depth.G[0],
 				];
 				starters = pids
-					.map(pid => userPlayers.find(p => p.pid === pid))
-					.filter(pid => pid !== undefined);
+					.map((pid) => userPlayers.find((p) => p.pid === pid))
+					.filter((pid) => pid !== undefined);
 			}
 		}
 
@@ -523,10 +523,10 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			gb: number;
 		})[] = (
 			await orderTeams(
-				teams.filter(t => t.seasonAttrs.cid === cid),
+				teams.filter((t) => t.seasonAttrs.cid === cid),
 				teams,
 			)
-		).map(t => ({
+		).map((t) => ({
 			...t,
 			rank: 0,
 			gb: 0,
@@ -612,7 +612,7 @@ const updateNewsFeed = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				},
 				"noCopyCache",
 			)
-		).map(t => t.seasonAttrs);
+		).map((t) => t.seasonAttrs);
 
 		return {
 			events,

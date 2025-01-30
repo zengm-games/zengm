@@ -6,10 +6,10 @@ import type { Player } from "../../../common/types";
 
 const hasActiveNegotiation = async (tid: number, pid: number) => {
 	const teamNegotiations = (await idb.cache.negotiations.getAll()).filter(
-		negotiation => negotiation.tid === tid,
+		(negotiation) => negotiation.tid === tid,
 	);
 
-	return teamNegotiations.some(negotiation => negotiation.pid === pid);
+	return teamNegotiations.some((negotiation) => negotiation.pid === pid);
 };
 
 const moodInfo = async (

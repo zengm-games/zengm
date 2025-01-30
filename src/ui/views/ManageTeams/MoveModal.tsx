@@ -41,7 +41,7 @@ const MoveModal = ({
 		abbrevs = Object.keys(teamInfos);
 		moveOptions = orderBy(
 			getTeamInfos(
-				abbrevs.map(abbrev => ({
+				abbrevs.map((abbrev) => ({
 					abbrev,
 					tid: -1,
 					cid: -1,
@@ -67,7 +67,7 @@ const MoveModal = ({
 						<div className="mb-3">
 							<select
 								className="form-select"
-								onChange={event => {
+								onChange={(event) => {
 									setSelectedRegion(Number.parseInt(event.target.value));
 								}}
 								value={selectedRegion}
@@ -90,7 +90,7 @@ const MoveModal = ({
 								id="move-modal-reband"
 								checked={rebrandTeam}
 								onChange={() => {
-									setRebrandTeam(checked => !checked);
+									setRebrandTeam((checked) => !checked);
 								}}
 							/>
 							<label className="form-check-label" htmlFor="move-modal-reband">

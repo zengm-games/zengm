@@ -9,7 +9,7 @@ const makeMatchupsWrapper = (
 	numPlayoffByes: number,
 ) => {
 	const { round: series } = makeMatchups(
-		teams.map(t => {
+		teams.map((t) => {
 			return {
 				tid: t.tid,
 

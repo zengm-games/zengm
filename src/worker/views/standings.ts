@@ -94,7 +94,7 @@ const updateStandings = async (
 				},
 				"noCopyCache",
 			)
-		).map(t => ({
+		).map((t) => ({
 			...t,
 			gb: {
 				league: 0,
@@ -117,18 +117,18 @@ const updateStandings = async (
 		const rankingGroups = {
 			league: [await orderTeams(teams, teams, orderTeamsOptions)],
 			conf: await Promise.all(
-				confs.map(conf =>
+				confs.map((conf) =>
 					orderTeams(
-						teams.filter(t => t.seasonAttrs.cid === conf.cid),
+						teams.filter((t) => t.seasonAttrs.cid === conf.cid),
 						teams,
 						orderTeamsOptions,
 					),
 				),
 			),
 			div: await Promise.all(
-				divs.map(div =>
+				divs.map((div) =>
 					orderTeams(
-						teams.filter(t => t.seasonAttrs.did === div.did),
+						teams.filter((t) => t.seasonAttrs.did === div.did),
 						teams,
 						orderTeamsOptions,
 					),
@@ -188,8 +188,8 @@ const updateStandings = async (
 			inputs.season === g.get("season")
 				? g.get("playIn")
 				: rankingGroups.league[0].some(
-						t => t.seasonAttrs.clinchedPlayoffs === "w",
-				  );
+						(t) => t.seasonAttrs.clinchedPlayoffs === "w",
+					);
 
 		return {
 			confs,

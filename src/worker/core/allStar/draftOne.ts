@@ -20,7 +20,7 @@ const draftOne = async (
 	}
 
 	const teamInd = allStars.teams[0].length > allStars.teams[1].length ? 1 : 0;
-	const remaining = allStars.remaining.filter(p => !p.injured);
+	const remaining = allStars.remaining.filter((p) => !p.injured);
 
 	let pick: AllStarPlayer;
 	const r = Math.random();
@@ -40,7 +40,7 @@ const draftOne = async (
 
 	if (pick) {
 		allStars.teams[teamInd].push(pick);
-		allStars.remaining = allStars.remaining.filter(p => p.pid !== pick.pid);
+		allStars.remaining = allStars.remaining.filter((p) => p.pid !== pick.pid);
 	}
 
 	if (allStars.remaining.every(({ injured }) => injured)) {

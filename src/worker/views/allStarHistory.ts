@@ -13,7 +13,7 @@ const addAbbrevAndCount = <
 };
 
 const augment = (allAllStars: AllStars[]) => {
-	const augmented = allAllStars.map(row => {
+	const augmented = allAllStars.map((row) => {
 		return {
 			gid: row.gid,
 			mvp: row.mvp ? addAbbrevAndCount(row.mvp) : undefined,

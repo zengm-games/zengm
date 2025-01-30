@@ -17,7 +17,7 @@ const updateExportPlayers = async (
 		let playersAll;
 		if (g.get("season") === season) {
 			playersAll = await idb.cache.players.getAll();
-			playersAll = playersAll.filter(p => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
+			playersAll = playersAll.filter((p) => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
 		} else {
 			playersAll = await idb.getCopies.players(
 				{

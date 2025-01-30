@@ -30,7 +30,7 @@ const getBest = <T extends PlayerWithoutKey>(
 	if (DRAFT_BY_TEAM_OVR) {
 		// playersAvailable is sorted by value. So if we hit a player at a minimum contract at a position, no player with lower value needs to be considered
 		const seenMinContractAtPos = new Set();
-		const playersAvailableFiltered = playersAvailable.filter(p => {
+		const playersAvailableFiltered = playersAvailable.filter((p) => {
 			const pos = p.ratings.at(-1).pos;
 			if (seenMinContractAtPos.has(pos)) {
 				return false;
@@ -51,7 +51,9 @@ const getBest = <T extends PlayerWithoutKey>(
 			p,
 			teamOvrDiff: teamOvrDiffs[i],
 		}));
-		playersSorted = orderBy(wrapper, x => x.teamOvrDiff, "desc").map(x => x.p);
+		playersSorted = orderBy(wrapper, (x) => x.teamOvrDiff, "desc").map(
+			(x) => x.p,
+		);
 	} else {
 		playersSorted = playersAvailable;
 	}
@@ -83,7 +85,7 @@ const getBest = <T extends PlayerWithoutKey>(
 				}
 			}
 
-			keyPositionsNeededCache = allKeyPositionsNeeded.filter(pos => {
+			keyPositionsNeededCache = allKeyPositionsNeeded.filter((pos) => {
 				const injured = positionCounts.injured[pos] ?? 0;
 				const healthy = positionCounts.healthy[pos] ?? 0;
 

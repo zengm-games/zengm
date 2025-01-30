@@ -31,7 +31,7 @@ const BANNED_STAT_VARIABLES = new Set(
 );
 
 const STAT_VARIABLES = [...stats.derived, ...stats.raw].filter(
-	stat => !BANNED_STAT_VARIABLES.has(stat),
+	(stat) => !BANNED_STAT_VARIABLES.has(stat),
 );
 
 const AWARD_VARIABLES: Record<string, string> = {
@@ -79,12 +79,12 @@ const evaluate = (
 	const goatFormula =
 		formula ??
 		(info.type === "career"
-			? g.get("goatFormula") ?? DEFAULT_FORMULA
-			: g.get("goatSeasonFormula") ?? DEFAULT_FORMULA_SEASON);
+			? (g.get("goatFormula") ?? DEFAULT_FORMULA)
+			: (g.get("goatSeasonFormula") ?? DEFAULT_FORMULA_SEASON));
 
 	const object: Record<string, number> = {};
 
-	const statsRows = p.stats.filter(row => {
+	const statsRows = p.stats.filter((row) => {
 		if (info.type === "season" && row.season !== info.season) {
 			return false;
 		}

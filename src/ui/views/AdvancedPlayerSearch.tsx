@@ -87,14 +87,14 @@ const SelectOperator = <
 		<select
 			className="form-select"
 			value={value as any}
-			onChange={event => {
+			onChange={(event) => {
 				onChange(event.target.value as any);
 			}}
 			style={{
 				width: 150,
 			}}
 		>
-			{operators.map(operator => {
+			{operators.map((operator) => {
 				return (
 					<option key={operator} value={operator}>
 						{(textOverrides as any)?.[operator] ?? operator}
@@ -125,7 +125,7 @@ const ValueInput = ({
 				})}
 				inputMode={type === "numeric" ? "numeric" : undefined}
 				value={value}
-				onChange={event => {
+				onChange={(event) => {
 					onChange(event.target.value as any);
 				}}
 				style={{
@@ -157,14 +157,14 @@ const SelectTeam = ({
 		<select
 			className="form-select"
 			value={value as any}
-			onChange={event => {
+			onChange={(event) => {
 				onChange(event.target.value as any);
 			}}
 			style={{
 				width: 308,
 			}}
 		>
-			{teams.map(x => {
+			{teams.map((x) => {
 				return <OptionDropdown key={x.key} value={x} />;
 			})}
 		</select>
@@ -236,7 +236,7 @@ const Filters = ({
 }) => {
 	const setFilter = (i: number, filter: AdvancedPlayerSearchFilterEditing) => {
 		filter.errorMessage = validateFilter(filter);
-		setFilters(oldFilters => {
+		setFilters((oldFilters) => {
 			return oldFilters.map((oldFilter, j) => (i === j ? filter : oldFilter));
 		});
 	};
@@ -254,7 +254,7 @@ const Filters = ({
 	];
 
 	if (isSport("baseball")) {
-		statTypes = statTypes.filter(row => row.key !== "fielding");
+		statTypes = statTypes.filter((row) => row.key !== "fielding");
 	}
 
 	return (
@@ -273,7 +273,7 @@ const Filters = ({
 									<select
 										className="form-select"
 										value={filter.category}
-										onChange={event => {
+										onChange={(event) => {
 											const newCategory = event.target.value as any;
 											const newKey = Object.keys(
 												allFilters[newCategory].options,
@@ -289,14 +289,14 @@ const Filters = ({
 											width: 150,
 										}}
 									>
-										{statTypes.map(x => {
+										{statTypes.map((x) => {
 											return <OptionDropdown key={x.key} value={x} />;
 										})}
 									</select>
 									<select
 										className="form-select"
 										value={filterInfo.key}
-										onChange={event => {
+										onChange={(event) => {
 											const newFilter = getInitialFilterEditing(
 												filter.category,
 												event.target.value,
@@ -332,7 +332,7 @@ const Filters = ({
 									{filter.key === "abbrev" ? (
 										<SelectTeam
 											value={filter.value}
-											onChange={value => {
+											onChange={(value) => {
 												setFilter(i, {
 													...filter,
 													operator: "is exactly",
@@ -345,7 +345,7 @@ const Filters = ({
 											<SelectOperator
 												type={filterInfo.valueType}
 												value={filter.operator}
-												onChange={operator => {
+												onChange={(operator) => {
 													setFilter(i, {
 														...filter,
 														operator,
@@ -355,7 +355,7 @@ const Filters = ({
 											<ValueInput
 												type={filterInfo.valueType}
 												value={filter.value}
-												onChange={value => {
+												onChange={(value) => {
 													setFilter(i, {
 														...filter,
 														value,
@@ -370,7 +370,7 @@ const Filters = ({
 							<button
 								className="text-danger btn btn-link p-0 border-0"
 								onClick={() => {
-									setFilters(oldFilters => {
+									setFilters((oldFilters) => {
 										return oldFilters.filter((oldFilter, j) => i !== j);
 									});
 								}}
@@ -388,7 +388,7 @@ const Filters = ({
 				type="button"
 				className="btn btn-secondary"
 				onClick={() => {
-					setFilters(prev => {
+					setFilters((prev) => {
 						return [...prev, getInitialFilterEditing("ratings", "ovr")];
 					});
 				}}
@@ -415,20 +415,20 @@ const ShowStatTypes = ({
 			? [
 					{ key: "regular", value: "Traditional Stats" },
 					...dropdownOptions.filter(
-						row =>
+						(row) =>
 							row.key !== "perGame" &&
 							row.key !== "per36" &&
 							row.key !== "totals",
 					),
 				]
 			: isSport("baseball")
-				? dropdownOptions.filter(row => row.key !== "fielding")
+				? dropdownOptions.filter((row) => row.key !== "fielding")
 				: dropdownOptions),
 	];
 
 	return (
 		<>
-			{allStatTypes.map(x => {
+			{allStatTypes.map((x) => {
 				const id = `AdvancedPlayerSearchStatType-${x.key}`;
 				return (
 					<div className="form-check" key={x.key}>
@@ -437,11 +437,11 @@ const ShowStatTypes = ({
 							type="checkbox"
 							checked={showStatTypes.includes(x.key as string)}
 							id={id}
-							onChange={event => {
+							onChange={(event) => {
 								if (event.target.checked) {
 									setShowStatTypes([...showStatTypes, x.key as string]);
 								} else {
-									setShowStatTypes(showStatTypes.filter(y => y !== x.key));
+									setShowStatTypes(showStatTypes.filter((y) => y !== x.key));
 								}
 							}}
 						/>
@@ -458,7 +458,7 @@ const ShowStatTypes = ({
 const filtersToEditable = (
 	filters: AdvancedPlayerSearchFilter[],
 ): AdvancedPlayerSearchFilterEditing[] => {
-	return filters.map(filter => {
+	return filters.map((filter) => {
 		return {
 			...filter,
 			value: filter.value === null ? "" : String(filter.value),
@@ -470,7 +470,7 @@ const filtersToEditable = (
 const filtersFromEditable = (
 	filters: AdvancedPlayerSearchFilterEditing[],
 ): AdvancedPlayerSearchFilter[] => {
-	return filters.map(filter => {
+	return filters.map((filter) => {
 		const info = getFilterInfo(filter.category, filter.key);
 		return {
 			category: filter.category,
@@ -580,23 +580,25 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 
 	const { uniqueColFiltersWithInfo, uniqueStatTypeInfos } = useMemo(() => {
 		const renderedFiltersWithInfos = rendered.filters
-			.map(filter => {
+			.map((filter) => {
 				const info = getFilterInfo(filter.category, filter.key);
 				return {
 					filter,
 					info: info!,
 				};
 			})
-			.filter(row => !!row.info);
+			.filter((row) => !!row.info);
 
 		const seenCols = new Set(defaultCols.current);
-		const uniqueColFiltersWithInfo = renderedFiltersWithInfos.filter(filter => {
-			if (seenCols.has(filter.info.colKey)) {
-				return false;
-			}
-			seenCols.add(filter.info.colKey);
-			return true;
-		});
+		const uniqueColFiltersWithInfo = renderedFiltersWithInfos.filter(
+			(filter) => {
+				if (seenCols.has(filter.info.colKey)) {
+					return false;
+				}
+				seenCols.add(filter.info.colKey);
+				return true;
+			},
+		);
 
 		// Process these after filters, so filter cols get shown first
 		let uniqueStatTypeInfos = [];
@@ -604,28 +606,28 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 			const keys = getExtraStatTypeKeys([statType]);
 			if (statType === "bio") {
 				uniqueStatTypeInfos.push(
-					...keys.attrs.map(key => {
+					...keys.attrs.map((key) => {
 						const info = allFilters.bio.options[key];
 						return info;
 					}),
 				);
 			} else if (statType === "ratings") {
 				uniqueStatTypeInfos.push(
-					...keys.ratings.map(key => {
+					...keys.ratings.map((key) => {
 						const info = allFilters.ratings.options[key];
 						return info;
 					}),
 				);
 			} else {
 				uniqueStatTypeInfos.push(
-					...keys.stats.map(key => {
+					...keys.stats.map((key) => {
 						const info = allFilters[statType].options[key];
 						return info;
 					}),
 				);
 			}
 		}
-		uniqueStatTypeInfos = uniqueStatTypeInfos.filter(row => {
+		uniqueStatTypeInfos = uniqueStatTypeInfos.filter((row) => {
 			if (seenCols.has(row.colKey)) {
 				return false;
 			}
@@ -638,8 +640,8 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 
 	const cols = getCols([
 		...defaultCols.current,
-		...uniqueColFiltersWithInfo.map(filter => filter.info.colKey),
-		...uniqueStatTypeInfos.map(row => row.colKey),
+		...uniqueColFiltersWithInfo.map((filter) => filter.info.colKey),
+		...uniqueStatTypeInfos.map((row) => row.colKey),
 	]);
 
 	const currentSeasonOnly =
@@ -692,9 +694,9 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					showRatings ? p.ratings.ovr : null,
 					showRatings ? p.ratings.pot : null,
 					...[
-						...uniqueColFiltersWithInfo.map(row => row.info),
+						...uniqueColFiltersWithInfo.map((row) => row.info),
 						...uniqueStatTypeInfos,
-					].map(info => {
+					].map((info) => {
 						const value = info.getValue(p);
 						if (info.category === "bio") {
 							return value;
@@ -731,7 +733,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		<>
 			<form
 				className="mb-5"
-				onSubmit={async event => {
+				onSubmit={async (event) => {
 					event.preventDefault();
 
 					const actualFilters = filtersFromEditable(filters);
@@ -747,7 +749,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 							playoffs,
 							statType,
 							JSON.stringify(
-								actualFilters.map(filter => {
+								actualFilters.map((filter) => {
 									return [
 										filter.category,
 										filter.key,
@@ -769,7 +771,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 							<select
 								className="form-select"
 								value={seasonStart}
-								onChange={event => {
+								onChange={(event) => {
 									const season = Number.parseInt(event.target.value);
 									if (season > seasonEnd) {
 										setSeasonRange([season, season]);
@@ -778,7 +780,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 									}
 								}}
 							>
-								{seasons.map(x => {
+								{seasons.map((x) => {
 									return <OptionDropdown key={x.key} value={x} />;
 								})}
 							</select>
@@ -786,7 +788,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 							<select
 								className="form-select"
 								value={seasonEnd}
-								onChange={event => {
+								onChange={(event) => {
 									const season = Number.parseInt(event.target.value);
 									if (season < seasonStart) {
 										setSeasonRange([season, season]);
@@ -795,7 +797,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 									}
 								}}
 							>
-								{seasons.map(x => {
+								{seasons.map((x) => {
 									return <OptionDropdown key={x.key} value={x} />;
 								})}
 							</select>
@@ -805,7 +807,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 						<select
 							className="form-select"
 							value={singleSeason}
-							onChange={event => {
+							onChange={(event) => {
 								setSingleSeason(event.target.value as any);
 							}}
 						>
@@ -816,14 +818,14 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					<div className="col-12 col-sm-6">
 						<select
 							className="form-select"
-							onChange={event => {
+							onChange={(event) => {
 								const newPlayoffs = event.target.value as any;
 
 								setPlayoffs(newPlayoffs);
 							}}
 							value={playoffs}
 						>
-							{playoffsOptions.map(x => {
+							{playoffsOptions.map((x) => {
 								return <OptionDropdown key={x.key} value={x} />;
 							})}
 						</select>
@@ -834,11 +836,11 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 							<select
 								className="form-select"
 								value={statType}
-								onChange={event => {
+								onChange={(event) => {
 									setStatType(event.target.value as any);
 								}}
 							>
-								{statTypes.map(x => {
+								{statTypes.map((x) => {
 									return <OptionDropdown key={x.key} value={x} />;
 								})}
 							</select>
@@ -854,7 +856,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 				/>
 				<ActionButton
 					className="mt-3"
-					disabled={filters.some(filter => filter.errorMessage)}
+					disabled={filters.some((filter) => filter.errorMessage)}
 					processing={fetchingPlayers}
 					processingText="Loading"
 					type="submit"

@@ -53,7 +53,7 @@ const DEFENSIVE_POSITIONS = ["DL", "LB", "CB", "S"] as const;
 
 // Approximate Value: https://www.sports-reference.com/blog/approximate-value-methodology/
 const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
-	const teams = teamsInput.map(t => {
+	const teams = teamsInput.map((t) => {
 		const offPts =
 			league.ptsPerDrive === 0
 				? 0
@@ -106,7 +106,7 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 	});
 	const teamsByTid = groupByUnique(teams, "tid");
 
-	const individualPts = players.map(p => {
+	const individualPts = players.map((p) => {
 		let score = 0;
 
 		const t = teamsByTid[p.tid];
@@ -407,7 +407,7 @@ const advStats = async () => {
 		for (let i = 0; i < allLeague.length; i++) {
 			for (const p2 of allLeague[i].players) {
 				if (p2 && (p2.pos === "OL" || DEFENSIVE_POSITIONS.includes(p2.pos))) {
-					const p = players.find(p3 => p3.pid === p2.pid);
+					const p = players.find((p3) => p3.pid === p2.pid);
 					if (p) {
 						p.allLeagueTeam = i;
 					}

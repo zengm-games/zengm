@@ -145,7 +145,7 @@ const SelectTeam = ({
 			throw new Error("Invalid setSeason call");
 		}
 
-		setAddEditTeamInfo(info => ({
+		setAddEditTeamInfo((info) => ({
 			...info,
 			[key]: newSeason,
 		}));
@@ -181,7 +181,7 @@ const SelectTeam = ({
 		const newTeams = orderBy(
 			applyRealTeamInfos(newInfo.teams, realTeamInfo, season),
 			["region", "name", "tid"],
-		).map(t => ({
+		).map((t) => ({
 			...t,
 			tid: -1,
 			cid: -1,
@@ -195,10 +195,10 @@ const SelectTeam = ({
 			newTeam = newTeams[index];
 		} else {
 			if (typeof tidInput === "number") {
-				newTeam = newTeams.find(t => t.tid === tidInput);
+				newTeam = newTeams.find((t) => t.tid === tidInput);
 			}
 			if (!newTeam) {
-				newTeam = newTeams.find(t => t.abbrev === abbrev) ?? newTeams[0];
+				newTeam = newTeams.find((t) => t.abbrev === abbrev) ?? newTeams[0];
 			}
 		}
 
@@ -239,7 +239,7 @@ const SelectTeam = ({
 		const run = async () => {
 			if (addEditTeamInfo.addType === "random") {
 				const availableAbbrevs = getUnusedAbbrevs([]);
-				const param = availableAbbrevs.map(abbrev => ({
+				const param = availableAbbrevs.map((abbrev) => ({
 					tid: -1,
 					cid: -1,
 					did: -1,
@@ -247,7 +247,7 @@ const SelectTeam = ({
 				}));
 				setAllTeams(
 					orderBy(
-						getTeamInfos(param).map(t => ({
+						getTeamInfos(param).map((t) => ({
 							...t,
 							popRank: -1,
 						})),
@@ -289,10 +289,12 @@ const SelectTeam = ({
 
 	let availableTeams = allTeams;
 	if (availableTeams && addEditTeamInfo.hideDupeAbbrevs) {
-		const currentAbbrevs = new Set(currentTeams.map(t => t.abbrev));
-		availableTeams = availableTeams.filter(t => !currentAbbrevs.has(t.abbrev));
+		const currentAbbrevs = new Set(currentTeams.map((t) => t.abbrev));
+		availableTeams = availableTeams.filter(
+			(t) => !currentAbbrevs.has(t.abbrev),
+		);
 	}
-	const availableAbbrevs = availableTeams?.map(t => t.abbrev);
+	const availableAbbrevs = availableTeams?.map((t) => t.abbrev);
 	const actualAbbrev = availableAbbrevs?.includes(abbrev as any)
 		? abbrev
 		: "custom";
@@ -306,8 +308,8 @@ const SelectTeam = ({
 				<select
 					className="form-select"
 					value={addEditTeamInfo.addType}
-					onChange={async event => {
-						setAddEditTeamInfo(info => ({
+					onChange={async (event) => {
+						setAddEditTeamInfo((info) => ({
 							...info,
 							addType: event.target.value as any,
 						}));
@@ -330,9 +332,9 @@ const SelectTeam = ({
 						<select
 							className="form-select ms-2"
 							value={addEditTeamInfo.lid}
-							onChange={async event => {
+							onChange={async (event) => {
 								const lid = Number.parseInt(event.target.value);
-								setAddEditTeamInfo(info => ({
+								setAddEditTeamInfo((info) => ({
 									...info,
 									lid,
 								}));
@@ -346,7 +348,7 @@ const SelectTeam = ({
 							}}
 						>
 							{leagues ? (
-								leagues.map(league => (
+								leagues.map((league) => (
 									<option key={league.lid} value={league.lid}>
 										{league.name}
 									</option>
@@ -365,7 +367,7 @@ const SelectTeam = ({
 							<select
 								className="form-select"
 								value={season}
-								onChange={async event => {
+								onChange={async (event) => {
 									const value = Number.parseInt(event.target.value);
 									setSeason(value);
 									await loadTeams(league!, value);
@@ -376,7 +378,7 @@ const SelectTeam = ({
 								}}
 							>
 								{league
-									? range(league.seasonEnd, league.seasonStart - 1).map(i => (
+									? range(league.seasonEnd, league.seasonStart - 1).map((i) => (
 											<option key={i} value={i}>
 												{i}
 											</option>
@@ -390,12 +392,12 @@ const SelectTeam = ({
 								actualDisabled || availableTeams === undefined || loadingTeams
 							}
 							value={actualAbbrev}
-							onChange={event => {
+							onChange={(event) => {
 								const newAbbrev = event.target.value;
 								if (newAbbrev === "custom") {
 									onChange({ ...CUSTOM_TEAM });
 								} else {
-									const t = availableTeams?.find(t => t.abbrev === newAbbrev);
+									const t = availableTeams?.find((t) => t.abbrev === newAbbrev);
 									if (t) {
 										onChange(t);
 									}
@@ -410,14 +412,14 @@ const SelectTeam = ({
 							{addEditTeamInfo.addType === "random" && availableTeams ? (
 								<TeamsSplitNorthAmericaWorld
 									teams={availableTeams}
-									option={t => (
+									option={(t) => (
 										<option key={t.abbrev} value={t.abbrev}>
 											{t.region} {t.name} ({t.abbrev})
 										</option>
 									)}
 								/>
 							) : (
-								availableTeams?.map(t => (
+								availableTeams?.map((t) => (
 									<option key={t.abbrev} value={t.abbrev}>
 										{t.region} {t.name} ({t.abbrev})
 										{t.seasonInfo
@@ -462,7 +464,7 @@ const SelectTeam = ({
 							checked={addEditTeamInfo.hideDupeAbbrevs}
 							id="hideDupeAbbrevs"
 							onChange={() => {
-								setAddEditTeamInfo(info => ({
+								setAddEditTeamInfo((info) => ({
 									...info,
 									hideDupeAbbrevs: !info.hideDupeAbbrevs,
 								}));
@@ -544,7 +546,7 @@ const UpsertTeamModal = ({
 	useEffect(() => {
 		let t: NewLeagueTeamWithoutRank | undefined;
 		if (addEditTeamInfo.type === "edit") {
-			t = teams.find(t => t.tid === addEditTeamInfo.tidEdit);
+			t = teams.find((t) => t.tid === addEditTeamInfo.tidEdit);
 		} else if (
 			addEditTeamInfo.type === "add" &&
 			addEditTeamInfo.addType === "random"
@@ -568,7 +570,7 @@ const UpsertTeamModal = ({
 			throw new Error("Invalid team");
 		}
 		const did = Number.parseInt(controlledTeam.did);
-		const div = divs.find(div => div.did === did);
+		const div = divs.find((div) => div.did === did);
 		if (!div) {
 			throw new Error("Invalid div");
 		}
@@ -642,7 +644,7 @@ const UpsertTeamModal = ({
 						addEditTeamInfo={addEditTeamInfo}
 						setAddEditTeamInfo={setAddEditTeamInfo}
 						disabled={!controlledTeam}
-						onChange={t => {
+						onChange={(t) => {
 							newControlledTeam(t);
 						}}
 						currentTeams={teams}
@@ -654,7 +656,7 @@ const UpsertTeamModal = ({
 				{controlledTeam ? (
 					<form
 						id="foo"
-						onSubmit={event => {
+						onSubmit={(event) => {
 							event.preventDefault();
 							save();
 						}}

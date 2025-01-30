@@ -30,10 +30,10 @@ export const exportPlayers = async (
 	const readableStream = await makeExportStream(["players"], {
 		abortSignal,
 		filter: {
-			players: p => seasonsByPid.has(p.pid),
+			players: (p) => seasonsByPid.has(p.pid),
 		},
 		forEach: {
-			players: p => {
+			players: (p) => {
 				p.exportedSeason = seasonsByPid.get(p.pid);
 				if (p.exportedSeason === "latest") {
 					p.exportedSeason = p.ratings.at(-1).season;
@@ -140,7 +140,7 @@ const ExportPlayers = ({
 
 	const selectedPids = new Set(selected.map(({ p }) => p.pid));
 
-	const rows: DataTableRow[] = players.map(p => {
+	const rows: DataTableRow[] = players.map((p) => {
 		return {
 			key: p.pid,
 			metadata: {
@@ -182,7 +182,7 @@ const ExportPlayers = ({
 					className="btn btn-xs btn-primary"
 					disabled={exporting}
 					onClick={() => {
-						setSelected(selected.filter(row => row.p.pid !== p.pid));
+						setSelected(selected.filter((row) => row.p.pid !== p.pid));
 					}}
 					title="Remove player from export"
 				>
@@ -230,19 +230,19 @@ const ExportPlayers = ({
 							className="btn btn-secondary"
 							onClick={() => {
 								const currentSelectedPids = new Set(
-									selected.map(row => row.p.pid),
+									selected.map((row) => row.p.pid),
 								);
 								const newSelectedPids = new Set(
 									Array.from(selectedRows.map.values())
-										.filter(metadata => metadata.type === "player")
-										.filter(p => !currentSelectedPids.has(p.pid))
-										.map(p => p.pid),
+										.filter((metadata) => metadata.type === "player")
+										.filter((p) => !currentSelectedPids.has(p.pid))
+										.map((p) => p.pid),
 								);
 								setSelected([
 									...selected,
 									...players
-										.filter(p => newSelectedPids.has(p.pid))
-										.map(p => ({ p, season })),
+										.filter((p) => newSelectedPids.has(p.pid))
+										.map((p) => ({ p, season })),
 								]);
 								selectedRows.clear();
 							}}
@@ -281,7 +281,7 @@ const ExportPlayers = ({
 										try {
 											await exportPlayers(
 												new Map(
-													selected.map(info => {
+													selected.map((info) => {
 														return [info.p.pid, info.season];
 													}),
 												),
@@ -315,11 +315,11 @@ const ExportPlayers = ({
 									onClick={() => {
 										const pidsToRemove = new Set(
 											Array.from(selectedRows2.map.values())
-												.filter(metadata => metadata.type === "player")
-												.map(p => p.pid),
+												.filter((metadata) => metadata.type === "player")
+												.map((p) => p.pid),
 										);
 										setSelected(
-											selected.filter(p => !pidsToRemove.has(p.p.pid)),
+											selected.filter((p) => !pidsToRemove.has(p.p.pid)),
 										);
 										selectedRows2.deleteAll(pidsToRemove);
 									}}

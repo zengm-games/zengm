@@ -306,7 +306,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 					"noCopyCache",
 				);
 				const finalsTeams = allTeams.filter(
-					t => t.tid === team1.tid || t.tid === team2.tid,
+					(t) => t.tid === team1.tid || t.tid === team2.tid,
 				);
 				if (finalsTeams.length === 2) {
 					const orderedTeams = await orderTeams(finalsTeams, allTeams, {

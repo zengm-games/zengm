@@ -41,7 +41,7 @@ export const ReferenceLine = ({
 			<LinePath
 				className="chart-line"
 				data={x}
-				x={d => d}
+				x={(d) => d}
 				y={(d, i) => y[i]}
 				stroke={color}
 				strokeDasharray="5 5"
@@ -159,7 +159,7 @@ const OwnerMoodsChart = ({
 					maxWidth: MAX_WIDTH,
 				}}
 			>
-				{parent => {
+				{(parent) => {
 					const width = parent.width - margin.left - margin.right;
 					const xScale = scalePoint({
 						domain: years,
@@ -197,8 +197,8 @@ const OwnerMoodsChart = ({
 												className="chart-line"
 												curve={curveMonotoneX}
 												data={data}
-												x={d => xScale(d.year) ?? 0}
-												y={d => yScale(d[key]) ?? 0}
+												x={(d) => xScale(d.year) ?? 0}
+												y={(d) => yScale(d[key]) ?? 0}
 												stroke={color}
 												strokeWidth={width}
 											/>

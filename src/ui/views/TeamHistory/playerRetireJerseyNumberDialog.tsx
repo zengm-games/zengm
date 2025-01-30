@@ -40,7 +40,7 @@ const Confirm = confirmable<
 			<Modal.Header closeButton>Retire {p.name}'s jersey number</Modal.Header>
 			<Modal.Body>
 				<form
-					onSubmit={event => {
+					onSubmit={(event) => {
 						event.preventDefault();
 						ok();
 					}}
@@ -50,12 +50,12 @@ const Confirm = confirmable<
 							<select
 								ref={inputRef}
 								className="form-select"
-								onChange={event => {
+								onChange={(event) => {
 									setNumber(event.target.value);
 								}}
 								value={number}
 							>
-								{numbers.map(number => (
+								{numbers.map((number) => (
 									<option key={number} value={number}>
 										#{number} (
 										{helpers

@@ -24,11 +24,11 @@ const getSubdomain = () => {
 };
 
 const mySpawn = (command: string, args: string[]) => {
-	return new Promise<void>(resolve => {
+	return new Promise<void>((resolve) => {
 		console.log(`${command} ${args.join(" ")}`);
 
 		const cmd = spawn(command, args, { shell: true, stdio: "inherit" });
-		cmd.on("close", code => {
+		cmd.on("close", (code) => {
 			if (code !== 0) {
 				console.log(`child process exited with code ${code}`);
 				process.exit(code);

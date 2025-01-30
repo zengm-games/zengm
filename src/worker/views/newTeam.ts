@@ -37,7 +37,7 @@ const addHistoryAndPicksAndPlayers = async <T extends { tid: number }>(
 		const historyTotal = getHistoryTeam(teamSeasons, playoffsByConfBySeason);
 		const historyUser = getHistoryTeam(
 			teamSeasons.filter(
-				teamSeason => g.get("userTid", teamSeason.season) === teamSeason.tid,
+				(teamSeason) => g.get("userTid", teamSeason.season) === teamSeason.tid,
 			),
 			playoffsByConfBySeason,
 		);
@@ -50,7 +50,7 @@ const addHistoryAndPicksAndPlayers = async <T extends { tid: number }>(
 		);
 
 		const draftPicks = await Promise.all(
-			draftPicksRaw.map(async dp => {
+			draftPicksRaw.map(async (dp) => {
 				return {
 					...dp,
 					desc: await helpers.pickDesc(dp),
@@ -160,31 +160,34 @@ const updateTeamSelect = async () => {
 	const disabled = t ? t.disabled : false;
 
 	// Remove user's team (no re-hiring immediately after firing)
-	let teams = teamsAll.filter(t => t.tid !== g.get("userTid"));
+	let teams = teamsAll.filter((t) => t.tid !== g.get("userTid"));
 
 	if (expansion) {
 		// User team will always be first, cause expansion teams are at the end of the teams list
-		teams = teams.filter(t => expansionTids.includes(t.tid));
+		teams = teams.filter((t) => expansionTids.includes(t.tid));
 	} else if (otherTeamsWantToHire) {
 		// Deterministic random selection of teams
-		teams = orderBy(teams, t => t.seasonAttrs.revenue % 10, "asc").slice(0, 5);
+		teams = orderBy(teams, (t) => t.seasonAttrs.revenue % 10, "asc").slice(
+			0,
+			5,
+		);
 	} else if (!g.get("godMode")) {
 		// If not in god mode, user must have been fired or team folded
 
 		// Only get option of 5 worst
-		teams = orderBy(teams, t => t.seasonAttrs.winp, "asc").slice(0, 5);
+		teams = orderBy(teams, (t) => t.seasonAttrs.winp, "asc").slice(0, 5);
 	}
 
 	let orderedTeams = orderBy(teams, ["region", "name", "tid"]);
 	if ((expansion && !g.get("gameOver")) || otherTeamsWantToHire) {
 		// User team first!
-		const userTeam = teamsAll.find(t => t.tid === g.get("userTid"));
+		const userTeam = teamsAll.find((t) => t.tid === g.get("userTid"));
 		if (userTeam) {
-			orderedTeams = [userTeam, ...orderedTeams.filter(t => t !== userTeam)];
+			orderedTeams = [userTeam, ...orderedTeams.filter((t) => t !== userTeam)];
 		}
 	}
 
-	const teamsWithOvr = orderedTeams.map(t => ({
+	const teamsWithOvr = orderedTeams.map((t) => ({
 		...t,
 		ovr: 0,
 	}));

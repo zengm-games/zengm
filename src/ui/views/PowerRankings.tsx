@@ -56,10 +56,14 @@ const PowerRankings = ({
 	const actualShowHealthy = showHealthy || currentSeason !== season;
 
 	const [otherKeys, otherKeysTitle, otherKeysPrefix] = bySport({
-		baseball: [POSITIONS.filter(pos => pos !== "DH"), "Position Ranks", "pos"],
+		baseball: [
+			POSITIONS.filter((pos) => pos !== "DH"),
+			"Position Ranks",
+			"pos",
+		],
 		basketball: [RATINGS, "Rating Ranks", "rating"],
 		football: [
-			POSITIONS.filter(pos => pos !== "KR" && pos !== "PR"),
+			POSITIONS.filter((pos) => pos !== "KR" && pos !== "PR"),
 			"Position Ranks",
 			"pos",
 		],
@@ -87,9 +91,9 @@ const PowerRankings = ({
 						<a
 							className="ms-2"
 							href=""
-							onClick={event => {
+							onClick={(event) => {
 								event.preventDefault();
-								setShowHealthy(val => !val);
+								setShowHealthy((val) => !val);
 							}}
 						>
 							{showHealthy ? "(Show with injuries)" : "(Show without injuries)"}
@@ -115,7 +119,7 @@ const PowerRankings = ({
 		"L10",
 		`stat:${isSport("basketball") ? "mov" : "diff"}`,
 		"AvgAge",
-		...otherKeys.map(key => `${otherKeysPrefix}:${key}`),
+		...otherKeys.map((key) => `${otherKeysPrefix}:${key}`),
 	];
 
 	const cols = getCols(colNames);
@@ -128,9 +132,9 @@ const PowerRankings = ({
 		}
 	}
 
-	const rows = teams.map(t => {
-		const conf = confs.find(conf => conf.cid === t.seasonAttrs.cid);
-		const div = divs.find(div => div.did === t.seasonAttrs.did);
+	const rows = teams.map((t) => {
+		const conf = confs.find((conf) => conf.cid === t.seasonAttrs.cid);
+		const div = divs.find((div) => div.did === t.seasonAttrs.did);
 
 		return {
 			key: t.tid,
@@ -170,7 +174,7 @@ const PowerRankings = ({
 					isSport("basketball") ? "mov" : "diff",
 				),
 				t.powerRankings.avgAge.toFixed(1),
-				...otherKeys.map(key => ({
+				...otherKeys.map((key) => ({
 					value: (
 						<Other
 							actualShowHealthy={actualShowHealthy}

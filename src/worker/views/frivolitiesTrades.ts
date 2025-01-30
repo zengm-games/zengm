@@ -152,7 +152,7 @@ const frivolitiesTrades = async (
 			title = "Biggest Trades";
 			description = "Trades involving the best players and prospects.";
 
-			getValue = teams => {
+			getValue = (teams) => {
 				let scoreMax = 0;
 				for (const t of teams) {
 					for (const asset of t.assets) {
@@ -174,7 +174,7 @@ const frivolitiesTrades = async (
 			description =
 				"Trades where one team's assets produced a lot more value than the other.";
 
-			getValue = teams => {
+			getValue = (teams) => {
 				const value = Math.abs(teams[0].statSum - teams[1].statSum);
 
 				return { value };
@@ -185,7 +185,7 @@ const frivolitiesTrades = async (
 		}
 
 		if (tid >= 0) {
-			filter = event => event.tids.includes(tid);
+			filter = (event) => event.tids.includes(tid);
 		}
 
 		const trades = await getMostXRows({

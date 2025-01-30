@@ -45,7 +45,7 @@ const checkStatisticalFeat = (
 		if (allStars) {
 			// Fix team ID to actual team, not All-Star team
 			const indTeam = tid === results.team[0].id ? 0 : 1;
-			const entry = allStars.teams[indTeam].find(p2 => p2.pid === pid);
+			const entry = allStars.teams[indTeam].find((p2) => p2.pid === pid);
 
 			if (entry) {
 				actualTid = entry.tid;
@@ -74,7 +74,7 @@ const checkStatisticalFeat = (
 			results.team[0].id === tid ? ([0, 1] as const) : ([1, 0] as const);
 		const won = winner === i;
 		const tied = winner === -1;
-		const featTextArr = Object.keys(feats).map(stat => {
+		const featTextArr = Object.keys(feats).map((stat) => {
 			// Hacky way to convert "1 assists" into "an assist"
 			if (feats[stat] === 1 && stat.endsWith("s")) {
 				const singular = stat.slice(0, -1);

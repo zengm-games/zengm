@@ -223,14 +223,14 @@ class GameSim extends GameSimBase {
 
 				// Handle rest days for goalie
 				if (pos === "G") {
-					const starter = players.find(p => !p.injured);
+					const starter = players.find((p) => !p.injured);
 					if (
 						starter &&
 						starter.numConsecutiveGamesG !== undefined &&
 						starter.numConsecutiveGamesG > 1
 					) {
 						// Swap starter and backup, if appropriate based on composite rating OR if starter has played 10+ consecutive games and the backup is actually a goalie
-						const backup = players.find(p => !p.injured && p !== starter);
+						const backup = players.find((p) => !p.injured && p !== starter);
 						if (
 							backup &&
 							(backup.compositeRating.goalkeeping >
@@ -314,8 +314,8 @@ class GameSim extends GameSimBase {
 				}
 
 				// This ensures that any subs from the bench will be taken based on how good they are as a C/W (previously, it'd just take the best ovr player)
-				centers.push(...orderBy(notInDefinedLines, p => p.ovrs.C, "desc"));
-				wings.push(...orderBy(notInDefinedLines, p => p.ovrs.W, "desc"));
+				centers.push(...orderBy(notInDefinedLines, (p) => p.ovrs.C, "desc"));
+				wings.push(...orderBy(notInDefinedLines, (p) => p.ovrs.W, "desc"));
 
 				const lines: PlayerGameSim[][] = range(NUM_LINES[pos]).map(() => []);
 				for (const line of lines) {
@@ -533,8 +533,8 @@ class GameSim extends GameSimBase {
 			clock: this.clock,
 		});
 
-		const skaters = teamNums.map(t => {
-			let eligible = this.team[t].depth.F.filter(p => !p.injured);
+		const skaters = teamNums.map((t) => {
+			let eligible = this.team[t].depth.F.filter((p) => !p.injured);
 			if (eligible.length === 0) {
 				// Use injured players if there are no others
 				eligible = this.team[t].depth.F;
@@ -542,12 +542,12 @@ class GameSim extends GameSimBase {
 
 			return orderBy(
 				this.team[t].depth.F,
-				p => p.compositeRating.scoring,
+				(p) => p.compositeRating.scoring,
 				"desc",
 			);
 		}) as [PlayerGameSim[], PlayerGameSim[]];
 
-		const goalies = teamNums.map(t => {
+		const goalies = teamNums.map((t) => {
 			return this.lines[t === 0 ? 1 : 0].G[0][0];
 		}) as [PlayerGameSim, PlayerGameSim];
 
@@ -691,7 +691,7 @@ class GameSim extends GameSimBase {
 	doHit() {
 		const t = random.choice(
 			teamNums,
-			t => this.team[t].compositeRating.hitting,
+			(t) => this.team[t].compositeRating.hitting,
 		);
 		const t2 = t === 0 ? 1 : 0;
 		const hitter = this.pickPlayer(t, "enforcer", ["C", "W", "D"]);
@@ -1066,7 +1066,7 @@ class GameSim extends GameSimBase {
 
 		const winner = random.choice(
 			[p0, p1],
-			p => p.compositeRating.faceoffs ** 0.5,
+			(p) => p.compositeRating.faceoffs ** 0.5,
 		);
 
 		let names: [string, string];
@@ -1102,7 +1102,7 @@ class GameSim extends GameSimBase {
 		const r = Math.random();
 
 		const penalty = penalties.find(
-			penalty => r < penalty.cumsumProbPerPossession,
+			(penalty) => r < penalty.cumsumProbPerPossession,
 		);
 
 		if (!penalty) {
@@ -1111,7 +1111,7 @@ class GameSim extends GameSimBase {
 
 		const t = random.choice(
 			teamNums,
-			t => this.team[t].compositeRating.penalties,
+			(t) => this.team[t].compositeRating.penalties,
 		);
 
 		// Hack - don't want to deal with >2 penalties at the same time
@@ -1292,7 +1292,7 @@ class GameSim extends GameSimBase {
 				},
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
-				valFunc: p => (p.ovrs.D / 100 + p.compositeRating.enforcer) / 2,
+				valFunc: (p) => (p.ovrs.D / 100 + p.compositeRating.enforcer) / 2,
 			});
 
 			this.team[t].compositeRating.penalties = getCompositeFactor({
@@ -1304,7 +1304,7 @@ class GameSim extends GameSimBase {
 				},
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
-				valFunc: p => p.compositeRating.penalties / 2,
+				valFunc: (p) => p.compositeRating.penalties / 2,
 			});
 
 			this.team[t].compositeRating.penalties = getCompositeFactor({
@@ -1316,7 +1316,7 @@ class GameSim extends GameSimBase {
 				},
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
-				valFunc: p => p.compositeRating.enforcer / 2,
+				valFunc: (p) => p.compositeRating.enforcer / 2,
 			});
 
 			this.team[t].compositeRating.puckControl = getCompositeFactor({
@@ -1328,7 +1328,7 @@ class GameSim extends GameSimBase {
 				},
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
-				valFunc: p => p.compositeRating.playmaker,
+				valFunc: (p) => p.compositeRating.playmaker,
 			});
 
 			this.team[t].compositeRating.takeaway = getCompositeFactor({
@@ -1340,7 +1340,7 @@ class GameSim extends GameSimBase {
 				},
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
-				valFunc: p => (p.ovrs.D / 100 + p.compositeRating.grinder) / 2,
+				valFunc: (p) => (p.ovrs.D / 100 + p.compositeRating.grinder) / 2,
 			});
 
 			this.team[t].compositeRating.blocking = getCompositeFactor({
@@ -1352,7 +1352,7 @@ class GameSim extends GameSimBase {
 				},
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
-				valFunc: p => (p.ovrs.D / 100 + p.compositeRating.blocking) / 2,
+				valFunc: (p) => (p.ovrs.D / 100 + p.compositeRating.blocking) / 2,
 			});
 
 			this.team[t].compositeRating.scoring = getCompositeFactor({
@@ -1364,7 +1364,7 @@ class GameSim extends GameSimBase {
 				},
 				synergyFactor: this.synergyFactor,
 				synergyRatio,
-				valFunc: p => p.compositeRating.scoring,
+				valFunc: (p) => p.compositeRating.scoring,
 			});
 		}
 	}
@@ -1390,7 +1390,7 @@ class GameSim extends GameSimBase {
 				}
 			}
 			emergencyPlayers = emergencyPlayers.filter(
-				p => !playersRemainingOn.includes(p),
+				(p) => !playersRemainingOn.includes(p),
 			);
 			if (emergencyPlayers.length === 0) {
 				throw new Error("Not enough players");
@@ -1576,7 +1576,7 @@ class GameSim extends GameSimBase {
 
 				const currentlyOnIce = Object.values(this.playersOnIce[t]).flat();
 				const goalie = this.lines[t].G.flat().find(
-					p => !currentlyOnIce.includes(p),
+					(p) => !currentlyOnIce.includes(p),
 				);
 				if (!goalie) {
 					throw new Error("noPullGoalie failed - goalie not found");
@@ -1692,7 +1692,7 @@ class GameSim extends GameSimBase {
 					t,
 					pids: Object.values(this.playersOnIce[t])
 						.flat()
-						.map(p => p.id),
+						.map((p) => p.id),
 				});
 			}
 		}
@@ -1853,7 +1853,7 @@ class GameSim extends GameSimBase {
 	) {
 		let players = getPlayers(this.playersOnIce[t], positions);
 		if (ignorePlayers) {
-			players = players.filter(p => !ignorePlayers.includes(p));
+			players = players.filter((p) => !ignorePlayers.includes(p));
 		}
 
 		const weightFunc =
@@ -1880,7 +1880,7 @@ class GameSim extends GameSimBase {
 	) {
 		const players = orderBy(
 			getPlayers(this.playersOnIce[t], positions),
-			p => p.compositeRating[rating] * fatigue(p.stat.energy),
+			(p) => p.compositeRating[rating] * fatigue(p.stat.energy),
 			"desc",
 		);
 

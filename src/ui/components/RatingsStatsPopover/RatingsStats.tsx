@@ -10,7 +10,7 @@ const RatingsStats = (props: {
 	stats: any;
 	type?: "career" | "current" | "draft" | number;
 }) => {
-	const challengeNoRatings = useLocal(state => state.challengeNoRatings);
+	const challengeNoRatings = useLocal((state) => state.challengeNoRatings);
 
 	return bySport({
 		baseball: RatingsStatsBaseball({

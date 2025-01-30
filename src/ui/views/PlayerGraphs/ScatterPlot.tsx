@@ -98,8 +98,8 @@ const ScatterPlot = <Row extends unknown>({
 }) => {
 	const HEIGHT = 400;
 
-	const xVals = data.map(point => point.x);
-	const yVals = data.map(point => point.y);
+	const xVals = data.map((point) => point.x);
+	const yVals = data.map((point) => point.y);
 
 	const xDomain = [Math.min(...xVals), Math.max(...xVals)];
 	if (reverseAxis[0]) {
@@ -153,7 +153,7 @@ const ScatterPlot = <Row extends unknown>({
 	};
 
 	const labels = ([0, 1] as const).map(
-		i =>
+		(i) =>
 			`${descShort[i]}${descLong[i] !== undefined ? ` (${descLong[i]})` : ""}`,
 	);
 
@@ -194,8 +194,8 @@ const ScatterPlot = <Row extends unknown>({
 						tickLabelProps={fontSizeProps}
 					/>
 					<LinePath
-						y={d => yScale(avg(d))}
-						x={d => xScale(d)}
+						y={(d) => yScale(avg(d))}
+						x={(d) => xScale(d)}
 						stroke={"var(--bs-red)"}
 						data={xDomain}
 						opacity={0.7}
@@ -282,7 +282,7 @@ const ScatterPlot = <Row extends unknown>({
 				// @ts-expect-error
 				<TooltipWithBounds left={tooltipLeft} top={tooltipTop}>
 					<h3>{getTooltipTitle(tooltipData.row)}</h3>
-					{([0, 1] as const).map(i => {
+					{([0, 1] as const).map((i) => {
 						return renderTooltip(
 							tooltipData[i === 0 ? "x" : "y"],
 							tooltipData.row,
@@ -301,7 +301,7 @@ export const StatGraph = <Row extends unknown>(
 	return (
 		<div className="position-relative">
 			<ParentSize>
-				{parent => <ScatterPlot<Row> width={parent.width} {...props} />}
+				{(parent) => <ScatterPlot<Row> width={parent.width} {...props} />}
 			</ParentSize>
 		</div>
 	);

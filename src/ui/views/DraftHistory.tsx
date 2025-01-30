@@ -25,12 +25,12 @@ const Summary = ({
 		p.draft.round === 0 ? "undrafted" : `${p.draft.round}-${p.draft.pick}`;
 
 	const firstPick = players.find(
-		p => p.draft.round === 1 && p.draft.pick === 1,
+		(p) => p.draft.round === 1 && p.draft.pick === 1,
 	);
 
 	const mostStat = orderBy(
 		players,
-		p => p.careerStats[summaryStat],
+		(p) => p.careerStats[summaryStat],
 		"desc",
 	).slice(0, 3);
 
@@ -48,7 +48,7 @@ const Summary = ({
 		);
 	}
 
-	const roys = players.filter(p => p.awardCounts.roy > 0);
+	const roys = players.filter((p) => p.awardCounts.roy > 0);
 	if (roys.length > 0) {
 		summaryRows.push(
 			<>
@@ -68,7 +68,7 @@ const Summary = ({
 
 	if (
 		mostStat.length > 0 &&
-		mostStat.some(p => p.careerStats[summaryStat] !== 0)
+		mostStat.some((p) => p.careerStats[summaryStat] !== 0)
 	) {
 		summaryRows.push(
 			<>
@@ -122,8 +122,8 @@ const Summary = ({
 	];
 	for (const { key, title } of awards) {
 		const filtered = orderBy(
-			players.filter(p => p.awardCounts[key] > 0),
-			[p => p.awardCounts[key], p => p.careerStats[summaryStat]],
+			players.filter((p) => p.awardCounts[key] > 0),
+			[(p) => p.awardCounts[key], (p) => p.careerStats[summaryStat]],
 			["desc", "desc"],
 		);
 		const count = filtered.length;
@@ -152,7 +152,7 @@ const Summary = ({
 							,{" "}
 							<a
 								href="#"
-								onClick={event => {
+								onClick={(event) => {
 									event.preventDefault();
 									setExpanded([...expanded, key]);
 								}}
@@ -266,12 +266,12 @@ const DraftHistory = ({
 		"Ovr",
 		"Pot",
 		"Skills",
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
 	]);
 
-	const teamInfoCache = useLocal(state => state.teamInfoCache);
+	const teamInfoCache = useLocal((state) => state.teamInfoCache);
 
-	const rows: DataTableRow[] = players.map(p => {
+	const rows: DataTableRow[] = players.map((p) => {
 		const showRatings = !challengeNoRatings || p.currentTid === PLAYER.RETIRED;
 
 		return {
@@ -336,7 +336,7 @@ const DraftHistory = ({
 				<span className="skills-alone">
 					<SkillsBlock skills={p.peakSkills} />
 				</span>,
-				...stats.map(stat => helpers.roundStat(p.careerStats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.careerStats[stat], stat)),
 			],
 			classNames: {
 				"table-danger": p.hof,

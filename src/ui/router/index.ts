@@ -252,10 +252,10 @@ class Router {
 			});
 		}
 
-		document.addEventListener(clickEvent, e => {
+		document.addEventListener(clickEvent, (e) => {
 			this._onclick(e as NonStandardEvent);
 		});
-		window.addEventListener("popstate", e => {
+		window.addEventListener("popstate", (e) => {
 			this._onpopstate(e);
 		});
 

@@ -35,7 +35,7 @@ const Confirm = confirmable<
 					to?
 				</h3>
 				<div className="d-flex flex-wrap gap-2">
-					{range(numWatchColors + 1).map(watch => {
+					{range(numWatchColors + 1).map((watch) => {
 						return (
 							<button
 								key={watch}

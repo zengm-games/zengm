@@ -27,7 +27,7 @@ const Note = ({
 	if (editing) {
 		return (
 			<form
-				onSubmit={async event => {
+				onSubmit={async (event) => {
 					event.preventDefault();
 					if (info.type === "player") {
 						await toWorker("main", "setPlayerNote", {
@@ -47,7 +47,7 @@ const Note = ({
 				<textarea
 					className="form-control"
 					rows={5}
-					onChange={event => {
+					onChange={(event) => {
 						setEditedNote(event.target.value);
 					}}
 					style={{ maxWidth: MAX_WIDTH }}

@@ -79,7 +79,7 @@ const tryAddAsset = async (
 		if (isSport("basketball")) {
 			// For basketball, convert G/F/C into real positions
 			lookingForSpecificPositions = new Set(
-				POSITIONS.filter(pos => {
+				POSITIONS.filter((pos) => {
 					for (const pos2 of lookingFor.positions) {
 						if (pos.includes(pos2)) {
 							return true;
@@ -208,10 +208,10 @@ const tryAddAsset = async (
 	if (prevDv > 0) {
 		// Here we are trying to find a single asset for the AI to give up (or a negative asset from the user) while still having the trade be favorable to them. So we are discarding assets that are too good to give up. If there is no asset remaining (dv is negative for all assets) then just give up.
 		// prevDv condition is basically just for the trading block with lookingFor - we want to make sure the assets we're picking actually move things in the correct direction, which is generally starting with a positive dv and moving down towards 0. Maybe would make sense to put a similar condition for negative dv, but idk if it's needed.
-		assets = assets.filter(asset => asset.dv > 0 && asset.dv < prevDv);
+		assets = assets.filter((asset) => asset.dv > 0 && asset.dv < prevDv);
 	} else {
 		// Going in the opposite direction, make sure this asset actually moves us that way
-		assets = assets.filter(asset => asset.dv > prevDv);
+		assets = assets.filter((asset) => asset.dv > prevDv);
 	}
 
 	if (assets.length === 0) {
@@ -301,7 +301,7 @@ const tryAddAsset = async (
 			lookingFor.draftPicks
 		) {
 			// If we're looking for draft picks (and we're done looking for 1 player for a specific position or 1 player with some other sort, if necessary), add draft picks first before players. If there are no draft picks that the AI team is willing to give up, then asset will be undefined and it will try to find a player below.
-			asset = assets.find(asset => asset.type === "draftPick");
+			asset = assets.find((asset) => asset.type === "draftPick");
 		}
 	}
 

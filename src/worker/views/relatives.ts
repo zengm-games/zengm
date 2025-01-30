@@ -134,7 +134,7 @@ const updatePlayers = async (
 			) => {
 				const players = await idb.getCopies.players(
 					{
-						pids: infos.map(info => info.pid),
+						pids: infos.map((info) => info.pid),
 					},
 					"noCopyCache",
 				);
@@ -149,7 +149,7 @@ const updatePlayers = async (
 						continue;
 					}
 
-					const info = infos.find(info => info.pid === p.pid);
+					const info = infos.find((info) => info.pid === p.pid);
 					if (!info) {
 						continue;
 					}
@@ -207,7 +207,7 @@ const updatePlayers = async (
 		} else {
 			playersAll = await idb.getCopies.players(
 				{
-					filter: p => p.relatives.length > 0,
+					filter: (p) => p.relatives.length > 0,
 				},
 				"noCopyCache",
 			);

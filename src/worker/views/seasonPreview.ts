@@ -30,7 +30,7 @@ const updateSeasonPreview = async (
 		const prevTeamTidsByPid = new Map<number, number>();
 
 		for (const p of playersRaw) {
-			const prevTid = p.stats.findLast(row => row.season === season - 1)?.tid;
+			const prevTid = p.stats.findLast((row) => row.season === season - 1)?.tid;
 			if (prevTid === undefined) {
 				continue;
 			}
@@ -39,11 +39,11 @@ const updateSeasonPreview = async (
 			if (
 				g.get("season") === season &&
 				(g.get("phase") === PHASE.PRESEASON ||
-					!p.stats.some(row => row.season === season))
+					!p.stats.some((row) => row.season === season))
 			) {
 				currentTid = p.tid;
 			} else {
-				currentTid = p.stats.find(row => row.season === season)?.tid;
+				currentTid = p.stats.find((row) => row.season === season)?.tid;
 			}
 
 			if (currentTid === undefined || currentTid < 0) {
@@ -73,22 +73,22 @@ const updateSeasonPreview = async (
 			showNoStats: true,
 		});
 
-		const playersTopAll = orderBy(players, p => p.ratings.ovr, "desc");
+		const playersTopAll = orderBy(players, (p) => p.ratings.ovr, "desc");
 
 		const playersTop = playersTopAll.slice(0, NUM_PLAYERS_TO_SHOW);
 		const playersImproving = orderBy(
-			players.filter(p => p.ratings.dovr > 0),
-			p => p.ratings.ovr + 2 * p.ratings.dovr,
+			players.filter((p) => p.ratings.dovr > 0),
+			(p) => p.ratings.ovr + 2 * p.ratings.dovr,
 			"desc",
 		).slice(0, NUM_PLAYERS_TO_SHOW);
 		const playersDeclining = orderBy(
-			players.filter(p => p.ratings.dovr < 0),
-			p => p.ratings.ovr - 3 * p.ratings.dovr,
+			players.filter((p) => p.ratings.dovr < 0),
+			(p) => p.ratings.ovr - 3 * p.ratings.dovr,
 			"desc",
 		).slice(0, NUM_PLAYERS_TO_SHOW);
 		const playersTopRookies = orderBy(
-			players.filter(p => p.draft.year === season - 1),
-			p => p.ratings.ovr,
+			players.filter((p) => p.draft.year === season - 1),
+			(p) => p.ratings.ovr,
 			"desc",
 		).slice(0, NUM_PLAYERS_TO_SHOW);
 
@@ -125,7 +125,7 @@ const updateSeasonPreview = async (
 
 		const playersByTid = groupBy(players, "tid");
 
-		const teamSeasons = teamSeasonsCurrent.map(teamSeason => {
+		const teamSeasons = teamSeasonsCurrent.map((teamSeason) => {
 			const teamPlayers = playersByTid[teamSeason.tid] ?? [];
 
 			let ovrStart = teamSeason.ovrStart;
@@ -135,7 +135,7 @@ const updateSeasonPreview = async (
 			}
 
 			const teamSeasonPrev = teamSeasonsPrev.find(
-				ts => ts.tid === teamSeason.tid,
+				(ts) => ts.tid === teamSeason.tid,
 			);
 			const ovrPrev = teamSeasonPrev?.ovrEnd ?? ovrStart;
 			const dovr = ovrStart - ovrPrev;
@@ -159,7 +159,7 @@ const updateSeasonPreview = async (
 				name: teamSeason.name ?? teamInfoCache.name,
 				ovr: ovrStart,
 				dovr,
-				players: orderBy(teamPlayers, p => p.ratings.ovr, "desc").slice(0, 2),
+				players: orderBy(teamPlayers, (p) => p.ratings.ovr, "desc").slice(0, 2),
 				lastSeason,
 			};
 		});
@@ -169,12 +169,12 @@ const updateSeasonPreview = async (
 			NUM_TEAMS_TO_SHOW,
 		);
 		const teamsImproving = orderBy(
-			teamSeasons.filter(t => t.dovr > 0),
+			teamSeasons.filter((t) => t.dovr > 0),
 			"dovr",
 			"desc",
 		).slice(0, NUM_TEAMS_TO_SHOW);
 		const teamsDeclining = orderBy(
-			teamSeasons.filter(t => t.dovr < 0),
+			teamSeasons.filter((t) => t.dovr < 0),
 			"dovr",
 			"asc",
 		).slice(0, NUM_TEAMS_TO_SHOW);

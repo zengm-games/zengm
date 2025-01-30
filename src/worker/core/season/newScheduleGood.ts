@@ -317,8 +317,8 @@ const finalize = ({
 		}
 	}
 
-	const cids = new Set(settings.divs.map(div => div.cid));
-	const teamsByCid = groupBy(teams, t => t.seasonAttrs.cid);
+	const cids = new Set(settings.divs.map((div) => div.cid));
+	const teamsByCid = groupBy(teams, (t) => t.seasonAttrs.cid);
 	for (const cid of cids) {
 		const numTeams = teamsByCid[cid]?.length ?? 0;
 		allowOneTeamWithOneGameRemainingBase.conf[cid] =
@@ -450,7 +450,7 @@ const finalize = ({
 					// Order by team with most games remaining
 					groupIndexes = orderBy(
 						groupIndexes,
-						i => excessGamesRemainingByTid[group[i].tid][level],
+						(i) => excessGamesRemainingByTid[group[i].tid][level],
 						"desc",
 					);
 					// console.log('team games remaining', groupIndexes.map(i => excessGamesRemainingByTid[group[i].tid][level]));
@@ -523,7 +523,7 @@ const finalize = ({
 				let tid1;
 
 				let found = false;
-				skippedGameTidsOrdered = skippedGameTidsOrdered.filter(tid => {
+				skippedGameTidsOrdered = skippedGameTidsOrdered.filter((tid) => {
 					if (found) {
 						return true;
 					}
@@ -596,7 +596,7 @@ const finalize = ({
 				const getHomeMinCutoffDiffs = () => {
 					const cutoffDiff = (tid: number, homeAway: "home" | "away") =>
 						maxHomeOrAway(tid, level) - scheduleCounts2[tid][level][homeAway];
-					const cutoffDiffs = [tid0, tid1].map(tid => ({
+					const cutoffDiffs = [tid0, tid1].map((tid) => ({
 						home: cutoffDiff(tid, "home"),
 						away: cutoffDiff(tid, "away"),
 					}));

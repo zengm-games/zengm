@@ -42,7 +42,7 @@ const ImportPlayers = ({
 		}[]
 	>([]);
 
-	const teamInfoCache = useLocal(state => state.teamInfoCache);
+	const teamInfoCache = useLocal((state) => state.teamInfoCache);
 
 	const teams = [
 		{
@@ -60,7 +60,7 @@ const ImportPlayers = ({
 					name: `${t.region} ${t.name}`,
 					disabled: t.disabled,
 				}))
-				.filter(t => !t.disabled),
+				.filter((t) => !t.disabled),
 			["name", "tid"],
 		),
 	];
@@ -159,14 +159,14 @@ const ImportPlayers = ({
 		const ages: {
 			season: number;
 			age: number;
-		}[] = ratingsSeasons.map(ratingsSeason => {
+		}[] = ratingsSeasons.map((ratingsSeason) => {
 			return {
 				season: ratingsSeason + seasonOffset,
 				age: ratingsSeason - p.born.year,
 			};
 		});
 
-		const ageRow = ages.find(row => row.season === season);
+		const ageRow = ages.find((row) => row.season === season);
 		const age = ageRow ? ageRow.age : 0;
 
 		return {
@@ -344,7 +344,7 @@ const ImportPlayers = ({
 
 					const rawPlayers: any[] = leagueFile.players ?? [];
 
-					const players = rawPlayers.map(p => {
+					const players = rawPlayers.map((p) => {
 						const exportedSeason: number | undefined =
 							typeof p.exportedSeason === "number"
 								? p.exportedSeason

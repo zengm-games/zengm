@@ -8,7 +8,7 @@ export const useSelectedRows = () => {
 	const [map, setMap] = useState(new Map<Key, Metadata>());
 
 	const toggle = useCallback((key: Key, metadata: Metadata) => {
-		setMap(prev => {
+		setMap((prev) => {
 			const copy = new Map(prev);
 			if (copy.has(key)) {
 				copy.delete(key);
@@ -24,7 +24,7 @@ export const useSelectedRows = () => {
 	}, []);
 
 	const deleteEntry = useCallback((key: Key) => {
-		setMap(prev => {
+		setMap((prev) => {
 			const copy = new Map(prev);
 			copy.delete(key);
 			return copy;
@@ -32,7 +32,7 @@ export const useSelectedRows = () => {
 	}, []);
 
 	const deleteAll = useCallback((keys: Iterable<Key>) => {
-		setMap(prev => {
+		setMap((prev) => {
 			const copy = new Map(prev);
 			for (const key of keys) {
 				copy.delete(key);
@@ -42,7 +42,7 @@ export const useSelectedRows = () => {
 	}, []);
 
 	const setAll = useCallback((records: { key: Key; metadata: Metadata }[]) => {
-		setMap(prev => {
+		setMap((prev) => {
 			const copy = new Map(prev);
 			for (const { key, metadata } of records) {
 				copy.set(key, metadata);
@@ -93,12 +93,12 @@ export const useBulkSelectRows = ({
 	if (info.current === undefined && rows.length > 0) {
 		info.current = {
 			// This assumes metadata type the same in every row, no table mixing two types! Some rows having no metadata is fine though (such as drafted players during draft)
-			metadataType: rows.find(row => row.metadata)?.metadata?.type,
+			metadataType: rows.find((row) => row.metadata)?.metadata?.type,
 		};
 	}
 
 	const toggleBulkSelectRows = useCallback(() => {
-		setBulkSelectRows(bulk => !bulk);
+		setBulkSelectRows((bulk) => !bulk);
 	}, []);
 
 	const showBulkSelectCheckboxes = alwaysShowBulkSelectRows || bulkSelectRows;

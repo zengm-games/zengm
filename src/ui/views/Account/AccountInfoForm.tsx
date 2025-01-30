@@ -86,10 +86,10 @@ const AccountInfoForm = ({
 
 	return (
 		<form
-			onSubmit={async event => {
+			onSubmit={async (event) => {
 				event.preventDefault();
 
-				setState(state2 => ({
+				setState((state2) => ({
 					...state2,
 					submitting: true,
 					errorMessageEmail: undefined,
@@ -134,7 +134,7 @@ const AccountInfoForm = ({
 					if (data.success) {
 						await realtimeUpdate(["account"], "/account");
 
-						setState(state2 => ({
+						setState((state2) => ({
 							...state2,
 							editUsername: false,
 							editEmail: false,
@@ -165,7 +165,7 @@ const AccountInfoForm = ({
 							}
 						}
 
-						setState(state2 => ({
+						setState((state2) => ({
 							...state2,
 							...updatedState,
 							submitting: false,
@@ -173,7 +173,7 @@ const AccountInfoForm = ({
 					}
 				} catch (error) {
 					console.error(error);
-					setState(state2 => ({
+					setState((state2) => ({
 						...state2,
 						submitting: false,
 						errorMessageOverall: ajaxErrorMsg,

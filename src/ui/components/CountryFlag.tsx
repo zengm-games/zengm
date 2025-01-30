@@ -280,7 +280,7 @@ const CountryFlag = ({
 	override?: string;
 	style?: CSSProperties;
 }) => {
-	const flagOverrides = useLocal(state => state.flagOverrides);
+	const flagOverrides = useLocal((state) => state.flagOverrides);
 
 	const country2 = helpers.getCountry(country);
 

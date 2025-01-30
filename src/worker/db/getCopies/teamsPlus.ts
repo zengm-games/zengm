@@ -89,7 +89,7 @@ const processSeasonAttrs = async <
 
 	// @ts-expect-error
 	output.seasonAttrs = await Promise.all(
-		seasons.map(async ts => {
+		seasons.map(async (ts) => {
 			const row: any = {}; // Revenue and expenses calculation
 
 			const revenue = helpers
@@ -126,10 +126,10 @@ const processSeasonAttrs = async <
 						row.payrollOrSalaryPaid = ts.expenses.salary / 1000; // [millions of dollars]
 					}
 				} else if (attr === "lastTen") {
-					const lastTenWon = ts.lastTen.filter(x => x === 1).length;
-					const lastTenLost = ts.lastTen.filter(x => x === 0).length;
-					const lastTenOTL = ts.lastTen.filter(x => x === "OTL").length;
-					const lastTenTied = ts.lastTen.filter(x => x === -1).length;
+					const lastTenWon = ts.lastTen.filter((x) => x === 1).length;
+					const lastTenLost = ts.lastTen.filter((x) => x === 0).length;
+					const lastTenOTL = ts.lastTen.filter((x) => x === "OTL").length;
+					const lastTenTied = ts.lastTen.filter((x) => x === -1).length;
 					row.lastTen = `${lastTenWon}-${lastTenLost}`;
 
 					if (lastTenOTL > 0) {
@@ -220,7 +220,7 @@ const filterOrderStats = (
 ): TeamStats[] => {
 	return orderBy(
 		maybeDeepCopy(
-			stats.filter(ts => {
+			stats.filter((ts) => {
 				if (playoffs && ts.playoffs) {
 					return true;
 				}
@@ -310,7 +310,7 @@ const processStats = async <
 	}
 
 	// @ts-expect-error
-	output.stats = teamStats.map(ts => {
+	output.stats = teamStats.map((ts) => {
 		return team.processStats(ts, stats, playoffs, statType);
 	});
 
@@ -476,13 +476,13 @@ async function getCopies<
 					"Don't call teamsPlus with active=true for any season other than the current season",
 				);
 			}
-			teams = teams.filter(t => !t.disabled);
+			teams = teams.filter((t) => !t.disabled);
 		}
 
 		// @ts-expect-error
-		return (await Promise.all(teams.map(t => processTeam(t, options)))).filter(
-			x => x !== undefined,
-		);
+		return (
+			await Promise.all(teams.map((t) => processTeam(t, options)))
+		).filter((x) => x !== undefined);
 	}
 
 	const t = await idb.cache.teams.get(tid);

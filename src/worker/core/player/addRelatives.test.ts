@@ -11,13 +11,13 @@ import { range } from "../../../common/utils";
 const season = 2017;
 
 const genFathers = () => {
-	return range(season - 40, season - 20).map(season2 =>
+	return range(season - 40, season - 20).map((season2) =>
 		player.generate(PLAYER.RETIRED, 50, season2, true, DEFAULT_LEVEL),
 	);
 };
 
 const genBrothers = () => {
-	return range(season - 5, season + 1).map(season2 =>
+	return range(season - 5, season + 1).map((season2) =>
 		player.generate(0, 50, season2, true, DEFAULT_LEVEL),
 	);
 };
@@ -50,7 +50,7 @@ describe("makeBrother", () => {
 		p.born.loc = "Fake Country";
 		await makeBrother(p);
 		const brothers = await idb.cache.players.indexGetAll("playersByTid", 0);
-		const brother = brothers.find(b => b.relatives.length > 0);
+		const brother = brothers.find((b) => b.relatives.length > 0);
 
 		if (!brother) {
 			throw new Error("No brother found");
@@ -98,7 +98,7 @@ describe("makeBrother", () => {
 		const p = await getPlayer(0);
 		await makeBrother(p);
 		const brothers = await idb.cache.players.indexGetAll("playersByTid", 0);
-		const brother = brothers.find(b => b.relatives.length > 1);
+		const brother = brothers.find((b) => b.relatives.length > 1);
 
 		if (!brother) {
 			throw new Error("No brother found");
@@ -149,7 +149,7 @@ describe("makeBrother", () => {
 		const p = await getPlayer(0);
 		await makeBrother(p);
 		const brothers = await idb.cache.players.indexGetAll("playersByTid", 0);
-		const brother = brothers.find(b => b.relatives.length > 1);
+		const brother = brothers.find((b) => b.relatives.length > 1);
 		assert.strictEqual(brother, undefined);
 	});
 
@@ -173,7 +173,7 @@ describe("makeBrother", () => {
 		const p = await getPlayer(0);
 		await makeBrother(p);
 		const brothers = await idb.cache.players.indexGetAll("playersByTid", 0);
-		const brother = brothers.find(b => b.relatives.length > 1);
+		const brother = brothers.find((b) => b.relatives.length > 1);
 		assert.strictEqual(brother, undefined);
 	});
 
@@ -205,7 +205,7 @@ describe("makeBrother", () => {
 		const p = await getPlayer(0);
 		await makeBrother(p);
 		const brothers = await idb.cache.players.indexGetAll("playersByTid", 0);
-		const brother = brothers.find(b => b.relatives.length > 1);
+		const brother = brothers.find((b) => b.relatives.length > 1);
 
 		if (!brother) {
 			throw new Error("No brother found");
@@ -247,7 +247,7 @@ describe("makeBrother", () => {
 		const p = await getPlayer(0);
 		await makeBrother(p);
 		const brothers = await idb.cache.players.indexGetAll("playersByTid", 0);
-		const brother = brothers.find(b => b.relatives.length > 1);
+		const brother = brothers.find((b) => b.relatives.length > 1);
 		assert.strictEqual(brother, undefined);
 		assert.strictEqual(p.relatives.length, 1);
 	});
@@ -269,7 +269,7 @@ describe("makeSon", () => {
 			"playersByTid",
 			PLAYER.RETIRED,
 		);
-		const father = fathers.find(p => p.relatives.length > 0);
+		const father = fathers.find((p) => p.relatives.length > 0);
 
 		if (!father) {
 			throw new Error("No father found");
@@ -315,7 +315,7 @@ describe("makeSon", () => {
 			"playersByTid",
 			PLAYER.RETIRED,
 		);
-		const father = fathers.find(p => p.relatives.length > 0);
+		const father = fathers.find((p) => p.relatives.length > 0);
 		assert(!father);
 		assert.strictEqual(son.relatives.length, 1);
 		assert.deepStrictEqual(son.relatives[0], relFather);
@@ -354,7 +354,7 @@ describe("makeSon", () => {
 			"playersByTid",
 			PLAYER.RETIRED,
 		);
-		const father = fathers.find(p => p.relatives.length > 0);
+		const father = fathers.find((p) => p.relatives.length > 0);
 
 		if (!father) {
 			throw new Error("No father found");
@@ -376,7 +376,7 @@ describe("makeSon", () => {
 		assert.strictEqual(father.relatives[0].type, "son");
 		assert.strictEqual(father.relatives[1].type, "son");
 		assert.deepStrictEqual(
-			father.relatives.map(relative => relative.pid).sort(),
+			father.relatives.map((relative) => relative.pid).sort(),
 			[0, 1],
 		);
 		assert.strictEqual(brother2.born.loc, father.born.loc);
@@ -425,14 +425,14 @@ describe("makeSon", () => {
 			"playersByTid",
 			PLAYER.RETIRED,
 		);
-		const father = fathers2.find(p => p.relatives.length > 1);
+		const father = fathers2.find((p) => p.relatives.length > 1);
 
 		if (!father) {
 			throw new Error("No father found");
 		}
 
 		const otherSons2 = await idb.cache.players.indexGetAll("playersByTid", 0);
-		const otherSon = otherSons2.find(p => p.relatives.length > 1);
+		const otherSon = otherSons2.find((p) => p.relatives.length > 1);
 
 		if (!otherSon) {
 			throw new Error("No other son found");
@@ -453,7 +453,7 @@ describe("makeSon", () => {
 		assert.strictEqual(father.relatives[0].type, "son");
 		assert.strictEqual(father.relatives[1].type, "son");
 		assert.deepStrictEqual(
-			father.relatives.map(relative => relative.pid).sort(),
+			father.relatives.map((relative) => relative.pid).sort(),
 			[son2.pid, otherSon.pid],
 		);
 	});

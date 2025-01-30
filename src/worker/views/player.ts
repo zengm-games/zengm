@@ -229,7 +229,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 	await fixRatingsStatsAbbrevs(p);
 
 	// Filter out rows with no games played
-	p.stats = p.stats.filter(row => row.gp > 0);
+	p.stats = p.stats.filter((row) => row.gp > 0);
 
 	const userTid = g.get("userTid");
 
@@ -300,7 +300,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 		const key = JSON.stringify([
 			jerseyNumber,
 			t?.tid,
-			t?.colors?.map(x => x.toUpperCase()),
+			t?.colors?.map((x) => x.toUpperCase()),
 			t?.name,
 			t?.region,
 		]);
@@ -312,7 +312,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 			const t2 = teams[ps.tid];
 			const retiredIndex =
 				t2?.retiredJerseyNumbers?.findIndex(
-					info => info.pid === pid && info.number === jerseyNumber,
+					(info) => info.pid === pid && info.number === jerseyNumber,
 				) ?? -1;
 
 			jerseyNumberInfos.push({
@@ -337,7 +337,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 
 		// Randomly pick a season that he played on this team, and use that for colors
 		const teamJerseyNumberInfos = jerseyNumberInfos.filter(
-			info => info.t && info.t.tid === legacyTid,
+			(info) => info.t && info.t.tid === legacyTid,
 		);
 		if (teamJerseyNumberInfos.length > 0) {
 			const info = random.choice(teamJerseyNumberInfos);
@@ -385,7 +385,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 			title: "Draft Class",
 			players: (
 				await idb.cache.players.indexGetAll("playersByTid", p.tid)
-			).filter(p2 => p2.draft.year === p.draft.year),
+			).filter((p2) => p2.draft.year === p.draft.year),
 		};
 	}
 
@@ -394,7 +394,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 			customMenuInfo.players,
 			"value",
 			"desc",
-		).map(p2 => {
+		).map((p2) => {
 			const ratings = p2.ratings.at(-1);
 
 			const age = g.get("season") - p2.born.year;
@@ -447,7 +447,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 
 			// Jersey number
 			const stats = p.stats.findLast(
-				row => row.season === season && !row.playoffs && row.tid >= 0,
+				(row) => row.season === season && !row.playoffs && row.tid >= 0,
 			);
 			if (stats) {
 				if (stats.jerseyNumber !== undefined) {
@@ -548,15 +548,15 @@ const updatePlayer = async (
 			"asc",
 		);
 		const feats = eventsAll
-			.filter(event => event.type === "playerFeat")
-			.map(event => {
+			.filter((event) => event.type === "playerFeat")
+			.map((event) => {
 				return {
 					eid: event.eid,
 					season: event.season,
 					text: helpers.correctLinkLid(g.get("lid"), event.text as any),
 				};
 			});
-		const eventsFiltered = eventsAll.filter(event => {
+		const eventsFiltered = eventsAll.filter((event) => {
 			// undefined is a temporary workaround for bug from commit 999b9342d9a3dc0e8f337696e0e6e664e7b496a4
 			return !(
 				event.type === "award" ||

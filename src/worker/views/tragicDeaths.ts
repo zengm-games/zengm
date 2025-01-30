@@ -9,7 +9,7 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun")) {
 		const events = await idb.getCopies.events(
 			{
-				filter: event => event.type === "tragedy",
+				filter: (event) => event.type === "tragedy",
 			},
 			"noCopyCache",
 		);
@@ -45,7 +45,7 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				},
 				"noCopyCache",
 			)
-		).filter(p => p !== undefined);
+		).filter((p) => p !== undefined);
 
 		const players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: [
@@ -66,7 +66,7 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const players2 = addFirstNameShort(processPlayersHallOfFame(players)).map(
 			(p: any) => {
 				const event = events.find(
-					event2 => event2.pids && event2.pids.includes(p.pid),
+					(event2) => event2.pids && event2.pids.includes(p.pid),
 				);
 				const details = event?.text ?? "";
 				return {

@@ -72,7 +72,7 @@ const groupScheduleSeries = (tids: [number, number][]) => {
 		}
 
 		// Remove any series that are over
-		ongoingSeries = ongoingSeries.filter(series => series.numGamesLeft > 0);
+		ongoingSeries = ongoingSeries.filter((series) => series.numGamesLeft > 0);
 
 		// Add new series from teams not yet in an ongoing series for tomorrow
 		const tidsForTomorrow = new Set();
@@ -87,7 +87,7 @@ const groupScheduleSeries = (tids: [number, number][]) => {
 		// Order by number of series reamining, otherwise it tends to have some bunched series against the same team at the end of the season
 		seriesKeys = orderBy(
 			seriesKeys,
-			key => seriesGroupedByTeams[key].length,
+			(key) => seriesGroupedByTeams[key].length,
 			"desc",
 		);
 

@@ -13,7 +13,7 @@ const getCopies = async (
 	if (season !== undefined) {
 		const headToHeads = mergeByPk(
 			await idb.league.getAll("headToHeads", season),
-			(await idb.cache.headToHeads.getAll()).filter(event => {
+			(await idb.cache.headToHeads.getAll()).filter((event) => {
 				return event.season === season;
 			}),
 			"headToHeads",

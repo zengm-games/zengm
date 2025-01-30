@@ -36,7 +36,7 @@ const RetiredPlayers = ({
 					columns: "12em",
 				}}
 			>
-				{retiredPlayers.map(p => (
+				{retiredPlayers.map((p) => (
 					<span
 						key={p.pid}
 						className={p.stats.tid === userTid ? "table-info" : undefined}

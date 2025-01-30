@@ -61,8 +61,8 @@ const TeamForm = ({
 }) => {
 	const [face, setFace] = useState<FaceConfig | undefined>();
 
-	const divisions = divs.map(div => {
-		const conf = confs.find(c => c.cid === div.cid);
+	const divisions = divs.map((div) => {
+		const conf = confs.find((c) => c.cid === div.cid);
 		return {
 			did: div.did,
 			name: conf ? `${div.name} (${conf.name})` : div.name,
@@ -117,7 +117,7 @@ const TeamForm = ({
 						<input
 							type="text"
 							className="form-control"
-							onChange={e => handleInputChange("region", e)}
+							onChange={(e) => handleInputChange("region", e)}
 							value={t.region}
 						/>
 						{moveButton ? (
@@ -140,7 +140,7 @@ const TeamForm = ({
 					<input
 						type="text"
 						className="form-control"
-						onChange={e => handleInputChange("name", e)}
+						onChange={(e) => handleInputChange("name", e)}
 						value={t.name}
 					/>
 				</div>
@@ -151,7 +151,7 @@ const TeamForm = ({
 					<input
 						type="text"
 						className="form-control"
-						onChange={e => handleInputChange("abbrev", e)}
+						onChange={(e) => handleInputChange("abbrev", e)}
 						value={t.abbrev}
 					/>
 				</div>
@@ -161,10 +161,10 @@ const TeamForm = ({
 					<label className={classNameLabel}>Division</label>
 					<select
 						className="form-select"
-						onChange={e => handleInputChange("did", e)}
+						onChange={(e) => handleInputChange("did", e)}
 						value={t.did}
 					>
-						{divisions.map(division => (
+						{divisions.map((division) => (
 							<option key={division.did} value={division.did}>
 								{division.name}
 							</option>
@@ -179,7 +179,7 @@ const TeamForm = ({
 						type="text"
 						className="form-control"
 						disabled={disablePop}
-						onChange={e => handleInputChange("pop", e)}
+						onChange={(e) => handleInputChange("pop", e)}
 						value={t.pop}
 					/>
 				</div>
@@ -191,7 +191,7 @@ const TeamForm = ({
 						type="text"
 						className="form-control"
 						disabled={disableStadiumCapacity}
-						onChange={e => handleInputChange("stadiumCapacity", e)}
+						onChange={(e) => handleInputChange("stadiumCapacity", e)}
 						value={t.stadiumCapacity}
 					/>
 				</div>
@@ -202,7 +202,7 @@ const TeamForm = ({
 					<input
 						type="text"
 						className="form-control"
-						onChange={e => handleInputChange("imgURL", e)}
+						onChange={(e) => handleInputChange("imgURL", e)}
 						value={t.imgURL}
 					/>
 				</div>
@@ -213,7 +213,7 @@ const TeamForm = ({
 					<input
 						type="text"
 						className="form-control"
-						onChange={e => handleInputChange("imgURLSmall", e)}
+						onChange={(e) => handleInputChange("imgURLSmall", e)}
 						value={t.imgURLSmall}
 					/>
 				</div>
@@ -222,13 +222,13 @@ const TeamForm = ({
 				<div className="mb-3">
 					<label className={classNameLabel}>Jersey</label>
 					<div className="input-group">
-						{[0, 1, 2].map(j => (
+						{[0, 1, 2].map((j) => (
 							<ColorPicker
 								key={j}
 								onClick={async () => {
 									await ensureFace();
 								}}
-								onChange={value => {
+								onChange={(value) => {
 									handleInputChange(`colors${j}`, {
 										target: {
 											value,
@@ -249,7 +249,7 @@ const TeamForm = ({
 								// Runs when select is opened
 								await ensureFace();
 							}}
-							onChange={async e => {
+							onChange={async (e) => {
 								handleInputChange("jersey", e);
 
 								// Just to be sure, since onMouseDown seems strange
@@ -261,7 +261,7 @@ const TeamForm = ({
 								zIndex: 1,
 							}}
 						>
-							{helpers.keys(JERSEYS).map(jersey => (
+							{helpers.keys(JERSEYS).map((jersey) => (
 								<option key={jersey} value={jersey}>
 									{JERSEYS[jersey]}
 								</option>
@@ -306,7 +306,7 @@ const TeamForm = ({
 						<select
 							className="form-select"
 							disabled={disableStatus}
-							onChange={e => handleInputChange("disabled", e)}
+							onChange={(e) => handleInputChange("disabled", e)}
 							value={t.disabled ? "1" : "0"}
 						>
 							<option value="0">Active</option>
@@ -327,7 +327,7 @@ const TeamForm = ({
 								type="checkbox"
 								className="form-check-input"
 								checked={!!t.usePlayers}
-								onChange={e => handleInputChange("usePlayers", e)}
+								onChange={(e) => handleInputChange("usePlayers", e)}
 								id="TeamForm-usePlayers"
 							/>
 							<label

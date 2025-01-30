@@ -58,7 +58,7 @@ const makeTeams = (players: AwardPlayer[], rookie: boolean = false): any => {
 	const teamPositions = [["C"], ["W"], ["W"], ["D"], ["D"], ["G"]];
 
 	if (rookie) {
-		const teams = teamPositions.map(positions =>
+		const teams = teamPositions.map((positions) =>
 			getTopByPos(players, positions, usedPids),
 		);
 		return teams;
@@ -67,13 +67,13 @@ const makeTeams = (players: AwardPlayer[], rookie: boolean = false): any => {
 	const teams = [
 		{
 			title: "First Team",
-			players: teamPositions.map(positions =>
+			players: teamPositions.map((positions) =>
 				getTopByPos(players, positions, usedPids),
 			),
 		},
 		{
 			title: "Second Team",
-			players: teamPositions.map(positions =>
+			players: teamPositions.map((positions) =>
 				getTopByPos(players, positions, usedPids),
 			),
 		},
@@ -208,7 +208,7 @@ const doAwards = async (conditions: Conditions) => {
 	const mvp = mvpPlayers[0];
 
 	// Move dpoy to top, so he's always on All-League team
-	mvpPlayers = [dpoy, ...mvpPlayers.filter(p => p.pid !== dpoy.pid)];
+	mvpPlayers = [dpoy, ...mvpPlayers.filter((p) => p.pid !== dpoy.pid)];
 
 	const allLeague = makeTeams(mvpPlayers);
 	const royPlayers = getTopPlayers(
@@ -248,7 +248,7 @@ const doAwards = async (conditions: Conditions) => {
 
 	let finalsMvp;
 	const champTeam = teams.find(
-		t =>
+		(t) =>
 			t.seasonAttrs.playoffRoundsWon ===
 			g.get("numGamesPlayoffSeries", "current").length,
 	);

@@ -31,13 +31,13 @@ test("maxBy and minBy", () => {
 		a: 0,
 	});
 	assert.deepStrictEqual(
-		maxBy(items, item => -item.a),
+		maxBy(items, (item) => -item.a),
 		{
 			a: 0,
 		},
 	);
 	assert.deepStrictEqual(
-		minBy(items, item => -item.a),
+		minBy(items, (item) => -item.a),
 		{
 			a: 3,
 		},
@@ -59,7 +59,7 @@ test("omit", () => {
 
 test("countBy", () => {
 	assert.deepStrictEqual(
-		countBy([6.1, 4.2, 6.3], x => Math.floor(x)),
+		countBy([6.1, 4.2, 6.3], (x) => Math.floor(x)),
 		{ 4: 1, 6: 2 },
 	);
 });

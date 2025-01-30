@@ -20,7 +20,7 @@ export const getTeamOvrDiffs = (
 		return [];
 	}
 
-	const teamPlayers2 = teamPlayers.map(p => ({
+	const teamPlayers2 = teamPlayers.map((p) => ({
 		pid: p.pid,
 		value: p.value,
 		ratings: {
@@ -34,7 +34,7 @@ export const getTeamOvrDiffs = (
 		wholeRoster: true,
 	});
 
-	return players.map(p => {
+	return players.map((p) => {
 		const ratings = p.ratings.at(-1)!;
 		const newOvr = team.ovr(
 			[
@@ -97,14 +97,14 @@ const runPicks = async (
 	} else if (expansionDraft.phase === "draft") {
 		playersAll = (
 			await idb.cache.players.indexGetAll("playersByTid", [0, Infinity])
-		).filter(p => expansionDraft.availablePids.includes(p.pid));
+		).filter((p) => expansionDraft.availablePids.includes(p.pid));
 	} else {
 		playersAll = (
 			await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
 				[g.get("season")],
 				[g.get("season"), Infinity],
 			])
-		).filter(p => p.tid === PLAYER.UNDRAFTED);
+		).filter((p) => p.tid === PLAYER.UNDRAFTED);
 	}
 	playersAll.sort((a, b) => b.value - a.value);
 
@@ -163,7 +163,9 @@ const runPicks = async (
 						}
 					}
 					if (tidsOverLimit.length > 0) {
-						playersAll = playersAll.filter(p => !tidsOverLimit.includes(p.tid));
+						playersAll = playersAll.filter(
+							(p) => !tidsOverLimit.includes(p.tid),
+						);
 					}
 				}
 
@@ -195,7 +197,7 @@ const runPicks = async (
 				const pid = selection.pid;
 				await selectPlayer(dp, pid);
 				pids.push(pid);
-				playersAll = playersAll.filter(p => p !== selection); // Delete from the list of undrafted players
+				playersAll = playersAll.filter((p) => p !== selection); // Delete from the list of undrafted players
 
 				if (action.type !== "onePick") {
 					return autoSelectPlayer();

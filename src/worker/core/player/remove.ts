@@ -7,9 +7,11 @@ const hasRelativeAndMutate = (p: Player, pids: number[]) => {
 		return false;
 	}
 
-	const has = p.relatives.some(relative => pids.includes(relative.pid));
+	const has = p.relatives.some((relative) => pids.includes(relative.pid));
 	if (has) {
-		p.relatives = p.relatives.filter(relative => !pids.includes(relative.pid));
+		p.relatives = p.relatives.filter(
+			(relative) => !pids.includes(relative.pid),
+		);
 	}
 	return has;
 };

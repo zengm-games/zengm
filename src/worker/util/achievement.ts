@@ -44,7 +44,7 @@ async function add(
 
 	const notify = (slug: string) => {
 		const achievement = achievements.find(
-			achievement2 => slug === achievement2.slug,
+			(achievement2) => slug === achievement2.slug,
 		);
 
 		if (!achievement) {

@@ -68,7 +68,7 @@ const makeTeams = (
 	let dhType: "allDH" | "noDH" | "mix";
 	if (
 		dh === "all" ||
-		(Array.isArray(dh) && confs.every(conf => dh.includes(conf.cid)))
+		(Array.isArray(dh) && confs.every((conf) => dh.includes(conf.cid)))
 	) {
 		dhType = "allDH";
 	} else if (dh === "none" || (Array.isArray(dh) && dh.length === 0)) {
@@ -95,12 +95,12 @@ const makeTeams = (
 		teamPositions.push("P");
 	}
 
-	const team = teamPositions.map(pos => {
+	const team = teamPositions.map((pos) => {
 		// Rookie and offense come pre-sorted. For defense, need to sort by position each time
 		let sorted = players;
 		if (type === "defense") {
 			const index = (POS_NUMBERS as any)[pos] - 1;
-			sorted = orderBy(players, p => p.currentStats.rfld[index] ?? 0, "desc");
+			sorted = orderBy(players, (p) => p.currentStats.rfld[index] ?? 0, "desc");
 		}
 
 		return getTopByPos(sorted, pos, usedPids);
@@ -147,14 +147,14 @@ const getRealFinalsMvp = async (
 	const games = await idb.cache.games.getAll();
 
 	// Last game of the season will have the two finals teams
-	const finalsTids = games.at(-1)?.teams.map(t => t.tid);
+	const finalsTids = games.at(-1)?.teams.map((t) => t.tid);
 	if (finalsTids === undefined) {
 		return;
 	}
 
 	// Get all playoff games between those two teams - that will be all finals games
 	const finalsGames = games.filter(
-		game =>
+		(game) =>
 			game.playoffs &&
 			finalsTids.includes(game.teams[0].tid) &&
 			finalsTids.includes(game.teams[1].tid),
@@ -305,7 +305,7 @@ const getRealFinalsMvp = async (
 	}
 
 	const { pid } = playerArray[0];
-	const p = players.find(p2 => p2.pid === pid);
+	const p = players.find((p2) => p2.pid === pid);
 
 	if (p) {
 		const info = playerArray[0];
@@ -427,7 +427,7 @@ const doAwards = async (conditions: Conditions) => {
 		{
 			allowNone: true,
 			amount: Infinity,
-			score: p => p.currentStats.rbr + p.currentStats.rbat,
+			score: (p) => p.currentStats.rbr + p.currentStats.rbat,
 		},
 		players,
 	);
@@ -458,7 +458,7 @@ const doAwards = async (conditions: Conditions) => {
 
 	let finalsMvp;
 	const champTeam = teams.find(
-		t =>
+		(t) =>
 			t.seasonAttrs.playoffRoundsWon ===
 			g.get("numGamesPlayoffSeries", "current").length,
 	);

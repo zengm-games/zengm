@@ -65,7 +65,7 @@ export const getCloneName = (nameOld: string, namesOld: string[]) => {
 	while (true) {
 		const name = `${root} (clone${number > 1 ? ` ${number}` : ""})`;
 
-		if (namesOld.every(name2 => name !== name2)) {
+		if (namesOld.every((name2) => name !== name2)) {
 			return name;
 		}
 
@@ -86,7 +86,7 @@ const clone = async (lidOld: number) => {
 		}
 
 		const namesOld = (await idb.meta.getAll("leagues")).map(
-			league => league.name,
+			(league) => league.name,
 		);
 		name = getCloneName(leagueOld.name, namesOld);
 

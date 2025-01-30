@@ -19,7 +19,7 @@ type Categories = Record<"positions" | "skills" | "assets", Category>;
 
 const positions = bySport({
 	basketball: ["G", "F", "C"],
-	default: POSITIONS.filter(pos => !NOT_REAL_POSITIONS.includes(pos)),
+	default: POSITIONS.filter((pos) => !NOT_REAL_POSITIONS.includes(pos)),
 });
 const positionNames = bySport<Record<string, string> | undefined>({
 	baseball: undefined,
@@ -52,7 +52,7 @@ for (const [key, compositeWeight] of Object.entries(COMPOSITE_WEIGHTS)) {
 export const categories: Categories = {
 	positions: {
 		name: "Positions",
-		options: positions.map(pos => {
+		options: positions.map((pos) => {
 			return {
 				key: pos,
 				name: positionNames?.[pos] ?? pos,

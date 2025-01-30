@@ -42,9 +42,9 @@ const updateLeagueFinances = async (
 				},
 				"noCopyCache",
 			)
-		).map(t => {
+		).map((t) => {
 			const rosterSpots =
-				g.get("maxRosterSize") - players.filter(p => p.tid === t.tid).length;
+				g.get("maxRosterSize") - players.filter((p) => p.tid === t.tid).length;
 
 			return {
 				...t,

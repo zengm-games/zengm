@@ -83,10 +83,10 @@ const updateFrivolitiesDraftClasses = async (
 			if (p.hof) {
 				draftClass.numHOF += 1;
 			}
-			if (p.awards.some(award => award.type === "Most Valuable Player")) {
+			if (p.awards.some((award) => award.type === "Most Valuable Player")) {
 				draftClass.numMVP += 1;
 			}
-			if (p.awards.some(award => award.type === "All-Star")) {
+			if (p.awards.some((award) => award.type === "All-Star")) {
 				draftClass.numAS += 1;
 			}
 			if (p.retiredYear === Infinity) {
@@ -112,7 +112,7 @@ const updateFrivolitiesDraftClasses = async (
 		});
 
 		const bestPlayersAll = draftClasses.map(
-			draftClass => draftClass.bestPlayer.p,
+			(draftClass) => draftClass.bestPlayer.p,
 		);
 		const bestPlayers = addFirstNameShort(
 			processPlayersHallOfFame(

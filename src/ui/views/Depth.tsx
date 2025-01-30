@@ -27,7 +27,7 @@ const handleAutoSortAll = async () => {
 const lowerCaseWords = (string: string) => {
 	return string
 		.split(" ")
-		.map(word =>
+		.map((word) =>
 			isSport("baseball") && word === "DH)"
 				? "DH)"
 				: `${word.charAt(0).toLowerCase()}${word.slice(1)}`,
@@ -143,8 +143,8 @@ const Depth = ({
 
 	let playersSorted;
 	if (sortedPids !== undefined) {
-		playersSorted = sortedPids.map(pid => {
-			const p2 = players.find(p => p.pid === pid);
+		playersSorted = sortedPids.map((pid) => {
+			const p2 = players.find((p) => p.pid === pid);
 			if (!p2) {
 				throw new Error("Player not found");
 			}
@@ -201,8 +201,8 @@ const Depth = ({
 	const getIDsToSave = (pids: number[]): number[] => {
 		// For baseball lineup where saved IDs are not player IDs
 		if (isSport("baseball") && (pos === "L" || pos === "LP")) {
-			return pids.map(pid => {
-				const p2 = players.find(p => p.pid === pid);
+			return pids.map((pid) => {
+				const p2 = players.find((p) => p.pid === pid);
 				if (!p2) {
 					throw new Error("Player not found");
 				}
@@ -225,15 +225,15 @@ const Depth = ({
 			"Name",
 			"Pos",
 			"Age",
-			...positions.flatMap(position => {
+			...positions.flatMap((position) => {
 				if (isSport("baseball") && pos !== "P") {
 					return ["Ovr", "Pot"];
 				} else {
 					return [`rating:ovr${position}`, `rating:ovr${position}`];
 				}
 			}),
-			...ratings.map(rating => `rating:${rating}`),
-			...stats.map(stat => `stat:${stat}`),
+			...ratings.map((rating) => `rating:${rating}`),
+			...stats.map((stat) => `stat:${stat}`),
 		],
 		overrides,
 	);
@@ -325,7 +325,7 @@ const Depth = ({
 								? (p.ratings.pots[lineupPos] ?? p.ratings.pot)
 								: null,
 						]
-					: positions.flatMap(position => [
+					: positions.flatMap((position) => [
 							{
 								value:
 									!challengeNoRatings && p.pid >= 0
@@ -338,11 +338,11 @@ const Depth = ({
 								? p.ratings.pots[position]
 								: null,
 						])),
-				...ratings.map(rating => ({
+				...ratings.map((rating) => ({
 					value: !challengeNoRatings && p.pid >= 0 ? p.ratings[rating] : null,
 					classNames: "table-accent",
 				})),
-				...stats.map(stat =>
+				...stats.map((stat) =>
 					p.pid >= 0 ? helpers.roundStat(p.stats[stat], stat) : null,
 				),
 			],
@@ -376,7 +376,7 @@ const Depth = ({
 					isSport("baseball") ? "" : "d-none d-sm-flex"
 				}`}
 			>
-				{Object.keys(numStartersByPos).map(pos2 => {
+				{Object.keys(numStartersByPos).map((pos2) => {
 					if (
 						(showDH === "noDH" && (pos2 === "L" || pos2 === "D")) ||
 						(showDH === "dh" && (pos2 === "LP" || pos2 === "DP"))
@@ -502,7 +502,7 @@ const Depth = ({
 									highlightHandle: ({ index }) =>
 										index < numStarters * numLines,
 									onChange: async ({ oldIndex, newIndex }) => {
-										const pids = players.map(p => p.pid);
+										const pids = players.map((p) => p.pid);
 										const newSortedPids = arrayMoveImmutable(
 											pids,
 											oldIndex,
@@ -515,7 +515,7 @@ const Depth = ({
 										});
 									},
 									onSwap: async (index1, index2) => {
-										const newSortedPids = players.map(p => p.pid);
+										const newSortedPids = players.map((p) => p.pid);
 										newSortedPids[index1] = players[index2].pid;
 										newSortedPids[index2] = players[index1].pid;
 										setSortedPids(newSortedPids);

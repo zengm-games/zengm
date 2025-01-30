@@ -58,7 +58,7 @@ export const getStats = async ({
 			},
 			"noCopyCache",
 		)
-	).filter(t => {
+	).filter((t) => {
 		// For playoffs, only show teams who actually made playoffs (gp > 0)
 		return !playoffs || t.stats.gp > 0;
 	});
@@ -85,7 +85,9 @@ export const getStats = async ({
 				for (const series of round) {
 					for (const ah of ["away", "home"] as const) {
 						const ha = ah === "away" ? "home" : "away";
-						const t = teams.find(t2 => series[ah] && t2.tid === series[ah].tid);
+						const t = teams.find(
+							(t2) => series[ah] && t2.tid === series[ah].tid,
+						);
 
 						if (t && series[ah] && series[ha]) {
 							t.seasonAttrs.won += series[ah].won;
@@ -209,7 +211,7 @@ export const averageTeamStats = (
 
 		if (tid === undefined && teams.length !== 0) {
 			if (byPos) {
-				row[stat] = (sum as number[]).map(value => value / teams.length);
+				row[stat] = (sum as number[]).map((value) => value / teams.length);
 			} else {
 				row[stat] = (sum as number) / teams.length;
 			}

@@ -39,7 +39,7 @@ const updateLeadersYears = async (
 		inputs.statType !== state.statType
 	) {
 		const { categories: allCategories } = getCategoriesAndStats();
-		const allStats = allCategories.map(cat => cat.stat);
+		const allStats = allCategories.map((cat) => cat.stat);
 
 		const { categories, stats } = getCategoriesAndStats(inputs.stat);
 
@@ -48,7 +48,7 @@ const updateLeadersYears = async (
 		const seasons = range(g.get("startingSeason"), g.get("season") + 1);
 
 		let allLeaders = seasons
-			.map(season => ({
+			.map((season) => ({
 				season,
 				linkSeason: false,
 				leaders: [] as MyLeader[],
@@ -156,7 +156,7 @@ const updateLeadersYears = async (
 			}
 		});
 
-		allLeaders = allLeaders.filter(row => row.leaders.length > 0);
+		allLeaders = allLeaders.filter((row) => row.leaders.length > 0);
 
 		return {
 			allLeaders: leadersAddFirstNameShort(allLeaders),

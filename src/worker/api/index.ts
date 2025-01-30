@@ -248,7 +248,7 @@ const allStarDraftSetPlayers = async (
 			...allStars.teams[0],
 			...allStars.teams[1],
 			...allStars.remaining,
-		].map(p => p.pid);
+		].map((p) => p.pid);
 
 		const newPlayers = [
 			...players.teams[0],
@@ -256,12 +256,12 @@ const allStarDraftSetPlayers = async (
 			...players.remaining,
 		];
 
-		const newPids = newPlayers.map(p => p.pid);
+		const newPids = newPlayers.map((p) => p.pid);
 
-		const pidsToDelete = prevPids.filter(pid => !newPids.includes(pid));
+		const pidsToDelete = prevPids.filter((pid) => !newPids.includes(pid));
 
 		// Delete old awards
-		const awardsByPlayerToDelete = pidsToDelete.map(pid => ({
+		const awardsByPlayerToDelete = pidsToDelete.map((pid) => ({
 			pid,
 			type: "All-Star",
 		}));
@@ -269,8 +269,8 @@ const allStarDraftSetPlayers = async (
 
 		// Add new awards
 		const awardsByPlayer = newPlayers
-			.filter(p => !prevPids.includes(p.pid))
-			.map(p => ({
+			.filter((p) => !prevPids.includes(p.pid))
+			.map((p) => ({
 				pid: p.pid,
 				tid: p.tid,
 				name: p.name,
@@ -304,7 +304,7 @@ const allStarGameNow = async () => {
 		return;
 	}
 
-	let schedule = (await season.getSchedule()).map(game => {
+	let schedule = (await season.getSchedule()).map((game) => {
 		const newGame: ScheduleGameWithoutKey = {
 			...game,
 		};
@@ -315,7 +315,7 @@ const allStarGameNow = async () => {
 
 	// Does ASG exist in schedule? If so, delete it.
 	schedule = schedule.filter(
-		game => game.awayTid !== -2 || game.homeTid !== -1,
+		(game) => game.awayTid !== -2 || game.homeTid !== -1,
 	);
 
 	// Add 1 to each day, so we can fit in ASG
@@ -556,7 +556,7 @@ const createLeague = async (
 			getLeagueOptions.realStats === "all"
 		) {
 			const srID = fromFile.teams![tid].srID;
-			actualTid = realLeague.teams.findIndex(t => t.srID === srID);
+			actualTid = realLeague.teams.findIndex((t) => t.srID === srID);
 			if (!srID || actualTid < 0) {
 				throw new Error("Error finding tid");
 			}
@@ -722,7 +722,7 @@ const deleteOldData = async (options: {
 		if (p.ratings.length > 0) {
 			updated = true;
 			const latestSeason = p.ratings.at(-1)?.season;
-			p.ratings = p.ratings.filter(row => row.season >= latestSeason);
+			p.ratings = p.ratings.filter((row) => row.season >= latestSeason);
 		}
 		if (p.stats.length > 0) {
 			updated = true;
@@ -730,7 +730,7 @@ const deleteOldData = async (options: {
 			if (g.get("phase") === PHASE.PRESEASON) {
 				latestSeason -= 1;
 			}
-			p.stats = p.stats.filter(row => row.season >= latestSeason);
+			p.stats = p.stats.filter((row) => row.season >= latestSeason);
 		}
 		if (p.injuries.length > 0) {
 			if (
@@ -859,7 +859,7 @@ const deleteScheduledEvents = async (type: string) => {
 			await idb.cache.scheduledEvents.delete(event.id);
 		} else if (type === "expansionDraft") {
 			if (event.type === "expansionDraft") {
-				deletedExpansionTIDs.push(...event.info.teams.map(t => t.tid));
+				deletedExpansionTIDs.push(...event.info.teams.map((t) => t.tid));
 				await idb.cache.scheduledEvents.delete(event.id);
 			}
 
@@ -1207,7 +1207,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 
 	if (season === "all") {
 		seasons = Array.from(
-			new Set(players.flatMap(p => p.ratings).map(pr => pr.season)),
+			new Set(players.flatMap((p) => p.ratings).map((pr) => pr.season)),
 		);
 	} else {
 		seasons = [season];
@@ -1220,7 +1220,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 	for (const table of Object.values(PLAYER_STATS_TABLES)) {
 		if (table) {
 			stats.push(
-				...table.stats.filter(stat => {
+				...table.stats.filter((stat) => {
 					if (stat.endsWith("Max")) {
 						return false;
 					}
@@ -1282,17 +1282,19 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 		"Salary",
 		"Team",
 		"Season",
-		...shotLocationsGetCols(stats.map(stat => `stat:${stat}`)),
+		...shotLocationsGetCols(stats.map((stat) => `stat:${stat}`)),
 		"Ovr",
 		"Pot",
-		...getCols(RATINGS.map(rating => `rating:${rating}`)).map(col => col.title),
+		...getCols(RATINGS.map((rating) => `rating:${rating}`)).map(
+			(col) => col.title,
+		),
 		...getCols(
 			extraRatings.length
-				? ["ovr", "pot"].flatMap(prefix =>
-						POSITIONS.map(pos => `rating:${prefix}${pos}`),
+				? ["ovr", "pot"].flatMap((prefix) =>
+						POSITIONS.map((pos) => `rating:${prefix}${pos}`),
 					)
 				: [],
-		).map(col => col.title),
+		).map((col) => col.title),
 	];
 	const rows: any[] = [];
 
@@ -1317,13 +1319,13 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 				p.salary,
 				p.stats.abbrev,
 				s,
-				...stats.map(stat => p.stats[stat]),
+				...stats.map((stat) => p.stats[stat]),
 				p.ratings.ovr,
 				p.ratings.pot,
-				...RATINGS.map(rating => p.ratings[rating]),
+				...RATINGS.map((rating) => p.ratings[rating]),
 				...(extraRatings.length
-					? ["ovrs", "pots"].flatMap(type =>
-							POSITIONS.map(pos => p.ratings[type][pos]),
+					? ["ovrs", "pots"].flatMap((type) =>
+							POSITIONS.map((pos) => p.ratings[type][pos]),
 						)
 					: []),
 			]);
@@ -1525,13 +1527,13 @@ const exportDraftClass = async ({
 
 	// For exporting future draft classes (most common use case), the user might have manually changed the tid of some players, in which case we need this check to ensure that the exported draft class matches the draft class shown in the UI
 	if (onlyUndrafted) {
-		players = players.filter(p => p.tid === PLAYER.UNDRAFTED);
+		players = players.filter((p) => p.tid === PLAYER.UNDRAFTED);
 	}
 
 	const data: any = {
 		version: idb.league.version,
 		startingSeason: season,
-		players: players.map(p => ({
+		players: players.map((p) => ({
 			born: p.born,
 			college: p.college,
 			draft: {
@@ -1650,7 +1652,7 @@ const getJerseyNumberConflict = async ({
 }) => {
 	const conflicts = (
 		await idb.cache.players.indexGetAll("playersByTid", tid)
-	).filter(p => {
+	).filter((p) => {
 		// Can't conflict with self
 		if (p.pid === pid) {
 			return false;
@@ -1948,9 +1950,9 @@ const getOffers = async (
 ) => {
 	const teams = await idb.cache.teams.getAll();
 	const tids = orderBy(
-		teams.filter(t => !t.disabled),
+		teams.filter((t) => !t.disabled),
 		["region", "name", "tid"],
-	).map(t => t.tid);
+	).map((t) => t.tid);
 	const offers = [];
 
 	for (const tid of tids) {
@@ -2008,7 +2010,7 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 
 	// Take the pids and dpids in each offer and get the info needed to display the offer
 	return Promise.all(
-		offers.map(async offerRaw => {
+		offers.map(async (offerRaw) => {
 			const tid = offerRaw[1].tid;
 			const t = teamsByTid[tid];
 			if (!t) {
@@ -2022,10 +2024,10 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 					},
 					"noCopyCache",
 				);
-				picks = picks.filter(dp => dpids.includes(dp.dpid));
+				picks = picks.filter((dp) => dpids.includes(dp.dpid));
 
 				return await Promise.all(
-					picks.map(async dp => {
+					picks.map(async (dp) => {
 						return {
 							...dp,
 							desc: await helpers.pickDesc(dp, "short"),
@@ -2040,7 +2042,7 @@ export const augmentOffers = async (offers: TradeTeams[]) => {
 					tid,
 				);
 				playersAll = playersAll.filter(
-					p => pids.includes(p.pid) && !isUntradable(p).untradable,
+					(p) => pids.includes(p.pid) && !isUntradable(p).untradable,
 				);
 				return addFirstNameShort(
 					await idb.getCopies.playersPlus(playersAll, {
@@ -2144,14 +2146,14 @@ const getTradingBlockOffers = async ({
 
 	// If we're looking for a position and not draft picks, only keep offers that include that position
 	if (positionAndNotDraftPicks) {
-		offers = offers.filter(offer => {
+		offers = offers.filter((offer) => {
 			return offer[1].pids.length > 0;
 		});
 	}
 
 	// If we're looking for draft picks and nothing else, only keep offers that include picks
 	if (draftPicksAndNothingElse) {
-		offers = offers.filter(offer => {
+		offers = offers.filter((offer) => {
 			return offer[1].dpids.length > 0;
 		});
 	}
@@ -2161,7 +2163,7 @@ const getTradingBlockOffers = async ({
 		dpids,
 		pids,
 		tid: g.get("userTid"),
-		offers: offers.map(offer => {
+		offers: offers.map((offer) => {
 			return {
 				dpids: offer[1].dpids,
 				pids: offer[1].pids,
@@ -2209,12 +2211,12 @@ const handleUploadedDraftClass = async ({
 	let players: any[] = uploadedFile.players;
 
 	// Filter out any that are not draft prospects
-	players = players.filter(p => p.tid === PLAYER.UNDRAFTED);
+	players = players.filter((p) => p.tid === PLAYER.UNDRAFTED);
 
 	// Handle draft format change in version 33, where PLAYER.UNDRAFTED has multiple draft classes
 	if (uploadedFile.version !== undefined && uploadedFile.version >= 33) {
 		let filtered = players.filter(
-			p =>
+			(p) =>
 				p.draft === undefined ||
 				p.draft.year === undefined ||
 				p.draft.year === "" ||
@@ -2224,7 +2226,7 @@ const handleUploadedDraftClass = async ({
 		if (filtered.length === 0) {
 			// Try the next season, in case draft already happened
 			filtered = players.filter(
-				p =>
+				(p) =>
 					uploadedSeason !== undefined && p.draft.year === uploadedSeason + 1,
 			);
 		}
@@ -2614,7 +2616,7 @@ const ratingsStatsPopoverInfo = async ({
 		// If player has no stats that season and is not a draft prospect, show career stats
 		if (
 			p.draft.year < actualSeason &&
-			!p.ratings.some(row => row.season === actualSeason)
+			!p.ratings.some((row) => row.season === actualSeason)
 		) {
 			actualSeason = undefined;
 		}
@@ -2804,7 +2806,7 @@ const releasePlayer = async ({ pids }: { pids: number[] }) => {
 		return "Player not found";
 	}
 
-	if (players.some(p => p.tid !== g.get("userTid"))) {
+	if (players.some((p) => p.tid !== g.get("userTid"))) {
 		return "You aren't allowed to do this";
 	}
 
@@ -2881,7 +2883,7 @@ const removeLastTeam = async () => {
 		numActiveTeams: g.get("numActiveTeams") - 1,
 		numTeams: g.get("numTeams") - 1,
 		teamInfoCache: g.get("teamInfoCache").slice(0, -1),
-		userTids: g.get("userTids").filter(userTid => userTid !== tid),
+		userTids: g.get("userTids").filter((userTid) => userTid !== tid),
 	};
 
 	if (g.get("userTid") === tid && tid > 0) {
@@ -2917,7 +2919,7 @@ const removeLastTeam = async () => {
 
 			if (hasTid) {
 				scheduledEvent.info.teams = scheduledEvent.info.teams.filter(
-					t2 => t2.tid !== tid,
+					(t2) => t2.tid !== tid,
 				);
 				updated = true;
 			}
@@ -3400,10 +3402,10 @@ const reSignAll = async (players: any[]) => {
 	const userTid = g.get("userTid");
 	let negotiations = await idb.cache.negotiations.getAll(); // For Multi Team Mode, might have other team's negotiations going on
 	negotiations = negotiations.filter(
-		negotiation => negotiation.tid === userTid,
+		(negotiation) => negotiation.tid === userTid,
 	);
 	for (const { pid } of negotiations) {
-		const p = players.find(p => p.pid === pid);
+		const p = players.find((p) => p.pid === pid);
 
 		if (p && p.mood.user.willing) {
 			const errorMsg = await contractNegotiation.accept({
@@ -3602,7 +3604,7 @@ const updateConfsDivs = async ({
 		throw new Error("No divisions");
 	}
 	for (const div of divs) {
-		const conf = confs.find(c => c.cid === div.cid);
+		const conf = confs.find((c) => c.cid === div.cid);
 		if (!conf) {
 			throw new Error("div has invalid cid");
 		}
@@ -3658,10 +3660,10 @@ const updateGameAttributesGodMode = async (
 	delete gameAttributes.repeatSeason;
 
 	// Check schedule, unless it'd be too slow
-	const teams = (await idb.cache.teams.getAll()).filter(t => !t.disabled);
+	const teams = (await idb.cache.teams.getAll()).filter((t) => !t.disabled);
 	if (teams.length < TOO_MANY_TEAMS_TOO_SLOW) {
 		season.newSchedule(
-			teams.map(t => ({
+			teams.map((t) => ({
 				tid: t.tid,
 				seasonAttrs: {
 					cid: t.cid,
@@ -4015,7 +4017,9 @@ const updatePlayoffTeams = async (
 
 		const findTeam = (seed: number, cid: number) => {
 			// If byConf, we need to find the seed in the same conference, cause multiple teams will have this seed. Otherwise, can just check seed.
-			const t = teams.find(t => seed === t.seed && (!byConf || cid === t.cid));
+			const t = teams.find(
+				(t) => seed === t.seed && (!byConf || cid === t.cid),
+			);
 
 			if (!t) {
 				throw new Error("Team not found");
@@ -4044,7 +4048,7 @@ const updatePlayoffTeams = async (
 		checkMatchups(series[0]);
 
 		if (playIns) {
-			checkMatchups(playIns.flatMap(playIn => playIn.slice(0, 2)));
+			checkMatchups(playIns.flatMap((playIn) => playIn.slice(0, 2)));
 		}
 
 		await idb.cache.playoffSeries.put(playoffSeries);
@@ -4089,13 +4093,13 @@ const updateTeamInfo = async (
 	const teams = await idb.cache.teams.getAll();
 
 	for (const t of teams) {
-		const newTeam = newTeams.find(t2 => t2.tid === t.tid);
+		const newTeam = newTeams.find((t2) => t2.tid === t.tid);
 		if (!newTeam) {
 			throw new Error(`New team not found for tid ${t.tid}`);
 		}
 
 		if (newTeam.did !== undefined) {
-			const newDiv = g.get("divs").find(div => div.did === newTeam.did);
+			const newDiv = g.get("divs").find((div) => div.did === newTeam.did);
 			if (newDiv) {
 				t.did = newDiv.did;
 				t.cid = newDiv.cid;
@@ -4193,7 +4197,7 @@ const updateTeamInfo = async (
 	}
 
 	await league.setGameAttributes({
-		teamInfoCache: orderBy(newTeams, "tid").map(t => ({
+		teamInfoCache: orderBy(newTeams, "tid").map((t) => ({
 			abbrev: t.abbrev,
 			disabled: t.disabled,
 			imgURL: t.imgURL,
@@ -4255,7 +4259,7 @@ const upsertCustomizedPlayer = async (
 
 		if (t.retiredJerseyNumbers) {
 			const retiredJerseyNumbers = t.retiredJerseyNumbers.map(
-				row => row.number,
+				(row) => row.number,
 			);
 			const jerseyNumber = helpers.getJerseyNumber(p);
 			if (jerseyNumber && retiredJerseyNumbers.includes(jerseyNumber)) {
@@ -4362,7 +4366,7 @@ const upsertCustomizedPlayer = async (
 		}
 
 		const existingRelation = p2.relatives.find(
-			rel => rel.type === type2 && rel.pid === p.pid,
+			(rel) => rel.type === type2 && rel.pid === p.pid,
 		);
 		if (existingRelation) {
 			// We found relation! Make sure name is correct
@@ -4412,7 +4416,7 @@ const upsertCustomizedPlayer = async (
 		// Any relation in here that is no longer in p should be deleted in the corresponding player too
 		for (const prevRel of prevPlayer.relatives) {
 			const currentRel = p.relatives.find(
-				rel => rel.type === prevRel.type && rel.pid === prevRel.pid,
+				(rel) => rel.type === prevRel.type && rel.pid === prevRel.pid,
 			);
 			if (!currentRel) {
 				// prevRel has been deleted!
@@ -4424,7 +4428,7 @@ const upsertCustomizedPlayer = async (
 				);
 				if (p2) {
 					p2.relatives = p2.relatives.filter(
-						rel =>
+						(rel) =>
 							!(
 								rel.type === getInverseType(prevRel.type) &&
 								rel.pid === prevPlayer.pid
@@ -4458,7 +4462,7 @@ const upsertCustomizedPlayer = async (
 	if (jerseyNumber) {
 		const teammates = (
 			await idb.cache.players.indexGetAll("playersByTid", p.tid)
-		).filter(p2 => p2.pid !== p.pid);
+		).filter((p2) => p2.pid !== p.pid);
 		for (const teammate of teammates) {
 			const jerseyNumber2 = helpers.getJerseyNumber(teammate);
 			if (jerseyNumber === jerseyNumber2) {
@@ -4557,7 +4561,7 @@ const toggleTradeDeadline = async () => {
 		// Delete scheduled trade deadline
 		const schedule = await season.getSchedule();
 		const tradeDeadline = schedule.find(
-			game => game.homeTid === -3 && game.awayTid === -3,
+			(game) => game.homeTid === -3 && game.awayTid === -3,
 		);
 		if (tradeDeadline) {
 			await idb.cache.schedule.delete(tradeDeadline.gid);

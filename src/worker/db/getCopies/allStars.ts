@@ -13,7 +13,7 @@ const getCopies = async (
 	if (season !== undefined) {
 		const awards = mergeByPk(
 			await idb.league.getAll("allStars", season),
-			(await idb.cache.allStars.getAll()).filter(row => {
+			(await idb.cache.allStars.getAll()).filter((row) => {
 				return row.season === season;
 			}),
 			"allStars",

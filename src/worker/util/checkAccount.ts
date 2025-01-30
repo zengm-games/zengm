@@ -41,11 +41,13 @@ const checkAccount = async (
 
 			adding = true;
 
-			const achievements = (await idb.meta.getAll("achievements")).map(row => ({
-				// Default difficulty, for upgraded cases
-				difficulty: "normal",
-				...row,
-			}));
+			const achievements = (await idb.meta.getAll("achievements")).map(
+				(row) => ({
+					// Default difficulty, for upgraded cases
+					difficulty: "normal",
+					...row,
+				}),
+			);
 			if (achievements.length > 0) {
 				await idb.meta.clear("achievements");
 			}

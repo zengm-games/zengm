@@ -69,7 +69,7 @@ const processGameAttributes = (
 
 	gameAttributeEvents = helpers.deepCopy(
 		gameAttributeEvents.filter(
-			event =>
+			(event) =>
 				(event.season > season ||
 					(event.season === season && event.phase > phase)) &&
 				Object.keys(event.info).length > 0,
@@ -152,7 +152,7 @@ const processTeams = (
 
 		if (event.type === "expansionDraft") {
 			for (const t of event.info.teams) {
-				const ind = prevState.findIndex(t0 => t0.tid === t.tid);
+				const ind = prevState.findIndex((t0) => t0.tid === t.tid);
 				const t0 = prevState[ind];
 				if (t0) {
 					// Re-expanding a contracted team, probably with keepAllTeams
@@ -169,7 +169,7 @@ const processTeams = (
 			}
 		} else if (event.type === "teamInfo") {
 			const t = event.info;
-			const ind = prevState.findIndex(t0 => t0.tid === t.tid);
+			const ind = prevState.findIndex((t0) => t0.tid === t.tid);
 			const t0 = prevState[ind];
 			if (!t0) {
 				throw new Error(`teamInfo before expansionDraft for tid ${t.tid}`);
@@ -182,11 +182,11 @@ const processTeams = (
 		} else if (event.type === "contraction") {
 			if ((event.season === season && event.phase <= phase) || keepAllTeams) {
 				// Special case - we need to keep this team around, but label it as disabled. Otherwise, we can't generate the playoff bracket in leagues starting in a phase after the playoffs. Also, for realStats=="all".
-				const t = prevState.find(t => t.tid === event.info.tid);
+				const t = prevState.find((t) => t.tid === event.info.tid);
 				t.disabled = true;
 			} else {
 				let found = false;
-				prevState = prevState.filter(t => {
+				prevState = prevState.filter((t) => {
 					if (t.tid === event.info.tid) {
 						found = true;
 						return false;
@@ -211,7 +211,7 @@ const processTeams = (
 
 	teamEvents = helpers.deepCopy(
 		teamEvents.filter(
-			event =>
+			(event) =>
 				event.season > season || (event.season === season && event.phase > 0),
 		),
 	);
@@ -229,7 +229,7 @@ const processTeams = (
 		t.tid = tid;
 	}
 	let maxSeenTid = Math.max(...Object.values(tidOverrides));
-	teamEvents = teamEvents.map(event => {
+	teamEvents = teamEvents.map((event) => {
 		if (event.type === "teamInfo" || event.type === "contraction") {
 			const oldTid = event.info.tid;
 			let newTid = tidOverrides[oldTid];
@@ -260,7 +260,7 @@ const processTeams = (
 				...event,
 				info: {
 					...event.info,
-					teams: event.info.teams.map(t => {
+					teams: event.info.teams.map((t) => {
 						if (t.tid === undefined) {
 							return t;
 						}

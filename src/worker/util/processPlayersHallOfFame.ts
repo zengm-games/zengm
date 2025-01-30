@@ -23,7 +23,7 @@ const processPlayersHallOfFame = <
 	legacyTid: number;
 	peakOvr: number;
 })[] => {
-	return players.map(p => {
+	return players.map((p) => {
 		let peakOvr = 0;
 		if (Array.isArray(p.ratings)) {
 			for (const pr of p.ratings) {
@@ -34,7 +34,7 @@ const processPlayersHallOfFame = <
 		}
 		const bestSeasonOverride = p.most?.extra?.bestSeasonOverride;
 
-		const hasSeasonWithGamesPlayed = p.stats.some(ps => ps.gp > 0);
+		const hasSeasonWithGamesPlayed = p.stats.some((ps) => ps.gp > 0);
 
 		const posBySeason: Record<number, string | undefined> = {};
 

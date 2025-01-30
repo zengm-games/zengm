@@ -19,7 +19,7 @@ const autoProtect = async (tid: number): Promise<number[]> => {
 	);
 	const pids = orderBy(players, "valueFuzz", "desc")
 		.slice(0, maxNumCanProtext)
-		.map(p => p.pid);
+		.map((p) => p.pid);
 	return pids;
 };
 

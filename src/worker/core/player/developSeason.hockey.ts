@@ -32,7 +32,7 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 	stre: {
 		ageModifier: () => 0,
 		changeLimits: () => [-Infinity, Infinity],
-		posCoeff: pos => (pos === "D" ? 1 : 0.25),
+		posCoeff: (pos) => (pos === "D" ? 1 : 0.25),
 	},
 	spd: {
 		ageModifier: (age: number) => {

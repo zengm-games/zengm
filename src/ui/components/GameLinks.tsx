@@ -26,8 +26,8 @@ const GameLinks = ({
 		},
 	];
 
-	const otherGames = games.filter(game => game.name !== GAME_NAME);
-	const thisGame = games.find(game => game.name === GAME_NAME);
+	const otherGames = games.filter((game) => game.name !== GAME_NAME);
+	const thisGame = games.find((game) => game.name === GAME_NAME);
 	if (!thisGame) {
 		throw new Error("Game not found");
 	}

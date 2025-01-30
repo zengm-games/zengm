@@ -107,10 +107,10 @@ const Draft = ({
 				? "Expansion Draft"
 				: "Draft",
 	});
-	const remainingPicks = drafted.filter(p => p.pid < 0);
+	const remainingPicks = drafted.filter((p) => p.pid < 0);
 	const nextPick = remainingPicks[0];
 	const usersTurn = !!(nextPick && userTids.includes(nextPick.draft.tid));
-	const userRemaining = remainingPicks.some(p =>
+	const userRemaining = remainingPicks.some((p) =>
 		userTids.includes(p.draft.tid),
 	);
 	const colsUndrafted = getCols(
@@ -126,7 +126,7 @@ const Draft = ({
 		colsUndrafted.splice(
 			6,
 			0,
-			...getCols(["Contract", "Exp", ...stats.map(stat => `stat:${stat}`)]),
+			...getCols(["Contract", "Exp", ...stats.map((stat) => `stat:${stat}`)]),
 		);
 	}
 
@@ -134,7 +134,7 @@ const Draft = ({
 		colsUndrafted.splice(3, 0, ...getCols(["Team"]));
 	}
 
-	const rowsUndrafted: DataTableRow[] = undrafted.map(p => {
+	const rowsUndrafted: DataTableRow[] = undrafted.map((p) => {
 		const data = [
 			p.rank,
 			wrappedPlayerNameLabels({
@@ -183,7 +183,7 @@ const Draft = ({
 				0,
 				wrappedContractAmount(p),
 				wrappedContractExp(p),
-				...stats.map(stat =>
+				...stats.map((stat) =>
 					p.pid >= 0 && p.stats && typeof p.stats[stat] === "number"
 						? helpers.roundStat(p.stats[stat], stat)
 						: p.stats[stat],
@@ -222,7 +222,7 @@ const Draft = ({
 		colsDrafted.splice(2, 0, getCols(["From"])[0]);
 	}
 
-	const teamInfoCache = useLocal(state => state.teamInfoCache);
+	const teamInfoCache = useLocal((state) => state.teamInfoCache);
 
 	const rowsDrafted: DataTableRow[] = drafted.map((p, i) => {
 		const data = [
@@ -341,7 +341,7 @@ const Draft = ({
 				...(p.pid >= 0
 					? [helpers.formatCurrency(p.contract.amount, "M"), p.contract.exp]
 					: [null, null]),
-				...stats.map(stat =>
+				...stats.map((stat) =>
 					p.pid >= 0 && p.stats && typeof p.stats[stat] === "number"
 						? helpers.roundStat(p.stats[stat], stat)
 						: null,

@@ -32,15 +32,15 @@ const updatePlayers = async (
 
 		if (inputs.abbrev !== "all") {
 			feats = feats.filter(
-				feat => g.get("teamInfoCache")[feat.tid]?.abbrev === inputs.abbrev,
+				(feat) => g.get("teamInfoCache")[feat.tid]?.abbrev === inputs.abbrev,
 			);
 		}
 
 		if (inputs.season !== "all") {
-			feats = feats.filter(feat => feat.season === inputs.season);
+			feats = feats.filter((feat) => feat.season === inputs.season);
 		}
 
-		const featsProcessed = feats.map(feat => {
+		const featsProcessed = feats.map((feat) => {
 			if (isSport("basketball")) {
 				feat.stats.trb = feat.stats.orb + feat.stats.drb;
 				feat.stats.fgp =

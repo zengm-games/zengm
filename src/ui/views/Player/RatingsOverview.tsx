@@ -16,7 +16,7 @@ const RatingsOverview = ({
 		currentSeason = ratings.at(-1);
 	} else {
 		currentSeason =
-			ratings.find(row => row.season === season) ?? ratings.at(-1);
+			ratings.find((row) => row.season === season) ?? ratings.at(-1);
 	}
 
 	let lastSeason = currentSeason;

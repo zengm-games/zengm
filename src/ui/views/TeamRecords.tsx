@@ -123,16 +123,16 @@ const TeamRecords = ({
 		"Last",
 		"Titles",
 		"Last",
-		...categories.map(category => `count:${category}`),
+		...categories.map((category) => `count:${category}`),
 	]);
 
-	const lasts = cols.filter(col => col.title === "Last");
+	const lasts = cols.filter((col) => col.title === "Last");
 	lasts[0].desc = "Last Playoffs Appearance";
 	lasts[1].desc = "Last Finals Appearance";
 	lasts[2].desc = "Last Championship";
 
 	const rows = teams
-		.filter(t => showHistorical || !isHistorical(t))
+		.filter((t) => showHistorical || !isHistorical(t))
 		.map((t, i) => {
 			return {
 				key: i,
@@ -155,7 +155,7 @@ const TeamRecords = ({
 					t.lastFinals,
 					t.titles,
 					t.lastTitle,
-					...categories.map(category => (t as any)[category]),
+					...categories.map((category) => (t as any)[category]),
 				],
 				classNames: {
 					"text-body-secondary": !t.root,
@@ -174,7 +174,7 @@ const TeamRecords = ({
 				<button
 					className="btn btn-secondary"
 					onClick={() => {
-						setShowHistorical(show => !show);
+						setShowHistorical((show) => !show);
 					}}
 				>
 					{showHistorical ? "Hide historical teams" : "Show historical teams"}

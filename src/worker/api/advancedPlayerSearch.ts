@@ -27,7 +27,7 @@ export const getPlayers = async (
 	let tid: number | undefined;
 	if (tidInput !== undefined && tidInput <= 0) {
 		// For draft prospets and free agents, use current status
-		playersAll = playersAll.filter(p => p.tid === tidInput);
+		playersAll = playersAll.filter((p) => p.tid === tidInput);
 	} else {
 		// For other teams, use playersPlus
 		tid = tidInput;
@@ -69,7 +69,7 @@ export const getPlayers = async (
 	// For other seasons, use the stats abbrev for filtering
 	if (g.get("season") === season) {
 		if (tid !== undefined) {
-			players = players.filter(p => p.tid === tid);
+			players = players.filter((p) => p.tid === tid);
 		}
 
 		for (const p of players) {
@@ -77,7 +77,7 @@ export const getPlayers = async (
 			p.stats.tid = p.tid;
 		}
 	} else if (tid !== undefined && seasonRange === undefined) {
-		players = players.filter(p => p.stats.tid === tid);
+		players = players.filter((p) => p.stats.tid === tid);
 	}
 
 	if (isSport("baseball")) {
@@ -137,12 +137,12 @@ export const advancedPlayerSearch = async ({
 
 	// Special case for tid
 	const abbrevFilter = filters.find(
-		filter => filter.category === "bio" && filter.key === "abbrev",
+		(filter) => filter.category === "bio" && filter.key === "abbrev",
 	);
 	let tid: number | undefined;
 	if (abbrevFilter) {
 		// Remove from list of filters, since we are handling it here
-		filters = filters.filter(filter => filter !== abbrevFilter);
+		filters = filters.filter((filter) => filter !== abbrevFilter);
 
 		const abbrev = abbrevFilter.value;
 
@@ -154,7 +154,7 @@ export const advancedPlayerSearch = async ({
 			tid = PLAYER.FREE_AGENT;
 		} else {
 			const teamInfos = g.get("teamInfoCache");
-			const index = teamInfos.findIndex(t => t.abbrev === abbrev);
+			const index = teamInfos.findIndex((t) => t.abbrev === abbrev);
 			if (index >= 0) {
 				tid = index;
 			}
@@ -223,13 +223,13 @@ export const advancedPlayerSearch = async ({
 				p[obj].abbrev = p.stats.at(-1)?.abbrev;
 				p[obj].tid = p.stats.at(-1)?.tid;
 				p[obj].jerseyNumber = p.stats.at(-1)?.jerseyNumber;
-				p.ratings = maxBy(p.ratings, row => row.ovr);
+				p.ratings = maxBy(p.ratings, (row) => row.ovr);
 			} else {
 				obj = "stats";
 			}
 			p.stats = p[obj];
 
-			const matchesAll = filters.every(filter => {
+			const matchesAll = filters.every((filter) => {
 				const filterInfo = allFilters[filter.category].options[filter.key];
 				if (!filterInfo) {
 					return true;

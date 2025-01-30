@@ -101,7 +101,7 @@ const create = async (conditions: Conditions) => {
 			// If we need more than the default positions, they should be random
 			random.shuffle(positions);
 
-			const playersByPos = groupBy(candidates, p => {
+			const playersByPos = groupBy(candidates, (p) => {
 				if (isSport("baseball")) {
 					// Find actual played position based on highest gpF value
 					return getPosByGpF(p.currentStats.gpF);
@@ -164,8 +164,8 @@ const create = async (conditions: Conditions) => {
 
 				// Fill out with best non-pitchers, regardless of position
 				if (count < numPlayersNeeded) {
-					const pidsUsed = new Set(allStars.remaining.map(p => p.pid));
-					const remainingCandidates = candidates.filter(p => {
+					const pidsUsed = new Set(allStars.remaining.map((p) => p.pid));
+					const remainingCandidates = candidates.filter((p) => {
 						if (pidsUsed.has(p.pid)) {
 							return false;
 						}
@@ -236,16 +236,16 @@ const create = async (conditions: Conditions) => {
 		}
 
 		const grouped = groupBy(
-			sortedPlayers.filter(p => p.tid >= 0),
-			p => cidsByTid[p.tid],
+			sortedPlayers.filter((p) => p.tid >= 0),
+			(p) => cidsByTid[p.tid],
 		);
 
 		// Sorting is to make sure lowest cid is first
 		const groupedPlayers = orderBy(
 			Object.entries(grouped),
-			row => row[0],
+			(row) => row[0],
 			"asc",
-		).map(row => row[1]);
+		).map((row) => row[1]);
 
 		let numSuccess = 0;
 
@@ -299,9 +299,9 @@ const create = async (conditions: Conditions) => {
 		}
 
 		// @ts-expect-error
-		allStars.teamNames = allStars.teams.map(teamPlayers => {
+		allStars.teamNames = allStars.teams.map((teamPlayers) => {
 			const captainPID = teamPlayers[0].pid;
-			const p = players.find(p2 => p2.pid === captainPID);
+			const p = players.find((p2) => p2.pid === captainPID);
 			return `Team ${p.firstName}`;
 		});
 
@@ -318,7 +318,7 @@ const create = async (conditions: Conditions) => {
 
 		// Order by cid ascending, same as players
 		const confNames = orderBy(Object.values(confs), "cid", "asc").map(
-			conf => conf.name,
+			(conf) => conf.name,
 		);
 		allStars.teamNames[1] = `${confNames[1]}`;
 		allStars.teamNames[0] = `${confNames[0]}`;
@@ -364,10 +364,10 @@ const create = async (conditions: Conditions) => {
 
 		if (g.get("allStarDunk")) {
 			const dunkers = orderBy(
-				activePlayers.filter(p => p.injury.gamesRemaining === 0),
+				activePlayers.filter((p) => p.injury.gamesRemaining === 0),
 				[
-					p => (p.pid === prevWinnerDunk ? 1 : 0),
-					p => {
+					(p) => (p.pid === prevWinnerDunk ? 1 : 0),
+					(p) => {
 						const ratings = p.ratings.at(-1) as PlayerRatings;
 						return ratings.dnk + 2 * ratings.jmp;
 					},
@@ -375,7 +375,7 @@ const create = async (conditions: Conditions) => {
 				["desc", "desc"],
 			)
 				.slice(0, g.get("numPlayersDunk"))
-				.map(p => ({
+				.map((p) => ({
 					pid: p.pid,
 					tid: p.tid,
 					name: `${p.firstName} ${p.lastName}`,
@@ -393,7 +393,7 @@ const create = async (conditions: Conditions) => {
 
 				const orderedByHeight = orderBy(
 					activePlayers,
-					p => p.ratings.at(-1)!.hgt,
+					(p) => p.ratings.at(-1)!.hgt,
 					"desc",
 				);
 
@@ -436,13 +436,13 @@ const create = async (conditions: Conditions) => {
 			const numRatings = g.get("numPlayersThree") - numStats;
 
 			const shootersStats = orderBy(
-				activePlayers.filter(p => p.injury.gamesRemaining === 0),
+				activePlayers.filter((p) => p.injury.gamesRemaining === 0),
 				[
-					p => {
+					(p) => {
 						const stats = p.stats.at(-1);
 						return stats.tp;
 					},
-					p => {
+					(p) => {
 						const ratings = p.ratings.at(-1) as PlayerRatings;
 						return ratings.tp;
 					},
@@ -452,12 +452,12 @@ const create = async (conditions: Conditions) => {
 
 			const shootersRatings = orderBy(
 				activePlayers.filter(
-					p => p.injury.gamesRemaining === 0 && !shootersStats.includes(p),
+					(p) => p.injury.gamesRemaining === 0 && !shootersStats.includes(p),
 				),
 				[
 					// Include last year's winner here too
-					p => (p.pid === prevWinnerThree ? 1 : 0),
-					p => {
+					(p) => (p.pid === prevWinnerThree ? 1 : 0),
+					(p) => {
 						const ratings = p.ratings.at(-1) as PlayerRatings;
 						return ratings.tp;
 					},
@@ -465,7 +465,7 @@ const create = async (conditions: Conditions) => {
 				["desc", "desc"],
 			).slice(0, numRatings);
 
-			const shooters = [...shootersStats, ...shootersRatings].map(p => ({
+			const shooters = [...shootersStats, ...shootersRatings].map((p) => ({
 				pid: p.pid,
 				tid: p.tid,
 				name: `${p.firstName} ${p.lastName}`,

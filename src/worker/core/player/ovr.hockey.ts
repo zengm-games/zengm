@@ -54,7 +54,7 @@ const info = {
 const bonuses: Partial<Record<Position, (a: PlayerRatings) => number>> = {
 	C: () => 5,
 	W: () => 2,
-	G: ratings => -0.2 * ratings.glk,
+	G: (ratings) => -0.2 * ratings.glk,
 };
 
 const ovr = (ratings: PlayerRatings, pos?: Position): number => {

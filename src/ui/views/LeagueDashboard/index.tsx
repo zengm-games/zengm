@@ -125,7 +125,7 @@ const LeagueDashboard = ({
 										<>
 											<table className="table table-sm messages-table">
 												<tbody>
-													{messages.map(m => (
+													{messages.map((m) => (
 														<tr
 															key={m.mid}
 															className={m.read ? undefined : "fw-bold"}

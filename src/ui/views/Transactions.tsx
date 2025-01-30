@@ -40,7 +40,7 @@ const Transactions = ({
 			{moreLinks}
 
 			<ul className="list-group">
-				{events.map(e => (
+				{events.map((e) => (
 					<li key={e.eid} className="list-group-item">
 						<SafeHtml dirty={e.text} />
 					</li>

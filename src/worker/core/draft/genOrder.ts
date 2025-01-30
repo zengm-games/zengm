@@ -122,7 +122,7 @@ const getLotteryInfo = (draftType: DraftType, numLotteryTeams: number) => {
 
 const draftHasLottery = (
 	draftType: any,
-): draftType is typeof LOTTERY_DRAFT_TYPES[number] => {
+): draftType is (typeof LOTTERY_DRAFT_TYPES)[number] => {
 	return LOTTERY_DRAFT_TYPES.includes(draftType);
 };
 
@@ -177,9 +177,8 @@ const genOrder = async (
 		draftPicksIndexed[tid][dp.round] = dp;
 	}
 
-	const { allTeams, teamsByRound, ties } = await getTeamsByRound(
-		draftPicksIndexed,
-	);
+	const { allTeams, teamsByRound, ties } =
+		await getTeamsByRound(draftPicksIndexed);
 	const firstRoundTeams = teamsByRound[0] ?? [];
 
 	const draftType = draftTypeOverride ?? g.get("draftType");
@@ -228,13 +227,13 @@ const genOrder = async (
 		}
 
 		const chanceTotal = chances.reduce((a, b) => a + b, 0);
-		const chancePct = chances.map(c => (c / chanceTotal) * 100);
+		const chancePct = chances.map((c) => (c / chanceTotal) * 100);
 
 		// Idenfity chances indexes protected by riggedLottery, and set to 0 in chancesCumsum
 		const riggedLotteryIndexes = riggedLottery
-			? riggedLottery.map(dpid => {
+			? riggedLottery.map((dpid) => {
 					if (typeof dpid === "number") {
-						const originalTid = draftPicks.find(dp => {
+						const originalTid = draftPicks.find((dp) => {
 							return dp.dpid === dpid;
 						})?.originalTid;
 						if (originalTid !== undefined) {
@@ -248,7 +247,7 @@ const genOrder = async (
 					}
 
 					return null;
-			  })
+				})
 			: undefined;
 
 		const chancesCumsum = chances.slice();
@@ -277,7 +276,7 @@ const genOrder = async (
 			}
 
 			const draw = random.randInt(0, totalChances - 1);
-			const i = chancesCumsum.findIndex(chance => chance > draw);
+			const i = chancesCumsum.findIndex((chance) => chance > draw);
 
 			if (
 				!firstN.includes(i) &&
@@ -371,7 +370,7 @@ const genOrder = async (
 			rigged: riggedLottery,
 			result: firstRoundTeams // Start with teams in lottery order
 				.map(({ tid }) => {
-					return draftPicks.find(dp => {
+					return draftPicks.find((dp) => {
 						// Keep only lottery picks
 						return (
 							dp.originalTid === tid &&
@@ -381,14 +380,14 @@ const genOrder = async (
 						);
 					});
 				})
-				.filter(dp => dp !== undefined) // Keep only lottery picks
-				.map(dp => {
+				.filter((dp) => dp !== undefined) // Keep only lottery picks
+				.map((dp) => {
 					if (dp === undefined) {
 						throw new Error("Should never happen");
 					}
 
 					// For the team making the pick
-					const t = allTeams.find(t2 => t2.tid === dp.tid);
+					const t = allTeams.find((t2) => t2.tid === dp.tid);
 					let won = 0;
 					let lost = 0;
 					let otl = 0;
@@ -407,7 +406,9 @@ const genOrder = async (
 					}
 
 					// For the original team
-					const i = firstRoundTeams.findIndex(t2 => t2.tid === dp.originalTid);
+					const i = firstRoundTeams.findIndex(
+						(t2) => t2.tid === dp.originalTid,
+					);
 					return {
 						tid: dp.tid,
 						originalTid: dp.originalTid,
@@ -441,10 +442,10 @@ const genOrder = async (
 			for (const { rounds, teams } of Object.values(ties)) {
 				if (rounds.includes(round)) {
 					// From getTeamsByRound, teams is guaranteed to be a continuous section of roundTeams, so we can just figure out the correct order for them and then replace them in roundTeam
-					const start = roundTeams.findIndex(t => teams.includes(t));
+					const start = roundTeams.findIndex((t) => teams.includes(t));
 					const length = teams.length;
 
-					const firstRoundOrder = firstRoundOrderAfterLottery.filter(t =>
+					const firstRoundOrder = firstRoundOrderAfterLottery.filter((t) =>
 						teams.includes(t),
 					);
 

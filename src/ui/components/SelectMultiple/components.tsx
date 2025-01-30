@@ -68,7 +68,7 @@ export const CustomMenuList = <T extends unknown>({
 						position: "relative",
 					}}
 				>
-					{rowVirtualizer.getVirtualItems().map(virtualItem => (
+					{rowVirtualizer.getVirtualItems().map((virtualItem) => (
 						<div
 							key={virtualItem.key}
 							style={{

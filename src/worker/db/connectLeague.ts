@@ -1403,7 +1403,7 @@ const migrate = async ({
 					},
 				];
 			} else {
-				maxOvertimes = ties.map(row => {
+				maxOvertimes = ties.map((row) => {
 					return {
 						start: row.start,
 						value: row.value ? 1 : null,
@@ -1430,7 +1430,7 @@ const migrate = async ({
 		for await (const cursor of transaction.objectStore("playerFeats")) {
 			const feat = cursor.value;
 
-			const pts = feat.score.split("-").map(x => Number.parseInt(x));
+			const pts = feat.score.split("-").map((x) => Number.parseInt(x));
 			let diff = -Infinity;
 			if (!Number.isNaN(pts[0]) && !Number.isNaN(pts[1])) {
 				diff = pts[0] - pts[1];

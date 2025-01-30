@@ -80,7 +80,7 @@ const maxRatingDists = async (numPlayers: number = 100) => {
 			ages[key][q3],
 			ages[key][ratings[key].length - 1],
 		];
-		const num100s = ratings[key].filter(x => x === 100).length;
+		const num100s = ratings[key].filter((x) => x === 100).length;
 		console.log(`${key}:`);
 		console.log(`Max ratings: ${JSON.stringify(ranges)}`);
 		console.log(`Ages of max ratings: ${JSON.stringify(ageRanges)}`);

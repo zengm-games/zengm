@@ -95,7 +95,7 @@ const formatRunners = (
 	} = {},
 ) => {
 	const filtered = runners.filter(
-		runner => runner.to !== runner.from || !ignoreStationary,
+		(runner) => runner.to !== runner.from || !ignoreStationary,
 	);
 
 	// Show most important runner (furthest along the bases) first
@@ -343,7 +343,7 @@ export const getText = (
 			let runnersText;
 			if (
 				event.outs === NUM_OUTS_PER_INNING &&
-				event.runners.every(runner => !runner.out) &&
+				event.runners.every((runner) => !runner.out) &&
 				!event.outAtNextBase
 			) {
 				// If there are 3 outs and no runner is out, then the hitter was out, in which case we don't need any runnersText
@@ -650,7 +650,7 @@ const processLiveGameEvents = ({
 
 					// Purposely don't update batterPid, because injury only happens after an at bat, so they'll be replaced in bases
 
-					sportState.bases = sportState.bases.map(base => {
+					sportState.bases = sportState.bases.map((base) => {
 						if (base === e.pid) {
 							return e.replacementPid;
 						}

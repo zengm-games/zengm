@@ -67,14 +67,14 @@ const LeagueMenu = <Value extends string>({
 					</label>
 					<NextPrevButtons
 						currentItem={value}
-						items={values.map(value => value.key).reverse()}
-						onChange={async newValue => {
+						items={values.map((value) => value.key).reverse()}
+						onChange={async (newValue) => {
 							await handleNewValue(newValue, value2);
 						}}
 					/>
 				</div>
 				{quickValues
-					? quickValues.map(key => (
+					? quickValues.map((key) => (
 							<button
 								key={key}
 								type="button"
@@ -84,7 +84,7 @@ const LeagueMenu = <Value extends string>({
 									handleNewValue(key, value2);
 								}}
 							>
-								{values.find(v => v.key === key)!.value}
+								{values.find((v) => v.key === key)!.value}
 							</button>
 						))
 					: null}
@@ -94,7 +94,7 @@ const LeagueMenu = <Value extends string>({
 					id="new-league-season"
 					className="form-select"
 					value={value}
-					onChange={async event => {
+					onChange={async (event) => {
 						await handleNewValue(
 							event.target.value as unknown as Value,
 							value2,
@@ -112,7 +112,7 @@ const LeagueMenu = <Value extends string>({
 				{value2 !== undefined && values2 && onNewValue2 ? (
 					<select
 						className="form-select"
-						onChange={event => {
+						onChange={(event) => {
 							const value2 = Number.parseInt(event.target.value);
 							onNewValue2(value2);
 							handleNewValue(value, value2);
@@ -130,11 +130,11 @@ const LeagueMenu = <Value extends string>({
 					className="btn btn-light-bordered"
 					type="button"
 					onClick={() => {
-						const keys = values.map(v => v.key);
+						const keys = values.map((v) => v.key);
 						const random = keys[Math.floor(Math.random() * keys.length)];
 
 						if (value2 !== undefined && values2 && onNewValue2) {
-							const keys2 = values2.map(v => v.key);
+							const keys2 = values2.map((v) => v.key);
 							const random2 = keys2[Math.floor(Math.random() * keys2.length)];
 							onNewValue2(random2);
 						}

@@ -13,13 +13,13 @@ const getOffers = async (seed: number) => {
 	const userTid = g.get("userTid");
 
 	const teams = (await idb.cache.teams.getAll()).filter(
-		t => !t.disabled && t.tid !== userTid,
+		(t) => !t.disabled && t.tid !== userTid,
 	);
 	random.shuffle(teams, seed);
 
 	const players = (
 		await idb.cache.players.indexGetAll("playersByTid", userTid)
-	).filter(p => !isUntradable(p).untradable);
+	).filter((p) => !isUntradable(p).untradable);
 	const draftPicks = await idb.cache.draftPicks.indexGetAll(
 		"draftPicksByTid",
 		userTid,
@@ -42,11 +42,11 @@ const getOffers = async (seed: number) => {
 
 			if ((r < 0.7 || draftPicks.length === 0) && players.length > 0) {
 				// Weight by player value - good player more likely to be in trade
-				pids.push(random.choice(players, p => p.value, seedBase + 1).pid);
+				pids.push(random.choice(players, (p) => p.value, seedBase + 1).pid);
 			} else if ((r < 0.85 || players.length === 0) && draftPicks.length > 0) {
 				dpids.push(random.choice(draftPicks, undefined, seedBase + 2).dpid);
 			} else {
-				pids.push(random.choice(players, p => p.value, seedBase + 3).pid);
+				pids.push(random.choice(players, (p) => p.value, seedBase + 3).pid);
 				dpids.push(random.choice(draftPicks, undefined, seedBase + 4).dpid);
 			}
 
@@ -114,7 +114,7 @@ export const fixPlayers = (
 ) => {
 	const t = offer.summary.teams[summaryTeamsIndex];
 	for (const p of t.trade) {
-		const p2 = playersWithStats.find(p2 => p2.pid === p.pid);
+		const p2 = playersWithStats.find((p2) => p2.pid === p.pid);
 		p.stats = p2.stats;
 		p.ratings = p2.ratings;
 		p.age = p2.age;

@@ -37,7 +37,7 @@ const SkillsBlock = ({
 	numSkillsBeforeTruncate?: number;
 	skills?: string[];
 }) => {
-	const fullNames = useLocal(state => state.fullNames);
+	const fullNames = useLocal((state) => state.fullNames);
 
 	if (skills === undefined) {
 		return null;
@@ -53,7 +53,7 @@ const SkillsBlock = ({
 
 	return (
 		<span className={className}>
-			{truncatedSkills.map(skill => (
+			{truncatedSkills.map((skill) => (
 				<span key={skill} className="skill" title={SKILLS[skill]}>
 					{skill}
 				</span>

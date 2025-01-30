@@ -144,7 +144,7 @@ const CustomizeColumns = ({
 }) => {
 	const stickyColsOptions = [0, 1, 2, 3] as StickyCols[];
 
-	const ids = colOrder.map(col => String(col.colIndex));
+	const ids = colOrder.map((col) => String(col.colIndex));
 
 	return (
 		<Modal animation={false} centered show={show} onHide={onHide}>
@@ -153,7 +153,7 @@ const CustomizeColumns = ({
 				<div className="d-flex mb-3 align-items-center">
 					<div>Number of sticky columns:</div>
 					<div className="btn-group ms-2">
-						{stickyColsOptions.map(i => (
+						{stickyColsOptions.map((i) => (
 							<button
 								key={i}
 								className={`btn ${
@@ -179,7 +179,7 @@ const CustomizeColumns = ({
 					</p>
 				) : null}
 				<DndContext
-					onDragEnd={event => {
+					onDragEnd={(event) => {
 						if (hasSuperCols) {
 							return;
 						}

@@ -44,7 +44,7 @@ const TeamNotes = ({
 		},
 	});
 
-	const rows = teams.map(t => {
+	const rows = teams.map((t) => {
 		const roundsWonText = helpers.roundsWonText(
 			t.playoffRoundsWon,
 			t.numPlayoffRounds,

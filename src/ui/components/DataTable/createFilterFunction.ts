@@ -120,9 +120,9 @@ const createFilterFunction = (
 
 	const filters = originalFilterText
 		.split(orOrAnd)
-		.map(text => text.trim())
-		.filter(text => text !== "")
-		.map(text => {
+		.map((text) => text.trim())
+		.filter((text) => text !== "")
+		.map((text) => {
 			let direction: Direction;
 			let number;
 

@@ -66,7 +66,7 @@ const autoSign = async () => {
 		const p = getBest(playersOnRoster, playersSorted, payroll);
 		if (p) {
 			// Remove from list of free agents
-			playersSorted = playersSorted.filter(p2 => p2 !== p);
+			playersSorted = playersSorted.filter((p2) => p2 !== p);
 
 			await player.sign(p, t.tid, p.contract, g.get("phase"));
 			await idb.cache.players.put(p);

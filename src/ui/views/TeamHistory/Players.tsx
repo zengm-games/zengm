@@ -52,7 +52,7 @@ const Players = ({
 		[
 			"Name",
 			"Pos",
-			...stats.map(stat => `stat:${stat}`),
+			...stats.map((stat) => `stat:${stat}`),
 			"Titles",
 			"Last Season",
 			"Actions",
@@ -67,7 +67,7 @@ const Players = ({
 		cols.pop();
 	}
 
-	const rows: DataTableRow[] = players.map(p => {
+	const rows: DataTableRow[] = players.map((p) => {
 		const canRetireJerseyNumber =
 			!!p.retirableJerseyNumbers &&
 			Object.keys(p.retirableJerseyNumbers).length > 0 &&
@@ -92,7 +92,7 @@ const Players = ({
 					lastName: p.lastName,
 				}),
 				p.pos,
-				...stats.map(stat => helpers.roundStat(p.careerStats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.careerStats[stat], stat)),
 				p.numRings,
 				p.lastYr,
 				...(includeRetireJerseyButton

@@ -18,7 +18,7 @@ const GOATFormula = ({
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [submitting, setSubmitting] = useState(false);
 
-	const cols = getCols(stats.map(stat => `stat:${stat}`));
+	const cols = getCols(stats.map((stat) => `stat:${stat}`));
 
 	const exampleStat = bySport({
 		baseball: "hr",
@@ -31,7 +31,7 @@ const GOATFormula = ({
 		<div className="row">
 			<form
 				className="col-md-6 mb-3"
-				onSubmit={async event => {
+				onSubmit={async (event) => {
 					event.preventDefault();
 
 					setErrorMessage(undefined);
@@ -57,7 +57,7 @@ const GOATFormula = ({
 						id="goat-formula"
 						rows={5}
 						value={goatFormula}
-						onChange={event => {
+						onChange={(event) => {
 							setGoatFormula(event.target.value);
 						}}
 					/>

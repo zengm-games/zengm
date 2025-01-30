@@ -60,7 +60,7 @@ const CustomMoodItemsForm = ({
 	for (let tid = 0; tid < teamInfoCache.length; tid++) {
 		tidsByAbbrev[teamInfoCache[tid].abbrev] = tid;
 	}
-	const teams = teamsRaw.map(t => {
+	const teams = teamsRaw.map((t) => {
 		let tid: number | "all";
 		if (t.key === "all") {
 			tid = "all";
@@ -83,7 +83,7 @@ const CustomMoodItemsForm = ({
 							{i === 0 ? <label className="form-label">Amount</label> : null}
 							<input
 								className="form-control"
-								onChange={event => {
+								onChange={(event) => {
 									handleCustomMoodItemsChange(i, "amount", event.target.value);
 								}}
 								type="text"
@@ -96,7 +96,7 @@ const CustomMoodItemsForm = ({
 							{i === 0 ? <label className="form-label">Text</label> : null}
 							<input
 								className="form-control"
-								onChange={event => {
+								onChange={(event) => {
 									handleCustomMoodItemsChange(i, "text", event.target.value);
 								}}
 								type="text"
@@ -108,7 +108,7 @@ const CustomMoodItemsForm = ({
 							{i === 0 ? <label className="form-label">Team</label> : null}
 							<select
 								className="form-select"
-								onChange={event => {
+								onChange={(event) => {
 									let tid;
 									if (event.target.value === "all") {
 										tid = undefined;
@@ -120,7 +120,7 @@ const CustomMoodItemsForm = ({
 								value={tid ?? "all"}
 								disabled={!godMode}
 							>
-								{teams.map(t => {
+								{teams.map((t) => {
 									return (
 										<option key={t.tid} value={t.tid}>
 											{Array.isArray(t.value) ? t.value[0].text : t.value}

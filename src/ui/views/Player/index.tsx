@@ -73,7 +73,7 @@ const StatsTable = ({
 		return null;
 	}
 
-	let playerStats = p.stats.filter(ps => ps.playoffs === playoffs);
+	let playerStats = p.stats.filter((ps) => ps.playoffs === playoffs);
 	const careerStats =
 		playoffs === "combined"
 			? p.careerStatsCombined
@@ -103,7 +103,7 @@ const StatsTable = ({
 		"Year",
 		"Team",
 		"Age",
-		...stats.map(stat =>
+		...stats.map((stat) =>
 			stat === "pos"
 				? "Pos"
 				: `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
@@ -138,14 +138,14 @@ const StatsTable = ({
 			i === 0 ? "Career" : null,
 			null,
 			null,
-			...stats.map(stat => formatStatGameHigh(object, stat)),
+			...stats.map((stat) => formatStatGameHigh(object, stat)),
 		]);
 	} else {
 		footer = [
 			"Career",
 			null,
 			null,
-			...stats.map(stat => formatStatGameHigh(careerStats, stat)),
+			...stats.map((stat) => formatStatGameHigh(careerStats, stat)),
 		];
 	}
 
@@ -236,7 +236,7 @@ const StatsTable = ({
 				<MaybeBold bold={leaders[ps.season]?.attrs.has("age")}>
 					{ps.age}
 				</MaybeBold>,
-				...stats.map(stat => (
+				...stats.map((stat) => (
 					<MaybeBold
 						bold={!ps.hasTot && leaders[ps.season]?.[leadersType].has(stat)}
 					>
@@ -371,7 +371,7 @@ const Player2 = ({
 						playerProfile: "overview",
 					}
 				: undefined,
-		dropdownCustomURL: fields => {
+		dropdownCustomURL: (fields) => {
 			let gameLogSeason;
 			if (player.stats.length > 0) {
 				gameLogSeason = player.stats.at(-1)!.season;
@@ -452,7 +452,7 @@ const Player2 = ({
 						"Pos",
 						"Ovr",
 						"Pot",
-						...ratings.map(rating => `rating:${rating}`),
+						...ratings.map((rating) => `rating:${rating}`),
 						"Skills",
 					])}
 					defaultSort={[0, "asc"]}
@@ -501,7 +501,7 @@ const Player2 = ({
 										{r.pot}
 									</MaybeBold>
 								) : null,
-								...ratings.map(rating =>
+								...ratings.map((rating) =>
 									showRatings ? (
 										<MaybeBold bold={leaders[r.season]?.ratings.has(rating)}>
 											{(r as any)[rating]}
@@ -582,7 +582,7 @@ const Player2 = ({
 								overflowY: "auto",
 							}}
 						>
-							{feats.map(e => {
+							{feats.map((e) => {
 								return (
 									<p key={e.eid}>
 										<b>{e.season}</b>: <SafeHtml dirty={e.text} />
@@ -603,7 +603,7 @@ const Player2 = ({
 				</div>
 				<div className="col-md-6 col-lg-8">
 					<HideableSection title="Transactions">
-						{events.map(e => {
+						{events.map((e) => {
 							return (
 								<p key={e.eid}>
 									<b>{e.season}</b>: <SafeHtml dirty={e.text} />

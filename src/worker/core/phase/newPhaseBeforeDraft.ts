@@ -40,7 +40,7 @@ const upcomingScheduledEventBlocksInflation = async () => {
 		undefined,
 		"noCopyCache",
 	);
-	return scheduledEvents.some(event => {
+	return scheduledEvents.some((event) => {
 		if (event.type === "gameAttributes") {
 			for (const key of INFLATION_GAME_ATTRIBUTES) {
 				if (Object.hasOwn(event.info, key)) {
@@ -338,7 +338,7 @@ const newPhaseBeforeDraft = async (
 
 	// Give award to all players on the championship team
 	const t = teams.find(
-		t2 =>
+		(t2) =>
 			t2.seasonAttrs.playoffRoundsWon ===
 			g.get("numGamesPlayoffSeries", "current").length,
 	);
@@ -481,7 +481,7 @@ const newPhaseBeforeDraft = async (
 			const tid = Number.parseInt(tidString);
 			const text = retiredPlayers
 				.map(
-					p =>
+					(p) =>
 						`<a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${
 							p.lastName
 						}</a> retired.`,
@@ -492,7 +492,7 @@ const newPhaseBeforeDraft = async (
 					type: "retiredList",
 					text,
 					showNotification: tid === g.get("userTid"),
-					pids: retiredPlayers.map(p => p.pid),
+					pids: retiredPlayers.map((p) => p.pid),
 					tids: [tid],
 					saveToDb: false,
 				},

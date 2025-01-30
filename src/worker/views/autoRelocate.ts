@@ -28,8 +28,8 @@ const getRealignInfo = (
 	const divs = g.get("divs");
 
 	for (const t of teams) {
-		const confIndex = confs.findIndex(conf => conf.cid === t.cid);
-		const divIndex = divs.findIndex(div => div.did === t.did);
+		const confIndex = confs.findIndex((conf) => conf.cid === t.cid);
+		const divIndex = divs.findIndex((div) => div.did === t.did);
 
 		if (!current[confIndex]) {
 			current[confIndex] = [];
@@ -50,7 +50,7 @@ const getRealignInfo = (
 	// Add any empty divs
 	for (let divIndex = 0; divIndex < divs.length; divIndex++) {
 		const div = divs[divIndex];
-		const confIndex = confs.findIndex(conf => conf.cid === div.cid);
+		const confIndex = confs.findIndex((conf) => conf.cid === div.cid);
 
 		if (!current[confIndex]) {
 			current[confIndex] = [];
@@ -63,8 +63,8 @@ const getRealignInfo = (
 	// Indexed on divIndex, so there are gaps unless we filter out undefined. Then it's no longer indexed by divIndex but that's fine.
 	for (let confIndex = 0; confIndex < current.length; confIndex++) {
 		current[confIndex] = current[confIndex]
-			.filter(row => row !== undefined)
-			.map(row => orderBy(row, ["region", "name"]));
+			.filter((row) => row !== undefined)
+			.map((row) => orderBy(row, ["region", "name"]));
 	}
 
 	return current;
@@ -107,7 +107,7 @@ const updateRelocate = async (inputs: void, updateEvents: UpdateEvents) => {
 			},
 		])[0];
 
-		const teams = (await idb.cache.teams.getAll()).filter(t => !t.disabled);
+		const teams = (await idb.cache.teams.getAll()).filter((t) => !t.disabled);
 
 		let realignInfo:
 			| undefined
@@ -119,7 +119,7 @@ const updateRelocate = async (inputs: void, updateEvents: UpdateEvents) => {
 			// Old version would try to realign disabled teams and then crash, so check for that
 			const invalidRealign = autoRelocate.realigned
 				.flat()
-				.some(tid => !teams.some(t => t.tid === tid));
+				.some((tid) => !teams.some((t) => t.tid === tid));
 			if (!invalidRealign) {
 				const current = getRealignInfo(teams, newTeam);
 				const realigned: typeof current = [];
@@ -131,17 +131,17 @@ const updateRelocate = async (inputs: void, updateEvents: UpdateEvents) => {
 					const div = divs[i];
 					const tids = autoRelocate.realigned[i];
 					if (tids) {
-						const confIndex = confs.findIndex(conf => conf.cid === div.cid);
+						const confIndex = confs.findIndex((conf) => conf.cid === div.cid);
 						if (!realigned[confIndex]) {
 							realigned[confIndex] = [];
 						}
 						realigned[confIndex].push(
 							orderBy(
-								tids.map(tid => {
+								tids.map((tid) => {
 									const t =
 										tid === newTeam.tid
 											? newTeam
-											: teams.find(t => t.tid === tid)!;
+											: teams.find((t) => t.tid === tid)!;
 									return {
 										tid,
 										region: t.region,

@@ -24,7 +24,7 @@ const useClickable = () => {
 			return;
 		}
 
-		setClicked(prevClicked => !prevClicked);
+		setClicked((prevClicked) => !prevClicked);
 	}, []);
 
 	return {

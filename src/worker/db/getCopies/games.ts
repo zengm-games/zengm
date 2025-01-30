@@ -16,7 +16,7 @@ const getCopies = async (
 				idb.league.transaction("games").store.index("season"),
 				season,
 			),
-			(await idb.cache.games.getAll()).filter(gm => {
+			(await idb.cache.games.getAll()).filter((gm) => {
 				return gm.season === season;
 			}),
 			"games",

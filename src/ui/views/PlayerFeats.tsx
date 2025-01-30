@@ -24,14 +24,14 @@ const PlayerFeats = ({
 		"Name",
 		"Pos",
 		"Team",
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
 		"Opp",
 		"Result",
 		"Season",
 		"Type",
 	]);
 
-	const rows: DataTableRow[] = feats.map(p => {
+	const rows: DataTableRow[] = feats.map((p) => {
 		const result = `${p.result} ${p.score}`;
 
 		return {
@@ -54,7 +54,7 @@ const PlayerFeats = ({
 				>
 					{p.abbrev}
 				</a>,
-				...stats.map(stat => helpers.roundStat(p.stats[stat], stat, true)),
+				...stats.map((stat) => helpers.roundStat(p.stats[stat], stat, true)),
 				<a
 					href={helpers.leagueUrl([
 						"roster",

@@ -52,11 +52,11 @@ const PlayerRatings = ({
 		"Exp",
 		"Ovr",
 		"Pot",
-		...ratings.map(rating => `rating:${rating}`),
+		...ratings.map((rating) => `rating:${rating}`),
 		...ovrsPotsColNames,
 	]);
 
-	const rows: DataTableRow[] = players.map(p => {
+	const rows: DataTableRow[] = players.map((p) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 
 		const ovrsPotsRatings: string[] = [];
@@ -114,7 +114,7 @@ const PlayerRatings = ({
 					: null,
 				showRatings ? p.ratings.ovr : null,
 				showRatings ? p.ratings.pot : null,
-				...ratings.map(rating => (showRatings ? p.ratings[rating] : null)),
+				...ratings.map((rating) => (showRatings ? p.ratings[rating] : null)),
 				...ovrsPotsRatings,
 			],
 			classNames: {

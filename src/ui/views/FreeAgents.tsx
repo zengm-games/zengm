@@ -37,7 +37,7 @@ const useSeasonsFreeAgents = () => {
 	const options: DropdownOption[] = range(
 		minFreeAgencySeason,
 		maxFreeAgencySeason + 1,
-	).map(freeAgencySeason => {
+	).map((freeAgencySeason) => {
 		let value;
 		if (freeAgencySeason >= -10 && freeAgencySeason < 10) {
 			value = `${freeAgencySeason}-${freeAgencySeason + 1}`;
@@ -176,7 +176,7 @@ const FreeAgents = ({
 		"Age",
 		"Ovr",
 		"Pot",
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
 		"Mood",
 		"Asking For",
 		"Exp",
@@ -187,7 +187,7 @@ const FreeAgents = ({
 		freeAgencySeason +
 		(season === "current" && phase < PHASE.FREE_AGENCY ? 1 : 0);
 
-	const rows: DataTableRow[] = players.map(p => {
+	const rows: DataTableRow[] = players.map((p) => {
 		return {
 			key: p.pid,
 			metadata: {
@@ -212,7 +212,7 @@ const FreeAgents = ({
 				p.age,
 				!challengeNoRatings ? p.ratings.ovr : null,
 				!challengeNoRatings ? p.ratings.pot : null,
-				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.stats[stat], stat)),
 				p.freeAgentType === "available"
 					? dataTableWrappedMood({
 							defaultType: "user",

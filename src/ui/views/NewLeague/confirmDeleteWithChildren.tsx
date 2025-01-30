@@ -43,7 +43,7 @@ const Confirm = confirmable<
 				{text}
 				<form
 					className="mt-3"
-					onSubmit={event => {
+					onSubmit={(event) => {
 						event.preventDefault();
 						ok();
 					}}
@@ -52,7 +52,7 @@ const Confirm = confirmable<
 						ref={selectRef}
 						className="form-select"
 						value={controlledValue}
-						onChange={event => {
+						onChange={(event) => {
 							const value = event.target.value;
 							setControlledValue(
 								value === "delete" ? undefined : Number.parseInt(value),

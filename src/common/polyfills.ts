@@ -27,8 +27,8 @@ if (POLYFILL_STREAMS) {
 		PolyfillTransformStream as any,
 	) as any;
 } else {
-	toPolyfillReadable = x => x;
-	toPolyfillTransform = x => x;
+	toPolyfillReadable = (x) => x;
+	toPolyfillTransform = (x) => x;
 }
 
 // Chrome 76, Safari 14.1
@@ -42,11 +42,11 @@ if (!Blob.prototype.stream) {
 
 		return new ReadableStream({
 			pull(controller) {
-				return new Promise(resolve => {
+				return new Promise((resolve) => {
 					if (offset < blob.size) {
 						const blobChunk = blob.slice(offset, offset + chunkSize);
 						const reader = new FileReader();
-						reader.onload = event => {
+						reader.onload = (event) => {
 							controller.enqueue((event.currentTarget as any).result);
 							offset += chunkSize;
 							if (offset >= blob.size) {

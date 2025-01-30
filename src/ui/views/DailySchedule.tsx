@@ -34,7 +34,7 @@ const DailySchedule = ({
 
 	let simToDay = null;
 	if (upcoming.length > 0 && !isToday) {
-		const minGid = Math.min(...upcoming.map(game => game.gid));
+		const minGid = Math.min(...upcoming.map((game) => game.gid));
 		simToDay = (
 			<div className="mb-3">
 				<button
@@ -85,7 +85,7 @@ const DailySchedule = ({
 						<>
 							{upcomingAndCompleted ? <h2>Upcoming Games</h2> : null}
 							<div className="d-flex flex-wrap" style={{ gap: "1rem 2rem" }}>
-								{upcoming.map(game => {
+								{upcoming.map((game) => {
 									const actions =
 										isToday && !tradeDeadline
 											? [
@@ -167,7 +167,7 @@ const DailySchedule = ({
 							) : null}
 
 							<div className="d-flex flex-wrap" style={{ gap: "1rem 2rem" }}>
-								{completed.map(game => {
+								{completed.map((game) => {
 									return (
 										<div
 											className="flex-grow-1"

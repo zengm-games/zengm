@@ -36,16 +36,18 @@ const getDepthPlayers = <
 
 			// @ts-expect-error
 			obj[pos] = (depth[pos] as number[])
-				.map(pid => players.find(p => p.pid === pid || (p as any).id === pid))
+				.map((pid) =>
+					players.find((p) => p.pid === pid || (p as any).id === pid),
+				)
 				.concat(
-					players.map(p =>
+					players.map((p) =>
 						(depth as any)[pos].includes(p.pid) ||
 						(depth as any)[pos].includes((p as any).id)
 							? undefined
 							: p,
 					),
 				)
-				.filter(p => p !== undefined);
+				.filter((p) => p !== undefined);
 
 			// Break referential integrity between D and DP, otherwise linupIndex and lineupPos get overwritten. But do it for the one we're not interested in, based on DH setting. This is needed for game sim to record stuff correctly.
 			if (
@@ -53,7 +55,7 @@ const getDepthPlayers = <
 				((dh && pos === "DP") || (!dh && pos === "D"))
 			) {
 				// @ts-expect-error
-				obj[pos] = obj[pos].map(p => ({ ...p }));
+				obj[pos] = obj[pos].map((p) => ({ ...p }));
 			}
 
 			return obj;
@@ -81,7 +83,7 @@ const getDepthPlayers = <
 
 			let dummyID = -1;
 			// @ts-expect-error
-			depths[key] = lineup.map(i => {
+			depths[key] = lineup.map((i) => {
 				if (i === -1) {
 					return {
 						pid: -1,

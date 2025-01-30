@@ -7,7 +7,7 @@
 "use strict";
 
 // To define types some day: https://github.com/babel/babel/issues/10637
-export const babelPluginSportFunctions = babel => {
+export const babelPluginSportFunctions = (babel) => {
 	const t = babel.types;
 
 	const PROCESS_ENV_SPORT = t.memberExpression(
@@ -15,7 +15,7 @@ export const babelPluginSportFunctions = babel => {
 		t.identifier("SPORT"),
 	);
 
-	const getObjectKey = property => {
+	const getObjectKey = (property) => {
 		if (property.key.type === "Identifier") {
 			return t.stringLiteral(property.key.name);
 		}
@@ -30,7 +30,7 @@ export const babelPluginSportFunctions = babel => {
 	return {
 		visitor: {
 			CallExpression: {
-				exit: path => {
+				exit: (path) => {
 					const node = path.node;
 
 					if (path.get("callee").isIdentifier({ name: "isSport" })) {
@@ -78,10 +78,10 @@ export const babelPluginSportFunctions = babel => {
 
 						const properties = node.arguments[0].properties;
 						const sportProperties = properties
-							.filter(property => property.key.name !== "default")
+							.filter((property) => property.key.name !== "default")
 							.reverse();
 						const defaultProperty = properties.find(
-							property => property.key.name === "default",
+							(property) => property.key.name === "default",
 						);
 
 						if (sportProperties.length === 0) {

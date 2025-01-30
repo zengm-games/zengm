@@ -17,14 +17,14 @@ const getDaysLeftSchedule = async (
 
 			let game;
 			if (typeof target === "number") {
-				game = schedule.find(game => game.gid === target);
+				game = schedule.find((game) => game.gid === target);
 			} else if (target === "allStarGame") {
 				game = schedule.find(
-					game => game.awayTid === -2 && game.homeTid === -1,
+					(game) => game.awayTid === -2 && game.homeTid === -1,
 				);
 			} else if (target === "tradeDeadline") {
 				game = schedule.find(
-					game => game.awayTid === -3 && game.homeTid === -3,
+					(game) => game.awayTid === -3 && game.homeTid === -3,
 				);
 			}
 

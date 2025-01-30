@@ -46,7 +46,7 @@ const NegotiationList = ({
 		"Age",
 		"Ovr",
 		"Pot",
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
 		"Acquired",
 		"Mood",
 		"Asking For",
@@ -54,7 +54,7 @@ const NegotiationList = ({
 		"Negotiate",
 	]);
 
-	const rows: DataTableRow[] = players.map(p => {
+	const rows: DataTableRow[] = players.map((p) => {
 		const negotiateButtons = (
 			<NegotiateButtons
 				canGoOverCap={salaryCapType === "none" || salaryCapType === "soft"}
@@ -89,7 +89,7 @@ const NegotiationList = ({
 				p.age,
 				!challengeNoRatings ? p.ratings.ovr : null,
 				!challengeNoRatings ? p.ratings.pot : null,
-				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.stats[stat], stat)),
 				{
 					value: <SafeHtml dirty={p.latestTransaction} />,
 					searchValue: p.latestTransaction,
@@ -125,7 +125,7 @@ const NegotiationList = ({
 		};
 	});
 
-	const hasRookies = players.some(p => p.contract.rookie);
+	const hasRookies = players.some((p) => p.contract.rookie);
 
 	return (
 		<>

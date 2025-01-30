@@ -207,7 +207,7 @@ export const SortableContextWrappers = ({
 		[clickedIndex, draggedIndex, highlightHandle, renderRow, rows, tableRef],
 	);
 
-	const ids = rows.map(row => getId(row));
+	const ids = rows.map((row) => getId(row));
 
 	// If I use the default sensor (pointer rather than mouse+touch) everything works (as long as you put touch-action-none on the handle)... except on iOS for some reason it sometimes only fires click events rather than pointer events. This seems to happen for roughly the bottom 2/3 of rows in the table. No idea why.
 	const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
@@ -215,14 +215,14 @@ export const SortableContextWrappers = ({
 	return (
 		<DndContext
 			sensors={sensors}
-			onDragStart={event => {
+			onDragStart={(event) => {
 				const index = ids.indexOf(event.active.id as string);
 				setDraggedIndex(index);
 
 				clicked.current.index = index;
 				clicked.current.start = Date.now();
 			}}
-			onDragEnd={event => {
+			onDragEnd={(event) => {
 				setDraggedIndex(undefined);
 				const oldId = event.active.id as string;
 				const newId = event.over?.id as string | undefined;
@@ -259,7 +259,7 @@ export const SortableContextWrappers = ({
 					setClickedIndex(undefined);
 				}
 			}}
-			onDragOver={event => {
+			onDragOver={(event) => {
 				const oldId = event.active.id as string;
 				const newId = event.over?.id as string | undefined;
 				if (newId !== undefined && oldId !== newId) {

@@ -120,7 +120,7 @@ const play = async (
 			await writePlayerStats(results, conditions);
 
 		const gidsFinished = await Promise.all(
-			results.map(async result => {
+			results.map(async (result) => {
 				const att = await writeTeamStats(result);
 				await writeGameStats(result, att, conditions);
 				return result.gid;
@@ -541,7 +541,7 @@ const play = async (
 		let dayOver = true;
 		if (gidOneGame !== undefined) {
 			const lengthBefore = schedule.length;
-			schedule = schedule.filter(game => game.gid === gidOneGame);
+			schedule = schedule.filter((game) => game.gid === gidOneGame);
 			const lengthAfter = schedule.length;
 
 			if (lengthBefore - lengthAfter > 0) {

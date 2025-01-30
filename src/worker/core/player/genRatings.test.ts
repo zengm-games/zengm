@@ -25,15 +25,15 @@ const printQuartiles = async (age?: number) => {
 	const players = await createRandomPlayers({
 		activeTids: range(30),
 		scoutingLevel: DEFAULT_LEVEL,
-		teams: range(30).map(tid => ({ tid })),
+		teams: range(30).map((tid) => ({ tid })),
 	});
 
 	const ovrs = (players as any[])
-		.filter(p => p.tid >= PLAYER.FREE_AGENT)
-		.map(p => p.ratings.at(-1).ovr)
+		.filter((p) => p.tid >= PLAYER.FREE_AGENT)
+		.map((p) => p.ratings.at(-1).ovr)
 		.sort((a, b) => a - b) as number[];
 	const quartiles = [0.25, 0.5, 0.75].map(
-		fraction => ovrs[Math.round(fraction * ovrs.length)],
+		(fraction) => ovrs[Math.round(fraction * ovrs.length)],
 	);
 	console.log(
 		"QUARTILES at",

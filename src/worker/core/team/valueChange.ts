@@ -491,7 +491,7 @@ const refreshCache = async () => {
 	for (const [tidString, players] of Object.entries(playersByTid)) {
 		const tid = Number.parseInt(tidString);
 		const ovr = team.ovr(
-			players.map(p => ({
+			players.map((p) => ({
 				pid: p.pid,
 				value: p.value,
 				ratings: {
@@ -506,7 +506,7 @@ const refreshCache = async () => {
 	}
 	teamOvrs.sort((a, b) => b.ovr - a.ovr);
 
-	const teams = (await idb.cache.teams.getAll()).filter(t => !t.disabled);
+	const teams = (await idb.cache.teams.getAll()).filter((t) => !t.disabled);
 
 	const allTeamSeasons = await idb.cache.teamSeasons.indexGetAll(
 		"teamSeasonsBySeasonTid",
@@ -516,8 +516,8 @@ const refreshCache = async () => {
 	let gp = 0;
 
 	// Estimate the order of the picks by team
-	const wps = teams.map(t => {
-		let teamOvrIndex = teamOvrs.findIndex(t2 => t2.tid === t.tid);
+	const wps = teams.map((t) => {
+		let teamOvrIndex = teamOvrs.findIndex((t2) => t2.tid === t.tid);
 		if (teamOvrIndex < 0) {
 			// This happens if a team has no players on it - just assume they are the worst
 			teamOvrIndex = teamOvrs.length - 1;
@@ -527,7 +527,7 @@ const refreshCache = async () => {
 		const teamOvrWinp = ovrIndexToEstWinPercent(teamOvrIndex);
 
 		const teamSeasons = allTeamSeasons.filter(
-			teamSeason => teamSeason.tid === t.tid,
+			(teamSeason) => teamSeason.tid === t.tid,
 		);
 		let record: [number, number];
 
@@ -643,8 +643,8 @@ const getModifiedPickRank = async (
 ) => {
 	// later we need to find the new ranks of this team's ovr/estimated win%
 	// it's cleaner to determine this by temporarily removing the old team info from the cached lists
-	const newTeamOvrs = cache.teamOvrs.filter(t => t.tid !== tid);
-	const newWps = cache.wps.filter(w => w.tid !== tid);
+	const newTeamOvrs = cache.teamOvrs.filter((t) => t.tid !== tid);
+	const newWps = cache.wps.filter((w) => w.tid !== tid);
 
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsBySeasonTid",
@@ -654,14 +654,14 @@ const getModifiedPickRank = async (
 	const seasonFraction = gp / g.get("numGames");
 
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
-	const playersAfterTrade = players.filter(p => !pidsRemove.includes(p.pid));
+	const playersAfterTrade = players.filter((p) => !pidsRemove.includes(p.pid));
 	for (const pid of pidsAdd) {
 		const p = await idb.cache.players.get(pid);
 		if (p) {
 			playersAfterTrade.push(p);
 		}
 	}
-	const playerRatings = playersAfterTrade.map(p => ({
+	const playerRatings = playersAfterTrade.map((p) => ({
 		pid: p.pid,
 		value: p.value,
 		ratings: {
@@ -672,7 +672,7 @@ const getModifiedPickRank = async (
 	}));
 
 	const newTeamOvr = team.ovr(playerRatings);
-	let newTeamOvrIndex = newTeamOvrs.findIndex(t => t.ovr < newTeamOvr);
+	let newTeamOvrIndex = newTeamOvrs.findIndex((t) => t.ovr < newTeamOvr);
 	if (newTeamOvrIndex === -1) {
 		// Worst Team (no -1 because we already removed this team from newTeamOvrs)
 		newTeamOvrIndex = newTeamOvrs.length;
@@ -685,7 +685,7 @@ const getModifiedPickRank = async (
 			: seasonFraction * ((teamSeason?.won ?? 0) / gp) +
 				(1 - seasonFraction) * newTeamOvrWinp;
 
-	let newRank = newWps.findIndex(w => newWp < w.wp);
+	let newRank = newWps.findIndex((w) => newWp < w.wp);
 	if (newRank === -1) {
 		// Best Team (no -1 because we already removed this team from newTeamOvrs)
 		newRank = newWps.length;

@@ -129,7 +129,7 @@ const getIndexKey = (
 
 	// Array keys are special, because they need to be stored in a JS object and then recovered
 	return stringifyInfinity(
-		index.key.map(field => {
+		index.key.map((field) => {
 			return field === "draft.year" ? row.draft.year : row[field];
 		}),
 	);

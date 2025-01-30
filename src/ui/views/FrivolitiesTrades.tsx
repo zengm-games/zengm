@@ -100,10 +100,10 @@ const FrivolitiesTrades = ({
 		},
 	];
 
-	const rows = trades.map(trade => {
-		const teamCols = trade.teams.map(t => {
+	const rows = trades.map((trade) => {
+		const teamCols = trade.teams.map((t) => {
 			const searchValue = t.assets
-				.map(asset => {
+				.map((asset) => {
 					if (asset.type === "player") {
 						return `${asset.pos} ${asset.name}`;
 					}

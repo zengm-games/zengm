@@ -47,7 +47,7 @@ for (const key of ["ovr", "pot", ...RATINGS]) {
 	ratingOptions[key] = {
 		colKey: addPrefixForStat("ratings", key),
 		valueType: "numeric",
-		getValue: p => p.ratings[key],
+		getValue: (p) => p.ratings[key],
 	};
 }
 
@@ -62,34 +62,34 @@ const allFiltersTemp: Record<
 			name: {
 				colKey: "Name",
 				valueType: "string",
-				getValue: p => p.name,
+				getValue: (p) => p.name,
 			},
 			pos: {
 				colKey: "Pos",
 				valueType: "string",
-				getValue: p => p.ratings.pos,
+				getValue: (p) => p.ratings.pos,
 				workerFieldOverride: null,
 			},
 			abbrev: {
 				colKey: "Team",
 				valueType: "string",
-				getValue: p => p.abbrev,
+				getValue: (p) => p.abbrev,
 			},
 			age: {
 				colKey: "Age",
 				valueType: "numeric",
-				getValue: p => p.age,
+				getValue: (p) => p.age,
 			},
 			jerseyNumber: {
 				colKey: "stat:jerseyNumber",
 				valueType: "string",
-				getValue: p => p.stats?.jerseyNumber ?? "",
+				getValue: (p) => p.stats?.jerseyNumber ?? "",
 				workerFieldOverride: null,
 			},
 			contract: {
 				colKey: "Contract",
 				valueType: "numeric",
-				getValue: p => p.contract.amount,
+				getValue: (p) => p.contract.amount,
 				colOverrides: {
 					desc: "Amount, Millions of Dollars",
 				},
@@ -97,42 +97,42 @@ const allFiltersTemp: Record<
 			exp: {
 				colKey: "Exp",
 				valueType: "numeric",
-				getValue: p => p.contract.exp,
+				getValue: (p) => p.contract.exp,
 				workerFieldOverride: "contract",
 			},
 			college: {
 				colKey: "College",
 				valueType: "string",
-				getValue: p => p.college,
+				getValue: (p) => p.college,
 			},
 			country: {
 				colKey: "Country",
 				valueType: "string",
-				getValue: p => p.born.loc,
+				getValue: (p) => p.born.loc,
 				workerFieldOverride: "born",
 			},
 			draftYear: {
 				colKey: "Draft Year",
 				valueType: "numeric",
-				getValue: p => p.draft.year,
+				getValue: (p) => p.draft.year,
 				workerFieldOverride: "draft",
 			},
 			draftRound: {
 				colKey: "Draft Round",
 				valueType: "numeric",
-				getValue: p => p.draft.round,
+				getValue: (p) => p.draft.round,
 				workerFieldOverride: "draft",
 			},
 			draftPick: {
 				colKey: "Draft Pick",
 				valueType: "numeric",
-				getValue: p => p.draft.pick,
+				getValue: (p) => p.draft.pick,
 				workerFieldOverride: "draft",
 			},
 			experience: {
 				colKey: "Experience",
 				valueType: "numeric",
-				getValue: p => p.experience,
+				getValue: (p) => p.experience,
 			},
 		},
 	},
@@ -179,11 +179,11 @@ for (const [category, table] of Object.entries(PLAYER_STATS_TABLES)) {
 			valueType: "numeric",
 			getValue:
 				category === "gameHighs"
-					? p => {
+					? (p) => {
 							const stat = p.stats[key];
 							return Array.isArray(stat) ? stat[0] : stat;
 						}
-					: p => p.stats[key],
+					: (p) => p.stats[key],
 		};
 	}
 
@@ -243,7 +243,7 @@ export const getStats = (statTypePlus: string) => {
 
 		// Remove pos for fielding stats
 		if (isSport("baseball")) {
-			return statsTable.stats.filter(stat => stat !== "pos");
+			return statsTable.stats.filter((stat) => stat !== "pos");
 		}
 
 		return [...statsTable.stats];

@@ -28,7 +28,7 @@ const StatsTable = ({
 	const [sortBys, setSortBys] = useState<SortBy[]>([]);
 
 	const onClick = (event: MouseEvent, i: number) => {
-		setSortBys(prevSortBys => {
+		setSortBys((prevSortBys) => {
 			const newSortBys =
 				updateSortBys({
 					cols,
@@ -69,7 +69,7 @@ const StatsTable = ({
 		"gmsc",
 	];
 	const cols = getCols(
-		stats.map(stat => `stat:${stat}`),
+		stats.map((stat) => `stat:${stat}`),
 		{
 			"stat:fg": {
 				desc: "Field Goals",

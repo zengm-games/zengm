@@ -76,7 +76,7 @@ const transition = { duration: 0.2, type: "tween" };
 
 // Listen for notifications sent before Notifications component is mounted
 const initialNotifications: Message[] = [];
-const unbind = emitter.on("notification", notification => {
+const unbind = emitter.on("notification", (notification) => {
 	initialNotifications.push(notification);
 });
 
@@ -92,13 +92,13 @@ const Notifications = () => {
 	useEffect(() => {
 		unbind();
 
-		const unbind2 = emitter.on("notification", notification => {
+		const unbind2 = emitter.on("notification", (notification) => {
 			// Non-persistent notifications, only show if page is visible, for performance
 			if (!notification.persistent && document.hidden) {
 				return;
 			}
 
-			setNotifications(currentNotifications => {
+			setNotifications((currentNotifications) => {
 				let newNotifications = [...currentNotifications, notification];
 
 				// Limit displayed notifications to 5 - all the persistent ones, plus the newest transient ones
@@ -106,7 +106,7 @@ const Notifications = () => {
 				let numPersistentKept = 0;
 				if (numToDelete > -1) {
 					// -1 so numPersistentKept can still identify when there are 4 persistent notifications
-					newNotifications = newNotifications.filter(notification => {
+					newNotifications = newNotifications.filter((notification) => {
 						if (notification.persistent) {
 							numPersistentKept += 1;
 							return true;
@@ -185,7 +185,7 @@ const Notifications = () => {
 				}}
 			>
 				<AnimatePresence initial={false}>
-					{notifications.map(notification => (
+					{notifications.map((notification) => (
 						<m.li
 							key={notification.id}
 							layout
@@ -197,8 +197,8 @@ const Notifications = () => {
 							<Notification
 								{...notification}
 								remove={() => {
-									setNotifications(currentNotifications =>
-										currentNotifications.filter(n => {
+									setNotifications((currentNotifications) =>
+										currentNotifications.filter((n) => {
 											if (n === notification) {
 												if (notification.onClose) {
 													notification.onClose();

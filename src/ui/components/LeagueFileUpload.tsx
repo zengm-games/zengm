@@ -302,7 +302,7 @@ const LeagueFileUpload = ({
 						className="form-control me-2"
 						placeholder="URL"
 						value={url}
-						onChange={event => {
+						onChange={(event) => {
 							setURL(event.target.value);
 						}}
 					/>

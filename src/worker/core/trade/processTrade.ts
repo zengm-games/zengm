@@ -42,7 +42,7 @@ const processTrade = async (
 
 	// Make sure to show best player first, so his picture is shown in news feed
 	if (maxPid !== undefined) {
-		pidsEvent = [maxPid, ...pidsEvent.filter(pid => pid !== maxPid)];
+		pidsEvent = [maxPid, ...pidsEvent.filter((pid) => pid !== maxPid)];
 	}
 
 	const eid = await logEvent({

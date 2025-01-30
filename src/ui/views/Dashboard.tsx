@@ -224,7 +224,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 		},
 	);
 
-	const rows = leagues.map(league => {
+	const rows = leagues.map((league) => {
 		const disabled =
 			deletingLID !== undefined ||
 			loadingLID !== undefined ||

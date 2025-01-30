@@ -41,7 +41,7 @@ const Winner = ({
 			</span>
 			<br />
 			{stats
-				.map(stat => `${helpers.roundStat(award[stat], stat)} ${stat}`)
+				.map((stat) => `${helpers.roundStat(award[stat], stat)} ${stat}`)
 				.join(", ")}
 		</>
 	);

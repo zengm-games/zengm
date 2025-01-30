@@ -47,7 +47,7 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 	const teamsByTid = groupByUnique(teams, "tid");
 
 	// Goals created
-	const gc = players.map(p => {
+	const gc = players.map((p) => {
 		const t = teamsByTid[p.tid];
 		if (t === undefined) {
 			throw new Error("Should never happen");
@@ -224,7 +224,7 @@ const advStats = async () => {
 	league.min /= g.get("numPlayersOnCourt");
 	league.saPerMin = league.sa / league.min;
 	league.oppGPerPmin = league.oppG / league.min;
-	league.gPerGame /= teams.filter(t => t.stats.gp > 0).length;
+	league.gPerGame /= teams.filter((t) => t.stats.gp > 0).length;
 
 	const updatedStats = { ...calculatePS(players, teams, league) };
 	await advStatsSave(players, playersRaw, updatedStats);

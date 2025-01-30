@@ -60,7 +60,7 @@ const RandomizeTeamsModal = ({
 							<select
 								className="form-select"
 								value={real ? "real" : "random"}
-								onChange={event => {
+								onChange={(event) => {
 									setReal(event.target.value === "real");
 								}}
 							>
@@ -77,7 +77,7 @@ const RandomizeTeamsModal = ({
 							id="randomize-teams-popweight"
 							checked={weightByPopulation}
 							onChange={() => {
-								setWeightByPopulation(value => !value);
+								setWeightByPopulation((value) => !value);
 							}}
 						/>
 						<label
@@ -96,7 +96,7 @@ const RandomizeTeamsModal = ({
 							checked={actualNorthAmericaOnly}
 							disabled={real}
 							onChange={() => {
-								setNorthAmericaOnly(value => !value);
+								setNorthAmericaOnly((value) => !value);
 							}}
 						/>
 						<label

@@ -19,7 +19,7 @@ const addAbbrev = (
 		return;
 	}
 
-	const t = teams.find(t => t.tid === award.tid);
+	const t = teams.find((t) => t.tid === award.tid);
 	if (!t) {
 		return {
 			...award,
@@ -27,7 +27,7 @@ const addAbbrev = (
 		};
 	}
 
-	const seasonAttrs = t.seasonAttrs.find(ts => ts.season === season);
+	const seasonAttrs = t.seasonAttrs.find((ts) => ts.season === season);
 	if (!seasonAttrs) {
 		return {
 			...award,
@@ -69,7 +69,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		);
 
 		const awards = await idb.getCopies.awards(undefined, "noCopyCache");
-		const seasons: any[] = awards.map(a => {
+		const seasons: any[] = awards.map((a) => {
 			return {
 				season: a.season,
 				finalsMvp: addAbbrev(a.finalsMvp, teams, a.season),
@@ -98,13 +98,13 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			const season = seasons[i].season;
 
 			// Only check for finals result for seasons that are over
-			const series = playoffSeries.find(ps => ps.season === season);
+			const series = playoffSeries.find((ps) => ps.season === season);
 
 			type MyTeam = (typeof teams)[number];
 			const formatTeam = (t: MyTeam, seed: number) => {
 				const tid = t.tid;
 
-				const teamSeason = t.seasonAttrs.find(ts => ts.season === season);
+				const teamSeason = t.seasonAttrs.find((ts) => ts.season === season);
 
 				return {
 					tid,
@@ -132,9 +132,9 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			if (series) {
 				if (series.series.length === 0) {
 					// 0 length numGamesPlayoffSeries, no playoffs
-					const t = teams.find(t =>
+					const t = teams.find((t) =>
 						t.seasonAttrs.find(
-							ts => ts.season === season && ts.playoffRoundsWon === 0,
+							(ts) => ts.season === season && ts.playoffRoundsWon === 0,
 						),
 					);
 
@@ -160,7 +160,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					}
 
 					const formatTeamWrapper = ({ seed, tid }: PlayoffSeriesTeam) => {
-						const t = teams.find(t => t.tid === tid);
+						const t = teams.find((t) => t.tid === tid);
 						if (!t) {
 							throw new Error(`Team not found for tid ${tid}`);
 						}

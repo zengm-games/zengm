@@ -28,7 +28,7 @@ const getClinchedPlayoffs = async (
 
 	const output: ClinchedPlayoffs[] = [];
 	for (const t of teamSeasons) {
-		const worstCases = teamSeasons.map(t2 => {
+		const worstCases = teamSeasons.map((t2) => {
 			const gp = helpers.getTeamSeasonGp(t2);
 
 			// Will be wrong if a team is missing a game due to scheduling constraints
@@ -121,7 +121,7 @@ const getClinchedPlayoffs = async (
 		}
 
 		if (!clinchedPlayoffs) {
-			const bestCases = teamSeasons.map(t2 => {
+			const bestCases = teamSeasons.map((t2) => {
 				const gp = helpers.getTeamSeasonGp(t2);
 
 				// Will be wrong if a team is missing a game due to scheduling constraints

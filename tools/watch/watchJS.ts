@@ -18,7 +18,7 @@ const watchJS = (
 			},
 		);
 
-		worker.on("message", message => {
+		worker.on("message", (message) => {
 			if (message.type === "start") {
 				updateStart(filename);
 			}

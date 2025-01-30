@@ -42,7 +42,7 @@ const PlayersTable = ({
 		"Team",
 		"Age",
 		"Ovr",
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
 	];
 	if (name !== "Remaining") {
 		colNames.unshift("#");
@@ -57,17 +57,17 @@ const PlayersTable = ({
 			? players
 			: [
 					...players,
-					...pidsAdd.map(pid => {
-						const p = remaining.find(p2 => p2.pid === pid);
+					...pidsAdd.map((pid) => {
+						const p = remaining.find((p2) => p2.pid === pid);
 						return p;
 					}),
 				]
 	)
 		// Filter everything, because `players` might have empty slots too due to deleted players
-		.filter(p => p !== undefined);
+		.filter((p) => p !== undefined);
 
 	const rows: DataTableRow[] = playersAugmented
-		.filter(p => {
+		.filter((p) => {
 			if (!pidsRemove) {
 				return true;
 			}
@@ -90,7 +90,7 @@ const PlayersTable = ({
 				</a>,
 				p.age,
 				!challengeNoRatings ? p.ratings.ovr : null,
-				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.stats[stat], stat)),
 			];
 			if (name !== "Remaining") {
 				data.unshift(i + 1);
@@ -158,7 +158,7 @@ const AllStars = ({
 	const draftType =
 		!spectator &&
 		type === "draft" &&
-		teams.some(t => userTids.includes(t[0].tid))
+		teams.some((t) => userTids.includes(t[0].tid))
 			? "user"
 			: "auto";
 
@@ -168,7 +168,7 @@ const AllStars = ({
 	const [editing, setEditing] = useState(false);
 
 	const reveal = useCallback((pid: number) => {
-		setRevealed(revealed2 => [...revealed2, pid]);
+		setRevealed((revealed2) => [...revealed2, pid]);
 	}, []);
 
 	const startDraft = useCallback(async () => {
@@ -229,7 +229,7 @@ const AllStars = ({
 		title: `All-Star ${type === "draft" ? "Draft" : "Teams"}`,
 		dropdownView: "all_star_draft",
 		dropdownFields: { seasons: season },
-		dropdownCustomURL: fields => {
+		dropdownCustomURL: (fields) => {
 			return helpers.leagueUrl(["all_star", "teams", fields.seasons]);
 		},
 	});
@@ -259,7 +259,7 @@ const AllStars = ({
 	const numPlayers =
 		teams[0].length +
 		teams[1].length +
-		remaining.filter(p => p.injury.gamesRemaining <= 0).length;
+		remaining.filter((p) => p.injury.gamesRemaining <= 0).length;
 
 	if (editing) {
 		return (

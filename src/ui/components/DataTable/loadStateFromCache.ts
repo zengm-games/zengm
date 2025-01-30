@@ -54,7 +54,7 @@ const loadStateFromCache = ({
 		}
 
 		// Don't let sortBy reference invalid col
-		sortBys = sortBys.filter(sortBy => sortBy[0] < cols.length);
+		sortBys = sortBys.filter((sortBy) => sortBy[0] < cols.length);
 
 		if (sortBys.length === 0) {
 			sortBys = [defaultSort];

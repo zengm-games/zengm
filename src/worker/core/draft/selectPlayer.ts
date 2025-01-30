@@ -126,11 +126,11 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 		g.get("phase") === PHASE.FANTASY_DRAFT
 			? `${g.get("season")} fantasy draft`
 			: g.get("phase") === PHASE.EXPANSION_DRAFT
-			? `${g.get("season")} expansion draft`
-			: `<a href="${helpers.leagueUrl([
-					"draft_history",
-					g.get("season"),
-			  ])}">${g.get("season")} draft</a>`;
+				? `${g.get("season")} expansion draft`
+				: `<a href="${helpers.leagueUrl([
+						"draft_history",
+						g.get("season"),
+					])}">${g.get("season")} draft</a>`;
 
 	if (!p.transactions) {
 		p.transactions = [];
@@ -172,7 +172,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 					[prevTid]: numDraftedByThisTeam,
 				},
 				availablePids: expansionDraft.availablePids.filter(
-					pid2 => pid !== pid2,
+					(pid2) => pid !== pid2,
 				),
 			},
 		});

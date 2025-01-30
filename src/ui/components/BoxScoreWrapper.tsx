@@ -131,7 +131,7 @@ const TeamNameAndScore = ({
 						className="d-flex gap-1 pt-1"
 						title={`${t.timeouts} ${helpers.plural("timeout", t.timeouts)} remaining`}
 					>
-						{range(STARTING_NUM_TIMEOUTS).map(i => (
+						{range(STARTING_NUM_TIMEOUTS).map((i) => (
 							<div
 								key={i}
 								style={{ width: 12, height: 3 }}
@@ -352,7 +352,7 @@ const FourFactors = ({ teams }: { teams: any[] }) => {
 
 	// +10 shows up in the gradient as maximum color, unless there is one component beyond that, in which case we use that value to highlight how extreme it is. But keeping +10 as the minumum possible max is good to show when they are all pretty close.
 	const maxMagnitude = Math.max(
-		Math.max(...Object.values(fourFactorsNetPoints).map(x => Math.abs(x))),
+		Math.max(...Object.values(fourFactorsNetPoints).map((x) => Math.abs(x))),
 		10,
 	);
 
@@ -636,7 +636,7 @@ const NextButton = ({
 	]);
 
 	const canPlay = playMenuOptions.some(
-		option => option.id === "day" || option.id === "week",
+		(option) => option.id === "day" || option.id === "week",
 	);
 
 	return (
@@ -777,7 +777,7 @@ const DetailedScore = ({
 		title?: string;
 		label: string;
 		bold?: boolean;
-	}[] = range(numPeriods).map(i => {
+	}[] = range(numPeriods).map((i) => {
 		return {
 			label:
 				i < boxScore.numPeriods || isSport("baseball")
@@ -847,7 +847,7 @@ const DetailedScore = ({
 						<thead>
 							<tr>
 								<th />
-								{qtrs.map(info => (
+								{qtrs.map((info) => (
 									<th
 										key={info.label}
 										className={info.bold ? undefined : "text-body-secondary"}
@@ -879,7 +879,7 @@ const DetailedScore = ({
 									{t.ptsQtrs.map((pts: number, i: number) => (
 										<td key={i}>{pts}</td>
 									))}
-									{range(numPeriods - t.ptsQtrs.length).map(i => (
+									{range(numPeriods - t.ptsQtrs.length).map((i) => (
 										<td key={i}>-</td>
 									))}
 									<th>{t.pts}</th>

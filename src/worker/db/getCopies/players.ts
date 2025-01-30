@@ -154,14 +154,14 @@ const getCopies = async (
 
 		const merged = mergeByPk(
 			fromDB,
-			(await idb.cache.players.getAll()).filter(p => pids.includes(p.pid)),
+			(await idb.cache.players.getAll()).filter((p) => pids.includes(p.pid)),
 			"players",
 			type,
 		);
 
 		const sorted = [];
 		for (const pid of pids) {
-			const p = merged.find(p2 => p2.pid === pid);
+			const p = merged.find((p2) => p2.pid === pid);
 			if (p) {
 				sorted.push(p);
 			}
@@ -217,7 +217,7 @@ const getCopies = async (
 			await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
 			"players",
 			type,
-		).filter(p => p.retiredYear === retiredYear);
+		).filter((p) => p.retiredYear === retiredYear);
 	}
 
 	if (tid !== undefined) {
@@ -295,7 +295,7 @@ const getCopies = async (
 						]),
 					)
 					.filter(
-						p =>
+						(p) =>
 							p.draft.year < activeSeason &&
 							p.retiredYear >= activeSeason &&
 							(statsTid === undefined || p.statsTids.includes(statsTid)),
@@ -313,7 +313,7 @@ const getCopies = async (
 				1,
 				filter,
 			),
-			(await idb.cache.players.getAll()).filter(p => p.hof === 1),
+			(await idb.cache.players.getAll()).filter((p) => p.hof === 1),
 			"players",
 			type,
 		).filter(filter);
@@ -332,7 +332,7 @@ const getCopies = async (
 					PLAYER.RETIRED,
 					Infinity,
 				])
-			).filter(p => p.draft.year === draftYear),
+			).filter((p) => p.draft.year === draftYear),
 			"players",
 			type,
 		);
@@ -352,7 +352,7 @@ const getCopies = async (
 						Infinity,
 					]),
 				)
-				.filter(p => p.statsTids.includes(statsTid)),
+				.filter((p) => p.statsTids.includes(statsTid)),
 			"players",
 			type,
 		);
@@ -370,25 +370,25 @@ const getCopies = async (
 		}
 		if (note) {
 			// If watch and note both set, don't include record twice
-			const pidsDB = new Set(fromDB.map(p => p.pid));
+			const pidsDB = new Set(fromDB.map((p) => p.pid));
 			fromDB.push(
 				// undefined for key returns all of the players with values, since the ones with watch/noteBool missing are not included in this index
 				...(
 					await getAll(playerStore.index("noteBool"), undefined, filter)
-				).filter(p => !pidsDB.has(p.pid)),
+				).filter((p) => !pidsDB.has(p.pid)),
 			);
 		}
 
 		const fromCacheAll = await idb.cache.players.getAll();
 
 		// Need to check if players with watch or noteBool in DB are updated in the cache. If so, mergeByPk can't handle it, so we need to handle it here.
-		const pidsCache = new Set(fromCacheAll.map(p => p.pid));
-		fromDB = fromDB.filter(p => !pidsCache.has(p.pid));
+		const pidsCache = new Set(fromCacheAll.map((p) => p.pid));
+		fromDB = fromDB.filter((p) => !pidsCache.has(p.pid));
 
 		return mergeByPk(
 			fromDB,
 			fromCacheAll.filter(
-				p => (watch && p.watch !== undefined) || (note && p.noteBool === 1),
+				(p) => (watch && p.watch !== undefined) || (note && p.noteBool === 1),
 			),
 			"players",
 			type,

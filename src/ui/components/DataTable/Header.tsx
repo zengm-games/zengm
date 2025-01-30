@@ -40,7 +40,7 @@ const FilterHeader = ({
 						{col.noSearch ? null : (
 							<input
 								className="datatable-filter-input"
-								onChange={event => handleFilterUpdate(event, colIndex)}
+								onChange={(event) => handleFilterUpdate(event, colIndex)}
 								type="text"
 								value={filter}
 							/>
@@ -63,7 +63,7 @@ const SuperCols = ({
 	showBulkSelectCheckboxes: boolean;
 	superCols: SuperCol[];
 }) => {
-	const colIndexes = colOrder.map(x => x.colIndex);
+	const colIndexes = colOrder.map((x) => x.colIndex);
 	const maxColIndex1 = Math.max(...colIndexes);
 	let maxColIndex2 = -1;
 	for (const superCol of superCols) {
@@ -112,7 +112,7 @@ const SuperCols = ({
 					if (!title && adjustedColspan > 1) {
 						return (
 							<Fragment key={i}>
-								{range(adjustedColspan).map(j => {
+								{range(adjustedColspan).map((j) => {
 									return (
 										<th
 											key={j}
@@ -200,11 +200,11 @@ const CustomToggle = forwardRef(
 			<input
 				className="form-check-input"
 				type="checkbox"
-				onClick={event => {
+				onClick={(event) => {
 					event.preventDefault();
 					onClick(event);
 				}}
-				ref={element => {
+				ref={(element) => {
 					inputRef.current = element;
 
 					if (typeof ref === "function") {
@@ -235,7 +235,7 @@ const BulkSelectHeaderCheckbox = ({
 	if (selectedRows.map.size === 0) {
 		state = "unchecked";
 	} else {
-		const filteredKeys = new Set(filteredRows.map(row => row.key));
+		const filteredKeys = new Set(filteredRows.map((row) => row.key));
 		const selectedKeys = new Set(selectedRows.map.keys());
 
 		if (
@@ -380,7 +380,7 @@ const Header = ({
 						<th
 							className={clsx(classNames, sortClassName)}
 							key={colIndex}
-							onClick={event => {
+							onClick={(event) => {
 								handleColClick(event, colIndex);
 							}}
 							title={desc}

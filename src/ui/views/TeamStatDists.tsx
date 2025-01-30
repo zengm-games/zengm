@@ -107,7 +107,7 @@ const proStatsAll = isSport("basketball")
 				100.9, 101.3, 104.7, 93.7, 105.4, 97.5, 101.8, 91.3, 104.7, 100.6, 91.1,
 				94.8, 104.5, 95.8, 94, 100.4, 97.3, 92.7,
 			],
-	  }
+		}
 	: {};
 
 // Scales for the box plots. This is not done dynamically so that the plots will be comparable across seasons.
@@ -134,7 +134,7 @@ const scale = isSport("basketball")
 			pf: [5, 25],
 			pts: [80, 130],
 			oppPts: [80, 130],
-	  }
+		}
 	: {};
 
 const width100 = {
@@ -167,8 +167,8 @@ const TeamStatDists = ({ season, statsAll }: View<"teamStatDists">) => {
 			<table>
 				<tbody>
 					{Object.keys(statsAll)
-						.filter(stat => stat !== "playoffs")
-						.map(stat => {
+						.filter((stat) => stat !== "playoffs")
+						.map((stat) => {
 							const bbgmPlot = (
 								<tr key={`${stat}-bbgm`}>
 									<td className="pe-3 text-end">{stat}</td>

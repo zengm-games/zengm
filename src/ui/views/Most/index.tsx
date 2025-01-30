@@ -32,7 +32,7 @@ const Most = ({
 	useTitleBar({ title, customMenu: frivolitiesMenu });
 
 	const hasBestSeasonOverride = players.some(
-		p => p.most?.extra?.bestSeasonOverride !== undefined,
+		(p) => p.most?.extra?.bestSeasonOverride !== undefined,
 	);
 
 	const superCols = [
@@ -53,7 +53,7 @@ const Most = ({
 	const cols = getCols([
 		"#",
 		"Name",
-		...extraCols.map(x => x.colName),
+		...extraCols.map((x) => x.colName),
 		"Pos",
 		"Drafted",
 		"Retired",
@@ -61,8 +61,8 @@ const Most = ({
 		"Peak Ovr",
 		"Year",
 		"Team",
-		...stats.map(stat => `stat:${stat}`),
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
 	]);
 
 	const rows: DataTableRow[] = players.map((p, i) => {
@@ -92,7 +92,7 @@ const Most = ({
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
 				}),
-				...extraCols.map(x => {
+				...extraCols.map((x) => {
 					const value = getValue(p, x.key);
 					if (x.colName === "Amount") {
 						return helpers.formatCurrency(value / 1000, "M");
@@ -139,8 +139,8 @@ const Most = ({
 				>
 					{p.bestStats.abbrev}
 				</a>,
-				...stats.map(stat => helpers.roundStat(p.bestStats[stat], stat)),
-				...stats.map(stat => helpers.roundStat(p.careerStats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.bestStats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.careerStats[stat], stat)),
 			],
 			classNames: {
 				"table-danger": p.hof,

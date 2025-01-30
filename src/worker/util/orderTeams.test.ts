@@ -4,7 +4,7 @@ import { breakTies } from "./orderTeams";
 import type { HeadToHead } from "../../common/types";
 import { range } from "../../common/utils";
 
-const baseTeams = range(4).map(tid => ({
+const baseTeams = range(4).map((tid) => ({
 	tid,
 	seasonAttrs: {
 		winp: 0.5,
@@ -62,8 +62,8 @@ describe("tiebreakers", () => {
 				usePts: false,
 			});
 
-			const tids = teamsSorted.map(t => t.tid);
-			const reasons = teamsSorted.map(t => t.tiebreaker);
+			const tids = teamsSorted.map((t) => t.tid);
+			const reasons = teamsSorted.map((t) => t.tiebreaker);
 
 			assert.deepStrictEqual(tids, [2, 3, 0, 1]);
 			assert.deepStrictEqual(reasons, [
@@ -123,8 +123,8 @@ describe("tiebreakers", () => {
 			usePts: false,
 		});
 
-		const tids = teamsSorted.map(t => t.tid);
-		const reasons = teamsSorted.map(t => t.tiebreaker);
+		const tids = teamsSorted.map((t) => t.tid);
+		const reasons = teamsSorted.map((t) => t.tiebreaker);
 
 		assert.deepStrictEqual(tids, [3, 1, 0, 2]);
 		assert.deepStrictEqual(reasons, [
@@ -152,8 +152,8 @@ describe("tiebreakers", () => {
 			usePts: false,
 		});
 
-		const tids = teamsSorted.map(t => t.tid);
-		const reasons = teamsSorted.map(t => t.tiebreaker);
+		const tids = teamsSorted.map((t) => t.tid);
+		const reasons = teamsSorted.map((t) => t.tiebreaker);
 
 		assert.deepStrictEqual(tids, [1, 2, 3, 0]);
 		assert.deepStrictEqual(reasons, [
@@ -205,8 +205,8 @@ describe("tiebreakers", () => {
 			usePts: false,
 		});
 
-		const tids = teamsSorted.map(t => t.tid);
-		const reasons = teamsSorted.map(t => t.tiebreaker);
+		const tids = teamsSorted.map((t) => t.tid);
+		const reasons = teamsSorted.map((t) => t.tiebreaker);
 
 		assert.deepStrictEqual(tids, [3, 2, 1, 0]);
 		assert.deepStrictEqual(reasons, [
@@ -231,8 +231,8 @@ describe("tiebreakers", () => {
 			usePts: false,
 		});
 
-		const tids = teamsSorted.map(t => t.tid);
-		const reasons = teamsSorted.map(t => t.tiebreaker);
+		const tids = teamsSorted.map((t) => t.tid);
+		const reasons = teamsSorted.map((t) => t.tiebreaker);
 
 		assert.deepStrictEqual(tids, [2, 3, 1, 0]);
 		assert.deepStrictEqual(reasons, [
@@ -285,8 +285,8 @@ describe("tiebreakers", () => {
 			usePts: false,
 		});
 
-		const tids = teamsSorted.map(t => t.tid);
-		const reasons = teamsSorted.map(t => t.tiebreaker);
+		const tids = teamsSorted.map((t) => t.tid);
+		const reasons = teamsSorted.map((t) => t.tiebreaker);
 
 		assert.deepStrictEqual(tids, [3, 2]);
 		assert.deepStrictEqual(reasons, ["strengthOfSchedule", undefined]);
@@ -334,8 +334,8 @@ describe("tiebreakers", () => {
 			usePts: false,
 		});
 
-		const tids = teamsSorted.map(t => t.tid);
-		const reasons = teamsSorted.map(t => t.tiebreaker);
+		const tids = teamsSorted.map((t) => t.tid);
+		const reasons = teamsSorted.map((t) => t.tiebreaker);
 
 		assert.deepStrictEqual(tids, [3, 2]);
 		assert.deepStrictEqual(reasons, ["strengthOfVictory", undefined]);

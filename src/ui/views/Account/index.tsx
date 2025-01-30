@@ -27,7 +27,7 @@ const StripeButton = ({ email }: { email: string }) => {
 				window.StripeCheckout.configure({
 					key: STRIPE_PUBLISHABLE_KEY,
 					image: "/ico/icon128.png",
-					token: async token => {
+					token: async (token) => {
 						try {
 							const data = await fetchWrapper({
 								url: `${ACCOUNT_API_URL}/gold_start.php`,

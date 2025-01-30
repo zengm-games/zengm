@@ -33,8 +33,10 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 
 	// Without this, we'd still see the old offers even after 10 games are played and there are new offers
 	useEffect(() => {
-		const tids = JSON.stringify(offers.map(offer => offer.tid).sort());
-		const prevTids = JSON.stringify(prevOffers.map(offer => offer.tid).sort());
+		const tids = JSON.stringify(offers.map((offer) => offer.tid).sort());
+		const prevTids = JSON.stringify(
+			prevOffers.map((offer) => offer.tid).sort(),
+		);
 
 		if (tids !== prevTids) {
 			setRemovedTids([]);
@@ -105,14 +107,14 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 	) => {
 		return {
 			searchValue: `${players
-				.map(p => `${p.name} ${p.ratings.pos}`)
-				.join(" ")} ${picks.map(pick => pick.desc).join(" ")}`,
+				.map((p) => `${p.name} ${p.ratings.pos}`)
+				.join(" ")} ${picks.map((pick) => pick.desc).join(" ")}`,
 			sortValue: playerScore(players) + pickScore(picks),
 		};
 	};
 
 	const filteredOffers = offers.filter(
-		offer => !removedTids.includes(offer.tid),
+		(offer) => !removedTids.includes(offer.tid),
 	);
 
 	return (
@@ -148,7 +150,7 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 							sortType: "number",
 						},
 					]}
-					getAssetColContents={offer => {
+					getAssetColContents={(offer) => {
 						return [
 							{
 								value: (
@@ -188,9 +190,9 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 					}}
 					challengeNoRatings={challengeNoRatings}
 					handleNegotiate={handleNegotiate}
-					handleRemove={i => {
+					handleRemove={(i) => {
 						const tid = offers[i].tid;
-						setRemovedTids(prevTids => [...prevTids, tid]);
+						setRemovedTids((prevTids) => [...prevTids, tid]);
 					}}
 					offers={filteredOffers}
 					salaryCap={salaryCap}
@@ -208,7 +210,7 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 								}}
 								onRemove={() => {
 									const tid = offer.tid;
-									setRemovedTids(prevTids => [...prevTids, tid]);
+									setRemovedTids((prevTids) => [...prevTids, tid]);
 								}}
 								salaryCap={salaryCap}
 								salaryCapType={salaryCapType}

@@ -34,8 +34,8 @@ const start = async () => {
 	const availablePids = (
 		await idb.cache.players.indexGetAll("playersByTid", [0, Infinity])
 	)
-		.filter(p => !protectedPids.includes(p.pid))
-		.map(p => p.pid);
+		.filter((p) => !protectedPids.includes(p.pid))
+		.map((p) => p.pid);
 
 	// Move draft picks around, like fantasy draft
 	await draft.genOrderFantasy(expansionDraft.expansionTids, "expansion");

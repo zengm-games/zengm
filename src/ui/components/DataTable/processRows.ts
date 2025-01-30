@@ -27,7 +27,7 @@ export const processRows = ({
 	const searchText = normalizeIntl(state.searchText);
 	const rowsFiltered = skipFiltering
 		? rows
-		: rows.filter(row => {
+		: rows.filter((row) => {
 				// Search
 				if (state.searchText !== "") {
 					let found = false;
@@ -77,7 +77,7 @@ export const processRows = ({
 	if (state.sortBys === undefined) {
 		rowsOrdered = rowsFiltered;
 	} else {
-		const sortKeys = state.sortBys.map(sortBy => (row: DataTableRow) => {
+		const sortKeys = state.sortBys.map((sortBy) => (row: DataTableRow) => {
 			let i = sortBy[0];
 
 			if (typeof i !== "number" || i >= row.data.length || i >= cols.length) {
@@ -90,7 +90,7 @@ export const processRows = ({
 		rowsOrdered = orderBy(
 			rowsFiltered,
 			sortKeys,
-			state.sortBys.map(sortBy => sortBy[1]),
+			state.sortBys.map((sortBy) => sortBy[1]),
 		);
 	}
 

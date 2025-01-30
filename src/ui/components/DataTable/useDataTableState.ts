@@ -24,7 +24,7 @@ export const useDataTableState = ({
 	);
 
 	const setStatePartial = useCallback((newState: Partial<State>) => {
-		setState(state2 => ({
+		setState((state2) => ({
 			...state2,
 			...newState,
 		}));

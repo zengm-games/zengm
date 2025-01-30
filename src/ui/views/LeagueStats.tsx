@@ -72,7 +72,7 @@ const LeagueStats = ({
 
 	const cols = getCols([
 		...basicColNames,
-		...stats.map(stat => {
+		...stats.map((stat) => {
 			if (stat.startsWith("opp")) {
 				return `stat:${stat.charAt(3).toLowerCase()}${stat.slice(4)}`;
 			}
@@ -98,7 +98,7 @@ const LeagueStats = ({
 		});
 	}
 
-	const rows = seasons.map(s => {
+	const rows = seasons.map((s) => {
 		const otherStatColumns = ["won", "lost"];
 		if (otl) {
 			otherStatColumns.push("otl");

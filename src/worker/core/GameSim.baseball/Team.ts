@@ -100,7 +100,7 @@ class Team<DH extends boolean> {
 		// For starting lineup, sub in top bench players
 		const inputBatters = this.dh ? this.t.depth.D : this.t.depth.DP;
 		// Start with starting lineup (already guaranteed healthy from getStartingPlayersInGame)
-		const batters = inputBatters.filter(p => this.playersInGame[p.id]);
+		const batters = inputBatters.filter((p) => this.playersInGame[p.id]);
 		// Add healthy bench players
 		let numBattersCurrent = batters.length;
 		for (const p of inputBatters) {
@@ -133,7 +133,7 @@ class Team<DH extends boolean> {
 		const defense = this.dh ? this.t.depth.D : this.t.depth.DP;
 
 		// -1 if not found
-		const pitcherBattingOrder = lineup.findIndex(p => p.id === -1);
+		const pitcherBattingOrder = lineup.findIndex((p) => p.id === -1);
 
 		playersInGame[startingPitcher.id] = {
 			p: startingPitcher,
@@ -171,10 +171,10 @@ class Team<DH extends boolean> {
 				// Player is injured or already in game at another position (maybe pitcher), pick someone off the bench
 				const sortedBench = orderBy(
 					bench,
-					[p => (p.injured ? 1 : 0), p => p.ovrs[pos]],
+					[(p) => (p.injured ? 1 : 0), (p) => p.ovrs[pos]],
 					["asc", "desc"],
 				);
-				const p2 = sortedBench.find(p => !playersInGame[p.id]);
+				const p2 = sortedBench.find((p) => !playersInGame[p.id]);
 				if (!p2) {
 					throw new Error("Not enough players");
 				} else {
@@ -215,7 +215,7 @@ class Team<DH extends boolean> {
 				...originalBattingOrder.slice(0, minBattingOrderWithSubstitution),
 				...orderBy(
 					originalBattingOrder.slice(minBattingOrderWithSubstitution),
-					p => lineupSort(p.p.ovrs.DH, p.p.compositeRating.speed),
+					(p) => lineupSort(p.p.ovrs.DH, p.p.compositeRating.speed),
 					"desc",
 				),
 			];
@@ -280,7 +280,7 @@ class Team<DH extends boolean> {
 		let numStartingPitchers = NUM_STARTING_PITCHERS;
 		if (this.playoffs) {
 			const starters = this.depth.pitchers.slice(0, NUM_STARTING_PITCHERS - 1);
-			if (starters.every(p => !p.injured)) {
+			if (starters.every((p) => !p.injured)) {
 				numStartingPitchers = NUM_STARTING_PITCHERS - 1;
 			}
 		}
@@ -296,20 +296,20 @@ class Team<DH extends boolean> {
 						p.compositeRating.workhorsePitcher,
 					) * p.compositeRating.pitcher,
 			}))
-			.filter(p => p.p.subIndex === undefined);
+			.filter((p) => p.p.subIndex === undefined);
 
 		const choiceWeight = (p: (typeof availablePitchers)[number]) =>
 			0.01 + p.value ** 2;
 
-		const healthyPitchers = availablePitchers.filter(p => !p.p.injured);
+		const healthyPitchers = availablePitchers.filter((p) => !p.p.injured);
 
 		if (this.allStarGame) {
 			return healthyPitchers[0];
 		}
 
 		const closer =
-			healthyPitchers.find(p => p.index === CLOSER_INDEX) ??
-			healthyPitchers.find(p => !p.starter) ??
+			healthyPitchers.find((p) => p.index === CLOSER_INDEX) ??
+			healthyPitchers.find((p) => !p.starter) ??
 			random.choice(healthyPitchers, choiceWeight) ??
 			random.choice(availablePitchers);
 
@@ -320,7 +320,9 @@ class Team<DH extends boolean> {
 		const skipCloser = Math.random() < 0.9;
 
 		const reliever = random.choice(
-			healthyPitchers.filter(p => !p.starter && (!skipCloser || p !== closer)),
+			healthyPitchers.filter(
+				(p) => !p.starter && (!skipCloser || p !== closer),
+			),
 			choiceWeight,
 		);
 
@@ -346,7 +348,7 @@ class Team<DH extends boolean> {
 						p.compositeRating.workhorsePitcher,
 					) * p.compositeRating.pitcher,
 			}))
-			.filter(p => p.p.subIndex === undefined);
+			.filter((p) => p.p.subIndex === undefined);
 
 		return random.choice(availablePitchers2, choiceWeight);
 	}
@@ -355,7 +357,7 @@ class Team<DH extends boolean> {
 		pos: Exclude<Position, "SP" | "RP">,
 	): PlayerGameSim | undefined {
 		const availablePlayers = this.depth.batters.filter(
-			p => p.subIndex === undefined,
+			(p) => p.subIndex === undefined,
 		);
 
 		let replacement;

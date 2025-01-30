@@ -106,14 +106,14 @@ const simLottery = (chances: number[], numToPick: number) => {
 			sum2 += t.chances;
 			if (rand < sum2) {
 				pickIndexes.push(t.index);
-				teams = teams.filter(t2 => t2 !== t);
+				teams = teams.filter((t2) => t2 !== t);
 
 				break;
 			}
 		}
 	}
 
-	pickIndexes.push(...teams.map(team => team.index));
+	pickIndexes.push(...teams.map((team) => team.index));
 
 	return pickIndexes;
 };
@@ -127,7 +127,7 @@ const monteCarloLotteryProbs = (
 
 	const probs: number[][] = [];
 
-	const chances = result.map(row => row.chances);
+	const chances = result.map((row) => row.chances);
 
 	for (let i = 0; i < ITERATIONS; i++) {
 		const result = simLottery(chances, numToPick);

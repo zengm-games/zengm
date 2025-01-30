@@ -63,12 +63,12 @@ const addSeasonInfoToTeams = async <
 	};
 
 	const ratings = basketball.ratings.filter(
-		row => row.season === options.season,
+		(row) => row.season === options.season,
 	);
 	const players = ratings
-		.map(row => formatPlayer(row))
-		.filter(p => p.tid >= 0)
-		.map(p => {
+		.map((row) => formatPlayer(row))
+		.filter((p) => p.tid >= 0)
+		.map((p) => {
 			const injury = getInjury({
 				...commonInjuryOptions,
 				slug: p.srID,
@@ -125,7 +125,7 @@ const addSeasonInfoToTeams = async <
 	const playersByTid = groupBy(players, "tid");
 
 	const teamsAugmented = teams
-		.map(t => {
+		.map((t) => {
 			const abbrev = oldAbbrevTo2020BBGMAbbrev(t.srID);
 
 			const teamSeason = teamSeasons?.[abbrev];
@@ -171,7 +171,7 @@ const addSeasonInfoToTeams = async <
 				seasonInfo,
 			};
 		})
-		.map(t => {
+		.map((t) => {
 			// Separate map in case seasonInfo one returns early
 			return {
 				...t,

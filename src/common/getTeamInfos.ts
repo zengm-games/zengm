@@ -11,7 +11,7 @@ export const abbrevRewrites: Record<string, string | undefined> = {
 const getTeamInfos = (
 	teams: { tid: number; cid: number; did: number; abbrev: string }[],
 ) => {
-	return teams.map(t => {
+	return teams.map((t) => {
 		const actualAbbrev = abbrevRewrites[t.abbrev] ?? t.abbrev;
 
 		if (!teamInfos[actualAbbrev]) {

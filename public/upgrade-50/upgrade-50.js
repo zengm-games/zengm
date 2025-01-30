@@ -1,5 +1,5 @@
 const logDiv = document.getElementById("status");
-const log = text => {
+const log = (text) => {
 	logDiv.innerHTML += `${text}<br>`;
 };
 
@@ -77,7 +77,7 @@ const initForm = async () => {
 		leagueSelect.appendChild(option);
 	}
 
-	document.getElementById("form").addEventListener("submit", async event => {
+	document.getElementById("form").addEventListener("submit", async (event) => {
 		event.preventDefault();
 
 		const lid = Number.parseInt(leagueSelect.value);

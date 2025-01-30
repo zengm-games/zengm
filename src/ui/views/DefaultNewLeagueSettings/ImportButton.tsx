@@ -22,7 +22,7 @@ const ImportButton = ({
 			type="file"
 			style={IMPORT_FILE_STYLE}
 			onClick={resetFileInput}
-			onChange={async event => {
+			onChange={async (event) => {
 				if (!event.target.files) {
 					return;
 				}

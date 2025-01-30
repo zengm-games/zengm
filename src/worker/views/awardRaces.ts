@@ -18,7 +18,7 @@ const updateAwardRaces = async (
 	) {
 		const awardCandidates = (
 			await season.getAwardCandidates(inputs.season)
-		).map(row => ({
+		).map((row) => ({
 			...row,
 			players: addFirstNameShort(row.players),
 		}));

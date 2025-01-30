@@ -450,7 +450,7 @@ const RenderOption = ({
 				</label>
 			</div>
 			{children
-				? children.map(child => (
+				? children.map((child) => (
 						<RenderOption
 							key={child.name}
 							{...child}
@@ -480,7 +480,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	);
 	const abortController = useRef<AbortController | undefined>(undefined);
 
-	const lid = useLocal(state => state.lid);
+	const lid = useLocal((state) => state.lid);
 
 	const cleanupAfterStream = (status?: ReactNode) => {
 		abortController.current = undefined;
@@ -524,10 +524,10 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				map,
 				name: await toWorker("main", "getLeagueName", undefined),
 				hasHistoricalData,
-				onPercentDone: percent => {
+				onPercentDone: (percent) => {
 					setPercentDone(percent);
 				},
-				onProcessingStore: store => {
+				onProcessingStore: (store) => {
 					setProcessingStore(store);
 				},
 			});
@@ -552,7 +552,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 						// This (and all "aborting/setAborting" code) is needed because there is no good way to abort an upload https://github.com/dropbox/dropbox-sdk-js/issues/159 until the next chunk, which can take a few seconds. So need this intermediate state where it is aborting, but has not aborted yet.
 						cleanupAfterStream();
 					},
-					onComplete: url => {
+					onComplete: (url) => {
 						status = (
 							<>
 								<p className="text-success">Upload complete!</p>
@@ -617,7 +617,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 		if (type === "default") {
 			setChecked(getDefaultChecked());
 		} else {
-			setChecked(prevChecked => {
+			setChecked((prevChecked) => {
 				const newChecked = { ...prevChecked };
 				for (const key of helpers.keys(newChecked)) {
 					if (type === "none") {
@@ -662,7 +662,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 		},
 	];
 
-	const bulkSelectButtons = bulkInfo.map(info => (
+	const bulkSelectButtons = bulkInfo.map((info) => (
 		<button
 			key={info.key}
 			className={`btn btn-${
@@ -700,13 +700,13 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 			<div className="btn-group mb-3">{bulkSelectButtons}</div>
 
 			<div className="row">
-				{categories.map(cat => (
+				{categories.map((cat) => (
 					<div className="col-md-6 col-lg-5 col-xl-4" key={cat.name}>
 						<RenderOption
 							{...cat}
 							checked={checked}
-							onToggle={name => {
-								setChecked(checked2 => ({
+							onToggle={(name) => {
+								setChecked((checked2) => ({
 									...checked2,
 									[name]: !checked2[name],
 								}));
@@ -725,7 +725,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 								type="checkbox"
 								checked={compressed}
 								onChange={() => {
-									setCompressed(compressed => !compressed);
+									setCompressed((compressed) => !compressed);
 								}}
 							/>
 							Compress (no extra whitespace)
@@ -739,7 +739,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 									type="checkbox"
 									checked={gzip}
 									onChange={() => {
-										setGzip(gzip => !gzip);
+										setGzip((gzip) => !gzip);
 									}}
 								/>
 								Compress (gzip)
@@ -753,7 +753,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 								type="checkbox"
 								checked={streamDownload}
 								onChange={() => {
-									setStreamDownload(streamDownload => !streamDownload);
+									setStreamDownload((streamDownload) => !streamDownload);
 								}}
 							/>
 							Streaming download

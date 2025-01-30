@@ -165,7 +165,7 @@ const calculatePER = (
 	}
 
 	league.aPER /= league.gp * 5 * helpers.effectiveGameLength();
-	const PER = aPER.map(num => num * (15 / league.aPER));
+	const PER = aPER.map((num) => num * (15 / league.aPER));
 
 	// Estimated Wins Added http://insider.espn.go.com/nba/hollinger/statistics
 	const EWA: number[] = []; // Position Replacement Levels
@@ -241,7 +241,7 @@ const calculateBPM = (
 	> = {};
 
 	// Count number of teams, which matters for the playoffs
-	const numTeams = teams.filter(t => t.stats.gp > 0).length;
+	const numTeams = teams.filter((t) => t.stats.gp > 0).length;
 
 	for (const t of teams) {
 		const off_rate = t.stats.ortg - league.ortg / numTeams;

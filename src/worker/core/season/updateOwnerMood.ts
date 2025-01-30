@@ -97,7 +97,7 @@ const updateOwnerMood = async (): Promise<
 					money: 0,
 					playoffs: 0,
 					wins: 0,
-			  };
+				};
 	}
 
 	// This is just for TypeScript

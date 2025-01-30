@@ -44,7 +44,7 @@ const PlayersForm = ({
 	const availablePlayers = allPlayers ?? initialAvailablePlayers;
 
 	const [currentPlayers, setCurrentPlayers] = useState<PlayerInfo[]>(
-		players.map(info => {
+		players.map((info) => {
 			return {
 				season: info.season,
 				p: {
@@ -62,7 +62,7 @@ const PlayersForm = ({
 	// Synchronize with new state after submitting form, in case something changed on backend in validation or something
 	useEffect(() => {
 		setCurrentPlayers(
-			players.map(info => {
+			players.map((info) => {
 				return {
 					season: info.season,
 					p: {
@@ -82,7 +82,7 @@ const PlayersForm = ({
 
 	return (
 		<form
-			onSubmit={event => {
+			onSubmit={(event) => {
 				event.preventDefault();
 				onSubmit(currentPlayers);
 			}}
@@ -94,7 +94,7 @@ const PlayersForm = ({
 							<SelectMultiple
 								value={playerInfo.p}
 								options={availablePlayers}
-								onChange={p => {
+								onChange={(p) => {
 									if (!p) {
 										return;
 									}
@@ -111,7 +111,7 @@ const PlayersForm = ({
 										newSeason = playerInfo.season;
 									}
 
-									setCurrentPlayers(players => {
+									setCurrentPlayers((players) => {
 										const newPlayers = [...players];
 
 										newPlayers[i] = {
@@ -125,8 +125,8 @@ const PlayersForm = ({
 										return newPlayers;
 									});
 								}}
-								getOptionLabel={p => formatName(p)}
-								getOptionValue={p => String(p.pid)}
+								getOptionLabel={(p) => formatName(p)}
+								getOptionValue={(p) => String(p.pid)}
 								loading={allPlayersState === "loading"}
 								isClearable={false}
 							/>
@@ -134,13 +134,13 @@ const PlayersForm = ({
 						<div className="me-2 flex-shrink-0">
 							<select
 								className="form-select"
-								onChange={event => {
+								onChange={(event) => {
 									const newSeason =
 										event.target.value === "career"
 											? ("career" as const)
 											: Number.parseInt(event.target.value);
 
-									setCurrentPlayers(players => {
+									setCurrentPlayers((players) => {
 										const newPlayers = [...players];
 										newPlayers[i] = {
 											...newPlayers[i],
@@ -177,7 +177,7 @@ const PlayersForm = ({
 								{range(
 									playerInfo.p.firstSeason,
 									playerInfo.p.lastSeason + 1,
-								).map(season => {
+								).map((season) => {
 									return (
 										<option key={season} value={season}>
 											{season}
@@ -189,10 +189,10 @@ const PlayersForm = ({
 						<div className="me-2 flex-shrink-0">
 							<select
 								className="form-select"
-								onChange={event => {
+								onChange={(event) => {
 									const newPlayoffs = event.target.value as SeasonType;
 
-									setCurrentPlayers(players => {
+									setCurrentPlayers((players) => {
 										const newPlayers = [...players];
 										newPlayers[i] = {
 											...newPlayers[i],
@@ -203,7 +203,7 @@ const PlayersForm = ({
 								}}
 								value={playerInfo.playoffs}
 							>
-								{playoffsOptions.map(x => {
+								{playoffsOptions.map((x) => {
 									return <OptionDropdown key={x.key} value={x} />;
 								})}
 							</select>
@@ -212,7 +212,7 @@ const PlayersForm = ({
 							<button
 								className="text-danger btn btn-link p-0 border-0"
 								onClick={() => {
-									setCurrentPlayers(players => {
+									setCurrentPlayers((players) => {
 										return players.filter((p, j) => j !== i);
 									});
 								}}
@@ -233,10 +233,10 @@ const PlayersForm = ({
 					type="button"
 					className="btn btn-secondary"
 					onClick={() => {
-						setCurrentPlayers(players => {
+						setCurrentPlayers((players) => {
 							// First player not previously selected
 							const p = availablePlayers.find(
-								p => !players.some(p2 => p2.p.pid === p.pid),
+								(p) => !players.some((p2) => p2.p.pid === p.pid),
 							);
 							if (!p) {
 								return players;

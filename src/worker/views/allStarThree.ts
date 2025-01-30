@@ -42,7 +42,7 @@ const updateAllStarThree = async (
 
 		const playersRaw = await idb.getCopies.players(
 			{
-				pids: three.players.map(p => p.pid),
+				pids: three.players.map((p) => p.pid),
 			},
 			"noCopyCache",
 		);
@@ -69,7 +69,7 @@ const updateAllStarThree = async (
 		});
 
 		for (const p of three.players) {
-			const p2 = players.find(p2 => p2.pid === p.pid);
+			const p2 = players.find((p2) => p2.pid === p.pid);
 
 			// p2 could be undefined if player was deleted before contest
 			if (p2) {
@@ -83,7 +83,7 @@ const updateAllStarThree = async (
 			}
 		}
 
-		const resultsByRound = three.rounds.map(round =>
+		const resultsByRound = three.rounds.map((round) =>
 			orderBy(allStar.threeContest.getRoundResults(round), "index", "asc"),
 		);
 
@@ -104,7 +104,7 @@ const updateAllStarThree = async (
 			allPossibleContestants = orderBy(
 				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
 				["lastName", "firstName"],
-			).map(p => ({
+			).map((p) => ({
 				pid: p.pid,
 				tid: p.tid,
 				name: `${p.firstName} ${p.lastName}`,

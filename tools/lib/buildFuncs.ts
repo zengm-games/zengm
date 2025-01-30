@@ -46,7 +46,7 @@ const replace = ({
 
 const buildCSS = async (watch: boolean = false) => {
 	const filenames = ["light", "dark"];
-	const rawCSS = filenames.map(filename => {
+	const rawCSS = filenames.map((filename) => {
 		const sassFilePath = `public/css/${filename}.scss`;
 		const sassResult = sass.renderSync({
 			file: sassFilePath,
@@ -58,7 +58,7 @@ const buildCSS = async (watch: boolean = false) => {
 		? []
 		: await new PurgeCSS().purge({
 				content: ["build/gen/*.js"],
-				css: rawCSS.map(raw => ({ raw })),
+				css: rawCSS.map((raw) => ({ raw })),
 				safelist: {
 					standard: [/^qc-cmp2-persistent-link$/],
 					greedy: [
@@ -240,7 +240,7 @@ const copyFiles = async (watch: boolean = false) => {
 	];
 
 	await fsp.cp("public", "build", {
-		filter: filename => {
+		filter: (filename) => {
 			// Loop through folders to ignore.
 			for (const folder of foldersToIgnore) {
 				if (filename.startsWith(`public/${folder}`)) {
@@ -264,7 +264,7 @@ const copyFiles = async (watch: boolean = false) => {
 	}
 
 	await fsp.cp(`public/${sport}`, "build", {
-		filter: filename => !filename.includes(".gitignore"),
+		filter: (filename) => !filename.includes(".gitignore"),
 		recursive: true,
 	});
 

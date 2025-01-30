@@ -206,7 +206,7 @@ export const Sketch = (props: SketchProps) => {
 							innerProps={{
 								style: { marginLeft: 1, marginRight: 5 },
 							}}
-							onChange={newHue => handleChange({ ...hsva, ...newHue })}
+							onChange={(newHue) => handleChange({ ...hsva, ...newHue })}
 						/>
 					</div>
 				</div>
@@ -222,7 +222,7 @@ export const Sketch = (props: SketchProps) => {
 					hsva={hsva}
 					style={{ marginLeft: 6 }}
 					aProps={false}
-					onChange={result => handleChange(result.hsva)}
+					onChange={(result) => handleChange(result.hsva)}
 				/>
 				<EyeDropperButton onChange={handleHex} />
 			</div>
@@ -230,7 +230,7 @@ export const Sketch = (props: SketchProps) => {
 				style={styleSwatch}
 				colors={PRESET_COLORS}
 				color={hsvaToHex(hsva)}
-				onChange={hsvColor => handleChange(hsvColor)}
+				onChange={(hsvColor) => handleChange(hsvColor)}
 				rectProps={{
 					style: styleSwatchRect,
 				}}

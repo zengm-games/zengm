@@ -27,7 +27,7 @@ const {
 } = util;
 
 const handleVersion = async () => {
-	window.addEventListener("storage", e => {
+	window.addEventListener("storage", (e) => {
 		if (e.key === "bbgmVersionConflict") {
 			const bbgmVersionStored = safeLocalStorage.getItem("bbgmVersion");
 
@@ -96,13 +96,13 @@ const handleVersion = async () => {
 				}
 
 				const getSWVersion = () => {
-					return new Promise(resolve => {
+					return new Promise((resolve) => {
 						setTimeout(() => {
 							resolve("???");
 						}, 2000);
 
 						const messageChannel = new MessageChannel();
-						messageChannel.port1.onmessage = event => {
+						messageChannel.port1.onmessage = (event) => {
 							resolve(event.data);
 						};
 						if (navigator.serviceWorker.controller) {
@@ -116,14 +116,14 @@ const handleVersion = async () => {
 				const swVersion = await getSWVersion();
 				console.log("swVersion", swVersion);
 
-				Bugsnag.notify(new Error("Game version mismatch"), event => {
+				Bugsnag.notify(new Error("Game version mismatch"), (event) => {
 					event.addMetadata("custom", {
 						bbgmVersion: window.bbgmVersion,
 						bbgmVersionStored,
 						hasNavigatorServiceWorker:
 							window.navigator.serviceWorker !== undefined,
 						registrationsLength: registrations.length,
-						registrations: registrations.map(r => {
+						registrations: registrations.map((r) => {
 							return {
 								scope: r.scope,
 								active: r.active

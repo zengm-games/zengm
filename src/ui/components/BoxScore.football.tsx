@@ -72,7 +72,7 @@ export const StatsHeader = ({
 					<th
 						className={className}
 						key={i}
-						onClick={event => {
+						onClick={(event) => {
 							onClick(event, i);
 						}}
 						title={desc}
@@ -129,17 +129,17 @@ const StatsTableIndividual = ({
 	type: keyof typeof PLAYER_GAME_STATS;
 }) => {
 	const stats = PLAYER_GAME_STATS[type].stats;
-	const cols = getCols(stats.map(stat => `stat:${stat}`));
+	const cols = getCols(stats.map((stat) => `stat:${stat}`));
 
 	const [sortBys, setSortBys] = useState(() => {
 		return PLAYER_GAME_STATS[type].sortBy.map(
-			stat => [stats.indexOf(stat), "desc"] as SortBy,
+			(stat) => [stats.indexOf(stat), "desc"] as SortBy,
 		);
 	});
 
 	const onClick = (event: MouseEvent, i: number) => {
 		setSortBys(
-			prevSortBys =>
+			(prevSortBys) =>
 				updateSortBys({
 					cols,
 					event,
@@ -150,17 +150,19 @@ const StatsTableIndividual = ({
 	};
 
 	const players = t.players
-		.map(p => {
+		.map((p) => {
 			return {
 				...p,
 				processed: processPlayerStats(p, stats),
 			};
 		})
-		.filter(p => filterPlayerStats(p, stats, type))
+		.filter((p) => filterPlayerStats(p, stats, type))
 		.sort(sortByStats(stats, undefined, sortBys));
 
 	const sortable = players.length > 1;
-	const highlightCols = sortable ? sortBys.map(sortBy => sortBy[0]) : undefined;
+	const highlightCols = sortable
+		? sortBys.map((sortBy) => sortBy[0])
+		: undefined;
 
 	return (
 		<div className="mb-3">
@@ -422,7 +424,7 @@ const DEFAULT_HEIGHT = 200;
 const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 	return (
 		<div className="d-flex align-items-stretch position-absolute w-100 h-100">
-			{range(NUM_SECTIONS).map(i => {
+			{range(NUM_SECTIONS).map((i) => {
 				const style: CSSProperties = {
 					width: `${(1 / 12) * 100}%`,
 					borderLeft: i > 0 ? "1px solid #495057" : undefined,
@@ -472,7 +474,7 @@ const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 						) : null}
 						{yardLine !== undefined ? (
 							<>
-								{range(2).map(i => (
+								{range(2).map((i) => (
 									<div key={i} style={{ marginLeft: "-.5rem", color: "#fff" }}>
 										{yardLine}
 									</div>
@@ -882,7 +884,7 @@ const BoxScore = ({
 				"Punting",
 				"Returns",
 				"Defense",
-			].map(title => (
+			].map((title) => (
 				<Fragment key={title}>
 					<h2>{title}</h2>
 					<StatsTable

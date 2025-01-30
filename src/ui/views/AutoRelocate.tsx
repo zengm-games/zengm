@@ -71,7 +71,7 @@ export const AutoRelocateExpandSubmit = ({
 										className="form-check-input me-1"
 										type="checkbox"
 										onChange={() => {
-											setOverride(checked => !checked);
+											setOverride((checked) => !checked);
 										}}
 										checked={override}
 									/>
@@ -184,7 +184,7 @@ const AutoRelocate = ({
 							checked={rebrandTeam}
 							disabled={status.type !== "init"}
 							onChange={() => {
-								setRebrandTeam(checked => !checked);
+								setRebrandTeam((checked) => !checked);
 							}}
 						/>
 						<label className="form-check-label" htmlFor="relocate-reband">
@@ -213,7 +213,7 @@ const AutoRelocate = ({
 													className="list-unstyled mb-0"
 													style={{ width: 170 }}
 												>
-													{div.map(t => {
+													{div.map((t) => {
 														let teamName = `${t.region} ${t.name}`;
 														if (t.tid === newTeam.tid) {
 															if (!rebrandTeam) {
@@ -230,7 +230,7 @@ const AutoRelocate = ({
 																		realign &&
 																		t.tid !== newTeam.tid &&
 																		!realignInfo.current[i][j].some(
-																			t2 => t2.tid === t.tid,
+																			(t2) => t2.tid === t.tid,
 																		),
 																})}
 															>
@@ -253,7 +253,7 @@ const AutoRelocate = ({
 								checked={realign}
 								disabled={status.type !== "init"}
 								onChange={() => {
-									setRealign(checked => !checked);
+									setRealign((checked) => !checked);
 								}}
 							/>
 							<label className="form-check-label" htmlFor="relocate-realign">

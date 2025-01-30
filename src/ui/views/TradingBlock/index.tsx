@@ -70,7 +70,7 @@ const OfferPlayers = ({
 				"Pot",
 				"Contract",
 				"Exp",
-				...stats.map(stat => `stat:${stat}`),
+				...stats.map((stat) => `stat:${stat}`),
 			],
 			{
 				Name: {
@@ -80,7 +80,7 @@ const OfferPlayers = ({
 		);
 
 		let sumContracts = 0;
-		const rows = players.map(p => {
+		const rows = players.map((p) => {
 			sumContracts += p.contract.amount;
 			return {
 				key: p.pid,
@@ -100,7 +100,7 @@ const OfferPlayers = ({
 					!challengeNoRatings ? p.ratings.pot : null,
 					wrappedContractAmount(p),
 					wrappedContractExp(p),
-					...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
+					...stats.map((stat) => helpers.roundStat(p.stats[stat], stat)),
 				],
 			};
 		});
@@ -545,14 +545,14 @@ const TradingBlock = ({
 		useLookingForState(savedTradingBlock?.lookingFor);
 
 	const handleChangeAsset = (type: "pids" | "dpids", id: number) => {
-		setState(prevState => {
+		setState((prevState) => {
 			const ids = {
 				pids: helpers.deepCopy(prevState.pids),
 				dpids: helpers.deepCopy(prevState.dpids),
 			};
 
 			if (ids[type].includes(id)) {
-				ids[type] = ids[type].filter(currId => currId !== id);
+				ids[type] = ids[type].filter((currId) => currId !== id);
 			} else {
 				ids[type].push(id);
 			}
@@ -565,7 +565,7 @@ const TradingBlock = ({
 	};
 
 	const handleClickAsk = async () => {
-		setState(prevState => ({
+		setState((prevState) => ({
 			...prevState,
 			asking: true,
 		}));
@@ -576,7 +576,7 @@ const TradingBlock = ({
 			lookingFor: lookingForState,
 		});
 
-		setState(prevState => ({
+		setState((prevState) => ({
 			...prevState,
 			asking: false,
 			noOffers: offers.length === 0,
@@ -599,7 +599,7 @@ const TradingBlock = ({
 	};
 
 	const handleRemove = (i: number) => {
-		setState(prevState => ({
+		setState((prevState) => ({
 			...prevState,
 			offers: prevState.offers.filter((offer, j) => j !== i),
 		}));
@@ -611,7 +611,7 @@ const TradingBlock = ({
 		}
 
 		if (type === "all" || type === "assets") {
-			setState(state => {
+			setState((state) => {
 				return {
 					...state,
 					asking: false,
@@ -686,7 +686,7 @@ const TradingBlock = ({
 			"Pot",
 			"Contract",
 			"Exp",
-			...stats.map(stat => `stat:${stat}`),
+			...stats.map((stat) => `stat:${stat}`),
 		],
 		{
 			"": {
@@ -697,7 +697,7 @@ const TradingBlock = ({
 		},
 	);
 
-	const rows = userRoster.map(p => {
+	const rows = userRoster.map((p) => {
 		return {
 			key: p.pid,
 			data: [
@@ -725,7 +725,7 @@ const TradingBlock = ({
 				!challengeNoRatings ? p.ratings.pot : null,
 				wrappedContractAmount(p),
 				wrappedContractExp(p),
-				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.stats[stat], stat)),
 			],
 		};
 	});
@@ -835,7 +835,7 @@ const TradingBlock = ({
 							sortType: "number",
 						},
 					})}
-					getAssetColContents={offer => {
+					getAssetColContents={(offer) => {
 						return [
 							{
 								value: (
@@ -858,27 +858,27 @@ const TradingBlock = ({
 									</>
 								),
 								searchValue: offer.players
-									.map(p => `${p.name} ${p.ratings.pos}`)
+									.map((p) => `${p.name} ${p.ratings.pos}`)
 									.join(" "),
 								sortValue: playerScore(offer.players),
 							},
 							{
 								value: (
 									<ul className="list-unstyled mb-0">
-										{offer.picks.map(pick => (
+										{offer.picks.map((pick) => (
 											<li key={pick.dpid}>
 												<SafeHtml dirty={pick.desc} />
 											</li>
 										))}
 									</ul>
 								),
-								searchValue: offer.picks.map(pick => pick.desc).join(" "),
+								searchValue: offer.picks.map((pick) => pick.desc).join(" "),
 								sortValue: pickScore(offer.picks),
 							},
 						];
 					}}
 					challengeNoRatings={challengeNoRatings}
-					handleNegotiate={async tradeInfo => {
+					handleNegotiate={async (tradeInfo) => {
 						await handleNegotiate(
 							tradeInfo.tid,
 							tradeInfo.pids,
@@ -938,7 +938,7 @@ const TradingBlock = ({
 														</tr>
 													</thead>
 													<tbody>
-														{offer.picks.map(pick => (
+														{offer.picks.map((pick) => (
 															<tr key={pick.dpid}>
 																<td>
 																	<SafeHtml dirty={pick.desc} />

@@ -65,7 +65,7 @@ const Confirm = confirmable<
 				simulate until?
 				<form
 					className="mt-3"
-					onSubmit={event => {
+					onSubmit={(event) => {
 						event.preventDefault();
 						ok();
 					}}
@@ -77,7 +77,7 @@ const Confirm = confirmable<
 								type="text"
 								className="form-control"
 								placeholder="Season"
-								onChange={event => {
+								onChange={(event) => {
 									setSeason(event.target.value);
 								}}
 								value={season}
@@ -87,7 +87,7 @@ const Confirm = confirmable<
 						<div className="col">
 							<select
 								className="form-select"
-								onChange={event => {
+								onChange={(event) => {
 									setPhase(event.target.value);
 								}}
 								value={phase}

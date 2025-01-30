@@ -44,7 +44,7 @@ const createGameAttributes = async (
 		userTids: [userTid],
 		season: startingSeason,
 		startingSeason,
-		teamInfoCache: teamInfos.map(t => ({
+		teamInfoCache: teamInfos.map((t) => ({
 			abbrev: t.abbrev,
 			disabled: t.disabled,
 			imgURL: t.imgURL,
@@ -54,7 +54,7 @@ const createGameAttributes = async (
 		})),
 		gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
 		numTeams: teamInfos.length,
-		numActiveTeams: teamInfos.filter(t => !t.disabled).length,
+		numActiveTeams: teamInfos.filter((t) => !t.disabled).length,
 	};
 
 	if (gameAttributesInput) {

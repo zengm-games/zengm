@@ -64,13 +64,13 @@ const RetiredJerseyNumbers = ({
 	>();
 
 	const sortedPlayers = orderBy(
-		players.filter(p => p.tid === PLAYER.RETIRED),
+		players.filter((p) => p.tid === PLAYER.RETIRED),
 		"name",
 	);
 
 	if (editing) {
 		const editingPidInt = Number.parseInt(editing.pid);
-		const playerSelectValue = sortedPlayers.some(p => p.pid === editingPidInt)
+		const playerSelectValue = sortedPlayers.some((p) => p.pid === editingPidInt)
 			? editing.pid
 			: "other";
 
@@ -86,7 +86,7 @@ const RetiredJerseyNumbers = ({
 		return (
 			<form
 				className="mb-3"
-				onSubmit={async event => {
+				onSubmit={async (event) => {
 					event.preventDefault();
 
 					try {
@@ -208,13 +208,13 @@ const RetiredJerseyNumbers = ({
 										className="form-select"
 										id="rjn-player-select"
 										value={playerSelectValue}
-										onChange={event => {
+										onChange={(event) => {
 											if (event.target.value !== "other") {
 												handleChange("pid")(event);
 											}
 										}}
 									>
-										{sortedPlayers.map(p => (
+										{sortedPlayers.map((p) => (
 											<option key={p.pid} value={p.pid}>
 												{p.firstName} {p.lastName}
 											</option>
@@ -344,19 +344,19 @@ const RetiredJerseyNumbers = ({
 	} else if (jerseySortKey === "jerseyNumber") {
 		sortedJerseyNumbers = orderBy(
 			retiredJerseyNumbers,
-			row => Number.parseInt(row.number),
+			(row) => Number.parseInt(row.number),
 			jerseySortDirection,
 		);
 	} else if (jerseySortKey === "jerseyRetirementYear") {
 		sortedJerseyNumbers = orderBy(
 			retiredJerseyNumbers,
-			row => row.seasonRetired,
+			(row) => row.seasonRetired,
 			jerseySortDirection,
 		);
 	} else {
 		sortedJerseyNumbers = orderBy(
 			retiredJerseyNumbers,
-			row => row.lastSeasonWithTeam,
+			(row) => row.lastSeasonWithTeam,
 			jerseySortDirection,
 		);
 	}
@@ -410,7 +410,7 @@ const RetiredJerseyNumbers = ({
 									<select
 										className="form-select"
 										value={jerseySortKey}
-										onChange={event => {
+										onChange={(event) => {
 											setJerseySortKey(event.target.value as JeresySortKey);
 											setPage(0);
 										}}

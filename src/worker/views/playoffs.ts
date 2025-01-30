@@ -148,7 +148,7 @@ const updatePlayoffs = async (
 			}
 		}
 
-		const confNames = g.get("confs", inputs.season).map(conf => conf.name); // Display the current or archived playoffs
+		const confNames = g.get("confs", inputs.season).map((conf) => conf.name); // Display the current or archived playoffs
 
 		const numGamesPlayoffSeries = g.get("numGamesPlayoffSeries", inputs.season);
 
@@ -209,7 +209,7 @@ const updatePlayoffs = async (
 			let teams: typeof teamsUnsorted;
 			if (playoffsByConf) {
 				teams = [];
-				const teamsByConf = groupBy(teamsUnsorted, t => t.seasonAttrs.cid);
+				const teamsByConf = groupBy(teamsUnsorted, (t) => t.seasonAttrs.cid);
 				for (const teamsConf of Object.values(teamsByConf)) {
 					teams.push(...(await orderTeams(teamsConf, teamsUnsorted)));
 				}
@@ -220,7 +220,7 @@ const updatePlayoffs = async (
 			// All first round matchups
 			const matchupsToCheck = [
 				...series[0],
-				...(playIns ? playIns.flatMap(playIn => playIn.slice(0, 2)) : []),
+				...(playIns ? playIns.flatMap((playIn) => playIn.slice(0, 2)) : []),
 			];
 
 			const seedsByTid = new Map();
@@ -231,7 +231,7 @@ const updatePlayoffs = async (
 				}
 			}
 
-			teamsToEdit = teams.map(t => ({
+			teamsToEdit = teams.map((t) => ({
 				tid: t.tid,
 				cid: t.seasonAttrs.cid,
 				region: t.region,

@@ -29,7 +29,9 @@ const updatePlayerGameLog = async (
 
 		const seasonsWithStats = Array.from(
 			new Set(
-				topStuff.player.stats.filter(row => row.gp > 0).map(row => row.season),
+				topStuff.player.stats
+					.filter((row) => row.gp > 0)
+					.map((row) => row.season),
 			),
 		).reverse();
 
@@ -42,7 +44,7 @@ const updatePlayerGameLog = async (
 		const stats: string[] = [];
 
 		const allStats = Array.from(
-			new Set(Object.values(PLAYER_GAME_STATS).flatMap(x => x.stats)),
+			new Set(Object.values(PLAYER_GAME_STATS).flatMap((x) => x.stats)),
 		);
 
 		const games = await idb.getCopies.games({ season }, "noCopyCache");
@@ -66,10 +68,10 @@ const updatePlayerGameLog = async (
 
 		const gameLog = [];
 		for (const game of games) {
-			let row = game.teams[0].players.find(p => p.pid === pid);
+			let row = game.teams[0].players.find((p) => p.pid === pid);
 			let t0 = 0;
 			if (!row) {
-				row = game.teams[1].players.find(p => p.pid === pid);
+				row = game.teams[1].players.find((p) => p.pid === pid);
 				t0 = 1;
 			}
 			if (!row) {
@@ -113,7 +115,7 @@ const updatePlayerGameLog = async (
 				const info = PLAYER_GAME_STATS[type];
 
 				// Filter gets rid of dupes, like how fmbLost appears for both Passing and Rushing in FBGM
-				const newStats = info.stats.filter(stat => !stats.includes(stat));
+				const newStats = info.stats.filter((stat) => !stats.includes(stat));
 
 				if (newStats.length > 0) {
 					stats.push(...newStats);

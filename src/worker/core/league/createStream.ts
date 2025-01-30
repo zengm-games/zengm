@@ -259,7 +259,7 @@ const preProcess = async (
 			x.result === undefined &&
 			typeof x.score === "string"
 		) {
-			const pts = (x.score as string).split("-").map(y => Number.parseInt(y));
+			const pts = (x.score as string).split("-").map((y) => Number.parseInt(y));
 			let diff = -Infinity;
 			if (!Number.isNaN(pts[0]) && !Number.isNaN(pts[1])) {
 				diff = pts[0] - pts[1];
@@ -566,7 +566,7 @@ const finalizeDBExceptPlayers = async ({
 	const schedule = await scheduleStore.getAll();
 	if (schedule.length > 0) {
 		const missingDay = schedule.some(
-			matchup => typeof matchup.day !== "number",
+			(matchup) => typeof matchup.day !== "number",
 		);
 
 		if (missingDay) {
@@ -678,7 +678,7 @@ const processTeamInfos = async ({
 		}
 	}
 
-	const teams = teamInfos.map(t => team.generate(t));
+	const teams = teamInfos.map((t) => team.generate(t));
 
 	// Version 55 upgrade
 	const budgetsByTid: Record<number, Team["budget"]> = {};
@@ -705,7 +705,7 @@ const processTeamInfos = async ({
 
 				// Remove any past seasons that claim to be from this season or a future season
 				teamSeasonsLocal = [
-					...teamSeasonsLocal.filter(ts => ts.season < last.season),
+					...teamSeasonsLocal.filter((ts) => ts.season < last.season),
 					last,
 				];
 			}
@@ -951,7 +951,9 @@ const finalizeActivePlayers = async ({
 		await idb.cache.players.put(p);
 	}
 
-	const pidsToNormalize = players1.filter(p => p.contract.temp).map(p => p.pid);
+	const pidsToNormalize = players1
+		.filter((p) => p.contract.temp)
+		.map((p) => p.pid);
 	await freeAgents.normalizeContractDemands({
 		type: "newLeague",
 		pids: pidsToNormalize,
@@ -969,7 +971,7 @@ const finalizeActivePlayers = async ({
 			if (t.disabled) {
 				continue;
 			}
-			const roster = players.filter(p => p.tid === t.tid);
+			const roster = players.filter((p) => p.tid === t.tid);
 			let payroll = roster.reduce((total, p) => total + p.contract.amount, 0);
 
 			while (payroll > g.get("salaryCap")) {
@@ -1148,7 +1150,7 @@ const beforeDBStream = async ({
 	const { realPlayerPhotos, realTeamInfo } = await getRealTeamPlayerData({
 		fileHasPlayers:
 			keptKeys.has("players") ||
-			teamInfos.some(t => t.usePlayers) ||
+			teamInfos.some((t) => t.usePlayers) ||
 			randomization === "debuts" ||
 			randomization === "debutsForever",
 		fileHasTeams: !!filteredFromFile.teams,
@@ -1170,7 +1172,7 @@ const beforeDBStream = async ({
 
 	// Update after applying real team info
 	if (realTeamInfo) {
-		gameAttributes.teamInfoCache = teams.map(t => ({
+		gameAttributes.teamInfoCache = teams.map((t) => ({
 			abbrev: t.abbrev,
 			disabled: t.disabled,
 			imgURL: t.imgURL,
@@ -1180,7 +1182,7 @@ const beforeDBStream = async ({
 		}));
 	}
 
-	const activeTids = teams.filter(t => !t.disabled).map(t => t.tid);
+	const activeTids = teams.filter((t) => !t.disabled).map((t) => t.tid);
 
 	await addLeagueMeta({
 		lid,
@@ -1273,7 +1275,7 @@ const afterDBStream = async ({
 		// Assign the team ID of all players to the 'playerTids' array.
 		// Check tid to prevent draft prospects from being swapped with established players
 		const numPlayersToShuffle = extraFromStream.activePlayers.filter(
-			p => p.tid > PLAYER.FREE_AGENT,
+			(p) => p.tid > PLAYER.FREE_AGENT,
 		).length;
 
 		const playerTids = [];
@@ -1373,7 +1375,7 @@ const afterDBStream = async ({
 		}
 	}
 	if (replaceTids.size > 0) {
-		activePlayers = activePlayers.filter(p => !replaceTids.has(p.tid));
+		activePlayers = activePlayers.filter((p) => !replaceTids.has(p.tid));
 		activePlayers.push(...extraActivePlayers);
 	}
 
@@ -1407,7 +1409,7 @@ const afterDBStream = async ({
 		}
 	}
 
-	if (activePlayers.some(p => p.srID !== undefined)) {
+	if (activePlayers.some((p) => p.srID !== undefined)) {
 		const basketball = await loadDataBasketball();
 
 		// Depending on how we got to this point, there may already be pids and here (normal real players league) or there may not (individual team selected from Customize Teams, or maybe random debuts in random players league)
@@ -1437,8 +1439,8 @@ const afterDBStream = async ({
 	for (let i = 0; i < teams.length; i++) {
 		if (teamInfos[i].strategy === undefined) {
 			const teamPlayers = activePlayers
-				.filter(p => p.tid === i)
-				.map(p => ({
+				.filter((p) => p.tid === i)
+				.map((p) => ({
 					pid: p.pid,
 					value: p.value,
 					ratings: p.ratings.at(-1),
@@ -1546,8 +1548,8 @@ const afterDBStream = async ({
 	if (g.get("phase") === PHASE.DRAFT) {
 		const currentDraftPicks = await draft.getOrder();
 		const draftNotStarted =
-			currentDraftPicks.every(dp => dp.round === 0) ||
-			currentDraftPicks.some(dp => dp.round === 1 && dp.pick === 1);
+			currentDraftPicks.every((dp) => dp.round === 0) ||
+			currentDraftPicks.some((dp) => dp.round === 1 && dp.pick === 1);
 		if (draftNotStarted) {
 			const numDraftPicksCurrent = currentDraftPicks.length;
 			if (numDraftPicksCurrent > 0) {
@@ -1575,11 +1577,11 @@ const afterDBStream = async ({
 
 		if (memorials) {
 			for (const memorial of memorials) {
-				const tid = teams.find(t => t.region === memorial.region)?.tid;
+				const tid = teams.find((t) => t.region === memorial.region)?.tid;
 				if (tid !== undefined) {
 					const players = (
 						await idb.cache.players.indexGetAll("playersByTid", tid)
-					).filter(p => p.relatives.length === 0);
+					).filter((p) => p.relatives.length === 0);
 					const p = random.choice(players);
 					if (p) {
 						p.firstName = memorial.firstName;

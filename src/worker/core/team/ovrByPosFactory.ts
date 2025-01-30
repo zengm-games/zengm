@@ -63,7 +63,7 @@ const ovrByPosFactory =
 		}
 
 		const playerInfo = orderBy(
-			players.map(p => {
+			players.map((p) => {
 				let pos;
 				if (
 					bySport({

@@ -29,7 +29,7 @@ export const getDraftTid = (
 	draftAbbrev: string,
 ) => {
 	const draftTeam = teams.find(
-		t =>
+		(t) =>
 			t.srID !== undefined && oldAbbrevTo2020BBGMAbbrev(t.srID) === draftAbbrev,
 	);
 	if (draftTeam) {
@@ -66,7 +66,8 @@ const formatPlayerFactory = async (
 		}
 
 		const t = teams.find(
-			t => t.srID !== undefined && oldAbbrevTo2020BBGMAbbrev(t.srID) === abbrev,
+			(t) =>
+				t.srID !== undefined && oldAbbrevTo2020BBGMAbbrev(t.srID) === abbrev,
 		);
 
 		const tid = t?.tid;
@@ -155,7 +156,7 @@ const formatPlayerFactory = async (
 			} else {
 				// Search forwards - first team a player was on that season
 				statsRow = basketball.teams.find(
-					row => row.slug === slug && row.season === ratings.season,
+					(row) => row.slug === slug && row.season === ratings.season,
 				);
 			}
 			const abbrev = statsRow ? statsRow.abbrev : ratings.abbrev_if_new_row;
@@ -165,7 +166,7 @@ const formatPlayerFactory = async (
 			}
 
 			if (legends) {
-				const team = teams.find(t => {
+				const team = teams.find((t) => {
 					if (hasQueens && abbrev === "NOL" && ratings.season < 2003) {
 						return (
 							t.srID !== undefined &&
@@ -188,7 +189,7 @@ const formatPlayerFactory = async (
 
 		if (jerseyNumber === undefined && tid !== PLAYER.RETIRED) {
 			// Fallback (mostly for draft prospects) - pick first number in database
-			const statsRow2 = basketball.teams.find(row => row.slug === slug);
+			const statsRow2 = basketball.teams.find((row) => row.slug === slug);
 			if (statsRow2) {
 				jerseyNumber = statsRow2.jerseyNumber;
 			}
@@ -220,7 +221,7 @@ const formatPlayerFactory = async (
 				exp: season + 3,
 			};
 		} else if (!options.randomDebuts || options.randomDebutsKeepCurrent) {
-			const salaryRows = basketball.salaries.filter(row => {
+			const salaryRows = basketball.salaries.filter((row) => {
 				if (row.slug !== slug) {
 					return false;
 				}
@@ -246,7 +247,9 @@ const formatPlayerFactory = async (
 				}
 				if (season >= LATEST_SEASON) {
 					// Auto-apply extensions, otherwise will feel weird
-					const salaryRowExtension = salaryRows.find(row => row.start > season);
+					const salaryRowExtension = salaryRows.find(
+						(row) => row.start > season,
+					);
 					if (salaryRowExtension) {
 						salaryRow = salaryRowExtension;
 					}
@@ -300,7 +303,7 @@ const formatPlayerFactory = async (
 				allAwards && !draftProspect
 					? helpers.deepCopy(
 							allAwards.filter(
-								award =>
+								(award) =>
 									award.season < awardsCutoffSeason ||
 									(options.type === "real" &&
 										options.phase === PHASE.PLAYOFFS &&
@@ -322,7 +325,7 @@ const formatPlayerFactory = async (
 		}
 
 		// Whitelist, to get rid of any other columns
-		const processedRatings = allRatings.map(row => getOnlyRatings(row, true));
+		const processedRatings = allRatings.map((row) => getOnlyRatings(row, true));
 
 		const addDummyRookieRatings =
 			!draftProspect &&
@@ -374,7 +377,7 @@ const formatPlayerFactory = async (
 
 			if (options.realStats === "lastSeason") {
 				statsTemp = basketballStats.stats.filter(
-					row =>
+					(row) =>
 						row.slug === slug &&
 						row.season === statsSeason &&
 						(includePlayoffs || !row.playoffs),
@@ -385,7 +388,7 @@ const formatPlayerFactory = async (
 				options.realStats === "all"
 			) {
 				statsTemp = basketballStats.stats.filter(
-					row =>
+					(row) =>
 						row.slug === slug &&
 						row.season <= statsSeason &&
 						(includePlayoffs || !row.playoffs || row.season < statsSeason),
@@ -393,7 +396,7 @@ const formatPlayerFactory = async (
 			}
 
 			if (statsTemp && statsTemp.length > 0) {
-				stats = statsTemp.map(row => {
+				stats = statsTemp.map((row) => {
 					let tid = getTidNormal(row.abbrev);
 					if (tid === undefined) {
 						// Team was disbanded
@@ -417,7 +420,7 @@ const formatPlayerFactory = async (
 
 		const hof: 1 | undefined =
 			!!awards &&
-			awards.some(award => award.type === "Inducted into the Hall of Fame")
+			awards.some((award) => award.type === "Inducted into the Hall of Fame")
 				? 1
 				: undefined;
 		const diedYear =
@@ -428,7 +431,7 @@ const formatPlayerFactory = async (
 		let retiredYear;
 		if (ratings.retiredUntil !== undefined) {
 			const lastNonRetiredSeason = allRatings.findLast(
-				row => row.season < ratings.season && row.retiredUntil === undefined,
+				(row) => row.season < ratings.season && row.retiredUntil === undefined,
 			);
 			if (lastNonRetiredSeason) {
 				retiredYear = lastNonRetiredSeason.season;

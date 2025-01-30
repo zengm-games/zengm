@@ -71,15 +71,15 @@ const getDraftProspects = async (
 	const initialDraftYear =
 		options.phase > PHASE.DRAFT ? options.season + 1 : options.season;
 
-	const seenSlugs = new Set(activePlayers.map(p => p.srID));
+	const seenSlugs = new Set(activePlayers.map((p) => p.srID));
 	const draftProspects = orderBy(basketball.ratings, ["slug", "season"])
-		.filter(ratings => {
+		.filter((ratings) => {
 			// Only keep rookie seasons
 			const seen = seenSlugs.has(ratings.slug);
 			seenSlugs.add(ratings.slug);
 			return !seen;
 		})
-		.filter(ratings => {
+		.filter((ratings) => {
 			if (options.randomDebuts) {
 				return true;
 			}
@@ -96,7 +96,7 @@ const getDraftProspects = async (
 
 			return false;
 		})
-		.map(ratings =>
+		.map((ratings) =>
 			formatPlayer(ratings, {
 				draftProspect: true,
 			}),

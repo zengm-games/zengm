@@ -184,12 +184,12 @@ const PlayerGameLog = ({
 			seasons: season,
 		},
 		dropdownCustomOptions: {
-			seasons: seasonsWithStats.map(season => ({
+			seasons: seasonsWithStats.map((season) => ({
 				key: season,
 				value: String(season),
 			})),
 		},
-		dropdownCustomURL: fields => {
+		dropdownCustomURL: (fields) => {
 			const parts =
 				fields.playerProfile === "gameLog"
 					? ["player_game_log", player.pid, fields.seasons]
@@ -208,7 +208,7 @@ const PlayerGameLog = ({
 		"Record",
 		"",
 		...(isSport("baseball") && showDecisionColumn ? ["Decision"] : []),
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
 	]);
 
 	const makeRow = (game: (typeof gameLog)[number], i: number): DataTableRow => {
@@ -273,7 +273,7 @@ const PlayerGameLog = ({
 				...(isSport("baseball") && showDecisionColumn
 					? [wrappedBaseballDecision(game.stats as any)]
 					: []),
-				...stats.map(stat =>
+				...stats.map((stat) =>
 					game.stats[stat] === undefined
 						? undefined
 						: helpers.roundStat(game.stats[stat], stat, true),
@@ -282,14 +282,16 @@ const PlayerGameLog = ({
 		};
 	};
 
-	const rowsRegularSeason = gameLog.filter(game => !game.playoffs).map(makeRow);
+	const rowsRegularSeason = gameLog
+		.filter((game) => !game.playoffs)
+		.map(makeRow);
 
-	const playoffGames = gameLog.filter(game => game.playoffs);
+	const playoffGames = gameLog.filter((game) => game.playoffs);
 	const rowsPlayoffs = playoffGames.map(makeRow);
 
 	// Add separators to playoff series when there is one more than a single game
 	let striped;
-	if (numGamesPlayoffSeires.some(numGames => numGames > 1)) {
+	if (numGamesPlayoffSeires.some((numGames) => numGames > 1)) {
 		striped = false;
 
 		let prevOppTid;

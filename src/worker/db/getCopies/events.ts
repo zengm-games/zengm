@@ -47,7 +47,7 @@ const getCopies = async (
 				.transaction("events")
 				.store.index("season")
 				.getAll(season),
-			(await idb.cache.events.getAll()).filter(event => {
+			(await idb.cache.events.getAll()).filter((event) => {
 				return event.season === season;
 			}),
 			"events",
@@ -58,7 +58,7 @@ const getCopies = async (
 	if (pid !== undefined) {
 		return mergeByPk(
 			await idb.league.transaction("events").store.index("pids").getAll(pid),
-			(await idb.cache.events.getAll()).filter(event => {
+			(await idb.cache.events.getAll()).filter((event) => {
 				return event.pids !== undefined && event.pids.includes(pid);
 			}),
 			"events",
@@ -69,7 +69,7 @@ const getCopies = async (
 	if (dpid !== undefined) {
 		return mergeByPk(
 			await idb.league.transaction("events").store.index("dpids").getAll(dpid),
-			(await idb.cache.events.getAll()).filter(event => {
+			(await idb.cache.events.getAll()).filter((event) => {
 				return event.dpids !== undefined && event.dpids.includes(dpid);
 			}),
 			"events",

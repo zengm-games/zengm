@@ -97,7 +97,7 @@ const getMostXTeamSeasons = async ({
 	const challengeNoRatings = g.get("challengeNoRatings");
 
 	const teamSeasons = await Promise.all(
-		teamSeasonsAll.map(async ts => {
+		teamSeasonsAll.map(async (ts) => {
 			return {
 				tid: ts.tid,
 				season: ts.season,
@@ -133,7 +133,7 @@ const getMostXTeamSeasons = async ({
 			.objectStore("teamStats")
 			.index("season, tid")
 			.getAll([ts.season, ts.tid]);
-		const row = teamStats.find(row => !row.playoffs);
+		const row = teamStats.find((row) => !row.playoffs);
 		if (row) {
 			ts.mov = team.processStats(row, ["mov"], false, "perGame").mov;
 			ts.gp = row.gp;
@@ -216,10 +216,10 @@ const updateFrivolitiesTeamSeasons = async (
 			description =
 				"These are the best seasons from teams that did not make the playoffs.";
 
-			filter = ts =>
+			filter = (ts) =>
 				ts.playoffRoundsWon < 0 &&
 				(season > ts.season || phase > PHASE.PLAYOFFS);
-			getValue = ts => {
+			getValue = (ts) => {
 				return { value: helpers.calcWinp(ts) };
 			};
 			sortParams = [
@@ -242,7 +242,7 @@ const updateFrivolitiesTeamSeasons = async (
 				},
 			);
 
-			filter = ts =>
+			filter = (ts) =>
 				ts.playoffRoundsWon >= 0 &&
 				(season > ts.season || phase > PHASE.PLAYOFFS);
 			getValue = (ts, playoffsByConf) => ({
@@ -269,7 +269,7 @@ const updateFrivolitiesTeamSeasons = async (
 				},
 			);
 
-			filter = ts =>
+			filter = (ts) =>
 				ts.playoffRoundsWon >= 0 &&
 				(season > ts.season || phase > PHASE.PLAYOFFS);
 			getValue = (ts, playoffsByConf) => {
@@ -308,7 +308,7 @@ const updateFrivolitiesTeamSeasons = async (
 				},
 			);
 
-			filter = ts =>
+			filter = (ts) =>
 				ts.playoffRoundsWon >= 0 &&
 				(season > ts.season || phase > PHASE.PLAYOFFS);
 			getValue = (ts, playoffsByConf) => {
@@ -341,7 +341,7 @@ const updateFrivolitiesTeamSeasons = async (
 				},
 			);
 
-			filter = ts => season > ts.season || phase > PHASE.PLAYOFFS;
+			filter = (ts) => season > ts.season || phase > PHASE.PLAYOFFS;
 			getValue = (ts, playoffsByConf) => ({
 				value: helpers.calcWinp(ts),
 				roundsWonText: getRoundsWonText(ts, playoffsByConf),
@@ -353,8 +353,8 @@ const updateFrivolitiesTeamSeasons = async (
 		} else if (type === "worst") {
 			title = "Worst Teams";
 
-			filter = ts => season > ts.season || phase > PHASE.PLAYOFFS;
-			getValue = ts => ({
+			filter = (ts) => season > ts.season || phase > PHASE.PLAYOFFS;
+			getValue = (ts) => ({
 				value: -helpers.calcWinp(ts),
 			});
 			sortParams = [
@@ -379,7 +379,7 @@ const updateFrivolitiesTeamSeasons = async (
 				},
 			);
 
-			filter = ts =>
+			filter = (ts) =>
 				ts.avgAge !== undefined &&
 				ts.playoffRoundsWon >= 0 &&
 				(season > ts.season || phase > PHASE.PLAYOFFS);

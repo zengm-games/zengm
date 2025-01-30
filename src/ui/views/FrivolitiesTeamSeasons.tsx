@@ -31,11 +31,11 @@ const FrivolitiesTeamSeasons = ({
 		...(usePts ? ["PTS", "PTS%"] : ["%"]),
 		`stat:${isSport("basketball") ? "mov" : "diff"}`,
 		"Ovr",
-		...extraCols.map(x => x.colName),
+		...extraCols.map((x) => x.colName),
 		"Links",
 	]);
 
-	const rows = teamSeasons.map(ts => {
+	const rows = teamSeasons.map((ts) => {
 		return {
 			key: ts.rank,
 			data: [
@@ -63,12 +63,12 @@ const FrivolitiesTeamSeasons = ({
 								pts: ts.pts * ts.gp,
 								oppPts: ts.oppPts * ts.gp,
 								gp: ts.gp,
-						  }
+							}
 						: ts,
 					isSport("basketball") ? "mov" : "diff",
 				),
 				ts.ovr,
-				...extraCols.map(x => {
+				...extraCols.map((x) => {
 					let value = getValue(ts, x.key);
 					if (x.colName === "AvgAge") {
 						value = value.toFixed(1);

@@ -50,7 +50,7 @@ const InfoRow = ({
 	let sortValues: any[] | undefined;
 
 	if (sortType !== undefined) {
-		sortValues = values.map(value => getSortVal(value, sortType));
+		sortValues = values.map((value) => getSortVal(value, sortType));
 		for (let i = 0; i < sortValues.length; i++) {
 			if (values[i] === "legend") {
 				continue;
@@ -128,9 +128,9 @@ const HeaderRow = ({
 			<th colSpan={colSpan} className="table-info p-0">
 				<a
 					className="compare-players-heading"
-					onClick={event => {
+					onClick={(event) => {
 						event.preventDefault();
-						setOpen(prev => !prev);
+						setOpen((prev) => !prev);
 					}}
 				>
 					<CollapseArrow open={open} /> {children}
@@ -160,7 +160,7 @@ const AwardRows = ({ players }: { players: PlayerInfoAndLegend[] }) => {
 
 	return (
 		<>
-			{allAwardsGrouped.map(award => {
+			{allAwardsGrouped.map((award) => {
 				return (
 					<InfoRow
 						key={award.type}
@@ -234,11 +234,11 @@ const ComparePlayers = ({
 		<PlayersForm
 			initialAvailablePlayers={initialAvailablePlayers}
 			players={players}
-			onSubmit={playerInfos => {
+			onSubmit={(playerInfos) => {
 				const url = helpers.leagueUrl([
 					"compare_players",
 					playerInfos
-						.map(info => {
+						.map((info) => {
 							const shortPlayoffs =
 								info.playoffs === "combined"
 									? "c"
@@ -287,7 +287,7 @@ const ComparePlayers = ({
 			col={getCols(["Age"])[0]}
 			values={playersToValues(
 				playersAndLegend,
-				p => p.ratings.season - p.born.year,
+				(p) => p.ratings.season - p.born.year,
 			)}
 			sortType="number"
 			sortAsc
@@ -326,7 +326,7 @@ const ComparePlayers = ({
 
 	// Only show contract if there is a non-null value for some player
 	const showContracts = contractValues.some(
-		value => value !== null && value !== "legend",
+		(value) => value !== null && value !== "legend",
 	);
 
 	return (
@@ -392,7 +392,7 @@ const ComparePlayers = ({
 										}}
 										values={playersToValues(
 											playersAndLegend,
-											p => `${p.experience} years`,
+											(p) => `${p.experience} years`,
 										)}
 										sortType="number"
 									/>
@@ -401,11 +401,14 @@ const ComparePlayers = ({
 								)}
 								<InfoRow
 									col={getCols(["Pos"])[0]}
-									values={playersToValues(playersAndLegend, p => p.ratings.pos)}
+									values={playersToValues(
+										playersAndLegend,
+										(p) => p.ratings.pos,
+									)}
 								/>
 								<InfoRow
 									col={getCols(["Draft"])[0]}
-									values={playersToValues(playersAndLegend, p =>
+									values={playersToValues(playersAndLegend, (p) =>
 										p.tid === PLAYER.UNDRAFTED
 											? "Draft prospect"
 											: p.draft.round === 0
@@ -424,7 +427,7 @@ const ComparePlayers = ({
 							</>
 						) : null}
 						{challengeNoRatings &&
-						!players.every(p => p.p.tid === PLAYER.RETIRED) ? null : (
+						!players.every((p) => p.p.tid === PLAYER.RETIRED) ? null : (
 							<>
 								<HeaderRow
 									colSpan={numCols}
@@ -436,7 +439,7 @@ const ComparePlayers = ({
 								{openRatings ? (
 									<>
 										{career ? ageRow : null}
-										{ratings.map(rating => {
+										{ratings.map((rating) => {
 											let key;
 											if (rating === "ovr") {
 												key = "Ovr";
@@ -452,7 +455,7 @@ const ComparePlayers = ({
 													col={col}
 													values={playersToValues(
 														playersAndLegend,
-														p => p.ratings[rating],
+														(p) => p.ratings[rating],
 													)}
 													sortType="number"
 												/>
@@ -470,7 +473,7 @@ const ComparePlayers = ({
 							Stats
 						</HeaderRow>
 						{openStats
-							? stats.map(stat => {
+							? stats.map((stat) => {
 									const col = getCols([`stat:${stat}`])[0];
 									return (
 										<InfoRow
@@ -478,7 +481,7 @@ const ComparePlayers = ({
 											col={col}
 											values={playersToValues(
 												playersAndLegend,
-												p =>
+												(p) =>
 													`${helpers.roundStat(p.stats[stat], stat)}${showPercentSign.includes(stat) ? "%" : ""}`,
 											)}
 											sortType={col.sortType}

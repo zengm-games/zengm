@@ -10,7 +10,7 @@ const formatYear = (year: {
 	[key: string]: { team: string; season: number }[];
 }) => {
 	return Object.keys(year).map((k, i) => {
-		const years = helpers.yearRanges(year[k].map(y => y.season)).join(", ");
+		const years = helpers.yearRanges(year[k].map((y) => y.season)).join(", ");
 		return (
 			<span key={k}>
 				{i > 0 ? ", " : null}
@@ -25,7 +25,7 @@ const formatYearString = (year: {
 }) => {
 	return Object.keys(year)
 		.map((k, i) => {
-			const years = helpers.yearRanges(year[k].map(y => y.season)).join(", ");
+			const years = helpers.yearRanges(year[k].map((y) => y.season)).join(", ");
 			return `${i > 0 ? ", " : ""}${k} (${years})`;
 		})
 		.join("");
@@ -58,7 +58,7 @@ const AwardsRecords = ({
 		},
 	});
 
-	const rows: DataTableRow[] = awardsRecords.map(a => {
+	const rows: DataTableRow[] = awardsRecords.map((a) => {
 		const yearsGrouped = groupBy(a.years, "team");
 
 		return {
@@ -80,7 +80,7 @@ const AwardsRecords = ({
 				{
 					value: formatYear(yearsGrouped),
 					searchValue: formatYearString(yearsGrouped),
-					sortValue: a.years.map(year => year.season).sort()[0],
+					sortValue: a.years.map((year) => year.season).sort()[0],
 				},
 				a.lastYear,
 				{

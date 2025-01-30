@@ -36,8 +36,8 @@ const resetCacheWithPlayers = async (info: { [key: string]: number }) => {
 	}
 
 	const numTeams = Object.keys(Object.keys(info))
-		.map(tid => Number.parseInt(tid))
-		.filter(tid => tid >= 0).length;
+		.map((tid) => Number.parseInt(tid))
+		.filter((tid) => tid >= 0).length;
 	const teamsDefault = helpers.getTeamsDefault();
 	const teams = teamsDefault.slice(0, numTeams).map(team.generate);
 

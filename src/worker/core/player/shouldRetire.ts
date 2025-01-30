@@ -91,7 +91,7 @@ const shouldRetire = (
 
 			// Second condition, for aging stars who are still pretty good, but clearly past their prime
 			if (age > maxAge) {
-				const maxOvr = Math.max(...p.ratings.map(row => row.ovr));
+				const maxOvr = Math.max(...p.ratings.map((row) => row.ovr));
 				const ovrFraction = ovr / maxOvr;
 				if (ovrFraction < 0.7) {
 					const prob2 = 0.2 + (0.7 - ovrFraction);

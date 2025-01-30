@@ -50,7 +50,7 @@ const Relatives = ({
 
 	return (
 		<>
-			{relatives.slice(0, numToShow).map(rel => {
+			{relatives.slice(0, numToShow).map((rel) => {
 				return (
 					<Fragment key={rel.pid}>
 						{helpers.getRelativeType(gender, rel.type)}:{" "}
@@ -109,7 +109,7 @@ const StatsSummary = ({
 	if (season !== undefined) {
 		// Specific season was requested
 		const playerStats = p.stats.filter(
-			ps => !ps.playoffs && ps.season === season,
+			(ps) => !ps.playoffs && ps.season === season,
 		);
 		ps = playerStats.at(-1);
 	}
@@ -137,7 +137,7 @@ const StatsSummary = ({
 		} else {
 			// Find current season for active player
 			const playerStats = p.stats.filter(
-				ps =>
+				(ps) =>
 					!ps.playoffs &&
 					(ps.season === currentSeason ||
 						(ps.season === currentSeason - 1 && phase === PHASE.PRESEASON)),
@@ -146,7 +146,7 @@ const StatsSummary = ({
 		}
 	}
 
-	const cols = getCols(["Summary", ...stats.map(stat => `stat:${stat}`)]);
+	const cols = getCols(["Summary", ...stats.map((stat) => `stat:${stat}`)]);
 
 	if (name === "Shot Locations") {
 		cols.at(-3)!.title = "M";
@@ -354,7 +354,7 @@ const TopStuff = ({
 	} else {
 		let skills;
 		if (season !== undefined) {
-			skills = player.ratings.find(row => row.season === season)?.skills;
+			skills = player.ratings.find((row) => row.season === season)?.skills;
 		}
 		if (!skills) {
 			skills = player.ratings.at(-1)!.skills;

@@ -10,7 +10,7 @@ import { DEFAULT_LEVEL } from "../../common/budgetLevels";
 
 const get = (slug: string): any => {
 	const achievement = achievements.find(
-		achievement2 => slug === achievement2.slug,
+		(achievement2) => slug === achievement2.slug,
 	);
 	if (!achievement) {
 		throw new Error(`No achievement found for slug "${slug}"`);
@@ -30,7 +30,7 @@ beforeAll(async () => {
 			player.generate(0, 30, 2010, true, DEFAULT_LEVEL),
 		],
 		teams: teamsDefault.map(team.generate),
-		teamSeasons: teamsDefault.map(t => team.genSeasonRow(t)),
+		teamSeasons: teamsDefault.map((t) => team.genSeasonRow(t)),
 	});
 
 	idb.league = testHelpers.mockIDBLeague();

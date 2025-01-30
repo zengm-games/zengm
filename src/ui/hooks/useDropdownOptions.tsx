@@ -40,7 +40,7 @@ export const getSortedTeams = ({
 }) => {
 	const array = [
 		...orderBy(
-			teamInfoCache.filter(t => !t.disabled),
+			teamInfoCache.filter((t) => !t.disabled),
 			["region", "name"],
 		),
 	];
@@ -48,7 +48,7 @@ export const getSortedTeams = ({
 	if (!hideDisabledTeams) {
 		array.push(
 			...orderBy(
-				teamInfoCache.filter(t => t.disabled),
+				teamInfoCache.filter((t) => t.disabled),
 				["region", "name"],
 			),
 		);
@@ -443,7 +443,7 @@ const useDropdownOptions = (
 		keys = Object.keys(TEAM_STATS_TABLES);
 	} else if (field === "teamAdvanced") {
 		keys = Object.keys(TEAM_STATS_TABLES).filter(
-			key => !key.includes("pponent") && !key.includes("opp"),
+			(key) => !key.includes("pponent") && !key.includes("opp"),
 		);
 	} else if (field === "teamRecordType") {
 		keys = ["by_team", "by_conf", "by_div"];
@@ -471,7 +471,7 @@ const useDropdownOptions = (
 		throw new Error(`Unknown Dropdown field: ${field}`);
 	}
 
-	const newOptions: DropdownOption[] = keys.map(rawKey => {
+	const newOptions: DropdownOption[] = keys.map((rawKey) => {
 		const key =
 			typeof rawKey === "string" && rawKey.includes("|||")
 				? rawKey.split("|||")[0]

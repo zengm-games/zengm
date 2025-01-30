@@ -70,7 +70,7 @@ const BarGraph = <Row extends unknown, Y extends (keyof NumbersOnly<Row>)[]>({
 }) => {
 	// Default scale for bar chart. This finds the max and min values in the data, adds 10% in each direction so you don't end up with tiny slivers, and then expands the upper/lower lims to 0 if 0 wasn't already in the range.
 	const defaultYlim = (): [number, number] => {
-		const values: number[] = data.map(row => {
+		const values: number[] = data.map((row) => {
 			// If stacked, add up all the components
 			let value = 0;
 			for (const key of y) {
@@ -116,8 +116,8 @@ const BarGraph = <Row extends unknown, Y extends (keyof NumbersOnly<Row>)[]>({
 
 	const widthPct = 100 / numBars;
 
-	const scaled = data.map(row =>
-		y.map(key => {
+	const scaled = data.map((row) =>
+		y.map((key) => {
 			// @ts-expect-error
 			return scale(row[key], ylim);
 		}),

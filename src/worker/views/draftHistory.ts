@@ -39,7 +39,7 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 		);
 	}
 
-	playersAll = playersAll.filter(p => {
+	playersAll = playersAll.filter((p) => {
 		return p.draft.year === inputs.season;
 	});
 	playersAll = await idb.getCopies.playersPlus(playersAll, {
@@ -64,10 +64,10 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 		fuzz: true,
 	});
 	const players = playersAll
-		.filter(p => {
+		.filter((p) => {
 			return p.draft.round >= 1 || p.careerStats.gp > 0;
 		})
-		.map(p => {
+		.map((p) => {
 			const currentPr = p.ratings.at(-1);
 			const peakPr: any = maxBy(p.ratings, "ovr");
 			return {

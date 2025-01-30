@@ -31,7 +31,7 @@ const genPlayerRows = (
 	stats: Stats,
 	challengeNoRatings: boolean,
 ) => {
-	return players.map(p => {
+	return players.map((p) => {
 		return {
 			key: p.pid,
 			data: [
@@ -71,7 +71,7 @@ const genPlayerRows = (
 				!challengeNoRatings ? p.ratings.pot : null,
 				wrappedContractAmount(p),
 				wrappedContractExp(p),
-				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.stats[stat], stat)),
 			],
 			classNames: {
 				"table-danger": (p.excluded || p.untradable) && !p.included,
@@ -86,7 +86,7 @@ const genPickRows = (
 	handleToggle: HandleToggle,
 	userOrOther: UserOrOther,
 ) => {
-	return picks.map(pick => {
+	return picks.map((pick) => {
 		return {
 			key: pick.dpid,
 			data: [
@@ -161,7 +161,7 @@ const AssetList = ({
 			"Pot",
 			"Contract",
 			"Exp",
-			...stats.map(stat => `stat:${stat}`),
+			...stats.map((stat) => `stat:${stat}`),
 		],
 		{
 			"": {
@@ -241,7 +241,7 @@ const AssetList = ({
 						>
 							Make all untradeable
 						</Dropdown.Item>
-						{range(numDraftRounds).map(i => (
+						{range(numDraftRounds).map((i) => (
 							<Dropdown.Item
 								key={i}
 								onClick={() => {

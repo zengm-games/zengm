@@ -74,7 +74,7 @@ const useStickyXX = (
 				rows = getRows();
 			}
 
-			const widths = lefts.map(left => `${left}px`);
+			const widths = lefts.map((left) => `${left}px`);
 
 			for (const row of rows) {
 				for (let i = 1; i < widths.length; i++) {

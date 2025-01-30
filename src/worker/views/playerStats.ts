@@ -87,7 +87,7 @@ const updatePlayers = async (
 
 		let tid: number | undefined = g
 			.get("teamInfoCache")
-			.findIndex(t => t.abbrev === inputs.abbrev);
+			.findIndex((t) => t.abbrev === inputs.abbrev);
 
 		if (tid < 0) {
 			tid = undefined;
@@ -107,7 +107,7 @@ const updatePlayers = async (
 		}
 
 		if (tid === undefined && inputs.abbrev === "watch") {
-			playersAll = playersAll.filter(p => p.watch);
+			playersAll = playersAll.filter((p) => p.watch);
 		}
 
 		let players = await idb.getCopies.playersPlus(playersAll, {
@@ -137,7 +137,7 @@ const updatePlayers = async (
 		});
 
 		if (inputs.season === "all") {
-			players = players.flatMap(p =>
+			players = players.flatMap((p) =>
 				p.stats.map((ps: any) => {
 					const ratings =
 						p.ratings.find((pr: any) => pr.season === ps.season) ??
@@ -154,7 +154,7 @@ const updatePlayers = async (
 
 		// Only keep players who actually played
 		if (inputs.abbrev !== "watch" && isSport("basketball")) {
-			players = players.filter(p => {
+			players = players.filter((p) => {
 				if (inputs.season !== "career") {
 					return p.stats.gp > 0;
 				} else if (inputs.playoffs === "playoffs") {
@@ -190,7 +190,7 @@ const updatePlayers = async (
 				obj = "stats";
 			}
 
-			players = players.filter(p => {
+			players = players.filter((p) => {
 				for (const stat of onlyShowIf) {
 					// Array check is for byPos stats
 					if (

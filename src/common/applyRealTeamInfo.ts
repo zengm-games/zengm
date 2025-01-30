@@ -60,9 +60,9 @@ const applyRealTeamInfo = (
 
 	// Available seasons that are less than or equal to the input season
 	const seasons = Object.keys(realInfoSeasons)
-		.map(x => Number.parseInt(x))
-		.filter(x => !Number.isNaN(x))
-		.filter(x => x <= season);
+		.map((x) => Number.parseInt(x))
+		.filter((x) => !Number.isNaN(x))
+		.filter((x) => x <= season);
 
 	if (seasons.length === 0) {
 		if (!options.exactSeason) {
@@ -88,7 +88,7 @@ const applyRealTeamInfo = (
 	const realInfoMerged = Object.assign(
 		{},
 		realInfoRoot,
-		...seasons.map(season => realInfoSeasons[season]),
+		...seasons.map((season) => realInfoSeasons[season]),
 	) as IndividualRealTeamInfo;
 
 	return applyToObject(t, realInfoMerged);

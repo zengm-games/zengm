@@ -67,7 +67,7 @@ const generateContractOptions = async (
 			helpers.roundContract(contractOptions[i].amount * 1000) / 1000;
 	}
 
-	const possible = contractOptions.filter(contractOption => {
+	const possible = contractOptions.filter((contractOption) => {
 		if (contractOption.smallestAmount) {
 			return true;
 		}
@@ -118,7 +118,7 @@ const updateNegotiation = async (
 		if (inputs.pid === undefined) {
 			negotiation = negotiations[0];
 		} else {
-			negotiation = negotiations.find(neg => neg.pid === inputs.pid);
+			negotiation = negotiations.find((neg) => neg.pid === inputs.pid);
 		}
 
 		if (!negotiation) {

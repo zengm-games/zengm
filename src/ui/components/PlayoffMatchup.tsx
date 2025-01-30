@@ -99,7 +99,7 @@ const Team = ({
 
 		// If byConf, we need to find the seed in the same conference, cause multiple teams will have this seed. Otherwise, can just check seed.
 		const teamEdited = teams.find(
-			t => team.seed === t.seed && (!byConf || team.cid === t.cid),
+			(t) => team.seed === t.seed && (!byConf || team.cid === t.cid),
 		);
 
 		if (teamEdited) {
@@ -107,7 +107,7 @@ const Team = ({
 
 			let teamsFiltered = teams;
 			if (byConf) {
-				teamsFiltered = teams.filter(t => t.cid === teamEdited.cid);
+				teamsFiltered = teams.filter((t) => t.cid === teamEdited.cid);
 			}
 
 			return (
@@ -119,16 +119,16 @@ const Team = ({
 					<TeamLogo team={teamEdited} />
 					<select
 						className="form-select god-mode"
-						onChange={event => {
+						onChange={(event) => {
 							const tid = Number.parseInt(event.target.value);
-							const newTeam = teams.find(t => t.tid === tid);
+							const newTeam = teams.find((t) => t.tid === tid);
 							if (newTeam) {
 								editing.onChange(teamEdited, newTeam);
 							}
 						}}
 						value={teamEdited.tid}
 					>
-						{teamsFiltered.map(t => {
+						{teamsFiltered.map((t) => {
 							return (
 								<option key={t.tid} value={t.tid}>
 									{t.seed !== undefined ? `${t.seed}.` : null} {t.region}{" "}

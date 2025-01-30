@@ -44,14 +44,16 @@ const getSuffix = (suffixNumber: number): string => {
 };
 
 const hasRelative = (p: Player, type: RelativeType) => {
-	return p.relatives.some(relative => relative.type === type);
+	return p.relatives.some((relative) => relative.type === type);
 };
 
 const getRelatives = async (
 	p: Player,
 	type: RelativeType,
 ): Promise<Player[]> => {
-	const pids = p.relatives.filter(rel => rel.type === type).map(rel => rel.pid);
+	const pids = p.relatives
+		.filter((rel) => rel.type === type)
+		.map((rel) => rel.pid);
 	const players = await idb.getCopies.players(
 		{
 			pids,
@@ -59,7 +61,7 @@ const getRelatives = async (
 		"noCopyCache",
 	);
 
-	return players.filter(p2 => !!p2);
+	return players.filter((p2) => !!p2);
 };
 
 const addRelative = (p: Player, relative: Relative) => {
@@ -135,7 +137,7 @@ export const makeSon = async (p: Player) => {
 			"noCopyCache",
 		)
 	).filter(
-		father =>
+		(father) =>
 			typeof father.diedYear !== "number" || father.diedYear >= p.born.year,
 	);
 
@@ -247,7 +249,7 @@ export const makeBrother = async (p: Player) => {
 
 	// Find a player from a draft 0-5 years ago to make the brother
 	const draftYear = p.draft.year - random.randInt(0, 5);
-	const existingRelativePids = p.relatives.map(rel => rel.pid);
+	const existingRelativePids = p.relatives.map((rel) => rel.pid);
 	const possibleBrothers = (
 		await idb.getCopies.players(
 			{
@@ -255,7 +257,7 @@ export const makeBrother = async (p: Player) => {
 			},
 			"noCopyCache",
 		)
-	).filter(p2 => {
+	).filter((p2) => {
 		if (p2.pid === p.pid) {
 			return false;
 		}

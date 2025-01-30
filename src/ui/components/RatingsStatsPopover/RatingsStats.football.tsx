@@ -28,7 +28,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 		ratingsBlock = null;
 	} else if (ratings) {
 		const extraRatings = posRatings(ratings.pos);
-		const cols = getCols(extraRatings.map(rating => `rating:${rating}`));
+		const cols = getCols(extraRatings.map((rating) => `rating:${rating}`));
 		ratingsBlock = (
 			<div className="row">
 				<div className="col-4">

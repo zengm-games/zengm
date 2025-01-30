@@ -67,7 +67,7 @@ const stableSoftmax = (x: number[], param: number) => {
 	if (maxX === 0 || denominator === 0) {
 		return numerators.map(() => 1);
 	}
-	return numerators.map(numerator => numerator / denominator);
+	return numerators.map((numerator) => numerator / denominator);
 };
 
 // "includeExpiringContracts" - use this at the start of re-signing phase
@@ -126,15 +126,15 @@ const normalizeContractDemands = async ({
 	if (type === "newLeague") {
 		players = playersAll;
 	} else if (type === "freeAgentsOnly") {
-		players = playersAll.filter(p => p.tid === PLAYER.FREE_AGENT);
+		players = playersAll.filter((p) => p.tid === PLAYER.FREE_AGENT);
 	} else {
 		players = playersAll.filter(
-			p => p.tid === PLAYER.FREE_AGENT || p.contract.exp === season,
+			(p) => p.tid === PLAYER.FREE_AGENT || p.contract.exp === season,
 		);
 	}
 
 	// Store contracts here, so they can be edited without editing player object (for including dummy players in pool)
-	const playerInfos = players.map(p => {
+	const playerInfos = players.map((p) => {
 		let dummy = false;
 		if (pids) {
 			dummy = !pids.includes(p.pid);
@@ -169,13 +169,13 @@ const normalizeContractDemands = async ({
 	}
 
 	const teams = (await idb.cache.teams.getAll())
-		.filter(t => !t.disabled)
-		.map(t => ({
+		.filter((t) => !t.disabled)
+		.map((t) => ({
 			...t,
 			payroll: 0,
 		}));
 	for (const t of teams) {
-		const contracts = (await team.getContracts(t.tid)).filter(contract => {
+		const contracts = (await team.getContracts(t.tid)).filter((contract) => {
 			if (pids && pids.includes(contract.pid)) {
 				return false;
 			}
@@ -213,7 +213,7 @@ const normalizeContractDemands = async ({
 
 			const availablePlayers = new Set(
 				playerInfosCurrent.filter(
-					p =>
+					(p) =>
 						p.contractAmount <= capSpace &&
 						(bids.get(p.pid) ?? 0) < NUM_BIDS_BEFORE_REMOVED,
 				),
@@ -221,7 +221,7 @@ const normalizeContractDemands = async ({
 			while (capSpace > minContract && availablePlayers.size > 0) {
 				const availablePlayersArray = Array.from(availablePlayers);
 				const probs = stableSoftmax(
-					availablePlayersArray.map(p => p.value * TEMP),
+					availablePlayersArray.map((p) => p.value * TEMP),
 					PARAM,
 				);
 				const p = random.choice(availablePlayersArray, probs);

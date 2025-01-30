@@ -13,7 +13,7 @@ let defaultTeams: {
 }[];
 
 beforeAll(() => {
-	defaultTeams = helpers.getTeamsDefault().map(t => ({
+	defaultTeams = helpers.getTeamsDefault().map((t) => ({
 		// Don't need tid to start at 0, could be disabled teams!
 		tid: t.tid + 2,
 		seasonAttrs: {
@@ -66,8 +66,8 @@ describe("old basketball tests", () => {
 		const home: Record<number, Record<number, number>> = {};
 
 		for (let i = 0; i < tids.length; i++) {
-			const t0 = defaultTeams.find(t => t.tid === tids[i][0]);
-			const t1 = defaultTeams.find(t => t.tid === tids[i][1]);
+			const t0 = defaultTeams.find((t) => t.tid === tids[i][0]);
+			const t1 = defaultTeams.find((t) => t.tid === tids[i][1]);
 			if (!t0 || !t1) {
 				console.log(tids[i]);
 				throw new Error("Team not found");
@@ -102,8 +102,8 @@ describe("old basketball tests", () => {
 		const home: Record<number, Record<number, number>> = {};
 
 		for (let i = 0; i < tids.length; i++) {
-			const t0 = defaultTeams.find(t => t.tid === tids[i][0]);
-			const t1 = defaultTeams.find(t => t.tid === tids[i][1]);
+			const t0 = defaultTeams.find((t) => t.tid === tids[i][0]);
+			const t1 = defaultTeams.find((t) => t.tid === tids[i][1]);
 			if (!t0 || !t1) {
 				console.log(tids[i]);
 				throw new Error("Team not found");
@@ -138,8 +138,8 @@ describe("old basketball tests", () => {
 		const home: Record<number, Record<number, number>> = {};
 
 		for (let i = 0; i < tids.length; i++) {
-			const t0 = defaultTeams.find(t => t.tid === tids[i][0]);
-			const t1 = defaultTeams.find(t => t.tid === tids[i][1]);
+			const t0 = defaultTeams.find((t) => t.tid === tids[i][0]);
+			const t1 = defaultTeams.find((t) => t.tid === tids[i][1]);
 			if (!t0 || !t1) {
 				console.log(tids[i]);
 				throw new Error("Team not found");
@@ -176,7 +176,7 @@ describe("old basketball tests", () => {
 
 describe("old newScheduleCrappy tests", () => {
 	const makeTeams = (numTeams: number) => {
-		return range(numTeams).map(tid => ({
+		return range(numTeams).map((tid) => ({
 			// Don't need tid to start at 0, could be disabled teams!
 			tid: 5 + tid,
 			seasonAttrs: {
@@ -213,7 +213,7 @@ describe("old newScheduleCrappy tests", () => {
 				const tids = matchups.flat();
 
 				for (const t of teams) {
-					const count = tids.filter(tid => t.tid === tid).length;
+					const count = tids.filter((tid) => t.tid === tid).length;
 					assert.strictEqual(count, numGames);
 				}
 			}
@@ -242,7 +242,7 @@ describe("old newScheduleCrappy tests", () => {
 				let oneShort = false;
 
 				for (const t of teams) {
-					const count = tids.filter(tid => t.tid === tid).length;
+					const count = tids.filter((tid) => t.tid === tid).length;
 
 					if (count + 1 === numGames) {
 						if (oneShort) {
@@ -310,17 +310,17 @@ describe("error handling", () => {
 		g.setWithoutSavingToDB("numGamesConf", 2);
 		g.setWithoutSavingToDB(
 			"divs",
-			g.get("divs").map(div => ({
+			g.get("divs").map((div) => ({
 				...div,
 				cid: 0,
 			})),
 		);
 		g.setWithoutSavingToDB(
 			"confs",
-			g.get("confs").filter(conf => conf.cid === 0),
+			g.get("confs").filter((conf) => conf.cid === 0),
 		);
 		const { tids, warning } = newScheduleGood(
-			defaultTeams.map(t => ({
+			defaultTeams.map((t) => ({
 				...t,
 				seasonAttrs: {
 					cid: 0,
@@ -362,7 +362,9 @@ describe("random test cases", () => {
 				for (const [tid, count] of Object.entries(counts)) {
 					if (count < 4) {
 						console.log("tid", tid, "count", count);
-						console.log(defaultTeams.find(t => t.tid === Number.parseInt(tid)));
+						console.log(
+							defaultTeams.find((t) => t.tid === Number.parseInt(tid)),
+						);
 					}
 				}
 				console.log("tids.length", tids.length);

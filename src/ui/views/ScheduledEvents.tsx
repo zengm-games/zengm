@@ -212,10 +212,10 @@ const ViewEvent = ({
 									{key === "confs" || key === "divs"
 										? (value as any[]).map((x, i) => (
 												<div key={i}>{x.name}</div>
-										  ))
+											))
 										: Array.isArray(value)
-										? JSON.stringify(value)
-										: String(value)}
+											? JSON.stringify(value)
+											: String(value)}
 								</td>
 							</tr>
 						);
@@ -275,7 +275,7 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 		title: "Scheduled Events",
 	});
 
-	const teamInfoCache = useLocal(state => state.teamInfoCache);
+	const teamInfoCache = useLocal((state) => state.teamInfoCache);
 
 	if (scheduledEvents.length === 0) {
 		return (
@@ -296,7 +296,7 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 		},
 	});
 
-	const rows = scheduledEvents.map(scheduledEvent => {
+	const rows = scheduledEvents.map((scheduledEvent) => {
 		return {
 			key: scheduledEvent.id,
 			data: [

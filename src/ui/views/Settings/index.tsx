@@ -21,7 +21,7 @@ const Settings = ({ initialSettings }: View<"settings">) => {
 					dirtySettings: true,
 				});
 			}}
-			onSave={async settings => {
+			onSave={async (settings) => {
 				await toWorker("main", "updateGameAttributesGodMode", settings);
 
 				localActions.update({

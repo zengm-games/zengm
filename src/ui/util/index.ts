@@ -18,7 +18,7 @@ try {
 }
 
 export const promiseWorker = new PWBHost(worker);
-promiseWorker.registerError(error => {
+promiseWorker.registerError((error) => {
 	Bugsnag.notify(error);
 
 	console.error("Error from worker:");

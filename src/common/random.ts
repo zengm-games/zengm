@@ -161,7 +161,7 @@ export const choice = <T>(
 	} else {
 		weights = x.map(weightInput);
 	}
-	weights = weights.map(weight =>
+	weights = weights.map((weight) =>
 		weight < 0 || Number.isNaN(weight) ? Number.MIN_VALUE : weight,
 	);
 
@@ -176,7 +176,7 @@ export const choice = <T>(
 	}, []);
 	const max = cumsums.at(-1)!;
 	const rand = uniformSeed(getSeed()) * max;
-	const ind = cumsums.findIndex(cumsum => cumsum >= rand);
+	const ind = cumsums.findIndex((cumsum) => cumsum >= rand);
 	return x[ind];
 };
 

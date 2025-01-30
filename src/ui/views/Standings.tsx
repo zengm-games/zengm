@@ -232,7 +232,7 @@ const GroupStandings = ({
 	separatorIndexes: number[];
 	teams: StandingsTeam[];
 }) => {
-	const maxRank = Math.max(...teams.map(t => t.rank.playoffs));
+	const maxRank = Math.max(...teams.map((t) => t.rank.playoffs));
 
 	return (
 		<ResponsiveTableWrapper>
@@ -366,7 +366,7 @@ const SmallStandings = ({
 	teams: StandingsTeam[];
 }) => {
 	const maxRank = Math.max(
-		...teams.map(t => (playoffsByConf ? t.rank.conf : t.rank.league)),
+		...teams.map((t) => (playoffsByConf ? t.rank.conf : t.rank.league)),
 	);
 
 	return (
@@ -433,7 +433,7 @@ const Standings = ({
 
 	// Show small playoff standings if we're currently viewing the division standings and if the playoff standings differ from the division standings (like multiple divisions get grouped together to determine playoff ranking)
 	const confHasMultipleDivs = confs.some(
-		conf => divs.filter(div => div.cid === conf.cid).length > 1,
+		(conf) => divs.filter((div) => div.cid === conf.cid).length > 1,
 	);
 	const showSmallPlayoffStandings =
 		type === "div" &&
@@ -491,11 +491,11 @@ const Standings = ({
 				separatorIndexes.push(maxPlayoffSeedNoPlayIn - 1);
 			}
 		}
-		groups = confs.map(conf => ({
+		groups = confs.map((conf) => ({
 			name: conf.name,
 			subgroups: divs
-				.filter(div => div.cid === conf.cid)
-				.map(div => {
+				.filter((div) => div.cid === conf.cid)
+				.map((div) => {
 					const j = divs.indexOf(div);
 					return {
 						name: div.name,
@@ -530,7 +530,7 @@ const Standings = ({
 			<div className="float-md-end mt-3 mt-md-0" style={{ maxWidth: 400 }}>
 				<p>Tiebreakers for the {season} season:</p>
 				<ol>
-					{tiebreakers.map(key => (
+					{tiebreakers.map((key) => (
 						<li key={key}>{TIEBREAKERS[key]}</li>
 					))}
 				</ol>

@@ -26,7 +26,7 @@ const doSeason = async (
 			}
 
 			// If a pick already exists in the database, no need to create it
-			const existingPick = existingPicks.find(dp => {
+			const existingPick = existingPicks.find((dp) => {
 				return (
 					t.tid === dp.originalTid && round === dp.round && season === dp.season
 				);

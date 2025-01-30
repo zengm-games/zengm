@@ -25,7 +25,7 @@ const updateExpand = async (inputs: void, updateEvents: UpdateEvents) => {
 								abbrev,
 							};
 						}),
-				  )
+					)
 				: [];
 
 		return {

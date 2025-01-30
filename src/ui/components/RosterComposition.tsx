@@ -14,7 +14,7 @@ const PositionFraction = ({
 	players: Players;
 	pos: string;
 }) => {
-	const count = players.filter(p => p.ratings.pos === pos).length;
+	const count = players.filter((p) => p.ratings.pos === pos).length;
 	const target = Math.floor(POSITION_COUNTS[pos]);
 	const ratio = count / target;
 

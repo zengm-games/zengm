@@ -44,7 +44,7 @@ if (window.innerWidth >= 1200) {
 }
 
 const useLocal = createWithEqualityFn<LocalStateWithActions>(
-	set => ({
+	(set) => ({
 		alwaysShowCountry: false,
 		challengeNoRatings: false,
 		customMenu: undefined,
@@ -96,8 +96,10 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 
 		actions: {
 			deleteGames(gids: number[]) {
-				set(state => {
-					const newGames = state.games.filter(game => !gids.includes(game.gid));
+				set((state) => {
+					const newGames = state.games.filter(
+						(game) => !gids.includes(game.gid),
+					);
 
 					return {
 						games: newGames,
@@ -106,12 +108,12 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 			},
 
 			mergeGames(games: LocalStateUI["games"]) {
-				set(state => {
+				set((state) => {
 					const newGames = state.games.slice();
 
 					for (const game of games) {
 						const index = newGames.findIndex(
-							newGame => newGame.gid === game.gid,
+							(newGame) => newGame.gid === game.gid,
 						);
 						if (index >= 0) {
 							newGames[index] = game;
@@ -229,7 +231,7 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 				}
 
 				if (update) {
-					set(state => ({ ...state, ...updates }));
+					set((state) => ({ ...state, ...updates }));
 				}
 			},
 		},
@@ -250,7 +252,7 @@ const useLocalPartial = <Key extends keyof LocalStateUI>(keys: Key[]) => {
 };
 
 // This assumes the actions object never changes!
-const useLocalActions = () => useLocal(state => state.actions);
+const useLocalActions = () => useLocal((state) => state.actions);
 
 const local = useLocal;
 const localActions = local.getState().actions;

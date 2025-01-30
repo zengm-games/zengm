@@ -56,8 +56,8 @@ const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
 		{ text: "++", ptModifier: "1.5" },
 	];
 
-	const values = ptModifiers.map(x => helpers.localeParseFloat(x.ptModifier));
-	const index = values.findIndex(ptModifier => ptModifier > p.ptModifier);
+	const values = ptModifiers.map((x) => helpers.localeParseFloat(x.ptModifier));
+	const index = values.findIndex((ptModifier) => ptModifier > p.ptModifier);
 	let value;
 	if (index === 0) {
 		value = values[0];
@@ -71,7 +71,7 @@ const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
 		<select
 			className="form-select pt-modifier-select"
 			value={value}
-			onChange={event => handlePtChange(p, userTid, event)}
+			onChange={(event) => handlePtChange(p, userTid, event)}
 			style={(ptStyles as any)[String(value)]}
 		>
 			{ptModifiers.map(({ text, ptModifier }) => {

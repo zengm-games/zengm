@@ -176,7 +176,7 @@ const makeDunkHarder = (dunk: DunkAttempt, minScoreNeeded: number) => {
 			// If there are parts with higher difficulty, move up to the next highest one
 			const candidate = orderBy(
 				candidates,
-				candidate => candidate[1].difficulty,
+				(candidate) => candidate[1].difficulty,
 				"asc",
 			)[0];
 			newDunk[part] = candidate[0];
@@ -423,7 +423,7 @@ const getMinScoreNeeded = (
 	const currentScore = scoresByIndex[nextDunkerIndex]?.score ?? 0;
 
 	const otherScores = orderBy(
-		Object.values(scoresByIndex).filter(row => row.index !== nextDunkerIndex),
+		Object.values(scoresByIndex).filter((row) => row.index !== nextDunkerIndex),
 		"score",
 		"desc",
 	);

@@ -15,7 +15,7 @@ const testRunPicks = async (numNow: number, numTotal: number) => {
 			[g.get("season")],
 			[g.get("season"), Infinity],
 		])
-	).filter(p => p.tid === PLAYER.UNDRAFTED);
+	).filter((p) => p.tid === PLAYER.UNDRAFTED);
 	assert.strictEqual(players.length, 70 - numTotal);
 };
 
@@ -43,7 +43,7 @@ const testDraftUser = async (round: number) => {
 			[g.get("season")],
 			[g.get("season"), Infinity],
 		])
-	).filter(p => p.tid === PLAYER.UNDRAFTED);
+	).filter((p) => p.tid === PLAYER.UNDRAFTED);
 	const p = players[0];
 	await draft.selectPlayer(dp, p.pid);
 	assert.strictEqual(p.tid, g.get("userTid"));

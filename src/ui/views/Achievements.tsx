@@ -14,14 +14,14 @@ const makeAchievementId = (slug: string) => `achievement-${slug}`;
 
 const CompletionTable = ({ achievements }: View<"achievements">) => {
 	const filtered = achievements.filter(
-		achievement => achievement.category !== "Meta",
+		(achievement) => achievement.category !== "Meta",
 	);
 
 	const levels = DIFFICULTIES.map((difficulty, i) => {
 		// "insane" and "hard" also count towards "normal". "insane" also counts towards "hard".
 		const allowed = DIFFICULTIES.slice(i);
-		const count = filtered.filter(achievement =>
-			allowed.some(difficulty => achievement[difficulty] > 0),
+		const count = filtered.filter((achievement) =>
+			allowed.some((difficulty) => achievement[difficulty] > 0),
 		).length;
 		return {
 			difficulty: helpers.upperCaseFirstLetter(difficulty),
@@ -38,7 +38,7 @@ const CompletionTable = ({ achievements }: View<"achievements">) => {
 			</p>
 			<table className="table table-nonfluid">
 				<tbody>
-					{levels.map(level => (
+					{levels.map((level) => (
 						<tr key={level.difficulty}>
 							<th>{level.difficulty}</th>
 							<td>
@@ -96,7 +96,7 @@ const Category = ({
 			? (["normal"] as typeof DIFFICULTIES_REVERSE)
 			: DIFFICULTIES_REVERSE;
 
-	const achievementsWithTotal = achievements.map(achievement => ({
+	const achievementsWithTotal = achievements.map((achievement) => ({
 		...achievement,
 		total: difficulties.reduce(
 			(sum, difficulty) => sum + achievement[difficulty],
@@ -138,18 +138,20 @@ const Category = ({
 		);
 
 		// Get all the same team/season grouped together
-		const achievementsGrouped = groupBy(achievementsWithTotal, achievement =>
+		const achievementsGrouped = groupBy(achievementsWithTotal, (achievement) =>
 			achievement.slug.split("_").slice(0, 3).join("_"),
 		);
-		const rows = Object.values(achievementsGrouped).map(achievements => {
+		const rows = Object.values(achievementsGrouped).map((achievements) => {
 			// Minimum color of the achievements in this row, to highlight the name which represents them all
 			const fakeCounts = {
-				total: Math.min(...achievements.map(achievement => achievement.total)),
+				total: Math.min(
+					...achievements.map((achievement) => achievement.total),
+				),
 				normal: 0,
 				hard: 0,
 				insane: 0,
 			};
-			const maxDifficulties = achievements.map(achievement => {
+			const maxDifficulties = achievements.map((achievement) => {
 				let index = -1; // -1 means no achievements at any difficulty level
 				for (let i = 0; i < DIFFICULTIES.length; i++) {
 					const difficulty = DIFFICULTIES[i];
@@ -192,7 +194,7 @@ const Category = ({
 						searchValue: achievements[0].name,
 						classNames: rowClassNames,
 					},
-					...achievements.flatMap(achievement => {
+					...achievements.flatMap((achievement) => {
 						return [
 							{
 								value: achievement.normal,
@@ -257,7 +259,7 @@ const Category = ({
 
 	return (
 		<div className="row g-2">
-			{achievementsWithTotal.map(achievement => {
+			{achievementsWithTotal.map((achievement) => {
 				const highlight = highlightSlug === achievement.slug;
 
 				return (
@@ -281,7 +283,7 @@ const Category = ({
 								>
 									{achievement.name}
 									{achievement.total > 0
-										? difficulties.map(difficulty => {
+										? difficulties.map((difficulty) => {
 												const count = achievement[difficulty];
 												return (
 													<span
@@ -319,7 +321,7 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 	useTitleBar({
 		title: "Achievements",
 	});
-	const username = useLocal(state => state.username);
+	const username = useLocal((state) => state.username);
 	const loggedIn = !!username;
 
 	useEffect(() => {

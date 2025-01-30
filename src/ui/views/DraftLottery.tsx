@@ -136,7 +136,7 @@ const Row = ({
 	const userTeam = tid === userTid;
 
 	let revealedPickNumber = null;
-	const pickCols = range(NUM_PICKS).map(j => {
+	const pickCols = range(NUM_PICKS).map((j) => {
 		const prob = probs[i][j];
 		const pct = prob !== undefined ? `${(prob * 100).toFixed(1)}%` : undefined;
 
@@ -230,7 +230,7 @@ const Rigged = ({
 	rigged,
 	type,
 }: Pick<Props, "numToPick" | "result" | "rigged" | "type">) => {
-	const teamInfoCache = useLocal(state => state.teamInfoCache);
+	const teamInfoCache = useLocal((state) => state.teamInfoCache);
 
 	if (!rigged || !result || type === "projected") {
 		return null;
@@ -252,7 +252,7 @@ const Rigged = ({
 				<td key={i}>
 					<select
 						className="form-select form-select-sm px-1 god-mode"
-						onChange={async event => {
+						onChange={async (event) => {
 							const value = Number.parseInt(event.target.value);
 
 							// Unset any other selection of this team

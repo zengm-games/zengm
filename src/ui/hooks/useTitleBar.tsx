@@ -59,7 +59,7 @@ const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 				let value;
 				if (dropdownCustomOptions?.[dropdownKey]) {
 					const option = dropdownCustomOptions[dropdownKey].find(
-						row => row.key === key,
+						(row) => row.key === key,
 					);
 					if (option) {
 						value = option.value;
@@ -76,7 +76,7 @@ const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 			}
 		}
 
-		document.title = parts.filter(part => part !== "???").join(" » ");
+		document.title = parts.filter((part) => part !== "???").join(" » ");
 	}, [dropdownCustomOptions, dropdownFields, state, title, titleLong]);
 
 	// Without useLayoutEffect, weird shit happens in Safari! State inappropriately bleeds over from one load of a view to the next. Not sure why!

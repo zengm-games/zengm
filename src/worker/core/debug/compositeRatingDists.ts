@@ -9,7 +9,7 @@ const compositeRatingDists = async () => {
 		.store.index("tid")
 		.getAll(IDBKeyRange.lowerBound(PLAYER.FREE_AGENT));
 	const compositeRatings = players
-		.map(p => {
+		.map((p) => {
 			return player.compositeRating(
 				p.ratings.at(-1)!,
 				COMPOSITE_WEIGHTS.shootingThreePointer.ratings,

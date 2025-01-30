@@ -29,7 +29,7 @@ const disable = async (tid: number) => {
 
 		if (prevUserTids.length > 1) {
 			// If it's multi team mode, just move to another team
-			const newUserTids = prevUserTids.filter(userTid => userTid !== tid);
+			const newUserTids = prevUserTids.filter((userTid) => userTid !== tid);
 			const newUserTid = random.choice(newUserTids);
 			await league.setGameAttributes({
 				userTid: newUserTid,
@@ -44,7 +44,7 @@ const disable = async (tid: number) => {
 			await updatePlayMenu();
 		}
 	} else if (prevUserTids.includes(tid)) {
-		const newUserTids = prevUserTids.filter(userTid => userTid !== tid);
+		const newUserTids = prevUserTids.filter((userTid) => userTid !== tid);
 		await league.setGameAttributes({
 			userTids: newUserTids,
 		});
@@ -109,9 +109,9 @@ const disable = async (tid: number) => {
 
 	const allTeams = await idb.cache.teams.getAll();
 	await league.setGameAttributes({
-		numActiveTeams: allTeams.filter(t => !t.disabled).length,
+		numActiveTeams: allTeams.filter((t) => !t.disabled).length,
 		numTeams: allTeams.length,
-		teamInfoCache: allTeams.map(t => ({
+		teamInfoCache: allTeams.map((t) => ({
 			abbrev: t.abbrev,
 			disabled: t.disabled,
 			imgURL: t.imgURL,

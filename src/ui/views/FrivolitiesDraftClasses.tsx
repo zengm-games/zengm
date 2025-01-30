@@ -43,7 +43,7 @@ const FrivolitiesDraftClasses = ({
 		"Pos",
 		"Pick",
 		"Peak Ovr",
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
 	]);
 
 	const rows: DataTableRow[] = draftClasses.map((draftClass, i) => {
@@ -94,7 +94,7 @@ const FrivolitiesDraftClasses = ({
 				p.ratings.at(-1).pos,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
 				showRatings ? p.peakOvr : null,
-				...stats.map(stat => helpers.roundStat(p.careerStats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.careerStats[stat], stat)),
 			],
 		};
 	});

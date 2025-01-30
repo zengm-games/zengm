@@ -66,11 +66,11 @@ const madeHof = (
 	p: Player<PlayerRatings> | PlayerWithoutKey<PlayerRatings>,
 ): boolean => {
 	const av = p.stats
-		.filter(ps => {
+		.filter((ps) => {
 			// No playoff stats, because AV is scaled strangely there
 			return !ps.playoffs;
 		})
-		.map(ps => ps.av); // Calculate career WS and "dominance factor" DF (top 5 years WS - 35)
+		.map((ps) => ps.av); // Calculate career WS and "dominance factor" DF (top 5 years WS - 35)
 
 	av.sort((a, b) => b - a); // Descending order
 

@@ -23,7 +23,7 @@ const Confirm = confirmable<unknown, "all" | "unstarred" | null>(
 					Are you sure you want to delete ALL data in ALL of your leagues?
 					<form
 						className="mt-3"
-						onSubmit={event => {
+						onSubmit={(event) => {
 							event.preventDefault();
 							ok();
 						}}
@@ -35,7 +35,7 @@ const Confirm = confirmable<unknown, "all" | "unstarred" | null>(
 								checked={unstarredOnly}
 								id="deleteAllLeaguesType"
 								onChange={() => {
-									setUnstarredOnly(checked => !checked);
+									setUnstarredOnly((checked) => !checked);
 								}}
 							/>
 							<label

@@ -191,7 +191,7 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 					<p className="mb-2">
 						Priorities:{" "}
 						{mood.traits
-							.map(trait => MOOD_TRAITS[trait].toLowerCase())
+							.map((trait) => MOOD_TRAITS[trait].toLowerCase())
 							.join(", ")}
 					</p>
 				) : null}
@@ -201,7 +201,7 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 							className={clsx("nav-link", {
 								active: type === "user",
 							})}
-							onClick={event => {
+							onClick={(event) => {
 								event.preventDefault();
 								setType("user");
 							}}
@@ -215,7 +215,7 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 								className={clsx("nav-link", {
 									active: type === "current",
 								})}
-								onClick={event => {
+								onClick={(event) => {
 									event.preventDefault();
 									setType("current");
 								}}
@@ -227,7 +227,7 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 				</ul>
 				<table>
 					<tbody>
-						{helpers.keys(componentsRounded).map(key => {
+						{helpers.keys(componentsRounded).map((key) => {
 							if (key === "custom") {
 								return (
 									<Fragment key={key}>

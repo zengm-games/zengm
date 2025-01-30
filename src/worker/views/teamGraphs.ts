@@ -58,8 +58,8 @@ export const getStats = (statTypePlus: string, seasons: [number, number]) => {
 		];
 
 		// Show ties/otl if they are enabled in one of the seasons in question
-		const useTies = seasons.some(x => season.hasTies(x));
-		const useOtl = seasons.some(x => g.get("otl", x));
+		const useTies = seasons.some((x) => season.hasTies(x));
+		const useOtl = seasons.some((x) => g.get("otl", x));
 
 		// Check pts/winp together since they are based on the same thing
 		let usePts = false;
@@ -87,7 +87,7 @@ export const getStats = (statTypePlus: string, seasons: [number, number]) => {
 			toRemove.push("ptsPct", "pts");
 		}
 
-		return stats.filter(stat => {
+		return stats.filter((stat) => {
 			for (const part of toRemove) {
 				if (stat.startsWith(part)) {
 					return false;
@@ -138,7 +138,7 @@ export const getStats = (statTypePlus: string, seasons: [number, number]) => {
 
 		// Remove pos for fielding stats
 		if (isSport("baseball")) {
-			return statsTable.stats.filter(stat => stat !== "pos");
+			return statsTable.stats.filter((stat) => stat !== "pos");
 		}
 
 		return [...statsTable.stats];
@@ -176,7 +176,7 @@ const getTeamStats = async (
 		seasonAttrs.push(...(stats as any[]));
 	} else if (statTypePlus === "finances") {
 		seasonAttrs.push(
-			...(stats as any[]).filter(stat => !stat.endsWith("Level")),
+			...(stats as any[]).filter((stat) => !stat.endsWith("Level")),
 			"expenseLevels",
 		);
 	} else if (statTypePlus === "powerRankings") {

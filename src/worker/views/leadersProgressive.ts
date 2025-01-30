@@ -32,8 +32,8 @@ const leadersProgressiveAddFirstNameShort = (
 	] as const;
 	const players = addFirstNameShort(
 		rows
-			.flatMap(row => categories.map(category => row[category]))
-			.filter(row => row !== undefined) as MyLeader[],
+			.flatMap((row) => categories.map((category) => row[category]))
+			.filter((row) => row !== undefined) as MyLeader[],
 	);
 
 	let i = 0;
@@ -61,7 +61,7 @@ const updateLeadersProgressive = async (
 		inputs.statType !== state.statType
 	) {
 		const { categories: allCategories } = getCategoriesAndStats();
-		const allStats = allCategories.map(cat => cat.stat);
+		const allStats = allCategories.map((cat) => cat.stat);
 
 		const { categories, stats } = getCategoriesAndStats(inputs.stat);
 
@@ -69,7 +69,7 @@ const updateLeadersProgressive = async (
 
 		const seasons = range(g.get("startingSeason"), g.get("season") + 1);
 
-		let allLeaders = seasons.map(season => ({
+		let allLeaders = seasons.map((season) => ({
 			season,
 			linkSeason: false,
 			yearByYear: undefined as (MyLeader & { count: number }) | undefined,
@@ -176,7 +176,7 @@ const updateLeadersProgressive = async (
 
 			{
 				// Career stats up to this season
-				const filteredStats = pRaw.stats.filter(row => row.season <= season);
+				const filteredStats = pRaw.stats.filter((row) => row.season <= season);
 
 				const p = await idb.getCopy.playersPlus(
 					{
@@ -240,9 +240,9 @@ const updateLeadersProgressive = async (
 						// Update career
 						// For "active", consider up to the current season. For "career", also consider values for retired players or players who are not playing this year but will play again later. To do this, get `maxSeasonCareer`, which is the maximum season up to which this player's career total for this `season` can apply.
 						const allSeasons: number[] = Array.from(
-							new Set(pRaw.stats.map(row => row.season)),
+							new Set(pRaw.stats.map((row) => row.season)),
 						).sort((a, b) => a - b);
-						const nextSeason = allSeasons.find(season2 => season2 > season);
+						const nextSeason = allSeasons.find((season2) => season2 > season);
 						let maxSeasonCareer;
 						if (nextSeason === undefined) {
 							// Last year of this player - so can apply this to any season
@@ -288,7 +288,7 @@ const updateLeadersProgressive = async (
 			}
 		}
 
-		allLeaders = allLeaders.filter(row => row.yearByYear);
+		allLeaders = allLeaders.filter((row) => row.yearByYear);
 		leadersProgressiveAddFirstNameShort(allLeaders);
 
 		const yearByYearCounts: Record<number, number | undefined> = {};

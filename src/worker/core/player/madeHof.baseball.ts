@@ -19,7 +19,7 @@ const madeHof = (
 ): boolean => {
 	let earliestSeason = Infinity;
 
-	const wars = p.stats.map(ps => {
+	const wars = p.stats.map((ps) => {
 		if (ps.season < earliestSeason) {
 			earliestSeason = ps.season;
 		}

@@ -27,7 +27,7 @@ const ManageTeams = ({
 	const updateConfName =
 		(cid: number) => (event: ChangeEvent<HTMLInputElement>) => {
 			const newConfs = [...liveConfs];
-			const conf = newConfs.find(c => c.cid === cid);
+			const conf = newConfs.find((c) => c.cid === cid);
 			if (conf) {
 				conf.name = event.target.value;
 				setLiveConfs(newConfs);
@@ -37,7 +37,7 @@ const ManageTeams = ({
 	const updateDivName =
 		(did: number) => (event: ChangeEvent<HTMLInputElement>) => {
 			const newDivs = [...liveDivs];
-			const div = newDivs.find(d => d.did === did);
+			const div = newDivs.find((d) => d.did === did);
 			if (div) {
 				div.name = event.target.value;
 				setLiveDivs(newDivs);
@@ -45,12 +45,12 @@ const ManageTeams = ({
 		};
 
 	const deleteConf = (cid: number) => () => {
-		setLiveConfs(liveConfs.filter(conf => conf.cid !== cid));
-		setLiveDivs(liveDivs.filter(div => div.cid !== cid));
+		setLiveConfs(liveConfs.filter((conf) => conf.cid !== cid));
+		setLiveDivs(liveDivs.filter((div) => div.cid !== cid));
 	};
 
 	const deleteDiv = (did: number) => () => {
-		setLiveDivs(liveDivs.filter(div => div.did !== did));
+		setLiveDivs(liveDivs.filter((div) => div.did !== did));
 	};
 
 	const addConf = (event: MouseEvent) => {
@@ -155,7 +155,7 @@ const ManageTeams = ({
 
 			<form onSubmit={handleSubmit}>
 				<div className="row">
-					{liveConfs.map(conf => {
+					{liveConfs.map((conf) => {
 						return (
 							<div key={conf.cid} className="col-xl-3 col-lg-4 col-md-6 mb-3">
 								<div className="card">
@@ -184,8 +184,8 @@ const ManageTeams = ({
 											</button>
 										</div>
 										{liveDivs
-											.filter(div => div.cid === conf.cid)
-											.map(div => (
+											.filter((div) => div.cid === conf.cid)
+											.map((div) => (
 												<div
 													key={div.did}
 													className="d-flex align-items-end mb-3 ms-4"

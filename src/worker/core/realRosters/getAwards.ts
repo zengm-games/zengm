@@ -158,7 +158,7 @@ const fillInPlayers = (awards: Awards<string, string>): Awards => {
 		bestRecordConfs: awards.bestRecordConfs,
 
 		roy: awardPlayer(awards.roy, false),
-		allRookie: awards.allRookie.map(slug =>
+		allRookie: awards.allRookie.map((slug) =>
 			awardPlayer(slug, false),
 		) as AwardPlayer[],
 		mip: awardPlayer(awards.mip, false),
@@ -167,19 +167,19 @@ const fillInPlayers = (awards: Awards<string, string>): Awards => {
 		allLeague: [
 			{
 				title: "First Team",
-				players: awards.allLeague[0].players.map(slug =>
+				players: awards.allLeague[0].players.map((slug) =>
 					awardPlayer(slug, false),
 				) as AwardPlayer[],
 			},
 			{
 				title: "Second Team",
-				players: awards.allLeague[1].players.map(slug =>
+				players: awards.allLeague[1].players.map((slug) =>
 					awardPlayer(slug, false),
 				) as AwardPlayer[],
 			},
 			{
 				title: "Third Team",
-				players: awards.allLeague[2].players.map(slug =>
+				players: awards.allLeague[2].players.map((slug) =>
 					awardPlayer(slug, false),
 				) as AwardPlayer[],
 			},
@@ -188,19 +188,19 @@ const fillInPlayers = (awards: Awards<string, string>): Awards => {
 		allDefensive: [
 			{
 				title: "First Team",
-				players: awards.allDefensive[0].players.map(slug =>
+				players: awards.allDefensive[0].players.map((slug) =>
 					awardPlayer(slug, true),
 				) as AwardPlayerDefense[],
 			},
 			{
 				title: "Second Team",
-				players: awards.allDefensive[1].players.map(slug =>
+				players: awards.allDefensive[1].players.map((slug) =>
 					awardPlayer(slug, true),
 				) as AwardPlayerDefense[],
 			},
 			{
 				title: "Third Team",
-				players: awards.allDefensive[2].players.map(slug =>
+				players: awards.allDefensive[2].players.map((slug) =>
 					awardPlayer(slug, true),
 				) as AwardPlayerDefense[],
 			},
@@ -208,7 +208,9 @@ const fillInPlayers = (awards: Awards<string, string>): Awards => {
 		finalsMvp: awardPlayer(awards.finalsMvp, false, true),
 		sfmvp:
 			awards.sfmvp && awards.sfmvp.length > 0
-				? (awards.sfmvp.map(slug => awardPlayer(slug, false)) as AwardPlayer[])
+				? (awards.sfmvp.map((slug) =>
+						awardPlayer(slug, false),
+					) as AwardPlayer[])
 				: undefined,
 	};
 };

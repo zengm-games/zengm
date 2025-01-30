@@ -65,7 +65,7 @@ const addStatsRow = async (
 	p.statsTids.push(p.tid);
 	p.statsTids = Array.from(new Set(p.statsTids)); // Calculate yearsWithTeam
 
-	const playerStats = p.stats.filter(ps => !ps.playoffs);
+	const playerStats = p.stats.filter((ps) => !ps.playoffs);
 
 	if (playerStats.length > 0) {
 		const i = playerStats.length - 1;

@@ -27,7 +27,7 @@ const Standings = ({
 	| "usePts"
 	| "userTid"
 >) => {
-	const maxRank = Math.max(...confTeams.map(t => t.rank));
+	const maxRank = Math.max(...confTeams.map((t) => t.rank));
 
 	return (
 		<>

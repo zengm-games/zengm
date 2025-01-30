@@ -33,7 +33,7 @@ const proQuartiles = isSport("basketball")
 			pf: [0.2, 1.4, 1.8, 2.3, 3.8],
 			pts: [0.8, 5.1, 7.9, 12.6, 36.1],
 			per: [0.7, 10.4, 13.0, 16.4, 31.0],
-	  }
+		}
 	: {};
 
 const PlayerStatDists = ({
@@ -74,7 +74,7 @@ const PlayerStatDists = ({
 					pf: [0, 6],
 					pts: [0, 50],
 					per: [0, 35],
-			  }
+				}
 			: {};
 
 	return (
@@ -105,8 +105,8 @@ const PlayerStatDists = ({
 			<table>
 				<tbody>
 					{Object.keys(statsAll)
-						.filter(stat => typeof statsAll[stat][0] === "number")
-						.map(stat => {
+						.filter((stat) => typeof statsAll[stat][0] === "number")
+						.map((stat) => {
 							const col = getCols([`stat:${stat}`])[0];
 							const bbgmPlot = (
 								<tr key={`${stat}-bbgm`}>

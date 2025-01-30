@@ -79,7 +79,7 @@ const updatePlayers = async (
 			const statTable = PLAYER_STATS_TABLES[inputs.statType];
 			const onlyShowIf = statTable.onlyShowIf;
 			if (onlyShowIf) {
-				players = players.filter(p => {
+				players = players.filter((p) => {
 					for (const stat of onlyShowIf) {
 						if (typeof p["stats"][stat] === "number" && p["stats"][stat] > 0) {
 							return true;

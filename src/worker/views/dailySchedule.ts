@@ -71,7 +71,7 @@ const updateDailySchedule = async (
 					day = 1;
 				}
 
-				const scheduleDay = schedule.filter(game => game.day === day);
+				const scheduleDay = schedule.filter((game) => game.day === day);
 				isToday =
 					scheduleDay.length > 0 && schedule[0].gid === scheduleDay[0].gid;
 
@@ -88,7 +88,7 @@ const updateDailySchedule = async (
 				}
 			}
 
-			const completed = games.filter(game => game.day === day);
+			const completed = games.filter((game) => game.day === day);
 
 			let upcoming: Awaited<ReturnType<typeof getUpcoming>> = [];
 			if (inputs.season === currentSeason) {

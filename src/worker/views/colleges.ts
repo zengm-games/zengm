@@ -185,7 +185,7 @@ export const genView = (
 			}
 
 			// Hacky crap because p is nested
-			const players = infos.map(info => info.p);
+			const players = infos.map((info) => info.p);
 			const playersWithFirstNameShort = addFirstNameShort(players);
 			for (let i = 0; i < infos.length; i++) {
 				infos[i].p = playersWithFirstNameShort[i];

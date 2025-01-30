@@ -210,19 +210,19 @@ const SelectTeam = ({
 			["region", "name", "tid"],
 		);
 
-		const prevTeam = teams.find(t => t.tid === tid);
+		const prevTeam = teams.find((t) => t.tid === tid);
 		let newTeam;
 		if (tidInput === "random") {
 			const index = Math.floor(Math.random() * newTeams.length);
 			newTeam = newTeams[index];
 		} else {
 			if (typeof tidInput === "number") {
-				newTeam = newTeams.find(t => t.tid === tidInput);
+				newTeam = newTeams.find((t) => t.tid === tidInput);
 			}
 			if (!newTeam) {
 				newTeam =
-					newTeams.find(t => t.abbrev === prevTeam?.abbrev) ??
-					newTeams.find(t => t.region === prevTeam?.region) ??
+					newTeams.find((t) => t.abbrev === prevTeam?.abbrev) ??
+					newTeams.find((t) => t.region === prevTeam?.region) ??
 					newTeams[0];
 			}
 		}
@@ -276,7 +276,7 @@ const SelectTeam = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [leagues]);
 
-	const t = teams.find(t => t.tid === tid);
+	const t = teams.find((t) => t.tid === tid);
 	let record;
 	if (t?.seasonInfo) {
 		record = helpers.formatRecord(t.seasonInfo);
@@ -295,7 +295,7 @@ const SelectTeam = ({
 							!league ? undefined : league.type === "real" ? "real" : league.lid
 						}
 						disabled={disabled || !league}
-						onChange={async event => {
+						onChange={async (event) => {
 							const value = event.target.value;
 							const lid = value === "real" ? value : Number.parseInt(value);
 							const league = await loadLeague(lid);
@@ -306,7 +306,7 @@ const SelectTeam = ({
 						{SPORT_HAS_REAL_PLAYERS ? (
 							<option value="real">Real historical teams</option>
 						) : null}
-						{leagues.map(league => (
+						{leagues.map((league) => (
 							<option key={league.lid} value={league.lid}>
 								{league.name}
 							</option>
@@ -317,7 +317,7 @@ const SelectTeam = ({
 					<select
 						className="form-select"
 						value={season}
-						onChange={async event => {
+						onChange={async (event) => {
 							const value = Number.parseInt(event.target.value);
 							setSeason(value);
 							await loadTeams(league!, value);
@@ -328,7 +328,7 @@ const SelectTeam = ({
 						}}
 					>
 						{league
-							? range(league.seasonEnd, league.seasonStart - 1).map(i => (
+							? range(league.seasonEnd, league.seasonStart - 1).map((i) => (
 									<option key={i} value={i}>
 										{i}
 									</option>
@@ -338,15 +338,15 @@ const SelectTeam = ({
 					<select
 						className="form-select"
 						value={teams.length === 0 ? "loading" : tid}
-						onChange={event => {
+						onChange={(event) => {
 							const newTid = Number.parseInt(event.target.value);
 							setTid(newTid);
-							const newTeam = teams.find(t => t.tid === newTid);
+							const newTeam = teams.find((t) => t.tid === newTid);
 							onChange(league!, newTeam as any, gameAttributes);
 						}}
 						disabled={loadingTeams || disabled || !league}
 					>
-						{teams.map(t => (
+						{teams.map((t) => (
 							<option key={t.tid} value={t.tid}>
 								{t.region} {t.name} ({t.ovr} ovr)
 							</option>
@@ -419,7 +419,7 @@ const SelectTeam = ({
 						</li>
 					);
 				})}
-				{range(NUM_PLAYERS_TO_SHOW - playersToShow.length).map(j => {
+				{range(NUM_PLAYERS_TO_SHOW - playersToShow.length).map((j) => {
 					const i = playersToShow.length + j;
 					return (
 						<li key={i} className={playerRowClassName(i)}>
@@ -555,7 +555,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 		t: ExhibitionTeam | undefined,
 		gameAttributes: ExhibitionGameAttributes,
 	) => {
-		setTeams(teams => {
+		setTeams((teams) => {
 			let newTeams: typeof teams;
 			const entry = t === undefined ? undefined : { gameAttributes, league, t };
 			if (index === 0) {
@@ -598,7 +598,9 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 			return entry.t.season;
 		}
 
-		return leagues?.find(league2 => league2.lid === league.lid)?.name ?? "???";
+		return (
+			leagues?.find((league2) => league2.lid === league.lid)?.name ?? "???"
+		);
 	};
 
 	let gameAttributesWarning;
@@ -606,7 +608,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 		const entry = teams[gameAttributesInfo.type === "t0" ? 0 : 1];
 		const league = entry?.league;
 		if (league && league.type !== "real") {
-			const league2 = leagues?.find(league2 => league2.lid === league.lid);
+			const league2 = leagues?.find((league2) => league2.lid === league.lid);
 			if (league2 && entry.t.season !== league.seasonEnd) {
 				gameAttributesWarning = (
 					<div className="text-danger mb-2">
@@ -664,7 +666,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 			</div>
 
 			<form
-				onSubmit={async event => {
+				onSubmit={async (event) => {
 					event.preventDefault();
 
 					setSimmingGame(true);
@@ -676,7 +678,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						neutralSite,
 						playoffIntensity,
 						swapHomeAway: neutralSite ? undefined : swapHomeAway,
-						teams: teams.map(entry => {
+						teams: teams.map((entry) => {
 							if (!entry) {
 								throw new Error("Missing entry");
 							}
@@ -699,7 +701,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 					};
 					safeLocalStorage.setItem(CACHE_KEY, JSON.stringify(toSave));
 
-					const simTeams = teams.map(entry => entry?.t) as [
+					const simTeams = teams.map((entry) => entry?.t) as [
 						ExhibitionTeam,
 						ExhibitionTeam,
 					];
@@ -725,7 +727,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 							id="gameAttributesSelect"
 							className="form-select"
 							value={gameAttributesInfo.type}
-							onChange={async event => {
+							onChange={async (event) => {
 								const type = event.target.value;
 
 								if (type === "custom") {
@@ -811,7 +813,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 							className="btn py-1 btn-light-bordered ms-2"
 							type="button"
 							onClick={() => {
-								setSwapHomeAway(swap => !swap);
+								setSwapHomeAway((swap) => !swap);
 							}}
 						>
 							Swap
@@ -840,7 +842,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 			>
 				<Modal.Body>
 					<SettingsForm
-						onSave={settings => {
+						onSave={(settings) => {
 							setGameAttributesInfo({
 								type: "custom",
 								// getGameAttributes call should not be necessary, but let's just be save

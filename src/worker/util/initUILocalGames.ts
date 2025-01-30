@@ -14,7 +14,7 @@ const initUILocalGames = async () => {
 			season: g.get("season"),
 			includeAllStarGame: true,
 		})
-	).map(game => ({
+	).map((game) => ({
 		forceWin: game.forceWin,
 		gid: game.gid,
 		overtimes: game.overtimes,

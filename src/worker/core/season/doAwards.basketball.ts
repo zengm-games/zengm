@@ -146,7 +146,7 @@ const getPlayoffSeriesMVP = (players: PlayerFiltered[], games: Game[]) => {
 	}
 
 	const { pid } = playerArray[0];
-	const p = players.find(p2 => p2.pid === pid);
+	const p = players.find((p2) => p2.pid === pid);
 
 	if (p) {
 		return {
@@ -166,14 +166,14 @@ const getRealFinalsMvp = async (
 	const games = await idb.cache.games.getAll();
 
 	// Last game of the season will have the two finals teams
-	const finalsTids = games.at(-1)?.teams.map(t => t.tid);
+	const finalsTids = games.at(-1)?.teams.map((t) => t.tid);
 	if (finalsTids === undefined) {
 		return;
 	}
 
 	// Get all playoff games between those two teams - that will be all finals games
 	const finalsGames = games.filter(
-		game =>
+		(game) =>
 			game.playoffs &&
 			finalsTids.includes(game.teams[0].tid) &&
 			finalsTids.includes(game.teams[1].tid),
@@ -196,7 +196,7 @@ const getSemiFinalsMvp = async (
 	const mvps = [];
 
 	for (const series of semifinalsSeries) {
-		const seriesGames = games.filter(game => series.gids?.includes(game.gid));
+		const seriesGames = games.filter((game) => series.gids?.includes(game.gid));
 		const mvp = getPlayoffSeriesMVP(players, seriesGames);
 		if (mvp) {
 			mvps.push(mvp);
@@ -276,7 +276,7 @@ export const dpoyScore = (p: PlayerFiltered) => {
 
 // Handle case where GS is not available, which happens when loading historical stats
 export const getSmoyFilter = (players: PlayerFiltered[]) => {
-	if (players.some(p => p.currentStats.gs > 0)) {
+	if (players.some((p) => p.currentStats.gs > 0)) {
 		return (p: PlayerFiltered) =>
 			p.currentStats.gs === 0 || p.currentStats.gp / p.currentStats.gs > 2;
 	}
@@ -474,7 +474,7 @@ const doAwards = async (conditions: Conditions) => {
 	);
 	let finalsMvp;
 	const champTeam = teams.find(
-		t =>
+		(t) =>
 			t.seasonAttrs.playoffRoundsWon ===
 			g.get("numGamesPlayoffSeries", "current").length,
 	);

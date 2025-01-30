@@ -56,7 +56,7 @@ const useCommandPalette = () => {
 
 			if (event.code === "KeyK" && (event.ctrlKey || event.metaKey)) {
 				event.preventDefault();
-				setShow(current => !current);
+				setShow((current) => !current);
 			}
 		};
 
@@ -133,22 +133,22 @@ const getResultsGroupedDefault = ({
 	};
 
 	const flat = menuItems.filter(
-		menuItem => menuItem.type === "link",
+		(menuItem) => menuItem.type === "link",
 	) as MenuItemLink[];
 	const nested = menuItems.filter(
-		menuItem => menuItem.type === "header",
+		(menuItem) => menuItem.type === "header",
 	) as MenuItemHeader[];
 
 	const results = [
-		...flat.filter(filterMenuItem).map(menuItem => {
+		...flat.filter(filterMenuItem).map((menuItem) => {
 			return {
 				category: "",
 				menuItem,
 			};
 		}),
-		...nested.map(header => {
+		...nested.map((header) => {
 			return (header.children.filter(filterMenuItem) as MenuItemLink[]).map(
-				menuItem => {
+				(menuItem) => {
 					return {
 						category: header.long,
 						menuItem,
@@ -183,7 +183,7 @@ const getResultsGroupedDefault = ({
 		});
 
 	results.unshift(
-		...playMenuOptions.map(option => ({
+		...playMenuOptions.map((option) => ({
 			category: "Play",
 			prefix: undefined,
 			text: option.label,
@@ -253,7 +253,7 @@ const getResultsGroupedTeams = ({
 				onClick: onHide,
 			} as AnchorProps,
 		}))
-		.filter(t => !hideDisabledTeams || !t.disabled);
+		.filter((t) => !hideDisabledTeams || !t.disabled);
 
 	const filteredResults = matchSorter(teamInfos, searchText, {
 		keys: ["text"],
@@ -263,7 +263,7 @@ const getResultsGroupedTeams = ({
 	return [
 		{
 			category: "",
-			results: filteredResults.map(t => ({
+			results: filteredResults.map((t) => ({
 				category: "",
 				text: t.text,
 				anchorProps: t.anchorProps,
@@ -321,7 +321,7 @@ const getResultsGroupedLeagues = async ({
 				onClick: onHide,
 			} as AnchorProps,
 		},
-		...newLeagueResults.map(row => ({
+		...newLeagueResults.map((row) => ({
 			category: undefined,
 			text: row.text,
 			anchorProps: {
@@ -329,7 +329,7 @@ const getResultsGroupedLeagues = async ({
 				onClick: onHide,
 			} as AnchorProps,
 		})),
-		...orderBy(leagues, "lastPlayed", "desc").map(l => {
+		...orderBy(leagues, "lastPlayed", "desc").map((l) => {
 			const lastPlayed = `last played ${
 				l.lastPlayed ? ago(l.lastPlayed) : "???"
 			}`;
@@ -363,12 +363,12 @@ const getResultsGroupedLeagues = async ({
 	} else {
 		// Search - return sorted by relevance, no grouping
 		const filteredResults = matchSorter(results, searchText, {
-			keys: [row => (row as any).search ?? row.text],
+			keys: [(row) => (row as any).search ?? row.text],
 			baseSort,
 		});
 		if (filteredResults.length > 0) {
 			output.push({
-				results: filteredResults.map(row => ({
+				results: filteredResults.map((row) => ({
 					category: row.category,
 					text: row.text,
 					anchorProps: row.anchorProps,
@@ -393,7 +393,7 @@ const getResultsGroupedPlayers = async ({
 	const players = await toWorker("main", "getPlayersCommandPalette", undefined);
 
 	const playerInfos = orderBy(players, ["lastName", "firstName", "abbrev"]).map(
-		p => {
+		(p) => {
 			return {
 				text: `${p.firstName} ${p.lastName} - ${p.abbrev}, ${p.ratings.pos}, ${
 					p.age
@@ -417,7 +417,7 @@ const getResultsGroupedPlayers = async ({
 
 	return [
 		{
-			results: filteredResults.map(row => ({
+			results: filteredResults.map((row) => ({
 				text: row.text,
 				anchorProps: row.anchorProps,
 			})),
@@ -519,7 +519,7 @@ const ResultText = ({
 		highlightedTextArray = textArray;
 	} else {
 		let searchTextIndex = 0;
-		highlightedTextArray = textArray.map(line => {
+		highlightedTextArray = textArray.map((line) => {
 			if (searchTextIndex === searchText.length) {
 				return line;
 			}
@@ -722,7 +722,7 @@ const SearchResults = memo(
 
 const ModeText = ({ inLeague }: { inLeague: boolean }) => {
 	// Hide players/teams in league
-	const modes = MODES.filter(mode => inLeague || mode.key === "!");
+	const modes = MODES.filter((mode) => inLeague || mode.key === "!");
 
 	return (
 		<>
@@ -845,7 +845,7 @@ const ComandPalette = ({
 			}
 
 			if (event.code === "ArrowDown") {
-				setActiveIndex(index => {
+				setActiveIndex((index) => {
 					if (index === undefined) {
 						return 0;
 					}
@@ -857,7 +857,7 @@ const ComandPalette = ({
 					return index + 1;
 				});
 			} else if (event.code === "ArrowUp") {
-				setActiveIndex(index => {
+				setActiveIndex((index) => {
 					if (index === undefined) {
 						return 0;
 					}
@@ -892,7 +892,7 @@ const ComandPalette = ({
 				></span>
 				<form
 					className="flex-grow-1"
-					onSubmit={event => {
+					onSubmit={(event) => {
 						event.preventDefault();
 
 						if (activeIndex !== undefined) {
@@ -938,11 +938,11 @@ const ComandPalette = ({
 								fontSize: 15,
 							}}
 							value={searchTextInput}
-							onChange={event => {
+							onChange={(event) => {
 								const newText = event.target.value;
 
 								if (!mode && newText.length > 0) {
-									const newMode = MODES.find(mode => mode.key === newText[0]);
+									const newMode = MODES.find((mode) => mode.key === newText[0]);
 									if (newMode) {
 										setMode(newMode);
 										setSearchTextInput(newText.slice(1));
@@ -954,7 +954,7 @@ const ComandPalette = ({
 								setSearchTextInput(newText);
 								setActiveIndex(newText.length > 0 ? 0 : undefined);
 							}}
-							onKeyDown={event => {
+							onKeyDown={(event) => {
 								// Handle backspace when mode is set and there is no text - unset mode
 								if (
 									searchTextInput === "" &&

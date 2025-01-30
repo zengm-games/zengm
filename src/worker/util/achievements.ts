@@ -551,7 +551,7 @@ const achievements: Achievement[] = [
 			}
 
 			return teamSeasons.every(
-				ts =>
+				(ts) =>
 					ts.playoffRoundsWon <
 					g.get("numGamesPlayoffSeries", ts.season).length,
 			);
@@ -1148,7 +1148,7 @@ const achievements: Achievement[] = [
 		category: "Draft",
 
 		check() {
-			return checkSleeperPick(p => {
+			return checkSleeperPick((p) => {
 				return bySport({
 					baseball: p.draft.round >= 2,
 					basketball: p.draft.round > 1 || p.draft.pick >= 15,
@@ -1172,7 +1172,7 @@ const achievements: Achievement[] = [
 		category: "Draft",
 
 		check() {
-			return checkSleeperPick(p => {
+			return checkSleeperPick((p) => {
 				return bySport({
 					baseball: p.draft.round >= 3,
 					basketball: p.draft.round > 1,
@@ -1519,7 +1519,7 @@ if (isSport("hockey") || isSport("basketball")) {
 				}
 
 				const playersAll = await idb.cache.players.getAll();
-				const countUSA = playersAll.filter(p => {
+				const countUSA = playersAll.filter((p) => {
 					if (isSport("hockey")) {
 						return (
 							helpers.getCountry(p.born.loc) === "Canada" ||
@@ -1934,7 +1934,7 @@ if (isSport("basketball")) {
 
 		// Get tid of srID
 		const teams = await idb.cache.teams.getAll();
-		const tid = teams.find(t => t.srID && srIDs.includes(t.srID))?.tid;
+		const tid = teams.find((t) => t.srID && srIDs.includes(t.srID))?.tid;
 		if (tid === undefined) {
 			return false;
 		}
@@ -1949,7 +1949,7 @@ if (isSport("basketball")) {
 
 		// Make sure there are at least some real players in the league, to prevent user from unselecting "Players" from a custom league and getting a random team
 		const players = await idb.cache.players.getAll();
-		return players.some(p => p.real);
+		return players.some((p) => p.real);
 	};
 
 	for (const { name, season, srIDs } of rebuilds) {
@@ -2007,10 +2007,10 @@ if (isSport("football")) {
 		if (wonTitle) {
 			const games = await idb.cache.games.getAll();
 			const userPlayoffGames = games.filter(
-				game => game.playoffs && game.won.tid === g.get("userTid"),
+				(game) => game.playoffs && game.won.tid === g.get("userTid"),
 			);
 
-			return userPlayoffGames.every(game => {
+			return userPlayoffGames.every((game) => {
 				const diff = game.won.pts - game.lost.pts;
 				return diff <= pointDifferentialLimit;
 			});

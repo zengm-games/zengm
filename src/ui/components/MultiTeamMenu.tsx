@@ -30,7 +30,7 @@ const MultiTeamMenu = () => {
 	}
 
 	const teams = orderBy(
-		state.userTids.map(tid => ({
+		state.userTids.map((tid) => ({
 			region: state.teamInfoCache[tid]?.region,
 			name: state.teamInfoCache[tid]?.name,
 			tid,
@@ -38,7 +38,7 @@ const MultiTeamMenu = () => {
 		["region", "name", "tid"],
 	);
 
-	const ind = teams.findIndex(t => t.tid === state.userTid);
+	const ind = teams.findIndex((t) => t.tid === state.userTid);
 
 	const prev = async () => {
 		const t = teams[ind - 1];
@@ -79,7 +79,7 @@ const MultiTeamMenu = () => {
 					onChange={handleChange}
 					value={state.userTid}
 				>
-					{teams.map(t => (
+					{teams.map((t) => (
 						<option key={t.tid} value={t.tid}>
 							{t.region} {t.name}
 						</option>

@@ -51,12 +51,12 @@ const getPlayerInfo = async (
 const augment = async (allStars: AllStars) => {
 	const remaining = (
 		await Promise.all(
-			allStars.remaining.map(info => getPlayerInfo(info, allStars.season)),
+			allStars.remaining.map((info) => getPlayerInfo(info, allStars.season)),
 		)
-	).filter(p => p !== undefined);
+	).filter((p) => p !== undefined);
 	const teams = await Promise.all(
-		allStars.teams.map(players =>
-			Promise.all(players.map(info => getPlayerInfo(info, allStars.season))),
+		allStars.teams.map((players) =>
+			Promise.all(players.map((info) => getPlayerInfo(info, allStars.season))),
 		),
 	);
 
@@ -126,7 +126,7 @@ const updateAllStarTeams = async (
 			allPossiblePlayers = orderBy(
 				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
 				["lastName", "firstName"],
-			).map(p => ({
+			).map((p) => ({
 				pid: p.pid,
 				tid: p.tid,
 				name: `${p.firstName} ${p.lastName}`,

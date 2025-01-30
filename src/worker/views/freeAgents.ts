@@ -77,8 +77,8 @@ const getPlayers = async (
 
 		if (type === "both") {
 			// Ensure players don't appear both available and signed, like they were signed and then released again
-			const availablePids = new Set(available.map(p => p.pid));
-			signed = signed.filter(p => !availablePids.has(p.pid));
+			const availablePids = new Set(available.map((p) => p.pid));
+			signed = signed.filter((p) => !availablePids.has(p.pid));
 		}
 	} else {
 		if (type !== "available") {
@@ -95,7 +95,7 @@ const getPlayers = async (
 	})[] = [];
 	for (const p of signed) {
 		const freeAgentTransaction = p.transactions?.findLast(
-			row => row.type === "freeAgent" && isSeason(freeAgencySeason, row),
+			(row) => row.type === "freeAgent" && isSeason(freeAgencySeason, row),
 		);
 		if (freeAgentTransaction) {
 			processedSigned.push({
@@ -111,7 +111,7 @@ const getPlayers = async (
 	return {
 		freeAgents: [
 			...(await addMood(
-				available.map(p => {
+				available.map((p) => {
 					return {
 						...p,
 						freeAgentType: "available",
@@ -217,7 +217,7 @@ const updateFreeAgents = async (
 		}
 
 		// Default sort, used for the compare players link
-		players = orderBy(players, p => p.contract.amount, "desc");
+		players = orderBy(players, (p) => p.contract.amount, "desc");
 
 		const userPlayers = await idb.getCopies.playersPlus(playersByType.user, {
 			attrs: [],

@@ -55,7 +55,7 @@ const iqFormula: RatingFormula = {
 
 		return 2;
 	},
-	changeLimits: age => {
+	changeLimits: (age) => {
 		if (age >= 24) {
 			return [-3, 9];
 		}

@@ -118,7 +118,7 @@ const getSeasonLeaders = async (season: number) => {
 		ratingsFuzz: Record<string, unknown>;
 	} = {
 		season,
-		age: max(players, p => p.age),
+		age: max(players, (p) => p.age),
 		regularSeason: {},
 		playoffs: {},
 		combined: {},
@@ -127,8 +127,8 @@ const getSeasonLeaders = async (season: number) => {
 	};
 
 	for (const rating of ["ovr", "pot", ...RATINGS]) {
-		leadersCache.ratings[rating] = max(players, p => p.ratings[rating]);
-		leadersCache.ratingsFuzz[rating] = max(players, p =>
+		leadersCache.ratings[rating] = max(players, (p) => p.ratings[rating]);
+		leadersCache.ratingsFuzz[rating] = max(players, (p) =>
 			player.fuzzRating(p.ratings[rating], p.ratings.fuzz, true),
 		);
 	}
@@ -164,7 +164,7 @@ const getSeasonLeaders = async (season: number) => {
 			};
 
 			leadersCache[type][stat] = max(
-				players.filter(p => {
+				players.filter((p) => {
 					const playerStats = p[type];
 					if (!playerStats) {
 						// Maybe no playoff stats
@@ -192,7 +192,7 @@ const getSeasonLeaders = async (season: number) => {
 
 					return pass;
 				}),
-				p => {
+				(p) => {
 					const value = p[type][stat];
 					if (player.stats.max.includes(stat) && value) {
 						return value[0];

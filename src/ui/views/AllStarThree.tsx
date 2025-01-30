@@ -22,7 +22,7 @@ const ShotTable = ({ racks }: { racks: boolean[][] }) => {
 				<div key={i} className={clsx("col-12 col-sm", highlight(i))}>
 					<div className="fw-bold text-center my-1">{name}</div>
 					<div className="d-flex mb-2">
-						{range(NUM_BALLS_PER_RACK).map(j => {
+						{range(NUM_BALLS_PER_RACK).map((j) => {
 							const shotResult: boolean | undefined = racks[i]?.[j];
 							const moneyball = j === NUM_BALLS_PER_RACK - 1;
 
@@ -114,7 +114,7 @@ const AllStarThree = ({
 
 		const run = async () => {
 			if (!paused) {
-				await new Promise<void>(resolve => {
+				await new Promise<void>((resolve) => {
 					setTimeout(() => {
 						resolve();
 					}, 700);
@@ -136,7 +136,7 @@ const AllStarThree = ({
 		title: "Three-Point Contest",
 		dropdownView: "all_star_three",
 		dropdownFields: { seasons: season },
-		dropdownCustomURL: fields => {
+		dropdownCustomURL: (fields) => {
 			return helpers.leagueUrl(["all_star", "three", fields.seasons]);
 		},
 	});

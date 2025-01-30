@@ -246,7 +246,7 @@ export const formatPlayerBioInfoState = (
 	if (playerBioInfoSort.countries[0] === "frequency") {
 		countriesSorted = orderBy(
 			countries,
-			row => Number.parseInt(row.frequency),
+			(row) => Number.parseInt(row.frequency),
 			playerBioInfoSort.countries[1],
 		);
 	} else {
@@ -560,7 +560,7 @@ const PlayerBioInfo2 = ({
 	const handleChange =
 		(key: "country" | "frequency" | "games", i: number) =>
 		(event: ChangeEvent<HTMLInputElement>) => {
-			setInfoState(data => ({
+			setInfoState((data) => ({
 				...data,
 				countries: data.countries.map((row, j) => {
 					if (i !== j) {
@@ -600,15 +600,15 @@ const PlayerBioInfo2 = ({
 			if (i === "default") {
 				if (key === "fractionSkipCollege") {
 					// No need to update countries, cause default is stored as blank there
-					setInfoState(data => ({
+					setInfoState((data) => ({
 						...data,
 						defaultFractionSkipCollege: rows,
 					}));
 				} else {
-					setInfoState(data => ({
+					setInfoState((data) => ({
 						...data,
 						[defaultProp]: rows,
-						countries: data.countries.map(row => {
+						countries: data.countries.map((row) => {
 							// Skip for races in built-in countries
 							if (row.builtIn && key === "races") {
 								return row;
@@ -631,7 +631,7 @@ const PlayerBioInfo2 = ({
 					}));
 				}
 			} else {
-				setInfoState(data => ({
+				setInfoState((data) => ({
 					...data,
 					countries: data.countries.map((row, j) => {
 						if (i !== j) {
@@ -713,7 +713,7 @@ const PlayerBioInfo2 = ({
 								}
 							} else if (type === "names") {
 								const row = defaultsState.countries.find(
-									row => row.country === country,
+									(row) => row.country === country,
 								);
 								if (!row) {
 									throw new Error("Country not found");
@@ -723,7 +723,7 @@ const PlayerBioInfo2 = ({
 								throw new Error("Invalid type");
 							}
 
-							setInfoState(data => ({
+							setInfoState((data) => ({
 								...data,
 								countries: data.countries.map((row, j) => {
 									if (i !== j) {
@@ -755,7 +755,7 @@ const PlayerBioInfo2 = ({
 								throw new Error("Invalid type");
 							}
 
-							setInfoState(data => ({
+							setInfoState((data) => ({
 								...data,
 								countries: data.countries.map((row, j) => {
 									if (i !== j) {
@@ -819,7 +819,7 @@ const PlayerBioInfo2 = ({
 						<NamesEditor
 							defaultRows={
 								defaultsState.countries.find(
-									row =>
+									(row) =>
 										row.country === infoState.countries[pageInfo.index].country,
 								)?.names
 							}

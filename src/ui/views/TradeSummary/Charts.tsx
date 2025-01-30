@@ -84,7 +84,7 @@ const Chart = ({
 		>
 			<div className="text-center">{title}</div>
 			<ParentSize>
-				{parent => {
+				{(parent) => {
 					const width = parent.width - margin.left - margin.right;
 					const xScale = scaleLinear({
 						domain: xDomain,
@@ -137,9 +137,9 @@ const Chart = ({
 									tickFormat={yTickFormat as any}
 									tickLength={5}
 								/>
-								{[0, 1].map(i => {
+								{[0, 1].map((i) => {
 									const filtered = seasonsToPlot.filter(
-										row => row.teams[i][valueKey] !== undefined,
+										(row) => row.teams[i][valueKey] !== undefined,
 									);
 
 									return (
@@ -148,8 +148,8 @@ const Chart = ({
 												className="chart-line"
 												curve={curveMonotoneX}
 												data={filtered}
-												x={d => xScale(d.season)}
-												y={d => yScale(d.teams[i][valueKey] ?? 0)}
+												x={(d) => xScale(d.season)}
+												y={(d) => yScale(d.teams[i][valueKey] ?? 0)}
 												stroke={colors[i]}
 												strokeWidth={STROKE_WIDTH}
 											/>
@@ -163,7 +163,7 @@ const Chart = ({
 														fontSize={STAR_SIZE}
 														textAnchor="middle"
 														alignmentBaseline="middle"
-														onMouseOver={event =>
+														onMouseOver={(event) =>
 															handleMouseOver(event, d.teams[i])
 														}
 														onMouseOut={hideTooltip}
@@ -179,7 +179,7 @@ const Chart = ({
 														cy={yScale(d.teams[i][valueKey] ?? 0)}
 														stroke={d.teams[i].champ ? colorChamp : colors[i]}
 														strokeWidth={STROKE_WIDTH}
-														onMouseOver={event =>
+														onMouseOver={(event) =>
 															handleMouseOver(event, d.teams[i])
 														}
 														onMouseOut={hideTooltip}

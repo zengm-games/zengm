@@ -55,10 +55,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 	) => {
 		// Free agents were generated in 2020, so offset
 		const numExistingFreeAgents = players.filter(
-			p => p.tid === PLAYER.FREE_AGENT,
+			(p) => p.tid === PLAYER.FREE_AGENT,
 		).length;
 		if (numExistingFreeAgents < 50) {
-			let pid = Math.max(...players.map(p => p.pid));
+			let pid = Math.max(...players.map((p) => p.pid));
 
 			const freeAgents2 = helpers.deepCopy(
 				basketball.freeAgents.slice(0, 50 - numExistingFreeAgents),
@@ -103,7 +103,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				-1,
 			);
 
-			const ratingsRows = basketball.ratings.filter(row => {
+			const ratingsRows = basketball.ratings.filter((row) => {
 				if (
 					options.realStats === "all" ||
 					options.realStats === "allActive" ||
@@ -124,7 +124,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			});
 
 			let groupedRatings = Object.values(groupBy(ratingsRows, "slug")).filter(
-				allRatings => {
+				(allRatings) => {
 					// Ignore players in upcoming draft
 					const bio = basketball.bios[allRatings[0].slug];
 					if (
@@ -142,7 +142,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 			if (options.realStats === "allActive") {
 				// Only keep players who are active this season
-				groupedRatings = groupedRatings.filter(allRatings => {
+				groupedRatings = groupedRatings.filter((allRatings) => {
 					const lastSeason = allRatings.at(-1)?.season;
 					return lastSeason === options.season;
 				});
@@ -164,7 +164,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 				if (options.realStats === "allActiveHOF") {
 					// Only keep players who are active this season or in the HoF
-					groupedRatings = groupedRatings.filter(allRatings => {
+					groupedRatings = groupedRatings.filter((allRatings) => {
 						const lastRatings = allRatings.at(-1)!;
 						return (
 							lastRatings.season === options.season ||
@@ -174,7 +174,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				}
 			}
 
-			players = groupedRatings.map(ratings => {
+			players = groupedRatings.map((ratings) => {
 				const p = formatPlayer(ratings);
 
 				const retiredUntil = ratings.at(-1)?.retiredUntil;
@@ -193,7 +193,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			});
 
 			// Find draft prospects, which can't include any active players
-			const lastPID = Math.max(...players.map(p => p.pid));
+			const lastPID = Math.max(...players.map((p) => p.pid));
 			const draftProspects = await getDraftProspects(
 				basketball,
 				players,
@@ -239,7 +239,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			}
 
 			if (options.randomDebuts) {
-				const toRandomize = players.filter(p => {
+				const toRandomize = players.filter((p) => {
 					if (p.tid === PLAYER.FREE_AGENT || p.tid === PLAYER.RETIRED) {
 						return false;
 					}
@@ -251,10 +251,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 					return true;
 				});
 
-				const draftYears = toRandomize.map(p => p.draft.year);
+				const draftYears = toRandomize.map((p) => p.draft.year);
 				random.shuffle(draftYears);
 
-				const tids = toRandomize.filter(p => p.tid >= 0).map(p => p.tid);
+				const tids = toRandomize.filter((p) => p.tid >= 0).map((p) => p.tid);
 				random.shuffle(tids);
 
 				for (let i = 0; i < toRandomize.length; i++) {
@@ -282,19 +282,23 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 						const targetRatingsSeason = options.season - diff;
 
-						const rows = basketball.ratings.filter(row => row.slug === p.srID);
+						const rows = basketball.ratings.filter(
+							(row) => row.slug === p.srID,
+						);
 						if (rows.length === 0) {
 							throw new Error(`No ratings found for "${p.srID}"`);
 						}
 
 						// If possible, use ratings from exact age
-						let ratings = rows.find(row => row.season === targetRatingsSeason);
+						let ratings = rows.find(
+							(row) => row.season === targetRatingsSeason,
+						);
 
 						// Otherwise, find closest
 						if (!ratings) {
 							const sorted = orderBy(
 								rows,
-								row => Math.abs(row.season - targetRatingsSeason),
+								(row) => Math.abs(row.season - targetRatingsSeason),
 								"asc",
 							);
 							ratings = sorted[0];
@@ -305,7 +309,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 						// Draft prospect
 						p.tid = PLAYER.UNDRAFTED;
 						const rookieRatings = basketball.ratings.find(
-							row => row.slug === p.srID,
+							(row) => row.slug === p.srID,
 						);
 						if (!rookieRatings) {
 							throw new Error(`No ratings found for "${p.srID}"`);
@@ -345,7 +349,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			dp: Basketball["draftPicks"][number][number],
 		) => {
 			const t = initialTeams.find(
-				t => oldAbbrevTo2020BBGMAbbrev(t.srID) === dp.abbrev,
+				(t) => oldAbbrevTo2020BBGMAbbrev(t.srID) === dp.abbrev,
 			);
 			if (!t) {
 				throw new Error(`Team not found for draft pick abbrev ${dp.abbrev}`);
@@ -354,7 +358,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			let t2;
 			if (dp.originalAbbrev) {
 				t2 = initialTeams.find(
-					t => oldAbbrevTo2020BBGMAbbrev(t.srID) === dp.originalAbbrev,
+					(t) => oldAbbrevTo2020BBGMAbbrev(t.srID) === dp.originalAbbrev,
 				);
 				if (!t2) {
 					throw new Error(
@@ -378,7 +382,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		const includeRealizedDraftPicksThisSeason = options.phase === PHASE.DRAFT;
 		if (includeDraftPicks2020AndFuture || includeRealizedDraftPicksThisSeason) {
 			draftPicks = basketball.draftPicks[options.season]
-				.filter(dp => {
+				.filter((dp) => {
 					if (dp.round > 2) {
 						return false;
 					}
@@ -432,7 +436,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 					return true;
 				})
-				.map(dp => {
+				.map((dp) => {
 					const [t, t2] = getDraftPickTeams(dp);
 
 					return {
@@ -508,7 +512,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				}
 
 				for (const t of initialTeamsSeason) {
-					const t2 = initialTeams.find(t2 => t2.tid === t.tid);
+					const t2 = initialTeams.find((t2) => t2.tid === t.tid);
 					if (!t2) {
 						throw new Error("t2 not found");
 					}
@@ -580,7 +584,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 			// Add dummy entry for current season, otherwise league.create gets confused by all the other entries and thinks the last one should be moved to the current season
 			if (options.phase === PHASE.PRESEASON) {
-				const activeTeams = initialTeams.filter(t => !t.disabled);
+				const activeTeams = initialTeams.filter((t) => !t.disabled);
 
 				for (const t of activeTeams) {
 					const teamSeason = team.genSeasonRow(
@@ -604,7 +608,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			if (playIns) {
 				const getTidAndWinp = (abbrev: string) => {
 					const t = initialTeams.find(
-						t => oldAbbrevTo2020BBGMAbbrev(t.srID) === abbrev,
+						(t) => oldAbbrevTo2020BBGMAbbrev(t.srID) === abbrev,
 					);
 					if (!t) {
 						throw new Error("Missing team");
@@ -624,7 +628,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				const currentPlayoffSeries = playoffSeries.at(-1);
 				if (currentPlayoffSeries) {
 					currentPlayoffSeries.playIns = playIns.map((playIn, cid) => {
-						return playIn.map(matchup => {
+						return playIn.map((matchup) => {
 							return {
 								home: {
 									cid,
@@ -741,7 +745,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 					basketball.expansionDrafts[options.season],
 				)) {
 					const t = initialTeams.find(
-						t => abbrev === oldAbbrevTo2020BBGMAbbrev(t.abbrev),
+						(t) => abbrev === oldAbbrevTo2020BBGMAbbrev(t.abbrev),
 					);
 					if (!t) {
 						throw new Error("Team not found");
@@ -773,7 +777,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				}) => {
 					// Contract - this should work pretty well for players with contract data. Other players (like from the old days) will have this randomly generated in augmentPartialPlayer.
 					const salaryRow = basketball.salaries.find(
-						row => row.start <= options.season + 1 && row.slug === p.srID,
+						(row) => row.start <= options.season + 1 && row.slug === p.srID,
 					);
 					if (salaryRow) {
 						if (p.draft.round === undefined) {
@@ -864,12 +868,12 @@ const getLeague = async (options: GetLeagueOptions) => {
 					) {
 						// Search forwards - first team a player was on that season
 						const statsRow = basketball.teams.find(
-							row => row.slug === p.srID && row.season === options.season + 1,
+							(row) => row.slug === p.srID && row.season === options.season + 1,
 						);
 
 						if (statsRow) {
 							const t = initialTeams.find(
-								t =>
+								(t) =>
 									t.srID !== undefined &&
 									oldAbbrevTo2020BBGMAbbrev(t.srID) === statsRow.abbrev,
 							);
@@ -898,7 +902,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			// Add retired jersey numbers for expansion teams too - but not for teams that are going to disband and then return again later (seenAbbrevs check)
 			const initialAndFutureTeams = [...initialTeams];
 			const seenAbbrevs = new Set(
-				initialTeams.map(t => oldAbbrevTo2020BBGMAbbrev(t.srID)),
+				initialTeams.map((t) => oldAbbrevTo2020BBGMAbbrev(t.srID)),
 			);
 			for (const event of scheduledEvents) {
 				if (event.type === "expansionDraft") {
@@ -979,7 +983,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			},
 		);
 
-		const hasQueens = initialTeams.some(t => t.name === "Queens");
+		const hasQueens = initialTeams.some((t) => t.name === "Queens");
 
 		const formatPlayer = await formatPlayerFactory(
 			basketball,
@@ -991,20 +995,20 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		let players = orderBy(
 			basketball.ratings,
-			ratings => player.ovr(ratings as any),
+			(ratings) => player.ovr(ratings as any),
 			"desc",
 		)
 			.filter(
-				ratings =>
+				(ratings) =>
 					ratings.season >= legendsInfo[options.decade].start &&
 					ratings.season <= legendsInfo[options.decade].end,
 			)
-			.map(ratings =>
+			.map((ratings) =>
 				formatPlayer(ratings, {
 					hasQueens,
 				}),
 			)
-			.filter(p => p.tid >= 0);
+			.filter((p) => p.tid >= 0);
 
 		const keptPlayers = [];
 		const numPlayersPerTeam = Array(initialTeams.length).fill(0);
@@ -1018,7 +1022,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				numPlayersPerTeam[p.tid] += 1;
 
 				// Remove other years of this player
-				players = players.filter(p2 => p2.srID !== p.srID);
+				players = players.filter((p2) => p2.srID !== p.srID);
 			}
 		}
 

@@ -45,7 +45,7 @@ export const EditContestants = ({
 		);
 	}
 
-	const selectedPIDs = players.map(p => p.pid);
+	const selectedPIDs = players.map((p) => p.pid);
 
 	return (
 		<form
@@ -53,11 +53,11 @@ export const EditContestants = ({
 			style={{
 				maxWidth: 300,
 			}}
-			onSubmit={async event => {
+			onSubmit={async (event) => {
 				event.preventDefault();
 
 				// Get rid of any other properties, like abbrev
-				const minimalPlayers = players.map(p => ({
+				const minimalPlayers = players.map((p) => ({
 					pid: p.pid,
 					tid: p.tid,
 					name: p.name,
@@ -75,15 +75,15 @@ export const EditContestants = ({
 				return (
 					<div className="mb-2" key={i}>
 						<SelectMultiple
-							options={allPossibleContestants.filter(p => {
+							options={allPossibleContestants.filter((p) => {
 								// Keep this player and any other non-selected players
 								const selectedIndex = selectedPIDs.indexOf(p.pid);
 								return selectedIndex === i || selectedIndex < 0;
 							})}
-							value={allPossibleContestants.find(p2 => p.pid === p2.pid)}
-							getOptionLabel={p => `${p.name}, ${p.abbrev}`}
-							getOptionValue={p => String(p.pid)}
-							onChange={p => {
+							value={allPossibleContestants.find((p2) => p.pid === p2.pid)}
+							getOptionLabel={(p) => `${p.name}, ${p.abbrev}`}
+							getOptionValue={(p) => String(p.pid)}
+							onChange={(p) => {
 								if (p) {
 									const newPlayers = [...players];
 									newPlayers[i] = p;
@@ -119,7 +119,7 @@ const getReplaceInfo = ({
 	let replaceInfo;
 
 	if (text.endsWith("a short person")) {
-		const p = dunk.playersShort.find(p => p?.pid !== pid);
+		const p = dunk.playersShort.find((p) => p?.pid !== pid);
 		if (p) {
 			replaceInfo = {
 				...p,
@@ -127,7 +127,7 @@ const getReplaceInfo = ({
 			};
 		}
 	} else if (text.endsWith("a tall person")) {
-		const p = dunk.playersTall.find(p => p?.pid !== pid);
+		const p = dunk.playersTall.find((p) => p?.pid !== pid);
 		if (p) {
 			replaceInfo = {
 				...p,
@@ -252,7 +252,7 @@ const Log = ({
 
 				if (event.type === "attempt") {
 					const actualMoves = [event.dunk.move1, event.dunk.move2].filter(
-						move => move !== "none",
+						(move) => move !== "none",
 					);
 
 					return (
@@ -358,7 +358,7 @@ const UserDunkForm = ({
 		updateProjeted();
 	}, [dunkAttempt, index]);
 
-	const units = useLocal(state => state.units);
+	const units = useLocal((state) => state.units);
 
 	const name = dunk.players[index].name;
 
@@ -399,7 +399,7 @@ const UserDunkForm = ({
 				}}
 			>
 				<form
-					onSubmit={async event => {
+					onSubmit={async (event) => {
 						event.preventDefault();
 
 						setSubmitted(true);
@@ -433,7 +433,7 @@ const UserDunkForm = ({
 									id="user-dunk-toss"
 									value={dunkAttempt[key]}
 									className="form-select"
-									onChange={event => {
+									onChange={(event) => {
 										setDunkAttempt({
 											...dunkAttempt,
 											[key]: event.currentTarget.value,
@@ -524,14 +524,14 @@ export const ContestantProfiles = ({
 
 				const yearsWon = (p.awards as Player["awards"])
 					.filter(
-						award =>
+						(award) =>
 							award.type ===
 							(contestIsDunk
 								? "Slam Dunk Contest Winner"
 								: "Three-Point Contest Winner"),
 					)
-					.map(award => award.season)
-					.filter(year => year < season);
+					.map((award) => award.season)
+					.filter((year) => year < season);
 
 				return (
 					<div key={p.pid}>
@@ -636,7 +636,7 @@ export const ContestantProfiles = ({
 									onChange={async () => {
 										let controlling = [...contest.controlling];
 										if (controlling.includes(i)) {
-											controlling = controlling.filter(j => j !== i);
+											controlling = controlling.filter((j) => j !== i);
 										} else {
 											controlling.push(i);
 										}
@@ -698,7 +698,7 @@ export const ScoreTable = ({
 							maxRoundCurrent += 1;
 							return <th key={i}>Round {maxRoundCurrent}</th>;
 						})}
-						{range(maxRoundCurrent + 1, numRounds + 1).map(i => (
+						{range(maxRoundCurrent + 1, numRounds + 1).map((i) => (
 							<th key={i} className={centerClassName}>
 								Round {i}
 							</th>
@@ -726,7 +726,7 @@ export const ScoreTable = ({
 								</td>
 								{contest.rounds.map((round, j) => {
 									const roundResult = resultsByRound[j].find(
-										p => p.index === i,
+										(p) => p.index === i,
 									);
 									if (!roundResult) {
 										return <td key={j} />;
@@ -746,7 +746,7 @@ export const ScoreTable = ({
 										</td>
 									);
 								})}
-								{range(maxRoundCurrent + 1, numRounds + 1).map(i => (
+								{range(maxRoundCurrent + 1, numRounds + 1).map((i) => (
 									<td key={i} />
 								))}
 								{contest.winner !== undefined ? (
@@ -794,7 +794,7 @@ const AllStarDunk = ({
 				if (awaitingUserDunkIndex !== undefined) {
 					setPaused(true);
 				} else {
-					await new Promise<void>(resolve => {
+					await new Promise<void>((resolve) => {
 						setTimeout(() => {
 							resolve();
 						}, 2000);
@@ -817,7 +817,7 @@ const AllStarDunk = ({
 		title: "Slam Dunk Contest",
 		dropdownView: "all_star_dunk",
 		dropdownFields: { seasons: season },
-		dropdownCustomURL: fields => {
+		dropdownCustomURL: (fields) => {
 			return helpers.leagueUrl(["all_star", "dunk", fields.seasons]);
 		},
 	});

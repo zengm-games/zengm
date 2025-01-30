@@ -219,13 +219,13 @@ const DataTable = ({
 			({ hidden, colIndex }) => !hidden && cols[colIndex],
 		);
 		const columns = colOrderFiltered.map(({ colIndex }) => cols[colIndex]);
-		const colNames = columns.map(col => col.title);
+		const colNames = columns.map((col) => col.title);
 		const processedRows = processRows({
 			cols,
 			rankCol,
 			rows,
 			state,
-		}).map(row =>
+		}).map((row) =>
 			row.data.map((val, i) => {
 				const sortType = columns[i].sortType;
 				if (sortType === "currency" || sortType === "number") {
@@ -395,8 +395,8 @@ const DataTable = ({
 		state.sortBys === undefined
 			? []
 			: state.sortBys
-					.map(sortBy => sortBy[0])
-					.map(i =>
+					.map((sortBy) => sortBy[0])
+					.map((i) =>
 						colOrderFiltered.findIndex(({ colIndex }) => {
 							if (colIndex !== i) {
 								return false;
@@ -466,7 +466,7 @@ const DataTable = ({
 					/>
 				)}
 				<tbody>
-					{processedRowsPage.map(row => {
+					{processedRowsPage.map((row) => {
 						if (sortableRows) {
 							return <DraggableRow key={row.key} id={getId(row)} row={row} />;
 						}
@@ -531,7 +531,7 @@ const DataTable = ({
 						state.settingsCache.set("DataTableColOrder", newOrder);
 					}
 				}}
-				onChangeStickyCols={stickyCols => {
+				onChangeStickyCols={(stickyCols) => {
 					setStatePartial({
 						stickyCols,
 					});
@@ -605,7 +605,7 @@ const DataTable = ({
 						{sortableRows ? (
 							<SortableContextWrappers
 								{...sortableRows}
-								renderRow={renderRowProps => {
+								renderRow={(renderRowProps) => {
 									const row = renderRowProps.row;
 									return (
 										<Row

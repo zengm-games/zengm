@@ -15,7 +15,7 @@ const Relatives = ({
 	userTid,
 }: View<"relatives">) => {
 	const target =
-		pid !== undefined ? players.find(p => p.pid === pid) : undefined;
+		pid !== undefined ? players.find((p) => p.pid === pid) : undefined;
 
 	let title;
 	if (target === undefined) {
@@ -64,11 +64,11 @@ const Relatives = ({
 		gender === "male" ? "# Sons" : "# Daughters",
 		"Year",
 		"Team",
-		...stats.map(stat => `stat:${stat}`),
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
 	]);
 
-	const rows: DataTableRow[] = players.map(p => {
+	const rows: DataTableRow[] = players.map((p) => {
 		const relationArray: string[] = [];
 		if (target) {
 			relationArray.push(p.relationText);
@@ -128,8 +128,8 @@ const Relatives = ({
 				>
 					{p.bestStats.abbrev}
 				</a>,
-				...stats.map(stat => helpers.roundStat(p.bestStats[stat], stat)),
-				...stats.map(stat => helpers.roundStat(p.careerStats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.bestStats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.careerStats[stat], stat)),
 			],
 			classNames: {
 				"table-danger": p.hof,

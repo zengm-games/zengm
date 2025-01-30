@@ -90,7 +90,7 @@ const iqFormula: RatingFormula = {
 
 		return 2;
 	},
-	changeLimits: age => {
+	changeLimits: (age) => {
 		if (age >= 24) {
 			return [-3, 9];
 		}
@@ -125,7 +125,7 @@ const iqFormulaMinus: RatingFormula = {
 
 		return 1.75;
 	},
-	changeLimits: age => {
+	changeLimits: (age) => {
 		if (age >= 24) {
 			return [-3, 9];
 		}
@@ -160,7 +160,7 @@ const iqFormulaPlus: RatingFormula = {
 
 		return 2;
 	},
-	changeLimits: age => {
+	changeLimits: (age) => {
 		if (age >= 24) {
 			return [-3, 9];
 		}

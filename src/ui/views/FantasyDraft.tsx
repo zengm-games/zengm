@@ -9,7 +9,7 @@ import { shuffle } from "../../common/random";
 import type { DataTableRow } from "../components/DataTable";
 
 const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
-	const [sortedTids, setSortedTids] = useState(teams.map(t => t.tid));
+	const [sortedTids, setSortedTids] = useState(teams.map((t) => t.tid));
 	const [starting, setStarting] = useState(false);
 	const randomize = useCallback(() => {
 		const newSortedTids = [...sortedTids];
@@ -37,8 +37,8 @@ const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
 	}
 
 	// Use the result of drag and drop to sort players, before the "official" order comes back as props
-	const teamsSorted = sortedTids.map(tid => {
-		const found = teams.find(t => t.tid === tid);
+	const teamsSorted = sortedTids.map((tid) => {
+		const found = teams.find((t) => t.tid === tid);
 		if (!found) {
 			throw new Error("Should never happen");
 		}

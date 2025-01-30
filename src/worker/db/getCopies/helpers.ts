@@ -10,7 +10,7 @@ export const maybeDeepCopy = <T>(row: T, type: GetCopyType | undefined) =>
 // Merge fromDb and fromCache by primary key. Records in fromCache will overwrite records in fromDb, and then extra records will be appended to end. Return value is cloned.
 export const mergeByPk = <
 	MyStore extends Store,
-	PrimaryKey extends typeof idb.cache.storeInfos[MyStore]["pk"],
+	PrimaryKey extends (typeof idb.cache.storeInfos)[MyStore]["pk"],
 	T extends Record<PrimaryKey, any>,
 >(
 	fromDb: T[],
@@ -33,11 +33,11 @@ export const mergeByPk = <
 	}
 
 	const output = fromDb
-		.filter(row => {
+		.filter((row) => {
 			// Filter out rows if they have been deleted from the cache, but not yet persisted to IndexedDB
 			return !idb.cache._deletes[storeName].has(row[pk]);
 		})
-		.map(row => {
+		.map((row) => {
 			const key = row[pk];
 
 			if (Object.hasOwn(cacheKeys, key)) {

@@ -30,8 +30,8 @@ const groupScheduleCompact = (tids: [number, number][]) => {
 		}
 		const remainingMatchupsArray = orderBy(
 			Array.from(remainingMatchups),
-			matchup => {
-				return Math.min(...matchup.map(tid => numGamesLeftByTid[tid] ?? 0));
+			(matchup) => {
+				return Math.min(...matchup.map((tid) => numGamesLeftByTid[tid] ?? 0));
 			},
 			"desc",
 		);

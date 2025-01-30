@@ -5,7 +5,7 @@ import type { UpdateEvents, Player } from "../../common/types";
 import addFirstNameShort from "../util/addFirstNameShort";
 
 const getSeason = async (playersAll: Player[], season: number) => {
-	const playersAllFiltered = playersAll.filter(p => p.draft.year === season);
+	const playersAllFiltered = playersAll.filter((p) => p.draft.year === season);
 	const players = await idb.getCopies.playersPlus(playersAllFiltered, {
 		attrs: ["pid", "firstName", "lastName", "age", "valueFuzz", "watch"],
 		ratings: ["ovr", "pot", "skills", "fuzz", "pos"],
@@ -61,7 +61,7 @@ const updateDraftScouting = async (
 				[firstSeason],
 				[Infinity, Infinity],
 			])
-		).filter(p => p.tid === tid);
+		).filter((p) => p.tid === tid);
 
 		let maxDraftYear = firstSeason + 2;
 		for (const p of players) {

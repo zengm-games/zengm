@@ -90,10 +90,10 @@ const moodComponents = async (
 			[tid, season],
 		],
 	);
-	const currentTeamSeason = teamSeasons.find(ts => ts.season === season);
+	const currentTeamSeason = teamSeasons.find((ts) => ts.season === season);
 
 	const teams = helpers.addPopRank(await idb.cache.teams.getAll());
-	const t = teams.find(t => t.tid === tid);
+	const t = teams.find((t) => t.tid === tid);
 	if (!t) {
 		throw new Error(`tid ${tid} not found`);
 	}
@@ -163,7 +163,7 @@ const moodComponents = async (
 				// If season ongoing, project record and playoff success based on last year
 				if (phase < PHASE.PLAYOFFS) {
 					const previousSeason = teamSeasons.find(
-						ts => ts.season === season - 1,
+						(ts) => ts.season === season - 1,
 					);
 					const previousRecord = {
 						won: previousSeason ? previousSeason.won : 0,
@@ -257,7 +257,7 @@ const moodComponents = async (
 
 	{
 		// LOYALTY
-		const numSeasonsWithTeam = p.stats.filter(row => row.tid === tid).length;
+		const numSeasonsWithTeam = p.stats.filter((row) => row.tid === tid).length;
 		components.loyalty = numSeasonsWithTeam / 8;
 
 		let wantsToReSign = p.tid === tid;

@@ -81,7 +81,7 @@ export const RacesEditor = ({
 	const handleChange =
 		(field: "frequency", i: number) =>
 		(event: ChangeEvent<HTMLInputElement>) => {
-			setRowsEdited(rows =>
+			setRowsEdited((rows) =>
 				rows.map((row, j) => {
 					if (i !== j) {
 						return row;
@@ -249,7 +249,7 @@ const CollegesControls = ({
 						} else {
 							colleges = orderBy(
 								rows,
-								row => Number.parseInt(row.frequency),
+								(row) => Number.parseInt(row.frequency),
 								direction,
 							);
 						}
@@ -338,7 +338,7 @@ export const CollegesEditor = ({
 	const handleChange =
 		(field: "name" | "frequency", i: number) =>
 		(event: ChangeEvent<HTMLInputElement>) => {
-			setRowsEdited(rows =>
+			setRowsEdited((rows) =>
 				rows.map((row, j) => {
 					if (i !== j) {
 						return row;
@@ -373,7 +373,7 @@ export const CollegesEditor = ({
 							style={{ maxWidth: 100 }}
 							id="fractionSkipCollege"
 							value={fractionSkipCollegeEdited}
-							onChange={event => {
+							onChange={(event) => {
 								setFractionSkipCollegeEdited(event.target.value);
 							}}
 						/>
@@ -439,7 +439,7 @@ export const CollegesEditor = ({
 							<PlayerBioInfoRowButton
 								className="text-danger"
 								onClick={() => {
-									setRowsEdited(rows => rows.filter(row2 => row !== row2));
+									setRowsEdited((rows) => rows.filter((row2) => row !== row2));
 								}}
 								title="Delete"
 								icon="glyphicon-remove"
@@ -555,7 +555,7 @@ const NamesControls = ({
 						} else {
 							names = orderBy(
 								rows,
-								row => Number.parseInt(row.frequency),
+								(row) => Number.parseInt(row.frequency),
 								direction,
 							);
 						}
@@ -619,7 +619,7 @@ export const NamesEditor = ({
 	const handleChange =
 		(field: "name" | "frequency", i: number) =>
 		(event: ChangeEvent<HTMLInputElement>) => {
-			setRowsEdited(rows => ({
+			setRowsEdited((rows) => ({
 				...rows,
 				[firstOrLast]: rows[firstOrLast].map((row, j) => {
 					if (i !== j) {
@@ -636,7 +636,7 @@ export const NamesEditor = ({
 
 	const setRowsEditedWrapper =
 		(type: "first" | "last") => (rowsNew: NameRow[]) => {
-			setRowsEdited(rows => ({
+			setRowsEdited((rows) => ({
 				...rows,
 				[type]: rowsNew,
 			}));
@@ -653,7 +653,7 @@ export const NamesEditor = ({
 				/>
 
 				<ul className="nav nav-tabs mt-3">
-					{(["first", "last"] as const).map(type => (
+					{(["first", "last"] as const).map((type) => (
 						<li key={type} className="nav-item">
 							<a
 								className={clsx("nav-link", {
@@ -710,7 +710,7 @@ export const NamesEditor = ({
 									className="text-danger"
 									onClick={() => {
 										setRowsEditedWrapper(firstOrLast)(
-											rowsEdited[firstOrLast].filter(row2 => row !== row2),
+											rowsEdited[firstOrLast].filter((row2) => row !== row2),
 										);
 									}}
 									title="Delete"
@@ -798,7 +798,7 @@ export const FlagEditor = ({
 							className="form-control"
 							id="playerBioInfoFlag"
 							value={flagEdited}
-							onChange={event => {
+							onChange={(event) => {
 								setFlagEdited(event.target.value);
 							}}
 						/>

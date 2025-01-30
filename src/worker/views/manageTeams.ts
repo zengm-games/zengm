@@ -27,7 +27,7 @@ const updateTeamInfo = async () => {
 			},
 			"noCopyCache",
 		)
-	).map(t => {
+	).map((t) => {
 		const pop = t.pop ?? t.seasonAttrs.pop;
 
 		return {

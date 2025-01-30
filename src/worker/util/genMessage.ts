@@ -50,7 +50,7 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 		},
 		"noCopyCache",
 	);
-	const moods = teamSeasons.map(ts => {
+	const moods = teamSeasons.map((ts) => {
 		return (
 			ts.ownerMood ?? {
 				money: 0,

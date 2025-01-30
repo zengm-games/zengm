@@ -63,7 +63,9 @@ const getRookieSalaries = (): number[] => {
 		salaries.push(minContract);
 	}
 
-	const salariesRounded = salaries.map(salary => helpers.roundContract(salary));
+	const salariesRounded = salaries.map((salary) =>
+		helpers.roundContract(salary),
+	);
 
 	return salariesRounded;
 };

@@ -25,16 +25,16 @@ const Player = ({
 	return (
 		<div style={divStyle}>
 			<SelectMultiple
-				options={allPossiblePlayers.filter(p2 => {
+				options={allPossiblePlayers.filter((p2) => {
 					// Keep this player and any other non-selected players
 					const selectedIndex = selectedPIDs.indexOf(p2.pid);
 					return p2.pid === p?.pid || selectedIndex < 0;
 				})}
 				value={
-					p === null ? null : allPossiblePlayers.find(p2 => p.pid === p2.pid)
+					p === null ? null : allPossiblePlayers.find((p2) => p.pid === p2.pid)
 				}
-				getOptionLabel={p => `${p.name}, ${p.abbrev}`}
-				getOptionValue={p => String(p.pid)}
+				getOptionLabel={(p) => `${p.name}, ${p.abbrev}`}
+				getOptionValue={(p) => String(p.pid)}
 				onChange={onChange}
 				isClearable={isClearable}
 			/>
@@ -170,8 +170,8 @@ const EditAllStars = ({
 }) => {
 	const [sections, setSections] = useState(initialSections);
 
-	const selectedPIDs = sections.flatMap(section =>
-		section.players.map(p => p?.pid),
+	const selectedPIDs = sections.flatMap((section) =>
+		section.players.map((p) => p?.pid),
 	);
 
 	const allPossibleHealthy: typeof allPossiblePlayers = [];
@@ -243,15 +243,15 @@ const EditAllStars = ({
 
 	return (
 		<form
-			onSubmit={async event => {
+			onSubmit={async (event) => {
 				event.preventDefault();
 
 				// Get rid of any other properties, like abbrev
-				const minimalSections = sections.map(section => ({
+				const minimalSections = sections.map((section) => ({
 					...section,
 					players: section.players
-						.filter(p => p !== null)
-						.map(p => {
+						.filter((p) => p !== null)
+						.map((p) => {
 							const p2: AllStarPlayer = {
 								pid: p.pid,
 								tid: p.tid,

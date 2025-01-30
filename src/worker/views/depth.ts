@@ -141,7 +141,7 @@ const updateDepth = async (
 				showDH = "dh";
 			} else {
 				const confs = g.get("confs");
-				const filteredConfs = confs.filter(conf => dh.includes(conf.cid));
+				const filteredConfs = confs.filter((conf) => dh.includes(conf.cid));
 				if (confs.length === filteredConfs.length) {
 					showDH = "dh";
 				} else if (filteredConfs.length === 0) {

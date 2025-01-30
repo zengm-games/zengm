@@ -47,7 +47,7 @@ const simpleGameAttributesUpgrade = (
 				},
 			];
 		} else {
-			maxOvertimes = ties.map(row => {
+			maxOvertimes = ties.map((row) => {
 				return {
 					start: row.start,
 					value: row.value ? 1 : null,

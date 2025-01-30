@@ -92,7 +92,7 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 	}
 
 	// Handle teams without draft picks (for challengeNoDraftPicks)
-	const teams = allTeams.filter(t => !!draftPicksIndexed[t.tid]);
+	const teams = allTeams.filter((t) => !!draftPicksIndexed[t.tid]);
 
 	// Expansion teams and re-activated teams who did not play this season
 	for (const t of teams) {
@@ -105,7 +105,7 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 		}
 	}
 
-	type MyTeam = typeof teams[number];
+	type MyTeam = (typeof teams)[number];
 
 	const usePts = g.get("pointsFormula", "current") !== "";
 
@@ -113,7 +113,7 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 		TIEBREAKER === "random"
 			? {
 					tiebreakersOverride: ["coinFlip"],
-			  }
+				}
 			: undefined;
 
 	////
@@ -130,7 +130,9 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 	> = {};
 
 	const addTie = (tiedTeams: MyTeam[], round: number) => {
-		const key = JSON.stringify(tiedTeams.map(t => t.tid).sort((a, b) => a - b));
+		const key = JSON.stringify(
+			tiedTeams.map((t) => t.tid).sort((a, b) => a - b),
+		);
 
 		if (!ties[key]) {
 			ties[key] = {
@@ -167,7 +169,7 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 	const firstRound: MyTeam[] = [];
 
 	const nonPlayoffTeams = teams.filter(
-		t => t.seasonAttrs.playoffRoundsWon < 0 && !tidPlayoffs.includes(t.tid),
+		(t) => t.seasonAttrs.playoffRoundsWon < 0 && !tidPlayoffs.includes(t.tid),
 	);
 	const nonPlayoffTeamsOrdered = (
 		await orderTeams(nonPlayoffTeams, allTeams, {
@@ -181,7 +183,7 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 	firstRound.push(...nonPlayoffTeamsOrdered);
 
 	const playoffTeams = teams.filter(
-		t => t.seasonAttrs.playoffRoundsWon >= 0 || tidPlayoffs.includes(t.tid),
+		(t) => t.seasonAttrs.playoffRoundsWon >= 0 || tidPlayoffs.includes(t.tid),
 	);
 	if (playoffTeams.length > 0) {
 		if (FIRST_ROUND_PLAYOFF_TEAMS_ORDER === "record") {
@@ -208,7 +210,7 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 				playoffRoundsWon++
 			) {
 				const playoffRoundTeams = playoffTeams.filter(
-					t => t.seasonAttrs.playoffRoundsWon === playoffRoundsWon,
+					(t) => t.seasonAttrs.playoffRoundsWon === playoffRoundsWon,
 				);
 				const playoffRoundTeamsOrdered = (
 					await orderTeams(playoffRoundTeams, allTeams, orderTeamsSettings)

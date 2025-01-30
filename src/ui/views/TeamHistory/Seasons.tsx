@@ -26,7 +26,7 @@ const ExpandableNote = ({ note }: { note: string | undefined }) => {
 
 const Seasons = ({ history }: Pick<View<"teamHistory">, "history">) => {
 	const numTeamNames = new Set(
-		history.map(h => h.name).filter(name => name !== undefined),
+		history.map((h) => h.name).filter((name) => name !== undefined),
 	).size;
 
 	let prevName = numTeamNames === 1 ? history[0].name : undefined;

@@ -60,12 +60,12 @@ const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		const allTeamSeasons = teamSeasonsByTeam.flat();
 
-		const tids = new Set(allTeamSeasons.map(ts => ts.tid));
+		const tids = new Set(allTeamSeasons.map((ts) => ts.tid));
 
 		const players: Player[] = [];
 		const addPlayer = (p: Player) => {
 			p.stats = p.stats.filter(
-				row => seasonsByTid[row.tid] && seasonsByTid[row.tid].has(row.season),
+				(row) => seasonsByTid[row.tid] && seasonsByTid[row.tid].has(row.season),
 			);
 			players.push(p);
 		};

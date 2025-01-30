@@ -36,7 +36,7 @@ const Schedule = ({
 		(type: "win" | "lose" | "tie" | "none") => async () => {
 			setForcingAll(true);
 			await toWorker("main", "setForceWinAll", { tid, type });
-			setForceWinKey(key => key + 1);
+			setForceWinKey((key) => key + 1);
 			setForcingAll(false);
 		};
 
@@ -158,7 +158,7 @@ const Schedule = ({
 				</div>
 				<div style={{ maxWidth: 510 }} className="flex-grow-1">
 					<h2>Completed Games</h2>
-					{completed.map(game => (
+					{completed.map((game) => (
 						<ScoreBox
 							boxScoreTeamOverride={`${abbrev}_${tid}`}
 							className="mb-3"

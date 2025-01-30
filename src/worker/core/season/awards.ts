@@ -173,7 +173,8 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 
 	// Only keep players who actually have a stats entry for the latest season
 	players = players.filter(
-		p => p.stats.length > 0 && p.stats.some((ps: any) => ps.season === season),
+		(p) =>
+			p.stats.length > 0 && p.stats.some((ps: any) => ps.season === season),
 	);
 
 	// Add winp, for later
@@ -210,7 +211,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 		p.pos = p.ratings.at(-1).pos;
 		if (isSport("baseball")) {
 			// Overwrite position with actual position played
-			const gpF = (p.currentStats.gpF as (number | undefined)[]).map(gp =>
+			const gpF = (p.currentStats.gpF as (number | undefined)[]).map((gp) =>
 				gp === undefined ? 0 : gp,
 			);
 			let maxGP = 0; // Start at 0 rather than -Infinity because we're not interested in positions with 0 games played
@@ -309,9 +310,9 @@ const teamAwards = async (
 		otl: g.get("otl", "current") ? teams[0].seasonAttrs.otl : undefined,
 	};
 	const bestRecordConfs = await Promise.all(
-		g.get("confs", "current").map(async c => {
+		g.get("confs", "current").map(async (c) => {
 			const teamsConf = await orderTeams(
-				teams.filter(t2 => t2.seasonAttrs.cid === c.cid),
+				teams.filter((t2) => t2.seasonAttrs.cid === c.cid),
 				teams,
 			);
 			const t = teamsConf[0];
@@ -355,7 +356,7 @@ const leagueLeaders = (
 
 	for (const cat of categories) {
 		const p = maxBy(
-			players.filter(p2 => {
+			players.filter((p2) => {
 				// In basketball, everything except gp is a per-game average, so we need to scale them by games played to check against minValue. In other sports, this whole check is unneccessary currently, because the stats are season totals not per game averages.
 				let playerValue;
 				if (!isSport("basketball")) {
@@ -368,7 +369,7 @@ const leagueLeaders = (
 					p2.currentStats.gp >= 0.85 * numGames
 				);
 			}),
-			p => p.currentStats[cat.stat],
+			(p) => p.currentStats[cat.stat],
 		);
 
 		if (p) {
@@ -497,8 +498,8 @@ const saveAwardsByPlayer = async (
 		}
 	}
 	const pids = Array.from(
-		new Set(awardsByPlayer.map(award => award.pid)),
-	).filter(x => x != undefined);
+		new Set(awardsByPlayer.map((award) => award.pid)),
+	).filter((x) => x != undefined);
 	for (const pid of pids) {
 		let p = await idb.cache.players.get(pid);
 		if (!p) {
@@ -535,7 +536,7 @@ const deleteAwardsByPlayer = async (
 		return;
 	}
 
-	const pids = Array.from(new Set(awardsByPlayer.map(award => award.pid)));
+	const pids = Array.from(new Set(awardsByPlayer.map((award) => award.pid)));
 	const players = await idb.getCopies.players(
 		{
 			pids,
@@ -544,10 +545,10 @@ const deleteAwardsByPlayer = async (
 	);
 	for (const p of players) {
 		const typesToDelete = awardsByPlayer
-			.filter(award => award.pid === p.pid)
-			.map(award => award.type);
+			.filter((award) => award.pid === p.pid)
+			.map((award) => award.type);
 		p.awards = p.awards.filter(
-			award => award.season != season || !typesToDelete.includes(award.type),
+			(award) => award.season != season || !typesToDelete.includes(award.type),
 		);
 		await idb.cache.players.put(p);
 	}

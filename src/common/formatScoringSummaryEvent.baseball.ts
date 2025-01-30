@@ -17,7 +17,7 @@ export const formatScoringSummaryEvent = (
 	} else {
 		const runners = (event as Extract<PlayByPlayEvent, { type: "hitResult" }>)
 			.runners;
-		if (runners?.some(runner => runner.scored)) {
+		if (runners?.some((runner) => runner.scored)) {
 			scored = true;
 		}
 	}

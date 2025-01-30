@@ -32,7 +32,7 @@ const addNewTeamToExistingLeague = async (
 		throw new Error("No divisions");
 	}
 
-	let div = divs.find(d => d.did === teamInfo.did);
+	let div = divs.find((d) => d.did === teamInfo.did);
 	if (!div) {
 		div = divs.at(-1)!;
 	}
@@ -64,13 +64,13 @@ const addNewTeamToExistingLeague = async (
 				cid,
 				...teamInfo,
 				disabled: false,
-		  }
+			}
 		: generate({
 				...teamInfo,
 				tid: g.get("numTeams"),
 				cid,
 				popRank,
-		  });
+			});
 	await idb.cache.teams.put(t);
 
 	if (g.get("phase") <= PHASE.PLAYOFFS) {
@@ -82,9 +82,9 @@ const addNewTeamToExistingLeague = async (
 
 	const allTeams = await idb.cache.teams.getAll();
 	await league.setGameAttributes({
-		numActiveTeams: allTeams.filter(t => !t.disabled).length,
+		numActiveTeams: allTeams.filter((t) => !t.disabled).length,
 		numTeams: allTeams.length,
-		teamInfoCache: allTeams.map(t => ({
+		teamInfoCache: allTeams.map((t) => ({
 			abbrev: t.abbrev,
 			disabled: t.disabled,
 			imgURL: t.imgURL,

@@ -60,7 +60,7 @@ export const getStartingPitcher = (
 	}
 
 	// Fifth pass - anybody
-	let p = random.choice(pitchers.filter(p => !p.injured));
+	let p = random.choice(pitchers.filter((p) => !p.injured));
 	if (!p) {
 		p = random.choice(pitchers);
 	}

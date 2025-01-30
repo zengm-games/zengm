@@ -645,7 +645,7 @@ const writeGameStats = async (
 		if (allStars) {
 			// Fix team ID to actual team, not All-Star team
 			const entry = allStars.teams[indTeam].find(
-				p => p.pid === clutchPlay.pids[0],
+				(p) => p.pid === clutchPlay.pids[0],
 			);
 
 			if (entry) {

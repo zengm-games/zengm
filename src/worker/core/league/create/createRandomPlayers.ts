@@ -172,10 +172,10 @@ const createRandomPlayers = async ({
 			teamJerseyNumbers[tid2] = [];
 		}
 
-		const t = teams.find(t => t.tid === tid2);
+		const t = teams.find((t) => t.tid === tid2);
 		const retiredJerseyNumbers =
 			t && t.retiredJerseyNumbers
-				? t.retiredJerseyNumbers.map(row => row.number)
+				? t.retiredJerseyNumbers.map((row) => row.number)
 				: [];
 
 		numPlayersByTid[tid2] += 1;
@@ -244,7 +244,7 @@ const createRandomPlayers = async ({
 			playersStayedOnOwnTeam.add(p);
 		}
 	}
-	keptPlayers = keptPlayers.filter(p => !playersStayedOnOwnTeam.has(p));
+	keptPlayers = keptPlayers.filter((p) => !playersStayedOnOwnTeam.has(p));
 
 	// Then add other players, up to the limit
 	while (true) {
@@ -260,12 +260,12 @@ const createRandomPlayers = async ({
 			}
 
 			const p = freeAgents.getBest(
-				players.filter(p2 => p2.tid === currentTid),
+				players.filter((p2) => p2.tid === currentTid),
 				keptPlayers,
 			);
 
 			if (p) {
-				keptPlayers = keptPlayers.filter(p2 => p2 !== p);
+				keptPlayers = keptPlayers.filter((p2) => p2 !== p);
 				await addPlayerToTeam(p, currentTid);
 			} else {
 				console.log(currentTid, "can't find player");
@@ -312,7 +312,7 @@ const createRandomPlayers = async ({
 			positionCountsSum += positionCount;
 		}
 
-		const groupedPlayers = groupBy(keptPlayers, p => p.ratings[0].pos);
+		const groupedPlayers = groupBy(keptPlayers, (p) => p.ratings[0].pos);
 
 		for (const pos of Object.keys(groupedPlayers)) {
 			const limit = Math.round(

@@ -36,7 +36,7 @@ const PlayerRatingDists = ({
 
 			<table>
 				<tbody>
-					{Object.keys(ratingsAll).map(rating => {
+					{Object.keys(ratingsAll).map((rating) => {
 						return (
 							<tr key={rating}>
 								<td className="pe-3 text-end">{rating}</td>

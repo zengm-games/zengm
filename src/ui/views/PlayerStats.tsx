@@ -87,7 +87,7 @@ const PlayerStats = ({
 		"Age",
 		"Team",
 		...(season === "all" ? ["Season"] : []),
-		...stats.map(stat =>
+		...stats.map((stat) =>
 			stat === "pos"
 				? "Pos"
 				: `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
@@ -139,7 +139,7 @@ const PlayerStats = ({
 		});
 	}
 
-	const rows: DataTableRow[] = players.map(p => {
+	const rows: DataTableRow[] = players.map((p) => {
 		// HACKS to show right stats, info
 		let actualAbbrev;
 		let actualTid;
@@ -154,7 +154,7 @@ const PlayerStats = ({
 			p.stats = p[statsProperty];
 		}
 
-		const statsRow = stats.map(stat =>
+		const statsRow = stats.map((stat) =>
 			formatStatGameHigh(p.stats, stat, statType),
 		);
 

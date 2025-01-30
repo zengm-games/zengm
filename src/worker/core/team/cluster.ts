@@ -9,7 +9,7 @@ type Clusters = {
 }[];
 
 const stringifyClusters = (clusters: Clusters) => {
-	const clusters2 = clusters.map(cluster => [...cluster.pointIndexes].sort());
+	const clusters2 = clusters.map((cluster) => [...cluster.pointIndexes].sort());
 
 	return JSON.stringify(clusters2);
 };
@@ -81,8 +81,8 @@ export const kmeansFixedSize = (
 	const NUM_TRIES = 100;
 	const ITERATION_LIMIT = 1000;
 
-	const minima = [0, 1].map(i => Math.min(...points.map(row => row[i])));
-	const maxima = [0, 1].map(i => Math.max(...points.map(row => row[i])));
+	const minima = [0, 1].map((i) => Math.min(...points.map((row) => row[i])));
+	const maxima = [0, 1].map((i) => Math.max(...points.map((row) => row[i])));
 
 	const pointIndexes = points.map((point, i) => i);
 
@@ -259,7 +259,7 @@ export const sortByDivs = (
 
 			newClusters[divIndex] = bestCluster;
 			remainingClusters = remainingClusters.filter(
-				cluster => cluster !== bestCluster,
+				(cluster) => cluster !== bestCluster,
 			);
 			score += minDistance;
 		}

@@ -28,7 +28,7 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 				);
 			}
 
-			setState(prevState => ({
+			setState((prevState) => ({
 				...prevState,
 				disabled: false,
 			}));
@@ -38,7 +38,7 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 	const handleChange =
 		(name: string) => (event: ChangeEvent<HTMLInputElement>) => {
 			const value = event.target.value;
-			setState(prevState => ({
+			setState((prevState) => ({
 				...prevState,
 				[name]: value,
 			}));
@@ -47,7 +47,7 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 	const handleSubmit = (event: FormEvent) => {
 		event.preventDefault();
 
-		setState(prevState => ({
+		setState((prevState) => ({
 			...prevState,
 			disabled: true,
 		}));
@@ -64,7 +64,7 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 			async (status: number, response: stripe.StripeCardTokenResponse) => {
 				const error = response.error;
 				if (error) {
-					setState(prevState => ({
+					setState((prevState) => ({
 						...prevState,
 						disabled: false,
 						formError: error.message,
@@ -86,7 +86,7 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 							goldResult: data,
 						});
 					} catch {
-						setState(prevState => ({
+						setState((prevState) => ({
 							...prevState,
 							disabled: false,
 							formError: ajaxErrorMsg,

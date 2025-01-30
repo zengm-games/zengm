@@ -45,7 +45,7 @@ const Confirm = confirmable<
 				{defaultValue !== undefined ? (
 					<form
 						className="mt-3"
-						onSubmit={event => {
+						onSubmit={(event) => {
 							event.preventDefault();
 							ok();
 						}}
@@ -55,7 +55,7 @@ const Confirm = confirmable<
 							type="text"
 							className="form-control"
 							value={controlledValue}
-							onChange={event => {
+							onChange={(event) => {
 								setControlledValue(event.target.value);
 							}}
 						/>

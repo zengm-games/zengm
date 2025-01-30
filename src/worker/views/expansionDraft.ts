@@ -27,7 +27,7 @@ const updateExpansionDraft = async () => {
 
 	const divs = g.get("divs", "current");
 	const div = divs.at(-1)!;
-	const param = allAbbrevs.map(abbrev => ({
+	const param = allAbbrevs.map((abbrev) => ({
 		tid: -1,
 		cid: div.cid,
 		did: div.did,
@@ -35,7 +35,7 @@ const updateExpansionDraft = async () => {
 	}));
 
 	const builtInTeams: ExpansionDraftSetupTeam[] = getTeamInfos(param).map(
-		t => ({
+		(t) => ({
 			abbrev: t.abbrev,
 			region: t.region,
 			name: t.name,
@@ -51,7 +51,7 @@ const updateExpansionDraft = async () => {
 	);
 
 	const disabledTeams = (await idb.cache.teams.getAll()).filter(
-		t => t.disabled,
+		(t) => t.disabled,
 	);
 	for (const t of disabledTeams) {
 		builtInTeams.push({

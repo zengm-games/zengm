@@ -11,7 +11,7 @@ const getShortTall = async (pids: [number, number]) => {
 	}
 
 	return Promise.all(
-		pids.map(async pid => {
+		pids.map(async (pid) => {
 			const p = await idb.getCopy.players({ pid }, "noCopyCache");
 			if (p) {
 				return {
@@ -61,7 +61,7 @@ const updateAllStarDunk = async (
 
 		const playersRaw = await idb.getCopies.players(
 			{
-				pids: dunk.players.map(p => p.pid),
+				pids: dunk.players.map((p) => p.pid),
 			},
 			"noCopyCache",
 		);
@@ -88,7 +88,7 @@ const updateAllStarDunk = async (
 		});
 
 		for (const p of dunk.players) {
-			const p2 = players.find(p2 => p2.pid === p.pid);
+			const p2 = players.find((p2) => p2.pid === p.pid);
 
 			// p2 could be undefined if player was deleted before contest
 			if (p2) {
@@ -102,7 +102,7 @@ const updateAllStarDunk = async (
 			}
 		}
 
-		const resultsByRound = dunk.rounds.map(round =>
+		const resultsByRound = dunk.rounds.map((round) =>
 			orderBy(allStar.dunkContest.getRoundResults(round), "index", "asc"),
 		);
 
@@ -191,7 +191,7 @@ const updateAllStarDunk = async (
 			allPossibleContestants = orderBy(
 				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
 				["lastName", "firstName"],
-			).map(p => ({
+			).map((p) => ({
 				pid: p.pid,
 				tid: p.tid,
 				name: `${p.firstName} ${p.lastName}`,

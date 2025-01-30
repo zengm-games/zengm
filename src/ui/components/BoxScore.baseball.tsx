@@ -68,12 +68,14 @@ const StatsTable = ({
 }) => {
 	const stats = PLAYER_GAME_STATS[type].stats;
 	const seasonStats = PLAYER_GAME_STATS[type].seasonStats;
-	const cols = getCols([...stats, ...seasonStats].map(stat => `stat:${stat}`));
+	const cols = getCols(
+		[...stats, ...seasonStats].map((stat) => `stat:${stat}`),
+	);
 
 	const [sortBys, setSortBys] = useState<SortBy[]>([]);
 
 	const onClick = (event: MouseEvent, i: number) => {
-		setSortBys(prevSortBys => {
+		setSortBys((prevSortBys) => {
 			const newSortBys =
 				updateSortBys({
 					cols,
@@ -98,7 +100,7 @@ const StatsTable = ({
 
 	const allStarGame = t.tid === -1 || t.tid === -2;
 	let players = t.players
-		.map(p => {
+		.map((p) => {
 			// p.seasonStats is stats from before the game. Add current game stats to get current value - works for live sim and post-game box score!
 			const seasonStatsCurrent = {
 				...p.seasonStats,
@@ -130,7 +132,7 @@ const StatsTable = ({
 				seasonStats: seasonStats2,
 			};
 		})
-		.filter(p => filterPlayerStats(p, stats, type));
+		.filter((p) => filterPlayerStats(p, stats, type));
 
 	if (sortBys.length === 0) {
 		// Default sort order
@@ -156,7 +158,9 @@ const StatsTable = ({
 	sumsByStat.ip = outsToInnings(sumsByStat.ip);
 
 	const sortable = players.length > 1;
-	const highlightCols = sortable ? sortBys.map(sortBy => sortBy[0]) : undefined;
+	const highlightCols = sortable
+		? sortBys.map((sortBy) => sortBy[0])
+		: undefined;
 
 	return (
 		<div className="mb-3">
@@ -192,14 +196,14 @@ const StatsTable = ({
 						<tfoot>
 							<tr>
 								<th colSpan={2}>Total</th>
-								{stats.map(stat => (
+								{stats.map((stat) => (
 									<th key={stat}>
 										{stat === "pm"
 											? null
 											: helpers.roundStat(sumsByStat[stat], stat, true)}
 									</th>
 								))}
-								{seasonStats.map(stat => (
+								{seasonStats.map((stat) => (
 									<th key={stat} />
 								))}
 							</tr>
@@ -476,7 +480,7 @@ const BoxScore = ({
 							{t.season !== undefined ? `${t.season} ` : null}
 							{t.region} {t.name}
 						</h2>
-						{["Batting", "Pitching"].map(title => (
+						{["Batting", "Pitching"].map((title) => (
 							<StatsTable
 								key={title}
 								Row={Row}

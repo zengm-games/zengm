@@ -1055,60 +1055,60 @@ class GameSim extends GameSimBase {
 		this.team[this.o].compositeRating.receiving = getCompositeFactor({
 			playersOnField: this.playersOnField[this.o],
 			positions: ["WR", "TE", "RB"],
-			orderFunc: p => p.ovrs.WR,
+			orderFunc: (p) => p.ovrs.WR,
 			weightsMain: [5, 3, 2],
 			weightsBonus: [0.5, 0.25],
-			valFunc: p => p.ovrs.WR / 100,
+			valFunc: (p) => p.ovrs.WR / 100,
 		});
 		this.team[this.o].compositeRating.rushing = getCompositeFactor({
 			playersOnField: this.playersOnField[this.o],
 			positions: ["RB", "WR", "QB"],
-			orderFunc: p => p.ovrs.RB,
+			orderFunc: (p) => p.ovrs.RB,
 			weightsMain: [1],
 			weightsBonus: [0.1],
-			valFunc: p => (p.ovrs.RB / 100 + p.compositeRating.rushing) / 2,
+			valFunc: (p) => (p.ovrs.RB / 100 + p.compositeRating.rushing) / 2,
 		});
 
 		// Top 5 blockers, plus a bit more from TE/RB if they exist
 		this.team[this.o].compositeRating.passBlocking = getCompositeFactor({
 			playersOnField: this.playersOnField[this.o],
 			positions: ["OL", "TE", "RB"],
-			orderFunc: p => p.ovrs.OL,
+			orderFunc: (p) => p.ovrs.OL,
 			weightsMain: [5, 4, 3, 3, 3],
 			weightsBonus: [1, 0.5],
-			valFunc: p => (p.ovrs.OL / 100 + p.compositeRating.passBlocking) / 2,
+			valFunc: (p) => (p.ovrs.OL / 100 + p.compositeRating.passBlocking) / 2,
 		});
 		this.team[this.o].compositeRating.runBlocking = getCompositeFactor({
 			playersOnField: this.playersOnField[this.o],
 			positions: ["OL", "TE", "RB"],
-			orderFunc: p => p.ovrs.OL,
+			orderFunc: (p) => p.ovrs.OL,
 			weightsMain: [5, 4, 3, 3, 3],
 			weightsBonus: [1, 0.5],
-			valFunc: p => (p.ovrs.OL / 100 + p.compositeRating.runBlocking) / 2,
+			valFunc: (p) => (p.ovrs.OL / 100 + p.compositeRating.runBlocking) / 2,
 		});
 		this.team[this.d].compositeRating.passRushing = getCompositeFactor({
 			playersOnField: this.playersOnField[this.d],
 			positions: ["DL", "LB"],
-			orderFunc: p => p.ovrs.DL,
+			orderFunc: (p) => p.ovrs.DL,
 			weightsMain: [5, 4, 3, 2, 1],
 			weightsBonus: [],
-			valFunc: p => (p.ovrs.DL / 100 + p.compositeRating.passRushing) / 2,
+			valFunc: (p) => (p.ovrs.DL / 100 + p.compositeRating.passRushing) / 2,
 		});
 		this.team[this.d].compositeRating.runStopping = getCompositeFactor({
 			playersOnField: this.playersOnField[this.d],
 			positions: ["DL", "LB", "S"],
-			orderFunc: p => p.ovrs.DL,
+			orderFunc: (p) => p.ovrs.DL,
 			weightsMain: [5, 4, 3, 2, 2, 1, 1],
 			weightsBonus: [0.5, 0.5],
-			valFunc: p => (p.ovrs.DL / 100 + p.compositeRating.runStopping) / 2,
+			valFunc: (p) => (p.ovrs.DL / 100 + p.compositeRating.runStopping) / 2,
 		});
 		this.team[this.d].compositeRating.passCoverage = getCompositeFactor({
 			playersOnField: this.playersOnField[this.d],
 			positions: ["CB", "S", "LB"],
-			orderFunc: p => p.ovrs.CB,
+			orderFunc: (p) => p.ovrs.CB,
 			weightsMain: [5, 4, 3, 2],
 			weightsBonus: [1, 0.5],
-			valFunc: p => (p.ovrs.CB / 100 + p.compositeRating.passCoverage) / 2,
+			valFunc: (p) => (p.ovrs.CB / 100 + p.compositeRating.passCoverage) / 2,
 		});
 	}
 
@@ -1151,9 +1151,9 @@ class GameSim extends GameSimBase {
 			for (const pos of helpers.keys(formation[side])) {
 				const numPlayers = formation[side][pos];
 				const players = this.team[t].depth[pos]
-					.filter(p => !p.injured)
-					.filter(p => !pidsUsed.has(p.id))
-					.filter(p => {
+					.filter((p) => !p.injured)
+					.filter((p) => !pidsUsed.has(p.id))
+					.filter((p) => {
 						// For some positions, filter out some players based on fatigue
 						const positions = ["RB", "WR", "TE", "DL", "LB", "CB", "S"];
 
@@ -1443,7 +1443,7 @@ class GameSim extends GameSimBase {
 		const kicker =
 			kickerInput !== undefined
 				? kickerInput
-				: this.team[this.o].depth.K.find(p => !p.injured);
+				: this.team[this.o].depth.K.find((p) => !p.injured);
 		let baseProb = 0;
 		let distance =
 			100 - this.scrimmage + FIELD_GOAL_DISTANCE_YARDS_ADDED_FROM_SCRIMMAGE;
@@ -2271,7 +2271,7 @@ class GameSim extends GameSimBase {
 
 		const foulRateFactor = g.get("foulRateFactor");
 
-		let called = penalties.filter(pen => {
+		let called = penalties.filter((pen) => {
 			if (!pen.playTypes.includes(playType)) {
 				return false;
 			}
@@ -2300,7 +2300,7 @@ class GameSim extends GameSimBase {
 
 		const scrimmage = this.currentPlay.state.current.scrimmage;
 
-		const penInfos = called.map(pen => {
+		const penInfos = called.map((pen) => {
 			let spotYds: number | undefined;
 
 			const t =
@@ -2364,14 +2364,14 @@ class GameSim extends GameSimBase {
 			if (posOdds !== undefined) {
 				const positionsOnField = helpers.keys(this.playersOnField[penInfo.t]);
 				const positionsForPenalty = helpers.keys(posOdds);
-				const positions = positionsOnField.filter(pos =>
+				const positions = positionsOnField.filter((pos) =>
 					positionsForPenalty.includes(pos),
 				);
 
 				if (positions.length > 0) {
 					// https://github.com/microsoft/TypeScript/issues/21732
 					// @ts-expect-error
-					const pos = random.choice(positions, pos2 => posOdds[pos2]);
+					const pos = random.choice(positions, (pos2) => posOdds[pos2]);
 
 					const players = this.playersOnField[penInfo.t][pos];
 

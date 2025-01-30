@@ -160,8 +160,8 @@ export const BulkActions = ({
 		};
 		const players = Array.from(selectedRows.map.values())
 			.slice(0, MAX_NUM_TO_COMPARE)
-			.filter(metadata => metadata.type === "player")
-			.map(metadata => {
+			.filter((metadata) => metadata.type === "player")
+			.map((metadata) => {
 				return `${metadata.pid}-${getSeason(metadata.season, "compare")}-${seasonTypes[metadata.playoffs]}`;
 			});
 
@@ -234,8 +234,8 @@ export const BulkActions = ({
 
 	const onWatchPlayers = async () => {
 		const pids = Array.from(selectedRows.map.values())
-			.filter(metadata => metadata.type === "player")
-			.map(metadata => {
+			.filter((metadata) => metadata.type === "player")
+			.map((metadata) => {
 				return metadata.pid;
 			});
 
@@ -263,8 +263,8 @@ export const BulkActions = ({
 		);
 		if (proceed) {
 			const pids = Array.from(selectedRows.map.values())
-				.filter(metadata => metadata.type === "player")
-				.map(metadata => {
+				.filter((metadata) => metadata.type === "player")
+				.map((metadata) => {
 					return metadata.pid;
 				});
 			await toWorker("main", "removePlayers", pids);
@@ -276,8 +276,8 @@ export const BulkActions = ({
 
 	const onHealPlayers = async () => {
 		const pids = Array.from(selectedRows.map.values())
-			.filter(metadata => metadata.type === "player")
-			.map(metadata => {
+			.filter((metadata) => metadata.type === "player")
+			.map((metadata) => {
 				return metadata.pid;
 			});
 		await toWorker("main", "clearInjuries", pids);

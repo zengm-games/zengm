@@ -94,7 +94,7 @@ const GamesList = ({
 						<td colSpan={3}>Loading...</td>
 					</tr>
 				) : (
-					gamesList.games.map(gm => {
+					gamesList.games.map((gm) => {
 						const home = gm.teams[0].tid === tid;
 						const user = home ? 0 : 1;
 						const other = home ? 1 : 0;
@@ -180,7 +180,7 @@ const GameLog = ({
 			[dropdownTeamsKey]: abbrev,
 			seasons: season,
 		},
-		dropdownCustomURL: fields => {
+		dropdownCustomURL: (fields) => {
 			return helpers.leagueUrl([
 				"game_log",
 				fields[dropdownTeamsKey],

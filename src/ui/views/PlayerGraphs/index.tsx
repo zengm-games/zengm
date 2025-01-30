@@ -12,7 +12,7 @@ import clsx from "clsx";
 import { addPrefixForStat } from "../../../common/advancedPlayerSearch";
 
 const getStatsWithLabels = (stats: string[], statType: string) => {
-	return getCols(stats.map(stat => addPrefixForStat(statType, stat)));
+	return getCols(stats.map((stat) => addPrefixForStat(statType, stat)));
 };
 
 const getStatFromPlayer = (p: any, stat: string, statType: string) => {
@@ -87,9 +87,9 @@ const GraphCreation = ({
 			data={data}
 			descShort={descShort}
 			descLong={[titleX.desc, titleY.desc]}
-			getKey={p => p.pid}
-			getLink={p => helpers.leagueUrl(["player", p.pid])}
-			getTooltipTitle={p => p.name}
+			getKey={(p) => p.pid}
+			getLink={(p) => helpers.leagueUrl(["player", p.pid])}
+			getTooltipTitle={(p) => p.name}
 			renderTooltip={(value, p, i) => {
 				const undraftedOverride =
 					statType[i] === "bio" &&
@@ -187,7 +187,7 @@ const PickStat = ({
 			<select
 				className="form-select"
 				value={state.season}
-				onChange={event =>
+				onChange={(event) =>
 					updateUrl({
 						[`season${xyCapital}`]:
 							event.target.value === "career"
@@ -200,14 +200,14 @@ const PickStat = ({
 				}}
 			>
 				<option value="career">Career</option>
-				{seasons.map(x => {
+				{seasons.map((x) => {
 					return <OptionDropdown key={x.key} value={x} />;
 				})}
 			</select>
 			<select
 				className="form-select"
 				value={state.statType}
-				onChange={async event => {
+				onChange={async (event) => {
 					const newStatType = event.target.value;
 					const { stat } = await toWorker("main", "getPlayerGraphStat", {
 						prev: {
@@ -224,14 +224,14 @@ const PickStat = ({
 					maxWidth: 130,
 				}}
 			>
-				{statTypes.map(x => {
+				{statTypes.map((x) => {
 					return <OptionDropdown key={x.key} value={x} />;
 				})}
 			</select>
 			<select
 				className="form-select"
 				value={state.stat}
-				onChange={event =>
+				onChange={(event) =>
 					updateUrl({
 						[`stat${xyCapital}`]: event.target.value,
 					})
@@ -249,7 +249,7 @@ const PickStat = ({
 			<select
 				className="form-select"
 				value={state.playoffs}
-				onChange={event =>
+				onChange={(event) =>
 					updateUrl({ [`playoffs${xyCapital}`]: event.target.value })
 				}
 				style={{
@@ -257,7 +257,7 @@ const PickStat = ({
 				}}
 			>
 				{playoffs
-					.filter(x => {
+					.filter((x) => {
 						if (x.key === "regularSeason") {
 							// Regular season always exists
 							return true;
@@ -268,7 +268,7 @@ const PickStat = ({
 						}
 						return x;
 					})
-					.map(x => {
+					.map((x) => {
 						return <OptionDropdown key={x.key} value={x} />;
 					})}
 			</select>
@@ -402,7 +402,7 @@ const PlayerGraphs = ({
 								"form-control",
 								minGamesError ? "is-invalid" : undefined,
 							)}
-							onChange={event => {
+							onChange={(event) => {
 								updateUrl({
 									minGames: event.target.value,
 								});

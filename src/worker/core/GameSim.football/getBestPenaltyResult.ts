@@ -28,7 +28,7 @@ const getBestPenaltyResult = <
 
 	const scores = results.map(({ state }) => {
 		const ptsScoredThisPlay = ([0, 1] as const).map(
-			t => state.pts[t] - initialState.pts[t],
+			(t) => state.pts[t] - initialState.pts[t],
 		);
 
 		// Does not handle situation where a tie is particularly desirable or not desirable for a team
@@ -170,7 +170,7 @@ const getBestPenaltyResult = <
 
 	const bestScoreString = JSON.stringify(orderedScores[0]);
 	const bestScores = scores.filter(
-		score => JSON.stringify(score) === bestScoreString,
+		(score) => JSON.stringify(score) === bestScoreString,
 	);
 
 	// Randomly pick a winner if there are ties

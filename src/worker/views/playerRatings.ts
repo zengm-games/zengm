@@ -24,7 +24,7 @@ export const getPlayers = async (
 
 	if (g.get("season") === season) {
 		playersAll = await idb.cache.players.getAll();
-		playersAll = playersAll.filter(p => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
+		playersAll = playersAll.filter((p) => p.tid !== PLAYER.RETIRED); // Normally won't be in cache, but who knows...
 	} else {
 		playersAll = await idb.getCopies.players(
 			{
@@ -36,7 +36,7 @@ export const getPlayers = async (
 
 	// Show all teams
 	if (tid === undefined && abbrev === "watch") {
-		playersAll = playersAll.filter(p => p.watch);
+		playersAll = playersAll.filter((p) => p.watch);
 	}
 
 	let players = await idb.getCopies.playersPlus(playersAll, {
@@ -68,7 +68,7 @@ export const getPlayers = async (
 	// For other seasons, use the stats abbrev for filtering
 	if (g.get("season") === season) {
 		if (tid !== undefined) {
-			players = players.filter(p => p.tid === tid);
+			players = players.filter((p) => p.tid === tid);
 		}
 
 		for (const p of players) {
@@ -76,7 +76,7 @@ export const getPlayers = async (
 			p.stats.tid = p.tid;
 		}
 	} else if (tid !== undefined) {
-		players = players.filter(p => p.stats.tid === tid);
+		players = players.filter((p) => p.stats.tid === tid);
 	}
 
 	if (isSport("baseball")) {

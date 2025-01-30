@@ -9,7 +9,7 @@ const logLotteryWinners = (
 	pick: number,
 	conditions?: Conditions,
 ) => {
-	const idx = teams.findIndex(t => t.tid === origTm);
+	const idx = teams.findIndex((t) => t.tid === origTm);
 
 	if (idx >= 0) {
 		const expectedPick = idx + 1;

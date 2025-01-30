@@ -39,7 +39,7 @@ const RosterContinuity = ({
 			key: season - i,
 			data: [
 				season - i,
-				...seasonRow.map(pct => {
+				...seasonRow.map((pct) => {
 					if (pct === undefined) {
 						return null;
 					}

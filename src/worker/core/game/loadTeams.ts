@@ -86,7 +86,7 @@ export const processTeam = (
 	// Injury-adjusted ovr
 	const playersCurrent = players
 		.filter((p: any) => p.injury.gamesRemaining === 0)
-		.map(p => ({
+		.map((p) => ({
 			pid: p.pid,
 			value: p.value,
 			ratings: {
@@ -228,7 +228,7 @@ export const processTeam = (
 			let ps;
 			if (allStarGame) {
 				// Only look at regular season stats, in case All-Star Game is in playoffs
-				ps = p.stats.filter(ps => !ps.playoffs).at(-1);
+				ps = p.stats.filter((ps) => !ps.playoffs).at(-1);
 				hasStats = !!ps && ps.season === g.get("season");
 			} else {
 				ps = p.stats.at(-1);
@@ -352,7 +352,7 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 						return p;
 					}),
 				)
-			).filter(p => p !== undefined) as Player[];
+			).filter((p) => p !== undefined) as Player[];
 
 			const depth = await team.genDepth(players);
 
@@ -375,7 +375,7 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 		}
 	} else {
 		await Promise.all(
-			tids.map(async tid => {
+			tids.map(async (tid) => {
 				const [players, team, teamSeason] = await Promise.all([
 					idb.cache.players.indexGetAll("playersByTid", tid),
 					idb.cache.teams.get(tid),

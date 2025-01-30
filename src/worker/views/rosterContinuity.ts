@@ -20,7 +20,7 @@ export async function* iterateActivePlayersSeasonRange(
 			},
 			"noCopyCache",
 		)
-	).filter(p => p.draft.year < seasonStart);
+	).filter((p) => p.draft.year < seasonStart);
 
 	for (let season = seasonStart; season <= seasonEnd; season++) {
 		if (season > seasonStart) {
@@ -33,7 +33,7 @@ export async function* iterateActivePlayersSeasonRange(
 
 			if (type === "all") {
 				// Remove players who retired after the previous season
-				players = players.filter(p => p.retiredYear >= season);
+				players = players.filter((p) => p.retiredYear >= season);
 			} else {
 				// Remove all players, since last iteration would have already sent them through
 				players = [];
@@ -41,7 +41,7 @@ export async function* iterateActivePlayersSeasonRange(
 
 			players = [
 				// Remove players who retired after the previous season
-				...players.filter(p => p.retiredYear >= season),
+				...players.filter((p) => p.retiredYear >= season),
 
 				// Add rookies
 				...rookies,
@@ -139,7 +139,7 @@ const updateSeasons = async (
 			prevMinutesAll = minutesAll;
 		}
 
-		const abbrevs = g.get("teamInfoCache").map(t => t.abbrev);
+		const abbrevs = g.get("teamInfoCache").map((t) => t.abbrev);
 
 		// Keep track of tids, sorted alphabetically by abbrev, adding any new ones (again sorted) to the end each year
 		const tidsSorted: number[] = [];
@@ -153,9 +153,9 @@ const updateSeasons = async (
 
 			const tidsSortedSeason = orderBy(
 				Array.from(tidsSortedSeasonSet).filter(
-					tid => !tidsSorted.includes(tid),
+					(tid) => !tidsSorted.includes(tid),
 				),
-				tid => abbrevs[tid],
+				(tid) => abbrevs[tid],
 			);
 			tidsSorted.push(...tidsSortedSeason);
 		}
@@ -167,14 +167,14 @@ const updateSeasons = async (
 			}
 		}
 		if (remainingTids.length > 0) {
-			const tidsSortedSeason = orderBy(remainingTids, tid => abbrevs[tid]);
+			const tidsSortedSeason = orderBy(remainingTids, (tid) => abbrevs[tid]);
 			tidsSorted.push(...tidsSortedSeason);
 		}
 
 		// Actually reorder all
-		const abbrevsSorted = tidsSorted.map(tid => abbrevs[tid]);
-		const seasonsSorted = seasons.map(season =>
-			tidsSorted.map(tid => season[tid]),
+		const abbrevsSorted = tidsSorted.map((tid) => abbrevs[tid]);
+		const seasonsSorted = seasons.map((season) =>
+			tidsSorted.map((tid) => season[tid]),
 		);
 
 		seasonsSorted.reverse();

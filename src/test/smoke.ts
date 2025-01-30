@@ -44,7 +44,7 @@ describe("Smoke Tests", () => {
 			start: Date.now(),
 		};
 		league.autoPlay();
-		return new Promise(resolve => {
+		return new Promise((resolve) => {
 			intervalID = window.setInterval(() => {
 				if (g.get("season") === 2017) {
 					clearInterval(intervalID);

@@ -31,7 +31,7 @@ const newPhaseResignPlayers = async (
 					[g.get("season")],
 					[g.get("season"), Infinity],
 				])
-		  ).filter(p => p.tid === PLAYER.UNDRAFTED)
+			).filter((p) => p.tid === PLAYER.UNDRAFTED)
 		: [];
 
 	for (const p of [...existingFreeAgents, ...undraftedPlayers]) {
@@ -91,33 +91,33 @@ const newPhaseResignPlayers = async (
 		for (let tid = 0; tid < g.get("numTeams"); tid++) {
 			const payroll = await team.getPayroll(tid);
 			const expiringPayroll = players
-				.filter(p => p.tid === tid && p.contract.exp <= g.get("season"))
+				.filter((p) => p.tid === tid && p.contract.exp <= g.get("season"))
 				.reduce((total, p) => total + p.contract.amount, 0);
 			payrollsByTid.set(tid, payroll - expiringPayroll);
 		}
 	}
 
 	const expiringPids = orderBy(
-		players.filter(p => p.contract.exp <= g.get("season")),
+		players.filter((p) => p.contract.exp <= g.get("season")),
 		[
 			"tid",
-			p => {
+			(p) => {
 				return p.draft.year === g.get("season") ? 1 : -1;
 			},
 			"value",
 		],
 		["asc", "desc", "desc"],
-	).map(p => p.pid);
+	).map((p) => p.pid);
 
 	const expiredRookieContractPids = new Set(
 		players
 			.filter(
-				p =>
+				(p) =>
 					p.contract.exp <= g.get("season") &&
 					p.contract.rookie &&
 					p.draft.year < g.get("season"),
 			)
-			.map(p => p.pid),
+			.map((p) => p.pid),
 	);
 
 	await freeAgents.normalizeContractDemands({

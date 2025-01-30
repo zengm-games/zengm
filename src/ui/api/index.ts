@@ -106,7 +106,7 @@ const updateTeamOvrs = (ovrs: number[]) => {
 	const games = local.getState().games;
 
 	// Find upcoming game, it's the only one that needs updating because it's the only one displayed in a ScoreBox in LeagueTopBar
-	const gameIndex = games.findIndex(game => game.teams[0].pts === undefined);
+	const gameIndex = games.findIndex((game) => game.teams[0].pts === undefined);
 	if (gameIndex >= 0) {
 		const { teams } = games[gameIndex];
 		if (

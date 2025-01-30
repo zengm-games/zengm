@@ -18,7 +18,7 @@ import { isSport } from "../../common";
 import api from "../api";
 
 const loadFramerMotionFeatures = () =>
-	import("../util/framerMotionFeatures").then(res => res.default);
+	import("../util/framerMotionFeatures").then((res) => res.default);
 
 const minHeight100 = {
 	// Just using h-100 class here results in the sticky ad in the skyscraper becoming unstuck after scrolling down 100% of the viewport, for some reason

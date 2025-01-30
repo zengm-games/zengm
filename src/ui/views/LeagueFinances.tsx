@@ -67,7 +67,7 @@ const LeagueFinances = ({
 				"Trade",
 			]);
 
-	const rows = teams.map(t => {
+	const rows = teams.map((t) => {
 		// Display the current actual payroll for this season, or the salary actually paid out for prior seasons
 		const payroll = t.seasonAttrs.payrollOrSalaryPaid;
 

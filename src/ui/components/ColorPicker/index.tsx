@@ -36,7 +36,7 @@ export const ColorPicker = ({
 				<Popover>
 					<Sketch
 						color={hex}
-						onChange={color => {
+						onChange={(color) => {
 							setHex(color.hex);
 							onChange(color.hex);
 						}}

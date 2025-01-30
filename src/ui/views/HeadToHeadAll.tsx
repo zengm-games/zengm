@@ -26,10 +26,12 @@ const HeadToHeadAll = ({
 
 	const [showInactive, setShowInactive] = useState(true);
 
-	const hasInactiveTeams = season === "all" && teams.some(t => t.disabled);
+	const hasInactiveTeams = season === "all" && teams.some((t) => t.disabled);
 
 	const teamsFiltered =
-		!hasInactiveTeams || showInactive ? teams : teams.filter(t => !t.disabled);
+		!hasInactiveTeams || showInactive
+			? teams
+			: teams.filter((t) => !t.disabled);
 
 	const cols = [
 		...getCols(["Team"]),
@@ -47,7 +49,7 @@ const HeadToHeadAll = ({
 		}),
 	];
 
-	const rows = teamsFiltered.map(t => {
+	const rows = teamsFiltered.map((t) => {
 		const infoByTid = infoByTidByTid.get(t.tid);
 
 		return {
@@ -69,7 +71,7 @@ const HeadToHeadAll = ({
 						</a>
 					),
 				},
-				...teamsFiltered.map(t2 => {
+				...teamsFiltered.map((t2) => {
 					const info = infoByTid?.get(t2.tid);
 					if (!info) {
 						return null;
@@ -107,7 +109,7 @@ const HeadToHeadAll = ({
 						<button
 							className="btn btn-secondary mt-3"
 							onClick={() => {
-								setShowInactive(show => !show);
+								setShowInactive((show) => !show);
 							}}
 						>
 							{showInactive ? "Hide inactive teams" : "Show inactive teams"}

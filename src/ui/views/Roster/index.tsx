@@ -138,8 +138,8 @@ const Roster = ({
 	// Use the result of drag and drop to sort players, before the "official" order comes back as props
 	let playersSorted: typeof players;
 	if (sortedPids !== undefined) {
-		playersSorted = sortedPids.map(pid => {
-			return players.find(p => p.pid === pid);
+		playersSorted = sortedPids.map((pid) => {
+			return players.find((p) => p.pid === pid);
 		});
 	} else {
 		playersSorted = players;
@@ -159,7 +159,7 @@ const Roster = ({
 			...(season === currentSeason ? ["Contract"] : []),
 			"stat:yearsWithTeam",
 			"Country",
-			...stats.map(stat => `stat:${stat}`),
+			...stats.map((stat) => `stat:${stat}`),
 			...(editable ? ["PT"] : []),
 			...(showMood ? ["Mood"] : []),
 			...(showRelease ? ["Release"] : []),
@@ -319,7 +319,7 @@ const Roster = ({
 					sortValue: p.born.loc,
 					searchValue: p.born.loc,
 				},
-				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.stats[stat], stat)),
 				...(editable ? [<PlayingTime p={p} userTid={userTid} />] : []),
 				...(showMood
 					? [
@@ -422,7 +422,7 @@ const Roster = ({
 					...(showRelease
 						? ([
 								{
-									onClick: async selectedRows => {
+									onClick: async (selectedRows) => {
 										const proceed = await confirm(
 											`Are you sure you want to release ${helpers.numberWithCommas(selectedRows.map.size)} ${helpers.plural("player", selectedRows.map.size)}?`,
 											{
@@ -434,8 +434,8 @@ const Roster = ({
 										);
 										if (proceed) {
 											const pids = Array.from(selectedRows.map.values())
-												.filter(metadata => metadata.type === "player")
-												.map(metadata => {
+												.filter((metadata) => metadata.type === "player")
+												.map((metadata) => {
 													return metadata.pid;
 												});
 											const errorMsg = await toWorker("main", "releasePlayer", {
@@ -461,16 +461,16 @@ const Roster = ({
 					...(showTradeFor || showTradingBlock
 						? ([
 								{
-									onClick: selectedRows => {
+									onClick: (selectedRows) => {
 										let numUntradeable = 0;
 
 										const playersByPid = groupByUnique(players, "pid");
 										const pids = Array.from(selectedRows.map.values())
-											.filter(metadata => metadata.type === "player")
-											.map(metadata => {
+											.filter((metadata) => metadata.type === "player")
+											.map((metadata) => {
 												return metadata.pid;
 											})
-											.filter(pid => {
+											.filter((pid) => {
 												if (playersByPid[pid].untradable) {
 													numUntradeable += 1;
 													return false;
@@ -521,7 +521,7 @@ const Roster = ({
 									if (oldIndex === newIndex) {
 										return;
 									}
-									const pids = players.map(p => p.pid);
+									const pids = players.map((p) => p.pid);
 									const newSortedPids = arrayMoveImmutable(
 										pids,
 										oldIndex,
@@ -531,7 +531,7 @@ const Roster = ({
 									await toWorker("main", "reorderRosterDrag", newSortedPids);
 								},
 								onSwap: async (index1, index2) => {
-									const newSortedPids = players.map(p => p.pid);
+									const newSortedPids = players.map((p) => p.pid);
 									newSortedPids[index1] = players[index2].pid;
 									newSortedPids[index2] = players[index1].pid;
 									setSortedPids(newSortedPids);

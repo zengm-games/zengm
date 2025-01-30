@@ -3,7 +3,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { LiveGame } from "./LiveGame";
 
 const ExhibitionGame = ({ liveSim }: View<"exhibitionGame">) => {
-	const teamName = (t: typeof liveSim["initialBoxScore"]["teams"][number]) =>
+	const teamName = (t: (typeof liveSim)["initialBoxScore"]["teams"][number]) =>
 		`${t.season} ${t.region} ${t.name}`;
 	useTitleBar({
 		title: "Exhibition Game",

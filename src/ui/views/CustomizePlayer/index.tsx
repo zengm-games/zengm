@@ -57,7 +57,7 @@ const copyValidValues = (
 	if (target.hof !== source.hof) {
 		// Always remove old entries, so there are never duplicates
 		target.awards = target.awards.filter(
-			award => !award.type.includes("Hall of Fame"),
+			(award) => !award.type.includes("Hall of Fame"),
 		);
 		if (!target.hof && source.hof) {
 			// Add to HoF
@@ -193,7 +193,7 @@ const copyValidValues = (
 
 		if (contractChanged && !activated) {
 			// Remove entries from old contract
-			target.salaries = target.salaries.filter(salary => {
+			target.salaries = target.salaries.filter((salary) => {
 				return salary.season < start || salary.amount !== oldContract.amount;
 			});
 		}
@@ -269,14 +269,14 @@ const copyValidValues = (
 	target.face = JSON.parse(source.face);
 
 	target.relatives = source.relatives
-		.map(rel => {
+		.map((rel) => {
 			// @ts-expect-error
 			rel.pid = Number.parseInt(rel.pid);
 			return rel;
 		})
-		.filter(rel => !Number.isNaN(rel.pid));
+		.filter((rel) => !Number.isNaN(rel.pid));
 
-	target.customMoodItems = source.customMoodItems?.map(row => {
+	target.customMoodItems = source.customMoodItems?.map((row) => {
 		let amount;
 		if (typeof row.amount === "number") {
 			amount = row.amount;
@@ -384,7 +384,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
-		setState(prevState => ({
+		setState((prevState) => ({
 			...prevState,
 			saving: true,
 		}));
@@ -421,7 +421,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 				saveToDb: false,
 				persistent: true,
 			});
-			setState(prevState => ({
+			setState((prevState) => ({
 				...prevState,
 				saving: false,
 			}));
@@ -443,7 +443,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		// @ts-expect-error
 		const checked = event.target.checked;
 
-		setState(prevState => {
+		setState((prevState) => {
 			const p: any = prevState.p;
 
 			if (type === "root") {
@@ -511,7 +511,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		event: ChangeEvent<HTMLSelectElement>,
 	) => {
 		const value = event.target.value;
-		setState(prevState => ({
+		setState((prevState) => ({
 			...prevState,
 			appearanceOption: value,
 		}));
@@ -522,7 +522,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 		const face = await toWorker("main", "generateFace", p.born.loc);
 
-		setState(prevState => {
+		setState((prevState) => {
 			// @ts-expect-error
 			prevState.p.face = JSON.stringify(face, null, 2);
 			return {
@@ -621,7 +621,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 	const adjustRatings = (amount: number) => async (event: MouseEvent) => {
 		event.preventDefault();
-		setState(prevState => {
+		setState((prevState) => {
 			const p = prevState.p;
 			const oldRatings = p.ratings[r];
 			const pos = p.pos ?? autoPos;
@@ -722,7 +722,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									<button
 										className="btn btn-secondary"
 										type="button"
-										onClick={async event => {
+										onClick={async (event) => {
 											event.preventDefault();
 
 											const { firstName, lastName } = await toWorker(
@@ -731,7 +731,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 												p.born.loc,
 											);
 
-											setState(prevState => {
+											setState((prevState) => {
 												const p: any = {
 													...prevState.p,
 													firstName,
@@ -770,7 +770,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									<option value={PLAYER.RETIRED}>Retired</option>
 									<option value={PLAYER.UNDRAFTED}>Draft Prospect</option>
 									<option value={PLAYER.FREE_AGENT}>Free Agent</option>
-									{orderBy(teams, ["text", "tid"]).map(t => {
+									{orderBy(teams, ["text", "tid"]).map((t) => {
 										return (
 											<option key={t.tid} value={t.tid}>
 												{t.text}
@@ -835,8 +835,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										Auto{autoPos !== undefined ? ` (${autoPos})` : null}
 									</option>
 									{POSITIONS.filter(
-										pos => !NOT_REAL_POSITIONS.includes(pos),
-									).map(pos => {
+										(pos) => !NOT_REAL_POSITIONS.includes(pos),
+									).map((pos) => {
 										return (
 											<option key={pos} value={pos}>
 												{pos}
@@ -857,7 +857,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									<button
 										className="btn btn-secondary"
 										type="button"
-										onClick={async event => {
+										onClick={async (event) => {
 											event.preventDefault();
 
 											const jerseyNumber = await toWorker(
@@ -918,7 +918,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										className="btn btn-secondary"
 										type="button"
 										disabled={!godMode}
-										onClick={async event => {
+										onClick={async (event) => {
 											event.preventDefault();
 
 											const country = await toWorker(
@@ -927,7 +927,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 												undefined,
 											);
 
-											setState(prevState => {
+											setState((prevState) => {
 												const p: any = {
 													...prevState.p,
 													born: {
@@ -959,7 +959,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									<button
 										className="btn btn-secondary"
 										type="button"
-										onClick={async event => {
+										onClick={async (event) => {
 											event.preventDefault();
 
 											const college = await toWorker(
@@ -968,7 +968,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 												undefined,
 											);
 
-											setState(prevState => {
+											setState((prevState) => {
 												const p: any = {
 													...prevState.p,
 													college,
@@ -1024,7 +1024,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									disabled={!godMode}
 								>
 									<option value={PLAYER.UNDRAFTED}>Undrafted</option>
-									{orderBy(teams, ["text", "tid"]).map(t => {
+									{orderBy(teams, ["text", "tid"]).map((t) => {
 										return (
 											<option key={t.tid} value={t.tid}>
 												{t.text}
@@ -1084,10 +1084,10 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										<button
 											className="btn btn-secondary"
 											type="button"
-											onClick={async event => {
+											onClick={async (event) => {
 												event.preventDefault();
 
-												setState(prevState => {
+												setState((prevState) => {
 													const p: any = {
 														...prevState.p,
 														injury: {
@@ -1110,7 +1110,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										<button
 											className="btn btn-secondary"
 											type="button"
-											onClick={async event => {
+											onClick={async (event) => {
 												event.preventDefault();
 
 												const injury = await toWorker(
@@ -1122,7 +1122,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 													injury.gamesRemaining = 1;
 												}
 
-												setState(prevState => {
+												setState((prevState) => {
 													const p: any = {
 														...prevState.p,
 														injury,
@@ -1170,7 +1170,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 							{playerMoodTraits ? (
 								<div className="col-3 mb-3">
 									<label className="form-label">Mood Traits</label>
-									{helpers.keys(MOOD_TRAITS).map(trait => (
+									{helpers.keys(MOOD_TRAITS).map((trait) => (
 										<div className="form-check" key={trait}>
 											<label className="form-check-label">
 												<input
@@ -1243,7 +1243,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										hockey: " and position",
 									},
 								)} as this player`}
-								onClick={async event => {
+								onClick={async (event) => {
 									event.preventDefault();
 									const { hgt, ratings } = await toWorker(
 										"main",
@@ -1259,7 +1259,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										},
 									);
 
-									setState(prevState => {
+									setState((prevState) => {
 										const p: any = {
 											...prevState.p,
 											hgt,

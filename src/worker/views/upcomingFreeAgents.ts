@@ -25,7 +25,7 @@ const updateUpcomingFreeAgents = async (
 			})
 		: await idb.getCopies.players({
 				tid: [0, Infinity],
-				filter: p => p.contract.exp === inputs.season,
+				filter: (p) => p.contract.exp === inputs.season,
 			});
 
 	// Done before filter so full player object can be passed to player.genContract.

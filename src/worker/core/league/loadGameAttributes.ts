@@ -62,7 +62,7 @@ const loadGameAttributes = async () => {
 			if (key === "teamInfoCache") {
 				g.setWithoutSavingToDB(
 					"teamInfoCache",
-					(await idb.cache.teams.getAll()).map(t => ({
+					(await idb.cache.teams.getAll()).map((t) => ({
 						abbrev: t.abbrev,
 						disabled: t.disabled,
 						imgURL: t.imgURL,
@@ -74,7 +74,7 @@ const loadGameAttributes = async () => {
 			} else if (key === "numActiveTeams") {
 				g.setWithoutSavingToDB(
 					"numActiveTeams",
-					(await idb.cache.teams.getAll()).filter(t => !t.disabled).length,
+					(await idb.cache.teams.getAll()).filter((t) => !t.disabled).length,
 				);
 			} else if (
 				key === "numGamesPlayoffSeries" &&

@@ -90,12 +90,12 @@ const getInjury = ({
 	if (draftProspect) {
 		// Currently defined in injuries.csv as starting at the beginning of the rookie season, maybe should change in the future
 		row = playerInjuries.find(
-			injury => injury.season === draftYear + 1 && injury.phase === 0,
+			(injury) => injury.season === draftYear + 1 && injury.phase === 0,
 		);
 	} else {
 		// Take most recent injury, up to one season back. injuries is already sorted descending by season/phase
 		row = playerInjuries.find(
-			injury =>
+			(injury) =>
 				(injury.season === season && injury.phase <= phase) ||
 				(injury.season === season - 1 && injury.phase > phase),
 		);

@@ -59,7 +59,7 @@ const updateUserRoster = async (
 		);
 
 		const userPicks2 = await Promise.all(
-			userPicks.map(async dp => {
+			userPicks.map(async (dp) => {
 				return {
 					...dp,
 					desc: await helpers.pickDesc(dp),
@@ -73,17 +73,17 @@ const updateUserRoster = async (
 			if (savedTradingBlockRaw?.tid === g.get("userTid")) {
 				// If a pid/dpid is no longer valid on the user's team, ignore
 				const userValidPids = new Set(savedTradingBlockRaw.pids).isSubsetOf(
-					new Set(userRoster.filter(p => !p.untradable).map(p => p.pid)),
+					new Set(userRoster.filter((p) => !p.untradable).map((p) => p.pid)),
 				);
 				const userValidDpids = new Set(savedTradingBlockRaw.dpids).isSubsetOf(
-					new Set(userPicks2.map(dp => dp.dpid)),
+					new Set(userPicks2.map((dp) => dp.dpid)),
 				);
 				if (userValidPids && userValidDpids) {
 					const offers = await Promise.all(
 						(
 							await addMissingAssets(
 								await augmentOffers(
-									savedTradingBlockRaw.offers.map(offer => {
+									savedTradingBlockRaw.offers.map((offer) => {
 										return [
 											{
 												dpids: savedTradingBlockRaw.dpids,
@@ -103,7 +103,7 @@ const updateUserRoster = async (
 									}),
 								),
 							)
-						).map(async offer => {
+						).map(async (offer) => {
 							const dv = await team.valueChange(
 								offer.tid,
 								offer.pidsUser,

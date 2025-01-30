@@ -50,7 +50,7 @@ const DefaultNewLeagueSettings = ({
 		const keys = helpers.keys(newOverrides);
 
 		// Handle adding parent of hidden key
-		return keys.flatMap(key => {
+		return keys.flatMap((key) => {
 			const setting = settingsByKey[key]?.[0];
 
 			if (!setting) {
@@ -59,7 +59,7 @@ const DefaultNewLeagueSettings = ({
 			}
 
 			if (setting.hidden) {
-				const partner = settings.find(setting =>
+				const partner = settings.find((setting) =>
 					setting?.partners?.includes(key as Key),
 				);
 				if (partner) {
@@ -76,7 +76,7 @@ const DefaultNewLeagueSettings = ({
 	);
 
 	const settingsRemainingToSelect = settings.filter(
-		setting =>
+		(setting) =>
 			!setting.hidden &&
 			!settingsShown.includes(setting.key) &&
 			(!setting.showOnlyIf ||
@@ -91,7 +91,7 @@ const DefaultNewLeagueSettings = ({
 		groupBy(settingsRemainingToSelect, "category"),
 	).map(([category, catSettings]) => ({
 		label: category,
-		options: catSettings.map(setting => ({
+		options: catSettings.map((setting) => ({
 			label: setting.name,
 			value: setting.key,
 		})),
@@ -124,7 +124,7 @@ const DefaultNewLeagueSettings = ({
 		};
 
 		const allowedKeys = new Set<string>(
-			settings.flatMap(setting =>
+			settings.flatMap((setting) =>
 				setting.partners ? [setting.key, ...setting.partners] : setting.key,
 			),
 		);
@@ -163,10 +163,10 @@ const DefaultNewLeagueSettings = ({
 						value: Key;
 					}>
 						classNamePrefix="dark-select"
-						onChange={newValue => {
+						onChange={(newValue) => {
 							if (newValue) {
 								onAnyChange();
-								setSettingsShown(shown => [...shown, newValue.value]);
+								setSettingsShown((shown) => [...shown, newValue.value]);
 							}
 						}}
 						options={options}
@@ -186,22 +186,24 @@ const DefaultNewLeagueSettings = ({
 							<Dropdown.Item
 								onClick={() => {
 									onAnyChange();
-									setSettingsShown(settings.map(setting => setting.key));
+									setSettingsShown(settings.map((setting) => setting.key));
 								}}
 							>
 								All Settings
 							</Dropdown.Item>
-							{options.map(option => (
+							{options.map((option) => (
 								<Dropdown.Item
 									key={option.label}
 									onClick={() => {
 										onAnyChange();
-										setSettingsShown(current => {
+										setSettingsShown((current) => {
 											const currentWithCategory = [
 												...current,
 												...settings
-													.filter(setting => setting.category === option.label)
-													.map(setting => setting.key),
+													.filter(
+														(setting) => setting.category === option.label,
+													)
+													.map((setting) => setting.key),
 											];
 											return Array.from(new Set(currentWithCategory));
 										});
@@ -226,10 +228,10 @@ const DefaultNewLeagueSettings = ({
 							onBeforeImport={() => {
 								setImportErrorMessage(undefined);
 							}}
-							onError={errorMessage => {
+							onError={(errorMessage) => {
 								setImportErrorMessage(errorMessage);
 							}}
-							onImport={settings => {
+							onImport={(settings) => {
 								onAnyChange();
 
 								const newOverrides = removeSettingsEqualToDefault(
@@ -237,7 +239,7 @@ const DefaultNewLeagueSettings = ({
 								);
 								setOverridesLocal(newOverrides);
 								setSettingsShown(getKeysFromOverrides(newOverrides));
-								setOverridesLocalCounter(counter => counter + 1);
+								setOverridesLocalCounter((counter) => counter + 1);
 							}}
 						/>
 						<ExportButton />
@@ -251,7 +253,7 @@ const DefaultNewLeagueSettings = ({
 
 			<SettingsForm
 				key={overridesLocalCounter}
-				onSave={async settingsFromSave => {
+				onSave={async (settingsFromSave) => {
 					const newDefaultSettings: Partial<Settings> = {
 						...settingsFromSave,
 					};
@@ -311,9 +313,9 @@ const DefaultNewLeagueSettings = ({
 				onCancel={() => {
 					realtimeUpdate([], "/settings");
 				}}
-				onCancelDefaultSetting={key => {
+				onCancelDefaultSetting={(key) => {
 					onAnyChange();
-					setSettingsShown(shown => shown.filter(key2 => key2 !== key));
+					setSettingsShown((shown) => shown.filter((key2) => key2 !== key));
 				}}
 				onUpdateExtra={() => {
 					localActions.update({

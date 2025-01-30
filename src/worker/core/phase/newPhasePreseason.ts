@@ -186,7 +186,7 @@ const newPhasePreseason = async (
 		}
 	}
 
-	const activeTeams = teams.filter(t => !t.disabled);
+	const activeTeams = teams.filter((t) => !t.disabled);
 	const popRanks = helpers.getPopRanks(activeTeams);
 	for (let i = 0; i < activeTeams.length; i++) {
 		const t = activeTeams[i];
@@ -220,7 +220,7 @@ const newPhasePreseason = async (
 
 	if (updatedTeams) {
 		await league.setGameAttributes({
-			teamInfoCache: teams.map(t => ({
+			teamInfoCache: teams.map((t) => ({
 				abbrev: t.abbrev,
 				disabled: t.disabled,
 				imgURL: t.imgURL,
@@ -351,7 +351,7 @@ const newPhasePreseason = async (
 
 			// First entry for last season, so it skips injuries
 			const newRatings = helpers.deepCopy(
-				p.ratings.find(pr => pr.season === g.get("season") - 1),
+				p.ratings.find((pr) => pr.season === g.get("season") - 1),
 			);
 			if (newRatings) {
 				newRatings.season += 1;
@@ -394,7 +394,7 @@ const newPhasePreseason = async (
 
 	// Handle jersey number conflicts, which should only exist for players added in free agency, because otherwise it would have been handled at the time of signing
 	const playersByTeam = groupBy(
-		players.filter(p => p.tid >= 0 && p.stats.length > 0),
+		players.filter((p) => p.tid >= 0 && p.stats.length > 0),
 		"tid",
 	);
 	for (const [tidString, roster] of Object.entries(playersByTeam)) {
@@ -405,14 +405,14 @@ const newPhasePreseason = async (
 				continue;
 			}
 			const conflicts = roster.filter(
-				p2 => p2.stats.at(-1).jerseyNumber === jerseyNumber,
+				(p2) => p2.stats.at(-1).jerseyNumber === jerseyNumber,
 			);
 			if (conflicts.length > 1) {
 				// Conflict! Who gets to keep the number?
 
 				// Player who was on team last year (should only be one at most)
 				let playerWhoKeepsIt = conflicts.find(
-					p => p.stats.length > 1 && p.stats.at(-2)!.tid === tid,
+					(p) => p.stats.length > 1 && p.stats.at(-2)!.tid === tid,
 				);
 				if (!playerWhoKeepsIt) {
 					// Randomly pick one

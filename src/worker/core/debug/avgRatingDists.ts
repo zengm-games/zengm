@@ -57,12 +57,12 @@ const avgRatingDists = async (numPlayers: number = 100) => {
 	console.log("Career arc for the q1/median/q3 player");
 
 	for (const key of Object.keys(ratings[0])) {
-		const ratingsForKey: any[] = ratings.map(r => {
+		const ratingsForKey: any[] = ratings.map((r) => {
 			return r[key].sort((a: any, b: any) => a - b);
 		});
-		const q1s = ratingsForKey.map(row => row[q1]);
-		const q2s = ratingsForKey.map(row => row[q2]);
-		const q3s = ratingsForKey.map(row => row[q3]);
+		const q1s = ratingsForKey.map((row) => row[q1]);
+		const q2s = ratingsForKey.map((row) => row[q2]);
+		const q3s = ratingsForKey.map((row) => row[q3]);
 		console.log(`${key}:`);
 		console.log(`q1: ${JSON.stringify(q1s)}`);
 		console.log(`q2: ${JSON.stringify(q2s)}`);

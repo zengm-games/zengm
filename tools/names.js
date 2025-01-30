@@ -7,7 +7,7 @@ const countryFreqs = ({ fnsByCountry }) => {
 	return Object.fromEntries(
 		Object.keys(fnsByCountry)
 			.sort()
-			.map(country => {
+			.map((country) => {
 				let sum = 0;
 				const namesCountry = fnsByCountry[country];
 				for (const count of Object.values(namesCountry)) {
@@ -30,7 +30,7 @@ const football = JSON.parse(
 const countriesBasketball = countryFreqs(basketball);
 const countriesFootball = countryFreqs(football);
 
-const combineNames = namesArray => {
+const combineNames = (namesArray) => {
 	const combined = {};
 	for (const names of namesArray) {
 		for (const [country, countryNames] of Object.entries(names)) {
@@ -64,7 +64,7 @@ const getOverrides = () => {
 		path.join(import.meta.dirname, "names-manual"),
 	);
 
-	const getNames = filename => {
+	const getNames = (filename) => {
 		const csv = fs.readFileSync(
 			path.join(import.meta.dirname, "names-manual", filename),
 			"utf8",

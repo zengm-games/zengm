@@ -46,16 +46,16 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 
 	const seenSlugs = new Set<string>(
 		// @ts-expect-error
-		players.filter(p => p.srID !== undefined).map(p => p.srID),
+		players.filter((p) => p.srID !== undefined).map((p) => p.srID),
 	);
 	const draftProspects = orderBy(basketball.ratings, ["slug", "season"])
-		.filter(ratings => {
+		.filter((ratings) => {
 			// Only keep rookie seasons
 			const seen = seenSlugs.has(ratings.slug);
 			seenSlugs.add(ratings.slug);
 			return !seen;
 		})
-		.map(ratings =>
+		.map((ratings) =>
 			formatPlayer(ratings, {
 				draftProspect: true,
 			}),
@@ -81,7 +81,7 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 		}
 	}
 
-	return draftProspects.map(p => omit(p, "pid"));
+	return draftProspects.map((p) => omit(p, "pid"));
 };
 
 export default initRandomDebutsForRandomPlayersLeague;

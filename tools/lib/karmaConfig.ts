@@ -31,7 +31,7 @@ export default {
 
 	frameworks: ["mocha", "source-map-support"],
 
-	files: files.map(pattern => {
+	files: files.map((pattern) => {
 		return {
 			pattern,
 			watched: false,

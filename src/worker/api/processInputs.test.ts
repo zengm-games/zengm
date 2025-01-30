@@ -8,7 +8,7 @@ beforeAll(() => {
 	const teams = helpers.getTeamsDefault();
 	g.setWithoutSavingToDB(
 		"teamInfoCache",
-		teams.map(t => ({
+		teams.map((t) => ({
 			abbrev: t.abbrev,
 			disabled: false,
 			imgURL: t.imgURL,

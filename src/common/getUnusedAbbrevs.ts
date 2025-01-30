@@ -14,8 +14,8 @@ const getUnusedAbbrevs = (
 		const blacklist = [
 			...abbrevs,
 			...currentTeams
-				.filter(t2 => !disabledTeamsCountAsUnused || !t2.disabled)
-				.map(t2 => t2.abbrev),
+				.filter((t2) => !disabledTeamsCountAsUnused || !t2.disabled)
+				.map((t2) => t2.abbrev),
 		];
 
 		// Handle a couple teams with multiple abbrevs
@@ -43,7 +43,7 @@ const getUnusedAbbrevs = (
 		}
 
 		const currentTeam = currentTeams.find(
-			t2 =>
+			(t2) =>
 				t2.region === t.region &&
 				t2.name === t.name &&
 				(!disabledTeamsCountAsUnused || !t2.disabled),

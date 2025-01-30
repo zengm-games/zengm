@@ -10,7 +10,7 @@ const close = async (disconnect?: boolean) => {
 
 	// Wait in case stuff is still happening (ugh)
 	if (gameSim) {
-		await new Promise<void>(resolve => {
+		await new Promise<void>((resolve) => {
 			setTimeout(() => {
 				resolve();
 			}, 1000);

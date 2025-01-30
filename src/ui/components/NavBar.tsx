@@ -142,7 +142,7 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 						inLeague={inLeague}
 						lid={lid}
 						menuItems={menuItems.filter(
-							menuItem => !menuItem.commandPaletteOnly,
+							(menuItem) => !menuItem.commandPaletteOnly,
 						)}
 					/>
 				</div>

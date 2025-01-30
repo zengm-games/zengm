@@ -100,7 +100,7 @@ export const startServer = async (exposeToNetwork: boolean) => {
 		}
 	});
 
-	return new Promise<void>(resolve => {
+	return new Promise<void>((resolve) => {
 		server.listen(port, exposeToNetwork ? "0.0.0.0" : "localhost", () => {
 			console.log(`Local: http://localhost:${port}`);
 			if (exposeToNetwork) {

@@ -97,7 +97,7 @@ const getStatsWithLabels = (
 	statType: string,
 	prefixOpp: boolean,
 ) => {
-	return getCols(stats.map(stat => addPrefixForStat(statType, stat))).map(
+	return getCols(stats.map((stat) => addPrefixForStat(statType, stat))).map(
 		(col, i) => {
 			const stat = stats[i];
 
@@ -248,16 +248,16 @@ const GraphCreation = <Team extends ViewProps["teamsX"][number]>({
 			data={data}
 			descShort={descShort}
 			descLong={[titleX.desc, titleY.desc]}
-			getImageUrl={t => t.seasonAttrs.imgURLSmall ?? t.seasonAttrs.imgURL}
-			getKey={t => t.tid}
-			getLink={t =>
+			getImageUrl={(t) => t.seasonAttrs.imgURLSmall ?? t.seasonAttrs.imgURL}
+			getKey={(t) => t.tid}
+			getLink={(t) =>
 				helpers.leagueUrl([
 					"roster",
 					`${t.abbrev}_${t.tid}`,
 					t.seasonAttrs.season,
 				])
 			}
-			getTooltipTitle={t => `${t.seasonAttrs.region} ${t.seasonAttrs.name}`}
+			getTooltipTitle={(t) => `${t.seasonAttrs.region} ${t.seasonAttrs.name}`}
 			renderTooltip={(value, p, i) => {
 				return (
 					<div key={i}>
@@ -315,7 +315,7 @@ const addStatsSuffix = (option: DropdownOption) => {
 	if (typeof value === "string") {
 		newValue = actuallyAddSuffix(value);
 	} else {
-		newValue = value.map(row => {
+		newValue = value.map((row) => {
 			return {
 				...row,
 				text: actuallyAddSuffix(row.text),
@@ -381,7 +381,7 @@ const PickStat = ({
 			<select
 				className="form-select"
 				value={state.season}
-				onChange={event =>
+				onChange={(event) =>
 					updateUrl({
 						[`season${xyCapital}`]: Number.parseInt(event.target.value),
 					})
@@ -390,14 +390,14 @@ const PickStat = ({
 					maxWidth: 70,
 				}}
 			>
-				{dropdownSeasons.map(x => {
+				{dropdownSeasons.map((x) => {
 					return <OptionDropdown key={x.key} value={x} />;
 				})}
 			</select>
 			<select
 				className="form-select"
 				value={state.statType}
-				onChange={async event => {
+				onChange={async (event) => {
 					const newStatType = event.target.value;
 					const { stat } = await toWorker("main", "getTeamGraphStat", {
 						prev: {
@@ -415,14 +415,14 @@ const PickStat = ({
 					maxWidth: 130,
 				}}
 			>
-				{statTypes.map(x => {
+				{statTypes.map((x) => {
 					return <OptionDropdown key={x.key} value={x} />;
 				})}
 			</select>
 			<select
 				className="form-select"
 				value={state.stat}
-				onChange={event =>
+				onChange={(event) =>
 					updateUrl({
 						[`stat${xyCapital}`]: event.target.value,
 					})
@@ -440,7 +440,7 @@ const PickStat = ({
 			<select
 				className="form-select"
 				value={state.playoffs}
-				onChange={event =>
+				onChange={(event) =>
 					updateUrl({ [`playoffs${xyCapital}`]: event.target.value })
 				}
 				style={{
@@ -448,7 +448,7 @@ const PickStat = ({
 				}}
 			>
 				{playoffs
-					.filter(x => {
+					.filter((x) => {
 						if (x.key === "regularSeason") {
 							// Regular season always exists
 							return true;
@@ -463,7 +463,7 @@ const PickStat = ({
 						}
 						return x;
 					})
-					.map(x => {
+					.map((x) => {
 						return <OptionDropdown key={x.key} value={x} />;
 					})}
 			</select>

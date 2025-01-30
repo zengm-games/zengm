@@ -25,9 +25,9 @@ const getNumDaysThisRound = (playoffSeries: PlayoffSeries) => {
 			const num = series.away
 				? g.get("numGamesPlayoffSeries", "current")[
 						playoffSeries.currentRound
-				  ] -
-				  series.home.won -
-				  series.away.won
+					] -
+					series.home.won -
+					series.away.won
 				: 0;
 
 			if (num > numDaysThisRound) {
@@ -50,11 +50,13 @@ const getNumDaysPlayIn = async () => {
 	}
 
 	let numDays = 0;
-	if (playoffSeries.playIns.some(playIn => playIn[0].home.pts === undefined)) {
+	if (
+		playoffSeries.playIns.some((playIn) => playIn[0].home.pts === undefined)
+	) {
 		numDays = 2;
 	} else if (
 		playoffSeries.playIns.some(
-			playIn => playIn.length > 2 && playIn[2]?.home.pts === undefined,
+			(playIn) => playIn.length > 2 && playIn[2]?.home.pts === undefined,
 		)
 	) {
 		numDays = 1;

@@ -100,10 +100,10 @@ const HistoryAll = ({ awards, seasons, userTid }: View<"historyAll">) => {
 		"Season",
 		"League Champion",
 		"Runner Up",
-		...awards.map(award => `award:${award}`),
+		...awards.map((award) => `award:${award}`),
 	]);
 
-	const rows = seasons.map(s => {
+	const rows = seasons.map((s) => {
 		let seasonLink;
 		if (s.champ) {
 			seasonLink = (
@@ -124,7 +124,7 @@ const HistoryAll = ({ awards, seasons, userTid }: View<"historyAll">) => {
 				seasonLink,
 				champEl,
 				runnerUpEl,
-				...awards.map(award => awardName(s[award], s.season, userTid)),
+				...awards.map((award) => awardName(s[award], s.season, userTid)),
 			],
 		};
 	});

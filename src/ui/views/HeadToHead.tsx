@@ -73,7 +73,7 @@ const HeadToHead = ({
 		];
 	};
 
-	const rows = teams.map(t => {
+	const rows = teams.map((t) => {
 		const urlParts: (string | number)[] = [
 			"roster",
 			`${t.seasonAttrs.abbrev}_${t.tid}`,

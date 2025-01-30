@@ -32,7 +32,7 @@ const findRatingsRow = (
 
 	// Something's wrong! Look for first/last ratings entry that season based on phase
 	if (phase <= PHASE.PLAYOFFS) {
-		const ratings = allRatings.find(ratings => ratings.season >= season);
+		const ratings = allRatings.find((ratings) => ratings.season >= season);
 		if (ratings) {
 			return ratings;
 		}
@@ -74,7 +74,7 @@ const findStatSum = (
 	const firstTry = allStats[index];
 	if (firstTry === undefined || firstTry.season !== season) {
 		// Something's wrong! Look for first stats entry that is after the trade
-		index = allStats.findIndex(row => {
+		index = allStats.findIndex((row) => {
 			return (
 				row.season > season ||
 				(row.season === season && !row.playoffs && phase < PHASE.PLAYOFFS) ||
@@ -211,7 +211,7 @@ const getActualPlayerInfo = async (
 
 	let foundCurrentTransaction = false;
 	let tradeBeforeDraft = false;
-	const nextTransaction = p.transactions?.find(row => {
+	const nextTransaction = p.transactions?.find((row) => {
 		if (row.type === "trade" && row.eid === eid) {
 			// We found this trade in the log, so next transaction is leaving this team
 			foundCurrentTransaction = true;
@@ -299,7 +299,7 @@ const getSeasonsToPlot = async (
 	const statSeasons = [
 		...Object.keys(statSumsBySeason[0]),
 		...Object.keys(statSumsBySeason[1]),
-	].map(x => Number.parseInt(x));
+	].map((x) => Number.parseInt(x));
 	const maxStatSeason = Math.max(...statSeasons);
 	if (maxStatSeason > end) {
 		end = maxStatSeason;

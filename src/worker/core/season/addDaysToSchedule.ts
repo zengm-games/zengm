@@ -28,7 +28,7 @@ const addDaysToSchedule = (
 		}
 	}
 
-	return games.map(game => {
+	return games.map((game) => {
 		const { awayTid, homeTid } = game;
 
 		const allStarGame = awayTid === -2 && homeTid === -1;

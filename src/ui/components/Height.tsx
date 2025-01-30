@@ -11,7 +11,7 @@ export const getHeightString = (inches: number, units: "metric" | "us") => {
 };
 
 const Height = ({ inches }: { inches: number }) => {
-	const units = useLocal(state2 => state2.units);
+	const units = useLocal((state2) => state2.units);
 
 	return getHeightString(inches, units) as unknown as JSX.Element;
 };

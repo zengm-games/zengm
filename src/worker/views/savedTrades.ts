@@ -32,10 +32,10 @@ const getOffers = async () => {
 	const userTid = g.get("userTid");
 
 	const savedTrades = (await idb.cache.savedTrades.getAll()).filter(
-		savedTrade => savedTrade.tid === userTid,
+		(savedTrade) => savedTrade.tid === userTid,
 	);
 
-	const offers = savedTrades.map(savedTrade =>
+	const offers = savedTrades.map((savedTrade) =>
 		savedTradeHashToTradeTeams(savedTrade.hash),
 	);
 
@@ -46,7 +46,7 @@ const getOffers = async () => {
 				hash: savedTrades[i].hash,
 			};
 		}),
-		info => info.summary.teams[1].name,
+		(info) => info.summary.teams[1].name,
 	);
 };
 
@@ -124,7 +124,7 @@ export const addMissingAssets = async <T extends AugmentedOffer>(
 		for (const { type, pids, players, dpids, picks } of missingInfos) {
 			if (pids.length !== players.length) {
 				const missingPids = pids.filter(
-					pid => !players.some(p => p.pid === pid),
+					(pid) => !players.some((p) => p.pid === pid),
 				);
 
 				for (const pid of missingPids) {
@@ -165,7 +165,7 @@ export const addMissingAssets = async <T extends AugmentedOffer>(
 
 			if (dpids.length !== picks.length) {
 				const missingDpids = dpids.filter(
-					dpid => !picks.some(dp => dp.dpid === dpid),
+					(dpid) => !picks.some((dp) => dp.dpid === dpid),
 				);
 
 				for (const dpid of missingDpids) {

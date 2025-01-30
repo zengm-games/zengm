@@ -311,7 +311,7 @@ export const settings: Setting[] = (
 			type: "intOrNull",
 			description:
 				"Number of games versus other teams in the same division. Leave blank to treat division games like conference games.",
-			validator: value => {
+			validator: (value) => {
 				if (typeof value === "number" && value < 0) {
 					throw new Error("Cannot be negative");
 				}
@@ -324,7 +324,7 @@ export const settings: Setting[] = (
 			type: "intOrNull",
 			description:
 				"Number of games versus other teams in the same conference but different division. Leave blank to give no special scheduling treatment to conference games.",
-			validator: value => {
+			validator: (value) => {
 				if (typeof value === "number" && value < 0) {
 					throw new Error("Cannot be negative");
 				}
@@ -416,7 +416,7 @@ export const settings: Setting[] = (
 						ranked in the standings and playoffs. Available tiebreakers are:
 					</p>
 					<ul>
-						{helpers.keys(TIEBREAKERS).map(key => (
+						{helpers.keys(TIEBREAKERS).map((key) => (
 							<li key={key}>
 								<b>{key}</b> - {TIEBREAKERS[key]}
 							</li>
@@ -430,7 +430,7 @@ export const settings: Setting[] = (
 				</>
 			),
 			type: "jsonString",
-			validator: value => {
+			validator: (value) => {
 				if (!Array.isArray(value)) {
 					throw new Error("Must be an array");
 				}
@@ -460,7 +460,7 @@ export const settings: Setting[] = (
 					</p>
 				</>
 			),
-			validator: async value => {
+			validator: async (value) => {
 				await toWorker("main", "validatePointsFormula", value);
 			},
 			type: "string",
@@ -473,7 +473,7 @@ export const settings: Setting[] = (
 			type: "int",
 			description:
 				"Number of playoff teams who will get a bye in the first round. For leagues with two conferences, byes will be split evenly across conferences.",
-			validator: value => {
+			validator: (value) => {
 				if (value < 0) {
 					throw new Error("Value cannot be less than 0");
 				}
@@ -584,7 +584,7 @@ export const settings: Setting[] = (
 				</>
 			),
 
-			validator: value => {
+			validator: (value) => {
 				if (value < 1) {
 					throw new Error("Value cannot be less than 1");
 				}
@@ -615,7 +615,7 @@ export const settings: Setting[] = (
 					</p>
 				</>
 			),
-			validator: async value => {
+			validator: async (value) => {
 				if (!Array.isArray(value)) {
 					throw new Error("Must be an array");
 				}
@@ -634,7 +634,7 @@ export const settings: Setting[] = (
 			type: "int",
 			description:
 				"Number of seasons in the future to generate tradable draft picks for. The default value is 4. If you set this to 0, it disables all trading of draft picks.",
-			validator: value => {
+			validator: (value) => {
 				if (value < 0) {
 					throw new Error("Value cannot be less than 0");
 				}
@@ -646,7 +646,7 @@ export const settings: Setting[] = (
 			name: "# Draft Rounds",
 			godModeRequired: "existingLeagueOnly",
 			type: "int",
-			validator: value => {
+			validator: (value) => {
 				if (value < 0) {
 					throw new Error("Value cannot be less than 0");
 				}
@@ -670,7 +670,7 @@ export const settings: Setting[] = (
 				</>
 			),
 			type: "jsonString",
-			validator: value => {
+			validator: (value) => {
 				if (!Array.isArray(value)) {
 					throw new Error("Must be an array");
 				}
@@ -694,7 +694,7 @@ export const settings: Setting[] = (
 			godModeRequired: "always",
 			type: "float1000",
 			decoration: "currency",
-			validator: value => {
+			validator: (value) => {
 				if (value <= 0) {
 					throw new Error("Must be a positive number");
 				}
@@ -774,7 +774,7 @@ export const settings: Setting[] = (
 			godModeRequired: "always",
 			type: "float1000",
 			decoration: "currency",
-			validator: value => {
+			validator: (value) => {
 				if (value < 0) {
 					throw new Error("Value cannot be negative");
 				}
@@ -804,7 +804,7 @@ export const settings: Setting[] = (
 			name: "Min Contract Length",
 			godModeRequired: "always",
 			type: "int",
-			validator: value => {
+			validator: (value) => {
 				if (value < 1) {
 					throw new Error("Value must be at least 1");
 				}
@@ -922,7 +922,7 @@ export const settings: Setting[] = (
 					</p>
 				</>
 			),
-			validator: value => {
+			validator: (value) => {
 				if (value < 0) {
 					throw new Error("Value cannot be less than 0");
 				}
@@ -1087,7 +1087,7 @@ export const settings: Setting[] = (
 			type: "float",
 			description:
 				"Probability each offseason that there will be expansion teams.",
-			validator: value => {
+			validator: (value) => {
 				if (value < 0 || value > 1) {
 					throw new Error("Value must be between 0 and 1");
 				}
@@ -1112,7 +1112,7 @@ export const settings: Setting[] = (
 			name: "Auto Expansion # Teams",
 			type: "int",
 			description: "Number of teams to be added in each expansion draft.",
-			validator: value => {
+			validator: (value) => {
 				if (value < 1) {
 					throw new Error("Value must be greater than 0");
 				}
@@ -1125,7 +1125,7 @@ export const settings: Setting[] = (
 			type: "int",
 			description:
 				"Once your league reaches this size, there will be no more automatic expansion teams. Expansion will also stop if all the built-in teams have been used.",
-			validator: value => {
+			validator: (value) => {
 				if (value < 1) {
 					throw new Error("Value must be greater than 0");
 				}
@@ -1138,7 +1138,7 @@ export const settings: Setting[] = (
 			type: "float",
 			description:
 				"Probability each offseason that a team will relocate to a new region.",
-			validator: value => {
+			validator: (value) => {
 				if (value < 0 || value > 1) {
 					throw new Error("Value must be between 0 and 1");
 				}
@@ -1208,7 +1208,7 @@ export const settings: Setting[] = (
 				</>
 			),
 			type: "jsonString",
-			validator: value => {
+			validator: (value) => {
 				if (!Array.isArray(value)) {
 					throw new Error("Must be an array");
 				}
@@ -1332,7 +1332,7 @@ export const settings: Setting[] = (
 			decoration: "percent",
 			description:
 				"At the end of the playoffs, there's some percentage chance of half the league either dying (if random player) or retiring (if real player). After each event, it can't happen again until three years later.",
-			validator: value => {
+			validator: (value) => {
 				if (value > 100) {
 					throw new Error("Value cannot be greater than 100%");
 				}
@@ -1372,7 +1372,7 @@ export const settings: Setting[] = (
 					</p>
 				</>
 			),
-			validator: value => {
+			validator: (value) => {
 				if (value > 1) {
 					throw new Error("Value cannot be greater than 1");
 				}
@@ -1528,7 +1528,7 @@ export const settings: Setting[] = (
 					</p>
 				</>
 			),
-			validator: value => {
+			validator: (value) => {
 				if (value !== null) {
 					if (value > 1) {
 						throw new Error("Value cannot be greater than 1");
@@ -1596,7 +1596,7 @@ export const settings: Setting[] = (
 			name: "Foul Out Limit",
 			godModeRequired: "always",
 			type: "int",
-			validator: value => {
+			validator: (value) => {
 				if (value < 0) {
 					throw new Error("Value cannot be less than 0");
 				}
@@ -1618,7 +1618,7 @@ export const settings: Setting[] = (
 				</>
 			),
 			type: "jsonString",
-			validator: value => {
+			validator: (value) => {
 				if (!Array.isArray(value)) {
 					throw new Error("Must be an array");
 				}
@@ -1649,7 +1649,7 @@ export const settings: Setting[] = (
 				hockey:
 					"The length of a possession is divided by this number. So higher value -> quicker shots. And lower value -> longer time between shots.",
 			}),
-			validator: value => {
+			validator: (value) => {
 				if (value <= 0) {
 					throw new Error("Must be a positive number");
 				}
@@ -1796,7 +1796,7 @@ export const settings: Setting[] = (
 					"The baseline rate for penalties is multiplied by this number. Max is 10 because beyond that there is basically a penalty every play.",
 				hockey: undefined,
 			}),
-			validator: value => {
+			validator: (value) => {
 				if (isSport("football") && value > 10) {
 					throw new Error("Value cannot exceed 10");
 				}
@@ -2059,7 +2059,7 @@ export const settings: Setting[] = (
 					</p>
 				</>
 			),
-			validator: value => {
+			validator: (value) => {
 				if (value < 0 || value > 1) {
 					throw new Error("Value must be between 0 and 1");
 				}
@@ -2170,7 +2170,7 @@ export const settings: Setting[] = (
 			name: `Number of ${isSport("baseball") ? "Innings" : "Periods"} Per Game`,
 			godModeRequired: "always",
 			type: "int",
-			validator: value => {
+			validator: (value) => {
 				if (value <= 0) {
 					throw new Error("Value must be greater than 0");
 				}
@@ -2206,7 +2206,7 @@ export const settings: Setting[] = (
 			],
 			description: `This disables the home ${COURT} advantage for some games.`,
 		},
-		...(["maxOvertimes", "maxOvertimesPlayoffs"] as const).map(key => {
+		...(["maxOvertimes", "maxOvertimesPlayoffs"] as const).map((key) => {
 			const playoffs = key === "maxOvertimesPlayoffs";
 
 			const setting: Setting = {
@@ -2235,7 +2235,7 @@ export const settings: Setting[] = (
 						</p>
 					</>
 				),
-				validator: value => {
+				validator: (value) => {
 					if (typeof value === "number" && value < 0) {
 						throw new Error("Cannot be negative");
 					}
@@ -2244,7 +2244,7 @@ export const settings: Setting[] = (
 
 			return setting;
 		}),
-		...(["shootoutRounds", "shootoutRoundsPlayoffs"] as const).map(key => {
+		...(["shootoutRounds", "shootoutRoundsPlayoffs"] as const).map((key) => {
 			const playoffs = key === "shootoutRoundsPlayoffs";
 			const overtimePeriods = isSport("baseball")
 				? "extra innings"
@@ -2404,7 +2404,7 @@ export const settings: Setting[] = (
 			type: "int",
 			description:
 				"If this is more than 1, you can cycle through the colors by clicking a player's watch flag. Maximum possible value is 8.",
-			validator: value => {
+			validator: (value) => {
 				if (value < 1 || value > 8) {
 					throw new Error("Value must be between 1 and 8");
 				}
@@ -2461,7 +2461,7 @@ export const settings: Setting[] = (
 			key: "numPlayersDunk",
 			name: "# Players In Dunk Contest",
 			type: "int",
-			validator: value => {
+			validator: (value) => {
 				if (value <= 1) {
 					throw new Error("Value must be greater than 2");
 				}
@@ -2478,7 +2478,7 @@ export const settings: Setting[] = (
 			key: "numPlayersThree",
 			name: "# Players In 3pt Contest",
 			type: "int",
-			validator: value => {
+			validator: (value) => {
 				if (value <= 1) {
 					throw new Error("Value must be greater than 2");
 				}
@@ -2502,7 +2502,7 @@ export const settings: Setting[] = (
 					</p>
 				</>
 			),
-			parse: value => {
+			parse: (value) => {
 				if (value === "all" || value === "none") {
 					return value;
 				}
@@ -2511,13 +2511,13 @@ export const settings: Setting[] = (
 				if (!Array.isArray(parsed)) {
 					throw new Error('Must be "all", "none", or array');
 				}
-				if (parsed.some(x => typeof x !== "number" || !Number.isInteger(x))) {
+				if (parsed.some((x) => typeof x !== "number" || !Number.isInteger(x))) {
 					throw new Error("Array can only contain integers");
 				}
 
 				return parsed;
 			},
-			stringify: value => {
+			stringify: (value) => {
 				if (typeof value === "string") {
 					return value;
 				}
@@ -2526,4 +2526,4 @@ export const settings: Setting[] = (
 			},
 		},
 	] as Setting[]
-).filter(setting => !gameAttributesKeysOtherSports.has(setting.key as any));
+).filter((setting) => !gameAttributesKeysOtherSports.has(setting.key as any));

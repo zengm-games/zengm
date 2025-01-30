@@ -42,7 +42,7 @@ const AwardRaces = ({
 					const cols = [
 						...globalCols,
 						...getCols([roy ? "Pick" : "Record", "Ovr"]),
-						...getCols(stats.map(stat => `stat:${stat}`)),
+						...getCols(stats.map((stat) => `stat:${stat}`)),
 					];
 
 					if (mip) {
@@ -69,7 +69,7 @@ const AwardRaces = ({
 						const abbrev = ps ? ps.abbrev : undefined;
 						const tid = ps ? ps.tid : undefined;
 
-						const t = teams.find(t => t.tid === tid);
+						const t = teams.find((t) => t.tid === tid);
 
 						let recordOrPick = null;
 						if (roy) {
@@ -128,7 +128,7 @@ const AwardRaces = ({
 								}
 							}
 							data.push(
-								...stats.map(stat => {
+								...stats.map((stat) => {
 									if (!ps && !ps2) {
 										return undefined;
 									}
@@ -156,7 +156,7 @@ const AwardRaces = ({
 							);
 						} else {
 							data.push(pr && showRatings ? pr.ovr : undefined);
-							const statsRow = stats.map(stat =>
+							const statsRow = stats.map((stat) =>
 								ps ? helpers.roundStat(ps[stat], stat) : undefined,
 							);
 							data.push(...statsRow);

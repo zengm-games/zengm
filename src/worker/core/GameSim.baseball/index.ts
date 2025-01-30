@@ -2091,7 +2091,7 @@ class GameSim extends GameSimBase {
 	getSportState() {
 		return {
 			outs: this.outs,
-			bases: this.bases.map(base => base?.p.id) as [
+			bases: this.bases.map((base) => base?.p.id) as [
 				number | undefined,
 				number | undefined,
 				number | undefined,
@@ -2295,18 +2295,18 @@ class GameSim extends GameSimBase {
 			rounds: this.shootoutRounds,
 		});
 
-		const hitters = teamNums.map(t => {
+		const hitters = teamNums.map((t) => {
 			// Find best hitter - slight bias towards high usage players
 			return maxBy(
 				this.team[t].t.player,
-				p =>
+				(p) =>
 					p.compositeRating.powerHitter +
 					0.2 * p.compositeRating.contactHitter -
 					(p.injured ? 1000 : 0),
 			)!;
 		}) as [PlayerGameSim, PlayerGameSim];
 
-		const pitchers = teamNums.map(t => {
+		const pitchers = teamNums.map((t) => {
 			const candidate = this.team[t].getBestReliefPitcher(false);
 			if (candidate) {
 				return candidate.p;
@@ -2359,7 +2359,7 @@ class GameSim extends GameSimBase {
 	shouldIntentionalWalk() {
 		// At end of game, don't put tying/winning run on
 		const diffPts = this.team[this.d].t.stat.pts - this.team[this.o].t.stat.pts;
-		const runsWithHR = this.bases.filter(p => !p).length + 1;
+		const runsWithHR = this.bases.filter((p) => !p).length + 1;
 		const tyingRunUp = diffPts === runsWithHR;
 		const tyingRunOnDeck = diffPts === runsWithHR + 1;
 		if (

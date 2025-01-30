@@ -45,11 +45,11 @@ const ClearButton = ({
 						}}
 					>
 						All{" "}
-						{numbers.map(number => {
+						{numbers.map((number) => {
 							return <Flag key={number} watch={number} />;
 						})}
 					</Dropdown.Item>
-					{numbers.map(number => {
+					{numbers.map((number) => {
 						return (
 							<Dropdown.Item
 								key={number}
@@ -114,7 +114,7 @@ const WatchList = ({
 			"Pot",
 			"Contract",
 			"Exp",
-			...stats.map(stat => `stat:${stat}`),
+			...stats.map((stat) => `stat:${stat}`),
 			"Note",
 		],
 		{
@@ -124,7 +124,7 @@ const WatchList = ({
 		},
 	);
 
-	const rows: DataTableRow[] = players.map(p => {
+	const rows: DataTableRow[] = players.map((p) => {
 		let contract;
 		let exp = null;
 		if (p.tid === PLAYER.RETIRED) {
@@ -176,7 +176,7 @@ const WatchList = ({
 				showRatings ? p.ratings.pot : null,
 				contract,
 				exp,
-				...stats.map(stat =>
+				...stats.map((stat) =>
 					helpers.roundStat(p.stats[stat], stat, statType === "totals"),
 				),
 				{
@@ -232,7 +232,7 @@ const WatchList = ({
 
 			<ClearButton
 				players={players}
-				onClick={async type => {
+				onClick={async (type) => {
 					setClearing(true);
 					await toWorker("main", "clearWatchList", type);
 					setClearing(false);

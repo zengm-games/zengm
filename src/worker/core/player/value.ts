@@ -87,7 +87,7 @@ const value = (
 	const intercept = 31.693;
 
 	// 1. Account for stats (and current ratings if not enough stats)
-	const ps = p.stats.filter(playerStats => !playerStats.playoffs);
+	const ps = p.stats.filter((playerStats) => !playerStats.playoffs);
 	let current = pr.ovr;
 
 	// No stats at all? Just look at ratings more, then.

@@ -8,7 +8,7 @@ import { makeNormalResponsive } from "../hooks/useDropdownOptions";
 import { range } from "../../common/utils";
 
 export const formatStatsDropdown = (stats: string[]) =>
-	stats.map(stat => {
+	stats.map((stat) => {
 		const col = getCols([`stat:${stat}`])[0];
 		return {
 			key: stat,
@@ -39,7 +39,7 @@ const LeadersYears = ({
 	const cols = [
 		getCols(["Season"])[0],
 		...range(1, 11).map(
-			rank =>
+			(rank) =>
 				({
 					title: helpers.ordinal(rank),
 					sortSequence: ["desc", "asc"],
@@ -69,7 +69,7 @@ const LeadersYears = ({
 					) : (
 						season
 					),
-					...leaders.map(p => ({
+					...leaders.map((p) => ({
 						value: (
 							<>
 								<PlayerNameLabels

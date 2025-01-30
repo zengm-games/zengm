@@ -20,11 +20,11 @@ const getPopRanks = (
 		tid: number;
 	}[],
 ): number[] => {
-	const teamsFiltered = teamSeasons.filter(t => !t.disabled);
+	const teamsFiltered = teamSeasons.filter((t) => !t.disabled);
 
 	const teamsSorted = orderBy(teamsFiltered, "pop", "desc");
 
-	return teamSeasons.map(t => {
+	return teamSeasons.map((t) => {
 		// Find the starting and ending ranks of all teams tied with the current team (if no tie, then startRank and endRank will be the same)
 		let startRank;
 		let endRank;
@@ -1256,7 +1256,7 @@ const getJerseyNumber = (
 	}
 
 	const entries = Object.entries(numSeasonsByJerseyNumber).reverse();
-	const entry = entries.find(entry => entry[1] === max);
+	const entry = entries.find((entry) => entry[1] === max);
 	if (entry) {
 		return entry[0];
 	}
@@ -1469,7 +1469,7 @@ const getRecordNumericValue = (record: string | null) => {
 
 	let [won, lost, otl, tied] = record
 		.split("-")
-		.map(num => Number.parseInt(num));
+		.map((num) => Number.parseInt(num));
 
 	// Technically, if only one of "tied" or "otl" is present, we can't distinguish. Assume it's tied, in that case.
 	if (typeof otl === "number" && typeof tied !== "number") {

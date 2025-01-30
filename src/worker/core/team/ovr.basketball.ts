@@ -19,7 +19,7 @@ const ovr = (
 		.slice()
 		// Sort first, so non-ovr ratings are based on the top ovr players
 		.sort((a, b) => b.ratings.ovr - a.ratings.ovr)
-		.map(p => {
+		.map((p) => {
 			if (rating === undefined) {
 				return p.ratings.ovr;
 			}

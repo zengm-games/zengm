@@ -19,7 +19,7 @@ export const SelectSeasonRange = ({
 
 	return (
 		<div className={clsx("input-group", className)} style={{ width: 180 }}>
-			{([0, 1] as const).map(i => {
+			{([0, 1] as const).map((i) => {
 				return (
 					<select
 						key={i}
@@ -27,7 +27,7 @@ export const SelectSeasonRange = ({
 						className="form-select"
 						disabled={disabled}
 						value={seasonRange[i]}
-						onChange={event => {
+						onChange={(event) => {
 							const newSeason = Number.parseInt(event.target.value);
 
 							setters[i](newSeason);
@@ -44,7 +44,7 @@ export const SelectSeasonRange = ({
 							}
 						}}
 					>
-						{allSeasons.map(season => (
+						{allSeasons.map((season) => (
 							<option key={season} value={season}>
 								{season}
 							</option>

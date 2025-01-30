@@ -8,8 +8,8 @@ const ensureValidDivsConfs = async () => {
 
 	const teams = await idb.cache.teams.getAll();
 	for (const t of teams) {
-		const div = divs.find(d => d.did === t.did);
-		const conf = confs.find(c => c.cid === t.cid);
+		const div = divs.find((d) => d.did === t.did);
+		const conf = confs.find((c) => c.cid === t.cid);
 		const divMatchesConf = div && conf ? conf.cid === div.cid : false;
 
 		if (divMatchesConf) {
@@ -25,7 +25,7 @@ const ensureValidDivsConfs = async () => {
 			newCid = div.cid;
 		} else if (conf) {
 			// Put in last division of conference, if possible
-			const potentialDivs = divs.filter(d => d.cid === conf.cid);
+			const potentialDivs = divs.filter((d) => d.cid === conf.cid);
 			if (potentialDivs.length > 0) {
 				newDid = potentialDivs.at(-1)!.did;
 			}

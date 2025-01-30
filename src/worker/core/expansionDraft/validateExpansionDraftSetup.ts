@@ -27,7 +27,7 @@ const validateExpansionDraftSetup = async () => {
 	const divs = await g.get("divs");
 
 	// Do some error checking
-	const expansionTeams = expansionTeamsRaw.map(t => {
+	const expansionTeams = expansionTeamsRaw.map((t) => {
 		if (t.imgURL === "") {
 			t.imgURL = undefined;
 		}

@@ -32,7 +32,7 @@ const Trade = (props: View<"trade">) => {
 		includeOrExclude: "include" | "exclude",
 		id: number,
 	) => {
-		setState(prevState => ({
+		setState((prevState) => ({
 			...prevState,
 			accepted: false,
 			message: null,
@@ -53,7 +53,7 @@ const Trade = (props: View<"trade">) => {
 		const key = `${userOrOther}-${idType}${excluded}` as keyof typeof ids;
 
 		if (ids[key].includes(id)) {
-			ids[key] = ids[key].filter(currId => currId !== id);
+			ids[key] = ids[key].filter((currId) => currId !== id);
 		} else {
 			ids[key].push(id);
 		}
@@ -100,14 +100,14 @@ const Trade = (props: View<"trade">) => {
 			ids[key] = [];
 		} else if (playerOrPick === "player") {
 			const players = userOrOther === "other" ? otherRoster : userRoster;
-			ids[key] = players.map(p => p.pid);
+			ids[key] = players.map((p) => p.pid);
 		} else {
 			let picks = userOrOther === "other" ? otherPicks : userPicks;
 			if (draftRoundOnly !== undefined) {
-				picks = picks.filter(dp => dp.round === draftRoundOnly);
+				picks = picks.filter((dp) => dp.round === draftRoundOnly);
 			}
 			ids[key] = Array.from(
-				new Set([...ids[key], ...picks.map(dp => dp.dpid)]),
+				new Set([...ids[key], ...picks.map((dp) => dp.dpid)]),
 			);
 		}
 
@@ -131,7 +131,7 @@ const Trade = (props: View<"trade">) => {
 	};
 
 	const handleChangeTeam = async (tid: number) => {
-		setState(prevState => ({
+		setState((prevState) => ({
 			...prevState,
 			accepted: false,
 			message: null,
@@ -176,7 +176,7 @@ const Trade = (props: View<"trade">) => {
 			},
 		] as TradeTeams | undefined;
 
-		setState(prevState => ({
+		setState((prevState) => ({
 			...prevState,
 			accepted: false,
 			asking: true,
@@ -194,7 +194,7 @@ const Trade = (props: View<"trade">) => {
 			newPrevTeams = undefined;
 		}
 
-		setState(prevState => ({
+		setState((prevState) => ({
 			...prevState,
 			asking: false,
 			message,
@@ -203,7 +203,7 @@ const Trade = (props: View<"trade">) => {
 	};
 
 	const handleClickClear = async (type: TradeClearType) => {
-		setState(prevState => ({
+		setState((prevState) => ({
 			...prevState,
 			accepted: false,
 			message: null,
@@ -213,7 +213,7 @@ const Trade = (props: View<"trade">) => {
 	};
 
 	const handleClickForceTrade = () => {
-		setState(prevState => ({
+		setState((prevState) => ({
 			...prevState,
 			forceTrade: !prevState.forceTrade,
 		}));
@@ -224,7 +224,7 @@ const Trade = (props: View<"trade">) => {
 
 		if (output) {
 			const [accepted, message] = output;
-			setState(prevState => ({
+			setState((prevState) => ({
 				...prevState,
 				accepted,
 				message,
@@ -275,7 +275,7 @@ const Trade = (props: View<"trade">) => {
 	const summaryText = useRef<HTMLDivElement>(null);
 	const summaryControls = useRef<HTMLDivElement>(null);
 
-	const userTids = useLocal(state => state.userTids);
+	const userTids = useLocal((state) => state.userTids);
 
 	const updateSummaryHeight = useCallback(() => {
 		if (summaryControls.current && summaryText.current) {
@@ -323,7 +323,7 @@ const Trade = (props: View<"trade">) => {
 		summary.teams[1].picks.length +
 		summary.teams[1].trade.length;
 
-	const otherTeamIndex = teams.findIndex(t => t.tid === otherTid);
+	const otherTeamIndex = teams.findIndex((t) => t.tid === otherTid);
 
 	const otherTeam = teams[otherTeamIndex];
 	const otherTeamName = otherTeam
@@ -361,11 +361,11 @@ const Trade = (props: View<"trade">) => {
 						<select
 							className="float-start form-select select-team mx-2 flex-shrink-1"
 							value={otherTid}
-							onChange={event => {
+							onChange={(event) => {
 								handleChangeTeam(Number.parseInt(event.currentTarget.value));
 							}}
 						>
-							{teams.map(t => (
+							{teams.map((t) => (
 								<option key={t.tid} value={t.tid}>
 									{t.region} {t.name}
 								</option>
@@ -456,7 +456,7 @@ const Trade = (props: View<"trade">) => {
 															"updateTrade",
 															state.prevTeams,
 														);
-														setState(prevState => ({
+														setState((prevState) => ({
 															...prevState,
 															message: null,
 															prevTeams: undefined,

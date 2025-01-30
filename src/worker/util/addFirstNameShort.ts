@@ -95,7 +95,7 @@ const addFirstNameShort = <
 		tries[lastName] = trie;
 	}
 
-	return players.map(p => {
+	return players.map((p) => {
 		let firstNameShort;
 		const trie = tries[p.lastName];
 		if (!trie) {

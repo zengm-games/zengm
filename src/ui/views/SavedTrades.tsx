@@ -88,8 +88,8 @@ const SavedTrades = (props: View<"savedTrades">) => {
 	) => {
 		return {
 			searchValue: `${players
-				.map(p => `${p.name} ${p.ratings.pos}`)
-				.join(" ")} ${picks.map(pick => pick.desc).join(" ")}`,
+				.map((p) => `${p.name} ${p.ratings.pos}`)
+				.join(" ")} ${picks.map((pick) => pick.desc).join(" ")}`,
 			sortValue: playerScore(players) + pickScore(picks),
 		};
 	};
@@ -109,7 +109,7 @@ const SavedTrades = (props: View<"savedTrades">) => {
 				<Dropdown.Menu>
 					<Dropdown.Item
 						onClick={async () => {
-							const hashes = offers.map(offer => offer.hash);
+							const hashes = offers.map((offer) => offer.hash);
 							await toWorker("main", "clearSavedTrades", hashes);
 						}}
 					>
@@ -119,10 +119,10 @@ const SavedTrades = (props: View<"savedTrades">) => {
 						onClick={async () => {
 							const hashes = offers
 								.filter(
-									offer =>
+									(offer) =>
 										offer.missing.length > 0 || offer.missingUser.length > 0,
 								)
-								.map(offer => offer.hash);
+								.map((offer) => offer.hash);
 							await toWorker("main", "clearSavedTrades", hashes);
 						}}
 					>
@@ -149,7 +149,7 @@ const SavedTrades = (props: View<"savedTrades">) => {
 							sortType: "number",
 						},
 					]}
-					getAssetColContents={offer => {
+					getAssetColContents={(offer) => {
 						return [
 							{
 								value: (

@@ -25,7 +25,7 @@ const SaveTrade = memo(
 		const [saved, setSaved] = useState<number | undefined>();
 
 		const empty = tradeTeams.every(
-			t => t.pids.length === 0 && t.dpids.length === 0,
+			(t) => t.pids.length === 0 && t.dpids.length === 0,
 		);
 		const hash = hashSavedTrade(tradeTeams);
 

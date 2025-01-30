@@ -933,7 +933,7 @@ class Play {
 		if (offenseAfter !== offenseBefore) {
 			// "Clean hands" means that a change of possession occurred while the team gaining possession had no prior penalties on this play
 			const cleanHands = this.events.every(
-				event =>
+				(event) =>
 					event.event.type !== "penalty" || event.event.t !== offenseAfter,
 			);
 
@@ -977,7 +977,7 @@ class Play {
 
 	adjudicatePenalties(timeExpiredAtEndOfHalf: boolean) {
 		const penalties = this.events.filter(
-			event => event.event.type === "penalty",
+			(event) => event.event.type === "penalty",
 		) as WrappedPenaltyEvent[];
 
 		if (penalties.length === 0) {
@@ -1013,10 +1013,10 @@ class Play {
 				// Different team - maybe offsetting? Many edge cases http://static.nfl.com/static/content/public/image/rulebook/pdfs/17_Rule14_Penalty_Enforcement.pdf section 3
 
 				const penalties5 = penalties.filter(
-					penalty => penalty.event.penYds === 5,
+					(penalty) => penalty.event.penYds === 5,
 				);
 				const penalties15 = penalties.filter(
-					penalty =>
+					(penalty) =>
 						penalty.event.penYds === 15 ||
 						penalty.event.name === "Pass interference",
 				);
@@ -1039,7 +1039,7 @@ class Play {
 					const numPossessionChanges = penalties.map(
 						(penalty, i) =>
 							possessionChangeIndexes.filter(
-								index => index <= this.penaltyRollbacks[i].indexEvent,
+								(index) => index <= this.penaltyRollbacks[i].indexEvent,
 							).length,
 					);
 					if (
@@ -1075,7 +1075,7 @@ class Play {
 		}
 
 		if (options !== undefined && choosingTeam !== undefined) {
-			const results = options.flatMap(decisions => {
+			const results = options.flatMap((decisions) => {
 				const indexAccept = decisions.indexOf("accept");
 				const indexOffset = decisions.indexOf("offset");
 				const penalty = penalties[indexAccept];
@@ -1111,7 +1111,7 @@ class Play {
 						offsetting
 					) {
 						const validIndexes = this.spotOfEnforcementIndexes.filter(
-							index => index < penaltyRollback.indexEvent,
+							(index) => index < penaltyRollback.indexEvent,
 						);
 						const indexEvent =
 							validIndexes.length === 0 ? -1 : Math.max(...validIndexes);
@@ -1123,7 +1123,7 @@ class Play {
 						});
 					} else if (penaltyRollback.type === "spotOfEnforcement") {
 						const validIndexes = this.spotOfEnforcementIndexes.filter(
-							index => index < penaltyRollback.indexEvent,
+							(index) => index < penaltyRollback.indexEvent,
 						);
 						const indexEvent =
 							validIndexes.length === 0 ? -1 : Math.max(...validIndexes);
@@ -1183,7 +1183,7 @@ class Play {
 					statChanges = penalty?.statChanges;
 				}
 
-				return subResults.map(subResult => ({
+				return subResults.map((subResult) => ({
 					indexAccept,
 					decisions,
 					statChanges,
@@ -1266,9 +1266,9 @@ class Play {
 
 							return result.indexEvent === undefined || i > result.indexEvent;
 						})
-						.map(event => event.statChanges)
-						.flatMap(statChanges => {
-							return statChanges.map(statChange => {
+						.map((event) => event.statChanges)
+						.flatMap((statChanges) => {
+							return statChanges.map((statChange) => {
 								const newStatChange = [...statChange] as StatChange;
 
 								if (newStatChange[3] === undefined) {

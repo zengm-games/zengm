@@ -10,7 +10,7 @@ const buildJS = async () => {
 	for (const name of ["ui", "worker"]) {
 		for (const legacy of [false, true]) {
 			promises.push(
-				new Promise<void>(resolve => {
+				new Promise<void>((resolve) => {
 					const worker = new Worker(
 						new URL("./buildJSWorker.ts", import.meta.url),
 						{
@@ -34,8 +34,8 @@ const buildJS = async () => {
 	// Hack because otherwise I'm somehow left with no newline before the souce map URL, which confuses Bugsnag
 	const replacePaths = fs
 		.readdirSync("build/gen")
-		.filter(filename => filename.endsWith(".js"))
-		.map(filename => `build/gen/${filename}`);
+		.filter((filename) => filename.endsWith(".js"))
+		.map((filename) => `build/gen/${filename}`);
 	replace({
 		paths: replacePaths,
 		replaces: [

@@ -10,7 +10,7 @@ const watchCSS = async (
 		path.join(import.meta.dirname, "watchCSSWorker.ts"),
 	);
 
-	worker.on("message", message => {
+	worker.on("message", (message) => {
 		if (message.type === "start") {
 			updateStart(message.filename);
 		}

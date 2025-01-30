@@ -16,7 +16,7 @@ const swapWorstRoster = async (addSisyphusLogs: boolean) => {
 				ovr: -Infinity,
 			};
 		})
-		.filter(t => !t.disabled);
+		.filter((t) => !t.disabled);
 
 	for (const t of teams) {
 		t.ovr = await getTeamOvr(t.tid);
@@ -67,7 +67,7 @@ const swapWorstRoster = async (addSisyphusLogs: boolean) => {
 				phase <= PHASE.PLAYOFFS
 			) {
 				p.stats.pop();
-				p.statsTids = Array.from(new Set(p.stats.map(row => row.tid)));
+				p.statsTids = Array.from(new Set(p.stats.map((row) => row.tid)));
 				player.addStatsRow(p, phase === PHASE.PLAYOFFS);
 			}
 

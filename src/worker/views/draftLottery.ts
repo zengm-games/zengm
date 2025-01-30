@@ -55,8 +55,8 @@ const updateDraftLottery = async (
 
 		const dpidsAvailableToTrade = new Set(
 			(await idb.cache.draftPicks.getAll())
-				.filter(dp => dp.season === season)
-				.map(dp => dp.dpid),
+				.filter((dp) => dp.season === season)
+				.map((dp) => dp.dpid),
 		);
 
 		// View completed draft lottery

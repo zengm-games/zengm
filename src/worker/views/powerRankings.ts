@@ -19,9 +19,9 @@ const otherToRanks = (
 
 	for (const field of ["other", "otherCurrent"] as const) {
 		for (const key of Object.keys(teams[0].powerRankings[field])) {
-			const values = teams.map(t => t.powerRankings[field][key]);
+			const values = teams.map((t) => t.powerRankings[field][key]);
 			const sorted = values.slice().sort((a, b) => b - a);
-			const ranks = values.map(value => sorted.indexOf(value) + 1);
+			const ranks = values.map((value) => sorted.indexOf(value) + 1);
 			for (let i = 0; i < teams.length; i++) {
 				teams[i].powerRankings[field][key] = ranks[i];
 			}
@@ -38,7 +38,7 @@ export const addPowerRankingsStuffToTeams = async <
 ) => {
 	// Calculate team ovr ratings
 	const teamsWithRankings = await Promise.all(
-		teams.map(async t => {
+		teams.map(async (t) => {
 			let teamPlayers;
 
 			if (g.get("season") === season) {
@@ -72,7 +72,7 @@ export const addPowerRankingsStuffToTeams = async <
 				tid: t.tid,
 			});
 			const teamPlayersCurrent = teamPlayers.filter(
-				p => p.injury.gamesRemaining === 0,
+				(p) => p.injury.gamesRemaining === 0,
 			);
 
 			const ovr = team.ovr(teamPlayers, {

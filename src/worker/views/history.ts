@@ -48,7 +48,7 @@ const updateHistory = async (
 				return;
 			}
 
-			const t = teams.find(t => t.tid === obj.tid);
+			const t = teams.find((t) => t.tid === obj.tid);
 			if (t) {
 				obj.abbrev = t.seasonAttrs.abbrev;
 			} else {
@@ -110,7 +110,7 @@ const updateHistory = async (
 
 		// Get champs
 		const champ = teams.find(
-			t =>
+			(t) =>
 				t.seasonAttrs.playoffRoundsWon ===
 				g.get("numGamesPlayoffSeries", season).length,
 		);

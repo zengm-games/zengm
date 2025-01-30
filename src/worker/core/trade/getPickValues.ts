@@ -29,12 +29,12 @@ const getPickValues = async (): Promise<TradePickValues> => {
 		PLAYER.UNDRAFTED,
 	);
 	players.sort((a, b) => b.value - a.value);
-	const playersByDraftYear = groupBy(players, p => p.draft.year);
+	const playersByDraftYear = groupBy(players, (p) => p.draft.year);
 
 	const pickValues: TradePickValues = {} as TradePickValues;
 
 	for (const [season, players] of Object.entries(playersByDraftYear)) {
-		pickValues[season] = players.map(p => p.value);
+		pickValues[season] = players.map((p) => p.value);
 	}
 
 	const currentSeason = g.get("season");
@@ -47,7 +47,7 @@ const getPickValues = async (): Promise<TradePickValues> => {
 
 		// See what the lowest remaining pick is
 		const draftPicks = (await idb.cache.draftPicks.getAll()).filter(
-			dp => dp.season === currentSeason,
+			(dp) => dp.season === currentSeason,
 		);
 		const diff = numPicks - draftPicks.length;
 
@@ -63,9 +63,9 @@ const getPickValues = async (): Promise<TradePickValues> => {
 	// Defaults are the average of future drafts
 	const seasons = Object.keys(playersByDraftYear);
 	const currentSeasonString = String(currentSeason);
-	pickValues.default = range(numPicksDefault).map(i => {
+	pickValues.default = range(numPicksDefault).map((i) => {
 		const vals = seasons
-			.filter(season => {
+			.filter((season) => {
 				const seasonPickValues = pickValues[season];
 				if (
 					!seasonPickValues ||
@@ -79,7 +79,7 @@ const getPickValues = async (): Promise<TradePickValues> => {
 
 				return true;
 			})
-			.map(season => (pickValues[season] as number[])[i]);
+			.map((season) => (pickValues[season] as number[])[i]);
 		return vals.reduce((total, val) => total + val, 0) / vals.length;
 	});
 

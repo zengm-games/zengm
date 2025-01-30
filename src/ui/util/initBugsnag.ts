@@ -5,7 +5,7 @@ Bugsnag.start({
 	apiKey: window.bugsnagKey,
 	appVersion: window.bbgmVersion,
 	autoTrackSessions: false,
-	onError: event => {
+	onError: (event) => {
 		// Normalize league URLs to all look the same
 		if (event && typeof event.context === "string") {
 			event.context = event.context.replace(/^\/l\/\d+/, "/l/0");

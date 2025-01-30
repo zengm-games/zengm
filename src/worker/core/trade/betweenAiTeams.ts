@@ -11,7 +11,7 @@ import { isSport } from "../../../common";
 const getAITids = async () => {
 	const teams = await idb.cache.teams.getAll();
 	return teams
-		.filter(t => {
+		.filter((t) => {
 			if (t.disabled) {
 				return false;
 			}
@@ -24,7 +24,7 @@ const getAITids = async () => {
 			}
 			return !g.get("userTids").includes(t.tid);
 		})
-		.map(t => t.tid);
+		.map((t) => t.tid);
 };
 
 const attempt = async (valueChangeKey: number) => {
@@ -35,7 +35,7 @@ const attempt = async (valueChangeKey: number) => {
 	}
 
 	const tid = random.choice(aiTids);
-	const otherTids = aiTids.filter(tid2 => tid !== tid2);
+	const otherTids = aiTids.filter((tid2) => tid !== tid2);
 
 	if (otherTids.length === 0) {
 		return false;
@@ -44,7 +44,7 @@ const attempt = async (valueChangeKey: number) => {
 	const otherTid = random.choice(otherTids);
 	const players = (
 		await idb.cache.players.indexGetAll("playersByTid", tid)
-	).filter(p => !isUntradable(p).untradable);
+	).filter((p) => !isUntradable(p).untradable);
 	const draftPicks = await idb.cache.draftPicks.indexGetAll(
 		"draftPicksByTid",
 		tid,
@@ -60,7 +60,7 @@ const attempt = async (valueChangeKey: number) => {
 
 	if ((r < 0.7 || draftPicks.length === 0) && players.length > 0) {
 		// Weight by player value - good player more likely to be in trade
-		const p = random.choice(players, p => p.value);
+		const p = random.choice(players, (p) => p.value);
 		if (!p) {
 			return false;
 		}
@@ -69,7 +69,7 @@ const attempt = async (valueChangeKey: number) => {
 		dpids.push(random.choice(draftPicks).dpid);
 	} else {
 		// Weight by player value - good player more likely to be in trade
-		const p = random.choice(players, p => p.value);
+		const p = random.choice(players, (p) => p.value);
 		const dp = random.choice(draftPicks);
 		if (!p || !dp) {
 			return false;

@@ -48,8 +48,8 @@ const updateCustomizePlayer = async (
 
 	if (updateEvents.includes("firstRun")) {
 		const teams = (await idb.cache.teams.getAll())
-			.filter(t => !t.disabled)
-			.map(t => {
+			.filter((t) => !t.disabled)
+			.map((t) => {
 				return {
 					tid: t.tid,
 					text: `${t.region} ${t.name}`,
@@ -119,12 +119,12 @@ const updateCustomizePlayer = async (
 					ovr: 0,
 					skills: [],
 				};
-				p.salaries = p.salaries.filter(row => row.season >= g.get("season"));
+				p.salaries = p.salaries.filter((row) => row.season >= g.get("season"));
 			}
 		}
 
 		const currentPlayers = await idb.cache.players.getAll();
-		const pids = new Set(currentPlayers.map(p => p.pid));
+		const pids = new Set(currentPlayers.map((p) => p.pid));
 
 		for (const relative of p.relatives) {
 			if (!pids.has(relative.pid)) {

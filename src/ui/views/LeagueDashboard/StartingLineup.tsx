@@ -17,7 +17,7 @@ const StartingLineup = ({
 	View<"leagueDashboard">,
 	"challengeNoRatings" | "numPlayersOnCourt" | "starters" | "startersStats"
 >) => {
-	const statCols = getCols(startersStats.map(stat => `stat:${stat}`));
+	const statCols = getCols(startersStats.map((stat) => `stat:${stat}`));
 
 	return (
 		<>
@@ -46,7 +46,7 @@ const StartingLineup = ({
 						</tr>
 					</thead>
 					<tbody>
-						{starters.map(p => (
+						{starters.map((p) => (
 							<tr key={p.pid}>
 								<td>
 									<PlayerNameLabels
@@ -80,7 +80,7 @@ const StartingLineup = ({
 								<td>
 									<Contract p={p} />
 								</td>
-								{startersStats.map(stat => (
+								{startersStats.map((stat) => (
 									<td key={stat}>{helpers.roundStat(p.stats[stat], stat)}</td>
 								))}
 							</tr>

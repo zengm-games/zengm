@@ -40,7 +40,7 @@ const Slider = ({
 				min="0"
 				max="10"
 				step="1"
-				onChange={async event => {
+				onChange={async (event) => {
 					const parsed = Number.parseInt(event.target.value);
 					if (!Number.isNaN(parsed)) {
 						setValue(parsed);
@@ -89,7 +89,7 @@ const PlayThroughInjuriesSliders = ({
 					<button
 						className="btn btn-link p-0 fw-bold"
 						type="button"
-						onClick={() => setExpanded(prev => !prev)}
+						onClick={() => setExpanded((prev) => !prev)}
 					>
 						<CollapseArrow open={expanded} /> {titleText}
 					</button>

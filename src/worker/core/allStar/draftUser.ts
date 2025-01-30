@@ -7,14 +7,14 @@ const draftUser = async (pid: number): Promise<boolean> => {
 		throw new Error("allStars not found");
 	}
 
-	const pick = allStars.remaining.find(p => p.pid === pid);
+	const pick = allStars.remaining.find((p) => p.pid === pid);
 	if (!pick) {
 		throw new Error("Player not found");
 	}
 
 	const teamInd = allStars.teams[0].length > allStars.teams[1].length ? 1 : 0;
 	allStars.teams[teamInd].push(pick);
-	allStars.remaining = allStars.remaining.filter(p => p.pid !== pick.pid);
+	allStars.remaining = allStars.remaining.filter((p) => p.pid !== pick.pid);
 
 	if (allStars.remaining.every(({ injured }) => injured)) {
 		allStars.finalized = true;

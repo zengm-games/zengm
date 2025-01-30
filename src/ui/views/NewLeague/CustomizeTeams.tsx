@@ -98,7 +98,7 @@ const reducer = (state: State, action: Action): State => {
 		case "addConf": {
 			const maxCID =
 				state.confs.length > 0
-					? Math.max(...state.confs.map(conf => conf.cid))
+					? Math.max(...state.confs.map((conf) => conf.cid))
 					: -1;
 			return {
 				...state,
@@ -115,7 +115,7 @@ const reducer = (state: State, action: Action): State => {
 		case "addDiv": {
 			const maxDID =
 				state.divs.length > 0
-					? Math.max(...state.divs.map(div => div.did))
+					? Math.max(...state.divs.map((div) => div.did))
 					: -1;
 			return {
 				...state,
@@ -140,7 +140,7 @@ const reducer = (state: State, action: Action): State => {
 		case "renameConf":
 			return {
 				...state,
-				confs: state.confs.map(conf => {
+				confs: state.confs.map((conf) => {
 					if (action.cid !== conf.cid) {
 						return conf;
 					}
@@ -155,7 +155,7 @@ const reducer = (state: State, action: Action): State => {
 		case "renameDiv":
 			return {
 				...state,
-				divs: state.divs.map(div => {
+				divs: state.divs.map((div) => {
 					if (action.did !== div.did) {
 						return div;
 					}
@@ -168,7 +168,7 @@ const reducer = (state: State, action: Action): State => {
 			};
 
 		case "editTeam": {
-			const newTeams = state.teams.map(t => {
+			const newTeams = state.teams.map((t) => {
 				if (t.tid !== action.t.tid) {
 					return t;
 				}
@@ -182,7 +182,7 @@ const reducer = (state: State, action: Action): State => {
 		}
 
 		case "moveConf": {
-			const oldIndex = state.confs.findIndex(conf => conf.cid === action.cid);
+			const oldIndex = state.confs.findIndex((conf) => conf.cid === action.cid);
 			const newIndex = oldIndex + action.direction;
 
 			if (newIndex < 0 || newIndex > state.confs.length - 1) {
@@ -201,20 +201,20 @@ const reducer = (state: State, action: Action): State => {
 			// Make sure we're sorted by cid, to make moving between conferences easy
 			const newDivs = orderBy(state.divs, "cid", "asc");
 
-			const div = newDivs.find(div => div.did === action.did);
+			const div = newDivs.find((div) => div.did === action.did);
 			if (!div) {
 				return state;
 			}
 
 			// See if we're moving at the boundary of the conference, in which case we need to switch to a new conference
-			const divsLocal = newDivs.filter(div2 => div2.cid === div.cid);
-			const indexLocal = divsLocal.findIndex(div => div.did === action.did);
+			const divsLocal = newDivs.filter((div2) => div2.cid === div.cid);
+			const indexLocal = divsLocal.findIndex((div) => div.did === action.did);
 			let newCID = -1;
 			if (
 				(indexLocal === 0 && action.direction === -1) ||
 				(indexLocal === divsLocal.length - 1 && action.direction === 1)
 			) {
-				const confIndex = state.confs.findIndex(conf => conf.cid === div.cid);
+				const confIndex = state.confs.findIndex((conf) => conf.cid === div.cid);
 				if (confIndex > 0 && action.direction === -1) {
 					newCID = state.confs[confIndex - 1].cid;
 				} else if (
@@ -228,7 +228,7 @@ const reducer = (state: State, action: Action): State => {
 			if (newCID >= 0) {
 				return {
 					...state,
-					divs: newDivs.map(div => {
+					divs: newDivs.map((div) => {
 						if (action.did !== div.did) {
 							return div;
 						}
@@ -242,7 +242,7 @@ const reducer = (state: State, action: Action): State => {
 			}
 
 			// Normal move
-			const oldIndex = newDivs.findIndex(div => div.did === action.did);
+			const oldIndex = newDivs.findIndex((div) => div.did === action.did);
 			const newIndex = oldIndex + action.direction;
 
 			if (newIndex < 0 || newIndex > newDivs.length - 1) {
@@ -264,11 +264,11 @@ const reducer = (state: State, action: Action): State => {
 			let newTeams;
 			if (moveToCID === undefined) {
 				// Delete children
-				newDivs = state.divs.filter(div => div.cid !== action.cid);
-				newTeams = state.teams.filter(t => t.cid !== action.cid);
+				newDivs = state.divs.filter((div) => div.cid !== action.cid);
+				newTeams = state.teams.filter((t) => t.cid !== action.cid);
 			} else {
 				// Move children
-				newDivs = state.divs.map(div => {
+				newDivs = state.divs.map((div) => {
 					if (div.cid !== action.cid) {
 						return div;
 					}
@@ -278,7 +278,7 @@ const reducer = (state: State, action: Action): State => {
 						cid: moveToCID,
 					};
 				});
-				newTeams = state.teams.map(t => {
+				newTeams = state.teams.map((t) => {
 					if (t.cid !== action.cid) {
 						return t;
 					}
@@ -291,7 +291,7 @@ const reducer = (state: State, action: Action): State => {
 			}
 
 			return {
-				confs: state.confs.filter(conf => conf.cid !== action.cid),
+				confs: state.confs.filter((conf) => conf.cid !== action.cid),
 				divs: newDivs,
 				teams: makeTIDsSequential(newTeams),
 			};
@@ -301,14 +301,14 @@ const reducer = (state: State, action: Action): State => {
 			let newTeams;
 			if (action.moveToDID === undefined) {
 				// Delete children
-				newTeams = state.teams.filter(t => t.did !== action.did);
+				newTeams = state.teams.filter((t) => t.did !== action.did);
 			} else {
 				// Move children
-				const div = state.divs.find(div => div.did === action.moveToDID);
+				const div = state.divs.find((div) => div.did === action.moveToDID);
 				if (!div) {
 					throw new Error("div not found");
 				}
-				newTeams = state.teams.map(t => {
+				newTeams = state.teams.map((t) => {
 					if (t.did !== action.did) {
 						return t;
 					}
@@ -323,7 +323,7 @@ const reducer = (state: State, action: Action): State => {
 
 			return {
 				...state,
-				divs: state.divs.filter(div => div.did !== action.did),
+				divs: state.divs.filter((div) => div.did !== action.did),
 				teams: makeTIDsSequential(newTeams),
 			};
 		}
@@ -332,7 +332,7 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				teams: makeTIDsSequential(
-					state.teams.filter(t => t.tid !== action.tid),
+					state.teams.filter((t) => t.tid !== action.tid),
 				),
 			};
 
@@ -361,9 +361,9 @@ const PlayersButton = ({
 					<Popover.Header>Top Players</Popover.Header>
 					<Popover.Body>
 						<ul className="list-unstyled mb-0">
-							{orderBy(players, p => p.ratings.at(-1).ovr, "desc")
+							{orderBy(players, (p) => p.ratings.at(-1).ovr, "desc")
 								.slice(0, 10)
-								.map(p => {
+								.map((p) => {
 									const ratings = p.ratings.at(-1)!;
 									return (
 										<li key={p.pid}>
@@ -442,7 +442,7 @@ const CardHeader = ({
 			{renaming ? (
 				<form
 					className="d-flex"
-					onSubmit={event => {
+					onSubmit={(event) => {
 						event.preventDefault();
 						onRename(controlledName);
 						setRenaming(false);
@@ -453,7 +453,7 @@ const CardHeader = ({
 						type="text"
 						className="form-control me-2"
 						value={controlledName}
-						onChange={event => {
+						onChange={(event) => {
 							setControlledName(event.target.value);
 						}}
 					/>
@@ -548,9 +548,9 @@ const Division = ({
 						dispatch({ type: "deleteDiv", did: div.did });
 					} else {
 						const siblings = divs
-							.filter(div2 => div2.did !== div.did)
-							.map(div2 => {
-								const conf = confs.find(conf => conf.cid === div2.cid);
+							.filter((div2) => div2.did !== div.did)
+							.map((div2) => {
+								const conf = confs.find((conf) => conf.cid === div2.cid);
 								return {
 									key: div2.did,
 									text: `Move teams to "${div2.name}" division (${
@@ -584,7 +584,7 @@ const Division = ({
 			/>
 
 			<ul className="list-group list-group-flush">
-				{teams.map(t => (
+				{teams.map((t) => (
 					<li key={t.tid} className="list-group-item d-flex px-2">
 						<div className="me-auto">
 							{t.season !== undefined ? (
@@ -646,7 +646,7 @@ const Conference = ({
 	disableMoveDown: boolean;
 	abbrevsUsedMultipleTimes: string[];
 }) => {
-	const children = divs.filter(div => div.cid === conf.cid);
+	const children = divs.filter((div) => div.cid === conf.cid);
 
 	return (
 		<div className="card mb-2">
@@ -657,8 +657,8 @@ const Conference = ({
 						dispatch({ type: "deleteConf", cid: conf.cid });
 					} else {
 						const siblings = confs
-							.filter(conf2 => conf2.cid !== conf.cid)
-							.map(conf2 => ({
+							.filter((conf2) => conf2.cid !== conf.cid)
+							.map((conf2) => ({
 								key: conf2.cid,
 								text: `Move divisions to "${conf2.name}" conference`,
 							}));
@@ -697,7 +697,7 @@ const Conference = ({
 							dispatch={dispatch}
 							showAddEditTeamModal={showAddEditTeamModal}
 							editTeam={editTeam}
-							teams={teams.filter(t => t.did === div.did)}
+							teams={teams.filter((t) => t.did === div.did)}
 							disableMoveUp={i === 0 && disableMoveUp}
 							disableMoveDown={i === divs.length - 1 && disableMoveDown}
 							abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
@@ -848,7 +848,7 @@ const CustomizeTeams = ({
 			}
 
 			const numTeamsPerDiv = myDivs.map(
-				div => myTeams.filter(t => t.did === div.did).length,
+				(div) => myTeams.filter((t) => t.did === div.did).length,
 			);
 
 			const response = await toWorker("main", "getRandomTeams", {
@@ -947,7 +947,7 @@ const CustomizeTeams = ({
 				</Dropdown>
 				<form
 					className="btn-group ms-auto"
-					onSubmit={event => {
+					onSubmit={(event) => {
 						event.preventDefault();
 
 						if (abbrevsUsedMultipleTimes.length > 0) {

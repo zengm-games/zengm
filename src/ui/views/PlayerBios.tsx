@@ -48,10 +48,10 @@ const PlayerBios = ({
 		"Experience",
 		"Ovr",
 		"Pot",
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
 	]);
 
-	const rows: DataTableRow[] = players.map(p => {
+	const rows: DataTableRow[] = players.map((p) => {
 		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
 		const college = p.college && p.college !== "" ? p.college : "None";
 
@@ -146,7 +146,7 @@ const PlayerBios = ({
 				p.experience,
 				showRatings ? p.ratings.ovr : null,
 				showRatings ? p.ratings.pot : null,
-				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.stats[stat], stat)),
 			],
 			classNames: {
 				"table-danger": p.hof,

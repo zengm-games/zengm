@@ -113,7 +113,7 @@ const relocateVote = async ({
 
 		const teams = await idb.cache.teams.getAll();
 		await league.setGameAttributes({
-			teamInfoCache: teams.map(t => ({
+			teamInfoCache: teams.map((t) => ({
 				abbrev: t.abbrev,
 				disabled: t.disabled,
 				imgURL: t.imgURL,

@@ -46,11 +46,11 @@ const PlayerList = ({
 		"Pot",
 		"Contract",
 		"Exp",
-		...stats.map(stat => `stat:${stat}`),
+		...stats.map((stat) => `stat:${stat}`),
 		"Acquired",
 	]);
 
-	const rows = players.map(p => {
+	const rows = players.map((p) => {
 		return {
 			key: p.pid,
 			data: [
@@ -64,7 +64,7 @@ const PlayerList = ({
 						if (!protectedPids.includes(p.pid)) {
 							updateProtectedPids([...protectedPids, p.pid]);
 						} else {
-							updateProtectedPids(protectedPids.filter(pid => pid !== p.pid));
+							updateProtectedPids(protectedPids.filter((pid) => pid !== p.pid));
 						}
 					}}
 				/>,
@@ -84,7 +84,7 @@ const PlayerList = ({
 				!challengeNoRatings ? p.ratings.pot : null,
 				wrappedContractAmount(p),
 				wrappedContractExp(p),
-				...stats.map(stat => helpers.roundStat(p.stats[stat], stat)),
+				...stats.map((stat) => helpers.roundStat(p.stats[stat], stat)),
 				{
 					value: <SafeHtml dirty={p.latestTransaction} />,
 					searchValue: p.latestTransaction,

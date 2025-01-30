@@ -10,7 +10,7 @@ const recomputeLocalUITeamOvrs = async () => {
 			0, // Active players have tid >= 0
 			Infinity,
 		])
-	).map(p => ({
+	).map((p) => ({
 		pid: p.pid,
 		tid: p.tid,
 		injury: p.injury,
@@ -22,9 +22,9 @@ const recomputeLocalUITeamOvrs = async () => {
 		},
 	}));
 
-	const ovrs = range(g.get("numTeams")).map(tid => {
+	const ovrs = range(g.get("numTeams")).map((tid) => {
 		const playersCurrent = players.filter(
-			p => p.tid === tid && p.injury.gamesRemaining === 0,
+			(p) => p.tid === tid && p.injury.gamesRemaining === 0,
 		);
 		return team.ovr(playersCurrent);
 	});

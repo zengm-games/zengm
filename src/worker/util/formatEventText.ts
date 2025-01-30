@@ -204,7 +204,7 @@ const formatEventText = async (event: EventBBGM) => {
 
 	if (event.type === "sisyphus") {
 		const teamNames = await Promise.all(
-			event.tids.map(async tid => {
+			event.tids.map(async (tid) => {
 				const teamInfo = await getTeamInfoBySeason(tid, event.season);
 				return teamInfo
 					? `<a href="${helpers.leagueUrl([

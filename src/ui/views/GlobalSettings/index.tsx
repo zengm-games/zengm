@@ -49,7 +49,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 		(name: string) =>
 		(event: ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>) => {
 			const value = event.target.value;
-			setState(state2 => ({
+			setState((state2) => ({
 				...state2,
 				[name]: value,
 			}));
@@ -93,7 +93,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 
 	useTitleBar({ title: "Global Settings" });
 
-	const phaseChangeRedirects = DEFAULT_PHASE_CHANGE_REDIRECTS.map(phase => {
+	const phaseChangeRedirects = DEFAULT_PHASE_CHANGE_REDIRECTS.map((phase) => {
 		let label;
 		if (phase === PHASE.REGULAR_SEASON) {
 			label = "Season preview, before regular season";
@@ -185,7 +185,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 										let phaseChangeRedirects;
 										if (checked) {
 											phaseChangeRedirects = state.phaseChangeRedirects.filter(
-												phase2 => phase2 !== phase,
+												(phase2) => phase2 !== phase,
 											);
 										} else {
 											phaseChangeRedirects = [

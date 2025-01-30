@@ -178,7 +178,7 @@ export const getVisibleCategories = ({
 			continue;
 		}
 
-		const catSettings = groupedSettings[category.name].filter(option => {
+		const catSettings = groupedSettings[category.name].filter((option) => {
 			return (
 				(showGodModeSettings ||
 					settingIsEnabled(godMode, newLeague, option.godModeRequired)) &&
@@ -298,12 +298,12 @@ const SettingsForm = ({
 
 		if (proceed) {
 			if (state.godMode) {
-				setState(prevState => ({
+				setState((prevState) => ({
 					...prevState,
 					godMode: false,
 				}));
 			} else {
-				setState(prevState => ({
+				setState((prevState) => ({
 					...prevState,
 					godMode: true,
 					godModeInPast: true,
@@ -315,7 +315,7 @@ const SettingsForm = ({
 	const [filterText, setFilterText] = useState("");
 
 	// Filter out the new league only ones when appropriate
-	const filteredSettings = settings.filter(setting => {
+	const filteredSettings = settings.filter((setting) => {
 		return (
 			(!settingsShown || settingsShown.includes(setting.key)) &&
 			(!setting.showOnlyIf ||
@@ -335,10 +335,10 @@ const SettingsForm = ({
 	if (filterText !== "" && /\S/.test(filterText)) {
 		const words = filterText
 			.split(" ")
-			.map(word => word.trim().toLowerCase())
-			.filter(word => word !== "");
+			.map((word) => word.trim().toLowerCase())
+			.filter((word) => word !== "");
 
-		filteredSettings2 = filteredSettings.filter(setting => {
+		filteredSettings2 = filteredSettings.filter((setting) => {
 			const category = setting.category.toLowerCase();
 			const name = setting.name.toLowerCase();
 
@@ -350,7 +350,7 @@ const SettingsForm = ({
 				? getSearchVal(setting.descriptionLong)
 				: "";
 
-			return words.every(word => {
+			return words.every((word) => {
 				return (
 					category.includes(word) ||
 					name.includes(word) ||
@@ -375,7 +375,7 @@ const SettingsForm = ({
 			if (primaryOption.partners) {
 				for (const partner of primaryOption.partners) {
 					const partnerOption = settings.find(
-						setting => setting.key === partner,
+						(setting) => setting.key === partner,
 					);
 					if (partnerOption) {
 						options.push(partnerOption);
@@ -465,7 +465,7 @@ const SettingsForm = ({
 	});
 
 	const toggleGodModeSettings = () => {
-		setShowGodModeSettings(show => !show);
+		setShowGodModeSettings((show) => !show);
 	};
 
 	const showGodModeSettingsButton = !godMode && !alwaysShowGodModeSettings;
@@ -536,7 +536,7 @@ const SettingsForm = ({
 							placeholder="Filter settings..."
 							style={{ maxWidth: 300 }}
 							value={filterText}
-							onChange={event => {
+							onChange={(event) => {
 								setFilterText(event.target.value);
 							}}
 						/>
@@ -569,8 +569,8 @@ const SettingsForm = ({
 					<ul className="list-unstyled">
 						<li>Shortcuts: </li>
 						{visibleCategories
-							.map(category => category.name)
-							.map(name => (
+							.map((category) => category.name)
+							.map((name) => (
 								<li key={name} className="settings-shortcut">
 									<a href={`#${name}`}>{name}</a>
 								</li>

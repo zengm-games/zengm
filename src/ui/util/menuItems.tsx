@@ -53,7 +53,7 @@ if (isSport("baseball")) {
 
 const scheduledEvents: MenuItemLink = {
 	type: "link",
-	active: pageID => pageID === "scheduledEvents",
+	active: (pageID) => pageID === "scheduledEvents",
 	league: true,
 	commandPalette: true,
 	path: ["scheduled_events"],
@@ -63,7 +63,7 @@ const scheduledEvents: MenuItemLink = {
 const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 	{
 		type: "link",
-		active: pageID => pageID === "dashboard",
+		active: (pageID) => pageID === "dashboard",
 		nonLeague: true,
 		commandPalette: true,
 		path: "/",
@@ -73,7 +73,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		? ([
 				{
 					type: "link",
-					active: pageID => pageID === "newLeague",
+					active: (pageID) => pageID === "newLeague",
 					nonLeague: true,
 					path: "/new_league",
 					text: "New League",
@@ -114,7 +114,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		: ([
 				{
 					type: "link",
-					active: pageID => pageID === "newLeague",
+					active: (pageID) => pageID === "newLeague",
 					nonLeague: true,
 					commandPalette: true,
 					path: "/new_league",
@@ -123,7 +123,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			] as MenuItemLink[])),
 	{
 		type: "link",
-		active: pageID =>
+		active: (pageID) =>
 			typeof pageID === "string" && pageID.startsWith("exhibition"),
 		nonLeague: true,
 		commandPalette: true,
@@ -132,14 +132,14 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 	},
 	{
 		type: "link",
-		active: pageID => pageID === "dashboard",
+		active: (pageID) => pageID === "dashboard",
 		league: true,
 		path: "/",
 		text: "Switch League",
 	},
 	{
 		type: "link",
-		active: pageID => pageID === "leagueDashboard",
+		active: (pageID) => pageID === "leagueDashboard",
 		league: true,
 		path: [],
 		text: {
@@ -169,7 +169,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "standings",
+				active: (pageID) => pageID === "standings",
 				league: true,
 				commandPalette: true,
 				path: ["standings"],
@@ -177,7 +177,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "playoffs",
+				active: (pageID) => pageID === "playoffs",
 				league: true,
 				commandPalette: true,
 				path: ["playoffs"],
@@ -185,7 +185,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "dailySchedule",
+				active: (pageID) => pageID === "dailySchedule",
 				league: true,
 				commandPalette: true,
 				path: ["daily_schedule"],
@@ -193,7 +193,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "leagueFinances",
+				active: (pageID) => pageID === "leagueFinances",
 				league: true,
 				commandPalette: true,
 				path: ["league_finances"],
@@ -201,7 +201,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "history" || pageID === "historyAll",
+				active: (pageID) => pageID === "history" || pageID === "historyAll",
 				league: true,
 				commandPalette: true,
 				path: ["history_all"],
@@ -209,7 +209,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "powerRankings",
+				active: (pageID) => pageID === "powerRankings",
 				league: true,
 				commandPalette: true,
 				path: ["power_rankings"],
@@ -217,7 +217,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "transactions",
+				active: (pageID) => pageID === "transactions",
 				league: true,
 				commandPalette: true,
 				path: ["transactions", "all"],
@@ -225,7 +225,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "news",
+				active: (pageID) => pageID === "news",
 				league: true,
 				commandPalette: true,
 				path: ["news"],
@@ -290,7 +290,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		children: [
 			{
 				type: "link",
-				active: pageID => pageID === "roster",
+				active: (pageID) => pageID === "roster",
 				league: true,
 				commandPalette: true,
 				path: ["roster"],
@@ -306,7 +306,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				: []),
 			{
 				type: "link",
-				active: pageID => pageID === "schedule",
+				active: (pageID) => pageID === "schedule",
 				league: true,
 				commandPalette: true,
 				path: ["schedule"],
@@ -314,7 +314,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "teamFinances",
+				active: (pageID) => pageID === "teamFinances",
 				league: true,
 				commandPalette: true,
 				path: ["team_finances"],
@@ -322,7 +322,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "teamHistory",
+				active: (pageID) => pageID === "teamHistory",
 				league: true,
 				commandPalette: true,
 				path: ["team_history"],
@@ -330,7 +330,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "gmHistory",
+				active: (pageID) => pageID === "gmHistory",
 				league: true,
 				commandPalette: true,
 				path: ["gm_history"],
@@ -355,7 +355,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		children: [
 			{
 				type: "link",
-				active: pageID => pageID === "freeAgents",
+				active: (pageID) => pageID === "freeAgents",
 				league: true,
 				commandPalette: true,
 				path: ["free_agents"],
@@ -371,7 +371,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "trade",
+				active: (pageID) => pageID === "trade",
 				league: true,
 				commandPalette: true,
 				path: ["trade"],
@@ -379,7 +379,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "tradingBlock",
+				active: (pageID) => pageID === "tradingBlock",
 				league: true,
 				commandPalette: true,
 				path: ["trading_block"],
@@ -387,7 +387,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "tradeProposals",
+				active: (pageID) => pageID === "tradeProposals",
 				league: true,
 				commandPalette: true,
 				path: ["trade_proposals"],
@@ -395,7 +395,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "savedTrades",
+				active: (pageID) => pageID === "savedTrades",
 				league: true,
 				commandPalette: true,
 				path: ["saved_trades"],
@@ -403,7 +403,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID =>
+				active: (pageID) =>
 					typeof pageID === "string" && pageID.startsWith("draft"),
 				league: true,
 				commandPalette: true,
@@ -444,7 +444,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "comparePlayers",
+				active: (pageID) => pageID === "comparePlayers",
 				league: true,
 				commandPalette: true,
 				path: ["compare_players"],
@@ -452,7 +452,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "watchList",
+				active: (pageID) => pageID === "watchList",
 				league: true,
 				commandPalette: true,
 				path: ["watch_list"],
@@ -460,7 +460,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "hallOfFame",
+				active: (pageID) => pageID === "hallOfFame",
 				league: true,
 				commandPalette: true,
 				path: ["hall_of_fame"],
@@ -477,7 +477,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		children: [
 			{
 				type: "link",
-				active: pageID => pageID === "gameLog",
+				active: (pageID) => pageID === "gameLog",
 				league: true,
 				commandPalette: true,
 				path: ["game_log"],
@@ -485,7 +485,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID =>
+				active: (pageID) =>
 					pageID === "leaders" ||
 					pageID === "leadersProgressive" ||
 					pageID === "leadersYears",
@@ -512,7 +512,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "playerRatings",
+				active: (pageID) => pageID === "playerRatings",
 				league: true,
 				commandPalette: true,
 				path: ["player_ratings"],
@@ -528,7 +528,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "playerStats",
+				active: (pageID) => pageID === "playerStats",
 				league: true,
 				commandPalette: true,
 				path: ["player_stats"],
@@ -562,7 +562,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "playerBios",
+				active: (pageID) => pageID === "playerBios",
 				league: true,
 				commandPalette: true,
 				path: ["player_bios"],
@@ -570,7 +570,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "playerGraphs",
+				active: (pageID) => pageID === "playerGraphs",
 				league: true,
 				commandPalette: true,
 				path: ["player_graphs"],
@@ -578,7 +578,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "advancedPlayerSearch",
+				active: (pageID) => pageID === "advancedPlayerSearch",
 				league: true,
 				commandPalette: true,
 				path: ["advanced_player_search"],
@@ -586,7 +586,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "teamStats",
+				active: (pageID) => pageID === "teamStats",
 				league: true,
 				commandPalette: true,
 				path: ["team_stats"],
@@ -602,7 +602,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "teamGraphs",
+				active: (pageID) => pageID === "teamGraphs",
 				league: true,
 				commandPalette: true,
 				path: ["team_graphs"],
@@ -610,7 +610,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "leagueStats",
+				active: (pageID) => pageID === "leagueStats",
 				league: true,
 				commandPalette: true,
 				path: ["league_stats"],
@@ -618,7 +618,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "injuries",
+				active: (pageID) => pageID === "injuries",
 				league: true,
 				commandPalette: true,
 				path: ["injuries"],
@@ -626,7 +626,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "playerFeats",
+				active: (pageID) => pageID === "playerFeats",
 				league: true,
 				commandPalette: true,
 				path: ["player_feats"],
@@ -634,7 +634,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "awardRaces",
+				active: (pageID) => pageID === "awardRaces",
 				league: true,
 				commandPalette: true,
 				path: ["award_races"],
@@ -652,7 +652,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		children: [
 			{
 				type: "link",
-				active: pageID => pageID === "achievements",
+				active: (pageID) => pageID === "achievements",
 				league: true,
 				nonLeague: true,
 				commandPalette: true,
@@ -677,7 +677,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "customizePlayer",
+				active: (pageID) => pageID === "customizePlayer",
 				godMode: true,
 				league: true,
 				commandPalette: true,
@@ -686,7 +686,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "deleteOldData",
+				active: (pageID) => pageID === "deleteOldData",
 				league: true,
 				commandPalette: true,
 				path: ["delete_old_data"],
@@ -694,7 +694,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "editAwards",
+				active: (pageID) => pageID === "editAwards",
 				godMode: true,
 				league: true,
 				commandPalette: true,
@@ -703,7 +703,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "exportLeague",
+				active: (pageID) => pageID === "exportLeague",
 				league: true,
 				commandPalette: true,
 				path: ["export_league"],
@@ -711,7 +711,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "exportStats",
+				active: (pageID) => pageID === "exportStats",
 				league: true,
 				commandPalette: true,
 				path: ["export_stats"],
@@ -719,7 +719,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "expansionDraft",
+				active: (pageID) => pageID === "expansionDraft",
 				league: true,
 				commandPalette: true,
 				path: ["expansion_draft"],
@@ -727,7 +727,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "fantasyDraft",
+				active: (pageID) => pageID === "fantasyDraft",
 				league: true,
 				commandPalette: true,
 				path: ["fantasy_draft"],
@@ -735,7 +735,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "frivolities",
+				active: (pageID) => pageID === "frivolities",
 				league: true,
 				commandPalette: true,
 				path: ["frivolities"],
@@ -743,7 +743,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "godMode",
+				active: (pageID) => pageID === "godMode",
 				league: true,
 				commandPalette: true,
 				path: ["god_mode"],
@@ -751,7 +751,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "exportPlayers",
+				active: (pageID) => pageID === "exportPlayers",
 				league: true,
 				commandPalette: true,
 				path: ["export_players"],
@@ -759,7 +759,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "manageConfs",
+				active: (pageID) => pageID === "manageConfs",
 				league: true,
 				commandPalette: true,
 				path: ["manage_confs"],
@@ -767,7 +767,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "manageTeams",
+				active: (pageID) => pageID === "manageTeams",
 				league: true,
 				commandPalette: true,
 				path: ["manage_teams"],
@@ -775,7 +775,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "multiTeamMode",
+				active: (pageID) => pageID === "multiTeamMode",
 				league: true,
 				commandPalette: true,
 				godMode: true,
@@ -784,7 +784,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "newTeam",
+				active: (pageID) => pageID === "newTeam",
 				league: true,
 				commandPalette: true,
 				godMode: true,
@@ -824,7 +824,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID =>
+				active: (pageID) =>
 					pageID === "globalSettings" || pageID === "defaultNewLeagueSettings",
 				league: true,
 				nonLeague: true,
@@ -843,7 +843,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "settings",
+				active: (pageID) => pageID === "settings",
 				league: true,
 				commandPalette: true,
 				path: ["settings"],
@@ -851,7 +851,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: pageID => pageID === "dangerZone",
+				active: (pageID) => pageID === "dangerZone",
 				league: true,
 				commandPalette: true,
 				path: ["danger_zone"],
@@ -868,7 +868,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		commandPaletteOnly: true,
 		children: Object.entries(frivolities).flatMap(([category, rows]) =>
 			rows.map(
-				row =>
+				(row) =>
 					({
 						type: "link",
 						league: true,

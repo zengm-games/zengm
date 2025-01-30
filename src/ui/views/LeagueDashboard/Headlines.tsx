@@ -46,7 +46,7 @@ const Headlines = ({ events, season, teams, userTid }: HeadlinesProps) => {
 			</h2>
 			<div className="row mb-1">
 				<AnimatePresence initial={false}>
-					{throttledEvents.map(event => {
+					{throttledEvents.map((event) => {
 						return (
 							<m.div
 								key={event.eid}
@@ -86,8 +86,8 @@ const ThrottledComponent = memo(
 			return false;
 		}
 
-		const prevEIDs = prevProps.events.map(event => event.eid);
-		const nextEIDs = nextProps.events.map(event => event.eid);
+		const prevEIDs = prevProps.events.map((event) => event.eid);
+		const nextEIDs = nextProps.events.map((event) => event.eid);
 		return JSON.stringify(prevEIDs) === JSON.stringify(nextEIDs);
 	},
 );

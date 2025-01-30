@@ -248,7 +248,7 @@ const Option = ({
 					<label
 						className="form-label mb-0"
 						htmlFor={id}
-						onClick={event => {
+						onClick={(event) => {
 							// Don't toggle on label click, too confusing
 							if (type === "bool") {
 								event.preventDefault();
@@ -274,7 +274,7 @@ const Option = ({
 						<span
 							className="ms-1 glyphicon glyphicon-question-sign help-icon"
 							onClick={() => {
-								setShowDescriptionLong(show => !show);
+								setShowDescriptionLong((show) => !show);
 							}}
 						/>
 					) : null}
@@ -354,7 +354,7 @@ const SettingsFormOptions = ({
 }) => {
 	return (
 		<>
-			{visibleCategories.map(category => {
+			{visibleCategories.map((category) => {
 				return (
 					<Fragment key={category.name}>
 						<a className="anchor" id={category.name} />
@@ -377,7 +377,7 @@ const SettingsFormOptions = ({
 								}}
 								value={gameSimPreset}
 								disabled={!godMode}
-								onChange={event => {
+								onChange={(event) => {
 									setGameSimPreset(event.target.value);
 								}}
 							>
@@ -387,7 +387,7 @@ const SettingsFormOptions = ({
 								{Object.keys(gameSimPresets)
 									.sort()
 									.reverse()
-									.map(season => (
+									.map((season) => (
 										<option key={season} value={season}>
 											{season}
 										</option>

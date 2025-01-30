@@ -54,7 +54,7 @@ const g: GameAttributes & {
 		throw new Error(`Attempt to get g.${key} while it is not already set`);
 	},
 
-	getRaw: key => {
+	getRaw: (key) => {
 		if (Object.hasOwn(g, key)) {
 			// @ts-expect-error
 			const gameAttribute = g[key];

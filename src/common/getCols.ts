@@ -3575,7 +3575,7 @@ const getCols = (
 	titles: string[],
 	overrides: Record<string, Partial<Col>> = {},
 ): Col[] => {
-	return titles.map(title => {
+	return titles.map((title) => {
 		if (!Object.hasOwn(cols, title)) {
 			throw new Error(`Unknown column: "${title}"`);
 		}

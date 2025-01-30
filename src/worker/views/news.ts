@@ -41,7 +41,7 @@ export const processEvents = async (
 ) => {
 	let numKept = 0;
 	const events = eventsAll
-		.filter(event => {
+		.filter((event) => {
 			if (
 				tid !== undefined &&
 				event.tids &&
@@ -52,7 +52,7 @@ export const processEvents = async (
 			}
 			return !IGNORE_EVENT_TYPES.includes(event.type);
 		})
-		.map(event => {
+		.map((event) => {
 			if (
 				event.score !== undefined &&
 				event.tids &&
@@ -67,7 +67,7 @@ export const processEvents = async (
 
 			return event;
 		})
-		.filter(event => {
+		.filter((event) => {
 			let keep = true;
 			if (level === "big") {
 				if (event.score === undefined || event.score < 20) {
@@ -103,7 +103,7 @@ export const processEvents = async (
 		});
 	}
 
-	const eventsWithPlayers = events2.map(event => {
+	const eventsWithPlayers = events2.map((event) => {
 		let p:
 			| undefined
 			| {
@@ -179,7 +179,7 @@ const updateNews = async (
 				},
 				"noCopyCache",
 			)
-		).map(t => t.seasonAttrs);
+		).map((t) => t.seasonAttrs);
 
 		return {
 			abbrev,

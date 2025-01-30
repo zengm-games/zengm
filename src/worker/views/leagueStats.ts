@@ -78,7 +78,7 @@ const updateLeagueStats = async (
 			}
 		}
 
-		stats = stats.filter(stat => !ignoreStats.includes(stat));
+		stats = stats.filter((stat) => !ignoreStats.includes(stat));
 
 		return {
 			abbrev: inputs.abbrev,

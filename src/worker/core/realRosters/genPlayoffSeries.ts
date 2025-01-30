@@ -12,10 +12,10 @@ const genPlayoffSeries = (
 ) => {
 	// Look at first 2 rounds, to find any byes
 	const firstRound = basketball.playoffSeries[season].filter(
-		row => row.round === 0,
+		(row) => row.round === 0,
 	);
 	const secondRound = basketball.playoffSeries[season].filter(
-		row => row.round === 1,
+		(row) => row.round === 1,
 	);
 
 	type MatchupTeam = {
@@ -40,7 +40,7 @@ const genPlayoffSeries = (
 	) => {
 		firstRoundAbbrevs.add(abbrev);
 		const t = initialTeams.find(
-			t => oldAbbrevTo2020BBGMAbbrev(t.srID) === abbrev,
+			(t) => oldAbbrevTo2020BBGMAbbrev(t.srID) === abbrev,
 		);
 		if (!t) {
 			throw new Error("Missing team");
@@ -129,11 +129,11 @@ const genPlayoffSeries = (
 			];
 		}
 
-		const matchups = matchupsAbbrevs.map(abbrev => {
-			const t = initialTeams.find(t => t.abbrev === abbrev);
+		const matchups = matchupsAbbrevs.map((abbrev) => {
+			const t = initialTeams.find((t) => t.abbrev === abbrev);
 			if (t) {
 				const matchup = firstRoundMatchups.find(
-					matchup =>
+					(matchup) =>
 						t.tid === matchup.home.tid ||
 						(matchup.away && t.tid === matchup.away.tid),
 				);
@@ -150,11 +150,11 @@ const genPlayoffSeries = (
 		const cids = [0, 1];
 		for (const cid of cids) {
 			const confMatchups = firstRoundMatchups.filter(
-				matchup => matchup.home.cid === cid,
+				(matchup) => matchup.home.cid === cid,
 			);
 			for (const seeds of confSeeds) {
 				const matchup = confMatchups.find(
-					matchup =>
+					(matchup) =>
 						matchup.home.seed - 1 === seeds[0] ||
 						matchup.home.seed - 1 === seeds[1],
 				);
@@ -170,7 +170,7 @@ const genPlayoffSeries = (
 		for (let i = 1; i <= numRounds; i++) {
 			const currentRound = series[i];
 			const matchups = basketball.playoffSeries[season]
-				.filter(row => row.round === i)
+				.filter((row) => row.round === i)
 				.map(genHomeAway);
 
 			// Iterate over every other game, and find the matchup in the next round that contains one of the teams in that game. This ensures order of the bracket is maintained.
@@ -182,7 +182,7 @@ const genPlayoffSeries = (
 					previousTids.push(away.tid);
 				}
 				const currentMatchup = matchups.find(
-					matchup =>
+					(matchup) =>
 						previousTids.includes(matchup.home.tid) ||
 						previousTids.includes(matchup.away.tid),
 				);

@@ -15,7 +15,7 @@ const updateRandomDebutsForever = async (
 	const basketball = await loadDataBasketball();
 
 	const currentTeams = (await idb.cache.teams.getAll()).filter(
-		t => !t.disabled,
+		(t) => !t.disabled,
 	);
 
 	const scheduledEvents = await idb.cache.scheduledEvents.getAll();
@@ -48,7 +48,7 @@ const updateRandomDebutsForever = async (
 	addRelatives(draftProspects, basketball.relatives);
 
 	// Randomize draft classes
-	const draftYears = draftProspects.map(p => p.draft.year);
+	const draftYears = draftProspects.map((p) => p.draft.year);
 	random.shuffle(draftYears);
 	for (let i = 0; i < draftProspects.length; i++) {
 		const p = draftProspects[i];

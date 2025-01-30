@@ -2,7 +2,7 @@
 
 import { babelPluginSportFunctions } from "../babel-plugin-sport-functions/index.js";
 
-export const babelConfig = legacy => {
+export const babelConfig = (legacy) => {
 	const plugins = [babelPluginSportFunctions];
 
 	if (legacy) {

@@ -79,8 +79,8 @@ const Playoffs = ({
 				byConf: playoffsByConf,
 				onChange: (prevTeam: TeamToEdit, newTeam: TeamToEdit) => {
 					// Swap seeds of these two teams
-					setTeamsEdited(teams =>
-						teams.map(t => {
+					setTeamsEdited((teams) =>
+						teams.map((t) => {
 							if (t.tid === prevTeam.tid) {
 								return {
 									...t,
@@ -235,7 +235,7 @@ const Playoffs = ({
 													/>
 												) : null}
 											</td>
-											{range(maxNumCols - 2).map(j => (
+											{range(maxNumCols - 2).map((j) => (
 												<td key={j} style={tdStyle} />
 											))}
 										</tr>

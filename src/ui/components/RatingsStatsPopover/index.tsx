@@ -162,7 +162,7 @@ const RatingsStatsPopover = ({
 					watch={actualWatch}
 					onChange={
 						LOCAL_WATCH
-							? newWatch => {
+							? (newWatch) => {
 									setLocalWatch(newWatch);
 								}
 							: undefined

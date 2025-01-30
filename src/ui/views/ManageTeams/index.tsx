@@ -47,7 +47,7 @@ const reducer = (state: State, action: Action) => {
 			};
 		case "updateTeam": {
 			const newTeams = state.teams.slice();
-			const t = newTeams.find(t => t.tid === action.tid);
+			const t = newTeams.find((t) => t.tid === action.tid);
 			if (!t) {
 				throw new Error(`No team found with tid ${action.tid}`);
 			}
@@ -262,7 +262,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 
 			<form onSubmit={handleSubmit}>
 				<div className="row gx-2">
-					{teams.map(t => (
+					{teams.map((t) => (
 						<Fragment key={t.tid}>
 							<TeamForm
 								classNamesCol={[

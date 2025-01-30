@@ -21,7 +21,7 @@ const TeamStats = ({
 	<>
 		<h2>Team Stats</h2>
 		<p>
-			{teamStats.map(teamStat => (
+			{teamStats.map((teamStat) => (
 				<TeamStat key={teamStat.stat} {...teamStat} />
 			))}
 			<a href={helpers.leagueUrl(["team_stats"])}>» Team Stats</a>

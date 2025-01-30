@@ -212,7 +212,7 @@ const MenuItem = ({
 					root={false}
 				/>
 			))
-			.filter(element => element !== null);
+			.filter((element) => element !== null);
 
 		if (children.length === 0) {
 			return null;

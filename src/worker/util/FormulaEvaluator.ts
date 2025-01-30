@@ -68,7 +68,7 @@ const operators: Record<
 		operands: 1,
 		precedence: 3,
 		associativity: "r",
-		func: a => -a,
+		func: (a) => -a,
 	},
 };
 

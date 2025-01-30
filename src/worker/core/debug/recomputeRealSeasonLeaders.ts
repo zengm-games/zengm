@@ -41,7 +41,7 @@ const recomputeRealSeasonLeaders = async () => {
 		// Apply game sim settings
 		// All the ones we're interested in (not confs/divs/whatever) are in phase 0 currently
 		const scheduledEvent = realData.scheduledEventsGameAttributes.find(
-			row => row.season === season2 && row.phase === 0,
+			(row) => row.season === season2 && row.phase === 0,
 		);
 		if (scheduledEvent) {
 			const presets = scheduledEvent.info as any;

@@ -22,15 +22,15 @@ const genPlayers = async (
 	);
 
 	const existingPlayers = allDraftProspects.filter(
-		p => p.draft.year === draftYear,
+		(p) => p.draft.year === draftYear,
 	);
 
 	// Trigger randomDebutsForever?
 	if (g.get("randomDebutsForever") !== undefined) {
 		// Trigger condition - draftYear has no real players in it, or the year after draftYear has no real players in it
-		const currentRealPlayers = existingPlayers.filter(p => p.real).length;
+		const currentRealPlayers = existingPlayers.filter((p) => p.real).length;
 		const nextRealPlayers = allDraftProspects.filter(
-			p => p.real && p.draft.year === draftYear + 1,
+			(p) => p.real && p.draft.year === draftYear + 1,
 		).length;
 		if (currentRealPlayers === 0 || nextRealPlayers === 0) {
 			await realRosters.updateRandomDebutsForever(

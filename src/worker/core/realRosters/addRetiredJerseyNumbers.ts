@@ -28,11 +28,11 @@ const addRetiredJerseyNumbers = ({
 	allRetiredJerseyNumbers: Basketball["retiredJerseyNumbers"];
 }) => {
 	const playersBySlug = groupByUnique(
-		players.filter(p => p.srID !== undefined),
+		players.filter((p) => p.srID !== undefined),
 		"srID",
 	);
 
-	const teamsBySlug = groupByUnique(teams, t =>
+	const teamsBySlug = groupByUnique(teams, (t) =>
 		oldAbbrevTo2020BBGMAbbrev(t.srID),
 	);
 

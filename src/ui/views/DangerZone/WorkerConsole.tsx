@@ -61,7 +61,7 @@ const WorkerConsole = ({ godMode }: { godMode: boolean }) => {
 			) : null}
 
 			<form
-				onSubmit={async event => {
+				onSubmit={async (event) => {
 					event.preventDefault();
 
 					setStatus({ type: "running" });
@@ -81,7 +81,7 @@ const WorkerConsole = ({ godMode }: { godMode: boolean }) => {
 					className="form-control font-monospace mb-2"
 					disabled={disabled}
 					rows={10}
-					onChange={event => {
+					onChange={(event) => {
 						setCode(event.target.value);
 						if (status.type === "done") {
 							setStatus({ type: "init" });

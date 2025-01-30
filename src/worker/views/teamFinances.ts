@@ -54,7 +54,7 @@ const updateTeamFinances = async (
 		// Convert contract objects into table rows
 		const contractTotals = Array(numSeasons).fill(0);
 		const contracts = addFirstNameShort(
-			contractsRaw.map(contract => {
+			contractsRaw.map((contract) => {
 				const amounts: number[] = [];
 
 				for (let i = season; i <= contract.exp; i++) {
@@ -117,7 +117,7 @@ const updateTeamFinances = async (
 			return output;
 		};
 
-		const barData = teamSeasons.slice(0, showInt).map(teamSeason => {
+		const barData = teamSeasons.slice(0, showInt).map((teamSeason) => {
 			const att = teamSeason.att / teamSeason.gpHome;
 
 			const numPlayoffRounds = g.get(

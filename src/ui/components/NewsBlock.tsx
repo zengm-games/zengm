@@ -66,7 +66,7 @@ const NewsBlock = ({
 		}
 	} else if (event.tids && event.tids.length <= 3) {
 		// Show multiple logos, like for a trade;
-		teamName = event.tids.map(tid => {
+		teamName = event.tids.map((tid) => {
 			teamInfo = teams[tid];
 
 			if (!teamInfo) {

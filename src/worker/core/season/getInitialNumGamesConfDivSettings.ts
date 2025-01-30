@@ -15,7 +15,7 @@ const getInitialNumGamesConfDivSettings = (
 		...settingsInput,
 	};
 
-	const scheduleTeams = teams.map(t => ({
+	const scheduleTeams = teams.map((t) => ({
 		tid: t.tid,
 		seasonAttrs: {
 			did: t.did,

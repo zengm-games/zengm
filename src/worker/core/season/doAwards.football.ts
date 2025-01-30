@@ -180,7 +180,9 @@ export const makeTeams = (
 
 	if (rookie) {
 		return [
-			...slots.map(slot => getTopByPos(slot.players, slot.positions, usedPids)),
+			...slots.map((slot) =>
+				getTopByPos(slot.players, slot.positions, usedPids),
+			),
 			kickers[0],
 			punters[0],
 			kickReturners[0],
@@ -192,7 +194,7 @@ export const makeTeams = (
 		{
 			title: "First Team",
 			players: [
-				...slots.map(slot =>
+				...slots.map((slot) =>
 					getTopByPos(slot.players, slot.positions, usedPids),
 				),
 				kickers[0],
@@ -204,7 +206,7 @@ export const makeTeams = (
 		{
 			title: "Second Team",
 			players: [
-				...slots.map(slot =>
+				...slots.map((slot) =>
 					getTopByPos(slot.players, slot.positions, usedPids),
 				),
 				kickers[1],
@@ -223,14 +225,14 @@ const getRealFinalsMvp = async (
 	const games = await idb.cache.games.getAll();
 
 	// Last game of the season will have the two finals teams
-	const finalsTids = games.at(-1)?.teams.map(t => t.tid);
+	const finalsTids = games.at(-1)?.teams.map((t) => t.tid);
 	if (finalsTids === undefined) {
 		return;
 	}
 
 	// Get all playoff games between those two teams - that will be all finals games
 	const finalsGames = games.filter(
-		game =>
+		(game) =>
 			game.playoffs &&
 			finalsTids.includes(game.teams[0].tid) &&
 			finalsTids.includes(game.teams[1].tid),
@@ -293,7 +295,7 @@ const getRealFinalsMvp = async (
 	}
 
 	const { pid } = playerArray[0];
-	const p = players.find(p2 => p2.pid === pid);
+	const p = players.find((p2) => p2.pid === pid);
 
 	if (p) {
 		return {
@@ -442,7 +444,7 @@ const doAwards = async (conditions: Conditions) => {
 	const allRookie = makeTeams(oroyPlayers, droyPlayers, true);
 	let finalsMvp;
 	const champTeam = teams.find(
-		t =>
+		(t) =>
 			t.seasonAttrs.playoffRoundsWon ===
 			g.get("numGamesPlayoffSeries", "current").length,
 	);

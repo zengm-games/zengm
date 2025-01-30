@@ -113,7 +113,7 @@ const setGameAttributes = async (
 				const popRanks = helpers.getPopRanks(teamSeasons);
 
 				for (let i = 0; i < teamSeasons.length; i++) {
-					const t = teams.find(t => t.tid === teamSeasons[i].tid);
+					const t = teams.find((t) => t.tid === teamSeasons[i].tid);
 					const popRank = popRanks[i];
 					if (popRank === undefined || t === undefined) {
 						continue;

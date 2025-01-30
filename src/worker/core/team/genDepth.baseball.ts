@@ -98,7 +98,7 @@ export const getDepthDefense = (
 
 	if (playersRemaining.length > 0) {
 		for (const scorePos of defPositions) {
-			const maxIndex = findMaxBy(playersRemaining, 1, p =>
+			const maxIndex = findMaxBy(playersRemaining, 1, (p) =>
 				score(p, scorePos),
 			)[0].index;
 
@@ -172,7 +172,7 @@ export const getDepthDefense = (
 		}
 	}
 
-	return defensivePlayersSorted.map(p => p.pid);
+	return defensivePlayersSorted.map((p) => p.pid);
 };
 
 export const getDepthPitchers = (
@@ -190,7 +190,7 @@ export const getDepthPitchers = (
 	const getTopByPos = (pos: "SP" | "RP", numToAdd: number) => {
 		const pids = [];
 		const indexes = new Set();
-		const records = findMaxBy(playersRemaining, numToAdd, p => score(p, pos));
+		const records = findMaxBy(playersRemaining, numToAdd, (p) => score(p, pos));
 		for (const record of records) {
 			pids.push(playersRemaining[record.index].pid);
 			indexes.add(record.index);
@@ -224,7 +224,7 @@ export const getDepthPitchers = (
 		}
 		return diff;
 	});
-	pitchersSorted.push(...playersRemaining.map(p => p.pid));
+	pitchersSorted.push(...playersRemaining.map((p) => p.pid));
 
 	return pitchersSorted;
 };
@@ -250,7 +250,7 @@ const genDepth = async (
 
 	// Can't use getCopies in exhibition game, and also want to ignore fuzz, so just keep these two code paths
 	if (local.exhibitionGamePlayers) {
-		players = playersRaw.map(p => {
+		players = playersRaw.map((p) => {
 			const ratings = p.ratings.at(-1)!;
 			return {
 				pid: p.pid,
@@ -287,7 +287,7 @@ const genDepth = async (
 			// than them without otherwise disturbing the order of the depth chart. This is useful for adding free agents to
 			// the user's team - start them if they're better, but otherwise don't fuck with the user's depth chart.
 			const playersNotInDepth = players.filter(
-				p => !depth[pos2].includes(p.pid),
+				(p) => !depth[pos2].includes(p.pid),
 			);
 
 			if (pos2 === "D" || pos2 === "DP") {
@@ -302,7 +302,7 @@ const genDepth = async (
 					for (let i = 0; i < defPositions.length; i++) {
 						const scorePos = defPositions[i];
 						const pScore = score(p, scorePos);
-						const p2 = players.find(p2 => p2.pid === depth[pos2][i]);
+						const p2 = players.find((p2) => p2.pid === depth[pos2][i]);
 						if (!p2 || pScore > score(p2, scorePos)) {
 							depth[pos2][i] = p.pid;
 							added = true;
@@ -325,7 +325,7 @@ const genDepth = async (
 					const pScore = score(p);
 					let added = false;
 					for (let i = defPositions.length; i < depth[pos2].length; i++) {
-						const p2 = players.find(p2 => p2.pid === depth[pos2][i]);
+						const p2 = players.find((p2) => p2.pid === depth[pos2][i]);
 
 						if (!p2 || pScore > score(p2)) {
 							depth[pos2].splice(i, 0, p.pid);
@@ -347,14 +347,14 @@ const genDepth = async (
 					// Put in starting rotation if better than existing starter
 					for (let i = 0; i < NUM_STARTERS; i++) {
 						const pScore = score(p, "SP");
-						const p2 = players.find(p2 => p2.pid === depth[pos2][i]);
+						const p2 = players.find((p2) => p2.pid === depth[pos2][i]);
 						if (!p2 || pScore > score(p2, "SP")) {
 							depth[pos2].splice(i, 0, p.pid);
 							added = true;
 
 							// Move last starter to reliever
 							const lastStarter = players.find(
-								p2 => p2.pid === depth[pos2][NUM_STARTERS],
+								(p2) => p2.pid === depth[pos2][NUM_STARTERS],
 							);
 							if (lastStarter) {
 								depth[pos2].splice(NUM_STARTERS, 1);
@@ -375,7 +375,7 @@ const genDepth = async (
 					const pScore = score(p, "RP");
 					let added = false;
 					for (let i = NUM_STARTERS; i < depth[pos2].length; i++) {
-						const p2 = players.find(p2 => p2.pid === depth[pos2][i]);
+						const p2 = players.find((p2) => p2.pid === depth[pos2][i]);
 
 						if (!p2 || pScore > score(p2, "RP")) {
 							depth[pos2].splice(i, 0, p.pid);
@@ -405,11 +405,11 @@ const genDepth = async (
 
 				const sortedStarters = orderBy(
 					starters,
-					info => lineupSort(info.p.ratings.ovrs.DH, info.p.ratings.spd),
+					(info) => lineupSort(info.p.ratings.ovrs.DH, info.p.ratings.spd),
 					"desc",
 				);
 
-				const indexes = sortedStarters.map(info => info.i);
+				const indexes = sortedStarters.map((info) => info.i);
 
 				if (pos2 === "LP") {
 					// Pitcher last

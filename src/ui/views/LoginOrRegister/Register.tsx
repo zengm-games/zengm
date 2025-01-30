@@ -108,7 +108,7 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 					}
 				}
 
-				setState(state2 => ({
+				setState((state2) => ({
 					...state2,
 					...updatedState,
 					submitting: false,
@@ -116,7 +116,7 @@ const Register = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 			}
 		} catch (error) {
 			console.error(error);
-			setState(state2 => ({
+			setState((state2) => ({
 				...state2,
 				submitting: false,
 				errorMessageOverall: ajaxErrorMsg,

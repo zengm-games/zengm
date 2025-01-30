@@ -26,7 +26,7 @@ const DraftClass = ({
 
 	const cols = getCols(["#", "Name", "Pos", "Age", "Ovr", "Pot"]);
 
-	const rows: DataTableRow[] = players.map(p => {
+	const rows: DataTableRow[] = players.map((p) => {
 		return {
 			key: p.pid,
 			metadata: {
@@ -67,7 +67,7 @@ const DraftClass = ({
 					<div className="btn-group me-auto">
 						<button
 							className="btn btn-light-bordered btn-xs"
-							onClick={() => setShowImportForm(val => !val)}
+							onClick={() => setShowImportForm((val) => !val)}
 						>
 							Import
 						</button>

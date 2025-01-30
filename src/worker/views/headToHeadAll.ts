@@ -29,7 +29,7 @@ const updateHeadToHeadAll = async (
 				type,
 				season,
 			},
-			info => {
+			(info) => {
 				let infoByTid = infoByTidByTid.get(info.tid2);
 				if (!infoByTid) {
 					infoByTid = new Map();
@@ -70,13 +70,13 @@ const updateHeadToHeadAll = async (
 				(season === currentSeason && g.get("phase") > PHASE.REGULAR_SEASON)
 			) {
 				// For old seasons, don't include teams that played no games (inactive or didn't exist yet)
-				teams = teams.filter(t => {
+				teams = teams.filter((t) => {
 					const gp = gpByTid.get(t.tid) ?? 0;
 					return gp > 0;
 				});
 			} else if (season === currentSeason) {
 				// For current season, don't include inactive teams
-				teams = teams.filter(t => !t.disabled);
+				teams = teams.filter((t) => !t.disabled);
 			}
 		}
 

@@ -23,7 +23,7 @@ const getBestDid = (
 	// If divs are uneven size, only look at the smallest one(s) as candidate divs for the expansion team.
 	// newDids is to handle multiple teams coming in at the same time - don't put them in the same div!
 	const divCounts: Record<string, number> = {};
-	for (const did of [...teams.map(t => t.did), ...newDids]) {
+	for (const did of [...teams.map((t) => t.did), ...newDids]) {
 		if (divCounts[did] === undefined) {
 			divCounts[did] = 1;
 		} else {
@@ -32,8 +32,8 @@ const getBestDid = (
 	}
 	const minDivSize = Math.min(...Object.values(divCounts));
 	const candidateDids = Object.keys(divCounts)
-		.filter(did => divCounts[did] === minDivSize)
-		.map(did => Number.parseInt(did));
+		.filter((did) => divCounts[did] === minDivSize)
+		.map((did) => Number.parseInt(did));
 	if (candidateDids.length === 0) {
 		throw new Error("Should never happen");
 	}
@@ -48,7 +48,7 @@ const getBestDid = (
 
 	// First try by team regions, since that will be more accurate
 	for (const did of didsMissingCenters) {
-		const divTeams = teams.filter(t => t.did === did && !t.disabled);
+		const divTeams = teams.filter((t) => t.did === did && !t.disabled);
 		if (divTeams.length > 0) {
 			const center: [number, number] = [0, 0];
 			let divTeamsAllHaveCoords = true;
@@ -76,7 +76,7 @@ const getBestDid = (
 	if (didsMissingCenters.size > 0) {
 		const divs = g.get("divs");
 		for (const did of didsMissingCenters) {
-			const div = divs.find(div => div.did === did);
+			const div = divs.find((div) => div.did === did);
 			if (div) {
 				const divCoords = DEFAULT_COORDS[div.name];
 				if (divCoords) {
@@ -93,7 +93,7 @@ const getBestDid = (
 			geographicCoordinates[region].latitude,
 			geographicCoordinates[region].longitude,
 		];
-		return minBy(candidateDids, did =>
+		return minBy(candidateDids, (did) =>
 			calcDistance(divCenters.get(did)!, newCenter),
 		)!;
 	}
@@ -135,10 +135,10 @@ const expandVote = async (
 		);
 		const teams = await idb.cache.teams.getAll();
 		const newDids: number[] = [];
-		const expansionTeams = teamInfos.map(t => {
+		const expansionTeams = teamInfos.map((t) => {
 			// If a disabled team has this abbrev, reuse their tid
 			const disabledTid = teams.findIndex(
-				t2 => t2.abbrev === t.abbrev && t2.disabled,
+				(t2) => t2.abbrev === t.abbrev && t2.disabled,
 			);
 			let tid;
 			if (disabledTid >= 0) {

@@ -250,7 +250,7 @@ export const breakTies = <T extends BaseTeam>(
 			for (const t2 of teams) {
 				const firstLevel = headToHead.regularSeason[t2.tid];
 				if (firstLevel) {
-					const tids = Object.keys(firstLevel).map(string =>
+					const tids = Object.keys(firstLevel).map((string) =>
 						Number.parseInt(string),
 					);
 					for (const tid2 of tids) {
@@ -494,7 +494,7 @@ export const breakTies = <T extends BaseTeam>(
 						tiebreaker,
 					},
 			...breakTies(
-				teams.filter(t2 => t2 !== t),
+				teams.filter((t2) => t2 !== t),
 				allTeams,
 				options,
 			),
@@ -638,7 +638,7 @@ const orderTeams = async <T extends BaseTeam>(
 	const numTeamsDiv = g.get("playoffsNumTeamsDiv", season);
 	if (numTeamsDiv > 0 && divisionRanks.size > 0) {
 		// ...and apply division leader boost, if necessary
-		iterees.unshift(t => {
+		iterees.unshift((t) => {
 			const rank = divisionRanks.get(t.tid);
 			if (rank === undefined || rank > numTeamsDiv) {
 				return Infinity;
@@ -666,7 +666,7 @@ const orderTeams = async <T extends BaseTeam>(
 
 	for (let i = 0; i < teamsSorted.length; i++) {
 		const t = teamsSorted[i];
-		const currentValues = iterees.map(func => func(t));
+		const currentValues = iterees.map((func) => func(t));
 
 		if (prevValues && arraysEqual(prevValues, currentValues)) {
 			if (!currentTiedGroup) {

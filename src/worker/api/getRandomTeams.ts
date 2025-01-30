@@ -52,7 +52,7 @@ const getAllRealTeamInfos = async (seasonRange: [number, number]) => {
 	// For any team with many duplicates removed, the remaining one should have a pretty high weight;
 	const infosByAbbrev: Record<string, (typeof teamInfos)[number]> = {};
 
-	return teamInfos.filter(t => {
+	return teamInfos.filter((t) => {
 		if (abbrevsSeen.has(t.abbrev)) {
 			const toAdd = [];
 			if (infosByAbbrev[t.abbrev]) {
@@ -107,7 +107,7 @@ const augmentRealTeams = async (teams: MyTeam[]) => {
 		}
 	}
 
-	return teams.map(t => output.find(t2 => t.tid === t2.tid)!);
+	return teams.map((t) => output.find((t2) => t.tid === t2.tid)!);
 };
 
 const getRandomTeams = async ({
@@ -154,7 +154,7 @@ const getRandomTeams = async ({
 		confs = gameAttributes.confs;
 		divs = gameAttributes.divs;
 		numTeamsPerDiv = divs.map(
-			div => teams.filter(t => t.did === div.did).length,
+			(div) => teams.filter((t) => t.did === div.did).length,
 		);
 	}
 
@@ -168,7 +168,7 @@ const getRandomTeams = async ({
 		allTeamInfos = await getAllRealTeamInfos(seasonRange);
 	} else {
 		allTeamInfos = getTeamInfos(
-			Object.keys(teamInfos).map(abbrev => ({
+			Object.keys(teamInfos).map((abbrev) => ({
 				tid: 0,
 				cid: 0,
 				did: 0,
@@ -179,7 +179,7 @@ const getRandomTeams = async ({
 
 	if (northAmericaOnly) {
 		allTeamInfos = allTeamInfos.filter(
-			t => !geographicCoordinates[t.region]?.outsideNorthAmerica,
+			(t) => !geographicCoordinates[t.region]?.outsideNorthAmerica,
 		);
 	}
 
@@ -187,9 +187,9 @@ const getRandomTeams = async ({
 		| ((teamInfo: { pop: number; weight?: number }) => number)
 		| undefined;
 	if (weightByPopulation) {
-		weightFunction = teamInfo => teamInfo.pop;
+		weightFunction = (teamInfo) => teamInfo.pop;
 	} else if (real) {
-		weightFunction = teamInfo => teamInfo.weight ?? 1;
+		weightFunction = (teamInfo) => teamInfo.weight ?? 1;
 	}
 
 	const teamsRemaining = new Set(allTeamInfos);
@@ -208,7 +208,7 @@ const getRandomTeams = async ({
 	}
 
 	const teamInfoCluster = selectedTeamInfos.map(
-		teamInfo =>
+		(teamInfo) =>
 			[
 				geographicCoordinates[teamInfo.region].latitude,
 				geographicCoordinates[teamInfo.region].longitude,
@@ -227,7 +227,7 @@ const getRandomTeams = async ({
 		const div = divs[i];
 
 		// Sort teams within a division by region/name so they look nicer
-		const tidsSorted = orderBy(clusters[i].pointIndexes, teamIndex => {
+		const tidsSorted = orderBy(clusters[i].pointIndexes, (teamIndex) => {
 			const teamInfo = selectedTeamInfos[teamIndex];
 			return `${teamInfo.region} ${teamInfo.name}`;
 		});

@@ -95,7 +95,7 @@ const genPlayersWithoutSaving = async (
 
 	if (!forceScrubs) {
 		// If it's mostly real players, generate scrubs
-		const numRealPlayers = existingPlayers.filter(p => p.real).length;
+		const numRealPlayers = existingPlayers.filter((p) => p.real).length;
 		forceScrubs = numRealPlayers > 0.5 * normalNumPlayers;
 	}
 

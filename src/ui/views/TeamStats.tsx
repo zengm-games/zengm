@@ -72,7 +72,7 @@ const TeamStats = ({
 	const cols = getCols(
 		[
 			...basicColNames,
-			...stats.map(stat => {
+			...stats.map((stat) => {
 				if (stat.startsWith("opp")) {
 					return `stat:${stat.charAt(3).toLowerCase()}${stat.slice(4)}`;
 				}
@@ -175,7 +175,7 @@ const TeamStats = ({
 		});
 	}
 
-	const rows = teams.map(t => {
+	const rows = teams.map((t) => {
 		const data = makeRowObject(t.stats, t.seasonAttrs);
 
 		// This is our team.

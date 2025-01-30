@@ -36,13 +36,13 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 				});
 
 				if (data.success) {
-					setState(state2 => ({
+					setState((state2) => ({
 						...state2,
 						globalMessage: undefined,
 						showForm: true,
 					}));
 				} else {
-					setState(state2 => ({
+					setState((state2) => ({
 						...state2,
 						globalMessage: (
 							<>
@@ -56,7 +56,7 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 					}));
 				}
 			} catch {
-				setState(state2 => ({
+				setState((state2) => ({
 					...state2,
 					globalMessage: <span className="text-danger">{ajaxErrorMsg}</span>,
 					showForm: false,
@@ -79,7 +79,7 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 
 		const element = document.getElementById("resetpw");
 		if (!(element instanceof HTMLFormElement)) {
-			setState(state2 => ({
+			setState((state2) => ({
 				...state2,
 				errorMessageOverall: "resetpw element not found",
 			}));

@@ -43,7 +43,7 @@ const genDepth = async (
 
 	// Can't use getCopies in exhibition game, and also want to ignore fuzz, so just keep these two code paths
 	if (local.exhibitionGamePlayers) {
-		players = playersRaw.map(p => {
+		players = playersRaw.map((p) => {
 			const ratings = p.ratings.at(-1)!;
 			return {
 				pid: p.pid,
@@ -71,7 +71,7 @@ const genDepth = async (
 			// than them without otherwise disturbing the order of the depth chart. This is useful for adding free agents to
 			// the user's team - start them if they're better, but otherwise don't fuck with the user's depth chart.
 			const playersNotInDepth = players.filter(
-				p => !depth[pos2].includes(p.pid),
+				(p) => !depth[pos2].includes(p.pid),
 			);
 
 			for (const p of playersNotInDepth) {
@@ -79,7 +79,7 @@ const genDepth = async (
 				let added = false;
 
 				for (let i = 0; i < depth[pos2].length; i++) {
-					const p2 = players.find(p3 => p3.pid === depth[pos2][i]);
+					const p2 = players.find((p3) => p3.pid === depth[pos2][i]);
 
 					if (!p2 || pScore > score(p2, pos2)) {
 						depth[pos2].splice(i, 0, p.pid);
@@ -103,7 +103,7 @@ const genDepth = async (
 				}
 				return diff;
 			});
-			depth[pos2] = players.map(p => p.pid);
+			depth[pos2] = players.map((p) => p.pid);
 		}
 	}
 

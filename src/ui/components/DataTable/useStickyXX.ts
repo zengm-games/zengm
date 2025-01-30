@@ -42,7 +42,7 @@ const useStickyXX = (
 		let rows;
 
 		// Remove left margin from the first column, which I think only matters when you're hiding the first column (like clicking "Hide bulk select players")
-		if (row && row.cells[0].style.left) {
+		if (row && row.cells[0]?.style.left) {
 			rows = getRows();
 			for (const row of rows) {
 				if (row.cells[0]) {

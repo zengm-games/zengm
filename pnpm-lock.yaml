@@ -135,8 +135,8 @@ importers:
         specifier: ^0.0.4
         version: 0.0.4
       react-bootstrap:
-        specifier: ^2.10.8
-        version: 2.10.8(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: ^2.10.9
+        version: 2.10.9(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react-confirm:
         specifier: ^0.3.0
         version: 0.3.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -211,8 +211,8 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0(@typescript-eslint/eslint-plugin@8.22.0(@typescript-eslint/parser@8.22.0(eslint@9.19.0)(typescript@5.7.3))(eslint@9.19.0)(typescript@5.7.3))(eslint@9.19.0)(typescript@5.7.3)
       '@restart/ui':
-        specifier: ^1.9.3
-        version: 1.9.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: ^1.9.4
+        version: 1.9.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@rollup/plugin-alias':
         specifier: ^5.1.1
         version: 5.1.1(rollup@4.32.1)
@@ -1366,8 +1366,8 @@ packages:
     peerDependencies:
       react: '>=16.8.0'
 
-  '@restart/ui@1.9.3':
-    resolution: {integrity: sha512-2QwCC42ISRAu7nafKeO4khG1F65Xfu2n+cwQT30Ck5bxszKDXuT2AZMDIX2auXxHRednG2ynr8ffSA1fRrkOGg==}
+  '@restart/ui@1.9.4':
+    resolution: {integrity: sha512-N4C7haUc3vn4LTwVUPlkJN8Ach/+yIMvRuTVIhjilNHqegY60SGLrzud6errOMNJwSnmYFnt1J0H/k8FE3A4KA==}
     peerDependencies:
       react: '>=16.14.0'
       react-dom: '>=16.14.0'
@@ -2652,8 +2652,8 @@ packages:
     engines: {node: '>=0.10.0'}
     hasBin: true
 
-  electron-to-chromium@1.5.88:
-    resolution: {integrity: sha512-K3C2qf1o+bGzbilTDCTBhTQcMS9KW60yTAaTeeXsfvQuTDDwlokLam/AdqlqcSy9u4UainDgsHV23ksXAOgamw==}
+  electron-to-chromium@1.5.89:
+    resolution: {integrity: sha512-okLMJSmbI+XHr8aG+wCK+VPH+d38sHMED6/q1CTsCNkqfdOZL3k2ThWnh44HL6bJKj9cabPCSVLDv9ynsIm8qg==}
 
   emoji-regex@10.4.0:
     resolution: {integrity: sha512-EC+0oUMY1Rqm4O6LLrgjtYDvcVYTy7chDnM4Q7030tP4Kwj3u/pR6gP9ygnp2CJMK5Gq+9Q2oqmrFJAz01DXjw==}
@@ -4201,8 +4201,8 @@ packages:
   react-addons-text-content@0.0.4:
     resolution: {integrity: sha512-4ZXHRIiHvtD48Qw+IZLHZWbIGYXlfx+8FlFzwHjFjTSiGY4cn1sOUWJ4w4Ai05MWdqGL4Ze0bJPyaesh870fIw==}
 
-  react-bootstrap@2.10.8:
-    resolution: {integrity: sha512-Vw1B2QfGGsrcBge0HQt8rjhnw2syFbtlPQXl/50k/bAnA4Jwi9+Bd4aYYTa68oyBB2KXMtDbGy2oMGl7eSet9A==}
+  react-bootstrap@2.10.9:
+    resolution: {integrity: sha512-TJUCuHcxdgYpOqeWmRApM/Dy0+hVsxNRFvq2aRFQuxhNi/+ivOxC5OdWIeHS3agxvzJ4Ev4nDw2ZdBl9ymd/JQ==}
     peerDependencies:
       '@types/react': '>=16.14.8'
       react: '>=16.14.0'
@@ -6395,7 +6395,7 @@ snapshots:
       dequal: 2.0.3
       react: 19.0.0
 
-  '@restart/ui@1.9.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
+  '@restart/ui@1.9.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
       '@babel/runtime': 7.26.7
       '@popperjs/core': 2.11.8
@@ -7356,7 +7356,7 @@ snapshots:
   browserslist@4.24.4:
     dependencies:
       caniuse-lite: 1.0.30001696
-      electron-to-chromium: 1.5.88
+      electron-to-chromium: 1.5.89
       node-releases: 2.0.19
       update-browserslist-db: 1.1.2(browserslist@4.24.4)
 
@@ -7831,7 +7831,7 @@ snapshots:
     dependencies:
       jake: 10.9.2
 
-  electron-to-chromium@1.5.88: {}
+  electron-to-chromium@1.5.89: {}
 
   emoji-regex@10.4.0: {}
 
@@ -9583,11 +9583,11 @@ snapshots:
 
   react-addons-text-content@0.0.4: {}
 
-  react-bootstrap@2.10.8(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  react-bootstrap@2.10.9(@types/react@19.0.8)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       '@babel/runtime': 7.26.7
       '@restart/hooks': 0.4.16(react@19.0.0)
-      '@restart/ui': 1.9.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@restart/ui': 1.9.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@types/prop-types': 15.7.14
       '@types/react-transition-group': 4.4.12(@types/react@19.0.8)
       classnames: 2.5.1

@@ -1,7 +1,8 @@
 import fs from "node:fs";
-import generateJSONSchema from "./lib/generateJSONSchema.ts";
 
 if (!fs.existsSync("build/files/league-schema.json")) {
+	const generateJSONSchema = (await import("./lib/generateJSONSchema.ts"))
+		.default;
 	const jsonSchema = generateJSONSchema("test");
 	fs.mkdirSync("build/files", { recursive: true });
 	fs.writeFileSync(

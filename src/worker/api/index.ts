@@ -1473,7 +1473,7 @@ const getExportFilename = async (type: "league" | "players") => {
 				const rnd = playoffSeries.currentRound;
 				if (rnd < 0) {
 					filename += "_Play-In";
-				} else {
+				} else if (playoffSeries.series.length > 0) {
 					filename += `_Round_${playoffSeries.currentRound + 1}`;
 
 					// Find the latest playoff series with the user's team in it

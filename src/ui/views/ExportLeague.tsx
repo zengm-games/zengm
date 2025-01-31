@@ -787,84 +787,86 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 						</div>
 					) : null}
 
-					{state === "idle" || state === "download" ? (
-						<ActionButton
-							processing={state === "download"}
-							onClick={handleSubmit("download")}
-						>
-							<span className="glyphicon glyphicon-download-alt" /> Download
-							File
-						</ActionButton>
-					) : null}
+					<div className="d-flex flex-wrap gap-2">
+						{state === "idle" || state === "download" ? (
+							<ActionButton
+								processing={state === "download"}
+								onClick={handleSubmit("download")}
+							>
+								<span className="glyphicon glyphicon-download-alt" /> Download
+								file
+							</ActionButton>
+						) : null}
 
-					{state === "idle" || state === "dropbox" ? (
-						dropboxAccessToken ? (
-							<>
-								<ActionButton
-									className={state === "idle" ? "ms-2" : undefined}
-									maintainWidth={false}
-									processing={state === "dropbox"}
-									onClick={handleSubmit("dropbox")}
-								>
-									<span className="glyphicon glyphicon-cloud-upload" /> Save to
-									Dropbox
-								</ActionButton>
-								{state === "idle" ? (
-									<button
-										className="btn btn-danger ms-2"
-										onClick={() => {
-											safeLocalStorage.removeItem("dropboxAccessToken");
-											setDropboxAccessToken(null);
-										}}
+						{state === "idle" || state === "dropbox" ? (
+							dropboxAccessToken ? (
+								<>
+									<ActionButton
+										className={state === "idle" ? "ms-2" : undefined}
+										maintainWidth={false}
+										processing={state === "dropbox"}
+										onClick={handleSubmit("dropbox")}
 									>
-										Disconnect
-									</button>
-								) : null}
-							</>
-						) : (
+										<span className="glyphicon glyphicon-cloud-upload" /> Save
+										to Dropbox
+									</ActionButton>
+									{state === "idle" ? (
+										<button
+											className="btn btn-danger"
+											onClick={() => {
+												safeLocalStorage.removeItem("dropboxAccessToken");
+												setDropboxAccessToken(null);
+											}}
+										>
+											Disconnect
+										</button>
+									) : null}
+								</>
+							) : (
+								<button
+									className="btn btn-primary"
+									onClick={async () => {
+										if (lid === undefined) {
+											return;
+										}
+
+										const { getAuthenticationUrl } = await import(
+											"../util/dropbox"
+										);
+										const url = await getAuthenticationUrl(lid);
+
+										// Remember what was checked, since local state will be lost during redirect
+										saveDefaults(checked, compressed, gzip);
+
+										window.location.href = url;
+									}}
+								>
+									<span className="glyphicon glyphicon-cloud-upload" /> Connect
+									to Dropbox
+								</button>
+							)
+						) : null}
+
+						{SUPPORTS_CANCEL && state !== "idle" ? (
 							<button
-								className="btn btn-primary ms-2"
-								onClick={async () => {
-									if (lid === undefined) {
-										return;
+								className="btn btn-secondary"
+								type="button"
+								disabled={aborting}
+								onClick={() => {
+									if (abortController.current) {
+										abortController.current.abort();
+										if (state === "dropbox") {
+											setAborting(true);
+										} else {
+											cleanupAfterStream();
+										}
 									}
-
-									const { getAuthenticationUrl } = await import(
-										"../util/dropbox"
-									);
-									const url = await getAuthenticationUrl(lid);
-
-									// Remember what was checked, since local state will be lost during redirect
-									saveDefaults(checked, compressed, gzip);
-
-									window.location.href = url;
 								}}
 							>
-								<span className="glyphicon glyphicon-cloud-upload" /> Connect to
-								Dropbox
+								Cancel
 							</button>
-						)
-					) : null}
-
-					{SUPPORTS_CANCEL && state !== "idle" ? (
-						<button
-							className="btn btn-secondary ms-2"
-							type="button"
-							disabled={aborting}
-							onClick={() => {
-								if (abortController.current) {
-									abortController.current.abort();
-									if (state === "dropbox") {
-										setAborting(true);
-									} else {
-										cleanupAfterStream();
-									}
-								}
-							}}
-						>
-							Cancel
-						</button>
-					) : null}
+						) : null}
+					</div>
 
 					{percentDone >= 0 ? (
 						<ProgressBarText

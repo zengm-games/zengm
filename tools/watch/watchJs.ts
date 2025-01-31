@@ -1,4 +1,3 @@
-import path from "node:path";
 import { Worker } from "node:worker_threads";
 
 export const watchJs = (
@@ -9,14 +8,11 @@ export const watchJs = (
 	for (const name of ["ui", "worker"]) {
 		const filename = `build/gen/${name}.js`;
 
-		const worker = new Worker(
-			path.join(import.meta.dirname, "watchJsWorker.ts"),
-			{
-				workerData: {
-					name,
-				},
+		const worker = new Worker(new URL("watchJsWorker.ts", import.meta.url), {
+			workerData: {
+				name,
 			},
-		);
+		});
 
 		worker.on("message", (message) => {
 			if (message.type === "start") {

@@ -1,4 +1,3 @@
-import path from "node:path";
 import { Worker } from "node:worker_threads";
 
 // This import is needed for https://github.com/parcel-bundler/lightningcss/issues/892
@@ -9,9 +8,7 @@ export const watchCss = async (
 	updateEnd: (filename: string) => void,
 	updateError: (filename: string, error: Error) => void,
 ) => {
-	const worker = new Worker(
-		path.join(import.meta.dirname, "watchCssWorker.ts"),
-	);
+	const worker = new Worker(new URL("watchCssWorker.ts", import.meta.url));
 
 	worker.on("message", (message) => {
 		if (message.type === "start") {

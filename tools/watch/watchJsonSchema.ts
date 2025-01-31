@@ -8,7 +8,7 @@ const importFresh = async (modulePath: string) => {
 	return await import(cacheBustingModulePath);
 };
 
-const watchJSONSchema = async (
+export const watchJsonSchema = async (
 	updateStart: (filename: string) => void,
 	updateEnd: (filename: string) => void,
 	updateError: (filename: string, error: Error) => void,
@@ -25,7 +25,7 @@ const watchJSONSchema = async (
 
 			// Dynamically reload generateJsonSchema, cause that's what we're watching!
 			const { generateJsonSchema } = await importFresh(
-				"../lib/generateJsonSchema.ts",
+				"../build/generateJsonSchema.ts",
 			);
 
 			const jsonSchema = generateJsonSchema(sport);
@@ -40,10 +40,8 @@ const watchJSONSchema = async (
 
 	await buildJSONSchema();
 
-	const watcher = watch("tools/lib/generateJsonSchema.ts", {});
+	const watcher = watch("tools/build/generateJsonSchema.ts", {});
 	watcher.on("change", buildJSONSchema);
 };
 
-// watchJSONSchema((filename) => console.log('updateStart', filename), (filename) => console.log('updateEnd', filename), (filename, error) => console.log('updateError', filename, error));
-
-export default watchJSONSchema;
+// watchJsonSchema((filename) => console.log('updateStart', filename), (filename) => console.log('updateEnd', filename), (filename, error) => console.log('updateError', filename, error));

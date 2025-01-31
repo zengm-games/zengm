@@ -1,4 +1,4 @@
-import deploy from "./lib/deploy.ts";
+import { deploy } from "./lib/deploy.ts";
 
 const sports = ["basketball", "football", "baseball", "hockey"] as const;
 

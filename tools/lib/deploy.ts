@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process";
 import Cloudflare from "cloudflare";
 import { readFile } from "node:fs/promises";
-import build from "./build.ts";
+import { build } from "../build/build.ts";
 import { bySport } from "./bySport.ts";
 import { getSport } from "./getSport.ts";
 
@@ -39,7 +39,7 @@ const mySpawn = (command: string, args: string[]) => {
 	});
 };
 
-const deploy = async () => {
+export const deploy = async () => {
 	const cloudflareConfig = JSON.parse(
 		await readFile(
 			new URL("../../../../.config/cloudflare.json", import.meta.url),
@@ -130,5 +130,3 @@ const deploy = async () => {
 
 	console.log("\nDone!");
 };
-
-export default deploy;

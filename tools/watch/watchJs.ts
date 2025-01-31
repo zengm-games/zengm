@@ -1,7 +1,7 @@
 import path from "node:path";
 import { Worker } from "node:worker_threads";
 
-const watchJS = (
+export const watchJs = (
 	updateStart: (filename: string) => void,
 	updateEnd: (filename: string) => void,
 	updateError: (filename: string, error: Error) => void,
@@ -10,7 +10,7 @@ const watchJS = (
 		const filename = `build/gen/${name}.js`;
 
 		const worker = new Worker(
-			path.join(import.meta.dirname, "watchJSWorker.ts"),
+			path.join(import.meta.dirname, "watchJsWorker.ts"),
 			{
 				workerData: {
 					name,
@@ -32,6 +32,4 @@ const watchJS = (
 	}
 };
 
-// watchJS((filename) => console.log('updateStart', filename), (filename) => console.log('updateEnd', filename), (filename, error) => console.log('updateError', filename, error));
-
-export default watchJS;
+// watchJs((filename) => console.log('updateStart', filename), (filename) => console.log('updateEnd', filename), (filename, error) => console.log('updateError', filename, error));

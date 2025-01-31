@@ -1,3 +1,3 @@
-import deploy from "./lib/deploy.ts";
+import { deploy } from "./lib/deploy.ts";
 
 await deploy();

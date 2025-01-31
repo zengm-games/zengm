@@ -1,9 +1,9 @@
 import { statSync } from "node:fs";
 import { spinners } from "./spinners.ts";
-import watchCSS from "./watchCSS.ts";
-import watchFiles from "./watchFiles.ts";
-import watchJS from "./watchJS.ts";
-import watchJSONSchema from "./watchJSONSchema.ts";
+import { watchCss } from "./watchCss.ts";
+import { watchFiles } from "./watchFiles.ts";
+import { watchJs } from "./watchJs.ts";
+import { watchJsonSchema } from "./watchJsonSchema.ts";
 import { startServer } from "../lib/server.ts";
 
 const param = process.argv[2];
@@ -50,9 +50,9 @@ const updateError = (filename: string, error: Error) => {
 // Needs to run first, to create output folder
 await watchFiles(updateStart, updateEnd, updateError);
 
-// Schema is needed for JS bunlde, and watchJSONSchema is async
-watchJSONSchema(updateStart, updateEnd, updateError).then(() => {
-	watchJS(updateStart, updateEnd, updateError);
+// Schema is needed for JS bunlde, and watchJsonSchema is async
+watchJsonSchema(updateStart, updateEnd, updateError).then(() => {
+	watchJs(updateStart, updateEnd, updateError);
 });
 
-watchCSS(updateStart, updateEnd, updateError);
+watchCss(updateStart, updateEnd, updateError);

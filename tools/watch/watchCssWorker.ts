@@ -1,6 +1,6 @@
 import { watch } from "chokidar";
 import { parentPort } from "node:worker_threads";
-import { buildCss } from "../lib/buildCss.ts";
+import { buildCss } from "../build/buildCss.ts";
 
 const filenames = ["build/gen/light.css", "build/gen/dark.css"];
 

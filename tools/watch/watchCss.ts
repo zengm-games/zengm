@@ -1,13 +1,13 @@
 import path from "node:path";
 import { Worker } from "node:worker_threads";
 
-const watchCSS = async (
+export const watchCss = async (
 	updateStart: (filename: string) => void,
 	updateEnd: (filename: string) => void,
 	updateError: (filename: string, error: Error) => void,
 ) => {
 	const worker = new Worker(
-		path.join(import.meta.dirname, "watchCSSWorker.ts"),
+		path.join(import.meta.dirname, "watchCssWorker.ts"),
 	);
 
 	worker.on("message", (message) => {
@@ -22,5 +22,3 @@ const watchCSS = async (
 		}
 	});
 };
-
-export default watchCSS;

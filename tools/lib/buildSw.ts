@@ -5,18 +5,18 @@ import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
 import { rollup } from "rollup";
 import workboxBuild from "workbox-build";
-import { replace as replace2 } from "./buildFuncs.ts";
+import { replace as replace2 } from "./replace.ts";
 
-const getRev = () => {
+const getVersionNumber = () => {
 	const files = fs.readdirSync("build/gen");
 	for (const file of files) {
 		if (file.endsWith(".js")) {
-			const rev = file.split("-")[1].replace(".js", "");
-			return rev;
+			const versionNumber = file.split("-")[1].replace(".js", "");
+			return versionNumber;
 		}
 	}
 
-	throw new Error("rev not found");
+	throw new Error("versionNumber not found");
 };
 
 // NOTE: This should be run *AFTER* all assets are built
@@ -80,20 +80,18 @@ const bundle = async () => {
 	});
 };
 
-const buildSW = async () => {
+export const buildSw = async () => {
 	await injectManifest();
 	await bundle();
 
-	const rev = getRev();
+	const versionNumber = getVersionNumber();
 	replace2({
 		paths: ["build/sw.js"],
 		replaces: [
 			{
 				searchValue: "REV_GOES_HERE",
-				replaceValue: rev,
+				replaceValue: versionNumber,
 			},
 		],
 	});
 };
-
-export default buildSW;

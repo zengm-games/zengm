@@ -1,11 +1,14 @@
 import fs from "node:fs";
-import { fileHash, genRev, replace, setTimestamps } from "./buildFuncs.ts";
 import { Worker } from "node:worker_threads";
+import { fileHash } from "./fileHash.ts";
+import { generateVersionNumber } from "./generateVersionNumber.ts";
+import { replace } from "./replace.ts";
+import { setTimestamps } from "./setTimestamps.ts";
 
-const rev = genRev();
-console.log(rev);
+const versionNumber = generateVersionNumber();
+console.log(versionNumber);
 
-const buildJS = async () => {
+export const buildJs = async () => {
 	const promises = [];
 	for (const name of ["ui", "worker"]) {
 		for (const legacy of [false, true]) {
@@ -17,7 +20,7 @@ const buildJS = async () => {
 							workerData: {
 								legacy,
 								name,
-								rev,
+								rev: versionNumber,
 							},
 						},
 					);
@@ -46,7 +49,7 @@ const buildJS = async () => {
 		],
 	});
 
-	setTimestamps(rev);
+	setTimestamps(versionNumber);
 
 	const jsonFiles = [
 		"names",
@@ -73,9 +76,10 @@ const buildJS = async () => {
 		}
 	}
 	replace({
-		paths: [`build/gen/worker-legacy-${rev}.js`, `build/gen/worker-${rev}.js`],
+		paths: [
+			`build/gen/worker-legacy-${versionNumber}.js`,
+			`build/gen/worker-${versionNumber}.js`,
+		],
 		replaces,
 	});
 };
-
-export default buildJS;

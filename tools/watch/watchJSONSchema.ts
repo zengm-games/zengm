@@ -1,11 +1,11 @@
 import { watch } from "chokidar";
 import fs from "node:fs";
-import { getSport } from "../lib/buildFuncs.ts";
+import { getSport } from "../lib/getSport.ts";
 
 // https://ar.al/2021/02/22/cache-busting-in-node.js-dynamic-esm-imports/
 const importFresh = async (modulePath: string) => {
 	const cacheBustingModulePath = `${modulePath}?update=${Date.now()}`;
-	return (await import(cacheBustingModulePath)).default;
+	return await import(cacheBustingModulePath);
 };
 
 const watchJSONSchema = async (
@@ -23,12 +23,12 @@ const watchJSONSchema = async (
 		try {
 			updateStart(outFilename);
 
-			// Dynamically reload generateJSONSchema, cause that's what we're watching!
-			const generateJSONSchema = await importFresh(
-				"../lib/generateJSONSchema.ts",
+			// Dynamically reload generateJsonSchema, cause that's what we're watching!
+			const { generateJsonSchema } = await importFresh(
+				"../lib/generateJsonSchema.ts",
 			);
 
-			const jsonSchema = generateJSONSchema(sport);
+			const jsonSchema = generateJsonSchema(sport);
 			const output = JSON.stringify(jsonSchema, null, 2);
 			fs.writeFileSync(outFilename, output);
 
@@ -40,7 +40,7 @@ const watchJSONSchema = async (
 
 	await buildJSONSchema();
 
-	const watcher = watch("tools/lib/generateJSONSchema.ts", {});
+	const watcher = watch("tools/lib/generateJsonSchema.ts", {});
 	watcher.on("change", buildJSONSchema);
 };
 

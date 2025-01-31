@@ -4,7 +4,7 @@ import babel from "@babel/core";
 import babelPluginSyntaxTypescript from "@babel/plugin-syntax-typescript";
 // @ts-expect-error
 import { babelPluginSportFunctions } from "../babel-plugin-sport-functions/index.js";
-import { getSport } from "./buildFuncs.ts";
+import { getSport } from "./getSport.ts";
 
 // Result is undefined if no match, meaning just do normal stuff
 type BabelCacheResult =

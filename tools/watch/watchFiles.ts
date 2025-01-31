@@ -1,5 +1,8 @@
 import { watch } from "chokidar";
-import { copyFiles, genRev, reset, setTimestamps } from "../lib/buildFuncs.ts";
+import { copyFiles } from "../lib/copyFiles.ts";
+import { generateVersionNumber } from "../lib/generateVersionNumber.ts";
+import { reset } from "../lib/reset.ts";
+import { setTimestamps } from "../lib/setTimestamps.ts";
 
 // Would be better to only copy individual files on update, but this is fast enough
 
@@ -16,8 +19,8 @@ const watchFiles = async (
 
 			await copyFiles(true);
 
-			const rev = genRev();
-			setTimestamps(rev, true);
+			const versionNumber = generateVersionNumber();
+			setTimestamps(versionNumber, true);
 			//minifyIndexHTML();
 
 			updateEnd(outFilename);

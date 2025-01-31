@@ -2,7 +2,8 @@ import { spawn } from "node:child_process";
 import Cloudflare from "cloudflare";
 import { readFile } from "node:fs/promises";
 import build from "./build.ts";
-import { bySport, getSport } from "./buildFuncs.ts";
+import { bySport } from "./bySport.ts";
+import { getSport } from "./getSport.ts";
 
 const getSubdomain = () => {
 	const inputSubdomain = process.argv[2];

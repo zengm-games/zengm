@@ -1,4 +1,4 @@
-import { bySport } from "./buildFuncs.ts";
+import { bySport } from "./bySport.ts";
 
 const genRatings = (sport: string) => {
 	const properties: any = {
@@ -152,7 +152,7 @@ const wrap = (child: any) => ({
 	],
 });
 
-const generateJSONSchema = (sport: string) => {
+export const generateJsonSchema = (sport: string) => {
 	if (sport === "test") {
 		return {
 			$schema: "http://json-schema.org/draft-07/schema#",
@@ -2720,5 +2720,3 @@ const generateJSONSchema = (sport: string) => {
 		},
 	};
 };
-
-export default generateJSONSchema;

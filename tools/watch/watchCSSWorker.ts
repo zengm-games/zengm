@@ -1,10 +1,10 @@
 import { watch } from "chokidar";
 import { parentPort } from "node:worker_threads";
-import { buildCSS } from "../lib/buildFuncs.ts";
+import { buildCss } from "../lib/buildCss.ts";
 
 const filenames = ["build/gen/light.css", "build/gen/dark.css"];
 
-const myBuildCSS = async () => {
+const mybuildCss = async () => {
 	for (const filename of filenames) {
 		parentPort!.postMessage({
 			type: "start",
@@ -13,7 +13,7 @@ const myBuildCSS = async () => {
 	}
 
 	try {
-		await buildCSS(true);
+		await buildCss(true);
 		for (const filename of filenames) {
 			parentPort!.postMessage({
 				type: "end",
@@ -31,7 +31,7 @@ const myBuildCSS = async () => {
 	}
 };
 
-await myBuildCSS();
+await mybuildCss();
 
 const watcher = watch("public/css", {});
-watcher.on("change", myBuildCSS);
+watcher.on("change", mybuildCss);

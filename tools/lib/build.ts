@@ -1,14 +1,12 @@
 import fs from "node:fs/promises";
-import {
-	buildCSS,
-	copyFiles,
-	getSport,
-	minifyIndexHTML,
-	reset,
-} from "./buildFuncs.ts";
-import generateJSONSchema from "./generateJSONSchema.ts";
-import buildJS from "./build-js.ts";
-import buildSW from "./build-sw.ts";
+import { buildCss } from "./buildCss.ts";
+import { buildJs } from "./buildJs.ts";
+import { buildSw } from "./buildSw.ts";
+import { copyFiles } from "./copyFiles.ts";
+import { generateJsonSchema } from "./generateJsonSchema.ts";
+import { getSport } from "./getSport.ts";
+import { minifyIndexHtml } from "./minifyIndexHtml.ts";
+import { reset } from "./reset.ts";
 
 export default async () => {
 	const sport = getSport();
@@ -18,7 +16,7 @@ export default async () => {
 	await reset();
 	await copyFiles();
 
-	const jsonSchema = generateJSONSchema(sport);
+	const jsonSchema = generateJsonSchema(sport);
 	await fs.mkdir("build/files", { recursive: true });
 	await fs.writeFile(
 		"build/files/league-schema.json",
@@ -26,12 +24,12 @@ export default async () => {
 	);
 
 	console.log("Bundling JavaScript files...");
-	await buildJS();
+	await buildJs();
 
 	console.log("Processing CSS/HTML files...");
-	await buildCSS();
-	await minifyIndexHTML();
+	await buildCss();
+	await minifyIndexHtml();
 
 	console.log("Generating sw.js...");
-	await buildSW();
+	await buildSw();
 };

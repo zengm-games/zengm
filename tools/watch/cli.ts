@@ -50,9 +50,9 @@ const updateError = (filename: string, error: Error) => {
 // Needs to run first, to create output folder
 await watchFiles(updateStart, updateEnd, updateError);
 
-// Schema is needed for JS bunlde, and watchJsonSchema is async
-watchJsonSchema(updateStart, updateEnd, updateError).then(() => {
-	watchJs(updateStart, updateEnd, updateError);
-});
-
 watchCss(updateStart, updateEnd, updateError);
+
+// Schema is needed for JS bunlde, and watchJsonSchema is async
+await watchJsonSchema(updateStart, updateEnd, updateError);
+
+watchJs(updateStart, updateEnd, updateError);

@@ -1,6 +1,9 @@
 import path from "node:path";
 import { Worker } from "node:worker_threads";
 
+// This import is needed for https://github.com/parcel-bundler/lightningcss/issues/892
+import "lightningcss";
+
 export const watchCss = async (
 	updateStart: (filename: string) => void,
 	updateEnd: (filename: string) => void,

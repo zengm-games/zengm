@@ -33,7 +33,7 @@ export type Action =
 			team: State["teams"][number];
 	  };
 
-const reducer = (state: State, action: Action) => {
+const reducer = (state: State, action: Action): State => {
 	switch (action.type) {
 		case "startSaving":
 			return {

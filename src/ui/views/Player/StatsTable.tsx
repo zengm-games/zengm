@@ -51,7 +51,7 @@ export const StatsTable = ({
 				? p.careerStatsPlayoffs
 				: p.careerStats;
 
-	const rangeFooter = useRangeFooter({ playerStats });
+	const rangeFooter = useRangeFooter(p.pid, playerStats);
 
 	if (!hasRegularSeasonStats && !hasPlayoffStats) {
 		return null;
@@ -126,8 +126,62 @@ export const StatsTable = ({
 			],
 		];
 
-		if (rangeFooter.state === "open") {
-			footer.push([]);
+		const rangeFooterState = rangeFooter.state;
+		if (
+			rangeFooterState.type === "open" ||
+			rangeFooterState.type === "loading" ||
+			rangeFooterState.type === "error"
+		) {
+			const rangeStatsValues: any[] = ([0, 1] as const).map((i) => {
+				return (
+					<select
+						key={i}
+						className="form-select form-select-sm"
+						value={rangeFooterState.seasonRange[i]}
+						disabled={rangeFooterState.type === "loading"}
+						onChange={(event) => {
+							const value = Number.parseInt(event.target.value);
+							const newSeasonRange: [number, number] = [
+								...rangeFooterState.seasonRange,
+							];
+							newSeasonRange[i] = value;
+
+							if (i === 0 && newSeasonRange[1] < newSeasonRange[0]) {
+								newSeasonRange[1] = newSeasonRange[0];
+							} else if (i === 1 && newSeasonRange[1] < newSeasonRange[0]) {
+								newSeasonRange[0] = newSeasonRange[1];
+							}
+
+							rangeFooter.setSeasonRange(newSeasonRange);
+						}}
+					>
+						{rangeFooterState.seasons.map((season) => (
+							<option key={season} value={season}>
+								{season}
+							</option>
+						))}
+					</select>
+				);
+			});
+			if (
+				(rangeFooterState.type === "open" ||
+					rangeFooterState.type === "loading") &&
+				rangeFooterState.p
+			) {
+				const rangeStats =
+					playoffs === "combined"
+						? rangeFooterState.p.careerStatsCombined
+						: playoffs
+							? rangeFooterState.p.careerStatsPlayoffs
+							: rangeFooterState.p.careerStats;
+
+				rangeStatsValues.push(
+					null,
+					...stats.map((stat) => formatStatGameHigh(rangeStats, stat)),
+				);
+			}
+
+			footer.push(rangeStatsValues);
 		}
 	}
 
@@ -236,7 +290,7 @@ export const StatsTable = ({
 			description={hasLeader ? highlightLeaderText : null}
 		>
 			<DataTable
-				classNameWrapper={rangeFooter.state === "closed" ? "mb-2" : "mb-3"}
+				classNameWrapper={rangeFooter.state.type === "closed" ? "mb-2" : "mb-3"}
 				cols={cols}
 				defaultSort={[0, "asc"]}
 				defaultStickyCols={2}
@@ -295,12 +349,10 @@ export const StatsTable = ({
 					</ul>
 				}
 			/>
-			{rangeFooter.state === "closed" ? (
+			{rangeFooter.state.type === "closed" ? (
 				<button
 					className="btn btn-sm btn-secondary mb-3"
-					onClick={() => {
-						rangeFooter.setState("open");
-					}}
+					onClick={rangeFooter.onOpen}
 				>
 					Select season range
 				</button>

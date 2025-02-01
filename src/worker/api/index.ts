@@ -140,6 +140,7 @@ import formatScoreWithShootout from "../../common/formatScoreWithShootout";
 import { getStats } from "../../common/advancedPlayerSearch";
 import type { LookingFor } from "../core/trade/makeItWork";
 import type { LookingForState } from "../../ui/views/TradingBlock/useLookingForState";
+import { getPlayer } from "../views/player";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1786,6 +1787,35 @@ const getLocal = async (name: keyof Local) => {
 };
 
 const getPlayerBioInfoDefaults = initDefaults;
+
+const getPlayerRangeFooterStats = async ({
+	pid,
+	seasonRange,
+}: {
+	pid: number;
+	seasonRange: [number, number];
+}) => {
+	const pRaw = await idb.getCopy.players(
+		{
+			pid,
+		},
+		"noCopyCache",
+	);
+	if (!pRaw) {
+		return;
+	}
+
+	const p = await getPlayer(pRaw, seasonRange);
+
+	if (p) {
+		// Would be nice to only return the one we need, but returning them all means tab changes are free
+		return {
+			careerStatsCombined: p.careerStatsCombined,
+			careerStatsPlayoffs: p.careerStatsPlayoffs,
+			careerStats: p.careerStats,
+		};
+	}
+};
 
 const getPlayerWatch = async (pid: number) => {
 	if (Number.isNaN(pid)) {
@@ -4714,6 +4744,7 @@ export default {
 		getPlayersCommandPalette,
 		getLocal,
 		getPlayerBioInfoDefaults,
+		getPlayerRangeFooterStats,
 		getPlayerWatch,
 		getProjectedAttendance,
 		getRandomCollege,

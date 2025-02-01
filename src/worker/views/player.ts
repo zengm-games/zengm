@@ -77,39 +77,10 @@ export const getPlayerProfileStats = () => {
 	return Array.from(new Set(stats));
 };
 
-export const getCommon = async (pid?: number, season?: number) => {
-	if (pid === undefined) {
-		// https://stackoverflow.com/a/59923262/786644
-		const returnValue = {
-			type: "error" as const,
-			errorMessage: "Player not found.",
-		};
-		return returnValue;
-	}
-
-	const statSummary = Object.values(PLAYER_SUMMARY);
-
-	const statTables = Object.values(PLAYER_STATS_TABLES);
-	const stats = getPlayerProfileStats();
-
-	const pRaw = await idb.getCopy.players(
-		{
-			pid,
-		},
-		"noCopyCache",
-	);
-
-	if (!pRaw) {
-		// https://stackoverflow.com/a/59923262/786644
-		const returnValue = {
-			type: "error" as const,
-			errorMessage: "Player not found.",
-		};
-		return returnValue;
-	}
-
-	await face.upgrade(pRaw);
-
+export const getPlayer = async (
+	pRaw: Player,
+	seasonRange?: [number, number],
+) => {
 	type Stats = {
 		season: number;
 		tid: number;
@@ -118,6 +89,8 @@ export const getCommon = async (pid?: number, season?: number) => {
 		playoffs: boolean;
 		jerseyNumber: string;
 	} & Record<string, number>;
+
+	const stats = getPlayerProfileStats();
 
 	const p:
 		| (Pick<
@@ -215,7 +188,54 @@ export const getCommon = async (pid?: number, season?: number) => {
 		showRookies: true,
 		fuzz: true,
 		mergeStats: "totAndTeams",
+		seasonRange,
 	});
+
+	if (!p) {
+		return;
+	}
+
+	await fixRatingsStatsAbbrevs(p);
+
+	// Filter out rows with no games played
+	p.stats = p.stats.filter((row) => row.gp > 0);
+
+	return p;
+};
+
+export const getCommon = async (pid?: number, season?: number) => {
+	if (pid === undefined) {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
+			type: "error" as const,
+			errorMessage: "Player not found.",
+		};
+		return returnValue;
+	}
+
+	const pRaw = await idb.getCopy.players(
+		{
+			pid,
+		},
+		"noCopyCache",
+	);
+
+	if (!pRaw) {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
+			type: "error" as const,
+			errorMessage: "Player not found.",
+		};
+		return returnValue;
+	}
+
+	await face.upgrade(pRaw);
+
+	const statSummary = Object.values(PLAYER_SUMMARY);
+
+	const statTables = Object.values(PLAYER_STATS_TABLES);
+
+	const p = await getPlayer(pRaw);
 
 	if (!p) {
 		// https://stackoverflow.com/a/59923262/786644
@@ -225,11 +245,6 @@ export const getCommon = async (pid?: number, season?: number) => {
 		};
 		return returnValue;
 	}
-
-	await fixRatingsStatsAbbrevs(p);
-
-	// Filter out rows with no games played
-	p.stats = p.stats.filter((row) => row.gp > 0);
 
 	const userTid = g.get("userTid");
 

@@ -1,8 +1,7 @@
 import { deploy } from "./lib/deploy.ts";
+import { SPORTS } from "./lib/getSport.ts";
 
-const sports = ["basketball", "football", "baseball", "hockey"] as const;
-
-for (const sport of sports) {
+for (const sport of SPORTS) {
 	process.env.SPORT = sport;
 	await deploy();
 }

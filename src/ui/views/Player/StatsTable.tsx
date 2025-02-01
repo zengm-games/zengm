@@ -140,35 +140,38 @@ export const StatsTable = ({
 			rangeFooterState.type === "error"
 		) {
 			const rangeStatsValues: any[] = ([0, 1] as const).map((i) => {
-				return (
-					<select
-						key={i}
-						className="form-select form-select-sm"
-						value={rangeFooterState.seasonRange[i]}
-						disabled={rangeFooterState.type === "loading"}
-						onChange={(event) => {
-							const value = Number.parseInt(event.target.value);
-							const newSeasonRange: [number, number] = [
-								...rangeFooterState.seasonRange,
-							];
-							newSeasonRange[i] = value;
+				return {
+					classNames: "p-0",
+					value: (
+						<select
+							key={i}
+							className="form-select form-select-sm"
+							value={rangeFooterState.seasonRange[i]}
+							disabled={rangeFooterState.type === "loading"}
+							onChange={(event) => {
+								const value = Number.parseInt(event.target.value);
+								const newSeasonRange: [number, number] = [
+									...rangeFooterState.seasonRange,
+								];
+								newSeasonRange[i] = value;
 
-							if (i === 0 && newSeasonRange[1] < newSeasonRange[0]) {
-								newSeasonRange[1] = newSeasonRange[0];
-							} else if (i === 1 && newSeasonRange[1] < newSeasonRange[0]) {
-								newSeasonRange[0] = newSeasonRange[1];
-							}
+								if (i === 0 && newSeasonRange[1] < newSeasonRange[0]) {
+									newSeasonRange[1] = newSeasonRange[0];
+								} else if (i === 1 && newSeasonRange[1] < newSeasonRange[0]) {
+									newSeasonRange[0] = newSeasonRange[1];
+								}
 
-							rangeFooter.setSeasonRange(newSeasonRange);
-						}}
-					>
-						{rangeFooterState.seasons.map((season) => (
-							<option key={season} value={season}>
-								{season}
-							</option>
-						))}
-					</select>
-				);
+								rangeFooter.setSeasonRange(newSeasonRange);
+							}}
+						>
+							{rangeFooterState.seasons.map((season) => (
+								<option key={season} value={season}>
+									{season}
+								</option>
+							))}
+						</select>
+					),
+				};
 			});
 			if (
 				(rangeFooterState.type === "open" ||

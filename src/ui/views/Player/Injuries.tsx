@@ -67,13 +67,15 @@ const Injuries = ({
 					],
 				};
 			})}
-			footer={[
-				"Total",
-				null,
-				totals.games,
-				showRatings ? totals.ovrDrop : null,
-				showRatings ? totals.potDrop : null,
-			]}
+			footer={{
+				data: [
+					"Total",
+					null,
+					totals.games,
+					showRatings ? totals.ovrDrop : null,
+					showRatings ? totals.potDrop : null,
+				],
+			}}
 		/>
 	);
 };

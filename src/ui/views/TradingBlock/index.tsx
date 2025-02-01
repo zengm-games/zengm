@@ -24,6 +24,7 @@ import useTradeOffersSwitch from "../../hooks/useTradeOffersSwitch";
 import LookingFor from "./LookingFor";
 import useLookingForState from "./useLookingForState";
 import { Dropdown, SplitButton } from "react-bootstrap";
+import type { FooterRow } from "../../components/DataTable/Footer";
 
 export type OfferType = Awaited<
 	ReturnType<(typeof api)["main"]["getTradingBlockOffers"]>
@@ -105,9 +106,9 @@ const OfferPlayers = ({
 			};
 		});
 
-		let footer;
+		let footer: FooterRow | undefined;
 		if (sumContracts !== 0 && players.length > 1) {
-			footer = [];
+			footer = { data: [] };
 			// Total text is too distracting, and it's usually a small number of players
 			/*footer[0] = (
 				<div className="text-end">
@@ -115,7 +116,7 @@ const OfferPlayers = ({
 					)
 				</div>
 			);*/
-			footer[5] = helpers.formatCurrency(sumContracts, "M");
+			footer.data[5] = helpers.formatCurrency(sumContracts, "M");
 		}
 
 		return (
@@ -668,13 +669,13 @@ const TradingBlock = ({
 		}
 	}
 
-	const footer = [];
-	footer[1] = (
+	const footer: FooterRow = { data: [] };
+	footer.data[1] = (
 		<div className="text-end">
 			Total ({state.pids.length} {helpers.plural("player", state.pids.length)})
 		</div>
 	);
-	footer[6] = helpers.formatCurrency(sumContracts, "M");
+	footer.data[6] = helpers.formatCurrency(sumContracts, "M");
 
 	const cols = getCols(
 		[

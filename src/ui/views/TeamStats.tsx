@@ -230,11 +230,13 @@ const TeamStats = ({
 			isSport("baseball") &&
 			(teamOpponent === "fielding" || teamOpponent === "oppFielding")
 		)
-			? [
-					null,
-					"Avg",
-					...Object.values(makeRowObject(averages as any, averages as any)),
-				]
+			? {
+					data: [
+						null,
+						"Avg",
+						...Object.values(makeRowObject(averages as any, averages as any)),
+					],
+				}
 			: undefined;
 
 	return (

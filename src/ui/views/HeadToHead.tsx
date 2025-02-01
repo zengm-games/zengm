@@ -94,7 +94,9 @@ const HeadToHead = ({
 		};
 	});
 
-	const footer = ["Total", ...makeRow(totals)];
+	const footer = {
+		data: ["Total", ...makeRow(totals)],
+	};
 
 	return (
 		<>

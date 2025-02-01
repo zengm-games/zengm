@@ -106,24 +106,28 @@ export const StatsTable = ({
 			stats,
 		});
 
-		footer = expandFieldingStats({
-			rows: [careerStats],
-			stats,
-			addDummyPosIndex: true,
-		}).map((object, i) => [
-			i === 0 ? "Career" : null,
-			null,
-			null,
-			...stats.map((stat) => formatStatGameHigh(object, stat)),
-		]);
+		footer = {
+			data: expandFieldingStats({
+				rows: [careerStats],
+				stats,
+				addDummyPosIndex: true,
+			}).map((object, i) => [
+				i === 0 ? "Career" : null,
+				null,
+				null,
+				...stats.map((stat) => formatStatGameHigh(object, stat)),
+			]),
+		};
 	} else {
 		footer = [
-			[
-				"Career",
-				null,
-				null,
-				...stats.map((stat) => formatStatGameHigh(careerStats, stat)),
-			],
+			{
+				data: [
+					"Career",
+					null,
+					null,
+					...stats.map((stat) => formatStatGameHigh(careerStats, stat)),
+				],
+			},
 		];
 
 		const rangeFooterState = rangeFooter.state;
@@ -181,7 +185,7 @@ export const StatsTable = ({
 				);
 			}
 
-			footer.push(rangeStatsValues);
+			footer.push({ data: rangeStatsValues });
 		}
 	}
 

@@ -9,7 +9,7 @@ import {
 } from "react";
 import Controls from "./Controls";
 import CustomizeColumns from "./CustomizeColumns";
-import Footer from "./Footer";
+import Footer, { type FooterRow } from "./Footer";
 import Header from "./Header";
 import Info from "./Info";
 import Row from "./Row";
@@ -110,7 +110,7 @@ export type Props = {
 	disableSettingsCache?: boolean;
 	defaultStickyCols?: StickyCols;
 	extraBulkActions?: BulkAction[];
-	footer?: any[];
+	footer?: FooterRow | FooterRow[];
 	hideAllControls?: boolean; // When ReactNode, display as a title above the table
 	hideHeader?: boolean;
 	hideMenuToo?: boolean;

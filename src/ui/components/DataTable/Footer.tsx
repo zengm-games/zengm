@@ -2,13 +2,17 @@ import clsx, { type ClassValue } from "clsx";
 import { use, type ReactNode } from "react";
 import { DataTableContext } from "./contexts";
 
-type FooterElement = (
+type FooterElement =
 	| ReactNode
 	| {
 			value: ReactNode;
 			classNames?: ClassValue;
-	  }
-)[];
+	  };
+
+export type FooterRow = {
+	classNames?: ClassValue;
+	data: FooterElement[];
+};
 
 const Footer = ({
 	colOrder,
@@ -18,7 +22,7 @@ const Footer = ({
 		colIndex: number;
 		hidden?: boolean;
 	}[];
-	footer?: FooterElement[] | FooterElement[][];
+	footer?: FooterRow | FooterRow[];
 }) => {
 	if (!footer) {
 		return null;
@@ -26,29 +30,27 @@ const Footer = ({
 
 	const { highlightCols } = use(DataTableContext);
 
-	let footers: FooterElement[][];
+	let footers: FooterRow[];
 
-	if (Array.isArray(footer[0])) {
+	if (Array.isArray(footer)) {
 		// There are multiple footers
-		// @ts-expect-error
 		footers = footer;
 	} else {
 		// There's only one footer
-		// @ts-expect-error
 		footers = [footer];
 	}
 
 	return (
 		<tfoot>
-			{footers.map((row, i) => (
-				<tr key={i}>
+			{footers.map((footer, i) => (
+				<tr key={i} className={clsx(footer.classNames)}>
 					{colOrder.map(({ colIndex }, j) => {
 						const highlightColClassNames = highlightCols.includes(j)
 							? "sorting_highlight"
 							: undefined;
 
-						const value = row[colIndex];
-						if (value != null && Object.hasOwn(value, "value")) {
+						const value = footer.data[colIndex];
+						if (value != null && Object.hasOwn(value as any, "value")) {
 							return (
 								<th
 									className={clsx(

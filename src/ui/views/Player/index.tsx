@@ -223,10 +223,12 @@ const Player2 = ({
 							className="datatable-negative-margin-top mb-3"
 							cols={getCols(["Year", "Amount"])}
 							defaultSort={[0, "asc"]}
-							footer={[
-								"Total",
-								helpers.formatCurrency(player.salariesTotal, "M"),
-							]}
+							footer={{
+								data: [
+									"Total",
+									helpers.formatCurrency(player.salariesTotal, "M"),
+								],
+							}}
 							hideAllControls
 							name="Player:Salaries"
 							rows={player.salaries.map((s, i) => {

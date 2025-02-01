@@ -67,6 +67,8 @@ export const useRangeFooter = (pid: number, playerStats: PlayerStats) => {
 			type: "loading",
 			seasons,
 			seasonRange,
+			p:
+				state.type === "loading" || state.type === "open" ? state.p : undefined,
 		});
 
 		const p = await toWorker("main", "getPlayerRangeFooterStats", {

@@ -3,10 +3,10 @@ apply checkbox td hack to buttons too
 - bootstrap utility?
 
 season range highlighting like sports-reference on click highlight
-- have another row below the career totals that lets you select a range
-  - button should be below table, only add row (with select in first 2 columns) when clicked
-  - show faded while loading
+- show old stats faded while loading
+- select spacing
 - test
+  - no button if <3 seasons
   - baseball fielding stats, or disable
   - career highs
   - per game

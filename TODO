@@ -3,7 +3,6 @@ apply checkbox td hack to buttons too
 - bootstrap utility?
 
 season range highlighting like sports-reference on click highlight
-- select rounded corners
 - show error in age col
 - don't disable selects
 - remove artificial delay

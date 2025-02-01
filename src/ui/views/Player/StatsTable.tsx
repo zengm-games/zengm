@@ -145,7 +145,10 @@ export const StatsTable = ({
 					value: (
 						<select
 							key={i}
-							className="form-select form-select-sm"
+							className={clsx(
+								"form-select form-select-sm rounded-0",
+								i === 0 ? "rounded-start-1" : "rounded-end-1",
+							)}
 							value={rangeFooterState.seasonRange[i]}
 							disabled={rangeFooterState.type === "loading"}
 							onChange={(event) => {

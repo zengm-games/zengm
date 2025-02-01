@@ -10,6 +10,7 @@ import SeasonIcons from "./SeasonIcons";
 import HideableSection from "../../components/HideableSection";
 import { DataTable } from "../../components";
 import clsx from "clsx";
+import { useRangeFooter } from "./useRangeFooter";
 
 export const StatsTable = ({
 	name,
@@ -42,10 +43,6 @@ export const StatsTable = ({
 		setPlayoffs(true);
 	}
 
-	if (!hasRegularSeasonStats && !hasPlayoffStats) {
-		return null;
-	}
-
 	let playerStats = p.stats.filter((ps) => ps.playoffs === playoffs);
 	const careerStats =
 		playoffs === "combined"
@@ -53,6 +50,12 @@ export const StatsTable = ({
 			: playoffs
 				? p.careerStatsPlayoffs
 				: p.careerStats;
+
+	const rangeFooter = useRangeFooter({ playerStats });
+
+	if (!hasRegularSeasonStats && !hasPlayoffStats) {
+		return null;
+	}
 
 	if (onlyShowIf !== undefined) {
 		let display = false;
@@ -115,11 +118,17 @@ export const StatsTable = ({
 		]);
 	} else {
 		footer = [
-			"Career",
-			null,
-			null,
-			...stats.map((stat) => formatStatGameHigh(careerStats, stat)),
+			[
+				"Career",
+				null,
+				null,
+				...stats.map((stat) => formatStatGameHigh(careerStats, stat)),
+			],
 		];
+
+		if (rangeFooter.state === "open") {
+			footer.push([]);
+		}
 	}
 
 	const leadersType =
@@ -227,7 +236,7 @@ export const StatsTable = ({
 			description={hasLeader ? highlightLeaderText : null}
 		>
 			<DataTable
-				className="mb-3"
+				classNameWrapper={rangeFooter.state === "closed" ? "mb-2" : "mb-3"}
 				cols={cols}
 				defaultSort={[0, "asc"]}
 				defaultStickyCols={2}
@@ -286,6 +295,16 @@ export const StatsTable = ({
 					</ul>
 				}
 			/>
+			{rangeFooter.state === "closed" ? (
+				<button
+					className="btn btn-sm btn-secondary mb-3"
+					onClick={() => {
+						rangeFooter.setState("open");
+					}}
+				>
+					Select season range
+				</button>
+			) : null}
 		</HideableSection>
 	);
 };

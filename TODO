@@ -1,3 +1,7 @@
+apply checkbox td hack to buttons too
+- should correctly handle hover state
+- bootstrap utility?
+
 season range highlighting like sports-reference on click highlight
 - could compute stats in worker with seasonRange
   - first click - highlight every row for that season
@@ -13,11 +17,13 @@ season range highlighting like sports-reference on click highlight
   - button to open the modal, default range is whole career
   - have another row below the career totals that lets you select a range
     - advantages of this: discoverable, no weird floating window, no confusing way to change a range after initial selection
+    - button should be below table, only add row (with select in first 2 columns) when clicked
 - test
   - baseball fielding stats, or disable
   - career highs
   - per game
   - totals
+  - persistence of state when switching between players
 
 show career totals per team at bottom of stats tables in player profile pages
 - add some extra option to playersPlus like careerStatsPerTeam

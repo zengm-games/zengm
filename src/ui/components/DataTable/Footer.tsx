@@ -1,6 +1,14 @@
-import clsx from "clsx";
-import { use } from "react";
+import clsx, { type ClassValue } from "clsx";
+import { use, type ReactNode } from "react";
 import { DataTableContext } from "./contexts";
+
+type FooterElement = (
+	| ReactNode
+	| {
+			value: ReactNode;
+			classNames?: ClassValue;
+	  }
+)[];
 
 const Footer = ({
 	colOrder,
@@ -10,7 +18,7 @@ const Footer = ({
 		colIndex: number;
 		hidden?: boolean;
 	}[];
-	footer?: any[];
+	footer?: FooterElement[] | FooterElement[][];
 }) => {
 	if (!footer) {
 		return null;
@@ -18,13 +26,15 @@ const Footer = ({
 
 	const { highlightCols } = use(DataTableContext);
 
-	let footers: any[][];
+	let footers: FooterElement[][];
 
 	if (Array.isArray(footer[0])) {
 		// There are multiple footers
+		// @ts-expect-error
 		footers = footer;
 	} else {
 		// There's only one footer
+		// @ts-expect-error
 		footers = [footer];
 	}
 
@@ -41,17 +51,20 @@ const Footer = ({
 						if (value != null && Object.hasOwn(value, "value")) {
 							return (
 								<th
-									className={clsx(value.classNames, highlightColClassNames)}
+									className={clsx(
+										(value as any).classNames,
+										highlightColClassNames,
+									)}
 									key={colIndex}
 								>
-									{value.value}
+									{(value as any).value}
 								</th>
 							);
 						}
 
 						return (
 							<th key={colIndex} className={clsx(highlightColClassNames)}>
-								{value}
+								{value as any}
 							</th>
 						);
 					})}

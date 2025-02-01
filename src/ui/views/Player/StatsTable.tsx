@@ -11,6 +11,7 @@ import HideableSection from "../../components/HideableSection";
 import { DataTable } from "../../components";
 import clsx from "clsx";
 import { useRangeFooter } from "./useRangeFooter";
+import type { FooterRow } from "../../components/DataTable/Footer";
 
 export const StatsTable = ({
 	name,
@@ -99,25 +100,27 @@ export const StatsTable = ({
 		cols.at(-1)!.title = "%";
 	}
 
-	let footer;
+	let footer: FooterRow[];
 	if (isSport("baseball") && name === "Fielding") {
 		playerStats = expandFieldingStats({
 			rows: playerStats,
 			stats,
 		});
 
-		footer = {
-			data: expandFieldingStats({
-				rows: [careerStats],
-				stats,
-				addDummyPosIndex: true,
-			}).map((object, i) => [
-				i === 0 ? "Career" : null,
-				null,
-				null,
-				...stats.map((stat) => formatStatGameHigh(object, stat)),
-			]),
-		};
+		footer = [
+			{
+				data: expandFieldingStats({
+					rows: [careerStats],
+					stats,
+					addDummyPosIndex: true,
+				}).map((object, i) => [
+					i === 0 ? "Career" : null,
+					null,
+					null,
+					...stats.map((stat) => formatStatGameHigh(object, stat)),
+				]),
+			},
+		];
 	} else {
 		footer = [
 			{
@@ -185,7 +188,13 @@ export const StatsTable = ({
 				);
 			}
 
-			footer.push({ data: rangeStatsValues });
+			footer.push({
+				classNames:
+					rangeFooterState.type === "loading"
+						? "text-body-secondary"
+						: undefined,
+				data: rangeStatsValues,
+			});
 		}
 	}
 

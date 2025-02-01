@@ -3,8 +3,10 @@ apply checkbox td hack to buttons too
 - bootstrap utility?
 
 season range highlighting like sports-reference on click highlight
-- show old stats faded while loading
 - select spacing
+- show error in age col
+- don't disable selects
+- remove artificial delay
 - test
   - no button if <3 seasons
   - baseball fielding stats, or disable

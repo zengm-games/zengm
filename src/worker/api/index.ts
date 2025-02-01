@@ -1795,6 +1795,10 @@ const getPlayerRangeFooterStats = async ({
 	pid: number;
 	seasonRange: [number, number];
 }) => {
+	await new Promise((resolve) => {
+		setTimeout(resolve, 1000);
+	});
+
 	const pRaw = await idb.getCopy.players(
 		{
 			pid,

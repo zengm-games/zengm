@@ -796,27 +796,31 @@ const TeamFinances = ({
 		};
 	});
 
-	const footer = {
-		data: [
-			["", "Totals"].concat(
+	const footer = [
+		{
+			data: ["", "Totals"].concat(
 				// @ts-expect-error
 				contractTotals.map((amount) => highlightZeroNegative(amount)),
 			),
-			salaryCapType === "none"
-				? ["", "Under Luxury Tax"].concat(
-						// @ts-expect-error
-						contractTotals.map((amount) =>
-							highlightZeroNegative(luxuryPayroll - amount),
+		},
+		{
+			data:
+				salaryCapType === "none"
+					? ["", "Under Luxury Tax"].concat(
+							// @ts-expect-error
+							contractTotals.map((amount) =>
+								highlightZeroNegative(luxuryPayroll - amount),
+							),
+						)
+					: ["", "Free Cap Space"].concat(
+							// @ts-expect-error
+							contractTotals.map((amount) =>
+								highlightZeroNegative(salaryCap - amount),
+							),
 						),
-					)
-				: ["", "Free Cap Space"].concat(
-						// @ts-expect-error
-						contractTotals.map((amount) =>
-							highlightZeroNegative(salaryCap - amount),
-						),
-					),
-		],
-	};
+		},
+	];
+	console.log(footer);
 
 	// This happens for expansion teams before they have a TeamSeason
 	const noSeasonData = barData.length === 0;

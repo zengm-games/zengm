@@ -47,7 +47,7 @@ const getSeasons = (playerStats: PlayerStats) => {
 };
 
 export const useRangeFooter = (pid: number, playerStats: PlayerStats) => {
-	const [state, setState] = useState<State>(() => {
+	const getInitialState = (): State => {
 		const seasons = getSeasons(playerStats);
 
 		const type =
@@ -57,9 +57,11 @@ export const useRangeFooter = (pid: number, playerStats: PlayerStats) => {
 			type,
 			seasons,
 		};
-	});
+	};
+	const [state, setState] = useState(getInitialState);
 
 	const latestLoadCount = useRef(0);
+	const prevPid = useRef(pid);
 
 	const loadData = async (seasons: number[], seasonRange: [number, number]) => {
 		latestLoadCount.current += 1;
@@ -115,6 +117,13 @@ export const useRangeFooter = (pid: number, playerStats: PlayerStats) => {
 	};
 
 	useEffect(() => {
+		if (prevPid.current !== pid) {
+			// Reset state when player changes
+			setState(getInitialState());
+			prevPid.current = pid;
+			return;
+		}
+
 		const seasons = getSeasons(playerStats);
 
 		if (seasons.length < RANGE_FOOTER_NUM_SEASONS_CUTOFF) {
@@ -149,9 +158,9 @@ export const useRangeFooter = (pid: number, playerStats: PlayerStats) => {
 			}
 		}
 
-		// Only recalculate if a new season appears
+		// Only recalculate if a new season appears or if this is a new player
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [playerStats.length]);
+	}, [playerStats.length, pid]);
 
 	const onOpen = async () => {
 		if (state.type !== "closed") {

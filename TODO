@@ -5,13 +5,7 @@ apply checkbox td hack to buttons too
 season range highlighting like sports-reference on click highlight
 - remove artificial delay
 - test
-  - no button if <3 seasons
   - baseball fielding stats, or disable
-  - career highs
-  - per game
-  - totals
-  - persistence of state when switching between players
-  - new season added by simming
   - if current season is selected, should update while simming
 - blog
   - advantages of this: discoverable, no weird floating window, no confusing way to change a range after initial selection

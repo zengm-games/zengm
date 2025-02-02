@@ -229,7 +229,7 @@ const Depth = ({
 				if (isSport("baseball") && pos !== "P") {
 					return ["Ovr", "Pot"];
 				} else {
-					return [`rating:ovr${position}`, `rating:ovr${position}`];
+					return [`rating:ovr${position}`, `rating:pot${position}`];
 				}
 			}),
 			...ratings.map((rating) => `rating:${rating}`),

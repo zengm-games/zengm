@@ -30,6 +30,7 @@ type State =
 			type: "error";
 			seasons: number[];
 			seasonRange: [number, number];
+			p?: RangeFooterPlayer;
 	  }
 	| {
 			type: "open";
@@ -68,17 +69,27 @@ export const useRangeFooter = (pid: number, playerStats: PlayerStats) => {
 			seasons,
 			seasonRange,
 			p:
-				state.type === "loading" || state.type === "open" ? state.p : undefined,
+				state.type === "loading" ||
+				state.type === "open" ||
+				state.type === "error"
+					? state.p
+					: undefined,
 		});
 
-		const p = await toWorker("main", "getPlayerRangeFooterStats", {
-			pid,
-			seasonRange,
-		});
+		let p;
 
-		if (latestLoadCount.current !== loadCount) {
-			// Another load must have started after this one
-			return;
+		try {
+			p = await toWorker("main", "getPlayerRangeFooterStats", {
+				pid,
+				seasonRange,
+			});
+
+			if (latestLoadCount.current !== loadCount) {
+				// Another load must have started after this one
+				return;
+			}
+		} catch (error) {
+			console.log(error);
 		}
 
 		if (!p) {
@@ -86,15 +97,21 @@ export const useRangeFooter = (pid: number, playerStats: PlayerStats) => {
 				type: "error",
 				seasons,
 				seasonRange,
+				p:
+					state.type === "loading" ||
+					state.type === "open" ||
+					state.type === "error"
+						? state.p
+						: undefined,
+			});
+		} else {
+			setState({
+				type: "open",
+				seasons,
+				seasonRange,
+				p: p as any,
 			});
 		}
-
-		setState({
-			type: "open",
-			seasons,
-			seasonRange,
-			p: p as any,
-		});
 	};
 
 	useEffect(() => {

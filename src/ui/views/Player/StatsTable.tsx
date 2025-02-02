@@ -176,9 +176,15 @@ export const StatsTable = ({
 					),
 				};
 			});
+			rangeStatsValues.push(
+				rangeFooterState.type === "error" ? (
+					<span className="glyphicon glyphicon-exclamation-sign text-danger" />
+				) : null,
+			);
 			if (
 				(rangeFooterState.type === "open" ||
-					rangeFooterState.type === "loading") &&
+					rangeFooterState.type === "loading" ||
+					rangeFooterState.type === "error") &&
 				rangeFooterState.p
 			) {
 				const rangeStats =
@@ -189,7 +195,6 @@ export const StatsTable = ({
 							: rangeFooterState.p.careerStats;
 
 				rangeStatsValues.push(
-					null,
 					...stats.map((stat) => formatStatGameHigh(rangeStats, stat)),
 				);
 			}

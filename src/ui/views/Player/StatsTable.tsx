@@ -150,7 +150,6 @@ export const StatsTable = ({
 								i === 0 ? "rounded-start-1" : "rounded-end-1",
 							)}
 							value={rangeFooterState.seasonRange[i]}
-							disabled={rangeFooterState.type === "loading"}
 							onChange={(event) => {
 								const value = Number.parseInt(event.target.value);
 								const newSeasonRange: [number, number] = [

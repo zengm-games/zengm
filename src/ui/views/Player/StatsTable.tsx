@@ -100,27 +100,27 @@ export const StatsTable = ({
 		cols.at(-1)!.title = "%";
 	}
 
+	const isBaseballFielding = isSport("baseball") && name === "Fielding";
+
 	let footer: FooterRow[];
-	if (isSport("baseball") && name === "Fielding") {
+	if (isBaseballFielding) {
 		playerStats = expandFieldingStats({
 			rows: playerStats,
 			stats,
 		});
 
-		footer = [
-			{
-				data: expandFieldingStats({
-					rows: [careerStats],
-					stats,
-					addDummyPosIndex: true,
-				}).map((object, i) => [
-					i === 0 ? "Career" : null,
-					null,
-					null,
-					...stats.map((stat) => formatStatGameHigh(object, stat)),
-				]),
-			},
-		];
+		footer = expandFieldingStats({
+			rows: [careerStats],
+			stats,
+			addDummyPosIndex: true,
+		}).map((object, i) => ({
+			data: [
+				i === 0 ? "Career" : null,
+				null,
+				null,
+				...stats.map((stat) => formatStatGameHigh(object, stat)),
+			],
+		}));
 	} else {
 		footer = [
 			{
@@ -307,13 +307,16 @@ export const StatsTable = ({
 		});
 	}
 
+	const showSelectSeasonRangeButton =
+		rangeFooter.state.type === "closed" && !isBaseballFielding;
+
 	return (
 		<HideableSection
 			title={name}
 			description={hasLeader ? highlightLeaderText : null}
 		>
 			<DataTable
-				classNameWrapper={rangeFooter.state.type === "closed" ? "mb-2" : "mb-3"}
+				classNameWrapper={showSelectSeasonRangeButton ? "mb-2" : "mb-3"}
 				cols={cols}
 				defaultSort={[0, "asc"]}
 				defaultStickyCols={2}
@@ -372,7 +375,7 @@ export const StatsTable = ({
 					</ul>
 				}
 			/>
-			{rangeFooter.state.type === "closed" ? (
+			{showSelectSeasonRangeButton ? (
 				<button
 					className="btn btn-sm btn-secondary mb-3"
 					onClick={rangeFooter.onOpen}

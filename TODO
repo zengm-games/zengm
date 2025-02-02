@@ -2,14 +2,6 @@ apply checkbox td hack to buttons too
 - should correctly handle hover state
 - bootstrap utility?
 
-season range highlighting like sports-reference on click highlight
-- remove artificial delay
-- test
-  - baseball fielding stats, or disable
-  - if current season is selected, should update while simming
-- blog
-  - advantages of this: discoverable, no weird floating window, no confusing way to change a range after initial selection
-
 show career totals per team at bottom of stats tables in player profile pages
 - add some extra option to playersPlus like careerStatsPerTeam
 

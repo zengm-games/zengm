@@ -294,7 +294,7 @@ const ExportPlayers = ({
 										setExporting(false);
 									}}
 									processing={exporting}
-									processingText="Exorting"
+									processingText="Exporting"
 									size="lg"
 									variant="primary"
 								>

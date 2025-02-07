@@ -105,10 +105,13 @@ const processTrade = async (
 
 			if (teamSeason) {
 				// Bad players do not actually count as a "player traded away"
-				teamSeason.numPlayersTradedAway += helpers.sigmoid(
-					p.valueNoPot / 100,
-					30,
-					0.47,
+				teamSeason.numPlayersTradedAway += 1.4 * Math.pow(
+					helpers.sigmoid(
+						p.valueNoPot / 100,
+						20,
+						0.47,
+					), 
+					4
 				);
 			}
 		}

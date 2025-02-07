@@ -152,7 +152,7 @@ export const SummaryTeam = ({
 									pid={p.pid}
 									legacyName={p.name}
 								/>
-								<div className="ms-2">
+								<div className="ms-2" title={`Expires ${p.contract.exp}`}>
 									<ContractAmount p={p} />
 								</div>
 								{handleRemove ? (

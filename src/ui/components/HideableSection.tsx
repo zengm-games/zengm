@@ -68,6 +68,7 @@ const HideableSection = ({
 		titleExtraKey,
 	);
 
+	// z-index of 1 ensures that it is still clickable when used with datatable-negative-margin-top
 	return (
 		<>
 			<div
@@ -80,7 +81,7 @@ const HideableSection = ({
 				{renderTitle ? (
 					renderTitle(show, hideableSectionButton)
 				) : (
-					<div className="d-flex" style={{ minWidth: 0 }}>
+					<div className="d-flex z-1" style={{ minWidth: 0 }}>
 						<h2 className="mb-0 text-truncate">{title}</h2>
 						{hideableSectionButton}
 					</div>

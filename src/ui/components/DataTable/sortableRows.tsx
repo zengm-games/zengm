@@ -75,11 +75,15 @@ export const SortableHandle = ({
 			const overlayTds = sortableHandleRef.current.parentElement!.children;
 
 			for (let i = 0; i < overlayTds.length; i++) {
-				const overlayTd = overlayTds[i] as HTMLTableCellElement;
-				const tableTd = tableTds[i] as HTMLTableCellElement;
+				const overlayTd = overlayTds[i] as HTMLTableCellElement | undefined;
+				if (overlayTd) {
+					const tableTd = tableTds[i] as HTMLTableCellElement | undefined;
 
-				overlayTd.style.width = `${tableTd.offsetWidth}px`;
-				overlayTd.style.padding = "4px";
+					if (tableTd) {
+						overlayTd.style.width = `${tableTd.offsetWidth}px`;
+					}
+					overlayTd.style.padding = "4px";
+				}
 			}
 		}
 	}, [overlay, tableRef]);

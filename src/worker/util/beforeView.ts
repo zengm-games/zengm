@@ -144,7 +144,7 @@ const beforeLeague = async (
 			try {
 				await idb.cache.fill();
 			} catch (error) {
-				// idb.cache.fill will throw an error in some situations, like if season is not in the database ("Undefined season"). In that case, we want to unset lid so the UI knows we are not in a league, otherwise it messes with error handling (see lid check in runBeofre)
+				// idb.cache.fill will throw an error in some situations, like if season is not in the database ("Undefined season"). In that case, we want to unset lid so the UI knows we are not in a league, otherwise it messes with error handling (see lid check in runBefore)
 				// @ts-expect-error
 				g.setWithoutSavingToDB("lid", undefined);
 

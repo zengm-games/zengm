@@ -7,21 +7,19 @@ import type {
 
 // Possessions estimate, from https://www.basketball-reference.com/about/glossary.html#poss
 const poss = (ts: TeamStats) => {
-	if (ts.orb + ts.oppDrb > 0 && ts.oppOrb + ts.drb > 0) {
-		return (
-			0.5 *
-			(ts.fga +
-				0.4 * ts.fta -
-				1.07 * (ts.orb / (ts.orb + ts.oppDrb)) * (ts.fga - ts.fg) +
-				ts.tov +
-				(ts.oppFga +
-					0.4 * ts.oppFta -
-					1.07 * (ts.oppOrb / (ts.oppOrb + ts.drb)) * (ts.oppFga - ts.oppFg) +
-					ts.oppTov))
-		);
-	}
-
-	return 0;
+	return (
+		0.5 *
+		(ts.fga +
+			0.4 * ts.fta -
+			1.07 * helpers.ratio(ts.orb, ts.orb + ts.oppDrb) * (ts.fga - ts.fg) +
+			ts.tov +
+			(ts.oppFga +
+				0.4 * ts.oppFta -
+				1.07 *
+					helpers.ratio(ts.oppOrb, ts.oppOrb + ts.drb) *
+					(ts.oppFga - ts.oppFg) +
+				ts.oppTov))
+	);
 };
 
 const processStats = (

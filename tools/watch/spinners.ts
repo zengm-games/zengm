@@ -136,15 +136,12 @@ class Spinners<Key extends string = string> {
 				dateStart: new Date(),
 			};
 		} else if (info.status === "success") {
-			if (oldInfo?.status !== "spin") {
-				throw new Error(
-					`Invalid transition: ${oldInfo?.status} -> ${info.status}`,
-				);
-			}
-
 			this.info[key] = {
 				status: "success",
-				dateStart: oldInfo.dateStart,
+				dateStart:
+					!oldInfo || oldInfo.status === "error"
+						? new Date()
+						: oldInfo.dateStart,
 				dateEnd: new Date(),
 				size: info.size,
 			};

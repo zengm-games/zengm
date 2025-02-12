@@ -1923,7 +1923,14 @@ export const generateJsonSchema = (sport: string) => {
 									},
 									type: {
 										type: "string",
-										enum: ["draft", "freeAgent", "trade", "godMode", "import"],
+										enum: [
+											"draft",
+											"freeAgent",
+											"trade",
+											"godMode",
+											"import",
+											"sisyphus",
+										],
 									},
 									pickNum: {
 										type: "integer",

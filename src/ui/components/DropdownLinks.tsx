@@ -96,7 +96,7 @@ const makeAnchorProps = (menuItem: MenuItemLink) => {
 		href = menuItem.path;
 
 		if (menuItem.path.startsWith("http")) {
-			rel = "noopener noreferrer";
+			rel = "noopener";
 			target = "_blank";
 		}
 	} else if (Array.isArray(menuItem.path)) {
@@ -163,7 +163,7 @@ const MenuItem = ({
 			anchorProps.href = menuItem.path;
 
 			if (menuItem.path.startsWith("http")) {
-				anchorProps.rel = "noopener noreferrer";
+				anchorProps.rel = "noopener";
 				anchorProps.target = "_blank";
 			}
 		} else if (Array.isArray(menuItem.path)) {

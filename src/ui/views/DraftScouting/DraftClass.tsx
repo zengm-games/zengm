@@ -129,7 +129,7 @@ const DraftClass = ({
 						To replace this draft class with players from a{" "}
 						<a
 							href={`https://${WEBSITE_ROOT}/manual/customization/draft-class/`}
-							rel="noopener noreferrer"
+							rel="noopener"
 							target="_blank"
 						>
 							custom draft class file

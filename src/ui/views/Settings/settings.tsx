@@ -662,7 +662,7 @@ export const settings: Setting[] = (
 					Set the minimum/maximum age of generated draft prospects.{" "}
 					<a
 						href="https://zengm.com/blog/2021/03/age-draft-prospects-force-retire-age/"
-						rel="noopener noreferrer"
+						rel="noopener"
 						target="_blank"
 					>
 						More info.
@@ -852,7 +852,7 @@ export const settings: Setting[] = (
 						<a
 							href="https://en.wikipedia.org/wiki/NBA_salary_cap#Larry_Bird_exception"
 							target="_blank"
-							rel="noopener noreferrer"
+							rel="noopener"
 						>
 							Larry Bird exception
 						</a>
@@ -963,7 +963,7 @@ export const settings: Setting[] = (
 								Based on{" "}
 								<a
 									href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3445097/"
-									rel="noopener noreferrer"
+									rel="noopener"
 									target="_blank"
 								>
 									this article
@@ -1257,7 +1257,7 @@ export const settings: Setting[] = (
 					bonus/penalty for having the "winning" mood trait. See{" "}
 					<a
 						href={`https://${WEBSITE_ROOT}/manual/player-mood/`}
-						rel="noopener noreferrer"
+						rel="noopener"
 						target="_blank"
 					>
 						the manual

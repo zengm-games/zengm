@@ -99,7 +99,7 @@ export const makeAnchorProps = (
 		href = menuItem.path;
 
 		if (menuItem.path.startsWith("http")) {
-			rel = "noopener noreferrer";
+			rel = "noopener";
 			target = "_blank";
 		}
 	} else if (Array.isArray(menuItem.path)) {

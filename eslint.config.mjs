@@ -48,6 +48,12 @@ export default tseslint.config(
 			],
 			"react/display-name": "off",
 			"react/jsx-key": "off", // Too many false positives, like on DataTableRow.data
+			"react/jsx-no-target-blank": [
+				"error",
+				{
+					allowReferrer: true,
+				},
+			],
 			"react/jsx-sort-props": "off",
 			"react/no-unescaped-entities": "off",
 			"react-hooks/rules-of-hooks": "error",

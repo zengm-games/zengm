@@ -572,7 +572,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						use{" "}
 						<a
 							href={`https://zengm.com/facesjs/editor/#${faceHash}`}
-							rel="noopener noreferrer"
+							rel="noopener"
 							target="_blank"
 						>
 							the face editor
@@ -609,7 +609,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 				<span className="text-body-secondary">
 					Your image must be hosted externally. If you need to upload an image,
 					try using{" "}
-					<a href="http://imgur.com/" rel="noopener noreferrer" target="_blank">
+					<a href="http://imgur.com/" rel="noopener" target="_blank">
 						imgur
 					</a>
 					. For ideal display, crop your image so it has a 2:3 aspect ratio

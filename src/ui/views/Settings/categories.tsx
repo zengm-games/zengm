@@ -33,7 +33,7 @@ const categories: {
 					conference teams if one of those settings is left blank).{" "}
 					<a
 						href={`https://${WEBSITE_ROOT}/manual/customization/schedule-settings/`}
-						rel="noopener noreferrer"
+						rel="noopener"
 						target="_blank"
 					>
 						More details.
@@ -73,7 +73,7 @@ const categories: {
 					every year before the draft. It works by picking a{" "}
 					<a
 						href="https://en.wikipedia.org/wiki/Truncated_normal_distribution"
-						rel="noopener noreferrer"
+						rel="noopener"
 						target="_blank"
 					>
 						truncated Gaussian random number
@@ -139,7 +139,7 @@ const categories: {
 					The{" "}
 					<a
 						href="https://thetournament.com/elam-ending"
-						rel="noopener noreferrer"
+						rel="noopener"
 						target="_blank"
 					>
 						Elam Ending

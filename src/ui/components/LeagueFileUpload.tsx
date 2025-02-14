@@ -31,7 +31,7 @@ const ErrorMessage = ({ error }: { error: Error | null }) => {
 			{error.message} Please{" "}
 			<a
 				href={`https://${WEBSITE_ROOT}/manual/faq/#latest-version`}
-				rel="noopener noreferrer"
+				rel="noopener"
 				target="_blank"
 			>
 				make sure you have the latest version of the game loaded

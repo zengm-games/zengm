@@ -234,7 +234,7 @@ const Account = ({
 						{GAME_NAME} is completely free. There will never be any{" "}
 						<a
 							href="http://en.wikipedia.org/wiki/Freemium"
-							rel="noopener noreferrer"
+							rel="noopener"
 							target="_blank"
 						>
 							"freemium"
@@ -242,7 +242,7 @@ const Account = ({
 						or{" "}
 						<a
 							href="http://en.wikipedia.org/wiki/Free-to-play"
-							rel="noopener noreferrer"
+							rel="noopener"
 							target="_blank"
 						>
 							"pay-to-win"

@@ -63,7 +63,7 @@ const Storage = () => {
 				Since {GAME_NAME} stores game data in your browser profile,{" "}
 				<a
 					href={`https://${WEBSITE_ROOT}/manual/faq/#missing-leagues`}
-					rel="noopener noreferrer"
+					rel="noopener"
 					target="_blank"
 				>
 					sometimes it can be inadvertently deleted

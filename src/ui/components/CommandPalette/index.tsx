@@ -207,7 +207,7 @@ const getResultsGroupedDefault = ({
 		for (const category of Object.keys(resultsGrouped)) {
 			if (resultsGrouped[category]) {
 				output.push({
-					category,
+					category: category === "undefined" ? undefined : category,
 					results: resultsGrouped[category],
 				});
 			}
@@ -355,7 +355,7 @@ const getResultsGroupedLeagues = async ({
 		for (const category of Object.keys(resultsGrouped)) {
 			if (resultsGrouped[category]) {
 				output.push({
-					category,
+					category: category === "undefined" ? undefined : category,
 					results: resultsGrouped[category],
 				});
 			}

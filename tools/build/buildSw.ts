@@ -89,7 +89,7 @@ export const buildSw = async () => {
 		paths: ["build/sw.js"],
 		replaces: [
 			{
-				searchValue: "REV_GOES_HERE",
+				searchValue: "VERSION_NUMBER",
 				replaceValue: versionNumber,
 			},
 		],

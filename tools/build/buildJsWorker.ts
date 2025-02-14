@@ -18,7 +18,7 @@ const BLACKLIST = {
 const buildFile = async (
 	name: "ui" | "worker",
 	legacy: boolean,
-	rev: string,
+	versionNumber: string,
 ) => {
 	const bundle = await rollup({
 		...rollupConfig("production", {
@@ -46,7 +46,7 @@ const buildFile = async (
 		format,
 		indent: false,
 		sourcemap: true,
-		entryFileNames: `[name]-${legacy ? "legacy-" : ""}${rev}.js`,
+		entryFileNames: `[name]-${legacy ? "legacy-" : ""}${versionNumber}.js`,
 		chunkFileNames: `chunk-${legacy ? "legacy-" : ""}[hash].js`,
 		dir: "build/gen",
 	});
@@ -54,6 +54,6 @@ const buildFile = async (
 	parentPort!.postMessage("done");
 };
 
-const { legacy, name, rev } = workerData;
+const { legacy, name, versionNumber } = workerData;
 
-await buildFile(name, legacy, rev);
+await buildFile(name, legacy, versionNumber);

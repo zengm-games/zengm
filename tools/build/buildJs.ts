@@ -20,7 +20,7 @@ export const buildJs = async () => {
 							workerData: {
 								legacy,
 								name,
-								rev: versionNumber,
+								versionNumber,
 							},
 						},
 					);

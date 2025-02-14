@@ -1,13 +1,16 @@
 import { bySport } from "../lib/bySport.ts";
 import { replace } from "./replace.ts";
 
-export const setTimestamps = (rev: string, watch: boolean = false) => {
+export const setTimestamps = (
+	versionNumber: string,
+	watch: boolean = false,
+) => {
 	if (watch) {
 		replace({
 			paths: ["build/index.html"],
 			replaces: [
 				{
-					searchValue: "-REV_GOES_HERE.js",
+					searchValue: "-VERSION_NUMBER.js",
 					replaceValue: ".js",
 				},
 				{
@@ -19,8 +22,8 @@ export const setTimestamps = (rev: string, watch: boolean = false) => {
 					replaceValue: "",
 				},
 				{
-					searchValue: "REV_GOES_HERE",
-					replaceValue: rev,
+					searchValue: "VERSION_NUMBER",
+					replaceValue: versionNumber,
 				},
 			],
 		});
@@ -30,13 +33,13 @@ export const setTimestamps = (rev: string, watch: boolean = false) => {
 				"build/index.html",
 
 				// This is currently just for lastChangesVersion, so don't worry about it not working in watch mode
-				`build/gen/worker-${rev}.js`,
-				`build/gen/worker-legacy-${rev}.js`,
+				`build/gen/worker-${versionNumber}.js`,
+				`build/gen/worker-legacy-${versionNumber}.js`,
 			],
 			replaces: [
 				{
-					searchValue: "REV_GOES_HERE",
-					replaceValue: rev,
+					searchValue: "VERSION_NUMBER",
+					replaceValue: versionNumber,
 				},
 			],
 		});
@@ -240,7 +243,7 @@ if (window.enableLogging) {
 
 	if (!watch) {
 		replace({
-			paths: [`build/gen/ui-legacy-${rev}.js`],
+			paths: [`build/gen/ui-legacy-${versionNumber}.js`],
 			replaces: [
 				{
 					searchValue: "/gen/worker-",
@@ -277,5 +280,5 @@ if (window.enableLogging) {
 		],
 	});
 
-	return rev;
+	return versionNumber;
 };

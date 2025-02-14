@@ -4,7 +4,7 @@ import type { Conditions } from "../../common/types";
 import { fetchWrapper, SUBREDDIT_NAME } from "../../common";
 
 const LAST_VERSION_BEFORE_THIS_EXISTED = "2021.05.25.0919";
-const CURRENT_VERSION = "REV_GOES_HERE";
+const CURRENT_VERSION = "VERSION_NUMBER";
 const MAX_NUM_TO_SHOW = 3;
 const FETCH_LIMIT = 10;
 

@@ -52,7 +52,7 @@ const create = (db: IDBPDatabase<MetaDB>) => {
 		autoIncrement: true,
 	});
 	attributeStore.put(0, "nagged");
-	attributeStore.put("REV_GOES_HERE", "lastChangesVersion");
+	attributeStore.put("VERSION_NUMBER", "lastChangesVersion");
 };
 
 const migrate = async ({

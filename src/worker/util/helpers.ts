@@ -106,7 +106,7 @@ const calcWinp = ({
 
 // Used to fix links in the event log, which will be wrong if a league is exported and then imported. Would be better to do this on import!
 const correctLinkLid = (lid: number, text: string) => {
-	return text.replaceAll(/\/l\/\d+\//g, `/l/${lid}/`);
+	return text.replace(/\/l\/\d+\//g, `/l/${lid}/`);
 };
 
 const defaultTicketPrice = (

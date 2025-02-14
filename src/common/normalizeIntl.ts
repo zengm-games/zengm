@@ -2,5 +2,5 @@
 export const normalizeIntl = (str: string) =>
 	str
 		.normalize("NFD")
-		.replaceAll(/\p{Diacritic}/gu, "")
+		.replace(/\p{Diacritic}/gu, "")
 		.toLowerCase();

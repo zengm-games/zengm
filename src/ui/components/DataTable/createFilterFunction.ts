@@ -144,7 +144,7 @@ const createFilterFunction = (
 				searchType === "currency" ||
 				searchType === "draftPick"
 			) {
-				number = text.replaceAll(/[^\d.<=>?-]/g, "");
+				number = text.replace(/[^\d.<=>?-]/g, "");
 				if (number[0] === ">" || number[0] === "<" || number[0] === "=") {
 					direction = number[0];
 					number = number.slice(1); // Remove first char

@@ -57,6 +57,7 @@ export default tseslint.config(
 			"typescript-sort-keys/interface": "off",
 			"unicorn/consistent-function-scoping": "off",
 			"unicorn/numeric-separators-style": "off",
+			"unicorn/prefer-string-replace-all": "off", // replaceAll fails in some cases, idk why, but shows up in error logs and someone complained
 			"unicorn/prefer-ternary": "off",
 			"unicorn/prefer-top-level-await": "off", // Chrome 89, Firefox 89, Safari 15
 

@@ -60,7 +60,7 @@ const match = (route: Route, path: string) => {
 
 export const makeRegex = (path: string) => {
 	const parts = path
-		.replaceAll(/(^\/+|\/+$)/g, "") // Strip starting and ending slashes
+		.replace(/(^\/+|\/+$)/g, "") // Strip starting and ending slashes
 		.split("/");
 
 	const keys = [];

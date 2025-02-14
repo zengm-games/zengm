@@ -11,7 +11,7 @@ const namesBasketball = () => {
 	const upperCaseFirst = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 	const getName = (untrimmedName, file) => {
-		const name = untrimmedName.trim().replaceAll(/\s\s+/g, " "); // Condense whitespace to just single spaces
+		const name = untrimmedName.trim().replace(/\s\s+/g, " "); // Condense whitespace to just single spaces
 		if (name === "") {
 			throw new Error(
 				`No name found in ${file}, probably it is not a valid player page`,

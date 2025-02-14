@@ -1444,7 +1444,7 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 };
 
 const getExportFilename = async (type: "league" | "players") => {
-	const leagueName = (await league.getName()).replaceAll(/[^\da-z]/gi, "_");
+	const leagueName = (await league.getName()).replace(/[^\da-z]/gi, "_");
 
 	if (type === "league") {
 		const phase = g.get("phase");
@@ -1453,7 +1453,7 @@ const getExportFilename = async (type: "league" | "players") => {
 
 		let filename = `${GAME_ACRONYM}_${leagueName}_${g.get(
 			"season",
-		)}_${PHASE_TEXT[phase].replaceAll(/[^\da-z]/gi, "_")}`;
+		)}_${PHASE_TEXT[phase].replace(/[^\da-z]/gi, "_")}`;
 
 		if (
 			phase === PHASE.REGULAR_SEASON ||
@@ -1574,7 +1574,7 @@ const exportDraftClass = async ({
 		}
 	}
 
-	const leagueName = (await league.getName()).replaceAll(/[^\da-z]/gi, "_");
+	const leagueName = (await league.getName()).replace(/[^\da-z]/gi, "_");
 	const filename = `${GAME_ACRONYM}_${
 		retiredPlayers ? "retired" : "draft"
 	}_class_${leagueName}_${season}.json`;

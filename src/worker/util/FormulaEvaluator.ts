@@ -18,7 +18,7 @@ const UNARY_MINUS = "#";
 
 const regexEncode = (string: string) => {
 	// eslint-disable-next-line no-useless-escape
-	return string.replaceAll(/[$()*+./?[\\\]^{|}\-]/g, String.raw`\$&`);
+	return string.replace(/[$()*+./?[\\\]^{|}\-]/g, String.raw`\$&`);
 };
 
 const regexSort = (a: string, b: string) => {
@@ -79,7 +79,7 @@ const operatorsString = Object.keys(operators)
 
 const parseUnaryMinus = (string: string) => {
 	return string
-		.replaceAll(/\s/g, "")
+		.replace(/\s/g, "")
 		.replaceAll(BINARY_MINUS, (match, offset, string) => {
 			if (offset === 0) {
 				return UNARY_MINUS;

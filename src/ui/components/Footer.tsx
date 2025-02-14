@@ -112,7 +112,7 @@ const Footer = memo(() => {
 			<hr />
 
 			<div
-				className="d-flex flex-wrap justify-content-between"
+				className="d-flex flex-wrap justify-content-between text-body-secondary"
 				style={{
 					columnGap: "1rem",
 				}}
@@ -122,16 +122,20 @@ const Footer = memo(() => {
 						return (
 							<span key={url}>
 								{i > 0 ? " · " : null}
-								<a href={url} target="_blank">
+								<a href={url} className="link-secondary" target="_blank">
 									{title}
 								</a>
 							</span>
 						);
 					})}
 				</div>
-				<div className="text-body-secondary">
+				<div>
 					{GAME_ACRONYM}{" "}
-					<a href="https://zengm.com/changelog/" target="_blank">
+					<a
+						href="https://zengm.com/changelog/"
+						className="link-secondary"
+						target="_blank"
+					>
 						v{window.bbgmVersion}
 					</a>
 				</div>

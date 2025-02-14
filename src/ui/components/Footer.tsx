@@ -130,7 +130,14 @@ const Footer = memo(() => {
 					})}
 				</div>
 				<div className="text-body-secondary">
-					{GAME_ACRONYM} v{window.bbgmVersion}
+					{GAME_ACRONYM}{" "}
+					<a
+						href="https://zengm.com/changelog/"
+						rel="noopener noreferrer"
+						target="_blank"
+					>
+						v{window.bbgmVersion}
+					</a>
 				</div>
 			</div>
 		</footer>

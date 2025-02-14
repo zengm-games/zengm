@@ -763,7 +763,6 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 									browser to download an export. If that happens to you, please{" "}
 									<a
 										href="https://basketball-gm.com/manual/debugging/"
-										rel="noopener"
 										target="_blank"
 									>
 										help me figure out why it's not working

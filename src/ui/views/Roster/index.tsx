@@ -206,7 +206,6 @@ const Roster = ({
 							See{" "}
 							<a
 								href={`https://${WEBSITE_ROOT}/manual/player-mood/`}
-								rel="noopener"
 								target="_blank"
 							>
 								the manual

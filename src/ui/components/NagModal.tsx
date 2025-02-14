@@ -67,19 +67,11 @@ const NagModal = ({ close, show }: Props) => {
 				<Modal.Body>
 					<p>
 						{GAME_NAME} is completely free. There will never be any{" "}
-						<a
-							href="http://en.wikipedia.org/wiki/Freemium"
-							rel="noopener"
-							target="_blank"
-						>
+						<a href="http://en.wikipedia.org/wiki/Freemium" target="_blank">
 							"freemium"
 						</a>{" "}
 						or{" "}
-						<a
-							href="http://en.wikipedia.org/wiki/Free-to-play"
-							rel="noopener"
-							target="_blank"
-						>
+						<a href="http://en.wikipedia.org/wiki/Free-to-play" target="_blank">
 							"pay-to-win"
 						</a>{" "}
 						bullshit here. Why? Because if a game charges you money for

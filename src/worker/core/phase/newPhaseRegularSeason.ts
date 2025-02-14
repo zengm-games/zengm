@@ -78,7 +78,7 @@ const newPhaseRegularSeason = async (
 					extraClass: "",
 					persistent: true,
 					saveToDb: false,
-					text: `<b>Mailing List</b><br>If you'd like to receive a quarterly email containing the latest news about ${GAME_NAME}, <a href="https://landing.mailerlite.com/webforms/landing/z7d2z9" target="_blank" rel="noopener">subscribe to our newsletter here</a>.`,
+					text: `<b>Mailing List</b><br>If you'd like to receive a quarterly email containing the latest news about ${GAME_NAME}, <a href="https://landing.mailerlite.com/webforms/landing/z7d2z9" target="_blank">subscribe to our newsletter here</a>.`,
 					type: "info",
 				});
 			} else {

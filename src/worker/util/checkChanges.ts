@@ -57,7 +57,7 @@ const checkChanges = async (conditions: Conditions) => {
 							url = link;
 						}
 
-						text += ` <a href="${url}" rel="noopener" target="_blank">More details</a>`;
+						text += ` <a href="${url}" target="_blank">More details</a>`;
 					}
 				}
 				text += "</p>";
@@ -78,7 +78,7 @@ const checkChanges = async (conditions: Conditions) => {
 			} else {
 				moreText = "View all changes";
 			}
-			text += `<p class="mt-1 mb-0"><a href="https://zengm.com/changelog/" rel="noopener" target="_blank">${moreText}</a></p>`;
+			text += `<p class="mt-1 mb-0"><a href="https://zengm.com/changelog/" target="_blank">${moreText}</a></p>`;
 
 			logEvent(
 				{

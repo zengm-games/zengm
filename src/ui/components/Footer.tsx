@@ -122,7 +122,7 @@ const Footer = memo(() => {
 						return (
 							<span key={url}>
 								{i > 0 ? " · " : null}
-								<a href={url} rel="noopener" target="_blank">
+								<a href={url} target="_blank">
 									{title}
 								</a>
 							</span>
@@ -131,7 +131,7 @@ const Footer = memo(() => {
 				</div>
 				<div className="text-body-secondary">
 					{GAME_ACRONYM}{" "}
-					<a href="https://zengm.com/changelog/" rel="noopener" target="_blank">
+					<a href="https://zengm.com/changelog/" target="_blank">
 						v{window.bbgmVersion}
 					</a>
 				</div>

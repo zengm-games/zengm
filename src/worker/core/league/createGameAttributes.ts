@@ -275,7 +275,7 @@ const createGameAttributes = async (
 			logEvent(
 				{
 					type: "info",
-					text: `"# Division Games" and "# Conference Games" settings were reset because the supplied values did not work. <a href="https://${WEBSITE_ROOT}/manual/customization/schedule-settings/" rel="noopener" target="_blank">More details.</a>`,
+					text: `"# Division Games" and "# Conference Games" settings were reset because the supplied values did not work. <a href="https://${WEBSITE_ROOT}/manual/customization/schedule-settings/" target="_blank">More details.</a>`,
 					saveToDb: false,
 				},
 				conditions,

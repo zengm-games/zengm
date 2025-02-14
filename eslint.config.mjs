@@ -48,12 +48,7 @@ export default tseslint.config(
 			],
 			"react/display-name": "off",
 			"react/jsx-key": "off", // Too many false positives, like on DataTableRow.data
-			"react/jsx-no-target-blank": [
-				"error",
-				{
-					allowReferrer: true,
-				},
-			],
+			"react/jsx-no-target-blank": "off", // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/noopener  Note: Setting target="_blank" on <a>, <area> and <form> elements implicitly provides the same rel behavior as setting rel="noopener" which does not set window.opener.
 			"react/jsx-sort-props": "off",
 			"react/no-unescaped-entities": "off",
 			"react-hooks/rules-of-hooks": "error",

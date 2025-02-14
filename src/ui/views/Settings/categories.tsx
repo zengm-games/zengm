@@ -33,7 +33,6 @@ const categories: {
 					conference teams if one of those settings is left blank).{" "}
 					<a
 						href={`https://${WEBSITE_ROOT}/manual/customization/schedule-settings/`}
-						rel="noopener"
 						target="_blank"
 					>
 						More details.
@@ -73,7 +72,6 @@ const categories: {
 					every year before the draft. It works by picking a{" "}
 					<a
 						href="https://en.wikipedia.org/wiki/Truncated_normal_distribution"
-						rel="noopener"
 						target="_blank"
 					>
 						truncated Gaussian random number
@@ -137,11 +135,7 @@ const categories: {
 			<>
 				<p>
 					The{" "}
-					<a
-						href="https://thetournament.com/elam-ending"
-						rel="noopener"
-						target="_blank"
-					>
+					<a href="https://thetournament.com/elam-ending" target="_blank">
 						Elam Ending
 					</a>{" "}
 					is a new way to play the end of basketball games. In the final period

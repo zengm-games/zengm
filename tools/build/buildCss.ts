@@ -1,27 +1,31 @@
 import { Buffer } from "node:buffer";
 import fs from "node:fs";
+import { promisify } from "node:util";
 import browserslist from "browserslist";
-import * as lightningCSS from "lightningcss";
+import { browserslistToTargets, transform } from "lightningcss";
 import { PurgeCSS } from "purgecss";
-import * as sass from "sass";
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { render } from "sass-embedded";
 import { fileHash } from "./fileHash.ts";
 import { replace } from "./replace.ts";
 
 export const buildCss = async (watch: boolean = false) => {
 	const filenames = ["light", "dark"];
-	const rawCSS = filenames.map((filename) => {
-		const sassFilePath = `public/css/${filename}.scss`;
-		const sassResult = sass.renderSync({
-			file: sassFilePath,
-		});
-		return sassResult.css.toString();
-	});
+	const rawCss = await Promise.all(
+		filenames.map(async (filename) => {
+			// sass-embedded is faster async, while sass is faster sync (but still slower than sass-embedded)
+			const sassResult = await promisify(render)({
+				file: `public/css/${filename}.scss`,
+			});
+			return sassResult!.css.toString();
+		}),
+	);
 
-	const purgeCSSResults = watch
+	const purgeCssResults = watch
 		? []
 		: await new PurgeCSS().purge({
 				content: ["build/gen/*.js"],
-				css: rawCSS.map((raw) => ({ raw })),
+				css: rawCss.map((raw) => ({ raw })),
 				safelist: {
 					standard: [/^qc-cmp2-persistent-link$/],
 					greedy: [
@@ -47,6 +51,10 @@ export const buildCss = async (watch: boolean = false) => {
 				},
 			});
 
+	const replaces: Parameters<typeof replace>[0]["replaces"] | undefined = watch
+		? undefined
+		: [];
+
 	for (let i = 0; i < filenames.length; i++) {
 		const filename = filenames[i];
 
@@ -54,20 +62,20 @@ export const buildCss = async (watch: boolean = false) => {
 		if (!watch) {
 			// https://zengm.com/blog/2022/07/investigating-a-tricky-performance-bug/
 			const DANGER_CSS = ".input-group.has-validation";
-			if (!rawCSS[i].includes(DANGER_CSS)) {
+			if (!rawCss[i].includes(DANGER_CSS)) {
 				throw new Error(
-					`rawCSS no longer contains ${DANGER_CSS} - same problem might exist with another name?`,
+					`rawCss no longer contains ${DANGER_CSS} - same problem might exist with another name?`,
 				);
 			}
 
-			const purgeCSSResult = purgeCSSResults[i].css;
+			const purgeCSSResult = purgeCssResults[i].css;
 
-			const { code } = lightningCSS.transform({
+			const { code } = transform({
 				filename: `${filename}.css`,
 				code: Buffer.from(purgeCSSResult),
 				minify: true,
 				sourceMap: false,
-				targets: lightningCSS.browserslistToTargets(
+				targets: browserslistToTargets(
 					browserslist("Chrome >= 75, Firefox >= 78, Safari >= 12.1"),
 				),
 			});
@@ -78,7 +86,7 @@ export const buildCss = async (watch: boolean = false) => {
 				throw new Error(`CSS output contains ${DANGER_CSS}`);
 			}
 		} else {
-			output = rawCSS[i];
+			output = rawCss[i];
 		}
 
 		let outFilename;
@@ -88,17 +96,19 @@ export const buildCss = async (watch: boolean = false) => {
 			const hash = fileHash(output);
 			outFilename = `build/gen/${filename}-${hash}.css`;
 
-			replace({
-				paths: ["build/index.html"],
-				replaces: [
-					{
-						searchValue: `CSS_HASH_${filename.toUpperCase()}`,
-						replaceValue: hash,
-					},
-				],
+			replaces!.push({
+				searchValue: `CSS_HASH_${filename.toUpperCase()}`,
+				replaceValue: hash,
 			});
 		}
 
 		fs.writeFileSync(outFilename, output);
+	}
+
+	if (replaces) {
+		replace({
+			paths: ["build/index.html"],
+			replaces,
+		});
 	}
 };

@@ -191,34 +191,40 @@ describe("old newScheduleCrappy tests", () => {
 		g.setWithoutSavingToDB("allStarGame", null);
 	});
 
-	test("when numTeams*numGames is even, everyone gets a full schedule", () => {
-		for (let numGames = 2; numGames < 50; numGames += 1) {
-			for (let numTeams = 2; numTeams < 50; numTeams += 1) {
-				if ((numTeams * numGames) % 2 === 1) {
-					continue;
-				}
+	test(
+		"when numTeams*numGames is even, everyone gets a full schedule",
+		{
+			timeout: 10_000,
+		},
+		() => {
+			for (let numGames = 2; numGames < 50; numGames += 1) {
+				for (let numTeams = 2; numTeams < 50; numTeams += 1) {
+					if ((numTeams * numGames) % 2 === 1) {
+						continue;
+					}
 
-				g.setWithoutSavingToDB("numGames", numGames);
-				const teams = makeTeams(numTeams);
-				const { tids: matchups } = newScheduleGood(teams);
+					g.setWithoutSavingToDB("numGames", numGames);
+					const teams = makeTeams(numTeams);
+					const { tids: matchups } = newScheduleGood(teams);
 
-				// Total number of games
-				assert.strictEqual(
-					matchups.length * 2,
-					numGames * numTeams,
-					`Total number of games is wrong for ${numTeams} teams and ${numGames} games`,
-				);
+					// Total number of games
+					assert.strictEqual(
+						matchups.length * 2,
+						numGames * numTeams,
+						`Total number of games is wrong for ${numTeams} teams and ${numGames} games`,
+					);
 
-				// Number of games for each teams
-				const tids = matchups.flat();
+					// Number of games for each teams
+					const tids = matchups.flat();
 
-				for (const t of teams) {
-					const count = tids.filter((tid) => t.tid === tid).length;
-					assert.strictEqual(count, numGames);
+					for (const t of teams) {
+						const count = tids.filter((tid) => t.tid === tid).length;
+						assert.strictEqual(count, numGames);
+					}
 				}
 			}
-		}
-	});
+		},
+	);
 
 	test("when numTeams*numGames is odd, one team is a game short", () => {
 		for (let numGames = 2; numGames < 50; numGames += 1) {

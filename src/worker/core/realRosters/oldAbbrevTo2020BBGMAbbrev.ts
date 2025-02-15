@@ -10,12 +10,12 @@ const oldAbbrevTo2020BBGMAbbrev = (abbrev: string) => {
 		TRH: "TOR",
 		CLR: "CLE",
 		DTF: "DET",
+		DNN: "DEN",
 
 		// These teams go defunct and remain defunct by 2020, indicated by the _ prefix
 		WSC: "_WSC",
 		STB: "_STL",
 		AND: "_AND",
-		DNN: "_DEN",
 		WAT: "_WAT",
 		PRO: "_PRO",
 		PIT: "_PIT",

@@ -418,29 +418,31 @@ const processRatings = (
 	}
 };
 
-export const weightByMinutes = bySport({
-	baseball: [],
-	basketball: [
-		"per",
-		"ws48",
-		"astp",
-		"blkp",
-		"drbp",
-		"orbp",
-		"stlp",
-		"trbp",
-		"usgp",
-		"drtg",
-		"ortg",
-		"obpm",
-		"dbpm",
-		"bpm",
-		"pm100",
-		"onOff100",
-	],
-	football: [],
-	hockey: [],
-});
+export const weightByMinutes = new Set(
+	bySport({
+		baseball: [],
+		basketball: [
+			"per",
+			"ws48",
+			"astp",
+			"blkp",
+			"drbp",
+			"orbp",
+			"stlp",
+			"trbp",
+			"usgp",
+			"drtg",
+			"ortg",
+			"obpm",
+			"dbpm",
+			"bpm",
+			"pm100",
+			"onOff100",
+		],
+		football: [],
+		hockey: [],
+	}),
+);
 
 const filterForCareerStats = (
 	allStats: any[],
@@ -459,62 +461,62 @@ const filterForCareerStats = (
 	);
 };
 
-const reduceCareerStats = (careerStats: any[], attr: string) => {
-	let initialValue: null | (number | undefined)[] | number;
+const sumCareerStats = (careerStats: any[], attr: string) => {
+	let value: null | (number | undefined)[] | number;
 	let type: "max" | "byPos" | "normal";
 	if (attr.endsWith("Max")) {
-		initialValue = null;
+		value = null;
 		type = "max";
 	} else if (
 		player.stats.byPos?.includes(attr) ||
 		(isSport("baseball") && attr === "rfld")
 	) {
-		initialValue = [];
+		value = [];
 		type = "byPos";
 	} else {
-		initialValue = 0;
+		value = 0;
 		type = "normal";
 	}
 
-	const weightAttrByMinutes = weightByMinutes.includes(attr);
+	const weightAttrByMinutes = weightByMinutes.has(attr);
+	const lng = attr.endsWith("Lng");
 
-	return careerStats.reduce((memo, cs) => {
+	for (const cs of careerStats) {
 		if (cs[attr] === undefined) {
-			return memo;
+			continue;
 		}
 
 		if (type === "byPos") {
 			for (let i = 0; i < cs[attr].length; i++) {
 				const value = cs[attr][i];
 				if (value !== undefined) {
-					if (memo[i] === undefined) {
-						memo[i] = 0;
+					if (value[i] === undefined) {
+						value[i] = 0;
 					}
-					memo[i] += value;
+					value[i] += value;
 				}
 			}
+		} else {
+			const num = weightAttrByMinutes ? cs[attr] * cs.min : cs[attr];
 
-			return memo;
-		}
+			if (type === "max") {
+				if (num === undefined || num === null) {
+					continue;
+				}
 
-		const num = weightAttrByMinutes ? cs[attr] * cs.min : cs[attr];
-
-		if (type === "max") {
-			if (num === undefined || num === null) {
-				return memo;
+				value =
+					value === null || num[0] > (value as any)[0]
+						? [num[0], num[1], helpers.getAbbrev(cs.tid), cs.tid, cs.season]
+						: value;
+			} else if (lng) {
+				value = num > (value as any) ? num : value;
+			} else {
+				value += num;
 			}
-
-			return memo === null || num[0] > memo[0]
-				? [num[0], num[1], helpers.getAbbrev(cs.tid), cs.tid, cs.season]
-				: memo;
 		}
+	}
 
-		if (attr.endsWith("Lng")) {
-			return num > memo ? num : memo;
-		}
-
-		return memo + num;
-	}, initialValue);
+	return value;
 };
 
 const getPlayerStats = (
@@ -629,7 +631,7 @@ const getPlayerStats = (
 
 		for (const attr of attrs) {
 			if (!ignoredKeys.has(attr)) {
-				statSums[attr] = reduceCareerStats(rowsToMerge2, attr);
+				statSums[attr] = sumCareerStats(rowsToMerge2, attr);
 			}
 		}
 
@@ -841,19 +843,19 @@ const processStats = (
 		for (const attr of attrs) {
 			if (!ignoredKeys.has(attr)) {
 				if (regularSeason) {
-					statSums[attr] = reduceCareerStats(
+					statSums[attr] = sumCareerStats(
 						careerStatsFiltered.regularSeason,
 						attr,
 					);
 				}
 				if (playoffs) {
-					statSumsPlayoffs[attr] = reduceCareerStats(
+					statSumsPlayoffs[attr] = sumCareerStats(
 						careerStatsFiltered.playoffs,
 						attr,
 					);
 				}
 				if (combined) {
-					statSumsCombined[attr] = reduceCareerStats(
+					statSumsCombined[attr] = sumCareerStats(
 						careerStatsFiltered.combined,
 						attr,
 					);
@@ -1059,7 +1061,6 @@ const getCopies = async (
 		statType,
 		mergeStats,
 	};
-	console.log("playersPlus", players, options);
 
 	return players
 		.map((p) => processPlayer(p, options))

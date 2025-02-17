@@ -113,7 +113,7 @@ const evaluate = (
 		object[tot] = 0;
 		object[playoffs] = 0;
 
-		const weightStatByMinutes = weightByMinutes.includes(stat);
+		const weightStatByMinutes = weightByMinutes.has(stat);
 		let minSum = 0;
 		let minSumPlayoffs = 0;
 

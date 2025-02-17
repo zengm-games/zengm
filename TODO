@@ -4,21 +4,19 @@ missing stats in historical leagues (like blk/stl in old leagues)
 - handle in TOT seasons
 - handle in GOAT Lab
 - handle anywhere else that adds things up, like careerTotals, seasonRange, etc
-  - tov% calculation is wrong - depends on some values which are only there sometimes, needs to use 
-  - trb calculation is wrong - average together trb and orb+drb depending on availability
+  - tov% calculation is wrong - depends on some values which are only there sometimes
+    - maybe have a check in playersPlus processPlayers for if this needs to be recomputed, and then manually do it?
   - TEST
     - seasonRange
     - per 36
     - per 36 with some seasons before min was tracked
       - should be undefined
 - bring back old AST% values if career totals can be done properly (only if value exists for this season type)
+  - have getAttrs takes first/last row of actual processed stats for this type, not any type
 - make sure exhibition games work
 - keepWithNoStats messed up now?
 - 1950s bugs
   - EWA showing up as -0 when PER doesn't exist
-  - AST% in career totals
-    - delete old playoff astp?
-    - smarter summing?
 - dd/td/qd/fxf should always be filled in
 - test alexnoob rosters
 - blog

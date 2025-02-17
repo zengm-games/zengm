@@ -113,7 +113,7 @@ const processStats = (
 			scale = false;
 		} else if (stat === "trb") {
 			// In historical stats, before orb/drb were tracked separately, stats rows include trb
-			row[stat] = ps.trb ?? ps.drb + ps.orb;
+			row[stat] = (ps.trb ?? 0) + (ps.drb ?? 0) + (ps.orb ?? 0);
 		} else if (stat === "2p") {
 			// In historical stats, tp may be undefined, but fg never is
 			row[stat] = ps.fg - (ps.tp ?? 0);
@@ -142,7 +142,12 @@ const processStats = (
 				const min = statSumsExtra?.[stat]?.min ?? ps.min;
 				row[stat] = min > 0 ? (val * 36) / min : 0;
 			} else {
-				const gp = statSumsExtra?.[stat]?.gp ?? ps.gp;
+				let gp;
+				if (stat === "trb" && statSumsExtra?.trb?.gp !== undefined) {
+					gp = statSumsExtra.trb.gp + (statSumsExtra.drb?.gp ?? 0);
+				} else {
+					gp = statSumsExtra?.[stat]?.gp ?? ps.gp;
+				}
 				row[stat] = gp > 0 ? val / gp : 0;
 			}
 		}

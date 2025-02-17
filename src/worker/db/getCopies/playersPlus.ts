@@ -462,11 +462,7 @@ const filterForCareerStats = (
 	);
 };
 
-const sumCareerStats = (
-	careerStats: any[],
-	attr: string,
-	statType: PlayerStatType,
-) => {
+const sumCareerStats = (careerStats: any[], attr: string) => {
 	let value: null | (number | undefined)[] | number;
 	let type: "max" | "byPos" | "normal";
 	if (attr.endsWith("Max")) {
@@ -503,6 +499,14 @@ const sumCareerStats = (
 				};
 			}
 			continue;
+		}
+
+		// Special case for trb - even if first season has trb, we still want to keep tracking extraForMissingValues because we'll need it later when adding up with drb/orb seasons
+		if (isSport("basketball") && !extraForMissingValues && attr === "trb") {
+			extraForMissingValues = {
+				gp: 0,
+				min: 0,
+			};
 		}
 
 		if (type === "byPos") {
@@ -656,7 +660,6 @@ const getPlayerStats = (
 			"jerseyNumber",
 		]);
 		const statSums: any = {};
-		const attrs = rowsToMerge.length > 0 ? Object.keys(rowsToMerge.at(-1)) : [];
 
 		const rowsToMerge2 = filterForCareerStats(
 			rowsToMerge,
@@ -664,9 +667,9 @@ const getPlayerStats = (
 			mergeStats,
 		);
 
-		for (const attr of attrs) {
+		for (const attr of getAttrs(rowsToMerge)) {
 			if (!ignoredKeys.has(attr)) {
-				statSums[attr] = sumCareerStats(rowsToMerge2, attr, "totals").value;
+				statSums[attr] = sumCareerStats(rowsToMerge2, attr).value;
 			}
 		}
 
@@ -773,6 +776,20 @@ const processPlayerStats = (
 	return output;
 };
 
+const getAttrs = (statsRows: any[]) => {
+	const attrs = statsRows.length > 0 ? Object.keys(statsRows.at(-1)) : [];
+	if (
+		isSport("basketball") &&
+		statsRows.length > 0 &&
+		statsRows[0].trb !== undefined
+	) {
+		// If these are historical stats with TRB rather than ORB and DRB separate, that will be apparent in the first (oldest) row
+		attrs.push("trb");
+	}
+
+	return attrs;
+};
+
 const processStats = (
 	output: PlayerFiltered,
 	p: Player,
@@ -860,7 +877,6 @@ const processStats = (
 			"yearsWithTeam",
 			"jerseyNumber",
 		]);
-		const attrs = careerStats.length > 0 ? Object.keys(careerStats.at(-1)) : [];
 
 		const statSums = {
 			regularSeason: {} as any,
@@ -897,14 +913,10 @@ const processStats = (
 			seasonTypes.push("combined");
 		}
 
-		for (const attr of attrs) {
+		for (const attr of getAttrs(careerStats)) {
 			if (!ignoredKeys.has(attr)) {
 				for (const seasonType of seasonTypes) {
-					const sumInfo = sumCareerStats(
-						careerStatsFiltered[seasonType],
-						attr,
-						statType,
-					);
+					const sumInfo = sumCareerStats(careerStatsFiltered[seasonType], attr);
 
 					statSums[seasonType][attr] = sumInfo.value;
 

@@ -610,18 +610,18 @@ const getPlayerStats = (
 		seasonType: "regularSeason" | "playoffs" | "combined",
 	) => {
 		// Aggregate annual stats and ignore other things
-		const ignoredKeys = [
+		const ignoredKeys = new Set([
 			"season",
 			"tid",
 			"yearsWithTeam",
 			"playoffs",
 			"jerseyNumber",
-		];
+		]);
 		const statSums: any = {};
 		const attrs = rowsToMerge.length > 0 ? Object.keys(rowsToMerge.at(-1)) : [];
 
 		for (const attr of attrs) {
-			if (!ignoredKeys.includes(attr)) {
+			if (!ignoredKeys.has(attr)) {
 				statSums[attr] = reduceCareerStats(
 					rowsToMerge,
 					attr,
@@ -700,8 +700,15 @@ const processPlayerStats = (
 	statSums: any,
 	stats: string[],
 	statType: PlayerStatType,
+	keepWithNoStats: boolean,
 ) => {
-	const output = processPlayerStats2(statSums, stats, statType, p.born.year);
+	const output = processPlayerStats2(
+		statSums,
+		stats,
+		statType,
+		p.born.year,
+		keepWithNoStats,
+	);
 
 	// More common stuff between basketball/football could be moved here... abbrev is just special cause it needs to run on the worker
 	if (stats.includes("abbrev")) {
@@ -741,6 +748,7 @@ const processStats = (
 		statType,
 		stats,
 	}: PlayersPlusOptionsRequired,
+	keepWithNoStats: boolean,
 ) => {
 	// Only season(s) and team in question
 	let playerStats = getPlayerStats(
@@ -792,7 +800,7 @@ const processStats = (
 			careerStats.push(ps);
 		}
 
-		return processPlayerStats(p, ps, stats, statType);
+		return processPlayerStats(p, ps, stats, statType, keepWithNoStats);
 	});
 
 	if (
@@ -805,14 +813,19 @@ const processStats = (
 		output.stats = output.stats.at(-1);
 	} else if (season === undefined) {
 		// Aggregate annual stats and ignore other things
-		const ignoredKeys = ["season", "tid", "yearsWithTeam", "jerseyNumber"];
+		const ignoredKeys = new Set([
+			"season",
+			"tid",
+			"yearsWithTeam",
+			"jerseyNumber",
+		]);
 		const statSums: any = {};
 		const statSumsPlayoffs: any = {};
 		const statSumsCombined: any = {};
 		const attrs = careerStats.length > 0 ? Object.keys(careerStats.at(-1)) : [];
 
 		for (const attr of attrs) {
-			if (!ignoredKeys.includes(attr)) {
+			if (!ignoredKeys.has(attr)) {
 				if (regularSeason) {
 					statSums[attr] = reduceCareerStats(
 						careerStats,
@@ -854,7 +867,13 @@ const processStats = (
 		}
 
 		if (regularSeason) {
-			output.careerStats = processPlayerStats(p, statSums, stats, statType);
+			output.careerStats = processPlayerStats(
+				p,
+				statSums,
+				stats,
+				statType,
+				keepWithNoStats,
+			);
 		}
 
 		if (playoffs) {
@@ -863,6 +882,7 @@ const processStats = (
 				statSumsPlayoffs,
 				stats,
 				statType,
+				keepWithNoStats,
 			);
 		}
 
@@ -872,6 +892,7 @@ const processStats = (
 				statSumsCombined,
 				stats,
 				statType,
+				keepWithNoStats,
 			);
 		}
 	}
@@ -925,7 +946,7 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
 		(showNoStats && (season === undefined || season > p.draft.year));
 
 	if (options.stats.length > 0 || keepWithNoStats) {
-		processStats(output, p, playerStats, options);
+		processStats(output, p, playerStats, options, keepWithNoStats);
 
 		// Only add a player if filterStats finds something (either stats that season, or options overriding that check)
 		if (output.stats === undefined && !keepWithNoStats) {

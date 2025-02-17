@@ -1330,7 +1330,15 @@ const ratio = (
 	return 0;
 };
 
-const percentage = (numerator: number, denominator: number) => {
+const percentage = (
+	numerator: number | undefined,
+	denominator: number | undefined,
+) => {
+	// Handle missing historical basketball stats
+	if (numerator === undefined || denominator === undefined) {
+		return undefined;
+	}
+
 	return 100 * ratio(numerator, denominator);
 };
 

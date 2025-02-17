@@ -13,10 +13,17 @@ const processPlayerStats = (
 	stats: string[],
 	statType?: PlayerStatType,
 	bornYear?: number,
+	keepWithNoStats?: boolean,
 ) => {
 	return bySport({
 		baseball: processPlayerStatsBaseball(ps, stats, statType, bornYear),
-		basketball: processPlayerStatsBasketball(ps, stats, statType, bornYear),
+		basketball: processPlayerStatsBasketball(
+			ps,
+			stats,
+			statType,
+			bornYear,
+			keepWithNoStats,
+		),
 		football: processPlayerStatsFootball(ps, stats, bornYear, () =>
 			g.get("fantasyPoints"),
 		),

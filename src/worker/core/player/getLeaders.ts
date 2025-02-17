@@ -10,6 +10,7 @@ import getSeasonLeaders, {
 
 // Return the attrs/ratings/stats this player is the leader in, by season
 const getLeaders = async (pRaw: Player) => {
+	return {};
 	const seasons = new Set<number>();
 	for (const row of [...pRaw.stats, ...pRaw.ratings]) {
 		seasons.add(row.season);

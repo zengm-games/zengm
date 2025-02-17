@@ -5,6 +5,7 @@ import {
 	processPlayerStatsFootball,
 	processPlayerStatsHockey,
 } from "../../common";
+import type { StatSumsExtra } from "../../common/processPlayerStats.basketball";
 import type { PlayerStats, PlayerStatType } from "../../common/types";
 import g from "./g";
 
@@ -14,6 +15,7 @@ const processPlayerStats = (
 	statType?: PlayerStatType,
 	bornYear?: number,
 	keepWithNoStats?: boolean,
+	statSumsExtra?: StatSumsExtra,
 ) => {
 	return bySport({
 		baseball: processPlayerStatsBaseball(ps, stats, statType, bornYear),
@@ -23,6 +25,7 @@ const processPlayerStats = (
 			statType,
 			bornYear,
 			keepWithNoStats,
+			statSumsExtra,
 		),
 		football: processPlayerStatsFootball(ps, stats, bornYear, () =>
 			g.get("fantasyPoints"),

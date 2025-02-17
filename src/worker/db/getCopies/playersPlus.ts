@@ -11,6 +11,7 @@ import type {
 	PlayerStatType,
 	PlayersPlusOptions,
 } from "../../../common/types";
+import type { StatSumsExtra } from "../../../common/processPlayerStats.basketball";
 
 type PlayersPlusOptionsRequired = Required<
 	Omit<PlayersPlusOptions, "season" | "seasonRange" | "tid">
@@ -461,7 +462,11 @@ const filterForCareerStats = (
 	);
 };
 
-const sumCareerStats = (careerStats: any[], attr: string) => {
+const sumCareerStats = (
+	careerStats: any[],
+	attr: string,
+	statType: PlayerStatType,
+) => {
 	let value: null | (number | undefined)[] | number;
 	let type: "max" | "byPos" | "normal";
 	if (attr.endsWith("Max")) {
@@ -481,8 +486,22 @@ const sumCareerStats = (careerStats: any[], attr: string) => {
 	const weightAttrByMinutes = weightByMinutes.has(attr);
 	const lng = attr.endsWith("Lng");
 
+	// Calculate values used for perGame and per36 averages, which is needed for historical stats where some seasons might not have had a stat collected. Like if you want career assists per game, and only 2 of the player's 5 seasons were after they started tracking assists, we need to know gp for only those 2 seasons
+	let extraForMissingValues:
+		| {
+				gp: number | undefined;
+				min: number | undefined;
+		  }
+		| undefined;
+
 	for (const cs of careerStats) {
 		if (cs[attr] === undefined) {
+			if (isSport("basketball") && !extraForMissingValues) {
+				extraForMissingValues = {
+					gp: 0,
+					min: 0,
+				};
+			}
 			continue;
 		}
 
@@ -512,11 +531,27 @@ const sumCareerStats = (careerStats: any[], attr: string) => {
 				value = num > (value as any) ? num : value;
 			} else {
 				value += num;
+
+				if (extraForMissingValues) {
+					for (const key of ["gp", "min"] as const) {
+						if (typeof cs[key] === "number") {
+							if (extraForMissingValues[key] !== undefined) {
+								extraForMissingValues[key] += cs[key];
+							}
+						} else {
+							// Missing this value for some row, meaning we just can't compute per game or per 36 minutes or whatever for this stat
+							extraForMissingValues[key] = undefined;
+						}
+					}
+				}
 			}
 		}
 	}
 
-	return value;
+	return {
+		value,
+		extraForMissingValues,
+	};
 };
 
 const getPlayerStats = (
@@ -631,7 +666,7 @@ const getPlayerStats = (
 
 		for (const attr of attrs) {
 			if (!ignoredKeys.has(attr)) {
-				statSums[attr] = sumCareerStats(rowsToMerge2, attr);
+				statSums[attr] = sumCareerStats(rowsToMerge2, attr, "totals").value;
 			}
 		}
 
@@ -705,6 +740,7 @@ const processPlayerStats = (
 	stats: string[],
 	statType: PlayerStatType,
 	keepWithNoStats: boolean,
+	statSumsExtra?: StatSumsExtra,
 ) => {
 	const output = processPlayerStats2(
 		statSums,
@@ -712,6 +748,7 @@ const processPlayerStats = (
 		statType,
 		p.born.year,
 		keepWithNoStats,
+		statSumsExtra,
 	);
 
 	// More common stuff between basketball/football could be moved here... abbrev is just special cause it needs to run on the worker
@@ -823,10 +860,19 @@ const processStats = (
 			"yearsWithTeam",
 			"jerseyNumber",
 		]);
-		const statSums: any = {};
-		const statSumsPlayoffs: any = {};
-		const statSumsCombined: any = {};
 		const attrs = careerStats.length > 0 ? Object.keys(careerStats.at(-1)) : [];
+
+		const statSums = {
+			regularSeason: {} as any,
+			playoffs: {} as any,
+			combined: {} as any,
+		};
+
+		const statSumsExtra = {
+			regularSeason: {} as StatSumsExtra,
+			playoffs: {} as StatSumsExtra,
+			combined: {} as StatSumsExtra,
+		};
 
 		const careerStatsFiltered = {
 			regularSeason: regularSeason
@@ -840,34 +886,48 @@ const processStats = (
 				: [],
 		};
 
+		const seasonTypes: ("regularSeason" | "playoffs" | "combined")[] = [];
+		if (regularSeason) {
+			seasonTypes.push("regularSeason");
+		}
+		if (playoffs) {
+			seasonTypes.push("playoffs");
+		}
+		if (combined) {
+			seasonTypes.push("combined");
+		}
+
 		for (const attr of attrs) {
 			if (!ignoredKeys.has(attr)) {
-				if (regularSeason) {
-					statSums[attr] = sumCareerStats(
-						careerStatsFiltered.regularSeason,
+				for (const seasonType of seasonTypes) {
+					const sumInfo = sumCareerStats(
+						careerStatsFiltered[seasonType],
 						attr,
+						statType,
 					);
-				}
-				if (playoffs) {
-					statSumsPlayoffs[attr] = sumCareerStats(
-						careerStatsFiltered.playoffs,
-						attr,
-					);
-				}
-				if (combined) {
-					statSumsCombined[attr] = sumCareerStats(
-						careerStatsFiltered.combined,
-						attr,
-					);
+
+					statSums[seasonType][attr] = sumInfo.value;
+
+					if (sumInfo.extraForMissingValues) {
+						statSumsExtra[seasonType][attr] = sumInfo.extraForMissingValues;
+					}
 				}
 			}
 		}
 
 		// Special case for some variables, weight by minutes
 		for (const attr of weightByMinutes) {
-			for (const object of [statSums, statSumsPlayoffs, statSumsCombined]) {
+			for (const seasonType of seasonTypes) {
+				const object = statSums[seasonType];
 				if (Object.hasOwn(object, attr)) {
-					if (object.min > 0) {
+					if (statSumsExtra[seasonType][attr]) {
+						const min = statSumsExtra[seasonType][attr].min;
+						if (min === undefined) {
+							object[attr] = 0;
+						} else {
+							object[attr] /= min;
+						}
+					} else if (object.min > 0) {
 						object[attr] /= object.min;
 					} else {
 						object[attr] = 0;
@@ -879,30 +939,33 @@ const processStats = (
 		if (regularSeason) {
 			output.careerStats = processPlayerStats(
 				p,
-				statSums,
+				statSums.regularSeason,
 				stats,
 				statType,
 				keepWithNoStats,
+				statSumsExtra.regularSeason,
 			);
 		}
 
 		if (playoffs) {
 			output.careerStatsPlayoffs = processPlayerStats(
 				p,
-				statSumsPlayoffs,
+				statSums.playoffs,
 				stats,
 				statType,
 				keepWithNoStats,
+				statSumsExtra.playoffs,
 			);
 		}
 
 		if (combined) {
 			output.careerStatsCombined = processPlayerStats(
 				p,
-				statSumsCombined,
+				statSums.combined,
 				stats,
 				statType,
 				keepWithNoStats,
+				statSumsExtra.combined,
 			);
 		}
 	}

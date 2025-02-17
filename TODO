@@ -4,9 +4,13 @@ missing stats in historical leagues (like blk/stl in old leagues)
 - handle in TOT seasons
 - handle in GOAT Lab
 - handle anywhere else that adds things up, like careerTotals, seasonRange, etc
-  - track min/gp available in the seasons for each stat, if there is an undefined value only. pass throguh to processPlayerStats
-  - if stat is only available some years when calculating derived stat, use only available seasons (like min only being available for some seasons, but GP for all)
-    - needs to handle trb too - average together trb and orb+drb depending on availability
+  - tov% calculation is wrong - depends on some values which are only there sometimes, needs to use 
+  - trb calculation is wrong - average together trb and orb+drb depending on availability
+  - TEST
+    - seasonRange
+    - per 36
+    - per 36 with some seasons before min was tracked
+      - should be undefined
 - bring back old AST% values if career totals can be done properly (only if value exists for this season type)
 - make sure exhibition games work
 - keepWithNoStats messed up now?

@@ -1,6 +1,11 @@
 import helpers from "./helpers";
 import type { PlayerStats, PlayerStatType } from "./types";
 
+export type StatSumsExtra = Record<
+	string,
+	{ gp: number | undefined; min: number | undefined } | undefined
+>;
+
 const straightThrough = [
 	"gp",
 	"gs",
@@ -35,6 +40,7 @@ const processStats = (
 	statType: PlayerStatType = "totals",
 	bornYear?: number,
 	keepWithNoStats?: boolean,
+	statSumsExtra?: StatSumsExtra,
 ) => {
 	const row: any = {};
 
@@ -133,9 +139,11 @@ const processStats = (
 			if (statType === "totals") {
 				row[stat] = val;
 			} else if (statType === "per36" && stat !== "min") {
-				row[stat] = ps.min > 0 ? (val * 36) / ps.min : 0;
+				const min = statSumsExtra?.[stat]?.min ?? ps.min;
+				row[stat] = min > 0 ? (val * 36) / min : 0;
 			} else {
-				row[stat] = ps.gp > 0 ? val / ps.gp : 0;
+				const gp = statSumsExtra?.[stat]?.gp ?? ps.gp;
+				row[stat] = gp > 0 ? val / gp : 0;
 			}
 		}
 

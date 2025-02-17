@@ -5,6 +5,7 @@ missing stats in historical leagues (like blk/stl in old leagues)
 - handle in GOAT Lab
 - handle anywhere else that adds things up, like careerTotals, seasonRange, etc
   - if stat is only available some years when calculating derived stat, use only available seasons (like min only being available for some seasons, but GP for all)
+    - needs to handle trb too - average together trb and orb+drb depending on availability
 - make sure exhibition games work
 - keepWithNoStats messed up now?
 - 1950s bugs
@@ -13,8 +14,11 @@ missing stats in historical leagues (like blk/stl in old leagues)
     - delete old playoff astp?
     - smarter summing?
 - dd/td/qd/fxf should always be filled in
-- rebounds should be stored as trb, rather than drb because they really are total
 - test alexnoob rosters
+- blog
+  - null values
+  - trb
+  - career stats with null values or trb
 
 intermittent "tid not found" error when starting real players league with all stats in 1977
 

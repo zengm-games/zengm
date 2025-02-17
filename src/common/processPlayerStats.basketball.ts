@@ -106,8 +106,8 @@ const processStats = (
 			row.bpm = ps.dbpm + ps.obpm;
 			scale = false;
 		} else if (stat === "trb") {
-			// In historical stats, orb may be undefined, but trb never is
-			row[stat] = ps.drb + (ps.orb ?? 0);
+			// In historical stats, before orb/drb were tracked separately, stats rows include trb
+			row[stat] = ps.trb ?? ps.drb + ps.orb;
 		} else if (stat === "2p") {
 			// In historical stats, tp may be undefined, but fg never is
 			row[stat] = ps.fg - (ps.tp ?? 0);

@@ -39,7 +39,6 @@ const augmentPartialPlayer = async (
 	version: number | undefined,
 	ignoreJerseyNumberConflicts?: boolean,
 ): Promise<Player<MinimalPlayerRatings>> => {
-	console.log(p, structuredClone(p.stats?.[0]));
 	let age;
 
 	if (p.born === undefined) {

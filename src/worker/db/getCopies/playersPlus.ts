@@ -442,12 +442,24 @@ export const weightByMinutes = bySport({
 	hockey: [],
 });
 
-const reduceCareerStats = (
-	careerStats: any[],
-	attr: string,
+const filterForCareerStats = (
+	allStats: any[],
 	seasonType: "playoffs" | "regularSeason" | "combined",
 	mergeStats: PlayersPlusOptionsRequired["mergeStats"],
 ) => {
+	return allStats.filter(
+		(row) =>
+			((row.playoffs === "combined" && seasonType === "combined") ||
+				(row.playoffs === true && seasonType === "playoffs") ||
+				(row.playoffs === false && seasonType === "regularSeason")) &&
+			// Combined only has TOT, even for totAndTeams, so keep TOT combined rows
+			(mergeStats !== "totAndTeams" ||
+				row.playoffs === "combined" ||
+				row.tid !== PLAYER.TOT),
+	);
+};
+
+const reduceCareerStats = (careerStats: any[], attr: string) => {
 	let initialValue: null | (number | undefined)[] | number;
 	let type: "max" | "byPos" | "normal";
 	if (attr.endsWith("Max")) {
@@ -466,54 +478,43 @@ const reduceCareerStats = (
 
 	const weightAttrByMinutes = weightByMinutes.includes(attr);
 
-	return careerStats
-		.filter(
-			(cs) =>
-				((cs.playoffs === "combined" && seasonType === "combined") ||
-					(cs.playoffs === true && seasonType === "playoffs") ||
-					(cs.playoffs === false && seasonType === "regularSeason")) &&
-				// Combined only has TOT, even for totAndTeams, so keep TOT combined rows
-				(mergeStats !== "totAndTeams" ||
-					cs.playoffs === "combined" ||
-					cs.tid !== PLAYER.TOT),
-		)
-		.reduce((memo, cs) => {
-			if (cs[attr] === undefined) {
-				return memo;
-			}
+	return careerStats.reduce((memo, cs) => {
+		if (cs[attr] === undefined) {
+			return memo;
+		}
 
-			if (type === "byPos") {
-				for (let i = 0; i < cs[attr].length; i++) {
-					const value = cs[attr][i];
-					if (value !== undefined) {
-						if (memo[i] === undefined) {
-							memo[i] = 0;
-						}
-						memo[i] += value;
+		if (type === "byPos") {
+			for (let i = 0; i < cs[attr].length; i++) {
+				const value = cs[attr][i];
+				if (value !== undefined) {
+					if (memo[i] === undefined) {
+						memo[i] = 0;
 					}
+					memo[i] += value;
 				}
+			}
 
+			return memo;
+		}
+
+		const num = weightAttrByMinutes ? cs[attr] * cs.min : cs[attr];
+
+		if (type === "max") {
+			if (num === undefined || num === null) {
 				return memo;
 			}
 
-			const num = weightAttrByMinutes ? cs[attr] * cs.min : cs[attr];
+			return memo === null || num[0] > memo[0]
+				? [num[0], num[1], helpers.getAbbrev(cs.tid), cs.tid, cs.season]
+				: memo;
+		}
 
-			if (type === "max") {
-				if (num === undefined || num === null) {
-					return memo;
-				}
+		if (attr.endsWith("Lng")) {
+			return num > memo ? num : memo;
+		}
 
-				return memo === null || num[0] > memo[0]
-					? [num[0], num[1], helpers.getAbbrev(cs.tid), cs.tid, cs.season]
-					: memo;
-			}
-
-			if (attr.endsWith("Lng")) {
-				return num > memo ? num : memo;
-			}
-
-			return memo + num;
-		}, initialValue);
+		return memo + num;
+	}, initialValue);
 };
 
 const getPlayerStats = (
@@ -620,14 +621,15 @@ const getPlayerStats = (
 		const statSums: any = {};
 		const attrs = rowsToMerge.length > 0 ? Object.keys(rowsToMerge.at(-1)) : [];
 
+		const rowsToMerge2 = filterForCareerStats(
+			rowsToMerge,
+			seasonType,
+			mergeStats,
+		);
+
 		for (const attr of attrs) {
 			if (!ignoredKeys.has(attr)) {
-				statSums[attr] = reduceCareerStats(
-					rowsToMerge,
-					attr,
-					seasonType,
-					mergeStats,
-				);
+				statSums[attr] = reduceCareerStats(rowsToMerge2, attr);
 			}
 		}
 
@@ -824,30 +826,36 @@ const processStats = (
 		const statSumsCombined: any = {};
 		const attrs = careerStats.length > 0 ? Object.keys(careerStats.at(-1)) : [];
 
+		const careerStatsFiltered = {
+			regularSeason: regularSeason
+				? filterForCareerStats(careerStats, "regularSeason", mergeStats)
+				: [],
+			playoffs: playoffs
+				? filterForCareerStats(careerStats, "playoffs", mergeStats)
+				: [],
+			combined: combined
+				? filterForCareerStats(careerStats, "combined", mergeStats)
+				: [],
+		};
+
 		for (const attr of attrs) {
 			if (!ignoredKeys.has(attr)) {
 				if (regularSeason) {
 					statSums[attr] = reduceCareerStats(
-						careerStats,
+						careerStatsFiltered.regularSeason,
 						attr,
-						"regularSeason",
-						mergeStats,
 					);
 				}
 				if (playoffs) {
 					statSumsPlayoffs[attr] = reduceCareerStats(
-						careerStats,
+						careerStatsFiltered.playoffs,
 						attr,
-						"playoffs",
-						mergeStats,
 					);
 				}
 				if (combined) {
 					statSumsCombined[attr] = reduceCareerStats(
-						careerStats,
+						careerStatsFiltered.combined,
 						attr,
-						"combined",
-						mergeStats,
 					);
 				}
 			}
@@ -1051,6 +1059,7 @@ const getCopies = async (
 		statType,
 		mergeStats,
 	};
+	console.log("playersPlus", players, options);
 
 	return players
 		.map((p) => processPlayer(p, options))

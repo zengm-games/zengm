@@ -6,6 +6,7 @@ missing stats in historical leagues (like blk/stl in old leagues)
 - handle anywhere else that adds things up, like careerTotals, seasonRange, etc
   - if stat is only available some years when calculating derived stat, use only available seasons (like min only being available for some seasons, but GP for all)
     - needs to handle trb too - average together trb and orb+drb depending on availability
+- bring back old AST% values if career totals can be done properly (only if value exists for this season type)
 - make sure exhibition games work
 - keepWithNoStats messed up now?
 - 1950s bugs

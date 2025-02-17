@@ -88,7 +88,8 @@ const processStats = (
 			row[stat] = helpers.ratio(ps.fta, ps.fga);
 			scale = false;
 		} else if (stat === "tovp") {
-			row[stat] = helpers.percentage(ps.tov, ps.fga + 0.44 * ps.fta + ps.tov);
+			row[stat] =
+				ps.tovp ?? helpers.percentage(ps.tov, ps.fga + 0.44 * ps.fta + ps.tov);
 			scale = false;
 		} else if (stat === "season") {
 			row.season = ps.season;

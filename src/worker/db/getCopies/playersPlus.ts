@@ -464,8 +464,11 @@ const filterForCareerStats = (
 
 const sumCareerStats = (careerStats: any[], attr: string) => {
 	let value: null | (number | undefined)[] | number;
-	let type: "max" | "byPos" | "normal";
-	if (attr.endsWith("Max")) {
+	let type: "max" | "byPos" | "normal" | "tovpHack";
+	if (isSport("basketball") && attr === "tovp") {
+		value = [0, 0];
+		type = "tovpHack";
+	} else if (attr.endsWith("Max")) {
 		value = null;
 		type = "max";
 	} else if (
@@ -491,6 +494,15 @@ const sumCareerStats = (careerStats: any[], attr: string) => {
 		| undefined;
 
 	for (const cs of careerStats) {
+		if (isSport("basketball") && type === "tovpHack") {
+			if (cs.tov !== undefined) {
+				(value as any)[0] += cs.tov;
+				(value as any)[1] += cs.fga + 0.44 * cs.fta + cs.tov;
+			}
+
+			continue;
+		}
+
 		if (cs[attr] === undefined) {
 			if (isSport("basketball") && !extraForMissingValues) {
 				extraForMissingValues = {
@@ -550,6 +562,10 @@ const sumCareerStats = (careerStats: any[], attr: string) => {
 				}
 			}
 		}
+	}
+
+	if (isSport("basketball") && type === "tovpHack") {
+		value = helpers.percentage((value as any)[0], (value as any)[1]) ?? 0;
 	}
 
 	return {
@@ -667,7 +683,7 @@ const getPlayerStats = (
 			mergeStats,
 		);
 
-		for (const attr of getAttrs(rowsToMerge)) {
+		for (const attr of getAttrsToSum(rowsToMerge)) {
 			if (!ignoredKeys.has(attr)) {
 				statSums[attr] = sumCareerStats(rowsToMerge2, attr).value;
 			}
@@ -776,15 +792,26 @@ const processPlayerStats = (
 	return output;
 };
 
-const getAttrs = (statsRows: any[]) => {
+const getAttrsToSum = (statsRows: any[]) => {
 	const attrs = statsRows.length > 0 ? Object.keys(statsRows.at(-1)) : [];
+
+	// If these are historical stats with TRB rather than ORB and DRB separate, that will be apparent in the first (oldest) row
 	if (
 		isSport("basketball") &&
 		statsRows.length > 0 &&
 		statsRows[0].trb !== undefined
 	) {
-		// If these are historical stats with TRB rather than ORB and DRB separate, that will be apparent in the first (oldest) row
 		attrs.push("trb");
+	}
+
+	// If these are historical stats with TOV missing in the first row, then it's possible we need a special calculation of TOV% because we need to use FGA and FTA only from rows with TOV
+	if (
+		isSport("basketball") &&
+		statsRows.length > 0 &&
+		statsRows[0].tov === undefined &&
+		statsRows.some((row) => row.tov !== undefined)
+	) {
+		attrs.push("tovp");
 	}
 
 	return attrs;
@@ -913,7 +940,7 @@ const processStats = (
 			seasonTypes.push("combined");
 		}
 
-		for (const attr of getAttrs(careerStats)) {
+		for (const attr of getAttrsToSum(careerStats)) {
 			if (!ignoredKeys.has(attr)) {
 				for (const seasonType of seasonTypes) {
 					const sumInfo = sumCareerStats(careerStatsFiltered[seasonType], attr);

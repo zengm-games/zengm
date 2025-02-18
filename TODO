@@ -1,10 +1,7 @@
 missing stats in historical leagues (like blk/stl in old leagues)
-- make undefined
 - maybe add an option to allow undefined, and only use that certain places? idk
-- handle in GOAT Lab
 - make sure exhibition games work
 - keepWithNoStats messed up now?
-- test alexnoob rosters
 - blog
   - null values
   - trb

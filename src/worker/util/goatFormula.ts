@@ -4,6 +4,7 @@ import stats from "../core/player/stats";
 import { weightByMinutes } from "../db/getCopies/playersPlus";
 import FormulaEvaluator from "./FormulaEvaluator";
 import g from "./g";
+import helpers from "./helpers";
 
 const DEFAULT_FORMULA = bySport({
 	baseball: "20 * mvp + war",
@@ -118,6 +119,11 @@ const evaluate = (
 		let minSumPlayoffs = 0;
 
 		for (const row of statsRows) {
+			if (row[stat] === undefined) {
+				// For missing values in historical real players data
+				continue;
+			}
+
 			if (row.playoffs) {
 				if (weightStatByMinutes) {
 					object[playoffs] += row[stat] * row.min;
@@ -131,7 +137,7 @@ const evaluate = (
 						object[peak] = row[stat];
 					}
 
-					const perGame = row[stat] / row.gp;
+					const perGame = helpers.ratio(row[stat], row.gp);
 					if (perGame > object[peakPerGame]) {
 						object[peakPerGame] = perGame;
 					}
@@ -147,8 +153,8 @@ const evaluate = (
 		}
 
 		if (weightStatByMinutes) {
-			object[tot] /= minSum;
-			object[playoffs] /= minSumPlayoffs;
+			object[tot] = helpers.ratio(object[tot], minSum);
+			object[playoffs] = helpers.ratio(object[playoffs], minSumPlayoffs);
 		}
 	}
 

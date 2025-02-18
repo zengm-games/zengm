@@ -1,14 +1,3 @@
-missing stats in historical leagues (like blk/stl in old leagues)
-- maybe add an option to allow undefined, and only use that certain places? idk
-- make sure exhibition games work
-- keepWithNoStats messed up now?
-- blog
-  - null values
-  - trb
-  - career stats with null values or trb
-  - tov% career stats
-  - dd/ba/etc always missing
-
 intermittent "tid not found" error when starting real players league with all stats in 1977
 
 hype on league finances page https://discord.com/channels/290013534023057409/331882115119448065/1335735421145186440

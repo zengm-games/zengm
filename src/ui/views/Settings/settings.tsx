@@ -1600,6 +1600,31 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Game Simulation",
+			key: "twoPointerValue",
+			name: "Two Pointer Value",
+			godModeRequired: "always",
+			type: "int",
+			validator: (value) => {
+				if (value < 0) {
+					throw new Error("Value cannot be less than 0");
+				}
+			},
+		},
+		{
+			category: "Game Simulation",
+			key: "threePointerValue",
+			name: "Three Pointer Value",
+			godModeRequired: "always",
+			type: "int",
+			validator: (value) => {
+				if (value < 0) {
+					throw new Error("Value cannot be less than 0");
+				}
+				// TODO: can add another check to make it always greater than twoPointerValue?
+			},
+		},
+		{
+			category: "Game Simulation",
 			key: "foulsUntilBonus",
 			name: "# Fouls Until Bonus",
 			godModeRequired: "always",

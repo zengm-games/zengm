@@ -660,6 +660,8 @@ export type GameAttributesLeague = {
 	tradeProposalsSeed: number;
 	tragicDeathRate: number;
 	tragicDeaths?: TragicDeaths;
+	twoPointerValue: number;
+	threePointerValue: number;
 	userTid: number;
 	userTids: number[];
 	weightFactor: number;

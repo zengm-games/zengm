@@ -39,6 +39,8 @@ export type Key =
 	| "foulsNeededToFoulOut"
 	| "foulsUntilBonus"
 	| "threePointers"
+	| "twoPointerValue"
+	| "threePointerValue"
 	| "pace"
 	| "threePointTendencyFactor"
 	| "threePointAccuracyFactor"

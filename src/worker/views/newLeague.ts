@@ -116,6 +116,14 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"threePointAccuracyFactor",
 		),
+		twoPointerValue: unwrapGameAttribute(
+			defaultGameAttributes,
+			"twoPointerValue",
+		),
+		threePointerValue: unwrapGameAttribute(
+			defaultGameAttributes,
+			"threePointerValue",
+		),
 		twoPointAccuracyFactor: unwrapGameAttribute(
 			defaultGameAttributes,
 			"twoPointAccuracyFactor",

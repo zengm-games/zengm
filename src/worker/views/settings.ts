@@ -51,6 +51,8 @@ type Key =
 	| "foulRateFactor"
 	| "foulsNeededToFoulOut"
 	| "foulsUntilBonus"
+	| "twoPointerValue"
+	| "threePointerValue"
 	| "threePointers"
 	| "pace"
 	| "threePointTendencyFactor"
@@ -260,6 +262,8 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			foulRateFactor: g.get("foulRateFactor"),
 			foulsNeededToFoulOut: g.get("foulsNeededToFoulOut"),
 			foulsUntilBonus: g.get("foulsUntilBonus"),
+			twoPointerValue: g.get("twoPointerValue"),
+			threePointerValue: g.get("threePointerValue"),
 			threePointers: g.get("threePointers"),
 			pace: g.get("pace"),
 			threePointTendencyFactor: g.get("threePointTendencyFactor"),

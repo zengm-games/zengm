@@ -1836,7 +1836,8 @@ class GameSim extends GameSimBase {
 		if (putBack) {
 			shooter = this.lastOrbPlayer;
 		}
-
+		const twoPointerValue = g.get("twoPointerValue");
+		const threePointerValue = g.get("threePointerValue");
 		const p = this.playersOnCourt[this.o][shooter];
 		const currentFatigue = this.fatigue(
 			this.team[this.o].player[p].stat.energy,
@@ -1929,10 +1930,12 @@ class GameSim extends GameSimBase {
 		}
 
 		// In some situations (4th quarter late game situations depending on score, and last second heaves in other quarters) players shoot more 3s
+		// Mininum value should be the max of what two pointers and three pointers are worth.
+		// Should force a shot on what should be worth more value, if edited in settings.
 		const diff = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
 		const quarter = this.team[this.o].stat.ptsQtrs.length;
-		const forceThreePointer =
-			(diff >= 3 &&
+		const forceHighestValueShot =
+			(diff >= Math.max(threePointerValue, twoPointerValue) &&
 				diff <= 10 &&
 				this.t <= 10 &&
 				quarter >= this.numPeriods &&
@@ -1941,7 +1944,8 @@ class GameSim extends GameSimBase {
 				this.t < 2 &&
 				this.possessionLength <= 3 &&
 				!this.sideOutOfBounds());
-
+		const forceThreePointer =
+			forceHighestValueShot && threePointerValue > twoPointerValue;
 		const rushed = this.t < 2 && this.possessionLength < 6;
 
 		if (this.t <= 0) {
@@ -2322,11 +2326,17 @@ class GameSim extends GameSimBase {
 		type: ShotType,
 		andOne: boolean = false,
 	) {
+		const twoPointerValue = g.get("twoPointerValue");
+		const threePointerValue = g.get("threePointerValue");
 		const p = this.playersOnCourt[this.o][shooter];
 		const pid = this.team[this.o].player[p].id;
 		this.recordStat(this.o, p, "fga");
 		this.recordStat(this.o, p, "fg");
-		this.recordStat(this.o, p, "pts", 2); // 2 points for 2's
+		if (type === "threePointer") {
+			this.recordStat(this.o, p, "pts", threePointerValue);
+		} else {
+			this.recordStat(this.o, p, "pts", twoPointerValue); // 2 points for 2's
+		}
 
 		let fouler;
 		let pidFoul;
@@ -2404,10 +2414,6 @@ class GameSim extends GameSimBase {
 				clock: this.t,
 			});
 		} else if (type === "threePointer") {
-			if (g.get("threePointers")) {
-				this.recordStat(this.o, p, "pts"); // Extra point for 3's
-			}
-
 			this.recordStat(this.o, p, "tpa");
 			this.recordStat(this.o, p, "tp");
 			this.playByPlay.logEvent({
@@ -2648,6 +2654,10 @@ class GameSim extends GameSimBase {
 	}
 
 	recordLastScore(teamnum: TeamNum, playernum: number, type: ShotType) {
+		const maxPointValue = Math.max(
+			g.get("twoPointerValue"),
+			g.get("threePointerValue"),
+		);
 		// only record plays in the fourth quarter or overtime...
 		if (this.team[0].stat.ptsQtrs.length < this.numPeriods) {
 			return;
@@ -2658,8 +2668,10 @@ class GameSim extends GameSimBase {
 			return;
 		}
 
-		// ...when the lead is 3 or less
-		if (Math.abs(this.team[0].stat.pts - this.team[1].stat.pts) > 4) {
+		// ...when the lead is equal to or less than the value of a 2 or 3 pointer, based on whats larger
+		if (
+			Math.abs(this.team[0].stat.pts - this.team[1].stat.pts) > maxPointValue
+		) {
 			return;
 		}
 

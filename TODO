@@ -2,8 +2,6 @@ missing stats in historical leagues (like blk/stl in old leagues)
 - make undefined
 - maybe add an option to allow undefined, and only use that certain places? idk
 - handle in GOAT Lab
-- bring back old AST% values if career totals can be done properly (only if value exists for this season type)
-  - have getAttrs takes first/last row of actual processed stats for this type, not any type
 - make sure exhibition games work
 - keepWithNoStats messed up now?
 - test alexnoob rosters

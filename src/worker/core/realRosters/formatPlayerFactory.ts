@@ -364,6 +364,9 @@ const formatPlayerFactory = async (
 			tid: number;
 			minAvailable: number;
 			ewa: number | undefined;
+			td: number | undefined;
+			qd: number | undefined;
+			fxf: number | undefined;
 		};
 		let stats: StatsRow[] | undefined;
 		if (options.type === "real" && basketballStats) {
@@ -412,6 +415,11 @@ const formatPlayerFactory = async (
 							row.per !== undefined && row.min !== undefined
 								? getEWA(row.per, row.min, bio.pos, 1)
 								: undefined,
+
+						// Set these to explicitly 0 for seasons since the relevant stats (ast/trb, and blk/stl) were tracked
+						td: row.td ?? (row.season >= 1951 ? 0 : undefined), // Ideally this would be in the raw data, but it seems they use null rather than 0 for some seasons/players
+						qd: row.qd ?? (row.season >= 1975 ? 0 : undefined),
+						fxf: row.fxf ?? (row.season >= 1975 ? 0 : undefined),
 					};
 					delete (newRow as any).slug;
 					delete (newRow as any).abbrev;

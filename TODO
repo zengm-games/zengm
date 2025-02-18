@@ -6,13 +6,16 @@ missing stats in historical leagues (like blk/stl in old leagues)
   - have getAttrs takes first/last row of actual processed stats for this type, not any type
 - make sure exhibition games work
 - keepWithNoStats messed up now?
-- dd/td/qd/fxf should always be filled in
+- career stats 0 for qd/fxf why? http://localhost/l/70/player/282
+  - 0 for some combined seasons why?
+    - seems to be seasons with regular season and playoff stats http://localhost/l/70/player/753
 - test alexnoob rosters
 - blog
   - null values
   - trb
   - career stats with null values or trb
   - tov% career stats
+  - dd/ba/etc always missing
 
 intermittent "tid not found" error when starting real players league with all stats in 1977
 

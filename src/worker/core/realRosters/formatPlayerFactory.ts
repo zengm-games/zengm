@@ -363,7 +363,7 @@ const formatPlayerFactory = async (
 			playoffs: boolean;
 			tid: number;
 			minAvailable: number;
-			ewa: number;
+			ewa: number | undefined;
 		};
 		let stats: StatsRow[] | undefined;
 		if (options.type === "real" && basketballStats) {
@@ -408,7 +408,10 @@ const formatPlayerFactory = async (
 						playoffs: !!row.playoffs,
 						tid,
 						minAvailable: (row.gp ?? 0) * MINUTES_PER_GAME,
-						ewa: getEWA(row.per ?? 0, row.min ?? 0, bio.pos, 1),
+						ewa:
+							row.per !== undefined && row.min !== undefined
+								? getEWA(row.per, row.min, bio.pos, 1)
+								: undefined,
 					};
 					delete (newRow as any).slug;
 					delete (newRow as any).abbrev;

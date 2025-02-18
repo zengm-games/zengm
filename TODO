@@ -6,8 +6,6 @@ missing stats in historical leagues (like blk/stl in old leagues)
   - have getAttrs takes first/last row of actual processed stats for this type, not any type
 - make sure exhibition games work
 - keepWithNoStats messed up now?
-- 1950s bugs
-  - EWA showing up as -0 when PER doesn't exist
 - dd/td/qd/fxf should always be filled in
 - test alexnoob rosters
 - blog

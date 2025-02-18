@@ -141,7 +141,7 @@ const processStats = (
 				row[stat] = val;
 			} else if (statType === "per36" && stat !== "min") {
 				const min = statSumsExtra?.[stat]?.min ?? ps.min;
-				row[stat] = min > 0 ? (val * 36) / min : 0;
+				row[stat] = min > 0 ? (val * 36) / min : undefined;
 			} else {
 				let gp;
 				if (stat === "trb" && statSumsExtra?.trb?.gp !== undefined) {

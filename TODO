@@ -4,9 +4,8 @@ missing stats in historical leagues (like blk/stl in old leagues)
 - handle in GOAT Lab
 - handle anywhere else that adds things up, like careerTotals, seasonRange, etc
   - TEST
-    - per 36
-    - per 36 with some seasons before min was tracked
-      - should be undefined
+    - player stats -> career totals
+      - why some 0% TOV% before TOV were tracked? http://localhost/l/65/player_stats/all/career/advanced/regularSeason
 - bring back old AST% values if career totals can be done properly (only if value exists for this season type)
   - have getAttrs takes first/last row of actual processed stats for this type, not any type
 - make sure exhibition games work

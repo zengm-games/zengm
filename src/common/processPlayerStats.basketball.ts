@@ -113,8 +113,10 @@ const processStats = (
 			row.bpm = ps.dbpm + ps.obpm;
 			scale = false;
 		} else if (stat === "trb") {
-			// In historical stats, before orb/drb were tracked separately, stats rows include trb
-			row[stat] = (ps.trb ?? 0) + (ps.drb ?? 0) + (ps.orb ?? 0);
+			// In historical stats, before orb/drb were tracked separately, stats rows include trb. Even older seasons, trb was not even tracked
+			if (ps.trb !== undefined || ps.drb !== undefined) {
+				row[stat] = (ps.trb ?? 0) + (ps.drb ?? 0) + (ps.orb ?? 0);
+			}
 		} else if (stat === "2p") {
 			// In historical stats, tp may be undefined, but fg never is
 			row[stat] = ps.fg - (ps.tp ?? 0);

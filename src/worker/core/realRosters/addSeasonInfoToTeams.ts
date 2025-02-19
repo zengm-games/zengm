@@ -91,6 +91,10 @@ const addSeasonInfoToTeams = async <
 			p2.firstName = parts[0];
 			p2.lastName = parts.slice(1).join(" ");
 
+			if (!p2.stats) {
+				p2.stats = [];
+			}
+
 			for (const row of p2.ratings) {
 				row.fuzz = 0;
 			}

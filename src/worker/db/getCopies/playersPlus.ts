@@ -463,23 +463,47 @@ const filterForCareerStats = (
 };
 
 const sumCareerStats = (careerStats: any[], attr: string) => {
-	let value: null | (number | undefined)[] | number;
-	let type: "max" | "byPos" | "normal" | "tovpHack";
+	let info:
+		| {
+				type: "max";
+				value: null | [number, number, string, number, number];
+		  }
+		| {
+				type: "byPos";
+				value: (number | undefined)[];
+		  }
+		| {
+				type: "normal";
+				value: number;
+		  }
+		| {
+				type: "tovpHack";
+				value: [0, 0]; // Numberator and denominator of tovp formula
+		  };
+
 	if (isSport("basketball") && attr === "tovp") {
-		value = [0, 0];
-		type = "tovpHack";
+		info = {
+			type: "tovpHack",
+			value: [0, 0],
+		};
 	} else if (attr.endsWith("Max")) {
-		value = null;
-		type = "max";
+		info = {
+			type: "max",
+			value: null,
+		};
 	} else if (
 		player.stats.byPos?.includes(attr) ||
 		(isSport("baseball") && attr === "rfld")
 	) {
-		value = [];
-		type = "byPos";
+		info = {
+			type: "byPos",
+			value: [],
+		};
 	} else {
-		value = 0;
-		type = "normal";
+		info = {
+			type: "normal",
+			value: 0,
+		};
 	}
 
 	const weightAttrByMinutes = weightByMinutes.has(attr);
@@ -494,10 +518,10 @@ const sumCareerStats = (careerStats: any[], attr: string) => {
 		| undefined;
 
 	for (const cs of careerStats) {
-		if (isSport("basketball") && type === "tovpHack") {
+		if (isSport("basketball") && info.type === "tovpHack") {
 			if (cs.tov !== undefined) {
-				(value as any)[0] += cs.tov;
-				(value as any)[1] += cs.fga + 0.44 * cs.fta + cs.tov;
+				info.value[0] += cs.tov;
+				info.value[1] += cs.fga + 0.44 * cs.fta + cs.tov;
 			}
 
 			continue;
@@ -521,32 +545,32 @@ const sumCareerStats = (careerStats: any[], attr: string) => {
 			};
 		}
 
-		if (type === "byPos") {
+		if (info.type === "byPos") {
 			for (let i = 0; i < cs[attr].length; i++) {
 				const arrayValue = cs[attr][i];
 				if (arrayValue !== undefined) {
-					if ((value as any)[i] === undefined) {
-						(value as any)[i] = 0;
+					if (info.value[i] === undefined) {
+						info.value[i] = 0;
 					}
-					(value as any)[i] += arrayValue;
+					info.value[i] += arrayValue;
 				}
 			}
 		} else {
 			const num = weightAttrByMinutes ? cs[attr] * cs.min : cs[attr];
 
-			if (type === "max") {
+			if (info.type === "max") {
 				if (num === undefined || num === null) {
 					continue;
 				}
 
-				value =
-					value === null || num[0] > (value as any)[0]
+				info.value =
+					info.value === null || num[0] > info.value[0]
 						? [num[0], num[1], helpers.getAbbrev(cs.tid), cs.tid, cs.season]
-						: value;
+						: info.value;
 			} else if (lng) {
-				value = num > (value as any) ? num : value;
+				info.value = num > info.value ? num : info.value;
 			} else {
-				value += num;
+				info.value += num;
 
 				if (extraForMissingValues) {
 					for (const key of ["gp", "min"] as const) {
@@ -564,12 +588,16 @@ const sumCareerStats = (careerStats: any[], attr: string) => {
 		}
 	}
 
-	if (isSport("basketball") && type === "tovpHack") {
-		value = helpers.percentage((value as any)[0], (value as any)[1]) ?? 0;
+	let outputValue;
+	if (isSport("basketball") && info.type === "tovpHack") {
+		// Finalize tovp formula
+		outputValue = helpers.percentage(info.value[0], info.value[1]) ?? 0;
+	} else {
+		outputValue = info.value;
 	}
 
 	return {
-		value,
+		value: outputValue,
 		extraForMissingValues,
 	};
 };

@@ -491,7 +491,7 @@ const Depth = ({
 					defaultSort="disableSort"
 					// Different value for baseball is because that uses showRowLabels, which adds an extra column
 					defaultStickyCols={window.mobile ? 0 : isSport("baseball") ? 3 : 2}
-					name="Roster"
+					name={`Depth${pos}`}
 					rows={rows}
 					hideAllControls={editable}
 					nonfluid

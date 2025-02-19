@@ -279,6 +279,4 @@ if (window.enableLogging) {
 			},
 		],
 	});
-
-	return versionNumber;
 };

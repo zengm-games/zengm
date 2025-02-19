@@ -523,12 +523,12 @@ const sumCareerStats = (careerStats: any[], attr: string) => {
 
 		if (type === "byPos") {
 			for (let i = 0; i < cs[attr].length; i++) {
-				const value = cs[attr][i];
-				if (value !== undefined) {
-					if (value[i] === undefined) {
-						value[i] = 0;
+				const arrayValue = cs[attr][i];
+				if (arrayValue !== undefined) {
+					if ((value as any)[i] === undefined) {
+						(value as any)[i] = 0;
 					}
-					value[i] += value;
+					(value as any)[i] += arrayValue;
 				}
 			}
 		} else {

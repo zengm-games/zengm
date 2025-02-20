@@ -968,9 +968,9 @@ const processStats = (
 			seasonTypes.push("combined");
 		}
 
-		for (const attr of getAttrsToSum(careerStats)) {
-			if (!ignoredKeys.has(attr)) {
-				for (const seasonType of seasonTypes) {
+		for (const seasonType of seasonTypes) {
+			for (const attr of getAttrsToSum(careerStatsFiltered[seasonType])) {
+				if (!ignoredKeys.has(attr)) {
 					const sumInfo = sumCareerStats(careerStatsFiltered[seasonType], attr);
 
 					statSums[seasonType][attr] = sumInfo.value;

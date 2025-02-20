@@ -246,11 +246,11 @@ export const getText = (
 		];
 	} else if (event.type === "endOfPeriod") {
 		if (event.reason === "runOutClock") {
-			texts = ["They run out the clock to end the game"];
+			texts = ["They ran out the clock to end the game"];
 		} else if (event.reason === "noShot") {
 			texts = ["They didn't get a shot up before the buzzer"];
 		} else {
-			texts = ["The clock runs out as the defense tries to foul"];
+			texts = ["The clock ran out as the defense tried to foul"];
 		}
 	} else if (event.type === "outOfBounds") {
 		texts = [`Out of bounds, last touched by the ${event.on}`];

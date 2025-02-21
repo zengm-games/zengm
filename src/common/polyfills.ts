@@ -126,7 +126,6 @@ import "./polyfill-TextEncoderDecoderStream";
 // Chrome 85, Safari 13.1
 if (!String.prototype.replaceAll) {
 	const escapeRegex = (string: string) => {
-		// eslint-disable-next-line unicorn/prefer-string-replace-all
 		return string.replace(/[$()*+./?[\\\]^{|}-]/g, String.raw`\$&`);
 	};
 
@@ -142,7 +141,6 @@ if (!String.prototype.replaceAll) {
 		}
 
 		// If a string
-		// eslint-disable-next-line unicorn/prefer-string-replace-all
 		return this.replace(new RegExp(escapeRegex(str as string), "g"), newStr);
 	};
 }

@@ -1,6 +1,11 @@
 import helpers from "./helpers";
 import type { PlayerStats, PlayerStatType } from "./types";
 
+export type StatSumsExtra = Record<
+	string,
+	{ gp: number | undefined; min: number | undefined } | undefined
+>;
+
 const straightThrough = [
 	"gp",
 	"gs",
@@ -34,6 +39,8 @@ const processStats = (
 	stats: string[],
 	statType: PlayerStatType = "totals",
 	bornYear?: number,
+	keepWithNoStats?: boolean,
+	statSumsExtra?: StatSumsExtra,
 ) => {
 	const row: any = {};
 
@@ -43,13 +50,18 @@ const processStats = (
 			row[stat] = ps[stat];
 			scale = false;
 		} else if (stat === "2pp") {
-			row[stat] = helpers.percentage(ps.fg - ps.tp, ps.fga - ps.tpa);
+			// In historical stats, tp may be undefined, but fg never is
+			row[stat] = helpers.percentage(
+				ps.fg - (ps.tp ?? 0),
+				ps.fga - (ps.tpa ?? 0),
+			);
 			scale = false;
 		} else if (stat === "fgp") {
 			row[stat] = helpers.percentage(ps.fg, ps.fga);
 			scale = false;
 		} else if (stat === "efg") {
-			row[stat] = helpers.percentage(ps.fg + 0.5 * ps.tp, ps.fga);
+			// In historical stats, tp may be undefined, but fg never is
+			row[stat] = helpers.percentage(ps.fg + 0.5 * (ps.tp ?? 0), ps.fga);
 			scale = false;
 		} else if (stat === "fgpAtRim") {
 			row[stat] = helpers.percentage(ps.fgAtRim, ps.fgaAtRim);
@@ -76,7 +88,8 @@ const processStats = (
 			row[stat] = helpers.ratio(ps.fta, ps.fga);
 			scale = false;
 		} else if (stat === "tovp") {
-			row[stat] = helpers.percentage(ps.tov, ps.fga + 0.44 * ps.fta + ps.tov);
+			row[stat] =
+				ps.tovp ?? helpers.percentage(ps.tov, ps.fga + 0.44 * ps.fta + ps.tov);
 			scale = false;
 		} else if (stat === "season") {
 			row.season = ps.season;
@@ -100,11 +113,16 @@ const processStats = (
 			row.bpm = ps.dbpm + ps.obpm;
 			scale = false;
 		} else if (stat === "trb") {
-			row[stat] = ps.drb + ps.orb;
+			// In historical stats, before orb/drb were tracked separately, stats rows include trb. Even older seasons, trb was not even tracked
+			if (ps.trb !== undefined || ps.drb !== undefined) {
+				row[stat] = (ps.trb ?? 0) + (ps.drb ?? 0) + (ps.orb ?? 0);
+			}
 		} else if (stat === "2p") {
-			row[stat] = ps.fg - ps.tp;
+			// In historical stats, tp may be undefined, but fg never is
+			row[stat] = ps.fg - (ps.tp ?? 0);
 		} else if (stat === "2pa") {
-			row[stat] = ps.fga - ps.tpa;
+			// In historical stats, tp may be undefined, but fg never is
+			row[stat] = ps.fga - (ps.tpa ?? 0);
 		} else if (stat === "jerseyNumber") {
 			row[stat] = ps[stat];
 			scale = false;
@@ -124,18 +142,29 @@ const processStats = (
 			if (statType === "totals") {
 				row[stat] = val;
 			} else if (statType === "per36" && stat !== "min") {
-				row[stat] = ps.min > 0 ? (val * 36) / ps.min : 0;
+				const min = statSumsExtra?.[stat]?.min ?? ps.min;
+				row[stat] = min > 0 ? (val * 36) / min : undefined;
 			} else {
-				row[stat] = ps.gp > 0 ? val / ps.gp : 0;
+				let gp;
+				if (stat === "trb" && statSumsExtra?.trb?.gp !== undefined) {
+					gp = statSumsExtra.trb.gp + (statSumsExtra.drb?.gp ?? 0);
+				} else {
+					gp = statSumsExtra?.[stat]?.gp ?? ps.gp;
+				}
+				row[stat] = gp > 0 ? val / gp : 0;
 			}
 		}
 
-		// For keepWithNoStats
 		if (
+			keepWithNoStats &&
 			(row[stat] === undefined || Number.isNaN(row[stat])) &&
 			stat !== "jerseyNumber"
 		) {
 			row[stat] = 0;
+		}
+
+		if (!keepWithNoStats && Number.isNaN(row[stat])) {
+			row[stat] = undefined;
 		}
 	}
 

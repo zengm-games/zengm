@@ -217,11 +217,12 @@ export const mvpScore = (p: PlayerFiltered) => {
 		p.teamInfo.gp / defaultGameAttributes.numGames[0].value,
 		1,
 	);
+	// ?? 0 is for Award Races for historical seasons with missing data
 	return (
 		winpScale * p.teamInfo.winp +
-		p.currentStats.ewa / 22 +
-		p.currentStats.vorp / 32 +
-		p.currentStats.fracWS / 10
+		(p.currentStats.ewa ?? 0) / 22 +
+		(p.currentStats.vorp ?? 0) / 32 +
+		(p.currentStats.fracWS ?? 0) / 10
 	);
 };
 
@@ -237,9 +238,9 @@ export const smoyScore = (p: PlayerFiltered) => {
 	return (
 		winpScale * p.teamInfo.winp +
 		(perGameScale * p.currentStats.pts) / 9.9 +
-		p.currentStats.ewa / 5.5 +
-		p.currentStats.vorp / 2.3 +
-		p.currentStats.ws / 4.9
+		(p.currentStats.ewa ?? 0) / 5.5 +
+		(p.currentStats.vorp ?? 0) / 2.3 +
+		(p.currentStats.ws ?? 0) / 4.9
 	);
 };
 
@@ -249,8 +250,8 @@ export const royScore = (p: PlayerFiltered) => {
 		1,
 	);
 	return (
-		p.currentStats.ewa / 2.1 +
-		p.currentStats.vorp +
+		(p.currentStats.ewa ?? 0) / 2.1 +
+		(p.currentStats.vorp ?? 0) +
 		(perGameScale * p.currentStats.pts) / 2
 	);
 };
@@ -268,9 +269,9 @@ export const dpoyScore = (p: PlayerFiltered) => {
 	// nicidob kind of arbitrarily made up this formula
 	return (
 		winpScale * p.teamInfo.winp +
-		p.currentStats.dws / 3.1 +
-		(perGameScale * p.currentStats.blk) / 4.1 +
-		(perGameScale * p.currentStats.stl) / 1.8
+		(p.currentStats.dws ?? 0) / 3.1 +
+		(perGameScale * (p.currentStats.blk ?? 0)) / 4.1 +
+		(perGameScale * (p.currentStats.stl ?? 0)) / 1.8
 	);
 };
 

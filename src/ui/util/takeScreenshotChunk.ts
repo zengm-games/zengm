@@ -53,17 +53,34 @@ const takeScreenshotChunk = async () => {
 
 	window.scrollTo(0, 0);
 
-	const canvas = await html2canvas(contentEl, {
-		backgroundColor: theme === "dark" ? "#212529" : "#fff",
-	});
+	const cleanup = () => {
+		// Remove watermark
+		contentEl.style.display = "";
+		contentEl.removeChild(watermark);
+		contentEl.style.padding = "";
 
-	// Remove watermark
-	contentEl.style.display = "";
-	contentEl.removeChild(watermark);
-	contentEl.style.padding = "";
+		// Remove notifications
+		contentEl.removeChild(notifications);
+	};
 
-	// Remove notifications
-	contentEl.removeChild(notifications);
+	let canvas;
+	try {
+		canvas = await html2canvas(contentEl, {
+			backgroundColor: theme === "dark" ? "#212529" : "#fff",
+		});
+	} catch (error) {
+		cleanup();
+
+		logEvent({
+			type: "error",
+			text: `Error taking screenshot: ${error.message}`,
+			saveToDb: false,
+		});
+
+		return;
+	}
+
+	cleanup();
 
 	logEvent({
 		type: "screenshot",
@@ -109,12 +126,7 @@ const takeScreenshotChunk = async () => {
 	} catch (error) {
 		console.log(error);
 		let errorMsg;
-		if (
-			error &&
-			error.responseJSON &&
-			error.responseJSON.error &&
-			error.responseJSON.error.message
-		) {
+		if (error.responseJSON?.error?.message) {
 			errorMsg = `Error saving screenshot. Error message from Imgur: "${error.responseJSON.error.message}"`;
 		} else if (error.message) {
 			errorMsg = `Error saving screenshot. Error message from Imgur: "${error.message}"`;

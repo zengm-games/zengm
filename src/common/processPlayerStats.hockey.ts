@@ -70,7 +70,7 @@ const processStats = (
 
 				// Show GP for goalie in some UIs, cause everything else is a rate stat
 				row[stat] =
-					`${stat === "keyStatsWithGoalieGP" ? `${ps.gpGoalie} GP, ` : ""}${gaa.toFixed(2)} GAA, ${svPct.toFixed(1)} SV%`;
+					`${stat === "keyStatsWithGoalieGP" ? `${ps.gpGoalie} GP, ` : ""}${gaa.toFixed(2)} GAA, ${svPct?.toFixed(1)} SV%`;
 			} else {
 				row[stat] = "";
 			}

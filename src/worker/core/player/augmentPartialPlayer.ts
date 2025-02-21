@@ -107,7 +107,7 @@ const augmentPartialPlayer = async (
 		p.retiredYear = Infinity;
 	}
 
-	if (!p.stats) {
+	if (!Array.isArray(p.stats)) {
 		p.stats = [];
 	}
 
@@ -393,17 +393,11 @@ const augmentPartialPlayer = async (
 	}
 
 	// If no stats in League File, create blank stats rows for active players if necessary
-	if (!Array.isArray(p.stats)) {
-		p.stats = [];
-	}
-
 	if (p.stats.length === 0) {
 		if (p.tid >= 0 && g.get("phase") <= PHASE.PLAYOFFS) {
 			await addStatsRowWrapped(p, ignoreJerseyNumberConflicts);
 		}
 	} else {
-		const statKeys = [...stats.derived, ...stats.raw];
-
 		let yearsWithTeam = 1;
 		let prevTid;
 		for (const ps of p.stats) {
@@ -416,13 +410,6 @@ const augmentPartialPlayer = async (
 				}
 
 				ps.yearsWithTeam = yearsWithTeam;
-			}
-
-			// Handle any missing stats
-			for (const key of statKeys) {
-				if (ps[key] === undefined) {
-					ps[key] = 0;
-				}
 			}
 
 			if (isSport("baseball") && stats.byPos) {

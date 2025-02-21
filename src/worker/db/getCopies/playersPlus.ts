@@ -11,6 +11,7 @@ import type {
 	PlayerStatType,
 	PlayersPlusOptions,
 } from "../../../common/types";
+import type { StatSumsExtra } from "../../../common/processPlayerStats.basketball";
 
 type PlayersPlusOptionsRequired = Required<
 	Omit<PlayersPlusOptions, "season" | "seasonRange" | "tid">
@@ -418,102 +419,187 @@ const processRatings = (
 	}
 };
 
-export const weightByMinutes = bySport({
-	baseball: [],
-	basketball: [
-		"per",
-		"ws48",
-		"astp",
-		"blkp",
-		"drbp",
-		"orbp",
-		"stlp",
-		"trbp",
-		"usgp",
-		"drtg",
-		"ortg",
-		"obpm",
-		"dbpm",
-		"bpm",
-		"pm100",
-		"onOff100",
-	],
-	football: [],
-	hockey: [],
-});
+export const weightByMinutes = new Set(
+	bySport({
+		baseball: [],
+		basketball: [
+			"per",
+			"ws48",
+			"astp",
+			"blkp",
+			"drbp",
+			"orbp",
+			"stlp",
+			"trbp",
+			"usgp",
+			"drtg",
+			"ortg",
+			"obpm",
+			"dbpm",
+			"bpm",
+			"pm100",
+			"onOff100",
+		],
+		football: [],
+		hockey: [],
+	}),
+);
 
-const reduceCareerStats = (
-	careerStats: any[],
-	attr: string,
+const filterForCareerStats = (
+	allStats: any[],
 	seasonType: "playoffs" | "regularSeason" | "combined",
 	mergeStats: PlayersPlusOptionsRequired["mergeStats"],
 ) => {
-	let initialValue: null | (number | undefined)[] | number;
-	let type: "max" | "byPos" | "normal";
-	if (attr.endsWith("Max")) {
-		initialValue = null;
-		type = "max";
+	return allStats.filter(
+		(row) =>
+			((row.playoffs === "combined" && seasonType === "combined") ||
+				(row.playoffs === true && seasonType === "playoffs") ||
+				(row.playoffs === false && seasonType === "regularSeason")) &&
+			// Combined only has TOT, even for totAndTeams, so keep TOT combined rows
+			(mergeStats !== "totAndTeams" ||
+				row.playoffs === "combined" ||
+				row.tid !== PLAYER.TOT),
+	);
+};
+
+const sumCareerStats = (careerStats: any[], attr: string) => {
+	let info:
+		| {
+				type: "max";
+				value: null | [number, number, string, number, number];
+		  }
+		| {
+				type: "byPos";
+				value: (number | undefined)[];
+		  }
+		| {
+				type: "normal";
+				value: number;
+		  }
+		| {
+				type: "tovpHack";
+				value: [0, 0]; // Numberator and denominator of tovp formula
+		  };
+
+	if (isSport("basketball") && attr === "tovp") {
+		info = {
+			type: "tovpHack",
+			value: [0, 0],
+		};
+	} else if (attr.endsWith("Max")) {
+		info = {
+			type: "max",
+			value: null,
+		};
 	} else if (
 		player.stats.byPos?.includes(attr) ||
 		(isSport("baseball") && attr === "rfld")
 	) {
-		initialValue = [];
-		type = "byPos";
+		info = {
+			type: "byPos",
+			value: [],
+		};
 	} else {
-		initialValue = 0;
-		type = "normal";
+		info = {
+			type: "normal",
+			value: 0,
+		};
 	}
 
-	const weightAttrByMinutes = weightByMinutes.includes(attr);
+	const weightAttrByMinutes = weightByMinutes.has(attr);
+	const lng = attr.endsWith("Lng");
 
-	return careerStats
-		.filter(
-			(cs) =>
-				((cs.playoffs === "combined" && seasonType === "combined") ||
-					(cs.playoffs === true && seasonType === "playoffs") ||
-					(cs.playoffs === false && seasonType === "regularSeason")) &&
-				// Combined only has TOT, even for totAndTeams, so keep TOT combined rows
-				(mergeStats !== "totAndTeams" ||
-					cs.playoffs === "combined" ||
-					cs.tid !== PLAYER.TOT),
-		)
-		.reduce((memo, cs) => {
-			if (cs[attr] === undefined) {
-				return memo;
+	// Calculate values used for perGame and per36 averages, which is needed for historical stats where some seasons might not have had a stat collected. Like if you want career assists per game, and only 2 of the player's 5 seasons were after they started tracking assists, we need to know gp for only those 2 seasons
+	let extraForMissingValues:
+		| {
+				gp: number | undefined;
+				min: number | undefined;
+		  }
+		| undefined;
+
+	for (const cs of careerStats) {
+		if (isSport("basketball") && info.type === "tovpHack") {
+			if (cs.tov !== undefined) {
+				info.value[0] += cs.tov;
+				info.value[1] += cs.fga + 0.44 * cs.fta + cs.tov;
 			}
 
-			if (type === "byPos") {
-				for (let i = 0; i < cs[attr].length; i++) {
-					const value = cs[attr][i];
-					if (value !== undefined) {
-						if (memo[i] === undefined) {
-							memo[i] = 0;
-						}
-						memo[i] += value;
+			continue;
+		}
+
+		if (cs[attr] === undefined) {
+			if (isSport("basketball") && !extraForMissingValues) {
+				extraForMissingValues = {
+					gp: 0,
+					min: 0,
+				};
+			}
+			continue;
+		}
+
+		// Special case for trb - even if first season has trb, we still want to keep tracking extraForMissingValues because we'll need it later when adding up with drb/orb seasons
+		if (isSport("basketball") && !extraForMissingValues && attr === "trb") {
+			extraForMissingValues = {
+				gp: 0,
+				min: 0,
+			};
+		}
+
+		if (info.type === "byPos") {
+			for (let i = 0; i < cs[attr].length; i++) {
+				const arrayValue = cs[attr][i];
+				if (arrayValue !== undefined) {
+					if (info.value[i] === undefined) {
+						info.value[i] = 0;
 					}
+					info.value[i] += arrayValue;
 				}
-
-				return memo;
 			}
-
+		} else {
 			const num = weightAttrByMinutes ? cs[attr] * cs.min : cs[attr];
 
-			if (type === "max") {
+			if (info.type === "max") {
 				if (num === undefined || num === null) {
-					return memo;
+					continue;
 				}
 
-				return memo === null || num[0] > memo[0]
-					? [num[0], num[1], helpers.getAbbrev(cs.tid), cs.tid, cs.season]
-					: memo;
-			}
+				info.value =
+					info.value === null || num[0] > info.value[0]
+						? [num[0], num[1], helpers.getAbbrev(cs.tid), cs.tid, cs.season]
+						: info.value;
+			} else if (lng) {
+				info.value = num > info.value ? num : info.value;
+			} else {
+				info.value += num;
 
-			if (attr.endsWith("Lng")) {
-				return num > memo ? num : memo;
+				if (extraForMissingValues) {
+					for (const key of ["gp", "min"] as const) {
+						if (typeof cs[key] === "number") {
+							if (extraForMissingValues[key] !== undefined) {
+								extraForMissingValues[key] += cs[key];
+							}
+						} else {
+							// Missing this value for some row, meaning we just can't compute per game or per 36 minutes or whatever for this stat
+							extraForMissingValues[key] = undefined;
+						}
+					}
+				}
 			}
+		}
+	}
 
-			return memo + num;
-		}, initialValue);
+	let outputValue;
+	if (isSport("basketball") && info.type === "tovpHack") {
+		// Finalize tovp formula
+		outputValue = helpers.percentage(info.value[0], info.value[1]) ?? 0;
+	} else {
+		outputValue = info.value;
+	}
+
+	return {
+		value: outputValue,
+		extraForMissingValues,
+	};
 };
 
 const getPlayerStats = (
@@ -610,24 +696,24 @@ const getPlayerStats = (
 		seasonType: "regularSeason" | "playoffs" | "combined",
 	) => {
 		// Aggregate annual stats and ignore other things
-		const ignoredKeys = [
+		const ignoredKeys = new Set([
 			"season",
 			"tid",
 			"yearsWithTeam",
 			"playoffs",
 			"jerseyNumber",
-		];
+		]);
 		const statSums: any = {};
-		const attrs = rowsToMerge.length > 0 ? Object.keys(rowsToMerge.at(-1)) : [];
 
-		for (const attr of attrs) {
-			if (!ignoredKeys.includes(attr)) {
-				statSums[attr] = reduceCareerStats(
-					rowsToMerge,
-					attr,
-					seasonType,
-					mergeStats,
-				);
+		const rowsToMerge2 = filterForCareerStats(
+			rowsToMerge,
+			seasonType,
+			mergeStats,
+		);
+
+		for (const attr of getAttrsToSum(rowsToMerge)) {
+			if (!ignoredKeys.has(attr)) {
+				statSums[attr] = sumCareerStats(rowsToMerge2, attr).value;
 			}
 		}
 
@@ -700,8 +786,17 @@ const processPlayerStats = (
 	statSums: any,
 	stats: string[],
 	statType: PlayerStatType,
+	keepWithNoStats: boolean,
+	statSumsExtra?: StatSumsExtra,
 ) => {
-	const output = processPlayerStats2(statSums, stats, statType, p.born.year);
+	const output = processPlayerStats2(
+		statSums,
+		stats,
+		statType,
+		p.born.year,
+		keepWithNoStats,
+		statSumsExtra,
+	);
 
 	// More common stuff between basketball/football could be moved here... abbrev is just special cause it needs to run on the worker
 	if (stats.includes("abbrev")) {
@@ -725,6 +820,31 @@ const processPlayerStats = (
 	return output;
 };
 
+const getAttrsToSum = (statsRows: any[]) => {
+	const attrs = statsRows.length > 0 ? Object.keys(statsRows.at(-1)) : [];
+
+	// If these are historical stats with TRB rather than ORB and DRB separate, that will be apparent in the first (oldest) row
+	if (
+		isSport("basketball") &&
+		statsRows.length > 0 &&
+		statsRows[0].trb !== undefined
+	) {
+		attrs.push("trb");
+	}
+
+	// If these are historical stats with TOV missing in the first row, then it's possible we need a special calculation of TOV% because we need to use FGA and FTA only from rows with TOV
+	if (
+		isSport("basketball") &&
+		statsRows.length > 0 &&
+		statsRows[0].tov === undefined &&
+		statsRows.some((row) => row.tov !== undefined)
+	) {
+		attrs.push("tovp");
+	}
+
+	return attrs;
+};
+
 const processStats = (
 	output: PlayerFiltered,
 	p: Player,
@@ -741,6 +861,7 @@ const processStats = (
 		statType,
 		stats,
 	}: PlayersPlusOptionsRequired,
+	keepWithNoStats: boolean,
 ) => {
 	// Only season(s) and team in question
 	let playerStats = getPlayerStats(
@@ -792,7 +913,7 @@ const processStats = (
 			careerStats.push(ps);
 		}
 
-		return processPlayerStats(p, ps, stats, statType);
+		return processPlayerStats(p, ps, stats, statType, keepWithNoStats);
 	});
 
 	if (
@@ -805,46 +926,75 @@ const processStats = (
 		output.stats = output.stats.at(-1);
 	} else if (season === undefined) {
 		// Aggregate annual stats and ignore other things
-		const ignoredKeys = ["season", "tid", "yearsWithTeam", "jerseyNumber"];
-		const statSums: any = {};
-		const statSumsPlayoffs: any = {};
-		const statSumsCombined: any = {};
-		const attrs = careerStats.length > 0 ? Object.keys(careerStats.at(-1)) : [];
+		const ignoredKeys = new Set([
+			"season",
+			"tid",
+			"yearsWithTeam",
+			"jerseyNumber",
+		]);
 
-		for (const attr of attrs) {
-			if (!ignoredKeys.includes(attr)) {
-				if (regularSeason) {
-					statSums[attr] = reduceCareerStats(
-						careerStats,
-						attr,
-						"regularSeason",
-						mergeStats,
-					);
-				}
-				if (playoffs) {
-					statSumsPlayoffs[attr] = reduceCareerStats(
-						careerStats,
-						attr,
-						"playoffs",
-						mergeStats,
-					);
-				}
-				if (combined) {
-					statSumsCombined[attr] = reduceCareerStats(
-						careerStats,
-						attr,
-						"combined",
-						mergeStats,
-					);
+		const statSums = {
+			regularSeason: {} as any,
+			playoffs: {} as any,
+			combined: {} as any,
+		};
+
+		const statSumsExtra = {
+			regularSeason: {} as StatSumsExtra,
+			playoffs: {} as StatSumsExtra,
+			combined: {} as StatSumsExtra,
+		};
+
+		const careerStatsFiltered = {
+			regularSeason: regularSeason
+				? filterForCareerStats(careerStats, "regularSeason", mergeStats)
+				: [],
+			playoffs: playoffs
+				? filterForCareerStats(careerStats, "playoffs", mergeStats)
+				: [],
+			combined: combined
+				? filterForCareerStats(careerStats, "combined", mergeStats)
+				: [],
+		};
+
+		const seasonTypes: ("regularSeason" | "playoffs" | "combined")[] = [];
+		if (regularSeason) {
+			seasonTypes.push("regularSeason");
+		}
+		if (playoffs) {
+			seasonTypes.push("playoffs");
+		}
+		if (combined) {
+			seasonTypes.push("combined");
+		}
+
+		for (const attr of getAttrsToSum(careerStats)) {
+			if (!ignoredKeys.has(attr)) {
+				for (const seasonType of seasonTypes) {
+					const sumInfo = sumCareerStats(careerStatsFiltered[seasonType], attr);
+
+					statSums[seasonType][attr] = sumInfo.value;
+
+					if (sumInfo.extraForMissingValues) {
+						statSumsExtra[seasonType][attr] = sumInfo.extraForMissingValues;
+					}
 				}
 			}
 		}
 
 		// Special case for some variables, weight by minutes
 		for (const attr of weightByMinutes) {
-			for (const object of [statSums, statSumsPlayoffs, statSumsCombined]) {
+			for (const seasonType of seasonTypes) {
+				const object = statSums[seasonType];
 				if (Object.hasOwn(object, attr)) {
-					if (object.min > 0) {
+					if (statSumsExtra[seasonType][attr]) {
+						const min = statSumsExtra[seasonType][attr].min;
+						if (min === undefined) {
+							object[attr] = 0;
+						} else {
+							object[attr] /= min;
+						}
+					} else if (object.min > 0) {
 						object[attr] /= object.min;
 					} else {
 						object[attr] = 0;
@@ -854,24 +1004,35 @@ const processStats = (
 		}
 
 		if (regularSeason) {
-			output.careerStats = processPlayerStats(p, statSums, stats, statType);
+			output.careerStats = processPlayerStats(
+				p,
+				statSums.regularSeason,
+				stats,
+				statType,
+				keepWithNoStats,
+				statSumsExtra.regularSeason,
+			);
 		}
 
 		if (playoffs) {
 			output.careerStatsPlayoffs = processPlayerStats(
 				p,
-				statSumsPlayoffs,
+				statSums.playoffs,
 				stats,
 				statType,
+				keepWithNoStats,
+				statSumsExtra.playoffs,
 			);
 		}
 
 		if (combined) {
 			output.careerStatsCombined = processPlayerStats(
 				p,
-				statSumsCombined,
+				statSums.combined,
 				stats,
 				statType,
+				keepWithNoStats,
+				statSumsExtra.combined,
 			);
 		}
 	}
@@ -925,7 +1086,7 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
 		(showNoStats && (season === undefined || season > p.draft.year));
 
 	if (options.stats.length > 0 || keepWithNoStats) {
-		processStats(output, p, playerStats, options);
+		processStats(output, p, playerStats, options, keepWithNoStats);
 
 		// Only add a player if filterStats finds something (either stats that season, or options overriding that check)
 		if (output.stats === undefined && !keepWithNoStats) {

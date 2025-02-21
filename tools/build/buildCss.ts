@@ -4,7 +4,6 @@ import { promisify } from "node:util";
 import browserslist from "browserslist";
 import { browserslistToTargets, transform } from "lightningcss";
 import { PurgeCSS } from "purgecss";
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { render } from "sass-embedded";
 import { fileHash } from "./fileHash.ts";
 import { replace } from "./replace.ts";

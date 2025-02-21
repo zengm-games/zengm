@@ -363,7 +363,10 @@ const formatPlayerFactory = async (
 			playoffs: boolean;
 			tid: number;
 			minAvailable: number;
-			ewa: number;
+			ewa?: number;
+			td?: number;
+			qd?: number;
+			fxf?: number;
 		};
 		let stats: StatsRow[] | undefined;
 		if (options.type === "real" && basketballStats) {
@@ -408,10 +411,29 @@ const formatPlayerFactory = async (
 						playoffs: !!row.playoffs,
 						tid,
 						minAvailable: (row.gp ?? 0) * MINUTES_PER_GAME,
-						ewa: getEWA(row.per ?? 0, row.min ?? 0, bio.pos, 1),
 					};
 					delete (newRow as any).slug;
 					delete (newRow as any).abbrev;
+
+					// EWA is not in raw data, so we need to compute it when possible
+					if (newRow.per !== undefined && newRow.min !== undefined) {
+						newRow.ewa = getEWA(newRow.per, newRow.min, bio.pos, 1);
+					}
+
+					// Set these to explicitly 0 for seasons since the relevant stats (ast/trb, and blk/stl) were tracked
+					if (newRow.season >= 1951) {
+						if (newRow.qd === undefined) {
+							newRow.qd = 0;
+						}
+
+						// Ideally this would be in the raw data, but it seems they use null rather than 0 for some seasons/players
+						if (newRow.td === undefined) {
+							newRow.td = 0;
+						}
+					}
+					if (newRow.season >= 1975 && newRow.fxf === undefined) {
+						newRow.fxf = 0;
+					}
 
 					return newRow;
 				});

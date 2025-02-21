@@ -85,14 +85,14 @@ const StatsTable = ({
 	if (showFooter) {
 		for (const stat of stats) {
 			if (stat === "svPct") {
-				sumsByStat[stat] = helpers.percentage(sumsByStat.sv, sumsByStat.sa);
+				sumsByStat[stat] =
+					helpers.percentage(sumsByStat.sv, sumsByStat.sa) ?? 0;
 			} else if (stat === "foPct") {
-				sumsByStat[stat] = helpers.percentage(
-					sumsByStat.fow,
-					sumsByStat.fow + sumsByStat.fol,
-				);
+				sumsByStat[stat] =
+					helpers.percentage(sumsByStat.fow, sumsByStat.fow + sumsByStat.fol) ??
+					0;
 			} else if (stat === "sPct") {
-				sumsByStat[stat] = helpers.percentage(sumsByStat.g, sumsByStat.s);
+				sumsByStat[stat] = helpers.percentage(sumsByStat.g, sumsByStat.s) ?? 0;
 			} else {
 				sumsByStat[stat] = 0;
 				for (const p of players) {

@@ -154,7 +154,7 @@ const processStats = (
 			if (role === "passer") {
 				row[stat] = `${helpers
 					.percentage(ps.pssCmp, ps.pss)
-					.toFixed(1)}%, ${helpers.numberWithCommas(ps.pssYds)} yards, ${
+					?.toFixed(1)}%, ${helpers.numberWithCommas(ps.pssYds)} yards, ${
 					ps.pssTD
 				} TD, ${ps.pssInt} int, ${qbRat(ps).toFixed(1)} QBRat`;
 			} else if (role === "rusher") {
@@ -175,7 +175,7 @@ const processStats = (
 				} sacks, ${ps.defPssDef} PD, ${ps.defInt} int`;
 			} else if (role === "kicker") {
 				const fgm = ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50;
-				row[stat] = `${fgm} FGs, ${helpers.percentage(fgm, fga).toFixed(1)}%`;
+				row[stat] = `${fgm} FGs, ${helpers.percentage(fgm, fga)?.toFixed(1)}%`;
 			} else if (role === "punter") {
 				row[stat] = `${ps.pnt} punts, ${(ps.pntYds / ps.pnt).toFixed(
 					1,

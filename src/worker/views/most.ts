@@ -838,7 +838,7 @@ const updatePlayers = async (
 			});
 
 			sortParams = [
-				[(x: any) => x.most.value, (x: any) => x.most.extra.ovr],
+				[(x: any) => x.most.extra.age, (x: any) => x.most.value],
 				["desc", "desc"],
 			];
 
@@ -862,48 +862,40 @@ const updatePlayers = async (
 						}
 					}
 				}
-
-				let maxOvr = -Infinity;
-				let season: number | undefined;
+				let entries = [];
 				for (const mvp of mvpSeasons) {
-					// get the OVR for that season
 					const ratings = p.ratings.find((r) => r.season === mvp.season);
 					const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
-					// gt vs gte makes sense if you think about oldest vs youngest, we're searching in order here
-					if ((oldest && ovr >= maxOvr) || (!oldest && ovr > maxOvr)) {
-						maxOvr = ovr;
-						season = mvp.season;
+					let tid = p.stats.find((s) => s.season === mvp.season)?.tid;
+					const season = mvp.season;
+
+					if (season === undefined) {
+						return;
 					}
-				}
 
-				if (season === undefined) {
-					return;
-				}
-
-				const maxAge = season - p.born.year;
-
-				let tid: number | undefined;
-				for (const ps of p.stats) {
-					if (season === ps.season) {
-						tid = ps.tid;
-					} else if (season < ps.season) {
-						break;
+					for (const ps of p.stats) {
+						if (season === ps.season) {
+							tid = ps.tid;
+						} else if (season < ps.season) {
+							break;
+						}
 					}
+
+					if (tid === undefined) {
+						return;
+					}
+					entries.push({
+						value: ovr,
+						extra: {
+							age: mvp.season - p.born.year,
+							bestSeasonOverride: mvp.season,
+							ovr,
+							tid: tid,
+						},
+					});
 				}
 
-				if (tid === undefined) {
-					return;
-				}
-
-				return {
-					value: oldest ? maxAge : -maxAge,
-					extra: {
-						age: maxAge,
-						bestSeasonOverride: season,
-						ovr: maxOvr,
-						tid,
-					},
-				};
+				return entries;
 			};
 			after = tidAndSeasonToAbbrev;
 		} else if (type === "worst_injuries") {

@@ -1994,7 +1994,7 @@ class GameSim extends GameSimBase {
 				clock: this.t,
 			});
 		} else if (
-			forceThreePointer ||
+			(forceThreePointer && threePointerValue > twoPointerValue) ||
 			Math.random() <
 				0.67 * shootingThreePointerScaled2 * g.get("threePointTendencyFactor")
 		) {
@@ -2162,10 +2162,10 @@ class GameSim extends GameSimBase {
 			this.doPf({ t: this.d, type: threePointer ? "pfTP" : "pfFG", shooter });
 
 			if (threePointer) {
-				return this.doFt(shooter, 3);
+				return this.doFt(shooter, threePointerValue);
 			}
 
-			return this.doFt(shooter, 2);
+			return this.doFt(shooter, twoPointerValue);
 		}
 
 		// Miss
@@ -2332,11 +2332,12 @@ class GameSim extends GameSimBase {
 		const pid = this.team[this.o].player[p].id;
 		this.recordStat(this.o, p, "fga");
 		this.recordStat(this.o, p, "fg");
-		if (type === "threePointer") {
-			this.recordStat(this.o, p, "pts", threePointerValue);
-		} else {
-			this.recordStat(this.o, p, "pts", twoPointerValue); // 2 points for 2's
-		}
+		this.recordStat(
+			this.o,
+			p,
+			"pts",
+			type === "threePointer" ? threePointerValue : twoPointerValue,
+		);
 
 		let fouler;
 		let pidFoul;

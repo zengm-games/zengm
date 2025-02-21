@@ -851,13 +851,14 @@ const updatePlayers = async (
 					(award) => award.type === "Most Valuable Player",
 				);
 				for (const mvp of mvpSeasons) {
+					const age = mvp.season - p.born.year;
 					// if we are looking for youngest, filter out mvp seasons that are younger than 28
 					if (!oldest) {
-						if (mvp.season - p.born.year > 28) {
+						if (age > 28) {
 							return;
 						}
 					} else {
-						if (mvp.season - p.born.year < 30) {
+						if (age < 30) {
 							return;
 						}
 					}
@@ -866,8 +867,8 @@ const updatePlayers = async (
 				for (const mvp of mvpSeasons) {
 					const ratings = p.ratings.find((r) => r.season === mvp.season);
 					const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
-					let tid = p.stats.find((s) => s.season === mvp.season)?.tid;
 					const season = mvp.season;
+					let tid = p.stats.find((s) => s.season === mvp.season)?.tid;
 
 					if (season === undefined) {
 						return;

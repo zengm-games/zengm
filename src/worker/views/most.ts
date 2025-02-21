@@ -853,14 +853,8 @@ const updatePlayers = async (
 				for (const mvp of mvpSeasons) {
 					const age = mvp.season - p.born.year;
 					// if we are looking for youngest, filter out mvp seasons that are younger than 28
-					if (!oldest) {
-						if (age > 28) {
-							return;
-						}
-					} else {
-						if (age < 30) {
-							return;
-						}
+					if (oldest ? age < 30 : age > 28) {
+						return;
 					}
 				}
 				let entries = [];

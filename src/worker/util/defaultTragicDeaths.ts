@@ -50,6 +50,9 @@ const reasons = [
 	"PLAYER_NAME was killed by a falling coconut while relaxing at the beach.",
 	"PLAYER_NAME died after eating way too many Brazil nuts and overdosing on selenium.",
 	"PLAYER_NAME drowned after falling into a vat of chocolate during a factory tour.",
+
+	// https://discord.com/channels/290013534023057409/290013534023057409/1342311601688018945
+	"PLAYER_NAME accidentally shot himself in the head after slipping on a banana peel while walking down the stairs.",
 ];
 
 if (isSport("basketball")) {

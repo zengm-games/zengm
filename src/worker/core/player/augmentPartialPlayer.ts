@@ -228,7 +228,7 @@ const augmentPartialPlayer = async (
 		}) &&
 		(!r2.ovrs || !r2.pots || !r2.pos)
 	) {
-		// Kind of hacky... impose ovrs/pots, but only for latest season. This will also overwrite ovr, pot, and skills
+		// Kind of hacky... impose ovrs/pots, but only for latest season. This will also overwrite ovr, pot, and skills - but they may again be overwritten below if fuzz was not present
 		await develop(p, 0);
 	}
 
@@ -311,19 +311,24 @@ const augmentPartialPlayer = async (
 	}
 
 	for (const r of p.ratings) {
+		let appliedFuzz = false;
 		if (r.fuzz === undefined) {
 			r.fuzz = pg.ratings[0].fuzz;
+			appliedFuzz = true;
 		}
 
-		if (r.skills === undefined) {
+		if (r.skills === undefined || appliedFuzz) {
 			r.skills = skills(r);
 		}
 
-		if (r.ovr === undefined) {
+		if (r.ovr === undefined || appliedFuzz) {
 			r.ovr = ovr(r);
 		}
 
-		if (isSport("basketball") && (r.pot === undefined || r.pot < r.ovr)) {
+		if (
+			isSport("basketball") &&
+			(r.pot === undefined || r.pot < r.ovr || appliedFuzz)
+		) {
 			// Only basketball, in case position is not known at this point
 			r.pot = await monteCarloPot({
 				ratings: r,
@@ -335,8 +340,7 @@ const augmentPartialPlayer = async (
 			});
 		}
 
-		if (r.pos === undefined && !isSport("football")) {
-			// Football is handled below with call to player.develop
+		if (r.pos === undefined || appliedFuzz) {
 			if (p.pos !== undefined && typeof p.pos === "string") {
 				r.pos = p.pos;
 			} else {

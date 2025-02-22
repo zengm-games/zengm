@@ -235,6 +235,8 @@ const augmentPartialPlayer = async (
 	// Rating rescaling
 	if (isSport("basketball") && (version === undefined || version <= 26)) {
 		for (const r of p.ratings) {
+			let scaleRatings = false;
+
 			// Replace blk/stl with diq
 			if (typeof r.diq !== "number") {
 				if (typeof r.blk === "number" && typeof r.stl === "number") {
@@ -244,59 +246,64 @@ const augmentPartialPlayer = async (
 				} else {
 					r.diq = 50;
 				}
+
+				scaleRatings = true;
 			}
 
 			// Add oiq
 			if (typeof r.oiq !== "number") {
 				r.oiq = Math.round((r.drb + r.pss + r.tp + r.ins) / 4);
 
-				if (typeof r.oiq !== "number") {
+				if (Number.isNaN(r.oiq)) {
 					r.oiq = 50;
 				}
+
+				scaleRatings = true;
 			}
 
-			// Scale ratings
-			const ratingKeys = [
-				"stre",
-				"spd",
-				"jmp",
-				"endu",
-				"ins",
-				"dnk",
-				"ft",
-				"fg",
-				"tp",
-				"oiq",
-				"diq",
-				"drb",
-				"pss",
-				"reb",
-			];
+			if (scaleRatings) {
+				const ratingKeys = [
+					"stre",
+					"spd",
+					"jmp",
+					"endu",
+					"ins",
+					"dnk",
+					"ft",
+					"fg",
+					"tp",
+					"oiq",
+					"diq",
+					"drb",
+					"pss",
+					"reb",
+				];
 
-			for (const key of ratingKeys) {
-				if (typeof r[key] === "number") {
-					// 100 -> 80
-					// 0 -> 20
-					// Linear in between
-					r[key] -= (20 * (r[key] - 50)) / 50;
-				} else {
-					console.log(p);
-					throw new Error(`Missing rating: ${key}`);
+				for (const key of ratingKeys) {
+					if (typeof r[key] === "number") {
+						// 100 -> 80
+						// 0 -> 20
+						// Linear in between
+						r[key] -= (20 * (r[key] - 50)) / 50;
+					} else {
+						console.log(p);
+						throw new Error(`Missing rating: ${key}`);
+					}
 				}
-			}
 
-			r.ovr = ovr(r);
-			r.skills = skills(r);
-			r.pot = await monteCarloPot({
-				ratings: r,
-				age: r.season - p.born.year,
-				srID: p.srID,
-			});
+				r.ovr = ovr(r);
+				r.skills = skills(r);
+				r.pot = await monteCarloPot({
+					ratings: r,
+					age: r.season - p.born.year,
+					srID: p.srID,
+				});
 
-			if (p.draft.year === r.season) {
-				p.draft.ovr = r.ovr;
-				p.draft.skills = r.skills;
-				p.draft.pot = r.pot;
+				if (p.draft.year === r.season) {
+					p.draft.ovr = r.ovr;
+					p.draft.skills = r.skills;
+					p.draft.pot = r.pot;
+				}
 			}
 		}
 	}

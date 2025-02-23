@@ -819,7 +819,7 @@ const updatePlayers = async (
 			title = `${oldest ? "Oldest" : "Youngest"} MVP`;
 			description = `These are the players who won their MVP at the ${
 				oldest ? "oldest" : "youngest"
-			} age ${oldest ? "mininum age of 30" : "maximum age of 28"}.`;
+			} age.`;
 			extraCols.push({
 				key: ["most", "extra", "age"],
 				colName: "Age",
@@ -839,7 +839,7 @@ const updatePlayers = async (
 
 			sortParams = [
 				[(x: any) => x.most.extra.age, (x: any) => x.most.value],
-				["desc", "desc"],
+				oldest ? ["desc", "desc"] : ["asc", "desc"],
 			];
 
 			filter = (p) =>
@@ -850,14 +850,7 @@ const updatePlayers = async (
 				const mvpSeasons = p.awards.filter(
 					(award) => award.type === "Most Valuable Player",
 				);
-				for (const mvp of mvpSeasons) {
-					const age = mvp.season - p.born.year;
-					// if we are looking for youngest, filter out mvp seasons that are younger than 28
-					if (oldest ? age < 30 : age > 28) {
-						return;
-					}
-				}
-				let entries = [];
+				const entries = [];
 				for (const mvp of mvpSeasons) {
 					const ratings = p.ratings.find((r) => r.season === mvp.season);
 					const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);

@@ -23,6 +23,8 @@ import { orderBy, range } from "../../../common/utils";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
+const GOALS = new Set(["evG", "ppG", "shG"]);
+
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
  *
@@ -1919,9 +1921,7 @@ class GameSim extends GameSimBase {
 
 				let pts;
 
-				const goals = ["evG", "ppG", "shG"];
-
-				if (goals.includes(s)) {
+				if (GOALS.has(s)) {
 					pts = 1;
 				}
 

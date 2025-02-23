@@ -30,7 +30,7 @@ export const dropPlayers = async (
 
 		if (KEY_POSITIONS_NEEDED) {
 			countsHealthyKey = {} as Record<string, number>;
-			for (const pos of KEY_POSITIONS_NEEDED) {
+			for (const pos of Object.keys(KEY_POSITIONS_NEEDED)) {
 				countsHealthyKey[pos] = 0;
 			}
 		}

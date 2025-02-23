@@ -4,13 +4,15 @@ import { DRAFT_BY_TEAM_OVR, bySport } from "../../../common";
 import { getTeamOvrDiffs } from "../draft/runPicks";
 import { orderBy } from "../../../common/utils";
 
-// In some sports, extra check for certain important rare positions in case the only one was traded away. These should only be positions with weird unique skills, where you can't replace them easily with another position.
-export const KEY_POSITIONS_NEEDED = bySport({
-	baseball: undefined,
-	basketball: undefined,
-	football: ["QB", "K", "P"],
-	hockey: ["G"],
-});
+// In some sports, extra check for certain important rare positions in case the only one was traded away. These should only be positions with weird unique skills, where you can't replace them easily with another position. Value is the number of players that should be at each position.
+export const KEY_POSITIONS_NEEDED = bySport<Record<string, number> | undefined>(
+	{
+		baseball: undefined,
+		basketball: undefined,
+		football: { QB: 2, K: 1, P: 1 },
+		hockey: { G: 2 },
+	},
+);
 
 // Find the best available free agent for a team.
 // playersAvailable should be sorted - best players first, worst players last.
@@ -68,10 +70,13 @@ const getBest = <T extends PlayerWithoutKey>(
 				return keyPositionsNeededCache;
 			}
 
-			const allKeyPositionsNeeded = [...KEY_POSITIONS_NEEDED];
-			const positionCounts = {
-				injured: {} as Record<string, number>,
-				healthy: {} as Record<string, number>,
+			const allKeyPositionsNeeded = Object.keys(KEY_POSITIONS_NEEDED);
+			const positionCounts: Record<
+				"injured" | "healthy",
+				Record<string, number>
+			> = {
+				injured: {},
+				healthy: {},
 			};
 
 			for (const p of playersOnRoster) {
@@ -89,8 +94,12 @@ const getBest = <T extends PlayerWithoutKey>(
 				const injured = positionCounts.injured[pos] ?? 0;
 				const healthy = positionCounts.healthy[pos] ?? 0;
 
-				// If we already have 3 injured ones, maybe don't sign another? idk
-				return injured <= 3 && healthy === 0;
+				// If we already have 4 injured ones, maybe don't sign another? idk
+				if (injured >= 4) {
+					return false;
+				}
+
+				return healthy === 0 || healthy + injured < KEY_POSITIONS_NEEDED[pos];
 			});
 
 			return keyPositionsNeededCache;

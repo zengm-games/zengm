@@ -1,6 +1,7 @@
 better relative faces https://mail.google.com/mail/u/0/#inbox/FMfcgzQZTMQRKQcWXCSldcPFMJfLvDGb
 - https://github.com/zengm-games/facesjs/issues/5
 - could do in zengm code - delete a few features (to randomize them) and randomize skin/hair color a bit
+- won't apply to real players
 
 keep track of DNP players in box score explicitly, just with minimal info rather than full stats
 - use for basketball to save space
@@ -9,8 +10,6 @@ keep track of DNP players in box score explicitly, just with minimal info rather
 intermittent "tid not found" error when starting real players league with all stats in 1977
 
 hype on league finances page https://discord.com/channels/290013534023057409/331882115119448065/1335735421145186440
-
-more aggressively have 2 G per team in hockey https://discord.com/channels/290013534023057409/331882115119448065/1334780104085344278
 
 add ability to export at any season/phase https://old.reddit.com/r/BasketballGM/comments/1dsfbps/monthly_suggestions_thread/leiay76/
 - would need better log of player movement

@@ -86,7 +86,7 @@ const newPhaseResignPlayers = async (
 	}
 
 	const payrollsByTid = new Map();
-
+	// JTODO: edit team option contracts here. This page might not be the correct place to manage assigning team options.
 	if (g.get("salaryCapType") === "hard") {
 		for (let tid = 0; tid < g.get("numTeams"); tid++) {
 			const payroll = await team.getPayroll(tid);
@@ -96,6 +96,13 @@ const newPhaseResignPlayers = async (
 			payrollsByTid.set(tid, payroll - expiringPayroll);
 		}
 	}
+	// JTODO: get a list of players who are under team options. Should also check if they are on expiring payroll.
+	// Need to add a new button type for accepting a team option? How should the finances change for next season if its not accepted or accepted?
+	// Do we need to add a new phase for this?
+	const pidsUnderTeamOption = new Set();
+	players
+		.filter((p) => p.contract.option === "team")
+		.map((p) => pidsUnderTeamOption.add(p.pid));
 
 	const expiringPids = orderBy(
 		players.filter((p) => p.contract.exp <= g.get("season")),

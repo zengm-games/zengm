@@ -333,7 +333,7 @@ const TopStuff = ({
 				}
 			}
 		}
-
+		// JTODO show team options here somehow? Need to see how it shold be done. Also, once a teamOption is finished should convert back to regualr contract
 		contractInfo = (
 			<>
 				{freeAgent ? "Asking for" : "Contract"}:{" "}

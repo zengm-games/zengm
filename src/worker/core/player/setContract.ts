@@ -7,10 +7,11 @@ import type { PlayerContract, PlayerWithoutKey } from "../../../common/types";
  *
  * @memberOf core.player
  * @param {Object} p Player object.
- * @param {Object} contract Contract object with two properties,    exp (year) and amount (thousands of dollars).
+ * @param {Object} contract Contract object with three properties,    exp (year), amount (thousands of dollars), and option (team | player | none).
  * @param {boolean} signed Is this an official signed contract (true), or just part of a negotiation (false)?
  * @return {Object} Updated player object.
  */
+// JTODO: edit here to include an option
 const setContract = (
 	p: Pick<PlayerWithoutKey, "contract" | "salaries">,
 	contract: PlayerContract,
@@ -31,7 +32,7 @@ const setContract = (
 		if (g.get("phase") > PHASE.AFTER_TRADE_DEADLINE) {
 			start += 1;
 		}
-
+		// JTODO: should this include options? If a team option is set, this probably needs to be expanded
 		for (let i = start; i <= p.contract.exp; i++) {
 			p.salaries.push({
 				season: i,

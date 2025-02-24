@@ -98,6 +98,7 @@ const moodComponents = async (
 		throw new Error(`tid ${tid} not found`);
 	}
 
+	// JTODO: could factor in teamOptions for mood? Not sure about this.
 	const components: MoodComponents = {
 		marketSize: 0,
 		facilities: 0,

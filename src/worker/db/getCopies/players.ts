@@ -3,6 +3,7 @@ import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
 import { g, helpers } from "../../util";
 import type {
+	ContractOption,
 	GetCopyType,
 	MinimalPlayerRatings,
 	Player,
@@ -54,7 +55,7 @@ export const getPlayersActiveSeason = (
 		};
 	});
 };
-
+// JTODO: get copies of players under options contract? idk could be useful to look for if a player has a player contract.
 const getCopies = async (
 	{
 		pid,
@@ -68,6 +69,7 @@ const getCopies = async (
 		statsTid,
 		tid,
 		watch,
+		option,
 		filter = () => true,
 	}: {
 		pid?: number;
@@ -81,6 +83,7 @@ const getCopies = async (
 		statsTid?: number;
 		tid?: [number, number] | number;
 		watch?: boolean;
+		option?: ContractOption;
 		filter?: (p: Player<MinimalPlayerRatings>) => boolean;
 	} = {},
 	type?: GetCopyType,

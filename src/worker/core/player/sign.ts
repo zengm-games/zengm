@@ -4,6 +4,7 @@ import setContract from "./setContract";
 import { g, helpers, logEvent } from "../../util";
 import type { Phase, Player, PlayerContract } from "../../../common/types";
 
+// JTODO: update contract here? Not sure if this is the correct place...
 const sign = async (
 	p: Player,
 	tid: number,

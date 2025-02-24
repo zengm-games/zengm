@@ -8,7 +8,7 @@ import {
 	toWorker,
 	useLocalPartial,
 } from "../util";
-import type { View } from "../../common/types";
+import type { ContractOption, View } from "../../common/types";
 import {
 	HelpPopover,
 	Mood,
@@ -30,15 +30,26 @@ const redirectNegotiationOrRoster = async (cancelled: boolean) => {
 	}
 };
 
+// JTODO: this button should actually probably be stored within the Buttons.tsx folder, but temporary for now
+const TeamOption = () => {
+	const button = (
+		<button className="btn btn-secondary" onClick={}>
+			Ask for team option?
+		</button>
+	);
+};
+// JTODO: add option here for team options, like how should it be applied?
 const SignButton = ({
 	pid,
 	amount,
 	exp,
+	option,
 	disabledReason,
 }: {
 	pid: number;
 	amount: number;
 	exp: number;
+	option: ContractOption;
 	disabledReason: string | undefined;
 }) => {
 	const button = (
@@ -50,6 +61,7 @@ const SignButton = ({
 					pid,
 					amount: Math.round(amount * 1000),
 					exp,
+					option,
 				});
 				if (errorMsg !== undefined && errorMsg) {
 					logEvent({
@@ -83,7 +95,6 @@ const SignButton = ({
 };
 
 const widthStyle = { maxWidth: 575 };
-
 const Negotiation = ({
 	capSpace,
 	challengeNoRatings,
@@ -100,6 +111,7 @@ const Negotiation = ({
 	const { gender } = useLocalPartial(["gender"]);
 
 	let message;
+	// JTODO: once a team contrat is accepted, it should be reflected in the salary cap, so that should be taken into account when calculating cap space. It should also just turn it into a one year.
 	if (salaryCapType === "soft") {
 		if (resigning) {
 			message = (

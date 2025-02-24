@@ -2,9 +2,9 @@ import { player, team } from "..";
 import cancel from "./cancel";
 import { idb } from "../../db";
 import { g, toUI, recomputeLocalUITeamOvrs } from "../../util";
-import type { PlayerContract } from "../../../common/types";
+import type { ContractOption, PlayerContract } from "../../../common/types";
 import { PHASE } from "../../../common";
-
+// JTODO: need the player to think about team options. This should make the player less likely to accept an offer. Maybe this can be affected by some mood components? (Loyalty === not bothered, Winning & prior seasons === not bothered, Money === bothered, etc.)
 /**
  * Accept the player's offer.
  *
@@ -18,11 +18,13 @@ const accept = async ({
 	pid,
 	amount,
 	exp,
+	option,
 	dryRun,
 }: {
 	pid: number;
 	amount: number;
 	exp: number;
+	option: ContractOption;
 	dryRun?: boolean;
 }) => {
 	const negotiation = await idb.cache.negotiations.get(pid);
@@ -76,12 +78,13 @@ const accept = async ({
 	const contract: PlayerContract = {
 		amount,
 		exp,
+		option,
 	};
 	if (p.contract.rookie && g.get("phase") === PHASE.RESIGN_PLAYERS) {
 		// Not sure if the phase condition is necessary. The purpose of this is for hard cap rookies with rookie contract scale.
 		contract.rookie = true;
 	}
-
+	// JTODO: make sure that options are updated here? Think this is the right place
 	if (!dryRun) {
 		await player.sign(p, g.get("userTid"), contract, g.get("phase"));
 		await idb.cache.players.put(p);

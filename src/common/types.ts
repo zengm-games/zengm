@@ -233,6 +233,7 @@ export type DraftType =
 
 // Key is team ID receiving this asset
 // Why store name and extra draft pick info? For performance a bit, but mostly in case old players are deleted in a league, the trade event will still show something reasonable
+// JTODO: how will teams think about player options/ team options?
 type TradeEventAsset =
 	| {
 			pid: number;
@@ -969,6 +970,7 @@ export type MoodComponents = {
 
 export type MoodTrait = "F" | "L" | "$" | "W";
 
+// JTODO_playerOption: consider adding a demands for player option? Also, how can this be changed to handle player options?
 export type Negotiation = {
 	pid: number;
 	tid: number;
@@ -1105,11 +1107,17 @@ export type PhaseReturn = {
 	updateEvents?: UpdateEvents;
 };
 
+// JTODO: consider adding here, team contract options/non-tradeable players/ player options.
+// 		  considering the next two, a bit more complex. Options should be a string, player or team
+//		  but if this wants to be expanded it could be?
+export type ContractOption = "team" | "player" | "none";
+
 export type PlayerContract = {
 	amount: number;
 	exp: number;
 	rookie?: true; // If present, this is a rookie contract. Could be either a rookie scale auto sign, or negotiated.
 	rookieResign?: true; // Should only be present during re-signing phase for guys re-signing after rookie contracts, otherwise can't identify if previous contract was a rookie contract cause it's overwritten!
+	option?: ContractOption;
 };
 
 export type PlayerFeatWithoutKey = {

@@ -238,7 +238,6 @@ const tryAddAsset = async (
 
 			lookingForSort = true;
 		}
-
 		if (lookingFor.bestCurrentPlayers) {
 			for (const asset of assets) {
 				if (asset.type === "player") {
@@ -340,6 +339,8 @@ const tryAddAsset = async (
  * @param {?Object} estValuesCached Estimated draft pick values from trade.getPickValues, or null. Only pass if you're going to call this repeatedly, then it'll be faster if you cache the values up front.
  * @return {Promise.<?Object>} If it works, resolves to a teams object (similar to first input) with the "made it work" trade info. Otherwise, resolves to undefined
  */
+// JTODO: update the logic around calculating the value for a player with their team option.
+// Should be treated as one year longer than it actually is, and then if the team option is declined, the player should be added to the trade as a free agent.
 const makeItWork = async (
 	teams: TradeTeams,
 	{

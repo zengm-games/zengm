@@ -1396,6 +1396,7 @@ const sum = (values: (number | undefined)[]) => {
 };
 
 // If a player was just drafted and the regular season hasn't started, then he can be released without paying anything
+// JTODO: to consider, should players who are just drafted be able to be put under a team option contract when signing them?
 const justDrafted = (
 	p: {
 		draft: {

@@ -2836,6 +2836,7 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",
 	},
+	// JTODO_playerOption: edit this here, could account for player option maybe?
 	"Asking For": {
 		sortSequence: ["desc", "asc"],
 		sortType: "currency",

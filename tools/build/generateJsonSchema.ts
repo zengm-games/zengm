@@ -383,6 +383,11 @@ export const generateJsonSchema = (sport: string) => {
 					rookieResign: {
 						const: true,
 					},
+					// JTODO: do we need a none option for enum? Could just be undefined? Not sure how to write that into this schema
+					option: {
+						type: "string",
+						enum: ["none", "team", "player"],
+					},
 				},
 				required: ["amount", "exp"],
 			},

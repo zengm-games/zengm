@@ -89,6 +89,7 @@ import type {
 	DunkAttempt,
 	AllStarPlayer,
 	League,
+	ContractOption,
 } from "../../common/types";
 import {
 	addSimpleAndTeamAwardsToAwardsByPlayer,
@@ -142,16 +143,19 @@ import type { LookingFor } from "../core/trade/makeItWork";
 import type { LookingForState } from "../../ui/views/TradingBlock/useLookingForState";
 import { getPlayer } from "../views/player";
 
+// JTODO: add here team options
 const acceptContractNegotiation = async ({
 	pid,
 	amount,
 	exp,
+	option,
 }: {
 	pid: number;
 	amount: number;
 	exp: number;
+	option: ContractOption;
 }) => {
-	return contractNegotiation.accept({ pid, amount, exp });
+	return contractNegotiation.accept({ pid, amount, exp, option });
 };
 
 const addTeam = async () => {

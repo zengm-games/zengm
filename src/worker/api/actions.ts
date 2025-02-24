@@ -4,6 +4,7 @@ import { idb } from "../db";
 import { g, helpers, logEvent, toUI, updateStatus } from "../util";
 import type { Conditions, TradeTeams } from "../../common/types";
 
+// JTODO add here teamOption?
 const negotiate = async (pid: number, conditions: Conditions) => {
 	// If there is no active negotiation with this pid, create it
 	const negotiation = await idb.cache.negotiations.get(pid);

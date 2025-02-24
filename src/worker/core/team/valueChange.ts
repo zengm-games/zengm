@@ -7,6 +7,7 @@ import type {
 	PlayerContract,
 	PlayerInjury,
 	DraftPick,
+	ContractOption,
 } from "../../../common/types";
 import { groupBy } from "../../../common/utils";
 import { getNumPicksPerRound } from "../trade/getPickValues";
@@ -19,6 +20,7 @@ type Asset =
 			injury: PlayerInjury;
 			age: number;
 			justDrafted: boolean;
+			contractOption: ContractOption;
 	  }
 	| {
 			type: "pick";
@@ -141,6 +143,7 @@ const getPlayers = async ({
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
 				justDrafted: helpers.justDrafted(p, phase, season),
+				contractOption: p.contract.option ?? "none",
 			});
 		} else {
 			// Only apply fudge factor to positive assets
@@ -156,6 +159,7 @@ const getPlayers = async ({
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
 				justDrafted: helpers.justDrafted(p, phase, season),
+				contractOption: p.contract.option ?? "none",
 			});
 		}
 	}
@@ -173,6 +177,7 @@ const getPlayers = async ({
 				injury: p.injury,
 				age: g.get("season") - p.born.year,
 				justDrafted: helpers.justDrafted(p, phase, season),
+				contractOption: p.contract.option ?? "none",
 			});
 		}
 	}
@@ -393,6 +398,7 @@ const EXPONENT = bySport({
 	hockey: 3.5,
 });
 
+// JTODO: can account for teamOptions here, for calculating a player's value
 const sumValues = (
 	players: Asset[],
 	strategy: string,
@@ -411,7 +417,7 @@ const sumValues = (
 
 		const treatAsFutureDraftPick =
 			p.type === "pick" && (season !== p.draftYear || phase <= PHASE.PLAYOFFS);
-
+		// JTODO: maybe improve this by taking into account what complements the team? And also update this to use min and Max age if provided
 		if (strategy === "rebuilding") {
 			// Value young/cheap players and draft picks more. Penalize expensive/old players
 			if (treatAsFutureDraftPick) {
@@ -466,7 +472,12 @@ const sumValues = (
 			playerValue /= 20;
 		}
 
-		const contractsFactor = strategy === "rebuilding" ? 2 : 0.5;
+		// JTODO: look for team options here. How can we get this from the game?
+		// Team options should be valued more for both rebuilding and contending
+		let contractsFactor = strategy === "rebuilding" ? 2 : 0.5;
+		if (p.type === "player") {
+			contractsFactor += p.contractOption === "team" ? 1 : 0;
+		}
 		playerValue += contractsFactor * p.contractValue;
 		// console.log(playerValue, p);
 

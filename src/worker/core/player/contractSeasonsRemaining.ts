@@ -1,5 +1,5 @@
 import { g } from "../../util";
-
+// JTODO edit here, see where this is used? Does this need to be edited if the player has an option? Need to do further research as into where this is called. If this is called to determine contracts, should be thought of.
 /**
  * How many seasons are left on this contract? The answer can be a fraction if the season is partially over
  *

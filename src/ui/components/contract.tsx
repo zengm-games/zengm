@@ -58,7 +58,7 @@ export const ContractExp = ({
 
 	const season = useLocal((state) => state.season);
 	const expiring = season === p.contract.exp;
-
+	// JTODO: implement option to offer a team contract here
 	return (
 		<span
 			className={clsx({

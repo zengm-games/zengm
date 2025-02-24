@@ -50,6 +50,9 @@ const getMostXPlayers = async ({
 		}
 
 		const mosts = Array.isArray(most) ? most : [most];
+		if (mosts.length === 0) {
+			continue;
+		}
 
 		for (const row of mosts) {
 			playersAll.push({
@@ -790,15 +793,7 @@ const updatePlayers = async (
 
 				const maxAge = season - p.born.year;
 
-				let tid: number | undefined;
-				for (const ps of p.stats) {
-					if (season === ps.season) {
-						tid = ps.tid;
-					} else if (season < ps.season) {
-						break;
-					}
-				}
-
+				const tid = p.stats.findLast((row) => row.season === season)?.tid;
 				if (tid === undefined) {
 					return;
 				}
@@ -821,7 +816,7 @@ const updatePlayers = async (
 				oldest ? "oldest" : "youngest"
 			} players who won an MVP award.`;
 			extraCols.push({
-				key: ["most", "value"],
+				key: ["most", "extra", "age"],
 				colName: "Age",
 			});
 			extraCols.push({
@@ -835,7 +830,7 @@ const updatePlayers = async (
 
 			sortParams = [
 				[(x: any) => x.most.value, (x: any) => x.most.extra.ovr],
-				oldest ? ["desc", "desc"] : ["asc", "desc"],
+				["desc", "desc"],
 			];
 
 			filter = (p) =>
@@ -848,34 +843,23 @@ const updatePlayers = async (
 				);
 				const entries = [];
 				for (const mvp of mvpSeasons) {
-					const ratings = p.ratings.find((r) => r.season === mvp.season);
-					const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
+					const ratings = p.ratings.findLast((r) => r.season === mvp.season);
 					const season = mvp.season;
-					let tid = p.stats.find((s) => s.season === mvp.season)?.tid;
+					const tid = p.stats.findLast((row) => row.season === season)?.tid;
 
-					if (season === undefined) {
-						return;
+					if (tid !== undefined && ratings !== undefined) {
+						const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
+						const age = mvp.season - p.born.year;
+						entries.push({
+							value: oldest ? age : -age,
+							extra: {
+								age,
+								bestSeasonOverride: mvp.season,
+								ovr,
+								tid,
+							},
+						});
 					}
-
-					for (const ps of p.stats) {
-						if (season === ps.season) {
-							tid = ps.tid;
-						} else if (season < ps.season) {
-							break;
-						}
-					}
-
-					if (tid === undefined) {
-						return;
-					}
-					entries.push({
-						value: mvp.season - p.born.year,
-						extra: {
-							bestSeasonOverride: mvp.season,
-							ovr,
-							tid,
-						},
-					});
 				}
 
 				return entries;

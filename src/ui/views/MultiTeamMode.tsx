@@ -139,10 +139,10 @@ const MultiTeamMode = ({
 				(command+click on Mac) to select individual teams.
 			</p>
 
-			<div className="d-flex mb-3">
+			<div className="d-flex gap-2 mb-3">
 				<button
 					type="button"
-					className="btn btn-light-bordered me-2"
+					className="btn btn-secondary"
 					onClick={async () => {
 						await toWorker("main", "updateMultiTeamMode", {
 							userTids: teams.map((t) => t.tid),
@@ -191,16 +191,16 @@ const MultiTeamMode = ({
 				These actions will apply to all teams controlled by multi team mode.
 			</p>
 
-			<div className="btn-group">
+			<div className="d-flex gap-2">
 				<button
-					className="btn btn-light-bordered"
+					className="btn btn-secondary"
 					onClick={() => handleAutoSort(userTids)}
 				>
 					Auto sort {bySport({ football: "depth charts", default: "rosters" })}
 				</button>
 				{isSport("basketball") ? (
 					<button
-						className="btn btn-light-bordered"
+						className="btn btn-secondary"
 						onClick={() => handleResetPT(userTids)}
 					>
 						Reset playing time

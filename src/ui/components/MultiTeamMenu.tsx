@@ -41,22 +41,19 @@ const MultiTeamMenu = () => {
 	const ind = teams.findIndex((t) => t.tid === state.userTid);
 
 	const prev = async () => {
-		const t = teams[ind - 1];
+		const t = teams[ind - 1] ?? teams.at(-1);
 
 		if (t !== undefined) {
 			await setUserTid(t.tid);
 		}
 	};
 	const next = async () => {
-		const t = teams[ind + 1];
+		const t = teams[ind + 1] ?? teams[0];
 
 		if (t !== undefined) {
 			await setUserTid(t.tid);
 		}
 	};
-
-	const prevDisabled = ind < 0 || ind === 0;
-	const nextDisabled = ind < 0 || ind === state.userTids.length - 1;
 
 	let bottom = 0;
 	if (state.stickyFooterAd) {
@@ -66,10 +63,9 @@ const MultiTeamMenu = () => {
 	return (
 		<div className="multi-team-menu d-flex align-items-end" style={{ bottom }}>
 			<button
-				className="btn btn-link p-0 mb-1"
-				disabled={prevDisabled}
+				className="btn btn-link text-black p-0 mb-1"
 				onClick={prev}
-				title="Previous Team"
+				title="Previous team"
 			>
 				<span className="glyphicon glyphicon-menu-left" />
 			</button>
@@ -87,10 +83,9 @@ const MultiTeamMenu = () => {
 				</select>
 			</div>
 			<button
-				className="btn btn-link p-0 mb-1"
-				disabled={nextDisabled}
+				className="btn btn-link text-black p-0 mb-1"
 				onClick={next}
-				title="Next Team"
+				title="Next team"
 			>
 				<span className="glyphicon glyphicon-menu-right" />
 			</button>

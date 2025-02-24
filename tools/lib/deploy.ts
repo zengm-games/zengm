@@ -67,7 +67,7 @@ export const deploy = async () => {
 	for (const folder of copyAndKeep) {
 		console.log(`Copying ${folder}...`);
 		await mySpawn("rsync", [
-			"-vhrl",
+			"-hrl",
 			`./build/${folder}/`,
 			`jersch50@pdx1-shared-a3-10.dreamhost.com:/home/jersch50/${domain}/${folder}/`,
 		]);

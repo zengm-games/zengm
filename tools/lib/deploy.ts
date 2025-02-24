@@ -93,7 +93,7 @@ export const deploy = async () => {
 		excludes.push("--exclude", "/sw.js*");
 	}
 	await mySpawn("rsync", [
-		"-vhrl",
+		"-hrl",
 		"--delete",
 		...excludes,
 		"./build/",

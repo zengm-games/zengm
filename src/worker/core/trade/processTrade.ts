@@ -50,7 +50,7 @@ const processTrade = async (
 		showNotification: false,
 		pids: pidsEvent,
 		dpids: dpidsEvent,
-		tids: Array.from(tids), // Array.from is for Flow
+		tids,
 		score: Math.round(helpers.bound(maxPlayerValue - 40, 0, Infinity)),
 		teams,
 		phase: g.get("phase"),

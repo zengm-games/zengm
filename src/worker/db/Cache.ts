@@ -82,7 +82,6 @@ type Index =
 	| "teamSeasonsByTidSeason"
 	| "teamStatsByPlayoffsTid";
 
-// This variable is only needed because Object.keys(storeInfos) is not handled well in Flow
 export const STORES: Store[] = [
 	"allStars",
 	"awards",

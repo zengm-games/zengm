@@ -169,7 +169,6 @@ export type CompositeWeights<RatingKey = string> = {
 	};
 };
 
-// Not exact because https://github.com/facebook/flow/issues/2386 - same thing elsewhere
 export type Conditions = {
 	hostID?: number;
 };

@@ -436,8 +436,8 @@ const DraftLotteryTable = (props: Props) => {
 		);
 	}
 
+	// Checking both is redundant, but TypeScript wants it
 	if (result && probs) {
-		// Checking both is redundant, but flow wants it
 		table = (
 			<>
 				<p />

@@ -228,8 +228,6 @@ cancelling expansion draft can somehow delete existing teams, not just expansion
 
 in baseball, after a trade, player could be in the depth chart for LP (no DH lineup) even if there is no DH lineup at all, and then his position there will show up in lineupPos elsewhere on the depth chart. but weirdly, this happened with a pitcher getting listed at CF. seems the CF was sent out in the trade, maybe related? https://discord.com/channels/290013534023057409/290015591216054273/1278535975022231553
 
-depth chart link to compare players https://mail.google.com/mail/u/0/#sent/FMfcgzQVzFbDgsScWqqVNXgVKhBlRpDv
-
 fuite
 - works with web worker, not shared worker
 - only looks in main process, not worker process
@@ -339,8 +337,6 @@ https://discord.com/channels/290013534023057409/569726303926878219/1253099037872
 baseball colleges
 
 green highlight (players from your team) most places should be aware of userTid history
-
-football/hockey contract adjustment https://discord.com/channels/290013534023057409/331882115119448065/1246513056905822311
 
 When exporting Bio Info, export even default values, then dedupe on import https://old.reddit.com/r/BasketballGM/comments/1ch7wik/monthly_suggestions_thread/l3kvqv1/
 - or better, include option
@@ -584,7 +580,6 @@ use team colors as foreground/background in UI in some places - already guarante
 - box scores
 
 hockey
-- AI should always sign backup goalie https://discord.com/channels/290013534023057409/290015591216054273/1170939243728736296
 - sub out goalies if they're performing badly in a game https://mail.google.com/mail/u/0/#inbox/FMfcgzGtxSvvjwxTVJGWmxftgHClmhhT?compose=VpCqJXKbbdqKZCHqLrSpgWhCKdmkXtZbvDLhlvtPxPZCWDGNKlKCjkltGnbrzGQvkwGllPg
 
 scheduled events for roster size changes https://discord.com/channels/290013534023057409/290015591216054273/1167345210955681802

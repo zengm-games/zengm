@@ -108,7 +108,7 @@ const normalizeContractDemands = async ({
 			basketball: false,
 			football: true,
 
-			// For hockey, we want the fast method (numRounds 0) for any in-season free agents created by releasing players
+			// For hockey, we want the fast method (numRounds 0) for any in-season free agents created by releasing players. For basketball (due to fewer players) this optimization is not needed.
 			hockey: type === "dummyExpiringContracts" && pids !== undefined,
 		}) ||
 		minContract === maxContract ||

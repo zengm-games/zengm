@@ -1,12 +1,4 @@
-faster/stabler normalizeContractDemands for non-basketball sports
-- for hockey, normalizeContractDemands is currently taking like 25% of sim time https://old.reddit.com/r/ZenGMHockey/comments/1ittkdr/sims_in_hockey_are_slower_compared_to_baseball/
-- why was hockey so slow? can it be fixed without resorting to getContract?
-- should basketball get same fix as hockey, even if gain is smaller?
-- blog
-  - football - scale the fast way
-  - hockey - use the fast way during season
-    - 40% faster to sim regular season
-  - baseball/basketball - no change
+season arrows on auto play form
 
 better relative faces https://mail.google.com/mail/u/0/#inbox/FMfcgzQZTMQRKQcWXCSldcPFMJfLvDGb
 - https://github.com/zengm-games/facesjs/issues/5

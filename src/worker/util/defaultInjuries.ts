@@ -3,7 +3,11 @@
 import { isSport } from "../../common";
 import helpers from "./helpers";
 
-let defaultInjuries;
+let defaultInjuries: {
+	name: string;
+	frequency: number;
+	games: number;
+}[];
 
 if (isSport("hockey")) {
 	// https://discord.com/channels/@me/778760871911751700/1340867968325652480

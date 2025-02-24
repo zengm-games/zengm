@@ -816,17 +816,13 @@ const updatePlayers = async (
 			after = tidAndSeasonToAbbrev;
 		} else if (type === "oldest_mvp" || type === "youngest_mvp") {
 			const oldest = type === "oldest_mvp";
-			title = `${oldest ? "Oldest" : "Youngest"} MVP`;
-			description = `These are the players who won their MVP at the ${
+			title = `${oldest ? "Oldest" : "Youngest"} MVPs`;
+			description = `These are the ${
 				oldest ? "oldest" : "youngest"
-			} age.`;
+			} players who won an MVP award.`;
 			extraCols.push({
-				key: ["most", "extra", "age"],
+				key: ["most", "value"],
 				colName: "Age",
-			});
-			extraCols.push({
-				key: ["most", "extra", "bestSeasonOverride"],
-				colName: "Season",
 			});
 			extraCols.push({
 				key: ["most", "extra"],
@@ -838,7 +834,7 @@ const updatePlayers = async (
 			});
 
 			sortParams = [
-				[(x: any) => x.most.extra.age, (x: any) => x.most.value],
+				[(x: any) => x.most.value, (x: any) => x.most.extra.ovr],
 				oldest ? ["desc", "desc"] : ["asc", "desc"],
 			];
 
@@ -873,12 +869,11 @@ const updatePlayers = async (
 						return;
 					}
 					entries.push({
-						value: ovr,
+						value: mvp.season - p.born.year,
 						extra: {
-							age: mvp.season - p.born.year,
 							bestSeasonOverride: mvp.season,
 							ovr,
-							tid: tid,
+							tid,
 						},
 					});
 				}

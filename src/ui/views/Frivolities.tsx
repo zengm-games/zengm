@@ -223,19 +223,19 @@ export const frivolities = {
 			description: "The oldest players who actually played.",
 		},
 		{
+			urlParts: ["most", "oldest_mvp"],
+			name: "Oldest MVPs",
+			description: "The oldest players who won an MVP award.",
+		},
+		{
 			urlParts: ["most", "oldest_peaks"],
 			name: "Oldest Peaks",
 			description: "The players who were the oldest when they peaked in ovr.",
 		},
 		{
-			urlParts: ["most", "oldest_mvp"],
-			name: "Oldest MVPs",
-			description: "The players who won an MVP at their oldest.",
-		},
-		{
 			urlParts: ["most", "youngest_mvp"],
 			name: "Youngest MVPs",
-			description: "The players who won an MVP at their youngest.",
+			description: "The youngest players who won an MVP award.",
 		},
 		{
 			urlParts: ["most", "youngest_peaks"],

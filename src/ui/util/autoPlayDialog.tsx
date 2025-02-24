@@ -74,7 +74,7 @@ const Confirm = confirmable<
 						<div className="col">
 							<input
 								ref={inputRef}
-								type="text"
+								type="number"
 								className="form-control"
 								placeholder="Season"
 								onChange={(event) => {

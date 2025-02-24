@@ -814,6 +814,78 @@ const updatePlayers = async (
 				};
 			};
 			after = tidAndSeasonToAbbrev;
+		} else if (type === "oldest_mvp" || type === "youngest_mvp") {
+			const oldest = type === "oldest_mvp";
+			title = `${oldest ? "Oldest" : "Youngest"} MVP`;
+			description = `These are the players who won their MVP at the ${
+				oldest ? "oldest" : "youngest"
+			} age.`;
+			extraCols.push({
+				key: ["most", "extra", "age"],
+				colName: "Age",
+			});
+			extraCols.push({
+				key: ["most", "extra", "bestSeasonOverride"],
+				colName: "Season",
+			});
+			extraCols.push({
+				key: ["most", "extra"],
+				colName: "Team",
+			});
+			extraCols.push({
+				key: ["most", "extra", "ovr"],
+				colName: "Ovr",
+			});
+
+			sortParams = [
+				[(x: any) => x.most.extra.age, (x: any) => x.most.value],
+				oldest ? ["desc", "desc"] : ["asc", "desc"],
+			];
+
+			filter = (p) =>
+				p.awards.length > 0 &&
+				p.awards.some((a) => a.type === "Most Valuable Player");
+
+			getValue = (p) => {
+				const mvpSeasons = p.awards.filter(
+					(award) => award.type === "Most Valuable Player",
+				);
+				const entries = [];
+				for (const mvp of mvpSeasons) {
+					const ratings = p.ratings.find((r) => r.season === mvp.season);
+					const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
+					const season = mvp.season;
+					let tid = p.stats.find((s) => s.season === mvp.season)?.tid;
+
+					if (season === undefined) {
+						return;
+					}
+
+					for (const ps of p.stats) {
+						if (season === ps.season) {
+							tid = ps.tid;
+						} else if (season < ps.season) {
+							break;
+						}
+					}
+
+					if (tid === undefined) {
+						return;
+					}
+					entries.push({
+						value: ovr,
+						extra: {
+							age: mvp.season - p.born.year,
+							bestSeasonOverride: mvp.season,
+							ovr,
+							tid: tid,
+						},
+					});
+				}
+
+				return entries;
+			};
+			after = tidAndSeasonToAbbrev;
 		} else if (type === "worst_injuries") {
 			title = "Worst Injuries";
 			description =

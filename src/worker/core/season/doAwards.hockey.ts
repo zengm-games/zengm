@@ -118,7 +118,6 @@ export const goyScore = (p: PlayerFiltered) => {
 		p.currentStats.gpGoalie === 0
 			? 0
 			: p.currentStats.gps / p.currentStats.gpGoalie;
-	console.log(p.currentStats);
 	return gpsPerGame * Math.min(numGamesMax, p.currentStats.gpGoalie);
 };
 

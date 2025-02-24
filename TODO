@@ -1,9 +1,10 @@
-hockey game sim perf https://old.reddit.com/r/ZenGMHockey/comments/1ittkdr/sims_in_hockey_are_slower_compared_to_baseball/
-- normalizeContractDemands is a decent chunk of it
-  - https://discord.com/channels/290013534023057409/290015468939640832/895698503144194080
-
-fbgm contract scaling
-- https://discord.com/channels/290013534023057409/290015468939640832/895698503144194080
+faster/stabler normalizeContractDemands for non-basketball sports
+- for hockey, normalizeContractDemands is currently taking like 25% of sim time https://old.reddit.com/r/ZenGMHockey/comments/1ittkdr/sims_in_hockey_are_slower_compared_to_baseball/
+- blog
+  - football - scale the fast way
+  - hockey - use the fast way during season
+    - 40% faster to sim regular season
+  - baseball/basketball - no change
 
 better relative faces https://mail.google.com/mail/u/0/#inbox/FMfcgzQZTMQRKQcWXCSldcPFMJfLvDGb
 - https://github.com/zengm-games/facesjs/issues/5

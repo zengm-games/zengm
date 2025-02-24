@@ -44,6 +44,10 @@ const genContract = (
 		factor *= 1.4;
 	}
 
+	if (isSport("hockey")) {
+		factor *= 1.4;
+	}
+
 	let amount =
 		((factor2 * p.value) / 100 - 0.47) *
 			factor *

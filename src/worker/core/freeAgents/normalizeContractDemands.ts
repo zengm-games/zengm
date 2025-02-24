@@ -1,5 +1,5 @@
 import { idb } from "../../db";
-import { PLAYER, PHASE, bySport } from "../../../common";
+import { PLAYER, PHASE, bySport, isSport } from "../../../common";
 import { team, player, draft } from "..";
 import { g, helpers, random } from "../../util";
 import type { Player } from "../../../common/types";
@@ -107,7 +107,9 @@ const normalizeContractDemands = async ({
 			baseball: true,
 			basketball: false,
 			football: true,
-			hockey: false,
+
+			// For hockey, we want the fast method (numRounds 0) for any in-season free agents created by releasing players
+			hockey: type === "dummyExpiringContracts" && pids !== undefined,
 		}) ||
 		minContract === maxContract ||
 		g.get("numActiveTeams") >= TOO_MANY_TEAMS_TOO_SLOW
@@ -273,6 +275,86 @@ const normalizeContractDemands = async ({
 		rookieSalaries = draft.getRookieSalaries();
 	}
 
+	const playerInfosToUpdate = playerInfos.filter((info) => {
+		return (
+			(type === "freeAgentsOnly" ||
+				type === "newLeague" ||
+				numRounds === 0 ||
+				updatedPIDs.has(info.pid)) &&
+			!info.dummy
+		);
+	});
+
+	// Set contract amounts to final values, especially for numRounds=0
+	for (const info of playerInfosToUpdate) {
+		const p = info.p;
+		if (rookieSalaries && p.draft.year === season) {
+			const pickIndex =
+				(p.draft.round - 1) * g.get("numActiveTeams") + p.draft.pick - 1;
+			info.contractAmount = rookieSalaries[pickIndex] ?? rookieSalaries.at(-1);
+		} else if (numRounds === 0) {
+			info.contractAmount = player.genContract(p, type === "newLeague").amount;
+		} else if (type === "newLeague") {
+			info.contractAmount *= random.uniform(0.4, 1.1);
+		}
+	}
+	if (
+		isSport("football") &&
+		numRounds === 0 &&
+		type === "freeAgentsOnly" &&
+		maxContract !== minContract
+	) {
+		let totalCapSpace = 0;
+		for (const t of teams) {
+			totalCapSpace += helpers.bound(salaryCap - t.payroll, 0, Infinity);
+		}
+
+		if (totalCapSpace === 0) {
+			// No cap space, min contracts for everyone
+			for (const info of playerInfosToUpdate) {
+				info.contractAmount = minContract;
+			}
+		} else {
+			let numPlayersOnTeams = 0;
+			for (const p of playersAll) {
+				if (p.tid >= 0) {
+					numPlayersOnTeams += 1;
+				}
+			}
+			const numTotalRosterSpots = teams.length * g.get("maxRosterSize");
+			const numOpenRosterSpots = Math.max(
+				0,
+				numTotalRosterSpots - numPlayersOnTeams,
+			);
+
+			// For the top free agents (up to the available number of roster spots), adjust their contract demands up/down based on available cap space. Anyone beyond the available number of roster spots, set to a min contract
+			let topPlayersAmountSum = 0;
+			let topPlayersCount = 0; // In case there are fewer than roster spots, somehow
+			for (let i = 0; i < playerInfosToUpdate.length; i++) {
+				const info = playerInfosToUpdate[i];
+				const playerNum = i + 1;
+
+				if (playerNum < numOpenRosterSpots) {
+					topPlayersAmountSum += info.contractAmount;
+					topPlayersCount += 1;
+				} else {
+					info.contractAmount = minContract;
+				}
+			}
+
+			// Adjust contracts of top players
+			const fraction = totalCapSpace / topPlayersAmountSum;
+			for (const info of playerInfosToUpdate.slice(0, topPlayersCount)) {
+				info.contractAmount =
+					minContract +
+					(info.contractAmount - minContract) *
+						fraction *
+						random.uniform(0.75, 1);
+				// console.log(`${info.p.firstName} ${info.p.lastName} ${prev} -> ${info.contractAmount}`)
+			}
+		}
+	}
+
 	let offset = g.get("phase") <= PHASE.PLAYOFFS ? -1 : 0;
 	if (nextSeason) {
 		// Otherwise the season+phase combo appears off when setting contract expiration in newPhasePreseason
@@ -281,80 +363,59 @@ const normalizeContractDemands = async ({
 	const minNewContractExp =
 		g.get("season") + g.get("minContractLength") + offset;
 
-	for (const info of playerInfos) {
+	for (const info of playerInfosToUpdate) {
+		const p = info.p;
+
+		const exp =
+			rookieSalaries && p.draft.year === season
+				? g.get("season") + draft.getRookieContractLength(p.draft.round)
+				: getExpiration(p, type === "newLeague", nextSeason);
+
+		let amount = info.contractAmount;
+
+		// HACK - assume within first 3 years it is a rookie contract. Only need to check players with draftPickAutoContract disabled, because otherwise there is other code handling rookie contracts.
+		let labelAsRookieContract = rookieSalaries && p.draft.year === season;
 		if (
-			(type === "freeAgentsOnly" ||
-				type === "newLeague" ||
-				numRounds === 0 ||
-				updatedPIDs.has(info.pid)) &&
-			!info.dummy
+			type === "newLeague" &&
+			p.draft.round > 0 &&
+			!g.get("draftPickAutoContract")
 		) {
-			const p = info.p;
+			if (g.get("season") <= p.draft.year + 3) {
+				labelAsRookieContract = true;
 
-			const exp =
-				rookieSalaries && p.draft.year === season
-					? g.get("season") + draft.getRookieContractLength(p.draft.round)
-					: getExpiration(p, type === "newLeague", nextSeason);
-
-			let amount;
-			if (rookieSalaries && p.draft.year === season) {
-				const pickIndex =
-					(p.draft.round - 1) * g.get("numActiveTeams") + p.draft.pick - 1;
-				amount = rookieSalaries[pickIndex] ?? rookieSalaries.at(-1);
-			} else if (numRounds === 0) {
-				amount = player.genContract(p, type === "newLeague").amount;
-			} else {
-				if (type === "newLeague") {
-					info.contractAmount *= random.uniform(0.4, 1.1);
-				}
-
-				amount = info.contractAmount;
+				// Decrease salary by 50%, like in newPhaseResignPlayers
+				amount /= 2;
 			}
-
-			// HACK - assume within first 3 years it is a rookie contract. Only need to check players with draftPickAutoContract disabled, because otherwise there is other code handling rookie contracts.
-			let labelAsRookieContract = rookieSalaries && p.draft.year === season;
-			if (
-				type === "newLeague" &&
-				p.draft.round > 0 &&
-				!g.get("draftPickAutoContract")
-			) {
-				if (g.get("season") <= p.draft.year + 3) {
-					labelAsRookieContract = true;
-
-					// Decrease salary by 50%, like in newPhaseResignPlayers
-					amount /= 2;
-				}
-			}
-
-			// During regular season, should only look for short contracts that teams will actually sign
-			if (type === "dummyExpiringContracts") {
-				if (info.contractAmount >= maxContract / 4) {
-					p.contract.exp = season;
-					info.contractAmount = (info.contractAmount + maxContract / 4) / 2;
-				}
-			}
-
-			amount = helpers.bound(
-				helpers.roundContract(amount),
-				minContract,
-				maxContract,
-			);
-
-			// Make sure to remove "temp" flag!
-			p.contract = {
-				amount,
-				exp,
-			};
-			if (p.tid === PLAYER.FREE_AGENT && p.contract.exp < minNewContractExp) {
-				p.contract.exp = minNewContractExp;
-			}
-
-			if (labelAsRookieContract) {
-				p.contract.rookie = true;
-			}
-
-			await idb.cache.players.put(p);
 		}
+
+		// During regular season, should only look for short contracts that teams will actually sign
+		if (type === "dummyExpiringContracts") {
+			if (info.contractAmount >= maxContract / 4) {
+				p.contract.exp = season;
+				info.contractAmount = (info.contractAmount + maxContract / 4) / 2;
+			}
+		}
+
+		amount = helpers.bound(
+			helpers.roundContract(amount),
+			minContract,
+			maxContract,
+		);
+
+		// Make sure to remove "temp" flag!
+		p.contract = {
+			amount,
+			exp,
+		};
+		if (p.tid === PLAYER.FREE_AGENT && p.contract.exp < minNewContractExp) {
+			p.contract.exp = minNewContractExp;
+		}
+
+		if (labelAsRookieContract) {
+			p.contract.rookie = true;
+		}
+
+		await idb.cache.players.put(p);
 	}
 };
 

@@ -6,6 +6,46 @@ import { helpers, toWorker } from "../../util";
 import ResponsivePopover from "../ResponsivePopover";
 import { PLAYER } from "../../../common";
 
+const PlayerNote = ({
+	note,
+	playerName,
+}: {
+	note: string | undefined;
+	playerName: string | undefined;
+}) => {
+	const [isOpen, setIsOpen] = useState(true);
+	if (!note) {
+		return null;
+	}
+	return (
+		<>
+			<div className="text-body-secondary bold">
+				{" "}
+				Notes {playerName !== undefined ? `for ${playerName}` : ""}
+			</div>
+			<div
+				className="text-wrap"
+				style={{
+					maxHeight: isOpen ? "10em" : "3em",
+					overflowY: "auto",
+				}}
+			>
+				{note}
+			</div>
+			<div className="d-flex justify-content-end">
+				{note.length > 100 && (
+					<button
+						className="btn btn-sm btn-light-bordered"
+						onClick={() => setIsOpen((prev) => !prev)}
+					>
+						{isOpen ? "less" : "more"}
+					</button>
+				)}
+			</div>
+		</>
+	);
+};
+
 const Icon = ({
 	onClick,
 	ref,
@@ -64,6 +104,7 @@ const RatingsStatsPopover = ({
 		};
 		pid: number;
 		type?: "career" | "current" | "draft" | number;
+		note?: string;
 	}>({
 		pid,
 	});
@@ -107,6 +148,7 @@ const RatingsStatsPopover = ({
 			stats: p.stats,
 			pid,
 			type: p.type,
+			note: p.note,
 		});
 		setLoadingData(false);
 	}, [pid, season]);
@@ -118,8 +160,10 @@ const RatingsStatsPopover = ({
 		}
 	}, [loadData, loadingData]);
 
-	const { abbrev, tid, age, jerseyNumber, name, ratings, stats, type } = player;
+	const { abbrev, tid, age, jerseyNumber, name, ratings, stats, type, note } =
+		player;
 
+	// JTODO: this probably makes a bit more sense as a component instead of a pure jsx function?
 	let nameBlock = null;
 	if (name) {
 		nameBlock = (
@@ -188,6 +232,7 @@ const RatingsStatsPopover = ({
 		>
 			<div className="mb-2">{nameBlock}</div>
 			<RatingsStats ratings={ratings} stats={stats} type={type} />
+			<PlayerNote note={note} playerName={name} />
 		</div>
 	);
 

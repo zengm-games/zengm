@@ -329,7 +329,7 @@ const augmentPartialPlayer = async (
 		}
 
 		if (r.ovr === undefined || appliedFuzz) {
-			r.ovr = ovr(r);
+			r.ovr = ovr(r, r.pos ?? p.pos);
 		}
 
 		if (

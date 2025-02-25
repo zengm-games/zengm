@@ -2680,7 +2680,7 @@ const ratingsStatsPopoverInfo = async ({
 		hockey: ["keyStatsWithGoalieGP"],
 	});
 
-	const attrs = ["name", "jerseyNumber", "tid", "age"];
+	const attrs = ["name", "jerseyNumber", "tid", "age", "note"];
 	const ratings = ["pos", "ovr", "pot", "season", "tid", ...RATINGS];
 	if (!local.exhibitionGamePlayers) {
 		attrs.push("abbrev");
@@ -2697,7 +2697,7 @@ const ratingsStatsPopoverInfo = async ({
 		oldStats: true,
 		fuzz: true,
 	});
-
+	console.log("this is what is grabbed from p2?", p2);
 	if (actualSeason === undefined) {
 		if (draftProspect) {
 			p2.ratings = p2.ratings[0];
@@ -2708,7 +2708,6 @@ const ratingsStatsPopoverInfo = async ({
 		p2.age = p2.ratings.season - p.born.year;
 
 		p2.stats = p2.careerStats;
-
 		delete p2.careerStats;
 	}
 	if (actualSeason === undefined || actualSeason < currentSeason) {
@@ -2731,7 +2730,6 @@ const ratingsStatsPopoverInfo = async ({
 	} else {
 		type = actualSeason;
 	}
-
 	return {
 		...p2,
 		type,

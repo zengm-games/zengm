@@ -275,7 +275,7 @@ const normalizeContractDemands = async ({
 		rookieSalaries = draft.getRookieSalaries();
 	}
 
-	const playerInfosToUpdate = playerInfos.filter((info) => {
+	const playerInfosToUpdate = playerInfosCurrent.filter((info) => {
 		return (
 			(type === "freeAgentsOnly" ||
 				type === "newLeague" ||
@@ -315,6 +315,12 @@ const normalizeContractDemands = async ({
 				info.contractAmount = minContract;
 			}
 		} else {
+			const playerInfosToUpdateSorted = orderBy(
+				playerInfosToUpdate,
+				"value",
+				"desc",
+			);
+
 			let numPlayersOnTeams = 0;
 			for (const p of playersAll) {
 				if (p.tid >= 0) {
@@ -330,8 +336,8 @@ const normalizeContractDemands = async ({
 			// For the top free agents (up to the available number of roster spots), adjust their contract demands up/down based on available cap space. Anyone beyond the available number of roster spots, set to a min contract
 			let topPlayersAmountSum = 0;
 			let topPlayersCount = 0; // In case there are fewer than roster spots, somehow
-			for (let i = 0; i < playerInfosToUpdate.length; i++) {
-				const info = playerInfosToUpdate[i];
+			for (let i = 0; i < playerInfosToUpdateSorted.length; i++) {
+				const info = playerInfosToUpdateSorted[i];
 				const playerNum = i + 1;
 
 				if (playerNum < numOpenRosterSpots) {
@@ -344,7 +350,7 @@ const normalizeContractDemands = async ({
 
 			// Adjust contracts of top players
 			const fraction = totalCapSpace / topPlayersAmountSum;
-			for (const info of playerInfosToUpdate.slice(0, topPlayersCount)) {
+			for (const info of playerInfosToUpdateSorted.slice(0, topPlayersCount)) {
 				info.contractAmount =
 					minContract +
 					(info.contractAmount - minContract) *

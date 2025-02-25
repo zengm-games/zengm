@@ -122,6 +122,9 @@ const Most = ({
 							</a>
 						);
 					}
+					if (x.colName === "Ovr" && !showRatings) {
+						return null;
+					}
 					return value;
 				}),
 				p.ratings.at(-1).pos,

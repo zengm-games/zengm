@@ -2697,7 +2697,6 @@ const ratingsStatsPopoverInfo = async ({
 		oldStats: true,
 		fuzz: true,
 	});
-	console.log("this is what is grabbed from p2?", p2);
 	if (actualSeason === undefined) {
 		if (draftProspect) {
 			p2.ratings = p2.ratings[0];

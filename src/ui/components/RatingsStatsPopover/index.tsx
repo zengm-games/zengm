@@ -7,19 +7,16 @@ import ResponsivePopover from "../ResponsivePopover";
 import { PLAYER } from "../../../common";
 
 const PlayerNote = ({
+	className,
 	note,
-	playerName,
 }: {
-	note: string | undefined;
-	playerName: string | undefined;
+	className?: string;
+	note: string;
 }) => {
-	if (!note) {
-		return null;
-	}
 	return (
 		<>
 			<div
-				className="text-wrap"
+				className={clsx("text-wrap", className)}
 				style={{
 					maxHeight: "7em",
 					overflowY: "auto",
@@ -207,8 +204,7 @@ const RatingsStatsPopover = ({
 	const modalBody = (
 		<>
 			<RatingsStats ratings={ratings} stats={stats} type={type} />
-			{note ? <div className="mb-2" /> : null}
-			<PlayerNote note={note} playerName={name} />
+			{note ? <PlayerNote className="mt-2" note={note} /> : null}
 		</>
 	);
 
@@ -221,8 +217,7 @@ const RatingsStatsPopover = ({
 		>
 			<div className="mb-2">{nameBlock}</div>
 			<RatingsStats ratings={ratings} stats={stats} type={type} />
-			{note ? <div className="mb-2" /> : null}
-			<PlayerNote note={note} playerName={name} />
+			{note ? <PlayerNote className="mt-2" note={note} /> : null}
 		</div>
 	);
 

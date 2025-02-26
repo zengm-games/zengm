@@ -13,34 +13,19 @@ const PlayerNote = ({
 	note: string | undefined;
 	playerName: string | undefined;
 }) => {
-	const [isOpen, setIsOpen] = useState(true);
 	if (!note) {
 		return null;
 	}
 	return (
 		<>
-			<div className="text-body-secondary bold">
-				{" "}
-				Notes {playerName !== undefined ? `for ${playerName}` : ""}
-			</div>
 			<div
 				className="text-wrap"
 				style={{
-					maxHeight: isOpen ? "10em" : "3em",
+					maxHeight: "7em",
 					overflowY: "auto",
 				}}
 			>
 				{note}
-			</div>
-			<div className="d-flex justify-content-end">
-				{note.length > 100 && (
-					<button
-						className="btn btn-sm btn-light-bordered"
-						onClick={() => setIsOpen((prev) => !prev)}
-					>
-						{isOpen ? "less" : "more"}
-					</button>
-				)}
 			</div>
 		</>
 	);
@@ -220,7 +205,11 @@ const RatingsStatsPopover = ({
 
 	const modalHeader = nameBlock;
 	const modalBody = (
-		<RatingsStats ratings={ratings} stats={stats} type={type} />
+		<>
+			<RatingsStats ratings={ratings} stats={stats} type={type} />
+			{note ? <div className="mb-2" /> : null}
+			<PlayerNote note={note} playerName={name} />
+		</>
 	);
 
 	const popoverContent = (
@@ -232,6 +221,7 @@ const RatingsStatsPopover = ({
 		>
 			<div className="mb-2">{nameBlock}</div>
 			<RatingsStats ratings={ratings} stats={stats} type={type} />
+			{note ? <div className="mb-2" /> : null}
 			<PlayerNote note={note} playerName={name} />
 		</div>
 	);

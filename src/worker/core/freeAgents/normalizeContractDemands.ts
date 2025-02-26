@@ -275,7 +275,7 @@ const normalizeContractDemands = async ({
 		rookieSalaries = draft.getRookieSalaries();
 	}
 
-	const playerInfosToUpdate = playerInfosCurrent.filter((info) => {
+	const playerInfosToUpdate = playerInfos.filter((info) => {
 		return (
 			(type === "freeAgentsOnly" ||
 				type === "newLeague" ||

@@ -6,6 +6,31 @@ import { helpers, toWorker } from "../../util";
 import ResponsivePopover from "../ResponsivePopover";
 import { PLAYER } from "../../../common";
 
+const PlayerNote = ({
+	note,
+	playerName,
+}: {
+	note: string | undefined;
+	playerName: string | undefined;
+}) => {
+	if (!note) {
+		return null;
+	}
+	return (
+		<>
+			<div
+				className="text-wrap"
+				style={{
+					maxHeight: "7em",
+					overflowY: "auto",
+				}}
+			>
+				{note}
+			</div>
+		</>
+	);
+};
+
 const Icon = ({
 	onClick,
 	ref,
@@ -64,6 +89,7 @@ const RatingsStatsPopover = ({
 		};
 		pid: number;
 		type?: "career" | "current" | "draft" | number;
+		note?: string;
 	}>({
 		pid,
 	});
@@ -107,6 +133,7 @@ const RatingsStatsPopover = ({
 			stats: p.stats,
 			pid,
 			type: p.type,
+			note: p.note,
 		});
 		setLoadingData(false);
 	}, [pid, season]);
@@ -118,8 +145,10 @@ const RatingsStatsPopover = ({
 		}
 	}, [loadData, loadingData]);
 
-	const { abbrev, tid, age, jerseyNumber, name, ratings, stats, type } = player;
+	const { abbrev, tid, age, jerseyNumber, name, ratings, stats, type, note } =
+		player;
 
+	// JTODO: this probably makes a bit more sense as a component instead of a pure jsx function?
 	let nameBlock = null;
 	if (name) {
 		nameBlock = (
@@ -176,7 +205,11 @@ const RatingsStatsPopover = ({
 
 	const modalHeader = nameBlock;
 	const modalBody = (
-		<RatingsStats ratings={ratings} stats={stats} type={type} />
+		<>
+			<RatingsStats ratings={ratings} stats={stats} type={type} />
+			{note ? <div className="mb-2" /> : null}
+			<PlayerNote note={note} playerName={name} />
+		</>
 	);
 
 	const popoverContent = (
@@ -188,6 +221,8 @@ const RatingsStatsPopover = ({
 		>
 			<div className="mb-2">{nameBlock}</div>
 			<RatingsStats ratings={ratings} stats={stats} type={type} />
+			{note ? <div className="mb-2" /> : null}
+			<PlayerNote note={note} playerName={name} />
 		</div>
 	);
 

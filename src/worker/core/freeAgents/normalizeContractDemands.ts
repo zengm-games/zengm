@@ -86,6 +86,10 @@ const normalizeContractDemands = async ({
 	pids?: number[];
 	nextSeason?: boolean;
 }) => {
+	if (pids && pids.length === 0) {
+		return;
+	}
+
 	// Higher means more unequal salaries
 	const PARAM = bySport({
 		baseball: 1,

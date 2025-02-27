@@ -8,7 +8,6 @@ import schema from "league-schema"; // eslint-disable-line import/no-unresolved
 import { helpers, toUI } from "../util";
 import { highWaterMark } from "../core/league/createStream";
 import type { Conditions } from "../../common/types";
-import { toPolyfillReadable, toPolyfillTransform } from "bbgm-polyfills"; // eslint-disable-line import/no-unresolved
 import { DEFAULT_TEAM_COLORS, LEAGUE_DATABASE_VERSION } from "../../common";
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
@@ -442,7 +441,7 @@ const initialCheck = async (
 		sizeInBytes = file.size;
 	}
 
-	const stream0 = toPolyfillReadable(stream);
+	const stream0 = stream;
 
 	// I HAVE NO IDEA WHY THIS LINE IS NEEDED, but without this, Firefox seems to cut the stream off early
 	(self as any).stream0 = stream0;
@@ -453,7 +452,7 @@ const initialCheck = async (
 				emitProgressStream(leagueCreationID, sizeInBytes, conditions),
 			),
 		)
-	).pipeThrough(toPolyfillTransform(new TextDecoderStream()));
+	).pipeThrough(new TextDecoderStream());
 	const { basicInfo, schemaErrors } = await getBasicInfo({
 		stream: stream2,
 		includePlayersInBasicInfo,

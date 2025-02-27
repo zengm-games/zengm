@@ -23,12 +23,6 @@ importers:
       '@dumbmatter/idb':
         specifier: ^8.0.0
         version: 8.0.0
-      '@juggle/resize-observer':
-        specifier: ^3.4.0
-        version: 3.4.0
-      '@mattiasbuelens/web-streams-adapter':
-        specifier: ^0.1.0
-        version: 0.1.0
       '@tanstack/react-virtual':
         specifier: ^3.13.0
         version: 3.13.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -161,9 +155,6 @@ importers:
       use-sync-external-store:
         specifier: ^1.4.0
         version: 1.4.0(react@19.0.0)
-      web-streams-polyfill:
-        specifier: ^4.1.0
-        version: 4.1.0
       workbox-core:
         specifier: ^7.3.0
         version: 7.3.0
@@ -189,16 +180,7 @@ importers:
       '@babel/plugin-syntax-typescript':
         specifier: ^7.25.9
         version: 7.25.9(@babel/core@7.26.9)
-      '@babel/plugin-transform-class-properties':
-        specifier: ^7.25.9
-        version: 7.25.9(@babel/core@7.26.9)
       '@babel/plugin-transform-logical-assignment-operators':
-        specifier: ^7.25.9
-        version: 7.25.9(@babel/core@7.26.9)
-      '@babel/plugin-transform-nullish-coalescing-operator':
-        specifier: ^7.26.6
-        version: 7.26.6(@babel/core@7.26.9)
-      '@babel/plugin-transform-optional-chaining':
         specifier: ^7.25.9
         version: 7.25.9(@babel/core@7.26.9)
       '@babel/preset-react':
@@ -1462,13 +1444,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
-
-  '@juggle/resize-observer@3.4.0':
-    resolution: {integrity: sha512-dfLbk+PwWvFzSxwk3n5ySL0hfBog779o8h68wK/7/APo/7cgyWp5jcXockbxdk5kFRkbeXWm4Fbi9FrdN381sA==}
-
-  '@mattiasbuelens/web-streams-adapter@0.1.0':
-    resolution: {integrity: sha512-oV4PyZfwJNtmFWhvlJLqYIX1Nn22ML8FZpS16ZUKv0hg7414xV1fjsGqxQzLT2dyK92TKxsJSwMOd7VNHAtPmA==}
-    engines: {node: '>= 12'}
 
   '@nkzw/eslint-config@2.0.0':
     resolution: {integrity: sha512-1UzZI++iFOOyzWZWcoPtaeSNDbcwHKE0mJBZIvpt/8ZD2KV15IDFC9zIwCWNGmN0INsbPaJVJ8UjGZshT+DI5w==}
@@ -5348,10 +5323,6 @@ packages:
     resolution: {integrity: sha512-QW95TCTaHmsYfHDybGMwO5IJIM93I/6vTRk+daHTWFPhwh+C8Cg7j7XyKrwrj8Ib6vYXe0ocYNrmzY4xAAN6ug==}
     engines: {node: '>= 14'}
 
-  web-streams-polyfill@4.1.0:
-    resolution: {integrity: sha512-A7Jxrg7+eV+eZR/CIdESDnRGFb6/bcKukGvJBB5snI6cw3is1c2qamkYstC1bY1p08TyMRlN9eTMkxmnKJBPBw==}
-    engines: {node: '>= 8'}
-
   webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
 
@@ -6690,10 +6661,6 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
-
-  '@juggle/resize-observer@3.4.0': {}
-
-  '@mattiasbuelens/web-streams-adapter@0.1.0': {}
 
   '@nkzw/eslint-config@2.0.0(@typescript-eslint/eslint-plugin@8.24.1(@typescript-eslint/parser@8.24.1(eslint@9.20.1)(typescript@5.7.3))(eslint@9.20.1)(typescript@5.7.3))(eslint@9.20.1)(typescript@5.7.3)':
     dependencies:
@@ -10966,8 +10933,6 @@ snapshots:
       loose-envify: 1.4.0
 
   web-streams-polyfill@4.0.0-beta.3: {}
-
-  web-streams-polyfill@4.1.0: {}
 
   webidl-conversions@3.0.1: {}
 

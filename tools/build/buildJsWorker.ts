@@ -35,7 +35,7 @@ const buildFile = async (
 	let format: ModuleFormat;
 	if (legacy) {
 		// ES modules don't work in workers in all the browsers currently supported
-		// Chrome 80, Firefox 114, Safari 15.5/16.4
+		// Safari 15.5/16.4
 		format = name === "ui" ? "es" : "iife";
 	} else {
 		format = "es";

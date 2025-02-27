@@ -9,21 +9,21 @@ const customLaunchers = [
 	{
 		base: "BrowserStack",
 		browser: "firefox",
-		browser_version: "78.0", // Works back to 78 currently (last release on some old Mac versions)
+		browser_version: "115.0", // Works back to 115 currently (last release on some old Mac versions)
 		os: "Windows",
 		os_version: "10",
 	},
 	{
 		base: "BrowserStack",
 		browser: "chrome",
-		browser_version: "80.0", // Works back to 75 currently
+		browser_version: "80.0", // Works back to 80 currently
 		os: "Windows",
 		os_version: "10",
 	},
 	{
 		base: "BrowserStack",
 		browser: "safari",
-		browser_version: "14.1", // Works back to 12.1 currently
+		browser_version: "14.1", // Works back to 14.1 currently
 		os: "OS X",
 		os_version: "Big Sur",
 	},

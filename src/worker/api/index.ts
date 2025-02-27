@@ -62,7 +62,6 @@ import {
 	defaultInjuries,
 	defaultTragicDeaths,
 } from "../util";
-import { toPolyfillReadable, toPolyfillTransform } from "bbgm-polyfills"; // eslint-disable-line import/no-unresolved
 import views from "../views";
 import type {
 	Conditions,
@@ -573,7 +572,7 @@ const createLeague = async (
 		let baseStream: ReadableStream;
 		let sizeInBytes: number | undefined;
 		if (file) {
-			baseStream = file.stream() as unknown as ReadableStream;
+			baseStream = file.stream();
 			sizeInBytes = file.size;
 		} else {
 			const response = await fetch(url!);
@@ -584,7 +583,7 @@ const createLeague = async (
 			}
 		}
 
-		const stream0 = toPolyfillReadable(baseStream);
+		const stream0 = baseStream;
 
 		// I HAVE NO IDEA WHY THIS LINE IS NEEDED, but without this, Firefox seems to cut the stream off early
 		(self as any).stream0 = stream0;
@@ -596,7 +595,7 @@ const createLeague = async (
 				),
 			)
 		)
-			.pipeThrough(toPolyfillTransform(new TextDecoderStream()))
+			.pipeThrough(new TextDecoderStream())
 			.pipeThrough(parseJSON());
 	} else {
 		stream = createStreamFromLeagueObject({});

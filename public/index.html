@@ -133,11 +133,6 @@ function checkModern() {
     return false;
   }
 
-  // Firefox 105, Safari 14.1
-  if (typeof TextDecoderStream === "undefined") {
-    return false;
-  }
-
   return true;
 };
 
@@ -176,10 +171,14 @@ function withGoodWorker() {
 }
 
 function checkBrowser() {
+  // Chrome <71, Firefox <105, Safari <14.1
+  if (typeof TextDecoderStream === "undefined") {
+    return false;
+  }
+
   try {
-    // Safari 10 https://bugs.webkit.org/show_bug.cgi?id=171041
-    // {...x} is for Chrome 59 and lower
-    eval("{ const x = {a: 1}; const y = {...x}; const s = Symbol(); let e = (e) => { for (let e of []) {}; }; queueMicrotask(() => {}); }");
+    // nullish coalescing gets Chrome <80, Firefox <72, Safari <13.1
+    eval("{ const z = null ?? 0; }");
     return true;
   } catch (error) {
     return false;
@@ -221,7 +220,7 @@ goodIDB(function (idbResult) {
     if (idbResult === "open-failed") {
       errorMsg = '<p><b>Error!</b> Cannot store data.</p><p>If you have disabled cookies in your browser, you must enable them to play GAME_NAME.</p>';
     } else {
-      errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run GAME_NAME. Current supported browsers include:</p><ul class="list-unstyled mb-0"><li>Chrome 75+</li><li>Firefox 78+</li><li>Safari 12.1+</li></ul>';
+      errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run GAME_NAME. Current supported browsers include:</p><ul class="list-unstyled mb-0"><li>Chrome 80+</li><li>Firefox 115+</li><li>Safari 14.1+</li></ul>';
     }
 
     var startupError = document.getElementById("startup-error");

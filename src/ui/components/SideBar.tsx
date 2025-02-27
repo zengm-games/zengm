@@ -320,11 +320,10 @@ const SideBar = memo(({ pageID, pathname }: Props) => {
 			}
 		};
 
-		// Rather than addEventListener for Safari <14
-		mediaQueryList.addListener(handle);
+		mediaQueryList.addEventListener("change", handle);
 
 		return () => {
-			mediaQueryList.removeListener(handle);
+			mediaQueryList.removeEventListener("change", handle);
 		};
 	}, [close, open]);
 

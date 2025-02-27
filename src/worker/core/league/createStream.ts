@@ -457,7 +457,8 @@ const finalizeGameAttributes = async ({
 	}
 
 	if (
-		randomization === "debutsForever" &&
+		(randomization === "debutsForever" ||
+			randomization === "debutsForeverKeepCurrent") &&
 		finalized.randomDebutsForever === undefined
 	) {
 		finalized.randomDebutsForever = 1;
@@ -1152,7 +1153,9 @@ const beforeDBStream = async ({
 			keptKeys.has("players") ||
 			teamInfos.some((t) => t.usePlayers) ||
 			randomization === "debuts" ||
-			randomization === "debutsForever",
+			randomization === "debutsKeepCurrent" ||
+			randomization === "debutsForever" ||
+			randomization === "debutsForeverKeepCurrent",
 		fileHasTeams: !!filteredFromFile.teams,
 	});
 

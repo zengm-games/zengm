@@ -759,16 +759,27 @@ const roster = (params: Params) => {
 		return returnValue;
 	}
 
+	const season = validateSeason(params.season);
+
 	if (params.abbrev === "DP" || params.abbrev === "DP_-2") {
+		let redirectUrl;
+		const draftAlreadyHappened =
+			season < g.get("season") ||
+			(season === g.get("season") && g.get("phase") > PHASE.DRAFT);
+		if (draftAlreadyHappened) {
+			redirectUrl = helpers.leagueUrl(["draft_history", season]);
+		} else {
+			redirectUrl = helpers.leagueUrl(["draft_scouting"]);
+		}
+
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {
-			redirectUrl: helpers.leagueUrl(["draft_scouting"]),
+			redirectUrl,
 		};
 		return returnValue;
 	}
 
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
-	const season = validateSeason(params.season);
 
 	return { abbrev, playoffs: validateSeasonType(params.playoffs), season, tid };
 };

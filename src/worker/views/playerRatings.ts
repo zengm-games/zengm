@@ -39,6 +39,9 @@ export const getPlayers = async (
 		playersAll = playersAll.filter((p) => p.watch);
 	}
 
+	// showNoStats for current season (so draft picks etc show up on their correct team) or for no team (so free agents show up)
+	const showNoStats = season === g.get("season") || tid === undefined;
+
 	let players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
@@ -58,7 +61,7 @@ export const getPlayers = async (
 		ratings: ["ovr", "pot", "skills", "pos", ...ratings],
 		stats: ["abbrev", "tid", "jerseyNumber", ...stats],
 		season,
-		showNoStats: true,
+		showNoStats,
 		showRookies: true,
 		fuzz: true,
 	});

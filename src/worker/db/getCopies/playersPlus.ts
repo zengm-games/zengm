@@ -787,6 +787,7 @@ const processPlayerStats = (
 	stats: string[],
 	statType: PlayerStatType,
 	keepWithNoStats: boolean,
+	season: number | "career" | undefined, // undefined means showNoStats was used with career totals, but this is an individual stat season so idk
 	statSumsExtra?: StatSumsExtra,
 ) => {
 	const output = processPlayerStats2(
@@ -801,17 +802,29 @@ const processPlayerStats = (
 	// More common stuff between basketball/football could be moved here... abbrev is just special cause it needs to run on the worker
 	if (stats.includes("abbrev")) {
 		if (statSums.tid === undefined) {
-			output.abbrev = helpers.getAbbrev(
-				p.tid === PLAYER.UNDRAFTED ? PLAYER.UNDRAFTED : PLAYER.FREE_AGENT,
-			);
+			if (season === g.get("season")) {
+				output.abbrev = helpers.getAbbrev(
+					p.tid === PLAYER.UNDRAFTED ? PLAYER.UNDRAFTED : PLAYER.FREE_AGENT,
+				);
+			} else if (typeof season === "number") {
+				output.abbrev = season <= p.draft.year ? "DP" : "FA";
+			} else {
+				output.abbrev = "???";
+			}
 		} else {
 			output.abbrev = helpers.getAbbrev(statSums.tid);
 		}
 	}
-
 	if (stats.includes("tid")) {
 		if (statSums.tid === undefined) {
-			output.tid = p.tid;
+			if (season === g.get("season")) {
+				output.tid = p.tid;
+			} else if (typeof season === "number") {
+				output.tid =
+					season <= p.draft.year ? PLAYER.UNDRAFTED : PLAYER.FREE_AGENT;
+			} else {
+				output.tid = PLAYER.FREE_AGENT;
+			}
 		} else {
 			output.tid = statSums.tid;
 		}
@@ -913,7 +926,14 @@ const processStats = (
 			careerStats.push(ps);
 		}
 
-		return processPlayerStats(p, ps, stats, statType, keepWithNoStats);
+		return processPlayerStats(
+			p,
+			ps,
+			stats,
+			statType,
+			keepWithNoStats,
+			ps.season ?? season,
+		);
 	});
 
 	if (
@@ -1010,6 +1030,7 @@ const processStats = (
 				stats,
 				statType,
 				keepWithNoStats,
+				"career",
 				statSumsExtra.regularSeason,
 			);
 		}
@@ -1021,6 +1042,7 @@ const processStats = (
 				stats,
 				statType,
 				keepWithNoStats,
+				"career",
 				statSumsExtra.playoffs,
 			);
 		}
@@ -1032,6 +1054,7 @@ const processStats = (
 				stats,
 				statType,
 				keepWithNoStats,
+				"career",
 				statSumsExtra.combined,
 			);
 		}

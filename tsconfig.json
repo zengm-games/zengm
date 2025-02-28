@@ -22,7 +22,8 @@
 		"noImplicitOverride": true,
 		"isolatedModules": true,
 		"skipLibCheck": true,
-		"allowImportingTsExtensions": true
+		"allowImportingTsExtensions": true,
+		"erasableSyntaxOnly": true
 	},
 	"include": ["src", "tools"]
 }

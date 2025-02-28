@@ -168,7 +168,7 @@ const RelativesForm = ({
 				<ActionButton
 					className="ms-3 me-2"
 					processing={allPlayersState === "loading"}
-					disabled={allPlayersState === "done"}
+					disabled={allPlayersState === "done" || !godMode}
 					onClick={async () => {
 						setAllPlayersState("loading");
 						try {

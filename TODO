@@ -1,3 +1,14 @@
+option to exclude notable games box scores from deletion
+- ASG
+- statistical feats
+- buzzer beaters
+- playoffs
+- finals
+- games involving your team
+- firefox auto delete performance
+  - do what we do now if no need to check actual box score
+  - otherwise, maybe move to newPhasePreseason and run async in background
+
 ⭐ emoji for championships on the Owner review graph. We get it on trades. Should get some of those emoji on the Owner Graphs too https://discord.com/channels/290013534023057409/331882115119448065/1343301981879406613
 
 better relative faces https://mail.google.com/mail/u/0/#inbox/FMfcgzQZTMQRKQcWXCSldcPFMJfLvDGb
@@ -1296,17 +1307,6 @@ injuries
 FBGM
 - lower salaries https://discord.com/channels/290013534023057409/331882115119448065/856734085191041024
 - fewer RB2 carries
-
-option to exclude notable games box scores from deletion
-- ASG
-- statistical feats
-- buzzer beaters
-- playoffs
-- finals
-- games involving your team
-- firefox auto delete performance
-  - do what we do now if no need to check actual box score
-  - otherwise, maybe move to newPhasePreseason and run async in background
 
 beter handling of customizable columns in tables where the defaults change based on some URL parameter
 - "Customized columns on League Stats break a bit when you filter for a different team. So swap STL/BLK and change from All to w/e squad, and you'll see BLK just wholly disappear." https://discord.com/channels/290013534023057409/290015591216054273/855827200577765387

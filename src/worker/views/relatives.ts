@@ -14,13 +14,16 @@ const getRelationText = (
 	generation: number,
 	directLine: boolean,
 	brother: boolean,
+	spouse: boolean,
 ) => {
 	if (generation === 0) {
 		return directLine
 			? "Self"
 			: brother
 				? helpers.getRelativeType(gender, "brother")
-				: "Cousin";
+				: spouse
+					? "Spouse"
+					: "Cousin";
 	}
 
 	if (generation === 1) {
@@ -120,6 +123,9 @@ const updatePlayers = async (
 		// Brothers of initial player, that's it
 		const brotherPids = new Set<number>();
 
+		// If the initial player has a son with multiple fathers, those other fathers should be labeled as spouses
+		const spousePids = new Set<number>();
+
 		if (typeof pid === "number") {
 			const pidsSeen = new Set();
 			fatherLinePids.add(pid);
@@ -158,7 +164,18 @@ const updatePlayers = async (
 					generations.push(info.generation);
 					pidsSeen.add(p.pid);
 
+					let sonOfInitialPlayer = false;
+					const otherFathers = [];
+
 					for (const relative of p.relatives) {
+						if (info.generation === -1 && relative.type === "father") {
+							if (relative.pid === pid) {
+								sonOfInitialPlayer = true;
+							} else {
+								otherFathers.push(relative);
+							}
+						}
+
 						if (fatherLinePids.has(p.pid) && relative.type === "father") {
 							fatherLinePids.add(relative.pid);
 						}
@@ -172,6 +189,10 @@ const updatePlayers = async (
 						}
 						pidsSeenLocal.add(relative.pid);
 
+						if (initial && relative.type === "brother") {
+							brotherPids.add(relative.pid);
+						}
+
 						let generation = info.generation;
 						if (relative.type === "son") {
 							generation -= 1;
@@ -179,14 +200,16 @@ const updatePlayers = async (
 							generation += 1;
 						}
 
-						if (initial && relative.type === "brother") {
-							brotherPids.add(relative.pid);
-						}
-
 						infosNext.push({
 							pid: relative.pid,
 							generation,
 						});
+					}
+
+					if (sonOfInitialPlayer) {
+						for (const otherFather of otherFathers) {
+							spousePids.add(otherFather.pid);
+						}
 					}
 				}
 
@@ -244,6 +267,7 @@ const updatePlayers = async (
 					generations[i],
 					fatherLinePids.has(p.pid) || sonLinePids.has(p.pid),
 					brotherPids.has(p.pid),
+					spousePids.has(p.pid),
 				);
 			}
 		}

@@ -12,7 +12,7 @@ export default defineConfig({
 		}),
 	],*/
 	resolve: {
-		alias: getRollupAliasEntries("test"),
+		alias: getRollupAliasEntries(false),
 	},
 	test: {
 		isolate: false,

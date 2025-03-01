@@ -15,7 +15,7 @@ const extensions = [".mjs", ".js", ".json", ".node", ".ts", ".tsx"];
 
 type NodeEnv = "development" | "production" | "test";
 
-export const getRollupAliasEntries = (nodeEnv: NodeEnv, legacy?: boolean) => {
+export const getRollupAliasEntries = (legacy: boolean) => {
 	const root = path.join(import.meta.dirname, "..", "..");
 
 	return {
@@ -25,10 +25,6 @@ export const getRollupAliasEntries = (nodeEnv: NodeEnv, legacy?: boolean) => {
 		"bbgm-polyfills": legacy
 			? path.resolve(root, "src/common/polyfills.ts")
 			: path.resolve(root, "src/common/polyfills-modern.ts"),
-
-		"bbgm-polyfills-ui": legacy
-			? path.resolve(root, "src/ui/util/polyfills.ts")
-			: path.resolve(root, "src/common/polyfills-noop.ts"),
 	};
 };
 
@@ -51,7 +47,7 @@ export default (
 
 	const plugins = [
 		alias({
-			entries: getRollupAliasEntries(nodeEnv, legacy),
+			entries: getRollupAliasEntries(!!legacy),
 		}),
 		replace({
 			preventAssignment: true,

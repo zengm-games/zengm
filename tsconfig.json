@@ -6,19 +6,18 @@
 		"noEmit": true,
 		"noUnusedLocals": true,
 		"noFallthroughCasesInSwitch": true,
-		"moduleResolution": "Bundler",
+		"moduleResolution": "bundler",
 		"baseUrl": ".",
 		"paths": {
 			"league-schema": ["build/files/league-schema.json"],
 			"bbgm-polyfills": ["src/common/polyfills-modern.ts"],
-			"bbgm-polyfills-ui": ["src/common/polyfills-noop.ts"],
-			"bbgm-debug": ["src/worker/core/debug/index.ts"]
+			"bbgm-polyfills-ui": ["src/common/polyfills-noop.ts"]
 		},
 		"esModuleInterop": true,
 		"strict": true,
 		"useUnknownInCatchVariables": false,
 		"verbatimModuleSyntax": true,
-		"module": "Preserve",
+		"module": "preserve",
 		"noImplicitOverride": true,
 		"isolatedModules": true,
 		"skipLibCheck": true,

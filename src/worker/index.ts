@@ -7,6 +7,12 @@ import * as util from "./util";
 
 self.bbgm = { api, ...common, ...core, ...db, ...util };
 
+if (process.env.NODE_ENV === "development") {
+	import("./core/debug").then(({ default: debug }) => {
+		self.bbgm.debug = debug;
+	});
+}
+
 export type WorkerAPICategory =
 	| "actions"
 	| "exhibitionGame"

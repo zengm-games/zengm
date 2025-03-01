@@ -29,11 +29,6 @@ export const getRollupAliasEntries = (nodeEnv: NodeEnv, legacy?: boolean) => {
 		"bbgm-polyfills-ui": legacy
 			? path.resolve(root, "src/ui/util/polyfills.ts")
 			: path.resolve(root, "src/common/polyfills-noop.ts"),
-
-		"bbgm-debug":
-			nodeEnv === "development"
-				? path.resolve(root, "src/worker/core/debug/index.ts")
-				: path.resolve(root, "src/worker/core/debug/prod.ts"),
 	};
 };
 

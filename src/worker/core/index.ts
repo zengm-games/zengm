@@ -1,7 +1,6 @@
 export { default as GameSim } from "./GameSim";
 export { default as allStar } from "./allStar";
 export { default as contractNegotiation } from "./contractNegotiation";
-export { default as debug } from "bbgm-debug"; // eslint-disable-line import/no-unresolved
 export { default as draft } from "./draft";
 export { default as expansionDraft } from "./expansionDraft";
 export { default as finances } from "./finances";

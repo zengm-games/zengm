@@ -3,6 +3,10 @@ FBGM contracts in first offseason of new league
 - ideal solution: make fewer teams under the cap
 - less ideal solution: cap fraction in normalizeContractDemands
 
+keep track of DNP players in box score explicitly, just with minimal info rather than full stats
+- use for basketball to save space
+- use for player game log, especially for pitchers in baseball https://discord.com/channels/290013534023057409/944392892905037885/1335192150949888032
+
 option to exclude notable games box scores from deletion
 - ASG
 - statistical feats
@@ -10,20 +14,23 @@ option to exclude notable games box scores from deletion
 - playoffs
 - finals
 - games involving your team
+- manually flag games
+  - add new "saved games" page
 - firefox auto delete performance
   - do what we do now if no need to check actual box score
   - otherwise, maybe move to newPhasePreseason and run async in background
 
 ⭐ emoji for championships on the Owner review graph. We get it on trades. Should get some of those emoji on the Owner Graphs too https://discord.com/channels/290013534023057409/331882115119448065/1343301981879406613
 
+head2head page that lets you look at 2 specific teams regular season and playoff series matchups in a list head2head page that lets you look at 2 specific teams regular season and playoff series matchups in a list
+
+page showing all owned future draft picks https://old.reddit.com/r/BasketballGM/comments/1ieujhu/monthly_suggestions_thread/maha33q/
+- ovr, power rank, and avg age of team for traded picks
+
 better relative faces https://mail.google.com/mail/u/0/#inbox/FMfcgzQZTMQRKQcWXCSldcPFMJfLvDGb
 - https://github.com/zengm-games/facesjs/issues/5
 - could do in zengm code - delete a few features (to randomize them) and randomize skin/hair color a bit
 - won't apply to real players
-
-keep track of DNP players in box score explicitly, just with minimal info rather than full stats
-- use for basketball to save space
-- use for player game log, especially for pitchers in baseball https://discord.com/channels/290013534023057409/944392892905037885/1335192150949888032
 
 intermittent "tid not found" error when starting real players league with all stats in 1977
 
@@ -761,6 +768,7 @@ custom awards
 - add triple crown for baseball, like league leader awards
 - store top 10 for each individual award, so it can be displayed easily on player profile pages
 - should still be able to add an arbitrary one-off custom award - have some place for those in the awards object, and use it for unknown awards in upgraded leagues
+- support awards per div/conf
 
 names of playoff rounds
 - centralize to one place

@@ -352,8 +352,12 @@ const normalizeContractDemands = async ({
 				}
 			}
 
-			// Adjust contracts of top players
-			const fraction = totalCapSpace / topPlayersAmountSum;
+			// Adjust contracts of top players - bound is so it's not too crazy, especially in a new league
+			const fraction = helpers.bound(
+				totalCapSpace / topPlayersAmountSum,
+				0.6,
+				1.4,
+			);
 			for (const info of playerInfosToUpdateSorted.slice(0, topPlayersCount)) {
 				info.contractAmount =
 					minContract +

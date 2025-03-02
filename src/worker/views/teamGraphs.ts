@@ -273,7 +273,6 @@ const updateTeams = async (
 			inputStat !== undefined && statForAxis.stats.includes(inputStat)
 				? inputStat
 				: random.choice(statForAxis.stats);
-		console.log(inputStat, stat);
 
 		return {
 			[season]: inputs[season],

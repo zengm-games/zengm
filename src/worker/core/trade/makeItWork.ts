@@ -38,7 +38,7 @@ const tryAddAsset = async (
 	prevDv: number,
 	firstTry: boolean,
 	lookingFor?: LookingFor,
-): Promise<TradeTeams | void> => {
+): Promise<TradeTeams | undefined> => {
 	let assets: Asset[] = [];
 
 	if (!holdUserConstant) {

@@ -4,7 +4,7 @@ import type { GetCopyType, Message } from "../../../common/types";
 const getCopy = async (
 	{ mid }: { mid: number },
 	type?: GetCopyType,
-): Promise<Message | void> => {
+): Promise<Message | undefined> => {
 	const result = await idb.getCopies.messages(
 		{
 			mid,

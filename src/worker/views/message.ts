@@ -67,8 +67,24 @@ const updateMessage = async (
 			await updatePlayMenu();
 		}
 
+		let augmentedMessage;
+		if (message) {
+			augmentedMessage = {
+				...message,
+				ownerMoods: message.ownerMoods?.map((mood, i) => {
+					const season = message.year - message.ownerMoods.length + 1 + i;
+
+					return {
+						...mood,
+						total: mood.money + mood.playoffs + mood.wins,
+						season,
+					};
+				}),
+			};
+		}
+
 		return {
-			message,
+			message: augmentedMessage,
 		};
 	}
 };

@@ -56,26 +56,29 @@ const updatePlayoffs = async (
 	inputs: ViewInput<"playoffs">,
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<{
-	canEdit: boolean;
-	confNames: string[];
-	finalMatchups: boolean;
-	matchups: {
-		matchup: [number, number];
-		rowspan: number;
-	}[][];
-	numGamesPlayoffSeries: number[];
-	numGamesToWinSeries: number[];
-	playIns: PlayIns;
-	playoffsByConf: boolean;
-	season: number;
-	series: {
-		home: SeriesTeam;
-		away?: SeriesTeam;
-	}[][];
-	teamsToEdit: TeamToEdit[];
-	userTid: number;
-} | void> => {
+): Promise<
+	| {
+			canEdit: boolean;
+			confNames: string[];
+			finalMatchups: boolean;
+			matchups: {
+				matchup: [number, number];
+				rowspan: number;
+			}[][];
+			numGamesPlayoffSeries: number[];
+			numGamesToWinSeries: number[];
+			playIns: PlayIns;
+			playoffsByConf: boolean;
+			season: number;
+			series: {
+				home: SeriesTeam;
+				away?: SeriesTeam;
+			}[][];
+			teamsToEdit: TeamToEdit[];
+			userTid: number;
+	  }
+	| undefined
+> => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("playoffs") ||

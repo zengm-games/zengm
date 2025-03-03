@@ -8,7 +8,7 @@ const getCopy = async (
 		season: number;
 	},
 	type?: GetCopyType,
-): Promise<DraftLotteryResult | void> => {
+): Promise<DraftLotteryResult | undefined> => {
 	const result = await idb.getCopies.draftLotteryResults(
 		{
 			season,

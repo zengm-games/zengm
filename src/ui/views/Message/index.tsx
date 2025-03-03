@@ -28,7 +28,7 @@ const Message = ({ message }: View<"message">) => {
 			<SafeHtml dirty={message.text} />
 
 			{message.ownerMoods && message.ownerMoods.length > 2 ? (
-				<OwnerMoodsChart ownerMoods={message.ownerMoods} year={message.year} />
+				<OwnerMoodsChart ownerMoods={message.ownerMoods} />
 			) : null}
 
 			<p>

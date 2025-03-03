@@ -4,7 +4,7 @@ import type { GetCopyType, Player } from "../../../common/types";
 const getCopy = async (
 	{ pid }: { pid: number },
 	type?: GetCopyType,
-): Promise<Player | void> => {
+): Promise<Player | undefined> => {
 	const result = await idb.getCopies.players(
 		{
 			pid,

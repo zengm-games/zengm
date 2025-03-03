@@ -16,7 +16,7 @@ const create = async (
 	pid: number,
 	resigning: boolean,
 	tid: number = g.get("userTid"),
-): Promise<string | void> => {
+): Promise<string | undefined> => {
 	if (
 		g.get("phase") > PHASE.AFTER_TRADE_DEADLINE &&
 		g.get("phase") <= PHASE.RESIGN_PLAYERS &&

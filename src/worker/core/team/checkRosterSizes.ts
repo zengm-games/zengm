@@ -123,7 +123,7 @@ export const dropPlayers = async (
  */
 const checkRosterSizes = async (
 	userOrOther: "user" | "other",
-): Promise<string | void> => {
+): Promise<string | undefined> => {
 	const minFreeAgents: Player[] = [];
 	let userTeamSizeError: string | undefined;
 

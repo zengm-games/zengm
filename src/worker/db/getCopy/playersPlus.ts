@@ -8,7 +8,7 @@ import type {
 const getCopy = async (
 	p: Player,
 	options: PlayersPlusOptions,
-): Promise<PlayerFiltered | void> => {
+): Promise<PlayerFiltered | undefined> => {
 	const result = await idb.getCopies.playersPlus([p], options);
 	return result[0];
 };

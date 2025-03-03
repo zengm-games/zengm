@@ -16,21 +16,24 @@ const updateDraftLottery = async (
 	{ season }: ViewInput<"draftLottery">,
 	updateEvents: UpdateEvents,
 	state: any,
-): Promise<{
-	challengeWarning?: boolean;
-	notEnoughTeams?: boolean;
-	draftType?: DraftType | "dummy";
-	dpidsAvailableToTrade: Set<number>;
-	godMode?: boolean;
-	numToPick: number;
-	result: DraftLotteryResultArray | undefined;
-	rigged: GameAttributesLeague["riggedLottery"];
-	season: number;
-	showExpansionTeamMessage: boolean;
-	spectator: boolean;
-	type: "completed" | "projected" | "readyToRun";
-	userTid: number;
-} | void> => {
+): Promise<
+	| {
+			challengeWarning?: boolean;
+			notEnoughTeams?: boolean;
+			draftType?: DraftType | "dummy";
+			dpidsAvailableToTrade: Set<number>;
+			godMode?: boolean;
+			numToPick: number;
+			result: DraftLotteryResultArray | undefined;
+			rigged: GameAttributesLeague["riggedLottery"];
+			season: number;
+			showExpansionTeamMessage: boolean;
+			spectator: boolean;
+			type: "completed" | "projected" | "readyToRun";
+			userTid: number;
+	  }
+	| undefined
+> => {
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("newPhase") ||

@@ -4,7 +4,7 @@ import type { EventBBGM, GetCopyType } from "../../../common/types";
 const getCopy = async (
 	{ eid }: { eid: number },
 	type?: GetCopyType,
-): Promise<EventBBGM | void> => {
+): Promise<EventBBGM | undefined> => {
 	const result = await idb.getCopies.events(
 		{
 			eid,

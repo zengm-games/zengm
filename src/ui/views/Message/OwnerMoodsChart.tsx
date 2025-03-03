@@ -6,7 +6,7 @@ import { LinePath } from "@visx/shape";
 import { scaleLinear, scalePoint } from "@visx/scale";
 import { Text } from "@visx/text";
 import { HelpPopover } from "../../components";
-import type { OwnerMood } from "../../../common/types";
+import type { View } from "../../../common/types";
 import { Fragment } from "react";
 
 export const ReferenceLine = ({
@@ -66,27 +66,26 @@ export const ReferenceLine = ({
 
 const OwnerMoodsChart = ({
 	ownerMoods,
-	year,
 }: {
-	ownerMoods: OwnerMood[];
-	year: number;
+	ownerMoods: NonNullable<
+		NonNullable<View<"message">["message"]>["ownerMoods"]
+	>;
 }) => {
 	const MAX_WIDTH = 400;
 	const HEIGHT = 400;
 
-	const data = ownerMoods.map((mood, i) => {
+	const data = ownerMoods.map((mood) => {
 		return {
 			...mood,
-			total: mood.money + mood.playoffs + mood.wins,
-			year: String(year - ownerMoods.length + 1 + i),
+			season: String(mood.season),
 		};
 	});
 	const allValues: number[] = [];
-	const years: string[] = [];
+	const seasons: string[] = [];
 
 	for (const row of data) {
 		allValues.push(row.money, row.playoffs, row.total, row.wins);
-		years.push(row.year);
+		seasons.push(row.season);
 	}
 
 	// totals span -1 to 3, others -3 to 1
@@ -162,7 +161,7 @@ const OwnerMoodsChart = ({
 				{(parent) => {
 					const width = parent.width - margin.left - margin.right;
 					const xScale = scalePoint({
-						domain: years,
+						domain: seasons,
 						range: [0, width],
 					});
 					return (
@@ -197,7 +196,7 @@ const OwnerMoodsChart = ({
 												className="chart-line"
 												curve={curveMonotoneX}
 												data={data}
-												x={(d) => xScale(d.year) ?? 0}
+												x={(d) => xScale(d.season) ?? 0}
 												y={(d) => yScale(d[key]) ?? 0}
 												stroke={color}
 												strokeWidth={width}
@@ -207,7 +206,7 @@ const OwnerMoodsChart = ({
 													key={j}
 													className="fill-white"
 													r={3 * Math.sqrt(width)}
-													cx={xScale(d.year)}
+													cx={xScale(d.season)}
 													cy={yScale(d[key])}
 													stroke={color}
 													strokeWidth={width}

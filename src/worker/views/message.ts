@@ -88,11 +88,6 @@ const updateMessage = async (
 
 					let seasonInfo;
 					if (teamSeason) {
-						const roundsWonText = getRoundsWonText(
-							teamSeason,
-							await getPlayoffsByConf(teamSeason.season),
-						).toLocaleLowerCase();
-
 						const revenue = helpers
 							.keys(teamSeason.revenues)
 							.reduce((memo, rev) => memo + teamSeason.revenues[rev], 0);
@@ -101,13 +96,21 @@ const updateMessage = async (
 							.reduce((memo, rev) => memo + teamSeason.expenses[rev], 0);
 						const profit = (revenue - expense) / 1000; // [millions of dollars]
 
+						const roundsWonText = getRoundsWonText(
+							teamSeason,
+							await getPlayoffsByConf(teamSeason.season),
+						).toLocaleLowerCase();
+
 						seasonInfo = {
 							won: teamSeason.won,
 							lost: teamSeason.lost,
 							tied: teamSeason.tied,
 							otl: teamSeason.otl,
-							roundsWonText,
+							champ:
+								teamSeason.playoffRoundsWon ===
+								g.get("numGamesPlayoffSeries", teamSeason.season).length,
 							profit,
+							roundsWonText,
 						};
 					}
 

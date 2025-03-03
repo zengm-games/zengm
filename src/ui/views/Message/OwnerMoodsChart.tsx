@@ -76,6 +76,7 @@ const OwnerMoodsChart = ({
 }) => {
 	const MAX_WIDTH = 400;
 	const HEIGHT = 400;
+	const STAR_SIZE = 40;
 
 	const data = ownerMoods.map((mood) => {
 		return {
@@ -215,6 +216,14 @@ const OwnerMoodsChart = ({
 									color="var(--bs-secondary)"
 								/>
 								{lineInfos.map(({ key, color, width = 1 }) => {
+									const onMouseOver = (d: (typeof data)[number]) =>
+										key === "total"
+											? (event: MouseEvent) => {
+													handleMouseOver(event, d);
+												}
+											: undefined;
+									const onMouseOut = key === "total" ? hideTooltip : undefined;
+
 									return (
 										<Fragment key={key}>
 											<LinePath
@@ -226,25 +235,35 @@ const OwnerMoodsChart = ({
 												stroke={color}
 												strokeWidth={width}
 											/>
-											{data.map((d, j) => (
-												<circle
-													key={j}
-													className="fill-white"
-													r={3 * Math.sqrt(width)}
-													cx={xScale(d.season)}
-													cy={yScale(d[key])}
-													stroke={color}
-													strokeWidth={width}
-													onMouseOver={
-														key === "total"
-															? (event) => {
-																	handleMouseOver(event, d);
-																}
-															: undefined
-													}
-													onMouseOut={key === "total" ? hideTooltip : undefined}
-												/>
-											))}
+											{data.map((d, j) => {
+												return d.seasonInfo?.champ && key === "total" ? (
+													<text
+														key={j}
+														className="user-select-none fill-yellow"
+														x={xScale(d.season)}
+														y={yScale(d[key])}
+														fontSize={STAR_SIZE}
+														textAnchor="middle"
+														alignmentBaseline="middle"
+														onMouseOver={onMouseOver(d)}
+														onMouseOut={onMouseOut}
+													>
+														★
+													</text>
+												) : (
+													<circle
+														key={j}
+														className="fill-white"
+														r={3 * Math.sqrt(width)}
+														cx={xScale(d.season)}
+														cy={yScale(d[key])}
+														stroke={color}
+														strokeWidth={width}
+														onMouseOver={onMouseOver(d)}
+														onMouseOut={onMouseOut}
+													/>
+												);
+											})}
 										</Fragment>
 									);
 								})}

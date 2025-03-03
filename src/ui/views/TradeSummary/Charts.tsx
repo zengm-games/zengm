@@ -258,11 +258,10 @@ const Charts = ({
 		for (const team of row.teams) {
 			if (team.stat !== undefined) {
 				allStats.push(team.stat);
+			}
 
-				const pct = team[pctKey];
-				if (pct !== undefined) {
-					allPcts.push(pct);
-				}
+			if (team[pctKey] !== undefined) {
+				allPcts.push(team[pctKey]);
 			}
 		}
 		seasons.push(row.season);

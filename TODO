@@ -1,9 +1,7 @@
-update game screenshots
+⭐ emoji for championships on the Owner review graph. We get it on trades. Should get some of those emoji on the Owner Graphs too https://discord.com/channels/290013534023057409/331882115119448065/1343301981879406613
 
-FBGM contracts in first offseason of new league
-- too many teams way under the cap, so contracts get inflated a lot
-- ideal solution: make fewer teams under the cap
-- less ideal solution: cap fraction in normalizeContractDemands
+page showing all owned future draft picks https://old.reddit.com/r/BasketballGM/comments/1ieujhu/monthly_suggestions_thread/maha33q/
+- ovr, power rank, and avg age of team for traded picks
 
 keep track of DNP players in box score explicitly, just with minimal info rather than full stats
 - use for basketball to save space
@@ -22,12 +20,15 @@ option to exclude notable games box scores from deletion
   - do what we do now if no need to check actual box score
   - otherwise, maybe move to newPhasePreseason and run async in background
 
-⭐ emoji for championships on the Owner review graph. We get it on trades. Should get some of those emoji on the Owner Graphs too https://discord.com/channels/290013534023057409/331882115119448065/1343301981879406613
+if a player comes back to your team for a 2nd stint but his jersey number is retired, he should be allowed to wear that retired number (and actually it should be his preference) https://old.reddit.com/r/BasketballGM/comments/1ieujhu/monthly_suggestions_thread/
+- what if 2 numbers are retired?
+- after implementing this, maybe the "Retire Jersey" button should be enabled for players still on your team, since they can keep their jersey number
+
+if you download a spreadsheet of the most lopsided trades, the spreadsheet leaves out the "team" columns https://old.reddit.com/r/BasketballGM/comments/1ieujhu/monthly_suggestions_thread/mceee7x/
+
+update game screenshots
 
 head2head page that lets you look at 2 specific teams regular season and playoff series matchups in a list head2head page that lets you look at 2 specific teams regular season and playoff series matchups in a list
-
-page showing all owned future draft picks https://old.reddit.com/r/BasketballGM/comments/1ieujhu/monthly_suggestions_thread/maha33q/
-- ovr, power rank, and avg age of team for traded picks
 
 better relative faces https://mail.google.com/mail/u/0/#inbox/FMfcgzQZTMQRKQcWXCSldcPFMJfLvDGb
 - https://github.com/zengm-games/facesjs/issues/5

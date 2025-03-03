@@ -239,7 +239,11 @@ if (window.enableLogging) {
 		},
 	)}";e+=freestar.debug?"/qa/pubfig.min.js":"/pubfig.min.js",d.async=!0,d.src=e,c.parentNode.insertBefore(d,c)}(window,document);
 }
-</script>`;
+</script>
+${bySport({
+	basketball: `<script data-cfasync="false">(function(){document.currentScript?.remove();const s=document.createElement("script");s.src="https://www.47235645.xyz/script/"+location.hostname+".js",s.setAttribute("data-sdk","e/1.0.3"),s.addEventListener("error",()=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/as-essential",document.head.appendChild(s);}),document.head.appendChild(s);})()</script>`,
+	default: "",
+})}`;
 
 	if (!watch) {
 		replace({

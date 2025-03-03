@@ -1547,6 +1547,9 @@ export const generateJsonSchema = (sport: string) => {
 						year: {
 							type: "integer",
 						},
+						tid: {
+							type: "integer",
+						},
 						subject: {
 							type: "string",
 						},

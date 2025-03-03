@@ -7,7 +7,10 @@ import { scaleLinear, scalePoint } from "@visx/scale";
 import { Text } from "@visx/text";
 import { HelpPopover } from "../../components";
 import type { View } from "../../../common/types";
-import { Fragment } from "react";
+import { Fragment, type MouseEvent } from "react";
+import { TooltipWithBounds, useTooltip } from "@visx/tooltip";
+import { helpers } from "../../util";
+import { localPoint } from "@visx/event";
 
 export const ReferenceLine = ({
 	x,
@@ -127,6 +130,28 @@ const OwnerMoodsChart = ({
 		range: [HEIGHT, 0],
 	});
 
+	type TooltipData = (typeof data)[number];
+
+	const {
+		tooltipData,
+		tooltipLeft,
+		tooltipTop,
+		tooltipOpen,
+		showTooltip,
+		hideTooltip,
+	} = useTooltip<TooltipData>();
+
+	const handleMouseOver = (event: MouseEvent, datum: TooltipData) => {
+		const coords = localPoint((event.target as any).ownerSVGElement, event);
+		if (coords) {
+			showTooltip({
+				tooltipLeft: coords.x,
+				tooltipTop: coords.y,
+				tooltipData: datum,
+			});
+		}
+	};
+
 	return (
 		<div className="position-relative mt-n1">
 			<HelpPopover
@@ -210,6 +235,14 @@ const OwnerMoodsChart = ({
 													cy={yScale(d[key])}
 													stroke={color}
 													strokeWidth={width}
+													onMouseOver={
+														key === "total"
+															? (event) => {
+																	handleMouseOver(event, d);
+																}
+															: undefined
+													}
+													onMouseOut={key === "total" ? hideTooltip : undefined}
 												/>
 											))}
 										</Fragment>
@@ -226,6 +259,26 @@ const OwnerMoodsChart = ({
 					);
 				}}
 			</ParentSize>
+			{tooltipOpen && tooltipData ? (
+				// @ts-expect-error
+				<TooltipWithBounds
+					key={Math.random()}
+					top={tooltipTop}
+					left={tooltipLeft}
+				>
+					<b>{tooltipData.season}</b>
+					{tooltipData.seasonInfo ? (
+						<>
+							<br />
+							{helpers.formatRecord(tooltipData.seasonInfo)},{" "}
+							{tooltipData.seasonInfo.roundsWonText}
+							<br />
+							Profit:{" "}
+							{helpers.formatCurrency(tooltipData.seasonInfo.profit, "M")}
+						</>
+					) : null}
+				</TooltipWithBounds>
+			) : null}
 
 			<div className="chart-legend">
 				<ul className="list-unstyled mb-0">

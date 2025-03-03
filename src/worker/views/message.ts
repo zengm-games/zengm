@@ -1,6 +1,8 @@
 import { idb } from "../db";
 import { g, helpers, updatePlayMenu, updateStatus } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
+import getPlayoffsByConf from "../core/season/getPlayoffsByConf";
+import { getRoundsWonText } from "./frivolitiesTeamSeasons";
 
 const updateMessage = async (
 	inputs: ViewInput<"message">,
@@ -69,17 +71,58 @@ const updateMessage = async (
 
 		let augmentedMessage;
 		if (message) {
-			augmentedMessage = {
-				...message,
-				ownerMoods: message.ownerMoods?.map((mood, i) => {
+			let augmentedOwnerMoods;
+			if (message.ownerMoods) {
+				augmentedOwnerMoods = [];
+
+				for (let i = 0; i < message.ownerMoods.length; i++) {
+					const mood = message.ownerMoods[i];
+
 					const season = message.year - message.ownerMoods.length + 1 + i;
 
-					return {
+					const teamSeason = await idb.getCopy.teamSeasons({
+						// Old messages don't include tid
+						tid: message.tid ?? g.get("userTid"),
+						season,
+					});
+
+					let seasonInfo;
+					if (teamSeason) {
+						const roundsWonText = getRoundsWonText(
+							teamSeason,
+							await getPlayoffsByConf(teamSeason.season),
+						).toLocaleLowerCase();
+
+						const revenue = helpers
+							.keys(teamSeason.revenues)
+							.reduce((memo, rev) => memo + teamSeason.revenues[rev], 0);
+						const expense = helpers
+							.keys(teamSeason.expenses)
+							.reduce((memo, rev) => memo + teamSeason.expenses[rev], 0);
+						const profit = (revenue - expense) / 1000; // [millions of dollars]
+
+						seasonInfo = {
+							won: teamSeason.won,
+							lost: teamSeason.lost,
+							tied: teamSeason.tied,
+							otl: teamSeason.otl,
+							roundsWonText,
+							profit,
+						};
+					}
+
+					augmentedOwnerMoods.push({
 						...mood,
 						total: mood.money + mood.playoffs + mood.wins,
 						season,
-					};
-				}),
+						seasonInfo,
+					});
+				}
+			}
+
+			augmentedMessage = {
+				...message,
+				ownerMoods: augmentedOwnerMoods,
 			};
 		}
 

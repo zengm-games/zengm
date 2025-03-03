@@ -212,6 +212,7 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 		year: g.get("season"),
 		text: m,
 		subject: "Annual performance evaluation",
+		tid: g.get("userTid"),
 		ownerMoods: moods,
 	});
 };

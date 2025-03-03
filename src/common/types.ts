@@ -905,6 +905,7 @@ export type MessageWithoutKey = {
 	read: boolean;
 	text: string;
 	year: number;
+	tid?: number;
 	subject?: string;
 	ownerMoods?: OwnerMood[];
 };

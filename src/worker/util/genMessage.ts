@@ -164,7 +164,7 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 				m += `<p>${text}</p>`;
 			}
 
-			const prob = helpers.bound(currentTotal, 0, 3) / 5;
+			const prob = helpers.bound(currentTotal, 0, 3) / 3;
 			const otherTeamsWantToHire = Math.random() < prob;
 
 			await league.setGameAttributes({

@@ -4231,6 +4231,10 @@ const updateTeamInfo = async (
 			name: t.name,
 			region: t.region,
 		})),
+
+		// numActiveTeams is only needed when enabling a disabled team, and numTeams should never be needed. But might as well do these every time just to be sure, because it's easy.
+		numActiveTeams: newTeams.filter((t) => !t.disabled).length,
+		numTeams: newTeams.length,
 	});
 
 	await league.updateMeta();

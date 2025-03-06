@@ -9,8 +9,7 @@
 		"moduleResolution": "bundler",
 		"baseUrl": ".",
 		"paths": {
-			"league-schema": ["build/files/league-schema.json"],
-			"bbgm-polyfills": ["src/common/polyfills-modern.ts"]
+			"league-schema": ["build/files/league-schema.json"]
 		},
 		"esModuleInterop": true,
 		"strict": true,

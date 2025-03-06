@@ -15,17 +15,10 @@ const extensions = [".mjs", ".js", ".json", ".node", ".ts", ".tsx"];
 
 type NodeEnv = "development" | "production" | "test";
 
-export const getRollupAliasEntries = (legacy: boolean) => {
-	const root = path.join(import.meta.dirname, "..", "..");
-
-	return {
-		// This is assumed to be generated prior to rollup being started
-		"league-schema": path.resolve(root, "build/files/league-schema.json"),
-
-		"bbgm-polyfills": legacy
-			? path.resolve(root, "src/common/polyfills.ts")
-			: path.resolve(root, "src/common/polyfills-modern.ts"),
-	};
+const root = path.join(import.meta.dirname, "..", "..");
+export const rollupAliasEntries = {
+	// This is assumed to be generated prior to rollup being started
+	"league-schema": path.resolve(root, "build/files/league-schema.json"),
 };
 
 export default (
@@ -33,11 +26,9 @@ export default (
 	{
 		blacklistOptions,
 		statsFilename,
-		legacy,
 	}: {
 		blacklistOptions?: RegExp[];
 		statsFilename?: string;
-		legacy?: boolean;
 	} = {},
 ) => {
 	const sport = getSport();
@@ -47,7 +38,7 @@ export default (
 
 	const plugins = [
 		alias({
-			entries: getRollupAliasEntries(!!legacy),
+			entries: rollupAliasEntries,
 		}),
 		replace({
 			preventAssignment: true,
@@ -58,14 +49,9 @@ export default (
 		}),
 		babel({
 			babelHelpers: "bundled",
-			exclude: legacy
-				? /^node_modules\/(?!@tanstack\/react-virtual|d3|idb|nanoevents|react-bootstrap|streamsaver?).*$/
-				: "node_modules/**",
+			exclude: "node_modules/**",
 			extensions: extensions.filter((extension) => extension !== ".json"),
-			configFile: path.join(
-				import.meta.dirname,
-				`../../babel.config${legacy ? ".legacy" : ""}.mjs`,
-			),
+			skipPreflightCheck: true,
 		}),
 		json({
 			compact: true,

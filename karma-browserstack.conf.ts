@@ -16,7 +16,7 @@ const customLaunchers = [
 	{
 		base: "BrowserStack",
 		browser: "chrome",
-		browser_version: "80.0", // Works back to 80 currently
+		browser_version: "85.0", // Works back to 85 currently
 		os: "Windows",
 		os_version: "10",
 	},

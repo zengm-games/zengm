@@ -127,15 +127,6 @@ var timeoutID = setTimeout(function () {
   startupError.style.display = "block";
 }, 6000);
 
-function checkModern() {
-  // Chrome 97, Firefox 104, Safari 15.4
-  if (Array.prototype.findLast === undefined) {
-    return false;
-  }
-
-  return true;
-};
-
 function withGoodBrowser() {
   document.getElementById("startup-browser").innerHTML += " done!";
   startupUI.innerHTML = "Loading UI...";
@@ -144,11 +135,7 @@ function withGoodBrowser() {
   var body = document.getElementsByTagName('body').item(0);
   var script = document.createElement('script');
   script.type = "module"; // Needs to be module for modulepreload
-  if (checkModern()) {
-    script.src = "/gen/ui-" + bbgmVersion + ".js";
-  } else  {
-    script.src = "/gen/ui-legacy-" + bbgmVersion + ".js";
-  }
+  script.src = "/gen/ui-" + bbgmVersion + ".js";
   body.appendChild(script);
 }
 
@@ -176,13 +163,12 @@ function checkBrowser() {
     return false;
   }
 
-  try {
-    // nullish coalescing gets Chrome <80, Firefox <72, Safari <13.1
-    eval("{ const z = null ?? 0; }");
-    return true;
-  } catch (error) {
+  // Chrome <85
+  if (!String.prototype.replaceAll) {
     return false;
   }
+
+  return true;
 };
 
 // Browser compatibility checks! Used to be like https://gist.github.com/jensarps/15f270874889e1717b3d but now the buggy old IE/Safari IndexedDB implementations are not supported for other reasons, like checkBrowser.
@@ -220,7 +206,7 @@ goodIDB(function (idbResult) {
     if (idbResult === "open-failed") {
       errorMsg = '<p><b>Error!</b> Cannot store data.</p><p>If you have disabled cookies in your browser, you must enable them to play GAME_NAME.</p>';
     } else {
-      errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run GAME_NAME. Current supported browsers include:</p><ul class="list-unstyled mb-0"><li>Chrome 80+</li><li>Firefox 115+</li><li>Safari 14.1+</li></ul>';
+      errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run GAME_NAME. Current supported browsers include:</p><ul class="list-unstyled mb-0"><li>Chrome 85+</li><li>Firefox 115+</li><li>Safari 14.1+</li></ul>';
     }
 
     var startupError = document.getElementById("startup-error");

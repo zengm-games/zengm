@@ -34,7 +34,6 @@ export const setTimestamps = (
 
 				// This is currently just for lastChangesVersion, so don't worry about it not working in watch mode
 				`build/gen/worker-${versionNumber}.js`,
-				`build/gen/worker-legacy-${versionNumber}.js`,
 			],
 			replaces: [
 				{
@@ -244,18 +243,6 @@ ${bySport({
 	basketball: `<script data-cfasync="false">(function(){document.currentScript?.remove();const s=document.createElement("script");s.src="https://www.47235645.xyz/script/"+location.hostname+".js",s.setAttribute("data-sdk","e/1.0.3"),s.addEventListener("error",()=>{const s=document.createElement("script");s.src="https://cdn.jsdelivr.net/npm/as-essential",document.head.appendChild(s);}),document.head.appendChild(s);})()</script>`,
 	default: "",
 })}`;
-
-	if (!watch) {
-		replace({
-			paths: [`build/gen/ui-legacy-${versionNumber}.js`],
-			replaces: [
-				{
-					searchValue: "/gen/worker-",
-					replaceValue: "/gen/worker-legacy-",
-				},
-			],
-		});
-	}
 
 	replace({
 		paths: ["build/index.html"],

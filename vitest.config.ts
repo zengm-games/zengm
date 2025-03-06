@@ -1,6 +1,6 @@
 //import babel from "vite-plugin-babel";
 import { configDefaults, defineConfig } from "vitest/config"; // eslint-disable-line import/no-unresolved
-import { getRollupAliasEntries } from "./tools/lib/rollupConfig";
+import { rollupAliasEntries } from "./tools/lib/rollupConfig";
 
 const footballTests = ["**/*.football/*.test.ts", "**/*.football.test.ts"];
 
@@ -12,7 +12,7 @@ export default defineConfig({
 		}),
 	],*/
 	resolve: {
-		alias: getRollupAliasEntries(false),
+		alias: rollupAliasEntries,
 	},
 	test: {
 		isolate: false,

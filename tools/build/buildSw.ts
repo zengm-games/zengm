@@ -36,11 +36,7 @@ const injectManifest = async () => {
 			"ico/logo-gold.png",
 		],
 		dontCacheBustURLsMatching: /gen\/.*\.(js|css)/,
-		globIgnores: [
-			"gen/*-legacy-*.js",
-			"gen/real-player-*.json",
-			"upgrade-50/*",
-		],
+		globIgnores: ["gen/real-player-*.json", "upgrade-50/*"],
 
 		// Changing default is only needed for unminified versions from watch-js
 		maximumFileSizeToCacheInBytes: 100 * 1024 * 1024,

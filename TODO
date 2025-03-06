@@ -279,11 +279,14 @@ hard to click player ratings popover icon on mobile without hitting player name?
 "Show players you can afford" button should be a toggle https://old.reddit.com/r/BasketballGM/comments/1e5dwvi/some_design_suggestions_to_improve_mobile_uiux/le6kljv/?context=3
 
 advanced player search
-- later
-  - when selecting a team, contract seasons to sum up should be filtered by stats seasons (just like ratings). except it's kind of fake, since it doesn't handle released contract amounts going to original team
-  - filter UI AND/OR logic, rather than just AND?
-    - ootp lets you pick and/or, but how to specify grouping? https://manuals.ootpdevelopments.com/index.php?man=ootp16&page=filters
-    - could make it hierarchical, but that's complicated https://cloud.google.com/looker/docs/and-or-filters-in-explores#filter_groups https://support.airtable.com/docs/filtering-records-using-conditions#condition-groups-and-advanced-filtering
+- more filters to add https://old.reddit.com/r/BasketballGM/comments/1dsfbps/monthly_suggestions_thread/lfi9uif/
+  - current team info (cap space, strategy, record, ovr)
+  - player (skills, mood traits, chance to re-sign with your/current team, projected contract)
+  - player awards
+- when selecting a team, contract seasons to sum up should be filtered by stats seasons (just like ratings). except it's kind of fake, since it doesn't handle released contract amounts going to original team
+- filter UI AND/OR logic, rather than just AND?
+  - ootp lets you pick and/or, but how to specify grouping? https://manuals.ootpdevelopments.com/index.php?man=ootp16&page=filters
+  - could make it hierarchical, but that's complicated https://cloud.google.com/looker/docs/and-or-filters-in-explores#filter_groups https://support.airtable.com/docs/filtering-records-using-conditions#condition-groups-and-advanced-filtering
 
 mobile UI ideas https://old.reddit.com/r/BasketballGM/comments/1e5dwvi/some_design_suggestions_to_improve_mobile_uiux/
 - #2: add trade link to roster page
@@ -1374,13 +1377,8 @@ bundle size
     - how many is too many?
     - performance hit if the current view is not in the main bundle?
 - use a single rollup command for both ui and worker, so common code can go in a chunk, like https://github.com/rollup/rollup-starter-code-splitting/blob/master/rollup.config.js
-  - do es module imports work inside a worker in firefox?
-    - https://web.dev/module-workers/
-    - https://caniuse.com/mdn-api_worker_worker_ecmascript_modules
-    - https://bugzilla.mozilla.org/show_bug.cgi?id=1247687
-  - for legacy bundle, need to include systemjs loader in worker, so it can load modules and init itself
-  - remove blacklist plugin
-  - do main and legacy builds in parallel
+  - requires Safari 15
+  - remove blacklist plugin entries where appropriate
 - confirm cache header
 - confirm bugnsag working
 

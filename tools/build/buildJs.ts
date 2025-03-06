@@ -11,26 +11,23 @@ console.log(versionNumber);
 export const buildJs = async () => {
 	const promises = [];
 	for (const name of ["ui", "worker"]) {
-		for (const legacy of [false, true]) {
-			promises.push(
-				new Promise<void>((resolve) => {
-					const worker = new Worker(
-						new URL("buildJsWorker.ts", import.meta.url),
-						{
-							workerData: {
-								legacy,
-								name,
-								versionNumber,
-							},
+		promises.push(
+			new Promise<void>((resolve) => {
+				const worker = new Worker(
+					new URL("buildJsWorker.ts", import.meta.url),
+					{
+						workerData: {
+							name,
+							versionNumber,
 						},
-					);
+					},
+				);
 
-					worker.on("message", () => {
-						resolve();
-					});
-				}),
-			);
-		}
+				worker.on("message", () => {
+					resolve();
+				});
+			}),
+		);
 	}
 	await Promise.all(promises);
 
@@ -76,10 +73,7 @@ export const buildJs = async () => {
 		}
 	}
 	replace({
-		paths: [
-			`build/gen/worker-legacy-${versionNumber}.js`,
-			`build/gen/worker-${versionNumber}.js`,
-		],
+		paths: [`build/gen/worker-${versionNumber}.js`],
 		replaces,
 	});
 };

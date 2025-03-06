@@ -2,24 +2,23 @@
 
 // Chrome 92, Safari 15.4
 // https://github.com/tc39/proposal-relative-indexing-method#polyfill
-function at(this: any, n: number) {
-	// ToInteger() abstract op
-	n = Math.trunc(n) || 0;
-	// Allow negative indexing from the end
-	if (n < 0) {
-		n += this.length;
-	}
-	// OOB access is guaranteed to return undefined
-	if (n < 0 || n >= this.length) {
-		return undefined;
-	}
-	// Otherwise, this is just normal property access
-	return this[n];
-}
 if (!Array.prototype.at) {
 	for (const C of [Array, String]) {
 		Object.defineProperty(C.prototype, "at", {
-			value: at,
+			value(this: any, n: number) {
+				// ToInteger() abstract op
+				n = Math.trunc(n) || 0;
+				// Allow negative indexing from the end
+				if (n < 0) {
+					n += this.length;
+				}
+				// OOB access is guaranteed to return undefined
+				if (n < 0 || n >= this.length) {
+					return undefined;
+				}
+				// Otherwise, this is just normal property access
+				return this[n];
+			},
 			writable: true,
 			enumerable: false,
 			configurable: true,
@@ -58,26 +57,39 @@ if (!Object.hasOwn) {
 	});
 }
 
-// Chrome 85
-if (!String.prototype.replaceAll) {
-	const escapeRegex = (string: string) => {
-		return string.replace(/[$()*+./?[\\\]^{|}-]/g, String.raw`\$&`);
-	};
-
-	(String as any).prototype.replaceAll = function (
-		str: string | RegExp,
-		newStr: string,
-	) {
-		// If a regex pattern
-		if (
-			Object.prototype.toString.call(str).toLowerCase() === "[object regexp]"
-		) {
-			return this.replace(str, newStr);
-		}
-
-		// If a string
-		return this.replace(new RegExp(escapeRegex(str as string), "g"), newStr);
-	};
+// Chrome 122, Firefox 127, Safari 17
+// https://github.com/rauschma/set-methods-polyfill/blob/894c17391303aec7190801636c64465f653479d8/src/library.ts
+type SetReadOperations<T> = {
+	size: number;
+	has(key: T): boolean;
+	keys(): IterableIterator<T>;
+};
+if (!Set.prototype.isSubsetOf) {
+	Object.defineProperty(Set.prototype, "isSubsetOf", {
+		value<T>(this: Set<T>, other: SetReadOperations<T>): boolean {
+			for (const elem of this) {
+				if (!other.has(elem)) {
+					return false;
+				}
+			}
+			return true;
+		},
+		writable: true,
+		enumerable: false,
+		configurable: true,
+	});
 }
-
-import "./polyfills-modern";
+if (!Set.prototype.union) {
+	Object.defineProperty(Set.prototype, "union", {
+		value<T>(this: Set<T>, other: SetReadOperations<T>): Set<T> {
+			const result = new Set<T>(this);
+			for (const elem of other.keys()) {
+				result.add(elem);
+			}
+			return result;
+		},
+		writable: true,
+		enumerable: false,
+		configurable: true,
+	});
+}

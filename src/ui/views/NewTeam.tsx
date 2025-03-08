@@ -112,6 +112,7 @@ const NewTeam = ({
 	const [tid, setTid] = useState(
 		teams && teams.length > 0 ? teams[0].tid : undefined,
 	);
+	const [submitting, setSubmitting] = useState(false);
 
 	if (tid === undefined && teams && teams.length > 0) {
 		setTid(teams[0].tid);
@@ -125,13 +126,20 @@ const NewTeam = ({
 		event.preventDefault();
 
 		if (tid !== undefined) {
-			await toWorker("main", "switchTeam", tid);
-			realtimeUpdate(
-				[],
-				expansion
-					? helpers.leagueUrl(["protect_players"])
-					: helpers.leagueUrl([]),
-			);
+			setSubmitting(true);
+
+			try {
+				await toWorker("main", "switchTeam", tid);
+				realtimeUpdate(
+					[],
+					expansion
+						? helpers.leagueUrl(["protect_players"])
+						: helpers.leagueUrl([]),
+				);
+			} catch (error) {
+				setSubmitting(false);
+				throw error;
+			}
 		}
 	};
 
@@ -264,7 +272,10 @@ const NewTeam = ({
 					})}
 				</select>
 
-				<button className="btn btn-primary" disabled={tid === undefined}>
+				<button
+					className="btn btn-primary"
+					disabled={tid === undefined || submitting}
+				>
 					{submitText}
 				</button>
 			</form>

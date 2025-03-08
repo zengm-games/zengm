@@ -1,5 +1,3 @@
-form reset to first team in UI when switching teams
-
 key={Math.random()}
 
 page showing all owned future draft picks https://old.reddit.com/r/BasketballGM/comments/1ieujhu/monthly_suggestions_thread/maha33q/
@@ -2642,8 +2640,6 @@ trade improvements
     quick fix: check box to only look for teams under the cap http://www.reddit.com/r/BasketballGM/comments/1qh107/proposed_trades_question/
   trades between AI teams
     call team.checkRosterSizes after this if it's in between days
-team switching after being fired
-  keep track of what team the user controlled, so stats for the user (not the team) can be shown
 random events
   like.. player gets suspended, out X games. or player gets into fight, fan support drops. etc.
 more detailed draft - slower picks, trades, etc.

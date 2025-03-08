@@ -75,6 +75,7 @@ const updateTeamFinances = async (
 					watch: contract.watch,
 					released: contract.released,
 					amounts,
+					capPct: (100 * contract.amount) / g.get("salaryCap"),
 				};
 			}),
 		);

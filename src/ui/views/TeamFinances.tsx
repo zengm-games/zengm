@@ -749,7 +749,7 @@ const TeamFinances = ({
 
 	const { gameSimInProgress } = useLocalPartial(["gameSimInProgress"]);
 
-	const cols = getCols(["Pos", "Name"]).concat(
+	const cols = getCols(["Pos", "Name", "Cap%"]).concat(
 		salariesSeasons.map((season) => {
 			return {
 				title: String(season),
@@ -773,6 +773,7 @@ const TeamFinances = ({
 				firstNameShort: p.firstNameShort,
 				lastName: p.lastName,
 			}),
+			p.capPct.toFixed(1),
 		];
 
 		// Loop through the salaries for the next five years for this player.
@@ -798,7 +799,7 @@ const TeamFinances = ({
 
 	const footer = [
 		{
-			data: ["", "Totals"].concat(
+			data: ["", "Totals", ""].concat(
 				// @ts-expect-error
 				contractTotals.map((amount) => highlightZeroNegative(amount)),
 			),
@@ -806,13 +807,13 @@ const TeamFinances = ({
 		{
 			data:
 				salaryCapType === "none"
-					? ["", "Under Luxury Tax"].concat(
+					? ["", "Under Luxury Tax", ""].concat(
 							// @ts-expect-error
 							contractTotals.map((amount) =>
 								highlightZeroNegative(luxuryPayroll - amount),
 							),
 						)
-					: ["", "Free Cap Space"].concat(
+					: ["", "Free Cap Space", ""].concat(
 							// @ts-expect-error
 							contractTotals.map((amount) =>
 								highlightZeroNegative(salaryCap - amount),
@@ -1035,7 +1036,7 @@ const TeamFinances = ({
 
 			<DataTable
 				cols={cols}
-				defaultSort={[2, "desc"]}
+				defaultSort={[3, "desc"]}
 				name="TeamFinances"
 				nonfluid
 				footer={footer}

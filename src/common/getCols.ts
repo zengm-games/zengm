@@ -2856,9 +2856,13 @@ const cols: {
 	},
 	Cap: {
 		desc: "Salary Cap Issue",
-		sortSequence: ["asc", "desc"],
 		sortType: "number",
 		width: "1px",
+	},
+	"Cap%": {
+		desc: "Percentage of Salary Cap",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
 	},
 	"Cap Space": {
 		sortSequence: ["desc", "asc"],

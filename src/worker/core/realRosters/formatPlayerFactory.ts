@@ -367,6 +367,7 @@ const formatPlayerFactory = async (
 			td?: number;
 			qd?: number;
 			fxf?: number;
+			trb?: number;
 		};
 		let stats: StatsRow[] | undefined;
 		if (options.type === "real" && basketballStats) {

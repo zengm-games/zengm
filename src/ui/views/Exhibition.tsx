@@ -113,7 +113,10 @@ const PlayerStatsSummary = ({ stats }: { stats: Player["stats"][number] }) => {
 		return (
 			<>
 				{helpers.roundStat(stats.pts / stats.gp, "pts")} pts /{" "}
-				{helpers.roundStat(((stats.orb ?? 0) + stats.drb) / stats.gp, "trb")}{" "}
+				{helpers.roundStat(
+					((stats.trb ?? 0) + (stats.drb ?? 0) + (stats.orb ?? 0)) / stats.gp,
+					"trb",
+				)}{" "}
 				trb / {helpers.roundStat(stats.ast / stats.gp, "ast")} ast
 			</>
 		);

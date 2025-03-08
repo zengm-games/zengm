@@ -108,9 +108,7 @@ const fillInPlayers = (awards: Awards<string, string>): Awards => {
 
 		let trb = 0;
 		if (stats && stats.gp !== undefined && stats.gp > 0) {
-			if (stats.drb !== undefined) {
-				trb = (stats.drb + (stats.orb ?? 0)) / stats.gp;
-			}
+			trb = ((stats.trb ?? 0) + (stats.drb ?? 0) + (stats.orb ?? 0)) / stats.gp;
 		}
 
 		if (defensive) {

@@ -67,7 +67,7 @@ const Confirm = confirmable<
 							</select>
 						</div>
 						<button className="btn btn-primary" onClick={ok}>
-							Retire Jersey Number
+							Retire jersey number
 						</button>
 					</div>
 				</form>

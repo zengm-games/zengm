@@ -280,13 +280,13 @@ const updateTeamHistory = async (
 			}),
 		);
 
-		const retiredByPid: Record<number, string[]> = {};
+		const retiredByPid: Record<number, Set<string>> = {};
 		for (const { pid, number } of retiredJerseyNumbers) {
 			if (pid !== undefined) {
 				if (!retiredByPid[pid]) {
-					retiredByPid[pid] = [];
+					retiredByPid[pid] = new Set();
 				}
-				retiredByPid[pid].push(number);
+				retiredByPid[pid].add(number);
 			}
 		}
 
@@ -297,11 +297,12 @@ const updateTeamHistory = async (
 			p.stats = p.stats.filter((row) => row.tid === inputs.tid);
 			const retirableJerseyNumbers: Record<string, string[]> = {};
 			(p as any).retirableJerseyNumbers = retirableJerseyNumbers;
-			for (const { jerseyNumber, playoffs, season } of p.stats) {
+			for (const { gp, jerseyNumber, playoffs, season } of p.stats) {
 				if (
 					!playoffs &&
+					gp > 0 &&
 					jerseyNumber !== undefined &&
-					(!retiredByPid[p.pid] || !retiredByPid[p.pid].includes(jerseyNumber))
+					(!retiredByPid[p.pid] || !retiredByPid[p.pid].has(jerseyNumber))
 				) {
 					if (!retirableJerseyNumbers[jerseyNumber]) {
 						retirableJerseyNumbers[jerseyNumber] = [];

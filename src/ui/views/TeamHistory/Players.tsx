@@ -102,7 +102,7 @@ const Players = ({
 								disabled={!canRetireJerseyNumber}
 								onClick={() => retireJerseyNumber(p)}
 							>
-								Retire Jersey
+								Retire jersey
 							</button>,
 						]
 					: []),

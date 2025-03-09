@@ -3563,13 +3563,11 @@ const cols: {
 	"award:oroy": {
 		desc: "Offensive Rookie of the Year",
 		sortSequence: ["desc", "asc"],
-		sortType: "number",
 		title: "OROY",
 	},
 	"award:droy": {
 		desc: "Defensive Rookie of the Year",
 		sortSequence: ["desc", "asc"],
-		sortType: "number",
 		title: "DROY",
 	},
 	...sportSpecificCols,

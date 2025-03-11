@@ -22,7 +22,7 @@ export const ProcessingSpinner = ({
 	);
 };
 
-const styleGrid11 = {
+export const styleGrid11 = {
 	gridColumn: 1,
 	gridRow: 1,
 };

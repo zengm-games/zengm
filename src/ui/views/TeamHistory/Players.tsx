@@ -5,6 +5,7 @@ import type { View } from "../../../common/types";
 import playerRetireJerseyNumberDialog from "./playerRetireJerseyNumberDialog";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
 import type { DataTableRow } from "../../components/DataTable";
+import { styleGrid11 } from "../../components/ActionButton";
 
 // The Partial<> ones are only required for TeamHistory, not GmHistory
 const Players = ({
@@ -73,6 +74,8 @@ const Players = ({
 			Object.keys(p.retirableJerseyNumbers).length > 0 &&
 			p.tid !== tid;
 
+		const hasMultipleNumbers = Object.keys(p.retirableJerseyNumbers).length > 1;
+
 		return {
 			key: p.pid,
 			metadata: {
@@ -97,12 +100,24 @@ const Players = ({
 				p.lastYr,
 				...(includeRetireJerseyButton
 					? [
+							// d-inline-grid stuff is from https://x.com/wesbos/status/1834242925401694490
 							<button
-								className="btn btn-light-bordered btn-xs"
+								className="btn btn-light-bordered btn-xs d-inline-grid text-start"
 								disabled={!canRetireJerseyNumber}
 								onClick={() => retireJerseyNumber(p)}
 							>
-								Retire jersey
+								<span
+									style={styleGrid11}
+									className={hasMultipleNumbers ? "opacity-0" : "opacity-100"}
+								>
+									Retire jersey
+								</span>
+								<span
+									style={styleGrid11}
+									className={hasMultipleNumbers ? "opacity-100" : "opacity-0"}
+								>
+									Retire jersey...
+								</span>
 							</button>,
 						]
 					: []),

@@ -20,7 +20,6 @@ const Confirm = confirmable<
 				selectedNumber = number;
 			}
 		}
-		console.log(maxSeasons, selectedNumber);
 		return selectedNumber;
 	});
 

@@ -1,8 +1,6 @@
 page showing all owned future draft picks https://old.reddit.com/r/BasketballGM/comments/1ieujhu/monthly_suggestions_thread/maha33q/
 - link from roster and draft pages
-- updateEvents and team change
 - account for fantasy/expansion season picks
-- regress projectedPick to the mean, based on seasons remaining and maybe age - maybe similar to getPickNumber
 - default sort? multiple?
 - blog
   - estimated pick

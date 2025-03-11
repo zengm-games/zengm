@@ -5,6 +5,36 @@ import { groupByUnique } from "../../common/utils";
 import { addPowerRankingsStuffToTeams } from "./powerRankings";
 import { getEstPicks } from "../core/team/valueChange";
 
+const adjustProjectedPick = ({
+	projectedPick,
+	numSeasons,
+	numTeams,
+}: {
+	projectedPick: number;
+	numSeasons: number;
+	numTeams: number;
+}) => {
+	if (numSeasons <= 0) {
+		return projectedPick;
+	}
+
+	const averagePick = numTeams / 2;
+
+	const NUM_SEASONS_CUTOFF = 8;
+
+	// Many years in the future, we know basically nothing
+	if (numSeasons >= NUM_SEASONS_CUTOFF) {
+		return Math.round(averagePick);
+	}
+
+	// Before then, average projectedPick and averagePick with increasing weight
+	const fractionProjectedPick = 1 - numSeasons / NUM_SEASONS_CUTOFF;
+	return Math.round(
+		fractionProjectedPick * projectedPick +
+			(1 - fractionProjectedPick) * averagePick,
+	);
+};
+
 const updateDraftPicks = async (
 	{ abbrev, tid }: ViewInput<"draftPicks">,
 	updateEvents: UpdateEvents,
@@ -43,14 +73,14 @@ const updateDraftPicks = async (
 
 		const teams = groupByUnique(teamsWithRankings, "tid");
 
-		let estPicks;
+		let estPicksCache;
 
 		for (const dp of draftPicksRaw) {
 			const t = teams[dp.originalTid];
 
 			let projectedPick;
-			if (dp.pick === 0) {
-				if (!estPicks) {
+			if (dp.pick === 0 && typeof dp.season === "number") {
+				if (!estPicksCache) {
 					const teamOvrsSorted = teamsWithRankings
 						.map((t) => {
 							return {
@@ -59,12 +89,15 @@ const updateDraftPicks = async (
 							};
 						})
 						.sort((a, b) => b.ovr - a.ovr);
-					const output = await getEstPicks(teamOvrsSorted);
-					estPicks = output.estPicks;
-					console.log(estPicks);
+					const { estPicks } = await getEstPicks(teamOvrsSorted);
+					estPicksCache = estPicks;
 				}
 
-				projectedPick = estPicks[dp.originalTid];
+				projectedPick = adjustProjectedPick({
+					projectedPick: estPicksCache[dp.originalTid],
+					numSeasons: dp.season - g.get("season"),
+					numTeams: teamsWithRankings.length,
+				});
 			}
 
 			draftPicks.push({

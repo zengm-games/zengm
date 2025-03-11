@@ -51,9 +51,9 @@ const DraftTeamHistory = ({
 				dp.round,
 				dp.pick > 0 ? (
 					dp.pick
-				) : (
+				) : dp.projectedPick !== undefined ? (
 					<i className="text-body-secondary">{dp.projectedPick}</i>
-				),
+				) : null,
 				dp.originalTid !== dp.tid ? (
 					<a
 						href={helpers.leagueUrl([

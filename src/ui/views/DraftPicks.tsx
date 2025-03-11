@@ -3,6 +3,7 @@ import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import type { DataTableRow } from "../components/DataTable";
+import { orderBy } from "../../common/utils";
 
 const DraftTeamHistory = ({
 	abbrev,
@@ -43,7 +44,16 @@ const DraftTeamHistory = ({
 		},
 	);
 
-	const rows: DataTableRow[] = draftPicks.map((dp) => {
+	const rows: DataTableRow[] = orderBy(
+		draftPicks,
+		[
+			"season",
+			"round",
+			(dp) => (dp.pick > 0 ? dp.pick : (dp.projectedPick ?? 0)),
+			"powerRanking",
+		],
+		["asc", "asc", "asc", "asc"],
+	).map((dp) => {
 		return {
 			key: dp.dpid,
 			data: [
@@ -93,7 +103,7 @@ const DraftTeamHistory = ({
 
 			<DataTable
 				style={{
-					maxWidth: 600,
+					maxWidth: 570,
 				}}
 				cols={cols}
 				defaultSort={[0, "asc"]}

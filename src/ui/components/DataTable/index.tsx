@@ -6,6 +6,7 @@ import {
 	type ReactNode,
 	useEffect,
 	useRef,
+	type CSSProperties,
 } from "react";
 import Controls from "./Controls";
 import CustomizeColumns from "./CustomizeColumns";
@@ -127,6 +128,7 @@ export type Props = {
 		onSwap: (index1: number, index2: number) => void;
 	};
 	striped?: boolean;
+	style?: CSSProperties;
 	superCols?: SuperCol[];
 	title?: ReactNode;
 
@@ -162,6 +164,7 @@ const DataTable = ({
 	small,
 	sortableRows,
 	striped,
+	style,
 	superCols,
 	title,
 }: Props) => {
@@ -539,7 +542,7 @@ const DataTable = ({
 				}}
 				stickyCols={state.stickyCols}
 			/>
-			<div className={className}>
+			<div className={className} style={style}>
 				<div
 					className={clsx({
 						"d-inline-block mw-100": nonfluid,

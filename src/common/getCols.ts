@@ -2846,7 +2846,6 @@ const cols: {
 	},
 	AvgAge: {
 		desc: "Average age, weighted by minutes played",
-		sortSequence: ["desc", "asc"],
 		sortType: "number",
 		title: "Age",
 	},
@@ -3154,6 +3153,9 @@ const cols: {
 	Pop: {
 		desc: "Region Population",
 		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"Power Ranking": {
 		sortType: "number",
 	},
 	Playoffs: {

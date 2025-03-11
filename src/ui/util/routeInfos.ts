@@ -213,6 +213,8 @@ const routeInfos = {
 	"/l/:lid/advanced_player_search/:seasonStart/:seasonEnd/:singleSeason/:playoffs/:statType/:filters/:showStatTypes":
 		"advancedPlayerSearch",
 	"/l/:lid/team_notes": "teamNotes",
+	"/l/:lid/draft_picks": "draftPicks",
+	"/l/:lid/draft_picks/:abbrev": "draftPicks",
 };
 
 export default routeInfos;

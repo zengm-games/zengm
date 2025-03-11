@@ -22,9 +22,10 @@ import DefaultNewLeagueSettings from "./DefaultNewLeagueSettings";
 import DeleteOldData from "./DeleteOldData";
 import Depth from "./Depth";
 import Draft from "./Draft";
-import DraftLottery from "./DraftLottery";
-import DraftScouting from "./DraftScouting";
 import DraftHistory from "./DraftHistory";
+import DraftLottery from "./DraftLottery";
+import DraftPicks from "./DraftPicks";
+import DraftScouting from "./DraftScouting";
 import DraftTeamHistory from "./DraftTeamHistory";
 import Dropbox from "./Dropbox";
 import EditAwards from "./EditAwards";
@@ -136,9 +137,10 @@ export default {
 	DeleteOldData,
 	Depth,
 	Draft,
-	DraftLottery,
-	DraftScouting,
 	DraftHistory,
+	DraftLottery,
+	DraftPicks,
+	DraftScouting,
 	DraftTeamHistory,
 	Dropbox,
 	EditAwards,

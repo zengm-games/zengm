@@ -224,6 +224,15 @@ const draftHistory = (params: Params) => {
 	};
 };
 
+const draftPicks = (params: Params) => {
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+
+	return {
+		tid,
+		abbrev,
+	};
+};
+
 const draftTeamHistory = (params: Params) => {
 	let [tid, abbrev] = validateAbbrev(params.abbrev);
 
@@ -1069,6 +1078,7 @@ export default {
 	draft,
 	draftLottery,
 	draftHistory,
+	draftPicks,
 	draftTeamHistory,
 	editAwards: validateSeasonOnly,
 	exhibitionGame,

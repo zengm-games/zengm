@@ -21,9 +21,10 @@ import dashboard from "./dashboard";
 import defaultNewLeagueSettings from "./defaultNewLeagueSettings";
 import depth from "./depth";
 import draft from "./draft";
-import draftLottery from "./draftLottery";
-import draftScouting from "./draftScouting";
 import draftHistory from "./draftHistory";
+import draftLottery from "./draftLottery";
+import draftPicks from "./draftPicks";
+import draftScouting from "./draftScouting";
 import draftTeamHistory from "./draftTeamHistory";
 import editAwards from "./editAwards";
 import exhibition from "./exhibition";
@@ -130,9 +131,10 @@ export default {
 	defaultNewLeagueSettings,
 	depth,
 	draft,
-	draftLottery,
-	draftScouting,
 	draftHistory,
+	draftLottery,
+	draftPicks,
+	draftScouting,
 	draftTeamHistory,
 	editAwards,
 	exhibition,

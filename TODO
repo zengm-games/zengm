@@ -1,7 +1,17 @@
-key={Math.random()}
-
 page showing all owned future draft picks https://old.reddit.com/r/BasketballGM/comments/1ieujhu/monthly_suggestions_thread/maha33q/
-- ovr, power rank, and avg age of team for traded picks
+- link from roster and draft pages
+- updateEvents and team change
+- account for fantasy/expansion season picks
+- show projected pick based on power ranking, age, and how far out it is
+- default sort? multiple?
+
+some UI indication of when multiple jerseys are available to retire, so you know if to expect the popup or not
+
+hide least popular menu items
+- graphs?
+- search?
+
+key={Math.random()}
 
 keep track of DNP players in box score explicitly, just with minimal info rather than full stats
 - use for basketball to save space

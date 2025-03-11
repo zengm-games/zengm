@@ -9,6 +9,10 @@ const avgAge = (
 		};
 	}[],
 ) => {
+	if (players.length === 0) {
+		return;
+	}
+
 	let numerator = 0;
 	let denominator = 0;
 

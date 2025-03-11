@@ -47,7 +47,17 @@ const DraftTeamHistory = ({
 		return {
 			key: dp.dpid,
 			data: [
-				dp.season,
+				dp.season === "fantasy"
+					? {
+							value: "Fantasy",
+							sortValue: -Infinity,
+						}
+					: dp.season === "expansion"
+						? {
+								value: "Expansion",
+								sortValue: -Infinity,
+							}
+						: dp.season,
 				dp.round,
 				dp.pick > 0 ? (
 					dp.pick
@@ -67,7 +77,7 @@ const DraftTeamHistory = ({
 				dp.powerRanking,
 				!challengeNoRatings ? dp.ovr : null,
 				helpers.formatRecord(dp.record),
-				dp.avgAge.toFixed(1),
+				dp.avgAge?.toFixed(1),
 			],
 		};
 	});

@@ -103,8 +103,8 @@ const updateDraftPicks = async (
 			draftPicks.push({
 				...dp,
 				originalAbbrev: t?.abbrev ?? "???",
-				avgAge: t?.powerRankings.avgAge ?? 0,
-				ovr: t?.powerRankings.ovr ?? 0,
+				avgAge: t?.powerRankings.avgAge,
+				ovr: t?.powerRankings.ovr,
 				powerRanking: t?.powerRankings.rank ?? Infinity,
 				record: {
 					won: t?.seasonAttrs.won ?? 0,

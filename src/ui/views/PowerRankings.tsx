@@ -173,7 +173,7 @@ const PowerRankings = ({
 						: t.stats,
 					isSport("basketball") ? "mov" : "diff",
 				),
-				t.powerRankings.avgAge.toFixed(1),
+				t.powerRankings.avgAge?.toFixed(1),
 				...otherKeys.map((key) => ({
 					value: (
 						<Other

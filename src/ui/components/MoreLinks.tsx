@@ -93,6 +93,7 @@ const MoreLinks = (
 						: ["game_log", `${abbrev}_${tid}`],
 				name: "Game Log",
 			},
+			{ url: ["draft_picks"], name: "Draft Picks" },
 			{
 				url: ["team_history", `${abbrev}_${tid}`],
 				name: "History",
@@ -196,6 +197,7 @@ const MoreLinks = (
 					draftType === "freeAgents" ? "Upcoming Prospects" : "Draft Scouting",
 			},
 		];
+		links.push({ url: ["draft_picks"], name: "Draft Picks" });
 		if (!NO_LOTTERY_DRAFT_TYPES.includes(draftType)) {
 			links.push({
 				url:

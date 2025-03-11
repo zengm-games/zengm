@@ -479,33 +479,9 @@ const sumValues = (
 	}, 0);
 };
 
-const refreshCache = async () => {
-	const playersByTid = groupBy(
-		await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
-		"tid",
-	);
-	const teamOvrs: {
-		tid: number;
-		ovr: number;
-	}[] = [];
-	for (const [tidString, players] of Object.entries(playersByTid)) {
-		const tid = Number.parseInt(tidString);
-		const ovr = team.ovr(
-			players.map((p) => ({
-				pid: p.pid,
-				value: p.value,
-				ratings: {
-					ovr: p.ratings.at(-1)!.ovr,
-					ovrs: p.ratings.at(-1)!.ovrs,
-					pos: p.ratings.at(-1)!.pos,
-				},
-			})),
-		);
-
-		teamOvrs.push({ tid, ovr });
-	}
-	teamOvrs.sort((a, b) => b.ovr - a.ovr);
-
+export const getEstPicks = async (
+	teamOvrsSorted: { ovr: number; tid: number }[],
+) => {
 	const teams = (await idb.cache.teams.getAll()).filter((t) => !t.disabled);
 
 	const allTeamSeasons = await idb.cache.teamSeasons.indexGetAll(
@@ -517,10 +493,10 @@ const refreshCache = async () => {
 
 	// Estimate the order of the picks by team
 	const wps = teams.map((t) => {
-		let teamOvrIndex = teamOvrs.findIndex((t2) => t2.tid === t.tid);
+		let teamOvrIndex = teamOvrsSorted.findIndex((t2) => t2.tid === t.tid);
 		if (teamOvrIndex < 0) {
 			// This happens if a team has no players on it - just assume they are the worst
-			teamOvrIndex = teamOvrs.length - 1;
+			teamOvrIndex = teamOvrsSorted.length - 1;
 		}
 
 		// 25% to 75% based on rank
@@ -562,6 +538,41 @@ const refreshCache = async () => {
 	for (let i = 0; i < wps.length; i++) {
 		estPicks[wps[i].tid] = i + 1;
 	}
+
+	return {
+		estPicks,
+		wps,
+	};
+};
+
+const refreshCache = async () => {
+	const playersByTid = groupBy(
+		await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
+		"tid",
+	);
+	const teamOvrs: {
+		tid: number;
+		ovr: number;
+	}[] = [];
+	for (const [tidString, players] of Object.entries(playersByTid)) {
+		const tid = Number.parseInt(tidString);
+		const ovr = team.ovr(
+			players.map((p) => ({
+				pid: p.pid,
+				value: p.value,
+				ratings: {
+					ovr: p.ratings.at(-1)!.ovr,
+					ovrs: p.ratings.at(-1)!.ovrs,
+					pos: p.ratings.at(-1)!.pos,
+				},
+			})),
+		);
+
+		teamOvrs.push({ tid, ovr });
+	}
+	teamOvrs.sort((a, b) => b.ovr - a.ovr);
+
+	const { estPicks, wps } = await getEstPicks(teamOvrs);
 
 	return {
 		estPicks,

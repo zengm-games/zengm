@@ -3,6 +3,7 @@ import { g } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { groupByUnique } from "../../common/utils";
 import { addPowerRankingsStuffToTeams } from "./powerRankings";
+import { getEstPicks } from "../core/team/valueChange";
 
 const updateDraftPicks = async (
 	{ abbrev, tid }: ViewInput<"draftPicks">,
@@ -42,8 +43,29 @@ const updateDraftPicks = async (
 
 		const teams = groupByUnique(teamsWithRankings, "tid");
 
+		let estPicks;
+
 		for (const dp of draftPicksRaw) {
 			const t = teams[dp.originalTid];
+
+			let projectedPick;
+			if (dp.pick === 0) {
+				if (!estPicks) {
+					const teamOvrsSorted = teamsWithRankings
+						.map((t) => {
+							return {
+								ovr: t.powerRankings.ovr,
+								tid: t.tid,
+							};
+						})
+						.sort((a, b) => b.ovr - a.ovr);
+					const output = await getEstPicks(teamOvrsSorted);
+					estPicks = output.estPicks;
+					console.log(estPicks);
+				}
+
+				projectedPick = estPicks[dp.originalTid];
+			}
 
 			draftPicks.push({
 				...dp,
@@ -57,6 +79,7 @@ const updateDraftPicks = async (
 					tied: t?.seasonAttrs.tied ?? 0,
 					otl: t?.seasonAttrs.otl ?? 0,
 				},
+				projectedPick,
 			});
 		}
 

@@ -49,7 +49,11 @@ const DraftTeamHistory = ({
 			data: [
 				dp.season,
 				dp.round,
-				dp.pick > 0 ? dp.pick : null,
+				dp.pick > 0 ? (
+					dp.pick
+				) : (
+					<i className="text-body-secondary">{dp.projectedPick}</i>
+				),
 				dp.originalTid !== dp.tid ? (
 					<a
 						href={helpers.leagueUrl([
@@ -73,10 +77,8 @@ const DraftTeamHistory = ({
 			<MoreLinks type="draft" page="draft_picks" draftType={draftType} />
 
 			<p>
-				Players currently on your team are{" "}
-				<span className="text-info">highlighted in blue</span>. Players in the
-				Hall of Fame are <span className="text-danger">highlighted in red</span>
-				.
+				Projected draft pick numbers are shown in{" "}
+				<i className="text-body-secondary">faded italics</i>.
 			</p>
 
 			<DataTable

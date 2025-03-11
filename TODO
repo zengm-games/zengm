@@ -2,8 +2,10 @@ page showing all owned future draft picks https://old.reddit.com/r/BasketballGM/
 - link from roster and draft pages
 - updateEvents and team change
 - account for fantasy/expansion season picks
-- show projected pick based on power ranking, age, and how far out it is
+- regress projectedPick to the mean, based on seasons remaining and maybe age - maybe similar to getPickNumber
 - default sort? multiple?
+- blog
+  - estimated pick
 
 some UI indication of when multiple jerseys are available to retire, so you know if to expect the popup or not
 

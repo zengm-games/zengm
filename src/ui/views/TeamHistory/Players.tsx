@@ -74,7 +74,9 @@ const Players = ({
 			Object.keys(p.retirableJerseyNumbers).length > 0 &&
 			p.tid !== tid;
 
-		const hasMultipleNumbers = Object.keys(p.retirableJerseyNumbers).length > 1;
+		const hasMultipleNumbers =
+			!!p.retirableJerseyNumbers &&
+			Object.keys(p.retirableJerseyNumbers).length > 1;
 
 		return {
 			key: p.pid,

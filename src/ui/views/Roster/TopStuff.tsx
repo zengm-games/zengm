@@ -267,7 +267,7 @@ const TopStuff = ({
 							<span title="Average age, weighted by minutes played">
 								Average age
 							</span>
-							: {t.seasonAttrs.avgAge!.toFixed(1)}
+							: {t.seasonAttrs.avgAge?.toFixed(1)}
 						</div>
 
 						{isCurrentSeason ? (

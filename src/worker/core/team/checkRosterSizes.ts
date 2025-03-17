@@ -82,13 +82,16 @@ export const dropPlayers = async (
 
 			if (countsHealthyKey) {
 				// If this is a key position and there is only one healthy player, keep the healthy player
-				if (countsHealthyKey[pos] <= 1 && p.injury.gamesRemaining === 0) {
+				if (
+					countsHealthyKey[pos] <= (KEY_POSITIONS_NEEDED?.[pos] ?? 1) &&
+					p.injury.gamesRemaining === 0
+				) {
 					continue;
 				}
 			}
 
-			// Use 1 rather than POSITION_COUNTS[pos], just to be sure it's not some weird league where POSITION_COUNTS don't apply
-			if (counts[pos] <= 1) {
+			// Use 1 as fallback limit rather than POSITION_COUNTS[pos], just to be sure it's not some weird league where POSITION_COUNTS don't apply
+			if (counts[pos] <= (KEY_POSITIONS_NEEDED?.[pos] ?? 1)) {
 				continue;
 			}
 

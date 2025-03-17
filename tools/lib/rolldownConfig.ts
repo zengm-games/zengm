@@ -7,7 +7,6 @@ import babelPluginSyntaxTypescript from "@babel/plugin-syntax-typescript";
 // @ts-expect-error
 import { babelPluginSportFunctions } from "../babel-plugin-sport-functions/index.js";
 import { getSport } from "./getSport.ts";
-import { rollupAliasEntries } from "../lib/rollupConfig.ts";
 
 export const rolldownConfig = (
 	name: "ui" | "worker",
@@ -130,8 +129,5 @@ export const rolldownConfig = (
 			"process.env.SPORT": JSON.stringify(sport),
 		},
 		plugins,
-		resolve: {
-			alias: rollupAliasEntries,
-		},
 	};
 };

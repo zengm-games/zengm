@@ -1,5 +1,4 @@
 import { parentPort, workerData } from "node:worker_threads";
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { watch } from "rolldown";
 import { rolldownConfig } from "../lib/rolldownConfig.ts";
 

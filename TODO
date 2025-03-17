@@ -16,6 +16,7 @@ rolldown
     - other plugins, like blacklist and visualizer
     - isSport confirm works
     - code splitting
+    - does it make sense to specify output options within rolldownConfig, or leave that to be done separately by caller?
   - UI to switch sports (see obsidian)
 
 hide least popular menu items

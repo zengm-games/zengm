@@ -6,6 +6,10 @@ draft picks page
 - also add another table for picks you traded away https://discord.com/channels/290013534023057409/331882115119448065/1350432504137388133
 - add contending/rebuilding status too draft picks page https://discord.com/channels/290013534023057409/1349149416803536896/1349151391049842841
 
+allow trading more than 2 picks
+- 2nd+ round picks should not be in the limit
+- maybe add penalty to score for >2 picks, rather than hard limit
+
 rolldown
 - when stable, switch to watchJsWorker2 and get rid of esbuild stuff
 - future

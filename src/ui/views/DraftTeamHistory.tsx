@@ -18,6 +18,7 @@ const DraftTeamHistory = ({
 	draftType,
 	players,
 	stats,
+	tid,
 	userAbbrev,
 }: View<"draftTeamHistory">) => {
 	const noDraft = draftType === "freeAgents";
@@ -165,7 +166,13 @@ const DraftTeamHistory = ({
 
 	return (
 		<>
-			<MoreLinks type="draft" page="draft_team_history" draftType={draftType} />
+			<MoreLinks
+				type="draft"
+				page="draft_team_history"
+				abbrev={abbrev}
+				draftType={draftType}
+				tid={tid}
+			/>
 
 			<p>
 				Players currently on your team are{" "}

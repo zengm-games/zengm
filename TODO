@@ -1,3 +1,11 @@
+CPU repeatedly releases and signs backup goalie https://discord.com/channels/290013534023057409/290015591216054273/1348745060384247878
+- make auto release code aware of 2 goalie requirement
+
+draft picks page
+- links to trades where they were acquired https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/j1a3nws/
+- also add another table for picks you traded away https://discord.com/channels/290013534023057409/331882115119448065/1350432504137388133
+- add contending/rebuilding status too draft picks page https://discord.com/channels/290013534023057409/1349149416803536896/1349151391049842841
+
 rolldown
 - when stable, switch to watchJsWorker2 and get rid of esbuild stuff
 - future
@@ -9,11 +17,6 @@ rolldown
     - isSport confirm works
     - code splitting
   - UI to switch sports (see obsidian)
-
-add contending/rebuilding status too draft picks page https://discord.com/channels/290013534023057409/1349149416803536896/1349151391049842841
-
-CPU repeatedly releases and signs backup goalie https://discord.com/channels/290013534023057409/290015591216054273/1348745060384247878
-- make auto release code aware of 2 goalie requirement
 
 hide least popular menu items
 - graphs?
@@ -447,6 +450,7 @@ OTW
 - formatRecord as W-OTW-OTL-L-T if both OTW and OTL are available, otherwise if only OTL keep it after L
 - add tracking of ROW for tiebreakers even if we don't break out OTW in standings - maybe always track this
   - RW might be needed to - doesn't include shootouts. shootouts make this more complicated, maybe not worth doing now...
+- complexity details: https://mail.google.com/mail/u/0/#sent/FMfcgzQZTgTgrtpwdkWnWJRqZFwrTBKr?compose=CllgCJlDSvVLngcRlzWGhJkHXrXZNCLksLHSgtmSCGkvXhpVzNRDxLQnvFxjzRTdLxTNgnQFmBq
 
 more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
 - rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is
@@ -916,8 +920,6 @@ rather than showing percentage for match, show actual $ amount https://old.reddi
 still too much overtime scoring https://discord.com/channels/290013534023057409/331882115119448065/1061049070753435799
 
 show previous salary on re-signing table https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/izjihq3/
-
-dedicated page listing all owned draft picks, including links to trades where they were acquired https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/j1a3nws/
 
 show totals for pts/reb/ast/etc in play by play like "J. Brown Driving layup (12 pts) D. White (3 AST)" https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/j26zhxu/
 

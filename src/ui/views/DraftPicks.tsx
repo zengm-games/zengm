@@ -10,6 +10,7 @@ const DraftTeamHistory = ({
 	challengeNoRatings,
 	draftPicks,
 	draftType,
+	tid,
 }: View<"draftPicks">) => {
 	useTitleBar({
 		title: "Draft Picks",
@@ -94,7 +95,13 @@ const DraftTeamHistory = ({
 
 	return (
 		<>
-			<MoreLinks type="draft" page="draft_picks" draftType={draftType} />
+			<MoreLinks
+				type="draft"
+				page="draft_picks"
+				abbrev={abbrev}
+				draftType={draftType}
+				tid={tid}
+			/>
 
 			<p>
 				Projected draft pick numbers are shown in{" "}

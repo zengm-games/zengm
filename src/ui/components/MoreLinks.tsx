@@ -14,6 +14,8 @@ const MoreLinks = (
 		| {
 				type: "draft";
 				draftType: DraftType;
+				abbrev?: string;
+				tid?: number;
 				season?: number;
 		  }
 		| {
@@ -93,7 +95,7 @@ const MoreLinks = (
 						: ["game_log", `${abbrev}_${tid}`],
 				name: "Game Log",
 			},
-			{ url: ["draft_picks"], name: "Draft Picks" },
+			{ url: ["draft_picks", `${abbrev}_${tid}`], name: "Draft Picks" },
 			{
 				url: ["team_history", `${abbrev}_${tid}`],
 				name: "History",
@@ -187,7 +189,7 @@ const MoreLinks = (
 			});
 		}
 	} else if (props.type === "draft") {
-		const { draftType, season } = props;
+		const { abbrev, draftType, season, tid } = props;
 
 		links = [
 			// { url: ["draft"], name: "Draft", },
@@ -197,7 +199,13 @@ const MoreLinks = (
 					draftType === "freeAgents" ? "Upcoming Prospects" : "Draft Scouting",
 			},
 		];
-		links.push({ url: ["draft_picks"], name: "Draft Picks" });
+		links.push({
+			url:
+				abbrev !== undefined && tid !== undefined
+					? ["draft_picks", `${abbrev}_${tid}`]
+					: ["draft_picks"],
+			name: "Draft Picks",
+		});
 		if (!NO_LOTTERY_DRAFT_TYPES.includes(draftType)) {
 			links.push({
 				url:
@@ -209,7 +217,13 @@ const MoreLinks = (
 			url: season !== undefined ? ["draft_history", season] : ["draft_history"],
 			name: draftType === "freeAgents" ? "Prospects History" : "Draft History",
 		});
-		links.push({ url: ["draft_team_history"], name: "Team History" });
+		links.push({
+			url:
+				abbrev !== undefined && tid !== undefined
+					? ["draft_team_history", `${abbrev}_${tid}`]
+					: ["draft_team_history"],
+			name: "Team History",
+		});
 	} else if (props.type == "awards") {
 		const { season } = props;
 

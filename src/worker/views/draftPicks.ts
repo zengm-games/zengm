@@ -121,6 +121,7 @@ const updateDraftPicks = async (
 			challengeNoRatings: g.get("challengeNoRatings"),
 			draftPicks,
 			draftType: g.get("draftType"),
+			tid,
 		};
 	}
 };

@@ -43,32 +43,33 @@ export const rolldownConfig = (
 				},
 			},
 			async handler(code, id) {
+				if (
+					!code.includes("bySport") &&
+					(envOptions.nodeEnv !== "production" || !code.includes("isSport"))
+				) {
+					return;
+				}
+
 				const { mtimeMs } = await fs.stat(id);
 				const cached = babelCache[id];
 				if (cached?.mtimeMs === mtimeMs) {
 					return cached.result;
 				}
 
-				let result: TransformResult;
-				if (
-					code.includes("bySport") ||
-					(envOptions.nodeEnv === "production" && code.includes("isSport"))
-				) {
-					const babelResult = await babel.transformAsync(code, {
-						babelrc: false,
-						configFile: false,
-						sourceMaps: true,
-						plugins: [
-							[babelPluginSyntaxTypescript, { isTSX: id.endsWith(".tsx") }],
-							babelPluginSportFunctions,
-						],
-					});
+				const babelResult = await babel.transformAsync(code, {
+					babelrc: false,
+					configFile: false,
+					sourceMaps: true,
+					plugins: [
+						[babelPluginSyntaxTypescript, { isTSX: id.endsWith(".tsx") }],
+						babelPluginSportFunctions,
+					],
+				});
 
-					result = {
-						code: babelResult!.code!,
-						map: babelResult!.map,
-					};
-				}
+				const result = {
+					code: babelResult!.code!,
+					map: babelResult!.map,
+				};
 
 				babelCache[id] = {
 					mtimeMs,

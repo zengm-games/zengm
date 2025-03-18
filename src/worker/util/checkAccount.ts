@@ -25,12 +25,14 @@ const checkAccount = async (
 		// Keep track of latest here, for ads and multi tab sync
 		local.goldUntil = data.gold_until;
 		local.mailingList = !!data.mailing_list;
+		local.email = data.username === "" ? undefined : data.email;
 		local.username = data.username === "" ? undefined : data.username;
 		const currentTimestamp = Math.floor(Date.now() / 1000) - GRACE_PERIOD;
 		await toUI("updateLocal", [
 			{
+				email: local.email,
 				gold: currentTimestamp <= data.gold_until,
-				username: data.username,
+				username: local.username,
 			},
 		]);
 

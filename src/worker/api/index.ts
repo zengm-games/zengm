@@ -2530,6 +2530,7 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 		await toUI("updateLocal", [
 			{
 				gold: local.goldUntil < Infinity && currentTimestamp <= local.goldUntil,
+				email: local.email,
 				username: local.username,
 			},
 		]);

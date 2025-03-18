@@ -49,6 +49,7 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 		challengeNoRatings: false,
 		customMenu: undefined,
 		dirtySettings: false,
+		email: undefined,
 		fantasyPoints: undefined,
 		flagOverrides: {},
 		fullNames: false,
@@ -179,6 +180,14 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 					} else {
 						window.removeEventListener("beforeunload", blockCloseTab);
 					}
+				}
+
+				if (obj.email && !obj.gold) {
+					window.freestar.queue.push(() => {
+						window.freestar.identity.setIdentity({
+							email: obj.email,
+						});
+					});
 				}
 
 				set(obj as any);

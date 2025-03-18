@@ -4,6 +4,7 @@ import type { Local } from "../../common/types";
 const defaultLocal: Local = {
 	autoPlayUntil: undefined,
 	autoSave: true,
+	email: undefined,
 	exhibitionGamePlayers: undefined,
 	fantasyDraftResults: [],
 	goldUntil: Infinity, // Default is to assume Gold, until told otherwise by server
@@ -27,6 +28,7 @@ const local: Local & {
 } = {
 	autoPlayUntil: defaultLocal.autoPlayUntil,
 	autoSave: defaultLocal.autoSave,
+	email: defaultLocal.email,
 	exhibitionGamePlayers: defaultLocal.exhibitionGamePlayers,
 	fantasyDraftResults: defaultLocal.fantasyDraftResults,
 	goldUntil: defaultLocal.goldUntil,
@@ -49,6 +51,7 @@ const local: Local & {
 		// These variables will be reset if the user switches leagues
 		local.autoPlayUntil = defaultLocal.autoPlayUntil;
 		local.autoSave = defaultLocal.autoSave;
+		local.email = defaultLocal.email;
 		local.exhibitionGamePlayers = defaultLocal.exhibitionGamePlayers;
 		local.fantasyDraftResults = defaultLocal.fantasyDraftResults;
 		local.leagueLoaded = defaultLocal.leagueLoaded;

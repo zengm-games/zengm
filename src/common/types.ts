@@ -994,6 +994,7 @@ export type LocalStateUI = {
 	challengeNoRatings: boolean;
 	customMenu?: MenuItemHeader;
 	dirtySettings: boolean;
+	email?: string;
 	flagOverrides: Record<string, string | undefined>;
 	gameSimInProgress: boolean;
 	games: {
@@ -1387,6 +1388,7 @@ export type Local = {
 		start: number;
 	};
 	autoSave: boolean;
+	email: string | undefined;
 	exhibitionGamePlayers?: Record<number, Player>;
 	fantasyDraftResults: (Player<any> & {
 		prevAbbrev: string;

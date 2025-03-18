@@ -18,7 +18,6 @@ const getGameAttributes = (
 	if (options.type === "real") {
 		const gameAttributes: Record<string, unknown> = {
 			maxRosterSize: 18,
-			gracePeriodEnd: options.season + 2,
 			...initialGameAttributes,
 		};
 

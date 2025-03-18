@@ -33,6 +33,13 @@ const createGameAttributes = async (
 	},
 	conditions?: Conditions,
 ) => {
+	console.log(structuredClone(gameAttributesInput));
+	// Can't get fired for the first two seasons
+	const inputPhase = gameAttributesInput.nextPhase ?? gameAttributesInput.phase;
+	const gracePeriodEnd =
+		startingSeason +
+		(inputPhase !== undefined && inputPhase >= PHASE.PLAYOFFS ? 3 : 2);
+
 	const gameAttributes: GameAttributesLeagueWithHistory = {
 		...defaultGameAttributes,
 		userTid: [
@@ -52,7 +59,7 @@ const createGameAttributes = async (
 			name: t.name,
 			region: t.region,
 		})),
-		gracePeriodEnd: startingSeason + 2, // Can't get fired for the first two seasons
+		gracePeriodEnd,
 		numTeams: teamInfos.length,
 		numActiveTeams: teamInfos.filter((t) => !t.disabled).length,
 	};
@@ -101,7 +108,9 @@ const createGameAttributes = async (
 
 						// Keep in sync with g.wrap
 						let currentSeason = gameAttributes.season;
-						if (gameAttributes.phase > PHASE.PLAYOFFS) {
+						const actualPhase =
+							gameAttributes.nextPhase ?? gameAttributes.phase;
+						if (actualPhase > PHASE.PLAYOFFS) {
 							currentSeason += 1;
 						}
 

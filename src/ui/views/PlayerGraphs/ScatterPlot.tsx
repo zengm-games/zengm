@@ -279,7 +279,6 @@ const ScatterPlot = <Row extends unknown>({
 				</Group>
 			</svg>
 			{tooltipOpen && tooltipData ? (
-				// @ts-expect-error
 				<TooltipWithBounds left={tooltipLeft} top={tooltipTop}>
 					<h3>{getTooltipTitle(tooltipData.row)}</h3>
 					{([0, 1] as const).map((i) => {

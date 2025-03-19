@@ -130,7 +130,7 @@ importers:
         version: 0.0.4
       react-bootstrap:
         specifier: ^2.10.9
-        version: 2.10.9(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 2.10.9(@types/react@19.0.12)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       react-confirm:
         specifier: ^0.3.0
         version: 0.3.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -139,7 +139,7 @@ importers:
         version: 19.0.0(react@19.0.0)
       react-select:
         specifier: ^5.10.1
-        version: 5.10.1(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 5.10.1(@types/react@19.0.12)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       roman-numerals:
         specifier: ^0.3.2
         version: 0.3.2
@@ -172,7 +172,7 @@ importers:
         version: 7.3.0
       zustand:
         specifier: ^5.0.3
-        version: 5.0.3(@types/react@19.0.10)(react@19.0.0)(use-sync-external-store@1.4.0(react@19.0.0))
+        version: 5.0.3(@types/react@19.0.12)(react@19.0.0)(use-sync-external-store@1.4.0(react@19.0.0))
     devDependencies:
       '@babel/core':
         specifier: ^7.26.10
@@ -250,11 +250,11 @@ importers:
         specifier: ^22.13.10
         version: 22.13.10
       '@types/react':
-        specifier: ^19.0.10
-        version: 19.0.10
+        specifier: ^19.0.12
+        version: 19.0.12
       '@types/react-dom':
         specifier: ^19.0.4
-        version: 19.0.4(@types/react@19.0.10)
+        version: 19.0.4(@types/react@19.0.12)
       '@types/roman-numerals':
         specifier: ^0.3.2
         version: 0.3.2
@@ -280,8 +280,8 @@ importers:
         specifier: ^4.0.3
         version: 4.0.3
       cloudflare:
-        specifier: ^4.1.0
-        version: 4.1.0
+        specifier: ^4.2.0
+        version: 4.2.0
       concurrently:
         specifier: ^9.1.2
         version: 9.1.2
@@ -1776,8 +1776,8 @@ packages:
     peerDependencies:
       '@types/react': '*'
 
-  '@types/react@19.0.10':
-    resolution: {integrity: sha512-JuRQ9KXLEjaUNjTWpzuR231Z2WpIwczOkBEIvbHNCzQefFIT0L8IqE6NV6ULLyC1SI/i234JnDoMkfg+RjQj2g==}
+  '@types/react@19.0.12':
+    resolution: {integrity: sha512-V6Ar115dBDrjbtXSrS+/Oruobc+qVbbUxDFC1RSbRqLt5SYvxxyIDrSC85RWml54g+jfNeEMZhEj7wW07ONQhA==}
 
   '@types/resolve@1.20.2':
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
@@ -2415,8 +2415,8 @@ packages:
     resolution: {integrity: sha512-BSeNnyus75C4//NQ9gQt1/csTXyo/8Sb+afLAkzAptFuMsod9HFokGNudZpi/oQV73hnVK+sR+5PVRMd+Dr7YQ==}
     engines: {node: '>=12'}
 
-  cloudflare@4.1.0:
-    resolution: {integrity: sha512-TySwSEGGQhuVHFVjKRUHkzZum0MSGJkgfVjep+KBJxuxScEvjoTckQFbxlYThPp5kLm8IUi4C7oJeVr5e9etVw==}
+  cloudflare@4.2.0:
+    resolution: {integrity: sha512-L9IainZq+7PN3NG/Mg7T9oRm7SB7AskNe6QLD8j7FrJY+2Dn1qpeLqXF8Im04ANnssezf0KAOtSuxNAAyNEgkg==}
 
   clsx@2.1.1:
     resolution: {integrity: sha512-eYm0QWBtUrBWZWG0d386OGAw16Z995PiOVo2B7bjWSbHedGl5e0ZWaq65kOGgUSNesEIDkB9ISbTg/JK9dhCZA==}
@@ -6367,7 +6367,7 @@ snapshots:
 
   '@emotion/memoize@0.9.0': {}
 
-  '@emotion/react@11.14.0(@types/react@19.0.10)(react@19.0.0)':
+  '@emotion/react@11.14.0(@types/react@19.0.12)(react@19.0.0)':
     dependencies:
       '@babel/runtime': 7.26.10
       '@emotion/babel-plugin': 11.13.5
@@ -6379,7 +6379,7 @@ snapshots:
       hoist-non-react-statics: 3.3.2
       react: 19.0.0
     optionalDependencies:
-      '@types/react': 19.0.10
+      '@types/react': 19.0.12
     transitivePeerDependencies:
       - supports-color
 
@@ -7040,15 +7040,15 @@ snapshots:
 
   '@types/prop-types@15.7.14': {}
 
-  '@types/react-dom@19.0.4(@types/react@19.0.10)':
+  '@types/react-dom@19.0.4(@types/react@19.0.12)':
     dependencies:
-      '@types/react': 19.0.10
+      '@types/react': 19.0.12
 
-  '@types/react-transition-group@4.4.12(@types/react@19.0.10)':
+  '@types/react-transition-group@4.4.12(@types/react@19.0.12)':
     dependencies:
-      '@types/react': 19.0.10
+      '@types/react': 19.0.12
 
-  '@types/react@19.0.10':
+  '@types/react@19.0.12':
     dependencies:
       csstype: 3.1.3
 
@@ -7296,7 +7296,7 @@ snapshots:
 
   '@visx/axis@3.12.0(react@19.0.0)':
     dependencies:
-      '@types/react': 19.0.10
+      '@types/react': 19.0.12
       '@visx/group': 3.12.0(react@19.0.0)
       '@visx/point': 3.12.0
       '@visx/scale': 3.12.0
@@ -7308,8 +7308,8 @@ snapshots:
 
   '@visx/bounds@3.12.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@types/react': 19.0.10
-      '@types/react-dom': 19.0.4(@types/react@19.0.10)
+      '@types/react': 19.0.12
+      '@types/react-dom': 19.0.4(@types/react@19.0.12)
       prop-types: 15.8.1
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
@@ -7321,12 +7321,12 @@ snapshots:
 
   '@visx/event@3.12.0':
     dependencies:
-      '@types/react': 19.0.10
+      '@types/react': 19.0.12
       '@visx/point': 3.12.0
 
   '@visx/group@3.12.0(react@19.0.0)':
     dependencies:
-      '@types/react': 19.0.10
+      '@types/react': 19.0.12
       classnames: 2.5.1
       prop-types: 15.8.1
       react: 19.0.0
@@ -7336,7 +7336,7 @@ snapshots:
   '@visx/responsive@3.12.0(react@19.0.0)':
     dependencies:
       '@types/lodash': 4.17.16
-      '@types/react': 19.0.10
+      '@types/react': 19.0.12
       lodash: 4.17.21
       prop-types: 15.8.1
       react: 19.0.0
@@ -7350,7 +7350,7 @@ snapshots:
       '@types/d3-path': 1.0.11
       '@types/d3-shape': 1.3.12
       '@types/lodash': 4.17.16
-      '@types/react': 19.0.10
+      '@types/react': 19.0.12
       '@visx/curve': 3.12.0
       '@visx/group': 3.12.0(react@19.0.0)
       '@visx/scale': 3.12.0
@@ -7364,7 +7364,7 @@ snapshots:
   '@visx/text@3.12.0(react@19.0.0)':
     dependencies:
       '@types/lodash': 4.17.16
-      '@types/react': 19.0.10
+      '@types/react': 19.0.12
       classnames: 2.5.1
       lodash: 4.17.21
       prop-types: 15.8.1
@@ -7373,7 +7373,7 @@ snapshots:
 
   '@visx/tooltip@3.12.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
-      '@types/react': 19.0.10
+      '@types/react': 19.0.12
       '@visx/bounds': 3.12.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       classnames: 2.5.1
       prop-types: 15.8.1
@@ -7836,7 +7836,7 @@ snapshots:
       strip-ansi: 6.0.1
       wrap-ansi: 7.0.0
 
-  cloudflare@4.1.0:
+  cloudflare@4.2.0:
     dependencies:
       '@types/node': 18.19.80
       '@types/node-fetch': 2.6.12
@@ -9907,13 +9907,13 @@ snapshots:
 
   react-addons-text-content@0.0.4: {}
 
-  react-bootstrap@2.10.9(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  react-bootstrap@2.10.9(@types/react@19.0.12)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       '@babel/runtime': 7.26.10
       '@restart/hooks': 0.4.16(react@19.0.0)
       '@restart/ui': 1.9.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@types/prop-types': 15.7.14
-      '@types/react-transition-group': 4.4.12(@types/react@19.0.10)
+      '@types/react-transition-group': 4.4.12(@types/react@19.0.12)
       classnames: 2.5.1
       dom-helpers: 5.2.1
       invariant: 2.2.4
@@ -9925,7 +9925,7 @@ snapshots:
       uncontrollable: 7.2.1(react@19.0.0)
       warning: 4.0.3
     optionalDependencies:
-      '@types/react': 19.0.10
+      '@types/react': 19.0.12
 
   react-confirm@0.3.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
@@ -9941,19 +9941,19 @@ snapshots:
 
   react-lifecycles-compat@3.0.4: {}
 
-  react-select@5.10.1(@types/react@19.0.10)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  react-select@5.10.1(@types/react@19.0.12)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       '@babel/runtime': 7.26.10
       '@emotion/cache': 11.14.0
-      '@emotion/react': 11.14.0(@types/react@19.0.10)(react@19.0.0)
+      '@emotion/react': 11.14.0(@types/react@19.0.12)(react@19.0.0)
       '@floating-ui/dom': 1.6.13
-      '@types/react-transition-group': 4.4.12(@types/react@19.0.10)
+      '@types/react-transition-group': 4.4.12(@types/react@19.0.12)
       memoize-one: 6.0.0
       prop-types: 15.8.1
       react: 19.0.0
       react-dom: 19.0.0(react@19.0.0)
       react-transition-group: 4.4.5(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      use-isomorphic-layout-effect: 1.2.0(@types/react@19.0.10)(react@19.0.0)
+      use-isomorphic-layout-effect: 1.2.0(@types/react@19.0.12)(react@19.0.0)
     transitivePeerDependencies:
       - '@types/react'
       - supports-color
@@ -10760,7 +10760,7 @@ snapshots:
   uncontrollable@7.2.1(react@19.0.0):
     dependencies:
       '@babel/runtime': 7.26.10
-      '@types/react': 19.0.10
+      '@types/react': 19.0.12
       invariant: 2.2.4
       react: 19.0.0
       react-lifecycles-compat: 3.0.4
@@ -10810,11 +10810,11 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  use-isomorphic-layout-effect@1.2.0(@types/react@19.0.10)(react@19.0.0):
+  use-isomorphic-layout-effect@1.2.0(@types/react@19.0.12)(react@19.0.0):
     dependencies:
       react: 19.0.0
     optionalDependencies:
-      '@types/react': 19.0.10
+      '@types/react': 19.0.12
 
   use-local-storage-state@19.5.0(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
@@ -11203,8 +11203,8 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  zustand@5.0.3(@types/react@19.0.10)(react@19.0.0)(use-sync-external-store@1.4.0(react@19.0.0)):
+  zustand@5.0.3(@types/react@19.0.12)(react@19.0.0)(use-sync-external-store@1.4.0(react@19.0.0)):
     optionalDependencies:
-      '@types/react': 19.0.10
+      '@types/react': 19.0.12
       react: 19.0.0
       use-sync-external-store: 1.4.0(react@19.0.0)

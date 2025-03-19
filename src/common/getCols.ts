@@ -3306,6 +3306,10 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	Trades: {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Type: {
 		desc: "Type of Game",
 	},

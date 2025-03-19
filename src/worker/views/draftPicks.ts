@@ -1,9 +1,10 @@
 import { idb } from "../db";
-import { g } from "../util";
+import { g, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import { groupByUnique } from "../../common/utils";
 import { addPowerRankingsStuffToTeams } from "./powerRankings";
 import { getEstPicks } from "../core/team/valueChange";
+import { PLAYER } from "../../common";
 
 const adjustProjectedPick = ({
 	projectedPick,
@@ -100,6 +101,40 @@ const updateDraftPicks = async (
 				});
 			}
 
+			// Extra filter at the end is for TypeScript
+			const events = (
+				await idb.getCopies.events({
+					dpid: dp.dpid,
+					filter: (event) => event.type === "trade",
+				})
+			).filter((row) => row.type === "trade");
+
+			let trades;
+			if (events.length > 0) {
+				trades = events.map((event) => {
+					let tid = PLAYER.DOES_NOT_EXIST;
+
+					// Which team traded the pick?
+					if (event.teams) {
+						for (let i = 0; i < 2; i++) {
+							if (
+								event.teams[i].assets.some(
+									(asset) => (asset as any).dpid === dp.dpid,
+								)
+							) {
+								tid = event.tids[i];
+								break;
+							}
+						}
+					}
+
+					return {
+						abbrev: helpers.getAbbrev(tid),
+						eid: event.eid,
+					};
+				});
+			}
+
 			draftPicks.push({
 				...dp,
 				originalAbbrev: t?.abbrev ?? "???",
@@ -113,6 +148,7 @@ const updateDraftPicks = async (
 					otl: t?.seasonAttrs.otl ?? 0,
 				},
 				projectedPick,
+				trades,
 			});
 		}
 

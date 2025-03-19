@@ -28,6 +28,7 @@ const DraftTeamHistory = ({
 			"Ovr",
 			"Record",
 			"AvgAge",
+			"Trades",
 		],
 		{
 			"Draft Round": {
@@ -89,6 +90,30 @@ const DraftTeamHistory = ({
 				!challengeNoRatings ? dp.ovr : null,
 				helpers.formatRecord(dp.record),
 				dp.avgAge?.toFixed(1),
+				dp.trades
+					? {
+							value: (
+								<>
+									{dp.originalAbbrev}
+									{dp.trades.map((info) => {
+										return (
+											<>
+												{" "}
+												→{" "}
+												<a
+													href={helpers.leagueUrl(["trade_summary", info.eid])}
+												>
+													{info.abbrev}
+												</a>
+											</>
+										);
+									})}
+								</>
+							),
+							searchValue: `${dp.originalAbbrev}${dp.trades.map((info) => ` → ${info.abbrev}`)}`,
+							sortValue: dp.trades.length,
+						}
+					: null,
 			],
 		};
 	});

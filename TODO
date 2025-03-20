@@ -1,3 +1,9 @@
+If you go onto a team and start spam releasing players quickly (best way to do this is decrease window size) it will show a black error box saying you are not allowed to do this. also happens if you try to release a player twice before the game updates the ui https://discord.com/channels/290013534023057409/290015591216054273/1310075135444783164
+- happens in league with tons of free agents https://discord.com/channels/290013534023057409/290015591216054273/1352057685574684742
+- ideally should disable other release buttons while releasing
+  - maybe make it generic to computing contracts, send some signal to UI like it does when simming games
+  - should also affect bulk action buttons
+
 allow trading more than 2 picks
 - 2nd+ round picks should not be in the limit
 - maybe add penalty to score for >2 picks, rather than hard limit
@@ -196,8 +202,6 @@ in slam dunk contest in god mode, UI to control other players is hidden on mobil
 FBGM -  declines penalty when it would have given untimed down in 4th quarter with a chance to win https://discord.com/channels/290013534023057409/290015591216054273/1313017959035179008
 
 condense develop0 and updateValues into a single function, mainly for worker console
-
-If you go onto a team and start spam releasing players quickly (best way to do this is decrease window size) it will show a black error box saying you are not allowed to do this. also happens if you try to release a player twice before the game updates the ui https://discord.com/channels/290013534023057409/290015591216054273/1310075135444783164
 
 Injury "games missed" has some counting bug. I can't send league (on phone, hundreds of years, etc.) but with standard 82 game seasons... guy plays 6/82 in '65 and 74/82 in '66. But under injuries is listed as "2065: Torn ACL, 148 games" and "2066: Torn ACL, 122 games". So under most injured frivolity, says he missed 400 career games but that's definitely not right. Could at least cap with (team games played  - player games played) per season somewhere if the cross-day accounting is needed for playoffs or FA or something https://discord.com/channels/290013534023057409/290015591216054273/1310287379457900564
 
@@ -568,9 +572,6 @@ better clock handling in BBGM - calculate time as you go in the play
 - fewer out of bounds after missed free throws, maybe other shot types too
 - ORB% should vary by shot type
 
-tailwind
-- https://usewindy.com/
-
 better copy/paste or export of play-by-play
 - https://old.reddit.com/r/BasketballGM/comments/188okm0/is_there_a_way_to_copy_the_playbyplay/kbq4bei/?context=3
 
@@ -615,7 +616,7 @@ FBGM move event text generation to UI
   - is "clock" really needed in every PlayEvent? i think it's only needed in the actual clock ones. even scoring plays don't need it, they just use the snap time
   - too many formatClock calls
 
-FBGM show field during game
+FBGM drive chart
 - later
   - would be nice to make "1st & 10" gray box have dynamic width in play log
     - same for score tag on negative play (defense or kick return)

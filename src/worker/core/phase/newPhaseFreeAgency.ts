@@ -1,8 +1,12 @@
 import { contractNegotiation, freeAgents } from "..";
 import { helpers } from "../../util";
 import type { PhaseReturn } from "../../../common/types";
+import { idb } from "../../db";
 
 const newPhaseFreeAgency = async (): Promise<PhaseReturn> => {
+	// In case some weird situation results in games still in the schedule, clear them
+	await idb.cache.schedule.clear();
+
 	// Delete all current negotiations to resign players
 	await contractNegotiation.cancelAll();
 

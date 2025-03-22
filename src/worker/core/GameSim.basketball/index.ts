@@ -2111,33 +2111,19 @@ class GameSim extends GameSimBase {
 			}
 
 			/* 
-			TODO: do some additional research to determine what the % bounds should be. 
-				Preliminary analysis says that a 'great' passer should increase shot probability ~ 4%
-
-				However, what if a pass comes from a 'bad' passer? Or what if the pass is from a 'great' passer, but external factors
-				(such as the pass being contested) make the pass less effective? We will set the lower bound to -2.5% for now, and 4% for the upper bound.
-				We want the random number to be skewed to the higher number, as there are ~ 1.5-2 AST/TOV ratio for NBA teams
+				We want the % chance for better shot to be a higher number, as there are ~ 1.5-2 AST/TOV ratio for NBA teams
 				https://www.basketball-reference.com/leagues/NBA_2025.html#per_game-team
 			*/
 			const passQuality = (passer: number): number => {
-				const upperBound = 0.04;
-				const lowerBound = -0.025;
+				const upperBound = 0.03;
+				const lowerBound = -0.015;
 				const p = this.playersOnCourt[this.o][passer];
-				const passAtr = this.team[this.o].player[p].compositeRating.passing;
-
-				// Scale passAtr (0-1) to influence the skewing factor
-				const skewFactor =
-					(passAtr / 100) * (upperBound - lowerBound) + lowerBound;
-
-				// Generate a random value within bounds, skewed by passAtr
+				// 100 / 5000 -> 0.02, 50 -> 0.01, 0 -> 0
+				const passAtr =
+					this.team[this.o].player[p].compositeRating.passing / 5000;
 				const passRating =
 					Math.random() * (upperBound - lowerBound) + lowerBound;
-				if (passRating + skewFactor < lowerBound) {
-					return lowerBound;
-				} else if (passRating + skewFactor > upperBound) {
-					return upperBound;
-				}
-				return passRating + skewFactor;
+				return passRating + passAtr;
 			};
 
 			// Assisted shots are easier

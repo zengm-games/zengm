@@ -1190,7 +1190,7 @@ const getCopies = async (
 ): Promise<PlayerFiltered[]> => {
 	if (mergeStats === "totAndTeams" && season !== undefined) {
 		throw new Error(
-			"mergeStats totOnly is not supported for individual seasons",
+			"mergeStats totAndTeams is not supported for individual seasons",
 		);
 	}
 

@@ -3,10 +3,12 @@ import { PlayerPicture } from "../../components";
 
 export const Face = ({
 	face,
+	faceCount,
 	onChange,
 	randomizeFace,
 }: {
 	face: string;
+	faceCount: number;
 	onChange: (face: string) => void;
 	randomizeFace: () => void;
 }) => {
@@ -19,7 +21,7 @@ export const Face = ({
 
 	useEffect(() => {
 		const listener = (event: MessageEvent) => {
-			if (event.data.type === "face") {
+			if (event.data.type === "facesjs" && event.data.key === faceCount) {
 				onChange(JSON.stringify(event.data.value));
 			}
 		};
@@ -42,7 +44,7 @@ export const Face = ({
 				<p>
 					You can edit this JSON here, but you'll probably find it easier to use{" "}
 					<a
-						href={`${process.env.NODE_ENV === "development" ? "http://localhost:5173" : "https://zengm.com"}/facesjs/editor/#${faceHash}`}
+						href={`${process.env.NODE_ENV === "development" ? "http://localhost:5173" : "https://zengm.com"}/facesjs/editor/#${faceCount},${faceHash}`}
 						target="_blank"
 						rel="opener"
 					>

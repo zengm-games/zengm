@@ -532,6 +532,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 	const {
 		challengeNoRatings,
+		faceCount,
 		gender,
 		godMode,
 		originalTid,
@@ -1158,6 +1159,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						{appearanceOption === "Cartoon Face" ? (
 							<Face
 								face={p.face as any}
+								faceCount={faceCount}
 								onChange={(face) => {
 									setState((prevState) => {
 										return {

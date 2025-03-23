@@ -1,10 +1,8 @@
 better face editor integration
 - https://github.com/zengm-games/facesjs/issues/57
-- make sure it handles navigating away from edit page gracefully
-  - including opening another edit page
-    - need to pass lid/pid
-      - new player has no pid! maybe use random ID? useID
 - close window on save - but what if it didn't save? should require acknowledgement from main window before closing
+- should box to edit JSON even be there?
+- more prominent editor link
 
 better relative faces https://mail.google.com/mail/u/0/#inbox/FMfcgzQZTMQRKQcWXCSldcPFMJfLvDGb
 - https://github.com/zengm-games/facesjs/issues/5

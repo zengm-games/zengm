@@ -21,8 +21,17 @@ export const Face = ({
 
 	useEffect(() => {
 		const listener = (event: MessageEvent) => {
+			// key check is to handle the case where the user opens an editor, switches to another player, and opens another editor. So there are two editors open for two different players - we need to tell which one this is. Can't use pid alone because new players don't have a pid yet!
 			if (event.data.type === "facesjs" && event.data.key === faceCount) {
 				onChange(JSON.stringify(event.data.value));
+				event.source?.postMessage(
+					{
+						type: "facesjs",
+						action: "close",
+						// @ts-expect-error
+					},
+					"*",
+				);
 			}
 		};
 		window.addEventListener("message", listener);
@@ -61,13 +70,37 @@ export const Face = ({
 					rows={10}
 					value={face}
 				/>
-				<button
-					type="button"
-					className="btn btn-secondary mt-1"
-					onClick={randomizeFace}
-				>
-					Randomize
-				</button>
+				<div className="d-flex gap-2 mt-2">
+					<button
+						type="button"
+						className="btn btn-secondary"
+						onClick={() => {
+							// Need button rather than link because "open in new tab" seems to interfere with setting window.opener in the new window, even with rel="opener"
+							window.open(
+								`${process.env.NODE_ENV === "development" ? "http://localhost:5173" : "https://zengm.com"}/facesjs/editor/#${faceCount},${faceHash}`,
+								`_blank`,
+							);
+						}}
+					>
+						Face editor
+					</button>
+					<button
+						type="button"
+						className="btn btn-secondary"
+						onClick={randomizeFace}
+					>
+						Randomize
+					</button>
+					<button
+						type="button"
+						className="btn btn-secondary"
+						onClick={() => {
+							console.log("EDIT");
+						}}
+					>
+						Paste JSON
+					</button>
+				</div>
 			</div>
 		</div>
 	);

@@ -1140,7 +1140,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 						<h2>Appearance</h2>
 
-						<div className="mb-3">
+						<div>
 							<label className="form-label">
 								You can either create a cartoon face or specify the URL to an
 								image.
@@ -1174,7 +1174,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 								randomizeFace={randomizeFace}
 							/>
 						) : (
-							<div className="mb-3">
+							<div className="my-3">
 								<label className="form-label">Image URL</label>
 								<input
 									type="text"

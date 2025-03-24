@@ -1,5 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { PlayerPicture } from "../../components";
+import clsx from "clsx";
 
 export const Face = ({
 	face,
@@ -28,8 +29,8 @@ export const Face = ({
 					{
 						type: "facesjs",
 						action: "close",
-						// @ts-expect-error
 					},
+					// @ts-expect-error
 					"*",
 				);
 			}
@@ -42,35 +43,20 @@ export const Face = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
+	const [editJson, setEditJson] = useState(false);
+
 	return (
-		<div className="row">
-			<div className="col-sm-4">
-				<div style={{ maxHeight: "225px", maxWidth: "150px" }}>
-					{parsedFace ? <PlayerPicture face={parsedFace} /> : "Invalid JSON"}
-				</div>
+		<div className="d-flex gap-3">
+			<div style={{ height: 225, width: 150 }}>
+				{parsedFace ? <PlayerPicture face={parsedFace} /> : "Invalid JSON"}
 			</div>
-			<div className="col-sm-8">
-				<p>
-					You can edit this JSON here, but you'll probably find it easier to use{" "}
-					<a
-						href={`${process.env.NODE_ENV === "development" ? "http://localhost:5173" : "https://zengm.com"}/facesjs/editor/#${faceCount},${faceHash}`}
-						target="_blank"
-						rel="opener"
-					>
-						the face editor
-					</a>{" "}
-					and copy the results back here. Team colors set there will be
-					overridden here.
-				</p>
-				<textarea
-					className="form-control"
-					onChange={(event) => {
-						onChange(event.target.value);
-					}}
-					rows={10}
-					value={face}
-				/>
-				<div className="d-flex gap-2 mt-2">
+			<div className="flex-grow-1">
+				<div
+					className={clsx(
+						"d-flex gap-2",
+						editJson ? undefined : "mt-4 flex-column align-items-start",
+					)}
+				>
 					<button
 						type="button"
 						className="btn btn-secondary"
@@ -95,12 +81,22 @@ export const Face = ({
 						type="button"
 						className="btn btn-secondary"
 						onClick={() => {
-							console.log("EDIT");
+							setEditJson((value) => !value);
 						}}
 					>
-						Paste JSON
+						Edit raw JSON
 					</button>
 				</div>
+				{editJson ? (
+					<textarea
+						className="form-control mt-2"
+						onChange={(event) => {
+							onChange(event.target.value);
+						}}
+						rows={10}
+						value={face}
+					/>
+				) : null}
 			</div>
 		</div>
 	);

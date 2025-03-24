@@ -92,39 +92,33 @@ type PlayByPlayEventInputScore =
 			clock: number;
 	  };
 
+export type blockType =
+	| "blkAtRim"
+	| "blkLowPost"
+	| "blkMidRange"
+	| "blkTp"
+	| "blkTipIn"
+	| "blkPutBack";
+export type fgaType =
+	| "fgaAtRim"
+	| "fgaLowPost"
+	| "fgaMidRange"
+	| "fgaTp"
+	| "fgaTpFake"
+	| "fgaTipIn"
+	| "fgaPutBack";
+export type fgMissType =
+	| "missPutBack"
+	| "missAtRim"
+	| "missLowPost"
+	| "missMidRange"
+	| "missTp"
+	| "missFt"
+	| "missTpFake"
+	| "missTipIn";
 type PlayByPlayEventInputNoScore =
 	| {
-			type: "blkTipIn";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "blkPutBack";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "blkAtRim";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "blkLowPost";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "blkMidRange";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "blkTp";
+			type: blockType;
 			t: TeamNum;
 			pid: number;
 			clock: number;
@@ -136,49 +130,12 @@ type PlayByPlayEventInputNoScore =
 			clock: number;
 	  }
 	| {
-			type: "fgaAtRim";
+			type: fgaType;
 			t: TeamNum;
 			pid: number;
 			clock: number;
-	  }
-	| {
-			type: "fgaLowPost";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "fgaMidRange";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "fgaTp";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-			desperation: boolean;
-	  }
-	| {
-			type: "fgaTpFake";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-			desperation: boolean;
-	  }
-	| {
-			type: "fgaTipIn";
-			t: TeamNum;
-			pid: number;
-			pidPass: number;
-			clock: number;
-	  }
-	| {
-			type: "fgaPutBack";
-			t: TeamNum;
-			pid: number;
-			clock: number;
+			desperation?: boolean | undefined; // needed for tp/tpFake. undefined for others
+			pidPass?: number | undefined; // needed for tipin. undefined for others
 	  }
 	| {
 			type: "foulOut";
@@ -202,43 +159,7 @@ type PlayByPlayEventInputNoScore =
 			clock: number;
 	  }
 	| {
-			type: "missTipIn";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "missPutBack";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "missAtRim";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "missFt";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "missLowPost";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "missMidRange";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "missTp";
+			type: fgMissType;
 			t: TeamNum;
 			pid: number;
 			clock: number;

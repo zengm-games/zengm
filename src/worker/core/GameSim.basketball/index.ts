@@ -2148,28 +2148,28 @@ class GameSim extends GameSimBase {
 		// Miss
 		advanceClock();
 		this.recordStat(this.o, p, "fga");
-		let logType: fgMissType = "missAtRim"; // Default, should always be set to the right case!
+		let fgMissLogType: fgMissType = "missAtRim"; // Default, should always be set to the right case!
 		if (type === "tipIn") {
 			this.recordStat(this.o, p, "fgaAtRim");
-			logType = "missTipIn";
+			fgMissLogType = "missTipIn";
 		} else if (type === "putBack") {
 			this.recordStat(this.o, p, "fgaAtRim");
-			logType = "missPutBack";
+			fgMissLogType = "missPutBack";
 		} else if (type === "atRim") {
 			this.recordStat(this.o, p, "fgaAtRim");
-			logType = "missAtRim";
+			fgMissLogType = "missAtRim";
 		} else if (type === "lowPost") {
 			this.recordStat(this.o, p, "fgaLowPost");
-			logType = "missLowPost";
+			fgMissLogType = "missLowPost";
 		} else if (type === "midRange") {
 			this.recordStat(this.o, p, "fgaMidRange");
-			logType = "missMidRange";
+			fgMissLogType = "missMidRange";
 		} else if (type === "threePointer") {
 			this.recordStat(this.o, p, "tpa");
-			logType = "missTp";
+			fgMissLogType = "missTp";
 		}
 		this.playByPlay.logEvent({
-			type: logType,
+			type: fgMissLogType,
 			t: this.o,
 			pid: this.team[this.o].player[p].id,
 			clock: this.t,

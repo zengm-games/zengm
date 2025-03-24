@@ -1588,7 +1588,7 @@ const generateFace = async (country: string | undefined) => {
 	const { race } = await player.name(
 		country ? helpers.getCountry(country) : undefined,
 	);
-	return face.generate(race);
+	return face.generate({ race });
 };
 
 const getAutoPos = (ratings: any) => {

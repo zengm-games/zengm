@@ -4,7 +4,6 @@ import { face, g, helpers, random } from "../../util";
 import type { Player, Relative, RelativeType } from "../../../common/types";
 import { isSport } from "../../../common";
 import player from ".";
-import { generateRelative } from "facesjs";
 
 const parseLastName = (lastName: string): [string, number | undefined] => {
 	const parts = lastName.split(" ");
@@ -97,8 +96,7 @@ const makeSimilar = (existingRelative: Player, newRelative: Player) => {
 	}
 
 	if (!existingRelative.imgURL) {
-		newRelative.face = generateRelative({
-			gender: g.get("gender"),
+		newRelative.face = face.generate({
 			relative: existingRelative.face,
 		});
 	}
@@ -115,7 +113,7 @@ const applyNewCountry = async (p: Player, relative: Player) => {
 		p.firstName = firstName;
 
 		// Generate new name and face
-		p.face = face.generate(race);
+		p.face = face.generate({ race });
 	}
 
 	// Make them the same state/province, if USA/Canada

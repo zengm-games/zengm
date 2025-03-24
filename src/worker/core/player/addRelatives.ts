@@ -4,6 +4,7 @@ import { face, g, helpers, random } from "../../util";
 import type { Player, Relative, RelativeType } from "../../../common/types";
 import { isSport } from "../../../common";
 import player from ".";
+import { generateRelative } from "facesjs";
 
 const parseLastName = (lastName: string): [string, number | undefined] => {
 	const parts = lastName.split(" ");
@@ -93,6 +94,13 @@ const makeSimilar = (existingRelative: Player, newRelative: Player) => {
 		Math.random() < 0.5
 	) {
 		newRelative.jerseyNumber = existingRelative.stats.at(-1).jerseyNumber;
+	}
+
+	if (!existingRelative.imgURL) {
+		newRelative.face = generateRelative({
+			gender: g.get("gender"),
+			relative: existingRelative.face,
+		});
 	}
 };
 

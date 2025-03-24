@@ -33,7 +33,6 @@ const createGameAttributes = async (
 	},
 	conditions?: Conditions,
 ) => {
-	console.log(structuredClone(gameAttributesInput));
 	// Can't get fired for the first two seasons
 	const inputPhase = gameAttributesInput.nextPhase ?? gameAttributesInput.phase;
 	const gracePeriodEnd =

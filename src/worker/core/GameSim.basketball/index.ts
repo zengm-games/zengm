@@ -2338,9 +2338,12 @@ class GameSim extends GameSimBase {
 
 		let pAst;
 		let pidAst;
+		let pidTotalPts = this.getStat(this.o, shooter, "pts");
+		let pidAstTotalAst = undefined;
 		if (passer !== undefined) {
 			pAst = this.playersOnCourt[this.o][passer];
 			pidAst = this.team[this.o].player[pAst].id;
+			pidAstTotalAst = this.getStat(this.o, pidAst, "ast");
 		}
 
 		if (type === "tipIn") {
@@ -2352,6 +2355,8 @@ class GameSim extends GameSimBase {
 				pid,
 				pidAst,
 				clock: this.t,
+				pidTotalPts,
+				pidAstTotalAst,
 			});
 		} else if (type === "putBack") {
 			this.recordStat(this.o, p, "fgaAtRim");
@@ -2361,6 +2366,7 @@ class GameSim extends GameSimBase {
 				t: this.o,
 				pid,
 				clock: this.t,
+				pidTotalPts,
 			});
 		} else if (type === "atRim") {
 			// Randomly pick a name to be dunked on
@@ -2382,6 +2388,8 @@ class GameSim extends GameSimBase {
 				pidDefense,
 				pidAst,
 				clock: this.t,
+				pidTotalPts,
+				pidAstTotalAst,
 			});
 		} else if (type === "lowPost") {
 			this.recordStat(this.o, p, "fgaLowPost");
@@ -2392,6 +2400,8 @@ class GameSim extends GameSimBase {
 				pid,
 				pidAst,
 				clock: this.t,
+				pidTotalPts,
+				pidAstTotalAst,
 			});
 		} else if (type === "midRange") {
 			this.recordStat(this.o, p, "fgaMidRange");
@@ -2402,12 +2412,14 @@ class GameSim extends GameSimBase {
 				pid,
 				pidAst,
 				clock: this.t,
+				pidTotalPts,
+				pidAstTotalAst,
 			});
 		} else if (type === "threePointer") {
 			if (g.get("threePointers")) {
 				this.recordStat(this.o, p, "pts"); // Extra point for 3's
 			}
-
+			pidTotalPts = this.getStat(this.o, shooter, "pts"); // Needs to be updated again here, since stat is updated above
 			this.recordStat(this.o, p, "tpa");
 			this.recordStat(this.o, p, "tp");
 			this.playByPlay.logEvent({
@@ -2416,6 +2428,8 @@ class GameSim extends GameSimBase {
 				pid,
 				pidAst,
 				clock: this.t,
+				pidTotalPts,
+				pidAstTotalAst,
 			});
 		}
 
@@ -2709,6 +2723,11 @@ class GameSim extends GameSimBase {
 					t: this.o,
 					pid: this.team[this.o].player[p].id,
 					clock: this.t,
+					pidTotalPts: this.getStat(
+						this.o,
+						this.team[this.o].player[p].id,
+						"pts",
+					),
 				});
 				outcome = "ft";
 				this.recordLastScore(this.o, p, "ft");
@@ -2908,6 +2927,19 @@ class GameSim extends GameSimBase {
 		return array;
 	}
 
+	/**
+	 * Get stat (s) for a player (p) on a team (t).
+	 * @param {number} t Team (0 or 1, this.or or this.d).
+	 * @param {number} p Integer index of this.team[t].player for the player of interest.
+	 * @param {string} s Key for the property of this.team[t].player[p].stat to increment.
+	 */
+	getStat(t: TeamNum, p: number, s: Stat) {
+		if (this.team[t].player[p] !== undefined) {
+			console.log(this.team[t].player[p].stat[s]);
+			return this.team[t].player[p].stat[s];
+		}
+		// return await this.team[t].player[p].stat[s];
+	}
 	/**
 	 * Increments a stat (s) for a player (p) on a team (t) by amount (default is 1).
 	 *

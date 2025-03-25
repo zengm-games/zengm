@@ -2338,7 +2338,7 @@ class GameSim extends GameSimBase {
 
 		let pAst;
 		let pidAst;
-		let pidTotalPts = this.getStat(this.o, shooter, "pts");
+		let pidTotalPts = this.getStat(this.o, p, "pts");
 		let pidAstTotalAst = undefined;
 		if (passer !== undefined) {
 			pAst = this.playersOnCourt[this.o][passer];

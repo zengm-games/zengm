@@ -7,6 +7,8 @@ type PlayByPlayEventInputScore =
 			pid: number;
 			pidDefense: number;
 			pidAst: number | undefined;
+			pidTotalPts: number;
+			pidAstTotalAst: number | undefined;
 			clock: number;
 	  }
 	| {
@@ -15,6 +17,8 @@ type PlayByPlayEventInputScore =
 			pid: number;
 			pidDefense: number;
 			pidAst: number | undefined;
+			pidTotalPts: number;
+			pidAstTotalAst: number | undefined;
 			clock: number;
 	  }
 	| {
@@ -22,12 +26,16 @@ type PlayByPlayEventInputScore =
 			t: TeamNum;
 			pid: number;
 			pidAst: number | undefined;
+			pidTotalPts: number;
+			pidAstTotalAst: number | undefined;
 			clock: number;
 	  }
 	| {
 			type: "fgLowPostAndOne";
 			t: TeamNum;
 			pid: number;
+			pidTotalPts: number;
+			pidAstTotalAst: number | undefined;
 			pidAst: number | undefined;
 			clock: number;
 	  }
@@ -35,6 +43,8 @@ type PlayByPlayEventInputScore =
 			type: "fgMidRange";
 			t: TeamNum;
 			pid: number;
+			pidTotalPts: number;
+			pidAstTotalAst: number | undefined;
 			pidAst: number | undefined;
 			clock: number;
 	  }
@@ -42,6 +52,8 @@ type PlayByPlayEventInputScore =
 			type: "fgMidRangeAndOne";
 			t: TeamNum;
 			pid: number;
+			pidTotalPts: number;
+			pidAstTotalAst: number | undefined;
 			pidAst: number | undefined;
 			clock: number;
 	  }
@@ -49,12 +61,15 @@ type PlayByPlayEventInputScore =
 			type: "ft";
 			t: TeamNum;
 			pid: number;
+			pidTotalPts: number;
 			clock: number;
 	  }
 	| {
 			type: "tp";
 			t: TeamNum;
 			pid: number;
+			pidTotalPts: number;
+			pidAstTotalAst: number | undefined;
 			pidAst: number | undefined;
 			clock: number;
 	  }
@@ -62,6 +77,8 @@ type PlayByPlayEventInputScore =
 			type: "tpAndOne";
 			t: TeamNum;
 			pid: number;
+			pidTotalPts: number;
+			pidAstTotalAst: number | undefined;
 			pidAst: number | undefined;
 			clock: number;
 	  }
@@ -69,6 +86,8 @@ type PlayByPlayEventInputScore =
 			type: "fgTipIn";
 			t: TeamNum;
 			pid: number;
+			pidTotalPts: number;
+			pidAstTotalAst: number | undefined;
 			pidAst: number | undefined;
 			clock: number;
 	  }
@@ -76,6 +95,8 @@ type PlayByPlayEventInputScore =
 			type: "fgTipInAndOne";
 			t: TeamNum;
 			pid: number;
+			pidTotalPts: number;
+			pidAstTotalAst: number | undefined;
 			pidAst: number | undefined;
 			clock: number;
 	  }
@@ -83,12 +104,14 @@ type PlayByPlayEventInputScore =
 			type: "fgPutBack";
 			t: TeamNum;
 			pid: number;
+			pidTotalPts: number;
 			clock: number;
 	  }
 	| {
 			type: "fgPutBackAndOne";
 			t: TeamNum;
 			pid: number;
+			pidTotalPts: number;
 			clock: number;
 	  };
 

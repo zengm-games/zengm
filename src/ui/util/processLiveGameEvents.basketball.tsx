@@ -23,6 +23,7 @@ const getName = (pid: number) => {
 	return playersByPid?.[pid]?.name ?? "???";
 };
 
+// JTODO: add in here! Where the points, rbs, asts, are shown. Just start with points for now, pass in the event object
 export const getText = (
 	event: PlayByPlayEvent,
 	boxScore: {
@@ -146,7 +147,7 @@ export const getText = (
 		event.type === "fgMidRange" ||
 		event.type === "tp"
 	) {
-		texts = ["It's good!"];
+		texts = [`It's good! ${getName(event.pid)} (${event.pidTotalPts} PTS)`];
 	} else if (
 		event.type === "fgLowPostAndOne" ||
 		event.type === "fgMidRangeAndOne" ||
@@ -360,6 +361,7 @@ const processLiveGameEvents = ({
 
 		const eAny = e as any;
 
+		// JTODO: change this maybe so team being controlled is at the top?
 		// Swap teams order, so home team is at bottom in box score
 		const actualT = eAny.t === 0 ? 1 : eAny.t === 1 ? 0 : undefined;
 

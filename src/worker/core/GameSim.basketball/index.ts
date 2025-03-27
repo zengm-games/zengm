@@ -2160,7 +2160,7 @@ class GameSim extends GameSimBase {
 		// Miss
 		advanceClock();
 		this.recordStat(this.o, p, "fga");
-		let fgMissLogType: FgMissType | undefined = undefined; // Error, why is it complaining it is being used incorrectly?
+		let fgMissLogType: FgMissType | undefined = undefined;
 		if (type === "tipIn") {
 			this.recordStat(this.o, p, "fgaAtRim");
 			fgMissLogType = "missTipIn";

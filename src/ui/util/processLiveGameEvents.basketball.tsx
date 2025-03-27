@@ -69,7 +69,7 @@ export const getText = (
 	} else if (event.type === "fgaTipIn") {
 		texts = [
 			`${getName(event.pid)} cuts to the rim as ${getName(
-				event.pidPass as number,
+				event.pidPass,
 			)} lobs up the inbound pass`,
 		];
 	} else if (event.type === "fgaPutBack") {

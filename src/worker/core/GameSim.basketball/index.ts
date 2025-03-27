@@ -453,7 +453,6 @@ class GameSim extends GameSimBase {
 			neutralSite: this.neutralSite,
 			// scoringSummary: this.playByPlay.scoringSummary,
 		};
-		console.log(this.playByPlay);
 		return out;
 	}
 
@@ -2042,33 +2041,6 @@ class GameSim extends GameSimBase {
 					0.34;
 				probAndOne = 0.15;
 			}
-			const baseLogInformation = {
-				t: this.o,
-				pid: this.team[this.o].player[p].id,
-				clock: this.t,
-			};
-			if (
-				fgaLogType === "fgaLowPost" ||
-				fgaLogType === "fgaMidRange" ||
-				fgaLogType === "fgaAtRim"
-			) {
-				this.playByPlay.logEvent({
-					...baseLogInformation,
-					type: fgaLogType,
-				});
-			} else if (fgaLogType === "fgaTp" || fgaLogType === "fgaTpFake") {
-				this.playByPlay.logEvent({
-					...baseLogInformation,
-					type: fgaLogType,
-					desperation: rushed && forceThreePointer,
-				});
-			} else if (fgaLogType === "fgaTipIn" && pAst) {
-				this.playByPlay.logEvent({
-					...baseLogInformation,
-					type: fgaLogType,
-					pidPass: this.team[this.o].player[pAst].id,
-				});
-			}
 			// Better shooting in the ASG, why not?
 			if (this.allStarGame) {
 				probMake += 0.1;
@@ -2076,7 +2048,33 @@ class GameSim extends GameSimBase {
 
 			probMake *= g.get("twoPointAccuracyFactor");
 		}
-
+		const baseLogInformation = {
+			t: this.o,
+			pid: this.team[this.o].player[p].id,
+			clock: this.t,
+		};
+		if (
+			fgaLogType === "fgaLowPost" ||
+			fgaLogType === "fgaMidRange" ||
+			fgaLogType === "fgaAtRim"
+		) {
+			this.playByPlay.logEvent({
+				...baseLogInformation,
+				type: fgaLogType,
+			});
+		} else if (fgaLogType === "fgaTp" || fgaLogType === "fgaTpFake") {
+			this.playByPlay.logEvent({
+				...baseLogInformation,
+				type: fgaLogType,
+				desperation: rushed && forceThreePointer,
+			});
+		} else if (fgaLogType === "fgaTipIn" && pAst) {
+			this.playByPlay.logEvent({
+				...baseLogInformation,
+				type: fgaLogType,
+				pidPass: this.team[this.o].player[pAst].id,
+			});
+		}
 		if (this.probBlk() > Math.random()) {
 			return this.doBlk(shooter, type); // orb or drb
 		}

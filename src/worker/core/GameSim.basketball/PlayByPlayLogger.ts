@@ -1,174 +1,87 @@
 type TeamNum = 0 | 1;
-
-type PlayByPlayEventInputScore =
-	| {
-			type: "fgAtRim";
-			t: TeamNum;
-			pid: number;
-			pidDefense: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "fgAtRimAndOne";
-			t: TeamNum;
-			pid: number;
-			pidDefense: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "fgLowPost";
-			t: TeamNum;
-			pid: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "fgLowPostAndOne";
-			t: TeamNum;
-			pid: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "fgMidRange";
-			t: TeamNum;
-			pid: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "fgMidRangeAndOne";
-			t: TeamNum;
-			pid: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "ft";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "tp";
-			t: TeamNum;
-			pid: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "tpAndOne";
-			t: TeamNum;
-			pid: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "fgTipIn";
-			t: TeamNum;
-			pid: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "fgTipInAndOne";
-			t: TeamNum;
-			pid: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "fgPutBack";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "fgPutBackAndOne";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  };
-
-export type blockType =
+export type BlockType =
 	| "blkAtRim"
 	| "blkLowPost"
 	| "blkMidRange"
 	| "blkTp"
 	| "blkTipIn"
 	| "blkPutBack";
-export type fgaType =
-	| "fgaAtRim"
-	| "fgaLowPost"
-	| "fgaMidRange"
-	| "fgaTp"
-	| "fgaTpFake"
-	| "fgaTipIn"
-	| "fgaPutBack";
-export type fgMissType =
+export type FgaType = "fgaAtRim" | "fgaLowPost" | "fgaMidRange" | "fgaPutBack";
+export type FgMissType =
 	| "missPutBack"
 	| "missAtRim"
 	| "missLowPost"
 	| "missMidRange"
 	| "missTp"
-	| "missFt"
 	| "missTpFake"
 	| "missTipIn";
+export type FgMakeType = // fgAtRim/AndOne, ft,fgPutBack/AndOne excluded because they are handled separately
+
+		| "fgLowPost"
+		| "fgLowPostAndOne"
+		| "fgMidRange"
+		| "fgMidRangeAndOne"
+		| "fgTp"
+		| "fgTpAndOne"
+		| "fgTipIn"
+		| "fgTipInAndOne"; // Wondering, why is there a missTpFake but no fgTpFake?
+type PlayByPlayEventInputScore =
+	| {
+			type: "fgAtRim" | "fgAtRimAndOne";
+			t: TeamNum;
+			pid: number;
+			pidDefense: number;
+			pidAst: number | undefined;
+			clock: number;
+	  }
+	| {
+			type: FgMakeType;
+			t: TeamNum;
+			pid: number;
+			pidAst: number | undefined;
+			clock: number;
+	  }
+	| {
+			type: "ft" | "fgPutBack" | "fgPutBackAndOne";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+	  };
+
 type PlayByPlayEventInputNoScore =
 	| {
-			type: blockType;
+			type:
+				| BlockType
+				| FgaType
+				| FgMissType
+				| "pfNonShooting"
+				| "pfAndOne"
+				| "drb"
+				| "orb"
+				| "foulOut"
+				| "injury"
+				| "jumpBall"
+				| "missFt";
 			t: TeamNum;
 			pid: number;
 			clock: number;
 	  }
 	| {
-			type: "drb";
+			type: "fgaTp" | "fgaTpFake";
 			t: TeamNum;
 			pid: number;
 			clock: number;
+			desperation: boolean;
 	  }
 	| {
-			type: fgaType;
+			type: "fgaTipIn" | "fgTipInAndOne";
 			t: TeamNum;
 			pid: number;
 			clock: number;
-			desperation?: boolean | undefined; // needed for tp/tpFake. undefined for others
-			pidPass?: number | undefined; // needed for tipin. undefined for others
-	  }
-	| {
-			type: "foulOut";
-			t: TeamNum;
-			pid: number;
-			clock: number;
+			pidPass: number;
 	  }
 	| {
 			type: "gameOver";
-	  }
-	| {
-			type: "injury";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "jumpBall";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: fgMissType;
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "orb";
-			t: TeamNum;
-			pid: number;
-			clock: number;
 	  }
 	| {
 			type: "overtime";
@@ -176,36 +89,10 @@ type PlayByPlayEventInputNoScore =
 			period: number;
 	  }
 	| {
-			type: "pfNonShooting";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "pfBonus";
+			type: "pfBonus" | "pfFG" | "pfTP";
 			t: TeamNum;
 			pid: number;
 			pidShooting: number;
-			clock: number;
-	  }
-	| {
-			type: "pfFG";
-			t: TeamNum;
-			pid: number;
-			pidShooting: number;
-			clock: number;
-	  }
-	| {
-			type: "pfTP";
-			t: TeamNum;
-			pid: number;
-			pidShooting: number;
-			clock: number;
-	  }
-	| {
-			type: "pfAndOne";
-			t: TeamNum;
-			pid: number;
 			clock: number;
 	  }
 	| {
@@ -314,7 +201,8 @@ const scoringTypes = [
 	"fgMidRange",
 	"fgMidRangeAndOne",
 	"ft",
-	"tp",
+	"fgTp",
+	"fgTpAndOne",
 ];
 
 const isScoringPlay = (

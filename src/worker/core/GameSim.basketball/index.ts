@@ -6,9 +6,10 @@ import type { GameAttributesLeague, PlayerInjury } from "../../../common/types";
 import GameSimBase from "../GameSimBase";
 import { maxBy, range } from "../../../common/utils";
 import PlayByPlayLogger, {
-	type blockType,
-	type fgaType,
-	type fgMissType,
+	type BlockType,
+	type FgaType,
+	type FgMakeType,
+	type FgMissType,
 } from "./PlayByPlayLogger";
 import getWinner from "../../../common/getWinner";
 
@@ -452,7 +453,7 @@ class GameSim extends GameSimBase {
 			neutralSite: this.neutralSite,
 			// scoringSummary: this.playByPlay.scoringSummary,
 		};
-
+		console.log(this.playByPlay);
 		return out;
 	}
 
@@ -1957,7 +1958,8 @@ class GameSim extends GameSimBase {
 		let probMake;
 		let probMissAndFoul;
 		let type: ShotType;
-		let fgaLogType: fgaType = "fgaTipIn";
+		let fgaLogType: FgaType | "fgaTpFake" | "fgaTp" | "fgaTipIn";
+		const pAst = passer ? this.playersOnCourt[this.o][passer] : undefined;
 		if (tipInFromOutOfBounds && passer !== undefined) {
 			fgaLogType = "fgaTipIn";
 			type = "tipIn";
@@ -2040,21 +2042,33 @@ class GameSim extends GameSimBase {
 					0.34;
 				probAndOne = 0.15;
 			}
-			this.playByPlay.logEvent({
-				type: fgaLogType,
+			const baseLogInformation = {
 				t: this.o,
 				pid: this.team[this.o].player[p].id,
 				clock: this.t,
-				desperation:
-					(fgaLogType as string) === "fgaTp" ||
-					(fgaLogType as string) === "fgaTpFake"
-						? rushed && forceThreePointer
-						: undefined,
-				pidPass:
-					(fgaLogType as string) === "fgaTipIn" && passer
-						? this.team[this.o].player[passer].id
-						: undefined,
-			});
+			};
+			if (
+				fgaLogType === "fgaLowPost" ||
+				fgaLogType === "fgaMidRange" ||
+				fgaLogType === "fgaAtRim"
+			) {
+				this.playByPlay.logEvent({
+					...baseLogInformation,
+					type: fgaLogType,
+				});
+			} else if (fgaLogType === "fgaTp" || fgaLogType === "fgaTpFake") {
+				this.playByPlay.logEvent({
+					...baseLogInformation,
+					type: fgaLogType,
+					desperation: rushed && forceThreePointer,
+				});
+			} else if (fgaLogType === "fgaTipIn" && pAst) {
+				this.playByPlay.logEvent({
+					...baseLogInformation,
+					type: fgaLogType,
+					pidPass: this.team[this.o].player[pAst].id,
+				});
+			}
 			// Better shooting in the ASG, why not?
 			if (this.allStarGame) {
 				probMake += 0.1;
@@ -2148,7 +2162,7 @@ class GameSim extends GameSimBase {
 		// Miss
 		advanceClock();
 		this.recordStat(this.o, p, "fga");
-		let fgMissLogType: fgMissType = "missAtRim"; // Default, should always be set to the right case!
+		let fgMissLogType: FgMissType | undefined = undefined; // Error, why is it complaining it is being used incorrectly?
 		if (type === "tipIn") {
 			this.recordStat(this.o, p, "fgaAtRim");
 			fgMissLogType = "missTipIn";
@@ -2166,8 +2180,13 @@ class GameSim extends GameSimBase {
 			fgMissLogType = "missMidRange";
 		} else if (type === "threePointer") {
 			this.recordStat(this.o, p, "tpa");
-			fgMissLogType = "missTp";
+			fgMissLogType = g.get("threePointers") ? "missTp" : "missTpFake";
+		} else {
+			throw new Error(
+				`Unknown type: ${type} fgMissLogType is set to undefined`,
+			);
 		}
+
 		this.playByPlay.logEvent({
 			type: fgMissLogType,
 			t: this.o,
@@ -2215,20 +2234,24 @@ class GameSim extends GameSimBase {
 		const ratios = this.ratingArray("blocking", this.d, 10);
 		const p2 = this.playersOnCourt[this.d][pickPlayer(ratios)];
 		this.recordStat(this.d, p2, "blk");
-		let logType: blockType = "blkTipIn"; // Default, should always be set to the right case!
+		let blockLogType: BlockType | undefined = undefined;
 		if (type === "tipIn") {
-			logType = "blkTipIn";
+			blockLogType = "blkTipIn";
 		} else if (type === "putBack") {
-			logType = "blkPutBack";
+			blockLogType = "blkPutBack";
 		} else if (type === "lowPost") {
-			logType = "blkLowPost";
+			blockLogType = "blkLowPost";
 		} else if (type === "midRange") {
-			logType = "blkMidRange";
+			blockLogType = "blkMidRange";
 		} else if (type === "threePointer") {
-			logType = "blkTp";
+			blockLogType = "blkTp";
+		} else if (type === "atRim") {
+			blockLogType = "blkAtRim";
+		} else {
+			throw new Error(`Unknown type: ${type} blockLogType is set to undefined`);
 		}
 		this.playByPlay.logEvent({
-			type: logType,
+			type: blockLogType,
 			t: this.d,
 			pid: this.team[this.d].player[p2].id,
 			clock: this.t,
@@ -2268,87 +2291,85 @@ class GameSim extends GameSimBase {
 
 		let pAst;
 		let pidAst;
+		let pidDefense;
 		if (passer !== undefined) {
 			pAst = this.playersOnCourt[this.o][passer];
 			pidAst = this.team[this.o].player[pAst].id;
 		}
-
+		// Randomly pick a name to be dunked on. Used in atRim
+		if (pidFoul !== undefined) {
+			pidDefense = pidFoul;
+		} else {
+			const ratios = this.ratingArray("blocking", this.d, 5);
+			const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
+			pidDefense = this.team[this.d].player[p].id;
+		}
+		let fgMakeLogType:
+			| FgMakeType
+			| "fgPutBackAndOne"
+			| "fgPutBack"
+			| "fgAtRimAndOne"
+			| "fgAtRim";
 		if (type === "tipIn") {
 			this.recordStat(this.o, p, "fgaAtRim");
 			this.recordStat(this.o, p, "fgAtRim");
-			this.playByPlay.logEvent({
-				type: andOne ? "fgTipInAndOne" : "fgTipIn",
-				t: this.o,
-				pid,
-				pidAst,
-				clock: this.t,
-			});
+			fgMakeLogType = andOne ? "fgTipInAndOne" : "fgTipIn";
 		} else if (type === "putBack") {
 			this.recordStat(this.o, p, "fgaAtRim");
 			this.recordStat(this.o, p, "fgAtRim");
-			this.playByPlay.logEvent({
-				type: andOne ? "fgPutBackAndOne" : "fgPutBack",
-				t: this.o,
-				pid,
-				clock: this.t,
-			});
+			fgMakeLogType = andOne ? "fgPutBackAndOne" : "fgPutBack";
 		} else if (type === "atRim") {
-			// Randomly pick a name to be dunked on
-			let pidDefense;
-			if (pidFoul !== undefined) {
-				pidDefense = pidFoul;
-			} else {
-				const ratios = this.ratingArray("blocking", this.d, 5);
-				const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
-				pidDefense = this.team[this.d].player[p].id;
-			}
-
 			this.recordStat(this.o, p, "fgaAtRim");
 			this.recordStat(this.o, p, "fgAtRim");
-			this.playByPlay.logEvent({
-				type: andOne ? "fgAtRimAndOne" : "fgAtRim",
-				t: this.o,
-				pid,
-				pidDefense,
-				pidAst,
-				clock: this.t,
-			});
+			fgMakeLogType = andOne ? "fgAtRimAndOne" : "fgAtRim";
 		} else if (type === "lowPost") {
 			this.recordStat(this.o, p, "fgaLowPost");
 			this.recordStat(this.o, p, "fgLowPost");
-			this.playByPlay.logEvent({
-				type: andOne ? "fgLowPostAndOne" : "fgLowPost",
-				t: this.o,
-				pid,
-				pidAst,
-				clock: this.t,
-			});
+			fgMakeLogType = andOne ? "fgLowPostAndOne" : "fgLowPost";
 		} else if (type === "midRange") {
 			this.recordStat(this.o, p, "fgaMidRange");
 			this.recordStat(this.o, p, "fgMidRange");
-			this.playByPlay.logEvent({
-				type: andOne ? "fgMidRangeAndOne" : "fgMidRange",
-				t: this.o,
-				pid,
-				pidAst,
-				clock: this.t,
-			});
+			fgMakeLogType = andOne ? "fgMidRangeAndOne" : "fgMidRange";
 		} else if (type === "threePointer") {
 			if (g.get("threePointers")) {
 				this.recordStat(this.o, p, "pts"); // Extra point for 3's
 			}
-
 			this.recordStat(this.o, p, "tpa");
 			this.recordStat(this.o, p, "tp");
+			fgMakeLogType = andOne ? "fgTp" : "fgTpAndOne";
+		} else {
+			throw new Error(
+				`Unknown type: ${type} fgMakeLogType is set to undefined`,
+			);
+		}
+		const baseLogInformation = {
+			t: this.o,
+			pid,
+			clock: this.t,
+		};
+		// assign correct log events
+		if (fgMakeLogType === "fgPutBackAndOne" || fgMakeLogType === "fgPutBack") {
 			this.playByPlay.logEvent({
-				type: andOne ? "tpAndOne" : "tp",
-				t: this.o,
-				pid,
+				...baseLogInformation,
+				type: fgMakeLogType,
+			});
+		} else if (
+			fgMakeLogType === "fgAtRimAndOne" ||
+			fgMakeLogType === "fgAtRim"
+		) {
+			this.playByPlay.logEvent({
+				...baseLogInformation,
+				type: fgMakeLogType,
+				pidDefense,
 				pidAst,
-				clock: this.t,
+			});
+		} else {
+			this.playByPlay.logEvent({
+				...baseLogInformation,
+				type: fgMakeLogType,
+				pidAst,
 			});
 		}
-
 		this.recordLastScore(this.o, p, type);
 
 		if (pAst !== undefined) {
@@ -2691,24 +2712,24 @@ class GameSim extends GameSimBase {
 		const fouler = info.fouler ?? pickPlayer(this.ratingArray("fouling", t));
 		const p = this.playersOnCourt[t][fouler];
 		this.recordStat(t, p, "pf");
-
+		const baseLogInformation = {
+			t,
+			pid: this.team[t].player[p].id,
+			clock: this.t,
+		};
 		if (info.type === "pfNonShooting" || info.type === "pfAndOne") {
 			this.playByPlay.logEvent({
+				...baseLogInformation,
 				type: info.type,
-				t,
-				pid: this.team[t].player[p].id,
-				clock: this.t,
 			});
 		} else {
 			this.playByPlay.logEvent({
+				...baseLogInformation,
 				type: info.type,
-				t,
-				pid: this.team[t].player[p].id,
 				pidShooting:
 					this.team[this.o].player[
 						this.playersOnCourt[this.o][(info as any).shooter]
 					].id,
-				clock: this.t,
 			});
 		}
 

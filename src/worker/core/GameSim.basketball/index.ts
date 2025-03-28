@@ -2230,7 +2230,7 @@ class GameSim extends GameSimBase {
 		const ratios = this.ratingArray("blocking", this.d, 10);
 		const p2 = this.playersOnCourt[this.d][pickPlayer(ratios)];
 		this.recordStat(this.d, p2, "blk");
-		let blockLogType: BlockType | undefined = undefined;
+		let blockLogType: BlockType | undefined;
 		if (type === "tipIn") {
 			blockLogType = "blkTipIn";
 		} else if (type === "putBack") {

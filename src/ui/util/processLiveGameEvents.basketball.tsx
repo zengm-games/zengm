@@ -3,7 +3,6 @@ import { choice } from "../../common/random";
 import { helpers, local } from ".";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim.basketball/PlayByPlayLogger";
 import type { ReactNode } from "react";
-
 const getPronoun = (pronoun: Parameters<typeof helpers.pronoun>[1]) => {
 	return helpers.pronoun(local.getState().gender, pronoun);
 };
@@ -22,17 +21,71 @@ let playersByPid:
 const getName = (pid: number) => {
 	return playersByPid?.[pid]?.name ?? "???";
 };
+type StatRecordedType = {
+	type: (typeof statRecordedTypes)[number];
+	pid: number;
+	pidAst: number | undefined;
+	t: 0 | 1;
+};
+// We use this type for display on the logger
+const statRecordedTypes = [
+	"fgLowPost",
+	"fgLowPostAndOne",
+	"fgMidRange",
+	"fgMidRangeAndOne",
+	"fgTp",
+	"fgTpAndOne",
+	"fgTipIn",
+	"fgTipInAndOne",
+	"fgAtRim",
+	"fgAtRimAndOne",
+	"ft",
+	"fgPutBack",
+	"fgPutBackAndOne",
+	"blkAtRim",
+	"blkLowPost",
+	"blkMidRange",
+	"blkTp",
+	"blkTipIn",
+	"blkPutBack",
+	"pfNonShooting",
+	"pfAndOne",
+	"drb",
+	"orb",
+	"tov",
+	"stl",
+] as const;
 
+const getPlayerStatsFromBoxScore = (
+	pid: number,
+	team: { pts: number; players: any[] },
+) => {
+	return team.players.find((p) => p.pid === pid);
+};
 export const getText = (
 	event: PlayByPlayEvent,
 	boxScore: {
 		numPeriods: number;
-		teams: [{ pts: number }, { pts: number }];
+		teams: [{ pts: number; players: any[] }, { pts: number; players: any[] }];
 	},
 ) => {
 	let texts: ReactNode[] | undefined;
 	let weights;
-
+	let playerStats;
+	let assistPlayerStats;
+	if (
+		statRecordedTypes.includes(event.type as (typeof statRecordedTypes)[number])
+	) {
+		const statEvent = event as StatRecordedType; // Can cast as there is a type guard above
+		const team = statEvent.t === 1 ? boxScore.teams[0] : boxScore.teams[1];
+		// Team ID is inversed; need to switch. Probably boxScore changes it based on who's on offense.
+		playerStats = getPlayerStatsFromBoxScore(statEvent.pid, team);
+		if (statEvent.pidAst !== undefined) {
+			assistPlayerStats = getPlayerStatsFromBoxScore(statEvent.pidAst, team);
+		}
+		console.log(playerStats, assistPlayerStats);
+		// Now that we have the player stats, we can use them to generate the text
+	}
 	if (event.type === "period") {
 		texts = [
 			`Start of ${helpers.ordinal(event.period)} ${getPeriodName(

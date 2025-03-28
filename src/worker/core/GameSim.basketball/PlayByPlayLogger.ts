@@ -13,7 +13,6 @@ export type FgMissType =
 	| "missLowPost"
 	| "missMidRange"
 	| "missTp"
-	| "missTpFake"
 	| "missTipIn";
 export type FgMakeType = // fgAtRim/AndOne, ft,fgPutBack/AndOne excluded because they are handled separately
 
@@ -21,10 +20,10 @@ export type FgMakeType = // fgAtRim/AndOne, ft,fgPutBack/AndOne excluded because
 		| "fgLowPostAndOne"
 		| "fgMidRange"
 		| "fgMidRangeAndOne"
-		| "fgTp"
-		| "fgTpAndOne"
+		| "tp"
+		| "tpAndOne"
 		| "fgTipIn"
-		| "fgTipInAndOne"; // Wondering, why is there a missTpFake but no fgTpFake?
+		| "fgTipInAndOne";
 type PlayByPlayEventInputScore =
 	| {
 			type: "fgAtRim" | "fgAtRimAndOne";

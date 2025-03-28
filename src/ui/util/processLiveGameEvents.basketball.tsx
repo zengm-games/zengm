@@ -144,13 +144,13 @@ export const getText = (
 	} else if (
 		event.type === "fgLowPost" ||
 		event.type === "fgMidRange" ||
-		event.type === "fgTp"
+		event.type === "tp"
 	) {
 		texts = ["It's good!"];
 	} else if (
 		event.type === "fgLowPostAndOne" ||
 		event.type === "fgMidRangeAndOne" ||
-		event.type === "fgTpAndOne"
+		event.type === "tpAndOne"
 	) {
 		texts = ["It's good, and a foul!"];
 	} else if (

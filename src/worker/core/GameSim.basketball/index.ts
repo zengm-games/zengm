@@ -2178,11 +2178,9 @@ class GameSim extends GameSimBase {
 			fgMissLogType = "missMidRange";
 		} else if (type === "threePointer") {
 			this.recordStat(this.o, p, "tpa");
-			fgMissLogType = g.get("threePointers") ? "missTp" : "missTpFake";
+			fgMissLogType = "missTp";
 		} else {
-			throw new Error(
-				`Unknown type: ${type} fgMissLogType is set to undefined`,
-			);
+			throw new Error(`Should never happen ${fgMissLogType}`);
 		}
 
 		this.playByPlay.logEvent({
@@ -2246,7 +2244,7 @@ class GameSim extends GameSimBase {
 		} else if (type === "atRim") {
 			blockLogType = "blkAtRim";
 		} else {
-			throw new Error(`Unknown type: ${type} blockLogType is set to undefined`);
+			throw new Error(`Should never happen ${type}`);
 		}
 		this.playByPlay.logEvent({
 			type: blockLogType,
@@ -2334,11 +2332,9 @@ class GameSim extends GameSimBase {
 			}
 			this.recordStat(this.o, p, "tpa");
 			this.recordStat(this.o, p, "tp");
-			fgMakeLogType = andOne ? "fgTp" : "fgTpAndOne";
+			fgMakeLogType = andOne ? "tp" : "tpAndOne";
 		} else {
-			throw new Error(
-				`Unknown type: ${type} fgMakeLogType is set to undefined`,
-			);
+			throw new Error(`Unknown type: ${type}`);
 		}
 		const baseLogInformation = {
 			t: this.o,

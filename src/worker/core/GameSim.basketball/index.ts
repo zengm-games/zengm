@@ -2118,12 +2118,10 @@ class GameSim extends GameSimBase {
 				const upperBound = 0.03;
 				const lowerBound = -0.015;
 				const p = this.playersOnCourt[this.o][passer];
-				// 100 / 5000 -> 0.02, 50 -> 0.01, 0 -> 0
 				const passAtr =
-					this.team[this.o].player[p].compositeRating.passing / 5000;
-				const passRating =
-					Math.random() * (upperBound - lowerBound) + lowerBound;
-				return passRating + passAtr;
+					this.team[this.o].player[p].compositeRating.passing / 100;
+				const passRating = lowerBound + passAtr * (upperBound - lowerBound);
+				return passRating;
 			};
 
 			// Assisted shots are easier

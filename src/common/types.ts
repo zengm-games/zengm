@@ -961,6 +961,7 @@ export type MoodComponents = {
 	playingTime: number;
 	rookieContract: number;
 	difficulty: number;
+	relatives: number;
 	custom?: {
 		text: string;
 		amount: number;

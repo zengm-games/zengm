@@ -108,6 +108,7 @@ const moodComponents = async (
 		playingTime: 0,
 		rookieContract: 0,
 		difficulty: 0,
+		relatives: 0,
 	};
 
 	if (p.customMoodItems) {
@@ -312,6 +313,20 @@ const moodComponents = async (
 			p.tid === PLAYER.UNDRAFTED
 		) {
 			components.rookieContract = 8;
+		}
+	}
+
+	{
+		// Relatives
+		if (p.relatives.length > 0) {
+			const relativePids = new Set(p.relatives.map((relative) => relative.pid));
+			const players = await idb.cache.players.indexGetAll("playersByTid", [
+				PLAYER.FREE_AGENT,
+				tid,
+			]);
+			const teamPids = new Set(players.map((p) => p.pid));
+			const relativesOnTeam = teamPids.intersection(relativePids);
+			components.relatives = 2 * relativesOnTeam.size;
 		}
 	}
 

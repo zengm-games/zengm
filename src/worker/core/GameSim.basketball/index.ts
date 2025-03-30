@@ -2287,18 +2287,9 @@ class GameSim extends GameSimBase {
 
 		let pAst;
 		let pidAst;
-		let pidDefense;
 		if (passer !== undefined) {
 			pAst = this.playersOnCourt[this.o][passer];
 			pidAst = this.team[this.o].player[pAst].id;
-		}
-		// Randomly pick a name to be dunked on. Used in atRim
-		if (pidFoul !== undefined) {
-			pidDefense = pidFoul;
-		} else {
-			const ratios = this.ratingArray("blocking", this.d, 5);
-			const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
-			pidDefense = this.team[this.d].player[p].id;
 		}
 		let fgMakeLogType: FgMakeType | undefined;
 		if (type === "tipIn") {
@@ -2346,6 +2337,16 @@ class GameSim extends GameSimBase {
 			fgMakeLogType === "fgAtRimAndOne" ||
 			fgMakeLogType === "fgAtRim"
 		) {
+			let pidDefense;
+			// Randomly pick a name to be dunked on
+			if (pidFoul !== undefined) {
+				pidDefense = pidFoul;
+			} else {
+				const ratios = this.ratingArray("blocking", this.d, 5);
+				const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
+				pidDefense = this.team[this.d].player[p].id;
+			}
+
 			this.playByPlay.logEvent({
 				...baseLogInformation,
 				type: fgMakeLogType,

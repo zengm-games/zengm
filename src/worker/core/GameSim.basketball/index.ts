@@ -2300,12 +2300,7 @@ class GameSim extends GameSimBase {
 			const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
 			pidDefense = this.team[this.d].player[p].id;
 		}
-		let fgMakeLogType:
-			| FgMakeType
-			| "fgPutBackAndOne"
-			| "fgPutBack"
-			| "fgAtRimAndOne"
-			| "fgAtRim";
+		let fgMakeLogType: FgMakeType | undefined;
 		if (type === "tipIn") {
 			this.recordStat(this.o, p, "fgaAtRim");
 			this.recordStat(this.o, p, "fgAtRim");

@@ -2068,7 +2068,7 @@ class GameSim extends GameSimBase {
 				type: fgaLogType,
 				desperation: rushed && forceThreePointer,
 			});
-		} else if (fgaLogType === "fgaTipIn" && pAst) {
+		} else if (fgaLogType === "fgaTipIn" && pAst !== undefined) {
 			this.playByPlay.logEvent({
 				...baseLogInformation,
 				type: fgaLogType,

@@ -1,8 +1,39 @@
 type TeamNum = 0 | 1;
+export type BlockType =
+	| "blkAtRim"
+	| "blkLowPost"
+	| "blkMidRange"
+	| "blkTp"
+	| "blkTipIn"
+	| "blkPutBack";
+export type FgaType = "fgaAtRim" | "fgaLowPost" | "fgaMidRange" | "fgaPutBack";
+export type FgMissType =
+	| "missPutBack"
+	| "missAtRim"
+	| "missLowPost"
+	| "missMidRange"
+	| "missTp"
+	| "missTipIn";
+export type FgMakeNormalType = // fgAtRim/AndOne, ft,fgPutBack/AndOne excluded because they are handled separately
 
+		| "fgLowPost"
+		| "fgLowPostAndOne"
+		| "fgMidRange"
+		| "fgMidRangeAndOne"
+		| "tp"
+		| "tpAndOne"
+		| "fgTipIn"
+		| "fgTipInAndOne";
+
+export type FgMakeWithoutAstType = "ft" | "fgPutBack" | "fgPutBackAndOne";
+export type FgMakeWithDefenderType = "fgAtRimAndOne" | "fgAtRim";
+export type FgMakeType =
+	| FgMakeNormalType
+	| FgMakeWithoutAstType
+	| FgMakeWithDefenderType;
 type PlayByPlayEventInputScore =
 	| {
-			type: "fgAtRim";
+			type: FgMakeWithDefenderType;
 			t: TeamNum;
 			pid: number;
 			pidDefense: number;
@@ -10,83 +41,14 @@ type PlayByPlayEventInputScore =
 			clock: number;
 	  }
 	| {
-			type: "fgAtRimAndOne";
-			t: TeamNum;
-			pid: number;
-			pidDefense: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "fgLowPost";
+			type: FgMakeNormalType;
 			t: TeamNum;
 			pid: number;
 			pidAst: number | undefined;
 			clock: number;
 	  }
 	| {
-			type: "fgLowPostAndOne";
-			t: TeamNum;
-			pid: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "fgMidRange";
-			t: TeamNum;
-			pid: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "fgMidRangeAndOne";
-			t: TeamNum;
-			pid: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "ft";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "tp";
-			t: TeamNum;
-			pid: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "tpAndOne";
-			t: TeamNum;
-			pid: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "fgTipIn";
-			t: TeamNum;
-			pid: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "fgTipInAndOne";
-			t: TeamNum;
-			pid: number;
-			pidAst: number | undefined;
-			clock: number;
-	  }
-	| {
-			type: "fgPutBack";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "fgPutBackAndOne";
+			type: FgMakeWithoutAstType;
 			t: TeamNum;
 			pid: number;
 			clock: number;
@@ -94,160 +56,38 @@ type PlayByPlayEventInputScore =
 
 type PlayByPlayEventInputNoScore =
 	| {
-			type: "blkTipIn";
+			type:
+				| BlockType
+				| FgaType
+				| FgMissType
+				| "pfNonShooting"
+				| "pfAndOne"
+				| "drb"
+				| "orb"
+				| "foulOut"
+				| "injury"
+				| "jumpBall"
+				| "missFt";
 			t: TeamNum;
 			pid: number;
 			clock: number;
 	  }
 	| {
-			type: "blkPutBack";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "blkAtRim";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "blkLowPost";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "blkMidRange";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "blkTp";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "drb";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "fgaAtRim";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "fgaLowPost";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "fgaMidRange";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "fgaTp";
+			type: "fgaTp" | "fgaTpFake";
 			t: TeamNum;
 			pid: number;
 			clock: number;
 			desperation: boolean;
 	  }
 	| {
-			type: "fgaTpFake";
+			type: "fgaTipIn" | "fgTipInAndOne";
 			t: TeamNum;
 			pid: number;
 			clock: number;
-			desperation: boolean;
-	  }
-	| {
-			type: "fgaTipIn";
-			t: TeamNum;
-			pid: number;
 			pidPass: number;
-			clock: number;
-	  }
-	| {
-			type: "fgaPutBack";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "foulOut";
-			t: TeamNum;
-			pid: number;
-			clock: number;
 	  }
 	| {
 			type: "gameOver";
-	  }
-	| {
-			type: "injury";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "jumpBall";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "missTipIn";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "missPutBack";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "missAtRim";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "missFt";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "missLowPost";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "missMidRange";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "missTp";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "orb";
-			t: TeamNum;
-			pid: number;
-			clock: number;
 	  }
 	| {
 			type: "overtime";
@@ -255,36 +95,10 @@ type PlayByPlayEventInputNoScore =
 			period: number;
 	  }
 	| {
-			type: "pfNonShooting";
-			t: TeamNum;
-			pid: number;
-			clock: number;
-	  }
-	| {
-			type: "pfBonus";
+			type: "pfBonus" | "pfFG" | "pfTP";
 			t: TeamNum;
 			pid: number;
 			pidShooting: number;
-			clock: number;
-	  }
-	| {
-			type: "pfFG";
-			t: TeamNum;
-			pid: number;
-			pidShooting: number;
-			clock: number;
-	  }
-	| {
-			type: "pfTP";
-			t: TeamNum;
-			pid: number;
-			pidShooting: number;
-			clock: number;
-	  }
-	| {
-			type: "pfAndOne";
-			t: TeamNum;
-			pid: number;
 			clock: number;
 	  }
 	| {
@@ -385,7 +199,7 @@ export type PlayByPlayEvent =
 			boxScore: any;
 	  };
 
-const scoringTypes = [
+const scoringTypes = new Set([
 	"fgAtRim",
 	"fgAtRimAndOne",
 	"fgLowPost",
@@ -394,12 +208,13 @@ const scoringTypes = [
 	"fgMidRangeAndOne",
 	"ft",
 	"tp",
-];
+	"tpAndOne",
+]);
 
 const isScoringPlay = (
 	event: PlayByPlayEventInput,
 ): event is PlayByPlayEventInputScore => {
-	return scoringTypes.includes(event.type);
+	return scoringTypes.has(event.type);
 };
 
 class PlayByPlayLogger {

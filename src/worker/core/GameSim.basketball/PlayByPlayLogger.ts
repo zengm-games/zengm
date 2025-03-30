@@ -199,7 +199,7 @@ export type PlayByPlayEvent =
 			boxScore: any;
 	  };
 
-const scoringTypes = new Set([
+const scoringTypes: Set<PlayByPlayEventInput["type"]> = new Set([
 	"fgAtRim",
 	"fgAtRimAndOne",
 	"fgLowPost",
@@ -209,7 +209,7 @@ const scoringTypes = new Set([
 	"ft",
 	"tp",
 	"tpAndOne",
-]);
+] satisfies PlayByPlayEventInputScore["type"][]);
 
 const isScoringPlay = (
 	event: PlayByPlayEventInput,

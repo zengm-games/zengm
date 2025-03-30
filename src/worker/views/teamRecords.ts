@@ -238,9 +238,9 @@ const getRowInfo = (
 	let playoffs = 0;
 	let finals = 0;
 	let titles = 0;
-	let lastPlayoffs: number | undefined = undefined;
-	let lastFinals: number | undefined = undefined;
-	let lastTitle: number | undefined = undefined;
+	let lastPlayoffs: number | undefined;
+	let lastFinals: number | undefined;
+	let lastTitle: number | undefined;
 	for (const record of seasonAttrs) {
 		const numRounds = g.get("numGamesPlayoffSeries", record.season).length;
 		if (record.playoffRoundsWon >= 0) {

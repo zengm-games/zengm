@@ -2294,6 +2294,9 @@ class GameSim extends GameSimBase {
 			pAst = this.playersOnCourt[this.o][passer];
 			pidAst = this.team[this.o].player[pAst].id;
 		}
+		if (pAst !== undefined) {
+			this.recordStat(this.o, pAst, "ast");
+		}
 		// Randomly pick a name to be dunked on. Used in atRim
 		if (pidFoul !== undefined) {
 			pidDefense = pidFoul;
@@ -2369,10 +2372,6 @@ class GameSim extends GameSimBase {
 			});
 		}
 		this.recordLastScore(this.o, p, type);
-
-		if (pAst !== undefined) {
-			this.recordStat(this.o, pAst, "ast");
-		}
 
 		if (andOne && !this.elamDone) {
 			this.doPf({ t: this.d, type: "pfAndOne", shooter, fouler });

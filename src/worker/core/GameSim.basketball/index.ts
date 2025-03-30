@@ -2112,15 +2112,14 @@ class GameSim extends GameSimBase {
 
 			/* 
 				To calculate the upper bound, we take Ast / Potential Ast to get conversion rate for shots
-				Then we compare this to the teams FG% for the best shooters. The avg seems to be around 4% higher.
-				The number is scaled down a bit, as to not affect shot probability too much
+				Then we compare this to the teams FG% for the best shooters. The avg seems to be around ~7-8% higher.
 				https://www.nba.com/stats/players/passing?dir=D&sort=POTENTIAL_AST
 
 				We want the % chance for better shot to be a higher number, as there are ~ 1.5-2 AST/TOV ratio for NBA teams
 				https://www.basketball-reference.com/leagues/NBA_2025.html#per_game-team
 			*/
 			const passQuality = (passer: number): number => {
-				const upperBound = 0.03;
+				const upperBound = 0.08;
 				const lowerBound = -0.015;
 				const p = this.playersOnCourt[this.o][passer];
 				const passAtr = this.team[this.o].player[p].compositeRating.passing;

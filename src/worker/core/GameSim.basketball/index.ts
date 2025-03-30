@@ -2320,7 +2320,7 @@ class GameSim extends GameSimBase {
 			this.recordStat(this.o, p, "tp");
 			fgMakeLogType = andOne ? "tp" : "tpAndOne";
 		} else {
-			throw new Error(`Unknown type: ${type}`);
+			throw new Error(`Should never happen ${type}`);
 		}
 		const baseLogInformation = {
 			t: this.o,

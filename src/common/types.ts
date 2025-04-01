@@ -205,9 +205,10 @@ export type DraftPickWithoutKey = {
 	tid: number;
 	originalTid: number;
 	round: number;
-	pick: number;
-	// 0 if not set
+	pick: number; // 0 if not set
 	season: DraftPickSeason;
+	note?: string;
+	noteBool?: 1; // Keep in sync with note - for indexing
 };
 
 export type DraftPick = {
@@ -354,6 +355,8 @@ export type Game = {
 		sPts?: number;
 	};
 	neutralSite?: boolean;
+	note?: string;
+	noteBool?: 1; // Keep in sync with note - for indexing
 	numGamesToWinSeries?: number;
 	numPeriods?: number; // Optional only for legacy, otherwise it's the number of periods in the game, defined at the start
 	numPlayersOnCourt?: number;

@@ -1,11 +1,14 @@
 import { getAll, idb } from "..";
 import { mergeByPk } from "./helpers";
 import type { Game, GetCopyType } from "../../../common/types";
+import { helpers } from "../../util";
 
 const getCopies = async (
 	{
+		gid,
 		season,
 	}: {
+		gid?: number;
 		season?: number;
 	} = {},
 	type?: GetCopyType,
@@ -22,6 +25,20 @@ const getCopies = async (
 			"games",
 			type,
 		);
+	}
+
+	if (gid !== undefined) {
+		const game = await idb.cache.games.get(gid);
+		if (game) {
+			return [type === "noCopyCache" ? game : helpers.deepCopy(game)];
+		}
+
+		const game2 = await idb.league.get("games", gid);
+		if (game2) {
+			return [game2];
+		}
+
+		return [];
 	}
 
 	return mergeByPk(

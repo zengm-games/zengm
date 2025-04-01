@@ -3,22 +3,32 @@ import { toWorker } from "../../util";
 
 const MAX_WIDTH = 600;
 
+export type NoteInfo =
+	| {
+			type: "draftPick";
+			dpid: number;
+	  }
+	| {
+			type: "game";
+			gid: number;
+	  }
+	| {
+			type: "player";
+			pid: number;
+	  }
+	| {
+			type: "teamSeason";
+			tid: number;
+			season: number;
+	  };
+
 const Note = ({
 	note,
 	info,
 	infoLink,
 }: {
 	note: string | undefined;
-	info:
-		| {
-				type: "player";
-				pid: number;
-		  }
-		| {
-				type: "teamSeason";
-				tid: number;
-				season: number;
-		  };
+	info: NoteInfo;
 	infoLink?: ReactNode;
 }) => {
 	const [editing, setEditing] = useState(false);
@@ -29,18 +39,10 @@ const Note = ({
 			<form
 				onSubmit={async (event) => {
 					event.preventDefault();
-					if (info.type === "player") {
-						await toWorker("main", "setPlayerNote", {
-							pid: info.pid,
-							note: editedNote,
-						});
-					} else {
-						await toWorker("main", "setTeamNote", {
-							tid: info.tid,
-							season: info.season,
-							note: editedNote,
-						});
-					}
+					await toWorker("main", "setNote", {
+						...info,
+						editedNote,
+					});
 					setEditing(false);
 				}}
 			>

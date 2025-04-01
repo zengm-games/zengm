@@ -140,6 +140,7 @@ import { getStats } from "../../common/advancedPlayerSearch";
 import type { LookingFor } from "../core/trade/makeItWork";
 import type { LookingForState } from "../../ui/views/TradingBlock/useLookingForState";
 import { getPlayer } from "../views/player";
+import type { NoteInfo } from "../../ui/views/Player/Note";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -3342,61 +3343,58 @@ const setLocal = async <T extends keyof Local>([key, value]: [T, Local[T]]) => {
 	}
 };
 
-const setPlayerNote = async ({ pid, note }: { pid: number; note: string }) => {
-	const p = await idb.getCopy.players(
-		{
-			pid,
-		},
-		"noCopyCache",
-	);
-
-	if (p) {
-		if (note === "") {
-			delete p.note;
-			delete p.noteBool;
-		} else {
-			p.note = note;
-			p.noteBool = 1;
-		}
-		await idb.cache.players.put(p);
+const setNote = async (info: NoteInfo & { editedNote: string }) => {
+	let cacheStore;
+	let object;
+	let updateEvents: UpdateEvents;
+	if (info.type === "draftPick") {
+		cacheStore = idb.cache.draftPicks;
+		object = await idb.cache.draftPicks.get(info.dpid);
+		updateEvents = ["???"];
+	} else if (info.type === "game") {
+		cacheStore = idb.cache.games;
+		object = await idb.getCopy.games(
+			{
+				gid: info.gid,
+			},
+			"noCopyCache",
+		);
+		updateEvents = ["???"];
+	} else if (info.type === "player") {
+		cacheStore = idb.cache.players;
+		object = await idb.getCopy.players(
+			{
+				pid: info.pid,
+			},
+			"noCopyCache",
+		);
+		updateEvents = ["playerMovement"];
 	} else {
-		throw new Error("Invalid pid");
+		cacheStore = idb.cache.teamSeasons;
+		object = await idb.getCopy.teamSeasons(
+			{
+				tid: info.tid,
+				season: info.season,
+			},
+			"noCopyCache",
+		);
+		updateEvents = ["team"];
 	}
 
-	await toUI("realtimeUpdate", [["playerMovement"]]);
-};
-
-const setTeamNote = async ({
-	tid,
-	season,
-	note,
-}: {
-	tid: number;
-	season: number;
-	note: string;
-}) => {
-	const ts = await idb.getCopy.teamSeasons(
-		{
-			tid,
-			season,
-		},
-		"noCopyCache",
-	);
-
-	if (ts) {
-		if (note === "") {
-			delete ts.note;
-			delete ts.noteBool;
+	if (object) {
+		if (info.editedNote === "") {
+			delete object.note;
+			delete object.noteBool;
 		} else {
-			ts.note = note;
-			ts.noteBool = 1;
+			object.note = info.editedNote;
+			object.noteBool = 1;
 		}
-		await idb.cache.teamSeasons.put(ts);
+		await cacheStore.put(object as any);
 	} else {
-		throw new Error("Invalid tid/season");
+		throw new Error("Invalid object");
 	}
 
-	await toUI("realtimeUpdate", [["team"]]);
+	await toUI("realtimeUpdate", [updateEvents]);
 };
 
 const sign = async ({
@@ -4790,8 +4788,7 @@ export default {
 		setForceWinAll,
 		setGOATFormula,
 		setLocal,
-		setPlayerNote,
-		setTeamNote,
+		setNote,
 		setSavedTrade,
 		sign,
 		updateExpansionDraftSetup,

@@ -33,8 +33,33 @@ const Notes = (props: View<"notes">) => {
 		);
 
 		const output = getDraftPicksColsAndRows({ challengeNoRatings, draftPicks });
-		cols = output.cols;
+		cols = [
+			...output.cols,
+			...getCols([""], {
+				"": {
+					noSearch: true,
+					sortSequence: [],
+				},
+			}),
+		];
 		rows = output.rows;
+
+		for (const row of rows) {
+			row.data.push(
+				<button
+					className="btn btn-danger"
+					onClick={async () => {
+						await toWorker("main", "setNote", {
+							type: "draftPick",
+							dpid: row.key as any,
+							editedNote: "",
+						});
+					}}
+				>
+					Delete
+				</button>,
+			);
+		}
 	} else if (props.type === "game") {
 		cols = [];
 		rows = [];
@@ -183,6 +208,7 @@ const Notes = (props: View<"notes">) => {
 				defaultSort={[0, "asc"]}
 				defaultStickyCols={1}
 				name="TeamNotes"
+				pagination
 				rows={rows}
 			/>
 		</>

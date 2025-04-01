@@ -1840,6 +1840,7 @@ export type UpdateEvents = (
 	| "gameSim"
 	| "leagues"
 	| "newPhase"
+	| "notes"
 	| "options"
 	| "playerMovement"
 	| "playoffs"

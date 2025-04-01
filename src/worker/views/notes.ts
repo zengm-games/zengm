@@ -11,7 +11,7 @@ const updateNotes = async (
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
-		updateEvents.includes("team") ||
+		updateEvents.includes("notes") ||
 		type !== state.type
 	) {
 		const teamSeasons = await idb.getCopies.teamSeasons(

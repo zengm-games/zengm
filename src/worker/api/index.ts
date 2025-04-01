@@ -433,20 +433,28 @@ const clearInjuries = async (pid: number[] | "all") => {
 	await recomputeLocalUITeamOvrs();
 };
 
-const clearTeamNotes = async () => {
-	const teamSeasons = await idb.getCopies.teamSeasons(
+const noteUpdateEvents: Record<NoteInfo["type"], UpdateEvents> = {
+	draftPick: ["notes", "playerMovement"],
+	game: ["notes"],
+	player: ["notes", "playerMovement"],
+	teamSeason: ["notes", "team"],
+};
+
+const clearNotes = async (type: NoteInfo["type"]) => {
+	const storeName = `${type}s` as const;
+	const rows = await idb.getCopies[storeName](
 		{
 			note: true,
 		},
 		"noCopyCache",
 	);
-	for (const ts of teamSeasons) {
-		delete ts.note;
-		delete ts.noteBool;
-		await idb.cache.teamSeasons.put(ts);
+	for (const row of rows) {
+		delete row.note;
+		delete row.noteBool;
+		await idb.cache[storeName].put(row as any);
 	}
 
-	await toUI("realtimeUpdate", [["team"]]);
+	await toUI("realtimeUpdate", [noteUpdateEvents[type]]);
 };
 
 const clearWatchList = async (type: "all" | number) => {
@@ -3346,11 +3354,9 @@ const setLocal = async <T extends keyof Local>([key, value]: [T, Local[T]]) => {
 const setNote = async (info: NoteInfo & { editedNote: string }) => {
 	let cacheStore;
 	let object;
-	let updateEvents: UpdateEvents | undefined;
 	if (info.type === "draftPick") {
 		cacheStore = idb.cache.draftPicks;
 		object = await idb.cache.draftPicks.get(info.dpid);
-		updateEvents = ["playerMovement"];
 	} else if (info.type === "game") {
 		cacheStore = idb.cache.games;
 		object = await idb.getCopy.games(
@@ -3367,7 +3373,6 @@ const setNote = async (info: NoteInfo & { editedNote: string }) => {
 			},
 			"noCopyCache",
 		);
-		updateEvents = ["playerMovement"];
 	} else {
 		cacheStore = idb.cache.teamSeasons;
 		object = await idb.getCopy.teamSeasons(
@@ -3377,7 +3382,6 @@ const setNote = async (info: NoteInfo & { editedNote: string }) => {
 			},
 			"noCopyCache",
 		);
-		updateEvents = ["team"];
 	}
 
 	if (object) {
@@ -3393,9 +3397,7 @@ const setNote = async (info: NoteInfo & { editedNote: string }) => {
 		throw new Error("Invalid object");
 	}
 
-	if (updateEvents) {
-		await toUI("realtimeUpdate", [updateEvents]);
-	}
+	await toUI("realtimeUpdate", [noteUpdateEvents[info.type]]);
 };
 
 const sign = async ({
@@ -4708,7 +4710,7 @@ export default {
 		checkParticipationAchievement,
 		clearInjuries,
 		clearSavedTrades,
-		clearTeamNotes,
+		clearNotes,
 		clearTrade,
 		clearWatchList,
 		countNegotiations,

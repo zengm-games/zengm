@@ -51,7 +51,7 @@ const getCopies = async (
 				// undefined for key returns all of the players with noteBool, since the ones without noteBool are not included in this index
 				.getAll(),
 			await idb.cache.games.getAll(),
-			"teamSeasons",
+			"games",
 			type,
 		).filter((row) => row.noteBool === 1);
 	}

@@ -27,7 +27,7 @@ const Notes = (props: View<"notes">) => {
 
 		infoText = (
 			<>
-				Add notes to new draft picks from the{" "}
+				Add notes to draft picks from the{" "}
 				<a href={helpers.leagueUrl(["draft_picks"])}>Draft Picks page</a>.
 			</>
 		);
@@ -61,8 +61,93 @@ const Notes = (props: View<"notes">) => {
 			);
 		}
 	} else if (props.type === "game") {
-		cols = [];
-		rows = [];
+		const { games } = props;
+
+		infoText = (
+			<>
+				Add notes to games at{" "}
+				<a href={helpers.leagueUrl(["game_log"])}>
+					the bottom of any box score
+				</a>
+				.
+			</>
+		);
+
+		cols = getCols(
+			["Season", "Playoffs", "Home", "Away", "Score", "Note", ""],
+			{
+				Note: {
+					width: "100%",
+				},
+				"": {
+					noSearch: true,
+					sortSequence: [],
+				},
+			},
+		);
+
+		rows = games.map((game) => {
+			return {
+				key: game.gid,
+				data: [
+					game.season,
+					"Playoffs",
+					<a
+						href={helpers.leagueUrl([
+							"roster",
+							`${game.home.abbrev}_${game.home.tid}`,
+							game.season,
+						])}
+					>
+						{game.home.abbrev}
+					</a>,
+					<a
+						href={helpers.leagueUrl([
+							"roster",
+							`${game.away.abbrev}_${game.away.tid}`,
+							game.season,
+						])}
+					>
+						{game.away.abbrev}
+					</a>,
+					<a
+						href={helpers.leagueUrl([
+							"game_log",
+							`${game.home.abbrev}_${game.home.tid}`,
+							game.season,
+							game.gid,
+						])}
+					>
+						Score
+					</a>,
+					{
+						value: (
+							<Note
+								note={game.note}
+								info={{
+									type: "game",
+									gid: game.gid,
+								}}
+							/>
+						),
+						searchValue: game.note,
+						sortValue: game.note,
+					},
+					<button
+						className="btn btn-danger"
+						onClick={async () => {
+							await toWorker("main", "setNote", {
+								type: "game",
+								gid: game.gid,
+								editedNote: "",
+							});
+						}}
+					>
+						Delete
+					</button>,
+				],
+			};
+		});
 	} else if (props.type === "player") {
 		cols = [];
 		rows = [];
@@ -71,7 +156,7 @@ const Notes = (props: View<"notes">) => {
 
 		infoText = (
 			<>
-				Add notes to new team seasons from the{" "}
+				Add notes to team seasons from the{" "}
 				<a href={helpers.leagueUrl(["roster"])}>Roster page</a>.
 			</>
 		);

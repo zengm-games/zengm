@@ -1,7 +1,17 @@
-import { DEFAULT_TEAM_COLORS } from "../../common";
+import { DEFAULT_JERSEY, DEFAULT_TEAM_COLORS } from "../../common";
 import { idb } from "../db";
 
 const getTeamInfoBySeason = async (tid: number, season: number) => {
+	if (tid === -1 || tid === -2) {
+		return {
+			abbrev: "ASG",
+			colors: DEFAULT_TEAM_COLORS,
+			jersey: DEFAULT_JERSEY,
+			name: tid === -1 ? "1" : "2",
+			region: "All-Stars",
+		};
+	}
+
 	const teamSeasonsIndex = idb.league
 		.transaction("teamSeasons")
 		.store.index("tid, season");

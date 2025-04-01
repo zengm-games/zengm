@@ -1,6 +1,6 @@
 import { season, team } from "../core";
 import { idb } from "../db";
-import { g, helpers } from "../util";
+import { g, getTeamInfoBySeason, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf";
 import { processDraftPicks } from "./draftPicks";
@@ -29,8 +29,32 @@ const updateNotes = async (
 				draftPicks,
 			};
 		} else if (type === "game") {
+			const gamesRaw = await idb.getCopies.games({ note: true }, "noCopyCache");
+
+			console.log(gamesRaw);
+			const games = [];
+			for (const game of gamesRaw) {
+				const home = await getTeamInfoBySeason(game.teams[0].tid, game.season);
+				const away = await getTeamInfoBySeason(game.teams[1].tid, game.season);
+
+				games.push({
+					gid: game.gid,
+					note: game.note,
+					season: game.season,
+					home: {
+						tid: game.teams[0].tid,
+						abbrev: home?.abbrev ?? "???",
+					},
+					away: {
+						tid: game.teams[1].tid,
+						abbrev: away?.abbrev ?? "???",
+					},
+				});
+			}
+
 			return {
 				type,
+				games,
 			};
 		} else if (type === "player") {
 			return {

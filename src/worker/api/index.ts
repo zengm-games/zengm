@@ -3350,7 +3350,7 @@ const setNote = async (info: NoteInfo & { editedNote: string }) => {
 	if (info.type === "draftPick") {
 		cacheStore = idb.cache.draftPicks;
 		object = await idb.cache.draftPicks.get(info.dpid);
-		updateEvents = ["???"];
+		updateEvents = ["playerMovement"];
 	} else if (info.type === "game") {
 		cacheStore = idb.cache.games;
 		object = await idb.getCopy.games(

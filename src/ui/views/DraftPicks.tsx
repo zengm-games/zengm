@@ -4,6 +4,7 @@ import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import type { DataTableRow } from "../components/DataTable";
 import { orderBy } from "../../common/utils";
+import Note from "./Player/Note";
 
 const DraftTeamHistory = ({
 	abbrev,
@@ -29,6 +30,7 @@ const DraftTeamHistory = ({
 			"Record",
 			"AvgAge",
 			"Trades",
+			"Note",
 		],
 		{
 			"Draft Round": {
@@ -42,6 +44,9 @@ const DraftTeamHistory = ({
 			},
 			Ovr: {
 				title: "Team Ovr",
+			},
+			Note: {
+				classNames: "w-100",
 			},
 		},
 	);
@@ -114,6 +119,24 @@ const DraftTeamHistory = ({
 							sortValue: dp.trades.length,
 						}
 					: null,
+				{
+					value: (
+						<Note
+							note={dp.note}
+							info={{
+								type: "draftPick",
+								dpid: dp.dpid,
+							}}
+							infoLink={
+								<div className="ms-auto">
+									<a href={helpers.leagueUrl(["team_notes"])}>View all</a>
+								</div>
+							}
+						/>
+					),
+					searchValue: dp.note,
+					sortValue: dp.note,
+				},
 			],
 		};
 	});
@@ -134,9 +157,6 @@ const DraftTeamHistory = ({
 			</p>
 
 			<DataTable
-				style={{
-					maxWidth: 570,
-				}}
 				cols={cols}
 				defaultSort={[0, "asc"]}
 				name="DraftPicks"

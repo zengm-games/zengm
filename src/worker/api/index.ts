@@ -3346,7 +3346,7 @@ const setLocal = async <T extends keyof Local>([key, value]: [T, Local[T]]) => {
 const setNote = async (info: NoteInfo & { editedNote: string }) => {
 	let cacheStore;
 	let object;
-	let updateEvents: UpdateEvents;
+	let updateEvents: UpdateEvents | undefined;
 	if (info.type === "draftPick") {
 		cacheStore = idb.cache.draftPicks;
 		object = await idb.cache.draftPicks.get(info.dpid);
@@ -3359,7 +3359,6 @@ const setNote = async (info: NoteInfo & { editedNote: string }) => {
 			},
 			"noCopyCache",
 		);
-		updateEvents = ["???"];
 	} else if (info.type === "player") {
 		cacheStore = idb.cache.players;
 		object = await idb.getCopy.players(
@@ -3394,7 +3393,9 @@ const setNote = async (info: NoteInfo & { editedNote: string }) => {
 		throw new Error("Invalid object");
 	}
 
-	await toUI("realtimeUpdate", [updateEvents]);
+	if (updateEvents) {
+		await toUI("realtimeUpdate", [updateEvents]);
+	}
 };
 
 const sign = async ({

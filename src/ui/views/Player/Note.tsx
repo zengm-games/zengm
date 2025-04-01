@@ -22,17 +22,25 @@ export type NoteInfo =
 			season: number;
 	  };
 
-const Note = ({
-	note,
-	info,
-	infoLink,
-}: {
-	note: string | undefined;
-	info: NoteInfo;
-	infoLink?: ReactNode;
-}) => {
+const Note = (
+	props:
+		| {
+				initialNote: string | undefined;
+				note?: undefined;
+				info: NoteInfo;
+				infoLink?: ReactNode;
+		  }
+		| {
+				initialNote?: undefined;
+				note: string | undefined;
+				info: NoteInfo;
+				infoLink?: ReactNode;
+		  },
+) => {
+	const { initialNote, note, info, infoLink } = props;
+
 	const [editing, setEditing] = useState(false);
-	const [editedNote, setEditedNote] = useState(note ?? "");
+	const [editedNote, setEditedNote] = useState(initialNote ?? note ?? "");
 
 	if (editing) {
 		return (
@@ -75,9 +83,18 @@ const Note = ({
 		);
 	}
 
-	const name = info.type === "player" ? "player" : "team";
+	const name =
+		info.type === "draftPick"
+			? "draft pick"
+			: info.type === "game"
+				? "game"
+				: info.type === "player"
+					? "player"
+					: "team";
 
-	if (note === undefined || note === "") {
+	const noteToShow = Object.hasOwn(props, "initialNote") ? editedNote : note;
+
+	if (noteToShow === undefined || noteToShow === "") {
 		return (
 			<button
 				type="button"
@@ -97,7 +114,7 @@ const Note = ({
 				className={"overflow-auto small-scrollbar"}
 				style={{ whiteSpace: "pre-line", maxHeight: 300, maxWidth: MAX_WIDTH }}
 			>
-				{note}
+				{noteToShow}
 			</div>
 			<button
 				type="button"

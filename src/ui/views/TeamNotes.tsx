@@ -101,10 +101,11 @@ const TeamNotes = ({
 				<button
 					className="btn btn-danger"
 					onClick={async () => {
-						await toWorker("main", "setTeamNote", {
+						await toWorker("main", "setNote", {
+							type: "teamSeason",
 							tid: t.tid,
 							season: t.season,
-							note: "",
+							editedNote: "",
 						});
 					}}
 				>

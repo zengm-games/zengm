@@ -18,6 +18,7 @@ import BoxScore from "./BoxScore";
 import { range } from "../../common/utils";
 import getWinner from "../../common/getWinner";
 import { OverlayTrigger, Popover } from "react-bootstrap";
+import Note from "../views/Player/Note";
 
 const TeamNameLink = ({
 	children,
@@ -1164,6 +1165,20 @@ const BoxScoreWrapper = ({
 				</>
 			) : null}
 			{forcedWinText}
+			<div className="mt-3">
+				<Note
+					initialNote={boxScore.note}
+					info={{
+						type: "game",
+						gid: boxScore.gid,
+					}}
+					infoLink={
+						<div className="ms-auto">
+							<a href={helpers.leagueUrl(["team_notes"])}>View all</a>
+						</div>
+					}
+				/>
+			</div>
 		</>
 	);
 };

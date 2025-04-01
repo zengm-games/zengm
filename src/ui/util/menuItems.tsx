@@ -275,7 +275,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				type: "link",
 				league: true,
 				commandPalette: true,
-				commandPaletteOnly: true,
 				path: ["notes"],
 				text: "Notes",
 			},

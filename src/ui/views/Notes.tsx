@@ -5,6 +5,7 @@ import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName";
 import type { View } from "../../common/types";
 import { useState } from "react";
 import Note from "./Player/Note";
+import { getDraftPicksColsAndRows } from "./DraftPicks";
 
 const Notes = (props: View<"notes">) => {
 	const [clearing, setClearing] = useState(false);
@@ -22,8 +23,18 @@ const Notes = (props: View<"notes">) => {
 	let rows;
 
 	if (props.type === "draftPick") {
-		cols = [];
-		rows = [];
+		const { challengeNoRatings, draftPicks } = props;
+
+		infoText = (
+			<>
+				Add notes to new draft picks from the{" "}
+				<a href={helpers.leagueUrl(["draft_picks"])}>Draft Picks page</a>.
+			</>
+		);
+
+		const output = getDraftPicksColsAndRows({ challengeNoRatings, draftPicks });
+		cols = output.cols;
+		rows = output.rows;
 	} else if (props.type === "game") {
 		cols = [];
 		rows = [];
@@ -134,7 +145,6 @@ const Notes = (props: View<"notes">) => {
 					</button>,
 				],
 				classNames: {
-					"align-top": true,
 					"table-info": t.tid === userTid,
 				},
 			};

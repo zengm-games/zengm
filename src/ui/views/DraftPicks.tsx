@@ -6,19 +6,10 @@ import type { DataTableRow } from "../components/DataTable";
 import { orderBy } from "../../common/utils";
 import Note from "./Player/Note";
 
-const DraftTeamHistory = ({
-	abbrev,
+export const getDraftPicksColsAndRows = ({
 	challengeNoRatings,
 	draftPicks,
-	draftType,
-	tid,
-}: View<"draftPicks">) => {
-	useTitleBar({
-		title: "Draft Picks",
-		dropdownView: "draft_picks",
-		dropdownFields: { teams: abbrev },
-	});
-
+}: Pick<View<"draftPicks">, "challengeNoRatings" | "draftPicks">) => {
 	const cols = getCols(
 		[
 			"Year",
@@ -141,6 +132,30 @@ const DraftTeamHistory = ({
 		};
 	});
 
+	return {
+		cols,
+		rows,
+	};
+};
+
+const DraftPicks = ({
+	abbrev,
+	challengeNoRatings,
+	draftPicks,
+	draftType,
+	tid,
+}: View<"draftPicks">) => {
+	useTitleBar({
+		title: "Draft Picks",
+		dropdownView: "draft_picks",
+		dropdownFields: { teams: abbrev },
+	});
+
+	const { rows, cols } = getDraftPicksColsAndRows({
+		challengeNoRatings,
+		draftPicks,
+	});
+
 	return (
 		<>
 			<MoreLinks
@@ -166,4 +181,4 @@ const DraftTeamHistory = ({
 	);
 };
 
-export default DraftTeamHistory;
+export default DraftPicks;

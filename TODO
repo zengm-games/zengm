@@ -2,10 +2,16 @@ more notes
 - game notes, like player/team notes https://discord.com/channels/290013534023057409/331882115119448065/1304735855042232332
 - draft pick notes https://discord.com/channels/@me/778760871911751700/1356362654838554634
   - edit from draft picks page
-- abstract editor code from other notes
 - abstract team notes page to support player/team/pick/game notes
+  - maybe just make it for team/game, leave player/pick for dedicated pages
+    - for picks, would need a "With Notes" option on the Draft Picks page, that also shows a button to clear all
   - should primary "view all" link for player notes go here, rather than watch list? should notes support on watch list page be removed?
   - check all infoLink links
+- should it have a menu link?
+- MoreLinks
+  - current links to notes
+  - other links to notes sub-pages?
+  - should Notes link elsewhere, maybe dynamically based on type?
 
 better indicate the winning/lossing team in score boxes, especially on schedule page of other teams https://discord.com/channels/290013534023057409/331882115119448065/1356366763499196537
 - espn.com - fades out losing team, puts a black arrow next to winning team's score

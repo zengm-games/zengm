@@ -169,6 +169,10 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	available: "Available",
 	signed: "Signed",
 	both: "Both",
+	draftPick: "Draft Picks",
+	game: "Games",
+	player: "Players",
+	teamSeason: "Teams",
 };
 
 if (isSport("baseball")) {
@@ -467,6 +471,8 @@ const useDropdownOptions = (
 		keys = ["overview", "gameLog"];
 	} else if (field === "typeFreeAgents") {
 		keys = ["available", "signed", "both"];
+	} else if (field === "notesType") {
+		keys = ["draftPick", "game", "player", "teamSeason"];
 	} else {
 		throw new Error(`Unknown Dropdown field: ${field}`);
 	}

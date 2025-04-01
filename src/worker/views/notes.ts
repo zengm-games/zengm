@@ -1,11 +1,19 @@
 import { season, team } from "../core";
 import { idb } from "../db";
 import { g, helpers } from "../util";
-import type { UpdateEvents } from "../../common/types";
+import type { UpdateEvents, ViewInput } from "../../common/types";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf";
 
-const updateTeamNotes = async (inputs: unknown, updateEvents: UpdateEvents) => {
-	if (updateEvents.includes("firstRun") || updateEvents.includes("team")) {
+const updateNotes = async (
+	{ type }: ViewInput<"notes">,
+	updateEvents: UpdateEvents,
+	state: any,
+) => {
+	if (
+		updateEvents.includes("firstRun") ||
+		updateEvents.includes("team") ||
+		type !== state.type
+	) {
 		const teamSeasons = await idb.getCopies.teamSeasons(
 			{ note: true },
 			"noCopyCache",
@@ -51,6 +59,7 @@ const updateTeamNotes = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		return {
 			teams,
 			ties: season.hasTies(Infinity),
+			type,
 			otl: g.get("otl"),
 			usePts,
 			userTid: g.get("userTid"),
@@ -58,4 +67,4 @@ const updateTeamNotes = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	}
 };
 
-export default updateTeamNotes;
+export default updateNotes;

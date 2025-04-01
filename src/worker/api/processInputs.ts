@@ -4,6 +4,7 @@ import type { PlayerStatType } from "../../common/types";
 import type { Params } from "../../ui/router";
 import type { boxScoreToLiveSim } from "../views/liveGame";
 import type { AdvancedPlayerSearchFilter } from "../../ui/views/AdvancedPlayerSearch";
+import type { NoteInfo } from "../../ui/views/Player/Note";
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -584,6 +585,19 @@ const news = (params: Params) => {
 	};
 };
 
+const notes = (params: Params) => {
+	const type: NoteInfo["type"] =
+		params.type === "draftPick" ||
+		params.type === "game" ||
+		params.type === "player" ||
+		params.type === "teamSeason"
+			? params.type
+			: "player";
+	return {
+		type,
+	};
+};
+
 const player = (params: Params) => {
 	return {
 		pid: params.pid !== undefined ? Number.parseInt(params.pid) : undefined,
@@ -1104,6 +1118,7 @@ export default {
 	negotiationList,
 	newLeague,
 	news,
+	notes,
 	player,
 	playerBios: playerRatings,
 	playerFeats,

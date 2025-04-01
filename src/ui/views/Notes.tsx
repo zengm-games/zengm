@@ -6,17 +6,15 @@ import type { View } from "../../common/types";
 import { useState } from "react";
 import Note from "./Player/Note";
 
-const TeamNotes = ({
-	teams,
-	ties,
-	otl,
-	usePts,
-	userTid,
-}: View<"teamNotes">) => {
+const Notes = ({ teams, ties, type, otl, usePts, userTid }: View<"notes">) => {
 	const [clearing, setClearing] = useState(false);
 
 	useTitleBar({
-		title: "Team Notes",
+		title: "Notes",
+		dropdownView: "notes",
+		dropdownFields: {
+			notesType: type,
+		},
 	});
 
 	const colNames = ["Team", "Season", "W", "L"];
@@ -121,7 +119,7 @@ const TeamNotes = ({
 
 	return (
 		<>
-			<MoreLinks type="league" page="team_notes" />
+			<MoreLinks type="league" page="notes" />
 
 			<p>
 				Add notes to new team seasons from the{" "}
@@ -152,4 +150,4 @@ const TeamNotes = ({
 	);
 };
 
-export default TeamNotes;
+export default Notes;

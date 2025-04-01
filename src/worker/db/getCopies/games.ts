@@ -6,9 +6,11 @@ import { helpers } from "../../util";
 const getCopies = async (
 	{
 		gid,
+		note,
 		season,
 	}: {
 		gid?: number;
+		note?: boolean;
 		season?: number;
 	} = {},
 	type?: GetCopyType,
@@ -39,6 +41,19 @@ const getCopies = async (
 		}
 
 		return [];
+	}
+
+	if (note) {
+		return mergeByPk(
+			await idb.league
+				.transaction("games")
+				.store.index("noteBool")
+				// undefined for key returns all of the players with noteBool, since the ones without noteBool are not included in this index
+				.getAll(),
+			await idb.cache.games.getAll(),
+			"teamSeasons",
+			type,
+		).filter((row) => row.noteBool === 1);
 	}
 
 	return mergeByPk(

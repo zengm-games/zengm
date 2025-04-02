@@ -258,14 +258,17 @@ const checkAroundTheWorld = async (target: number) => {
 				},
 				"noCopyCache",
 			);
-			if (teamSeason) {
-				if (
-					teamSeason.playoffRoundsWon ===
-					g.get("numGamesPlayoffSeries", season).length
-				) {
-					tidsWon.add(tid);
-				}
+			if (
+				teamSeason?.playoffRoundsWon ===
+				g.get("numGamesPlayoffSeries", season).length
+			) {
+				tidsWon.add(tid);
 			}
+		}
+
+		// Achievement already awarded, no need to scan further
+		if (tidsWon.size > target) {
+			return false;
 		}
 
 		// See if we're one short of the cutoff right before the current season. That's the only time we want to actually give this achievement, otherwise it will trigger every year after that too

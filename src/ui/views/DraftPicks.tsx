@@ -118,11 +118,7 @@ export const getDraftPicksColsAndRows = ({
 								type: "draftPick",
 								dpid: dp.dpid,
 							}}
-							infoLink={
-								<div className="ms-auto">
-									<a href={helpers.leagueUrl(["team_notes"])}>View all</a>
-								</div>
-							}
+							infoLink
 						/>
 					),
 					searchValue: dp.note,

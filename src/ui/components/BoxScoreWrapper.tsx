@@ -1172,11 +1172,7 @@ const BoxScoreWrapper = ({
 						type: "game",
 						gid: boxScore.gid,
 					}}
-					infoLink={
-						<div className="ms-auto">
-							<a href={helpers.leagueUrl(["team_notes"])}>View all</a>
-						</div>
-					}
+					infoLink
 				/>
 			</div>
 		</>

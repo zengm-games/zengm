@@ -1,5 +1,5 @@
-import { useState, type ReactNode } from "react";
-import { toWorker } from "../../util";
+import { useState } from "react";
+import { helpers, toWorker } from "../../util";
 
 const MAX_WIDTH = 600;
 
@@ -28,13 +28,13 @@ const Note = (
 				initialNote: string | undefined;
 				note?: undefined;
 				info: NoteInfo;
-				infoLink?: ReactNode;
+				infoLink?: boolean;
 		  }
 		| {
 				initialNote?: undefined;
 				note: string | undefined;
 				info: NoteInfo;
-				infoLink?: ReactNode;
+				infoLink?: boolean;
 		  },
 ) => {
 	const { initialNote, note, info, infoLink } = props;
@@ -77,7 +77,11 @@ const Note = (
 					>
 						Cancel
 					</button>
-					{infoLink}
+					{infoLink ? (
+						<div className="ms-auto">
+							<a href={helpers.leagueUrl(["notes", info.type])}>View all</a>
+						</div>
+					) : null}
 				</div>
 			</form>
 		);

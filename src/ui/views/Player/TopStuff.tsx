@@ -703,11 +703,6 @@ const TopStuff = ({
 						type: "player",
 						pid: player.pid,
 					}}
-					infoLink={
-						<div className="ms-auto">
-							<a href={helpers.leagueUrl(["notes", "player"])}>View all</a>
-						</div>
-					}
 				/>
 			</div>
 		</div>

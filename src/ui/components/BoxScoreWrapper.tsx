@@ -1031,7 +1031,7 @@ const BoxScoreWrapper = ({
 	const prevPlayIndex = useRef(playIndex);
 	useEffect(() => {
 		prevPlayIndex.current = playIndex;
-	});
+	}, [playIndex]);
 	// If more than one play has happend between renders, force update of every row of the live box score, in case a player was subbed out in the missing play
 	let forceRowUpdate =
 		playIndex !== undefined &&

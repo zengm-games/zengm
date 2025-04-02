@@ -126,7 +126,7 @@ const CountryFlagPid = ({
 		return () => {
 			mounted = false;
 		};
-	});
+	}, [pid]);
 
 	return <CountryFlag className={className} country={country ?? "Unknown"} />;
 };

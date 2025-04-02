@@ -114,7 +114,7 @@ const useStickyXX = (
 	}, [updateStickyCols]);
 
 	// Run every render, because there's no better way to detect when data changes, which can change column widths
-	useEffect(updateStickyCols);
+	useEffect(updateStickyCols, undefined);
 
 	const stickyClass = getStickyColsClass(stickyCols);
 

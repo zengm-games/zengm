@@ -299,7 +299,7 @@ const Trade = (props: View<"trade">) => {
 	// Run every render, in case it changes
 	useEffect(() => {
 		updateSummaryHeight();
-	});
+	}, undefined);
 
 	useEffect(() => {
 		window.addEventListener("optimizedResize", updateSummaryHeight);

@@ -335,34 +335,38 @@ const Notes = (props: View<"notes">) => {
 
 			<p>{infoText}</p>
 
-			<ActionButton
-				className="mb-3"
-				onClick={async () => {
-					setClearing(true);
-					await toWorker("main", "clearNotes", props.type);
-					setClearing(false);
-				}}
-				processing={clearing}
-				variant="danger"
-			>
-				Clear{" "}
-				{props.type === "draftPick"
-					? "draft pick"
-					: props.type === "game"
-						? "game"
-						: props.type === "player"
-							? "player"
-							: "team"}{" "}
-				notes
-			</ActionButton>
+			{rows.length > 0 ? (
+				<>
+					<ActionButton
+						className="mb-3"
+						onClick={async () => {
+							setClearing(true);
+							await toWorker("main", "clearNotes", props.type);
+							setClearing(false);
+						}}
+						processing={clearing}
+						variant="danger"
+					>
+						Clear{" "}
+						{props.type === "draftPick"
+							? "draft pick"
+							: props.type === "game"
+								? "game"
+								: props.type === "player"
+									? "player"
+									: "team"}{" "}
+						notes
+					</ActionButton>
 
-			<DataTable
-				cols={cols}
-				defaultSort={[0, "asc"]}
-				name={`Notes${props.type}`}
-				pagination
-				rows={rows}
-			/>
+					<DataTable
+						cols={cols}
+						defaultSort={[0, "asc"]}
+						name={`Notes${props.type}`}
+						pagination
+						rows={rows}
+					/>
+				</>
+			) : null}
 		</>
 	);
 };

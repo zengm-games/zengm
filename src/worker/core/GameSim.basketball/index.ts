@@ -2318,7 +2318,7 @@ class GameSim extends GameSimBase {
 			}
 			this.recordStat(this.o, p, "tpa");
 			this.recordStat(this.o, p, "tp");
-			fgMakeLogType = andOne ? "tp" : "tpAndOne";
+			fgMakeLogType = andOne ? "tpAndOne" : "tp";
 		} else {
 			throw new Error(`Should never happen ${type}`);
 		}

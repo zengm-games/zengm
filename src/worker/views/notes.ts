@@ -5,6 +5,7 @@ import type { UpdateEvents, ViewInput } from "../../common/types";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf";
 import { processDraftPicks } from "./draftPicks";
 import getWinner from "../../common/getWinner";
+import formatScoreWithShootout from "../../common/formatScoreWithShootout";
 
 const updateNotes = async (
 	{ type }: ViewInput<"notes">,
@@ -46,7 +47,6 @@ const updateNotes = async (
 
 			const games = [];
 			for (const game of gamesRaw) {
-				console.log(game);
 				const home = await getTeamInfo(game.teams[0].tid, game.season);
 				const away = await getTeamInfo(game.teams[1].tid, game.season);
 
@@ -55,7 +55,9 @@ const updateNotes = async (
 				games.push({
 					gid: game.gid,
 					note: game.note,
+					playoffs: game.playoffs,
 					season: game.season,
+					score: formatScoreWithShootout(game.teams[0], game.teams[1]),
 					winner,
 					home: {
 						tid: game.teams[0].tid,

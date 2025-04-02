@@ -91,7 +91,7 @@ const Notes = (props: View<"notes">) => {
 				key: game.gid,
 				data: [
 					game.season,
-					"Playoffs",
+					game.playoffs ? <span className="glyphicon glyphicon-ok" /> : null,
 					{
 						value: (
 							<a
@@ -128,7 +128,7 @@ const Notes = (props: View<"notes">) => {
 							game.gid,
 						])}
 					>
-						Score
+						{game.score}
 					</a>,
 					{
 						value: (

@@ -89,13 +89,11 @@ const updatePlayers = async (
 		updateEvents.includes("playerMovement") ||
 		updateEvents.includes("newPhase") ||
 		inputs.statType !== state.statType ||
-		inputs.playoffs !== state.playoffs ||
-		inputs.flagNote !== state.flagNote
+		inputs.playoffs !== state.playoffs
 	) {
 		const playersAll = await idb.getCopies.players(
 			{
-				watch: inputs.flagNote === "flag" || inputs.flagNote === "either",
-				note: inputs.flagNote === "note" || inputs.flagNote === "either",
+				watch: true,
 			},
 			"noCopyCache",
 		);
@@ -105,7 +103,6 @@ const updatePlayers = async (
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			currentSeason: g.get("season"),
-			flagNote: inputs.flagNote,
 			phase: g.get("phase"),
 			players,
 			playoffs: inputs.playoffs,

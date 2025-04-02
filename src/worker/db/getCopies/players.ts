@@ -358,41 +358,32 @@ const getCopies = async (
 		);
 	}
 
-	// If watch and note both set, then return any players that have one of the flags set
-	if (watch || note) {
-		const playerStore = idb.league.transaction("players").store;
-		let fromDB = [];
-		if (watch) {
-			// undefined for key returns all of the players with values, since the ones with watch/noteBool missing are not included in this index
-			fromDB.push(
-				...(await getAll(playerStore.index("watch"), undefined, filter)),
-			);
-		}
-		if (note) {
-			// If watch and note both set, don't include record twice
-			const pidsDB = new Set(fromDB.map((p) => p.pid));
-			fromDB.push(
-				// undefined for key returns all of the players with values, since the ones with watch/noteBool missing are not included in this index
-				...(
-					await getAll(playerStore.index("noteBool"), undefined, filter)
-				).filter((p) => !pidsDB.has(p.pid)),
-			);
-		}
-
-		const fromCacheAll = await idb.cache.players.getAll();
-
-		// Need to check if players with watch or noteBool in DB are updated in the cache. If so, mergeByPk can't handle it, so we need to handle it here.
-		const pidsCache = new Set(fromCacheAll.map((p) => p.pid));
-		fromDB = fromDB.filter((p) => !pidsCache.has(p.pid));
-
+	if (note) {
 		return mergeByPk(
-			fromDB,
-			fromCacheAll.filter(
-				(p) => (watch && p.watch !== undefined) || (note && p.noteBool === 1),
+			// undefined for key returns all of the players with noteBool, since the ones without noteBool are not included in this index
+			await getAll(
+				idb.league.transaction("players").store.index("noteBool"),
+				undefined,
+				filter,
 			),
+			await idb.cache.players.getAll(),
 			"players",
 			type,
-		).filter(filter);
+		).filter((p) => p.noteBool === 1 && filter(p));
+	}
+
+	if (watch) {
+		return mergeByPk(
+			// undefined for key returns all of the players with values, since the ones with without watch are not included in this index
+			await getAll(
+				idb.league.transaction("players").store.index("watch"),
+				undefined,
+				filter,
+			),
+			await idb.cache.players.getAll(),
+			"players",
+			type,
+		).filter((p) => p.watch !== undefined && filter(p));
 	}
 
 	return mergeByPk(

@@ -157,9 +157,6 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	conf: makeNormalResponsive("Conf", "Conference"),
 	div: makeNormalResponsive("Div", "Division"),
 	your_teams: "Your Teams",
-	flag: makeNormalResponsive("Flagged", "Flagged Players"),
-	note: makeNormalResponsive("Notes", "Players With Notes"),
-	either: "Either",
 	skater: "Skaters",
 	goalie: "Goalies",
 	combined: "Combined",
@@ -465,8 +462,6 @@ const useDropdownOptions = (
 		keys = ["newest", "oldest"];
 	} else if (field === "standingsType") {
 		keys = ["league", "conf", "div"];
-	} else if (field === "flagNote") {
-		keys = ["flag", "note", "either"];
 	} else if (field === "playerProfile") {
 		keys = ["overview", "gameLog"];
 	} else if (field === "typeFreeAgents") {

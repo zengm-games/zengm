@@ -976,16 +976,7 @@ const watchList = (params: Params) => {
 		statType = "perGame";
 	}
 
-	let flagNote: "flag" | "note" | "either";
-	if (params.flagNote === "either") {
-		flagNote = "either";
-	} else if (params.flagNote === "note") {
-		flagNote = "note";
-	} else {
-		flagNote = "flag";
-	}
-
-	return { playoffs: validateSeasonType(params.playoffs), statType, flagNote };
+	return { playoffs: validateSeasonType(params.playoffs), statType };
 };
 
 const powerRankings = (params: Params) => {

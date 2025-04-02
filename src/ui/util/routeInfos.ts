@@ -121,7 +121,6 @@ const routeInfos = {
 	"/l/:lid/watch_list": "watchList",
 	"/l/:lid/watch_list/:statType": "watchList",
 	"/l/:lid/watch_list/:statType/:playoffs": "watchList",
-	"/l/:lid/watch_list/:statType/:playoffs/:flagNote": "watchList",
 	"/l/:lid/customize_player": "customizePlayer",
 	"/l/:lid/customize_player/:pid": "customizePlayer",
 	"/l/:lid/customize_player/:pid/:type": "customizePlayer",

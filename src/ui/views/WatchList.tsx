@@ -213,7 +213,6 @@ export const getWatchListColsAndRows = ({
 const WatchList = ({
 	challengeNoRatings,
 	currentSeason,
-	flagNote,
 	phase,
 	players,
 	playoffs,
@@ -228,7 +227,6 @@ const WatchList = ({
 		dropdownFields: {
 			statTypes: statType,
 			playoffsCombined: playoffs,
-			flagNote,
 		},
 	});
 

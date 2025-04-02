@@ -227,6 +227,10 @@ const MoreLinks = (
 					: ["draft_team_history"],
 			name: "Team History",
 		});
+		links.push({
+			url: ["notes", "draftPick"],
+			name: "Draft Pick Notes",
+		});
 	} else if (props.type == "awards") {
 		const { season } = props;
 

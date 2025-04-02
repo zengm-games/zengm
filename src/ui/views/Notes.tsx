@@ -25,7 +25,7 @@ const Notes = (props: View<"notes">) => {
 	let rows;
 
 	if (props.type === "draftPick") {
-		const { challengeNoRatings, draftPicks } = props;
+		const { challengeNoRatings, draftPicks, draftType } = props;
 
 		infoText = (
 			<>
@@ -33,6 +33,8 @@ const Notes = (props: View<"notes">) => {
 				<a href={helpers.leagueUrl(["draft_picks"])}>Draft Picks page</a>.
 			</>
 		);
+
+		moreLinks = <MoreLinks type="draft" page="notes" draftType={draftType} />;
 
 		const output = getDraftPicksColsAndRows({ challengeNoRatings, draftPicks });
 		cols = [
@@ -222,6 +224,8 @@ const Notes = (props: View<"notes">) => {
 				<a href={helpers.leagueUrl(["roster"])}>Roster page</a>.
 			</>
 		);
+
+		moreLinks = <MoreLinks type="league" page="notes" />;
 
 		const colNames = ["Team", "Season", "W", "L"];
 		if (otl) {

@@ -35,6 +35,7 @@ const updateNotes = async (
 				type,
 				challengeNoRatings: g.get("challengeNoRatings"),
 				draftPicks,
+				draftType: g.get("draftType"),
 			};
 		} else if (type === "game") {
 			const gamesRaw = await idb.getCopies.games({ note: true }, "noCopyCache");

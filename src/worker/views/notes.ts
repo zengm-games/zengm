@@ -1,11 +1,17 @@
 import { season, team } from "../core";
 import { idb } from "../db";
 import { g, getTeamInfoBySeason, helpers } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import {
+	type PlayerStatType,
+	type UpdateEvents,
+	type ViewInput,
+} from "../../common/types";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf";
 import { processDraftPicks } from "./draftPicks";
 import getWinner from "../../common/getWinner";
 import formatScoreWithShootout from "../../common/formatScoreWithShootout";
+import { formatPlayersWatchList } from "./watchList";
+import { bySport } from "../../common";
 
 const updateNotes = async (
 	{ type }: ViewInput<"notes">,
@@ -75,8 +81,33 @@ const updateNotes = async (
 				games,
 			};
 		} else if (type === "player") {
+			const playersRaw = await idb.getCopies.players(
+				{ note: true },
+				"noCopyCache",
+			);
+
+			const playoffs = "regularSeason" as const;
+			const statType = bySport<PlayerStatType>({
+				baseball: "totals",
+				basketball: "perGame",
+				football: "totals",
+				hockey: "totals",
+			});
+
+			const { players, stats } = await formatPlayersWatchList(playersRaw, {
+				playoffs,
+				statType,
+			});
+
 			return {
 				type,
+				challengeNoRatings: g.get("challengeNoRatings"),
+				currentSeason: g.get("season"),
+				phase: g.get("phase"),
+				players,
+				playoffs,
+				statType,
+				stats,
 			};
 		} else if (type === "teamSeason") {
 			const teamSeasons = await idb.getCopies.teamSeasons(

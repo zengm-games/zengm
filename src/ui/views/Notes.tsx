@@ -6,6 +6,7 @@ import type { View } from "../../common/types";
 import { useState } from "react";
 import Note from "./Player/Note";
 import { getDraftPicksColsAndRows } from "./DraftPicks";
+import { getWatchListColsAndRows } from "./WatchList";
 
 const Notes = (props: View<"notes">) => {
 	const [clearing, setClearing] = useState(false);
@@ -159,8 +160,54 @@ const Notes = (props: View<"notes">) => {
 			};
 		});
 	} else if (props.type === "player") {
-		cols = [];
-		rows = [];
+		const {
+			challengeNoRatings,
+			currentSeason,
+			phase,
+			players,
+			playoffs,
+			statType,
+			stats,
+		} = props;
+
+		const output = getWatchListColsAndRows({
+			challengeNoRatings,
+			currentSeason,
+			editableNote: true,
+			phase,
+			players,
+			playoffs,
+			statType,
+			stats,
+		});
+
+		cols = [
+			...output.cols,
+			...getCols([""], {
+				"": {
+					noSearch: true,
+					sortSequence: [],
+				},
+			}),
+		];
+		rows = output.rows;
+
+		for (const row of rows) {
+			row.data.push(
+				<button
+					className="btn btn-danger"
+					onClick={async () => {
+						await toWorker("main", "setNote", {
+							type: "player",
+							pid: row.key as any,
+							editedNote: "",
+						});
+					}}
+				>
+					Delete
+				</button>,
+			);
+		}
 	} else if (props.type === "teamSeason") {
 		const { teams, ties, otl, usePts, userTid } = props;
 
@@ -269,6 +316,8 @@ const Notes = (props: View<"notes">) => {
 				},
 			};
 		});
+	} else {
+		throw new Error("Should never happen");
 	}
 
 	return (

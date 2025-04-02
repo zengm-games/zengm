@@ -92,24 +92,34 @@ const Notes = (props: View<"notes">) => {
 				data: [
 					game.season,
 					"Playoffs",
-					<a
-						href={helpers.leagueUrl([
-							"roster",
-							`${game.home.abbrev}_${game.home.tid}`,
-							game.season,
-						])}
-					>
-						{game.home.abbrev}
-					</a>,
-					<a
-						href={helpers.leagueUrl([
-							"roster",
-							`${game.away.abbrev}_${game.away.tid}`,
-							game.season,
-						])}
-					>
-						{game.away.abbrev}
-					</a>,
+					{
+						value: (
+							<a
+								href={helpers.leagueUrl([
+									"roster",
+									`${game.home.abbrev}_${game.home.tid}`,
+									game.season,
+								])}
+							>
+								{game.home.abbrev}
+							</a>
+						),
+						classNames: game.winner === 0 ? "table-success" : undefined,
+					},
+					{
+						value: (
+							<a
+								href={helpers.leagueUrl([
+									"roster",
+									`${game.away.abbrev}_${game.away.tid}`,
+									game.season,
+								])}
+							>
+								{game.away.abbrev}
+							</a>
+						),
+						classNames: game.winner === 1 ? "table-success" : undefined,
+					},
 					<a
 						href={helpers.leagueUrl([
 							"game_log",
@@ -291,8 +301,7 @@ const Notes = (props: View<"notes">) => {
 			<DataTable
 				cols={cols}
 				defaultSort={[0, "asc"]}
-				defaultStickyCols={1}
-				name="TeamNotes"
+				name={`Notes${props.type}`}
 				pagination
 				rows={rows}
 			/>

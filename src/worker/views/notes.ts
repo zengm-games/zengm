@@ -4,6 +4,7 @@ import { g, getTeamInfoBySeason, helpers } from "../util";
 import type { UpdateEvents, ViewInput } from "../../common/types";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf";
 import { processDraftPicks } from "./draftPicks";
+import getWinner from "../../common/getWinner";
 
 const updateNotes = async (
 	{ type }: ViewInput<"notes">,
@@ -45,13 +46,17 @@ const updateNotes = async (
 
 			const games = [];
 			for (const game of gamesRaw) {
+				console.log(game);
 				const home = await getTeamInfo(game.teams[0].tid, game.season);
 				const away = await getTeamInfo(game.teams[1].tid, game.season);
+
+				const winner = getWinner(game.teams);
 
 				games.push({
 					gid: game.gid,
 					note: game.note,
 					season: game.season,
+					winner,
 					home: {
 						tid: game.teams[0].tid,
 						abbrev: home?.abbrev ?? "???",

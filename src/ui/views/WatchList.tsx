@@ -3,7 +3,7 @@ import { Dropdown } from "react-bootstrap";
 import { PHASE, PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, useLocalPartial } from "../util";
-import { ActionButton, DataTable, WatchBlock } from "../components";
+import { ActionButton, DataTable, MoreLinks, WatchBlock } from "../components";
 import type { View } from "../../common/types";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
 import {
@@ -245,6 +245,7 @@ const WatchList = ({
 
 	return (
 		<>
+			<MoreLinks type="playerNotes" page="watch_list" />
 			<Dropdown className="float-end my-1">
 				<Dropdown.Toggle
 					id="watch-list-other-reports"

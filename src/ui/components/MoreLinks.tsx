@@ -56,6 +56,9 @@ const MoreLinks = (
 				season: number | "career" | "all";
 				statType: PlayerStatType;
 		  }
+		| {
+				type: "playerNotes";
+		  }
 	) & {
 		page: string;
 		keepSelfLink?: boolean;
@@ -368,6 +371,11 @@ const MoreLinks = (
 				],
 				name: "Player Stats",
 			},
+		];
+	} else if (props.type === "playerNotes") {
+		links = [
+			{ url: ["notes", "player"], name: "Player Notes" },
+			{ url: ["watch_list"], name: "Watch List" },
 		];
 	} else {
 		throw new Error("Invalid MoreLinks type");

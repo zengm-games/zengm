@@ -20,6 +20,7 @@ const Notes = (props: View<"notes">) => {
 	});
 
 	let infoText;
+	let moreLinks;
 	let cols;
 	let rows;
 
@@ -160,6 +161,10 @@ const Notes = (props: View<"notes">) => {
 			};
 		});
 	} else if (props.type === "player") {
+		infoText = <>Add notes to players at the top of the player profile page.</>;
+
+		moreLinks = <MoreLinks type="playerNotes" page="notes" />;
+
 		const {
 			challengeNoRatings,
 			currentSeason,
@@ -322,7 +327,7 @@ const Notes = (props: View<"notes">) => {
 
 	return (
 		<>
-			<MoreLinks type="league" page="notes" />
+			{moreLinks}
 
 			<p>{infoText}</p>
 

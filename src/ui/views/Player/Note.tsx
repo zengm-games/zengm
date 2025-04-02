@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { helpers, toWorker } from "../../util";
+import clsx from "clsx";
 
 const MAX_WIDTH = 600;
 
@@ -29,15 +30,17 @@ const Note = (
 				note?: undefined;
 				info: NoteInfo;
 				infoLink?: boolean;
+				xs?: boolean;
 		  }
 		| {
 				initialNote?: undefined;
 				note: string | undefined;
 				info: NoteInfo;
 				infoLink?: boolean;
+				xs?: boolean;
 		  },
 ) => {
-	const { initialNote, note, info, infoLink } = props;
+	const { initialNote, note, info, infoLink, xs } = props;
 
 	const [editing, setEditing] = useState(false);
 	const [editedNote, setEditedNote] = useState(initialNote ?? note ?? "");
@@ -102,7 +105,7 @@ const Note = (
 		return (
 			<button
 				type="button"
-				className="btn btn-light-bordered btn-sm"
+				className={clsx("btn btn-light-bordered", xs ? "btn-xs" : "btn-sm")}
 				onClick={() => {
 					setEditing(true);
 				}}

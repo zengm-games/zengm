@@ -119,6 +119,7 @@ export const getDraftPicksColsAndRows = ({
 								dpid: dp.dpid,
 							}}
 							infoLink
+							xs
 						/>
 					),
 					searchValue: dp.note,

@@ -31,11 +31,22 @@ const updateNotes = async (
 		} else if (type === "game") {
 			const gamesRaw = await idb.getCopies.games({ note: true }, "noCopyCache");
 
-			console.log(gamesRaw);
+			const teamInfoCache: Record<string, { abbrev: string } | undefined> = {};
+			const getTeamInfo = async (tid: number, season: number) => {
+				const key = `${season}_${tid}`;
+				if (Object.hasOwn(teamInfoCache, key)) {
+					return teamInfoCache[key];
+				}
+
+				const info = await getTeamInfoBySeason(tid, season);
+				teamInfoCache[key] = info;
+				return info;
+			};
+
 			const games = [];
 			for (const game of gamesRaw) {
-				const home = await getTeamInfoBySeason(game.teams[0].tid, game.season);
-				const away = await getTeamInfoBySeason(game.teams[1].tid, game.season);
+				const home = await getTeamInfo(game.teams[0].tid, game.season);
+				const away = await getTeamInfo(game.teams[1].tid, game.season);
 
 				games.push({
 					gid: game.gid,

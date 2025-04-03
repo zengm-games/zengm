@@ -38,18 +38,22 @@ export const rolldownConfig = (
 		name: "sport-functions",
 		transform: {
 			filter: {
+				// This screens out any node_modules code (should be .js) and .json or other non-TypeScript files. It originally was:
+				//     id: { include: /\.tsx?$/ },
+				// But in rolldown, any filter that matches means the whole thing matches, so it'd be like (id || code) when I want (id && code). Using an exclude filter for id makes it work how I want (only transform ts/tsx files containing bySport/isSport)
 				id: {
-					include: /\.tsx?$/,
+					exclude: /.*(?<!\.ts)$/,
+				},
+
+				// This screens out any files that don't include bySport/isSport
+				code: {
+					include:
+						envOptions.nodeEnv === "production"
+							? ["bySport", "isSport"]
+							: "bySport",
 				},
 			},
 			async handler(code, id) {
-				if (
-					!code.includes("bySport") &&
-					(envOptions.nodeEnv !== "production" || !code.includes("isSport"))
-				) {
-					return;
-				}
-
 				const { mtimeMs } = await fs.stat(id);
 				const cached = babelCache[id];
 				if (cached?.mtimeMs === mtimeMs) {

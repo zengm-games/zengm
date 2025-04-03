@@ -1165,16 +1165,18 @@ const BoxScoreWrapper = ({
 				</>
 			) : null}
 			{forcedWinText}
-			<div className="mt-3">
-				<Note
-					initialNote={boxScore.note}
-					info={{
-						type: "game",
-						gid: boxScore.gid,
-					}}
-					infoLink
-				/>
-			</div>
+			{boxScore.exhibition ? null : (
+				<div className="mt-3">
+					<Note
+						initialNote={boxScore.note}
+						info={{
+							type: "game",
+							gid: boxScore.gid,
+						}}
+						infoLink
+					/>
+				</div>
+			)}
 		</>
 	);
 };

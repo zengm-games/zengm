@@ -1,52 +1,46 @@
-// The only purpose of this is to allow the minifier to do dead code elimination, which it can do for `if (true) {}` but
-// not for `if (function_that_returns_true()) {}`. This allows for multiple sports in the same codebase, without multiple
-// sports in every bundle, and without writing by hand messy long ternaries that the minifier can understand.
+// The purpose of this is to do dead code elimination (or allow the minifier to do it) by sport (defined in process.env.SPORT), without requiring ugly syntax like nested ternaries for handling multiple sports. Instead, we have these nicer isSport and bySport functions.
 //
 // Based on https://github.com/4Catalyzer/babel-plugin-dev-expression/blob/293b8716d3df93b3c5fb23cf3181c8bb296ec449/dev-expression.js
 
 "use strict";
 
+// Better than tools/lib/getSport.ts because it's not TypeScript (can't import this everywhere in TS yet) and it's slightly faster (no validation, since we can assume that is done elsewhere)
+const getSport = () => process.env.SPORT ?? "basketball";
+
+// Handles quoted and unquoted keys, like {key: 1} vs {"key": 1}
+const getObjectKey = (property) => {
+	if (property.key.type === "Identifier") {
+		return property.key.name;
+	}
+
+	if (property.key.type === "StringLiteral") {
+		return property.key.value;
+	}
+
+	throw new Error(`Unknown node type "${property.key.type}"`);
+};
+
 // To define types some day: https://github.com/babel/babel/issues/10637
 export const babelPluginSportFunctions = (babel) => {
 	const t = babel.types;
 
-	const PROCESS_ENV_SPORT = t.memberExpression(
-		t.memberExpression(t.identifier("process"), t.identifier("env")),
-		t.identifier("SPORT"),
-	);
-
-	const getObjectKey = (property) => {
-		if (property.key.type === "Identifier") {
-			return t.stringLiteral(property.key.name);
-		}
-
-		if (property.key.type === "StringLiteral") {
-			return t.stringLiteral(property.key.value);
-		}
-
-		throw new Error(`Unknown node type "${property.key.type}"`);
-	};
-
 	return {
 		visitor: {
 			CallExpression: {
-				exit: (path) => {
-					const node = path.node;
+				exit(path) {
+					const callee = path.get("callee");
 
-					if (path.get("callee").isIdentifier({ name: "isSport" })) {
+					if (callee.isIdentifier({ name: "isSport" })) {
 						// Turns this code:
 						//
 						// isSport("basketball");
 						//
-						// into this:
-						//
-						// process.env.SPORT === "basketball"
+						// into either true or false, depending on if the current sport is basketball or not.
 
-						const sport = node.arguments[0];
-						path.replaceWith(
-							t.binaryExpression("===", PROCESS_ENV_SPORT, sport),
-						);
-					} else if (path.get("callee").isIdentifier({ name: "bySport" })) {
+						const localSport = path.node.arguments[0].value;
+						const value = t.booleanLiteral(localSport === getSport());
+						path.replaceWith(value);
+					} else if (callee.isIdentifier({ name: "bySport" })) {
 						// Turns this code:
 						//
 						// const whatever = bySport({
@@ -57,63 +51,37 @@ export const babelPluginSportFunctions = (babel) => {
 						//
 						// into this:
 						//
-						// const whatever = process.env.SPORT === "basketball"
-						//     ? "basketball thing"
-						//     : process.env.SPORT === "football"
-						//     ? "football thing"
-						//     : "hockey thing";
+						// const whatever = "basketball thing";
 						//
-						// And this:
+						// (Or football/hockey thing, if that is the current sport.)
+						//
+						// Also supports a "default" property:
 						//
 						// const whatever = bySport({
 						//     basketball: "basketball thing",
 						//     default: "default thing",
 						// });
 						//
-						// into this:
+						// So that outputs this for any non-basketball sport:
 						//
-						// const whatever = process.env.SPORT === "basketball"
-						//     ? "basketball thing"
-						//     : "default thing";
+						// const whatever = "default thing";
 
-						const properties = node.arguments[0].properties;
-						const sportProperties = properties
-							.filter((property) => property.key.name !== "default")
-							.reverse();
-						const defaultProperty = properties.find(
-							(property) => property.key.name === "default",
-						);
+						const sport = getSport();
 
-						if (sportProperties.length === 0) {
-							throw new Error("Must have at least one sport in bySport");
+						const properties = path.node.arguments[0].properties;
+						const propertiesByKey = {};
+						for (const property of properties) {
+							propertiesByKey[getObjectKey(property)] = property;
 						}
 
-						let bigTernary = defaultProperty
-							? t.conditionalExpression(
-									t.binaryExpression(
-										"===",
-										PROCESS_ENV_SPORT,
-										getObjectKey(sportProperties[0]),
-									),
-									sportProperties[0].value,
-									defaultProperty.value,
-								)
-							: sportProperties[0].value;
+						const value =
+							propertiesByKey[sport]?.value ?? propertiesByKey.default?.value;
 
-						// Wrap other sports around the first
-						for (let i = 1; i < sportProperties.length; i++) {
-							bigTernary = t.conditionalExpression(
-								t.binaryExpression(
-									"===",
-									PROCESS_ENV_SPORT,
-									getObjectKey(sportProperties[i]),
-								),
-								sportProperties[i].value,
-								bigTernary,
-							);
+						if (value === undefined) {
+							throw new Error(`Missing sport (${sport}) and default`);
 						}
 
-						path.replaceWith(bigTernary);
+						path.replaceWith(value);
 					}
 				},
 			},

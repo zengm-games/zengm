@@ -19,7 +19,18 @@ describe("isSport", () => {
 			`if (isSport("basketball")) {
   console.log("foo");
 }`,
-			`if (process.env.SPORT === "basketball") {
+			`if (true) {
+  console.log("foo");
+}`,
+		);
+	});
+
+	test("should replace isSport in if, for other sport", () => {
+		compare(
+			`if (isSport("football")) {
+  console.log("foo");
+}`,
+			`if (false) {
   console.log("foo");
 }`,
 		);
@@ -30,17 +41,14 @@ describe("isSport", () => {
 			`if (!isSport("basketball")) {
   console.log("foo");
 }`,
-			`if (!(process.env.SPORT === "basketball")) {
+			`if (!true) {
   console.log("foo");
 }`,
 		);
 	});
 
 	test("should replace isSport in ternary", () => {
-		compare(
-			`isSport("basketball") ? 1 : 0;`,
-			`process.env.SPORT === "basketball" ? 1 : 0;`,
-		);
+		compare(`isSport("basketball") ? 1 : 0;`, `true ? 1 : 0;`);
 	});
 });
 
@@ -52,7 +60,7 @@ describe("bySport", () => {
   football: "football thing",
   hockey: "hockey thing",
 });`,
-			`const whatever = process.env.SPORT === "basketball" ? "basketball thing" : process.env.SPORT === "football" ? "football thing" : "hockey thing";`,
+			`const whatever = "basketball thing";`,
 		);
 	});
 
@@ -62,17 +70,17 @@ describe("bySport", () => {
   "basketball": "basketball thing",
   football: "football thing",
 });`,
-			`const whatever = process.env.SPORT === "basketball" ? "basketball thing" : "football thing";`,
+			`const whatever = "basketball thing";`,
 		);
 	});
 
 	test("should replace bySport, with default if no matching sport", () => {
 		compare(
 			`const whatever = bySport({
+  football: "football thing",
   default: "default thing",
-  basketball: "basketball thing",
 });`,
-			`const whatever = process.env.SPORT === "basketball" ? "basketball thing" : "default thing";`,
+			`const whatever = "default thing";`,
 		);
 	});
 });

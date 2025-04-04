@@ -42,7 +42,6 @@ rolldown
     - code splitting
     - does it make sense to specify output options within rolldownConfig, or leave that to be done separately by caller?
   - UI to switch sports (see obsidian)
-  - pass sport to babelPluginSportFunctions and have it only generate the code for that sport, should be a little more efficient
 
 hide least popular menu items
 - graphs?

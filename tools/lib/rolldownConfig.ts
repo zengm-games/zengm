@@ -39,9 +39,10 @@ export const rolldownConfig = (
 			filter: {
 				// This screens out any node_modules code (should be .js) and .json or other non-TypeScript files. It originally was:
 				//     id: { include: /\.tsx?$/ },
-				// But in rolldown, any filter that matches means the whole thing matches, so it'd be like (id || code) when I want (id && code). Using an exclude filter for id makes it work how I want (only transform ts/tsx files containing bySport/isSport)
+				// But in rolldown, any filter that matches means the whole thing matches, so it'd be like (id || code) when I want (id && code). Using an exclude filter for id makes it work how I want (only transform ts/tsx files containing bySport/isSport).
+				// node_modules is just in case people start putting ts files on npm or something and I don't notice.
 				id: {
-					exclude: /.*(?<!\.ts)$/,
+					exclude: ["node_modules", /.*(?<!\.ts)$/],
 				},
 
 				// This screens out any files that don't include bySport/isSport

@@ -17,7 +17,7 @@
 		"dev": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/watch/cli.ts",
 		"preview": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/preview.ts",
 		"lint": "concurrently --raw \"node --run lint-js\" \"node --run lint-ts\"",
-		"lint-js": "node --run pre-test && eslint",
+		"lint-js": "node --run pre-test && npx --node-options='--experimental-strip-types --disable-warning=ExperimentalWarning' eslint --flag unstable_native_nodejs_ts_config",
 		"lint-ts": "node --run pre-test && tsc",
 		"pre-test": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/pre-test.ts",
 		"prettier": "prettier --write \"*.{mjs,cjs,js,json,scss,ts,tsx}\" \"public/**/*.{mjs,cjs,js,json,scss,ts,tsx}\" \"src/**/*.{mjs,cjs,js,json,scss,ts,tsx}\" \"tools/**/*.{mjs,cjs,js,json,scss,ts,tsx}\"",
@@ -30,6 +30,7 @@
 	"lint-staged": {
 		"*.{js,cjs,mjs,jsx,json,scss,ts,cts,mts,tsx}": "prettier --write"
 	},
+	"type": "module",
 	"dependencies": {
 		"@bugsnag/browser": "^8.2.0",
 		"@bugsnag/plugin-react": "^8.2.0",

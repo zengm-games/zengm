@@ -45,6 +45,8 @@ export default (
 			skipPreflightCheck: true,
 
 			// Babel config
+			babelrc: false,
+			configFile: false,
 			compact: false,
 			presets: [
 				[

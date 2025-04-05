@@ -3,7 +3,7 @@ import babel from "@babel/core";
 // @ts-expect-error
 import babelPluginSyntaxTypescript from "@babel/plugin-syntax-typescript";
 import { babelPluginSportFunctions } from "../babel-plugin-sport-functions/index.ts";
-import { getSport } from "./getSport.ts";
+import { getSport, type Sport } from "./getSport.ts";
 
 // Result is undefined if no match, meaning just do normal stuff
 type BabelCacheResult =
@@ -23,7 +23,10 @@ const babelCache: Record<
 > = {};
 
 // Use babel to run babel-plugin-sport-functions. This is needed because the way bySport is defined, the sport-specific code will run if it's present, which can produce errors. It's not actually needed for isSport.
-const pluginSportFunctions = (nodeEnv: "development" | "production") => ({
+const pluginSportFunctions = (
+	nodeEnv: "development" | "production",
+	sport: Sport,
+) => ({
 	name: "sport-functions",
 	setup(build: any) {
 		build.onLoad(
@@ -52,7 +55,7 @@ const pluginSportFunctions = (nodeEnv: "development" | "production") => ({
 						sourceMaps: "inline",
 						plugins: [
 							[babelPluginSyntaxTypescript, { isTSX }],
-							babelPluginSportFunctions,
+							[babelPluginSportFunctions, { sport }],
 						],
 					}))!.code!;
 
@@ -98,7 +101,7 @@ const esbuildConfig = ({
 			"process.env.NODE_ENV": JSON.stringify(nodeEnv),
 			"process.env.SPORT": JSON.stringify(sport),
 		},
-		plugins: [pluginSportFunctions(nodeEnv)],
+		plugins: [pluginSportFunctions(nodeEnv, sport)],
 
 		// This is needed because dropbox conditionally requries various node builtins, and esbuild chokes on that even though it never actually makes it to the browser
 		external: name === "ui" ? ["crypto", "util"] : undefined,

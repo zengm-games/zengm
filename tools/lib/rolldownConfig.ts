@@ -5,24 +5,13 @@ import type { RolldownPlugin, TransformResult, WatchOptions } from "rolldown";
 // @ts-expect-error
 import babelPluginSyntaxTypescript from "@babel/plugin-syntax-typescript";
 import { babelPluginSportFunctions } from "../babel-plugin-sport-functions/index.ts";
-import { getSport } from "./getSport.ts";
+import { getSport, type Sport } from "./getSport.ts";
 
-export const rolldownConfig = (
-	name: "ui" | "worker",
-	envOptions:
-		| {
-				nodeEnv: "development";
-				postMessage: (message: any) => void;
-		  }
-		| {
-				nodeEnv: "production";
-		  },
-): WatchOptions => {
-	const infile = `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`;
-	const outfile = `build/gen/${name}.js`;
-	const sport = getSport();
-
-	// Result is undefined if no match, meaning just do normal stuff
+// Use babel to run babel-plugin-sport-functions. This is needed even in dev mode because the way bySport is defined, the sport-specific code will run if it's present, which can produce errors. It's not actually needed for isSport in dev mode.
+const pluginSportFunctions = (
+	nodeEnv: "development" | "production",
+	sport: Sport,
+): RolldownPlugin => {
 	const babelCache: Record<
 		string,
 		| {
@@ -32,8 +21,7 @@ export const rolldownConfig = (
 		| undefined
 	> = {};
 
-	// Use babel to run babel-plugin-sport-functions. This is needed even in dev mode because the way bySport is defined, the sport-specific code will run if it's present, which can produce errors. It's not actually needed for isSport in dev mode.
-	const pluginSportFunctions: RolldownPlugin = {
+	return {
 		name: "sport-functions",
 		transform: {
 			filter: {
@@ -48,9 +36,7 @@ export const rolldownConfig = (
 				// This screens out any files that don't include bySport/isSport
 				code: {
 					include:
-						envOptions.nodeEnv === "production"
-							? ["bySport", "isSport"]
-							: "bySport",
+						nodeEnv === "production" ? ["bySport", "isSport"] : "bySport",
 				},
 			},
 			async handler(code, id) {
@@ -66,7 +52,7 @@ export const rolldownConfig = (
 					sourceMaps: true,
 					plugins: [
 						[babelPluginSyntaxTypescript, { isTSX: id.endsWith(".tsx") }],
-						babelPluginSportFunctions,
+						[babelPluginSportFunctions, { sport }],
 					],
 				});
 
@@ -84,8 +70,24 @@ export const rolldownConfig = (
 			},
 		},
 	};
+};
 
-	const plugins = [pluginSportFunctions];
+export const rolldownConfig = (
+	name: "ui" | "worker",
+	envOptions:
+		| {
+				nodeEnv: "development";
+				postMessage: (message: any) => void;
+		  }
+		| {
+				nodeEnv: "production";
+		  },
+): WatchOptions => {
+	const infile = `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`;
+	const outfile = `build/gen/${name}.js`;
+	const sport = getSport();
+
+	const plugins = [pluginSportFunctions(envOptions.nodeEnv, sport)];
 
 	if (envOptions.nodeEnv === "development") {
 		plugins.push({

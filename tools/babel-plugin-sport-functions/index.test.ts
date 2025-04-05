@@ -1,7 +1,6 @@
 import { assert, describe, test } from "vitest";
 import { transform } from "@babel/core";
-// @ts-expect-error
-import { babelPluginSportFunctions } from "./index.js";
+import { babelPluginSportFunctions } from "./index.ts";
 
 const compare = (input: string, output: string) => {
 	const compiled = transform(input, {

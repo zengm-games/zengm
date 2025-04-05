@@ -4,8 +4,7 @@ import babel from "@babel/core";
 import type { RolldownPlugin, TransformResult, WatchOptions } from "rolldown";
 // @ts-expect-error
 import babelPluginSyntaxTypescript from "@babel/plugin-syntax-typescript";
-// @ts-expect-error
-import { babelPluginSportFunctions } from "../babel-plugin-sport-functions/index.js";
+import { babelPluginSportFunctions } from "../babel-plugin-sport-functions/index.ts";
 import { getSport } from "./getSport.ts";
 
 export const rolldownConfig = (

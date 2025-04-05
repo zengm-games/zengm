@@ -8,6 +8,7 @@ import replace from "@rollup/plugin-replace";
 import terser from "@rollup/plugin-terser";
 import { visualizer } from "rollup-plugin-visualizer";
 import { getSport } from "./getSport.ts";
+import { babelPluginSportFunctions } from "../babel-plugin-sport-functions/index.ts";
 
 const extensions = [".mjs", ".js", ".json", ".node", ".ts", ".tsx"];
 
@@ -37,10 +38,24 @@ export default (
 			},
 		}),
 		babel({
+			// Rollup plugin config
 			babelHelpers: "bundled",
 			exclude: "node_modules/**",
 			extensions: extensions.filter((extension) => extension !== ".json"),
 			skipPreflightCheck: true,
+
+			// Babel config
+			compact: false,
+			presets: [
+				[
+					"@babel/preset-react",
+					{
+						runtime: "automatic",
+					},
+				],
+				"@babel/preset-typescript",
+			],
+			plugins: [babelPluginSportFunctions],
 		}),
 		json({
 			compact: true,

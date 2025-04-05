@@ -2,8 +2,7 @@ import fs from "node:fs/promises";
 import babel from "@babel/core";
 // @ts-expect-error
 import babelPluginSyntaxTypescript from "@babel/plugin-syntax-typescript";
-// @ts-expect-error
-import { babelPluginSportFunctions } from "../babel-plugin-sport-functions/index.js";
+import { babelPluginSportFunctions } from "../babel-plugin-sport-functions/index.ts";
 import { getSport } from "./getSport.ts";
 
 // Result is undefined if no match, meaning just do normal stuff

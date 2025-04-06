@@ -311,7 +311,7 @@ export const spinners = new Spinners(
 			return `${symbolAndText}: build started at ${coloredTime}`;
 		}
 		if (info.status === "error") {
-			return `${symbolAndText} ${info.error.stack ?? "See error above from ESBuild"}`;
+			return `${symbolAndText} ${info.error.stack ?? "???"}`;
 		}
 
 		if (info.status === "success") {

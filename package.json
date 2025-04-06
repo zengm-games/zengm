@@ -127,7 +127,6 @@
 		"cloudflare": "^4.2.0",
 		"concurrently": "^9.1.2",
 		"conditional-type-checks": "^1.0.6",
-		"esbuild": "^0.25.2",
 		"eslint": "^9.24.0",
 		"eslint-plugin-jsx-a11y": "^6.10.2",
 		"fake-indexeddb": "^6.0.0",
@@ -162,10 +161,5 @@
 		"node": "^22.0.0",
 		"pnpm": "^10.0.0"
 	},
-	"private": true,
-	"pnpm": {
-		"onlyBuiltDependencies": [
-			"esbuild"
-		]
-	}
+	"private": true
 }

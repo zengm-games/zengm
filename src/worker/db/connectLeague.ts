@@ -87,6 +87,7 @@ export interface LeagueDB extends DBSchema {
 		key: number;
 		value: Game;
 		indexes: {
+			noteBool: 1;
 			season: number;
 		};
 	};
@@ -505,6 +506,9 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 	eventStore.createIndex("dpids", "dpids", {
 		unique: false,
 		multiEntry: true,
+	});
+	gameStore.createIndex("noteBool", "noteBool", {
+		unique: false,
 	});
 	gameStore.createIndex("season", "season", {
 		unique: false,
@@ -1471,6 +1475,12 @@ const migrate = async ({
 	if (oldVersion <= 62) {
 		db.createObjectStore("savedTradingBlock", {
 			keyPath: "rid",
+		});
+	}
+
+	if (oldVersion <= 63) {
+		transaction.objectStore("games").createIndex("noteBool", "noteBool", {
+			unique: false,
 		});
 	}
 };

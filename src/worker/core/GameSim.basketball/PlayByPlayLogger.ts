@@ -13,21 +13,27 @@ export type FgMissType =
 	| "missLowPost"
 	| "missMidRange"
 	| "missTp"
-	| "missTpFake"
 	| "missTipIn";
-export type FgMakeType = // fgAtRim/AndOne, ft,fgPutBack/AndOne excluded because they are handled separately
+export type FgMakeNormalType = // fgAtRim/AndOne, ft,fgPutBack/AndOne excluded because they are handled separately
 
 		| "fgLowPost"
 		| "fgLowPostAndOne"
 		| "fgMidRange"
 		| "fgMidRangeAndOne"
-		| "fgTp"
-		| "fgTpAndOne"
+		| "tp"
+		| "tpAndOne"
 		| "fgTipIn"
-		| "fgTipInAndOne"; // Wondering, why is there a missTpFake but no fgTpFake?
+		| "fgTipInAndOne";
+
+export type FgMakeWithoutAstType = "ft" | "fgPutBack" | "fgPutBackAndOne";
+export type FgMakeWithDefenderType = "fgAtRimAndOne" | "fgAtRim";
+export type FgMakeType =
+	| FgMakeNormalType
+	| FgMakeWithoutAstType
+	| FgMakeWithDefenderType;
 type PlayByPlayEventInputScore =
 	| {
-			type: "fgAtRim" | "fgAtRimAndOne";
+			type: FgMakeWithDefenderType;
 			t: TeamNum;
 			pid: number;
 			pidDefense: number;
@@ -35,14 +41,14 @@ type PlayByPlayEventInputScore =
 			clock: number;
 	  }
 	| {
-			type: FgMakeType;
+			type: FgMakeNormalType;
 			t: TeamNum;
 			pid: number;
 			pidAst: number | undefined;
 			clock: number;
 	  }
 	| {
-			type: "ft" | "fgPutBack" | "fgPutBackAndOne";
+			type: FgMakeWithoutAstType;
 			t: TeamNum;
 			pid: number;
 			clock: number;
@@ -193,7 +199,7 @@ export type PlayByPlayEvent =
 			boxScore: any;
 	  };
 
-const scoringTypes = [
+const scoringTypes: Set<PlayByPlayEventInput["type"]> = new Set([
 	"fgAtRim",
 	"fgAtRimAndOne",
 	"fgLowPost",
@@ -201,14 +207,14 @@ const scoringTypes = [
 	"fgMidRange",
 	"fgMidRangeAndOne",
 	"ft",
-	"fgTp",
-	"fgTpAndOne",
-];
+	"tp",
+	"tpAndOne",
+] satisfies PlayByPlayEventInputScore["type"][]);
 
 const isScoringPlay = (
 	event: PlayByPlayEventInput,
 ): event is PlayByPlayEventInputScore => {
-	return scoringTypes.includes(event.type);
+	return scoringTypes.has(event.type);
 };
 
 class PlayByPlayLogger {

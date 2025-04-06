@@ -70,7 +70,7 @@ const generate = (
 			ovr: 0,
 			skills: [],
 		},
-		face: face.generate(race),
+		face: face.generate({ race }),
 		firstName,
 		gamesUntilTradable: 0,
 		hgt: actualHeightInInches,

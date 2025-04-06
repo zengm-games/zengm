@@ -1,4 +1,3 @@
-import alias from "@rollup/plugin-alias";
 import rollupConfig from "./rollupConfig.ts";
 import browserstackLauncher from "karma-browserstack-launcher";
 import chromeLauncher from "karma-chrome-launcher";
@@ -9,15 +8,6 @@ import rollupPreprocessor from "karma-rollup-preprocessor";
 import sourceMapSupport from "karma-source-map-support";
 
 const files = ["src/test/mocha.ts", "src/test/smoke.ts"];
-
-const rollupConfigTemp = rollupConfig("test");
-rollupConfigTemp.plugins.unshift(
-	alias({
-		entries: {
-			"smoke-test-overrides": `./../worker/index.ts`,
-		},
-	}),
-);
 
 export default {
 	plugins: [
@@ -47,7 +37,7 @@ export default {
 	singleRun: true,
 
 	rollupPreprocessor: {
-		...rollupConfigTemp,
+		...rollupConfig("test"),
 		output: {
 			format: "iife",
 			indent: false,

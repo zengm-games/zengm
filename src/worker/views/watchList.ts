@@ -2,8 +2,80 @@ import { bySport, PLAYER } from "../../common";
 import { player } from "../core";
 import { idb } from "../db";
 import { g } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import type { Player, UpdateEvents, ViewInput } from "../../common/types";
 import addFirstNameShort from "../util/addFirstNameShort";
+
+export const formatPlayersWatchList = async (
+	playersAll: Player[],
+	{ playoffs, statType }: Pick<ViewInput<"watchList">, "playoffs" | "statType">,
+) => {
+	const stats = bySport({
+		baseball: ["gp", "keyStats", "war"],
+		basketball: [
+			"gp",
+			"min",
+			"fgp",
+			"tpp",
+			"ftp",
+			"trb",
+			"ast",
+			"tov",
+			"stl",
+			"blk",
+			"pts",
+			"per",
+			"ewa",
+		],
+		football: ["gp", "keyStats", "av"],
+		hockey: ["gp", "keyStats", "ops", "dps", "ps"],
+	});
+
+	const players = addFirstNameShort(
+		await idb.getCopies.playersPlus(playersAll, {
+			attrs: [
+				"pid",
+				"firstName",
+				"lastName",
+				"age",
+				"ageAtDeath",
+				"injury",
+				"tid",
+				"abbrev",
+				"watch",
+				"contract",
+				"draft",
+				"jerseyNumber",
+				"note",
+			],
+			ratings: ["ovr", "pot", "skills", "pos"],
+			stats,
+			season: g.get("season"),
+			statType,
+			playoffs: playoffs === "playoffs",
+			regularSeason: playoffs === "regularSeason",
+			combined: playoffs === "combined",
+			fuzz: true,
+			showNoStats: true,
+			showRookies: true,
+			showRetired: true,
+			showDraftProspectRookieRatings: true,
+			oldStats: true,
+		}),
+	);
+
+	// Add mood to free agent contracts
+	for (const p of players) {
+		if (p.tid === PLAYER.FREE_AGENT) {
+			const p2 = await idb.cache.players.get(p.pid);
+			if (p2) {
+				const mood = await player.moodInfo(p2, g.get("userTid"));
+				p.contract.amount = mood.contractAmount / 1000;
+			}
+		}
+	}
+
+	return { players, stats };
+};
 
 const updatePlayers = async (
 	inputs: ViewInput<"watchList">,
@@ -17,86 +89,20 @@ const updatePlayers = async (
 		updateEvents.includes("playerMovement") ||
 		updateEvents.includes("newPhase") ||
 		inputs.statType !== state.statType ||
-		inputs.playoffs !== state.playoffs ||
-		inputs.flagNote !== state.flagNote
+		inputs.playoffs !== state.playoffs
 	) {
-		const stats = bySport({
-			baseball: ["gp", "keyStats", "war"],
-			basketball: [
-				"gp",
-				"min",
-				"fgp",
-				"tpp",
-				"ftp",
-				"trb",
-				"ast",
-				"tov",
-				"stl",
-				"blk",
-				"pts",
-				"per",
-				"ewa",
-			],
-			football: ["gp", "keyStats", "av"],
-			hockey: ["gp", "keyStats", "ops", "dps", "ps"],
-		});
-
 		const playersAll = await idb.getCopies.players(
 			{
-				watch: inputs.flagNote === "flag" || inputs.flagNote === "either",
-				note: inputs.flagNote === "note" || inputs.flagNote === "either",
+				watch: true,
 			},
 			"noCopyCache",
 		);
 
-		const players = addFirstNameShort(
-			await idb.getCopies.playersPlus(playersAll, {
-				attrs: [
-					"pid",
-					"firstName",
-					"lastName",
-					"age",
-					"ageAtDeath",
-					"injury",
-					"tid",
-					"abbrev",
-					"watch",
-					"contract",
-					"draft",
-					"jerseyNumber",
-					"note",
-				],
-				ratings: ["ovr", "pot", "skills", "pos"],
-				stats,
-				season: g.get("season"),
-				statType: inputs.statType,
-				playoffs: inputs.playoffs === "playoffs",
-				regularSeason: inputs.playoffs === "regularSeason",
-				combined: inputs.playoffs === "combined",
-				fuzz: true,
-				showNoStats: true,
-				showRookies: true,
-				showRetired: true,
-				showDraftProspectRookieRatings: true,
-				oldStats: true,
-			}),
-		);
-
-		// Add mood to free agent contracts
-		for (const p of players) {
-			if (p.tid === PLAYER.FREE_AGENT) {
-				const p2 = await idb.cache.players.get(p.pid);
-				if (p2) {
-					const mood = await player.moodInfo(p2, g.get("userTid"));
-					p.contract.amount = mood.contractAmount / 1000;
-				}
-			}
-		}
+		const { players, stats } = await formatPlayersWatchList(playersAll, inputs);
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
 			currentSeason: g.get("season"),
-			flagNote: inputs.flagNote,
 			phase: g.get("phase"),
 			players,
 			playoffs: inputs.playoffs,

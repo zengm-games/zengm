@@ -69,6 +69,7 @@ import negotiationList from "./negotiationList";
 import newLeague from "./newLeague";
 import newTeam from "./newTeam";
 import news from "./news";
+import notes from "./notes";
 import player from "./player";
 import playerBios from "./playerBios";
 import playerFeats from "./playerFeats";
@@ -94,7 +95,6 @@ import standings from "./standings";
 import teamFinances from "./teamFinances";
 import teamGraphs from "./teamGraphs";
 import teamHistory from "./teamHistory";
-import teamNotes from "./teamNotes";
 import teamRecords from "./teamRecords";
 import teamStatDists from "./teamStatDists";
 import teamStats from "./teamStats";
@@ -179,6 +179,7 @@ export default {
 	newLeague,
 	newTeam,
 	news,
+	notes,
 	player,
 	playerBios,
 	playerFeats,
@@ -204,7 +205,6 @@ export default {
 	teamFinances,
 	teamGraphs,
 	teamHistory,
-	teamNotes,
 	teamRecords,
 	teamStatDists,
 	teamStats,

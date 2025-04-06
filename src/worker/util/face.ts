@@ -1,4 +1,4 @@
-import { generate as generateFace } from "facesjs";
+import { generate as generateFace, type FaceConfig } from "facesjs";
 import { idb } from "../db";
 import type {
 	MinimalPlayerRatings,
@@ -9,7 +9,11 @@ import { bySport, DEFAULT_JERSEY, isSport } from "../../common";
 import g from "./g";
 import defaultGameAttributes from "../../common/defaultGameAttributes";
 
-const generate = (race?: Race) => {
+const generate = (
+	options:
+		| { race?: Race; relative?: undefined }
+		| { race?: undefined; relative?: FaceConfig } = {},
+) => {
 	let overrides: any;
 
 	if (isSport("baseball")) {
@@ -43,7 +47,7 @@ const generate = (race?: Race) => {
 
 	let face = generateFace(overrides, {
 		gender,
-		race,
+		...options,
 	});
 
 	if (!isSport("baseball")) {
@@ -61,7 +65,7 @@ const generate = (race?: Race) => {
 		) {
 			face = generateFace(overrides, {
 				gender,
-				race,
+				...options,
 			});
 		}
 	}

@@ -34,6 +34,8 @@ export const finalizePlayersRelativesList = (
 	]);
 };
 
+let faceCount = 0;
+
 const updateCustomizePlayer = async (
 	inputs: ViewInput<"customizePlayer">,
 	updateEvents: UpdateEvents,
@@ -144,9 +146,12 @@ const updateCustomizePlayer = async (
 
 		const initialAutoPos = player.pos(p.ratings.at(-1));
 
+		faceCount += 1;
+
 		return {
 			appearanceOption,
 			challengeNoRatings: g.get("challengeNoRatings"),
+			faceCount,
 			gender: g.get("gender"),
 			godMode: g.get("godMode"),
 			initialAutoPos,

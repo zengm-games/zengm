@@ -3,7 +3,7 @@ import { Dropdown } from "react-bootstrap";
 import { PHASE, PLAYER } from "../../common";
 import useTitleBar from "../hooks/useTitleBar";
 import { getCols, helpers, toWorker, useLocalPartial } from "../util";
-import { ActionButton, DataTable, WatchBlock } from "../components";
+import { ActionButton, DataTable, MoreLinks, WatchBlock } from "../components";
 import type { View } from "../../common/types";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
 import {
@@ -13,6 +13,7 @@ import {
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
 import { Flag } from "../components/WatchBlock";
 import type { DataTableRow } from "../components/DataTable";
+import Note from "./Player/Note";
 
 const ClearButton = ({
 	onClick,
@@ -79,30 +80,27 @@ const ClearButton = ({
 	);
 };
 
-const WatchList = ({
+export const getWatchListColsAndRows = ({
 	challengeNoRatings,
 	currentSeason,
-	flagNote,
+	editableNote,
 	phase,
 	players,
 	playoffs,
 	statType,
 	stats,
-}: View<"watchList">) => {
-	const [clearing, setClearing] = useState(false);
-
-	useTitleBar({
-		title: "Watch List",
-		dropdownView: "watch_list",
-		dropdownFields: {
-			statTypes: statType,
-			playoffsCombined: playoffs,
-			flagNote,
-		},
-	});
-
-	const { gender } = useLocalPartial(["gender"]);
-
+}: Pick<
+	View<"watchList">,
+	| "challengeNoRatings"
+	| "currentSeason"
+	| "phase"
+	| "players"
+	| "playoffs"
+	| "statType"
+	| "stats"
+> & {
+	editableNote: boolean;
+}) => {
 	const cols = getCols(
 		[
 			"",
@@ -180,7 +178,15 @@ const WatchList = ({
 					helpers.roundStat(p.stats[stat], stat, statType === "totals"),
 				),
 				{
-					value: (
+					value: editableNote ? (
+						<Note
+							note={p.note}
+							info={{
+								type: "player",
+								pid: p.pid,
+							}}
+						/>
+					) : (
 						<div
 							className="overflow-auto small-scrollbar"
 							style={{
@@ -198,8 +204,48 @@ const WatchList = ({
 		};
 	});
 
+	return {
+		cols,
+		rows,
+	};
+};
+
+const WatchList = ({
+	challengeNoRatings,
+	currentSeason,
+	phase,
+	players,
+	playoffs,
+	statType,
+	stats,
+}: View<"watchList">) => {
+	const [clearing, setClearing] = useState(false);
+
+	useTitleBar({
+		title: "Watch List",
+		dropdownView: "watch_list",
+		dropdownFields: {
+			statTypes: statType,
+			playoffsCombined: playoffs,
+		},
+	});
+
+	const { gender } = useLocalPartial(["gender"]);
+
+	const { cols, rows } = getWatchListColsAndRows({
+		challengeNoRatings,
+		currentSeason,
+		editableNote: false,
+		phase,
+		players,
+		playoffs,
+		statType,
+		stats,
+	});
+
 	return (
 		<>
+			<MoreLinks type="playerNotes" page="watch_list" />
 			<Dropdown className="float-end my-1">
 				<Dropdown.Toggle
 					id="watch-list-other-reports"

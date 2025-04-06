@@ -3,7 +3,6 @@ import {
 	type FormEvent,
 	type ChangeEvent,
 	type MouseEvent,
-	type ReactNode,
 	useEffect,
 	useLayoutEffect,
 } from "react";
@@ -17,7 +16,7 @@ import {
 	bySport,
 	NOT_REAL_POSITIONS,
 } from "../../../common";
-import { PlayerPicture, HelpPopover } from "../../components";
+import { HelpPopover } from "../../components";
 import useTitleBar from "../../hooks/useTitleBar";
 import { helpers, realtimeUpdate, toWorker, logEvent } from "../../util";
 import RatingsForm from "./RatingsForm";
@@ -27,6 +26,7 @@ import posRatings from "../../../common/posRatings";
 import { orderBy } from "../../../common/utils";
 import CustomMoodItemsForm from "./CustomMoodItemsForm";
 import { roundContract } from "../../../common/roundContract";
+import { Face } from "./Face";
 
 const copyValidValues = (
 	source: PlayerWithoutKey,
@@ -517,9 +517,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		}));
 	};
 
-	const randomizeFace = async (event: MouseEvent) => {
-		event.preventDefault(); // Don't submit whole form
-
+	const randomizeFace = async () => {
 		const face = await toWorker("main", "generateFace", p.born.loc);
 
 		setState((prevState) => {
@@ -534,6 +532,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 	const {
 		challengeNoRatings,
+		faceCount,
 		gender,
 		godMode,
 		originalTid,
@@ -548,75 +547,6 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 	useTitleBar({ title });
 
 	const r = p.ratings.length - 1;
-
-	let parsedFace;
-	try {
-		// @ts-expect-error
-		parsedFace = JSON.parse(p.face);
-	} catch {}
-
-	const faceHash = parsedFace ? btoa(JSON.stringify(parsedFace)) : "";
-
-	let pictureDiv: ReactNode = null;
-	if (appearanceOption === "Cartoon Face") {
-		pictureDiv = (
-			<div className="row">
-				<div className="col-sm-4">
-					<div style={{ maxHeight: "225px", maxWidth: "150px" }}>
-						{parsedFace ? <PlayerPicture face={parsedFace} /> : "Invalid JSON"}
-					</div>
-				</div>
-				<div className="col-sm-8">
-					<p>
-						You can edit this JSON here, but you'll probably find it easier to
-						use{" "}
-						<a
-							href={`https://zengm.com/facesjs/editor/#${faceHash}`}
-							target="_blank"
-						>
-							the face editor
-						</a>{" "}
-						and copy the results back here. Team colors set there will be
-						overridden here.
-					</p>
-					<textarea
-						className="form-control"
-						onChange={handleChange.bind(null, "root", "face")}
-						rows={10}
-						value={p.face as any}
-					/>
-					<button
-						type="button"
-						className="btn btn-secondary mt-1"
-						onClick={randomizeFace}
-					>
-						Randomize
-					</button>
-				</div>
-			</div>
-		);
-	} else {
-		pictureDiv = (
-			<div className="mb-3">
-				<label className="form-label">Image URL</label>
-				<input
-					type="text"
-					className="form-control"
-					onChange={handleChange.bind(null, "root", "imgURL")}
-					value={p.imgURL}
-				/>
-				<span className="text-body-secondary">
-					Your image must be hosted externally. If you need to upload an image,
-					try using{" "}
-					<a href="http://imgur.com/" target="_blank">
-						imgur
-					</a>
-					. For ideal display, crop your image so it has a 2:3 aspect ratio
-					(such as 100px wide and 150px tall).
-				</span>
-			</div>
-		);
-	}
 
 	const adjustRatings = (amount: number) => async (event: MouseEvent) => {
 		event.preventDefault();
@@ -1210,7 +1140,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 						<h2>Appearance</h2>
 
-						<div className="mb-3">
+						<div>
 							<label className="form-label">
 								You can either create a cartoon face or specify the URL to an
 								image.
@@ -1226,7 +1156,43 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 							</select>
 						</div>
 
-						{pictureDiv}
+						{appearanceOption === "Cartoon Face" ? (
+							<Face
+								face={p.face as any}
+								faceCount={faceCount}
+								onChange={(face) => {
+									setState((prevState) => {
+										return {
+											...prevState,
+											p: {
+												...prevState.p,
+												face: face as any,
+											},
+										};
+									});
+								}}
+								randomizeFace={randomizeFace}
+							/>
+						) : (
+							<div className="my-3">
+								<label className="form-label">Image URL</label>
+								<input
+									type="text"
+									className="form-control"
+									onChange={handleChange.bind(null, "root", "imgURL")}
+									value={p.imgURL}
+								/>
+								<span className="text-body-secondary">
+									Your image must be hosted externally. If you need to upload an
+									image, try using{" "}
+									<a href="http://imgur.com/" target="_blank">
+										imgur
+									</a>
+									. For ideal display, crop your image so it has a 2:3 aspect
+									ratio (such as 100px wide and 150px tall).
+								</span>
+							</div>
+						)}
 					</div>
 
 					<div className="col-md-5 mb-3">

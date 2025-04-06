@@ -64,6 +64,12 @@ if (window.enableLogging) {
   document.head.appendChild(s);
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
+  gtag('consent', 'default', {
+    ad_storage: 'granted',
+    ad_user_data: 'granted',
+    ad_personalization: 'granted',
+    analytics_storage: 'granted'
+  });
   gtag('js', new Date());
   gtag('config', 'GOOGLE_ANALYTICS_ID', {
     cookie_domain: 'GOOGLE_ANALYTICS_COOKIE_DOMAIN',

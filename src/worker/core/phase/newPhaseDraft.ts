@@ -5,6 +5,9 @@ import { g, helpers } from "../../util";
 import type { Conditions, PhaseReturn } from "../../../common/types";
 
 const newPhaseDraft = async (conditions: Conditions): Promise<PhaseReturn> => {
+	// In case some weird situation results in games still in the schedule, clear them
+	await idb.cache.schedule.clear();
+
 	// Kill off old retired players (done here since not much else happens in this phase change, so making it a little
 	// slower is fine). This assumes all killable players have no changes in the cache, which is almost certainly true,
 	// but under certain rare cases could cause a minor problem. For performance reasons, this also assumes that any

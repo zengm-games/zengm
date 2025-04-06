@@ -19,6 +19,9 @@ import { groupBy } from "../../../common/utils";
 const newPhasePreseason = async (
 	conditions: Conditions,
 ): Promise<PhaseReturn> => {
+	// In case some weird situation results in games still in the schedule, clear them
+	await idb.cache.schedule.clear();
+
 	const repeatSeason = g.get("repeatSeason");
 	if (repeatSeason?.type !== "playersAndRosters") {
 		await freeAgents.autoSign();

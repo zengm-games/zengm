@@ -15,6 +15,9 @@ import { orderBy } from "../../../common/utils";
 const newPhaseResignPlayers = async (
 	conditions: Conditions,
 ): Promise<PhaseReturn> => {
+	// In case some weird situation results in games still in the schedule, clear them
+	await idb.cache.schedule.clear();
+
 	await idb.cache.negotiations.clear();
 
 	const repeatSeasonType = g.get("repeatSeason")?.type;

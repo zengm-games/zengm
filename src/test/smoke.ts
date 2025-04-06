@@ -2,7 +2,7 @@ import { league } from "../worker/core";
 import { connectMeta, idb } from "../worker/db";
 import { defaultGameAttributes, g, local } from "../worker/util";
 
-import "smoke-test-overrides"; // eslint-disable-line import/no-unresolved
+import "../worker/index.ts";
 import { deleteDB } from "@dumbmatter/idb";
 import createStreamFromLeagueObject from "../worker/core/league/create/createStreamFromLeagueObject";
 import { helpers, LEAGUE_DATABASE_VERSION } from "../common";

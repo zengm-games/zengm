@@ -14,6 +14,8 @@ const MoreLinks = (
 		| {
 				type: "draft";
 				draftType: DraftType;
+				abbrev?: string;
+				tid?: number;
 				season?: number;
 		  }
 		| {
@@ -54,6 +56,9 @@ const MoreLinks = (
 				season: number | "career" | "all";
 				statType: PlayerStatType;
 		  }
+		| {
+				type: "playerNotes";
+		  }
 	) & {
 		page: string;
 		keepSelfLink?: boolean;
@@ -93,7 +98,7 @@ const MoreLinks = (
 						: ["game_log", `${abbrev}_${tid}`],
 				name: "Game Log",
 			},
-			{ url: ["draft_picks"], name: "Draft Picks" },
+			{ url: ["draft_picks", `${abbrev}_${tid}`], name: "Draft Picks" },
 			{
 				url: ["team_history", `${abbrev}_${tid}`],
 				name: "History",
@@ -187,7 +192,7 @@ const MoreLinks = (
 			});
 		}
 	} else if (props.type === "draft") {
-		const { draftType, season } = props;
+		const { abbrev, draftType, season, tid } = props;
 
 		links = [
 			// { url: ["draft"], name: "Draft", },
@@ -197,7 +202,13 @@ const MoreLinks = (
 					draftType === "freeAgents" ? "Upcoming Prospects" : "Draft Scouting",
 			},
 		];
-		links.push({ url: ["draft_picks"], name: "Draft Picks" });
+		links.push({
+			url:
+				abbrev !== undefined && tid !== undefined
+					? ["draft_picks", `${abbrev}_${tid}`]
+					: ["draft_picks"],
+			name: "Draft Picks",
+		});
 		if (!NO_LOTTERY_DRAFT_TYPES.includes(draftType)) {
 			links.push({
 				url:
@@ -209,7 +220,17 @@ const MoreLinks = (
 			url: season !== undefined ? ["draft_history", season] : ["draft_history"],
 			name: draftType === "freeAgents" ? "Prospects History" : "Draft History",
 		});
-		links.push({ url: ["draft_team_history"], name: "Team History" });
+		links.push({
+			url:
+				abbrev !== undefined && tid !== undefined
+					? ["draft_team_history", `${abbrev}_${tid}`]
+					: ["draft_team_history"],
+			name: "Team History",
+		});
+		links.push({
+			url: ["notes", "draftPick"],
+			name: "Draft Pick Notes",
+		});
 	} else if (props.type == "awards") {
 		const { season } = props;
 
@@ -301,7 +322,7 @@ const MoreLinks = (
 				name: "All-Star History",
 			},
 			{ url: ["season_preview"], name: "Season Previews" },
-			{ url: ["team_notes"], name: "Team Notes" },
+			{ url: ["notes", "teamSeason"], name: "Team Notes" },
 		];
 	} else if (props.type === "importExport") {
 		links = [
@@ -354,6 +375,11 @@ const MoreLinks = (
 				],
 				name: "Player Stats",
 			},
+		];
+	} else if (props.type === "playerNotes") {
+		links = [
+			{ url: ["notes", "player"], name: "Player Notes" },
+			{ url: ["watch_list"], name: "Watch List" },
 		];
 	} else {
 		throw new Error("Invalid MoreLinks type");

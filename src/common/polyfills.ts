@@ -64,6 +64,31 @@ type SetReadOperations<T> = {
 	has(key: T): boolean;
 	keys(): IterableIterator<T>;
 };
+if (!Set.prototype.intersection) {
+	Object.defineProperty(Set.prototype, "intersection", {
+		value<T>(this: Set<T>, other: SetReadOperations<T>): Set<T> {
+			let smallerElems;
+			let largerHas;
+			if (this.size <= other.size) {
+				smallerElems = this;
+				largerHas = other;
+			} else {
+				smallerElems = other.keys();
+				largerHas = this;
+			}
+			const result = new Set<T>();
+			for (const elem of smallerElems) {
+				if (largerHas.has(elem)) {
+					result.add(elem);
+				}
+			}
+			return result;
+		},
+		writable: true,
+		enumerable: false,
+		configurable: true,
+	});
+}
 if (!Set.prototype.isSubsetOf) {
 	Object.defineProperty(Set.prototype, "isSubsetOf", {
 		value<T>(this: Set<T>, other: SetReadOperations<T>): boolean {

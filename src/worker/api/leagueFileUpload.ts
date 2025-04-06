@@ -4,7 +4,7 @@ import JSONParserText from "./JSONParserText";
 
 // This is dynamically resolved with rollup-plugin-alias
 // @ts-ignore
-import schema from "league-schema"; // eslint-disable-line import/no-unresolved
+import schema from "../../../build/files/league-schema.json";
 import { helpers, toUI } from "../util";
 import { highWaterMark } from "../core/league/createStream";
 import type { Conditions } from "../../common/types";

@@ -205,9 +205,10 @@ export type DraftPickWithoutKey = {
 	tid: number;
 	originalTid: number;
 	round: number;
-	pick: number;
-	// 0 if not set
+	pick: number; // 0 if not set
 	season: DraftPickSeason;
+	note?: string;
+	noteBool?: 1; // Keep in sync with note - for indexing
 };
 
 export type DraftPick = {
@@ -354,6 +355,8 @@ export type Game = {
 		sPts?: number;
 	};
 	neutralSite?: boolean;
+	note?: string;
+	noteBool?: 1; // Keep in sync with note - for indexing
 	numGamesToWinSeries?: number;
 	numPeriods?: number; // Optional only for legacy, otherwise it's the number of periods in the game, defined at the start
 	numPlayersOnCourt?: number;
@@ -961,6 +964,7 @@ export type MoodComponents = {
 	playingTime: number;
 	rookieContract: number;
 	difficulty: number;
+	relatives: number;
 	custom?: {
 		text: string;
 		amount: number;
@@ -994,6 +998,7 @@ export type LocalStateUI = {
 	challengeNoRatings: boolean;
 	customMenu?: MenuItemHeader;
 	dirtySettings: boolean;
+	email?: string;
 	flagOverrides: Record<string, string | undefined>;
 	gameSimInProgress: boolean;
 	games: {
@@ -1387,6 +1392,7 @@ export type Local = {
 		start: number;
 	};
 	autoSave: boolean;
+	email: string | undefined;
 	exhibitionGamePlayers?: Record<number, Player>;
 	fantasyDraftResults: (Player<any> & {
 		prevAbbrev: string;
@@ -1834,6 +1840,7 @@ export type UpdateEvents = (
 	| "gameSim"
 	| "leagues"
 	| "newPhase"
+	| "notes"
 	| "options"
 	| "playerMovement"
 	| "playoffs"

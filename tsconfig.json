@@ -1,26 +1,29 @@
 {
 	"compilerOptions": {
+		// Based on https://www.totaltypescript.com/tsconfig-cheat-sheet
+		"esModuleInterop": true,
+		"skipLibCheck": true,
 		"target": "esnext",
 		"resolveJsonModule": true,
-		"jsx": "react-jsx",
-		"noEmit": true,
-		"noUnusedLocals": true,
-		"noFallthroughCasesInSwitch": true,
-		"moduleResolution": "bundler",
-		"baseUrl": ".",
-		"paths": {
-			"league-schema": ["build/files/league-schema.json"]
-		},
-		"esModuleInterop": true,
-		"strict": true,
-		"useUnknownInCatchVariables": false,
-		"verbatimModuleSyntax": true,
-		"module": "preserve",
-		"noImplicitOverride": true,
+		"moduleDetection": "force",
 		"isolatedModules": true,
-		"skipLibCheck": true,
+		"verbatimModuleSyntax": true,
+		"strict": true,
+		"noImplicitOverride": true,
+		"module": "preserve",
+		"noEmit": true,
+
+		// Extra strictness
+		"noFallthroughCasesInSwitch": true,
+		"noUnusedLocals": true,
+
+		// Maybe would be nice, but too much legacy crap
+		"noUncheckedIndexedAccess": false,
+		"useUnknownInCatchVariables": false,
+
 		"allowImportingTsExtensions": true,
-		"erasableSyntaxOnly": true
+		"erasableSyntaxOnly": true,
+		"jsx": "react-jsx"
 	},
 	"include": ["src", "tools"]
 }

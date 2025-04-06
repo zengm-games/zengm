@@ -71,6 +71,8 @@ const Most = ({
 		const draftPick =
 			p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "";
 
+		const hasBestStats = p.bestStats.season !== undefined;
+
 		return {
 			key: i,
 			metadata: {
@@ -133,17 +135,23 @@ const Most = ({
 				draftPick,
 				showRatings ? p.peakOvr : null,
 				p.bestStats.season,
-				<a
-					href={helpers.leagueUrl([
-						"roster",
-						`${p.bestStats.abbrev}_${p.bestStats.tid}`,
-						p.bestStats.season,
-					])}
-				>
-					{p.bestStats.abbrev}
-				</a>,
-				...stats.map((stat) => helpers.roundStat(p.bestStats[stat], stat)),
-				...stats.map((stat) => helpers.roundStat(p.careerStats[stat], stat)),
+				hasBestStats ? (
+					<a
+						href={helpers.leagueUrl([
+							"roster",
+							`${p.bestStats.abbrev}_${p.bestStats.tid}`,
+							p.bestStats.season,
+						])}
+					>
+						{p.bestStats.abbrev}
+					</a>
+				) : null,
+				...stats.map((stat) =>
+					hasBestStats ? helpers.roundStat(p.bestStats[stat], stat) : null,
+				),
+				...stats.map((stat) =>
+					hasBestStats ? helpers.roundStat(p.careerStats[stat], stat) : null,
+				),
 			],
 			classNames: {
 				"table-danger": p.hof,

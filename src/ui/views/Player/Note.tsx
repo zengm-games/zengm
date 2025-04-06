@@ -1,46 +1,59 @@
-import { useState, type ReactNode } from "react";
-import { toWorker } from "../../util";
+import { useState } from "react";
+import { helpers, toWorker } from "../../util";
+import clsx from "clsx";
 
 const MAX_WIDTH = 600;
 
-const Note = ({
-	note,
-	info,
-	infoLink,
-}: {
-	note: string | undefined;
-	info:
+export type NoteInfo =
+	| {
+			type: "draftPick";
+			dpid: number;
+	  }
+	| {
+			type: "game";
+			gid: number;
+	  }
+	| {
+			type: "player";
+			pid: number;
+	  }
+	| {
+			type: "teamSeason";
+			tid: number;
+			season: number;
+	  };
+
+const Note = (
+	props:
 		| {
-				type: "player";
-				pid: number;
+				initialNote: string | undefined;
+				note?: undefined;
+				info: NoteInfo;
+				infoLink?: boolean;
+				xs?: boolean;
 		  }
 		| {
-				type: "teamSeason";
-				tid: number;
-				season: number;
-		  };
-	infoLink?: ReactNode;
-}) => {
+				initialNote?: undefined;
+				note: string | undefined;
+				info: NoteInfo;
+				infoLink?: boolean;
+				xs?: boolean;
+		  },
+) => {
+	const { initialNote, note, info, infoLink, xs } = props;
+
 	const [editing, setEditing] = useState(false);
-	const [editedNote, setEditedNote] = useState(note ?? "");
+	const [editedNote, setEditedNote] = useState(initialNote ?? note ?? "");
 
 	if (editing) {
 		return (
 			<form
 				onSubmit={async (event) => {
 					event.preventDefault();
-					if (info.type === "player") {
-						await toWorker("main", "setPlayerNote", {
-							pid: info.pid,
-							note: editedNote,
-						});
-					} else {
-						await toWorker("main", "setTeamNote", {
-							tid: info.tid,
-							season: info.season,
-							note: editedNote,
-						});
-					}
+					await toWorker("main", "setNote", {
+						...info,
+						editedNote,
+					});
 					setEditing(false);
 				}}
 			>
@@ -67,19 +80,32 @@ const Note = ({
 					>
 						Cancel
 					</button>
-					{infoLink}
+					{infoLink ? (
+						<div className="ms-auto">
+							<a href={helpers.leagueUrl(["notes", info.type])}>View all</a>
+						</div>
+					) : null}
 				</div>
 			</form>
 		);
 	}
 
-	const name = info.type === "player" ? "player" : "team";
+	const name =
+		info.type === "draftPick"
+			? "draft pick"
+			: info.type === "game"
+				? "game"
+				: info.type === "player"
+					? "player"
+					: "team";
 
-	if (note === undefined || note === "") {
+	const noteToShow = Object.hasOwn(props, "initialNote") ? editedNote : note;
+
+	if (noteToShow === undefined || noteToShow === "") {
 		return (
 			<button
 				type="button"
-				className="btn btn-light-bordered btn-sm"
+				className={clsx("btn btn-light-bordered", xs ? "btn-xs" : "btn-sm")}
 				onClick={() => {
 					setEditing(true);
 				}}
@@ -95,7 +121,7 @@ const Note = ({
 				className={"overflow-auto small-scrollbar"}
 				style={{ whiteSpace: "pre-line", maxHeight: 300, maxWidth: MAX_WIDTH }}
 			>
-				{note}
+				{noteToShow}
 			</div>
 			<button
 				type="button"

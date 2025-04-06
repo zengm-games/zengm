@@ -18,6 +18,7 @@ import BoxScore from "./BoxScore";
 import { range } from "../../common/utils";
 import getWinner from "../../common/getWinner";
 import { OverlayTrigger, Popover } from "react-bootstrap";
+import Note from "../views/Player/Note";
 
 const TeamNameLink = ({
 	children,
@@ -1030,7 +1031,7 @@ const BoxScoreWrapper = ({
 	const prevPlayIndex = useRef(playIndex);
 	useEffect(() => {
 		prevPlayIndex.current = playIndex;
-	});
+	}, [playIndex]);
 	// If more than one play has happend between renders, force update of every row of the live box score, in case a player was subbed out in the missing play
 	let forceRowUpdate =
 		playIndex !== undefined &&
@@ -1164,6 +1165,18 @@ const BoxScoreWrapper = ({
 				</>
 			) : null}
 			{forcedWinText}
+			{boxScore.exhibition ? null : (
+				<div className="mt-3">
+					<Note
+						initialNote={boxScore.note}
+						info={{
+							type: "game",
+							gid: boxScore.gid,
+						}}
+						infoLink
+					/>
+				</div>
+			)}
 		</>
 	);
 };

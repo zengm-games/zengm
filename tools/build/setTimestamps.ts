@@ -254,9 +254,9 @@ ${bySport({
 			{
 				searchValue: "GOOGLE_ANALYTICS_ID",
 				replaceValue: bySport({
-					basketball: "UA-38759330-1",
-					football: "UA-38759330-2",
-					default: "UA-38759330-3",
+					basketball: "G-8MW4G9YRJK",
+					football: "G-B5MWX6ZDK2",
+					default: "G-27QV0377Q1",
 				}),
 			},
 			{

@@ -5,13 +5,24 @@ import { orderBy } from "../../../common/utils";
 
 const getCopies = async (
 	{
+		note,
 		tid,
 	}: {
+		note?: boolean;
 		tid?: number;
 	} = {},
 	type?: GetCopyType,
 ): Promise<DraftPick[]> => {
 	let draftPicks;
+
+	if (note) {
+		return mergeByPk(
+			[], // All picks always in cache
+			await idb.cache.draftPicks.getAll(),
+			"draftPicks",
+			type,
+		).filter((row) => row.noteBool === 1);
+	}
 
 	if (tid !== undefined) {
 		draftPicks = mergeByPk(

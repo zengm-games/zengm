@@ -4,6 +4,9 @@ import { g } from "../../util";
 import type { PhaseReturn } from "../../../common/types";
 
 const newPhaseAfterDraft = async (): Promise<PhaseReturn> => {
+	// In case some weird situation results in games still in the schedule, clear them
+	await idb.cache.schedule.clear();
+
 	await draft.genPicks({
 		afterDraft: true,
 	});

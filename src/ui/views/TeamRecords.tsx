@@ -117,7 +117,7 @@ const TeamRecords = ({
 		...(otl ? ["OTL"] : []),
 		...(ties ? ["T"] : []),
 		...(usePts ? ["PTS", "PTS%"] : ["%"]),
-		"Playoffs",
+		"PlayoffAppearances",
 		"Last",
 		"Finals",
 		"Last",

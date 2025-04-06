@@ -2849,6 +2849,9 @@ const cols: {
 		sortType: "number",
 		title: "Age",
 	},
+	Away: {
+		desc: "Away Team",
+	},
 	Born: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
@@ -3019,6 +3022,9 @@ const cols: {
 	HOF: {
 		sortSequence: ["desc", "asc"],
 	},
+	Home: {
+		desc: "Home Team",
+	},
 	Injury: {},
 	L: {
 		desc: "Losses",
@@ -3158,11 +3164,13 @@ const cols: {
 	"Power Ranking": {
 		sortType: "number",
 	},
-	Playoffs: {
+	PlayoffAppearances: {
 		desc: "Playoff Appearances",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
+		title: "Playoffs",
 	},
+	Playoffs: {},
 	Pos: {
 		desc: "Position",
 		sortType: "pos",
@@ -3257,6 +3265,7 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	Score: {},
 	Season: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
@@ -3303,6 +3312,10 @@ const cols: {
 	},
 	Titles: {
 		desc: "Championships Won",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	Trades: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},

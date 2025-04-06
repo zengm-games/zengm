@@ -125,14 +125,7 @@ export const makeAbbrevsUnique = <T extends { abbrev: string }>(
  * @return {Promise.Object} Resolves to an object containing the box score data (or a blank object).
  */
 const boxScore = async (gid: number) => {
-	let game = helpers.deepCopy(await idb.cache.games.get(gid)); // Only this season is in cache
-
-	if (!game) {
-		const game2 = await idb.league.get("games", gid);
-		if (game2) {
-			game = game2;
-		}
-	}
+	const game = await idb.getCopy.games({ gid });
 
 	// If game doesn't exist (bad gid or deleted box scores), show nothing
 	if (!game) {

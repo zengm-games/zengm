@@ -1,15 +1,11 @@
-add contending/rebuilding status too draft picks page https://discord.com/channels/290013534023057409/1349149416803536896/1349151391049842841
+better indicate the winning/lossing team in score boxes, especially on schedule page of other teams https://discord.com/channels/290013534023057409/331882115119448065/1356366763499196537
+- espn.com - fades out losing team, puts a black arrow next to winning team's score
+- nba.com - just a red arrow next to winning team's score
+- yahoo - fade and red arrow
 
-CPU repeatedly releases and signs backup goalie https://discord.com/channels/290013534023057409/290015591216054273/1348745060384247878
-- make auto release code aware of 2 goalie requirement
+store list of prior worker console commands https://discord.com/channels/290013534023057409/331882115119448065/1354957789755215953
 
-hide least popular menu items
-- graphs?
-- search?
-
-keep track of DNP players in box score explicitly, just with minimal info rather than full stats
-- use for basketball to save space
-- use for player game log, especially for pitchers in baseball https://discord.com/channels/290013534023057409/944392892905037885/1335192150949888032
+population rounding should be dynamic https://discord.com/channels/290013534023057409/331882115119448065/1353247122224451675
 
 option to exclude notable games box scores from deletion
 - ASG
@@ -24,6 +20,39 @@ option to exclude notable games box scores from deletion
   - do what we do now if no need to check actual box score
   - otherwise, maybe move to newPhasePreseason and run async in background
 
+If you go onto a team and start spam releasing players quickly (best way to do this is decrease window size) it will show a black error box saying you are not allowed to do this. also happens if you try to release a player twice before the game updates the ui https://discord.com/channels/290013534023057409/290015591216054273/1310075135444783164
+- happens in league with tons of free agents https://discord.com/channels/290013534023057409/290015591216054273/1352057685574684742
+- ideally should disable other release buttons while releasing
+  - maybe make it generic to computing contracts, send some signal to UI like it does when simming games
+  - should also affect bulk action buttons
+
+allow trading more than 2 picks
+- 2nd+ round picks should not be in the limit
+- maybe add penalty to score for >2 picks, rather than hard limit
+
+rolldown
+- when stable, switch to watchJsWorker2 and get rid of esbuild stuff
+- future
+  - why does filter.code make it slower? bug? wait until their docs are finished
+  - prod build
+    - minify?
+    - bundle size?
+    - other plugins, like blacklist and visualizer
+    - isSport confirm works
+    - code splitting
+    - does it make sense to specify output options within rolldownConfig, or leave that to be done separately by caller?
+  - UI to switch sports (see obsidian)
+
+hide least popular menu items
+- graphs?
+- search?
+
+ability to add custom teams to the default list of teams, for selecting when starting a new random players league, or adding a team to a league, etc https://discord.com/channels/290013534023057409/331882115119448065/1351880641762955284
+
+keep track of DNP players in box score explicitly, just with minimal info rather than full stats
+- use for basketball to save space
+- use for player game log, especially for pitchers in baseball https://discord.com/channels/290013534023057409/944392892905037885/1335192150949888032
+
 if a player comes back to your team for a 2nd stint but his jersey number is retired, he should be allowed to wear that retired number (and actually it should be his preference) https://old.reddit.com/r/BasketballGM/comments/1ieujhu/monthly_suggestions_thread/
 - what if 2 numbers are retired?
 - after implementing this, maybe the "Retire Jersey" button should be enabled for players still on your team, since they can keep their jersey number
@@ -33,11 +62,6 @@ if you download a spreadsheet of the most lopsided trades, the spreadsheet leave
 update game screenshots
 
 head2head page that lets you look at 2 specific teams regular season and playoff series matchups in a list head2head page that lets you look at 2 specific teams regular season and playoff series matchups in a list
-
-better relative faces https://mail.google.com/mail/u/0/#inbox/FMfcgzQZTMQRKQcWXCSldcPFMJfLvDGb
-- https://github.com/zengm-games/facesjs/issues/5
-- could do in zengm code - delete a few features (to randomize them) and randomize skin/hair color a bit
-- won't apply to real players
 
 intermittent "tid not found" error when starting real players league with all stats in 1977
 
@@ -183,16 +207,12 @@ FBGM -  declines penalty when it would have given untimed down in 4th quarter wi
 
 condense develop0 and updateValues into a single function, mainly for worker console
 
-If you go onto a team and start spam releasing players quickly (best way to do this is decrease window size) it will show a black error box saying you are not allowed to do this. also happens if you try to release a player twice before the game updates the ui https://discord.com/channels/290013534023057409/290015591216054273/1310075135444783164
-
 Injury "games missed" has some counting bug. I can't send league (on phone, hundreds of years, etc.) but with standard 82 game seasons... guy plays 6/82 in '65 and 74/82 in '66. But under injuries is listed as "2065: Torn ACL, 148 games" and "2066: Torn ACL, 122 games". So under most injured frivolity, says he missed 400 career games but that's definitely not right. Could at least cap with (team games played  - player games played) per season somewhere if the cross-day accounting is needed for playoffs or FA or something https://discord.com/channels/290013534023057409/290015591216054273/1310287379457900564
 
 scheduled events editor
 - see "scheduled-events-editor" branch, shit's complicated
 
 players just drafted should not count towards mood when traded away https://old.reddit.com/r/BasketballGM/comments/1gtj4dj/suggestion_for_core_updates_in_newsletter/
-
-game notes, like player/team notes https://discord.com/channels/290013534023057409/331882115119448065/1304735855042232332
 
 too many non-shooting fouls in late game situations when defense is in the bonus - should be rare when tied or up 1-2 points
 - https://discord.com/channels/290013534023057409/331882115119448065/1304329744774336522
@@ -435,6 +455,7 @@ OTW
 - formatRecord as W-OTW-OTL-L-T if both OTW and OTL are available, otherwise if only OTL keep it after L
 - add tracking of ROW for tiebreakers even if we don't break out OTW in standings - maybe always track this
   - RW might be needed to - doesn't include shootouts. shootouts make this more complicated, maybe not worth doing now...
+- complexity details: https://mail.google.com/mail/u/0/#sent/FMfcgzQZTgTgrtpwdkWnWJRqZFwrTBKr?compose=CllgCJlDSvVLngcRlzWGhJkHXrXZNCLksLHSgtmSCGkvXhpVzNRDxLQnvFxjzRTdLxTNgnQFmBq
 
 more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
 - rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is
@@ -450,6 +471,10 @@ new achievements
   - Win 5 consecutive championships without losing a playoff game during the streak (obviously this doesn't work for FBGM)
   - Lead the league in both passing and rushing yards for 3 consecutive seasons.(Obv just for FBGM)
 - finals MVP with no assists https://old.reddit.com/r/BasketballGM/comments/1hyowqb/my_power_forward_is_the_ultimate_ball_hog/
+- player ones, like a player with certain stats in a game/season, or years with team, or awards https://old.reddit.com/r/BasketballGM/comments/1jpwg4w/version_202504020886_players_get_a_mood_bonus_if/ml3treh/?context=3
+- euro vision - top 5 players in minutes played all european https://old.reddit.com/r/BasketballGM/comments/1jpwg4w/version_202504020886_players_get_a_mood_bonus_if/ml433j6/?context=3
+- smallest ball - top 5 players in minutes played all under 6'5" or something https://old.reddit.com/r/BasketballGM/comments/1jpwg4w/version_202504020886_players_get_a_mood_bonus_if/ml433j6/?context=3
+- balanced breakfast - 5 players averaging 15 ppg https://old.reddit.com/r/BasketballGM/comments/1jpwg4w/version_202504020886_players_get_a_mood_bonus_if/ml433j6/?context=3
 
 arrow navigation between players on team https://old.reddit.com/r/BasketballGM/comments/1afy7ba/monthly_suggestions_thread/kr9whzi/
 - make it a select? or listen for keyboard shortcut?
@@ -553,9 +578,6 @@ better clock handling in BBGM - calculate time as you go in the play
 - fewer out of bounds after missed free throws, maybe other shot types too
 - ORB% should vary by shot type
 
-tailwind
-- https://usewindy.com/
-
 better copy/paste or export of play-by-play
 - https://old.reddit.com/r/BasketballGM/comments/188okm0/is_there_a_way_to_copy_the_playbyplay/kbq4bei/?context=3
 
@@ -600,7 +622,7 @@ FBGM move event text generation to UI
   - is "clock" really needed in every PlayEvent? i think it's only needed in the actual clock ones. even scoring plays don't need it, they just use the snap time
   - too many formatClock calls
 
-FBGM show field during game
+FBGM drive chart
 - later
   - would be nice to make "1st & 10" gray box have dynamic width in play log
     - same for score tag on negative play (defense or kick return)
@@ -904,8 +926,6 @@ rather than showing percentage for match, show actual $ amount https://old.reddi
 still too much overtime scoring https://discord.com/channels/290013534023057409/331882115119448065/1061049070753435799
 
 show previous salary on re-signing table https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/izjihq3/
-
-dedicated page listing all owned draft picks, including links to trades where they were acquired https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/j1a3nws/
 
 show totals for pts/reb/ast/etc in play by play like "J. Brown Driving layup (12 pts) D. White (3 AST)" https://old.reddit.com/r/BasketballGM/comments/z99cby/monthly_suggestions_thread/j26zhxu/
 

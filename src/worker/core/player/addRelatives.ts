@@ -94,6 +94,12 @@ const makeSimilar = (existingRelative: Player, newRelative: Player) => {
 	) {
 		newRelative.jerseyNumber = existingRelative.stats.at(-1).jerseyNumber;
 	}
+
+	if (!existingRelative.imgURL) {
+		newRelative.face = face.generate({
+			relative: existingRelative.face,
+		});
+	}
 };
 
 const applyNewCountry = async (p: Player, relative: Player) => {
@@ -107,7 +113,7 @@ const applyNewCountry = async (p: Player, relative: Player) => {
 		p.firstName = firstName;
 
 		// Generate new name and face
-		p.face = face.generate(race);
+		p.face = face.generate({ race });
 	}
 
 	// Make them the same state/province, if USA/Canada
@@ -157,15 +163,16 @@ export const makeSon = async (p: Player) => {
 		return 1;
 	});
 	const [fatherLastName, fatherSuffixNumber] = parseLastName(father.lastName);
-	const sonSuffixNumber =
-		typeof fatherSuffixNumber === "number" ? fatherSuffixNumber + 1 : 2;
-	const sonSuffix = getSuffix(sonSuffixNumber);
 
 	// Call this before giving the Jr. the father's first name, so father's name doesn't get overwritten
 	await applyNewCountry(p, father);
 
 	// Only rename to be a Jr if the father has no son yet (first is always Jr)
 	if (!hasRelative(father, "son")) {
+		const sonSuffixNumber =
+			typeof fatherSuffixNumber === "number" ? fatherSuffixNumber + 1 : 2;
+		const sonSuffix = getSuffix(sonSuffixNumber);
+
 		p.firstName = father.firstName;
 		p.lastName = `${fatherLastName} ${sonSuffix}`;
 

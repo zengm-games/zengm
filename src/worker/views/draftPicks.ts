@@ -1,9 +1,10 @@
 import { idb } from "../db";
-import { g } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import { g, helpers } from "../util";
+import type { DraftPick, UpdateEvents, ViewInput } from "../../common/types";
 import { groupByUnique } from "../../common/utils";
 import { addPowerRankingsStuffToTeams } from "./powerRankings";
 import { getEstPicks } from "../core/team/valueChange";
+import { PLAYER } from "../../common";
 
 const adjustProjectedPick = ({
 	projectedPick,
@@ -35,6 +36,109 @@ const adjustProjectedPick = ({
 	);
 };
 
+export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
+	const draftPicks = [];
+
+	const teamsRaw = await idb.getCopies.teamsPlus(
+		{
+			attrs: ["tid", "abbrev"],
+			seasonAttrs: ["lastTen", "won", "lost", "tied", "otl"],
+			stats: ["gp", "mov"],
+			season: g.get("season"),
+			showNoStats: true,
+		},
+		"noCopyCache",
+	);
+
+	const teamsWithRankings = await addPowerRankingsStuffToTeams(
+		teamsRaw,
+		g.get("season"),
+		"regularSeason",
+	);
+
+	const teams = groupByUnique(teamsWithRankings, "tid");
+
+	let estPicksCache;
+
+	for (const dp of draftPicksRaw) {
+		const t = teams[dp.originalTid];
+
+		let projectedPick;
+		if (dp.pick === 0 && typeof dp.season === "number") {
+			if (!estPicksCache) {
+				const teamOvrsSorted = teamsWithRankings
+					.map((t) => {
+						return {
+							ovr: t.powerRankings.ovr,
+							tid: t.tid,
+						};
+					})
+					.sort((a, b) => b.ovr - a.ovr);
+				const { estPicks } = await getEstPicks(teamOvrsSorted);
+				estPicksCache = estPicks;
+			}
+
+			projectedPick = adjustProjectedPick({
+				projectedPick: estPicksCache[dp.originalTid],
+				numSeasons: dp.season - g.get("season"),
+				numTeams: teamsWithRankings.length,
+			});
+		}
+
+		// Extra filter at the end is for TypeScript
+		const events = (
+			await idb.getCopies.events({
+				dpid: dp.dpid,
+				filter: (event) => event.type === "trade",
+			})
+		).filter((row) => row.type === "trade");
+
+		let trades;
+		if (events.length > 0) {
+			trades = events.map((event) => {
+				let tid = PLAYER.DOES_NOT_EXIST;
+
+				// Which team traded the pick?
+				if (event.teams) {
+					for (let i = 0; i < 2; i++) {
+						if (
+							event.teams[i].assets.some(
+								(asset) => (asset as any).dpid === dp.dpid,
+							)
+						) {
+							tid = event.tids[i];
+							break;
+						}
+					}
+				}
+
+				return {
+					abbrev: helpers.getAbbrev(tid),
+					eid: event.eid,
+				};
+			});
+		}
+
+		draftPicks.push({
+			...dp,
+			originalAbbrev: t?.abbrev ?? "???",
+			avgAge: t?.powerRankings.avgAge,
+			ovr: t?.powerRankings.ovr,
+			powerRanking: t?.powerRankings.rank ?? Infinity,
+			record: {
+				won: t?.seasonAttrs.won ?? 0,
+				lost: t?.seasonAttrs.lost ?? 0,
+				tied: t?.seasonAttrs.tied ?? 0,
+				otl: t?.seasonAttrs.otl ?? 0,
+			},
+			projectedPick,
+			trades,
+		});
+	}
+
+	return draftPicks;
+};
+
 const updateDraftPicks = async (
 	{ abbrev, tid }: ViewInput<"draftPicks">,
 	updateEvents: UpdateEvents,
@@ -52,75 +156,14 @@ const updateDraftPicks = async (
 			tid,
 		);
 
-		const draftPicks = [];
-
-		const teamsRaw = await idb.getCopies.teamsPlus(
-			{
-				attrs: ["tid", "abbrev"],
-				seasonAttrs: ["lastTen", "won", "lost", "tied", "otl"],
-				stats: ["gp", "mov"],
-				season: g.get("season"),
-				showNoStats: true,
-			},
-			"noCopyCache",
-		);
-
-		const teamsWithRankings = await addPowerRankingsStuffToTeams(
-			teamsRaw,
-			g.get("season"),
-			"regularSeason",
-		);
-
-		const teams = groupByUnique(teamsWithRankings, "tid");
-
-		let estPicksCache;
-
-		for (const dp of draftPicksRaw) {
-			const t = teams[dp.originalTid];
-
-			let projectedPick;
-			if (dp.pick === 0 && typeof dp.season === "number") {
-				if (!estPicksCache) {
-					const teamOvrsSorted = teamsWithRankings
-						.map((t) => {
-							return {
-								ovr: t.powerRankings.ovr,
-								tid: t.tid,
-							};
-						})
-						.sort((a, b) => b.ovr - a.ovr);
-					const { estPicks } = await getEstPicks(teamOvrsSorted);
-					estPicksCache = estPicks;
-				}
-
-				projectedPick = adjustProjectedPick({
-					projectedPick: estPicksCache[dp.originalTid],
-					numSeasons: dp.season - g.get("season"),
-					numTeams: teamsWithRankings.length,
-				});
-			}
-
-			draftPicks.push({
-				...dp,
-				originalAbbrev: t?.abbrev ?? "???",
-				avgAge: t?.powerRankings.avgAge,
-				ovr: t?.powerRankings.ovr,
-				powerRanking: t?.powerRankings.rank ?? Infinity,
-				record: {
-					won: t?.seasonAttrs.won ?? 0,
-					lost: t?.seasonAttrs.lost ?? 0,
-					tied: t?.seasonAttrs.tied ?? 0,
-					otl: t?.seasonAttrs.otl ?? 0,
-				},
-				projectedPick,
-			});
-		}
+		const draftPicks = await processDraftPicks(draftPicksRaw);
 
 		return {
 			abbrev,
 			challengeNoRatings: g.get("challengeNoRatings"),
 			draftPicks,
 			draftType: g.get("draftType"),
+			tid,
 		};
 	}
 };

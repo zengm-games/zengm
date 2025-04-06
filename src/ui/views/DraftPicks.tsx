@@ -4,19 +4,12 @@ import { getCols, helpers } from "../util";
 import type { View } from "../../common/types";
 import type { DataTableRow } from "../components/DataTable";
 import { orderBy } from "../../common/utils";
+import Note from "./Player/Note";
 
-const DraftTeamHistory = ({
-	abbrev,
+export const getDraftPicksColsAndRows = ({
 	challengeNoRatings,
 	draftPicks,
-	draftType,
-}: View<"draftPicks">) => {
-	useTitleBar({
-		title: "Draft Picks",
-		dropdownView: "draft_picks",
-		dropdownFields: { teams: abbrev },
-	});
-
+}: Pick<View<"draftPicks">, "challengeNoRatings" | "draftPicks">) => {
 	const cols = getCols(
 		[
 			"Year",
@@ -27,6 +20,8 @@ const DraftTeamHistory = ({
 			"Ovr",
 			"Record",
 			"AvgAge",
+			"Trades",
+			"Note",
 		],
 		{
 			"Draft Round": {
@@ -40,6 +35,9 @@ const DraftTeamHistory = ({
 			},
 			Ovr: {
 				title: "Team Ovr",
+			},
+			Note: {
+				classNames: "w-100",
 			},
 		},
 	);
@@ -88,13 +86,82 @@ const DraftTeamHistory = ({
 				!challengeNoRatings ? dp.ovr : null,
 				helpers.formatRecord(dp.record),
 				dp.avgAge?.toFixed(1),
+				dp.trades
+					? {
+							value: (
+								<>
+									{dp.originalAbbrev}
+									{dp.trades.map((info) => {
+										return (
+											<>
+												{" "}
+												→{" "}
+												<a
+													href={helpers.leagueUrl(["trade_summary", info.eid])}
+												>
+													{info.abbrev}
+												</a>
+											</>
+										);
+									})}
+								</>
+							),
+							searchValue: `${dp.originalAbbrev}${dp.trades.map((info) => ` → ${info.abbrev}`)}`,
+							sortValue: dp.trades.length,
+						}
+					: null,
+				{
+					value: (
+						<Note
+							note={dp.note}
+							info={{
+								type: "draftPick",
+								dpid: dp.dpid,
+							}}
+							infoLink
+							xs
+						/>
+					),
+					searchValue: dp.note,
+					sortValue: dp.note,
+				},
 			],
 		};
 	});
 
+	return {
+		cols,
+		rows,
+	};
+};
+
+const DraftPicks = ({
+	abbrev,
+	challengeNoRatings,
+	draftPicks,
+	draftType,
+	tid,
+}: View<"draftPicks">) => {
+	useTitleBar({
+		title: "Draft Picks",
+		dropdownView: "draft_picks",
+		dropdownFields: { teams: abbrev },
+	});
+
+	const { rows, cols } = getDraftPicksColsAndRows({
+		challengeNoRatings,
+		draftPicks,
+	});
+
 	return (
 		<>
-			<MoreLinks type="draft" page="draft_picks" draftType={draftType} />
+			<MoreLinks
+				type="draft"
+				page="draft_picks"
+				abbrev={abbrev}
+				draftType={draftType}
+				tid={tid}
+			/>
 
 			<p>
 				Projected draft pick numbers are shown in{" "}
@@ -102,9 +169,6 @@ const DraftTeamHistory = ({
 			</p>
 
 			<DataTable
-				style={{
-					maxWidth: 570,
-				}}
 				cols={cols}
 				defaultSort={[0, "asc"]}
 				name="DraftPicks"
@@ -114,4 +178,4 @@ const DraftTeamHistory = ({
 	);
 };
 
-export default DraftTeamHistory;
+export default DraftPicks;

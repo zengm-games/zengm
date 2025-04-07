@@ -103,8 +103,13 @@ const Most = ({
 						return helpers.plusMinus(value, 0);
 					}
 					if (x.colName === "GOAT") {
-						if (Number.isInteger(value) && value < 1000000) {
-							return helpers.numberWithCommas(value);
+						if (value < 1_000_000) {
+							const numDigits = Number.parseInt(
+								Math.abs(value).toString(),
+							).toString().length;
+							// Show 3 decimal places if it's 1 digit integer part, and decrease by 1 as the integer length increases
+							const maximumFractionDigits = Math.max(4 - numDigits, 0);
+							return helpers.numberWithCommas(value, maximumFractionDigits);
 						}
 						return value.toPrecision(3);
 					}

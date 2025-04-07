@@ -821,7 +821,6 @@ const TeamFinances = ({
 						),
 		},
 	];
-	console.log(footer);
 
 	// This happens for expansion teams before they have a TeamSeason
 	const noSeasonData = barData.length === 0;

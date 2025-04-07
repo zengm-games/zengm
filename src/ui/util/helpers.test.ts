@@ -11,6 +11,15 @@ describe("numberWithCommas", () => {
 		assert.strictEqual(helpers.numberWithCommas("582.3795234"), "582.3795234");
 		assert.strictEqual(helpers.numberWithCommas(49.99), "49.99");
 	});
+
+	test("handle maximumFractionDigits parameter", () => {
+		assert.strictEqual(helpers.numberWithCommas(0.12345678901), "0.123456789");
+		assert.strictEqual(
+			helpers.numberWithCommas(0.12345678901, 8),
+			"0.12345679",
+		);
+		assert.strictEqual(helpers.numberWithCommas(0.12345678901, 3), "0.123");
+	});
 });
 
 describe("roundStat", () => {

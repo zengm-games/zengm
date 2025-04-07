@@ -3,11 +3,6 @@ show the rest of the draft picks on the draft lottery page https://old.reddit.co
   - handle no lottery case
 - add button to also show later round picks
 
-better indicate the winning/lossing team in score boxes, especially on schedule page of other teams https://discord.com/channels/290013534023057409/331882115119448065/1356366763499196537
-- espn.com - fades out losing team, puts a black arrow next to winning team's score
-- nba.com - just a red arrow next to winning team's score
-- yahoo - fade and red arrow
-
 store list of prior worker console commands https://discord.com/channels/290013534023057409/331882115119448065/1354957789755215953
 
 some way to export play-by-play and box score https://discord.com/channels/290013534023057409/1357064671118753904/1357521047934734397

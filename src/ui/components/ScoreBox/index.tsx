@@ -276,8 +276,6 @@ const ScoreBox = memo(
 										} else {
 											scoreClass = "alert-danger";
 										}
-									} else {
-										scoreClass = "alert-secondary";
 									}
 
 									if (game.forceWin !== undefined) {
@@ -377,6 +375,8 @@ const ScoreBox = memo(
 								}
 							}
 
+							const WINNER_ARROW_WIDTH = 6;
+
 							return (
 								<div
 									key={i}
@@ -463,7 +463,7 @@ const ScoreBox = memo(
 													userTeamClass,
 													{
 														"fw-bold score-box-score": small,
-														"px-2": !small,
+														"ps-2": !small,
 														"pe-1": small,
 													},
 												)}
@@ -494,12 +494,36 @@ const ScoreBox = memo(
 													</a>
 												) : (
 													<>
-														{t.pts}
+														<span
+															className={
+																winner !== i && winner !== -1
+																	? "text-body-secondary"
+																	: undefined
+															}
+														>
+															{t.pts}
+														</span>
 														{t.sPts !== undefined ? (
 															<span className="text-body-secondary">
 																&nbsp;({t.sPts})
 															</span>
 														) : null}
+														<div className="ms-1">
+															{winner === i ? (
+																<svg
+																	viewBox="0 0 50 100"
+																	xmlns="http://www.w3.org/2000/svg"
+																	width={WINNER_ARROW_WIDTH}
+																	height={WINNER_ARROW_WIDTH * 2}
+																	className="align-baseline"
+																	style={{ fill: "var(--bs-gray-600)" }}
+																>
+																	<polygon points="0,50 50,0 50,100 0,50" />
+																</svg>
+															) : (
+																<div style={{ width: WINNER_ARROW_WIDTH }} />
+															)}
+														</div>
 													</>
 												)}
 											</div>

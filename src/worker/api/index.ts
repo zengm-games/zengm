@@ -697,6 +697,12 @@ const deleteOldData = async (options: {
 				cursor.delete();
 			}
 		}
+
+		for await (const cursor of transaction.objectStore("teams")) {
+			const t = cursor.value;
+			t.retiredJerseyNumbers = [];
+			cursor.update(t);
+		}
 	}
 
 	if (options.teamStats) {

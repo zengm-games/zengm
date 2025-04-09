@@ -86,7 +86,7 @@ const updateDraftLottery = async (
 			).map((dp) => dp.dpid),
 		);
 
-		let teams = groupByUnique(
+		const teams = groupByUnique(
 			await idb.getCopies.teamsPlus({
 				attrs: ["tid"],
 				seasonAttrs: [

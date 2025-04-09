@@ -205,6 +205,7 @@ const Row = ({
 					originalT={teams[originalTid]?.seasonAttrs}
 					originalTid={originalTid}
 					season={season}
+					showLogos
 				/>
 			</td>
 			<td className={spectator ? "p-0" : undefined}>
@@ -287,6 +288,7 @@ const RowNonLottery = ({
 					originalT={teams[dp.originalTid]?.seasonAttrs}
 					originalTid={dp.originalTid}
 					season={season}
+					showLogos
 				/>
 			</td>
 			<td className={spectator ? "p-0" : undefined}>
@@ -392,9 +394,11 @@ const Rigged = ({
 
 const NonLotteryHeader = ({ children }: { children: ReactNode }) => {
 	return (
-		<th colSpan={4} className="text-center table-secondary">
-			{children}
-		</th>
+		<tr>
+			<th colSpan={4} className="text-center table-secondary">
+				{children}
+			</th>
+		</tr>
 	);
 };
 

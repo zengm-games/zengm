@@ -1,7 +1,6 @@
 show the rest of the draft picks on the draft lottery page https://old.reddit.com/r/BasketballGM/comments/1j0neia/monthly_suggestions_thread/mfrduzi/
 - should be based on if the season ended today standings
   - return from genOrder somehow
-- add logos of both teams
 - test no lottery
 - test during expansion draft
 - test during fantasy draft
@@ -11,8 +10,8 @@ show the rest of the draft picks on the draft lottery page https://old.reddit.co
   - don't show any of this stuff
 - test during draft
   - need to get from player objects?
-- test hockey pts
-- use formatRecord
+
+remove table align top
 
 store list of prior worker console commands https://discord.com/channels/290013534023057409/331882115119448065/1354957789755215953
 

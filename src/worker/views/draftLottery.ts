@@ -37,7 +37,16 @@ const updateDraftLottery = async (
 				string,
 				| TeamFiltered<
 						["tid"],
-						["won", "lost", "tied", "otl", "pts"],
+						[
+							"won",
+							"lost",
+							"tied",
+							"otl",
+							"pts",
+							"abbrev",
+							"imgURL",
+							"imgURLSmall",
+						],
 						undefined,
 						number
 				  >
@@ -80,7 +89,16 @@ const updateDraftLottery = async (
 		let teams = groupByUnique(
 			await idb.getCopies.teamsPlus({
 				attrs: ["tid"],
-				seasonAttrs: ["won", "lost", "tied", "otl", "pts"],
+				seasonAttrs: [
+					"won",
+					"lost",
+					"tied",
+					"otl",
+					"pts",
+					"abbrev",
+					"imgURL",
+					"imgURLSmall",
+				],
 				season,
 			}),
 			"tid",

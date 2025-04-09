@@ -199,7 +199,13 @@ const Row = ({
 					"table-info": userTeam,
 				})}
 			>
-				<DraftAbbrev tid={tid} originalTid={originalTid} season={season} />
+				<DraftAbbrev
+					t={teams[tid]?.seasonAttrs}
+					tid={tid}
+					originalT={teams[originalTid]?.seasonAttrs}
+					originalTid={originalTid}
+					season={season}
+				/>
 			</td>
 			<td className={spectator ? "p-0" : undefined}>
 				{userTeam || spectator || pickAlreadyMade ? null : (
@@ -276,7 +282,9 @@ const RowNonLottery = ({
 				})}
 			>
 				<DraftAbbrev
+					t={t?.seasonAttrs}
 					tid={dp.tid}
+					originalT={teams[dp.originalTid]?.seasonAttrs}
 					originalTid={dp.originalTid}
 					season={season}
 				/>

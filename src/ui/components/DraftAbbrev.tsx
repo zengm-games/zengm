@@ -1,19 +1,31 @@
 import { helpers, useLocal } from "../util";
 
+type TeamOverride = {
+	abbrev: string;
+	imgURL?: string;
+	imgURLSmall?: string;
+};
+
 // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
+// Supply t and originalT if you want historical abbrevs/logos to be accurate, otherwise current values will be used.
 const DraftAbbrev = ({
+	originalT,
 	originalTid,
+	t,
 	tid,
 	season,
 }: {
+	originalT?: TeamOverride;
 	originalTid: number;
+	t?: TeamOverride;
 	tid: number;
 	season?: number;
 	children?: any;
 }) => {
 	const teamInfoCache = useLocal((state) => state.teamInfoCache);
-	const abbrev = teamInfoCache[tid]?.abbrev;
-	const originalAbbrev = teamInfoCache[originalTid]?.abbrev;
+	const abbrev = t?.abbrev ?? teamInfoCache[tid]?.abbrev;
+	const originalAbbrev =
+		originalT?.abbrev ?? teamInfoCache[originalTid]?.abbrev;
 	const args1 =
 		season === undefined
 			? ["roster", `${abbrev}_${tid}`]

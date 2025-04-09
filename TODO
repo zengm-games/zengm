@@ -12,8 +12,6 @@ show the rest of the draft picks on the draft lottery page https://old.reddit.co
 - test during draft
   - need to get from player objects?
 - test hockey pts
-- allow override in DraftAbbrev to specify actual abbrev/logo from that season
-  - put in teams from draftLottery
 - use formatRecord
 
 store list of prior worker console commands https://discord.com/channels/290013534023057409/331882115119448065/1354957789755215953
@@ -711,6 +709,7 @@ wrong team abbrev various places
   - fixRatingsStatsAbbrevs - updates abbrevs in player object (ratings/stats/draft)
 - any abbrev returned in stats or ratings from playersPlus is wrong
 - using teamInfoCache from UI is probably wrong too
+- anything using DraftAbbrev without passing in t/originalT is wrong
 
 button to randomize all contracts as if a new league https://old.reddit.com/r/nba/comments/w8igiw/basketball_gm_is_ready_to_get_you_through_the/ihriglz/?context=3
 - handle contract history

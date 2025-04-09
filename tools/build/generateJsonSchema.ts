@@ -587,16 +587,11 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 										type: "integer",
 										minimum: 1,
 									},
-									won: {
+									dpid: {
 										type: "integer",
-										minimum: 0,
-									},
-									lost: {
-										type: "integer",
-										minimum: 0,
 									},
 								},
-								required: ["tid", "originalTid", "chances", "won", "lost"],
+								required: ["tid", "originalTid", "chances", "dpid"],
 							},
 						},
 					},

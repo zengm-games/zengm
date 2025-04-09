@@ -35,12 +35,13 @@ const updateDraftLottery = async (
 			spectator: boolean;
 			teams: Record<
 				string,
-				TeamFiltered<
-					["tid"],
-					["won", "lost", "tied", "otl", "pts"],
-					undefined,
-					number
-				>
+				| TeamFiltered<
+						["tid"],
+						["won", "lost", "tied", "otl", "pts"],
+						undefined,
+						number
+				  >
+				| undefined
 			>;
 			type: "completed" | "projected" | "readyToRun";
 			usePts: boolean;
@@ -76,7 +77,7 @@ const updateDraftLottery = async (
 			).map((dp) => dp.dpid),
 		);
 
-		const teams = groupByUnique(
+		let teams = groupByUnique(
 			await idb.getCopies.teamsPlus({
 				attrs: ["tid"],
 				seasonAttrs: ["won", "lost", "tied", "otl", "pts"],

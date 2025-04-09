@@ -178,11 +178,6 @@ export type DraftLotteryResultArray = {
 	originalTid: number;
 	chances: number;
 	pick?: number;
-	won: number;
-	lost: number;
-	tied: number;
-	otl: number;
-	pts?: number;
 	dpid: number;
 }[];
 

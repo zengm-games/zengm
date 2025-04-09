@@ -218,8 +218,13 @@ const Row = ({
 			</td>
 			<td>
 				<a href={helpers.leagueUrl(["standings", season])}>
-					{usePts ? `${teams[tid].seasonAttrs.pts} pts (` : null}
-					{helpers.formatRecord(teams[tid].seasonAttrs)}
+					{usePts ? `${teams[tid]?.seasonAttrs.pts ?? 0} pts (` : null}
+					{helpers.formatRecord(
+						teams[tid]?.seasonAttrs ?? {
+							won: 0,
+							lost: 0,
+						},
+					)}
 					{usePts ? `)` : null}
 				</a>
 			</td>
@@ -293,8 +298,13 @@ const RowNonLottery = ({
 			</td>
 			<td>
 				<a href={helpers.leagueUrl(["standings", season])}>
-					{usePts ? `${t.seasonAttrs.pts} pts (` : null}
-					{helpers.formatRecord(t.seasonAttrs)}
+					{usePts ? `${t?.seasonAttrs.pts ?? 0} pts (` : null}
+					{helpers.formatRecord(
+						t?.seasonAttrs ?? {
+							won: 0,
+							lost: 0,
+						},
+					)}
 					{usePts ? `)` : null}
 				</a>
 			</td>

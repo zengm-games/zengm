@@ -15,9 +15,6 @@ show the rest of the draft picks on the draft lottery page https://old.reddit.co
 - allow override in DraftAbbrev to specify actual abbrev/logo from that season
   - put in teams from draftLottery
 - use formatRecord
-- don't store record info in draftlotteryresult
-  - won, lost, otl, tied, pts
-  - schema
 
 store list of prior worker console commands https://discord.com/channels/290013534023057409/331882115119448065/1354957789755215953
 

@@ -290,7 +290,6 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 	}
 
 	return {
-		allTeams,
 		teamsByRound,
 		ties,
 	};

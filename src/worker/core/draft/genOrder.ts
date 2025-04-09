@@ -183,8 +183,7 @@ const genOrder = async (
 		draftPicksIndexed[tid][dp.round] = dp;
 	}
 
-	const { allTeams, teamsByRound, ties } =
-		await getTeamsByRound(draftPicksIndexed);
+	const { teamsByRound, ties } = await getTeamsByRound(draftPicksIndexed);
 	const firstRoundTeams = teamsByRound[0] ?? [];
 
 	const draftType = draftTypeOverride ?? g.get("draftType");
@@ -367,8 +366,6 @@ const genOrder = async (
 
 	let draftLotteryResult: ReturnVal["draftLotteryResult"];
 	if (draftHasLottery(draftType)) {
-		const usePts = g.get("pointsFormula", "current") !== "";
-
 		// Save draft lottery results separately
 		draftLotteryResult = {
 			season: g.get("season"),
@@ -392,39 +389,16 @@ const genOrder = async (
 						throw new Error("Should never happen");
 					}
 
-					// For the team making the pick
-					const t = allTeams.find((t2) => t2.tid === dp.tid);
-					let won = 0;
-					let lost = 0;
-					let otl = 0;
-					let tied = 0;
-					let pts;
-
-					if (t) {
-						won = t.seasonAttrs.won;
-						lost = t.seasonAttrs.lost;
-						otl = t.seasonAttrs.otl;
-						tied = t.seasonAttrs.tied;
-
-						if (usePts) {
-							pts = t.seasonAttrs.pts;
-						}
-					}
-
 					// For the original team
 					const i = firstRoundTeams.findIndex(
 						(t2) => t2.tid === dp.originalTid,
 					);
+
 					return {
 						tid: dp.tid,
 						originalTid: dp.originalTid,
 						chances: chances[i],
 						pick: dp.pick,
-						won,
-						lost,
-						otl,
-						tied,
-						pts,
 						dpid: dp.dpid,
 					};
 				}),

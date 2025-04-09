@@ -2362,10 +2362,6 @@ class GameSim extends GameSimBase {
 		}
 		this.recordLastScore(this.o, p, type);
 
-		if (pAst !== undefined) {
-			this.recordStat(this.o, pAst, "ast");
-		}
-
 		if (andOne && !this.elamDone) {
 			this.doPf({ t: this.d, type: "pfAndOne", shooter, fouler });
 			return this.doFt(shooter, 1); // fg, orb, or drb

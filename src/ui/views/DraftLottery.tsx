@@ -119,18 +119,19 @@ const Row = ({
 	pickAlreadyMade,
 	season,
 	t,
+	usePts,
 	userTid,
 	indRevealed,
 	toReveal,
 	probs,
 	spectator,
-}: {
+	teams,
+}: Pick<Props, "teams" | "usePts" | "userTid"> & {
 	NUM_PICKS: number;
 	i: number;
 	pickAlreadyMade: boolean;
 	season: number;
 	t: DraftLotteryResultArray[number];
-	userTid: number;
 	indRevealed: State["indRevealed"];
 	toReveal: State["toReveal"];
 	probs: NonNullable<ReturnType<typeof getDraftLotteryProbs>["probs"]>;
@@ -138,8 +139,7 @@ const Row = ({
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 
-	const { tid, originalTid, chances, pick, won, lost, otl, tied, pts, dpid } =
-		t;
+	const { tid, originalTid, chances, pick, dpid } = t;
 
 	const userTeam = tid === userTid;
 
@@ -218,11 +218,9 @@ const Row = ({
 			</td>
 			<td>
 				<a href={helpers.leagueUrl(["standings", season])}>
-					{pts !== undefined ? `${pts} pts (` : null}
-					{won}-{lost}
-					{otl > 0 ? <>-{otl}</> : null}
-					{tied > 0 ? <>-{tied}</> : null}
-					{pts !== undefined ? `)` : null}
+					{usePts ? `${teams[tid].seasonAttrs.pts} pts (` : null}
+					{helpers.formatRecord(teams[tid].seasonAttrs)}
+					{usePts ? `)` : null}
 				</a>
 			</td>
 			<td>{chances}</td>
@@ -235,17 +233,20 @@ const RowNonLottery = ({
 	dp,
 	pickAlreadyMade,
 	spectator,
+	teams,
+	usePts,
 	userTid,
-}: {
+}: Pick<Props, "teams" | "usePts" | "userTid"> & {
 	dp: DraftPick;
 	pickAlreadyMade: boolean;
 	spectator: boolean;
-	userTid: number;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 
 	const userTeam = dp.tid === userTid;
 	const season = dp.season as number;
+
+	const t = teams[dp.tid];
 
 	return (
 		<tr
@@ -291,7 +292,11 @@ const RowNonLottery = ({
 				)}
 			</td>
 			<td>
-				<a href={helpers.leagueUrl(["standings", season])}>???</a>
+				<a href={helpers.leagueUrl(["standings", season])}>
+					{usePts ? `${t.seasonAttrs.pts} pts (` : null}
+					{helpers.formatRecord(t.seasonAttrs)}
+					{usePts ? `)` : null}
+				</a>
 			</td>
 		</tr>
 	);
@@ -481,7 +486,9 @@ const DraftLotteryTable = (props: Props) => {
 		numToPick,
 		rigged,
 		season,
+		teams,
 		type,
+		usePts,
 		userTid,
 	} = props;
 	const { draftType, result } = state;
@@ -579,6 +586,8 @@ const DraftLotteryTable = (props: Props) => {
 									toReveal={state.toReveal}
 									probs={probs}
 									spectator={props.spectator}
+									teams={teams}
+									usePts={usePts}
 								/>
 							))}
 							{draftPicks ? (
@@ -603,11 +612,13 @@ const DraftLotteryTable = (props: Props) => {
 													) : null}
 													<RowNonLottery
 														dp={dp}
-														userTid={userTid}
-														spectator={props.spectator}
 														pickAlreadyMade={
 															!dpidsAvailableToTrade.has(dp.dpid)
 														}
+														spectator={props.spectator}
+														teams={teams}
+														usePts={usePts}
+														userTid={userTid}
 													/>
 												</Fragment>
 											);

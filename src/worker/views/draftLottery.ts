@@ -10,9 +10,10 @@ import type {
 	DraftLotteryResult,
 	GameAttributesLeague,
 	DraftPick,
+	TeamFiltered,
 } from "../../common/types";
 import { getNumToPick } from "../core/draft/genOrder";
-import { orderBy } from "../../common/utils";
+import { groupByUnique, orderBy } from "../../common/utils";
 
 const updateDraftLottery = async (
 	{ season }: ViewInput<"draftLottery">,
@@ -32,7 +33,17 @@ const updateDraftLottery = async (
 			season: number;
 			showExpansionTeamMessage: boolean;
 			spectator: boolean;
+			teams: Record<
+				string,
+				TeamFiltered<
+					["tid"],
+					["won", "lost", "tied", "otl", "pts"],
+					undefined,
+					number
+				>
+			>;
 			type: "completed" | "projected" | "readyToRun";
+			usePts: boolean;
 			userTid: number;
 	  }
 	| undefined
@@ -64,6 +75,19 @@ const updateDraftLottery = async (
 				await idb.cache.draftPicks.indexGetAll("draftPicksBySeason", season)
 			).map((dp) => dp.dpid),
 		);
+
+		const teams = groupByUnique(
+			await idb.getCopies.teamsPlus({
+				attrs: ["tid"],
+				seasonAttrs: ["won", "lost", "tied", "otl", "pts"],
+				season,
+			}),
+			"tid",
+		);
+
+		const pointsFormula = g.get("pointsFormula", season);
+		const usePts = pointsFormula !== "";
+		console.log(usePts, pointsFormula);
 
 		// View completed draft lottery
 		if (
@@ -100,7 +124,9 @@ const updateDraftLottery = async (
 					season,
 					showExpansionTeamMessage,
 					spectator: g.get("spectator"),
+					teams,
 					type: "completed",
+					usePts,
 					userTid: g.get("userTid"),
 				};
 			}
@@ -116,7 +142,9 @@ const updateDraftLottery = async (
 					season,
 					showExpansionTeamMessage,
 					spectator: g.get("spectator"),
+					teams,
 					type: "completed",
+					usePts,
 					userTid: g.get("userTid"),
 				};
 			}
@@ -132,7 +160,9 @@ const updateDraftLottery = async (
 				season,
 				showExpansionTeamMessage,
 				spectator: g.get("spectator"),
+				teams,
 				type: "projected",
+				usePts,
 				userTid: g.get("userTid"),
 			};
 		}
@@ -197,10 +227,12 @@ const updateDraftLottery = async (
 			),
 			result: draftLotteryResult?.result,
 			rigged: g.get("riggedLottery"),
-			season: draftLotteryResult ? draftLotteryResult.season : season,
+			season,
 			spectator: g.get("spectator"),
 			showExpansionTeamMessage,
+			teams,
 			type,
+			usePts,
 			userTid: g.get("userTid"),
 		};
 	}

@@ -1,11 +1,8 @@
 show the rest of the draft picks on the draft lottery page https://old.reddit.com/r/BasketballGM/comments/1j0neia/monthly_suggestions_thread/mfrduzi/
 - should be based on if the season ended today standings
   - return from genOrder somehow
-- add a full width th "end of lottery" like tankathon
-  - handle no lottery case
-  - handle showing/hiding full width when there are no/all teams in lottery
 - add logos of both teams
-- add button to also show later round picks
+- test no lottery
 - test during expansion draft
 - test during fantasy draft
 - test tooSlow
@@ -14,8 +11,13 @@ show the rest of the draft picks on the draft lottery page https://old.reddit.co
   - don't show any of this stuff
 - test during draft
   - need to get from player objects?
+- test hockey pts
+- allow override in DraftAbbrev to specify actual abbrev/logo from that season
+  - put in teams from draftLottery
 - use formatRecord
 - don't store record info in draftlotteryresult
+  - won, lost, otl, tied, pts
+  - schema
 
 store list of prior worker console commands https://discord.com/channels/290013534023057409/331882115119448065/1354957789755215953
 

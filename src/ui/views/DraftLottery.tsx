@@ -1,5 +1,12 @@
 import clsx from "clsx";
-import { useEffect, useReducer, useRef } from "react";
+import {
+	Fragment,
+	useEffect,
+	useReducer,
+	useRef,
+	useState,
+	type ReactNode,
+} from "react";
 import {
 	DraftAbbrev,
 	MoreLinks,
@@ -12,6 +19,7 @@ import type {
 	DraftLotteryResultArray,
 	View,
 	DraftType,
+	DraftPick,
 } from "../../common/types";
 import useClickable from "../hooks/useClickable";
 import {
@@ -169,20 +177,13 @@ const Row = ({
 		);
 	});
 
-	const row = (
+	return (
 		<tr
 			className={clsx({
 				"table-warning": clicked,
 			})}
 			onClick={toggleClicked}
 		>
-			<td
-				className={clsx({
-					"table-info": userTeam,
-				})}
-			>
-				<DraftAbbrev tid={tid} originalTid={originalTid} season={season} />
-			</td>
 			<td
 				className={clsx(
 					{
@@ -192,6 +193,13 @@ const Row = ({
 				)}
 			>
 				{revealedPickNumber}
+			</td>
+			<td
+				className={clsx({
+					"table-info": userTeam,
+				})}
+			>
+				<DraftAbbrev tid={tid} originalTid={originalTid} season={season} />
 			</td>
 			<td className={spectator ? "p-0" : undefined}>
 				{userTeam || spectator || pickAlreadyMade ? null : (
@@ -221,7 +229,72 @@ const Row = ({
 			{pickCols}
 		</tr>
 	);
-	return row;
+};
+
+const RowNonLottery = ({
+	dp,
+	pickAlreadyMade,
+	spectator,
+	userTid,
+}: {
+	dp: DraftPick;
+	pickAlreadyMade: boolean;
+	spectator: boolean;
+	userTid: number;
+}) => {
+	const { clicked, toggleClicked } = useClickable();
+
+	const userTeam = dp.tid === userTid;
+	const season = dp.season as number;
+
+	return (
+		<tr
+			className={clsx({
+				"table-warning": clicked,
+			})}
+			onClick={toggleClicked}
+		>
+			<td
+				className={clsx(
+					{
+						"table-info": userTeam,
+					},
+					"text-end",
+				)}
+			>
+				{dp.pick}
+			</td>
+			<td
+				className={clsx({
+					"table-info": userTeam,
+				})}
+			>
+				<DraftAbbrev
+					tid={dp.tid}
+					originalTid={dp.originalTid}
+					season={season}
+				/>
+			</td>
+			<td className={spectator ? "p-0" : undefined}>
+				{userTeam || spectator || pickAlreadyMade ? null : (
+					<button
+						className="btn btn-xs btn-light-bordered"
+						onClick={async () => {
+							await toWorker("actions", "tradeFor", {
+								dpid: dp.dpid,
+								tid: dp.tid,
+							});
+						}}
+					>
+						Trade
+					</button>
+				)}
+			</td>
+			<td>
+				<a href={helpers.leagueUrl(["standings", season])}>???</a>
+			</td>
+		</tr>
+	);
 };
 
 const Rigged = ({
@@ -291,6 +364,14 @@ const Rigged = ({
 			))}
 			<td colSpan={result.length - actualRigged.length} />
 		</tr>
+	);
+};
+
+const NonLotteryHeader = ({ children }: { children: ReactNode }) => {
+	return (
+		<th colSpan={4} className="text-center table-secondary">
+			{children}
+		</th>
 	);
 };
 
@@ -395,6 +476,7 @@ const DraftLotteryTable = (props: Props) => {
 
 	const {
 		dpidsAvailableToTrade,
+		draftPicks,
 		godMode,
 		numToPick,
 		rigged,
@@ -405,6 +487,11 @@ const DraftLotteryTable = (props: Props) => {
 	const { draftType, result } = state;
 	const { tooSlow, probs } = getDraftLotteryProbs(result, draftType, numToPick);
 	const NUM_PICKS = result !== undefined ? result.length : 14;
+
+	// Initial value true means either no non-lottery picks, or only 1st round non-lottery picks, in which case there's no need for the "Show all" button so initialize to true, since we hide the button after it's clicked if initially false
+	const [showAll, setShowAll] = useState(
+		() => !draftPicks?.some((dp) => dp.round > 1),
+	);
 
 	const showStartButton =
 		type === "readyToRun" &&
@@ -436,12 +523,13 @@ const DraftLotteryTable = (props: Props) => {
 		);
 	}
 
+	let seenRound = 1;
+
 	// Checking both is redundant, but TypeScript wants it
 	if (result && probs) {
 		table = (
 			<>
-				<p />
-				<ResponsiveTableWrapper nonfluid>
+				<ResponsiveTableWrapper nonfluid className="mb-0">
 					<table
 						className={clsx(
 							"table table-striped table-borderless table-sm table-hover",
@@ -461,10 +549,8 @@ const DraftLotteryTable = (props: Props) => {
 								</th>
 							</tr>
 							<tr>
+								<th title="Pick number">#</th>
 								<th>Team</th>
-								<th title="Pick number" className="text-end">
-									#
-								</th>
 								<th className={props.spectator ? "p-0" : undefined} />
 								<th>Record</th>
 								<th>Chances</th>
@@ -495,9 +581,52 @@ const DraftLotteryTable = (props: Props) => {
 									spectator={props.spectator}
 								/>
 							))}
+							{draftPicks ? (
+								<>
+									{draftPicks.some((dp) => showAll || dp.round === 1) ? (
+										<NonLotteryHeader>Non-lottery picks</NonLotteryHeader>
+									) : null}
+									{draftPicks
+										.filter((dp) => dp.round === 1 || showAll)
+										.map((dp) => {
+											const showRoundHeader = seenRound !== dp.round;
+											if (showRoundHeader) {
+												seenRound = dp.round;
+											}
+
+											return (
+												<Fragment key={dp.dpid}>
+													{showRoundHeader ? (
+														<NonLotteryHeader>
+															{helpers.ordinal(dp.round)} round
+														</NonLotteryHeader>
+													) : null}
+													<RowNonLottery
+														dp={dp}
+														userTid={userTid}
+														spectator={props.spectator}
+														pickAlreadyMade={
+															!dpidsAvailableToTrade.has(dp.dpid)
+														}
+													/>
+												</Fragment>
+											);
+										})}
+								</>
+							) : null}
 						</tbody>
 					</table>
 				</ResponsiveTableWrapper>
+				{showAll ? null : (
+					<button
+						className="btn btn-secondary mt-3"
+						onClick={() => {
+							setShowAll(true);
+						}}
+					>
+						Show all rounds
+					</button>
+				)}
 				{tooSlow ? (
 					<p className="text-warning">
 						<b>Warning:</b> Computing exact odds for so many teams and picks is

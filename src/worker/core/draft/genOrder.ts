@@ -9,17 +9,23 @@ import type {
 	DraftLotteryResult,
 	DraftType,
 	DraftPickWithoutKey,
+	DraftPick,
 } from "../../../common/types";
 import genOrderGetPicks from "./genOrderGetPicks";
 import getTeamsByRound from "./getTeamsByRound";
 import { bySport } from "../../../common";
 import { league } from "..";
 
-type ReturnVal = DraftLotteryResult & {
-	draftType: Exclude<
-		DraftType,
-		"random" | "noLottery" | "noLotteryReverse" | "freeAgents"
-	>;
+type ReturnVal = {
+	draftLotteryResult:
+		| (DraftLotteryResult & {
+				draftType: Exclude<
+					DraftType,
+					"random" | "noLottery" | "noLotteryReverse" | "freeAgents"
+				>;
+		  })
+		| undefined;
+	draftPicks: DraftPick[];
 };
 
 const LOTTERY_DRAFT_TYPES = [
@@ -160,7 +166,7 @@ const genOrder = async (
 	mock: boolean = false,
 	conditions?: Conditions,
 	draftTypeOverride?: DraftType,
-): Promise<ReturnVal | undefined> => {
+): Promise<ReturnVal> => {
 	// Sometimes picks just fail to generate or get lost. For example, if numSeasonsFutureDraftPicks is 0.
 	await genPicks();
 
@@ -359,7 +365,7 @@ const genOrder = async (
 		}
 	}
 
-	let draftLotteryResult: ReturnVal | undefined;
+	let draftLotteryResult: ReturnVal["draftLotteryResult"];
 	if (draftHasLottery(draftType)) {
 		const usePts = g.get("pointsFormula", "current") !== "";
 
@@ -494,7 +500,7 @@ const genOrder = async (
 		});
 	}
 
-	return draftLotteryResult;
+	return { draftLotteryResult, draftPicks };
 };
 
 export default genOrder;

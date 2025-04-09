@@ -9,8 +9,10 @@ import type {
 	DraftType,
 	DraftLotteryResult,
 	GameAttributesLeague,
+	DraftPick,
 } from "../../common/types";
 import { getNumToPick } from "../core/draft/genOrder";
+import { orderBy } from "../../common/utils";
 
 const updateDraftLottery = async (
 	{ season }: ViewInput<"draftLottery">,
@@ -20,6 +22,7 @@ const updateDraftLottery = async (
 	| {
 			challengeWarning?: boolean;
 			notEnoughTeams?: boolean;
+			draftPicks?: DraftPick[];
 			draftType?: DraftType | "dummy";
 			dpidsAvailableToTrade: Set<number>;
 			godMode?: boolean;
@@ -57,9 +60,9 @@ const updateDraftLottery = async (
 		}
 
 		const dpidsAvailableToTrade = new Set(
-			(await idb.cache.draftPicks.getAll())
-				.filter((dp) => dp.season === season)
-				.map((dp) => dp.dpid),
+			(
+				await idb.cache.draftPicks.indexGetAll("draftPicksBySeason", season)
+			).map((dp) => dp.dpid),
 		);
 
 		// View completed draft lottery
@@ -136,8 +139,11 @@ const updateDraftLottery = async (
 
 		// View projected draft lottery for this season
 		let draftLotteryResult;
+		let draftPicks;
 		try {
-			draftLotteryResult = await draft.genOrder(true);
+			const result = await draft.genOrder(true);
+			draftLotteryResult = result.draftLotteryResult;
+			draftPicks = result.draftPicks;
 		} catch (error) {
 			console.log(error);
 			if (!(error as any).notEnoughTeams) {
@@ -160,6 +166,21 @@ const updateDraftLottery = async (
 			? draftLotteryResult.draftType
 			: "noLottery";
 
+		if (draftPicks) {
+			const numLotteryPicks = draftLotteryResult?.result.length ?? 0;
+			draftPicks = orderBy(
+				draftPicks.filter((dp) => {
+					// Remove any lottery picks
+					if (dp.round === 1 && dp.pick <= numLotteryPicks) {
+						return false;
+					}
+					return true;
+				}),
+				["round", "pick"],
+			);
+			console.log("draftLotteryResult", draftLotteryResult, draftPicks);
+		}
+
 		return {
 			challengeWarning:
 				!draftLotteryResult &&
@@ -167,6 +188,7 @@ const updateDraftLottery = async (
 				g.get("userTids").length > 0,
 			notEnoughTeams: !draftLotteryResult,
 			dpidsAvailableToTrade,
+			draftPicks,
 			draftType,
 			godMode: g.get("godMode"),
 			numToPick: getNumToPick(

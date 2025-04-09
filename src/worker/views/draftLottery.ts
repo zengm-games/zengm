@@ -21,12 +21,12 @@ const updateDraftLottery = async (
 	state: any,
 ): Promise<
 	| {
-			challengeWarning?: boolean;
-			notEnoughTeams?: boolean;
-			draftPicks?: DraftPick[];
+			challengeWarning: boolean;
+			notEnoughTeams: boolean;
+			draftPicks: DraftPick[] | undefined;
 			draftType?: DraftType | "dummy";
 			dpidsAvailableToTrade: Set<number>;
-			godMode?: boolean;
+			godMode: boolean;
 			numToPick: number;
 			result: DraftLotteryResultArray | undefined;
 			rigged: GameAttributesLeague["riggedLottery"];
@@ -106,7 +106,6 @@ const updateDraftLottery = async (
 
 		const pointsFormula = g.get("pointsFormula", season);
 		const usePts = pointsFormula !== "";
-		console.log(usePts, pointsFormula);
 
 		// View completed draft lottery
 		if (
@@ -136,6 +135,7 @@ const updateDraftLottery = async (
 
 				return {
 					dpidsAvailableToTrade,
+					draftPicks: undefined,
 					draftType,
 					numToPick: getNumToPick(draftType, result ? result.length : 14),
 					result,
@@ -147,6 +147,9 @@ const updateDraftLottery = async (
 					type: "completed",
 					usePts,
 					userTid: g.get("userTid"),
+					challengeWarning: false,
+					notEnoughTeams: false,
+					godMode: g.get("godMode"),
 				};
 			}
 
@@ -154,6 +157,7 @@ const updateDraftLottery = async (
 				// Maybe there was no draft lottery done, or it was deleted from the database
 				return {
 					dpidsAvailableToTrade,
+					draftPicks: undefined,
 					draftType: "noLottery",
 					numToPick: 0,
 					result: undefined,
@@ -165,6 +169,9 @@ const updateDraftLottery = async (
 					type: "completed",
 					usePts,
 					userTid: g.get("userTid"),
+					challengeWarning: false,
+					notEnoughTeams: false,
+					godMode: g.get("godMode"),
 				};
 			}
 		}
@@ -172,6 +179,7 @@ const updateDraftLottery = async (
 		if (NO_LOTTERY_DRAFT_TYPES.includes(g.get("draftType"))) {
 			return {
 				dpidsAvailableToTrade,
+				draftPicks: undefined,
 				draftType: g.get("draftType"),
 				numToPick: 0,
 				result: undefined,
@@ -183,6 +191,9 @@ const updateDraftLottery = async (
 				type: "projected",
 				usePts,
 				userTid: g.get("userTid"),
+				challengeWarning: false,
+				notEnoughTeams: false,
+				godMode: g.get("godMode"),
 			};
 		}
 

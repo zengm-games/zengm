@@ -1,13 +1,9 @@
 show the rest of the draft picks on the draft lottery page https://old.reddit.com/r/BasketballGM/comments/1j0neia/monthly_suggestions_thread/mfrduzi/
-- should be based on if the season ended today standings
-  - return from genOrder somehow
 - test no lottery
 - test during expansion draft
 - test during fantasy draft
 - test tooSlow
 - test rigged
-- test past season
-  - don't show any of this stuff
 - test during draft
   - need to get from player objects?
 

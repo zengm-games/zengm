@@ -32,7 +32,6 @@ const DraftAbbrev = ({
 
 	const abbrev = t.abbrev;
 	const originalAbbrev = originalT.abbrev;
-	console.log(showLogos, t.imgURL, t.imgURLSmall);
 
 	const args1 =
 		season === undefined

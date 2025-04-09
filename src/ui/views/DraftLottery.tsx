@@ -517,10 +517,7 @@ const DraftLotteryTable = (props: Props) => {
 	const { tooSlow, probs } = getDraftLotteryProbs(result, draftType, numToPick);
 	const NUM_PICKS = result !== undefined ? result.length : 14;
 
-	// Initial value true means either no non-lottery picks, or only 1st round non-lottery picks, in which case there's no need for the "Show all" button so initialize to true, since we hide the button after it's clicked if initially false
-	const [showAll, setShowAll] = useState(
-		() => !draftPicks?.some((dp) => dp.round > 1),
-	);
+	const [showAll, setShowAll] = useState(false);
 
 	const showStartButton =
 		type === "readyToRun" &&
@@ -553,6 +550,9 @@ const DraftLotteryTable = (props: Props) => {
 	}
 
 	let seenRound = 1;
+	const otherDraftPicksToShow = draftPicks?.filter(
+		(dp) => showAll || dp.round === 1,
+	);
 
 	// Checking both is redundant, but TypeScript wants it
 	if (result && probs) {
@@ -612,45 +612,41 @@ const DraftLotteryTable = (props: Props) => {
 									usePts={usePts}
 								/>
 							))}
-							{draftPicks ? (
+							{otherDraftPicksToShow && otherDraftPicksToShow.length > 0 ? (
 								<>
-									{draftPicks.some((dp) => showAll || dp.round === 1) ? (
+									{otherDraftPicksToShow.some((dp) => dp.round === 1) ? (
 										<NonLotteryHeader>Non-lottery picks</NonLotteryHeader>
 									) : null}
-									{draftPicks
-										.filter((dp) => dp.round === 1 || showAll)
-										.map((dp) => {
-											const showRoundHeader = seenRound !== dp.round;
-											if (showRoundHeader) {
-												seenRound = dp.round;
-											}
+									{otherDraftPicksToShow.map((dp) => {
+										const showRoundHeader = seenRound !== dp.round;
+										if (showRoundHeader) {
+											seenRound = dp.round;
+										}
 
-											return (
-												<Fragment key={dp.dpid}>
-													{showRoundHeader ? (
-														<NonLotteryHeader>
-															{helpers.ordinal(dp.round)} round
-														</NonLotteryHeader>
-													) : null}
-													<RowNonLottery
-														dp={dp}
-														pickAlreadyMade={
-															!dpidsAvailableToTrade.has(dp.dpid)
-														}
-														spectator={props.spectator}
-														teams={teams}
-														usePts={usePts}
-														userTid={userTid}
-													/>
-												</Fragment>
-											);
-										})}
+										return (
+											<Fragment key={dp.dpid}>
+												{showRoundHeader ? (
+													<NonLotteryHeader>
+														{helpers.ordinal(dp.round)} round
+													</NonLotteryHeader>
+												) : null}
+												<RowNonLottery
+													dp={dp}
+													pickAlreadyMade={!dpidsAvailableToTrade.has(dp.dpid)}
+													spectator={props.spectator}
+													teams={teams}
+													usePts={usePts}
+													userTid={userTid}
+												/>
+											</Fragment>
+										);
+									})}
 								</>
 							) : null}
 						</tbody>
 					</table>
 				</ResponsiveTableWrapper>
-				{showAll ? null : (
+				{!showAll && draftPicks?.some((dp) => dp.round > 1) ? (
 					<button
 						className="btn btn-secondary mt-3"
 						onClick={() => {
@@ -659,7 +655,7 @@ const DraftLotteryTable = (props: Props) => {
 					>
 						Show all rounds
 					</button>
-				)}
+				) : null}
 				{tooSlow ? (
 					<p className="text-warning">
 						<b>Warning:</b> Computing exact odds for so many teams and picks is

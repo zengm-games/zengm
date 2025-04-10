@@ -30,7 +30,7 @@ const pluginSportFunctions = (
 				// But in rolldown, any filter that matches means the whole thing matches, so it'd be like (id || code) when I want (id && code). Using an exclude filter for id makes it work how I want (only transform ts/tsx files containing bySport/isSport).
 				// node_modules is just in case people start putting ts files on npm or something and I don't notice.
 				id: {
-					exclude: ["node_modules", /^((?!\.ts$|\.tsx$).)*$/],
+					exclude: ["node_modules", /^((?!\.tsx?$).)*$/],
 				},
 
 				// This screens out any files that don't include bySport/isSport

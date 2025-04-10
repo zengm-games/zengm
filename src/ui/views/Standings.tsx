@@ -64,7 +64,7 @@ export const TeamColumn = ({
 
 	// Why is this one column, rather than two (one for rank, one for team) which would be simpler and avoid rankMinWidth? Because the header on the dashboard table - colspan 2 works weirdly, and colspan 1 leaves padding on the left.
 	return (
-		<td className="py-1" style={tdStyle}>
+		<td style={tdStyle}>
 			<div className="d-flex align-items-center">
 				<div
 					className="text-end"

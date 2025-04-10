@@ -498,7 +498,6 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 			{rows.length > 0 ? (
 				<DataTable
 					cols={cols}
-					className="dashboard-table"
 					disableSettingsCache
 					defaultSort={[7, "desc"]}
 					defaultStickyCols={1}

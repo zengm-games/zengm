@@ -222,7 +222,7 @@ const FrivolitiesTrades = ({
 			{description ? <p>{description}</p> : null}
 
 			<DataTable
-				className="align-top-all"
+				className="align-top"
 				cols={cols}
 				defaultSort={[0, "asc"]}
 				name={`FrivolitiesTrades_${type}`}

@@ -19,7 +19,7 @@ import type {
 	DraftLotteryResultArray,
 	View,
 	DraftType,
-	DraftPick,
+	DraftPickWithoutKey,
 } from "../../common/types";
 import useClickable from "../hooks/useClickable";
 import {
@@ -249,7 +249,7 @@ const RowNonLottery = ({
 	usePts,
 	userTid,
 }: Pick<Props, "teams" | "usePts" | "userTid"> & {
-	dp: DraftPick;
+	dp: DraftPickWithoutKey;
 	pickAlreadyMade: boolean;
 	spectator: boolean;
 }) => {
@@ -560,14 +560,14 @@ const DraftLotteryTable = (props: Props) => {
 				{otherDraftPicksToShow.some((dp) => dp.round === 1) ? (
 					<NonLotteryHeader>Non-lottery picks</NonLotteryHeader>
 				) : null}
-				{otherDraftPicksToShow.map((dp) => {
+				{otherDraftPicksToShow.map((dp, i) => {
 					const showRoundHeader = seenRound !== dp.round;
 					if (showRoundHeader) {
 						seenRound = dp.round;
 					}
 
 					return (
-						<Fragment key={dp.dpid}>
+						<Fragment key={i}>
 							{showRoundHeader ? (
 								<NonLotteryHeader>
 									{helpers.ordinal(dp.round)} round

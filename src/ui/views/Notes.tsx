@@ -359,6 +359,7 @@ const Notes = (props: View<"notes">) => {
 					</ActionButton>
 
 					<DataTable
+						className="align-top-all"
 						cols={cols}
 						defaultSort={[0, "asc"]}
 						name={`Notes${props.type}`}

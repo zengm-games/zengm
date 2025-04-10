@@ -392,6 +392,10 @@ table {
 	vertical-align: middle;
 }
 
+.align-top-all .table td {
+	vertical-align: top;
+}
+
 .table:not(.table-bordered) {
 	border-top: $table-border-width solid $table-border-color;
 }

@@ -451,7 +451,7 @@ export const OfferTable = ({
 
 	return (
 		<DataTable
-			className="align-top"
+			className="align-top-all"
 			clickable={false}
 			cols={offerCols}
 			defaultSort={[1, "asc"]}

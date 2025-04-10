@@ -287,7 +287,7 @@ const WatchList = ({
 			/>
 
 			<DataTable
-				className="mt-3"
+				className="align-top-all mt-3"
 				cols={cols}
 				defaultSort={[5, "desc"]}
 				defaultStickyCols={window.mobile ? 1 : 2}

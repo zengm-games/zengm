@@ -44,13 +44,9 @@ const DraftAbbrev = ({
 			: ["roster", `${originalAbbrev}_${originalTid}`, season];
 
 	return (
-		<div className="d-flex align-items-center">
+		<div className="d-flex align-items-center gap-1">
 			{showLogos ? (
-				<TeamLogoInline
-					imgURL={t.imgURL}
-					imgURLSmall={t.imgURLSmall}
-					className="me-1 flex-shrink-0"
-				/>
+				<TeamLogoInline imgURL={t.imgURL} imgURLSmall={t.imgURLSmall} />
 			) : null}
 			<div>
 				<a href={helpers.leagueUrl(args1)}>{abbrev}</a>
@@ -65,7 +61,6 @@ const DraftAbbrev = ({
 				<TeamLogoInline
 					imgURL={originalT.imgURL}
 					imgURLSmall={originalT.imgURLSmall}
-					className="ms-1 flex-shrink-0"
 				/>
 			) : null}
 		</div>

@@ -554,116 +554,120 @@ const DraftLotteryTable = (props: Props) => {
 		(dp) => showAll || dp.round === 1,
 	);
 
+	const otherDraftPickRows =
+		otherDraftPicksToShow && otherDraftPicksToShow.length > 0 ? (
+			<>
+				{otherDraftPicksToShow.some((dp) => dp.round === 1) ? (
+					<NonLotteryHeader>Non-lottery picks</NonLotteryHeader>
+				) : null}
+				{otherDraftPicksToShow.map((dp) => {
+					const showRoundHeader = seenRound !== dp.round;
+					if (showRoundHeader) {
+						seenRound = dp.round;
+					}
+
+					return (
+						<Fragment key={dp.dpid}>
+							{showRoundHeader ? (
+								<NonLotteryHeader>
+									{helpers.ordinal(dp.round)} round
+								</NonLotteryHeader>
+							) : null}
+							<RowNonLottery
+								dp={dp}
+								pickAlreadyMade={!dpidsAvailableToTrade.has(dp.dpid)}
+								spectator={props.spectator}
+								teams={teams}
+								usePts={usePts}
+								userTid={userTid}
+							/>
+						</Fragment>
+					);
+				})}
+			</>
+		) : null;
+
 	// Checking both is redundant, but TypeScript wants it
 	if (result && probs) {
 		table = (
-			<>
-				<ResponsiveTableWrapper nonfluid className="mb-0">
-					<table
-						className={clsx(
-							"table table-striped table-borderless table-sm table-hover",
-							stickyClass,
-						)}
-						ref={tableRef}
-					>
-						<thead>
-							<tr>
-								<th />
-								<th />
-								<th className={props.spectator ? "p-0" : undefined} />
-								<th />
-								<th />
-								<th colSpan={NUM_PICKS} className="text-center">
-									Pick Probabilities
-								</th>
-							</tr>
-							<tr>
-								<th title="Pick number">#</th>
-								<th>Team</th>
-								<th className={props.spectator ? "p-0" : undefined} />
-								<th>Record</th>
-								<th>Chances</th>
-								{result.map((row, i) => (
-									<th key={i}>{helpers.ordinal(i + 1)}</th>
-								))}
-							</tr>
-							<Rigged
-								numToPick={numToPick}
-								rigged={rigged}
-								result={props.result}
-								type={props.type}
-							/>
-						</thead>
-						<tbody>
-							{result.map((t, i) => (
-								<Row
-									key={i}
-									NUM_PICKS={NUM_PICKS}
-									i={i}
-									pickAlreadyMade={!dpidsAvailableToTrade.has(t.dpid)}
-									season={season}
-									t={t}
-									userTid={userTid}
-									indRevealed={state.indRevealed}
-									toReveal={state.toReveal}
-									probs={probs}
-									spectator={props.spectator}
-									teams={teams}
-									usePts={usePts}
-								/>
+			<ResponsiveTableWrapper nonfluid className="mb-0">
+				<table
+					className={clsx(
+						"table table-striped table-borderless table-sm table-hover",
+						stickyClass,
+					)}
+					ref={tableRef}
+				>
+					<thead>
+						<tr>
+							<th />
+							<th />
+							<th className={props.spectator ? "p-0" : undefined} />
+							<th />
+							<th />
+							<th colSpan={NUM_PICKS} className="text-center">
+								Pick Probabilities
+							</th>
+						</tr>
+						<tr>
+							<th title="Pick number">#</th>
+							<th>Team</th>
+							<th className={props.spectator ? "p-0" : undefined} />
+							<th>Record</th>
+							<th>Chances</th>
+							{result.map((row, i) => (
+								<th key={i}>{helpers.ordinal(i + 1)}</th>
 							))}
-							{otherDraftPicksToShow && otherDraftPicksToShow.length > 0 ? (
-								<>
-									{otherDraftPicksToShow.some((dp) => dp.round === 1) ? (
-										<NonLotteryHeader>Non-lottery picks</NonLotteryHeader>
-									) : null}
-									{otherDraftPicksToShow.map((dp) => {
-										const showRoundHeader = seenRound !== dp.round;
-										if (showRoundHeader) {
-											seenRound = dp.round;
-										}
-
-										return (
-											<Fragment key={dp.dpid}>
-												{showRoundHeader ? (
-													<NonLotteryHeader>
-														{helpers.ordinal(dp.round)} round
-													</NonLotteryHeader>
-												) : null}
-												<RowNonLottery
-													dp={dp}
-													pickAlreadyMade={!dpidsAvailableToTrade.has(dp.dpid)}
-													spectator={props.spectator}
-													teams={teams}
-													usePts={usePts}
-													userTid={userTid}
-												/>
-											</Fragment>
-										);
-									})}
-								</>
-							) : null}
-						</tbody>
-					</table>
-				</ResponsiveTableWrapper>
-				{!showAll && draftPicks?.some((dp) => dp.round > 1) ? (
-					<button
-						className="btn btn-secondary mt-3"
-						onClick={() => {
-							setShowAll(true);
-						}}
-					>
-						Show all rounds
-					</button>
-				) : null}
-				{tooSlow ? (
-					<p className="text-warning">
-						<b>Warning:</b> Computing exact odds for so many teams and picks is
-						too slow, so estimates are shown. The lottery will still run
-						correctly though.
-					</p>
-				) : null}
-			</>
+						</tr>
+						<Rigged
+							numToPick={numToPick}
+							rigged={rigged}
+							result={props.result}
+							type={props.type}
+						/>
+					</thead>
+					<tbody>
+						{result.map((t, i) => (
+							<Row
+								key={i}
+								NUM_PICKS={NUM_PICKS}
+								i={i}
+								pickAlreadyMade={!dpidsAvailableToTrade.has(t.dpid)}
+								season={season}
+								t={t}
+								userTid={userTid}
+								indRevealed={state.indRevealed}
+								toReveal={state.toReveal}
+								probs={probs}
+								spectator={props.spectator}
+								teams={teams}
+								usePts={usePts}
+							/>
+						))}
+						{otherDraftPickRows}
+					</tbody>
+				</table>
+			</ResponsiveTableWrapper>
+		);
+	} else if (otherDraftPickRows) {
+		table = (
+			<ResponsiveTableWrapper nonfluid className="mb-0">
+				<table
+					className={clsx(
+						"table table-striped table-borderless table-sm table-hover",
+					)}
+				>
+					<thead>
+						<tr>
+							<th title="Pick number">#</th>
+							<th>Team</th>
+							<th className={props.spectator ? "p-0" : undefined} />
+							<th>Record</th>
+						</tr>
+					</thead>
+					<tbody>{otherDraftPickRows}</tbody>
+				</table>
+			</ResponsiveTableWrapper>
 		);
 	} else {
 		table = <p className="mt-3">No draft lottery results for {season}.</p>;
@@ -710,8 +714,26 @@ const DraftLotteryTable = (props: Props) => {
 					titleNext="Show Next Pick"
 				/>
 			) : null}
+			{tooSlow ? (
+				<p className="text-warning">
+					<b>Warning:</b> Computing exact odds for so many teams and picks is
+					too slow, so estimates are shown. The lottery will still run correctly
+					though.
+				</p>
+			) : null}
 
 			{table}
+
+			{!showAll && draftPicks?.some((dp) => dp.round > 1) ? (
+				<button
+					className="btn btn-secondary mt-3"
+					onClick={() => {
+						setShowAll(true);
+					}}
+				>
+					Show all rounds
+				</button>
+			) : null}
 		</>
 	);
 };

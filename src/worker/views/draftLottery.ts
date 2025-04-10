@@ -176,32 +176,12 @@ const updateDraftLottery = async (
 			}
 		}
 
-		if (NO_LOTTERY_DRAFT_TYPES.includes(g.get("draftType"))) {
-			return {
-				dpidsAvailableToTrade,
-				draftPicks: undefined,
-				draftType: g.get("draftType"),
-				numToPick: 0,
-				result: undefined,
-				rigged: undefined,
-				season,
-				showExpansionTeamMessage,
-				spectator: g.get("spectator"),
-				teams,
-				type: "projected",
-				usePts,
-				userTid: g.get("userTid"),
-				challengeWarning: false,
-				notEnoughTeams: false,
-				godMode: g.get("godMode"),
-			};
-		}
-
 		// View projected draft lottery for this season
 		let draftLotteryResult;
 		let draftPicks;
 		try {
 			const result = await draft.genOrder(true);
+			console.log("result", result);
 			draftLotteryResult = result.draftLotteryResult;
 			draftPicks = result.draftPicks;
 		} catch (error) {
@@ -246,7 +226,9 @@ const updateDraftLottery = async (
 				!draftLotteryResult &&
 				g.get("challengeNoDraftPicks") &&
 				g.get("userTids").length > 0,
-			notEnoughTeams: !draftLotteryResult,
+			notEnoughTeams:
+				!draftLotteryResult &&
+				!NO_LOTTERY_DRAFT_TYPES.includes(g.get("draftType")),
 			dpidsAvailableToTrade,
 			draftPicks,
 			draftType,

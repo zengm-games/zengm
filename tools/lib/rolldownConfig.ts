@@ -6,6 +6,11 @@ import type { RolldownPlugin, TransformResult, WatchOptions } from "rolldown";
 import babelPluginSyntaxTypescript from "@babel/plugin-syntax-typescript";
 import { babelPluginSportFunctions } from "../babel-plugin-sport-functions/index.ts";
 import { getSport, type Sport } from "./getSport.ts";
+// @ts-expect-error
+import blacklist from "rollup-plugin-blacklist";
+import terser from "@rollup/plugin-terser";
+import { visualizer } from "rollup-plugin-visualizer";
+import type { Plugin } from "rollup";
 
 // Use babel to run babel-plugin-sport-functions. This is needed even in dev mode because the way bySport is defined, the sport-specific code will run if it's present, which can produce errors. It's not actually needed for isSport in dev mode.
 const pluginSportFunctions = (
@@ -81,13 +86,16 @@ export const rolldownConfig = (
 		  }
 		| {
 				nodeEnv: "production";
+				blacklistOptions: RegExp[];
 		  },
 ): WatchOptions => {
 	const infile = `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`;
 	const outfile = `build/gen/${name}.js`;
 	const sport = getSport();
 
-	const plugins = [pluginSportFunctions(envOptions.nodeEnv, sport)];
+	const plugins: (Plugin | RolldownPlugin)[] = [
+		pluginSportFunctions(envOptions.nodeEnv, sport),
+	];
 
 	if (envOptions.nodeEnv === "development") {
 		plugins.push({
@@ -117,6 +125,25 @@ export const rolldownConfig = (
 				});
 			},
 		});
+	} else {
+		plugins.push(blacklist(envOptions.blacklistOptions));
+
+		plugins.push(
+			terser({
+				format: {
+					comments: false,
+				},
+			}),
+		);
+
+		plugins.push(
+			visualizer({
+				filename: `stats-${name}.html`,
+				gzipSize: true,
+				sourcemap: true,
+				template: "sunburst",
+			}),
+		);
 	}
 
 	return {
@@ -135,6 +162,7 @@ export const rolldownConfig = (
 			"process.env.NODE_ENV": JSON.stringify(envOptions.nodeEnv),
 			"process.env.SPORT": JSON.stringify(sport),
 		},
+		// @ts-expect-error
 		plugins,
 	};
 };

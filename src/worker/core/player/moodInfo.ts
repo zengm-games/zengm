@@ -113,7 +113,7 @@ const moodInfo = async (
 		!g.get("playersRefuseToNegotiate") ||
 		rookie ||
 		firstSeasonAfterExpansionOverride ||
-		contractAmount === g.get("minContract")
+		(contractAmount === g.get("minContract") && p.tid === PLAYER.FREE_AGENT)
 	) {
 		probWilling = 1;
 		willing = true;

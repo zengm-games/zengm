@@ -682,44 +682,46 @@ const DraftLotteryTable = (props: Props) => {
 					</>
 				) : null}
 			</p>
-			{showStartButton ? (
-				<button
-					className="btn btn-large btn-success"
-					onClick={() => startLottery()}
-				>
-					Start Lottery
-				</button>
-			) : null}
-			{showRigButton ? (
-				<button
-					className="btn btn-large btn-god-mode ms-2"
-					onClick={async () => {
-						await toWorker("main", "updateGameAttributes", {
-							riggedLottery: [],
-						});
-					}}
-				>
-					Rig Lottery
-				</button>
-			) : null}
-			{type === "readyToRun" &&
-			(state.revealState === "running" || state.revealState === "paused") ? (
-				<PlayPauseNext
-					onPlay={handleResume}
-					onPause={handlePause}
-					onNext={handleShowOne}
-					paused={state.revealState === "paused"}
-					titlePlay="Resume Lottery"
-					titlePause="Pause Lottery"
-					titleNext="Show Next Pick"
-				/>
-			) : null}
+			<div className="mb-3">
+				{showStartButton ? (
+					<button
+						className="btn btn-large btn-success"
+						onClick={() => startLottery()}
+					>
+						Start lottery
+					</button>
+				) : null}
+				{showRigButton ? (
+					<button
+						className="btn btn-large btn-god-mode ms-2"
+						onClick={async () => {
+							await toWorker("main", "updateGameAttributes", {
+								riggedLottery: [],
+							});
+						}}
+					>
+						Rig lottery
+					</button>
+				) : null}
+				{type === "readyToRun" &&
+				(state.revealState === "running" || state.revealState === "paused") ? (
+					<PlayPauseNext
+						onPlay={handleResume}
+						onPause={handlePause}
+						onNext={handleShowOne}
+						paused={state.revealState === "paused"}
+						titlePlay="Resume lottery"
+						titlePause="Pause lottery"
+						titleNext="Show next pick"
+					/>
+				) : null}
+			</div>
 			{tooSlow ? (
-				<p className="text-warning">
+				<div className="text-warning mb-3">
 					<b>Warning:</b> Computing exact odds for so many teams and picks is
-					too slow, so estimates are shown. The lottery will still run correctly
-					though.
-				</p>
+					slow, so estimates are shown below. When the actual lottery occurs it
+					is simulated done with complete accuracy.
+				</div>
 			) : null}
 
 			{table}

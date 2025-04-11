@@ -224,16 +224,14 @@ const Row = ({
 				)}
 			</td>
 			<td>
-				<a href={helpers.leagueUrl(["standings", season])}>
-					{usePts ? `${teams[tid]?.seasonAttrs.pts ?? 0} pts (` : null}
-					{helpers.formatRecord(
-						teams[tid]?.seasonAttrs ?? {
-							won: 0,
-							lost: 0,
-						},
-					)}
-					{usePts ? `)` : null}
-				</a>
+				{usePts ? `${teams[originalTid]?.seasonAttrs.pts ?? 0} pts (` : null}
+				{helpers.formatRecord(
+					teams[originalTid]?.seasonAttrs ?? {
+						won: 0,
+						lost: 0,
+					},
+				)}
+				{usePts ? `)` : null}
 			</td>
 			<td>{chances}</td>
 			{pickCols}
@@ -307,16 +305,14 @@ const RowNonLottery = ({
 				)}
 			</td>
 			<td>
-				<a href={helpers.leagueUrl(["standings", season])}>
-					{usePts ? `${t?.seasonAttrs.pts ?? 0} pts (` : null}
-					{helpers.formatRecord(
-						t?.seasonAttrs ?? {
-							won: 0,
-							lost: 0,
-						},
-					)}
-					{usePts ? `)` : null}
-				</a>
+				{usePts ? `${t?.seasonAttrs.pts ?? 0} pts (` : null}
+				{helpers.formatRecord(
+					t?.seasonAttrs ?? {
+						won: 0,
+						lost: 0,
+					},
+				)}
+				{usePts ? `)` : null}
 			</td>
 		</tr>
 	);

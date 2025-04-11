@@ -1,6 +1,7 @@
 import { watch } from "chokidar";
 import fs from "node:fs";
 import { getSport } from "../lib/getSport.ts";
+import type { Spinners } from "./spinners.ts";
 
 // https://ar.al/2021/02/22/cache-busting-in-node.js-dynamic-esm-imports/
 const importFresh = async (modulePath: string) => {
@@ -12,6 +13,7 @@ export const watchJsonSchema = async (
 	updateStart: (filename: string) => void,
 	updateEnd: (filename: string) => void,
 	updateError: (filename: string, error: Error) => void,
+	eventEmitter: Spinners["eventEmitter"],
 ) => {
 	fs.mkdirSync("build/files", { recursive: true });
 
@@ -42,6 +44,7 @@ export const watchJsonSchema = async (
 
 	const watcher = watch("tools/build/generateJsonSchema.ts", {});
 	watcher.on("change", buildJSONSchema);
+	eventEmitter.on("newSport", buildJSONSchema);
 };
 
 // watchJsonSchema((filename) => console.log('updateStart', filename), (filename) => console.log('updateEnd', filename), (filename, error) => console.log('updateError', filename, error));

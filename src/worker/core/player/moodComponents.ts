@@ -320,10 +320,7 @@ const moodComponents = async (
 		// Relatives
 		if (p.relatives.length > 0) {
 			const relativePids = new Set(p.relatives.map((relative) => relative.pid));
-			const players = await idb.cache.players.indexGetAll("playersByTid", [
-				PLAYER.FREE_AGENT,
-				tid,
-			]);
+			const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 			const teamPids = new Set(players.map((p) => p.pid));
 			const relativesOnTeam = teamPids.intersection(relativePids);
 			components.relatives = 2 * relativesOnTeam.size;

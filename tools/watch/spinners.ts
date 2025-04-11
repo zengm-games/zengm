@@ -1,8 +1,11 @@
 // Based on yocto-spinner https://github.com/sindresorhus/yocto-spinner v0.1.2 - MIT License - Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
 
+import EventEmitter from "node:events";
 import process from "node:process";
+import readline from "node:readline";
 import type { WriteStream } from "node:tty";
 import { stripVTControlCharacters, styleText } from "node:util";
+import { SPORTS, type Sport } from "../lib/getSport.ts";
 
 const isUnicodeSupported =
 	process.platform !== "win32" || Boolean(process.env.WT_SESSION);
@@ -11,6 +14,10 @@ const isInteractive = (stream: WriteStream) =>
 	Boolean(
 		stream.isTTY && process.env.TERM !== "dumb" && !("CI" in process.env),
 	);
+
+const mod = (n: number, m: number) => {
+	return ((n % m) + m) % m;
+};
 
 const successSymbol = styleText("green", isUnicodeSupported ? "✔" : "√");
 const errorSymbol = styleText("red", isUnicodeSupported ? "✖" : "×");
@@ -22,6 +29,13 @@ const frames = (
 ).map((frame) => styleText("cyan", frame));
 
 const interval = 80;
+
+const sportEmojis: Record<Sport, string> = {
+	basketball: "🏀",
+	football: "🏈",
+	baseball: "⚾",
+	hockey: "🏒",
+};
 
 type Info =
 	| {
@@ -51,7 +65,7 @@ type RenderKey<Key> = ({
 
 type ExtraRenderDelays = Partial<Record<"error" | "success", number[]>>;
 
-class Spinners<Key extends string = string> {
+export class Spinners<Key extends string = string> {
 	private currentFrame = -1;
 	private timer: NodeJS.Timeout | undefined;
 	private stream = process.stderr;
@@ -69,6 +83,11 @@ class Spinners<Key extends string = string> {
 	private info: Record<Key, Info | undefined> = {} as any;
 	private renderKey: RenderKey<Key>;
 
+	private sportIndex;
+	eventEmitter = new EventEmitter<{
+		newSport: never[];
+	}>();
+
 	constructor(
 		renderKey: RenderKey<Key>,
 		extraRenderDelays?: ExtraRenderDelays,
@@ -80,6 +99,13 @@ class Spinners<Key extends string = string> {
 		const exitHandlerBound = this.exitHandler.bind(this);
 		process.once("SIGINT", exitHandlerBound);
 		process.once("SIGTERM", exitHandlerBound);
+
+		this.sportIndex = SPORTS.indexOf(process.env.SPORT);
+		if (this.sportIndex < 0) {
+			this.sportIndex = 0;
+		}
+
+		this.listenForArrowKeys();
 	}
 
 	private startRendering() {
@@ -215,7 +241,31 @@ class Spinners<Key extends string = string> {
 			this.lastSpinnerFrameTime = now;
 		}
 
-		let string = this.keys
+		let string = "Use left/right arrows to select a sport:\n";
+
+		string += SPORTS.map((sport, i) =>
+			styleText(
+				i === this.sportIndex ? "cyan" : "gray",
+				"▄".repeat([...sport].length + 5),
+			),
+		).join("");
+		string += "\n";
+		string += SPORTS.map((sport, i) =>
+			styleText(
+				i === this.sportIndex ? "bgCyan" : "bgGray",
+				` ${sportEmojis[sport]} ${sport} `,
+			),
+		).join("");
+		string += "\n";
+		string += SPORTS.map((sport, i) =>
+			styleText(
+				i === this.sportIndex ? "cyan" : "gray",
+				"▀".repeat([...sport].length + 5),
+			),
+		).join("");
+		string += "\n";
+
+		string += this.keys
 			.map((key) => {
 				const info = this.info[key]!;
 
@@ -283,6 +333,36 @@ class Spinners<Key extends string = string> {
 		// SIGTERM: 128 + 15
 		const exitCode = signal === "SIGINT" ? 130 : signal === "SIGTERM" ? 143 : 1;
 		process.exit(exitCode);
+	}
+
+	private listenForArrowKeys() {
+		readline.emitKeypressEvents(process.stdin); // Enables keypress events on stdin
+
+		if (process.stdin.isTTY) {
+			process.stdin.setRawMode(true); // Sets the terminal to raw mode
+		}
+
+		const directions = {
+			"\u001b[D": -1, // Left arrow
+			"\u001b[C": 1, // Right arrow
+		};
+
+		process.stdin.on("keypress", (str, key) => {
+			// @ts-expect-error
+			const direction = directions[key.sequence];
+
+			if (direction !== undefined) {
+				this.sportIndex = mod(this.sportIndex + direction, SPORTS.length);
+				process.env.SPORT = SPORTS[this.sportIndex];
+				this.eventEmitter.emit("newSport");
+				if (!this.rendering) {
+					this.render();
+				}
+			} else if (key.ctrl && key.name === "c") {
+				// Allow Ctrl+C to exit the script
+				this.exitHandler("SIGINT");
+			}
+		});
 	}
 }
 

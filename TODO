@@ -1,3 +1,7 @@
+dev sport switcher
+- don't activate left/right arrows until it's initialized
+- debounce arrows
+
 store list of prior worker console commands https://discord.com/channels/290013534023057409/331882115119448065/1354957789755215953
 
 some way to export play-by-play and box score https://discord.com/channels/290013534023057409/1357064671118753904/1357521047934734397

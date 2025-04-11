@@ -48,11 +48,16 @@ const updateError = (filename: string, error: Error) => {
 };
 
 // Needs to run first, to create output folder
-await watchFiles(updateStart, updateEnd, updateError);
+await watchFiles(updateStart, updateEnd, updateError, spinners.eventEmitter);
 
 watchCss(updateStart, updateEnd, updateError);
 
 // Schema is needed for JS bunlde, and watchJsonSchema is async
-await watchJsonSchema(updateStart, updateEnd, updateError);
+await watchJsonSchema(
+	updateStart,
+	updateEnd,
+	updateError,
+	spinners.eventEmitter,
+);
 
-watchJs(updateStart, updateEnd, updateError);
+watchJs(updateStart, updateEnd, updateError, spinners.eventEmitter);

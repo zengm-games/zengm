@@ -4,6 +4,10 @@ somehow show count of goals and HR inline for baseball and hockey
 - https://discord.com/channels/@me/778760871911751700/1179618240507420783
 - https://github.com/zengm-games/zengm/pull/484
 
+dev sport switcher
+- don't activate left/right arrows until it's initialized
+- debounce arrows
+
 store list of prior worker console commands https://discord.com/channels/290013534023057409/331882115119448065/1354957789755215953
 - save when you run, assuming no existing one is saved with the same contents (hash and use as key)
 - save number of times run, first date, last date

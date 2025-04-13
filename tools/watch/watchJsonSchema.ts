@@ -1,5 +1,5 @@
 import { watch } from "chokidar";
-import fs from "node:fs";
+import fs from "node:fs/promises";
 import { getSport } from "../lib/getSport.ts";
 import type { Spinners } from "./spinners.ts";
 
@@ -15,14 +15,18 @@ export const watchJsonSchema = async (
 	updateError: (filename: string, error: Error) => void,
 	eventEmitter: Spinners["eventEmitter"],
 ) => {
-	fs.mkdirSync("build/files", { recursive: true });
-
-	const sport = getSport();
+	await fs.mkdir("build/files", { recursive: true });
 
 	const outFilename = "build/files/league-schema.json";
 
+	let buildCount = 0;
+
 	const buildJSONSchema = async () => {
 		try {
+			const sport = getSport();
+			buildCount += 1;
+			const initialBuildCount = buildCount;
+
 			updateStart(outFilename);
 
 			// Dynamically reload generateJsonSchema, cause that's what we're watching!
@@ -30,9 +34,17 @@ export const watchJsonSchema = async (
 				"../build/generateJsonSchema.ts",
 			);
 
+			if (buildCount !== initialBuildCount) {
+				return;
+			}
+
 			const jsonSchema = generateJsonSchema(sport);
 			const output = JSON.stringify(jsonSchema, null, 2);
-			fs.writeFileSync(outFilename, output);
+			await fs.writeFile(outFilename, output);
+
+			if (buildCount !== initialBuildCount) {
+				return;
+			}
 
 			updateEnd(outFilename);
 		} catch (error) {

@@ -15,14 +15,27 @@ export const watchFiles = async (
 ) => {
 	const outFilename = "static files";
 
+	let buildCount = 0;
+
 	const buildWatchFiles = async () => {
 		try {
+			buildCount += 1;
+			const initialBuildCount = buildCount;
+
 			updateStart(outFilename);
 
 			await copyFiles(true);
 
+			if (buildCount !== initialBuildCount) {
+				return;
+			}
+
 			const versionNumber = generateVersionNumber();
-			setTimestamps(versionNumber, true);
+			await setTimestamps(versionNumber, true);
+
+			if (buildCount !== initialBuildCount) {
+				return;
+			}
 
 			updateEnd(outFilename);
 		} catch (error) {

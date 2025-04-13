@@ -1,20 +1,21 @@
-import fs from "node:fs";
+import fs from "node:fs/promises";
+import type { PathLike } from "node:fs";
 
-export const replace = ({
+export const replace = async ({
 	paths,
 	replaces,
 }: {
-	paths: fs.PathOrFileDescriptor[];
+	paths: (PathLike | fs.FileHandle)[];
 	replaces: {
 		searchValue: string | RegExp;
 		replaceValue: string;
 	}[];
 }) => {
 	for (const path of paths) {
-		let contents = fs.readFileSync(path, "utf8");
+		let contents = await fs.readFile(path, "utf8");
 		for (const { searchValue, replaceValue } of replaces) {
 			contents = contents.replaceAll(searchValue, replaceValue);
 		}
-		fs.writeFileSync(path, contents);
+		await fs.writeFile(path, contents);
 	}
 };

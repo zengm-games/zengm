@@ -19,10 +19,10 @@ const mod = (n: number, m: number) => {
 	return ((n % m) + m) % m;
 };
 
-const successSymbol = styleText("green", isUnicodeSupported ? "✔" : "√");
-const errorSymbol = styleText("red", isUnicodeSupported ? "✖" : "×");
+const SUCCESS_SYMBOL = styleText("green", isUnicodeSupported ? "✔" : "√");
+const ERROR_SYMBOL = styleText("red", isUnicodeSupported ? "✖" : "×");
 
-const frames = (
+const FRAMES = (
 	isUnicodeSupported
 		? ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
 		: ["-", "\\", "|", "/"]
@@ -30,12 +30,31 @@ const frames = (
 
 const interval = 80;
 
-const sportEmojis: Record<Sport, string> = {
+const SPORT_EMOJIS: Record<Sport, string> = {
 	basketball: "🏀",
 	football: "🏈",
 	baseball: "⚾",
 	hockey: "🏒",
 };
+
+const DEBOUNCE_SPORT_MENU_WAIT = 500; // [milliseconds]
+
+const upperCaseFirstLetter = <T extends string>(string: T) => {
+	return `${string.charAt(0).toUpperCase()}${string.slice(1)}` as Capitalize<T>;
+};
+
+const SPORT_MENU_COLOR_INACTIVE = "whiteBright" as const;
+const SPORT_MENU_COLOR_DEBOUNCE = "gray" as const;
+const SPORT_MENU_COLOR_ACTIVE = "whiteBright" as const;
+const SPORT_MENU_BGCOLOR_INACTIVE = "gray" as const;
+const SPORT_MENU_BGCOLOR_DEBOUNCE = "cyan" as const;
+const SPORT_MENU_BGCOLOR_ACTIVE = "cyan" as const;
+const SPORT_MENU_BGCOLOR_INACTIVE_BG =
+	`bg${upperCaseFirstLetter(SPORT_MENU_BGCOLOR_INACTIVE)}` as const;
+const SPORT_MENU_BGCOLOR_DEBOUNCE_BG =
+	`bg${upperCaseFirstLetter(SPORT_MENU_BGCOLOR_DEBOUNCE)}` as const;
+const SPORT_MENU_BGCOLOR_ACTIVE_BG =
+	`bg${upperCaseFirstLetter(SPORT_MENU_BGCOLOR_ACTIVE)}` as const;
 
 type Info =
 	| {
@@ -86,7 +105,14 @@ export class Spinners<Key extends string = string> {
 	private sportIndex;
 	eventEmitter = new EventEmitter<{
 		newSport: never[];
+		switchingSport: never[];
 	}>();
+
+	// When this is true it means the user is switching between sports, so we should cancel any in-progress builds, but the user hasn't finished selecting the new sport. Arguably it'd be better to not do this in case the user selects the original sport, but I think it's more common to actually switch sports, so that use case should be prioritized.
+	get switchingSport() {
+		return this.switchSportsTimeoutId;
+	}
+	private switchSportsTimeoutId: NodeJS.Timeout | undefined;
 
 	constructor(
 		renderKey: RenderKey<Key>,
@@ -237,7 +263,7 @@ export class Spinners<Key extends string = string> {
 			this.currentFrame === -1 ||
 			now - this.lastSpinnerFrameTime >= interval
 		) {
-			this.currentFrame = ++this.currentFrame % frames.length;
+			this.currentFrame = ++this.currentFrame % FRAMES.length;
 			this.lastSpinnerFrameTime = now;
 		}
 
@@ -245,21 +271,33 @@ export class Spinners<Key extends string = string> {
 
 		string += SPORTS.map((sport, i) =>
 			styleText(
-				i === this.sportIndex ? "cyan" : "gray",
+				i === this.sportIndex
+					? this.switchSportsTimeoutId
+						? SPORT_MENU_BGCOLOR_DEBOUNCE
+						: SPORT_MENU_BGCOLOR_ACTIVE
+					: SPORT_MENU_BGCOLOR_INACTIVE,
 				"▄".repeat([...sport].length + 5),
 			),
 		).join("");
 		string += "\n";
 		string += SPORTS.map((sport, i) =>
 			styleText(
-				i === this.sportIndex ? "bgCyan" : "bgGray",
-				` ${sportEmojis[sport]} ${sport} `,
+				i === this.sportIndex
+					? this.switchSportsTimeoutId
+						? [SPORT_MENU_BGCOLOR_DEBOUNCE_BG, SPORT_MENU_COLOR_DEBOUNCE]
+						: [SPORT_MENU_BGCOLOR_ACTIVE_BG, SPORT_MENU_COLOR_ACTIVE]
+					: [SPORT_MENU_BGCOLOR_INACTIVE_BG, SPORT_MENU_COLOR_INACTIVE],
+				` ${SPORT_EMOJIS[sport]} ${sport} `,
 			),
 		).join("");
 		string += "\n";
 		string += SPORTS.map((sport, i) =>
 			styleText(
-				i === this.sportIndex ? "cyan" : "gray",
+				i === this.sportIndex
+					? this.switchSportsTimeoutId
+						? SPORT_MENU_BGCOLOR_DEBOUNCE
+						: SPORT_MENU_BGCOLOR_ACTIVE
+					: SPORT_MENU_BGCOLOR_INACTIVE,
 				"▀".repeat([...sport].length + 5),
 			),
 		).join("");
@@ -271,11 +309,11 @@ export class Spinners<Key extends string = string> {
 
 				let symbol: string;
 				if (info.status === "error") {
-					symbol = errorSymbol;
+					symbol = ERROR_SYMBOL;
 				} else if (info.status === "success") {
-					symbol = successSymbol;
+					symbol = SUCCESS_SYMBOL;
 				} else {
-					symbol = frames[this.currentFrame];
+					symbol = FRAMES[this.currentFrame];
 				}
 
 				return this.renderKey({
@@ -352,9 +390,25 @@ export class Spinners<Key extends string = string> {
 			const direction = directions[key.sequence];
 
 			if (direction !== undefined) {
+				this.eventEmitter.emit("switchingSport");
+
+				// Clear any pending sport transition
+				if (this.switchSportsTimeoutId) {
+					clearTimeout(this.switchSportsTimeoutId);
+				}
+
 				this.sportIndex = mod(this.sportIndex + direction, SPORTS.length);
-				process.env.SPORT = SPORTS[this.sportIndex];
-				this.eventEmitter.emit("newSport");
+
+				this.switchSportsTimeoutId = setTimeout(() => {
+					this.switchSportsTimeoutId = undefined;
+					process.env.SPORT = SPORTS[this.sportIndex];
+					this.eventEmitter.emit("newSport");
+					if (!this.rendering) {
+						this.render();
+					}
+				}, DEBOUNCE_SPORT_MENU_WAIT);
+
+				// Handle setting the color of highlighting, based on this.switchSportsTimeoutId
 				if (!this.rendering) {
 					this.render();
 				}

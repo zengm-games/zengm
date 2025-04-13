@@ -3,7 +3,7 @@ import { copyFiles } from "../build/copyFiles.ts";
 import { generateVersionNumber } from "../build/generateVersionNumber.ts";
 import { reset } from "../build/reset.ts";
 import { setTimestamps } from "../build/setTimestamps.ts";
-import type { Spinners } from "./spinners.ts";
+import { spinners, type Spinners } from "./spinners.ts";
 
 // Would be better to only copy individual files on update, but this is fast enough
 
@@ -26,14 +26,14 @@ export const watchFiles = async (
 
 			await copyFiles(true);
 
-			if (buildCount !== initialBuildCount) {
+			if (buildCount !== initialBuildCount || spinners.switchingSport) {
 				return;
 			}
 
 			const versionNumber = generateVersionNumber();
 			await setTimestamps(versionNumber, true);
 
-			if (buildCount !== initialBuildCount) {
+			if (buildCount !== initialBuildCount || spinners.switchingSport) {
 				return;
 			}
 

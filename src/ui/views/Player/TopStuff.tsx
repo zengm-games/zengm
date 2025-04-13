@@ -10,25 +10,25 @@ import {
 	JerseyNumber,
 	Mood,
 	InjuryIcon,
-} from "../../components";
+} from "../../components/index.tsx";
 import {
 	confirm,
 	helpers,
 	toWorker,
 	realtimeUpdate,
 	getCols,
-} from "../../util";
+} from "../../util/index.ts";
 import type {
 	GameAttributesLeague,
 	Phase,
 	Player,
 	View,
-} from "../../../common/types";
-import { bySport, isSport, PHASE, PLAYER } from "../../../common";
+} from "../../../common/types.ts";
+import { bySport, isSport, PHASE, PLAYER } from "../../../common/index.ts";
 import clsx from "clsx";
-import AwardsSummary from "./AwardsSummary";
-import RatingsOverview from "./RatingsOverview";
-import Note from "./Note";
+import AwardsSummary from "./AwardsSummary.tsx";
+import RatingsOverview from "./RatingsOverview.tsx";
+import Note from "./Note.tsx";
 
 const Relatives = ({
 	gender,

@@ -1,7 +1,7 @@
 import { assert, beforeAll, test } from "vitest";
-import testHelpers from "../../../test/helpers";
-import newScheduleGood from "./newScheduleGood";
-import { helpers } from "../../util";
+import testHelpers from "../../../test/helpers.ts";
+import newScheduleGood from "./newScheduleGood.ts";
+import { helpers } from "../../util/index.ts";
 
 let defaultTeams: {
 	seasonAttrs: {

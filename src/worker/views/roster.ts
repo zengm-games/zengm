@@ -1,15 +1,15 @@
-import { bySport, isSport, PHASE, POSITIONS } from "../../common";
-import { finances, season, team } from "../core";
-import { idb } from "../db";
-import { g } from "../util";
+import { bySport, isSport, PHASE, POSITIONS } from "../../common/index.ts";
+import { finances, season, team } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
 import type {
 	Player,
 	UpdateEvents,
 	ViewInput,
 	TeamSeasonAttr,
-} from "../../common/types";
-import { addMood } from "./freeAgents";
-import addFirstNameShort from "../util/addFirstNameShort";
+} from "../../common/types.ts";
+import { addMood } from "./freeAgents.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
 
 export const sortByPos = (p: {
 	ratings: {

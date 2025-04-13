@@ -1,20 +1,20 @@
 import clsx from "clsx";
 import { useState, type FormEvent, useEffect } from "react";
-import { groupBy } from "../../../common/utils";
-import { ActionButton, StickyBottomButtons } from "../../components";
-import { confirm, localActions, logEvent, helpers } from "../../util";
-import { settings } from "./settings";
-import type { Key, Values } from "./types";
-import type { Settings } from "../../../worker/views/settings";
+import { groupBy } from "../../../common/utils.ts";
+import { ActionButton, StickyBottomButtons } from "../../components/index.tsx";
+import { confirm, localActions, logEvent, helpers } from "../../util/index.ts";
+import { settings } from "./settings.tsx";
+import type { Key, Values } from "./types.ts";
+import type { Settings } from "../../../worker/views/settings.ts";
 import type {
 	InjuriesSetting,
 	PlayerBioInfo,
 	TragicDeaths,
-} from "../../../common/types";
-import SettingsFormOptions from "./SettingsFormOptions";
-import categories from "./categories";
-import useSettingsFormState from "./useSettingsFormState";
-import getSearchVal from "../../components/DataTable/getSearchVal";
+} from "../../../common/types.ts";
+import SettingsFormOptions from "./SettingsFormOptions.tsx";
+import categories from "./categories.tsx";
+import useSettingsFormState from "./useSettingsFormState.ts";
+import getSearchVal from "../../components/DataTable/getSearchVal.tsx";
 
 export const encodeDecodeFunctions = {
 	bool: {

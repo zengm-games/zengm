@@ -1,8 +1,8 @@
-import { bySport } from "../../../common";
-import rosterAutoSortBaseball from "./rosterAutoSort.baseball";
-import rosterAutoSortBasketball from "./rosterAutoSort.basketball";
-import rosterAutoSortFootball from "./rosterAutoSort.football";
-import rosterAutoSortHockey from "./rosterAutoSort.hockey";
+import { bySport } from "../../../common/index.ts";
+import rosterAutoSortBaseball from "./rosterAutoSort.baseball.ts";
+import rosterAutoSortBasketball from "./rosterAutoSort.basketball.ts";
+import rosterAutoSortFootball from "./rosterAutoSort.football.ts";
+import rosterAutoSortHockey from "./rosterAutoSort.hockey.ts";
 
 const rosterAutoSort = async (
 	tid: number,

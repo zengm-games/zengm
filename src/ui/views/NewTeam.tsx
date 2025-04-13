@@ -1,14 +1,14 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
-import { PHASE } from "../../common";
-import useTitleBar from "../hooks/useTitleBar";
-import { helpers, realtimeUpdate, toWorker } from "../util";
-import type { View } from "../../common/types";
+import { PHASE } from "../../common/index.ts";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { helpers, realtimeUpdate, toWorker } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
 import {
 	PlayerNameLabels,
 	PopText,
 	RecordAndPlayoffs,
 	SafeHtml,
-} from "../components";
+} from "../components/index.tsx";
 import clsx from "clsx";
 
 const HistoryBlock = ({

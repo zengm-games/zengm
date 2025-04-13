@@ -7,16 +7,20 @@ import {
 	teamAwards,
 	addSimpleAndTeamAwardsToAwardsByPlayer,
 	saveAwardsByPlayer,
-} from "./awards";
-import { idb } from "../../db";
-import { defaultGameAttributes, g, helpers } from "../../util";
-import type { Conditions, Game, PlayerFiltered } from "../../../common/types";
+} from "./awards.ts";
+import { idb } from "../../db/index.ts";
+import { defaultGameAttributes, g, helpers } from "../../util/index.ts";
+import type {
+	Conditions,
+	Game,
+	PlayerFiltered,
+} from "../../../common/types.ts";
 import type {
 	AwardPlayer,
 	AwardPlayerDefense,
 	Awards,
-} from "../../../common/types.basketball";
-import { orderBy } from "../../../common/utils";
+} from "../../../common/types.basketball.ts";
+import { orderBy } from "../../../common/utils.ts";
 
 const getPlayerInfoOffense = (p: PlayerFiltered): AwardPlayer => {
 	return {

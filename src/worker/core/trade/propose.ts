@@ -1,12 +1,12 @@
-import { PHASE } from "../../../common";
-import { team } from "..";
-import { g } from "../../util";
-import clear from "./clear";
-import processTrade from "./processTrade";
-import summary from "./summary";
-import get from "./get";
-import { idb } from "../../db";
-import { hashSavedTrade } from "../../../common/hashSavedTrade";
+import { PHASE } from "../../../common/index.ts";
+import { team } from "../index.ts";
+import { g } from "../../util/index.ts";
+import clear from "./clear.ts";
+import processTrade from "./processTrade.ts";
+import summary from "./summary.ts";
+import get from "./get.ts";
+import { idb } from "../../db/index.ts";
+import { hashSavedTrade } from "../../../common/hashSavedTrade.ts";
 
 /**
  * Proposes the current trade in the database.

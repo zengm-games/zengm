@@ -4,12 +4,12 @@ import {
 	ResponsiveTableWrapper,
 	MovOrDiff,
 	TeamLogoInline,
-} from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import useClickable from "../hooks/useClickable";
-import type { TeamSeason, View } from "../../common/types";
-import { bySport, isSport, TIEBREAKERS } from "../../common";
+} from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers } from "../util/index.ts";
+import useClickable from "../hooks/useClickable.tsx";
+import type { TeamSeason, View } from "../../common/types.ts";
+import { bySport, isSport, TIEBREAKERS } from "../../common/index.ts";
 
 type StandingsTeam =
 	View<"standings">["rankingGroups"]["league"][number][number];

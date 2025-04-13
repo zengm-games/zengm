@@ -1,6 +1,6 @@
-import { defaultInjuries, g, helpers, random } from "../../util";
-import type { InjuriesSetting, PlayerInjury } from "../../../common/types";
-import { healthEffect } from "../../../common/budgetLevels";
+import { defaultInjuries, g, helpers, random } from "../../util/index.ts";
+import type { InjuriesSetting, PlayerInjury } from "../../../common/types.ts";
+import { healthEffect } from "../../../common/budgetLevels.ts";
 
 let prevInjuries: InjuriesSetting | undefined;
 

@@ -4,7 +4,7 @@ import type {
 	LogEventSaveOptions,
 	LogEventShowOptions,
 	DistributiveOmit,
-} from "./types";
+} from "./types.ts";
 
 // Really, pids, tids, and type should not be optional if saveToDb is true
 type LogEventOptions = {

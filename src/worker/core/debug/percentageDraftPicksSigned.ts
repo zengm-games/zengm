@@ -1,5 +1,5 @@
-import { idb } from "../../db";
-import { g } from "../../util";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
 
 const percentageDraftPicksSigned = async () => {
 	const players = await idb.getCopies.players(undefined, "noCopyCache");

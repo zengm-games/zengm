@@ -1,7 +1,7 @@
-import { idb } from "..";
-import { mergeByPk } from "./helpers";
-import type { DraftPick, GetCopyType } from "../../../common/types";
-import { orderBy } from "../../../common/utils";
+import { idb } from "../index.ts";
+import { mergeByPk } from "./helpers.ts";
+import type { DraftPick, GetCopyType } from "../../../common/types.ts";
+import { orderBy } from "../../../common/utils.ts";
 
 const getCopies = async (
 	{

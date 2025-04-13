@@ -1,13 +1,13 @@
-import { draft, player, freeAgents } from "../..";
-import { PHASE, POSITION_COUNTS } from "../../../../common";
-import { groupBy, orderBy } from "../../../../common/utils";
+import { draft, player, freeAgents } from "../../index.ts";
+import { PHASE, POSITION_COUNTS } from "../../../../common/index.ts";
+import { groupBy, orderBy } from "../../../../common/utils.ts";
 import type {
 	PlayerWithoutKey,
 	MinimalPlayerRatings,
 	PlayerContract,
 	Team,
-} from "../../../../common/types";
-import { g, random } from "../../../util";
+} from "../../../../common/types.ts";
+import { g, random } from "../../../util/index.ts";
 
 const createRandomPlayers = async ({
 	activeTids,

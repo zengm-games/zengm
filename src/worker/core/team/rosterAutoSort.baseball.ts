@@ -1,5 +1,5 @@
-import { idb } from "../../db";
-import genDepth from "./genDepth.baseball";
+import { idb } from "../../db/index.ts";
+import genDepth from "./genDepth.baseball.ts";
 
 const rosterAutoSort = async (
 	tid: number,

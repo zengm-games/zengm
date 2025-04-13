@@ -1,6 +1,6 @@
 import clsx, { type ClassValue } from "clsx";
 import { use, type ReactNode } from "react";
-import { DataTableContext } from "./contexts";
+import { DataTableContext } from "./contexts.ts";
 
 type FooterElement =
 	| ReactNode

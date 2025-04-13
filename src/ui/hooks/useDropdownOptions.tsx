@@ -5,10 +5,10 @@ import {
 	bySport,
 	isSport,
 	PLAYER_STATS_TABLES,
-} from "../../common";
-import { useLocalPartial } from "../util";
-import type { LocalStateUI } from "../../common/types";
-import { orderBy } from "../../common/utils";
+} from "../../common/index.ts";
+import { useLocalPartial } from "../util/index.ts";
+import type { LocalStateUI } from "../../common/types.ts";
+import { orderBy } from "../../common/utils.ts";
 
 export type ResponsiveOption = {
 	minWidth: number;

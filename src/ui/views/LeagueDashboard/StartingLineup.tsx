@@ -2,11 +2,11 @@ import {
 	PlayerNameLabels,
 	RatingWithChange,
 	ResponsiveTableWrapper,
-} from "../../components";
-import { getCols, helpers } from "../../util";
-import type { View } from "../../../common/types";
-import { DEPTH_CHART_NAME, isSport } from "../../../common";
-import { Contract } from "../../components/contract";
+} from "../../components/index.tsx";
+import { getCols, helpers } from "../../util/index.ts";
+import type { View } from "../../../common/types.ts";
+import { DEPTH_CHART_NAME, isSport } from "../../../common/index.ts";
+import { Contract } from "../../components/contract.tsx";
 
 const StartingLineup = ({
 	challengeNoRatings,

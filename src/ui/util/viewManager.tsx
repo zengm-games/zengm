@@ -1,11 +1,11 @@
-import type { UpdateEvents } from "../../common/types";
-import useTitleBar from "../hooks/useTitleBar";
-import router, { type Context, makeRegex } from "../router";
-import { local, localActions } from "./local";
-import realtimeUpdate from "./realtimeUpdate";
-import toWorker from "./toWorker";
+import type { UpdateEvents } from "../../common/types.ts";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import router, { type Context, makeRegex } from "../router/index.ts";
+import { local, localActions } from "./local.ts";
+import realtimeUpdate from "./realtimeUpdate.ts";
+import toWorker from "./toWorker.ts";
 import { create } from "zustand";
-import routeInfos from "./routeInfos";
+import routeInfos from "./routeInfos.ts";
 
 /**
  * Things that might be nice, to improve this:

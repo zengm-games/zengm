@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Modal } from "react-bootstrap";
-import teamInfos from "../../../common/teamInfos";
-import getTeamInfos from "../../../common/getTeamInfos";
-import { TeamsSplitNorthAmericaWorld } from "../../components/TeamsSplitNorthAmericaWorld";
-import { TeamLogoJerseyInfo } from "../../components/TeamLogoJerseyInfo";
-import { orderBy } from "../../../common/utils";
+import teamInfos from "../../../common/teamInfos.ts";
+import getTeamInfos from "../../../common/getTeamInfos.ts";
+import { TeamsSplitNorthAmericaWorld } from "../../components/TeamsSplitNorthAmericaWorld.tsx";
+import { TeamLogoJerseyInfo } from "../../components/TeamLogoJerseyInfo.tsx";
+import { orderBy } from "../../../common/utils.ts";
 
 export type MoveModalTeam = {
 	abbrev: string;

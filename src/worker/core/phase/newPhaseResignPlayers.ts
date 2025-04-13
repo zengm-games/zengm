@@ -1,4 +1,9 @@
-import { bySport, PHASE, PLAYER, POSITION_COUNTS } from "../../../common";
+import {
+	bySport,
+	PHASE,
+	PLAYER,
+	POSITION_COUNTS,
+} from "../../../common/index.ts";
 import {
 	contractNegotiation,
 	draft,
@@ -6,11 +11,11 @@ import {
 	player,
 	team,
 	freeAgents,
-} from "..";
-import { idb } from "../../db";
-import { g, helpers, local, logEvent } from "../../util";
-import type { Conditions, PhaseReturn } from "../../../common/types";
-import { orderBy } from "../../../common/utils";
+} from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers, local, logEvent } from "../../util/index.ts";
+import type { Conditions, PhaseReturn } from "../../../common/types.ts";
+import { orderBy } from "../../../common/utils.ts";
 
 const newPhaseResignPlayers = async (
 	conditions: Conditions,

@@ -1,4 +1,4 @@
-import fuzzRating from "./fuzzRating";
+import fuzzRating from "./fuzzRating.ts";
 
 const fuzzOvrs = (ovrs: Record<string, number> | undefined, fuzz: number) => {
 	if (ovrs === undefined) {

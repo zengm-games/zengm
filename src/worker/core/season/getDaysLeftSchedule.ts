@@ -1,4 +1,4 @@
-import getSchedule from "./getSchedule";
+import getSchedule from "./getSchedule.ts";
 
 /**
  * Get the number of days left in the regular season schedule.

@@ -1,4 +1,4 @@
-import type { StickyColsPlusCheckboxes } from "./useStickyXX";
+import type { StickyColsPlusCheckboxes } from "./useStickyXX.ts";
 
 const getStickyColsClass = (stickyCols: StickyColsPlusCheckboxes) => {
 	if (stickyCols === 4) {

@@ -1,8 +1,14 @@
-import retire from "./retire";
-import { idb } from "../../db";
-import { defaultTragicDeaths, g, helpers, logEvent, random } from "../../util";
-import type { Conditions, Player } from "../../../common/types";
-import { bySport } from "../../../common";
+import retire from "./retire.ts";
+import { idb } from "../../db/index.ts";
+import {
+	defaultTragicDeaths,
+	g,
+	helpers,
+	logEvent,
+	random,
+} from "../../util/index.ts";
+import type { Conditions, Player } from "../../../common/types.ts";
+import { bySport } from "../../../common/index.ts";
 
 const getReason = () => {
 	const tragicDeaths = g.get("tragicDeaths") ?? defaultTragicDeaths;

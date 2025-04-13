@@ -1,7 +1,7 @@
-import { idb } from "../db";
-import { g, local, updatePlayMenu } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
-import { bySport, SIMPLE_AWARDS } from "../../common";
+import { idb } from "../db/index.ts";
+import { g, local, updatePlayMenu } from "../util/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { bySport, SIMPLE_AWARDS } from "../../common/index.ts";
 
 const viewedSeasonSummary = async () => {
 	local.unviewedSeasonSummary = false;

@@ -1,5 +1,5 @@
-import type { PrimaryPosition } from "../../../common/types.football";
-import ovrByPosFactory from "./ovrByPosFactory";
+import type { PrimaryPosition } from "../../../common/types.football.ts";
+import ovrByPosFactory from "./ovrByPosFactory.ts";
 
 // See analysis/team-ovr-football
 

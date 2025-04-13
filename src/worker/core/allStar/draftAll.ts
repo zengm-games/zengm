@@ -1,6 +1,6 @@
-import { idb } from "../../db";
-import { g } from "../../util";
-import draftOne from "./draftOne";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
+import draftOne from "./draftOne.ts";
 
 const draftAll = async (): Promise<number[]> => {
 	const allStars = await idb.cache.allStars.get(g.get("season"));

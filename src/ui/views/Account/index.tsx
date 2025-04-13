@@ -5,14 +5,19 @@ import {
 	STRIPE_PUBLISHABLE_KEY,
 	fetchWrapper,
 	GAME_NAME,
-} from "../../../common";
-import useTitleBar from "../../hooks/useTitleBar";
-import { confirm, getScript, realtimeUpdate, toWorker } from "../../util";
-import type { View } from "../../../common/types";
-import { GameLinks } from "../../components";
-import { ajaxErrorMsg } from "../LoginOrRegister";
-import AccountInfoForm from "./AccountInfoForm";
-import DeleteAccountForm from "./DeleteAccountForm";
+} from "../../../common/index.ts";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import {
+	confirm,
+	getScript,
+	realtimeUpdate,
+	toWorker,
+} from "../../util/index.ts";
+import type { View } from "../../../common/types.ts";
+import { GameLinks } from "../../components/index.tsx";
+import { ajaxErrorMsg } from "../LoginOrRegister/index.tsx";
+import AccountInfoForm from "./AccountInfoForm.tsx";
+import DeleteAccountForm from "./DeleteAccountForm.tsx";
 
 const StripeButton = ({ email }: { email: string }) => {
 	const [handler, setHandler] = useState<StripeCheckoutHandler | undefined>();

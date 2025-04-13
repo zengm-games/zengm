@@ -1,13 +1,18 @@
-import { player, team } from "../core";
-import { idb } from "../db";
-import { g, helpers } from "../util";
+import { player, team } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import { g, helpers } from "../util/index.ts";
 import {
 	makeAbbrevsUnique,
 	setTeamInfo,
 	type TeamSeasonOverride,
-} from "./gameLog";
-import type { AllStars, UpdateEvents, ViewInput } from "../../common/types";
-import { bySport, isSport, PHASE, STARTING_NUM_TIMEOUTS } from "../../common";
+} from "./gameLog.ts";
+import type { AllStars, UpdateEvents, ViewInput } from "../../common/types.ts";
+import {
+	bySport,
+	isSport,
+	PHASE,
+	STARTING_NUM_TIMEOUTS,
+} from "../../common/index.ts";
 
 export const boxScoreToLiveSim = async ({
 	allStars,

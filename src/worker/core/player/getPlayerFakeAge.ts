@@ -1,4 +1,4 @@
-import { g, random } from "../../util";
+import { g, random } from "../../util/index.ts";
 
 const getPlayerFakeAge = <
 	T extends {

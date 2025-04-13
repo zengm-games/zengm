@@ -1,6 +1,6 @@
-import { idb } from "../../db";
-import { g } from "../../util";
-import getPlayoffsByConf from "./getPlayoffsByConf";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
+import getPlayoffsByConf from "./getPlayoffsByConf.ts";
 
 export const getNumPlayoffTeamsRaw = ({
 	numRounds,

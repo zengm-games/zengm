@@ -1,5 +1,5 @@
-import { idb } from "../../db";
-import { g } from "../../util";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
 
 const getName = async () => {
 	const l = await idb.meta.get("leagues", g.get("lid"));

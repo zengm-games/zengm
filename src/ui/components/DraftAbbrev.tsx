@@ -1,5 +1,5 @@
-import { helpers, useLocal } from "../util";
-import TeamLogoInline from "./TeamLogoInline";
+import { helpers, useLocal } from "../util/index.ts";
+import TeamLogoInline from "./TeamLogoInline.tsx";
 
 type TeamOverride = {
 	abbrev: string;

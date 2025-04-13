@@ -1,5 +1,5 @@
-import type { UpdateEvents } from "../../common/types";
-import { viewManager } from "./viewManager";
+import type { UpdateEvents } from "../../common/types.ts";
+import { viewManager } from "./viewManager.tsx";
 
 /**
  * Smartly update the currently loaded view or redirect to a new one.

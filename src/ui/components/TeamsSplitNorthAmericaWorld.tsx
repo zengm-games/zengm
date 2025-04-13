@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import geographicCoordinates from "../../common/geographicCoordinates";
+import geographicCoordinates from "../../common/geographicCoordinates.ts";
 
 export const TeamsSplitNorthAmericaWorld = <
 	T extends {

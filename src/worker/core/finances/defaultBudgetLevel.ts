@@ -1,5 +1,5 @@
-import { BUDGET_LEVEL_SCALE, MAX_LEVEL } from "../../../common/budgetLevels";
-import { g, helpers, random } from "../../util";
+import { BUDGET_LEVEL_SCALE, MAX_LEVEL } from "../../../common/budgetLevels.ts";
+import { g, helpers, random } from "../../util/index.ts";
 
 // Inverse of levelToEffect
 export const effectToLevel = (effect: number) => {

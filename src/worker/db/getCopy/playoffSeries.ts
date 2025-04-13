@@ -1,7 +1,7 @@
-import { idb } from "..";
-import { g } from "../../util";
-import type { GetCopyType, PlayoffSeries } from "../../../common/types";
-import { maybeDeepCopy } from "../getCopies/helpers";
+import { idb } from "../index.ts";
+import { g } from "../../util/index.ts";
+import type { GetCopyType, PlayoffSeries } from "../../../common/types.ts";
+import { maybeDeepCopy } from "../getCopies/helpers.ts";
 
 const getCopy = async (
 	{

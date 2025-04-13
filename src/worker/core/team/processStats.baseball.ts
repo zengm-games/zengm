@@ -1,12 +1,12 @@
-import team from ".";
+import team from "./index.ts";
 import {
 	NUM_OUTS_PER_GAME,
 	outsToInnings,
 	sumByPos,
-} from "../../../common/processPlayerStats.baseball";
-import type { TeamStatAttr, TeamStats } from "../../../common/types";
-import type { TeamStatAttrByPos } from "../../../common/types.baseball";
-import { helpers } from "../../util";
+} from "../../../common/processPlayerStats.baseball.ts";
+import type { TeamStatAttr, TeamStats } from "../../../common/types.ts";
+import type { TeamStatAttrByPos } from "../../../common/types.baseball.ts";
+import { helpers } from "../../util/index.ts";
 
 const processStats = (
 	ts: TeamStats,

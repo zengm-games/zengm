@@ -1,7 +1,7 @@
 import { afterAll, assert, beforeAll, test } from "vitest";
-import { g } from "../../util";
-import testHelpers from "../../../test/helpers";
-import { makeMatchups } from "./genPlayoffSeries";
+import { g } from "../../util/index.ts";
+import testHelpers from "../../../test/helpers.ts";
+import { makeMatchups } from "./genPlayoffSeries.ts";
 
 const makeMatchupsWrapper = (
 	teams: { tid: number; cid: number }[],

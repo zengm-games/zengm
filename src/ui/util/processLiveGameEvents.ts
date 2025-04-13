@@ -1,8 +1,8 @@
-import { bySport } from "../../common";
-import processLiveGameEventsBaseball from "./processLiveGameEvents.baseball";
-import processLiveGameEventsBasketball from "./processLiveGameEvents.basketball";
-import processLiveGameEventsFootball from "./processLiveGameEvents.football";
-import processLiveGameEventsHockey from "./processLiveGameEvents.hockey";
+import { bySport } from "../../common/index.ts";
+import processLiveGameEventsBaseball from "./processLiveGameEvents.baseball.tsx";
+import processLiveGameEventsBasketball from "./processLiveGameEvents.basketball.tsx";
+import processLiveGameEventsFootball from "./processLiveGameEvents.football.tsx";
+import processLiveGameEventsHockey from "./processLiveGameEvents.hockey.tsx";
 
 // Mutates boxScore!!!
 const processLiveGameEvents = ({

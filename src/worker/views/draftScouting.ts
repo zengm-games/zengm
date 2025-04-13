@@ -1,8 +1,8 @@
-import { PHASE, PLAYER } from "../../common";
-import { idb } from "../db";
-import { g } from "../util";
-import type { UpdateEvents, Player } from "../../common/types";
-import addFirstNameShort from "../util/addFirstNameShort";
+import { PHASE, PLAYER } from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
+import type { UpdateEvents, Player } from "../../common/types.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
 
 const getSeason = async (playersAll: Player[], season: number) => {
 	const playersAllFiltered = playersAll.filter((p) => p.draft.year === season);

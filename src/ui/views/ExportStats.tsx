@@ -1,9 +1,9 @@
 import { type FormEvent, useCallback, useState } from "react";
-import useTitleBar from "../hooks/useTitleBar";
-import { downloadFile, toWorker } from "../util";
-import type { View } from "../../common/types";
-import { GAME_ACRONYM, isSport } from "../../common";
-import { ActionButton } from "../components";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { downloadFile, toWorker } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { GAME_ACRONYM, isSport } from "../../common/index.ts";
+import { ActionButton } from "../components/index.tsx";
 
 const genFilename = (
 	leagueName: string,

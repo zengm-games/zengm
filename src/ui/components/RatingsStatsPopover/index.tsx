@@ -1,10 +1,10 @@
 import clsx from "clsx";
 import { type Ref, useCallback, useEffect, useState } from "react";
-import RatingsStats from "./RatingsStats";
-import WatchBlock from "../WatchBlock";
-import { helpers, toWorker } from "../../util";
-import ResponsivePopover from "../ResponsivePopover";
-import { PLAYER } from "../../../common";
+import RatingsStats from "./RatingsStats.tsx";
+import WatchBlock from "../WatchBlock.tsx";
+import { helpers, toWorker } from "../../util/index.ts";
+import ResponsivePopover from "../ResponsivePopover.tsx";
+import { PLAYER } from "../../../common/index.ts";
 
 const PlayerNote = ({
 	className,

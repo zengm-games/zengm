@@ -1,7 +1,7 @@
-import helpers from "./helpers";
-import initView from "./initView";
-import views from "../views";
-import routeInfos from "./routeInfos";
+import helpers from "./helpers.ts";
+import initView from "./initView.ts";
+import views from "../views/index.ts";
+import routeInfos from "./routeInfos.ts";
 
 const genPage = (id: string, inLeague: boolean) => {
 	const componentName = helpers.upperCaseFirstLetter(id);

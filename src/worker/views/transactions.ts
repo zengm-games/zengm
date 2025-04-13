@@ -1,6 +1,6 @@
-import { idb } from "../db";
-import { formatEventText } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import { idb } from "../db/index.ts";
+import { formatEventText } from "../util/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 
 const updateEventLog = async (
 	inputs: ViewInput<"transactions">,

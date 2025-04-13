@@ -1,10 +1,10 @@
-import { toUI } from "../../util";
+import { toUI } from "../../util/index.ts";
 import type {
 	GameAttributesLeagueWithHistory,
 	GameAttributesLeague,
 	LocalStateUI,
-} from "../../../common/types";
-import { unwrapGameAttribute } from "../../../common";
+} from "../../../common/types.ts";
+import { unwrapGameAttribute } from "../../../common/index.ts";
 
 const gameAttributesToUI = async (
 	gameAttributes: GameAttributesLeagueWithHistory,

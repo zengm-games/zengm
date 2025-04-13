@@ -1,5 +1,8 @@
-import type { RealPlayerPhotos, RealTeamInfo } from "../../../../common/types";
-import { idb } from "../../../db";
+import type {
+	RealPlayerPhotos,
+	RealTeamInfo,
+} from "../../../../common/types.ts";
+import { idb } from "../../../db/index.ts";
 
 const getRealTeamPlayerData = async ({
 	fileHasPlayers,

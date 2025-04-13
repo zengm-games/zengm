@@ -1,4 +1,4 @@
-import { helpers } from "../util";
+import { helpers } from "../util/index.ts";
 
 const RecordAndPlayoffs = ({
 	abbrev,

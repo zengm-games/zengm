@@ -1,5 +1,5 @@
-import type { UpdateEvents, ViewInput } from "../../common/types";
-import { g } from "../util";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { g } from "../util/index.ts";
 
 const updateAdvancedPlayerSearch = async (
 	{

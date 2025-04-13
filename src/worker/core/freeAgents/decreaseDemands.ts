@@ -1,6 +1,6 @@
-import { PHASE, PLAYER } from "../../../common";
-import { idb } from "../../db";
-import { g, helpers } from "../../util";
+import { PHASE, PLAYER } from "../../../common/index.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers } from "../../util/index.ts";
 
 /**
  * Decrease contract demands for all free agents.

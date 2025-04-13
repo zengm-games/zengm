@@ -5,8 +5,8 @@ import {
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
 	isSport,
-} from "../../common";
-import logEvent from "./logEvent";
+} from "../../common/index.ts";
+import logEvent from "./logEvent.ts";
 
 const takeScreenshotChunk = async () => {
 	const theme = window.getTheme();

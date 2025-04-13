@@ -1,4 +1,4 @@
-import { getPlayers, getTopPlayers } from "./awards";
+import { getPlayers, getTopPlayers } from "./awards.ts";
 import {
 	dpoyScore,
 	dfoyFilter,
@@ -6,7 +6,7 @@ import {
 	goyScore,
 	royFilter,
 	royScore,
-} from "./doAwards.hockey";
+} from "./doAwards.hockey.ts";
 
 const getAwardCandidates = async (season: number) => {
 	const players = await getPlayers(season);

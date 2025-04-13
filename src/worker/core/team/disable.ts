@@ -1,5 +1,5 @@
-import { idb } from "../../db";
-import { player, league, draft } from "..";
+import { idb } from "../../db/index.ts";
+import { player, league, draft } from "../index.ts";
 import {
 	g,
 	updateStatus,
@@ -7,9 +7,9 @@ import {
 	random,
 	logEvent,
 	helpers,
-} from "../../util";
-import { PHASE } from "../../../common";
-import deleteUnreadMessages from "./deleteUnreadMessages";
+} from "../../util/index.ts";
+import { PHASE } from "../../../common/index.ts";
+import deleteUnreadMessages from "./deleteUnreadMessages.ts";
 
 const disable = async (tid: number) => {
 	const t = await idb.cache.teams.get(tid);

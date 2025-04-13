@@ -1,10 +1,10 @@
-import { idb } from "../db";
-import { g, helpers } from "../util";
-import type { DraftPick, UpdateEvents, ViewInput } from "../../common/types";
-import { groupByUnique } from "../../common/utils";
-import { addPowerRankingsStuffToTeams } from "./powerRankings";
-import { getEstPicks } from "../core/team/valueChange";
-import { PLAYER } from "../../common";
+import { idb } from "../db/index.ts";
+import { g, helpers } from "../util/index.ts";
+import type { DraftPick, UpdateEvents, ViewInput } from "../../common/types.ts";
+import { groupByUnique } from "../../common/utils.ts";
+import { addPowerRankingsStuffToTeams } from "./powerRankings.ts";
+import { getEstPicks } from "../core/team/valueChange.ts";
+import { PLAYER } from "../../common/index.ts";
 
 const adjustProjectedPick = ({
 	projectedPick,

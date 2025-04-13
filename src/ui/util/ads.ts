@@ -1,5 +1,9 @@
-import { AD_DIVS, MOBILE_AD_BOTTOM_MARGIN, VIDEO_ADS } from "../../common";
-import { local, localActions } from "./local";
+import {
+	AD_DIVS,
+	MOBILE_AD_BOTTOM_MARGIN,
+	VIDEO_ADS,
+} from "../../common/index.ts";
+import { local, localActions } from "./local.ts";
 
 const SKYSCAPER_WIDTH_CUTOFF = 1200 + 190;
 

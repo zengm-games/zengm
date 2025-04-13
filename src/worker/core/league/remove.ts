@@ -1,7 +1,7 @@
 import { deleteDB } from "@dumbmatter/idb";
-import close from "./close";
-import { idb } from "../../db";
-import { g, logEvent } from "../../util";
+import close from "./close.ts";
+import { idb } from "../../db/index.ts";
+import { g, logEvent } from "../../util/index.ts";
 
 const remove = async (lid: number) => {
 	if (g.get("lid") === lid) {

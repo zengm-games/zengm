@@ -1,17 +1,23 @@
-import { bySport, isSport, PHASE, PLAYER, RATINGS } from "../../common";
-import { idb } from "../db";
-import { g, helpers, random } from "../util";
+import {
+	bySport,
+	isSport,
+	PHASE,
+	PLAYER,
+	RATINGS,
+} from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import { g, helpers, random } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
 	PlayerStatType,
-} from "../../common/types";
-import { POS_NUMBERS } from "../../common/constants.baseball";
-import { maxBy } from "../../common/utils";
+} from "../../common/types.ts";
+import { POS_NUMBERS } from "../../common/constants.baseball.ts";
+import { maxBy } from "../../common/utils.ts";
 import {
 	getStats,
 	getStatsTableByType,
-} from "../../common/advancedPlayerSearch";
+} from "../../common/advancedPlayerSearch.ts";
 
 export const statTypes = bySport({
 	baseball: [

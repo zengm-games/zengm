@@ -1,8 +1,8 @@
 import { afterEach, assert, beforeAll, test } from "vitest";
-import { g } from "../../util";
-import { trade } from "..";
-import { beforeTests, reset } from "./testHelpers";
-import get from "./get";
+import { g } from "../../util/index.ts";
+import { trade } from "../index.ts";
+import { beforeTests, reset } from "./testHelpers.ts";
+import get from "./get.ts";
 
 const testCreateTrade = async (
 	otherTidTest: number,

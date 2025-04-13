@@ -1,9 +1,9 @@
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import { DataTable, MoreLinks } from "../components";
-import type { View } from "../../common/types";
-import { wrappedMovOrDiff } from "../components/MovOrDiff";
-import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers } from "../util/index.ts";
+import { DataTable, MoreLinks } from "../components/index.tsx";
+import type { View } from "../../common/types.ts";
+import { wrappedMovOrDiff } from "../components/MovOrDiff.tsx";
+import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 
 const HeadToHead = ({
 	abbrev,

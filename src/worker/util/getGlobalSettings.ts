@@ -1,6 +1,6 @@
-import { idb } from "../db";
-import type { Options } from "../../common/types";
-import { DEFAULT_PHASE_CHANGE_REDIRECTS } from "../../common";
+import { idb } from "../db/index.ts";
+import type { Options } from "../../common/types.ts";
+import { DEFAULT_PHASE_CHANGE_REDIRECTS } from "../../common/index.ts";
 
 const getGlobalSettings = async () => {
 	const globalSettings = ((await idb.meta.get("attributes", "options")) ??

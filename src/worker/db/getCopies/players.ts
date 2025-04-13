@@ -1,14 +1,14 @@
-import { PLAYER } from "../../../common";
-import { getAll, idb } from "..";
-import { mergeByPk } from "./helpers";
-import { g, helpers } from "../../util";
+import { PLAYER } from "../../../common/index.ts";
+import { getAll, idb } from "../index.ts";
+import { mergeByPk } from "./helpers.ts";
+import { g, helpers } from "../../util/index.ts";
 import type {
 	GetCopyType,
 	MinimalPlayerRatings,
 	Player,
-} from "../../../common/types";
+} from "../../../common/types.ts";
 import { type IDBPDatabase, unwrap } from "@dumbmatter/idb";
-import type { LeagueDB } from "../connectLeague";
+import type { LeagueDB } from "../connectLeague.ts";
 
 export const getPlayersActiveSeason = (
 	league: IDBPDatabase<LeagueDB>,

@@ -1,6 +1,6 @@
-import { PHASE } from "../../common";
-import { idb } from "../db";
-import { g, local } from "../util";
+import { PHASE } from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import { g, local } from "../util/index.ts";
 
 const updateDangerZone = async () => {
 	let canRegenerateSchedule = g.get("phase") === PHASE.REGULAR_SEASON;

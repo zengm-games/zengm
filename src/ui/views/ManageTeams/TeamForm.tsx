@@ -1,12 +1,12 @@
 import type { FaceConfig } from "facesjs";
 import { useState } from "react";
-import { helpers, JERSEYS } from "../../../common";
-import type { View, ExpansionDraftSetupTeam } from "../../../common/types";
-import { JerseyNumber } from "../../components";
-import { toWorker } from "../../util";
-import MoveModal, { type MoveModalTeamFinal } from "./MoveModal";
-import { ColorPicker } from "../../components/ColorPicker";
-import { MyFace } from "../../components/MyFace";
+import { helpers, JERSEYS } from "../../../common/index.ts";
+import type { View, ExpansionDraftSetupTeam } from "../../../common/types.ts";
+import { JerseyNumber } from "../../components/index.tsx";
+import { toWorker } from "../../util/index.ts";
+import MoveModal, { type MoveModalTeamFinal } from "./MoveModal.tsx";
+import { ColorPicker } from "../../components/ColorPicker/index.tsx";
+import { MyFace } from "../../components/MyFace.tsx";
 
 const TeamForm = ({
 	classNamesCol,

@@ -1,5 +1,5 @@
-import { helpers } from "../../util";
-import type { View } from "../../../common/types";
+import { helpers } from "../../util/index.ts";
+import type { View } from "../../../common/types.ts";
 
 const TeamStat = ({
 	name,

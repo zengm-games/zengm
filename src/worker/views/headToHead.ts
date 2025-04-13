@@ -1,8 +1,8 @@
-import { g, helpers } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
-import { headToHead } from "../core";
-import { idb } from "../db";
-import hasTies from "../core/season/hasTies";
+import { g, helpers } from "../util/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { headToHead } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import hasTies from "../core/season/hasTies.ts";
 
 const updateHeadToHead = async (
 	{ abbrev, season, tid, type }: ViewInput<"headToHead">,

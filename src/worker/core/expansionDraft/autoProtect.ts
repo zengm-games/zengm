@@ -1,7 +1,7 @@
-import { idb } from "../../db";
-import { g } from "../../util";
-import { PHASE } from "../../../common";
-import { orderBy } from "../../../common/utils";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
+import { PHASE } from "../../../common/index.ts";
+import { orderBy } from "../../../common/utils.ts";
 
 const autoProtect = async (tid: number): Promise<number[]> => {
 	const expansionDraft = g.get("expansionDraft");

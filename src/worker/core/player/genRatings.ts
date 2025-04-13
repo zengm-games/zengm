@@ -1,11 +1,11 @@
-import { bySport, PHASE } from "../../../common";
-import type { MinimalPlayerRatings } from "../../../common/types";
-import { g, helpers } from "../../util";
-import genRatingsBaseball from "./genRatings.baseball";
-import genRatingsBasketball from "./genRatings.basketball";
-import genRatingsFootball from "./genRatings.football";
-import genRatingsHockey from "./genRatings.hockey";
-import pos from "./pos";
+import { bySport, PHASE } from "../../../common/index.ts";
+import type { MinimalPlayerRatings } from "../../../common/types.ts";
+import { g, helpers } from "../../util/index.ts";
+import genRatingsBaseball from "./genRatings.baseball.ts";
+import genRatingsBasketball from "./genRatings.basketball.ts";
+import genRatingsFootball from "./genRatings.football.ts";
+import genRatingsHockey from "./genRatings.hockey.ts";
+import pos from "./pos.ts";
 
 const genRatings = (season: number, scoutingLevel: number) => {
 	const { heightInInches, ratings } = bySport<{

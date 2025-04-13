@@ -1,9 +1,9 @@
-import { idb } from "../db";
-import { g, helpers } from "../util";
-import type { UpdateEvents, AllStars, ViewInput } from "../../common/types";
-import { isSport } from "../../common";
-import { season } from "../core";
-import { orderBy } from "../../common/utils";
+import { idb } from "../db/index.ts";
+import { g, helpers } from "../util/index.ts";
+import type { UpdateEvents, AllStars, ViewInput } from "../../common/types.ts";
+import { isSport } from "../../common/index.ts";
+import { season } from "../core/index.ts";
+import { orderBy } from "../../common/utils.ts";
 
 const sumBy = <Key extends string, T extends Record<Key, number>>(
 	records: T[],

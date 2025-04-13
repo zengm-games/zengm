@@ -1,5 +1,5 @@
-import { WEBSITE_ROOT } from "../../common";
-import logEvent from "./logEvent";
+import { WEBSITE_ROOT } from "../../common/index.ts";
+import logEvent from "./logEvent.ts";
 
 const requestPersistentStorage = async () => {
 	if (

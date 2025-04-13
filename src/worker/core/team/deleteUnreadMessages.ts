@@ -1,4 +1,4 @@
-import { idb } from "../../db";
+import { idb } from "../../db/index.ts";
 
 // Call this e.g. when switching team and any existing unread message is obsolete
 const deleteUnreadMessages = async () => {

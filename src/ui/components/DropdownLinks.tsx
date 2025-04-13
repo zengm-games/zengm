@@ -2,12 +2,12 @@ import clsx from "clsx";
 import { memo, useCallback, useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
-import { helpers } from "../util";
+import { helpers } from "../util/index.ts";
 import type {
 	MenuItemLink,
 	MenuItemHeader,
 	MenuItemText,
-} from "../../common/types";
+} from "../../common/types.ts";
 
 type TopMenuToggleProps = {
 	long: string;

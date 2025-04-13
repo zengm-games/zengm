@@ -1,5 +1,5 @@
-import { helpers } from "../../util";
-import evaluatePointsFormula from "./evaluatePointsFormula";
+import { helpers } from "../../util/index.ts";
+import evaluatePointsFormula from "./evaluatePointsFormula.ts";
 
 const ptsMax = (ts: {
 	won: number;

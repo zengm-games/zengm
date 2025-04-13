@@ -1,9 +1,9 @@
-import { PlayerPicture } from ".";
-import SafeHtml from "./SafeHtml";
+import { PlayerPicture } from "./index.tsx";
+import SafeHtml from "./SafeHtml.tsx";
 import clsx from "clsx";
-import { helpers } from "../util";
-import type { View, LogEventType } from "../../common/types";
-import { categories, types } from "../../common/transactionInfo";
+import { helpers } from "../util/index.ts";
+import type { View, LogEventType } from "../../common/types.ts";
+import { categories, types } from "../../common/transactionInfo.ts";
 
 const Badge = ({ type }: { type: LogEventType }) => {
 	let text;

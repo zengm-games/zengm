@@ -1,13 +1,13 @@
-import { idb } from "../../db";
-import { g, logEvent, helpers } from "../../util";
-import { league, team } from "..";
+import { idb } from "../../db/index.ts";
+import { g, logEvent, helpers } from "../../util/index.ts";
+import { league, team } from "../index.ts";
 import type {
 	GameAttributesLeague,
 	Team,
 	Conditions,
-} from "../../../common/types";
-import { PHASE } from "../../../common";
-import validateExpansionDraftSetup from "./validateExpansionDraftSetup";
+} from "../../../common/types.ts";
+import { PHASE } from "../../../common/index.ts";
+import validateExpansionDraftSetup from "./validateExpansionDraftSetup.ts";
 
 const advanceToPlayerProtection = async (
 	fromScheduledEvent: boolean,

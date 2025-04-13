@@ -1,4 +1,4 @@
-import { bySport, isSport } from "../../../common";
+import { bySport, isSport } from "../../../common/index.ts";
 
 let potEstimator: (ovr: number, age: number, pos?: string) => number;
 

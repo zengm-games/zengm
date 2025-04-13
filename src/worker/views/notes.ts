@@ -1,17 +1,17 @@
-import { season, team } from "../core";
-import { idb } from "../db";
-import { g, getTeamInfoBySeason, helpers } from "../util";
+import { season, team } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import { g, getTeamInfoBySeason, helpers } from "../util/index.ts";
 import {
 	type PlayerStatType,
 	type UpdateEvents,
 	type ViewInput,
-} from "../../common/types";
-import getPlayoffsByConf from "../core/season/getPlayoffsByConf";
-import { processDraftPicks } from "./draftPicks";
-import getWinner from "../../common/getWinner";
-import formatScoreWithShootout from "../../common/formatScoreWithShootout";
-import { formatPlayersWatchList } from "./watchList";
-import { bySport } from "../../common";
+} from "../../common/types.ts";
+import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
+import { processDraftPicks } from "./draftPicks.ts";
+import getWinner from "../../common/getWinner.ts";
+import formatScoreWithShootout from "../../common/formatScoreWithShootout.ts";
+import { formatPlayersWatchList } from "./watchList.ts";
+import { bySport } from "../../common/index.ts";
 
 const updateNotes = async (
 	{ type }: ViewInput<"notes">,

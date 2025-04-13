@@ -1,4 +1,4 @@
-import { bySport, PHASE, PLAYER } from "../../common";
+import { bySport, PHASE, PLAYER } from "../../common/index.ts";
 import type {
 	DiscriminateUnion,
 	DraftPickSeason,
@@ -10,13 +10,13 @@ import type {
 	PlayerStats,
 	UpdateEvents,
 	ViewInput,
-} from "../../common/types";
-import { player, team } from "../core";
-import getPlayoffsByConf from "../core/season/getPlayoffsByConf";
-import { idb } from "../db";
-import { g, getTeamInfoBySeason, helpers } from "../util";
-import { assetIsPlayer, getPlayerFromPick } from "../util/formatEventText";
-import { getRoundsWonText } from "./frivolitiesTeamSeasons";
+} from "../../common/types.ts";
+import { player, team } from "../core/index.ts";
+import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
+import { idb } from "../db/index.ts";
+import { g, getTeamInfoBySeason, helpers } from "../util/index.ts";
+import { assetIsPlayer, getPlayerFromPick } from "../util/formatEventText.ts";
+import { getRoundsWonText } from "./frivolitiesTeamSeasons.ts";
 
 const findRatingsRow = (
 	allRatings: MinimalPlayerRatings[],

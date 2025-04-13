@@ -1,15 +1,15 @@
-import afterPicks from "./afterPicks";
-import deleteLotteryResultIfNoDraftYet from "./deleteLotteryResultIfNoDraftYet";
-import genOrder from "./genOrder";
-import genOrderFantasy from "./genOrderFantasy";
-import genPicks from "./genPicks";
-import genPlayers from "./genPlayers";
-import genPlayersWithoutSaving from "./genPlayersWithoutSaving";
-import getOrder from "./getOrder";
-import getRookieContractLength from "./getRookieContractLength";
-import getRookieSalaries from "./getRookieSalaries";
-import runPicks from "./runPicks";
-import selectPlayer from "./selectPlayer";
+import afterPicks from "./afterPicks.ts";
+import deleteLotteryResultIfNoDraftYet from "./deleteLotteryResultIfNoDraftYet.ts";
+import genOrder from "./genOrder.ts";
+import genOrderFantasy from "./genOrderFantasy.ts";
+import genPicks from "./genPicks.ts";
+import genPlayers from "./genPlayers.ts";
+import genPlayersWithoutSaving from "./genPlayersWithoutSaving.ts";
+import getOrder from "./getOrder.ts";
+import getRookieContractLength from "./getRookieContractLength.ts";
+import getRookieSalaries from "./getRookieSalaries.ts";
+import runPicks from "./runPicks.ts";
+import selectPlayer from "./selectPlayer.ts";
 
 export default {
 	afterPicks,

@@ -1,6 +1,6 @@
-import { getAll, idb } from "../db";
-import g from "./g";
-import type { Game } from "../../common/types";
+import { getAll, idb } from "../db/index.ts";
+import g from "./g.ts";
+import type { Game } from "../../common/types.ts";
 
 /**
  * Generate a game log list.

@@ -13,16 +13,16 @@ import {
 	WEBSITE_ROOT,
 	unwrapGameAttribute,
 	LEAGUE_DATABASE_VERSION,
-} from "../../../common";
+} from "../../../common/index.ts";
 import {
 	ActionButton,
 	LeagueFileUpload,
 	NextPrevButtons,
 	PopText,
 	ProgressBarText,
-} from "../../components";
-import type { LeagueFileUploadOutput } from "../../components/LeagueFileUpload";
-import useTitleBar from "../../hooks/useTitleBar";
+} from "../../components/index.tsx";
+import type { LeagueFileUploadOutput } from "../../components/LeagueFileUpload.tsx";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
 	confirm,
 	helpers,
@@ -32,7 +32,7 @@ import {
 	safeLocalStorage,
 	useLocalPartial,
 	analyticsEvent,
-} from "../../util";
+} from "../../util/index.ts";
 import type {
 	View,
 	RealTeamInfo,
@@ -40,19 +40,19 @@ import type {
 	Div,
 	Conf,
 	GameAttributesLeague,
-} from "../../../common/types";
+} from "../../../common/types.ts";
 import clsx from "clsx";
-import { descriptions } from "../Settings/settings";
-import LeagueMenu from "./LeagueMenu";
-import LeaguePartPicker from "./LeaguePartPicker";
-import type { LeagueInfo, NewLeagueTeam } from "./types";
-import CustomizeSettings from "./CustomizeSettings";
-import CustomizeTeams, { makeTIDsSequential } from "./CustomizeTeams";
-import type { Settings } from "../../../worker/views/settings";
-import type { BasicInfo } from "../../../worker/api/leagueFileUpload";
-import { SelectSeasonRange } from "./SelectSeasonRange";
-import { orderBy } from "../../../common/utils";
-import { analyticsEventLocal } from "../../../common/analyticsEventLocal";
+import { descriptions } from "../Settings/settings.tsx";
+import LeagueMenu from "./LeagueMenu.tsx";
+import LeaguePartPicker from "./LeaguePartPicker.tsx";
+import type { LeagueInfo, NewLeagueTeam } from "./types.ts";
+import CustomizeSettings from "./CustomizeSettings.tsx";
+import CustomizeTeams, { makeTIDsSequential } from "./CustomizeTeams.tsx";
+import type { Settings } from "../../../worker/views/settings.ts";
+import type { BasicInfo } from "../../../worker/api/leagueFileUpload.ts";
+import { SelectSeasonRange } from "./SelectSeasonRange.tsx";
+import { orderBy } from "../../../common/utils.ts";
+import { analyticsEventLocal } from "../../../common/analyticsEventLocal.ts";
 
 const animationVariants = {
 	visible: {

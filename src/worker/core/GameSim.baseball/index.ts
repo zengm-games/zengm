@@ -1,22 +1,22 @@
-import { g, helpers, random } from "../../util";
+import { g, helpers, random } from "../../util/index.ts";
 import {
 	NUM_BALLS_PER_WALK,
 	NUM_OUTS_PER_INNING,
 	NUM_STRIKES_PER_OUT,
 	POS_NUMBERS,
 	POS_NUMBERS_INVERSE,
-} from "../../../common/constants.baseball";
-import PlayByPlayLogger from "./PlayByPlayLogger";
-import type { PlayerGameSim, Runner, TeamGameSim, TeamNum } from "./types";
-import getInjuryRate from "../GameSim.basketball/getInjuryRate";
-import Team from "./Team";
-import { fatigueFactor } from "./fatigueFactor";
-import { infoDefense } from "../player/ovr.baseball";
-import GameSimBase from "../GameSimBase";
-import getWinner from "../../../common/getWinner";
-import { maxBy } from "../../../common/utils";
-import { choice } from "../../../common/random";
-import { PHASE } from "../../../common";
+} from "../../../common/constants.baseball.ts";
+import PlayByPlayLogger from "./PlayByPlayLogger.ts";
+import type { PlayerGameSim, Runner, TeamGameSim, TeamNum } from "./types.ts";
+import getInjuryRate from "../GameSim.basketball/getInjuryRate.ts";
+import Team from "./Team.ts";
+import { fatigueFactor } from "./fatigueFactor.ts";
+import { infoDefense } from "../player/ovr.baseball.ts";
+import GameSimBase from "../GameSimBase.ts";
+import getWinner from "../../../common/getWinner.ts";
+import { maxBy } from "../../../common/utils.ts";
+import { choice } from "../../../common/random.ts";
+import { PHASE } from "../../../common/index.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 

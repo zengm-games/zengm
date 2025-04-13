@@ -1,5 +1,5 @@
-import { bySport } from "../../../common";
-import limitRating from "./limitRating";
+import { bySport } from "../../../common/index.ts";
+import limitRating from "./limitRating.ts";
 
 const heightToRating = (heightInInches: number) => {
 	const minHgt = bySport({

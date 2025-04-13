@@ -1,7 +1,7 @@
-import { idb } from "../../db";
-import { random, helpers } from "../../util";
-import { bySport, isSport } from "../../../common";
-import { range } from "../../../common/utils";
+import { idb } from "../../db/index.ts";
+import { random, helpers } from "../../util/index.ts";
+import { bySport, isSport } from "../../../common/index.ts";
+import { range } from "../../../common/utils.ts";
 
 // Football/hockey gets 1-99
 const VALID_JERSEY_NUMBERS = range(1, 100).map(String);

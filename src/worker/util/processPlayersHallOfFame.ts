@@ -1,5 +1,5 @@
-import { bySport } from "../../common";
-import { maxBy } from "../../common/utils";
+import { bySport } from "../../common/index.ts";
+import { maxBy } from "../../common/utils.ts";
 
 // Would be better as part of idb.getCopies.playersPlus
 const processPlayersHallOfFame = <

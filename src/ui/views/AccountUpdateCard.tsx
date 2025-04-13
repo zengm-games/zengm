@@ -3,11 +3,11 @@ import {
 	ACCOUNT_API_URL,
 	STRIPE_PUBLISHABLE_KEY,
 	fetchWrapper,
-} from "../../common";
-import useTitleBar from "../hooks/useTitleBar";
-import { getScript, realtimeUpdate } from "../util";
-import type { View } from "../../common/types";
-import { ajaxErrorMsg } from "./LoginOrRegister";
+} from "../../common/index.ts";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getScript, realtimeUpdate } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { ajaxErrorMsg } from "./LoginOrRegister/index.tsx";
 
 const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 	const [state, setState] = useState({

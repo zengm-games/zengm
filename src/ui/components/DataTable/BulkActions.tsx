@@ -1,5 +1,5 @@
 import { Dropdown } from "react-bootstrap";
-import { Flag } from "../WatchBlock";
+import { Flag } from "../WatchBlock.tsx";
 import {
 	confirm,
 	helpers,
@@ -7,7 +7,7 @@ import {
 	realtimeUpdate,
 	toWorker,
 	useLocalPartial,
-} from "../../util";
+} from "../../util/index.ts";
 import {
 	useCallback,
 	useEffect,
@@ -15,12 +15,12 @@ import {
 	type ReactNode,
 	type RefObject,
 } from "react";
-import type { SelectedRows } from "./useBulkSelectRows";
-import { watchListDialog } from "./watchListDialog";
-import { exportPlayers } from "../../views/ExportPlayers";
+import type { SelectedRows } from "./useBulkSelectRows.ts";
+import { watchListDialog } from "./watchListDialog.tsx";
+import { exportPlayers } from "../../views/ExportPlayers.tsx";
 import { createPortal } from "react-dom";
-import Modal from "../Modal";
-import type { DataTableRowMetadata, Props } from ".";
+import Modal from "../Modal.tsx";
+import type { DataTableRowMetadata, Props } from "./index.tsx";
 import clsx from "clsx";
 
 // Even at 20 the UI is kind of silly, and if you put in too many players it gets slow/crashes

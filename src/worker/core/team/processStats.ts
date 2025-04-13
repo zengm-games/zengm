@@ -1,13 +1,13 @@
-import processStatsBaseball from "./processStats.baseball";
-import processStatsBasketball from "./processStats.basketball";
-import processStatsFootball from "./processStats.football";
-import processStatsHockey from "./processStats.hockey";
+import processStatsBaseball from "./processStats.baseball.ts";
+import processStatsBasketball from "./processStats.basketball.ts";
+import processStatsFootball from "./processStats.football.ts";
+import processStatsHockey from "./processStats.hockey.ts";
 import type {
 	TeamStatAttr,
 	TeamStatType,
 	TeamStats,
-} from "../../../common/types";
-import { bySport } from "../../../common";
+} from "../../../common/types.ts";
+import { bySport } from "../../../common/index.ts";
 
 const processStats = (
 	ts: TeamStats,

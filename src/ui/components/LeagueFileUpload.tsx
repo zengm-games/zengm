@@ -6,16 +6,20 @@ import {
 	type ChangeEvent,
 	type MouseEvent,
 } from "react";
-import { ProgressBarText } from ".";
-import { LEAGUE_DATABASE_VERSION, GAME_NAME, WEBSITE_ROOT } from "../../common";
-import type { BasicInfo } from "../../worker/api/leagueFileUpload";
+import { ProgressBarText } from "./index.tsx";
+import {
+	LEAGUE_DATABASE_VERSION,
+	GAME_NAME,
+	WEBSITE_ROOT,
+} from "../../common/index.ts";
+import type { BasicInfo } from "../../worker/api/leagueFileUpload.ts";
 import {
 	localActions,
 	resetFileInput,
 	toWorker,
 	useLocalPartial,
-} from "../util";
-import simpleGameAttributesUpgrade from "../../common/simpleGameAttributesUpgrade";
+} from "../util/index.ts";
+import simpleGameAttributesUpgrade from "../../common/simpleGameAttributesUpgrade.ts";
 
 const ErrorMessage = ({ error }: { error: Error | null }) => {
 	if (!error || !error.message) {

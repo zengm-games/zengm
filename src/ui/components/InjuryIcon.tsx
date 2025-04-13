@@ -1,7 +1,7 @@
 import { useId } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { timeBetweenGames } from "../../common";
-import type { PlayerInjury } from "../../common/types";
+import { timeBetweenGames } from "../../common/index.ts";
+import type { PlayerInjury } from "../../common/types.ts";
 
 const InjuryIcon = ({
 	className = "",

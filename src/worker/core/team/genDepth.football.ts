@@ -1,8 +1,8 @@
-import { idb } from "../../db";
-import { g, helpers, local } from "../../util";
-import { POSITIONS } from "../../../common/constants.football";
-import type { Position } from "../../../common/types.football";
-import type { Player, PlayerFiltered } from "../../../common/types";
+import { idb } from "../../db/index.ts";
+import { g, helpers, local } from "../../util/index.ts";
+import { POSITIONS } from "../../../common/constants.football.ts";
+import type { Position } from "../../../common/types.football.ts";
+import type { Player, PlayerFiltered } from "../../../common/types.ts";
 
 const score = (p: PlayerFiltered, pos: Position) => {
 	let tempScore = p.ratings.ovrs[pos];

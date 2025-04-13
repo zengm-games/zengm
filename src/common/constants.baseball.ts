@@ -1,5 +1,5 @@
-import type { CompositeWeights, Conf, Div } from "./types";
-import type { Position, RatingKey } from "./types.baseball";
+import type { CompositeWeights, Conf, Div } from "./types.ts";
+import type { Position, RatingKey } from "./types.baseball.ts";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	powerPitcher: {

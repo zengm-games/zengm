@@ -1,8 +1,8 @@
-import { idb } from "../../db";
-import { g, helpers } from "../../util";
-import makeItWork from "./makeItWork";
-import summary from "./summary";
-import get from "./get";
+import { idb } from "../../db/index.ts";
+import { g, helpers } from "../../util/index.ts";
+import makeItWork from "./makeItWork.ts";
+import summary from "./summary.ts";
+import get from "./get.ts";
 
 /**
  * Make a trade work

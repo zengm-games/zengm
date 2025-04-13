@@ -1,8 +1,8 @@
 import { afterEach, assert, beforeAll, test } from "vitest";
-import { trade } from "..";
-import { g } from "../../util";
-import { beforeTests, reset } from "./testHelpers";
-import get from "./get";
+import { trade } from "../index.ts";
+import { g } from "../../util/index.ts";
+import { beforeTests, reset } from "./testHelpers.ts";
+import get from "./get.ts";
 
 beforeAll(beforeTests);
 afterEach(reset);

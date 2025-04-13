@@ -1,6 +1,6 @@
-import compositeRating from "./compositeRating";
-import type { MinimalPlayerRatings } from "../../../common/types";
-import { COMPOSITE_WEIGHTS } from "../../../common";
+import compositeRating from "./compositeRating.ts";
+import type { MinimalPlayerRatings } from "../../../common/types.ts";
+import { COMPOSITE_WEIGHTS } from "../../../common/index.ts";
 
 const hasSkill = (
 	ratings: MinimalPlayerRatings,

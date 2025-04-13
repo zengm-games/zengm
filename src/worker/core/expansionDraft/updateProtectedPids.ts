@@ -1,6 +1,6 @@
-import { g, helpers } from "../../util";
-import { league } from "..";
-import { PHASE } from "../../../common";
+import { g, helpers } from "../../util/index.ts";
+import { league } from "../index.ts";
+import { PHASE } from "../../../common/index.ts";
 
 const updateProtectedPids = async (tid: number, protectedPids: number[]) => {
 	const expansionDraft = helpers.deepCopy(g.get("expansionDraft"));

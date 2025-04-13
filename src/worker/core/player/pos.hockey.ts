@@ -1,6 +1,6 @@
-import ovr from "./ovr.hockey";
-import type { PlayerRatings } from "../../../common/types.hockey";
-import { POSITIONS } from "../../../common";
+import ovr from "./ovr.hockey.ts";
+import type { PlayerRatings } from "../../../common/types.hockey.ts";
+import { POSITIONS } from "../../../common/index.ts";
 
 const pos = (ratings: PlayerRatings): string => {
 	const ovrs = POSITIONS.map((position) => ovr(ratings, position));

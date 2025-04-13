@@ -1,8 +1,8 @@
-import { groupBy, range } from "../../../common/utils";
-import { PHASE, PLAYER } from "../../../common";
-import { idb } from "../../db";
-import { g } from "../../util";
-import type { TradePickValues } from "../../../common/types";
+import { groupBy, range } from "../../../common/utils.ts";
+import { PHASE, PLAYER } from "../../../common/index.ts";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
+import type { TradePickValues } from "../../../common/types.ts";
 
 const PLACEHOLDER_VALUE_ALREADY_PICKED = -1;
 

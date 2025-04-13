@@ -1,10 +1,10 @@
-import { bySport } from "../../common";
-import { team, trade } from "../core";
-import { idb } from "../db";
-import { g, helpers } from "../util";
-import type { TradeTeams } from "../../common/types";
-import addFirstNameShort from "../util/addFirstNameShort";
-import { orderBy } from "../../common/utils";
+import { bySport } from "../../common/index.ts";
+import { team, trade } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import { g, helpers } from "../util/index.ts";
+import type { TradeTeams } from "../../common/types.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { orderBy } from "../../common/utils.ts";
 
 // This relies on vars being populated, so it can't be called in parallel with updateTrade
 export const getSummary = async (teams: TradeTeams) => {

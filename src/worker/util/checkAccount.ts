@@ -1,10 +1,14 @@
-import { ACCOUNT_API_URL, fetchWrapper, GRACE_PERIOD } from "../../common";
-import { idb } from "../db";
-import achievement from "./achievement";
-import local from "./local";
-import toUI from "./toUI";
-import type { Conditions, PartialTopMenu } from "../../common/types";
-import { groupBy } from "../../common/utils";
+import {
+	ACCOUNT_API_URL,
+	fetchWrapper,
+	GRACE_PERIOD,
+} from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import achievement from "./achievement.ts";
+import local from "./local.ts";
+import toUI from "./toUI.ts";
+import type { Conditions, PartialTopMenu } from "../../common/types.ts";
+import { groupBy } from "../../common/utils.ts";
 
 // If it tries to add achievements from IDB to API twice at the same time, weird stuff could happen
 let adding = false;

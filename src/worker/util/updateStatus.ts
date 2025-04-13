@@ -1,10 +1,10 @@
-import { PHASE } from "../../common";
-import { idb } from "../db";
-import g from "./g";
-import local from "./local";
-import toUI from "./toUI";
-import type { Conditions } from "../../common/types";
-import { helpers } from ".";
+import { PHASE } from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import g from "./g.ts";
+import local from "./local.ts";
+import toUI from "./toUI.ts";
+import type { Conditions } from "../../common/types.ts";
+import { helpers } from "./index.ts";
 
 /*Save status to database and push to client.
 

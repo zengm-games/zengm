@@ -1,9 +1,9 @@
-import loadDataBasketball from "./loadData.basketball";
-import formatScheduledEvents from "./formatScheduledEvents";
-import { isSport } from "../../../common";
-import getGameAttributes from "./getGameAttributes";
-import type { GetLeagueOptions } from "../../../common/types";
-import addSeasonInfoToTeams from "./addSeasonInfoToTeams";
+import loadDataBasketball from "./loadData.basketball.ts";
+import formatScheduledEvents from "./formatScheduledEvents.ts";
+import { isSport } from "../../../common/index.ts";
+import getGameAttributes from "./getGameAttributes.ts";
+import type { GetLeagueOptions } from "../../../common/types.ts";
+import addSeasonInfoToTeams from "./addSeasonInfoToTeams.ts";
 
 export const legendsInfo = {
 	"1950s": {

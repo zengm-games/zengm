@@ -1,10 +1,10 @@
 import { assert, beforeAll, beforeEach, describe, test } from "vitest";
-import testHelpers from "../../test/helpers";
-import { player } from "../core";
-import { g } from "../util";
-import { idb } from ".";
-import type { Player } from "../../common/types";
-import { DEFAULT_LEVEL } from "../../common/budgetLevels";
+import testHelpers from "../../test/helpers.ts";
+import { player } from "../core/index.ts";
+import { g } from "../util/index.ts";
+import { idb } from "./index.ts";
+import type { Player } from "../../common/types.ts";
+import { DEFAULT_LEVEL } from "../../common/budgetLevels.ts";
 
 beforeAll(async () => {
 	testHelpers.resetG();

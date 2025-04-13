@@ -1,5 +1,5 @@
-import { idb } from "../../db";
-import { g, helpers } from "../../util";
+import { idb } from "../../db/index.ts";
+import { g, helpers } from "../../util/index.ts";
 
 const validateExpansionDraftSetup = async () => {
 	const expansionDraft = g.get("expansionDraft");

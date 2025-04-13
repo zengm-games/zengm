@@ -1,13 +1,13 @@
 import { afterAll, assert, beforeAll, describe, test } from "vitest";
-import testHelpers from "../../test/helpers";
-import { player, team } from "../core";
-import { idb } from "../db";
-import g from "./g";
-import helpers from "./helpers";
-import achievements from "./achievements";
-import type { TeamSeason, Achievement } from "../../common/types";
-import defaultGameAttributes from "../../common/defaultGameAttributes";
-import { DEFAULT_LEVEL } from "../../common/budgetLevels";
+import testHelpers from "../../test/helpers.ts";
+import { player, team } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import g from "./g.ts";
+import helpers from "./helpers.ts";
+import achievements from "./achievements.ts";
+import type { TeamSeason, Achievement } from "../../common/types.ts";
+import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
+import { DEFAULT_LEVEL } from "../../common/budgetLevels.ts";
 
 const get = (slug: string) => {
 	const achievement = achievements.find(

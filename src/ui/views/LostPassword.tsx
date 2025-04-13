@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
-import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
-import useTitleBar from "../hooks/useTitleBar";
-import { ajaxErrorMsg } from "./LoginOrRegister";
+import { ACCOUNT_API_URL, fetchWrapper } from "../../common/index.ts";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { ajaxErrorMsg } from "./LoginOrRegister/index.tsx";
 
 type State = {
 	errorMessage?: string;

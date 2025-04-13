@@ -1,4 +1,4 @@
-import { local, useLocal } from "../util";
+import { local, useLocal } from "../util/index.ts";
 
 import type { JSX } from "react";
 

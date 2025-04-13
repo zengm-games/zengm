@@ -9,11 +9,11 @@ import {
 	PHASE,
 	PLAYER,
 	unwrapGameAttribute,
-} from "../../common";
-import { player, season } from "../core";
-import { idb } from ".";
-import { defaultGameAttributes, helpers, logEvent } from "../util";
-import connectIndexedDB from "./connectIndexedDB";
+} from "../../common/index.ts";
+import { player, season } from "../core/index.ts";
+import { idb } from "./index.ts";
+import { defaultGameAttributes, helpers, logEvent } from "../util/index.ts";
+import connectIndexedDB from "./connectIndexedDB.ts";
 import type {
 	DBSchema,
 	IDBPDatabase,
@@ -46,10 +46,10 @@ import type {
 	GameAttributesLeagueWithHistory,
 	SavedTrade,
 	SavedTradingBlock,
-} from "../../common/types";
-import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings";
-import { amountToLevel } from "../../common/budgetLevels";
-import { orderBy } from "../../common/utils";
+} from "../../common/types.ts";
+import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings.ts";
+import { amountToLevel } from "../../common/budgetLevels.ts";
+import { orderBy } from "../../common/utils.ts";
 
 export interface LeagueDB extends DBSchema {
 	allStars: {

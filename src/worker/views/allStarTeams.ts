@@ -1,16 +1,16 @@
-import { allStar } from "../core";
-import { idb } from "../db";
-import { g, getTeamInfoBySeason, helpers } from "../util";
+import { allStar } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import { g, getTeamInfoBySeason, helpers } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	AllStars,
 	ViewInput,
 	AllStarPlayer,
 	PlayerInjury,
-} from "../../common/types";
-import { bySport, isSport, PHASE } from "../../common";
-import { sortByPos } from "./roster";
-import { orderBy } from "../../common/utils";
+} from "../../common/types.ts";
+import { bySport, isSport, PHASE } from "../../common/index.ts";
+import { sortByPos } from "./roster.ts";
+import { orderBy } from "../../common/utils.ts";
 
 const stats = bySport({
 	baseball: ["keyStats"],

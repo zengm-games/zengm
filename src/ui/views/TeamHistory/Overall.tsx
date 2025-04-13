@@ -1,6 +1,6 @@
-import { RecordAndPlayoffs } from "../../components";
-import type { View } from "../../../common/types";
-import { helpers } from "../../util";
+import { RecordAndPlayoffs } from "../../components/index.tsx";
+import type { View } from "../../../common/types.ts";
+import { helpers } from "../../util/index.ts";
 
 const Overall = ({
 	bestRecord,

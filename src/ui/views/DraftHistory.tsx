@@ -1,13 +1,24 @@
 import { Fragment, useState } from "react";
-import { DataTable, DraftAbbrev, SkillsBlock, MoreLinks } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, downloadFile, toWorker, useLocal } from "../util";
-import type { View } from "../../common/types";
-import { bySport, PLAYER } from "../../common";
-import { wrappedAgeAtDeath } from "../components/AgeAtDeath";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import { orderBy } from "../../common/utils";
-import type { DataTableRow } from "../components/DataTable";
+import {
+	DataTable,
+	DraftAbbrev,
+	SkillsBlock,
+	MoreLinks,
+} from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import {
+	getCols,
+	helpers,
+	downloadFile,
+	toWorker,
+	useLocal,
+} from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { bySport, PLAYER } from "../../common/index.ts";
+import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import { orderBy } from "../../common/utils.ts";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
 
 const Summary = ({
 	players,

@@ -1,13 +1,13 @@
-import { idb } from "../db";
-import { g, processPlayersHallOfFame } from "../util";
+import { idb } from "../db/index.ts";
+import { g, processPlayersHallOfFame } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	Player,
 	MinimalPlayerRatings,
-} from "../../common/types";
-import { bySport, PHASE } from "../../common";
-import addFirstNameShort from "../util/addFirstNameShort";
-import { orderBy } from "../../common/utils";
+} from "../../common/types.ts";
+import { bySport, PHASE } from "../../common/index.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { orderBy } from "../../common/utils.ts";
 
 const playerValue = (p: Player<MinimalPlayerRatings>) => {
 	let sum = 0;

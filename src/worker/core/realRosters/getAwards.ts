@@ -1,17 +1,17 @@
-import { AWARD_NAMES, PHASE, PLAYER } from "../../../common";
-import { groupByUnique } from "../../../common/utils";
+import { AWARD_NAMES, PHASE, PLAYER } from "../../../common/index.ts";
+import { groupByUnique } from "../../../common/utils.ts";
 import type {
 	GetLeagueOptionsReal,
 	TeamSeasonWithoutKey,
-} from "../../../common/types";
+} from "../../../common/types.ts";
 import type {
 	AwardPlayer,
 	AwardPlayerDefense,
 	Awards,
-} from "../../../common/types.basketball";
-import type formatPlayerFactory from "./formatPlayerFactory";
-import type formatScheduledEvents from "./formatScheduledEvents";
-import type { Basketball } from "./loadData.basketball";
+} from "../../../common/types.basketball.ts";
+import type formatPlayerFactory from "./formatPlayerFactory.ts";
+import type formatScheduledEvents from "./formatScheduledEvents.ts";
+import type { Basketball } from "./loadData.basketball.ts";
 
 type Teams = ReturnType<typeof formatScheduledEvents>["initialTeams"];
 

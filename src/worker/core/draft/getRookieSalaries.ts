@@ -1,4 +1,4 @@
-import { g, helpers } from "../../util";
+import { g, helpers } from "../../util/index.ts";
 
 /**
  * Get a list of rookie salaries for all players in the draft.

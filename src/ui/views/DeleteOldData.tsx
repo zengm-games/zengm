@@ -1,7 +1,7 @@
 import { useState, type FormEvent, type ChangeEvent } from "react";
-import useTitleBar from "../hooks/useTitleBar";
-import { helpers, logEvent, toWorker } from "../util";
-import { ActionButton } from "../components";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { helpers, logEvent, toWorker } from "../util/index.ts";
+import { ActionButton } from "../components/index.tsx";
 
 const DeleteOldData = () => {
 	const [state, setState] = useState({

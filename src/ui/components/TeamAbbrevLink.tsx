@@ -1,5 +1,5 @@
-import { PLAYER } from "../../common";
-import { helpers } from "../util";
+import { PLAYER } from "../../common/index.ts";
+import { helpers } from "../util/index.ts";
 
 const TeamAbbrev = ({
 	tid,

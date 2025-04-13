@@ -1,10 +1,10 @@
-import { idb } from "../db";
+import { idb } from "../db/index.ts";
 import type {
 	UpdateEvents,
 	RealPlayerPhotos,
 	RealTeamInfo,
-} from "../../common/types";
-import { getGlobalSettings } from "../util";
+} from "../../common/types.ts";
+import { getGlobalSettings } from "../util/index.ts";
 
 const updateOptions = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("options")) {

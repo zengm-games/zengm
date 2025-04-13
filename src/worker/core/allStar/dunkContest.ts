@@ -1,10 +1,14 @@
-import type { AllStars, Conditions, DunkAttempt } from "../../../common/types";
-import { dunkInfos, getValidMoves } from "../../../common/dunkContest";
-import { idb } from "../../db";
-import { g, helpers, random } from "../../util";
-import { saveAwardsByPlayer } from "../season/awards";
-import { getNextRoundType } from "./contest";
-import { orderBy } from "../../../common/utils";
+import type {
+	AllStars,
+	Conditions,
+	DunkAttempt,
+} from "../../../common/types.ts";
+import { dunkInfos, getValidMoves } from "../../../common/dunkContest.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers, random } from "../../util/index.ts";
+import { saveAwardsByPlayer } from "../season/awards.ts";
+import { getNextRoundType } from "./contest.ts";
+import { orderBy } from "../../../common/utils.ts";
 
 export const HIGHEST_POSSIBLE_SCORE = 50;
 export const LOWEST_POSSIBLE_SCORE = 5;

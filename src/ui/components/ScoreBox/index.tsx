@@ -4,13 +4,13 @@ import {
 	getBestPlayerBoxScore,
 	isSport,
 	PHASE,
-} from "../../../common";
-import { getCols, helpers, useLocalPartial } from "../../util";
+} from "../../../common/index.ts";
+import { getCols, helpers, useLocalPartial } from "../../util/index.ts";
 import React, { memo, type ReactNode } from "react";
-import TeamLogoInline from "../TeamLogoInline";
-import defaultGameAttributes from "../../../common/defaultGameAttributes";
-import PlayerNameLabels from "../PlayerNameLabels";
-import getWinner from "../../../common/getWinner";
+import TeamLogoInline from "../TeamLogoInline.tsx";
+import defaultGameAttributes from "../../../common/defaultGameAttributes.ts";
+import PlayerNameLabels from "../PlayerNameLabels.tsx";
+import getWinner from "../../../common/getWinner.ts";
 
 const roundHalf = (x: number) => {
 	return Math.round(x * 2) / 2;

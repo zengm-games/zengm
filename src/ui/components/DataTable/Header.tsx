@@ -7,10 +7,10 @@ import {
 	useRef,
 	useLayoutEffect,
 } from "react";
-import type { Col, DataTableRow, Props, SortBy, SuperCol } from ".";
-import { range } from "../../../common/utils";
+import type { Col, DataTableRow, Props, SortBy, SuperCol } from "./index.tsx";
+import { range } from "../../../common/utils.ts";
 import { Dropdown } from "react-bootstrap";
-import type { SelectedRows } from "./useBulkSelectRows";
+import type { SelectedRows } from "./useBulkSelectRows.ts";
 
 const FilterHeader = ({
 	colOrder,

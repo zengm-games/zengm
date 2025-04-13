@@ -1,5 +1,5 @@
-import type { PlayerStats } from "../../../common/types";
-import { g } from "../../util";
+import type { PlayerStats } from "../../../common/types.ts";
+import { g } from "../../util/index.ts";
 
 const statsRowIsCurrent = (
 	ps: PlayerStats | undefined,

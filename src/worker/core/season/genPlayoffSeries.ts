@@ -1,15 +1,15 @@
-import { g, helpers, logEvent, orderTeams } from "../../util";
+import { g, helpers, logEvent, orderTeams } from "../../util/index.ts";
 import type {
 	TeamFiltered,
 	PlayoffSeries,
 	PlayoffSeriesTeam,
 	PlayInTournament,
-} from "../../../common/types";
-import genPlayoffSeeds from "./genPlayoffSeeds";
-import { idb } from "../../db";
-import getPlayoffsByConf from "./getPlayoffsByConf";
-import validatePlayoffSettings from "./validatePlayoffSettings";
-import { range } from "../../../common/utils";
+} from "../../../common/types.ts";
+import genPlayoffSeeds from "./genPlayoffSeeds.ts";
+import { idb } from "../../db/index.ts";
+import getPlayoffsByConf from "./getPlayoffsByConf.ts";
+import validatePlayoffSettings from "./validatePlayoffSettings.ts";
+import { range } from "../../../common/utils.ts";
 
 type MyTeam = TeamFiltered<
 	["tid"],

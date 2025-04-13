@@ -1,8 +1,8 @@
 import { assert, beforeAll, describe, test } from "vitest";
-import Play from "./Play";
-import { genTwoTeams, initGameSim } from "./index.test";
-import { PHASE } from "../../../common";
-import { g } from "../../util";
+import Play from "./Play.ts";
+import { genTwoTeams, initGameSim } from "./index.test.ts";
+import { PHASE } from "../../../common/index.ts";
+import { g } from "../../util/index.ts";
 
 beforeAll(async () => {
 	await genTwoTeams();

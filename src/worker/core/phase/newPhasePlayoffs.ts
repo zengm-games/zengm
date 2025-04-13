@@ -1,11 +1,11 @@
-import { finances, player, season, team } from "..";
-import { idb } from "../../db";
-import { achievement, g, helpers, local, logEvent } from "../../util";
+import { finances, player, season, team } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { achievement, g, helpers, local, logEvent } from "../../util/index.ts";
 import type {
 	Conditions,
 	PhaseReturn,
 	PlayoffSeries,
-} from "../../../common/types";
+} from "../../../common/types.ts";
 
 const newPhasePlayoffs = async (
 	conditions: Conditions,

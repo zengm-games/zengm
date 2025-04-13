@@ -1,12 +1,16 @@
 import { type FormEvent, useRef, useState } from "react";
-import { ACCOUNT_API_URL, fetchWrapper, GRACE_PERIOD } from "../../../common";
-import { ActionButton } from "../../components";
+import {
+	ACCOUNT_API_URL,
+	fetchWrapper,
+	GRACE_PERIOD,
+} from "../../../common/index.ts";
+import { ActionButton } from "../../components/index.tsx";
 import {
 	analyticsEvent,
 	localActions,
 	realtimeUpdate,
 	toWorker,
-} from "../../util";
+} from "../../util/index.ts";
 
 const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 	const [submitting, setSubmitting] = useState(false);

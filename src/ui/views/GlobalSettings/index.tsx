@@ -1,16 +1,21 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
-import useTitleBar from "../../hooks/useTitleBar";
-import { helpers, logEvent, safeLocalStorage, toWorker } from "../../util";
-import RealData from "./RealData";
-import Storage from "./Storage";
-import type { View } from "../../../common/types";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import {
+	helpers,
+	logEvent,
+	safeLocalStorage,
+	toWorker,
+} from "../../util/index.ts";
+import RealData from "./RealData.tsx";
+import Storage from "./Storage.tsx";
+import type { View } from "../../../common/types.ts";
 import {
 	DEFAULT_PHASE_CHANGE_REDIRECTS,
 	isSport,
 	PHASE,
 	PHASE_TEXT,
-} from "../../../common";
-import { HelpPopover, MoreLinks } from "../../components";
+} from "../../../common/index.ts";
+import { HelpPopover, MoreLinks } from "../../components/index.tsx";
 
 const GlobalSettings = (props: View<"globalSettings">) => {
 	const [state, setState] = useState(() => {

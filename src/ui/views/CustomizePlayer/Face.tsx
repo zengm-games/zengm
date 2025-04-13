@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PlayerPicture } from "../../components";
+import { PlayerPicture } from "../../components/index.tsx";
 import clsx from "clsx";
 
 export const Face = ({

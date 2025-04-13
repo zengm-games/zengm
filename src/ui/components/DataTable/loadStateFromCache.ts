@@ -1,6 +1,6 @@
-import { safeLocalStorage } from "../../util";
-import type { Props, SortBy, StickyCols } from ".";
-import SettingsCache from "./SettingsCache";
+import { safeLocalStorage } from "../../util/index.ts";
+import type { Props, SortBy, StickyCols } from "./index.tsx";
+import SettingsCache from "./SettingsCache.ts";
 
 export type State = {
 	colOrder: {

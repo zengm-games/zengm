@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { AnimatePresence, m } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { toWorker, useLocalPartial } from "../util";
+import { toWorker, useLocalPartial } from "../util/index.ts";
 
 type Team = {
 	tid: number;

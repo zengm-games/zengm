@@ -1,7 +1,7 @@
-import { GameLinks } from "../../components";
-import useTitleBar from "../../hooks/useTitleBar";
-import Login from "./Login";
-import Register from "./Register";
+import { GameLinks } from "../../components/index.tsx";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import Login from "./Login.tsx";
+import Register from "./Register.tsx";
 
 export const ajaxErrorMsg =
 	"Error connecting to server. Check your Internet connection or try again later.";

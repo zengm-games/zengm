@@ -1,4 +1,4 @@
-import type { LogEventType } from "./types";
+import type { LogEventType } from "./types.ts";
 
 export const categories = {
 	award: {

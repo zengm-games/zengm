@@ -1,10 +1,10 @@
-import { DataTable } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, gradientStyleFactory } from "../util";
-import type { Col } from "../components/DataTable";
-import type { View } from "../../common/types";
-import { frivolitiesMenu } from "./Frivolities";
-import { bySport } from "../../common";
+import { DataTable } from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, gradientStyleFactory } from "../util/index.ts";
+import type { Col } from "../components/DataTable/index.tsx";
+import type { View } from "../../common/types.ts";
+import { frivolitiesMenu } from "./Frivolities.tsx";
+import { bySport } from "../../common/index.ts";
 
 const gradientStyle = bySport({
 	baseball: gradientStyleFactory(0.6, 0.75, 0.8, 0.95),

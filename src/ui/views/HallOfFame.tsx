@@ -1,9 +1,9 @@
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import { DataTable } from "../components";
-import type { View } from "../../common/types";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import type { DataTableRow } from "../components/DataTable";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers } from "../util/index.ts";
+import { DataTable } from "../components/index.tsx";
+import type { View } from "../../common/types.ts";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
 
 const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
 	useTitleBar({ title: "Hall of Fame" });

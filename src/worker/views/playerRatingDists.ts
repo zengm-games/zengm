@@ -1,7 +1,7 @@
-import { PHASE, PLAYER, RATINGS, bySport } from "../../common";
-import { idb } from "../db";
-import { g } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import { PHASE, PLAYER, RATINGS, bySport } from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerRatingDists">,

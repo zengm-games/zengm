@@ -1,4 +1,4 @@
-import helpers from "./helpers";
+import helpers from "./helpers.ts";
 
 export const MAX_LEVEL = 100;
 

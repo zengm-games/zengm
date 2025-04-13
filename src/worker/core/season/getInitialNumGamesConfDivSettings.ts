@@ -1,5 +1,5 @@
-import type { NewScheduleGoodSettings } from "./newScheduleGood";
-import newScheduleGood from "./newScheduleGood";
+import type { NewScheduleGoodSettings } from "./newScheduleGood.ts";
+import newScheduleGood from "./newScheduleGood.ts";
 
 export const TOO_MANY_TEAMS_TOO_SLOW = 150;
 

@@ -1,5 +1,5 @@
 import { assert, describe, test } from "vitest";
-import { PointsFormulaEvaluator } from "./evaluatePointsFormula";
+import { PointsFormulaEvaluator } from "./evaluatePointsFormula.ts";
 
 describe("PointsFormulaEvaluator", () => {
 	test("works for a normal formula", () => {

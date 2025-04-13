@@ -1,7 +1,7 @@
 import { Fragment } from "react";
-import posRatings from "../../../common/posRatings.football";
-import { getCols, gradientStyleFactory } from "../../util";
-import type { RatingKey } from "../../../common/types.football";
+import posRatings from "../../../common/posRatings.football.ts";
+import { getCols, gradientStyleFactory } from "../../util/index.ts";
+import type { RatingKey } from "../../../common/types.football.ts";
 
 const gradientStyle = gradientStyleFactory(25, 45, 55, 75);
 

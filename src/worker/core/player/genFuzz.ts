@@ -1,8 +1,8 @@
 import {
 	scoutingEffectCutoff,
 	scoutingEffectStddev,
-} from "../../../common/budgetLevels";
-import { random } from "../../util";
+} from "../../../common/budgetLevels.ts";
+import { random } from "../../util/index.ts";
 
 const genFuzz = (souctingLevel: number): number => {
 	// 1 to 8

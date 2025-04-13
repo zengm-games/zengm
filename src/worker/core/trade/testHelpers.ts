@@ -1,7 +1,7 @@
-import { g } from "../../util";
-import testHelpers from "../../../test/helpers";
-import { player, trade } from "..";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import { g } from "../../util/index.ts";
+import testHelpers from "../../../test/helpers.ts";
+import { player, trade } from "../index.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 const beforeTests = async () => {
 	testHelpers.resetG();

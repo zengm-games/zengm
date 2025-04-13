@@ -1,6 +1,10 @@
 import type { FaceConfig } from "facesjs";
 import { Face } from "facesjs/react"; // eslint-disable-line import/no-unresolved
-import { DEFAULT_JERSEY, DEFAULT_TEAM_COLORS, isSport } from "../../common";
+import {
+	DEFAULT_JERSEY,
+	DEFAULT_TEAM_COLORS,
+	isSport,
+} from "../../common/index.ts";
 
 export const MyFace = ({
 	colors = DEFAULT_TEAM_COLORS,

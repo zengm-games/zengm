@@ -1,5 +1,5 @@
-import { orderBy } from "../../../common/utils";
-import { random } from "../../util";
+import { orderBy } from "../../../common/utils.ts";
+import { random } from "../../util/index.ts";
 
 const groupScheduleCompact = (tids: [number, number][]) => {
 	const dailyMatchups: [number, number][][] = [];

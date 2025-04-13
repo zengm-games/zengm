@@ -1,4 +1,4 @@
-import { range } from "../../../common/utils";
+import { range } from "../../../common/utils.ts";
 
 const getValidNumPlayoffRounds = (
 	numPlayoffRounds: number,

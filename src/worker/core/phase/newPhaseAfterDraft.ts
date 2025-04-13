@@ -1,7 +1,7 @@
-import { draft, league } from "..";
-import { idb } from "../../db";
-import { g } from "../../util";
-import type { PhaseReturn } from "../../../common/types";
+import { draft, league } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
+import type { PhaseReturn } from "../../../common/types.ts";
 
 const newPhaseAfterDraft = async (): Promise<PhaseReturn> => {
 	// In case some weird situation results in games still in the schedule, clear them

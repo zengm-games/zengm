@@ -1,8 +1,8 @@
-import { PHASE } from "../../../common";
-import getWinner from "../../../common/getWinner";
-import type { HeadToHead } from "../../../common/types";
-import { idb } from "../../db";
-import { g } from "../../util";
+import { PHASE } from "../../../common/index.ts";
+import getWinner from "../../../common/getWinner.ts";
+import type { HeadToHead } from "../../../common/types.ts";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
 
 const addGame = async ({
 	tids,

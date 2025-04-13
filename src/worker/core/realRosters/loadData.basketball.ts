@@ -1,4 +1,4 @@
-import type { Phase, ScheduledEventWithoutKey } from "../../../common/types";
+import type { Phase, ScheduledEventWithoutKey } from "../../../common/types.ts";
 
 export type Ratings = {
 	slug: string;

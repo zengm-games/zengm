@@ -1,9 +1,9 @@
 import type { IDBPDatabase } from "@dumbmatter/idb";
-import Cache from "./Cache";
-import connectLeague, { type LeagueDB } from "./connectLeague";
-import connectMeta, { type MetaDB } from "./connectMeta";
-import * as getCopies from "./getCopies";
-import * as getCopy from "./getCopy";
+import Cache from "./Cache.ts";
+import connectLeague, { type LeagueDB } from "./connectLeague.ts";
+import connectMeta, { type MetaDB } from "./connectMeta.ts";
+import * as getCopies from "./getCopies/index.ts";
+import * as getCopy from "./getCopy/index.ts";
 
 const idb: {
 	cache: Cache;
@@ -22,6 +22,6 @@ const idb: {
 };
 
 export { Cache, connectLeague, connectMeta, idb };
-export { default as getAll } from "./getAll";
-export { default as iterate } from "./iterate";
-export { default as reset } from "./reset";
+export { default as getAll } from "./getAll.ts";
+export { default as iterate } from "./iterate.ts";
+export { default as reset } from "./reset.ts";

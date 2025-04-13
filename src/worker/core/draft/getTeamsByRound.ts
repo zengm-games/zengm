@@ -1,9 +1,9 @@
-import { bySport, PHASE } from "../../../common";
-import { idb } from "../../db";
-import { g, orderTeams } from "../../util";
-import { getDivisionRanks } from "../../util/orderTeams";
-import type { DraftPickWithoutKey } from "../../../common/types";
-import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries";
+import { bySport, PHASE } from "../../../common/index.ts";
+import { idb } from "../../db/index.ts";
+import { g, orderTeams } from "../../util/index.ts";
+import { getDivisionRanks } from "../../util/orderTeams.ts";
+import type { DraftPickWithoutKey } from "../../../common/types.ts";
+import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries.ts";
 
 /**
  * Differences across sports:

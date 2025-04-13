@@ -1,5 +1,5 @@
-import type { Conf, Div, Player } from "../../../common/types";
-import type { ExhibitionTeam } from "../Exhibition";
+import type { Conf, Div, Player } from "../../../common/types.ts";
+import type { ExhibitionTeam } from "../Exhibition.tsx";
 
 // Keep in sync with BASIC_TEAM_KEYS
 export type NewLeagueTeam = {

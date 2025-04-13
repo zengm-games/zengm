@@ -1,6 +1,6 @@
-import { idb } from "../../db";
-import { PLAYER } from "../../../common";
-import type { Player } from "../../../common/types";
+import { idb } from "../../db/index.ts";
+import { PLAYER } from "../../../common/index.ts";
+import type { Player } from "../../../common/types.ts";
 
 const hasRelativeAndMutate = (p: Player, pids: number[]) => {
 	if (!p.relatives) {

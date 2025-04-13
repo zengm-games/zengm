@@ -6,11 +6,11 @@ import type {
 	PlayerContract,
 	GameAttributesLeague,
 	RelativeType,
-} from "./types";
-import getTeamInfos from "./getTeamInfos";
-import isSport from "./isSport";
-import { PHASE } from "./constants";
-import { orderBy } from "./utils";
+} from "./types.ts";
+import getTeamInfos from "./getTeamInfos.ts";
+import isSport from "./isSport.ts";
+import { PHASE } from "./constants.ts";
+import { orderBy } from "./utils.ts";
 
 const getPopRanks = (
 	teamSeasons: {

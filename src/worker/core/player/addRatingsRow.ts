@@ -1,10 +1,10 @@
-import genFuzz from "./genFuzz";
-import { g } from "../../util";
+import genFuzz from "./genFuzz.ts";
+import { g } from "../../util/index.ts";
 import type {
 	MinimalPlayerRatings,
 	Player,
 	PlayerWithoutKey,
-} from "../../../common/types";
+} from "../../../common/types.ts";
 
 const addRatingsRow = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,

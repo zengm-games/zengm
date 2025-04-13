@@ -1,5 +1,5 @@
-import { helpers } from "../../../worker/util";
-import type { GamePlayer } from "../../../common/types";
+import { helpers } from "../../../worker/util/index.ts";
+import type { GamePlayer } from "../../../common/types.ts";
 
 const checkStatisticalFeat = (p: GamePlayer) => {
 	const minFactor = helpers.quarterLengthFactor();

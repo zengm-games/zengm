@@ -1,6 +1,6 @@
-import { helpers } from "../../util";
-import fuzzRating from "./fuzzRating";
-import type { MinimalPlayerRatings } from "../../../common/types";
+import { helpers } from "../../util/index.ts";
+import fuzzRating from "./fuzzRating.ts";
+import type { MinimalPlayerRatings } from "../../../common/types.ts";
 
 const compositeRating = (
 	ratings: MinimalPlayerRatings,

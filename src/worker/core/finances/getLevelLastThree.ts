@@ -1,8 +1,8 @@
-import { g, helpers } from "../../util";
-import type { Team, TeamSeasonWithoutKey } from "../../../common/types";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
-import { PHASE } from "../../../common";
-import { idb } from "../../db";
+import { g, helpers } from "../../util/index.ts";
+import type { Team, TeamSeasonWithoutKey } from "../../../common/types.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
+import { PHASE } from "../../../common/index.ts";
+import { idb } from "../../db/index.ts";
 
 const getLevelLastThree = async (
 	key: keyof TeamSeasonWithoutKey["expenseLevels"],

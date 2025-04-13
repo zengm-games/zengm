@@ -1,15 +1,15 @@
-import type { View } from "../../../common/types";
-import useTitleBar from "../../hooks/useTitleBar";
-import { StatGraph, type TooltipData } from "./ScatterPlot";
+import type { View } from "../../../common/types.ts";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import { StatGraph, type TooltipData } from "./ScatterPlot.tsx";
 import useDropdownOptions, {
 	type DropdownOption,
-} from "../../hooks/useDropdownOptions";
-import realtimeUpdate from "../../util/realtimeUpdate";
-import { getCols, helpers, toWorker } from "../../util";
-import { groupByUnique } from "../../../common/utils";
-import type { Col } from "../../components/DataTable";
+} from "../../hooks/useDropdownOptions.tsx";
+import realtimeUpdate from "../../util/realtimeUpdate.ts";
+import { getCols, helpers, toWorker } from "../../util/index.ts";
+import { groupByUnique } from "../../../common/utils.ts";
+import type { Col } from "../../components/DataTable/index.tsx";
 import clsx from "clsx";
-import { addPrefixForStat } from "../../../common/advancedPlayerSearch";
+import { addPrefixForStat } from "../../../common/advancedPlayerSearch.ts";
 
 const getStatsWithLabels = (stats: string[], statType: string) => {
 	return getCols(stats.map((stat) => addPrefixForStat(statType, stat)));

@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from "react";
-import type { DataTableRow, DataTableRowMetadata } from ".";
+import type { DataTableRow, DataTableRowMetadata } from "./index.tsx";
 
 export const useSelectedRows = () => {
 	type Key = DataTableRow["key"];

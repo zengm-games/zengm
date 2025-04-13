@@ -1,12 +1,12 @@
-import { createLogger } from "../../common";
-import { idb } from "../db";
-import g from "./g";
-import toUI from "./toUI";
+import { createLogger } from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import g from "./g.ts";
+import toUI from "./toUI.ts";
 import type {
 	Conditions,
 	LogEventSaveOptions,
 	LogEventShowOptions,
-} from "../../common/types";
+} from "../../common/types.ts";
 
 const saveEvent = (event: LogEventSaveOptions) => {
 	return idb.cache.events.add({ ...event, season: g.get("season") });

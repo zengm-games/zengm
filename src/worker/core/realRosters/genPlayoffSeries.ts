@@ -1,8 +1,8 @@
-import type { Basketball } from "./loadData.basketball";
-import type formatScheduledEvents from "./formatScheduledEvents";
-import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
-import genPlayoffSeeds from "../season/genPlayoffSeeds";
-import { helpers } from "../../util";
+import type { Basketball } from "./loadData.basketball.ts";
+import type formatScheduledEvents from "./formatScheduledEvents.ts";
+import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev.ts";
+import genPlayoffSeeds from "../season/genPlayoffSeeds.ts";
+import { helpers } from "../../util/index.ts";
 
 const genPlayoffSeries = (
 	basketball: Basketball,

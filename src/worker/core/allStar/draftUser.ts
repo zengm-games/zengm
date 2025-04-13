@@ -1,5 +1,5 @@
-import { idb } from "../../db";
-import { g } from "../../util";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
 
 const draftUser = async (pid: number): Promise<boolean> => {
 	const allStars = await idb.cache.allStars.get(g.get("season"));

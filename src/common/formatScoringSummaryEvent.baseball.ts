@@ -2,7 +2,7 @@ import type {
 	PlayByPlayEvent,
 	PlayByPlayEventInput,
 	PlayByPlayEventScore,
-} from "../worker/core/GameSim.baseball/PlayByPlayLogger";
+} from "../worker/core/GameSim.baseball/PlayByPlayLogger.ts";
 
 export const formatScoringSummaryEvent = (
 	event: PlayByPlayEventInput,

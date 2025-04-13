@@ -1,5 +1,8 @@
-import { GAME_ACRONYM, LEAGUE_DATABASE_VERSION } from "../../../common";
-import { confirm, downloadFile, local, toWorker } from "../../util";
+import {
+	GAME_ACRONYM,
+	LEAGUE_DATABASE_VERSION,
+} from "../../../common/index.ts";
+import { confirm, downloadFile, local, toWorker } from "../../util/index.ts";
 
 const ExportButton = () => (
 	<button

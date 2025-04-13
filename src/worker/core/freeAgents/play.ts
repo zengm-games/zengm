@@ -1,7 +1,7 @@
-import { PHASE } from "../../../common";
-import { league, phase, trade } from "..";
-import autoSign from "./autoSign";
-import decreaseDemands from "./decreaseDemands";
+import { PHASE } from "../../../common/index.ts";
+import { league, phase, trade } from "../index.ts";
+import autoSign from "./autoSign.ts";
+import decreaseDemands from "./decreaseDemands.ts";
 import {
 	g,
 	lock,
@@ -10,8 +10,8 @@ import {
 	toUI,
 	recomputeLocalUITeamOvrs,
 	helpers,
-} from "../../util";
-import type { Conditions } from "../../../common/types";
+} from "../../util/index.ts";
+import type { Conditions } from "../../../common/types.ts";
 
 /**
  * Simulates one or more days of free agency.

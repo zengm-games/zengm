@@ -1,13 +1,13 @@
-import { PHASE } from "../../../common";
+import { PHASE } from "../../../common/index.ts";
 import type {
 	GameAttributesLeagueWithHistory,
 	PlayerWithoutKey,
-} from "../../../common/types";
-import { defaultGameAttributes, random } from "../../util";
-import type { Settings } from "../../views/settings";
-import formatPlayerFactory from "../realRosters/formatPlayerFactory";
-import type { Basketball } from "../realRosters/loadData.basketball";
-import { omit, orderBy } from "../../../common/utils";
+} from "../../../common/types.ts";
+import { defaultGameAttributes, random } from "../../util/index.ts";
+import type { Settings } from "../../views/settings.ts";
+import formatPlayerFactory from "../realRosters/formatPlayerFactory.ts";
+import type { Basketball } from "../realRosters/loadData.basketball.ts";
+import { omit, orderBy } from "../../../common/utils.ts";
 
 // Code inside realPlayers is responsible for random debuts normally. But that only works for real players leagues, not random players leagues. So here is a standalone version. Maybe these should be used in realPlayers too, would be more DRY...
 const initRandomDebutsForRandomPlayersLeague = async ({

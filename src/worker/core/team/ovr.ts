@@ -1,8 +1,8 @@
-import { bySport } from "../../../common";
-import ovrBaseball from "./ovr.baseball";
-import ovrBasketball from "./ovr.basketball";
-import ovrFootball from "./ovr.football";
-import ovrHockey from "./ovr.hockey";
+import { bySport } from "../../../common/index.ts";
+import ovrBaseball from "./ovr.baseball.ts";
+import ovrBasketball from "./ovr.basketball.ts";
+import ovrFootball from "./ovr.football.ts";
+import ovrHockey from "./ovr.hockey.ts";
 
 // pos is used for position-specific rankings
 // wholeRoster=true is used for computing team value of the whole roster, like for determining who to draft or sign

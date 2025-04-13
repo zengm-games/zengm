@@ -1,5 +1,5 @@
-import type { Context } from "../router";
-import { viewManager } from "./viewManager";
+import type { Context } from "../router/index.ts";
+import { viewManager } from "./viewManager.tsx";
 
 type InitArgs = {
 	Component: any;

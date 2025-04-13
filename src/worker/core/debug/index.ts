@@ -1,14 +1,14 @@
 // Functions only used for debugging the game, particularly balance issues. This should not be included or loaded in the compiled version.
-import averageCareerArc from "./averageCareerArc";
-import avgRatingDists from "./avgRatingDists";
-import compositeRatingDists from "./compositeRatingDists";
-import countPositions from "./countPositions";
-import countSkills from "./countSkills";
-import maxRatingDists from "./maxRatingDists";
-import percentageDraftPicksSigned from "./percentageDraftPicksSigned";
-import recomputeHallOfFame from "./recomputeHallOfFame";
-import recomputeOvr from "./recomputeOvr";
-import recomputeRealSeasonLeaders from "./recomputeRealSeasonLeaders";
+import averageCareerArc from "./averageCareerArc.ts";
+import avgRatingDists from "./avgRatingDists.ts";
+import compositeRatingDists from "./compositeRatingDists.ts";
+import countPositions from "./countPositions.ts";
+import countSkills from "./countSkills.ts";
+import maxRatingDists from "./maxRatingDists.ts";
+import percentageDraftPicksSigned from "./percentageDraftPicksSigned.ts";
+import recomputeHallOfFame from "./recomputeHallOfFame.ts";
+import recomputeOvr from "./recomputeOvr.ts";
+import recomputeRealSeasonLeaders from "./recomputeRealSeasonLeaders.ts";
 
 export default {
 	averageCareerArc,

@@ -1,4 +1,4 @@
-import { isSport } from "../../../common";
+import { isSport } from "../../../common/index.ts";
 
 // See play-style-adjustments in bbgm-rosters.
 // This used to include the threePointers setting, but since now that is in Game Simulation rather than Tendencies, it's not here anymore. Same with other various settings that change over time in real players leagues.

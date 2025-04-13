@@ -1,17 +1,17 @@
-import { PLAYER, PHASE, bySport, isSport } from "../../../common";
-import { player, trade } from "../../core";
+import { PLAYER, PHASE, bySport, isSport } from "../../../common/index.ts";
+import { player, trade } from "../../core/index.ts";
 import {
 	g,
 	helpers,
 	processPlayerStats as processPlayerStats2,
-} from "../../util";
+} from "../../util/index.ts";
 import type {
 	Player,
 	PlayerFiltered,
 	PlayerStatType,
 	PlayersPlusOptions,
-} from "../../../common/types";
-import type { StatSumsExtra } from "../../../common/processPlayerStats.basketball";
+} from "../../../common/types.ts";
+import type { StatSumsExtra } from "../../../common/processPlayerStats.basketball.ts";
 
 type PlayersPlusOptionsRequired = Required<
 	Omit<PlayersPlusOptions, "season" | "seasonRange" | "tid">

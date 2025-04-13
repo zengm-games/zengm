@@ -3,13 +3,13 @@ import {
 	helpers as commonHelpers,
 	timeBetweenGames,
 	isSport,
-} from "../../common";
-import { idb } from "../db";
-import g from "./g";
-import type { DraftPick, PlayoffSeriesTeam } from "../../common/types";
-import defaultGameAttributes from "../../common/defaultGameAttributes";
-import hasTies from "../core/season/hasTies";
-import { roundContract as roundContractRaw } from "../../common/roundContract";
+} from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import g from "./g.ts";
+import type { DraftPick, PlayoffSeriesTeam } from "../../common/types.ts";
+import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
+import hasTies from "../core/season/hasTies.ts";
+import { roundContract as roundContractRaw } from "../../common/roundContract.ts";
 
 const augmentSeries = async (
 	series: {

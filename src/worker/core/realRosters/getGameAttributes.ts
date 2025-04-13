@@ -1,9 +1,9 @@
-import { PHASE } from "../../../common";
+import { PHASE } from "../../../common/index.ts";
 import type {
 	GameAttributesLeague,
 	GetLeagueOptions,
-} from "../../../common/types";
-import { FIRST_SEASON_WITH_ALEXNOOB_ROSTERS } from "./getLeague";
+} from "../../../common/types.ts";
+import { FIRST_SEASON_WITH_ALEXNOOB_ROSTERS } from "./getLeague.ts";
 
 type MyGameAttributes = Partial<GameAttributesLeague> &
 	Pick<

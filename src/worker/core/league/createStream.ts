@@ -1,5 +1,13 @@
 import type { IDBPTransaction } from "@dumbmatter/idb";
-import { draft, finances, freeAgents, league, player, season, team } from "..";
+import {
+	draft,
+	finances,
+	freeAgents,
+	league,
+	player,
+	season,
+	team,
+} from "../index.ts";
 import {
 	applyRealTeamInfo,
 	DEFAULT_STADIUM_CAPACITY,
@@ -8,7 +16,7 @@ import {
 	PHASE,
 	PLAYER,
 	SPORT_HAS_REAL_PLAYERS,
-} from "../../../common";
+} from "../../../common/index.ts";
 import type {
 	Conditions,
 	Conf,
@@ -25,10 +33,10 @@ import type {
 	TeamBasic,
 	TeamSeasonWithoutKey,
 	TeamStatsWithoutKey,
-} from "../../../common/types";
-import type { NewLeagueTeam } from "../../../ui/views/NewLeague/types";
-import { CUMULATIVE_OBJECTS } from "../../api/leagueFileUpload";
-import { Cache, connectLeague, idb } from "../../db";
+} from "../../../common/types.ts";
+import type { NewLeagueTeam } from "../../../ui/views/NewLeague/types.ts";
+import { CUMULATIVE_OBJECTS } from "../../api/leagueFileUpload.ts";
+import { Cache, connectLeague, idb } from "../../db/index.ts";
 import {
 	helpers,
 	local,
@@ -39,22 +47,22 @@ import {
 	toUI,
 	updatePhase,
 	updateStatus,
-} from "../../util";
-import g, { wrap } from "../../util/g";
-import type { Settings } from "../../views/settings";
-import { getAutoTicketPriceByTid } from "../game/attendance";
-import addRelatives from "../realRosters/addRelatives";
-import loadDataBasketball from "../realRosters/loadData.basketball";
-import addDraftProspects from "./create/addDraftProspects";
-import createRandomPlayers from "./create/createRandomPlayers";
-import getRealTeamPlayerData from "./create/getRealTeamPlayerData";
-import createGameAttributes from "./createGameAttributes";
-import initRandomDebutsForRandomPlayersLeague from "./initRandomDebutsForRandomPlayersLeague";
-import setRepeatSeason from "./setRepeatSeason";
-import processPlayerNewLeague from "./processPlayerNewLeague";
-import remove from "./remove";
-import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings";
-import { DEFAULT_LEVEL, amountToLevel } from "../../../common/budgetLevels";
+} from "../../util/index.ts";
+import g, { wrap } from "../../util/g.ts";
+import type { Settings } from "../../views/settings.ts";
+import { getAutoTicketPriceByTid } from "../game/attendance.ts";
+import addRelatives from "../realRosters/addRelatives.ts";
+import loadDataBasketball from "../realRosters/loadData.basketball.ts";
+import addDraftProspects from "./create/addDraftProspects.ts";
+import createRandomPlayers from "./create/createRandomPlayers.ts";
+import getRealTeamPlayerData from "./create/getRealTeamPlayerData.ts";
+import createGameAttributes from "./createGameAttributes.ts";
+import initRandomDebutsForRandomPlayersLeague from "./initRandomDebutsForRandomPlayersLeague.ts";
+import setRepeatSeason from "./setRepeatSeason.ts";
+import processPlayerNewLeague from "./processPlayerNewLeague.ts";
+import remove from "./remove.ts";
+import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
+import { DEFAULT_LEVEL, amountToLevel } from "../../../common/budgetLevels.ts";
 
 export type TeamInfo = TeamBasic & {
 	disabled?: boolean;

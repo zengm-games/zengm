@@ -1,13 +1,13 @@
-import "./util/initBugsnag";
-import "../common/polyfills";
+import "./util/initBugsnag.ts";
+import "../common/polyfills.ts";
 import type { ReactNode } from "react";
 import { createRoot } from "react-dom/client";
-import api from "./api";
-import { Controller, ErrorBoundary } from "./components";
-import router from "./router";
-import * as util from "./util";
-import type { Env } from "../common/types";
-import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common";
+import api from "./api/index.ts";
+import { Controller, ErrorBoundary } from "./components/index.tsx";
+import router from "./router/index.ts";
+import * as util from "./util/index.ts";
+import type { Env } from "../common/types.ts";
+import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common/index.ts";
 import Bugsnag from "@bugsnag/browser";
 window.bbgm = { api, ...util };
 const {
@@ -352,5 +352,5 @@ const setupRoutes = () => {
 	render();
 	await setupRoutes();
 
-	await import("./util/initServiceWorker");
+	await import("./util/initServiceWorker.ts");
 })();

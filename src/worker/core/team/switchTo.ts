@@ -1,7 +1,7 @@
-import { idb } from "../../db";
-import { league } from "..";
-import { g, toUI } from "../../util";
-import deleteUnreadMessages from "./deleteUnreadMessages";
+import { idb } from "../../db/index.ts";
+import { league } from "../index.ts";
+import { g, toUI } from "../../util/index.ts";
+import deleteUnreadMessages from "./deleteUnreadMessages.ts";
 
 const switchTo = async (tid: number, tids?: number[]) => {
 	const prevTid = g.get("userTid");

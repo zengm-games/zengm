@@ -1,7 +1,7 @@
 import type {
 	PlayByPlayEvent,
 	PlayByPlayEventScore,
-} from "../worker/core/GameSim.hockey/PlayByPlayLogger";
+} from "../worker/core/GameSim.hockey/PlayByPlayLogger.ts";
 
 export const formatScoringSummaryEvent = (
 	event: PlayByPlayEvent,

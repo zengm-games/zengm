@@ -1,8 +1,8 @@
-import advanceToPlayerProtection from "./advanceToPlayerProtection";
-import autoProtect from "./autoProtect";
-import finalize from "./finalize";
-import start from "./start";
-import updateProtectedPids from "./updateProtectedPids";
+import advanceToPlayerProtection from "./advanceToPlayerProtection.ts";
+import autoProtect from "./autoProtect.ts";
+import finalize from "./finalize.ts";
+import start from "./start.ts";
+import updateProtectedPids from "./updateProtectedPids.ts";
 
 export default {
 	advanceToPlayerProtection,

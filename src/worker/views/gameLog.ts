@@ -1,12 +1,12 @@
-import { idb } from "../db";
-import { g, getProcessedGames, helpers } from "../util";
+import { idb } from "../db/index.ts";
+import { g, getProcessedGames, helpers } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
 	AllStars,
 	Game,
-} from "../../common/types";
-import { DEFAULT_TEAM_COLORS, PHASE } from "../../common";
+} from "../../common/types.ts";
+import { DEFAULT_TEAM_COLORS, PHASE } from "../../common/index.ts";
 
 export type TeamSeasonOverride = {
 	region?: string;

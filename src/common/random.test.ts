@@ -1,6 +1,6 @@
 import { assert, describe, test } from "vitest";
-import * as random from "./random";
-import helpers from "./helpers";
+import * as random from "./random.ts";
+import helpers from "./helpers.ts";
 
 describe("choice", () => {
 	test("works", () => {

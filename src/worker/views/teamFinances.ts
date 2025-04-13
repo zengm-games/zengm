@@ -1,10 +1,14 @@
-import { PHASE } from "../../common";
-import { finances, team } from "../core";
-import { idb } from "../db";
-import { g, helpers } from "../util";
-import type { TeamSeason, UpdateEvents, ViewInput } from "../../common/types";
-import { getAutoTicketPriceByTid } from "../core/game/attendance";
-import addFirstNameShort from "../util/addFirstNameShort";
+import { PHASE } from "../../common/index.ts";
+import { finances, team } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import { g, helpers } from "../util/index.ts";
+import type {
+	TeamSeason,
+	UpdateEvents,
+	ViewInput,
+} from "../../common/types.ts";
+import { getAutoTicketPriceByTid } from "../core/game/attendance.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
 
 const updateTeamFinances = async (
 	inputs: ViewInput<"teamFinances">,

@@ -1,7 +1,7 @@
-import { maybeDeepCopy, mergeByPk } from "./helpers";
-import { team } from "../../core";
-import { idb } from "..";
-import { g, helpers } from "../../util";
+import { maybeDeepCopy, mergeByPk } from "./helpers.ts";
+import { team } from "../../core/index.ts";
+import { idb } from "../index.ts";
+import { g, helpers } from "../../util/index.ts";
 import type {
 	Team,
 	TeamAttr,
@@ -11,9 +11,9 @@ import type {
 	TeamStatType,
 	TeamStats,
 	GetCopyType,
-} from "../../../common/types";
-import { DEFAULT_POINTS_FORMULA } from "../../../common";
-import { orderBy } from "../../../common/utils";
+} from "../../../common/types.ts";
+import { DEFAULT_POINTS_FORMULA } from "../../../common/index.ts";
+import { orderBy } from "../../../common/utils.ts";
 
 const processAttrs = <
 	Attrs extends Readonly<TeamAttr[]>,

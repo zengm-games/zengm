@@ -1,11 +1,11 @@
-import { formatEventText, g } from "../util";
+import { formatEventText, g } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
 	EventBBGM,
 	LogEventType,
-} from "../../common/types";
-import { idb } from "../db";
+} from "../../common/types.ts";
+import { idb } from "../db/index.ts";
 import type { FaceConfig } from "facesjs";
 
 const IGNORE_EVENT_TYPES = ["retiredList", "newTeam"];

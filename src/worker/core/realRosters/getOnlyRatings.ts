@@ -1,4 +1,4 @@
-import type { Ratings } from "./loadData.basketball";
+import type { Ratings } from "./loadData.basketball.ts";
 
 export type OnlyRatings = {
 	hgt: number;

@@ -1,13 +1,13 @@
 import { assert, beforeAll, test } from "vitest";
-import testHelpers from "../../../test/helpers";
+import testHelpers from "../../../test/helpers.ts";
 import {
 	getActualAttendance,
 	getAdjustedTicketPrice,
 	getAutoTicketPrice,
 	getBaseAttendance,
-} from "./attendance";
-import team from "../team";
-import { helpers } from "../../util";
+} from "./attendance.ts";
+import team from "../team/index.ts";
+import { helpers } from "../../util/index.ts";
 
 beforeAll(async () => {
 	testHelpers.resetG();

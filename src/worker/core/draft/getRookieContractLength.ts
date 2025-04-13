@@ -1,4 +1,4 @@
-import { g } from "../../util";
+import { g } from "../../util/index.ts";
 
 const getRookieContractLength = (draftRound: number) => {
 	const rookieContractLengths = g.get("rookieContractLengths");

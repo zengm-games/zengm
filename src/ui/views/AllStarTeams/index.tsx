@@ -1,12 +1,17 @@
 import { useCallback, useState } from "react";
-import { DataTable } from "../../components";
-import useTitleBar from "../../hooks/useTitleBar";
-import { getCols, helpers, toWorker, useLocalPartial } from "../../util";
-import type { View } from "../../../common/types";
-import EditAllStars from "./EditAllStars";
-import { wait } from "../../../common";
-import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
-import type { DataTableRow } from "../../components/DataTable";
+import { DataTable } from "../../components/index.tsx";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import {
+	getCols,
+	helpers,
+	toWorker,
+	useLocalPartial,
+} from "../../util/index.ts";
+import type { View } from "../../../common/types.ts";
+import EditAllStars from "./EditAllStars.tsx";
+import { wait } from "../../../common/index.ts";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
+import type { DataTableRow } from "../../components/DataTable/index.tsx";
 
 const PlayersTable = ({
 	challengeNoRatings,

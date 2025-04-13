@@ -1,6 +1,6 @@
-import { getPlayers, getTopPlayers } from "./awards";
-import { mvpScore, dpoyScore } from "./doAwards.football";
-import type { PlayerFiltered } from "../../../common/types";
+import { getPlayers, getTopPlayers } from "./awards.ts";
+import { mvpScore, dpoyScore } from "./doAwards.football.ts";
+import type { PlayerFiltered } from "../../../common/types.ts";
 
 const filterPosition =
 	(season: number, positions: string[]) => (p: PlayerFiltered) => {

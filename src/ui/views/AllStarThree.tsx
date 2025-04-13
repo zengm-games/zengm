@@ -1,12 +1,16 @@
-import useTitleBar from "../hooks/useTitleBar";
-import { helpers, toWorker } from "../util";
-import type { View } from "../../common/types";
-import { PlayPauseNext } from "../components";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { helpers, toWorker } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { PlayPauseNext } from "../components/index.tsx";
 import { useEffect, useState } from "react";
-import { isSport } from "../../common";
-import { ContestantProfiles, EditContestants, ScoreTable } from "./AllStarDunk";
+import { isSport } from "../../common/index.ts";
+import {
+	ContestantProfiles,
+	EditContestants,
+	ScoreTable,
+} from "./AllStarDunk.tsx";
 import clsx from "clsx";
-import { range } from "../../common/utils";
+import { range } from "../../common/utils.ts";
 
 const NUM_BALLS_PER_RACK = 5;
 

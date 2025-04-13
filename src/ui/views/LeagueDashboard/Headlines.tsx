@@ -1,7 +1,7 @@
 import { m, AnimatePresence } from "framer-motion";
-import { NewsBlock } from "../../components";
-import { helpers } from "../../util";
-import type { View } from "../../../common/types";
+import { NewsBlock } from "../../components/index.tsx";
+import { helpers } from "../../util/index.ts";
+import type { View } from "../../../common/types.ts";
 import { memo, useEffect, useRef, useState } from "react";
 
 const transition = { duration: 0.4, type: "tween" };

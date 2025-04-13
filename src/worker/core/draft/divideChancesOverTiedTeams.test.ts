@@ -1,10 +1,10 @@
 import { afterAll, assert, beforeAll, test } from "vitest";
-import { loadTeamSeasons } from "./testHelpers";
-import lotterySort from "./lotterySort";
-import divideChancesOverTiedTeams from "./divideChancesOverTiedTeams";
-import { idb } from "../../db";
-import { g } from "../../util";
-import testHelpers from "../../../test/helpers";
+import { loadTeamSeasons } from "./testHelpers.ts";
+import lotterySort from "./lotterySort.ts";
+import divideChancesOverTiedTeams from "./divideChancesOverTiedTeams.ts";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
+import testHelpers from "../../../test/helpers.ts";
 
 beforeAll(async () => {
 	testHelpers.resetG();

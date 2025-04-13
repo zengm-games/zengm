@@ -1,20 +1,20 @@
-import genPicks from "./genPicks";
-import logLotteryChances from "./logLotteryChances";
-import logLotteryWinners from "./logLotteryWinners";
-import divideChancesOverTiedTeams from "./divideChancesOverTiedTeams";
-import { idb } from "../../db";
-import { g, helpers, random } from "../../util";
+import genPicks from "./genPicks.ts";
+import logLotteryChances from "./logLotteryChances.ts";
+import logLotteryWinners from "./logLotteryWinners.ts";
+import divideChancesOverTiedTeams from "./divideChancesOverTiedTeams.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers, random } from "../../util/index.ts";
 import type {
 	Conditions,
 	DraftLotteryResult,
 	DraftType,
 	DraftPickWithoutKey,
 	DraftPick,
-} from "../../../common/types";
-import genOrderGetPicks from "./genOrderGetPicks";
-import getTeamsByRound from "./getTeamsByRound";
-import { bySport } from "../../../common";
-import { league } from "..";
+} from "../../../common/types.ts";
+import genOrderGetPicks from "./genOrderGetPicks.ts";
+import getTeamsByRound from "./getTeamsByRound.ts";
+import { bySport } from "../../../common/index.ts";
+import { league } from "../index.ts";
 
 type ReturnVal = {
 	draftLotteryResult:

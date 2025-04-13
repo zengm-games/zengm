@@ -1,16 +1,16 @@
-import { PHASE } from "../../common";
-import { idb } from "../db";
-import g from "./g";
-import type { TeamFiltered } from "../../common/types";
-import { getPlayers, getTopPlayers } from "../core/season/awards";
+import { PHASE } from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import g from "./g.ts";
+import type { TeamFiltered } from "../../common/types.ts";
+import { getPlayers, getTopPlayers } from "../core/season/awards.ts";
 import {
 	dpoyScore,
 	makeTeams,
 	mvpScore,
-} from "../core/season/doAwards.football";
-import advStatsSave from "./advStatsSave";
-import { groupByUnique } from "../../common/utils";
-import defaultGameAttributes from "../../common/defaultGameAttributes";
+} from "../core/season/doAwards.football.ts";
+import advStatsSave from "./advStatsSave.ts";
+import { groupByUnique } from "../../common/utils.ts";
+import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 
 type Team = TeamFiltered<
 	["tid"],

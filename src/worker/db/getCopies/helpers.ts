@@ -1,7 +1,7 @@
-import { helpers } from "../../util";
-import type { Store } from "../Cache";
-import { idb } from "../../db";
-import type { GetCopyType } from "../../../common/types";
+import { helpers } from "../../util/index.ts";
+import type { Store } from "../Cache.ts";
+import { idb } from "../../db/index.ts";
+import type { GetCopyType } from "../../../common/types.ts";
 
 // When "noCopyCache" is passed, that means we promise not to mutate any of these records, so we don't need to deepCopy
 export const maybeDeepCopy = <T>(row: T, type: GetCopyType | undefined) =>

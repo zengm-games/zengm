@@ -6,11 +6,11 @@ import {
 	type AwardsByPlayer,
 	addSimpleAndTeamAwardsToAwardsByPlayer,
 	saveAwardsByPlayer,
-} from "./awards";
-import { idb } from "../../db";
-import { g } from "../../util";
-import type { Conditions, PlayerFiltered } from "../../../common/types";
-import type { AwardPlayer, Awards } from "../../../common/types.hockey";
+} from "./awards.ts";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
+import type { Conditions, PlayerFiltered } from "../../../common/types.ts";
+import type { AwardPlayer, Awards } from "../../../common/types.hockey.ts";
 
 const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 	return {

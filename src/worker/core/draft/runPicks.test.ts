@@ -1,11 +1,11 @@
 import { afterAll, assert, beforeAll, test } from "vitest";
-import { PLAYER } from "../../../common";
-import testHelpers from "../../../test/helpers";
-import { draft } from "..";
-import { idb } from "../../db";
-import { g } from "../../util";
-import { getDraftTids, loadTeamSeasons } from "./testHelpers";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import { PLAYER } from "../../../common/index.ts";
+import testHelpers from "../../../test/helpers.ts";
+import { draft } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
+import { getDraftTids, loadTeamSeasons } from "./testHelpers.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 const testRunPicks = async (numNow: number, numTotal: number) => {
 	const pids = await draft.runPicks({ type: "untilYourNextPick" });

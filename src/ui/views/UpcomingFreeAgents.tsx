@@ -1,11 +1,11 @@
-import { PHASE } from "../../common";
-import { DataTable, MoreLinks } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, useLocalPartial } from "../util";
-import type { View } from "../../common/types";
-import { dataTableWrappedMood } from "../components/Mood";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import type { DataTableRow } from "../components/DataTable";
+import { PHASE } from "../../common/index.ts";
+import { DataTable, MoreLinks } from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers, useLocalPartial } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { dataTableWrappedMood } from "../components/Mood.tsx";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
 
 const UpcomingFreeAgents = ({
 	challengeNoRatings,

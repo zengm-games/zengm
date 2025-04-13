@@ -1,5 +1,5 @@
-import useDropdownOptions from "../../hooks/useDropdownOptions";
-import { useLocalPartial } from "../../util";
+import useDropdownOptions from "../../hooks/useDropdownOptions.tsx";
+import { useLocalPartial } from "../../util/index.ts";
 
 const CustomMoodItemsForm = ({
 	godMode,

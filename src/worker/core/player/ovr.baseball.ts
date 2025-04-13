@@ -1,7 +1,10 @@
-import { helpers } from "../../../worker/util";
-import type { PlayerRatings, Position } from "../../../common/types.baseball";
-import { COMPOSITE_WEIGHTS } from "../../../common";
-import compositeRating from "./compositeRating";
+import { helpers } from "../../../worker/util/index.ts";
+import type {
+	PlayerRatings,
+	Position,
+} from "../../../common/types.baseball.ts";
+import { COMPOSITE_WEIGHTS } from "../../../common/index.ts";
+import compositeRating from "./compositeRating.ts";
 
 type RatingWeights = Record<string, [number, number]>;
 

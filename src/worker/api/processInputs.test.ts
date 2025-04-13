@@ -1,6 +1,6 @@
 import { assert, beforeAll, describe, test } from "vitest";
-import { g, helpers } from "../util";
-import { validateAbbrev, validateSeason } from "./processInputs";
+import { g, helpers } from "../util/index.ts";
+import { validateAbbrev, validateSeason } from "./processInputs.ts";
 
 beforeAll(() => {
 	g.setWithoutSavingToDB("userTid", 4);

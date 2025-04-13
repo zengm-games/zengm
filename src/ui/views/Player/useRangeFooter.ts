@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import type { View } from "../../../common/types";
-import { toWorker } from "../../util";
+import type { View } from "../../../common/types.ts";
+import { toWorker } from "../../util/index.ts";
 
 type Player = View<"player">["player"];
 type PlayerStats = Player["stats"];

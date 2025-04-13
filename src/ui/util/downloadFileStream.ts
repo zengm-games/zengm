@@ -1,5 +1,5 @@
 import streamSaver from "streamsaver";
-import downloadFile from "./downloadFile";
+import downloadFile from "./downloadFile.ts";
 
 const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 

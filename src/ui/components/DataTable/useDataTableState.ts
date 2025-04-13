@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import loadStateFromCache, {
 	type LoadStateFromCacheProps,
 	type State,
-} from "./loadStateFromCache";
+} from "./loadStateFromCache.ts";
 
 export const useDataTableState = ({
 	cols,

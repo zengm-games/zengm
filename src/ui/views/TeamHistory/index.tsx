@@ -1,11 +1,11 @@
-import useTitleBar from "../../hooks/useTitleBar";
-import type { View } from "../../../common/types";
-import Overall from "./Overall";
-import Players from "./Players";
-import RetiredJerseyNumbers from "./RetiredJerseyNumbers";
-import Seasons from "./Seasons";
-import { MoreLinks } from "../../components";
-import HideableSection from "../../components/HideableSection";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import type { View } from "../../../common/types.ts";
+import Overall from "./Overall.tsx";
+import Players from "./Players.tsx";
+import RetiredJerseyNumbers from "./RetiredJerseyNumbers.tsx";
+import Seasons from "./Seasons.tsx";
+import { MoreLinks } from "../../components/index.tsx";
+import HideableSection from "../../components/HideableSection.tsx";
 
 const TeamHistory = ({
 	abbrev,

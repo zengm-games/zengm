@@ -1,8 +1,8 @@
-import OwnerMoodsChart from "./OwnerMoodsChart";
-import { SafeHtml } from "../../components";
-import useTitleBar from "../../hooks/useTitleBar";
-import { helpers } from "../../util";
-import type { View } from "../../../common/types";
+import OwnerMoodsChart from "./OwnerMoodsChart.tsx";
+import { SafeHtml } from "../../components/index.tsx";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import { helpers } from "../../util/index.ts";
+import type { View } from "../../../common/types.ts";
 
 const Message = ({ message }: View<"message">) => {
 	const title = message && message.subject ? message.subject : "Message";

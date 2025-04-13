@@ -1,16 +1,16 @@
-import { bySport, isSport, PHASE, PLAYER } from "../../../common";
-import addStatsRow from "./addStatsRow";
-import develop, { monteCarloPot } from "./develop";
-import generate from "./generate";
-import heightToRating from "./heightToRating";
-import name from "./name";
-import ovr from "./ovr";
-import pos from "./pos";
-import setContract from "./setContract";
-import skills from "./skills";
-import stats from "./stats";
-import { g, helpers, random } from "../../util";
-import type { MinimalPlayerRatings, Player } from "../../../common/types";
+import { bySport, isSport, PHASE, PLAYER } from "../../../common/index.ts";
+import addStatsRow from "./addStatsRow.ts";
+import develop, { monteCarloPot } from "./develop.ts";
+import generate from "./generate.ts";
+import heightToRating from "./heightToRating.ts";
+import name from "./name.ts";
+import ovr from "./ovr.ts";
+import pos from "./pos.ts";
+import setContract from "./setContract.ts";
+import skills from "./skills.ts";
+import stats from "./stats.ts";
+import { g, helpers, random } from "../../util/index.ts";
+import type { MinimalPlayerRatings, Player } from "../../../common/types.ts";
 
 const addStatsRowWrapped = async (
 	p: any,

@@ -1,6 +1,6 @@
-import autoPlay from "./autoPlay";
-import { local, toUI, g, logEvent } from "../../util";
-import type { Conditions } from "../../../common/types";
+import autoPlay from "./autoPlay.ts";
+import { local, toUI, g, logEvent } from "../../util/index.ts";
+import type { Conditions } from "../../../common/types.ts";
 
 const initAutoPlay = async (conditions: Conditions) => {
 	if (g.get("gameOver")) {

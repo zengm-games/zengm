@@ -5,23 +5,23 @@ import {
 	isSport,
 	PHASE,
 	unwrapGameAttribute,
-} from "../../common";
-import { groupBy, orderBy } from "../../common/utils";
+} from "../../common/index.ts";
+import { groupBy, orderBy } from "../../common/utils.ts";
 import type {
 	Conditions,
 	GameAttributesLeague,
 	Team,
-} from "../../common/types";
+} from "../../common/types.ts";
 import type {
 	ExhibitionGameAttributes,
 	ExhibitionTeam,
-} from "../../ui/views/Exhibition";
-import { GameSim, player, realRosters, team } from "../core";
-import { processTeam } from "../core/game/loadTeams";
-import { gameSimToBoxScore } from "../core/game/writeGameStats";
-import { getRosterOrderByPid } from "../core/team/rosterAutoSort.basketball";
-import { connectLeague, idb } from "../db";
-import { getPlayersActiveSeason } from "../db/getCopies/players";
+} from "../../ui/views/Exhibition.tsx";
+import { GameSim, player, realRosters, team } from "../core/index.ts";
+import { processTeam } from "../core/game/loadTeams.ts";
+import { gameSimToBoxScore } from "../core/game/writeGameStats.ts";
+import { getRosterOrderByPid } from "../core/team/rosterAutoSort.basketball.ts";
+import { connectLeague, idb } from "../db/index.ts";
+import { getPlayersActiveSeason } from "../db/getCopies/players.ts";
 import {
 	defaultGameAttributes,
 	g,
@@ -29,9 +29,9 @@ import {
 	local,
 	random,
 	toUI,
-} from "../util";
-import { boxScoreToLiveSim } from "../views/liveGame";
-import getPlayoffsByConf from "../core/season/getPlayoffsByConf";
+} from "../util/index.ts";
+import { boxScoreToLiveSim } from "../views/liveGame.ts";
+import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 
 export const getLeagues = async () => {
 	const leagues = await idb.meta.getAll("leagues");

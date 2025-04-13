@@ -1,9 +1,9 @@
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker } from "../util";
-import { DataTable } from "../components";
-import type { View } from "../../common/types";
-import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName";
-import type { DataTableRow } from "../components/DataTable";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers, toWorker } from "../util/index.ts";
+import { DataTable } from "../components/index.tsx";
+import type { View } from "../../common/types.ts";
+import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
 
 const LeagueFinances = ({
 	budget,

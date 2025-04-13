@@ -1,20 +1,20 @@
-import { allStar, player, season, team } from "..";
-import { idb } from "../../db";
-import { g, helpers, random } from "../../util";
+import { allStar, player, season, team } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers, random } from "../../util/index.ts";
 import type {
 	Player,
 	MinimalPlayerRatings,
 	Conditions,
-} from "../../../common/types";
+} from "../../../common/types.ts";
 import {
 	bySport,
 	COMPOSITE_WEIGHTS,
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	isSport,
 	PHASE,
-} from "../../../common";
-import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor";
-import statsRowIsCurrent from "../player/statsRowIsCurrent";
+} from "../../../common/index.ts";
+import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor.ts";
+import statsRowIsCurrent from "../player/statsRowIsCurrent.ts";
 
 const MAX_NUM_PLAYERS_PACE = 7;
 

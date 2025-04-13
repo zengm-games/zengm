@@ -1,6 +1,6 @@
-import { idb } from "../../db";
-import genDepth from "./genDepth.football";
-import type { Position } from "../../../common/types.football";
+import { idb } from "../../db/index.ts";
+import genDepth from "./genDepth.football.ts";
+import type { Position } from "../../../common/types.football.ts";
 
 const rosterAutoSort = async (
 	tid: number,

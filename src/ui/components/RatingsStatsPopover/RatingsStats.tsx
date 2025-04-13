@@ -1,9 +1,9 @@
-import RatingsStatsBaseball from "./RatingsStats.baseball";
-import RatingsStatsBasketball from "./RatingsStats.basketball";
-import RatingsStatsFootball from "./RatingsStats.football";
-import RatingsStatsHockey from "./RatingsStats.hockey";
-import { useLocal } from "../../util";
-import { bySport } from "../../../common";
+import RatingsStatsBaseball from "./RatingsStats.baseball.tsx";
+import RatingsStatsBasketball from "./RatingsStats.basketball.tsx";
+import RatingsStatsFootball from "./RatingsStats.football.tsx";
+import RatingsStatsHockey from "./RatingsStats.hockey.tsx";
+import { useLocal } from "../../util/index.ts";
+import { bySport } from "../../../common/index.ts";
 
 const RatingsStats = (props: {
 	ratings: any;

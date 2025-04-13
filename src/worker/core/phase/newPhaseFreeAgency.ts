@@ -1,7 +1,7 @@
-import { contractNegotiation, freeAgents } from "..";
-import { helpers } from "../../util";
-import type { PhaseReturn } from "../../../common/types";
-import { idb } from "../../db";
+import { contractNegotiation, freeAgents } from "../index.ts";
+import { helpers } from "../../util/index.ts";
+import type { PhaseReturn } from "../../../common/types.ts";
+import { idb } from "../../db/index.ts";
 
 const newPhaseFreeAgency = async (): Promise<PhaseReturn> => {
 	// In case some weird situation results in games still in the schedule, clear them

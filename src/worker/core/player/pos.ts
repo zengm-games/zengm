@@ -1,9 +1,9 @@
-import posBaseball from "./pos.baseball";
-import posBasketball from "./pos.basketball";
-import posFootball from "./pos.football";
-import posHockey from "./pos.hockey";
-import type { MinimalPlayerRatings } from "../../../common/types";
-import { bySport } from "../../../common";
+import posBaseball from "./pos.baseball.ts";
+import posBasketball from "./pos.basketball.ts";
+import posFootball from "./pos.football.ts";
+import posHockey from "./pos.hockey.ts";
+import type { MinimalPlayerRatings } from "../../../common/types.ts";
+import { bySport } from "../../../common/index.ts";
 
 const pos = (ratings: MinimalPlayerRatings) => {
 	return bySport<(ratings: any) => string>({

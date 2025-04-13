@@ -5,7 +5,7 @@ import type {
 	StoreValue,
 	IndexNames,
 } from "@dumbmatter/idb";
-import type { LeagueDB } from "./connectLeague";
+import type { LeagueDB } from "./connectLeague.ts";
 
 /**
  * This is used for two separate purposes.

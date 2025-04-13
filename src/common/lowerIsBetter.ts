@@ -1,4 +1,4 @@
-import bySport from "./bySport";
+import bySport from "./bySport.ts";
 
 // This might not be comprehensive. It was first made for teamStats, and then later used in comparePlayers.
 export const lowerIsBetter = new Set(

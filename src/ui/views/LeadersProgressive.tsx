@@ -1,11 +1,11 @@
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import { DataTable, MoreLinks } from "../components";
-import type { View } from "../../common/types";
-import { LeadersTopText } from "./Leaders";
-import { formatStatsDropdown } from "./LeadersYears";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import type { DataTableRow } from "../components/DataTable";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers } from "../util/index.ts";
+import { DataTable, MoreLinks } from "../components/index.tsx";
+import type { View } from "../../common/types.ts";
+import { LeadersTopText } from "./Leaders.tsx";
+import { formatStatsDropdown } from "./LeadersYears.tsx";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
 
 const LeadersProgressive = ({
 	allLeaders,

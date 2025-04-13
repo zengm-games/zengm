@@ -1,7 +1,7 @@
-import { PHASE } from "../../../common";
-import { NUM_STARTING_PITCHERS } from "../../../common/constants.baseball";
-import { g, random } from "../../util";
-import type { PlayerGameSim } from "./types";
+import { PHASE } from "../../../common/index.ts";
+import { NUM_STARTING_PITCHERS } from "../../../common/constants.baseball.ts";
+import { g, random } from "../../util/index.ts";
+import type { PlayerGameSim } from "./types.ts";
 
 export const CLOSER_INDEX = NUM_STARTING_PITCHERS;
 

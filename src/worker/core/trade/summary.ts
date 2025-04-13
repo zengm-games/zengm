@@ -1,9 +1,13 @@
-import { team } from "..";
-import { idb } from "../../db";
-import { g, helpers } from "../../util";
-import type { Player, TradeSummary, TradeTeams } from "../../../common/types";
-import { orderBy } from "../../../common/utils";
-import isUntradable from "./isUntradable";
+import { team } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers } from "../../util/index.ts";
+import type {
+	Player,
+	TradeSummary,
+	TradeTeams,
+} from "../../../common/types.ts";
+import { orderBy } from "../../../common/utils.ts";
+import isUntradable from "./isUntradable.ts";
 
 const getTeamOvr = async (playersRaw: Player[]) => {
 	const players = await idb.getCopies.playersPlus(playersRaw, {

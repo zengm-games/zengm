@@ -1,7 +1,7 @@
 // https://github.com/babel/babel/issues/10637#issuecomment-882101248
 import type * as BabelCoreNamespace from "@babel/core";
 import type { PluginObj } from "@babel/core";
-import type { Sport } from "../lib/getSport";
+import type { Sport } from "../lib/getSport.ts";
 
 type Babel = typeof BabelCoreNamespace;
 type ObjectProperty = BabelCoreNamespace.types.ObjectProperty;

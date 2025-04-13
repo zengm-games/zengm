@@ -1,6 +1,6 @@
-import { createLogger } from "../../common";
-import { local, notify, toWorker, safeLocalStorage } from ".";
-import type { LogEventShowOptions } from "../../common/types";
+import { createLogger } from "../../common/index.ts";
+import { local, notify, toWorker, safeLocalStorage } from "./index.ts";
+import type { LogEventShowOptions } from "../../common/types.ts";
 
 const saveEvent = () => {
 	throw new Error("UI events should not be saved to DB");

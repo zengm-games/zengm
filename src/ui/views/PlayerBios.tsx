@@ -1,17 +1,17 @@
-import { CountryFlag, DataTable } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import type { View } from "../../common/types";
-import { PLAYER } from "../../common";
-import { dataTableWrappedMood } from "../components/Mood";
-import { wrappedHeight } from "../components/Height";
-import { wrappedWeight } from "../components/Weight";
+import { CountryFlag, DataTable } from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { PLAYER } from "../../common/index.ts";
+import { dataTableWrappedMood } from "../components/Mood.tsx";
+import { wrappedHeight } from "../components/Height.tsx";
+import { wrappedWeight } from "../components/Weight.tsx";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
-} from "../components/contract";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import type { DataTableRow } from "../components/DataTable";
+} from "../components/contract.tsx";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
 
 const PlayerBios = ({
 	abbrev,

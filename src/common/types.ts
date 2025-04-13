@@ -1,7 +1,7 @@
 import type { FaceConfig } from "facesjs";
 import type { MouseEvent, ReactNode } from "react";
-import type processInputs from "../worker/api/processInputs";
-import type views from "../worker/views";
+import type processInputs from "../worker/api/processInputs.ts";
+import type views from "../worker/views/index.ts";
 
 export type Env = {
 	enableLogging: boolean;
@@ -1622,13 +1622,13 @@ export type TeamSeasonAttr = keyof TeamSeasonPlus;
 import type {
 	TeamStatAttr as TeamStatAttrBaseball,
 	TeamStatAttrByPos as TeamStatAttrByPosBaseball,
-} from "./types.baseball";
-import type { TeamStatAttr as TeamStatAttrBasketball } from "./types.basketball";
-import type { TeamStatAttr as TeamStatAttrFootball } from "./types.football";
-import type { TeamStatAttr as TeamStatAttrHockey } from "./types.hockey";
-import type { TIEBREAKERS } from "./constants";
-import type { DropdownOption } from "../ui/hooks/useDropdownOptions";
-import type { LookingForState } from "../ui/views/TradingBlock/useLookingForState";
+} from "./types.baseball.ts";
+import type { TeamStatAttr as TeamStatAttrBasketball } from "./types.basketball.ts";
+import type { TeamStatAttr as TeamStatAttrFootball } from "./types.football.ts";
+import type { TeamStatAttr as TeamStatAttrHockey } from "./types.hockey.ts";
+import type { TIEBREAKERS } from "./constants.ts";
+import type { DropdownOption } from "../ui/hooks/useDropdownOptions.tsx";
+import type { LookingForState } from "../ui/views/TradingBlock/useLookingForState.ts";
 type TeamStatsPlus = Record<TeamStatAttrBaseball, number> &
 	Record<TeamStatAttrByPosBaseball, number[]> &
 	Record<TeamStatAttrBasketball, number> &

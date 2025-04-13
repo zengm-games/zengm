@@ -1,10 +1,10 @@
-import { league } from "../core";
-import { idb } from "../db";
-import g from "./g";
-import helpers from "./helpers";
-import local from "./local";
-import type { OwnerMood } from "../../common/types";
-import { COURT } from "../../common";
+import { league } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import g from "./g.ts";
+import helpers from "./helpers.ts";
+import local from "./local.ts";
+import type { OwnerMood } from "../../common/types.ts";
+import { COURT } from "../../common/index.ts";
 
 const moodTexts = ["Horrible!", "Bad.", "Pretty good.", "Good.", "Excellent!"];
 

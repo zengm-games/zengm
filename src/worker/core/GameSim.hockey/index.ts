@@ -1,25 +1,25 @@
-import { defaultGameAttributes, g, helpers, random } from "../../util";
+import { defaultGameAttributes, g, helpers, random } from "../../util/index.ts";
 import {
 	NUM_LINES,
 	NUM_PLAYERS_PER_LINE,
 	POSITIONS,
-} from "../../../common/constants.hockey";
-import PlayByPlayLogger from "./PlayByPlayLogger";
-import getPlayers from "./getPlayers";
-import type { Position } from "../../../common/types.hockey";
+} from "../../../common/constants.hockey.ts";
+import PlayByPlayLogger from "./PlayByPlayLogger.ts";
+import getPlayers from "./getPlayers.ts";
+import type { Position } from "../../../common/types.hockey.ts";
 import type {
 	CompositeRating,
 	PlayerGameSim,
 	PlayersOnIce,
 	TeamGameSim,
 	TeamNum,
-} from "./types";
-import getCompositeFactor from "./getCompositeFactor";
-import { penalties, penaltyTypes } from "../GameSim.hockey/penalties";
-import PenaltyBox from "./PenaltyBox";
-import getInjuryRate from "../GameSim.basketball/getInjuryRate";
-import GameSimBase from "../GameSimBase";
-import { orderBy, range } from "../../../common/utils";
+} from "./types.ts";
+import getCompositeFactor from "./getCompositeFactor.ts";
+import { penalties, penaltyTypes } from "../GameSim.hockey/penalties.ts";
+import PenaltyBox from "./PenaltyBox.ts";
+import getInjuryRate from "../GameSim.basketball/getInjuryRate.ts";
+import GameSimBase from "../GameSimBase.ts";
+import { orderBy, range } from "../../../common/utils.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 

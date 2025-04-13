@@ -1,8 +1,8 @@
-import { bySport, isSport, PHASE, PLAYER } from "../../../common";
-import { g, helpers, random } from "../../util";
-import { idb } from "../../db";
-import moodComponents from "./moodComponents";
-import type { Player } from "../../../common/types";
+import { bySport, isSport, PHASE, PLAYER } from "../../../common/index.ts";
+import { g, helpers, random } from "../../util/index.ts";
+import { idb } from "../../db/index.ts";
+import moodComponents from "./moodComponents.ts";
+import type { Player } from "../../../common/types.ts";
 
 const hasActiveNegotiation = async (tid: number, pid: number) => {
 	const teamNegotiations = (await idb.cache.negotiations.getAll()).filter(

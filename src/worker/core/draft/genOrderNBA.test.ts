@@ -1,7 +1,7 @@
 import { afterAll, assert, beforeAll, test } from "vitest";
-import { getDraftTids, loadTeamSeasons } from "./testHelpers";
-import testHelpers from "../../../test/helpers";
-import { idb } from "../../db";
+import { getDraftTids, loadTeamSeasons } from "./testHelpers.ts";
+import testHelpers from "../../../test/helpers.ts";
+import { idb } from "../../db/index.ts";
 
 beforeAll(async () => {
 	testHelpers.resetG();

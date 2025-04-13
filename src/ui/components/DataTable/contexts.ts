@@ -1,6 +1,6 @@
 import { createContext } from "react";
-import type { SelectedRows } from "./useBulkSelectRows";
-import type { Props, SortBy } from ".";
+import type { SelectedRows } from "./useBulkSelectRows.ts";
+import type { Props, SortBy } from "./index.tsx";
 
 export const DataTableContext = createContext<
 	{

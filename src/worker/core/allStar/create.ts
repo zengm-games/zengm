@@ -2,19 +2,19 @@ import {
 	getPlayers,
 	getTopPlayers,
 	saveAwardsByPlayer,
-} from "../season/awards";
-import { g, random } from "../../util";
+} from "../season/awards.ts";
+import { g, random } from "../../util/index.ts";
 import type {
 	AllStars,
 	Conditions,
 	PlayerFiltered,
 	AllStarPlayer,
-} from "../../../common/types";
-import { bySport, isSport } from "../../../common";
-import { idb } from "../../db";
-import type { PlayerRatings } from "../../../common/types.basketball";
-import { groupBy, orderBy, range } from "../../../common/utils";
-import { getPosByGpF } from "../season/doAwards.baseball";
+} from "../../../common/types.ts";
+import { bySport, isSport } from "../../../common/index.ts";
+import { idb } from "../../db/index.ts";
+import type { PlayerRatings } from "../../../common/types.basketball.ts";
+import { groupBy, orderBy, range } from "../../../common/utils.ts";
+import { getPosByGpF } from "../season/doAwards.baseball.ts";
 
 const MIN_PLAYERS_CONTEST = 2;
 

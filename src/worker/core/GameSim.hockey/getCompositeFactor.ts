@@ -1,4 +1,4 @@
-import type { PlayerGameSim, PlayersOnIce } from "./types";
+import type { PlayerGameSim, PlayersOnIce } from "./types.ts";
 
 const getCompositeFactor = ({
 	playersOnIce,

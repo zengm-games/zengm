@@ -1,5 +1,5 @@
-import type { PlayerInjury } from "../../../common/types";
-import type { Position } from "../../../common/types.football";
+import type { PlayerInjury } from "../../../common/types.ts";
+import type { Position } from "../../../common/types.football.ts";
 
 export type TeamNum = 0 | 1;
 

@@ -1,6 +1,6 @@
-import type { TeamFiltered } from "../../../common/types";
-import { countBy } from "../../../common/utils";
-import { g } from "../../util";
+import type { TeamFiltered } from "../../../common/types.ts";
+import { countBy } from "../../../common/utils.ts";
+import { g } from "../../util/index.ts";
 
 /**
  * Divide the combinations between teams with tied records.

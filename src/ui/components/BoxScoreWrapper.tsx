@@ -6,19 +6,19 @@ import {
 	useRef,
 	type CSSProperties,
 } from "react";
-import { isSport, PHASE, STARTING_NUM_TIMEOUTS } from "../../common";
+import { isSport, PHASE, STARTING_NUM_TIMEOUTS } from "../../common/index.ts";
 import {
 	gradientStyleFactory,
 	helpers,
 	realtimeUpdate,
 	toWorker,
 	useLocalPartial,
-} from "../util";
-import BoxScore from "./BoxScore";
-import { range } from "../../common/utils";
-import getWinner from "../../common/getWinner";
+} from "../util/index.ts";
+import BoxScore from "./BoxScore.tsx";
+import { range } from "../../common/utils.ts";
+import getWinner from "../../common/getWinner.ts";
 import { OverlayTrigger, Popover } from "react-bootstrap";
-import Note from "../views/Player/Note";
+import Note from "../views/Player/Note.tsx";
 
 const TeamNameLink = ({
 	children,

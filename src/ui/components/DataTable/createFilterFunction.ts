@@ -1,8 +1,8 @@
-import getSearchVal from "./getSearchVal";
-import getSortVal from "./getSortVal";
-import type { SortType } from "../../../common/types";
-import { helpers } from "../../util";
-import { normalizeIntl } from "../../../common/normalizeIntl";
+import getSearchVal from "./getSearchVal.tsx";
+import getSortVal from "./getSortVal.tsx";
+import type { SortType } from "../../../common/types.ts";
+import { helpers } from "../../util/index.ts";
+import { normalizeIntl } from "../../../common/normalizeIntl.ts";
 
 type Direction = ">" | "<" | "=" | undefined;
 

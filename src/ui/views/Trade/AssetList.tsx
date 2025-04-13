@@ -1,14 +1,14 @@
-import { DataTable, SafeHtml } from "../../components";
-import { getCols, helpers } from "../../util";
-import type { View } from "../../../common/types";
+import { DataTable, SafeHtml } from "../../components/index.tsx";
+import { getCols, helpers } from "../../util/index.ts";
+import type { View } from "../../../common/types.ts";
 import { Dropdown } from "react-bootstrap";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
-} from "../../components/contract";
-import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
-import type { HandleToggle } from ".";
-import { range } from "../../../common/utils";
+} from "../../components/contract.tsx";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
+import type { HandleToggle } from "./index.tsx";
+import { range } from "../../../common/utils.ts";
 
 type HandleBulk = (
 	type: "check" | "clear",

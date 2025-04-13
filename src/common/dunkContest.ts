@@ -1,4 +1,4 @@
-import type { View } from "./types";
+import type { View } from "./types.ts";
 
 export const dunkInfos: Record<
 	"toss" | "distance" | "move",

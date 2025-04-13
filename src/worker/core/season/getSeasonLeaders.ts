@@ -1,15 +1,15 @@
-import { bySport, PHASE, PLAYER, RATINGS } from "../../../common";
-import type { SeasonLeaders, PlayerStatType } from "../../../common/types";
-import { idb } from "../../db";
-import { g, local } from "../../util";
+import { bySport, PHASE, PLAYER, RATINGS } from "../../../common/index.ts";
+import type { SeasonLeaders, PlayerStatType } from "../../../common/types.ts";
+import { idb } from "../../db/index.ts";
+import { g, local } from "../../util/index.ts";
 import {
 	GamesPlayedCache,
 	playerMeetsCategoryRequirements,
-} from "../../views/leaders";
-import { getPlayerProfileStats } from "../../views/player";
-import { player } from "..";
-import getLeaderRequirements from "../season/getLeaderRequirements";
-import { NUM_SEASON_LEADERS_CACHE } from "../../db/Cache";
+} from "../../views/leaders.ts";
+import { getPlayerProfileStats } from "../../views/player.ts";
+import { player } from "../index.ts";
+import getLeaderRequirements from "../season/getLeaderRequirements.ts";
+import { NUM_SEASON_LEADERS_CACHE } from "../../db/Cache.ts";
 
 export const splitRegularSeasonPlayoffsCombined = (p: any) => {
 	for (const row of p.stats) {

@@ -1,6 +1,6 @@
-import { idb } from "../../db";
-import { g } from "../../util";
-import league from "../league";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
+import league from "../league/index.ts";
 
 const genOrderFantasy = async (
 	tids: number[],

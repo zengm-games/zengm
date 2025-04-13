@@ -1,7 +1,7 @@
-import { RATINGS } from "../../../common/constants.basketball";
-import type { RatingKey } from "../../../common/types.basketball";
-import player from "../player";
-import potEstimator from "../player/potEstimator";
+import { RATINGS } from "../../../common/constants.basketball.ts";
+import type { RatingKey } from "../../../common/types.basketball.ts";
+import player from "../player/index.ts";
+import potEstimator from "../player/potEstimator.ts";
 
 /*
 Run this script in the worker console in a random players league (30 teams) to get the data:

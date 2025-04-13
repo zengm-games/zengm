@@ -1,11 +1,11 @@
 import { useState } from "react";
-import { PHASE, WEBSITE_ROOT } from "../../../common";
-import type { View } from "../../../common/types";
-import { ActionButton } from "../../components";
-import useTitleBar from "../../hooks/useTitleBar";
-import { helpers, logEvent, toWorker } from "../../util";
-import AutoSave from "./AutoSave";
-import WorkerConsole from "./WorkerConsole";
+import { PHASE, WEBSITE_ROOT } from "../../../common/index.ts";
+import type { View } from "../../../common/types.ts";
+import { ActionButton } from "../../components/index.tsx";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import { helpers, logEvent, toWorker } from "../../util/index.ts";
+import AutoSave from "./AutoSave.tsx";
+import WorkerConsole from "./WorkerConsole.tsx";
 
 const DangerZone = ({
 	autoSave,

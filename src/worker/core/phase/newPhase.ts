@@ -1,16 +1,16 @@
-import { PHASE, WEBSITE_ROOT } from "../../../common";
-import finalize from "./finalize";
-import newPhasePreseason from "./newPhasePreseason";
-import newPhaseRegularSeason from "./newPhaseRegularSeason";
-import newPhaseAfterTradeDeadline from "./newPhaseAfterTradeDeadline";
-import newPhasePlayoffs from "./newPhasePlayoffs";
-import newPhaseBeforeDraft from "./newPhaseBeforeDraft";
-import newPhaseDraft from "./newPhaseDraft";
-import newPhaseAfterDraft from "./newPhaseAfterDraft";
-import newPhaseResignPlayers from "./newPhaseResignPlayers";
-import newPhaseFreeAgency from "./newPhaseFreeAgency";
-import newPhaseFantasyDraft from "./newPhaseFantasyDraft";
-import newPhaseExpansionDraft from "./newPhaseExpansionDraft";
+import { PHASE, WEBSITE_ROOT } from "../../../common/index.ts";
+import finalize from "./finalize.ts";
+import newPhasePreseason from "./newPhasePreseason.ts";
+import newPhaseRegularSeason from "./newPhaseRegularSeason.ts";
+import newPhaseAfterTradeDeadline from "./newPhaseAfterTradeDeadline.ts";
+import newPhasePlayoffs from "./newPhasePlayoffs.ts";
+import newPhaseBeforeDraft from "./newPhaseBeforeDraft.ts";
+import newPhaseDraft from "./newPhaseDraft.ts";
+import newPhaseAfterDraft from "./newPhaseAfterDraft.ts";
+import newPhaseResignPlayers from "./newPhaseResignPlayers.ts";
+import newPhaseFreeAgency from "./newPhaseFreeAgency.ts";
+import newPhaseFantasyDraft from "./newPhaseFantasyDraft.ts";
+import newPhaseExpansionDraft from "./newPhaseExpansionDraft.ts";
 import {
 	g,
 	lock,
@@ -18,8 +18,8 @@ import {
 	updatePlayMenu,
 	updateStatus,
 	local,
-} from "../../util";
-import type { Conditions, Phase } from "../../../common/types";
+} from "../../util/index.ts";
+import type { Conditions, Phase } from "../../../common/types.ts";
 
 /**
  * Set a new phase of the game.

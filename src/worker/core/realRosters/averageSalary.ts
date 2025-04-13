@@ -1,5 +1,5 @@
-import { helpers } from "../../util";
-import type { Basketball } from "./loadData.basketball";
+import { helpers } from "../../util/index.ts";
+import type { Basketball } from "./loadData.basketball.ts";
 
 export const averageSalary = (
 	row: Basketball["salaries"][number],

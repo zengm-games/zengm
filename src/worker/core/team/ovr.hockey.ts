@@ -1,5 +1,5 @@
-import type { Position } from "../../../common/types.hockey";
-import ovrByPosFactory from "./ovrByPosFactory";
+import type { Position } from "../../../common/types.hockey.ts";
+import ovrByPosFactory from "./ovrByPosFactory.ts";
 
 // See analysis/team-ovr-hockey
 

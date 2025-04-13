@@ -1,5 +1,5 @@
 import { assert, test } from "vitest";
-import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession";
+import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession.ts";
 
 const short = jumpBallWinnerStartsThisPeriodWithPossession;
 

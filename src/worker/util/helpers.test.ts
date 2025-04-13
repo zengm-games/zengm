@@ -1,7 +1,7 @@
 import { assert, beforeAll, describe, test } from "vitest";
-import { PLAYER } from "../../common";
-import g from "./g";
-import helpers from "./helpers";
+import { PLAYER } from "../../common/index.ts";
+import g from "./g.ts";
+import helpers from "./helpers.ts";
 
 beforeAll(() => {
 	g.setWithoutSavingToDB("userTid", 4);

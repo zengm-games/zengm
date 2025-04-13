@@ -1,6 +1,6 @@
-import { getAll, idb } from "..";
-import { maybeDeepCopy, mergeByPk } from "./helpers";
-import type { EventBBGM, GetCopyType } from "../../../common/types";
+import { getAll, idb } from "../index.ts";
+import { maybeDeepCopy, mergeByPk } from "./helpers.ts";
+import type { EventBBGM, GetCopyType } from "../../../common/types.ts";
 
 type Filter = (event: EventBBGM) => boolean;
 

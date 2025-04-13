@@ -1,9 +1,9 @@
-import useTitleBar from "../hooks/useTitleBar";
-import type { View, LocalStateUI } from "../../common/types";
-import { helpers, getCols, useLocal, toWorker } from "../util";
-import { DataTable, PlayerNameLabels } from "../components";
-import { PHASE_TEXT } from "../../common";
-import { settings } from "./Settings/settings";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import type { View, LocalStateUI } from "../../common/types.ts";
+import { helpers, getCols, useLocal, toWorker } from "../util/index.ts";
+import { DataTable, PlayerNameLabels } from "../components/index.tsx";
+import { PHASE_TEXT } from "../../common/index.ts";
+import { settings } from "./Settings/settings.tsx";
 import { Dropdown } from "react-bootstrap";
 
 const godModeOptions: Partial<

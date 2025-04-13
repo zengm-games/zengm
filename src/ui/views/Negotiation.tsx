@@ -1,21 +1,21 @@
 import clsx from "clsx";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import useTitleBar from "../hooks/useTitleBar";
+import useTitleBar from "../hooks/useTitleBar.tsx";
 import {
 	helpers,
 	logEvent,
 	realtimeUpdate,
 	toWorker,
 	useLocalPartial,
-} from "../util";
-import type { View } from "../../common/types";
+} from "../util/index.ts";
+import type { View } from "../../common/types.ts";
 import {
 	HelpPopover,
 	Mood,
 	PlayerPicture,
 	RatingsStatsPopover,
-} from "../components";
-import { isSport } from "../../common";
+} from "../components/index.tsx";
+import { isSport } from "../../common/index.ts";
 
 // Show the negotiations list if there are more ongoing negotiations
 const redirectNegotiationOrRoster = async (cancelled: boolean) => {

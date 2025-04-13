@@ -1,9 +1,9 @@
-import { player, team } from "..";
-import cancel from "./cancel";
-import { idb } from "../../db";
-import { g, toUI, recomputeLocalUITeamOvrs } from "../../util";
-import type { PlayerContract } from "../../../common/types";
-import { PHASE } from "../../../common";
+import { player, team } from "../index.ts";
+import cancel from "./cancel.ts";
+import { idb } from "../../db/index.ts";
+import { g, toUI, recomputeLocalUITeamOvrs } from "../../util/index.ts";
+import type { PlayerContract } from "../../../common/types.ts";
+import { PHASE } from "../../../common/index.ts";
 
 /**
  * Accept the player's offer.

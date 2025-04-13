@@ -1,14 +1,14 @@
-import "../common/polyfills";
-import api from "./api";
-import * as common from "../common";
-import * as core from "./core";
-import * as db from "./db";
-import * as util from "./util";
+import "../common/polyfills.ts";
+import api from "./api/index.ts";
+import * as common from "../common/index.ts";
+import * as core from "./core/index.ts";
+import * as db from "./db/index.ts";
+import * as util from "./util/index.ts";
 
 self.bbgm = { api, ...common, ...core, ...db, ...util };
 
 if (process.env.NODE_ENV === "development") {
-	import("./core/debug").then(({ default: debug }) => {
+	import("./core/debug/index.ts").then(({ default: debug }) => {
 		self.bbgm.debug = debug;
 	});
 }

@@ -1,6 +1,6 @@
-import type { HeadToHead } from "../../../common/types";
-import { idb } from "../../db";
-import { g } from "../../util";
+import type { HeadToHead } from "../../../common/types.ts";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
 
 const blankInfo = (tid: number, tid2: number, season: number) => ({
 	tid,

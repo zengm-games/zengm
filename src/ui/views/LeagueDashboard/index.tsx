@@ -1,12 +1,12 @@
-import useTitleBar from "../../hooks/useTitleBar";
-import { helpers } from "../../util";
-import { PlayoffMatchup } from "../../components";
-import Leaders from "./Leaders";
-import Standings from "./Standings";
-import StartingLineup from "./StartingLineup";
-import TeamStats from "./TeamStats";
-import type { View } from "../../../common/types";
-import Headlines from "./Headlines";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import { helpers } from "../../util/index.ts";
+import { PlayoffMatchup } from "../../components/index.tsx";
+import Leaders from "./Leaders.tsx";
+import Standings from "./Standings.tsx";
+import StartingLineup from "./StartingLineup.tsx";
+import TeamStats from "./TeamStats.tsx";
+import type { View } from "../../../common/types.ts";
+import Headlines from "./Headlines.tsx";
 
 const LeagueDashboard = ({
 	att,

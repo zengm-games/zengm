@@ -1,3 +1,3 @@
-import { genView } from "./Colleges";
+import { genView } from "./Colleges.tsx";
 
 export default genView("draftPosition");

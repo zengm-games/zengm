@@ -1,9 +1,9 @@
-import doAwardsBaseball from "./doAwards.baseball";
-import doAwardsBasketball from "./doAwards.basketball";
-import doAwardsFootball from "./doAwards.football";
-import doAwardsHockey from "./doAwards.hockey";
-import type { Conditions } from "../../../common/types";
-import { bySport } from "../../../common";
+import doAwardsBaseball from "./doAwards.baseball.ts";
+import doAwardsBasketball from "./doAwards.basketball.ts";
+import doAwardsFootball from "./doAwards.football.ts";
+import doAwardsHockey from "./doAwards.hockey.ts";
+import type { Conditions } from "../../../common/types.ts";
+import { bySport } from "../../../common/index.ts";
 
 const doAwards = (conditions: Conditions) => {
 	return bySport({

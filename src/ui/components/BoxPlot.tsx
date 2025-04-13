@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { helpers } from "../util";
+import { helpers } from "../util/index.ts";
 
 const quartile = (data: number[], quart: 1 | 2 | 3) => {
 	return data[Math.round((data.length * quart) / 4)];

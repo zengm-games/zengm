@@ -1,5 +1,5 @@
 import { assert, test } from "vitest";
-import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
+import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries.ts";
 
 test("handles normal case", async () => {
 	const numGamesPlayoffSeries = getValidNumGamesPlayoffSeries(

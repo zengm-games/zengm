@@ -1,8 +1,8 @@
-import { idb } from "../../db";
-import { g, helpers, local, random } from "../../util";
-import type { Position } from "../../../common/types.baseball";
-import type { Player, PlayerFiltered } from "../../../common/types";
-import { groupByUnique, orderBy } from "../../../common/utils";
+import { idb } from "../../db/index.ts";
+import { g, helpers, local, random } from "../../util/index.ts";
+import type { Position } from "../../../common/types.baseball.ts";
+import type { Player, PlayerFiltered } from "../../../common/types.ts";
+import { groupByUnique, orderBy } from "../../../common/utils.ts";
 
 const score = (p: PlayerFiltered, pos?: Position) => {
 	if (pos === undefined) {

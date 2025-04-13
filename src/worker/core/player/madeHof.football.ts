@@ -1,6 +1,6 @@
-import { g, helpers } from "../../util";
-import type { Player, PlayerWithoutKey } from "../../../common/types";
-import type { PlayerRatings } from "../../../common/types.football";
+import { g, helpers } from "../../util/index.ts";
+import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
+import type { PlayerRatings } from "../../../common/types.football.ts";
 
 const getMostCommonPos = (ratings: PlayerRatings[]) => {
 	const counts = new Map<string, number>();

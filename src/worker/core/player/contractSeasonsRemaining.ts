@@ -1,4 +1,4 @@
-import { g } from "../../util";
+import { g } from "../../util/index.ts";
 
 /**
  * How many seasons are left on this contract? The answer can be a fraction if the season is partially over

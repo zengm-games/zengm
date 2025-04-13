@@ -1,5 +1,5 @@
-import { idb } from "..";
-import type { GetCopyType, Player } from "../../../common/types";
+import { idb } from "../index.ts";
+import type { GetCopyType, Player } from "../../../common/types.ts";
 
 const getCopy = async (
 	{ pid }: { pid: number },

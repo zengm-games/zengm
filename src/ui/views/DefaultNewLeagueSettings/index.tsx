@@ -1,24 +1,24 @@
 import { useEffect, useMemo, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import Select from "react-select";
-import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
-import { groupBy } from "../../../common/utils";
-import type { View } from "../../../common/types";
-import type { Settings } from "../../../worker/views/settings";
-import { MoreLinks } from "../../components";
-import useTitleBar from "../../hooks/useTitleBar";
+import { SPORT_HAS_REAL_PLAYERS } from "../../../common/index.ts";
+import { groupBy } from "../../../common/utils.ts";
+import type { View } from "../../../common/types.ts";
+import type { Settings } from "../../../worker/views/settings.ts";
+import { MoreLinks } from "../../components/index.tsx";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
 	helpers,
 	localActions,
 	logEvent,
 	realtimeUpdate,
 	toWorker,
-} from "../../util";
-import { settings } from "../Settings/settings";
-import SettingsForm from "../Settings/SettingsForm";
-import type { Key } from "../Settings/types";
-import ExportButton from "./ExportButton";
-import ImportButton from "./ImportButton";
+} from "../../util/index.ts";
+import { settings } from "../Settings/settings.tsx";
+import SettingsForm from "../Settings/SettingsForm.tsx";
+import type { Key } from "../Settings/types.ts";
+import ExportButton from "./ExportButton.tsx";
+import ImportButton from "./ImportButton.tsx";
 
 const DefaultNewLeagueSettings = ({
 	defaultSettings,

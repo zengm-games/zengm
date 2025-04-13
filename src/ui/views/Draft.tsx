@@ -1,20 +1,26 @@
 import clsx from "clsx";
 import { useState } from "react";
-import useTitleBar from "../hooks/useTitleBar";
-import { confirm, getCols, helpers, toWorker, useLocal } from "../util";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import {
+	confirm,
+	getCols,
+	helpers,
+	toWorker,
+	useLocal,
+} from "../util/index.ts";
 import {
 	DataTable,
 	DraftAbbrev,
 	MoreLinks,
 	RosterComposition,
-} from "../components";
-import type { View } from "../../common/types";
+} from "../components/index.tsx";
+import type { View } from "../../common/types.ts";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
-} from "../components/contract";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import type { DataTableRow } from "../components/DataTable";
+} from "../components/contract.tsx";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
 
 const DraftButtons = ({
 	spectator,

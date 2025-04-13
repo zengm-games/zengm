@@ -1,15 +1,15 @@
-import { PLAYER, RATINGS, bySport } from "../../common";
-import { idb } from "../db";
-import type { UpdateEvents, ViewInput } from "../../common/types";
+import { PLAYER, RATINGS, bySport } from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import {
 	finalizePlayersRelativesList,
 	formatPlayerRelativesList,
-} from "./customizePlayer";
-import { shuffle } from "../../common/random";
-import { g, getTeamInfoBySeason } from "../util";
-import { maxBy } from "../../common/utils";
-import { getPlayerProfileStats } from "./player";
-import type { SeasonType } from "../api/processInputs";
+} from "./customizePlayer.ts";
+import { shuffle } from "../../common/random.ts";
+import { g, getTeamInfoBySeason } from "../util/index.ts";
+import { maxBy } from "../../common/utils.ts";
+import { getPlayerProfileStats } from "./player.ts";
+import type { SeasonType } from "../api/processInputs.ts";
 
 const hasPlayerInfoChanged = (
 	inputPlayers: ViewInput<"comparePlayers">["players"],

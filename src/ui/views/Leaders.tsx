@@ -1,9 +1,13 @@
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
-import type { View } from "../../common/types";
-import { bySport, isSport } from "../../common";
-import type { DataTableRow } from "../components/DataTable";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers } from "../util/index.ts";
+import {
+	DataTable,
+	MoreLinks,
+	PlayerNameLabels,
+} from "../components/index.tsx";
+import type { View } from "../../common/types.ts";
+import { bySport, isSport } from "../../common/index.ts";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
 
 export const LeadersTopText = ({
 	includeHighlight,

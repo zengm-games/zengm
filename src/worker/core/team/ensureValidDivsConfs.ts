@@ -1,6 +1,6 @@
-import { PHASE } from "../../../common";
-import { idb } from "../../db";
-import { g } from "../../util";
+import { PHASE } from "../../../common/index.ts";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
 
 const ensureValidDivsConfs = async () => {
 	const divs = g.get("divs");

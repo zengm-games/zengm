@@ -1,11 +1,11 @@
-import { idb } from "../db";
-import { g, helpers } from "../util";
-import type { TradeTeams, UpdateEvents } from "../../common/types";
-import isUntradable from "../core/trade/isUntradable";
-import { augmentOffers } from "../api";
-import { fixPlayers } from "./tradeProposals";
-import { PLAYER } from "../../common";
-import { orderBy } from "../../common/utils";
+import { idb } from "../db/index.ts";
+import { g, helpers } from "../util/index.ts";
+import type { TradeTeams, UpdateEvents } from "../../common/types.ts";
+import isUntradable from "../core/trade/isUntradable.ts";
+import { augmentOffers } from "../api/index.ts";
+import { fixPlayers } from "./tradeProposals.ts";
+import { PLAYER } from "../../common/index.ts";
+import { orderBy } from "../../common/utils.ts";
 
 const savedTradeHashToTradeTeams = (hash: string): TradeTeams => {
 	const values = JSON.parse(hash);

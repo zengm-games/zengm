@@ -1,9 +1,9 @@
-import { defaultGameAttributes, g, helpers } from "../../util";
-import setGameAttributes from "./setGameAttributes";
-import type { GameAttributesLeague } from "../../../common/types";
-import { PLAYER } from "../../../common";
-import { idb } from "../../db";
-import player from "../player";
+import { defaultGameAttributes, g, helpers } from "../../util/index.ts";
+import setGameAttributes from "./setGameAttributes.ts";
+import type { GameAttributesLeague } from "../../../common/types.ts";
+import { PLAYER } from "../../../common/index.ts";
+import { idb } from "../../db/index.ts";
+import player from "../player/index.ts";
 
 const setRepeatSeason = async (
 	type: "players" | "playersAndRosters" | "disabled",

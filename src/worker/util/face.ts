@@ -1,13 +1,13 @@
 import { generate as generateFace, type FaceConfig } from "facesjs";
-import { idb } from "../db";
+import { idb } from "../db/index.ts";
 import type {
 	MinimalPlayerRatings,
 	PlayerWithoutKey,
 	Race,
-} from "../../common/types";
-import { bySport, DEFAULT_JERSEY, isSport } from "../../common";
-import g from "./g";
-import defaultGameAttributes from "../../common/defaultGameAttributes";
+} from "../../common/types.ts";
+import { bySport, DEFAULT_JERSEY, isSport } from "../../common/index.ts";
+import g from "./g.ts";
+import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 
 const generate = (
 	options:

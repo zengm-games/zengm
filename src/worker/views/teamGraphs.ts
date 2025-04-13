@@ -4,18 +4,18 @@ import {
 	POSITIONS,
 	RATINGS,
 	TEAM_STATS_TABLES,
-} from "../../common";
-import { idb } from "../db";
-import { g, helpers, random } from "../util";
+} from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import { g, helpers, random } from "../util/index.ts";
 import type {
 	TeamFiltered,
 	TeamSeasonAttr,
 	UpdateEvents,
 	ViewInput,
-} from "../../common/types";
-import type { TeamStatAttr } from "../../common/types.baseball";
-import { season } from "../core";
-import { addPowerRankingsStuffToTeams } from "./powerRankings";
+} from "../../common/types.ts";
+import type { TeamStatAttr } from "../../common/types.baseball.ts";
+import { season } from "../core/index.ts";
+import { addPowerRankingsStuffToTeams } from "./powerRankings.ts";
 
 export const statTypes = [
 	"standings",

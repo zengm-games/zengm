@@ -1,12 +1,12 @@
 import { useState, type ChangeEvent } from "react";
-import { JerseyNumber } from "../../components";
-import { helpers, confirm, toWorker, logEvent } from "../../util";
-import type { View } from "../../../common/types";
-import { PLAYER } from "../../../common";
+import { JerseyNumber } from "../../components/index.tsx";
+import { helpers, confirm, toWorker, logEvent } from "../../util/index.ts";
+import type { View } from "../../../common/types.ts";
+import { PLAYER } from "../../../common/index.ts";
 import clsx from "clsx";
 import useLocalStorageState from "use-local-storage-state";
-import { orderBy } from "../../../common/utils";
-import HideableSection from "../../components/HideableSection";
+import { orderBy } from "../../../common/utils.ts";
+import HideableSection from "../../components/HideableSection.tsx";
 
 const PAGE_SIZE = 12;
 

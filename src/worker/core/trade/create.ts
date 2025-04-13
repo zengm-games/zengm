@@ -1,6 +1,6 @@
-import { idb } from "../../db";
-import type { TradeTeams } from "../../../common/types";
-import get from "./get";
+import { idb } from "../../db/index.ts";
+import type { TradeTeams } from "../../../common/types.ts";
+import get from "./get.ts";
 
 /**
  * Start a new trade with a team.

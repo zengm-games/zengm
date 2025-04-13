@@ -1,15 +1,15 @@
-import { PHASE } from "../../../common";
-import getTeamInfos from "../../../common/getTeamInfos";
-import type { Conditions } from "../../../common/types";
-import { idb } from "../../db";
-import { g, updatePlayMenu, toUI, logEvent, random } from "../../util";
-import expansionDraft from "../expansionDraft";
-import league from "../league";
-import phase from "../phase";
-import { getVoteResult } from "./relocateVote";
-import geographicCoordinates from "../../../common/geographicCoordinates";
-import { DEFAULT_COORDS, calcDistance } from "./cluster";
-import { minBy } from "../../../common/utils";
+import { PHASE } from "../../../common/index.ts";
+import getTeamInfos from "../../../common/getTeamInfos.ts";
+import type { Conditions } from "../../../common/types.ts";
+import { idb } from "../../db/index.ts";
+import { g, updatePlayMenu, toUI, logEvent, random } from "../../util/index.ts";
+import expansionDraft from "../expansionDraft/index.ts";
+import league from "../league/index.ts";
+import phase from "../phase/index.ts";
+import { getVoteResult } from "./relocateVote.ts";
+import geographicCoordinates from "../../../common/geographicCoordinates.ts";
+import { DEFAULT_COORDS, calcDistance } from "./cluster.ts";
+import { minBy } from "../../../common/utils.ts";
 
 const getBestDid = (
 	teams: {

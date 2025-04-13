@@ -1,8 +1,8 @@
-import { bySport } from "../../common";
-import GameSimBaseball from "./GameSim.baseball";
-import GameSimBasketball from "./GameSim.basketball";
-import GameSimFootball from "./GameSim.football";
-import GameSimHockey from "./GameSim.hockey";
+import { bySport } from "../../common/index.ts";
+import GameSimBaseball from "./GameSim.baseball/index.ts";
+import GameSimBasketball from "./GameSim.basketball/index.ts";
+import GameSimFootball from "./GameSim.football/index.ts";
+import GameSimHockey from "./GameSim.hockey/index.ts";
 
 const GameSim = bySport<
 	| typeof GameSimBaseball

@@ -1,8 +1,8 @@
-import { bySport } from "../../../common";
-import statsBaseball from "./stats.baseball";
-import statsBasketball from "./stats.basketball";
-import statsFootball from "./stats.football";
-import statsHockey from "./stats.hockey";
+import { bySport } from "../../../common/index.ts";
+import statsBaseball from "./stats.baseball.ts";
+import statsBasketball from "./stats.basketball.ts";
+import statsFootball from "./stats.football.ts";
+import statsHockey from "./stats.hockey.ts";
 
 const stats = bySport<unknown>({
 	baseball: statsBaseball,

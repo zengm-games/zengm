@@ -1,5 +1,5 @@
-import { idb } from "../../db";
-import { g } from "../../util";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
 
 /**
  * Update team strategies (contending or rebuilding) for every team in the league.

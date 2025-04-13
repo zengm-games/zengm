@@ -1,7 +1,7 @@
-import { PHASE, NO_LOTTERY_DRAFT_TYPES } from "../../common";
-import { draft } from "../core";
-import { idb } from "../db";
-import { g } from "../util";
+import { PHASE, NO_LOTTERY_DRAFT_TYPES } from "../../common/index.ts";
+import { draft } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	DraftLotteryResultArray,
@@ -11,9 +11,9 @@ import type {
 	GameAttributesLeague,
 	TeamFiltered,
 	DraftPickWithoutKey,
-} from "../../common/types";
-import { getNumToPick } from "../core/draft/genOrder";
-import { groupByUnique, orderBy } from "../../common/utils";
+} from "../../common/types.ts";
+import { getNumToPick } from "../core/draft/genOrder.ts";
+import { groupByUnique, orderBy } from "../../common/utils.ts";
 
 const filterDraftPicks = (
 	draftPicks: DraftPickWithoutKey[],

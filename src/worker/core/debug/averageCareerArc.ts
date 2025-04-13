@@ -1,6 +1,6 @@
-import { player } from "..";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
-import { g } from "../../util";
+import { player } from "../index.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
+import { g } from "../../util/index.ts";
 
 const averageCareerArc = async (ratingToSave: string) => {
 	console.log(

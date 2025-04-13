@@ -2,14 +2,14 @@ import {
 	NUM_ACTIVE_BATTERS,
 	NUM_ACTIVE_PITCHERS,
 	NUM_STARTING_PITCHERS,
-} from "../../../common/constants.baseball";
-import type { Position } from "../../../common/types.baseball";
-import { orderBy } from "../../../common/utils";
-import { random } from "../../util";
-import { lineupSort } from "../team/genDepth.baseball";
-import { fatigueFactor } from "./fatigueFactor";
-import { CLOSER_INDEX, getStartingPitcher } from "./getStartingPitcher";
-import type { PlayerGameSim, TeamGameSim } from "./types";
+} from "../../../common/constants.baseball.ts";
+import type { Position } from "../../../common/types.baseball.ts";
+import { orderBy } from "../../../common/utils.ts";
+import { random } from "../../util/index.ts";
+import { lineupSort } from "../team/genDepth.baseball.ts";
+import { fatigueFactor } from "./fatigueFactor.ts";
+import { CLOSER_INDEX, getStartingPitcher } from "./getStartingPitcher.ts";
+import type { PlayerGameSim, TeamGameSim } from "./types.ts";
 
 type GamePositions<DH extends boolean> =
 	| Exclude<Position, "SP" | "RP" | "DH">

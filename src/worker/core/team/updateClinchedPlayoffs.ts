@@ -1,12 +1,16 @@
-import { idb } from "../../db";
-import type { TeamSeason, Conditions, TeamStats } from "../../../common/types";
-import { g, helpers, logEvent } from "../../util";
+import { idb } from "../../db/index.ts";
+import type {
+	TeamSeason,
+	Conditions,
+	TeamStats,
+} from "../../../common/types.ts";
+import { g, helpers, logEvent } from "../../util/index.ts";
 import {
 	genPlayoffSeriesFromTeams,
 	getTidPlayIns,
-} from "../season/genPlayoffSeries";
-import evaluatePointsFormula from "./evaluatePointsFormula";
-import { season } from "..";
+} from "../season/genPlayoffSeries.ts";
+import evaluatePointsFormula from "./evaluatePointsFormula.ts";
+import { season } from "../index.ts";
 
 type ClinchedPlayoffs = TeamSeason["clinchedPlayoffs"];
 

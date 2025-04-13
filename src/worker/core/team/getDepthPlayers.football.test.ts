@@ -1,6 +1,6 @@
 import { assert, test } from "vitest";
-import getDepthPlayers from "./getDepthPlayers";
-import { helpers } from "../../../common";
+import getDepthPlayers from "./getDepthPlayers.ts";
+import { helpers } from "../../../common/index.ts";
 
 test("works", () => {
 	const depth = {

@@ -1,5 +1,5 @@
-import type { TeamStatAttr, TeamStats } from "../../../common/types";
-import { helpers } from "../../util";
+import type { TeamStatAttr, TeamStats } from "../../../common/types.ts";
+import { helpers } from "../../util/index.ts";
 
 const processStats = (
 	ts: TeamStats,

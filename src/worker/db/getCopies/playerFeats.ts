@@ -1,6 +1,6 @@
-import { getAll, idb } from "..";
-import { mergeByPk } from "./helpers";
-import type { GetCopyType, PlayerFeat } from "../../../common/types";
+import { getAll, idb } from "../index.ts";
+import { mergeByPk } from "./helpers.ts";
+import type { GetCopyType, PlayerFeat } from "../../../common/types.ts";
 
 const getCopies = async (
 	options: any = {},

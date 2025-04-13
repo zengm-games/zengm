@@ -1,9 +1,9 @@
-import ovrBaseball from "./ovr.baseball";
-import ovrBasketball from "./ovr.basketball";
-import ovrFootball from "./ovr.football";
-import ovrHockey from "./ovr.hockey";
-import type { MinimalPlayerRatings } from "../../../common/types";
-import { bySport } from "../../../common";
+import ovrBaseball from "./ovr.baseball.ts";
+import ovrBasketball from "./ovr.basketball.ts";
+import ovrFootball from "./ovr.football.ts";
+import ovrHockey from "./ovr.hockey.ts";
+import type { MinimalPlayerRatings } from "../../../common/types.ts";
+import { bySport } from "../../../common/index.ts";
 
 const ovr = (ratings: MinimalPlayerRatings, pos?: string) => {
 	return bySport<(...args: any[]) => number>({

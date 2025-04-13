@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
-import { BoxPlot, MoreLinks } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols } from "../util";
-import type { View } from "../../common/types";
-import { isSport } from "../../common";
+import { BoxPlot, MoreLinks } from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { isSport } from "../../common/index.ts";
 
 const width100 = {
 	width: "100%",

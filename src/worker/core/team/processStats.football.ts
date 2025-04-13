@@ -1,6 +1,6 @@
-import { qbRat } from "../../../common/processPlayerStats.football";
-import type { TeamStatAttr, TeamStats } from "../../../common/types";
-import { helpers } from "../../util";
+import { qbRat } from "../../../common/processPlayerStats.football.ts";
+import type { TeamStatAttr, TeamStats } from "../../../common/types.ts";
+import { helpers } from "../../util/index.ts";
 
 const processStats = (
 	ts: TeamStats,

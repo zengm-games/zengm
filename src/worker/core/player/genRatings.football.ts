@@ -1,9 +1,9 @@
-import genFuzz from "./genFuzz";
-import limitRating from "./limitRating";
-import { helpers, random } from "../../util";
+import genFuzz from "./genFuzz.ts";
+import limitRating from "./limitRating.ts";
+import { helpers, random } from "../../util/index.ts";
 //import posFootball from "./pos.football";
-import { POSITION_COUNTS } from "../../../common/constants.football";
-import type { PlayerRatings } from "../../../common/types.football";
+import { POSITION_COUNTS } from "../../../common/constants.football.ts";
+import type { PlayerRatings } from "../../../common/types.football.ts";
 
 const getPos = () => {
 	const numPlayers = Object.values(POSITION_COUNTS).reduce((sum, val) => {

@@ -1,9 +1,9 @@
-import autoSign from "./autoSign";
-import decreaseDemands from "./decreaseDemands";
-import ensureEnoughPlayers from "./ensureEnoughPlayers";
-import getBest from "./getBest";
-import normalizeContractDemands from "./normalizeContractDemands";
-import play from "./play";
+import autoSign from "./autoSign.ts";
+import decreaseDemands from "./decreaseDemands.ts";
+import ensureEnoughPlayers from "./ensureEnoughPlayers.ts";
+import getBest from "./getBest.ts";
+import normalizeContractDemands from "./normalizeContractDemands.ts";
+import play from "./play.ts";
 
 export default {
 	autoSign,

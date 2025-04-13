@@ -1,14 +1,19 @@
 import { useState } from "react";
 import { arrayMoveImmutable } from "array-move";
-import { bySport, isSport, PLAYER, WEBSITE_ROOT } from "../../../common";
+import {
+	bySport,
+	isSport,
+	PLAYER,
+	WEBSITE_ROOT,
+} from "../../../common/index.ts";
 import {
 	CountryFlag,
 	HelpPopover,
 	SafeHtml,
 	MoreLinks,
 	DataTable,
-} from "../../components";
-import useTitleBar from "../../hooks/useTitleBar";
+} from "../../components/index.tsx";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
 	confirm,
 	getCols,
@@ -16,17 +21,24 @@ import {
 	logEvent,
 	toWorker,
 	useLocalPartial,
-} from "../../util";
-import PlayingTime, { ptStyles } from "./PlayingTime";
-import TopStuff from "./TopStuff";
-import type { GameAttributesLeague, Phase, View } from "../../../common/types";
-import { wrappedContract } from "../../components/contract";
-import type { DataTableRow, SortBy } from "../../components/DataTable";
-import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
-import { dataTableWrappedMood } from "../../components/Mood";
-import { wrappedRatingWithChange } from "../../components/RatingWithChange";
-import type { BulkAction } from "../../components/DataTable/BulkActions";
-import { groupByUnique } from "../../../common/utils";
+} from "../../util/index.ts";
+import PlayingTime, { ptStyles } from "./PlayingTime.tsx";
+import TopStuff from "./TopStuff.tsx";
+import type {
+	GameAttributesLeague,
+	Phase,
+	View,
+} from "../../../common/types.ts";
+import { wrappedContract } from "../../components/contract.tsx";
+import type {
+	DataTableRow,
+	SortBy,
+} from "../../components/DataTable/index.tsx";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
+import { dataTableWrappedMood } from "../../components/Mood.tsx";
+import { wrappedRatingWithChange } from "../../components/RatingWithChange.tsx";
+import type { BulkAction } from "../../components/DataTable/BulkActions.tsx";
+import { groupByUnique } from "../../../common/utils.ts";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],

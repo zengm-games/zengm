@@ -1,7 +1,7 @@
-import { bySport, isSport, PHASE } from "../../common";
-import type { Conditions, PlayoffSeries } from "../../common/types";
-import { season, game, phase, freeAgents } from "../core";
-import { idb } from "../db";
+import { bySport, isSport, PHASE } from "../../common/index.ts";
+import type { Conditions, PlayoffSeries } from "../../common/types.ts";
+import { season, game, phase, freeAgents } from "../core/index.ts";
+import { idb } from "../db/index.ts";
 import {
 	g,
 	updateStatus,
@@ -10,8 +10,8 @@ import {
 	updatePlayMenu,
 	lock,
 	toUI,
-} from "../util";
-import { runDraft } from "./actions";
+} from "../util/index.ts";
+import { runDraft } from "./actions.ts";
 
 const getNumDaysThisRound = (playoffSeries: PlayoffSeries) => {
 	let numDaysThisRound = 0;

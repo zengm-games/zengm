@@ -1,9 +1,18 @@
-import { idb } from "../db";
-import { g } from "../util";
-import type { TeamFiltered, UpdateEvents, ViewInput } from "../../common/types";
-import { team } from "../core";
-import { NOT_REAL_POSITIONS, POSITIONS, RATINGS, isSport } from "../../common";
-import hasTies from "../core/season/hasTies";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
+import type {
+	TeamFiltered,
+	UpdateEvents,
+	ViewInput,
+} from "../../common/types.ts";
+import { team } from "../core/index.ts";
+import {
+	NOT_REAL_POSITIONS,
+	POSITIONS,
+	RATINGS,
+	isSport,
+} from "../../common/index.ts";
+import hasTies from "../core/season/hasTies.ts";
 
 const otherToRanks = (
 	teams: {

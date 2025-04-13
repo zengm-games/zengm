@@ -1,6 +1,6 @@
-import { PHASE, PLAYER } from "../../../common";
-import { league, phase, player, freeAgents } from "..";
-import { idb } from "../../db";
+import { PHASE, PLAYER } from "../../../common/index.ts";
+import { league, phase, player, freeAgents } from "../index.ts";
+import { idb } from "../../db/index.ts";
 import {
 	g,
 	local,
@@ -8,9 +8,9 @@ import {
 	updatePlayMenu,
 	updatePhase,
 	updateStatus,
-} from "../../util";
-import type { Conditions } from "../../../common/types";
-import expansionDraft from "../expansionDraft";
+} from "../../util/index.ts";
+import type { Conditions } from "../../../common/types.ts";
+import expansionDraft from "../expansionDraft/index.ts";
 
 const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 	if (draftOver) {

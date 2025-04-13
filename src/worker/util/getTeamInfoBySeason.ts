@@ -1,5 +1,5 @@
-import { DEFAULT_JERSEY, DEFAULT_TEAM_COLORS } from "../../common";
-import { idb } from "../db";
+import { DEFAULT_JERSEY, DEFAULT_TEAM_COLORS } from "../../common/index.ts";
+import { idb } from "../db/index.ts";
 
 const getTeamInfoBySeason = async (tid: number, season: number) => {
 	if (tid === -1 || tid === -2) {

@@ -1,4 +1,4 @@
-import { draft, league } from "..";
+import { draft, league } from "../index.ts";
 
 const finalize = async () => {
 	await league.setGameAttributes({

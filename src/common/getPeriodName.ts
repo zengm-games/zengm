@@ -1,4 +1,4 @@
-import isSport from "./isSport";
+import isSport from "./isSport.ts";
 
 const getPeriodName = (numPeriods: number, short?: boolean) => {
 	if (isSport("baseball")) {

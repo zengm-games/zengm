@@ -1,7 +1,7 @@
-import { helpers } from "../../util";
-import type { View } from "../../../common/types";
-import { bySport } from "../../../common";
-import { PlayerNameLabels } from "../../components";
+import { helpers } from "../../util/index.ts";
+import type { View } from "../../../common/types.ts";
+import { bySport } from "../../../common/index.ts";
+import { PlayerNameLabels } from "../../components/index.tsx";
 
 const Leader = ({
 	abbrev,

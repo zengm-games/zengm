@@ -10,13 +10,13 @@ import {
 	useState,
 	type ReactNode,
 } from "react";
-import { groupBy, orderBy } from "../../../common/utils";
+import { groupBy, orderBy } from "../../../common/utils.ts";
 import type {
 	LocalStateUI,
 	MenuItemHeader,
 	MenuItemLink,
 	MenuItemText,
-} from "../../../common/types";
+} from "../../../common/types.ts";
 import {
 	helpers,
 	logEvent,
@@ -25,11 +25,14 @@ import {
 	safeLocalStorage,
 	toWorker,
 	useLocalPartial,
-} from "../../util";
-import { getText, makeAnchorProps } from "../SideBar";
-import { SPORT_HAS_LEGENDS, SPORT_HAS_REAL_PLAYERS } from "../../../common";
-import Modal from "../Modal";
-import { normalizeIntl } from "../../../common/normalizeIntl";
+} from "../../util/index.ts";
+import { getText, makeAnchorProps } from "../SideBar.tsx";
+import {
+	SPORT_HAS_LEGENDS,
+	SPORT_HAS_REAL_PLAYERS,
+} from "../../../common/index.ts";
+import Modal from "../Modal.tsx";
+import { normalizeIntl } from "../../../common/normalizeIntl.ts";
 
 const TWO_MONTHS_IN_MILLISECONDS = 2 * 30 * 24 * 60 * 60 * 1000;
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;

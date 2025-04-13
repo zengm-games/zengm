@@ -1,16 +1,16 @@
-import { PLAYER, unwrapGameAttribute } from "../../../common";
-import { groupBy } from "../../../common/utils";
+import { PLAYER, unwrapGameAttribute } from "../../../common/index.ts";
+import { groupBy } from "../../../common/utils.ts";
 import type {
 	GameAttributesLeague,
 	GetLeagueOptions,
 	Player,
-} from "../../../common/types";
-import { defaultGameAttributes, g, helpers, local } from "../../util";
-import player from "../player";
-import formatPlayerFactory from "./formatPlayerFactory";
-import getInjury from "./getInjury";
-import type { Basketball } from "./loadData.basketball";
-import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
+} from "../../../common/types.ts";
+import { defaultGameAttributes, g, helpers, local } from "../../util/index.ts";
+import player from "../player/index.ts";
+import formatPlayerFactory from "./formatPlayerFactory.ts";
+import getInjury from "./getInjury.ts";
+import type { Basketball } from "./loadData.basketball.ts";
+import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev.ts";
 
 const addSeasonInfoToTeams = async <
 	T extends {

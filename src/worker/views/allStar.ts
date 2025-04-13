@@ -1,6 +1,6 @@
-import { allStar } from "../core";
-import type { UpdateEvents } from "../../common/types";
-import { g } from "../util";
+import { allStar } from "../core/index.ts";
+import type { UpdateEvents } from "../../common/types.ts";
+import { g } from "../util/index.ts";
 
 const updateAllStar = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("gameSim")) {

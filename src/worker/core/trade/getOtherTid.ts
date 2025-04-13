@@ -1,4 +1,4 @@
-import get from "./get";
+import get from "./get.ts";
 
 /**
  * Gets the team ID for the team that the user is trading with.

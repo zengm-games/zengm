@@ -1,6 +1,6 @@
-import { DEFAULT_POINTS_FORMULA } from "../../../common";
-import { g } from "../../util";
-import FormulaEvaluator from "../../util/FormulaEvaluator";
+import { DEFAULT_POINTS_FORMULA } from "../../../common/index.ts";
+import { g } from "../../util/index.ts";
+import FormulaEvaluator from "../../util/FormulaEvaluator.ts";
 
 const SYMBOLS = ["W", "L", "T", "OTL"] as const;
 

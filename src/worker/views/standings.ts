@@ -1,8 +1,8 @@
-import { idb } from "../db";
-import { g, helpers, orderTeams } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
-import { getTiebreakers } from "../util/orderTeams";
-import { season } from "../core";
+import { idb } from "../db/index.ts";
+import { g, helpers, orderTeams } from "../util/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { getTiebreakers } from "../util/orderTeams.ts";
+import { season } from "../core/index.ts";
 
 export const getMaxPlayoffSeed = async (
 	playoffSeason: number,

@@ -1,4 +1,4 @@
-import type { SeasonLeaders } from "../../../common/types";
+import type { SeasonLeaders } from "../../../common/types.ts";
 
 export type BasketballStats = {
 	seasonLeaders: Record<number, Omit<SeasonLeaders, "season" | "ratingsFuzz">>;

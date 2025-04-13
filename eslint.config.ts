@@ -29,6 +29,7 @@ export default tseslint.config(
 			"@typescript-eslint/no-explicit-any": "off",
 			// Really just want to disable in TSX files, where this pattern is actually needed https://github.com/typescript-eslint/typescript-eslint/issues/4062
 			"@typescript-eslint/no-unnecessary-type-constraint": "off",
+			"import/extensions": ["error", "ignorePackages"],
 			"import/no-extraneous-dependencies": ["error", { packageDir: "." }],
 			"import/no-namespace": "off",
 			"jsx-a11y/anchor-has-content": "off",

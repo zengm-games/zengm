@@ -1,18 +1,22 @@
 import { useState, type ChangeEvent } from "react";
-import { PLAYER, PHASE, gameAttributesArrayToObject } from "../../common";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker, useLocal } from "../util";
+import {
+	PLAYER,
+	PHASE,
+	gameAttributesArrayToObject,
+} from "../../common/index.ts";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers, toWorker, useLocal } from "../util/index.ts";
 import {
 	ActionButton,
 	DataTable,
 	LeagueFileUpload,
 	MoreLinks,
-} from "../components";
-import type { View } from "../../common/types";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import { orderBy } from "../../common/utils";
-import { useSelectedRows } from "../components/DataTable/useBulkSelectRows";
-import type { DataTableRow } from "../components/DataTable";
+} from "../components/index.tsx";
+import type { View } from "../../common/types.ts";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import { orderBy } from "../../common/utils.ts";
+import { useSelectedRows } from "../components/DataTable/useBulkSelectRows.ts";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
 
 const ImportPlayers = ({
 	challengeNoRatings,

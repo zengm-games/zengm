@@ -1,15 +1,15 @@
-import { bySport, PHASE } from "../../../common";
-import { draft, player, team, trade } from "..";
-import { idb } from "../../db";
-import { g, helpers, local } from "../../util";
+import { bySport, PHASE } from "../../../common/index.ts";
+import { draft, player, team, trade } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers, local } from "../../util/index.ts";
 import type {
 	TradePickValues,
 	PlayerContract,
 	PlayerInjury,
 	DraftPick,
-} from "../../../common/types";
-import { groupBy } from "../../../common/utils";
-import { getNumPicksPerRound } from "../trade/getPickValues";
+} from "../../../common/types.ts";
+import { groupBy } from "../../../common/utils.ts";
+import { getNumPicksPerRound } from "../trade/getPickValues.ts";
 
 type Asset =
 	| {

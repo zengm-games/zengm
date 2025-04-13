@@ -1,7 +1,7 @@
-import useTitleBar from "../../hooks/useTitleBar";
-import type { View } from "../../../common/types";
-import SettingsForm from "./SettingsForm";
-import { localActions, logEvent, toWorker } from "../../util";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import type { View } from "../../../common/types.ts";
+import SettingsForm from "./SettingsForm.tsx";
+import { localActions, logEvent, toWorker } from "../../util/index.ts";
 import { useEffect } from "react";
 
 const Settings = ({ initialSettings }: View<"settings">) => {

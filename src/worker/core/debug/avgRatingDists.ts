@@ -1,6 +1,6 @@
-import { draft, player } from "..";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
-import { range } from "../../../common/utils";
+import { draft, player } from "../index.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
+import { range } from "../../../common/utils.ts";
 
 const avgRatingDists = async (numPlayers: number = 100) => {
 	const NUM_SEASONS = 20;

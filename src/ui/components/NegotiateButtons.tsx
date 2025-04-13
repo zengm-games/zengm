@@ -1,4 +1,4 @@
-import { logEvent, toWorker } from "../util";
+import { logEvent, toWorker } from "../util/index.ts";
 
 // season is just needed during re-signing, because it's used to make sure drafted players in hard cap leagues always
 // are willing to sign.

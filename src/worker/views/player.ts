@@ -4,9 +4,9 @@ import {
 	RATINGS,
 	PLAYER_SUMMARY,
 	DEFAULT_JERSEY,
-} from "../../common";
-import { player } from "../core";
-import { idb } from "../db";
+} from "../../common/index.ts";
+import { player } from "../core/index.ts";
+import { idb } from "../db/index.ts";
 import {
 	face,
 	formatEventText,
@@ -16,7 +16,7 @@ import {
 	helpers,
 	processPlayersHallOfFame,
 	random,
-} from "../util";
+} from "../util/index.ts";
 import type {
 	MenuItemHeader,
 	MenuItemLink,
@@ -24,8 +24,8 @@ import type {
 	Player,
 	UpdateEvents,
 	ViewInput,
-} from "../../common/types";
-import { orderBy } from "../../common/utils";
+} from "../../common/types.ts";
+import { orderBy } from "../../common/utils.ts";
 
 const fixRatingsStatsAbbrevs = async (p: {
 	draft?: {

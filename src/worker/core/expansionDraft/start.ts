@@ -1,8 +1,8 @@
-import { idb } from "../../db";
-import { g, helpers, local, updatePlayMenu } from "../../util";
-import autoProtect from "./autoProtect";
-import { league, draft } from "..";
-import { PHASE } from "../../../common";
+import { idb } from "../../db/index.ts";
+import { g, helpers, local, updatePlayMenu } from "../../util/index.ts";
+import autoProtect from "./autoProtect.ts";
+import { league, draft } from "../index.ts";
+import { PHASE } from "../../../common/index.ts";
 
 const start = async () => {
 	const expansionDraft = helpers.deepCopy(g.get("expansionDraft"));

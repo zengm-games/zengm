@@ -1,6 +1,6 @@
-import { isSport } from "../../../common";
-import type { Div } from "../../../common/types";
-import { random } from "../../util";
+import { isSport } from "../../../common/index.ts";
+import type { Div } from "../../../common/types.ts";
+import { random } from "../../util/index.ts";
 
 type Clusters = {
 	center: [number, number];

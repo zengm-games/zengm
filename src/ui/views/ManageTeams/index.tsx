@@ -1,11 +1,11 @@
 import { Fragment, useReducer, type FormEvent } from "react";
-import useTitleBar from "../../hooks/useTitleBar";
-import { helpers, logEvent, toWorker } from "../../util";
-import AddRemove from "./AddRemove";
-import type { View } from "../../../common/types";
-import { PHASE } from "../../../common";
-import TeamForm from "./TeamForm";
-import { groupBy } from "../../../common/utils";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import { helpers, logEvent, toWorker } from "../../util/index.ts";
+import AddRemove from "./AddRemove.tsx";
+import type { View } from "../../../common/types.ts";
+import { PHASE } from "../../../common/index.ts";
+import TeamForm from "./TeamForm.tsx";
+import { groupBy } from "../../../common/utils.ts";
 
 const nextSeasonWarning =
 	"Because the regular season is already over, changes will not be fully applied until next season.";

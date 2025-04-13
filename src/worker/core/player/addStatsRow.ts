@@ -1,9 +1,9 @@
-import stats from "./stats";
-import { g, helpers } from "../../util";
-import type { Player, PlayerWithoutKey } from "../../../common/types";
-import genJerseyNumber from "./genJerseyNumber";
-import { isSport } from "../../../common";
-import statsRowIsCurrent from "./statsRowIsCurrent";
+import stats from "./stats.ts";
+import { g, helpers } from "../../util/index.ts";
+import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
+import genJerseyNumber from "./genJerseyNumber.ts";
+import { isSport } from "../../../common/index.ts";
+import statsRowIsCurrent from "./statsRowIsCurrent.ts";
 
 /**
  * Add a new row of stats to the playerStats database.

@@ -1,10 +1,10 @@
-import { bySport, PLAYER, POSITION_COUNTS } from "../../../common";
-import { player, freeAgents } from "..";
-import rosterAutoSort from "./rosterAutoSort";
-import { idb } from "../../db";
-import { g, helpers, local } from "../../util";
-import type { MinimalPlayerRatings, Player } from "../../../common/types";
-import { KEY_POSITIONS_NEEDED } from "../freeAgents/getBest";
+import { bySport, PLAYER, POSITION_COUNTS } from "../../../common/index.ts";
+import { player, freeAgents } from "../index.ts";
+import rosterAutoSort from "./rosterAutoSort.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers, local } from "../../util/index.ts";
+import type { MinimalPlayerRatings, Player } from "../../../common/types.ts";
+import { KEY_POSITIONS_NEEDED } from "../freeAgents/getBest.ts";
 
 export const dropPlayers = async (
 	players: Player<MinimalPlayerRatings>[],

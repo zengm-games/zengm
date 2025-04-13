@@ -8,15 +8,15 @@ import {
 	SPORT_HAS_REAL_PLAYERS,
 	TIEBREAKERS,
 	WEBSITE_ROOT,
-} from "../../../common";
-import { toWorker, helpers } from "../../util";
+} from "../../../common/index.ts";
+import { toWorker, helpers } from "../../util/index.ts";
 import type { ReactNode } from "react";
-import type { Category, Decoration, FieldType, Key, Values } from "./types";
-import type { Settings } from "../../../worker/views/settings";
-import { draftTypeDescriptions } from "../../../common/draftLottery";
+import type { Category, Decoration, FieldType, Key, Values } from "./types.ts";
+import type { Settings } from "../../../worker/views/settings.ts";
+import { draftTypeDescriptions } from "../../../common/draftLottery.ts";
 import defaultGameAttributes, {
 	gameAttributesKeysOtherSports,
-} from "../../../common/defaultGameAttributes";
+} from "../../../common/defaultGameAttributes.ts";
 
 export const descriptions = {
 	difficulty:

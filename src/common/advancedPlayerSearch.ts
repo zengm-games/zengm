@@ -1,5 +1,5 @@
-import { isSport, PLAYER_STATS_TABLES, RATINGS } from ".";
-import type { Col } from "../ui/components/DataTable";
+import { isSport, PLAYER_STATS_TABLES, RATINGS } from "./index.ts";
+import type { Col } from "../ui/components/DataTable/index.tsx";
 
 type AdvancedPlayerSearchField = {
 	category: string;

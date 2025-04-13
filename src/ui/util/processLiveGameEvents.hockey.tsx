@@ -1,11 +1,11 @@
-import { getPeriodName } from "../../common";
-import { helpers, local } from ".";
+import { getPeriodName } from "../../common/index.ts";
+import { helpers, local } from "./index.ts";
 import type {
 	PlayByPlayEvent,
 	PlayByPlayEventScore,
-} from "../../worker/core/GameSim.hockey/PlayByPlayLogger";
-import type { PlayerInjury } from "../../common/types";
-import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.hockey";
+} from "../../worker/core/GameSim.hockey/PlayByPlayLogger.ts";
+import type { PlayerInjury } from "../../common/types.ts";
+import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.hockey.ts";
 
 let playersByPidGid: number | undefined;
 let playersByPid:

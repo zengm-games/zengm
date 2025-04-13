@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { assert, describe, test } from "vitest";
-import helpers from "./helpers";
+import helpers from "./helpers.ts";
 
 describe("numberWithCommas", () => {
 	test("work", () => {

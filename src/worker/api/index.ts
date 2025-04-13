@@ -13,14 +13,14 @@ import {
 	DEFAULT_JERSEY,
 	POSITIONS,
 	GRACE_PERIOD,
-} from "../../common";
-import actions from "./actions";
+} from "../../common/index.ts";
+import actions from "./actions.ts";
 import leagueFileUpload, {
 	decompressStreamIfNecessary,
 	emitProgressStream,
 	parseJSON,
-} from "./leagueFileUpload";
-import processInputs from "./processInputs";
+} from "./leagueFileUpload.ts";
+import processInputs from "./processInputs.ts";
 import {
 	allStar,
 	contractNegotiation,
@@ -35,8 +35,8 @@ import {
 	realRosters,
 	freeAgents,
 	season,
-} from "../core";
-import { connectMeta, idb } from "../db";
+} from "../core/index.ts";
+import { connectMeta, idb } from "../db/index.ts";
 import {
 	achievement,
 	beforeView,
@@ -61,8 +61,8 @@ import {
 	loadNames,
 	defaultInjuries,
 	defaultTragicDeaths,
-} from "../util";
-import views from "../views";
+} from "../util/index.ts";
+import views from "../views/index.ts";
 import type {
 	Conditions,
 	Env,
@@ -88,59 +88,59 @@ import type {
 	DunkAttempt,
 	AllStarPlayer,
 	League,
-} from "../../common/types";
+} from "../../common/types.ts";
 import {
 	addSimpleAndTeamAwardsToAwardsByPlayer,
 	type AwardsByPlayer,
 	deleteAwardsByPlayer,
 	saveAwardsByPlayer,
-} from "../core/season/awards";
-import { getScore } from "../core/player/checkJerseyNumberRetirement";
-import type { NewLeagueTeam } from "../../ui/views/NewLeague/types";
-import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula";
-import type { Settings } from "../views/settings";
+} from "../core/season/awards.ts";
+import { getScore } from "../core/player/checkJerseyNumberRetirement.ts";
+import type { NewLeagueTeam } from "../../ui/views/NewLeague/types.ts";
+import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula.ts";
+import type { Settings } from "../views/settings.ts";
 import {
 	getActualAttendance,
 	getAdjustedTicketPrice,
 	getAutoTicketPriceByTid,
 	getBaseAttendance,
-} from "../core/game/attendance";
-import goatFormula from "../util/goatFormula";
-import getRandomTeams from "./getRandomTeams";
-import { withState } from "../core/player/name";
-import { initDefaults } from "../util/loadNames";
-import type { PlayerRatings } from "../../common/types.basketball";
-import createStreamFromLeagueObject from "../core/league/create/createStreamFromLeagueObject";
+} from "../core/game/attendance.ts";
+import goatFormula from "../util/goatFormula.ts";
+import getRandomTeams from "./getRandomTeams.ts";
+import { withState } from "../core/player/name.ts";
+import { initDefaults } from "../util/loadNames.ts";
+import type { PlayerRatings } from "../../common/types.basketball.ts";
+import createStreamFromLeagueObject from "../core/league/create/createStreamFromLeagueObject.ts";
 import type { IDBPIndex, IDBPObjectStore } from "@dumbmatter/idb";
-import type { LeagueDB } from "../db/connectLeague";
-import playMenu from "./playMenu";
-import toolsMenu from "./toolsMenu";
-import addFirstNameShort from "../util/addFirstNameShort";
-import statsBaseball from "../core/team/stats.baseball";
-import { extraRatings } from "../views/playerRatings";
-import { groupByUnique, maxBy, omit, orderBy } from "../../common/utils";
+import type { LeagueDB } from "../db/connectLeague.ts";
+import playMenu from "./playMenu.ts";
+import toolsMenu from "./toolsMenu.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
+import statsBaseball from "../core/team/stats.baseball.ts";
+import { extraRatings } from "../views/playerRatings.ts";
+import { groupByUnique, maxBy, omit, orderBy } from "../../common/utils.ts";
 import {
 	finalizePlayersRelativesList,
 	formatPlayerRelativesList,
-} from "../views/customizePlayer";
-import { TOO_MANY_TEAMS_TOO_SLOW } from "../core/season/getInitialNumGamesConfDivSettings";
-import { advancedPlayerSearch } from "./advancedPlayerSearch";
-import * as exhibitionGame from "./exhibitionGame";
-import { getSummary } from "../views/trade";
-import { statTypes } from "../views/playerGraphs";
+} from "../views/customizePlayer.ts";
+import { TOO_MANY_TEAMS_TOO_SLOW } from "../core/season/getInitialNumGamesConfDivSettings.ts";
+import { advancedPlayerSearch } from "./advancedPlayerSearch.ts";
+import * as exhibitionGame from "./exhibitionGame.ts";
+import { getSummary } from "../views/trade.ts";
+import { statTypes } from "../views/playerGraphs.ts";
 import {
 	getStats as teamGetStats,
 	statTypes as teamStatTypes,
-} from "../views/teamGraphs";
-import { DEFAULT_LEVEL } from "../../common/budgetLevels";
-import isUntradable from "../core/trade/isUntradable";
-import getWinner from "../../common/getWinner";
-import formatScoreWithShootout from "../../common/formatScoreWithShootout";
-import { getStats } from "../../common/advancedPlayerSearch";
-import type { LookingFor } from "../core/trade/makeItWork";
-import type { LookingForState } from "../../ui/views/TradingBlock/useLookingForState";
-import { getPlayer } from "../views/player";
-import type { NoteInfo } from "../../ui/views/Player/Note";
+} from "../views/teamGraphs.ts";
+import { DEFAULT_LEVEL } from "../../common/budgetLevels.ts";
+import isUntradable from "../core/trade/isUntradable.ts";
+import getWinner from "../../common/getWinner.ts";
+import formatScoreWithShootout from "../../common/formatScoreWithShootout.ts";
+import { getStats } from "../../common/advancedPlayerSearch.ts";
+import type { LookingFor } from "../core/trade/makeItWork.ts";
+import type { LookingForState } from "../../ui/views/TradingBlock/useLookingForState.ts";
+import { getPlayer } from "../views/player.ts";
+import type { NoteInfo } from "../../ui/views/Player/Note.tsx";
 
 const acceptContractNegotiation = async ({
 	pid,

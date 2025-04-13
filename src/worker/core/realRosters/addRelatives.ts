@@ -1,6 +1,6 @@
-import { groupBy } from "../../../common/utils";
-import type { Relative } from "../../../common/types";
-import type { Basketball } from "./loadData.basketball";
+import { groupBy } from "../../../common/utils.ts";
+import type { Relative } from "../../../common/types.ts";
+import type { Basketball } from "./loadData.basketball.ts";
 
 let allRelativesBySlug: Record<string, Basketball["relatives"]> | undefined;
 

@@ -1,6 +1,6 @@
-import type { League } from "../../../common/types";
-import { idb } from "../../db";
-import { g, local } from "../../util";
+import type { League } from "../../../common/types.ts";
+import { idb } from "../../db/index.ts";
+import { g, local } from "../../util/index.ts";
 
 const updateMeta = async (
 	updates?: Partial<Exclude<League, "lid">>,

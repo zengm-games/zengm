@@ -1,8 +1,8 @@
-import { bySport } from "../../common";
-import advStatsBaseball from "./advStats.baseball";
-import advStatsBasketball from "./advStats.basketball";
-import advStatsFootball from "./advStats.football";
-import advStatsHockey from "./advStats.hockey";
+import { bySport } from "../../common/index.ts";
+import advStatsBaseball from "./advStats.baseball.ts";
+import advStatsBasketball from "./advStats.basketball.ts";
+import advStatsFootball from "./advStats.football.ts";
+import advStatsHockey from "./advStats.hockey.ts";
 
 const advStats = () => {
 	return bySport({

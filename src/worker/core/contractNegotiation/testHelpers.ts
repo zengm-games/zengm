@@ -1,9 +1,9 @@
-import { PLAYER } from "../../../common";
-import testHelpers from "../../../test/helpers";
-import { player, team } from "..";
-import { idb } from "../../db";
-import { g, helpers } from "../../util";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import { PLAYER } from "../../../common/index.ts";
+import testHelpers from "../../../test/helpers.ts";
+import { player, team } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers } from "../../util/index.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 // Make player ask for a min contract, to ensure he'll never refuse to sign
 const givePlayerMinContract = async (pid: number) => {

@@ -1,9 +1,9 @@
-import { idb } from "../db";
-import { g, helpers, processPlayersHallOfFame } from "../util";
-import type { UpdateEvents, Player } from "../../common/types";
-import { bySport } from "../../common";
-import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement";
-import addFirstNameShort from "../util/addFirstNameShort";
+import { idb } from "../db/index.ts";
+import { g, helpers, processPlayersHallOfFame } from "../util/index.ts";
+import type { UpdateEvents, Player } from "../../common/types.ts";
+import { bySport } from "../../common/index.ts";
+import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
 
 type InfoTemp = {
 	numPlayers: number;

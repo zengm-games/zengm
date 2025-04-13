@@ -1,5 +1,5 @@
-import { idb } from "../../db";
-import type { ScheduleGame } from "../../../common/types";
+import { idb } from "../../db/index.ts";
+import type { ScheduleGame } from "../../../common/types.ts";
 
 /**
  * Get an array of games from the schedule.

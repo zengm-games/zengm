@@ -15,18 +15,23 @@ import {
 	WEBSITE_ROOT,
 	bySport,
 	NOT_REAL_POSITIONS,
-} from "../../../common";
-import { HelpPopover } from "../../components";
-import useTitleBar from "../../hooks/useTitleBar";
-import { helpers, realtimeUpdate, toWorker, logEvent } from "../../util";
-import RatingsForm from "./RatingsForm";
-import RelativesForm from "./RelativesForm";
-import type { View, Phase, PlayerWithoutKey } from "../../../common/types";
-import posRatings from "../../../common/posRatings";
-import { orderBy } from "../../../common/utils";
-import CustomMoodItemsForm from "./CustomMoodItemsForm";
-import { roundContract } from "../../../common/roundContract";
-import { Face } from "./Face";
+} from "../../../common/index.ts";
+import { HelpPopover } from "../../components/index.tsx";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import {
+	helpers,
+	realtimeUpdate,
+	toWorker,
+	logEvent,
+} from "../../util/index.ts";
+import RatingsForm from "./RatingsForm.tsx";
+import RelativesForm from "./RelativesForm.tsx";
+import type { View, Phase, PlayerWithoutKey } from "../../../common/types.ts";
+import posRatings from "../../../common/posRatings.ts";
+import { orderBy } from "../../../common/utils.ts";
+import CustomMoodItemsForm from "./CustomMoodItemsForm.tsx";
+import { roundContract } from "../../../common/roundContract.ts";
+import { Face } from "./Face.tsx";
 
 const copyValidValues = (
 	source: PlayerWithoutKey,

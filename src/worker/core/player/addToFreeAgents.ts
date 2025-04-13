@@ -1,9 +1,9 @@
-import { PLAYER } from "../../../common";
+import { PLAYER } from "../../../common/index.ts";
 import type {
 	MinimalPlayerRatings,
 	Player,
 	PlayerWithoutKey,
-} from "../../../common/types";
+} from "../../../common/types.ts";
 
 /**
  * Adds player to the free agents list.

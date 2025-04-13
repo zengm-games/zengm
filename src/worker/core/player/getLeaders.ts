@@ -1,12 +1,12 @@
-import { PHASE, RATINGS } from "../../../common";
-import type { Player } from "../../../common/types";
-import { idb } from "../../db";
-import { g } from "../../util";
-import { getPlayerProfileStats } from "../../views/player";
-import player from ".";
+import { PHASE, RATINGS } from "../../../common/index.ts";
+import type { Player } from "../../../common/types.ts";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
+import { getPlayerProfileStats } from "../../views/player.ts";
+import player from "./index.ts";
 import getSeasonLeaders, {
 	splitRegularSeasonPlayoffsCombined,
-} from "../season/getSeasonLeaders";
+} from "../season/getSeasonLeaders.ts";
 
 // Return the attrs/ratings/stats this player is the leader in, by season
 const getLeaders = async (pRaw: Player) => {

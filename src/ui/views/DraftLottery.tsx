@@ -12,22 +12,22 @@ import {
 	MoreLinks,
 	PlayPauseNext,
 	ResponsiveTableWrapper,
-} from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { helpers, toWorker, useLocal } from "../util";
+} from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { helpers, toWorker, useLocal } from "../util/index.ts";
 import type {
 	DraftLotteryResultArray,
 	View,
 	DraftType,
 	DraftPickWithoutKey,
-} from "../../common/types";
-import useClickable from "../hooks/useClickable";
+} from "../../common/types.ts";
+import useClickable from "../hooks/useClickable.tsx";
 import {
 	draftTypeDescriptions,
 	getDraftLotteryProbs,
-} from "../../common/draftLottery";
-import useStickyXX from "../components/DataTable/useStickyXX";
-import { range } from "../../common/utils";
+} from "../../common/draftLottery.ts";
+import useStickyXX from "../components/DataTable/useStickyXX.ts";
+import { range } from "../../common/utils.ts";
 
 type Props = View<"draftLottery">;
 type State = {

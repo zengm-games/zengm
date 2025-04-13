@@ -2,10 +2,10 @@ import { useEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import useDropdownOptions, {
 	type ResponsiveOption,
-} from "../hooks/useDropdownOptions";
-import { helpers, realtimeUpdate, sanitize } from "../util";
-import NextPrevButtons from "./NextPrevButtons";
-import type { LocalStateUI } from "../../common/types";
+} from "../hooks/useDropdownOptions.tsx";
+import { helpers, realtimeUpdate, sanitize } from "../util/index.ts";
+import NextPrevButtons from "./NextPrevButtons.tsx";
+import type { LocalStateUI } from "../../common/types.ts";
 
 // This assumes that when val is an array, it is already sorted by minWidth ascending
 export const getResponsiveValue = (

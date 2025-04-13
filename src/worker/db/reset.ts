@@ -1,6 +1,6 @@
-import { league } from "../core";
-import { idb } from ".";
-import { logEvent } from "../util";
+import { league } from "../core/index.ts";
+import { idb } from "./index.ts";
+import { logEvent } from "../util/index.ts";
 
 const reset = async (type: "all" | "unstarred") => {
 	// Delete any current league databases

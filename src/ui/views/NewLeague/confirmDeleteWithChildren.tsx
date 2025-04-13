@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { confirmable, createConfirmation } from "react-confirm";
-import Modal from "../../components/Modal";
+import Modal from "../../components/Modal.tsx";
 
 type Args = {
 	text: string;

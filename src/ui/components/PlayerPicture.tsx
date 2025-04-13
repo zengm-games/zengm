@@ -1,5 +1,5 @@
 import type { FaceConfig } from "facesjs";
-import { MyFace } from "./MyFace";
+import { MyFace } from "./MyFace.tsx";
 
 const imgStyle = {
 	maxHeight: "100%",

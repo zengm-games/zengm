@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { PLAYER } from "../../common";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker, useLocalPartial } from "../util";
-import { ActionButton, DataTable, MoreLinks } from "../components";
-import type { View } from "../../common/types";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import type { DataTableRow } from "../components/DataTable";
-import { useSelectedRows } from "../components/DataTable/useBulkSelectRows";
+import { PLAYER } from "../../common/index.ts";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers, toWorker, useLocalPartial } from "../util/index.ts";
+import { ActionButton, DataTable, MoreLinks } from "../components/index.tsx";
+import type { View } from "../../common/types.ts";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { useSelectedRows } from "../components/DataTable/useBulkSelectRows.ts";
 
 // For seasonsByPid, key is pid and value is season. No support for exporting the same player from multiple seasons
 export const exportPlayers = async (
@@ -20,7 +20,7 @@ export const exportPlayers = async (
 	}
 
 	const { downloadFileStream, makeExportStream } = await import(
-		"../util/exportLeague"
+		"../util/exportLeague.ts"
 	);
 
 	if (abortSignal?.aborted) {

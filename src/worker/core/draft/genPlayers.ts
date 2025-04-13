@@ -1,8 +1,8 @@
-import { isSport, PLAYER } from "../../../common";
-import { finances, player, realRosters } from "..";
-import genPlayersWithoutSaving from "./genPlayersWithoutSaving";
-import { idb } from "../../db";
-import { g, helpers, logEvent } from "../../util";
+import { isSport, PLAYER } from "../../../common/index.ts";
+import { finances, player, realRosters } from "../index.ts";
+import genPlayersWithoutSaving from "./genPlayersWithoutSaving.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers, logEvent } from "../../util/index.ts";
 
 const genPlayers = async (
 	draftYear: number,

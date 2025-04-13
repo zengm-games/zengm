@@ -1,7 +1,10 @@
-import { helpers } from "../../../worker/util";
-import type { PlayerRatings, Position } from "../../../common/types.football";
-import { COMPOSITE_WEIGHTS } from "../../../common/constants.football";
-import compositeRating from "./compositeRating";
+import { helpers } from "../../../worker/util/index.ts";
+import type {
+	PlayerRatings,
+	Position,
+} from "../../../common/types.football.ts";
+import { COMPOSITE_WEIGHTS } from "../../../common/constants.football.ts";
+import compositeRating from "./compositeRating.ts";
 
 const info = {
 	QB: {

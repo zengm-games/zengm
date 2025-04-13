@@ -1,10 +1,10 @@
-import { PLAYER } from "../../../common";
-import { g, helpers, logEvent } from "../../util";
-import madeHof from "./madeHof";
-import type { Conditions, Player } from "../../../common/types";
-import { idb } from "../../db";
-import { player } from "..";
-import addAward from "./addAward";
+import { PLAYER } from "../../../common/index.ts";
+import { g, helpers, logEvent } from "../../util/index.ts";
+import madeHof from "./madeHof.ts";
+import type { Conditions, Player } from "../../../common/types.ts";
+import { idb } from "../../db/index.ts";
+import { player } from "../index.ts";
+import addAward from "./addAward.ts";
 
 /**
  * Have a player retire, including all event and HOF bookkeeping.

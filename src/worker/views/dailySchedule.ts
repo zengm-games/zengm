@@ -1,9 +1,9 @@
-import { season } from "../core";
-import { idb } from "../db";
-import { g } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
-import { getTopPlayers, getUpcoming } from "./schedule";
-import { PHASE } from "../../common";
+import { season } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { getTopPlayers, getUpcoming } from "./schedule.ts";
+import { PHASE } from "../../common/index.ts";
 
 let prevInputsDay: number | undefined;
 const updateDailySchedule = async (

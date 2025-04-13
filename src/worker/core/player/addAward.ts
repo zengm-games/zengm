@@ -1,4 +1,4 @@
-import type { PlayerAward } from "../../../common/types";
+import type { PlayerAward } from "../../../common/types.ts";
 
 const hashAward = (award: PlayerAward) => {
 	return JSON.stringify([award.season, award.type]);

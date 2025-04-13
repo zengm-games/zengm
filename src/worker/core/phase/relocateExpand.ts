@@ -1,11 +1,11 @@
-import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
-import geographicCoordinates from "../../../common/geographicCoordinates";
-import getTeamInfos from "../../../common/getTeamInfos";
-import { kmeansFixedSize, sortByDivs } from "../team/cluster";
-import { idb } from "../../db";
-import { g, random } from "../../util";
-import league from "../league";
-import type { GameAttributesLeague } from "../../../common/types";
+import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs.ts";
+import geographicCoordinates from "../../../common/geographicCoordinates.ts";
+import getTeamInfos from "../../../common/getTeamInfos.ts";
+import { kmeansFixedSize, sortByDivs } from "../team/cluster.ts";
+import { idb } from "../../db/index.ts";
+import { g, random } from "../../util/index.ts";
+import league from "../league/index.ts";
+import type { GameAttributesLeague } from "../../../common/types.ts";
 
 const upcomingScheduledEventBlocksRelocateExpand = async () => {
 	const scheduledEvents = await idb.getCopies.scheduledEvents(

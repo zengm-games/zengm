@@ -1,7 +1,7 @@
-import { idb } from "..";
-import { maybeDeepCopy, mergeByPk } from "./helpers";
-import { g } from "../../util";
-import type { GetCopyType, TeamSeason } from "../../../common/types";
+import { idb } from "../index.ts";
+import { maybeDeepCopy, mergeByPk } from "./helpers.ts";
+import { g } from "../../util/index.ts";
+import type { GetCopyType, TeamSeason } from "../../../common/types.ts";
 
 const getCopies = async (
 	{

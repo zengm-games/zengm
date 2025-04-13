@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import fs from "node:fs/promises";
 import { bySport } from "../lib/bySport.ts";
 import { replace } from "./replace.ts";
+import { getSport } from "../lib/getSport.ts";
 
 const setSport = async () => {
 	await replace({
@@ -92,10 +93,7 @@ export const copyFiles = async (watch: boolean = false) => {
 		recursive: true,
 	});
 
-	let sport = process.env.SPORT;
-	if (typeof sport !== "string") {
-		sport = "basketball";
-	}
+	const sport = getSport();
 
 	await fs.cp(`public/${sport}`, "build", {
 		filter: (filename) => !filename.includes(".gitignore"),

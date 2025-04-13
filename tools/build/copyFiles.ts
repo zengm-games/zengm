@@ -100,11 +100,6 @@ export const copyFiles = async (watch: boolean = false) => {
 		recursive: true,
 	});
 
-	// Remove the empty folders created by the "filter" function.
-	for (const folder of foldersToIgnore) {
-		await fs.rm(`build/${folder}`, { recursive: true, force: true });
-	}
-
 	const realPlayerFilenames = ["real-player-data", "real-player-stats"];
 	for (const filename of realPlayerFilenames) {
 		const sourcePath = `data/${filename}.${sport}.json`;

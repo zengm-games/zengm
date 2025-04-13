@@ -1,4 +1,15 @@
+somehow show count of goals and HR inline for baseball and hockey
+- others too... like for basketball stats it should be this game's stats
+- https://x.com/nevameant2b/status/1877107051492499699
+- https://discord.com/channels/@me/778760871911751700/1179618240507420783
+- https://github.com/zengm-games/zengm/pull/484
+
 store list of prior worker console commands https://discord.com/channels/290013534023057409/331882115119448065/1354957789755215953
+- save when you run, assuming no existing one is saved with the same contents (hash and use as key)
+- save number of times run, first date, last date
+- allow starring, delete, and bulk delete (optionally ignoring starred ones)
+- also allow searching and other DataTable features
+- do this in popup window?
 
 some way to export play-by-play and box score https://discord.com/channels/290013534023057409/1357064671118753904/1357521047934734397
 
@@ -172,11 +183,6 @@ counter proposals too jumpy, get rid of that extra iteration at the end maybe?
 option to disable notification popups https://old.reddit.com/r/BasketballGM/comments/1h3racg/monthly_suggestions_thread/m0duybm/
 - red ones still go through
 - UI-related ones still go through, like warnings or "success" ones
-
-somehow show count of goals and HR inline for baseball and hockey
-- others too... like for basketball stats it should be this game's stats
-- https://x.com/nevameant2b/status/1877107051492499699
-- https://discord.com/channels/@me/778760871911751700/1179618240507420783
 
 Change (or add an option for) the coin flip to be like the old NBA coin flip, which was between the worst teams in each conference, not the worst two teams overall. Alternatively add the ability to edit the teams in the lottery. Probably no one else cares, but I like to be accurate. https://discord.com/channels/290013534023057409/331882115119448065/1322397494335897692
 

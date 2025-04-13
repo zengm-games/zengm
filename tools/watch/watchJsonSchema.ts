@@ -1,7 +1,7 @@
 import { watch } from "chokidar";
 import fs from "node:fs/promises";
 import { getSport } from "../lib/getSport.ts";
-import type { Spinners } from "./spinners.ts";
+import { spinners, type Spinners } from "./spinners.ts";
 
 // https://ar.al/2021/02/22/cache-busting-in-node.js-dynamic-esm-imports/
 const importFresh = async (modulePath: string) => {
@@ -34,7 +34,7 @@ export const watchJsonSchema = async (
 				"../build/generateJsonSchema.ts",
 			);
 
-			if (buildCount !== initialBuildCount) {
+			if (buildCount !== initialBuildCount || spinners.switchingSport) {
 				return;
 			}
 
@@ -42,7 +42,7 @@ export const watchJsonSchema = async (
 			const output = JSON.stringify(jsonSchema, null, 2);
 			await fs.writeFile(outFilename, output);
 
-			if (buildCount !== initialBuildCount) {
+			if (buildCount !== initialBuildCount || spinners.switchingSport) {
 				return;
 			}
 

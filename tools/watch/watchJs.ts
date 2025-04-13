@@ -31,10 +31,14 @@ export const watchJs = async (
 			return watcher;
 		};
 
-		let watcher = await makeWatcher();
+		//let watcher = await makeWatcher();
+		await makeWatcher();
+
+		eventEmitter.on("switchingSport", async () => {
+			//await watcher.close();
+		});
 
 		eventEmitter.on("newSport", async () => {
-			await watcher.close();
 			//watcher = await makeWatcher();
 		});
 	}

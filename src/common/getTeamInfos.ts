@@ -1,4 +1,4 @@
-import teamInfos from "./teamInfos";
+import teamInfos from "./teamInfos.ts";
 
 export const noSmallLogo = ["LAE", "VAN"];
 

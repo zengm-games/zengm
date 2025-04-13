@@ -36,7 +36,7 @@ export const buildJs = async () => {
 		.readdirSync("build/gen")
 		.filter((filename) => filename.endsWith(".js"))
 		.map((filename) => `build/gen/${filename}`);
-	replace({
+	await replace({
 		paths: replacePaths,
 		replaces: [
 			{
@@ -46,7 +46,7 @@ export const buildJs = async () => {
 		],
 	});
 
-	setTimestamps(versionNumber);
+	await setTimestamps(versionNumber);
 
 	const jsonFiles = [
 		"names",
@@ -72,7 +72,7 @@ export const buildJs = async () => {
 			});
 		}
 	}
-	replace({
+	await replace({
 		paths: [`build/gen/worker-${versionNumber}.js`],
 		replaces,
 	});

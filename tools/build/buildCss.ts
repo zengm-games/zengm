@@ -105,7 +105,7 @@ export const buildCss = async (watch: boolean = false) => {
 	}
 
 	if (replaces) {
-		replace({
+		await replace({
 			paths: ["build/index.html"],
 			replaces,
 		});

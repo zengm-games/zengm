@@ -1,4 +1,4 @@
-import { statSync } from "node:fs";
+import fs from "node:fs/promises";
 import { spinners } from "./spinners.ts";
 import { watchCss } from "./watchCss.ts";
 import { watchFiles } from "./watchFiles.ts";
@@ -28,10 +28,10 @@ const updateStart = (filename: string) => {
 	});
 };
 
-const updateEnd = (filename: string) => {
+const updateEnd = async (filename: string) => {
 	let size;
 	if (filename !== "static files") {
-		size = statSync(filename).size;
+		size = (await fs.stat(filename)).size;
 	}
 
 	spinners.setStatus(filename, {

@@ -3,8 +3,8 @@ import fsp from "node:fs/promises";
 import { bySport } from "../lib/bySport.ts";
 import { replace } from "./replace.ts";
 
-const setSport = () => {
-	replace({
+const setSport = async () => {
+	await replace({
 		paths: ["build/index.html"],
 		replaces: [
 			{
@@ -126,5 +126,5 @@ export const copyFiles = async (watch: boolean = false) => {
 </IfModule>`;
 	await fsp.writeFile("build/img/flags/.htaccess", flagHtaccess);
 
-	setSport();
+	await setSport();
 };

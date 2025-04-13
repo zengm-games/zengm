@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import { createReadStream, existsSync } from "node:fs";
 import http from "node:http";
 import path from "node:path";
 import os from "node:os";
@@ -23,7 +23,7 @@ const mimeTypes = {
 };
 const sendFile = (res: http.ServerResponse, filename: string) => {
 	const filePath = path.join("build", filename);
-	if (fs.existsSync(filePath)) {
+	if (existsSync(filePath)) {
 		const ext = path.extname(filename);
 		if (Object.hasOwn(mimeTypes, ext)) {
 			res.writeHead(200, { "Content-Type": (mimeTypes as any)[ext] });
@@ -31,7 +31,7 @@ const sendFile = (res: http.ServerResponse, filename: string) => {
 			console.log(`Unknown mime type for extension ${ext}`);
 		}
 
-		fs.createReadStream(filePath).pipe(res);
+		createReadStream(filePath).pipe(res);
 	} else {
 		console.log(`404 ${filename}`);
 		res.writeHead(404, {

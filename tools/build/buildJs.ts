@@ -1,4 +1,5 @@
-import fs from "node:fs";
+import { existsSync } from "node:fs";
+import fs from "node:fs/promises";
 import { Worker } from "node:worker_threads";
 import { fileHash } from "./fileHash.ts";
 import { generateVersionNumber } from "./generateVersionNumber.ts";
@@ -32,8 +33,7 @@ export const buildJs = async () => {
 	await Promise.all(promises);
 
 	// Hack because otherwise I'm somehow left with no newline before the souce map URL, which confuses Bugsnag
-	const replacePaths = fs
-		.readdirSync("build/gen")
+	const replacePaths = (await fs.readdir("build/gen"))
 		.filter((filename) => filename.endsWith(".js"))
 		.map((filename) => `build/gen/${filename}`);
 	await replace({
@@ -57,14 +57,14 @@ export const buildJs = async () => {
 	const replaces = [];
 	for (const filename of jsonFiles) {
 		const filePath = `build/gen/${filename}.json`;
-		if (fs.existsSync(filePath)) {
-			const string = fs.readFileSync(filePath, "utf8");
+		if (existsSync(filePath)) {
+			const string = await fs.readFile(filePath, "utf8");
 			const compressed = JSON.stringify(JSON.parse(string));
 
 			const hash = fileHash(compressed);
 			const newFilename = filePath.replace(".json", `-${hash}.json`);
-			fs.rmSync(filePath);
-			fs.writeFileSync(newFilename, compressed);
+			await fs.rm(filePath);
+			await fs.writeFile(newFilename, compressed);
 
 			replaces.push({
 				searchValue: `/gen/${filename}.json`,

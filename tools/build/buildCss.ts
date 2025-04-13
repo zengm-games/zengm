@@ -1,5 +1,5 @@
 import { Buffer } from "node:buffer";
-import fs from "node:fs";
+import fs from "node:fs/promises";
 import { promisify } from "node:util";
 import browserslist from "browserslist";
 import { browserslistToTargets, transform } from "lightningcss";
@@ -101,7 +101,7 @@ export const buildCss = async (watch: boolean = false) => {
 			});
 		}
 
-		fs.writeFileSync(outFilename, output);
+		await fs.writeFile(outFilename, output);
 	}
 
 	if (replaces) {

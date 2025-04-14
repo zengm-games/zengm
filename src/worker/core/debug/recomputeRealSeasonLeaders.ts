@@ -1,4 +1,4 @@
-// Run this in a new real players leauge with all stats, and it will calculate everything
+// Run this in a new real players league with all stats, and it will calculate everything
 
 import { idb } from "../../db/index.ts";
 import { g, local } from "../../util/index.ts";

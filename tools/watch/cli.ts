@@ -61,3 +61,5 @@ await watchJsonSchema(
 );
 
 watchJs(updateStart, updateEnd, updateError, spinners.eventEmitter);
+
+spinners.initialized = true;

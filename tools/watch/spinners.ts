@@ -114,6 +114,9 @@ export class Spinners<Key extends string = string> {
 	}
 	private switchSportsTimeoutId: NodeJS.Timeout | undefined;
 
+	// Switching sports too fast (before JS has started to build) breaks rolldown somehow, so don't allow switching sports until some time later
+	initialized = false;
+
 	constructor(
 		renderKey: RenderKey<Key>,
 		extraRenderDelays?: ExtraRenderDelays,
@@ -272,7 +275,7 @@ export class Spinners<Key extends string = string> {
 		string += SPORTS.map((sport, i) =>
 			styleText(
 				i === this.sportIndex
-					? this.switchSportsTimeoutId
+					? this.switchingSport || !this.initialized
 						? SPORT_MENU_BGCOLOR_DEBOUNCE
 						: SPORT_MENU_BGCOLOR_ACTIVE
 					: SPORT_MENU_BGCOLOR_INACTIVE,
@@ -283,7 +286,7 @@ export class Spinners<Key extends string = string> {
 		string += SPORTS.map((sport, i) =>
 			styleText(
 				i === this.sportIndex
-					? this.switchSportsTimeoutId
+					? this.switchingSport || !this.initialized
 						? [SPORT_MENU_BGCOLOR_DEBOUNCE_BG, SPORT_MENU_COLOR_DEBOUNCE]
 						: [SPORT_MENU_BGCOLOR_ACTIVE_BG, SPORT_MENU_COLOR_ACTIVE]
 					: [SPORT_MENU_BGCOLOR_INACTIVE_BG, SPORT_MENU_COLOR_INACTIVE],
@@ -294,7 +297,7 @@ export class Spinners<Key extends string = string> {
 		string += SPORTS.map((sport, i) =>
 			styleText(
 				i === this.sportIndex
-					? this.switchSportsTimeoutId
+					? this.switchingSport || !this.initialized
 						? SPORT_MENU_BGCOLOR_DEBOUNCE
 						: SPORT_MENU_BGCOLOR_ACTIVE
 					: SPORT_MENU_BGCOLOR_INACTIVE,
@@ -386,6 +389,10 @@ export class Spinners<Key extends string = string> {
 		};
 
 		process.stdin.on("keypress", (str, key) => {
+			if (!this.initialized) {
+				return;
+			}
+
 			// @ts-expect-error
 			const direction = directions[key.sequence];
 

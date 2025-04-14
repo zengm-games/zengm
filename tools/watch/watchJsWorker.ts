@@ -21,7 +21,7 @@ const makeWatcher = async () => {
 			parentPort?.postMessage({
 				type: "start",
 			});
-	
+
 			parentPort?.postMessage({
 				type: "error",
 				error: event.error,
@@ -35,8 +35,10 @@ const makeWatcher = async () => {
 let watcher = await makeWatcher();
 
 parentPort?.on("message", async (message) => {
-	if (message.type === "newSport") {
+	if (message.type === "switchingSport") {
 		await watcher.close();
+	} else if (message.type === "newSport") {
+		process.env.SPORT = message.sport;
 		watcher = await makeWatcher();
 	}
 });

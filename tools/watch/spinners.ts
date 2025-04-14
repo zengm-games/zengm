@@ -104,7 +104,7 @@ export class Spinners<Key extends string = string> {
 
 	private sportIndex;
 	eventEmitter = new EventEmitter<{
-		newSport: never[];
+		newSport: Sport[];
 		switchingSport: never[];
 	}>();
 
@@ -402,7 +402,7 @@ export class Spinners<Key extends string = string> {
 				this.switchSportsTimeoutId = setTimeout(() => {
 					this.switchSportsTimeoutId = undefined;
 					process.env.SPORT = SPORTS[this.sportIndex];
-					this.eventEmitter.emit("newSport");
+					this.eventEmitter.emit("newSport", SPORTS[this.sportIndex]);
 					if (!this.rendering) {
 						this.render();
 					}

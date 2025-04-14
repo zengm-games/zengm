@@ -5,11 +5,10 @@ somehow show count of goals and HR inline for baseball and hockey
 - https://github.com/zengm-games/zengm/pull/484
 
 dev sport switcher
-- don't activate left/right arrows until it's initialized
+- don't activate left/right arrows until it's initialized?
 - when switching to a new sport, make sure to send some signal or set some flag to cancel any in-progress updates, otherwise it's a race condition
-  - buildCount stuff probably works for json/files. closing watcher might work for js. test.
-  - need to send a signal to inside any of the async functions, or is waiting until after okay?
 - league schema change triggers worker build - does this mean on sport change, worker builds twice?
+- if you switch sport immediately, JS build gets stuck
 
 store list of prior worker console commands https://discord.com/channels/290013534023057409/331882115119448065/1354957789755215953
 - save when you run, assuming no existing one is saved with the same contents (hash and use as key)

@@ -33,8 +33,8 @@ const statRecordedTypes = [
 	"fgLowPostAndOne",
 	"fgMidRange",
 	"fgMidRangeAndOne",
-	"fgTp",
-	"fgTpAndOne",
+	"tp",
+	"tpAndOne",
 	"fgTipIn",
 	"fgTipInAndOne",
 	"fgAtRim",
@@ -69,7 +69,7 @@ export const getText = (
 	let playerTovStats: any;
 	if (!playersByPid) {
 		throw new Error("playersByPid is undefined");
-	} else if (event.type in statRecordedTypes) {
+	} else if (statRecordedTypes.find((type) => type === event.type)) {
 		const statEvent = event as StatRecordedType; // Can cast as there is a type guard above
 		playerStats = playersByPid[statEvent.pid];
 		if (statEvent.pidAst !== undefined) {
@@ -88,7 +88,7 @@ export const getText = (
 		playerStats = playersByPid[event.pid];
 		playerTovStats = playersByPid[event.pidTov];
 	}
-	console.log(playersByPid);
+
 	if (event.type === "period") {
 		texts = [
 			`Start of ${helpers.ordinal(event.period)} ${getPeriodName(

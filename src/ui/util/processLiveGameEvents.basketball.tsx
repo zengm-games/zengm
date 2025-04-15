@@ -212,13 +212,6 @@ export const getText = (
 		event.type === "fgMidRange" ||
 		event.type === "tp"
 	) {
-		console.log(
-			event.pid,
-			playersByPid,
-			playersByPid[event.pid],
-			playerStats,
-			"buggy",
-		);
 		texts = [`It's good! (${playerStats.pts} PTS)`];
 	} else if (
 		event.type === "fgLowPostAndOne" ||

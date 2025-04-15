@@ -55,12 +55,6 @@ const statRecordedTypes = [
 	"tov",
 ] as const;
 
-const getPlayerStatsFromBoxScore = (
-	pid: number,
-	team: { pts: number; players: any[] },
-) => {
-	return team.players.find((p) => p.pid === pid);
-};
 export const getText = (
 	event: PlayByPlayEvent,
 	boxScore: {
@@ -70,18 +64,16 @@ export const getText = (
 ) => {
 	let texts: ReactNode[] | undefined;
 	let weights;
-	let playerStats;
-	let assistPlayerStats;
-	let playerTovStats;
-	if (
-		statRecordedTypes.includes(event.type as (typeof statRecordedTypes)[number])
-	) {
+	let playerStats: any;
+	let assistPlayerStats: any;
+	let playerTovStats: any;
+	if (!playersByPid) {
+		throw new Error("playersByPid is undefined");
+	} else if (event.type in statRecordedTypes) {
 		const statEvent = event as StatRecordedType; // Can cast as there is a type guard above
-		const team = statEvent.t === 1 ? boxScore.teams[0] : boxScore.teams[1];
-		// Team ID is inversed; need to switch. Probably boxScore changes it based on who's on offense.
-		playerStats = getPlayerStatsFromBoxScore(statEvent.pid, team);
+		playerStats = playersByPid[statEvent.pid];
 		if (statEvent.pidAst !== undefined) {
-			assistPlayerStats = getPlayerStatsFromBoxScore(statEvent.pidAst, team);
+			assistPlayerStats = playersByPid[statEvent.pidAst];
 		}
 		// Now that we have the player stats, we can use them to generate the text
 	} else if (
@@ -91,16 +83,12 @@ export const getText = (
 		event.type === "pfNonShooting" ||
 		event.type === "pfTP"
 	) {
-		const team = event.t === 1 ? boxScore.teams[0] : boxScore.teams[1];
-		playerStats = getPlayerStatsFromBoxScore(event.pid, team);
+		playerStats = playersByPid[event.pid];
 	} else if (event.type === "stl") {
-		const [stlTeam, tovTeam] =
-			event.t === 1
-				? [boxScore.teams[0], boxScore.teams[1]]
-				: [boxScore.teams[1], boxScore.teams[0]];
-		playerStats = getPlayerStatsFromBoxScore(event.pid, stlTeam);
-		playerTovStats = getPlayerStatsFromBoxScore(event.pidTov, tovTeam);
+		playerStats = playersByPid[event.pid];
+		playerTovStats = playersByPid[event.pidTov];
 	}
+	console.log(playersByPid);
 	if (event.type === "period") {
 		texts = [
 			`Start of ${helpers.ordinal(event.period)} ${getPeriodName(
@@ -224,6 +212,13 @@ export const getText = (
 		event.type === "fgMidRange" ||
 		event.type === "tp"
 	) {
+		console.log(
+			event.pid,
+			playersByPid,
+			playersByPid[event.pid],
+			playerStats,
+			"buggy",
+		);
 		texts = [`It's good! (${playerStats.pts} PTS)`];
 	} else if (
 		event.type === "fgLowPostAndOne" ||

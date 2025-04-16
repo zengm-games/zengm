@@ -43,7 +43,7 @@ export const statTypes = bySport({
 		"bio",
 		"ratings",
 		"passing",
-		"rushing",
+		"rushingReceiving",
 		"defense",
 		"kicking",
 		"returns",

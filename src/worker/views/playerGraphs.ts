@@ -1,8 +1,8 @@
 import {
-	bySport,
 	isSport,
 	PHASE,
 	PLAYER,
+	PLAYER_STATS_TABLES,
 	RATINGS,
 } from "../../common/index.ts";
 import { idb } from "../db/index.ts";
@@ -19,37 +19,13 @@ import {
 	getStatsTableByType,
 } from "../../common/advancedPlayerSearch.ts";
 
-export const statTypes = bySport({
-	baseball: [
-		"bio",
-		"ratings",
-		"batting",
-		"pitching",
-		"fielding",
-		"advanced",
-		"gameHighs",
-	],
-	basketball: [
-		"bio",
-		"ratings",
-		"perGame",
-		"per36",
-		"totals",
-		"shotLocations",
-		"advanced",
-		"gameHighs",
-	],
-	football: [
-		"bio",
-		"ratings",
-		"passing",
-		"rushingReceiving",
-		"defense",
-		"kicking",
-		"returns",
-	],
-	hockey: ["bio", "ratings", "skater", "goalie", "advanced", "gameHighs"],
-});
+export const statTypes = [
+	"bio",
+	"ratings",
+	...(isSport("basketball")
+		? ["perGame", "per36", "totals", "shotLocations", "advanced", "gameHighs"]
+		: Object.keys(PLAYER_STATS_TABLES)),
+];
 
 const getPlayerStats = async (
 	statTypeInput: string | undefined,

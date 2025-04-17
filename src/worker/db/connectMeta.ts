@@ -1,13 +1,13 @@
 import type { DBSchema, IDBPDatabase } from "@dumbmatter/idb";
-import { isSport } from "../../common";
+import { isSport } from "../../common/index.ts";
 import type {
 	League,
 	Options,
 	RealPlayerPhotos,
 	RealTeamInfo,
-} from "../../common/types";
-import type { Settings } from "../views/settings";
-import connectIndexedDB from "./connectIndexedDB";
+} from "../../common/types.ts";
+import type { Settings } from "../views/settings.ts";
+import connectIndexedDB from "./connectIndexedDB.ts";
 
 export interface MetaDB extends DBSchema {
 	achievements: {

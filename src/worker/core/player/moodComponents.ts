@@ -1,10 +1,10 @@
-import { finances } from "..";
-import { isSport, PHASE, PLAYER } from "../../../common";
-import { facilitiesEffectMood } from "../../../common/budgetLevels";
-import type { MoodComponents, Player } from "../../../common/types";
-import { idb } from "../../db";
-import { g, helpers, local } from "../../util";
-import { getNegotiationPids } from "../../views/negotiationList";
+import { finances } from "../index.ts";
+import { isSport, PHASE, PLAYER } from "../../../common/index.ts";
+import { facilitiesEffectMood } from "../../../common/budgetLevels.ts";
+import type { MoodComponents, Player } from "../../../common/types.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers, local } from "../../util/index.ts";
+import { getNegotiationPids } from "../../views/negotiationList.ts";
 
 const getMinFractionDiff = async (pid: number, tid: number) => {
 	if (!isSport("basketball")) {
@@ -320,10 +320,7 @@ const moodComponents = async (
 		// Relatives
 		if (p.relatives.length > 0) {
 			const relativePids = new Set(p.relatives.map((relative) => relative.pid));
-			const players = await idb.cache.players.indexGetAll("playersByTid", [
-				PLAYER.FREE_AGENT,
-				tid,
-			]);
+			const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 			const teamPids = new Set(players.map((p) => p.pid));
 			const relativesOnTeam = teamPids.intersection(relativePids);
 			components.relatives = 2 * relativesOnTeam.size;

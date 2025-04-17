@@ -1,6 +1,11 @@
-import { AWARD_NAMES } from "../../../common";
-import { getPlayers, getTopPlayers } from "./awards";
-import { mvpScore, poyScore, rpoyFilter, royFilter } from "./doAwards.baseball";
+import { AWARD_NAMES } from "../../../common/index.ts";
+import { getPlayers, getTopPlayers } from "./awards.ts";
+import {
+	mvpScore,
+	poyScore,
+	rpoyFilter,
+	royFilter,
+} from "./doAwards.baseball.ts";
 
 const getAwardCandidates = async (season: number) => {
 	const players = await getPlayers(season);

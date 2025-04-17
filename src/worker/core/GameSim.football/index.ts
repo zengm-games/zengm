@@ -1,13 +1,13 @@
-import { g, helpers, random } from "../../util";
-import { POSITIONS } from "../../../common/constants.football";
+import { g, helpers, random } from "../../util/index.ts";
+import { POSITIONS } from "../../../common/constants.football.ts";
 import PlayByPlayLogger, {
 	type PlayByPlayEventScore,
-} from "./PlayByPlayLogger";
-import getCompositeFactor from "./getCompositeFactor";
-import getPlayers from "./getPlayers";
-import formations from "./formations";
-import penalties from "./penalties";
-import type { Position } from "../../../common/types.football";
+} from "./PlayByPlayLogger.ts";
+import getCompositeFactor from "./getCompositeFactor.ts";
+import getPlayers from "./getPlayers.ts";
+import formations from "./formations.ts";
+import penalties from "./penalties.ts";
+import type { Position } from "../../../common/types.football.ts";
 import type {
 	CompositeRating,
 	PenaltyPlayType,
@@ -16,16 +16,16 @@ import type {
 	TeamGameSim,
 	TeamNum,
 	Formation,
-} from "./types";
-import getInjuryRate from "../GameSim.basketball/getInjuryRate";
+} from "./types.ts";
+import getInjuryRate from "../GameSim.basketball/getInjuryRate.ts";
 import Play, {
 	SCRIMMAGE_EXTRA_POINT,
 	SCRIMMAGE_KICKOFF,
 	SCRIMMAGE_TWO_POINT_CONVERSION,
-} from "./Play";
-import LngTracker from "./LngTracker";
-import GameSimBase from "../GameSimBase";
-import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common";
+} from "./Play.ts";
+import LngTracker from "./LngTracker.ts";
+import GameSimBase from "../GameSimBase.ts";
+import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 

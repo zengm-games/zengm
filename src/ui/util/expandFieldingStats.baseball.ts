@@ -1,4 +1,4 @@
-import { POS_NUMBERS_INVERSE } from "../../common/constants.baseball";
+import { POS_NUMBERS_INVERSE } from "../../common/constants.baseball.ts";
 
 export const expandFieldingStats = ({
 	addDummyPosIndex,

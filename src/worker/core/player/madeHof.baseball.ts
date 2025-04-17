@@ -1,9 +1,9 @@
-import { g, helpers } from "../../util";
+import { g, helpers } from "../../util/index.ts";
 import type {
 	Player,
 	PlayerWithoutKey,
 	MinimalPlayerRatings,
-} from "../../../common/types";
+} from "../../../common/types.ts";
 
 /**
  * Is a player worthy of the Hall of Fame?

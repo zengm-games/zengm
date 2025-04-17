@@ -1,9 +1,9 @@
-import { g } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
-import { averageTeamStats, getStats, ignoreStats } from "./teamStats";
-import { PHASE, TEAM_STATS_TABLES } from "../../common";
-import { season } from "../core";
-import { range } from "../../common/utils";
+import { g } from "../util/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { averageTeamStats, getStats, ignoreStats } from "./teamStats.ts";
+import { PHASE, TEAM_STATS_TABLES } from "../../common/index.ts";
+import { season } from "../core/index.ts";
+import { range } from "../../common/utils.ts";
 
 const updateLeagueStats = async (
 	inputs: ViewInput<"leagueStats">,

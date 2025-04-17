@@ -8,34 +8,34 @@ import {
 	useRef,
 	type CSSProperties,
 } from "react";
-import Controls from "./Controls";
-import CustomizeColumns from "./CustomizeColumns";
-import Footer, { type FooterRow } from "./Footer";
-import Header from "./Header";
-import Info from "./Info";
-import Row from "./Row";
-import Pagination from "./Pagination";
-import PerPage from "./PerPage";
-import getSearchVal from "./getSearchVal";
-import getSortVal from "./getSortVal";
-import ResponsiveTableWrapper from "../ResponsiveTableWrapper";
-import { downloadFile, helpers, safeLocalStorage } from "../../util";
-import type { SortOrder, SortType } from "../../../common/types";
+import Controls from "./Controls.tsx";
+import CustomizeColumns from "./CustomizeColumns.tsx";
+import Footer, { type FooterRow } from "./Footer.tsx";
+import Header from "./Header.tsx";
+import Info from "./Info.tsx";
+import Row from "./Row.tsx";
+import Pagination from "./Pagination.tsx";
+import PerPage from "./PerPage.tsx";
+import getSearchVal from "./getSearchVal.tsx";
+import getSortVal from "./getSortVal.tsx";
+import ResponsiveTableWrapper from "../ResponsiveTableWrapper.tsx";
+import { downloadFile, helpers, safeLocalStorage } from "../../util/index.ts";
+import type { SortOrder, SortType } from "../../../common/types.ts";
 import { arrayMoveImmutable } from "array-move";
-import updateSortBys from "./updateSortBys";
-import useStickyXX from "./useStickyXX";
-import { useDataTableState } from "./useDataTableState";
-import { processRows } from "./processRows";
-import { useBulkSelectRows, type SelectedRows } from "./useBulkSelectRows";
-import { BulkActions, type BulkAction } from "./BulkActions";
+import updateSortBys from "./updateSortBys.ts";
+import useStickyXX from "./useStickyXX.ts";
+import { useDataTableState } from "./useDataTableState.ts";
+import { processRows } from "./processRows.ts";
+import { useBulkSelectRows, type SelectedRows } from "./useBulkSelectRows.ts";
+import { BulkActions, type BulkAction } from "./BulkActions.tsx";
 import {
 	DraggableRow,
 	getId,
 	MyDragOverlay,
 	SortableContextWrappers,
 	type HighlightHandle,
-} from "./sortableRows";
-import { DataTableContext } from "./contexts";
+} from "./sortableRows.tsx";
+import { DataTableContext } from "./contexts.ts";
 
 export type SortBy = [number, SortOrder];
 

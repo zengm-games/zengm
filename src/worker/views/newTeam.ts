@@ -1,11 +1,11 @@
-import { idb } from "../db";
-import { g, helpers } from "../util";
-import { PHASE } from "../../common";
-import { season, team } from "../core";
-import { orderBy } from "../../common/utils";
-import { getHistoryTeam } from "./teamHistory";
-import { getPlayoffsByConfBySeason } from "./frivolitiesTeamSeasons";
-import type { UpdateEvents } from "../../common/types";
+import { idb } from "../db/index.ts";
+import { g, helpers } from "../util/index.ts";
+import { PHASE } from "../../common/index.ts";
+import { season, team } from "../core/index.ts";
+import { orderBy } from "../../common/utils.ts";
+import { getHistoryTeam } from "./teamHistory.ts";
+import { getPlayoffsByConfBySeason } from "./frivolitiesTeamSeasons.ts";
+import type { UpdateEvents } from "../../common/types.ts";
 
 export const getTeamOvr = async (tid: number) => {
 	const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);

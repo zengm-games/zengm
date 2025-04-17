@@ -1,10 +1,10 @@
-import { idb } from "../../db";
-import { g, helpers, logEvent } from "../../util";
-import type { Conditions, GameResults } from "../../../common/types";
-import season from "../season";
-import { findSeries } from "./writeGameStats";
-import getWinner from "../../../common/getWinner";
-import formatScoreWithShootout from "../../../common/formatScoreWithShootout";
+import { idb } from "../../db/index.ts";
+import { g, helpers, logEvent } from "../../util/index.ts";
+import type { Conditions, GameResults } from "../../../common/types.ts";
+import season from "../season/index.ts";
+import { findSeries } from "./writeGameStats.ts";
+import getWinner from "../../../common/getWinner.ts";
+import formatScoreWithShootout from "../../../common/formatScoreWithShootout.ts";
 
 const updatePlayoffSeries = async (
 	results: GameResults,

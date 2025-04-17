@@ -1,5 +1,5 @@
-import evaluatePointsFormula from "./evaluatePointsFormula";
-import ptsMax from "./ptsMax";
+import evaluatePointsFormula from "./evaluatePointsFormula.ts";
+import ptsMax from "./ptsMax.ts";
 
 const ptsPct = (ts: {
 	won: number;

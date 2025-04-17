@@ -1,11 +1,11 @@
-import { league } from "../worker/core";
-import { connectMeta, idb } from "../worker/db";
-import { defaultGameAttributes, g, local } from "../worker/util";
+import { league } from "../worker/core/index.ts";
+import { connectMeta, idb } from "../worker/db/index.ts";
+import { defaultGameAttributes, g, local } from "../worker/util/index.ts";
 
 import "../worker/index.ts";
 import { deleteDB } from "@dumbmatter/idb";
-import createStreamFromLeagueObject from "../worker/core/league/create/createStreamFromLeagueObject";
-import { helpers, LEAGUE_DATABASE_VERSION } from "../common";
+import createStreamFromLeagueObject from "../worker/core/league/create/createStreamFromLeagueObject.ts";
+import { helpers, LEAGUE_DATABASE_VERSION } from "../common/index.ts";
 
 describe("Smoke Tests", () => {
 	let intervalID: number;

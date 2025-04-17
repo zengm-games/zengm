@@ -1,4 +1,4 @@
-import { getNumPlayoffTeamsRaw } from "./getNumPlayoffTeams";
+import { getNumPlayoffTeamsRaw } from "./getNumPlayoffTeams.ts";
 
 const validatePlayoffSettings = ({
 	numRounds,

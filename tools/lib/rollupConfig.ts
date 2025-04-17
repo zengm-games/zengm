@@ -47,7 +47,6 @@ export default (
 			// Babel config
 			babelrc: false,
 			configFile: false,
-			compact: false,
 			presets: [
 				[
 					"@babel/preset-react",
@@ -57,7 +56,7 @@ export default (
 				],
 				"@babel/preset-typescript",
 			],
-			plugins: [babelPluginSportFunctions],
+			plugins: [[babelPluginSportFunctions, { sport }]],
 		}),
 		json({
 			compact: true,

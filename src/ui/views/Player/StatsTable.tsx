@@ -1,17 +1,17 @@
 import { useState } from "react";
-import type { View } from "../../../common/types";
-import { getCols, helpers } from "../../util";
-import { isSport } from "../../../common";
-import { highlightLeaderText, MaybeBold, SeasonLink } from "./common";
-import { expandFieldingStats } from "../../util/expandFieldingStats.baseball";
-import TeamAbbrevLink from "../../components/TeamAbbrevLink";
-import { formatStatGameHigh } from "../PlayerStats";
-import SeasonIcons from "./SeasonIcons";
-import HideableSection from "../../components/HideableSection";
-import { DataTable } from "../../components";
+import type { View } from "../../../common/types.ts";
+import { getCols, helpers } from "../../util/index.ts";
+import { isSport } from "../../../common/index.ts";
+import { highlightLeaderText, MaybeBold, SeasonLink } from "./common.tsx";
+import { expandFieldingStats } from "../../util/expandFieldingStats.baseball.ts";
+import TeamAbbrevLink from "../../components/TeamAbbrevLink.tsx";
+import { formatStatGameHigh } from "../PlayerStats.tsx";
+import SeasonIcons from "./SeasonIcons.tsx";
+import HideableSection from "../../components/HideableSection.tsx";
+import { DataTable } from "../../components/index.tsx";
 import clsx from "clsx";
-import { useRangeFooter } from "./useRangeFooter";
-import type { FooterRow } from "../../components/DataTable/Footer";
+import { useRangeFooter } from "./useRangeFooter.ts";
+import type { FooterRow } from "../../components/DataTable/Footer.tsx";
 
 export const StatsTable = ({
 	name,

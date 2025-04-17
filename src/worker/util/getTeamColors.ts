@@ -1,5 +1,5 @@
-import { DEFAULT_TEAM_COLORS } from "../../common";
-import { idb } from "../db";
+import { DEFAULT_TEAM_COLORS } from "../../common/index.ts";
+import { idb } from "../db/index.ts";
 
 const getTeamColors = async (tid: number) => {
 	let teamColors: [string, string, string] = DEFAULT_TEAM_COLORS;

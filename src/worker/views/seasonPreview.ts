@@ -1,11 +1,11 @@
-import { idb } from "../db";
-import { g, helpers } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
-import { team } from "../core";
-import { groupBy, orderBy } from "../../common/utils";
-import { PHASE } from "../../common";
-import { loadAbbrevs } from "./gameLog";
-import getPlayoffsByConf from "../core/season/getPlayoffsByConf";
+import { idb } from "../db/index.ts";
+import { g, helpers } from "../util/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { team } from "../core/index.ts";
+import { groupBy, orderBy } from "../../common/utils.ts";
+import { PHASE } from "../../common/index.ts";
+import { loadAbbrevs } from "./gameLog.ts";
+import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 
 const updateSeasonPreview = async (
 	{ season }: ViewInput<"seasonPreview">,

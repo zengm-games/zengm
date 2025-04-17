@@ -1,21 +1,21 @@
 import loadStatsBasketball, {
 	type BasketballStats,
-} from "./loadStats.basketball";
-import { PHASE, PLAYER } from "../../../common";
+} from "./loadStats.basketball.ts";
+import { PHASE, PLAYER } from "../../../common/index.ts";
 import type {
 	GetLeagueOptions,
 	PlayerContract,
 	PlayerInjury,
-} from "../../../common/types";
-import { LATEST_SEASON } from "./getLeague";
-import getOnlyRatings from "./getOnlyRatings";
-import type { Basketball, Ratings } from "./loadData.basketball";
-import nerfDraftProspect from "./nerfDraftProspect";
-import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
-import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition";
-import { getEWA } from "../../util/advStats.basketball";
-import { averageSalary } from "./averageSalary";
-import { helpers } from "../../util";
+} from "../../../common/types.ts";
+import { LATEST_SEASON } from "./getLeague.ts";
+import getOnlyRatings from "./getOnlyRatings.ts";
+import type { Basketball, Ratings } from "./loadData.basketball.ts";
+import nerfDraftProspect from "./nerfDraftProspect.ts";
+import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev.ts";
+import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition.ts";
+import { getEWA } from "../../util/advStats.basketball.ts";
+import { averageSalary } from "./averageSalary.ts";
+import { helpers } from "../../util/index.ts";
 
 const MINUTES_PER_GAME = 48;
 

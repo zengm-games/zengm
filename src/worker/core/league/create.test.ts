@@ -1,6 +1,6 @@
 import { assert, beforeAll, describe, test } from "vitest";
-import testHelpers from "../../../test/helpers";
-import { g } from "../../util";
+import testHelpers from "../../../test/helpers.ts";
+import { g } from "../../util/index.ts";
 
 describe.skip("worker/core/league/create", () => {
 	let leagueData: any;

@@ -1,12 +1,12 @@
 import { afterAll, assert, beforeAll, describe, test } from "vitest";
-import { PLAYER } from "../../../common";
-import testHelpers from "../../../test/helpers";
-import { player } from "..";
-import { makeBrother, makeSon } from "./addRelatives";
-import { idb } from "../../db";
-import type { Relative } from "../../../common/types";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
-import { range } from "../../../common/utils";
+import { PLAYER } from "../../../common/index.ts";
+import testHelpers from "../../../test/helpers.ts";
+import { player } from "../index.ts";
+import { makeBrother, makeSon } from "./addRelatives.ts";
+import { idb } from "../../db/index.ts";
+import type { Relative } from "../../../common/types.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
+import { range } from "../../../common/utils.ts";
 
 const season = 2017;
 

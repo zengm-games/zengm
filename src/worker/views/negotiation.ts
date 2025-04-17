@@ -1,13 +1,13 @@
-import { PHASE } from "../../common";
-import { contractNegotiation, player, team } from "../core";
-import { idb } from "../db";
-import { g, helpers } from "../util";
+import { PHASE } from "../../common/index.ts";
+import { contractNegotiation, player, team } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type {
 	ViewInput,
 	PlayerContract,
 	UpdateEvents,
-} from "../../common/types";
-import { range } from "../../common/utils";
+} from "../../common/types.ts";
+import { range } from "../../common/utils.ts";
 
 const generateContractOptions = async (
 	pid: number,

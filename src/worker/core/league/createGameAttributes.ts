@@ -1,21 +1,21 @@
-import { season } from "..";
+import { season } from "../index.ts";
 import {
 	DIFFICULTY,
 	gameAttributeHasHistory,
 	PHASE,
 	unwrapGameAttribute,
 	WEBSITE_ROOT,
-} from "../../../common";
+} from "../../../common/index.ts";
 import type {
 	Conditions,
 	GameAttributesLeague,
 	GameAttributesLeagueWithHistory,
-} from "../../../common/types";
-import { defaultGameAttributes, logEvent } from "../../util";
-import { wrap } from "../../util/g";
-import getInitialNumGamesConfDivSettings from "../season/getInitialNumGamesConfDivSettings";
-import type { TeamInfo } from "./createStream";
-import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries";
+} from "../../../common/types.ts";
+import { defaultGameAttributes, logEvent } from "../../util/index.ts";
+import { wrap } from "../../util/g.ts";
+import getInitialNumGamesConfDivSettings from "../season/getInitialNumGamesConfDivSettings.ts";
+import type { TeamInfo } from "./createStream.ts";
+import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries.ts";
 
 const createGameAttributes = async (
 	{

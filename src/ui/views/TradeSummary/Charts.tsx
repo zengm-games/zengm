@@ -8,10 +8,10 @@ import { ParentSize } from "@visx/responsive";
 import { LinePath } from "@visx/shape";
 import { scaleLinear } from "@visx/scale";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
-import type { View } from "../../../common/types";
-import { helpers } from "../../util";
-import { PHASE } from "../../../common";
-import { ReferenceLine } from "../Message/OwnerMoodsChart";
+import type { View } from "../../../common/types.ts";
+import { helpers } from "../../util/index.ts";
+import { PHASE } from "../../../common/index.ts";
+import { ReferenceLine } from "../Message/OwnerMoodsChart.tsx";
 import clsx from "clsx";
 
 const HEIGHT = 200;

@@ -1,7 +1,7 @@
-import { idb } from "../db";
-import { g } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
-import { groupByUnique, range } from "../../common/utils";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { groupByUnique, range } from "../../common/utils.ts";
 import {
 	GamesPlayedCache,
 	getCategoriesAndStats,
@@ -9,7 +9,7 @@ import {
 	type Leader,
 	leadersAddFirstNameShort,
 	playerMeetsCategoryRequirements,
-} from "./leaders";
+} from "./leaders.ts";
 
 const NUM_LEADERS = 10;
 

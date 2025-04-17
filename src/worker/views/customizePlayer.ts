@@ -1,14 +1,14 @@
-import { PLAYER, PHASE } from "../../common";
-import { finances, player } from "../core";
-import { idb } from "../db";
-import { face, g } from "../util";
+import { PLAYER, PHASE } from "../../common/index.ts";
+import { finances, player } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import { face, g } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
 	PlayerWithoutKey,
 	Player,
-} from "../../common/types";
-import { orderBy } from "../../common/utils";
+} from "../../common/types.ts";
+import { orderBy } from "../../common/utils.ts";
 
 export const formatPlayerRelativesList = (p: Player) => {
 	const firstSeason = p.ratings[0].season as number;

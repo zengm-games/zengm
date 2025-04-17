@@ -3,15 +3,15 @@ import {
 	NO_LOTTERY_DRAFT_TYPES,
 	bySport,
 	ALL_STAR_GAME_ONLY,
-} from "../../common";
-import { draft, season } from "../core";
-import g from "./g";
-import helpers from "./helpers";
-import local from "./local";
-import lock from "./lock";
-import toUI from "./toUI";
-import type { Option } from "../../common/types";
-import { idb } from "../db";
+} from "../../common/index.ts";
+import { draft, season } from "../core/index.ts";
+import g from "./g.ts";
+import helpers from "./helpers.ts";
+import local from "./local.ts";
+import lock from "./lock.ts";
+import toUI from "./toUI.ts";
+import type { Option } from "../../common/types.ts";
+import { idb } from "../db/index.ts";
 
 const updatePlayMenu = async () => {
 	if (process.env.NODE_ENV === "test") {

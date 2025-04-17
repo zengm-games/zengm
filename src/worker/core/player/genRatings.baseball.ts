@@ -1,8 +1,8 @@
-import genFuzz from "./genFuzz";
-import limitRating from "./limitRating";
-import { helpers, random } from "../../util";
-import { POSITION_COUNTS } from "../../../common/constants.baseball";
-import type { PlayerRatings } from "../../../common/types.baseball";
+import genFuzz from "./genFuzz.ts";
+import limitRating from "./limitRating.ts";
+import { helpers, random } from "../../util/index.ts";
+import { POSITION_COUNTS } from "../../../common/constants.baseball.ts";
+import type { PlayerRatings } from "../../../common/types.baseball.ts";
 
 const getPos = () => {
 	const numPlayers = Object.values(POSITION_COUNTS).reduce((sum, val) => {

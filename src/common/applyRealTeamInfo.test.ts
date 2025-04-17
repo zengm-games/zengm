@@ -1,9 +1,9 @@
 import { assert, beforeAll, test } from "vitest";
-import applyRealTeamInfo from "./applyRealTeamInfo";
-import generate from "../worker/core/team/generate";
-import testHelpers from "../test/helpers";
-import helpers from "./helpers";
-import type { RealTeamInfo } from "./types";
+import applyRealTeamInfo from "./applyRealTeamInfo.ts";
+import generate from "../worker/core/team/generate.ts";
+import testHelpers from "../test/helpers.ts";
+import helpers from "./helpers.ts";
+import type { RealTeamInfo } from "./types.ts";
 
 beforeAll(async () => {
 	testHelpers.resetG();

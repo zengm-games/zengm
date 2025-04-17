@@ -1,11 +1,14 @@
-import { player, team } from "../core";
-import { idb } from "../db";
-import { g } from "../util";
-import posRatings from "../../common/posRatings";
-import type { UpdateEvents, ViewInput } from "../../common/types";
-import { bySport, isSport } from "../../common";
-import { NUM_LINES, NUM_PLAYERS_PER_LINE } from "../../common/constants.hockey";
-import addFirstNameShort from "../util/addFirstNameShort";
+import { player, team } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
+import posRatings from "../../common/posRatings.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { bySport, isSport } from "../../common/index.ts";
+import {
+	NUM_LINES,
+	NUM_PLAYERS_PER_LINE,
+} from "../../common/constants.hockey.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
 
 const defenseStats = [
 	"defTckSolo",

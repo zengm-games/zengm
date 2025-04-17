@@ -1,10 +1,10 @@
-import limitRating from "./limitRating";
-import { helpers, random } from "../../util";
+import limitRating from "./limitRating.ts";
+import { helpers, random } from "../../util/index.ts";
 import type {
 	PlayerRatings,
 	RatingKey,
-} from "../../../common/types.basketball";
-import { coachingEffect } from "../../../common/budgetLevels";
+} from "../../../common/types.basketball.ts";
+import { coachingEffect } from "../../../common/budgetLevels.ts";
 
 type RatingFormula = {
 	ageModifier: (age: number) => number;

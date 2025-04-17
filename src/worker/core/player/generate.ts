@@ -1,12 +1,12 @@
-import genRatings from "./genRatings";
-import { face, g } from "../../util";
+import genRatings from "./genRatings.ts";
+import { face, g } from "../../util/index.ts";
 import type {
 	MinimalPlayerRatings,
 	PlayerWithoutKey,
 	Race,
-} from "../../../common/types";
-import genWeight from "./genWeight";
-import genMoodTraits from "./genMoodTraits";
+} from "../../../common/types.ts";
+import genWeight from "./genWeight.ts";
+import genMoodTraits from "./genMoodTraits.ts";
 
 const generate = (
 	tid: number,

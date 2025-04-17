@@ -1,5 +1,5 @@
-import { idb } from "../../db";
-import { g, local, lock, updateStatus } from "../../util";
+import { idb } from "../../db/index.ts";
+import { g, local, lock, updateStatus } from "../../util/index.ts";
 
 // Flush cache, disconnect from league database, and unset g.get("lid")
 const close = async (disconnect?: boolean) => {

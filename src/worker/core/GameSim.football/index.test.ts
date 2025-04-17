@@ -1,12 +1,12 @@
 import { assert, beforeAll, test } from "vitest";
-import GameSim from ".";
-import { player, team } from "..";
-import loadTeams from "../game/loadTeams";
-import { g, helpers } from "../../util";
-import testHelpers from "../../../test/helpers";
-import Play from "./Play";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
-import { range } from "../../../common/utils";
+import GameSim from "./index.ts";
+import { player, team } from "../index.ts";
+import loadTeams from "../game/loadTeams.ts";
+import { g, helpers } from "../../util/index.ts";
+import testHelpers from "../../../test/helpers.ts";
+import Play from "./Play.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
+import { range } from "../../../common/utils.ts";
 
 export const genTwoTeams = async () => {
 	testHelpers.resetG();

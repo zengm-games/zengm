@@ -1,5 +1,5 @@
-import isSport from "./isSport";
-import type { DraftLotteryResultArray, DraftType } from "./types";
+import isSport from "./isSport.ts";
+import type { DraftLotteryResultArray, DraftType } from "./types.ts";
 
 class MultiDimensionalRange {
 	initial: boolean;

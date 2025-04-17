@@ -1,8 +1,8 @@
-import { idb } from "../db";
-import { g, processPlayersHallOfFame } from "../util";
-import type { UpdateEvents } from "../../common/types";
-import { bySport } from "../../common";
-import addFirstNameShort from "../util/addFirstNameShort";
+import { idb } from "../db/index.ts";
+import { g, processPlayersHallOfFame } from "../util/index.ts";
+import type { UpdateEvents } from "../../common/types.ts";
+import { bySport } from "../../common/index.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
 
 const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes

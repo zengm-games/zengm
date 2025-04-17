@@ -1,8 +1,8 @@
-import { wait } from "../../../common";
-import { idb } from "../../db";
-import { g } from "../../util";
-import create from "./create";
-import nextGameIsAllStar from "./nextGameIsAllStar";
+import { wait } from "../../../common/index.ts";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
+import create from "./create.ts";
+import nextGameIsAllStar from "./nextGameIsAllStar.ts";
 
 let creatingAllStars = false;
 const getOrCreate = async (season: number) => {

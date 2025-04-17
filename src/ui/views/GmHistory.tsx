@@ -1,10 +1,10 @@
-import useTitleBar from "../hooks/useTitleBar";
-import { helpers } from "../util";
-import type { View } from "../../common/types";
-import Overall from "./TeamHistory/Overall";
-import Players from "./TeamHistory/Players";
-import Seasons from "./TeamHistory/Seasons";
-import HideableSection from "../components/HideableSection";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { helpers } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import Overall from "./TeamHistory/Overall.tsx";
+import Players from "./TeamHistory/Players.tsx";
+import Seasons from "./TeamHistory/Seasons.tsx";
+import HideableSection from "../components/HideableSection.tsx";
 
 const GmHistory = ({
 	bestRecord,

@@ -1,5 +1,5 @@
 import { assert, test } from "vitest";
-import penalties from "./penalties";
+import penalties from "./penalties.ts";
 
 test("posOdds sum to 1", () => {
 	for (const pen of penalties) {

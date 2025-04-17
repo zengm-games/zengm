@@ -1,10 +1,11 @@
-import fs from "node:fs";
-import fsp from "node:fs/promises";
+import { existsSync } from "node:fs";
+import fs from "node:fs/promises";
 import { bySport } from "../lib/bySport.ts";
 import { replace } from "./replace.ts";
+import { getSport } from "../lib/getSport.ts";
 
-const setSport = () => {
-	replace({
+const setSport = async () => {
+	await replace({
 		paths: ["build/index.html"],
 		replaces: [
 			{
@@ -73,7 +74,7 @@ export const copyFiles = async (watch: boolean = false) => {
 		"hockey",
 	];
 
-	await fsp.cp("public", "build", {
+	await fs.cp("public", "build", {
 		filter: (filename) => {
 			// Loop through folders to ignore.
 			for (const folder of foldersToIgnore) {
@@ -92,39 +93,31 @@ export const copyFiles = async (watch: boolean = false) => {
 		recursive: true,
 	});
 
-	let sport = process.env.SPORT;
-	if (typeof sport !== "string") {
-		sport = "basketball";
-	}
+	const sport = getSport();
 
-	await fsp.cp(`public/${sport}`, "build", {
+	await fs.cp(`public/${sport}`, "build", {
 		filter: (filename) => !filename.includes(".gitignore"),
 		recursive: true,
 	});
 
-	// Remove the empty folders created by the "filter" function.
-	for (const folder of foldersToIgnore) {
-		await fsp.rm(`build/${folder}`, { recursive: true, force: true });
-	}
-
 	const realPlayerFilenames = ["real-player-data", "real-player-stats"];
 	for (const filename of realPlayerFilenames) {
 		const sourcePath = `data/${filename}.${sport}.json`;
-		if (fs.existsSync(sourcePath)) {
-			await fsp.copyFile(sourcePath, `build/gen/${filename}.json`);
+		if (existsSync(sourcePath)) {
+			await fs.copyFile(sourcePath, `build/gen/${filename}.json`);
 		}
 	}
 
-	await fsp.copyFile("data/names.json", "build/gen/names.json");
-	await fsp.copyFile("data/names-female.json", "build/gen/names-female.json");
+	await fs.copyFile("data/names.json", "build/gen/names.json");
+	await fs.copyFile("data/names-female.json", "build/gen/names-female.json");
 
-	await fsp.cp("node_modules/flag-icons/flags/4x3", "build/img/flags", {
+	await fs.cp("node_modules/flag-icons/flags/4x3", "build/img/flags", {
 		recursive: true,
 	});
 	const flagHtaccess = `<IfModule mod_headers.c>
 	Header set Cache-Control "public,max-age=31536000"
 </IfModule>`;
-	await fsp.writeFile("build/img/flags/.htaccess", flagHtaccess);
+	await fs.writeFile("build/img/flags/.htaccess", flagHtaccess);
 
-	setSport();
+	await setSport();
 };

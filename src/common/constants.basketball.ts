@@ -1,5 +1,5 @@
-import type { CompositeWeights, Conf, Div } from "./types";
-import type { RatingKey } from "./types.basketball";
+import type { CompositeWeights, Conf, Div } from "./types.ts";
+import type { RatingKey } from "./types.basketball.ts";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	pace: {

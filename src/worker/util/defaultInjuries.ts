@@ -1,7 +1,7 @@
 // See data/injuries.ods for basketball data
 
-import { isSport } from "../../common";
-import helpers from "./helpers";
+import { isSport } from "../../common/index.ts";
+import helpers from "./helpers.ts";
 
 let defaultInjuries: {
 	name: string;

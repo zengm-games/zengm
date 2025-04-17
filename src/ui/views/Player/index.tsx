@@ -1,15 +1,20 @@
-import { DataTable, InjuryIcon, SafeHtml, SkillsBlock } from "../../components";
-import Injuries from "./Injuries";
-import useTitleBar from "../../hooks/useTitleBar";
-import { getCols, helpers, groupAwards } from "../../util";
-import type { View } from "../../../common/types";
-import SeasonIcons from "./SeasonIcons";
-import TopStuff from "./TopStuff";
-import { PLAYER } from "../../../common";
-import TeamAbbrevLink from "../../components/TeamAbbrevLink";
-import HideableSection from "../../components/HideableSection";
-import { StatsTable } from "./StatsTable";
-import { highlightLeaderText, MaybeBold, SeasonLink } from "./common";
+import {
+	DataTable,
+	InjuryIcon,
+	SafeHtml,
+	SkillsBlock,
+} from "../../components/index.tsx";
+import Injuries from "./Injuries.tsx";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import { getCols, helpers, groupAwards } from "../../util/index.ts";
+import type { View } from "../../../common/types.ts";
+import SeasonIcons from "./SeasonIcons.tsx";
+import TopStuff from "./TopStuff.tsx";
+import { PLAYER } from "../../../common/index.ts";
+import TeamAbbrevLink from "../../components/TeamAbbrevLink.tsx";
+import HideableSection from "../../components/HideableSection.tsx";
+import { StatsTable } from "./StatsTable.tsx";
+import { highlightLeaderText, MaybeBold, SeasonLink } from "./common.tsx";
 
 const Player2 = ({
 	bestPos,

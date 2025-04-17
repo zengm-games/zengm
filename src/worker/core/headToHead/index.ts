@@ -1,5 +1,5 @@
-import addGame from "./addGame";
-import iterate from "./iterate";
+import addGame from "./addGame.ts";
+import iterate from "./iterate.ts";
 
 export default {
 	addGame,

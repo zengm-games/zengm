@@ -1,4 +1,4 @@
-import newPhase from "./newPhase";
+import newPhase from "./newPhase.ts";
 
 export default {
 	newPhase,

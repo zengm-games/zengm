@@ -1,11 +1,11 @@
-import { idb } from "..";
+import { idb } from "../index.ts";
 import type {
 	TeamAttr,
 	TeamStatAttr,
 	TeamSeasonAttr,
 	TeamStatType,
 	GetCopyType,
-} from "../../../common/types";
+} from "../../../common/types.ts";
 
 const getCopy = async <
 	Attrs extends Readonly<TeamAttr[]> | undefined,

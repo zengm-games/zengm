@@ -1,49 +1,31 @@
-import { bySport, isSport, PHASE, PLAYER, RATINGS } from "../../common";
-import { idb } from "../db";
-import { g, helpers, random } from "../util";
+import {
+	isSport,
+	PHASE,
+	PLAYER,
+	PLAYER_STATS_TABLES,
+	RATINGS,
+} from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import { g, helpers, random } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
 	PlayerStatType,
-} from "../../common/types";
-import { POS_NUMBERS } from "../../common/constants.baseball";
-import { maxBy } from "../../common/utils";
+} from "../../common/types.ts";
+import { POS_NUMBERS } from "../../common/constants.baseball.ts";
+import { maxBy } from "../../common/utils.ts";
 import {
 	getStats,
 	getStatsTableByType,
-} from "../../common/advancedPlayerSearch";
+} from "../../common/advancedPlayerSearch.ts";
 
-export const statTypes = bySport({
-	baseball: [
-		"bio",
-		"ratings",
-		"batting",
-		"pitching",
-		"fielding",
-		"advanced",
-		"gameHighs",
-	],
-	basketball: [
-		"bio",
-		"ratings",
-		"perGame",
-		"per36",
-		"totals",
-		"shotLocations",
-		"advanced",
-		"gameHighs",
-	],
-	football: [
-		"bio",
-		"ratings",
-		"passing",
-		"rushing",
-		"defense",
-		"kicking",
-		"returns",
-	],
-	hockey: ["bio", "ratings", "skater", "goalie", "advanced", "gameHighs"],
-});
+export const statTypes = [
+	"bio",
+	"ratings",
+	...(isSport("basketball")
+		? ["perGame", "per36", "totals", "shotLocations", "advanced", "gameHighs"]
+		: Object.keys(PLAYER_STATS_TABLES)),
+];
 
 const getPlayerStats = async (
 	statTypeInput: string | undefined,

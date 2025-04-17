@@ -1,5 +1,5 @@
 import { bySport } from "../lib/bySport.ts";
-import type { getSport } from "../lib/getSport.ts";
+import type { Sport } from "../lib/getSport.ts";
 
 const genRatings = (sport: string) => {
 	const properties: any = {
@@ -153,9 +153,7 @@ const wrap = (child: any) => ({
 	],
 });
 
-export const generateJsonSchema = (
-	sport: ReturnType<typeof getSport> | "test",
-) => {
+export const generateJsonSchema = (sport: Sport | "test") => {
 	if (sport === "test") {
 		return {
 			$schema: "http://json-schema.org/draft-07/schema#",
@@ -589,16 +587,11 @@ export const generateJsonSchema = (
 										type: "integer",
 										minimum: 1,
 									},
-									won: {
+									dpid: {
 										type: "integer",
-										minimum: 0,
-									},
-									lost: {
-										type: "integer",
-										minimum: 0,
 									},
 								},
-								required: ["tid", "originalTid", "chances", "won", "lost"],
+								required: ["tid", "originalTid", "chances", "dpid"],
 							},
 						},
 					},

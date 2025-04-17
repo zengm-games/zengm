@@ -1,5 +1,5 @@
 import { useState, type FormEvent, type ReactNode } from "react";
-import useTitleBar from "../hooks/useTitleBar";
+import useTitleBar from "../hooks/useTitleBar.tsx";
 import {
 	confirm,
 	helpers,
@@ -7,15 +7,15 @@ import {
 	realtimeUpdate,
 	getCols,
 	useLocalPartial,
-} from "../util";
-import type { View } from "../../common/types";
-import { SafeHtml, DataTable } from "../components";
-import { PHASE } from "../../common";
+} from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { SafeHtml, DataTable } from "../components/index.tsx";
+import { PHASE } from "../../common/index.ts";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
-} from "../components/contract";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+} from "../components/contract.tsx";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 
 const PlayerList = ({
 	challengeNoRatings,

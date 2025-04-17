@@ -1,4 +1,4 @@
-import type teamStats from "../worker/core/team/stats.basketball";
+import type teamStats from "../worker/core/team/stats.basketball.ts";
 
 // Should all the extra ones be in teamStats["derived"]?
 export type TeamStatAttr =

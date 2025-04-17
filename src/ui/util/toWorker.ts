@@ -1,6 +1,6 @@
-import { promiseWorker } from ".";
-import type { WorkerAPICategory } from "../../worker";
-import type api from "../../worker/api";
+import { promiseWorker } from "./index.ts";
+import type { WorkerAPICategory } from "../../worker/index.ts";
+import type api from "../../worker/api/index.ts";
 
 type API = typeof api;
 

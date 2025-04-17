@@ -1,9 +1,9 @@
 import romanNumerals from "roman-numerals";
-import { idb } from "../../db";
-import { face, g, helpers, random } from "../../util";
-import type { Player, Relative, RelativeType } from "../../../common/types";
-import { isSport } from "../../../common";
-import player from ".";
+import { idb } from "../../db/index.ts";
+import { face, g, helpers, random } from "../../util/index.ts";
+import type { Player, Relative, RelativeType } from "../../../common/types.ts";
+import { isSport } from "../../../common/index.ts";
+import player from "./index.ts";
 
 const parseLastName = (lastName: string): [string, number | undefined] => {
 	const parts = lastName.split(" ");

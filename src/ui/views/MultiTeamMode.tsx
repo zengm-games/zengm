@@ -1,9 +1,9 @@
 import { useCallback, type ChangeEvent, useRef } from "react";
-import { bySport, isSport, PHASE } from "../../common";
-import useTitleBar from "../hooks/useTitleBar";
-import { toWorker, logEvent, helpers } from "../util";
-import type { View } from "../../common/types";
-import { orderBy } from "../../common/utils";
+import { bySport, isSport, PHASE } from "../../common/index.ts";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { toWorker, logEvent, helpers } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { orderBy } from "../../common/utils.ts";
 
 const handleAutoSort = async (tids: number[]) => {
 	await toWorker("main", "autoSortRoster", { tids });

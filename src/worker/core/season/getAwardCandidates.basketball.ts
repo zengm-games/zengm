@@ -1,4 +1,4 @@
-import { getPlayers, getTopPlayers } from "./awards";
+import { getPlayers, getTopPlayers } from "./awards.ts";
 import {
 	dpoyScore,
 	mipFilter,
@@ -8,7 +8,7 @@ import {
 	royScore,
 	getSmoyFilter,
 	smoyScore,
-} from "./doAwards.basketball";
+} from "./doAwards.basketball.ts";
 
 const getAwardCandidates = async (season: number) => {
 	const players = await getPlayers(season);

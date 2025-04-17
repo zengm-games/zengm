@@ -1,5 +1,5 @@
-import { PHASE, bySport } from "../../common";
-import { g } from "../util";
+import { PHASE, bySport } from "../../common/index.ts";
+import { g } from "../util/index.ts";
 
 class GameSimBase {
 	id: number;

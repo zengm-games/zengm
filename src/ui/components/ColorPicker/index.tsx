@@ -1,6 +1,6 @@
 import { useState, type CSSProperties } from "react";
 import { OverlayTrigger, Popover } from "react-bootstrap";
-import { Sketch } from "./Sketch";
+import { Sketch } from "./Sketch.tsx";
 
 export const ColorPicker = ({
 	onClick,

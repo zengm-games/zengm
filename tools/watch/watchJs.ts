@@ -1,9 +1,11 @@
 import { Worker } from "node:worker_threads";
+import type { Spinners } from "./spinners.ts";
 
 export const watchJs = (
 	updateStart: (filename: string) => void,
 	updateEnd: (filename: string) => void,
 	updateError: (filename: string, error: Error) => void,
+	eventEmitter: Spinners["eventEmitter"],
 ) => {
 	for (const name of ["ui", "worker"]) {
 		const filename = `build/gen/${name}.js`;
@@ -24,6 +26,14 @@ export const watchJs = (
 			if (message.type === "error") {
 				updateError(filename, message.error);
 			}
+		});
+
+		eventEmitter.on("switchingSport", async () => {
+			worker.postMessage({ type: "switchingSport" });
+		});
+
+		eventEmitter.on("newSport", (sport) => {
+			worker.postMessage({ type: "newSport", sport });
 		});
 	}
 };

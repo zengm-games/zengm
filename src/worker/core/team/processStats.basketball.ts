@@ -1,9 +1,9 @@
-import { helpers } from "../../util";
+import { helpers } from "../../util/index.ts";
 import type {
 	TeamStatAttr,
 	TeamStatType,
 	TeamStats,
-} from "../../../common/types";
+} from "../../../common/types.ts";
 
 // Possessions estimate, from https://www.basketball-reference.com/about/glossary.html#poss
 const poss = (ts: TeamStats) => {

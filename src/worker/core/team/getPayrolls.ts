@@ -1,5 +1,5 @@
-import getPayroll from "./getPayroll";
-import { idb } from "../../db";
+import getPayroll from "./getPayroll.ts";
+import { idb } from "../../db/index.ts";
 
 /**
  * Get the total current payroll for every team team.

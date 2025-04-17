@@ -1,8 +1,8 @@
-import { g } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
-import { season } from "../core";
-import { idb } from "../db";
-import addFirstNameShort from "../util/addFirstNameShort";
+import { g } from "../util/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { season } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
 
 const updateAwardRaces = async (
 	inputs: ViewInput<"awardRaces">,

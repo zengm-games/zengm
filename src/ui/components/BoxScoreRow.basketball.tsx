@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import type { MouseEvent } from "react";
-import PlayerNameLabels from "./PlayerNameLabels";
-import { helpers } from "../util";
+import PlayerNameLabels from "./PlayerNameLabels.tsx";
+import { helpers } from "../util/index.ts";
 
 const BoxScoreRow = ({
 	className,

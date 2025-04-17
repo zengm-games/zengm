@@ -1,5 +1,5 @@
-import { idb } from "../../db";
-import type { ContractInfo } from "../../../common/types";
+import { idb } from "../../db/index.ts";
+import type { ContractInfo } from "../../../common/types.ts";
 
 /**
  * Get the total current payroll for a team.

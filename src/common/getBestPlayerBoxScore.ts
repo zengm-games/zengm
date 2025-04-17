@@ -1,6 +1,6 @@
-import bySport from "./bySport";
-import processPlayerStats from "./processPlayerStats";
-import { orderBy } from "./utils";
+import bySport from "./bySport.ts";
+import processPlayerStats from "./processPlayerStats.ts";
+import { orderBy } from "./utils.ts";
 
 const getBestPlayerBoxScore = (players: any[]) => {
 	if (players.length === 0) {

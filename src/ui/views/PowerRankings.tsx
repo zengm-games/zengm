@@ -1,11 +1,11 @@
 import { useState } from "react";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import { DataTable } from "../components";
-import type { View } from "../../common/types";
-import { bySport, isSport, POSITIONS, RATINGS } from "../../common";
-import { wrappedMovOrDiff } from "../components/MovOrDiff";
-import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers } from "../util/index.ts";
+import { DataTable } from "../components/index.tsx";
+import type { View } from "../../common/types.ts";
+import { bySport, isSport, POSITIONS, RATINGS } from "../../common/index.ts";
+import { wrappedMovOrDiff } from "../components/MovOrDiff.tsx";
+import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 
 const Other = ({
 	actualShowHealthy,

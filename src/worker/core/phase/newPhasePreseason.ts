@@ -4,17 +4,25 @@ import {
 	bySport,
 	isSport,
 	DEFAULT_PLAY_THROUGH_INJURIES,
-} from "../../../common";
-import { finances, freeAgents, league, player, team } from "..";
-import { idb } from "../../db";
-import { env, g, helpers, local, logEvent, random, toUI } from "../../util";
+} from "../../../common/index.ts";
+import { finances, freeAgents, league, player, team } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import {
+	env,
+	g,
+	helpers,
+	local,
+	logEvent,
+	random,
+	toUI,
+} from "../../util/index.ts";
 import type {
 	Conditions,
 	PhaseReturn,
 	RealTeamInfo,
 	TeamSeason,
-} from "../../../common/types";
-import { groupBy } from "../../../common/utils";
+} from "../../../common/types.ts";
+import { groupBy } from "../../../common/utils.ts";
 
 const newPhasePreseason = async (
 	conditions: Conditions,

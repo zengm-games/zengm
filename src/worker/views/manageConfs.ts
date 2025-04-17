@@ -1,4 +1,4 @@
-import { g } from "../util";
+import { g } from "../util/index.ts";
 
 const updateConfs = async () => {
 	const confs = g.get("confs");

@@ -1,5 +1,5 @@
 import { assert, describe, test } from "vitest";
-import { countBy, maxBy, minBy, omit, orderBy, range } from "./utils";
+import { countBy, maxBy, minBy, omit, orderBy, range } from "./utils.ts";
 
 test("range", () => {
 	assert.deepStrictEqual(range(5), [0, 1, 2, 3, 4]);

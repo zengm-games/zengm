@@ -1,8 +1,8 @@
-import addToFreeAgents from "./addToFreeAgents";
-import { idb } from "../../db";
-import { g, helpers, logEvent } from "../../util";
-import type { Player } from "../../../common/types";
-import { PHASE } from "../../../common";
+import addToFreeAgents from "./addToFreeAgents.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers, logEvent } from "../../util/index.ts";
+import type { Player } from "../../../common/types.ts";
+import { PHASE } from "../../../common/index.ts";
 
 /**
  * Release player.

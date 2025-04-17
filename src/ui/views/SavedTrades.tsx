@@ -1,17 +1,17 @@
-import { PHASE } from "../../common";
-import useTitleBar from "../hooks/useTitleBar";
-import type { View } from "../../common/types";
-import { SummaryTeam } from "./Trade/Summary";
-import { helpers, toWorker, useLocalPartial } from "../util";
+import { PHASE } from "../../common/index.ts";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import type { View } from "../../common/types.ts";
+import { SummaryTeam } from "./Trade/Summary.tsx";
+import { helpers, toWorker, useLocalPartial } from "../util/index.ts";
 import {
 	Offer,
 	OfferTable,
 	type OfferType,
 	pickScore,
 	playerScore,
-} from "./TradingBlock";
+} from "./TradingBlock/index.tsx";
 import { Dropdown } from "react-bootstrap";
-import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch";
+import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch.tsx";
 
 const SavedTrades = (props: View<"savedTrades">) => {
 	const {

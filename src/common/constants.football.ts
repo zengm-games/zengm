@@ -1,5 +1,5 @@
-import type { CompositeWeights, Conf, Div } from "./types";
-import type { Position, PrimaryPosition, RatingKey } from "./types.football";
+import type { CompositeWeights, Conf, Div } from "./types.ts";
+import type { Position, PrimaryPosition, RatingKey } from "./types.football.ts";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	passingAccuracy: {

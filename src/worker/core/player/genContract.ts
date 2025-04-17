@@ -1,11 +1,11 @@
-import { g, helpers, random } from "../../util";
+import { g, helpers, random } from "../../util/index.ts";
 import type {
 	MinimalPlayerRatings,
 	Player,
 	PlayerContract,
 	PlayerWithoutKey,
-} from "../../../common/types";
-import { isSport } from "../../../common";
+} from "../../../common/types.ts";
+import { isSport } from "../../../common/index.ts";
 
 /**
  * Generate a contract for a player.

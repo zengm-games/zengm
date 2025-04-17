@@ -1,6 +1,6 @@
 import * as React from "react";
 import Bugsnag from "@bugsnag/browser";
-import useTitleBar from "../hooks/useTitleBar";
+import useTitleBar from "../hooks/useTitleBar.tsx";
 
 const FallbackGlobal = ({ error, info }: { error: Error; info?: any }) => {
 	console.log(error, info);

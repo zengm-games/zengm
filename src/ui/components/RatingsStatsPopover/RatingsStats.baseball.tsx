@@ -1,5 +1,5 @@
-import { gradientStyleFactory } from "../../util";
-import type { RatingKey } from "../../../common/types.baseball";
+import { gradientStyleFactory } from "../../util/index.ts";
+import type { RatingKey } from "../../../common/types.baseball.ts";
 
 const gradientStyle = gradientStyleFactory(25, 45, 55, 75);
 

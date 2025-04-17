@@ -1,17 +1,17 @@
-import { isSport, PHASE, PLAYER } from "../../common";
+import { isSport, PHASE, PLAYER } from "../../common/index.ts";
 import {
 	allFilters,
 	getExtraStatTypeKeys,
-} from "../../common/advancedPlayerSearch";
-import type { Player, PlayerStatType, ViewInput } from "../../common/types";
-import { maxBy } from "../../common/utils";
-import { normalizeIntl } from "../../common/normalizeIntl";
-import { idb } from "../db";
-import { g } from "../util";
-import addFirstNameShort from "../util/addFirstNameShort";
-import { buffOvrDH } from "../views/depth";
-import { iterateActivePlayersSeasonRange } from "../views/rosterContinuity";
-import type { SeasonType } from "./processInputs";
+} from "../../common/advancedPlayerSearch.ts";
+import type { Player, PlayerStatType, ViewInput } from "../../common/types.ts";
+import { maxBy } from "../../common/utils.ts";
+import { normalizeIntl } from "../../common/normalizeIntl.ts";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { buffOvrDH } from "../views/depth.ts";
+import { iterateActivePlayersSeasonRange } from "../views/rosterContinuity.ts";
+import type { SeasonType } from "./processInputs.ts";
 
 export const getPlayers = async (
 	season: number | undefined,

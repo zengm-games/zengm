@@ -1,8 +1,8 @@
-import { PHASE } from "../../../common";
-import { g, random } from "../../util";
-import type { TeamFiltered } from "../../../common/types";
-import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries";
-import { range } from "../../../common/utils";
+import { PHASE } from "../../../common/index.ts";
+import { g, random } from "../../util/index.ts";
+import type { TeamFiltered } from "../../../common/types.ts";
+import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries.ts";
+import { range } from "../../../common/utils.ts";
 
 /**
  * Sort teams in place in correct order for lottery.

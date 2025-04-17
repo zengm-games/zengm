@@ -1,4 +1,4 @@
-import bySport from "./bySport";
+import bySport from "./bySport.ts";
 
 // Filter based on if player has any stats, for use in box score and player game log
 const filterPlayerStats = (p: any, stats: string[], type: string) => {

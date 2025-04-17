@@ -1,5 +1,5 @@
-import type { Game, ScheduleGameWithoutKey } from "../../../common/types";
-import { g } from "../../util";
+import type { Game, ScheduleGameWithoutKey } from "../../../common/types.ts";
+import { g } from "../../util/index.ts";
 
 const addDaysToSchedule = (
 	games: {

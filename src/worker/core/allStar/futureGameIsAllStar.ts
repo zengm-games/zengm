@@ -1,4 +1,4 @@
-import { season } from "..";
+import { season } from "../index.ts";
 
 const futureGameIsAllStar = async () => {
 	const schedule = await season.getSchedule();

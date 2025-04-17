@@ -1,6 +1,6 @@
-import { PHASE, timeBetweenGames } from "../../../common";
-import { g } from "../../util";
-import type { Player, PlayerWithoutKey } from "../../../common/types";
+import { PHASE, timeBetweenGames } from "../../../common/index.ts";
+import { g } from "../../util/index.ts";
+import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
 
 const isUntradable = (
 	p: Player | PlayerWithoutKey,

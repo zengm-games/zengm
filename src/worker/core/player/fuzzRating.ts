@@ -1,4 +1,4 @@
-import { g, helpers } from "../../util";
+import { g, helpers } from "../../util/index.ts";
 
 const fuzzRating = (
 	rating: number,

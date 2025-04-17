@@ -1,8 +1,8 @@
 import { assert, test } from "vitest";
-import testHelpers from "../../../test/helpers";
-import { player } from "..";
-import madeHofBasketball from "./madeHof.basketball";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import testHelpers from "../../../test/helpers.ts";
+import { player } from "../index.ts";
+import madeHofBasketball from "./madeHof.basketball.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 test("narrowly make HoF based on dominance factor", () => {
 	testHelpers.resetG();

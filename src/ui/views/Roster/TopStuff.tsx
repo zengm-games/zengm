@@ -4,13 +4,13 @@ import {
 	RecordAndPlayoffs,
 	RosterComposition,
 	PlusMinus,
-} from "../../components";
-import { helpers } from "../../util";
-import InstructionsAndSortButtons from "./InstructionsAndSortButtons";
-import PlayThroughInjurySliders from "./PlayThroughInjuriesSliders";
-import type { View } from "../../../common/types";
-import { bySport } from "../../../common";
-import Note from "../Player/Note";
+} from "../../components/index.tsx";
+import { helpers } from "../../util/index.ts";
+import InstructionsAndSortButtons from "./InstructionsAndSortButtons.tsx";
+import PlayThroughInjurySliders from "./PlayThroughInjuriesSliders.tsx";
+import type { View } from "../../../common/types.ts";
+import { bySport } from "../../../common/index.ts";
+import Note from "../Player/Note.tsx";
 
 const fontSizeLarger = { fontSize: "larger" };
 

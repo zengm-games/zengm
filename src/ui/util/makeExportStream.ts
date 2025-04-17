@@ -3,14 +3,14 @@ import type { IDBPCursorWithValue } from "@dumbmatter/idb";
 import {
 	gameAttributesArrayToObject,
 	LEAGUE_DATABASE_VERSION,
-} from "../../common";
+} from "../../common/index.ts";
 import {
 	gameAttributesCache,
 	gameAttributesKeysOtherSports,
-} from "../../common/defaultGameAttributes";
-import { local } from "./local";
-import toWorker from "./toWorker";
-import type { LeagueDB } from "../../worker/db/connectLeague";
+} from "../../common/defaultGameAttributes.ts";
+import { local } from "./local.ts";
+import toWorker from "./toWorker.ts";
+import type { LeagueDB } from "../../worker/db/connectLeague.ts";
 
 // Otherwise it often pulls just one record per transaction, as it's hitting up against the high water mark
 const TWENTY_MEGABYTES_IN_BYTES = 20 * 1024 * 1024;

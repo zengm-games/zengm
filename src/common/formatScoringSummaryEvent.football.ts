@@ -1,7 +1,7 @@
 import type {
 	PlayByPlayEvent,
 	PlayByPlayEventScore,
-} from "../worker/core/GameSim.football/PlayByPlayLogger";
+} from "../worker/core/GameSim.football/PlayByPlayLogger.ts";
 
 export const formatScoringSummaryEvent = (
 	event: PlayByPlayEvent,

@@ -1,6 +1,6 @@
-import { PHASE } from "../../../common";
-import { league } from "..";
-import { idb } from "../../db";
+import { PHASE } from "../../../common/index.ts";
+import { league } from "../index.ts";
+import { idb } from "../../db/index.ts";
 import {
 	local,
 	lock,
@@ -12,8 +12,8 @@ import {
 	g,
 	getGlobalSettings,
 	logEvent,
-} from "../../util";
-import type { Conditions, Phase, PhaseReturn } from "../../../common/types";
+} from "../../util/index.ts";
+import type { Conditions, Phase, PhaseReturn } from "../../../common/types.ts";
 
 /**
  * Common tasks run after a new phrase is set.

@@ -1,13 +1,13 @@
-import { league } from "..";
-import { idb } from "../../db";
-import { defaultGameAttributes, g } from "../../util";
+import { league } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { defaultGameAttributes, g } from "../../util/index.ts";
 import {
 	gameAttributeHasHistory,
 	helpers,
 	unwrapGameAttribute,
-} from "../../../common";
-import gameAttributesToUI from "./gameAttributesToUI";
-import { gameAttributesKeysOtherSports } from "../../../common/defaultGameAttributes";
+} from "../../../common/index.ts";
+import gameAttributesToUI from "./gameAttributesToUI.ts";
+import { gameAttributesKeysOtherSports } from "../../../common/defaultGameAttributes.ts";
 
 export const ALWAYS_WRAP = [
 	"confs",

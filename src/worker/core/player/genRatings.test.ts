@@ -9,12 +9,12 @@
  */
 
 import { describe, test } from "vitest";
-import { PLAYER } from "../../../common";
-import testHelpers from "../../../test/helpers";
-import { g } from "../../util";
-import createRandomPlayers from "../league/create/createRandomPlayers";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
-import { range } from "../../../common/utils";
+import { PLAYER } from "../../../common/index.ts";
+import testHelpers from "../../../test/helpers.ts";
+import { g } from "../../util/index.ts";
+import createRandomPlayers from "../league/create/createRandomPlayers.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
+import { range } from "../../../common/utils.ts";
 
 const printQuartiles = async (age?: number) => {
 	if (age !== undefined) {

@@ -1,4 +1,5 @@
 export const SPORTS = ["basketball", "football", "baseball", "hockey"] as const;
+export type Sport = (typeof SPORTS)[number];
 
 export const getSport = () => {
 	if (SPORTS.includes(process.env.SPORT)) {

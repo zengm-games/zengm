@@ -1,4 +1,4 @@
-import { safeLocalStorage } from "../../util";
+import { safeLocalStorage } from "../../util/index.ts";
 
 class SettingsCache {
 	disabled: boolean;

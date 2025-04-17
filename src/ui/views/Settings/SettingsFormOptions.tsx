@@ -2,20 +2,20 @@
 import clsx from "clsx";
 import { AnimatePresence, m } from "framer-motion";
 import { type ChangeEvent, Fragment, type ReactNode, useState } from "react";
-import { isSport } from "../../../common";
-import { HelpPopover } from "../../components";
-import gameSimPresets from "./gameSimPresets";
-import PlayerBioInfo2 from "./PlayerBioInfo";
-import RowsEditor from "./RowsEditor";
+import { isSport } from "../../../common/index.ts";
+import { HelpPopover } from "../../components/index.tsx";
+import gameSimPresets from "./gameSimPresets.ts";
+import PlayerBioInfo2 from "./PlayerBioInfo.tsx";
+import RowsEditor from "./RowsEditor.tsx";
 import {
 	getVisibleCategories,
 	settingIsEnabled,
 	settingNeedsGodMode,
 	type SpecialStateOthers,
 	type State,
-} from "./SettingsForm";
-import type { Decoration, FieldType, Key, Values } from "./types";
-import { helpers } from "../../util";
+} from "./SettingsForm.tsx";
+import type { Decoration, FieldType, Key, Values } from "./types.ts";
+import { helpers } from "../../util/index.ts";
 
 export const godModeRequiredMessage = (
 	godModeRequired?: "always" | "existingLeagueOnly",

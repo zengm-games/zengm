@@ -1,8 +1,11 @@
 // Based on yocto-spinner https://github.com/sindresorhus/yocto-spinner v0.1.2 - MIT License - Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
 
+import EventEmitter from "node:events";
 import process from "node:process";
+import readline from "node:readline";
 import type { WriteStream } from "node:tty";
 import { stripVTControlCharacters, styleText } from "node:util";
+import { SPORTS, type Sport } from "../lib/getSport.ts";
 
 const isUnicodeSupported =
 	process.platform !== "win32" || Boolean(process.env.WT_SESSION);
@@ -12,16 +15,46 @@ const isInteractive = (stream: WriteStream) =>
 		stream.isTTY && process.env.TERM !== "dumb" && !("CI" in process.env),
 	);
 
-const successSymbol = styleText("green", isUnicodeSupported ? "✔" : "√");
-const errorSymbol = styleText("red", isUnicodeSupported ? "✖" : "×");
+const mod = (n: number, m: number) => {
+	return ((n % m) + m) % m;
+};
 
-const frames = (
+const SUCCESS_SYMBOL = styleText("green", isUnicodeSupported ? "✔" : "√");
+const ERROR_SYMBOL = styleText("red", isUnicodeSupported ? "✖" : "×");
+
+const FRAMES = (
 	isUnicodeSupported
 		? ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"]
 		: ["-", "\\", "|", "/"]
 ).map((frame) => styleText("cyan", frame));
 
 const interval = 80;
+
+const SPORT_EMOJIS: Record<Sport, string> = {
+	basketball: "🏀",
+	football: "🏈",
+	baseball: "⚾",
+	hockey: "🏒",
+};
+
+const DEBOUNCE_SPORT_MENU_WAIT = 500; // [milliseconds]
+
+const upperCaseFirstLetter = <T extends string>(string: T) => {
+	return `${string.charAt(0).toUpperCase()}${string.slice(1)}` as Capitalize<T>;
+};
+
+const SPORT_MENU_COLOR_INACTIVE = "whiteBright" as const;
+const SPORT_MENU_COLOR_DEBOUNCE = "gray" as const;
+const SPORT_MENU_COLOR_ACTIVE = "whiteBright" as const;
+const SPORT_MENU_BGCOLOR_INACTIVE = "gray" as const;
+const SPORT_MENU_BGCOLOR_DEBOUNCE = "cyan" as const;
+const SPORT_MENU_BGCOLOR_ACTIVE = "cyan" as const;
+const SPORT_MENU_BGCOLOR_INACTIVE_BG =
+	`bg${upperCaseFirstLetter(SPORT_MENU_BGCOLOR_INACTIVE)}` as const;
+const SPORT_MENU_BGCOLOR_DEBOUNCE_BG =
+	`bg${upperCaseFirstLetter(SPORT_MENU_BGCOLOR_DEBOUNCE)}` as const;
+const SPORT_MENU_BGCOLOR_ACTIVE_BG =
+	`bg${upperCaseFirstLetter(SPORT_MENU_BGCOLOR_ACTIVE)}` as const;
 
 type Info =
 	| {
@@ -51,7 +84,7 @@ type RenderKey<Key> = ({
 
 type ExtraRenderDelays = Partial<Record<"error" | "success", number[]>>;
 
-class Spinners<Key extends string = string> {
+export class Spinners<Key extends string = string> {
 	private currentFrame = -1;
 	private timer: NodeJS.Timeout | undefined;
 	private stream = process.stderr;
@@ -69,6 +102,21 @@ class Spinners<Key extends string = string> {
 	private info: Record<Key, Info | undefined> = {} as any;
 	private renderKey: RenderKey<Key>;
 
+	private sportIndex;
+	eventEmitter = new EventEmitter<{
+		newSport: Sport[];
+		switchingSport: never[];
+	}>();
+
+	// When this is true it means the user is switching between sports, so we should cancel any in-progress builds, but the user hasn't finished selecting the new sport. Arguably it'd be better to not do this in case the user selects the original sport, but I think it's more common to actually switch sports, so that use case should be prioritized.
+	get switchingSport() {
+		return this.switchSportsTimeoutId;
+	}
+	private switchSportsTimeoutId: NodeJS.Timeout | undefined;
+
+	// Switching sports too fast (before JS has started to build) breaks rolldown somehow, so don't allow switching sports until some time later
+	initialized = false;
+
 	constructor(
 		renderKey: RenderKey<Key>,
 		extraRenderDelays?: ExtraRenderDelays,
@@ -80,6 +128,13 @@ class Spinners<Key extends string = string> {
 		const exitHandlerBound = this.exitHandler.bind(this);
 		process.once("SIGINT", exitHandlerBound);
 		process.once("SIGTERM", exitHandlerBound);
+
+		this.sportIndex = SPORTS.indexOf(process.env.SPORT);
+		if (this.sportIndex < 0) {
+			this.sportIndex = 0;
+		}
+
+		this.listenForArrowKeys();
 	}
 
 	private startRendering() {
@@ -211,21 +266,57 @@ class Spinners<Key extends string = string> {
 			this.currentFrame === -1 ||
 			now - this.lastSpinnerFrameTime >= interval
 		) {
-			this.currentFrame = ++this.currentFrame % frames.length;
+			this.currentFrame = ++this.currentFrame % FRAMES.length;
 			this.lastSpinnerFrameTime = now;
 		}
 
-		let string = this.keys
+		let string = "Use left/right arrows to select a sport:\n";
+
+		string += SPORTS.map((sport, i) =>
+			styleText(
+				i === this.sportIndex
+					? this.switchingSport || !this.initialized
+						? SPORT_MENU_BGCOLOR_DEBOUNCE
+						: SPORT_MENU_BGCOLOR_ACTIVE
+					: SPORT_MENU_BGCOLOR_INACTIVE,
+				"▄".repeat([...sport].length + 5),
+			),
+		).join("");
+		string += "\n";
+		string += SPORTS.map((sport, i) =>
+			styleText(
+				i === this.sportIndex
+					? this.switchingSport || !this.initialized
+						? [SPORT_MENU_BGCOLOR_DEBOUNCE_BG, SPORT_MENU_COLOR_DEBOUNCE]
+						: [SPORT_MENU_BGCOLOR_ACTIVE_BG, SPORT_MENU_COLOR_ACTIVE]
+					: [SPORT_MENU_BGCOLOR_INACTIVE_BG, SPORT_MENU_COLOR_INACTIVE],
+				` ${SPORT_EMOJIS[sport]} ${sport} `,
+			),
+		).join("");
+		string += "\n";
+		string += SPORTS.map((sport, i) =>
+			styleText(
+				i === this.sportIndex
+					? this.switchingSport || !this.initialized
+						? SPORT_MENU_BGCOLOR_DEBOUNCE
+						: SPORT_MENU_BGCOLOR_ACTIVE
+					: SPORT_MENU_BGCOLOR_INACTIVE,
+				"▀".repeat([...sport].length + 5),
+			),
+		).join("");
+		string += "\n";
+
+		string += this.keys
 			.map((key) => {
 				const info = this.info[key]!;
 
 				let symbol: string;
 				if (info.status === "error") {
-					symbol = errorSymbol;
+					symbol = ERROR_SYMBOL;
 				} else if (info.status === "success") {
-					symbol = successSymbol;
+					symbol = SUCCESS_SYMBOL;
 				} else {
-					symbol = frames[this.currentFrame];
+					symbol = FRAMES[this.currentFrame];
 				}
 
 				return this.renderKey({
@@ -284,6 +375,56 @@ class Spinners<Key extends string = string> {
 		const exitCode = signal === "SIGINT" ? 130 : signal === "SIGTERM" ? 143 : 1;
 		process.exit(exitCode);
 	}
+
+	private listenForArrowKeys() {
+		readline.emitKeypressEvents(process.stdin); // Enables keypress events on stdin
+
+		if (process.stdin.isTTY) {
+			process.stdin.setRawMode(true); // Sets the terminal to raw mode
+		}
+
+		const directions = {
+			"\u001b[D": -1, // Left arrow
+			"\u001b[C": 1, // Right arrow
+		};
+
+		process.stdin.on("keypress", (str, key) => {
+			if (!this.initialized) {
+				return;
+			}
+
+			// @ts-expect-error
+			const direction = directions[key.sequence];
+
+			if (direction !== undefined) {
+				this.eventEmitter.emit("switchingSport");
+
+				// Clear any pending sport transition
+				if (this.switchSportsTimeoutId) {
+					clearTimeout(this.switchSportsTimeoutId);
+				}
+
+				this.sportIndex = mod(this.sportIndex + direction, SPORTS.length);
+
+				this.switchSportsTimeoutId = setTimeout(() => {
+					this.switchSportsTimeoutId = undefined;
+					process.env.SPORT = SPORTS[this.sportIndex];
+					this.eventEmitter.emit("newSport", SPORTS[this.sportIndex]);
+					if (!this.rendering) {
+						this.render();
+					}
+				}, DEBOUNCE_SPORT_MENU_WAIT);
+
+				// Handle setting the color of highlighting, based on this.switchSportsTimeoutId
+				if (!this.rendering) {
+					this.render();
+				}
+			} else if (key.ctrl && key.name === "c") {
+				// Allow Ctrl+C to exit the script
+				this.exitHandler("SIGINT");
+			}
+		});
+	}
 }
 
 const TIME_CUTOFF_SPIN_1 = 1000;
@@ -311,7 +452,7 @@ export const spinners = new Spinners(
 			return `${symbolAndText}: build started at ${coloredTime}`;
 		}
 		if (info.status === "error") {
-			return `${symbolAndText} ${info.error.stack ?? "See error above from ESBuild"}`;
+			return `${symbolAndText} ${info.error.stack ?? "???"}`;
 		}
 
 		if (info.status === "success") {

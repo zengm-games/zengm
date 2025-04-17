@@ -9,14 +9,14 @@ import {
 	realtimeUpdate,
 	requestPersistentStorage,
 	safeLocalStorage,
-} from "../util";
-import { showEvent } from "../util/logEvent";
+} from "../util/index.ts";
+import { showEvent } from "../util/logEvent.ts";
 import type {
 	LocalStateUI,
 	LogEventShowOptions,
 	UpdateEvents,
 	GameAttributesLeague,
-} from "../../common/types";
+} from "../../common/types.ts";
 
 const initAds = (type: "accountChecked" | "uiRendered") => {
 	ads.setLoadingDone(type);

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Modal } from "react-bootstrap";
-import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
-import { SelectSeasonRange } from "./SelectSeasonRange";
-import { MAX_SEASON, MIN_SEASON } from ".";
+import { SPORT_HAS_REAL_PLAYERS } from "../../../common/index.ts";
+import { SelectSeasonRange } from "./SelectSeasonRange.tsx";
+import { MAX_SEASON, MIN_SEASON } from "./index.tsx";
 
 const RandomizeTeamsModal = ({
 	onCancel,

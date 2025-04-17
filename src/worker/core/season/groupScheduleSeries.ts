@@ -1,5 +1,5 @@
-import { orderBy } from "../../../common/utils";
-import { helpers, random } from "../../util";
+import { orderBy } from "../../../common/utils.ts";
+import { helpers, random } from "../../util/index.ts";
 
 const groupScheduleSeries = (tids: [number, number][]) => {
 	const matchupToKey = (matchup: [number, number]) =>

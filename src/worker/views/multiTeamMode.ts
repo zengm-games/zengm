@@ -1,6 +1,6 @@
-import { g } from "../util";
-import type { UpdateEvents } from "../../common/types";
-import { idb } from "../db";
+import { g } from "../util/index.ts";
+import type { UpdateEvents } from "../../common/types.ts";
+import { idb } from "../db/index.ts";
 
 const updateMultiTeamMode = async (
 	inputs: unknown,

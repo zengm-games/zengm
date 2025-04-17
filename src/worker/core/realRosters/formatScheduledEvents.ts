@@ -1,13 +1,13 @@
-import { helpers } from "../../util";
+import { helpers } from "../../util/index.ts";
 import type {
 	ScheduledEventWithoutKey,
 	Team,
 	TeamSeasonWithoutKey,
-} from "../../../common/types";
-import { gameAttributeHasHistory, PHASE } from "../../../common";
-import { ALWAYS_WRAP } from "../league/loadGameAttributes";
-import { wrap } from "../../util/g";
-import { orderBy } from "../../../common/utils";
+} from "../../../common/types.ts";
+import { gameAttributeHasHistory, PHASE } from "../../../common/index.ts";
+import { ALWAYS_WRAP } from "../league/loadGameAttributes.ts";
+import { wrap } from "../../util/g.ts";
+import { orderBy } from "../../../common/utils.ts";
 
 const processGameAttributes = (
 	events: any[],

@@ -1,8 +1,8 @@
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, gradientStyleFactory, helpers } from "../util";
-import { DataTable, MoreLinks } from "../components";
-import type { View } from "../../common/types";
-import type { Col } from "../components/DataTable";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, gradientStyleFactory, helpers } from "../util/index.ts";
+import { DataTable, MoreLinks } from "../components/index.tsx";
+import type { View } from "../../common/types.ts";
+import type { Col } from "../components/DataTable/index.tsx";
 import clsx from "clsx";
 import { useState } from "react";
 

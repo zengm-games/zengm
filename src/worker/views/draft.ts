@@ -1,9 +1,9 @@
-import { bySport, PHASE, PLAYER } from "../../common";
-import type { UpdateEvents } from "../../common/types";
-import { draft } from "../core";
-import { idb } from "../db";
-import { g, helpers, local } from "../util";
-import addFirstNameShort from "../util/addFirstNameShort";
+import { bySport, PHASE, PLAYER } from "../../common/index.ts";
+import type { UpdateEvents } from "../../common/types.ts";
+import { draft } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import { g, helpers, local } from "../util/index.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
 
 const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (

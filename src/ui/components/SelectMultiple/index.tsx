@@ -1,5 +1,5 @@
 import Select from "react-select";
-import { CustomMenuList, CustomOption } from "./components";
+import { CustomMenuList, CustomOption } from "./components.tsx";
 
 const SelectMultiple = <T extends Record<string, unknown>>({
 	value,

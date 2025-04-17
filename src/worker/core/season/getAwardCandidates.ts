@@ -1,8 +1,8 @@
-import { bySport } from "../../../common";
-import getAwardCandidatesBaseball from "./getAwardCandidates.baseball";
-import getAwardCandidatesBasketball from "./getAwardCandidates.basketball";
-import getAwardCandidatesFootball from "./getAwardCandidates.football";
-import getAwardCandidatesHockey from "./getAwardCandidates.hockey";
+import { bySport } from "../../../common/index.ts";
+import getAwardCandidatesBaseball from "./getAwardCandidates.baseball.ts";
+import getAwardCandidatesBasketball from "./getAwardCandidates.basketball.ts";
+import getAwardCandidatesFootball from "./getAwardCandidates.football.ts";
+import getAwardCandidatesHockey from "./getAwardCandidates.hockey.ts";
 
 const getAwardCandidates = (season: number) => {
 	return bySport({

@@ -1,5 +1,5 @@
 import { memo } from "react"; // Ensure there is enough room to display 160px wide ad with 15px margins next to 1200px wide container
-import { AD_DIVS } from "../../common";
+import { AD_DIVS } from "../../common/index.ts";
 
 const Header = memo(() => {
 	return (

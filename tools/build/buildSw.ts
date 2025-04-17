@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import fs from "node:fs/promises";
 import { babel } from "@rollup/plugin-babel";
 import replace from "@rollup/plugin-replace";
 import resolve from "@rollup/plugin-node-resolve";
@@ -7,8 +7,8 @@ import { rollup } from "rollup";
 import workboxBuild from "workbox-build";
 import { replace as replace2 } from "./replace.ts";
 
-const getVersionNumber = () => {
-	const files = fs.readdirSync("build/gen");
+const getVersionNumber = async () => {
+	const files = await fs.readdir("build/gen");
 	for (const file of files) {
 		if (file.endsWith(".js")) {
 			const versionNumber = file.split("-")[1].replace(".js", "");
@@ -80,8 +80,8 @@ export const buildSw = async () => {
 	await injectManifest();
 	await bundle();
 
-	const versionNumber = getVersionNumber();
-	replace2({
+	const versionNumber = await getVersionNumber();
+	await replace2({
 		paths: ["build/sw.js"],
 		replaces: [
 			{

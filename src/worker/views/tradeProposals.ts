@@ -1,10 +1,10 @@
-import { idb } from "../db";
-import { g, helpers, random } from "../util";
-import type { TradeTeams, UpdateEvents } from "../../common/types";
-import isUntradable from "../core/trade/isUntradable";
-import makeItWork from "../core/trade/makeItWork";
-import summary from "../core/trade/summary";
-import { augmentOffers } from "../api";
+import { idb } from "../db/index.ts";
+import { g, helpers, random } from "../util/index.ts";
+import type { TradeTeams, UpdateEvents } from "../../common/types.ts";
+import isUntradable from "../core/trade/isUntradable.ts";
+import makeItWork from "../core/trade/makeItWork.ts";
+import summary from "../core/trade/summary.ts";
+import { augmentOffers } from "../api/index.ts";
 
 const getOffers = async (seed: number) => {
 	const NUM_OFFERS = 5;

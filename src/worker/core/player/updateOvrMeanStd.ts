@@ -1,5 +1,5 @@
-import { local } from "../../util";
-import { idb } from "../../db";
+import { local } from "../../util/index.ts";
+import { idb } from "../../db/index.ts";
 
 const updateOvrMeanStd = async () => {
 	if (local.playerOvrMeanStdStale) {

@@ -5,15 +5,15 @@ import {
 	useState,
 	useMemo,
 } from "react";
-import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
-import { getCols, helpers, processPlayerStats } from "../util";
-import { filterPlayerStats, getPeriodName } from "../../common";
-import type { PlayByPlayEventScore } from "../../worker/core/GameSim.hockey/PlayByPlayLogger";
-import { formatClock } from "../util/processLiveGameEvents.hockey";
-import { PLAYER_GAME_STATS } from "../../common/constants.hockey";
-import { sortByStats, StatsHeader } from "./BoxScore.football";
-import updateSortBys from "./DataTable/updateSortBys";
-import type { SortBy } from "./DataTable";
+import ResponsiveTableWrapper from "./ResponsiveTableWrapper.tsx";
+import { getCols, helpers, processPlayerStats } from "../util/index.ts";
+import { filterPlayerStats, getPeriodName } from "../../common/index.ts";
+import type { PlayByPlayEventScore } from "../../worker/core/GameSim.hockey/PlayByPlayLogger.ts";
+import { formatClock } from "../util/processLiveGameEvents.hockey.tsx";
+import { PLAYER_GAME_STATS } from "../../common/constants.hockey.ts";
+import { sortByStats, StatsHeader } from "./BoxScore.football.tsx";
+import updateSortBys from "./DataTable/updateSortBys.ts";
+import type { SortBy } from "./DataTable/index.tsx";
 
 type Team = {
 	abbrev: string;

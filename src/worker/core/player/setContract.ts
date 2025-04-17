@@ -1,6 +1,9 @@
-import { PHASE } from "../../../common";
-import { g } from "../../util";
-import type { PlayerContract, PlayerWithoutKey } from "../../../common/types";
+import { PHASE } from "../../../common/index.ts";
+import { g } from "../../util/index.ts";
+import type {
+	PlayerContract,
+	PlayerWithoutKey,
+} from "../../../common/types.ts";
 
 /**
  * Store a contract in a player object.

@@ -1,6 +1,6 @@
-import type { GameResults } from "../../../common/types";
-import { idb } from "../../db";
-import { helpers, local } from "../../util";
+import type { GameResults } from "../../../common/types.ts";
+import { idb } from "../../db/index.ts";
+import { helpers, local } from "../../util/index.ts";
 
 export const setLiveSimRatingsStatsPopoverPlayers = async (
 	results: GameResults[],

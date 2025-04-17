@@ -1,5 +1,5 @@
-import { idb } from "../db";
-import type { ViewInput, RealTeamInfo } from "../../common/types";
+import { idb } from "../db/index.ts";
+import type { ViewInput, RealTeamInfo } from "../../common/types.ts";
 import {
 	defaultGameAttributes,
 	defaultInjuries,
@@ -7,10 +7,10 @@ import {
 	env,
 	getNewLeagueLid,
 	newLeagueGodModeLimits,
-} from "../util";
-import type { Settings } from "./settings";
-import { unwrapGameAttribute } from "../../common";
-import goatFormula from "../util/goatFormula";
+} from "../util/index.ts";
+import type { Settings } from "./settings.ts";
+import { unwrapGameAttribute } from "../../common/index.ts";
+import goatFormula from "../util/goatFormula.ts";
 
 const getDefaultRealStats = () => {
 	return env.mobile ? "none" : "allActiveHOF";

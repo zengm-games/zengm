@@ -1,9 +1,13 @@
-import { player, team } from "..";
-import { idb } from "../../db";
-import type { DraftPick, Player, TradeTeams } from "../../../common/types";
-import isUntradable from "./isUntradable";
-import { helpers } from "../../util";
-import { COMPOSITE_WEIGHTS, isSport, POSITIONS } from "../../../common";
+import { player, team } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import type { DraftPick, Player, TradeTeams } from "../../../common/types.ts";
+import isUntradable from "./isUntradable.ts";
+import { helpers } from "../../util/index.ts";
+import {
+	COMPOSITE_WEIGHTS,
+	isSport,
+	POSITIONS,
+} from "../../../common/index.ts";
 
 export type LookingFor = {
 	positions: Set<string>;

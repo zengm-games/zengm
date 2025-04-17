@@ -1,11 +1,11 @@
-import { idb } from "../db";
-import { g, helpers } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
-import { bySport } from "../../common";
-import addFirstNameShort from "../util/addFirstNameShort";
-import { augmentOffers } from "../api";
-import { team } from "../core";
-import { addMissingAssets } from "./savedTrades";
+import { idb } from "../db/index.ts";
+import { g, helpers } from "../util/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { bySport } from "../../common/index.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { augmentOffers } from "../api/index.ts";
+import { team } from "../core/index.ts";
+import { addMissingAssets } from "./savedTrades.ts";
 
 const updateUserRoster = async (
 	inputs: ViewInput<"tradingBlock">,

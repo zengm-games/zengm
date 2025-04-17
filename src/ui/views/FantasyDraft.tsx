@@ -1,12 +1,12 @@
 import { useCallback, useState } from "react";
 import { arrayMoveImmutable } from "array-move";
-import { PHASE } from "../../common";
-import { DataTable } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker } from "../util";
-import type { View } from "../../common/types";
-import { shuffle } from "../../common/random";
-import type { DataTableRow } from "../components/DataTable";
+import { PHASE } from "../../common/index.ts";
+import { DataTable } from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers, toWorker } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { shuffle } from "../../common/random.ts";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
 
 const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
 	const [sortedTids, setSortedTids] = useState(teams.map((t) => t.tid));

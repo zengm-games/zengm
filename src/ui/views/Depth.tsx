@@ -1,20 +1,20 @@
 import clsx from "clsx";
 import { useState } from "react";
 import { arrayMoveImmutable } from "array-move";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, toWorker, useLocalPartial } from "../util";
-import { DataTable, MoreLinks } from "../components";
-import type { View } from "../../common/types";
-import { bySport, isSport } from "../../common";
-import { NUM_LINES } from "../../common/constants.hockey";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers, toWorker, useLocalPartial } from "../util/index.ts";
+import { DataTable, MoreLinks } from "../components/index.tsx";
+import type { View } from "../../common/types.ts";
+import { bySport, isSport } from "../../common/index.ts";
+import { NUM_LINES } from "../../common/constants.hockey.ts";
 import {
 	NUM_ACTIVE_BATTERS,
 	NUM_ACTIVE_PITCHERS,
 	NUM_STARTING_PITCHERS,
-} from "../../common/constants.baseball";
-import { range } from "../../common/utils";
-import type { DataTableRow } from "../components/DataTable";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+} from "../../common/constants.baseball.ts";
+import { range } from "../../common/utils.ts";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 
 const handleAutoSort = async (pos: string) => {
 	await toWorker("main", "autoSortRoster", { pos });

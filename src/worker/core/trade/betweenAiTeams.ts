@@ -1,12 +1,12 @@
-import { team } from "..";
-import { idb } from "../../db";
-import { g, random, local } from "../../util";
-import isUntradable from "./isUntradable";
-import makeItWork from "./makeItWork";
-import processTrade from "./processTrade";
-import summary from "./summary";
-import type { TradeTeams } from "../../../common/types";
-import { isSport } from "../../../common";
+import { team } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { g, random, local } from "../../util/index.ts";
+import isUntradable from "./isUntradable.ts";
+import makeItWork from "./makeItWork.ts";
+import processTrade from "./processTrade.ts";
+import summary from "./summary.ts";
+import type { TradeTeams } from "../../../common/types.ts";
+import { isSport } from "../../../common/index.ts";
 
 const getAITids = async () => {
 	const teams = await idb.cache.teams.getAll();

@@ -1,5 +1,9 @@
-import { checkAccount } from "../util";
-import type { Conditions, UpdateEvents, ViewInput } from "../../common/types";
+import { checkAccount } from "../util/index.ts";
+import type {
+	Conditions,
+	UpdateEvents,
+	ViewInput,
+} from "../../common/types.ts";
 
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
 const GRACE_PERIOD = 60 * 60 * 24 * 3;

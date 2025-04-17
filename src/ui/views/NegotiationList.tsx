@@ -4,13 +4,19 @@ import {
 	RosterComposition,
 	RosterSalarySummary,
 	SafeHtml,
-} from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { confirm, getCols, helpers, logEvent, toWorker } from "../util";
-import type { View } from "../../common/types";
-import { dataTableWrappedMood } from "../components/Mood";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import type { DataTableRow } from "../components/DataTable";
+} from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import {
+	confirm,
+	getCols,
+	helpers,
+	logEvent,
+	toWorker,
+} from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { dataTableWrappedMood } from "../components/Mood.tsx";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
 
 const NegotiationList = ({
 	capSpace,

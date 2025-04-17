@@ -1,6 +1,6 @@
-import useTitleBar from "../hooks/useTitleBar";
-import { helpers, toWorker, useLocal, useLocalPartial } from "../util";
-import type { DunkAttempt, Player, View } from "../../common/types";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { helpers, toWorker, useLocal, useLocalPartial } from "../util/index.ts";
+import type { DunkAttempt, Player, View } from "../../common/types.ts";
 import {
 	Height,
 	PlayerNameLabels,
@@ -8,19 +8,19 @@ import {
 	PlayPauseNext,
 	ResponsiveTableWrapper,
 	Weight,
-} from "../components";
+} from "../components/index.tsx";
 import { useEffect, useState } from "react";
-import { isSport } from "../../common";
-import SelectMultiple from "../components/SelectMultiple";
+import { isSport } from "../../common/index.ts";
+import SelectMultiple from "../components/SelectMultiple/index.tsx";
 import {
 	dunkInfos,
 	getNumRounds,
 	getValidMoves,
 	isDunkContest,
-} from "../../common/dunkContest";
+} from "../../common/dunkContest.ts";
 import clsx from "clsx";
-import { getHeightString } from "../components/Height";
-import { range } from "../../common/utils";
+import { getHeightString } from "../components/Height.tsx";
+import { range } from "../../common/utils.ts";
 
 export const EditContestants = ({
 	allPossibleContestants,

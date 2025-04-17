@@ -1,12 +1,12 @@
 import clsx from "clsx";
-import { helpers } from "../../util";
+import { helpers } from "../../util/index.ts";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import {
 	categories,
 	type LookingForState,
 	type SetLookingForState,
-} from "./useLookingForState";
-import { ResponsiveTableWrapper } from "../../components";
+} from "./useLookingForState.ts";
+import { ResponsiveTableWrapper } from "../../components/index.tsx";
 
 const LookingFor = ({
 	disabled,

@@ -4,10 +4,10 @@ import {
 	processPlayerStatsBasketball,
 	processPlayerStatsFootball,
 	processPlayerStatsHockey,
-} from "../../common";
-import type { StatSumsExtra } from "../../common/processPlayerStats.basketball";
-import type { PlayerStats, PlayerStatType } from "../../common/types";
-import g from "./g";
+} from "../../common/index.ts";
+import type { StatSumsExtra } from "../../common/processPlayerStats.basketball.ts";
+import type { PlayerStats, PlayerStatType } from "../../common/types.ts";
+import g from "./g.ts";
 
 const processPlayerStats = (
 	ps: PlayerStats,

@@ -1,4 +1,4 @@
-import { ALL_STAR_GAME_ONLY, isSport, PHASE } from "../../../common";
+import { ALL_STAR_GAME_ONLY, isSport, PHASE } from "../../../common/index.ts";
 import {
 	GameSim,
 	allStar,
@@ -8,15 +8,15 @@ import {
 	season,
 	team,
 	trade,
-} from "..";
-import loadTeams from "./loadTeams";
-import updatePlayoffSeries from "./updatePlayoffSeries";
-import writeGameStats from "./writeGameStats";
+} from "../index.ts";
+import loadTeams from "./loadTeams.ts";
+import updatePlayoffSeries from "./updatePlayoffSeries.ts";
+import writeGameStats from "./writeGameStats.ts";
 import writePlayerStats, {
 	P_FATIGUE_DAILY_REDUCTION,
-} from "./writePlayerStats";
-import writeTeamStats from "./writeTeamStats";
-import { idb } from "../../db";
+} from "./writePlayerStats.ts";
+import writeTeamStats from "./writeTeamStats.ts";
+import { idb } from "../../db/index.ts";
 import {
 	advStats,
 	g,
@@ -28,16 +28,16 @@ import {
 	updateStatus,
 	recomputeLocalUITeamOvrs,
 	local,
-} from "../../util";
+} from "../../util/index.ts";
 import type {
 	Conditions,
 	GameResults,
 	ScheduleGame,
 	UpdateEvents,
-} from "../../../common/types";
-import allowForceTie from "../../../common/allowForceTie";
-import getWinner from "../../../common/getWinner";
-import { setLiveSimRatingsStatsPopoverPlayers } from "./setLiveSimRatingsStatsPopoverPlayers";
+} from "../../../common/types.ts";
+import allowForceTie from "../../../common/allowForceTie.ts";
+import getWinner from "../../../common/getWinner.ts";
+import { setLiveSimRatingsStatsPopoverPlayers } from "./setLiveSimRatingsStatsPopoverPlayers.ts";
 
 /**
  * Play one or more days of games.

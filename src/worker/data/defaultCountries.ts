@@ -1,5 +1,5 @@
 // This is dynamically resolved with rollup-plugin-alias
-import { bySport } from "../../common";
+import { bySport } from "../../common/index.ts";
 
 // Would be nice to put this stuff in names.json, but need a way to make it sport specific.
 

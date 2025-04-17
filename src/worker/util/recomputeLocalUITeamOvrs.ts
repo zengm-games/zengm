@@ -1,8 +1,8 @@
-import { range } from "../../common/utils";
-import { player, team } from "../core";
-import { idb } from "../db";
-import g from "./g";
-import toUI from "./toUI";
+import { range } from "../../common/utils.ts";
+import { player, team } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import g from "./g.ts";
+import toUI from "./toUI.ts";
 
 const recomputeLocalUITeamOvrs = async () => {
 	const players = (

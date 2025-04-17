@@ -1,4 +1,4 @@
-import type { Local } from "../../common/types";
+import type { Local } from "../../common/types.ts";
 
 // These variables are transient and will be reset every refresh. See lock.js for more.
 const defaultLocal: Local = {

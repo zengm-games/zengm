@@ -1,11 +1,11 @@
-import { bySport } from "../../../common";
-import { POSITION_COUNTS } from "../../../common/constants";
+import { bySport } from "../../../common/index.ts";
+import { POSITION_COUNTS } from "../../../common/constants.ts";
 import {
 	NUM_STARTING_PITCHERS,
 	POS_NUMBERS_INVERSE,
-} from "../../../common/constants.baseball";
-import { orderBy } from "../../../common/utils";
-import { getDepthDefense, getDepthPitchers } from "./genDepth.baseball";
+} from "../../../common/constants.baseball.ts";
+import { orderBy } from "../../../common/utils.ts";
+import { getDepthDefense, getDepthPitchers } from "./genDepth.baseball.ts";
 
 const DEFAULT_OVR = 0;
 

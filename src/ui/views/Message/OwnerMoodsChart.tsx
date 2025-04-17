@@ -5,11 +5,11 @@ import { ParentSize } from "@visx/responsive";
 import { LinePath } from "@visx/shape";
 import { scaleLinear, scalePoint } from "@visx/scale";
 import { Text } from "@visx/text";
-import { HelpPopover } from "../../components";
-import type { View } from "../../../common/types";
+import { HelpPopover } from "../../components/index.tsx";
+import type { View } from "../../../common/types.ts";
 import { Fragment, type MouseEvent } from "react";
 import { TooltipWithBounds, useTooltip } from "@visx/tooltip";
-import { helpers } from "../../util";
+import { helpers } from "../../util/index.ts";
 import { localPoint } from "@visx/event";
 
 export const ReferenceLine = ({

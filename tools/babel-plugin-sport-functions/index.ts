@@ -1,16 +1,14 @@
 // https://github.com/babel/babel/issues/10637#issuecomment-882101248
 import type * as BabelCoreNamespace from "@babel/core";
 import type { PluginObj } from "@babel/core";
+import type { Sport } from "../lib/getSport.ts";
 
 type Babel = typeof BabelCoreNamespace;
 type ObjectProperty = BabelCoreNamespace.types.ObjectProperty;
 
-// The purpose of this is to do dead code elimination (or allow the minifier to do it) by sport (defined in process.env.SPORT), without requiring ugly syntax like nested ternaries for handling multiple sports. Instead, we have these nicer isSport and bySport functions.
+// The purpose of this is to do dead code elimination (or allow the minifier to do it) by sport, without requiring ugly syntax like nested ternaries for handling multiple sports. Instead, we have these nicer isSport and bySport functions.
 //
 // Based on https://github.com/4Catalyzer/babel-plugin-dev-expression/blob/293b8716d3df93b3c5fb23cf3181c8bb296ec449/dev-expression.js
-
-// Maybe better than tools/lib/getSport.ts because it's slightly faster (no validation, since we can assume that is done elsewhere)
-const getSport = () => process.env.SPORT ?? "basketball";
 
 // Handles quoted and unquoted keys, like {key: 1} vs {"key": 1}
 const getObjectKey = (property: ObjectProperty) => {
@@ -25,7 +23,14 @@ const getObjectKey = (property: ObjectProperty) => {
 	throw new Error(`Unknown node type "${property.key.type}"`);
 };
 
-export const babelPluginSportFunctions = (babel: Babel): PluginObj => {
+export const babelPluginSportFunctions = (
+	babel: Babel,
+	{
+		sport,
+	}: {
+		sport: Sport;
+	},
+): PluginObj => {
 	const t = babel.types;
 
 	return {
@@ -49,7 +54,7 @@ export const babelPluginSportFunctions = (babel: Babel): PluginObj => {
 						}
 
 						const localSport = argument.value;
-						const value = t.booleanLiteral(localSport === getSport());
+						const value = t.booleanLiteral(localSport === sport);
 						path.replaceWith(value);
 					} else if (callee.isIdentifier({ name: "bySport" })) {
 						// Turns this code:
@@ -76,8 +81,6 @@ export const babelPluginSportFunctions = (babel: Babel): PluginObj => {
 						// So that outputs this for any non-basketball sport:
 						//
 						// const whatever = "default thing";
-
-						const sport = getSport();
 
 						const argument = path.node.arguments[0];
 						if (argument.type !== "ObjectExpression") {

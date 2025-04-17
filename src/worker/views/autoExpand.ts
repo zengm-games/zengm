@@ -1,6 +1,6 @@
-import { g, helpers } from "../util";
-import getTeamInfos from "../../common/getTeamInfos";
-import type { UpdateEvents } from "../../common/types";
+import { g, helpers } from "../util/index.ts";
+import getTeamInfos from "../../common/getTeamInfos.ts";
+import type { UpdateEvents } from "../../common/types.ts";
 
 const updateExpand = async (inputs: void, updateEvents: UpdateEvents) => {
 	// Ignore team updateEvent from relocateVote, and newPhase from starting the expansion draft

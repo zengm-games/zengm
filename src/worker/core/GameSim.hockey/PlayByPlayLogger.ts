@@ -1,6 +1,6 @@
-import { formatScoringSummaryEvent } from "../../../common/formatScoringSummaryEvent.hockey";
-import type { penaltyTypes } from "./penalties";
-import type { TeamNum } from "./types";
+import { formatScoringSummaryEvent } from "../../../common/formatScoringSummaryEvent.hockey.ts";
+import type { penaltyTypes } from "./penalties.ts";
+import type { TeamNum } from "./types.ts";
 
 type PlayByPlayEventInputScore =
 	| {

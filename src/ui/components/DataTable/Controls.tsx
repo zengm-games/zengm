@@ -1,9 +1,9 @@
 import clsx from "clsx";
 import type { SyntheticEvent } from "react";
 import { Dropdown } from "react-bootstrap";
-import { bySport } from "../../../common";
-import HelpPopover from "../HelpPopover";
-import type { DataTableRowMetadata } from ".";
+import { bySport } from "../../../common/index.ts";
+import HelpPopover from "../HelpPopover.tsx";
+import type { DataTableRowMetadata } from "./index.tsx";
 
 const style = {
 	height: 27,

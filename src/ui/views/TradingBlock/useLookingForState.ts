@@ -5,7 +5,7 @@ import {
 	NOT_REAL_POSITIONS,
 	POSITIONS,
 	SKILLS,
-} from "../../../common";
+} from "../../../common/index.ts";
 
 type Category = {
 	name: string;

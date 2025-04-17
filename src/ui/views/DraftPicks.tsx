@@ -1,10 +1,10 @@
-import { DataTable, MoreLinks } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import type { View } from "../../common/types";
-import type { DataTableRow } from "../components/DataTable";
-import { orderBy } from "../../common/utils";
-import Note from "./Player/Note";
+import { DataTable, MoreLinks } from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { orderBy } from "../../common/utils.ts";
+import Note from "./Player/Note.tsx";
 
 export const getDraftPicksColsAndRows = ({
 	challengeNoRatings,

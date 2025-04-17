@@ -1,6 +1,6 @@
-import { idb } from "../db";
-import { g, helpers } from "../util";
-import type { UpdateEvents, AllStars } from "../../common/types";
+import { idb } from "../db/index.ts";
+import { g, helpers } from "../util/index.ts";
+import type { UpdateEvents, AllStars } from "../../common/types.ts";
 
 const addAbbrevAndCount = <
 	T extends {

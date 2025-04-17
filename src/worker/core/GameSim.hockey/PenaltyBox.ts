@@ -1,5 +1,5 @@
-import { penalties, penaltyTypes } from "./penalties";
-import type { PlayerGameSim, TeamNum } from "./types";
+import { penalties, penaltyTypes } from "./penalties.ts";
+import type { PlayerGameSim, TeamNum } from "./types.ts";
 
 type PenaltyBoxEntry = {
 	p: PlayerGameSim;

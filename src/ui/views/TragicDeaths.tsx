@@ -1,10 +1,10 @@
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import { DataTable, SafeHtml } from "../components";
-import type { View } from "../../common/types";
-import { frivolitiesMenu } from "./Frivolities";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import type { DataTableRow } from "../components/DataTable";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers } from "../util/index.ts";
+import { DataTable, SafeHtml } from "../components/index.tsx";
+import type { View } from "../../common/types.ts";
+import { frivolitiesMenu } from "./Frivolities.tsx";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
 
 const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 	useTitleBar({ title: "Tragic Deaths", customMenu: frivolitiesMenu });

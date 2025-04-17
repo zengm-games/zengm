@@ -1,5 +1,5 @@
-import { idb } from "../../db";
-import { updatePlayMenu, updateStatus } from "../../util";
+import { idb } from "../../db/index.ts";
+import { updatePlayMenu, updateStatus } from "../../util/index.ts";
 
 /**
  * Cancel all ongoing contract negotiations.

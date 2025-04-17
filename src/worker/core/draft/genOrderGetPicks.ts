@@ -1,6 +1,6 @@
-import { idb } from "../../db";
-import { g, helpers } from "../../util";
-import type { DraftPick } from "../../../common/types";
+import { idb } from "../../db/index.ts";
+import { g, helpers } from "../../util/index.ts";
+import type { DraftPick } from "../../../common/types.ts";
 
 const genOrderGetPicks = async (mock: boolean) => {
 	const draftPicks = helpers.deepCopy(

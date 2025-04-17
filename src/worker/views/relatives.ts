@@ -1,13 +1,13 @@
-import { idb } from "../db";
-import { g, helpers, processPlayersHallOfFame } from "../util";
+import { idb } from "../db/index.ts";
+import { g, helpers, processPlayersHallOfFame } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	Player,
 	ViewInput,
 	GameAttributesLeague,
-} from "../../common/types";
-import { bySport } from "../../common";
-import addFirstNameShort from "../util/addFirstNameShort";
+} from "../../common/types.ts";
+import { bySport } from "../../common/index.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
 
 const getRelationText = (
 	gender: GameAttributesLeague["gender"],

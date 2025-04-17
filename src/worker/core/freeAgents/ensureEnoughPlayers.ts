@@ -1,7 +1,7 @@
-import { idb } from "../../db";
-import { PLAYER } from "../../../common";
-import { g } from "../../util";
-import { player } from "..";
+import { idb } from "../../db/index.ts";
+import { PLAYER } from "../../../common/index.ts";
+import { g } from "../../util/index.ts";
+import { player } from "../index.ts";
 
 // Ensure enough players, in case there was some huge expansion draft
 const ensureEnoughPlayers = async () => {

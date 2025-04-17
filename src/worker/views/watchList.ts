@@ -1,9 +1,9 @@
-import { bySport, PLAYER } from "../../common";
-import { player } from "../core";
-import { idb } from "../db";
-import { g } from "../util";
-import type { Player, UpdateEvents, ViewInput } from "../../common/types";
-import addFirstNameShort from "../util/addFirstNameShort";
+import { bySport, PLAYER } from "../../common/index.ts";
+import { player } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
+import type { Player, UpdateEvents, ViewInput } from "../../common/types.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
 
 export const formatPlayersWatchList = async (
 	playersAll: Player[],

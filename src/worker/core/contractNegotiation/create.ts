@@ -1,7 +1,13 @@
-import { PHASE, PLAYER } from "../../../common";
-import { player } from "..";
-import { idb } from "../../db";
-import { g, helpers, lock, updatePlayMenu, updateStatus } from "../../util";
+import { PHASE, PLAYER } from "../../../common/index.ts";
+import { player } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import {
+	g,
+	helpers,
+	lock,
+	updatePlayMenu,
+	updateStatus,
+} from "../../util/index.ts";
 
 /**
  * Start a new contract negotiation with a player.

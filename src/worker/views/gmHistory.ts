@@ -1,8 +1,8 @@
-import { idb } from "../db";
-import { g } from "../util";
-import type { UpdateEvents, TeamSeason, Player } from "../../common/types";
-import { getHistory, getHistoryTeam } from "./teamHistory";
-import { getPlayoffsByConfBySeason } from "./frivolitiesTeamSeasons";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
+import type { UpdateEvents, TeamSeason, Player } from "../../common/types.ts";
+import { getHistory, getHistoryTeam } from "./teamHistory.ts";
+import { getPlayoffsByConfBySeason } from "./frivolitiesTeamSeasons.ts";
 
 const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (

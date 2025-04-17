@@ -1,5 +1,5 @@
-import { formatScoringSummaryEvent } from "../../../common/formatScoringSummaryEvent.football";
-import type { TeamNum } from "./types";
+import { formatScoringSummaryEvent } from "../../../common/formatScoringSummaryEvent.football.ts";
+import type { TeamNum } from "./types.ts";
 
 export type PlayByPlayEventInputScore =
 	| {

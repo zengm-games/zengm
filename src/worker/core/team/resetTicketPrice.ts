@@ -1,6 +1,6 @@
-import type { Team } from "../../../common/types";
-import { g, helpers } from "../../util";
-import { getAutoTicketPriceByTid } from "../game/attendance";
+import type { Team } from "../../../common/types.ts";
+import { g, helpers } from "../../util/index.ts";
+import { getAutoTicketPriceByTid } from "../game/attendance.ts";
 
 const resetTicketPrice = async (
 	t: Team,

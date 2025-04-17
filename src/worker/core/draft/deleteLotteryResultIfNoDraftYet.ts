@@ -1,6 +1,6 @@
-import { PHASE } from "../../../common";
-import { idb } from "../../db";
-import { g } from "../../util";
+import { PHASE } from "../../../common/index.ts";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
 
 // Call this when adding/removing/enabling/disabling teams. Because if that happens during the draft lottery phase, it's possible the stored draftLotteryResult will be based on the incorrect set of teams, and it needs to be deleted so it can re-run.
 const deleteLotteryResultIfNoDraftYet = async () => {

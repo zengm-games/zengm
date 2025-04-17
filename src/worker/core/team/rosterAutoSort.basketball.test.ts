@@ -1,5 +1,5 @@
 import { assert, describe, test } from "vitest";
-import { findStarters } from "./rosterAutoSort.basketball";
+import { findStarters } from "./rosterAutoSort.basketball.ts";
 
 describe("findStarters", () => {
 	test("handle easy roster sorts", () => {

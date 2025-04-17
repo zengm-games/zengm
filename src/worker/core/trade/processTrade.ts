@@ -1,6 +1,6 @@
-import { PHASE } from "../../../common";
-import { player } from "..";
-import { idb } from "../../db";
+import { PHASE } from "../../../common/index.ts";
+import { player } from "../index.ts";
+import { idb } from "../../db/index.ts";
 import {
 	g,
 	helpers,
@@ -8,8 +8,8 @@ import {
 	toUI,
 	updatePlayMenu,
 	recomputeLocalUITeamOvrs,
-} from "../../util";
-import type { TradeEventTeams } from "../../../common/types";
+} from "../../util/index.ts";
+import type { TradeEventTeams } from "../../../common/types.ts";
 
 const processTrade = async (
 	tids: [number, number],

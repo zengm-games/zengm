@@ -1,9 +1,9 @@
-import { DataTable, MoreLinks } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import type { View } from "../../common/types";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import { isSport } from "../../common";
+import { DataTable, MoreLinks } from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import { isSport } from "../../common/index.ts";
 
 const playerName = (p?: { pid: number; name: string; count: number }) => {
 	if (!p) {

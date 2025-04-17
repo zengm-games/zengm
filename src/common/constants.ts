@@ -1,9 +1,9 @@
-import bySport from "./bySport";
-import * as constantsBaseball from "./constants.baseball";
-import * as constantsBasketball from "./constants.basketball";
-import * as constantsFootball from "./constants.football";
-import * as constantsHockey from "./constants.hockey";
-import type { CompositeWeights, Phase, DraftType, MoodTrait } from "./types";
+import bySport from "./bySport.ts";
+import * as constantsBaseball from "./constants.baseball.ts";
+import * as constantsBasketball from "./constants.basketball.ts";
+import * as constantsFootball from "./constants.football.ts";
+import * as constantsHockey from "./constants.hockey.ts";
+import type { CompositeWeights, Phase, DraftType, MoodTrait } from "./types.ts";
 
 const ACCOUNT_API_URL =
 	process.env.NODE_ENV === "development"

@@ -1,6 +1,6 @@
 import clsx from "clsx";
-import { RecordAndPlayoffs } from "../../components";
-import type { View } from "../../../common/types";
+import { RecordAndPlayoffs } from "../../components/index.tsx";
+import type { View } from "../../../common/types.ts";
 import { useState } from "react";
 
 const ExpandableNote = ({ note }: { note: string | undefined }) => {

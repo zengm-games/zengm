@@ -1,9 +1,9 @@
-import { bySport, PLAYER } from "../../common";
-import { idb } from "../db";
-import { g } from "../util";
-import type { ViewInput } from "../../common/types";
-import addFirstNameShort from "../util/addFirstNameShort";
-import { maxBy } from "../../common/utils";
+import { bySport, PLAYER } from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
+import type { ViewInput } from "../../common/types.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { maxBy } from "../../common/utils.ts";
 
 const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 	// Update every time because anything could change this (unless all players from class are retired)

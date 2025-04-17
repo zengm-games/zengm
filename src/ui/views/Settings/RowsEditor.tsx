@@ -1,7 +1,7 @@
 import { csvFormat, csvParse } from "d3-dsv";
 import { type ChangeEvent, type CSSProperties, useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
-import type { InjuriesSetting, TragicDeaths } from "../../../common/types";
+import type { InjuriesSetting, TragicDeaths } from "../../../common/types.ts";
 import {
 	confirm,
 	downloadFile,
@@ -9,11 +9,11 @@ import {
 	logEvent,
 	resetFileInput,
 	toWorker,
-} from "../../util";
-import { godModeRequiredMessage } from "./SettingsFormOptions";
+} from "../../util/index.ts";
+import { godModeRequiredMessage } from "./SettingsFormOptions.tsx";
 import clsx from "clsx";
-import { SPORT_HAS_REAL_PLAYERS } from "../../../common";
-import Modal from "../../components/Modal";
+import { SPORT_HAS_REAL_PLAYERS } from "../../../common/index.ts";
+import Modal from "../../components/Modal.tsx";
 
 type Rows<Type> = Type extends "injuries" ? InjuriesSetting : TragicDeaths;
 type RowsState<Type> = Type extends "injuries"

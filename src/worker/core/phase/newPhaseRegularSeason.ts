@@ -1,7 +1,7 @@
-import { season } from "..";
-import { idb } from "../../db";
-import { g, helpers, local, logEvent, toUI } from "../../util";
-import type { Conditions, PhaseReturn } from "../../../common/types";
+import { season } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers, local, logEvent, toUI } from "../../util/index.ts";
+import type { Conditions, PhaseReturn } from "../../../common/types.ts";
 import {
 	EMAIL_ADDRESS,
 	FACEBOOK_USERNAME,
@@ -9,7 +9,7 @@ import {
 	isSport,
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
-} from "../../../common";
+} from "../../../common/index.ts";
 
 const newPhaseRegularSeason = async (
 	conditions: Conditions,

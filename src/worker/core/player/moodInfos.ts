@@ -1,6 +1,6 @@
-import { g } from "../../util";
-import moodInfo from "./moodInfo";
-import type { Player } from "../../../common/types";
+import { g } from "../../util/index.ts";
+import moodInfo from "./moodInfo.ts";
+import type { Player } from "../../../common/types.ts";
 
 // Computes moodInfo for both userTid and current team
 const moodInfos = async (

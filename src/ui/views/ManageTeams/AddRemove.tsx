@@ -1,8 +1,8 @@
 import type { Dispatch, FormEvent } from "react";
-import { PHASE } from "../../../common";
-import { logEvent, toWorker, helpers } from "../../util";
-import type { Phase } from "../../../common/types";
-import type { Action } from ".";
+import { PHASE } from "../../../common/index.ts";
+import { logEvent, toWorker, helpers } from "../../util/index.ts";
+import type { Phase } from "../../../common/types.ts";
+import type { Action } from "./index.tsx";
 
 type Props = {
 	dispatch: Dispatch<Action>;

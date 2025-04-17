@@ -1,6 +1,6 @@
-import ovr from "./ovr.football";
-import type { PlayerRatings } from "../../../common/types.football";
-import { NOT_REAL_POSITIONS, POSITIONS } from "../../../common";
+import ovr from "./ovr.football.ts";
+import type { PlayerRatings } from "../../../common/types.football.ts";
+import { NOT_REAL_POSITIONS, POSITIONS } from "../../../common/index.ts";
 
 const pos = (ratings: PlayerRatings): string => {
 	const positions = POSITIONS.filter(

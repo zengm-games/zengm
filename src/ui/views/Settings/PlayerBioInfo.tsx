@@ -2,27 +2,27 @@ import { type ChangeEvent, useRef, useState } from "react";
 import type {
 	GameAttributesLeague,
 	PlayerBioInfo,
-} from "../../../common/types";
+} from "../../../common/types.ts";
 import {
 	confirm,
 	helpers,
 	logEvent,
 	safeLocalStorage,
 	toWorker,
-} from "../../util";
-import { godModeRequiredMessage } from "./SettingsFormOptions";
-import type { initDefaults } from "../../../worker/util/loadNames";
-import { getFrequencies, mergeCountries } from "../../../common/names";
+} from "../../util/index.ts";
+import { godModeRequiredMessage } from "./SettingsFormOptions.tsx";
+import type { initDefaults } from "../../../worker/util/loadNames.ts";
+import { getFrequencies, mergeCountries } from "../../../common/names.ts";
 import isEqual from "fast-deep-equal";
 import {
 	CollegesEditor,
 	FlagEditor,
 	NamesEditor,
 	RacesEditor,
-} from "./PlayerBioInfoEditors";
-import { CountriesEditor } from "./PlayerBioInfoCountries";
-import Modal from "../../components/Modal";
-import { orderBy } from "../../../common/utils";
+} from "./PlayerBioInfoEditors.tsx";
+import { CountriesEditor } from "./PlayerBioInfoCountries.tsx";
+import Modal from "../../components/Modal.tsx";
+import { orderBy } from "../../../common/utils.ts";
 
 export type Defaults = Awaited<ReturnType<typeof initDefaults>>;
 

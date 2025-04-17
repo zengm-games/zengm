@@ -389,6 +389,11 @@ table {
 
 .table {
 	font-variant: tabular-nums;
+	vertical-align: middle;
+}
+
+.align-top-all .table td {
+	vertical-align: top;
 }
 
 .table:not(.table-bordered) {

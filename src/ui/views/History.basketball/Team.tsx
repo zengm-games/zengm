@@ -1,4 +1,4 @@
-import { helpers } from "../../../ui/util";
+import { helpers } from "../../../ui/util/index.ts";
 
 const Player = ({
 	p,

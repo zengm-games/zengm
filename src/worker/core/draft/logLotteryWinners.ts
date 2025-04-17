@@ -1,6 +1,6 @@
-import logAction from "./logAction";
-import logLotteryTxt from "./logLotteryTxt";
-import type { Conditions, TeamFiltered } from "../../../common/types";
+import logAction from "./logAction.ts";
+import logLotteryTxt from "./logLotteryTxt.ts";
+import type { Conditions, TeamFiltered } from "../../../common/types.ts";
 
 const logLotteryWinners = (
 	teams: TeamFiltered<["tid"]>[],

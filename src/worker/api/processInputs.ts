@@ -1,10 +1,10 @@
-import { bySport, isSport, PHASE } from "../../common";
-import { g, helpers } from "../util";
-import type { PlayerStatType } from "../../common/types";
-import type { Params } from "../../ui/router";
-import type { boxScoreToLiveSim } from "../views/liveGame";
-import type { AdvancedPlayerSearchFilter } from "../../ui/views/AdvancedPlayerSearch";
-import type { NoteInfo } from "../../ui/views/Player/Note";
+import { bySport, isSport, PHASE } from "../../common/index.ts";
+import { g, helpers } from "../util/index.ts";
+import type { PlayerStatType } from "../../common/types.ts";
+import type { Params } from "../../ui/router/index.ts";
+import type { boxScoreToLiveSim } from "../views/liveGame.ts";
+import type { AdvancedPlayerSearchFilter } from "../../ui/views/AdvancedPlayerSearch.tsx";
+import type { NoteInfo } from "../../ui/views/Player/Note.tsx";
 
 /**
  * Validate that a given abbreviation corresponds to a team.

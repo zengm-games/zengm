@@ -6,13 +6,17 @@ import {
 	useState,
 	type CSSProperties,
 } from "react";
-import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
-import { getCols, processPlayerStats } from "../util";
-import { filterPlayerStats, getPeriodName, helpers } from "../../common";
-import { PLAYER_GAME_STATS } from "../../common/constants.football";
-import type { Col, SortBy } from "./DataTable";
-import updateSortBys from "./DataTable/updateSortBys";
-import { getSortClassName } from "./DataTable/Header";
+import ResponsiveTableWrapper from "./ResponsiveTableWrapper.tsx";
+import { getCols, processPlayerStats } from "../util/index.ts";
+import {
+	filterPlayerStats,
+	getPeriodName,
+	helpers,
+} from "../../common/index.ts";
+import { PLAYER_GAME_STATS } from "../../common/constants.football.ts";
+import type { Col, SortBy } from "./DataTable/index.tsx";
+import updateSortBys from "./DataTable/updateSortBys.ts";
+import { getSortClassName } from "./DataTable/Header.tsx";
 import clsx from "clsx";
 import {
 	formatClock,
@@ -22,10 +26,10 @@ import {
 	getText,
 	scrimmageToFieldPos,
 	type SportState,
-} from "../util/processLiveGameEvents.football";
+} from "../util/processLiveGameEvents.football.tsx";
 import { OverlayTrigger, Popover } from "react-bootstrap";
-import type { PlayByPlayEventScore } from "../../worker/core/GameSim.football/PlayByPlayLogger";
-import { range } from "../../common/utils";
+import type { PlayByPlayEventScore } from "../../worker/core/GameSim.football/PlayByPlayLogger.ts";
+import { range } from "../../common/utils.ts";
 
 type Team = {
 	abbrev: string;

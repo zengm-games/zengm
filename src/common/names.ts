@@ -1,5 +1,5 @@
-import helpers from "./helpers";
-import type { PlayerBioInfo } from "./types";
+import helpers from "./helpers.ts";
+import type { PlayerBioInfo } from "./types.ts";
 
 export type DefaultNames = Record<
 	string,

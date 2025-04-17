@@ -1,17 +1,17 @@
-import { bySport, PHASE } from "../../../common";
-import { idb } from "../../db";
-import { g, helpers, logEvent } from "../../util";
-import checkStatisticalFeatBaseball from "./checkStatisticalFeat.baseball";
-import checkStatisticalFeatBasketball from "./checkStatisticalFeat.basketball";
-import checkStatisticalFeatFootball from "./checkStatisticalFeat.football";
-import checkStatisticalFeatHockey from "./checkStatisticalFeat.hockey";
+import { bySport, PHASE } from "../../../common/index.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers, logEvent } from "../../util/index.ts";
+import checkStatisticalFeatBaseball from "./checkStatisticalFeat.baseball.ts";
+import checkStatisticalFeatBasketball from "./checkStatisticalFeat.basketball.ts";
+import checkStatisticalFeatFootball from "./checkStatisticalFeat.football.ts";
+import checkStatisticalFeatHockey from "./checkStatisticalFeat.hockey.ts";
 import type {
 	Conditions,
 	GamePlayer,
 	GameResults,
-} from "../../../common/types";
-import getWinner from "../../../common/getWinner";
-import formatScoreWithShootout from "../../../common/formatScoreWithShootout";
+} from "../../../common/types.ts";
+import getWinner from "../../../common/getWinner.ts";
+import formatScoreWithShootout from "../../../common/formatScoreWithShootout.ts";
 
 const checkPlayer = bySport({
 	baseball: checkStatisticalFeatBaseball,

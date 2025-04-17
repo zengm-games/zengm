@@ -1,5 +1,5 @@
-import { idb } from "..";
-import type { AllStars, GetCopyType } from "../../../common/types";
+import { idb } from "../index.ts";
+import type { AllStars, GetCopyType } from "../../../common/types.ts";
 
 const getCopy = async (
 	{

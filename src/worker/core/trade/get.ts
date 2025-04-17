@@ -1,4 +1,4 @@
-import { idb } from "../../db";
+import { idb } from "../../db/index.ts";
 
 const get = async () => {
 	const tr = await idb.cache.trade.get(0);

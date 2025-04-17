@@ -1,10 +1,10 @@
 import { assert, test } from "vitest";
-import { PLAYER } from "../../../common";
-import testHelpers from "../../../test/helpers";
-import { idb } from "../../db";
-import { g } from "../../util";
-import { draft } from "..";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import { PLAYER } from "../../../common/index.ts";
+import testHelpers from "../../../test/helpers.ts";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
+import { draft } from "../index.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 test("generate 70 players for the draft", async () => {
 	testHelpers.resetG();

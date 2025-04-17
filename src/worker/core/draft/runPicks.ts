@@ -1,16 +1,16 @@
-import { DRAFT_BY_TEAM_OVR, PHASE, PLAYER } from "../../../common";
-import afterPicks from "./afterPicks";
-import getOrder from "./getOrder";
-import selectPlayer from "./selectPlayer";
-import { idb } from "../../db";
-import { g, local, lock, random } from "../../util";
+import { DRAFT_BY_TEAM_OVR, PHASE, PLAYER } from "../../../common/index.ts";
+import afterPicks from "./afterPicks.ts";
+import getOrder from "./getOrder.ts";
+import selectPlayer from "./selectPlayer.ts";
+import { idb } from "../../db/index.ts";
+import { g, local, lock, random } from "../../util/index.ts";
 import type {
 	Conditions,
 	MinimalPlayerRatings,
 	Player,
 	PlayerWithoutKey,
-} from "../../../common/types";
-import { player, team } from "..";
+} from "../../../common/types.ts";
+import { player, team } from "../index.ts";
 
 export const getTeamOvrDiffs = (
 	teamPlayers: PlayerWithoutKey<MinimalPlayerRatings>[],

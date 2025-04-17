@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import type { Player } from "../../../common/types";
+import type { Player } from "../../../common/types.ts";
 
 const prefixCount = (text: string, count: number) => {
 	if (count <= 1) {

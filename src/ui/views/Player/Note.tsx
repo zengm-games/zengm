@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { helpers, toWorker } from "../../util";
+import { helpers, toWorker } from "../../util/index.ts";
 import clsx from "clsx";
 
 const MAX_WIDTH = 600;

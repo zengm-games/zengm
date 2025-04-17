@@ -1,7 +1,7 @@
-import { draft } from "../..";
-import { PHASE, PLAYER } from "../../../../common";
-import type { PlayerWithoutKey } from "../../../../common/types";
-import { g } from "../../../util";
+import { draft } from "../../index.ts";
+import { PHASE, PLAYER } from "../../../../common/index.ts";
+import type { PlayerWithoutKey } from "../../../../common/types.ts";
+import { g } from "../../../util/index.ts";
 
 const addDraftProspects = async ({
 	players,

@@ -1,7 +1,7 @@
-import { getPeriodName } from "../../common";
-import { choice } from "../../common/random";
-import { helpers, local } from ".";
-import type { PlayByPlayEvent } from "../../worker/core/GameSim.basketball/PlayByPlayLogger";
+import { getPeriodName } from "../../common/index.ts";
+import { choice } from "../../common/random.ts";
+import { helpers, local } from "./index.ts";
+import type { PlayByPlayEvent } from "../../worker/core/GameSim.basketball/PlayByPlayLogger.ts";
 import type { ReactNode } from "react";
 const getPronoun = (pronoun: Parameters<typeof helpers.pronoun>[1]) => {
 	return helpers.pronoun(local.getState().gender, pronoun);

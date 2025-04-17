@@ -4,9 +4,9 @@ import {
 	processPlayerStatsBasketball,
 	processPlayerStatsFootball,
 	processPlayerStatsHockey,
-} from "../../common";
-import type { PlayerStats, PlayerStatType } from "../../common/types";
-import { local } from "./local";
+} from "../../common/index.ts";
+import type { PlayerStats, PlayerStatType } from "../../common/types.ts";
+import { local } from "./local.ts";
 
 const processPlayerStats = (
 	ps: PlayerStats,

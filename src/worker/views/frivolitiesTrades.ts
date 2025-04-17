@@ -1,14 +1,14 @@
-import { idb } from "../db";
-import { g, getTeamInfoBySeason } from "../util";
+import { idb } from "../db/index.ts";
+import { g, getTeamInfoBySeason } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
 	DiscriminateUnion,
 	EventBBGM,
 	Phase,
-} from "../../common/types";
-import { processAssets } from "./tradeSummary";
-import { orderBy, type OrderBySortParams } from "../../common/utils";
+} from "../../common/types.ts";
+import { processAssets } from "./tradeSummary.ts";
+import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
 
 type Most = {
 	value: number;

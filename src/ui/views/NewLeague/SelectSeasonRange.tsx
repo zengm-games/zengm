@@ -1,6 +1,6 @@
-import { MAX_SEASON, MIN_SEASON } from ".";
+import { MAX_SEASON, MIN_SEASON } from "./index.tsx";
 import clsx from "clsx";
-import { range } from "../../../common/utils";
+import { range } from "../../../common/utils.ts";
 
 export const SelectSeasonRange = ({
 	className,

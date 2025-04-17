@@ -1,8 +1,8 @@
-import { PHASE } from "../../common";
-import type { Conditions } from "../../common/types";
-import { league, phase } from "../core";
-import { reset } from "../db";
-import { toUI } from "../util";
+import { PHASE } from "../../common/index.ts";
+import type { Conditions } from "../../common/types.ts";
+import { league, phase } from "../core/index.ts";
+import { reset } from "../db/index.ts";
+import { toUI } from "../util/index.ts";
 
 const toolsMenu = {
 	autoPlaySeasons: (param: unknown, conditions: Conditions) => {

@@ -1,5 +1,5 @@
-import helpers from "./helpers";
-import type { PlayerStats, PlayerStatType } from "./types";
+import helpers from "./helpers.ts";
+import type { PlayerStats, PlayerStatType } from "./types.ts";
 
 export const NUM_OUTS_PER_GAME = 27;
 

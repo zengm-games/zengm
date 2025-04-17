@@ -1,6 +1,6 @@
-import { isSport } from "../../../common";
-import type { Race } from "../../../common/types";
-import { loadNames, local, random } from "../../util";
+import { isSport } from "../../../common/index.ts";
+import type { Race } from "../../../common/types.ts";
+import { loadNames, local, random } from "../../util/index.ts";
 
 const getFromCumSumArray = <T extends string>(array: [T, number][]) => {
 	const rand = random.uniform(0, array.at(-1)![1]);

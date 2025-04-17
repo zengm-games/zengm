@@ -1,6 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
-import { downloadFile, helpers, resetFileInput, toWorker } from "../../util";
+import {
+	downloadFile,
+	helpers,
+	resetFileInput,
+	toWorker,
+} from "../../util/index.ts";
 import clsx from "clsx";
 import {
 	type Defaults,
@@ -10,12 +15,12 @@ import {
 	parseAndValidate,
 	type PlayerBioInfoState,
 	prune,
-} from "./PlayerBioInfo";
-import PlayerBioInfoSortButton from "./PlayerBioInfoSortButton";
-import { IMPORT_FILE_STYLE } from "./RowsEditor";
-import { CountryFlag } from "../../components";
-import Modal from "../../components/Modal";
-import { orderBy } from "../../../common/utils";
+} from "./PlayerBioInfo.tsx";
+import PlayerBioInfoSortButton from "./PlayerBioInfoSortButton.tsx";
+import { IMPORT_FILE_STYLE } from "./RowsEditor.tsx";
+import { CountryFlag } from "../../components/index.tsx";
+import Modal from "../../components/Modal.tsx";
+import { orderBy } from "../../../common/utils.ts";
 
 export const smallColStyle = {
 	marginLeft: 10,

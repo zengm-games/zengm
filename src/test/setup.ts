@@ -1,5 +1,5 @@
 import { IDBKeyRange } from "fake-indexeddb";
-import fs from "node:fs";
+import fs from "node:fs/promises";
 
 // When mockIDBLeague is used, sometimes IDBKeyRange still gets called even though there is no actual database
 global.IDBKeyRange = IDBKeyRange;
@@ -25,7 +25,7 @@ const fetchCache: Record<string, any> = {};
 			filePath = filePath.replace(".json", `.${process.env.SPORT}.json`);
 		}
 
-		fetchCache[url] = JSON.parse(fs.readFileSync(filePath, "utf8"));
+		fetchCache[url] = JSON.parse(await fs.readFile(filePath, "utf8"));
 	}
 
 	return {

@@ -1,7 +1,7 @@
-import { draft, player } from "..";
-import { g, helpers } from "../../util";
-import { RATINGS } from "../../../common";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import { draft, player } from "../index.ts";
+import { g, helpers } from "../../util/index.ts";
+import { RATINGS } from "../../../common/index.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 const maxRatingDists = async (numPlayers: number = 100) => {
 	// Each player gets one entry per array: their career max in a rating

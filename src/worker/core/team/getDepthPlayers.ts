@@ -1,6 +1,6 @@
-import { bySport, isSport, POSITIONS } from "../../../common";
-import type { Team } from "../../../common/types";
-import { range } from "../../../common/utils";
+import { bySport, isSport, POSITIONS } from "../../../common/index.ts";
+import type { Team } from "../../../common/types.ts";
+import { range } from "../../../common/utils.ts";
 
 // Translate team.depth from pids to player objects, while validating that it contains all players on the team (supplied by `players`) and no extraneous players.
 const getDepthPlayers = <

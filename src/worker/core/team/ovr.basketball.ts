@@ -1,4 +1,4 @@
-import { defaultGameAttributes, g } from "../../util";
+import { defaultGameAttributes, g } from "../../util/index.ts";
 
 const ovr = (
 	players: {

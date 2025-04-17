@@ -1,14 +1,14 @@
-import { idb } from "../db";
-import { g, helpers } from "../util";
+import { idb } from "../db/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
 	TeamStatAttr,
 	TeamSeasonAttr,
-} from "../../common/types";
-import { TEAM_STATS_TABLES } from "../../common";
-import { season, team } from "../core";
-import { lowerIsBetter } from "../../common/lowerIsBetter";
+} from "../../common/types.ts";
+import { TEAM_STATS_TABLES } from "../../common/index.ts";
+import { season, team } from "../core/index.ts";
+import { lowerIsBetter } from "../../common/lowerIsBetter.ts";
 
 export const getStats = async ({
 	season,

@@ -7,7 +7,7 @@ const compare = (input: string, output: string) => {
 		babelrc: false,
 		configFile: false,
 		filename: "test.js",
-		plugins: [babelPluginSportFunctions],
+		plugins: [[babelPluginSportFunctions, { sport: "basketball" }]],
 	})!.code;
 	assert.strictEqual(compiled, output);
 };

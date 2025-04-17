@@ -1,6 +1,6 @@
-import { idb } from "../../db";
-import { toUI } from "../../util";
-import { player } from "..";
+import { idb } from "../../db/index.ts";
+import { toUI } from "../../util/index.ts";
+import { player } from "../index.ts";
 
 const recomputeOvr = async () => {
 	const ovrs: {

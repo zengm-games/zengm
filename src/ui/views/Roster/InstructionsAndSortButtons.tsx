@@ -1,5 +1,5 @@
-import type { View } from "../../../common/types";
-import { toWorker } from "../../util";
+import type { View } from "../../../common/types.ts";
+import { toWorker } from "../../util/index.ts";
 
 const handleAutoSort = async () => {
 	await toWorker("main", "autoSortRoster", undefined);

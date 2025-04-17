@@ -1,6 +1,6 @@
-import { idb } from "../../db";
-import { g } from "../../util";
-import type { AllStarPlayer } from "../../../common/types";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
+import type { AllStarPlayer } from "../../../common/types.ts";
 
 const draftOne = async (
 	allowNone?: boolean,

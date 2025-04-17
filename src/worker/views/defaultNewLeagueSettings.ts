@@ -1,8 +1,8 @@
-import type { UpdateEvents } from "../../common/types";
-import { idb } from "../db";
-import goatFormula from "../util/goatFormula";
-import { getDefaultSettings } from "./newLeague";
-import type { Settings } from "./settings";
+import type { UpdateEvents } from "../../common/types.ts";
+import { idb } from "../db/index.ts";
+import goatFormula from "../util/goatFormula.ts";
+import { getDefaultSettings } from "./newLeague.ts";
+import type { Settings } from "./settings.ts";
 
 const updateOptions = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun")) {

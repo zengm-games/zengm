@@ -1,8 +1,8 @@
 import { type CSSProperties, useState, useLayoutEffect } from "react";
-import JerseyNumber from "./JerseyNumber";
-import { toWorker } from "../util";
+import JerseyNumber from "./JerseyNumber.tsx";
+import { toWorker } from "../util/index.ts";
 import type { FaceConfig } from "facesjs";
-import { MyFace } from "./MyFace";
+import { MyFace } from "./MyFace.tsx";
 
 export const TeamLogoJerseyInfo = ({
 	brandedTeam,

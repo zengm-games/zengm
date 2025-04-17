@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import type { View } from "../../../common/types";
-import { range } from "../../../common/utils";
-import SelectMultiple from "../../components/SelectMultiple";
-import { ActionButton, HelpPopover } from "../../components";
-import { toWorker } from "../../util";
+import type { View } from "../../../common/types.ts";
+import { range } from "../../../common/utils.ts";
+import SelectMultiple from "../../components/SelectMultiple/index.tsx";
+import { ActionButton, HelpPopover } from "../../components/index.tsx";
+import { toWorker } from "../../util/index.ts";
 import {
 	formatName,
 	type PlayerInfoForName,
-} from "../CustomizePlayer/RelativesForm";
-import type { SeasonType } from "../../../worker/api/processInputs";
+} from "../CustomizePlayer/RelativesForm.tsx";
+import type { SeasonType } from "../../../worker/api/processInputs.ts";
 import useDropdownOptions, {
 	type DropdownOption,
-} from "../../hooks/useDropdownOptions";
+} from "../../hooks/useDropdownOptions.tsx";
 
 type PlayerInfo = {
 	season: number | "career";

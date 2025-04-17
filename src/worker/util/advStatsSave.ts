@@ -1,5 +1,5 @@
-import { idb } from "../db";
-import type { MinimalPlayerRatings, Player } from "../../common/types";
+import { idb } from "../db/index.ts";
+import type { MinimalPlayerRatings, Player } from "../../common/types.ts";
 
 const advStatsSave = async (
 	players: any[],

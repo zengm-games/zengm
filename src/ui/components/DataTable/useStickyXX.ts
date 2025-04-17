@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
-import type { StickyCols } from ".";
-import getStickyColsClass from "./getStickyColsClass";
-import { range } from "../../../common/utils";
+import type { StickyCols } from "./index.tsx";
+import getStickyColsClass from "./getStickyColsClass.ts";
+import { range } from "../../../common/utils.ts";
 
 // Add 1 to the StickyCols setting
 export type StickyColsPlusCheckboxes = StickyCols | 4;

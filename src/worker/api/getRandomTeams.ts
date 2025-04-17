@@ -1,15 +1,15 @@
-import { PHASE } from "../../common";
-import getTeamInfos from "../../common/getTeamInfos";
-import teamInfos from "../../common/teamInfos";
-import type { Conf, Div } from "../../common/types";
-import { realRosters } from "../core";
-import geographicCoordinates from "../../common/geographicCoordinates";
-import { random } from "../util";
-import type { NewLeagueTeamWithoutRank } from "../../ui/views/NewLeague/types";
-import { groupBy, omit, orderBy, range } from "../../common/utils";
-import addSeasonInfoToTeams from "../core/realRosters/addSeasonInfoToTeams";
-import loadDataBasketball from "../core/realRosters/loadData.basketball";
-import { kmeansFixedSize, sortByDivs } from "../core/team/cluster";
+import { PHASE } from "../../common/index.ts";
+import getTeamInfos from "../../common/getTeamInfos.ts";
+import teamInfos from "../../common/teamInfos.ts";
+import type { Conf, Div } from "../../common/types.ts";
+import { realRosters } from "../core/index.ts";
+import geographicCoordinates from "../../common/geographicCoordinates.ts";
+import { random } from "../util/index.ts";
+import type { NewLeagueTeamWithoutRank } from "../../ui/views/NewLeague/types.ts";
+import { groupBy, omit, orderBy, range } from "../../common/utils.ts";
+import addSeasonInfoToTeams from "../core/realRosters/addSeasonInfoToTeams.ts";
+import loadDataBasketball from "../core/realRosters/loadData.basketball.ts";
+import { kmeansFixedSize, sortByDivs } from "../core/team/cluster.ts";
 
 type MyTeam = NewLeagueTeamWithoutRank & {
 	weight?: number;

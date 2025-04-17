@@ -1,14 +1,14 @@
-import { PHASE } from "../../common";
+import { PHASE } from "../../common/index.ts";
 import type {
 	DraftPickSeason,
 	EventBBGM,
 	Player,
 	TradeEventTeams,
-} from "../../common/types";
-import { idb } from "../db";
-import g from "./g";
-import getTeamInfoBySeason from "./getTeamInfoBySeason";
-import helpers from "./helpers";
+} from "../../common/types.ts";
+import { idb } from "../db/index.ts";
+import g from "./g.ts";
+import getTeamInfoBySeason from "./getTeamInfoBySeason.ts";
+import helpers from "./helpers.ts";
 
 type PlayerAsset = {
 	pid: number;

@@ -1,11 +1,11 @@
-import useTitleBar from "../../hooks/useTitleBar";
-import type { View } from "../../../common/types";
-import { helpers } from "../../util";
-import { PlayerNameLabels } from "../../components";
-import { PHASE, PHASE_TEXT } from "../../../common";
-import Charts from "./Charts";
-import PickText from "./PickText";
-import type { PlayerOutcome } from "../../../worker/views/tradeSummary";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import type { View } from "../../../common/types.ts";
+import { helpers } from "../../util/index.ts";
+import { PlayerNameLabels } from "../../components/index.tsx";
+import { PHASE, PHASE_TEXT } from "../../../common/index.ts";
+import Charts from "./Charts.tsx";
+import PickText from "./PickText.tsx";
+import type { PlayerOutcome } from "../../../worker/views/tradeSummary.ts";
 
 const Outcome = ({ outcome }: { outcome: PlayerOutcome }) => {
 	if (!outcome) {

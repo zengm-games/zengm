@@ -1,6 +1,6 @@
-import { PHASE } from "../../common";
-import { g } from "../util";
-import type { UpdateEvents } from "../../common/types";
+import { PHASE } from "../../common/index.ts";
+import { g } from "../util/index.ts";
+import type { UpdateEvents } from "../../common/types.ts";
 
 const updateImportPlayers = async (
 	input: unknown,

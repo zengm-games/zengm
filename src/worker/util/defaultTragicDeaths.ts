@@ -1,4 +1,4 @@
-import { GAME_NAME, isSport } from "../../common";
+import { GAME_NAME, isSport } from "../../common/index.ts";
 
 const reasons = [
 	"SPECIAL_CLUE",

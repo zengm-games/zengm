@@ -1,7 +1,7 @@
-import { getNumRounds, isDunkContest } from "../../../common/dunkContest";
-import { orderBy } from "../../../common/utils";
-import * as dunkContest from "./dunkContest";
-import * as threeContest from "./threeContest";
+import { getNumRounds, isDunkContest } from "../../../common/dunkContest.ts";
+import { orderBy } from "../../../common/utils.ts";
+import * as dunkContest from "./dunkContest.ts";
+import * as threeContest from "./threeContest.ts";
 
 export const getNextRoundType = (contest: {
 	players: {

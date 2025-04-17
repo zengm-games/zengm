@@ -1,9 +1,9 @@
 import type {
 	GameAttributesLeague,
 	PlayoffSeries,
-} from "../../../common/types";
-import { idb } from "../../db";
-import { g } from "../../util";
+} from "../../../common/types.ts";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
 
 const getPlayoffsByConf = async (
 	season: number,

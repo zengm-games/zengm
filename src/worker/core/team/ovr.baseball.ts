@@ -1,5 +1,5 @@
-import type { Position } from "../../../common/types.baseball";
-import ovrByPosFactory from "./ovrByPosFactory";
+import type { Position } from "../../../common/types.baseball.ts";
+import ovrByPosFactory from "./ovrByPosFactory.ts";
 
 // See analysis/team-ovr-baseball
 

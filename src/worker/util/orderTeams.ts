@@ -1,11 +1,11 @@
-import { groupBy, orderBy } from "../../common/utils";
-import helpers from "./helpers";
-import type { TIEBREAKERS } from "../../common";
-import type { HeadToHead } from "../../common/types";
-import { team } from "../core";
-import { idb } from "../db";
-import g from "./g";
-import { uniformSeed } from "../../common/random";
+import { groupBy, orderBy } from "../../common/utils.ts";
+import helpers from "./helpers.ts";
+import type { TIEBREAKERS } from "../../common/index.ts";
+import type { HeadToHead } from "../../common/types.ts";
+import { team } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import g from "./g.ts";
+import { uniformSeed } from "../../common/random.ts";
 
 export const getTiebreakers = (season: number) => {
 	const tiebreakers = [...g.get("tiebreakers", season)];

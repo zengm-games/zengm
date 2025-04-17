@@ -1,11 +1,11 @@
-import useTitleBar from "../hooks/useTitleBar";
-import type { View } from "../../common/types";
-import TopStuff from "./Player/TopStuff";
-import { getCols, helpers } from "../util";
-import { DataTable, InjuryIcon } from "../components";
-import { NoGamesMessage } from "./GameLog";
-import type { DataTableRow } from "../components/DataTable";
-import { isSport } from "../../common";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import type { View } from "../../common/types.ts";
+import TopStuff from "./Player/TopStuff.tsx";
+import { getCols, helpers } from "../util/index.ts";
+import { DataTable, InjuryIcon } from "../components/index.tsx";
+import { NoGamesMessage } from "./GameLog.tsx";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { isSport } from "../../common/index.ts";
 import clsx from "clsx";
 
 type DecisionPlayer = {

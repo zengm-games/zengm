@@ -9,12 +9,12 @@ import {
 	SPORT_HAS_LEGENDS,
 	SPORT_HAS_REAL_PLAYERS,
 	WEBSITE_PLAY,
-} from "../../common";
-import { DataTable, TeamLogoInline } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { confirm, getCols, logEvent, toWorker } from "../util";
-import type { View } from "../../common/types";
-import { choice } from "../../common/random";
+} from "../../common/index.ts";
+import { DataTable, TeamLogoInline } from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { confirm, getCols, logEvent, toWorker } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { choice } from "../../common/random.ts";
 
 // Re-rendering caused this to run multiple times after "Play" click, even with useRef or useMemo
 const randomOtherSport = bySport({
@@ -498,7 +498,6 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 			{rows.length > 0 ? (
 				<DataTable
 					cols={cols}
-					className="dashboard-table"
 					disableSettingsCache
 					defaultSort={[7, "desc"]}
 					defaultStickyCols={1}

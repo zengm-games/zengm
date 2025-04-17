@@ -1,22 +1,22 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import type { View } from "../../common/types";
-import useDropdownOptions from "../hooks/useDropdownOptions";
-import useTitleBar from "../hooks/useTitleBar";
-import { OptionDropdown } from "./PlayerGraphs";
-import { isSport, PLAYER, PLAYER_STATS_TABLES } from "../../common";
-import { getCols, helpers, realtimeUpdate, toWorker } from "../util";
-import { ActionButton, DataTable, PlusMinus } from "../components";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
+import type { View } from "../../common/types.ts";
+import useDropdownOptions from "../hooks/useDropdownOptions.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { OptionDropdown } from "./PlayerGraphs/index.tsx";
+import { isSport, PLAYER, PLAYER_STATS_TABLES } from "../../common/index.ts";
+import { getCols, helpers, realtimeUpdate, toWorker } from "../util/index.ts";
+import { ActionButton, DataTable, PlusMinus } from "../components/index.tsx";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import {
 	allFilters,
 	getExtraStatTypeKeys,
-} from "../../common/advancedPlayerSearch";
+} from "../../common/advancedPlayerSearch.ts";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
-} from "../components/contract";
+} from "../components/contract.tsx";
 import clsx from "clsx";
-import type { DataTableRow } from "../components/DataTable";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];

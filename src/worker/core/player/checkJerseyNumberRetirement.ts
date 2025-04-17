@@ -1,9 +1,9 @@
-import { bySport, isSport } from "../../../common";
-import type { Player, PlayerStats, Team } from "../../../common/types";
-import { maxBy, orderBy } from "../../../common/utils";
-import { idb } from "../../db";
-import { g, local, logEvent, helpers } from "../../util";
-import { getThreshold } from "./madeHof.football";
+import { bySport, isSport } from "../../../common/index.ts";
+import type { Player, PlayerStats, Team } from "../../../common/types.ts";
+import { maxBy, orderBy } from "../../../common/utils.ts";
+import { idb } from "../../db/index.ts";
+import { g, local, logEvent, helpers } from "../../util/index.ts";
+import { getThreshold } from "./madeHof.football.ts";
 
 // Higher in basketball, because real player leagues have a lot
 const MAX_RETIRED_JERSEY_NUMBERS_PER_AI_TEAM = isSport("basketball") ? 30 : 12;

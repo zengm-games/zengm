@@ -6,8 +6,13 @@ import {
 	useState,
 	type ReactNode,
 } from "react";
-import { BarGraph, DataTable, HelpPopover, MoreLinks } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
+import {
+	BarGraph,
+	DataTable,
+	HelpPopover,
+	MoreLinks,
+} from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
 import {
 	getCols,
 	gradientStyleFactory,
@@ -15,11 +20,11 @@ import {
 	logEvent,
 	toWorker,
 	useLocalPartial,
-} from "../util";
-import type { View } from "../../common/types";
-import { getAdjustedTicketPrice, PHASE } from "../../common";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import type { DataTableRow } from "../components/DataTable";
+} from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { getAdjustedTicketPrice, PHASE } from "../../common/index.ts";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
 import {
 	DEFAULT_LEVEL,
 	MAX_LEVEL,
@@ -31,7 +36,7 @@ import {
 	levelToEffect,
 	scoutingEffectCutoff,
 	scoutingEffectStddev,
-} from "../../common/budgetLevels";
+} from "../../common/budgetLevels.ts";
 
 const paddingLeft85 = { paddingLeft: 85 };
 
@@ -821,7 +826,6 @@ const TeamFinances = ({
 						),
 		},
 	];
-	console.log(footer);
 
 	// This happens for expansion teams before they have a TeamSeason
 	const noSeasonData = barData.length === 0;

@@ -1,6 +1,6 @@
 import { Dropdown, SplitButton } from "react-bootstrap";
 import useLocalStorageState from "use-local-storage-state";
-import { ActionButton } from "../../components";
+import { ActionButton } from "../../components/index.tsx";
 
 export type TradeClearType = "all" | "other" | "user" | "keepUntradeable";
 

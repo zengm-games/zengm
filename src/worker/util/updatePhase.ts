@@ -1,9 +1,13 @@
-import { NO_LOTTERY_DRAFT_TYPES, PHASE_TEXT, PHASE } from "../../common";
-import g from "./g";
-import local from "./local";
-import toUI from "./toUI";
-import type { Conditions } from "../../common/types";
-import { league } from "../core";
+import {
+	NO_LOTTERY_DRAFT_TYPES,
+	PHASE_TEXT,
+	PHASE,
+} from "../../common/index.ts";
+import g from "./g.ts";
+import local from "./local.ts";
+import toUI from "./toUI.ts";
+import type { Conditions } from "../../common/types.ts";
+import { league } from "../core/index.ts";
 
 // Calculate phase text in worker rather than UI, because here we can easily cache it in the meta database
 async function updatePhase(conditions?: Conditions) {

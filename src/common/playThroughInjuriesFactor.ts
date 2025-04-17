@@ -1,4 +1,4 @@
-import bySport from "./bySport";
+import bySport from "./bySport.ts";
 
 const PERFORMANCE_FRACTION_DECREASE_PER_DAY = bySport({
 	baseball: 0.025,

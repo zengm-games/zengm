@@ -1,8 +1,8 @@
-import { idb } from "../db";
-import { g, helpers, updatePlayMenu, updateStatus } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
-import getPlayoffsByConf from "../core/season/getPlayoffsByConf";
-import { getRoundsWonText } from "./frivolitiesTeamSeasons";
+import { idb } from "../db/index.ts";
+import { g, helpers, updatePlayMenu, updateStatus } from "../util/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
+import { getRoundsWonText } from "./frivolitiesTeamSeasons.ts";
 
 const updateMessage = async (
 	inputs: ViewInput<"message">,

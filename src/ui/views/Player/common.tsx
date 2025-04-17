@@ -1,5 +1,5 @@
 import type { JSX, ReactNode } from "react";
-import { helpers } from "../../util";
+import { helpers } from "../../util/index.ts";
 
 export const SeasonLink = ({
 	className,

@@ -1,10 +1,10 @@
 import { assert, beforeAll, test } from "vitest";
-import { PLAYER } from "../../../common";
-import testHelpers from "../../../test/helpers";
-import { player } from "../../core";
-import { idb } from "..";
-import { g, helpers } from "../../util";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import { PLAYER } from "../../../common/index.ts";
+import testHelpers from "../../../test/helpers.ts";
+import { player } from "../../core/index.ts";
+import { idb } from "../index.ts";
+import { g, helpers } from "../../util/index.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 let p: any;
 beforeAll(async () => {

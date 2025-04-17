@@ -1,11 +1,11 @@
-import { helpers } from "../../util";
-import type { View } from "../../../common/types";
+import { helpers } from "../../util/index.ts";
+import type { View } from "../../../common/types.ts";
 import clsx from "clsx";
-import { PlayerNameLabels, SafeHtml } from "../../components";
-import { ContractAmount } from "../../components/contract";
-import type { HandleToggle } from ".";
-import { isSport } from "../../../common";
-import type { MissingAsset } from "../../../worker/views/savedTrades";
+import { PlayerNameLabels, SafeHtml } from "../../components/index.tsx";
+import { ContractAmount } from "../../components/contract.tsx";
+import type { HandleToggle } from "./index.tsx";
+import { isSport } from "../../../common/index.ts";
+import type { MissingAsset } from "../../../worker/views/savedTrades.ts";
 import type { Ref } from "react";
 
 // Arrow is https://icons.getbootstrap.com/icons/arrow-right/ v1.8.1

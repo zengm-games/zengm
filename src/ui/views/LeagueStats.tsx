@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
-import { getCols, helpers } from "../util";
-import useTitleBar from "../hooks/useTitleBar";
-import { DataTable, MoreLinks } from "../components";
-import type { View } from "../../common/types";
-import { isSport } from "../../common";
-import { expandFieldingStats } from "../util/expandFieldingStats.baseball";
+import { getCols, helpers } from "../util/index.ts";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { DataTable, MoreLinks } from "../components/index.tsx";
+import type { View } from "../../common/types.ts";
+import { isSport } from "../../common/index.ts";
+import { expandFieldingStats } from "../util/expandFieldingStats.baseball.ts";
 
 export const formatMaybeInteger = (x: number) =>
 	Number.isInteger(x) ? String(x) : x.toFixed(1);

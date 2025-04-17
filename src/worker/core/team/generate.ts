@@ -1,12 +1,12 @@
-import { helpers, g } from "../../util";
-import type { Team } from "../../../common/types";
+import { helpers, g } from "../../util/index.ts";
+import type { Team } from "../../../common/types.ts";
 import {
 	DEFAULT_JERSEY,
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	DEFAULT_TEAM_COLORS,
 	isSport,
-} from "../../../common";
-import finances from "../finances";
+} from "../../../common/index.ts";
+import finances from "../finances/index.ts";
 
 /**
  * Create a new team object.

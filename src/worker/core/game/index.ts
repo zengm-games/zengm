@@ -1,4 +1,4 @@
-import play from "./play";
+import play from "./play.ts";
 
 export default {
 	play,

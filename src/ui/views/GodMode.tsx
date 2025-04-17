@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import useTitleBar from "../hooks/useTitleBar";
-import { helpers, toWorker } from "../util";
-import type { View } from "../../common/types";
-import { DAILY_SCHEDULE } from "../../common";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { helpers, toWorker } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { DAILY_SCHEDULE } from "../../common/index.ts";
 
 const GodMode = (props: View<"godMode">) => {
 	const { godMode } = props;

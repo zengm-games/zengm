@@ -1,5 +1,5 @@
 import { assert, describe, test } from "vitest";
-import { getCloneName } from "./clone";
+import { getCloneName } from "./clone.ts";
 
 describe("getCloneName", () => {
 	test("base case", () => {

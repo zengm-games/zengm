@@ -1,15 +1,15 @@
 import { type ChangeEvent, useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
-import { helpers, logEvent } from "../../util";
+import { helpers, logEvent } from "../../util/index.ts";
 import clsx from "clsx";
-import { isInvalidNumber, type PlayerBioInfoState } from "./PlayerBioInfo";
+import { isInvalidNumber, type PlayerBioInfoState } from "./PlayerBioInfo.tsx";
 import {
 	PlayerBioInfoRowButton,
 	smallColStyle,
-} from "./PlayerBioInfoCountries";
-import PlayerBioInfoSortButton from "./PlayerBioInfoSortButton";
-import Modal from "../../components/Modal";
-import { orderBy } from "../../../common/utils";
+} from "./PlayerBioInfoCountries.tsx";
+import PlayerBioInfoSortButton from "./PlayerBioInfoSortButton.tsx";
+import Modal from "../../components/Modal.tsx";
+import { orderBy } from "../../../common/utils.ts";
 
 type RaceRow = PlayerBioInfoState["countries"][number]["races"][number];
 

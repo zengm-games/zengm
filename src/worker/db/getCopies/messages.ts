@@ -1,6 +1,6 @@
-import { getAll, idb } from "..";
-import { maybeDeepCopy, mergeByPk } from "./helpers";
-import type { GetCopyType, Message } from "../../../common/types";
+import { getAll, idb } from "../index.ts";
+import { maybeDeepCopy, mergeByPk } from "./helpers.ts";
+import type { GetCopyType, Message } from "../../../common/types.ts";
 
 const getLastEntries = <T>(arr: T[], limit: number): T[] => {
 	return arr.slice(arr.length - limit);

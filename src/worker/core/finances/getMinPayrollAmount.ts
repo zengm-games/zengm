@@ -1,4 +1,4 @@
-import { g } from "../../util";
+import { g } from "../../util/index.ts";
 
 const getMinPayrollAmount = (payroll: number) => {
 	if (payroll < g.get("minPayroll")) {

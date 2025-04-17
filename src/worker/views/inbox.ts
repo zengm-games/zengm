@@ -1,4 +1,4 @@
-import { idb } from "../db";
+import { idb } from "../db/index.ts";
 
 const updateInbox = async () => {
 	const messages = await idb.getCopies.messages();

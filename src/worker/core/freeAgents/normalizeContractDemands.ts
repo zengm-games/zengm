@@ -1,10 +1,10 @@
-import { idb } from "../../db";
-import { PLAYER, PHASE, bySport, isSport } from "../../../common";
-import { team, player, draft } from "..";
-import { g, helpers, random } from "../../util";
-import type { Player } from "../../../common/types";
-import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings";
-import { orderBy } from "../../../common/utils";
+import { idb } from "../../db/index.ts";
+import { PLAYER, PHASE, bySport, isSport } from "../../../common/index.ts";
+import { team, player, draft } from "../index.ts";
+import { g, helpers, random } from "../../util/index.ts";
+import type { Player } from "../../../common/types.ts";
+import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
+import { orderBy } from "../../../common/utils.ts";
 
 const TEMP = 0.35;
 const LEARNING_RATE = 0.5;

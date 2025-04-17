@@ -1,7 +1,7 @@
-import { PHASE } from "../../../common";
-import type { PlayerInjury } from "../../../common/types";
-import { defaultGameAttributes } from "../../util";
-import type { Basketball } from "./loadData.basketball";
+import { PHASE } from "../../../common/index.ts";
+import type { PlayerInjury } from "../../../common/types.ts";
+import { defaultGameAttributes } from "../../util/index.ts";
+import type { Basketball } from "./loadData.basketball.ts";
 
 const getGamesToHeal = ({
 	row,

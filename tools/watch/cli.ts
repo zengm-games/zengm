@@ -1,4 +1,4 @@
-import { statSync } from "node:fs";
+import fs from "node:fs/promises";
 import { spinners } from "./spinners.ts";
 import { watchCss } from "./watchCss.ts";
 import { watchFiles } from "./watchFiles.ts";
@@ -28,10 +28,10 @@ const updateStart = (filename: string) => {
 	});
 };
 
-const updateEnd = (filename: string) => {
+const updateEnd = async (filename: string) => {
 	let size;
 	if (filename !== "static files") {
-		size = statSync(filename).size;
+		size = (await fs.stat(filename)).size;
 	}
 
 	spinners.setStatus(filename, {
@@ -48,11 +48,18 @@ const updateError = (filename: string, error: Error) => {
 };
 
 // Needs to run first, to create output folder
-await watchFiles(updateStart, updateEnd, updateError);
+await watchFiles(updateStart, updateEnd, updateError, spinners.eventEmitter);
 
 watchCss(updateStart, updateEnd, updateError);
 
 // Schema is needed for JS bunlde, and watchJsonSchema is async
-await watchJsonSchema(updateStart, updateEnd, updateError);
+await watchJsonSchema(
+	updateStart,
+	updateEnd,
+	updateError,
+	spinners.eventEmitter,
+);
 
-watchJs(updateStart, updateEnd, updateError);
+watchJs(updateStart, updateEnd, updateError, spinners.eventEmitter);
+
+spinners.initialized = true;

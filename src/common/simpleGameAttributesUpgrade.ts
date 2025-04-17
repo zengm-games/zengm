@@ -1,8 +1,8 @@
-import isSport from "./isSport";
+import isSport from "./isSport.ts";
 import type {
 	GameAttributeWithHistory,
 	GameAttributesLeagueWithHistory,
-} from "./types";
+} from "./types.ts";
 
 // Ideally all upgrade stuff would be here, because this also gets called before showing the setting screen when importing a league... maybe some day!
 const simpleGameAttributesUpgrade = (

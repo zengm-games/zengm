@@ -1,8 +1,8 @@
-import { PHASE, PLAYER } from "../../../common";
-import { contractNegotiation, draft, league } from "..";
-import { idb } from "../../db";
-import { g, local } from "../../util";
-import type { Conditions, PhaseReturn } from "../../../common/types";
+import { PHASE, PLAYER } from "../../../common/index.ts";
+import { contractNegotiation, draft, league } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { g, local } from "../../util/index.ts";
+import type { Conditions, PhaseReturn } from "../../../common/types.ts";
 
 const newPhaseFantasyDraft = async (
 	conditions: Conditions,

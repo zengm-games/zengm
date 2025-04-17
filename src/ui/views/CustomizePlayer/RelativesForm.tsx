@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
-import { groupByUnique } from "../../../common/utils";
-import type { GameAttributesLeague } from "../../../common/types";
+import { groupByUnique } from "../../../common/utils.ts";
+import type { GameAttributesLeague } from "../../../common/types.ts";
 import {
 	ActionButton,
 	HelpPopover,
 	RatingsStatsPopover,
-} from "../../components";
-import SelectMultiple from "../../components/SelectMultiple";
-import { helpers, toWorker } from "../../util";
+} from "../../components/index.tsx";
+import SelectMultiple from "../../components/SelectMultiple/index.tsx";
+import { helpers, toWorker } from "../../util/index.ts";
 
 export type PlayerInfoForName = {
 	pid: number;

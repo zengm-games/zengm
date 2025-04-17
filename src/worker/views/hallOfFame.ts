@@ -1,8 +1,8 @@
-import { bySport, PHASE } from "../../common";
-import { idb } from "../db";
-import { g, processPlayersHallOfFame } from "../util";
-import type { UpdateEvents } from "../../common/types";
-import addFirstNameShort from "../util/addFirstNameShort";
+import { bySport, PHASE } from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import { g, processPlayersHallOfFame } from "../util/index.ts";
+import type { UpdateEvents } from "../../common/types.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
 
 const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (

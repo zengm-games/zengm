@@ -1,9 +1,13 @@
-import type { AllStars, Conditions, ThreeResult } from "../../../common/types";
-import type { PlayerRatings } from "../../../common/types.basketball";
-import { idb } from "../../db";
-import { g } from "../../util";
-import { saveAwardsByPlayer } from "../season/awards";
-import { getNextRoundType } from "./contest";
+import type {
+	AllStars,
+	Conditions,
+	ThreeResult,
+} from "../../../common/types.ts";
+import type { PlayerRatings } from "../../../common/types.basketball.ts";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
+import { saveAwardsByPlayer } from "../season/awards.ts";
+import { getNextRoundType } from "./contest.ts";
 
 export type Three = NonNullable<AllStars["three"]>;
 

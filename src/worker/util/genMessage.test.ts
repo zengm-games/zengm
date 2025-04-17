@@ -1,10 +1,10 @@
 import { assert, beforeEach, test } from "vitest";
-import testHelpers from "../../test/helpers";
-import { team } from "../core";
-import { idb } from "../db";
-import g from "./g";
-import genMessage from "./genMessage";
-import { helpers } from "../../common";
+import testHelpers from "../../test/helpers.ts";
+import { team } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import g from "./g.ts";
+import genMessage from "./genMessage.ts";
+import { helpers } from "../../common/index.ts";
 
 beforeEach(async () => {
 	testHelpers.resetG();

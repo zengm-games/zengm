@@ -1,11 +1,15 @@
-import { idb } from "../db";
-import { g, helpers } from "../util";
-import type { UpdateEvents, ViewInput, TeamSeason } from "../../common/types";
-import { isSport, PHASE } from "../../common";
-import { team } from "../core";
-import hasTies from "../core/season/hasTies";
-import { orderBy, type OrderBySortParams } from "../../common/utils";
-import getPlayoffsByConf from "../core/season/getPlayoffsByConf";
+import { idb } from "../db/index.ts";
+import { g, helpers } from "../util/index.ts";
+import type {
+	UpdateEvents,
+	ViewInput,
+	TeamSeason,
+} from "../../common/types.ts";
+import { isSport, PHASE } from "../../common/index.ts";
+import { team } from "../core/index.ts";
+import hasTies from "../core/season/hasTies.ts";
+import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
+import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 
 type Most = {
 	value: number;

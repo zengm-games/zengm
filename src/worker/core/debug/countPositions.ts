@@ -1,6 +1,6 @@
-import { isSport, PLAYER, POSITION_COUNTS } from "../../../common";
-import { idb } from "../../db";
-import { player } from "..";
+import { isSport, PLAYER, POSITION_COUNTS } from "../../../common/index.ts";
+import { idb } from "../../db/index.ts";
+import { player } from "../index.ts";
 
 const countPositions = async () => {
 	// All non-retired players

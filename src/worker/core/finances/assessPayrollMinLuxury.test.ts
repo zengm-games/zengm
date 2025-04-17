@@ -1,9 +1,9 @@
 import { assert, test } from "vitest";
-import testHelpers from "../../../test/helpers";
-import { finances, player, team } from "..";
-import { idb } from "../../db";
-import { g, helpers } from "../../util";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import testHelpers from "../../../test/helpers.ts";
+import { finances, player, team } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers } from "../../util/index.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 test("store payroll and appropriately assess luxury and minimum payroll taxes for each team", async () => {
 	testHelpers.resetG();

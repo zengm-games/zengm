@@ -1,4 +1,4 @@
-import { getDefaultSettings, getRealTeamInfo } from "./newLeague";
+import { getDefaultSettings, getRealTeamInfo } from "./newLeague.ts";
 
 const updateExhibition = async () => {
 	const defaultSettings = {

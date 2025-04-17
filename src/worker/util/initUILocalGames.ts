@@ -1,8 +1,8 @@
-import g from "./g";
-import getProcessedGames from "./getProcessedGames";
-import toUI from "./toUI";
-import type { LocalStateUI } from "../../common/types";
-import { getUpcoming } from "../views/schedule";
+import g from "./g.ts";
+import getProcessedGames from "./getProcessedGames.ts";
+import toUI from "./toUI.ts";
+import type { LocalStateUI } from "../../common/types.ts";
+import { getUpcoming } from "../views/schedule.ts";
 
 const initUILocalGames = async () => {
 	const userTid = g.get("userTid");

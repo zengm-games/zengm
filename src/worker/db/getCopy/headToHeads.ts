@@ -1,5 +1,5 @@
-import { idb } from "..";
-import type { GetCopyType, HeadToHead } from "../../../common/types";
+import { idb } from "../index.ts";
+import type { GetCopyType, HeadToHead } from "../../../common/types.ts";
 
 const getCopy = async (
 	{

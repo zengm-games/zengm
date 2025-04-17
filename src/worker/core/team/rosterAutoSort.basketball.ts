@@ -1,5 +1,5 @@
-import { idb } from "../../db";
-import { g } from "../../util";
+import { idb } from "../../db/index.ts";
+import { g } from "../../util/index.ts";
 
 /**
  * Given a list of players sorted by ability, find the starters.

@@ -4,18 +4,18 @@ import {
 	type FormEvent,
 	type MouseEvent,
 } from "react";
-import useTitleBar from "../hooks/useTitleBar";
-import { helpers, toWorker, logEvent } from "../util";
-import type { View, ExpansionDraftSetupTeam } from "../../common/types";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { helpers, toWorker, logEvent } from "../util/index.ts";
+import type { View, ExpansionDraftSetupTeam } from "../../common/types.ts";
 import {
 	DEFAULT_JERSEY,
 	DEFAULT_STADIUM_CAPACITY,
 	DEFAULT_TEAM_COLORS,
 	PHASE,
-} from "../../common";
-import TeamForm from "./ManageTeams/TeamForm";
-import { getGodModeWarnings } from "./NewLeague/UpsertTeamModal";
-import { TeamsSplitNorthAmericaWorld } from "../components/TeamsSplitNorthAmericaWorld";
+} from "../../common/index.ts";
+import TeamForm from "./ManageTeams/TeamForm.tsx";
+import { getGodModeWarnings } from "./NewLeague/UpsertTeamModal.tsx";
+import { TeamsSplitNorthAmericaWorld } from "../components/TeamsSplitNorthAmericaWorld.tsx";
 
 const ExpansionDraft = ({
 	builtInTeams,

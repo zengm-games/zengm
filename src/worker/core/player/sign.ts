@@ -1,8 +1,8 @@
-import { isSport, PHASE } from "../../../common";
-import addStatsRow from "./addStatsRow";
-import setContract from "./setContract";
-import { g, helpers, logEvent } from "../../util";
-import type { Phase, Player, PlayerContract } from "../../../common/types";
+import { isSport, PHASE } from "../../../common/index.ts";
+import addStatsRow from "./addStatsRow.ts";
+import setContract from "./setContract.ts";
+import { g, helpers, logEvent } from "../../util/index.ts";
+import type { Phase, Player, PlayerContract } from "../../../common/types.ts";
 
 const sign = async (
 	p: Player,

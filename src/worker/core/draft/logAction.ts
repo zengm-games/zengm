@@ -1,6 +1,6 @@
-import { PHASE } from "../../../common";
-import { g, logEvent } from "../../util";
-import type { Conditions } from "../../../common/types";
+import { PHASE } from "../../../common/index.ts";
+import { g, logEvent } from "../../util/index.ts";
+import type { Conditions } from "../../../common/types.ts";
 
 const logAction = (
 	tid: number,

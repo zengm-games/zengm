@@ -1,10 +1,15 @@
 import { type FormEvent, useState, useEffect } from "react";
-import useTitleBar from "../hooks/useTitleBar";
-import type { View } from "../../common/types";
-import { logEvent, toWorker, helpers, realtimeUpdate } from "../util";
-import SelectMultiple from "../components/SelectMultiple";
-import { AWARD_NAMES, bySport, isSport, SIMPLE_AWARDS } from "../../common";
-import { range } from "../../common/utils";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import type { View } from "../../common/types.ts";
+import { logEvent, toWorker, helpers, realtimeUpdate } from "../util/index.ts";
+import SelectMultiple from "../components/SelectMultiple/index.tsx";
+import {
+	AWARD_NAMES,
+	bySport,
+	isSport,
+	SIMPLE_AWARDS,
+} from "../../common/index.ts";
+import { range } from "../../common/utils.ts";
 
 const Position = ({ index, p }: { index: number; p: any }) => {
 	if (!isSport("football")) {

@@ -6,26 +6,30 @@ import {
 	isSport,
 	PHASE,
 	SPORT_HAS_REAL_PLAYERS,
-} from "../../common";
-import defaultGameAttributes from "../../common/defaultGameAttributes";
+} from "../../common/index.ts";
+import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 import type {
 	GameAttributesLeague,
 	Player,
 	RealTeamInfo,
 	Team,
 	View,
-} from "../../common/types";
-import { ActionButton, PlayerNameLabels } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
+} from "../../common/types.ts";
+import { ActionButton, PlayerNameLabels } from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
 import {
 	helpers,
 	processPlayerStats,
 	safeLocalStorage,
 	toWorker,
-} from "../util";
-import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from "./NewLeague";
-import SettingsForm from "./Settings/SettingsForm";
-import { orderBy, range } from "../../common/utils";
+} from "../util/index.ts";
+import {
+	applyRealTeamInfos,
+	MAX_SEASON,
+	MIN_SEASON,
+} from "./NewLeague/index.tsx";
+import SettingsForm from "./Settings/SettingsForm.tsx";
+import { orderBy, range } from "../../common/utils.ts";
 
 export const getRandomSeason = (start: number, end: number) => {
 	return Math.floor(Math.random() * (1 + end - start)) + start;

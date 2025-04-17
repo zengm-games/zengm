@@ -1,11 +1,11 @@
-import genFuzz from "./genFuzz";
-import heightToRating from "./heightToRating";
-import limitRating from "./limitRating";
-import { helpers, random } from "../../util";
+import genFuzz from "./genFuzz.ts";
+import heightToRating from "./heightToRating.ts";
+import limitRating from "./limitRating.ts";
+import { helpers, random } from "../../util/index.ts";
 import type {
 	PlayerRatings,
 	RatingKey,
-} from "../../../common/types.basketball";
+} from "../../../common/types.basketball.ts";
 
 const typeFactors: Record<
 	"point" | "wing" | "big",

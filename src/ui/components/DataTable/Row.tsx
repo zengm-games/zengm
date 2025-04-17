@@ -1,13 +1,13 @@
 import clsx from "clsx";
 import { use, type MouseEvent } from "react";
-import useClickable from "../../hooks/useClickable";
-import type { DataTableRow, DataTableRowMetadata } from ".";
+import useClickable from "../../hooks/useClickable.tsx";
+import type { DataTableRow, DataTableRowMetadata } from "./index.tsx";
 import {
 	SortableHandle,
 	SortableTableContext,
 	type RenderRowProps,
-} from "./sortableRows";
-import { DataTableContext } from "./contexts";
+} from "./sortableRows.tsx";
+import { DataTableContext } from "./contexts.ts";
 
 type MyRow = Omit<DataTableRow, "data"> & {
 	data: any[];

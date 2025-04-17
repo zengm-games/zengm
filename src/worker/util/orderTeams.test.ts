@@ -1,8 +1,8 @@
 import { assert, describe, test } from "vitest";
-import helpers from "./helpers";
-import { breakTies } from "./orderTeams";
-import type { HeadToHead } from "../../common/types";
-import { range } from "../../common/utils";
+import helpers from "./helpers.ts";
+import { breakTies } from "./orderTeams.ts";
+import type { HeadToHead } from "../../common/types.ts";
+import { range } from "../../common/utils.ts";
 
 const baseTeams = range(4).map((tid) => ({
 	tid,

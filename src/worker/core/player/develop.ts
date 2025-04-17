@@ -4,17 +4,17 @@ import {
 	NOT_REAL_POSITIONS,
 	PLAYER,
 	POSITIONS,
-} from "../../../common";
-import developSeason from "./developSeason";
-import ovr from "./ovr";
-import pos from "./pos";
-import skills from "./skills";
-import { g, helpers, random } from "../../util";
-import type { MinimalPlayerRatings } from "../../../common/types";
-import genWeight from "./genWeight";
-import potEstimator from "./potEstimator";
-import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+} from "../../../common/index.ts";
+import developSeason from "./developSeason.ts";
+import ovr from "./ovr.ts";
+import pos from "./pos.ts";
+import skills from "./skills.ts";
+import { g, helpers, random } from "../../util/index.ts";
+import type { MinimalPlayerRatings } from "../../../common/types.ts";
+import genWeight from "./genWeight.ts";
+import potEstimator from "./potEstimator.ts";
+import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
 

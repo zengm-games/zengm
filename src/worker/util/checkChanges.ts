@@ -1,7 +1,7 @@
-import { idb } from "../db";
-import logEvent from "./logEvent";
-import type { Conditions } from "../../common/types";
-import { fetchWrapper, SUBREDDIT_NAME } from "../../common";
+import { idb } from "../db/index.ts";
+import logEvent from "./logEvent.ts";
+import type { Conditions } from "../../common/types.ts";
+import { fetchWrapper, SUBREDDIT_NAME } from "../../common/index.ts";
 
 const LAST_VERSION_BEFORE_THIS_EXISTED = "2021.05.25.0919";
 const CURRENT_VERSION = "VERSION_NUMBER";

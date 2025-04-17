@@ -1,9 +1,9 @@
 import { useEffect, useLayoutEffect } from "react";
-import { getSortedTeams, getDropdownValue } from "./useDropdownOptions";
-import { localActions, useLocalPartial } from "../util";
-import type { LocalStateUI, MenuItemHeader } from "../../common/types";
-import { GAME_NAME } from "../../common";
-import { getResponsiveValue } from "../components/Dropdown";
+import { getSortedTeams, getDropdownValue } from "./useDropdownOptions.tsx";
+import { localActions, useLocalPartial } from "../util/index.ts";
+import type { LocalStateUI, MenuItemHeader } from "../../common/types.ts";
+import { GAME_NAME } from "../../common/index.ts";
+import { getResponsiveValue } from "../components/Dropdown.tsx";
 
 const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 	title,

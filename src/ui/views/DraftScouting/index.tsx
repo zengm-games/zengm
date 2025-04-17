@@ -1,8 +1,8 @@
 import { useState } from "react";
-import DraftClass from "./DraftClass";
-import useTitleBar from "../../hooks/useTitleBar";
-import type { View } from "../../../common/types";
-import { MoreLinks } from "../../components";
+import DraftClass from "./DraftClass.tsx";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import type { View } from "../../../common/types.ts";
+import { MoreLinks } from "../../components/index.tsx";
 
 const PAGE_SIZE = 3;
 

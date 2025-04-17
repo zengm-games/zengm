@@ -1,6 +1,12 @@
-import { PHASE } from "../../../common";
-import { idb } from "../../db";
-import { g, helpers, lock, updatePlayMenu, updateStatus } from "../../util";
+import { PHASE } from "../../../common/index.ts";
+import { idb } from "../../db/index.ts";
+import {
+	g,
+	helpers,
+	lock,
+	updatePlayMenu,
+	updateStatus,
+} from "../../util/index.ts";
 
 /**
  * Cancel contract negotiations with a player.

@@ -1,7 +1,7 @@
-import { idb } from "../db";
-import { g, helpers } from "../util";
-import type { UpdateEvents } from "../../common/types";
-import { orderBy, range } from "../../common/utils";
+import { idb } from "../db/index.ts";
+import { g, helpers } from "../util/index.ts";
+import type { UpdateEvents } from "../../common/types.ts";
+import { orderBy, range } from "../../common/utils.ts";
 
 // Range includes both seasonStart and seasonEnd
 export async function* iterateActivePlayersSeasonRange(

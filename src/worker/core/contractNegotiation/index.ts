@@ -1,7 +1,7 @@
-import accept from "./accept";
-import cancel from "./cancel";
-import cancelAll from "./cancelAll";
-import create from "./create";
+import accept from "./accept.ts";
+import cancel from "./cancel.ts";
+import cancelAll from "./cancelAll.ts";
+import create from "./create.ts";
 
 export default {
 	accept,

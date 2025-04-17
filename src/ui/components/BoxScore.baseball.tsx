@@ -6,28 +6,28 @@ import {
 	useEffect,
 	useMemo,
 } from "react";
-import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
-import { getCols, helpers, processPlayerStats } from "../util";
-import { filterPlayerStats } from "../../common";
-import { PLAYER_GAME_STATS } from "../../common/constants.baseball";
-import { sortByStats, StatsHeader } from "./BoxScore.football";
-import updateSortBys from "./DataTable/updateSortBys";
-import type { SortBy } from "./DataTable";
+import ResponsiveTableWrapper from "./ResponsiveTableWrapper.tsx";
+import { getCols, helpers, processPlayerStats } from "../util/index.ts";
+import { filterPlayerStats } from "../../common/index.ts";
+import { PLAYER_GAME_STATS } from "../../common/constants.baseball.ts";
+import { sortByStats, StatsHeader } from "./BoxScore.football.tsx";
+import updateSortBys from "./DataTable/updateSortBys.ts";
+import type { SortBy } from "./DataTable/index.tsx";
 import {
 	type BoxScorePlayer,
 	getText,
 	playersByPid,
 	type SportState,
-} from "../util/processLiveGameEvents.baseball";
-import PlayerNameLabels from "./PlayerNameLabels";
+} from "../util/processLiveGameEvents.baseball.tsx";
+import PlayerNameLabels from "./PlayerNameLabels.tsx";
 import processStats, {
 	outsToInnings,
-} from "../../common/processPlayerStats.baseball";
+} from "../../common/processPlayerStats.baseball.ts";
 import type {
 	PlayByPlayEvent,
 	PlayByPlayEventScore,
-} from "../../worker/core/GameSim.baseball/PlayByPlayLogger";
-import { orderBy } from "../../common/utils";
+} from "../../worker/core/GameSim.baseball/PlayByPlayLogger.ts";
+import { orderBy } from "../../common/utils.ts";
 
 type Team = {
 	abbrev: string;

@@ -1,16 +1,16 @@
-import { idb } from "../db";
-import { g, helpers } from "../util";
+import { idb } from "../db/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
 	TeamSeason,
 	Player,
-} from "../../common/types";
-import { getBestPos } from "../core/player/checkJerseyNumberRetirement";
-import { bySport } from "../../common";
-import addFirstNameShort from "../util/addFirstNameShort";
-import { groupByUnique } from "../../common/utils";
-import { getPlayoffsByConfBySeason } from "./frivolitiesTeamSeasons";
+} from "../../common/types.ts";
+import { getBestPos } from "../core/player/checkJerseyNumberRetirement.ts";
+import { bySport } from "../../common/index.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { groupByUnique } from "../../common/utils.ts";
+import { getPlayoffsByConfBySeason } from "./frivolitiesTeamSeasons.ts";
 
 type PlayoffsByConfBySeason = Awaited<
 	ReturnType<typeof getPlayoffsByConfBySeason>

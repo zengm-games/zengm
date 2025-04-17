@@ -1,8 +1,8 @@
 import { assert, test } from "vitest";
-import testHelpers from "../../../test/helpers";
-import player from "./index";
-import { g } from "../../util";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import testHelpers from "../../../test/helpers.ts";
+import player from "./index.ts";
+import { g } from "../../util/index.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 test("pick appropriate player to have a fake age", () => {
 	testHelpers.resetG();

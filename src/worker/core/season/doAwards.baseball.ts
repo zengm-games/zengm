@@ -6,19 +6,19 @@ import {
 	type AwardsByPlayer,
 	addSimpleAndTeamAwardsToAwardsByPlayer,
 	saveAwardsByPlayer,
-} from "./awards";
-import { idb } from "../../db";
-import { g, helpers } from "../../util";
-import type { Conditions, PlayerFiltered } from "../../../common/types";
-import type { AwardPlayer, Awards } from "../../../common/types.baseball";
+} from "./awards.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers } from "../../util/index.ts";
+import type { Conditions, PlayerFiltered } from "../../../common/types.ts";
+import type { AwardPlayer, Awards } from "../../../common/types.baseball.ts";
 import {
 	POS_NUMBERS,
 	POS_NUMBERS_INVERSE,
-} from "../../../common/constants.baseball";
+} from "../../../common/constants.baseball.ts";
 import processPlayerStats, {
 	NUM_OUTS_PER_GAME,
-} from "../../../common/processPlayerStats.baseball";
-import { orderBy } from "../../../common/utils";
+} from "../../../common/processPlayerStats.baseball.ts";
+import { orderBy } from "../../../common/utils.ts";
 
 const getPlayerInfo = (p: PlayerFiltered): AwardPlayer | undefined => {
 	if (!p) {

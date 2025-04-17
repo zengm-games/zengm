@@ -1,12 +1,12 @@
-// Run this in a new real players leauge with all stats, and it will calculate everything
+// Run this in a new real players league with all stats, and it will calculate everything
 
-import { idb } from "../../db";
-import { g, local } from "../../util";
-import { LATEST_SEASON, MIN_SEASON } from "../realRosters/getLeague";
-import type { SeasonLeaders } from "../../../common/types";
-import { league, season } from "..";
-import { PHASE } from "../../../common";
-import loadData from "../realRosters/loadData.basketball";
+import { idb } from "../../db/index.ts";
+import { g, local } from "../../util/index.ts";
+import { LATEST_SEASON, MIN_SEASON } from "../realRosters/getLeague.ts";
+import type { SeasonLeaders } from "../../../common/types.ts";
+import { league, season } from "../index.ts";
+import { PHASE } from "../../../common/index.ts";
+import loadData from "../realRosters/loadData.basketball.ts";
 
 const recomputeRealSeasonLeaders = async () => {
 	// Clear any existing seasonLeaders, so it gets recomputed

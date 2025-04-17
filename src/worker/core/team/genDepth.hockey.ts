@@ -1,11 +1,11 @@
-import { idb } from "../../db";
-import { g, helpers, local } from "../../util";
+import { idb } from "../../db/index.ts";
+import { g, helpers, local } from "../../util/index.ts";
 import {
 	NUM_LINES,
 	NUM_PLAYERS_PER_LINE,
-} from "../../../common/constants.hockey";
-import type { Position } from "../../../common/types.hockey";
-import type { Player, PlayerFiltered } from "../../../common/types";
+} from "../../../common/constants.hockey.ts";
+import type { Position } from "../../../common/types.hockey.ts";
+import type { Player, PlayerFiltered } from "../../../common/types.ts";
 
 const score = (p: PlayerFiltered, pos: Position) => {
 	let tempScore = p.ratings.ovrs[pos];

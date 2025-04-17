@@ -1,6 +1,6 @@
-import { ACCOUNT_API_URL, fetchWrapper } from "../../common";
-import { checkAccount } from "../util";
-import type { Conditions, UpdateEvents } from "../../common/types";
+import { ACCOUNT_API_URL, fetchWrapper } from "../../common/index.ts";
+import { checkAccount } from "../util/index.ts";
+import type { Conditions, UpdateEvents } from "../../common/types.ts";
 
 const updateAccountUpdateCard = async (
 	inputs: unknown,

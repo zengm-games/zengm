@@ -1,10 +1,10 @@
 import { useState } from "react";
-import useTitleBar from "../hooks/useTitleBar";
-import type { View } from "../../common/types";
-import { helpers } from "../util";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import type { View } from "../../common/types.ts";
+import { helpers } from "../util/index.ts";
 import clsx from "clsx";
-import { NewsBlock } from "../components";
-import { categories, types } from "../../common/transactionInfo";
+import { NewsBlock } from "../components/index.tsx";
+import { categories, types } from "../../common/transactionInfo.ts";
 
 const News = ({
 	abbrev,

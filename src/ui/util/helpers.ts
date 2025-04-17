@@ -1,5 +1,5 @@
-import { bySport, helpers as commonHelpers } from "../../common";
-import { local } from "./local";
+import { bySport, helpers as commonHelpers } from "../../common/index.ts";
+import { local } from "./local.ts";
 
 const leagueUrl = (components: (number | string | undefined)[]): string => {
 	const lid = local.getState().lid;

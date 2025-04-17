@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { type MouseEvent, useCallback, useEffect, useState } from "react";
-import { GAME_NAME, WEBSITE_ROOT } from "../../../common";
+import { GAME_NAME, WEBSITE_ROOT } from "../../../common/index.ts";
 
 const Storage = () => {
 	const [status, setStatus] = useState<

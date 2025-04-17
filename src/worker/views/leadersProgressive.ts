@@ -1,15 +1,15 @@
-import { idb } from "../db";
-import { g } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
-import { groupByUnique, range } from "../../common/utils";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { groupByUnique, range } from "../../common/utils.ts";
 import {
 	GamesPlayedCache,
 	getCategoriesAndStats,
 	iterateAllPlayers,
 	type Leader,
 	playerMeetsCategoryRequirements,
-} from "./leaders";
-import addFirstNameShort from "../util/addFirstNameShort";
+} from "./leaders.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
 
 type MyLeader = Omit<
 	Leader,

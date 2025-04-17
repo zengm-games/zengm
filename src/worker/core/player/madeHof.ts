@@ -1,13 +1,13 @@
-import madeHofBaseball from "./madeHof.baseball";
-import madeHofBasketball from "./madeHof.basketball";
-import madeHofFootball from "./madeHof.football";
-import madeHofHockey from "./madeHof.hockey";
+import madeHofBaseball from "./madeHof.baseball.ts";
+import madeHofBasketball from "./madeHof.basketball.ts";
+import madeHofFootball from "./madeHof.football.ts";
+import madeHofHockey from "./madeHof.hockey.ts";
 import type {
 	Player,
 	MinimalPlayerRatings,
 	PlayerWithoutKey,
-} from "../../../common/types";
-import { bySport } from "../../../common";
+} from "../../../common/types.ts";
+import { bySport } from "../../../common/index.ts";
 
 const madeHof = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,

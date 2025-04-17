@@ -1,5 +1,5 @@
-import type { Settings } from "../../../worker/views/settings";
-import SettingsForm from "../Settings/SettingsForm";
+import type { Settings } from "../../../worker/views/settings.ts";
+import SettingsForm from "../Settings/SettingsForm.tsx";
 
 const CustomizeSettings = ({
 	onCancel,

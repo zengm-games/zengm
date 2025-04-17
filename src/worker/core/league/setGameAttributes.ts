@@ -1,4 +1,4 @@
-import { idb } from "../../db";
+import { idb } from "../../db/index.ts";
 import {
 	defaultInjuries,
 	defaultTragicDeaths,
@@ -6,17 +6,17 @@ import {
 	helpers,
 	initUILocalGames,
 	local,
-} from "../../util";
-import { wrap } from "../../util/g";
-import type { GameAttributesLeague } from "../../../common/types";
-import { draft, team } from "..";
-import gameAttributesToUI from "./gameAttributesToUI";
-import { unwrapGameAttribute } from "../../../common";
-import { getAutoTicketPriceByTid } from "../game/attendance";
-import goatFormula from "../../util/goatFormula";
-import updateMeta from "./updateMeta";
-import { initDefaults } from "../../util/loadNames";
-import { gameAttributesKeysOtherSports } from "../../../common/defaultGameAttributes";
+} from "../../util/index.ts";
+import { wrap } from "../../util/g.ts";
+import type { GameAttributesLeague } from "../../../common/types.ts";
+import { draft, team } from "../index.ts";
+import gameAttributesToUI from "./gameAttributesToUI.ts";
+import { unwrapGameAttribute } from "../../../common/index.ts";
+import { getAutoTicketPriceByTid } from "../game/attendance.ts";
+import goatFormula from "../../util/goatFormula.ts";
+import updateMeta from "./updateMeta.ts";
+import { initDefaults } from "../../util/loadNames.ts";
+import { gameAttributesKeysOtherSports } from "../../../common/defaultGameAttributes.ts";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	await updateMeta({

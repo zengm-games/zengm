@@ -1,8 +1,8 @@
-import { team } from "..";
-import { idb } from "../../db";
-import { g, helpers, logEvent } from "../../util";
-import getLuxuryTaxAmount from "./getLuxuryTaxAmount";
-import getMinPayrollAmount from "./getMinPayrollAmount";
+import { team } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers, logEvent } from "../../util/index.ts";
+import getLuxuryTaxAmount from "./getLuxuryTaxAmount.ts";
+import getMinPayrollAmount from "./getMinPayrollAmount.ts";
 
 const rosterLink = (tid: number) =>
 	`<a href="${helpers.leagueUrl([

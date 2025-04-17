@@ -2,8 +2,8 @@
 
 /* eslint-disable no-async-promise-executor */
 import { assert, test } from "vitest";
-import router from ".";
-import type { Context } from ".";
+import router from "./index.ts";
+import type { Context } from "./index.ts";
 
 const counts: Record<string, number> = {};
 const countCallback = async (context: Context) => {

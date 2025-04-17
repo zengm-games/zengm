@@ -1,8 +1,8 @@
-import { bySport, PHASE } from "../../common";
-import { g } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
-import { getPlayers } from "./playerRatings";
-import addFirstNameShort from "../util/addFirstNameShort";
+import { bySport, PHASE } from "../../common/index.ts";
+import { g } from "../util/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { getPlayers } from "./playerRatings.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
 
 const updateInjuries = async (
 	inputs: ViewInput<"injuries">,

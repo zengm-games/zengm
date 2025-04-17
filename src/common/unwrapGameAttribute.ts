@@ -1,5 +1,5 @@
-import gameAttributeHasHistory from "./gameAttributeHasHistory";
-import type { GameAttributesLeague } from "./types";
+import gameAttributeHasHistory from "./gameAttributeHasHistory.ts";
+import type { GameAttributesLeague } from "./types.ts";
 
 // Get latest value
 const unwrapGameAttribute = <T extends keyof GameAttributesLeague>(

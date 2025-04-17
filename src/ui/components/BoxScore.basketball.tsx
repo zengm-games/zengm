@@ -1,10 +1,10 @@
-import ResponsiveTableWrapper from "./ResponsiveTableWrapper";
-import SafeHtml from "../components/SafeHtml";
-import { getCols, helpers } from "../util";
-import { sortByStats, StatsHeader } from "./BoxScore.football";
+import ResponsiveTableWrapper from "./ResponsiveTableWrapper.tsx";
+import SafeHtml from "../components/SafeHtml.tsx";
+import { getCols, helpers } from "../util/index.ts";
+import { sortByStats, StatsHeader } from "./BoxScore.football.tsx";
 import { type MouseEvent, useState } from "react";
-import type { SortBy } from "./DataTable";
-import updateSortBys from "./DataTable/updateSortBys";
+import type { SortBy } from "./DataTable/index.tsx";
+import updateSortBys from "./DataTable/updateSortBys.ts";
 
 const StatsTable = ({
 	Row,

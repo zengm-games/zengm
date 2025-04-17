@@ -1,10 +1,10 @@
-import { finances, league, player } from "..";
-import { idb } from "../../db";
-import { g, random } from "../../util";
-import getDraftProspects from "./getDraftProspects";
-import loadDataBasketball from "./loadData.basketball";
-import addRelatives from "./addRelatives";
-import { LEAGUE_DATABASE_VERSION, PHASE } from "../../../common";
+import { finances, league, player } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { g, random } from "../../util/index.ts";
+import getDraftProspects from "./getDraftProspects.ts";
+import loadDataBasketball from "./loadData.basketball.ts";
+import addRelatives from "./addRelatives.ts";
+import { LEAGUE_DATABASE_VERSION, PHASE } from "../../../common/index.ts";
 
 const updateRandomDebutsForever = async (
 	draftYear: number,

@@ -1,4 +1,4 @@
-import type { ViewInput } from "../../common/types";
+import type { ViewInput } from "../../common/types.ts";
 
 const updateToken = async (inputs: ViewInput<"resetPassword">) => {
 	return {

@@ -1,11 +1,11 @@
-import value from "./value";
+import value from "./value.ts";
 import type {
 	MinimalPlayerRatings,
 	Player,
 	PlayerWithoutKey,
-} from "../../../common/types";
-import { g, local } from "../../util";
-import updateOvrMeanStd from "./updateOvrMeanStd";
+} from "../../../common/types.ts";
+import { g, local } from "../../util/index.ts";
+import updateOvrMeanStd from "./updateOvrMeanStd.ts";
 
 const updateValues = async (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,

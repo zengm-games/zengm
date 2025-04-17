@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
-import useTitleBar from "../hooks/useTitleBar";
-import { BoxPlot, MoreLinks } from "../components";
-import type { View } from "../../common/types";
-import { isSport } from "../../common";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { BoxPlot, MoreLinks } from "../components/index.tsx";
+import type { View } from "../../common/types.ts";
+import { isSport } from "../../common/index.ts";
 
 const proStatsAll = isSport("basketball")
 	? {

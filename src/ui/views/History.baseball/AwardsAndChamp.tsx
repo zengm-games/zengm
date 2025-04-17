@@ -1,6 +1,6 @@
-import { helpers } from "../../../ui/util";
-import type { ActualProps } from ".";
-import { AWARD_NAMES } from "../../../common";
+import { helpers } from "../../../ui/util/index.ts";
+import type { ActualProps } from "./index.tsx";
+import { AWARD_NAMES } from "../../../common/index.ts";
 
 const Winner = ({
 	award,

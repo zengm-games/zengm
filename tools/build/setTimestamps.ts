@@ -1,12 +1,12 @@
 import { bySport } from "../lib/bySport.ts";
 import { replace } from "./replace.ts";
 
-export const setTimestamps = (
+export const setTimestamps = async (
 	versionNumber: string,
 	watch: boolean = false,
 ) => {
 	if (watch) {
-		replace({
+		await replace({
 			paths: ["build/index.html"],
 			replaces: [
 				{
@@ -28,7 +28,7 @@ export const setTimestamps = (
 			],
 		});
 	} else {
-		replace({
+		await replace({
 			paths: [
 				"build/index.html",
 
@@ -244,7 +244,7 @@ ${bySport({
 	default: "",
 })}`;
 
-	replace({
+	await replace({
 		paths: ["build/index.html"],
 		replaces: [
 			{

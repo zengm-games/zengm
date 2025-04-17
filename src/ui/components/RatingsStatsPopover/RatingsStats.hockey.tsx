@@ -1,5 +1,5 @@
-import { gradientStyleFactory } from "../../util";
-import type { RatingKey } from "../../../common/types.hockey";
+import { gradientStyleFactory } from "../../util/index.ts";
+import type { RatingKey } from "../../../common/types.hockey.ts";
 
 const gradientStyle = gradientStyleFactory(25, 45, 55, 75);
 

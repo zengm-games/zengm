@@ -1,10 +1,15 @@
-import { g, helpers, random } from "../../../worker/util";
-import { groupBy, groupByUnique, orderBy, range } from "../../../common/utils";
-import type { Div, GameAttributesLeague } from "../../../common/types";
-import { TOO_MANY_TEAMS_TOO_SLOW } from "./getInitialNumGamesConfDivSettings";
-import groupScheduleSeries from "./groupScheduleSeries";
-import { isSport } from "../../../common";
-import groupScheduleCompact from "./groupScheduleCompact";
+import { g, helpers, random } from "../../../worker/util/index.ts";
+import {
+	groupBy,
+	groupByUnique,
+	orderBy,
+	range,
+} from "../../../common/utils.ts";
+import type { Div, GameAttributesLeague } from "../../../common/types.ts";
+import { TOO_MANY_TEAMS_TOO_SLOW } from "./getInitialNumGamesConfDivSettings.ts";
+import groupScheduleSeries from "./groupScheduleSeries.ts";
+import { isSport } from "../../../common/index.ts";
+import groupScheduleCompact from "./groupScheduleCompact.ts";
 
 type MyTeam = {
 	seasonAttrs: {

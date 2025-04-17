@@ -1,5 +1,5 @@
 import { assert, test } from "vitest";
-import LngTracker from "./LngTracker";
+import LngTracker from "./LngTracker.ts";
 
 test("works", () => {
 	const lngTracker = new LngTracker();

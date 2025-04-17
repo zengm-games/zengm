@@ -1,9 +1,9 @@
 import { Fragment, useState } from "react";
-import { ForceWin, MoreLinks, ScoreBox } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import type { View } from "../../common/types";
-import { toWorker, useLocalPartial } from "../util";
-import allowForceTie from "../../common/allowForceTie";
+import { ForceWin, MoreLinks, ScoreBox } from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import type { View } from "../../common/types.ts";
+import { toWorker, useLocalPartial } from "../util/index.ts";
+import allowForceTie from "../../common/allowForceTie.ts";
 import { Dropdown } from "react-bootstrap";
 
 const Schedule = ({

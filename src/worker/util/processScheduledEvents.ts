@@ -1,15 +1,22 @@
-import { idb } from "../db";
-import g from "./g";
-import helpers from "./helpers";
-import logEvent from "./logEvent";
-import { league, expansionDraft, phase, team, player, finances } from "../core";
+import { idb } from "../db/index.ts";
+import g from "./g.ts";
+import helpers from "./helpers.ts";
+import logEvent from "./logEvent.ts";
+import {
+	league,
+	expansionDraft,
+	phase,
+	team,
+	player,
+	finances,
+} from "../core/index.ts";
 import type {
 	ScheduledEvent,
 	Conditions,
 	RealTeamInfo,
-} from "../../common/types";
-import { PHASE, applyRealTeamInfo } from "../../common";
-import local from "./local";
+} from "../../common/types.ts";
+import { PHASE, applyRealTeamInfo } from "../../common/index.ts";
+import local from "./local.ts";
 
 const processTeamInfo = async (
 	info: Extract<ScheduledEvent, { type: "teamInfo" }>["info"],

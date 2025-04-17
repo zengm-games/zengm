@@ -1,11 +1,11 @@
-import { PLAYER } from "../../../common";
-import { DataTable } from "../../components";
-import { helpers, getCols, toWorker } from "../../util";
-import type { View } from "../../../common/types";
-import playerRetireJerseyNumberDialog from "./playerRetireJerseyNumberDialog";
-import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
-import type { DataTableRow } from "../../components/DataTable";
-import { styleGrid11 } from "../../components/ActionButton";
+import { PLAYER } from "../../../common/index.ts";
+import { DataTable } from "../../components/index.tsx";
+import { helpers, getCols, toWorker } from "../../util/index.ts";
+import type { View } from "../../../common/types.ts";
+import playerRetireJerseyNumberDialog from "./playerRetireJerseyNumberDialog.tsx";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
+import type { DataTableRow } from "../../components/DataTable/index.tsx";
+import { styleGrid11 } from "../../components/ActionButton.tsx";
 
 // The Partial<> ones are only required for TeamHistory, not GmHistory
 const Players = ({

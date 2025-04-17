@@ -1,6 +1,6 @@
-import { MOOD_TRAITS } from "../../../common";
-import type { MoodTrait } from "../../../common/types";
-import { helpers, random } from "../../util";
+import { MOOD_TRAITS } from "../../../common/index.ts";
+import type { MoodTrait } from "../../../common/types.ts";
+import { helpers, random } from "../../util/index.ts";
 
 const MOOD_TRAIT_KEYS = helpers.keys(MOOD_TRAITS);
 

@@ -1,5 +1,5 @@
-import { CUMULATIVE_OBJECTS } from "../../../api/leagueFileUpload";
-import { highWaterMark } from "../createStream";
+import { CUMULATIVE_OBJECTS } from "../../../api/leagueFileUpload.ts";
+import { highWaterMark } from "../createStream.ts";
 
 // Silly to stream this, since leagueObject is already in memory, but this allows us to unify the input to league creation
 const createStreamFromLeagueObject = (

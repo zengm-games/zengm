@@ -1,30 +1,35 @@
 import { useState, type ReactNode } from "react";
-import { PHASE } from "../../../common";
-import useTitleBar from "../../hooks/useTitleBar";
-import { getCols, helpers, toWorker, useLocalPartial } from "../../util";
+import { PHASE } from "../../../common/index.ts";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import {
+	getCols,
+	helpers,
+	toWorker,
+	useLocalPartial,
+} from "../../util/index.ts";
 import {
 	ActionButton,
 	DataTable,
 	HelpPopover,
 	SafeHtml,
 	SaveTrade,
-} from "../../components";
-import type { Col } from "../../components/DataTable";
-import type { View } from "../../../common/types";
-import type api from "../../../worker/api";
+} from "../../components/index.tsx";
+import type { Col } from "../../components/DataTable/index.tsx";
+import type { View } from "../../../common/types.ts";
+import type api from "../../../worker/api/index.ts";
 import clsx from "clsx";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
-} from "../../components/contract";
-import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
-import { MissingAssets, OvrChange } from "../Trade/Summary";
-import type { MissingAsset } from "../../../worker/views/savedTrades";
-import useTradeOffersSwitch from "../../hooks/useTradeOffersSwitch";
-import LookingFor from "./LookingFor";
-import useLookingForState from "./useLookingForState";
+} from "../../components/contract.tsx";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
+import { MissingAssets, OvrChange } from "../Trade/Summary.tsx";
+import type { MissingAsset } from "../../../worker/views/savedTrades.ts";
+import useTradeOffersSwitch from "../../hooks/useTradeOffersSwitch.tsx";
+import LookingFor from "./LookingFor.tsx";
+import useLookingForState from "./useLookingForState.ts";
 import { Dropdown, SplitButton } from "react-bootstrap";
-import type { FooterRow } from "../../components/DataTable/Footer";
+import type { FooterRow } from "../../components/DataTable/Footer.tsx";
 
 export type OfferType = Awaited<
 	ReturnType<(typeof api)["main"]["getTradingBlockOffers"]>

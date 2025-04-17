@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common";
+import { PHASE } from "../../../common/index.ts";
 import {
 	draft,
 	freeAgents,
@@ -7,10 +7,10 @@ import {
 	season,
 	expansionDraft,
 	team,
-} from "..";
-import { g, random } from "../../util";
-import type { Conditions } from "../../../common/types";
-import { idb } from "../../db";
+} from "../index.ts";
+import { g, random } from "../../util/index.ts";
+import type { Conditions } from "../../../common/types.ts";
+import { idb } from "../../db/index.ts";
 
 // Depending on phase, initiate action that will lead to the next phase
 const autoPlay = async (conditions: Conditions = {}) => {

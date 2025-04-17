@@ -1,15 +1,15 @@
-import { getPeriodName } from "../../common";
-import { helpers, local } from ".";
+import { getPeriodName } from "../../common/index.ts";
+import { helpers, local } from "./index.ts";
 import type {
 	PlayByPlayEvent,
 	PlayByPlayEventScore,
-} from "../../worker/core/GameSim.baseball/PlayByPlayLogger";
+} from "../../worker/core/GameSim.baseball/PlayByPlayLogger.ts";
 import {
 	NUM_OUTS_PER_INNING,
 	POS_NUMBERS_INVERSE,
-} from "../../common/constants.baseball";
-import type { PlayerInjury } from "../../common/types";
-import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.baseball";
+} from "../../common/constants.baseball.ts";
+import type { PlayerInjury } from "../../common/types.ts";
+import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.baseball.ts";
 
 export type BoxScorePlayer = {
 	name: string;

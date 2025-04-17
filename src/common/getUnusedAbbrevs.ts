@@ -1,4 +1,4 @@
-import teamInfos from "./teamInfos";
+import teamInfos from "./teamInfos.ts";
 
 const getUnusedAbbrevs = (
 	currentTeams: {

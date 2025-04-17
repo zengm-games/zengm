@@ -1,12 +1,12 @@
-import fuzzRating from "./fuzzRating";
-import { g } from "../../util";
+import fuzzRating from "./fuzzRating.ts";
+import { g } from "../../util/index.ts";
 import type {
 	MinimalPlayerRatings,
 	Player,
 	PlayerWithoutKey,
-} from "../../../common/types";
-import valueCombineOvrPot from "./valueCombineOvrPot";
-import { bySport, isSport } from "../../../common";
+} from "../../../common/types.ts";
+import valueCombineOvrPot from "./valueCombineOvrPot.ts";
+import { bySport, isSport } from "../../../common/index.ts";
 
 /**
  * Returns a numeric value for a given player, representing is general worth to a typical team

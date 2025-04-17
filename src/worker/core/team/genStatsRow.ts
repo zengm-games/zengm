@@ -1,6 +1,6 @@
-import stats from "./stats";
-import { g } from "../../util";
-import type { TeamStats } from "../../../common/types";
+import stats from "./stats.ts";
+import { g } from "../../util/index.ts";
+import type { TeamStats } from "../../../common/types.ts";
 
 /**
  * Generate a new row of team stats.

@@ -1,8 +1,8 @@
-import Dropdown from "./Dropdown";
-import DropdownLinks from "./DropdownLinks";
-import NewWindowLink from "./NewWindowLink";
-import { useLocalPartial } from "../util";
-import type { MenuItemHeader } from "../../common/types";
+import Dropdown from "./Dropdown.tsx";
+import DropdownLinks from "./DropdownLinks.tsx";
+import NewWindowLink from "./NewWindowLink.tsx";
+import { useLocalPartial } from "../util/index.ts";
+import type { MenuItemHeader } from "../../common/types.ts";
 
 const genPath = (parts: string[], season: string | undefined) => {
 	if (season !== undefined) {

@@ -1,11 +1,11 @@
-import { g, logEvent, helpers } from "../../util";
-import type { Team } from "../../../common/types";
-import generate from "./generate";
-import genSeasonRow from "./genSeasonRow";
-import genStatsRow from "./genStatsRow";
-import { draft, league } from "..";
-import { idb } from "../../db";
-import { PHASE } from "../../../common";
+import { g, logEvent, helpers } from "../../util/index.ts";
+import type { Team } from "../../../common/types.ts";
+import generate from "./generate.ts";
+import genSeasonRow from "./genSeasonRow.ts";
+import genStatsRow from "./genStatsRow.ts";
+import { draft, league } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { PHASE } from "../../../common/index.ts";
 
 const addNewTeamToExistingLeague = async (
 	teamInfo: {

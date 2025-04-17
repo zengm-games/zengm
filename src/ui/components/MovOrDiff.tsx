@@ -1,4 +1,4 @@
-import PlusMinus from "./PlusMinus";
+import PlusMinus from "./PlusMinus.tsx";
 
 type Stats = {
 	pts: number;

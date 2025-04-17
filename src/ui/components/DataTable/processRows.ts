@@ -1,10 +1,10 @@
-import type { DataTableRow, Props } from ".";
-import { normalizeIntl } from "../../../common/normalizeIntl";
-import { orderBy } from "../../../common/utils";
-import createFilterFunction from "./createFilterFunction";
-import getSearchVal from "./getSearchVal";
-import getSortVal from "./getSortVal";
-import type { State } from "./loadStateFromCache";
+import type { DataTableRow, Props } from "./index.tsx";
+import { normalizeIntl } from "../../../common/normalizeIntl.ts";
+import { orderBy } from "../../../common/utils.ts";
+import createFilterFunction from "./createFilterFunction.ts";
+import getSearchVal from "./getSearchVal.tsx";
+import getSortVal from "./getSortVal.tsx";
+import type { State } from "./loadStateFromCache.ts";
 
 export const processRows = ({
 	cols,

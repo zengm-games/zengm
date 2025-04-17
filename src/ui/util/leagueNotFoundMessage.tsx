@@ -1,4 +1,4 @@
-import { bySport, GAME_NAME } from "../../common";
+import { bySport, GAME_NAME } from "../../common/index.ts";
 
 const pro = bySport({
 	baseball: "MLB",

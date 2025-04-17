@@ -1,9 +1,9 @@
-import { idb } from "../../db";
-import { g, logEvent } from "../../util";
-import { getTeamOvr } from "../../views/newTeam";
-import player from "../player";
-import { PHASE } from "../../../common";
-import { orderBy } from "../../../common/utils";
+import { idb } from "../../db/index.ts";
+import { g, logEvent } from "../../util/index.ts";
+import { getTeamOvr } from "../../views/newTeam.ts";
+import player from "../player/index.ts";
+import { PHASE } from "../../../common/index.ts";
+import { orderBy } from "../../../common/utils.ts";
 
 // Swap the user's roster with the roster of the worst team in the league, by ovr
 const swapWorstRoster = async (addSisyphusLogs: boolean) => {

@@ -5,24 +5,24 @@ import {
 	AWARD_NAMES,
 	bySport,
 	isSport,
-} from "../../../common";
-import { idb } from "../../db";
+} from "../../../common/index.ts";
+import { idb } from "../../db/index.ts";
 import {
 	g,
 	defaultGameAttributes,
 	helpers,
 	logEvent,
 	orderTeams,
-} from "../../util";
+} from "../../util/index.ts";
 import type {
 	Conditions,
 	PlayerFiltered,
 	TeamFiltered,
-} from "../../../common/types";
-import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball";
-import season from ".";
-import addAward from "../player/addAward";
-import { maxBy } from "../../../common/utils";
+} from "../../../common/types.ts";
+import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball.ts";
+import season from "./index.ts";
+import addAward from "../player/addAward.ts";
+import { maxBy } from "../../../common/utils.ts";
 
 export type AwardsByPlayer = {
 	pid: number;

@@ -1,11 +1,15 @@
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import { DataTable, MoreLinks, PlayerNameLabels } from "../components";
-import type { View } from "../../common/types";
-import { LeadersTopText } from "./Leaders";
-import type { Col, DataTableRow } from "../components/DataTable";
-import { makeNormalResponsive } from "../hooks/useDropdownOptions";
-import { range } from "../../common/utils";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers } from "../util/index.ts";
+import {
+	DataTable,
+	MoreLinks,
+	PlayerNameLabels,
+} from "../components/index.tsx";
+import type { View } from "../../common/types.ts";
+import { LeadersTopText } from "./Leaders.tsx";
+import type { Col, DataTableRow } from "../components/DataTable/index.tsx";
+import { makeNormalResponsive } from "../hooks/useDropdownOptions.tsx";
+import { range } from "../../common/utils.ts";
 
 export const formatStatsDropdown = (stats: string[]) =>
 	stats.map((stat) => {

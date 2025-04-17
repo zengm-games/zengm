@@ -1,10 +1,10 @@
-import bySport from "./bySport";
-import processPlayerStatsBaseball from "./processPlayerStats.baseball";
-import processPlayerStatsBasketball from "./processPlayerStats.basketball";
-import processPlayerStatsFootball from "./processPlayerStats.football";
-import processPlayerStatsHockey from "./processPlayerStats.hockey";
-import type { PlayerStats, PlayerStatType } from "./types";
-import defaultGameAttributes from "./defaultGameAttributes";
+import bySport from "./bySport.ts";
+import processPlayerStatsBaseball from "./processPlayerStats.baseball.ts";
+import processPlayerStatsBasketball from "./processPlayerStats.basketball.ts";
+import processPlayerStatsFootball from "./processPlayerStats.football.ts";
+import processPlayerStatsHockey from "./processPlayerStats.hockey.ts";
+import type { PlayerStats, PlayerStatType } from "./types.ts";
+import defaultGameAttributes from "./defaultGameAttributes.ts";
 
 // ONLY USE THIS IF THE fantasySports SETTING DOES NOT MATTER!!! Otherwise, use it from ui
 const processPlayerStats = (

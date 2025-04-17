@@ -1,10 +1,10 @@
 import { useState } from "react";
-import useTitleBar from "../hooks/useTitleBar";
-import type { View } from "../../common/types";
-import { helpers, toWorker } from "../util";
-import { TeamLogoJerseyInfo } from "../components/TeamLogoJerseyInfo";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import type { View } from "../../common/types.ts";
+import { helpers, toWorker } from "../util/index.ts";
+import { TeamLogoJerseyInfo } from "../components/TeamLogoJerseyInfo.tsx";
 import clsx from "clsx";
-import { wait } from "../../common";
+import { wait } from "../../common/index.ts";
 
 export const AutoRelocateExpandSubmit = ({
 	godMode,

@@ -1,7 +1,7 @@
-import { WEBSITE_ROOT } from "../../../common";
-import type { Conditions } from "../../../common/types";
-import { g, helpers, logEvent } from "../../util";
-import newScheduleGood from "./newScheduleGood";
+import { WEBSITE_ROOT } from "../../../common/index.ts";
+import type { Conditions } from "../../../common/types.ts";
+import { g, helpers, logEvent } from "../../util/index.ts";
+import newScheduleGood from "./newScheduleGood.ts";
 
 const newSchedule = (
 	teams: {

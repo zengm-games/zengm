@@ -1,10 +1,13 @@
-import { PlayoffMatchup, ResponsiveTableWrapper } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import type { View } from "../../common/types";
-import { helpers, toWorker } from "../util";
+import {
+	PlayoffMatchup,
+	ResponsiveTableWrapper,
+} from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import type { View } from "../../common/types.ts";
+import { helpers, toWorker } from "../util/index.ts";
 import { useState } from "react";
 import clsx from "clsx";
-import { range } from "../../common/utils";
+import { range } from "../../common/utils.ts";
 
 type TeamToEdit = View<"playoffs">["teamsToEdit"][number];
 

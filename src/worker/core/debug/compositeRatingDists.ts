@@ -1,6 +1,6 @@
-import { COMPOSITE_WEIGHTS, PLAYER } from "../../../common";
-import { player } from "..";
-import { idb } from "../../db";
+import { COMPOSITE_WEIGHTS, PLAYER } from "../../../common/index.ts";
+import { player } from "../index.ts";
+import { idb } from "../../db/index.ts";
 
 const compositeRatingDists = async () => {
 	// All non-retired players

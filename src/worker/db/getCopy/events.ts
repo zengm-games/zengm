@@ -1,5 +1,5 @@
-import { idb } from "..";
-import type { EventBBGM, GetCopyType } from "../../../common/types";
+import { idb } from "../index.ts";
+import type { EventBBGM, GetCopyType } from "../../../common/types.ts";
 
 const getCopy = async (
 	{ eid }: { eid: number },

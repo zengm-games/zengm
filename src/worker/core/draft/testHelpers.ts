@@ -1,10 +1,10 @@
 import { assert } from "vitest";
-import sampleTiebreakers from "../../../test/fixtures/sampleTiebreakers";
-import testHelpers from "../../../test/helpers";
-import { draft } from "..";
-import { idb } from "../../db";
-import { g, helpers } from "../../util";
-import type { Team, TeamSeasonWithoutKey } from "../../../common/types";
+import sampleTiebreakers from "../../../test/fixtures/sampleTiebreakers.ts";
+import testHelpers from "../../../test/helpers.ts";
+import { draft } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers } from "../../util/index.ts";
+import type { Team, TeamSeasonWithoutKey } from "../../../common/types.ts";
 
 const getDraftTids = async () => {
 	await draft.genOrder();

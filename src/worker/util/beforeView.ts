@@ -1,5 +1,5 @@
-import { Cache, connectLeague, idb } from "../db";
-import { league } from "../core";
+import { Cache, connectLeague, idb } from "../db/index.ts";
+import { league } from "../core/index.ts";
 import {
 	env,
 	g,
@@ -10,8 +10,8 @@ import {
 	updatePhase,
 	updatePlayMenu,
 	updateStatus,
-} from ".";
-import type { Conditions, League } from "../../common/types";
+} from "./index.ts";
+import type { Conditions, League } from "../../common/types.ts";
 
 let heartbeatIntervalID: number;
 

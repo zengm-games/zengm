@@ -1,4 +1,4 @@
-import { idb } from "../db";
+import { idb } from "../db/index.ts";
 
 const getNewLeagueLid = async () => {
 	const cursor = await idb.meta

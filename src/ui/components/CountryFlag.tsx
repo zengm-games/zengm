@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import type { CSSProperties } from "react";
-import { helpers, useLocal } from "../util";
+import { helpers, useLocal } from "../util/index.ts";
 
 // https://github.com/lipis/flag-icons/blob/main/country.json with some duplicate names added
 const countryCodes: Record<string, string> = {

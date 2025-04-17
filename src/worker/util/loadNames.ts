@@ -1,19 +1,19 @@
-import defaultGameAttributes from "../../common/defaultGameAttributes";
+import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 import {
 	type DefaultNames,
 	getFrequencies,
 	mergeCountries,
-} from "../../common/names";
+} from "../../common/names.ts";
 import type {
 	PlayerBioInfoProcessed,
 	NamesLegacy,
 	GameAttributesLeague,
-} from "../../common/types";
-import defaultColleges from "../data/defaultColleges";
-import { defaultCountries, groups } from "../data/defaultCountries";
-import defaultRaces from "../data/defaultRaces";
-import g from "./g";
-import helpers from "./helpers";
+} from "../../common/types.ts";
+import defaultColleges from "../data/defaultColleges.ts";
+import { defaultCountries, groups } from "../data/defaultCountries.ts";
+import defaultRaces from "../data/defaultRaces.ts";
+import g from "./g.ts";
+import helpers from "./helpers.ts";
 
 const toCumSumArray = <T extends string>(
 	obj: Record<T, number>,

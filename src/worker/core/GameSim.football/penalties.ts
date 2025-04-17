@@ -1,5 +1,5 @@
-import type { Position } from "../../../common/types.football";
-import type { PenaltyPlayType } from "./types";
+import type { Position } from "../../../common/types.football.ts";
+import type { PenaltyPlayType } from "./types.ts";
 
 type Penalty = {
 	name: string;

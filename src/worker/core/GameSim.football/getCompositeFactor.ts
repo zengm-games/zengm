@@ -1,7 +1,7 @@
-import getPlayers from "./getPlayers";
-import type { Position } from "../../../common/types.football";
-import type { PlayerGameSim, PlayersOnField } from "./types";
-import { orderBy } from "../../../common/utils";
+import getPlayers from "./getPlayers.ts";
+import type { Position } from "../../../common/types.football.ts";
+import type { PlayerGameSim, PlayersOnField } from "./types.ts";
+import { orderBy } from "../../../common/utils.ts";
 
 // weightsBonus is not added to denominator, it just gives a bonus in situations e.g. with extra receivers or blockers beyond normal
 const getCompositeFactor = ({

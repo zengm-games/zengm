@@ -1,17 +1,21 @@
-import { idb } from "../db";
-import { g, helpers, processPlayersHallOfFame } from "../util";
+import { idb } from "../db/index.ts";
+import { g, helpers, processPlayersHallOfFame } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	Player,
 	ViewInput,
 	MinimalPlayerRatings,
-} from "../../common/types";
-import { groupBy, orderBy, type OrderBySortParams } from "../../common/utils";
-import { player } from "../core";
-import { bySport, PLAYER } from "../../common";
-import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement";
-import goatFormula from "../util/goatFormula";
-import addFirstNameShort from "../util/addFirstNameShort";
+} from "../../common/types.ts";
+import {
+	groupBy,
+	orderBy,
+	type OrderBySortParams,
+} from "../../common/utils.ts";
+import { player } from "../core/index.ts";
+import { bySport, PLAYER } from "../../common/index.ts";
+import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts";
+import goatFormula from "../util/goatFormula.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
 
 type Most = {
 	value: number;

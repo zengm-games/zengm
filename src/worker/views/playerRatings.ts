@@ -1,9 +1,15 @@
-import { bySport, isSport, PHASE, PLAYER, RATINGS } from "../../common";
-import { idb } from "../db";
-import { g } from "../util";
-import type { UpdateEvents, ViewInput } from "../../common/types";
-import addFirstNameShort from "../util/addFirstNameShort";
-import { buffOvrDH } from "./depth";
+import {
+	bySport,
+	isSport,
+	PHASE,
+	PLAYER,
+	RATINGS,
+} from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { buffOvrDH } from "./depth.ts";
 
 export const extraRatings = bySport({
 	baseball: ["ovrs", "pots"],

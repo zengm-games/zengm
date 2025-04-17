@@ -1,7 +1,7 @@
 import { afterEach, assert, beforeAll, test } from "vitest";
-import { contractNegotiation } from "..";
-import { idb } from "../../db";
-import { beforeTests, givePlayerMinContract } from "./testHelpers";
+import { contractNegotiation } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import { beforeTests, givePlayerMinContract } from "./testHelpers.ts";
 
 beforeAll(beforeTests);
 afterEach(() => idb.cache.negotiations.clear());

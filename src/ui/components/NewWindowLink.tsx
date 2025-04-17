@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { helpers } from "../util";
+import { helpers } from "../util/index.ts";
 type Props = {
 	parts?: (number | string)[];
 };

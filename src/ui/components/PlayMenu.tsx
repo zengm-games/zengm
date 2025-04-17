@@ -1,7 +1,7 @@
 import { useEffect, type MouseEvent } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
-import { confirm, local, realtimeUpdate, toWorker } from "../util";
-import type { Option } from "../../common/types";
+import { confirm, local, realtimeUpdate, toWorker } from "../util/index.ts";
+import type { Option } from "../../common/types.ts";
 import clsx from "clsx";
 
 const handleOptionClick = (option: Option, event: MouseEvent) => {

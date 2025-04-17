@@ -1,9 +1,9 @@
-import { bySport } from "../../../common";
-import type { Player, Team } from "../../../common/types";
-import type { Position } from "../../../common/types.football";
-import genDepthBaseball from "./genDepth.baseball";
-import genDepthFootball from "./genDepth.football";
-import genDepthHockey from "./genDepth.hockey";
+import { bySport } from "../../../common/index.ts";
+import type { Player, Team } from "../../../common/types.ts";
+import type { Position } from "../../../common/types.football.ts";
+import genDepthBaseball from "./genDepth.baseball.ts";
+import genDepthFootball from "./genDepth.football.ts";
+import genDepthHockey from "./genDepth.hockey.ts";
 
 const genDepth = async (
 	players: Player[],

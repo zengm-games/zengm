@@ -1,5 +1,5 @@
 import { assert, test } from "vitest";
-import addFirstNameShort from "./addFirstNameShort";
+import addFirstNameShort from "./addFirstNameShort.ts";
 
 test("does nothing if last names are not the same", () => {
 	const players = [

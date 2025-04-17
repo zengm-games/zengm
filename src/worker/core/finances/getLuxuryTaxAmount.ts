@@ -1,4 +1,4 @@
-import { g } from "../../util";
+import { g } from "../../util/index.ts";
 
 const getLuxuryTaxAmount = (payroll: number) => {
 	// Only apply luxury tax if hard cap is disabled!

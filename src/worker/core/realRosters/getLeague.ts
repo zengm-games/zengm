@@ -1,37 +1,37 @@
-import loadDataBasketball, { type Basketball } from "./loadData.basketball";
-import loadStatsBasketball from "./loadStats.basketball";
-import formatScheduledEvents from "./formatScheduledEvents";
-import { groupBy, orderBy, range } from "../../../common/utils";
+import loadDataBasketball, { type Basketball } from "./loadData.basketball.ts";
+import loadStatsBasketball from "./loadStats.basketball.ts";
+import formatScheduledEvents from "./formatScheduledEvents.ts";
+import { groupBy, orderBy, range } from "../../../common/utils.ts";
 import type {
 	GetLeagueOptions,
 	DraftPickWithoutKey,
 	DraftLotteryResult,
 	GameAttributesLeague,
 	PlayerContract,
-} from "../../../common/types";
-import { defaultGameAttributes, helpers, random } from "../../util";
+} from "../../../common/types.ts";
+import { defaultGameAttributes, helpers, random } from "../../util/index.ts";
 import {
 	isSport,
 	LEAGUE_DATABASE_VERSION,
 	PHASE,
 	PLAYER,
 	unwrapGameAttribute,
-} from "../../../common";
-import { player, team } from "..";
-import { legendsInfo } from "./getLeagueInfo";
-import getDraftProspects from "./getDraftProspects";
-import formatPlayerFactory, { getDraftTid } from "./formatPlayerFactory";
-import nerfDraftProspect from "./nerfDraftProspect";
-import getOnlyRatings, { type OnlyRatings } from "./getOnlyRatings";
-import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
-import addRelatives from "./addRelatives";
-import addRetiredJerseyNumbers from "./addRetiredJerseyNumbers";
-import genPlayoffSeries from "./genPlayoffSeries";
-import getGameAttributes from "./getGameAttributes";
-import getAwards from "./getAwards";
-import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition";
-import getInjury from "./getInjury";
-import { averageSalary } from "./averageSalary";
+} from "../../../common/index.ts";
+import { player, team } from "../index.ts";
+import { legendsInfo } from "./getLeagueInfo.ts";
+import getDraftProspects from "./getDraftProspects.ts";
+import formatPlayerFactory, { getDraftTid } from "./formatPlayerFactory.ts";
+import nerfDraftProspect from "./nerfDraftProspect.ts";
+import getOnlyRatings, { type OnlyRatings } from "./getOnlyRatings.ts";
+import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev.ts";
+import addRelatives from "./addRelatives.ts";
+import addRetiredJerseyNumbers from "./addRetiredJerseyNumbers.ts";
+import genPlayoffSeries from "./genPlayoffSeries.ts";
+import getGameAttributes from "./getGameAttributes.ts";
+import getAwards from "./getAwards.ts";
+import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition.ts";
+import getInjury from "./getInjury.ts";
+import { averageSalary } from "./averageSalary.ts";
 
 export const MIN_SEASON = 1947;
 export const LATEST_SEASON = 2025;

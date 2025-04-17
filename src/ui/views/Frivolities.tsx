@@ -1,12 +1,12 @@
 import { Fragment } from "react";
-import useTitleBar from "../hooks/useTitleBar";
-import { helpers } from "../util";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { helpers } from "../util/index.ts";
 import type {
 	MenuItemHeader,
 	MenuItemLink,
 	MenuItemText,
-} from "../../common/types";
-import { GAME_NAME, isSport } from "../../common";
+} from "../../common/types.ts";
+import { GAME_NAME, isSport } from "../../common/index.ts";
 
 const style = { maxWidth: 1000 };
 

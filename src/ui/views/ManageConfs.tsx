@@ -4,10 +4,10 @@ import {
 	type FormEvent,
 	type MouseEvent,
 } from "react";
-import useTitleBar from "../hooks/useTitleBar";
-import { helpers, logEvent, toWorker } from "../util";
-import type { View } from "../../common/types";
-import { PHASE } from "../../common";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { helpers, logEvent, toWorker } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { PHASE } from "../../common/index.ts";
 
 const nextSeasonWarning =
 	"Because the regular season is already over, changes will not be fully applied until next season.";

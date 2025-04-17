@@ -1,25 +1,25 @@
 import { useCallback, useEffect, useState } from "react";
-import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from ".";
+import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from "./index.tsx";
 import {
 	DEFAULT_JERSEY,
 	DEFAULT_STADIUM_CAPACITY,
 	DEFAULT_TEAM_COLORS,
 	SPORT_HAS_REAL_PLAYERS,
-} from "../../../common";
-import getTeamInfos from "../../../common/getTeamInfos";
-import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs";
-import type { Conf, Div, Player, View } from "../../../common/types";
-import Modal from "../../components/Modal";
-import { helpers, logEvent, toWorker } from "../../util";
+} from "../../../common/index.ts";
+import getTeamInfos from "../../../common/getTeamInfos.ts";
+import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs.ts";
+import type { Conf, Div, Player, View } from "../../../common/types.ts";
+import Modal from "../../components/Modal.tsx";
+import { helpers, logEvent, toWorker } from "../../util/index.ts";
 import {
 	type ExhibitionLeagueWithSeasons,
 	getRandomSeason,
-} from "../Exhibition";
-import TeamForm from "../ManageTeams/TeamForm";
-import type { AddEditTeamInfo } from "./CustomizeTeams";
-import type { NewLeagueTeamWithoutRank } from "./types";
-import { TeamsSplitNorthAmericaWorld } from "../../components/TeamsSplitNorthAmericaWorld";
-import { orderBy, range } from "../../../common/utils";
+} from "../Exhibition.tsx";
+import TeamForm from "../ManageTeams/TeamForm.tsx";
+import type { AddEditTeamInfo } from "./CustomizeTeams.tsx";
+import type { NewLeagueTeamWithoutRank } from "./types.ts";
+import { TeamsSplitNorthAmericaWorld } from "../../components/TeamsSplitNorthAmericaWorld.tsx";
+import { orderBy, range } from "../../../common/utils.ts";
 
 export const getGodModeWarnings = ({
 	is,

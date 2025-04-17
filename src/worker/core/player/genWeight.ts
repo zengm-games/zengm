@@ -1,5 +1,5 @@
-import { isSport } from "../../../common";
-import { g, random } from "../../util";
+import { isSport } from "../../../common/index.ts";
+import { g, random } from "../../util/index.ts";
 
 const genWeight = (hgt: number, stre?: number, pos?: string) => {
 	let MIN_WEIGHT = 155;

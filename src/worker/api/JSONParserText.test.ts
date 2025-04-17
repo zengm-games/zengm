@@ -1,6 +1,6 @@
 import { test } from "vitest";
 
-import JSONParserText from "./JSONParserText";
+import JSONParserText from "./JSONParserText.ts";
 
 test.skip("error on invalid trailing comma in object", () => {
 	const parser = new JSONParserText((value) => {

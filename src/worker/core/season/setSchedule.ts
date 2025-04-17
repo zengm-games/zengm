@@ -1,14 +1,14 @@
-import { idb } from "../../db";
-import { getUpcoming } from "../../views/schedule";
-import { g, toUI } from "../../util";
+import { idb } from "../../db/index.ts";
+import { getUpcoming } from "../../views/schedule.ts";
+import { g, toUI } from "../../util/index.ts";
 import type {
 	LocalStateUI,
 	ScheduleGame,
 	ScheduleGameWithoutKey,
-} from "../../../common/types";
-import addDaysToSchedule from "./addDaysToSchedule";
-import { PHASE } from "../../../common";
-import { isFinals } from "./isFinals";
+} from "../../../common/types.ts";
+import addDaysToSchedule from "./addDaysToSchedule.ts";
+import { PHASE } from "../../../common/index.ts";
+import { isFinals } from "./isFinals.ts";
 
 const makePlayoffsKey = (game: ScheduleGameWithoutKey) =>
 	JSON.stringify([game.homeTid, game.awayTid]);

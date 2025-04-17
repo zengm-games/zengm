@@ -1,7 +1,7 @@
 import { useState } from "react";
-import type { AllStarPlayer, View } from "../../../common/types";
-import SelectMultiple from "../../components/SelectMultiple";
-import { toWorker } from "../../util";
+import type { AllStarPlayer, View } from "../../../common/types.ts";
+import SelectMultiple from "../../components/SelectMultiple/index.tsx";
+import { toWorker } from "../../util/index.ts";
 
 const divStyle = {
 	width: 300,

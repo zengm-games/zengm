@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useRef } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { DEFAULT_TEAM_COLORS } from "../../common";
+import { DEFAULT_TEAM_COLORS } from "../../common/index.ts";
 
 const getValidTeamColors = (t?: { colors: any }) => {
 	const colors = [...DEFAULT_TEAM_COLORS];

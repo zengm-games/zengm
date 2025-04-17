@@ -1,8 +1,8 @@
-import { draft, player } from "..";
-import { PLAYER } from "../../../common";
-import type { PlayerWithoutKey } from "../../../common/types";
-import { g } from "../../util";
-import type { PreProcessParams } from "./createStream";
+import { draft, player } from "../index.ts";
+import { PLAYER } from "../../../common/index.ts";
+import type { PlayerWithoutKey } from "../../../common/types.ts";
+import { g } from "../../util/index.ts";
+import type { PreProcessParams } from "./createStream.ts";
 
 const processPlayerNewLeague = async ({
 	p,

@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
-import { ActionButton } from "../../components";
-import { helpers, toWorker } from "../../util";
+import { ActionButton } from "../../components/index.tsx";
+import { helpers, toWorker } from "../../util/index.ts";
 import useLocalStorageState from "use-local-storage-state";
 
 const LogOutput = ({ value }: { value: string }) => {

@@ -5,8 +5,8 @@ import {
 	SUBREDDIT_NAME,
 	VIDEO_ADS,
 	VIDEO_AD_PADDING,
-} from "../../common";
-import { useLocalPartial } from "../util";
+} from "../../common/index.ts";
+import { useLocalPartial } from "../util/index.ts";
 
 const footerLinks = [
 	{

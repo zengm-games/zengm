@@ -5,16 +5,16 @@ import {
 	PHASE,
 	PLAYER,
 	PLAYER_STATS_TABLES,
-} from "../../common";
-import { idb } from "../db";
-import { g } from "../util";
+} from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
 	PlayerStatType,
-} from "../../common/types";
-import addFirstNameShort from "../util/addFirstNameShort";
-import { getBestPos } from "../core/player/checkJerseyNumberRetirement";
+} from "../../common/types.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { getBestPos } from "../core/player/checkJerseyNumberRetirement.ts";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerStats">,

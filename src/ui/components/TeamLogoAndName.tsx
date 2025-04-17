@@ -1,4 +1,4 @@
-import TeamLogoInline from "./TeamLogoInline";
+import TeamLogoInline from "./TeamLogoInline.tsx";
 
 type Team = {
 	seasonAttrs: {
@@ -21,14 +21,14 @@ const TeamLogoAndName = ({
 	noLogo?: boolean;
 }) => {
 	return (
-		<div className="d-flex align-items-center">
+		<div className="d-flex align-items-center gap-1">
 			{!noLogo ? (
 				<TeamLogoInline
 					imgURL={t.seasonAttrs.imgURL}
 					imgURLSmall={t.seasonAttrs.imgURLSmall}
 				/>
 			) : null}
-			<div className={noLogo ? undefined : "ms-1"}>
+			<div>
 				<a href={url}>
 					<span className="d-none d-sm-inline">
 						{t.seasonAttrs.region} {t.seasonAttrs.name}

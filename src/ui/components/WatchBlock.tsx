@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { memo, type SyntheticEvent } from "react";
-import { toWorker, useLocalPartial } from "../util";
+import { toWorker, useLocalPartial } from "../util/index.ts";
 
 type Props = {
 	className?: string;

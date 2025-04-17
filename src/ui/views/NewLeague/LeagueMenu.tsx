@@ -1,8 +1,8 @@
 import Bugsnag from "@bugsnag/browser";
 import { useEffect, useRef } from "react";
-import { NextPrevButtons } from "../../components";
-import { logEvent } from "../../util";
-import type { LeagueInfo } from "./types";
+import { NextPrevButtons } from "../../components/index.tsx";
+import { logEvent } from "../../util/index.ts";
+import type { LeagueInfo } from "./types.ts";
 
 const quickValuesStyle = { height: 19 };
 

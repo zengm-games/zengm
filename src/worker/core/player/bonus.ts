@@ -1,6 +1,6 @@
-import limitRating from "./limitRating";
-import { random } from "../../util";
-import type { PlayerWithoutKey } from "../../../common/types";
+import limitRating from "./limitRating.ts";
+import { random } from "../../util/index.ts";
+import type { PlayerWithoutKey } from "../../../common/types.ts";
 
 const bonus = (p: PlayerWithoutKey, amount?: number) => {
 	const ratings = p.ratings.at(-1);

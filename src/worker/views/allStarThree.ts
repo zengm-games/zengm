@@ -1,9 +1,9 @@
-import { allStar } from "../core";
-import type { UpdateEvents, ViewInput } from "../../common/types";
-import { idb } from "../db";
-import { g, getTeamInfoBySeason, helpers } from "../util";
-import { isSport, PHASE } from "../../common";
-import { orderBy } from "../../common/utils";
+import { allStar } from "../core/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { idb } from "../db/index.ts";
+import { g, getTeamInfoBySeason, helpers } from "../util/index.ts";
+import { isSport, PHASE } from "../../common/index.ts";
+import { orderBy } from "../../common/utils.ts";
 
 const updateAllStarThree = async (
 	{ season }: ViewInput<"allStarThree">,

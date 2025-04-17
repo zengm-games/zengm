@@ -1,10 +1,10 @@
 import { assert, beforeAll, describe, test } from "vitest";
 import { assert as typeAssert, type IsExact } from "conditional-type-checks";
-import testHelpers from "../../../test/helpers";
-import { player, team } from "../../core";
-import { idb } from "..";
-import { g, helpers } from "../../util";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import testHelpers from "../../../test/helpers.ts";
+import { player, team } from "../../core/index.ts";
+import { idb } from "../index.ts";
+import { g, helpers } from "../../util/index.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 beforeAll(async () => {
 	testHelpers.resetG();

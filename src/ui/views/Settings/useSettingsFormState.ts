@@ -1,7 +1,7 @@
 import { type ChangeEvent, useState } from "react";
-import type { Settings } from "../../../worker/views/settings";
-import gameSimPresets from "./gameSimPresets";
-import { settings } from "./settings";
+import type { Settings } from "../../../worker/views/settings.ts";
+import gameSimPresets from "./gameSimPresets.ts";
+import { settings } from "./settings.tsx";
 import {
 	encodeDecodeFunctions,
 	type SpecialStateOthers,
@@ -9,8 +9,8 @@ import {
 	SPECIAL_STATE_BOOLEANS,
 	SPECIAL_STATE_OTHERS,
 	type State,
-} from "./SettingsForm";
-import type { FieldType, Key } from "./types";
+} from "./SettingsForm.tsx";
+import type { FieldType, Key } from "./types.ts";
 
 const useSettingsFormState = ({
 	initialSettings,

@@ -1,17 +1,20 @@
-import { defaultGameAttributes, g, helpers, random } from "../../util";
-import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common";
-import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession";
-import getInjuryRate from "./getInjuryRate";
-import type { GameAttributesLeague, PlayerInjury } from "../../../common/types";
-import GameSimBase from "../GameSimBase";
-import { maxBy, range } from "../../../common/utils";
+import { defaultGameAttributes, g, helpers, random } from "../../util/index.ts";
+import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
+import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession.ts";
+import getInjuryRate from "./getInjuryRate.ts";
+import type {
+	GameAttributesLeague,
+	PlayerInjury,
+} from "../../../common/types.ts";
+import GameSimBase from "../GameSimBase.ts";
+import { maxBy, range } from "../../../common/utils.ts";
 import PlayByPlayLogger, {
 	type BlockType,
 	type FgaType,
 	type FgMakeType,
 	type FgMissType,
-} from "./PlayByPlayLogger";
-import getWinner from "../../../common/getWinner";
+} from "./PlayByPlayLogger.ts";
+import getWinner from "../../../common/getWinner.ts";
 
 const SHOT_CLOCK = 24;
 // const NUM_TIMEOUTS_MAX_FINAL_PERIOD = 4;

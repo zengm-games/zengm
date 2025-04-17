@@ -1,5 +1,5 @@
-import type { DraftPickSeason } from "../../../common/types";
-import { helpers } from "../../util";
+import type { DraftPickSeason } from "../../../common/types.ts";
+import { helpers } from "../../util/index.ts";
 
 const PickText = ({
 	asset,

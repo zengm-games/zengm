@@ -1,16 +1,16 @@
-import { bySport, PHASE, PLAYER } from "../../common";
+import { bySport, PHASE, PLAYER } from "../../common/index.ts";
 import type {
 	Phase,
 	Player,
 	UpdateEvents,
 	ViewInput,
-} from "../../common/types";
-import { orderBy } from "../../common/utils";
-import { player, team } from "../core";
-import { idb } from "../db";
-import { g } from "../util";
-import addFirstNameShort from "../util/addFirstNameShort";
-import { loadAbbrevs } from "./gameLog";
+} from "../../common/types.ts";
+import { orderBy } from "../../common/utils.ts";
+import { player, team } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { loadAbbrevs } from "./gameLog.ts";
 
 export const addMood = async (players: Player[]) => {
 	const moods: Awaited<ReturnType<(typeof player)["moodInfos"]>>[] = [];

@@ -1,43 +1,44 @@
-import esbuild from "esbuild";
-import fs from "node:fs";
 import { parentPort, workerData } from "node:worker_threads";
-import esbuildConfig from "../lib/esbuildConfig.ts";
+import { watch } from "rolldown";
+import { rolldownConfig } from "../lib/rolldownConfig.ts";
 
-const pluginStartEnd = {
-	name: "start-end",
-	setup(build: any) {
-		build.onStart(() => {
-			parentPort!.postMessage({
+// ?? is just so this can be run as a standalone script, for testing
+const name = workerData?.name ?? "worker";
+
+const makeWatcher = async () => {
+	const config = rolldownConfig(name, {
+		nodeEnv: "development",
+		postMessage(message: any) {
+			parentPort?.postMessage(message);
+		},
+	});
+
+	const watcher = await watch(config);
+
+	watcher.on("event", (event) => {
+		if (event.code === "ERROR") {
+			// In case "start" wasn't set from rolldown plugin yet
+			parentPort?.postMessage({
 				type: "start",
 			});
-		});
-		build.onEnd((result: any) => {
-			if (result.errors.length) {
-				parentPort!.postMessage({
-					type: "error",
-					error: result.errors[0],
-				});
 
-				// Save to file so it appears when reloading page
-				const js = `throw new Error(\`${result.errors[0].message}\`)`;
-				fs.writeFileSync(config.outfile, js);
-			} else {
-				parentPort!.postMessage({
-					type: "end",
-				});
-			}
-		});
-	},
+			parentPort?.postMessage({
+				type: "error",
+				error: event.error,
+			});
+		}
+	});
+
+	return watcher;
 };
 
-const { name } = workerData;
+let watcher = await makeWatcher();
 
-const config = esbuildConfig({
-	name,
-	nodeEnv: "development",
+parentPort?.on("message", async (message) => {
+	if (message.type === "switchingSport") {
+		await watcher.close();
+	} else if (message.type === "newSport") {
+		process.env.SPORT = message.sport;
+		watcher = await makeWatcher();
+	}
 });
-
-config.plugins.push(pluginStartEnd);
-
-const ctx = await esbuild.context(config);
-await ctx.watch();

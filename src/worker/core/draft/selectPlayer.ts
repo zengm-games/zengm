@@ -1,10 +1,10 @@
-import { PHASE } from "../../../common";
-import { player, league, team } from "..";
-import getRookieSalaries from "./getRookieSalaries";
-import { idb } from "../../db";
-import { g, helpers, local, logEvent } from "../../util";
-import type { DraftPick } from "../../../common/types";
-import getRookieContractLength from "./getRookieContractLength";
+import { PHASE } from "../../../common/index.ts";
+import { player, league, team } from "../index.ts";
+import getRookieSalaries from "./getRookieSalaries.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers, local, logEvent } from "../../util/index.ts";
+import type { DraftPick } from "../../../common/types.ts";
+import getRookieContractLength from "./getRookieContractLength.ts";
 
 /**
  * Select a player for the current drafting team.

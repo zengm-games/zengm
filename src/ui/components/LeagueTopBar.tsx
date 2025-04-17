@@ -1,8 +1,8 @@
 import clsx from "clsx";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { useLocalPartial, safeLocalStorage } from "../util";
-import ScoreBox from "./ScoreBox";
-import { emitter } from "./Modal";
+import { useLocalPartial, safeLocalStorage } from "../util/index.ts";
+import ScoreBox from "./ScoreBox/index.tsx";
+import { emitter } from "./Modal.tsx";
 
 const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {
 	// container-fluid is needed to make this account for scrollbar width when modal is open

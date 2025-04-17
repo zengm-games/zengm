@@ -1,7 +1,7 @@
-import { idb } from "../../db";
-import { g, local } from "../../util";
-import type { OwnerMood } from "../../../common/types";
-import { bySport } from "../../../common";
+import { idb } from "../../db/index.ts";
+import { g, local } from "../../util/index.ts";
+import type { OwnerMood } from "../../../common/types.ts";
+import { bySport } from "../../../common/index.ts";
 
 /**
  * Update teamSeason.ownerMood based on performance this season, only for user's team.

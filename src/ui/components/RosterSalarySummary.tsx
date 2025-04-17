@@ -1,6 +1,6 @@
-import { HelpPopover } from ".";
-import type { GameAttributesLeague } from "../../common/types";
-import { helpers } from "../util";
+import { HelpPopover } from "./index.tsx";
+import type { GameAttributesLeague } from "../../common/types.ts";
+import { helpers } from "../util/index.ts";
 
 const RosterSalarySummary = ({
 	capSpace,

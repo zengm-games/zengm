@@ -1,10 +1,10 @@
-import { AWARD_NAMES, bySport, isSport } from "../../common";
-import type { MinimalPlayerRatings, Player } from "../../common/types";
-import stats from "../core/player/stats";
-import { weightByMinutes } from "../db/getCopies/playersPlus";
-import FormulaEvaluator from "./FormulaEvaluator";
-import g from "./g";
-import helpers from "./helpers";
+import { AWARD_NAMES, bySport, isSport } from "../../common/index.ts";
+import type { MinimalPlayerRatings, Player } from "../../common/types.ts";
+import stats from "../core/player/stats.ts";
+import { weightByMinutes } from "../db/getCopies/playersPlus.ts";
+import FormulaEvaluator from "./FormulaEvaluator.ts";
+import g from "./g.ts";
+import helpers from "./helpers.ts";
 
 const DEFAULT_FORMULA = bySport({
 	baseball: "20 * mvp + war",

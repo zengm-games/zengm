@@ -1,8 +1,8 @@
-import fs from "node:fs";
+import fs from "node:fs/promises";
 import { minify } from "html-minifier-terser";
 
 export const minifyIndexHtml = async () => {
-	const content = fs.readFileSync("build/index.html", "utf8");
+	const content = await fs.readFile("build/index.html", "utf8");
 	const minified = await minify(content, {
 		collapseBooleanAttributes: true,
 		collapseWhitespace: true,
@@ -11,5 +11,5 @@ export const minifyIndexHtml = async () => {
 		removeComments: true,
 		useShortDoctype: true,
 	});
-	fs.writeFileSync("build/index.html", minified);
+	await fs.writeFile("build/index.html", minified);
 };

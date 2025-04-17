@@ -1,7 +1,7 @@
-import { getPeriodName } from "../../common";
-import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.football";
-import { helpers, local } from ".";
-import type { PlayByPlayEvent } from "../../worker/core/GameSim.football/PlayByPlayLogger";
+import { getPeriodName } from "../../common/index.ts";
+import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.football.ts";
+import { helpers, local } from "./index.ts";
+import type { PlayByPlayEvent } from "../../worker/core/GameSim.football/PlayByPlayLogger.ts";
 import type { ReactNode } from "react";
 
 let playersByPidGid: number | undefined;

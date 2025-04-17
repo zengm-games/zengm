@@ -1,7 +1,7 @@
 import type { MouseEvent } from "react";
-import { bySport } from "../../common";
-import BoxScoreRowBasketball from "./BoxScoreRow.basketball";
-import BoxScoreRowFootball from "./BoxScoreRow.football";
+import { bySport } from "../../common/index.ts";
+import BoxScoreRowBasketball from "./BoxScoreRow.basketball.tsx";
+import BoxScoreRowFootball from "./BoxScoreRow.football.tsx";
 
 const BoxScoreRow = (props: {
 	className?: string;

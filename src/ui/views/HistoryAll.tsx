@@ -1,11 +1,11 @@
-import { DataTable, MoreLinks, TeamLogoInline } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import type { View } from "../../common/types";
+import { DataTable, MoreLinks, TeamLogoInline } from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
 import {
 	CountBadge,
 	wrappedPlayerNameLabels,
-} from "../components/PlayerNameLabels";
+} from "../components/PlayerNameLabels.tsx";
 
 const awardName = (
 	award:

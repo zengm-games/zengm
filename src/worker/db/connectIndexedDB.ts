@@ -4,8 +4,8 @@ import type {
 	IDBPTransaction,
 	StoreNames,
 } from "@dumbmatter/idb";
-import { WEBSITE_ROOT } from "../../common";
-import { logEvent } from "../util";
+import { WEBSITE_ROOT } from "../../common/index.ts";
+import { logEvent } from "../util/index.ts";
 
 // If duplicate message is sent multiple times in a row (like IndexedDB transaction abort with many open requests), only show one
 const debounceMessagesStore = new Map<string, number>();

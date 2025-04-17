@@ -1,13 +1,13 @@
 import clsx from "clsx";
 import { Fragment, useState } from "react";
-import { MOOD_TRAITS } from "../../common";
+import { MOOD_TRAITS } from "../../common/index.ts";
 import type {
 	GameAttributesLeague,
 	MoodComponents,
 	MoodTrait,
-} from "../../common/types";
-import { helpers, useLocalPartial } from "../util"; // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
-import ResponsivePopover from "./ResponsivePopover";
+} from "../../common/types.ts";
+import { helpers, useLocalPartial } from "../util/index.ts"; // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
+import ResponsivePopover from "./ResponsivePopover.tsx";
 
 const componentText = (
 	component: keyof MoodComponents,

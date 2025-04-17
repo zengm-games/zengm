@@ -1,8 +1,8 @@
-import { idb } from "../db";
-import g from "./g";
-import type { Achievement, Player } from "../../common/types";
-import { bySport, isSport, PLAYER } from "../../common";
-import helpers from "./helpers";
+import { idb } from "../db/index.ts";
+import g from "./g.ts";
+import type { Achievement, Player } from "../../common/types.ts";
+import { bySport, isSport, PLAYER } from "../../common/index.ts";
+import helpers from "./helpers.ts";
 
 const goldenOldiesCutoffs = bySport({
 	baseball: [30, 33, 36],

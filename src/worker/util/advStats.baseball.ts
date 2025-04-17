@@ -1,11 +1,11 @@
-import { helpers, PHASE } from "../../common";
-import { idb } from "../db";
-import g from "./g";
-import type { TeamFiltered } from "../../common/types";
-import advStatsSave from "./advStatsSave";
-import { NUM_OUTS_PER_GAME } from "../../common/processPlayerStats.baseball";
-import { POS_NUMBERS_INVERSE } from "../../common/constants.baseball";
-import { groupByUnique, range } from "../../common/utils";
+import { helpers, PHASE } from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import g from "./g.ts";
+import type { TeamFiltered } from "../../common/types.ts";
+import advStatsSave from "./advStatsSave.ts";
+import { NUM_OUTS_PER_GAME } from "../../common/processPlayerStats.baseball.ts";
+import { POS_NUMBERS_INVERSE } from "../../common/constants.baseball.ts";
+import { groupByUnique, range } from "../../common/utils.ts";
 
 const teamStats = [
 	"h",

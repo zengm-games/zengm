@@ -1,4 +1,4 @@
-import type { RatingKey } from "./types.football";
+import type { RatingKey } from "./types.football.ts";
 
 const posRatings = (pos: string): RatingKey[] => {
 	if (pos === "QB") {

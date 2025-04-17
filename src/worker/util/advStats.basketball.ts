@@ -1,11 +1,11 @@
-import { PHASE } from "../../common";
-import { idb } from "../db";
-import g from "./g";
-import type { TeamFiltered } from "../../common/types";
-import advStatsSave from "./advStatsSave";
-import { groupByUnique } from "../../common/utils";
-import helpers from "./helpers";
-import defaultGameAttributes from "../../common/defaultGameAttributes";
+import { PHASE } from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import g from "./g.ts";
+import type { TeamFiltered } from "../../common/types.ts";
+import advStatsSave from "./advStatsSave.ts";
+import { groupByUnique } from "../../common/utils.ts";
+import helpers from "./helpers.ts";
+import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 
 type Team = TeamFiltered<
 	["tid"],

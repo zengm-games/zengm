@@ -1,4 +1,4 @@
-import type { Col, StickyCols } from ".";
+import type { Col, StickyCols } from "./index.tsx";
 import { type CSSProperties } from "react";
 import { DndContext, closestCenter } from "@dnd-kit/core";
 import {
@@ -6,7 +6,7 @@ import {
 	useSortable,
 	verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import Modal from "../Modal";
+import Modal from "../Modal.tsx";
 
 const DraggableItem = ({
 	col,

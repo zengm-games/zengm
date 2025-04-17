@@ -1,4 +1,4 @@
-import type { IndividualRealTeamInfo, Team, RealTeamInfo } from "./types";
+import type { IndividualRealTeamInfo, Team, RealTeamInfo } from "./types.ts";
 
 const POTENTIAL_OVERRIDES = [
 	"abbrev",

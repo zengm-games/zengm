@@ -1,7 +1,7 @@
-import { PLAYER, helpers } from "../../common";
-import { idb } from ".";
-import cmp from "./cmp";
-import { g, local, lock } from "../util";
+import { PLAYER, helpers } from "../../common/index.ts";
+import { idb } from "./index.ts";
+import cmp from "./cmp.ts";
+import { g, local, lock } from "../util/index.ts";
 import type {
 	AllStars,
 	DraftLotteryResult,
@@ -36,11 +36,11 @@ import type {
 	EventBBGMWithoutKey,
 	SeasonLeaders,
 	SavedTradingBlock,
-} from "../../common/types";
+} from "../../common/types.ts";
 import type { IDBPTransaction } from "@dumbmatter/idb";
-import type { LeagueDB } from "./connectLeague";
-import getAll from "./getAll";
-import { league } from "../core";
+import type { LeagueDB } from "./connectLeague.ts";
+import getAll from "./getAll.ts";
+import { league } from "../core/index.ts";
 
 export const NUM_SEASON_LEADERS_CACHE = 50;
 

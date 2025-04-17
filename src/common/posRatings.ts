@@ -1,8 +1,8 @@
-import posRatingsBaseball from "./posRatings.baseball";
-import posRatingsFootball from "./posRatings.football";
-import posRatingsHockey from "./posRatings.hockey";
-import { RATINGS } from ".";
-import bySport from "./bySport";
+import posRatingsBaseball from "./posRatings.baseball.ts";
+import posRatingsFootball from "./posRatings.football.ts";
+import posRatingsHockey from "./posRatings.hockey.ts";
+import { RATINGS } from "./index.ts";
+import bySport from "./bySport.ts";
 
 const posRatings = (pos: string) => {
 	return bySport({

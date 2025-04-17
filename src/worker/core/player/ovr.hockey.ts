@@ -1,5 +1,5 @@
-import { helpers } from "../../../worker/util";
-import type { PlayerRatings, Position } from "../../../common/types.hockey";
+import { helpers } from "../../../worker/util/index.ts";
+import type { PlayerRatings, Position } from "../../../common/types.hockey.ts";
 
 const info = {
 	C: {

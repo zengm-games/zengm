@@ -1,9 +1,9 @@
-import { PLAYER } from "../../common";
-import { team } from "../core";
-import { idb } from "../db";
-import { g } from "../util";
-import addFirstNameShort from "../util/addFirstNameShort";
-import { addMood, freeAgentStats } from "./freeAgents";
+import { PLAYER } from "../../common/index.ts";
+import { team } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { addMood, freeAgentStats } from "./freeAgents.ts";
 
 export const getNegotiationPids = async (tid: number) => {
 	const negotiations = await idb.cache.negotiations.getAll();

@@ -1,7 +1,7 @@
 import clsx from "clsx";
-import { helpers } from "../../util";
-import { ColPtsOrGB, TeamColumn } from "../Standings";
-import type { View } from "../../../common/types";
+import { helpers } from "../../util/index.ts";
+import { ColPtsOrGB, TeamColumn } from "../Standings.tsx";
+import type { View } from "../../../common/types.ts";
 
 const width100 = {
 	width: "100%",

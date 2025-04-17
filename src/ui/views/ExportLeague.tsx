@@ -1,22 +1,31 @@
 import clsx from "clsx";
 import { useState, type ReactNode, useRef } from "react";
-import { GAME_NAME, isSport, WEBSITE_ROOT } from "../../common";
+import { GAME_NAME, isSport, WEBSITE_ROOT } from "../../common/index.ts";
 import {
 	gameAttributesKeysGameState,
 	gameAttributesKeysTeams,
-} from "../../common/defaultGameAttributes";
-import { types } from "../../common/transactionInfo";
+} from "../../common/defaultGameAttributes.ts";
+import { types } from "../../common/transactionInfo.ts";
 import type {
 	EventBBGM,
 	GameAttribute,
 	Player,
 	Team,
 	View,
-} from "../../common/types";
-import type { LeagueDBStoreNames } from "../../worker/db/connectLeague";
-import { ActionButton, MoreLinks, ProgressBarText } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { helpers, safeLocalStorage, toWorker, useLocal } from "../util";
+} from "../../common/types.ts";
+import type { LeagueDBStoreNames } from "../../worker/db/connectLeague.ts";
+import {
+	ActionButton,
+	MoreLinks,
+	ProgressBarText,
+} from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import {
+	helpers,
+	safeLocalStorage,
+	toWorker,
+	useLocal,
+} from "../util/index.ts";
 
 const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 
@@ -514,7 +523,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 			);
 
 			const { downloadFileStream, makeExportStream } = await import(
-				"../util/exportLeague"
+				"../util/exportLeague.ts"
 			);
 
 			const readableStream = await makeExportStream(stores, {
@@ -543,7 +552,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				if (lid === undefined) {
 					throw new Error("Missing lid");
 				}
-				const { dropboxStream } = await import("../util/dropbox");
+				const { dropboxStream } = await import("../util/dropbox.ts");
 				fileStream = await dropboxStream({
 					accessToken: dropboxAccessToken,
 					filename,
@@ -830,7 +839,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 										}
 
 										const { getAuthenticationUrl } = await import(
-											"../util/dropbox"
+											"../util/dropbox.ts"
 										);
 										const url = await getAuthenticationUrl(lid);
 

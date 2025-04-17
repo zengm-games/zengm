@@ -1,10 +1,19 @@
-import { filterPlayerStats, isSport, PLAYER_GAME_STATS } from "../../common";
-import formatScoreWithShootout from "../../common/formatScoreWithShootout";
-import getWinner from "../../common/getWinner";
-import type { UpdateEvents, ViewInput } from "../../common/types";
-import { idb } from "../db";
-import { g, getTeamInfoBySeason, helpers, processPlayerStats } from "../util";
-import { getCommon } from "./player";
+import {
+	filterPlayerStats,
+	isSport,
+	PLAYER_GAME_STATS,
+} from "../../common/index.ts";
+import formatScoreWithShootout from "../../common/formatScoreWithShootout.ts";
+import getWinner from "../../common/getWinner.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import { idb } from "../db/index.ts";
+import {
+	g,
+	getTeamInfoBySeason,
+	helpers,
+	processPlayerStats,
+} from "../util/index.ts";
+import { getCommon } from "./player.ts";
 
 const updatePlayerGameLog = async (
 	{ pid, season }: ViewInput<"playerGameLog">,

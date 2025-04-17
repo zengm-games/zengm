@@ -1,9 +1,17 @@
-better indicate the winning/lossing team in score boxes, especially on schedule page of other teams https://discord.com/channels/290013534023057409/331882115119448065/1356366763499196537
-- espn.com - fades out losing team, puts a black arrow next to winning team's score
-- nba.com - just a red arrow next to winning team's score
-- yahoo - fade and red arrow
+somehow show count of goals and HR inline for baseball and hockey
+- others too... like for basketball stats it should be this game's stats
+- https://x.com/nevameant2b/status/1877107051492499699
+- https://discord.com/channels/@me/778760871911751700/1179618240507420783
+- https://github.com/zengm-games/zengm/pull/484
 
 store list of prior worker console commands https://discord.com/channels/290013534023057409/331882115119448065/1354957789755215953
+- save when you run, assuming no existing one is saved with the same contents (hash and use as key)
+- save number of times run, first date, last date
+- allow starring, delete, and bulk delete (optionally ignoring starred ones)
+- also allow searching and other DataTable features
+- do this in popup window?
+
+some way to export play-by-play and box score https://discord.com/channels/290013534023057409/1357064671118753904/1357521047934734397
 
 population rounding should be dynamic https://discord.com/channels/290013534023057409/331882115119448065/1353247122224451675
 
@@ -31,17 +39,13 @@ allow trading more than 2 picks
 - maybe add penalty to score for >2 picks, rather than hard limit
 
 rolldown
-- when stable, switch to watchJsWorker2 and get rid of esbuild stuff
-- future
-  - why does filter.code make it slower? bug? wait until their docs are finished
-  - prod build
-    - minify?
-    - bundle size?
-    - other plugins, like blacklist and visualizer
-    - isSport confirm works
-    - code splitting
-    - does it make sense to specify output options within rolldownConfig, or leave that to be done separately by caller?
-  - UI to switch sports (see obsidian)
+- prod build
+  - minify?
+  - bundle size?
+  - other plugins, like blacklist and visualizer
+  - isSport confirm works
+  - code splitting
+  - does it make sense to specify output options within rolldownConfig, or leave that to be done separately by caller?
 
 hide least popular menu items
 - graphs?
@@ -60,8 +64,6 @@ if a player comes back to your team for a 2nd stint but his jersey number is ret
 if you download a spreadsheet of the most lopsided trades, the spreadsheet leaves out the "team" columns https://old.reddit.com/r/BasketballGM/comments/1ieujhu/monthly_suggestions_thread/mceee7x/
 
 update game screenshots
-
-head2head page that lets you look at 2 specific teams regular season and playoff series matchups in a list head2head page that lets you look at 2 specific teams regular season and playoff series matchups in a list
 
 intermittent "tid not found" error when starting real players league with all stats in 1977
 
@@ -137,6 +139,7 @@ datatable should support unsorted sort state
 - leaders, award races - so we don't have to highlight by default
 - roster basketball non-user - so we can allow sorting while still allowing rosterOrder viewing
 - check how sort status is passed to row.classNames
+- already happens in box scores
 
 unify export players and export draft class code
 - export players adds exportedSeason to player, and uses that to process player object on import
@@ -148,7 +151,7 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
 - bottom: all the tables from player stats, showing one row for each player
   - make sticky header not go over these
 
-ivestigate trade weirdness https://discord.com/channels/290013534023057409/290015591216054273/1330946762017607751
+investigate trade weirdness https://discord.com/channels/290013534023057409/290015591216054273/1330946762017607751
 
 on drive chart, a 2 point conversion attempt that goes backwards puts the end of the score tag on the wrong side of the field
 
@@ -178,11 +181,6 @@ counter proposals too jumpy, get rid of that extra iteration at the end maybe?
 option to disable notification popups https://old.reddit.com/r/BasketballGM/comments/1h3racg/monthly_suggestions_thread/m0duybm/
 - red ones still go through
 - UI-related ones still go through, like warnings or "success" ones
-
-somehow show count of goals and HR inline for baseball and hockey
-- others too... like for basketball stats it should be this game's stats
-- https://x.com/nevameant2b/status/1877107051492499699
-- https://discord.com/channels/@me/778760871911751700/1179618240507420783
 
 Change (or add an option for) the coin flip to be like the old NBA coin flip, which was between the worst teams in each conference, not the worst two teams overall. Alternatively add the ability to edit the teams in the lottery. Probably no one else cares, but I like to be accurate. https://discord.com/channels/290013534023057409/331882115119448065/1322397494335897692
 
@@ -699,6 +697,7 @@ wrong team abbrev various places
   - fixRatingsStatsAbbrevs - updates abbrevs in player object (ratings/stats/draft)
 - any abbrev returned in stats or ratings from playersPlus is wrong
 - using teamInfoCache from UI is probably wrong too
+- anything using DraftAbbrev without passing in t/originalT is wrong
 
 button to randomize all contracts as if a new league https://old.reddit.com/r/nba/comments/w8igiw/basketball_gm_is_ready_to_get_you_through_the/ihriglz/?context=3
 - handle contract history

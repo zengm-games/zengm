@@ -1,8 +1,8 @@
 import { assert, beforeAll, test } from "vitest";
-import testHelpers from "../../../test/helpers";
-import { player } from "..";
-import genJerseyNumber from "./genJerseyNumber";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import testHelpers from "../../../test/helpers.ts";
+import { player } from "../index.ts";
+import genJerseyNumber from "./genJerseyNumber.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 beforeAll(async () => {
 	testHelpers.resetG();

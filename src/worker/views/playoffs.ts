@@ -1,12 +1,12 @@
-import { season } from "../core";
-import { idb } from "../db";
-import { g, helpers, orderTeams } from "../util";
+import { season } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import { g, helpers, orderTeams } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
 	PlayoffSeries,
-} from "../../common/types";
-import { groupBy } from "../../common/utils";
+} from "../../common/types.ts";
+import { groupBy } from "../../common/utils.ts";
 
 type SeriesTeam = {
 	abbrev: string;

@@ -1,6 +1,6 @@
-import { PHASE } from "./constants";
-import type { Phase } from "./types";
-import isSport from "./isSport";
+import { PHASE } from "./constants.ts";
+import type { Phase } from "./types.ts";
+import isSport from "./isSport.ts";
 
 // Probably this logic should be used in GameSim too, cause it is the same there
 const allowForceTie = ({

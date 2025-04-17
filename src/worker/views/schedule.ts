@@ -1,9 +1,9 @@
-import { player, season, team } from "../core";
-import { idb } from "../db";
-import { g, getProcessedGames } from "../util";
-import type { UpdateEvents, ViewInput, Game } from "../../common/types";
-import { bySport, PHASE } from "../../common";
-import { orderBy } from "../../common/utils";
+import { player, season, team } from "../core/index.ts";
+import { idb } from "../db/index.ts";
+import { g, getProcessedGames } from "../util/index.ts";
+import type { UpdateEvents, ViewInput, Game } from "../../common/types.ts";
+import { bySport, PHASE } from "../../common/index.ts";
+import { orderBy } from "../../common/utils.ts";
 
 export const getUpcoming = async ({
 	day,

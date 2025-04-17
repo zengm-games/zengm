@@ -1,18 +1,18 @@
 import { useReducer, useState } from "react";
 import type { Dispatch } from "react";
-import type { NewLeagueTeamWithoutRank } from "./types";
-import type { Conf, Div, Player, View } from "../../../common/types";
+import type { NewLeagueTeamWithoutRank } from "./types.ts";
+import type { Conf, Div, Player, View } from "../../../common/types.ts";
 import clsx from "clsx";
 import { arrayMoveImmutable } from "array-move";
-import UpsertTeamModal from "./UpsertTeamModal";
-import { StickyBottomButtons } from "../../components";
-import { logEvent, toWorker } from "../../util";
-import confirmDeleteWithChildren from "./confirmDeleteWithChildren";
+import UpsertTeamModal from "./UpsertTeamModal.tsx";
+import { StickyBottomButtons } from "../../components/index.tsx";
+import { logEvent, toWorker } from "../../util/index.ts";
+import confirmDeleteWithChildren from "./confirmDeleteWithChildren.tsx";
 import { Dropdown, OverlayTrigger, Popover } from "react-bootstrap";
-import { ProcessingSpinner } from "../../components/ActionButton";
-import { applyRealTeamInfos, MAX_SEASON } from ".";
-import RandomizeTeamsModal from "./RandomizeTeamsModal";
-import { countBy, orderBy } from "../../../common/utils";
+import { ProcessingSpinner } from "../../components/ActionButton.tsx";
+import { applyRealTeamInfos, MAX_SEASON } from "./index.tsx";
+import RandomizeTeamsModal from "./RandomizeTeamsModal.tsx";
+import { countBy, orderBy } from "../../../common/utils.ts";
 
 export const makeTIDsSequential = <T extends { tid: number }>(
 	teams: T[],

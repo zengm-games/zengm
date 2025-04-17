@@ -1,7 +1,14 @@
-import getTeamInfos from "../../../common/getTeamInfos";
-import { idb } from "../../db";
-import { g, updatePlayMenu, random, toUI, logEvent, helpers } from "../../util";
-import league from "../league";
+import getTeamInfos from "../../../common/getTeamInfos.ts";
+import { idb } from "../../db/index.ts";
+import {
+	g,
+	updatePlayMenu,
+	random,
+	toUI,
+	logEvent,
+	helpers,
+} from "../../util/index.ts";
+import league from "../league/index.ts";
 
 export const getVoteResult = (userVote: boolean, override: boolean) => {
 	const numActiveTeams = g.get("numActiveTeams");

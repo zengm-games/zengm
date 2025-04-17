@@ -1,7 +1,7 @@
-import { bySport } from "../../common";
-import { groupBy } from "../../common/utils";
-import type { Player } from "../../common/types";
-import helpers from "./helpers";
+import { bySport } from "../../common/index.ts";
+import { groupBy } from "../../common/utils.ts";
+import type { Player } from "../../common/types.ts";
+import helpers from "./helpers.ts";
 
 const awardsOrder = [
 	"Inducted into the Hall of Fame",

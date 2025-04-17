@@ -1,7 +1,7 @@
 import { useState, type FormEvent, type ChangeEvent } from "react";
-import useTitleBar from "../hooks/useTitleBar";
-import { helpers, logEvent, toWorker } from "../util";
-import { ActionButton } from "../components";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { helpers, logEvent, toWorker } from "../util/index.ts";
+import { ActionButton } from "../components/index.tsx";
 
 const DeleteOldData = () => {
 	const [state, setState] = useState({
@@ -17,7 +17,7 @@ const DeleteOldData = () => {
 	const [deleting, setDeleting] = useState(false);
 
 	const handleChange =
-		(name: string) => (event: ChangeEvent<HTMLInputElement>) => {
+		(name: keyof typeof state) => (event: ChangeEvent<HTMLInputElement>) => {
 			setState({
 				...state,
 				[name]: event.target.checked,
@@ -41,13 +41,44 @@ const DeleteOldData = () => {
 	useTitleBar({ title: "Delete Old Data" });
 
 	return (
-		<>
+		<div style={{ maxWidth: 600 }}>
 			<p>
 				As you play multiple seasons in a league, the database can grow quite
 				large. This used to slow down performance, but doesn't much anymore.
 				However it does still use up hard drive space, which you can reclaim
 				here by deleting old data from this league.
 			</p>
+
+			<div className="d-flex gap-2 mb-3">
+				<button
+					className="btn btn-secondary"
+					onClick={() => {
+						const newState = {
+							...state,
+						};
+						for (const key of helpers.keys(newState)) {
+							newState[key] = true;
+						}
+						setState(newState);
+					}}
+				>
+					Select all
+				</button>
+				<button
+					className="btn btn-secondary"
+					onClick={() => {
+						const newState = {
+							...state,
+						};
+						for (const key of helpers.keys(newState)) {
+							newState[key] = false;
+						}
+						setState(newState);
+					}}
+				>
+					Clear
+				</button>
+			</div>
 
 			<form onSubmit={handleSubmit}>
 				<div className="form-check">
@@ -161,7 +192,7 @@ const DeleteOldData = () => {
 					Delete Old Data
 				</ActionButton>
 			</form>
-		</>
+		</div>
 	);
 };
 

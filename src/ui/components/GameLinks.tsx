@@ -1,4 +1,4 @@
-import { GAME_NAME } from "../../common";
+import { GAME_NAME } from "../../common/index.ts";
 
 const GameLinks = ({
 	noLinks,

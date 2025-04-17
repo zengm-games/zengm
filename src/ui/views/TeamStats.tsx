@@ -1,12 +1,17 @@
-import { getCols, gradientStyleFactory, helpers, prefixStatOpp } from "../util";
-import useTitleBar from "../hooks/useTitleBar";
-import { DataTable, PlusMinus, MoreLinks } from "../components";
-import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName";
-import type { View } from "../../common/types";
-import { isSport } from "../../common";
-import { formatMaybeInteger } from "./LeagueStats";
-import { expandFieldingStats } from "../util/expandFieldingStats.baseball";
-import type { DataTableRow } from "../components/DataTable";
+import {
+	getCols,
+	gradientStyleFactory,
+	helpers,
+	prefixStatOpp,
+} from "../util/index.ts";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { DataTable, PlusMinus, MoreLinks } from "../components/index.tsx";
+import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
+import type { View } from "../../common/types.ts";
+import { isSport } from "../../common/index.ts";
+import { formatMaybeInteger } from "./LeagueStats.tsx";
+import { expandFieldingStats } from "../util/expandFieldingStats.baseball.ts";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
 
 const TeamStats = ({
 	allStats,

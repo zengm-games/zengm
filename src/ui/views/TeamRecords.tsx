@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { DataTable, MoreLinks } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import type { View } from "../../common/types";
-import { bySport } from "../../common";
-import TeamLogoAndName from "../components/TeamLogoAndName";
+import { DataTable, MoreLinks } from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { bySport } from "../../common/index.ts";
+import TeamLogoAndName from "../components/TeamLogoAndName.tsx";
 
 const teamLink = (t: View<"teamRecords">["teams"][number]) => {
 	return {

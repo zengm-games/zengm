@@ -4,12 +4,12 @@ import {
 	ResponsiveTableWrapper,
 	MovOrDiff,
 	TeamLogoInline,
-} from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers } from "../util";
-import useClickable from "../hooks/useClickable";
-import type { TeamSeason, View } from "../../common/types";
-import { bySport, isSport, TIEBREAKERS } from "../../common";
+} from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers } from "../util/index.ts";
+import useClickable from "../hooks/useClickable.tsx";
+import type { TeamSeason, View } from "../../common/types.ts";
+import { bySport, isSport, TIEBREAKERS } from "../../common/index.ts";
 
 type StandingsTeam =
 	View<"standings">["rankingGroups"]["league"][number][number];
@@ -64,7 +64,7 @@ export const TeamColumn = ({
 
 	// Why is this one column, rather than two (one for rank, one for team) which would be simpler and avoid rankMinWidth? Because the header on the dashboard table - colspan 2 works weirdly, and colspan 1 leaves padding on the left.
 	return (
-		<td className="py-1" style={tdStyle}>
+		<td style={tdStyle}>
 			<div className="d-flex align-items-center">
 				<div
 					className="text-end"

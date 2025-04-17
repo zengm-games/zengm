@@ -1,8 +1,8 @@
-import { g, helpers } from "../util";
-import getTeamInfos from "../../common/getTeamInfos";
-import { idb } from "../db";
-import type { UpdateEvents } from "../../common/types";
-import { orderBy } from "../../common/utils";
+import { g, helpers } from "../util/index.ts";
+import getTeamInfos from "../../common/getTeamInfos.ts";
+import { idb } from "../db/index.ts";
+import type { UpdateEvents } from "../../common/types.ts";
+import { orderBy } from "../../common/utils.ts";
 
 const getRealignInfo = (
 	teams: {

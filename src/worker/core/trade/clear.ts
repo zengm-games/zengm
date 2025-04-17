@@ -1,4 +1,4 @@
-import { idb } from "../../db";
+import { idb } from "../../db/index.ts";
 
 /**
  * Remove all players currently added to the trade.

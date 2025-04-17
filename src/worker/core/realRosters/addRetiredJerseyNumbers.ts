@@ -1,8 +1,8 @@
-import { PHASE, PLAYER } from "../../../common";
-import { groupByUnique } from "../../../common/utils";
-import type { Team } from "../../../common/types";
-import type { Basketball } from "./loadData.basketball";
-import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev";
+import { PHASE, PLAYER } from "../../../common/index.ts";
+import { groupByUnique } from "../../../common/utils.ts";
+import type { Team } from "../../../common/types.ts";
+import type { Basketball } from "./loadData.basketball.ts";
+import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev.ts";
 
 const addRetiredJerseyNumbers = ({
 	teams,

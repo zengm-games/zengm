@@ -1,7 +1,7 @@
-import { idb } from "../db";
-import type { UpdateEvents, ViewInput } from "../../common/types"; // Keep in sync with Dropdown.js
-import { bySport } from "../../common";
-import addFirstNameShort from "../util/addFirstNameShort";
+import { idb } from "../db/index.ts";
+import type { UpdateEvents, ViewInput } from "../../common/types.ts"; // Keep in sync with Dropdown.js
+import { bySport } from "../../common/index.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
 
 // Sync with useDropdownOptions
 const optionsTmp = bySport({

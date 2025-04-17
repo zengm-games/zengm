@@ -1,6 +1,6 @@
-import type { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball";
-import { formatScoringSummaryEvent } from "../../../common/formatScoringSummaryEvent.baseball";
-import type { Runner, TeamNum } from "./types";
+import type { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball.ts";
+import { formatScoringSummaryEvent } from "../../../common/formatScoringSummaryEvent.baseball.ts";
+import type { Runner, TeamNum } from "./types.ts";
 
 export type PlayByPlayEventInput =
 	| {

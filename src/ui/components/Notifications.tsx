@@ -1,10 +1,10 @@
 import clsx from "clsx";
 import { m, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { emitter, type Message } from "../util/notify";
-import SafeHtml from "./SafeHtml";
-import { useLocalPartial } from "../util";
-import { MOBILE_AD_BOTTOM_MARGIN } from "../../common";
+import { emitter, type Message } from "../util/notify.ts";
+import SafeHtml from "./SafeHtml.tsx";
+import { useLocalPartial } from "../util/index.ts";
+import { MOBILE_AD_BOTTOM_MARGIN } from "../../common/index.ts";
 
 const MAX_NUM_NOTIFICATIONS = 5;
 

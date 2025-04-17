@@ -1,11 +1,11 @@
-import useTitleBar from "../../hooks/useTitleBar";
-import { getCols, helpers } from "../../util";
-import { DataTable, SafeHtml } from "../../components";
-import type { View } from "../../../common/types";
-import { frivolitiesMenu } from "../Frivolities";
-import GOATFormula from "./GOATFormula";
-import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels";
-import type { DataTableRow } from "../../components/DataTable";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import { getCols, helpers } from "../../util/index.ts";
+import { DataTable, SafeHtml } from "../../components/index.tsx";
+import type { View } from "../../../common/types.ts";
+import { frivolitiesMenu } from "../Frivolities.tsx";
+import GOATFormula from "./GOATFormula.tsx";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
+import type { DataTableRow } from "../../components/DataTable/index.tsx";
 
 export const getValue = (
 	obj: any,
@@ -103,8 +103,13 @@ const Most = ({
 						return helpers.plusMinus(value, 0);
 					}
 					if (x.colName === "GOAT") {
-						if (Number.isInteger(value) && value < 1000000) {
-							return helpers.numberWithCommas(value);
+						if (value < 1_000_000) {
+							const numDigits = Number.parseInt(
+								Math.abs(value).toString(),
+							).toString().length;
+							// Show 3 decimal places if it's 1 digit integer part, and decrease by 1 as the integer length increases
+							const maximumFractionDigits = Math.max(4 - numDigits, 0);
+							return helpers.numberWithCommas(value, maximumFractionDigits);
 						}
 						return value.toPrecision(3);
 					}

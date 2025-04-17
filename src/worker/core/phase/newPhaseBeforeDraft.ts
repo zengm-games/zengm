@@ -1,6 +1,6 @@
-import { PLAYER } from "../../../common";
-import { draft, player, season, team, league } from "..";
-import { idb } from "../../db";
+import { PLAYER } from "../../../common/index.ts";
+import { draft, player, season, team, league } from "../index.ts";
+import { idb } from "../../db/index.ts";
 import {
 	achievement,
 	defaultGameAttributes,
@@ -13,7 +13,7 @@ import {
 	random,
 	orderTeams,
 	env,
-} from "../../util";
+} from "../../util/index.ts";
 import type {
 	Conditions,
 	PhaseReturn,
@@ -21,11 +21,11 @@ import type {
 	Player,
 	LogEventType,
 	GameAttributesLeague,
-} from "../../../common/types";
-import setGameAttributes from "../league/setGameAttributes";
-import { doExpand, doRelocate } from "./relocateExpand";
-import addAward from "../player/addAward";
-import { analyticsEventLocal } from "../../../common/analyticsEventLocal";
+} from "../../../common/types.ts";
+import setGameAttributes from "../league/setGameAttributes.ts";
+import { doExpand, doRelocate } from "./relocateExpand.ts";
+import addAward from "../player/addAward.ts";
+import { analyticsEventLocal } from "../../../common/analyticsEventLocal.ts";
 
 const INFLATION_GAME_ATTRIBUTES = [
 	"salaryCap",

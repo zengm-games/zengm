@@ -1,11 +1,11 @@
-import type { Player } from "../../../common/types";
-import { random, g } from "../../util";
-import develop from "./develop";
-import generate from "./generate";
-import { PHASE, PLAYER } from "../../../common";
-import { idb } from "../../db";
-import name from "./name";
-import { DEFAULT_LEVEL } from "../../../common/budgetLevels";
+import type { Player } from "../../../common/types.ts";
+import { random, g } from "../../util/index.ts";
+import develop from "./develop.ts";
+import generate from "./generate.ts";
+import { PHASE, PLAYER } from "../../../common/index.ts";
+import { idb } from "../../db/index.ts";
+import name from "./name.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 const genRandomFreeAgent = async (): Promise<Player> => {
 	let minAge = 25;

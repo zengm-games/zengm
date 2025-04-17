@@ -1,7 +1,7 @@
-import { bySport, PHASE, SIMPLE_AWARDS } from "../../common";
-import { idb } from "../db";
-import { g } from "../util";
-import type { UpdateEvents, PlayoffSeriesTeam } from "../../common/types";
+import { bySport, PHASE, SIMPLE_AWARDS } from "../../common/index.ts";
+import { idb } from "../db/index.ts";
+import { g } from "../util/index.ts";
+import type { UpdateEvents, PlayoffSeriesTeam } from "../../common/types.ts";
 
 const addAbbrev = (
 	award: any,

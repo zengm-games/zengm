@@ -1,4 +1,4 @@
-import type { PlayerRatings } from "../../../common/types.basketball";
+import type { PlayerRatings } from "../../../common/types.basketball.ts";
 
 const POS_VALUES = {
 	PG: 0,

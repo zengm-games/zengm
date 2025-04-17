@@ -1,14 +1,17 @@
 import type { ValidateFunction } from "ajv";
 import Ajv from "ajv";
-import JSONParserText from "./JSONParserText";
+import JSONParserText from "./JSONParserText.ts";
 
 // This is dynamically resolved with rollup-plugin-alias
 // @ts-ignore
 import schema from "../../../build/files/league-schema.json";
-import { helpers, toUI } from "../util";
-import { highWaterMark } from "../core/league/createStream";
-import type { Conditions } from "../../common/types";
-import { DEFAULT_TEAM_COLORS, LEAGUE_DATABASE_VERSION } from "../../common";
+import { helpers, toUI } from "../util/index.ts";
+import { highWaterMark } from "../core/league/createStream.ts";
+import type { Conditions } from "../../common/types.ts";
+import {
+	DEFAULT_TEAM_COLORS,
+	LEAGUE_DATABASE_VERSION,
+} from "../../common/index.ts";
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
 export const CUMULATIVE_OBJECTS = new Set([

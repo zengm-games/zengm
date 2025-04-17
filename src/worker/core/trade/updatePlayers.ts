@@ -1,6 +1,6 @@
-import { idb } from "../../db";
-import type { TradeTeams } from "../../../common/types";
-import isUntradable from "./isUntradable";
+import { idb } from "../../db/index.ts";
+import type { TradeTeams } from "../../../common/types.ts";
+import isUntradable from "./isUntradable.ts";
 
 /**
  * Validates that players are allowed to be traded and updates the database.

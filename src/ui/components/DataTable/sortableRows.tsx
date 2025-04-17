@@ -23,7 +23,7 @@ import {
 	type ReactNode,
 	type RefObject,
 } from "react";
-import type { DataTableRow } from ".";
+import type { DataTableRow } from "./index.tsx";
 import clsx from "clsx";
 
 export type HighlightHandle = (a: {

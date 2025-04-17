@@ -1,7 +1,7 @@
-import { GAME_NAME } from "../../common";
-import { ads } from "../util";
-import GameLinks from "./GameLinks";
-import Modal from "./Modal";
+import { GAME_NAME } from "../../common/index.ts";
+import { ads } from "../util/index.ts";
+import GameLinks from "./GameLinks.tsx";
+import Modal from "./Modal.tsx";
 
 type Props = {
 	close: () => void;

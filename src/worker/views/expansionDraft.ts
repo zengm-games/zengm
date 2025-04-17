@@ -1,10 +1,10 @@
-import { g, helpers, newLeagueGodModeLimits } from "../util";
-import getTeamInfos from "../../common/getTeamInfos";
-import type { ExpansionDraftSetupTeam } from "../../common/types";
-import { idb } from "../db";
-import getUnusedAbbrevs from "../../common/getUnusedAbbrevs";
-import { bySport, DEFAULT_JERSEY } from "../../common";
-import { orderBy } from "../../common/utils";
+import { g, helpers, newLeagueGodModeLimits } from "../util/index.ts";
+import getTeamInfos from "../../common/getTeamInfos.ts";
+import type { ExpansionDraftSetupTeam } from "../../common/types.ts";
+import { idb } from "../db/index.ts";
+import getUnusedAbbrevs from "../../common/getUnusedAbbrevs.ts";
+import { bySport, DEFAULT_JERSEY } from "../../common/index.ts";
+import { orderBy } from "../../common/utils.ts";
 
 const updateExpansionDraft = async () => {
 	const expansionDraft = g.get("expansionDraft");

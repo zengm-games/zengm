@@ -1,7 +1,7 @@
-import { MoreLinks, SafeHtml } from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { helpers } from "../util";
-import type { View } from "../../common/types";
+import { MoreLinks, SafeHtml } from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { helpers } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
 
 const Transactions = ({
 	abbrev,

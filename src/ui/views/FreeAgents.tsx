@@ -1,25 +1,25 @@
 import { useCallback, useState } from "react";
-import { PHASE, PHASE_TEXT } from "../../common";
+import { PHASE, PHASE_TEXT } from "../../common/index.ts";
 import {
 	DataTable,
 	MoreLinks,
 	NegotiateButtons,
 	RosterComposition,
 	RosterSalarySummary,
-} from "../components";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, useLocalPartial } from "../util";
-import type { Phase, View } from "../../common/types";
-import { dataTableWrappedMood } from "../components/Mood";
+} from "../components/index.tsx";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers, useLocalPartial } from "../util/index.ts";
+import type { Phase, View } from "../../common/types.ts";
+import { dataTableWrappedMood } from "../components/Mood.tsx";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
-} from "../components/contract";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels";
-import { range } from "../../common/utils";
-import type { DropdownOption } from "../hooks/useDropdownOptions";
-import type { FreeAgentTransaction } from "../../worker/views/freeAgents";
-import type { DataTableRow } from "../components/DataTable";
+} from "../components/contract.tsx";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import { range } from "../../common/utils.ts";
+import type { DropdownOption } from "../hooks/useDropdownOptions.tsx";
+import type { FreeAgentTransaction } from "../../worker/views/freeAgents.ts";
+import type { DataTableRow } from "../components/DataTable/index.tsx";
 
 const useSeasonsFreeAgents = () => {
 	const { phase, season, startingSeason } = useLocalPartial([

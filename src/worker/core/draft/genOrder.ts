@@ -1,25 +1,31 @@
-import genPicks from "./genPicks";
-import logLotteryChances from "./logLotteryChances";
-import logLotteryWinners from "./logLotteryWinners";
-import divideChancesOverTiedTeams from "./divideChancesOverTiedTeams";
-import { idb } from "../../db";
-import { g, helpers, random } from "../../util";
+import genPicks from "./genPicks.ts";
+import logLotteryChances from "./logLotteryChances.ts";
+import logLotteryWinners from "./logLotteryWinners.ts";
+import divideChancesOverTiedTeams from "./divideChancesOverTiedTeams.ts";
+import { idb } from "../../db/index.ts";
+import { g, helpers, random } from "../../util/index.ts";
 import type {
 	Conditions,
 	DraftLotteryResult,
 	DraftType,
 	DraftPickWithoutKey,
-} from "../../../common/types";
-import genOrderGetPicks from "./genOrderGetPicks";
-import getTeamsByRound from "./getTeamsByRound";
-import { bySport } from "../../../common";
-import { league } from "..";
+	DraftPick,
+} from "../../../common/types.ts";
+import genOrderGetPicks from "./genOrderGetPicks.ts";
+import getTeamsByRound from "./getTeamsByRound.ts";
+import { bySport } from "../../../common/index.ts";
+import { league } from "../index.ts";
 
-type ReturnVal = DraftLotteryResult & {
-	draftType: Exclude<
-		DraftType,
-		"random" | "noLottery" | "noLotteryReverse" | "freeAgents"
-	>;
+type ReturnVal = {
+	draftLotteryResult:
+		| (DraftLotteryResult & {
+				draftType: Exclude<
+					DraftType,
+					"random" | "noLottery" | "noLotteryReverse" | "freeAgents"
+				>;
+		  })
+		| undefined;
+	draftPicks: DraftPick[];
 };
 
 const LOTTERY_DRAFT_TYPES = [
@@ -160,7 +166,7 @@ const genOrder = async (
 	mock: boolean = false,
 	conditions?: Conditions,
 	draftTypeOverride?: DraftType,
-): Promise<ReturnVal | undefined> => {
+): Promise<ReturnVal> => {
 	// Sometimes picks just fail to generate or get lost. For example, if numSeasonsFutureDraftPicks is 0.
 	await genPicks();
 
@@ -177,8 +183,7 @@ const genOrder = async (
 		draftPicksIndexed[tid][dp.round] = dp;
 	}
 
-	const { allTeams, teamsByRound, ties } =
-		await getTeamsByRound(draftPicksIndexed);
+	const { teamsByRound, ties } = await getTeamsByRound(draftPicksIndexed);
 	const firstRoundTeams = teamsByRound[0] ?? [];
 
 	const draftType = draftTypeOverride ?? g.get("draftType");
@@ -359,10 +364,8 @@ const genOrder = async (
 		}
 	}
 
-	let draftLotteryResult: ReturnVal | undefined;
+	let draftLotteryResult: ReturnVal["draftLotteryResult"];
 	if (draftHasLottery(draftType)) {
-		const usePts = g.get("pointsFormula", "current") !== "";
-
 		// Save draft lottery results separately
 		draftLotteryResult = {
 			season: g.get("season"),
@@ -386,39 +389,16 @@ const genOrder = async (
 						throw new Error("Should never happen");
 					}
 
-					// For the team making the pick
-					const t = allTeams.find((t2) => t2.tid === dp.tid);
-					let won = 0;
-					let lost = 0;
-					let otl = 0;
-					let tied = 0;
-					let pts;
-
-					if (t) {
-						won = t.seasonAttrs.won;
-						lost = t.seasonAttrs.lost;
-						otl = t.seasonAttrs.otl;
-						tied = t.seasonAttrs.tied;
-
-						if (usePts) {
-							pts = t.seasonAttrs.pts;
-						}
-					}
-
 					// For the original team
 					const i = firstRoundTeams.findIndex(
 						(t2) => t2.tid === dp.originalTid,
 					);
+
 					return {
 						tid: dp.tid,
 						originalTid: dp.originalTid,
 						chances: chances[i],
 						pick: dp.pick,
-						won,
-						lost,
-						otl,
-						tied,
-						pts,
 						dpid: dp.dpid,
 					};
 				}),
@@ -494,7 +474,7 @@ const genOrder = async (
 		});
 	}
 
-	return draftLotteryResult;
+	return { draftLotteryResult, draftPicks };
 };
 
 export default genOrder;

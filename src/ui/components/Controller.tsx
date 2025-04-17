@@ -1,24 +1,24 @@
 import { LazyMotion } from "framer-motion";
 import { memo, useCallback, useEffect } from "react";
-import { localActions, useLocalPartial } from "../util";
-import CommandPalette from "./CommandPalette";
-import ErrorBoundary from "./ErrorBoundary";
-import Footer from "./Footer";
-import Header from "./Header";
-import LeagueTopBar from "./LeagueTopBar";
-import MultiTeamMenu from "./MultiTeamMenu";
-import NagModal from "./NagModal";
-import NavBar from "./NavBar";
-import Notifications from "./Notifications";
-import SideBar from "./SideBar";
-import Skyscraper from "./Skyscraper";
-import TitleBar from "./TitleBar";
-import { useViewData } from "../util/viewManager";
-import { isSport } from "../../common";
-import api from "../api";
+import { localActions, useLocalPartial } from "../util/index.ts";
+import CommandPalette from "./CommandPalette/index.tsx";
+import ErrorBoundary from "./ErrorBoundary.tsx";
+import Footer from "./Footer.tsx";
+import Header from "./Header.tsx";
+import LeagueTopBar from "./LeagueTopBar.tsx";
+import MultiTeamMenu from "./MultiTeamMenu.tsx";
+import NagModal from "./NagModal.tsx";
+import NavBar from "./NavBar.tsx";
+import Notifications from "./Notifications.tsx";
+import SideBar from "./SideBar.tsx";
+import Skyscraper from "./Skyscraper.tsx";
+import TitleBar from "./TitleBar.tsx";
+import { useViewData } from "../util/viewManager.tsx";
+import { isSport } from "../../common/index.ts";
+import api from "../api/index.ts";
 
 const loadFramerMotionFeatures = () =>
-	import("../util/framerMotionFeatures").then((res) => res.default);
+	import("../util/framerMotionFeatures.ts").then((res) => res.default);
 
 const minHeight100 = {
 	// Just using h-100 class here results in the sticky ad in the skyscraper becoming unstuck after scrolling down 100% of the viewport, for some reason

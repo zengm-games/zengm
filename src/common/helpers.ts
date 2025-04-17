@@ -6,11 +6,11 @@ import type {
 	PlayerContract,
 	GameAttributesLeague,
 	RelativeType,
-} from "./types";
-import getTeamInfos from "./getTeamInfos";
-import isSport from "./isSport";
-import { PHASE } from "./constants";
-import { orderBy } from "./utils";
+} from "./types.ts";
+import getTeamInfos from "./getTeamInfos.ts";
+import isSport from "./isSport.ts";
+import { PHASE } from "./constants.ts";
+import { orderBy } from "./utils.ts";
 
 const getPopRanks = (
 	teamSeasons: {
@@ -1023,10 +1023,13 @@ const localeParseFloat = (string: string) => {
 };
 
 // Format a number as an integer with commas in the thousands places.
-const numberWithCommas = (x: number | string): string => {
+const numberWithCommas = (
+	x: number | string,
+	maximumFractionDigits: number = 10,
+): string => {
 	const y = typeof x === "string" ? localeParseFloat(x) : x;
 
-	return y.toLocaleString("en-US", { maximumFractionDigits: 10 });
+	return y.toLocaleString("en-US", { maximumFractionDigits });
 };
 
 const roundWinp = (winp: number): string => {

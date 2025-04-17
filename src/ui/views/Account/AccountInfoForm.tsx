@@ -1,10 +1,10 @@
 import clsx from "clsx";
 import { type ChangeEvent, useState } from "react";
-import { ACCOUNT_API_URL, fetchWrapper } from "../../../common";
-import { ActionButton } from "../../components";
-import { helpers, realtimeUpdate } from "../../util";
-import { ajaxErrorMsg } from "../LoginOrRegister";
-import { fields } from "../LoginOrRegister/Register";
+import { ACCOUNT_API_URL, fetchWrapper } from "../../../common/index.ts";
+import { ActionButton } from "../../components/index.tsx";
+import { helpers, realtimeUpdate } from "../../util/index.ts";
+import { ajaxErrorMsg } from "../LoginOrRegister/index.tsx";
+import { fields } from "../LoginOrRegister/Register.tsx";
 
 const formGroupStyle = {
 	width: 300,

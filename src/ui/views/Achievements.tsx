@@ -1,11 +1,11 @@
 import clsx from "clsx";
-import { groupBy } from "../../common/utils";
+import { groupBy } from "../../common/utils.ts";
 import { Fragment, useEffect } from "react";
-import useTitleBar from "../hooks/useTitleBar";
-import { getCols, helpers, useLocal } from "../util";
-import type { View } from "../../common/types";
-import { GAME_ACRONYM, GAME_NAME } from "../../common";
-import { DataTable } from "../components";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { getCols, helpers, useLocal } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { GAME_ACRONYM, GAME_NAME } from "../../common/index.ts";
+import { DataTable } from "../components/index.tsx";
 
 const DIFFICULTIES = ["normal", "hard", "insane"] as const;
 const DIFFICULTIES_REVERSE = [...DIFFICULTIES].reverse();

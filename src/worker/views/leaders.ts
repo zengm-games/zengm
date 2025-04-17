@@ -1,11 +1,11 @@
-import { bySport, isSport, PHASE } from "../../common";
-import { idb } from "../db";
+import { bySport, isSport, PHASE } from "../../common/index.ts";
+import { idb } from "../db/index.ts";
 import {
 	defaultGameAttributes,
 	g,
 	helpers,
 	processPlayersHallOfFame,
-} from "../util";
+} from "../util/index.ts";
 import type {
 	MinimalPlayerRatings,
 	Player,
@@ -14,10 +14,10 @@ import type {
 	PlayerStatType,
 	UpdateEvents,
 	ViewInput,
-} from "../../common/types";
-import { groupByUnique, range } from "../../common/utils";
-import addFirstNameShort from "../util/addFirstNameShort";
-import { season } from "../core";
+} from "../../common/types.ts";
+import { groupByUnique, range } from "../../common/utils.ts";
+import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { season } from "../core/index.ts";
 
 export const getCategoriesAndStats = (onlyStat?: string) => {
 	let categories = bySport<

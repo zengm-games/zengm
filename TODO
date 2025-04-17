@@ -46,7 +46,6 @@ rolldown
   - isSport confirm works
   - code splitting
   - does it make sense to specify output options within rolldownConfig, or leave that to be done separately by caller?
-- UI to switch sports (see obsidian)
 
 hide least popular menu items
 - graphs?
@@ -65,8 +64,6 @@ if a player comes back to your team for a 2nd stint but his jersey number is ret
 if you download a spreadsheet of the most lopsided trades, the spreadsheet leaves out the "team" columns https://old.reddit.com/r/BasketballGM/comments/1ieujhu/monthly_suggestions_thread/mceee7x/
 
 update game screenshots
-
-head2head page that lets you look at 2 specific teams regular season and playoff series matchups in a list head2head page that lets you look at 2 specific teams regular season and playoff series matchups in a list
 
 intermittent "tid not found" error when starting real players league with all stats in 1977
 
@@ -142,6 +139,7 @@ datatable should support unsorted sort state
 - leaders, award races - so we don't have to highlight by default
 - roster basketball non-user - so we can allow sorting while still allowing rosterOrder viewing
 - check how sort status is passed to row.classNames
+- already happens in box scores
 
 unify export players and export draft class code
 - export players adds exportedSeason to player, and uses that to process player object on import
@@ -153,7 +151,7 @@ compare players http://www.reddit.com/r/BasketballGM/comments/1saclf/suggestion_
 - bottom: all the tables from player stats, showing one row for each player
   - make sticky header not go over these
 
-ivestigate trade weirdness https://discord.com/channels/290013534023057409/290015591216054273/1330946762017607751
+investigate trade weirdness https://discord.com/channels/290013534023057409/290015591216054273/1330946762017607751
 
 on drive chart, a 2 point conversion attempt that goes backwards puts the end of the score tag on the wrong side of the field
 

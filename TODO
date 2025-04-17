@@ -48,8 +48,7 @@ rolldown
   - does it make sense to specify output options within rolldownConfig, or leave that to be done separately by caller?
 
 hide least popular menu items
-- graphs?
-- search?
+- from GA, least popular main menu items are: player graphs, team graphs, and advanced player search
 
 ability to add custom teams to the default list of teams, for selecting when starting a new random players league, or adding a team to a league, etc https://discord.com/channels/290013534023057409/331882115119448065/1351880641762955284
 
@@ -312,8 +311,6 @@ mobile UI ideas https://old.reddit.com/r/BasketballGM/comments/1e5dwvi/some_desi
 - #2: add trade link to roster page
 - #3: move roster higher on page - make injury stuff at the bottom, and condense other stuff
 
-reorganize menus - what goes in teams/players vs stats?
-
 some generic way to hide ratings in challengeNoRatings
 - should be done on worker, so UI never gets an opportunity to display ratings. this is better than a Rating component because it handles all cases, including when ratings are shown inline in some text
 
@@ -326,8 +323,6 @@ keep players on their real historical teams https://old.reddit.com/r/BasketballG
   - could store in some json file
 - does it make sense without spectator mode?
 - OOTP calls it "use historical transactions" https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/ldoidno/?context=3 
-
-Player Bio Info: Button to equalize all country frequencies (to 1) https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/l7e83r5/
 
 vitest
 - when browser testing is stable, could replace the karma/mocha stuff with vitest

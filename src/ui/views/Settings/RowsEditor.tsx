@@ -225,6 +225,21 @@ const Controls = <Type extends "injuries" | "tragicDeaths">({
 							>
 								Clear
 							</Dropdown.Item>
+							<Dropdown.Item
+								onClick={() => {
+									setRows(
+										// @ts-expect-error
+										rows.map((row) => {
+											return {
+												...row,
+												frequency: "1",
+											};
+										}),
+									);
+								}}
+							>
+								Set all frequencies to 1
+							</Dropdown.Item>
 						</Dropdown.Menu>
 					</Dropdown>
 				</div>

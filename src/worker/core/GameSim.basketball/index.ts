@@ -2290,6 +2290,7 @@ class GameSim extends GameSimBase {
 		if (passer !== undefined) {
 			pAst = this.playersOnCourt[this.o][passer];
 			pidAst = this.team[this.o].player[pAst].id;
+			this.recordStat(this.o, pAst, "ast");
 		}
 		let fgMakeLogType: FgMakeType | undefined;
 		if (type === "tipIn") {

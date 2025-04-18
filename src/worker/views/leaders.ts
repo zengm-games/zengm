@@ -482,7 +482,7 @@ export class GamesPlayedCache {
 		type: "regularSeason" | "playoffs" | "combined",
 		tid: number,
 		career: boolean,
-	): number | null {
+	): number {
 		if (type === "combined") {
 			return (
 				(this.get(season, "regularSeason", tid, career) ?? 0) +
@@ -518,11 +518,19 @@ export class GamesPlayedCache {
 			return g.get("numGames");
 		}
 
+		// Fallback will happen if there is missing data or if it's realRosters for a past season. For the latter case, we actually do have the correct historical values in g, which mostly works. Same is true for some other cases with missing data, probably. The regularSeason estimate is better than playoffs, because we don't know how many rounds a team played in the playoffs (at least without doing more work, like looking in the playoffSeries database, and whatever who cares).
 		if (playoffs) {
-			return this.playoffsCache[season]?.[tid] ?? null;
+			const gp = this.playoffsCache[season]?.[tid];
+			if (gp !== undefined) {
+				return gp;
+			}
+
+			return helpers.numGamesToWinSeries(
+				g.get("numGamesPlayoffSeries", season)[0],
+			);
 		}
 
-		return this.regularSeasonCache[season]?.[tid] ?? null;
+		return this.regularSeasonCache[season]?.[tid] ?? g.get("numGames", season);
 	}
 }
 
@@ -644,12 +652,6 @@ export const playerMeetsCategoryRequirements = ({
 				playerStats.tid,
 				career,
 			);
-
-			if (gpTeam === null) {
-				// Just include everyone, since there was some issue getting gamesPlayed (such as playoffs season before startingSeason)
-				pass = true;
-				break;
-			}
 
 			// Special case GP
 			if (minStat === "gp") {

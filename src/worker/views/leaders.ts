@@ -485,8 +485,8 @@ export class GamesPlayedCache {
 	): number {
 		if (type === "combined") {
 			return (
-				(this.get(season, "regularSeason", tid, career) ?? 0) +
-				(this.get(season, "playoffs", tid, career) ?? 0)
+				this.get(season, "regularSeason", tid, career) +
+				this.get(season, "playoffs", tid, career)
 			);
 		}
 

@@ -15,6 +15,9 @@ export type BoxScorePlayer = {
 	name: string;
 	pid: number;
 	injury: PlayerInjury;
+	seasonStats: {
+		[stat: string]: number;
+	};
 };
 type BoxScoreTeam = {
 	abbrev: string;
@@ -147,7 +150,6 @@ export const getText = (
 	let text;
 
 	let bold = false;
-
 	switch (event.type) {
 		case "sideStart": {
 			text = `${event.t === 0 ? "Bottom" : "Top"} of the ${helpers.ordinal(
@@ -185,9 +187,10 @@ export const getText = (
 			break;
 		}
 		case "strikeOut": {
+			const strikeOutText = playersByPid[event.pid].so;
 			text = event.swinging
-				? `${helpers.pronoun(local.getState().gender, "He")} goes down swinging`
-				: "Called strike three";
+				? `${helpers.pronoun(local.getState().gender, "He")} goes down swinging (${strikeOutText})`
+				: `Called strike three (${strikeOutText} SO)`;
 			bold = true;
 			break;
 		}
@@ -296,13 +299,13 @@ export const getText = (
 				if (event.numBases === 1) {
 					text = "Single!";
 				} else if (event.numBases === 2) {
-					text = "Double!";
+					text = `Double! (${playersByPid[event.pid].seasonStats["2b"]})`;
 				} else if (event.numBases === 3) {
-					text = "Triple!";
+					text = `Triple! (${playersByPid[event.pid].seasonStats["3b"]})`;
 				} else if (event.runners.length === 3) {
-					text = "Grand slam!";
+					text = `Grand slam! (${playersByPid[event.pid].seasonStats["3b"]})`;
 				} else {
-					text = "Home run!";
+					text = `Home run! (${playersByPid[event.pid].seasonStats["hr"]})`;
 				}
 			} else if (event.result === "flyOut") {
 				text = `Caught by the ${
@@ -383,7 +386,7 @@ export const getText = (
 			} else if (event.throw) {
 				text = `${getName(
 					event.pid,
-				)} beats the throw and is safe at ${getBaseName(event.to)}`;
+				)} beats the throw and is safe at ${getBaseName(event.to)} (${playersByPid[event.pid].seasonStats["sb"]})`;
 			} else {
 				text = `${getName(event.pid)} steals ${getBaseName(
 					event.to,

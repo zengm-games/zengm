@@ -112,6 +112,11 @@ const updateLeadersYears = async (
 			}
 
 			const value = p.stats[cat.stat];
+			if (value === undefined) {
+				// value should only be undefined in historical data before certain stats were tracked
+				return;
+			}
+
 			const lastValue = current.leaders.at(-1)?.stat;
 			if (
 				lastValue !== undefined &&

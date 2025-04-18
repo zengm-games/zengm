@@ -138,6 +138,11 @@ const updateLeadersProgressive = async (
 				});
 				if (p) {
 					const value = p.stats[cat.stat];
+					if (value === undefined) {
+						// value should only be undefined in historical data before certain stats were tracked
+						return;
+					}
+
 					const lastValue = current.yearByYear?.stat;
 					if (
 						lastValue === undefined ||

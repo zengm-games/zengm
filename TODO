@@ -1,3 +1,16 @@
+FG% leader has very few FG http://localhost/l/12/leaders/all/perGame/regularSeason
+
+no height changes with 100% determinism https://old.reddit.com/r/BasketballGM/comments/mhj2r2/monthly_suggestions_thread/gu9tsqi/
+
+hockey hangs if everyone is injured
+
+keep track of DNP players in box score explicitly, just with minimal info rather than full stats
+- use for basketball to save space
+  - need at least some metadata to show in box score
+    - could just delete any 0 stats, that might achieve the same result and work for all sports?
+  - for other sports, no metadata is needed, could just be an array of pids
+- use for player game log, especially for pitchers in baseball https://discord.com/channels/290013534023057409/944392892905037885/1335192150949888032
+
 somehow show count of goals and HR inline for baseball and hockey
 - others too... like for basketball stats it should be this game's stats
 - https://x.com/nevameant2b/status/1877107051492499699
@@ -10,6 +23,7 @@ store list of prior worker console commands https://discord.com/channels/2900135
 - allow starring, delete, and bulk delete (optionally ignoring starred ones)
 - also allow searching and other DataTable features
 - do this in popup window?
+- won't this get filled with a bunk of junk, like running the same code with different parameters? idk, maybe not worth it
 
 some way to export play-by-play and box score https://discord.com/channels/290013534023057409/1357064671118753904/1357521047934734397
 
@@ -51,10 +65,6 @@ hide least popular menu items
 - from GA, least popular main menu items are: player graphs, team graphs, and advanced player search
 
 ability to add custom teams to the default list of teams, for selecting when starting a new random players league, or adding a team to a league, etc https://discord.com/channels/290013534023057409/331882115119448065/1351880641762955284
-
-keep track of DNP players in box score explicitly, just with minimal info rather than full stats
-- use for basketball to save space
-- use for player game log, especially for pitchers in baseball https://discord.com/channels/290013534023057409/944392892905037885/1335192150949888032
 
 if a player comes back to your team for a 2nd stint but his jersey number is retired, he should be allowed to wear that retired number (and actually it should be his preference) https://old.reddit.com/r/BasketballGM/comments/1ieujhu/monthly_suggestions_thread/
 - what if 2 numbers are retired?
@@ -1174,11 +1184,6 @@ manually specify draft order in god mode
 hockey ovr revamp
 - ovrs for skater and goalie. determine skater positions like BBGM, including possibility of hybrid positions like F. cause there's really a fair amount of overlap in what players do
 
-more season preview stuff
-- top free agent signings
-- ...1 more needed
-  - top young players? kind of redundant
-
 for some fbgm penalties, don't allow the ball carrier to be called
 
 getCopy/getCopies dry
@@ -1426,10 +1431,6 @@ team rating should do something sensible if roster size or num players on court 
 
 draft lottery animation for random draft https://old.reddit.com/r/BasketballGM/comments/mhj2r2/monthly_suggestions_thread/gtokjf0/
 
-no height changes with 100% determinism https://old.reddit.com/r/BasketballGM/comments/mhj2r2/monthly_suggestions_thread/gu9tsqi/
-
-view console.log output from worker console UI https://discord.com/channels/290013534023057409/331882115119448065/836521637103796224
-
 trade value of players vs picks as difficulty changes https://mail.google.com/mail/u/0/#inbox/FMfcgxwLtkQskcMSQwdhHzQvdwXMKqSG
 
 playoff series W/L in live sim double incrementing https://discord.com/channels/290013534023057409/290015591216054273/835678883466313769
@@ -1470,16 +1471,8 @@ If you have “lose best player at the end of the season” turned on, there’s
 
 bbgm ai teams keep dynasties together too easily?
 
-daily score summary https://discord.com/channels/@me/790622657284014120/818668678757089280
-
 New bug: if you have a pop-up window open with the roster page or whatever, and you collapsed the score bar on that, you still get the little notifications for scores in the corner even on the main window where the score bar is showing
 - also, trade in multiple windows
-
-teams in hockey ignoring salary cap? maybe just to sign goalie? https://discord.com/channels/290013534023057409/290015591216054273/817944239442624522
-
-hockey
-- game sim performance
-- ovr PR
 
 change point value of 2/3 pointers https://old.reddit.com/r/BasketballGM/comments/ko1zy7/monthly_suggestions_thread/gjtthn2/
 
@@ -1503,8 +1496,6 @@ head to head records
 free agents should be more willing to sign with teams that overpay
 - https://old.reddit.com/r/BasketballGM/comments/lccu22/observation_from_an_intermittent_player_free/
 
-warning when trading away draft pick for nothing https://mail.google.com/mail/u/0/#inbox/FMfcgxwKkbnxZHrTjZZWLrrrxtthlrXz?compose=DmwnWrRnZvzzkvZLMpKFFjcCwGzpkjhWhFHgSvCgfXVGZDcnLSLBTxBVlXFkLZJGKBLFCpQVshmQ
-
 madeHof
 - copy fudge changes from basketball to football
 - numGames scaling - use lower bound of games played each season
@@ -1524,9 +1515,6 @@ nicidob FBGM ovr
 - https://discord.com/channels/290013534023057409/290015468939640832/796279896073568256
 - https://discord.com/channels/290013534023057409/290015468939640832/796812223254364222
 - distribution of players in new league, and distribution of ovr at each position?
-
-league name being stored in file name
-- https://discord.com/channels/@me/682666234604552221/796152730036731974
 
 scheduled events documentation
 - https://old.reddit.com/r/BasketballGM/comments/k7g2yu/tutorial_how_to_schedule_an_expansion_draft_in_a/
@@ -1592,7 +1580,6 @@ force resign button under lock ratings, keep a man on one team
 
 award editor
 - Finals MVP displays regular season stats if you change it to someone who also played in that same finals. https://discord.com/channels/290013534023057409/290015591216054273/787237109924495412
-- support adding custom awards
 - support editing seasons older than the start of the league
 
 UI for selecting a custom set of teams in a new league
@@ -1654,8 +1641,6 @@ ability to switch back to prior year
 - maybe not...
   - in other games, this would be achieved by saving at different times. when that is easier (stream) that will be better
   - storing g is messy, since g already has a history mechanism
-
-typescript 4.1 stuff
 
 nicidob new ovr formula
 - basketball: https://github.com/zengm-games/zengm/pull/275/files
@@ -1720,14 +1705,6 @@ genSchedulePlayoffsDay -> genSchedulePlayoffsRound
 - https://old.reddit.com/r/BasketballGM/comments/jd9vyg/new_feature_in_god_mode_to_select_the_winner_of_a/g9hgt09/
 
 schedule editor
-
-start in any phase
-- later
-  - get rid of keys.push("playoffSeries", "draftLotteryResults", "draftPicks");
-    - need to improve LeagueMenu so fetching leagueInfo depends on both season and phase forms
-  - start before expansion draft
-  - start before draft lottery
-  - what about changes to settings (like playoff settings, etc), does it need to store previous season's value too?
 
 trade stuff
 - more penalty for bad contracts

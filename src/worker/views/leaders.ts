@@ -815,6 +815,10 @@ const updateLeaders = async (
 				const outputCat = outputCategories[i];
 
 				const value = playerStats[cat.stat];
+				if (value === undefined) {
+					// value should only be undefined in historical data before certain stats were tracked
+					continue;
+				}
 				const lastValue = outputCat.leaders.at(-1)?.stat;
 				if (
 					lastValue !== undefined &&

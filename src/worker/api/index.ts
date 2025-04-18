@@ -2406,6 +2406,7 @@ const importPlayers = async ({
 			lastName: p.lastName,
 			ratings: p.ratings,
 			salaries: p.salaries || [],
+			srID: p.srID,
 			tid,
 			transactions: [
 				{

@@ -331,6 +331,13 @@ const getExportInfo = (
 
 	const stores = Array.from(storesSet);
 
+	const includeAtLeastSeasonAndStartingSeason =
+		checked.players ||
+		checked.teams ||
+		checked.headToHead ||
+		checked.schedule ||
+		checked.draftPicks;
+
 	const filter: any = {};
 	if (checked.newsFeedTransactions && !checked.newsFeedOther) {
 		filter.events = (event: EventBBGM) => {
@@ -345,9 +352,26 @@ const getExportInfo = (
 	} else if (
 		checked.leagueSettings ||
 		checked.gameState ||
-		checked.teamsBasic
+		checked.teamsBasic ||
+		includeAtLeastSeasonAndStartingSeason
 	) {
 		filter.gameAttributes = (row: GameAttribute<any>) => {
+			if (includeAtLeastSeasonAndStartingSeason) {
+				if (row.key === "season" || row.key === "startingSeason") {
+					return true;
+				}
+
+				// Short circuit if none of the other settings are enabled
+				if (
+					!checked.leagueSettings &&
+					!checked.gameState &&
+					!checked.teamsBasic
+				) {
+					return false;
+				}
+			}
+
+			// If leagueSettings is not checked, that means at least one of gameState or teamsBasic is, so filter out any other settings
 			if (!checked.leagueSettings) {
 				if (
 					!gameAttributesKeysGameState.includes(row.key) &&
@@ -357,18 +381,19 @@ const getExportInfo = (
 				}
 			}
 
+			// If gameState or teamBasic is not checked, filter out any associated settings
 			if (!checked.gameState) {
 				if (gameAttributesKeysGameState.includes(row.key)) {
 					return false;
 				}
 			}
-
 			if (!checked.teamsBasic) {
 				if (gameAttributesKeysTeams.includes(row.key)) {
 					return false;
 				}
 			}
 
+			// Made it this far, must be something to keep
 			return true;
 		};
 	}
@@ -407,20 +432,11 @@ const getExportInfo = (
 		};
 	}
 
-	// Include startingSeason when necessary (historical data but no game state)
-	const hasHistoricalData =
-		checked.players ||
-		checked.teams ||
-		checked.headToHead ||
-		checked.schedule ||
-		checked.draftPicks;
-
 	return {
 		stores,
 		filter,
 		forEach,
 		map,
-		hasHistoricalData,
 	};
 };
 
@@ -517,10 +533,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				filename += ".gz";
 			}
 
-			const { stores, filter, forEach, map, hasHistoricalData } = getExportInfo(
-				stats,
-				checked,
-			);
+			const { stores, filter, forEach, map } = getExportInfo(stats, checked);
 
 			const { downloadFileStream, makeExportStream } = await import(
 				"../util/exportLeague.ts"
@@ -532,7 +545,6 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				forEach,
 				map,
 				name: await toWorker("main", "getLeagueName", undefined),
-				hasHistoricalData,
 				onPercentDone: (percent) => {
 					setPercentDone(percent);
 				},

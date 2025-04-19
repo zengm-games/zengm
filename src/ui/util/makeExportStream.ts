@@ -53,7 +53,6 @@ const makeExportStream = async (
 		forEach = {},
 		map = {},
 		name,
-		hasHistoricalData,
 		onPercentDone,
 		onProcessingStore,
 	}: {
@@ -69,7 +68,6 @@ const makeExportStream = async (
 			[key: string]: (a: any) => any;
 		};
 		name?: string;
-		hasHistoricalData?: boolean;
 		onPercentDone?: (percentDone: number) => void;
 		onProcessingStore?: (processingStore: string) => void;
 	},
@@ -127,8 +125,6 @@ const makeExportStream = async (
 	let prevStore: string | undefined;
 	let cancelCallback: (() => void) | undefined;
 	const enqueuedFirstRecord = new Set();
-
-	let hasGameAttributesStartingSeason = false;
 
 	let numRecordsSeen = 0;
 	let numRecordsTotal = 0;
@@ -229,9 +225,6 @@ const makeExportStream = async (
 					}
 
 					const gameAttributesObject = gameAttributesArrayToObject(rows);
-
-					hasGameAttributesStartingSeason =
-						gameAttributesObject.startingSeason !== undefined;
 
 					await writeRootObject(
 						controller,
@@ -364,19 +357,6 @@ const makeExportStream = async (
 
 					if (storeIndex >= stores.length) {
 						// Done whole export!
-
-						if (
-							!stores.includes("gameAttributes") ||
-							(hasHistoricalData && !hasGameAttributesStartingSeason)
-						) {
-							// Set startingSeason if gameAttributes is not selected, otherwise it's going to fail loading unless startingSeason is coincidentally the same as the default
-							await writeRootObject(
-								controller,
-								"startingSeason",
-								(await leagueDB.get("gameAttributes", "startingSeason"))?.value,
-							);
-						}
-
 						await controller.enqueue(`${newline}}${newline}`);
 
 						done();

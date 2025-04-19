@@ -1,3 +1,20 @@
+option to exclude notable games box scores from deletion
+- ASG
+- statistical feats
+- buzzer beaters
+- playoffs
+- finals
+- games involving your team
+- manually flag games
+  - add new "saved games" page
+- notes
+- firefox auto delete performance
+  - do what we do now if no need to check actual box score
+  - otherwise, maybe move to newPhasePreseason and run async in background
+
+make spd less important for WR https://discord.com/channels/290013534023057409/331882115119448065/1361879407400063176
+- also recalculate ovr formula
+
 FG% leader has very few FG http://localhost/l/12/leaders/all/perGame/regularSeason
 
 no height changes with 100% determinism https://old.reddit.com/r/BasketballGM/comments/mhj2r2/monthly_suggestions_thread/gu9tsqi/
@@ -28,19 +45,6 @@ store list of prior worker console commands https://discord.com/channels/2900135
 some way to export play-by-play and box score https://discord.com/channels/290013534023057409/1357064671118753904/1357521047934734397
 
 population rounding should be dynamic https://discord.com/channels/290013534023057409/331882115119448065/1353247122224451675
-
-option to exclude notable games box scores from deletion
-- ASG
-- statistical feats
-- buzzer beaters
-- playoffs
-- finals
-- games involving your team
-- manually flag games
-  - add new "saved games" page
-- firefox auto delete performance
-  - do what we do now if no need to check actual box score
-  - otherwise, maybe move to newPhasePreseason and run async in background
 
 If you go onto a team and start spam releasing players quickly (best way to do this is decrease window size) it will show a black error box saying you are not allowed to do this. also happens if you try to release a player twice before the game updates the ui https://discord.com/channels/290013534023057409/290015591216054273/1310075135444783164
 - happens in league with tons of free agents https://discord.com/channels/290013534023057409/290015591216054273/1352057685574684742

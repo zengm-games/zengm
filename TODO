@@ -7,10 +7,18 @@ option to exclude notable games box scores from deletion
 - games involving your team
 - manually flag games
   - add new "saved games" page
+    - regardless of the manual flag, need some way to easily look at these saved games. could use same mechanism as deleting to identify them, but ignore year constraint
 - notes
-- firefox auto delete performance
+- firefox auto delete performance - still 10x slower to use openCursor vs openKeyCursor
   - do what we do now if no need to check actual box score
   - otherwise, maybe move to newPhasePreseason and run async in background
+  - could set a flag on the game object to determine if it should be deleted or not, and index on that
+    - could either be a boolean (in compound key with season, replacing current season index) or contain the season (like deleteYear, in a separate index)
+    - a little tricky for upgrading, need to consider past controlled teams and i think there's no userTids history
+    - would need to recompute on settings change
+    - or could make a more compound key containing all the things we use - would be annoying since some are arrays, booleans, etc. but could create specific fields for them. then we wouldn't need to manually recompute the index key ever
+- handle imported leagues
+- handle upgraded leagues
 
 make spd less important for WR https://discord.com/channels/290013534023057409/331882115119448065/1361879407400063176
 - also recalculate ovr formula

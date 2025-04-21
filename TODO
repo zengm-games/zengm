@@ -17,8 +17,10 @@ option to exclude notable games box scores from deletion
     - a little tricky for upgrading, need to consider past controlled teams and i think there's no userTids history
     - would need to recompute on settings change
     - or could make a more compound key containing all the things we use - would be annoying since some are arrays, booleans, etc. but could create specific fields for them. then we wouldn't need to manually recompute the index key ever
+  - Could do read-only iterate in background and delete with cache, only requires saving gid in memory right?
 - handle imported leagues
 - handle upgraded leagues
+- test baseball performance
 
 make spd less important for WR https://discord.com/channels/290013534023057409/331882115119448065/1361879407400063176
 - also recalculate ovr formula

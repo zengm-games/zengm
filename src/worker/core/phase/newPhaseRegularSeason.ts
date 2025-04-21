@@ -27,21 +27,13 @@ const newPhaseRegularSeason = async (
 	await season.setSchedule(season.newSchedule(teams));
 
 	if (g.get("autoDeleteOldBoxScores")) {
-		const tx = idb.league.transaction("games", "readwrite");
-		const gameStore = tx.store;
-		const gameIndex = gameStore.index("season");
-
-		// openKeyCursor is crucial for performance in Firefox
-		let cursor = await gameIndex.openKeyCursor(
+		// readwrite index is slow here in Firefox unless we iterate using openKeyCursor, but that means it's difficult to apply complex logic to deciding when to delete a game. So iterate with full objects in a readonly cursor, and save the deleting for later (happens at the end of phase change, so very soon) because just deleting a bunch of games by their primary key is fast.
+		const gameIndex = idb.league.transaction("games").store.index("season");
+		for await (const { value: game } of gameIndex.iterate(
 			IDBKeyRange.upperBound(g.get("season") - 3),
-		);
-
-		while (cursor) {
-			gameStore.delete(cursor.primaryKey);
-			cursor = await cursor.continue();
+		)) {
+			await idb.cache.games.delete(game.gid);
 		}
-
-		await tx.done;
 	}
 
 	// Without this, then there is a race condition creating it on demand in addGame, and some of the first day's games are lost

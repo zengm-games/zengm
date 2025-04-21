@@ -11,10 +11,10 @@ import type { View } from "../../../common/types.ts";
 import SeasonIcons from "./SeasonIcons.tsx";
 import TopStuff from "./TopStuff.tsx";
 import { PLAYER } from "../../../common/index.ts";
-import TeamAbbrevLink from "../../components/TeamAbbrevLink.tsx";
 import HideableSection from "../../components/HideableSection.tsx";
 import { StatsTable } from "./StatsTable.tsx";
 import { highlightLeaderText, MaybeBold, SeasonLink } from "./common.tsx";
+import { wrappedTeamAbbrevLink } from "../../components/TeamAbbrevLink.tsx";
 
 const Player2 = ({
 	bestPos,
@@ -167,11 +167,11 @@ const Player2 = ({
 										</>
 									),
 								},
-								<TeamAbbrevLink
-									abbrev={r.abbrev}
-									season={r.season}
-									tid={r.tid}
-								/>,
+								wrappedTeamAbbrevLink({
+									abbrev: r.abbrev,
+									season: r.season,
+									tid: r.tid,
+								}),
 								<MaybeBold bold={leaders[r.season]?.attrs.has("age")}>
 									{r.age}
 								</MaybeBold>,

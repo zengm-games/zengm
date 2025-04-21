@@ -4,7 +4,6 @@ import { getCols, helpers } from "../../util/index.ts";
 import { isSport } from "../../../common/index.ts";
 import { highlightLeaderText, MaybeBold, SeasonLink } from "./common.tsx";
 import { expandFieldingStats } from "../../util/expandFieldingStats.baseball.ts";
-import TeamAbbrevLink from "../../components/TeamAbbrevLink.tsx";
 import { formatStatGameHigh } from "../PlayerStats.tsx";
 import SeasonIcons from "./SeasonIcons.tsx";
 import HideableSection from "../../components/HideableSection.tsx";
@@ -12,6 +11,7 @@ import { DataTable } from "../../components/index.tsx";
 import clsx from "clsx";
 import { useRangeFooter } from "./useRangeFooter.ts";
 import type { FooterRow } from "../../components/DataTable/Footer.tsx";
+import { wrappedTeamAbbrevLink } from "../../components/TeamAbbrevLink.tsx";
 
 export const StatsTable = ({
 	name,
@@ -286,12 +286,12 @@ export const StatsTable = ({
 						</>
 					),
 				},
-				<TeamAbbrevLink
-					abbrev={ps.abbrev}
-					className={className}
-					season={ps.season}
-					tid={ps.tid}
-				/>,
+				wrappedTeamAbbrevLink({
+					abbrev: ps.abbrev,
+					className,
+					season: ps.season,
+					tid: ps.tid,
+				}),
 				<MaybeBold bold={leaders[ps.season]?.attrs.has("age")}>
 					{ps.age}
 				</MaybeBold>,

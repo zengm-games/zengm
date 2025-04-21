@@ -1,7 +1,5 @@
 when sorting a text column that contains undefined values (such as abbrev column of ratings table on player profile), the undefined row always comes first. should only come first for either ascending or descending (maybe whichever is not default for that col?)
 
-starting pitcher gets BS somehow https://discord.com/channels/290013534023057409/944392892905037885/1363691921675124916
-
 option to exclude notable games box scores from deletion
 - ASG
 - statistical feats

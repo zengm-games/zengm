@@ -1940,16 +1940,17 @@ class GameSim extends GameSimBase {
 	}
 
 	doScore(runInfo: OccupiedBase, rbi?: PlayerGameSim) {
-		const pitcher =
+		const responsiblePitcher =
 			this.team[this.d].playersByPid[runInfo.responsiblePitcherPid];
 
 		const unearned =
 			runInfo.reachedOnError ||
-			(this.outsIfNoErrorsByPitcherPid[pitcher.id] ?? 0) >= NUM_OUTS_PER_INNING;
+			(this.outsIfNoErrorsByPitcherPid[responsiblePitcher.id] ?? 0) >=
+				NUM_OUTS_PER_INNING;
 
-		this.recordStat(this.d, pitcher, "rPit");
+		this.recordStat(this.d, responsiblePitcher, "rPit");
 		if (!unearned) {
-			this.recordStat(this.d, pitcher, "er");
+			this.recordStat(this.d, responsiblePitcher, "er");
 		}
 
 		this.recordStat(this.o, runInfo.p, "r");
@@ -1963,7 +1964,9 @@ class GameSim extends GameSimBase {
 
 			// Game was just tied up, so this could be a blown save
 			if (this.team[this.d].saveSituation !== undefined) {
-				this.recordStat(this.d, pitcher, "bs");
+				// BS applies to the current pitcher in the game, not the pitcher responsible for the run
+				const currentPitcher = this.team[this.d].playersInGameByPos.P.p;
+				this.recordStat(this.d, currentPitcher, "bs");
 
 				// No longer save eligible
 				this.team[this.d].saveSituation = undefined;
@@ -1974,7 +1977,7 @@ class GameSim extends GameSimBase {
 		) {
 			// This run just broke the tie, now someone is winning
 			this.winEligiblePid = this.team[this.o].playersInGameByPos.P.p.id;
-			this.lossEligiblePid = pitcher.id;
+			this.lossEligiblePid = responsiblePitcher.id;
 		}
 	}
 

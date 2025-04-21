@@ -8,7 +8,9 @@ import { stripVTControlCharacters, styleText } from "node:util";
 import { SPORTS, type Sport } from "../lib/getSport.ts";
 
 const isUnicodeSupported =
-	process.platform !== "win32" || Boolean(process.env.WT_SESSION);
+	process.platform !== "win32" ||
+	Boolean(process.env.WT_SESSION) || // Windows Terminal
+	process.env.TERM_PROGRAM === "vscode";
 
 const isInteractive = (stream: WriteStream) =>
 	Boolean(

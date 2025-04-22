@@ -1,5 +1,3 @@
-when sorting a text column that contains undefined values (such as abbrev column of ratings table on player profile), the undefined row always comes first. should only come first for either ascending or descending (maybe whichever is not default for that col?)
-
 option to exclude notable games box scores from deletion
 - ASG
 - statistical feats

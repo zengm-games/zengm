@@ -126,59 +126,90 @@ describe("orderBy", () => {
 	});
 
 	// lodash did this (I think) and parts of my code rely on it
-	test("null is treated like Infinity", () => {
-		const items = [
-			{
-				a: 1,
-			},
-			{
-				a: 3,
-			},
-			{
-				a: 0,
-			},
-			{
-				a: 2,
-			},
-			{
-				a: null,
-			},
-		];
+	test("null/undefined is treated like Infinity", () => {
+		for (const nullUndefined of [null, undefined]) {
+			const items = [
+				{
+					a: 1,
+				},
+				{
+					a: 3,
+				},
+				{
+					a: 0,
+				},
+				{
+					a: 2,
+				},
+				{
+					a: nullUndefined,
+				},
+			];
 
-		assert.deepStrictEqual(orderBy(items, "a", "asc"), [
-			{
-				a: 0,
-			},
-			{
-				a: 1,
-			},
-			{
-				a: 2,
-			},
-			{
-				a: 3,
-			},
-			{
-				a: null,
-			},
-		]);
+			assert.deepStrictEqual(orderBy(items, "a", "asc"), [
+				{
+					a: 0,
+				},
+				{
+					a: 1,
+				},
+				{
+					a: 2,
+				},
+				{
+					a: 3,
+				},
+				{
+					a: nullUndefined,
+				},
+			]);
 
-		assert.deepStrictEqual(orderBy(items, "a", "desc"), [
-			{
-				a: null,
-			},
-			{
-				a: 3,
-			},
-			{
-				a: 2,
-			},
-			{
-				a: 1,
-			},
-			{
-				a: 0,
-			},
-		]);
+			assert.deepStrictEqual(orderBy(items, "a", "desc"), [
+				{
+					a: nullUndefined,
+				},
+				{
+					a: 3,
+				},
+				{
+					a: 2,
+				},
+				{
+					a: 1,
+				},
+				{
+					a: 0,
+				},
+			]);
+		}
+	});
+
+	test("null/undefined is treated as last possibly string (also kind of tests mixed string/number sorting)", () => {
+		for (const nullUndefined of [null, undefined]) {
+			const items = [
+				{
+					abbrev: "CIN",
+				},
+				{
+					abbrev: nullUndefined,
+				},
+			];
+			assert.deepStrictEqual(orderBy(items, "abbrev", "asc"), [
+				{
+					abbrev: "CIN",
+				},
+				{
+					abbrev: nullUndefined,
+				},
+			]);
+			assert.deepStrictEqual(orderBy(items, "abbrev", "desc"), [
+				{
+					abbrev: nullUndefined,
+				},
+				{
+					abbrev: "CIN",
+				},
+			]);
+		}
 	});
 });

@@ -144,6 +144,15 @@ const createSortFunction = <Item, Key extends OrderByKey<Item>>(
 
 			const descending = order === "desc";
 
+			const typeA = typeof valueA;
+			const typeB = typeof valueB;
+			if (typeA === "number" && typeB === "string") {
+				return descending ? -1 : 1;
+			}
+			if (typeA === "string" && typeB === "number") {
+				return descending ? 1 : -1;
+			}
+
 			if (valueA < valueB) {
 				return descending ? 1 : -1;
 			}

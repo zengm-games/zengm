@@ -26,9 +26,13 @@ const DraftAbbrev = ({
 }) => {
 	const teamInfoCache = useLocal((state) => state.teamInfoCache);
 
-	const t = tInput ?? teamInfoCache[tid] ?? { abbrev: "???" };
-	const originalT = originalTInput ??
-		teamInfoCache[originalTid] ?? { abbrev: "???" };
+	const t = tInput ?? teamInfoCache[tid];
+	const originalT = originalTInput ?? teamInfoCache[originalTid];
+
+	if (!t || !originalT) {
+		// Happens for players like undrafted on the draft history page, tid is <0
+		return;
+	}
 
 	const abbrev = t.abbrev;
 	const originalAbbrev = originalT.abbrev;

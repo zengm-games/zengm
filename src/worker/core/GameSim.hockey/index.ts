@@ -1395,7 +1395,10 @@ class GameSim extends GameSimBase {
 				(p) => !playersRemainingOn.includes(p),
 			);
 			if (emergencyPlayers.length === 0) {
-				throw new Error("Not enough players");
+				// This could happen if everyone is injured resulting in lines not having players
+				emergencyPlayers = this.team[t].depth[pos].filter(
+					(p) => !playersRemainingOn.includes(p),
+				);
 			}
 			return random.choice(emergencyPlayers);
 		}

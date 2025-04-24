@@ -41,7 +41,7 @@ export const Face = ({
 			window.removeEventListener("message", listener);
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [faceCount]);
 
 	const [editJson, setEditJson] = useState(false);
 

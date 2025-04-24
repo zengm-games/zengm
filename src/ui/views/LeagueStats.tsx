@@ -48,25 +48,30 @@ const LeagueStats = ({
 		basicColNames.push("%");
 	}
 	basicColNames.push("AvgAge");
-	if (superCols) {
-		superCols[0].colspan += 1;
-	}
 
+	let actualSuperCols;
 	if (superCols) {
-		superCols[0].colspan += 1;
-		if (otl) {
-			superCols[0].colspan += 1;
+		actualSuperCols = helpers.deepCopy(superCols);
+		if (actualSuperCols) {
+			actualSuperCols[0].colspan += 1;
 		}
-		if (ties) {
-			superCols[0].colspan += 1;
-		}
-		if (tid >= 0) {
-			superCols[0].colspan -= 1;
-		}
-		if (usePts) {
-			superCols[0].colspan += 2;
-		} else {
-			superCols[0].colspan += 1;
+
+		if (actualSuperCols) {
+			actualSuperCols[0].colspan += 1;
+			if (otl) {
+				actualSuperCols[0].colspan += 1;
+			}
+			if (ties) {
+				actualSuperCols[0].colspan += 1;
+			}
+			if (tid >= 0) {
+				actualSuperCols[0].colspan -= 1;
+			}
+			if (usePts) {
+				actualSuperCols[0].colspan += 2;
+			} else {
+				actualSuperCols[0].colspan += 1;
+			}
 		}
 	}
 
@@ -185,7 +190,7 @@ const LeagueStats = ({
 				name={`LeagueStats${teamOpponent}`}
 				pagination={pagination}
 				rows={rows}
-				superCols={superCols}
+				superCols={actualSuperCols}
 			/>
 		</>
 	);

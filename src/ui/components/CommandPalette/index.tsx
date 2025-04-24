@@ -511,7 +511,7 @@ const ResultText = ({
 	searchText: string;
 	text: string | string[];
 }) => {
-	const textArray = Array.isArray(text) ? text : [text];
+	const textArray = Array.isArray(text) ? [...text] : [text];
 
 	if (categoryPrefix) {
 		textArray[0] = `${categoryPrefix} > ${textArray[0]}`;

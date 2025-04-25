@@ -479,14 +479,16 @@ const Draft = ({
 									userRemaining={userRemaining}
 									usersTurn={usersTurn}
 								/>
-								<button
-									className="btn btn-god-mode"
-									onClick={() => {
-										setEditDraftOrder((value) => !value);
-									}}
-								>
-									Edit draft order
-								</button>
+								{godMode ? (
+									<button
+										className="btn btn-god-mode"
+										onClick={() => {
+											setEditDraftOrder((value) => !value);
+										}}
+									>
+										Edit draft order
+									</button>
+								) : null}
 							</div>
 						</>
 					) : (
@@ -586,11 +588,11 @@ const Draft = ({
 
 					<DataTable
 						cols={colsDrafted}
-						defaultSort={[0, "asc"]}
+						defaultSort={sortableRows ? "disableSort" : [0, "asc"]}
 						defaultStickyCols={window.mobile ? 1 : 2}
 						hideAllControls={sortableRows}
 						name="Draft:Drafted"
-						pagination={sortableRows ? rowsDrafted.length > 100 : false}
+						pagination={sortableRows ? false : rowsDrafted.length > 100}
 						rows={rowsDrafted}
 						sortableRows={
 							sortableRows

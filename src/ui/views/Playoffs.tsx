@@ -126,7 +126,7 @@ const Playoffs = ({
 							}
 						}}
 					>
-						{editing ? "Save Changes" : "Edit Playoff Teams"}
+						{editing ? "Save changes" : "Edit playoff teams"}
 					</button>
 					{editing ? (
 						<button

@@ -1,7 +1,5 @@
-manually specify draft order in god mode
-- test perf in FBGM and ZGMG
-
 creating a new league from a file while selecting a new team should reset the grace period, right? but it seems not to https://discord.com/channels/290013534023057409/290015591216054273/1364800457666592841
+- does this make sense? might as well just let you change teams at any point without god mode
 
 option to exclude notable games box scores from deletion
 - ASG

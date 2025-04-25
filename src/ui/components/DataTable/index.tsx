@@ -33,6 +33,7 @@ import {
 	getId,
 	MyDragOverlay,
 	SortableContextWrappers,
+	type DisableRow,
 	type HighlightHandle,
 } from "./sortableRows.tsx";
 import { DataTableContext } from "./contexts.ts";
@@ -123,7 +124,8 @@ export type Props = {
 	showRowLabels?: boolean;
 	small?: boolean;
 	sortableRows?: {
-		highlightHandle: HighlightHandle;
+		disableRow?: DisableRow;
+		highlightHandle?: HighlightHandle;
 		onChange: (a: { oldIndex: number; newIndex: number }) => void;
 		onSwap: (index1: number, index2: number) => void;
 	};
@@ -168,10 +170,17 @@ const DataTable = ({
 	superCols,
 	title,
 }: Props) => {
-	if (sortableRows && !hideAllControls) {
-		throw new Error(
-			`If you enable sortable, you must also enable hideAllControls`,
-		);
+	if (sortableRows) {
+		if (!hideAllControls) {
+			throw new Error(
+				`If you enable sortableRows, you must also enable hideAllControls`,
+			);
+		}
+		if (!hideAllControls) {
+			throw new Error(
+				`If you enable sortableRows, you cannot enable pagination`,
+			);
+		}
 	}
 
 	const hideAllControlsBool = !!hideAllControls;

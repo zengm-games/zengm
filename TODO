@@ -1,3 +1,10 @@
+manually specify draft order in god mode
+- make draft page drag-and-drop, with purple handles
+- handle drafted player existing
+  - affects offsets of indexes from handles
+
+creating a new league from a file while selecting a new team should reset the grace period, right? but it seems not to https://discord.com/channels/290013534023057409/290015591216054273/1364800457666592841
+
 option to exclude notable games box scores from deletion
 - ASG
 - statistical feats
@@ -1187,9 +1194,6 @@ offsetting penalties broken on kickoff https://discord.com/channels/290013534023
 
 on team history, graph of team ovr / winp / mov over time, star for championship
 - maybe better on league history, to show for whole league?
-
-manually specify draft order in god mode
-- make draft page drag-and-drop, with purple handles
 
 hockey ovr revamp
 - ovrs for skater and goalie. determine skater positions like BBGM, including possibility of hybrid positions like F. cause there's really a fair amount of overlap in what players do

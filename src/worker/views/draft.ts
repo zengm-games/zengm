@@ -232,6 +232,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			expansionDraft: g.get("phase") === PHASE.EXPANSION_DRAFT,
 			expansionDraftFilteredTeamsMessage,
 			fantasyDraft,
+			godMode: g.get("godMode"),
 			season: g.get("season"),
 			spectator: g.get("spectator"),
 			stats,

@@ -32,7 +32,7 @@ const DraftButtons = ({
 	usersTurn: boolean;
 }) => {
 	return (
-		<div className="btn-group mb-3" id="draft-buttons">
+		<div className="btn-group" id="draft-buttons">
 			<button
 				className="btn btn-light-bordered"
 				disabled={usersTurn && !spectator}
@@ -86,6 +86,7 @@ const Draft = ({
 	expansionDraft,
 	expansionDraftFilteredTeamsMessage,
 	fantasyDraft,
+	godMode,
 	season,
 	spectator,
 	stats,
@@ -119,6 +120,13 @@ const Draft = ({
 	const userRemaining = remainingPicks.some((p) =>
 		userTids.includes(p.draft.tid),
 	);
+
+	const [editDraftOrder, setEditDraftOrder] = useState(false);
+
+	const canEditDraftOrder = godMode && remainingPicks.length > 0;
+
+	const sortableRows = editDraftOrder && canEditDraftOrder;
+
 	const colsUndrafted = getCols(
 		["#", "Name", "Pos", "Age", "Ovr", "Pot", "Draft"],
 		{
@@ -423,11 +431,21 @@ const Draft = ({
 									</p>
 								</div>
 							) : null}
-							<DraftButtons
-								spectator={spectator}
-								userRemaining={userRemaining}
-								usersTurn={usersTurn}
-							/>
+							<div className="mb-3 d-flex gap-2 flex-wrap">
+								<DraftButtons
+									spectator={spectator}
+									userRemaining={userRemaining}
+									usersTurn={usersTurn}
+								/>
+								<button
+									className="btn btn-god-mode"
+									onClick={() => {
+										setEditDraftOrder((value) => !value);
+									}}
+								>
+									Edit draft order
+								</button>
+							</div>
 						</>
 					) : (
 						<>
@@ -528,9 +546,39 @@ const Draft = ({
 						cols={colsDrafted}
 						defaultSort={[0, "asc"]}
 						defaultStickyCols={window.mobile ? 1 : 2}
+						hideAllControls={sortableRows}
 						name="Draft:Drafted"
-						pagination={rowsDrafted.length > 100}
+						pagination={sortableRows ? rowsDrafted.length > 100 : false}
 						rows={rowsDrafted}
+						sortableRows={
+							sortableRows
+								? {
+										disableRow: (index) => drafted[index].pid >= 0,
+										onChange: async ({ oldIndex, newIndex }) => {
+											if (oldIndex === newIndex) {
+												return;
+											}
+											console.log(oldIndex, newIndex);
+											/*const pids = players.map((p) => p.pid);
+															const newSortedPids = arrayMoveImmutable(
+																pids,
+																oldIndex,
+																newIndex,
+															);
+															setSortedPids(newSortedPids);
+															await toWorker("main", "reorderRosterDrag", newSortedPids);*/
+										},
+										onSwap: async (index1, index2) => {
+											console.log(index1, index2);
+											/*const newSortedPids = players.map((p) => p.pid);
+															newSortedPids[index1] = players[index2].pid;
+															newSortedPids[index2] = players[index1].pid;
+															setSortedPids(newSortedPids);
+															await toWorker("main", "reorderRosterDrag", newSortedPids);*/
+										},
+									}
+								: undefined
+						}
 					/>
 				</div>
 			</div>

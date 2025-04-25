@@ -68,16 +68,23 @@ const Row = ({
 	const { clicked, toggleClicked } = useClickable();
 
 	let classNames;
-	if (typeof row.classNames === "function") {
-		const { draggedIndex } = use(SortableTableContext);
+	let disableSort;
+	if (sortableRows || typeof row.classNames === "function") {
+		const { disableRow, draggedIndex } = use(SortableTableContext);
 
-		classNames = row.classNames({
-			isDragged: draggedIndex !== undefined,
-			isFiltered,
-			sortBys,
-		});
-	} else {
-		classNames = row.classNames;
+		if (sortableRows && disableRow) {
+			disableSort = disableRow(sortableRows.index);
+		}
+
+		if (typeof row.classNames === "function") {
+			classNames = row.classNames({
+				isDragged: draggedIndex !== undefined,
+				isFiltered,
+				sortBys,
+			});
+		} else {
+			classNames = row.classNames;
+		}
 	}
 
 	return (
@@ -90,7 +97,8 @@ const Row = ({
 					sortableRows.draggedIndex === sortableRows.index,
 			})}
 			onClick={clickable ? toggleClicked : undefined}
-			ref={sortableRows?.setNodeRef}
+			// Not sure why this works to disable sorting for certain rows, but it seems to work!
+			ref={disableSort ? undefined : sortableRows?.setNodeRef}
 			style={sortableRows?.style}
 		>
 			{showBulkSelectCheckboxes ? (

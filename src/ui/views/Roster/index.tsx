@@ -150,9 +150,8 @@ const Roster = ({
 	// Use the result of drag and drop to sort players, before the "official" order comes back as props
 	let playersSorted: typeof players;
 	if (sortedPids !== undefined) {
-		playersSorted = sortedPids.map((pid) => {
-			return players.find((p) => p.pid === pid);
-		});
+		const playersByPid = groupByUnique(players, "pid");
+		playersSorted = sortedPids.map((pid) => playersByPid[pid]);
 	} else {
 		playersSorted = players;
 	}

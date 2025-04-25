@@ -21,6 +21,7 @@ import {
 } from "../components/contract.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { arrayMoveImmutable } from "array-move";
 
 const DraftButtons = ({
 	spectator,
@@ -558,23 +559,36 @@ const Draft = ({
 											if (oldIndex === newIndex) {
 												return;
 											}
-											console.log(oldIndex, newIndex);
-											/*const pids = players.map((p) => p.pid);
-															const newSortedPids = arrayMoveImmutable(
-																pids,
-																oldIndex,
-																newIndex,
-															);
-															setSortedPids(newSortedPids);
-															await toWorker("main", "reorderRosterDrag", newSortedPids);*/
+											const numDraftedPlayers =
+												drafted.length - remainingPicks.length;
+											const dpids = remainingPicks.map((row) => row.draft.dpid);
+											const newSortedDpids = arrayMoveImmutable(
+												dpids,
+												oldIndex - numDraftedPlayers,
+												newIndex - numDraftedPlayers,
+											);
+											await toWorker(
+												"main",
+												"reorderDraftDrag",
+												newSortedDpids,
+											);
 										},
 										onSwap: async (index1, index2) => {
+											const numDraftedPlayers =
+												drafted.length - remainingPicks.length;
+											const i1 = index1 - numDraftedPlayers;
+											const i2 = index2 - numDraftedPlayers;
 											console.log(index1, index2);
-											/*const newSortedPids = players.map((p) => p.pid);
-															newSortedPids[index1] = players[index2].pid;
-															newSortedPids[index2] = players[index1].pid;
-															setSortedPids(newSortedPids);
-															await toWorker("main", "reorderRosterDrag", newSortedPids);*/
+											const newSortedDpids = remainingPicks.map(
+												(row) => row.draft.dpid,
+											);
+											newSortedDpids[i1] = remainingPicks[i2].draft.dpid;
+											newSortedDpids[i2] = remainingPicks[i1].draft.dpid;
+											await toWorker(
+												"main",
+												"reorderDraftDrag",
+												newSortedDpids,
+											);
 										},
 									}
 								: undefined

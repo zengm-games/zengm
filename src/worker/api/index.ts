@@ -3030,20 +3030,42 @@ const reorderDepthDrag = async ({
 	}
 };
 
-const reorderRosterDrag = async (sortedPids: number[]) => {
-	await Promise.all(
-		sortedPids.map(async (pid, rosterOrder) => {
-			const p = await idb.cache.players.get(pid);
-			if (!p) {
-				throw new Error("Invalid pid");
-			}
+const reorderDraftDrag = async (sortedDpids: number[]) => {
+	const draftPicks = await draft.getOrder();
+	for (let i = 0; i < draftPicks.length; i++) {
+		const dp = draftPicks[i];
+		const sortedIndex = sortedDpids.indexOf(dp.dpid);
+		const dpToTakeOrderFrom = draftPicks[sortedIndex];
+		if (!dpToTakeOrderFrom) {
+			throw new Error("Invalid dpid");
+		}
 
-			if (p.rosterOrder !== rosterOrder) {
-				p.rosterOrder = rosterOrder;
-				await idb.cache.players.put(p);
-			}
-		}),
-	);
+		// Only need to update database if something changed
+		if (dpToTakeOrderFrom.dpid !== dp.dpid) {
+			await idb.cache.draftPicks.put({
+				...dp,
+				round: dpToTakeOrderFrom.round,
+				pick: dpToTakeOrderFrom.pick,
+			});
+		}
+	}
+
+	await toUI("realtimeUpdate", [["playerMovement"]]);
+};
+
+const reorderRosterDrag = async (sortedPids: number[]) => {
+	for (let rosterOrder = 0; rosterOrder < sortedPids.length; rosterOrder++) {
+		const pid = sortedPids[rosterOrder];
+		const p = await idb.cache.players.get(pid);
+		if (!p) {
+			throw new Error("Invalid pid");
+		}
+
+		if (p.rosterOrder !== rosterOrder) {
+			p.rosterOrder = rosterOrder;
+			await idb.cache.players.put(p);
+		}
+	}
 
 	const t = await idb.cache.teams.get(g.get("userTid"));
 	if (t) {
@@ -4789,6 +4811,7 @@ export default {
 		removeLeague,
 		removePlayers,
 		reorderDepthDrag,
+		reorderDraftDrag,
 		reorderRosterDrag,
 		resetPlayingTime,
 		retiredJerseyNumberDelete,

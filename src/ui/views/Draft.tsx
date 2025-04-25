@@ -22,6 +22,7 @@ import {
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { arrayMoveImmutable } from "array-move";
+import { groupByUnique } from "../../common/utils.ts";
 
 const DraftButtons = ({
 	spectator,
@@ -98,6 +99,48 @@ const Draft = ({
 }: View<"draft">) => {
 	const [drafting, setDrafting] = useState(false);
 
+	const [editDraftOrder, setEditDraftOrder] = useState(false);
+	const [sortedDpids, setSortedDpids] = useState<number[] | undefined>(
+		undefined,
+	);
+	const [prevDrafted, setPrevDrafted] = useState(drafted);
+
+	if (drafted !== prevDrafted) {
+		setSortedDpids(undefined);
+		setPrevDrafted(drafted);
+	}
+
+	// Use the result of drag and drop to sort drafted players and picks, before the "official" order comes back as props
+	let draftedSorted: typeof drafted;
+	if (sortedDpids !== undefined) {
+		const draftedByDpid = groupByUnique(drafted, (p) => p.draft.dpid);
+		const draftedPlayers = drafted.filter((p) => p.pid >= 0);
+		const dpids = drafted.map((row) => row.draft.dpid);
+		draftedSorted = [
+			// Drafted players always at top
+			...draftedPlayers,
+
+			// Then draft picks follow
+			...sortedDpids.map((dpid, i) => {
+				const unsortedDpid = dpids[i + draftedPlayers.length];
+				const dpToTakeOrderFrom = draftedByDpid[unsortedDpid].draft;
+
+				return {
+					...draftedByDpid[dpid],
+					draft: {
+						...draftedByDpid[dpid].draft,
+
+						// Need to manually update round/pick for instant feedback rather than waiting for the server to update, because otherwise all this sortedDpids stuff is useless because the sort of the DataTable overrides it
+						round: dpToTakeOrderFrom.round,
+						pick: dpToTakeOrderFrom.pick,
+					},
+				};
+			}),
+		];
+	} else {
+		draftedSorted = drafted;
+	}
+
 	const draftUser = async (pid: number, simToNextUserPick = false) => {
 		setDrafting(true);
 		await toWorker("main", "draftUser", pid);
@@ -115,14 +158,12 @@ const Draft = ({
 				? "Expansion Draft"
 				: "Draft",
 	});
-	const remainingPicks = drafted.filter((p) => p.pid < 0);
+	const remainingPicks = draftedSorted.filter((p) => p.pid < 0);
 	const nextPick = remainingPicks[0];
 	const usersTurn = !!(nextPick && userTids.includes(nextPick.draft.tid));
 	const userRemaining = remainingPicks.some((p) =>
 		userTids.includes(p.draft.tid),
 	);
-
-	const [editDraftOrder, setEditDraftOrder] = useState(false);
 
 	const canEditDraftOrder = godMode && remainingPicks.length > 0;
 
@@ -239,7 +280,7 @@ const Draft = ({
 
 	const teamInfoCache = useLocal((state) => state.teamInfoCache);
 
-	const rowsDrafted: DataTableRow[] = drafted.map((p, i) => {
+	const rowsDrafted: DataTableRow[] = draftedSorted.map((p, i) => {
 		const data = [
 			`${p.draft.round}-${p.draft.pick}`,
 			{
@@ -269,7 +310,7 @@ const Draft = ({
 						onClick={async () => {
 							if (!spectator) {
 								let numUserPicksBefore = 0;
-								for (const p2 of drafted) {
+								for (const p2 of draftedSorted) {
 									if (p2.draft.dpid === p.draft.dpid) {
 										break;
 									}
@@ -375,7 +416,7 @@ const Draft = ({
 		}
 
 		return {
-			key: i,
+			key: p.draft.dpid,
 			metadata:
 				p.pid >= 0
 					? {
@@ -554,19 +595,20 @@ const Draft = ({
 						sortableRows={
 							sortableRows
 								? {
-										disableRow: (index) => drafted[index].pid >= 0,
+										disableRow: (index) => draftedSorted[index].pid >= 0,
 										onChange: async ({ oldIndex, newIndex }) => {
 											if (oldIndex === newIndex) {
 												return;
 											}
 											const numDraftedPlayers =
-												drafted.length - remainingPicks.length;
+												draftedSorted.length - remainingPicks.length;
 											const dpids = remainingPicks.map((row) => row.draft.dpid);
 											const newSortedDpids = arrayMoveImmutable(
 												dpids,
 												oldIndex - numDraftedPlayers,
 												newIndex - numDraftedPlayers,
 											);
+											setSortedDpids(newSortedDpids);
 											await toWorker(
 												"main",
 												"reorderDraftDrag",
@@ -575,15 +617,15 @@ const Draft = ({
 										},
 										onSwap: async (index1, index2) => {
 											const numDraftedPlayers =
-												drafted.length - remainingPicks.length;
+												draftedSorted.length - remainingPicks.length;
 											const i1 = index1 - numDraftedPlayers;
 											const i2 = index2 - numDraftedPlayers;
-											console.log(index1, index2);
 											const newSortedDpids = remainingPicks.map(
 												(row) => row.draft.dpid,
 											);
 											newSortedDpids[i1] = remainingPicks[i2].draft.dpid;
 											newSortedDpids[i2] = remainingPicks[i1].draft.dpid;
+											setSortedDpids(newSortedDpids);
 											await toWorker(
 												"main",
 												"reorderDraftDrag",

@@ -1,5 +1,4 @@
 manually specify draft order in god mode
-- does it need a setSortedPids (like on roster) thing to prevent flicker
 - test perf in FBGM and ZGMG
 
 creating a new league from a file while selecting a new team should reset the grace period, right? but it seems not to https://discord.com/channels/290013534023057409/290015591216054273/1364800457666592841

@@ -82,9 +82,10 @@ const Row = ({
 				isFiltered,
 				sortBys,
 			});
-		} else {
-			classNames = row.classNames;
 		}
+	}
+	if (typeof row.classNames !== "function") {
+		classNames = row.classNames;
 	}
 
 	return (

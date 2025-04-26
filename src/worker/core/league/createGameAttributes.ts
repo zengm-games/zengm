@@ -33,12 +33,6 @@ const createGameAttributes = async (
 	},
 	conditions?: Conditions,
 ) => {
-	// Can't get fired for the first two seasons
-	const inputPhase = gameAttributesInput.nextPhase ?? gameAttributesInput.phase;
-	const gracePeriodEnd =
-		startingSeason +
-		(inputPhase !== undefined && inputPhase >= PHASE.PLAYOFFS ? 3 : 2);
-
 	const gameAttributes: GameAttributesLeagueWithHistory = {
 		...defaultGameAttributes,
 		userTid: [
@@ -58,7 +52,6 @@ const createGameAttributes = async (
 			name: t.name,
 			region: t.region,
 		})),
-		gracePeriodEnd,
 		numTeams: teamInfos.length,
 		numActiveTeams: teamInfos.filter((t) => !t.disabled).length,
 	};
@@ -132,6 +125,15 @@ const createGameAttributes = async (
 		if (!gameAttributes.userTids.includes(userTid)) {
 			gameAttributes.userTids = [userTid];
 		}
+	}
+
+	// Can't get fired for the first two seasons
+	if (gameAttributesInput?.gracePeriodEnd === undefined) {
+		const inputPhase =
+			gameAttributesInput.nextPhase ?? gameAttributesInput.phase;
+		gameAttributes.gracePeriodEnd =
+			gameAttributes.season +
+			(inputPhase !== undefined && inputPhase >= PHASE.PLAYOFFS ? 3 : 2);
 	}
 
 	// Extra check for lowestDifficulty, so that it won't be overwritten by a league file if the user selects Easy

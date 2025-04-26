@@ -181,6 +181,11 @@ const DataTable = ({
 				`If you enable sortableRows, you cannot enable pagination`,
 			);
 		}
+		if (defaultSort !== "disableSort") {
+			throw new Error(
+				`If you enable sortableRows, you must set defaultSort to "disableSort"`,
+			);
+		}
 	}
 
 	const hideAllControlsBool = !!hideAllControls;

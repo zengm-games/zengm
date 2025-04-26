@@ -46,14 +46,18 @@ const updateFrivolitiesDraftClasses = async (
 		let draftClass: DraftClass | undefined;
 		const draftClasses: DraftClass[] = [];
 
+		const mostRecentDraftYear =
+			g.get("phase") >= PHASE.DRAFT ? g.get("season") : g.get("season") - 1;
+
 		for await (const { value: p } of idb.league
 			.transaction("players")
 			.store.index("draft.year, retiredYear")
-			.iterate(IDBKeyRange.lowerBound([g.get("startingSeason")]))) {
-			if (p.draft.round < 1) {
-				continue;
-			}
-
+			.iterate(
+				IDBKeyRange.bound(
+					[g.get("startingSeason")],
+					[mostRecentDraftYear, Infinity],
+				),
+			)) {
 			const value = playerValue(p);
 
 			if (draftClass === undefined || p.draft.year !== draftClass.season) {

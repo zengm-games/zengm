@@ -1,5 +1,9 @@
 why is there error if you run a non-basketball build while basketball is open and then create a non-real players league?
 
+allow trading more than 2 picks
+- 2nd+ round picks should not be in the limit
+- maybe add penalty to score for >2 picks, rather than hard limit
+
 option to exclude notable games box scores from deletion
 - ASG
 - statistical feats
@@ -59,10 +63,6 @@ If you go onto a team and start spam releasing players quickly (best way to do t
 - ideally should disable other release buttons while releasing
   - maybe make it generic to computing contracts, send some signal to UI like it does when simming games
   - should also affect bulk action buttons
-
-allow trading more than 2 picks
-- 2nd+ round picks should not be in the limit
-- maybe add penalty to score for >2 picks, rather than hard limit
 
 rolldown
 - prod build

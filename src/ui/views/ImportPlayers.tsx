@@ -1,9 +1,5 @@
 import { useState, type ChangeEvent } from "react";
-import {
-	PLAYER,
-	PHASE,
-	gameAttributesArrayToObject,
-} from "../../common/index.ts";
+import { PLAYER, PHASE } from "../../common/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, toWorker, useLocal } from "../util/index.ts";
 import {
@@ -28,12 +24,9 @@ const ImportPlayers = ({
 		undefined | "loading" | "importing" | "success"
 	>();
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
-	const [leagueFile, setLeagueFile] = useState<{
-		startingSeason: number;
-		version?: number;
-	}>({
-		startingSeason: currentSeason,
-	});
+	const [leagueFileVersion, setLeagueFileVersion] = useState<
+		number | undefined
+	>();
 	const [players, setPlayers] = useState<
 		{
 			p: any;
@@ -327,24 +320,7 @@ const ImportPlayers = ({
 					}
 
 					const leagueFile = output.basicInfo;
-
-					let startingSeason = leagueFile.startingSeason;
-					if (typeof startingSeason !== "number" && leagueFile.gameAttributes) {
-						if (Array.isArray(leagueFile.gameAttributes)) {
-							leagueFile.gameAttributes = gameAttributesArrayToObject(
-								leagueFile.gameAttributes,
-							);
-						}
-						startingSeason = leagueFile.gameAttributes.startingSeason;
-					}
-					if (typeof startingSeason !== "number") {
-						throw new Error("League file must include startingSeason");
-					}
-
-					setLeagueFile({
-						startingSeason,
-						version: leagueFile.version,
-					});
+					setLeagueFileVersion(leagueFile.version);
 
 					const rawPlayers: any[] = leagueFile.players ?? [];
 
@@ -447,7 +423,7 @@ const ImportPlayers = ({
 
 							try {
 								await toWorker("main", "importPlayers", {
-									leagueFile,
+									leagueFileVersion,
 									players: players.filter((p, i) => selectedRows.map.has(i)),
 								});
 								setStatus("success");

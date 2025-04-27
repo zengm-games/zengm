@@ -2355,13 +2355,10 @@ const idbCacheFlush = async () => {
 };
 
 const importPlayers = async ({
-	leagueFile,
+	leagueFileVersion,
 	players,
 }: {
-	leagueFile: {
-		startingSeason: number;
-		version?: number;
-	};
+	leagueFileVersion: number | undefined;
 	players: {
 		p: any;
 		contractAmount: string;
@@ -2505,7 +2502,7 @@ const importPlayers = async ({
 		const p3 = await player.augmentPartialPlayer(
 			p2,
 			DEFAULT_LEVEL,
-			leagueFile.version,
+			leagueFileVersion,
 		);
 		await player.updateValues(p3);
 

@@ -965,22 +965,22 @@ const TeamFinances = ({
 								data={barData}
 								y={[
 									"expensesSalary",
-									"expensesMinTax",
-									"expensesLuxuryTax",
 									"expensesScouting",
 									"expensesCoaching",
 									"expensesHealth",
 									"expensesFacilities",
+									"expensesMinTax",
+									"expensesLuxuryTax",
 								]}
 								tooltip={(row, y) => {
 									const text = {
 										expensesSalary: "player salaries",
-										expensesMinTax: "minimum payroll tax",
-										expensesLuxuryTax: "luxury tax",
 										expensesScouting: "scouting",
 										expensesCoaching: "coaching",
 										expensesHealth: "health",
 										expensesFacilities: "facilities",
+										expensesMinTax: "minimum payroll tax",
+										expensesLuxuryTax: "luxury tax",
 									};
 
 									return `${row.season} ${text[y]}: ${helpers.formatCurrency(

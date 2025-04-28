@@ -2,6 +2,7 @@ import { bySport, PHASE, SIMPLE_AWARDS } from "../../common/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { UpdateEvents, PlayoffSeriesTeam } from "../../common/types.ts";
+import { groupByUnique, range } from "../../common/utils.ts";
 
 const addAbbrev = (
 	award: any,
@@ -69,36 +70,64 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		);
 
 		const awards = await idb.getCopies.awards(undefined, "noCopyCache");
-		const seasons: any[] = awards.map((a) => {
-			return {
-				season: a.season,
-				finalsMvp: addAbbrev(a.finalsMvp, teams, a.season),
-				mvp: addAbbrev(a.mvp, teams, a.season),
-				dpoy: addAbbrev(a.dpoy, teams, a.season),
-				dfoy: addAbbrev(a.dfoy, teams, a.season),
-				goy: addAbbrev(a.goy, teams, a.season),
-				smoy: addAbbrev(a.smoy, teams, a.season),
-				mip: addAbbrev(a.mip, teams, a.season),
-				roy: addAbbrev(a.roy, teams, a.season),
-				oroy: addAbbrev(a.oroy, teams, a.season),
-				droy: addAbbrev(a.droy, teams, a.season),
-				poy: addAbbrev(a.poy, teams, a.season),
-				rpoy: addAbbrev(a.rpoy, teams, a.season),
+		const awardsBySeason = groupByUnique(awards, "season");
+
+		// Start with the oldest season we have team or awards history for
+		const maxSeason =
+			g.get("phase") > PHASE.PLAYOFFS ? g.get("season") : g.get("season") - 1;
+		let minSeason = maxSeason;
+		for (const t of teams) {
+			if (t.seasonAttrs[0].season < minSeason) {
+				minSeason = t.seasonAttrs[0].season;
+			}
+		}
+		if (awards.length > 0 && awards[0].season < minSeason) {
+			minSeason = awards[0].season;
+		}
+
+		// Would be nice to do this by sport, but too lazy
+		const awardTypes = [
+			"finalsMvp",
+			"mvp",
+			"dpoy",
+			"dfoy",
+			"goy",
+			"smoy",
+			"mip",
+			"roy",
+			"oroy",
+			"droy",
+			"poy",
+			"rpoy",
+		];
+
+		const seasons: any[] = range(minSeason, maxSeason + 1).map((season) => {
+			const a = awardsBySeason[season];
+
+			const row: any = {
+				season,
 				runnerUp: undefined,
 				champ: undefined,
 			};
+
+			for (const awardType of awardTypes) {
+				row[awardType] = addAbbrev(a?.[awardType], teams, a.season);
+			}
+
+			return row;
 		});
 
 		const playoffSeries = await idb.getCopies.playoffSeries(
 			undefined,
 			"noCopyCache",
 		);
+		const playoffSeriesBySeason = groupByUnique(playoffSeries, "season");
 
-		for (let i = 0; i < seasons.length; i++) {
-			const season = seasons[i].season;
+		for (const row of seasons) {
+			const season = row.season;
 
 			// Only check for finals result for seasons that are over
-			const series = playoffSeries.find((ps) => ps.season === season);
+			const series = playoffSeriesBySeason[season];
 
 			type MyTeam = (typeof teams)[number];
 			const formatTeam = (t: MyTeam, seed: number) => {
@@ -139,7 +168,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					);
 
 					if (t) {
-						seasons[i].champ = formatTeam(t, 1);
+						row.champ = formatTeam(t, 1);
 					}
 				} else {
 					const finals = series.series.at(-1)![0];
@@ -168,8 +197,8 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						return formatTeam(t, seed);
 					};
 
-					seasons[i].champ = formatTeamWrapper(champ);
-					seasons[i].runnerUp = formatTeamWrapper(runnerUp);
+					row.champ = formatTeamWrapper(champ);
+					row.runnerUp = formatTeamWrapper(runnerUp);
 				}
 			}
 		}

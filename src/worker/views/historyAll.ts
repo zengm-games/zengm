@@ -85,21 +85,12 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			minSeason = awards[0].season;
 		}
 
-		// Would be nice to do this by sport, but too lazy
-		const awardTypes = [
-			"finalsMvp",
-			"mvp",
-			"dpoy",
-			"dfoy",
-			"goy",
-			"smoy",
-			"mip",
-			"roy",
-			"oroy",
-			"droy",
-			"poy",
-			"rpoy",
-		];
+		const awardTypes = bySport({
+			baseball: ["finalsMvp", "mvp", "poy", "rpoy", "roy"],
+			basketball: ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"],
+			football: ["finalsMvp", "mvp", "dpoy", "oroy", "droy"],
+			hockey: ["finalsMvp", "mvp", "dpoy", "dfoy", "goy", "roy"],
+		});
 
 		const seasons: any[] = range(minSeason, maxSeason + 1).map((season) => {
 			const a = awardsBySeason[season];
@@ -111,7 +102,9 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			};
 
 			for (const awardType of awardTypes) {
-				row[awardType] = addAbbrev(a?.[awardType], teams, a.season);
+				row[awardType] = a
+					? addAbbrev(a[awardType], teams, a.season)
+					: undefined;
 			}
 
 			return row;
@@ -241,15 +234,8 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			}
 		}
 
-		const awardNames = bySport({
-			baseball: ["finalsMvp", "mvp", "poy", "rpoy", "roy"],
-			basketball: ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"],
-			football: ["finalsMvp", "mvp", "dpoy", "oroy", "droy"],
-			hockey: ["finalsMvp", "mvp", "dpoy", "dfoy", "goy", "roy"],
-		});
-
 		return {
-			awards: awardNames,
+			awards: awardTypes,
 			seasons,
 			userTid: g.get("userTid"),
 		};

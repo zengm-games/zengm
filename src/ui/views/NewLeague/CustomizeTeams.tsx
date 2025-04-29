@@ -3,7 +3,7 @@ import type { Dispatch } from "react";
 import type { NewLeagueTeamWithoutRank } from "./types.ts";
 import type { Conf, Div, Player, View } from "../../../common/types.ts";
 import clsx from "clsx";
-import { arrayMoveImmutable } from "array-move";
+import { arrayMove } from "@dnd-kit/sortable";
 import UpsertTeamModal from "./UpsertTeamModal.tsx";
 import { StickyBottomButtons } from "../../components/index.tsx";
 import { logEvent, toWorker } from "../../util/index.ts";
@@ -189,7 +189,7 @@ const reducer = (state: State, action: Action): State => {
 				return state;
 			}
 
-			const newConfs = arrayMoveImmutable(state.confs, oldIndex, newIndex);
+			const newConfs = arrayMove(state.confs, oldIndex, newIndex);
 
 			return {
 				...state,
@@ -249,7 +249,7 @@ const reducer = (state: State, action: Action): State => {
 				return state;
 			}
 
-			const newDivs2 = arrayMoveImmutable(newDivs, oldIndex, newIndex);
+			const newDivs2 = arrayMove(newDivs, oldIndex, newIndex);
 
 			return {
 				...state,

@@ -21,7 +21,7 @@ import {
 } from "../components/contract.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
-import { arrayMoveImmutable } from "array-move";
+import { arrayMove } from "@dnd-kit/sortable";
 import { groupByUnique } from "../../common/utils.ts";
 
 const DraftButtons = ({
@@ -605,7 +605,7 @@ const Draft = ({
 											const numDraftedPlayers =
 												draftedSorted.length - remainingPicks.length;
 											const dpids = remainingPicks.map((row) => row.draft.dpid);
-											const newSortedDpids = arrayMoveImmutable(
+											const newSortedDpids = arrayMove(
 												dpids,
 												oldIndex - numDraftedPlayers,
 												newIndex - numDraftedPlayers,

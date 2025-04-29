@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useState } from "react";
-import { arrayMoveImmutable } from "array-move";
+import { arrayMove } from "@dnd-kit/sortable";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, toWorker, useLocalPartial } from "../util/index.ts";
 import { DataTable, MoreLinks } from "../components/index.tsx";
@@ -503,11 +503,7 @@ const Depth = ({
 										index < numStarters * numLines,
 									onChange: async ({ oldIndex, newIndex }) => {
 										const pids = players.map((p) => p.pid);
-										const newSortedPids = arrayMoveImmutable(
-											pids,
-											oldIndex,
-											newIndex,
-										);
+										const newSortedPids = arrayMove(pids, oldIndex, newIndex);
 										setSortedPids(newSortedPids);
 										await toWorker("main", "reorderDepthDrag", {
 											pos,

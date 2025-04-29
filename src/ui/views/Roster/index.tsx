@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { arrayMoveImmutable } from "array-move";
+import { arrayMove } from "@dnd-kit/sortable";
 import {
 	bySport,
 	isSport,
@@ -532,11 +532,7 @@ const Roster = ({
 										return;
 									}
 									const pids = players.map((p) => p.pid);
-									const newSortedPids = arrayMoveImmutable(
-										pids,
-										oldIndex,
-										newIndex,
-									);
+									const newSortedPids = arrayMove(pids, oldIndex, newIndex);
 									setSortedPids(newSortedPids);
 									await toWorker("main", "reorderRosterDrag", newSortedPids);
 								},

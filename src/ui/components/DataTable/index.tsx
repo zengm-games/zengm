@@ -21,7 +21,7 @@ import getSortVal from "./getSortVal.tsx";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper.tsx";
 import { downloadFile, helpers, safeLocalStorage } from "../../util/index.ts";
 import type { SortOrder, SortType } from "../../../common/types.ts";
-import { arrayMoveImmutable } from "array-move";
+import { arrayMove } from "@dnd-kit/sortable";
 import updateSortBys from "./updateSortBys.ts";
 import useStickyXX from "./useStickyXX.ts";
 import { useDataTableState } from "./useDataTableState.ts";
@@ -521,11 +521,7 @@ const DataTable = ({
 					state.settingsCache.clear("DataTableStickyCols");
 				}}
 				onChange={({ oldIndex, newIndex }) => {
-					const newOrder = arrayMoveImmutable(
-						state.colOrder,
-						oldIndex,
-						newIndex,
-					);
+					const newOrder = arrayMove(state.colOrder, oldIndex, newIndex);
 					setStatePartial({
 						colOrder: newOrder,
 					});

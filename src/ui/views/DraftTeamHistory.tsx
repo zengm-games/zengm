@@ -11,6 +11,7 @@ import type { View } from "../../common/types.ts";
 import { PLAYER } from "../../common/index.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 
 const DraftTeamHistory = ({
 	abbrev,
@@ -143,7 +144,7 @@ const DraftTeamHistory = ({
 				>
 					{p.currentAbbrev}
 				</a>,
-				p.currentAge,
+				wrappedAgeAtDeath(p.currentAge, p.ageAtDeath),
 				showRatings ? p.currentOvr : null,
 				showRatings ? p.currentPot : null,
 				<span className="skills-alone">

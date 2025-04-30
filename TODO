@@ -1,3 +1,8 @@
+new league progress bar not working https://discord.com/channels/290013534023057409/290015591216054273/1366816211278757888
+- example file: https://dl.dropboxusercontent.com/scl/fi/1dj2bgv2g267mtw1ntoyh/BBGM_SCB_2050_2050_preseason.json?rlkey=t95e00qep792go4tpwo9jkz5a&dl=0
+
+Most games no playoffs frivolity should not to include games that were played in seasons with no playoffs https://discord.com/channels/290013534023057409/331882115119448065/1366191473778757663
+
 allow trading more than 2 picks
 - 2nd+ round picks should not be in the limit
 - maybe add penalty to score for >2 picks, rather than hard limit
@@ -34,8 +39,19 @@ option to exclude notable games box scores from deletion
 - handle upgraded leagues
 - test baseball performance
 
+more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
+- rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is
+- also random (generate a random players draft class and just put the real names on it)
+
 make spd less important for WR https://discord.com/channels/290013534023057409/331882115119448065/1361879407400063176
 - also recalculate ovr formula
+
+add comparison to real player, for random player or draft prospect?
+- https://twitter.com/messages/1928999030-3723150857
+- draftRatings/seasonRatings/seasonStats/seasonPotential/careerRatings/careerStats
+- "real life"/"your league" (only basketball)
+  - make prominent during draft
+- reverse search during draft - find players similar to a player from your league (or real life)
 
 no height changes with 100% determinism https://old.reddit.com/r/BasketballGM/comments/mhj2r2/monthly_suggestions_thread/gu9tsqi/
 
@@ -469,10 +485,6 @@ OTW
 - add tracking of ROW for tiebreakers even if we don't break out OTW in standings - maybe always track this
   - RW might be needed to - doesn't include shootouts. shootouts make this more complicated, maybe not worth doing now...
 - complexity details: https://mail.google.com/mail/u/0/#sent/FMfcgzQZTgTgrtpwdkWnWJRqZFwrTBKr?compose=CllgCJlDSvVLngcRlzWGhJkHXrXZNCLksLHSgtmSCGkvXhpVzNRDxLQnvFxjzRTdLxTNgnQFmBq
-
-more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
-- rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is
-- also random (generate a random players draft class and just put the real names on it)
 
 new achievements
 - moneyball 4 - win 3 championships with hardest constraint https://old.reddit.com/r/BasketballGM/comments/1bgxksp/auto_played_almost_9000_seasons_to_get_longevity/lhgnwm1/?context=3
@@ -1052,11 +1064,6 @@ On Free Agents page, for players asking for more than my available cap space, ad
 - should be in another column, hidden by default
 
 League Finances page always shows the current  salary cap/ min payroll/luxury tax limit even when you go back in time - I'd rather have it display values from the past years (or also could be shown in roster page - previous years) https://discord.com/channels/290013534023057409/331882115119448065/979759314090754108
-
-add comparison to real player, for random player or draft prospect?
-- https://twitter.com/messages/1928999030-3723150857
-- draftRatings/seasonRatings/seasonStats/seasonPotential/careerRatings/careerStats
-- "real life"/"your league" (only basketball)
 
 all-time teams
 - https://old.reddit.com/r/BasketballGM/comments/v23qzt/monthly_suggestions_thread/iaqmdke/

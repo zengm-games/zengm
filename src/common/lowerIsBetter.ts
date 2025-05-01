@@ -140,6 +140,7 @@ export const lowerIsBetter = new Set(
 			"pim",
 			"fol",
 			"gv",
+			"ga",
 			"gaa",
 			"oppG",
 			"oppA",

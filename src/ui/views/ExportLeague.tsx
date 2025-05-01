@@ -271,7 +271,7 @@ const loadCompressed = (): boolean => {
 };
 
 const loadGzip = (): boolean => {
-	// Safari 16.4 (can remove this and other checks for the existence of DecompressionStream)
+	// Safari 16.4 (can remove this and other checks for the existence of DecompressionStream and CompressionStream)
 	if (typeof DecompressionStream === "undefined") {
 		return false;
 	}

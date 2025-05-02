@@ -2395,7 +2395,6 @@ export const settings: Setting[] = (
 			description:
 				"This will stop game simulation if one of your players is injured for more than N games. In auto play mode (Tools > Auto Play Seasons), this has no effect.",
 			customForm: ({ disabled, handleChange, id, inputStyle, state }) => {
-				console.log(state);
 				const key2 = "stopOnInjury";
 				const checked = state[key2] === "true";
 				return (

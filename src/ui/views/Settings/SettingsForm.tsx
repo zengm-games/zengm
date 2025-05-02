@@ -204,6 +204,7 @@ export const SPECIAL_STATE_OTHERS = [
 	"injuries",
 	"tragicDeaths",
 	"playerBioInfo",
+	"saveOldBoxScores",
 ] as const;
 export const SPECIAL_STATE_BOOLEANS = ["godMode", "godModeInPast"] as const;
 export const SPECIAL_STATE_ALL = [
@@ -219,7 +220,12 @@ export type State = Record<Exclude<Key, SpecialStateAll>, string> &
 	Record<"injuries", InjuriesSetting> &
 	Record<"tragicDeaths", TragicDeaths> &
 	Record<"playerBioInfo", PlayerBioInfo | undefined> &
-	Record<"saveOldBoxScores", GameAttributesLeague["saveOldBoxScores"]>;
+	Record<
+		"saveOldBoxScores",
+		Omit<GameAttributesLeague["saveOldBoxScores"], "pastSeasons"> & {
+			pastSeasons: string;
+		}
+	>;
 
 const SettingsForm = ({
 	onCancel,

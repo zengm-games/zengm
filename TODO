@@ -23,7 +23,7 @@ option to exclude notable games box scores from deletion
   - Games with clutch plays: your/all/none
     - all sports?
   - All-Star Games: switch
-- need import/export from state format (for integer)
+- need to convert state to number appropriately when saving
 - make sure to flush or otherwise handle recently added note
 - reponsive - should wrap name, or maybe change to Save Box Scores
 - default num seasons 2 or 3?

@@ -2395,6 +2395,7 @@ export const settings: Setting[] = (
 			description:
 				"This will stop game simulation if one of your players is injured for more than N games. In auto play mode (Tools > Auto Play Seasons), this has no effect.",
 			customForm: ({ disabled, handleChange, id, inputStyle, state }) => {
+				console.log(state);
 				const key2 = "stopOnInjury";
 				const checked = state[key2] === "true";
 				return (
@@ -2454,6 +2455,97 @@ export const settings: Setting[] = (
 			name: "Stop On Injury",
 			type: "bool",
 			hidden: true,
+		},
+		{
+			category: "General",
+			key: "saveOldBoxScores",
+			name: "Save Old Box Scores",
+			type: "custom",
+			customForm: ({ disabled, handleChangeRaw, id, state }) => {
+				const saveOldBoxScores = state.saveOldBoxScores;
+
+				const commonRows = [
+					{
+						key: "notes",
+						title: "Games with notes",
+					},
+					{
+						key: "playoffs",
+						title: "Playoff games",
+					},
+					{
+						key: "finals",
+						title: "Finals games",
+					},
+					{
+						key: "feats",
+						title: "Games with statistical feats",
+					},
+					{
+						key: "clutchPlays",
+						title: "Games with clutch plays",
+					},
+				] as const;
+
+				const SELECT_WIDTH = 80;
+
+				return (
+					<div className="d-flex flex-column gap-1">
+						<div className="d-flex align-items-center gap-2">
+							<div>
+								Past{" "}
+								<input
+									disabled={disabled}
+									type="text"
+									className="form-control form-control-sm d-inline-block"
+									value={saveOldBoxScores.pastSeasons}
+									style={{ width: 35 }}
+								/>{" "}
+								seasons
+							</div>
+							<select
+								disabled={disabled}
+								className="ms-auto form-select form-select-sm"
+								value={saveOldBoxScores.pastSeasonsType ?? "none"}
+								style={{ width: SELECT_WIDTH }}
+							>
+								<option value="your">Your team</option>
+								<option value="all">All</option>
+								<option value="none">None</option>
+							</select>
+						</div>
+						{commonRows.map(({ key, title }) => {
+							return (
+								<div className="d-flex align-items-center gap-2">
+									<div>{title}</div>
+									<select
+										disabled={disabled}
+										className="ms-auto form-select form-select-sm"
+										value={saveOldBoxScores[key] ?? "none"}
+										style={{ width: SELECT_WIDTH }}
+									>
+										<option value="your">Your team</option>
+										<option value="all">All</option>
+										<option value="none">None</option>
+									</select>
+								</div>
+							);
+						})}
+						<div className="d-flex align-items-center gap-2">
+							<div>All-Star Games</div>
+							<select
+								disabled={disabled}
+								className="ms-auto form-select form-select-sm"
+								value={saveOldBoxScores.allStar ?? "none"}
+								style={{ width: SELECT_WIDTH }}
+							>
+								<option value="all">All</option>
+								<option value="none">None</option>
+							</select>
+						</div>
+					</div>
+				);
+			},
 		},
 		{
 			category: "General",

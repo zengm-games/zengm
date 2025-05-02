@@ -241,7 +241,7 @@ const Option = ({
 
 	return (
 		<>
-			<div className="d-flex align-items-center" style={{ minHeight: 33 }}>
+			<div className="d-flex align-items-top" style={{ minHeight: 33 }}>
 				<div className="me-auto text-nowrap">
 					<label
 						className="form-label mb-0"
@@ -252,6 +252,7 @@ const Option = ({
 								event.preventDefault();
 							}
 						}}
+						style={{ marginTop: 7 }}
 					>
 						{settingNeedsGodMode(godModeRequired, newLeague) ? (
 							<span

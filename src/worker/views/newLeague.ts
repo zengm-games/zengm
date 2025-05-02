@@ -409,6 +409,10 @@ export const getDefaultSettings = () => {
 		),
 		neutralSite: unwrapGameAttribute(defaultGameAttributes, "neutralSite"),
 		rpdPot: unwrapGameAttribute(defaultGameAttributes, "rpdPot"),
+		saveOldBoxScores: unwrapGameAttribute(
+			defaultGameAttributes,
+			"saveOldBoxScores",
+		),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

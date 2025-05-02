@@ -357,6 +357,12 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	neutralSite: "never",
 	tradeProposalsSeed: 0,
 	rpdPot: true,
+	saveOldBoxScores: {
+		pastSeasons: 2,
+		pastSeasonsType: "all",
+		notes: "all",
+		playoffs: "your",
+	},
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!

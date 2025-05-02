@@ -171,7 +171,8 @@ type Key =
 	| "autoRelocateRebrand"
 	| "alwaysShowCountry"
 	| "neutralSite"
-	| "rpdPot";
+	| "rpdPot"
+	| "saveOldBoxScores";
 
 export type Settings = Pick<
 	GameAttributesLeague,
@@ -383,6 +384,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			alwaysShowCountry: g.get("alwaysShowCountry"),
 			neutralSite: g.get("neutralSite"),
 			rpdPot: g.get("rpdPot"),
+			saveOldBoxScores: g.get("saveOldBoxScores"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

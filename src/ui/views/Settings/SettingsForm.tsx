@@ -7,6 +7,7 @@ import { settings } from "./settings.tsx";
 import type { Key, Values } from "./types.ts";
 import type { Settings } from "../../../worker/views/settings.ts";
 import type {
+	GameAttributesLeague,
 	InjuriesSetting,
 	PlayerBioInfo,
 	TragicDeaths,
@@ -217,7 +218,8 @@ export type State = Record<Exclude<Key, SpecialStateAll>, string> &
 	Record<SpecialStateBoolean, boolean> &
 	Record<"injuries", InjuriesSetting> &
 	Record<"tragicDeaths", TragicDeaths> &
-	Record<"playerBioInfo", PlayerBioInfo | undefined>;
+	Record<"playerBioInfo", PlayerBioInfo | undefined> &
+	Record<"saveOldBoxScores", GameAttributesLeague["saveOldBoxScores"]>;
 
 const SettingsForm = ({
 	onCancel,

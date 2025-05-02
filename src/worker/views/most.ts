@@ -264,7 +264,10 @@ const updatePlayers = async (
 			getValue = (p) => {
 				let sum = 0;
 				for (const ps of p.stats) {
-					sum += ps.gp;
+					const numRounds = g.get("numGamesPlayoffSeries", ps.season).length;
+					if (numRounds > 0) {
+						sum += ps.gp;
+					}
 				}
 				return { value: sum };
 			};

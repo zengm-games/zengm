@@ -5,8 +5,6 @@ import { type ChangeEvent, Fragment, type ReactNode, useState } from "react";
 import { isSport } from "../../../common/index.ts";
 import { HelpPopover } from "../../components/index.tsx";
 import gameSimPresets from "./gameSimPresets.ts";
-import PlayerBioInfo2 from "./PlayerBioInfo.tsx";
-import RowsEditor from "./RowsEditor.tsx";
 import {
 	getVisibleCategories,
 	settingIsEnabled,
@@ -322,6 +320,15 @@ const Option = ({
 	);
 };
 
+export type HandleChange = (
+	name: Key,
+	type: FieldType,
+) => (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+
+export type HandleChangeRaw = <Name extends SpecialStateOthers>(
+	name: Name,
+) => (value: State[Name]) => void;
+
 const SettingsFormOptions = ({
 	disabled,
 	gameSimPreset,
@@ -338,13 +345,8 @@ const SettingsFormOptions = ({
 	disabled: boolean;
 	gameSimPreset: string;
 	godMode: boolean;
-	handleChange: (
-		name: Key,
-		type: FieldType,
-	) => (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-	handleChangeRaw: <Name extends SpecialStateOthers>(
-		name: Name,
-	) => (value: State[Name]) => void;
+	handleChange: HandleChange;
+	handleChangeRaw: HandleChangeRaw;
 	newLeague?: boolean;
 	onCancelDefaultSetting?: (key: Key) => void;
 	setGameSimPreset: (gameSimPreset: string) => void;
@@ -418,70 +420,17 @@ const SettingsFormOptions = ({
 									);
 									const id = `settings-${category.name}-${name}`;
 
-									let customFormNode;
-									if (customForm) {
-										if (key === "stopOnInjuryGames") {
-											const key2 = "stopOnInjury";
-											const checked = state[key2] === "true";
-											customFormNode = (
-												<div
-													style={inputStyle}
-													className="d-flex align-items-center"
-												>
-													<div
-														className="form-check form-switch"
-														title={checked ? "Enabled" : "Disabled"}
-													>
-														<input
-															type="checkbox"
-															className="form-check-input"
-															checked={checked}
-															disabled={!enabled || disabled}
-															onChange={handleChange(key2, "bool")}
-															id={id + "2"}
-															value={state[key2]}
-														/>
-														<label
-															className="form-check-label"
-															htmlFor={id + "2"}
-														/>
-													</div>
-													<div className="input-group">
-														<input
-															id={id}
-															disabled={!checked || !enabled || disabled}
-															className="form-control"
-															type="text"
-															onChange={handleChange(key, type)}
-															value={state[key]}
-															inputMode="numeric"
-														/>
-														<div className="input-group-text">Games</div>
-													</div>
-												</div>
-											);
-										} else if (key === "injuries" || key === "tragicDeaths") {
-											customFormNode = (
-												<RowsEditor
-													defaultValue={state[key]}
-													disabled={!enabled || disabled}
-													godModeRequired={godModeRequired}
-													onChange={handleChangeRaw(key)}
-													type={key}
-												/>
-											);
-										} else if (key === "playerBioInfo") {
-											customFormNode = (
-												<PlayerBioInfo2
-													defaultValue={state[key]}
-													disabled={!enabled || disabled}
-													godModeRequired={godModeRequired}
-													onChange={handleChangeRaw(key)}
-													gender={state.gender as any}
-												/>
-											);
-										}
-									}
+									const customFormNode = customForm
+										? customForm({
+												disabled: !enabled || disabled,
+												godModeRequired,
+												handleChange,
+												handleChangeRaw,
+												id,
+												inputStyle,
+												state,
+											})
+										: undefined;
 
 									return (
 										<div

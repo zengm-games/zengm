@@ -11,25 +11,18 @@ keep players on their real historical teams https://old.reddit.com/r/BasketballG
 - OOTP calls it "use historical transactions" https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/ldoidno/?context=3 
 
 option to exclude notable games box scores from deletion
-- ASG
-- statistical feats
-- buzzer beaters
-- playoffs
-- finals
-- games involving your team
-- manually flag games
-  - add new "saved games" page
-    - regardless of the manual flag, need some way to easily look at these saved games. could use same mechanism as deleting to identify them, but ignore year constraint
-- notes
-- firefox auto delete performance - still 10x slower to use openCursor vs openKeyCursor
-  - do what we do now if no need to check actual box score
-  - otherwise, maybe move to newPhasePreseason and run async in background
-  - could set a flag on the game object to determine if it should be deleted or not, and index on that
-    - could either be a boolean (in compound key with season, replacing current season index) or contain the season (like deleteYear, in a separate index)
-    - a little tricky for upgrading, need to consider past controlled teams and i think there's no userTids history
-    - would need to recompute on settings change
-    - or could make a more compound key containing all the things we use - would be annoying since some are arrays, booleans, etc. but could create specific fields for them. then we wouldn't need to manually recompute the index key ever
-  - Could do read-only iterate in background and delete with cache, only requires saving gid in memory right?
+- Box scores from the current season are always saved. The options here will save additional box scores from past seasons. Any box score that meets at least one of your selected criteria is saved, with the exception of 
+- For most options, have a dropdown for "Your team", "All teams", and "None"
+- validation should check if multi team mode is enabled, and if so warn that "your team" means only one team
+- types of games to save
+  - Past N seasons: N and your/all/none
+  - Games with notes: your/all/none
+  - Playoff games: your/all/none
+  - Finals games: your/all/none
+  - Games with statistical feats: your/all/none
+  - Games with buzzer beaters: your/all/none
+    - all sports?
+  - All-Star Games: switch
 - handle imported leagues
 - handle upgraded leagues
 - test baseball performance
@@ -59,6 +52,7 @@ keep track of DNP players in box score explicitly, just with minimal info rather
 
 somehow show count of goals and HR inline for baseball and hockey
 - others too... like for basketball stats it should be this game's stats
+- make sure it works in scoring log for all sports
 - https://x.com/nevameant2b/status/1877107051492499699
 - https://discord.com/channels/@me/778760871911751700/1179618240507420783
 - https://github.com/zengm-games/zengm/pull/484

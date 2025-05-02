@@ -10,24 +10,30 @@ import {
 	WEBSITE_ROOT,
 } from "../../../common/index.ts";
 import { toWorker, helpers } from "../../util/index.ts";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import type { Category, Decoration, FieldType, Key, Values } from "./types.ts";
 import type { Settings } from "../../../worker/views/settings.ts";
 import { draftTypeDescriptions } from "../../../common/draftLottery.ts";
 import defaultGameAttributes, {
 	gameAttributesKeysOtherSports,
 } from "../../../common/defaultGameAttributes.ts";
+import type { HandleChange, HandleChangeRaw } from "./SettingsFormOptions.tsx";
+import type { State } from "./SettingsForm.tsx";
+import RowsEditor from "./RowsEditor.tsx";
+import PlayerBioInfo2 from "./PlayerBioInfo.tsx";
 
 export const descriptions = {
 	difficulty:
 		"Increasing difficulty makes AI teams more reluctant to trade with you, makes players less likely to sign with you, and makes it harder to turn a profit.",
 };
 
+type GodModeRequired = "always" | "existingLeagueOnly" | undefined;
+
 type Setting = {
 	category: Category;
 	key: Key;
 	name: string;
-	godModeRequired?: "always" | "existingLeagueOnly";
+	godModeRequired?: GodModeRequired;
 	type: FieldType;
 	decoration?: Decoration;
 	values?: Values;
@@ -48,7 +54,15 @@ type Setting = {
 		newLeague?: boolean;
 		realPlayers?: boolean;
 	}) => boolean | undefined;
-	customForm?: true;
+	customForm?: (props: {
+		disabled: boolean;
+		godModeRequired: GodModeRequired;
+		handleChange: HandleChange;
+		handleChangeRaw: HandleChangeRaw;
+		id: string;
+		inputStyle: CSSProperties;
+		state: State;
+	}) => ReactNode;
 	hidden?: true;
 	maxWidth?: true;
 
@@ -1011,7 +1025,17 @@ export const settings: Setting[] = (
 			key: "tragicDeaths",
 			name: "Tragic Death Types",
 			type: "custom",
-			customForm: true,
+			customForm: ({ disabled, handleChangeRaw, godModeRequired, state }) => {
+				return (
+					<RowsEditor
+						defaultValue={state.tragicDeaths}
+						disabled={disabled}
+						godModeRequired={godModeRequired}
+						onChange={handleChangeRaw("tragicDeaths")}
+						type="tragicDeaths"
+					/>
+				);
+			},
 		},
 		{
 			category: "Events",
@@ -1458,7 +1482,17 @@ export const settings: Setting[] = (
 			type: "custom",
 			description:
 				"Customize the home countries and names of generated players.",
-			customForm: true,
+			customForm: ({ disabled, handleChangeRaw, godModeRequired, state }) => {
+				return (
+					<PlayerBioInfo2
+						defaultValue={state.playerBioInfo}
+						disabled={disabled}
+						godModeRequired={godModeRequired}
+						onChange={handleChangeRaw("playerBioInfo")}
+						gender={state.gender as any}
+					/>
+				);
+			},
 		},
 		{
 			category: "Players",
@@ -2360,7 +2394,41 @@ export const settings: Setting[] = (
 			type: "int",
 			description:
 				"This will stop game simulation if one of your players is injured for more than N games. In auto play mode (Tools > Auto Play Seasons), this has no effect.",
-			customForm: true,
+			customForm: ({ disabled, handleChange, id, inputStyle, state }) => {
+				const key2 = "stopOnInjury";
+				const checked = state[key2] === "true";
+				return (
+					<div style={inputStyle} className="d-flex align-items-center">
+						<div
+							className="form-check form-switch"
+							title={checked ? "Enabled" : "Disabled"}
+						>
+							<input
+								type="checkbox"
+								className="form-check-input"
+								checked={checked}
+								disabled={disabled}
+								onChange={handleChange("stopOnInjury", "bool")}
+								id={id + "2"}
+								value={state[key2]}
+							/>
+							<label className="form-check-label" htmlFor={id + "2"} />
+						</div>
+						<div className="input-group">
+							<input
+								id={id}
+								disabled={!checked || disabled}
+								className="form-control"
+								type="text"
+								onChange={handleChange("stopOnInjuryGames", "int")}
+								value={state.stopOnInjuryGames}
+								inputMode="numeric"
+							/>
+							<div className="input-group-text">Games</div>
+						</div>
+					</div>
+				);
+			},
 			partners: ["stopOnInjury"],
 		},
 		{
@@ -2368,7 +2436,17 @@ export const settings: Setting[] = (
 			key: "injuries",
 			name: "Injury Types",
 			type: "custom",
-			customForm: true,
+			customForm: ({ disabled, handleChangeRaw, godModeRequired, state }) => {
+				return (
+					<RowsEditor
+						defaultValue={state.injuries}
+						disabled={disabled}
+						godModeRequired={godModeRequired}
+						onChange={handleChangeRaw("injuries")}
+						type="injuries"
+					/>
+				);
+			},
 		},
 		{
 			category: "General",

@@ -66,9 +66,9 @@
 		"framer-motion": "^12.9.4",
 		"html2canvas": "^1.4.1",
 		"just-clone": "^6.2.0",
-		"match-sorter": "^8.0.0",
+		"match-sorter": "^8.0.1",
 		"nanoevents": "^9.1.0",
-		"promise-worker-bi": "^4.1.1",
+		"promise-worker-bi": "^5.0.0",
 		"react": "^19.1.0",
 		"react-addons-text-content": "^0.0.4",
 		"react-bootstrap": "^2.10.9",
@@ -85,7 +85,7 @@
 		"workbox-routing": "^7.3.0",
 		"workbox-strategies": "^7.3.0",
 		"workbox-window": "^7.3.0",
-		"zustand": "^5.0.3"
+		"zustand": "^5.0.4"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.27.1",
@@ -120,7 +120,7 @@
 		"@types/stripe-checkout": "^1.0.7",
 		"@types/stripe-v2": "^2.0.6",
 		"@types/wicg-file-system-access": "^2023.10.6",
-		"browserslist": "^4.24.4",
+		"browserslist": "^4.24.5",
 		"cheerio": "^1.0.0",
 		"chokidar": "^4.0.3",
 		"cloudflare": "^4.2.0",

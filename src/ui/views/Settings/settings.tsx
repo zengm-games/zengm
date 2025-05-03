@@ -2575,14 +2575,18 @@ export const settings: Setting[] = (
 			descriptionLong: (
 				<>
 					<p>
-						Box scores from the current season are always saved. The options
-						here will save additional box scores from past seasons. Any box
-						score that meets at least one of your selected criteria is saved.
+						Saving box scores takes a lot of disk space, so by default not all
+						are saved.
 					</p>
 					<p>
-						For example, if you have "Playoff games" set to "All" and "Games
-						with statistical feats" set to "None", all playoff games will be
-						saved, including those with statistical feats.
+						Box scores from the current season are always saved. The options
+						here allow you to save additional box scores from past seasons.
+					</p>
+					<p>
+						Any box score that meets at least one of the selected criteria is
+						saved. For example, if you have "Playoff games" set to "All" and
+						"Games with statistical feats" set to "None", all playoff games will
+						be saved, including those with statistical feats.
 					</p>
 					<p>To keep all past seasons, enter "all" instead of a number.</p>
 				</>
@@ -2604,7 +2608,9 @@ export const settings: Setting[] = (
 				} else {
 					pastSeasons = Number.parseInt(value.pastSeasons);
 					if (Number.isNaN(pastSeasons) || pastSeasons < 0) {
-						throw new Error("Invalid number of seasons");
+						throw new Error(
+							'Invalid number of seasons - should be a positive integer or "all"',
+						);
 					}
 				}
 

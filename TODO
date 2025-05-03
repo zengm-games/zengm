@@ -40,6 +40,8 @@ option to exclude notable games box scores from deletion
   - gameAttributes.saveOldBoxScores
   - finals/playerFeats booleans
 - update "automatically deleted" message in GameLog
+- remove autoDeleteOldBoxScores
+- where should it be on the settings page?
 
 more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
 - rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is

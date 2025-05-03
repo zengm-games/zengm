@@ -20,15 +20,13 @@ option to exclude notable games box scores from deletion
   - Games with clutch plays: your/all/none
     - all sports?
   - All-Star Games: switch
-- need to convert state to number appropriately when saving
 - make sure to flush or otherwise handle recently added note
 - reponsive - should wrap name, or maybe change to Save Box Scores
-- default num seasons 2 or 3?
-- handle invlaid number of seasons
 - handle imported leagues
 - handle upgraded leagues
 - test baseball performance
 - schema
+- update "automatically deleted" message in GameLog
 
 more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
 - rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is

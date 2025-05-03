@@ -2537,7 +2537,10 @@ export const settings: Setting[] = (
 						</div>
 						{commonRows.map(({ key, title }) => {
 							return (
-								<div className="d-flex align-items-center justify-content-end gap-2">
+								<div
+									key={key}
+									className="d-flex align-items-center justify-content-end gap-2"
+								>
 									<div>{title}</div>
 									<select
 										disabled={disabled}
@@ -2583,10 +2586,25 @@ export const settings: Setting[] = (
 					</p>
 				</>
 			),
-			stringify: (value: GameAttributesLeague["saveOldBoxScores"]) => {
+			stringify: (
+				value: GameAttributesLeague["saveOldBoxScores"],
+			): State["saveOldBoxScores"] => {
 				return {
 					...value,
 					pastSeasons: String(value.pastSeasons),
+				};
+			},
+			parse: (
+				value: State["saveOldBoxScores"],
+			): GameAttributesLeague["saveOldBoxScores"] => {
+				const pastSeasons = Number.parseInt(value.pastSeasons);
+				if (Number.isNaN(pastSeasons) || pastSeasons < 0) {
+					throw new Error("Invalid number of seasons");
+				}
+
+				return {
+					...value,
+					pastSeasons,
 				};
 			},
 		},

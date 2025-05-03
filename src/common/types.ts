@@ -641,7 +641,7 @@ export type GameAttributesLeague = {
 	salaryCap: number;
 	salaryCapType: "hard" | "none" | "soft";
 	saveOldBoxScores: {
-		pastSeasons: number;
+		pastSeasons: number | "all";
 		pastSeasonsType?: "your" | "all";
 		note?: "your" | "all";
 		playoffs?: "your" | "all";

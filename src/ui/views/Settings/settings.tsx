@@ -2584,6 +2584,7 @@ export const settings: Setting[] = (
 						with statistical feats" set to "None", all playoff games will be
 						saved, including those with statistical feats.
 					</p>
+					<p>To keep all past seasons, enter "all" instead of a number.</p>
 				</>
 			),
 			stringify: (
@@ -2597,9 +2598,14 @@ export const settings: Setting[] = (
 			parse: (
 				value: State["saveOldBoxScores"],
 			): GameAttributesLeague["saveOldBoxScores"] => {
-				const pastSeasons = Number.parseInt(value.pastSeasons);
-				if (Number.isNaN(pastSeasons) || pastSeasons < 0) {
-					throw new Error("Invalid number of seasons");
+				let pastSeasons: "all" | number;
+				if (value.pastSeasons === "all") {
+					pastSeasons = "all";
+				} else {
+					pastSeasons = Number.parseInt(value.pastSeasons);
+					if (Number.isNaN(pastSeasons) || pastSeasons < 0) {
+						throw new Error("Invalid number of seasons");
+					}
 				}
 
 				return {

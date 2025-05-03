@@ -139,6 +139,8 @@ const checkStatisticalFeat = (
 			result,
 		});
 	}
+
+	return !!feats;
 };
 
 export default checkStatisticalFeat;

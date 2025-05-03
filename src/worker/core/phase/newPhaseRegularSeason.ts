@@ -15,17 +15,23 @@ class GameHasYourTeamCache {
 	cache: Record<number, boolean | undefined> = {};
 	userTidCache: Record<number, number | undefined> = {};
 
+	getUserTid(season: number) {
+		let userTid = this.userTidCache[season];
+		if (userTid === undefined) {
+			userTid = g.get("userTid", season);
+			this.userTidCache[season] = userTid;
+		}
+
+		return userTid;
+	}
+
 	check(game: Game) {
 		const cached = this.cache[game.gid];
 		if (cached !== undefined) {
 			return cached;
 		}
 
-		let userTid = this.userTidCache[game.season];
-		if (userTid === undefined) {
-			userTid = g.get("userTid", game.season);
-			this.userTidCache[game.season] = userTid;
-		}
+		const userTid = this.getUserTid(game.season);
 
 		const value =
 			game.teams[0].tid === userTid || game.teams[1].tid === userTid;
@@ -102,7 +108,8 @@ const newPhaseRegularSeason = async (
 				}
 			}
 			if (saveIfMeetsConditions("playerFeat", game)) {
-				if (game.playerFeat) {
+				const userTid = gameHasYourTeamCache.getUserTid(game.season);
+				if (game.teams.some((t) => t.playerFeat && t.tid === userTid)) {
 					break;
 				}
 			}

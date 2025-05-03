@@ -322,6 +322,7 @@ type GameTeam = {
 	tied?: number; // Undefined for legacy objects or if there are no ties in this sport
 	otl?: number; // Undefined for legacy objects or if there are no otls in this sport
 
+	playerFeat?: boolean;
 	playoffs?: {
 		seed: number;
 		won: number;
@@ -357,7 +358,6 @@ export type Game = {
 	numPeriods?: number; // Optional only for legacy, otherwise it's the number of periods in the game, defined at the start
 	numPlayersOnCourt?: number;
 	playoffs?: boolean;
-	playerFeat?: boolean;
 	overtimes: number;
 	scoringSummary?: any;
 	season: number;

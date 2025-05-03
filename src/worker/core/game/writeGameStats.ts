@@ -240,7 +240,7 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 	}
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 	if (playoffs) {
-		gameStats.playoffs = playoffs;
+		gameStats.playoffs = true;
 	}
 
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
@@ -253,6 +253,10 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 	for (let t = 0; t < 2; t++) {
 		for (const key of Object.keys(results.team[t].stat)) {
 			(gameStats.teams[t] as any)[key] = results.team[t].stat[key];
+		}
+
+		if (results.teams[t].playerFeat) {
+			gameStats.teams[t].playerFeat = true;
 		}
 
 		for (const p0 of results.team[t].player) {
@@ -476,12 +480,16 @@ const writeGameStats = async (
 		currentRound >= 0 &&
 		playoffInfos
 	) {
-		const round =
-			currentRound >= numPlayoffRounds - 1
-				? "finals"
-				: playoffsByConf
-					? "conference finals"
-					: "semifinals";
+		const finals = currentRound >= numPlayoffRounds - 1;
+		if (finals) {
+			gameStats.finals = true;
+		}
+
+		const round = finals
+			? "finals"
+			: playoffsByConf
+				? "conference finals"
+				: "semifinals";
 		let score = round === "finals" ? 20 : 10;
 		const gameNum = playoffInfos[0].won + playoffInfos[0].lost;
 		const gameNumText = numGamesToWinSeries > 1 ? ` game ${gameNum} of` : "";

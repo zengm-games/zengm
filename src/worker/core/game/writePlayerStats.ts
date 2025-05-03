@@ -291,7 +291,7 @@ const writePlayerStats = async (
 			}
 		}
 
-		for (let i = 0; i < result.team.length; i++) {
+		for (const i of [0, 1] as const) {
 			const t = result.team[i];
 			let goaliePID: number | undefined;
 
@@ -384,7 +384,16 @@ const writePlayerStats = async (
 					}
 				}
 
-				player.checkStatisticalFeat(p.id, t.id, p, result, conditions);
+				const hasFeat = player.checkStatisticalFeat(
+					p.id,
+					t.id,
+					p,
+					result,
+					conditions,
+				);
+				if (hasFeat) {
+					t.playerFeat = true;
+				}
 
 				const p2 = await idb.cache.players.get(p.id);
 				if (!p2) {

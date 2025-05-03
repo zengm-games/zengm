@@ -11,9 +11,6 @@ keep players on their real historical teams https://old.reddit.com/r/BasketballG
 - OOTP calls it "use historical transactions" https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/ldoidno/?context=3 
 
 option to exclude notable games box scores from deletion
-- Box scores from the current season are always saved. The options here will save additional box scores from past seasons. Any box score that meets at least one of your selected criteria is saved, with the exception of 
-- For most options, have a dropdown for "Your team", "All teams", and "None"
-- validation should check if multi team mode is enabled, and if so warn that "your team" means only one team
 - types of games to save
   - Past N seasons: N and your/all/none
   - Games with notes: your/all/none

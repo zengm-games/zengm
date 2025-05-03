@@ -10,7 +10,7 @@ import {
 	WEBSITE_ROOT,
 } from "../../../common/index.ts";
 import { toWorker, helpers } from "../../util/index.ts";
-import type { CSSProperties, ReactNode } from "react";
+import type { ChangeEvent, CSSProperties, ReactNode } from "react";
 import type { Category, Decoration, FieldType, Key, Values } from "./types.ts";
 import type { Settings } from "../../../worker/views/settings.ts";
 import { draftTypeDescriptions } from "../../../common/draftLottery.ts";
@@ -2488,9 +2488,23 @@ export const settings: Setting[] = (
 
 				const SELECT_WIDTH = 80;
 
+				const myHandleChange = handleChangeRaw("saveOldBoxScores");
+
+				const handleChangeSelect =
+					(key: Exclude<keyof typeof saveOldBoxScores, "pastSeasons">) =>
+					(event: ChangeEvent<HTMLSelectElement>) => {
+						myHandleChange({
+							...saveOldBoxScores,
+							[key]:
+								event.target.value === "none"
+									? undefined
+									: (event.target.value as any),
+						});
+					};
+
 				return (
 					<div className="d-flex flex-column gap-1">
-						<div className="d-flex align-items-center gap-2">
+						<div className="d-flex align-items-center justify-content-end gap-2">
 							<div>
 								Past{" "}
 								<input
@@ -2499,14 +2513,21 @@ export const settings: Setting[] = (
 									className="form-control form-control-sm d-inline-block"
 									value={saveOldBoxScores.pastSeasons}
 									style={{ width: 35 }}
+									onChange={(event) => {
+										myHandleChange({
+											...saveOldBoxScores,
+											pastSeasons: event.target.value,
+										});
+									}}
 								/>{" "}
 								seasons
 							</div>
 							<select
 								disabled={disabled}
-								className="ms-auto form-select form-select-sm"
+								className="form-select form-select-sm"
 								value={saveOldBoxScores.pastSeasonsType ?? "none"}
 								style={{ width: SELECT_WIDTH }}
+								onChange={handleChangeSelect("pastSeasonsType")}
 							>
 								<option value="your">Your team</option>
 								<option value="all">All</option>
@@ -2515,13 +2536,14 @@ export const settings: Setting[] = (
 						</div>
 						{commonRows.map(({ key, title }) => {
 							return (
-								<div className="d-flex align-items-center gap-2">
+								<div className="d-flex align-items-center justify-content-end gap-2">
 									<div>{title}</div>
 									<select
 										disabled={disabled}
-										className="ms-auto form-select form-select-sm"
+										className="form-select form-select-sm"
 										value={saveOldBoxScores[key] ?? "none"}
 										style={{ width: SELECT_WIDTH }}
+										onChange={handleChangeSelect(key)}
 									>
 										<option value="your">Your team</option>
 										<option value="all">All</option>
@@ -2530,13 +2552,14 @@ export const settings: Setting[] = (
 								</div>
 							);
 						})}
-						<div className="d-flex align-items-center gap-2">
+						<div className="d-flex align-items-center justify-content-end gap-2">
 							<div>All-Star Games</div>
 							<select
 								disabled={disabled}
-								className="ms-auto form-select form-select-sm"
+								className="form-select form-select-sm"
 								value={saveOldBoxScores.allStar ?? "none"}
 								style={{ width: SELECT_WIDTH }}
+								onChange={handleChangeSelect("allStar")}
 							>
 								<option value="all">All</option>
 								<option value="none">None</option>
@@ -2545,6 +2568,20 @@ export const settings: Setting[] = (
 					</div>
 				);
 			},
+			descriptionLong: (
+				<>
+					<p>
+						Box scores from the current season are always saved. The options
+						here will save additional box scores from past seasons. Any box
+						score that meets at least one of your selected criteria is saved.
+					</p>
+					<p>
+						For example, if you have "Playoff games" set to "All" and "Games
+						with statistical feats" set to "None", all playoff games will be
+						saved, including those with statistical feats.
+					</p>
+				</>
+			),
 		},
 		{
 			category: "General",

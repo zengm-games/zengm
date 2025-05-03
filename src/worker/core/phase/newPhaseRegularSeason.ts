@@ -41,29 +41,21 @@ class GameHasYourTeamCache {
 	}
 }
 
-const newPhaseRegularSeason = async (
-	conditions: Conditions,
-): Promise<PhaseReturn> => {
-	const teams = await idb.getCopies.teamsPlus(
-		{
-			attrs: ["tid"],
-			seasonAttrs: ["cid", "did"],
-			season: g.get("season"),
-			active: true,
-		},
-		"noCopyCache",
-	);
-
-	await season.setSchedule(season.newSchedule(teams));
-
-	if (g.get("autoDeleteOldBoxScores")) {
+const deleteOldBoxScores = async () => {
+	const saveOldBoxScores = g.get("saveOldBoxScores");
+	if (
+		saveOldBoxScores.pastSeasons === "all" &&
+		saveOldBoxScores.pastSeasonsType === "all"
+	) {
+		// Not deleting anything
+	} else {
 		// readwrite index is slow here in Firefox unless we iterate using openKeyCursor, but that means it's difficult to apply complex logic to deciding when to delete a game. So iterate with full objects in a readonly cursor, and save the deleting for later (happens at the end of phase change, so very soon) because just deleting a bunch of games by their primary key is fast.
 		const gameIndex = idb.league.transaction("games").store.index("season");
 
-		const saveOldBoxScores = g.get("saveOldBoxScores");
 		let range;
 		if (
 			saveOldBoxScores.pastSeasonsType === "all" &&
+			saveOldBoxScores.pastSeasons !== "all" &&
 			saveOldBoxScores.pastSeasons > 0
 		) {
 			// If we're saving all box scores in the past N seasons, we can use an IDBKeyRange to avoid event looking at those box scores
@@ -85,44 +77,61 @@ const newPhaseRegularSeason = async (
 				(saveOldBoxScores[type] === "your" && gameHasYourTeamCache.check(game))
 			);
 		};
+		console.log("range", range);
 
 		for await (const { value: game } of gameIndex.iterate(range)) {
 			if (saveIfMeetsConditions("pastSeasonsType", game)) {
-				if (game.season >= g.get("season") - saveOldBoxScores.pastSeasons) {
-					break;
+				if (
+					saveOldBoxScores.pastSeasons === "all" ||
+					game.season >= g.get("season") - saveOldBoxScores.pastSeasons
+				) {
+					console.log("save pastSeasonsType", game);
+					continue;
 				}
 			}
 			if (saveIfMeetsConditions("note", game)) {
 				if (game.noteBool) {
-					break;
+					console.log("save note", game);
+					continue;
 				}
 			}
 			if (saveIfMeetsConditions("playoffs", game)) {
 				if (game.playoffs) {
-					break;
+					console.log("save playoffs", game);
+					continue;
 				}
 			}
 			if (saveIfMeetsConditions("finals", game)) {
 				if (game.finals) {
-					break;
+					console.log("save finals", game);
+					continue;
 				}
 			}
 			if (saveIfMeetsConditions("playerFeat", game)) {
 				const userTid = gameHasYourTeamCache.getUserTid(game.season);
-				if (game.teams.some((t) => t.playerFeat && t.tid === userTid)) {
-					break;
+				if (
+					game.teams.some(
+						(t) =>
+							t.playerFeat &&
+							(saveOldBoxScores.playerFeat === "all" || t.tid === userTid),
+					)
+				) {
+					console.log("save playerFeat", game);
+					continue;
 				}
 			}
 			if (saveIfMeetsConditions("clutchPlays", game)) {
 				if (game.clutchPlays && game.clutchPlays.length > 0) {
-					break;
+					console.log("save clutchPlays", game);
+					continue;
 				}
 			}
 			if (saveIfMeetsConditions("allStar", game)) {
 				const isAllStarGame =
 					game.teams[0].tid === -1 && game.teams[1].tid === -2;
 				if (isAllStarGame) {
-					break;
+					console.log("save allStar", game);
+					continue;
 				}
 			}
 
@@ -130,6 +139,24 @@ const newPhaseRegularSeason = async (
 			await idb.cache.games.delete(game.gid);
 		}
 	}
+};
+
+const newPhaseRegularSeason = async (
+	conditions: Conditions,
+): Promise<PhaseReturn> => {
+	const teams = await idb.getCopies.teamsPlus(
+		{
+			attrs: ["tid"],
+			seasonAttrs: ["cid", "did"],
+			season: g.get("season"),
+			active: true,
+		},
+		"noCopyCache",
+	);
+
+	await season.setSchedule(season.newSchedule(teams));
+
+	await deleteOldBoxScores();
 
 	// Without this, then there is a race condition creating it on demand in addGame, and some of the first day's games are lost
 	await idb.cache.headToHeads.put({

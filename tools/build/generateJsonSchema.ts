@@ -649,9 +649,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 							alwaysShowCountry: {
 								type: "boolean",
 							},
-							autoDeleteOldBoxScores: {
-								type: "boolean",
-							},
 							autoExpand: {
 								type: "object",
 								properties: {

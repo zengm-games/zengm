@@ -87,7 +87,6 @@ type Key =
 	| "numPlayersOnCourt"
 	| "numDraftRounds"
 	| "tradeDeadline"
-	| "autoDeleteOldBoxScores"
 	| "difficulty"
 	| "stopOnInjury"
 	| "stopOnInjuryGames"
@@ -297,7 +296,6 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			numPlayersOnCourt: g.get("numPlayersOnCourt"),
 			numDraftRounds: g.get("numDraftRounds"),
 			tradeDeadline: g.get("tradeDeadline"),
-			autoDeleteOldBoxScores: g.get("autoDeleteOldBoxScores"),
 			difficulty: g.get("difficulty"),
 			stopOnInjury: g.get("stopOnInjury"),
 			stopOnInjuryGames: g.get("stopOnInjuryGames"),

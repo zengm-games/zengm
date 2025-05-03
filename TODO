@@ -11,12 +11,10 @@ keep players on their real historical teams https://old.reddit.com/r/BasketballG
 - OOTP calls it "use historical transactions" https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/ldoidno/?context=3 
 
 option to exclude notable games box scores from deletion
-- types of games to save
+- test
   - Past N seasons: N and your/all/none
   - Games with notes: your/all/none
   - Playoff games: your/all/none
-  - Finals games: your/all/none
-  - Games with statistical feats: your/all/none
   - Games with clutch plays: your/all/none
     - all sports?
   - All-Star Games: switch
@@ -33,6 +31,7 @@ option to exclude notable games box scores from deletion
 - handle imported leagues
   - gameAttributes.saveOldBoxScores
   - run db migration code depending on version param, to handle additional flags
+    - call upgradeGamesVersion65
 - test baseball performance
 - test perf if we are scanning over many saved records
 - test that range is selecting correct seasons
@@ -42,6 +41,11 @@ option to exclude notable games box scores from deletion
 - update "automatically deleted" message in GameLog
 - remove autoDeleteOldBoxScores
 - where should it be on the settings page?
+
+option to disable notification popups https://old.reddit.com/r/BasketballGM/comments/1h3racg/monthly_suggestions_thread/m0duybm/
+- red ones still go through
+- UI-related ones still go through, like warnings or "success" ones
+- https://mail.google.com/mail/u/0/#inbox/FMfcgzQbfBnzTbzpmKpRrBLWChBbDBrP
 
 more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
 - rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is
@@ -225,10 +229,6 @@ counter proposals too jumpy, get rid of that extra iteration at the end maybe?
 - try with and without overshooting (without meaning, don't add anyone worth more than the initial trade proposal) and if both work, pick the one with fewest assets
 - something about magnitude - no point in adding 20 shitty players when trading a star
 - only overshoot if # of players is not too much
-
-option to disable notification popups https://old.reddit.com/r/BasketballGM/comments/1h3racg/monthly_suggestions_thread/m0duybm/
-- red ones still go through
-- UI-related ones still go through, like warnings or "success" ones
 
 Change (or add an option for) the coin flip to be like the old NBA coin flip, which was between the worst teams in each conference, not the worst two teams overall. Alternatively add the ability to edit the teams in the lottery. Probably no one else cares, but I like to be accurate. https://discord.com/channels/290013534023057409/331882115119448065/1322397494335897692
 

@@ -255,7 +255,7 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 			(gameStats.teams[t] as any)[key] = results.team[t].stat[key];
 		}
 
-		if (results.teams[t].playerFeat) {
+		if (results.team[t].playerFeat) {
 			gameStats.teams[t].playerFeat = true;
 		}
 

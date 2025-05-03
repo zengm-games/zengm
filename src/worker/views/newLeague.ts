@@ -207,10 +207,6 @@ export const getDefaultSettings = () => {
 			"numDraftRounds",
 		),
 		tradeDeadline: unwrapGameAttribute(defaultGameAttributes, "tradeDeadline"),
-		autoDeleteOldBoxScores: unwrapGameAttribute(
-			defaultGameAttributes,
-			"autoDeleteOldBoxScores",
-		),
 		difficulty: unwrapGameAttribute(defaultGameAttributes, "difficulty"),
 		stopOnInjury: unwrapGameAttribute(defaultGameAttributes, "stopOnInjury"),
 		stopOnInjuryGames: unwrapGameAttribute(

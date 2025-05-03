@@ -419,6 +419,58 @@ const upgrade45 = (transaction: VersionChangeTransaction) => {
 	};
 };
 
+export const upgradeGamesVersion65 = async (
+	transaction: IDBPTransaction<
+		LeagueDB,
+		("games" | "playerFeats" | "playoffSeries")[],
+		"readwrite"
+	>,
+) => {
+	const gamesStore = transaction.objectStore("games");
+
+	// Add finals to game objects
+	for await (const { value: playoffSeries } of transaction.objectStore(
+		"playoffSeries",
+	)) {
+		const lastRound = playoffSeries.series.at(-1);
+
+		// Finals is the only one where there is only one series in the round
+		const finalsSeries = lastRound?.[0];
+		if (finalsSeries) {
+			const gids = finalsSeries.gids;
+			if (gids) {
+				for (const gid of gids) {
+					const game = await gamesStore.get(gid);
+					if (game && !game.finals) {
+						game.finals = true;
+						console.log("finals game", game);
+						await gamesStore.put(game);
+					}
+				}
+			}
+		}
+	}
+
+	// Add playerFeat to game objects
+	for await (const { value: feat } of transaction.objectStore("playerFeats")) {
+		const game = await gamesStore.get(feat.gid);
+		if (game) {
+			let updated;
+			for (const t of game.teams) {
+				if (t.tid === feat.tid && !t.playerFeat) {
+					t.playerFeat = true;
+					updated = true;
+				}
+			}
+
+			if (updated) {
+				console.log("playerFeat game", game);
+				await gamesStore.put(game);
+			}
+		}
+	}
+};
+
 /**
  * Create a new league database with the latest structure.
  *
@@ -1482,6 +1534,29 @@ const migrate = async ({
 		transaction.objectStore("games").createIndex("noteBool", "noteBool", {
 			unique: false,
 		});
+	}
+
+	if (oldVersion <= 64) {
+		slowUpgrade();
+
+		// Convert autoDeleteOldBoxScores to saveOldBoxScores
+		const gameAttributesStore = transaction.objectStore("gameAttributes");
+		const autoDeleteOldBoxScores = (
+			await gameAttributesStore.get("autoDeleteOldBoxScores")
+		)?.value;
+		// If autoDeleteOldBoxScores was true, just let the new default apply. Only override if it was false
+		if (autoDeleteOldBoxScores === false) {
+			const saveOldBoxScores = {
+				pastSeasons: "all",
+				pastSeasonsType: "all",
+			};
+			await gameAttributesStore.put({
+				key: "saveOldBoxScores",
+				value: saveOldBoxScores,
+			});
+		}
+
+		await upgradeGamesVersion65(transaction as any);
 	}
 };
 

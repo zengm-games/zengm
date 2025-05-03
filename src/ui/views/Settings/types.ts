@@ -74,7 +74,6 @@ export type Key =
 	| "numPlayersOnCourt"
 	| "numDraftRounds"
 	| "tradeDeadline"
-	| "autoDeleteOldBoxScores"
 	| "difficulty"
 	| "stopOnInjuryGames"
 	| "stopOnInjury"

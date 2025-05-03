@@ -2621,14 +2621,6 @@ export const settings: Setting[] = (
 			},
 		},
 		{
-			category: "General",
-			key: "autoDeleteOldBoxScores",
-			name: "Auto Delete Old Box Scores",
-			type: "bool",
-			description:
-				"This will automatically delete box scores older than the past three seasons because box scores use a lot of disk space. See Tools > Delete Old Data for more.",
-		},
-		{
 			category: "UI",
 			key: "hideDisabledTeams",
 			name: "Hide Inactive Teams",

@@ -490,7 +490,6 @@ export type GameAttributesLeague = {
 	allStarDunk: boolean;
 	allStarThree: boolean;
 	alwaysShowCountry: boolean;
-	autoDeleteOldBoxScores: boolean;
 	autoExpand:
 		| {
 				phase: "vote";

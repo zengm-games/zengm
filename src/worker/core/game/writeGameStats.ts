@@ -191,8 +191,6 @@ const getPlayoffInfos = async (game: Game) => {
 };
 
 export const gameSimToBoxScore = async (results: GameResults, att: number) => {
-	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
-
 	const gameStats: Game = {
 		gid: results.gid,
 		day: results.day,
@@ -200,7 +198,6 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 		clutchPlays: [],
 		numPlayersOnCourt: results.numPlayersOnCourt,
 		season: g.get("season"),
-		playoffs,
 		numPeriods: g.get("numPeriods"),
 		overtimes: results.overtimes,
 		won: {
@@ -240,6 +237,10 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 	}
 	if (results.neutralSite) {
 		gameStats.neutralSite = true;
+	}
+	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
+	if (playoffs) {
+		gameStats.playoffs = playoffs;
 	}
 
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;

@@ -2466,7 +2466,7 @@ export const settings: Setting[] = (
 
 				const commonRows = [
 					{
-						key: "notes",
+						key: "note",
 						title: "Games with notes",
 					},
 					{
@@ -2478,7 +2478,7 @@ export const settings: Setting[] = (
 						title: "Finals games",
 					},
 					{
-						key: "feats",
+						key: "playerFeat",
 						title: "Games with statistical feats",
 					},
 					{

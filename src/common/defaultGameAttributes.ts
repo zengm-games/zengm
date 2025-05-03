@@ -360,7 +360,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	saveOldBoxScores: {
 		pastSeasons: 2,
 		pastSeasonsType: "all",
-		notes: "all",
+		note: "all",
 		playoffs: "your",
 	},
 };

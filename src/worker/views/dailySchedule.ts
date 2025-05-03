@@ -31,7 +31,7 @@ const updateDailySchedule = async (
 			const daysAndPlayoffs = new Map<number, boolean>();
 			for (const game of games) {
 				if (game.day !== undefined) {
-					daysAndPlayoffs.set(game.day, game.playoffs);
+					daysAndPlayoffs.set(game.day, !!game.playoffs);
 				}
 			}
 

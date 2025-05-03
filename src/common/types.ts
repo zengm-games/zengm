@@ -342,6 +342,7 @@ export type Game = {
 	att: number;
 	clutchPlays?: string[];
 	day?: number; // Only optional for legacy
+	finals?: boolean;
 	forceWin?: number; // If defined, it's the number of iterations that were used to force the win/tie
 	gid: number;
 	lost: {
@@ -355,7 +356,8 @@ export type Game = {
 	numGamesToWinSeries?: number;
 	numPeriods?: number; // Optional only for legacy, otherwise it's the number of periods in the game, defined at the start
 	numPlayersOnCourt?: number;
-	playoffs: boolean;
+	playoffs?: boolean;
+	playerFeat?: boolean;
 	overtimes: number;
 	scoringSummary?: any;
 	season: number;
@@ -641,10 +643,10 @@ export type GameAttributesLeague = {
 	saveOldBoxScores: {
 		pastSeasons: number;
 		pastSeasonsType?: "your" | "all";
-		notes?: "your" | "all";
+		note?: "your" | "all";
 		playoffs?: "your" | "all";
 		finals?: "your" | "all";
-		feats?: "your" | "all";
+		playerFeat?: "your" | "all";
 		clutchPlays?: "your" | "all";
 		allStar?: "all";
 	};

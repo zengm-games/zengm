@@ -86,7 +86,7 @@ const newPhaseRegularSeason = async (
 					break;
 				}
 			}
-			if (saveIfMeetsConditions("notes", game)) {
+			if (saveIfMeetsConditions("note", game)) {
 				if (game.noteBool) {
 					break;
 				}
@@ -97,12 +97,14 @@ const newPhaseRegularSeason = async (
 				}
 			}
 			if (saveIfMeetsConditions("finals", game)) {
-				if (game.playoffs) {
-					// ???
+				if (game.finals) {
+					break;
 				}
 			}
-			if (saveIfMeetsConditions("feats", game)) {
-				// ???
+			if (saveIfMeetsConditions("playerFeat", game)) {
+				if (game.playerFeat) {
+					break;
+				}
 			}
 			if (saveIfMeetsConditions("clutchPlays", game)) {
 				if (game.clutchPlays && game.clutchPlays.length > 0) {

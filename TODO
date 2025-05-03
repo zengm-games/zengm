@@ -24,12 +24,18 @@ option to exclude notable games box scores from deletion
 - how to implement finals? add a flag?
 - make sure to flush or otherwise handle recently added note
 - reponsive - should wrap name, or maybe change to Save Box Scores
-- handle imported leagues
 - handle upgraded leagues
+  - gameAttributes.saveOldBoxScores
+  - Game flags - finals, playerFeat
+- handle imported leagues
+  - gameAttributes.saveOldBoxScores
+  - run db migration code depending on version param, to handle additional flags
 - test baseball performance
 - test perf if we are scanning over many saved records
 - test that range is selecting correct seasons
 - schema
+  - gameAttributes.saveOldBoxScores
+  - finals/playerFeats booleans
 - update "automatically deleted" message in GameLog
 
 more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/

@@ -333,7 +333,7 @@ const ScoreBox = memo(
 										) : null}
 										{!challengeNoRatings ? `${p.ratings.ovr} ovr` : null}
 										{bySport({
-											baseball: `${!challengeNoRatings ? ", " : ""}${
+											baseball: `${!challengeNoRatings && p.stats.keyStatsShort ? ", " : ""}${
 												p.stats.keyStatsShort
 											}`,
 											basketball: `${
@@ -342,7 +342,7 @@ const ScoreBox = memo(
 												1,
 											)} / ${p.stats.ast.toFixed(1)}`,
 											football: null,
-											hockey: `${!challengeNoRatings ? ", " : ""}${
+											hockey: `${!challengeNoRatings && p.stats.keyStatsShort ? ", " : ""}${
 												p.stats.keyStats
 											}`,
 										})}

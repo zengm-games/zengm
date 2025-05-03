@@ -20,11 +20,15 @@ option to exclude notable games box scores from deletion
   - Games with clutch plays: your/all/none
     - all sports?
   - All-Star Games: switch
+- how to implement feats? add a flag?
+- how to implement finals? add a flag?
 - make sure to flush or otherwise handle recently added note
 - reponsive - should wrap name, or maybe change to Save Box Scores
 - handle imported leagues
 - handle upgraded leagues
 - test baseball performance
+- test perf if we are scanning over many saved records
+- test that range is selecting correct seasons
 - schema
 - update "automatically deleted" message in GameLog
 

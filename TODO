@@ -18,20 +18,8 @@ option to exclude notable games box scores from deletion
   - Games with clutch plays: your/all/none
     - all sports?
   - All-Star Games: switch
-- how to implement feats? add a flag?
-  - per team, so you can have it for just your team?
-- how to implement finals? add a flag?
 - make sure to flush or otherwise handle recently added note
 - reponsive - should wrap name, or maybe change to Save Box Scores
-- handle upgraded leagues
-  - gameAttributes.saveOldBoxScores
-  - Game flags - finals, playerFeat
-    - playerFeats objects contain gids
-    - for finals playoffseries.gids should have it, otherwise could index by season and look for end and see if it's playoffs between two finals teams from playoffseries
-- handle imported leagues
-  - gameAttributes.saveOldBoxScores
-  - run db migration code depending on version param, to handle additional flags
-    - call upgradeGamesVersion65
 - test baseball performance
 - test perf if we are scanning over many saved records
 - test that range is selecting correct seasons
@@ -39,7 +27,6 @@ option to exclude notable games box scores from deletion
   - gameAttributes.saveOldBoxScores
   - finals/playerFeats booleans
 - update "automatically deleted" message in GameLog
-- remove autoDeleteOldBoxScores
 - where should it be on the settings page?
 
 option to disable notification popups https://old.reddit.com/r/BasketballGM/comments/1h3racg/monthly_suggestions_thread/m0duybm/

@@ -63,6 +63,7 @@ import processPlayerNewLeague from "./processPlayerNewLeague.ts";
 import remove from "./remove.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { DEFAULT_LEVEL, amountToLevel } from "../../../common/budgetLevels.ts";
+import { upgradeGamesVersion65 } from "../../db/connectLeague.ts";
 
 export type TeamInfo = TeamBasic & {
 	disabled?: boolean;
@@ -1609,6 +1610,15 @@ const afterDBStream = async ({
 	await idb.cache.flush();
 	idb.cache.startAutoFlush();
 	local.leagueLoaded = true;
+
+	// Version 65 upgrade
+	if (fromFile.version !== undefined && fromFile.version < 65) {
+		const transaction = idb.league.transaction(
+			["games", "playerFeats", "playoffSeries"],
+			"readwrite",
+		);
+		await upgradeGamesVersion65(transaction);
+	}
 };
 
 const createStream = async (

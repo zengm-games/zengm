@@ -428,6 +428,11 @@ export const upgradeGamesVersion65 = async (
 ) => {
 	const gamesStore = transaction.objectStore("games");
 
+	const numGames = await gamesStore.count();
+	if (numGames === 0) {
+		return;
+	}
+
 	// Add finals to game objects
 	for await (const { value: playoffSeries } of transaction.objectStore(
 		"playoffSeries",
@@ -443,7 +448,6 @@ export const upgradeGamesVersion65 = async (
 					const game = await gamesStore.get(gid);
 					if (game && !game.finals) {
 						game.finals = true;
-						console.log("finals game", game);
 						await gamesStore.put(game);
 					}
 				}
@@ -464,7 +468,6 @@ export const upgradeGamesVersion65 = async (
 			}
 
 			if (updated) {
-				console.log("playerFeat game", game);
 				await gamesStore.put(game);
 			}
 		}

@@ -2575,12 +2575,10 @@ export const settings: Setting[] = (
 			descriptionLong: (
 				<>
 					<p>
-						Saving box scores takes a lot of disk space, so by default not all
-						are saved.
-					</p>
-					<p>
-						Box scores from the current season are always saved. The options
-						here allow you to save additional box scores from past seasons.
+						Box scores take up a lot of disk space, so by default they
+						eventually are deleted. Box scores from the current season are
+						always saved. The options here allow you to save additional box
+						scores from past seasons.
 					</p>
 					<p>
 						Any box score that meets at least one of the selected criteria is

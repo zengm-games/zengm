@@ -161,7 +161,8 @@ export type Key =
 	| "autoRelocateRealign"
 	| "alwaysShowCountry"
 	| "neutralSite"
-	| "rpdPot";
+	| "rpdPot"
+	| "saveOldBoxScores";
 
 export type Category =
 	| "New League"

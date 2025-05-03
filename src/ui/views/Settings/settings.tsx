@@ -21,6 +21,7 @@ import type { HandleChange, HandleChangeRaw } from "./SettingsFormOptions.tsx";
 import type { State } from "./SettingsForm.tsx";
 import RowsEditor from "./RowsEditor.tsx";
 import PlayerBioInfo2 from "./PlayerBioInfo.tsx";
+import type { GameAttributesLeague } from "../../../common/types.ts";
 
 export const descriptions = {
 	difficulty:
@@ -2582,6 +2583,12 @@ export const settings: Setting[] = (
 					</p>
 				</>
 			),
+			stringify: (value: GameAttributesLeague["saveOldBoxScores"]) => {
+				return {
+					...value,
+					pastSeasons: String(value.pastSeasons),
+				};
+			},
 		},
 		{
 			category: "General",

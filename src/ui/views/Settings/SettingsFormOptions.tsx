@@ -9,7 +9,6 @@ import {
 	getVisibleCategories,
 	settingIsEnabled,
 	settingNeedsGodMode,
-	type SpecialStateOthers,
 	type State,
 } from "./SettingsForm.tsx";
 import type { Decoration, FieldType, Key, Values } from "./types.ts";
@@ -326,7 +325,7 @@ export type HandleChange = (
 	type: FieldType,
 ) => (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 
-export type HandleChangeRaw = <Name extends SpecialStateOthers>(
+export type HandleChangeRaw = <Name extends Key>(
 	name: Name,
 ) => (value: State[Name]) => void;
 

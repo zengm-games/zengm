@@ -4,7 +4,6 @@ import gameSimPresets from "./gameSimPresets.ts";
 import { settings } from "./settings.tsx";
 import {
 	encodeDecodeFunctions,
-	type SpecialStateOthers,
 	SPECIAL_STATE_ALL,
 	SPECIAL_STATE_BOOLEANS,
 	SPECIAL_STATE_OTHERS,
@@ -41,17 +40,9 @@ const useSettingsFormState = ({
 		}
 
 		for (const key of [...SPECIAL_STATE_BOOLEANS, ...SPECIAL_STATE_OTHERS]) {
-			if (key === "saveOldBoxScores") {
-				initialState.saveOldBoxScores = {
-					...initialSettings.saveOldBoxScores,
-					pastSeasons: String(initialSettings.saveOldBoxScores.pastSeasons),
-				};
-			} else {
-				(initialState as any)[key] = initialSettings[key];
-			}
+			(initialState as any)[key] = initialSettings[key];
 		}
 
-		console.log("initialState", initialState);
 		return initialState;
 	});
 	const godMode = !!state.godMode;
@@ -93,7 +84,7 @@ const useSettingsFormState = ({
 		};
 
 	const handleChangeRaw =
-		<Name extends SpecialStateOthers>(name: Name) =>
+		<Name extends Key>(name: Name) =>
 		(value: State[Name]) => {
 			setState((prevState) => ({
 				...prevState,

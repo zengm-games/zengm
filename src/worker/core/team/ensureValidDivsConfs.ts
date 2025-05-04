@@ -46,7 +46,8 @@ const ensureValidDivsConfs = async () => {
 		}
 		await idb.cache.teams.put(t);
 
-		if (g.get("phase") < PHASE.PLAYOFFS) {
+		const actualPhase = g.get("nextPhase") ?? g.get("phase");
+		if (actualPhase < PHASE.PLAYOFFS) {
 			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[t.tid, g.get("season")],

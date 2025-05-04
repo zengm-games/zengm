@@ -360,7 +360,6 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 		pastSeasons: 2,
 		pastSeasonsType: "all",
 		note: "all",
-		playoffs: "your",
 	},
 };
 

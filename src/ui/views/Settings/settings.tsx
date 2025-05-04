@@ -2464,7 +2464,12 @@ export const settings: Setting[] = (
 			customForm: ({ disabled, handleChangeRaw, id, state }) => {
 				const saveOldBoxScores = state.saveOldBoxScores;
 
-				const commonRows = [
+				type NormalKey = Exclude<keyof typeof saveOldBoxScores, "pastSeasons">;
+
+				const commonRows: {
+					key: NormalKey;
+					title: string;
+				}[] = [
 					{
 						key: "note",
 						title: "Games with notes",
@@ -2481,19 +2486,29 @@ export const settings: Setting[] = (
 						key: "playerFeat",
 						title: "Games with statistical feats",
 					},
-					{
-						key: "clutchPlays",
-						title: "Games with clutch plays",
-					},
-				] as const;
+
+					// Only basketball has clutchPlays currently, so no point showing this option for others
+					...(bySport({
+						baseball: false,
+						basketball: true,
+						football: false,
+						hockey: false,
+					})
+						? [
+								{
+									key: "clutchPlays",
+									title: "Games with clutch plays",
+								} as const,
+							]
+						: []),
+				];
 
 				const SELECT_WIDTH = 80;
 
 				const myHandleChange = handleChangeRaw("saveOldBoxScores");
 
 				const handleChangeSelect =
-					(key: Exclude<keyof typeof saveOldBoxScores, "pastSeasons">) =>
-					(event: ChangeEvent<HTMLSelectElement>) => {
+					(key: NormalKey) => (event: ChangeEvent<HTMLSelectElement>) => {
 						myHandleChange({
 							...saveOldBoxScores,
 							[key]:

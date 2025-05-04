@@ -16,7 +16,6 @@ option to exclude notable games box scores from deletion
   - Games with notes: your/all/none
   - Playoff games: your/all/none
   - Games with clutch plays: your/all/none
-    - all sports?
   - All-Star Games: switch
 - make sure to flush or otherwise handle recently added note
 - reponsive - should wrap name, or maybe change to Save Box Scores

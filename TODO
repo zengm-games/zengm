@@ -11,22 +11,19 @@ keep players on their real historical teams https://old.reddit.com/r/BasketballG
 - OOTP calls it "use historical transactions" https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/ldoidno/?context=3 
 
 option to exclude notable games box scores from deletion
-- test
-  - Past N seasons: N and your/all/none
-  - Games with notes: your/all/none
-  - Playoff games: your/all/none
-  - Games with clutch plays: your/all/none
-  - All-Star Games: switch
 - make sure to flush or otherwise handle recently added note
 - reponsive - should wrap name, or maybe change to Save Box Scores
 - test baseball performance
 - test perf if we are scanning over many saved records
-- test that range is selecting correct seasons
 - schema
   - gameAttributes.saveOldBoxScores
   - finals/playerFeats booleans
 - update "automatically deleted" message in GameLog
 - where should it be on the settings page?
+
+show traded away picks on draft picks page https://discord.com/channels/290013534023057409/331882115119448065/1368517331277320283
+
+add some way to select historical players from history to import into a league, maybe from the Import Players page https://business.facebook.com/latest/inbox/instagram_direct?asset_id=374563936018019&business_id=253589952619424&selected_item_id=340282366841710301244276230450124311206&mailbox_id=374563936018019&nav_ref=diode_page_inbox_message_notif&notif_id=1746023990007561&notif_t=bizsuite_ig_direct_jewel&thread_type=IG_MESSAGE
 
 option to disable notification popups https://old.reddit.com/r/BasketballGM/comments/1h3racg/monthly_suggestions_thread/m0duybm/
 - red ones still go through

@@ -77,7 +77,6 @@ const deleteOldBoxScores = async () => {
 				(saveOldBoxScores[type] === "your" && gameHasYourTeamCache.check(game))
 			);
 		};
-		console.log("range", range);
 
 		for await (const { value: game } of gameIndex.iterate(range)) {
 			if (saveIfMeetsConditions("pastSeasonsType", game)) {
@@ -85,25 +84,21 @@ const deleteOldBoxScores = async () => {
 					saveOldBoxScores.pastSeasons === "all" ||
 					game.season >= g.get("season") - saveOldBoxScores.pastSeasons
 				) {
-					console.log("save pastSeasonsType", game);
 					continue;
 				}
 			}
 			if (saveIfMeetsConditions("note", game)) {
 				if (game.noteBool) {
-					console.log("save note", game);
 					continue;
 				}
 			}
 			if (saveIfMeetsConditions("playoffs", game)) {
 				if (game.playoffs) {
-					console.log("save playoffs", game);
 					continue;
 				}
 			}
 			if (saveIfMeetsConditions("finals", game)) {
 				if (game.finals) {
-					console.log("save finals", game);
 					continue;
 				}
 			}
@@ -116,13 +111,11 @@ const deleteOldBoxScores = async () => {
 							(saveOldBoxScores.playerFeat === "all" || t.tid === userTid),
 					)
 				) {
-					console.log("save playerFeat", game);
 					continue;
 				}
 			}
 			if (saveIfMeetsConditions("clutchPlays", game)) {
 				if (game.clutchPlays && game.clutchPlays.length > 0) {
-					console.log("save clutchPlays", game);
 					continue;
 				}
 			}
@@ -130,7 +123,6 @@ const deleteOldBoxScores = async () => {
 				const isAllStarGame =
 					game.teams[0].tid === -1 && game.teams[1].tid === -2;
 				if (isAllStarGame) {
-					console.log("save allStar", game);
 					continue;
 				}
 			}

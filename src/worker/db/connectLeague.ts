@@ -428,8 +428,9 @@ export const upgradeGamesVersion65 = async (
 ) => {
 	const gamesStore = transaction.objectStore("games");
 
-	const numGames = await gamesStore.count();
-	if (numGames === 0) {
+	// cursor is null if there are no saved box scores. Using IDBObjectStore.count() is slower if there are a lot of games
+	const cursor = await gamesStore.openKeyCursor();
+	if (!cursor) {
 		return;
 	}
 

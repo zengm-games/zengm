@@ -15,9 +15,6 @@ option to exclude notable games box scores from deletion
 - reponsive - should wrap name, or maybe change to Save Box Scores
 - test baseball performance
 - test perf if we are scanning over many saved records
-- schema
-  - gameAttributes.saveOldBoxScores
-  - finals/playerFeats booleans
 - update "automatically deleted" message in GameLog
 - where should it be on the settings page?
 

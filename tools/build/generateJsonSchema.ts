@@ -1240,6 +1240,51 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 								type: "string",
 								enum: ["hard", "none", "soft"],
 							},
+							saveOldBoxScores: {
+								type: "object",
+								properties: {
+									pastSeasons: {
+										anyOf: [
+											{
+												type: "integer",
+												minimum: 0,
+											},
+											{
+												const: "all",
+											},
+										],
+									},
+									pastSeasonsType: {
+										type: "string",
+										enum: ["your", "all"],
+									},
+									note: {
+										type: "string",
+										enum: ["your", "all"],
+									},
+									playoffs: {
+										type: "string",
+										enum: ["your", "all"],
+									},
+									finals: {
+										type: "string",
+										enum: ["your", "all"],
+									},
+									playerFeat: {
+										type: "string",
+										enum: ["your", "all"],
+									},
+									clutchPlays: {
+										type: "string",
+										enum: ["your", "all"],
+									},
+									allStar: {
+										type: "string",
+										const: "all",
+									},
+								},
+								required: ["pastSeasons"],
+							},
 							season: {
 								type: "integer",
 							},
@@ -1464,6 +1509,9 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					properties: {
 						att: {
 							type: "integer",
+						},
+						finals: {
+							type: "boolean",
 						},
 						gid: {
 							type: "integer",

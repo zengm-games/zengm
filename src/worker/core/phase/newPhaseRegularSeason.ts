@@ -50,7 +50,7 @@ const deleteOldBoxScores = async () => {
 		// Not deleting anything
 	} else {
 		// Extra flush before reading games from IndexedDB, in case there is a game in memory with an added/deleted note
-		await idb.cache.flush();
+		await idb.cache.flush(["games"]);
 
 		// readwrite index is slow here in Firefox unless we iterate using openKeyCursor, but that means it's difficult to apply complex logic to deciding when to delete a game. So iterate with full objects in a readonly cursor, and save the deleting for later (happens at the end of phase change, so very soon) because just deleting a bunch of games by their primary key is fast.
 		const gameIndex = idb.league.transaction("games").store.index("season");

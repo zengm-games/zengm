@@ -798,18 +798,31 @@ class Cache {
 	}
 
 	// Take current contents in database and write to disk
-	async flush() {
+	async flush(storesToCheck = STORES) {
 		if (!local.autoSave) {
 			return;
 		}
 
 		this._validateStatus("full");
 
-		const transaction = idb.league.transaction(STORES, "readwrite");
+		// Only open transaction on stores with dirty records - code below does nothing unless this._deletes or this._dirtyRecords has something in it
+		const stores = storesToCheck.filter(
+			(store) =>
+				this._deletes[store].size > 0 || this._dirtyRecords[store].size > 0,
+		);
+		if (stores.length === 0) {
+			// Not sure if this is needed - prior to this short circuit, if this._dirty was somehow true it would have been set false at the bottom of this function. So put it here just in case.
+			this._dirty = false;
 
-		// This is synchronous not because of Firefox, but to prevent any race condition
-		for (const store of STORES) {
+			// Skip making any transaction if possible
+			return;
+		}
+
+		const transaction = idb.league.transaction(stores, "readwrite");
+
+		for (const store of stores) {
 			for (const id of this._deletes[store]) {
+				// This is synchronous to prevent any race condition
 				transaction.objectStore(store).delete(id);
 			}
 
@@ -820,6 +833,7 @@ class Cache {
 
 				// If record was deleted after being marked as dirty, it will be undefined here
 				if (record !== undefined) {
+					// This is synchronous to prevent any race condition
 					transaction.objectStore(store).put(record);
 				}
 			}

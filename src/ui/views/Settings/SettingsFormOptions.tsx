@@ -238,9 +238,13 @@ const Option = ({
 		);
 	}
 
+	// flex-wrap is so wide custom controls (like saveOldBoxScores) wraps when necessary, and also maxWidth ones wrap all the time
 	return (
 		<>
-			<div className="d-flex align-items-top" style={{ minHeight: 33 }}>
+			<div
+				className="d-flex flex-wrap gap-1 align-items-top"
+				style={{ minHeight: 33 }}
+			>
 				<div className="me-auto text-nowrap">
 					<label
 						className="form-label mb-0"

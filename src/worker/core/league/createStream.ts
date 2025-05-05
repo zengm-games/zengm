@@ -1617,7 +1617,11 @@ const afterDBStream = async ({
 			["games", "playerFeats", "playoffSeries"],
 			"readwrite",
 		);
-		await upgradeGamesVersion65(transaction);
+		await upgradeGamesVersion65({
+			transaction,
+			stopIfTooMany: true,
+			lid,
+		});
 	}
 };
 

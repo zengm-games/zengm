@@ -419,13 +419,19 @@ const upgrade45 = (transaction: VersionChangeTransaction) => {
 	};
 };
 
-export const upgradeGamesVersion65 = async (
+export const upgradeGamesVersion65 = async ({
+	transaction,
+	stopIfTooMany,
+	lid,
+}: {
 	transaction: IDBPTransaction<
 		LeagueDB,
 		("games" | "playerFeats" | "playoffSeries")[],
 		"readwrite"
-	>,
-) => {
+	>;
+	stopIfTooMany: boolean;
+	lid: number;
+}) => {
 	const gamesStore = transaction.objectStore("games");
 
 	// cursor is null if there are no saved box scores. Using IDBObjectStore.count() is slower if there are a lot of games
@@ -434,10 +440,31 @@ export const upgradeGamesVersion65 = async (
 		return;
 	}
 
+	const LIMIT_PLAYOFF_SERIES = 1000;
+	const LIMIT_PLAYER_FEATS = 10000;
+
+	const tooMany = async () => {
+		logEvent({
+			type: "error",
+			text: `Upgrade is taking too long, so skipping some stuff doesn't matter unless you want to save box scores from finals games or games with statistical feats. If you want to finish the upgrade and use those features, <a href="/l/${lid}/upgrade65">click here</a>.`,
+			saveToDb: false,
+			persistent: true,
+		});
+	};
+
 	// Add finals to game objects
+	let countPlayoffSeries = 0;
 	for await (const { value: playoffSeries } of transaction.objectStore(
 		"playoffSeries",
 	)) {
+		if (stopIfTooMany) {
+			countPlayoffSeries += 1;
+			if (countPlayoffSeries >= LIMIT_PLAYOFF_SERIES) {
+				tooMany();
+				return;
+			}
+		}
+
 		const lastRound = playoffSeries.series.at(-1);
 
 		// Finals is the only one where there is only one series in the round
@@ -457,7 +484,16 @@ export const upgradeGamesVersion65 = async (
 	}
 
 	// Add playerFeat to game objects
+	let countPlayerFeats = 0;
 	for await (const { value: feat } of transaction.objectStore("playerFeats")) {
+		if (stopIfTooMany) {
+			countPlayerFeats += 1;
+			if (countPlayerFeats >= LIMIT_PLAYER_FEATS) {
+				tooMany();
+				return;
+			}
+		}
+
 		const game = await gamesStore.get(feat.gid);
 		if (game) {
 			let updated;
@@ -1560,7 +1596,11 @@ const migrate = async ({
 			});
 		}
 
-		await upgradeGamesVersion65(transaction as any);
+		await upgradeGamesVersion65({
+			transaction: transaction as any,
+			stopIfTooMany: true,
+			lid,
+		});
 	}
 };
 

@@ -14,11 +14,6 @@ option to exclude notable games box scores from deletion
 - test perf if we are scanning over many saved records
   - scanning over games that wind up being deleted?
   - scanning over games that wind up being saved?
-  - upgrade/import
-    - feats is pretty slow, even if corresponding games don't exist, about 2 seconds per 1000 feats
-      - maybe give warning and link if more than 10k feats or 1k seasons?
-        - what about for import?
-    - confirm tooMany link works, both for import and upgrade
 - update "automatically deleted" message in GameLog
 - where should it be on the settings page?
 

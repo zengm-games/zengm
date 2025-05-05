@@ -110,6 +110,7 @@ import TradeSummary from "./TradeSummary/index.tsx";
 import TradingBlock from "./TradingBlock/index.tsx";
 import Transactions from "./Transactions.tsx";
 import UpcomingFreeAgents from "./UpcomingFreeAgents.tsx";
+import Upgrade65 from "./Upgrade65.tsx";
 import WatchList from "./WatchList.tsx";
 
 export default {
@@ -225,5 +226,6 @@ export default {
 	TragicDeaths,
 	Transactions,
 	UpcomingFreeAgents,
+	Upgrade65,
 	WatchList,
 };

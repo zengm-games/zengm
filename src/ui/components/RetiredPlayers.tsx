@@ -72,7 +72,6 @@ const RetiredPlayers = ({
 			</p>
 			<ActionButton
 				variant="light-bordered"
-				disabled={exporting}
 				onClick={async () => {
 					try {
 						setExporting(true);

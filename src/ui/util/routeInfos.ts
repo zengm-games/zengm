@@ -215,6 +215,7 @@ const routeInfos = {
 	"/l/:lid/notes/:type": "notes",
 	"/l/:lid/draft_picks": "draftPicks",
 	"/l/:lid/draft_picks/:abbrev": "draftPicks",
+	"/l/:lid/upgrade65": "upgrade65",
 };
 
 export default routeInfos;

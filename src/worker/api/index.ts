@@ -112,7 +112,7 @@ import { initDefaults } from "../util/loadNames.ts";
 import type { PlayerRatings } from "../../common/types.basketball.ts";
 import createStreamFromLeagueObject from "../core/league/create/createStreamFromLeagueObject.ts";
 import type { IDBPIndex, IDBPObjectStore } from "@dumbmatter/idb";
-import type { LeagueDB } from "../db/connectLeague.ts";
+import { upgradeGamesVersion65, type LeagueDB } from "../db/connectLeague.ts";
 import playMenu from "./playMenu.ts";
 import toolsMenu from "./toolsMenu.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
@@ -4295,6 +4295,41 @@ const updateAwards = async (
 	await saveAwardsByPlayer(awardsByPlayer, conditions, awards.season, false);
 };
 
+const upgrade65Estimate = async () => {
+	// cursor is null if there are no saved box scores. Using IDBObjectStore.count() is slower if there are a lot of games
+	const cursor = await idb.league.transaction("games").store.openKeyCursor();
+	if (!cursor) {
+		return {
+			numFeats: 0,
+			numPlayoffSeries: 0,
+		};
+	}
+
+	const [numFeats, numPlayoffSeries] = await Promise.all([
+		idb.league.transaction("playerFeats").store.count(),
+		idb.league.transaction("playoffSeries").store.count(),
+	]);
+
+	return {
+		numFeats,
+		numPlayoffSeries,
+	};
+};
+
+const upgrade65 = async () => {
+	console.time("upgrade65");
+	const transaction = idb.league.transaction(
+		["games", "playerFeats", "playoffSeries"],
+		"readwrite",
+	);
+	await upgradeGamesVersion65({
+		transaction,
+		stopIfTooMany: false,
+		lid: g.get("lid"),
+	});
+	console.timeEnd("upgrade65");
+};
+
 const upsertCustomizedPlayer = async (
 	{
 		p,
@@ -4850,6 +4885,8 @@ export default {
 		updatePlayoffTeams,
 		updateTeamInfo,
 		updateTrade,
+		upgrade65,
+		upgrade65Estimate,
 		upsertCustomizedPlayer,
 		validatePointsFormula,
 		validatePlayoffSettings,

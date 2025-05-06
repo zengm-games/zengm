@@ -55,10 +55,11 @@ export const NoGamesMessage = ({
 			<>
 				{" "}
 				By default, box scores from old seasons are automatically deleted after
-				3 years.{" "}
+				2 seasons. You can edit this behavior with the
 				<a href={helpers.leagueUrl(["settings"])}>
-					You can change this behavior on the League Settings page.
+					Save Old Box Scores setting on the League Settings page
 				</a>
+				.
 			</>
 		) : null}
 	</div>

@@ -11,10 +11,6 @@ keep players on their real historical teams https://old.reddit.com/r/BasketballG
 - OOTP calls it "use historical transactions" https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/ldoidno/?context=3 
 
 option to exclude notable games box scores from deletion
-- test perf if we are scanning over many saved records
-  - scanning over games that wind up being deleted?
-  - scanning over games that wind up being saved?
-- update "automatically deleted" message in GameLog
 - where should it be on the settings page?
 
 show traded away picks on draft picks page https://discord.com/channels/290013534023057409/331882115119448065/1368517331277320283

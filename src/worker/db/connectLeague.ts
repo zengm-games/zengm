@@ -1594,6 +1594,7 @@ const migrate = async ({
 				key: "saveOldBoxScores",
 				value: saveOldBoxScores,
 			});
+			await gameAttributesStore.delete("autoDeleteOldBoxScores");
 		}
 
 		await upgradeGamesVersion65({

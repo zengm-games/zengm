@@ -412,25 +412,33 @@ class Play {
 						? event.spotYds
 						: event.penYds;
 
-				statChanges.push([event.t, event.p, "pen"]);
-				statChanges.push([event.t, event.p, "penYds", actualPenYds]);
+				statChanges.push(
+					[event.t, event.p, "pen"],
+					[event.t, event.p, "penYds", actualPenYds],
+				);
 			}
 			if (event.type === "kr") {
-				statChanges.push([state.o, event.p, "kr"]);
-				statChanges.push([state.o, event.p, "krYds", event.yds]);
-				statChanges.push([state.o, event.p, "krLng", event.yds]);
+				statChanges.push(
+					[state.o, event.p, "kr"],
+					[state.o, event.p, "krYds", event.yds],
+					[state.o, event.p, "krLng", event.yds],
+				);
 			} else if (event.type === "onsideKickRecovery") {
 				if (!event.success) {
-					statChanges.push([state.o, event.p, "kr"]);
-					statChanges.push([state.o, event.p, "krYds", event.yds]);
-					statChanges.push([state.o, event.p, "krLng", event.yds]);
+					statChanges.push(
+						[state.o, event.p, "kr"],
+						[state.o, event.p, "krYds", event.yds],
+						[state.o, event.p, "krLng", event.yds],
+					);
 				}
 			} else if (event.type === "krTD") {
 				statChanges.push([state.o, event.p, "krTD"]);
 			} else if (event.type === "p") {
-				statChanges.push([state.o, event.p, "pnt"]);
-				statChanges.push([state.o, event.p, "pntYds", event.yds]);
-				statChanges.push([state.o, event.p, "pntLng", event.yds]);
+				statChanges.push(
+					[state.o, event.p, "pnt"],
+					[state.o, event.p, "pntYds", event.yds],
+					[state.o, event.p, "pntLng", event.yds],
+				);
 				const kickTo = state.scrimmage + event.yds;
 				if (kickTo > 80 && kickTo < 100) {
 					statChanges.push([state.o, event.p, "pntIn20"]);
@@ -438,64 +446,72 @@ class Play {
 			} else if (event.type === "touchbackPunt") {
 				statChanges.push([state.d, event.p, "pntTB"]);
 			} else if (event.type === "pr") {
-				statChanges.push([state.o, event.p, "pr"]);
-				statChanges.push([state.o, event.p, "prYds", event.yds]);
-				statChanges.push([state.o, event.p, "prLng", event.yds]);
+				statChanges.push(
+					[state.o, event.p, "pr"],
+					[state.o, event.p, "prYds", event.yds],
+					[state.o, event.p, "prLng", event.yds],
+				);
 			} else if (event.type === "prTD") {
 				statChanges.push([state.o, event.p, "prTD"]);
 			} else if (event.type === "rus") {
-				statChanges.push([state.o, event.p, "rus"]);
-				statChanges.push([state.o, event.p, "rusYds", event.yds]);
-				statChanges.push([state.o, event.p, "rusLng", event.yds]);
+				statChanges.push(
+					[state.o, event.p, "rus"],
+					[state.o, event.p, "rusYds", event.yds],
+					[state.o, event.p, "rusLng", event.yds],
+				);
 			} else if (event.type === "rusTD") {
 				statChanges.push([state.o, event.p, "rusTD"]);
 			} else if (event.type === "kneel") {
-				statChanges.push([state.o, event.p, "rus"]);
-				statChanges.push([state.o, event.p, "rusYds", event.yds]);
-				statChanges.push([state.o, event.p, "rusLng", event.yds]);
+				statChanges.push(
+					[state.o, event.p, "rus"],
+					[state.o, event.p, "rusYds", event.yds],
+					[state.o, event.p, "rusLng", event.yds],
+				);
 			} else if (event.type === "sk") {
-				statChanges.push([state.o, event.qb, "pssSk"]);
-				statChanges.push([state.o, event.qb, "pssSkYds", Math.abs(event.yds)]);
-				statChanges.push([state.d, event.p, "defSk"]);
-				statChanges.push([state.d, event.p, "defTckSolo"]);
-				statChanges.push([state.d, event.p, "defTckLoss"]);
+				statChanges.push(
+					[state.o, event.qb, "pssSk"],
+					[state.o, event.qb, "pssSkYds", Math.abs(event.yds)],
+					[state.d, event.p, "defSk"],
+					[state.d, event.p, "defTckSolo"],
+					[state.d, event.p, "defTckLoss"],
+				);
 			} else if (event.type === "pss") {
-				statChanges.push([state.o, event.qb, "pss"]);
-				statChanges.push([state.o, event.target, "tgt"]);
+				statChanges.push(
+					[state.o, event.qb, "pss"],
+					[state.o, event.target, "tgt"],
+				);
 			} else if (event.type === "pssCmp") {
-				statChanges.push([state.o, event.qb, "pssCmp"]);
-				statChanges.push([state.o, event.qb, "pssYds", event.yds]);
-				statChanges.push([state.o, event.qb, "pssLng", event.yds]);
-				statChanges.push([state.o, event.target, "rec"]);
-				statChanges.push([state.o, event.target, "recYds", event.yds]);
-				statChanges.push([state.o, event.target, "recLng", event.yds]);
+				statChanges.push(
+					[state.o, event.qb, "pssCmp"],
+					[state.o, event.qb, "pssYds", event.yds],
+					[state.o, event.qb, "pssLng", event.yds],
+					[state.o, event.target, "rec"],
+					[state.o, event.target, "recYds", event.yds],
+					[state.o, event.target, "recLng", event.yds],
+				);
 			} else if (event.type === "pssInc") {
 				if (event.defender) {
 					statChanges.push([state.d, event.defender, "defPssDef"]);
 				}
 			} else if (event.type === "pssTD") {
-				statChanges.push([state.o, event.qb, "pssTD"]);
-				statChanges.push([state.o, event.target, "recTD"]);
+				statChanges.push(
+					[state.o, event.qb, "pssTD"],
+					[state.o, event.target, "recTD"],
+				);
 			} else if (event.type === "int") {
-				statChanges.push([state.d, event.qb, "pssInt"]);
-				statChanges.push([state.o, event.defender, "defPssDef"]);
-				statChanges.push([state.o, event.defender, "defInt"]);
+				statChanges.push(
+					[state.d, event.qb, "pssInt"],
+					[state.o, event.defender, "defPssDef"],
+					[state.o, event.defender, "defInt"],
+				);
 
 				const touchback = state.scrimmage + event.ydsReturn <= 0;
 
 				if (!touchback) {
-					statChanges.push([
-						state.o,
-						event.defender,
-						"defIntYds",
-						event.ydsReturn,
-					]);
-					statChanges.push([
-						state.o,
-						event.defender,
-						"defIntLng",
-						event.ydsReturn,
-					]);
+					statChanges.push(
+						[state.o, event.defender, "defIntYds", event.ydsReturn],
+						[state.o, event.defender, "defIntLng", event.ydsReturn],
+					);
 				}
 			} else if (event.type === "intTD") {
 				statChanges.push([state.o, event.p, "defIntTD"]);
@@ -531,8 +547,10 @@ class Play {
 					}
 				}
 			} else if (event.type === "fmb") {
-				statChanges.push([state.o, event.pFumbled, "fmb"]);
-				statChanges.push([state.d, event.pForced, "defFmbFrc"]);
+				statChanges.push(
+					[state.o, event.pFumbled, "fmb"],
+					[state.d, event.pForced, "defFmbFrc"],
+				);
 			} else if (event.type === "fmbRec") {
 				statChanges.push([state.o, event.pRecovered, "defFmbRec"]);
 
@@ -540,8 +558,10 @@ class Play {
 					statChanges.push([state.d, event.pFumbled, "fmbLost"]);
 				}
 
-				statChanges.push([state.o, event.pRecovered, "defFmbYds", event.yds]);
-				statChanges.push([state.o, event.pRecovered, "defFmbLng", event.yds]);
+				statChanges.push(
+					[state.o, event.pRecovered, "defFmbYds", event.yds],
+					[state.o, event.pRecovered, "defFmbLng", event.yds],
+				);
 			} else if (event.type === "fmbTD") {
 				statChanges.push([state.o, event.p, "defFmbTD"]);
 			} else if (event.type === "defSft") {

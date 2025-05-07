@@ -99,8 +99,7 @@ const LeagueFinances = ({
 			if (showCapSpaceForReal) {
 				data.push(helpers.formatCurrency(salaryCap - payroll, "M"));
 			}
-			data.push(t.rosterSpots);
-			data.push(helpers.upperCaseFirstLetter(t.strategy));
+			data.push(t.rosterSpots, helpers.upperCaseFirstLetter(t.strategy));
 		} else {
 			if (showCapSpaceForReal) {
 				data.push(null);
@@ -117,9 +116,6 @@ const LeagueFinances = ({
 			>
 				Trade With
 			</button>,
-		);
-
-		data.push(
 			t.seasonAttrs.expenseLevels.scouting,
 			t.seasonAttrs.expenseLevels.coaching,
 			t.seasonAttrs.expenseLevels.health,

@@ -851,8 +851,7 @@ const newSchedule = (
 					!tidsInDays[j].includes(tids[i][0]) &&
 					!tidsInDays[j].includes(tids[i][1])
 				) {
-					tidsInDays[j].push(tids[i][0]);
-					tidsInDays[j].push(tids[i][1]);
+					tidsInDays[j].push(tids[i][0], tids[i][1]);
 					days[j].push(tids[i]);
 					used = true;
 					break;

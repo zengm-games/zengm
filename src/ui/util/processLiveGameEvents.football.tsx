@@ -680,8 +680,10 @@ const processLiveGameEvents = ({
 						boxScore.teams[otherT].abbrev,
 					);
 
-					textParts.push(formatDownAndDistance(e.down, e.toGo, e.scrimmage));
-					textParts.push(fieldPos);
+					textParts.push(
+						formatDownAndDistance(e.down, e.toGo, e.scrimmage),
+						fieldPos,
+					);
 				}
 				t = actualT;
 

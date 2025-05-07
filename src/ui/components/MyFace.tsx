@@ -1,5 +1,5 @@
 import type { FaceConfig } from "facesjs";
-import { Face } from "facesjs/react"; // eslint-disable-line import/no-unresolved
+import { Face } from "facesjs/react";
 import {
 	DEFAULT_JERSEY,
 	DEFAULT_TEAM_COLORS,

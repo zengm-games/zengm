@@ -244,8 +244,8 @@ const genDepth = async (
 
 			if (pos2 === "G" || pos2 === "D") {
 				const { selected, sorted } = info[pos2];
-				depth[pos2].push(...selected.map((p) => p.pid));
 				depth[pos2].push(
+					...selected.map((p) => p.pid),
 					...sorted.filter((p) => !selected.includes(p)).map((p) => p.pid),
 				);
 			} else {

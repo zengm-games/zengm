@@ -1,5 +1,5 @@
 //import babel from "vite-plugin-babel";
-import { configDefaults, defineConfig } from "vitest/config"; // eslint-disable-line import/no-unresolved
+import { configDefaults, defineConfig } from "vitest/config";
 
 const footballTests = ["**/*.football/*.test.ts", "**/*.football.test.ts"];
 

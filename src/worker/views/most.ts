@@ -623,18 +623,20 @@ const updatePlayers = async (
 			title = "Most Years on One Team";
 			description =
 				"These are the players who played the most seasons for a single team.";
-			extraCols.push({
-				key: ["most", "value"],
-				colName: "# Seasons",
-			});
-			extraCols.push({
-				key: ["most", "extra", "gp"],
-				colName: "stat:gp",
-			});
-			extraCols.push({
-				key: ["most", "extra"],
-				colName: "Team",
-			});
+			extraCols.push(
+				{
+					key: ["most", "value"],
+					colName: "# Seasons",
+				},
+				{
+					key: ["most", "extra", "gp"],
+					colName: "stat:gp",
+				},
+				{
+					key: ["most", "extra"],
+					colName: "Team",
+				},
+			);
 
 			getValue = (p) => {
 				let maxNumSeasons = 0;
@@ -675,22 +677,24 @@ const updatePlayers = async (
 		} else if (type === "oldest") {
 			title = "Oldest to Play in a Game";
 			description = "These are the oldest players who ever played in a game.";
-			extraCols.push({
-				key: ["most", "value"],
-				colName: "Age",
-			});
-			extraCols.push({
-				key: ["most", "extra", "season"],
-				colName: "Season",
-			});
-			extraCols.push({
-				key: ["most", "extra"],
-				colName: "Team",
-			});
-			extraCols.push({
-				key: ["most", "extra", "ovr"],
-				colName: "Ovr",
-			});
+			extraCols.push(
+				{
+					key: ["most", "value"],
+					colName: "Age",
+				},
+				{
+					key: ["most", "extra", "season"],
+					colName: "Season",
+				},
+				{
+					key: ["most", "extra"],
+					colName: "Team",
+				},
+				{
+					key: ["most", "extra", "ovr"],
+					colName: "Ovr",
+				},
+			);
 
 			getValue = (p) => {
 				let maxAge = 0;
@@ -734,22 +738,24 @@ const updatePlayers = async (
 			description = `These are the players who peaked in ovr at the ${
 				oldest ? "oldest" : "youngest"
 			} age (min 5 seasons in career${oldest ? "" : " and 30+ years old"}).`;
-			extraCols.push({
-				key: ["most", "extra", "age"],
-				colName: "Age",
-			});
-			extraCols.push({
-				key: ["most", "extra", "bestSeasonOverride"],
-				colName: "Season",
-			});
-			extraCols.push({
-				key: ["most", "extra"],
-				colName: "Team",
-			});
-			extraCols.push({
-				key: ["most", "extra", "ovr"],
-				colName: "Ovr",
-			});
+			extraCols.push(
+				{
+					key: ["most", "extra", "age"],
+					colName: "Age",
+				},
+				{
+					key: ["most", "extra", "bestSeasonOverride"],
+					colName: "Season",
+				},
+				{
+					key: ["most", "extra"],
+					colName: "Team",
+				},
+				{
+					key: ["most", "extra", "ovr"],
+					colName: "Ovr",
+				},
+			);
 
 			sortParams = [
 				[(x: any) => x.most.value, (x: any) => x.most.extra.ovr],
@@ -822,18 +828,20 @@ const updatePlayers = async (
 			description = `These are the ${
 				oldest ? "oldest" : "youngest"
 			} players who won an MVP award.`;
-			extraCols.push({
-				key: ["most", "extra", "age"],
-				colName: "Age",
-			});
-			extraCols.push({
-				key: ["most", "extra"],
-				colName: "Team",
-			});
-			extraCols.push({
-				key: ["most", "extra", "ovr"],
-				colName: "Ovr",
-			});
+			extraCols.push(
+				{
+					key: ["most", "extra", "age"],
+					colName: "Age",
+				},
+				{
+					key: ["most", "extra"],
+					colName: "Team",
+				},
+				{
+					key: ["most", "extra", "ovr"],
+					colName: "Ovr",
+				},
+			);
 
 			sortParams = [
 				[(x: any) => x.most.value, (x: any) => x.most.extra.ovr],
@@ -879,18 +887,20 @@ const updatePlayers = async (
 			if (g.get("challengeNoRatings")) {
 				description += challengeNoRatingsText;
 			}
-			extraCols.push({
-				key: ["most", "extra", "type"],
-				colName: "Injury",
-			});
-			extraCols.push({
-				key: ["most", "extra", "season"],
-				colName: "Season",
-			});
-			extraCols.push({
-				key: ["most", "value"],
-				colName: "Ovr Drop",
-			});
+			extraCols.push(
+				{
+					key: ["most", "extra", "type"],
+					colName: "Injury",
+				},
+				{
+					key: ["most", "extra", "season"],
+					colName: "Season",
+				},
+				{
+					key: ["most", "value"],
+					colName: "Ovr Drop",
+				},
+			);
 
 			filter = (p) =>
 				p.injuries.length > 0 &&

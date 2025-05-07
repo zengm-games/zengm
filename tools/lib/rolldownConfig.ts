@@ -126,17 +126,13 @@ export const rolldownConfig = (
 			},
 		});
 	} else {
-		plugins.push(blacklist(envOptions.blacklistOptions));
-
 		plugins.push(
+			blacklist(envOptions.blacklistOptions),
 			terser({
 				format: {
 					comments: false,
 				},
 			}),
-		);
-
-		plugins.push(
 			visualizer({
 				filename: `stats-${name}.html`,
 				gzipSize: true,

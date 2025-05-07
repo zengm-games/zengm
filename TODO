@@ -1,3 +1,9 @@
+When changing the jersey number on a player acquired in FA it also changes what that player's jersey number was on his previous team, despite him being signed to a different team now
+- need to treat jerseyNumber like teamSeason stuff (name, etc) - store "latest" in root, and copy from there when making new stats row, if possible
+  - what does jerseyNumber in root mean now? can that be used directly, or does it need to be preserved?
+- https://discord.com/channels/290013534023057409/290015591216054273/940321320569286687
+- https://discord.com/channels/290013534023057409/290015591216054273/1369484504992845865
+
 allow trading more than 2 picks
 - 2nd+ round picks should not be in the limit
 - maybe add penalty to score for >2 picks, rather than hard limit
@@ -1770,10 +1776,6 @@ wordmarks on team history https://old.reddit.com/r/BasketballGM/comments/ik1kif/
 individual player determinism https://old.reddit.com/r/BasketballGM/comments/ij0bi7/would_it_be_possible_to_make_player_determinism/
 
 salaries wrong after expansion draft? https://cdn.discordapp.com/attachments/290015591216054273/750472674953920572/unknown.png
-
-When changing the jersey number on a player acquired in FA it also changes what that player's jersey number was on his previous team, despite him being signed to a different team now
-- need to treat jerseyNumber like teamSeason stuff (name, etc) - store "latest" in root, and copy from there when making new stats row, if possible
-- https://discord.com/channels/290013534023057409/290015591216054273/940321320569286687
 
 option to disable unimportant notifications
 - https://old.reddit.com/r/BasketballGM/comments/ier26k/pop_ups_disable/

@@ -788,21 +788,23 @@ const DetailedScore = ({
 	});
 
 	if (isSport("baseball")) {
-		qtrs.push({
-			label: "R",
-			title: "Runs",
-			bold: true,
-		});
-		qtrs.push({
-			label: "H",
-			title: "Hits",
-			bold: true,
-		});
-		qtrs.push({
-			label: "E",
-			title: "Errors",
-			bold: true,
-		});
+		qtrs.push(
+			{
+				label: "R",
+				title: "Runs",
+				bold: true,
+			},
+			{
+				label: "H",
+				title: "Hits",
+				bold: true,
+			},
+			{
+				label: "E",
+				title: "Errors",
+				bold: true,
+			},
+		);
 	} else {
 		qtrs.push({
 			label: "F",

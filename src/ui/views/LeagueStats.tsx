@@ -42,8 +42,7 @@ const LeagueStats = ({
 		basicColNames.push("T");
 	}
 	if (usePts) {
-		basicColNames.push("PTS");
-		basicColNames.push("PTS%");
+		basicColNames.push("PTS", "PTS%");
 	} else {
 		basicColNames.push("%");
 	}
@@ -112,8 +111,7 @@ const LeagueStats = ({
 			otherStatColumns.push("tied");
 		}
 		if (usePts) {
-			otherStatColumns.push("pts");
-			otherStatColumns.push("ptsPct");
+			otherStatColumns.push("pts", "ptsPct");
 		} else {
 			otherStatColumns.push("winp");
 		}

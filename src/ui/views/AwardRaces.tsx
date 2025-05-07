@@ -143,8 +143,6 @@ const AwardRaces = ({
 										</StatWithChange>
 									);
 								}),
-							);
-							data.push(
 								<a
 									href={helpers.leagueUrl([
 										"compare_players",

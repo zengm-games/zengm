@@ -220,21 +220,25 @@ const MoreLinks = (
 				name: "Draft Lottery",
 			});
 		}
-		links.push({
-			url: season !== undefined ? ["draft_history", season] : ["draft_history"],
-			name: draftType === "freeAgents" ? "Prospects History" : "Draft History",
-		});
-		links.push({
-			url:
-				abbrev !== undefined && tid !== undefined
-					? ["draft_team_history", `${abbrev}_${tid}`]
-					: ["draft_team_history"],
-			name: "Team History",
-		});
-		links.push({
-			url: ["notes", "draftPick"],
-			name: "Draft Pick Notes",
-		});
+		links.push(
+			{
+				url:
+					season !== undefined ? ["draft_history", season] : ["draft_history"],
+				name:
+					draftType === "freeAgents" ? "Prospects History" : "Draft History",
+			},
+			{
+				url:
+					abbrev !== undefined && tid !== undefined
+						? ["draft_team_history", `${abbrev}_${tid}`]
+						: ["draft_team_history"],
+				name: "Team History",
+			},
+			{
+				url: ["notes", "draftPick"],
+				name: "Draft Pick Notes",
+			},
+		);
 	} else if (props.type == "awards") {
 		const { season } = props;
 

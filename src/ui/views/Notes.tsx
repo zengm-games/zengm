@@ -235,8 +235,7 @@ const Notes = (props: View<"notes">) => {
 			colNames.push("T");
 		}
 		if (usePts) {
-			colNames.push("PTS");
-			colNames.push("PTS%");
+			colNames.push("PTS", "PTS%");
 		} else {
 			colNames.push("%");
 		}

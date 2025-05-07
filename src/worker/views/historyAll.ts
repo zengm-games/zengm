@@ -75,7 +75,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		// Start with the oldest season we have team or awards history for
 		const maxSeason =
 			g.get("phase") > PHASE.PLAYOFFS ? g.get("season") : g.get("season") - 1;
-		let minSeason = g.get("startingSeason");
+		let minSeason = Infinity;
 		for (const t of teams) {
 			if (t.seasonAttrs.length > 0 && t.seasonAttrs[0].season < minSeason) {
 				minSeason = t.seasonAttrs[0].season;

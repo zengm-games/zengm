@@ -440,8 +440,8 @@ export const upgradeGamesVersion65 = async ({
 		return;
 	}
 
-	const LIMIT_PLAYOFF_SERIES = 1;
-	const LIMIT_PLAYER_FEATS = 1;
+	const LIMIT_PLAYOFF_SERIES = 1000;
+	const LIMIT_PLAYER_FEATS = 10000;
 
 	const tooMany = async () => {
 		logEvent({

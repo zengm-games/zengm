@@ -121,6 +121,7 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 
 		draftPicks.push({
 			...dp,
+			abbrev: teams[dp.tid]?.abbrev ?? "???",
 			originalAbbrev: t?.abbrev ?? "???",
 			avgAge: t?.powerRankings.avgAge,
 			ovr: t?.powerRankings.ovr,
@@ -151,17 +152,28 @@ const updateDraftPicks = async (
 		updateEvents.includes("newPhase") ||
 		abbrev !== state.abbrev
 	) {
-		const draftPicksRaw = await idb.cache.draftPicks.indexGetAll(
-			"draftPicksByTid",
-			tid,
+		const draftPicksRaw = (await idb.cache.draftPicks.getAll()).filter(
+			(dp) => dp.tid === tid || dp.originalTid === tid,
 		);
 
-		const draftPicks = await processDraftPicks(draftPicksRaw);
+		const draftPicksProcessed = await processDraftPicks(draftPicksRaw);
+
+		// Do this after processDraftPicks so processDraftPicks can use the same caches for both
+		const draftPicks = [];
+		const draftPicksOutgoing = [];
+		for (const dp of draftPicksProcessed) {
+			if (dp.tid === tid) {
+				draftPicks.push(dp);
+			} else if (dp.originalTid === tid) {
+				draftPicksOutgoing.push(dp);
+			}
+		}
 
 		return {
 			abbrev,
 			challengeNoRatings: g.get("challengeNoRatings"),
 			draftPicks,
+			draftPicksOutgoing,
 			draftType: g.get("draftType"),
 			tid,
 		};

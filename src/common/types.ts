@@ -1231,7 +1231,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 		ovrDrop?: number;
 		potDrop?: number;
 	}[];
-	jerseyNumber?: string;
+	jerseyNumber?: string; // Should be undefined only for a player who has never been on a team, or a player signed to his first team before the preseason
 	lastName: string;
 	moodTraits: MoodTrait[];
 	note?: string;

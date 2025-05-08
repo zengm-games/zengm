@@ -74,18 +74,10 @@ const copyValidValues = (
 	}
 	target.hof = source.hof;
 
-	// jerseyNumber? could be in root or stats
 	if (target.jerseyNumber !== source.jerseyNumber) {
 		target.jerseyNumber = source.jerseyNumber;
 		if (target.jerseyNumber === "") {
 			target.jerseyNumber = undefined;
-		}
-	}
-	if (target.stats.length > 0 && source.stats.length > 0) {
-		target.stats.at(-1).jerseyNumber = source.stats.at(-1).jerseyNumber;
-		if (target.stats.at(-1).jerseyNumber === "") {
-			target.jerseyNumber = undefined;
-			target.stats.at(-1).jerseyNumber = undefined;
 		}
 	}
 
@@ -459,11 +451,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						delete p[field];
 					}
 				} else if (field === "jerseyNumber") {
-					if (p.stats.length > 0) {
-						p.stats.at(-1).jerseyNumber = val;
-					} else {
-						p.jerseyNumber = val;
-					}
+					p.jerseyNumber = val;
 				} else if (field === "pos") {
 					if (val === "auto") {
 						delete p.pos;

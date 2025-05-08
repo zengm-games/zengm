@@ -4,6 +4,7 @@ import {
 	bySport,
 	isSport,
 	DEFAULT_PLAY_THROUGH_INJURIES,
+	PHASE,
 } from "../../../common/index.ts";
 import { finances, freeAgents, league, player, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
@@ -22,7 +23,7 @@ import type {
 	RealTeamInfo,
 	TeamSeason,
 } from "../../../common/types.ts";
-import { groupBy } from "../../../common/utils.ts";
+import { groupBy, maxBy } from "../../../common/utils.ts";
 
 const newPhasePreseason = async (
 	conditions: Conditions,
@@ -328,7 +329,6 @@ const newPhasePreseason = async (
 				},
 				conditions,
 			);
-			await idb.cache.players.put(p);
 		}
 	}
 
@@ -388,8 +388,6 @@ const newPhasePreseason = async (
 			// Update player values after ratings changes
 			await player.updateValues(p);
 		}
-
-		await idb.cache.players.put(p);
 	}
 
 	if (repeatSeason?.type !== "playersAndRosters") {
@@ -403,36 +401,30 @@ const newPhasePreseason = async (
 
 	local.minFractionDiffs = undefined;
 
-	// Handle jersey number conflicts, which should only exist for players added in free agency, because otherwise it would have been handled at the time of signing
+	// Handle jersey number conflicts
 	const playersByTeam = groupBy(
 		players.filter((p) => p.tid >= 0 && p.stats.length > 0),
 		"tid",
 	);
-	for (const [tidString, roster] of Object.entries(playersByTeam)) {
-		const tid = Number.parseInt(tidString);
+	for (const roster of Object.values(playersByTeam)) {
 		for (const p of roster) {
-			const jerseyNumber = p.stats.at(-1).jerseyNumber;
-			if (!jerseyNumber) {
+			const jerseyNumber = p.jerseyNumber;
+			if (jerseyNumber === undefined) {
 				continue;
 			}
-			const conflicts = roster.filter(
-				(p2) => p2.stats.at(-1).jerseyNumber === jerseyNumber,
-			);
+			const conflicts = roster.filter((p2) => p2.jerseyNumber === jerseyNumber);
 			if (conflicts.length > 1) {
-				// Conflict! Who gets to keep the number?
-
-				// Player who was on team last year (should only be one at most)
-				let playerWhoKeepsIt = conflicts.find(
-					(p) => p.stats.length > 1 && p.stats.at(-2)!.tid === tid,
+				// Conflict! Who gets to keep the number? The one with the highest career peak ovr!
+				const playerWhoKeepsIt = maxBy(
+					conflicts,
+					(p) => maxBy(p.ratings, "ovr")!.ovr,
 				);
-				if (!playerWhoKeepsIt) {
-					// Randomly pick one
-					playerWhoKeepsIt = random.choice(conflicts);
-				}
 
 				for (const p of conflicts) {
 					if (p !== playerWhoKeepsIt) {
-						p.stats.at(-1).jerseyNumber = await player.genJerseyNumber(p);
+						player.setJerseyNumber(p, await player.genJerseyNumber(p), {
+							phase: PHASE.PRESEASON,
+						});
 					}
 				}
 			}
@@ -440,8 +432,19 @@ const newPhasePreseason = async (
 
 		// One more pass, for players without jersey numbers at all (draft picks)
 		for (const p of roster) {
-			p.stats.at(-1).jerseyNumber = await player.genJerseyNumber(p);
+			if (
+				p.jerseyNumber === undefined ||
+				(p.stats.length > 0 && p.stats.at(-1).jerseyNumber === undefined)
+			) {
+				player.setJerseyNumber(p, await player.genJerseyNumber(p), {
+					phase: PHASE.PRESEASON,
+				});
+			}
 		}
+	}
+
+	for (const p of players) {
+		await idb.cache.players.put(p);
 	}
 
 	// No ads during multi season auto sim

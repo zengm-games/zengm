@@ -1232,12 +1232,18 @@ const getJerseyNumber = (
 	type: "mostCommon" | "current" = "current",
 ): string | undefined => {
 	if (type === "current") {
+		// jerseyNumber at root of the file is the player's real current jersey number. Could be undefined if not set yet (draft prospect, or just signed and hasn't played yet)
+		if (p.jerseyNumber !== undefined) {
+			return p.jerseyNumber;
+		}
+
+		// This used to be the primary source of truth, but is now just historical data. Use it for players from before p.jerseyNumber was mandatory
 		if (p.stats.length > 0) {
 			return p.stats.at(-1).jerseyNumber;
 		}
 
-		// For uploaded league files, or real players leagues with no old stats (with new old stats, relies on augmentPartialPlayer to set jerseyNumber from root in latest stats row)
-		return p.jerseyNumber;
+		// None found? Return undefind. This happens for players who have never been on a team during the season
+		return;
 	}
 
 	// Find most common from career

@@ -19,11 +19,6 @@ const addStatsRowWrapped = async (
 	await addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
 		ignoreJerseyNumberConflicts,
 	});
-
-	// For real players leagues starting in the preseason, there could be a previous season with stats and a different jersey number, but the root jerseyNumber will be the one for the upcoming season
-	if (p.jerseyNumber !== undefined) {
-		p.stats.at(-1).jerseyNumber = p.jerseyNumber;
-	}
 };
 
 /**

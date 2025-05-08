@@ -165,7 +165,7 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 		// Figure out most common jersey number
 		const valuesByJerseyNumber = new Map<string, number>();
 		for (const ps of p.stats) {
-			if (ps.tid !== tid || !ps.jerseyNumber) {
+			if (ps.tid !== tid || ps.jerseyNumber === undefined) {
 				continue;
 			}
 			const value = getValueStatsRow(ps);

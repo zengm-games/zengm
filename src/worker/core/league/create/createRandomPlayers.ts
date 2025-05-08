@@ -186,7 +186,7 @@ const createRandomPlayers = async ({
 		});
 
 		const jerseyNumber = p.stats.at(-1).jerseyNumber;
-		if (jerseyNumber) {
+		if (jerseyNumber !== undefined) {
 			teamJerseyNumbers[tid2].push(jerseyNumber);
 		}
 

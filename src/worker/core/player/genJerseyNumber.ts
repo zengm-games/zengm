@@ -402,12 +402,12 @@ const genJerseyNumber = async (
 
 	// When all jersey numbers are retired, it will add a prefix and try again
 	prefix?: number,
-): Promise<string | undefined> => {
+): Promise<string> => {
 	let prevJerseyNumber;
 	if (!pickRandomNumber) {
 		prevJerseyNumber = helpers.getJerseyNumber(p);
 
-		if (p.tid < 0) {
+		if (p.tid < 0 && prevJerseyNumber !== undefined) {
 			return prevJerseyNumber;
 		}
 	}

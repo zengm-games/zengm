@@ -3200,15 +3200,18 @@ const retiredJerseyNumberUpsert = async ({
 	await idb.cache.teams.put(t);
 
 	// Handle players who have the retired jersey number
-	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
-	for (const p of players) {
-		if (p.stats.length === 0) {
-			continue;
-		}
+	if (g.get("phase") <= PHASE.PLAYOFFS) {
+		const players = await idb.cache.players.indexGetAll("playersByTid", tid);
+		for (const p of players) {
+			if (p.stats.length === 0) {
+				continue;
+			}
 
-		const jerseyNumber = helpers.getJerseyNumber(p);
-		if (jerseyNumber === info.number) {
-			p.stats.at(-1).jerseyNumber = await player.genJerseyNumber(p);
+			const jerseyNumber = helpers.getJerseyNumber(p);
+			if (jerseyNumber === info.number) {
+				player.setJerseyNumber(p, await player.genJerseyNumber(p));
+				await idb.cache.players.put(p);
+			}
 		}
 	}
 
@@ -4533,6 +4536,22 @@ const upsertCustomizedPlayer = async (
 		}
 	}
 
+	const jerseyNumber = p.jerseyNumber;
+	if (jerseyNumber !== undefined && p.tid >= 0) {
+		// Update stats row if necessary
+		player.setJerseyNumber(p, jerseyNumber);
+
+		// If jersey number is the same as a teammate, edit the teammate's
+		const conflicts = (
+			await idb.cache.players.indexGetAll("playersByTid", p.tid)
+		).filter((p2) => p2.pid !== p.pid && p2.jerseyNumber === jerseyNumber);
+		for (const conflict of conflicts) {
+			const newJerseyNumber = await player.genJerseyNumber(conflict);
+			player.setJerseyNumber(conflict, newJerseyNumber);
+			await idb.cache.players.put(conflict);
+		}
+	}
+
 	// Save to database, adding pid if it doesn't already exist
 	await idb.cache.players.put(p);
 
@@ -4547,26 +4566,6 @@ const upsertCustomizedPlayer = async (
 
 		if (p2) {
 			await ensureRelationExists(p as Player, p2, rel.type);
-		}
-	}
-
-	// If jersey number is the same as a teammate, edit the teammate's
-	const jerseyNumber = helpers.getJerseyNumber(p);
-	if (jerseyNumber) {
-		const teammates = (
-			await idb.cache.players.indexGetAll("playersByTid", p.tid)
-		).filter((p2) => p2.pid !== p.pid);
-		for (const teammate of teammates) {
-			const jerseyNumber2 = helpers.getJerseyNumber(teammate);
-			if (jerseyNumber === jerseyNumber2) {
-				const newJerseyNumber = await player.genJerseyNumber(teammate);
-
-				if (teammate.stats.length > 0) {
-					teammate.stats.at(-1).jerseyNumber = newJerseyNumber;
-				} else {
-					teammate.jerseyNumber = newJerseyNumber;
-				}
-			}
 		}
 	}
 

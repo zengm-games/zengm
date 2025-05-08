@@ -1,18 +1,10 @@
 When changing the jersey number on a player acquired in FA it also changes what that player's jersey number was on his previous team, despite him being signed to a different team now
-- need to treat jerseyNumber like teamSeason stuff (name, etc) - store "latest" in root, and copy from there when making new stats row, if possible
-  - what does jerseyNumber in root mean now? can that be used directly, or does it need to be preserved?
 - https://discord.com/channels/290013534023057409/290015591216054273/940321320569286687
 - https://discord.com/channels/290013534023057409/290015591216054273/1369484504992845865
-- plan
-  - should we distingiush between favorite number and current number, so player can switch back to favorite after he changes teams to one with no conflict? idk if that matters enough
-  - problem - some players have p.jerseyNumber now (relatives, real players, custom rosters), others don't
-    - step 1 - start saving to p.jerseyNumber
-      - anywhere stats one is saved
-    - step 2 - start using p.jerseyNumber
-      - addRelatives
-      - genJerseyNumber
-  - code that changes number when joining a new team should instead change at the root, and should propagate to stats row from that
-    - or, any place that saves Stats.jerseyNumber should also save Player.jerseyNumber. but you can assign Player.jerseyNumber alone if there is no valid stats row (like after season)
+- upgrade
+  - overwrite/create p.jerseyNumber with stats value, if stats exists. skip retired players
+  - only do based on version or if jerseyNumber is undefined (to save cases where jerseyNumber contains a pending change)
+- import
 
 allow trading more than 2 picks
 - 2nd+ round picks should not be in the limit

@@ -226,14 +226,10 @@ const processAttrs = (
 				output.latestTransactionSeason = undefined;
 			}
 		} else if (attr === "jerseyNumber") {
-			if (p.stats.length === 0) {
-				output.jerseyNumber = undefined;
-			} else if (p.tid === PLAYER.RETIRED) {
-				output.jerseyNumber = helpers.getJerseyNumber(p, "mostCommon");
-			} else {
-				// Latest
-				output.jerseyNumber = p.stats.at(-1).jerseyNumber;
-			}
+			output.jerseyNumber = helpers.getJerseyNumber(
+				p,
+				p.tid === PLAYER.RETIRED ? "mostCommon" : "current",
+			);
 		} else if (attr === "experience") {
 			const seasons = new Set();
 			for (const row of p.stats) {

@@ -92,7 +92,7 @@ const makeSimilar = (existingRelative: Player, newRelative: Player) => {
 		existingRelative.stats.length > 0 &&
 		Math.random() < 0.5
 	) {
-		newRelative.jerseyNumber = existingRelative.stats.at(-1).jerseyNumber;
+		newRelative.jerseyNumber = existingRelative.jerseyNumber;
 	}
 
 	if (!existingRelative.imgURL) {

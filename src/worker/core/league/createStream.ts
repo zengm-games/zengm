@@ -952,8 +952,12 @@ const finalizeActivePlayers = async ({
 	for (const p of players1) {
 		if (fileHasPlayers) {
 			// Fix jersey numbers, which matters for league files where that data might be invalid (conflicts) or incomplete
-			if (p.tid >= 0 && p.stats.length > 0 && !p.stats.at(-1).jerseyNumber) {
-				p.stats.at(-1).jerseyNumber = await player.genJerseyNumber(p);
+			if (
+				p.tid >= 0 &&
+				p.stats.length > 0 &&
+				p.stats.at(-1).jerseyNumber === undefined
+			) {
+				player.setJerseyNumber(p, await player.genJerseyNumber(p));
 			}
 		}
 

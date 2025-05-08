@@ -1103,9 +1103,14 @@ class GameSim extends GameSimBase {
 
 		const r = Math.random();
 
-		const penalty = penalties.find(
-			(penalty) => r < penalty.cumsumProbPerPossession,
-		);
+		// Sum numPerSeason, divide by (60 * 82 * 30) assuming 60 seconds per possession, 82 games, 30 teams
+		const probPenaltyPerPossession = 0.06 * g.get("foulRateFactor");
+
+		if (r > probPenaltyPerPossession) {
+			return;
+		}
+
+		const penalty = random.choice(penalties, (penalty) => penalty.numPerSeason);
 
 		if (!penalty) {
 			return false;

@@ -1816,7 +1816,7 @@ export const settings: Setting[] = (
 		{
 			category: "Tendencies",
 			key: "foulRateFactor",
-			name: `${isSport("football") ? "Penalty" : "Foul"} Rate Factor`,
+			name: `${isSport("basketball") ? "Foul" : "Penalty"} Rate Factor`,
 			godModeRequired: "always",
 			type: "float",
 			description: bySport({
@@ -1825,7 +1825,7 @@ export const settings: Setting[] = (
 					"The baseline rates for shooting and non-shooting fouls are multiplied by this number.",
 				football:
 					"The baseline rate for penalties is multiplied by this number. Max is 10 because beyond that there is basically a penalty every play.",
-				hockey: undefined,
+				hockey: "The baseline rate for penalties is multiplied by this number.",
 			}),
 			validator: (value) => {
 				if (isSport("football") && value > 10) {

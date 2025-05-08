@@ -115,6 +115,7 @@ const gameAttributesKeysSportSpecific = {
 		"pace",
 	] as GameAttributeKey[],
 	hockey: [
+		"foulRateFactor",
 		"quarterLength",
 		"hitFactor",
 		"giveawayFactor",

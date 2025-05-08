@@ -684,7 +684,7 @@ const deleteOldData = async (options: {
 	if (options.teamHistory) {
 		for await (const cursor of transaction.objectStore("teamSeasons")) {
 			if (cursor.value.season < g.get("season")) {
-				cursor.delete();
+				await cursor.delete();
 			}
 		}
 
@@ -694,21 +694,21 @@ const deleteOldData = async (options: {
 
 		for await (const cursor of transaction.objectStore("allStars")) {
 			if (cursor.value.season < g.get("season")) {
-				cursor.delete();
+				await cursor.delete();
 			}
 		}
 
 		for await (const cursor of transaction.objectStore("teams")) {
 			const t = cursor.value;
 			t.retiredJerseyNumbers = [];
-			cursor.update(t);
+			await cursor.update(t);
 		}
 	}
 
 	if (options.teamStats) {
 		for await (const cursor of transaction.objectStore("teamStats")) {
 			if (cursor.value.season < g.get("season")) {
-				cursor.delete();
+				await cursor.delete();
 			}
 		}
 	}
@@ -718,7 +718,7 @@ const deleteOldData = async (options: {
 			.objectStore("players")
 			.index("tid")
 			.iterate(PLAYER.RETIRED)) {
-			cursor.delete();
+			await cursor.delete();
 		}
 	} else if (options.retiredPlayersUnnotable) {
 		for await (const cursor of transaction
@@ -727,7 +727,7 @@ const deleteOldData = async (options: {
 			.iterate(PLAYER.RETIRED)) {
 			const p = cursor.value;
 			if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
-				cursor.delete();
+				await cursor.delete();
 			}
 		}
 	}
@@ -794,7 +794,7 @@ const deleteOldData = async (options: {
 			const p = cursor.value;
 			const p2 = deletePlayerStats(p);
 			if (p2) {
-				cursor.update(p2);
+				await cursor.update(p2);
 			}
 		}
 	} else if (options.playerStatsUnnotable) {
@@ -803,7 +803,7 @@ const deleteOldData = async (options: {
 			if (p.awards.length === 0 && !p.statsTids.includes(g.get("userTid"))) {
 				const p2 = deletePlayerStats(p);
 				if (p2) {
-					cursor.update(p2);
+					await cursor.update(p2);
 				}
 			}
 		}

@@ -75,7 +75,6 @@ const generate = (
 		gamesUntilTradable: 0,
 		hgt: actualHeightInInches,
 		imgURL: "",
-		// Custom rosters can define player image URLs to be used rather than vector faces
 		injury: {
 			type: "Healthy",
 			gamesRemaining: 0,
@@ -88,8 +87,7 @@ const generate = (
 		relatives: [],
 		ratings: [ratings],
 		retiredYear: Infinity,
-		rosterOrder: 666,
-		// Will be set later
+		rosterOrder: 666, // Will be set later
 		salaries: [],
 		stats: [],
 		statsTids: [],
@@ -97,6 +95,7 @@ const generate = (
 		transactions: [],
 		weight,
 		yearsFreeAgent: 0,
+
 		// These should be set by updateValues after player is completely done (automatic in develop)
 		value: 0,
 		valueNoPot: 0,

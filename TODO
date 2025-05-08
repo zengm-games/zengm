@@ -1,11 +1,3 @@
-When changing the jersey number on a player acquired in FA it also changes what that player's jersey number was on his previous team, despite him being signed to a different team now
-- https://discord.com/channels/290013534023057409/290015591216054273/940321320569286687
-- https://discord.com/channels/290013534023057409/290015591216054273/1369484504992845865
-- upgrade
-  - overwrite/create p.jerseyNumber with stats value, if stats exists. skip retired players
-  - only do based on version or if jerseyNumber is undefined (to save cases where jerseyNumber contains a pending change)
-- import
-
 allow trading more than 2 picks
 - 2nd+ round picks should not be in the limit
 - maybe add penalty to score for >2 picks, rather than hard limit

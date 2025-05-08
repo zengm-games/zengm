@@ -477,6 +477,18 @@ const augmentPartialPlayer = async (
 		delete p.note;
 	}
 
+	// Version 66
+	// jerseyNumber should always be defined in version 66+, except for players with no stats entry such as draft prospects. But still check for this just in case there is some weird custom file. Besides that, we need to restrict updates by version because we only want to overwrite an existing value in jerseyNumber if it is possibly stale (which is the case for versions before 66)
+	if ((version !== undefined && version < 66) || p.jerseyNumber === undefined) {
+		const row = p.stats.at(-1);
+		if (
+			row?.jerseyNumber !== undefined &&
+			row.jerseyNumber !== p.jerseyNumber
+		) {
+			p.jerseyNumber = row.jerseyNumber;
+		}
+	}
+
 	return p;
 };
 

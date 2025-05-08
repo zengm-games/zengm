@@ -28,7 +28,7 @@ const DRAFT_BY_TEAM_OVR = bySport({
 	hockey: true,
 });
 
-const LEAGUE_DATABASE_VERSION = 65;
+const LEAGUE_DATABASE_VERSION = 66;
 
 const NO_LOTTERY_DRAFT_TYPES: DraftType[] = [
 	"freeAgents",

@@ -1169,10 +1169,11 @@ class GameSim extends GameSimBase {
 					pidsUsed.add(p.id);
 				}
 
-				if (playType === "starters") {
-					for (const p of this.playersOnField[t][pos]) {
+				for (const p of this.playersOnField[t][pos]) {
+					if (playType === "starters") {
 						this.recordStat(t, p, "gs");
 					}
+					this.recordStat(t, p, "gp");
 				}
 			}
 		}
@@ -2532,8 +2533,8 @@ class GameSim extends GameSimBase {
 		const isLng = s.endsWith("Lng");
 
 		if (p !== undefined) {
-			if (s === "gs") {
-				// In case player starts on offense and defense, only record once
+			if (s === "gs" || s === "gp") {
+				// gs check is in case player starts on offense and defense, only record once
 				p.stat[s] = 1;
 			} else if (isLng) {
 				p.stat[s] = this.lngTracker.log("player", p.id, s, amt, remove);
@@ -2544,6 +2545,7 @@ class GameSim extends GameSimBase {
 
 		if (
 			s !== "gs" &&
+			s !== "gp" &&
 			s !== "courtTime" &&
 			s !== "benchTime" &&
 			s !== "energy"

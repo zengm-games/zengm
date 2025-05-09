@@ -51,6 +51,7 @@ type Stat =
 	| "fgaMidRange"
 	| "ft"
 	| "fta"
+	| "gp"
 	| "gs"
 	| "min"
 	| "orb"
@@ -1179,13 +1180,12 @@ class GameSim extends GameSimBase {
 		}
 
 		// Record starters if that hasn't been done yet. This should run the first time this function is called, and never again.
-		if (recordStarters) {
-			for (const t of teamNums) {
-				for (let p = 0; p < this.team[t].player.length; p++) {
-					if (this.playersOnCourt[t].includes(p)) {
-						this.recordStat(t, p, "gs");
-					}
+		for (const t of teamNums) {
+			for (const p of this.playersOnCourt[t]) {
+				if (recordStarters) {
+					this.recordStat(t, p, "gs");
 				}
+				this.recordStat(t, p, "gp");
 			}
 		}
 
@@ -2862,11 +2862,15 @@ class GameSim extends GameSimBase {
 	 */
 	recordStat(t: TeamNum, p: number | undefined, s: Stat, amt: number = 1) {
 		if (p !== undefined) {
-			this.team[t].player[p].stat[s] += amt;
+			if (s === "gp") {
+				this.team[t].player[p].stat[s] = 1;
+			} else {
+				this.team[t].player[p].stat[s] += amt;
+			}
 		}
 
 		if (s !== "courtTime" && s !== "benchTime" && s !== "energy") {
-			if (s !== "gs") {
+			if (s !== "gs" && s !== "gp") {
 				this.team[t].stat[s] += amt; // Record quarter-by-quarter scoring too
 
 				if (s === "pts") {

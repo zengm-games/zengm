@@ -16,7 +16,6 @@ import type {
 import { headToHead, season } from "../index.ts";
 import getWinner from "../../../common/getWinner.ts";
 import formatScoreWithShootout from "../../../common/formatScoreWithShootout.ts";
-import { STAT_PLAYED_IN_GAME_IF_NONZERO } from "./writePlayerStats.ts";
 
 const allStarMVP = async (
 	game: Game,
@@ -262,7 +261,7 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 		for (const p0 of results.team[t].player) {
 			// In basketball, players who didn't play are shown in box score. In other sports, they aren't. So only save box score stats for players who actually played
 			if (!isSport("basketball")) {
-				if (p0.stat[STAT_PLAYED_IN_GAME_IF_NONZERO] === 0) {
+				if (p0.stat.gp === 0) {
 					continue;
 				}
 			}

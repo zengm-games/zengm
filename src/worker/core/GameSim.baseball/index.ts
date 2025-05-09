@@ -2757,7 +2757,13 @@ class GameSim extends GameSimBase {
 		// Filter out stats that don't get saved to box score
 		if (s !== "courtTime" && s !== "benchTime" && s !== "energy") {
 			// Filter out stats that are only for player, not team
-			if (s !== "gsF" && s !== "gpF" && s !== "poSo" && s !== "cgF") {
+			if (
+				s !== "gp" &&
+				s !== "gsF" &&
+				s !== "gpF" &&
+				s !== "poSo" &&
+				s !== "cgF"
+			) {
 				if (s === "r") {
 					this.team[t].t.stat.pts += amt;
 					this.team[t].t.stat.ptsQtrs[qtr] += amt;

@@ -7,7 +7,6 @@ import type {
 	Conditions,
 } from "../../../common/types.ts";
 import {
-	bySport,
 	COMPOSITE_WEIGHTS,
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	isSport,
@@ -18,12 +17,7 @@ import statsRowIsCurrent from "../player/statsRowIsCurrent.ts";
 
 const MAX_NUM_PLAYERS_PACE = 7;
 
-const skipPlayerStats = bySport({
-	baseball: ["minAvailable"],
-	basketball: ["gp", "minAvailable"],
-	football: ["gp", "minAvailable"],
-	hockey: ["gp", "minAvailable"],
-});
+const skipPlayerStats = ["minAvailable"];
 
 let playerStats: Record<string, number | number[]>;
 let teamStats: Record<string, number>;
@@ -241,8 +235,6 @@ export const processTeam = (
 		}
 
 		p2.stat = {
-			gs: 0,
-			min: 0,
 			...playerStats,
 
 			// Starters will play at least 3 minutes before being subbed out, after that the default here doesn't matter

@@ -1680,11 +1680,12 @@ class GameSim extends GameSimBase {
 				}
 			}
 
-			if (options.type === "starters") {
-				const currentlyOnIce = Object.values(this.playersOnIce[t]).flat();
-				for (const p of currentlyOnIce) {
+			const currentlyOnIce = Object.values(this.playersOnIce[t]).flat();
+			for (const p of currentlyOnIce) {
+				if (options.type === "starters") {
 					this.recordStat(t, p, "gs");
 				}
+				this.recordStat(t, p, "gp");
 			}
 
 			if (substitutions || options.type === "starters") {
@@ -1907,12 +1908,17 @@ class GameSim extends GameSimBase {
 		const qtr = this.team[t].stat.ptsQtrs.length - 1;
 
 		if (p !== undefined) {
-			p.stat[s] += amt;
+			if (s === "gp") {
+				p.stat[s] = 1;
+			} else {
+				p.stat[s] += amt;
+			}
 		}
 
 		// Filter out stats that don't get saved to box score
 		if (
 			s !== "gs" &&
+			s !== "gp" &&
 			s !== "courtTime" &&
 			s !== "benchTime" &&
 			s !== "energy"

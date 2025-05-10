@@ -176,28 +176,32 @@ export const HeadlineScore = ({
 			}
 		>
 			<h2
-				className={`d-flex justify-content-center ${small ? "mb-0" : liveGameSim ? "mb-1" : "mb-2"}`}
+				className={`d-flex flex-wrap justify-content-center ${small ? "mb-0" : liveGameSim ? "mb-1" : "mb-2"}`}
 			>
-				<TeamNameAndScore
-					boxScore={boxScore}
-					possessionNum={0}
-					small={small}
-					t={t0}
-				/>
-				{shootout ? (
-					<div className="text-body-secondary">&nbsp;({t0.sPts})</div>
-				) : null}
-				<div>,&nbsp;</div>
-				<TeamNameAndScore
-					boxScore={boxScore}
-					possessionNum={1}
-					small={small}
-					t={t1}
-				/>
-				{shootout ? (
-					<div className="text-body-secondary">&nbsp;({t1.sPts})</div>
-				) : null}
-				{boxScore.overtime ? <div>&nbsp;{boxScore.overtime}</div> : null}
+				<div className="d-flex">
+					<TeamNameAndScore
+						boxScore={boxScore}
+						possessionNum={0}
+						small={small}
+						t={t0}
+					/>
+					{shootout ? (
+						<div className="text-body-secondary">&nbsp;({t0.sPts})</div>
+					) : null}
+					<div>,&nbsp;</div>
+				</div>
+				<div className="d-flex">
+					<TeamNameAndScore
+						boxScore={boxScore}
+						possessionNum={1}
+						small={small}
+						t={t1}
+					/>
+					{shootout ? (
+						<div className="text-body-secondary">&nbsp;({t1.sPts})</div>
+					) : null}
+					{boxScore.overtime ? <div>&nbsp;{boxScore.overtime}</div> : null}
+				</div>
 			</h2>
 			{liveGameSim ? (
 				<div className={small ? undefined : "mb-2"}>
@@ -1129,7 +1133,7 @@ const BoxScoreWrapper = ({
 		<>
 			<div className="d-flex text-center">
 				<TeamLogo season={boxScore.season} t={t0} />
-				<div className="mx-auto flex-shrink-0 mb-2">
+				<div className="mx-auto flex-shrink-0 mb-2 mw-100">
 					<HeadlineScore boxScore={boxScore} />
 					<DetailedScore
 						abbrev={abbrev}

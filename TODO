@@ -1,3 +1,6 @@
+long team name in box score overflow, like ASG https://discord.com/channels/290013534023057409/290015591216054273/1370493572989849760
+- wraps in live sim, but not in finished box score
+
 allow trading more than 2 picks
 - 2nd+ round picks should not be in the limit
 - maybe add penalty to score for >2 picks, rather than hard limit

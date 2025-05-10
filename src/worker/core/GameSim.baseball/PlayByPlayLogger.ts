@@ -54,6 +54,7 @@ export type PlayByPlayEventInput =
 			type: "strikeOut";
 			swinging: boolean;
 			outs: number;
+			pid: number;
 			bases: [number | undefined, number | undefined, number | undefined];
 	  }
 	| {

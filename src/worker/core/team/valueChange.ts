@@ -132,7 +132,6 @@ const getPlayers = async ({
 
 	for (const p of players) {
 		const value = zscore(p.value);
-
 		if (!pidsRemove.includes(p.pid)) {
 			roster.push({
 				type: "player",
@@ -412,6 +411,7 @@ const sumValues = (
 		const treatAsFutureDraftPick =
 			p.type === "pick" && (season !== p.draftYear || phase <= PHASE.PLAYOFFS);
 
+		// These factors don't make sense for negative value players!!!
 		if (strategy === "rebuilding") {
 			// Value young/cheap players and draft picks more. Penalize expensive/old players
 			if (treatAsFutureDraftPick) {
@@ -468,7 +468,6 @@ const sumValues = (
 
 		const contractsFactor = strategy === "rebuilding" ? 2 : 0.5;
 		playerValue += contractsFactor * p.contractValue;
-		// console.log(playerValue, p);
 
 		// if a player was just drafted and can be released, they shouldn't have negative value
 		if (p.type == "player" && p.justDrafted) {

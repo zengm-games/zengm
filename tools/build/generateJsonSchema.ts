@@ -1557,15 +1557,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 							required: ["tid", "pts"],
 						},
 					},
-					required: [
-						"att",
-						"lost",
-						"playoffs",
-						"overtimes",
-						"season",
-						"teams",
-						"won",
-					],
+					required: ["att", "lost", "overtimes", "season", "teams", "won"],
 				},
 			},
 			messages: {

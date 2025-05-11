@@ -2653,7 +2653,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 										required: ["scouting", "coaching", "health", "facilities"],
 									},
 									payrollEndOfSeason: {
-										type: "integer",
+										type: "number",
 									},
 									ownerMood: {
 										type: "object",

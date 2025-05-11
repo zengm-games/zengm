@@ -588,6 +588,7 @@ class GameSim extends GameSimBase {
 			type: "jumpBall",
 			t: this.d,
 			pid: this.team[this.d].player[jumpers[this.d]].id,
+			pid2: this.team[this.o].player[jumpers[this.o]].id,
 			clock: this.t,
 		});
 		return this.d;

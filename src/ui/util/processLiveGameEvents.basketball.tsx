@@ -235,7 +235,9 @@ export const getText = (
 			`Substitution: ${getName(event.pid)} for ${getName(event.pidOff)}`,
 		];
 	} else if (event.type === "jumpBall") {
-		texts = [`${getName(event.pid)} won the jump ball`];
+		texts = [
+			`${getName(event.pid)} won the jump ball against ${getName(event.pid2)}`,
+		];
 	} else if (event.type === "elamActive") {
 		texts = [`Elam Ending activated! First team to ${event.target} wins.`];
 	} else if (event.type === "timeout") {

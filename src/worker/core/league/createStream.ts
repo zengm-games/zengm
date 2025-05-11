@@ -1126,6 +1126,13 @@ const beforeDBStream = async ({
 	};
 
 	let teamInfos = helpers.addPopRank(filteredFromFile.teams ?? teamsFromInput);
+	for (const t of teamInfos) {
+		for (const key of ["imgURL", "imgURLSmall"] as const) {
+			if (typeof t[key] === "string") {
+				t[key] = helpers.stripBbcode(t[key]);
+			}
+		}
+	}
 
 	// Validation of some identifiers
 	confirmSequential(teamInfos, "tid", "team");

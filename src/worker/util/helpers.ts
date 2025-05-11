@@ -360,6 +360,21 @@ const getTeamSeasonGp = (teamSeason: {
 	return teamSeason.won + teamSeason.lost + teamSeason.tied + teamSeason.otl;
 };
 
+// Strips BBCode from strings like:
+// [url=https://imgbb.com/][img]https://i.ibb.co/HTGQNH5P/RIO.png[/img][/url]
+// [img]https://i.ibb.co/HTGQNH5P/RIO.png[/img]
+const stripBbcode = (imgURL: string) => {
+	if (!imgURL.trim().startsWith("[")) {
+		return imgURL;
+	}
+
+	const matches = imgURL.match(/\[img[^\]]*](.*?)\[\/img]/i);
+	if (matches) {
+		return matches[1];
+	}
+	return imgURL;
+};
+
 const helpers = {
 	...commonHelpers,
 	augmentSeries,
@@ -380,6 +395,7 @@ const helpers = {
 	sigmoid,
 	daysLeft,
 	gameAndSeasonLengthScaleFactor,
+	stripBbcode,
 };
 
 export default helpers;

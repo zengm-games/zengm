@@ -49,3 +49,22 @@ describe("roundContract", () => {
 		assert.strictEqual(helpers.getAbbrev("6"), "DAL");
 	});
 });
+
+describe("stripBbcode", () => {
+	test("stripBbcode", () => {
+		const target = "https://i.ibb.co/HTGQNH5P/RIO.png";
+
+		const inputs = [
+			"[url=https://imgbb.com/][img]https://i.ibb.co/HTGQNH5P/RIO.png[/img][/url]",
+			"[img]https://i.ibb.co/HTGQNH5P/RIO.png[/img]",
+			'[img param=4 otherparam="aaa"]https://i.ibb.co/HTGQNH5P/RIO.png[/img]',
+			"  [img]https://i.ibb.co/HTGQNH5P/RIO.png[/img]",
+			"[img]https://i.ibb.co/HTGQNH5P/RIO.png[/img]  ",
+			"https://i.ibb.co/HTGQNH5P/RIO.png",
+		];
+
+		for (const input of inputs) {
+			assert.strictEqual(helpers.stripBbcode(input), target);
+		}
+	});
+});

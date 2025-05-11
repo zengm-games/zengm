@@ -3488,6 +3488,16 @@ const updateExpansionDraftSetup = async (changes: {
 		throw new Error("Invalid expansion draft phase");
 	}
 
+	if (changes.teams) {
+		for (const t of changes.teams) {
+			for (const key of ["imgURL", "imgURLSmall"] as const) {
+				if (typeof t[key] === "string") {
+					t[key] = helpers.stripBbcode(t[key]);
+				}
+			}
+		}
+	}
+
 	await league.setGameAttributes({
 		expansionDraft: {
 			...expansionDraft,
@@ -4167,11 +4177,13 @@ const updateTeamInfo = async (
 		t.name = newTeam.name;
 		t.abbrev = newTeam.abbrev;
 
-		if (Object.hasOwn(newTeam, "imgURL")) {
-			t.imgURL = newTeam.imgURL;
-		}
-		if (Object.hasOwn(newTeam, "imgURLSmall")) {
-			t.imgURLSmall = newTeam.imgURLSmall;
+		for (const key of ["imgURL", "imgURLSmall"] as const) {
+			if (Object.hasOwn(newTeam, key)) {
+				t[key] = newTeam[key];
+				if (typeof t[key] === "string") {
+					t[key] = helpers.stripBbcode(t[key]);
+				}
+			}
 		}
 
 		t.colors = newTeam.colors;
@@ -4365,6 +4377,8 @@ const upsertCustomizedPlayer = async (
 			}
 		}
 	}
+
+	p.imgURL = helpers.stripBbcode(p.imgURL);
 
 	const r = p.ratings.length - 1;
 

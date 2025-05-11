@@ -36,6 +36,7 @@ const getPlayerInfo = async (
 		stats: [...stats, "jerseyNumber", "tid", "abbrev"],
 		fuzz: true,
 		showNoStats: true,
+		mergeStats: "totOnly",
 	});
 
 	// Use values at time of draft

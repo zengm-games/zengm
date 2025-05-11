@@ -1181,8 +1181,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									<a href="http://imgur.com/" target="_blank">
 										imgur
 									</a>
-									. For ideal display, crop your image so it has a 2:3 aspect
-									ratio (such as 100px wide and 150px tall).
+									. For more details, see{" "}
+									<a
+										href={`https://${WEBSITE_ROOT}/manual/customization/player-photos-team-logos/`}
+										target="_blank"
+									>
+										the manual
+									</a>
+									.
 								</span>
 							</div>
 						)}

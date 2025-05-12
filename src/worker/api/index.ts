@@ -4555,6 +4555,9 @@ const upsertCustomizedPlayer = async (
 		// Update stats row if necessary
 		player.setJerseyNumber(p, jerseyNumber);
 
+		// Extra write so genJerseyNumber sees it
+		await idb.cache.players.put(p);
+
 		// If jersey number is the same as a teammate, edit the teammate's
 		const conflicts = (
 			await idb.cache.players.indexGetAll("playersByTid", p.tid)

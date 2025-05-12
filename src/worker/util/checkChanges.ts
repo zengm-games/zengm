@@ -10,10 +10,9 @@ const FETCH_LIMIT = 10;
 
 const checkChanges = async (conditions: Conditions) => {
 	// Fall back to LAST_VERSION_BEFORE_THIS_EXISTED if data doesn't exist - must be a user from before then
-	const lastChangesVersion = ((await idb.meta.get(
-		"attributes",
-		"lastChangesVersion",
-	)) ?? (LAST_VERSION_BEFORE_THIS_EXISTED as unknown)) as string;
+	const lastChangesVersion =
+		(await idb.meta.get("attributes", "lastChangesVersion")) ??
+		(LAST_VERSION_BEFORE_THIS_EXISTED as unknown as string);
 
 	if (CURRENT_VERSION > lastChangesVersion) {
 		const changes = (await fetchWrapper({

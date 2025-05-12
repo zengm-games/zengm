@@ -9,7 +9,7 @@ import type {
 import type { Settings } from "../views/settings.ts";
 import connectIndexedDB from "./connectIndexedDB.ts";
 
-export interface MetaDB extends DBSchema {
+interface MetaDB extends DBSchema {
 	achievements: {
 		key: number;
 		value: {

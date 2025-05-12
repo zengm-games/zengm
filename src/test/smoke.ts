@@ -1,5 +1,5 @@
 import { league } from "../worker/core/index.ts";
-import { connectMeta, idb } from "../worker/db/index.ts";
+import { idb } from "../worker/db/index.ts";
 import { defaultGameAttributes, g, local } from "../worker/util/index.ts";
 
 import "../worker/index.ts";
@@ -13,7 +13,6 @@ describe("Smoke Tests", () => {
 	it("Create a new league and simuluate a season without error", async function () {
 		this.timeout(5 * 60 * 1000); // 5 minutes
 
-		idb.meta = await connectMeta();
 		const stream = createStreamFromLeagueObject({});
 
 		await league.createStream(stream, {
@@ -64,12 +63,7 @@ describe("Smoke Tests", () => {
 			throw new Error("g.lid should be undefined");
 		}
 
-		if (idb.meta !== undefined) {
-			idb.meta.close();
-		}
-
+		await idb.meta.close();
 		await deleteDB("meta");
-		// @ts-expect-error
-		idb.meta = undefined;
 	});
 });

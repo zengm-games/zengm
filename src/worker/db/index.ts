@@ -1,24 +1,18 @@
 import type { IDBPDatabase } from "@dumbmatter/idb";
 import Cache from "./Cache.ts";
 import connectLeague, { type LeagueDB } from "./connectLeague.ts";
-import connectMeta, { type MetaDB } from "./connectMeta.ts";
+import connectMeta from "./connectMeta.ts";
 import * as getCopies from "./getCopies/index.ts";
 import * as getCopy from "./getCopy/index.ts";
+import { SafeIdb } from "./SafeIdb.ts";
 
-const idb: {
-	cache: Cache;
-	getCopies: typeof getCopies;
-	getCopy: typeof getCopy;
-	league: IDBPDatabase<LeagueDB>;
-	meta: IDBPDatabase<MetaDB>;
-} = {
+const idb = {
 	cache: new Cache(),
 	getCopies,
 	getCopy,
 	// @ts-expect-error
-	league: undefined,
-	// @ts-expect-error
-	meta: undefined,
+	league: undefined as IDBPDatabase<LeagueDB>,
+	meta: new SafeIdb(connectMeta),
 };
 
 export { Cache, connectLeague, connectMeta, idb };

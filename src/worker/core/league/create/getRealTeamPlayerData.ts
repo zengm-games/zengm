@@ -11,15 +11,21 @@ const getRealTeamPlayerData = async ({
 	fileHasPlayers: boolean;
 	fileHasTeams: boolean;
 }) => {
-	const realPlayerPhotos = (
-		fileHasPlayers
-			? await idb.meta.get("attributes", "realPlayerPhotos")
-			: undefined
-	) as RealPlayerPhotos | undefined;
-
-	const realTeamInfo = (
-		fileHasTeams ? await idb.meta.get("attributes", "realTeamInfo") : undefined
-	) as RealTeamInfo | undefined;
+	let realPlayerPhotos;
+	let realTeamInfo;
+	if (fileHasPlayers || fileHasTeams) {
+		const attributesStore = (await idb.meta.transaction("attributes")).store;
+		if (fileHasPlayers) {
+			realPlayerPhotos = (await attributesStore.get("realPlayerPhotos")) as
+				| RealPlayerPhotos
+				| undefined;
+		}
+		if (fileHasTeams) {
+			realTeamInfo = (await attributesStore.get("realTeamInfo")) as
+				| RealTeamInfo
+				| undefined;
+		}
+	}
 
 	return {
 		realPlayerPhotos,

@@ -36,7 +36,7 @@ import {
 	freeAgents,
 	season,
 } from "../core/index.ts";
-import { connectMeta, idb } from "../db/index.ts";
+import { idb } from "../db/index.ts";
 import {
 	achievement,
 	beforeView,
@@ -1717,7 +1717,7 @@ const getLeagueName = () => {
 	return league.getName();
 };
 
-const getLeagues = () => {
+const getLeagues = async () => {
 	return idb.meta.getAll("leagues");
 };
 
@@ -2520,13 +2520,14 @@ const incrementTradeProposalsSeed = async () => {
 	await toUI("realtimeUpdate", [["g.tradeProposalsSeed"]]);
 };
 
+let initRan = false;
 const init = async (inputEnv: Env, conditions: Conditions) => {
 	Object.assign(env, inputEnv);
 
 	// Kind of hacky, only run this for the first host tab
-	if (idb.meta === undefined) {
+	if (!initRan) {
+		initRan = true;
 		checkNaNs();
-		idb.meta = await connectMeta();
 
 		// Account and changes checks can be async
 		(async () => {
@@ -3922,8 +3923,10 @@ const updateOptions = async (
 		}
 	}
 
-	await idb.meta.put(
-		"attributes",
+	const attributesStore = (
+		await idb.meta.transaction("attributes", "readwrite")
+	).store;
+	await attributesStore.put(
 		{
 			units: options.units,
 			fullNames: options.fullNames,
@@ -3931,8 +3934,8 @@ const updateOptions = async (
 		},
 		"options",
 	);
-	await idb.meta.put("attributes", realPlayerPhotos, "realPlayerPhotos");
-	await idb.meta.put("attributes", realTeamInfo, "realTeamInfo");
+	await attributesStore.put(realPlayerPhotos, "realPlayerPhotos");
+	await attributesStore.put(realTeamInfo, "realTeamInfo");
 	await toUI("updateLocal", [
 		{ units: options.units, fullNames: options.fullNames },
 	]);

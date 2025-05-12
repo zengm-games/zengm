@@ -987,13 +987,15 @@ const migrate = async ({
 					value: difficulty,
 				});
 
-				unwrap(idb.meta.transaction("leagues").objectStore("leagues")).get(
-					lid,
-				).onsuccess = (event2: any) => {
-					const l = event2.target.result;
-					l.difficulty = difficulty;
-					idb.meta.put("leagues", l);
-				};
+				idb.meta.transaction("leagues").then((transaction) => {
+					unwrap(transaction.objectStore("leagues")).get(lid).onsuccess = (
+						event2: any,
+					) => {
+						const l = event2.target.result;
+						l.difficulty = difficulty;
+						idb.meta.put("leagues", l);
+					};
+				});
 			};
 		}
 

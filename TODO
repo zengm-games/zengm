@@ -7,6 +7,7 @@ reconnect to meta before use
     - won't be called if ui thinks league has not changed
       - call beforeView every time, and in there check if g or idb.league looks funny
         - is idb.league check enough?
+  - these can also happen on API calls, so maybe add a check there too
   - try restarting worker manually to debug - do same errors occur?
 
 in random debuts forever, have some quick way to open the "compare players" page for all versions of a player https://old.reddit.com/r/BasketballGM/comments/1joi4m5/monthly_suggestions_thread/mmo6kav/

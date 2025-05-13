@@ -4324,8 +4324,8 @@ const upgrade65Estimate = async () => {
 	}
 
 	const [numFeats, numPlayoffSeries] = await Promise.all([
-		idb.league.transaction("playerFeats").store.count(),
-		idb.league.transaction("playoffSeries").store.count(),
+		idb.league.count("playerFeats"),
+		idb.league.count("playoffSeries"),
 	]);
 
 	return {

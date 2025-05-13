@@ -2,6 +2,7 @@ reconnect to meta before use
 - same for league?
   - maybe have API to get a transaction but make it async
     - do the same for meta?
+- what about "Attempt to get g.phase while it is not already set" errors?
 
 in random debuts forever, have some quick way to open the "compare players" page for all versions of a player https://old.reddit.com/r/BasketballGM/comments/1joi4m5/monthly_suggestions_thread/mmo6kav/
 

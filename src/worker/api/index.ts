@@ -39,7 +39,6 @@ import {
 import { idb } from "../db/index.ts";
 import {
 	achievement,
-	beforeView,
 	checkAccount,
 	checkChanges,
 	checkNaNs,
@@ -141,6 +140,7 @@ import type { LookingFor } from "../core/trade/makeItWork.ts";
 import type { LookingForState } from "../../ui/views/TradingBlock/useLookingForState.ts";
 import { getPlayer } from "../views/player.ts";
 import type { NoteInfo } from "../../ui/views/Player/Note.tsx";
+import { beforeLeague, beforeNonLeague } from "../util/beforeView.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -360,21 +360,32 @@ const autoSortRoster = async ({
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
-const beforeViewLeague = async (
+const beforeView = async (
 	{
-		newLid,
-		loadedLid,
+		inLeague,
+		lidCurrent,
+		lidUrl,
 	}: {
-		newLid: number;
-		loadedLid: number | undefined;
+		inLeague: boolean;
+		lidCurrent: number | undefined;
+		lidUrl: number | undefined;
 	},
 	conditions: Conditions,
 ) => {
-	return beforeView.league(newLid, loadedLid, conditions);
-};
-
-const beforeViewNonLeague = async (param: unknown, conditions: Conditions) => {
-	return beforeView.nonLeague(conditions);
+	if (inLeague) {
+		// idb.league check is for Safari weirdness - seems we need to reinitialize state sometimes because it is lost? idk
+		if (
+			lidUrl !== undefined &&
+			(lidUrl !== lidCurrent || idb.league === undefined)
+		) {
+			await beforeLeague(lidUrl, conditions);
+		}
+	} else {
+		// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line no-lonely-if
+		if (lidCurrent !== undefined) {
+			await beforeNonLeague(conditions);
+		}
+	}
 };
 
 const cancelContractNegotiation = async (pid: number) => {
@@ -979,7 +990,7 @@ const deleteScheduledEvents = async (type: string) => {
 const discardUnsavedProgress = async () => {
 	const lid = g.get("lid");
 	await league.close(true);
-	await beforeView.league(lid, undefined);
+	await beforeLeague(lid);
 };
 
 const draftLottery = async () => {
@@ -4783,8 +4794,7 @@ export default {
 		allStarDraftSetPlayers,
 		allStarGameNow,
 		autoSortRoster,
-		beforeViewLeague,
-		beforeViewNonLeague,
+		beforeView,
 		cancelContractNegotiation,
 		checkAccount: checkAccount2,
 		checkParticipationAchievement,

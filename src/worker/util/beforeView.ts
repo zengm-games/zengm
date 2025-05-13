@@ -82,11 +82,7 @@ const checkHeartbeat = async (lid: number) => {
 
 // beforeLeague runs when the user switches leagues (including the initial league selection).
 let loadingNewLid;
-const beforeLeague = async (
-	newLid: number,
-	loadedLid: number | undefined,
-	conditions?: Conditions,
-) => {
+export const beforeLeague = async (newLid: number, conditions?: Conditions) => {
 	// Make sure league template FOR THE CURRENT LEAGUE is showing
 	loadingNewLid = newLid;
 	const switchingDatabaseLid = newLid !== g.get("lid");
@@ -192,7 +188,7 @@ const beforeLeague = async (
 
 // beforeNonLeague runs when the user clicks a link back to the dashboard while in a league. beforeNonLeagueRunning is to handle extra realtimeUpdate request triggered by stopping gameSim in league.disconnect
 let beforeNonLeagueRunning = false;
-const beforeNonLeague = async (conditions: Conditions) => {
+export const beforeNonLeague = async (conditions: Conditions) => {
 	if (!beforeNonLeagueRunning) {
 		try {
 			beforeNonLeagueRunning = true;
@@ -209,9 +205,4 @@ const beforeNonLeague = async (conditions: Conditions) => {
 			throw error;
 		}
 	}
-};
-
-export default {
-	league: beforeLeague,
-	nonLeague: beforeNonLeague,
 };

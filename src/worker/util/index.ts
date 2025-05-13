@@ -3,7 +3,6 @@ export const promiseWorker = new PWBWorker();
 
 export { default as achievement } from "./achievement.ts";
 export { default as advStats } from "./advStats.ts";
-export { default as beforeView } from "./beforeView.ts";
 export { default as checkAccount } from "./checkAccount.ts";
 export { default as checkChanges } from "./checkChanges.ts";
 export { default as checkNaNs } from "./checkNaNs.ts";

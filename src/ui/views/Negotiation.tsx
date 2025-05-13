@@ -15,7 +15,7 @@ import {
 	PlayerPicture,
 	RatingsStatsPopover,
 } from "../components/index.tsx";
-import { isSport } from "../../common/index.ts";
+import { isSport, PHASE } from "../../common/index.ts";
 
 // Show the negotiations list if there are more ongoing negotiations
 const redirectNegotiationOrRoster = async (cancelled: boolean) => {
@@ -90,6 +90,7 @@ const Negotiation = ({
 	contractOptions,
 	payroll,
 	p,
+	phase,
 	resigning,
 	salaryCap,
 	salaryCapType,
@@ -124,6 +125,10 @@ const Negotiation = ({
 		message =
 			"You are not allowed to go over the salary cap to sign players, unless it's for a minimum contract.";
 	}
+
+	// Why is the phase check needed? Ideally it wouldn't be, but somehow if a re-signing player is in the negotiations database some other time, it's good to still show the "cancel" button, otherwise there is no way to cancel. One way this could happen is if advancing to the re-signing phase fails before completing, so negotiations are starting but you're not in the re-signing phase yet.
+	const resigningAndResigningPhase =
+		resigning && phase === PHASE.RESIGN_PLAYERS;
 
 	return (
 		<>
@@ -204,7 +209,7 @@ const Negotiation = ({
 			</div>
 
 			<div className="mt-3">
-				{resigning ? (
+				{resigningAndResigningPhase ? (
 					<a
 						className="btn btn-secondary"
 						href={helpers.leagueUrl(["negotiation"])}

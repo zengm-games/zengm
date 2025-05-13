@@ -198,6 +198,7 @@ const updateNegotiation = async (
 			salaryCapType: g.get("salaryCapType"),
 			payroll: payroll / 1000,
 			p,
+			phase: g.get("phase"),
 			resigning: negotiation.resigning,
 			salaryCap: g.get("salaryCap") / 1000,
 			t,

@@ -306,9 +306,6 @@ importers:
       husky:
         specifier: ^9.1.7
         version: 9.1.7
-      jiti:
-        specifier: ^2.4.2
-        version: 2.4.2
       jsdom:
         specifier: ^26.1.0
         version: 26.1.0
@@ -9358,7 +9355,8 @@ snapshots:
       filelist: 1.0.4
       minimatch: 3.1.2
 
-  jiti@2.4.2: {}
+  jiti@2.4.2:
+    optional: true
 
   js-tokens@4.0.0: {}
 

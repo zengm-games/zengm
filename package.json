@@ -11,20 +11,20 @@
 		"url": "https://github.com/zengm-games/zengm.git"
 	},
 	"scripts": {
-		"build": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/build/cli.ts",
-		"deploy": "node --run lint && node --run test && node --experimental-strip-types --disable-warning=ExperimentalWarning tools/deploy.ts",
-		"deploy-all": "node --run lint && node --run test && node --experimental-strip-types --disable-warning=ExperimentalWarning tools/deploy-all.ts",
-		"dev": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/watch/cli.ts",
-		"preview": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/preview.ts",
+		"build": "node --disable-warning=ExperimentalWarning tools/build/cli.ts",
+		"deploy": "node --run lint && node --run test && node --disable-warning=ExperimentalWarning tools/deploy.ts",
+		"deploy-all": "node --run lint && node --run test && node --disable-warning=ExperimentalWarning tools/deploy-all.ts",
+		"dev": "node --disable-warning=ExperimentalWarning tools/watch/cli.ts",
+		"preview": "node --disable-warning=ExperimentalWarning tools/preview.ts",
 		"lint": "concurrently --raw \"node --run lint-js\" \"node --run lint-ts\"",
-		"lint-js": "node --run pre-test && npx --node-options='--experimental-strip-types --disable-warning=ExperimentalWarning' eslint --flag unstable_native_nodejs_ts_config",
+		"lint-js": "node --run pre-test && eslint",
 		"lint-ts": "node --run pre-test && tsc",
-		"pre-test": "node --experimental-strip-types --disable-warning=ExperimentalWarning tools/pre-test.ts",
+		"pre-test": "node --disable-warning=ExperimentalWarning tools/pre-test.ts",
 		"prettier": "prettier --write \"*.{mjs,cjs,js,json,scss,ts,tsx}\" \"public/**/*.{mjs,cjs,js,json,scss,ts,tsx}\" \"src/**/*.{mjs,cjs,js,json,scss,ts,tsx}\" \"tools/**/*.{mjs,cjs,js,json,scss,ts,tsx}\"",
 		"test": "node --run pre-test && vitest --run",
-		"test-e2e": "node --run pre-test && node --experimental-strip-types --disable-warning=ExperimentalWarning node_modules/karma/bin/karma start karma.conf.ts",
-		"test-e2e-watch": "node --run pre-test && node --experimental-strip-types --disable-warning=ExperimentalWarning node_modules/karma/bin/karma start karma.conf.ts --auto-watch --no-single-run",
-		"test-e2e-browserstack": "node --run pre-test && node --experimental-strip-types --disable-warning=ExperimentalWarning node_modules/karma/bin/karma start karma-browserstack.conf.ts",
+		"test-e2e": "node --run pre-test && node --disable-warning=ExperimentalWarning node_modules/karma/bin/karma start karma.conf.ts",
+		"test-e2e-watch": "node --run pre-test && node --disable-warning=ExperimentalWarning node_modules/karma/bin/karma start karma.conf.ts --auto-watch --no-single-run",
+		"test-e2e-browserstack": "node --run pre-test && node --disable-warning=ExperimentalWarning node_modules/karma/bin/karma start karma-browserstack.conf.ts",
 		"prepare": "husky"
 	},
 	"lint-staged": {
@@ -133,7 +133,6 @@
 		"globals": "^16.1.0",
 		"html-minifier-terser": "^7.2.0",
 		"husky": "^9.1.7",
-		"jiti": "^2.4.2",
 		"jsdom": "^26.1.0",
 		"karma": "^6.4.4",
 		"karma-browserstack-launcher": "^1.6.0",
@@ -158,7 +157,7 @@
 		"workbox-build": "^7.3.0"
 	},
 	"engines": {
-		"node": "^22.0.0",
+		"node": "^24.0.0",
 		"pnpm": "^10.0.0"
 	},
 	"private": true

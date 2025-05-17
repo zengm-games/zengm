@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useEffect } from "react";
 import { Dropdown } from "react-bootstrap";
-import { formatModifierKeyLabel } from "../util/formatModifierKeyLabel";
+import { formatModifierKeyLabel } from "../util/formatModifierKeyLabel.ts";
 
 const PlayPauseNext = ({
 	className,

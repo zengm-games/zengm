@@ -2118,6 +2118,7 @@ class GameSim extends GameSimBase {
 		this.playByPlay.logEvent({
 			type: "strikeOut",
 			swinging,
+			pid: batter.id,
 			...this.getSportState(),
 		});
 	}

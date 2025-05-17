@@ -2294,6 +2294,7 @@ class GameSim extends GameSimBase {
 		if (passer !== undefined) {
 			pAst = this.playersOnCourt[this.o][passer];
 			pidAst = this.team[this.o].player[pAst].id;
+			this.recordStat(this.o, pAst, "ast");
 		}
 		let fgMakeLogType: FgMakeType | undefined;
 		if (type === "tipIn") {
@@ -2365,10 +2366,6 @@ class GameSim extends GameSimBase {
 			});
 		}
 		this.recordLastScore(this.o, p, type);
-
-		if (pAst !== undefined) {
-			this.recordStat(this.o, pAst, "ast");
-		}
 
 		if (andOne && !this.elamDone) {
 			this.doPf({ t: this.d, type: "pfAndOne", shooter, fouler });

@@ -54,7 +54,7 @@ const updateFrivolitiesDraftClasses = async (
 			.store.index("draft.year, retiredYear")
 			.iterate(
 				IDBKeyRange.bound(
-					[g.get("startingSeason")],
+					[Math.min(mostRecentDraftYear, g.get("startingSeason"))],
 					[mostRecentDraftYear, Infinity],
 				),
 			)) {

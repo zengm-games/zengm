@@ -38,6 +38,9 @@ export const LATEST_SEASON = 2025;
 export const FIRST_SEASON_WITH_ALEXNOOB_ROSTERS = 2020;
 const FREE_AGENTS_SEASON = 2020;
 
+// Set true after the lottery happens, then false again after the playoffs end
+const INCLUDE_LATEST_SEASON_DRAFT_LOTTERY_RESULTS = true;
+
 const getLeague = async (options: GetLeagueOptions) => {
 	if (!isSport("basketball")) {
 		throw new Error(`Not supported for ${process.env.SPORT}`);
@@ -379,7 +382,11 @@ const getLeague = async (options: GetLeagueOptions) => {
 			options.season >= 2020 &&
 			!options.randomDebuts &&
 			!!basketball.draftPicks[options.season];
-		const includeRealizedDraftPicksThisSeason = options.phase === PHASE.DRAFT;
+		const includeRealizedDraftPicksThisSeason =
+			options.phase === PHASE.DRAFT ||
+			(options.phase === PHASE.PLAYOFFS &&
+				options.season === LATEST_SEASON &&
+				INCLUDE_LATEST_SEASON_DRAFT_LOTTERY_RESULTS);
 		if (includeDraftPicks2020AndFuture || includeRealizedDraftPicksThisSeason) {
 			draftPicks = basketball.draftPicks[options.season]
 				.filter((dp) => {

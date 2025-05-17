@@ -1,6 +1,3 @@
-Start season during the playoffs but with the lottery results fixed https://discord.com/channels/290013534023057409/331882115119448065/1372844735135219755
-- only apply when starting a league during the playoffs of the latest season, when playoffs is the latest phase you can start in. and only if lottery results are available
-
 reconnect to meta before use
 - same for league?
   - maybe have API to get a transaction but make it async

@@ -9,12 +9,16 @@ const doSeason = async (
 	existingPicks: (DraftPick & {
 		keep?: boolean;
 	})[],
+	realPlayers: boolean | undefined,
 ) => {
 	const teams = await idb.cache.teams.getAll();
 
 	// If draft is ongoing, don't create picks because some may have already been used. And in the case that all have been used, there's no way to know for sure, so this is the best we can do.
 	const ongoingDraft =
 		g.get("season") === season && g.get("phase") === PHASE.DRAFT;
+
+	// Some real drafts included forfeited picks, so we don't want to recreate them here if this is a new real players league and there are some draft picks for this season
+	const skipRealPlayers = realPlayers && existingPicks.length > 0;
 
 	const userTids = g.get("userTids");
 	const challengeNoDraftPicks = g.get("challengeNoDraftPicks");
@@ -41,16 +45,14 @@ const doSeason = async (
 				if (!deletePickChallengeMode) {
 					existingPick.keep = true;
 				}
-			} else if (!ongoingDraft) {
-				if (!skipChallengeMode) {
-					await idb.cache.draftPicks.add({
-						tid: t.tid,
-						originalTid: t.tid,
-						round,
-						pick: 0,
-						season,
-					});
-				}
+			} else if (!ongoingDraft && !skipChallengeMode && !skipRealPlayers) {
+				await idb.cache.draftPicks.add({
+					tid: t.tid,
+					originalTid: t.tid,
+					round,
+					pick: 0,
+					season,
+				});
 			}
 		}
 	}
@@ -83,7 +85,7 @@ const genPicks = async ({
 	const dpOffset = g.get("phase") > PHASE.DRAFT || afterDraft ? 1 : 0;
 	for (let i = 0; i < numSeasons; i++) {
 		const draftYear = g.get("season") + dpOffset + i;
-		await doSeason(draftYear, existingPicks);
+		await doSeason(draftYear, existingPicks, realPlayers);
 	}
 
 	if (g.get("phase") === PHASE.FANTASY_DRAFT) {

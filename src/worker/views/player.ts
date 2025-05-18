@@ -485,6 +485,22 @@ export const getCommon = async (pid?: number, season?: number) => {
 		}
 	}
 
+	let randomDebutsForeverPids;
+	if (g.get("randomDebutsForever") !== undefined && p.srID !== undefined) {
+		randomDebutsForeverPids = [];
+		for await (const { value: p2 } of idb.league
+			.transaction("players")
+			.store.index("srID")
+			.iterate(p.srID)) {
+			randomDebutsForeverPids.push(p2.pid);
+		}
+
+		// No point showing if there are no other versions
+		if (randomDebutsForeverPids.length === 1) {
+			randomDebutsForeverPids = undefined;
+		}
+	}
+
 	return {
 		type: "normal" as const,
 		bestPos,
@@ -499,6 +515,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 		phase: g.get("phase"),
 		pid, // Needed for state.pid check
 		player: p,
+		randomDebutsForeverPids,
 		retired,
 		showContract:
 			p.tid !== PLAYER.UNDRAFTED &&

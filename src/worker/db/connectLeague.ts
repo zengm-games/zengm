@@ -117,6 +117,7 @@ export interface LeagueDB extends DBSchema {
 			"draft.year, retiredYear": [number, number];
 			hof: 1;
 			noteBool: 1;
+			srID: string;
 			statsTids: number;
 			tid: number;
 			watch: 1;
@@ -588,69 +589,42 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 	db.createObjectStore("allStars", {
 		keyPath: "season",
 	});
-	eventStore.createIndex("season", "season", {
-		unique: false,
-	});
+	eventStore.createIndex("season", "season");
 	eventStore.createIndex("pids", "pids", {
-		unique: false,
 		multiEntry: true,
 	});
 	eventStore.createIndex("dpids", "dpids", {
-		unique: false,
 		multiEntry: true,
 	});
-	gameStore.createIndex("noteBool", "noteBool", {
-		unique: false,
-	});
-	gameStore.createIndex("season", "season", {
-		unique: false,
-	});
-	playerStore.createIndex(
-		"draft.year, retiredYear",
-		["draft.year", "retiredYear"],
-		{
-			unique: false,
-		},
-	);
+	gameStore.createIndex("noteBool", "noteBool");
+	gameStore.createIndex("season", "season");
+	playerStore.createIndex("draft.year, retiredYear", [
+		"draft.year",
+		"retiredYear",
+	]);
 	playerStore.createIndex("statsTids", "statsTids", {
-		unique: false,
 		multiEntry: true,
 	});
-	playerStore.createIndex("tid", "tid", {
-		unique: false,
-	});
-	playerStore.createIndex("hof", "hof", {
-		unique: false,
-	});
-	playerStore.createIndex("noteBool", "noteBool", {
-		unique: false,
-	});
-	playerStore.createIndex("watch", "watch", {
-		unique: false,
-	});
+	playerStore.createIndex("tid", "tid");
+	playerStore.createIndex("hof", "hof");
+	playerStore.createIndex("noteBool", "noteBool");
+	playerStore.createIndex("srID", "srID");
+	playerStore.createIndex("watch", "watch");
 	teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {
 		unique: true,
 	});
 	teamSeasonsStore.createIndex("tid, season", ["tid", "season"], {
-		unique: false,
+		unique: true,
 	});
-	teamSeasonsStore.createIndex("noteBool", "noteBool", {
-		unique: false,
-	});
-	teamStatsStore.createIndex("season, tid", ["season", "tid"], {
-		unique: false,
-	});
-	teamStatsStore.createIndex("tid", "tid", {
-		unique: false,
-	});
+	teamSeasonsStore.createIndex("noteBool", "noteBool");
+	teamStatsStore.createIndex("season, tid", ["season", "tid"]);
+	teamStatsStore.createIndex("tid", "tid");
 
 	const scheduledEventsStore = db.createObjectStore("scheduledEvents", {
 		keyPath: "id",
 		autoIncrement: true,
 	});
-	scheduledEventsStore.createIndex("season", "season", {
-		unique: false,
-	});
+	scheduledEventsStore.createIndex("season", "season");
 
 	db.createObjectStore("savedTrades", {
 		keyPath: "hash",
@@ -706,17 +680,13 @@ const migrate = async ({
 				autoIncrement: true,
 			});
 			teamSeasonsStore.createIndex("tid, season", ["tid", "season"], {
-				unique: false,
+				unique: true,
 			});
 			teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {
 				unique: true,
 			});
-			teamStatsStore.createIndex("tid", "tid", {
-				unique: false,
-			});
-			teamStatsStore.createIndex("season, tid", ["season", "tid"], {
-				unique: false,
-			});
+			teamStatsStore.createIndex("tid", "tid");
+			teamStatsStore.createIndex("season, tid", ["season", "tid"]);
 
 			for await (const cursor of transaction.objectStore("teams")) {
 				const t = cursor.value;
@@ -789,9 +759,7 @@ const migrate = async ({
 		if (oldVersion < 22) {
 			transaction
 				.objectStore("players")
-				.createIndex("draft.year, retiredYear", ["draft.year", "retiredYear"], {
-					unique: false,
-				});
+				.createIndex("draft.year, retiredYear", ["draft.year", "retiredYear"]);
 			for await (const cursor of transaction.objectStore("players")) {
 				const p = cursor.value;
 				if (p.retiredYear === null || p.retiredYear === undefined) {
@@ -1045,9 +1013,7 @@ const migrate = async ({
 				keyPath: "id",
 				autoIncrement: true,
 			});
-			scheduledEventsStore.createIndex("season", "season", {
-				unique: false,
-			});
+			scheduledEventsStore.createIndex("season", "season");
 		}
 
 		if (oldVersion < 38) {
@@ -1088,7 +1054,6 @@ const migrate = async ({
 
 		if (oldVersion < 40) {
 			transaction.objectStore("events").createIndex("dpids", "dpids", {
-				unique: false,
 				multiEntry: true,
 			});
 		}
@@ -1305,16 +1270,10 @@ const migrate = async ({
 
 		// Had hof index in version 49, others in 50. Merged together here so the upgrade could happen together for people who have not yet upgraded to 49
 		if (oldVersion < 50) {
-			playerStore.createIndex("hof", "hof", {
-				unique: false,
-			});
+			playerStore.createIndex("hof", "hof");
 		}
-		playerStore.createIndex("noteBool", "noteBool", {
-			unique: false,
-		});
-		playerStore.createIndex("watch", "watch", {
-			unique: false,
-		});
+		playerStore.createIndex("noteBool", "noteBool");
+		playerStore.createIndex("watch", "watch");
 	}
 
 	if (oldVersion < 51) {
@@ -1561,9 +1520,7 @@ const migrate = async ({
 
 	if (oldVersion < 62) {
 		const teamSeasonsStore = transaction.objectStore("teamSeasons");
-		teamSeasonsStore.createIndex("noteBool", "noteBool", {
-			unique: false,
-		});
+		teamSeasonsStore.createIndex("noteBool", "noteBool");
 	}
 
 	if (oldVersion < 63) {
@@ -1573,9 +1530,7 @@ const migrate = async ({
 	}
 
 	if (oldVersion < 64) {
-		transaction.objectStore("games").createIndex("noteBool", "noteBool", {
-			unique: false,
-		});
+		transaction.objectStore("games").createIndex("noteBool", "noteBool");
 	}
 
 	if (oldVersion < 65) {
@@ -1622,6 +1577,12 @@ const migrate = async ({
 				await cursor.update(p);
 			}
 		}
+	}
+
+	if (oldVersion < 67) {
+		slowUpgrade();
+
+		transaction.objectStore("players").createIndex("srID", "srID");
 	}
 };
 

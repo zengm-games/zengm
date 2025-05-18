@@ -30,6 +30,7 @@ const Player2 = ({
 	leaders,
 	phase,
 	player,
+	randomDebutsForeverPids,
 	ratings,
 	retired,
 	showContract,
@@ -97,6 +98,7 @@ const Player2 = ({
 				jerseyNumberInfos={jerseyNumberInfos}
 				phase={phase}
 				player={player}
+				randomDebutsForeverPids={randomDebutsForeverPids}
 				retired={retired}
 				showContract={showContract}
 				showRatings={showRatings}

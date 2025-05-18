@@ -29,6 +29,7 @@ import clsx from "clsx";
 import AwardsSummary from "./AwardsSummary.tsx";
 import RatingsOverview from "./RatingsOverview.tsx";
 import Note from "./Note.tsx";
+import { ButtonGroup, Dropdown, DropdownButton } from "react-bootstrap";
 
 const Relatives = ({
 	gender,
@@ -234,6 +235,47 @@ const StatsSummary = ({
 	);
 };
 
+const ComparePlayerButton = ({
+	pid,
+	randomDebutsForeverPids,
+	season,
+}: {
+	pid: number;
+	randomDebutsForeverPids: number[] | undefined;
+	season: number | "career";
+}) => {
+	const normalCompareUrl = helpers.leagueUrl([
+		"compare_players",
+		`${pid}-${season}-r`,
+	]);
+
+	if (randomDebutsForeverPids) {
+		return (
+			<DropdownButton
+				as={ButtonGroup}
+				variant="light-bordered"
+				title="Compare player"
+			>
+				<Dropdown.Item href={normalCompareUrl}>Alone</Dropdown.Item>
+				<Dropdown.Item
+					href={helpers.leagueUrl([
+						"compare_players",
+						randomDebutsForeverPids.map((pid) => `${pid}-career-r`).join(","),
+					])}
+				>
+					With random debuts forever versions
+				</Dropdown.Item>
+			</DropdownButton>
+		);
+	}
+
+	return (
+		<a className="btn btn-light-bordered" href={normalCompareUrl}>
+			Compare player
+		</a>
+	);
+};
+
 const TopStuff = ({
 	bestPos,
 	currentSeason,
@@ -244,6 +286,7 @@ const TopStuff = ({
 	jerseyNumberInfos,
 	phase,
 	player,
+	randomDebutsForeverPids,
 	retired,
 	season,
 	showContract,
@@ -269,6 +312,7 @@ const TopStuff = ({
 	| "jerseyNumberInfos"
 	| "phase"
 	| "player"
+	| "randomDebutsForeverPids"
 	| "retired"
 	| "showContract"
 	| "showRatings"
@@ -427,15 +471,11 @@ const TopStuff = ({
 					Negotiate contract
 				</button>
 			) : null}
-			<a
-				className="btn btn-light-bordered"
-				href={helpers.leagueUrl([
-					"compare_players",
-					`${player.pid}-${retired ? "career" : player.ratings.at(-1)!.season}-r`,
-				])}
-			>
-				Compare player
-			</a>
+			<ComparePlayerButton
+				pid={player.pid}
+				randomDebutsForeverPids={randomDebutsForeverPids}
+				season={retired ? "career" : player.ratings.at(-1)!.season}
+			/>
 		</>
 	);
 

@@ -155,6 +155,7 @@ const PlayerGameLog = ({
 	numGamesPlayoffSeires,
 	phase,
 	player,
+	randomDebutsForeverPids,
 	retired,
 	showContract,
 	showRatings,
@@ -339,6 +340,7 @@ const PlayerGameLog = ({
 				jerseyNumberInfos={jerseyNumberInfos}
 				phase={phase}
 				player={player}
+				randomDebutsForeverPids={randomDebutsForeverPids}
 				retired={retired}
 				season={season}
 				showContract={showContract}

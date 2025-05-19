@@ -158,7 +158,6 @@ export const rolldownConfig = (
 			"process.env.NODE_ENV": JSON.stringify(envOptions.nodeEnv),
 			"process.env.SPORT": JSON.stringify(sport),
 		},
-		// @ts-expect-error
 		plugins,
 	};
 };

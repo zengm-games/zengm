@@ -1,3 +1,6 @@
+bug with trade value of draft pick for expansion team - valued as 1st rather than 15th? https://old.reddit.com/r/BasketballGM/comments/13x2hhe/monthly_suggestions_thread/jmgzqei/
+- more generally, draft order code should be aligned with pick value estimation code. this would also solve issue with weird draftTypes and unbalanced conferences (team makes playoff and no longer is in lottery)
+
 reconnect to meta before use
 - same for league?
   - maybe have API to get a transaction but make it async
@@ -787,8 +790,6 @@ contract extensions, available if player mood is high enough and contract is exp
 - maybe also trade demands if mood is low enough https://discord.com/channels/@me/1159143934623236146/1273473474064810046
 
 cancelling expansion draft in real players league breaks tids? https://mail.google.com/mail/u/0/#inbox/FMfcgzGtwggXJHtMpFDRKPDccCjSnCQc
-
-bug with trade value of draft pick for expansion team - valued as 1st rather than 15th? https://old.reddit.com/r/BasketballGM/comments/13x2hhe/monthly_suggestions_thread/jmgzqei/
 
 custom awards
 - fields

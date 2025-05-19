@@ -25,16 +25,19 @@ const getSubdomain = () => {
 };
 
 const mySpawn = (command: string, args: string[]) => {
-	return new Promise<void>((resolve) => {
+	return new Promise<void>((resolve, reject) => {
 		console.log(`${command} ${args.join(" ")}`);
 
-		const cmd = spawn(command, args, { shell: true, stdio: "inherit" });
+		const cmd = spawn(command, args, { stdio: "inherit" });
+		cmd.on("error", (error) => {
+			reject(error);
+		});
 		cmd.on("close", (code) => {
 			if (code !== 0) {
-				console.log(`child process exited with code ${code}`);
-				process.exit(code);
+				reject(new Error(`child process exited with code ${code}`));
+			} else {
+				resolve();
 			}
-			resolve();
 		});
 	});
 };

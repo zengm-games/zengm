@@ -1,3 +1,5 @@
+ctrl+k menu better overflow for long titles like in frivolities
+
 bug with trade value of draft pick for expansion team - valued as 1st rather than 15th? https://old.reddit.com/r/BasketballGM/comments/13x2hhe/monthly_suggestions_thread/jmgzqei/
 - more generally, draft order code should be aligned with pick value estimation code. this would also solve issue with weird draftTypes and unbalanced conferences (team makes playoff and no longer is in lottery)
 

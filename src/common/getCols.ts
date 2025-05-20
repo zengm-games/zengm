@@ -2791,6 +2791,11 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"# Jerseys": {
+		desc: "Number of Retired Jersey Numbers",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	"# Mothers": {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",

@@ -1009,6 +1009,37 @@ const updatePlayers = async (
 				};
 			};
 			after = tidAndSeasonToAbbrev;
+		} else if (type === "retired_jersey_numbers") {
+			title = "Most Retired Jersey Numbers";
+			description =
+				"These are the players who have the most jersey numbers retired (minimum 2). Two numbers retired by the same team counts, as does the same number retired by different teams.";
+			extraCols.push({
+				key: ["most", "value"],
+				colName: "# Jerseys",
+			});
+
+			const teams = await idb.cache.teams.getAll();
+			const retiredJerseyNumbersByPid: Record<number, number | undefined> = {};
+			for (const t of teams) {
+				if (t.retiredJerseyNumbers) {
+					for (const { pid } of t.retiredJerseyNumbers) {
+						if (pid !== undefined) {
+							if (retiredJerseyNumbersByPid[pid] === undefined) {
+								retiredJerseyNumbersByPid[pid] = 0;
+							}
+							retiredJerseyNumbersByPid[pid] += 1;
+						}
+					}
+				}
+			}
+
+			getValue = (p) => {
+				const value = retiredJerseyNumbersByPid[p.pid];
+				if (value === undefined || value <= 1) {
+					return;
+				}
+				return { value };
+			};
 		} else {
 			throw new Error(`Unknown type "${type}"`);
 		}

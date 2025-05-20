@@ -593,7 +593,7 @@ const ResultText = ({
 	}
 
 	return (
-		<div>
+		<div className="text-truncate" style={{ minWidth: 0 }}>
 			{prefix}
 			{highlightedTextArray.map((line, i) => {
 				return (
@@ -699,15 +699,16 @@ const SearchResults = memo(
 										<a
 											key={j}
 											{...result.anchorProps}
-											className={`d-flex cursor-pointer list-group-item list-group-item-action border-0 ${
+											className={`d-flex cursor-pointer list-group-item list-group-item-action border-0 text-nowrap ${
 												active ? ACTIVE_CLASS : ""
 											}`}
-											style={{ whiteSpace: "pre" }}
 										>
 											{highlightedResult}
 
 											{active ? (
-												<div className="ms-auto">Press enter to select</div>
+												<div className="ms-auto ps-1">
+													Press enter to select
+												</div>
 											) : null}
 										</a>
 									);

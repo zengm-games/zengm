@@ -1,3 +1,7 @@
+ios app store with pwabuilder?
+
+add some hockey rate stats: G/60, A/60, PTS/60, S/60
+
 bug with trade value of draft pick for expansion team - valued as 1st rather than 15th? https://old.reddit.com/r/BasketballGM/comments/13x2hhe/monthly_suggestions_thread/jmgzqei/
 - more generally, draft order code should be aligned with pick value estimation code. this would also solve issue with weird draftTypes and unbalanced conferences (team makes playoff and no longer is in lottery)
 
@@ -418,6 +422,12 @@ Support logos being saved to IndexedDB
   - if hash based especially, some bulk edit function (replace this logo in all leagues, or maybe some leagues/seasons)
 - or allow uploading to server
   - https://news.ycombinator.com/item?id=40221210
+- data URLs with base64 image data
+  - currently the JSON parser crashes the browser https://discord.com/channels/290013534023057409/1374150430216556705
+    - try https://www.npmjs.com/package/@streamparser/json-whatwg
+    - make sure works with existing community files
+  - would need to dedupe rather than storing in each TeamSeason
+  - even deduped, would be big file sizes, and users might accidentally put huge files there
 
 https://discord.com/channels/290013534023057409/569726303926878219/1253099037872226314
 - Dpoy is still a little weird. I understand if dm wants it to be evenly spread out among positions, however with my sliders that are damn near identical to irl stats (which I feel should be the default for the game) corners win it 8/10 times
@@ -527,8 +537,6 @@ jersey numbers by position and frequency
 offsetting penalties at end of half should lead to untimed down, same as defensive penalty https://discord.com/channels/290013534023057409/290015591216054273/1215714915550232646
 
 draft pick trade logic bug https://old.reddit.com/message/messages/274jbgt AI may value the picks by team record only, even when the better record team is in the lottery and the worse record team is not
-
-data URI for image files?
 
 hockey: add offsides, icing, puck out of play https://discord.com/channels/@me/778760871911751700/1213624877345411162
 - improve stats: more faceoffs, more shifts

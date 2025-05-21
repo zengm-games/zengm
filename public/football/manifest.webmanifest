@@ -10,7 +10,8 @@
 		{
 			"src": "/ico/icon512.png",
 			"type": "image/png",
-			"sizes": "512x512"
+			"sizes": "512x512",
+			"purpose": "any"
 		},
 		{
 			"src": "/ico/maskable.png",
@@ -20,6 +21,7 @@
 		}
 	],
 	"start_url": "/?utm_source=a2hs",
+	"id": "/?utm_source=a2hs",
 	"background_color": "#808080",
 	"display": "standalone",
 	"scope": "/",

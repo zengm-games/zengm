@@ -2,6 +2,7 @@ import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { DraftPick } from "../../../common/types.ts";
 import { PHASE } from "../../../common/index.ts";
+import { groupBy } from "../../../common/utils.ts";
 
 // Add a new set of draft picks, or confirm that the existing picks are correct (because this is idempotent!)
 const doSeason = async (
@@ -31,9 +32,7 @@ const doSeason = async (
 
 			// If a pick already exists in the database, no need to create it
 			const existingPick = existingPicks.find((dp) => {
-				return (
-					t.tid === dp.originalTid && round === dp.round && season === dp.season
-				);
+				return t.tid === dp.originalTid && round === dp.round;
 			});
 
 			const skipChallengeMode =
@@ -83,9 +82,14 @@ const genPicks = async ({
 	}
 
 	const dpOffset = g.get("phase") > PHASE.DRAFT || afterDraft ? 1 : 0;
+	const existingPicksBySeason = groupBy(existingPicks, "season");
 	for (let i = 0; i < numSeasons; i++) {
 		const draftYear = g.get("season") + dpOffset + i;
-		await doSeason(draftYear, existingPicks, realPlayers);
+		await doSeason(
+			draftYear,
+			existingPicksBySeason[draftYear] ?? [],
+			realPlayers,
+		);
 	}
 
 	if (g.get("phase") === PHASE.FANTASY_DRAFT) {

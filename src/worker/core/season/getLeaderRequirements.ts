@@ -44,6 +44,10 @@ const getLeaderRequirements = () => {
 		minStats: { rec: 1.875 * numGames },
 	};
 
+	const hockeyRateStats = {
+		minStats: { s: numGames },
+	};
+
 	return bySport<
 		Record<
 			string,
@@ -553,12 +557,23 @@ const getLeaderRequirements = () => {
 			gRec: {
 				sortValue: helpers.getRecordNumericValue,
 			},
-			sPct: {
-				minStats: { s: numGames },
-			},
+			sPct: hockeyRateStats,
 			foPct: {
 				minStats: { fow: 2 * numGames },
 			},
+			g60: hockeyRateStats,
+			a60: hockeyRateStats,
+			pts60: hockeyRateStats,
+			s60: hockeyRateStats,
+			evG60: hockeyRateStats,
+			evA60: hockeyRateStats,
+			evPts60: hockeyRateStats,
+			ppG60: hockeyRateStats,
+			ppA60: hockeyRateStats,
+			ppPts60: hockeyRateStats,
+			shG60: hockeyRateStats,
+			shA60: hockeyRateStats,
+			shPts60: hockeyRateStats,
 		},
 	});
 };

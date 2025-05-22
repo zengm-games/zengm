@@ -74,6 +74,32 @@ const processStats = (
 			} else {
 				row[stat] = "";
 			}
+		} else if (stat === "g60") {
+			row[stat] = helpers.ratio(g, ps.min / 60);
+		} else if (stat === "a60") {
+			row[stat] = helpers.ratio(a, ps.min / 60);
+		} else if (stat === "pts60") {
+			row[stat] = helpers.ratio(g + a, ps.min / 60);
+		} else if (stat === "s60") {
+			row[stat] = helpers.ratio(ps.s, ps.min / 60);
+		} else if (stat === "evG60") {
+			row[stat] = helpers.ratio(ps.evG, ps.min / 60);
+		} else if (stat === "evA60") {
+			row[stat] = helpers.ratio(ps.evA, ps.min / 60);
+		} else if (stat === "evPts60") {
+			row[stat] = helpers.ratio(ps.evPts, ps.min / 60);
+		} else if (stat === "ppG60") {
+			row[stat] = helpers.ratio(ps.ppG, ps.min / 60);
+		} else if (stat === "ppA60") {
+			row[stat] = helpers.ratio(ps.ppA, ps.min / 60);
+		} else if (stat === "ppPts60") {
+			row[stat] = helpers.ratio(ps.ppPts, ps.min / 60);
+		} else if (stat === "shG60") {
+			row[stat] = helpers.ratio(ps.shG, ps.min / 60);
+		} else if (stat === "shA60") {
+			row[stat] = helpers.ratio(ps.shA, ps.min / 60);
+		} else if (stat === "shPts60") {
+			row[stat] = helpers.ratio(ps.shPts, ps.min / 60);
 		} else {
 			row[stat] = ps[stat];
 		}

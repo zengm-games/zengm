@@ -116,6 +116,33 @@ class Ads {
 			}
 
 			window.freestar.queue.push(() => {
+				// Do moblie footer stuff before actually showing the ad, in case somehow `window.freestar.config.enabled_slots.push` causes an error that prevented subsequent code from running. Cause now 2 people have said the multi team menu is hiding behind ads on mobile, which must mean stickyFooterAd is not being set to true. Could somehow be Blockthrough (or whatever) running while Freestar code doesn't, but users say they aren't using an ad blocker...
+				if (window.mobile) {
+					localActions.update({
+						stickyFooterAd: true,
+					});
+
+					// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
+					const footer = document.getElementById("main-footer");
+					if (footer) {
+						footer.style.paddingBottom = `${MOBILE_AD_BOTTOM_MARGIN}px`;
+					}
+
+					// Disabled due to https://mail.google.com/mail/u/0/#inbox/FMfcgzQZSZHnVhMpncBXqpCxZMdgtcJL
+					// Hack to hopefully stop the Microsoft ad from breaking everything
+					// Maybe this is breaking country tracking in Freestar, and maybe for direct ads too?
+					/*window.googletag = window.googletag || {};
+					window.googletag.cmd = window.googletag.cmd || [];
+					window.googletag.cmd.push(() => {
+						window.googletag.pubads().setForceSafeFrame(true);
+						window.googletag.pubads().setSafeFrameConfig({
+							allowOverlayExpansion: false,
+							allowPushExpansion: false,
+							sandbox: true,
+						});
+					});*/
+				}
+
 				if (VIDEO_ADS && !window.mobile) {
 					window.freestar.newStickyFooter("football-gm_adhesion");
 				}
@@ -147,32 +174,6 @@ class Ads {
 						placementName: id,
 						slotId: id,
 					});
-				}
-
-				if (divs.includes(AD_DIVS.mobile)) {
-					localActions.update({
-						stickyFooterAd: true,
-					});
-
-					// Add margin to footer - do this manually rather than using stickyFooterAd so <Footer> does not have to re-render
-					const footer = document.getElementById("main-footer");
-					if (footer) {
-						footer.style.paddingBottom = `${MOBILE_AD_BOTTOM_MARGIN}px`;
-					}
-
-					// Disabled due to https://mail.google.com/mail/u/0/#inbox/FMfcgzQZSZHnVhMpncBXqpCxZMdgtcJL
-					// Hack to hopefully stop the Microsoft ad from breaking everything
-					// Maybe this is breaking country tracking in Freestar, and maybe for direct ads too?
-					/*window.googletag = window.googletag || {};
-					window.googletag.cmd = window.googletag.cmd || [];
-					window.googletag.cmd.push(() => {
-						window.googletag.pubads().setForceSafeFrame(true);
-						window.googletag.pubads().setSafeFrameConfig({
-							allowOverlayExpansion: false,
-							allowPushExpansion: false,
-							sandbox: true,
-						});
-					});*/
 				}
 
 				if (!window.mobile && !VIDEO_ADS) {

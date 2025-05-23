@@ -3,7 +3,7 @@ import type {
 	GameAttributesLeague,
 	GetLeagueOptions,
 } from "../../../common/types.ts";
-import { FIRST_SEASON_WITH_ALEXNOOB_ROSTERS } from "./getLeague.ts";
+import { FIRST_SEASON_WITH_ALEXNOOB_ROSTERS } from "./seasons.ts";
 
 type MyGameAttributes = Partial<GameAttributesLeague> &
 	Pick<

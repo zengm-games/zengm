@@ -4,6 +4,7 @@ import { isSport } from "../../../common/index.ts";
 import getGameAttributes from "./getGameAttributes.ts";
 import type { GetLeagueOptions } from "../../../common/types.ts";
 import addSeasonInfoToTeams from "./addSeasonInfoToTeams.ts";
+import { LATEST_SEASON } from "./seasons.ts";
 
 export const legendsInfo = {
 	"1950s": {
@@ -34,9 +35,13 @@ export const legendsInfo = {
 		start: 2010,
 		end: 2019,
 	},
+	"2020s": {
+		start: 2020,
+		end: 2029,
+	},
 	all: {
 		start: -Infinity,
-		end: 2020,
+		end: LATEST_SEASON,
 	},
 };
 

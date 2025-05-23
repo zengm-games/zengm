@@ -2,7 +2,7 @@
 
 import { idb } from "../../db/index.ts";
 import { g, local } from "../../util/index.ts";
-import { LATEST_SEASON, MIN_SEASON } from "../realRosters/getLeague.ts";
+import { LATEST_SEASON, MIN_SEASON } from "../realRosters/seasons.ts";
 import type { SeasonLeaders } from "../../../common/types.ts";
 import { league, season } from "../index.ts";
 import { PHASE } from "../../../common/index.ts";

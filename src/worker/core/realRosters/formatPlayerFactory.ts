@@ -7,7 +7,7 @@ import type {
 	PlayerContract,
 	PlayerInjury,
 } from "../../../common/types.ts";
-import { LATEST_SEASON } from "./getLeague.ts";
+import { LATEST_SEASON } from "./seasons.ts";
 import getOnlyRatings from "./getOnlyRatings.ts";
 import type { Basketball, Ratings } from "./loadData.basketball.ts";
 import nerfDraftProspect from "./nerfDraftProspect.ts";

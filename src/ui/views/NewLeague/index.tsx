@@ -160,6 +160,10 @@ const legends = [
 		value: "All Time",
 	},
 	{
+		key: "2020s" as const,
+		value: "2020s",
+	},
+	{
 		key: "2010s" as const,
 		value: "2010s",
 	},

@@ -1,3 +1,4 @@
+import { LATEST_SEASON, MIN_SEASON } from "./seasons.ts";
 import loadDataBasketball, { type Basketball } from "./loadData.basketball.ts";
 import loadStatsBasketball from "./loadStats.basketball.ts";
 import formatScheduledEvents from "./formatScheduledEvents.ts";
@@ -33,9 +34,6 @@ import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatin
 import getInjury from "./getInjury.ts";
 import { averageSalary } from "./averageSalary.ts";
 
-export const MIN_SEASON = 1947;
-export const LATEST_SEASON = 2025;
-export const FIRST_SEASON_WITH_ALEXNOOB_ROSTERS = 2020;
 const FREE_AGENTS_SEASON = 2020;
 
 // Set true after the lottery happens, then false again after the playoffs end

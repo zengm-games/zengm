@@ -1904,6 +1904,7 @@ export type GetLeagueOptions =
 				| "1990s"
 				| "2000s"
 				| "2010s"
+				| "2020s"
 				| "all";
 	  };
 

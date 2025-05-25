@@ -407,24 +407,42 @@ const newPhasePreseason = async (
 		"tid",
 	);
 	for (const roster of Object.values(playersByTeam)) {
+		if (roster.length === 0) {
+			continue;
+		}
+		const retiredJerseyNumbers = new Set(
+			teams[roster[0].tid].retiredJerseyNumbers?.map((row) => row.number),
+		);
+
 		for (const p of roster) {
 			const jerseyNumber = p.jerseyNumber;
 			if (jerseyNumber === undefined) {
 				continue;
 			}
-			const conflicts = roster.filter((p2) => p2.jerseyNumber === jerseyNumber);
-			if (conflicts.length > 1) {
-				// Conflict! Who gets to keep the number? The one with the highest career peak ovr!
-				const playerWhoKeepsIt = maxBy(
-					conflicts,
-					(p) => maxBy(p.ratings, "ovr")!.ovr,
-				);
 
-				for (const p of conflicts) {
-					if (p !== playerWhoKeepsIt) {
-						player.setJerseyNumber(p, await player.genJerseyNumber(p), {
-							phase: PHASE.PRESEASON,
-						});
+			// Conflicts with retired numbers
+			if (retiredJerseyNumbers.has(jerseyNumber)) {
+				player.setJerseyNumber(p, await player.genJerseyNumber(p), {
+					phase: PHASE.PRESEASON,
+				});
+			} else {
+				// Conflicts with teammates
+				const conflicts = roster.filter(
+					(p2) => p2.jerseyNumber === jerseyNumber,
+				);
+				if (conflicts.length > 1) {
+					// Conflict! Who gets to keep the number? The one with the highest career peak ovr!
+					const playerWhoKeepsIt = maxBy(
+						conflicts,
+						(p) => maxBy(p.ratings, "ovr")!.ovr,
+					);
+
+					for (const p of conflicts) {
+						if (p !== playerWhoKeepsIt) {
+							player.setJerseyNumber(p, await player.genJerseyNumber(p), {
+								phase: PHASE.PRESEASON,
+							});
+						}
 					}
 				}
 			}

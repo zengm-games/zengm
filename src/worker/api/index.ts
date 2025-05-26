@@ -13,6 +13,7 @@ import {
 	DEFAULT_JERSEY,
 	POSITIONS,
 	GRACE_PERIOD,
+	LEAGUE_DATABASE_VERSION,
 } from "../../common/index.ts";
 import actions from "./actions.ts";
 import leagueFileUpload, {
@@ -117,7 +118,14 @@ import toolsMenu from "./toolsMenu.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import statsBaseball from "../core/team/stats.baseball.ts";
 import { extraRatings } from "../views/playerRatings.ts";
-import { groupByUnique, maxBy, omit, orderBy } from "../../common/utils.ts";
+import {
+	groupBy,
+	groupByUnique,
+	maxBy,
+	omit,
+	orderBy,
+	range,
+} from "../../common/utils.ts";
 import {
 	finalizePlayersRelativesList,
 	formatPlayerRelativesList,
@@ -141,6 +149,9 @@ import type { LookingForState } from "../../ui/views/TradingBlock/useLookingForS
 import { getPlayer } from "../views/player.ts";
 import type { NoteInfo } from "../../ui/views/Player/Note.tsx";
 import { beforeLeague, beforeNonLeague } from "../util/beforeView.ts";
+import loadData from "../core/realRosters/loadData.basketball.ts";
+import formatPlayerFactory from "../core/realRosters/formatPlayerFactory.ts";
+import { LATEST_SEASON } from "../core/realRosters/seasons.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -2523,6 +2534,59 @@ const importPlayers = async ({
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
+const importPlayersGetReal = async () => {
+	const basketball = await loadData();
+	const groupedRatings = Object.values(groupBy(basketball.ratings, "slug"));
+
+	const teams = await idb.cache.teams.getAll();
+
+	const formatPlayer = await formatPlayerFactory(
+		basketball,
+		{
+			type: "real",
+			season: LATEST_SEASON,
+			phase: g.get("phase"),
+			randomDebuts: false,
+			randomDebutsKeepCurrent: false,
+			realDraftRatings: g.get("realDraftRatings") ?? "rookie",
+			realStats: "none",
+			includePlayers: true,
+		},
+		LATEST_SEASON,
+		teams,
+		-1,
+	);
+
+	const contract = {
+		exp: g.get("season") + 2,
+		amount: helpers.roundContract(
+			Math.sqrt(g.get("minContract") * g.get("maxContract")),
+		),
+	};
+	const salaries = range(g.get("season"), contract.exp + 1).map((season) => {
+		return {
+			season,
+			amount: contract.amount,
+		};
+	});
+
+	const players = [];
+	for (const ratings of groupedRatings) {
+		const p = formatPlayer(ratings);
+		p.contract = { ...contract };
+		p.salaries = helpers.deepCopy(salaries);
+		const p2 = await player.augmentPartialPlayer(
+			p,
+			DEFAULT_LEVEL,
+			LEAGUE_DATABASE_VERSION,
+			true,
+		);
+		players.push(p2);
+	}
+
+	return players;
+};
+
 const incrementTradeProposalsSeed = async () => {
 	await league.setGameAttributes({
 		tradeProposalsSeed: g.get("tradeProposalsSeed") + 1,
@@ -4853,6 +4917,7 @@ export default {
 		handleUploadedDraftClass,
 		idbCacheFlush,
 		importPlayers,
+		importPlayersGetReal,
 		incrementTradeProposalsSeed,
 		init,
 		initGold,

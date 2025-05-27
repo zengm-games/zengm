@@ -1,8 +1,50 @@
 import { draft, player } from "../index.ts";
 import { PLAYER } from "../../../common/index.ts";
-import type { PlayerWithoutKey } from "../../../common/types.ts";
+import type {
+	PlayerWithoutKey,
+	RealPlayerPhotos,
+} from "../../../common/types.ts";
 import { g } from "../../util/index.ts";
 import type { PreProcessParams } from "./createStream.ts";
+
+export const applyRealPlayerPhotos = (
+	realPlayerPhotos: RealPlayerPhotos | undefined,
+	p: Pick<PlayerWithoutKey, "imgURL" | "srID"> & {
+		draft: {
+			year: number;
+		};
+	} & (
+			| {
+					name?: string;
+					firstName: string;
+					lastName: string;
+			  }
+			| {
+					name: string;
+					firstName?: string;
+					lastName?: string;
+			  }
+		),
+) => {
+	if (realPlayerPhotos) {
+		// Do this before augment so it doesn't need to create a face
+		if (p.srID) {
+			if (realPlayerPhotos[p.srID] !== undefined) {
+				p.imgURL = realPlayerPhotos[p.srID];
+			} else {
+				const name = p.name ?? `${p.firstName} ${p.lastName}`;
+
+				// Keep in sync with bbgm-rosters
+				const key = `dp_${p.draft.year}_${name
+					.replaceAll(" ", "_")
+					.toLowerCase()}`;
+				if (realPlayerPhotos[key] !== undefined) {
+					p.imgURL = realPlayerPhotos[key];
+				}
+			}
+		}
+	}
+};
 
 const processPlayerNewLeague = async ({
 	p,
@@ -23,24 +65,7 @@ const processPlayerNewLeague = async ({
 	| "scoutingLevel"
 	| "version"
 >) => {
-	if (realPlayerPhotos) {
-		// Do this before augment so it doesn't need to create a face
-		if (p.srID) {
-			if (realPlayerPhotos[p.srID] !== undefined) {
-				p.imgURL = realPlayerPhotos[p.srID];
-			} else {
-				const name = p.name ?? `${p.firstName} ${p.lastName}`;
-
-				// Keep in sync with bbgm-rosters
-				const key = `dp_${p.draft.year}_${name
-					.replaceAll(" ", "_")
-					.toLowerCase()}`;
-				if (realPlayerPhotos[key] !== undefined) {
-					p.imgURL = realPlayerPhotos[key];
-				}
-			}
-		}
-	}
+	applyRealPlayerPhotos(realPlayerPhotos, p);
 
 	const p2: PlayerWithoutKey = await player.augmentPartialPlayer(
 		{ ...p },

@@ -491,7 +491,8 @@ export const ImportPlayersInner = ({
 						size="lg"
 						variant="primary"
 					>
-						Import {selectedRows.map.size} players
+						Import {selectedRows.map.size}{" "}
+						{helpers.plural("player", selectedRows.map.size)}
 					</ActionButton>
 
 					{status === "success" ? (

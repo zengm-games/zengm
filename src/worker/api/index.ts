@@ -88,6 +88,7 @@ import type {
 	DunkAttempt,
 	AllStarPlayer,
 	League,
+	RealPlayerPhotos,
 } from "../../common/types.ts";
 import {
 	addSimpleAndTeamAwardsToAwardsByPlayer,
@@ -152,6 +153,7 @@ import { beforeLeague, beforeNonLeague } from "../util/beforeView.ts";
 import loadData from "../core/realRosters/loadData.basketball.ts";
 import formatPlayerFactory from "../core/realRosters/formatPlayerFactory.ts";
 import { LATEST_SEASON } from "../core/realRosters/seasons.ts";
+import { applyRealPlayerPhotos } from "../core/league/processPlayerNewLeague.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -2568,9 +2570,14 @@ const importPlayersGetReal = async () => {
 		};
 	});
 
+	const realPlayerPhotos = (await (
+		await idb.meta.transaction("attributes")
+	).store.get("realPlayerPhotos")) as RealPlayerPhotos | undefined;
+
 	const players = [];
 	for (const ratings of groupedRatings) {
 		const p = formatPlayer(ratings);
+		applyRealPlayerPhotos(realPlayerPhotos, p);
 		p.contract = { ...contract };
 		p.salaries = helpers.deepCopy(salaries);
 		const p2 = await player.augmentPartialPlayer(

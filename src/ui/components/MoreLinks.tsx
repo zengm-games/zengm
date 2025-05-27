@@ -3,6 +3,7 @@ import {
 	bySport,
 	isSport,
 	NO_LOTTERY_DRAFT_TYPES,
+	SPORT_HAS_REAL_PLAYERS,
 } from "../../common/index.ts";
 import type { DraftType, PlayerStatType } from "../../common/types.ts";
 import { helpers, useLocalPartial } from "../util/index.ts";
@@ -334,6 +335,9 @@ const MoreLinks = (
 		];
 	} else if (props.type === "importExport") {
 		links = [
+			...(SPORT_HAS_REAL_PLAYERS
+				? [{ url: ["import_players_real"], name: "Import Real Players" }]
+				: []),
 			{ url: ["import_players"], name: "Import Players" },
 			{ url: ["export_players"], name: "Export Players" },
 			{ url: ["export_league"], name: "Export League" },

@@ -53,6 +53,7 @@ import HeadToHeadAll from "./HeadToHeadAll.tsx";
 import History from "./History.tsx";
 import HistoryAll from "./HistoryAll.tsx";
 import ImportPlayers from "./ImportPlayers.tsx";
+import ImportPlayersReal from "./ImportPlayersReal.tsx";
 import Inbox from "./Inbox.tsx";
 import Injuries from "./Injuries.tsx";
 import Leaders from "./Leaders.tsx";
@@ -169,6 +170,7 @@ export default {
 	History,
 	HistoryAll,
 	ImportPlayers,
+	ImportPlayersReal,
 	Inbox,
 	Injuries,
 	Leaders,

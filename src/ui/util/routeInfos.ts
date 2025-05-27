@@ -186,6 +186,7 @@ const routeInfos = {
 	"/l/:lid/export_players": "exportPlayers",
 	"/l/:lid/export_players/:season": "exportPlayers",
 	"/l/:lid/import_players": "importPlayers",
+	"/l/:lid/import_players_real": "importPlayersReal",
 	"/l/:lid/gm_history": "gmHistory",
 	"/l/:lid/settings": "settings",
 	"/l/:lid/trade_summary/:eid": "tradeSummary",

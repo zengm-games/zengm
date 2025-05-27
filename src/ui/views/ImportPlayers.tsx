@@ -14,12 +14,15 @@ import { orderBy } from "../../common/utils.ts";
 import { useSelectedRows } from "../components/DataTable/useBulkSelectRows.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 
-const ImportPlayers = ({
+export const ImportPlayersInner = ({
 	challengeNoRatings,
 	currentSeason,
 	godMode,
 	phase,
-}: View<"importPlayers">) => {
+	real,
+}: View<"importPlayers"> & {
+	real: boolean;
+}) => {
 	const [status, setStatus] = useState<
 		undefined | "loading" | "loadingReal" | "importing" | "success"
 	>();
@@ -62,14 +65,14 @@ const ImportPlayers = ({
 		),
 	];
 
-	useTitleBar({
-		title: "Import Players",
-		dropdownView: "import_players",
-	});
-
 	const selectedRows = useSelectedRows();
 
-	const links = <MoreLinks type="importExport" page="import_players" />;
+	const links = (
+		<MoreLinks
+			type="importExport"
+			page={real ? "import_players_real" : "import_players"}
+		/>
+	);
 
 	if (!godMode) {
 		return (
@@ -300,148 +303,156 @@ const ImportPlayers = ({
 		<>
 			{links}
 
-			<p>
-				Upload an exported players file or a league file below. You will be able
-				to select the specific players you want from that file before actually
-				importing them.
-			</p>
+			{!real ? (
+				<>
+					<p>
+						Upload an exported players file or a league file below. You will be
+						able to select the specific players you want from that file before
+						actually importing them.
+					</p>
 
-			<LeagueFileUpload
-				disabled={disableButtons}
-				includePlayersInBasicInfo
-				onLoading={() => {
-					setStatus("loading");
-				}}
-				onDone={async (error, output) => {
-					setStatus(undefined);
+					<LeagueFileUpload
+						disabled={disableButtons}
+						includePlayersInBasicInfo
+						onLoading={() => {
+							setStatus("loading");
+						}}
+						onDone={async (error, output) => {
+							setStatus(undefined);
 
-					if (error || !output) {
-						return;
-					}
+							if (error || !output) {
+								return;
+							}
 
-					const leagueFile = output.basicInfo;
-					setLeagueFileVersion(leagueFile.version);
+							const leagueFile = output.basicInfo;
+							setLeagueFileVersion(leagueFile.version);
 
-					const rawPlayers: any[] = leagueFile.players ?? [];
+							const rawPlayers: any[] = leagueFile.players ?? [];
 
-					const players = rawPlayers.map((p) => {
-						const exportedSeason: number | undefined =
-							typeof p.exportedSeason === "number"
-								? p.exportedSeason
-								: undefined;
+							const players = rawPlayers.map((p) => {
+								const exportedSeason: number | undefined =
+									typeof p.exportedSeason === "number"
+										? p.exportedSeason
+										: undefined;
 
-						const season =
-							exportedSeason !== undefined
-								? p.exportedSeason
-								: p.ratings.at(-1).season;
+								const season =
+									exportedSeason !== undefined
+										? p.exportedSeason
+										: p.ratings.at(-1).season;
 
-						let tid;
-						if (
-							Array.isArray(p.stats) &&
-							p.stats.length > 0 &&
-							exportedSeason !== undefined
-						) {
-							for (let i = p.stats.length - 1; i >= 0; i--) {
-								const ps = p.stats[i];
-								if (ps.season === p.exportedSeason) {
-									if (
-										ps.tid < teamInfoCache.length &&
-										!teamInfoCache[ps.tid].disabled
-									) {
-										tid = ps.tid;
+								let tid;
+								if (
+									Array.isArray(p.stats) &&
+									p.stats.length > 0 &&
+									exportedSeason !== undefined
+								) {
+									for (let i = p.stats.length - 1; i >= 0; i--) {
+										const ps = p.stats[i];
+										if (ps.season === p.exportedSeason) {
+											if (
+												ps.tid < teamInfoCache.length &&
+												!teamInfoCache[ps.tid].disabled
+											) {
+												tid = ps.tid;
+											}
+											break;
+										}
 									}
-									break;
 								}
-							}
-						}
-						if (typeof tid !== "number") {
-							tid = p.tid;
-						}
+								if (typeof tid !== "number") {
+									tid = p.tid;
+								}
 
-						if (
-							tid < PLAYER.UNDRAFTED ||
-							tid >= teamInfoCache.length ||
-							(tid >= 0 && teamInfoCache[tid].disabled)
-						) {
-							tid = PLAYER.FREE_AGENT;
-						}
+								if (
+									tid < PLAYER.UNDRAFTED ||
+									tid >= teamInfoCache.length ||
+									(tid >= 0 && teamInfoCache[tid].disabled)
+								) {
+									tid = PLAYER.FREE_AGENT;
+								}
 
-						let contractAmount = 1;
-						let contractExp = season + 1;
-						if (p.contract && season === p.ratings.at(-1).season) {
-							// Exported the latest season for this player
-							contractAmount = p.contract.amount / 1000;
-							contractExp = p.contract.exp;
-						} else {
-							// Exported some historical season, try to figure out contract
-							const salaryRow = Array.isArray(p.salaries)
-								? p.salaries.find((row: any) => row.season === season)
-								: undefined;
-							if (salaryRow) {
-								contractAmount = salaryRow.amount / 1000;
-							}
-						}
+								let contractAmount = 1;
+								let contractExp = season + 1;
+								if (p.contract && season === p.ratings.at(-1).season) {
+									// Exported the latest season for this player
+									contractAmount = p.contract.amount / 1000;
+									contractExp = p.contract.exp;
+								} else {
+									// Exported some historical season, try to figure out contract
+									const salaryRow = Array.isArray(p.salaries)
+										? p.salaries.find((row: any) => row.season === season)
+										: undefined;
+									if (salaryRow) {
+										contractAmount = salaryRow.amount / 1000;
+									}
+								}
 
-						const seasonOffset = currentSeason - season;
+								const seasonOffset = currentSeason - season;
 
-						return {
-							p,
-							checked: false,
-							contractAmount: String(contractAmount),
-							contractExp: String(contractExp + seasonOffset),
-							draftYear: String(currentSeason + (phase >= PHASE.DRAFT ? 1 : 0)),
-							season: season + seasonOffset,
-							seasonOffset,
-							tid,
-						};
-					});
+								return {
+									p,
+									checked: false,
+									contractAmount: String(contractAmount),
+									contractExp: String(contractExp + seasonOffset),
+									draftYear: String(
+										currentSeason + (phase >= PHASE.DRAFT ? 1 : 0),
+									),
+									season: season + seasonOffset,
+									seasonOffset,
+									tid,
+								};
+							});
 
-					selectedRows.clear();
-					setPlayers(players);
-				}}
-			/>
+							selectedRows.clear();
+							setPlayers(players);
+						}}
+					/>
+				</>
+			) : players.length === 0 ? (
+				<ActionButton
+					className="mb-3"
+					disabled={disableButtons}
+					onClick={async () => {
+						setStatus("loadingReal");
 
-			<ActionButton
-				className="mt-3"
-				disabled={disableButtons}
-				onClick={async () => {
-					setStatus("loadingReal");
+						const players2 = await toWorker(
+							"main",
+							"importPlayersGetReal",
+							undefined,
+						);
 
-					const players2 = await toWorker(
-						"main",
-						"importPlayersGetReal",
-						undefined,
-					);
+						const players = players2.map((p) => {
+							// Rookie season, not draft prospect season, when possible
+							const season = (p.ratings[1] ?? p.ratings[0]).season;
 
-					const players = players2.map((p) => {
-						// Rookie season, not draft prospect season, when possible
-						const season = (p.ratings[1] ?? p.ratings[0]).season;
+							const seasonOffset = currentSeason - season;
 
-						const seasonOffset = currentSeason - season;
+							return {
+								p,
+								checked: false,
+								contractAmount: String(p.contract.amount / 1000),
+								contractExp: String(p.contract.exp),
+								draftYear: String(
+									currentSeason + (phase >= PHASE.DRAFT ? 1 : 0),
+								),
+								season: season + seasonOffset,
+								seasonOffset,
+								tid: PLAYER.FREE_AGENT,
+							};
+						});
 
-						return {
-							p,
-							checked: false,
-							contractAmount: String(p.contract.amount / 1000),
-							contractExp: String(p.contract.exp),
-							draftYear: String(currentSeason + (phase >= PHASE.DRAFT ? 1 : 0)),
-							season: season + seasonOffset,
-							seasonOffset,
-							tid: PLAYER.FREE_AGENT,
-						};
-					});
-
-					selectedRows.clear();
-					setPlayers(players);
-					setStatus(undefined);
-				}}
-				processing={status === "loadingReal"}
-				processingText="Loading..."
-				size="lg"
-				variant="primary"
-			>
-				Import real players
-			</ActionButton>
+						selectedRows.clear();
+						setPlayers(players);
+						setStatus(undefined);
+					}}
+					processing={status === "loadingReal"}
+					processingText="Loading..."
+					size="lg"
+					variant="primary"
+				>
+					Load real players
+				</ActionButton>
+			) : null}
 
 			{rows.length > 0 ? (
 				<>
@@ -502,6 +513,15 @@ const ImportPlayers = ({
 			) : null}
 		</>
 	);
+};
+
+const ImportPlayers = (props: View<"importPlayers">) => {
+	useTitleBar({
+		title: "Import Players",
+		dropdownView: "import_players",
+	});
+
+	return <ImportPlayersInner {...props} real={false} />;
 };
 
 export default ImportPlayers;

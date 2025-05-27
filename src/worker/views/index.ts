@@ -50,6 +50,7 @@ import headToHeadAll from "./headToHeadAll.ts";
 import history from "./history.ts";
 import historyAll from "./historyAll.ts";
 import importPlayers from "./importPlayers.ts";
+import importPlayersReal from "./importPlayersReal.ts";
 import inbox from "./inbox.ts";
 import injuries from "./injuries.ts";
 import leaders from "./leaders.ts";
@@ -160,6 +161,7 @@ export default {
 	history,
 	historyAll,
 	importPlayers,
+	importPlayersReal,
 	injuries,
 	inbox,
 	leaders,

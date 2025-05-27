@@ -2538,8 +2538,6 @@ const importPlayersGetReal = async () => {
 	const basketball = await loadData();
 	const groupedRatings = Object.values(groupBy(basketball.ratings, "slug"));
 
-	const teams = await idb.cache.teams.getAll();
-
 	const formatPlayer = await formatPlayerFactory(
 		basketball,
 		{
@@ -2553,7 +2551,7 @@ const importPlayersGetReal = async () => {
 			includePlayers: true,
 		},
 		LATEST_SEASON,
-		teams,
+		[],
 		-1,
 	);
 

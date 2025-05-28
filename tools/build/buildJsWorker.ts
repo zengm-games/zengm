@@ -17,14 +17,10 @@ const BLACKLIST = {
 
 const buildFile = async (name: "ui" | "worker", versionNumber: string) => {
 	const bundle = await rollup({
-		...rollupConfig("production", {
+		...rollupConfig(name, {
+			nodeEnv: "production",
 			blacklistOptions: BLACKLIST[name],
-			statsFilename: `stats-${name}.html`,
 		}),
-		input: {
-			[name]: `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`,
-		},
-		preserveEntrySignatures: false,
 	});
 
 	// ES modules don't work in workers in all the browsers currently supported, otherwise could use "es" everywhere. Also at that point could evaluate things like code splitting in the worker, or code splitting between ui/worker bundles (building them together)

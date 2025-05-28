@@ -9,31 +9,35 @@ import terser from "@rollup/plugin-terser";
 import { visualizer } from "rollup-plugin-visualizer";
 import { getSport } from "./getSport.ts";
 import { babelPluginSportFunctions } from "../babel-plugin-sport-functions/index.ts";
+import type { RollupOptions } from "rollup";
 
 const extensions = [".mjs", ".js", ".json", ".node", ".ts", ".tsx"];
 
-type NodeEnv = "development" | "production" | "test";
-
 export default (
-	nodeEnv: NodeEnv,
-	{
-		blacklistOptions,
-		statsFilename,
-	}: {
-		blacklistOptions?: RegExp[];
-		statsFilename?: string;
-	} = {},
-) => {
+	name: "ui" | "worker",
+	envOptions:
+		| {
+				nodeEnv: "development";
+				postMessage: (message: any) => void;
+		  }
+		| {
+				nodeEnv: "production";
+				blacklistOptions: RegExp[];
+		  }
+		| {
+				nodeEnv: "test";
+		  },
+): RollupOptions => {
 	const sport = getSport();
 
 	// Not sure if this does anything
-	process.env.NODE_ENV = nodeEnv;
+	process.env.NODE_ENV = envOptions.nodeEnv;
 
 	const plugins = [
 		replace({
 			preventAssignment: true,
 			values: {
-				"process.env.NODE_ENV": JSON.stringify(nodeEnv),
+				"process.env.NODE_ENV": JSON.stringify(envOptions.nodeEnv),
 				"process.env.SPORT": JSON.stringify(sport),
 			},
 		}),
@@ -69,24 +73,16 @@ export default (
 		}),
 	];
 
-	if (nodeEnv === "production") {
+	if (envOptions.nodeEnv === "production") {
+		plugins.splice(1, 0, blacklist(envOptions.blacklistOptions));
 		plugins.push(
 			terser({
 				format: {
 					comments: false,
 				},
 			}),
-		);
-	}
-
-	if (blacklistOptions) {
-		plugins.splice(1, 0, blacklist(blacklistOptions));
-	}
-
-	if (statsFilename) {
-		plugins.push(
 			visualizer({
-				filename: statsFilename,
+				filename: `stats-${name}.html`,
 				gzipSize: true,
 				sourcemap: true,
 				template: "sunburst",
@@ -95,6 +91,9 @@ export default (
 	}
 
 	return {
+		input: {
+			[name]: `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`,
+		},
 		plugins,
 		onwarn(warning: any, rollupWarn: any) {
 			// I don't like this, but there's too much damn baggage
@@ -119,5 +118,6 @@ export default (
 				usePolling: true,
 			},
 		},
+		preserveEntrySignatures: false,
 	};
 };

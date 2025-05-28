@@ -148,6 +148,7 @@ export const rolldownConfig = (
 			file: outfile,
 			inlineDynamicImports: true,
 			sourcemap: true,
+			externalLiveBindings: false,
 
 			// ES modules don't work in workers in all the browsers currently supported, otherwise could use "es" everywhere. Also at that point could evaluate things like code splitting in the worker, or code splitting between ui/worker bundles (building them together)
 			// Safari 15

@@ -37,7 +37,7 @@ export default {
 	singleRun: true,
 
 	rollupPreprocessor: {
-		...rollupConfig("test"),
+		...rollupConfig("ui", { nodeEnv: "test" }),
 		output: {
 			format: "iife",
 			indent: false,

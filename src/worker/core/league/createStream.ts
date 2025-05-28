@@ -1353,6 +1353,10 @@ const afterDBStream = async ({
 				delete p.contract;
 				delete p.salaries;
 				delete p.awards;
+				delete p.hof;
+				delete p.diedYear;
+				p.gamesUntilTradable = 0;
+				p.ptModifier = 1;
 				p.stats = [];
 				p.tid = t.tid;
 				adjustSeasonPlayer(p);

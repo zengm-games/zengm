@@ -241,7 +241,6 @@ const playMenu = {
 		await runDraft({ type: "untilEnd" }, conditions);
 	},
 	untilResignPlayers: async (param: unknown, conditions: Conditions) => {
-		console.log("untilResignPlayers");
 		if (
 			g.get("draftType") === "freeAgents" &&
 			g.get("phase") === PHASE.DRAFT_LOTTERY

@@ -9,6 +9,7 @@ import {
 	team,
 	player,
 	finances,
+	freeAgents,
 } from "../core/index.ts";
 import type {
 	ScheduledEvent,
@@ -498,6 +499,8 @@ const processScheduledEvents = async (
 		| RealTeamInfo
 		| undefined;
 
+	const unretiredPids = [];
+
 	for (const scheduledEvent of scheduledEvents) {
 		if (scheduledEvent.season !== season || scheduledEvent.phase !== phase) {
 			if (
@@ -527,6 +530,7 @@ const processScheduledEvents = async (
 		} else if (scheduledEvent.type === "contraction") {
 			eventLogTexts.push(...(await processContraction(scheduledEvent.info)));
 		} else if (scheduledEvent.type === "unretirePlayer") {
+			unretiredPids.push(scheduledEvent.info.pid);
 			eventLogTexts.push(
 				...(await processUnretirePlayer(scheduledEvent.info.pid)),
 			);
@@ -542,6 +546,13 @@ const processScheduledEvents = async (
 	if (scheduledEvents.length > 0) {
 		// Non-default scheduled events (or default plus bulk delete) could leave a team orphanied in a division or conference that no longer exists
 		await team.ensureValidDivsConfs();
+	}
+
+	if (unretiredPids.length > 0) {
+		await freeAgents.normalizeContractDemands({
+			type: "freeAgentsOnly",
+			pids: unretiredPids,
+		});
 	}
 
 	if (eventLogTexts.length > 0) {

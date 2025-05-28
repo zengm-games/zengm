@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import { stripVTControlCharacters } from "node:util";
 import babel from "@babel/core";
-import type { RolldownPlugin, TransformResult, WatchOptions } from "rolldown";
+import type { BuildOptions, RolldownPlugin, TransformResult } from "rolldown";
 // @ts-expect-error
 import babelPluginSyntaxTypescript from "@babel/plugin-syntax-typescript";
 import { babelPluginSportFunctions } from "../babel-plugin-sport-functions/index.ts";
@@ -87,10 +87,12 @@ export const rolldownConfig = (
 		| {
 				nodeEnv: "production";
 				blacklistOptions: RegExp[];
+				versionNumber: string;
 		  },
-): WatchOptions => {
+): BuildOptions => {
 	const infile = `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`;
-	const outfile = `build/gen/${name}.js`;
+	const watchOutfile = `build/gen/${name}.js`;
+
 	const sport = getSport();
 
 	const plugins: (Plugin | RolldownPlugin)[] = [
@@ -115,7 +117,7 @@ export const rolldownConfig = (
 					});
 
 					const js = `throw new Error(${JSON.stringify(stripVTControlCharacters(error.message))})`;
-					await fs.writeFile(outfile, js);
+					await fs.writeFile(watchOutfile, js);
 				}
 			},
 
@@ -145,8 +147,16 @@ export const rolldownConfig = (
 	return {
 		input: infile,
 		output: {
-			file: outfile,
-			inlineDynamicImports: true,
+			...(envOptions.nodeEnv === "production"
+				? {
+						entryFileNames: `${name}-${envOptions.versionNumber}.js`,
+						chunkFileNames: `chunk-[hash].js`,
+						dir: "build/gen",
+					}
+				: {
+						file: watchOutfile,
+						inlineDynamicImports: true,
+					}),
 			sourcemap: true,
 			externalLiveBindings: false,
 

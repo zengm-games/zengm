@@ -41,6 +41,7 @@ const buildFile = async (name: "ui" | "worker", versionNumber: string) => {
 			format,
 			indent: false,
 			sourcemap: true,
+			externalLiveBindings: false,
 			entryFileNames: `[name]-${versionNumber}.js`,
 			chunkFileNames: `chunk-[hash].js`,
 			dir: "build/gen",

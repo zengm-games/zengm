@@ -40,6 +40,10 @@ export default tseslint.config(
 			"no-empty": "off",
 			"no-extra-parens": "off",
 			"no-self-compare": "error",
+			"perfectionist/sort-interfaces": "off",
+			"perfectionist/sort-jsx-props": "off",
+			"perfectionist/sort-objects": "off",
+			"perfectionist/sort-object-types": "off",
 			"prefer-const": [
 				"error",
 				{

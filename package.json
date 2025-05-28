@@ -147,7 +147,7 @@
 		"mocha": "^11.5.0",
 		"prettier": "^3.5.3",
 		"purgecss": "^7.0.2",
-		"rolldown": "1.0.0-beta.10",
+		"rolldown": "1.0.0-beta.9",
 		"rollup": "^4.41.1",
 		"rollup-plugin-blacklist": "^1.0.1",
 		"rollup-plugin-visualizer": "^6.0.1",

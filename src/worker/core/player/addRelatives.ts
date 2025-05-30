@@ -2,8 +2,12 @@ import romanNumerals from "roman-numerals";
 import { idb } from "../../db/index.ts";
 import { face, g, helpers, random } from "../../util/index.ts";
 import type { Player, Relative, RelativeType } from "../../../common/types.ts";
-import { isSport } from "../../../common/index.ts";
 import player from "./index.ts";
+import setJerseyNumber from "./setJerseyNumber.ts";
+import {
+	getTeammateJerseyNumbers,
+	JERSEY_NUMBERS_BY_POSITION,
+} from "./genJerseyNumber.ts";
 
 const parseLastName = (lastName: string): [string, number | undefined] => {
 	const parts = lastName.split(" ");
@@ -81,18 +85,59 @@ const addRelative = (p: Player, relative: Relative) => {
 	}
 };
 
+// Normally this code runs for a draft prospect, but in a new league it runs for random players already on teams! Great!
+// This does not check if existingRelative.jerseyNumber is currently a valid number. If it's invalid, probably it was manually edited, so might as well keep it for fun
+const makeSimilarJerseyNumber = async (
+	existingRelative: Player,
+	newRelative: Player,
+) => {
+	if (!existingRelative.jerseyNumber) {
+		return;
+	}
+
+	if (JERSEY_NUMBERS_BY_POSITION) {
+		if (
+			existingRelative.ratings.at(-1).pos !== newRelative.ratings.at(-1).pos
+		) {
+			return;
+		}
+	}
+
+	// Team conflict checks
+	if (newRelative.tid >= 0) {
+		const teammateJerseyNumbers = await getTeammateJerseyNumbers(
+			newRelative.tid,
+			newRelative.pid,
+		);
+		if (teammateJerseyNumbers.includes(existingRelative.jerseyNumber)) {
+			return;
+		}
+
+		const t = await idb.cache.teams.get(newRelative.tid);
+		if (t?.retiredJerseyNumbers) {
+			for (const info of t.retiredJerseyNumbers) {
+				// For retired jersey number, allow it if somehow the retired number belongs to the relative, just for fun
+				if (
+					info.number === existingRelative.jerseyNumber &&
+					info.pid !== existingRelative.pid
+				) {
+					return;
+				}
+			}
+		}
+	}
+
+	setJerseyNumber(newRelative, existingRelative.jerseyNumber);
+};
+
 // 50% chance of going to the same college and having the samer jersey number
-const makeSimilar = (existingRelative: Player, newRelative: Player) => {
+const makeSimilar = async (existingRelative: Player, newRelative: Player) => {
 	if (existingRelative.college !== "" && Math.random() < 0.5) {
 		newRelative.college = existingRelative.college;
 	}
 
-	if (
-		!isSport("football") &&
-		existingRelative.stats.length > 0 &&
-		Math.random() < 0.5
-	) {
-		newRelative.jerseyNumber = existingRelative.jerseyNumber;
+	if (existingRelative.jerseyNumber && Math.random() < 0.5) {
+		await makeSimilarJerseyNumber(existingRelative, newRelative);
 	}
 
 	if (!existingRelative.imgURL) {
@@ -238,7 +283,7 @@ export const makeSon = async (p: Player) => {
 		pid: p.pid,
 		name: `${p.firstName} ${p.lastName}`,
 	});
-	makeSimilar(father, p);
+	await makeSimilar(father, p);
 	await idb.cache.players.put(p);
 	await idb.cache.players.put(father);
 };
@@ -349,7 +394,7 @@ export const makeBrother = async (p: Player) => {
 		pid: p.pid,
 		name: `${p.firstName} ${p.lastName}`,
 	});
-	makeSimilar(brother, p);
+	await makeSimilar(brother, p);
 	await idb.cache.players.put(p);
 	await idb.cache.players.put(brother);
 };

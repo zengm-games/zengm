@@ -1,3 +1,8 @@
+jersey number bugs
+- in new league, conflict seems to be resolved by updating value in stats, but not at root http://localhost/l/78/customize_player/156
+
+advanced player search should use ageAtDeath https://discord.com/channels/290013534023057409/1377966148238446643/1377966148238446643
+
 Option to resim a exhibition game between the same 2 teams rather than going back into the menu https://discord.com/channels/290013534023057409/331882115119448065/1377067383004594287
 
 ios app store with pwabuilder?

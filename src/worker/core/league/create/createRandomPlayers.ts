@@ -1,6 +1,6 @@
 import { draft, player, freeAgents } from "../../index.ts";
 import { PHASE, POSITION_COUNTS } from "../../../../common/index.ts";
-import { groupBy, orderBy } from "../../../../common/utils.ts";
+import { groupBy, groupByUnique, orderBy } from "../../../../common/utils.ts";
 import type {
 	PlayerWithoutKey,
 	MinimalPlayerRatings,
@@ -167,16 +167,16 @@ const createRandomPlayers = async ({
 
 	const teamJerseyNumbers: Record<number, string[]> = {};
 
+	const teamsByTid = groupByUnique(teams, "tid");
+
 	const addPlayerToTeam = async (p: PlayerWithoutKey, tid2: number) => {
 		if (!teamJerseyNumbers[tid2]) {
 			teamJerseyNumbers[tid2] = [];
 		}
 
-		const t = teams.find((t) => t.tid === tid2);
+		const t = teamsByTid[tid2];
 		const retiredJerseyNumbers =
-			t && t.retiredJerseyNumbers
-				? t.retiredJerseyNumbers.map((row) => row.number)
-				: [];
+			t?.retiredJerseyNumbers?.map((row) => row.number) ?? [];
 
 		numPlayersByTid[tid2] += 1;
 		p.tid = tid2;
@@ -185,9 +185,8 @@ const createRandomPlayers = async ({
 			team: teamJerseyNumbers[tid2],
 		});
 
-		const jerseyNumber = p.stats.at(-1).jerseyNumber;
-		if (jerseyNumber !== undefined) {
-			teamJerseyNumbers[tid2].push(jerseyNumber);
+		if (p.jerseyNumber !== undefined) {
+			teamJerseyNumbers[tid2].push(p.jerseyNumber);
 		}
 
 		// Keep rookie contract, or no?

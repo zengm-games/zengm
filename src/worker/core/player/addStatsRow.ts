@@ -79,7 +79,7 @@ const addStatsRow = async (
 	}
 
 	if (jerseyNumbers.ignoreJerseyNumberConflicts) {
-		// Just carry over the previous jersey number. There is another pass of genJerseyNumber in league/create.ts that will clean up any conflicts. Don't want to call genJerseyNumber here because it'll generate random numbers for players with no jersey number, which could conflict with manually specified jersey numbers for other players, and the wrong one could be keypt in league/create.ts.
+		// Just carry over the previous jersey number. This is intended for situations where we'll check for conflicts later, like augmentPartialPlayer in a new league from a file. There is another pass of genJerseyNumber in league/createStream.ts that will clean up any conflicts. Don't want to call genJerseyNumber here because it'll generate random numbers for players with no jersey number, which could conflict with manually specified jersey numbers for other players, and the wrong one could be keypt in league/createStream.ts.
 		p.jerseyNumber = helpers.getJerseyNumber(p); // Undefined for rookies just drafted!
 	} else {
 		p.jerseyNumber = await genJerseyNumber(

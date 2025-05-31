@@ -47,10 +47,7 @@ const updateAllStarDunk = async (
 		const allStars = await allStar.getOrCreate(season);
 		const dunk = allStars?.dunk;
 		if (dunk === undefined) {
-			if (
-				season === g.get("season") &&
-				g.get("phase") <= PHASE.REGULAR_SEASON
-			) {
+			if (season === g.get("season") && g.get("phase") < PHASE.PLAYOFFS) {
 				return {
 					redirectUrl: helpers.leagueUrl(["all_star", "dunk", season - 1]),
 				};

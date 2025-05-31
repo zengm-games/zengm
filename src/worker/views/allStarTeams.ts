@@ -90,10 +90,7 @@ const updateAllStarTeams = async (
 	) {
 		const allStars = await allStar.getOrCreate(season);
 		if (allStars === undefined) {
-			if (
-				season === g.get("season") &&
-				g.get("phase") <= PHASE.REGULAR_SEASON
-			) {
+			if (season === g.get("season") && g.get("phase") < PHASE.PLAYOFFS) {
 				return {
 					redirectUrl: helpers.leagueUrl(["all_star", "teams", season - 1]),
 				};

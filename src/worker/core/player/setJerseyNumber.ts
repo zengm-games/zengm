@@ -21,7 +21,7 @@ const setJerseyNumber = (
 			stats &&
 			stats.tid === p.tid &&
 			stats.season === season &&
-			((phase <= PHASE.REGULAR_SEASON && !stats.playoffs) ||
+			((phase < PHASE.PLAYOFFS && !stats.playoffs) ||
 				(phase === PHASE.PLAYOFFS && stats.playoffs))
 		) {
 			stats.jerseyNumber = jerseyNumber;

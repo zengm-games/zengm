@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent } from "react";
-import { PLAYER, PHASE } from "../../common/index.ts";
+import { PLAYER, PHASE, LEAGUE_DATABASE_VERSION } from "../../common/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, toWorker, useLocal } from "../util/index.ts";
 import {
@@ -443,6 +443,7 @@ export const ImportPlayersInner = ({
 
 						selectedRows.clear();
 						setPlayers(players);
+						setLeagueFileVersion(LEAGUE_DATABASE_VERSION);
 						setStatus(undefined);
 					}}
 					processing={status === "loadingReal"}

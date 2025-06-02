@@ -1,3 +1,12 @@
+perf issues in large league with 8500 seasons
+- filling cache (such as in preseason) is slow
+  - https://issues.chromium.org/issues/370917918#comment9
+  - using readwrite transaction maybe fixes it? should i do that everywhere?
+- loading some pages is slow https://discord.com/channels/290013534023057409/1378128106585460856/1378773261936103546
+  - HoF
+  - player profile pages
+  - probably also are index issues
+
 advanced player search should use ageAtDeath https://discord.com/channels/290013534023057409/1377966148238446643/1377966148238446643
 
 Option to resim a exhibition game between the same 2 teams rather than going back into the menu https://discord.com/channels/290013534023057409/331882115119448065/1377067383004594287

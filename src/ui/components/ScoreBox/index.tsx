@@ -342,7 +342,7 @@ const ScoreBox = memo(
 												1,
 											)} / ${p.stats.ast.toFixed(1)}`,
 											football: null,
-											hockey: `${!challengeNoRatings && p.stats.keyStatsShort ? ", " : ""}${
+											hockey: `${!challengeNoRatings && p.stats.keyStats ? ", " : ""}${
 												p.stats.keyStats
 											}`,
 										})}

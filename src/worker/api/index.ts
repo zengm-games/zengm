@@ -4306,7 +4306,8 @@ const updateTeamInfo = async (
 		}
 
 		// Also apply team info changes to this season
-		if (g.get("phase") < PHASE.PLAYOFFS) {
+		const actualPhase = g.get("nextPhase") ?? g.get("phase");
+		if (actualPhase < PHASE.PLAYOFFS) {
 			let teamSeason: TeamSeason | TeamSeasonWithoutKey | undefined =
 				await idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
 					t.tid,
@@ -4472,7 +4473,8 @@ const upsertCustomizedPlayer = async (
 		}
 
 		// Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
-		if (p.draft.year === season && g.get("phase") >= PHASE.RESIGN_PLAYERS) {
+		const actualPhase = g.get("nextPhase") ?? g.get("phase");
+		if (p.draft.year === season && actualPhase >= PHASE.RESIGN_PLAYERS) {
 			p.draft.year += 1;
 		}
 

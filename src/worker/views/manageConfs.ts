@@ -5,10 +5,10 @@ const updateConfs = async () => {
 	const divs = g.get("divs");
 
 	return {
+		actualPhase: g.get("nextPhase") ?? g.get("phase"),
 		autoRelocate: !!g.get("autoRelocate"),
 		confs,
 		divs,
-		phase: g.get("phase"),
 	};
 };
 

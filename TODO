@@ -1,3 +1,10 @@
+use actualPhase in more places rather than just phase
+
+perfect game means there need to be no errors too https://old.reddit.com/r/ZenGMBaseball/comments/1l2rxp6/the_perfect_game_that_wasnt/
+
+option to show contracts as percentage of salary cap
+- need to know past salary caps for past seasons
+
 perf issues in large league with 8500 seasons
 - filling cache (such as in preseason) is slow
   - https://issues.chromium.org/issues/370917918#comment9
@@ -51,8 +58,6 @@ keep players on their real historical teams https://old.reddit.com/r/BasketballG
 - does it make sense without spectator mode?
   - a lesser option would be to make players retire when they do IRL
 - OOTP calls it "use historical transactions" https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/ldoidno/?context=3 
-
-use actualPhase in more places rather than just phase
 
 option to disable notification popups https://old.reddit.com/r/BasketballGM/comments/1h3racg/monthly_suggestions_thread/m0duybm/
 - red ones still go through

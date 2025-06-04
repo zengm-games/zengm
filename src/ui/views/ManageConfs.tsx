@@ -13,10 +13,10 @@ const nextSeasonWarning =
 	"Because the regular season is already over, changes will not be fully applied until next season.";
 
 const ManageTeams = ({
+	actualPhase,
 	autoRelocate,
 	confs,
 	divs,
-	phase,
 }: View<"manageConfs">) => {
 	const [liveConfs, setLiveConfs] = useState(confs);
 	const [liveDivs, setLiveDivs] = useState(divs);
@@ -103,7 +103,7 @@ const ManageTeams = ({
 
 		let text = "Saved conferences and divisions.";
 
-		if (phase >= PHASE.PLAYOFFS) {
+		if (actualPhase >= PHASE.PLAYOFFS) {
 			text += `<br /><br />${nextSeasonWarning}`;
 		}
 
@@ -115,15 +115,6 @@ const ManageTeams = ({
 
 		setSaving(false);
 	};
-
-	if (phase < 0) {
-		return (
-			<p>
-				Wait until after your fantasy or expansion draft to edit conferences and
-				divisions.
-			</p>
-		);
-	}
 
 	if (autoRelocate) {
 		return (
@@ -147,7 +138,7 @@ const ManageTeams = ({
 				<a href={helpers.leagueUrl(["manage_teams"])}>manage teams page</a>.
 			</p>
 
-			{phase >= PHASE.PLAYOFFS ? (
+			{actualPhase >= PHASE.PLAYOFFS ? (
 				<p className="alert alert-warning d-inline-block">
 					{nextSeasonWarning}
 				</p>

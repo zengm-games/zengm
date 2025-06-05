@@ -16,6 +16,7 @@ import { wrap } from "../../util/g.ts";
 import getInitialNumGamesConfDivSettings from "../season/getInitialNumGamesConfDivSettings.ts";
 import type { TeamInfo } from "./createStream.ts";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries.ts";
+import { actualPhase } from "../../util/actualPhase.ts";
 
 const createGameAttributes = async (
 	{
@@ -100,9 +101,10 @@ const createGameAttributes = async (
 
 						// Keep in sync with g.wrap
 						let currentSeason = gameAttributes.season;
-						const actualPhase =
-							gameAttributes.nextPhase ?? gameAttributes.phase;
-						if (actualPhase > PHASE.PLAYOFFS) {
+						if (
+							actualPhase(gameAttributes.phase, gameAttributes.nextPhase) >
+							PHASE.PLAYOFFS
+						) {
 							currentSeason += 1;
 						}
 
@@ -204,11 +206,11 @@ const createGameAttributes = async (
 			gameAttributesInput.season !== undefined &&
 			gameAttributesInput.phase !== undefined
 		) {
-			const actualPhase =
-				gameAttributesInput.nextPhase ?? gameAttributesInput.phase;
-
 			let currentSeason = gameAttributesInput.season;
-			if (actualPhase >= PHASE.PLAYOFFS) {
+			if (
+				actualPhase(gameAttributesInput.phase, gameAttributesInput.nextPhase) >=
+				PHASE.PLAYOFFS
+			) {
 				currentSeason += 1;
 			}
 

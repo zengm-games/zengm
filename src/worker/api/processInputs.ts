@@ -5,6 +5,7 @@ import type { Params } from "../../ui/router/index.ts";
 import type { boxScoreToLiveSim } from "../views/liveGame.ts";
 import type { AdvancedPlayerSearchFilter } from "../../ui/views/AdvancedPlayerSearch.tsx";
 import type { NoteInfo } from "../../ui/views/Player/Note.tsx";
+import { actualPhase } from "../util/actualPhase.ts";
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -952,8 +953,8 @@ const transactions = (params: Params) => {
 const upcomingFreeAgents = (params: Params) => {
 	let season = validateSeason(params.season);
 
-	const actualPhase = g.get("nextPhase") ?? g.get("phase");
-	if (actualPhase >= 0 && actualPhase <= PHASE.RESIGN_PLAYERS) {
+	const phase = actualPhase();
+	if (phase >= 0 && phase <= PHASE.RESIGN_PLAYERS) {
 		if (season < g.get("season")) {
 			season = g.get("season");
 		}

@@ -154,6 +154,7 @@ import loadData from "../core/realRosters/loadData.basketball.ts";
 import formatPlayerFactory from "../core/realRosters/formatPlayerFactory.ts";
 import { LATEST_SEASON } from "../core/realRosters/seasons.ts";
 import { applyRealPlayerPhotos } from "../core/league/processPlayerNewLeague.ts";
+import { actualPhase } from "../util/actualPhase.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -3281,7 +3282,7 @@ const retiredJerseyNumberUpsert = async ({
 	await idb.cache.teams.put(t);
 
 	// Handle players who have the retired jersey number
-	if (g.get("phase") <= PHASE.PLAYOFFS) {
+	if (actualPhase() <= PHASE.PLAYOFFS) {
 		const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 		for (const p of players) {
 			if (p.stats.length === 0) {
@@ -4306,8 +4307,7 @@ const updateTeamInfo = async (
 		}
 
 		// Also apply team info changes to this season
-		const actualPhase = g.get("nextPhase") ?? g.get("phase");
-		if (actualPhase < PHASE.PLAYOFFS) {
+		if (actualPhase() < PHASE.PLAYOFFS) {
 			let teamSeason: TeamSeason | TeamSeasonWithoutKey | undefined =
 				await idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
 					t.tid,
@@ -4473,8 +4473,7 @@ const upsertCustomizedPlayer = async (
 		}
 
 		// Once a new draft class is generated, if the next season hasn't started, need to bump up year numbers
-		const actualPhase = g.get("nextPhase") ?? g.get("phase");
-		if (p.draft.year === season && actualPhase >= PHASE.RESIGN_PLAYERS) {
+		if (p.draft.year === season && actualPhase() >= PHASE.RESIGN_PLAYERS) {
 			p.draft.year += 1;
 		}
 

@@ -1,5 +1,6 @@
 import { PHASE } from "../../../common/index.ts";
 import { idb } from "../../db/index.ts";
+import { actualPhase } from "../../util/actualPhase.ts";
 import { g } from "../../util/index.ts";
 
 const ensureValidDivsConfs = async () => {
@@ -46,8 +47,7 @@ const ensureValidDivsConfs = async () => {
 		}
 		await idb.cache.teams.put(t);
 
-		const actualPhase = g.get("nextPhase") ?? g.get("phase");
-		if (actualPhase < PHASE.PLAYOFFS) {
+		if (actualPhase() < PHASE.PLAYOFFS) {
 			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[t.tid, g.get("season")],

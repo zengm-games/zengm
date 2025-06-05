@@ -12,6 +12,7 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { buffOvrDH } from "../views/depth.ts";
 import { iterateActivePlayersSeasonRange } from "../views/rosterContinuity.ts";
 import type { SeasonType } from "./processInputs.ts";
+import { actualPhase } from "../util/actualPhase.ts";
 
 export const getPlayers = async (
 	season: number | undefined,
@@ -169,7 +170,7 @@ export const advancedPlayerSearch = async ({
 		(tid === undefined || tid === PLAYER.UNDRAFTED)
 	) {
 		// Show the upcoming draft class too
-		actualSeasonEnd += g.get("phase") > PHASE.DRAFT ? 2 : 1;
+		actualSeasonEnd += actualPhase() > PHASE.DRAFT ? 2 : 1;
 
 		// Set to "unique" so the draft prospects are the only ones appearing in the excess seasons. This works only because we confirm seasonStart === seasonEnd, in which case normally the unique/all setting doesn't matter
 		seasonRangeType = "unique";

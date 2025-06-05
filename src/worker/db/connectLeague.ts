@@ -50,6 +50,7 @@ import type {
 import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings.ts";
 import { amountToLevel } from "../../common/budgetLevels.ts";
 import { orderBy } from "../../common/utils.ts";
+import { actualPhase } from "../util/actualPhase.ts";
 
 export interface LeagueDB extends DBSchema {
 	allStars: {
@@ -1139,10 +1140,9 @@ const migrate = async ({
 						}
 
 						const nextPhase = event3.target.result.value;
-						const actualPhase = nextPhase ?? phase;
 
 						let currentSeason = season;
-						if (actualPhase >= PHASE.PLAYOFFS) {
+						if (actualPhase(phase as any, nextPhase) >= PHASE.PLAYOFFS) {
 							currentSeason += 1;
 						}
 

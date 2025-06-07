@@ -45,10 +45,13 @@ const pluginSportFunctions = (
 				},
 			},
 			async handler(code, id) {
-				const { mtimeMs } = await fs.stat(id);
-				const cached = babelCache[id];
-				if (cached?.mtimeMs === mtimeMs) {
-					return cached.result;
+				let mtimeMs;
+				if (nodeEnv === "development") {
+					mtimeMs = (await fs.stat(id)).mtimeMs;
+					const cached = babelCache[id];
+					if (cached?.mtimeMs === mtimeMs) {
+						return cached.result;
+					}
 				}
 
 				const babelResult = await babel.transformAsync(code, {
@@ -66,10 +69,12 @@ const pluginSportFunctions = (
 					map: babelResult!.map,
 				};
 
-				babelCache[id] = {
-					mtimeMs,
-					result,
-				};
+				if (nodeEnv === "development") {
+					babelCache[id] = {
+						mtimeMs: mtimeMs!,
+						result,
+					};
+				}
 
 				return result;
 			},

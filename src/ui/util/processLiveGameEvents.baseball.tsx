@@ -129,6 +129,7 @@ const formatRunners = (
 		texts.unshift(`${scored[0]} scores.`);
 	} else if (scored.length > 1) {
 		let namesCombined;
+		// Safari 16
 		if (Intl.ListFormat) {
 			namesCombined = new Intl.ListFormat("en").format(scored);
 		} else {

@@ -123,8 +123,8 @@ type PlayByPlayEventInputNoScore =
 	| {
 			type: "sub";
 			t: TeamNum;
-			pid: number;
-			pidOff: number;
+			pids: number[];
+			pidsOff: number[];
 			clock: number;
 	  }
 	| {

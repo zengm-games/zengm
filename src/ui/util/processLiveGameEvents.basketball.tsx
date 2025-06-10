@@ -232,7 +232,11 @@ export const getText = (
 		];
 	} else if (event.type === "sub") {
 		texts = [
-			`Substitution: ${getName(event.pid)} for ${getName(event.pidOff)}`,
+			<>
+				On: {event.pids.map((pid) => getName(pid)).join(", ")}
+				<br />
+				Off: {event.pidsOff.map((pid) => getName(pid)).join(", ")}
+			</>,
 		];
 	} else if (event.type === "jumpBall") {
 		texts = [
@@ -494,8 +498,12 @@ const processLiveGameEvents = ({
 			}
 
 			if (e.type === "sub") {
-				playersByPid[e.pid].inGame = true;
-				playersByPid[e.pidOff].inGame = false;
+				for (const pid of e.pids) {
+					playersByPid[pid].inGame = true;
+				}
+				for (const pid of e.pidsOff) {
+					playersByPid[pid].inGame = false;
+				}
 			} else if (e.type === "elamActive") {
 				boxScore.elamTarget = e.target;
 			}

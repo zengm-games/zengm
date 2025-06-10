@@ -1064,6 +1064,9 @@ class GameSim extends GameSimBase {
 
 			const ovrsOnCourt = this.playersOnCourt[t].map((p) => ovrs[p]);
 
+			const pids = [];
+			const pidsOff = [];
+
 			// Sub off the lowest ovr guy first
 			for (const pp of getSortedIndexes(ovrsOnCourt)) {
 				const p = this.playersOnCourt[t][pp];
@@ -1165,18 +1168,23 @@ class GameSim extends GameSimBase {
 
 						// It's only a "substitution" if it's not the starting lineup
 						if (!recordStarters) {
-							this.playByPlay.logEvent({
-								type: "sub",
-								t,
-								pid: this.team[t].player[b].id,
-								pidOff: this.team[t].player[p].id,
-								clock: this.t,
-							});
+							pids.push(this.team[t].player[b].id);
+							pidsOff.push(this.team[t].player[p].id);
 						}
 
 						break;
 					}
 				}
+			}
+
+			if (pids.length > 0) {
+				this.playByPlay.logEvent({
+					type: "sub",
+					t,
+					pids,
+					pidsOff,
+					clock: this.t,
+				});
 			}
 		}
 

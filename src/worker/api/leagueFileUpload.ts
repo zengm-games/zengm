@@ -1,9 +1,6 @@
 import type { ValidateFunction } from "ajv";
 import Ajv from "ajv";
 import JSONParserText from "./JSONParserText.ts";
-
-// This is dynamically resolved with rollup-plugin-alias
-// @ts-ignore
 import schema from "../../../build/files/league-schema.json";
 import { helpers, toUI } from "../util/index.ts";
 import { highWaterMark } from "../core/league/createStream.ts";

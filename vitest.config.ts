@@ -13,7 +13,7 @@ export default defineConfig({
 	test: {
 		isolate: false,
 		setupFiles: ["./src/test/setup.ts", "./src/worker/index.ts"],
-		workspace: [
+		projects: [
 			{
 				extends: true,
 				test: {

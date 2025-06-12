@@ -421,7 +421,7 @@ type TradeEvent = DiscriminateUnion<EventBBGM, "type", "trade">;
 
 export const processAssets = async (
 	event: TradeEvent,
-	i: number,
+	i: 0 | 1,
 	statSumsBySeason?: StatSumsBySeasons,
 ) => {
 	if (!event.teams || event.phase === undefined) {
@@ -565,7 +565,8 @@ const updateTradeSummary = async (
 
 		const statSumsBySeason: StatSumsBySeasons = [{}, {}];
 
-		for (const [i, tid] of event.tids.entries()) {
+		for (const i of [0, 1] as const) {
+			const tid = event.tids[i];
 			const teamInfo = await getTeamInfoBySeason(tid, event.season);
 			if (!teamInfo) {
 				throw new Error("teamInfo not found");

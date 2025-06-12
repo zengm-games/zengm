@@ -1,10 +1,10 @@
 types
-- trade ones should assume only 2 teams?
-  - TradeEventTeams
 - Record<*, * | undefined> types not needed anymore
 - getCol/getCols export from common needed?
 - test game winning shot logging in BBGM
 - ui local phase should be Phase type not number
+
+more injuries for tall players
 
 ZGMB ASG pitcher record - appears as if it's incrementing in some places (box score, player game log) even though it's not. would be better to not show record for ASG
 

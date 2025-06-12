@@ -911,7 +911,7 @@ const TradingBlock = ({
 								}}
 								salaryCap={salaryCap}
 								salaryCapType={salaryCapType}
-								teamInfo={teamInfoCache[offer.tid]}
+								teamInfo={teamInfoCache[offer.tid]!}
 								first={i === 0}
 								{...offer}
 							>

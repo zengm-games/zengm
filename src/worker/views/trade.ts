@@ -2,9 +2,22 @@ import { bySport } from "../../common/index.ts";
 import { team, trade } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { TradeTeams } from "../../common/types.ts";
+import type { TradeSummary, TradeTeams } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { orderBy } from "../../common/utils.ts";
+
+const getSummaryTeam = (summary: TradeSummary, i: 0 | 1) => {
+	return {
+		name: summary.teams[i].name,
+		ovrAfter: summary.teams[i].ovrAfter,
+		ovrBefore: summary.teams[i].ovrBefore,
+		payrollAfterTrade: summary.teams[i].payrollAfterTrade,
+		total: summary.teams[i].total,
+		trade: summary.teams[i].trade,
+		picks: summary.teams[i].picks,
+		other: i === 0 ? (1 as const) : (0 as const), // Index of other team
+	};
+};
 
 // This relies on vars being populated, so it can't be called in parallel with updateTrade
 export const getSummary = async (teams: TradeTeams) => {
@@ -18,18 +31,7 @@ export const getSummary = async (teams: TradeTeams) => {
 				teams[1].dpids.length > 0),
 		warning: summary.warning,
 		warningAmount: summary.warningAmount,
-		teams: ([0, 1] as const).map((i) => {
-			return {
-				name: summary.teams[i].name,
-				ovrAfter: summary.teams[i].ovrAfter,
-				ovrBefore: summary.teams[i].ovrBefore,
-				payrollAfterTrade: summary.teams[i].payrollAfterTrade,
-				total: summary.teams[i].total,
-				trade: summary.teams[i].trade,
-				picks: summary.teams[i].picks,
-				other: i === 0 ? 1 : 0, // Index of other team
-			};
-		}),
+		teams: [getSummaryTeam(summary, 0), getSummaryTeam(summary, 1)] as const,
 	};
 	return summary2;
 };

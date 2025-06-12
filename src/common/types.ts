@@ -245,9 +245,14 @@ type TradeEventAsset =
 			originalTid: number;
 	  };
 
-export type TradeEventTeams = {
-	assets: TradeEventAsset[];
-}[];
+export type TradeEventTeams = [
+	{
+		assets: TradeEventAsset[];
+	},
+	{
+		assets: TradeEventAsset[];
+	},
+];
 
 export type DiscriminateUnion<T, K extends keyof T, V extends T[K]> =
 	T extends Record<K, V> ? T : never;
@@ -286,7 +291,7 @@ export type EventBBGMWithoutKey =
 			text?: string; // Only legacy will have text
 			pids: number[];
 			dpids: number[];
-			tids: number[];
+			tids: [number, number];
 			season: number;
 
 			// These three will only be undefind in legacy events

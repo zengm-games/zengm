@@ -124,7 +124,7 @@ const formatEventText = async (event: EventBBGM) => {
 		let text = "";
 
 		// assets is indexed on the receiving teams, so swap indexes when making text about the former teams
-		const tids = [...event.tids].reverse();
+		const tids = [event.tids[1], event.tids[0]] as const;
 
 		for (const i of [0, 1] as const) {
 			const tid = tids[i];

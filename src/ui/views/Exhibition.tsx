@@ -30,10 +30,7 @@ import {
 } from "./NewLeague/index.tsx";
 import SettingsForm from "./Settings/SettingsForm.tsx";
 import { orderBy, range } from "../../common/utils.ts";
-
-export const getRandomSeason = (start: number, end: number) => {
-	return Math.floor(Math.random() * (1 + end - start)) + start;
-};
+import { choice, randInt } from "../../common/random.ts";
 
 export type ExhibitionTeam = {
 	season: number;
@@ -220,8 +217,7 @@ const SelectTeam = ({
 		const prevTeam = teams.find((t) => t.tid === tid);
 		let newTeam;
 		if (tidInput === "random") {
-			const index = Math.floor(Math.random() * newTeams.length);
-			newTeam = newTeams[index];
+			newTeam = choice(newTeams);
 		} else {
 			if (typeof tidInput === "number") {
 				newTeam = newTeams.find((t) => t.tid === tidInput);
@@ -230,7 +226,7 @@ const SelectTeam = ({
 				newTeam =
 					newTeams.find((t) => t.abbrev === prevTeam?.abbrev) ??
 					newTeams.find((t) => t.region === prevTeam?.region) ??
-					newTeams[0];
+					newTeams[0]!;
 			}
 		}
 
@@ -269,12 +265,9 @@ const SelectTeam = ({
 			}
 
 			const league = await loadLeague(
-				SPORT_HAS_REAL_PLAYERS ? "real" : leagues[0].lid,
+				SPORT_HAS_REAL_PLAYERS ? "real" : leagues[0]!.lid,
 			);
-			const randomSeason = getRandomSeason(
-				league.seasonStart,
-				league.seasonEnd,
-			);
+			const randomSeason = randInt(league.seasonStart, league.seasonEnd);
 			setSeason(randomSeason);
 			await loadTeams(league, randomSeason, "random");
 		};
@@ -367,7 +360,7 @@ const SelectTeam = ({
 						type="button"
 						disabled={disabled || !league}
 						onClick={async () => {
-							const randomSeason = getRandomSeason(
+							const randomSeason = randInt(
 								league!.seasonStart,
 								league!.seasonEnd,
 							);

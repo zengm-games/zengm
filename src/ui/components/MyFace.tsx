@@ -23,10 +23,10 @@ export const MyFace = ({
 		overrides = {
 			teamColors: colors,
 			jersey: {
-				id: jerseyId,
+				id: jerseyId!,
 			},
 			accessories: {
-				id: accessoryId,
+				id: accessoryId!,
 			},
 		};
 	} else {

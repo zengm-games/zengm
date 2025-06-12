@@ -28,8 +28,7 @@ const getPopRanks = (
 		// Find the starting and ending ranks of all teams tied with the current team (if no tie, then startRank and endRank will be the same)
 		let startRank;
 		let endRank;
-		for (let i = 0; i < teamsSorted.length; i++) {
-			const t2 = teamsSorted[i];
+		for (const [i, t2] of teamsSorted.entries()) {
 			if (t2.pop === t.pop || t2.tid === t.tid) {
 				if (startRank === undefined) {
 					startRank = i + 1;
@@ -54,11 +53,27 @@ function addPopRank<
 
 	return teams.map((t, i) => ({
 		...t,
-		popRank: popRanks[i],
+		popRank: popRanks[i]!,
 	}));
 }
 
-const gameScore = (arg: { [key: string]: number }): number => {
+const gameScore = (
+	arg: Record<
+		| "pts"
+		| "fg"
+		| "fga"
+		| "fta"
+		| "ft"
+		| "orb"
+		| "drb"
+		| "stl"
+		| "ast"
+		| "blk"
+		| "pf"
+		| "tov",
+		number
+	>,
+): number => {
 	return (
 		arg.pts +
 		0.4 * arg.fg -
@@ -938,7 +953,7 @@ const formatCurrency = (
 
 		const exponent = Math.floor(Math.log10(abs));
 		const suffixIndex = Math.floor((exponent + baseExponent) / 3);
-		if (suffixIndex < currencySuffixes.length) {
+		if (currencySuffixes[suffixIndex] !== undefined) {
 			append = currencySuffixes[suffixIndex];
 			abs /= 1000 ** (suffixIndex - baseExponent / 3);
 		} else {
@@ -1484,7 +1499,7 @@ const getRecordNumericValue = (record: string | null) => {
 		return -Infinity;
 	}
 
-	let [won, lost, otl, tied] = record
+	let [won = 0, lost = 0, otl, tied] = record
 		.split("-")
 		.map((num) => Number.parseInt(num));
 

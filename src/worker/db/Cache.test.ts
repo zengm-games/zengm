@@ -19,7 +19,7 @@ beforeEach(() => {
 
 describe("get", () => {
 	test("retrieve an object", async () => {
-		const p = (await idb.cache.players.getAll())[0];
+		const p = (await idb.cache.players.getAll())[0]!;
 		const p2 = (await idb.cache.players.get(p.pid)) as Player;
 		assert.strictEqual(p.pid, p2.pid);
 	});
@@ -30,7 +30,7 @@ describe("get", () => {
 	});
 
 	test("wait until filling complete before resolving query", async () => {
-		const p = (await idb.cache.players.getAll())[0];
+		const p = (await idb.cache.players.getAll())[0]!;
 
 		idb.cache._status = "filling";
 		let setTimeoutCalled = false;

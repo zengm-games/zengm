@@ -8,18 +8,22 @@ import {
 } from "../../../common/index.ts";
 import getTeamInfos from "../../../common/getTeamInfos.ts";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs.ts";
-import type { Conf, Div, Player, View } from "../../../common/types.ts";
+import type {
+	Conf,
+	Div,
+	NonEmptyArray,
+	Player,
+	View,
+} from "../../../common/types.ts";
 import Modal from "../../components/Modal.tsx";
 import { helpers, logEvent, toWorker } from "../../util/index.ts";
-import {
-	type ExhibitionLeagueWithSeasons,
-	getRandomSeason,
-} from "../Exhibition.tsx";
+import { type ExhibitionLeagueWithSeasons } from "../Exhibition.tsx";
 import TeamForm from "../ManageTeams/TeamForm.tsx";
 import type { AddEditTeamInfo } from "./CustomizeTeams.tsx";
 import type { NewLeagueTeamWithoutRank } from "./types.ts";
 import { TeamsSplitNorthAmericaWorld } from "../../components/TeamsSplitNorthAmericaWorld.tsx";
 import { orderBy, range } from "../../../common/utils.ts";
+import { choice, randInt } from "../../../common/random.ts";
 
 export const getGodModeWarnings = ({
 	is,
@@ -191,8 +195,7 @@ const SelectTeam = ({
 
 		let newTeam;
 		if (tidInput === "random") {
-			const index = Math.floor(Math.random() * newTeams.length);
-			newTeam = newTeams[index];
+			newTeam = choice(newTeams);
 		} else {
 			if (typeof tidInput === "number") {
 				newTeam = newTeams.find((t) => t.tid === tidInput);
@@ -264,7 +267,7 @@ const SelectTeam = ({
 					undefined,
 				);
 				setLeagues(allLeagues);
-				if (allLeagues.length > 0) {
+				if (allLeagues[0]) {
 					const lid = addEditTeamInfo.lid ?? allLeagues[0].lid;
 					const league = await loadLeague(lid);
 					await loadTeams(
@@ -439,17 +442,14 @@ const SelectTeam = ({
 							disabled={actualDisabled}
 							onClick={async () => {
 								if (addEditTeamInfo.addType !== "random" && league) {
-									const randomSeason = getRandomSeason(
+									const randomSeason = randInt(
 										league.seasonStart,
 										league.seasonEnd,
 									);
 									setSeason(randomSeason);
 									await loadTeams(league, randomSeason, "random");
 								} else if (availableTeams) {
-									const t =
-										availableTeams[
-											Math.floor(Math.random() * availableTeams.length)
-										];
+									const t = choice(availableTeams);
 									onChange(t);
 								}
 							}}
@@ -494,8 +494,8 @@ const UpsertTeamModal = ({
 	addEditTeamInfo: AddEditTeamInfo;
 	setAddEditTeamInfo: SetAddEditTeamInfo;
 	teams: NewLeagueTeamWithoutRank[];
-	confs: Conf[];
-	divs: Div[];
+	confs: NonEmptyArray<Conf>;
+	divs: NonEmptyArray<Div>;
 	onCancel: () => void;
 	onSave: (t: NewLeagueTeamWithoutRank) => void;
 } & Pick<View<"newLeague">, "godModeLimits" | "realTeamInfo">) => {

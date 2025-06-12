@@ -128,7 +128,7 @@ export const findSeries = (
 		}
 	} else {
 		// Regular playoffs
-		const roundSeries = playoffSeries.series[playoffSeries.currentRound];
+		const roundSeries = playoffSeries.series[playoffSeries.currentRound]!;
 		return roundSeries.find(isValidSeries);
 	}
 };
@@ -249,7 +249,7 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 		allStars = await idb.cache.allStars.get(g.get("season"));
 	}
 
-	for (let t = 0; t < 2; t++) {
+	for (const t of [0, 1] as const) {
 		for (const key of Object.keys(results.team[t].stat)) {
 			(gameStats.teams[t] as any)[key] = results.team[t].stat[key];
 		}
@@ -311,7 +311,7 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 	// Store some extra junk to make box scores easy
 	const otl = gameStats.overtimes > 0 && g.get("otl", "current");
 	const winner = getWinner([results.team[0].stat, results.team[1].stat]);
-	const [tw, tl] = winner === 0 ? [0, 1] : [1, 0];
+	const [tw, tl] = winner === 0 ? ([0, 1] as const) : ([1, 0] as const);
 	gameStats.won.tid = results.team[tw].id;
 	gameStats.lost.tid = results.team[tl].id;
 	gameStats.won.pts = results.team[tw].stat.pts;
@@ -615,7 +615,7 @@ const writeGameStats = async (
 				const numGamesThisRound =
 					currentRound === -1
 						? 1
-						: g.get("numGamesPlayoffSeries", "current")[currentRound];
+						: g.get("numGamesPlayoffSeries", "current")[currentRound]!;
 
 				if (numGamesThisRound > 1) {
 					const numGamesToWinSeries =

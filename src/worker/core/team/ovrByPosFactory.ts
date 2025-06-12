@@ -129,7 +129,7 @@ const ovrByPosFactory =
 
 		let predictedMOV = intercept;
 		for (const [pos, values] of Object.entries(valuesByPos)) {
-			const weights = weightsByPos[pos];
+			const weights = weightsByPos[pos]!;
 			const minLength = weights.length;
 
 			const numToInclude = wholeRoster
@@ -149,7 +149,7 @@ const ovrByPosFactory =
 					let exponent = i - minLength + 1;
 
 					// Penalty for exceeding normal roster limits
-					if (i >= POSITION_COUNTS[pos]) {
+					if (i >= POSITION_COUNTS[pos]!) {
 						exponent += 2;
 					}
 

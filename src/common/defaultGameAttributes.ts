@@ -8,9 +8,10 @@ import isSport from "./isSport.ts";
 import type {
 	GameAttributeKey,
 	GameAttributesLeagueWithHistory,
+	GameAttributeWithHistory,
 } from "./types.ts";
 
-const wrap = <T>(value: T) => [
+const wrap = <T>(value: T): GameAttributeWithHistory<T> => [
 	{
 		start: -Infinity,
 		value,

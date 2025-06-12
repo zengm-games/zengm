@@ -41,14 +41,14 @@ const match = (route: Route, path: string) => {
 	const params: Params = {};
 	let matches = false;
 
-	const pathname = path.split("?")[0].split("#")[0];
+	const pathname = path.split("?")[0]!.split("#")[0]!;
 	const m = route.regex.exec(decodeURIComponent(pathname));
 
 	if (m) {
 		matches = true;
 		for (let i = 1, len = m.length; i < len; ++i) {
-			const key = route.keys[i - 1];
-			const val = decodeURLEncodedURIComponent(m[i]);
+			const key = route.keys[i - 1]!;
+			const val = decodeURLEncodedURIComponent(m[i]!);
 			if (val !== undefined) {
 				params[key] = val;
 			}

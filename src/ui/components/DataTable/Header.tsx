@@ -32,7 +32,7 @@ const FilterHeader = ({
 		<tr>
 			{showBulkSelectCheckboxes ? <th /> : null}
 			{colOrder.map(({ colIndex }) => {
-				const col = cols[colIndex];
+				const col = cols[colIndex]!;
 
 				const filter = filters[colIndex] ?? "";
 				return (
@@ -79,7 +79,7 @@ const SuperCols = ({
 		const superCol = superCols[superColIndex];
 		if (superCol) {
 			if (!colIndexes.includes(i)) {
-				colspanAdjustments[superColIndex] -= 1;
+				colspanAdjustments[superColIndex]! -= 1;
 			}
 
 			currentSuperColCount += 1;
@@ -95,7 +95,7 @@ const SuperCols = ({
 			{showBulkSelectCheckboxes ? <th /> : null}
 			{superCols
 				.map(({ colspan, desc, title }, i) => {
-					const adjustedColspan = colspan + colspanAdjustments[i];
+					const adjustedColspan = colspan + colspanAdjustments[i]!;
 					return {
 						adjustedColspan,
 						colspan,
@@ -364,7 +364,7 @@ const Header = ({
 				{sortable ? <th className="p-0" /> : null}
 				{colOrder.map(({ colIndex }) => {
 					const { classNames, desc, sortSequence, title, titleReact, width } =
-						cols[colIndex];
+						cols[colIndex]!;
 
 					let sortClassName;
 					if (

@@ -49,7 +49,7 @@ const PhaseStatusBlock = () => {
 			[PHASE.RESIGN_PLAYERS]: ["negotiation"],
 			[PHASE.FREE_AGENCY]: ["free_agents"],
 		};
-		urlParts = urls[phase];
+		urlParts = urls[phase]!;
 	}
 
 	return (

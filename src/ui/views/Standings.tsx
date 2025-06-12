@@ -185,7 +185,7 @@ export const ColPtsOrGB = ({
 	pointsFormula: string;
 	usePts: boolean;
 }) => {
-	const col = getCols([usePts ? "PTS" : "GB"])[0];
+	const col = getCols([usePts ? "PTS" : "GB"])[0]!;
 	if (usePts) {
 		col.desc = `Points (${pointsFormula})`;
 	}
@@ -461,7 +461,7 @@ const Standings = ({
 				subgroups: [
 					{
 						separatorIndexes,
-						teams: rankingGroups.league[0],
+						teams: rankingGroups.league[0]!,
 					},
 				],
 			},
@@ -479,7 +479,7 @@ const Standings = ({
 			subgroups: [
 				{
 					separatorIndexes,
-					teams: rankingGroups.conf[i],
+					teams: rankingGroups.conf[i]!,
 				},
 			],
 		}));
@@ -500,7 +500,7 @@ const Standings = ({
 					return {
 						name: div.name,
 						separatorIndexes,
-						teams: rankingGroups.div[j],
+						teams: rankingGroups.div[j]!,
 					};
 				}),
 		}));
@@ -595,7 +595,7 @@ const Standings = ({
 									playoffsByConf={playoffsByConf}
 									pointsFormula={pointsFormula}
 									season={season}
-									teams={rankingGroups.conf[i]}
+									teams={rankingGroups.conf[i]!}
 									userTid={userTid}
 									usePts={usePts}
 								/>
@@ -621,7 +621,7 @@ const Standings = ({
 						playoffsByConf={playoffsByConf}
 						pointsFormula={pointsFormula}
 						season={season}
-						teams={rankingGroups.league[0]}
+						teams={rankingGroups.league[0]!}
 						userTid={userTid}
 						usePts={usePts}
 					/>

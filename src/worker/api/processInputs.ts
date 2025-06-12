@@ -20,16 +20,18 @@ export const validateAbbrev = (
 	abbrev?: string,
 	strict?: boolean,
 ): [number, string] => {
+	const teamInfoCache = g.get("teamInfoCache");
+
 	if (abbrev !== undefined) {
 		{
 			const int = Number.parseInt(abbrev);
-			if (!Number.isNaN(int) && int < g.get("teamInfoCache").length) {
-				return [int, g.get("teamInfoCache")[int]?.abbrev];
+			if (!Number.isNaN(int) && teamInfoCache[int]) {
+				return [int, teamInfoCache[int].abbrev];
 			}
 		}
 
 		{
-			const tid = g.get("teamInfoCache").findIndex((t) => t.abbrev === abbrev);
+			const tid = teamInfoCache.findIndex((t) => t.abbrev === abbrev);
 			if (tid >= 0) {
 				return [tid, abbrev];
 			}
@@ -38,8 +40,8 @@ export const validateAbbrev = (
 		{
 			const parts = abbrev.split("_");
 			const int = Number.parseInt(parts.at(-1)!);
-			if (!Number.isNaN(int) && int < g.get("teamInfoCache").length) {
-				return [int, g.get("teamInfoCache")[int]?.abbrev];
+			if (!Number.isNaN(int) && teamInfoCache[int]) {
+				return [int, teamInfoCache[int].abbrev];
 			}
 		}
 	}
@@ -49,7 +51,7 @@ export const validateAbbrev = (
 	}
 
 	const tid = g.get("userTid");
-	abbrev = g.get("teamInfoCache")[tid]?.abbrev;
+	abbrev = teamInfoCache[tid]?.abbrev;
 	if (abbrev === undefined) {
 		abbrev = "???";
 	}
@@ -929,7 +931,7 @@ const transactions = (params: Params) => {
 		abbrev = "all";
 	} else {
 		tid = g.get("userTid");
-		abbrev = g.get("teamInfoCache")[tid]?.abbrev;
+		abbrev = g.get("teamInfoCache")[tid]!.abbrev;
 	}
 
 	let season: number | "all";
@@ -1014,8 +1016,8 @@ const comparePlayers = (params: Params) => {
 			...info.split(",").map((pidSeasonPlayoffs) => {
 				const parts = pidSeasonPlayoffs.split("-");
 				return {
-					pid: Number.parseInt(parts[0]),
-					season: parts[1] === "career" ? "career" : Number.parseInt(parts[1]),
+					pid: Number.parseInt(parts[0]!),
+					season: parts[1] === "career" ? "career" : Number.parseInt(parts[1]!),
 					playoffs:
 						parts[2] === "c"
 							? "combined"

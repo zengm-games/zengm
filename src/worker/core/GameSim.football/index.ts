@@ -162,7 +162,7 @@ class GameSim extends GameSimBase {
 			homeCourtFactor *
 			helpers.bound(1 + g.get("homeCourtAdvantage") / 100, 0.01, Infinity);
 
-		for (let t = 0; t < 2; t++) {
+		for (const t of [0, 1] as const) {
 			let factor;
 
 			if (t === 0) {
@@ -171,10 +171,10 @@ class GameSim extends GameSimBase {
 				factor = 1.0 / homeCourtModifier; // Penalty for away team
 			}
 
-			for (let p = 0; p < this.team[t].player.length; p++) {
-				for (const r of Object.keys(this.team[t].player[p].compositeRating)) {
+			for (const p of this.team[t].player) {
+				for (const r of Object.keys(p.compositeRating)) {
 					if (r !== "endurance") {
-						this.team[t].player[p].compositeRating[r] *= factor;
+						p.compositeRating[r] *= factor;
 					}
 				}
 			}
@@ -202,34 +202,33 @@ class GameSim extends GameSimBase {
 		});
 
 		// Delete stuff that isn't needed before returning
-		for (let t = 0; t < 2; t++) {
+		for (const t of [0, 1] as const) {
 			delete this.team[t].compositeRating;
 			// @ts-expect-error
 			delete this.team[t].pace;
 
-			for (let p = 0; p < this.team[t].player.length; p++) {
+			for (const p of this.team[t].player) {
 				// @ts-expect-error
-				delete this.team[t].player[p].age;
+				delete p.age;
 				// @ts-expect-error
-				delete this.team[t].player[p].valueNoPot;
-				delete this.team[t].player[p].compositeRating;
+				delete p.valueNoPot;
+				delete p.compositeRating;
 				// @ts-expect-error
-				delete this.team[t].player[p].ptModifier;
-				delete this.team[t].player[p].stat.benchTime;
-				delete this.team[t].player[p].stat.courtTime;
-				delete this.team[t].player[p].stat.energy;
+				delete p.ptModifier;
+				delete p.stat.benchTime;
+				delete p.stat.courtTime;
+				delete p.stat.energy;
 			}
 		}
 
 		const scoringSummary: PlayByPlayEventScore[] = [];
 
 		// Remove any scores that were negated by penalties
-		for (let i = 0; i < this.playByPlay.scoringSummary.length; i++) {
-			const current = this.playByPlay.scoringSummary[i];
+		for (const [i, current] of this.playByPlay.scoringSummary.entries()) {
 			const next = this.playByPlay.scoringSummary[i + 1];
 
 			// Must have been reversed by a penalty
-			if (next && next.type === "removeLastScore") {
+			if (next?.type === "removeLastScore") {
 				continue;
 			}
 
@@ -447,7 +446,7 @@ class GameSim extends GameSimBase {
 	getTopPlayerOnField(t: TeamNum, pos: Position) {
 		const players = this.playersOnField[t][pos];
 
-		if (!players || players.length === 0) {
+		if (!players || !players[0]) {
 			throw new Error(`No player found at position ${pos}`);
 		}
 
@@ -1125,7 +1124,7 @@ class GameSim extends GameSimBase {
 		let formation: Formation;
 
 		if (playType === "starters") {
-			formation = formations.normal[0];
+			formation = formations.normal[0]!;
 		} else if (playType === "run" || playType === "pass") {
 			formation = random.choice(formations.normal);
 		} else if (playType === "extraPoint" || playType === "fieldGoal") {
@@ -1140,7 +1139,7 @@ class GameSim extends GameSimBase {
 
 		const sides = ["off", "def"] as const;
 
-		for (let i = 0; i < 2; i++) {
+		for (const i of [0, 1] as const) {
 			const t = i === 0 ? this.o : this.d;
 			const side = sides[i];
 

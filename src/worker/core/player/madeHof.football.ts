@@ -65,31 +65,31 @@ export const getThreshold = (pos?: string) => {
 const madeHof = (
 	p: Player<PlayerRatings> | PlayerWithoutKey<PlayerRatings>,
 ): boolean => {
-	const av = p.stats
+	const avs: number[] = p.stats
 		.filter((ps) => {
 			// No playoff stats, because AV is scaled strangely there
 			return !ps.playoffs;
 		})
 		.map((ps) => ps.av); // Calculate career WS and "dominance factor" DF (top 5 years WS - 35)
 
-	av.sort((a, b) => b - a); // Descending order
+	avs.sort((a, b) => b - a); // Descending order
 
 	let total = 0;
 	let df = -35;
 
-	for (let i = 0; i < av.length; i++) {
-		total += av[i];
+	for (const [i, av] of avs.entries()) {
+		total += av;
 
 		if (i < 5) {
-			df += av[i];
+			df += av;
 		}
 	}
 
 	// Fudge factor for players generated when the league started
 	const fudgeSeasons = g.get("startingSeason") - p.draft.year - 7;
 
-	if (fudgeSeasons > 0) {
-		total += av[0] * fudgeSeasons;
+	if (fudgeSeasons > 0 && avs[0] !== undefined) {
+		total += avs[0] * fudgeSeasons;
 	}
 
 	const pos = getMostCommonPos(p.ratings);

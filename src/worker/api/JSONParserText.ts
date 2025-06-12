@@ -89,7 +89,7 @@ class JSONParserText {
 
 	write(text: string) {
 		for (let i = 0, l = text.length; i < l; i++) {
-			const n = text[i];
+			const n = text[i]!;
 			if (this.tokenizerState === "START") {
 				if (n === "{") {
 					this.onToken("LEFT_BRACE", "{", i);

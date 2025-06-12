@@ -52,7 +52,7 @@ describe.skip("worker/core/league/create", () => {
 		assert.strictEqual(leagueData.teams.length, g.get("numActiveTeams"));
 		assert.strictEqual(leagueData.teams.length, g.get("numTeams"));
 
-		for (let i = 0; i < 2; i++) {
+		for (const i of [0, 1] as const) {
 			assert.strictEqual(testHelpers.numInArrayEqualTo(cids, i), 15);
 		}
 

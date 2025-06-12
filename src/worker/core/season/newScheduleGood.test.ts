@@ -3,6 +3,7 @@ import testHelpers from "../../../test/helpers.ts";
 import newScheduleGood from "./newScheduleGood.ts";
 import { g, helpers } from "../../util/index.ts";
 import { range } from "../../../common/utils.ts";
+import type { GameAttributesLeague } from "../../../common/types.ts";
 
 let defaultTeams: {
 	seasonAttrs: {
@@ -41,15 +42,15 @@ describe("old basketball tests", () => {
 
 		const home: Record<number, number> = {}; // Number of home games for each team
 		const away: Record<number, number> = {}; // Number of away games for each team
-		for (let i = 0; i < tids.length; i++) {
-			if (home[tids[i][0]] === undefined) {
-				home[tids[i][0]] = 0;
+		for (const matchup of tids) {
+			if (home[matchup[0]] === undefined) {
+				home[matchup[0]] = 0;
 			}
-			if (away[tids[i][1]] === undefined) {
-				away[tids[i][1]] = 0;
+			if (away[matchup[1]] === undefined) {
+				away[matchup[1]] = 0;
 			}
-			home[tids[i][0]] += 1;
-			away[tids[i][1]] += 1;
+			home[matchup[0]]! += 1;
+			away[matchup[1]]! += 1;
 		}
 
 		assert.strictEqual(Object.keys(home).length, defaultTeams.length);
@@ -65,30 +66,30 @@ describe("old basketball tests", () => {
 		// Each element in this object is an object representing the number of home games against each other team (only the ones in the other conference will be populated)
 		const home: Record<number, Record<number, number>> = {};
 
-		for (let i = 0; i < tids.length; i++) {
-			const t0 = defaultTeams.find((t) => t.tid === tids[i][0]);
-			const t1 = defaultTeams.find((t) => t.tid === tids[i][1]);
+		for (const matchup of tids) {
+			const t0 = defaultTeams.find((t) => t.tid === matchup[0]);
+			const t1 = defaultTeams.find((t) => t.tid === matchup[1]);
 			if (!t0 || !t1) {
-				console.log(tids[i]);
+				console.log(matchup);
 				throw new Error("Team not found");
 			}
 			if (t0.seasonAttrs.cid !== t1.seasonAttrs.cid) {
-				if (home[tids[i][1]] === undefined) {
-					home[tids[i][1]] = {};
+				if (home[matchup[1]] === undefined) {
+					home[matchup[1]] = {};
 				}
-				if (home[tids[i][1]][tids[i][0]] === undefined) {
-					home[tids[i][1]][tids[i][0]] = 0;
+				if (home[matchup[1]]![matchup[0]] === undefined) {
+					home[matchup[1]]![matchup[0]] = 0;
 				}
-				home[tids[i][1]][tids[i][0]] += 1;
+				home[matchup[1]]![matchup[0]]! += 1;
 			}
 		}
 
 		assert.strictEqual(Object.keys(home).length, defaultTeams.length);
 
 		for (const { tid } of defaultTeams) {
-			assert.strictEqual(Object.values(home[tid]).length, 15);
+			assert.strictEqual(Object.values(home[tid]!).length, 15);
 			assert.strictEqual(
-				testHelpers.numInArrayEqualTo(Object.values(home[tid]), 1),
+				testHelpers.numInArrayEqualTo(Object.values(home[tid]!), 1),
 				15,
 			);
 		}
@@ -101,30 +102,30 @@ describe("old basketball tests", () => {
 		// Each element in this object is an object representing the number of home games against each other team (only the ones in the same division will be populated)
 		const home: Record<number, Record<number, number>> = {};
 
-		for (let i = 0; i < tids.length; i++) {
-			const t0 = defaultTeams.find((t) => t.tid === tids[i][0]);
-			const t1 = defaultTeams.find((t) => t.tid === tids[i][1]);
+		for (const matchup of tids) {
+			const t0 = defaultTeams.find((t) => t.tid === matchup[0]);
+			const t1 = defaultTeams.find((t) => t.tid === matchup[1]);
 			if (!t0 || !t1) {
-				console.log(tids[i]);
+				console.log(matchup);
 				throw new Error("Team not found");
 			}
 			if (t0.seasonAttrs.did === t1.seasonAttrs.did) {
-				if (home[tids[i][1]] === undefined) {
-					home[tids[i][1]] = {};
+				if (home[matchup[1]] === undefined) {
+					home[matchup[1]] = {};
 				}
-				if (home[tids[i][1]][tids[i][0]] === undefined) {
-					home[tids[i][1]][tids[i][0]] = 0;
+				if (home[matchup[1]]![matchup[0]] === undefined) {
+					home[matchup[1]]![matchup[0]] = 0;
 				}
-				home[tids[i][1]][tids[i][0]] += 1;
+				home[matchup[1]]![matchup[0]]! += 1;
 			}
 		}
 
 		assert.strictEqual(Object.keys(home).length, defaultTeams.length);
 
 		for (const { tid } of defaultTeams) {
-			assert.strictEqual(Object.values(home[tid]).length, 4);
+			assert.strictEqual(Object.values(home[tid]!).length, 4);
 			assert.strictEqual(
-				testHelpers.numInArrayEqualTo(Object.values(home[tid]), 2),
+				testHelpers.numInArrayEqualTo(Object.values(home[tid]!), 2),
 				4,
 			);
 		}
@@ -137,37 +138,37 @@ describe("old basketball tests", () => {
 		// Each element in this object is an object representing the number of home games against each other team (only the ones in the same conference but different division will be populated)
 		const home: Record<number, Record<number, number>> = {};
 
-		for (let i = 0; i < tids.length; i++) {
-			const t0 = defaultTeams.find((t) => t.tid === tids[i][0]);
-			const t1 = defaultTeams.find((t) => t.tid === tids[i][1]);
+		for (const matchup of tids) {
+			const t0 = defaultTeams.find((t) => t.tid === matchup[0]);
+			const t1 = defaultTeams.find((t) => t.tid === matchup[1]);
 			if (!t0 || !t1) {
-				console.log(tids[i]);
+				console.log(matchup);
 				throw new Error("Team not found");
 			}
 			if (
 				t0.seasonAttrs.cid === t1.seasonAttrs.cid &&
 				t0.seasonAttrs.did !== t1.seasonAttrs.did
 			) {
-				if (home[tids[i][1]] === undefined) {
-					home[tids[i][1]] = {};
+				if (home[matchup[1]] === undefined) {
+					home[matchup[1]] = {};
 				}
-				if (home[tids[i][1]][tids[i][0]] === undefined) {
-					home[tids[i][1]][tids[i][0]] = 0;
+				if (home[matchup[1]]![matchup[0]] === undefined) {
+					home[matchup[1]]![matchup[0]] = 0;
 				}
-				home[tids[i][1]][tids[i][0]] += 1;
+				home[matchup[1]]![matchup[0]]! += 1;
 			}
 		}
 
 		assert.strictEqual(Object.keys(home).length, defaultTeams.length);
 
 		for (const { tid } of defaultTeams) {
-			assert.strictEqual(Object.values(home[tid]).length, 10);
+			assert.strictEqual(Object.values(home[tid]!).length, 10);
 			assert.strictEqual(
-				testHelpers.numInArrayEqualTo(Object.values(home[tid]), 1),
+				testHelpers.numInArrayEqualTo(Object.values(home[tid]!), 1),
 				2,
 			);
 			assert.strictEqual(
-				testHelpers.numInArrayEqualTo(Object.values(home[tid]), 2),
+				testHelpers.numInArrayEqualTo(Object.values(home[tid]!), 2),
 				8,
 			);
 		}
@@ -287,16 +288,16 @@ describe("old newScheduleCrappy tests", () => {
 
 				const home: Record<number, number> = {}; // Number of home games for each team
 				const away: Record<number, number> = {}; // Number of away games for each team
-				for (let i = 0; i < matchups.length; i++) {
-					if (home[matchups[i][0]] === undefined) {
-						home[matchups[i][0]] = 0;
+				for (const matchup of matchups) {
+					if (home[matchup[0]] === undefined) {
+						home[matchup[0]] = 0;
 					}
-					if (away[matchups[i][1]] === undefined) {
-						away[matchups[i][1]] = 0;
+					if (away[matchup[1]] === undefined) {
+						away[matchup[1]] = 0;
 					}
 
-					home[matchups[i][0]] += 1;
-					away[matchups[i][1]] += 1;
+					home[matchup[0]]! += 1;
+					away[matchup[1]]! += 1;
 				}
 
 				for (const t of teams) {
@@ -319,11 +320,11 @@ describe("error handling", () => {
 			g.get("divs").map((div) => ({
 				...div,
 				cid: 0,
-			})),
+			})) as any,
 		);
 		g.setWithoutSavingToDB(
 			"confs",
-			g.get("confs").filter((conf) => conf.cid === 0),
+			g.get("confs").filter((conf) => conf.cid === 0) as any,
 		);
 		const { tids, warning } = newScheduleGood(
 			defaultTeams.map((t) => ({
@@ -470,7 +471,7 @@ describe("random test cases", () => {
 			},
 		}));
 
-		const divs = [
+		const divs: GameAttributesLeague["divs"] = [
 			{
 				did: 0,
 				cid: 0,

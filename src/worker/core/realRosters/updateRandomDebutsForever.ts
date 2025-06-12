@@ -50,10 +50,10 @@ const updateRandomDebutsForever = async (
 	// Randomize draft classes
 	const draftYears = draftProspects.map((p) => p.draft.year);
 	random.shuffle(draftYears);
-	for (let i = 0; i < draftProspects.length; i++) {
-		const p = draftProspects[i];
-		const diff = draftYears[i] - p.draft.year;
-		p.draft.year = draftYears[i];
+	for (const [i, p] of draftProspects.entries()) {
+		const draftYear = draftYears[i]!;
+		const diff = draftYear - p.draft.year;
+		p.draft.year = draftYear;
 		p.born.year += diff;
 	}
 

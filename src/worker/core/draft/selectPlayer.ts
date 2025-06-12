@@ -40,7 +40,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 
 			// These are only used for expansion draft UI, not fantasy draft
 			prevTid,
-			prevAbbrev: g.get("teamInfoCache")[prevTid]?.abbrev,
+			prevAbbrev: g.get("teamInfoCache")[prevTid]!.abbrev,
 		};
 
 		const { ovr, pot, skills } = p.ratings.at(-1)!;
@@ -96,7 +96,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 			player.setContract(
 				p,
 				{
-					amount: rookieSalaries[i],
+					amount: rookieSalaries[i]!,
 					exp,
 					rookie: true,
 				},

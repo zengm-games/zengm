@@ -13,7 +13,7 @@ import { range } from "../../common/utils.ts";
 
 export const formatStatsDropdown = (stats: string[]) =>
 	stats.map((stat) => {
-		const col = getCols([`stat:${stat}`])[0];
+		const col = getCols([`stat:${stat}`])[0]!;
 		return {
 			key: stat,
 			value: col.desc ? makeNormalResponsive(col.title, col.desc) : col.title,
@@ -41,7 +41,7 @@ const LeadersYears = ({
 	});
 
 	const cols = [
-		getCols(["Season"])[0],
+		getCols(["Season"])[0]!,
 		...range(1, 11).map(
 			(rank) =>
 				({
@@ -58,15 +58,14 @@ const LeadersYears = ({
 		({ season, leaders, linkSeason }) => {
 			return {
 				key: season,
-				metadata:
-					leaders.length > 0
-						? {
-								type: "player",
-								pid: leaders[0].pid,
-								season,
-								playoffs,
-							}
-						: undefined,
+				metadata: leaders[0]
+					? {
+							type: "player",
+							pid: leaders[0].pid,
+							season,
+							playoffs,
+						}
+					: undefined,
 				data: [
 					linkSeason ? (
 						<a href={helpers.leagueUrl(["history", season])}>{season}</a>

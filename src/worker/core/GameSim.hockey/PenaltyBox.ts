@@ -49,7 +49,7 @@ class PenaltyBox {
 	}
 
 	getPowerPlayTeam() {
-		const counts = teamNums.map((t) => this.count(t));
+		const counts = [this.count(0), this.count(1)] as const;
 		let powerPlayTeam: TeamNum | undefined;
 		if (counts[0] > counts[1]) {
 			powerPlayTeam = 1;
@@ -169,7 +169,7 @@ class PenaltyBox {
 				return x;
 			}
 
-			return x - minutesArray[i - 1];
+			return x - minutesArray[i - 1]!;
 		});
 	}
 }

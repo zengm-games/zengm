@@ -53,15 +53,15 @@ const CustomMoodItemsForm = ({
 	const teamsRaw = useDropdownOptions("teamsAndAll");
 	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
 	const tidsByAbbrev: Record<string, number> = {};
-	for (let tid = 0; tid < teamInfoCache.length; tid++) {
-		tidsByAbbrev[teamInfoCache[tid].abbrev] = tid;
+	for (const [tid, t] of teamInfoCache.entries()) {
+		tidsByAbbrev[t.abbrev] = tid;
 	}
 	const teams = teamsRaw.map((t) => {
 		let tid: number | "all";
 		if (t.key === "all") {
 			tid = "all";
 		} else {
-			tid = tidsByAbbrev[t.key];
+			tid = tidsByAbbrev[t.key]!;
 		}
 
 		return {
@@ -119,7 +119,7 @@ const CustomMoodItemsForm = ({
 								{teams.map((t) => {
 									return (
 										<option key={t.tid} value={t.tid}>
-											{Array.isArray(t.value) ? t.value[0].text : t.value}
+											{Array.isArray(t.value) ? t.value[0]!.text : t.value}
 										</option>
 									);
 								})}

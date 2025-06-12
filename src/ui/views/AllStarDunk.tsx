@@ -148,7 +148,7 @@ const MoveText = ({
 	pid: number;
 	move: string;
 }) => {
-	const text = dunkInfos.move[move].name;
+	const text = dunkInfos.move[move]!.name;
 
 	const replaceInfo = getReplaceInfo({ dunk, pid, text });
 
@@ -178,7 +178,7 @@ const moveText = ({
 	move: string;
 	units: "metric" | "us";
 }) => {
-	const text = dunkInfos.move[move].name;
+	const text = dunkInfos.move[move]!.name;
 
 	const replaceInfo = getReplaceInfo({ dunk, pid, text });
 
@@ -208,7 +208,7 @@ const Log = ({
 			{dunk.winner !== undefined ? (
 				<li className={classNameTop}>
 					<p className="alert alert-success d-inline-block" style={alertStyle}>
-						{dunk.players[dunk.winner].name} is your {season} slam dunk contest
+						{dunk.players[dunk.winner]!.name} is your {season} slam dunk contest
 						champion!
 					</p>
 				</li>
@@ -248,7 +248,7 @@ const Log = ({
 					);
 				}
 
-				const p = dunk.players[event.player];
+				const p = dunk.players[event.player]!;
 
 				if (event.type === "attempt") {
 					const actualMoves = [event.dunk.move1, event.dunk.move2].filter(
@@ -270,16 +270,16 @@ const Log = ({
 							<br />
 							{event.dunk.toss !== "none" ? (
 								<>
-									Toss: {dunkInfos.toss[event.dunk.toss].name}
+									Toss: {dunkInfos.toss[event.dunk.toss]!.name}
 									<br />
 								</>
 							) : null}
-							Distance: {dunkInfos.distance[event.dunk.distance].name}
+							Distance: {dunkInfos.distance[event.dunk.distance]!.name}
 							{actualMoves.length === 1 ? (
 								<>
 									<br />
 									Move:{" "}
-									<MoveText dunk={dunk} pid={p.pid} move={actualMoves[0]} />
+									<MoveText dunk={dunk} pid={p.pid} move={actualMoves[0]!} />
 								</>
 							) : actualMoves.length === 2 ? (
 								<>
@@ -360,7 +360,7 @@ const UserDunkForm = ({
 
 	const units = useLocal((state) => state.units);
 
-	const name = dunk.players[index].name;
+	const name = dunk.players[index]!.name;
 
 	const fields: {
 		key: keyof DunkAttempt;
@@ -445,7 +445,7 @@ const UserDunkForm = ({
 											{key.startsWith("move")
 												? moveText({
 														dunk,
-														pid: dunk.players[index].pid,
+														pid: dunk.players[index]!.pid,
 														move: name,
 														units,
 													})
@@ -513,7 +513,7 @@ export const ContestantProfiles = ({
 			style={{ gap: "1.5rem 3rem", maxWidth: 900 }}
 		>
 			{players.map((p, i) => {
-				const tid = contest.players[i].tid;
+				const tid = contest.players[i]!.tid;
 
 				const allowControl =
 					contestIsDunk &&
@@ -708,7 +708,7 @@ export const ScoreTable = ({
 				</thead>
 				<tbody>
 					{players.map((p, i) => {
-						const tid = contest.players[i].tid;
+						const tid = contest.players[i]!.tid;
 
 						return (
 							<tr
@@ -725,7 +725,7 @@ export const ScoreTable = ({
 									/>
 								</td>
 								{contest.rounds.map((round, j) => {
-									const roundResult = resultsByRound[j].find(
+									const roundResult = resultsByRound[j]!.find(
 										(p) => p.index === i,
 									);
 									if (!roundResult) {

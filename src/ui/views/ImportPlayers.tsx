@@ -105,7 +105,7 @@ export const ImportPlayersInner = ({
 		) =>
 		(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 			const player = {
-				...players[index],
+				...players[index]!,
 			};
 
 			if (name === "age") {
@@ -351,7 +351,7 @@ export const ImportPlayersInner = ({
 										if (ps.season === p.exportedSeason) {
 											if (
 												ps.tid < teamInfoCache.length &&
-												!teamInfoCache[ps.tid].disabled
+												!teamInfoCache[ps.tid]!.disabled
 											) {
 												tid = ps.tid;
 											}
@@ -366,7 +366,7 @@ export const ImportPlayersInner = ({
 								if (
 									tid < PLAYER.UNDRAFTED ||
 									tid >= teamInfoCache.length ||
-									(tid >= 0 && teamInfoCache[tid].disabled)
+									(tid >= 0 && teamInfoCache[tid]!.disabled)
 								) {
 									tid = PLAYER.FREE_AGENT;
 								}

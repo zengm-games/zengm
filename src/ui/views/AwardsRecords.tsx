@@ -9,8 +9,8 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 const formatYear = (year: {
 	[key: string]: { team: string; season: number }[];
 }) => {
-	return Object.keys(year).map((k, i) => {
-		const years = helpers.yearRanges(year[k].map((y) => y.season)).join(", ");
+	return Object.entries(year).map(([k, yearInfo], i) => {
+		const years = helpers.yearRanges(yearInfo.map((y) => y.season)).join(", ");
 		return (
 			<span key={k}>
 				{i > 0 ? ", " : null}
@@ -23,9 +23,11 @@ const formatYear = (year: {
 const formatYearString = (year: {
 	[key: string]: { team: string; season: number }[];
 }) => {
-	return Object.keys(year)
-		.map((k, i) => {
-			const years = helpers.yearRanges(year[k].map((y) => y.season)).join(", ");
+	return Object.entries(year)
+		.map(([k, yearInfo], i) => {
+			const years = helpers
+				.yearRanges(yearInfo.map((y) => y.season))
+				.join(", ");
 			return `${i > 0 ? ", " : ""}${k} (${years})`;
 		})
 		.join("");

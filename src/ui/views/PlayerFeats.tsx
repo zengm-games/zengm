@@ -77,7 +77,7 @@ const PlayerFeats = ({
 							{result}
 						</a>
 					),
-					sortValue: Number.parseInt(p.score.split("-")[0]),
+					sortValue: Number.parseInt(p.score.split("-")[0]!),
 					searchValue: result,
 				},
 				p.season,

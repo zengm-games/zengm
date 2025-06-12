@@ -235,7 +235,7 @@ const DataTable = ({
 		const colOrderFiltered = state.colOrder.filter(
 			({ hidden, colIndex }) => !hidden && cols[colIndex],
 		);
-		const columns = colOrderFiltered.map(({ colIndex }) => cols[colIndex]);
+		const columns = colOrderFiltered.map(({ colIndex }) => cols[colIndex]!);
 		const colNames = columns.map((col) => col.title);
 		const processedRows = processRows({
 			cols,
@@ -244,7 +244,7 @@ const DataTable = ({
 			state,
 		}).map((row) =>
 			row.data.map((val, i) => {
-				const sortType = columns[i].sortType;
+				const sortType = columns[i]!.sortType;
 				if (sortType === "currency" || sortType === "number") {
 					return getSortVal(val, sortType, true);
 				}
@@ -420,7 +420,7 @@ const DataTable = ({
 							}
 
 							// Make sure sortSequence is not an empty array - same code is in Header
-							const sortSequence = cols[colIndex].sortSequence;
+							const sortSequence = cols[colIndex]!.sortSequence;
 							if (sortSequence && sortSequence.length === 0) {
 								return false;
 							}

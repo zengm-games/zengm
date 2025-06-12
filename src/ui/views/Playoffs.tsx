@@ -45,8 +45,8 @@ const Playoffs = ({
 		...numGamesPlayoffSeries,
 		...[...numGamesPlayoffSeries].reverse().slice(1),
 	];
-	for (let i = 0; i < series.length; i++) {
-		if (series[i].length === 0) {
+	for (const [i, row] of series.entries()) {
+		if (row.length === 0) {
 			numGamesPlayoffSeriesReflected[i] = undefined;
 			numGamesPlayoffSeriesReflected[
 				numGamesPlayoffSeriesReflected.length - 1 - i
@@ -163,7 +163,7 @@ const Playoffs = ({
 											<PlayoffMatchup
 												numGamesToWinSeries={numGamesToWinSeries[m.matchup[0]]}
 												season={season}
-												series={series[m.matchup[0]][m.matchup[1]]}
+												series={series[m.matchup[0]]![m.matchup[1]]}
 												userTid={userTid}
 												editing={editingInfo}
 											/>
@@ -202,12 +202,12 @@ const Playoffs = ({
 					<h2>Play-In Tournament</h2>
 					<p className="mb-2">
 						The {helpers.plural("winner", playIns.length)} of the{" "}
-						{playIns[0][0].home.seed}/{playIns[0][0].away.seed}{" "}
+						{playIns[0]![0].home.seed}/{playIns[0]![0].away.seed}{" "}
 						{helpers.plural("game makes", playIns.length, "games make")} the{" "}
 						playoffs. Then the{" "}
 						{helpers.plural("loser plays", playIns.length, "losers play")} the{" "}
 						{helpers.plural("winner", playIns.length)} of the{" "}
-						{playIns[0][1].home.seed}/{playIns[0][1].away.seed}{" "}
+						{playIns[0]![1].home.seed}/{playIns[0]![1].away.seed}{" "}
 						{helpers.plural("game", playIns.length)} for the final playoffs{" "}
 						{helpers.plural("spot", playIns.length)}.
 					</p>

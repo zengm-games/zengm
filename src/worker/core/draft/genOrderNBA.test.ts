@@ -23,10 +23,10 @@ test("give the 3 teams with the lowest win percentage picks not lower than 6", a
 	const draftTids = await getDraftTids();
 	const tids = [16, 28, 21]; // teams with lowest winp
 
-	for (let i = 0; i < tids.length; i++) {
-		assert(draftTids.indexOf(tids[i]) >= 0);
-		assert(draftTids.indexOf(tids[i]) <= i + 3);
-		assert.strictEqual(draftTids.lastIndexOf(tids[i]), 30 + i);
+	for (const [i, tid] of tids.entries()) {
+		assert(draftTids.indexOf(tid) >= 0);
+		assert(draftTids.indexOf(tid) <= i + 3);
+		assert.strictEqual(draftTids.lastIndexOf(tid), 30 + i);
 	}
 });
 
@@ -38,9 +38,9 @@ test("give lottery team with better record than playoff teams a pick based on ac
 	assert(draftTids.indexOf(17) <= 13);
 	assert.strictEqual(draftTids.lastIndexOf(17), 48); // bad record playoff team
 
-	for (let i = 0; i < pofteams.length; i++) {
-		assert(draftTids.indexOf(pofteams[i]) > draftTids.indexOf(17));
-		assert(draftTids.lastIndexOf(pofteams[i]) < draftTids.lastIndexOf(17));
+	for (const tid of pofteams) {
+		assert(draftTids.indexOf(tid) > draftTids.indexOf(17));
+		assert(draftTids.lastIndexOf(tid) < draftTids.lastIndexOf(17));
 	}
 });
 
@@ -50,11 +50,11 @@ test("give reverse round 2 order for teams with the same record", async () => {
 		[3, 15, 25],
 		[10, 18],
 		[13, 26],
-	]; // First set of tids can fail because all 3 teams are in the lottery, although with low odds
+	];
 
+	// First set of tids can fail because all 3 teams are in the lottery, although with low odds
 	const lotteryTids = draftTids.slice(0, 3);
-
-	for (const tid of sameRec[0]) {
+	for (const tid of sameRec[0]!) {
 		if (lotteryTids.includes(tid)) {
 			// Skip this test, it will fail otherwise
 			sameRec.shift();

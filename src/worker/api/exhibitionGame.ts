@@ -146,7 +146,7 @@ const getSeasonInfoLeague = async ({
 	const exhibitionTeams: ExhibitionTeamWithPop[] = await Promise.all(
 		teamSeasons.map(async (teamSeason) => {
 			const tid = teamSeason.tid;
-			const t = teams[tid];
+			const t = teams[tid]!;
 
 			let roundsWonText;
 			if (season === currentSeason && currentPhase < PHASE.PLAYOFFS) {
@@ -167,71 +167,65 @@ const getSeasonInfoLeague = async ({
 
 			const translatePids: Record<number, number> = {};
 
-			const teamPlayers = playersByTid[tid];
-			if (teamPlayers) {
-				for (const p of teamPlayers) {
-					translatePids[p.pid] = pid;
-					p.pid = pid;
-					pid += 1;
+			const teamPlayers = playersByTid[tid] ?? [];
+			for (const p of teamPlayers) {
+				translatePids[p.pid] = pid;
+				p.pid = pid;
+				pid += 1;
 
-					// No fatigue in exhibition game
-					if (
-						isSport("baseball") &&
-						p.pFatigue !== undefined &&
-						p.pFatigue > 0
-					) {
-						p.pFatigue = 0;
-					}
-					if (
-						isSport("hockey") &&
-						p.numConsecutiveGamesG !== undefined &&
-						p.numConsecutiveGamesG > 0
-					) {
-						p.numConsecutiveGamesG = 0;
-					}
-
-					// Reset to default, because we don't know what it should be
-					if (!isCurrentOngoingSeason) {
-						if (isSport("basketball")) {
-							p.ptModifier = 1;
-						}
-
-						p.injury = {
-							type: "Healthy",
-							gamesRemaining: 0,
-						};
-					}
+				// No fatigue in exhibition game
+				if (isSport("baseball") && p.pFatigue !== undefined && p.pFatigue > 0) {
+					p.pFatigue = 0;
+				}
+				if (
+					isSport("hockey") &&
+					p.numConsecutiveGamesG !== undefined &&
+					p.numConsecutiveGamesG > 0
+				) {
+					p.numConsecutiveGamesG = 0;
 				}
 
+				// Reset to default, because we don't know what it should be
 				if (!isCurrentOngoingSeason) {
-					// Update player values, since it will be needed for either depth chart or rosterOrder
-					g.setWithoutSavingToDB("season", season);
-					g.setWithoutSavingToDB("numActiveTeams", 2);
-					local.playerOvrMean = 48;
-					local.playerOvrStd = 10;
-					local.playerOvrMeanStdStale = false;
-					for (const p of teamPlayers) {
-						await player.develop(p, 0, false, 1);
-						await player.updateValues(p);
+					if (isSport("basketball")) {
+						p.ptModifier = 1;
 					}
 
-					// Reset rosterOrder for past seasons, since we don't store it
-					if (isSport("basketball")) {
-						const rosterOrderByPid = getRosterOrderByPid(
-							teamPlayers.map((p) => ({
-								pid: p.pid,
-								valueNoPot: p.valueNoPot,
-								valueNoPotFuzz: p.valueNoPotFuzz,
-								ratings: {
-									pos: p.ratings.at(-1)!.pos,
-								},
-							})),
-							tid,
-							false,
-						);
-						for (const p of teamPlayers) {
-							p.rosterOrder = rosterOrderByPid.get(p.pid);
-						}
+					p.injury = {
+						type: "Healthy",
+						gamesRemaining: 0,
+					};
+				}
+			}
+
+			if (!isCurrentOngoingSeason) {
+				// Update player values, since it will be needed for either depth chart or rosterOrder
+				g.setWithoutSavingToDB("season", season);
+				g.setWithoutSavingToDB("numActiveTeams", 2);
+				local.playerOvrMean = 48;
+				local.playerOvrStd = 10;
+				local.playerOvrMeanStdStale = false;
+				for (const p of teamPlayers) {
+					await player.develop(p, 0, false, 1);
+					await player.updateValues(p);
+				}
+
+				// Reset rosterOrder for past seasons, since we don't store it
+				if (isSport("basketball")) {
+					const rosterOrderByPid = getRosterOrderByPid(
+						teamPlayers.map((p) => ({
+							pid: p.pid,
+							valueNoPot: p.valueNoPot,
+							valueNoPotFuzz: p.valueNoPotFuzz,
+							ratings: {
+								pos: p.ratings.at(-1)!.pos,
+							},
+						})),
+						tid,
+						false,
+					);
+					for (const p of teamPlayers) {
+						p.rosterOrder = rosterOrderByPid.get(p.pid);
 					}
 				}
 			}
@@ -462,7 +456,7 @@ export const simExhibitionGame = async (
 		playByPlay: result.playByPlay as any,
 		teamSeasonOverrides: teams,
 	});
-	for (let i = 0; i < 2; i++) {
+	for (const i of [0, 1] as const) {
 		const j = i === 0 ? 1 : 0;
 		liveSim.initialBoxScore.teams[i].season = teams[j].season;
 	}

@@ -376,7 +376,7 @@ const RetiredJerseyNumbers = ({
 	const showSortOptions = sortedJerseyNumbers.length > 1;
 
 	const findUnsortedIndex = (sortedIndex: number) => {
-		const target = sortedJerseyNumbers[indexStart + sortedIndex];
+		const target = sortedJerseyNumbers[indexStart + sortedIndex]!;
 		const unsortedIndex = retiredJerseyNumbers.indexOf(target) - indexStart;
 		if (unsortedIndex < 0) {
 			throw new Error("Should never happen");

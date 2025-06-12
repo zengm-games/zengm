@@ -35,8 +35,8 @@ const getPayroll = async (
 		}
 
 		const contracts = input;
-		for (let i = 0; i < contracts.length; i++) {
-			payroll += contracts[i].amount;
+		for (const contract of contracts) {
+			payroll += contract.amount;
 		}
 	}
 

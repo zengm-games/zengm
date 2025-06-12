@@ -48,11 +48,11 @@ const madeHof = (
 	let total = 0;
 	let df = -50;
 
-	for (let i = 0; i < winShares.length; i++) {
-		total += winShares[i];
+	for (const [i, winShare] of winShares.entries()) {
+		total += winShare;
 
 		if (i < 5) {
-			df += winShares[i];
+			df += winShare;
 		}
 	}
 
@@ -60,7 +60,7 @@ const madeHof = (
 	const fudgeSeasons =
 		Math.min(earliestSeason, g.get("startingSeason")) - p.draft.year - 5;
 
-	if (fudgeSeasons > 0) {
+	if (fudgeSeasons > 0 && winShares[0] !== undefined) {
 		total += winShares[0] * fudgeSeasons;
 	}
 

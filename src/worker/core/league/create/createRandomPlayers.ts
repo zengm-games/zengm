@@ -75,8 +75,7 @@ const createRandomPlayers = async ({
 		const tids = [...activeTids];
 		random.shuffle(tids);
 
-		for (let i = 0; i < draftClass.length; i++) {
-			const p = draftClass[i];
+		for (const [i, p] of draftClass.entries()) {
 			let round = 0;
 			let pick = 0;
 			const roundTemp = Math.floor(i / activeTids.length) + 1;
@@ -100,9 +99,9 @@ const createRandomPlayers = async ({
 			p.draft = {
 				round,
 				pick,
-				tid: round === 0 ? -1 : tids[pick - 1],
+				tid: round === 0 ? -1 : tids[pick - 1]!,
 				year: g.get("season") - numYearsAgo,
-				originalTid: round === 0 ? -1 : tids[pick - 1],
+				originalTid: round === 0 ? -1 : tids[pick - 1]!,
 				pot,
 				ovr,
 				skills,
@@ -121,7 +120,7 @@ const createRandomPlayers = async ({
 				}
 
 				const contract: PlayerContract = {
-					amount: rookieSalaries[i],
+					amount: rookieSalaries[i]!,
 					exp: g.get("season") - numYearsAgo + years,
 				};
 				if (g.get("draftPickAutoContract")) {
@@ -178,7 +177,7 @@ const createRandomPlayers = async ({
 		const retiredJerseyNumbers =
 			t?.retiredJerseyNumbers?.map((row) => row.number) ?? [];
 
-		numPlayersByTid[tid2] += 1;
+		numPlayersByTid[tid2]! += 1;
 		p.tid = tid2;
 		await player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
 			retired: retiredJerseyNumbers,
@@ -232,12 +231,12 @@ const createRandomPlayers = async ({
 	// Drafted players kept with own team, with some probability
 	const playersStayedOnOwnTeam = new Set();
 	for (let i = 0; i < numPlayerPerTeam * activeTids.length; i++) {
-		const p = keptPlayers[i];
+		const p = keptPlayers[i]!;
 
 		if (
 			p.draft.tid >= 0 &&
 			Math.random() < probStillOnDraftTeam(p) &&
-			numPlayersByTid[p.draft.tid] < numPlayerPerTeam
+			numPlayersByTid[p.draft.tid]! < numPlayerPerTeam
 		) {
 			await addPlayerToTeam(p, p.draft.tid);
 			playersStayedOnOwnTeam.add(p);
@@ -253,7 +252,7 @@ const createRandomPlayers = async ({
 		let numTeamsDone = 0;
 
 		for (const currentTid of tids) {
-			if (numPlayersByTid[currentTid] >= numPlayerPerTeam) {
+			if (numPlayersByTid[currentTid]! >= numPlayerPerTeam) {
 				numTeamsDone += 1;
 				continue;
 			}
@@ -315,11 +314,11 @@ const createRandomPlayers = async ({
 
 		for (const pos of Object.keys(groupedPlayers)) {
 			const limit = Math.round(
-				(maxNumFreeAgents * POSITION_COUNTS[pos]) / positionCountsSum,
+				(maxNumFreeAgents * POSITION_COUNTS[pos]!) / positionCountsSum,
 			);
 
 			for (let i = 0; i < limit; i++) {
-				addToFreeAgents(groupedPlayers[pos][i]);
+				addToFreeAgents(groupedPlayers[pos]![i]);
 			}
 		}
 	}

@@ -109,12 +109,10 @@ const NewTeam = ({
 	teams,
 	userTid,
 }: View<"newTeam">) => {
-	const [tid, setTid] = useState(
-		teams && teams.length > 0 ? teams[0].tid : undefined,
-	);
+	const [tid, setTid] = useState(teams?.[0]?.tid ?? undefined);
 	const [submitting, setSubmitting] = useState(false);
 
-	if (tid === undefined && teams && teams.length > 0) {
+	if (tid === undefined && teams?.[0]) {
 		setTid(teams[0].tid);
 	}
 
@@ -338,7 +336,7 @@ const NewTeam = ({
 							</>
 						)}
 						<br />
-						{confs[t.cid] ? confs[t.cid].name : null}
+						{confs[t.cid] ? confs[t.cid]!.name : null}
 						<br />
 						<PopText tid={tid} teams={teams} numActiveTeams={numActiveTeams} />
 

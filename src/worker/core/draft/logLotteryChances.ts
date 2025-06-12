@@ -12,14 +12,14 @@ const logLotteryChances = (
 	draftPicksIndexed: DraftPickWithoutKey[][],
 	conditions?: Conditions,
 ) => {
-	for (let i = 0; i < chances.length; i++) {
-		if (i < teams.length) {
+	for (const [i, chance] of chances.entries()) {
+		if (teams[i]) {
 			const originalTid = teams[i].tid;
 			const dp = draftPicksIndexed[originalTid]?.[1];
 
 			if (dp) {
 				const tid = dp.tid;
-				const txt = logLotteryTxt(tid, "chance", chances[i]);
+				const txt = logLotteryTxt(tid, "chance", chance);
 				logAction(tid, txt, 0, conditions);
 			}
 		}

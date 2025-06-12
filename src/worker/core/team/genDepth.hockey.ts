@@ -215,18 +215,18 @@ const genDepth = async (
 						// Recompute lines, with everyone shifted down
 						const oldDepth = [...depth.F];
 						depth.F = [
-							startingC[0],
-							startingW[0],
-							startingW[1],
-							startingC[1],
-							startingW[2],
-							startingW[3],
-							startingC[2],
-							startingW[4],
-							startingW[5],
-							startingC[3],
-							startingW[6],
-							startingW[7],
+							startingC[0]!,
+							startingW[0]!,
+							startingW[1]!,
+							startingC[1]!,
+							startingW[2]!,
+							startingW[3]!,
+							startingC[2]!,
+							startingW[4]!,
+							startingW[5]!,
+							startingC[3]!,
+							startingW[6]!,
+							startingW[7]!,
 						];
 
 						depth.F.push(...oldDepth.filter((pid) => !depth.F.includes(pid)));

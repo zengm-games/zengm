@@ -38,8 +38,8 @@ const hasPlayerInfoChanged = (
 	}
 
 	for (let i = 0; i < inputPlayers.length; i++) {
-		const inputP = inputPlayers[i];
-		const stateP = statePlayers[i];
+		const inputP = inputPlayers[i]!;
+		const stateP = statePlayers[i]!;
 
 		if (
 			inputP.pid !== stateP.p.pid ||

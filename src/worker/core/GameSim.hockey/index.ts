@@ -213,7 +213,7 @@ class GameSim extends GameSimBase {
 			for (const pos of ["G", "D", "F"] as const) {
 				const numInDepthChart = NUM_LINES[pos] * NUM_PLAYERS_PER_LINE[pos];
 				for (let i = 0; i < numInDepthChart; i++) {
-					inDepthChart.add(this.team[t].depth[pos][i].id);
+					inDepthChart.add(this.team[t].depth[pos][i]!.id);
 				}
 			}
 
@@ -249,28 +249,27 @@ class GameSim extends GameSimBase {
 
 				const lines: PlayerGameSim[][] = range(NUM_LINES[pos]).map(() => []);
 				let ind = 0;
-				for (let i = 0; i < players.length; i++) {
-					const p = players[i];
+				for (const [i, p] of players.entries()) {
 					if (p.injured || usedPlayerIDs.has(p.id)) {
 						continue;
 					}
 
 					if (i < numInDepthChart || !inDepthChart.has(p.id)) {
-						if (lines[ind].length === NUM_PLAYERS_PER_LINE[pos]) {
+						if (lines[ind]!.length === NUM_PLAYERS_PER_LINE[pos]) {
 							ind += 1;
 							if (ind === NUM_LINES[pos]) {
 								break;
 							}
 						}
-						if (lines[ind].length < NUM_PLAYERS_PER_LINE[pos]) {
-							lines[ind].push(p);
+						if (lines[ind]!.length < NUM_PLAYERS_PER_LINE[pos]) {
+							lines[ind]!.push(p);
 							usedPlayerIDs.add(p.id);
 						}
 					}
 				}
 
 				// If too injured to fill one line, poach players from inDepthChart
-				const line = lines[0];
+				const line = lines[0]!;
 				if (line.length < NUM_PLAYERS_PER_LINE[pos]) {
 					for (const p of players) {
 						if (p.injured || usedPlayerIDs.has(p.id)) {
@@ -299,8 +298,7 @@ class GameSim extends GameSimBase {
 				const wings = [];
 				const notInDefinedLines = [];
 
-				for (let i = 0; i < players.length; i++) {
-					const p = players[i];
+				for (const [i, p] of players.entries()) {
 					if (p.injured || usedPlayerIDs.has(p.id)) {
 						continue;
 					}
@@ -381,7 +379,7 @@ class GameSim extends GameSimBase {
 			for (const pos of ["G", "D", "F"] as const) {
 				const players = this.team[t].depth[pos];
 
-				const line = this.lines[t][pos][0];
+				const line = this.lines[t][pos][0]!;
 				const numNeeded = NUM_PLAYERS_PER_LINE[pos];
 				if (line.length < numNeeded) {
 					for (const p of players) {
@@ -405,7 +403,7 @@ class GameSim extends GameSimBase {
 			homeCourtFactor *
 			helpers.bound(1 + g.get("homeCourtAdvantage") / 100, 0.01, Infinity);
 
-		for (let t = 0; t < 2; t++) {
+		for (const t of teamNums) {
 			let factor;
 
 			if (t === 0) {
@@ -414,10 +412,10 @@ class GameSim extends GameSimBase {
 				factor = 1.0 / homeCourtModifier; // Penalty for away team
 			}
 
-			for (let p = 0; p < this.team[t].player.length; p++) {
-				for (const r of Object.keys(this.team[t].player[p].compositeRating)) {
+			for (const p of this.team[t].player) {
+				for (const r of Object.keys(p.compositeRating)) {
 					if (r !== "endurance") {
-						this.team[t].player[p].compositeRating[r] *= factor;
+						p.compositeRating[r] *= factor;
 					}
 				}
 			}
@@ -445,23 +443,23 @@ class GameSim extends GameSimBase {
 		});
 
 		// Delete stuff that isn't needed before returning
-		for (let t = 0; t < 2; t++) {
+		for (const t of teamNums) {
 			delete this.team[t].compositeRating;
 			// @ts-expect-error
 			delete this.team[t].pace;
 
-			for (let p = 0; p < this.team[t].player.length; p++) {
+			for (const p of this.team[t].player) {
 				// @ts-expect-error
-				delete this.team[t].player[p].age;
+				delete p.age;
 				// @ts-expect-error
-				delete this.team[t].player[p].valueNoPot;
-				delete this.team[t].player[p].compositeRating;
+				delete p.valueNoPot;
+				delete p.compositeRating;
 				// @ts-expect-error
-				delete this.team[t].player[p].ptModifier;
-				delete this.team[t].player[p].stat.benchTime;
-				delete this.team[t].player[p].stat.courtTime;
-				delete this.team[t].player[p].stat.energy;
-				delete this.team[t].player[p].numConsecutiveGamesG;
+				delete p.ptModifier;
+				delete p.stat.benchTime;
+				delete p.stat.courtTime;
+				delete p.stat.energy;
+				delete p.numConsecutiveGamesG;
 			}
 		}
 
@@ -550,13 +548,13 @@ class GameSim extends GameSimBase {
 		}) as [PlayerGameSim[], PlayerGameSim[]];
 
 		const goalies = teamNums.map((t) => {
-			return this.lines[t === 0 ? 1 : 0].G[0][0];
+			return this.lines[t === 0 ? 1 : 0].G[0]![0]!;
 		}) as [PlayerGameSim, PlayerGameSim];
 
-		const skatersIndex = [0, 0];
+		const skatersIndex: [number, number] = [0, 0];
 
 		const getNextSkater = (t: 0 | 1) => {
-			const skater = skaters[t][skatersIndex[t] % skaters[t].length];
+			const skater = skaters[t][skatersIndex[t] % skaters[t].length]!;
 			skatersIndex[t] += 1;
 			return skater;
 		};
@@ -1382,10 +1380,10 @@ class GameSim extends GameSimBase {
 		playersRemainingOn: PlayerGameSim[],
 	) {
 		let nextLine =
-			this.lines[t][pos][(this.currentLine[t][pos] + 1) % NUM_LINES[pos]];
+			this.lines[t][pos][(this.currentLine[t][pos] + 1) % NUM_LINES[pos]]!;
 		if (nextLine.length === 0 && this.currentLine[t][pos] !== 0) {
 			// This could happen if a line is empty due to a ton of injuries
-			nextLine = this.lines[t][pos][0];
+			nextLine = this.lines[t][pos][0]!;
 		}
 
 		if (nextLine.length === 0) {
@@ -1438,12 +1436,11 @@ class GameSim extends GameSimBase {
 		let newLine = this.lines[t][pos][this.currentLine[t][pos]];
 		if (!newLine || newLine.length < NUM_PLAYERS_PER_LINE[pos]) {
 			this.currentLine[t][pos] = 0;
-			newLine = this.lines[t][pos][this.currentLine[t][pos]];
+			newLine = this.lines[t][pos][this.currentLine[t][pos]]!;
 		}
 
 		newLine = [...newLine];
-		for (let i = 0; i < newLine.length; i++) {
-			const p = newLine[i];
+		for (const [i, p] of newLine.entries()) {
 			if (this.penaltyBox.has(t, p) || playersRemainingOn.includes(p)) {
 				newLine[i] = this.getPlayerFromNextLine(t, pos, playersRemainingOn);
 			}
@@ -1536,10 +1533,10 @@ class GameSim extends GameSimBase {
 
 		for (const t of teamNums) {
 			if (options.type === "starters") {
-				this.playersOnIce[t].C = this.lines[t].F[0].slice(0, 1);
-				this.playersOnIce[t].W = this.lines[t].F[0].slice(1, 3);
-				this.playersOnIce[t].D = [...this.lines[t].D[0]];
-				this.playersOnIce[t].G = [...this.lines[t].G[0]];
+				this.playersOnIce[t].C = this.lines[t].F[0]!.slice(0, 1);
+				this.playersOnIce[t].W = this.lines[t].F[0]!.slice(1, 3);
+				this.playersOnIce[t].D = [...this.lines[t].D[0]!];
+				this.playersOnIce[t].G = [...this.lines[t].G[0]!];
 
 				// No need to track shft here because updatePlayersOnIce will be called with newPeriod anyway. So actually, this "starters" mode of updatePlayersOnIce could be eliminated as long as gs was tracked properly in the first newPeriod call.
 			} else if (options.type === "penaltyOver") {
@@ -1895,7 +1892,7 @@ class GameSim extends GameSimBase {
 			"desc",
 		);
 
-		return players[0];
+		return players[0]!;
 	}
 
 	// Pass undefined as p for some team-only stats

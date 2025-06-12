@@ -10,9 +10,12 @@ import { replace as replace2 } from "./replace.ts";
 const getVersionNumber = async () => {
 	const files = await fs.readdir("build/gen");
 	for (const file of files) {
-		if (file.endsWith(".js")) {
-			const versionNumber = file.split("-")[1].replace(".js", "");
-			return versionNumber;
+		if (file.startsWith("ui") && file.endsWith(".js")) {
+			const filePart = file.split("-")[1];
+			if (filePart !== undefined) {
+				const versionNumber = filePart.replace(".js", "");
+				return versionNumber;
+			}
 		}
 	}
 

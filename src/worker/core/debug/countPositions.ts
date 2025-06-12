@@ -37,7 +37,7 @@ const countPositions = async () => {
 	}
 
 	for (const position of Object.keys(posOvrs)) {
-		posOvrs[position] /= posCounts[position];
+		posOvrs[position]! /= posCounts[position]!;
 	}
 
 	if (isSport("football")) {
@@ -53,7 +53,7 @@ const countPositions = async () => {
 				`${posCounts[position]} / ${Math.round(
 					(players.length * target) / positionCountsTotal,
 				)}`,
-				Math.round(posOvrs[position]),
+				Math.round(posOvrs[position]!),
 			);
 		}
 	} else {

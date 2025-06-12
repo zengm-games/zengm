@@ -70,7 +70,7 @@ const groupTeamsByDid = (
 			other: [],
 		};
 
-		const grouped = teamsGroupedByDid[div.did];
+		const grouped = teamsGroupedByDid[div.did]!;
 
 		for (const t of teams) {
 			// Only label same-division teams as div if numGamesDiv is set. Otherwise, put them in conf (if same-conference and if numGamesConf is set) or other.
@@ -130,12 +130,12 @@ const getNumGamesTargetsByDid = (
 	const divs = settings.divs;
 
 	for (const div of divs) {
-		const divSize = teamsGroupedByDid[div.did].div.length;
+		const divSize = teamsGroupedByDid[div.did]!.div.length;
 		if (divSize === 0 && numGamesInfo.numGamesDiv !== null) {
 			continue;
 		}
 
-		const confSize = teamsGroupedByDid[div.did].conf.length;
+		const confSize = teamsGroupedByDid[div.did]!.conf.length;
 
 		const denominators = {
 			div: divSize,
@@ -315,7 +315,7 @@ const finalize = ({
 
 		// If there are no teams in a div, this check is needed
 		if (numGamesTargetsByDid[did]) {
-			const numTeams = teamsGroupedByDid[did].div.length;
+			const numTeams = teamsGroupedByDid[did]!.div.length;
 			const numGames = numGamesTargetsByDid[did].excess.div;
 			allowOneTeamWithOneGameRemainingBase.div[did] =
 				(numTeams * numGames) % 2 === 1;
@@ -394,22 +394,22 @@ const finalize = ({
 			if (tidsEither.has(tid0, tid1)) {
 				// Already have an "either" game between these two teams, so instead make them a home and away each
 				tidsEither.remove(tid0, tid1);
-				scheduleCounts[tid0][level].either -= 1;
-				scheduleCounts[tid1][level].either -= 1;
+				scheduleCounts[tid0]![level].either -= 1;
+				scheduleCounts[tid1]![level].either -= 1;
 
 				// Swapping order for the 2nd one is irrelevant I think, but whatever
 				tidsDoneTwoExcess.push([tid0, tid1], [tid1, tid0]);
 
-				scheduleCounts[tid0][level].home += 1;
-				scheduleCounts[tid0][level].away += 1;
-				scheduleCounts[tid1][level].home += 1;
-				scheduleCounts[tid1][level].away += 1;
+				scheduleCounts[tid0]![level].home += 1;
+				scheduleCounts[tid0]![level].away += 1;
+				scheduleCounts[tid1]![level].home += 1;
+				scheduleCounts[tid1]![level].away += 1;
 			} else {
 				// Record as an "either" game
 				tidsEither.add(tid0, tid1);
 
-				scheduleCounts[tid0][level].either += 1;
-				scheduleCounts[tid1][level].either += 1;
+				scheduleCounts[tid0]![level].either += 1;
+				scheduleCounts[tid1]![level].either += 1;
 			}
 		};
 
@@ -423,7 +423,7 @@ const finalize = ({
 			> = {};
 			for (const t of teams) {
 				excessGamesRemainingByTid[t.tid] = {
-					...numGamesTargetsByDid[t.seasonAttrs.did].excess,
+					...numGamesTargetsByDid[t.seasonAttrs.did]!.excess,
 				};
 			}
 			// console.log('excessGamesRemainingByTid', helpers.deepCopy(excessGamesRemainingByTid));
@@ -433,10 +433,10 @@ const finalize = ({
 			random.shuffle(teamIndexes);
 
 			for (const teamIndex of teamIndexes) {
-				const t = teams[teamIndex];
+				const t = teams[teamIndex]!;
 
-				const teamsGrouped = teamsGroupedByDid[t.seasonAttrs.did];
-				const excessGamesRemaining = excessGamesRemainingByTid[t.tid];
+				const teamsGrouped = teamsGroupedByDid[t.seasonAttrs.did]!;
+				const excessGamesRemaining = excessGamesRemainingByTid[t.tid]!;
 
 				for (const level of LEVELS) {
 					const numGames = excessGamesRemaining[level];
@@ -455,27 +455,27 @@ const finalize = ({
 					// Order by team with most games remaining
 					groupIndexes = orderBy(
 						groupIndexes,
-						(i) => excessGamesRemainingByTid[group[i].tid][level],
+						(i) => excessGamesRemainingByTid[group[i]!.tid]![level],
 						"desc",
 					);
 					// console.log('team games remaining', groupIndexes.map(i => excessGamesRemainingByTid[group[i].tid][level]));
 
 					for (const groupIndex of groupIndexes) {
-						const t2 = group[groupIndex];
+						const t2 = group[groupIndex]!;
 
 						if (t.tid === t2.tid) {
 							continue;
 						}
 
 						// Make sure other team needs a game
-						if (excessGamesRemainingByTid[t2.tid][level] === 0) {
+						if (excessGamesRemainingByTid[t2.tid]![level] === 0) {
 							continue;
 						}
 
 						logAsEitherIfApplicable(t.tid, t2.tid, level);
 
 						excessGamesRemaining[level] -= 1;
-						excessGamesRemainingByTid[t2.tid][level] -= 1;
+						excessGamesRemainingByTid[t2.tid]![level] -= 1;
 
 						if (excessGamesRemaining[level] === 0) {
 							break;
@@ -546,8 +546,8 @@ const finalize = ({
 					break;
 				}
 
-				const t0 = teamsByTid[tid0];
-				const t1 = teamsByTid[tid1];
+				const t0 = teamsByTid[tid0]!;
+				const t1 = teamsByTid[tid1]!;
 				const level = getLevel(t0, t1);
 
 				logAsEitherIfApplicable(tid0, tid1, level);
@@ -581,30 +581,36 @@ const finalize = ({
 			const maxHomeOrAway = (tid: number, level: (typeof LEVELS)[number]) => {
 				// Use scheduleCounts rather than scheduleCounts2 because scheduleCounts2 gets mutated in the tidsEither for loop and is inconsistent when this is called (game removed from either before placed in home/away)
 				const numGamesAtLevel =
-					scheduleCounts[tid][level].away +
-					scheduleCounts[tid][level].home +
-					scheduleCounts[tid][level].either;
+					scheduleCounts[tid]![level].away +
+					scheduleCounts[tid]![level].home +
+					scheduleCounts[tid]![level].either;
 
 				// If it's an odd number of games, round up to allow extra home/away game
 				return Math.ceil(numGamesAtLevel / 2);
 			};
 
 			for (const [tid0, tid1] of shuffledTidsEither) {
-				const t0 = teamsByTid[tid0];
-				const t1 = teamsByTid[tid1];
+				const t0 = teamsByTid[tid0]!;
+				const t1 = teamsByTid[tid1]!;
 
 				const level = getLevel(t0, t1);
 
-				scheduleCounts2[tid0][level].either -= 1;
-				scheduleCounts2[tid1][level].either -= 1;
+				scheduleCounts2[tid0]![level].either -= 1;
+				scheduleCounts2[tid1]![level].either -= 1;
 
 				const getHomeMinCutoffDiffs = () => {
 					const cutoffDiff = (tid: number, homeAway: "home" | "away") =>
-						maxHomeOrAway(tid, level) - scheduleCounts2[tid][level][homeAway];
-					const cutoffDiffs = [tid0, tid1].map((tid) => ({
-						home: cutoffDiff(tid, "home"),
-						away: cutoffDiff(tid, "away"),
-					}));
+						maxHomeOrAway(tid, level) - scheduleCounts2[tid]![level][homeAway];
+					const cutoffDiffs = [
+						{
+							home: cutoffDiff(tid0, "home"),
+							away: cutoffDiff(tid0, "away"),
+						},
+						{
+							home: cutoffDiff(tid1, "home"),
+							away: cutoffDiff(tid1, "away"),
+						},
+					] as const;
 					// console.log('cutoffDiffs', cutoffDiffs, [tid0, tid1], scheduleCounts2[tid0][level].home, scheduleCounts2[tid0][level].away, scheduleCounts2[tid1][level].home, scheduleCounts2[tid1][level].away)
 					/*[0, 1].map(i => {
 						if (cutoffDiffs[i].home === 0 && cutoffDiffs[i].away === 0) {
@@ -617,7 +623,7 @@ const finalize = ({
 					return [
 						Math.min(cutoffDiffs[0].home, cutoffDiffs[1].away),
 						Math.min(cutoffDiffs[1].home, cutoffDiffs[0].away),
-					];
+					] as const;
 				};
 
 				let homeMinCutoffDiffs = getHomeMinCutoffDiffs();
@@ -630,7 +636,7 @@ const finalize = ({
 					for (const tid of [tid0, tid1]) {
 						if (tidsDoneIndexesByLevel[level][tid] && !swapped) {
 							for (const tidsDoneIndex of tidsDoneIndexesByLevel[level][tid]) {
-								const matchup = tidsDone[tidsDoneIndex];
+								const matchup = tidsDone[tidsDoneIndex]!;
 
 								// Skip if it's the same two teams, cause reversing that won't help
 								if (
@@ -643,15 +649,15 @@ const finalize = ({
 								// Will both teams still be valid if we swap?
 								if (
 									maxHomeOrAway(matchup[0], level) >
-										scheduleCounts2[matchup[0]][level].away &&
+										scheduleCounts2[matchup[0]]![level].away &&
 									maxHomeOrAway(matchup[1], level) >
-										scheduleCounts2[matchup[1]][level].home
+										scheduleCounts2[matchup[1]]![level].home
 								) {
 									// console.log('before', scheduleCounts2[matchup[0]][level].home, scheduleCounts2[matchup[0]][level].away, scheduleCounts2[matchup[1]][level].home, scheduleCounts2[matchup[1]][level].away)
-									scheduleCounts2[matchup[0]][level].home -= 1;
-									scheduleCounts2[matchup[0]][level].away += 1;
-									scheduleCounts2[matchup[1]][level].home += 1;
-									scheduleCounts2[matchup[1]][level].away -= 1;
+									scheduleCounts2[matchup[0]]![level].home -= 1;
+									scheduleCounts2[matchup[0]]![level].away += 1;
+									scheduleCounts2[matchup[1]]![level].home += 1;
+									scheduleCounts2[matchup[1]]![level].away -= 1;
 									// console.log('after', scheduleCounts2[matchup[0]][level].home, scheduleCounts2[matchup[0]][level].away, scheduleCounts2[matchup[1]][level].home, scheduleCounts2[matchup[1]][level].away)
 
 									matchup.reverse();
@@ -678,13 +684,13 @@ const finalize = ({
 				} else if (homeMinCutoffDiffs[0] > homeMinCutoffDiffs[1]) {
 					// tid0 home
 					tidsDone.push([tid0, tid1]);
-					scheduleCounts2[tid0][level].home += 1;
-					scheduleCounts2[tid1][level].away += 1;
+					scheduleCounts2[tid0]![level].home += 1;
+					scheduleCounts2[tid1]![level].away += 1;
 				} else {
 					// tid1 home
 					tidsDone.push([tid1, tid0]);
-					scheduleCounts2[tid1][level].home += 1;
-					scheduleCounts2[tid0][level].away += 1;
+					scheduleCounts2[tid1]![level].home += 1;
+					scheduleCounts2[tid0]![level].away += 1;
 				}
 
 				// Track in tidsDoneIndexesByLevel
@@ -738,8 +744,8 @@ const newScheduleGood = (
 
 	// Make all the required matchups (perTeam)
 	for (const t of teams) {
-		const teamsGrouped = teamsGroupedByDid[t.seasonAttrs.did];
-		const numGamesTargets = numGamesTargetsByDid[t.seasonAttrs.did];
+		const teamsGrouped = teamsGroupedByDid[t.seasonAttrs.did]!;
+		const numGamesTargets = numGamesTargetsByDid[t.seasonAttrs.did]!;
 
 		for (const level of LEVELS) {
 			const group = teamsGrouped[level];
@@ -753,8 +759,8 @@ const newScheduleGood = (
 				const numHome = Math.floor(numGamesTargets.perTeam[level] / 2);
 				for (let i = 0; i < numHome; i++) {
 					tidsDone.push([t.tid, t2.tid]);
-					scheduleCounts[t.tid][level].home += 1;
-					scheduleCounts[t2.tid][level].away += 1;
+					scheduleCounts[t.tid]![level].home += 1;
+					scheduleCounts[t2.tid]![level].away += 1;
 				}
 
 				// Record either games only for the lower tid, so they don't get double counted
@@ -762,8 +768,8 @@ const newScheduleGood = (
 					const numEither = numGamesTargets.perTeam[level] % 2;
 					for (let i = 0; i < numEither; i++) {
 						tidsEither.add(t.tid, t2.tid);
-						scheduleCounts[t.tid][level].either += 1;
-						scheduleCounts[t2.tid][level].either += 1;
+						scheduleCounts[t.tid]![level].either += 1;
+						scheduleCounts[t2.tid]![level].either += 1;
 					}
 				}
 			}
@@ -848,19 +854,19 @@ const newSchedule = (
 
 			for (let j = 0; j <= jMax; j++) {
 				if (
-					!tidsInDays[j].includes(tids[i][0]) &&
-					!tidsInDays[j].includes(tids[i][1])
+					!tidsInDays[j]!.includes(tids[i]![0]) &&
+					!tidsInDays[j]!.includes(tids[i]![1])
 				) {
-					tidsInDays[j].push(tids[i][0], tids[i][1]);
-					days[j].push(tids[i]);
+					tidsInDays[j]!.push(tids[i]![0], tids[i]![1]);
+					days[j]!.push(tids[i]!);
 					used = true;
 					break;
 				}
 			}
 
 			if (!used) {
-				days.push([tids[i]]);
-				tidsInDays.push([tids[i][0], tids[i][1]]);
+				days.push([tids[i]!]);
+				tidsInDays.push([tids[i]![0], tids[i]![1]]);
 				jMax += 1;
 			}
 		}

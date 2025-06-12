@@ -98,7 +98,7 @@ const processPlayersHallOfFame = <
 		const legacyTid = Number.parseInt(
 			Object.keys(teamSums).reduce(
 				(teamA: any, teamB: any) =>
-					teamSums[teamA] > teamSums[teamB] ? teamA : teamB,
+					teamSums[teamA]! > teamSums[teamB]! ? teamA : teamB,
 				-1,
 			),
 		);

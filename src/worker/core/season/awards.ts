@@ -216,8 +216,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 			);
 			let maxGP = 0; // Start at 0 rather than -Infinity because we're not interested in positions with 0 games played
 			let maxIndex;
-			for (let i = 0; i < gpF.length; i++) {
-				const gp = gpF[i];
+			for (const [i, gp] of gpF.entries()) {
 				if (gp > maxGP) {
 					maxGP = gp;
 					maxIndex = i;
@@ -252,7 +251,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 		for (const p of players) {
 			p.currentStats.fracWS = Math.min(
 				// Inner max is to handle negative totalWS
-				p.currentStats.ws / Math.max(totalWS[p.currentStats.tid], 1),
+				p.currentStats.ws / Math.max(totalWS[p.currentStats.tid]!, 1),
 
 				// In the rare case that a team has very low or even negative WS, don't let anybody have a crazy high fracWS
 				0.8,
@@ -293,7 +292,7 @@ const teamAwards = async (
 ) => {
 	const teams = await orderTeams(teamsUnsorted, teamsUnsorted);
 
-	if (teams.length === 0) {
+	if (!teams[0]) {
 		throw new Error("No teams found");
 	}
 

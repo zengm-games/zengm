@@ -522,27 +522,28 @@ const yearRanges = (arrInput: number[]): string[] => {
 	arr.sort((a, b) => a - b);
 
 	const runArr: string[] = [];
-	const tempArr = [[arr[0]]];
+	const tempArr = [[arr[0]!]];
 
 	for (let i = 1; i < arr.length; i++) {
+		// @ts-expect-error
 		if (arr[i] - arr[i - 1] > 1) {
 			tempArr.push([]);
 		}
 
-		tempArr.at(-1)!.push(arr[i]);
+		tempArr.at(-1)!.push(arr[i]!);
 	}
 
-	for (let i = 0; i < tempArr.length; i++) {
+	for (const row of tempArr) {
 		// runs of up to 2 consecutive years are displayed individually
-		if (tempArr[i].length <= 2) {
-			runArr.push(String(tempArr[i][0]));
+		if (row.length <= 2) {
+			runArr.push(String(row[0]));
 
-			if (tempArr[i].length === 2) {
-				runArr.push(String(tempArr[i][1]));
+			if (row.length === 2) {
+				runArr.push(String(row[1]));
 			}
 		} else {
 			// runs of 3 or more are displayed as a range
-			runArr.push(`${tempArr[i][0]}-${tempArr[i].at(-1)}`);
+			runArr.push(`${row[0]}-${row.at(-1)}`);
 		}
 	}
 

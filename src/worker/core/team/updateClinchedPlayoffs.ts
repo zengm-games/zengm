@@ -108,7 +108,7 @@ const getClinchedPlayoffs = async (
 			// Play-in dominates any other classification
 			clinchedPlayoffs = "w";
 		} else {
-			const matchups = result.series[0];
+			const matchups = result.series[0]!;
 			for (const matchup of matchups) {
 				if (matchup.home.tid === t.tid && matchup.home.seed === 1) {
 					clinchedPlayoffs = "z";
@@ -287,8 +287,7 @@ const updateClinchedPlayoffs = async (
 	}
 
 	let playoffsByConf: boolean | undefined;
-	for (let i = 0; i < teamSeasons.length; i++) {
-		const ts = teamSeasons[i];
+	for (const [i, ts] of teamSeasons.entries()) {
 		if (clinchedPlayoffs[i] !== ts.clinchedPlayoffs) {
 			ts.clinchedPlayoffs = clinchedPlayoffs[i];
 

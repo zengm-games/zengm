@@ -53,6 +53,7 @@ import type { BasicInfo } from "../../../worker/api/leagueFileUpload.ts";
 import { SelectSeasonRange } from "./SelectSeasonRange.tsx";
 import { orderBy } from "../../../common/utils.ts";
 import { analyticsEventLocal } from "../../../common/analyticsEventLocal.ts";
+import { choice } from "../../../common/random.ts";
 
 const animationVariants = {
 	visible: {
@@ -511,7 +512,7 @@ const reducer = (state: State, action: Action): State => {
 
 		case "setTid": {
 			const t = state.teams.find((t) => t.tid === action.tid);
-			const tid = t ? t.tid : state.teams.length > 0 ? state.teams[0].tid : 0;
+			const tid = t ? t.tid : state.teams.length > 0 ? state.teams[0]!.tid : 0;
 
 			return {
 				...state,
@@ -648,8 +649,8 @@ const getRebuildInfo = () => {
 	if (location.hash.startsWith("#rebuild=")) {
 		const rebuildSlug = location.hash.replace("#rebuild=", "");
 		const parts = rebuildSlug.split("_");
-		const abbrev = parts[1].toUpperCase();
-		const season = Number.parseInt(parts[2]);
+		const abbrev = parts[1]?.toUpperCase();
+		const season = Number.parseInt(parts[2]!);
 		if (abbrev && !Number.isNaN(season)) {
 			return {
 				abbrev,
@@ -1430,10 +1431,7 @@ const NewLeague = (props: View<"newLeague">) => {
 										disabled={disableWhileLoadingLeagueFile}
 										type="button"
 										onClick={() => {
-											const t =
-												displayedTeams[
-													Math.floor(Math.random() * displayedTeams.length)
-												];
+											const t = choice(displayedTeams);
 											dispatch({ type: "setTid", tid: t.tid });
 										}}
 									>

@@ -310,7 +310,10 @@ export class Spinners<Key extends string = string> {
 
 		string += this.keys
 			.map((key) => {
-				const info = this.info[key]!;
+				const info = this.info[key];
+				if (!info) {
+					throw new Error("Should never happen");
+				}
 
 				let symbol: string;
 				if (info.status === "error") {
@@ -318,7 +321,7 @@ export class Spinners<Key extends string = string> {
 				} else if (info.status === "success") {
 					symbol = SUCCESS_SYMBOL;
 				} else {
-					symbol = FRAMES[this.currentFrame];
+					symbol = FRAMES[this.currentFrame]!;
 				}
 
 				return this.renderKey({
@@ -410,8 +413,12 @@ export class Spinners<Key extends string = string> {
 
 				this.switchSportsTimeoutId = setTimeout(() => {
 					this.switchSportsTimeoutId = undefined;
-					process.env.SPORT = SPORTS[this.sportIndex];
-					this.eventEmitter.emit("newSport", SPORTS[this.sportIndex]);
+					const sport = SPORTS[this.sportIndex];
+					if (sport === undefined) {
+						throw new Error("Should never happen");
+					}
+					process.env.SPORT = sport;
+					this.eventEmitter.emit("newSport", sport);
 					if (!this.rendering) {
 						this.render();
 					}

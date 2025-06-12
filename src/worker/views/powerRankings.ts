@@ -27,12 +27,12 @@ const otherToRanks = (
 	}
 
 	for (const field of ["other", "otherCurrent"] as const) {
-		for (const key of Object.keys(teams[0].powerRankings[field])) {
-			const values = teams.map((t) => t.powerRankings[field][key]);
+		for (const key of Object.keys(teams[0]!.powerRankings[field])) {
+			const values = teams.map((t) => t.powerRankings[field][key]!);
 			const sorted = values.slice().sort((a, b) => b - a);
 			const ranks = values.map((value) => sorted.indexOf(value) + 1);
-			for (let i = 0; i < teams.length; i++) {
-				teams[i].powerRankings[field][key] = ranks[i];
+			for (const [i, t] of teams.entries()) {
+				t.powerRankings[field][key] = ranks[i]!;
 			}
 		}
 	}
@@ -99,7 +99,7 @@ export const addPowerRankingsStuffToTeams = async <
 			// Add estimated MOV from ovr (0/100 to -30/30)
 			const estimatedMOV = ovr * 0.6 - 30;
 			score += estimatedMOV;
-			let winsLastTen = Number.parseInt(t.seasonAttrs.lastTen.split("-")[0]);
+			let winsLastTen = Number.parseInt(t.seasonAttrs.lastTen.split("-")[0]!);
 
 			if (Number.isNaN(winsLastTen)) {
 				winsLastTen = 0;
@@ -160,8 +160,8 @@ export const addPowerRankingsStuffToTeams = async <
 		(a, b) => b.powerRankings.score - a.powerRankings.score,
 	);
 
-	for (let i = 0; i < teamsWithRankings.length; i++) {
-		teamsWithRankings[i].powerRankings.rank = i + 1;
+	for (const [i, t] of teamsWithRankings.entries()) {
+		t.powerRankings.rank = i + 1;
 	}
 
 	return teamsWithRankings;

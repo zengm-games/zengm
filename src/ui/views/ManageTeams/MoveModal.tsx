@@ -53,7 +53,7 @@ const MoveModal = ({
 	}
 
 	const [selectedRegion, setSelectedRegion] = useState(0);
-	const selectedTeam = moveOptions[selectedRegion];
+	const selectedTeam = moveOptions[selectedRegion]!;
 
 	const [rebrandTeam, setRebrandTeam] = useState(true);
 

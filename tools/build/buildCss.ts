@@ -55,19 +55,19 @@ export const buildCss = async (watch: boolean = false) => {
 		: [];
 
 	for (let i = 0; i < filenames.length; i++) {
-		const filename = filenames[i];
+		const filename = filenames[i]!;
 
 		let output;
 		if (!watch) {
 			// https://zengm.com/blog/2022/07/investigating-a-tricky-performance-bug/
 			const DANGER_CSS = ".input-group.has-validation";
-			if (!rawCss[i].includes(DANGER_CSS)) {
+			if (!rawCss[i]!.includes(DANGER_CSS)) {
 				throw new Error(
 					`rawCss no longer contains ${DANGER_CSS} - same problem might exist with another name?`,
 				);
 			}
 
-			const purgeCSSResult = purgeCssResults[i].css;
+			const purgeCSSResult = purgeCssResults[i]!.css;
 
 			const { code } = transform({
 				filename: `${filename}.css`,
@@ -85,7 +85,7 @@ export const buildCss = async (watch: boolean = false) => {
 				throw new Error(`CSS output contains ${DANGER_CSS}`);
 			}
 		} else {
-			output = rawCss[i];
+			output = rawCss[i]!;
 		}
 
 		let outFilename;

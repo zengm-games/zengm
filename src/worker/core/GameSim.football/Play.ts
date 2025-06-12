@@ -1005,8 +1005,7 @@ class Play {
 		}
 
 		const possessionChangeIndexes: number[] = [];
-		for (let i = 0; i < this.events.length; i++) {
-			const event = this.events[i];
+		for (const [i, event] of this.events.entries()) {
 			if (event.event.type === "possessionChange") {
 				possessionChangeIndexes.push(i);
 			}
@@ -1018,9 +1017,9 @@ class Play {
 		let offsetStatus: "offset" | "overrule" | undefined;
 		if (penalties.length === 1) {
 			options = [["decline"], ["accept"]];
-			choosingTeam = penalties[0].event.t === 0 ? 1 : 0;
+			choosingTeam = penalties[0]!.event.t === 0 ? 1 : 0;
 		} else if (penalties.length === 2) {
-			if (penalties[0].event.t === penalties[1].event.t) {
+			if (penalties[0]!.event.t === penalties[1]!.event.t) {
 				// Same team - other team gets to pick which they want to accept, if any
 				// console.log("2 penalties - same team", penalties, this.events);
 				options = [
@@ -1028,7 +1027,7 @@ class Play {
 					["decline", "accept"],
 					["accept", "decline"],
 				];
-				choosingTeam = penalties[0].event.t === 0 ? 1 : 0;
+				choosingTeam = penalties[0]!.event.t === 0 ? 1 : 0;
 			} else {
 				// Different team - maybe offsetting? Many edge cases http://static.nfl.com/static/content/public/image/rulebook/pdfs/17_Rule14_Penalty_Enforcement.pdf section 3
 
@@ -1042,7 +1041,7 @@ class Play {
 				);
 
 				if (penalties5.length === 1 && penalties15.length === 1) {
-					choosingTeam = penalties15[0].event.t === 0 ? 1 : 0;
+					choosingTeam = penalties15[0]!.event.t === 0 ? 1 : 0;
 
 					// 5 yd vs 15 yd penalty - only assess the 15 yd penalty
 					if (penalties15[0] === penalties[0]) {
@@ -1059,9 +1058,9 @@ class Play {
 					const numPossessionChanges = penalties.map(
 						(penalty, i) =>
 							possessionChangeIndexes.filter(
-								(index) => index <= this.penaltyRollbacks[i].indexEvent,
+								(index) => index <= this.penaltyRollbacks[i]!.indexEvent,
 							).length,
-					);
+					) as [number, number];
 					if (
 						numPossessionChanges[0] === numPossessionChanges[1] &&
 						numPossessionChanges[0] > 0
@@ -1098,7 +1097,7 @@ class Play {
 			const results = options.flatMap((decisions) => {
 				const indexAccept = decisions.indexOf("accept");
 				const indexOffset = decisions.indexOf("offset");
-				const penalty = penalties[indexAccept];
+				const penalty = penalties[indexAccept]!;
 
 				// console.log("decisions", decisions);
 
@@ -1120,7 +1119,7 @@ class Play {
 				} else {
 					const penaltyRollback =
 						this.penaltyRollbacks[indexAccept] ??
-						this.penaltyRollbacks[indexOffset];
+						this.penaltyRollbacks[indexOffset]!;
 					// console.log("penaltyRollback", JSON.parse(JSON.stringify(penaltyRollback)));
 					// console.log("penalty.event", penalty.event);
 					// indexEvent = penaltyRollback.indexEvent;
@@ -1173,11 +1172,11 @@ class Play {
 					for (const { indexEvent, state } of subResults) {
 						if (indexEvent !== undefined && indexEvent >= 0) {
 							for (let i = 0; i <= indexEvent; i++) {
-								const event = this.events[i].event;
+								const event = this.events[i]!.event;
 
 								// Only one penalty can be applied, this one! And that is done below.
 								if (event.type !== "penalty") {
-									this.updateState(state, this.events[i].event);
+									this.updateState(state, event);
 								}
 							}
 						}
@@ -1233,12 +1232,11 @@ class Play {
 
 			// Announce declind penalties first, then accepted penalties
 			for (const type of ["decline", "accept"] as const) {
-				for (let i = 0; i < penalties.length; i++) {
+				for (const [i, penalty] of penalties.entries()) {
 					const decision = result.decisions[i];
 					if (decision !== type) {
 						continue;
 					}
-					const penalty = penalties[i];
 
 					// Special case for pass interference, so it doesn't say "0 yards from the spot of the foul"
 					let yds = penalty.event.penYds;

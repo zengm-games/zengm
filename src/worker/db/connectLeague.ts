@@ -983,12 +983,9 @@ const migrate = async ({
 			for await (const cursor of transaction.objectStore("teams")) {
 				const t = cursor.value;
 				if (!(t as any).colors) {
-					if (
-						(teamsDefault as any)[t.tid] &&
-						teamsDefault[t.tid].region === t.region &&
-						teamsDefault[t.tid].name === t.name
-					) {
-						t.colors = teamsDefault[t.tid].colors;
+					const td = teamsDefault[t.tid];
+					if (td?.region === t.region && td.name === t.name) {
+						t.colors = td.colors;
 					} else {
 						t.colors = DEFAULT_TEAM_COLORS;
 					}
@@ -1396,7 +1393,7 @@ const migrate = async ({
 			] as const;
 			ts.expenseLevels = {} as any;
 			for (const key of expenseLevelsKeys) {
-				ts.expenseLevels[key] = gp * budgetsByTid[ts.tid][key];
+				ts.expenseLevels[key] = gp * budgetsByTid[ts.tid]![key];
 			}
 
 			await cursor.update(ts);
@@ -1465,7 +1462,7 @@ const migrate = async ({
 						start: row.start,
 						value: row.value ? 1 : null,
 					};
-				});
+				}) as any;
 			}
 
 			await store.put({
@@ -1487,7 +1484,10 @@ const migrate = async ({
 		for await (const cursor of transaction.objectStore("playerFeats")) {
 			const feat = cursor.value;
 
-			const pts = feat.score.split("-").map((x) => Number.parseInt(x));
+			const pts = feat.score.split("-").map((x) => Number.parseInt(x)) as [
+				number,
+				number,
+			];
 			let diff = -Infinity;
 			if (!Number.isNaN(pts[0]) && !Number.isNaN(pts[1])) {
 				diff = pts[0] - pts[1];

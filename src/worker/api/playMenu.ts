@@ -21,11 +21,11 @@ const getNumDaysThisRound = (playoffSeries: PlayoffSeries) => {
 	}
 
 	if (playoffSeries.series.length > 0) {
-		for (const series of playoffSeries.series[playoffSeries.currentRound]) {
+		for (const series of playoffSeries.series[playoffSeries.currentRound]!) {
 			const num = series.away
 				? g.get("numGamesPlayoffSeries", "current")[
 						playoffSeries.currentRound
-					] -
+					]! -
 					series.home.won -
 					series.away.won
 				: 0;
@@ -79,7 +79,7 @@ const getNumDaysPlayoffs = async () => {
 		i < g.get("numGamesPlayoffSeries", "current").length;
 		i++
 	) {
-		numDaysFutureRounds += g.get("numGamesPlayoffSeries", "current")[i];
+		numDaysFutureRounds += g.get("numGamesPlayoffSeries", "current")[i]!;
 	}
 
 	const numDaysPlayIn = await getNumDaysPlayIn();

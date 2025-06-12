@@ -176,20 +176,20 @@ const ExpansionDraft = ({
 			const newTeams = [...teams];
 			if (!event.target.checked) {
 				newTeams[i] = {
-					...newTeams[i],
+					...newTeams[i]!,
 					takeControl: false,
 				};
 			} else {
 				if (multiTeamMode) {
 					newTeams[i] = {
-						...newTeams[i],
+						...newTeams[i]!,
 						takeControl: true,
 					};
 				} else {
 					for (let j = 0; j < newTeams.length; j++) {
 						// Only allow one to be checked
 						newTeams[j] = {
-							...newTeams[j],
+							...newTeams[j]!,
 							takeControl: i === j,
 						};
 					}

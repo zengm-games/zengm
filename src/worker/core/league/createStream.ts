@@ -86,13 +86,15 @@ const addLeagueMeta = async ({
 	teams: Team[];
 	tid: number;
 }) => {
+	const t = teams[tid]!;
+
 	const l: League = {
 		lid,
 		name,
 		tid,
 		phaseText: "",
-		teamName: teams[tid].name,
-		teamRegion: teams[tid].region,
+		teamName: t.name,
+		teamRegion: t.region,
 		heartbeatID: undefined,
 		heartbeatTimestamp: undefined,
 		difficulty: g.get("difficulty"),
@@ -100,7 +102,7 @@ const addLeagueMeta = async ({
 		lastPlayed: new Date(),
 		startingSeason: g.get("startingSeason"),
 		season: g.get("season"),
-		imgURL: teams[tid].imgURLSmall ?? teams[tid].imgURL,
+		imgURL: t.imgURLSmall ?? t.imgURL,
 	};
 
 	// In case we are importing over an old league
@@ -268,7 +270,9 @@ const preProcess = async (
 			x.result === undefined &&
 			typeof x.score === "string"
 		) {
-			const pts = (x.score as string).split("-").map((y) => Number.parseInt(y));
+			const pts = (x.score as string)
+				.split("-")
+				.map((y) => Number.parseInt(y)) as [number, number];
 			let diff = -Infinity;
 			if (!Number.isNaN(pts[0]) && !Number.isNaN(pts[1])) {
 				diff = pts[0] - pts[1];
@@ -701,8 +705,7 @@ const processTeamInfos = async ({
 
 	let scoutingLevel: number | undefined;
 
-	for (let i = 0; i < teams.length; i++) {
-		const t = teams[i];
+	for (const [i, t] of teams.entries()) {
 		const teamInfo = teamInfos[i];
 		let teamSeasonsLocal: TeamSeasonWithoutKey[];
 
@@ -869,9 +872,10 @@ const processTeamInfos = async ({
 				}
 			}
 		} else if (!t.disabled) {
-			teamSeasonsLocal = [team.genSeasonRow(t)];
-			teamSeasonsLocal[0].pop = teamInfo.pop;
-			teamSeasonsLocal[0].stadiumCapacity = teamInfo.stadiumCapacity;
+			const row = team.genSeasonRow(t);
+			row.pop = teamInfo.pop;
+			row.stadiumCapacity = teamInfo.stadiumCapacity;
+			teamSeasonsLocal = [row];
 		} else {
 			teamSeasonsLocal = [];
 		}
@@ -1378,7 +1382,7 @@ const afterDBStream = async ({
 					player.setContract(
 						p2,
 						{
-							amount: rookieSalaries[pickIndex] ?? rookieSalaries.at(-1),
+							amount: rookieSalaries[pickIndex] ?? rookieSalaries.at(-1)!,
 							exp: p2.contract.exp,
 						},
 						true,
@@ -1463,7 +1467,7 @@ const afterDBStream = async ({
 	});
 
 	// Unless we got strategy from a league file, calculate it here
-	for (let i = 0; i < teams.length; i++) {
+	for (const [i, t] of teams.entries()) {
 		if (teamInfos[i].strategy === undefined) {
 			const teamPlayers = activePlayers
 				.filter((p) => p.tid === i)
@@ -1473,7 +1477,7 @@ const afterDBStream = async ({
 					ratings: p.ratings.at(-1),
 				}));
 			const ovr = team.ovr(teamPlayers);
-			teams[i].strategy = ovr >= 60 ? "contending" : "rebuilding";
+			t.strategy = ovr >= 60 ? "contending" : "rebuilding";
 		}
 	}
 

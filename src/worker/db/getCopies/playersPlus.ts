@@ -168,14 +168,15 @@ const processAttrs = (
 				} else {
 					// Iterate over transactions backwards, find most recent one that was before the supplied season
 					for (let i = p.transactions.length - 1; i >= 0; i--) {
-						if (tid !== undefined && p.transactions[i].tid !== tid) {
+						const currentTransaction = p.transactions[i]!;
+						if (tid !== undefined && currentTransaction.tid !== tid) {
 							continue;
 						}
 
 						if (
-							p.transactions[i].season < season ||
-							(p.transactions[i].season === season &&
-								p.transactions[i].phase <= PHASE.PLAYOFFS)
+							currentTransaction.season < season ||
+							(currentTransaction.season === season &&
+								currentTransaction.phase <= PHASE.PLAYOFFS)
 						) {
 							transaction = p.transactions[i];
 						}

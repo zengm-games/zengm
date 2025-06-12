@@ -191,7 +191,7 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 					challengeNoRatings={challengeNoRatings}
 					handleNegotiate={handleNegotiate}
 					handleRemove={(i) => {
-						const tid = offers[i].tid;
+						const tid = offers[i]!.tid;
 						setRemovedTids((prevTids) => [...prevTids, tid]);
 					}}
 					offers={filteredOffers}
@@ -214,7 +214,7 @@ const TradeProposals = (props: View<"tradeProposals">) => {
 								}}
 								salaryCap={salaryCap}
 								salaryCapType={salaryCapType}
-								teamInfo={teamInfoCache[offer.tid]}
+								teamInfo={teamInfoCache[offer.tid]!}
 								hideTopTeamOvrs
 								first={i === 0}
 								{...offer}

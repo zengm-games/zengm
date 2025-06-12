@@ -12,7 +12,7 @@ const getDaysLeftSchedule = async (
 	const schedule = await getSchedule();
 
 	if (target !== undefined) {
-		if (schedule.length > 0) {
+		if (schedule[0]) {
 			const today = schedule[0].day;
 
 			let game;
@@ -36,7 +36,7 @@ const getDaysLeftSchedule = async (
 		throw new Error(`getDaysLeftSchedule did not find target "${target}"`);
 	}
 
-	if (schedule.length === 0) {
+	if (!schedule[0]) {
 		return 0;
 	}
 

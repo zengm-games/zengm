@@ -3,6 +3,8 @@ import type { MouseEvent, ReactNode } from "react";
 import type processInputs from "../worker/api/processInputs.ts";
 import type views from "../worker/views/index.ts";
 
+export type NonEmptyArray<T> = [T, ...T[]];
+
 export type Env = {
 	enableLogging: boolean;
 	heartbeatID: string;
@@ -269,7 +271,7 @@ export type EventBBGMWithoutKey =
 	  }
 	| {
 			type: "sisyphus";
-			pids: number[];
+			pids: [number];
 			tids: number[];
 			season: number;
 			wonTitle: boolean;
@@ -436,10 +438,10 @@ export type ScheduledEventWithoutKey =
 
 export type ScheduledEvent = ScheduledEventWithoutKey & { id: number };
 
-export type GameAttributeWithHistory<T> = {
+export type GameAttributeWithHistory<T> = NonEmptyArray<{
 	start: number;
 	value: T;
-}[];
+}>;
 
 export type ExpansionDraftSetupTeam = {
 	abbrev: string;
@@ -524,12 +526,12 @@ export type GameAttributesLeague = {
 	challengeSisyphusMode: boolean;
 	challengeThanosMode: number;
 	thanosCooldownEnd: number | undefined;
-	confs: Conf[];
+	confs: NonEmptyArray<Conf>;
 	daysLeft: number;
 	defaultStadiumCapacity: number;
 	dh: "all" | "none" | number[];
 	difficulty: number;
-	divs: Div[];
+	divs: NonEmptyArray<Div>;
 	draftAges: [number, number];
 	draftPickAutoContract: boolean;
 	draftPickAutoContractPercent: number;
@@ -547,7 +549,7 @@ export type GameAttributesLeague = {
 	forceRetireAge: number;
 	forceRetireSeasons: number;
 	foulsNeededToFoulOut: number;
-	foulsUntilBonus: number[];
+	foulsUntilBonus: [number, number, number];
 	foulRateFactor: number;
 	gameOver: boolean;
 	gender: "female" | "male";
@@ -1240,7 +1242,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	pid?: number;
 	pos?: string; // Only in players from custom league files
 	ptModifier: number;
-	ratings: PlayerRatings[];
+	ratings: NonEmptyArray<PlayerRatings>;
 	real?: boolean;
 	relatives: Relative[];
 	retiredYear: number;
@@ -1613,7 +1615,7 @@ export type Team = {
 
 export type TeamAttr = keyof Team;
 
-type TeamSeasonPlus = TeamSeason & {
+type TeamSeasonPlus = Omit<TeamSeason, "lastTen"> & {
 	winp: number;
 	revenue: number;
 	profit: number;

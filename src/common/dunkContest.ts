@@ -115,7 +115,7 @@ export const dunkInfos: Record<
 };
 
 export const getValidMoves = (otherMove: string) => {
-	const move1 = dunkInfos.move[otherMove];
+	const move1 = dunkInfos.move[otherMove]!;
 
 	const validMoves = {
 		...dunkInfos.move,
@@ -125,7 +125,7 @@ export const getValidMoves = (otherMove: string) => {
 	}
 	if (move1.group !== undefined) {
 		for (const move of Object.keys(validMoves)) {
-			if (validMoves[move].group === move1.group) {
+			if (validMoves[move]!.group === move1.group) {
 				delete validMoves[move];
 			}
 		}

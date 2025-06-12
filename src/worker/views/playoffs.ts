@@ -137,13 +137,13 @@ const updatePlayoffs = async (
 			const rowspan = 2 ** i;
 
 			for (let j = 0; j < numGamesInSide; j++) {
-				matchups[j * rowspan].splice(i, 0, {
+				matchups[j * rowspan]!.splice(i, 0, {
 					rowspan,
 					matchup: [i, j],
 				});
 
 				if (series.length !== i + 1) {
-					matchups[j * rowspan].splice(i, 0, {
+					matchups[j * rowspan]!.splice(i, 0, {
 						rowspan,
 						matchup: [i, numGamesInSide + j],
 					});
@@ -170,7 +170,7 @@ const updatePlayoffs = async (
 		if (series.length === 0) {
 			canEdit = false;
 		} else {
-			for (const matchup of series[0]) {
+			for (const matchup of series[0]!) {
 				if (matchup.home.won > 0 || (matchup.away && matchup.away.won > 0)) {
 					canEdit = false;
 				}
@@ -222,7 +222,7 @@ const updatePlayoffs = async (
 
 			// All first round matchups
 			const matchupsToCheck = [
-				...series[0],
+				...series[0]!,
 				...(playIns ? playIns.flatMap((playIn) => playIn.slice(0, 2)) : []),
 			];
 

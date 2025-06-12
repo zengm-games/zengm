@@ -44,7 +44,7 @@ class Trie {
 		let bestYetNumHere = Infinity;
 		let node = this.root;
 		for (const char of word) {
-			node = node.children[char];
+			node = node.children[char]!;
 			length += 1;
 
 			// This is a potential candidate if there are fewer distinct names at this node

@@ -1,6 +1,5 @@
 import { defaultInjuries, defaultTragicDeaths, g } from "../util/index.ts";
 import type {
-	Conf,
 	GameAttributesLeague,
 	GetLeagueOptionsReal,
 	InjuriesSetting,
@@ -206,7 +205,7 @@ export type Settings = Pick<
 	tragicDeaths: TragicDeaths;
 	goatFormula: string;
 	goatSeasonFormula: string;
-	confs?: Conf[];
+	confs?: GameAttributesLeague["confs"];
 	giveMeWorstRoster: boolean;
 
 	// undefined in DefaultNewLeagueSettings - then it is not possible to validate some settings that depend on it

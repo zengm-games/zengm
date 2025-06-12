@@ -174,9 +174,9 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 
 if (isSport("baseball")) {
 	Object.assign(dropdownValues, {
-		batting: PLAYER_STATS_TABLES.batting.name,
-		pitching: PLAYER_STATS_TABLES.pitching.name,
-		fielding: PLAYER_STATS_TABLES.fielding.name,
+		batting: PLAYER_STATS_TABLES.batting!.name,
+		pitching: PLAYER_STATS_TABLES.pitching!.name,
+		fielding: PLAYER_STATS_TABLES.fielding!.name,
 	});
 }
 
@@ -475,7 +475,7 @@ const useDropdownOptions = (
 	const newOptions: DropdownOption[] = keys.map((rawKey) => {
 		const key =
 			typeof rawKey === "string" && rawKey.includes("|||")
-				? rawKey.split("|||")[0]
+				? rawKey.split("|||")[0]!
 				: rawKey;
 		return {
 			key,

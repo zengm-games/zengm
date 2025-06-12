@@ -39,7 +39,7 @@ const updateMessage = async (
 			}
 
 			// Then look for any message
-			if (messages.length > 0) {
+			if (messages[0]) {
 				// https://stackoverflow.com/a/59923262/786644
 				const returnValue = {
 					redirectUrl: helpers.leagueUrl(["message", messages[0].mid]),
@@ -76,7 +76,7 @@ const updateMessage = async (
 				augmentedOwnerMoods = [];
 
 				for (let i = 0; i < message.ownerMoods.length; i++) {
-					const mood = message.ownerMoods[i];
+					const mood = message.ownerMoods[i]!;
 
 					const season = message.year - message.ownerMoods.length + 1 + i;
 

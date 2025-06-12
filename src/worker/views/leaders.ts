@@ -430,7 +430,7 @@ export class GamesPlayedCache {
 				// This only matters if there is a play-in tournament
 				if (playoffSeries?.playIns) {
 					// Find any non-bye first round series and see how many games have been played so far
-					for (const series of playoffSeries.series[0]) {
+					for (const series of playoffSeries.series[0]!) {
 						if (series.away) {
 							// Number of games played so far - can't require more than this!
 							const numGamesFirstRoundSoFar = series.home.won + series.away.won;
@@ -813,8 +813,8 @@ const updateLeaders = async (
 			}
 
 			for (let i = 0; i < categories.length; i++) {
-				const cat = categories[i];
-				const outputCat = outputCategories[i];
+				const cat = categories[i]!;
+				const outputCat = outputCategories[i]!;
 
 				const value = playerStats[cat.stat];
 				if (value === undefined) {

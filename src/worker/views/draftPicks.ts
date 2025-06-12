@@ -79,7 +79,7 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 			}
 
 			projectedPick = adjustProjectedPick({
-				projectedPick: estPicksCache[dp.originalTid],
+				projectedPick: estPicksCache[dp.originalTid]!,
 				numSeasons: dp.season - g.get("season"),
 				numTeams: teamsWithRankings.length,
 			});
@@ -100,7 +100,7 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 
 				// Which team traded the pick?
 				if (event.teams) {
-					for (let i = 0; i < 2; i++) {
+					for (const i of [0, 1] as const) {
 						if (
 							event.teams[i].assets.some(
 								(asset) => (asset as any).dpid === dp.dpid,

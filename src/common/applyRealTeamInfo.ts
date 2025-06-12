@@ -81,7 +81,7 @@ const applyRealTeamInfo = (
 			return false;
 		}
 
-		return applyToObject(t, realInfoSeasons[seasons.at(-1)!]);
+		return applyToObject(t, realInfoSeasons[seasons.at(-1)!]!);
 	}
 
 	// Merge prior seasons, in case there is a partial one and applyToObject above applied something from the root (like updating imgURLSmall without updating imgURL, would default to root imgURL otherwise)

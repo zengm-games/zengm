@@ -361,7 +361,7 @@ export const makeBrother = async (p: Player) => {
 		if (hasRelative(brother1, "father")) {
 			const fathers = await getRelatives(brother1, "father");
 
-			if (fathers.length > 0) {
+			if (fathers[0]) {
 				const father = fathers[0];
 
 				// Add brother to father

@@ -51,7 +51,7 @@ export const boxScoreToLiveSim = async ({
 	boxScore.gameOver = false;
 	delete boxScore.shootout;
 
-	for (let i = 0; i < boxScore.teams.length; i++) {
+	for (const i of [0, 1] as const) {
 		const t = boxScore.teams[i];
 
 		// Fix records, taking out result of this game
@@ -190,7 +190,7 @@ const updatePlayByPlay = async (
 			if (playoffSeries) {
 				const finalRound = playoffSeries.series.at(-1);
 				if (finalRound?.length === 1) {
-					const finalMatchup = finalRound[0];
+					const finalMatchup = finalRound[0]!;
 					if (
 						(finalMatchup.home.tid === boxScore.teams[0].tid &&
 							finalMatchup.away?.tid === boxScore.teams[1].tid) ||

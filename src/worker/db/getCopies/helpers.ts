@@ -27,9 +27,9 @@ export const mergeByPk = <
 
 	const pk = idb.cache.storeInfos[storeName].pk as PrimaryKey;
 
-	for (let i = 0; i < fromCache.length; i++) {
-		cacheKeys[fromCache[i][pk]] = i;
-		cacheKeysUsed[fromCache[i][pk]] = false;
+	for (const [i, row] of fromCache.entries()) {
+		cacheKeys[row[pk]] = i;
+		cacheKeysUsed[row[pk]] = false;
 	}
 
 	const output = fromDb
@@ -40,9 +40,9 @@ export const mergeByPk = <
 		.map((row) => {
 			const key = row[pk];
 
-			if (Object.hasOwn(cacheKeys, key)) {
+			if (cacheKeys[key] !== undefined) {
 				cacheKeysUsed[key] = true;
-				return maybeDeepCopy(fromCache[cacheKeys[key]], type);
+				return maybeDeepCopy(fromCache[cacheKeys[key]]!, type);
 			}
 
 			return row;
@@ -50,8 +50,8 @@ export const mergeByPk = <
 
 	for (const key of Object.keys(cacheKeys)) {
 		if (!cacheKeysUsed[key]) {
-			const i = cacheKeys[key];
-			output.push(maybeDeepCopy(fromCache[i], type));
+			const i = cacheKeys[key]!;
+			output.push(maybeDeepCopy(fromCache[i]!, type));
 		}
 	}
 

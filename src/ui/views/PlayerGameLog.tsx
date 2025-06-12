@@ -308,14 +308,13 @@ const PlayerGameLog = ({
 			"table-secondary",
 			"table-active",
 		];
-		for (let i = 0; i < playoffGames.length; i++) {
-			const game = playoffGames[i];
+		for (const [i, game] of playoffGames.entries()) {
 			if (game.oppTid !== prevOppTid) {
 				prevOppTid = game.oppTid;
 				oppTidCounter += 1;
 			}
 
-			rowsPlayoffs[i].classNames = classes[oppTidCounter % classes.length];
+			rowsPlayoffs[i]!.classNames = classes[oppTidCounter % classes.length];
 		}
 	} else {
 		striped = true;

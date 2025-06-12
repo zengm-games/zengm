@@ -142,7 +142,7 @@ class ViewManager {
 			if (action.url) {
 				// It's a "navigation event" if it is moving to a new page, rather than just changing some parameter of a page (like abbrev or season). So we need to get the id of this url and compare it to idLoaded.
 				let id;
-				const urlToMatch = action.url.split("?")[0].split("#")[0];
+				const urlToMatch = action.url.split("?")[0]!.split("#")[0]!;
 				for (const route of this.routes) {
 					const m = route.regex.exec(decodeURIComponent(urlToMatch));
 

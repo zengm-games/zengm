@@ -3682,7 +3682,7 @@ const getCols = (
 
 		return {
 			...cols[title],
-			title: cols[title].title ?? title,
+			title: cols[title]!.title ?? title,
 			...overrides[title],
 		};
 	});

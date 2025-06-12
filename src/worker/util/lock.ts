@@ -95,13 +95,7 @@ async function unreadMessage(): Promise<boolean> {
 		"noCopyCache",
 	);
 
-	for (let i = 0; i < messages.length; i++) {
-		if (!messages[i].read) {
-			return true;
-		}
-	}
-
-	return false;
+	return messages.some((message) => !message.read);
 }
 
 export default {

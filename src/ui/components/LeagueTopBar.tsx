@@ -134,8 +134,8 @@ const LeagueTopBar = memo(() => {
 	// If you take control of an expansion team after the season, the ASG is the only game, and it looks weird to show just it
 	const onlyAllStarGame =
 		games.length === 1 &&
-		games[0].teams[0].tid === -1 &&
-		games[0].teams[1].tid === -2;
+		games[0]!.teams[0].tid === -1 &&
+		games[0]!.teams[1].tid === -2;
 
 	if (lid === undefined || games.length === 0 || onlyAllStarGame) {
 		return <div className="mt-2" />;

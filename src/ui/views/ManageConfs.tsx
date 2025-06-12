@@ -12,7 +12,7 @@ import { PHASE } from "../../common/index.ts";
 const nextSeasonWarning =
 	"Because the regular season is already over, changes will not be fully applied until next season.";
 
-const ManageTeams = ({
+const ManageConfs = ({
 	actualPhase,
 	autoRelocate,
 	confs,
@@ -244,4 +244,4 @@ const ManageTeams = ({
 	);
 };
 
-export default ManageTeams;
+export default ManageConfs;

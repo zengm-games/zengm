@@ -34,10 +34,10 @@ type DunkPart = "toss" | "distance" | "move1" | "move2";
 
 export const getDifficulty = (dunkAttempt: DunkAttempt) => {
 	const difficulties = [
-		dunkInfos.toss[dunkAttempt.toss].difficulty,
-		dunkInfos.distance[dunkAttempt.distance].difficulty,
-		dunkInfos.move[dunkAttempt.move1].difficulty,
-		dunkInfos.move[dunkAttempt.move2].difficulty,
+		dunkInfos.toss[dunkAttempt.toss]!.difficulty,
+		dunkInfos.distance[dunkAttempt.distance]!.difficulty,
+		dunkInfos.move[dunkAttempt.move1]!.difficulty,
+		dunkInfos.move[dunkAttempt.move2]!.difficulty,
 	];
 
 	let numMoreThan0 = 0;
@@ -102,7 +102,7 @@ const getDunkInfosPart = (part: DunkPart, dunk: DunkAttempt) => {
 		infos = dunkInfos[dunkInfoKey];
 	}
 
-	const currentPartDifficulty = dunkInfos[dunkInfoKey][dunk[part]].difficulty;
+	const currentPartDifficulty = dunkInfos[dunkInfoKey][dunk[part]]!.difficulty;
 
 	return { currentPartDifficulty, infos };
 };
@@ -182,7 +182,7 @@ const makeDunkHarder = (dunk: DunkAttempt, minScoreNeeded: number) => {
 				candidates,
 				(candidate) => candidate[1].difficulty,
 				"asc",
-			)[0];
+			)[0]!;
 			newDunk[part] = candidate[0];
 
 			if (getDunkScoreRaw(newDunk) > minScoreNeeded) {
@@ -298,9 +298,9 @@ export const getRoundResults = (round: Dunk["rounds"][number]) => {
 
 	for (const dunk of round.dunks) {
 		if (dunk.score !== undefined) {
-			resultsByIndex[dunk.index].numDunks += 1;
-			resultsByIndex[dunk.index].score += dunk.score;
-			resultsByIndex[dunk.index].scores.push(dunk.score);
+			resultsByIndex[dunk.index]!.numDunks += 1;
+			resultsByIndex[dunk.index]!.score += dunk.score;
+			resultsByIndex[dunk.index]!.scores.push(dunk.score);
 		}
 	}
 
@@ -533,7 +533,7 @@ export const simNextDunkEvent = async (
 			currentRound.dunks.push(lastDunk);
 		}
 
-		const p = await idb.cache.players.get(dunk.players[nextDunkerIndex].pid);
+		const p = await idb.cache.players.get(dunk.players[nextDunkerIndex]!.pid);
 
 		let ratings = p?.ratings.at(-1) as
 			| {
@@ -602,9 +602,9 @@ export const simNextDunkEvent = async (
 			} else {
 				type = "all";
 
-				dunk.winner = indexesForNextRound[0];
+				dunk.winner = indexesForNextRound[0]!;
 
-				const p = dunk.players[dunk.winner];
+				const p = dunk.players[dunk.winner]!;
 
 				await saveAwardsByPlayer(
 					[

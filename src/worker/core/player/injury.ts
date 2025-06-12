@@ -12,10 +12,10 @@ const injury = (healthLevel: number): PlayerInjury => {
 	if (injuries !== prevInjuries) {
 		cumSums = [];
 
-		for (let i = 0; i < injuries.length; i++) {
-			cumSums[i] = injuries[i].frequency;
+		for (const [i, injury] of injuries.entries()) {
+			cumSums[i] = injury.frequency;
 			if (i > 0) {
-				cumSums[i] += cumSums[i - 1];
+				cumSums[i] += cumSums[i - 1]!;
 			}
 		}
 
@@ -27,11 +27,11 @@ const injury = (healthLevel: number): PlayerInjury => {
 	const gamesRemaining = Math.round(
 		(1 + healthEffect(healthLevel)) *
 			random.uniform(0.25, 1.75) *
-			injuries[i].games,
+			injuries[i]!.games,
 	);
 
 	return {
-		type: injuries[i].name,
+		type: injuries[i]!.name,
 		gamesRemaining: helpers.bound(gamesRemaining, 0, Infinity),
 	};
 };

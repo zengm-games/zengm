@@ -17,7 +17,7 @@ test("start a negotiation with a free agent", async () => {
 	);
 	const negotiations = await idb.cache.negotiations.getAll();
 	assert.strictEqual(negotiations.length, 1);
-	assert.strictEqual(negotiations[0].pid, pid);
+	assert.strictEqual(negotiations[0]!.pid, pid);
 });
 
 test("fail to start a negotiation with anyone but a free agent", async () => {
@@ -45,7 +45,7 @@ test("only allow one concurrent negotiation if resigning is false", async () => 
 	);
 	let negotiations = await idb.cache.negotiations.getAll();
 	assert.strictEqual(negotiations.length, 1);
-	assert.strictEqual(negotiations[0].pid, pid1);
+	assert.strictEqual(negotiations[0]!.pid, pid1);
 	error = await contractNegotiation.create(pid2, false);
 	assert.strictEqual(
 		typeof error,
@@ -54,7 +54,7 @@ test("only allow one concurrent negotiation if resigning is false", async () => 
 	);
 	negotiations = await idb.cache.negotiations.getAll();
 	assert.strictEqual(negotiations.length, 1);
-	assert.strictEqual(negotiations[0].pid, pid2);
+	assert.strictEqual(negotiations[0]!.pid, pid2);
 });
 
 test("allow multiple concurrent negotiations if resigning is true", async () => {
@@ -70,7 +70,7 @@ test("allow multiple concurrent negotiations if resigning is true", async () => 
 	);
 	let negotiations = await idb.cache.negotiations.getAll();
 	assert.strictEqual(negotiations.length, 1);
-	assert.strictEqual(negotiations[0].pid, pid1);
+	assert.strictEqual(negotiations[0]!.pid, pid1);
 	error = await contractNegotiation.create(pid2, true);
 	assert.strictEqual(
 		typeof error,
@@ -79,6 +79,6 @@ test("allow multiple concurrent negotiations if resigning is true", async () => 
 	);
 	negotiations = await idb.cache.negotiations.getAll();
 	assert.strictEqual(negotiations.length, 2);
-	assert.strictEqual(negotiations[0].pid, pid1);
-	assert.strictEqual(negotiations[1].pid, pid2);
+	assert.strictEqual(negotiations[0]!.pid, pid1);
+	assert.strictEqual(negotiations[1]!.pid, pid2);
 });

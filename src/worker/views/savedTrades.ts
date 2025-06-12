@@ -43,7 +43,7 @@ const getOffers = async () => {
 		(await augmentOffers(offers)).map((offer, i) => {
 			return {
 				...offer,
-				hash: savedTrades[i].hash,
+				hash: savedTrades[i]!.hash,
 			};
 		}),
 		(info) => info.summary.teams[1].name,

@@ -16,9 +16,7 @@ const compositeRating = (
 	let numerator = 0;
 	let denominator = 0;
 
-	for (let i = 0; i < components.length; i++) {
-		const component = components[i];
-
+	for (const [i, component] of components.entries()) {
 		let factor: number;
 		if (typeof component === "number") {
 			factor = component;
@@ -39,8 +37,8 @@ const compositeRating = (
 			}
 		}
 
-		numerator += factor * weights[i];
-		denominator += 100 * weights[i];
+		numerator += factor * weights[i]!;
+		denominator += 100 * weights[i]!;
 	}
 
 	return helpers.bound(numerator / denominator, 0, 1);

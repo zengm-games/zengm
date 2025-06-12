@@ -207,7 +207,7 @@ const SavedTrades = (props: View<"savedTrades">) => {
 								}}
 								salaryCap={salaryCap}
 								salaryCapType={salaryCapType}
-								teamInfo={teamInfoCache[offer.tid]}
+								teamInfo={teamInfoCache[offer.tid]!}
 								hideTopTeamOvrs
 								first={i === 0}
 								{...offer}

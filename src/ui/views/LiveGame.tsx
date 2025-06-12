@@ -97,7 +97,7 @@ const getSeconds = (time: string | undefined) => {
 		// Seconds only being displayed
 		return Number.parseFloat(time);
 	}
-	const [min, sec] = parts;
+	const [min, sec] = parts as [number, number];
 	return min * 60 + sec;
 };
 

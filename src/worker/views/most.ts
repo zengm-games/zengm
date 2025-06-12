@@ -225,8 +225,8 @@ const updatePlayers = async (
 				pick = 0;
 			} else {
 				const parts = arg.split("-");
-				round = Number.parseInt(parts[0]);
-				pick = Number.parseInt(parts[1]);
+				round = parts[0] !== undefined ? Number.parseInt(parts[0]) : Number.NaN;
+				pick = parts[1] !== undefined ? Number.parseInt(parts[1]) : Number.NaN;
 
 				if (Number.isNaN(round) || Number.isNaN(pick)) {
 					throw new Error("Invalid pick");
@@ -648,8 +648,8 @@ const updatePlayers = async (
 					(ps) => ps.tid,
 				);
 				for (const tid of Object.keys(statsByTid)) {
-					const numSeasons = new Set(statsByTid[tid].map((row) => row.season))
-						.size;
+					const stats = statsByTid[tid]!;
+					const numSeasons = new Set(stats.map((row) => row.season)).size;
 					if (numSeasons > maxNumSeasons) {
 						maxNumSeasons = numSeasons;
 
@@ -657,7 +657,7 @@ const updatePlayers = async (
 						maxTid = Number.parseInt(tid);
 
 						maxGP = 0;
-						for (const ps of statsByTid[tid]) {
+						for (const ps of stats) {
 							maxGP += ps.gp;
 							maxSeason = ps.season;
 						}

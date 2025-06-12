@@ -203,10 +203,8 @@ const updatePlayoffSeries = async (
 			if (playoffSeries.currentRound === -1 && playoffSeries.playIns) {
 				let playInsIndex;
 				let playInIndex;
-				for (let i = 0; i < playoffSeries.playIns.length; i++) {
-					const playIn = playoffSeries.playIns[i];
-					for (let j = 0; j < playIn.length; j++) {
-						const matchup = playIn[j];
+				for (const [i, playIn] of playoffSeries.playIns.entries()) {
+					for (const [j, matchup] of playIn.entries()) {
 						if (matchup === series) {
 							playInsIndex = i;
 							playInIndex = j;
@@ -222,16 +220,16 @@ const updatePlayoffSeries = async (
 				// If this is the first game (top 2 teams) or last game (2nd round) of a play-in tournament, move the winner to the appropriate spot in the playoffs
 				let targetTid; // Team to replace in initial playoff matchups
 				if (playInIndex === 0) {
-					targetTid = playoffSeries.playIns[playInsIndex][0].home.tid;
+					targetTid = playoffSeries.playIns[playInsIndex]![0].home.tid;
 				} else if (playInIndex === 2) {
-					targetTid = playoffSeries.playIns[playInsIndex][0].away.tid;
+					targetTid = playoffSeries.playIns[playInsIndex]![0].away.tid;
 				}
 				if (targetTid !== undefined) {
 					const winner =
 						series.away.tid === winnerTid ? series.away : series.home;
 
 					// Find target team in playoffSeries and replace with winner of this game
-					for (const matchup of playoffSeries.series[0]) {
+					for (const matchup of playoffSeries.series[0]!) {
 						for (const type of ["home", "away"] as const) {
 							const matchupTeam = matchup[type];
 							if (

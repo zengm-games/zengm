@@ -2,6 +2,7 @@ import genRatings from "./genRatings.ts";
 import { face, g } from "../../util/index.ts";
 import type {
 	MinimalPlayerRatings,
+	NonEmptyArray,
 	PlayerWithoutKey,
 	Race,
 } from "../../../common/types.ts";
@@ -49,6 +50,8 @@ const generate = (
 	}
 	actualHeightInInches = Math.round(actualHeightInInches);
 
+	const ratingsArray: NonEmptyArray<MinimalPlayerRatings> = [ratings];
+
 	const p = {
 		awards: [],
 		born: {
@@ -85,7 +88,7 @@ const generate = (
 		numDaysFreeAgent: 0,
 		ptModifier: 1,
 		relatives: [],
-		ratings: [ratings],
+		ratings: ratingsArray,
 		retiredYear: Infinity,
 		rosterOrder: 666, // Will be set later
 		salaries: [],

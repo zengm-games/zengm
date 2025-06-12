@@ -65,13 +65,13 @@ const setDraftProspectRatingsBasedOnDraftPosition = (
 	if (index >= VALUE_BY_PICK.length) {
 		targetValue = VALUE_UNDRAFTED;
 	} else if (Number.isInteger(index)) {
-		targetValue = VALUE_BY_PICK[index];
+		targetValue = VALUE_BY_PICK[index]!;
 	} else {
 		const remainder = index % 1;
 		const lower = Math.floor(index);
 		targetValue =
-			(1 - remainder) * VALUE_BY_PICK[lower] +
-			remainder * VALUE_BY_PICK[lower + 1];
+			(1 - remainder) * VALUE_BY_PICK[lower]! +
+			remainder * VALUE_BY_PICK[lower + 1]!;
 	}
 
 	let value = getValue(ratings, age);

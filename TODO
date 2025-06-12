@@ -1,3 +1,13 @@
+types
+- trade ones should assume only 2 teams?
+  - TradeEventTeams
+- Record<*, * | undefined> types not needed anymore
+- add getCol function and have it replace calls for getCols(...)[0]
+  - multi line in AdvancedPlayerSearch
+- test game winning shot logging in BBGM
+- tests
+- ui local phase should be Phase type not number
+
 ZGMB ASG pitcher record - appears as if it's incrementing in some places (box score, player game log) even though it's not. would be better to not show record for ASG
 
 ZGMB live sim UI - show pictures of batter/pitcher and season stats https://discord.com/channels/290013534023057409/331882115119448065/1380594012049903667

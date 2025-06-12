@@ -145,7 +145,7 @@ const Row = ({
 
 	let revealedPickNumber = null;
 	const pickCols = range(NUM_PICKS).map((j) => {
-		const prob = probs[i][j];
+		const prob = probs[i]![j]!;
 		const pct = prob !== undefined ? `${(prob * 100).toFixed(1)}%` : undefined;
 
 		let highlighted = false;
@@ -461,12 +461,12 @@ const DraftLotteryTable = (props: Props) => {
 
 			const toReveal: number[] = [];
 
-			for (let i = 0; i < result.length; i++) {
-				const pick = result[i].pick;
+			for (const [i, row] of result.entries()) {
+				const pick = row.pick;
 				if (pick !== undefined) {
 					toReveal[pick - 1] = i;
 				}
-				result[i].pick = undefined;
+				row.pick = undefined;
 			}
 			toReveal.reverse();
 

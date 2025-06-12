@@ -315,7 +315,8 @@ const AllStars = ({
 		);
 	}
 
-	const teamDisplayOrder = type === "draft" ? [0, 1] : [1, 0];
+	const teamDisplayOrder =
+		type === "draft" ? ([0, 1] as const) : ([1, 0] as const);
 
 	return (
 		<>

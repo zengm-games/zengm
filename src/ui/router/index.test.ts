@@ -8,9 +8,9 @@ import type { Context } from "./index.ts";
 const counts: Record<string, number> = {};
 const countCallback = async (context: Context) => {
 	if (context.path.startsWith("/3/")) {
-		counts["/3/:foo"] += 1;
+		counts["/3/:foo"]! += 1;
 	} else {
-		counts[context.path] += 1;
+		counts[context.path]! += 1;
 	}
 };
 const routes = {
@@ -33,7 +33,7 @@ for (const key of Object.keys(routes)) {
 }
 
 test("sets routes", () => {
-	const countBefore = counts["/"];
+	const countBefore = counts["/"]!;
 
 	router.start({
 		routes,
@@ -44,7 +44,7 @@ test("sets routes", () => {
 });
 
 test("navigates", async () => {
-	const countBefore = counts["/0"];
+	const countBefore = counts["/0"]!;
 	assert.strictEqual(window.location.pathname, "/");
 
 	await router.navigate("/0");
@@ -64,7 +64,7 @@ test.skip("handles back/forward navigation", () => {
 
 // Same issue as previous test prevents this test from being good
 test("navigates without creating a history entry", async () => {
-	const countBefore = counts["/1"];
+	const countBefore = counts["/1"]!;
 	assert.strictEqual(window.location.pathname, "/0");
 
 	await router.navigate("/1", { replace: true });
@@ -101,7 +101,7 @@ test("fires routematched event", () => {
 
 test("fires navigationend event", () => {
 	return new Promise<void>(async (resolve, reject) => {
-		const countBefore = counts["/3/:foo"];
+		const countBefore = counts["/3/:foo"]!;
 		const callback = (arg: any) => {
 			try {
 				assert.strictEqual(counts["/3/:foo"], countBefore + 1);
@@ -146,7 +146,7 @@ test("fires navigationend event with 404 error", () => {
 
 test("fires navigationend event with runtime error", () => {
 	return new Promise<void>(async (resolve, reject) => {
-		const countBefore = counts["/error"];
+		const countBefore = counts["/error"]!;
 		const callback = (arg: any) => {
 			try {
 				assert.strictEqual(arg.error.message, "runtime error");
@@ -164,7 +164,7 @@ test("fires navigationend event with runtime error", () => {
 });
 
 test("passes state to callback", async () => {
-	const countBefore = counts["/state"];
+	const countBefore = counts["/state"]!;
 
 	const arg = { state: { custom: 123 } };
 	await router.navigate("/state", arg);

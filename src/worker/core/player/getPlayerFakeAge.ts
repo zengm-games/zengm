@@ -55,11 +55,11 @@ const getPlayerFakeAge = <
 	const randVal = random.randInt(0, sum - 1);
 	let runningSum = 0;
 
-	for (let i = 0; i < weights.length; i++) {
-		runningSum += weights[i];
+	for (const [i, weight] of weights.entries()) {
+		runningSum += weight;
 
 		if (randVal < runningSum) {
-			return youngPlayers[i];
+			return youngPlayers[i]!;
 		}
 	}
 };

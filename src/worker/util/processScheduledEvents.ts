@@ -380,13 +380,15 @@ const processExpansionDraft = async (
 			return true;
 		}
 
+		const t2 = teams[t.tid];
+
 		// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-		if (!teams[t.tid]) {
+		if (!t2) {
 			return true;
 		}
 
 		// If team is already enabled, no need for expansion draft
-		return teams[t.tid].disabled;
+		return t2.disabled;
 	});
 
 	if (realTeamInfo) {

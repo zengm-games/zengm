@@ -175,7 +175,7 @@ const AwardRows = ({ players }: { players: PlayerInfoAndLegend[] }) => {
 						}}
 						values={playersToValues(
 							players,
-							(_, i) => awardsGrouped[i][award.type]?.count,
+							(_, i) => awardsGrouped[i]![award.type]?.count,
 						)}
 						sortType="number"
 					/>
@@ -279,17 +279,17 @@ const ComparePlayers = ({
 		legendColumn === 0
 			? [{ p: "legend", season: undefined } as const, ...players]
 			: [
-					players[0],
+					players[0]!,
 					{ p: "legend", season: undefined } as const,
 					...players.slice(1),
 				];
 
 	// If one is career, all are career
-	const career = players.length > 0 && players[0].season === "career";
+	const career = players[0]?.season === "career";
 
 	const ageRow = (
 		<InfoRow
-			col={getCols(["Age"])[0]}
+			col={getCols(["Age"])[0]!}
 			values={playersToValues(
 				playersAndLegend,
 				(p) => p.ratings.season - p.born.year,
@@ -300,7 +300,7 @@ const ComparePlayers = ({
 	);
 
 	const contractValues = playersToValues(playersAndLegend, (p, i) => {
-		const season = playersAndLegend[i].season;
+		const season = playersAndLegend[i]!.season;
 
 		if (
 			p.tid === PLAYER.UNDRAFTED ||
@@ -405,14 +405,14 @@ const ComparePlayers = ({
 									ageRow
 								)}
 								<InfoRow
-									col={getCols(["Pos"])[0]}
+									col={getCols(["Pos"])[0]!}
 									values={playersToValues(
 										playersAndLegend,
 										(p) => p.ratings.pos,
 									)}
 								/>
 								<InfoRow
-									col={getCols(["Draft"])[0]}
+									col={getCols(["Draft"])[0]!}
 									values={playersToValues(playersAndLegend, (p) =>
 										p.tid === PLAYER.UNDRAFTED
 											? "Draft prospect"
@@ -425,7 +425,7 @@ const ComparePlayers = ({
 								/>
 								{showContracts ? (
 									<InfoRow
-										col={getCols(["Contract"])[0]}
+										col={getCols(["Contract"])[0]!}
 										values={contractValues}
 									/>
 								) : null}
@@ -453,7 +453,7 @@ const ComparePlayers = ({
 											} else {
 												key = `rating:${rating}`;
 											}
-											const col = getCols([key])[0];
+											const col = getCols([key])[0]!;
 											return (
 												<InfoRow
 													key={rating}
@@ -479,7 +479,7 @@ const ComparePlayers = ({
 						</HeaderRow>
 						{openStats
 							? stats.map((stat) => {
-									const col = getCols([`stat:${stat}`])[0];
+									const col = getCols([`stat:${stat}`])[0]!;
 									return (
 										<InfoRow
 											key={stat}

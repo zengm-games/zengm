@@ -65,7 +65,7 @@ const updateLeadersProgressive = async (
 
 		const { categories, stats } = getCategoriesAndStats(inputs.stat);
 
-		const cat = categories[0];
+		const cat = categories[0]!;
 
 		const seasons = range(g.get("startingSeason"), g.get("season") + 1);
 
@@ -259,16 +259,16 @@ const updateLeadersProgressive = async (
 
 						const startIndex = allLeaders.indexOf(current);
 						for (let i = startIndex; i < allLeaders.length; i++) {
-							const lastValue = allLeaders[i].career?.stat;
+							const lastValue = allLeaders[i]!.career?.stat;
 							if (
 								lastValue === undefined ||
 								(cat.sortAscending && value < lastValue) ||
 								(!cat.sortAscending && value > lastValue)
 							) {
-								allLeaders[i].career = leader;
+								allLeaders[i]!.career = leader;
 							}
 
-							if (allLeaders[i].season === maxSeasonCareer) {
+							if (allLeaders[i]!.season === maxSeasonCareer) {
 								break;
 							}
 						}

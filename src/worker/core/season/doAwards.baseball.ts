@@ -130,8 +130,7 @@ export const royFilter = (p: PlayerFiltered) => {
 export const getPosByGpF = (gpF: (number | undefined)[]) => {
 	let posIndex = -1;
 	let maxGP = -Infinity;
-	for (let i = 0; i < gpF.length; i++) {
-		const gp = gpF[i];
+	for (const [i, gp] of gpF.entries()) {
 		if (gp !== undefined && gp > maxGP) {
 			posIndex = i;
 			maxGP = gp;
@@ -247,13 +246,12 @@ const getRealFinalsMvp = async (
 					}
 				}
 
-				for (let i = 0; i < p.gpF.length; i++) {
-					const value = p.gpF[i];
+				for (const [i, gp] of p.gpF.entries()) {
 					if (info.gpF[i] === undefined) {
 						info.gpF[i] = 0;
 					}
-					if (value !== undefined) {
-						info.gpF[i] += value;
+					if (gp !== undefined) {
+						info.gpF[i] += gp;
 					}
 				}
 
@@ -300,7 +298,7 @@ const getRealFinalsMvp = async (
 		"desc",
 	);
 
-	if (playerArray.length === 0) {
+	if (!playerArray[0]) {
 		return;
 	}
 

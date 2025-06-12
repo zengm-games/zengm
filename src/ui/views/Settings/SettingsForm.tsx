@@ -179,7 +179,7 @@ export const getVisibleCategories = ({
 			continue;
 		}
 
-		const catSettings = groupedSettings[category.name].filter((option) => {
+		const catSettings = groupedSettings[category.name]!.filter((option) => {
 			return (
 				(showGodModeSettings ||
 					settingIsEnabled(godMode, newLeague, option.godModeRequired)) &&

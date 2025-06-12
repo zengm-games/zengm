@@ -28,9 +28,9 @@ const getTeamOvr = async (playersRaw: Player[]) => {
  * @return {Promise.Object} Resolves to an object contianing the trade summary.
  */
 const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
-	const tids = [teams[0].tid, teams[1].tid];
-	const pids = [teams[0].pids, teams[1].pids];
-	const dpids = [teams[0].dpids, teams[1].dpids];
+	const tids = [teams[0].tid, teams[1].tid] as const;
+	const pids = [teams[0].pids, teams[1].pids] as const;
+	const dpids = [teams[0].dpids, teams[1].dpids] as const;
 	const s: TradeSummary = {
 		teams: [
 			{
@@ -88,11 +88,11 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 			"draftPicksByTid",
 			tids[i],
 		);
-		for (let j = 0; j < picks.length; j++) {
-			if (dpids[i].includes(picks[j].dpid)) {
+		for (const dp of picks) {
+			if (dpids[i].includes(dp.dpid)) {
 				s.teams[i].picks.push({
-					dpid: picks[j].dpid,
-					desc: await helpers.pickDesc(picks[j], "short"),
+					dpid: dp.dpid,
+					desc: await helpers.pickDesc(dp, "short"),
 				});
 			}
 		}
@@ -115,9 +115,9 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 		s.teams[i].ovrAfter = await getTeamOvr(playersAfter[i]);
 	}
 
-	const overCap = [false, false];
-	const ratios = [0, 0];
-	for (const j of [0, 1]) {
+	const overCap: [boolean, boolean] = [false, false];
+	const ratios: [number, number] = [0, 0];
+	for (const j of [0, 1] as const) {
 		const k = j === 0 ? 1 : 0;
 		s.teams[j].name = `${g.get("teamInfoCache")[tids[j]]?.region} ${
 			g.get("teamInfoCache")[tids[j]]?.name

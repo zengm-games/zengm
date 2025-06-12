@@ -25,7 +25,7 @@ class MyModalManager extends BootstrapModalManager {
 		const divs = document.getElementsByClassName(
 			"league-top-bar-toggle",
 		) as HTMLCollectionOf<HTMLDivElement>;
-		if (divs.length > 0) {
+		if (divs[0]) {
 			divs[0].style.right = `${containerState.scrollBarWidth}px`;
 		}
 	}
@@ -39,7 +39,7 @@ class MyModalManager extends BootstrapModalManager {
 		const divs = document.getElementsByClassName(
 			"league-top-bar-toggle",
 		) as HTMLCollectionOf<HTMLDivElement>;
-		if (divs.length > 0) {
+		if (divs[0]) {
 			divs[0].style.right = "";
 		}
 

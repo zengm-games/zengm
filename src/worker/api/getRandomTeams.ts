@@ -53,10 +53,11 @@ const getAllRealTeamInfos = async (seasonRange: [number, number]) => {
 	const infosByAbbrev: Record<string, (typeof teamInfos)[number]> = {};
 
 	return teamInfos.filter((t) => {
+		// TODO - This code is mostly doing nothing and infosByAbbrev is probably not needed
 		if (abbrevsSeen.has(t.abbrev)) {
 			const toAdd = [];
 			if (infosByAbbrev[t.abbrev]) {
-				toAdd.push(infosByAbbrev[t.abbrev]);
+				toAdd.push(infosByAbbrev[t.abbrev]!);
 			}
 			for (const t of toAdd) {
 				t.weight += 1 / toAdd.length;
@@ -210,8 +211,8 @@ const getRandomTeams = async ({
 	const teamInfoCluster = selectedTeamInfos.map(
 		(teamInfo) =>
 			[
-				geographicCoordinates[teamInfo.region].latitude,
-				geographicCoordinates[teamInfo.region].longitude,
+				geographicCoordinates[teamInfo.region]!.latitude,
+				geographicCoordinates[teamInfo.region]!.longitude,
 			] as [number, number],
 	);
 
@@ -223,18 +224,16 @@ const getRandomTeams = async ({
 	).clusters;
 
 	let teamsOutput = [];
-	for (let i = 0; i < divs.length; i++) {
-		const div = divs[i];
-
+	for (const [i, div] of divs.entries()) {
 		// Sort teams within a division by region/name so they look nicer
-		const tidsSorted = orderBy(clusters[i].pointIndexes, (teamIndex) => {
-			const teamInfo = selectedTeamInfos[teamIndex];
+		const tidsSorted = orderBy(clusters[i]!.pointIndexes, (teamIndex) => {
+			const teamInfo = selectedTeamInfos[teamIndex]!;
 			return `${teamInfo.region} ${teamInfo.name}`;
 		});
 
 		for (const tid of tidsSorted) {
 			teamsOutput.push({
-				...selectedTeamInfos[tid],
+				...selectedTeamInfos[tid]!,
 				tid,
 				cid: div.cid,
 				did: div.did,

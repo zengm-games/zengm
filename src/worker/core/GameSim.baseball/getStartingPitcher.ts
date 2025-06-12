@@ -10,14 +10,13 @@ export const getStartingPitcher = (
 	allStarGame: boolean,
 ) => {
 	if (allStarGame) {
-		return pitchers[0];
+		return pitchers[0]!;
 	}
 
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 
 	// First pass - look for starting pitcher with no fatigue
-	for (let i = 0; i < pitchers.length; i++) {
-		const p = pitchers[i];
+	for (const [i, p] of pitchers.entries()) {
 		const pFatigue = p.pFatigue ?? 0;
 		if ((pFatigue === 0 || (playoffs && pFatigue < 30)) && !p.injured) {
 			return p;
@@ -30,7 +29,7 @@ export const getStartingPitcher = (
 
 	// Second pass - reliever with no fatigue
 	for (let i = CLOSER_INDEX + 1; i < pitchers.length; i++) {
-		const p = pitchers[i];
+		const p = pitchers[i]!;
 		const pFatigue = p.pFatigue ?? 0;
 		if (pFatigue === 0 && !p.injured) {
 			return p;
@@ -38,8 +37,7 @@ export const getStartingPitcher = (
 	}
 
 	// Third pass - look for slightly tired starting pitcher
-	for (let i = 0; i < pitchers.length; i++) {
-		const p = pitchers[i];
+	for (const [i, p] of pitchers.entries()) {
 		const pFatigue = p.pFatigue ?? 0;
 		if (pFatigue <= 30 && !p.injured) {
 			return p;
@@ -52,7 +50,7 @@ export const getStartingPitcher = (
 
 	// Fourth pass - tired reliever
 	for (let i = CLOSER_INDEX + 1; i < pitchers.length; i++) {
-		const p = pitchers[i];
+		const p = pitchers[i]!;
 		const pFatigue = p.pFatigue ?? 0;
 		if (pFatigue <= 30 && !p.injured) {
 			return p;

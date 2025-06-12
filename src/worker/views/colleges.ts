@@ -173,7 +173,7 @@ export const genView = (
 							if (retiredCounts[row.number] === undefined) {
 								retiredCounts[row.number] = 1;
 							} else {
-								retiredCounts[row.number] += 1;
+								retiredCounts[row.number]! += 1;
 							}
 						}
 					}
@@ -187,8 +187,8 @@ export const genView = (
 			// Hacky crap because p is nested
 			const players = infos.map((info) => info.p);
 			const playersWithFirstNameShort = addFirstNameShort(players);
-			for (let i = 0; i < infos.length; i++) {
-				infos[i].p = playersWithFirstNameShort[i];
+			for (const [i, info] of infos.entries()) {
+				info.p = playersWithFirstNameShort[i];
 			}
 
 			return {

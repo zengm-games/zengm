@@ -784,7 +784,7 @@ const TeamFinances = ({
 		// Loop through the salaries for the next five years for this player.
 		for (let j = 0; j < salariesSeasons.length; j++) {
 			if (p.amounts[j]) {
-				const formattedAmount = helpers.formatCurrency(p.amounts[j], "M");
+				const formattedAmount = helpers.formatCurrency(p.amounts[j]!, "M");
 
 				if (p.released) {
 					data.push(<i>{formattedAmount}</i>);

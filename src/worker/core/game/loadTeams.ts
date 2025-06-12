@@ -160,12 +160,12 @@ export const processTeam = (
 		}
 
 		// These use the same formulas as the skill definitions in player.skills!
-		for (const k of Object.keys(COMPOSITE_WEIGHTS)) {
+		for (const [k, weightInfo] of Object.entries(COMPOSITE_WEIGHTS)) {
 			p2.compositeRating[k] =
 				player.compositeRating(
 					rating,
-					COMPOSITE_WEIGHTS[k].ratings,
-					COMPOSITE_WEIGHTS[k].weights,
+					weightInfo.ratings,
+					weightInfo.weights,
 					false,
 				) * injuryFactor;
 

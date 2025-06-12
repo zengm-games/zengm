@@ -204,8 +204,9 @@ const getBasicInfo = async ({
 			);
 		}
 
-		if (validators[value.key]) {
-			const { validate, required } = validators[value.key];
+		const currentValidator = validators[value.key];
+		if (currentValidator) {
+			const { validate, required } = currentValidator;
 			validate(value.value);
 			if (validate.errors) {
 				schemaErrors.push(...validate.errors);

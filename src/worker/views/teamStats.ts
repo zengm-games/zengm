@@ -179,7 +179,7 @@ export const averageTeamStats = (
 		}
 
 		const byPos =
-			teams.length > 0 && Array.isArray((teams[0].stats as any)[stat]);
+			teams.length > 0 && Array.isArray((teams[0]!.stats as any)[stat]);
 
 		let sum = byPos ? [] : 0;
 		for (const t of teams) {
@@ -199,7 +199,7 @@ export const averageTeamStats = (
 						if ((sum as number[])[i] === undefined) {
 							(sum as number[])[i] = 0;
 						}
-						(sum as number[])[i] += value;
+						(sum as number[])[i]! += value;
 					}
 				}
 			} else {
@@ -319,8 +319,8 @@ const updateTeams = async (
 		}
 
 		// Sort stat types. "Better" values are at the start of the arrays.
-		for (const statType of helpers.keys(allStats)) {
-			allStats[statType].sort((a, b) => {
+		for (const [statType, allStatsOfType] of Object.entries(allStats)) {
+			allStatsOfType.sort((a, b) => {
 				// Sort lowest first.
 				if (lowerIsBetter.has(statType)) {
 					if (a < b) {

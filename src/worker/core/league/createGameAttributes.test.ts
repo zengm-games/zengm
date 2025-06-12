@@ -145,9 +145,9 @@ describe("tiebreakers", () => {
 
 			assert.deepStrictEqual(gameAttributes.tiebreakers[0].start, -Infinity);
 			assert.deepStrictEqual(gameAttributes.tiebreakers[0].value, ["coinFlip"]);
-			assert.deepStrictEqual(gameAttributes.tiebreakers[1].start, 2023);
+			assert.deepStrictEqual(gameAttributes.tiebreakers[1]!.start, 2023);
 			assert.deepStrictEqual(
-				gameAttributes.tiebreakers[1].value,
+				gameAttributes.tiebreakers[1]!.value,
 				defaultGameAttributes.tiebreakers[0].value,
 			);
 		});
@@ -165,9 +165,9 @@ describe("tiebreakers", () => {
 
 			assert.deepStrictEqual(gameAttributes.tiebreakers[0].start, -Infinity);
 			assert.deepStrictEqual(gameAttributes.tiebreakers[0].value, ["coinFlip"]);
-			assert.deepStrictEqual(gameAttributes.tiebreakers[1].start, 2024);
+			assert.deepStrictEqual(gameAttributes.tiebreakers[1]!.start, 2024);
 			assert.deepStrictEqual(
-				gameAttributes.tiebreakers[1].value,
+				gameAttributes.tiebreakers[1]!.value,
 				defaultGameAttributes.tiebreakers[0].value,
 			);
 		});
@@ -186,9 +186,9 @@ describe("tiebreakers", () => {
 
 			assert.deepStrictEqual(gameAttributes.tiebreakers[0].start, -Infinity);
 			assert.deepStrictEqual(gameAttributes.tiebreakers[0].value, ["coinFlip"]);
-			assert.deepStrictEqual(gameAttributes.tiebreakers[1].start, 2024);
+			assert.deepStrictEqual(gameAttributes.tiebreakers[1]!.start, 2024);
 			assert.deepStrictEqual(
-				gameAttributes.tiebreakers[1].value,
+				gameAttributes.tiebreakers[1]!.value,
 				defaultGameAttributes.tiebreakers[0].value,
 			);
 		});

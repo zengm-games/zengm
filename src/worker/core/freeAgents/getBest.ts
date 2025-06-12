@@ -51,7 +51,7 @@ const getBest = <T extends PlayerWithoutKey>(
 		);
 		const wrapper = playersAvailableFiltered.map((p, i) => ({
 			p,
-			teamOvrDiff: teamOvrDiffs[i],
+			teamOvrDiff: teamOvrDiffs[i]!,
 		}));
 		playersSorted = orderBy(wrapper, (x) => x.teamOvrDiff, "desc").map(
 			(x) => x.p,
@@ -99,7 +99,7 @@ const getBest = <T extends PlayerWithoutKey>(
 					return false;
 				}
 
-				return healthy === 0 || healthy + injured < KEY_POSITIONS_NEEDED[pos];
+				return healthy === 0 || healthy + injured < KEY_POSITIONS_NEEDED[pos]!;
 			});
 
 			return keyPositionsNeededCache;

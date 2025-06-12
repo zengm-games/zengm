@@ -343,10 +343,10 @@ export const OfferTable = ({
 			},
 		},
 	);
-	offerCols[4].title = "Your Ovr";
-	offerCols[4].desc = "Your team's change in ovr rating";
-	offerCols[5].title = "Other Ovr";
-	offerCols[5].desc = "Other team's change in ovr rating";
+	offerCols[4]!.title = "Your Ovr";
+	offerCols[4]!.desc = "Your team's change in ovr rating";
+	offerCols[5]!.title = "Other Ovr";
+	offerCols[5]!.desc = "Other team's change in ovr rating";
 	offerCols.splice(6, 0, ...assetCols);
 
 	const offerRows = offers.map((offer, i) => {

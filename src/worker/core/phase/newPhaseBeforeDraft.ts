@@ -153,7 +153,7 @@ const setChampNoPlayoffs = async (conditions: Conditions) => {
 
 	const ordered = await orderTeams(teams, teams);
 
-	const { tid } = ordered[0];
+	const { tid } = ordered[0]!;
 
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsByTidSeason",
@@ -249,7 +249,7 @@ const doThanosMode = async (conditions: Conditions) => {
 				numPlayers,
 			)}: `;
 			for (let i = 0; i < numPlayers; i++) {
-				const p = userSnappedPlayers[i];
+				const p = userSnappedPlayers[i]!;
 				if (i > 0 && numPlayers === 2) {
 					text += " and ";
 				} else if (i > 0 && i === numPlayers - 1) {
@@ -288,7 +288,7 @@ const doSisyphusMode = async (conditions: Conditions) => {
 	let text = "Sisyphus Mode activated! ";
 	const tids = [g.get("userTid")];
 	if (swappedTid !== undefined) {
-		const teamInfo = g.get("teamInfoCache")[swappedTid];
+		const teamInfo = g.get("teamInfoCache")[swappedTid]!;
 		text += `Your roster has been swapped with the worst team in the league, the ${teamInfo.region} ${teamInfo.name}.`;
 		tids.push(swappedTid);
 	} else {
@@ -431,7 +431,7 @@ const newPhaseBeforeDraft = async (
 						if (!retiredPlayersByTeam[p.tid]) {
 							retiredPlayersByTeam[p.tid] = [];
 						}
-						retiredPlayersByTeam[p.tid].push(p);
+						retiredPlayersByTeam[p.tid]!.push(p);
 					}
 					await player.retire(p, conditions);
 					update = true;

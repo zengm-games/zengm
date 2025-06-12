@@ -76,8 +76,8 @@ const FrivolitiesTrades = ({
 		"Links",
 	]);
 	for (const i of [4, 7]) {
-		if (cols[i].desc) {
-			cols[i].desc += " (Total After Trade)";
+		if (cols[i]!.desc) {
+			cols[i]!.desc += " (Total After Trade)";
 		}
 	}
 
@@ -206,8 +206,8 @@ const FrivolitiesTrades = ({
 					value: `${trade.season} ${PHASE_TEXT[trade.phase]}`,
 					sortValue: trade.season + (trade.phase + 10) / 1000,
 				},
-				...teamCols[0],
-				...teamCols[1],
+				...teamCols[0]!,
+				...teamCols[1]!,
 				<a href={helpers.leagueUrl(["trade_summary", trade.eid])}>Details</a>,
 			],
 			classNames: {

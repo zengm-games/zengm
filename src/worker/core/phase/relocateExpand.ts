@@ -101,7 +101,7 @@ const getCandidateTeams = <T extends { region: string }>(
 			return true;
 		}
 
-		return !geographicCoordinates[t.region].outsideNorthAmerica;
+		return !geographicCoordinates[t.region]!.outsideNorthAmerica;
 	});
 };
 
@@ -166,8 +166,8 @@ export const doRelocate = async () => {
 		const coordinates = activeTeams.map((temp) => {
 			const t = temp.tid === currentTeam.tid ? newTeam : temp;
 			return [
-				geographicCoordinates[t.region].latitude,
-				geographicCoordinates[t.region].longitude,
+				geographicCoordinates[t.region]!.latitude,
+				geographicCoordinates[t.region]!.longitude,
 			] as [number, number];
 		});
 
@@ -178,10 +178,10 @@ export const doRelocate = async () => {
 		);
 
 		for (let i = 0; i < divs.length; i++) {
-			const pointIndexes = clusters[i].pointIndexes;
+			const pointIndexes = clusters[i]!.pointIndexes;
 			if (pointIndexes) {
 				// Map to tids
-				realigned[i] = pointIndexes.map((i) => activeTeams[i].tid);
+				realigned[i] = pointIndexes.map((i) => activeTeams[i]!.tid);
 			}
 		}
 
@@ -190,7 +190,7 @@ export const doRelocate = async () => {
 			const original = divs.map(() => [] as number[]);
 			for (const t of activeTeams) {
 				const divIndex = divs.findIndex((div) => t.did === div.did);
-				original[divIndex].push(t.tid);
+				original[divIndex]!.push(t.tid);
 			}
 
 			const divIndexes = divs.map((div, i) => i);
@@ -199,7 +199,7 @@ export const doRelocate = async () => {
 				let bestScore2 = -Infinity;
 				let bestDid: number | undefined;
 				for (let divIndex = 0; divIndex < original.length; divIndex++) {
-					const did = divs[divIndex].did;
+					const did = divs[divIndex]!.did;
 
 					if (didsUsed.has(did)) {
 						continue;
@@ -207,7 +207,7 @@ export const doRelocate = async () => {
 
 					let score = 0;
 					for (const tid of tids) {
-						if (original[divIndex].includes(tid)) {
+						if (original[divIndex]!.includes(tid)) {
 							score += 1;
 						}
 					}
@@ -241,7 +241,7 @@ export const doRelocate = async () => {
 				const didsUsed = new Set<number>();
 
 				for (const divIndex of divIndexes) {
-					const tids = realigned[divIndex];
+					const tids = realigned[divIndex]!;
 					const result = getBestDid(tids, didsUsed);
 					didsUsed.add(result.did);
 					attempt[result.divIndex] = tids;

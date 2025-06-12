@@ -198,7 +198,7 @@ export const getPlayer = async (
 	await fixRatingsStatsAbbrevs(p);
 
 	// Filter out rows with no games played
-	p.stats = p.stats.filter((row) => row.gp > 0);
+	p.stats = p.stats.filter((row) => row.gp! > 0);
 
 	return p;
 };
@@ -346,7 +346,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 	let teamJersey;
 	let bestPos;
 	if (p.tid === PLAYER.RETIRED) {
-		const info = processPlayersHallOfFame([p])[0];
+		const info = processPlayersHallOfFame([p])[0]!;
 		const legacyTid = info.legacyTid;
 		bestPos = info.bestPos;
 

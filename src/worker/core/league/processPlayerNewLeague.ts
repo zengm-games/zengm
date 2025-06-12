@@ -29,8 +29,9 @@ export const applyRealPlayerPhotos = (
 	if (realPlayerPhotos) {
 		// Do this before augment so it doesn't need to create a face
 		if (p.srID) {
-			if (realPlayerPhotos[p.srID] !== undefined) {
-				p.imgURL = realPlayerPhotos[p.srID];
+			const realPlayerPhoto = realPlayerPhotos[p.srID];
+			if (realPlayerPhoto !== undefined) {
+				p.imgURL = realPlayerPhoto;
 			} else {
 				const name = p.name ?? `${p.firstName} ${p.lastName}`;
 

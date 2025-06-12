@@ -99,8 +99,8 @@ const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
 					},
 					onSwap: async (index1, index2) => {
 						const newSortedTids = [...sortedTids];
-						newSortedTids[index1] = sortedTids[index2];
-						newSortedTids[index2] = sortedTids[index1];
+						newSortedTids[index1] = sortedTids[index2]!;
+						newSortedTids[index2] = sortedTids[index1]!;
 						setSortedTids(newSortedTids);
 					},
 				}}

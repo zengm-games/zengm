@@ -27,7 +27,7 @@ const Summary = ({
 	players: View<"draftHistory">["players"];
 	summaryStat: View<"draftHistory">["summaryStat"];
 }) => {
-	const col = getCols([`stat:${summaryStat}`])[0];
+	const col = getCols([`stat:${summaryStat}`])[0]!;
 	const statText = <span title={col.desc}>{col.title}</span>;
 
 	const formatStat = (p: (typeof players)[number]) =>

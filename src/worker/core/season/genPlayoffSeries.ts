@@ -55,10 +55,10 @@ export const makeMatchups = (
 	const seeds = genPlayoffSeeds(numPlayoffTeams, numPlayoffByes);
 
 	const round = seeds.map((matchup) => {
-		const home = genTeam(teams[matchup[0]], matchup[0] + 1);
+		const home = genTeam(teams[matchup[0]]!, matchup[0] + 1);
 		const away =
 			matchup[1] !== undefined
-				? genTeam(teams[matchup[1]], matchup[1] + 1)
+				? genTeam(teams[matchup[1]]!, matchup[1] + 1)
 				: undefined;
 
 		return {
@@ -78,12 +78,12 @@ export const makeMatchups = (
 
 		playIn = [
 			{
-				home: genTeam(playInTeams[0], numPlayoffTeams - 1),
-				away: genTeam(playInTeams[1], numPlayoffTeams),
+				home: genTeam(playInTeams[0]!, numPlayoffTeams - 1),
+				away: genTeam(playInTeams[1]!, numPlayoffTeams),
 			},
 			{
-				home: genTeam(playInTeams[2], numPlayoffTeams + 1),
-				away: genTeam(playInTeams[3], numPlayoffTeams + 2),
+				home: genTeam(playInTeams[2]!, numPlayoffTeams + 1),
+				away: genTeam(playInTeams[3]!, numPlayoffTeams + 2),
 			},
 		];
 	}
@@ -110,7 +110,7 @@ export const getTidPlayIns = (playIns: PlayInTournament[]) => {
 
 const getTidPlayoffs = (series: PlayoffSeries["series"]) => {
 	const tids = [];
-	for (const matchup of series[0]) {
+	for (const matchup of series[0]!) {
 		tids.push(matchup.home.tid);
 		if (matchup.away !== undefined) {
 			tids.push(matchup.away.tid);
@@ -189,7 +189,7 @@ export const genPlayoffSeriesFromTeams = async (
 						numPlayoffTeams / 2,
 						numPlayoffByes / 2,
 					);
-					series[0].push(...round);
+					series[0]!.push(...round);
 					if (playIn) {
 						playIns.push(playIn);
 					}
@@ -211,7 +211,7 @@ export const genPlayoffSeriesFromTeams = async (
 				if (teamsConf.length > 0) {
 					// This sort determines conference champ. Sort inside makeMatchups call will determine overall #1 seed
 					const sorted = await orderTeams(teamsConf, teams, orderTeamsOptions);
-					teamsFinals.push(sorted[0]);
+					teamsFinals.push(sorted[0]!);
 				}
 			}
 
@@ -221,7 +221,7 @@ export const genPlayoffSeriesFromTeams = async (
 					numPlayoffTeams / 2,
 					numPlayoffByes / 2,
 				);
-				series[0].push(...round);
+				series[0]!.push(...round);
 			} else {
 				// Not enough teams in conference for playoff bracket
 				playoffsByConf = false;
@@ -239,7 +239,7 @@ export const genPlayoffSeriesFromTeams = async (
 			numPlayoffTeams,
 			numPlayoffByes,
 		);
-		series[0].push(...round);
+		series[0]!.push(...round);
 		if (playIn) {
 			playIns.push(playIn);
 		}
@@ -250,7 +250,7 @@ export const genPlayoffSeriesFromTeams = async (
 		(tid) => !tidPlayIn.includes(tid),
 	);
 
-	for (const matchup of series[0]) {
+	for (const matchup of series[0]!) {
 		for (const type of ["home", "away"] as const) {
 			const t = matchup[type];
 			if (t && tidPlayIn.includes(t.tid)) {

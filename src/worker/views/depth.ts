@@ -186,7 +186,7 @@ const updateDepth = async (
 				playoffs: playoffs === "playoffs",
 				regularSeason: playoffs === "regularSeason",
 				combined: playoffs === "combined",
-				stats: [...stats[pos2], "jerseyNumber"],
+				stats: [...stats[pos2]!, "jerseyNumber"],
 				season: g.get("season"),
 				showNoStats: true,
 				showRookies: true,

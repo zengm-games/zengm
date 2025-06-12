@@ -159,10 +159,11 @@ const updateUpcoming = async (
 		});
 
 		let canLiveSimFirstGame = false;
-		if (upcoming.length > 0) {
+		const upcoming0 = upcoming[0];
+		if (upcoming0) {
 			const scheduleToday = await season.getSchedule(true);
 			canLiveSimFirstGame = scheduleToday.some(
-				(game) => game.gid === upcoming[0].gid,
+				(game) => game.gid === upcoming0.gid,
 			);
 		}
 
@@ -188,7 +189,7 @@ export const getTopPlayers = async (
 	const teamInfoCache = g.get("teamInfoCache");
 
 	for (let tid = 0; tid < teamInfoCache.length; tid++) {
-		const t = teamInfoCache[tid];
+		const t = teamInfoCache[tid]!;
 		if (t.disabled || tid === skipTid) {
 			continue;
 		}
@@ -264,7 +265,7 @@ const updateCompleted = async (
 		});
 
 		for (let i = games.length - 1; i >= 0; i--) {
-			completed.unshift(games[i]);
+			completed.unshift(games[i]!);
 		}
 
 		const topPlayers = await getTopPlayers(inputs.tid, 2);

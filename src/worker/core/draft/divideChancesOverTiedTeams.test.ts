@@ -54,15 +54,15 @@ test("distribute combinations to teams with the same record", async () => {
 	await lotterySort(teams);
 	divideChancesOverTiedTeams(chances, teams, false);
 
-	for (let i = 0; i < sameRec.length; i++) {
-		const tids = sameRec[i];
+	for (const tids of sameRec) {
 		let value = 0;
 
-		for (let j = 0; j < tids.length; j++) {
+		for (const tid of tids) {
+			const chance = chances[tid]!;
 			if (value === 0) {
-				value = chances[tids[j]];
+				value = chance;
 			} else {
-				assert.strictEqual(value, chances[tids[j]]);
+				assert.strictEqual(value, chance);
 			}
 		}
 	}
@@ -70,14 +70,15 @@ test("distribute combinations to teams with the same record", async () => {
 	// test if isFinal is true
 	divideChancesOverTiedTeams(chances, teams, true);
 
-	for (let i = 0; i < sameRec.length; i++) {
-		const tids = sameRec[i];
+	for (const tids of sameRec) {
 		let value = 0;
 		let maxIdx = -1;
 
 		for (let j = tids.length - 1; j >= 0; j--) {
-			if (value <= chances[tids[j]]) {
-				value = chances[tids[j]];
+			const tid = tids[j]!;
+			const chance = chances[tid]!;
+			if (value <= chance) {
+				value = chance;
 				maxIdx = j;
 			}
 		}

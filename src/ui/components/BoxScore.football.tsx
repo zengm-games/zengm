@@ -104,8 +104,8 @@ export const sortByStats = (
 				statsObject = "seasonStats";
 			}
 
-			const aValue = getValue?.(a, stat) ?? a[statsObject][stat];
-			const bValue = getValue?.(b, stat) ?? b[statsObject][stat];
+			const aValue = getValue?.(a, stat!) ?? a[statsObject][stat!];
+			const bValue = getValue?.(b, stat!) ?? b[statsObject][stat!];
 
 			if (bValue !== aValue) {
 				const diff = bValue - aValue;

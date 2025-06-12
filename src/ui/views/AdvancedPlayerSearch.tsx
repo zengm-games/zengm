@@ -51,7 +51,7 @@ type AdvancedPlayerSearchFilterEditing = Omit<
 };
 
 const getFilterInfo = (category: string, key: string) => {
-	const info = allFilters[category].options[key];
+	const info = allFilters[category]!.options[key];
 	if (!info) {
 		throw new Error("Should never happen");
 	}
@@ -276,8 +276,8 @@ const Filters = ({
 										onChange={(event) => {
 											const newCategory = event.target.value as any;
 											const newKey = Object.keys(
-												allFilters[newCategory].options,
-											)[0];
+												allFilters[newCategory]!.options,
+											)[0]!;
 											const newFilter = getInitialFilterEditing(
 												newCategory,
 												newKey,
@@ -308,7 +308,7 @@ const Filters = ({
 											width: 150,
 										}}
 									>
-										{Object.values(allFilters[filter.category].options).map(
+										{Object.values(allFilters[filter.category]!.options).map(
 											(row, i) => {
 												const col = getCols(
 													[row.colKey],
@@ -317,7 +317,7 @@ const Filters = ({
 																[row.colKey]: row.colOverrides,
 															}
 														: undefined,
-												)[0];
+												)[0]!;
 												return (
 													<option key={i} value={row.key} title={col.desc}>
 														{col.title}
@@ -607,21 +607,21 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 			if (statType === "bio") {
 				uniqueStatTypeInfos.push(
 					...keys.attrs.map((key) => {
-						const info = allFilters.bio.options[key];
+						const info = allFilters.bio!.options[key]!;
 						return info;
 					}),
 				);
 			} else if (statType === "ratings") {
 				uniqueStatTypeInfos.push(
 					...keys.ratings.map((key) => {
-						const info = allFilters.ratings.options[key];
+						const info = allFilters.ratings!.options[key]!;
 						return info;
 					}),
 				);
 			} else {
 				uniqueStatTypeInfos.push(
 					...keys.stats.map((key) => {
-						const info = allFilters[statType].options[key];
+						const info = allFilters[statType]!.options[key]!;
 						return info;
 					}),
 				);

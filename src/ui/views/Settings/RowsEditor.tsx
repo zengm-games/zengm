@@ -32,7 +32,7 @@ type RowsState<Type> = Type extends "injuries"
 const formatRows = <Type extends "injuries" | "tragicDeaths">(
 	rows: Rows<Type>,
 ): RowsState<Type> => {
-	const keys = Object.keys(rows[0]) as any[];
+	const keys = Object.keys(rows[0]!) as any[];
 	return rows.map((row: any) => {
 		const formatted = {
 			id: Math.random(),

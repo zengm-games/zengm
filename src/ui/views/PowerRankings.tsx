@@ -125,9 +125,9 @@ const PowerRankings = ({
 	const cols = getCols(colNames);
 
 	if (isSport("basketball")) {
-		for (let i = 0; i < colNames.length; i++) {
-			if (colNames[i].startsWith("rating:")) {
-				cols[i].sortSequence = ["asc", "desc"];
+		for (const [i, colName] of colNames.entries()) {
+			if (colName.startsWith("rating:")) {
+				cols[i]!.sortSequence = ["asc", "desc"];
 			}
 		}
 	}
@@ -178,8 +178,8 @@ const PowerRankings = ({
 					value: (
 						<Other
 							actualShowHealthy={actualShowHealthy}
-							current={t.powerRankings.otherCurrent[key]}
-							healthy={t.powerRankings.other[key]}
+							current={t.powerRankings.otherCurrent[key]!}
+							healthy={t.powerRankings.other[key]!}
 						/>
 					),
 					searchValue: actualShowHealthy

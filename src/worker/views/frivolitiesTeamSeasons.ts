@@ -155,7 +155,7 @@ const getMostXTeamSeasons = async ({
 			const playoffSeries = await tx
 				.objectStore("playoffSeries")
 				.get(ts.season);
-			if (playoffSeries && playoffSeries.series.length > 0) {
+			if (playoffSeries?.series[0]) {
 				const matchups = playoffSeries.series[0];
 				for (const matchup of matchups) {
 					if (matchup.home.tid === ts.tid) {
@@ -171,8 +171,8 @@ const getMostXTeamSeasons = async ({
 	}
 
 	const ordered = orderBy(teamSeasons, ...sortParams);
-	for (let i = 0; i < ordered.length; i++) {
-		ordered[i].rank = i + 1;
+	for (const [i, row] of ordered.entries()) {
+		row.rank = i + 1;
 	}
 
 	return ordered;

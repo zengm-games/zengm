@@ -87,9 +87,9 @@ const updateAllStarThree = async (
 		const godMode = g.get("godMode");
 
 		const started =
-			three.rounds[0].results.length > 0 &&
-			three.rounds[0].results[0].racks.length > 0 &&
-			three.rounds[0].results[0].racks[0].length > 0;
+			three.rounds[0]!.results.length > 0 &&
+			three.rounds[0]!.results[0]!.racks.length > 0 &&
+			three.rounds[0]!.results[0]!.racks[0]!.length > 0;
 
 		let allPossibleContestants: {
 			pid: number;

@@ -447,7 +447,7 @@ const processLiveGameEvents = ({
 					}
 				}
 			} else if (e.s === "gs") {
-				const p = playersByPid[e.pid!];
+				const p = playersByPid[e.pid!]!;
 				p.inGame = true;
 			} else if (e.s === "sPts" || e.s === "sAtt") {
 				// Shootout
@@ -499,10 +499,10 @@ const processLiveGameEvents = ({
 
 			if (e.type === "sub") {
 				for (const pid of e.pids) {
-					playersByPid[pid].inGame = true;
+					playersByPid[pid]!.inGame = true;
 				}
 				for (const pid of e.pidsOff) {
-					playersByPid[pid].inGame = false;
+					playersByPid[pid]!.inGame = false;
 				}
 			} else if (e.type === "elamActive") {
 				boxScore.elamTarget = e.target;

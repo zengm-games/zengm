@@ -36,12 +36,12 @@ const GameLinks = ({
 		<>
 			{thisGameText ? thisGameText : thisGame.name},{" "}
 			{noLinks ? (
-				`${otherGames[0].name}, ${otherGames[1].name}, and ${otherGames[2].name}`
+				`${otherGames[0]!.name}, ${otherGames[1]!.name}, and ${otherGames[2]!.name}`
 			) : (
 				<>
-					<a href={otherGames[0].url}>{otherGames[0].name}</a>,{" "}
-					<a href={otherGames[1].url}>{otherGames[1].name}</a>, and{" "}
-					<a href={otherGames[2].url}>{otherGames[2].name}</a>
+					<a href={otherGames[0]!.url}>{otherGames[0]!.name}</a>,{" "}
+					<a href={otherGames[1]!.url}>{otherGames[1]!.name}</a>, and{" "}
+					<a href={otherGames[2]!.url}>{otherGames[2]!.name}</a>
 				</>
 			)}
 		</>

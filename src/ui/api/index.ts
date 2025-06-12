@@ -38,7 +38,7 @@ const mergeGames = (games: LocalStateUI["games"]) => {
 const newLid = async (lid: number) => {
 	const parts = window.location.pathname.split("/");
 
-	if (parts[1] === "l" && Number.parseInt(parts[2]) !== lid) {
+	if (parts[1] === "l" && Number.parseInt(parts[2]!) !== lid) {
 		parts[2] = String(lid);
 		const newPathname = parts.join("/");
 		await realtimeUpdate(["firstRun"], newPathname);
@@ -108,13 +108,13 @@ const updateTeamOvrs = (ovrs: number[]) => {
 	// Find upcoming game, it's the only one that needs updating because it's the only one displayed in a ScoreBox in LeagueTopBar
 	const gameIndex = games.findIndex((game) => game.teams[0].pts === undefined);
 	if (gameIndex >= 0) {
-		const { teams } = games[gameIndex];
+		const { teams } = games[gameIndex]!;
 		if (
 			teams[0].ovr !== ovrs[teams[0].tid] ||
 			teams[1].ovr !== ovrs[teams[1].tid]
 		) {
 			games[gameIndex] = {
-				...games[gameIndex],
+				...games[gameIndex]!,
 			};
 			teams[0].ovr = ovrs[teams[0].tid];
 			teams[1].ovr = ovrs[teams[1].tid];

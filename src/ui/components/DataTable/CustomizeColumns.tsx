@@ -203,7 +203,7 @@ const CustomizeColumns = ({
 								return (
 									<DraggableItem
 										key={colIndex}
-										id={ids[i]}
+										id={ids[i]!}
 										onToggleHidden={onToggleHidden(i)}
 										hidden={hidden}
 										col={col}

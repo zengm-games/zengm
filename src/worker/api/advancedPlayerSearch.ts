@@ -108,7 +108,7 @@ export const advancedPlayerSearch = async ({
 		if (filter.category === "ratings") {
 			extraRatings.push(filter.key);
 		} else if (filter.category === "bio") {
-			const filterInfo = allFilters[filter.category].options[filter.key];
+			const filterInfo = allFilters[filter.category]!.options[filter.key];
 			if (filterInfo && filterInfo.workerFieldOverride !== null) {
 				const key = filterInfo.workerFieldOverride ?? filter.key;
 				extraAttrs.push(key);
@@ -231,7 +231,7 @@ export const advancedPlayerSearch = async ({
 			p.stats = p[obj];
 
 			const matchesAll = filters.every((filter) => {
-				const filterInfo = allFilters[filter.category].options[filter.key];
+				const filterInfo = allFilters[filter.category]!.options[filter.key];
 				if (!filterInfo) {
 					return true;
 				}

@@ -275,7 +275,7 @@ const Draft = ({
 
 	if (expansionDraft) {
 		colsDrafted.splice(4, 1);
-		colsDrafted.splice(2, 0, getCols(["From"])[0]);
+		colsDrafted.splice(2, 0, getCols(["From"])[0]!);
 	}
 
 	const teamInfoCache = useLocal((state) => state.teamInfoCache);

@@ -156,7 +156,7 @@ const Depth = ({
 
 	let numStarters = 0;
 	let positions: string[];
-	const entry = numStartersByPos[pos];
+	const entry = numStartersByPos[pos]!;
 	if (typeof entry === "number") {
 		numStarters = entry;
 		positions = [pos];
@@ -167,7 +167,7 @@ const Depth = ({
 		positions = Object.keys(entry);
 	}
 
-	const numLines = numLinesByPos ? numLinesByPos[pos] : 1;
+	const numLines = numLinesByPos ? numLinesByPos[pos]! : 1;
 
 	let rowLabels: string[] | undefined;
 	if (isSport("baseball")) {
@@ -416,7 +416,7 @@ const Depth = ({
 							className="btn btn-light-bordered"
 							onClick={() => handleAutoSort(pos)}
 						>
-							Auto sort {posNames ? lowerCaseWords(posNames[pos]) : pos}
+							Auto sort {posNames ? lowerCaseWords(posNames[pos]!) : pos}
 						</button>
 						<button
 							className="btn btn-light-bordered"

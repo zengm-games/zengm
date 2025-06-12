@@ -235,7 +235,7 @@ const getAwards = (
 		playersBySlug = groupByUnique(players, "srID");
 	}
 
-	const seasonsRange = [1947, options.season - 1];
+	const seasonsRange: [number, number] = [1947, options.season - 1];
 	if (options.phase > PHASE.PLAYOFFS) {
 		seasonsRange[1] += 1;
 	}
@@ -323,8 +323,8 @@ const getAwards = (
 
 		const awards: Awards<string, string> = {
 			season,
-			bestRecord: awardTeam(bestRecordInfoBySeason[season].best),
-			bestRecordConfs: bestRecordInfoBySeason[season].bestConfs.map(awardTeam),
+			bestRecord: awardTeam(bestRecordInfoBySeason[season]!.best),
+			bestRecordConfs: bestRecordInfoBySeason[season]!.bestConfs.map(awardTeam),
 
 			roy: simple.roy,
 			allRookie,

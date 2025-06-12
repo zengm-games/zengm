@@ -54,8 +54,8 @@ const DailySchedule = ({
 
 	const tradeDeadline =
 		upcoming.length === 1 &&
-		upcoming[0].teams[0].tid === -3 &&
-		upcoming[0].teams[1].tid === -3;
+		upcoming[0]!.teams[0].tid === -3 &&
+		upcoming[0]!.teams[1].tid === -3;
 
 	let noGamesMessage;
 	if (days.length === 0) {

@@ -194,7 +194,7 @@ const doAwards = async (conditions: Conditions) => {
 		},
 		players,
 	).map(getPlayerInfo);
-	const dpoy = dpoyPlayers[0];
+	const dpoy = dpoyPlayers[0]!;
 
 	let mvpPlayers = getTopPlayers(
 		{
@@ -233,7 +233,7 @@ const doAwards = async (conditions: Conditions) => {
 		},
 		players,
 	).map(getPlayerInfo);
-	const dfoy = dfoyPlayers[0];
+	const dfoy = dfoyPlayers[0]!;
 
 	const goyPlayers = getTopPlayers(
 		{
@@ -243,7 +243,7 @@ const doAwards = async (conditions: Conditions) => {
 		},
 		players,
 	).map(getPlayerInfo);
-	const goy = goyPlayers[0];
+	const goy = goyPlayers[0]!;
 
 	let finalsMvp;
 	const champTeam = teams.find(

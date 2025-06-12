@@ -155,7 +155,7 @@ const retireJerseyNumber = async ({
 			"score",
 			"asc",
 		);
-		const worstRetiredJersey = sorted[0];
+		const worstRetiredJersey = sorted[0]!;
 
 		if (
 			worstRetiredJersey.score !== undefined &&

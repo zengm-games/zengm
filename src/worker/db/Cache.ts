@@ -36,6 +36,7 @@ import type {
 	EventBBGMWithoutKey,
 	SeasonLeaders,
 	SavedTradingBlock,
+	NonEmptyArray,
 } from "../../common/types.ts";
 import type { IDBPTransaction } from "@dumbmatter/idb";
 import type { LeagueDB } from "./connectLeague.ts";
@@ -118,7 +119,7 @@ const parseInfinity = (string: string) => {
 };
 const getIndexKey = (
 	index: {
-		key: string[];
+		key: NonEmptyArray<string>;
 	},
 	row: any,
 ) => {
@@ -234,7 +235,7 @@ class Cache {
 			indexes?: {
 				name: Index;
 				filter?: (a: any) => boolean;
-				key: string[];
+				key: NonEmptyArray<string>;
 				unique?: boolean;
 			}[];
 

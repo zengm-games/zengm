@@ -77,7 +77,7 @@ test("return requested info if tid/season match for an array of player objects",
 		season: 2012,
 	});
 
-	for (let i = 0; i < 2; i++) {
+	for (const i of [0, 1] as const) {
 		assert.strictEqual(pf[i].tid, 4);
 		assert.strictEqual(pf[i].awards.length, 0);
 		assert.strictEqual(pf[i].ratings.season, 2012);

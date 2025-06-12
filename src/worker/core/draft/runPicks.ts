@@ -119,7 +119,7 @@ const runPicks = async (
 
 	// This will actually draft "untilUserOrEnd"
 	const autoSelectPlayer = async (): Promise<number[]> => {
-		if (draftPicks.length > 0) {
+		if (draftPicks[0]) {
 			// If there are no players, delete the rest of the picks and draft is done
 			if (playersAll.length === 0) {
 				for (const dp of draftPicks) {
@@ -177,7 +177,7 @@ const runPicks = async (
 
 				const score = (p: Player<MinimalPlayerRatings>, i: number) => {
 					if (DRAFT_BY_TEAM_OVR) {
-						return (teamOvrDiffs[i] + 0.05 * p.value) ** 40;
+						return (teamOvrDiffs[i]! + 0.05 * p.value) ** 40;
 					}
 
 					return p.value ** 69;

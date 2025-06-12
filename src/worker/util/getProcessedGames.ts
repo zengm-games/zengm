@@ -25,7 +25,7 @@ const getProcessedGames = async ({
 }) => {
 	let maxGid;
 
-	if (loadedGames.length > 0) {
+	if (loadedGames[0]) {
 		maxGid = loadedGames[0].gid; // Load new games
 	} else {
 		maxGid = -1; // Load all games
@@ -45,7 +45,7 @@ const getProcessedGames = async ({
 
 	// Iterate backwards, was more useful back when current season wasn't cached
 	for (let i = games.length - 1; i >= 0; i--) {
-		const gm = games[i];
+		const gm = games[i]!;
 
 		if (gm.gid <= maxGid) {
 			break;

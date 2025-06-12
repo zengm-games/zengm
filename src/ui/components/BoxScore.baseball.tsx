@@ -87,8 +87,8 @@ const StatsTable = ({
 			if (
 				newSortBys.length === 1 &&
 				prevSortBys.length === 1 &&
-				newSortBys[0][0] === prevSortBys[0][0] &&
-				newSortBys[0][1] === "desc"
+				newSortBys[0]![0] === prevSortBys[0]![0] &&
+				newSortBys[0]![1] === "desc"
 			) {
 				// User just clicked twice on the same column. Reset sort.
 				return [];
@@ -155,7 +155,7 @@ const StatsTable = ({
 			}
 		}
 	}
-	sumsByStat.ip = outsToInnings(sumsByStat.ip);
+	sumsByStat.ip = outsToInnings(sumsByStat.ip!);
 
 	const sortable = players.length > 1;
 	const highlightCols = sortable
@@ -200,7 +200,7 @@ const StatsTable = ({
 									<th key={stat}>
 										{stat === "pm"
 											? null
-											: helpers.roundStat(sumsByStat[stat], stat, true)}
+											: helpers.roundStat(sumsByStat[stat]!, stat, true)}
 									</th>
 								))}
 								{seasonStats.map((stat) => (

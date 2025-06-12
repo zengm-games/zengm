@@ -276,7 +276,7 @@ const DefaultNewLeagueSettings = ({
 						const godModeKeys = [];
 
 						for (const key of helpers.keys(newDefaultSettings2)) {
-							const setting = settingsByKey[key][0];
+							const setting = settingsByKey[key]![0];
 							if (setting?.godModeRequired === "always") {
 								godModeKeys.push(setting.name);
 							}

@@ -273,16 +273,16 @@ const processLiveGameEvents = ({
 			}
 		} else if (e.type !== "init") {
 			if (e.type === "injury") {
-				const p = playersByPid[e.injuredPID];
+				const p = playersByPid[e.injuredPID]!;
 				p.injury = {
 					type: "Injured",
 					gamesRemaining: -1,
 				};
 			} else if (e.type === "penalty") {
-				const p = playersByPid[e.penaltyPID];
+				const p = playersByPid[e.penaltyPID]!;
 				p.inPenaltyBox = true;
 			} else if (e.type === "penaltyOver") {
-				const p = playersByPid[e.penaltyPID];
+				const p = playersByPid[e.penaltyPID]!;
 				p.inPenaltyBox = false;
 			}
 

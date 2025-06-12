@@ -261,9 +261,9 @@ const genOrder = async (
 		}
 		for (let i = 1; i < chancesCumsum.length; i++) {
 			if (riggedLotteryIndexes?.includes(i)) {
-				chancesCumsum[i] = chancesCumsum[i - 1];
+				chancesCumsum[i] = chancesCumsum[i - 1]!;
 			} else {
-				chancesCumsum[i] += chancesCumsum[i - 1];
+				chancesCumsum[i]! += chancesCumsum[i - 1]!;
 			}
 		}
 
@@ -286,7 +286,7 @@ const genOrder = async (
 			if (
 				!firstN.includes(i) &&
 				i < firstRoundTeams.length &&
-				draftPicksIndexed[firstRoundTeams[i].tid]
+				draftPicksIndexed[firstRoundTeams[i]!.tid]
 			) {
 				firstN.push(i);
 			}
@@ -320,17 +320,18 @@ const genOrder = async (
 	// First round - lottery winners
 	let pick = 1;
 	for (let i = 0; i < firstN.length; i++) {
-		const dp = draftPicksIndexed[firstRoundTeams[firstN[i]].tid][1];
+		const t = firstRoundTeams[firstN[i]!]!;
+		const dp = draftPicksIndexed[t.tid]![1];
 
 		if (dp !== undefined) {
 			dp.pick = pick;
-			firstRoundOrderAfterLottery.push(firstRoundTeams[firstN[i]]);
+			firstRoundOrderAfterLottery.push(t);
 
 			if (!mock) {
 				logLotteryWinners(
 					firstRoundTeams,
 					dp.tid,
-					firstRoundTeams[firstN[i]].tid,
+					firstRoundTeams[firstN[i]!]!.tid,
 					pick,
 					conditions,
 				);
@@ -341,22 +342,16 @@ const genOrder = async (
 	}
 
 	// First round - everyone else
-	for (let i = 0; i < firstRoundTeams.length; i++) {
+	for (const [i, t] of firstRoundTeams.entries()) {
 		if (!firstN.includes(i)) {
-			const dp = draftPicksIndexed[firstRoundTeams[i].tid]?.[1];
+			const dp = draftPicksIndexed[t.tid]?.[1];
 
 			if (dp) {
 				dp.pick = pick;
-				firstRoundOrderAfterLottery.push(firstRoundTeams[i]);
+				firstRoundOrderAfterLottery.push(t);
 
 				if (pick <= numLotteryTeams && !mock) {
-					logLotteryWinners(
-						firstRoundTeams,
-						dp.tid,
-						firstRoundTeams[i].tid,
-						pick,
-						conditions,
-					);
+					logLotteryWinners(firstRoundTeams, dp.tid, t.tid, pick, conditions);
 				}
 
 				pick += 1;
@@ -397,7 +392,7 @@ const genOrder = async (
 					return {
 						tid: dp.tid,
 						originalTid: dp.originalTid,
-						chances: chances[i],
+						chances: chances[i]!,
 						pick: dp.pick,
 						dpid: dp.dpid,
 					};
@@ -413,7 +408,7 @@ const genOrder = async (
 	}
 
 	for (let roundIndex = 1; roundIndex < teamsByRound.length; roundIndex++) {
-		const roundTeams = teamsByRound[roundIndex];
+		const roundTeams = teamsByRound[roundIndex]!;
 		const round = roundIndex + 1;
 
 		// Handle tiebreakers for the 2nd+ round (1st is already done by getTeamsByRound, but 2nd can't be done until now because it depends on lottery results for basketball/football)

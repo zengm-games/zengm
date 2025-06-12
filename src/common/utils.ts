@@ -17,7 +17,7 @@ export const groupBy = <T extends Record<string, unknown>>(
 
 	for (const row of rows) {
 		const keyValue = getValueByIteratee(key, row);
-		if (Object.hasOwn(grouped, keyValue)) {
+		if (grouped[keyValue]) {
 			grouped[keyValue].push(row);
 		} else {
 			grouped[keyValue] = [row];

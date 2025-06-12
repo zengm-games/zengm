@@ -277,7 +277,7 @@ const Roster = ({
 					(sortBys === undefined ||
 						(!isSport("basketball") &&
 							sortBys.length === 1 &&
-							sortBys[0][0] === defaultSortCol)) &&
+							sortBys[0]![0] === defaultSortCol)) &&
 					((isSport("basketball") &&
 						i === numPlayersOnCourt - 1 &&
 						season === currentSeason) ||

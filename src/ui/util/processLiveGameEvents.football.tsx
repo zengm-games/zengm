@@ -882,7 +882,7 @@ const processLiveGameEvents = ({
 				// Realize the flag by replacing the blank flag with the penalty details. Need to search prior plays in case the current play is a sub-play (like interception return, but flag was for offsides before the interception)
 				let flagFound = false;
 				for (let i = sportState.plays.length - 1; i >= 0; i--) {
-					const flagPlay = sportState.plays[i];
+					const flagPlay = sportState.plays[i]!;
 					const flagIndex = flagPlay.flags.indexOf(null);
 					if (flagIndex >= 0) {
 						flagPlay.flags[flagIndex] = {

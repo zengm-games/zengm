@@ -53,8 +53,8 @@ const UpcomingFreeAgents = ({
 		...(phase === PHASE.RESIGN_PLAYERS ? [] : ["Current Contract"]),
 		"Projected Contract",
 	]);
-	cols[6 + stats.length].title = "Your Team";
-	cols[7 + stats.length].title = "Current Team";
+	cols[6 + stats.length]!.title = "Your Team";
+	cols[7 + stats.length]!.title = "Current Team";
 
 	const rows: DataTableRow[] = players.map((p) => {
 		return {

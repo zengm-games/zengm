@@ -161,7 +161,7 @@ const Dropdown = ({ customOptions, customURL, fields, view }: Props) => {
 		if (customURL) {
 			const newFields = {
 				...fields,
-				[keys[i]]: value,
+				[keys[i]!]: value,
 			};
 
 			url = customURL(newFields);
@@ -183,7 +183,7 @@ const Dropdown = ({ customOptions, customURL, fields, view }: Props) => {
 						customOptions={customOptions ? customOptions[key] : undefined}
 						key={key}
 						field={key}
-						value={values[i]}
+						value={values[i]!}
 						handleChange={(value) => handleChange(i, value)}
 					/>
 				);

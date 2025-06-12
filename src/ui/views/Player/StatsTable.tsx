@@ -28,8 +28,8 @@ export const StatsTable = ({
 	superCols?: any[];
 	leaders: View<"player">["leaders"];
 }) => {
-	const hasRegularSeasonStats = p.careerStats.gp > 0;
-	const hasPlayoffStats = p.careerStatsPlayoffs.gp > 0;
+	const hasRegularSeasonStats = p.careerStats.gp! > 0;
+	const hasPlayoffStats = p.careerStatsPlayoffs.gp! > 0;
 
 	// Show playoffs by default if that's all we have
 	const [playoffs, setPlayoffs] = useState<boolean | "combined">(
@@ -62,7 +62,7 @@ export const StatsTable = ({
 		let display = false;
 		for (const stat of onlyShowIf) {
 			if (
-				careerStats[stat] > 0 ||
+				careerStats[stat]! > 0 ||
 				(Array.isArray(careerStats[stat]) &&
 					(careerStats[stat] as any).length > 0)
 			) {
@@ -235,9 +235,7 @@ export const StatsTable = ({
 	const rows = [];
 
 	let prevSeason;
-	for (let i = 0; i < playerStats.length; i++) {
-		const ps = playerStats[i];
-
+	for (const [i, ps] of playerStats.entries()) {
 		// Add blank rows for gap years if necessary
 		if (prevSeason !== undefined && prevSeason < ps.season - 1) {
 			const gapSeason = prevSeason + 1;

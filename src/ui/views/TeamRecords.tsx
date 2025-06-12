@@ -127,9 +127,9 @@ const TeamRecords = ({
 	]);
 
 	const lasts = cols.filter((col) => col.title === "Last");
-	lasts[0].desc = "Last Playoffs Appearance";
-	lasts[1].desc = "Last Finals Appearance";
-	lasts[2].desc = "Last Championship";
+	lasts[0]!.desc = "Last Playoffs Appearance";
+	lasts[1]!.desc = "Last Finals Appearance";
+	lasts[2]!.desc = "Last Championship";
 
 	const rows = teams
 		.filter((t) => showHistorical || !isHistorical(t))

@@ -28,15 +28,11 @@ const findPrevNextGids = (games: Game[], currentGid: number) => {
 	let nextGid;
 	let currentGidInList = false;
 
-	for (let i = 0; i < games.length; i++) {
-		if (games[i].gid === currentGid) {
+	for (const [i, game] of games.entries()) {
+		if (game.gid === currentGid) {
 			currentGidInList = true;
-			if (i > 0) {
-				nextGid = games[i - 1].gid;
-			}
-			if (i < games.length - 1) {
-				prevGid = games[i + 1].gid;
-			}
+			nextGid = games[i - 1]?.gid;
+			prevGid = games[i + 1]?.gid;
 			break;
 		}
 	}

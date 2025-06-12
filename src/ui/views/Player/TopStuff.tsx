@@ -129,7 +129,7 @@ const StatsSummary = ({
 					basketball: row.ws,
 					football: row.av,
 					hockey: row.ps,
-				});
+				})!;
 				if (value > maxValue) {
 					ps = row;
 					maxValue = value;
@@ -224,7 +224,7 @@ const StatsSummary = ({
 										"table-separator-left": separatorAfter.includes(i),
 									})}
 								>
-									{helpers.roundStat(p.careerStats[stat], stat)}
+									{helpers.roundStat(p.careerStats[stat]!, stat)}
 								</td>
 							);
 						})}
@@ -652,7 +652,7 @@ const TopStuff = ({
 							<div className="btn-group">{buttonsAvailableOutsideGodMode}</div>
 						</div>
 					) : null}
-					{player.careerStats.gp > 0 ? (
+					{player.careerStats.gp! > 0 ? (
 						<>
 							{statSummary.map(({ name, onlyShowIf, stats }) => (
 								<StatsSummary

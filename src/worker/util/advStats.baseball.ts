@@ -233,7 +233,7 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 
 	for (let i = 0; i < players.length; i++) {
 		const p = players[i];
-		const t = teamsByTid[p.tid];
+		const t = teamsByTid[p.tid]!;
 
 		// Batting Runs
 		const pitcherFactor = p.stats.gpPit >= 0.75 * p.stats.gp ? 0.5 : 1;
@@ -257,7 +257,7 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 					POS_NUMBERS_INVERSE[(j + 1) as keyof typeof POS_NUMBERS_INVERSE];
 
 				// Positional Adjustment Runs
-				rpos[i] +=
+				rpos[i]! +=
 					(gpF / g.get("numGames")) * POSITIONAL_ADJUSTMENT_COEFFICIENTS[pos];
 
 				// Fielding Runs
@@ -265,8 +265,8 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 					const po = pos === "C" ? p.stats.po[j] - p.stats.poSo : p.stats.po[j];
 					if (po !== undefined && po > 0) {
 						const poTeam =
-							pos === "C" ? t.stats.po[j] - t.stats.soPit : t.stats.po[j];
-						rfld[i][j] = (po / poTeam) * teamFieldingRuns[t.tid][pos];
+							pos === "C" ? t.stats.po[j]! - t.stats.soPit : t.stats.po[j]!;
+						rfld[i]![j] = (po / poTeam) * teamFieldingRuns[t.tid]![pos];
 					}
 				}
 			}
@@ -282,14 +282,14 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 			rrep[i] = p.stats.pa / 30;
 		}
 
-		raa[i] = rbat[i] + rbr[i] + helpers.sum(rfld[i]) + rpos[i] + rpit[i];
+		raa[i] = rbat[i]! + rbr[i]! + helpers.sum(rfld[i]!) + rpos[i]! + rpit[i]!;
 
-		waa[i] = raa[i] / runsPerGame;
+		waa[i] = raa[i]! / runsPerGame;
 
-		rar[i] = raa[i] + rrep[i];
+		rar[i] = raa[i]! + rrep[i]!;
 
 		// Wins Above Replacement
-		war[i] = rar[i] / runsPerGame;
+		war[i] = rar[i]! / runsPerGame;
 	}
 
 	return {

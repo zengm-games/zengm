@@ -149,7 +149,7 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				if (t2.tid === g.get("userTid")) {
 					teamStats = stats.map((stat, i) => {
 						return {
-							name: statNames[i],
+							name: statNames[i]!,
 							rank: 0,
 							stat,
 							value: (t2.stats as any)[stat],
@@ -168,8 +168,8 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		for (const stat of stats) {
 			teams.sort((a, b) => (b.stats as any)[stat] - (a.stats as any)[stat]);
 
-			for (let j = 0; j < teams.length; j++) {
-				if (teams[j].tid === g.get("userTid")) {
+			for (const [j, t] of teams.entries()) {
+				if (t.tid === g.get("userTid")) {
 					const entry = teamStats.find((teamStat) => teamStat.stat === stat);
 
 					if (entry) {
@@ -256,7 +256,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				});
 			} else {
 				leagueLeaders.push({
-					abbrev: g.get("teamInfoCache")[g.get("userTid")]?.abbrev,
+					abbrev: g.get("teamInfoCache")[g.get("userTid")]!.abbrev,
 					firstName: "",
 					lastName: "",
 					pid: 0,
@@ -401,13 +401,12 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				playoffSeries.currentRound >= 0 ? playoffSeries.currentRound : 0;
 
 			for (let rnd = lastRound; rnd >= 0; rnd--) {
-				for (let i = 0; i < series[rnd].length; i++) {
-					const { away, home } = series[rnd][i];
+				for (const [i, { away, home }] of series[rnd]!.entries()) {
 					if (
 						home.tid === g.get("userTid") ||
 						(away && away.tid === g.get("userTid") && !away.pendingPlayIn)
 					) {
-						foundSeries = series[rnd][i];
+						foundSeries = series[rnd]![i];
 						found = true;
 						showPlayoffSeries = true;
 
@@ -440,7 +439,7 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				await helpers.augmentSeries(playIns);
 				for (const playIn of playIns) {
 					for (let i = playIn.length - 1; i >= 0; i--) {
-						const { away, home } = playIn[i];
+						const { away, home } = playIn[i]!;
 						if (
 							home.tid === g.get("userTid") ||
 							away.tid === g.get("userTid")
@@ -543,7 +542,7 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					t.gb =
 						rank === 1
 							? 0
-							: helpers.gb(confTeams[0].seasonAttrs, t.seasonAttrs);
+							: helpers.gb(confTeams[0]!.seasonAttrs, t.seasonAttrs);
 				}
 
 				rank += 1;

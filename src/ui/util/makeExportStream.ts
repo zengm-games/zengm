@@ -187,7 +187,7 @@ const makeExportStream = async (
 					controller.enqueue(string);
 				};
 
-				const store = stores[storeIndex];
+				const store = stores[storeIndex]!;
 				if (onProcessingStore && store !== prevStore) {
 					onProcessingStore(store);
 				}

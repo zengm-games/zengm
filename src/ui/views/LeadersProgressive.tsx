@@ -48,10 +48,10 @@ const LeadersProgressive = ({
 			},
 		},
 	);
-	cols[1].title = "Year-by-Year";
-	cols[4].title = "Active";
-	cols[7].title = "Career";
-	cols[10].title = "Single Season";
+	cols[1]!.title = "Year-by-Year";
+	cols[4]!.title = "Active";
+	cols[7]!.title = "Career";
+	cols[10]!.title = "Single Season";
 
 	const totals = statType === "totals";
 

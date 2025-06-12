@@ -138,11 +138,10 @@ const updateStandings = async (
 
 		for (const type of helpers.keys(rankingGroups)) {
 			for (const group of rankingGroups[type]) {
-				for (let i = 0; i < group.length; i++) {
-					const t = group[i];
+				for (const [i, t] of group.entries()) {
 					if (!usePts) {
 						t.gb[type] =
-							i === 0 ? 0 : helpers.gb(group[0].seasonAttrs, t.seasonAttrs);
+							i === 0 ? 0 : helpers.gb(group[0]!.seasonAttrs, t.seasonAttrs);
 					}
 					t.rank[type] = i + 1;
 				}
@@ -187,7 +186,7 @@ const updateStandings = async (
 		const playIn =
 			inputs.season === g.get("season")
 				? g.get("playIn")
-				: rankingGroups.league[0].some(
+				: rankingGroups.league[0]!.some(
 						(t) => t.seasonAttrs.clinchedPlayoffs === "w",
 					);
 

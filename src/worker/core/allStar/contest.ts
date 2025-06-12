@@ -45,16 +45,17 @@ export const getNextRoundType = (contest: {
 	for (const round of resultsByRound) {
 		// Do the top N separate from the rest, as we need?
 		if (
-			round[numWinnersLeftToFind - 1].score > round[numWinnersLeftToFind].score
+			round[numWinnersLeftToFind - 1]!.score >
+			round[numWinnersLeftToFind]!.score
 		) {
 			for (let i = 0; i < numWinnersLeftToFind; i++) {
-				indexesForNextRound.push(round[i].index);
+				indexesForNextRound.push(round[i]!.index);
 			}
 			numWinnersLeftToFind = 0;
 			outcome = currentRoundNum === numRoundsTotal ? "over" : "normalRound";
 			break;
 		} else {
-			const tiedValue = round[numWinnersLeftToFind].score;
+			const tiedValue = round[numWinnersLeftToFind]!.score;
 
 			// Find players ranked above the tied players - they go to next round automatically
 			const playersToNextRound = round.filter((p) => p.score > tiedValue);

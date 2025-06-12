@@ -257,14 +257,14 @@ const updatePlayers = async (
 			fuzz: true,
 		});
 		if (generations.length > 0) {
-			for (let i = 0; i < players.length; i++) {
-				if (generations[i] === undefined) {
+			for (const [i, p] of players.entries()) {
+				const generation = generations[i];
+				if (generation === undefined) {
 					break;
 				}
-				const p = players[i];
 				p.relationText = getRelationText(
 					g.get("gender"),
-					generations[i],
+					generation,
 					fatherLinePids.has(p.pid) || sonLinePids.has(p.pid),
 					brotherPids.has(p.pid),
 					spousePids.has(p.pid),

@@ -57,10 +57,10 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			if (needsSecondRound) {
 				const getTeam = (i: number, type: "won" | "lost") => {
 					const oldTeam =
-						(playIn[i].home.won > 0 && type === "won") ||
-						(playIn[i].away.won > 0 && type === "lost")
-							? playIn[i].home
-							: playIn[i].away;
+						(playIn[i]!.home.won > 0 && type === "won") ||
+						(playIn[i]!.away.won > 0 && type === "lost")
+							? playIn[i]!.home
+							: playIn[i]!.away;
 
 					return {
 						...helpers.deepCopy(oldTeam),
@@ -107,7 +107,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	);
 
 	let minGamesPlayedThisRound = Infinity;
-	for (const { away, home } of series[rnd]) {
+	for (const { away, home } of series[rnd]!) {
 		if (seriesIsNotOver(home, away, numGamesToWin)) {
 			const numGames = home.won + away.won;
 			if (numGames < minGamesPlayedThisRound) {
@@ -117,7 +117,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	}
 
 	// Try to schedule games if there are active series
-	for (const { away, home } of series[rnd]) {
+	for (const { away, home } of series[rnd]!) {
 		if (seriesIsNotOver(home, away, numGamesToWin)) {
 			const numGames = home.won + away.won;
 
@@ -128,7 +128,10 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 
 			// Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
 			if (
-				betterSeedHome(g.get("numGamesPlayoffSeries", "current")[rnd], numGames)
+				betterSeedHome(
+					g.get("numGamesPlayoffSeries", "current")[rnd]!,
+					numGames,
+				)
 			) {
 				tids.push([home.tid, away.tid]);
 			} else {
@@ -142,9 +145,9 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		// Check if we need a playoffs All-Star Game
 		if (
 			g.get("allStarGame") === -1 &&
-			series[rnd].length === 1 &&
-			series[rnd][0].home.won === 0 &&
-			series[rnd][0].away?.won === 0
+			series[rnd]!.length === 1 &&
+			series[rnd]![0]!.home.won === 0 &&
+			series[rnd]![0]!.away?.won === 0
 		) {
 			// Make sure we didn't just play the All-Star Game - only schedule once
 			const allStar = await idb.getCopy.allStars({ season: g.get("season") });
@@ -159,7 +162,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 
 	// If playoffs are over, update winner and go to next phase
 	if (rnd === g.get("numGamesPlayoffSeries", "current").length - 1) {
-		const { away, home } = series[rnd][0];
+		const { away, home } = series[rnd]![0]!;
 		let key;
 
 		if (home.won >= numGamesToWin || !away) {
@@ -202,7 +205,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 
 	// Which teams won?
 	let teamsWon: PlayoffSeriesTeam[] = [];
-	for (const { home, away } of series[rnd]) {
+	for (const { home, away } of series[rnd]!) {
 		let teamWon;
 		if (home.won >= numGamesToWin || !away) {
 			teamWon = helpers.deepCopy(home);
@@ -245,8 +248,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		}
 
 		// Sort the groups so that each 2 teams are a matchup (best team, worst team, 2nd best team, 2nd worst team, etc)
-		for (let i = 0; i < groups.length; i++) {
-			const group = groups[i];
+		for (const [i, group] of groups.entries()) {
 			group.sort((a, b) => a.seed - b.seed);
 
 			const interleaved: PlayoffSeriesTeam[] = [];
@@ -266,8 +268,8 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
 
 	for (let i = 0; i < teamsWon.length; i += 2) {
-		const team1 = teamsWon[i];
-		const team2 = teamsWon[i + 1];
+		const team1 = teamsWon[i]!;
+		const team2 = teamsWon[i + 1]!;
 
 		// Set home/away in the next round - seed ties should be impossible except maybe in the finals, which is handled below
 		let firstTeamHome = team1.seed < team2.seed;
@@ -312,7 +314,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 					const orderedTeams = await orderTeams(finalsTeams, allTeams, {
 						skipDivisionLeaders: true,
 					});
-					firstTeamHome = orderedTeams[0].tid === team1.tid;
+					firstTeamHome = orderedTeams[0]!.tid === team1.tid;
 				}
 			}
 		}
@@ -332,7 +334,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		matchup.away.sPts = undefined;
 		matchup.home.won = 0;
 		matchup.away.won = 0;
-		series[rnd + 1][i / 2] = matchup;
+		series[rnd + 1]![i / 2] = matchup;
 	}
 
 	playoffSeries.currentRound += 1;

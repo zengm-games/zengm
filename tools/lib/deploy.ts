@@ -6,16 +6,13 @@ import { bySport } from "./bySport.ts";
 import { getSport } from "./getSport.ts";
 
 const getSubdomain = () => {
-	const inputSubdomain = process.argv[2];
+	const inputSubdomain = process.argv[2] ?? "play";
 
 	// test is basketball-gm.com only
 	const validSubdomains = ["beta", "play", "test"];
 
 	if (validSubdomains.includes(inputSubdomain)) {
 		return inputSubdomain;
-	}
-	if (inputSubdomain === undefined) {
-		return "play";
 	}
 	throw new Error(
 		`Invalid subdomain ${inputSubdomain} - should be ${validSubdomains.join(

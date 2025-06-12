@@ -70,7 +70,7 @@ export const getHistoryTeam = (
 					: undefined,
 			tid: teamSeason.tid,
 			abbrev:
-				teamSeason.abbrev || g.get("teamInfoCache")[teamSeason.tid]?.abbrev,
+				teamSeason.abbrev || g.get("teamInfoCache")[teamSeason.tid]!.abbrev,
 			note: teamSeason.note,
 		});
 		totalWon += teamSeason.won;
@@ -302,7 +302,7 @@ const updateTeamHistory = async (
 					!playoffs &&
 					gp > 0 &&
 					jerseyNumber !== undefined &&
-					(!retiredByPid[p.pid] || !retiredByPid[p.pid].has(jerseyNumber))
+					!retiredByPid[p.pid]?.has(jerseyNumber)
 				) {
 					if (!retirableJerseyNumbers[jerseyNumber]) {
 						retirableJerseyNumbers[jerseyNumber] = [];

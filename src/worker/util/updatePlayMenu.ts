@@ -386,7 +386,7 @@ const updatePlayMenu = async () => {
 	});
 
 	// Set first key to always be p
-	if (someOptions.length > 0) {
+	if (someOptions[0]) {
 		someOptions[0].key = "p";
 		someOptions[0].code = "KeyP";
 	}

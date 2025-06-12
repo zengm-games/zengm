@@ -77,8 +77,8 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			g.get("phase") > PHASE.PLAYOFFS ? g.get("season") : g.get("season") - 1;
 		let minSeason = Infinity;
 		for (const t of teams) {
-			if (t.seasonAttrs.length > 0 && t.seasonAttrs[0].season < minSeason) {
-				minSeason = t.seasonAttrs[0].season;
+			if (t.seasonAttrs.length > 0 && t.seasonAttrs[0]!.season < minSeason) {
+				minSeason = t.seasonAttrs[0]!.season;
 			}
 		}
 		if (awards.length > 0 && awards[0].season < minSeason) {
@@ -213,11 +213,12 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				}
 
 				const tid = row[category].tid;
-				if (counts[category][tid] === undefined) {
-					counts[category][tid] = 0;
+				const categoryCounts = counts[category]!;
+				if (categoryCounts[tid] === undefined) {
+					categoryCounts[tid] = 0;
 				}
-				counts[category][tid] += 1;
-				row[category].count = counts[category][tid];
+				categoryCounts[tid] += 1;
+				row[category].count = categoryCounts[tid];
 			}
 
 			for (const category of SIMPLE_AWARDS) {
@@ -226,11 +227,12 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				}
 
 				const pid = row[category].pid;
-				if (counts[category][pid] === undefined) {
-					counts[category][pid] = 0;
+				const categoryCounts = counts[category]!;
+				if (categoryCounts[pid] === undefined) {
+					categoryCounts[pid] = 0;
 				}
-				counts[category][pid] += 1;
-				row[category].count = counts[category][pid];
+				categoryCounts[pid] += 1;
+				row[category].count = categoryCounts[pid];
 			}
 		}
 

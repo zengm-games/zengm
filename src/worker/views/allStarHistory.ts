@@ -9,7 +9,7 @@ const addAbbrevAndCount = <
 >(
 	obj: T,
 ) => {
-	return { ...obj, abbrev: g.get("teamInfoCache")[obj.tid]?.abbrev, count: 0 };
+	return { ...obj, abbrev: g.get("teamInfoCache")[obj.tid]!.abbrev, count: 0 };
 };
 
 const augment = (allAllStars: AllStars[]) => {
@@ -22,15 +22,15 @@ const augment = (allAllStars: AllStars[]) => {
 			sPts: row.sPts,
 			season: row.season,
 			teamNames: row.teamNames,
-			captain1: addAbbrevAndCount(row.teams[0][0]),
-			captain2: addAbbrevAndCount(row.teams[1][0]),
+			captain1: addAbbrevAndCount(row.teams[0][0]!),
+			captain2: addAbbrevAndCount(row.teams[1][0]!),
 			dunk:
-				row.dunk && row.dunk.winner !== undefined
-					? addAbbrevAndCount(row.dunk.players[row.dunk.winner])
+				row.dunk?.winner !== undefined
+					? addAbbrevAndCount(row.dunk.players[row.dunk.winner]!)
 					: undefined,
 			three:
-				row.three && row.three.winner !== undefined
-					? addAbbrevAndCount(row.three.players[row.three.winner])
+				row.three?.winner !== undefined
+					? addAbbrevAndCount(row.three.players[row.three.winner]!)
 					: undefined,
 			type: row.type ?? "draft",
 		};

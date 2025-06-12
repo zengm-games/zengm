@@ -42,7 +42,7 @@ const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				if (!seasonsByTid[ts.tid]) {
 					seasonsByTid[ts.tid] = new Set();
 				}
-				seasonsByTid[ts.tid].add(season);
+				seasonsByTid[ts.tid]!.add(season);
 			}
 		}
 
@@ -64,9 +64,7 @@ const updateGmHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		const players: Player[] = [];
 		const addPlayer = (p: Player) => {
-			p.stats = p.stats.filter(
-				(row) => seasonsByTid[row.tid] && seasonsByTid[row.tid].has(row.season),
-			);
+			p.stats = p.stats.filter((row) => seasonsByTid[row.tid]?.has(row.season));
 			players.push(p);
 		};
 

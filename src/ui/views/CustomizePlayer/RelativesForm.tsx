@@ -84,7 +84,7 @@ const RelativesForm = ({
 				type: "brother",
 			});
 		} else {
-			relatives[index][field] = value!;
+			relatives[index]![field] = value!;
 		}
 		handleChange("root", "relatives", {
 			target: {

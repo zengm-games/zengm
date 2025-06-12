@@ -155,8 +155,7 @@ const updateAllStarDunk = async (
 					seenDunkers.add(index);
 				}
 
-				for (let i = 0; i < attempts.length; i++) {
-					const attempt = attempts[i];
+				for (const [i, attempt] of attempts.entries()) {
 					log.push({
 						type: "attempt",
 						player: index,

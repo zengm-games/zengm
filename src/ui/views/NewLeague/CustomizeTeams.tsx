@@ -216,12 +216,12 @@ const reducer = (state: State, action: Action): State => {
 			) {
 				const confIndex = state.confs.findIndex((conf) => conf.cid === div.cid);
 				if (confIndex > 0 && action.direction === -1) {
-					newCID = state.confs[confIndex - 1].cid;
+					newCID = state.confs[confIndex - 1]!.cid;
 				} else if (
 					confIndex < state.confs.length - 1 &&
 					action.direction === 1
 				) {
-					newCID = state.confs[confIndex + 1].cid;
+					newCID = state.confs[confIndex + 1]!.cid;
 				}
 			}
 
@@ -1007,8 +1007,9 @@ const CustomizeTeams = ({
 				}
 				addEditTeamInfo={addEditTeamInfo}
 				setAddEditTeamInfo={setAddEditTeamInfo}
-				confs={confs}
-				divs={divs}
+				// These are like Conf[] here rather than NonEmptyArray<Conf> because they can all be deleted, but the button to show UpsertTeamModal is only displayed if there is at least one div+conf so this is fine.
+				confs={confs as any}
+				divs={divs as any}
 				teams={teams}
 				onSave={(t: NewLeagueTeamWithoutRank) => {
 					if (t.tid === -1) {

@@ -349,7 +349,7 @@ describe("checkAchievement", () => {
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			const otherTid = 0;
-			const p = (await idb.cache.players.getAll())[0];
+			const p = (await idb.cache.players.getAll())[0]!;
 			p.draft.tid = otherTid;
 			await idb.cache.players.put(p);
 

@@ -265,7 +265,7 @@ const ScoreBox = memo(
 						))
 					) : (
 						[1, 0].map((i) => {
-							const t = game.teams[i];
+							const t = game.teams[i]!;
 							let scoreClass;
 							let scoreClassForceWin;
 							if (winner !== undefined) {
@@ -353,7 +353,7 @@ const ScoreBox = memo(
 								if (best) {
 									p = best.p;
 									playerStatText = best.statTexts.map((stat, i) => {
-										const col = getCols([`stat:${stat}`])[0];
+										const col = getCols([`stat:${stat}`])[0]!;
 
 										let title = col.title;
 										// Add back in prefix for some football ones

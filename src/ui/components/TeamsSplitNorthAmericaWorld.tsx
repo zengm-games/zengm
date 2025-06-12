@@ -14,8 +14,7 @@ export const TeamsSplitNorthAmericaWorld = <
 }) => {
 	const teamsNorthAmerica = [];
 	const teamsWorld = [];
-	for (let i = 0; i < teams.length; i++) {
-		const t = teams[i];
+	for (const [i, t] of teams.entries()) {
 		if (geographicCoordinates[t.region]?.outsideNorthAmerica) {
 			teamsWorld.push({
 				i,

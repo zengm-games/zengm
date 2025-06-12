@@ -88,7 +88,7 @@ const addSeasonInfoToTeams = async <
 
 			delete (p2 as any).name;
 			const parts = p.name.split(" ");
-			p2.firstName = parts[0];
+			p2.firstName = parts[0]!;
 			p2.lastName = parts.slice(1).join(" ");
 
 			if (!p2.stats) {
@@ -129,7 +129,7 @@ const addSeasonInfoToTeams = async <
 				if (playoffSeries) {
 					let playoffRoundsWon = -1;
 					for (const round of playoffSeries) {
-						const index = round.abbrevs.indexOf(abbrev);
+						const index = round.abbrevs.indexOf(abbrev) as 0 | 1;
 						if (index >= 0) {
 							playoffRoundsWon = round.round;
 							const otherIndex = index === 0 ? 1 : 0;

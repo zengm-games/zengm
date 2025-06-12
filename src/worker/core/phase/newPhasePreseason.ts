@@ -200,14 +200,13 @@ const newPhasePreseason = async (
 
 	const activeTeams = teams.filter((t) => !t.disabled);
 	const popRanks = helpers.getPopRanks(activeTeams);
-	for (let i = 0; i < activeTeams.length; i++) {
-		const t = activeTeams[i];
+	for (const [i, t] of activeTeams.entries()) {
 		if (
 			!g.get("userTids").includes(t.tid) ||
 			local.autoPlayUntil ||
 			g.get("spectator")
 		) {
-			await team.resetTicketPrice(t, popRanks[i]);
+			await team.resetTicketPrice(t, popRanks[i]!);
 
 			// Sometimes update budget items for AI teams
 			for (const key of [
@@ -217,7 +216,7 @@ const newPhasePreseason = async (
 				"facilities",
 			] as const) {
 				if (Math.random() < 0.5) {
-					t.budget[key] = finances.defaultBudgetLevel(popRanks[i]);
+					t.budget[key] = finances.defaultBudgetLevel(popRanks[i]!);
 				}
 			}
 
@@ -407,11 +406,11 @@ const newPhasePreseason = async (
 		"tid",
 	);
 	for (const roster of Object.values(playersByTeam)) {
-		if (roster.length === 0) {
+		if (!roster[0]) {
 			continue;
 		}
 		const retiredJerseyNumbers = new Set(
-			teams[roster[0].tid].retiredJerseyNumbers?.map((row) => row.number),
+			teams[roster[0].tid]!.retiredJerseyNumbers?.map((row) => row.number),
 		);
 
 		for (const p of roster) {

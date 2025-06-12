@@ -232,7 +232,7 @@ const allStarDraftReset = async () => {
 			allStars.teams[1].length,
 		);
 		for (let i = 1; i < maxIndex; i++) {
-			for (const t of [0, 1]) {
+			for (const t of [0, 1] as const) {
 				const p = allStars.teams[t][i];
 				if (p) {
 					allStars.remaining.push(p);
@@ -242,7 +242,7 @@ const allStarDraftReset = async () => {
 
 		allStars.remaining.push(...oldRemaining);
 
-		allStars.teams = [[allStars.teams[0][0]], [allStars.teams[1][0]]];
+		allStars.teams = [[allStars.teams[0][0]!], [allStars.teams[1][0]!]];
 
 		await idb.cache.allStars.put(allStars);
 
@@ -297,8 +297,8 @@ const allStarDraftSetPlayers = async (
 		allStars.teams = players.teams;
 		allStars.remaining = players.remaining;
 		if (allStars.type === "draft") {
-			for (let i = 0; i < 2; i++) {
-				const p = await idb.cache.players.get(allStars.teams[i][0].pid);
+			for (const i of [0, 1] as const) {
+				const p = await idb.cache.players.get(allStars.teams[i][0]!.pid);
 				if (p) {
 					allStars.teamNames[i] = `Team ${p.firstName}`;
 				}
@@ -342,7 +342,7 @@ const allStarGameNow = async () => {
 	schedule.unshift({
 		awayTid: -2,
 		homeTid: -1,
-		day: schedule.length > 0 ? schedule[0].day - 1 : 0,
+		day: schedule[0] ? schedule[0].day - 1 : 0,
 	});
 
 	await idb.cache.schedule.clear();
@@ -762,7 +762,7 @@ const deleteOldData = async (options: {
 		if (p.ratings.length > 0) {
 			updated = true;
 			const latestSeason = p.ratings.at(-1)?.season;
-			p.ratings = p.ratings.filter((row) => row.season >= latestSeason);
+			p.ratings = p.ratings.filter((row) => row.season >= latestSeason) as any;
 		}
 		if (p.stats.length > 0) {
 			updated = true;
@@ -795,8 +795,8 @@ const deleteOldData = async (options: {
 						? g.get("season") + 1
 						: g.get("season");
 				let minIndexKeep = Infinity;
-				for (let i = 0; i < p.salaries.length; i++) {
-					if (p.salaries[i].season === minSeasonKeep) {
+				for (const [i, row] of p.salaries.entries()) {
+					if (row.season === minSeasonKeep) {
 						// Keep latest contract that covers the current season - handles the case of old released contracts that would have also covered this season
 						minIndexKeep = i;
 					}
@@ -1039,7 +1039,7 @@ const dunkGetProjected = async ({
 
 	const allStars = await idb.cache.allStars.get(g.get("season"));
 	const dunk = allStars?.dunk;
-	if (dunk) {
+	if (dunk?.players[index]) {
 		const pid = dunk.players[index].pid;
 		const p = await idb.cache.players.get(pid);
 		if (p) {
@@ -1304,8 +1304,8 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 				// @ts-expect-error
 				colNames.push(overrides[col]);
 			} else {
-				const array = getCols([col]);
-				colNames.push(array[0].title);
+				const col2 = getCols([col])[0]!;
+				colNames.push(col2.title);
 			}
 		}
 
@@ -1517,7 +1517,7 @@ const getExportFilename = async (type: "league" | "players") => {
 					filename += `_Round_${playoffSeries.currentRound + 1}`;
 
 					// Find the latest playoff series with the user's team in it
-					for (const series of playoffSeries.series[rnd]) {
+					for (const series of playoffSeries.series[rnd]!) {
 						if (series.home.tid === userTid) {
 							if (series.away) {
 								filename += `_${series.home.won}-${series.away.won}`;
@@ -1718,7 +1718,7 @@ const getJerseyNumberConflict = async ({
 	}
 
 	if (conflicts.length === 1) {
-		const p = conflicts[0];
+		const p = conflicts[0]!;
 
 		return {
 			type: "player" as const,
@@ -2163,9 +2163,9 @@ const toConciseLookingFor = (lookingForState: LookingForState) => {
 	const output = {
 		positions: new Set<string>(),
 		skills: new Set<string>(),
-		draftPicks: lookingForState.assets.draftPicks,
-		prospects: lookingForState.assets.prospects,
-		bestCurrentPlayers: lookingForState.assets.bestCurrentPlayers,
+		draftPicks: lookingForState.assets.draftPicks!,
+		prospects: lookingForState.assets.prospects!,
+		bestCurrentPlayers: lookingForState.assets.bestCurrentPlayers!,
 	};
 
 	for (const category of ["positions", "skills"] as const) {
@@ -3111,8 +3111,7 @@ const reorderDepthDrag = async ({
 
 const reorderDraftDrag = async (sortedDpids: number[]) => {
 	const draftPicks = await draft.getOrder();
-	for (let i = 0; i < draftPicks.length; i++) {
-		const dp = draftPicks[i];
+	for (const dp of draftPicks) {
 		const sortedIndex = sortedDpids.indexOf(dp.dpid);
 		const dpToTakeOrderFrom = draftPicks[sortedIndex];
 		if (!dpToTakeOrderFrom) {
@@ -3133,8 +3132,7 @@ const reorderDraftDrag = async (sortedDpids: number[]) => {
 };
 
 const reorderRosterDrag = async (sortedPids: number[]) => {
-	for (let rosterOrder = 0; rosterOrder < sortedPids.length; rosterOrder++) {
-		const pid = sortedPids[rosterOrder];
+	for (const [rosterOrder, pid] of sortedPids.entries()) {
 		const p = await idb.cache.players.get(pid);
 		if (!p) {
 			throw new Error("Invalid pid");
@@ -3257,7 +3255,7 @@ const retiredJerseyNumberUpsert = async ({
 			throw new Error("Invalid index");
 		}
 
-		const prevNumber = t.retiredJerseyNumbers[i].number;
+		const prevNumber = t.retiredJerseyNumbers[i]?.number;
 		if (prevNumber !== info.number) {
 			saveEvent = true;
 		}
@@ -3759,7 +3757,7 @@ const updateConfsDivs = async ({
 		}
 	}
 
-	await league.setGameAttributes({ confs, divs });
+	await league.setGameAttributes({ confs: confs as any, divs: divs as any });
 
 	// Second, update any teams belonging to a deleted division
 	await team.ensureValidDivsConfs();
@@ -4160,7 +4158,6 @@ const updatePlayoffTeams = async (
 		seed: number | undefined;
 	}[],
 ) => {
-	console.log(teams);
 	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 	if (playoffSeries) {
 		const { playIns, series } = playoffSeries;
@@ -4196,7 +4193,7 @@ const updatePlayoffTeams = async (
 			}
 		};
 
-		checkMatchups(series[0]);
+		checkMatchups(series[0]!);
 
 		if (playIns) {
 			checkMatchups(playIns.flatMap((playIn) => playIn.slice(0, 2)));

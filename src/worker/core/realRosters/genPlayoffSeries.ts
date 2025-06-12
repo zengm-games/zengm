@@ -11,10 +11,10 @@ const genPlayoffSeries = (
 	completeBracket: boolean,
 ) => {
 	// Look at first 2 rounds, to find any byes
-	const firstRound = basketball.playoffSeries[season].filter(
+	const firstRound = basketball.playoffSeries[season]!.filter(
 		(row) => row.round === 0,
 	);
-	const secondRound = basketball.playoffSeries[season].filter(
+	const secondRound = basketball.playoffSeries[season]!.filter(
 		(row) => row.round === 1,
 	);
 
@@ -36,7 +36,7 @@ const genPlayoffSeries = (
 	const genTeam = (
 		abbrev: string,
 		series: (typeof basketball.playoffSeries)[number][number],
-		i: number,
+		i: 0 | 1,
 	) => {
 		firstRoundAbbrevs.add(abbrev);
 		const t = initialTeams.find(
@@ -45,7 +45,7 @@ const genPlayoffSeries = (
 		if (!t) {
 			throw new Error("Missing team");
 		}
-		const teamSeason = basketball.teamSeasons[season][abbrev];
+		const teamSeason = basketball.teamSeasons[season]![abbrev];
 		if (!teamSeason) {
 			throw new Error("Missing teamSeason");
 		}
@@ -61,7 +61,10 @@ const genPlayoffSeries = (
 	};
 
 	const genHomeAway = (series: (typeof firstRound)[number]) => {
-		const teams = series.abbrevs.map((abbrev, i) => genTeam(abbrev, series, i));
+		const teams = [
+			genTeam(series.abbrevs[0], series, 0),
+			genTeam(series.abbrevs[1], series, 1),
+		] as const;
 
 		let home;
 		let away;
@@ -87,7 +90,7 @@ const genPlayoffSeries = (
 	let numPlayoffByes = 0;
 
 	for (const series of secondRound) {
-		for (let i = 0; i < series.abbrevs.length; i++) {
+		for (const i of [0, 1] as const) {
 			const abbrev = series.abbrevs[i];
 			if (!firstRoundAbbrevs.has(abbrev)) {
 				// Appears in second round but not first... must have been a bye
@@ -159,7 +162,7 @@ const genPlayoffSeries = (
 						matchup.home.seed - 1 === seeds[1],
 				);
 				if (matchup) {
-					series[0].push(matchup);
+					series[0]!.push(matchup);
 				}
 			}
 		}
@@ -168,15 +171,15 @@ const genPlayoffSeries = (
 	// If necessary, add matchups for rounds after the first round
 	if (completeBracket) {
 		for (let i = 1; i <= numRounds; i++) {
-			const currentRound = series[i];
-			const matchups = basketball.playoffSeries[season]
-				.filter((row) => row.round === i)
-				.map(genHomeAway);
+			const currentRound = series[i]!;
+			const matchups = basketball.playoffSeries[season]!.filter(
+				(row) => row.round === i,
+			).map(genHomeAway);
 
 			// Iterate over every other game, and find the matchup in the next round that contains one of the teams in that game. This ensures order of the bracket is maintained.
-			const previousRound = series[i - 1];
+			const previousRound = series[i - 1]!;
 			for (let i = 0; i < previousRound.length; i += 2) {
-				const { away, home } = previousRound[i];
+				const { away, home } = previousRound[i]!;
 				const previousTids = [home.tid];
 				if (away) {
 					previousTids.push(away.tid);

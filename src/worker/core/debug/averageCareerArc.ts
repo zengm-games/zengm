@@ -23,8 +23,8 @@ const averageCareerArc = async (ratingToSave: string) => {
 		const p = player.generate(0, 19, g.get("season"), true, DEFAULT_LEVEL);
 
 		for (let k = 0; k < numSeasons; k++) {
-			averageOvr[k] += p.ratings[0].ovr;
-			averagePot[k] += p.ratings[0].pot;
+			averageOvr[k]! += p.ratings[0].ovr;
+			averagePot[k]! += p.ratings[0].pot;
 
 			if (ratingToSave) {
 				// @ts-expect-error
@@ -36,11 +36,11 @@ const averageCareerArc = async (ratingToSave: string) => {
 	}
 
 	for (let i = 0; i < numSeasons; i++) {
-		averageOvr[i] /= numPlayers;
-		averagePot[i] /= numPlayers;
+		averageOvr[i]! /= numPlayers;
+		averagePot[i]! /= numPlayers;
 
 		if (ratingToSave) {
-			averageRat[i] /= numPlayers;
+			averageRat[i]! /= numPlayers;
 		}
 	}
 

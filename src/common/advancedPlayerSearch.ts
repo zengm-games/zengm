@@ -215,16 +215,16 @@ export const getStatsTableByType = (statTypePlus: string) => {
 	let table;
 	if (isSport("basketball")) {
 		if (statTypePlus === "advanced") {
-			table = PLAYER_STATS_TABLES.advanced;
+			table = PLAYER_STATS_TABLES.advanced!;
 		} else if (statTypePlus === "shotLocations") {
-			table = PLAYER_STATS_TABLES.shotLocations;
+			table = PLAYER_STATS_TABLES.shotLocations!;
 		} else if (statTypePlus === "gameHighs") {
-			table = PLAYER_STATS_TABLES.gameHighs;
+			table = PLAYER_STATS_TABLES.gameHighs!;
 		} else {
-			table = PLAYER_STATS_TABLES.regular;
+			table = PLAYER_STATS_TABLES.regular!;
 		}
 	} else {
-		table = PLAYER_STATS_TABLES[statTypePlus];
+		table = PLAYER_STATS_TABLES[statTypePlus]!;
 	}
 
 	return processStatsTable(table);
@@ -260,7 +260,7 @@ export const getExtraStatTypeKeys = (
 
 	for (const statType of showStatTypes) {
 		if (statType === "bio") {
-			for (const [key, info] of Object.entries(allFilters.bio.options)) {
+			for (const [key, info] of Object.entries(allFilters.bio!.options)) {
 				if (key === "jerseyNumber") {
 					// Already shown by player name
 					continue;

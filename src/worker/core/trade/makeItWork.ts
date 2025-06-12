@@ -232,8 +232,8 @@ const tryAddAsset = async (
 					for (const skill of lookingFor.skills) {
 						asset.score += player.compositeRating(
 							ratings,
-							COMPOSITE_WEIGHTS[skill].ratings,
-							COMPOSITE_WEIGHTS[skill].weights,
+							COMPOSITE_WEIGHTS[skill]!.ratings,
+							COMPOSITE_WEIGHTS[skill]!.weights,
 							false,
 						);
 					}
@@ -312,7 +312,7 @@ const tryAddAsset = async (
 	// Find the asset that will push the trade value the smallest amount above 0 (i.e. the best asset the AI is willing to give up without making the trade unfavorable to them), or fall back to just adding the worst asset if no single asset is good enough
 	if (!asset) {
 		// asset is now guaranteed to be defined, since there was a length check above
-		asset = assets[0];
+		asset = assets[0]!;
 	}
 
 	const newTeams = helpers.deepCopy(teams);

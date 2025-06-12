@@ -140,7 +140,7 @@ const updateSeasonPreview = async (
 			const ovrPrev = teamSeasonPrev?.ovrEnd ?? ovrStart;
 			const dovr = ovrStart - ovrPrev;
 
-			const teamInfoCache = g.get("teamInfoCache")[teamSeason.tid];
+			const teamInfoCache = g.get("teamInfoCache")[teamSeason.tid]!;
 
 			const lastSeason = teamSeasonPrev
 				? {

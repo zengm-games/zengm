@@ -161,7 +161,7 @@ const Player2 = ({
 											player.injuries[r.injuryIndex] ? (
 												<InjuryIcon
 													injury={{
-														type: player.injuries[r.injuryIndex].type,
+														type: player.injuries[r.injuryIndex]!.type,
 														gamesRemaining: -1,
 													}}
 												/>

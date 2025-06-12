@@ -220,8 +220,7 @@ class Team<DH extends boolean> {
 				),
 			];
 
-			for (let i = 0; i < newBattingOrder.length; i++) {
-				const p = newBattingOrder[i];
+			for (const [i, p] of newBattingOrder.entries()) {
 				p.battingOrder = i;
 			}
 		}
@@ -250,13 +249,13 @@ class Team<DH extends boolean> {
 	}
 
 	getBatter() {
-		return this.playersInGameByBattingOrder[this.atBat];
+		return this.playersInGameByBattingOrder[this.atBat]!;
 	}
 
 	getOnDeck() {
 		return this.playersInGameByBattingOrder[
 			(this.atBat + 1) % NUM_BATTERS_PER_SIDE
-		];
+		]!;
 	}
 
 	advanceToNextBatter() {

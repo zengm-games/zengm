@@ -32,7 +32,7 @@ const ShotTable = ({ racks }: { racks: boolean[][] }) => {
 
 							const spin =
 								(i === racks.length - 1 || racks[i + 1]?.length === 0) &&
-								j === racks[i].length - 1 &&
+								j === racks[i]!.length - 1 &&
 								(i !== rackNames.length - 1 || j !== NUM_BALLS_PER_RACK - 1);
 
 							return (
@@ -150,7 +150,7 @@ const AllStarThree = ({
 	let maxScore = 30;
 	const currentResult = three.rounds.at(-1)?.results.at(-1);
 	if (currentResult) {
-		currentName = three.players[currentResult.index].name;
+		currentName = three.players[currentResult.index]!.name;
 
 		for (const rack of currentResult.racks) {
 			for (let i = 0; i < rack.length; i++) {
@@ -240,7 +240,7 @@ const AllStarThree = ({
 
 			{three.winner !== undefined ? (
 				<p className="alert alert-success d-inline-block mb-0">
-					{three.players[three.winner].name} is your {season} three-point
+					{three.players[three.winner]!.name} is your {season} three-point
 					contest champion!
 				</p>
 			) : (

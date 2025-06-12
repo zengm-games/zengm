@@ -145,7 +145,7 @@ const getPlayoffSeriesMVP = (players: PlayerFiltered[], games: Game[]) => {
 		"desc",
 	);
 
-	if (playerArray.length === 0) {
+	if (!playerArray[0]) {
 		return;
 	}
 

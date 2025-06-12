@@ -125,22 +125,20 @@ const BarGraph = <Row extends unknown, Y extends (keyof NumbersOnly<Row>)[]>({
 
 	// Draw bars
 	const bars = [];
-	for (let j = 0; j < scaled.length; j++) {
+	for (const [j, row] of scaled.entries()) {
 		let offset = scale(0, ylim);
-		for (let i = 0; i < scaled[j].length; i++) {
-			let className = classNameOverride?.(data[j]) ?? `bar-graph-${i + 1}`;
+		for (const [i, value] of row.entries()) {
+			let className = classNameOverride?.(data[j]!) ?? `bar-graph-${i + 1}`;
 
 			if (i > 0) {
-				offset += scaled[j][i - 1];
+				offset += row[i - 1]!;
 			}
-
-			const value = scaled[j][i];
 
 			let bottom = offset;
 			let height;
 
 			if (y.length === 1) {
-				const negative = (data[j][y[i]] as number) < 0;
+				const negative = (data[j]![y[i]!] as number) < 0;
 
 				// Fix for negative values
 				if (negative) {
@@ -167,7 +165,7 @@ const BarGraph = <Row extends unknown, Y extends (keyof NumbersOnly<Row>)[]>({
 						left: `${j * widthPct}%`,
 						width: `calc(${widthPct}% - ${gap}px)`,
 					}}
-					tooltip={tooltip?.(data[j], y[i])}
+					tooltip={tooltip?.(data[j]!, y[i]!)}
 				/>,
 			);
 		}

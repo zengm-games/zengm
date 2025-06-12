@@ -96,7 +96,7 @@ const getUniqueAbbrevsErrorMessage = (teams: { abbrev: string }[]) => {
 	}
 
 	if (duplicateInfos.length === 1) {
-		const { abbrev, count } = duplicateInfos[0];
+		const { abbrev, count } = duplicateInfos[0]!;
 		return (
 			<>
 				{count} teams have the same abbrev <b>{abbrev}</b> which can cause

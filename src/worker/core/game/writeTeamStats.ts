@@ -194,7 +194,7 @@ const writeTeamStats = async (results: GameResults) => {
 			let winpOld = 0; // Avg winning percentage of last 0-2 seasons (as available)
 
 			for (let i = 0; i < teamSeasons.length - 1; i++) {
-				winpOld += helpers.calcWinp(teamSeasons[i]);
+				winpOld += helpers.calcWinp(teamSeasons[i]!);
 			}
 
 			if (teamSeasons.length > 1) {

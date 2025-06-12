@@ -506,7 +506,7 @@ export const getEstPicks = async (
 		);
 		let record: [number, number];
 
-		if (teamSeasons.length === 0) {
+		if (!teamSeasons[0]) {
 			// Expansion team?
 			record = [0, 0];
 		} else {
@@ -534,8 +534,8 @@ export const getEstPicks = async (
 
 	// For each team, what is their estimated draft position?
 	const estPicks: Record<number, number> = {};
-	for (let i = 0; i < wps.length; i++) {
-		estPicks[wps[i].tid] = i + 1;
+	for (const [i, wp] of wps.entries()) {
+		estPicks[wp.tid] = i + 1;
 	}
 
 	return {

@@ -145,16 +145,17 @@ export const breakTies = <T extends BaseTeam>(
 				}
 			}
 
-			headToHeadInfo[t.tid] = {
+			const row = {
 				won,
 				lost,
 				tied,
 				otl,
 				score: 0,
 			};
-			headToHeadInfo[t.tid].score = options.usePts
-				? team.evaluatePointsFormula(headToHeadInfo[t.tid])
-				: helpers.calcWinp(headToHeadInfo[t.tid]);
+			row.score = options.usePts
+				? team.evaluatePointsFormula(row)
+				: helpers.calcWinp(row);
+			headToHeadInfo[t.tid] = row;
 		}
 	}
 
@@ -208,16 +209,17 @@ export const breakTies = <T extends BaseTeam>(
 					}
 				}
 
-				info[t.tid] = {
+				const row = {
 					won,
 					lost,
 					tied,
 					otl,
 					score: 0,
 				};
-				info[t.tid].score = options.usePts
-					? team.evaluatePointsFormula(info[t.tid])
-					: helpers.calcWinp(info[t.tid]);
+				row.score = options.usePts
+					? team.evaluatePointsFormula(row)
+					: helpers.calcWinp(row);
+				info[t.tid] = row;
 			}
 
 			return info;
@@ -320,16 +322,17 @@ export const breakTies = <T extends BaseTeam>(
 					}
 				}
 
-				commonOpponentsInfo[t.tid] = {
+				const row = {
 					won,
 					lost,
 					tied,
 					otl,
 					score: 0,
 				};
-				commonOpponentsInfo[t.tid].score = options.usePts
-					? team.evaluatePointsFormula(commonOpponentsInfo[t.tid])
-					: helpers.calcWinp(commonOpponentsInfo[t.tid]);
+				row.score = options.usePts
+					? team.evaluatePointsFormula(row)
+					: helpers.calcWinp(row);
+				commonOpponentsInfo[t.tid] = row;
 			}
 		}
 	}
@@ -337,7 +340,7 @@ export const breakTies = <T extends BaseTeam>(
 	let allSameDiv = false;
 	if (options.tiebreakers.includes("divRecordIfSame")) {
 		allSameDiv = true;
-		const did = teams[0].seasonAttrs.did;
+		const did = teams[0]!.seasonAttrs.did;
 		for (const t of teams) {
 			if (t.seasonAttrs.did !== did) {
 				allSameDiv = false;
@@ -350,7 +353,7 @@ export const breakTies = <T extends BaseTeam>(
 	if (options.tiebreakers.includes("confRecordIfSame")) {
 		allSameConf = true;
 		if (!allSameDiv) {
-			const cid = teams[0].seasonAttrs.cid;
+			const cid = teams[0]!.seasonAttrs.cid;
 			for (const t of teams) {
 				if (t.seasonAttrs.cid !== cid) {
 					allSameConf = false;
@@ -515,9 +518,9 @@ export const breakTies = <T extends BaseTeam>(
 
 			let maxValue;
 			maxIndexes = [];
-			for (let i = 0; i < values.length; i++) {
-				if (maxValue === undefined || values[i] > maxValue) {
-					maxValue = values[i];
+			for (const [i, value] of values.entries()) {
+				if (maxValue === undefined || value > maxValue) {
+					maxValue = value;
 					maxIndexes = [i];
 				} else if (values[i] === maxValue) {
 					maxIndexes.push(i);
@@ -526,7 +529,7 @@ export const breakTies = <T extends BaseTeam>(
 
 			if (maxIndexes.length === 1) {
 				// If there's only one team at max, that's our team! On to the next iteration
-				const t = teams[maxIndexes[0]];
+				const t = teams[maxIndexes[0]!]!;
 				return formatOutput(t, tiebreaker);
 			} else {
 				// If there's a tie at this level, mark the teams which are not part of the tie, and continue to the next tiebreaker
@@ -540,7 +543,7 @@ export const breakTies = <T extends BaseTeam>(
 	}
 
 	// We could reach here if the seed for the deterministic RNG in coinFlip is the same for two teams, which does happen unfortunately. In that case, just return the teams and pretend it was a coin flip result. Would be better to make the seed more unique, but that would break backwards compatibility.
-	return formatOutput(teams[0], "coinFlip");
+	return formatOutput(teams[0]!, "coinFlip");
 };
 
 export const getDivisionRanks = async <T extends BaseTeam>(
@@ -584,8 +587,7 @@ export const getDivisionRanks = async <T extends BaseTeam>(
 				skipTiebreakers,
 			});
 
-			for (let i = 0; i < teamsDivSorted.length; i++) {
-				const t = teamsDivSorted[i];
+			for (const [i, t] of teamsDivSorted.entries()) {
 				const rank = i + 1;
 				divisionRanks.set(t.tid, rank);
 			}
@@ -664,8 +666,7 @@ const orderTeams = async <T extends BaseTeam>(
 	let currentTiedGroup: TiedGroup | undefined;
 	const tiedGroups: TiedGroup[] = [];
 
-	for (let i = 0; i < teamsSorted.length; i++) {
-		const t = teamsSorted[i];
+	for (const [i, t] of teamsSorted.entries()) {
 		const currentValues = iterees.map((func) => func(t));
 
 		if (prevValues && arraysEqual(prevValues, currentValues)) {

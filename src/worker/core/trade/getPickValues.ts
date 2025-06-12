@@ -81,7 +81,7 @@ const getPickValues = async (): Promise<TradePickValues> => {
 
 				return true;
 			})
-			.map((season) => (pickValues[season] as number[])[i]);
+			.map((season) => pickValues[season]![i]!);
 		return vals.reduce((total, val) => total + val, 0) / vals.length;
 	});
 

@@ -137,7 +137,7 @@ const Chart = ({
 									tickFormat={yTickFormat as any}
 									tickLength={5}
 								/>
-								{[0, 1].map((i) => {
+								{([0, 1] as const).map((i) => {
 									const filtered = seasonsToPlot.filter(
 										(row) => row.teams[i][valueKey] !== undefined,
 									);

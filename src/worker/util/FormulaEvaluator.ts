@@ -120,9 +120,9 @@ const shuntingYard = (string: string) => {
 				while (
 					operators[stack.at(-1)!] !== undefined &&
 					((operator.associativity === "l" &&
-						operator.precedence <= operators[stack.at(-1)!].precedence) ||
+						operator.precedence <= operators[stack.at(-1)!]!.precedence) ||
 						(operator.associativity === "r" &&
-							operator.precedence < operators[stack.at(-1)!].precedence))
+							operator.precedence < operators[stack.at(-1)!]!.precedence))
 				) {
 					output.push(stack.pop() as string);
 				}
@@ -160,7 +160,7 @@ const shuntingYard = (string: string) => {
 				output2.push(`${output[i]}${output[i + 1]}`);
 				i += 1;
 			} else {
-				output2.push(output[i]);
+				output2.push(output[i]!);
 			}
 		}
 		return output2;

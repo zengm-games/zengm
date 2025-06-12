@@ -107,7 +107,7 @@ const PlayerStatDists = ({
 					{Object.keys(statsAll)
 						.filter((stat) => typeof statsAll[stat][0] === "number")
 						.map((stat) => {
-							const col = getCols([`stat:${stat}`])[0];
+							const col = getCols([`stat:${stat}`])[0]!;
 							const bbgmPlot = (
 								<tr key={`${stat}-bbgm`}>
 									<td className="pe-3 text-end" title={col.desc}>

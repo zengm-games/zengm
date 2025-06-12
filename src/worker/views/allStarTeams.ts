@@ -55,11 +55,11 @@ const augment = async (allStars: AllStars) => {
 			allStars.remaining.map((info) => getPlayerInfo(info, allStars.season)),
 		)
 	).filter((p) => p !== undefined);
-	const teams = await Promise.all(
+	const teams = (await Promise.all(
 		allStars.teams.map((players) =>
 			Promise.all(players.map((info) => getPlayerInfo(info, allStars.season))),
 		),
-	);
+	)) as [any[], any[]];
 
 	if (!isSport("basketball")) {
 		for (const t of teams) {
@@ -111,7 +111,7 @@ const updateAllStarTeams = async (
 
 		const godMode = g.get("godMode");
 
-		const started = teams[0].length > 1;
+		const started = teams[0]!.length > 1;
 
 		let allPossiblePlayers: {
 			pid: number;

@@ -46,7 +46,7 @@ test("works", () => {
 
 	for (const pos of helpers.keys(output)) {
 		assert.deepStrictEqual(
-			output[pos].map((p) => p.pid),
+			output[pos]!.map((p) => p.pid),
 			(target as any)[pos],
 		);
 	}

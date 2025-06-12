@@ -148,7 +148,7 @@ const boxScore = async (gid: number) => {
 		}
 	}
 
-	for (let i = 0; i < game.teams.length; i++) {
+	for (const i of [0, 1] as const) {
 		const t = game.teams[i];
 		await setTeamInfo(t, i, allStars, game);
 
@@ -277,8 +277,8 @@ export const loadAbbrevs = async (season: number) => {
 	// If no old abbrevs found, or if this is the current season, use cache
 	if (!loaded) {
 		const teamInfoCache = g.get("teamInfoCache");
-		for (let tid = 0; tid < teamInfoCache.length; tid++) {
-			abbrevs[tid] = teamInfoCache[tid].abbrev;
+		for (const [tid, t] of teamInfoCache.entries()) {
+			abbrevs[tid] = t.abbrev;
 		}
 	}
 
@@ -343,7 +343,7 @@ const updateGamesList = async (
 			games = newGames;
 		} else {
 			for (let i = newGames.length - 1; i >= 0; i--) {
-				games.unshift(newGames[i]);
+				games.unshift(newGames[i]!);
 			}
 		}
 

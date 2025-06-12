@@ -93,9 +93,9 @@ const getDepthPlayers = <
 					};
 				}
 
-				if (depths.D[i]) {
+				if (depths.D![i]) {
 					// IMPORTANT - maintain referential integrity
-					return Object.assign(depths[defenseKey][i], {
+					return Object.assign(depths[defenseKey]![i]!, {
 						lineupPos: POSITIONS[2 + i],
 						lineupIndex: i,
 					});

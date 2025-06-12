@@ -64,7 +64,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 						<Fragment key={rating}>
 							<br />
 							<span style={gradientStyle(ratings[rating])}>
-								<span title={cols[i].desc}>{cols[i].title}</span>:{" "}
+								<span title={cols[i]!.desc}>{cols[i]!.title}</span>:{" "}
 								{ratings[rating]}
 							</span>
 						</Fragment>

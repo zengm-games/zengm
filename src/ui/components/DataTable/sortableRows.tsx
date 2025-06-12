@@ -72,7 +72,7 @@ export const SortableHandle = ({
 		if (overlay && tableRef.current && sortableHandleRef.current) {
 			// All tds in the first row of the actual table
 			const tableTds =
-				tableRef.current.querySelector("tbody")!.children[0].children;
+				tableRef.current.querySelector("tbody")!.children[0]!.children;
 
 			// All tds in the overlay row
 			const overlayTds = sortableHandleRef.current.parentElement!.children;
@@ -313,7 +313,7 @@ export const MyDragOverlay = () => {
 						draggedIndex,
 						index: draggedIndex,
 						overlay: true,
-						row: rows[draggedIndex],
+						row: rows[draggedIndex]!,
 					})
 				: null}
 		</DragOverlay>

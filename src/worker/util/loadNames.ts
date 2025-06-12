@@ -198,8 +198,8 @@ const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 		} else {
 			for (const countryName of countryNames) {
 				countries[countryName] = {
-					first: legacyConvert(gNames.first[countryName]),
-					last: legacyConvert(gNames.last[countryName]),
+					first: legacyConvert(gNames.first[countryName]!),
+					last: legacyConvert(gNames.last[countryName]!),
 				};
 			}
 		}
@@ -260,7 +260,7 @@ const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 	if (gPlayerBioInfo?.default?.races) {
 		races = toCumSumArray(gPlayerBioInfo.default.races);
 	} else {
-		races = toCumSumArray(defaultRaces.USA);
+		races = toCumSumArray(defaultRaces.USA!);
 	}
 
 	const frequenciesObject = getFrequencies(gPlayerBioInfo, cache.countries);

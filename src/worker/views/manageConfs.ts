@@ -1,8 +1,10 @@
+import type { Conf, Div } from "../../common/types.ts";
 import { g } from "../util/index.ts";
 
 const updateConfs = async () => {
-	const confs = g.get("confs");
-	const divs = g.get("divs");
+	// While editing, can have 0 confs or divs
+	const confs: Conf[] = g.get("confs");
+	const divs: Div[] = g.get("divs");
 
 	return {
 		actualPhase: g.get("nextPhase") ?? g.get("phase"),

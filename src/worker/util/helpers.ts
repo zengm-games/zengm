@@ -171,7 +171,7 @@ const getAbbrev = (tid: number | string): string => {
 		tid = g.get("userTid");
 	}
 
-	return g.get("teamInfoCache")[tid]?.abbrev;
+	return g.get("teamInfoCache")[tid]!.abbrev;
 };
 
 const leagueUrl = (components: (number | string | undefined)[]): string =>
@@ -369,7 +369,7 @@ const stripBbcode = (imgURL: string) => {
 	}
 
 	const matches = imgURL.match(/\[img[^\]]*](.*?)\[\/img]/i);
-	if (matches) {
+	if (matches?.[1] !== undefined) {
 		return matches[1];
 	}
 	return imgURL;

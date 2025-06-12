@@ -30,7 +30,7 @@ const processTrade = async (
 
 	let maxPlayerValue = -Infinity;
 	let maxPid: number | undefined;
-	for (const j of [0, 1]) {
+	for (const j of [0, 1] as const) {
 		for (const pid of pids[j]) {
 			const p = await idb.cache.players.get(pid);
 			if (p && p.valueFuzz > maxPlayerValue) {
@@ -56,7 +56,7 @@ const processTrade = async (
 		phase: g.get("phase"),
 	});
 
-	for (const j of [0, 1]) {
+	for (const j of [0, 1] as const) {
 		const k = j === 0 ? 1 : 0;
 
 		let teamSeason;

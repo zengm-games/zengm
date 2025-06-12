@@ -89,8 +89,10 @@ const StatsTable = ({
 					helpers.percentage(sumsByStat.sv, sumsByStat.sa) ?? 0;
 			} else if (stat === "foPct") {
 				sumsByStat[stat] =
-					helpers.percentage(sumsByStat.fow, sumsByStat.fow + sumsByStat.fol) ??
-					0;
+					helpers.percentage(
+						sumsByStat.fow,
+						sumsByStat.fow! + sumsByStat.fol!,
+					) ?? 0;
 			} else if (stat === "sPct") {
 				sumsByStat[stat] = helpers.percentage(sumsByStat.g, sumsByStat.s) ?? 0;
 			} else {
@@ -144,7 +146,7 @@ const StatsTable = ({
 									<th key={stat}>
 										{stat === "pm"
 											? null
-											: helpers.roundStat(sumsByStat[stat], stat, true)}
+											: helpers.roundStat(sumsByStat[stat]!, stat, true)}
 									</th>
 								))}
 							</tr>

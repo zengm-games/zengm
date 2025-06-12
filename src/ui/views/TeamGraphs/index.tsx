@@ -99,7 +99,7 @@ const getStatsWithLabels = (
 ) => {
 	return getCols(stats.map((stat) => addPrefixForStat(statType, stat))).map(
 		(col, i) => {
-			const stat = stats[i];
+			const stat = stats[i]!;
 
 			if (prefixOpp && stat.startsWith("opp")) {
 				col.title = `opp${col.title}`;
@@ -148,7 +148,7 @@ const getStatFromTeam = (t: any, stat: string, statType: string) => {
 		const other = stat.startsWith("rank_");
 		const otherCurrent = stat.startsWith("rankCurrent_");
 		if (other || otherCurrent) {
-			const type = stat.split("_")[1];
+			const type = stat.split("_")[1]!;
 			return t.powerRankings[other ? "other" : "otherCurrent"][type];
 		}
 
@@ -235,8 +235,8 @@ const GraphCreation = <Team extends ViewProps["teamsX"][number]>({
 		return <div>No data for the selected options.</div>;
 	}
 
-	const titleX = getStatsWithLabels([stat[0]], statType[0], true)[0];
-	const titleY = getStatsWithLabels([stat[1]], statType[1], true)[0];
+	const titleX = getStatsWithLabels([stat[0]], statType[0], true)[0]!;
+	const titleY = getStatsWithLabels([stat[1]], statType[1], true)[0]!;
 	const descShort: [string, string] = [titleX.title, titleY.title];
 
 	const reverseAxis = stat.map(
@@ -261,7 +261,7 @@ const GraphCreation = <Team extends ViewProps["teamsX"][number]>({
 			renderTooltip={(value, p, i) => {
 				return (
 					<div key={i}>
-						{getFormattedStat(value, stat[i], statType[i])} {descShort[i]}
+						{getFormattedStat(value, stat[i]!, statType[i]!)} {descShort[i]}
 					</div>
 				);
 			}}
@@ -351,8 +351,8 @@ const PickStat = ({
 	) as (Col & {
 		stat: string;
 	})[];
-	for (let i = 0; i < statsXEnriched.length; i++) {
-		statsXEnriched[i].stat = stats[i];
+	for (const [i, row] of statsXEnriched.entries()) {
+		row.stat = stats[i]!;
 	}
 
 	const dropdownSeasons = useDropdownOptions("seasons");

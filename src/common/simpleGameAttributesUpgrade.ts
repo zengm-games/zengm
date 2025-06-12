@@ -52,7 +52,7 @@ const simpleGameAttributesUpgrade = (
 					start: row.start,
 					value: row.value ? 1 : null,
 				};
-			});
+			}) as any;
 		}
 
 		gameAttributes.maxOvertimes = maxOvertimes;

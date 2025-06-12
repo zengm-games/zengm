@@ -81,8 +81,12 @@ export const kmeansFixedSize = (
 	const NUM_TRIES = 100;
 	const ITERATION_LIMIT = 1000;
 
-	const minima = [0, 1].map((i) => Math.min(...points.map((row) => row[i])));
-	const maxima = [0, 1].map((i) => Math.max(...points.map((row) => row[i])));
+	const minima = ([0, 1] as const).map((i) =>
+		Math.min(...points.map((row) => row[i])),
+	) as [number, number];
+	const maxima = ([0, 1] as const).map((i) =>
+		Math.max(...points.map((row) => row[i])),
+	) as [number, number];
 
 	const pointIndexes = points.map((point, i) => i);
 
@@ -92,9 +96,9 @@ export const kmeansFixedSize = (
 			if (prevClusters) {
 				// Update centers, see if we do better next time
 				center = [0, 0];
-				const { pointIndexes } = prevClusters[i];
+				const { pointIndexes } = prevClusters[i]!;
 				for (const pointIndex of pointIndexes) {
-					const point = points[pointIndex];
+					const point = points[pointIndex]!;
 					center[0] += point[0];
 					center[1] += point[1];
 				}
@@ -129,16 +133,16 @@ export const kmeansFixedSize = (
 
 			// Assign each point to a cluster
 			for (const pointIndex of pointIndexes) {
-				const point = points[pointIndex];
+				const point = points[pointIndex]!;
 
 				let minDistance = Infinity;
 				let clusterIndex: number | undefined;
-				for (let i = 0; i < clusters.length; i++) {
-					if (clusters[i].pointIndexes.length >= clusterSizes[i]) {
+				for (const [i, cluster] of clusters.entries()) {
+					if (cluster.pointIndexes.length >= clusterSizes[i]!) {
 						continue;
 					}
 
-					const center = clusters[i].center;
+					const center = cluster.center;
 					const distance = calcDistance(point, center);
 
 					if (distance < minDistance) {
@@ -151,8 +155,8 @@ export const kmeansFixedSize = (
 					throw new Error("undefined clusterIndex");
 				}
 
-				clusters[clusterIndex].pointIndexes.push(pointIndex);
-				clusters[clusterIndex].distance += minDistance;
+				clusters[clusterIndex]!.pointIndexes.push(pointIndex);
+				clusters[clusterIndex]!.distance += minDistance;
 			}
 
 			const clustersString = stringifyClusters(clusters);
@@ -240,8 +244,8 @@ export const sortByDivs = (
 		let score = 0;
 
 		for (const divIndex of divIndexes) {
-			const div = divs[divIndex];
-			const divCoords = DEFAULT_COORDS[div.name];
+			const div = divs[divIndex]!;
+			const divCoords = DEFAULT_COORDS[div.name]!;
 
 			let bestCluster: Clusters[number] | undefined;
 			let minDistance = Infinity;

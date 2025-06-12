@@ -16,8 +16,8 @@ const advStatsSave = async (
 
 				if (ps) {
 					for (const key of keys) {
-						if (!Number.isNaN(updatedStats[key][i])) {
-							ps[key] = updatedStats[key][i];
+						if (!Number.isNaN(updatedStats[key]![i])) {
+							ps[key] = updatedStats[key]![i];
 						}
 					}
 

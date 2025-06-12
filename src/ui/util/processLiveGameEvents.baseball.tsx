@@ -27,7 +27,7 @@ type BoxScoreTeam = {
 let playersByPidGid: number | undefined;
 export let playersByPid: Record<number, BoxScorePlayer> = {};
 
-const getName = (pid: number) => playersByPid[pid].name ?? "???";
+const getName = (pid: number) => playersByPid[pid]?.name ?? "???";
 
 const getDirectionInfield = (
 	direction: Extract<PlayByPlayEvent, { type: "fly" }>["direction"],
@@ -307,7 +307,7 @@ export const getText = (
 				}
 			} else if (event.result === "flyOut") {
 				text = `Caught by the ${
-					POS_NUMBERS_INVERSE[event.posDefense[0]]
+					POS_NUMBERS_INVERSE[event.posDefense[0]!]
 				} for an out`;
 			} else if (event.result === "throwOut") {
 				if (event.posDefense[0] === 3) {
@@ -316,7 +316,7 @@ export const getText = (
 					} and forced out at 1st`;
 				} else {
 					text = `Fielded by the ${
-						POS_NUMBERS_INVERSE[event.posDefense[0]]
+						POS_NUMBERS_INVERSE[event.posDefense[0]!]
 					} and thrown out at 1st`;
 				}
 			} else if (event.result === "fieldersChoice") {
@@ -618,7 +618,8 @@ const processLiveGameEvents = ({
 			// Quarter-by-quarter score
 			if (e.s === "pts") {
 				const ptsQtrs = boxScore.teams[actualT!].ptsQtrs;
-				ptsQtrs[ptsQtrs.length - 1] += e.amt;
+				// eslint-disable-next-line unicorn/prefer-at
+				ptsQtrs[ptsQtrs.length - 1]! += e.amt;
 				boxScore.teams[actualT!].ptsQtrs = ptsQtrs;
 			}
 
@@ -637,7 +638,7 @@ const processLiveGameEvents = ({
 			}
 		} else if (e.type !== "init") {
 			if (e.type === "injury") {
-				const p = playersByPid[e.pid];
+				const p = playersByPid[e.pid]!;
 				p.injury = {
 					type: "Injured",
 					gamesRemaining: -1,

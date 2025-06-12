@@ -58,7 +58,7 @@ const useStickyXX = (
 
 			// For each stickyCol beyond the first, need to figure out how much it needs to be offset by the fixed width of prior sticky cols
 			for (let i = 1; i < stickyCols; i++) {
-				lefts[i] = lefts[i - 1] + row.cells[i - 1].offsetWidth;
+				lefts[i] = lefts[i - 1]! + row.cells[i - 1]!.offsetWidth;
 			}
 
 			if (
@@ -78,8 +78,9 @@ const useStickyXX = (
 
 			for (const row of rows) {
 				for (let i = 1; i < widths.length; i++) {
-					if (row.cells[i]) {
-						row.cells[i].style.left = widths[i];
+					const cell = row.cells[i];
+					if (cell) {
+						cell.style.left = widths[i]!;
 					}
 				}
 			}
@@ -96,7 +97,7 @@ const useStickyXX = (
 				}
 				for (const row of rows) {
 					for (const i of colsToReset) {
-						const cell = row.cells[i];
+						const cell = row.cells[i]!;
 						cell.style.left = "";
 					}
 				}

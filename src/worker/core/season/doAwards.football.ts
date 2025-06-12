@@ -290,7 +290,7 @@ const getRealFinalsMvp = async (
 		"desc",
 	);
 
-	if (playerArray.length === 0) {
+	if (!playerArray[0]) {
 		return;
 	}
 

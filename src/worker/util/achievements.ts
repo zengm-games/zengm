@@ -1,16 +1,16 @@
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
-import type { Achievement, Player } from "../../common/types.ts";
+import type { Achievement, NonEmptyArray, Player } from "../../common/types.ts";
 import { bySport, isSport, PLAYER } from "../../common/index.ts";
 import helpers from "./helpers.ts";
 
-const goldenOldiesCutoffs = bySport({
+const goldenOldiesCutoffs: [number, number, number] = bySport({
 	baseball: [30, 33, 36],
 	basketball: [30, 33, 36],
 	football: [28, 30, 32],
 	hockey: [30, 33, 36],
 });
-const youngGunsCutoffs = bySport({
+const youngGunsCutoffs: [number, number] = bySport({
 	baseball: [25, 22],
 	basketball: [25, 22],
 	football: [26, 24],
@@ -292,7 +292,7 @@ const getUserSeed = async () => {
 		return;
 	}
 
-	for (const matchup of playoffSeries.series[0]) {
+	for (const matchup of playoffSeries.series[0]!) {
 		if (matchup.away && matchup.away.tid === g.get("userTid")) {
 			return matchup.away.seed;
 		}
@@ -1688,7 +1688,11 @@ if (isSport("basketball")) {
 	);
 
 	// Rebuilds!
-	const rebuilds = [
+	const rebuilds: {
+		season: number;
+		srIDs: NonEmptyArray<string>;
+		name: string;
+	}[] = [
 		{
 			season: 1980,
 			srIDs: ["SDC", "LAC"],

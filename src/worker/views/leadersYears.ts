@@ -43,7 +43,7 @@ const updateLeadersYears = async (
 
 		const { categories, stats } = getCategoriesAndStats(inputs.stat);
 
-		const cat = categories[0];
+		const cat = categories[0]!;
 
 		const seasons = range(g.get("startingSeason"), g.get("season") + 1);
 

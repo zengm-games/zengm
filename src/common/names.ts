@@ -22,7 +22,7 @@ export const mergeCountries = (
 	};
 
 	for (const [group, info] of Object.entries(defaultNamesGroups)) {
-		for (const country of groups[group]) {
+		for (const country of groups[group]!) {
 			if (!mergedCountries[country]) {
 				// Country might not exist for female names, which means there are no female first names, so we should not add a country for this group
 				if (Object.keys(info.first).length > 0) {

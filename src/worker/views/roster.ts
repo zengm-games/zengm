@@ -142,11 +142,8 @@ const updateRoster = async (
 			// numGamesRemaining doesn't need to be calculated except for userTid, but it is.
 			let numGamesRemaining = 0;
 
-			for (let i = 0; i < schedule.length; i++) {
-				if (
-					inputs.tid === schedule[i].homeTid ||
-					inputs.tid === schedule[i].awayTid
-				) {
+			for (const matchup of schedule) {
+				if (inputs.tid === matchup.homeTid || inputs.tid === matchup.awayTid) {
 					numGamesRemaining += 1;
 				}
 			}

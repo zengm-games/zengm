@@ -16,7 +16,7 @@ export const findStarters = (positions: string[]): number[] => {
 	let numFC = 0;
 	let numC = 0;
 
-	for (let i = 0; i < positions.length; i++) {
+	for (const [i, pos] of positions.entries()) {
 		if (starters.length === 5 || (numG >= 2 && numFC >= 2)) {
 			break;
 		}
@@ -25,19 +25,18 @@ export const findStarters = (positions: string[]): number[] => {
 		if (
 			5 - starters.length >
 				(2 - numG > 0 ? 2 - numG : 0) + (2 - numFC > 0 ? 2 - numFC : 0) ||
-			(numG < 2 && positions[i].includes("G")) ||
-			(numFC < 2 &&
-				(positions[i].includes("F") || (positions[i] === "C" && numC === 0)))
+			(numG < 2 && pos.includes("G")) ||
+			(numFC < 2 && (pos.includes("F") || (pos === "C" && numC === 0)))
 		) {
 			starters.push(i);
-			numG += positions[i].includes("G") ? 1 : 0;
-			numFC += positions[i].includes("F") || positions[i] === "C" ? 1 : 0;
-			numC += positions[i] === "C" ? 1 : 0;
+			numG += pos.includes("G") ? 1 : 0;
+			numFC += pos.includes("F") || pos === "C" ? 1 : 0;
+			numC += pos === "C" ? 1 : 0;
 		}
 	}
 
 	// Fill in after meeting requirements, but still not too many Cs!
-	for (let i = 0; i < positions.length; i++) {
+	for (const [i, pos] of positions.entries()) {
 		if (starters.length === 5) {
 			break;
 		}
@@ -46,12 +45,12 @@ export const findStarters = (positions: string[]): number[] => {
 			continue;
 		}
 
-		if (numC >= 1 && positions[i] === "c") {
+		if (numC >= 1 && pos === "c") {
 			continue;
 		}
 
 		starters.push(i);
-		numC += positions[i] === "C" ? 1 : 0;
+		numC += pos === "C" ? 1 : 0;
 	}
 
 	return starters;
@@ -79,18 +78,18 @@ export const getRosterOrderByPid = (
 	// Shuffle array so that position conditions are met - 2 G and 2 F/C in starting lineup, at most one pure C
 	const positions = players.map((p) => p.ratings.pos);
 	const starters = findStarters(positions);
-	const newPlayers = starters.map((i) => players[i]);
+	const newPlayers = starters.map((i) => players[i]!);
 
-	for (let i = 0; i < players.length; i++) {
+	for (const [i, p] of players.entries()) {
 		if (!starters.includes(i)) {
-			newPlayers.push(players[i]);
+			newPlayers.push(p);
 		}
 	}
 
 	const rosterOrders = new Map();
 
-	for (let i = 0; i < newPlayers.length; i++) {
-		rosterOrders.set(newPlayers[i].pid, i);
+	for (const [i, p] of newPlayers.entries()) {
+		rosterOrders.set(p.pid, i);
 	}
 
 	return rosterOrders;

@@ -10,6 +10,7 @@ import type {
 	Conditions,
 	GameAttributesLeague,
 	GameAttributesLeagueWithHistory,
+	GameAttributeWithHistory,
 } from "../../../common/types.ts";
 import { defaultGameAttributes, logEvent } from "../../util/index.ts";
 import { wrap } from "../../util/g.ts";
@@ -215,10 +216,12 @@ const createGameAttributes = async (
 			}
 
 			// Apply default tiebreakers, while keeping track of when that happened
-			const tiebreakers = [
+			const tiebreakers: GameAttributeWithHistory<
+				GameAttributesLeague["tiebreakers"]
+			> = [
 				{
 					start: -Infinity,
-					value: ["coinFlip"] as GameAttributesLeague["tiebreakers"],
+					value: ["coinFlip"],
 				},
 				{
 					start: currentSeason,

@@ -133,7 +133,7 @@ const evaluate = (
 				}
 			} else {
 				if (info.type === "career") {
-					if (row[stat] > object[peak]) {
+					if (row[stat] > object[peak]!) {
 						object[peak] = row[stat];
 					}
 
@@ -167,12 +167,12 @@ const evaluate = (
 		object[perGame] = 0;
 		object[playoffsPerGame] = 0;
 
-		if (object.gp > 0) {
-			object[perGame] = object[tot] / object.gp;
+		if (object.gp! > 0) {
+			object[perGame] = object[tot]! / object.gp!;
 		}
 
-		if (object.gpPlayoffs > 0) {
-			object[playoffsPerGame] = object[playoffs] / object.gpPlayoffs;
+		if (object.gpPlayoffs! > 0) {
+			object[playoffsPerGame] = object[playoffs]! / object.gpPlayoffs!;
 		}
 	}
 
@@ -205,13 +205,13 @@ const evaluate = (
 	// Ignore career totals from low games guys
 	const minGp = info.type === "season" ? MIN_GP_SEASON : MIN_GP_TOTAL;
 	const minGpPlayoffs = info.type === "season" ? 0 : MIN_GP_TOTAL / 2;
-	if (object.gp < minGp) {
+	if (object.gp! < minGp) {
 		for (const stat of STAT_VARIABLES) {
 			object[stat] = 0;
 			object[`${stat}PerGame`] = 0;
 		}
 	}
-	if (object.gpPlayoffs < minGpPlayoffs) {
+	if (object.gpPlayoffs! < minGpPlayoffs) {
 		for (const stat of STAT_VARIABLES) {
 			object[`${stat}Playoffs`] = 0;
 			object[`${stat}PlayoffsPerGame`] = 0;

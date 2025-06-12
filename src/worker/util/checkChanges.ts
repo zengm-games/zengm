@@ -35,10 +35,10 @@ const checkChanges = async (conditions: Conditions) => {
 		if (changes && changes.length > 0) {
 			let text = "";
 
-			for (let i = 0; i < changes.length; i++) {
-				text += `<p class="mt-1 mb-0"><strong>v${changes[i].version}</strong>: ${changes[i].text}`;
+			for (const [i, change] of changes.entries()) {
+				text += `<p class="mt-1 mb-0"><strong>v${change.version}</strong>: ${change.text}`;
 
-				const links = changes[i].links;
+				const links = change.links;
 				if (links) {
 					const link =
 						links.find((link) => link.startsWith("/blog/")) ??

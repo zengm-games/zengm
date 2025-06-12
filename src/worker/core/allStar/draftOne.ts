@@ -25,13 +25,13 @@ const draftOne = async (
 	let pick: AllStarPlayer;
 	const r = Math.random();
 	if (r < 0.4 || remaining.length === 1) {
-		pick = remaining[0];
+		pick = remaining[0]!;
 	} else if (r < 0.7 || remaining.length === 2) {
-		pick = remaining[1];
+		pick = remaining[1]!;
 	} else if (r < 0.9 || remaining.length === 3) {
-		pick = remaining[2];
+		pick = remaining[2]!;
 	} else {
-		pick = remaining[3];
+		pick = remaining[3]!;
 	}
 
 	if (!pick && !allowNone) {

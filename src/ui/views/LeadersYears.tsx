@@ -1,5 +1,5 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers } from "../util/index.ts";
+import { getCol, helpers } from "../util/index.ts";
 import {
 	DataTable,
 	MoreLinks,
@@ -13,7 +13,7 @@ import { range } from "../../common/utils.ts";
 
 export const formatStatsDropdown = (stats: string[]) =>
 	stats.map((stat) => {
-		const col = getCols([`stat:${stat}`])[0]!;
+		const col = getCol(`stat:${stat}`);
 		return {
 			key: stat,
 			value: col.desc ? makeNormalResponsive(col.title, col.desc) : col.title,
@@ -41,7 +41,7 @@ const LeadersYears = ({
 	});
 
 	const cols = [
-		getCols(["Season"])[0]!,
+		getCol("Season"),
 		...range(1, 11).map(
 			(rank) =>
 				({

@@ -1,6 +1,6 @@
 import { Fragment, type ChangeEvent, useState, useEffect } from "react";
 import { bySport, RATINGS } from "../../../common/index.ts";
-import { getCols, helpers, toWorker } from "../../util/index.ts";
+import { getCol, helpers, toWorker } from "../../util/index.ts";
 
 const rows = bySport<
 	{
@@ -128,7 +128,7 @@ const RatingsForm = ({
 														return (
 															<div key={rating} className="mb-3">
 																<label className="form-label">
-																	{getCols([`rating:${rating}`])[0]!.desc}
+																	{getCol(`rating:${rating}`).desc}
 																</label>
 																<input
 																	type="text"

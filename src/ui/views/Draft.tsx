@@ -3,6 +3,7 @@ import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import {
 	confirm,
+	getCol,
 	getCols,
 	helpers,
 	toWorker,
@@ -275,7 +276,7 @@ const Draft = ({
 
 	if (expansionDraft) {
 		colsDrafted.splice(4, 1);
-		colsDrafted.splice(2, 0, getCols(["From"])[0]!);
+		colsDrafted.splice(2, 0, getCol("From"));
 	}
 
 	const teamInfoCache = useLocal((state) => state.teamInfoCache);

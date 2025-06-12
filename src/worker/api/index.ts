@@ -4,6 +4,7 @@ import {
 	PHASE,
 	PHASE_TEXT,
 	PLAYER,
+	getCol,
 	getCols,
 	PLAYER_STATS_TABLES,
 	RATINGS,
@@ -1304,7 +1305,7 @@ const exportPlayerAveragesCsv = async (season: number | "all") => {
 				// @ts-expect-error
 				colNames.push(overrides[col]);
 			} else {
-				const col2 = getCols([col])[0]!;
+				const col2 = getCol(col);
 				colNames.push(col2.title);
 			}
 		}

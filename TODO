@@ -2,8 +2,7 @@ types
 - trade ones should assume only 2 teams?
   - TradeEventTeams
 - Record<*, * | undefined> types not needed anymore
-- add getCol function and have it replace calls for getCols(...)[0]
-  - multi line in AdvancedPlayerSearch
+- getCol/getCols export from common needed?
 - test game winning shot logging in BBGM
 - ui local phase should be Phase type not number
 

@@ -7,6 +7,7 @@ import {
 } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import {
+	getCol,
 	getCols,
 	helpers,
 	downloadFile,
@@ -27,7 +28,7 @@ const Summary = ({
 	players: View<"draftHistory">["players"];
 	summaryStat: View<"draftHistory">["summaryStat"];
 }) => {
-	const col = getCols([`stat:${summaryStat}`])[0]!;
+	const col = getCol(`stat:${summaryStat}`);
 	const statText = <span title={col.desc}>{col.title}</span>;
 
 	const formatStat = (p: (typeof players)[number]) =>

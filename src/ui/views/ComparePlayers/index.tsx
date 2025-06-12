@@ -3,7 +3,7 @@ import type { SortType, View } from "../../../common/types.ts";
 import { PlayerNameLabels, PlayerPicture } from "../../components/index.tsx";
 import { PLAYER, bySport } from "../../../common/index.ts";
 import {
-	getCols,
+	getCol,
 	groupAwards,
 	helpers,
 	realtimeUpdate,
@@ -289,7 +289,7 @@ const ComparePlayers = ({
 
 	const ageRow = (
 		<InfoRow
-			col={getCols(["Age"])[0]!}
+			col={getCol("Age")}
 			values={playersToValues(
 				playersAndLegend,
 				(p) => p.ratings.season - p.born.year,
@@ -405,14 +405,14 @@ const ComparePlayers = ({
 									ageRow
 								)}
 								<InfoRow
-									col={getCols(["Pos"])[0]!}
+									col={getCol("Pos")}
 									values={playersToValues(
 										playersAndLegend,
 										(p) => p.ratings.pos,
 									)}
 								/>
 								<InfoRow
-									col={getCols(["Draft"])[0]!}
+									col={getCol("Draft")}
 									values={playersToValues(playersAndLegend, (p) =>
 										p.tid === PLAYER.UNDRAFTED
 											? "Draft prospect"
@@ -424,10 +424,7 @@ const ComparePlayers = ({
 									sortAsc
 								/>
 								{showContracts ? (
-									<InfoRow
-										col={getCols(["Contract"])[0]!}
-										values={contractValues}
-									/>
+									<InfoRow col={getCol("Contract")} values={contractValues} />
 								) : null}
 							</>
 						) : null}
@@ -453,7 +450,7 @@ const ComparePlayers = ({
 											} else {
 												key = `rating:${rating}`;
 											}
-											const col = getCols([key])[0]!;
+											const col = getCol(key);
 											return (
 												<InfoRow
 													key={rating}
@@ -479,7 +476,7 @@ const ComparePlayers = ({
 						</HeaderRow>
 						{openStats
 							? stats.map((stat) => {
-									const col = getCols([`stat:${stat}`])[0]!;
+									const col = getCol(`stat:${stat}`);
 									return (
 										<InfoRow
 											key={stat}

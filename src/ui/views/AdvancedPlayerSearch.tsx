@@ -4,7 +4,13 @@ import useDropdownOptions from "../hooks/useDropdownOptions.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { OptionDropdown } from "./PlayerGraphs/index.tsx";
 import { isSport, PLAYER, PLAYER_STATS_TABLES } from "../../common/index.ts";
-import { getCols, helpers, realtimeUpdate, toWorker } from "../util/index.ts";
+import {
+	getCol,
+	getCols,
+	helpers,
+	realtimeUpdate,
+	toWorker,
+} from "../util/index.ts";
 import { ActionButton, DataTable, PlusMinus } from "../components/index.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import {
@@ -310,14 +316,7 @@ const Filters = ({
 									>
 										{Object.values(allFilters[filter.category]!.options).map(
 											(row, i) => {
-												const col = getCols(
-													[row.colKey],
-													row.colOverrides
-														? {
-																[row.colKey]: row.colOverrides,
-															}
-														: undefined,
-												)[0]!;
+												const col = getCol(row.colKey, row.colOverrides);
 												return (
 													<option key={i} value={row.key} title={col.desc}>
 														{col.title}

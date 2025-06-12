@@ -6,7 +6,7 @@ import {
 	TeamLogoInline,
 } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers } from "../util/index.ts";
+import { getCol, helpers } from "../util/index.ts";
 import useClickable from "../hooks/useClickable.tsx";
 import type { TeamSeason, View } from "../../common/types.ts";
 import { bySport, isSport, TIEBREAKERS } from "../../common/index.ts";
@@ -185,7 +185,7 @@ export const ColPtsOrGB = ({
 	pointsFormula: string;
 	usePts: boolean;
 }) => {
-	const col = getCols([usePts ? "PTS" : "GB"])[0]!;
+	const col = getCol(usePts ? "PTS" : "GB");
 	if (usePts) {
 		col.desc = `Points (${pointsFormula})`;
 	}

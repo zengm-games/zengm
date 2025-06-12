@@ -96,7 +96,8 @@ const ExpansionDraft = ({
 
 	useTitleBar({ title: "Expansion Draft" });
 
-	const phaseDisabled = ![PHASE.PRESEASON, PHASE.DRAFT_LOTTERY].includes(phase);
+	const phaseDisabled =
+		phase !== PHASE.PRESEASON && phase !== PHASE.DRAFT_LOTTERY;
 
 	if (phaseDisabled) {
 		return (

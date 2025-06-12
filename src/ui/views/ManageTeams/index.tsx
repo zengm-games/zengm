@@ -2,7 +2,7 @@ import { Fragment, useReducer, type FormEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers, logEvent, toWorker } from "../../util/index.ts";
 import AddRemove from "./AddRemove.tsx";
-import type { View } from "../../../common/types.ts";
+import type { Phase, View } from "../../../common/types.ts";
 import { PHASE } from "../../../common/index.ts";
 import TeamForm from "./TeamForm.tsx";
 import { groupBy } from "../../../common/utils.ts";
@@ -174,15 +174,14 @@ const ManageTeams = (props: View<"manageTeams">) => {
 		);
 	}
 
-	const disableStatus =
-		!props.godMode ||
-		![
-			PHASE.PRESEASON,
-			PHASE.DRAFT_LOTTERY,
-			PHASE.AFTER_DRAFT,
-			PHASE.RESIGN_PLAYERS,
-			PHASE.FREE_AGENCY,
-		].includes(props.phase);
+	const validPhases: Phase[] = [
+		PHASE.PRESEASON,
+		PHASE.DRAFT_LOTTERY,
+		PHASE.AFTER_DRAFT,
+		PHASE.RESIGN_PLAYERS,
+		PHASE.FREE_AGENCY,
+	];
+	const disableStatus = !props.godMode || !validPhases.includes(props.phase);
 
 	const { saving, teams } = state;
 

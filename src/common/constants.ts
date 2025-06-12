@@ -37,19 +37,7 @@ const NO_LOTTERY_DRAFT_TYPES: DraftType[] = [
 	"random",
 ];
 
-const PHASE: {
-	EXPANSION_DRAFT: Phase;
-	FANTASY_DRAFT: Phase;
-	PRESEASON: Phase;
-	REGULAR_SEASON: Phase;
-	AFTER_TRADE_DEADLINE: Phase;
-	PLAYOFFS: Phase;
-	DRAFT_LOTTERY: Phase;
-	DRAFT: Phase;
-	AFTER_DRAFT: Phase;
-	RESIGN_PLAYERS: Phase;
-	FREE_AGENCY: Phase;
-} = {
+const PHASE = {
 	EXPANSION_DRAFT: -2,
 	FANTASY_DRAFT: -1,
 	PRESEASON: 0,
@@ -61,7 +49,7 @@ const PHASE: {
 	AFTER_DRAFT: 6,
 	RESIGN_PLAYERS: 7,
 	FREE_AGENCY: 8,
-};
+} satisfies Record<string, Phase>;
 
 const PLAYER = {
 	FREE_AGENT: -1,

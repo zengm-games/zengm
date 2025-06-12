@@ -1065,7 +1065,7 @@ export type LocalStateUI = {
 	neutralSite: GameAttributesLeague["neutralSite"];
 	numPeriods: number;
 	numWatchColors: number;
-	phase: number;
+	phase: Phase;
 	phaseText: string;
 	playMenuOptions: Option[];
 	popup: boolean;

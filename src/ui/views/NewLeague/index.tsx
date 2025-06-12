@@ -40,6 +40,7 @@ import type {
 	Div,
 	Conf,
 	GameAttributesLeague,
+	Phase,
 } from "../../../common/types.ts";
 import clsx from "clsx";
 import { descriptions } from "../Settings/settings.tsx";
@@ -145,7 +146,7 @@ const initKeptKeys = ({
 
 export const MIN_SEASON = 1947;
 export const MAX_SEASON = 2025;
-const MAX_PHASE = PHASE.PLAYOFFS;
+const MAX_PHASE = PHASE.PLAYOFFS as Phase;
 
 const seasons: { key: string; value: string }[] = [];
 for (let i = MAX_SEASON; i >= MIN_SEASON; i--) {
@@ -228,7 +229,7 @@ type State = {
 		| "real"
 		| "crossEra";
 	season: number;
-	phase: number;
+	phase: Phase;
 	name: string;
 
 	// Why keep difficulty here, rather than just using settings.difficulty? Because then it won't get reset every time settings change (new league file, etc).
@@ -272,7 +273,7 @@ type Action =
 	  }
 	| {
 			type: "setPhase";
-			phase: number;
+			phase: Phase;
 	  }
 	| {
 			type: "setKeptKeys";
@@ -711,7 +712,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			}
 
 			let season;
-			let phase;
+			let phase: Phase;
 			const rebuildInfo = getRebuildInfo();
 			if (rebuildInfo) {
 				season = rebuildInfo.season;
@@ -722,7 +723,9 @@ const NewLeague = (props: View<"newLeague">) => {
 				if (Number.isNaN(season)) {
 					season = MAX_SEASON;
 				}
-				phase = Number.parseInt(safeLocalStorage.getItem("prevPhase") as any);
+				phase = Number.parseInt(
+					safeLocalStorage.getItem("prevPhase") as any,
+				) as any;
 				if (Number.isNaN(phase)) {
 					phase = PHASE.PRESEASON;
 				}
@@ -1320,7 +1323,7 @@ const NewLeague = (props: View<"newLeague">) => {
 											]}
 											value2={state.phase}
 											values2={phases}
-											onNewValue2={(phase) => {
+											onNewValue2={(phase: any) => {
 												dispatch({
 													type: "setPhase",
 													phase,

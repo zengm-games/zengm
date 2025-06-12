@@ -11,12 +11,13 @@ type Props = {
 };
 
 const AddRemove = ({ dispatch, phase, saving }: Props) => {
-	const phaseDisabled = ![
+	const validPhases: Phase[] = [
 		PHASE.PRESEASON,
 		PHASE.AFTER_DRAFT,
 		PHASE.RESIGN_PLAYERS,
 		PHASE.FREE_AGENCY,
-	].includes(phase);
+	];
+	const phaseDisabled = !validPhases.includes(phase);
 
 	const addTeam = async (e: FormEvent) => {
 		e.preventDefault();

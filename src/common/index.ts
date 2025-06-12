@@ -8,8 +8,6 @@ export { default as gameAttributeHasHistory } from "./gameAttributeHasHistory.ts
 export { default as gameAttributesArrayToObject } from "./gameAttributesArrayToObject.ts";
 export { default as getAdjustedTicketPrice } from "./getAdjustedTicketPrice.ts";
 export { default as getBestPlayerBoxScore } from "./getBestPlayerBoxScore.ts";
-export { default as getCol } from "./getCol.ts";
-export { default as getCols } from "./getCols.ts";
 export { default as getPeriodName } from "./getPeriodName.ts";
 export { default as helpers } from "./helpers.ts";
 export { default as isSport } from "./isSport.ts";

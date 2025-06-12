@@ -4,8 +4,6 @@ import {
 	PHASE,
 	PHASE_TEXT,
 	PLAYER,
-	getCol,
-	getCols,
 	PLAYER_STATS_TABLES,
 	RATINGS,
 	isSport,
@@ -156,6 +154,8 @@ import formatPlayerFactory from "../core/realRosters/formatPlayerFactory.ts";
 import { LATEST_SEASON } from "../core/realRosters/seasons.ts";
 import { applyRealPlayerPhotos } from "../core/league/processPlayerNewLeague.ts";
 import { actualPhase } from "../util/actualPhase.ts";
+import getCol from "../../common/getCol.ts";
+import getCols from "../../common/getCols.ts";
 
 const acceptContractNegotiation = async ({
 	pid,

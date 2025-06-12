@@ -296,7 +296,7 @@ const updateLeadersProgressive = async (
 		allLeaders = allLeaders.filter((row) => row.yearByYear);
 		leadersProgressiveAddFirstNameShort(allLeaders);
 
-		const yearByYearCounts: Record<number, number | undefined> = {};
+		const yearByYearCounts: Record<number, number> = {};
 		for (const row of allLeaders) {
 			if (!row.yearByYear) {
 				continue;

@@ -101,7 +101,7 @@ export class Spinners<Key extends string = string> {
 	private extraRenderDelays: ExtraRenderDelays | undefined;
 
 	private keys: Key[] = [];
-	private info: Record<Key, Info | undefined> = {} as any;
+	private info: Record<Key, Info> = {} as any;
 	private renderKey: RenderKey<Key>;
 
 	private sportIndex;

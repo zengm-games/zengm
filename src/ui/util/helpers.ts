@@ -30,7 +30,7 @@ type RoundType =
 	| "minutes";
 
 // This only works for stats that are displayed the same in all contexts (per game, totals, individual game - yes, min in BBGM has a special override for individual games) - ideally would have a more comprehensive system. Currently it just assumes things that aren't the same in all contexts are 0 decimal places when totals and 1 otherwise.
-const roundOverrides: Record<string, RoundType | undefined> = bySport({
+const roundOverrides = bySport<Record<string, RoundType>>({
 	baseball: {
 		gp: "noDecimalPlace",
 		gs: "noDecimalPlace",

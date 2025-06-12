@@ -80,7 +80,7 @@ const addFirstNameShort = <
 })[] => {
 	const playersByLastName = groupBy(players, "lastName");
 
-	const tries: Record<string, Trie | undefined> = {};
+	const tries: Record<string, Trie> = {};
 	for (const [lastName, playersGroup] of Object.entries(playersByLastName)) {
 		if (playersGroup.length <= 1 || lastName === "") {
 			continue;

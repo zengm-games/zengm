@@ -8,7 +8,7 @@ import { idb } from "../../db/index.ts";
  * @return {Promise} Resolves to an array of payrolls, ordered by team id.
  */
 const getPayrolls = async () => {
-	const payrolls: Record<number, number | undefined> = {};
+	const payrolls: Record<number, number> = {};
 	const teams = (await idb.cache.teams.getAll()).filter((t) => !t.disabled);
 	for (const t of teams) {
 		payrolls[t.tid] = await getPayroll(t.tid);

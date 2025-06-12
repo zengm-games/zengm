@@ -90,8 +90,7 @@ export const babelPluginSportFunctions = (
 						}
 
 						const properties = argument.properties;
-						const propertiesByKey: Record<string, ObjectProperty | undefined> =
-							{};
+						const propertiesByKey: Record<string, ObjectProperty> = {};
 						for (const property of properties) {
 							if (property.type !== "ObjectProperty") {
 								throw new Error(

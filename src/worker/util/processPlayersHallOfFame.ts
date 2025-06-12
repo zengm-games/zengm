@@ -36,7 +36,7 @@ const processPlayersHallOfFame = <
 
 		const hasSeasonWithGamesPlayed = p.stats.some((ps) => ps.gp > 0);
 
-		const posBySeason: Record<number, string | undefined> = {};
+		const posBySeason: Record<number, string> = {};
 
 		for (const row of p.ratings) {
 			if (row.pos !== undefined && row.season !== undefined) {

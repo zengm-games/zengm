@@ -1,5 +1,4 @@
 types
-- Record<*, * | undefined> types not needed anymore
 - getCol/getCols export from common needed?
 - test game winning shot logging in BBGM
 - ui local phase should be Phase type not number

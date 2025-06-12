@@ -1012,7 +1012,7 @@ export type LocalStateUI = {
 	customMenu?: MenuItemHeader;
 	dirtySettings: boolean;
 	email?: string;
-	flagOverrides: Record<string, string | undefined>;
+	flagOverrides: Record<string, string>;
 	gameSimInProgress: boolean;
 	games: {
 		finals?: boolean;

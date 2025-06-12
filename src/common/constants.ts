@@ -516,7 +516,7 @@ export const STARTING_NUM_TIMEOUTS = bySport({
 export const VIDEO_ADS = false;
 export const VIDEO_AD_PADDING = 225 + 10 + 10;
 
-export const SKILLS: Record<string, string | undefined> = bySport({
+export const SKILLS = bySport<Record<string, string>>({
 	baseball: {
 		Pp: "Power pitcher",
 		Pf: "Finesse pitcher",

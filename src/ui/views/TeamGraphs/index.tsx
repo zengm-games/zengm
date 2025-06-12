@@ -20,7 +20,7 @@ const suffixes = {
 
 const addPrefixForStat = (statType: string, stat: string) => {
 	if (statType === "standings") {
-		const overrides: Record<string, string | undefined> = {
+		const overrides: Record<string, string> = {
 			otl: "OTL",
 			won: "W",
 			lost: "L",
@@ -41,7 +41,7 @@ const addPrefixForStat = (statType: string, stat: string) => {
 	}
 
 	if (statType === "powerRankings") {
-		const overrides: Record<string, string | undefined> = {
+		const overrides: Record<string, string> = {
 			avgAge: "AvgAge",
 			rank: "#",
 			ovr: "Team Rating",
@@ -68,7 +68,7 @@ const addPrefixForStat = (statType: string, stat: string) => {
 	}
 
 	if (statType === "finances") {
-		const overrides: Record<string, string | undefined> = {
+		const overrides: Record<string, string> = {
 			att: "Avg Attendance",
 			ticketPrice: "Ticket Price",
 			revenue: "Revenue",

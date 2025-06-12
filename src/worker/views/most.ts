@@ -1019,7 +1019,7 @@ const updatePlayers = async (
 			});
 
 			const teams = await idb.cache.teams.getAll();
-			const retiredJerseyNumbersByPid: Record<number, number | undefined> = {};
+			const retiredJerseyNumbersByPid: Record<number, number> = {};
 			for (const t of teams) {
 				if (t.retiredJerseyNumbers) {
 					for (const { pid } of t.retiredJerseyNumbers) {

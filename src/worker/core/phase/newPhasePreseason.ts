@@ -57,7 +57,7 @@ const newPhasePreseason = async (
 			newPop: number;
 		}
 	> = {};
-	const sameRegionOverrides: Record<string, string | undefined> = {
+	const sameRegionOverrides: Record<string, string> = {
 		"San Jose": "San Francisco",
 		"Golden State": "San Francisco",
 		Brooklyn: "New York",

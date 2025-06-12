@@ -48,7 +48,7 @@ export const getBestPos = (
 	},
 	tid: number | undefined,
 ): string => {
-	const posBySeason: Record<number, string | undefined> = {};
+	const posBySeason: Record<number, string> = {};
 
 	for (const row of p.ratings) {
 		if (row.pos !== undefined && row.season !== undefined) {

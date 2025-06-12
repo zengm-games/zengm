@@ -12,8 +12,8 @@ import {
 } from "../../../common/index.ts";
 
 class GameHasYourTeamCache {
-	cache: Record<number, boolean | undefined> = {};
-	userTidCache: Record<number, number | undefined> = {};
+	cache: Record<number, boolean> = {};
+	userTidCache: Record<number, number> = {};
 
 	getUserTid(season: number) {
 		let userTid = this.userTidCache[season];

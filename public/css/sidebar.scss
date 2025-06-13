@@ -38,14 +38,14 @@ $sidebar-width: 150px;
 	@extend .mb-1;
 	@extend .text-body-secondary;
 
-	&:hover {
-		text-decoration: none;
-	}
-
 	// Make like h2
 	display: block;
 	font-weight: 500;
 	line-height: 1.2;
+
+	&:hover {
+		text-decoration: none;
+	}
 }
 
 @include media-breakpoint-up(xl) {

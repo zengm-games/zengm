@@ -167,16 +167,16 @@ $list-group-item-bg-scale: 70%;
 
 .btn-light-bordered,
 .btn-light-bordered-2 {
+	// Both these are needed for disabled buttons, for some reason
+	color: $black !important;
+	&:disabled {
+		color: $black !important;
+	}
+
 	&:active,
 	&:focus,
 	&:not(:disabled):hover {
 		background-color: $gray-200 !important;
-		color: $black !important;
-	}
-
-	// Both these are needed for disabled buttons, for some reason
-	color: $black !important;
-	&:disabled {
 		color: $black !important;
 	}
 }

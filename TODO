@@ -1,6 +1,3 @@
-types
-- test game winning shot logging in BBGM
-
 more injuries for tall players
 
 ZGMB ASG pitcher record - appears as if it's incrementing in some places (box score, player game log) even though it's not. would be better to not show record for ASG
@@ -31,6 +28,8 @@ perf issues in large league with 8500 seasons
   - probably also are index issues
 
 advanced player search should use ageAtDeath https://discord.com/channels/290013534023057409/1377966148238446643/1377966148238446643
+- should only be when "Totals" are selected rather than "Single Season", otherwise age is fine for a single season
+- wrappedAgeAtDeath
 
 Option to resim a exhibition game between the same 2 teams rather than going back into the menu https://discord.com/channels/290013534023057409/331882115119448065/1377067383004594287
 

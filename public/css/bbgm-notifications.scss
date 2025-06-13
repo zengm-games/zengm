@@ -36,12 +36,6 @@
 	box-shadow: #999 0 0 12px;
 	color: rgba(255, 255, 255, 0.7); // Match normal close button
 
-	&:hover {
-		box-shadow: #000 0 0 12px;
-		color: #fff;
-		background-color: rgba(0, 0, 0, 1);
-	}
-
 	font-size: 20px;
 
 	border-width: 0px;
@@ -52,6 +46,12 @@
 
 	width: 31px;
 	height: 31px;
+
+	&:hover {
+		box-shadow: #000 0 0 12px;
+		color: #fff;
+		background-color: rgba(0, 0, 0, 1);
+	}
 }
 
 .notification {

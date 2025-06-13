@@ -172,6 +172,9 @@ h5 {
 }
 
 .navbar-brand {
+	// Not sure why, but without this it's 35.5px which screws up alignment of the dropdowns and the border
+	height: 35px;
+
 	img {
 		vertical-align: -3px;
 	}
@@ -179,9 +182,6 @@ h5 {
 	span {
 		padding-left: 5px;
 	}
-
-	// Not sure why, but without this it's 35.5px which screws up alignment of the dropdowns and the border
-	height: 35px;
 }
 
 .spin {
@@ -970,6 +970,13 @@ tr.table-warning:hover > td {
 }
 
 .title-bar {
+	gap: 0 10px;
+	min-height: 32px;
+
+	// Like .container-fluid
+	padding-left: var(--bs-gutter-x, 0.5rem);
+	padding-right: var(--bs-gutter-x, 0.5rem);
+
 	h1 {
 		font-size: 20px;
 		margin-bottom: 7px; // Needed in addition to .title-bar min-height when it wraps onto multiple lines
@@ -980,12 +987,6 @@ tr.table-warning:hover > td {
 	.dropdown-links .dropdown.show.nav-item {
 		background-color: $gray-100;
 	}
-	gap: 0 10px;
-	min-height: 32px;
-
-	// Like .container-fluid
-	padding-left: var(--bs-gutter-x, 0.5rem);
-	padding-right: var(--bs-gutter-x, 0.5rem);
 }
 .title-bar-right-links {
 	.nav-item {
@@ -1039,10 +1040,10 @@ tr.table-warning:hover > td {
 		font-size: 14px;
 	}
 	.title-bar {
+		min-height: 38px;
 		h1 {
 			font-size: 24px;
 		}
-		min-height: 38px;
 	}
 	.title-bar-right-links {
 		.nav-item {
@@ -1135,6 +1136,8 @@ $small-scrollbar-thumb-hover-color: darken($gray-500, 10%) !default;
 }
 
 .score-box-action {
+	height: 96px;
+
 	.btn {
 		border-bottom-left-radius: 0px !important;
 		border-top-left-radius: 0px !important;
@@ -1145,8 +1148,6 @@ $small-scrollbar-thumb-hover-color: darken($gray-500, 10%) !default;
 	.btn:not(:first-child) {
 		border-top: 1px solid $gray-300;
 	}
-
-	height: 96px;
 }
 
 .score-box-left-wrapper {

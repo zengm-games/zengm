@@ -4,8 +4,6 @@ import { helpers } from "../../util/index.ts";
 import type { View } from "../../../common/types.ts";
 import { memo, useEffect, useRef, useState } from "react";
 
-const transition = { duration: 0.4, type: "tween" };
-
 // Inlined from https://github.com/uidotdev/usehooks/blob/dfa6623fcc2dcad3b466def4e0495b3f38af962b/index.js#L1241C1-L1262C2 cause it seems silly to depend on that whole package for this one little function. But then I noticed a couple bug and sent a PR https://github.com/uidotdev/usehooks/pull/302
 const useThrottle = <T extends unknown>(value: T, interval: number): T => {
 	const [throttledValue, setThrottledValue] = useState(value);
@@ -54,7 +52,7 @@ const Headlines = ({ events, season, teams, userTid }: HeadlinesProps) => {
 								layout
 								initial={{ opacity: 0, scale: 0.5 }}
 								animate={{ opacity: 1, scale: 1 }}
-								transition={transition}
+								transition={{ duration: 0.4, type: "tween" }}
 								exit={{ transition: { duration: 0 } }}
 							>
 								<NewsBlock

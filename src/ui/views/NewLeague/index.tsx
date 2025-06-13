@@ -69,7 +69,7 @@ const animationVariants = {
 		x: "100vw",
 		transition: { duration: 0.25, ease: "easeInOut" },
 	},
-};
+} as const;
 
 export const applyRealTeamInfos = <
 	T extends Parameters<typeof applyRealTeamInfo>[0] & {

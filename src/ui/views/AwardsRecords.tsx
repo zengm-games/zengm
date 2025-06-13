@@ -87,10 +87,12 @@ const AwardsRecords = ({
 				a.lastYear,
 				{
 					value: <CheckmarkOrCross success={a.retired} />,
+					searchValue: a.retired ? 1 : 0,
 					sortValue: a.retired ? 1 : 0,
 				},
 				{
 					value: <CheckmarkOrCross success={a.hof} />,
+					searchValue: a.hof ? 1 : 0,
 					sortValue: a.hof ? 1 : 0,
 				},
 			],

@@ -1408,7 +1408,7 @@ export type Local = {
 	email: string | undefined;
 	exhibitionGamePlayers?: Record<number, Player>;
 	fantasyDraftResults: (Player<any> & {
-		prevAbbrev: string;
+		prevAbbrev: string | undefined;
 		prevTid: number;
 	})[];
 	goldUntil: number;

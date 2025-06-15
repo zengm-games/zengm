@@ -175,5 +175,6 @@ export const rolldownConfig = (
 			"process.env.SPORT": JSON.stringify(sport),
 		},
 		plugins,
+		preserveEntrySignatures: false,
 	};
 };

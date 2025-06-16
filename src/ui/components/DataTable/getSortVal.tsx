@@ -95,44 +95,6 @@ const getSortVal = (
 			return number;
 		}
 
-		if (sortType === "currency") {
-			if (sortVal === null || sortVal === "") {
-				return -Infinity;
-			}
-
-			// Keep in sync with helpers.formatCurrency
-			let factor;
-			if (sortVal.endsWith("Q")) {
-				factor = 1e15;
-			} else if (sortVal.endsWith("T")) {
-				factor = 1e12;
-			} else if (sortVal.endsWith("B")) {
-				factor = 1e9;
-			} else if (sortVal.endsWith("M")) {
-				factor = 1e6;
-			} else if (sortVal.endsWith("k")) {
-				factor = 1e3;
-			} else {
-				factor = 1;
-			}
-
-			// Drop $ and parseFloat will just keep the numeric part at the beginning of the string
-			const parsedNumber = helpers.localeParseFloat(sortVal.replace("$", ""));
-
-			if (!exportCSV) {
-				// This gets called by filter functions, which expect it to be in millions
-				factor /= 1e6;
-			}
-
-			const number = parsedNumber * factor;
-			if (factor > 1) {
-				// Get rid of floating point errors if we're multiplying by a large number
-				return Math.round(number);
-			}
-
-			return number;
-		}
-
 		if (sortType === "record") {
 			return helpers.getRecordNumericValue(sortVal);
 		}

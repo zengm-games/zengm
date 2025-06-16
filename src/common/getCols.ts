@@ -2917,11 +2917,11 @@ const cols: {
 	},
 	Amount: {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	"Asking For": {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	"Avg Attendance": {
 		sortSequence: ["desc", "asc"],
@@ -2951,13 +2951,13 @@ const cols: {
 	},
 	"Cap Space": {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	"Captain 1": {},
 	"Captain 2": {},
 	Cash: {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	Change: {
 		desc: "Difference between pre-lottery rank and draft lottery result",
@@ -2976,7 +2976,7 @@ const cols: {
 	Conference: {},
 	Contract: {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	Count: {
 		sortSequence: ["desc", "asc"],
@@ -2999,13 +2999,13 @@ const cols: {
 	"Current Contract": {
 		desc: "Current Contract",
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 		title: "Current",
 	},
 	"Projected Contract": {
 		desc: "Projected Contract",
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 		title: "Projected",
 	},
 	Decision: {},
@@ -3223,7 +3223,7 @@ const cols: {
 	},
 	Payroll: {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	"Peak Ovr": {
 		desc: "Peak Overall Rating",
@@ -3280,7 +3280,7 @@ const cols: {
 	},
 	Profit: {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	PT: {
 		desc: "Playing Time Modifier",
@@ -3317,7 +3317,7 @@ const cols: {
 	},
 	Revenue: {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	"Rookie Ovr": {
 		desc: "Rookie Overall Rating",
@@ -3341,7 +3341,7 @@ const cols: {
 	"Runner Up": {},
 	Salary: {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	Scouting: {
 		desc: "Scouting Level",
@@ -3370,7 +3370,7 @@ const cols: {
 	},
 	"Ticket Price": {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	Trade: {
 		noSearch: true,

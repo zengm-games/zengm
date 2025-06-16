@@ -3,6 +3,7 @@ import { shallow } from "zustand/shallow";
 import type { LocalStateUI, GameAttributesLeague } from "../../common/types.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 import safeLocalStorage from "./safeLocalStorage.ts";
+import { gameAttributesSyncedToUi } from "../../common/gameAttributesSyncedToUi.ts";
 
 // These are variables that are needed to display parts of the UI not driven explicitly by worker/views/*.js files. Like
 // the top navbar, the multi team menu, etc. They come from gameAttributes, the account system, and elsewhere.
@@ -198,35 +199,11 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 				gameAttributes: Partial<GameAttributesLeague>,
 				flagOverrides?: LocalStateUI["flagOverrides"],
 			) {
-				// Keep in sync with gameAttributesToUI - this is just for TypeScript
-				const keys = [
-					"alwaysShowCountry",
-					"challengeNoRatings",
-					"currencyFormat",
-					"fantasyPoints",
-					"gender",
-					"godMode",
-					"hideDisabledTeams",
-					"homeCourtAdvantage",
-					"lid",
-					"neutralSite",
-					"numPeriods",
-					"numWatchColors",
-					"phase",
-					"quarterLength",
-					"season",
-					"spectator",
-					"startingSeason",
-					"teamInfoCache",
-					"userTid",
-					"userTids",
-				] as const;
-
 				let update = false;
 
 				const updates: Partial<LocalStateUI> = {};
 
-				for (const key of keys) {
+				for (const key of gameAttributesSyncedToUi) {
 					if (
 						Object.hasOwn(gameAttributes, key) &&
 						updates[key] !== gameAttributes[key]

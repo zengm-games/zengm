@@ -5,37 +5,14 @@ import type {
 	LocalStateUI,
 } from "../../../common/types.ts";
 import { unwrapGameAttribute } from "../../../common/index.ts";
+import { gameAttributesSyncedToUi } from "../../../common/gameAttributesSyncedToUi.ts";
 
 const gameAttributesToUI = async (
 	gameAttributes: GameAttributesLeagueWithHistory,
 ) => {
-	// Keep in sync with ui/util/local.ts
-	const keys = [
-		"alwaysShowCountry",
-		"challengeNoRatings",
-		"currencyFormat",
-		"fantasyPoints",
-		"gender",
-		"godMode",
-		"hideDisabledTeams",
-		"homeCourtAdvantage",
-		"lid",
-		"neutralSite",
-		"numPeriods",
-		"numWatchColors",
-		"phase",
-		"quarterLength",
-		"season",
-		"spectator",
-		"startingSeason",
-		"teamInfoCache",
-		"userTid",
-		"userTids",
-	] as const;
-
 	const update: Partial<GameAttributesLeague> = {};
 	let updated = false;
-	for (const key of keys) {
+	for (const key of gameAttributesSyncedToUi) {
 		if (Object.hasOwn(gameAttributes, key)) {
 			(update as any)[key] = unwrapGameAttribute(gameAttributes, key);
 			updated = true;

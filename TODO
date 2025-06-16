@@ -1,6 +1,5 @@
 currency symbol option https://discord.com/channels/290013534023057409/331882115119448065/1383522788324806888
 - can it show live in settings UI somehow, for the currency fields?
-- test schema
 - changelog
 - store parsed in databse
   - parse/stringify

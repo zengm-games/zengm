@@ -1485,7 +1485,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 							},
 							currencyFormat: {
 								type: "array",
-								prefixItems: [
+								items: [
 									{
 										type: "string",
 									},
@@ -1496,7 +1496,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 										type: "string",
 									},
 								],
-								items: false,
 								minItems: 3,
 								maxItems: 3,
 							},
@@ -2735,7 +2734,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						},
 						teams: {
 							type: "array",
-							prefixItems: [
+							items: [
 								{
 									$ref: "#/definitions/tradeTeam",
 								},
@@ -2743,7 +2742,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 									$ref: "#/definitions/tradeTeam",
 								},
 							],
-							items: false,
 							minItems: 2,
 							maxItems: 2,
 						},

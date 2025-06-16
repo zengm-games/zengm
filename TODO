@@ -1,3 +1,12 @@
+currency symbol option https://discord.com/channels/290013534023057409/331882115119448065/1383522788324806888
+- make sure getSortVal works with it
+  - with arbitrary format, need to add explicit sortValue
+- can it show live in settings UI somehow, for the currency fields?
+- test switching setting
+- changelog
+
+show contract expiration in offers table https://discord.com/channels/290013534023057409/290013534023057409/1383779752082669680
+
 restart pitcher fatigue at start of regular season https://discord.com/channels/290013534023057409/944392892905037885/1383493832406204417
 
 more injuries for tall players

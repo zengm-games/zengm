@@ -745,6 +745,7 @@ export type GameAttributesLeague = {
 	contactFactor: number;
 	neutralSite: "never" | "finals" | "playoffs";
 	rpdPot: boolean;
+	currencyFormat: string;
 };
 
 export type GameAttributesLeagueWithHistory = Omit<
@@ -1009,6 +1010,7 @@ export type Options = {
 export type LocalStateUI = {
 	alwaysShowCountry: boolean;
 	challengeNoRatings: boolean;
+	currencyFormat: GameAttributesLeague["currencyFormat"];
 	customMenu?: MenuItemHeader;
 	dirtySettings: boolean;
 	email?: string;

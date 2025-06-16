@@ -8,7 +8,7 @@ const leagueUrl = (components: (number | string | undefined)[]): string => {
 		return "/";
 	}
 
-	return commonHelpers.leagueUrlFactory(lid, components);
+	return commonHelpers.leagueUrlBase(lid, components);
 };
 
 const plusMinus = (arg: number, d: number): string => {
@@ -550,8 +550,23 @@ const yearRanges = (arrInput: number[]): string[] => {
 	return runArr;
 };
 
+const formatCurrency = (
+	amount: number,
+	initialUnits?: "M" | "",
+	precision?: number,
+): string => {
+	const currencyFormat = local.getState().currencyFormat;
+	return commonHelpers.formatCurrencyBase(
+		currencyFormat,
+		amount,
+		initialUnits,
+		precision,
+	);
+};
+
 const helpers = {
 	...commonHelpers,
+	formatCurrency,
 	formatNumber,
 	leagueUrl,
 	plusMinus,

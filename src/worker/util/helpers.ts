@@ -174,8 +174,9 @@ const getAbbrev = (tid: number | string): string => {
 	return g.get("teamInfoCache")[tid]!.abbrev;
 };
 
-const leagueUrl = (components: (number | string | undefined)[]): string =>
-	commonHelpers.leagueUrlFactory(g.get("lid"), components);
+const leagueUrl = (components: (number | string | undefined)[]): string => {
+	return commonHelpers.leagueUrlBase(g.get("lid"), components);
+};
 
 const numGamesToWinSeries = (numGamesPlayoffSeries: number | undefined) => {
 	if (
@@ -375,6 +376,19 @@ const stripBbcode = (imgURL: string) => {
 	return imgURL;
 };
 
+const formatCurrency = (
+	amount: number,
+	initialUnits?: "M" | "",
+	precision?: number,
+): string => {
+	return commonHelpers.formatCurrencyBase(
+		g.get("currencyFormat"),
+		amount,
+		initialUnits,
+		precision,
+	);
+};
+
 const helpers = {
 	...commonHelpers,
 	augmentSeries,
@@ -382,6 +396,7 @@ const helpers = {
 	correctLinkLid,
 	defaultTicketPrice,
 	effectiveGameLength,
+	formatCurrency,
 	gb,
 	getAbbrev,
 	getTeamSeasonGp,

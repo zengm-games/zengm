@@ -22,6 +22,7 @@ import type { State } from "./SettingsForm.tsx";
 import RowsEditor from "./RowsEditor.tsx";
 import PlayerBioInfo2 from "./PlayerBioInfo.tsx";
 import type { GameAttributesLeague } from "../../../common/types.ts";
+import { parseCurrencyFormat } from "../../util/parseCurrencyFormat.ts";
 
 export const descriptions = {
 	difficulty:
@@ -2661,6 +2662,38 @@ export const settings: Setting[] = (
 			type: "bool",
 			description:
 				"This will show a player's birth country flag in most places his name is displayed.",
+		},
+		{
+			category: "UI",
+			key: "currencyFormat",
+			name: "Currency Format",
+			type: "string",
+			descriptionLong: (
+				<>
+					<p>
+						When displaying an amount of money, it will take this format and
+						replace <code>x.y</code> with the amount. The default is{" "}
+						<code>$x.y</code> for US-style currency formatting, but you can put
+						anything you want before or after the <code>x.y</code> part.
+					</p>
+					<p>
+						For example, some countries have a space between the symbol and
+						number like South Korea <code>₩ x.y</code> or put the symbol in the
+						back like Turkey <code>x.y ₺</code>
+					</p>
+					<p>
+						And some countries use a comma instead of a period for the decimal
+						separator, which you can do by changing <code>x.y</code> to{" "}
+						<code>x,y</code>. For example Euros like <code>x,y €</code>
+					</p>
+				</>
+			),
+			validator: (value) => {
+				const parsed = parseCurrencyFormat(value);
+				if (parsed === undefined) {
+					throw new Error("Must contain x.y or x,y");
+				}
+			},
 		},
 		{
 			category: "Players",

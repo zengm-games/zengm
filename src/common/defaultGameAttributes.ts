@@ -363,6 +363,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 		pastSeasonsType: "all",
 		note: "all",
 	},
+	currencyFormat: "$x.y",
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!

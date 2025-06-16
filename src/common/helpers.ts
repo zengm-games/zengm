@@ -11,6 +11,8 @@ import getTeamInfos from "./getTeamInfos.ts";
 import isSport from "./isSport.ts";
 import { PHASE } from "./constants.ts";
 import { orderBy } from "./utils.ts";
+import { parseCurrencyFormat } from "../ui/util/parseCurrencyFormat.ts";
+import defaultGameAttributes from "./defaultGameAttributes.ts";
 
 const getPopRanks = (
 	teamSeasons: {
@@ -907,7 +909,7 @@ function deepCopy<T>(obj: T): T {
  * @param {Array.<string|number>} components Array of components for the URL after the league ID, which will be combined with / in between.
  * @return {string} URL
  */
-const leagueUrlFactory = (
+const leagueUrlBase = (
 	lid: number,
 	components: (number | string | undefined)[],
 ) => {
@@ -922,27 +924,37 @@ const leagueUrlFactory = (
 	return url;
 };
 
-/**
- * Format a number as currency, correctly handling negative values.
- *
- * @memberOf util.helpers
- * @param {number} amount Input value.
- * @param {string=} append Suffix to append to the number, like "M" for things like $2M.
- * @param {number|string|undefined} precision Number of decimal places. Default is 2 (like $17.62).
- * @return {string} Formatted currency string.
- */
-const formatCurrency = (
+let currencyFormatCache:
+	| {
+			currencyFormat: string;
+			parsed: NonNullable<ReturnType<typeof parseCurrencyFormat>>;
+	  }
+	| undefined;
+
+const formatCurrencyBase = (
+	currencyFormat: string,
 	amount: number,
 	initialUnits: "M" | "" = "",
 	precision: number = 2,
 ) => {
+	if (currencyFormat !== currencyFormatCache?.currencyFormat) {
+		currencyFormatCache = {
+			currencyFormat,
+
+			// Silently fail - should only happen if user is manually editing JSON or something
+			parsed:
+				parseCurrencyFormat(currencyFormat) ??
+				parseCurrencyFormat(defaultGameAttributes.currencyFormat)!,
+		};
+	}
+
 	const baseExponent = initialUnits === "M" ? 6 : 0; // Input unit is in millions
 
 	const sign = amount < 0 ? "-" : "";
 	let abs = Math.abs(amount);
 
 	if (abs === 0) {
-		return "$0";
+		return `${currencyFormatCache.parsed.prepend}0${currencyFormatCache.parsed.append}`;
 	}
 
 	let append = "";
@@ -984,7 +996,11 @@ const formatCurrency = (
 		}
 	}
 
-	return `${sign}$${numberString}${append}`;
+	if (currencyFormatCache.parsed.decimalSeparator === ",") {
+		numberString = numberString.replace(".", ",");
+	}
+
+	return `${sign}${currencyFormatCache.parsed.prepend}${numberString}${append}${currencyFormatCache.parsed.append}`;
 };
 
 /**
@@ -1541,10 +1557,10 @@ export default {
 	getJerseyNumber,
 	getTeamsDefault,
 	deepCopy,
-	formatCurrency,
+	formatCurrencyBase,
 	isAmerican,
 	bound,
-	leagueUrlFactory,
+	leagueUrlBase,
 	numberWithCommas,
 	ordinal,
 	plural,

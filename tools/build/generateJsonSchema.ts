@@ -1498,6 +1498,9 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 							rpdPot: {
 								type: "boolean",
 							},
+							currencyFormat: {
+								type: "string",
+							},
 						},
 					},
 				],

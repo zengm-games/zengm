@@ -13,6 +13,7 @@ const gameAttributesToUI = async (
 	const keys = [
 		"alwaysShowCountry",
 		"challengeNoRatings",
+		"currencyFormat",
 		"fantasyPoints",
 		"gender",
 		"godMode",

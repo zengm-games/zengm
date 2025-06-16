@@ -161,7 +161,8 @@ export type Key =
 	| "alwaysShowCountry"
 	| "neutralSite"
 	| "rpdPot"
-	| "saveOldBoxScores";
+	| "saveOldBoxScores"
+	| "currencyFormat";
 
 export type Category =
 	| "New League"

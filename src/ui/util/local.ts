@@ -47,6 +47,7 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 	(set) => ({
 		alwaysShowCountry: false,
 		challengeNoRatings: false,
+		currencyFormat: defaultGameAttributes.currencyFormat,
 		customMenu: undefined,
 		dirtySettings: false,
 		email: undefined,
@@ -201,6 +202,7 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 				const keys = [
 					"alwaysShowCountry",
 					"challengeNoRatings",
+					"currencyFormat",
 					"fantasyPoints",
 					"gender",
 					"godMode",

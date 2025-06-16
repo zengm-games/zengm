@@ -759,7 +759,7 @@ const TeamFinances = ({
 			return {
 				title: String(season),
 				sortSequence: ["desc", "asc"],
-				sortType: "currency",
+				sortType: "number",
 			};
 		}),
 	);
@@ -784,12 +784,21 @@ const TeamFinances = ({
 		// Loop through the salaries for the next five years for this player.
 		for (let j = 0; j < salariesSeasons.length; j++) {
 			if (p.amounts[j]) {
-				const formattedAmount = helpers.formatCurrency(p.amounts[j]!, "M");
+				const amount = p.amounts[j]!;
+				const formattedAmount = helpers.formatCurrency(amount, "M");
 
 				if (p.released) {
-					data.push(<i>{formattedAmount}</i>);
+					data.push({
+						value: <i>{formattedAmount}</i>,
+						sortValue: amount,
+						searchValue: formattedAmount,
+					});
 				} else {
-					data.push(formattedAmount);
+					data.push({
+						value: formattedAmount,
+						sortValue: amount,
+						searchValue: formattedAmount,
+					});
 				}
 			} else {
 				data.push(null);

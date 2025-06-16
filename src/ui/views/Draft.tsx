@@ -396,7 +396,7 @@ const Draft = ({
 				7,
 				0,
 				...(p.pid >= 0
-					? [helpers.formatCurrency(p.contract.amount, "M"), p.contract.exp]
+					? [wrappedContractAmount(p), p.contract.exp]
 					: [null, null]),
 				...stats.map((stat) =>
 					p.pid >= 0 && p.stats && typeof p.stats[stat] === "number"

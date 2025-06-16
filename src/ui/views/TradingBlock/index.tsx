@@ -30,6 +30,7 @@ import LookingFor from "./LookingFor.tsx";
 import useLookingForState from "./useLookingForState.ts";
 import { Dropdown, SplitButton } from "react-bootstrap";
 import type { FooterRow } from "../../components/DataTable/Footer.tsx";
+import { wrappedCurrency } from "../../components/wrappedCurrency.ts";
 
 export type OfferType = Awaited<
 	ReturnType<(typeof api)["main"]["getTradingBlockOffers"]>
@@ -408,7 +409,7 @@ export const OfferTable = ({
 						}
 					: null,
 				...getAssetColContents(offer),
-				helpers.formatCurrency(salaryCapOrPayroll / 1000, "M"),
+				wrappedCurrency(salaryCapOrPayroll / 1000, "M"),
 				{
 					value: offer.summary.warning ? (
 						<HelpPopover className="fs-4">{offer.summary.warning}</HelpPopover>

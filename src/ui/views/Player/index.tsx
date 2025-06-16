@@ -15,6 +15,7 @@ import HideableSection from "../../components/HideableSection.tsx";
 import { StatsTable } from "./StatsTable.tsx";
 import { highlightLeaderText, MaybeBold, SeasonLink } from "./common.tsx";
 import { wrappedTeamAbbrevLink } from "../../components/TeamAbbrevLink.tsx";
+import { wrappedCurrency } from "../../components/wrappedCurrency.ts";
 
 const Player2 = ({
 	bestPos,
@@ -255,7 +256,7 @@ const Player2 = ({
 												</>
 											),
 										},
-										helpers.formatCurrency(s.amount, "M"),
+										wrappedCurrency(s.amount, "M"),
 									],
 								};
 							})}

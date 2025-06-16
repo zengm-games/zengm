@@ -1533,7 +1533,6 @@ export type SortOrder = "asc" | "desc";
 
 export type SortType =
 	| "country"
-	| "currency"
 	| "draftPick"
 	| "lastTen"
 	| "name"

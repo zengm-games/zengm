@@ -245,7 +245,7 @@ const DataTable = ({
 		}).map((row) =>
 			row.data.map((val, i) => {
 				const sortType = columns[i]!.sortType;
-				if (sortType === "currency" || sortType === "number") {
+				if (sortType === "number") {
 					return getSortVal(val, sortType, true);
 				}
 				return getSearchVal(val, false);

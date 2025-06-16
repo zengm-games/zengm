@@ -6,6 +6,7 @@ import { frivolitiesMenu } from "../Frivolities.tsx";
 import GOATFormula from "./GOATFormula.tsx";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../../components/DataTable/index.tsx";
+import { wrappedCurrency } from "../../components/wrappedCurrency.ts";
 
 export const getValue = (
 	obj: any,
@@ -97,7 +98,7 @@ const Most = ({
 				...extraCols.map((x) => {
 					const value = getValue(p, x.key);
 					if (x.colName === "Amount") {
-						return helpers.formatCurrency(value / 1000, "M");
+						return wrappedCurrency(value / 1000, "M");
 					}
 					if (x.colName === "Prog") {
 						return helpers.plusMinus(value, 0);

@@ -1,8 +1,4 @@
 currency symbol option https://discord.com/channels/290013534023057409/331882115119448065/1383522788324806888
-- make sure getSortVal works with it
-  - with arbitrary format, need to add explicit sortValue
-  - player bios
-  - look at all the columns switch away from currency in commit
 - can it show live in settings UI somehow, for the currency fields?
 - test schema
 - changelog

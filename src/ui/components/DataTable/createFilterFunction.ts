@@ -139,11 +139,7 @@ const createFilterFunction = (
 
 			text = normalizeIntl(text);
 
-			if (
-				searchType === "number" ||
-				searchType === "currency" ||
-				searchType === "draftPick"
-			) {
+			if (searchType === "number" || searchType === "draftPick") {
 				number = text.replace(/[^\d.<=>?-]/g, "");
 				if (number[0] === ">" || number[0] === "<" || number[0] === "=") {
 					direction = number[0];

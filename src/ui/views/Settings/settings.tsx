@@ -2671,7 +2671,7 @@ export const settings: Setting[] = (
 			descriptionLong: (
 				<>
 					<p>
-						When displaying an amount of money, it will take this format and
+						When displaying an amount of money, it will take this text and
 						replace <code>x.y</code> with the amount. The default is{" "}
 						<code>$x.y</code> for US-style currency formatting, but you can put
 						anything you want before or after the <code>x.y</code> part.

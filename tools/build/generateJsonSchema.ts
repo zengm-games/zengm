@@ -643,7 +643,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 								type: "boolean",
 							},
 							allStarType: {
-								type: "string",
 								enum: ["draft", "byConf", "top"],
 							},
 							alwaysShowCountry: {
@@ -678,7 +677,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 								minimum: 1,
 							},
 							autoExpandGeo: {
-								type: "string",
 								enum: ["naFirst", "naOnly", "any"],
 							},
 							autoRelocate: {
@@ -713,7 +711,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 								maximum: 1,
 							},
 							autoRelocateGeo: {
-								type: "string",
 								enum: ["naFirst", "naOnly", "any"],
 							},
 							autoRelocateRealign: {
@@ -782,7 +779,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 							dh: {
 								anyOf: [
 									{
-										type: "string",
 										enum: ["all", "none"],
 									},
 									{
@@ -824,7 +820,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 								minimum: 0,
 							},
 							draftType: {
-								type: "string",
 								// nba is legacy
 								enum: [
 									"nba1994",
@@ -899,7 +894,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 								type: "boolean",
 							},
 							gender: {
-								type: "string",
 								enum: ["female", "male"],
 							},
 							godMode: {
@@ -1195,7 +1189,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 								type: "object",
 								properties: {
 									type: {
-										type: "string",
 										enum: ["playersAndRosters", "players"],
 									},
 									startingSeason: {
@@ -1237,7 +1230,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 								minimum: 0,
 							},
 							salaryCapType: {
-								type: "string",
 								enum: ["hard", "none", "soft"],
 							},
 							saveOldBoxScores: {
@@ -1255,27 +1247,21 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 										],
 									},
 									pastSeasonsType: {
-										type: "string",
 										enum: ["your", "all"],
 									},
 									note: {
-										type: "string",
 										enum: ["your", "all"],
 									},
 									playoffs: {
-										type: "string",
 										enum: ["your", "all"],
 									},
 									finals: {
-										type: "string",
 										enum: ["your", "all"],
 									},
 									playerFeat: {
-										type: "string",
 										enum: ["your", "all"],
 									},
 									clutchPlays: {
-										type: "string",
 										enum: ["your", "all"],
 									},
 									allStar: {
@@ -1489,7 +1475,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 								type: "number",
 							},
 							neutralSite: {
-								type: "string",
 								enum: ["never", "finals", "playoffs"],
 							},
 							tradeProposalsSeed: {
@@ -1499,7 +1484,21 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 								type: "boolean",
 							},
 							currencyFormat: {
-								type: "string",
+								type: "array",
+								prefixItems: [
+									{
+										type: "string",
+									},
+									{
+										enum: [".", ","],
+									},
+									{
+										type: "string",
+									},
+								],
+								items: false,
+								minItems: 3,
+								maxItems: 3,
 							},
 						},
 					},
@@ -1663,7 +1662,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						},
 						stats: {},
 						result: {
-							type: "string",
 							enum: ["W", "L", "T"],
 						},
 						score: {
@@ -1875,7 +1873,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 								type: "object",
 								properties: {
 									type: {
-										type: "string",
 										enum: ["brother", "father", "son"],
 									},
 									pid: {
@@ -1961,7 +1958,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 										type: "integer",
 									},
 									type: {
-										type: "string",
 										enum: [
 											"draft",
 											"freeAgent",
@@ -2449,14 +2445,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 									lastTen: {
 										type: "array",
 										items: {
-											anyOf: [
-												{
-													type: "integer",
-												},
-												{
-													type: "string",
-												},
-											],
 											enum: [-1, 0, 1, "OTL"],
 										},
 									},
@@ -2747,7 +2735,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						},
 						teams: {
 							type: "array",
-							items: [
+							prefixItems: [
 								{
 									$ref: "#/definitions/tradeTeam",
 								},
@@ -2755,6 +2743,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 									$ref: "#/definitions/tradeTeam",
 								},
 							],
+							items: false,
 							minItems: 2,
 							maxItems: 2,
 						},

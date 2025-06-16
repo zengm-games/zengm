@@ -745,7 +745,7 @@ export type GameAttributesLeague = {
 	contactFactor: number;
 	neutralSite: "never" | "finals" | "playoffs";
 	rpdPot: boolean;
-	currencyFormat: string;
+	currencyFormat: [string, "." | ",", string];
 };
 
 export type GameAttributesLeagueWithHistory = Omit<

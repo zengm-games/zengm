@@ -1,12 +1,14 @@
+import type { GameAttributesLeague } from "../../common/types.ts";
+
 export const parseCurrencyFormat = (currencyFormat: string) => {
 	const match = currencyFormat.match(
 		/(?<prepend>.*)x(?<decimalSeparator>[,.])y(?<append>.*)/,
 	);
 	if (match) {
-		return {
-			append: match.groups!.append!,
-			decimalSeparator: match.groups!.decimalSeparator!,
-			prepend: match.groups!.prepend!,
-		};
+		return [
+			match.groups!.prepend,
+			match.groups!.decimalSeparator,
+			match.groups!.append,
+		] as GameAttributesLeague["currencyFormat"];
 	}
 };

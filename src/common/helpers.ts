@@ -11,8 +11,6 @@ import getTeamInfos from "./getTeamInfos.ts";
 import isSport from "./isSport.ts";
 import { PHASE } from "./constants.ts";
 import { orderBy } from "./utils.ts";
-import { parseCurrencyFormat } from "../ui/util/parseCurrencyFormat.ts";
-import defaultGameAttributes from "./defaultGameAttributes.ts";
 
 const getPopRanks = (
 	teamSeasons: {
@@ -924,37 +922,19 @@ const leagueUrlBase = (
 	return url;
 };
 
-let currencyFormatCache:
-	| {
-			currencyFormat: string;
-			parsed: NonNullable<ReturnType<typeof parseCurrencyFormat>>;
-	  }
-	| undefined;
-
 const formatCurrencyBase = (
-	currencyFormat: string,
+	currencyFormat: GameAttributesLeague["currencyFormat"],
 	amount: number,
 	initialUnits: "M" | "" = "",
 	precision: number = 2,
 ) => {
-	if (currencyFormat !== currencyFormatCache?.currencyFormat) {
-		currencyFormatCache = {
-			currencyFormat,
-
-			// Silently fail - should only happen if user is manually editing JSON or something
-			parsed:
-				parseCurrencyFormat(currencyFormat) ??
-				parseCurrencyFormat(defaultGameAttributes.currencyFormat)!,
-		};
-	}
-
 	const baseExponent = initialUnits === "M" ? 6 : 0; // Input unit is in millions
 
 	const sign = amount < 0 ? "-" : "";
 	let abs = Math.abs(amount);
 
 	if (abs === 0) {
-		return `${currencyFormatCache.parsed.prepend}0${currencyFormatCache.parsed.append}`;
+		return `${currencyFormat[0]}0${currencyFormat[2]}`;
 	}
 
 	let append = "";
@@ -996,11 +976,11 @@ const formatCurrencyBase = (
 		}
 	}
 
-	if (currencyFormatCache.parsed.decimalSeparator === ",") {
+	if (currencyFormat[1] === ",") {
 		numberString = numberString.replace(".", ",");
 	}
 
-	return `${sign}${currencyFormatCache.parsed.prepend}${numberString}${append}${currencyFormatCache.parsed.append}`;
+	return `${sign}${currencyFormat[0]}${numberString}${append}${currencyFormat[2]}`;
 };
 
 /**

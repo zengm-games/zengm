@@ -2667,7 +2667,7 @@ export const settings: Setting[] = (
 			category: "UI",
 			key: "currencyFormat",
 			name: "Currency Format",
-			type: "string",
+			type: "custom",
 			descriptionLong: (
 				<>
 					<p>
@@ -2688,11 +2688,16 @@ export const settings: Setting[] = (
 					</p>
 				</>
 			),
-			validator: (value) => {
+			parse: (value) => {
 				const parsed = parseCurrencyFormat(value);
 				if (parsed === undefined) {
 					throw new Error("Must contain x.y or x,y");
 				}
+
+				return parsed;
+			},
+			stringify: (value: GameAttributesLeague["currencyFormat"]) => {
+				return `${value[0]}x${value[1]}y${value[2]}`;
 			},
 		},
 		{

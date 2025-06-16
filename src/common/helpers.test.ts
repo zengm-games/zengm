@@ -33,119 +33,131 @@ describe("deepCopy", () => {
 
 describe("formatCurrency", () => {
 	test("work with no extra options", () => {
-		assert.strictEqual(helpers.formatCurrencyBase("$x.y", 52.766), "$52.77");
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 52.766),
+			"$52.77",
+		);
 	});
 
 	test("append a string, if supplied", () => {
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 64.764376, "M"),
+			helpers.formatCurrencyBase(["$", ".", ""], 64.764376, "M"),
 			"$64.76M",
 		);
 	});
 
 	test("round to any precision", () => {
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 64363.764376, "M", 5),
+			helpers.formatCurrencyBase(["$", ".", ""], 64363.764376, "M", 5),
 			"$64.36376B",
 		);
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 0.794123, "M", 0),
+			helpers.formatCurrencyBase(["$", ".", ""], 0.794123, "M", 0),
 			"$794k",
 		);
 	});
 
 	test("truncate trailing 0s", () => {
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 64.99, "M", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 64.99, "M", 2),
 			"$64.99M",
 		);
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 64.9, "M", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 64.9, "M", 2),
 			"$64.9M",
 		);
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 64.0, "M", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 64.0, "M", 2),
 			"$64M",
 		);
-		assert.strictEqual(helpers.formatCurrencyBase("$x.y", 64, "M", 2), "$64M");
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 64, "M", 2),
+			"$64M",
+		);
 	});
 
 	test("large numbers and scientific notation", () => {
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 64.363, "", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 64.363, "", 2),
 			"$64.36",
 		);
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 64000, "", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 64000, "", 2),
 			"$64k",
 		);
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 6400000, "", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 6400000, "", 2),
 			"$6.4M",
 		);
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 6400000000, "", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 6400000000, "", 2),
 			"$6.4B",
 		);
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 6400000000000, "", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 6400000000000, "", 2),
 			"$6.4T",
 		);
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 6400000000000000, "", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 6400000000000000, "", 2),
 			"$6.4Q",
 		);
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 6400000000000000000, "", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 6400000000000000000, "", 2),
 			"$6.4e18",
 		);
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 64000000000000000000, "", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 64000000000000000000, "", 2),
 			"$6.4e19",
 		);
 	});
 
 	test("large numbers and scientific notation, in millions", () => {
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 64363, "M", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 64363, "M", 2),
 			"$64.36B",
 		);
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 64363000, "M", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 64363000, "M", 2),
 			"$64.36T",
 		);
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 64363000000, "M", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 64363000000, "M", 2),
 			"$64.36Q",
 		);
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 643630000000, "M", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 643630000000, "M", 2),
 			"$643.63Q",
 		);
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 6436300000000, "M", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 6436300000000, "M", 2),
 			"$6.44e18",
 		);
 		assert.strictEqual(
-			helpers.formatCurrencyBase("$x.y", 64363000000000, "M", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 64363000000000, "M", 2),
 			"$6.44e19",
 		);
 	});
 
 	test("number under 1 with no unit", () => {
-		assert.strictEqual(helpers.formatCurrencyBase("$x.y", 0.5, ""), "$0.50");
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 0.5, ""),
+			"$0.50",
+		);
 	});
 
 	test("$1000M", () => {
-		assert.strictEqual(helpers.formatCurrencyBase("$x.y", 1000, "M"), "$1B");
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 1000, "M"),
+			"$1B",
+		);
 	});
 
 	test("Euros", () => {
 		assert.strictEqual(
-			helpers.formatCurrencyBase("x,y €", 64363, "M"),
+			helpers.formatCurrencyBase(["", ",", " €"], 64363, "M"),
 			"64,36B €",
 		);
-		assert.strictEqual(helpers.formatCurrencyBase("x,y €", 0), "0 €");
+		assert.strictEqual(helpers.formatCurrencyBase(["", ",", " €"], 0), "0 €");
 	});
 });
 

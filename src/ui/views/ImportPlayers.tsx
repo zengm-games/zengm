@@ -13,6 +13,7 @@ import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { orderBy } from "../../common/utils.ts";
 import { useSelectedRows } from "../components/DataTable/useBulkSelectRows.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { CurrencyInputGroup } from "../components/CurrencyInputGroup.tsx";
 
 export const ImportPlayersInner = ({
 	challengeNoRatings,
@@ -263,18 +264,16 @@ export const ImportPlayersInner = ({
 				tid >= PLAYER.FREE_AGENT ? (
 					{
 						value: (
-							<div className="input-group" style={{ minWidth: 180 }}>
-								<div className="input-group-text">$</div>
+							<CurrencyInputGroup displayUnit="M" style={{ minWidth: 180 }}>
 								<input
 									type="text"
 									className="form-control"
 									onChange={handleChange("contractAmount", i)}
 									value={contractAmount}
 								/>
-								<div className="input-group-text">M per year</div>
-							</div>
+							</CurrencyInputGroup>
 						),
-						sortValue: `$${contractAmount}M`,
+						sortValue: contractAmount,
 					}
 				) : (
 					<div style={{ minWidth: 180 }} />

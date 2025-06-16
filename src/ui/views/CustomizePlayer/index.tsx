@@ -32,6 +32,7 @@ import { orderBy } from "../../../common/utils.ts";
 import CustomMoodItemsForm from "./CustomMoodItemsForm.tsx";
 import { roundContract } from "../../../common/roundContract.ts";
 import { Face } from "./Face.tsx";
+import { CurrencyInputGroup } from "../../components/CurrencyInputGroup.tsx";
 
 const copyValidValues = (
 	source: PlayerWithoutKey,
@@ -1067,8 +1068,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						<div className="row">
 							<div className="col-6 mb-3">
 								<label className="form-label">Contract Amount</label>
-								<div className="input-group">
-									<div className="input-group-text">$</div>
+								<CurrencyInputGroup displayUnit="M">
 									<input
 										type="text"
 										className="form-control"
@@ -1076,8 +1076,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										value={p.contract.amount}
 										disabled={!godMode}
 									/>
-									<div className="input-group-text">M per year</div>
-								</div>
+								</CurrencyInputGroup>
 							</div>
 							<div className="col-6 mb-3">
 								<label className="form-label">Contract Expiration</label>

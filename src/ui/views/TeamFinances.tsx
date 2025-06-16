@@ -37,6 +37,7 @@ import {
 	scoutingEffectCutoff,
 	scoutingEffectStddev,
 } from "../../common/budgetLevels.ts";
+import { CurrencyInputGroup } from "../components/CurrencyInputGroup.tsx";
 
 const paddingLeft85 = { paddingLeft: 85 };
 
@@ -467,13 +468,11 @@ const FinancesForm = ({
 				</HelpPopover>
 			</h2>
 			<div className="d-flex align-items-center">
-				<div
-					className="input-group"
+				<CurrencyInputGroup
 					style={{
 						width: 115,
 					}}
 				>
-					<div className="input-group-text">$</div>
 					{state.autoTicketPrice ? (
 						<input
 							type="text"
@@ -491,7 +490,7 @@ const FinancesForm = ({
 							inputMode="decimal"
 						/>
 					)}
-				</div>
+				</CurrencyInputGroup>
 				<div className="ms-3">
 					<div>Ticket price rank: #{ticketPriceRank}</div>
 					<div>

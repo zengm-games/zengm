@@ -13,6 +13,7 @@ import {
 } from "./SettingsForm.tsx";
 import type { Decoration, FieldType, Key, Values } from "./types.ts";
 import { helpers } from "../../util/index.ts";
+import { CurrencyInputGroup } from "../../components/CurrencyInputGroup.tsx";
 
 export const godModeRequiredMessage = (
 	godModeRequired?: "always" | "existingLeagueOnly",
@@ -160,11 +161,9 @@ const Input = ({
 
 	if (decoration === "currency") {
 		return (
-			<div className="input-group" style={inputStyle}>
-				<div className="input-group-text">$</div>
+			<CurrencyInputGroup displayUnit="M" style={inputStyle}>
 				{inputElement}
-				<div className="input-group-text">M</div>
-			</div>
+			</CurrencyInputGroup>
 		);
 	}
 

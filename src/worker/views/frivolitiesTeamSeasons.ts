@@ -105,9 +105,12 @@ const getMostXTeamSeasons = async ({
 			return {
 				tid: ts.tid,
 				season: ts.season,
-				abbrev: ts.abbrev || g.get("teamInfoCache")[ts.tid]?.abbrev,
-				region: ts.region || g.get("teamInfoCache")[ts.tid]?.region,
-				name: ts.name || g.get("teamInfoCache")[ts.tid]?.name,
+				abbrev: ts.abbrev ?? g.get("teamInfoCache")[ts.tid]?.abbrev,
+				region: ts.region ?? g.get("teamInfoCache")[ts.tid]?.region,
+				name: ts.name ?? g.get("teamInfoCache")[ts.tid]?.name,
+				imgURL: ts.imgURL ?? g.get("teamInfoCache")[ts.tid]?.imgURL,
+				imgURLSmall:
+					ts.imgURLSmall ?? g.get("teamInfoCache")[ts.tid]?.imgURLSmall,
 				won: ts.won,
 				lost: ts.lost,
 				tied: ts.tied,

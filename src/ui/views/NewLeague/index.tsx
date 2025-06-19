@@ -221,6 +221,13 @@ const phases = [
 
 type State = {
 	creating: boolean;
+	customize:
+		| "default"
+		| "custom-rosters"
+		| "custom-url"
+		| "legends"
+		| "real"
+		| "crossEra";
 	season: number;
 	phase: Phase;
 	name: string;
@@ -232,6 +239,7 @@ type State = {
 	basicInfo: Omit<BasicInfo, "keys"> | undefined;
 	file: File | undefined;
 	url: string | undefined;
+	legend: string;
 	loadingLeagueFile: boolean;
 	teams: NewLeagueTeam[];
 	confs: Conf[];
@@ -242,27 +250,6 @@ type State = {
 	keptKeys: string[];
 	settings: Omit<Settings, "numActiveTeams">;
 	rebuildAbbrevPending?: string;
-
-	customize:
-		| {
-				type: "default";
-		  }
-		| {
-				type: "custom-rosters";
-		  }
-		| {
-				type: "custom-url";
-		  }
-		| {
-				type: "legends";
-				legend: string;
-		  }
-		| {
-				type: "real";
-		  }
-		| {
-				type: "crossEra";
-		  };
 };
 
 type Action =
@@ -278,7 +265,7 @@ type Action =
 	  }
 	| {
 			type: "setCustomize";
-			customize: State["customize"]["type"];
+			customize: State["customize"];
 	  }
 	| {
 			type: "setDifficulty";
@@ -444,22 +431,9 @@ const reducer = (state: State, action: Action): State => {
 				action.customize === "default" || action.customize === "crossEra"
 					? []
 					: state.allKeys;
-
-			let customize: State["customize"];
-			if (action.customize === "legends") {
-				customize = {
-					type: "legends",
-					legend: "all",
-				};
-			} else {
-				customize = {
-					type: action.customize,
-				};
-			}
-
 			return {
 				...state,
-				customize,
+				customize: action.customize,
 				allKeys,
 			};
 		}
@@ -485,10 +459,7 @@ const reducer = (state: State, action: Action): State => {
 		case "setLegend": {
 			return {
 				...state,
-				customize: {
-					type: "legends",
-					legend: action.legend,
-				},
+				legend: action.legend,
 			};
 		}
 
@@ -719,17 +690,16 @@ const NewLeague = (props: View<"newLeague">) => {
 		reducer,
 		props,
 		(props: View<"newLeague">): State => {
-			let customize: State["customize"] = { type: "default" };
+			let customize: State["customize"] = "default";
 			if (importing) {
-				customize = { type: "custom-rosters" };
+				customize = "custom-rosters";
 			}
-			if (props.type === "real" || props.type === "crossEra") {
-				customize = { type: props.type };
-			} else if (props.type === "legends") {
-				customize = {
-					type: "legends",
-					legend: "all",
-				};
+			if (
+				props.type === "real" ||
+				props.type === "legends" ||
+				props.type === "crossEra"
+			) {
+				customize = props.type;
 			}
 
 			const basicInfo = undefined;
@@ -780,6 +750,7 @@ const NewLeague = (props: View<"newLeague">) => {
 				creating: false,
 				customize,
 				season,
+				legend: "all",
 				difficulty: props.difficulty ?? DIFFICULTY.Normal,
 				phase,
 				name: props.name,
@@ -850,13 +821,13 @@ const NewLeague = (props: View<"newLeague">) => {
 			: false;
 
 		const startingSeasonFromInput =
-			state.customize.type === "default" || state.customize.type === "crossEra"
+			state.customize === "default" || state.customize === "crossEra"
 				? startingSeason
 				: undefined;
 
 		try {
 			let getLeagueOptions: GetLeagueOptions | undefined;
-			if (state.customize.type === "real") {
+			if (state.customize === "real") {
 				getLeagueOptions = {
 					type: "real",
 					season: state.season,
@@ -873,16 +844,16 @@ const NewLeague = (props: View<"newLeague">) => {
 					realStats: settings.realStats,
 					includePlayers: state.keptKeys.includes("players"),
 				};
-			} else if (state.customize.type === "legends") {
+			} else if (state.customize === "legends") {
 				getLeagueOptions = {
 					type: "legends",
-					decade: state.customize.legend as LegendKey,
+					decade: state.legend as LegendKey,
 				};
 			}
 
 			const teamRegionName = getTeamRegionName(state.teams, state.tid);
 			safeLocalStorage.setItem("prevTeamRegionName", teamRegionName);
-			if (state.customize.type === "real") {
+			if (state.customize === "real") {
 				safeLocalStorage.setItem("prevSeason", String(state.season));
 				safeLocalStorage.setItem("prevPhase", String(state.phase));
 			}
@@ -915,12 +886,12 @@ const NewLeague = (props: View<"newLeague">) => {
 				leagueCreationID: leagueCreationID.current,
 			});
 
-			let type: string = state.customize.type;
-			if (state.customize.type === "real") {
+			let type: string = state.customize;
+			if (type === "real") {
 				type = String(state.season);
 			}
-			if (state.customize.type === "legends") {
-				type = String(state.customize.legend);
+			if (type === "legends") {
+				type = String(state.legend);
 			}
 			analyticsEvent("new_league", {
 				league_type: type,
@@ -1097,7 +1068,7 @@ const NewLeague = (props: View<"newLeague">) => {
 
 	// This handles initial load
 	useEffect(() => {
-		if (state.customize.type === "crossEra") {
+		if (state.customize === "crossEra") {
 			generateCrossEraTeams();
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -1181,27 +1152,27 @@ const NewLeague = (props: View<"newLeague">) => {
 					saveText={createLeagueText}
 					hasPlayers={state.keptKeys.includes("players")}
 					// Don't want legends for this!
-					realPlayers={state.customize.type === "real"}
+					realPlayers={state.customize === "real"}
 				/>
 			</m.div>
 		);
 	}
 
 	const disableWhileLoadingLeagueFile =
-		((state.customize.type === "custom-rosters" ||
-			state.customize.type === "custom-url") &&
+		((state.customize === "custom-rosters" ||
+			state.customize === "custom-url") &&
 			((state.file === undefined && state.url === undefined) ||
 				state.loadingLeagueFile)) ||
-		((state.customize.type === "real" || state.customize.type === "legends") &&
+		((state.customize === "real" || state.customize === "legends") &&
 			state.pendingInitialLeagueInfo) ||
-		(state.customize.type === "crossEra" &&
+		(state.customize === "crossEra" &&
 			(state.loadingLeagueFile || state.pendingInitialLeagueInfo));
 	const showLoadingIndicator =
 		disableWhileLoadingLeagueFile &&
 		(state.loadingLeagueFile ||
-			((state.customize.type === "real" ||
-				state.customize.type === "legends" ||
-				state.customize.type === "crossEra") &&
+			((state.customize === "real" ||
+				state.customize === "legends" ||
+				state.customize === "crossEra") &&
 				state.pendingInitialLeagueInfo));
 
 	const bannedExpansionSeasons = [
@@ -1278,8 +1249,8 @@ const NewLeague = (props: View<"newLeague">) => {
 								/>
 							</div>
 
-							{state.customize.type === "default" ||
-							state.customize.type === "crossEra" ? (
+							{state.customize === "default" ||
+							state.customize === "crossEra" ? (
 								<div className="mb-3">
 									<label
 										className="form-label"
@@ -1300,7 +1271,7 @@ const NewLeague = (props: View<"newLeague">) => {
 								</div>
 							) : null}
 
-							{state.customize.type === "real" ? (
+							{state.customize === "real" ? (
 								<>
 									<div className="mb-3">
 										<LeagueMenu
@@ -1373,10 +1344,10 @@ const NewLeague = (props: View<"newLeague">) => {
 								</>
 							) : null}
 
-							{state.customize.type === "legends" ? (
+							{state.customize === "legends" ? (
 								<div className="mb-3">
 									<LeagueMenu
-										value={state.customize.legend}
+										value={state.legend}
 										values={legends}
 										getLeagueInfo={async (value) => {
 											const leagueInfo = await toWorker(
@@ -1445,8 +1416,8 @@ const NewLeague = (props: View<"newLeague">) => {
 											);
 										})}
 									</select>
-									{state.customize.type === "default" ||
-									state.customize.type === "crossEra" ? (
+									{state.customize === "default" ||
+									state.customize === "crossEra" ? (
 										<button
 											className="btn btn-light-bordered"
 											disabled={disableWhileLoadingLeagueFile}
@@ -1480,7 +1451,7 @@ const NewLeague = (props: View<"newLeague">) => {
 								) : (
 									<span className="text-body-secondary">Population: equal</span>
 								)}
-								{state.customize.type === "crossEra" ? (
+								{state.customize === "crossEra" ? (
 									<div className="d-flex mt-1">
 										{showSeasonRange ? (
 											<SelectSeasonRange
@@ -1716,7 +1687,7 @@ const NewLeague = (props: View<"newLeague">) => {
 															generateCrossEraTeams();
 														}
 													}}
-													value={state.customize.type}
+													value={state.customize}
 												>
 													<option value="default">
 														{SPORT_HAS_REAL_PLAYERS
@@ -1739,8 +1710,8 @@ const NewLeague = (props: View<"newLeague">) => {
 														Enter league file URL
 													</option>
 												</select>
-												{state.customize.type === "custom-rosters" ||
-												state.customize.type === "custom-url" ? (
+												{state.customize === "custom-rosters" ||
+												state.customize === "custom-url" ? (
 													<p className="mt-3">
 														League files can contain teams, players, settings,
 														and other data. You can create a league file by
@@ -1754,15 +1725,15 @@ const NewLeague = (props: View<"newLeague">) => {
 													</p>
 												) : null}
 											</div>
-											{state.customize.type === "custom-rosters" ||
-											state.customize.type === "custom-url" ? (
+											{state.customize === "custom-rosters" ||
+											state.customize === "custom-url" ? (
 												<div className="my-3">
 													<LeagueFileUpload
 														onLoading={() => {
 															dispatch({ type: "loadingLeagueFile" });
 														}}
 														onDone={handleNewLeagueFile}
-														enterURL={state.customize.type === "custom-url"}
+														enterURL={state.customize === "custom-url"}
 													/>
 												</div>
 											) : null}

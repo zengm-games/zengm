@@ -221,6 +221,11 @@ const phases = [
 
 type State = {
 	creating: boolean;
+	season: number;
+	phase: Phase;
+	name: string;
+
+	// Many of the settings below only apply to some of these "customize" types, but store them all in the root of one big object so that switching between them remembers state.
 	customize:
 		| "default"
 		| "custom-rosters"
@@ -228,9 +233,6 @@ type State = {
 		| "legends"
 		| "real"
 		| "crossEra";
-	season: number;
-	phase: Phase;
-	name: string;
 
 	// Why keep difficulty here, rather than just using settings.difficulty? Because then it won't get reset every time settings change (new league file, etc).
 	difficulty: number;
@@ -1362,9 +1364,11 @@ const NewLeague = (props: View<"newLeague">) => {
 											return leagueInfo;
 										}}
 										onLoading={(legend) => {
+											console.log("legend", legend);
 											dispatch({ type: "setLegend", legend });
 										}}
 										onDone={(info) => {
+											console.log("info", info);
 											handleNewLeagueInfo({
 												...info,
 												randomization: "debuts",

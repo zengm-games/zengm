@@ -1,3 +1,19 @@
+add legends mode based on league to UI somehow
+- refactor so each type's metadata is clearly specified in a discriminated union
+- should be able to select from "New legends league" or "New custom league"
+  - show dropdown with all your leagues, and one option for "real players"
+  - allow selecting range of seasons, with quick buttons to select "all"
+    - similar to cross era year range selector
+- load leagues (including first/last season) asynchronously like generateCrossEraTeams
+  - show Loading... as dropdown under "League" selection
+- maybe have UI do it from "Customize" menu?
+  - rething customize menu UI in general?
+- clone then run
+  - would be more efficient to read players database from other league directly, then we don't need to copy over the unimportant players
+- what about free agents?
+- https://discord.com/channels/290013534023057409/1382240288139116574/1383465548364382308
+- https://discord.com/channels/290013534023057409/1384327592433160233/1384957307657523344
+
 when customizing teams in a new league, in addition to "Randomize..." have "Presets..." menu with these options https://chat.reddit.com/room/!CMNGURJla_YigoZ0B5ZaPa6y7VGTFfyvGlXZcVW-E1o%3Areddit.com
 - Default
 - Real teams from any season (with or without players)

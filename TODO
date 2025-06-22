@@ -34,10 +34,15 @@ ZGMB ASG pitcher record - appears as if it's incrementing in some places (box sc
 
 ZGMB live sim UI - show pictures of batter/pitcher and season stats https://discord.com/channels/290013534023057409/331882115119448065/1380594012049903667
 
-ZGMB should have more aggressive baserunning https://discord.com/channels/290013534023057409/944392892905037885/1380189689725587576
-- ground balls advancing from 2nd to 3rd
-- other situations too
-- leads to fewer runs being scored https://discord.com/channels/290013534023057409/944392892905037885/1380517353619460177
+ZGMB game sim tweaks
+- should have more aggressive baserunning https://discord.com/channels/290013534023057409/944392892905037885/1380189689725587576
+  - ground balls advancing from 2nd to 3rd
+  - other situations too
+  - leads to fewer runs being scored https://discord.com/channels/290013534023057409/944392892905037885/1380517353619460177
+- https://discord.com/channels/290013534023057409/944392892905037885/1384962292025921556
+  - Higher probability of 2B/3B regardless of speed (but perhaps especially on grounders down the line)
+  - Higher probability of HR on line-drives
+  - Higher probability of hits on line-drives
 
 use actualPhase in more places rather than just phase
 
@@ -256,6 +261,7 @@ tables should be aware that rows are players who have pids. add bulk/all/select 
 datatable should support unsorted sort state
 - leaders, award races - so we don't have to highlight by default
 - roster basketball non-user - so we can allow sorting while still allowing rosterOrder viewing
+ - maybe also allow sorting for user, but don't persist so by default you can always drag/drop
 - check how sort status is passed to row.classNames
 - already happens in box scores
 
@@ -333,10 +339,6 @@ Before 4th down situations, there should be a play showing what formation they w
 - https://discord.com/channels/290013534023057409/331882115119448065/1304072070157697044
 
 hype should impact the magnitude of the home court advantage
-
-embed facesjs ui
-- what to do about all the dependencies?
-  - could load async
 
 hardcode known good schedule for default FBGM settings, to minimize bye weeks
 - take a template (or multiple templates) from the NFL, labeling each game by category (division, conference, non-conference specific division, non-conference random). then generate those games and put them in order of the template. randomize teams

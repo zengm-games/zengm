@@ -117,19 +117,17 @@ const getSeasonInfoLeague = async ({
 	let pid = pidOffset;
 
 	const players = (await getPlayersActiveSeason(league, season)).filter((p) => {
-		// Keep players who ended the season on this team. Not perfect, will miss released players
-		const seasonStats = p.stats
-			.filter((row) => row.season === season && !row.playoffs)
-			.at(-1);
+		// Keep players who ended the season on this team. Not perfect, will miss released players. Second check is for players added to the team in God Mode during the playoffs.
+		const seasonStats =
+			p.stats.findLast((row) => row.season === season && !row.playoffs) ??
+			p.stats.findLast((row) => row.season === season);
 		if (!seasonStats) {
 			return false;
 		}
 		p.stats = [seasonStats];
 
 		// Also filter ratings here, why  not
-		const seasonRatings = p.ratings
-			.filter((row) => row.season === season)
-			.at(-1);
+		const seasonRatings = p.ratings.findLast((row) => row.season === season);
 		if (!seasonRatings) {
 			return false;
 		}

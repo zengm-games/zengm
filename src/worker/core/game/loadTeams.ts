@@ -222,7 +222,7 @@ export const processTeam = (
 			let ps;
 			if (allStarGame) {
 				// Only look at regular season stats, in case All-Star Game is in playoffs
-				ps = p.stats.filter((ps) => !ps.playoffs).at(-1);
+				ps = p.stats.findLast((ps) => !ps.playoffs);
 				hasStats = !!ps && ps.season === g.get("season");
 			} else {
 				ps = p.stats.at(-1);

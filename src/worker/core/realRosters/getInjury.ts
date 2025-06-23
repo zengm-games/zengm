@@ -32,7 +32,7 @@ const getGamesToHeal = ({
 			row.phase <= PHASE.DRAFT_LOTTERY && phase > PHASE.DRAFT_LOTTERY;
 		passedFreeAgency =
 			row.phase <= PHASE.FREE_AGENCY && phase > PHASE.FREE_AGENCY;
-	} else if (season === row.season + 1 && phase <= PHASE.PLAYOFFS) {
+	} else if (season === row.season + 1 && phase <= PHASE.FREE_AGENCY) {
 		passedRegularSeason = row.phase <= PHASE.AFTER_TRADE_DEADLINE;
 		passedPlayoffs = row.phase <= PHASE.PLAYOFFS;
 		passedAfterPlayoffs = row.phase <= PHASE.DRAFT_LOTTERY;

@@ -1,3 +1,5 @@
+when starting new real players league after playoffs, should include awards object and other stuff for current season, enough for leauge history and season summary like http://localhost/l/150/history/2024 to work
+
 add legends mode based on league to UI somehow
 - should be able to select from "New legends league" or "New custom league"
   - show dropdown with all your leagues, and one option for "real players"

@@ -579,6 +579,7 @@ const createLeague = async (
 			}
 
 			if (getLeagueOptions.phase >= PHASE.PLAYOFFS) {
+				keys.add("awards");
 				keys.add("draftLotteryResults");
 				keys.add("draftPicks");
 				keys.add("playoffSeries");

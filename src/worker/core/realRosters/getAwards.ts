@@ -12,6 +12,7 @@ import type {
 import type formatPlayerFactory from "./formatPlayerFactory.ts";
 import type formatScheduledEvents from "./formatScheduledEvents.ts";
 import type { Basketball } from "./loadData.basketball.ts";
+import { MIN_SEASON } from "./seasons.ts";
 
 type Teams = ReturnType<typeof formatScheduledEvents>["initialTeams"];
 
@@ -219,7 +220,7 @@ const getAwards = (
 	teams: Teams,
 	options: GetLeagueOptionsReal,
 ) => {
-	if (options.realStats !== "all") {
+	if (options.realStats !== "all" && options.phase <= PHASE.PLAYOFFS) {
 		return;
 	}
 
@@ -235,7 +236,10 @@ const getAwards = (
 		playersBySlug = groupByUnique(players, "srID");
 	}
 
-	const seasonsRange: [number, number] = [1947, options.season - 1];
+	const seasonsRange: [number, number] = [
+		options.realStats === "all" ? MIN_SEASON : options.season,
+		options.season - 1,
+	];
 	if (options.phase > PHASE.PLAYOFFS) {
 		seasonsRange[1] += 1;
 	}
@@ -256,24 +260,27 @@ const getAwards = (
 		}
 		for (const teamSeason of t.seasons) {
 			const { cid, season } = teamSeason;
-			if (!bestRecordInfoBySeason[season]) {
-				bestRecordInfoBySeason[season] = {
-					best: teamSeason,
-					bestConfs: [],
-				};
-			} else {
-				if (teamSeason.won > bestRecordInfoBySeason[season].best.won) {
-					bestRecordInfoBySeason[season].best = teamSeason;
-				}
-			}
 
-			if (!bestRecordInfoBySeason[season].bestConfs[cid]) {
-				bestRecordInfoBySeason[season].bestConfs[cid] = teamSeason;
-			} else {
-				if (
-					teamSeason.won > bestRecordInfoBySeason[season].bestConfs[cid].won
-				) {
+			if (options.realStats === "all" || options.season === season) {
+				if (!bestRecordInfoBySeason[season]) {
+					bestRecordInfoBySeason[season] = {
+						best: teamSeason,
+						bestConfs: [],
+					};
+				} else {
+					if (teamSeason.won > bestRecordInfoBySeason[season].best.won) {
+						bestRecordInfoBySeason[season].best = teamSeason;
+					}
+				}
+
+				if (!bestRecordInfoBySeason[season].bestConfs[cid]) {
 					bestRecordInfoBySeason[season].bestConfs[cid] = teamSeason;
+				} else {
+					if (
+						teamSeason.won > bestRecordInfoBySeason[season].bestConfs[cid].won
+					) {
+						bestRecordInfoBySeason[season].bestConfs[cid] = teamSeason;
+					}
 				}
 			}
 		}

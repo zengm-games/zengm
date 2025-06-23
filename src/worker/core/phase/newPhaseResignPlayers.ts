@@ -17,6 +17,8 @@ import { g, helpers, local, logEvent } from "../../util/index.ts";
 import type { Conditions, PhaseReturn } from "../../../common/types.ts";
 import { orderBy } from "../../../common/utils.ts";
 
+export const FREE_AGENCY_DAYS = 30;
+
 const newPhaseResignPlayers = async (
 	conditions: Conditions,
 ): Promise<PhaseReturn> => {
@@ -334,7 +336,7 @@ const newPhaseResignPlayers = async (
 
 	// Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
 	await league.setGameAttributes({
-		daysLeft: 30,
+		daysLeft: FREE_AGENCY_DAYS,
 	});
 
 	return {

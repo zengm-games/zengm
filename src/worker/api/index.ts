@@ -2446,12 +2446,15 @@ const importPlayers = async ({
 			jerseyNumber: p.stats?.at(-1)?.jerseyNumber ?? p.jerseyNumber,
 		};
 
+		if (p.customMoodItems) {
+			(p2 as any).customMoodItems = p.customMoodItems;
+		}
 		if (p.noteBool) {
 			(p2 as any).note = p.note;
 			(p2 as any).noteBool = p.noteBool;
 		}
-		if (p.customMoodItems) {
-			(p2 as any).customMoodItems = p.customMoodItems;
+		if (p.real) {
+			(p2 as any).real = p.real;
 		}
 
 		// Only add injury if the season wasn't chaned by the user. These variables copied from ImportPlayers init

@@ -1,3 +1,6 @@
+import real players
+- include stats - do it by team srID, and treat as DOES_NOT_EXIST otherwise https://old.reddit.com/r/BasketballGM/comments/1kwal9w/version_202505261259_new_import_real_players/n0bfsbr/?context=3
+
 worker modules Safari 15
 - use import with json attribute for loading json files, rather than special effort to copy/fetch them
   - might fix issue with dev mode not letting you create new league if you killed it and did a prod build in background

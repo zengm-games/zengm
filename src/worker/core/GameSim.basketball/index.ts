@@ -1838,92 +1838,21 @@ class GameSim extends GameSimBase {
 		);
 	}
 
-	doShot(
-		shooter: PlayerNumOnCourt,
-		clockFactor: ClockFactor,
-		possessionStartsInFrontcourt: boolean,
-		tipInFromOutOfBounds: boolean,
-		lateGamePutBack: boolean,
-	) {
-		const putBack = lateGamePutBack; // Eventually use this in more situations
-
-		// If it's a putback, override shooter selection with whoever got the last offensive rebound
-		if (putBack) {
-			shooter = this.lastOrbPlayer;
-		}
-
-		const p = this.playersOnCourt[this.o][shooter]!;
-		const currentFatigue = this.fatigue(
-			this.team[this.o].player[p]!.stat.energy,
-		);
-
-		// Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
-		let passer: PlayerNumOnCourt | undefined;
-		if (
-			(tipInFromOutOfBounds ||
-				(this.t > 1 && this.probAst() > Math.random())) &&
-			!putBack &&
-			this.numPlayersOnCourt > 1
-		) {
-			const ratios = this.ratingArray("passing", this.o, 10);
-			passer = pickPlayer(ratios, shooter);
-		}
-
-		// Ball is already in frontcourt. How long until the shot goes up?
-		let lowerLimit = Math.min(this.t / 2, 2);
-		let upperLimit = Math.min(SHOT_CLOCK - this.possessionLength, this.t - 0.1);
-		if (upperLimit < 0) {
-			lowerLimit = 0;
-			upperLimit = 0;
-		}
-
-		// Time from the ball being in the frontcourt to a shot
-		let dt;
-		if (tipInFromOutOfBounds) {
-			dt = 0;
-		} else if (putBack) {
-			dt = random.uniform(Math.min(this.t, 0.1), Math.min(this.t, 1));
-		} else if (this.t <= 0.3) {
-			dt = random.uniform(0, upperLimit);
-		} else if (this.t < 1) {
-			// Less than 1 second left
-			dt = random.uniform(0.2, upperLimit);
-		} else if (lowerLimit > upperLimit) {
-			// Less than 2 seconds left
-			dt = random.uniform(0.5, upperLimit);
-		} else if (upperLimit - lowerLimit < 4) {
-			// Due to being near the end of the quarter, upperLimit and lowerLimit are close
-			dt = random.uniform(lowerLimit, upperLimit);
-		} else {
-			const mean =
-				clockFactor === "catchUp"
-					? 5
-					: clockFactor === "maintainLead"
-						? 12
-						: 6.25;
-
-			dt = random.truncGauss(mean, 5, lowerLimit, upperLimit);
-		}
-		this.advanceClockSeconds(dt);
-
-		// Turnovers for possessions that start in the frontcourt only (other turnovers are already handled above for the entire possession, although I guess it'd be better to do it here)
-		if (possessionStartsInFrontcourt) {
-			if (Math.random() < this.probTov()) {
-				let pTurnover;
-				if (tipInFromOutOfBounds) {
-					pTurnover = passer;
-				} else if (putBack) {
-					pTurnover = shooter;
-				}
-				return this.doTov(pTurnover);
-			}
-
-			// Offense loses ball out of bounds, but retains possession
-			if (Math.random() < 0.01) {
-				return this.doOutOfBounds(1);
-			}
-		}
-
+	getShotInfo({
+		currentFatigue,
+		lateGamePutBack,
+		p,
+		passer,
+		tipInFromOutOfBounds,
+		putBack,
+	}: {
+		currentFatigue: number;
+		lateGamePutBack: boolean;
+		p: number;
+		passer: PlayerNumOnCourt | undefined;
+		tipInFromOutOfBounds: boolean;
+		putBack: boolean;
+	}) {
 		let shootingThreePointerScaled =
 			this.team[this.o].player[p]!.compositeRating.shootingThreePointer;
 
@@ -2060,6 +1989,160 @@ class GameSim extends GameSimBase {
 
 			probMake *= g.get("twoPointAccuracyFactor");
 		}
+
+		let blocked;
+		if (this.probBlk() > Math.random()) {
+			blocked = true;
+		} else {
+			blocked = false;
+
+			let foulFactor =
+				0.65 *
+				(this.team[this.o].player[p]!.compositeRating.drawingFouls / 0.5) ** 2 *
+				g.get("foulRateFactor");
+
+			if (this.allStarGame) {
+				foulFactor *= 0.4;
+			}
+
+			probMissAndFoul *= foulFactor;
+			probAndOne *= foulFactor;
+			probMake =
+				(probMake -
+					0.25 * this.team[this.d].compositeRating.defense +
+					this.synergyFactor *
+						(this.team[this.o].synergy.off - this.team[this.d].synergy.def)) *
+				currentFatigue;
+
+			if (!tipInFromOutOfBounds) {
+				// Adjust probMake for end of quarter situations, where shot quality will be lower without much time
+				if (rushed) {
+					probMake *= Math.sqrt(this.possessionLength / 8);
+				}
+
+				// Assisted shots are easier
+				if (passer !== undefined) {
+					probMake += 0.025;
+				}
+			}
+		}
+
+		return {
+			blocked,
+			desperation: forceThreePointer || rushed,
+			fgaLogType,
+			pAst,
+			probAndOne,
+			probMake,
+			probMissAndFoul,
+			type,
+		};
+	}
+
+	doShot(
+		shooter: PlayerNumOnCourt,
+		clockFactor: ClockFactor,
+		possessionStartsInFrontcourt: boolean,
+		tipInFromOutOfBounds: boolean,
+		lateGamePutBack: boolean,
+	) {
+		const putBack = lateGamePutBack; // Eventually use this in more situations
+
+		// If it's a putback, override shooter selection with whoever got the last offensive rebound
+		if (putBack) {
+			shooter = this.lastOrbPlayer;
+		}
+
+		const p = this.playersOnCourt[this.o][shooter]!;
+		const currentFatigue = this.fatigue(
+			this.team[this.o].player[p]!.stat.energy,
+		);
+
+		// Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
+		let passer: PlayerNumOnCourt | undefined;
+		if (
+			(tipInFromOutOfBounds ||
+				(this.t > 1 && this.probAst() > Math.random())) &&
+			!putBack &&
+			this.numPlayersOnCourt > 1
+		) {
+			const ratios = this.ratingArray("passing", this.o, 10);
+			passer = pickPlayer(ratios, shooter);
+		}
+
+		// Ball is already in frontcourt. How long until the shot goes up?
+		let lowerLimit = Math.min(this.t / 2, 2);
+		let upperLimit = Math.min(SHOT_CLOCK - this.possessionLength, this.t - 0.1);
+		if (upperLimit < 0) {
+			lowerLimit = 0;
+			upperLimit = 0;
+		}
+
+		// Time from the ball being in the frontcourt to a shot
+		let dt;
+		if (tipInFromOutOfBounds) {
+			dt = 0;
+		} else if (putBack) {
+			dt = random.uniform(Math.min(this.t, 0.1), Math.min(this.t, 1));
+		} else if (this.t <= 0.3) {
+			dt = random.uniform(0, upperLimit);
+		} else if (this.t < 1) {
+			// Less than 1 second left
+			dt = random.uniform(0.2, upperLimit);
+		} else if (lowerLimit > upperLimit) {
+			// Less than 2 seconds left
+			dt = random.uniform(0.5, upperLimit);
+		} else if (upperLimit - lowerLimit < 4) {
+			// Due to being near the end of the quarter, upperLimit and lowerLimit are close
+			dt = random.uniform(lowerLimit, upperLimit);
+		} else {
+			const mean =
+				clockFactor === "catchUp"
+					? 5
+					: clockFactor === "maintainLead"
+						? 12
+						: 6.25;
+
+			dt = random.truncGauss(mean, 5, lowerLimit, upperLimit);
+		}
+		this.advanceClockSeconds(dt);
+
+		// Turnovers for possessions that start in the frontcourt only (other turnovers are already handled above for the entire possession, although I guess it'd be better to do it here)
+		if (possessionStartsInFrontcourt) {
+			if (Math.random() < this.probTov()) {
+				let pTurnover;
+				if (tipInFromOutOfBounds) {
+					pTurnover = passer;
+				} else if (putBack) {
+					pTurnover = shooter;
+				}
+				return this.doTov(pTurnover);
+			}
+
+			// Offense loses ball out of bounds, but retains possession
+			if (Math.random() < 0.01) {
+				return this.doOutOfBounds(1);
+			}
+		}
+
+		const {
+			blocked,
+			desperation,
+			fgaLogType,
+			pAst,
+			probAndOne,
+			probMake,
+			probMissAndFoul,
+			type,
+		} = this.getShotInfo({
+			currentFatigue,
+			lateGamePutBack,
+			p,
+			passer,
+			tipInFromOutOfBounds,
+			putBack,
+		});
+
 		const baseLogInformation = {
 			t: this.o,
 			pid: this.team[this.o].player[p]!.id,
@@ -2078,7 +2161,7 @@ class GameSim extends GameSimBase {
 			this.playByPlay.logEvent({
 				...baseLogInformation,
 				type: fgaLogType,
-				desperation: rushed && forceThreePointer,
+				desperation,
 			});
 		} else if (fgaLogType === "fgaTipIn" && pAst !== undefined) {
 			this.playByPlay.logEvent({
@@ -2087,38 +2170,8 @@ class GameSim extends GameSimBase {
 				pidPass: this.team[this.o].player[pAst]!.id,
 			});
 		}
-		if (this.probBlk() > Math.random()) {
+		if (blocked) {
 			return this.doBlk(shooter, type); // orb or drb
-		}
-
-		let foulFactor =
-			0.65 *
-			(this.team[this.o].player[p]!.compositeRating.drawingFouls / 0.5) ** 2 *
-			g.get("foulRateFactor");
-
-		if (this.allStarGame) {
-			foulFactor *= 0.4;
-		}
-
-		probMissAndFoul *= foulFactor;
-		probAndOne *= foulFactor;
-		probMake =
-			(probMake -
-				0.25 * this.team[this.d].compositeRating.defense +
-				this.synergyFactor *
-					(this.team[this.o].synergy.off - this.team[this.d].synergy.def)) *
-			currentFatigue;
-
-		if (!tipInFromOutOfBounds) {
-			// Adjust probMake for end of quarter situations, where shot quality will be lower without much time
-			if (rushed) {
-				probMake *= Math.sqrt(this.possessionLength / 8);
-			}
-
-			// Assisted shots are easier
-			if (passer !== undefined) {
-				probMake += 0.025;
-			}
 		}
 
 		const advanceClock = () => {

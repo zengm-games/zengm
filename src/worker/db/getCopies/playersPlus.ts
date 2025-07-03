@@ -179,6 +179,7 @@ const processAttrs = (
 								currentTransaction.phase <= PHASE.PLAYOFFS)
 						) {
 							transaction = p.transactions[i];
+							break;
 						}
 					}
 				}

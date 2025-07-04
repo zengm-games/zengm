@@ -25,14 +25,14 @@ const TIMEOUTS_STOP_CLOCK = 2; // [minutes]
 
 const TIP_IN_ONLY_LIMIT = 0.2; // [seconds] - only tip-ins from an inbound with less than this much time
 
-type ShotType =
+type ShotTypeFromField =
 	| "atRim"
-	| "ft"
 	| "lowPost"
 	| "midRange"
 	| "threePointer"
 	| "tipIn"
 	| "putBack";
+type ShotType = ShotTypeFromField | "ft";
 type Stat =
 	| "ast"
 	| "ba"
@@ -116,6 +116,14 @@ type PossessionOutcome =
 	| "outOfBoundsOffense";
 
 type ClockFactor = ReturnType<GameSim["getClockFactor"]>;
+
+type Shot = {
+	p: PlayerGameSim;
+	type: ShotTypeFromField;
+	probAndOne: number;
+	probMake: number;
+	probMissAndFoul: number;
+};
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -1672,7 +1680,6 @@ class GameSim extends GameSimBase {
 
 		// Shot!
 		return this.doShot(
-			shooter,
 			clockFactor,
 			possessionStartsInFrontcourt,
 			tipInFromOutOfBounds,
@@ -1775,38 +1782,16 @@ class GameSim extends GameSimBase {
 	}
 
 	getShotInfo({
-		currentFatigue,
+		assisted,
 		lateGamePutBack,
-		p,
-		passer,
 		tipInFromOutOfBounds,
 		putBack,
 	}: {
-		currentFatigue: number;
+		assisted: boolean;
 		lateGamePutBack: boolean;
-		p: PlayerGameSim;
-		passer: PlayerGameSim | undefined;
 		tipInFromOutOfBounds: boolean;
 		putBack: boolean;
 	}) {
-		let shootingThreePointerScaled = p.compositeRating.shootingThreePointer;
-
-		// Too many players shooting 3s at the high end - scale 0.55-1.0 to 0.55-0.85
-		if (shootingThreePointerScaled > 0.55) {
-			shootingThreePointerScaled =
-				0.55 + (shootingThreePointerScaled - 0.55) * (0.3 / 0.45);
-		}
-
-		// Too many players shooting 3s at the low end - scale 0.35-0.45 to 0.1-0.45, and 0-0.35 to 0-0.1
-		let shootingThreePointerScaled2 = shootingThreePointerScaled;
-		if (shootingThreePointerScaled2 < 0.35) {
-			shootingThreePointerScaled2 =
-				0 + shootingThreePointerScaled2 * (0.1 / 0.35);
-		} else if (shootingThreePointerScaled2 < 0.45) {
-			shootingThreePointerScaled2 =
-				0.1 + (shootingThreePointerScaled2 - 0.35) * (0.35 / 0.1);
-		}
-
 		// In some situations (4th quarter late game situations depending on score, and last second heaves in other quarters) players shoot more 3s
 		const diff = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
 		const quarter = this.team[this.o].stat.ptsQtrs.length;
@@ -1827,165 +1812,168 @@ class GameSim extends GameSimBase {
 			throw new Error("Clock at 0 when a shot is taken");
 		}
 
-		// Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
-		let probAndOne;
-		let probMake;
-		let probMissAndFoul;
-		let type: ShotType;
-		let fgaLogType: FgaType | "fgaTpFake" | "fgaTp" | "fgaTipIn";
-		if (tipInFromOutOfBounds && passer !== undefined) {
-			fgaLogType = "fgaTipIn";
-			type = "tipIn";
-			probMissAndFoul = 0.02;
-			probMake = 0.1 + p.compositeRating.shootingAtRim * 0.1;
-			probAndOne = 0.01;
-		} else if (putBack) {
-			type = "putBack";
-			fgaLogType = "fgaPutBack";
-			probMissAndFoul = 0.37;
-			probMake = p.compositeRating.shootingAtRim * 0.41 + 0.54;
-			probAndOne = 0.25;
-
-			if (lateGamePutBack) {
-				probMissAndFoul *= 0.75;
-				probMake *= 0.75;
-				probAndOne *= 0.75;
-			}
-		} else if (
-			forceThreePointer ||
-			Math.random() <
-				0.67 * shootingThreePointerScaled2 * g.get("threePointTendencyFactor")
-		) {
-			// Three pointer
-			type = "threePointer";
-			fgaLogType = g.get("threePointers") ? "fgaTp" : "fgaTpFake";
-			probMissAndFoul = 0.02;
-			probMake = shootingThreePointerScaled * 0.3 + 0.36;
-			probAndOne = 0.01;
-
-			// Better shooting in the ASG, why not?
-			if (this.allStarGame) {
-				probMake += 0.02;
-			}
-			probMake *= g.get("threePointAccuracyFactor");
+		// If it's a putback, override shooter selection with whoever got the last offensive rebound
+		let possibleShooters;
+		if (putBack && this.lastOrbPlayer !== undefined) {
+			possibleShooters = [this.lastOrbPlayer];
 		} else {
-			const r1 = 0.8 * Math.random() * p.compositeRating.shootingMidRange;
-			const r2 =
-				Math.random() *
-				(p.compositeRating.shootingAtRim +
-					this.synergyFactor *
-						(this.team[this.o].synergy.off - this.team[this.d].synergy.def)); // Synergy makes easy shots either more likely or less likely
-
-			const r3 =
-				Math.random() *
-				(p.compositeRating.shootingLowPost +
-					this.synergyFactor *
-						(this.team[this.o].synergy.off - this.team[this.d].synergy.def)); // Synergy makes easy shots either more likely or less likely
-
-			if (r1 > r2 && r1 > r3) {
-				// Two point jumper
-				type = "midRange";
-				fgaLogType = "fgaMidRange";
-				probMissAndFoul = 0.07;
-				probMake = p.compositeRating.shootingMidRange * 0.32 + 0.42;
-				probAndOne = 0.05;
-			} else if (r2 > r3) {
-				// Dunk, fast break or half court
-				type = "atRim";
-				fgaLogType = "fgaAtRim";
-				probMissAndFoul = 0.37;
-				probMake = p.compositeRating.shootingAtRim * 0.41 + 0.54;
-				probAndOne = 0.25;
-			} else {
-				// Post up
-				fgaLogType = "fgaLowPost";
-				type = "lowPost";
-				probMissAndFoul = 0.33;
-				probMake = p.compositeRating.shootingLowPost * 0.32 + 0.34;
-				probAndOne = 0.15;
-			}
-			// Better shooting in the ASG, why not?
-			if (this.allStarGame) {
-				probMake += 0.1;
-			}
-
-			probMake *= g.get("twoPointAccuracyFactor");
+			possibleShooters = this.playersOnCourt[this.o];
 		}
 
-		let blocked;
-		if (this.probBlk() > Math.random()) {
-			blocked = true;
-		} else {
-			blocked = false;
+		const shots: Shot[] = possibleShooters.flatMap((p) => {
+			let shots: Shot[];
+			if (tipInFromOutOfBounds) {
+				shots = [
+					{
+						p,
+						type: "tipIn",
+
+						probAndOne: 0.01,
+						probMake: 0.1 + p.compositeRating.shootingAtRim * 0.1,
+						probMissAndFoul: 0.02,
+					},
+				];
+			} else if (putBack) {
+				let probAndOne = 0.25;
+				let probMake = p.compositeRating.shootingAtRim * 0.41 + 0.54;
+				let probMissAndFoul = 0.37;
+
+				if (lateGamePutBack) {
+					probAndOne *= 0.75;
+					probMake *= 0.75;
+					probMissAndFoul *= 0.75;
+				}
+
+				shots = [
+					{
+						p,
+						type: "putBack",
+						probAndOne,
+						probMake,
+						probMissAndFoul,
+					},
+				];
+			} else {
+				let shootingThreePointerScaled = p.compositeRating.shootingThreePointer;
+
+				// Too many players shooting 3s at the high end - scale 0.55-1.0 to 0.55-0.85
+				if (shootingThreePointerScaled > 0.55) {
+					shootingThreePointerScaled =
+						0.55 + (shootingThreePointerScaled - 0.55) * (0.3 / 0.45);
+				}
+
+				shots = [
+					{
+						p,
+						type: "threePointer",
+						probAndOne: 0.01,
+						probMake: shootingThreePointerScaled * 0.3 + 0.36,
+						probMissAndFoul: 0.02,
+					},
+					{
+						p,
+						type: "midRange",
+						probAndOne: 0.05,
+						probMake: p.compositeRating.shootingMidRange * 0.32 + 0.42,
+						probMissAndFoul: 0.07,
+					},
+					{
+						p,
+						type: "atRim",
+						probAndOne: 0.25,
+						probMake: p.compositeRating.shootingAtRim * 0.41 + 0.54,
+						probMissAndFoul: 0.37,
+					},
+					{
+						p,
+						type: "lowPost",
+						probAndOne: 0.15,
+						probMake: p.compositeRating.shootingLowPost * 0.32 + 0.34,
+						probMissAndFoul: 0.33,
+					},
+				];
+
+				if (forceThreePointer) {
+					shots = shots.filter((shot) => shot.type === "threePointer");
+				}
+			}
 
 			let foulFactor =
 				0.65 *
 				(p.compositeRating.drawingFouls / 0.5) ** 2 *
 				g.get("foulRateFactor");
-
 			if (this.allStarGame) {
 				foulFactor *= 0.4;
 			}
 
-			probMissAndFoul *= foulFactor;
-			probAndOne *= foulFactor;
-			probMake =
-				(probMake -
-					0.25 * this.team[this.d].compositeRating.defense +
-					this.synergyFactor *
-						(this.team[this.o].synergy.off - this.team[this.d].synergy.def)) *
-				currentFatigue;
+			const currentFatigue = this.fatigue(p.stat.energy);
 
-			if (!tipInFromOutOfBounds) {
+			for (const shot of shots) {
+				shot.probMissAndFoul *= foulFactor;
+				shot.probAndOne *= foulFactor;
+				shot.probMake =
+					(shot.probMake -
+						0.25 * this.team[this.d].compositeRating.defense +
+						this.synergyFactor *
+							(this.team[this.o].synergy.off - this.team[this.d].synergy.def)) *
+					currentFatigue;
+			}
+
+			return shots;
+		});
+
+		for (const shot of shots) {
+			if (shot.type === "threePointer") {
+				// Better shooting in the ASG, why not?
+				if (this.allStarGame) {
+					shot.probMake += 0.02;
+				}
+				shot.probMake *= g.get("threePointAccuracyFactor");
+			} else if (shot.type !== "tipIn" && shot.type !== "putBack") {
+				// Better shooting in the ASG, why not?
+				if (this.allStarGame) {
+					shot.probMake += 0.1;
+				}
+				shot.probMake *= g.get("twoPointAccuracyFactor");
+			}
+
+			if (shot.type !== "tipIn") {
 				// Adjust probMake for end of quarter situations, where shot quality will be lower without much time
 				if (rushed) {
-					probMake *= Math.sqrt(this.possessionLength / 8);
+					shot.probMake *= Math.sqrt(this.possessionLength / 8);
 				}
 
 				// Assisted shots are easier
-				if (passer !== undefined) {
-					probMake += 0.025;
+				if (assisted) {
+					shot.probMake += 0.025;
 				}
 			}
+		}
+
+		const shot = random.choice(shots);
+
+		const blocked = this.probBlk() > Math.random();
+
+		let passer;
+		if (assisted) {
+			passer = this.pickPlayer("passing", this.o, 10, shot.p);
 		}
 
 		return {
 			blocked,
 			desperation: forceThreePointer || rushed,
-			fgaLogType,
-			probAndOne,
-			probMake,
-			probMissAndFoul,
-			type,
+			passer,
+			shot,
 		};
 	}
 
 	doShot(
-		p: PlayerGameSim,
 		clockFactor: ClockFactor,
 		possessionStartsInFrontcourt: boolean,
 		tipInFromOutOfBounds: boolean,
 		lateGamePutBack: boolean,
 	) {
 		const putBack = lateGamePutBack; // Eventually use this in more situations
-
-		// If it's a putback, override shooter selection with whoever got the last offensive rebound
-		if (putBack && this.lastOrbPlayer !== undefined) {
-			p = this.lastOrbPlayer;
-		}
-
-		const currentFatigue = this.fatigue(p.stat.energy);
-
-		// Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
-		let passer: PlayerGameSim | undefined;
-		if (
-			(tipInFromOutOfBounds ||
-				(this.t > 1 && this.probAst() > Math.random())) &&
-			!putBack &&
-			this.numPlayersOnCourt > 1
-		) {
-			passer = this.pickPlayer("passing", this.o, 10, p);
-		}
 
 		// Ball is already in frontcourt. How long until the shot goes up?
 		let lowerLimit = Math.min(this.t / 2, 2);
@@ -2024,14 +2012,21 @@ class GameSim extends GameSimBase {
 		}
 		this.advanceClockSeconds(dt);
 
+		// Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
+		const assisted =
+			(tipInFromOutOfBounds ||
+				(this.t > 1 && this.probAst() > Math.random())) &&
+			!putBack &&
+			this.numPlayersOnCourt > 1;
+
 		// Turnovers for possessions that start in the frontcourt only (other turnovers are already handled above for the entire possession, although I guess it'd be better to do it here)
 		if (possessionStartsInFrontcourt) {
 			if (Math.random() < this.probTov()) {
 				let pTurnover;
-				if (tipInFromOutOfBounds) {
-					pTurnover = passer;
+				if (tipInFromOutOfBounds && assisted) {
+					pTurnover = this.pickPlayer("passing", this.o, 10);
 				} else if (putBack) {
-					pTurnover = p;
+					pTurnover = this.lastOrbPlayer;
 				}
 				return this.doTov(pTurnover);
 			}
@@ -2042,22 +2037,27 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		const {
-			blocked,
-			desperation,
-			fgaLogType,
-			probAndOne,
-			probMake,
-			probMissAndFoul,
-			type,
-		} = this.getShotInfo({
-			currentFatigue,
+		const { blocked, desperation, passer, shot } = this.getShotInfo({
+			assisted,
 			lateGamePutBack,
-			p,
-			passer,
 			tipInFromOutOfBounds,
 			putBack,
 		});
+
+		const fgaLogTypes: Record<
+			ShotTypeFromField,
+			FgaType | "fgaTpFake" | "fgaTp" | "fgaTipIn"
+		> = {
+			tipIn: "fgaTipIn",
+			putBack: "fgaPutBack",
+			threePointer: g.get("threePointers") ? "fgaTp" : "fgaTpFake",
+			midRange: "fgaMidRange",
+			atRim: "fgaAtRim",
+			lowPost: "fgaLowPost",
+		};
+		const fgaLogType = fgaLogTypes[shot.type];
+
+		const p = shot.p;
 
 		const baseLogInformation = {
 			t: this.o,
@@ -2087,7 +2087,7 @@ class GameSim extends GameSimBase {
 			});
 		}
 		if (blocked) {
-			return this.doBlk(p, type); // orb or drb
+			return this.doBlk(p, shot.type); // orb or drb
 		}
 
 		const advanceClock = () => {
@@ -2102,11 +2102,13 @@ class GameSim extends GameSimBase {
 			// Time between the shot being released and the shot being decided (either make or miss, not including time to rebound)
 			this.advanceClockSeconds(
 				random.uniform(
-					...((type === "atRim" || type === "tipIn" || type === "putBack"
+					...((shot.type === "atRim" ||
+					shot.type === "tipIn" ||
+					shot.type === "putBack"
 						? [0.2, 0.5]
-						: type === "lowPost"
+						: shot.type === "lowPost"
 							? [0.7, 1.1]
-							: type === "midRange"
+							: shot.type === "midRange"
 								? [0.9, 1.3]
 								: [1.2, 1.9]) as [number, number]),
 				),
@@ -2114,20 +2116,21 @@ class GameSim extends GameSimBase {
 		};
 
 		// Make
-		if (probMake > Math.random()) {
-			const andOne = probAndOne > Math.random();
+		if (shot.probMake > Math.random()) {
+			const andOne = shot.probAndOne > Math.random();
 			if (andOne) {
 				this.isClockRunning = false;
 			}
 			advanceClock();
-			return this.doFg(p, passer, type, andOne);
+			return this.doFg(p, passer, shot.type, andOne);
 		}
 
 		// Miss, but fouled
-		if (probMissAndFoul > Math.random()) {
+		if (shot.probMissAndFoul > Math.random()) {
 			this.isClockRunning = false;
 			advanceClock();
-			const threePointer = type === "threePointer" && g.get("threePointers");
+			const threePointer =
+				shot.type === "threePointer" && g.get("threePointers");
 
 			this.doPf({
 				t: this.d,
@@ -2146,22 +2149,22 @@ class GameSim extends GameSimBase {
 		advanceClock();
 		this.recordStat(this.o, p, "fga");
 		let fgMissLogType: FgMissType | undefined;
-		if (type === "tipIn") {
+		if (shot.type === "tipIn") {
 			this.recordStat(this.o, p, "fgaAtRim");
 			fgMissLogType = "missTipIn";
-		} else if (type === "putBack") {
+		} else if (shot.type === "putBack") {
 			this.recordStat(this.o, p, "fgaAtRim");
 			fgMissLogType = "missPutBack";
-		} else if (type === "atRim") {
+		} else if (shot.type === "atRim") {
 			this.recordStat(this.o, p, "fgaAtRim");
 			fgMissLogType = "missAtRim";
-		} else if (type === "lowPost") {
+		} else if (shot.type === "lowPost") {
 			this.recordStat(this.o, p, "fgaLowPost");
 			fgMissLogType = "missLowPost";
-		} else if (type === "midRange") {
+		} else if (shot.type === "midRange") {
 			this.recordStat(this.o, p, "fgaMidRange");
 			fgMissLogType = "missMidRange";
-		} else if (type === "threePointer") {
+		} else if (shot.type === "threePointer") {
 			this.recordStat(this.o, p, "tpa");
 			fgMissLogType = "missTp";
 		} else {

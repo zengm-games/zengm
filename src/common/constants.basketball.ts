@@ -157,7 +157,19 @@ const PLAYER_GAME_STATS = {
 const PLAYER_SUMMARY = {
 	summary: {
 		name: "Summary",
-		stats: ["gp", "pts", "trb", "ast", "fgp", "tpp", "ftp", "tsp", "per", "ws"],
+		stats: [
+			"gp",
+			"min",
+			"pts",
+			"trb",
+			"ast",
+			"fgp",
+			"tpp",
+			"ftp",
+			"tsp",
+			"per",
+			"ws",
+		],
 	},
 };
 

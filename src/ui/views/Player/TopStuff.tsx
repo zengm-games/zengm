@@ -157,7 +157,7 @@ const StatsSummary = ({
 
 	const separatorAfter = bySport({
 		baseball: onlyShowIf?.includes("SP") ? [0, 4, 7] : [0, 5, 8],
-		basketball: [0, 4, 8],
+		basketball: [0, 5, 9],
 		football: [0, 2],
 		hockey: onlyShowIf?.includes("G") ? [0, 3] : [0, 5],
 	});

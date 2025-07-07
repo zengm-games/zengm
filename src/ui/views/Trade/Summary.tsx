@@ -2,7 +2,7 @@ import { helpers } from "../../util/index.ts";
 import type { View } from "../../../common/types.ts";
 import clsx from "clsx";
 import { PlayerNameLabels, SafeHtml } from "../../components/index.tsx";
-import { ContractAmount } from "../../components/contract.tsx";
+import { ContractAmount, ContractExp } from "../../components/contract.tsx";
 import type { HandleToggle } from "./index.tsx";
 import { isSport } from "../../../common/index.ts";
 import type { MissingAsset } from "../../../worker/views/savedTrades.ts";
@@ -152,8 +152,8 @@ export const SummaryTeam = ({
 									pid={p.pid}
 									legacyName={p.name}
 								/>
-								<div className="ms-2" title={`Expires ${p.contract.exp}`}>
-									<ContractAmount p={p} />
+								<div className="ms-2">
+									<ContractAmount p={p} /> / <ContractExp p={p} />
 								</div>
 								{handleRemove ? (
 									<button

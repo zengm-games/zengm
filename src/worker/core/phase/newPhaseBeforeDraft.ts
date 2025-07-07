@@ -323,8 +323,6 @@ const newPhaseBeforeDraft = async (
 		await setChampNoPlayoffs(conditions);
 	}
 
-	await achievement.check("afterPlayoffs", conditions);
-
 	await season.doAwards(conditions);
 	const teams = await idb.getCopies.teamsPlus(
 		{
@@ -354,6 +352,9 @@ const newPhaseBeforeDraft = async (
 			await idb.cache.players.put(p);
 		}
 	}
+
+	// Check here after adding awards, for run_it_back
+	await achievement.check("afterPlayoffs", conditions);
 
 	if (g.get("challengeLoseBestPlayer")) {
 		const tids = g.get("userTids");

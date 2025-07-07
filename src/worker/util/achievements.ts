@@ -1775,6 +1775,31 @@ if (isSport("basketball")) {
 
 			when: "afterAwards",
 		},
+		{
+			slug: "small_ball",
+			name: "Small Ball",
+			desc: "Win a championship without any players over 6'5\".",
+			category: "Team Composition",
+
+			async check() {
+				const wonTitle = await userWonTitle();
+
+				if (!wonTitle) {
+					return false;
+				}
+
+				const players = await idb.cache.players.indexGetAll(
+					"playersByTid",
+					g.get("userTid"),
+				);
+
+				const cutoff = 77; // 6'5" in inches
+
+				return players.every((p) => p.hgt <= cutoff);
+			},
+
+			when: "afterPlayoffs",
+		},
 	);
 
 	// Rebuilds!

@@ -183,7 +183,8 @@ const evaluate = (
 			} else {
 				const seasons = new Set();
 				for (const row of p.stats) {
-					if (row.min > 0) {
+					// gp is for real player data before minutes were tracked
+					if (row.min > 0 || row.gp > 0) {
 						seasons.add(row.season);
 					}
 				}

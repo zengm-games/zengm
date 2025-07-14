@@ -69,7 +69,7 @@ const getNorthAmericaOnly = ({
 
 	if (
 		activeTeams.some(
-			(t) => geographicCoordinates[t.region]?.outsideNorthAmerica,
+			(t) => geographicCoordinates[t.region]?.continent !== "North America",
 		)
 	) {
 		return false;
@@ -81,7 +81,7 @@ const getNorthAmericaOnly = ({
 		if (!coordinates) {
 			throw new Error("Should never happen");
 		}
-		if (!coordinates.outsideNorthAmerica) {
+		if (coordinates.continent === "North America") {
 			numNorthAmericanTeamsAvailable += 1;
 			if (numNorthAmericanTeamsAvailable >= numTeams) {
 				return true;
@@ -101,7 +101,7 @@ const getCandidateTeams = <T extends { region: string }>(
 			return true;
 		}
 
-		return !geographicCoordinates[t.region]!.outsideNorthAmerica;
+		return geographicCoordinates[t.region]!.continent === "North America";
 	});
 };
 

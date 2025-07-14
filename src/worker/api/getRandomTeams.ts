@@ -180,7 +180,7 @@ const getRandomTeams = async ({
 
 	if (northAmericaOnly) {
 		allTeamInfos = allTeamInfos.filter(
-			(t) => !geographicCoordinates[t.region]?.outsideNorthAmerica,
+			(t) => geographicCoordinates[t.region]?.continent === "North America",
 		);
 	}
 

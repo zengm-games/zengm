@@ -446,7 +446,11 @@ const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 					style.color = endzoneTeam.colors[1];
 					style.writingMode = "vertical-lr";
 				} else {
-					style.backgroundColor = darkGreen;
+					if (t2.region.startsWith("Boise")) {
+						style.backgroundColor = "#0480ff";
+					} else {
+						style.backgroundColor = darkGreen;
+					}
 				}
 				if (ENDZONE_OFFENSE) {
 					style.transform = "rotate(180deg)";

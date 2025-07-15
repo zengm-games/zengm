@@ -645,6 +645,7 @@ const processTeamInfos = async ({
 	realTeamInfo,
 	teamInfos,
 	userTid,
+	version,
 }: {
 	gameAttributes: {
 		salaryCap: number;
@@ -653,6 +654,7 @@ const processTeamInfos = async ({
 	realTeamInfo: RealTeamInfo | undefined;
 	teamInfos: any[];
 	userTid: number;
+	version: number | undefined;
 }) => {
 	const { salaryCap, season } = gameAttributes;
 
@@ -689,6 +691,20 @@ const processTeamInfos = async ({
 			}
 
 			// initialBudget will be created in team.generate below
+		}
+	}
+
+	// Version 68 upgrade
+	if (version !== undefined && version < 68) {
+		const keys = ["imgURL", "imgURLSmall"] as const;
+		for (const t of teamInfos) {
+			for (const key of keys) {
+				if (t[key] === "/img/logos-primary/CHI.svg") {
+					t[key] = "/img/logos-primary/CHW.svg";
+				} else if (t[key] === "/img/logos-secondary/CHI.svg") {
+					t[key] = "/img/logos-secondary/CHW.svg";
+				}
+			}
 		}
 	}
 
@@ -756,6 +772,18 @@ const processTeamInfos = async ({
 						// Careful, teamSeason.tid might not be defined for imported leagues yet!
 						teamSeason.expenseLevels[key] =
 							gp * (budgetsByTid[t.tid]?.[key] ?? DEFAULT_LEVEL);
+					}
+				}
+
+				// Version 68 upgrade
+				if (version !== undefined && version < 68) {
+					const keys = ["imgURL", "imgURLSmall"] as const;
+					for (const key of keys) {
+						if (teamSeason[key] === "/img/logos-primary/CHI.svg") {
+							teamSeason[key] = "/img/logos-primary/CHW.svg";
+						} else if (teamSeason[key] === "/img/logos-secondary/CHI.svg") {
+							teamSeason[key] = "/img/logos-secondary/CHW.svg";
+						}
 					}
 				}
 
@@ -1195,19 +1223,18 @@ const beforeDBStream = async ({
 			realTeamInfo,
 			teamInfos,
 			userTid: tid,
+			version: fromFile.version,
 		});
 
-	// Update after applying real team info
-	if (realTeamInfo) {
-		gameAttributes.teamInfoCache = teams.map((t) => ({
-			abbrev: t.abbrev,
-			disabled: t.disabled,
-			imgURL: t.imgURL,
-			imgURLSmall: t.imgURLSmall,
-			name: t.name,
-			region: t.region,
-		}));
-	}
+	// Update after applying real team info and any other changes in processTeamInfos
+	gameAttributes.teamInfoCache = teams.map((t) => ({
+		abbrev: t.abbrev,
+		disabled: t.disabled,
+		imgURL: t.imgURL,
+		imgURLSmall: t.imgURLSmall,
+		name: t.name,
+		region: t.region,
+	}));
 
 	const activeTids = teams.filter((t) => !t.disabled).map((t) => t.tid);
 

@@ -1584,6 +1584,31 @@ const migrate = async ({
 
 		transaction.objectStore("players").createIndex("srID", "srID");
 	}
+
+	if (oldVersion < 68) {
+		const keys = ["imgURL", "imgURLSmall"] as const;
+		const stores = ["teams", "teamSeasons"] as const;
+		for (const store of stores) {
+			for await (const cursor of transaction.objectStore(store)) {
+				const t = cursor.value;
+
+				let updated;
+				for (const key of keys) {
+					if (t[key] === "/img/logos-primary/CHI.svg") {
+						t[key] = "/img/logos-primary/CHW.svg";
+						updated = true;
+					} else if (t[key] === "/img/logos-secondary/CHI.svg") {
+						t[key] = "/img/logos-secondary/CHW.svg";
+						updated = true;
+					}
+				}
+
+				if (updated) {
+					await cursor.update(t);
+				}
+			}
+		}
+	}
 };
 
 const connectLeague = (lid: number) =>

@@ -447,7 +447,7 @@ const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 					style.writingMode = "vertical-lr";
 				} else {
 					if (t2.region.startsWith("Boise")) {
-						style.backgroundColor = "#0480ff";
+						style.backgroundColor = boiseBlue;
 					} else {
 						style.backgroundColor = darkGreen;
 					}
@@ -533,6 +533,7 @@ const darkGreen = "#1e7e34";
 const lightGray = "#adb5bd";
 const darkGray = "#495057";
 const red = "#dc3545";
+const boiseBlue = "#0480ff";
 
 const PlayBar = ({
 	first,

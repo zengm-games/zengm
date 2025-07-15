@@ -630,7 +630,7 @@ const teamInfos: {
 
 	// 2021-05-16 - rebranded
 
-	CHI: {
+	CHW: {
 		region: "Chicago",
 		name: "Whirlwinds",
 		pop: 9.1,
@@ -1073,7 +1073,7 @@ const teamInfos: {
 			hockey: "hockey2",
 		}),
 	},
-	CHG: {
+	CHI: {
 		region: "Chicago",
 		name: "Gangsters",
 		pop: 9.1,

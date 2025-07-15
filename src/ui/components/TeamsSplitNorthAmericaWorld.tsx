@@ -24,6 +24,12 @@ export const TeamsSplitNorthAmericaWorld = <
 		return continent;
 	});
 
+	// Needed because the i in option is referring to the original teams array
+	const indexes = new Map<T, number>();
+	for (const [i, t] of teams.entries()) {
+		indexes.set(t, i);
+	}
+
 	return continents.map((continent) => {
 		const continentTeams = teamsByContinent[continent];
 
@@ -33,7 +39,7 @@ export const TeamsSplitNorthAmericaWorld = <
 
 		return (
 			<optgroup key={continent} label={continent}>
-				{continentTeams.map((t, i) => option(t, i))}
+				{continentTeams.map((t) => option(t, indexes.get(t)!))}
 			</optgroup>
 		);
 	});

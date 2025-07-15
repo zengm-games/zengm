@@ -479,6 +479,103 @@ const geographicCoordinates: Record<
 		latitude: 37.5519,
 		longitude: 126.9918,
 	},
+
+	// 2025-07-14 - new teams
+	Amsterdam: {
+		continent: "Europe",
+		latitude: 52.3676,
+		longitude: 4.9041,
+	},
+	Bogota: {
+		continent: "South America",
+		latitude: 4.711,
+		longitude: -74.0721,
+	},
+	Boise: {
+		continent: "North America",
+		latitude: 43.615,
+		longitude: -116.2023,
+	},
+	Brussels: {
+		continent: "Europe",
+		latitude: 50.8503,
+		longitude: 4.3517,
+	},
+	Copenhagen: {
+		continent: "Europe",
+		latitude: 55.6761,
+		longitude: 12.5683,
+	},
+	Johannesburg: {
+		continent: "Africa",
+		latitude: -26.2041,
+		longitude: 28.0473,
+	},
+	Kyiv: {
+		continent: "Europe",
+		latitude: 50.4501,
+		longitude: 30.5234,
+	},
+	Lagos: {
+		continent: "Africa",
+		latitude: 6.5244,
+		longitude: 3.3792,
+	},
+	Lima: {
+		continent: "South America",
+		latitude: -12.0464,
+		longitude: -77.0428,
+	},
+	"McMurdo Station": {
+		continent: "Antarctica",
+		latitude: -77.8419,
+		longitude: 166.6863,
+	},
+	Moscow: {
+		continent: "Europe",
+		latitude: 55.7558,
+		longitude: 37.6173,
+	},
+	Nashville: {
+		continent: "North America",
+		latitude: 36.1627,
+		longitude: -86.7816,
+	},
+	Omaha: {
+		continent: "North America",
+		latitude: 41.2565,
+		longitude: -95.9345,
+	},
+	Santiago: {
+		continent: "South America",
+		latitude: -33.4489,
+		longitude: -70.6693,
+	},
+	Stockholm: {
+		continent: "Europe",
+		latitude: 59.3293,
+		longitude: 18.0686,
+	},
+	Tehran: {
+		continent: "Asia",
+		latitude: 35.6892,
+		longitude: 51.389,
+	},
+	"Tel Aviv": {
+		continent: "Asia",
+		latitude: 32.0853,
+		longitude: 34.7818,
+	},
+	Taipei: {
+		continent: "Asia",
+		latitude: 25.0329,
+		longitude: 121.5654,
+	},
+	Warsaw: {
+		continent: "Europe",
+		latitude: 52.2297,
+		longitude: 21.0122,
+	},
 };
 
 export default geographicCoordinates;

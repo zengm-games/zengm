@@ -1,3 +1,14 @@
+randomize teams improvements
+- on randomize teams popup, add option to specify the number of confs/divs/teams somehow, rather than always using the current ones https://discord.com/channels/290013534023057409/290013534023057409/1020913700313509920
+- allow something better than just a boolean "North America only", like international only, europe only
+- when customizing teams in a new league, in addition to "Randomize..." have "Presets..." menu with these options https://chat.reddit.com/room/!CMNGURJla_YigoZ0B5ZaPa6y7VGTFfyvGlXZcVW-E1o%3Areddit.com
+  - Default
+  - Real teams from any season (with or without players)
+  - Largest cities (North America only)
+  - Largest cities (whole world)
+  - Smallest cities (North America only)
+  - Smallest cities (whole world)
+
 import real players
 - include stats - do it by team srID, and treat as DOES_NOT_EXIST otherwise https://old.reddit.com/r/BasketballGM/comments/1kwal9w/version_202505261259_new_import_real_players/n0bfsbr/?context=3
 
@@ -22,14 +33,6 @@ add legends mode based on league to UI somehow
   - https://discord.com/channels/290013534023057409/1382240288139116574/1383465548364382308
   - https://discord.com/channels/290013534023057409/1384327592433160233/1384957307657523344
 - what about free agents?
-
-when customizing teams in a new league, in addition to "Randomize..." have "Presets..." menu with these options https://chat.reddit.com/room/!CMNGURJla_YigoZ0B5ZaPa6y7VGTFfyvGlXZcVW-E1o%3Areddit.com
-- Default
-- Real teams from any season (with or without players)
-- Largest cities (North America only)
-- Largest cities (whole world)
-- Smallest cities (North America only)
-- Smallest cities (whole world)
 
 restart pitcher fatigue at start of regular season https://discord.com/channels/290013534023057409/944392892905037885/1383493832406204417
 
@@ -1058,8 +1061,6 @@ FBGM not kicking game tying field goal at end https://discord.com/channels/29001
 ai draft trading bug https://old.reddit.com/r/BasketballGM/comments/x75ekz/bug_ai_trading_justdrafted_players_for_a_later/
 
 FBGM AI should not decline penalties at end of game when time runs out if losing https://discord.com/channels/290013534023057409/290015591216054273/1023130922209509438
-
-on randomize teams popup, add option to specify the number of confs/divs/teams somehow, rather than always using the current ones https://discord.com/channels/290013534023057409/290013534023057409/1020913700313509920
 
 fbgm scoring summary still shows entry for penalty overturned score until another score happens https://discord.com/channels/290013534023057409/290015591216054273/1020032451642409083
 

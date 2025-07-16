@@ -756,7 +756,7 @@ const getTeamsDefault = (): TeamBasic[] => {
 				tid: 11,
 				cid: 0,
 				did: 2,
-				abbrev: "MEM",
+				abbrev: "NSH",
 			},
 
 			{

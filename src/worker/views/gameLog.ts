@@ -28,6 +28,7 @@ export const setTeamInfo = async (
 		const ind = t.tid === -1 ? 0 : 1;
 
 		if (allStars.type === "byConf" || allStars.type === "top") {
+			t.region = "";
 			t.name = allStars.teamNames[ind];
 		} else {
 			// Covers type==="draft" and undefind type, from when draft was the only option

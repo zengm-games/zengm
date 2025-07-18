@@ -187,10 +187,10 @@ export const getText = (
 			break;
 		}
 		case "strikeOut": {
-			const strikeOutText = playersByPid[event.pid].so;
+			const strikeOutText = event.numOfStrikeouts;
 			text = event.swinging
-				? `${helpers.pronoun(local.getState().gender, "He")} goes down swinging (${strikeOutText})`
-				: `Called strike three (${strikeOutText} SO)`;
+				? `${helpers.pronoun(local.getState().gender, "He")} goes down swinging - ${getName(event.pitcherPid)} (${strikeOutText} SO)`
+				: `Called strike three - ${getName(event.pitcherPid)} (${strikeOutText} SO)`;
 			bold = true;
 			break;
 		}
@@ -299,6 +299,7 @@ export const getText = (
 				if (event.numBases === 1) {
 					text = "Single!";
 				} else if (event.numBases === 2) {
+					console.log(playersByPid[event.pid].seasonStats["2b"]);
 					text = `Double! (${playersByPid[event.pid].seasonStats["2b"]})`;
 				} else if (event.numBases === 3) {
 					text = `Triple! (${playersByPid[event.pid].seasonStats["3b"]})`;

@@ -164,6 +164,7 @@ export const processTeam = (
 		if (!g.get("userTids").includes(t.id)) {
 			p2.ptModifier = 1;
 		}
+		const seasonStats: Record<string, number> = {};
 
 		// These use the same formulas as the skill definitions in player.skills!
 		for (const k of Object.keys(COMPOSITE_WEIGHTS)) {
@@ -205,8 +206,7 @@ export const processTeam = (
 			(p2 as any).pFatigue = p.pFatigue ?? 0;
 
 			// Store some pre-game season stats that are displayed in box score
-			const seasonStats: Record<string, number> = {};
-			const seasonStatsKeys = [
+			const seasonStatsKeysBaseball = [
 				"pa",
 				"bb",
 				"hbp",
@@ -222,6 +222,7 @@ export const processTeam = (
 				"sv",
 				"bs",
 				"hld",
+				"sb",
 			];
 
 			let hasStats;
@@ -234,7 +235,31 @@ export const processTeam = (
 				ps = p.stats.at(-1);
 				hasStats = exhibitionGame || statsRowIsCurrent(ps, t.id, playoffs);
 			}
-			for (const key of seasonStatsKeys) {
+			for (const key of seasonStatsKeysBaseball) {
+				seasonStats[key] = hasStats ? ps[key] : 0;
+			}
+			(p2 as any).seasonStats = seasonStats;
+		} else if (isSport("football")) {
+			const seasonStatsKeysFootball = [
+				"pssTD",
+				"rusTD",
+				"recTD",
+				"defSk",
+				"fmb",
+				"defInt",
+			];
+
+			let hasStats;
+			let ps;
+			if (allStarGame) {
+				// Only look at regular season stats, in case All-Star Game is in playoffs
+				ps = p.stats.filter((ps) => !ps.playoffs).at(-1);
+				hasStats = !!ps && ps.season === g.get("season");
+			} else {
+				ps = p.stats.at(-1);
+				hasStats = exhibitionGame || statsRowIsCurrent(ps, t.id, playoffs);
+			}
+			for (const key of seasonStatsKeysFootball) {
 				seasonStats[key] = hasStats ? ps[key] : 0;
 			}
 			(p2 as any).seasonStats = seasonStats;
@@ -307,7 +332,7 @@ export const processTeam = (
  *
  * @memberOf core.game
  * @param {IDBTransaction} ot An IndexedDB transaction on players and teams.
- * @param {Promise} Resolves to an array of team objects, ordered by tid.
+ * @returns {Promise<Record<number, undefined | ReturnType<typeof processTeam>>>} Resolves to a record of team objects, ordered by tid.
  */
 const loadTeams = async (tids: number[], conditions: Conditions) => {
 	const teams: Record<number, undefined | ReturnType<typeof processTeam>> = {};

@@ -1265,6 +1265,20 @@ const teamInfos: {
 			hockey: "hockey2",
 		}),
 	},
+
+	// 2025-07-19
+	RYD: {
+		region: "Riyadh",
+		name: "Sabres",
+		pop: 7.9,
+		colors: ["#005430", "#ffffff", "#005430"],
+		jersey: bySport({
+			baseball: "baseball3:hat3",
+			basketball: "jersey",
+			football: "football",
+			hockey: "hockey",
+		}),
+	},
 };
 
 export default teamInfos;

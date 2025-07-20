@@ -576,6 +576,13 @@ const geographicCoordinates: Record<
 		latitude: 52.2297,
 		longitude: 21.0122,
 	},
+
+	// 2025-07-19
+	Riyadh: {
+		continent: "Asia",
+		latitude: 24.7136,
+		longitude: 46.6753,
+	},
 };
 
 export default geographicCoordinates;

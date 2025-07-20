@@ -366,9 +366,7 @@ class GameSim extends GameSimBase {
 		let distance;
 
 		if (direction === "outOfPlay") {
-			// If it's obviously out of play, just log it as a foul ball immmediately
-			this.doFoul();
-
+			// If it's obviously out of play, no need to announce hit type, it'll just be logged as a foul right away
 			return {
 				type: "outOfPlay",
 			} as const;

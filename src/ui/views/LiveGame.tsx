@@ -171,7 +171,6 @@ const PlayByPlayEntry = memo(
 						imgURL={boxScore.teams[entry.t].imgURL}
 						imgURLSmall={boxScore.teams[entry.t].imgURLSmall}
 						includePlaceholderIfNoLogo
-						size={24}
 					/>
 				) : null}
 				<div

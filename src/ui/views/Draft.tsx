@@ -14,13 +14,16 @@ import {
 	DraftAbbrev,
 	MoreLinks,
 	RosterComposition,
+	TeamLogoInline,
 } from "../components/index.tsx";
-import type { View } from "../../common/types.ts";
+import type { LocalStateUI, View } from "../../common/types.ts";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../components/contract.tsx";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import PlayerNameLabels, {
+	wrappedPlayerNameLabels,
+} from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { arrayMove } from "@dnd-kit/sortable";
 import { groupByUnique } from "../../common/utils.ts";
@@ -77,6 +80,205 @@ const DraftButtons = ({
 			>
 				To end of draft
 			</button>
+		</div>
+	);
+};
+
+const StickyDraftInfoLogo = ({
+	t,
+	tid,
+}: {
+	t: LocalStateUI["teamInfoCache"][number];
+	tid: number;
+}) => {
+	return (
+		<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${tid}`])}>
+			<TeamLogoInline imgURL={t.imgURL} imgURLSmall={t.imgURLSmall} size={32} />
+		</a>
+	);
+};
+
+const StickyDraftInfoPickTeam = ({
+	draft,
+	t,
+	tid,
+}: {
+	draft: {
+		round: number;
+		pick: number;
+	};
+	t: LocalStateUI["teamInfoCache"][number];
+	tid: number;
+}) => {
+	return (
+		<>
+			{draft.round}-{draft.pick}{" "}
+			<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${tid}`])}>
+				<span className="d-md-none">{t.abbrev}</span>
+				<span className="d-none d-md-inline">
+					{t.region} {t.name}
+				</span>
+			</a>
+		</>
+	);
+};
+
+const StickyDraftInfoPickWithoutPlayers = ({
+	draft,
+	t,
+}: {
+	draft: {
+		round: number;
+		pick: number;
+		tid: number;
+	};
+	t: LocalStateUI["teamInfoCache"][number];
+}) => {
+	return (
+		<div className="d-flex align-items-center gap-2">
+			<StickyDraftInfoLogo t={t} tid={draft.tid} />
+			<div>
+				<StickyDraftInfoPickTeam draft={draft} t={t} tid={draft.tid} />
+				<div>
+					<br />
+				</div>
+			</div>
+		</div>
+	);
+};
+
+const StickyDraftYoureUp = ({ numPicks }: { numPicks: number }) => {
+	const color =
+		numPicks === 0
+			? "bg-success"
+			: numPicks === 1
+				? "bg-warning"
+				: "bg-secondary";
+
+	return (
+		<div
+			className={clsx(
+				"py-2 ps-3 pe-2 text-end rounded-start-pill text-nowrap align-self-stretch d-flex align-items-center",
+				color,
+			)}
+		>
+			<div>
+				You're up:
+				<br />
+				{numPicks < 0 ? (
+					"next year!"
+				) : numPicks === 0 ? (
+					<b>now!</b>
+				) : numPicks === 1 ? (
+					<b>next!</b>
+				) : (
+					<>
+						in <b>{numPicks}</b> picks
+					</>
+				)}
+			</div>
+		</div>
+	);
+};
+
+const StickyDraftInfo = ({
+	challengeNoRatings,
+	drafted,
+	userTids,
+}: {
+	challengeNoRatings: boolean;
+	drafted: any[];
+	userTids: number[];
+}) => {
+	const teamInfoCache = useLocal((state) => state.teamInfoCache);
+	console.log(drafted);
+
+	const currentPickIndex = drafted.findIndex((p) => p.pid === -1);
+	if (currentPickIndex === -1) {
+		return;
+	}
+
+	const currentPick = drafted[currentPickIndex].draft;
+	const prevPick = drafted[currentPickIndex - 1];
+	const nextPick = drafted[currentPickIndex + 1]?.draft;
+
+	const yourNextPickIndex = drafted.findIndex((p) =>
+		userTids.includes(p.draft.tid),
+	);
+	const yourNextPick = yourNextPickIndex - currentPickIndex;
+
+	return (
+		<div
+			className="d-flex align-items-center gap-2 mb-3 bg-secondary-subtle sticky-top"
+			style={{ marginRight: -8, top: "52px" }}
+		>
+			<div className="row flex-grow-1 bg-secondary-subtle py-1">
+				<div className="col">
+					<h4 className="mb-1">Previous pick</h4>
+					<div>
+						{prevPick ? (
+							<>
+								<div className="d-flex align-items-center gap-2">
+									<StickyDraftInfoLogo
+										t={teamInfoCache[prevPick.draft.tid]!}
+										tid={prevPick.draft.tid}
+									/>
+									<div>
+										<StickyDraftInfoPickTeam
+											draft={prevPick.draft}
+											t={teamInfoCache[prevPick.draft.tid]!}
+											tid={prevPick.draft.tid}
+										/>
+
+										<div>
+											<span>{prevPick.ratings.pos} </span>
+											<PlayerNameLabels
+												pid={prevPick.pid}
+												injury={prevPick.injury}
+												skills={prevPick.ratings.skills}
+												watch={prevPick.watch}
+												firstName={prevPick.firstName}
+												firstNameShort={prevPick.firstNameShort}
+												lastName={prevPick.lastName}
+											/>
+											<span className="ps-1">
+												{" "}
+												{!challengeNoRatings
+													? `${prevPick.ratings.ovr}/${prevPick.ratings.pot}, `
+													: null}
+												{prevPick.age} yo
+											</span>
+										</div>
+									</div>
+								</div>
+							</>
+						) : (
+							"None"
+						)}
+					</div>
+				</div>
+				<div className="col">
+					<h4 className="mb-1">Current pick</h4>
+					<StickyDraftInfoPickWithoutPlayers
+						draft={currentPick}
+						t={teamInfoCache[currentPick.tid]!}
+					/>
+				</div>
+				<div className="col">
+					<h4 className="mb-1">Next pick</h4>
+					<div>
+						{nextPick ? (
+							<StickyDraftInfoPickWithoutPlayers
+								draft={nextPick}
+								t={teamInfoCache[nextPick.tid]!}
+							/>
+						) : (
+							"None"
+						)}
+					</div>
+				</div>
+			</div>
+			<StickyDraftYoureUp numPicks={yourNextPick} />
 		</div>
 	);
 };
@@ -445,10 +647,14 @@ const Draft = ({
 	const draftedColClasses = clsx(colClass);
 	return (
 		<>
+			<MoreLinks type="draft" page="draft" draftType={draftType} />
+			<StickyDraftInfo
+				challengeNoRatings={challengeNoRatings}
+				drafted={draftedSorted}
+				userTids={userTids}
+			/>
 			<div className="d-sm-flex">
 				<div>
-					<MoreLinks type="draft" page="draft" draftType={draftType} />
-
 					{remainingPicks.length > 0 ? (
 						<>
 							{challengeNoDraftPicks && !fantasyDraft && !expansionDraft ? (

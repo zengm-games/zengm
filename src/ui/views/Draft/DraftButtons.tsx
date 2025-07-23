@@ -10,7 +10,7 @@ export const DraftButtons = ({
 	usersTurn: boolean;
 }) => {
 	return (
-		<div className="btn-group" id="draft-buttons">
+		<div className="btn-group">
 			<button
 				className="btn btn-light-bordered"
 				disabled={usersTurn && !spectator}

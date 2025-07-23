@@ -433,7 +433,7 @@ const Draft = ({
 		}
 	} else {
 		messages.push(
-			<p id="draft-buttons">
+			<p>
 				<span className="alert alert-success d-inline-block mb-0">
 					The draft is over!
 				</span>
@@ -493,7 +493,7 @@ const Draft = ({
 			) : null}
 
 			<div className={wrapperClasses}>
-				<div className={undraftedColClasses}>
+				<div className={undraftedColClasses} id="table-undrafted">
 					<h2>
 						Undrafted Players
 						<span className="float-end">
@@ -506,7 +506,7 @@ const Draft = ({
 										target.scrollIntoView(true);
 
 										// Fixed navbar
-										window.scrollBy(0, -60);
+										window.scrollBy(0, -142);
 									}
 								}}
 							>
@@ -532,12 +532,12 @@ const Draft = ({
 								type="button"
 								className={buttonClasses}
 								onClick={() => {
-									const target = document.getElementById("draft-buttons");
+									const target = document.getElementById("table-undrafted");
 									if (target) {
 										target.scrollIntoView(true);
 
 										// Fixed navbar
-										window.scrollBy(0, -60);
+										window.scrollBy(0, -142);
 									}
 								}}
 							>

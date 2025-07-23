@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
 	confirm,
@@ -385,6 +385,74 @@ const Draft = ({
 		fantasyDraft || expansionDraft ? "col-12 col-xl-6" : "col-sm-6";
 	const undraftedColClasses = clsx(colClass);
 	const draftedColClasses = clsx(colClass);
+
+	const messages = [];
+	if (remainingPicks.length > 0) {
+		if (challengeNoDraftPicks && !fantasyDraft && !expansionDraft) {
+			messages.push(
+				<div>
+					<p className="alert alert-danger d-inline-block">
+						<b>Challenge Mode:</b> Your team does not get any draft picks unless
+						you acquire them in a trade.
+					</p>
+				</div>,
+			);
+		}
+		if (spectator) {
+			messages.push(
+				<div>
+					<p className="alert alert-danger d-inline-block">
+						In spectator mode you can't make draft picks, you can only watch the
+						draft.
+					</p>
+				</div>,
+			);
+		}
+		if (expansionDraftFilteredTeamsMessage) {
+			messages.push(
+				<div>
+					<p className="alert alert-warning d-inline-block">
+						{expansionDraftFilteredTeamsMessage}
+					</p>
+				</div>,
+			);
+		}
+		if (godMode) {
+			messages.push(
+				<div className="mb-3">
+					<button
+						className="btn btn-god-mode"
+						onClick={() => {
+							setEditDraftOrder((value) => !value);
+						}}
+					>
+						Edit draft order
+					</button>
+				</div>,
+			);
+		}
+	} else {
+		messages.push(
+			<p id="draft-buttons">
+				<span className="alert alert-success d-inline-block mb-0">
+					The draft is over!
+				</span>
+			</p>,
+		);
+		if (fantasyDraft || expansionDraft) {
+			messages.push(
+				<p>
+					<span className="alert alert-warning d-inline-block mb-0">
+						Draft results from {fantasyDraft ? "fantasy" : "expansion"} drafts
+						are only temporarily viewable. When you navigate away from this page
+						or proceed to the next phase of the game, you cannot come back to
+						this page.
+					</span>
+				</p>,
+			);
+		}
+	}
+
 	return (
 		<>
 			<MoreLinks type="draft" page="draft" draftType={draftType} />
@@ -394,68 +462,16 @@ const Draft = ({
 				spectator={spectator}
 				userTids={userTids}
 			/>
-			<div className="d-sm-flex">
-				<div>
-					{remainingPicks.length > 0 ? (
-						<>
-							{challengeNoDraftPicks && !fantasyDraft && !expansionDraft ? (
-								<div>
-									<p className="alert alert-danger d-inline-block">
-										<b>Challenge Mode:</b> Your team does not get any draft
-										picks unless you acquire them in a trade.
-									</p>
-								</div>
-							) : null}
-							{spectator ? (
-								<div>
-									<p className="alert alert-danger d-inline-block">
-										In spectator mode you can't make draft picks, you can only
-										watch the draft.
-									</p>
-								</div>
-							) : null}
-							{expansionDraftFilteredTeamsMessage ? (
-								<div>
-									<p className="alert alert-warning d-inline-block">
-										{expansionDraftFilteredTeamsMessage}
-									</p>
-								</div>
-							) : null}
-							{godMode ? (
-								<div className="mb-3">
-									<button
-										className="btn btn-god-mode"
-										onClick={() => {
-											setEditDraftOrder((value) => !value);
-										}}
-									>
-										Edit draft order
-									</button>
-								</div>
-							) : null}
-						</>
-					) : (
-						<>
-							<p id="draft-buttons">
-								<span className="alert alert-success d-inline-block mb-0">
-									The draft is over!
-								</span>
-							</p>
-							{fantasyDraft || expansionDraft ? (
-								<p>
-									<span className="alert alert-warning d-inline-block mb-0">
-										Draft results from {fantasyDraft ? "fantasy" : "expansion"}{" "}
-										drafts are only temporarily viewable. When you navigate away
-										from this page or proceed to the next phase of the game, you
-										cannot come back to this page.
-									</span>
-								</p>
-							) : null}
-						</>
-					)}
-				</div>
+			<div className="d-sm-flex gap-3">
+				{messages.length > 0 ? (
+					<div>
+						{messages.map((message, i) => (
+							<Fragment key={i}>{message}</Fragment>
+						))}
+					</div>
+				) : null}
 
-				<RosterComposition className="mb-3 ms-sm-3" players={userPlayers} />
+				<RosterComposition className="mb-3" players={userPlayers} />
 			</div>
 
 			{undrafted.length > 1 ? (

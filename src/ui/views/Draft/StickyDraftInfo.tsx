@@ -199,9 +199,7 @@ export const StickyDraftInfo = ({
 										</div>
 									</div>
 								</>
-							) : (
-								"None"
-							)}
+							) : null}
 						</div>
 					</div>
 					<div className="flex-fill">

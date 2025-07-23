@@ -21,7 +21,7 @@ import Dashboard from "./Dashboard.tsx";
 import DefaultNewLeagueSettings from "./DefaultNewLeagueSettings/index.tsx";
 import DeleteOldData from "./DeleteOldData.tsx";
 import Depth from "./Depth.tsx";
-import Draft from "./Draft.tsx";
+import Draft from "./Draft/index.tsx";
 import DraftHistory from "./DraftHistory.tsx";
 import DraftLottery from "./DraftLottery.tsx";
 import DraftPicks from "./DraftPicks.tsx";

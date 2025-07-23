@@ -19,7 +19,12 @@ const Logo = ({
 
 	return (
 		<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${tid}`])}>
-			<TeamLogoInline imgURL={t.imgURL} imgURLSmall={t.imgURLSmall} size={32} />
+			<TeamLogoInline
+				imgURL={t.imgURL}
+				imgURLSmall={t.imgURLSmall}
+				includePlaceholderIfNoLogo
+				size={32}
+			/>
 		</a>
 	);
 };
@@ -40,6 +45,11 @@ const PickTeam = ({
 	t: LocalStateUI["teamInfoCache"][number];
 	tid: number;
 }) => {
+	// TODO: Error here about t being undefined happens when switching from in league to not in league (like going to Global Settings)
+	if (!t) {
+		return;
+	}
+
 	return (
 		<>
 			<span className="d-none d-sm-inline">{prefix}</span>
@@ -101,7 +111,7 @@ const YoureUp = ({
 	return (
 		<div
 			className={clsx(
-				"ps-3 pe-2 text-end rounded-start-pill text-nowrap align-self-stretch d-flex align-items-center",
+				"ps-3 pe-2 text-end rounded-start-pill align-self-stretch d-flex align-items-center",
 				color,
 			)}
 		>
@@ -153,9 +163,12 @@ export const StickyDraftInfo = ({
 	);
 	const yourNextPick = yourNextPickIndex - currentPickIndex;
 
+	// Treat as equal size, unless we need to shrink
+	const flex = "1 1 0";
+
 	return (
 		<div
-			className="sticky-top mb-3"
+			className="sticky-top mb-3 text-nowrap"
 			style={{
 				marginLeft: "-0.5rem",
 				marginRight: "-0.5rem",
@@ -164,14 +177,14 @@ export const StickyDraftInfo = ({
 			}}
 		>
 			<div
-				className="d-flex align-items-center gap-2 bg-secondary-very-subtle"
+				className="d-flex align-items-center bg-secondary-very-subtle"
 				style={{
 					paddingLeft: "0.5rem",
 					pointerEvents: "auto",
 				}}
 			>
-				<div className="d-flex flex-grow-1 py-1">
-					<div className="flex-fill">
+				<div className="d-flex flex-grow-1 gap-1 py-1">
+					<div style={{ flex }}>
 						<div>
 							{prevPick ? (
 								<>
@@ -214,14 +227,14 @@ export const StickyDraftInfo = ({
 							) : null}
 						</div>
 					</div>
-					<div className="flex-fill">
+					<div style={{ flex }}>
 						<PickWithoutPlayers
 							draft={currentPick}
 							prefix="Current pick: "
 							t={teamInfoCache[currentPick.tid]!}
 						/>
 					</div>
-					<div className="d-none d-sm-block flex-fill">
+					<div className="d-none d-sm-block" style={{ flex }}>
 						{nextPick ? (
 							<PickWithoutPlayers
 								draft={nextPick}
@@ -229,7 +242,14 @@ export const StickyDraftInfo = ({
 								t={teamInfoCache[nextPick.tid]!}
 							/>
 						) : (
-							"Next pick: none"
+							<div
+								style={{
+									// Account for no Logo
+									paddingLeft: 40,
+								}}
+							>
+								Next pick: none
+							</div>
 						)}
 					</div>
 				</div>

@@ -1191,8 +1191,16 @@ $small-scrollbar-thumb-hover-color: darken($gray-500, 10%) !default;
 	color: $black !important;
 }
 
+.bg-success {
+	color: $white !important;
+}
+
 .bg-tertiary {
 	background-color: $gray-300 !important;
+}
+
+.bg-secondary-very-subtle {
+	background-color: $gray-100 !important;
 }
 
 .touch-action-none {

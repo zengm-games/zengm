@@ -12,6 +12,7 @@ const Logo = ({
 	t: LocalStateUI["teamInfoCache"][number];
 	tid: number;
 }) => {
+	// TODO: Error here about t being undefined happens when switching from in league to not in league (like going to Global Settings)
 	return (
 		<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${tid}`])}>
 			<TeamLogoInline imgURL={t.imgURL} imgURLSmall={t.imgURLSmall} size={32} />
@@ -95,7 +96,7 @@ const YoureUp = ({ numPicks }: { numPicks: number }) => {
 			)}
 		>
 			<div>
-				You're up:
+				You're up
 				<br />
 				{numPicks < 0 ? (
 					"next year!"
@@ -151,7 +152,7 @@ export const StickyDraftInfo = ({
 			}}
 		>
 			<div
-				className="d-flex align-items-center gap-2 bg-secondary-subtle"
+				className="d-flex align-items-center gap-2 bg-secondary-very-subtle"
 				style={{
 					paddingLeft: "0.5rem",
 					pointerEvents: "auto",
@@ -227,11 +228,12 @@ export const StickyDraftInfo = ({
 			<div
 				className="d-flex"
 				style={{
+					paddingLeft: "0.5rem",
 					pointerEvents: "none",
 				}}
 			>
 				<div
-					className="bg-secondary-subtle rounded-bottom pt-1"
+					className="bg-secondary-very-subtle rounded-bottom pt-1"
 					style={{
 						pointerEvents: "auto",
 					}}

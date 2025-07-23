@@ -26,60 +26,6 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { groupByUnique } from "../../../common/utils.ts";
 import { StickyDraftInfo } from "./StickyDraftInfo.tsx";
 
-const DraftButtons = ({
-	spectator,
-	userRemaining,
-	usersTurn,
-}: {
-	spectator: boolean;
-	userRemaining: boolean;
-	usersTurn: boolean;
-}) => {
-	return (
-		<div className="btn-group" id="draft-buttons">
-			<button
-				className="btn btn-light-bordered"
-				disabled={usersTurn && !spectator}
-				onClick={async () => {
-					await toWorker("playMenu", "onePick", undefined);
-				}}
-			>
-				Sim one pick
-			</button>
-			<button
-				className="btn btn-light-bordered"
-				disabled={(usersTurn && !spectator) || !userRemaining}
-				onClick={async () => {
-					await toWorker("playMenu", "untilYourNextPick", undefined);
-				}}
-			>
-				To your next pick
-			</button>
-			<button
-				className="btn btn-light-bordered"
-				onClick={async () => {
-					if (userRemaining && !spectator) {
-						const result = await confirm(
-							"If you proceed, the AI will make your remaining picks for you. Are you sure?",
-							{
-								okText: "Let AI finish the draft",
-								cancelText: "Cancel",
-							},
-						);
-
-						if (!result) {
-							return;
-						}
-					}
-					await toWorker("playMenu", "untilEnd", undefined);
-				}}
-			>
-				To end of draft
-			</button>
-		</div>
-	);
-};
-
 const Draft = ({
 	challengeNoDraftPicks,
 	challengeNoRatings,
@@ -161,9 +107,6 @@ const Draft = ({
 	const remainingPicks = draftedSorted.filter((p) => p.pid < 0);
 	const nextPick = remainingPicks[0];
 	const usersTurn = !!(nextPick && userTids.includes(nextPick.draft.tid));
-	const userRemaining = remainingPicks.some((p) =>
-		userTids.includes(p.draft.tid),
-	);
 
 	const canEditDraftOrder = godMode && remainingPicks.length > 0;
 
@@ -448,6 +391,7 @@ const Draft = ({
 			<StickyDraftInfo
 				challengeNoRatings={challengeNoRatings}
 				drafted={draftedSorted}
+				spectator={spectator}
 				userTids={userTids}
 			/>
 			<div className="d-sm-flex">
@@ -477,13 +421,8 @@ const Draft = ({
 									</p>
 								</div>
 							) : null}
-							<div className="mb-3 d-flex gap-2 flex-wrap">
-								<DraftButtons
-									spectator={spectator}
-									userRemaining={userRemaining}
-									usersTurn={usersTurn}
-								/>
-								{godMode ? (
+							{godMode ? (
+								<div className="mb-3">
 									<button
 										className="btn btn-god-mode"
 										onClick={() => {
@@ -492,8 +431,8 @@ const Draft = ({
 									>
 										Edit draft order
 									</button>
-								) : null}
-							</div>
+								</div>
+							) : null}
 						</>
 					) : (
 						<>

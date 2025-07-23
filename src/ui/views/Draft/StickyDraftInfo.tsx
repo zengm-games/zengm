@@ -3,6 +3,7 @@ import { helpers, useLocal } from "../../util/index.ts";
 import { TeamLogoInline } from "../../components/index.tsx";
 import type { LocalStateUI } from "../../../common/types.ts";
 import PlayerNameLabels from "../../components/PlayerNameLabels.tsx";
+import { DraftButtons } from "./DraftButtons.tsx";
 
 const Logo = ({
 	t,
@@ -21,6 +22,7 @@ const Logo = ({
 const PickTeam = ({
 	draft,
 	lineBreak,
+	prefix,
 	t,
 	tid,
 }: {
@@ -29,11 +31,13 @@ const PickTeam = ({
 		pick: number;
 	};
 	lineBreak?: boolean;
+	prefix?: string;
 	t: LocalStateUI["teamInfoCache"][number];
 	tid: number;
 }) => {
 	return (
 		<>
+			<span className="d-none d-sm-inline">{prefix}</span>
 			{draft.round}-{draft.pick}
 			{lineBreak ? <br /> : " "}
 			<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${tid}`])}>
@@ -48,6 +52,7 @@ const PickTeam = ({
 
 const PickWithoutPlayers = ({
 	draft,
+	prefix,
 	t,
 }: {
 	draft: {
@@ -55,13 +60,20 @@ const PickWithoutPlayers = ({
 		pick: number;
 		tid: number;
 	};
+	prefix?: string;
 	t: LocalStateUI["teamInfoCache"][number];
 }) => {
 	return (
 		<div className="d-flex align-items-center gap-2">
 			<Logo t={t} tid={draft.tid} />
 			<div>
-				<PickTeam draft={draft} lineBreak t={t} tid={draft.tid} />
+				<PickTeam
+					draft={draft}
+					lineBreak
+					t={t}
+					prefix={prefix}
+					tid={draft.tid}
+				/>
 			</div>
 		</div>
 	);
@@ -78,7 +90,7 @@ const YoureUp = ({ numPicks }: { numPicks: number }) => {
 	return (
 		<div
 			className={clsx(
-				"py-2 ps-3 pe-2 text-end rounded-start-pill text-nowrap align-self-stretch d-flex align-items-center",
+				"ps-3 pe-2 text-end rounded-start-pill text-nowrap align-self-stretch d-flex align-items-center",
 				color,
 			)}
 		>
@@ -104,10 +116,12 @@ const YoureUp = ({ numPicks }: { numPicks: number }) => {
 export const StickyDraftInfo = ({
 	challengeNoRatings,
 	drafted,
+	spectator,
 	userTids,
 }: {
 	challengeNoRatings: boolean;
 	drafted: any[];
+	spectator: boolean;
 	userTids: number[];
 }) => {
 	const teamInfoCache = useLocal((state) => state.teamInfoCache);
@@ -128,83 +142,107 @@ export const StickyDraftInfo = ({
 
 	return (
 		<div
-			className="d-flex align-items-center gap-2 mb-3 bg-secondary-subtle sticky-top"
+			className="sticky-top mb-3"
 			style={{
 				marginLeft: "-0.5rem",
-				paddingLeft: "0.5rem",
 				marginRight: "-0.5rem",
 				top: "52px",
+				pointerEvents: "none",
 			}}
 		>
-			<div className="d-flex flex-grow-1 bg-secondary-subtle py-1">
-				<div className="flex-fill">
-					<h4 className="mb-1">Previous pick</h4>
-					<div>
-						{prevPick ? (
-							<>
-								<div className="d-flex align-items-center gap-2">
-									<Logo
-										t={teamInfoCache[prevPick.draft.tid]!}
-										tid={prevPick.draft.tid}
-									/>
-									<div>
-										<PickTeam
-											draft={prevPick.draft}
+			<div
+				className="d-flex align-items-center gap-2 bg-secondary-subtle"
+				style={{
+					paddingLeft: "0.5rem",
+					pointerEvents: "auto",
+				}}
+			>
+				<div className="d-flex flex-grow-1 py-1">
+					<div className="flex-fill">
+						<div>
+							{prevPick ? (
+								<>
+									<div className="d-flex align-items-center gap-2">
+										<Logo
 											t={teamInfoCache[prevPick.draft.tid]!}
 											tid={prevPick.draft.tid}
 										/>
-
 										<div>
-											<span className="d-none d-md-inline">
-												{prevPick.ratings.pos}{" "}
-											</span>
-											<PlayerNameLabels
-												pid={prevPick.pid}
-												injury={prevPick.injury}
-												skills={prevPick.ratings.skills}
-												watch={prevPick.watch}
-												firstName={prevPick.firstName}
-												firstNameShort={prevPick.firstNameShort}
-												lastName={prevPick.lastName}
+											<PickTeam
+												draft={prevPick.draft}
+												t={teamInfoCache[prevPick.draft.tid]!}
+												tid={prevPick.draft.tid}
 											/>
-											<span className="d-none d-md-inline ps-1">
-												{" "}
-												{!challengeNoRatings
-													? `${prevPick.ratings.ovr}/${prevPick.ratings.pot}, `
-													: null}
-												{prevPick.age} yo
-											</span>
+
+											<div>
+												<span className="d-none d-md-inline">
+													{prevPick.ratings.pos}{" "}
+												</span>
+												<PlayerNameLabels
+													pid={prevPick.pid}
+													injury={prevPick.injury}
+													skills={prevPick.ratings.skills}
+													watch={prevPick.watch}
+													firstName={prevPick.firstName}
+													firstNameShort={prevPick.firstNameShort}
+													lastName={prevPick.lastName}
+												/>
+												<span className="d-none d-md-inline ps-1">
+													{" "}
+													{!challengeNoRatings
+														? `${prevPick.ratings.ovr}/${prevPick.ratings.pot}, `
+														: null}
+													{prevPick.age} yo
+												</span>
+											</div>
 										</div>
 									</div>
-								</div>
-							</>
-						) : (
-							"None"
-						)}
+								</>
+							) : (
+								"None"
+							)}
+						</div>
 					</div>
-				</div>
-				<div className="flex-fill">
-					<h4 className="mb-1">Current pick</h4>
-					<PickWithoutPlayers
-						draft={currentPick}
-						t={teamInfoCache[currentPick.tid]!}
-					/>
-				</div>
-				<div className="d-none d-sm-block flex-fill">
-					<h4 className="mb-1">Next pick</h4>
-					<div>
+					<div className="flex-fill">
+						<PickWithoutPlayers
+							draft={currentPick}
+							prefix="Current pick: "
+							t={teamInfoCache[currentPick.tid]!}
+						/>
+					</div>
+					<div className="d-none d-sm-block flex-fill">
 						{nextPick ? (
 							<PickWithoutPlayers
 								draft={nextPick}
+								prefix="Next pick: "
 								t={teamInfoCache[nextPick.tid]!}
 							/>
 						) : (
-							"None"
+							"Next pick: none"
 						)}
 					</div>
 				</div>
+				<YoureUp numPicks={yourNextPick} />
 			</div>
-			<YoureUp numPicks={yourNextPick} />
+			<div
+				className="d-flex"
+				style={{
+					pointerEvents: "none",
+				}}
+			>
+				<div
+					className="bg-secondary-subtle rounded-bottom pt-1"
+					style={{
+						pointerEvents: "auto",
+					}}
+				>
+					<DraftButtons
+						spectator={spectator}
+						userRemaining={yourNextPickIndex !== -1}
+						usersTurn={yourNextPick === 0}
+					/>
+				</div>
+			</div>
 		</div>
 	);
 };

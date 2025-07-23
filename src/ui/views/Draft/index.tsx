@@ -459,6 +459,7 @@ const Draft = ({
 			<StickyDraftInfo
 				challengeNoRatings={challengeNoRatings}
 				drafted={draftedSorted}
+				expansionOrFantasyDraft={expansionDraft || fantasyDraft}
 				spectator={spectator}
 				userTids={userTids}
 			/>

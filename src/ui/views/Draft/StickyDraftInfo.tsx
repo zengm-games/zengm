@@ -13,6 +13,10 @@ const Logo = ({
 	tid: number;
 }) => {
 	// TODO: Error here about t being undefined happens when switching from in league to not in league (like going to Global Settings)
+	if (!t) {
+		return;
+	}
+
 	return (
 		<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${tid}`])}>
 			<TeamLogoInline imgURL={t.imgURL} imgURLSmall={t.imgURLSmall} size={32} />
@@ -80,7 +84,13 @@ const PickWithoutPlayers = ({
 	);
 };
 
-const YoureUp = ({ numPicks }: { numPicks: number }) => {
+const YoureUp = ({
+	expansionOrFantasyDraft,
+	numPicks,
+}: {
+	expansionOrFantasyDraft: boolean;
+	numPicks: number;
+}) => {
 	const color =
 		numPicks === 0
 			? "bg-success"
@@ -99,7 +109,7 @@ const YoureUp = ({ numPicks }: { numPicks: number }) => {
 				You're up:
 				<br />
 				{numPicks < 0 ? (
-					"next year!"
+					`next ${expansionOrFantasyDraft ? "draft" : "year"}!`
 				) : numPicks === 0 ? (
 					<b>now!</b>
 				) : numPicks === 1 ? (
@@ -116,11 +126,13 @@ const YoureUp = ({ numPicks }: { numPicks: number }) => {
 
 export const StickyDraftInfo = ({
 	challengeNoRatings,
+	expansionOrFantasyDraft,
 	drafted,
 	spectator,
 	userTids,
 }: {
 	challengeNoRatings: boolean;
+	expansionOrFantasyDraft: boolean;
 	drafted: any[];
 	spectator: boolean;
 	userTids: number[];
@@ -221,7 +233,10 @@ export const StickyDraftInfo = ({
 						)}
 					</div>
 				</div>
-				<YoureUp numPicks={yourNextPick} />
+				<YoureUp
+					expansionOrFantasyDraft={expansionOrFantasyDraft}
+					numPicks={yourNextPick}
+				/>
 			</div>
 			<div
 				className="d-flex"

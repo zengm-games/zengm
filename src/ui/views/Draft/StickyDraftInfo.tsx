@@ -96,7 +96,7 @@ const YoureUp = ({ numPicks }: { numPicks: number }) => {
 			)}
 		>
 			<div>
-				You're up
+				You're up:
 				<br />
 				{numPicks < 0 ? (
 					"next year!"

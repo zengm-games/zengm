@@ -6,6 +6,7 @@ export const continents = [
 	"Europe",
 	"South America",
 	"Antarctica",
+	"Unknown",
 ] as const;
 type Continent = (typeof continents)[number];
 

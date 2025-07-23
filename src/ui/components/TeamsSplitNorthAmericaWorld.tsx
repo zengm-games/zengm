@@ -18,7 +18,7 @@ export const TeamsSplitNorthAmericaWorld = <
 	const teamsByContinent = groupBy(teams, (t) => {
 		const continent = geographicCoordinates[t.region]?.continent;
 		if (continent === undefined) {
-			throw new Error(`Unknown region ${t.region}`);
+			return "Unknown";
 		}
 
 		return continent;

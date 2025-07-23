@@ -48,17 +48,15 @@ const DraftButtons = ({
 			>
 				Sim one pick
 			</button>
-			{userRemaining ? (
-				<button
-					className="btn btn-light-bordered"
-					disabled={usersTurn && !spectator}
-					onClick={async () => {
-						await toWorker("playMenu", "untilYourNextPick", undefined);
-					}}
-				>
-					To your next pick
-				</button>
-			) : null}
+			<button
+				className="btn btn-light-bordered"
+				disabled={(usersTurn && !spectator) || !userRemaining}
+				onClick={async () => {
+					await toWorker("playMenu", "untilYourNextPick", undefined);
+				}}
+			>
+				To your next pick
+			</button>
 			<button
 				className="btn btn-light-bordered"
 				onClick={async () => {
@@ -100,6 +98,7 @@ const StickyDraftInfoLogo = ({
 
 const StickyDraftInfoPickTeam = ({
 	draft,
+	lineBreak,
 	t,
 	tid,
 }: {
@@ -107,12 +106,14 @@ const StickyDraftInfoPickTeam = ({
 		round: number;
 		pick: number;
 	};
+	lineBreak?: boolean;
 	t: LocalStateUI["teamInfoCache"][number];
 	tid: number;
 }) => {
 	return (
 		<>
-			{draft.round}-{draft.pick}{" "}
+			{draft.round}-{draft.pick}
+			{lineBreak ? <br /> : " "}
 			<a href={helpers.leagueUrl(["roster", `${t.abbrev}_${tid}`])}>
 				<span className="d-md-none">{t.abbrev}</span>
 				<span className="d-none d-md-inline">
@@ -138,10 +139,12 @@ const StickyDraftInfoPickWithoutPlayers = ({
 		<div className="d-flex align-items-center gap-2">
 			<StickyDraftInfoLogo t={t} tid={draft.tid} />
 			<div>
-				<StickyDraftInfoPickTeam draft={draft} t={t} tid={draft.tid} />
-				<div>
-					<br />
-				</div>
+				<StickyDraftInfoPickTeam
+					draft={draft}
+					lineBreak
+					t={t}
+					tid={draft.tid}
+				/>
 			</div>
 		</div>
 	);
@@ -191,7 +194,6 @@ const StickyDraftInfo = ({
 	userTids: number[];
 }) => {
 	const teamInfoCache = useLocal((state) => state.teamInfoCache);
-	console.log(drafted);
 
 	const currentPickIndex = drafted.findIndex((p) => p.pid === -1);
 	if (currentPickIndex === -1) {
@@ -202,18 +204,23 @@ const StickyDraftInfo = ({
 	const prevPick = drafted[currentPickIndex - 1];
 	const nextPick = drafted[currentPickIndex + 1]?.draft;
 
-	const yourNextPickIndex = drafted.findIndex((p) =>
-		userTids.includes(p.draft.tid),
+	const yourNextPickIndex = drafted.findIndex(
+		(p, i) => i >= currentPickIndex && userTids.includes(p.draft.tid),
 	);
 	const yourNextPick = yourNextPickIndex - currentPickIndex;
 
 	return (
 		<div
 			className="d-flex align-items-center gap-2 mb-3 bg-secondary-subtle sticky-top"
-			style={{ marginRight: -8, top: "52px" }}
+			style={{
+				marginLeft: "-0.5rem",
+				paddingLeft: "0.5rem",
+				marginRight: "-0.5rem",
+				top: "52px",
+			}}
 		>
-			<div className="row flex-grow-1 bg-secondary-subtle py-1">
-				<div className="col">
+			<div className="d-flex flex-grow-1 bg-secondary-subtle py-1">
+				<div className="flex-fill">
 					<h4 className="mb-1">Previous pick</h4>
 					<div>
 						{prevPick ? (
@@ -231,7 +238,9 @@ const StickyDraftInfo = ({
 										/>
 
 										<div>
-											<span>{prevPick.ratings.pos} </span>
+											<span className="d-none d-md-inline">
+												{prevPick.ratings.pos}{" "}
+											</span>
 											<PlayerNameLabels
 												pid={prevPick.pid}
 												injury={prevPick.injury}
@@ -241,7 +250,7 @@ const StickyDraftInfo = ({
 												firstNameShort={prevPick.firstNameShort}
 												lastName={prevPick.lastName}
 											/>
-											<span className="ps-1">
+											<span className="d-none d-md-inline ps-1">
 												{" "}
 												{!challengeNoRatings
 													? `${prevPick.ratings.ovr}/${prevPick.ratings.pot}, `
@@ -257,14 +266,14 @@ const StickyDraftInfo = ({
 						)}
 					</div>
 				</div>
-				<div className="col">
+				<div className="flex-fill">
 					<h4 className="mb-1">Current pick</h4>
 					<StickyDraftInfoPickWithoutPlayers
 						draft={currentPick}
 						t={teamInfoCache[currentPick.tid]!}
 					/>
 				</div>
-				<div className="col">
+				<div className="d-none d-sm-block flex-fill">
 					<h4 className="mb-1">Next pick</h4>
 					<div>
 						{nextPick ? (

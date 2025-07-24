@@ -105,7 +105,7 @@ const TeamNameAndScore = ({
 }) => {
 	return (
 		<div className="d-flex">
-			{boxScore.possession !== undefined ? (
+			{live && !boxScore.gameOver ? (
 				<span
 					className={
 						boxScore.possession === possessionNum
@@ -201,7 +201,7 @@ export const HeadlineScore = ({
 					{boxScore.overtime ? <div>&nbsp;{boxScore.overtime}</div> : null}
 				</div>
 			</h2>
-			{live ? (
+			{live && boxScore.quarter !== "" ? (
 				<div>
 					<span className="d-none d-sm-inline">
 						{boxScore.gameOver

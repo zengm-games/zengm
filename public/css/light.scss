@@ -704,14 +704,12 @@ tr.table-warning:hover > td {
 		overflow: auto;
 	}
 }
-@include media-breakpoint-down(md) {
-	.live-game-affix-mobile {
-		position: sticky;
-		top: 51px; // 52px leaves a gap for some reason
+.live-game-sticky {
+	position: sticky;
+	top: 52px;
 
-		// Puts it over sticky column headers
-		z-index: 1;
-	}
+	// Puts it over sticky column headers
+	z-index: 1;
 }
 
 // Keep in sync with trade/index.tsx

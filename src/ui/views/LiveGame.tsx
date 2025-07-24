@@ -961,85 +961,6 @@ export const LiveGame = (props: View<"liveGame">) => {
 				</p>
 			) : null}
 
-			{boxScore.current.gid >= 0 ? (
-				<div className="live-game-affix-mobile mb-3 d-md-none">
-					<div className="bg-white">
-						<HeadlineScore boxScore={boxScore.current} small />
-						<div className="d-flex align-items-center">
-							<PlayPauseNext
-								className="me-2"
-								disabled={boxScore.current.gameOver}
-								fastForwardAlignRight
-								fastForwards={fastForwardMenuItems}
-								onPlay={handlePlay}
-								onPause={handlePause}
-								onNext={handleNextPlay}
-								paused={paused}
-								titlePlay="Resume Simulation"
-								titlePause="Pause Simulation"
-								titleNext="Show Next Play"
-								// Since we have two PlayPauseNexts rendered, ignore shortcuts on one
-								ignoreKeyboardShortcuts
-							/>
-							<input
-								type="range"
-								className="form-range flex-grow-1"
-								min="1"
-								max="33"
-								step="1"
-								value={speed}
-								onChange={handleSpeedChange}
-								title="Speed"
-							/>
-						</div>
-					</div>
-					<div className="d-flex">
-						<div className="ms-auto btn-group">
-							<button
-								className="btn btn-light-bordered"
-								onClick={() => {
-									scrollTop.current?.scrollIntoView();
-								}}
-							>
-								Top
-							</button>
-							{!isSport("football") ? (
-								<>
-									<button
-										className="btn btn-light-bordered"
-										onClick={() => {
-											document
-												.getElementById("scroll-team-1")
-												?.scrollIntoView();
-										}}
-									>
-										{boxScore.current.teams[0].abbrev}
-									</button>
-									<button
-										className="btn btn-light-bordered"
-										onClick={() => {
-											document
-												.getElementById("scroll-team-2")
-												?.scrollIntoView();
-										}}
-									>
-										{boxScore.current.teams[1].abbrev}
-									</button>
-								</>
-							) : null}
-							<button
-								className="btn btn-light-bordered"
-								onClick={() => {
-									playByPlayDiv.current?.scrollIntoView();
-								}}
-							>
-								Plays
-							</button>
-						</div>
-					</div>
-				</div>
-			) : null}
-
 			<div
 				className="row"
 				ref={scrollTop}
@@ -1049,9 +970,88 @@ export const LiveGame = (props: View<"liveGame">) => {
 			>
 				<div className="col-md-9">
 					{boxScore.current.gid >= 0 ? (
+						<div className="live-game-sticky mb-3">
+							<div className="bg-white pt-md-2">
+								<HeadlineScore boxScore={boxScore.current} live />
+								<div className="d-flex align-items-center d-md-none">
+									<PlayPauseNext
+										className="me-2"
+										disabled={boxScore.current.gameOver}
+										fastForwardAlignRight
+										fastForwards={fastForwardMenuItems}
+										onPlay={handlePlay}
+										onPause={handlePause}
+										onNext={handleNextPlay}
+										paused={paused}
+										titlePlay="Resume Simulation"
+										titlePause="Pause Simulation"
+										titleNext="Show Next Play"
+										// Since we have two PlayPauseNexts rendered, ignore shortcuts on one
+										ignoreKeyboardShortcuts
+									/>
+									<input
+										type="range"
+										className="form-range flex-grow-1"
+										min="1"
+										max="33"
+										step="1"
+										value={speed}
+										onChange={handleSpeedChange}
+										title="Speed"
+									/>
+								</div>
+							</div>
+							<div className="d-flex d-md-none">
+								<div className="ms-auto btn-group">
+									<button
+										className="btn btn-light-bordered"
+										onClick={() => {
+											scrollTop.current?.scrollIntoView();
+										}}
+									>
+										Top
+									</button>
+									{!isSport("football") ? (
+										<>
+											<button
+												className="btn btn-light-bordered"
+												onClick={() => {
+													document
+														.getElementById("scroll-team-1")
+														?.scrollIntoView();
+												}}
+											>
+												{boxScore.current.teams[0].abbrev}
+											</button>
+											<button
+												className="btn btn-light-bordered"
+												onClick={() => {
+													document
+														.getElementById("scroll-team-2")
+														?.scrollIntoView();
+												}}
+											>
+												{boxScore.current.teams[1].abbrev}
+											</button>
+										</>
+									) : null}
+									<button
+										className="btn btn-light-bordered"
+										onClick={() => {
+											playByPlayDiv.current?.scrollIntoView();
+										}}
+									>
+										Plays
+									</button>
+								</div>
+							</div>
+						</div>
+					) : null}
+					{boxScore.current.gid >= 0 ? (
 						<BoxScoreWrapper
-							boxScore={boxScore.current}
 							Row={PlayerRow}
+							boxScore={boxScore.current}
+							live
 							playIndex={playIndex}
 							sportState={sportState.current}
 						/>

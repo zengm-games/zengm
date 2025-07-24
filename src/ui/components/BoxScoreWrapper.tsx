@@ -84,7 +84,9 @@ const TeamLogo = ({
 				>
 					<img className="mw-100 mh-100" src={t.imgURL} alt="" />
 				</TeamNameLink>
-				<div className="mt-1 mb-3 fw-bold">{helpers.formatRecord(t)}</div>
+				<div className="mt-1 mb-3 fw-bold text-center">
+					{helpers.formatRecord(t)}
+				</div>
 			</div>
 		</div>
 	) : null;
@@ -92,19 +94,15 @@ const TeamLogo = ({
 
 const TeamNameAndScore = ({
 	boxScore,
+	live,
 	possessionNum,
-	small,
 	t,
 }: {
 	boxScore: any;
+	live: boolean | undefined;
 	possessionNum: 0 | 1;
-	small: boolean | undefined;
 	t: any;
 }) => {
-	const className = small
-		? "d-none"
-		: `d-none d-${boxScore.exhibition ? "md" : "sm"}-inline`;
-
 	return (
 		<div className="d-flex">
 			{boxScore.possession !== undefined ? (
@@ -124,8 +122,11 @@ const TeamNameAndScore = ({
 			<div>
 				<TeamNameLink season={boxScore.season} t={t}>
 					{t.season !== undefined ? `${t.season} ` : null}
-					<span className={className}>{t.region} </span>
-					{t.name}
+					<span className="d-none d-lg-inline">
+						{t.region} {t.name}
+					</span>
+					<span className="d-none d-sm-inline d-lg-none">{t.name}</span>
+					<span className="d-inline d-sm-none">{t.abbrev}</span>
 				</TeamNameLink>
 				{t.timeouts !== undefined && STARTING_NUM_TIMEOUTS !== undefined ? (
 					<div
@@ -149,15 +150,14 @@ const TeamNameAndScore = ({
 
 export const HeadlineScore = ({
 	boxScore,
-	small,
+	live,
 }: {
 	boxScore: any;
-	small?: boolean;
+	live?: boolean;
 }) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
 	// change in the future.
-	const liveGameSim = boxScore.won?.name === undefined;
 	const t0 =
 		boxScore.won?.name !== undefined ? boxScore.won : boxScore.teams[0];
 	const t1 =
@@ -168,21 +168,19 @@ export const HeadlineScore = ({
 	return (
 		<div
 			className={
-				small
+				live
 					? "d-flex align-items-center flex-wrap justify-content-between gap-3 row-gap-0 mb-2"
-					: liveGameSim
-						? "d-none d-md-block"
-						: undefined
+					: undefined
 			}
 		>
 			<h2
-				className={`d-flex flex-wrap justify-content-center ${small ? "mb-0" : liveGameSim ? "mb-1" : "mb-2"}`}
+				className={`d-flex flex-wrap justify-content-center ${live ? "mb-0" : "mb-2"}`}
 			>
 				<div className="d-flex">
 					<TeamNameAndScore
 						boxScore={boxScore}
 						possessionNum={0}
-						small={small}
+						live={live}
 						t={t0}
 					/>
 					{shootout ? (
@@ -194,7 +192,7 @@ export const HeadlineScore = ({
 					<TeamNameAndScore
 						boxScore={boxScore}
 						possessionNum={1}
-						small={small}
+						live={live}
 						t={t1}
 					/>
 					{shootout ? (
@@ -203,8 +201,8 @@ export const HeadlineScore = ({
 					{boxScore.overtime ? <div>&nbsp;{boxScore.overtime}</div> : null}
 				</div>
 			</h2>
-			{liveGameSim ? (
-				<div className={small ? undefined : "mb-2"}>
+			{live ? (
+				<div>
 					<span className="d-none d-sm-inline">
 						{boxScore.gameOver
 							? "Final score"
@@ -827,6 +825,9 @@ const DetailedScore = ({
 		});
 	}
 
+	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
+	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
+	// change in the future.
 	const liveGameSim = boxScore.won?.name === undefined;
 
 	return (
@@ -1015,6 +1016,7 @@ const BoxScoreWrapper = ({
 	abbrev,
 	boxScore,
 	currentGidInList,
+	live,
 	nextGid,
 	playIndex,
 	prevGid,
@@ -1026,6 +1028,7 @@ const BoxScoreWrapper = ({
 	abbrev?: string;
 	boxScore: any;
 	currentGidInList?: boolean;
+	live?: boolean;
 	nextGid?: number;
 	playIndex?: number;
 	prevGid?: number;
@@ -1131,10 +1134,10 @@ const BoxScoreWrapper = ({
 
 	return (
 		<>
-			<div className="d-flex text-center">
+			<div className="d-flex align-items-center">
 				<TeamLogo season={boxScore.season} t={t0} />
 				<div className="mx-auto flex-shrink-0 mb-2 mw-100">
-					<HeadlineScore boxScore={boxScore} />
+					{!live ? <HeadlineScore boxScore={boxScore} /> : null}
 					<DetailedScore
 						abbrev={abbrev}
 						boxScore={boxScore}

@@ -1061,7 +1061,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 				</div>
 				<div className="col-md-3">
 					<div className="live-game-affix">
-						<div className="d-none d-md-flex align-items-center mb-3">
+						<div className="d-none d-md-flex align-items-center mb-3 pt-md-2">
 							<PlayPauseNext
 								className="me-2"
 								disabled={boxScore.current.gameOver}

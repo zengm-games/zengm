@@ -19,6 +19,7 @@ import { range } from "../../common/utils.ts";
 import getWinner from "../../common/getWinner.ts";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import Note from "../views/Player/Note.tsx";
+import TeamLogoInline from "./TeamLogoInline.tsx";
 
 const TeamNameLink = ({
 	children,
@@ -103,6 +104,8 @@ const TeamNameAndScore = ({
 	possessionNum: 0 | 1;
 	t: any;
 }) => {
+	const LOGO_SIZE = 24;
+
 	return (
 		<div className="d-flex">
 			{live && !boxScore.gameOver ? (
@@ -120,18 +123,30 @@ const TeamNameAndScore = ({
 				<span className="text-body-secondary">{t.playoffs.seed}.&nbsp;</span>
 			) : null}
 			<div>
-				<TeamNameLink season={boxScore.season} t={t}>
-					{t.season !== undefined ? `${t.season} ` : null}
-					<span className="d-none d-lg-inline">
-						{t.region} {t.name}
-					</span>
-					<span className="d-none d-sm-inline d-lg-none">{t.name}</span>
-					<span className="d-inline d-sm-none">{t.abbrev}</span>
+				<TeamNameLink
+					className="d-flex align-items-center gap-1"
+					season={boxScore.season}
+					t={t}
+				>
+					<TeamLogoInline
+						imgURL={t.imgURL}
+						imgURLSmall={t.imgURLSmall}
+						size={LOGO_SIZE}
+					/>
+					<div>
+						{t.season !== undefined ? `${t.season} ` : null}
+						<span className="d-none d-lg-inline">
+							{t.region} {t.name}
+						</span>
+						<span className="d-none d-sm-inline d-lg-none">{t.name}</span>
+						<span className="d-inline d-sm-none">{t.abbrev}</span>
+					</div>
 				</TeamNameLink>
 				{t.timeouts !== undefined && STARTING_NUM_TIMEOUTS !== undefined ? (
 					<div
 						className="d-flex gap-1 pt-1"
 						title={`${t.timeouts} ${helpers.plural("timeout", t.timeouts)} remaining`}
+						style={{ marginLeft: LOGO_SIZE + 4 }}
 					>
 						{range(STARTING_NUM_TIMEOUTS).map((i) => (
 							<div

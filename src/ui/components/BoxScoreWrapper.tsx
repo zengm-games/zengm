@@ -135,10 +135,16 @@ const TeamNameAndScore = ({
 					/>
 					<div>
 						{t.season !== undefined ? `${t.season} ` : null}
-						<span className="d-none d-lg-inline">
+						<span className="d-none d-xl-inline">
 							{t.region} {t.name}
 						</span>
-						<span className="d-none d-sm-inline d-lg-none">{t.name}</span>
+						<span className="d-none d-lg-inline d-xl-none">
+							{boxScore.exhibition ? "" : `${t.region} `}
+							{t.name}
+						</span>
+						<span className="d-none d-sm-inline d-lg-none">
+							{boxScore.exhibition ? t.abbrev : t.name}
+						</span>
 						<span className="d-inline d-sm-none">{t.abbrev}</span>
 					</div>
 				</TeamNameLink>
@@ -184,7 +190,7 @@ export const HeadlineScore = ({
 		<div
 			className={
 				live
-					? "d-flex align-items-center flex-wrap justify-content-between gap-3 row-gap-0 mb-2"
+					? "d-flex align-items-center flex-wrap justify-content-between gap-3 row-gap-0 pb-1"
 					: undefined
 			}
 		>
@@ -218,7 +224,7 @@ export const HeadlineScore = ({
 			</h2>
 			{live && boxScore.quarter !== "" ? (
 				<div>
-					<span className="d-none d-sm-inline">
+					<span className="d-none d-xl-inline">
 						{boxScore.gameOver
 							? "Final score"
 							: boxScore.shootout
@@ -234,7 +240,7 @@ export const HeadlineScore = ({
 											} of the ${boxScore.quarter}`
 										: `${boxScore.quarter}, ${boxScore.time} remaining`}
 					</span>
-					<span className="d-sm-none">
+					<span className="d-xl-none">
 						{boxScore.gameOver
 							? "F"
 							: boxScore.elamTarget !== undefined

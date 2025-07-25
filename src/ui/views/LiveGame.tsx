@@ -24,7 +24,7 @@ import { bySport, getPeriodName, isSport } from "../../common/index.ts";
 import useLocalStorageState from "use-local-storage-state";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_BASEBALL } from "../util/processLiveGameEvents.baseball.tsx";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_FOOTBALL } from "../util/processLiveGameEvents.football.tsx";
-import { HeadlineScore } from "../components/BoxScoreWrapper.tsx";
+import { HeadlineScoreLive } from "../components/BoxScoreWrapper.tsx";
 
 type PlayerRowProps = {
 	exhibition?: boolean;
@@ -972,7 +972,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 					{boxScore.current.gid >= 0 ? (
 						<div className="live-game-sticky mb-3">
 							<div className="bg-white pt-1 pt-md-2">
-								<HeadlineScore boxScore={boxScore.current} live />
+								<HeadlineScoreLive boxScore={boxScore.current} />
 								<div className="d-flex align-items-center d-md-none pt-1">
 									<PlayPauseNext
 										className="me-2"

@@ -97,11 +97,13 @@ const TeamNameAndScore = ({
 	boxScore,
 	live,
 	possessionNum,
+	shootout,
 	t,
 }: {
 	boxScore: any;
 	live: boolean | undefined;
 	possessionNum: 0 | 1;
+	shootout: boolean;
 	t: any;
 }) => {
 	const LOGO_SIZE = 24;
@@ -165,17 +167,104 @@ const TeamNameAndScore = ({
 				) : null}
 			</div>
 			<div>&nbsp;{t.pts}</div>
+			{shootout ? (
+				<div className="text-body-secondary">&nbsp;({t.sPts})</div>
+			) : null}
 		</div>
 	);
 };
 
-export const HeadlineScore = ({
-	boxScore,
-	live,
-}: {
-	boxScore: any;
-	live?: boolean;
-}) => {
+export const HeadlineScoreLive = ({ boxScore }: { boxScore: any }) => {
+	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
+	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
+	// change in the future.
+	const t0 =
+		boxScore.won?.name !== undefined ? boxScore.won : boxScore.teams[0];
+	const t1 =
+		boxScore.lost?.name !== undefined ? boxScore.lost : boxScore.teams[1];
+
+	const shootout = t0.sPts !== undefined;
+
+	const showClock = boxScore.quarter !== "";
+
+	let clockText: string | undefined;
+	if (showClock) {
+		clockText = boxScore.gameOver
+			? "F"
+			: boxScore.elamTarget !== undefined
+				? `Target: ${boxScore.elamTarget} pts`
+				: isSport("baseball")
+					? `${
+							boxScore.teams[0].ptsQtrs.length ===
+							boxScore.teams[1].ptsQtrs.length
+								? "B"
+								: "T"
+						}${boxScore.quarterShort}`
+					: `${boxScore.quarterShort}, ${boxScore.time}`;
+	}
+
+	const [clockWidth, setClockWidth] = useState<number | undefined>();
+	useEffect(() => {
+		const updateWidth = () => {
+			if (clockText !== undefined) {
+				const PADDING = 4;
+
+				const el = document.createElement("span");
+				el.textContent = clockText;
+				document.body.append(el);
+				const width = el.offsetWidth + PADDING;
+				document.body.removeChild(el);
+				setClockWidth(width);
+			}
+		};
+
+		updateWidth();
+
+		window.addEventListener("optimizedResize", updateWidth);
+		return () => {
+			window.removeEventListener("optimizedResize", updateWidth);
+		};
+	}, [clockText]);
+
+	const clockStyle =
+		showClock && clockWidth !== undefined
+			? {
+					width: clockWidth,
+				}
+			: undefined;
+
+	return (
+		<div className="d-flex align-items-center justify-content-between flex-wrap pb-1">
+			<div className="d-none d-md-block" style={clockStyle} />
+			<h2 className="d-flex flex-wrap justify-content-center mb-0 gap-3">
+				<div className="d-flex">
+					<TeamNameAndScore
+						boxScore={boxScore}
+						possessionNum={0}
+						live
+						shootout={shootout}
+						t={t0}
+					/>
+				</div>
+				<div className="d-flex">
+					<TeamNameAndScore
+						boxScore={boxScore}
+						possessionNum={1}
+						live
+						shootout={shootout}
+						t={t1}
+					/>
+					{boxScore.overtime ? <div>&nbsp;{boxScore.overtime}</div> : null}
+				</div>
+			</h2>
+			<div className="text-end text-nowrap" style={clockStyle}>
+				{clockStyle ? clockText : undefined}
+			</div>
+		</div>
+	);
+};
+
+const HeadlineScore = ({ boxScore }: { boxScore: any }) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
 	// change in the future.
@@ -187,75 +276,28 @@ export const HeadlineScore = ({
 	const shootout = t0.sPts !== undefined;
 
 	return (
-		<div
-			className={
-				live
-					? "d-flex align-items-center flex-wrap justify-content-between gap-3 row-gap-0 pb-1"
-					: undefined
-			}
-		>
-			<h2
-				className={`d-flex flex-wrap justify-content-center ${live ? "mb-0" : "mb-2"}`}
-			>
+		<div>
+			<h2 className="d-flex flex-wrap justify-content-center mb-2 gap-3">
 				<div className="d-flex">
 					<TeamNameAndScore
 						boxScore={boxScore}
 						possessionNum={0}
-						live={live}
+						live={false}
+						shootout={shootout}
 						t={t0}
 					/>
-					{shootout ? (
-						<div className="text-body-secondary">&nbsp;({t0.sPts})</div>
-					) : null}
-					<div>,&nbsp;</div>
 				</div>
 				<div className="d-flex">
 					<TeamNameAndScore
 						boxScore={boxScore}
 						possessionNum={1}
-						live={live}
+						live={false}
+						shootout={shootout}
 						t={t1}
 					/>
-					{shootout ? (
-						<div className="text-body-secondary">&nbsp;({t1.sPts})</div>
-					) : null}
 					{boxScore.overtime ? <div>&nbsp;{boxScore.overtime}</div> : null}
 				</div>
 			</h2>
-			{live && boxScore.quarter !== "" ? (
-				<div>
-					<span className="d-none d-xl-inline">
-						{boxScore.gameOver
-							? "Final score"
-							: boxScore.shootout
-								? "Shootout"
-								: boxScore.elamTarget !== undefined
-									? `Elam Ending target: ${boxScore.elamTarget} points`
-									: isSport("baseball")
-										? `${
-												boxScore.teams[0].ptsQtrs.length ===
-												boxScore.teams[1].ptsQtrs.length
-													? "Bottom"
-													: "Top"
-											} of the ${boxScore.quarter}`
-										: `${boxScore.quarter}, ${boxScore.time} remaining`}
-					</span>
-					<span className="d-xl-none">
-						{boxScore.gameOver
-							? "F"
-							: boxScore.elamTarget !== undefined
-								? `Elam Ending target: ${boxScore.elamTarget} points`
-								: isSport("baseball")
-									? `${
-											boxScore.teams[0].ptsQtrs.length ===
-											boxScore.teams[1].ptsQtrs.length
-												? "B"
-												: "T"
-										}${boxScore.quarterShort}`
-									: `${boxScore.quarterShort}, ${boxScore.time}`}
-					</span>
-				</div>
-			) : null}
 		</div>
 	);
 };

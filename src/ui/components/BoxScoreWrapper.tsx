@@ -1170,7 +1170,7 @@ const BoxScoreWrapper = ({
 						sportState={sportState}
 						tid={tid}
 					/>
-					<div className="mt-sm-1">
+					<div className="mt-sm-1 text-center">
 						<PlayoffRecord
 							numGamesToWinSeries={boxScore.numGamesToWinSeries}
 							season={boxScore.season}

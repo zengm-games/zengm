@@ -163,6 +163,9 @@ export const StickyDraftInfo = ({
 	);
 	const yourNextPick = yourNextPickIndex - currentPickIndex;
 
+	const userRemaining = yourNextPickIndex !== -1;
+	const usersTurn = yourNextPick === 0;
+
 	// Treat as equal size, unless we need to shrink
 	const flex = "1 1 0";
 
@@ -183,6 +186,13 @@ export const StickyDraftInfo = ({
 					pointerEvents: "auto",
 				}}
 			>
+				<div className="d-none d-xxl-block me-3">
+					<DraftButtons
+						spectator={spectator}
+						userRemaining={userRemaining}
+						usersTurn={usersTurn}
+					/>
+				</div>
 				<div className="d-flex flex-grow-1 gap-1 py-1">
 					<div style={{ flex }}>
 						<div>
@@ -259,7 +269,7 @@ export const StickyDraftInfo = ({
 				/>
 			</div>
 			<div
-				className="d-flex"
+				className="d-flex d-xxl-none"
 				style={{
 					paddingLeft: "0.5rem",
 					pointerEvents: "none",
@@ -273,8 +283,8 @@ export const StickyDraftInfo = ({
 				>
 					<DraftButtons
 						spectator={spectator}
-						userRemaining={yourNextPickIndex !== -1}
-						usersTurn={yourNextPick === 0}
+						userRemaining={userRemaining}
+						usersTurn={usersTurn}
 					/>
 				</div>
 			</div>

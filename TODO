@@ -2,6 +2,8 @@
 - salary cap higher
   - what year to start?
 
+spread doesn't account for playing through injuries
+
 randomize teams improvements
 - on randomize teams popup, add option to specify the number of confs/divs/teams somehow, rather than always using the current ones https://discord.com/channels/290013534023057409/290013534023057409/1020913700313509920
 - allow something better than just a boolean "North America only", like international only, europe only
@@ -1638,7 +1640,7 @@ name/colleges
 allow import/export of league settings from New League page
 
 add some more built-in teams
-- foreign: Shanghai, Karachi, Lagos, Kinshasa, Bangkok, Kuala Lumpur, Baghdad, Milan, Zagreb, Dubai, Barcelona, Hong Kong, Zagreb, Sarajevo
+- foreign: Shanghai, Karachi, Kinshasa, Bangkok, Kuala Lumpur, Baghdad, Milan, Dubai, Barcelona, Hong Kong, Zagreb, Sarajevo
 - Redo some of the BBGM default teams
   - Vancouver Orcas https://mail.google.com/mail/u/0/#inbox/FMfcgzGwJvqmmdKvZZGHLgkjJZGtNPDw?compose=DmwnWrRpfDXcbbLkrJmmJLsXflzZglwNmThVlTLxqRKXRDLbmPdTfJdWtHqlNSPbKlwhGKvnKJsB
 - Candidates

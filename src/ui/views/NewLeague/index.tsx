@@ -145,8 +145,8 @@ const initKeptKeys = ({
 };
 
 export const MIN_SEASON = 1947;
-export const MAX_SEASON = 2025;
-const MAX_PHASE = PHASE.AFTER_DRAFT as Phase;
+export const MAX_SEASON = 2026;
+const MAX_PHASE = PHASE.PRESEASON as Phase;
 
 const seasons: { key: string; value: string }[] = [];
 for (let i = MAX_SEASON; i >= MIN_SEASON; i--) {

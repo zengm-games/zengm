@@ -9,6 +9,7 @@ import {
 import type { AllStars, UpdateEvents, ViewInput } from "../../common/types.ts";
 import {
 	bySport,
+	getPeriodName,
 	isSport,
 	PHASE,
 	STARTING_NUM_TIMEOUTS,
@@ -46,7 +47,16 @@ export const boxScoreToLiveSim = async ({
 
 	boxScore.overtime = "";
 	boxScore.quarter = "";
-	boxScore.quarterShort = "";
+
+	// Initialize quarterShort so there is something to display immediately
+	boxScore.quarterShort = bySport({
+		baseball: "1",
+		default:
+			boxScore.numPeriods === 0
+				? "OT"
+				: `${getPeriodName(boxScore.numPeriods, true)}1`,
+	});
+
 	boxScore.time = `${g.get("quarterLength")}:00`;
 	boxScore.gameOver = false;
 	delete boxScore.shootout;

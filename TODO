@@ -1,6 +1,7 @@
 what about clock right next to score?
-- need better clock init than blank
+- decimal vs : for low clock values
 - when sticky, make bg-secondary-very-subtle
+- similar for draft?
 
 2026 rosters
 - salary cap higher

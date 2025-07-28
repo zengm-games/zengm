@@ -185,23 +185,18 @@ export const HeadlineScoreLive = ({ boxScore }: { boxScore: any }) => {
 
 	const shootout = t0.sPts !== undefined;
 
-	const showClock = boxScore.quarter !== "";
-
-	let clockText: string | undefined;
-	if (showClock) {
-		clockText = boxScore.gameOver
-			? "F"
-			: boxScore.elamTarget !== undefined
-				? `Target: ${boxScore.elamTarget} pts`
-				: isSport("baseball")
-					? `${
-							boxScore.teams[0].ptsQtrs.length ===
-							boxScore.teams[1].ptsQtrs.length
-								? "B"
-								: "T"
-						}${boxScore.quarterShort}`
-					: `${boxScore.quarterShort}, ${boxScore.time}`;
-	}
+	const clockText = boxScore.gameOver
+		? "F"
+		: boxScore.elamTarget !== undefined
+			? `Target: ${boxScore.elamTarget} pts`
+			: isSport("baseball")
+				? `${
+						boxScore.teams[0].ptsQtrs.length ===
+						boxScore.teams[1].ptsQtrs.length
+							? "B"
+							: "T"
+					}${boxScore.quarterShort}`
+				: `${boxScore.quarterShort}, ${boxScore.time}`;
 
 	return (
 		<div className="d-flex justify-content-center">

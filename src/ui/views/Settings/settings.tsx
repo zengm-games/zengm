@@ -2168,7 +2168,7 @@ export const settings: Setting[] = (
 					value > output.quarterLength
 				) {
 					throw new Error(
-						"Value must be less than or equal to the quarter length",
+						"Value must be less than or equal to the period length",
 					);
 				}
 			},

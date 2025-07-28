@@ -1,3 +1,11 @@
+what about clock right next to score?
+- need better clock init than blank
+- on mobile
+  - add solid bg on parent
+  - left/right align
+  - remove rounded corners (maybe doesn't matter with solid bg)
+- when sticky, make bg-secondary-very-subtle
+
 2026 rosters
 - salary cap higher
   - what year to start?

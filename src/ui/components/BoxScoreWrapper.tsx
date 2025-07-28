@@ -203,41 +203,10 @@ export const HeadlineScoreLive = ({ boxScore }: { boxScore: any }) => {
 					: `${boxScore.quarterShort}, ${boxScore.time}`;
 	}
 
-	const [clockWidth, setClockWidth] = useState<number | undefined>();
-	useEffect(() => {
-		const updateWidth = () => {
-			if (clockText !== undefined) {
-				const PADDING = 4;
-
-				const el = document.createElement("span");
-				el.textContent = clockText;
-				document.body.append(el);
-				const width = el.offsetWidth + PADDING;
-				document.body.removeChild(el);
-				setClockWidth(width);
-			}
-		};
-
-		updateWidth();
-
-		window.addEventListener("optimizedResize", updateWidth);
-		return () => {
-			window.removeEventListener("optimizedResize", updateWidth);
-		};
-	}, [clockText]);
-
-	const clockStyle =
-		showClock && clockWidth !== undefined
-			? {
-					width: clockWidth,
-				}
-			: undefined;
-
 	return (
-		<div className="d-flex align-items-center justify-content-between flex-wrap pb-1">
-			<div className="d-none d-md-block" style={clockStyle} />
-			<h2 className="d-flex flex-wrap justify-content-center mb-0 gap-3">
-				<div className="d-flex">
+		<div className="d-flex justify-content-center">
+			<div className="d-flex flex-wrap align-items-center justify-content-center gap-3 bg-white py-1 px-2 rounded-bottom-4">
+				<div className="d-flex h2 mb-0">
 					<TeamNameAndScore
 						boxScore={boxScore}
 						possessionNum={0}
@@ -246,7 +215,7 @@ export const HeadlineScoreLive = ({ boxScore }: { boxScore: any }) => {
 						t={t0}
 					/>
 				</div>
-				<div className="d-flex">
+				<div className="d-flex h2 mb-0">
 					<TeamNameAndScore
 						boxScore={boxScore}
 						possessionNum={1}
@@ -256,9 +225,7 @@ export const HeadlineScoreLive = ({ boxScore }: { boxScore: any }) => {
 					/>
 					{boxScore.overtime ? <div>&nbsp;{boxScore.overtime}</div> : null}
 				</div>
-			</h2>
-			<div className="text-end text-nowrap" style={clockStyle}>
-				{clockStyle ? clockText : undefined}
+				<div className="text-nowrap">{clockText}</div>
 			</div>
 		</div>
 	);

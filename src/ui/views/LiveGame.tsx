@@ -971,7 +971,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 				<div className="col-md-9">
 					{boxScore.current.gid >= 0 ? (
 						<div className="live-game-sticky mb-3">
-							<div className="bg-white pt-1 pt-md-2">
+							<div className="pt-1 pt-md-0">
 								<HeadlineScoreLive boxScore={boxScore.current} />
 								<div className="d-flex align-items-center d-md-none pt-1">
 									<PlayPauseNext

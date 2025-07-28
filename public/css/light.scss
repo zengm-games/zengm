@@ -1724,3 +1724,9 @@ tr.text-body-secondary {
 		text-decoration-color: inherit !important;
 	}
 }
+
+@include media-breakpoint-down(md) {
+	.live-game-score-wrapper {
+		background-color: $white !important;
+	}
+}

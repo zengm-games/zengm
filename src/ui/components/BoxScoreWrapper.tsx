@@ -205,7 +205,7 @@ export const HeadlineScoreLive = ({ boxScore }: { boxScore: any }) => {
 
 	return (
 		<div className="d-flex justify-content-center">
-			<div className="d-flex flex-wrap align-items-center justify-content-center gap-3 bg-white py-1 px-2 rounded-bottom-4">
+			<div className="d-flex flex-wrap align-items-center justify-content-center gap-3 bg-white py-md-1 px-md-2 rounded-bottom-4">
 				<div className="d-flex h2 mb-0">
 					<TeamNameAndScore
 						boxScore={boxScore}

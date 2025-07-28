@@ -25,6 +25,7 @@ import useLocalStorageState from "use-local-storage-state";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_BASEBALL } from "../util/processLiveGameEvents.baseball.tsx";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_FOOTBALL } from "../util/processLiveGameEvents.football.tsx";
 import { HeadlineScoreLive } from "../components/BoxScoreWrapper.tsx";
+import { useIsStuck } from "../hooks/useIsStuck.ts";
 
 type PlayerRowProps = {
 	exhibition?: boolean;
@@ -937,6 +938,10 @@ export const LiveGame = (props: View<"liveGame">) => {
 		},
 	);
 
+	const [liveGameStickyDiv, setLiveGameStickyDiv] =
+		useState<HTMLElement | null>(null);
+	const isStuck = useIsStuck(liveGameStickyDiv);
+
 	// Needs to return actual div, not fragment, for AutoAffix!!!
 	return (
 		<div>
@@ -970,9 +975,12 @@ export const LiveGame = (props: View<"liveGame">) => {
 			>
 				<div className="col-md-9">
 					{boxScore.current.gid >= 0 ? (
-						<div className="live-game-sticky mb-3">
+						<div className="live-game-sticky mb-3" ref={setLiveGameStickyDiv}>
 							<div className="pt-1 pt-md-0 live-game-score-wrapper">
-								<HeadlineScoreLive boxScore={boxScore.current} />
+								<HeadlineScoreLive
+									boxScore={boxScore.current}
+									isStuck={isStuck}
+								/>
 								<div className="d-flex align-items-center d-md-none pt-2">
 									<PlayPauseNext
 										className="me-2"

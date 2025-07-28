@@ -1,5 +1,5 @@
 what about clock right next to score?
-- when sticky, make bg-secondary-very-subtle
+- useIsStuck can get top from element css
 - similar for draft?
 
 2026 rosters

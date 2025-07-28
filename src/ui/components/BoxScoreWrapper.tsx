@@ -113,9 +113,7 @@ const TeamNameAndScore = ({
 			{live && !boxScore.gameOver ? (
 				<span
 					className={
-						boxScore.possession === possessionNum
-							? "text-warning"
-							: "text-white"
+						boxScore.possession === possessionNum ? "text-warning" : "opacity-0"
 					}
 				>
 					●&nbsp;
@@ -174,7 +172,13 @@ const TeamNameAndScore = ({
 	);
 };
 
-export const HeadlineScoreLive = ({ boxScore }: { boxScore: any }) => {
+export const HeadlineScoreLive = ({
+	boxScore,
+	isStuck,
+}: {
+	boxScore: any;
+	isStuck: boolean;
+}) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
 	// change in the future.
@@ -200,7 +204,9 @@ export const HeadlineScoreLive = ({ boxScore }: { boxScore: any }) => {
 
 	return (
 		<div className="d-flex justify-content-center">
-			<div className="d-flex flex-wrap align-items-center bg-white py-md-1 px-md-2 rounded-bottom-4 live-game-score-actual">
+			<div
+				className={`d-flex flex-wrap align-items-center ${isStuck ? "bg-secondary-very-subtle border border-top-0" : "bg-white"} py-md-1 px-md-2 rounded-bottom-4 live-game-score-actual`}
+			>
 				<div className="d-flex h2 mb-0">
 					<TeamNameAndScore
 						boxScore={boxScore}

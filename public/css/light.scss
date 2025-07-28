@@ -1197,8 +1197,9 @@ $small-scrollbar-thumb-hover-color: darken($gray-500, 10%) !default;
 	background-color: $gray-300 !important;
 }
 
+$bg-secondary-very-subtle: $gray-100;
 .bg-secondary-very-subtle {
-	background-color: $gray-100 !important;
+	background-color: $bg-secondary-very-subtle !important;
 }
 
 .touch-action-none {
@@ -1731,5 +1732,17 @@ tr.text-body-secondary {
 	}
 	.live-game-score-actual {
 		width: 100%;
+	}
+
+	.live-game-score-actual-stuck {
+		background-color: $white;
+	}
+}
+
+@include media-breakpoint-up(md) {
+	.live-game-score-actual-stuck {
+		background-color: $bg-secondary-very-subtle;
+		border: $border-width $border-style $border-color;
+		border-top: 0;
 	}
 }

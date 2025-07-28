@@ -205,7 +205,7 @@ export const HeadlineScoreLive = ({
 	return (
 		<div className="d-flex justify-content-center">
 			<div
-				className={`d-flex flex-wrap align-items-center ${isStuck ? "bg-secondary-very-subtle border border-top-0" : "bg-white"} py-md-1 px-md-2 rounded-bottom-4 live-game-score-actual`}
+				className={`d-flex flex-wrap align-items-center ${isStuck ? "live-game-score-actual-stuck" : "bg-white"} py-md-1 px-md-2 rounded-bottom-4 live-game-score-actual`}
 			>
 				<div className="d-flex h2 mb-0">
 					<TeamNameAndScore

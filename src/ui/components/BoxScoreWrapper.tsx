@@ -205,7 +205,7 @@ export const HeadlineScoreLive = ({ boxScore }: { boxScore: any }) => {
 
 	return (
 		<div className="d-flex justify-content-center">
-			<div className="d-flex flex-wrap align-items-center justify-content-center gap-3 bg-white py-md-1 px-md-2 rounded-bottom-4">
+			<div className="d-flex flex-wrap align-items-center bg-white py-md-1 px-md-2 rounded-bottom-4">
 				<div className="d-flex h2 mb-0">
 					<TeamNameAndScore
 						boxScore={boxScore}
@@ -215,7 +215,7 @@ export const HeadlineScoreLive = ({ boxScore }: { boxScore: any }) => {
 						t={t0}
 					/>
 				</div>
-				<div className="d-flex h2 mb-0">
+				<div className="d-flex h2 mb-0 ms-3">
 					<TeamNameAndScore
 						boxScore={boxScore}
 						possessionNum={1}
@@ -225,7 +225,15 @@ export const HeadlineScoreLive = ({ boxScore }: { boxScore: any }) => {
 					/>
 					{boxScore.overtime ? <div>&nbsp;{boxScore.overtime}</div> : null}
 				</div>
-				<div className="text-nowrap">{clockText}</div>
+				<div
+					className="text-nowrap ms-auto ms-md-3"
+					style={{
+						// Align with baseline of score text
+						paddingBottom: 2,
+					}}
+				>
+					{clockText}
+				</div>
 			</div>
 		</div>
 	);

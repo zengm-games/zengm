@@ -14,6 +14,7 @@ import {
 	PHASE,
 	STARTING_NUM_TIMEOUTS,
 } from "../../common/index.ts";
+import { formatClock } from "../../common/formatClock.ts";
 
 export const boxScoreToLiveSim = async ({
 	allStars,
@@ -57,7 +58,11 @@ export const boxScoreToLiveSim = async ({
 				: `${getPeriodName(boxScore.numPeriods, true)}1`,
 	});
 
-	boxScore.time = `${g.get("quarterLength")}:00`;
+	// Basketball clock is in seconds
+	const clock = isSport("basketball")
+		? g.get("quarterLength") * 60
+		: g.get("quarterLength");
+	boxScore.time = formatClock(clock);
 	boxScore.gameOver = false;
 	delete boxScore.shootout;
 

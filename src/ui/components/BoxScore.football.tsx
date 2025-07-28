@@ -19,7 +19,6 @@ import updateSortBys from "./DataTable/updateSortBys.ts";
 import { getSortClassName } from "./DataTable/Header.tsx";
 import clsx from "clsx";
 import {
-	formatClock,
 	formatDownAndDistance,
 	getScoreInfo,
 	getScoreInfoOld,
@@ -30,6 +29,7 @@ import {
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.football/PlayByPlayLogger.ts";
 import { range } from "../../common/utils.ts";
+import { formatClock } from "../../common/formatClock.ts";
 
 type Team = {
 	abbrev: string;

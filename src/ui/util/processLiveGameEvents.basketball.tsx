@@ -3,6 +3,7 @@ import { choice } from "../../common/random.ts";
 import { helpers, local } from "./index.ts";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim.basketball/PlayByPlayLogger.ts";
 import type { ReactNode } from "react";
+import { formatClock } from "../../common/formatClock.ts";
 
 const getPronoun = (pronoun: Parameters<typeof helpers.pronoun>[1]) => {
 	return helpers.pronoun(local.getState().gender, pronoun);
@@ -472,19 +473,7 @@ const processLiveGameEvents = ({
 			let time;
 			if (eAny.clock !== undefined) {
 				const seconds = eAny.clock;
-				if (seconds <= 59.9) {
-					const centiSecondsRounded = Math.ceil(seconds * 10);
-					const remainingSeconds = Math.floor(centiSecondsRounded / 10);
-					const remainingCentiSeconds = centiSecondsRounded % 10;
-					time = `${remainingSeconds}.${remainingCentiSeconds}`;
-				} else {
-					const secondsRounded = Math.ceil(seconds);
-					const minutes = Math.floor(secondsRounded / 60);
-					const remainingSeconds = secondsRounded % 60;
-					const formattedSeconds =
-						remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
-					time = `${minutes}:${formattedSeconds}`;
-				}
+				time = formatClock(seconds);
 			}
 
 			if (e.type === "injury") {

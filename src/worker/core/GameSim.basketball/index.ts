@@ -15,6 +15,7 @@ import PlayByPlayLogger, {
 	type FgMissType,
 } from "./PlayByPlayLogger.ts";
 import getWinner from "../../../common/getWinner.ts";
+import { formatClock } from "../../../common/formatClock.ts";
 
 const SHOT_CLOCK = 24;
 // const NUM_TIMEOUTS_MAX_FINAL_PERIOD = 4;
@@ -143,15 +144,6 @@ const getSortedIndexes = (ovrs: number[]) => {
 
 // Use if denominator of prob might be 0
 const boundProb = (prob: number) => helpers.bound(prob, 0.001, 0.999);
-
-// Keep time formatting in sync with processLiveGameEvents.basketball.tsx
-// Currently just used for end of game, so assume under 1 minute left.
-const formatClock = (t: number) => {
-	const centiSecondsRounded = Math.ceil(t * 10);
-	const remainingSeconds = Math.floor(centiSecondsRounded / 10);
-	const remainingCentiSeconds = centiSecondsRounded % 10;
-	return `${remainingSeconds}.${remainingCentiSeconds}`;
-};
 
 class GameSim extends GameSimBase {
 	team: [TeamGameSim, TeamGameSim];

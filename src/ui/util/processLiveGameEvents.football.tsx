@@ -3,6 +3,7 @@ import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEven
 import { helpers, local } from "./index.ts";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim.football/PlayByPlayLogger.ts";
 import type { ReactNode } from "react";
+import { formatClock } from "../../common/formatClock.ts";
 
 let playersByPidGid: number | undefined;
 let playersByPid:
@@ -173,22 +174,6 @@ export const getScoreInfoOld = (text: string) => {
 			sPts: undefined as undefined | number,
 		};
 	}
-};
-
-// Convert clock in minutes to min:sec, like 1.5 -> 1:30
-export const formatClock = (clock: number) => {
-	const secNum = Math.ceil((clock % 1) * 60);
-
-	let sec;
-	if (secNum >= 60) {
-		sec = "59";
-	} else if (secNum < 10) {
-		sec = `0${secNum}`;
-	} else {
-		sec = `${secNum}`;
-	}
-
-	return `${Math.floor(clock)}:${sec}`;
 };
 
 export const formatDownAndDistance = (

@@ -11,7 +11,7 @@ import isUntradable from "./isUntradable.ts";
 
 const getTeamOvr = async (playersRaw: Player[]) => {
 	const players = await idb.getCopies.playersPlus(playersRaw, {
-		attrs: ["value", "pid"],
+		attrs: ["injury", "pid", "value"],
 		fuzz: true,
 		ratings: ["ovr", "pos", "ovrs"],
 		season: g.get("season"),

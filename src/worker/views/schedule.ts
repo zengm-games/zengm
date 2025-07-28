@@ -3,7 +3,8 @@ import { idb } from "../db/index.ts";
 import { g, getProcessedGames } from "../util/index.ts";
 import type { UpdateEvents, ViewInput, Game } from "../../common/types.ts";
 import { bySport, PHASE } from "../../common/index.ts";
-import { orderBy } from "../../common/utils.ts";
+import { groupBy, groupByUnique, orderBy } from "../../common/utils.ts";
+import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 
 export const getUpcoming = async ({
 	day,
@@ -23,27 +24,26 @@ export const getUpcoming = async ({
 
 	const teams = await idb.getCopies.teamsPlus(
 		{
-			attrs: ["tid"],
+			attrs: ["playThroughInjuries", "tid"],
 			seasonAttrs: ["won", "lost", "tied", "otl"],
 			season: g.get("season"),
 			active: true,
 		},
 		"noCopyCache",
 	);
+	const teamsByTid = groupByUnique(teams, "tid");
 
 	const playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
 		0, // Active players have tid >= 0
 		Infinity,
 	]);
-	const healthyPlayers = await idb.getCopies.playersPlus(
-		playersRaw.filter((p) => p.injury.gamesRemaining === 0),
-		{
-			attrs: ["tid", "pid", "value"],
-			ratings: ["ovr", "pos", "ovrs"],
-			season: g.get("season"),
-			fuzz: true,
-		},
-	);
+	const players = await idb.getCopies.playersPlus(playersRaw, {
+		attrs: ["injury", "pid", "value", "tid"],
+		ratings: ["ovr", "pos", "ovrs"],
+		season: g.get("season"),
+		fuzz: true,
+	});
+	const playersByTid = groupBy(players, "tid");
 
 	const ovrsCache = new Map<number, number>();
 
@@ -55,19 +55,26 @@ export const getUpcoming = async ({
 		: undefined;
 
 	const getTeam = (tid: number) => {
+		const t = teamsByTid[tid];
+
 		let ovr = ovrsCache.get(tid);
 		if (ovr === undefined) {
-			ovr = team.ovr(
-				healthyPlayers.filter((p) => p.tid === tid),
-				{
-					playoffs: g.get("phase") === PHASE.PLAYOFFS,
+			ovr = team.ovr(playersByTid[tid] ?? [], {
+				accountForInjuredPlayers: {
+					numDaysInFuture: 0,
+					playThroughInjuries: getActualPlayThroughInjuries(t ?? "default"),
 				},
-			);
+				playoffs: g.get("phase") === PHASE.PLAYOFFS,
+			});
 			ovrsCache.set(tid, ovr);
 		}
 
 		if (tid < 0) {
 			return { tid };
+		}
+
+		if (!t) {
+			throw new Error(`No team found for tid ${tid}`);
 		}
 
 		let playoffs:
@@ -93,12 +100,6 @@ export const getUpcoming = async ({
 					};
 				}
 			}
-		}
-
-		const t = teams.find((t2) => t2.tid === tid);
-
-		if (!t) {
-			throw new Error(`No team found for tid ${tid}`);
 		}
 
 		return {

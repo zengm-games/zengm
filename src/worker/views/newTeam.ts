@@ -10,7 +10,7 @@ import type { UpdateEvents } from "../../common/types.ts";
 export const getTeamOvr = async (tid: number) => {
 	const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
 	const players = await idb.getCopies.playersPlus(playersAll, {
-		attrs: ["value", "pid"],
+		attrs: ["injury", "pid", "value"],
 		ratings: ["ovr", "pot", "ovrs", "pos"],
 		season: g.get("season"),
 		tid,

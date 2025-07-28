@@ -22,6 +22,20 @@ const skipPlayerStats = ["minAvailable"];
 let playerStats: Record<string, number | number[]>;
 let teamStats: Record<string, number>;
 
+export const getActualPlayThroughInjuries = (
+	t: { tid: number; playThroughInjuries: [number, number] } | "default",
+) => {
+	if (t === "default" || g.get("spectator")) {
+		return DEFAULT_PLAY_THROUGH_INJURIES;
+	}
+
+	if (g.get("userTids").includes(t.tid)) {
+		return t.playThroughInjuries;
+	}
+
+	return DEFAULT_PLAY_THROUGH_INJURIES;
+};
+
 export const processTeam = (
 	teamInput: {
 		tid: number;
@@ -77,19 +91,24 @@ export const processTeam = (
 
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 
+	const actualPlayThroughInjuries = getActualPlayThroughInjuries(teamInput);
+
 	// Injury-adjusted ovr
-	const playersCurrent = players
-		.filter((p: any) => p.injury.gamesRemaining === 0)
-		.map((p) => ({
-			pid: p.pid,
-			value: p.value,
-			ratings: {
-				ovr: player.fuzzRating(p.ratings.at(-1)!.ovr, p.ratings.at(-1)!.fuzz),
-				ovrs: player.fuzzOvrs(p.ratings.at(-1)!.ovrs, p.ratings.at(-1)!.fuzz),
-				pos: p.ratings.at(-1)!.pos,
-			},
-		}));
+	const playersCurrent = players.map((p) => ({
+		pid: p.pid,
+		injury: p.injury,
+		value: p.value,
+		ratings: {
+			ovr: player.fuzzRating(p.ratings.at(-1)!.ovr, p.ratings.at(-1)!.fuzz),
+			ovrs: player.fuzzOvrs(p.ratings.at(-1)!.ovrs, p.ratings.at(-1)!.fuzz),
+			pos: p.ratings.at(-1)!.pos,
+		},
+	}));
 	const ovr = team.ovr(playersCurrent, {
+		accountForInjuredPlayers: {
+			numDaysInFuture: 0,
+			playThroughInjuries: actualPlayThroughInjuries,
+		},
 		playoffs,
 	});
 
@@ -114,14 +133,7 @@ export const processTeam = (
 		depth: teamInput.depth,
 	};
 
-	let playThroughInjuriesBoth;
-	if (g.get("userTids").includes(teamInput.tid) && !g.get("spectator")) {
-		playThroughInjuriesBoth = teamInput.playThroughInjuries;
-	} else {
-		playThroughInjuriesBoth = DEFAULT_PLAY_THROUGH_INJURIES;
-	}
-
-	const playThroughInjuries = playThroughInjuriesBoth[playoffs ? 1 : 0];
+	const playThroughInjuries = actualPlayThroughInjuries[playoffs ? 1 : 0];
 
 	for (const p of players) {
 		const injuryFactor = playThroughInjuriesFactor(p.injury.gamesRemaining);

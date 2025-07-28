@@ -96,7 +96,7 @@ const newPhasePlayoffs = async (
 			teamSeason.tid,
 		);
 		const players = await idb.getCopies.playersPlus(playersRaw, {
-			attrs: ["age", "value", "pid"],
+			attrs: ["age", "injury", "value", "pid"],
 			fuzz: true,
 			stats: ["gp", "min"],
 			ratings: ["ovr", "pos", "ovrs"],

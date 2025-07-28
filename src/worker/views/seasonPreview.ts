@@ -66,6 +66,7 @@ const updateSeasonPreview = async (
 				"watch",
 				"value",
 				"draft",
+				"injury",
 			],
 			ratings: ["ovr", "pot", "dovr", "dpot", "pos", "skills", "ovrs"],
 			season,

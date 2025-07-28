@@ -1,4 +1,5 @@
-import { range } from "../../common/utils.ts";
+import { groupBy, range } from "../../common/utils.ts";
+import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 import { player, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
@@ -21,12 +22,19 @@ const recomputeLocalUITeamOvrs = async () => {
 			pos: p.ratings.at(-1)!.pos,
 		},
 	}));
+	const playersByTid = groupBy(players, "tid");
+
+	const teams = await idb.cache.teams.getAll();
 
 	const ovrs = range(g.get("numTeams")).map((tid) => {
-		const playersCurrent = players.filter(
-			(p) => p.tid === tid && p.injury.gamesRemaining === 0,
-		);
-		return team.ovr(playersCurrent);
+		const t = teams[tid]!;
+
+		return team.ovr(playersByTid[tid] ?? [], {
+			accountForInjuredPlayers: {
+				numDaysInFuture: 0,
+				playThroughInjuries: getActualPlayThroughInjuries(t),
+			},
+		});
 	});
 
 	await toUI("updateTeamOvrs", [ovrs]);

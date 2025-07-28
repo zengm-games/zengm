@@ -1500,6 +1500,7 @@ const afterDBStream = async ({
 				.filter((p) => p.tid === i)
 				.map((p) => ({
 					pid: p.pid,
+					injury: p.injury,
 					value: p.value,
 					ratings: p.ratings.at(-1),
 				}));

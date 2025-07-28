@@ -41,7 +41,7 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 
 	const teamsRaw = await idb.getCopies.teamsPlus(
 		{
-			attrs: ["tid", "abbrev"],
+			attrs: ["tid", "abbrev", "playThroughInjuries"],
 			seasonAttrs: ["lastTen", "won", "lost", "tied", "otl"],
 			stats: ["gp", "mov"],
 			season: g.get("season"),

@@ -331,6 +331,7 @@ export const getSeasonInfo = async (
 		t.ovr = team.ovr(
 			t.players.map((p) => ({
 				pid: p.pid,
+				injury: p.injury,
 				value: p.value,
 				ratings: {
 					ovr: p.ratings.at(-1)!.ovr,
@@ -338,6 +339,12 @@ export const getSeasonInfo = async (
 					pos: p.ratings.at(-1)!.pos,
 				},
 			})),
+			{
+				accountForInjuredPlayers: {
+					numDaysInFuture: 0,
+					playThroughInjuries: DEFAULT_PLAY_THROUGH_INJURIES,
+				},
+			},
 		);
 
 		for (const p of t.players) {

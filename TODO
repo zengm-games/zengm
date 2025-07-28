@@ -1,4 +1,7 @@
-spread doesn't account for playing through injuries
+Adjust team rating based on the adjusted ovr of players who are playing through injury... so that we can see accurate playoff point spreads based on who we have playing, and see how playing and resting an injured player effects our speads/TR https://discord.com/channels/290013534023057409/331882115119448065/849075933206151230
+- also pass in number of days in the future it is, to simulate healing?
+  - might slow down schedule page, can no longer cache ovrs
+- test other sports
 
 randomize teams improvements
 - on randomize teams popup, add option to specify the number of confs/divs/teams somehow, rather than always using the current ones https://discord.com/channels/290013534023057409/290013534023057409/1020913700313509920
@@ -1460,17 +1463,6 @@ player game log
 - later
   - totals at bottom
   - click two rows, popup shows avg over that timespan, like basketball-reference
-
-Adjust team rating based on the adjusted ovr of players who are playing through injury... so that we can see accurate playoff point spreads based on who we have playing, and see how playing and resting an injured player effects our speads/TR https://discord.com/channels/290013534023057409/331882115119448065/849075933206151230
-- team.ovr needs to take playThroughInjuries as an argument, and take all players not just healthy ones. then needs to adjust players by playThroughInjuriesFactor
-  - do injured/healthy with a flag rather than a filtered list
-  - if doing injured one, require playThroughInjuries to be passed too
-- update team.ovr calls
-  - powerRankings.ts
-  - roster.ts
-  - schedule.ts
-  - recomputeLocalUITeamOvrs
-  - loadTeams.ts
 
 in garbage time, rest players who are playing through injuries
 

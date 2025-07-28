@@ -558,6 +558,7 @@ const refreshCache = async () => {
 		const ovr = team.ovr(
 			players.map((p) => ({
 				pid: p.pid,
+				injury: p.injury,
 				value: p.value,
 				ratings: {
 					ovr: p.ratings.at(-1)!.ovr,
@@ -673,6 +674,7 @@ const getModifiedPickRank = async (
 	}
 	const playerRatings = playersAfterTrade.map((p) => ({
 		pid: p.pid,
+		injury: p.injury,
 		value: p.value,
 		ratings: {
 			ovr: p.ratings.at(-1)!.ovr,

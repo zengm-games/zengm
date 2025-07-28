@@ -13,6 +13,7 @@ import {
 	isSport,
 } from "../../common/index.ts";
 import hasTies from "../core/season/hasTies.ts";
+import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 
 const otherToRanks = (
 	teams: {
@@ -39,7 +40,12 @@ const otherToRanks = (
 };
 
 export const addPowerRankingsStuffToTeams = async <
-	T extends TeamFiltered<["tid"], ["lastTen"], ["gp", "mov"], number>,
+	T extends TeamFiltered<
+		["playThroughInjuries", "tid"],
+		["lastTen"],
+		["gp", "mov"],
+		number
+	>,
 >(
 	teams: T[],
 	season: number,
@@ -80,14 +86,17 @@ export const addPowerRankingsStuffToTeams = async <
 				fuzz: true,
 				tid: t.tid,
 			});
-			const teamPlayersCurrent = teamPlayers.filter(
-				(p) => p.injury.gamesRemaining === 0,
-			);
+
+			const playThroughInjuries = getActualPlayThroughInjuries(t);
 
 			const ovr = team.ovr(teamPlayers, {
 				playoffs: playoffs === "playoffs",
 			});
-			const ovrCurrent = team.ovr(teamPlayersCurrent, {
+			const ovrCurrent = team.ovr(teamPlayers, {
+				accountForInjuredPlayers: {
+					numDaysInFuture: 0,
+					playThroughInjuries,
+				},
 				playoffs: playoffs === "playoffs",
 			});
 
@@ -116,7 +125,11 @@ export const addPowerRankingsStuffToTeams = async <
 						playoffs: playoffs === "playoffs",
 						rating,
 					});
-					otherCurrent[rating] = team.ovr(teamPlayersCurrent, {
+					otherCurrent[rating] = team.ovr(teamPlayers, {
+						accountForInjuredPlayers: {
+							numDaysInFuture: 0,
+							playThroughInjuries,
+						},
 						playoffs: playoffs === "playoffs",
 						rating,
 					});
@@ -130,7 +143,11 @@ export const addPowerRankingsStuffToTeams = async <
 						playoffs: playoffs === "playoffs",
 						onlyPos: pos,
 					});
-					otherCurrent[pos] = team.ovr(teamPlayersCurrent, {
+					otherCurrent[pos] = team.ovr(teamPlayers, {
+						accountForInjuredPlayers: {
+							numDaysInFuture: 0,
+							playThroughInjuries,
+						},
 						playoffs: playoffs === "playoffs",
 						onlyPos: pos,
 					});
@@ -179,7 +196,7 @@ const updatePowerRankings = async (
 	) {
 		const teams = await idb.getCopies.teamsPlus(
 			{
-				attrs: ["tid", "depth"],
+				attrs: ["tid", "depth", "playThroughInjuries"],
 				seasonAttrs: [
 					"won",
 					"lost",

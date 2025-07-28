@@ -22,6 +22,7 @@ export const getTeamOvrDiffs = (
 
 	const teamPlayers2 = teamPlayers.map((p) => ({
 		pid: p.pid,
+		injury: p.injury,
 		value: p.value,
 		ratings: {
 			ovr: player.fuzzRating(p.ratings.at(-1)!.ovr, p.ratings.at(-1)!.fuzz),
@@ -41,10 +42,11 @@ export const getTeamOvrDiffs = (
 				...teamPlayers2,
 				{
 					pid: p.pid,
+					injury: p.injury,
 					value: p.value,
 					ratings: {
-						ovr: ratings.ovr,
-						ovrs: ratings.ovrs,
+						ovr: player.fuzzRating(ratings.ovr, ratings.fuzz),
+						ovrs: player.fuzzOvrs(ratings.ovrs, ratings.fuzz),
 						pos: ratings.pos,
 					},
 				},

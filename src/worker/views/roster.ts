@@ -10,6 +10,7 @@ import type {
 } from "../../common/types.ts";
 import { addMood } from "./freeAgents.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 
 export const sortByPos = (p: {
 	ratings: {
@@ -240,15 +241,16 @@ const updateRoster = async (
 				g.get("season") === inputs.season) ||
 			inputs.playoffs === "playoffs";
 
-		const playersCurrent = players.filter(
-			(p: any) => p.injury.gamesRemaining === 0,
-		);
 		const t2 = {
 			...t,
 			ovr: team.ovr(players, {
 				playoffs: playoffsOvr,
 			}),
-			ovrCurrent: team.ovr(playersCurrent, {
+			ovrCurrent: team.ovr(players, {
+				accountForInjuredPlayers: {
+					numDaysInFuture: 0,
+					playThroughInjuries: getActualPlayThroughInjuries(t),
+				},
 				playoffs: playoffsOvr,
 			}),
 		};

@@ -291,6 +291,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					showNoStats: true,
 					showRookies: true,
 					fuzz: true,
+					tid: g.get("userTid"),
 				},
 			),
 		);

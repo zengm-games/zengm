@@ -19,6 +19,14 @@ export const getUpcoming = async ({
 }) => {
 	const schedule = await season.getSchedule();
 
+	const firstGame = schedule[0];
+	if (!firstGame) {
+		return [];
+	}
+
+	// Use this to calculate injury healing from today until the day of a game
+	const todayDay = firstGame.day;
+
 	let keptOneGame = false;
 	const filteredSchedule = schedule.filter((game) => {
 		const keep =
@@ -37,6 +45,10 @@ export const getUpcoming = async ({
 
 		return keep;
 	});
+
+	if (filteredSchedule.length === 0) {
+		return [];
+	}
 
 	const teams = await idb.getCopies.teamsPlus(
 		{
@@ -61,8 +73,6 @@ export const getUpcoming = async ({
 	});
 	const playersByTid = groupBy(players, "tid");
 
-	const ovrsCache = new Map<number, number>();
-
 	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 	const roundSeries = playoffSeries
 		? playoffSeries.currentRound === -1 && playoffSeries.playIns
@@ -70,20 +80,17 @@ export const getUpcoming = async ({
 			: playoffSeries.series[playoffSeries.currentRound]
 		: undefined;
 
-	const getTeam = (tid: number) => {
+	const getTeam = (tid: number, day: number) => {
 		const t = teamsByTid[tid];
 
-		let ovr = ovrsCache.get(tid);
-		if (ovr === undefined) {
-			ovr = team.ovr(playersByTid[tid] ?? [], {
-				accountForInjuredPlayers: {
-					numDaysInFuture: 0,
-					playThroughInjuries: getActualPlayThroughInjuries(t ?? "default"),
-				},
-				playoffs: g.get("phase") === PHASE.PLAYOFFS,
-			});
-			ovrsCache.set(tid, ovr);
-		}
+		// For basketball this is fast, but for other sports it's a bit slow. Could cache sometimes, depending on which players are injured (if nobody is in playThroughInjuries window). This would apply by default in the regualr season, which is what matters, since the default is 0
+		const ovr = team.ovr(playersByTid[tid] ?? [], {
+			accountForInjuredPlayers: {
+				numDaysInFuture: day - todayDay,
+				playThroughInjuries: getActualPlayThroughInjuries(t ?? "default"),
+			},
+			playoffs: g.get("phase") === PHASE.PLAYOFFS,
+		});
 
 		if (tid < 0) {
 			return { tid };
@@ -135,15 +142,17 @@ export const getUpcoming = async ({
 		gid: number;
 		season: number;
 		teams: [ReturnType<typeof getTeam>, ReturnType<typeof getTeam>];
-	}[] = filteredSchedule.map(({ awayTid, finals, forceWin, gid, homeTid }) => {
-		return {
-			finals,
-			forceWin,
-			gid,
-			season: g.get("season"),
-			teams: [getTeam(homeTid), getTeam(awayTid)],
-		};
-	});
+	}[] = filteredSchedule.map(
+		({ awayTid, day, finals, forceWin, gid, homeTid }) => {
+			return {
+				finals,
+				forceWin,
+				gid,
+				season: g.get("season"),
+				teams: [getTeam(homeTid, day), getTeam(awayTid, day)],
+			};
+		},
+	);
 
 	return upcoming;
 };

@@ -1,6 +1,8 @@
 Adjust team rating based on the adjusted ovr of players who are playing through injury... so that we can see accurate playoff point spreads based on who we have playing, and see how playing and resting an injured player effects our speads/TR https://discord.com/channels/290013534023057409/331882115119448065/849075933206151230
 - also pass in number of days in the future it is, to simulate healing?
   - might slow down schedule page, can no longer cache ovrs
+    - how much?
+    - can we cache sometimes, depending on which players are injured (if nobody is in the partial window)? this would apply by default in the regualr season, which is what matters, since the default is 0
 - test other sports
 
 randomize teams improvements

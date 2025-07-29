@@ -1,7 +1,7 @@
 Adjust team rating based on the adjusted ovr of players who are playing through injury... so that we can see accurate playoff point spreads based on who we have playing, and see how playing and resting an injured player effects our speads/TR https://discord.com/channels/290013534023057409/331882115119448065/849075933206151230
 - test in playoffs
+  - spread for first day of playoffs seems wrong
 - test other sports
-- Play Through Injuries slider should call recomputeLocalUITeamOvrs
 
 randomize teams improvements
 - on randomize teams popup, add option to specify the number of confs/divs/teams somehow, rather than always using the current ones https://discord.com/channels/290013534023057409/290013534023057409/1020913700313509920

@@ -4044,6 +4044,16 @@ const updatePlayThroughInjuries = async ({
 
 		// So roster re-renders, which is needed to maintain state on mobile when the panel is closed
 		await toUI("realtimeUpdate", [["playerMovement"]]);
+
+		const phase = actualPhase();
+		if (
+			(!playoffs &&
+				(phase === PHASE.REGULAR_SEASON ||
+					phase === PHASE.AFTER_TRADE_DEADLINE)) ||
+			(playoffs && phase === PHASE.PLAYOFFS)
+		) {
+			await recomputeLocalUITeamOvrs();
+		}
 	}
 };
 

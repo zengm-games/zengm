@@ -1,6 +1,6 @@
 import { idb } from "../../db/index.ts";
 import { getUpcoming } from "../../views/schedule.ts";
-import { g, toUI } from "../../util/index.ts";
+import { g, recomputeLocalUITeamOvrs } from "../../util/index.ts";
 import type {
 	LocalStateUI,
 	ScheduleGame,
@@ -93,11 +93,7 @@ const setSchedule = async (tids: [number, number][]) => {
 		await idb.cache.schedule.add(game);
 	}
 
-	// Add upcoming games
-	const upcomingGame = await getOneUpcomingGame();
-	if (upcomingGame) {
-		await toUI("mergeGames", [[upcomingGame]]);
-	}
+	await recomputeLocalUITeamOvrs();
 };
 
 export default setSchedule;

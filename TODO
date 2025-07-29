@@ -1,6 +1,12 @@
 Adjust team rating based on the adjusted ovr of players who are playing through injury... so that we can see accurate playoff point spreads based on who we have playing, and see how playing and resting an injured player effects our speads/TR https://discord.com/channels/290013534023057409/331882115119448065/849075933206151230
 - in writeGameStats, make sure day count is correct, has it incremented yet? probably not, since param to getOneUpcomingGame is required
-- recomputeLocalUITeamOvrs  could be more efficient - doesn't need every team's ovr, just the teams from the next game
+  - I think recomputeLocalUITeamOvrs is running after this and overwriting it
+    - does this happen in all mergeGames? are all those ovr calculations useless?
+      - could get rid of mergeGames and put it only in recompute... but then there is flicker especially in writeGameStats
+      - could have dummy mode with no ovr calculation, but also some flicker then
+      - could leave as is - a bit inefficient
+      - could somehow refactor so recompute is not called if writeGameStats has already updated game, assuming writeGameStats can be fixed to have the correct day
+      - BEST SOLUTION - writeGameStats should not call mergeGames, instead that should be deferred to where recomputeLocalUITeamOvrs is now called. and there, if the user's team played a game, instead of calling recomputeLocalUITeamOvrs, it should run the writeGameStats mergeGames code
 
 randomize teams improvements
 - on randomize teams popup, add option to specify the number of confs/divs/teams somehow, rather than always using the current ones https://discord.com/channels/290013534023057409/290013534023057409/1020913700313509920

@@ -576,7 +576,7 @@ const writeGameStats = async (
 			},
 		];
 
-		// Also show the next game
+		// Also show the next game - this is kind of silly because the previous game hasn't been removed from the schedule yet (necessitating the argument to getOneUpcomingGame) and also we don't know if the day is over, so if the day is over, team ovrs will be computed wrong by not factoring in healing. So all games in this batch are done, recomputeLocalUITeamOvrs is called which basically just repeats this but with proper knowledge of if the day is finished (and injuries have healed yet) or not for team ovr calculation.
 		const upcomingGame = await getOneUpcomingGame(results.gid);
 		if (upcomingGame) {
 			gamesToUi.push(upcomingGame);

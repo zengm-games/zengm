@@ -1,8 +1,6 @@
 import { idb } from "../../db/index.ts";
-import { getUpcoming } from "../../views/schedule.ts";
 import { g, recomputeLocalUITeamOvrs } from "../../util/index.ts";
 import type {
-	LocalStateUI,
 	ScheduleGame,
 	ScheduleGameWithoutKey,
 } from "../../../common/types.ts";
@@ -12,35 +10,6 @@ import { isFinals } from "./isFinals.ts";
 
 const makePlayoffsKey = (game: ScheduleGameWithoutKey) =>
 	JSON.stringify([game.homeTid, game.awayTid]);
-
-export const getOneUpcomingGame = async (): Promise<
-	LocalStateUI["games"][number] | undefined
-> => {
-	const game = (
-		await getUpcoming({
-			tid: g.get("userTid"),
-			onlyOneGame: true,
-		})
-	)[0];
-	if (game) {
-		return {
-			finals: game.finals,
-			gid: game.gid,
-			teams: [
-				{
-					ovr: game.teams[0].ovr,
-					tid: game.teams[0].tid,
-					playoffs: game.teams[0].playoffs,
-				},
-				{
-					ovr: game.teams[1].ovr,
-					tid: game.teams[1].tid,
-					playoffs: game.teams[1].playoffs,
-				},
-			],
-		};
-	}
-};
 
 /**
  * Save the schedule to the database, overwriting what's currently there.

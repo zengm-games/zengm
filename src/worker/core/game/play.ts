@@ -39,7 +39,7 @@ import type {
 import allowForceTie from "../../../common/allowForceTie.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { setLiveSimRatingsStatsPopoverPlayers } from "./setLiveSimRatingsStatsPopoverPlayers.ts";
-import { getOneUpcomingGame } from "../season/setSchedule.ts";
+import { getOneUpcomingGame } from "../../util/recomputeLocalUITeamOvrs.ts";
 
 /**
  * Play one or more days of games.

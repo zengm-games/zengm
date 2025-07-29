@@ -9,12 +9,10 @@ import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 export const getUpcoming = async ({
 	day,
 	onlyOneGame,
-	skipGid,
 	tid,
 }: {
 	day?: number;
 	onlyOneGame?: boolean;
-	skipGid?: number;
 	tid?: number;
 }) => {
 	const schedule = await season.getSchedule();
@@ -36,7 +34,6 @@ export const getUpcoming = async ({
 				(game.homeTid === -1 && game.awayTid === -2) ||
 				(game.homeTid === -3 && game.awayTid === -3)) &&
 			(day === undefined || game.day === day) &&
-			game.gid !== skipGid &&
 			(!onlyOneGame || !keptOneGame);
 
 		if (keep) {

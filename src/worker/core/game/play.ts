@@ -32,12 +32,14 @@ import {
 import type {
 	Conditions,
 	GameResults,
+	LocalStateUI,
 	ScheduleGame,
 	UpdateEvents,
 } from "../../../common/types.ts";
 import allowForceTie from "../../../common/allowForceTie.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { setLiveSimRatingsStatsPopoverPlayers } from "./setLiveSimRatingsStatsPopoverPlayers.ts";
+import { getOneUpcomingGame } from "../season/setSchedule.ts";
 
 /**
  * Play one or more days of games.
@@ -119,10 +121,16 @@ const play = async (
 		const { injuryTexts, pidsInjuredOneGameOrLess, stopPlay } =
 			await writePlayerStats(results, conditions);
 
+		let gameToUi: LocalStateUI["games"][number] | undefined;
 		const gidsFinished = await Promise.all(
 			results.map(async (result) => {
 				const att = await writeTeamStats(result);
-				await writeGameStats(result, att, conditions);
+
+				const maybeGameToUi = await writeGameStats(result, att, conditions);
+				if (maybeGameToUi) {
+					gameToUi = maybeGameToUi;
+				}
+
 				return result.gid;
 			}),
 		);
@@ -284,8 +292,22 @@ const play = async (
 			}
 		}
 
-		// More stuff for LeagueTopBar - update ovrs based on injuries
-		await recomputeLocalUITeamOvrs();
+		// More stuff for LeagueTopBar - update ovrs based on injuries, and (if user just played a game) update the score of the user's last game and add their next game
+		// This is safe to do down here because injuries have been processed (if necessay) and games have been deleted from the schedule
+		if (gameToUi) {
+			const gamesToUi = [gameToUi];
+
+			// Also show next game
+			const upcomingGame = await getOneUpcomingGame();
+			if (upcomingGame) {
+				gamesToUi.push(upcomingGame);
+			}
+
+			await toUI("mergeGames", [gamesToUi]);
+		} else {
+			// This loads next game and calls mergeGames internally
+			await recomputeLocalUITeamOvrs();
+		}
 
 		await advStats();
 

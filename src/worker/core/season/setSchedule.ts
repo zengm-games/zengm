@@ -13,14 +13,13 @@ import { isFinals } from "./isFinals.ts";
 const makePlayoffsKey = (game: ScheduleGameWithoutKey) =>
 	JSON.stringify([game.homeTid, game.awayTid]);
 
-export const getOneUpcomingGame = async (
-	currentGid?: number,
-): Promise<LocalStateUI["games"][number] | undefined> => {
+export const getOneUpcomingGame = async (): Promise<
+	LocalStateUI["games"][number] | undefined
+> => {
 	const game = (
 		await getUpcoming({
 			tid: g.get("userTid"),
 			onlyOneGame: true,
-			skipGid: currentGid,
 		})
 	)[0];
 	if (game) {

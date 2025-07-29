@@ -5,7 +5,7 @@ import {
 } from "../../../common/index.ts";
 import { saveAwardsByPlayer } from "../season/awards.ts";
 import { idb } from "../../db/index.ts";
-import { g, helpers, logEvent, toUI } from "../../util/index.ts";
+import { g, helpers, logEvent } from "../../util/index.ts";
 import type {
 	Conditions,
 	Game,
@@ -17,7 +17,6 @@ import type {
 import { headToHead, season } from "../index.ts";
 import getWinner from "../../../common/getWinner.ts";
 import formatScoreWithShootout from "../../../common/formatScoreWithShootout.ts";
-import { getOneUpcomingGame } from "../season/setSchedule.ts";
 
 const allStarMVP = async (
 	game: Game,
@@ -546,43 +545,34 @@ const writeGameStats = async (
 		);
 	}
 
+	let gameToUi: LocalStateUI["games"][number] | undefined;
 	if (
 		results.team[0].id === g.get("userTid") ||
 		results.team[1].id === g.get("userTid") ||
 		allStarGame
 	) {
-		const gamesToUi: LocalStateUI["games"] = [
-			{
-				forceWin: results.forceWin,
-				gid: results.gid,
-				overtimes: results.overtimes,
-				numPeriods: g.get("numPeriods"),
-				teams: [
-					{
-						ovr: results.team[0].ovr,
-						pts: results.team[0].stat.pts,
-						sPts: results.team[0].stat.sPts,
-						tid: results.team[0].id,
-						playoffs: gameStats.teams[0].playoffs,
-					},
-					{
-						ovr: results.team[1].ovr,
-						pts: results.team[1].stat.pts,
-						sPts: results.team[1].stat.sPts,
-						tid: results.team[1].id,
-						playoffs: gameStats.teams[1].playoffs,
-					},
-				],
-			},
-		];
-
-		// Also show the next game - this is kind of silly because the previous game hasn't been removed from the schedule yet (necessitating the argument to getOneUpcomingGame) and also we don't know if the day is over, so if the day is over, team ovrs will be computed wrong by not factoring in healing. So all games in this batch are done, recomputeLocalUITeamOvrs is called which basically just repeats this but with proper knowledge of if the day is finished (and injuries have healed yet) or not for team ovr calculation.
-		const upcomingGame = await getOneUpcomingGame(results.gid);
-		if (upcomingGame) {
-			gamesToUi.push(upcomingGame);
-		}
-
-		await toUI("mergeGames", [gamesToUi]);
+		gameToUi = {
+			forceWin: results.forceWin,
+			gid: results.gid,
+			overtimes: results.overtimes,
+			numPeriods: g.get("numPeriods"),
+			teams: [
+				{
+					ovr: results.team[0].ovr,
+					pts: results.team[0].stat.pts,
+					sPts: results.team[0].stat.sPts,
+					tid: results.team[0].id,
+					playoffs: gameStats.teams[0].playoffs,
+				},
+				{
+					ovr: results.team[1].ovr,
+					pts: results.team[1].stat.pts,
+					sPts: results.team[1].stat.sPts,
+					tid: results.team[1].id,
+					playoffs: gameStats.teams[1].playoffs,
+				},
+			],
+		};
 	}
 
 	for (const clutchPlay of results.clutchPlays) {
@@ -717,6 +707,8 @@ const writeGameStats = async (
 	});
 
 	await idb.cache.games.put(gameStats);
+
+	return gameToUi;
 };
 
 export default writeGameStats;

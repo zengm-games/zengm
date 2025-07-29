@@ -1,8 +1,13 @@
 Adjust team rating based on the adjusted ovr of players who are playing through injury... so that we can see accurate playoff point spreads based on who we have playing, and see how playing and resting an injured player effects our speads/TR https://discord.com/channels/290013534023057409/331882115119448065/849075933206151230
 - also pass in number of days in the future it is, to simulate healing?
-  - might slow down schedule page, can no longer cache ovrs
-    - how much?
-    - can we cache sometimes, depending on which players are injured (if nobody is in the partial window)? this would apply by default in the regualr season, which is what matters, since the default is 0
+  - do it in getUpcoming, that's the only place it matters i think
+  - in writeGameStats, make sure day count is correct, has it incremented yet? probably not, since param to getOneUpcomingGame is required
+  - ovr needs to update after every day, even if no game played by user
+    - recomputeLocalUITeamOvrs is called every day
+      - could be more efficient - doesn't need every team's ovr, just the teams from the next day
+  - can we cache sometimes, depending on which players are injured (if nobody is in the partial window)? this would apply by default in the regualr season, which is what matters, since the default is 0
+    - never cache if someone is in the playThroughInjuries window
+    - otherwise, make a list of pid,injuredBool and sort asc and use as key. does that improve baseball perf?
 - test other sports
 
 randomize teams improvements

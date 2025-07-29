@@ -13,6 +13,36 @@ import { isFinals } from "./isFinals.ts";
 const makePlayoffsKey = (game: ScheduleGameWithoutKey) =>
 	JSON.stringify([game.homeTid, game.awayTid]);
 
+export const getOneUpcomingGame = async (
+	currentGid?: number,
+): Promise<LocalStateUI["games"][number] | undefined> => {
+	const game = (
+		await getUpcoming({
+			tid: g.get("userTid"),
+			onlyOneGame: true,
+			skipGid: currentGid,
+		})
+	)[0];
+	if (game) {
+		return {
+			finals: game.finals,
+			gid: game.gid,
+			teams: [
+				{
+					ovr: game.teams[0].ovr,
+					tid: game.teams[0].tid,
+					playoffs: game.teams[0].playoffs,
+				},
+				{
+					ovr: game.teams[1].ovr,
+					tid: game.teams[1].tid,
+					playoffs: game.teams[1].playoffs,
+				},
+			],
+		};
+	}
+};
+
 /**
  * Save the schedule to the database, overwriting what's currently there.
  *
@@ -64,29 +94,10 @@ const setSchedule = async (tids: [number, number][]) => {
 	}
 
 	// Add upcoming games
-	const games: LocalStateUI["games"] = [];
-	const userTid = g.get("userTid");
-	const upcoming = await getUpcoming({ tid: userTid });
-	for (const game of upcoming) {
-		games.push({
-			finals: game.finals,
-			gid: game.gid,
-			teams: [
-				{
-					ovr: game.teams[0].ovr,
-					tid: game.teams[0].tid,
-					playoffs: game.teams[0].playoffs,
-				},
-				{
-					ovr: game.teams[1].ovr,
-					tid: game.teams[1].tid,
-					playoffs: game.teams[1].playoffs,
-				},
-			],
-		});
+	const upcomingGame = await getOneUpcomingGame();
+	if (upcomingGame) {
+		await toUI("mergeGames", [[upcomingGame]]);
 	}
-
-	await toUI("mergeGames", [games]);
 };
 
 export default setSchedule;

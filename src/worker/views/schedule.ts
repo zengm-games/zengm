@@ -8,19 +8,35 @@ import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 
 export const getUpcoming = async ({
 	day,
-	limit = Infinity,
-	oneDay,
+	onlyOneGame,
+	skipGid,
 	tid,
 }: {
 	day?: number;
-	limit?: number;
-	oneDay?: boolean;
+	onlyOneGame?: boolean;
+	skipGid?: number;
 	tid?: number;
 }) => {
-	let schedule = await season.getSchedule(oneDay);
-	if (day !== undefined) {
-		schedule = schedule.filter((game) => game.day === day);
-	}
+	const schedule = await season.getSchedule();
+
+	let keptOneGame = false;
+	const filteredSchedule = schedule.filter((game) => {
+		const keep =
+			(tid === undefined ||
+				tid === game.homeTid ||
+				tid === game.awayTid ||
+				(game.homeTid === -1 && game.awayTid === -2) ||
+				(game.homeTid === -3 && game.awayTid === -3)) &&
+			(day === undefined || game.day === day) &&
+			game.gid !== skipGid &&
+			(!onlyOneGame || !keptOneGame);
+
+		if (keep) {
+			keptOneGame = true;
+		}
+
+		return keep;
+	});
 
 	const teams = await idb.getCopies.teamsPlus(
 		{
@@ -112,17 +128,6 @@ export const getUpcoming = async ({
 			playoffs,
 		};
 	};
-
-	const filteredSchedule = schedule
-		.filter(
-			(game) =>
-				tid === undefined ||
-				tid === game.homeTid ||
-				tid === game.awayTid ||
-				(game.homeTid === -1 && game.awayTid === -2) ||
-				(game.homeTid === -3 && game.awayTid === -3),
-		)
-		.slice(0, limit);
 
 	const upcoming: {
 		finals?: boolean;

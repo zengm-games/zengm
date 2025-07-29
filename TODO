@@ -1,12 +1,3 @@
-Adjust team rating based on the adjusted ovr of players who are playing through injury... so that we can see accurate playoff point spreads based on who we have playing, and see how playing and resting an injured player effects our speads/TR https://discord.com/channels/290013534023057409/331882115119448065/849075933206151230
-- test in playoffs
-  - spread for first day of playoffs seems wrong
-    - getUpcoming called before phase change, but relies on phase change
-    - could recompute in newPhasePlayoffs (phase also hasn't changed here) or is there some way to identify it where it is called and instead do it in the playoffs?
-      - where exactly is the bad calculation called from, is it even play.ts? seems to be from setSchedule from newSchedulePlayoffsDay from newPhasePlayoffs
-  - happens in current prod? YES
-- test other sports
-
 randomize teams improvements
 - on randomize teams popup, add option to specify the number of confs/divs/teams somehow, rather than always using the current ones https://discord.com/channels/290013534023057409/290013534023057409/1020913700313509920
 - allow something better than just a boolean "North America only", like international only, europe only

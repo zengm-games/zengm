@@ -2,7 +2,7 @@ import { player, season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, getProcessedGames } from "../util/index.ts";
 import type { UpdateEvents, ViewInput, Game } from "../../common/types.ts";
-import { bySport, PHASE } from "../../common/index.ts";
+import { bySport } from "../../common/index.ts";
 import { groupBy, groupByUnique, orderBy } from "../../common/utils.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 
@@ -86,7 +86,9 @@ export const getUpcoming = async ({
 				numDaysInFuture: day - todayDay,
 				playThroughInjuries: getActualPlayThroughInjuries(t ?? "default"),
 			},
-			playoffs: g.get("phase") === PHASE.PLAYOFFS,
+
+			// This is better than checking g.get("phase"), because g.get("phase") will still show up as regular season when this is called (via setSchedule) from newDayPlayoffSeries
+			playoffs: !!roundSeries,
 		});
 
 		if (tid < 0) {

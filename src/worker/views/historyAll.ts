@@ -1,26 +1,29 @@
 import { bySport, PHASE, SIMPLE_AWARDS } from "../../common/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type { UpdateEvents, PlayoffSeriesTeam } from "../../common/types.ts";
+import type { UpdateEvents } from "../../common/types.ts";
 import { groupByUnique, range } from "../../common/utils.ts";
 
 const addAbbrev = (
 	award: any,
-	teams: {
-		tid: number;
-		abbrev: string;
-		seasonAttrs: {
+	teams: Record<
+		number,
+		{
+			tid: number;
 			abbrev: string;
-			season: number;
-		}[];
-	}[],
+			seasonAttrs: {
+				abbrev: string;
+				season: number;
+			}[];
+		}
+	>,
 	season: number,
 ) => {
 	if (!award) {
 		return;
 	}
 
-	const t = teams.find((t) => t.tid === award.tid);
+	const t = teams[award.tid];
 	if (!t) {
 		return {
 			...award,
@@ -68,6 +71,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			},
 			"noCopyCache",
 		);
+		const teamsByTid = groupByUnique(teams, "tid");
 
 		const awards = await idb.getCopies.awards(undefined, "noCopyCache");
 		const awardsBySeason = groupByUnique(awards, "season");
@@ -103,7 +107,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 			for (const awardType of awardTypes) {
 				row[awardType] = a
-					? addAbbrev(a[awardType], teams, a.season)
+					? addAbbrev(a[awardType], teamsByTid, a.season)
 					: undefined;
 			}
 
@@ -123,7 +127,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			const series = playoffSeriesBySeason[season];
 
 			type MyTeam = (typeof teams)[number];
-			const formatTeam = (t: MyTeam, seed: number) => {
+			const formatTeam = (t: MyTeam, seed: number | undefined) => {
 				const tid = t.tid;
 
 				const teamSeason = t.seasonAttrs.find((ts) => ts.season === season);
@@ -150,6 +154,20 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					count: 0,
 				};
 			};
+			const formatTeamWrapper = ({
+				seed,
+				tid,
+			}: {
+				seed: number | undefined;
+				tid: number;
+			}) => {
+				const t = teamsByTid[tid];
+				if (!t) {
+					throw new Error(`Team not found for tid ${tid}`);
+				}
+
+				return formatTeam(t, seed);
+			};
 
 			if (series) {
 				if (series.series.length === 0) {
@@ -171,8 +189,8 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						continue;
 					}
 
-					let champ: PlayoffSeriesTeam;
-					let runnerUp: PlayoffSeriesTeam;
+					let champ;
+					let runnerUp;
 					if (finals.home.won > finals.away.won) {
 						champ = finals.home;
 						runnerUp = finals.away;
@@ -181,16 +199,42 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						runnerUp = finals.home;
 					}
 
-					const formatTeamWrapper = ({ seed, tid }: PlayoffSeriesTeam) => {
-						const t = teams.find((t) => t.tid === tid);
-						if (!t) {
-							throw new Error(`Team not found for tid ${tid}`);
-						}
-
-						return formatTeam(t, seed);
-					};
-
 					row.champ = formatTeamWrapper(champ);
+					row.runnerUp = formatTeamWrapper(runnerUp);
+				}
+			} else {
+				// This is for people with some missing playoffSeries data, either because it was deleted or because it never existed (like adding teamSeasons manually for past years)
+				const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
+					"teamSeasonsBySeasonTid",
+					[[season], [season, "Z"]],
+				);
+
+				const numPlayoffRounds = g.get("numGamesPlayoffSeries", season).length;
+
+				let champ;
+				let runnerUp;
+				for (const row of teamSeasons) {
+					if (row.playoffRoundsWon === numPlayoffRounds) {
+						champ = {
+							seed: undefined,
+							tid: row.tid,
+						};
+					} else if (row.playoffRoundsWon === numPlayoffRounds - 1) {
+						runnerUp = {
+							seed: undefined,
+							tid: row.tid,
+						};
+					}
+
+					if (champ && runnerUp) {
+						break;
+					}
+				}
+
+				if (champ) {
+					row.champ = formatTeamWrapper(champ);
+				}
+				if (runnerUp) {
 					row.runnerUp = formatTeamWrapper(runnerUp);
 				}
 			}

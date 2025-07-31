@@ -39,6 +39,7 @@ const Draft = ({
 	spectator,
 	stats,
 	undrafted,
+	userNextPickYear,
 	userPlayers,
 	userTid,
 	userTids,
@@ -459,8 +460,9 @@ const Draft = ({
 			<StickyDraftInfo
 				challengeNoRatings={challengeNoRatings}
 				drafted={draftedSorted}
-				expansionOrFantasyDraft={expansionDraft || fantasyDraft}
+				season={season}
 				spectator={spectator}
+				userNextPickYear={userNextPickYear}
 				userTids={userTids}
 			/>
 			<div className="d-sm-flex gap-3">

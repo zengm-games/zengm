@@ -94,12 +94,30 @@ const PickWithoutPlayers = ({
 	);
 };
 
-const YoureUp = ({
-	expansionOrFantasyDraft,
-	numPicks,
+const NextDraftText = ({
+	season,
+	userNextPickYear,
 }: {
-	expansionOrFantasyDraft: boolean;
+	season: number;
+	userNextPickYear: number;
+}) => {
+	if (userNextPickYear <= season) {
+		return "next draft";
+	} else if (userNextPickYear === season + 1) {
+		return "next year";
+	} else {
+		return `in ${userNextPickYear}!`;
+	}
+};
+
+const YoureUp = ({
+	numPicks,
+	season,
+	userNextPickYear,
+}: {
 	numPicks: number;
+	season: number;
+	userNextPickYear: number;
 }) => {
 	const color =
 		numPicks === 0
@@ -119,7 +137,7 @@ const YoureUp = ({
 				You're up:
 				<br />
 				{numPicks < 0 ? (
-					`next ${expansionOrFantasyDraft ? "draft" : "year"}!`
+					<NextDraftText season={season} userNextPickYear={userNextPickYear} />
 				) : numPicks === 0 ? (
 					<b>now!</b>
 				) : numPicks === 1 ? (
@@ -136,15 +154,17 @@ const YoureUp = ({
 
 export const StickyDraftInfo = ({
 	challengeNoRatings,
-	expansionOrFantasyDraft,
 	drafted,
+	season,
 	spectator,
+	userNextPickYear,
 	userTids,
 }: {
 	challengeNoRatings: boolean;
-	expansionOrFantasyDraft: boolean;
 	drafted: any[];
+	season: number;
 	spectator: boolean;
+	userNextPickYear: number;
 	userTids: number[];
 }) => {
 	const teamInfoCache = useLocal((state) => state.teamInfoCache);
@@ -264,8 +284,9 @@ export const StickyDraftInfo = ({
 					</div>
 				</div>
 				<YoureUp
-					expansionOrFantasyDraft={expansionOrFantasyDraft}
 					numPicks={yourNextPick}
+					season={season}
+					userNextPickYear={userNextPickYear}
 				/>
 			</div>
 			<div

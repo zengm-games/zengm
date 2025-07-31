@@ -4,6 +4,25 @@ import { draft } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers, local } from "../util/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { minBy } from "../../common/utils.ts";
+
+const getUserNextPickYear = async () => {
+	const userTids = g.get("userTids");
+
+	const draftPicks = (await idb.cache.draftPicks.getAll()).filter(
+		(dp) => userTids.includes(dp.tid) && typeof dp.season === "number",
+	);
+
+	// This could be the current season, but that's fine because the UI handles that case
+	let nextPickYear = minBy(draftPicks, "season")?.season as number | undefined;
+
+	if (nextPickYear === undefined) {
+		// No picks at all in future drafts, so find what the next one to be generated is
+		nextPickYear = g.get("season") + g.get("numSeasonsFutureDraftPicks");
+	}
+
+	return nextPickYear;
+};
 
 const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
@@ -224,6 +243,8 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			showRookies: true,
 		});
 
+		const userNextPickYear = await getUserNextPickYear();
+
 		return {
 			challengeNoDraftPicks: g.get("challengeNoDraftPicks"),
 			challengeNoRatings: g.get("challengeNoRatings"),
@@ -237,6 +258,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			spectator: g.get("spectator"),
 			stats,
 			undrafted,
+			userNextPickYear,
 			userPlayers,
 			userTid: g.get("userTid"),
 			userTids: g.get("userTids"),

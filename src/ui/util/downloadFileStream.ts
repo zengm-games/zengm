@@ -43,7 +43,7 @@ const downloadFileStream = async (
 		return fileStream;
 	}
 
-	const contents: Uint8Array[] = [];
+	const contents: Uint8Array<ArrayBuffer>[] = [];
 
 	const fileStream = new WritableStream({
 		write(chunk) {

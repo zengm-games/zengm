@@ -1,6 +1,6 @@
 const downloadFile = (
 	fileName: string,
-	contents: string | Uint8Array[],
+	contents: string | Uint8Array<ArrayBuffer>[],
 	mimeType: string,
 ) => {
 	let contents2;

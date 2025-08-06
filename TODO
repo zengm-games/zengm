@@ -1,3 +1,5 @@
+prod firefox error on account page: Unable to check <input pattern=‘[A-Za-z-0-9-_]+’> because ‘/[A-Za-z-0-9-_]+/v’ is not a valid regexp: character class escape cannot be used in class range in regular expression
+
 heaves shouldn't count unless they go in https://discord.com/channels/@me/1099138438147624990/1400890557546631329
 - heave definition: https://bleacherreport.com/articles/25223156-nba-announces-rule-change-end-quarter-heave-stats-2025-summer-league
 

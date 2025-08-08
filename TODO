@@ -1,3 +1,5 @@
+"regenerate schedule" from danger zone should also update g.numGames if it was changed https://old.reddit.com/r/BasketballGM/comments/1mkd2ya/each_team_plays_16_games_why_dont_the_top_4_teams/n7j05u5/?context=3 - like if this is the 2025 regular season and g.numGames says there is a change pending for next season, it should be moved to this season
+
 prod firefox error on account page: Unable to check <input pattern=‘[A-Za-z-0-9-_]+’> because ‘/[A-Za-z-0-9-_]+/v’ is not a valid regexp: character class escape cannot be used in class range in regular expression
 
 heaves shouldn't count unless they go in https://discord.com/channels/@me/1099138438147624990/1400890557546631329

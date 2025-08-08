@@ -15,7 +15,7 @@ export const fields = {
 			type: "text",
 			required: true,
 			maxLength: 15,
-			pattern: "[A-Za-z-0-9-_]+",
+			pattern: String.raw`[\w\-]+`,
 			title: "Letters, numbers, dashes (-), and underscores (_) only",
 			autoComplete: "username",
 		},

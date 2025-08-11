@@ -77,6 +77,7 @@ const AwardsRecords = ({
 					firstName: a.firstName,
 					firstNameShort: a.firstNameShort,
 					lastName: a.lastName,
+					pos: a.pos,
 				}),
 				a.count,
 				{

@@ -1,4 +1,13 @@
-"regenerate schedule" from danger zone should also update g.numGames if it was changed https://old.reddit.com/r/BasketballGM/comments/1mkd2ya/each_team_plays_16_games_why_dont_the_top_4_teams/n7j05u5/?context=3 - like if this is the 2025 regular season and g.numGames says there is a change pending for next season, it should be moved to this season
+allow trading more than 2 picks
+- 2nd+ round picks should not be in the limit
+- maybe add penalty to score for >2 picks, rather than hard limit
+- https://old.reddit.com/r/BasketballGM/comments/1lonckf/monthly_suggestions_thread/n15vegc/
+
+feasible AI features from Chrome's built-in AI
+- nicknames (pass in existing ones to not repeat)
+- social media
+
+leaders on dashboard should account for qualified/non-qualified players like league leaders page https://discord.com/channels/290013534023057409/1403842951574192228/1403842951574192228
 
 heaves shouldn't count unless they go in https://discord.com/channels/@me/1099138438147624990/1400890557546631329
 - heave definition: https://bleacherreport.com/articles/25223156-nba-announces-rule-change-end-quarter-heave-stats-2025-summer-league
@@ -110,10 +119,6 @@ HoF should highlight your team like GM History, not your current franchise https
   - retired players list should highlight players who ever played for your team https://old.reddit.com/r/BasketballGM/comments/1joi4m5/monthly_suggestions_thread/mkz8q9k/
 
 make clone player button a dropdown that lets you pick current season or a past season https://old.reddit.com/r/BasketballGM/comments/1joi4m5/monthly_suggestions_thread/moikegn/
-
-allow trading more than 2 picks
-- 2nd+ round picks should not be in the limit
-- maybe add penalty to score for >2 picks, rather than hard limit
 
 keep players on their real historical teams https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/l6k5gc7/
 - mid season trades?

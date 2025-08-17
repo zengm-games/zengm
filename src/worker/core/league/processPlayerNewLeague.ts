@@ -28,7 +28,8 @@ export const applyRealPlayerPhotos = (
 ) => {
 	if (realPlayerPhotos) {
 		// Do this before augment so it doesn't need to create a face
-		if (p.srID) {
+		// p.imgURL check means creating a league with specified images does not get overwritten
+		if (p.srID && !p.imgURL) {
 			const realPlayerPhoto = realPlayerPhotos[p.srID];
 			if (realPlayerPhoto !== undefined) {
 				p.imgURL = realPlayerPhoto;

@@ -412,7 +412,9 @@ const getPicks = async ({
 			const numBeyond2 = firstRoundPicks.length - 2;
 			if (numBeyond2 > 0) {
 				for (const pick of firstRoundPicks) {
-					pick.value *= 1 + numBeyond2 / SPORT_FACTOR;
+					if (pick.value > 0) {
+						pick.value *= 1 + numBeyond2 / SPORT_FACTOR;
+					}
 				}
 			}
 
@@ -420,7 +422,9 @@ const getPicks = async ({
 			const numBeyond2Other = otherPicks.length - 2;
 			if (numBeyond2Other > 0) {
 				for (const pick of otherPicks) {
-					pick.value *= 1 + numBeyond2 / (SPORT_FACTOR * pick.dp.round);
+					if (pick.value > 0) {
+						pick.value *= 1 + numBeyond2 / (SPORT_FACTOR * pick.dp.round);
+					}
 				}
 			}
 		}

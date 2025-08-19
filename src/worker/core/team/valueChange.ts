@@ -388,15 +388,39 @@ const getPicks = async ({
 
 		// Be wary about giving away too many 1st round draft picks!
 		if (remove.length > 0) {
-			const firstRoundPicks = remove.filter(
-				(x) => x.type === "pick" && x.dp.round === 1,
-			);
+			// More value for individual players in basketball, similar to EXPONENT
+			const SPORT_FACTOR = bySport({
+				baseball: 2.5,
+				basketball: 5,
+				hockey: 2.5,
+				football: 2.5,
+			});
+
+			const firstRoundPicks = [];
+			const otherPicks = [];
+			for (const asset of remove) {
+				if (asset.type === "pick") {
+					if (asset.dp.round === 1) {
+						firstRoundPicks.push(asset);
+					} else {
+						otherPicks.push(asset);
+					}
+				}
+			}
 
 			// If there are more than 2 picks in the trade, make them a bit more valuable to the AI
 			const numBeyond2 = firstRoundPicks.length - 2;
 			if (numBeyond2 > 0) {
 				for (const pick of firstRoundPicks) {
-					pick.value *= 1 + numBeyond2 / 5;
+					pick.value *= 1 + numBeyond2 / SPORT_FACTOR;
+				}
+			}
+
+			// Similar but less extreme for other picks
+			const numBeyond2Other = otherPicks.length - 2;
+			if (numBeyond2Other > 0) {
+				for (const pick of otherPicks) {
+					pick.value *= 1 + numBeyond2 / (SPORT_FACTOR * pick.dp.round);
 				}
 			}
 		}

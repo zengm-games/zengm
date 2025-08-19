@@ -1,12 +1,3 @@
-srID from alexnoob
-- what to do if blank? generate or ask?
-- check for duplicate srIDs at end of make-json
-
-allow trading more than 2 picks
-- 2nd+ round picks should not be in the limit
-- maybe add penalty to score for >2 picks, rather than hard limit
-- https://old.reddit.com/r/BasketballGM/comments/1lonckf/monthly_suggestions_thread/n15vegc/
-
 feasible AI features from Chrome's built-in AI
 - nicknames (pass in existing ones to not repeat)
 - social media

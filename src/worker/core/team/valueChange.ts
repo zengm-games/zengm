@@ -26,6 +26,7 @@ type Asset =
 			contractValue: number;
 			injury: PlayerInjury;
 			age: number;
+			dp: DraftPick;
 			draftPick: number;
 			draftYear: number;
 	  };
@@ -192,13 +193,17 @@ const getPickNumber = async (
 		estPick = dp.pick;
 	} else {
 		let temp = cache.estPicks[dp.originalTid];
+
+		// Used to know when to overvalue own pick
+		const tradeWithUser = tradingPartnerTid === g.get("userTid");
+
 		// if trading with the user, make sure the AI pick is accurately judged
 		// based on what players are outgoing in the trade
 		// and just use the cached estimated pick if no players are being exchanged
 		if (
 			tid !== g.get("userTid") &&
 			dp.originalTid === tid &&
-			tradingPartnerTid === g.get("userTid") &&
+			tradeWithUser &&
 			pidsAdd.length + pidsRemove.length > 0
 		) {
 			temp = await getModifiedPickRank(tid, pidsAdd, pidsRemove);
@@ -207,9 +212,6 @@ const getPickNumber = async (
 
 		// tid rather than originalTid, because it's about what the user can control
 		const usersPick = dp.tid === g.get("userTid");
-
-		// Used to know when to overvalue own pick
-		const tradeWithUser = tradingPartnerTid === g.get("userTid");
 
 		// For future draft picks, add some uncertainty.
 		const regressionTarget = (usersPick ? 0.75 : 0.25) * numPicksPerRound;
@@ -318,6 +320,7 @@ const getPickInfo = async (
 			type: "Healthy",
 			gamesRemaining: 0,
 		},
+		dp,
 
 		// Would be better to store age in estValues, but oh well
 		age: 20,
@@ -381,6 +384,22 @@ const getPicks = async ({
 				tradingPartnerTid,
 			);
 			remove.push(pickInfo);
+		}
+
+		// Be wary about giving away too many 1st round draft picks to the user!
+		const tradeWithUser = tradingPartnerTid === g.get("userTid");
+		if (tradeWithUser && remove.length > 0) {
+			const firstRoundPicks = remove.filter(
+				(x) => x.type === "pick" && x.dp.round === 1,
+			);
+
+			// If there are more than 2 picks in the trade, make them a bit more valuable to the AI
+			const numBeyond2 = firstRoundPicks.length - 2;
+			if (numBeyond2 > 0) {
+				for (const pick of firstRoundPicks) {
+					pick.value *= 1 + numBeyond2 / 5;
+				}
+			}
 		}
 	}
 };
@@ -592,11 +611,6 @@ const valueChange = async (
 	valueChangeKey: number = Math.random(),
 	tradingPartnerTid?: number,
 ): Promise<number> => {
-	// UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
-	if (dpidsRemove.length > 2) {
-		return -1;
-	}
-
 	await player.updateOvrMeanStd();
 
 	// Get value and skills for each player on team or involved in the proposed transaction

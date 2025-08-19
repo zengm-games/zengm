@@ -386,9 +386,8 @@ const getPicks = async ({
 			remove.push(pickInfo);
 		}
 
-		// Be wary about giving away too many 1st round draft picks to the user!
-		const tradeWithUser = tradingPartnerTid === g.get("userTid");
-		if (tradeWithUser && remove.length > 0) {
+		// Be wary about giving away too many 1st round draft picks!
+		if (remove.length > 0) {
 			const firstRoundPicks = remove.filter(
 				(x) => x.type === "pick" && x.dp.round === 1,
 			);

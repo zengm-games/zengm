@@ -176,5 +176,9 @@ export const rolldownConfig = (
 		},
 		plugins,
 		preserveEntrySignatures: false,
+		experimental: {
+			// Needed to add this when upgrading from rolldown@1.0.0-beta.31 to rolldown@1.0.0-beta.32, https://github.com/rolldown/rolldown/pull/5629 looks like the most relevant PR from that release
+			strictExecutionOrder: true,
+		},
 	};
 };

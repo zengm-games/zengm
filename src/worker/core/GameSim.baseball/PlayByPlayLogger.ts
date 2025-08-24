@@ -95,6 +95,7 @@ export type PlayByPlayEventInput =
 			outAtNextBase: boolean; // For if the runner was thrown out when trying to advance one more base
 			outs: number;
 			bases: [number | undefined, number | undefined, number | undefined];
+			seasonNumberOfHits: number;
 	  }
 	| {
 			type: "hitResult";
@@ -142,6 +143,7 @@ export type PlayByPlayEventInput =
 			outAtNextBase: boolean; // For if the runner was thrown out when trying to advance one more base
 			outs: number;
 			bases: [number | undefined, number | undefined, number | undefined];
+			seasonStolenBases: number | null;
 	  }
 	| {
 			type: "balk" | "wildPitch" | "passedBall";

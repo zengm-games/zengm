@@ -1020,7 +1020,7 @@ class GameSim extends GameSimBase {
 				this.recordStat(this.o, p, "sb");
 				this.recordStat(this.d, catcher, "sbF");
 			}
-
+			console.log("STEAL: END", p.seasonStats.sb);
 			this.playByPlay.logEvent({
 				type: "stealEnd",
 				pid: p!.id,
@@ -1029,6 +1029,7 @@ class GameSim extends GameSimBase {
 				throw: throwAt === i,
 				outAtNextBase: false,
 				...this.getSportState(),
+				seasonStolenBases: success ? p.seasonStats.sb : null,
 			});
 		}
 	}
@@ -1882,7 +1883,6 @@ class GameSim extends GameSimBase {
 					if (numBases < 4) {
 						this.bases[numBases - 1] = this.makeOccupiedBase(batter, true);
 					}
-
 					this.playByPlay.logEvent({
 						type: "hitResult",
 						result: "error",
@@ -1918,7 +1918,18 @@ class GameSim extends GameSimBase {
 							);
 						}
 					}
-
+					const determineSeasonNumberOfHits = (numBases: 1 | 2 | 3 | 4) => {
+						switch (numBases) {
+							case 1:
+								return batter.seasonStats["h"];
+							case 2:
+								return batter.seasonStats["2b"];
+							case 3:
+								return batter.seasonStats["3b"];
+							case 4:
+								return batter.seasonStats["hr"];
+						}
+					};
 					this.playByPlay.logEvent({
 						type: "hitResult",
 						result,
@@ -1929,6 +1940,7 @@ class GameSim extends GameSimBase {
 						numBases,
 						outAtNextBase: false,
 						...this.getSportState(),
+						seasonNumberOfHits: determineSeasonNumberOfHits(numBases),
 					});
 				}
 

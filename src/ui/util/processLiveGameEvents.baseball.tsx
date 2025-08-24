@@ -286,7 +286,6 @@ export const getText = (
 		}
 		case "hitResult": {
 			const sideRetired = event.outs === NUM_OUTS_PER_INNING;
-
 			text = "";
 			if (event.result === "error") {
 				text = `${helpers.pronoun(
@@ -299,14 +298,13 @@ export const getText = (
 				if (event.numBases === 1) {
 					text = "Single!";
 				} else if (event.numBases === 2) {
-					console.log(playersByPid[event.pid].seasonStats["2b"]);
-					text = `Double! (${playersByPid[event.pid].seasonStats["2b"]})`;
+					text = `Double! (${event.seasonNumberOfHits})`;
 				} else if (event.numBases === 3) {
-					text = `Triple! (${playersByPid[event.pid].seasonStats["3b"]})`;
+					text = `Triple! (${event.seasonNumberOfHits})`;
 				} else if (event.runners.length === 3) {
-					text = `Grand slam! (${playersByPid[event.pid].seasonStats["3b"]})`;
+					text = `Grand slam! (${event.seasonNumberOfHits})`;
 				} else {
-					text = `Home run! (${playersByPid[event.pid].seasonStats["hr"]})`;
+					text = `Home run! (${event.seasonNumberOfHits})`;
 				}
 			} else if (event.result === "flyOut") {
 				text = `Caught by the ${
@@ -380,6 +378,7 @@ export const getText = (
 			break;
 		}
 		case "stealEnd": {
+			console.log("STEAL END EVENT", event);
 			if (event.out) {
 				text = `${getName(event.pid)} is thrown out at ${getBaseName(
 					event.to,
@@ -387,7 +386,7 @@ export const getText = (
 			} else if (event.throw) {
 				text = `${getName(
 					event.pid,
-				)} beats the throw and is safe at ${getBaseName(event.to)} (${playersByPid[event.pid].seasonStats["sb"]})`;
+				)} beats the throw and is safe at ${getBaseName(event.to)} (${event.seasonStolenBases})`;
 			} else {
 				text = `${getName(event.pid)} steals ${getBaseName(
 					event.to,

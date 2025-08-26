@@ -7,8 +7,6 @@ leaders on dashboard should account for qualified/non-qualified players like lea
 heaves shouldn't count unless they go in https://discord.com/channels/@me/1099138438147624990/1400890557546631329
 - heave definition: https://bleacherreport.com/articles/25223156-nba-announces-rule-change-end-quarter-heave-stats-2025-summer-league
 
-vertical align of clock when no timeouts (not basketball)
-
 randomize teams improvements
 - on randomize teams popup, add option to specify the number of confs/divs/teams somehow, rather than always using the current ones https://discord.com/channels/290013534023057409/290013534023057409/1020913700313509920
 - allow something better than just a boolean "North America only", like international only, europe only

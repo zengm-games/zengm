@@ -111,16 +111,22 @@ const TeamNameAndScore = ({
 	return (
 		<div className="d-flex">
 			{live && !boxScore.gameOver ? (
-				<span
+				<div
 					className={
 						boxScore.possession === possessionNum ? "text-warning" : "opacity-0"
 					}
+					style={{ marginTop: -1 }}
 				>
 					●&nbsp;
-				</span>
+				</div>
 			) : null}
 			{t.playoffs ? (
-				<span className="text-body-secondary">{t.playoffs.seed}.&nbsp;</span>
+				<div
+					className="text-body-secondary fs-5 align-self-end"
+					style={{ paddingBottom: 1 }}
+				>
+					{t.playoffs.seed}.&nbsp;
+				</div>
 			) : null}
 			<div>
 				<TeamNameLink
@@ -226,14 +232,16 @@ export const HeadlineScoreLive = ({
 					/>
 					{boxScore.overtime ? <div>&nbsp;{boxScore.overtime}</div> : null}
 				</div>
-				<div
-					className="text-nowrap ms-auto ms-md-3"
-					style={{
-						// Align with baseline of score text
-						paddingBottom: 2,
-					}}
-				>
-					{clockText}
+				<div className="d-flex h2 mb-0 ms-auto ms-md-3">
+					<div
+						className="text-nowrap fs-6 align-self-end"
+						style={{
+							paddingBottom: 2,
+							paddingTop: STARTING_NUM_TIMEOUTS !== undefined ? 0 : 7,
+						}}
+					>
+						{clockText}
+					</div>
 				</div>
 			</div>
 		</div>

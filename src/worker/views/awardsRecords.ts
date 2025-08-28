@@ -387,10 +387,13 @@ const getPlayerAwards = (p: LocalPlayer, awardType: string) => {
 	const lastYear = Math.max(...years.map((y) => y.season));
 
 	// Find most common pos that this player had for this type of award
+	let maxPos;
 	const yearsSet = new Set(years.map((row) => row.season));
 	const allPos = p.ratings.filter((row) => yearsSet.has(row.season));
-	const posCounts = Object.entries(countBy(allPos, "pos"));
-	const maxPos = maxBy(posCounts, 1)![0]!;
+	if (allPos.length > 0) {
+		const posCounts = Object.entries(countBy(allPos, "pos"));
+		maxPos = maxBy(posCounts, 1)![0]!;
+	}
 
 	return {
 		firstName: p.firstName,

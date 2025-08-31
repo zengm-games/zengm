@@ -1,3 +1,10 @@
+in play by play, fg attempt before result https://discord.com/channels/290013534023057409/331882115119448065/1399817715589316929
+
+for past seasons roster pages, include a "Left" column similar to "Acquired" https://discord.com/channels/290013534023057409/331882115119448065/1409262567230148658
+- would need to track more stuff in "transactions" like when a player is released, etc
+
+loadTeams teamStats should not include opp stats - maybe make them a separate category in team.stats? that could break stuff though. could also just filter them out
+
 score bar UI might be better mirrored, like score in the middle and team on the outside for both sides https://discord.com/channels/290013534023057409/816359356424912976/1409956862513778719
 
 feasible AI features from Chrome's built-in AI
@@ -1377,7 +1384,6 @@ nicidob improve value formula
 
 more dramatic play-by-play
 - pass attempt and description before result
-- fg attempt before result
 - run after catch
 - fumble handoff
 - flags at various times

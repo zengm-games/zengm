@@ -426,7 +426,7 @@ const TEAM_STATS_TABLES = {
 		stats: [
 			"oppPa",
 			"oppAb",
-			"oppR",
+			"oppPts",
 			"oppH",
 			"opp2b",
 			"opp3b",

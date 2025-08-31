@@ -4,7 +4,6 @@ const rawAndOpp = [
 	// Batting
 	"pts",
 	"pa",
-	"r",
 	"h",
 	"2b",
 	"3b",

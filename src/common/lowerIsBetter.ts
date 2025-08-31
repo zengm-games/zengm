@@ -35,7 +35,7 @@ export const lowerIsBetter = new Set(
 			"pc9",
 			"oppPa",
 			"oppAb",
-			"oppR",
+			"oppPts",
 			"oppH",
 			"opp2b",
 			"opp3b",

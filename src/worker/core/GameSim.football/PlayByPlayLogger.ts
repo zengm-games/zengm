@@ -79,6 +79,13 @@ export type PlayByPlayEventInputScore =
 			td: boolean;
 	  }
 	| {
+			type: "extraPointAttempt" | "fieldGoalAttempt";
+			clock: number;
+			names: string[];
+			t: TeamNum;
+			yds: number;
+	  }
+	| {
 			type: "extraPoint" | "fieldGoal";
 			clock: number;
 			made: boolean;
@@ -149,11 +156,6 @@ export type PlayByPlayEventInput =
 			t: TeamNum;
 			touchback: boolean;
 			yds: number;
-	  }
-	| {
-			type: "extraPointAttempt";
-			clock: number;
-			t: TeamNum;
 	  }
 	| {
 			type: "fumble";

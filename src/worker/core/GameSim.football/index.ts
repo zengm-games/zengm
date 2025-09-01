@@ -1543,17 +1543,20 @@ class GameSim extends GameSimBase {
 	}
 
 	doFieldGoal(playType: "extraPoint" | "fieldGoal" | "fieldGoalLate") {
-		const extraPoint = playType === "extraPoint";
-
-		if (extraPoint) {
-			this.playByPlay.logEvent({
-				type: "extraPointAttempt",
-				clock: this.clock,
-				t: this.o,
-			});
-		}
-
 		this.updatePlayersOnField("fieldGoal");
+
+		const extraPoint = playType === "extraPoint";
+		const distance =
+			100 - this.scrimmage + FIELD_GOAL_DISTANCE_YARDS_ADDED_FROM_SCRIMMAGE;
+		const kicker = this.getTopPlayerOnField(this.o, "K");
+
+		this.playByPlay.logEvent({
+			type: extraPoint ? "extraPointAttempt" : "fieldGoalAttempt",
+			clock: this.clock,
+			names: [kicker.name],
+			t: this.o,
+			yds: distance,
+		});
 
 		if (!extraPoint) {
 			const penInfo = this.checkPenalties("beforeSnap");
@@ -1563,9 +1566,6 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		const distance =
-			100 - this.scrimmage + FIELD_GOAL_DISTANCE_YARDS_ADDED_FROM_SCRIMMAGE;
-		const kicker = this.getTopPlayerOnField(this.o, "K");
 		const made = Math.random() < this.probMadeFieldGoal(kicker);
 		const dt = extraPoint ? 0 : random.randInt(4, 6);
 		if (!extraPoint) {

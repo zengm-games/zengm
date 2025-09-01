@@ -433,7 +433,11 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 			</>
 		);
 	} else if (event.type === "extraPointAttempt") {
-		text = "Extra point attempt";
+		text = `${event.names[0]} comes on for an extra point attempt`;
+	} else if (event.type === "fieldGoalAttempt") {
+		text = `${event.names[0]} comes on for a ${
+			event.yds
+		} yard field goal attempt`;
 	} else if (event.type === "twoPointConversion") {
 		text = "Two-point conversion attempt";
 	} else if (event.type === "twoPointConversionFailed") {

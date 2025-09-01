@@ -189,6 +189,9 @@ importers:
       '@restart/ui':
         specifier: ^1.9.4
         version: 1.9.4(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+      '@rolldown/pluginutils':
+        specifier: 1.0.0-beta.34
+        version: 1.0.0-beta.34
       '@rollup/plugin-babel':
         specifier: ^6.0.4
         version: 6.0.4(@babel/core@7.28.3)(@types/babel__core@7.20.5)(rollup@4.49.0)

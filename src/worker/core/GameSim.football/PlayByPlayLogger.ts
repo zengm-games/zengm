@@ -239,6 +239,16 @@ export type PlayByPlayEventInput =
 			t: TeamNum;
 	  }
 	| {
+			type: "goingForItOn4th";
+			clock: number;
+			t: TeamNum;
+	  }
+	| {
+			type: "puntTeam";
+			clock: number;
+			t: TeamNum;
+	  }
+	| {
 			type: "turnoverOnDowns";
 			clock: number;
 			t: TeamNum;

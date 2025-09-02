@@ -440,6 +440,10 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 		} yard field goal attempt`;
 	} else if (event.type === "twoPointConversion") {
 		text = "Two-point conversion attempt";
+	} else if (event.type === "goingForItOn4th") {
+		text = "The offense stays on the field, they're going for it on 4th down!";
+	} else if (event.type === "puntTeam") {
+		text = "The punt team takes the field";
 	} else if (event.type === "twoPointConversionFailed") {
 		text = "Two-point conversion failed";
 	} else if (event.type === "turnoverOnDowns") {

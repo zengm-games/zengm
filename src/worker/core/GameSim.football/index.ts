@@ -864,8 +864,22 @@ class GameSim extends GameSimBase {
 		} else if (playType === "punt") {
 			dt = this.doPunt();
 		} else if (playType === "pass") {
+			if (this.down === 4) {
+				this.playByPlay.logEvent({
+					type: "goingForItOn4th",
+					clock: this.clock,
+					t: this.o,
+				});
+			}
 			dt = this.doPass();
 		} else if (playType === "run") {
+			if (this.down === 4) {
+				this.playByPlay.logEvent({
+					type: "goingForItOn4th",
+					clock: this.clock,
+					t: this.o,
+				});
+			}
 			dt = this.doRun();
 		} else if (playType === "kneel") {
 			dt = this.doKneel();
@@ -1341,6 +1355,12 @@ class GameSim extends GameSimBase {
 	}
 
 	doPunt() {
+		this.playByPlay.logEvent({
+			type: "puntTeam",
+			clock: this.clock,
+			t: this.o,
+		});
+
 		this.updatePlayersOnField("punt");
 		const penInfo = this.checkPenalties("beforeSnap");
 

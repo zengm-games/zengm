@@ -336,6 +336,9 @@ const newPhasePreseason = async (
 		if (isSport("hockey") && p.numConsecutiveGamesG !== undefined) {
 			p.numConsecutiveGamesG = 0;
 		}
+		if (isSport("baseball") && p.pFatigue !== undefined && p.pFatigue > 0) {
+			p.pFatigue = 0;
+		}
 
 		if (!repeatSeason) {
 			// Update ratings

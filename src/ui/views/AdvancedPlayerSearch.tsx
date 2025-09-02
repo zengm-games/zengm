@@ -23,6 +23,7 @@ import {
 } from "../components/contract.tsx";
 import clsx from "clsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];
@@ -682,7 +683,9 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					>
 						{p.stats.abbrev}
 					</a>,
-					p.age,
+					rendered.singleSeason === "totals"
+						? wrappedAgeAtDeath(p.age, p.ageAtDeath)
+						: p.age,
 					p.contract.amount > 0 ? wrappedContractAmount(p) : null,
 					p.contract.amount > 0 && currentSeasonOnly
 						? wrappedContractExp(p)
@@ -696,7 +699,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 						...uniqueColFiltersWithInfo.map((row) => row.info),
 						...uniqueStatTypeInfos,
 					].map((info) => {
-						const value = info.getValue(p);
+						const value = info.getValue(p, rendered.singleSeason);
 						if (info.category === "bio") {
 							return value;
 						} else if (info.category === "ratings") {
@@ -723,6 +726,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		currentSeasonOnly,
 		playoffs,
 		rendered.players,
+		rendered.singleSeason,
 		rendered.statType,
 		uniqueColFiltersWithInfo,
 		uniqueStatTypeInfos,

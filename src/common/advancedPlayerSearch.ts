@@ -7,7 +7,10 @@ type AdvancedPlayerSearchField = {
 	colKey: string;
 	colOverrides?: Partial<Col>;
 	valueType: "numeric" | "string";
-	getValue: (p: any) => string | number;
+	getValue: (
+		p: any,
+		singleSeason: "totals" | "singleSeason",
+	) => string | number;
 
 	// Used in worker to determine what data to fetch from playersPlus, if it's not just the string value in "key".
 	// null means don't fetch anything.
@@ -78,7 +81,13 @@ const allFiltersTemp: Record<
 			age: {
 				colKey: "Age",
 				valueType: "numeric",
-				getValue: (p) => p.age,
+				getValue: (p, singleSeason) => {
+					if (singleSeason === "totals") {
+						return p.ageAtDeath ?? p.age;
+					}
+
+					return p.age;
+				},
 			},
 			jerseyNumber: {
 				colKey: "stat:jerseyNumber",

@@ -14,7 +14,7 @@ import { iterateActivePlayersSeasonRange } from "../views/rosterContinuity.ts";
 import type { SeasonType } from "./processInputs.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 
-export const getPlayers = async (
+const getPlayers = async (
 	season: number | undefined,
 	attrs: string[],
 	ratings: string[],
@@ -40,6 +40,7 @@ export const getPlayers = async (
 			"firstName",
 			"lastName",
 			"age",
+			"ageAtDeath", // Only needed for "totals" but oh well
 			"contract",
 			"injury",
 			"hof",
@@ -236,7 +237,7 @@ export const advancedPlayerSearch = async ({
 					return true;
 				}
 
-				const pValue = filterInfo.getValue(p);
+				const pValue = filterInfo.getValue(p, singleSeason);
 				if (filterInfo.valueType === "numeric") {
 					if (filter.value === null) {
 						return true;

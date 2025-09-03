@@ -3,7 +3,9 @@ import getTeamInfos from "../../common/getTeamInfos.ts";
 import teamInfos from "../../common/teamInfos.ts";
 import type { Conf, Div } from "../../common/types.ts";
 import { realRosters } from "../core/index.ts";
-import geographicCoordinates from "../../common/geographicCoordinates.ts";
+import geographicCoordinates, {
+	type Continent,
+} from "../../common/geographicCoordinates.ts";
 import { random } from "../util/index.ts";
 import type { NewLeagueTeamWithoutRank } from "../../ui/views/NewLeague/types.ts";
 import { groupBy, omit, orderBy, range } from "../../common/utils.ts";
@@ -115,7 +117,7 @@ const getRandomTeams = async ({
 	divInfo,
 	real,
 	weightByPopulation,
-	northAmericaOnly,
+	continents,
 	seasonRange,
 }: {
 	divInfo:
@@ -130,7 +132,7 @@ const getRandomTeams = async ({
 		  };
 	real: boolean;
 	weightByPopulation: boolean;
-	northAmericaOnly: boolean;
+	continents: ReadonlyArray<Continent>;
 	seasonRange: [number, number]; // Only does something if real is true
 }) => {
 	let confs;
@@ -178,11 +180,10 @@ const getRandomTeams = async ({
 		);
 	}
 
-	if (northAmericaOnly) {
-		allTeamInfos = allTeamInfos.filter(
-			(t) => geographicCoordinates[t.region]?.continent === "North America",
-		);
-	}
+	const continentsSet = new Set(continents);
+	allTeamInfos = allTeamInfos.filter((t) =>
+		continentsSet.has(geographicCoordinates[t.region]?.continent ?? "Unknown"),
+	);
 
 	let weightFunction:
 		| ((teamInfo: { pop: number; weight?: number }) => number)

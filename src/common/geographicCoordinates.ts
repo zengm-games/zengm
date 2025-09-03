@@ -1,4 +1,4 @@
-export const continents = [
+export const realContinents = [
 	"North America",
 	"Africa",
 	"Asia",
@@ -6,9 +6,9 @@ export const continents = [
 	"Europe",
 	"South America",
 	"Antarctica",
-	"Unknown",
 ] as const;
-type Continent = (typeof continents)[number];
+export const continents = [...realContinents, "Unknown"] as const;
+export type Continent = (typeof continents)[number];
 
 const geographicCoordinates: Record<
 	string,

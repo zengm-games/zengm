@@ -13,6 +13,7 @@ import { ProcessingSpinner } from "../../components/ActionButton.tsx";
 import { applyRealTeamInfos, MAX_SEASON } from "./index.tsx";
 import RandomizeTeamsModal from "./RandomizeTeamsModal.tsx";
 import { countBy, orderBy } from "../../../common/utils.ts";
+import type { Continent } from "../../../common/geographicCoordinates.ts";
 
 export const makeTIDsSequential = <T extends { tid: number }>(
 	teams: T[],
@@ -825,12 +826,12 @@ const CustomizeTeams = ({
 	const randomize = async ({
 		real,
 		weightByPopulation,
-		northAmericaOnly,
+		continents,
 		seasonRange,
 	}: {
 		real: boolean;
 		weightByPopulation: boolean;
-		northAmericaOnly: boolean;
+		continents: ReadonlyArray<Continent>;
 		seasonRange: [number, number];
 	}) => {
 		setRandomizingState("randomizing");
@@ -860,7 +861,7 @@ const CustomizeTeams = ({
 				},
 				real,
 				weightByPopulation,
-				northAmericaOnly,
+				continents,
 				seasonRange,
 			});
 

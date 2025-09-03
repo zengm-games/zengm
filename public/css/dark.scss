@@ -386,6 +386,17 @@ table.table thead .sorting::after {
 	background-color: $white !important;
 }
 
+.dark-select__multi-value {
+	background-color: $gray-200 !important;
+}
+.dark-select__multi-value__label {
+	color: $black !important;
+}
+.dark-select__multi-value__remove {
+	// !important would override hover
+	color: $black;
+}
+
 .modal-backdrop.show {
 	opacity: 0.25; /* otherwise it is blindingly bright */
 }

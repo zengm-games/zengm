@@ -4,6 +4,11 @@ import { SPORT_HAS_REAL_PLAYERS } from "../../../common/index.ts";
 import { SelectSeasonRange } from "./SelectSeasonRange.tsx";
 import { MAX_SEASON, MIN_SEASON } from "./index.tsx";
 import HelpPopover from "../../components/HelpPopover.tsx";
+import {
+	realContinents,
+	type Continent,
+} from "../../../common/geographicCoordinates.ts";
+import Select from "react-select";
 
 const RandomizeTeamsModal = ({
 	onCancel,
@@ -14,25 +19,28 @@ const RandomizeTeamsModal = ({
 	onRandomize: (arg: {
 		real: boolean;
 		weightByPopulation: boolean;
-		northAmericaOnly: boolean;
+		continents: ReadonlyArray<Continent>;
 		seasonRange: [number, number];
 	}) => void;
 	show: boolean;
 }) => {
 	const [real, setReal] = useState(false);
 	const [weightByPopulation, setWeightByPopulation] = useState(true);
-	const [northAmericaOnly, setNorthAmericaOnly] = useState(false);
+	const [continents, setContinents] =
+		useState<ReadonlyArray<Continent>>(realContinents);
 	const [seasonStart, setSeasonStart] = useState(MIN_SEASON);
 	const [seasonEnd, setSeasonEnd] = useState(MAX_SEASON);
 	const seasonRange: [number, number] = [seasonStart, seasonEnd];
 
-	const actualNorthAmericaOnly = northAmericaOnly || real;
+	const actualContinents: ReadonlyArray<Continent> = real
+		? ["North America"]
+		: continents;
 
 	const onSubmit = () => {
 		onRandomize({
 			real,
 			weightByPopulation,
-			northAmericaOnly: actualNorthAmericaOnly,
+			continents: actualContinents,
 			seasonRange,
 		});
 	};
@@ -81,25 +89,42 @@ const RandomizeTeamsModal = ({
 							being selected.
 						</HelpPopover>
 					</div>
-					<div className="form-check form-switch mb-3">
-						<input
-							className="form-check-input"
-							type="checkbox"
-							role="switch"
-							id="randomize-teams-northamerica"
-							checked={actualNorthAmericaOnly}
-							disabled={real}
-							onChange={() => {
-								setNorthAmericaOnly((value) => !value);
-							}}
-						/>
-						<label
-							className="form-check-label"
-							htmlFor="randomize-teams-northamerica"
-						>
-							North America only
-						</label>
-					</div>
+					{real ? null : (
+						<>
+							<div className="mb-1 d-flex">
+								<div>Continents</div>
+								<button
+									className="btn btn-secondary btn-xs ms-auto"
+									onClick={() => {
+										console.log("CLIK");
+										setContinents(realContinents);
+									}}
+									type="button"
+								>
+									Select all
+								</button>
+							</div>
+							<Select
+								classNamePrefix="dark-select"
+								// Close menu on select of the last available item
+								closeMenuOnSelect={
+									continents.length === realContinents.length - 1
+								}
+								options={realContinents.map((continent) => ({
+									continent,
+								}))}
+								value={actualContinents.map((continent) => ({
+									continent,
+								}))}
+								getOptionLabel={(x) => x.continent}
+								getOptionValue={(x) => x.continent}
+								isMulti
+								onChange={(newValue) => {
+									setContinents(newValue.map((x) => x.continent));
+								}}
+							/>
+						</>
+					)}
 					{real ? (
 						<div className="d-flex align-items-center">
 							<label htmlFor="select-season-range" className="me-2">

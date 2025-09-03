@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import { stripVTControlCharacters } from "node:util";
 import babel from "@babel/core";
 import type { BuildOptions, RolldownPlugin, TransformResult } from "rolldown";
-import { and, code, id, include } from "@rolldown/pluginutils";
+import { and, code, id, include, or } from "@rolldown/pluginutils";
 // @ts-expect-error
 import babelPluginSyntaxTypescript from "@babel/plugin-syntax-typescript";
 import { babelPluginSportFunctions } from "../babel-plugin-sport-functions/index.ts";
@@ -30,7 +30,9 @@ const pluginSportFunctions = (
 	return {
 		name: "sport-functions",
 		transform: {
-			filter: [include(and(id(/\.tsx?$/), code("bySport"), code("isSport")))],
+			filter: [
+				include(and(id(/\.tsx?$/), or(code("bySport"), code("isSport")))),
+			],
 			async handler(code, id) {
 				let mtimeMs;
 				if (nodeEnv === "development") {

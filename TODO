@@ -1,13 +1,10 @@
 randomize teams improvements
-- https://chat.reddit.com/room/!CMNGURJla_YigoZ0B5ZaPa6y7VGTFfyvGlXZcVW-E1o%3Areddit.com
 - if screen wide enough, expand "Reset" into 3 separate buttons
-- rather than just "weight by population" have dropdown with explicit options for largest/smallest cities only
-- rather than real/random boolean, have dropdown for random, real (with players), and real (without players)
 - on randomize teams popup, add option to specify the number of confs/divs/teams somehow, rather than always using the current ones https://discord.com/channels/290013534023057409/290013534023057409/1020913700313509920
 - make sure UI looks good for non-basketball sports (hide things with no options)
 - handle case where not enough teams to fill the slots
 - move "processing" state to within modal
-  
+
 for past seasons roster pages, include a "Left" column similar to "Acquired" https://discord.com/channels/290013534023057409/331882115119448065/1409262567230148658
 - would need to track more stuff in "transactions" like when a player is released, etc
 

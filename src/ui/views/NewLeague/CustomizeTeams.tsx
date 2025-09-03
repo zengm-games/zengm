@@ -11,7 +11,9 @@ import confirmDeleteWithChildren from "./confirmDeleteWithChildren.tsx";
 import { Dropdown, OverlayTrigger, Popover } from "react-bootstrap";
 import { ProcessingSpinner } from "../../components/ActionButton.tsx";
 import { applyRealTeamInfos, MAX_SEASON } from "./index.tsx";
-import RandomizeTeamsModal from "./RandomizeTeamsModal.tsx";
+import RandomizeTeamsModal, {
+	type PopulationFactor,
+} from "./RandomizeTeamsModal.tsx";
 import { countBy, orderBy } from "../../../common/utils.ts";
 import type { Continent } from "../../../common/geographicCoordinates.ts";
 
@@ -825,12 +827,12 @@ const CustomizeTeams = ({
 
 	const randomize = async ({
 		real,
-		weightByPopulation,
+		populationFactor,
 		continents,
 		seasonRange,
 	}: {
 		real: boolean;
-		weightByPopulation: boolean;
+		populationFactor: PopulationFactor;
 		continents: ReadonlyArray<Continent>;
 		seasonRange: [number, number];
 	}) => {
@@ -860,7 +862,7 @@ const CustomizeTeams = ({
 					numTeamsPerDiv,
 				},
 				real,
-				weightByPopulation,
+				populationFactor,
 				continents,
 				seasonRange,
 			});

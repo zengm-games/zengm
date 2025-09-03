@@ -12,6 +12,7 @@ import { groupBy, omit, orderBy, range } from "../../common/utils.ts";
 import addSeasonInfoToTeams from "../core/realRosters/addSeasonInfoToTeams.ts";
 import loadDataBasketball from "../core/realRosters/loadData.basketball.ts";
 import { kmeansFixedSize, sortByDivs } from "../core/team/cluster.ts";
+import type { PopulationFactor } from "../../ui/views/NewLeague/RandomizeTeamsModal.tsx";
 
 type MyTeam = NewLeagueTeamWithoutRank & {
 	weight?: number;
@@ -116,7 +117,7 @@ const augmentRealTeams = async (teams: MyTeam[]) => {
 const getRandomTeams = async ({
 	divInfo,
 	real,
-	weightByPopulation,
+	populationFactor,
 	continents,
 	seasonRange,
 }: {
@@ -131,7 +132,7 @@ const getRandomTeams = async ({
 				type: "autoSeasonRange";
 		  };
 	real: boolean;
-	weightByPopulation: boolean;
+	populationFactor: PopulationFactor;
 	continents: ReadonlyArray<Continent>;
 	seasonRange: [number, number]; // Only does something if real is true
 }) => {
@@ -185,28 +186,37 @@ const getRandomTeams = async ({
 		continentsSet.has(geographicCoordinates[t.region]?.continent ?? "Unknown"),
 	);
 
-	let weightFunction:
-		| ((teamInfo: { pop: number; weight?: number }) => number)
-		| undefined;
-	if (weightByPopulation) {
-		weightFunction = (teamInfo) => teamInfo.pop;
-	} else if (real) {
-		weightFunction = (teamInfo) => teamInfo.weight ?? 1;
+	if (allTeamInfos.length < numTeamsTotal) {
+		return `There are only ${allTeamInfos.length} teams available to select based on your settings, but your league has ${numTeamsTotal} teams in it. Either make your league smaller or change your settings to create more candidate teams.`;
 	}
 
-	const teamsRemaining = new Set(allTeamInfos);
-	if (teamsRemaining.size < numTeamsTotal) {
-		return `There are only ${teamsRemaining.size} built-in ${
-			real ? `franchises from ${seasonRange[0]}-${seasonRange[1]}` : "teams"
-		}, so a league of ${numTeamsTotal} teams cannot be created.${
-			real ? " Delete some teams or select a wider range of seasons." : ""
-		}`;
-	}
-	const selectedTeamInfos: typeof allTeamInfos = [];
-	for (let i = 0; i < numTeamsTotal; i++) {
-		const teamInfo = random.choice(Array.from(teamsRemaining), weightFunction);
-		selectedTeamInfos.push(teamInfo);
-		teamsRemaining.delete(teamInfo);
+	let selectedTeamInfos: typeof allTeamInfos;
+	if (populationFactor === "largest" || populationFactor === "smallest") {
+		selectedTeamInfos = orderBy(
+			allTeamInfos,
+			"pop",
+			populationFactor === "largest" ? "desc" : "asc",
+		).slice(0, numTeamsTotal);
+	} else {
+		let weightFunction:
+			| ((teamInfo: { pop: number; weight?: number }) => number)
+			| undefined;
+		if (populationFactor === "randomWeighted") {
+			weightFunction = (teamInfo) => teamInfo.pop;
+		} else if (real) {
+			weightFunction = (teamInfo) => teamInfo.weight ?? 1;
+		}
+
+		selectedTeamInfos = [];
+		const teamsRemaining = new Set(allTeamInfos);
+		for (let i = 0; i < numTeamsTotal; i++) {
+			const teamInfo = random.choice(
+				Array.from(teamsRemaining),
+				weightFunction,
+			);
+			selectedTeamInfos.push(teamInfo);
+			teamsRemaining.delete(teamInfo);
+		}
 	}
 
 	const teamInfoCluster = selectedTeamInfos.map(

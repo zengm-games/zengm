@@ -10,6 +10,12 @@ import {
 } from "../../../common/geographicCoordinates.ts";
 import Select from "react-select";
 
+export type PopulationFactor =
+	| "random"
+	| "randomWeighted"
+	| "smallest"
+	| "largest";
+
 const RandomizeTeamsModal = ({
 	onCancel,
 	onRandomize,
@@ -18,14 +24,15 @@ const RandomizeTeamsModal = ({
 	onCancel: () => void;
 	onRandomize: (arg: {
 		real: boolean;
-		weightByPopulation: boolean;
+		populationFactor: PopulationFactor;
 		continents: ReadonlyArray<Continent>;
 		seasonRange: [number, number];
 	}) => void;
 	show: boolean;
 }) => {
 	const [real, setReal] = useState(false);
-	const [weightByPopulation, setWeightByPopulation] = useState(true);
+	const [populationFactor, setPopulationFactor] =
+		useState<PopulationFactor>("random");
 	const [continents, setContinents] =
 		useState<ReadonlyArray<Continent>>(realContinents);
 	const [seasonStart, setSeasonStart] = useState(MIN_SEASON);
@@ -39,11 +46,42 @@ const RandomizeTeamsModal = ({
 	const onSubmit = () => {
 		onRandomize({
 			real,
-			weightByPopulation,
+			populationFactor,
 			continents: actualContinents,
 			seasonRange,
 		});
 	};
+
+	const populationFactorOptions: {
+		key: PopulationFactor;
+		label: string;
+		description: string;
+	}[] = [
+		{
+			key: "random",
+			label: "Random",
+			description: "All regions have the same chance to be selected.",
+		},
+		{
+			key: "randomWeighted",
+			label: "Random, weight by population",
+			description: "Larger regions have a higher chance to be selected.",
+		},
+		{
+			key: "smallest",
+			label: "Smallest regions only",
+			description:
+				"Only the smallest regions will be selected, with no randomness.",
+		},
+		{
+			key: "largest",
+			label: "Largest regions only",
+			description:
+				"Only the largest regions will be selected, with no randomness.",
+		},
+	];
+
+	const maxWidth = 250;
 
 	return (
 		<Modal show={show} onHide={onCancel}>
@@ -53,7 +91,7 @@ const RandomizeTeamsModal = ({
 			<Modal.Body>
 				<form onSubmit={onSubmit}>
 					{SPORT_HAS_REAL_PLAYERS ? (
-						<div className="mb-3" style={{ width: 250 }}>
+						<div className="mb-3" style={{ maxWidth }}>
 							<select
 								className="form-select"
 								value={real ? "real" : "random"}
@@ -66,28 +104,35 @@ const RandomizeTeamsModal = ({
 							</select>
 						</div>
 					) : null}
-					<div className="form-check form-switch mb-3">
-						<input
-							className="form-check-input"
-							type="checkbox"
-							role="switch"
-							id="randomize-teams-popweight"
-							checked={weightByPopulation}
-							onChange={() => {
-								setWeightByPopulation((value) => !value);
-							}}
-						/>
-						<label
-							className="form-check-label"
-							htmlFor="randomize-teams-popweight"
-						>
-							Weight by population
+
+					<div className="mb-3" style={{ maxWidth }}>
+						<label className="form-label" htmlFor="randomize-teams-population">
+							Select by population
 						</label>
 						<HelpPopover className="ms-1">
-							"Weight by population" means teams from larger cities are more
-							likely to be selected. Otherwise, each team has an equal chance of
-							being selected.
+							{populationFactorOptions.map((option) => {
+								return (
+									<p key={option.key}>
+										<b>{option.label}:</b> {option.description}
+									</p>
+								);
+							})}
 						</HelpPopover>
+						<select
+							className="form-select"
+							onChange={(event) => {
+								setPopulationFactor(event.target.value as any);
+							}}
+							value={populationFactor}
+						>
+							{populationFactorOptions.map((option) => {
+								return (
+									<option key={option.key} value={option.key}>
+										{option.label}
+									</option>
+								);
+							})}
+						</select>
 					</div>
 					{real ? null : (
 						<>

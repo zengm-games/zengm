@@ -3,6 +3,7 @@ import { Modal } from "react-bootstrap";
 import { SPORT_HAS_REAL_PLAYERS } from "../../../common/index.ts";
 import { SelectSeasonRange } from "./SelectSeasonRange.tsx";
 import { MAX_SEASON, MIN_SEASON } from "./index.tsx";
+import HelpPopover from "../../components/HelpPopover.tsx";
 
 const RandomizeTeamsModal = ({
 	onCancel,
@@ -39,21 +40,9 @@ const RandomizeTeamsModal = ({
 	return (
 		<Modal show={show} onHide={onCancel}>
 			<Modal.Header closeButton>
-				<Modal.Title>Randomize Teams</Modal.Title>
+				<Modal.Title>Randomize teams</Modal.Title>
 			</Modal.Header>
 			<Modal.Body>
-				<p>
-					This will replace your current teams with a set of random teams
-					{SPORT_HAS_REAL_PLAYERS
-						? " - either completely random teams with fake players, or real teams from any season"
-						: null}
-					. It will also try to group them into reasonable divisions.
-				</p>
-				<p>
-					"Weight by population" means it is more likely to select teams from
-					larger cities. Otherwise, each team has an equal chance of being
-					selected.
-				</p>
 				<form onSubmit={onSubmit}>
 					{SPORT_HAS_REAL_PLAYERS ? (
 						<div className="mb-3" style={{ width: 250 }}>
@@ -86,6 +75,11 @@ const RandomizeTeamsModal = ({
 						>
 							Weight by population
 						</label>
+						<HelpPopover className="ms-1">
+							"Weight by population" means teams from larger cities are more
+							likely to be selected. Otherwise, each team has an equal chance of
+							being selected.
+						</HelpPopover>
 					</div>
 					<div className="form-check form-switch mb-3">
 						<input

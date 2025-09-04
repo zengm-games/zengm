@@ -465,7 +465,17 @@ const CardHeader = ({
 				</form>
 			) : (
 				<div className="d-flex">
-					<div className={alignButtonsRight ? "me-auto" : "me-2"}>{name}</div>
+					<div
+						className={clsx(
+							"btn btn-link p-0 border-0 text-reset text-decoration-none",
+							alignButtonsRight ? "me-auto" : "me-2",
+						)}
+						onClick={() => {
+							setRenaming(true);
+						}}
+					>
+						{name}
+					</div>
 					<button
 						className="ms-2 btn btn-link p-0 border-0 text-reset"
 						title="Move Up"

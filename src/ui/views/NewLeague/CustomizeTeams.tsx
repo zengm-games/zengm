@@ -857,13 +857,13 @@ const CustomizeTeams = ({
 			for (let cid = 0; cid < newConfDivNums.confs; cid++) {
 				myConfs.push({
 					cid,
-					name: `Conf ${cid}`,
+					name: `Conf ${cid + 1}`,
 				});
 				for (let i = 0; i < newConfDivNums.divs; i++) {
 					myDivs.push({
 						did,
 						cid,
-						name: `Div ${did}`,
+						name: `Div ${did + 1}`,
 					});
 					did += 1;
 				}

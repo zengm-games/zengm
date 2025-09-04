@@ -55,6 +55,7 @@ import { SelectSeasonRange } from "./SelectSeasonRange.tsx";
 import { orderBy } from "../../../common/utils.ts";
 import { analyticsEventLocal } from "../../../common/analyticsEventLocal.ts";
 import { choice } from "../../../common/random.ts";
+import { realContinents } from "../../../common/geographicCoordinates.ts";
 
 const animationVariants = {
 	visible: {
@@ -1043,9 +1044,9 @@ const NewLeague = (props: View<"newLeague">) => {
 			divInfo: {
 				type: "autoSeasonRange",
 			},
+			populationFactor: "random",
 			real: true,
-			weightByPopulation: false,
-			northAmericaOnly: false,
+			continents: realContinents,
 			seasonRange,
 		});
 

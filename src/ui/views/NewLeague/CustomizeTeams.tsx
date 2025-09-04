@@ -951,15 +951,16 @@ const CustomizeTeams = ({
 					<Dropdown.Menu>
 						<Dropdown.Item onClick={resetClear}>Clear</Dropdown.Item>
 						<Dropdown.Item onClick={resetDefault}>Default</Dropdown.Item>
-						<Dropdown.Item
-							onClick={() => {
-								setRandomizingState("modal");
-							}}
-						>
-							Randomize...
-						</Dropdown.Item>
 					</Dropdown.Menu>
 				</Dropdown>
+				<button
+					className="btn btn-secondary ms-2"
+					onClick={() => {
+						setRandomizingState("modal");
+					}}
+				>
+					Randomize...
+				</button>
 				<form
 					className="btn-group ms-auto"
 					onSubmit={(event) => {
@@ -1001,7 +1002,7 @@ const CustomizeTeams = ({
 						type="submit"
 						disabled={randomizingState === "modal"}
 					>
-						Save Teams
+						Save<span className="d-none d-sm-inline"> teams</span>
 					</button>
 				</form>
 			</StickyBottomButtons>

@@ -1,9 +1,10 @@
 randomize teams improvements
 - if screen wide enough, expand "Reset" into 3 separate buttons
-- on randomize teams popup, add option to specify the number of confs/divs/teams somehow, rather than always using the current ones https://discord.com/channels/290013534023057409/290013534023057409/1020913700313509920
 - make sure UI looks good for non-basketball sports (hide things with no options)
-- handle case where not enough teams to fill the slots
 - move "processing" state to within modal
+  - handle case where not enough teams to fill the slots
+  - handle invalid values (must be positive integers)
+- click on conf/div name to edit
 
 for past seasons roster pages, include a "Left" column similar to "Acquired" https://discord.com/channels/290013534023057409/331882115119448065/1409262567230148658
 - would need to track more stuff in "transactions" like when a player is released, etc

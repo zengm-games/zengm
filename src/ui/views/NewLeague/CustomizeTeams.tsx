@@ -829,30 +829,59 @@ const CustomizeTeams = ({
 		real,
 		populationFactor,
 		continents,
+		newConfDivNums,
 		seasonRange,
 	}: {
 		real: boolean;
 		populationFactor: PopulationFactor;
 		continents: ReadonlyArray<Continent>;
+		newConfDivNums: Record<"confs" | "divs" | "teams", number> | undefined;
 		seasonRange: [number, number];
 	}) => {
 		setRandomizingState("randomizing");
 
 		try {
-			// If there are no teams, auto reset to default first
-			let myDivs = divs;
-			let myTeams = teams;
-			let myConfs = confs;
-			if (myTeams.length === 0) {
-				const info = getDefaultConfsDivsTeams();
-				myDivs = info.divs;
-				myTeams = info.teams;
-				myConfs = info.confs;
-			}
+			let myConfs;
+			let myDivs;
+			let numTeamsPerDiv;
+			if (newConfDivNums) {
+				myConfs = [];
+				myDivs = [];
+				let did = 0;
+				for (let cid = 0; cid < newConfDivNums.confs; cid++) {
+					myConfs.push({
+						cid,
+						name: `Conf ${cid}`,
+					});
+					for (let i = 0; i < newConfDivNums.divs; i++) {
+						myDivs.push({
+							did,
+							cid,
+							name: `Div ${did}`,
+						});
+						did += 1;
+					}
+				}
 
-			const numTeamsPerDiv = myDivs.map(
-				(div) => myTeams.filter((t) => t.did === div.did).length,
-			);
+				numTeamsPerDiv = myDivs.map(() => newConfDivNums.teams);
+			} else {
+				myConfs = confs;
+				myDivs = divs;
+				let myTeams = teams;
+
+				// If there are no teams, auto reset to default
+				if (myTeams.length === 0) {
+					const info = getDefaultConfsDivsTeams();
+					myConfs = info.confs;
+					myDivs = info.divs;
+					myTeams = info.teams;
+				}
+
+				numTeamsPerDiv = myDivs.map(
+					(div) => myTeams.filter((t) => t.did === div.did).length,
+				);
+			}
+			console.log(structuredClone({ myConfs, myDivs, numTeamsPerDiv }));
 
 			const response = await toWorker("main", "getRandomTeams", {
 				divInfo: {

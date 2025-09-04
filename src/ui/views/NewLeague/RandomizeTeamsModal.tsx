@@ -26,11 +26,18 @@ const RandomizeTeamsModal = ({
 		real: boolean;
 		populationFactor: PopulationFactor;
 		continents: ReadonlyArray<Continent>;
+		newConfDivNums: Record<"confs" | "divs" | "teams", number> | undefined;
 		seasonRange: [number, number];
 	}) => void;
 	show: boolean;
 }) => {
 	const [real, setReal] = useState(false);
+	const [newConfsDivs, setNewConfsDivs] = useState(false);
+	const [newConfsDivsNums, setNewConfsDivsNums] = useState({
+		confs: "2",
+		divs: "3",
+		teams: "5",
+	});
 	const [populationFactor, setPopulationFactor] =
 		useState<PopulationFactor>("random");
 	const [continents, setContinents] =
@@ -44,10 +51,20 @@ const RandomizeTeamsModal = ({
 		: continents;
 
 	const onSubmit = () => {
+		let actualNewConfDivNums;
+		if (newConfsDivs) {
+			actualNewConfDivNums = {
+				confs: Number.parseInt(newConfsDivsNums.confs),
+				divs: Number.parseInt(newConfsDivsNums.divs),
+				teams: Number.parseInt(newConfsDivsNums.teams),
+			};
+		}
+
 		onRandomize({
 			real,
 			populationFactor,
 			continents: actualContinents,
+			newConfDivNums: actualNewConfDivNums,
 			seasonRange,
 		});
 	};
@@ -81,6 +98,24 @@ const RandomizeTeamsModal = ({
 		},
 	];
 
+	const newConfsDivsFields: {
+		key: "confs" | "divs" | "teams";
+		label: string;
+	}[] = [
+		{
+			key: "confs",
+			label: "# confs",
+		},
+		{
+			key: "divs",
+			label: "# divs per conf",
+		},
+		{
+			key: "teams",
+			label: "# teams per div",
+		},
+	];
+
 	const maxWidth = 250;
 
 	return (
@@ -105,6 +140,69 @@ const RandomizeTeamsModal = ({
 						</div>
 					) : null}
 
+					<div className="mb-3">
+						<div style={{ maxWidth }}>
+							<label className="form-label" htmlFor="randomize-confs-divs">
+								Conferences and divisions
+							</label>
+							<HelpPopover className="ms-1">
+								<p>
+									By default, your current conferences and divisions will be
+									kept, they will just have all their teams replaced by new
+									teams.
+								</p>
+								<p>
+									Altenratively, if you select <b>Generate new confs/divs</b>{" "}
+									then you can quickly specify new ones. For instance, 2
+									conferences with 2 divisions each and 10 teams each would
+									generate 2*2*10=40 teams.
+								</p>
+							</HelpPopover>
+							<select
+								className="form-select"
+								id="randomize-confs-divs"
+								onChange={(event) => {
+									setNewConfsDivs(event.target.value === "new");
+								}}
+								value={newConfsDivs ? "new" : "keep"}
+							>
+								<option value="keep">Keep current confs/divs</option>
+								<option value="new">Generate new confs/divs</option>
+							</select>
+						</div>
+
+						{newConfsDivs ? (
+							<div className="mt-3 row">
+								{newConfsDivsFields.map(({ key, label }) => {
+									return (
+										<div key={key} className="col">
+											<label
+												htmlFor={`randomize-confs-divs-${key}`}
+												className="form-label"
+											>
+												{label}
+											</label>
+											<input
+												type="number"
+												className="form-control"
+												id={`randomize-confs-divs-${key}`}
+												value={newConfsDivsNums[key]}
+												onChange={(event) => {
+													setNewConfsDivsNums((prev) => {
+														return {
+															...prev,
+															[key]: event.target.value,
+														};
+													});
+												}}
+											></input>
+										</div>
+									);
+								})}
+							</div>
+						) : null}
+					</div>
+
 					<div className="mb-3" style={{ maxWidth }}>
 						<label className="form-label" htmlFor="randomize-teams-population">
 							Select by population
@@ -120,6 +218,7 @@ const RandomizeTeamsModal = ({
 						</HelpPopover>
 						<select
 							className="form-select"
+							id="randomize-teams-population"
 							onChange={(event) => {
 								setPopulationFactor(event.target.value as any);
 							}}

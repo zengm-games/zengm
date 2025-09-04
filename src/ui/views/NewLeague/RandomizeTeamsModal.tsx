@@ -9,12 +9,32 @@ import {
 	type Continent,
 } from "../../../common/geographicCoordinates.ts";
 import Select from "react-select";
+import ActionButton from "../../components/ActionButton.tsx";
+import logEvent from "../../util/logEvent.ts";
 
 export type PopulationFactor =
 	| "random"
 	| "randomWeighted"
 	| "smallest"
 	| "largest";
+
+const newConfsDivsFields: {
+	key: "confs" | "divs" | "teams";
+	label: string;
+}[] = [
+	{
+		key: "confs",
+		label: "# confs",
+	},
+	{
+		key: "divs",
+		label: "# divs per conf",
+	},
+	{
+		key: "teams",
+		label: "# teams per div",
+	},
+];
 
 const RandomizeTeamsModal = ({
 	onCancel,
@@ -28,9 +48,10 @@ const RandomizeTeamsModal = ({
 		continents: ReadonlyArray<Continent>;
 		newConfDivNums: Record<"confs" | "divs" | "teams", number> | undefined;
 		seasonRange: [number, number];
-	}) => void;
+	}) => Promise<void>;
 	show: boolean;
 }) => {
+	const [randomizing, setRandomizing] = useState(false);
 	const [real, setReal] = useState(false);
 	const [newConfsDivs, setNewConfsDivs] = useState(false);
 	const [newConfsDivsNums, setNewConfsDivsNums] = useState({
@@ -50,23 +71,44 @@ const RandomizeTeamsModal = ({
 		? ["North America"]
 		: continents;
 
-	const onSubmit = () => {
-		let actualNewConfDivNums;
-		if (newConfsDivs) {
-			actualNewConfDivNums = {
-				confs: Number.parseInt(newConfsDivsNums.confs),
-				divs: Number.parseInt(newConfsDivsNums.divs),
-				teams: Number.parseInt(newConfsDivsNums.teams),
-			};
+	const onSubmit = async () => {
+		setRandomizing(true);
+
+		try {
+			let actualNewConfDivNums;
+			if (newConfsDivs) {
+				actualNewConfDivNums = {
+					confs: Number.parseInt(newConfsDivsNums.confs),
+					divs: Number.parseInt(newConfsDivsNums.divs),
+					teams: Number.parseInt(newConfsDivsNums.teams),
+				};
+
+				for (const { key, label } of newConfsDivsFields) {
+					if (
+						actualNewConfDivNums[key] < 1 ||
+						Number.isNaN(actualNewConfDivNums[key])
+					) {
+						throw new Error(`Invalid value for "${label}`);
+					}
+				}
+			}
+
+			await onRandomize({
+				real,
+				populationFactor,
+				continents: actualContinents,
+				newConfDivNums: actualNewConfDivNums,
+				seasonRange,
+			});
+		} catch (error) {
+			logEvent({
+				type: "error",
+				text: error.message,
+				saveToDb: false,
+			});
 		}
 
-		onRandomize({
-			real,
-			populationFactor,
-			continents: actualContinents,
-			newConfDivNums: actualNewConfDivNums,
-			seasonRange,
-		});
+		setRandomizing(false);
 	};
 
 	const populationFactorOptions: {
@@ -95,24 +137,6 @@ const RandomizeTeamsModal = ({
 			label: "Largest regions only",
 			description:
 				"Only the largest regions will be selected, with no randomness.",
-		},
-	];
-
-	const newConfsDivsFields: {
-		key: "confs" | "divs" | "teams";
-		label: string;
-	}[] = [
-		{
-			key: "confs",
-			label: "# confs",
-		},
-		{
-			key: "divs",
-			label: "# divs per conf",
-		},
-		{
-			key: "teams",
-			label: "# teams per div",
 		},
 	];
 
@@ -186,6 +210,8 @@ const RandomizeTeamsModal = ({
 												type="number"
 												className="form-control"
 												id={`randomize-confs-divs-${key}`}
+												min={1}
+												step={1}
 												value={newConfsDivsNums[key]}
 												onChange={(event) => {
 													setNewConfsDivsNums((prev) => {
@@ -284,12 +310,22 @@ const RandomizeTeamsModal = ({
 				</form>
 			</Modal.Body>
 			<Modal.Footer>
-				<button className="btn btn-secondary" onClick={onCancel}>
+				<button
+					className="btn btn-secondary"
+					disabled={randomizing}
+					onClick={onCancel}
+				>
 					Cancel
 				</button>
-				<button className="btn btn-primary" onClick={onSubmit}>
+				<ActionButton
+					maintainWidth={false}
+					onClick={onSubmit}
+					processing={randomizing}
+					processingText="Randomizing..."
+					variant="primary"
+				>
 					Randomize
-				</button>
+				</ActionButton>
 			</Modal.Footer>
 		</Modal>
 	);

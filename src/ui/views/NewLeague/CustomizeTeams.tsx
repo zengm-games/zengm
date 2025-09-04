@@ -9,7 +9,6 @@ import { StickyBottomButtons } from "../../components/index.tsx";
 import { logEvent, toWorker } from "../../util/index.ts";
 import confirmDeleteWithChildren from "./confirmDeleteWithChildren.tsx";
 import { Dropdown, OverlayTrigger, Popover } from "react-bootstrap";
-import { ProcessingSpinner } from "../../components/ActionButton.tsx";
 import { applyRealTeamInfos, MAX_SEASON } from "./index.tsx";
 import RandomizeTeamsModal, {
 	type PopulationFactor,
@@ -838,87 +837,75 @@ const CustomizeTeams = ({
 		newConfDivNums: Record<"confs" | "divs" | "teams", number> | undefined;
 		seasonRange: [number, number];
 	}) => {
-		setRandomizingState("randomizing");
-
-		try {
-			let myConfs;
-			let myDivs;
-			let numTeamsPerDiv;
-			if (newConfDivNums) {
-				myConfs = [];
-				myDivs = [];
-				let did = 0;
-				for (let cid = 0; cid < newConfDivNums.confs; cid++) {
-					myConfs.push({
+		let myConfs;
+		let myDivs;
+		let numTeamsPerDiv;
+		if (newConfDivNums) {
+			myConfs = [];
+			myDivs = [];
+			let did = 0;
+			for (let cid = 0; cid < newConfDivNums.confs; cid++) {
+				myConfs.push({
+					cid,
+					name: `Conf ${cid}`,
+				});
+				for (let i = 0; i < newConfDivNums.divs; i++) {
+					myDivs.push({
+						did,
 						cid,
-						name: `Conf ${cid}`,
+						name: `Div ${did}`,
 					});
-					for (let i = 0; i < newConfDivNums.divs; i++) {
-						myDivs.push({
-							did,
-							cid,
-							name: `Div ${did}`,
-						});
-						did += 1;
-					}
+					did += 1;
 				}
-
-				numTeamsPerDiv = myDivs.map(() => newConfDivNums.teams);
-			} else {
-				myConfs = confs;
-				myDivs = divs;
-				let myTeams = teams;
-
-				// If there are no teams, auto reset to default
-				if (myTeams.length === 0) {
-					const info = getDefaultConfsDivsTeams();
-					myConfs = info.confs;
-					myDivs = info.divs;
-					myTeams = info.teams;
-				}
-
-				numTeamsPerDiv = myDivs.map(
-					(div) => myTeams.filter((t) => t.did === div.did).length,
-				);
 			}
-			console.log(structuredClone({ myConfs, myDivs, numTeamsPerDiv }));
 
-			const response = await toWorker("main", "getRandomTeams", {
-				divInfo: {
-					type: "explicit",
-					confs: myConfs,
-					divs: myDivs,
-					numTeamsPerDiv,
-				},
-				real,
-				populationFactor,
-				continents,
-				seasonRange,
-			});
+			numTeamsPerDiv = myDivs.map(() => newConfDivNums.teams);
+		} else {
+			myConfs = confs;
+			myDivs = divs;
+			let myTeams = teams;
 
-			if (typeof response === "string") {
-				logEvent({
-					type: "error",
-					text: response,
-					saveToDb: false,
-				});
-			} else {
-				const newTeams = real
-					? applyRealTeamInfos(response.teams, realTeamInfo, "inTeamObject")
-					: response.teams;
-
-				dispatch({
-					type: "setState",
-					teams: newTeams,
-					divs: myDivs,
-					confs: myConfs,
-				});
+			// If there are no teams, auto reset to default
+			if (myTeams.length === 0) {
+				const info = getDefaultConfsDivsTeams();
+				myConfs = info.confs;
+				myDivs = info.divs;
+				myTeams = info.teams;
 			}
-			setRandomizingState(undefined);
-		} catch (error) {
-			setRandomizingState(undefined);
-			throw error;
+
+			numTeamsPerDiv = myDivs.map(
+				(div) => myTeams.filter((t) => t.did === div.did).length,
+			);
 		}
+
+		const response = await toWorker("main", "getRandomTeams", {
+			divInfo: {
+				type: "explicit",
+				confs: myConfs,
+				divs: myDivs,
+				numTeamsPerDiv,
+			},
+			real,
+			populationFactor,
+			continents,
+			seasonRange,
+		});
+
+		if (typeof response === "string") {
+			throw new Error(response);
+		} else {
+			const newTeams = real
+				? applyRealTeamInfos(response.teams, realTeamInfo, "inTeamObject")
+				: response.teams;
+
+			dispatch({
+				type: "setState",
+				teams: newTeams,
+				divs: myDivs,
+				confs: myConfs,
+			});
+		}
+		setRandomizingState(undefined);
 	};
 
 	return (
@@ -957,13 +944,9 @@ const CustomizeTeams = ({
 					<Dropdown.Toggle
 						variant="danger"
 						id="customize-teams-reset"
-						disabled={randomizingState === "randomizing"}
+						disabled={randomizingState === "modal"}
 					>
-						{randomizingState === "randomizing" ? (
-							<ProcessingSpinner />
-						) : (
-							"Reset"
-						)}
+						Reset
 					</Dropdown.Toggle>
 					<Dropdown.Menu>
 						<Dropdown.Item onClick={resetClear}>Clear</Dropdown.Item>
@@ -1009,14 +992,14 @@ const CustomizeTeams = ({
 						className="btn btn-secondary"
 						type="button"
 						onClick={onCancel}
-						disabled={randomizingState === "randomizing"}
+						disabled={randomizingState === "modal"}
 					>
 						Cancel
 					</button>
 					<button
 						className="btn btn-primary me-2"
 						type="submit"
-						disabled={randomizingState === "randomizing"}
+						disabled={randomizingState === "modal"}
 					>
 						Save Teams
 					</button>

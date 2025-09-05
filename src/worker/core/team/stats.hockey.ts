@@ -1,4 +1,6 @@
-const teamAndOpp = [
+import helpers from "../../util/helpers.ts";
+
+const raw = [
 	"pts",
 	"pim",
 	"evG",
@@ -17,27 +19,6 @@ const teamAndOpp = [
 	"gv",
 	"sv",
 	"ppo",
-
-	// KEEP THIS IN SYCN WITH ABOVE! TypeScript needs them to be listed explicitly. Used to be:
-	// ...teamAndOpp.map(stat => `opp${helpers.upperCaseFirstLetter(stat)}`),
-	"oppPts",
-	"oppPim",
-	"oppEvG",
-	"oppPpG",
-	"oppShG",
-	"oppEvA",
-	"oppPpA",
-	"oppShA",
-	"oppS",
-	"oppTsa",
-	"oppFow",
-	"oppFol",
-	"oppBlk",
-	"oppHit",
-	"oppTk",
-	"oppGv",
-	"oppSv",
-	"oppPpo",
 ] as const;
 
 // raw: recorded directly in game sim
@@ -45,7 +26,12 @@ const teamAndOpp = [
 // not present in this file: transiently derived things, like FG%
 const stats = {
 	derived: ["so", "oppQs", "oppRbs", "oppSo"],
-	raw: ["gp", "min", ...teamAndOpp] as const,
+	raw: [
+		"gp",
+		"min",
+		...raw,
+		...raw.map((stat) => `opp${helpers.upperCaseFirstLetter(stat)}` as const),
+	] as const,
 };
 
 export default stats;

@@ -17,7 +17,7 @@ import statsRowIsCurrent from "../player/statsRowIsCurrent.ts";
 
 const MAX_NUM_PLAYERS_PACE = 7;
 
-const skipPlayerStats = ["minAvailable"];
+const SKIP_PLAYER_STATS = new Set(["minAvailable"]);
 
 let playerStats: Record<string, number | number[]>;
 let teamStats: Record<string, number>;
@@ -54,24 +54,21 @@ export const processTeam = (
 	exhibitionGame?: boolean,
 ) => {
 	if (!playerStats) {
-		playerStats = player.stats.raw.reduce<Record<string, number>>(
-			(stats, stat) => {
-				if (skipPlayerStats.includes(stat)) {
-					return stats;
-				}
-
-				stats[stat] = 0;
-				return stats;
-			},
-			{},
-		);
+		playerStats = {};
+		for (const key of player.stats.raw) {
+			if (!SKIP_PLAYER_STATS.has(key) && !key.startsWith("opp")) {
+				playerStats[key] = 0;
+			}
+		}
 	}
 
 	if (!teamStats) {
-		teamStats = team.stats.raw.reduce<Record<string, number>>((stats, stat) => {
-			stats[stat] = 0;
-			return stats;
-		}, {});
+		teamStats = {};
+		for (const key of team.stats.raw) {
+			if (!key.startsWith("opp")) {
+				teamStats[key] = 0;
+			}
+		}
 	}
 
 	const allStarGame = teamInput.tid === -1 || teamInput.tid === -2;
@@ -297,7 +294,9 @@ export const processTeam = (
 
 	if (team.stats.byPos) {
 		for (const key of team.stats.byPos) {
-			t.stat[key] = [];
+			if (!key.startsWith("opp")) {
+				t.stat[key] = [];
+			}
 		}
 	}
 

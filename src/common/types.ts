@@ -1420,11 +1420,10 @@ export type Local = {
 	minFractionDiffs:
 		| Record<
 				number,
-				| {
-						tid: number;
-						diff: number;
-				  }
-				| undefined
+				{
+					tid: number;
+					diff: number;
+				}
 		  >
 		| undefined;
 	phaseText: string;

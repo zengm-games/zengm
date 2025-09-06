@@ -20,11 +20,10 @@ const pluginSportFunctions = (
 ): RolldownPlugin => {
 	const babelCache: Record<
 		string,
-		| {
-				mtimeMs: number;
-				result: TransformResult;
-		  }
-		| undefined
+		{
+			mtimeMs: number;
+			result: TransformResult;
+		}
 	> = {};
 
 	return {

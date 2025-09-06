@@ -52,22 +52,21 @@ const updateDraftLottery = async (
 			spectator: boolean;
 			teams: Record<
 				string,
-				| TeamFiltered<
-						["tid"],
-						[
-							"won",
-							"lost",
-							"tied",
-							"otl",
-							"pts",
-							"abbrev",
-							"imgURL",
-							"imgURLSmall",
-						],
-						undefined,
-						number
-				  >
-				| undefined
+				TeamFiltered<
+					["tid"],
+					[
+						"won",
+						"lost",
+						"tied",
+						"otl",
+						"pts",
+						"abbrev",
+						"imgURL",
+						"imgURLSmall",
+					],
+					undefined,
+					number
+				>
 			>;
 			type: "completed" | "projected" | "readyToRun";
 			usePts: boolean;

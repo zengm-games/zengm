@@ -23,14 +23,13 @@ const getLeaders = async (pRaw: Player) => {
 
 	const leaders: Record<
 		string,
-		| {
-				attrs: Set<string>;
-				regularSeason: Set<string>;
-				playoffs: Set<string>;
-				combined: Set<string>;
-				ratings: Set<string>;
-		  }
-		| undefined
+		{
+			attrs: Set<string>;
+			regularSeason: Set<string>;
+			playoffs: Set<string>;
+			combined: Set<string>;
+			ratings: Set<string>;
+		}
 	> = {};
 	for (const season of seasons) {
 		const regularSeasonOnly =

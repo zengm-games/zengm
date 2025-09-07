@@ -95,12 +95,12 @@ const baseballDecisionGames = (
 
 export const BaseballDecision = ({
 	className,
-	exhibition,
+	hideRecord,
 	p,
 	wlColors,
 }: {
 	className?: string;
-	exhibition?: boolean;
+	hideRecord: boolean; // Useful for ASG or exhibition
 	p: DecisionPlayer;
 	wlColors?: boolean;
 }) => {
@@ -118,7 +118,7 @@ export const BaseballDecision = ({
 		return (
 			<span className={clsx(colorClassName, className)}>
 				{decision}
-				{exhibition || formatted === undefined ? null : <> ({formatted})</>}
+				{hideRecord || formatted === undefined ? null : <> ({formatted})</>}
 			</span>
 		);
 	}
@@ -126,18 +126,18 @@ export const BaseballDecision = ({
 	return null;
 };
 
-const wrappedBaseballDecision = (p: DecisionPlayer) => {
+const wrappedBaseballDecision = (p: DecisionPlayer, hideRecord: boolean) => {
 	let searchValue;
 	let sortValue = ""; // Otherwise it doesn't work if undefined
 	const decision = baseballDecision(p);
 	if (decision !== undefined) {
 		const { count, formatted } = baseballDecisionGames(p, decision);
-		searchValue = `${decision} (${formatted})`;
 		sortValue = `${decision}${count + 10000}`;
+		searchValue = hideRecord ? decision : `${decision} (${formatted})`;
 	}
 
 	return {
-		value: <BaseballDecision p={p} />,
+		value: <BaseballDecision hideRecord={hideRecord} p={p} />,
 		searchValue,
 		sortValue,
 	};
@@ -213,6 +213,8 @@ const PlayerGameLog = ({
 	]);
 
 	const makeRow = (game: (typeof gameLog)[number], i: number): DataTableRow => {
+		const allStarGame = game.tid === -1 || game.tid === -2;
+
 		return {
 			key: i,
 			data: [
@@ -272,7 +274,7 @@ const PlayerGameLog = ({
 					classNames: "text-center",
 				},
 				...(isSport("baseball") && showDecisionColumn
-					? [wrappedBaseballDecision(game.stats as any)]
+					? [wrappedBaseballDecision(game.stats as any, allStarGame)]
 					: []),
 				...stats.map((stat) =>
 					game.stats[stat] === undefined

@@ -180,6 +180,7 @@ const StatsTable = ({
 					<tbody>
 						{players.map((p, i) => (
 							<Row
+								allStarGame={allStarGame}
 								key={p.pid}
 								exhibition={exhibition}
 								i={i}

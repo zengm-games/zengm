@@ -21,6 +21,7 @@ type Team = {
 	region: string;
 	players: any[];
 	season?: number;
+	tid: number;
 };
 
 type BoxScore = {
@@ -70,6 +71,7 @@ const StatsTable = ({
 		);
 	};
 
+	const allStarGame = t.tid === -1 || t.tid === -2;
 	const players = t.players
 		.map((p) => {
 			return {
@@ -127,6 +129,7 @@ const StatsTable = ({
 					<tbody>
 						{players.map((p, i) => (
 							<Row
+								allStarGame={allStarGame}
 								key={p.pid}
 								exhibition={exhibition}
 								i={i}

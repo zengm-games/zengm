@@ -4,7 +4,7 @@ import { bySport } from "../lib/bySport.ts";
 import { replace } from "./replace.ts";
 import { getSport } from "../lib/getSport.ts";
 
-const setSport = async () => {
+const setSport = async (signal?: AbortSignal) => {
 	await replace({
 		paths: ["build/index.html"],
 		replaces: [
@@ -62,10 +62,14 @@ const setSport = async () => {
 				}),
 			},
 		],
+		signal,
 	});
 };
 
-export const copyFiles = async (watch: boolean = false) => {
+export const copyFiles = async (
+	watch: boolean = false,
+	signal?: AbortSignal,
+) => {
 	const foldersToIgnore = [
 		"baseball",
 		"basketball",
@@ -93,6 +97,10 @@ export const copyFiles = async (watch: boolean = false) => {
 		recursive: true,
 	});
 
+	if (signal?.aborted) {
+		return;
+	}
+
 	const sport = getSport();
 
 	await fs.cp(`public/${sport}`, "build", {
@@ -100,24 +108,43 @@ export const copyFiles = async (watch: boolean = false) => {
 		recursive: true,
 	});
 
+	if (signal?.aborted) {
+		return;
+	}
+
 	const realPlayerFilenames = ["real-player-data", "real-player-stats"];
 	for (const filename of realPlayerFilenames) {
 		const sourcePath = `data/${filename}.${sport}.json`;
 		if (existsSync(sourcePath)) {
 			await fs.copyFile(sourcePath, `build/gen/${filename}.json`);
+
+			if (signal?.aborted) {
+				return;
+			}
 		}
 	}
 
 	await fs.copyFile("data/names.json", "build/gen/names.json");
+	if (signal?.aborted) {
+		return;
+	}
+
 	await fs.copyFile("data/names-female.json", "build/gen/names-female.json");
+	if (signal?.aborted) {
+		return;
+	}
 
 	await fs.cp("node_modules/flag-icons/flags/4x3", "build/img/flags", {
 		recursive: true,
 	});
+	if (signal?.aborted) {
+		return;
+	}
+
 	const flagHtaccess = `<IfModule mod_headers.c>
 	Header set Cache-Control "public,max-age=31536000"
 </IfModule>`;
-	await fs.writeFile("build/img/flags/.htaccess", flagHtaccess);
+	await fs.writeFile("build/img/flags/.htaccess", flagHtaccess, { signal });
 
-	await setSport();
+	await setSport(signal);
 };

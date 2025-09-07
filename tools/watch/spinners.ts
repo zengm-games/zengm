@@ -111,7 +111,7 @@ export class Spinners<Key extends string = string> {
 	}>();
 
 	// When this is true it means the user is switching between sports, so we should cancel any in-progress builds, but the user hasn't finished selecting the new sport. Arguably it'd be better to not do this in case the user selects the original sport, but I think it's more common to actually switch sports, so that use case should be prioritized.
-	get switchingSport() {
+	private get switchingSport() {
 		return this.switchSportsTimeoutId;
 	}
 	private switchSportsTimeoutId: NodeJS.Timeout | undefined;

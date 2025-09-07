@@ -75,7 +75,7 @@ export const rolldownConfig = (
 	envOptions:
 		| {
 				nodeEnv: "development";
-				postMessage: (message: any) => void;
+				postMessage: (message: unknown) => void;
 		  }
 		| {
 				nodeEnv: "production";

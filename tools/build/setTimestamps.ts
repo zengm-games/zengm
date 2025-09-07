@@ -4,6 +4,7 @@ import { replace } from "./replace.ts";
 export const setTimestamps = async (
 	versionNumber: string,
 	watch: boolean = false,
+	signal?: AbortSignal,
 ) => {
 	if (watch) {
 		await replace({
@@ -26,6 +27,7 @@ export const setTimestamps = async (
 					replaceValue: versionNumber,
 				},
 			],
+			signal,
 		});
 	} else {
 		await replace({
@@ -41,7 +43,12 @@ export const setTimestamps = async (
 					replaceValue: versionNumber,
 				},
 			],
+			signal,
 		});
+	}
+
+	if (signal?.aborted) {
+		return;
 	}
 
 	// InMobi Choice. Consent Manager Tag v3.0 (for TCF 2.2)
@@ -431,5 +438,6 @@ ${bySport({
 				}),
 			},
 		],
+		signal,
 	});
 };

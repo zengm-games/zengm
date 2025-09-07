@@ -8,7 +8,10 @@ import { render } from "sass-embedded";
 import { fileHash } from "./fileHash.ts";
 import { replace } from "./replace.ts";
 
-export const buildCss = async (watch: boolean = false) => {
+export const buildCss = async (
+	watch: boolean = false,
+	signal?: AbortSignal,
+) => {
 	const filenames = ["light", "dark"];
 	const rawCss = await Promise.all(
 		filenames.map(async (filename) => {
@@ -19,6 +22,9 @@ export const buildCss = async (watch: boolean = false) => {
 			return sassResult!.css.toString();
 		}),
 	);
+	if (signal?.aborted) {
+		return;
+	}
 
 	const purgeCssResults = watch
 		? []
@@ -49,6 +55,9 @@ export const buildCss = async (watch: boolean = false) => {
 					],
 				},
 			});
+	if (signal?.aborted) {
+		return;
+	}
 
 	const replaces: Parameters<typeof replace>[0]["replaces"] | undefined = watch
 		? undefined
@@ -101,13 +110,17 @@ export const buildCss = async (watch: boolean = false) => {
 			});
 		}
 
-		await fs.writeFile(outFilename, output);
+		await fs.writeFile(outFilename, output, { signal });
+		if (signal?.aborted) {
+			return;
+		}
 	}
 
 	if (replaces) {
 		await replace({
 			paths: ["build/index.html"],
 			replaces,
+			signal,
 		});
 	}
 };

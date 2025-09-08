@@ -204,9 +204,9 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				}
 			} else {
 				// This is for people with some missing playoffSeries data, either because it was deleted or because it never existed (like adding teamSeasons manually for past years)
-				const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
-					"teamSeasonsBySeasonTid",
-					[[season], [season, "Z"]],
+				const teamSeasons = await idb.getCopies.teamSeasons(
+					{ season },
+					"noCopyCache",
 				);
 
 				const numPlayoffRounds = g.get("numGamesPlayoffSeries", season).length;

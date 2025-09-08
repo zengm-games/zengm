@@ -150,7 +150,6 @@ const Input = ({
 			float: "decimal",
 			float1000: "decimal",
 			floatOrNull: "decimal",
-			floatOrUndefined: "decimal",
 			int: "numeric",
 			intOrNull: "numeric",
 		};

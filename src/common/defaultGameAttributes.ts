@@ -173,6 +173,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	numPeriods: 4, // per game
 	quarterLength: 12, // [minutes]
 	overtimeLength: 5,
+	overtimeLengthPlayoffs: null,
 	confs: wrap(DEFAULT_CONFS),
 	divs: wrap(DEFAULT_DIVS),
 	numGamesPlayoffSeries: wrap([7, 7, 7, 7]),

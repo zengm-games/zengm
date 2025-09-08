@@ -57,21 +57,6 @@ export const encodeDecodeFunctions = {
 			return parsed;
 		},
 	},
-	floatOrUndefined: {
-		stringify: (value: number | undefined) =>
-			value === undefined ? "" : String(value),
-		parse: (value: string) => {
-			if (value === "") {
-				return undefined;
-			}
-
-			const parsed = helpers.localeParseFloat(value);
-			if (Number.isNaN(parsed)) {
-				throw new Error(`"${value}" is not a valid number`);
-			}
-			return parsed;
-		},
-	},
 	int: {
 		stringify: String,
 		parse: (value: string) => {

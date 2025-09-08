@@ -747,7 +747,7 @@ export type GameAttributesLeague = {
 	rpdPot: boolean;
 	currencyFormat: [string, "." | ",", string];
 	overtimeLength: number;
-	overtimeLengthPlayoffs?: number;
+	overtimeLengthPlayoffs: number | null;
 };
 
 export type GameAttributesLeagueWithHistory = Omit<

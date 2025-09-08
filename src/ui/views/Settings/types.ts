@@ -194,7 +194,6 @@ export type FieldType =
 	| "float"
 	| "float1000"
 	| "floatOrNull"
-	| "floatOrUndefined"
 	| "int"
 	| "intOrNull"
 	| "jsonString"

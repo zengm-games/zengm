@@ -1499,8 +1499,15 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						minimum: 0,
 					},
 					overtimeLengthPlayoffs: {
-						type: "number",
-						minimum: 0,
+						anyOf: [
+							{
+								type: "integer",
+								minimum: 0,
+							},
+							{
+								type: "null",
+							},
+						],
 					},
 				},
 			},

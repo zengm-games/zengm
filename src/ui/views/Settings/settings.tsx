@@ -2224,7 +2224,6 @@ export const settings: Setting[] = (
 			category: "Game Simulation",
 			key: "overtimeLength",
 			name: "Overtime Period Length (minutes)",
-			godModeRequired: "always",
 			type: "float",
 			validator: (value) => {
 				if (value <= 0) {
@@ -2236,7 +2235,6 @@ export const settings: Setting[] = (
 			category: "Game Simulation",
 			key: "overtimeLengthPlayoffs",
 			name: "Playoff Overtime Period Length (minutes)",
-			godModeRequired: "always",
 			type: "floatOrUndefined",
 			description:
 				"Leave blank and it will be the same as the normal Overtime Period Length.",
@@ -2245,16 +2243,6 @@ export const settings: Setting[] = (
 					throw new Error("Value must be blank or greater than 0");
 				}
 			},
-		},
-		{
-			category: "Game Simulation",
-			key: "homeCourtAdvantage",
-			name: `Home ${helpers.upperCaseFirstLetter(COURT)} Advantage`,
-			godModeRequired: "always",
-			type: "float",
-			decoration: "percent",
-			description:
-				"This is the percentage boost/penalty given to home/away player ratings. Default is 1%.",
 		},
 		{
 			category: "Game Simulation",
@@ -2749,8 +2737,18 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Game Simulation",
+			key: "homeCourtAdvantage",
+			name: `Home ${helpers.upperCaseFirstLetter(COURT)} Advantage`,
+			godModeRequired: "always",
+			type: "float",
+			decoration: "percent",
+			description:
+				"This is the percentage boost/penalty given to home/away player ratings. Default is 1%.",
+		},
+		{
+			category: "Game Simulation",
 			key: "numPlayersOnCourt",
-			name: `# Players On ${COURT}`,
+			name: `# Players On ${helpers.upperCaseFirstLetter(COURT)}`,
 			godModeRequired: "always",
 			type: "int",
 			description: "By default BBGM is 5-on-5, but you can change that here",

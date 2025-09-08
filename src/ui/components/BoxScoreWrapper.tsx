@@ -123,7 +123,7 @@ const TeamNameAndScore = ({
 			{t.playoffs ? (
 				<div
 					className="text-body-secondary fs-5 align-self-end"
-					style={{ paddingBottom: 1 }}
+					style={{ paddingBottom: STARTING_NUM_TIMEOUTS !== undefined ? 8 : 1 }}
 				>
 					{t.playoffs.seed}.&nbsp;
 				</div>

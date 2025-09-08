@@ -162,7 +162,9 @@ export type Key =
 	| "neutralSite"
 	| "rpdPot"
 	| "saveOldBoxScores"
-	| "currencyFormat";
+	| "currencyFormat"
+	| "overtimeLength"
+	| "overtimeLengthPlayoffs";
 
 export type Category =
 	| "New League"
@@ -192,6 +194,7 @@ export type FieldType =
 	| "float"
 	| "float1000"
 	| "floatOrNull"
+	| "floatOrUndefined"
 	| "int"
 	| "intOrNull"
 	| "jsonString"

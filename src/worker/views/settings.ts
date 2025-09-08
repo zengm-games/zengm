@@ -171,7 +171,9 @@ type Key =
 	| "neutralSite"
 	| "rpdPot"
 	| "saveOldBoxScores"
-	| "currencyFormat";
+	| "currencyFormat"
+	| "overtimeLength"
+	| "overtimeLengthPlayoffs";
 
 export type Settings = Pick<
 	GameAttributesLeague,
@@ -384,6 +386,8 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			rpdPot: g.get("rpdPot"),
 			saveOldBoxScores: g.get("saveOldBoxScores"),
 			currencyFormat: g.get("currencyFormat"),
+			overtimeLength: g.get("overtimeLength"),
+			overtimeLengthPlayoffs: g.get("overtimeLengthPlayoffs"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

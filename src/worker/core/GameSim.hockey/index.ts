@@ -1,4 +1,4 @@
-import { defaultGameAttributes, g, helpers, random } from "../../util/index.ts";
+import { g, helpers, random } from "../../util/index.ts";
 import {
 	NUM_LINES,
 	NUM_PLAYERS_PER_LINE,
@@ -629,10 +629,7 @@ class GameSim extends GameSimBase {
 	}
 
 	simOvertime() {
-		this.clock = g.get("quarterLength");
-		if (this.clock === 0) {
-			this.clock = defaultGameAttributes.quarterLength;
-		}
+		this.clock = this.getOvertimeLength();
 
 		this.minutesSinceLineChange[0].F = 0;
 		this.minutesSinceLineChange[0].D = 0;

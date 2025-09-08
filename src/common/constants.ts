@@ -419,6 +419,8 @@ const EXHIBITION_GAME_SETTINGS = [
 	"foulsNeededToFoulOut",
 	"numPlayersOnCourt",
 	"quarterLength",
+	"overtimeLength",
+	"overtimeLengthPlayoffs",
 	"numPeriods",
 	"pace",
 	"homeCourtAdvantage",

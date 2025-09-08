@@ -1494,6 +1494,14 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						minItems: 3,
 						maxItems: 3,
 					},
+					overtimeLength: {
+						type: "number",
+						minimum: 0,
+					},
+					overtimeLengthPlayoffs: {
+						type: "number",
+						minimum: 0,
+					},
 				},
 			},
 			games: {

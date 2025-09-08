@@ -1,4 +1,4 @@
-import { defaultGameAttributes, g, helpers, random } from "../../util/index.ts";
+import { g, helpers, random } from "../../util/index.ts";
 import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession.ts";
 import getInjuryRate from "./getInjuryRate.ts";
@@ -648,13 +648,7 @@ class GameSim extends GameSimBase {
 	}
 
 	simOvertime() {
-		// 5 minutes by default, but scales
-		this.t = Math.ceil(
-			(g.get("quarterLength") * 60 * 5) / defaultGameAttributes.quarterLength,
-		);
-		if (this.t === 0) {
-			this.t = 5 * 60;
-		}
+		this.t = 60 * this.getOvertimeLength();
 
 		this.timeouts = [NUM_TIMEOUTS_OVERTIME, NUM_TIMEOUTS_OVERTIME];
 		this.logTimeouts();

@@ -25,7 +25,7 @@ import Play, {
 } from "./Play.ts";
 import LngTracker from "./LngTracker.ts";
 import GameSimBase from "../GameSimBase.ts";
-import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
+import { STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -396,13 +396,7 @@ class GameSim extends GameSimBase {
 	}
 
 	simOvertime() {
-		const playoffs = g.get("phase") === PHASE.PLAYOFFS;
-
-		// 10 minutes in regular season, 15 in playoffs
-		this.clock = Math.ceil(g.get("quarterLength") * (playoffs ? 1 : 2 / 3));
-		if (this.clock <= 0) {
-			this.clock = playoffs ? 15 : 10;
-		}
+		this.clock = this.getOvertimeLength();
 
 		this.overtime = true;
 		this.overtimes += 1;

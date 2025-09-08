@@ -1,3 +1,5 @@
+vertical align seeds with timeouts
+
 for past seasons roster pages, include a "Left" column similar to "Acquired" https://discord.com/channels/290013534023057409/331882115119448065/1409262567230148658
 - would need to track more stuff in "transactions" like when a player is released, etc
 
@@ -617,9 +619,6 @@ FBGM snap counts https://discord.com/channels/@me/778760871911751700/12068140626
 
 Make the Manage Teams table sortable https://old.reddit.com/r/BasketballGM/comments/18vljqg/monthly_suggestions_thread/kj2v734/
 
-make trade page still visible when trading is not allowed, just don't allow submitting trade
-- this lets you see draft pick assets https://old.reddit.com/r/BasketballGM/comments/18vljqg/monthly_suggestions_thread/kfvll57/
-
 add last jersey number to retired player class export https://discord.com/channels/@me/1190366676655558676/1207792999833018458
 
 When using the “can’t sign free agents except to minimum contracts” setting, none of the drafted players were able to sign with the team that drafted them (with the exception of the player controlled team) except for kickers and punters (due to them only asking for the minimum) https://discord.com/channels/290013534023057409/290015591216054273/1207484902384341093
@@ -628,26 +627,10 @@ danger zone thing to change current season
 
 random debuts option to shuffle entire draft class years https://old.reddit.com/r/BasketballGM/comments/194kdbc/new_saved_trades_page_under_the_players_menu_save/koj2fg1/?context=3
 
-sticky score on desktop live sim on desktop https://twitter.com/IcarusGant/status/1749201751599694324?t=z_DvDgHfzDAOIIRbcvbAuQ&s=19
-
-relatives should usually be the same race
-
 fix subscriptions
 - should not be possible to have multiple subscriptions active for same account
 - should be harder to have multiple subscriptions active for different accounts with same email
 - password recovery should handle multiple usernames for email
-
-setting for overtime period length
-- not available for baseball
-- football is different for playoffs
-- leave blank and overtime is same as period length
-- default values for
-  - basketball
-  - football
-  - hockey
-- upgrade by applying what would be the default in the old system
-  - import
-  - existing leagues
 
 box score overflow with long team name https://discord.com/channels/290013534023057409/290015591216054273/1194104187722661928
 

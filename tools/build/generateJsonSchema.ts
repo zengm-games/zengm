@@ -1509,6 +1509,12 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 							},
 						],
 					},
+					forceRetireRealPlayers: {
+						type: "boolean",
+					},
+					forceHistoricalRosters: {
+						type: "boolean",
+					},
 				},
 			},
 			games: {

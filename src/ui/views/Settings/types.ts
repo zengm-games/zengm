@@ -164,7 +164,9 @@ export type Key =
 	| "saveOldBoxScores"
 	| "currencyFormat"
 	| "overtimeLength"
-	| "overtimeLengthPlayoffs";
+	| "overtimeLengthPlayoffs"
+	| "forceRetireRealPlayers"
+	| "forceHistoricalRosters";
 
 export type Category =
 	| "New League"

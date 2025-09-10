@@ -421,6 +421,14 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"overtimeLengthPlayoffs",
 		),
+		forceRetireRealPlayers: unwrapGameAttribute(
+			defaultGameAttributes,
+			"forceRetireRealPlayers",
+		),
+		forceHistoricalRosters: unwrapGameAttribute(
+			defaultGameAttributes,
+			"forceHistoricalRosters",
+		),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

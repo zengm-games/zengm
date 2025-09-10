@@ -173,7 +173,9 @@ type Key =
 	| "saveOldBoxScores"
 	| "currencyFormat"
 	| "overtimeLength"
-	| "overtimeLengthPlayoffs";
+	| "overtimeLengthPlayoffs"
+	| "forceRetireRealPlayers"
+	| "forceHistoricalRosters";
 
 export type Settings = Pick<
 	GameAttributesLeague,
@@ -388,6 +390,8 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			currencyFormat: g.get("currencyFormat"),
 			overtimeLength: g.get("overtimeLength"),
 			overtimeLengthPlayoffs: g.get("overtimeLengthPlayoffs"),
+			forceRetireRealPlayers: g.get("forceRetireRealPlayers"),
+			forceHistoricalRosters: g.get("forceHistoricalRosters"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

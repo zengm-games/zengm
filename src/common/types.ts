@@ -748,6 +748,8 @@ export type GameAttributesLeague = {
 	currencyFormat: [string, "." | ",", string];
 	overtimeLength: number;
 	overtimeLengthPlayoffs: number | null;
+	forceRetireRealPlayers: boolean;
+	forceHistoricalRosters: boolean;
 };
 
 export type GameAttributesLeagueWithHistory = Omit<

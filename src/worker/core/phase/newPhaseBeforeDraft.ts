@@ -427,7 +427,7 @@ const newPhaseBeforeDraft = async (
 			let update = false;
 
 			if (!repeatSeasonType) {
-				if (player.shouldRetire(p)) {
+				if (await player.shouldRetire(p)) {
 					if (p.tid >= 0) {
 						if (!retiredPlayersByTeam[p.tid]) {
 							retiredPlayersByTeam[p.tid] = [];
@@ -436,18 +436,8 @@ const newPhaseBeforeDraft = async (
 					}
 					await player.retire(p, conditions);
 					update = true;
-				}
-
-				// Update "free agent years" counter and retire players who have been free agents for more than one years
-				if (p.tid === PLAYER.FREE_AGENT) {
-					const age = g.get("season") - p.born.year;
-					if (p.yearsFreeAgent >= 1 && age >= g.get("minRetireAge")) {
-						await player.retire(p, conditions);
-						update = true;
-					} else {
-						p.yearsFreeAgent += 1;
-					}
-
+				} else if (p.tid === PLAYER.FREE_AGENT) {
+					p.yearsFreeAgent += 1;
 					update = true;
 				} else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
 					p.yearsFreeAgent = 0;

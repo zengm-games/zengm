@@ -1,3 +1,32 @@
+keep players on their real historical teams https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/l6k5gc7/
+- at preseason, find team the same way we do when starting at the playoffs
+- how to handle random players? move to FA
+- after current season, disable effect
+- also apply real contracts
+- skip phases like in groundhog day?
+- test
+  - RPD still works
+- names
+  - make a new Real Players settings category?
+  - Force Retire Real Players -> Auto Retire Real Players?
+- options this synergizies with - should these be forced?
+  - forceRetireRealPlayers
+  - spectator mode
+  - no AI trades
+  - tragic deaths
+- OOTP calls it "use historical transactions" https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/ldoidno/?context=3
+- blog
+  - forceRetireRealPlayers
+    - works well with RPD
+    - stops after latest season with historical data
+- later
+  - handle mid season trades better
+  - handle offseason better
+    - draft picks
+
+heaves shouldn't count unless they go in https://discord.com/channels/@me/1099138438147624990/1400890557546631329
+- heave definition: https://bleacherreport.com/articles/25223156-nba-announces-rule-change-end-quarter-heave-stats-2025-summer-league
+
 for past seasons roster pages, include a "Left" column similar to "Acquired" https://discord.com/channels/290013534023057409/331882115119448065/1409262567230148658
 - would need to track more stuff in "transactions" like when a player is released, etc
 
@@ -8,9 +37,6 @@ feasible AI features from Chrome's built-in AI
 - social media
 
 leaders on dashboard should account for qualified/non-qualified players like league leaders page https://discord.com/channels/290013534023057409/1403842951574192228/1403842951574192228
-
-heaves shouldn't count unless they go in https://discord.com/channels/@me/1099138438147624990/1400890557546631329
-- heave definition: https://bleacherreport.com/articles/25223156-nba-announces-rule-change-end-quarter-heave-stats-2025-summer-league
 
 import real players
 - include stats - do it by team srID, and treat as DOES_NOT_EXIST otherwise https://old.reddit.com/r/BasketballGM/comments/1kwal9w/version_202505261259_new_import_real_players/n0bfsbr/?context=3
@@ -98,15 +124,6 @@ HoF should highlight your team like GM History, not your current franchise https
   - retired players list should highlight players who ever played for your team https://old.reddit.com/r/BasketballGM/comments/1joi4m5/monthly_suggestions_thread/mkz8q9k/
 
 make clone player button a dropdown that lets you pick current season or a past season https://old.reddit.com/r/BasketballGM/comments/1joi4m5/monthly_suggestions_thread/moikegn/
-
-keep players on their real historical teams https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/l6k5gc7/
-- mid season trades?
-  - could calc season fraction (like ASG) or GP and use that
-  - one last check b4 playoffs
-  - could store in some json file
-- does it make sense without spectator mode?
-  - a lesser option would be to make players retire when they do IRL
-- OOTP calls it "use historical transactions" https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/ldoidno/?context=3 
 
 option to disable notification popups https://old.reddit.com/r/BasketballGM/comments/1h3racg/monthly_suggestions_thread/m0duybm/
 - red ones still go through

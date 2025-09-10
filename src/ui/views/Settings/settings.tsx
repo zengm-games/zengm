@@ -2130,6 +2130,24 @@ export const settings: Setting[] = (
 			),
 		},
 		{
+			category: "Players",
+			key: "forceRetireRealPlayers",
+			name: "Force Retire Real Players",
+			godModeRequired: "always",
+			type: "bool",
+			description:
+				"This makes real players retire at the same age they did in real life.",
+		},
+		{
+			category: "Players",
+			key: "forceHistoricalRosters",
+			name: "Force Historical Rosters",
+			godModeRequired: "always",
+			type: "bool",
+			description:
+				"Every season, all real players will be moved to the same team they played for in real life. No other transactions are allowed.",
+		},
+		{
 			category: "Elam Ending",
 			key: "elam",
 			name: "Regular Season and Playoffs",

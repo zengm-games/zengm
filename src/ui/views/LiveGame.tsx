@@ -950,8 +950,8 @@ export const LiveGame = (props: View<"liveGame">) => {
 			{showWarning ? (
 				<p className="text-danger">
 					{boxScore.current.exhibition
-						? "If you navigate away from this page, you won't be able to see this box score again because it is not stored anywhere."
-						: "If you navigate away from this page, you won't be able to see these play-by-play results again because they are not stored anywhere. The results of this game are already final, though."}
+						? "If you navigate away from this page, you won't be able to see this box score again."
+						: "If you navigate away from this page, you won't be able to see these play-by-play results again. The results of this game are already final, though."}
 					<>
 						{" "}
 						<button

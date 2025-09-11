@@ -19,7 +19,11 @@ const initAutoPlay = async (conditions: Conditions) => {
 
 	const result = await toUI(
 		"autoPlayDialog",
-		[g.get("season"), g.get("repeatSeason")?.type],
+		[
+			g.get("season"),
+			g.get("forceHistoricalRosters"),
+			g.get("repeatSeason")?.type,
+		],
 		conditions,
 	);
 

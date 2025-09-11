@@ -294,7 +294,10 @@ const updatePlayMenu = async () => {
 		}
 	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
 		const repeatSeasonType = g.get("repeatSeason")?.type;
-		if (repeatSeasonType === "playersAndRosters") {
+		if (
+			repeatSeasonType === "playersAndRosters" ||
+			g.get("forceHistoricalRosters")
+		) {
 			keys = ["untilPreseason"];
 		} else {
 			if (

@@ -77,7 +77,7 @@ const autoPlay = async (conditions: Conditions = {}) => {
 		await game.play(100, conditions);
 	} else if (currentPhase === PHASE.DRAFT_LOTTERY) {
 		const type = g.get("repeatSeason")?.type;
-		if (type === "playersAndRosters") {
+		if (type === "playersAndRosters" || g.get("forceHistoricalRosters")) {
 			await phase.newPhase(PHASE.PRESEASON, conditions);
 		} else if (type === "players") {
 			await phase.newPhase(PHASE.RESIGN_PLAYERS, conditions);

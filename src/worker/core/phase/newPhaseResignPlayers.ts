@@ -35,14 +35,15 @@ const newPhaseResignPlayers = async (
 		"playersByTid",
 		PLAYER.FREE_AGENT,
 	);
-	const undraftedPlayers = !repeatSeasonType
-		? (
-				await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
-					[g.get("season")],
-					[g.get("season"), Infinity],
-				])
-			).filter((p) => p.tid === PLAYER.UNDRAFTED)
-		: [];
+	const undraftedPlayers =
+		!repeatSeasonType && !g.get("forceHistoricalRosters")
+			? (
+					await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
+						[g.get("season")],
+						[g.get("season"), Infinity],
+					])
+				).filter((p) => p.tid === PLAYER.UNDRAFTED)
+			: [];
 
 	for (const p of [...existingFreeAgents, ...undraftedPlayers]) {
 		player.addToFreeAgents(p);

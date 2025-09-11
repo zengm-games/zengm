@@ -144,8 +144,10 @@ const playAmount = async (
 
 		await freeAgents.play(numDays, conditions);
 	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
-		const type = g.get("repeatSeason")?.type;
-		if (type === "playersAndRosters") {
+		if (
+			g.get("repeatSeason")?.type === "playersAndRosters" ||
+			g.get("forceHistoricalRosters")
+		) {
 			await phase.newPhase(PHASE.PRESEASON, conditions);
 		}
 	}

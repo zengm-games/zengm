@@ -3808,6 +3808,17 @@ const updateGameAttributesGodMode = async (
 		}
 	}
 
+	if (
+		gameAttributes.forceHistoricalRosters &&
+		!g.get("forceHistoricalRosters")
+	) {
+		if (g.get("phase") < 0 || g.get("phase") > PHASE.DRAFT_LOTTERY) {
+			throw new Error(
+				"Force Historical Rosters can only be enabled before the draft",
+			);
+		}
+	}
+
 	// Will be handled in setRepeatSeason, don't pass through a string
 	delete gameAttributes.repeatSeason;
 

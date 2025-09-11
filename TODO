@@ -1,24 +1,33 @@
 keep players on their real historical teams https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/l6k5gc7/
 - at preseason, find team the same way we do when starting at the playoffs
 - how to handle random players? move to FA
-- after current season, disable effect
 - also apply real contracts
-- skip phases like in groundhog day?
+  - do this in newPhasePreseason similar to how repeatSeason imposes contracts
 - test
   - RPD still works
-- names
-  - make a new Real Players settings category?
-  - Force Retire Real Players -> Auto Retire Real Players?
+  - baseball retirement
+  - skip phases like in groundhog day
+- make a new Real Players settings category
 - options this synergizies with - should these be forced?
   - forceRetireRealPlayers
-  - spectator mode
-  - no AI trades
-  - tragic deaths
+  - don't set this because it depends on season, but do somehow disable until current season only!
+    - numSeasonsFutureDraftPicks
+    - no AI trades
+    - no tragic deaths
+    - also
+      - no FA signing (AI and user)
+      - no trades (AI and user)
+      - other spectator mode things?
+- auto disable forceHistoricalRosters when we reach LATEST_SEASON
+  - what phase? does it depend on MAX_PHASE?
+  - send notification when this happens
+  - also check if valid to enable setting, similar to check already for phase in updateGameAttributesGodMode
 - OOTP calls it "use historical transactions" https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/ldoidno/?context=3
 - blog
   - forceRetireRealPlayers
     - works well with RPD
     - stops after latest season with historical data
+  - forceHistoricalRosters
 - later
   - handle mid season trades better
   - handle offseason better

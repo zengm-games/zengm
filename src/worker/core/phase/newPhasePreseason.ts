@@ -32,7 +32,8 @@ const newPhasePreseason = async (
 	await idb.cache.schedule.clear();
 
 	const repeatSeason = g.get("repeatSeason");
-	if (repeatSeason?.type !== "playersAndRosters") {
+	const forceHistoricalRosters = g.get("forceHistoricalRosters");
+	if (repeatSeason?.type !== "playersAndRosters" && !forceHistoricalRosters) {
 		await freeAgents.autoSign();
 	}
 	await league.setGameAttributes({
@@ -267,7 +268,7 @@ const newPhasePreseason = async (
 	]);
 
 	// Small chance that a player was lying about his age!
-	if (!repeatSeason && Math.random() < 0.01) {
+	if (!repeatSeason && !forceHistoricalRosters && Math.random() < 0.01) {
 		const p = player.getPlayerFakeAge(players);
 
 		if (p) {

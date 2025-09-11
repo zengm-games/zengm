@@ -6,13 +6,14 @@ import { PHASE, PHASE_TEXT, helpers } from "../../common/index.ts";
 const Confirm = confirmable<
 	{
 		currentSeason: number;
+		forceHistoricalRosters: boolean;
 		repeatSeason: "players" | "playersAndRosters" | undefined;
 	},
 	{
 		season: string;
 		phase: string;
 	} | null
->(({ show, proceed, currentSeason, repeatSeason }) => {
+>(({ show, proceed, currentSeason, forceHistoricalRosters, repeatSeason }) => {
 	const [phase, setPhase] = useState(String(PHASE.PRESEASON));
 	const [season, setSeason] = useState(String(currentSeason + 1));
 
@@ -37,7 +38,10 @@ const Confirm = confirmable<
 			continue;
 		}
 
-		if (repeatSeason === "playersAndRosters" && phaseInt >= PHASE.DRAFT) {
+		if (
+			(repeatSeason === "playersAndRosters" || forceHistoricalRosters) &&
+			phaseInt >= PHASE.DRAFT
+		) {
 			continue;
 		}
 
@@ -119,10 +123,12 @@ const confirmFunction = createConfirmation(Confirm);
 
 const autoPlayDialog = (
 	currentSeason: number,
+	forceHistoricalRosters: boolean,
 	repeatSeason: "players" | "playersAndRosters" | undefined,
 ) => {
 	return confirmFunction({
 		currentSeason,
+		forceHistoricalRosters,
 		repeatSeason,
 	});
 };

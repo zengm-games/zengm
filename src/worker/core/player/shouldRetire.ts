@@ -8,6 +8,7 @@ import type {
 import { range } from "../../../common/utils.ts";
 import loadDataBasketball from "../realRosters/loadData.basketball.ts";
 import { LATEST_SEASON } from "../realRosters/seasons.ts";
+import realRosters from "../realRosters/index.ts";
 
 const checkForceRetireSeasons = (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
 	// No redshirt seasons before league was created, since we have no stats then
@@ -38,9 +39,6 @@ const checkForceRetireSeasons = (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
 	return numSeasonsInLeague - numRedshirtSeasons >= g.get("forceRetireSeasons");
 };
 
-// Cache for performance
-let playerActiveSeasons: Record<string, Set<number>> | undefined;
-
 // retire -> Real player has no ratings for the season where he is one year older than he is now, so retire him
 // noRetire -> Real player does have ratings, so don't retire him
 // passThrough -> This age would put the player past the latest season we have real player data for, so don't decide anything here, let the normal retirement algorithm apply
@@ -67,19 +65,12 @@ const checkForceRetireRealPlayers = async (
 		return "passThrough";
 	}
 
-	if (!playerActiveSeasons) {
-		playerActiveSeasons = {};
-		for (const row of basketball.teams) {
-			let set = playerActiveSeasons[row.slug];
-			if (!set) {
-				set = new Set();
-				playerActiveSeasons[row.slug] = set;
-			}
-			set.add(row.season);
-		}
-	}
+	const playerActiveSeasons = await realRosters.getPlayerActiveSeasons();
 
-	const active = playerActiveSeasons[srID]?.has(targetSeason);
+	// Object.hasOwn check is because the value could be undefined if the team doesn't exist in this league (imported player or deleted team or whatever) but we still want to recognize the player as being active that season
+	const active = playerActiveSeasons[srID]
+		? Object.hasOwn(playerActiveSeasons[srID], targetSeason)
+		: false;
 
 	return active ? "noRetire" : "retire";
 };

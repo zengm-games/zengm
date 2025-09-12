@@ -7,7 +7,14 @@ keep players on their real historical teams https://old.reddit.com/r/BasketballG
   - RPD still works
   - baseball retirement
   - skip phases like in groundhog day
+  - switching leauges to one with different tids works
+  - confirm it picks right team for in season trades
+  - confirm retiring still works
+  - scheduled events that trigger in skipped phases
 - make a new Real Players settings category
+  - hide in some situations?
+    - random players
+    - other sports
 - options this synergizies with - should these be forced?
   - forceRetireRealPlayers
   - don't set this because it depends on season, but do somehow disable until current season only!
@@ -28,6 +35,7 @@ keep players on their real historical teams https://old.reddit.com/r/BasketballG
     - works well with RPD
     - stops after latest season with historical data
   - forceHistoricalRosters
+    - also works well with RPD
 - later
   - handle mid season trades better
   - handle offseason better

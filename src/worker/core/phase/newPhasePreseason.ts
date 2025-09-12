@@ -6,7 +6,14 @@ import {
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	PHASE,
 } from "../../../common/index.ts";
-import { finances, freeAgents, league, player, team } from "../index.ts";
+import {
+	finances,
+	freeAgents,
+	league,
+	player,
+	realRosters,
+	team,
+} from "../index.ts";
 import { idb } from "../../db/index.ts";
 import {
 	env,
@@ -36,8 +43,9 @@ const newPhasePreseason = async (
 	if (repeatSeason?.type !== "playersAndRosters" && !forceHistoricalRosters) {
 		await freeAgents.autoSign();
 	}
+	const newSeason = g.get("season") + 1;
 	await league.setGameAttributes({
-		season: g.get("season") + 1,
+		season: newSeason,
 	});
 	await toUI("updateLocal", [
 		{
@@ -75,7 +83,7 @@ const newPhasePreseason = async (
 				imgURL: t.imgURL,
 			};
 
-			const updated = applyRealTeamInfo(t, realTeamInfo, g.get("season"), {
+			const updated = applyRealTeamInfo(t, realTeamInfo, newSeason, {
 				exactSeason: true,
 			});
 
@@ -89,7 +97,7 @@ const newPhasePreseason = async (
 					} are now the <a href="${helpers.leagueUrl([
 						"roster",
 						t.abbrev,
-						g.get("season"),
+						newSeason,
 					])}">${t.region} ${t.name}</a>.`;
 
 					logEvent({
@@ -105,7 +113,7 @@ const newPhasePreseason = async (
 					} are now the <a href="${helpers.leagueUrl([
 						"roster",
 						t.abbrev,
-						g.get("season"),
+						newSeason,
 					])}">${t.region} ${t.name}</a>.`;
 
 					logEvent({
@@ -120,7 +128,7 @@ const newPhasePreseason = async (
 						text: `The <a href="${helpers.leagueUrl([
 							"roster",
 							t.abbrev,
-							g.get("season"),
+							newSeason,
 						])}">${t.region} ${t.name}</a> got a new logo:<br><img src="${
 							t.imgURL
 						}" class="mt-2" style="max-width:120px;max-height:120px;">`,
@@ -144,7 +152,7 @@ const newPhasePreseason = async (
 			const teamSeasons = await idb.getCopies.teamSeasons(
 				{
 					tid: t.tid,
-					seasons: [g.get("season") - 3, g.get("season") - 1],
+					seasons: [newSeason - 3, newSeason - 1],
 				},
 				"noCopyCache",
 			);
@@ -156,17 +164,17 @@ const newPhasePreseason = async (
 		} else {
 			prevSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
-				[t.tid, g.get("season") - 1],
+				[t.tid, newSeason - 1],
 			);
 		}
 
-		const newSeason = team.genSeasonRow(t, prevSeason);
+		const newTeamSeason = team.genSeasonRow(t, prevSeason);
 
 		if (t.pop === undefined) {
-			t.pop = newSeason.pop;
+			t.pop = newTeamSeason.pop;
 		}
 		if (t.stadiumCapacity === undefined) {
-			t.stadiumCapacity = newSeason.stadiumCapacity;
+			t.stadiumCapacity = newTeamSeason.stadiumCapacity;
 		}
 
 		// Mean population should stay constant, otherwise the economics change too much
@@ -188,9 +196,9 @@ const newPhasePreseason = async (
 				t.pop = newPop;
 			}
 		}
-		newSeason.pop = t.pop;
+		newTeamSeason.pop = t.pop;
 
-		await idb.cache.teamSeasons.add(newSeason);
+		await idb.cache.teamSeasons.add(newTeamSeason);
 		await idb.cache.teamStats.add(team.genStatsRow(t.tid));
 
 		if (t.disabled) {
@@ -252,7 +260,7 @@ const newPhasePreseason = async (
 		const teamSeasons = await idb.getCopies.teamSeasons(
 			{
 				tid: t.tid,
-				seasons: [g.get("season") - 3, g.get("season") - 1],
+				seasons: [newSeason - 3, newSeason - 1],
 			},
 			"noCopyCache",
 		);
@@ -267,6 +275,16 @@ const newPhasePreseason = async (
 		Infinity,
 	]);
 
+	if (forceHistoricalRosters) {
+		// Also need to bring in the previous draft class who haven't been assigned a team yet
+		players.push(
+			...(await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
+				[newSeason - 1],
+				[newSeason - 1, Infinity],
+			])),
+		);
+	}
+
 	// Small chance that a player was lying about his age!
 	if (!repeatSeason && !forceHistoricalRosters && Math.random() < 0.01) {
 		const p = player.getPlayerFakeAge(players);
@@ -274,9 +292,9 @@ const newPhasePreseason = async (
 		if (p) {
 			const gender = g.get("gender");
 			const years = random.randInt(1, 4);
-			const age0 = g.get("season") - p.born.year;
+			const age0 = newSeason - p.born.year;
 			p.born.year -= years;
-			const age1 = g.get("season") - p.born.year;
+			const age1 = newSeason - p.born.year;
 			const name = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
 				p.firstName
 			} ${p.lastName}</a>`;
@@ -341,11 +359,7 @@ const newPhasePreseason = async (
 			p.pFatigue = 0;
 		}
 
-		if (!repeatSeason) {
-			// Update ratings
-			player.addRatingsRow(p, scoutingLevel);
-			await player.develop(p, 1, false, coachingLevels[p.tid]);
-		} else {
+		if (repeatSeason) {
 			if (repeatSeason.type === "playersAndRosters") {
 				const info = repeatSeason.players[p.pid];
 				if (info) {
@@ -353,7 +367,7 @@ const newPhasePreseason = async (
 					p.injury = helpers.deepCopy(info.injury);
 					p.contract = helpers.deepCopy(info.contract);
 
-					p.contract.exp += g.get("season") - repeatSeason.startingSeason;
+					p.contract.exp += newSeason - repeatSeason.startingSeason;
 					p.salaries.push({
 						season: p.contract.exp,
 						amount: p.contract.amount,
@@ -365,7 +379,7 @@ const newPhasePreseason = async (
 
 			// First entry for last season, so it skips injuries
 			const newRatings = helpers.deepCopy(
-				p.ratings.find((pr) => pr.season === g.get("season") - 1),
+				p.ratings.find((pr) => pr.season === newSeason - 1),
 			);
 			if (newRatings) {
 				newRatings.season += 1;
@@ -374,6 +388,23 @@ const newPhasePreseason = async (
 
 			p.transactions = [];
 			p.born.year += 1;
+		} else {
+			// Update ratings
+			player.addRatingsRow(p, scoutingLevel);
+			await player.develop(p, 1, false, coachingLevels[p.tid]);
+		}
+
+		if (
+			forceHistoricalRosters &&
+			p.draft.year < newSeason &&
+			p.tid !== PLAYER.RETIRED
+		) {
+			if (p.srID === undefined) {
+				p.tid = PLAYER.FREE_AGENT;
+			} else {
+				const playerActiveSeasons = await realRosters.getPlayerActiveSeasons();
+				p.tid = playerActiveSeasons[p.srID]?.[newSeason] ?? PLAYER.FREE_AGENT;
+			}
 		}
 
 		// Add row to player stats if they are on a team

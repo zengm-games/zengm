@@ -17,6 +17,7 @@ const defaultLocal: Local = {
 	playerOvrMean: 47,
 	playerOvrStd: 10,
 	playerOvrMeanStdStale: true,
+	realPlayerActiveSeasons: undefined,
 	seasonLeaders: undefined,
 	playingUntilEndOfRound: false,
 	statusText: "Idle",
@@ -43,6 +44,7 @@ const local: Local & {
 	playerOvrStd: defaultLocal.playerOvrStd,
 	playerOvrMeanStdStale: defaultLocal.playerOvrMeanStdStale,
 	playingUntilEndOfRound: defaultLocal.playingUntilEndOfRound,
+	realPlayerActiveSeasons: defaultLocal.realPlayerActiveSeasons,
 	seasonLeaders: defaultLocal.seasonLeaders,
 	statusText: defaultLocal.statusText,
 	unviewedSeasonSummary: defaultLocal.unviewedSeasonSummary,
@@ -64,6 +66,7 @@ const local: Local & {
 		local.playerOvrStd = defaultLocal.playerOvrStd;
 		local.playerOvrMeanStdStale = defaultLocal.playerOvrMeanStdStale;
 		local.playingUntilEndOfRound = defaultLocal.playingUntilEndOfRound;
+		local.realPlayerActiveSeasons = defaultLocal.realPlayerActiveSeasons; // Since there may be different tids in different leagues
 		local.seasonLeaders = defaultLocal.seasonLeaders;
 		local.statusText = defaultLocal.statusText;
 		local.unviewedSeasonSummary = defaultLocal.unviewedSeasonSummary;

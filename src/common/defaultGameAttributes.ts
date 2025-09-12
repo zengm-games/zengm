@@ -98,6 +98,8 @@ const gameAttributesKeysSportSpecific = {
 		"pace",
 		"allStarDunk",
 		"allStarThree",
+		"forceRetireRealPlayers",
+		"forceHistoricalRosters",
 	] as GameAttributeKey[],
 	football: [
 		"fantasyPoints",

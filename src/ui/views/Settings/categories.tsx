@@ -51,6 +51,9 @@ const categories: {
 		name: "Players",
 	},
 	{
+		name: "Real Players",
+	},
+	{
 		name: "Teams",
 	},
 	{

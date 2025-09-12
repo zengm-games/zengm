@@ -2067,7 +2067,7 @@ export const settings: Setting[] = (
 				"The probability of a takeaway happening is multiplied by this number.",
 		},
 		{
-			category: "Players",
+			category: "Real Players",
 			key: "realPlayerDeterminism",
 			name: "Real Player Determinism",
 			godModeRequired: "existingLeagueOnly",
@@ -2098,7 +2098,7 @@ export const settings: Setting[] = (
 			},
 		},
 		{
-			category: "Players",
+			category: "Real Players",
 			key: "rpdPot",
 			name: "RPD Affects Potential",
 			godModeRequired: "always",
@@ -2130,7 +2130,7 @@ export const settings: Setting[] = (
 			),
 		},
 		{
-			category: "Players",
+			category: "Real Players",
 			key: "forceRetireRealPlayers",
 			name: "Force Retire Real Players",
 			godModeRequired: "always",
@@ -2139,7 +2139,7 @@ export const settings: Setting[] = (
 				"This makes real players retire at the same age they did in real life.",
 		},
 		{
-			category: "Players",
+			category: "Real Players",
 			key: "forceHistoricalRosters",
 			name: "Force Historical Rosters",
 			godModeRequired: "always",

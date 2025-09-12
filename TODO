@@ -1,20 +1,12 @@
 keep players on their real historical teams https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/l6k5gc7/
 - at preseason, find team the same way we do when starting at the playoffs
-- how to handle random players? move to FA
 - also apply real contracts
   - do this in newPhasePreseason similar to how repeatSeason imposes contracts
 - test
   - RPD still works
   - baseball retirement
-  - skip phases like in groundhog day
-  - switching leauges to one with different tids works
-  - confirm it picks right team for in season trades
-  - confirm retiring still works
-  - scheduled events that trigger in skipped phases
-- make a new Real Players settings category
-  - hide in some situations?
-    - random players
-    - other sports
+  - starting league in invalid phase
+    - repeatSeason too
 - options this synergizies with - should these be forced?
   - forceRetireRealPlayers
   - don't set this because it depends on season, but do somehow disable until current season only!
@@ -36,10 +28,15 @@ keep players on their real historical teams https://old.reddit.com/r/BasketballG
     - stops after latest season with historical data
   - forceHistoricalRosters
     - also works well with RPD
+    - how it handles mid-season trades
 - later
   - handle mid season trades better
   - handle offseason better
     - draft picks
+
+support shared lists of names in player bio info
+- use for built-in names like chinese/hispanic countries
+- also allow for custom usage https://discord.com/channels/@me/1227394978674774038/1416118626582528010
 
 heaves shouldn't count unless they go in https://discord.com/channels/@me/1099138438147624990/1400890557546631329
 - heave definition: https://bleacherreport.com/articles/25223156-nba-announces-rule-change-end-quarter-heave-stats-2025-summer-league

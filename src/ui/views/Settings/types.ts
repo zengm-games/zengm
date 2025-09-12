@@ -189,6 +189,7 @@ export type Category =
 	| "Challenge Modes"
 	| "Game Modes"
 	| "Players"
+	| "Real Players"
 	| "UI";
 
 export type FieldType =

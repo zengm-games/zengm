@@ -30,15 +30,27 @@ export const getPlayerActiveSeasons = async () => {
 
 		const basketball = await loadDataBasketball();
 		local.realPlayerActiveSeasons = {};
-		for (const row of basketball.teams) {
-			let tidsBySeason = local.realPlayerActiveSeasons[row.slug];
+
+		const addRecord = (slug: string, abbrev: string, season: number) => {
+			let tidsBySeason = local.realPlayerActiveSeasons![slug];
 			if (!tidsBySeason) {
 				tidsBySeason = {};
-				local.realPlayerActiveSeasons[row.slug] = tidsBySeason;
+				local.realPlayerActiveSeasons![slug] = tidsBySeason;
 			}
 
 			// This will keep the last tid, which is the one we want for forceHistoricalRosters. Could also be undefined if this is a weird league (missing some team) - still will work for shouldRetire then
-			tidsBySeason[row.season] = tidsByAbbrev[row.abbrev];
+			tidsBySeason[season] = tidsByAbbrev[abbrev];
+		};
+
+		// Handle abbrev_if_new_row, since those are not reflected in the teams array for whatever dumb reason
+		for (const row of basketball.ratings) {
+			if (row.abbrev_if_new_row) {
+				addRecord(row.slug, row.abbrev_if_new_row, row.season);
+			}
+		}
+
+		for (const row of basketball.teams) {
+			addRecord(row.slug, row.abbrev, row.season);
 		}
 	}
 

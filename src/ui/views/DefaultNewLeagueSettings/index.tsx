@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import Select from "react-select";
-import { SPORT_HAS_REAL_PLAYERS } from "../../../common/index.ts";
+import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import { groupBy } from "../../../common/utils.ts";
 import type { View } from "../../../common/types.ts";
 import type { Settings } from "../../../worker/views/settings.ts";
@@ -83,7 +83,7 @@ const DefaultNewLeagueSettings = ({
 				setting.showOnlyIf({
 					hasPlayers: true,
 					newLeague: true,
-					realPlayers: SPORT_HAS_REAL_PLAYERS,
+					realPlayers: !!REAL_PLAYERS_INFO,
 				})),
 	);
 
@@ -151,7 +151,7 @@ const DefaultNewLeagueSettings = ({
 				not have that setting specified. So if you are uploading an exported
 				league containing league settings, it will not be changed by whatever
 				you specify here.
-				{SPORT_HAS_REAL_PLAYERS
+				{REAL_PLAYERS_INFO
 					? " Also, real players leagues have some non-default settings already applied, and those will also not be altered by your specified defaults."
 					: null}
 			</p>

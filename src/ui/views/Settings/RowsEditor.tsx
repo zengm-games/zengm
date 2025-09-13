@@ -12,7 +12,7 @@ import {
 } from "../../util/index.ts";
 import { godModeRequiredMessage } from "./SettingsFormOptions.tsx";
 import clsx from "clsx";
-import { SPORT_HAS_REAL_PLAYERS } from "../../../common/index.ts";
+import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import Modal from "../../components/Modal.tsx";
 
 type Rows<Type> = Type extends "injuries" ? InjuriesSetting : TragicDeaths;
@@ -456,7 +456,7 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 								<code>SPECIAL_GIFTS</code> because internally they have some
 								randomly generated parts.
 							</p>
-							{SPORT_HAS_REAL_PLAYERS ? (
+							{REAL_PLAYERS_INFO ? (
 								<p>
 									If you're using the built-in rosters with real players, please
 									be aware that real players can never experience tragic deaths.

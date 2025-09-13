@@ -27,10 +27,7 @@ import {
 	useLocalPartial,
 } from "../../util/index.ts";
 import { getText, makeAnchorProps } from "../SideBar.tsx";
-import {
-	SPORT_HAS_LEGENDS,
-	SPORT_HAS_REAL_PLAYERS,
-} from "../../../common/index.ts";
+import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import Modal from "../Modal.tsx";
 import { normalizeIntl } from "../../../common/normalizeIntl.ts";
 
@@ -285,7 +282,7 @@ const getResultsGroupedLeagues = async ({
 	const leagues = await toWorker("main", "getLeagues", undefined);
 
 	const newLeagueResults = [];
-	if (SPORT_HAS_REAL_PLAYERS) {
+	if (REAL_PLAYERS_INFO) {
 		newLeagueResults.push(
 			{
 				text: "New League - Real Players",
@@ -297,7 +294,7 @@ const getResultsGroupedLeagues = async ({
 			},
 		);
 
-		if (SPORT_HAS_LEGENDS) {
+		if (REAL_PLAYERS_INFO.legends) {
 			newLeagueResults.push({
 				text: "New League - Legends",
 				href: "/new_league/legends",

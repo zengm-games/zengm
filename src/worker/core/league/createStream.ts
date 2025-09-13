@@ -15,7 +15,7 @@ import {
 	LEAGUE_DATABASE_VERSION,
 	PHASE,
 	PLAYER,
-	SPORT_HAS_REAL_PLAYERS,
+	REAL_PLAYERS_INFO,
 } from "../../../common/index.ts";
 import type {
 	Conditions,
@@ -1137,7 +1137,7 @@ const beforeDBStream = async ({
 
 	// This setting is allowed to be undefined, so make it that way when appropriate
 	if (
-		!SPORT_HAS_REAL_PLAYERS &&
+		!REAL_PLAYERS_INFO &&
 		(!getLeagueOptions || getLeagueOptions.type !== "real")
 	) {
 		delete gameAttributeOverrides.realDraftRatings;

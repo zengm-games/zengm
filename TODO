@@ -1,8 +1,8 @@
-keep players on their real historical teams https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/l6k5gc7/
-- at preseason, find team the same way we do when starting at the playoffs
+keep players on their real historical teams
 - also apply real contracts
   - do this in newPhasePreseason similar to how repeatSeason imposes contracts
 - test
+  - other sports still work (including new league and exhibition)
   - RPD still works
   - baseball retirement
   - starting league in invalid phase
@@ -11,7 +11,6 @@ keep players on their real historical teams https://old.reddit.com/r/BasketballG
   - what phase? does it depend on MAX_PHASE?
   - send notification when this happens
   - also check if valid to enable setting, similar to check already for phase in updateGameAttributesGodMode
-- OOTP calls it "use historical transactions" https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/ldoidno/?context=3
 - blog
   - forceRetireRealPlayers
     - works well with RPD
@@ -28,10 +27,8 @@ keep players on their real historical teams https://old.reddit.com/r/BasketballG
   - handle offseason better
     - draft picks
 
-unify MAX_SEASON and LATEST_SEASON
-
 for repeatSeason, implement draft pick constraint like forceHistoricalRosters:;
-- add constraint to genPicks
+- add constraint (no picks) to genPicks
 - run genPicks on setting change
 - don't change numSeasonsFutureDraftPicks
 

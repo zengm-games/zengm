@@ -13,6 +13,7 @@ import {
 	POSITIONS,
 	GRACE_PERIOD,
 	LEAGUE_DATABASE_VERSION,
+	REAL_PLAYERS_INFO,
 } from "../../common/index.ts";
 import actions from "./actions.ts";
 import leagueFileUpload, {
@@ -151,7 +152,6 @@ import type { NoteInfo } from "../../ui/views/Player/Note.tsx";
 import { beforeLeague, beforeNonLeague } from "../util/beforeView.ts";
 import loadData from "../core/realRosters/loadData.basketball.ts";
 import formatPlayerFactory from "../core/realRosters/formatPlayerFactory.ts";
-import { LATEST_SEASON } from "../core/realRosters/seasons.ts";
 import { applyRealPlayerPhotos } from "../core/league/processPlayerNewLeague.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 import getCol from "../../common/getCol.ts";
@@ -2550,7 +2550,7 @@ const importPlayersGetReal = async () => {
 		basketball,
 		{
 			type: "real",
-			season: LATEST_SEASON,
+			season: REAL_PLAYERS_INFO!.MAX_SEASON,
 			phase: g.get("phase"),
 			randomDebuts: false,
 			randomDebutsKeepCurrent: false,
@@ -2558,7 +2558,7 @@ const importPlayersGetReal = async () => {
 			realStats: "none",
 			includePlayers: true,
 		},
-		LATEST_SEASON,
+		REAL_PLAYERS_INFO!.MAX_SEASON,
 		[],
 		-1,
 	);

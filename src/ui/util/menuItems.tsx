@@ -4,7 +4,7 @@ import {
 	DAILY_SCHEDULE,
 	DEPTH_CHART_NAME,
 	isSport,
-	SPORT_HAS_REAL_PLAYERS,
+	REAL_PLAYERS_INFO,
 	WEBSITE_ROOT,
 } from "../../common/index.ts";
 import type { MenuItemLink, MenuItemHeader } from "../../common/types.ts";
@@ -69,7 +69,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		path: "/",
 		text: "Leagues",
 	},
-	...(SPORT_HAS_REAL_PLAYERS
+	...(REAL_PLAYERS_INFO
 		? ([
 				{
 					type: "link",

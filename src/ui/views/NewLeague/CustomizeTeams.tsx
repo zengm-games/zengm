@@ -9,12 +9,13 @@ import { StickyBottomButtons } from "../../components/index.tsx";
 import { logEvent, toWorker } from "../../util/index.ts";
 import confirmDeleteWithChildren from "./confirmDeleteWithChildren.tsx";
 import { Dropdown, OverlayTrigger, Popover } from "react-bootstrap";
-import { applyRealTeamInfos, MAX_SEASON } from "./index.tsx";
+import { applyRealTeamInfos } from "./index.tsx";
 import RandomizeTeamsModal, {
 	type PopulationFactor,
 } from "./RandomizeTeamsModal.tsx";
 import { countBy, orderBy } from "../../../common/utils.ts";
 import type { Continent } from "../../../common/geographicCoordinates.ts";
+import { REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 
 export const makeTIDsSequential = <T extends { tid: number }>(
 	teams: T[],
@@ -776,7 +777,7 @@ const CustomizeTeams = ({
 		did: 0,
 		lid: undefined,
 		seasonLeague: undefined,
-		seasonReal: MAX_SEASON,
+		seasonReal: REAL_PLAYERS_INFO!.MAX_SEASON,
 		tidEdit: 0,
 		hideDupeAbbrevs: false,
 	});

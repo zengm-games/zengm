@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Modal } from "react-bootstrap";
-import { SPORT_HAS_REAL_PLAYERS } from "../../../common/index.ts";
+import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import { SelectSeasonRange } from "./SelectSeasonRange.tsx";
-import { MAX_SEASON, MIN_SEASON } from "./index.tsx";
 import HelpPopover from "../../components/HelpPopover.tsx";
 import {
 	realContinents,
@@ -63,8 +62,12 @@ const RandomizeTeamsModal = ({
 		useState<PopulationFactor>("random");
 	const [continents, setContinents] =
 		useState<ReadonlyArray<Continent>>(realContinents);
-	const [seasonStart, setSeasonStart] = useState(MIN_SEASON);
-	const [seasonEnd, setSeasonEnd] = useState(MAX_SEASON);
+	const [seasonStart, setSeasonStart] = useState(
+		REAL_PLAYERS_INFO?.MIN_SEASON ?? 0,
+	);
+	const [seasonEnd, setSeasonEnd] = useState(
+		REAL_PLAYERS_INFO?.MAX_SEASON ?? 0,
+	);
 	const seasonRange: [number, number] = [seasonStart, seasonEnd];
 
 	const actualContinents: ReadonlyArray<Continent> = real
@@ -149,7 +152,7 @@ const RandomizeTeamsModal = ({
 			</Modal.Header>
 			<Modal.Body>
 				<form onSubmit={onSubmit}>
-					{SPORT_HAS_REAL_PLAYERS ? (
+					{REAL_PLAYERS_INFO ? (
 						<div className="mb-3" style={{ maxWidth }}>
 							<select
 								className="form-select"

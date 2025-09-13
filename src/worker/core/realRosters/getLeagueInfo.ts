@@ -1,10 +1,9 @@
 import loadDataBasketball from "./loadData.basketball.ts";
 import formatScheduledEvents from "./formatScheduledEvents.ts";
-import { isSport } from "../../../common/index.ts";
+import { isSport, REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import getGameAttributes from "./getGameAttributes.ts";
 import type { GetLeagueOptions } from "../../../common/types.ts";
 import addSeasonInfoToTeams from "./addSeasonInfoToTeams.ts";
-import { LATEST_SEASON } from "./seasons.ts";
 
 export const legendsInfo = {
 	"1950s": {
@@ -41,7 +40,7 @@ export const legendsInfo = {
 	},
 	all: {
 		start: -Infinity,
-		end: LATEST_SEASON,
+		end: REAL_PLAYERS_INFO?.MAX_SEASON ?? Infinity,
 	},
 };
 

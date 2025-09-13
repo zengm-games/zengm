@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from "./index.tsx";
+import { applyRealTeamInfos } from "./index.tsx";
 import {
 	DEFAULT_JERSEY,
 	DEFAULT_STADIUM_CAPACITY,
 	DEFAULT_TEAM_COLORS,
-	SPORT_HAS_REAL_PLAYERS,
+	REAL_PLAYERS_INFO,
 } from "../../../common/index.ts";
 import getTeamInfos from "../../../common/getTeamInfos.ts";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs.ts";
@@ -216,8 +216,8 @@ const SelectTeam = ({
 		if (lid === "real") {
 			newLeague = {
 				type: "real",
-				seasonStart: MIN_SEASON,
-				seasonEnd: MAX_SEASON,
+				seasonStart: REAL_PLAYERS_INFO!.MIN_SEASON,
+				seasonEnd: REAL_PLAYERS_INFO!.MAX_SEASON,
 			};
 		} else {
 			const { seasonStart, seasonEnd } = await toWorker(
@@ -323,7 +323,7 @@ const SelectTeam = ({
 					}}
 				>
 					<option value="random">Random players team</option>
-					{SPORT_HAS_REAL_PLAYERS ? (
+					{REAL_PLAYERS_INFO ? (
 						<option value="real">Real historical teams</option>
 					) : null}
 					<option value="league">Team from existing league</option>

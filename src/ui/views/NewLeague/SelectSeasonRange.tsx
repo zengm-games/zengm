@@ -1,6 +1,6 @@
-import { MAX_SEASON, MIN_SEASON } from "./index.tsx";
 import clsx from "clsx";
 import { range } from "../../../common/utils.ts";
+import { REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 
 export const SelectSeasonRange = ({
 	className,
@@ -15,7 +15,9 @@ export const SelectSeasonRange = ({
 	seasonRange: [number, number];
 	setters: [(season: number) => void, (season: number) => void];
 }) => {
-	const allSeasons = range(MIN_SEASON, MAX_SEASON + 1);
+	const allSeasons = REAL_PLAYERS_INFO
+		? range(REAL_PLAYERS_INFO.MIN_SEASON, REAL_PLAYERS_INFO.MAX_SEASON + 1)
+		: [];
 
 	return (
 		<div className={clsx("input-group", className)} style={{ width: 180 }}>

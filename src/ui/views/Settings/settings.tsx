@@ -5,7 +5,7 @@ import {
 	DIFFICULTY,
 	GAME_NAME,
 	isSport,
-	SPORT_HAS_REAL_PLAYERS,
+	REAL_PLAYERS_INFO,
 	TIEBREAKERS,
 	WEBSITE_ROOT,
 } from "../../../common/index.ts";
@@ -23,7 +23,6 @@ import RowsEditor from "./RowsEditor.tsx";
 import PlayerBioInfo2 from "./PlayerBioInfo.tsx";
 import type { GameAttributesLeague } from "../../../common/types.ts";
 import { parseCurrencyFormat } from "../../util/parseCurrencyFormat.ts";
-import { MAX_SEASON } from "../NewLeague/index.tsx";
 
 export const descriptions = {
 	difficulty:
@@ -96,7 +95,7 @@ export const settings: Setting[] = (
 				{ key: "all", value: "All seasons, teams, and players" },
 			],
 		},
-		...(SPORT_HAS_REAL_PLAYERS
+		...(REAL_PLAYERS_INFO
 			? ([
 					{
 						category: "New League",
@@ -249,7 +248,7 @@ export const settings: Setting[] = (
 			showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
 				newLeague &&
 				((hasPlayers && realPlayers) ||
-					(SPORT_HAS_REAL_PLAYERS && !hasPlayers && !realPlayers)),
+					(REAL_PLAYERS_INFO && !hasPlayers && !realPlayers)),
 			type: "string",
 			values: [
 				{ key: "rookie", value: "Based on rookie season stats" },
@@ -1013,7 +1012,7 @@ export const settings: Setting[] = (
 						If you set it too high and run out of players, then you'll have to
 						use God Mode to either create more or bring some back from the dead.
 					</p>
-					{SPORT_HAS_REAL_PLAYERS ? (
+					{REAL_PLAYERS_INFO ? (
 						<p>
 							If you're using the built-in rosters with real players, please be
 							aware that real players can never experience tragic deaths, no
@@ -2154,7 +2153,7 @@ export const settings: Setting[] = (
 					</p>
 					<p>
 						This setting will automatically turn off after the current season (
-						{MAX_SEASON}).
+						{REAL_PLAYERS_INFO?.MAX_SEASON}).
 					</p>
 				</>
 			),

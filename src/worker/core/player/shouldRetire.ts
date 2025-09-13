@@ -1,4 +1,9 @@
-import { bySport, isSport, PLAYER } from "../../../common/index.ts";
+import {
+	bySport,
+	isSport,
+	PLAYER,
+	REAL_PLAYERS_INFO,
+} from "../../../common/index.ts";
 import { g, random } from "../../util/index.ts";
 import type {
 	MinimalPlayerRatings,
@@ -7,7 +12,6 @@ import type {
 } from "../../../common/types.ts"; // Players meeting one of these cutoffs might retire
 import { range } from "../../../common/utils.ts";
 import loadDataBasketball from "../realRosters/loadData.basketball.ts";
-import { LATEST_SEASON } from "../realRosters/seasons.ts";
 import realRosters from "../realRosters/index.ts";
 
 const checkForceRetireSeasons = (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
@@ -60,7 +64,7 @@ const checkForceRetireRealPlayers = async (
 
 	const targetSeason = bio.bornYear + age + 1;
 
-	if (targetSeason > LATEST_SEASON) {
+	if (REAL_PLAYERS_INFO && targetSeason > REAL_PLAYERS_INFO.MAX_SEASON) {
 		// We are beyond the latest season of real players data, so just keep him active
 		return "passThrough";
 	}

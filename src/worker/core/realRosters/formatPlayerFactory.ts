@@ -1,13 +1,12 @@
 import loadStatsBasketball, {
 	type BasketballStats,
 } from "./loadStats.basketball.ts";
-import { PHASE, PLAYER } from "../../../common/index.ts";
+import { PHASE, PLAYER, REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import type {
 	GetLeagueOptions,
 	PlayerContract,
 	PlayerInjury,
 } from "../../../common/types.ts";
-import { LATEST_SEASON } from "./seasons.ts";
 import getOnlyRatings, { type OnlyRatings } from "./getOnlyRatings.ts";
 import type { Basketball, Ratings } from "./loadData.basketball.ts";
 import nerfDraftProspect from "./nerfDraftProspect.ts";
@@ -227,7 +226,7 @@ const formatPlayerFactory = async (
 				}
 
 				// Auto-apply extensions, otherwise will feel weird
-				if (season >= LATEST_SEASON) {
+				if (season >= REAL_PLAYERS_INFO!.MAX_SEASON) {
 					return true;
 				}
 
@@ -245,7 +244,7 @@ const formatPlayerFactory = async (
 						break;
 					}
 				}
-				if (season >= LATEST_SEASON) {
+				if (season >= REAL_PLAYERS_INFO!.MAX_SEASON) {
 					// Auto-apply extensions, otherwise will feel weird
 					const salaryRowExtension = salaryRows.find(
 						(row) => row.start > season,

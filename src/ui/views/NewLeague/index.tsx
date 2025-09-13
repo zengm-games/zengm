@@ -7,8 +7,7 @@ import {
 	PHASE_TEXT,
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
-	SPORT_HAS_LEGENDS,
-	SPORT_HAS_REAL_PLAYERS,
+	REAL_PLAYERS_INFO,
 	gameAttributesArrayToObject,
 	WEBSITE_ROOT,
 	unwrapGameAttribute,
@@ -145,16 +144,18 @@ const initKeptKeys = ({
 	};
 };
 
-export const MIN_SEASON = 1947;
-export const MAX_SEASON = 2026;
-const MAX_PHASE = PHASE.PRESEASON as Phase;
-
 const seasons: { key: string; value: string }[] = [];
-for (let i = MAX_SEASON; i >= MIN_SEASON; i--) {
-	seasons.push({
-		key: String(i),
-		value: String(i),
-	});
+if (REAL_PLAYERS_INFO) {
+	for (
+		let i = REAL_PLAYERS_INFO.MAX_SEASON;
+		i >= REAL_PLAYERS_INFO.MIN_SEASON;
+		i--
+	) {
+		seasons.push({
+			key: String(i),
+			value: String(i),
+		});
+	}
 }
 
 const legends = [
@@ -724,7 +725,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			} else {
 				season = Number.parseInt(safeLocalStorage.getItem("prevSeason") as any);
 				if (Number.isNaN(season)) {
-					season = MAX_SEASON;
+					season = REAL_PLAYERS_INFO?.MAX_SEASON ?? new Date().getFullYear();
 				}
 				phase = Number.parseInt(
 					safeLocalStorage.getItem("prevPhase") as any,
@@ -778,7 +779,7 @@ const NewLeague = (props: View<"newLeague">) => {
 	if (importing) {
 		title = "Import League";
 	} else if (props.type === "custom") {
-		title = SPORT_HAS_REAL_PLAYERS ? "New Custom League" : "New League";
+		title = REAL_PLAYERS_INFO ? "New Custom League" : "New League";
 	} else if (props.type === "random") {
 		title = "New Random Players League";
 	} else if (props.type === "legends") {
@@ -1030,8 +1031,12 @@ const NewLeague = (props: View<"newLeague">) => {
 	);
 
 	const [showSeasonRange, setShowSeasonRange] = useState(false);
-	const [seasonCrossEraStart, setSeasonCrossEraStart] = useState(MIN_SEASON);
-	const [seasonCrossEraEnd, setSeasonCrossEraEnd] = useState(MAX_SEASON);
+	const [seasonCrossEraStart, setSeasonCrossEraStart] = useState(
+		REAL_PLAYERS_INFO?.MIN_SEASON ?? 0,
+	);
+	const [seasonCrossEraEnd, setSeasonCrossEraEnd] = useState(
+		REAL_PLAYERS_INFO?.MAX_SEASON ?? 0,
+	);
 	const seasonRange: [number, number] = [
 		seasonCrossEraStart,
 		seasonCrossEraEnd,
@@ -1193,9 +1198,15 @@ const NewLeague = (props: View<"newLeague">) => {
 		invalidSeasonPhaseMessage =
 			"Starting after the playoffs is not yet supported for seasons where league mergers occurred.";
 	}
-	if (state.season === MAX_SEASON && state.phase > MAX_PHASE) {
-		invalidSeasonPhaseMessage = `Sorry, I'm not allowed to share the results of the ${MAX_SEASON} ${
-			MAX_PHASE === PHASE.PRESEASON ? "season" : (PHASE_TEXT as any)[MAX_PHASE]
+	if (
+		REAL_PLAYERS_INFO &&
+		state.season === REAL_PLAYERS_INFO.MAX_SEASON &&
+		state.phase > REAL_PLAYERS_INFO.MAX_PHASE
+	) {
+		invalidSeasonPhaseMessage = `Sorry, I'm not allowed to share the results of the ${REAL_PLAYERS_INFO.MAX_SEASON} ${
+			REAL_PLAYERS_INFO.MAX_PHASE === PHASE.PRESEASON
+				? "season"
+				: (PHASE_TEXT as any)[REAL_PLAYERS_INFO.MAX_PHASE]
 		} yet.`;
 	}
 
@@ -1322,7 +1333,7 @@ const NewLeague = (props: View<"newLeague">) => {
 												"1984",
 												"1996",
 												"2003",
-												`${MAX_SEASON}`,
+												`${REAL_PLAYERS_INFO!.MAX_SEASON}`,
 											]}
 											value2={state.phase}
 											values2={phases}
@@ -1581,7 +1592,10 @@ const NewLeague = (props: View<"newLeague">) => {
 										<>
 											<ul className="list-group list-group-flush">
 												<li className="list-group-item bg-light">
-													<h3>Start in any season back to {MIN_SEASON}</h3>
+													<h3>
+														Start in any season back to{" "}
+														{REAL_PLAYERS_INFO!.MIN_SEASON}
+													</h3>
 													<p className="mb-0">
 														Players, teams, rosters, and contracts are generated
 														from real data. Draft classes are included up to
@@ -1591,8 +1605,9 @@ const NewLeague = (props: View<"newLeague">) => {
 												<li className="list-group-item bg-light">
 													<h3>Watch your league evolve over time</h3>
 													<p className="mb-0">
-														There were only 11 teams in {MIN_SEASON}, playing a
-														very different brand of basketball than today. Live
+														There were only 11 teams in{" "}
+														{REAL_PLAYERS_INFO!.MIN_SEASON}, playing a very
+														different brand of basketball than today. Live
 														through expansion drafts, league rule changes, team
 														relocations, economic growth, and changes in style
 														of play.
@@ -1695,17 +1710,17 @@ const NewLeague = (props: View<"newLeague">) => {
 													value={state.customize}
 												>
 													<option value="default">
-														{SPORT_HAS_REAL_PLAYERS
+														{REAL_PLAYERS_INFO
 															? "Random players and teams"
 															: "Default"}
 													</option>
-													{SPORT_HAS_REAL_PLAYERS ? (
+													{REAL_PLAYERS_INFO ? (
 														<option value="real">Real players and teams</option>
 													) : null}
-													{SPORT_HAS_LEGENDS ? (
+													{REAL_PLAYERS_INFO ? (
 														<option value="crossEra">Cross-era</option>
 													) : null}
-													{SPORT_HAS_LEGENDS ? (
+													{REAL_PLAYERS_INFO?.legends ? (
 														<option value="legends">Legends</option>
 													) : null}
 													<option value="custom-rosters">

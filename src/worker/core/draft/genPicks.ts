@@ -1,9 +1,8 @@
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { DraftPick } from "../../../common/types.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE, REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import { groupBy } from "../../../common/utils.ts";
-import { LATEST_SEASON } from "../realRosters/seasons.ts";
 
 // Add a new set of draft picks, or confirm that the existing picks are correct (because this is idempotent!)
 const doSeason = async (
@@ -24,7 +23,9 @@ const doSeason = async (
 
 	// With forceHistoricalRosters enabled, we only want picks after this mode will turn off
 	const skipForceHistoricalRosters =
-		g.get("forceHistoricalRosters") && season < LATEST_SEASON;
+		REAL_PLAYERS_INFO &&
+		g.get("forceHistoricalRosters") &&
+		season < REAL_PLAYERS_INFO.MAX_SEASON;
 
 	const userTids = g.get("userTids");
 	const challengeNoDraftPicks = g.get("challengeNoDraftPicks");

@@ -1,4 +1,3 @@
-import { LATEST_SEASON, MIN_SEASON } from "./seasons.ts";
 import loadDataBasketball, { type Basketball } from "./loadData.basketball.ts";
 import loadStatsBasketball from "./loadStats.basketball.ts";
 import formatScheduledEvents from "./formatScheduledEvents.ts";
@@ -16,6 +15,7 @@ import {
 	LEAGUE_DATABASE_VERSION,
 	PHASE,
 	PLAYER,
+	REAL_PLAYERS_INFO,
 	unwrapGameAttribute,
 } from "../../../common/index.ts";
 import { player, team } from "../index.ts";
@@ -383,7 +383,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		const includeRealizedDraftPicksThisSeason =
 			options.phase === PHASE.DRAFT ||
 			(options.phase === PHASE.PLAYOFFS &&
-				options.season === LATEST_SEASON &&
+				options.season === REAL_PLAYERS_INFO!.MAX_SEASON &&
 				INCLUDE_LATEST_SEASON_DRAFT_LOTTERY_RESULTS);
 		if (includeDraftPicks2020AndFuture || includeRealizedDraftPicksThisSeason) {
 			draftPicks = basketball.draftPicks[options.season]!.filter((dp) => {
@@ -467,7 +467,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		let playoffSeries;
 		let playoffSeriesRange: [number, number] | undefined;
 		if (options.realStats === "all") {
-			playoffSeriesRange = [MIN_SEASON, options.season - 1];
+			playoffSeriesRange = [REAL_PLAYERS_INFO!.MIN_SEASON, options.season - 1];
 			if (options.phase >= PHASE.PLAYOFFS) {
 				playoffSeriesRange[1] += 1;
 			}
@@ -767,7 +767,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			if (
 				options.phase > PHASE.DRAFT &&
 				!options.randomDebuts &&
-				options.season < LATEST_SEASON
+				options.season < REAL_PLAYERS_INFO!.MAX_SEASON
 			) {
 				const applyRookieContractAndFixRatings = (p: {
 					draft: {
@@ -944,7 +944,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 							? options.season
 							: options.season - 1;
 
-					seasonLeadersSeasons = range(MIN_SEASON, mostRecentLeadersSeason + 1);
+					seasonLeadersSeasons = range(
+						REAL_PLAYERS_INFO!.MIN_SEASON,
+						mostRecentLeadersSeason + 1,
+					);
 				}
 
 				const basketballStats = await loadStatsBasketball();
@@ -962,7 +965,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		return {
 			version: LEAGUE_DATABASE_VERSION,
-			startingSeason: options.realStats === "all" ? MIN_SEASON : options.season,
+			startingSeason:
+				options.realStats === "all"
+					? REAL_PLAYERS_INFO!.MIN_SEASON
+					: options.season,
 			players,
 			teams: initialTeams,
 			scheduledEvents,

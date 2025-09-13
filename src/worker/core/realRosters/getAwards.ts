@@ -1,4 +1,9 @@
-import { AWARD_NAMES, PHASE, PLAYER } from "../../../common/index.ts";
+import {
+	AWARD_NAMES,
+	PHASE,
+	PLAYER,
+	REAL_PLAYERS_INFO,
+} from "../../../common/index.ts";
 import { groupByUnique } from "../../../common/utils.ts";
 import type {
 	GetLeagueOptionsReal,
@@ -12,7 +17,6 @@ import type {
 import type formatPlayerFactory from "./formatPlayerFactory.ts";
 import type formatScheduledEvents from "./formatScheduledEvents.ts";
 import type { Basketball } from "./loadData.basketball.ts";
-import { MIN_SEASON } from "./seasons.ts";
 
 type Teams = ReturnType<typeof formatScheduledEvents>["initialTeams"];
 
@@ -237,7 +241,9 @@ const getAwards = (
 	}
 
 	const seasonsRange: [number, number] = [
-		options.realStats === "all" ? MIN_SEASON : options.season,
+		options.realStats === "all"
+			? REAL_PLAYERS_INFO!.MIN_SEASON
+			: options.season,
 		options.season - 1,
 	];
 	if (options.phase > PHASE.PLAYOFFS) {

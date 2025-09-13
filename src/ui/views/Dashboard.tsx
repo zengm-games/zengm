@@ -6,8 +6,7 @@ import ago from "s-ago";
 import {
 	bySport,
 	DIFFICULTY,
-	SPORT_HAS_LEGENDS,
-	SPORT_HAS_REAL_PLAYERS,
+	REAL_PLAYERS_INFO,
 	WEBSITE_PLAY,
 } from "../../common/index.ts";
 import { DataTable, TeamLogoInline } from "../components/index.tsx";
@@ -411,7 +410,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 				</p>
 			) : null}
 			<div className="dashboard-top-wrapper">
-				{SPORT_HAS_REAL_PLAYERS ? (
+				{REAL_PLAYERS_INFO ? (
 					<>
 						<a
 							href="/new_league/real"
@@ -430,7 +429,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 							<span className="dashboard-top-link-small">» Random players</span>
 						</a>
 						<div className="d-sm-none" />
-						{SPORT_HAS_LEGENDS ? (
+						{REAL_PLAYERS_INFO.legends ? (
 							<>
 								<a
 									href="/new_league/cross_era"

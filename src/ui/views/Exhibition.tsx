@@ -5,7 +5,7 @@ import {
 	EXHIBITION_GAME_SETTINGS,
 	isSport,
 	PHASE,
-	SPORT_HAS_REAL_PLAYERS,
+	REAL_PLAYERS_INFO,
 } from "../../common/index.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 import type {
@@ -23,11 +23,7 @@ import {
 	safeLocalStorage,
 	toWorker,
 } from "../util/index.ts";
-import {
-	applyRealTeamInfos,
-	MAX_SEASON,
-	MIN_SEASON,
-} from "./NewLeague/index.tsx";
+import { applyRealTeamInfos } from "./NewLeague/index.tsx";
 import SettingsForm from "./Settings/SettingsForm.tsx";
 import { orderBy, range } from "../../common/utils.ts";
 import { choice, randInt } from "../../common/random.ts";
@@ -161,8 +157,8 @@ const SelectTeam = ({
 		if (lid === "real") {
 			newLeague = {
 				type: "real",
-				seasonStart: MIN_SEASON,
-				seasonEnd: MAX_SEASON,
+				seasonStart: REAL_PLAYERS_INFO!.MIN_SEASON,
+				seasonEnd: REAL_PLAYERS_INFO!.MAX_SEASON,
 			};
 		} else {
 			const { seasonStart, seasonEnd } = await toWorker(
@@ -246,7 +242,7 @@ const SelectTeam = ({
 			// We only want to do this once, on initial load ideally, but we may have to wait for leagues to be provided
 			if (
 				!awaitingInitialLoad.current ||
-				(!SPORT_HAS_REAL_PLAYERS && leagues.length === 0)
+				(!REAL_PLAYERS_INFO && leagues.length === 0)
 			) {
 				return;
 			}
@@ -265,7 +261,7 @@ const SelectTeam = ({
 			}
 
 			const league = await loadLeague(
-				SPORT_HAS_REAL_PLAYERS ? "real" : leagues[0]!.lid,
+				REAL_PLAYERS_INFO ? "real" : leagues[0]!.lid,
 			);
 			const randomSeason = randInt(league.seasonStart, league.seasonEnd);
 			setSeason(randomSeason);
@@ -303,7 +299,7 @@ const SelectTeam = ({
 							await loadTeams(league, league.seasonEnd);
 						}}
 					>
-						{SPORT_HAS_REAL_PLAYERS ? (
+						{REAL_PLAYERS_INFO ? (
 							<option value="real">Real historical teams</option>
 						) : null}
 						{leagues.map((league) => (
@@ -622,7 +618,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 
 	const leaguesDefined = useMemo(() => leagues ?? [], [leagues]);
 
-	if (!SPORT_HAS_REAL_PLAYERS && leagues?.length === 0) {
+	if (!REAL_PLAYERS_INFO && leagues?.length === 0) {
 		return (
 			<p>
 				You need to <a href="/new_league">create some leagues</a> before you

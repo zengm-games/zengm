@@ -273,18 +273,17 @@ const FACEBOOK_USERNAME = bySport({
 	default: "ZenGMGames",
 });
 
-const SPORT_HAS_REAL_PLAYERS = bySport({
-	baseball: false,
-	basketball: true,
-	football: false,
-	hockey: false,
-});
-
-const SPORT_HAS_LEGENDS = bySport({
-	baseball: false,
-	basketball: true,
-	football: false,
-	hockey: false,
+const REAL_PLAYERS_INFO = bySport({
+	baseball: undefined,
+	basketball: {
+		legends: true,
+		FIRST_SEASON_WITH_ALEXNOOB_ROSTERS: 2020,
+		MIN_SEASON: 1947,
+		MAX_SEASON: 2026,
+		MAX_PHASE: PHASE.PRESEASON as Phase,
+	},
+	football: undefined,
+	hockey: undefined,
 });
 
 const WEBSITE_PLAY = bySport({
@@ -593,8 +592,7 @@ export {
 	PHASE,
 	PLAYER,
 	PHASE_TEXT,
-	SPORT_HAS_LEGENDS,
-	SPORT_HAS_REAL_PLAYERS,
+	REAL_PLAYERS_INFO,
 	STRIPE_PUBLISHABLE_KEY,
 	COMPOSITE_WEIGHTS,
 	PLAYER_GAME_STATS,

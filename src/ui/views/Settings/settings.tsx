@@ -23,6 +23,7 @@ import RowsEditor from "./RowsEditor.tsx";
 import PlayerBioInfo2 from "./PlayerBioInfo.tsx";
 import type { GameAttributesLeague } from "../../../common/types.ts";
 import { parseCurrencyFormat } from "../../util/parseCurrencyFormat.ts";
+import { MAX_SEASON } from "../NewLeague/index.tsx";
 
 export const descriptions = {
 	difficulty:
@@ -2144,8 +2145,19 @@ export const settings: Setting[] = (
 			name: "Force Historical Rosters",
 			godModeRequired: "always",
 			type: "bool",
-			description:
-				"Every season, all real players will be moved to the same team they played for in real life. No other transactions are allowed.",
+			descriptionLong: (
+				<>
+					<p>
+						Every season, all real players will be moved to the same team they
+						played for in real life. No other transactions will be made by AI
+						teams.
+					</p>
+					<p>
+						This setting will automatically turn off after the current season (
+						{MAX_SEASON}).
+					</p>
+				</>
+			),
 		},
 		{
 			category: "Elam Ending",

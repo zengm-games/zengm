@@ -7,13 +7,6 @@ keep players on their real historical teams https://old.reddit.com/r/BasketballG
   - baseball retirement
   - starting league in invalid phase
     - repeatSeason too
-- options this synergizies with - should these be forced?
-  - don't set this because it depends on season, but do somehow disable until current season only!
-    - numSeasonsFutureDraftPicks
-    - also
-      - no FA signing (including user)???
-      - no trades (including user)
-      - other spectator mode things?
 - auto disable forceHistoricalRosters when we reach LATEST_SEASON
   - what phase? does it depend on MAX_PHASE?
   - send notification when this happens
@@ -34,6 +27,13 @@ keep players on their real historical teams https://old.reddit.com/r/BasketballG
   - handle mid season trades better
   - handle offseason better
     - draft picks
+
+unify MAX_SEASON and LATEST_SEASON
+
+for repeatSeason, implement draft pick constraint like forceHistoricalRosters:;
+- add constraint to genPicks
+- run genPicks on setting change
+- don't change numSeasonsFutureDraftPicks
 
 support shared lists of names in player bio info
 - use for built-in names like chinese/hispanic countries

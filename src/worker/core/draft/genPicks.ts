@@ -3,6 +3,7 @@ import { g, helpers } from "../../util/index.ts";
 import type { DraftPick } from "../../../common/types.ts";
 import { PHASE } from "../../../common/index.ts";
 import { groupBy } from "../../../common/utils.ts";
+import { LATEST_SEASON } from "../realRosters/seasons.ts";
 
 // Add a new set of draft picks, or confirm that the existing picks are correct (because this is idempotent!)
 const doSeason = async (
@@ -20,6 +21,10 @@ const doSeason = async (
 
 	// Some real drafts included forfeited picks, so we don't want to recreate them here if this is a new real players league and there are some draft picks for this season
 	const skipRealPlayers = realPlayers && existingPicks.length > 0;
+
+	// With forceHistoricalRosters enabled, we only want picks after this mode will turn off
+	const skipForceHistoricalRosters =
+		g.get("forceHistoricalRosters") && season < LATEST_SEASON;
 
 	const userTids = g.get("userTids");
 	const challengeNoDraftPicks = g.get("challengeNoDraftPicks");
@@ -39,12 +44,18 @@ const doSeason = async (
 				challengeNoDraftPicks && userTids.includes(t.tid);
 
 			if (existingPick) {
-				const deletePickChallengeMode =
-					skipChallengeMode && userTids.includes(existingPick.tid);
-				if (!deletePickChallengeMode) {
+				const deletePick =
+					(skipChallengeMode && userTids.includes(existingPick.tid)) ||
+					skipForceHistoricalRosters;
+				if (!deletePick) {
 					existingPick.keep = true;
 				}
-			} else if (!ongoingDraft && !skipChallengeMode && !skipRealPlayers) {
+			} else if (
+				!ongoingDraft &&
+				!skipChallengeMode &&
+				!skipRealPlayers &&
+				!skipForceHistoricalRosters
+			) {
 				await idb.cache.draftPicks.add({
 					tid: t.tid,
 					originalTid: t.tid,
@@ -101,12 +112,6 @@ const genPicks = async ({
 	} else if (g.get("phase") === PHASE.EXPANSION_DRAFT) {
 		for (const existingPick of existingPicks) {
 			if (existingPick.season === "expansion") {
-				existingPick.keep = true;
-			}
-		}
-	} else if (realPlayers) {
-		for (const existingPick of existingPicks) {
-			if (existingPick.season === g.get("season")) {
 				existingPick.keep = true;
 			}
 		}

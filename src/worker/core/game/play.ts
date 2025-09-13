@@ -267,7 +267,8 @@ const play = async (
 			if (
 				g.get("phase") !== PHASE.PLAYOFFS &&
 				Math.random() < g.get("tragicDeathRate") &&
-				!g.get("repeatSeason")
+				!g.get("repeatSeason") &&
+				!g.get("forceHistoricalRosters")
 			) {
 				await player.killOne(conditions);
 

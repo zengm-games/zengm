@@ -8,14 +8,11 @@ keep players on their real historical teams https://old.reddit.com/r/BasketballG
   - starting league in invalid phase
     - repeatSeason too
 - options this synergizies with - should these be forced?
-  - forceRetireRealPlayers
   - don't set this because it depends on season, but do somehow disable until current season only!
     - numSeasonsFutureDraftPicks
-    - no AI trades
-    - no tragic deaths
     - also
-      - no FA signing (AI and user)
-      - no trades (AI and user)
+      - no FA signing (including user)???
+      - no trades (including user)
       - other spectator mode things?
 - auto disable forceHistoricalRosters when we reach LATEST_SEASON
   - what phase? does it depend on MAX_PHASE?
@@ -29,6 +26,10 @@ keep players on their real historical teams https://old.reddit.com/r/BasketballG
   - forceHistoricalRosters
     - also works well with RPD
     - how it handles mid-season trades
+    - force enables certain behaviors
+      - force retire real players
+      - no AI trades
+      - no tragic deaths
 - later
   - handle mid season trades better
   - handle offseason better

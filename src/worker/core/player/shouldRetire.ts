@@ -95,7 +95,10 @@ const shouldRetire = async (
 		return true;
 	}
 
-	if (g.get("forceRetireRealPlayers") && p.srID !== undefined) {
+	if (
+		(g.get("forceRetireRealPlayers") || g.get("forceHistoricalRosters")) &&
+		p.srID !== undefined
+	) {
 		const response = await checkForceRetireRealPlayers(p);
 		if (response === "noRetire") {
 			return false;

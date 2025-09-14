@@ -404,6 +404,19 @@ const newPhasePreseason = async (
 			} else {
 				const playerActiveSeasons = await realRosters.getPlayerActiveSeasons();
 				p.tid = playerActiveSeasons[p.srID]?.[newSeason] ?? PLAYER.FREE_AGENT;
+
+				if (p.tid >= 0 && p.contract.exp < newSeason) {
+					p.contract = {
+						amount: player.genContract(p).amount,
+						exp:
+							newSeason -
+							1 +
+							random.randInt(
+								g.get("minContractLength"),
+								g.get("maxContractLength"),
+							),
+					};
+				}
 			}
 		}
 

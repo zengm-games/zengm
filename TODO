@@ -1,6 +1,4 @@
 keep players on their real historical teams
-- also apply real contracts
-  - do this in newPhasePreseason similar to how repeatSeason imposes contracts
 - test
   - other sports still work (including new league and exhibition)
   - RPD still works
@@ -23,6 +21,7 @@ keep players on their real historical teams
   - handle mid season trades better
   - handle offseason better
     - draft picks
+  - apply real contracts in newPhasePreseason, similar to new league
 
 for repeatSeason, implement draft pick constraint like forceHistoricalRosters:;
 - add constraint (no picks) to genPicks

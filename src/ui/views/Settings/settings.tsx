@@ -2147,9 +2147,14 @@ export const settings: Setting[] = (
 			descriptionLong: (
 				<>
 					<p>
-						Every season, all real players will be moved to the same team they
-						played for in real life. No other transactions will be made by AI
-						teams.
+						Every preseason, all real players will be moved to the same team
+						they played for in real life.
+					</p>
+					<p>
+						While this is enabled, various other settings will always be
+						applied, such as enabling Force Retire Real Players, disabling
+						tradable draft picks, disabling AI-to-AI trades, and disabling
+						tragic deaths.
 					</p>
 					<p>
 						This setting will automatically turn off after the current season (

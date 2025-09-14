@@ -3817,6 +3817,12 @@ const updateGameAttributesGodMode = async (
 				"Force Historical Rosters can only be enabled before the draft",
 			);
 		}
+
+		if (REAL_PLAYERS_INFO && g.get("season") >= REAL_PLAYERS_INFO.MAX_SEASON) {
+			throw new Error(
+				"Force Historical Rosters can only be enabled before the current season",
+			);
+		}
 	}
 
 	// Will be handled in setRepeatSeason, don't pass through a string
@@ -3853,7 +3859,6 @@ const updateGameAttributesGodMode = async (
 		(gameAttributes.realPlayerDeterminism !== undefined &&
 			currentRealPlayerDeterminism !== gameAttributes.realPlayerDeterminism)
 	) {
-		console.log("RECOMPUTE");
 		const players = await idb.cache.players.getAll();
 		for (const p of players) {
 			if (p.real) {

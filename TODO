@@ -8,7 +8,6 @@ keep players on their real historical teams
   - starting league in invalid phase
     - repeatSeason too
   - sim from beginning
-- check if valid to enable setting, similar to check already for phase in updateGameAttributesGodMode
 - blog
   - forceRetireRealPlayers
     - works well with RPD

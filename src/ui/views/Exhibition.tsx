@@ -157,8 +157,8 @@ const SelectTeam = ({
 		if (lid === "real") {
 			newLeague = {
 				type: "real",
-				seasonStart: REAL_PLAYERS_INFO!.MIN_SEASON,
-				seasonEnd: REAL_PLAYERS_INFO!.MAX_SEASON,
+				seasonStart: REAL_PLAYERS_INFO?.MIN_SEASON ?? 0,
+				seasonEnd: REAL_PLAYERS_INFO?.MAX_SEASON ?? 0,
 			};
 		} else {
 			const { seasonStart, seasonEnd } = await toWorker(

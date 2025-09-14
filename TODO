@@ -7,13 +7,8 @@ keep players on their real historical teams
   - baseball retirement
   - starting league in invalid phase
     - repeatSeason too
-- auto disable forceHistoricalRosters when we reach LATEST_SEASON
-  - what phase? does it depend on MAX_PHASE?
-    - if MAX_PHASE > REGULAR_SEASON, then we know the final rosters, so don't disable until after the playoffs
-    - otherwise, we don't know the final rosters, so disable in the preseason, right after setting the rosters for that year
-    - make sure this aligns with genPicks!
-  - send notification when this happens
-  - also check if valid to enable setting, similar to check already for phase in updateGameAttributesGodMode
+  - sim from beginning
+- check if valid to enable setting, similar to check already for phase in updateGameAttributesGodMode
 - blog
   - forceRetireRealPlayers
     - works well with RPD

@@ -1,4 +1,4 @@
-import { finances, player, season, team } from "../index.ts";
+import { finances, player, realRosters, season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { achievement, g, helpers, local, logEvent } from "../../util/index.ts";
 import type {
@@ -6,6 +6,7 @@ import type {
 	PhaseReturn,
 	PlayoffSeries,
 } from "../../../common/types.ts";
+import { PHASE } from "../../../common/constants.ts";
 
 const newPhasePlayoffs = async (
 	conditions: Conditions,
@@ -124,6 +125,11 @@ const newPhasePlayoffs = async (
 
 	// Update clinchedPlayoffs with final values
 	await team.updateClinchedPlayoffs(true, conditions);
+
+	await realRosters.checkDisableForceHistoricalRosters(
+		g.get("season"),
+		PHASE.PLAYOFFS,
+	);
 
 	// Don't redirect if we're viewing a live game now
 	let redirect;

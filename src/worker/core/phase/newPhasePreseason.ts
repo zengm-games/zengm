@@ -499,6 +499,11 @@ const newPhasePreseason = async (
 		await idb.cache.players.put(p);
 	}
 
+	await realRosters.checkDisableForceHistoricalRosters(
+		newSeason,
+		PHASE.PRESEASON,
+	);
+
 	// No ads during multi season auto sim
 	if (env.enableLogging && !local.autoPlayUntil) {
 		toUI("showModal", [], conditions);

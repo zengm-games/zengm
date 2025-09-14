@@ -52,6 +52,18 @@ export const getPlayerActiveSeasons = async () => {
 		for (const row of basketball.teams) {
 			addRecord(row.slug, row.abbrev, row.season);
 		}
+
+		for (const row of basketball.ratings) {
+			if (row.retiredUntil !== undefined) {
+				const row2 = local.realPlayerActiveSeasons![row.slug];
+				if (row2) {
+					if (!row2.retiredUntil) {
+						row2.retiredUntil = {};
+					}
+					row2.retiredUntil[row.season] = row.retiredUntil;
+				}
+			}
+		}
 	}
 
 	return local.realPlayerActiveSeasons;

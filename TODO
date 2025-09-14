@@ -1,15 +1,12 @@
 keep players on their real historical teams
 - test
   - other sports still work (including new league and exhibition)
-  - RPD still works
-  - baseball retirement
-  - starting league in invalid phase
-    - repeatSeason too
-  - sim from beginning
+  - AI teams signing free agents like http://localhost/l/42/player/3406
 - blog
   - forceRetireRealPlayers
     - works well with RPD
     - stops after latest season with historical data
+    - also unretire players
   - forceHistoricalRosters
     - also works well with RPD
     - how it handles mid-season trades
@@ -17,6 +14,8 @@ keep players on their real historical teams
       - force retire real players
       - no AI trades
       - no tragic deaths
+    - see which teams/players are overrated/underrated by BBGM (or maybe who got lucky/unlucky IRL)
+    - ambiguity about players who are injured whole season vs temporarily retired vs playing in another league
 - later
   - handle mid season trades better
   - handle offseason better

@@ -1437,7 +1437,12 @@ export type Local = {
 	playerOvrMeanStdStale: boolean;
 	playingUntilEndOfRound: boolean;
 	realPlayerActiveSeasons:
-		| Record<string, Record<number, number | undefined>>
+		| Record<
+				string,
+				Record<number, number | undefined> & {
+					retiredUntil?: Record<number, number>;
+				}
+		  >
 		| undefined;
 	seasonLeaders: SeasonLeaders | undefined;
 	statusText: string;

@@ -1,7 +1,6 @@
 keep players on their real historical teams
 - test
   - other sports still work (including new league and exhibition)
-  - AI teams signing free agents like http://localhost/l/42/player/3406
 - blog
   - forceRetireRealPlayers
     - works well with RPD

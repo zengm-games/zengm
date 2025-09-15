@@ -107,10 +107,6 @@ const shouldRetire = async (
 		return true;
 	}
 
-	if (age < g.get("minRetireAge")) {
-		return false;
-	}
-
 	if (g.get("forceRetireSeasons") > 0 && checkForceRetireSeasons(p)) {
 		return true;
 	}
@@ -125,6 +121,10 @@ const shouldRetire = async (
 		} else if (response === "retire") {
 			return true;
 		}
+	}
+
+	if (age < g.get("minRetireAge")) {
+		return false;
 	}
 
 	const { ovr, pos } = p.ratings.at(-1)!;

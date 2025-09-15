@@ -1,3 +1,4 @@
+import { PHASE } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import local from "../../util/local.ts";
 import loadDataBasketball from "./loadData.basketball.ts";
@@ -50,7 +51,9 @@ export const getPlayerActiveSeasons = async () => {
 		}
 
 		for (const row of basketball.teams) {
-			addRecord(row.slug, row.abbrev, row.season);
+			if (row.phase === undefined || row.phase <= PHASE.PLAYOFFS) {
+				addRecord(row.slug, row.abbrev, row.season);
+			}
 		}
 
 		for (const row of basketball.ratings) {

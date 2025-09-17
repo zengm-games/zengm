@@ -346,6 +346,20 @@ describe("random test cases", () => {
 		testHelpers.resetG();
 	});
 
+	const getNumGamesByTid = (tids: [number, number][]) => {
+		const numGamesByTid: Record<number, number> = {};
+		for (const matchup of tids) {
+			for (const tid of matchup) {
+				if (!numGamesByTid[tid]) {
+					numGamesByTid[tid] = 0;
+				}
+				numGamesByTid[tid] += 1;
+			}
+		}
+
+		return numGamesByTid;
+	};
+
 	test("4 games, null div, 2 conf", () => {
 		// Test many times to make sure it doesn't intermittently skip a game due to faulty numGames*numTeams odd detection
 		for (let i = 0; i < 100; i++) {
@@ -355,27 +369,6 @@ describe("random test cases", () => {
 				numGamesDiv: null,
 				numGamesConf: 2,
 			});
-
-			if (tids.length < 60) {
-				const counts: Record<number, number> = {};
-				for (const matchup of tids) {
-					for (const tid of matchup) {
-						if (counts[tid] === undefined) {
-							counts[tid] = 0;
-						}
-						counts[tid] += 1;
-					}
-				}
-				for (const [tid, count] of Object.entries(counts)) {
-					if (count < 4) {
-						console.log("tid", tid, "count", count);
-						console.log(
-							defaultTeams.find((t) => t.tid === Number.parseInt(tid)),
-						);
-					}
-				}
-				console.log("tids.length", tids.length);
-			}
 
 			assert.strictEqual(tids.length, 60);
 			assert.strictEqual(warning, undefined);
@@ -405,6 +398,39 @@ describe("random test cases", () => {
 
 		assert.strictEqual(tids.length, 1230);
 		assert.strictEqual(warning, undefined);
+	});
+
+	test("1994 MLB style - unbalanced divs", () => {
+		// Remove one team from each conf
+		const seenCids = new Set();
+		const defaultTeams1994 = defaultTeams.filter((t) => {
+			if (!seenCids.has(t.seasonAttrs.cid)) {
+				seenCids.add(t.seasonAttrs.cid);
+				return false;
+			}
+
+			return true;
+		});
+
+		const numGames = 114;
+
+		const { tids, warning } = newScheduleGood(defaultTeams1994, {
+			divs: g.get("divs"),
+			numGames,
+			numGamesDiv: 48,
+			numGamesConf: 66,
+		});
+
+		assert.strictEqual(tids.length, 1596);
+		assert.strictEqual(warning, undefined);
+
+		const numGamesByTid = getNumGamesByTid(tids);
+		assert(
+			Object.values(numGamesByTid).every(
+				(numGamesTeam) => numGamesTeam === numGames,
+			),
+			"All teams play the same number of games",
+		);
 	});
 
 	// the conf with the new team thinks "i can get all my non-conf games with even home/away matchups, 0 excess games!". the conf without the new team thinks "i can play each team once, and then need 14 excess matchups (16+14)". but there are no games available for excess matchups, since the other conf has no excess

@@ -344,7 +344,7 @@ const finalize = ({
 		}
 	};
 
-	// Track games between teams where there are somehow 2 "either"" matchups (like if there are 3 mandatory games, then one excees), the mandatory games were split 1/1/1 for home/away/either, and then the one excess game also is an either, so make that 2 home and 2 away total - those last 2 games will show up in tidsDoneTemp
+	// Track games between teams where there are somehow 2 "either" matchups (like if there are 3 mandatory games, then one excees), the mandatory games were split 1/1/1 for home/away/either, and then the one excess game also is an either, so make that 2 home and 2 away total - those last 2 games will show up in tidsDoneTemp
 	let tidsDoneTwoExcess: [number, number][];
 
 	MAIN_LOOP_1: while (iteration1 < MAX_ITERATIONS_1) {
@@ -498,6 +498,28 @@ const finalize = ({
 						// Failed to make matchups, try again
 						continue MAIN_LOOP_1;
 					}
+				}
+			}
+		}
+
+		// One more pass to try to schedule games between teams that don't have a full schedule, regardless of constraints. This can happen if divs are unbalanced, in the initial setup of scheduleCounts. Might be better to calculate this up front and have a separate "level" (not div/conf/other) representing "# of games that don't fit, so just schedule anyone" but oh well, this works about the same as that and is easier. This just treats any "missing games" (scheduleCounts doesn't add up to numGames) the same as skipped games.
+		{
+			for (const [tidString, row] of Object.entries(scheduleCounts)) {
+				const numGamesNeeded =
+					settings.numGames -
+					(row.conf.away +
+						row.conf.home +
+						row.conf.either +
+						row.div.away +
+						row.div.home +
+						row.div.either +
+						row.other.away +
+						row.other.home +
+						row.other.either +
+						skippedGameTids.filter((tid) => tid === Number.parseInt(tidString))
+							.length);
+				for (let i = 0; i < numGamesNeeded; i++) {
+					skippedGameTids.push(Number.parseInt(tidString));
 				}
 			}
 		}
@@ -771,6 +793,7 @@ const newScheduleGood = (
 				// Record either games only when wanted by both teams (always happens if divs/confs are even, but otherwise probably won't)
 				if (numGamesTargets.perTeam[level] % 2) {
 					if (tidsEitherTemp.has(t.tid, t2.tid)) {
+						tidsEitherTemp.remove(t.tid, t2.tid);
 						tidsEither.add(t.tid, t2.tid);
 						scheduleCounts[t.tid]![level].either += 1;
 						scheduleCounts[t2.tid]![level].either += 1;

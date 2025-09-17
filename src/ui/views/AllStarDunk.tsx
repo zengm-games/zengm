@@ -509,7 +509,7 @@ export const ContestantProfiles = ({
 	// maxWidth is to get 4 in a row max
 	return (
 		<div
-			className="d-none d-sm-flex flex-wrap mb-4"
+			className="d-flex flex-wrap mb-4"
 			style={{ gap: "1.5rem 3rem", maxWidth: 900 }}
 		>
 			{players.map((p, i) => {

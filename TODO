@@ -785,6 +785,7 @@ FBGM
 - drive chart weirdness for successful onside kicks https://mail.google.com/mail/u/0/#inbox/FMfcgzGwJmLJLlZPKfvvFDnjqDfFXwpq
 - better timeout management
   - offense shouldn't take timeout if it's just saving time for the other team, like after 3rd down in a tied game when they are about to punt
+- 2025 overtime rules are now the same for regular season and playoffs, both teams get a chance to possess
 
 wrong team abbrev various places
 - functions for helping
@@ -1614,9 +1615,6 @@ add some more built-in teams
   - Vienna, Austria
   - Dubai, UAE
   - Maybe redo the LA Earthquakes and Philly Cheesesteaks. Maybe with new team names too?
-
-trade filters
-- https://old.reddit.com/r/BasketballGM/comments/kksxpp/proposal_trade_filters/
 
 Noticed that if I auto play through resignings and FA teams always end up above the roster limit. Imo they should be able to cut players before progs. https://discord.com/channels/290013534023057409/290015591216054273/787667855775891476
 

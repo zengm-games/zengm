@@ -1,13 +1,4 @@
-newScheduleGood pathological cases
-- 1994 mlb style (3 divs in each conf with 5/5/4 teams, 114 games, 48 div games, 66 conf games)
-  - https://discord.com/channels/290013534023057409/1417499381782810624/1417499381782810624
-  - Initialization of scheduleCounts in newScheduleGood seems to assume things are symmetric, like if tid 4 needs an "either" game with tid 15, then tid 15 also needs an "either" game with tid 4. But this is not necessarily true if the divisions are not even. In that case, what the current code does is produce an unbalanced schedule (since it only logs the game as "either" depending on which tid is higher so as to not double count, but then if only one matchup is requested (like tid+tid2 and not also tid2+tid) then some of those needed games will never be logged).
-  - If we did log all games, then it would result in teams playing like 120 games - why is that? Would be better if it never went over the limit in this initialization of scheduleCounts
-  - What would be better - only add "either" games that are wanted in both directions; add home/away/either only up numGames (maybe solved by the first part); and any remaining games (probably unbalanced between teams, like some teams may have numGames game scheduled and others may need a bunch more) just do round robin among all remaining teams
-    - after fixing "either" games to be only ones wanted in both directions, excess game count is wrong
-
 forceHistoricalRosters
-- some guys are FA, why? e.g. http://localhost/l/51/player/68
 - later
   - handle mid season trades better
   - handle offseason better
@@ -786,6 +777,7 @@ FBGM
 - interception in the enzone showing outside the endzone in drive chart, why? https://discord.com/channels/290013534023057409/290015591216054273/1195441266029232220
 - missed FG should put the ball at least on the 20 https://mail.google.com/mail/u/0/#inbox/FMfcgzGwJmDMcvCdTBhDpQRBpZbRlDnB?compose=GTvVlcRzBlKZpWSJKcGwhBWJsgxgxdqPxQPmDLdmNdGrSGjdShXVtnVbPplhHMkvhhNnRBFngBljz
 - drive chart weirdness for successful onside kicks https://mail.google.com/mail/u/0/#inbox/FMfcgzGwJmLJLlZPKfvvFDnjqDfFXwpq
+- drive chart weirdness for penalty overturning a play and having a loss of downs resulting in turnover on downs https://discord.com/channels/290013534023057409/1414344458194911243
 - better timeout management
   - offense shouldn't take timeout if it's just saving time for the other team, like after 3rd down in a tied game when they are about to punt
 - 2025 overtime rules are now the same for regular season and playoffs, both teams get a chance to possess

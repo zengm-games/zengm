@@ -224,7 +224,7 @@ const initScheduleCounts = (teams: MyTeam[]) => {
 };
 
 class TidsEither {
-	matchups: Map<string, [number, number]> = new Map();
+	matchups = new Map<string, [number, number]>();
 
 	// tid0 is the smaller one, for ease of comparison
 	private getSortedTids(tid0: number, tid1: number): [number, number] {
@@ -263,6 +263,27 @@ class TidsEither {
 		const clone = new TidsEither();
 		clone.matchups = helpers.deepCopy(this.matchups);
 		return clone;
+	}
+}
+
+class SkippedGameCounts {
+	private skippedGamesByTid = new Map<number, number>();
+
+	add(tid: number, amount: number = 1) {
+		const current = this.skippedGamesByTid.get(tid) ?? 0;
+		this.skippedGamesByTid.set(tid, current + amount);
+	}
+
+	get(tid: number) {
+		return this.skippedGamesByTid.get(tid) ?? 0;
+	}
+
+	get size() {
+		return this.skippedGamesByTid.size;
+	}
+
+	entries() {
+		return this.skippedGamesByTid.entries();
 	}
 }
 
@@ -358,7 +379,7 @@ const finalize = ({
 		);
 		tidsDoneTwoExcess = [];
 
-		const skippedGameTids: number[] = [];
+		const skippedGameCounts = new SkippedGameCounts();
 
 		const allowOneGameRemaining = (
 			t: MyTeam,
@@ -488,7 +509,7 @@ const finalize = ({
 					) {
 						applyOneGameRemaining(t, level);
 						excessGamesRemaining[level] -= 1;
-						skippedGameTids.push(t.tid);
+						skippedGameCounts.add(t.tid);
 
 						// Move am
 					}
@@ -505,6 +526,7 @@ const finalize = ({
 		// One more pass to try to schedule games between teams that don't have a full schedule, regardless of constraints. This can happen if divs are unbalanced, in the initial setup of scheduleCounts. Might be better to calculate this up front and have a separate "level" (not div/conf/other) representing "# of games that don't fit, so just schedule anyone" but oh well, this works about the same as that and is easier. This just treats any "missing games" (scheduleCounts doesn't add up to numGames) the same as skipped games.
 		{
 			for (const [tidString, row] of Object.entries(scheduleCounts)) {
+				const tid = Number.parseInt(tidString);
 				const numGamesNeeded =
 					settings.numGames -
 					(row.conf.away +
@@ -516,23 +538,21 @@ const finalize = ({
 						row.other.away +
 						row.other.home +
 						row.other.either +
-						skippedGameTids.filter((tid) => tid === Number.parseInt(tidString))
-							.length);
-				for (let i = 0; i < numGamesNeeded; i++) {
-					skippedGameTids.push(Number.parseInt(tidString));
+						skippedGameCounts.get(tid));
+				if (numGamesNeeded > 0) {
+					skippedGameCounts.add(tid, numGamesNeeded);
 				}
 			}
 		}
 
 		// If two team skipped games (must be due to div/conf constraints, since other constraint can only skip one), make them play each other. Better than uneven game count.
-		if (skippedGameTids.length >= 2) {
+		if (skippedGameCounts.size >= 2) {
 			// Put teams skipped multiple times in the front, so we don't get stuck with them at the end and have to skip a game
-			const counts = new Map<number, number>();
-			for (const tid of skippedGameTids) {
-				counts.set(tid, (counts.get(tid) ?? 0) + 1);
-			}
 			const countsInfo = orderBy(
-				Array.from(counts.entries()).map(([tid, count]) => ({ tid, count })),
+				Array.from(skippedGameCounts.entries()).map(([tid, count]) => ({
+					tid,
+					count,
+				})),
 				"count",
 				"desc",
 			);

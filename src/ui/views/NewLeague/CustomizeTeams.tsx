@@ -777,7 +777,7 @@ const CustomizeTeams = ({
 		did: 0,
 		lid: undefined,
 		seasonLeague: undefined,
-		seasonReal: REAL_PLAYERS_INFO!.MAX_SEASON,
+		seasonReal: REAL_PLAYERS_INFO?.MAX_SEASON ?? 0,
 		tidEdit: 0,
 		hideDupeAbbrevs: false,
 	});

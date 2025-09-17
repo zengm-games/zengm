@@ -740,7 +740,12 @@ const newScheduleGood = (
 	const scheduleCounts = initScheduleCounts(teams);
 
 	const tidsDone: [number, number][] = []; // tid_home, tid_away
-	const tidsEither = new TidsEither(); // home/away not yet set, add to tids later
+
+	// home/away not yet set, add to tids later
+	const tidsEither = new TidsEither();
+
+	// Used to track if we've already seen a matchup between two teams, in which case we schedule an "either" game
+	const tidsEitherTemp = new TidsEither();
 
 	// Make all the required matchups (perTeam)
 	for (const t of teams) {
@@ -763,13 +768,14 @@ const newScheduleGood = (
 					scheduleCounts[t2.tid]![level].away += 1;
 				}
 
-				// Record either games only for the lower tid, so they don't get double counted
-				if (t.tid < t2.tid) {
-					const numEither = numGamesTargets.perTeam[level] % 2;
-					for (let i = 0; i < numEither; i++) {
+				// Record either games only when wanted by both teams (always happens if divs/confs are even, but otherwise probably won't)
+				if (numGamesTargets.perTeam[level] % 2) {
+					if (tidsEitherTemp.has(t.tid, t2.tid)) {
 						tidsEither.add(t.tid, t2.tid);
 						scheduleCounts[t.tid]![level].either += 1;
 						scheduleCounts[t2.tid]![level].either += 1;
+					} else {
+						tidsEitherTemp.add(t.tid, t2.tid);
 					}
 				}
 			}
@@ -780,7 +786,14 @@ const newScheduleGood = (
 	console.log("numGamesTargetsByDid", numGamesTargetsByDid);
 	console.log("scheduleCounts", scheduleCounts);
 	console.log("tidsDone", tidsDone);
-	console.log("tidsEither", tidsEither.values());*/
+	console.log("tidsEither", tidsEither.values());
+	console.table(Object.entries(scheduleCounts).map(([tid, row]) => {
+		const did = (teams as any)[tid].seasonAttrs.did;
+		const numGamesFixed = row.conf.away + row.conf.home + row.conf.either + row.div.away + row.div.home + row.div.either + row.other.away + row.other.home + row.other.either;
+		const numGamesTargets = numGamesTargetsByDid[did]!.excess;
+		const numExcessGames = numGamesTargets.div + numGamesTargets.conf + numGamesTargets.other
+		return {tid, numGamesFixed, numExcessGames, numGames: numGamesFixed + numExcessGames, row};
+	}));*/
 
 	// Everything above is deterministic, but below is where randomness is introduced
 	const tidsDone2 = finalize({

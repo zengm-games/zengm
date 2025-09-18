@@ -5,7 +5,7 @@ forceHistoricalRosters
     - draft picks
   - apply real contracts in newPhasePreseason, similar to new league
 
-for repeatSeason, implement draft pick constraint like forceHistoricalRosters:;
+for repeatSeason, implement draft pick constraint like forceHistoricalRosters:
 - add constraint (no picks) to genPicks
 - run genPicks on setting change
 - don't change numSeasonsFutureDraftPicks
@@ -781,6 +781,7 @@ FBGM
 - better timeout management
   - offense shouldn't take timeout if it's just saving time for the other team, like after 3rd down in a tied game when they are about to punt
 - 2025 overtime rules are now the same for regular season and playoffs, both teams get a chance to possess
+- in play-by-play, distinguish between timeout due to low play clock and timeout due to clock management https://discord.com/channels/290013534023057409/1416078039837839360/1418244324033958048
 
 wrong team abbrev various places
 - functions for helping
@@ -1471,8 +1472,6 @@ teams run starting lineups with terrible guards because most GFs became SFs or F
 
 Re-enabling auto-save while auto-playing sometimes breaks the game. Uncaught (in promise) Error: Primary key "2480" already exists in "games" https://discord.com/channels/290013534023057409/290015591216054273/840126335501991957
 
-Live-simming a game being played by CPU teams in playoffs before simming your game on the same day causes the top game bar to stop updating. https://discord.com/channels/290013534023057409/290015591216054273/840604799539871744
-
 fbgm2
 - game sim
   - don't scramble if it's hail mary time
@@ -1488,8 +1487,6 @@ trade finder, with salary cap rules enforced
   - even better - filler salary could be added up front, to allow taking a bigger contract back... but how exactly?
 
 AI teams too likely to re-sign stars?
-
-in god mode, add button to switch to controlling a team directly on the roster page https://discord.com/channels/290013534023057409/331882115119448065/837416287948111942
 
 team rating should do something sensible if roster size or num players on court is different https://old.reddit.com/r/BasketballGM/comments/mhj2r2/monthly_suggestions_thread/guoseqe/
 

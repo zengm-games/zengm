@@ -5,7 +5,7 @@ import {
 	RosterComposition,
 	PlusMinus,
 } from "../../components/index.tsx";
-import { helpers } from "../../util/index.ts";
+import { helpers, toWorker } from "../../util/index.ts";
 import InstructionsAndSortButtons from "./InstructionsAndSortButtons.tsx";
 import PlayThroughInjurySliders from "./PlayThroughInjuriesSliders.tsx";
 import type { View } from "../../../common/types.ts";
@@ -165,6 +165,7 @@ const TopStuff = ({
 	showTradingBlock,
 	t,
 	tid,
+	userTid,
 }: Pick<
 	View<"roster">,
 	| "abbrev"
@@ -188,6 +189,7 @@ const TopStuff = ({
 	| "showTradingBlock"
 	| "t"
 	| "tid"
+	| "userTid"
 > & {
 	openRosterSpots: number;
 	profit: number;
@@ -247,7 +249,12 @@ const TopStuff = ({
 					{t.seasonAttrs.region} {t.seasonAttrs.name}
 				</h3>
 			) : null}
-			<div className="d-sm-flex mb-3">
+			<div
+				className="d-flex flex-wrap mb-3"
+				style={{
+					gap: "1rem 6rem",
+				}}
+			>
 				<div className="d-flex">
 					<div className="team-picture" style={logoStyle} />
 					<div>
@@ -297,23 +304,39 @@ const TopStuff = ({
 						) : null}
 					</div>
 				</div>
-				<div className="d-md-flex">
+				<div
+					className="d-flex flex-wrap"
+					style={{
+						gap: "1rem 3rem",
+					}}
+				>
 					{isCurrentSeason ? (
-						<div className="ms-sm-5 mt-3 mt-sm-0">
-							<RosterComposition players={players} />
-						</div>
-					) : null}
-					{showTradingBlock ? (
-						<div className="ms-sm-5 mt-3 mt-md-0">
-							<PlayThroughInjurySliders key={tid} t={t} />
-						</div>
+						<>
+							<div className="d-flex flex-column gap-3">
+								<RosterComposition players={players} />
+								{godMode && tid !== userTid ? (
+									<button
+										className="btn btn-god-mode"
+										onClick={async () => {
+											await toWorker("main", "takeControlTeam", tid);
+										}}
+									>
+										Take control of this team
+									</button>
+								) : null}
+							</div>
+							{showTradingBlock ? (
+								<div>
+									<PlayThroughInjurySliders key={tid} t={t} />
+								</div>
+							) : null}
+						</>
 					) : null}
 				</div>
 			</div>
 			<InstructionsAndSortButtons
 				keepRosterSorted={t.keepRosterSorted}
 				editable={editable}
-				godMode={godMode}
 				tid={tid}
 			/>
 

@@ -413,6 +413,7 @@ const Roster = ({
 				showTradingBlock={showTradingBlock}
 				t={t}
 				tid={tid}
+				userTid={userTid}
 			/>
 
 			{showSpectatorWarning ? (

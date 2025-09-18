@@ -1135,6 +1135,21 @@ const dunkSimNext = async (
 	await toUI("realtimeUpdate", [["allStarDunk"]]);
 };
 
+const takeControlTeam = async (userTid: number) => {
+	if (g.get("userTids").includes(userTid)) {
+		await league.setGameAttributes({
+			userTid,
+		});
+	} else {
+		await league.setGameAttributes({
+			userTid,
+			userTids: [userTid],
+		});
+	}
+
+	await toUI("realtimeUpdate", [["gameAttributes"]]);
+};
+
 const threeSimNext = async (
 	type: "event" | "rack" | "player" | "round" | "all",
 	conditions: Conditions,
@@ -4992,6 +5007,7 @@ export default {
 		startExpansionDraft,
 		startFantasyDraft,
 		switchTeam,
+		takeControlTeam,
 		threeSimNext,
 		toggleTradeDeadline,
 		tradeCounterOffer,

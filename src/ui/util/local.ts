@@ -12,6 +12,7 @@ type LocalActions = {
 	deleteGames: (gids: number[]) => void;
 	mergeGames: (games: LocalStateUI["games"]) => void;
 	resetLeague: () => void;
+	setShowLeagueTopBar: (showLeagueTopBar: boolean) => void;
 	setSidebarOpen: (sidebarOpen: boolean) => void;
 	update: (obj: Partial<LocalStateUI>) => void;
 	updateGameAttributes: (
@@ -44,6 +45,16 @@ if (window.innerWidth >= 1200) {
 	initialSidebarOpen = false;
 }
 
+let initialShowLeagueTopBar: boolean;
+const showTemp = safeLocalStorage.getItem("bbgmShowLeagueTopBar");
+if (showTemp === "true") {
+	initialShowLeagueTopBar = true;
+} else if (showTemp === "false") {
+	initialShowLeagueTopBar = false;
+} else {
+	initialShowLeagueTopBar = true;
+}
+
 const useLocal = createWithEqualityFn<LocalStateWithActions>(
 	(set) => ({
 		alwaysShowCountry: false,
@@ -73,6 +84,7 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 		popup: window.location.search === "?w=popup",
 		quarterLength: defaultGameAttributes.quarterLength,
 		season: 0,
+		showLeagueTopBar: initialShowLeagueTopBar,
 		showNagModal: false,
 		sidebarOpen: initialSidebarOpen,
 		spectator: false,
@@ -156,6 +168,14 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 					userTids: [],
 				});
 				window.removeEventListener("beforeunload", blockCloseTab);
+			},
+
+			setShowLeagueTopBar(showLeagueTopBar: boolean) {
+				set({ showLeagueTopBar });
+				safeLocalStorage.setItem(
+					"bbgmShowLeagueTopBar",
+					String(showLeagueTopBar),
+				);
 			},
 
 			setSidebarOpen(sidebarOpen: boolean) {

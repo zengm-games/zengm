@@ -1077,6 +1077,7 @@ export type LocalStateUI = {
 	popup: boolean;
 	quarterLength: number;
 	season: number;
+	showLeagueTopBar: boolean;
 	showNagModal: boolean;
 	sidebarOpen: boolean;
 	spectator: boolean;

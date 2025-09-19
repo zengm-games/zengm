@@ -1,5 +1,5 @@
 import { createLogger } from "../../common/index.ts";
-import { local, notify, toWorker, safeLocalStorage } from "./index.ts";
+import { local, notify, toWorker } from "./index.ts";
 import type { LogEventShowOptions } from "../../common/types.ts";
 
 const saveEvent = () => {
@@ -18,7 +18,7 @@ const showEvent = ({
 	let title;
 
 	if (type === "gameWon" || type === "gameLost" || type === "gameTied") {
-		if (safeLocalStorage.getItem("bbgmShowLeagueTopBar") !== "false") {
+		if (local.getState().showLeagueTopBar) {
 			return;
 		}
 	}

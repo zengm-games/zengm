@@ -2102,21 +2102,12 @@ login issues
 
 add toggle to table, to turn it into a heatmap showing which values are high or low. like think on a player stats table
 
-make the 3 year delayed effect of team finances more obvious
-
 teams play better/worse when down/up
 - 10 point gap equals home court advantage
   - implementing exactly this would require letting player composite ratings change every possession... maybe too complicated
 - @nicidob
 - reference http://apbr.org/metrics/viewtopic.php?f=2&t=8501&start=0 in comment
 - https://github.com/zengm-games/zengm/pull/276
-
-redesign splash page
-- https://twitter.com/i/events/879086180909764608?lang=en
-- https://twitter.com/steveschoger/status/935541212626464770/photo/1
-- https://medium.com/refactoring-ui/7-practical-tips-for-cheating-at-design-40c736799886
-- other pages?
-  - https://twitter.com/steveschoger/status/913062604540653568/photo/1
 
 player page UI improvements https://old.reddit.com/r/BasketballGM/comments/fbja8g/more_ideas/
 - deltas for ratings at the top
@@ -2273,8 +2264,6 @@ injury later
 
 can i get SideBar to have open state simply passed to it? performance might be ok now
 
-why is free agency so slow?
-
 button on free agents screen to fill out roster with players making up to 2x the minimum
 
 exportPlayerGamesCsv only supports basketball currently, and it's disabled in ExportStats.js. football box scores are more complicated, more derived stats
@@ -2282,11 +2271,7 @@ exportPlayerGamesCsv only supports basketball currently, and it's disabled in Ex
 way to specify routes for ShotLocations/RosterContinuity/Depth, so they aren't included in football/basketball routes
 
 game sim
-- pick playType from (down, toGo, scrimmage, score, quarter, time)
 - later
-  - clock
-    - pace
-    - clock management, strategy
   - for 2 point conversions and extra points, penalties don't actually move scrimmage currently!
   - log clutch plays
 
@@ -2324,9 +2309,6 @@ during free agency, after you sign all your free agents it should automatically 
 
 if a trade is highly unfavorable to the user, pop up a warning confirmation dialog
 
-live game
-- field with drive summary, football, direction, and last play
-
 ---
 
 "Accept Trade" button on trading block
@@ -2353,7 +2335,7 @@ make AI smarter about contracts
 - then do cool shit, like a tunable "randomness" factor or something that lets you tune player development, and also overall talent level, and also distribution of different ratings (to sim different eras)
   - https://www.google.com/search?q=OOTP+player+generator+modifiers&client=ubuntu&hs=nzO&channel=fs&sxsrf=ALeKk03DAwxNZl2Io6A0PwDmnR3InA95_w:1612847896152&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjc07TPhtzuAhXlUd8KHdfaB9kQ_AUoAnoECA8QBA&biw=1920&bih=869#imgrc=qKcVVE7ByPY6xM
 
-index updating
+cache index updating
 - currenty: check if the indexed property has changed, and only update a specific index then
 - would be better: make _dirtyIndexes per index, not per store  
 - even better: incrementally update index
@@ -2370,8 +2352,6 @@ later
 NEED TO FIX TRADE AI
 - make tests of trades that should/shouldn't happen
 - example: should never offer a strictly worse pick for a better pick. or at least not commonly
-
-no POT mode, to make it harder
 
 persist fantasy draft results
 - make an array of draft results
@@ -2441,20 +2421,11 @@ shared worker
 when dirty on close, show warning window, and initiate flush (if not already in progress)
 - hard to coordinate across UI and worker...
 
-this shit is UGLY UGLY UGLY, fix ASAP!!!
-  process.env.NODE_ENV === "test"
-
 get tests working
 - db.getCopy.teams
   - operate on individual functions? can export them just for tests
   - confirm operations that don't require IDB
   - confirm getAll updates from cache
-
-document cache data format and API!
-- different things are cached, depending on object store
-- all modifications go into cache
-- cache mutations are dangerous, see getCopy
-- read from just the cache if you're sure everything is there (like an active player). otherwise, read from db and augment with cache (because anything could be in cache, even if it's not normally.. like retired player added to watch list). getCopy variables do this
 
 ----
 

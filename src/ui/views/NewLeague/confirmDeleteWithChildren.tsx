@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { confirmable, createConfirmation } from "react-confirm";
 import Modal from "../../components/Modal.tsx";
 
 type Args = {
 	text: string;
 	deleteButtonText: string;
-	deleteChildrenText: string;
+	deleteChildrenText: string | undefined;
 	siblings: {
 		key: number;
 		text: string;
@@ -19,17 +19,24 @@ const Confirm = confirmable<
 		key?: number;
 	}
 >(({ show, proceed, deleteButtonText, deleteChildrenText, text, siblings }) => {
-	const [controlledValue, setControlledValue] = useState<number | undefined>();
-	const ok = () =>
+	const selectRef = useRef<HTMLSelectElement>(null);
+	const ok = () => {
+		// Use this rather than controlled state to more easily handle the default (don't need to specify the logic to hide "delete" twice)
+		const key =
+			!selectRef.current || selectRef.current.value === "delete"
+				? undefined
+				: Number.parseInt(selectRef.current.value);
+
 		proceed({
 			proceed: true,
-			key: controlledValue,
+			key,
 		});
-	const cancel = () =>
+	};
+	const cancel = () => {
 		proceed({
 			proceed: false,
 		});
-	const selectRef = useRef<HTMLSelectElement>(null);
+	};
 
 	useEffect(() => {
 		if (selectRef.current) {
@@ -48,18 +55,10 @@ const Confirm = confirmable<
 						ok();
 					}}
 				>
-					<select
-						ref={selectRef}
-						className="form-select"
-						value={controlledValue}
-						onChange={(event) => {
-							const value = event.target.value;
-							setControlledValue(
-								value === "delete" ? undefined : Number.parseInt(value),
-							);
-						}}
-					>
-						<option value="delete">{deleteChildrenText}</option>
+					<select ref={selectRef} className="form-select">
+						{deleteChildrenText !== undefined ? (
+							<option value="delete">{deleteChildrenText}</option>
+						) : null}
 						{siblings.map(({ key, text }) => (
 							<option key={key} value={key}>
 								{text}

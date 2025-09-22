@@ -1606,9 +1606,8 @@ export type Team = {
 	firstSeasonAfterExpansion?: number;
 	srID?: string;
 
-	// Optional because upgrade code was not written on 2020-05-04. Ideally should have populated these with the most recent value of teamSeason.
-	pop?: number;
-	stadiumCapacity?: number;
+	pop: number;
+	stadiumCapacity: number;
 
 	adjustForInflation: boolean;
 	disabled: boolean;

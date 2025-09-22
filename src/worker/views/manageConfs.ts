@@ -1,16 +1,21 @@
 import type { Conf, Div } from "../../common/types.ts";
+import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 
 const updateConfs = async () => {
-	// While editing, can have 0 confs or divs
-	const confs: Conf[] = g.get("confs");
-	const divs: Div[] = g.get("divs");
+	const initialConfs: Conf[] = g.get("confs");
+	const initialDivs: Div[] = g.get("divs");
+
+	const initialTeams = await idb.getCopies.teamsPlus({
+		attrs: ["abbrev", "region", "name", "pop", "tid", "cid", "did"],
+	});
 
 	return {
 		actualPhase: g.get("nextPhase") ?? g.get("phase"),
 		autoRelocate: !!g.get("autoRelocate"),
-		confs,
-		divs,
+		initialConfs,
+		initialDivs,
+		initialTeams,
 	};
 };
 

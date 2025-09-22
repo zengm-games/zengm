@@ -32,6 +32,75 @@ type ConfsDivsTeams = {
 	teams: NewLeagueTeamWithoutRank[];
 };
 
+const makeDIDsSequential = ({
+	divs,
+	teams,
+}: Pick<ConfsDivsTeams, "divs" | "teams">) => {
+	const divsByDid: Record<number, Div> = {};
+	const newDivs = orderBy(divs, "cid", "asc").map((div, newDid) => {
+		const newDiv = {
+			...div,
+			did: newDid,
+		};
+
+		divsByDid[div.did] = newDiv;
+
+		return newDiv;
+	});
+
+	const newTeams = makeTIDsSequential(teams).map((t) => {
+		const div = divsByDid[t.did];
+		if (!div) {
+			throw new Error("Invalid did");
+		}
+
+		return {
+			...t,
+			cid: div.cid,
+			did: div.did,
+		};
+	});
+
+	return {
+		divs: newDivs,
+		teams: newTeams,
+	};
+};
+
+const makeCIDsSequential = ({ confs, divs, teams }: ConfsDivsTeams) => {
+	const newCids: Record<number, number> = {};
+	const newConfs = confs.map((conf, newCid) => {
+		if (newCid !== conf.cid) {
+			newCids[conf.cid] = newCid;
+		}
+
+		return {
+			...conf,
+			cid: newCid,
+		};
+	});
+
+	const newDivs = divs.map((row) => {
+		const newCid = newCids[row.cid];
+		if (newCid !== undefined) {
+			return {
+				...row,
+				cid: newCid,
+			};
+		}
+
+		return row;
+	});
+
+	return {
+		confs: newConfs,
+		...makeDIDsSequential({
+			divs: newDivs,
+			teams,
+		}),
+	};
+};
+
 type State = ConfsDivsTeams;
 
 type Action =
@@ -88,14 +157,16 @@ type Action =
 			tid: number;
 	  };
 
-const reducer = (state: State, action: Action): State => {
+export const reducer = (state: State, action: Action): State => {
 	switch (action.type) {
 		case "setState":
 			return {
 				...state,
-				confs: action.confs,
-				divs: action.divs,
-				teams: makeTIDsSequential(action.teams),
+				...makeCIDsSequential({
+					confs: action.confs,
+					divs: action.divs,
+					teams: action.teams,
+				}),
 			};
 
 		case "addConf": {
@@ -122,14 +193,17 @@ const reducer = (state: State, action: Action): State => {
 					: -1;
 			return {
 				...state,
-				divs: [
-					...state.divs,
-					{
-						did: maxDID + 1,
-						cid: action.cid,
-						name: "New Division",
-					},
-				],
+				...makeDIDsSequential({
+					divs: [
+						...state.divs,
+						{
+							did: maxDID + 1,
+							cid: action.cid,
+							name: "New Division",
+						},
+					],
+					teams: state.teams,
+				}),
 			};
 		}
 
@@ -194,10 +268,11 @@ const reducer = (state: State, action: Action): State => {
 
 			const newConfs = arrayMove(state.confs, oldIndex, newIndex);
 
-			return {
-				...state,
+			return makeCIDsSequential({
 				confs: newConfs,
-			};
+				divs: state.divs,
+				teams: state.teams,
+			});
 		}
 
 		case "moveDiv": {
@@ -228,35 +303,37 @@ const reducer = (state: State, action: Action): State => {
 				}
 			}
 
+			let newDivs2;
 			if (newCID >= 0) {
-				return {
-					...state,
-					divs: newDivs.map((div) => {
-						if (action.did !== div.did) {
-							return div;
-						}
+				// Move to new conf
+				newDivs2 = newDivs.map((div) => {
+					if (action.did !== div.did) {
+						return div;
+					}
 
-						return {
-							...div,
-							cid: newCID,
-						};
-					}),
-				};
+					return {
+						...div,
+						cid: newCID,
+					};
+				});
+			} else {
+				// Move within conf
+				const oldIndex = newDivs.findIndex((div) => div.did === action.did);
+				const newIndex = oldIndex + action.direction;
+
+				if (newIndex < 0 || newIndex > newDivs.length - 1) {
+					return state;
+				}
+
+				newDivs2 = arrayMove(newDivs, oldIndex, newIndex);
 			}
-
-			// Normal move
-			const oldIndex = newDivs.findIndex((div) => div.did === action.did);
-			const newIndex = oldIndex + action.direction;
-
-			if (newIndex < 0 || newIndex > newDivs.length - 1) {
-				return state;
-			}
-
-			const newDivs2 = arrayMove(newDivs, oldIndex, newIndex);
 
 			return {
 				...state,
-				divs: newDivs2,
+				...makeDIDsSequential({
+					divs: newDivs2,
+					teams: state.teams,
+				}),
 			};
 		}
 
@@ -293,11 +370,13 @@ const reducer = (state: State, action: Action): State => {
 				});
 			}
 
-			return {
-				confs: state.confs.filter((conf) => conf.cid !== action.cid),
+			const newConfs = state.confs.filter((conf) => conf.cid !== action.cid);
+
+			return makeCIDsSequential({
+				confs: newConfs,
 				divs: newDivs,
-				teams: makeTIDsSequential(newTeams),
-			};
+				teams: newTeams,
+			});
 		}
 
 		case "deleteDiv": {
@@ -326,8 +405,10 @@ const reducer = (state: State, action: Action): State => {
 
 			return {
 				...state,
-				divs: state.divs.filter((div) => div.did !== action.did),
-				teams: makeTIDsSequential(newTeams),
+				...makeDIDsSequential({
+					divs: state.divs.filter((div) => div.did !== action.did),
+					teams: newTeams,
+				}),
 			};
 		}
 
@@ -534,22 +615,22 @@ const Division = ({
 	confs,
 	teams,
 	dispatch,
-	showAddEditTeamModal,
-	editTeam,
 	disableMoveUp,
 	disableMoveDown,
-	abbrevsUsedMultipleTimes,
+	edit,
 }: {
 	div: Div;
 	divs: Div[];
 	confs: Conf[];
 	teams: NewLeagueTeamWithoutRank[];
 	dispatch: Dispatch<Action>;
-	showAddEditTeamModal: (did: number) => void;
-	editTeam: (tid: number, did: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
-	abbrevsUsedMultipleTimes: string[];
+	edit?: {
+		showAddEditTeamModal: (did: number) => void;
+		editTeam: (tid: number, did: number) => void;
+		abbrevsUsedMultipleTimes: string[];
+	};
 }) => {
 	return (
 		<div className="card mt-3">
@@ -573,8 +654,10 @@ const Division = ({
 							});
 						const { proceed, key } = await confirmDeleteWithChildren({
 							text: `When the "${div.name}" division is deleted, what should happen to its teams?`,
-							deleteButtonText: "Delete Division",
-							deleteChildrenText: `Delete all teams in the "${div.name}" division`,
+							deleteButtonText: "Delete division",
+							deleteChildrenText: edit
+								? `Delete all teams in the "${div.name}" division`
+								: undefined,
 							siblings,
 						});
 
@@ -606,7 +689,7 @@ const Division = ({
 							{t.region} {t.name}{" "}
 							<span
 								className={
-									abbrevsUsedMultipleTimes.includes(t.abbrev)
+									edit?.abbrevsUsedMultipleTimes.includes(t.abbrev)
 										? "text-danger"
 										: undefined
 								}
@@ -617,47 +700,56 @@ const Division = ({
 						{t.players ? (
 							<PlayersButton players={t.players} usePlayers={t.usePlayers} />
 						) : null}
-						<EditButton
-							onClick={() => {
-								editTeam(t.tid, t.did);
-							}}
-						/>
-						<DeleteButton
-							onClick={() => {
-								dispatch({ type: "deleteTeam", tid: t.tid });
-							}}
-						/>
+						{edit ? (
+							<>
+								<EditButton
+									onClick={() => {
+										edit.editTeam(t.tid, t.did);
+									}}
+								/>
+								<DeleteButton
+									onClick={() => {
+										dispatch({ type: "deleteTeam", tid: t.tid });
+									}}
+								/>
+							</>
+						) : null}
 					</li>
 				))}
 			</ul>
 
-			<AddTeam showAddEditTeamModal={showAddEditTeamModal} did={div.did} />
+			{edit ? (
+				<AddTeam
+					showAddEditTeamModal={edit.showAddEditTeamModal}
+					did={div.did}
+				/>
+			) : null}
 		</div>
 	);
 };
 
-const Conference = ({
+export const Conference = ({
 	conf,
 	confs,
 	divs,
 	teams,
 	dispatch,
-	showAddEditTeamModal,
-	editTeam,
 	disableMoveUp,
 	disableMoveDown,
-	abbrevsUsedMultipleTimes,
+	edit,
 }: {
 	conf: Conf;
 	confs: Conf[];
 	divs: Div[];
 	teams: NewLeagueTeamWithoutRank[];
 	dispatch: Dispatch<Action>;
-	showAddEditTeamModal: (did: number) => void;
-	editTeam: (tid: number, did: number) => void;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
-	abbrevsUsedMultipleTimes: string[];
+	edit?: {
+		showAddEditTeamModal: (did: number) => void;
+		editTeam: (tid: number, did: number) => void;
+		abbrevsUsedMultipleTimes: string[];
+	};
 }) => {
 	const children = divs.filter((div) => div.cid === conf.cid);
 
@@ -678,7 +770,9 @@ const Conference = ({
 						const { proceed, key } = await confirmDeleteWithChildren({
 							text: `When the "${conf.name}" conference is deleted, what should happen to its divisions?`,
 							deleteButtonText: "Delete Conference",
-							deleteChildrenText: `Delete all divisions in the "${conf.name}" conference`,
+							deleteChildrenText: edit
+								? `Delete all divisions in the "${conf.name}" conference`
+								: undefined,
 							siblings,
 						});
 
@@ -708,12 +802,10 @@ const Conference = ({
 							divs={divs}
 							confs={confs}
 							dispatch={dispatch}
-							showAddEditTeamModal={showAddEditTeamModal}
-							editTeam={editTeam}
 							teams={teams.filter((t) => t.did === div.did)}
 							disableMoveUp={i === 0 && disableMoveUp}
 							disableMoveDown={i === divs.length - 1 && disableMoveDown}
-							abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
+							edit={edit}
 						/>
 					</div>
 				))}
@@ -929,11 +1021,13 @@ const CustomizeTeams = ({
 					divs={divs}
 					teams={teams}
 					dispatch={dispatch}
-					showAddEditTeamModal={showAddEditTeamModal}
-					editTeam={editTeam}
 					disableMoveUp={i === 0}
 					disableMoveDown={i === confs.length - 1}
-					abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
+					edit={{
+						showAddEditTeamModal,
+						editTeam,
+						abbrevsUsedMultipleTimes,
+					}}
 				/>
 			))}
 			<div className="mb-3 d-flex">

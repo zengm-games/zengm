@@ -1,3 +1,23 @@
+Manage Confs revamp
+- DRY add conference button
+- don't allow deleting last conf/div
+- actually rewrite cid/did when sorting, don't just reorder
+  - test
+- actually save tids in updateConfsDivs
+  - logic for delaying until next season, like manage teamas
+- actually allow editing, just not deleting
+  - idk, needs all the constraints from Manage Teams like with god mode...
+- when deleting, are there gaps in cid/did?
+
+playoffsByConf should support numConfs!=2
+- if power of 2, divides evenly
+- otherwise, would need byes after the conferences are done.
+  - how to pick which team gets bye? normal team sort with just the top teams
+  - 1950 nba playoffs
+- https://old.reddit.com/r/BasketballGM/comments/1nm84p1/how_to_split_playoffs_into_4_conferences/
+- how to determine which teams play when all the conference winners are left? UI is tricky
+  - do it based on Manage Confs order
+
 forceHistoricalRosters
 - later
   - handle mid season trades better
@@ -521,8 +541,6 @@ drag and drop
   - https://master--5fc05e08a4a65d0021ae0bf2.chromatic.com/?path=/story/presets-sortable-multiple-containers--basic-setup
     - https://github.com/clauderic/dnd-kit/blob/master/stories/2%20-%20Presets/Sortable/MultipleContainers.tsx
   - https://www.youtube.com/watch?v=RG-3R6Pu_Ik
-- manage confs page
-  - maybe same as customize page, but with some option to prevent deleting/adding teams
 
 injured players in hockey shootouts https://discord.com/channels/@me/778760871911751700/1238301880489345184
 
@@ -1366,13 +1384,6 @@ don't use positions in substitution, or be less rigid about it https://discord.c
 - ideally - look at ratings, not positions
 
 show playoff seeds on team history page https://old.reddit.com/r/BasketballGM/comments/phc895/hi_everyone_could_i_make_a_request_that_this/
-
-playoffsByConf should support numConfs!=2
-- if power of 2, divides evenly
-- otherwise, would need byes after the conferences are done.
-  - how to pick which team gets bye? normal team sort with just the top teams
-  - 1950 nba playoffs
-- how to determine which teams play when all the conference winners are left? UI is tricky
 
 no attendance in baseball https://discord.com/channels/290013534023057409/290015591216054273/1012536651110686742
 

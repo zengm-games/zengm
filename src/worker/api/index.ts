@@ -3762,25 +3762,61 @@ const updateBudget = async ({
 const updateConfsDivs = async ({
 	confs,
 	divs,
+	teams,
 }: {
-	confs: { cid: number; name: string }[];
-	divs: { cid: number; did: number; name: string }[];
+	confs: Conf[];
+	divs: Div[];
+	teams: { cid: number; did: number; tid: number }[];
 }) => {
 	// First some sanity checks to make sure they're consistent
-	if (divs.length === 0) {
-		throw new Error("No divisions");
-	}
 	for (const div of divs) {
 		const conf = confs.find((c) => c.cid === div.cid);
 		if (!conf) {
 			throw new Error("div has invalid cid");
 		}
 	}
+	for (const t of teams) {
+		const div = divs.find((d) => d.did === t.did);
+		if (!div) {
+			throw new Error("team has invalid did");
+		}
+		if (div.cid !== t.cid) {
+			throw new Error("team has invalid cid");
+		}
+	}
+
+	const currentTeams = await idb.cache.teams.getAll();
+	for (const t of currentTeams) {
+		if (t.disabled) {
+			continue;
+		}
+
+		const info = teams.find((row) => row.tid === t.tid);
+		if (!info) {
+			throw new Error("Inconsistent teams");
+		}
+		if (t.cid !== info.cid || t.did !== info.did) {
+			t.cid = info.cid;
+			t.did = info.did;
+			await idb.cache.teams.put(t);
+
+			// Also apply team info changes to this season
+			if (actualPhase() < PHASE.PLAYOFFS) {
+				const teamSeason = await idb.cache.teamSeasons.indexGet(
+					"teamSeasonsByTidSeason",
+					[t.tid, g.get("season")],
+				);
+
+				if (teamSeason) {
+					teamSeason.cid = t.cid;
+					teamSeason.did = t.did;
+					await idb.cache.teamSeasons.put(teamSeason);
+				}
+			}
+		}
+	}
 
 	await league.setGameAttributes({ confs: confs as any, divs: divs as any });
-
-	// Second, update any teams belonging to a deleted division
-	await team.ensureValidDivsConfs();
 
 	await toUI("realtimeUpdate", [["gameAttributes"]]);
 };

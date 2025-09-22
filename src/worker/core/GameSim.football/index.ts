@@ -37,7 +37,11 @@ const FIELD_GOAL_DISTANCE_YARDS_ADDED_FROM_SCRIMMAGE = 17;
  * @param {number} energy A player's energy level, from 0 to 1 (0 = lots of energy, 1 = none).
  * @return {number} Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).
  */
-const fatigue = (energy: number): number => {
+const fatigue = (energy: number, injured: boolean): number => {
+	if (injured) {
+		return 0;
+	}
+
 	energy += 0.05;
 
 	if (energy > 1) {
@@ -1156,7 +1160,7 @@ class GameSim extends GameSimBase {
 			this.playersOnField[t] = {};
 
 			for (const pos of helpers.keys(formation[side])) {
-				const numPlayers = formation[side][pos];
+				const numPlayers = formation[side][pos]!;
 				const players = this.team[t].depth[pos]
 					.filter((p) => !p.injured)
 					.filter((p) => !pidsUsed.has(p.id))
@@ -1168,12 +1172,43 @@ class GameSim extends GameSimBase {
 							return true;
 						}
 
-						return Math.random() < fatigue(p.stat.energy);
+						return Math.random() < fatigue(p.stat.energy, p.injured);
 					});
 				this.playersOnField[t][pos] = players.slice(0, numPlayers);
-
 				for (const p of this.playersOnField[t][pos]) {
 					pidsUsed.add(p.id);
+				}
+
+				if (this.playersOnField[t][pos].length < numPlayers) {
+					// Retry without ignoring fatigued players
+					const players = this.team[t].depth[pos]
+						.filter((p) => !p.injured)
+						.filter((p) => !pidsUsed.has(p.id));
+					this.playersOnField[t][pos].push(
+						...players.slice(
+							0,
+							numPlayers - this.playersOnField[t][pos].length,
+						),
+					);
+					for (const p of this.playersOnField[t][pos]) {
+						pidsUsed.add(p.id);
+					}
+
+					// Retry without ignoring injured players
+					if (this.playersOnField[t][pos].length < numPlayers) {
+						const players = this.team[t].depth[pos].filter(
+							(p) => !pidsUsed.has(p.id),
+						);
+						this.playersOnField[t][pos].push(
+							...players.slice(
+								0,
+								numPlayers - this.playersOnField[t][pos].length,
+							),
+						);
+						for (const p of this.playersOnField[t][pos]) {
+							pidsUsed.add(p.id);
+						}
+					}
 				}
 
 				for (const p of this.playersOnField[t][pos]) {
@@ -2526,7 +2561,8 @@ class GameSim extends GameSimBase {
 		const weightFunc =
 			rating !== undefined
 				? (p: PlayerGameSim) =>
-						(p.compositeRating[rating] * fatigue(p.stat.energy)) ** power
+						(p.compositeRating[rating] * fatigue(p.stat.energy, p.injured)) **
+						power
 				: undefined;
 		return random.choice(players, weightFunc);
 	}

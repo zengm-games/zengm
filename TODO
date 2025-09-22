@@ -1,12 +1,7 @@
-Manage Confs revamp
-- DRY add conference button
-- actually rewrite cid/did when sorting, don't just reorder
-  - test
-- actually save tids in updateConfsDivs
-  - logic for delaying until next season, like manage teamas
-- actually allow editing, just not deleting
-  - idk, needs all the constraints from Manage Teams like with god mode...
-- when deleting, are there gaps in cid/did?
+- Manage Teams
+  - Allow editing teams, just not deleting team
+    - needs all the constraints from Manage Teams like with god mode, phase...
+    - important for moving team to a new conf!
 
 playoffsByConf should support numConfs!=2
 - if power of 2, divides evenly
@@ -16,6 +11,11 @@ playoffsByConf should support numConfs!=2
 - https://old.reddit.com/r/BasketballGM/comments/1nm84p1/how_to_split_playoffs_into_4_conferences/
 - how to determine which teams play when all the conference winners are left? UI is tricky
   - do it based on Manage Confs order
+- store byConf as number of confs rather than boolean
+- roundsWonText needs to know how many confs, not just a boolean playoffsByConf
+- upgrade
+  - set setting to false unless there are 2 confs only
+  - byConf values
 
 forceHistoricalRosters
 - later

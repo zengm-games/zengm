@@ -743,7 +743,7 @@ const Division = ({
 	);
 };
 
-export const Conference = ({
+const Conference = ({
 	allowDeleteAllDivs,
 	conf,
 	confs,
@@ -844,6 +844,58 @@ export const Conference = ({
 				</button>
 			</div>
 		</div>
+	);
+};
+
+export const Conferences = ({
+	allowDeleteAllDivs,
+	confs,
+	divs,
+	teams,
+	dispatch,
+	edit,
+}: {
+	allowDeleteAllDivs: boolean;
+	confs: Conf[];
+	divs: Div[];
+	teams: NewLeagueTeamWithoutRank[];
+	dispatch: Dispatch<Action>;
+	edit?: {
+		showAddEditTeamModal: (did: number) => void;
+		editTeam: (tid: number, did: number) => void;
+		abbrevsUsedMultipleTimes: string[];
+	};
+}) => {
+	return (
+		<>
+			{confs.map((conf, i) => (
+				<Conference
+					key={conf.cid}
+					allowDeleteAllDivs={allowDeleteAllDivs}
+					conf={conf}
+					confs={confs}
+					divs={divs}
+					teams={teams}
+					dispatch={dispatch}
+					disableMoveUp={i === 0}
+					disableMoveDown={i === confs.length - 1}
+					edit={edit}
+				/>
+			))}
+			<div className="mb-3 d-flex">
+				<button
+					className="btn btn-light-bordered ms-auto"
+					onClick={() => {
+						dispatch({ type: "addConf" });
+					}}
+					style={{
+						marginRight: 18,
+					}}
+				>
+					Add Conference
+				</button>
+			</div>
+		</>
 	);
 };
 
@@ -1032,37 +1084,18 @@ const CustomizeTeams = ({
 
 	return (
 		<>
-			{confs.map((conf, i) => (
-				<Conference
-					key={conf.cid}
-					allowDeleteAllDivs
-					conf={conf}
-					confs={confs}
-					divs={divs}
-					teams={teams}
-					dispatch={dispatch}
-					disableMoveUp={i === 0}
-					disableMoveDown={i === confs.length - 1}
-					edit={{
-						showAddEditTeamModal,
-						editTeam,
-						abbrevsUsedMultipleTimes,
-					}}
-				/>
-			))}
-			<div className="mb-3 d-flex">
-				<button
-					className="btn btn-light-bordered ms-auto"
-					onClick={() => {
-						dispatch({ type: "addConf" });
-					}}
-					style={{
-						marginRight: 18,
-					}}
-				>
-					Add Conference
-				</button>
-			</div>
+			<Conferences
+				allowDeleteAllDivs
+				confs={confs}
+				divs={divs}
+				teams={teams}
+				dispatch={dispatch}
+				edit={{
+					showAddEditTeamModal,
+					editTeam,
+					abbrevsUsedMultipleTimes,
+				}}
+			/>
 
 			<StickyBottomButtons>
 				<Dropdown>

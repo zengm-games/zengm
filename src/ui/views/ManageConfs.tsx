@@ -4,7 +4,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers, logEvent, toWorker } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
 import { PHASE } from "../../common/index.ts";
-import { Conference, reducer } from "./NewLeague/CustomizeTeams.tsx";
+import { Conferences, reducer } from "./NewLeague/CustomizeTeams.tsx";
 import StickyBottomButtons from "../components/StickyBottomButtons.tsx";
 
 const nextSeasonWarning =
@@ -44,32 +44,13 @@ const ManageConfs = ({
 				</p>
 			) : null}
 
-			{confs.map((conf, i) => (
-				<Conference
-					key={conf.cid}
-					allowDeleteAllDivs={false}
-					conf={conf}
-					confs={confs}
-					divs={divs}
-					teams={teams}
-					dispatch={dispatch}
-					disableMoveUp={i === 0}
-					disableMoveDown={i === confs.length - 1}
-				/>
-			))}
-			<div className="mb-3 d-flex">
-				<button
-					className="btn btn-light-bordered ms-auto"
-					onClick={() => {
-						dispatch({ type: "addConf" });
-					}}
-					style={{
-						marginRight: 18,
-					}}
-				>
-					Add Conference
-				</button>
-			</div>
+			<Conferences
+				allowDeleteAllDivs={false}
+				confs={confs}
+				divs={divs}
+				teams={teams}
+				dispatch={dispatch}
+			/>
 
 			<StickyBottomButtons>
 				<form

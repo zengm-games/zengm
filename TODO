@@ -1,6 +1,5 @@
 Manage Confs revamp
 - DRY add conference button
-- don't allow deleting last conf/div
 - actually rewrite cid/did when sorting, don't just reorder
   - test
 - actually save tids in updateConfsDivs

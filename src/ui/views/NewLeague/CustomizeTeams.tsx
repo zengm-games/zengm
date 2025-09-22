@@ -486,10 +486,20 @@ const EditButton = ({ onClick }: { onClick: () => void }) => {
 	);
 };
 
-const DeleteButton = ({ onClick }: { onClick: () => void }) => {
+const DeleteButton = ({
+	disabled,
+	onClick,
+}: {
+	disabled?: boolean;
+	onClick: () => void;
+}) => {
 	return (
 		<button
-			className="ms-2 btn btn-link text-danger p-0 border-0"
+			className={clsx(
+				"ms-2 btn btn-link p-0 border-0",
+				disabled ? undefined : "text-danger",
+			)}
+			disabled={disabled}
 			onClick={onClick}
 			title="Delete"
 			type="button"
@@ -506,6 +516,7 @@ const CardHeader = ({
 	onMoveDown,
 	onMoveUp,
 	onRename,
+	disableDelete,
 	disableMoveUp,
 	disableMoveDown,
 }: {
@@ -515,6 +526,7 @@ const CardHeader = ({
 	onMoveDown: () => void;
 	onMoveUp: () => void;
 	onRename: (name: string) => void;
+	disableDelete: boolean;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
 }) => {
@@ -581,7 +593,7 @@ const CardHeader = ({
 							setRenaming(true);
 						}}
 					/>
-					<DeleteButton onClick={onDelete} />
+					<DeleteButton disabled={disableDelete} onClick={onDelete} />
 				</div>
 			)}
 		</div>
@@ -610,6 +622,7 @@ const AddTeam = ({
 };
 
 const Division = ({
+	allowDeleteAllDivs,
 	div,
 	divs,
 	confs,
@@ -619,6 +632,7 @@ const Division = ({
 	disableMoveDown,
 	edit,
 }: {
+	allowDeleteAllDivs: boolean;
 	div: Div;
 	divs: Div[];
 	confs: Conf[];
@@ -675,6 +689,7 @@ const Division = ({
 				onRename={(name: string) => {
 					dispatch({ type: "renameDiv", did: div.did, name });
 				}}
+				disableDelete={!allowDeleteAllDivs && divs.length === 1}
 				disableMoveUp={disableMoveUp}
 				disableMoveDown={disableMoveDown}
 			/>
@@ -729,6 +744,7 @@ const Division = ({
 };
 
 export const Conference = ({
+	allowDeleteAllDivs,
 	conf,
 	confs,
 	divs,
@@ -738,6 +754,7 @@ export const Conference = ({
 	disableMoveDown,
 	edit,
 }: {
+	allowDeleteAllDivs: boolean;
 	conf: Conf;
 	confs: Conf[];
 	divs: Div[];
@@ -787,6 +804,7 @@ export const Conference = ({
 				onMoveUp={() => {
 					dispatch({ type: "moveConf", cid: conf.cid, direction: -1 });
 				}}
+				disableDelete={!allowDeleteAllDivs && confs.length === 1}
 				disableMoveUp={disableMoveUp}
 				disableMoveDown={disableMoveDown}
 				onRename={(name: string) => {
@@ -798,6 +816,7 @@ export const Conference = ({
 				{children.map((div, i) => (
 					<div className="col-sm-6 col-md-4" key={div.did}>
 						<Division
+							allowDeleteAllDivs={allowDeleteAllDivs}
 							div={div}
 							divs={divs}
 							confs={confs}
@@ -1016,6 +1035,7 @@ const CustomizeTeams = ({
 			{confs.map((conf, i) => (
 				<Conference
 					key={conf.cid}
+					allowDeleteAllDivs
 					conf={conf}
 					confs={confs}
 					divs={divs}

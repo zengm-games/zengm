@@ -47,6 +47,7 @@ const ManageConfs = ({
 			{confs.map((conf, i) => (
 				<Conference
 					key={conf.cid}
+					allowDeleteAllDivs={false}
 					conf={conf}
 					confs={confs}
 					divs={divs}

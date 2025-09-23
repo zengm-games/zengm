@@ -7,7 +7,7 @@ import { PHASE } from "../../../common/index.ts";
 import TeamForm from "./TeamForm.tsx";
 import { groupBy } from "../../../common/utils.ts";
 
-const nextSeasonWarning =
+export const nextSeasonWarning =
 	"Because the regular season is already over, changes will not be fully applied until next season.";
 
 type State = {

@@ -17,7 +17,10 @@ import StickyBottomButtons from "../components/StickyBottomButtons.tsx";
 import type { NewLeagueTeamWithoutRank } from "./NewLeague/types.ts";
 import { Modal } from "react-bootstrap";
 import TeamForm from "./ManageTeams/TeamForm.tsx";
-import { PHASES_WHERE_TEAMS_CAN_BE_DISABLED } from "./ManageTeams/index.tsx";
+import {
+	nextSeasonWarning,
+	PHASES_WHERE_TEAMS_CAN_BE_DISABLED,
+} from "./ManageTeams/index.tsx";
 
 const EditTeamModal = ({
 	t,
@@ -176,9 +179,6 @@ const EditTeamModal = ({
 	);
 };
 
-const nextSeasonWarning =
-	"Because the regular season is already over, changes will not be fully applied until next season.";
-
 const ManageConfs = ({
 	actualPhase,
 	autoRelocate,
@@ -297,6 +297,7 @@ const ManageConfs = ({
 				divs={divs as NonEmptyArray<Div>}
 				onSave={(t) => {
 					console.log("EDIT", t);
+					dispatch({ type: "editTeam", t });
 					setEditTeam(undefined);
 				}}
 				onCancel={() => {

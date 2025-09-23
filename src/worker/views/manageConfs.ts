@@ -7,7 +7,20 @@ const updateConfs = async () => {
 	const initialDivs: Div[] = g.get("divs");
 
 	const initialTeams = await idb.getCopies.teamsPlus({
-		attrs: ["abbrev", "region", "name", "pop", "tid", "cid", "did"],
+		attrs: [
+			"abbrev",
+			"region",
+			"name",
+			"pop",
+			"tid",
+			"cid",
+			"did",
+			"imgURL",
+			"imgURLSmall",
+			"stadiumCapacity",
+			"jersey",
+			"colors",
+		],
 	});
 
 	return {

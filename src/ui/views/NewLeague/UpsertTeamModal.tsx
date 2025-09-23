@@ -630,7 +630,7 @@ const UpsertTeamModal = ({
 		>
 			<Modal.Header closeButton>
 				<Modal.Title>
-					{addEditTeamInfo.type === "edit" ? "Edit" : "Add"} Team
+					{addEditTeamInfo.type === "edit" ? "Edit" : "Add"} team
 				</Modal.Title>
 			</Modal.Header>
 			{addEditTeamInfo.type !== "edit" ? (
@@ -725,7 +725,7 @@ const UpsertTeamModal = ({
 					onClick={save}
 					disabled={!controlledTeam}
 				>
-					{addEditTeamInfo.type === "edit" ? "Save Team" : "Add Team"}
+					{addEditTeamInfo.type === "edit" ? "Save team" : "Add team"}
 				</button>
 			</Modal.Footer>
 		</Modal>

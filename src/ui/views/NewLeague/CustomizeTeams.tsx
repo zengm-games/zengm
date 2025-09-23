@@ -615,7 +615,7 @@ const AddTeam = ({
 					addTeam(did);
 				}}
 			>
-				Add Team
+				Add team
 			</button>
 		</div>
 	);
@@ -835,7 +835,7 @@ const Conference = ({
 						marginRight: 9,
 					}}
 				>
-					Add Division
+					Add division
 				</button>
 			</div>
 		</div>
@@ -889,7 +889,7 @@ export const Conferences = ({
 						marginRight: 18,
 					}}
 				>
-					Add Conference
+					Add conference
 				</button>
 			</div>
 		</>

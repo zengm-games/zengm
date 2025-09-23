@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { setTimeout } from "node:timers/promises";
 import Cloudflare from "cloudflare";
 import { readFile } from "node:fs/promises";
 import { build } from "../build/build.ts";
@@ -21,22 +22,36 @@ const getSubdomain = () => {
 	);
 };
 
-const mySpawn = (command: string, args: string[]) => {
-	return new Promise<void>((resolve, reject) => {
+const NUM_RETRIES = 10;
+const mySpawn = async (command: string, args: string[]) => {
+	for (let attempt = 0; attempt <= NUM_RETRIES; attempt++) {
 		console.log(`${command} ${args.join(" ")}`);
 
-		const cmd = spawn(command, args, { stdio: "inherit" });
-		cmd.on("error", (error) => {
-			reject(error);
+		const exitCode = await new Promise<number | null>((resolve, reject) => {
+			const cmd = spawn(command, args, { stdio: "inherit" });
+
+			cmd.on("error", (error) => {
+				reject(error);
+			});
+			cmd.on("close", (code) => {
+				resolve(code);
+			});
 		});
-		cmd.on("close", (code) => {
-			if (code !== 0) {
-				reject(new Error(`child process exited with code ${code}`));
-			} else {
-				resolve();
-			}
-		});
-	});
+
+		if (exitCode === 0) {
+			// Success!
+			return;
+		}
+
+		if (exitCode === 255 && attempt < NUM_RETRIES) {
+			await setTimeout(2000);
+			console.log(
+				`Retrying after error code ${exitCode} (attempt #${attempt + 1})`,
+			);
+		} else {
+			throw new Error(`child process exited with code ${exitCode}`);
+		}
+	}
 };
 
 export const deploy = async () => {

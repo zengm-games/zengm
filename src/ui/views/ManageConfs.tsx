@@ -4,7 +4,11 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers, logEvent, toWorker } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
 import { PHASE } from "../../common/index.ts";
-import { Conferences, reducer } from "./NewLeague/CustomizeTeams.tsx";
+import {
+	Conferences,
+	getAbbrevsUsedMultipleTimes,
+	reducer,
+} from "./NewLeague/CustomizeTeams.tsx";
 import StickyBottomButtons from "../components/StickyBottomButtons.tsx";
 
 const nextSeasonWarning =
@@ -36,6 +40,8 @@ const ManageConfs = ({
 		);
 	}
 
+	const abbrevsUsedMultipleTimes = getAbbrevsUsedMultipleTimes(teams);
+
 	return (
 		<>
 			{actualPhase >= PHASE.PLAYOFFS ? (
@@ -45,11 +51,16 @@ const ManageConfs = ({
 			) : null}
 
 			<Conferences
-				allowDeleteAllDivs={false}
 				confs={confs}
 				divs={divs}
 				teams={teams}
 				dispatch={dispatch}
+				allowDeleteTeams={false}
+				addTeam={undefined}
+				editTeam={() => {
+					console.log("Edit team");
+				}}
+				abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
 			/>
 
 			<StickyBottomButtons>
@@ -57,6 +68,17 @@ const ManageConfs = ({
 					className="btn-group ms-auto"
 					onSubmit={async (event) => {
 						event.preventDefault();
+
+						if (abbrevsUsedMultipleTimes.length > 0) {
+							logEvent({
+								type: "error",
+								text: `You cannot use the same abbrev for multiple teams: ${abbrevsUsedMultipleTimes.join(
+									", ",
+								)}`,
+								saveToDb: false,
+							});
+							return;
+						}
 
 						// Check to make sure that somehow we didn't accidentally reassign a tid
 						const initialRegions = initialTeams.map((t) => t.region);

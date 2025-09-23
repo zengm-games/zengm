@@ -601,10 +601,10 @@ const CardHeader = ({
 };
 
 const AddTeam = ({
-	showAddEditTeamModal,
+	addTeam,
 	did,
 }: {
-	showAddEditTeamModal: (did: number) => void;
+	addTeam: (did: number) => void;
 	did: number;
 }) => {
 	return (
@@ -612,7 +612,7 @@ const AddTeam = ({
 			<button
 				className="btn btn-light-bordered"
 				onClick={() => {
-					showAddEditTeamModal(did);
+					addTeam(did);
 				}}
 			>
 				Add Team
@@ -622,7 +622,7 @@ const AddTeam = ({
 };
 
 const Division = ({
-	allowDeleteAllDivs,
+	allowDeleteTeams,
 	div,
 	divs,
 	confs,
@@ -630,9 +630,11 @@ const Division = ({
 	dispatch,
 	disableMoveUp,
 	disableMoveDown,
-	edit,
+	addTeam,
+	editTeam,
+	abbrevsUsedMultipleTimes,
 }: {
-	allowDeleteAllDivs: boolean;
+	allowDeleteTeams: boolean;
 	div: Div;
 	divs: Div[];
 	confs: Conf[];
@@ -640,11 +642,9 @@ const Division = ({
 	dispatch: Dispatch<Action>;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
-	edit?: {
-		showAddEditTeamModal: (did: number) => void;
-		editTeam: (tid: number, did: number) => void;
-		abbrevsUsedMultipleTimes: string[];
-	};
+	addTeam: ((did: number) => void) | undefined;
+	editTeam: (tid: number, did: number) => void;
+	abbrevsUsedMultipleTimes: string[];
 }) => {
 	return (
 		<div className="card mt-3">
@@ -669,7 +669,7 @@ const Division = ({
 						const { proceed, key } = await confirmDeleteWithChildren({
 							text: `When the "${div.name}" division is deleted, what should happen to its teams?`,
 							deleteButtonText: "Delete division",
-							deleteChildrenText: edit
+							deleteChildrenText: allowDeleteTeams
 								? `Delete all teams in the "${div.name}" division`
 								: undefined,
 							siblings,
@@ -689,7 +689,7 @@ const Division = ({
 				onRename={(name: string) => {
 					dispatch({ type: "renameDiv", did: div.did, name });
 				}}
-				disableDelete={!allowDeleteAllDivs && divs.length === 1}
+				disableDelete={!allowDeleteTeams && divs.length === 1}
 				disableMoveUp={disableMoveUp}
 				disableMoveDown={disableMoveDown}
 			/>
@@ -704,7 +704,7 @@ const Division = ({
 							{t.region} {t.name}{" "}
 							<span
 								className={
-									edit?.abbrevsUsedMultipleTimes.includes(t.abbrev)
+									abbrevsUsedMultipleTimes.includes(t.abbrev)
 										? "text-danger"
 										: undefined
 								}
@@ -715,36 +715,29 @@ const Division = ({
 						{t.players ? (
 							<PlayersButton players={t.players} usePlayers={t.usePlayers} />
 						) : null}
-						{edit ? (
-							<>
-								<EditButton
-									onClick={() => {
-										edit.editTeam(t.tid, t.did);
-									}}
-								/>
-								<DeleteButton
-									onClick={() => {
-										dispatch({ type: "deleteTeam", tid: t.tid });
-									}}
-								/>
-							</>
+						<EditButton
+							onClick={() => {
+								editTeam(t.tid, t.did);
+							}}
+						/>
+						{allowDeleteTeams ? (
+							<DeleteButton
+								onClick={() => {
+									dispatch({ type: "deleteTeam", tid: t.tid });
+								}}
+							/>
 						) : null}
 					</li>
 				))}
 			</ul>
 
-			{edit ? (
-				<AddTeam
-					showAddEditTeamModal={edit.showAddEditTeamModal}
-					did={div.did}
-				/>
-			) : null}
+			{addTeam ? <AddTeam addTeam={addTeam} did={div.did} /> : null}
 		</div>
 	);
 };
 
 const Conference = ({
-	allowDeleteAllDivs,
+	allowDeleteTeams,
 	conf,
 	confs,
 	divs,
@@ -752,9 +745,11 @@ const Conference = ({
 	dispatch,
 	disableMoveUp,
 	disableMoveDown,
-	edit,
+	addTeam,
+	editTeam,
+	abbrevsUsedMultipleTimes,
 }: {
-	allowDeleteAllDivs: boolean;
+	allowDeleteTeams: boolean;
 	conf: Conf;
 	confs: Conf[];
 	divs: Div[];
@@ -762,11 +757,9 @@ const Conference = ({
 	dispatch: Dispatch<Action>;
 	disableMoveUp: boolean;
 	disableMoveDown: boolean;
-	edit?: {
-		showAddEditTeamModal: (did: number) => void;
-		editTeam: (tid: number, did: number) => void;
-		abbrevsUsedMultipleTimes: string[];
-	};
+	addTeam: ((did: number) => void) | undefined;
+	editTeam: (tid: number, did: number) => void;
+	abbrevsUsedMultipleTimes: string[];
 }) => {
 	const children = divs.filter((div) => div.cid === conf.cid);
 
@@ -787,7 +780,7 @@ const Conference = ({
 						const { proceed, key } = await confirmDeleteWithChildren({
 							text: `When the "${conf.name}" conference is deleted, what should happen to its divisions?`,
 							deleteButtonText: "Delete Conference",
-							deleteChildrenText: edit
+							deleteChildrenText: allowDeleteTeams
 								? `Delete all divisions in the "${conf.name}" conference`
 								: undefined,
 							siblings,
@@ -804,7 +797,7 @@ const Conference = ({
 				onMoveUp={() => {
 					dispatch({ type: "moveConf", cid: conf.cid, direction: -1 });
 				}}
-				disableDelete={!allowDeleteAllDivs && confs.length === 1}
+				disableDelete={!allowDeleteTeams && confs.length === 1}
 				disableMoveUp={disableMoveUp}
 				disableMoveDown={disableMoveDown}
 				onRename={(name: string) => {
@@ -816,7 +809,7 @@ const Conference = ({
 				{children.map((div, i) => (
 					<div className="col-sm-6 col-md-4" key={div.did}>
 						<Division
-							allowDeleteAllDivs={allowDeleteAllDivs}
+							allowDeleteTeams={allowDeleteTeams}
 							div={div}
 							divs={divs}
 							confs={confs}
@@ -824,7 +817,9 @@ const Conference = ({
 							teams={teams.filter((t) => t.did === div.did)}
 							disableMoveUp={i === 0 && disableMoveUp}
 							disableMoveDown={i === divs.length - 1 && disableMoveDown}
-							edit={edit}
+							addTeam={addTeam}
+							editTeam={editTeam}
+							abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
 						/>
 					</div>
 				))}
@@ -848,30 +843,29 @@ const Conference = ({
 };
 
 export const Conferences = ({
-	allowDeleteAllDivs,
+	allowDeleteTeams,
 	confs,
 	divs,
 	teams,
 	dispatch,
-	edit,
+	addTeam,
+	editTeam,
+	abbrevsUsedMultipleTimes,
 }: {
-	allowDeleteAllDivs: boolean;
+	allowDeleteTeams: boolean;
 	confs: Conf[];
 	divs: Div[];
 	teams: NewLeagueTeamWithoutRank[];
 	dispatch: Dispatch<Action>;
-	edit?: {
-		showAddEditTeamModal: (did: number) => void;
-		editTeam: (tid: number, did: number) => void;
-		abbrevsUsedMultipleTimes: string[];
-	};
+	addTeam: ((did: number) => void) | undefined;
+	editTeam: (tid: number, did: number) => void;
+	abbrevsUsedMultipleTimes: string[];
 }) => {
 	return (
 		<>
 			{confs.map((conf, i) => (
 				<Conference
 					key={conf.cid}
-					allowDeleteAllDivs={allowDeleteAllDivs}
 					conf={conf}
 					confs={confs}
 					divs={divs}
@@ -879,7 +873,10 @@ export const Conferences = ({
 					dispatch={dispatch}
 					disableMoveUp={i === 0}
 					disableMoveDown={i === confs.length - 1}
-					edit={edit}
+					allowDeleteTeams={allowDeleteTeams}
+					addTeam={addTeam}
+					editTeam={editTeam}
+					abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
 				/>
 			))}
 			<div className="mb-3 d-flex">
@@ -909,6 +906,20 @@ export type AddEditTeamInfo = {
 	seasonReal: number;
 	tidEdit: number;
 	hideDupeAbbrevs: boolean;
+};
+
+export const getAbbrevsUsedMultipleTimes = (
+	teams: NewLeagueTeamWithoutRank[],
+) => {
+	const abbrevCounts = countBy(teams, "abbrev");
+	const abbrevsUsedMultipleTimes: string[] = [];
+	for (const [abbrev, count] of Object.entries(abbrevCounts)) {
+		if (count > 1) {
+			abbrevsUsedMultipleTimes.push(abbrev);
+		}
+	}
+
+	return abbrevsUsedMultipleTimes;
 };
 
 const CustomizeTeams = ({
@@ -958,17 +969,11 @@ const CustomizeTeams = ({
 		});
 	};
 
-	const showAddEditTeamModal = (did: number) => {
+	const addTeam = (did: number) => {
 		setAddEditTeamInfo({ ...addEditTeamInfo, type: "add", did });
 	};
 
-	const abbrevCounts = countBy(teams, "abbrev");
-	const abbrevsUsedMultipleTimes: string[] = [];
-	for (const [abbrev, count] of Object.entries(abbrevCounts)) {
-		if (count > 1) {
-			abbrevsUsedMultipleTimes.push(abbrev);
-		}
-	}
+	const abbrevsUsedMultipleTimes = getAbbrevsUsedMultipleTimes(teams);
 
 	const resetClear = () => {
 		dispatch({
@@ -1085,16 +1090,14 @@ const CustomizeTeams = ({
 	return (
 		<>
 			<Conferences
-				allowDeleteAllDivs
+				allowDeleteTeams
 				confs={confs}
 				divs={divs}
 				teams={teams}
 				dispatch={dispatch}
-				edit={{
-					showAddEditTeamModal,
-					editTeam,
-					abbrevsUsedMultipleTimes,
-				}}
+				addTeam={addTeam}
+				editTeam={editTeam}
+				abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
 			/>
 
 			<StickyBottomButtons>

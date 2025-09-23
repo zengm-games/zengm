@@ -1,9 +1,3 @@
-- Manage Teams
-  - Allow editing teams, just not deleting team
-    - needs all the constraints from Manage Teams like with god mode, phase...
-    - important for moving team to a new conf!
-  - test abbrevsUsedMultipleTimes validator
-
 playoffsByConf should support numConfs!=2
 - if power of 2, divides evenly
 - otherwise, would need byes after the conferences are done.

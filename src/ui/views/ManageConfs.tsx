@@ -284,7 +284,7 @@ const ManageConfs = ({
 						type="submit"
 						disabled={saving || confs.length === 0 || divs.length === 0}
 					>
-						Save conferences and divisions
+						Save conferences
 					</button>
 				</form>
 			</StickyBottomButtons>

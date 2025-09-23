@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import { stripVTControlCharacters } from "node:util";
 import babel from "@babel/core";
 import type { BuildOptions, RolldownPlugin, TransformResult } from "rolldown";
-import { and, code, id, include, or } from "@rolldown/pluginutils";
+import { and, code, include, moduleType, or } from "@rolldown/pluginutils";
 // @ts-expect-error
 import babelPluginSyntaxTypescript from "@babel/plugin-syntax-typescript";
 import { babelPluginSportFunctions } from "../babel-plugin-sport-functions/index.ts";
@@ -30,9 +30,14 @@ const pluginSportFunctions = (
 		name: "sport-functions",
 		transform: {
 			filter: [
-				include(and(id(/\.tsx?$/), or(code("bySport"), code("isSport")))),
+				include(
+					and(
+						or(moduleType("ts"), moduleType("tsx")),
+						or(code("bySport"), code("isSport")),
+					),
+				),
 			],
-			async handler(code, id) {
+			async handler(code, id, { moduleType }) {
 				let mtimeMs;
 				if (nodeEnv === "development") {
 					mtimeMs = (await fs.stat(id)).mtimeMs;
@@ -42,12 +47,14 @@ const pluginSportFunctions = (
 					}
 				}
 
+				const isTSX = moduleType === "tsx";
+
 				const babelResult = await babel.transformAsync(code, {
 					babelrc: false,
 					configFile: false,
 					sourceMaps: true,
 					plugins: [
-						[babelPluginSyntaxTypescript, { isTSX: id.endsWith(".tsx") }],
+						[babelPluginSyntaxTypescript, { isTSX }],
 						[babelPluginSportFunctions, { sport }],
 					],
 				});

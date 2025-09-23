@@ -9,7 +9,7 @@ import genPlayoffSeeds from "./genPlayoffSeeds.ts";
 import { idb } from "../../db/index.ts";
 import getPlayoffsByConf from "./getPlayoffsByConf.ts";
 import validatePlayoffSettings from "./validatePlayoffSettings.ts";
-import { range } from "../../../common/utils.ts";
+import { groupBy, range } from "../../../common/utils.ts";
 
 type MyTeam = TeamFiltered<
 	["tid"],
@@ -175,15 +175,14 @@ export const genPlayoffSeriesFromTeams = async (
 	let playIns: PlayoffSeries["playIns"] = [];
 
 	if (playoffsByConf) {
+		const teamsByCid = groupBy(teams, (t) => t.seasonAttrs.cid);
+
 		if (numRounds > 1) {
 			// Default: top 50% of teams in each of the two conferences
 			for (const conf of g.get("confs", "current")) {
-				const cid = conf.cid;
-				const teamsConf: MyTeam[] = teams.filter(
-					(t) => t.seasonAttrs.cid === cid,
-				);
+				const teamsConf = teamsByCid[conf.cid];
 
-				if (teamsConf.length >= numPlayoffTeams / 2) {
+				if (teamsConf && teamsConf.length >= numPlayoffTeams / 2) {
 					const { round, playIn } = await makeMatchups(
 						await orderTeams(teamsConf, teams, orderTeamsOptions),
 						numPlayoffTeams / 2,
@@ -204,11 +203,8 @@ export const genPlayoffSeriesFromTeams = async (
 			const teamsFinals: MyTeam[] = [];
 
 			for (const conf of g.get("confs", "current")) {
-				const cid = conf.cid;
-				const teamsConf: MyTeam[] = teams.filter(
-					(t) => t.seasonAttrs.cid === cid,
-				);
-				if (teamsConf.length > 0) {
+				const teamsConf = teamsByCid[conf.cid];
+				if (teamsConf && teamsConf.length > 0) {
 					// This sort determines conference champ. Sort inside makeMatchups call will determine overall #1 seed
 					const sorted = await orderTeams(teamsConf, teams, orderTeamsOptions);
 					teamsFinals.push(sorted[0]!);

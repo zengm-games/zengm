@@ -119,6 +119,14 @@ const getUniqueAbbrevsErrorMessage = (teams: { abbrev: string }[]) => {
 	);
 };
 
+export const PHASES_WHERE_TEAMS_CAN_BE_DISABLED: Phase[] = [
+	PHASE.PRESEASON,
+	PHASE.DRAFT_LOTTERY,
+	PHASE.AFTER_DRAFT,
+	PHASE.RESIGN_PLAYERS,
+	PHASE.FREE_AGENCY,
+];
+
 const ManageTeams = (props: View<"manageTeams">) => {
 	const [state, dispatch] = useReducer(reducer, {
 		saving: false,
@@ -174,14 +182,8 @@ const ManageTeams = (props: View<"manageTeams">) => {
 		);
 	}
 
-	const validPhases: Phase[] = [
-		PHASE.PRESEASON,
-		PHASE.DRAFT_LOTTERY,
-		PHASE.AFTER_DRAFT,
-		PHASE.RESIGN_PLAYERS,
-		PHASE.FREE_AGENCY,
-	];
-	const disableStatus = !props.godMode || !validPhases.includes(props.phase);
+	const disableStatus =
+		!props.godMode || !PHASES_WHERE_TEAMS_CAN_BE_DISABLED.includes(props.phase);
 
 	const { saving, teams } = state;
 

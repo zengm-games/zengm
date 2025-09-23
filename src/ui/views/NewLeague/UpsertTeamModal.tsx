@@ -525,9 +525,6 @@ const UpsertTeamModal = ({
 			} else {
 				setControlledTeam({
 					...t,
-					region: t.region,
-					name: t.name,
-					abbrev: t.abbrev,
 					pop: String(t.pop),
 					stadiumCapacity: String(
 						t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY,
@@ -655,7 +652,6 @@ const UpsertTeamModal = ({
 			<Modal.Body>
 				{controlledTeam ? (
 					<form
-						id="foo"
 						onSubmit={(event) => {
 							event.preventDefault();
 							save();
@@ -710,7 +706,7 @@ const UpsertTeamModal = ({
 								showPlayers={!!controlledTeam.players}
 							/>
 						</div>
-						<button className="d-none" type="submit"></button>
+						<button className="d-none" type="submit" />
 					</form>
 				) : (
 					"Loading..."

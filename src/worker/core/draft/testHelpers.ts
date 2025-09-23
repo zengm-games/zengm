@@ -5,6 +5,7 @@ import { draft } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { Team, TeamSeasonWithoutKey } from "../../../common/types.ts";
+import { DEFAULT_STADIUM_CAPACITY } from "../../../common/constants.ts";
 
 const getDraftTids = async () => {
 	await draft.genOrder();
@@ -32,6 +33,8 @@ const loadTeamSeasons = async () => {
 			colors: ["#000000", "#000000", "#000000"],
 			playThroughInjuries: [0, 0],
 			initialBudget: partialT.budget,
+			pop: 1,
+			stadiumCapacity: DEFAULT_STADIUM_CAPACITY,
 		} as Team;
 
 		const teamSeasons = seasons.map((teamSeason) => ({

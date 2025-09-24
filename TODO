@@ -19,11 +19,6 @@ forceHistoricalRosters
     - draft picks
   - apply real contracts in newPhasePreseason, similar to new league
 
-for repeatSeason, implement draft pick constraint like forceHistoricalRosters:
-- add constraint (no picks) to genPicks
-- run genPicks on setting change
-- don't change numSeasonsFutureDraftPicks
-
 get rid of abbrev_if_new_row, instead just populate entries in teams
 
 support shared lists of names in player bio info

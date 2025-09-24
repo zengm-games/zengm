@@ -26,6 +26,7 @@ const doSeason = async (
 		REAL_PLAYERS_INFO &&
 		g.get("forceHistoricalRosters") &&
 		season < REAL_PLAYERS_INFO.MAX_SEASON;
+	const skipRepeatSeason = !!g.get("repeatSeason");
 
 	const userTids = g.get("userTids");
 	const challengeNoDraftPicks = g.get("challengeNoDraftPicks");
@@ -47,7 +48,8 @@ const doSeason = async (
 			if (existingPick) {
 				const deletePick =
 					(skipChallengeMode && userTids.includes(existingPick.tid)) ||
-					skipForceHistoricalRosters;
+					skipForceHistoricalRosters ||
+					skipRepeatSeason;
 				if (!deletePick) {
 					existingPick.keep = true;
 				}
@@ -55,7 +57,8 @@ const doSeason = async (
 				!ongoingDraft &&
 				!skipChallengeMode &&
 				!skipRealPlayers &&
-				!skipForceHistoricalRosters
+				!skipForceHistoricalRosters &&
+				!skipRepeatSeason
 			) {
 				await idb.cache.draftPicks.add({
 					tid: t.tid,

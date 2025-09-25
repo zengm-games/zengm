@@ -5,6 +5,10 @@ import type {
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
 
+const isPowerOfTwoMinTwo = (n: number) => {
+	return n >= 2 && (n & (n - 1)) === 0;
+};
+
 const getPlayoffsByConf = async (
 	season: number,
 	overrides?: {
@@ -13,15 +17,16 @@ const getPlayoffsByConf = async (
 		playoffsByConf: GameAttributesLeague["playoffsByConf"];
 		skipPlayoffSeries: boolean;
 	},
-) => {
+): Promise<number | false> => {
 	if (!overrides?.skipPlayoffSeries) {
 		const playoffSeries =
 			overrides?.playoffSeries ??
 			(await idb.getCopy.playoffSeries({ season }, "noCopyCache"));
+		const byConf = playoffSeries?.byConf;
 
-		if (playoffSeries && playoffSeries.byConf !== undefined) {
+		if (byConf !== undefined) {
 			// This is the most authoritative source, because it also handles the case where the setting is enabled but a conference doesn't have enough teams
-			return playoffSeries.byConf;
+			return byConf === true ? 2 : byConf;
 		}
 	}
 
@@ -29,7 +34,9 @@ const getPlayoffsByConf = async (
 	const playoffsByConf = overrides?.playoffsByConf ?? g.get("playoffsByConf");
 	const confs = overrides?.confs ?? g.get("confs", season);
 
-	return playoffsByConf && confs.length === 2;
+	const numConfs = confs.length;
+
+	return playoffsByConf && isPowerOfTwoMinTwo(numConfs) ? numConfs : false;
 };
 
 export default getPlayoffsByConf;

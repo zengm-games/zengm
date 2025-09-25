@@ -120,35 +120,14 @@ const getTidPlayoffs = (series: PlayoffSeries["series"]) => {
 	return tids;
 };
 
-export const genPlayoffSeriesFromTeams = async (
-	teams: MyTeam[],
-	orderTeamsOptions?: {
-		skipTiebreakers?: boolean;
-	},
-) => {
-	// Playoffs are split into two branches by conference only if there are exactly 2 conferences
-	let playoffsByConf = await getPlayoffsByConf(g.get("season"));
-
-	// Don't let there be an odd number of byes if playoffsByConf, otherwise it would get confusing
-	const numPlayoffByes = helpers.bound(
-		playoffsByConf && g.get("numPlayoffByes", "current") % 2 === 1
-			? g.get("numPlayoffByes", "current") - 1
-			: g.get("numPlayoffByes", "current"),
-		0,
-		Infinity,
-	);
-	const numRounds = g.get("numGamesPlayoffSeries", "current").length;
-
-	if (numRounds === 0) {
-		return {
-			byConf: playoffsByConf,
-			series: [],
-			tidPlayIn: [],
-			tidPlayoffs: [],
-		};
-	}
-
-	const byConf = await getPlayoffsByConf(g.get("season"));
+const myValidatePlayoffSettings = ({
+	numRounds,
+	numPlayoffByes,
+	byConf,
+}: Pick<
+	Parameters<typeof validatePlayoffSettings>[0],
+	"numRounds" | "numPlayoffByes" | "byConf"
+>) => {
 	try {
 		validatePlayoffSettings({
 			numRounds,
@@ -167,38 +146,59 @@ export const genPlayoffSeriesFromTeams = async (
 		// We need to stop executing because otherwise it will somehow have some other error due to invalid settings
 		throw error;
 	}
+};
 
-	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
+export const genPlayoffSeriesFromTeams = async (
+	teams: MyTeam[],
+	orderTeamsOptions?: {
+		skipTiebreakers?: boolean;
+	},
+) => {
+	const numRounds = g.get("numGamesPlayoffSeries", "current").length;
+
+	if (numRounds === 0) {
+		return {
+			byConf: false,
+			series: [],
+			tidPlayIn: [],
+			tidPlayoffs: [],
+		};
+	}
+
+	// Playoffs are split into two branches by conference only if there are exactly 2 conferences
+	let playoffsByConf = await getPlayoffsByConf(g.get("season"));
 
 	let series: PlayoffSeries["series"] = range(numRounds).map(() => []);
 
 	let playIns: PlayoffSeries["playIns"] = [];
 
+	// We need enough playoff teams to have at least one per conference
 	if (playoffsByConf) {
+		// Don't let there be an odd number of byes if playoffsByConf, otherwise it would get confusing
+		const numPlayoffByes = helpers.bound(
+			playoffsByConf && g.get("numPlayoffByes", "current") % 2 === 1
+				? g.get("numPlayoffByes", "current") - 1
+				: g.get("numPlayoffByes", "current"),
+			0,
+			Infinity,
+		);
+
+		// Mostly for TypeScript to know this never changes to false
+		const byConf = playoffsByConf;
+
+		myValidatePlayoffSettings({
+			numRounds,
+			numPlayoffByes,
+			byConf,
+		});
+
+		const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
+
 		const teamsByCid = groupBy(teams, (t) => t.seasonAttrs.cid);
 
-		if (numRounds > 1) {
-			// Default: top 50% of teams in each of the two conferences
-			for (const conf of g.get("confs", "current")) {
-				const teamsConf = teamsByCid[conf.cid];
+		const numRoundsNeeded = Math.log2(byConf);
 
-				if (teamsConf && teamsConf.length >= numPlayoffTeams / 2) {
-					const { round, playIn } = await makeMatchups(
-						await orderTeams(teamsConf, teams, orderTeamsOptions),
-						numPlayoffTeams / 2,
-						numPlayoffByes / 2,
-					);
-					series[0]!.push(...round);
-					if (playIn) {
-						playIns.push(playIn);
-					}
-				} else {
-					// Not enough teams in conference for playoff bracket
-					playoffsByConf = false;
-					playIns = [];
-				}
-			}
-		} else {
+		if (byConf === 2 && numRounds === 1) {
 			// Special case - if there is only one round, pick the best team in each conference to play
 			const teamsFinals: MyTeam[] = [];
 
@@ -222,11 +222,47 @@ export const genPlayoffSeriesFromTeams = async (
 				// Not enough teams in conference for playoff bracket
 				playoffsByConf = false;
 			}
+		} else if (numRounds >= numRoundsNeeded) {
+			for (const conf of g.get("confs", "current")) {
+				const teamsConf = teamsByCid[conf.cid];
+
+				if (teamsConf && teamsConf.length >= numPlayoffTeams / byConf) {
+					const { round, playIn } = await makeMatchups(
+						await orderTeams(teamsConf, teams, orderTeamsOptions),
+						numPlayoffTeams / byConf,
+						numPlayoffByes / byConf,
+					);
+					series[0]!.push(...round);
+					if (playIn) {
+						playIns.push(playIn);
+					}
+				} else {
+					// Not enough teams in conference for playoff bracket
+					playoffsByConf = false;
+					playIns = [];
+				}
+			}
+		} else {
+			playoffsByConf = false;
 		}
 	}
 
 	// Not an "else" because if the (playoffsByConf) branch fails it sets it to false and runs this as backup
-	if (!playoffsByConf) {
+	if (playoffsByConf === false) {
+		const numPlayoffByes = helpers.bound(
+			g.get("numPlayoffByes", "current"),
+			0,
+			Infinity,
+		);
+
+		myValidatePlayoffSettings({
+			numRounds,
+			numPlayoffByes,
+			byConf: playoffsByConf,
+		});
+
+		const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
+
 		// Reset, in case it was partially set in prior branch
 		series = range(numRounds).map(() => []);
 

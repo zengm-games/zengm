@@ -1485,7 +1485,7 @@ export type PlayInTournament =
 	| [PlayInMatchup, PlayInMatchup, PlayInMatchup];
 
 export type PlayoffSeries = {
-	byConf?: boolean; // undefined is for upgraded leagues and real players leagues
+	byConf?: number | false; // undefined is for upgraded leagues and real players leagues
 	currentRound: number;
 	season: number;
 	series: {

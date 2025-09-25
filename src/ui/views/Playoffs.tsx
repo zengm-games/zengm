@@ -106,6 +106,12 @@ const Playoffs = ({
 			}
 		: undefined;
 
+	// Hide "Best of X" footer if it's the same number of games every series
+	const showFooter =
+		numGamesPlayoffSeries.some(
+			(numGames) => numGames !== numGamesPlayoffSeries[0],
+		) || true;
+
 	return (
 		<div style={{ maxWidth }}>
 			{!finalMatchups ? (
@@ -142,13 +148,14 @@ const Playoffs = ({
 				</div>
 			) : null}
 
-			{playoffsByConf && numRounds > 1 ? (
-				<h2 className="d-none d-sm-block">
-					{confNames[1]} <span className="float-end">{confNames[0]}</span>
+			{(playoffsByConf === 2 || playoffsByConf === 4) && numRounds > 1 ? (
+				<h2 className="d-none d-sm-block mb-2">
+					{confNames[playoffsByConf === 2 ? 1 : 2]}{" "}
+					<span className="float-end">{confNames[0]}</span>
 				</h2>
 			) : null}
 
-			<ResponsiveTableWrapper>
+			<ResponsiveTableWrapper className={showFooter ? "mb-1" : "mb-3"}>
 				<table className="table-sm w-100">
 					<tbody>
 						{matchups.map((row, i) => (
@@ -173,29 +180,41 @@ const Playoffs = ({
 							</tr>
 						))}
 					</tbody>
-					<tfoot>
-						<tr className="text-center text-body-secondary">
-							{numGamesPlayoffSeriesReflected.map((numGames, i) => {
-								let text = null;
-								if (numGames !== undefined) {
-									text = `Best of ${numGames}`;
-								}
+					{showFooter ? (
+						<tfoot>
+							<tr className="text-center text-body-secondary">
+								{numGamesPlayoffSeriesReflected.map((numGames, i) => {
+									let text = null;
+									if (numGames !== undefined) {
+										text = `Best of ${numGames}`;
+									}
 
-								// Div wrapper is needed if you have a play-in tournament and one playoff round
-								return (
-									<td key={i}>
-										<div
-											style={numRoundsWithPlayIn === 1.5 ? tdStyle : undefined}
-										>
-											{text}
-										</div>
-									</td>
-								);
-							})}
-						</tr>
-					</tfoot>
+									// Div wrapper is needed if you have a play-in tournament and one playoff round
+									return (
+										<td key={i}>
+											<div
+												style={
+													numRoundsWithPlayIn === 1.5 ? tdStyle : undefined
+												}
+											>
+												{text}
+											</div>
+										</td>
+									);
+								})}
+							</tr>
+						</tfoot>
+					) : null}
 				</table>
 			</ResponsiveTableWrapper>
+
+			{playoffsByConf === 4 ? (
+				<h2 className="d-none d-sm-block mb-3">
+					{confNames[3]} <span className="float-end">{confNames[1]}</span>
+				</h2>
+			) : (
+				<div className="mb-3" />
+			)}
 
 			{playIns ? (
 				<>

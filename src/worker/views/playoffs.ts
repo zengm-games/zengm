@@ -68,7 +68,7 @@ const updatePlayoffs = async (
 			numGamesPlayoffSeries: number[];
 			numGamesToWinSeries: number[];
 			playIns: PlayIns;
-			playoffsByConf: boolean;
+			playoffsByConf: number | false;
 			season: number;
 			series: {
 				home: SeriesTeam;

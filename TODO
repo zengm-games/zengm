@@ -17,7 +17,6 @@ playoffsByConf should support numConfs!=2
   - do it based on Manage Confs order
 - store byConf as number of confs rather than boolean
 - roundsWonText needs to know how many confs, not just a boolean playoffsByConf
-- conference names in playoff bracket
 - upgrade
   - set setting to false unless there are 2 confs only
   - byConf values

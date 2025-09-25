@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import type { View } from "../../common/types.ts";
+import type { PlayoffSeries, View } from "../../common/types.ts";
 import { helpers } from "../util/index.ts";
 import type { ReactNode } from "react";
 
@@ -27,7 +27,7 @@ type SeriesTeam = {
 type TeamToEdit = View<"playoffs">["teamsToEdit"][number];
 
 type Editing = {
-	byConf: boolean;
+	byConf: NonNullable<PlayoffSeries["byConf"]>;
 	onChange: (prevTeam: TeamToEdit, newTeam: TeamToEdit) => void;
 	teams: TeamToEdit[];
 };

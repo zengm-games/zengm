@@ -236,3 +236,58 @@ describe("leagueUrlBase", () => {
 		assert.strictEqual(helpers.leagueUrlBase(lid, components), assertedUrl);
 	});
 });
+
+describe("roundsWonText", () => {
+	test("Default league, byConf", () => {
+		assert.strictEqual(helpers.roundsWonText(-1, 4, 2), "");
+		assert.strictEqual(helpers.roundsWonText(0, 4, 2), "Made playoffs");
+		assert.strictEqual(
+			helpers.roundsWonText(1, 4, 2),
+			"Made conference semifinals",
+		);
+		assert.strictEqual(
+			helpers.roundsWonText(2, 4, 2),
+			"Made conference finals",
+		);
+		assert.strictEqual(helpers.roundsWonText(3, 4, 2), "Conference champs");
+		assert.strictEqual(helpers.roundsWonText(4, 4, 2), "League champs");
+	});
+
+	test("Default league, no byConf", () => {
+		assert.strictEqual(helpers.roundsWonText(-1, 4, false), "");
+		assert.strictEqual(helpers.roundsWonText(0, 4, false), "Made playoffs");
+		assert.strictEqual(
+			helpers.roundsWonText(1, 4, false),
+			"Made quarterfinals",
+		);
+		assert.strictEqual(helpers.roundsWonText(2, 4, false), "Made semifinals");
+		assert.strictEqual(helpers.roundsWonText(3, 4, false), "Made finals");
+		assert.strictEqual(helpers.roundsWonText(4, 4, false), "League champs");
+	});
+
+	test("More conferences", () => {
+		assert.strictEqual(helpers.roundsWonText(-1, 4, 4), "");
+		assert.strictEqual(helpers.roundsWonText(0, 4, 4), "Made playoffs");
+		assert.strictEqual(
+			helpers.roundsWonText(1, 4, 4),
+			"Made conference finals",
+		);
+		assert.strictEqual(helpers.roundsWonText(2, 4, 4), "Conference champs");
+		assert.strictEqual(helpers.roundsWonText(3, 4, 4), "Made finals");
+		assert.strictEqual(helpers.roundsWonText(4, 4, 4), "League champs");
+
+		assert.strictEqual(helpers.roundsWonText(-1, 4, 8), "");
+		assert.strictEqual(helpers.roundsWonText(0, 4, 8), "Made playoffs");
+		assert.strictEqual(helpers.roundsWonText(1, 4, 8), "Conference champs");
+		assert.strictEqual(helpers.roundsWonText(2, 4, 8), "Made semifinals");
+		assert.strictEqual(helpers.roundsWonText(3, 4, 8), "Made finals");
+		assert.strictEqual(helpers.roundsWonText(4, 4, 8), "League champs");
+
+		assert.strictEqual(helpers.roundsWonText(-1, 4, 16), "");
+		assert.strictEqual(helpers.roundsWonText(0, 4, 16), "Made playoffs");
+		assert.strictEqual(helpers.roundsWonText(1, 4, 16), "Made quarterfinals");
+		assert.strictEqual(helpers.roundsWonText(2, 4, 16), "Made semifinals");
+		assert.strictEqual(helpers.roundsWonText(3, 4, 16), "Made finals");
+		assert.strictEqual(helpers.roundsWonText(4, 4, 16), "League champs");
+	});
+});

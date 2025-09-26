@@ -1296,24 +1296,41 @@ const roundsWonText = (
 			return "League champs" as const;
 		}
 
+		// Put this above "made playoffs" to handle the 2 team playoff case
 		if (playoffRoundsWon === numPlayoffRounds - 1) {
-			return playoffsByConf ? "Conference champs" : ("Made finals" as const);
+			return playoffsByConf === 2
+				? "Conference champs"
+				: ("Made finals" as const);
 		}
 
+		// Put this early so as to not glorify just making the playoffs with some fancier text
 		if (playoffRoundsWon === 0) {
 			return "Made playoffs" as const;
 		}
 
+		const confChampionshipRound =
+			playoffsByConf === false
+				? undefined
+				: numPlayoffRounds - Math.log2(playoffsByConf);
+
+		if (confChampionshipRound !== undefined) {
+			if (playoffRoundsWon === confChampionshipRound) {
+				return "Conference champs";
+			}
+			if (playoffRoundsWon === confChampionshipRound - 1) {
+				return "Made conference finals";
+			}
+			if (playoffRoundsWon === confChampionshipRound - 2) {
+				return "Made conference semifinals";
+			}
+		}
+
 		if (playoffRoundsWon === numPlayoffRounds - 2) {
-			return playoffsByConf
-				? "Made conference finals"
-				: ("Made semifinals" as const);
+			return "Made semifinals" as const;
 		}
 
 		if (playoffRoundsWon === numPlayoffRounds - 3) {
-			return playoffsByConf
-				? "Made conference semifinals"
-				: ("Made quarterfinals" as const);
+			return "Made quarterfinals" as const;
 		}
 
 		if (playoffRoundsWon >= 1) {

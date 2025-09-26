@@ -167,12 +167,18 @@ const createGameAttributes = async (
 	let newNumGames = oldNumGames;
 	let legacyPlayoffs = (gameAttributes as any).numPlayoffRounds !== undefined;
 	try {
+		const byConf = await season.getPlayoffsByConf(gameAttributes.season, {
+			skipPlayoffSeries: true,
+			playoffsByConf: gameAttributes.playoffsByConf,
+			confs: unwrapGameAttribute(gameAttributes, "confs"),
+		});
+
 		season.validatePlayoffSettings({
 			numRounds: oldNumGames.length,
 			numPlayoffByes: unwrapGameAttribute(gameAttributes, "numPlayoffByes"),
 			numActiveTeams: gameAttributes.numActiveTeams,
 			playIn: gameAttributes.playIn,
-			byConf: gameAttributes.playoffsByConf,
+			byConf,
 		});
 	} catch {
 		legacyPlayoffs = true;

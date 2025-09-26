@@ -1,3 +1,4 @@
+import type { ByConf } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
 import getPlayoffsByConf from "./getPlayoffsByConf.ts";
@@ -11,13 +12,13 @@ export const getNumPlayoffTeamsRaw = ({
 	numRounds: number;
 	numPlayoffByes: number;
 	playIn: boolean;
-	byConf: boolean;
+	byConf: ByConf;
 }) => {
 	const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
 	let numPlayInTeams = 0;
 	if (playIn) {
 		if (byConf) {
-			numPlayInTeams += 4;
+			numPlayInTeams += 2 * byConf;
 		} else {
 			numPlayInTeams += 2;
 		}

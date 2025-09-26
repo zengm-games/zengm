@@ -2,6 +2,7 @@ import { season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, getTeamInfoBySeason, helpers } from "../util/index.ts";
 import {
+	type ByConf,
 	type PlayerStatType,
 	type UpdateEvents,
 	type ViewInput,
@@ -120,7 +121,7 @@ const updateNotes = async (
 			const pointsFormula = g.get("pointsFormula");
 			const usePts = pointsFormula !== "";
 
-			const playoffsByConfBySeason = new Map<number, boolean>();
+			const playoffsByConfBySeason = new Map<number, ByConf>();
 
 			const teams = [];
 			for (const ts of teamSeasons) {

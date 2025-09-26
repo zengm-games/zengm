@@ -26,7 +26,7 @@ const getPlayoffsByConf = async (
 
 		if (byConf !== undefined) {
 			// This is the most authoritative source, because it also handles the case where the setting is enabled but a conference doesn't have enough teams
-			return byConf === true ? 2 : byConf;
+			return byConf;
 		}
 	}
 

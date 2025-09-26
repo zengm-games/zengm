@@ -4,6 +4,7 @@ import type {
 	PlayoffSeries,
 	PlayoffSeriesTeam,
 	PlayInTournament,
+	ByConf,
 } from "../../../common/types.ts";
 import genPlayoffSeeds from "./genPlayoffSeeds.ts";
 import { idb } from "../../db/index.ts";
@@ -162,6 +163,11 @@ export const genPlayoffSeriesFromTeams = async (
 			series: [],
 			tidPlayIn: [],
 			tidPlayoffs: [],
+		} satisfies {
+			byConf: ByConf;
+			series: PlayoffSeries["series"];
+			tidPlayIn: number[];
+			tidPlayoffs: number[];
 		};
 	}
 

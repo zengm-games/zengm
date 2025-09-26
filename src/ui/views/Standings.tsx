@@ -8,7 +8,7 @@ import {
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCol, helpers } from "../util/index.ts";
 import useClickable from "../hooks/useClickable.tsx";
-import type { TeamSeason, View } from "../../common/types.ts";
+import type { ByConf, TeamSeason, View } from "../../common/types.ts";
 import { bySport, isSport, TIEBREAKERS } from "../../common/index.ts";
 
 type StandingsTeam =
@@ -309,7 +309,7 @@ const SmallStandingsRow = ({
 	maxPlayoffSeed: number;
 	maxPlayoffSeedNoPlayIn: number;
 	maxRank: number;
-	playoffsByConf: boolean;
+	playoffsByConf: ByConf;
 	season: number;
 	t: StandingsTeam;
 	usePts: boolean;
@@ -329,14 +329,14 @@ const SmallStandingsRow = ({
 		>
 			<TeamColumn
 				maxRank={maxRank}
-				rank={playoffsByConf ? t.rank.conf : t.rank.league}
+				rank={playoffsByConf !== false ? t.rank.conf : t.rank.league}
 				season={season}
 				t={t}
 			/>
 			<td className="text-end">
 				{usePts
 					? Math.round(t.seasonAttrs.pts)
-					: playoffsByConf
+					: playoffsByConf !== false
 						? t.gb.conf
 						: t.gb.league}
 			</td>

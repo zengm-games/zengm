@@ -5,6 +5,7 @@ import type {
 	ViewInput,
 	TeamSeason,
 	Player,
+	ByConf,
 } from "../../common/types.ts";
 import { getBestPos } from "../core/player/checkJerseyNumberRetirement.ts";
 import { bySport } from "../../common/index.ts";
@@ -33,7 +34,7 @@ export const getHistoryTeam = (
 		otl?: number;
 		playoffRoundsWon: number;
 		numPlayoffRounds: number;
-		playoffsByConf: boolean;
+		playoffsByConf: ByConf;
 		name?: string;
 		tid: number;
 		abbrev: string;

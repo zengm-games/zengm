@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/index.ts";
-import type { View } from "../../common/types.ts";
+import type { ByConf, View } from "../../common/types.ts";
 import {
 	MoreLinks,
 	PlayerNameLabels,
@@ -118,7 +118,7 @@ const TeamList = ({
 }: {
 	challengeNoRatings: boolean;
 	numPlayoffRounds: number;
-	playoffsByConf: boolean;
+	playoffsByConf: ByConf;
 	teams: View<"seasonPreview">["teamsTop"];
 	season: number;
 	userTid: number;

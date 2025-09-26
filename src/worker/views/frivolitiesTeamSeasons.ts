@@ -4,6 +4,7 @@ import type {
 	UpdateEvents,
 	ViewInput,
 	TeamSeason,
+	ByConf,
 } from "../../common/types.ts";
 import { isSport, PHASE } from "../../common/index.ts";
 import { team } from "../core/index.ts";
@@ -40,7 +41,7 @@ class DefaultKeyMap<Key, Value> extends Map<Key, Value> {
 
 export const getPlayoffsByConfBySeason = async () => {
 	const currentSeason = g.get("season");
-	const playoffsByConfBySeason = new DefaultKeyMap<number, boolean>(
+	const playoffsByConfBySeason = new DefaultKeyMap<number, ByConf>(
 		currentSeason,
 	);
 	for (
@@ -61,7 +62,7 @@ const getMostXTeamSeasons = async ({
 	sortParams,
 }: {
 	filter?: (ts: TeamSeason) => boolean;
-	getValue: (ts: TeamSeason, playoffsByConf: boolean) => Most | undefined;
+	getValue: (ts: TeamSeason, playoffsByConf: ByConf) => Most | undefined;
 	after?: (most: Most) => Promise<Most> | Most;
 	sortParams: OrderBySortParams;
 }) => {
@@ -181,7 +182,7 @@ const getMostXTeamSeasons = async ({
 	return ordered;
 };
 
-export const getRoundsWonText = (ts: TeamSeason, playoffsByConf: boolean) => {
+export const getRoundsWonText = (ts: TeamSeason, playoffsByConf: ByConf) => {
 	const numPlayoffRounds = g.get("numGamesPlayoffSeries", ts.season).length;
 
 	return helpers.roundsWonText(

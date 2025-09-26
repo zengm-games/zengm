@@ -3,6 +3,7 @@ import type {
 	TeamSeason,
 	Conditions,
 	TeamStats,
+	ByConf,
 } from "../../../common/types.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import {
@@ -286,7 +287,7 @@ const updateClinchedPlayoffs = async (
 		clinchedPlayoffs = await getClinchedPlayoffs(teamSeasons, teamStats);
 	}
 
-	let playoffsByConf: boolean | undefined;
+	let playoffsByConf: ByConf | undefined;
 	for (const [i, ts] of teamSeasons.entries()) {
 		if (clinchedPlayoffs[i] !== ts.clinchedPlayoffs) {
 			ts.clinchedPlayoffs = clinchedPlayoffs[i];

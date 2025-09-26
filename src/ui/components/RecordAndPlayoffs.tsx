@@ -1,3 +1,4 @@
+import type { ByConf } from "../../common/types.ts";
 import { helpers } from "../util/index.ts";
 
 const RecordAndPlayoffs = ({
@@ -27,7 +28,7 @@ const RecordAndPlayoffs = ({
 			boldChamps?: boolean;
 			numPlayoffRounds: number;
 			playoffRoundsWon: number;
-			playoffsByConf: boolean;
+			playoffsByConf: ByConf;
 	  }
 	| {
 			boldChamps?: void;

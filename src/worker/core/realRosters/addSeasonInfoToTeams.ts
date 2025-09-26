@@ -142,7 +142,7 @@ const addSeasonInfoToTeams = async <
 					roundsWonText = helpers.roundsWonText(
 						playoffRoundsWon,
 						gameAttributes.numGamesPlayoffSeries!.length,
-						gameAttributes.confs.length === 2,
+						gameAttributes.confs.length === 2 ? 2 : false,
 						true,
 					);
 				}

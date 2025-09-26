@@ -1,22 +1,27 @@
 import { idb } from "../db/index.ts";
 import { g, helpers, orderTeams } from "../util/index.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import type { ByConf, UpdateEvents, ViewInput } from "../../common/types.ts";
 import { getTiebreakers } from "../util/orderTeams.ts";
 import { season } from "../core/index.ts";
 
 export const getMaxPlayoffSeed = async (
 	playoffSeason: number,
-	playoffsByConf: boolean,
+	playoffsByConf: ByConf,
 ) => {
 	const { numPlayoffTeams, numPlayInTeams } =
 		await season.getNumPlayoffTeams(playoffSeason);
 	const numTotalPlayoffs = numPlayoffTeams + numPlayInTeams;
 
-	const maxPlayoffSeed = playoffsByConf
-		? numTotalPlayoffs / 2
-		: numTotalPlayoffs;
+	const maxPlayoffSeed =
+		playoffsByConf !== false
+			? numTotalPlayoffs / playoffsByConf
+			: numTotalPlayoffs;
 	const maxPlayoffSeedNoPlayIn =
-		maxPlayoffSeed - 2 * (playoffsByConf ? numPlayInTeams / 2 : numPlayInTeams);
+		maxPlayoffSeed -
+		2 *
+			(playoffsByConf !== false
+				? numPlayInTeams / playoffsByConf
+				: numPlayInTeams);
 
 	return {
 		maxPlayoffSeed,

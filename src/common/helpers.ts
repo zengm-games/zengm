@@ -6,6 +6,7 @@ import type {
 	PlayerContract,
 	GameAttributesLeague,
 	RelativeType,
+	ByConf,
 } from "./types.ts";
 import getTeamInfos from "./getTeamInfos.ts";
 import isSport from "./isSport.ts";
@@ -1287,7 +1288,7 @@ const getJerseyNumber = (
 const roundsWonText = (
 	playoffRoundsWon: number,
 	numPlayoffRounds: number,
-	playoffsByConf: boolean,
+	playoffsByConf: ByConf,
 	showMissedPlayoffs?: boolean,
 ) => {
 	if (playoffRoundsWon >= 0) {

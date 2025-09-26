@@ -1,6 +1,7 @@
 import { unwrap } from "@dumbmatter/idb";
 import {
 	DEFAULT_PLAY_THROUGH_INJURIES,
+	DEFAULT_STADIUM_CAPACITY,
 	DEFAULT_TEAM_COLORS,
 	DIFFICULTY,
 	gameAttributesArrayToObject,
@@ -1606,6 +1607,36 @@ const migrate = async ({
 				if (updated) {
 					await cursor.update(t);
 				}
+			}
+		}
+	}
+
+	if (oldVersion < 69) {
+		// By thorough with recent Team change, even though it only affects very old leagues
+		for await (const cursor of transaction.objectStore("teams").iterate()) {
+			const t = cursor.value;
+			if (t.pop === undefined || t.stadiumCapacity === undefined) {
+				// Get most recent teamSeason
+				const cursor2 = await transaction
+					.objectStore("teamSeasons")
+					.index("tid, season")
+					.openCursor(IDBKeyRange.bound([t.tid], [t.tid, []]), "prev");
+				const teamSeason = cursor2?.value;
+
+				t.pop = teamSeason?.pop ?? 1;
+				t.stadiumCapacity = teamSeason?.pop ?? DEFAULT_STADIUM_CAPACITY;
+				await cursor.update(t);
+			}
+		}
+
+		for await (const cursor of transaction
+			.objectStore("playoffSeries")
+			.iterate()) {
+			const row = cursor.value;
+			if ((row as any).byConf === true) {
+				// This setting only worked with 2 conferences in the past, so 2 is what `true` used to mean
+				row.byConf = 2;
+				await cursor.update(row);
 			}
 		}
 	}

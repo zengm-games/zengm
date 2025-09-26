@@ -14,9 +14,6 @@ playoffsByConf should support numConfs!=2
 - how to determine which teams play when all the conference winners are left? UI is tricky
   - do it based on Manage Confs order
 - roundsWonText needs to know how many confs, not just a boolean playoffsByConf
-- upgrade
-  - set setting to false unless there are 2 confs only
-  - byConf values
 
 forceHistoricalRosters
 - later

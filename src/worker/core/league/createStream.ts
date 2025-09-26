@@ -282,6 +282,11 @@ const preProcess = async (
 
 			delete x.won;
 		}
+	} else if (key === "playoffSeries") {
+		// Version 69 upgrade
+		if (x.byConf === true) {
+			x.byConf = 2;
+		}
 	}
 
 	return x;
@@ -704,6 +709,17 @@ const processTeamInfos = async ({
 				} else if (t[key] === "/img/logos-secondary/CHI.svg") {
 					t[key] = "/img/logos-secondary/CHW.svg";
 				}
+			}
+		}
+	}
+
+	// Version 69 upgrade
+	if (version !== undefined && version < 69) {
+		for (const t of teamInfos) {
+			if (t.pop === undefined || t.stadiumCapacity === undefined) {
+				const teamSeason = t.seasons?.at(-1);
+				t.pop = teamSeason?.pop ?? 1;
+				t.stadiumCapacity = teamSeason?.pop ?? DEFAULT_STADIUM_CAPACITY;
 			}
 		}
 	}

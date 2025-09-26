@@ -18,10 +18,19 @@ const validatePlayoffSettings = ({
 		throw new Error("Cannot have a negative number of byes");
 	}
 
+	// This would be handled by the below check too, but this is a nicer error message for the common case
 	if (numRounds === 2 && numPlayoffByes > 0 && byConf !== false) {
 		throw new Error(
 			"You cannot have any byes in a two round playoff split by conference.",
 		);
+	}
+
+	if (byConf !== false && numPlayoffByes > 0 && numRounds > 0) {
+		// Make sure there are not too many byes
+		const numFirstRoundMatchups = 2 ** (numRounds - 1);
+		if (numPlayoffByes >= numFirstRoundMatchups) {
+			throw new Error("Too many byes for your playoff settings.");
+		}
 	}
 
 	if (numRounds === 1 && numPlayoffByes > 0) {

@@ -48,7 +48,7 @@ const genTeam = (t: MinimalTeam, seed: number): PlayoffSeriesTeam => {
 	};
 };
 
-// In a 2 conference playoff, this should be called once with each side of the bracket
+// In a byConf playoff, this should be called once for each conference
 export const makeMatchups = (
 	teams: MinimalTeam[],
 	numPlayoffTeams: number,
@@ -243,6 +243,7 @@ export const genPlayoffSeriesFromTeams = async (
 					// Not enough teams in conference for playoff bracket
 					playoffsByConf = false;
 					playIns = [];
+					break;
 				}
 			}
 		} else {

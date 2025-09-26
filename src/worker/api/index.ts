@@ -4886,7 +4886,7 @@ const validatePlayoffSettings = async ({
 
 	season.validatePlayoffSettings({
 		numRounds,
-		numPlayoffByes,
+		numPlayoffByes: season.getNumPlayoffByes({ numPlayoffByes, byConf }),
 		numActiveTeams,
 		playIn,
 		byConf,

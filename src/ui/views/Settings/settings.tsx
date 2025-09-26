@@ -487,8 +487,8 @@ export const settings: Setting[] = (
 			name: "# First Round Byes",
 			godModeRequired: "existingLeagueOnly",
 			type: "int",
-			description:
-				"Number of playoff teams who will get a bye in the first round. For leagues with two conferences, byes will be split evenly across conferences.",
+			descriptionLong:
+				'Number of playoff teams who will get a bye in the first round. If "Split By Conference" is enabled, byes will be divided evenly into each conference, and it will round up if necessary so every conference gets the same number of byes. For instance if you have 4 conferences and you put "2" in here, it will round up to 4 total byes (one in each conference).',
 			validator: (value) => {
 				if (value < 0) {
 					throw new Error("Value cannot be less than 0");

@@ -11,7 +11,11 @@ export const getNumPlayoffByes = ({
 		return numPlayoffByes;
 	}
 
-	// Round up to a multiple of the number of conferences - so all conferences get the same number of byes
 	const extra = numPlayoffByes % byConf;
-	return numPlayoffByes + extra;
+	if (extra === 0) {
+		return numPlayoffByes;
+	}
+
+	// Round up to a multiple of the number of conferences - so all conferences get the same number of byes
+	return numPlayoffByes + (byConf - extra);
 };

@@ -107,10 +107,9 @@ const Playoffs = ({
 		: undefined;
 
 	// Hide "Best of X" footer if it's the same number of games every series
-	const showFooter =
-		numGamesPlayoffSeries.some(
-			(numGames) => numGames !== numGamesPlayoffSeries[0],
-		) || true;
+	const showFooter = numGamesPlayoffSeries.some(
+		(numGames) => numGames !== numGamesPlayoffSeries[0],
+	);
 
 	return (
 		<div style={{ maxWidth }}>

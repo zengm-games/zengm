@@ -1,6 +1,7 @@
 import type { ByConf } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
+import { getNumPlayoffByes } from "./getNumPlayoffByes.ts";
 import getPlayoffsByConf from "./getPlayoffsByConf.ts";
 
 export const getNumPlayoffTeamsRaw = ({
@@ -32,9 +33,11 @@ export const getNumPlayoffTeamsRaw = ({
 
 const getNumPlayoffTeams = async (season: number) => {
 	const numRounds = g.get("numGamesPlayoffSeries", season).length;
-	const numPlayoffByes = g.get("numPlayoffByes", season);
-
 	const byConf = await getPlayoffsByConf(season);
+	const numPlayoffByes = getNumPlayoffByes({
+		numPlayoffByes: g.get("numPlayoffByes", season),
+		byConf,
+	});
 
 	const playoffSeries = await idb.getCopy.playoffSeries(
 		{ season },

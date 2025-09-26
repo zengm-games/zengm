@@ -42,9 +42,12 @@ const updateStandings = async (
 	) {
 		const confs = g.get("confs", inputs.season);
 		const divs = g.get("divs", inputs.season);
-		const numPlayoffByes = g.get("numPlayoffByes", inputs.season);
 
 		const playoffsByConf = await season.getPlayoffsByConf(inputs.season);
+		const numPlayoffByes = season.getNumPlayoffByes({
+			numPlayoffByes: g.get("numPlayoffByes", inputs.season),
+			byConf: playoffsByConf,
+		});
 
 		const { maxPlayoffSeed, maxPlayoffSeedNoPlayIn } = await getMaxPlayoffSeed(
 			inputs.season,

@@ -1111,6 +1111,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					},
 					numPlayoffByes: wrap({
 						type: "integer",
+						minimum: 0,
 					}),
 					numSeasonsFutureDraftPicks: {
 						type: "integer",

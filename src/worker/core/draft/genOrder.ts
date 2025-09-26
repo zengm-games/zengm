@@ -15,6 +15,7 @@ import genOrderGetPicks from "./genOrderGetPicks.ts";
 import getTeamsByRound from "./getTeamsByRound.ts";
 import { bySport } from "../../../common/index.ts";
 import { league } from "../index.ts";
+import getNumPlayoffTeams from "../season/getNumPlayoffTeams.ts";
 
 type ReturnVal = {
 	draftLotteryResult:
@@ -194,9 +195,8 @@ const genOrder = async (
 	let numLotteryTeams = 0;
 	let chances: number[] = [];
 	if (draftHasLottery(draftType)) {
-		const numPlayoffTeams =
-			2 ** g.get("numGamesPlayoffSeries", "current").length -
-			g.get("numPlayoffByes", "current");
+		const numPlayoffTeams = (await getNumPlayoffTeams(g.get("season")))
+			.numPlayoffTeams;
 
 		const info = getLotteryInfo(
 			draftType,

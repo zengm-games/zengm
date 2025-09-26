@@ -6,6 +6,7 @@ import getAwardCandidates from "./getAwardCandidates.ts";
 import getDaysLeftSchedule from "./getDaysLeftSchedule.ts";
 import getInitialNumGamesConfDivSettings from "./getInitialNumGamesConfDivSettings.ts";
 import getLeaderRequirements from "./getLeaderRequirements.ts";
+import { getNumPlayoffByes } from "./getNumPlayoffByes.ts";
 import getNumPlayoffTeams from "./getNumPlayoffTeams.ts";
 import getPlayoffsByConf from "./getPlayoffsByConf.ts";
 import getSchedule from "./getSchedule.ts";
@@ -26,6 +27,7 @@ export default {
 	getDaysLeftSchedule,
 	getInitialNumGamesConfDivSettings,
 	getLeaderRequirements,
+	getNumPlayoffByes,
 	getNumPlayoffTeams,
 	getPlayoffsByConf,
 	getSchedule,

@@ -1,4 +1,4 @@
-import { g, helpers, logEvent, orderTeams } from "../../util/index.ts";
+import { g, logEvent, orderTeams } from "../../util/index.ts";
 import type {
 	TeamFiltered,
 	PlayoffSeries,
@@ -11,6 +11,7 @@ import { idb } from "../../db/index.ts";
 import getPlayoffsByConf from "./getPlayoffsByConf.ts";
 import validatePlayoffSettings from "./validatePlayoffSettings.ts";
 import { groupBy, range } from "../../../common/utils.ts";
+import { getNumPlayoffByes } from "./getNumPlayoffByes.ts";
 
 type MyTeam = TeamFiltered<
 	["tid"],
@@ -180,14 +181,10 @@ export const genPlayoffSeriesFromTeams = async (
 
 	// We need enough playoff teams to have at least one per conference
 	if (playoffsByConf) {
-		// Don't let there be an odd number of byes if playoffsByConf, otherwise it would get confusing
-		const numPlayoffByes = helpers.bound(
-			playoffsByConf && g.get("numPlayoffByes", "current") % 2 === 1
-				? g.get("numPlayoffByes", "current") - 1
-				: g.get("numPlayoffByes", "current"),
-			0,
-			Infinity,
-		);
+		const numPlayoffByes = getNumPlayoffByes({
+			numPlayoffByes: g.get("numPlayoffByes", "current"),
+			byConf: playoffsByConf,
+		});
 
 		// Mostly for TypeScript to know this never changes to false
 		const byConf = playoffsByConf;
@@ -255,11 +252,10 @@ export const genPlayoffSeriesFromTeams = async (
 
 	// Not an "else" because if the (playoffsByConf) branch fails it sets it to false and runs this as backup
 	if (playoffsByConf === false) {
-		const numPlayoffByes = helpers.bound(
-			g.get("numPlayoffByes", "current"),
-			0,
-			Infinity,
-		);
+		const numPlayoffByes = getNumPlayoffByes({
+			numPlayoffByes: g.get("numPlayoffByes", "current"),
+			byConf: playoffsByConf,
+		});
 
 		myValidatePlayoffSettings({
 			numRounds,

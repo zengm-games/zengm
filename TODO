@@ -4,9 +4,7 @@ playoffsByConf should support numConfs!=2
   - could fix so assumes numConfs byes
   - could fix so byes only apply to some confs - confusing!
   - also consider edge cases, like if we have 4 conferences and 2 rounds in the playoffs, there is no room for byes. what to do then? need to have at least 1 team remaining in each "bracket"
-- is `playoffsByConf === 2 && numRounds === 1` special case needed?
-- how to handle play-in tournament? probably only allow it with 2 confs if byConf
-  - actually should work regardless
+  - also abstract this logic for anywhere numPlayoffByes is used
 - settings validator to ensure we have enough rounds for byConf
   - put this in genPlayoffSeries too - maybe use genPlayoffSeries in validator?
 - otherwise, would need byes after the conferences are done.
@@ -15,7 +13,6 @@ playoffsByConf should support numConfs!=2
 - https://old.reddit.com/r/BasketballGM/comments/1nm84p1/how_to_split_playoffs_into_4_conferences/
 - how to determine which teams play when all the conference winners are left? UI is tricky
   - do it based on Manage Confs order
-- store byConf as number of confs rather than boolean
 - roundsWonText needs to know how many confs, not just a boolean playoffsByConf
 - upgrade
   - set setting to false unless there are 2 confs only

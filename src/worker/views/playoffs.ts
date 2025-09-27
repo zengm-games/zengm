@@ -210,7 +210,7 @@ const updatePlayoffs = async (
 
 			// Sort teams by normal playoff order
 			let teams: typeof teamsUnsorted;
-			if (playoffsByConf) {
+			if (playoffsByConf !== false) {
 				teams = [];
 				const teamsByConf = groupBy(teamsUnsorted, (t) => t.seasonAttrs.cid);
 				for (const teamsConf of Object.values(teamsByConf)) {

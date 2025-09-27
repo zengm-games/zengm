@@ -576,7 +576,7 @@ const Standings = ({
 				<div style={{ minWidth: 0 }}>{groupStandings}</div>
 			</div>
 		);
-	} else if (playoffsByConf) {
+	} else if (playoffsByConf !== false) {
 		// Show small standings alongside each conference
 		allStandings = (
 			<Fragment>

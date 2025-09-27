@@ -180,7 +180,7 @@ export const genPlayoffSeriesFromTeams = async (
 	let playIns: PlayoffSeries["playIns"] = [];
 
 	// We need enough playoff teams to have at least one per conference
-	if (playoffsByConf) {
+	if (playoffsByConf !== false) {
 		const numPlayoffByes = getNumPlayoffByes({
 			numPlayoffByes: g.get("numPlayoffByes", "current"),
 			byConf: playoffsByConf,

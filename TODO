@@ -1,9 +1,3 @@
-byConf glitches
-- fix playoffReseed https://old.reddit.com/r/BasketballGM/comments/1nrh776/version_202509261213_the_split_by_conference/ngeolaa/
-  - should it reseed after the intraconference part is done or not? https://old.reddit.com/r/BasketballGM/comments/1nrh776/version_202509261213_the_split_by_conference/ngeuww8/
-- // Special case for the finals, do it by winp not seed
-  - should be for all cross-conference matchups
-
 forceHistoricalRosters
 - later
   - handle mid season trades better

@@ -235,11 +235,11 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		}
 	}
 
+	// Can't just look in playoffSeries.byConf because of upgraded leagues and real players leagues started in the playoffs
+	const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
+
 	// Need to reorder for reseeding?
 	if (g.get("playoffsReseed")) {
-		// Can't just look in playoffSeries.byConf because of upgraded leagues and real players leagues started in the playoffs
-		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
-
 		let groups: PlayoffSeriesTeam[][];
 
 		// teamsWon.length > playoffsByConf check is so it stops grouping by conference when all the intraconference matchups are complete
@@ -268,7 +268,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		teamsWon = groups.flat();
 	}
 
-	const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
+	let teamsForPlayoffsByConf; // cache
 
 	for (let i = 0; i < teamsWon.length; i += 2) {
 		const team1 = teamsWon[i]!;
@@ -277,13 +277,10 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		// Set home/away in the next round - seed ties should be impossible except maybe in the finals, which is handled below
 		let firstTeamHome = team1.seed < team2.seed;
 
-		// Special case for the finals, do it by winp not seed
-		if (playoffsByConf) {
-			const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
-
-			// Plus 2 reason: 1 is for 0 indexing, 1 is because currentRound hasn't been incremented yet
-			if (numPlayoffRounds === playoffSeries.currentRound + 2) {
-				const allTeams = await idb.getCopies.teamsPlus(
+		// Special case for after the byConf rounds end - go by winp not seed, since the seeds are not directly comparable
+		if (playoffsByConf !== false && teamsWon.length <= playoffsByConf) {
+			if (!teamsForPlayoffsByConf) {
+				teamsForPlayoffsByConf = await idb.getCopies.teamsPlus(
 					{
 						attrs: ["tid"],
 						seasonAttrs: [
@@ -310,15 +307,19 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 					},
 					"noCopyCache",
 				);
-				const finalsTeams = allTeams.filter(
-					(t) => t.tid === team1.tid || t.tid === team2.tid,
-				);
-				if (finalsTeams.length === 2) {
-					const orderedTeams = await orderTeams(finalsTeams, allTeams, {
+			}
+			const matchupTeams = teamsForPlayoffsByConf.filter(
+				(t) => t.tid === team1.tid || t.tid === team2.tid,
+			);
+			if (matchupTeams.length === 2) {
+				const orderedTeams = await orderTeams(
+					matchupTeams,
+					teamsForPlayoffsByConf,
+					{
 						skipDivisionLeaders: true,
-					});
-					firstTeamHome = orderedTeams[0]!.tid === team1.tid;
-				}
+					},
+				);
+				firstTeamHome = orderedTeams[0]!.tid === team1.tid;
 			}
 		}
 

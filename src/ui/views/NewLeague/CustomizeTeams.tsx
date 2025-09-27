@@ -1,4 +1,4 @@
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import type { Dispatch } from "react";
 import type { NewLeagueTeamWithoutRank } from "./types.ts";
 import type { Conf, Div, Player, View } from "../../../common/types.ts";
@@ -532,6 +532,13 @@ const CardHeader = ({
 }) => {
 	const [renaming, setRenaming] = useState(false);
 	const [controlledName, setControlledName] = useState(name);
+	const inputRef = useRef<HTMLInputElement>(null);
+
+	useEffect(() => {
+		if (renaming && inputRef.current) {
+			inputRef.current.select();
+		}
+	}, [renaming]);
 
 	return (
 		<div className={clsx("card-header", renaming ? "p-1" : "px-2")}>
@@ -546,6 +553,7 @@ const CardHeader = ({
 					style={{ maxWidth: 300 }}
 				>
 					<input
+						ref={inputRef}
 						type="text"
 						className="form-control me-2"
 						value={controlledName}

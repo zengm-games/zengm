@@ -1428,8 +1428,20 @@ export const settings: Setting[] = (
 			key: "playoffsByConf",
 			name: "Split By Conference",
 			godModeRequired: "existingLeagueOnly",
-			descriptionLong:
-				"If your league has two conferences and there are enough teams in each conference to fill up half of the playoff bracket, then enabling this setting will put the top N teams of each conference into separate sides of the bracket.",
+			descriptionLong: (
+				<>
+					<p>
+						If your league has two conferences and there are enough teams in
+						each conference to fill up half of the playoff bracket, then
+						enabling this setting will put the top N teams of each conference
+						into separate sides of the bracket.
+					</p>
+					<p>
+						This also works for any power of two - like 4 conferences, 8
+						conferences, 16 conferences, etc.
+					</p>
+				</>
+			),
 			type: "bool",
 		},
 		{

@@ -4,6 +4,7 @@ import { g, helpers, local, lock, orderTeams } from "../../util/index.ts";
 import type { PlayoffSeriesTeam } from "../../../common/types.ts";
 import { season } from "../index.ts";
 import { isSport } from "../../../common/index.ts";
+import { chunk } from "../../../common/utils.ts";
 
 // Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.
 const betterSeedHome = (numGamesPlayoffSeries: number, gameNum: number) => {
@@ -240,9 +241,11 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
 
 		let groups: PlayoffSeriesTeam[][];
-		if (playoffsByConf) {
-			const half = Math.ceil(teamsWon.length / 2);
-			groups = [teamsWon.slice(0, half), teamsWon.slice(-half)];
+
+		// teamsWon.length > playoffsByConf check is so it stops grouping by conference when all the intraconference matchups are complete
+		if (playoffsByConf !== false && teamsWon.length > playoffsByConf) {
+			const groupSize = Math.ceil(teamsWon.length / playoffsByConf);
+			groups = chunk(teamsWon, groupSize);
 		} else {
 			groups = [[...teamsWon]];
 		}

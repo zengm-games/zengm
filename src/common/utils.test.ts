@@ -1,5 +1,5 @@
 import { assert, describe, test } from "vitest";
-import { countBy, maxBy, minBy, omit, orderBy, range } from "./utils.ts";
+import { chunk, countBy, maxBy, minBy, omit, orderBy, range } from "./utils.ts";
 
 test("range", () => {
 	assert.deepStrictEqual(range(5), [0, 1, 2, 3, 4]);
@@ -212,4 +212,17 @@ describe("orderBy", () => {
 			]);
 		}
 	});
+});
+
+test("chunk", () => {
+	assert.deepStrictEqual(chunk([1, 2, 3, 4, 5, 6], 2), [
+		[1, 2],
+		[3, 4],
+		[5, 6],
+	]);
+
+	assert.deepStrictEqual(chunk([1, 2, 3, 4, 5, 6], 4), [
+		[1, 2, 3, 4],
+		[5, 6],
+	]);
 });

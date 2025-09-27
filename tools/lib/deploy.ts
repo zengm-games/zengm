@@ -80,7 +80,6 @@ export const deploy = async () => {
 	// .well-known is here because we never want to delete anything in it
 	const copyAndKeep = ["gen", "files", ".well-known"]; // MAKE SURE TO EXCLUDE FROM DELETION BELOW
 	for (const folder of copyAndKeep) {
-		console.log(`Copying ${folder}...`);
 		await mySpawn("rsync", [
 			"-hrl",
 			`./build/${folder}/`,
@@ -88,7 +87,6 @@ export const deploy = async () => {
 		]);
 	}
 
-	console.log("Copying other files...");
 	// files and leagues are here because real-player-data was briefly there in May 2020, so we don't want to delete them
 	const excludes = [
 		"--exclude",

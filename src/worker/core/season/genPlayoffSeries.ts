@@ -201,31 +201,33 @@ export const genPlayoffSeriesFromTeams = async (
 
 		const numRoundsNeeded = Math.log2(byConf);
 
-		if (byConf === 2 && numRounds === 1) {
-			// Special case - if there is only one round, pick the best team in each conference to play
-			const teamsFinals: MyTeam[] = [];
-
+		if (numRounds === numRoundsNeeded) {
+			// Special case - we have just enough teams, meaning every team in the playoffs is a 1 seed from their conference (like 2 conferences with 1 round, or 4 conferences and 2 rounds, or 8 and 3, etc.)
+			let teamsMatchup = [];
 			for (const conf of g.get("confs", "current")) {
 				const teamsConf = teamsByCid[conf.cid];
-				if (teamsConf && teamsConf.length > 0) {
-					// This sort determines conference champ. Sort inside makeMatchups call will determine overall #1 seed
+
+				if (teamsConf && teamsConf.length >= 1) {
+					// This sort determines conference champ. Sort inside makeMatchups call will determine home court advantage
 					const sorted = await orderTeams(teamsConf, teams, orderTeamsOptions);
-					teamsFinals.push(sorted[0]!);
+					teamsMatchup.push(sorted[0]!);
+
+					if (teamsMatchup.length === 2) {
+						const { round } = await makeMatchups(
+							await orderTeams(teamsMatchup, teams, orderTeamsOptions),
+							numPlayoffTeams / byConf,
+							numPlayoffByes / byConf,
+						);
+						series[0]!.push(...round);
+						teamsMatchup = [];
+					}
+				} else {
+					// Not enough teams in conference for playoff bracket
+					playoffsByConf = false;
+					break;
 				}
 			}
-
-			if (teamsFinals.length === 2) {
-				const { round } = await makeMatchups(
-					await orderTeams(teamsFinals, teams, orderTeamsOptions),
-					numPlayoffTeams / 2,
-					numPlayoffByes / 2,
-				);
-				series[0]!.push(...round);
-			} else {
-				// Not enough teams in conference for playoff bracket
-				playoffsByConf = false;
-			}
-		} else if (numRounds >= numRoundsNeeded) {
+		} else if (numRounds > numRoundsNeeded) {
 			for (const conf of g.get("confs", "current")) {
 				const teamsConf = teamsByCid[conf.cid];
 

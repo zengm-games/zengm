@@ -21,7 +21,21 @@ const updateConfs = async () => {
 			"jersey",
 			"colors",
 		],
+		active: true,
 	});
+
+	// Account for invalid divs, if they somehow exist - is this necessary??
+	/*const divsByDid = groupByUnique(initialDivs, "did");
+	for (const t of initialTeams) {
+		const div = divsByDid[t.did];
+		if (!div) {
+			const newDiv = initialDivs.at(-1)!;
+			t.did = newDiv.did;
+			t.cid = newDiv.cid;
+		} else {
+			t.cid = div.cid;
+		}
+	}*/
 
 	return {
 		actualPhase: g.get("nextPhase") ?? g.get("phase"),

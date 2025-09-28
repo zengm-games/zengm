@@ -30,7 +30,8 @@ import real players
 
 worker modules Safari 15
 - use import with json attribute for loading json files, rather than special effort to copy/fetch them
-  - might fix issue with dev mode not letting you create new league if you killed it and did a prod build in background
+  - only has more recent browser support, but it might work in earlier browsers (if file mime type is correct)
+  - might fix issue with dev mode not letting you create new league if you killed it and did a prod build in background (if file is unchanged, bundler should bundle it to the same extension?)
 
 add legends mode based on league to UI somehow
 - should be able to select from "New legends league" or "New custom league"

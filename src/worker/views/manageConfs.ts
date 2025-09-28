@@ -1,10 +1,9 @@
-import type { Conf, Div } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 
 const updateConfs = async () => {
-	const initialConfs: Conf[] = g.get("confs");
-	const initialDivs: Div[] = g.get("divs");
+	const initialConfs = g.get("confs");
+	const initialDivs = g.get("divs");
 
 	const initialTeams = await idb.getCopies.teamsPlus({
 		attrs: [

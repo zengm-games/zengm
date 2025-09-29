@@ -112,12 +112,6 @@ export default (
 			rollupWarn(warning);
 			console.log(warning.code, warning);
 		},
-		watch: {
-			// https://github.com/rollup/rollup/issues/1666#issuecomment-536227450
-			chokidar: {
-				usePolling: true,
-			},
-		},
 		preserveEntrySignatures: false,
 	};
 };

@@ -10,6 +10,10 @@ export default defineConfig({
 			filter: /\.[cjt]sx?$/,
 		}),
 	],*/
+	define: {
+		"process.env.NODE_ENV": JSON.stringify("test"),
+		"process.env.SPORT": JSON.stringify("basketball"),
+	},
 	test: {
 		isolate: false,
 		setupFiles: ["./src/test/setup.ts", "./src/worker/index.ts"],
@@ -23,6 +27,11 @@ export default defineConfig({
 					},
 					include: ["**/*.test.ts"],
 					exclude: [...configDefaults.exclude, ...footballTests],
+					browser: {
+						enabled: true,
+						provider: "playwright",
+						instances: [{ browser: "chromium" }],
+					},
 				},
 			},
 			{
@@ -33,6 +42,11 @@ export default defineConfig({
 						SPORT: "football",
 					},
 					include: footballTests,
+					browser: {
+						enabled: true,
+						provider: "playwright",
+						instances: [{ browser: "chromium" }],
+					},
 				},
 			},
 		],

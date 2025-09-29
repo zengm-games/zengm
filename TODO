@@ -32,6 +32,10 @@ worker modules Safari 15
 - use import with json attribute for loading json files, rather than special effort to copy/fetch them
   - only has more recent browser support, but it might work in earlier browsers (if file mime type is correct)
   - might fix issue with dev mode not letting you create new league if you killed it and did a prod build in background (if file is unchanged, bundler should bundle it to the same extension?)
+  - this will also allow us to get rid of the custom copying/hashing code for JSON files, since we can use an async import rather than fetch from worker.
+    - this will also allow fairly easy switching to vitest browser mode, since no fancy handling of static files will be needed (see vitest-browser branch)
+    - needs import assertions (and .default of imported value!) https://caniuse.com/?search=import%20attributes - browser support not great now: Chrome 123, Firefox 138, Safari 17.2
+      - if i want to get crazy, could rewrite the import to fetch in a plugin maybe, and then maybe have it keep the original json file in its module graph if that gets processed first. not sure if possible. wait until rolldown-only
 
 add legends mode based on league to UI somehow
 - should be able to select from "New legends league" or "New custom league"

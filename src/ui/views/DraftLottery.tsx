@@ -28,6 +28,7 @@ import {
 } from "../../common/draftLottery.ts";
 import useStickyXX from "../components/DataTable/useStickyXX.ts";
 import { range } from "../../common/utils.ts";
+import { NO_LOTTERY_DRAFT_TYPES } from "../../common/constants.ts";
 
 type Props = View<"draftLottery">;
 type State = {
@@ -738,7 +739,9 @@ const DraftLotteryTable = (props: Props) => {
 
 const DraftLottery = (props: Props) => {
 	useTitleBar({
-		title: "Draft Lottery",
+		title: NO_LOTTERY_DRAFT_TYPES.includes(props.draftType as any)
+			? "Draft Order"
+			: "Draft Lottery",
 		jumpTo: true,
 		jumpToSeason: props.season,
 		dropdownView: "draft_lottery",
@@ -752,11 +755,11 @@ const DraftLottery = (props: Props) => {
 			<MoreLinks
 				type="draft"
 				page="draft_lottery"
-				draftType="nba1994"
+				draftType={props.draftType}
 				season={props.season}
 			/>
 
-			{props.type === "projected" ? (
+			{props.type === "projected" && props.draftType !== "noLottery" ? (
 				<p>
 					This is what the draft lottery probabilities would be if the lottery
 					was held right now.

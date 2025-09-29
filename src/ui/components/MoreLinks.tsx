@@ -18,7 +18,7 @@ const MoreLinks = (
 		  }
 		| {
 				type: "draft";
-				draftType: DraftType;
+				draftType: DraftType | "dummy" | undefined;
 				abbrev?: string;
 				tid?: number;
 				season?: number;
@@ -206,22 +206,20 @@ const MoreLinks = (
 				name:
 					draftType === "freeAgents" ? "Upcoming Prospects" : "Draft Scouting",
 			},
-		];
-		links.push({
-			url:
-				abbrev !== undefined && tid !== undefined
-					? ["draft_picks", `${abbrev}_${tid}`]
-					: ["draft_picks"],
-			name: "Draft Picks",
-		});
-		if (!NO_LOTTERY_DRAFT_TYPES.includes(draftType)) {
-			links.push({
+			{
+				url:
+					abbrev !== undefined && tid !== undefined
+						? ["draft_picks", `${abbrev}_${tid}`]
+						: ["draft_picks"],
+				name: "Draft Picks",
+			},
+			{
 				url:
 					season !== undefined ? ["draft_lottery", season] : ["draft_lottery"],
-				name: "Draft Lottery",
-			});
-		}
-		links.push(
+				name: NO_LOTTERY_DRAFT_TYPES.includes(draftType as any)
+					? "Draft Order"
+					: "Draft Lottery",
+			},
 			{
 				url:
 					season !== undefined ? ["draft_history", season] : ["draft_history"],
@@ -239,7 +237,7 @@ const MoreLinks = (
 				url: ["notes", "draftPick"],
 				name: "Draft Pick Notes",
 			},
-		);
+		];
 	} else if (props.type == "awards") {
 		const { season } = props;
 

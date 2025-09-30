@@ -1,6 +1,4 @@
-roundsWonText not being used everywhere
-- DRY - leagueDashboard.ts has some too, maybe elsewhere also?
-- "conference finals" other places
+Use playoffRoundName in roundsWonText
 
 forceHistoricalRosters
 - later

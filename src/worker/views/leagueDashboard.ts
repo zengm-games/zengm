@@ -411,18 +411,9 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						found = true;
 						showPlayoffSeries = true;
 
-						if (rnd >= numPlayoffRounds - 1) {
-							seriesTitle = "League finals";
-						} else if (rnd === numPlayoffRounds - 2) {
-							seriesTitle = playoffsByConf ? "Conference finals" : "Semifinals";
-						} else if (rnd === numPlayoffRounds - 3) {
-							seriesTitle = playoffsByConf
-								? "Conference semifinals"
-								: "Quarterfinals";
-						} else {
-							seriesTitle = `${helpers.ordinal(rnd + 1)} round`;
-						}
-
+						seriesTitle = helpers.upperCaseFirstLetter(
+							helpers.playoffRoundName(rnd, numPlayoffRounds, playoffsByConf),
+						);
 						numGamesToWinSeries = helpers.numGamesToWinSeries(
 							g.get("numGamesPlayoffSeries", "current")[rnd],
 						);

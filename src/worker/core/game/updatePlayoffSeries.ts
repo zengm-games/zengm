@@ -117,43 +117,18 @@ const updatePlayoffSeries = async (
 				loserWon = series.away.won;
 			}
 
-			let currentRoundText = "";
-
 			const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
+			const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
+			const currentRoundText = helpers.playoffRoundName(
+				playoffSeries.currentRound,
+				numPlayoffRounds,
+				playoffsByConf,
+			);
 
-			let saveToDb = true;
-			if (playoffSeries.currentRound === -1) {
-				currentRoundText = "play-in tournament";
-			} else if (playoffSeries.currentRound === 0) {
-				currentRoundText = `${helpers.ordinal(1)} round of the playoffs`;
-			} else if (
-				playoffSeries.currentRound ===
-				g.get("numGamesPlayoffSeries", "current").length - 3
-			) {
-				currentRoundText = playoffsByConf
-					? "conference semifinals"
-					: "quarterfinals";
-			} else if (
-				playoffSeries.currentRound ===
-				g.get("numGamesPlayoffSeries", "current").length - 2
-			) {
-				currentRoundText = playoffsByConf ? "conference finals" : "semifinals";
-
-				// Not needed, because individual game event in writeGameStats will cover this round
-				saveToDb = false;
-			} else if (
-				playoffSeries.currentRound ===
-				g.get("numGamesPlayoffSeries", "current").length - 1
-			) {
-				currentRoundText = "finals";
-
-				// Not needed, because individual game event in writeGameStats will cover this round
-				saveToDb = false;
-			} else {
-				currentRoundText = `${helpers.ordinal(
-					playoffSeries.currentRound + 1,
-				)} round of the playoffs`;
-			}
+			// Not needed, because individual game event in writeGameStats will cover this round
+			const saveToDb =
+				playoffSeries.currentRound >= 0 &&
+				playoffSeries.currentRound >= numPlayoffRounds - 2;
 
 			const showPts =
 				winnerPts !== undefined &&

@@ -485,11 +485,11 @@ const writeGameStats = async (
 			gameStats.finals = true;
 		}
 
-		const round = finals
-			? "finals"
-			: playoffsByConf
-				? "conference finals"
-				: "semifinals";
+		const round = helpers.playoffRoundName(
+			currentRound,
+			numPlayoffRounds,
+			playoffsByConf,
+		);
 		let score = round === "finals" ? 20 : 10;
 		const gameNum = playoffInfos[0].won + playoffInfos[0].lost;
 		const gameNumText = numGamesToWinSeries > 1 ? ` game ${gameNum} of` : "";
@@ -598,16 +598,11 @@ const writeGameStats = async (
 			}`;
 
 			if (currentRound !== undefined && playoffInfos) {
-				const round =
-					currentRound === -1
-						? "play-in tournament game"
-						: currentRound >= numPlayoffRounds - 1
-							? "finals"
-							: currentRound >= numPlayoffRounds - 2
-								? playoffsByConf
-									? "conference finals"
-									: "semifinals"
-								: `${helpers.ordinal(currentRound + 1)} round of the playoffs`;
+				const round = helpers.playoffRoundName(
+					currentRound,
+					numPlayoffRounds,
+					playoffsByConf,
+				);
 
 				const gameNum = playoffInfos[0].won + playoffInfos[0].lost;
 				const numGamesThisRound =

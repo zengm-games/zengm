@@ -1285,6 +1285,55 @@ const getJerseyNumber = (
 	return undefined;
 };
 
+const playoffRoundName = (
+	currentRound: number, // Like currentRound from PlayoffSeries, not playoffRoundsWon. Difference is that playoffRoundsWon can be 1 higher than this (for finals winner) and -1 means differnet things (here it is play-in tournament, not missed playoffs)
+	numPlayoffRounds: number,
+	playoffsByConf: ByConf,
+) => {
+	if (currentRound === -1) {
+		return "play-in tournament";
+	}
+
+	if (currentRound === numPlayoffRounds - 1) {
+		return "finals" as const;
+	}
+
+	// Put this early so as to not glorify just making the playoffs with some fancier text
+	if (currentRound === 0) {
+		return "1st round" as const;
+	}
+
+	const confChampionshipRound =
+		playoffsByConf === false
+			? undefined
+			: numPlayoffRounds - Math.log2(playoffsByConf);
+
+	if (confChampionshipRound !== undefined) {
+		if (currentRound === confChampionshipRound - 1) {
+			return "conference finals";
+		}
+		if (currentRound === confChampionshipRound - 2) {
+			return "conference semifinals";
+		}
+	}
+
+	if (currentRound === numPlayoffRounds - 2) {
+		return "semifinals";
+	}
+
+	if (currentRound === numPlayoffRounds - 3) {
+		return "quarterfinals";
+	}
+
+	if (currentRound >= 1) {
+		return `${ordinal(currentRound + 1)} round` as const;
+	}
+
+	throw new Error(
+		`Invalid roundIndex ${currentRound} ${numPlayoffRounds} ${playoffsByConf}`,
+	);
+};
+
 const roundsWonText = (
 	playoffRoundsWon: number,
 	numPlayoffRounds: number,
@@ -1293,19 +1342,17 @@ const roundsWonText = (
 ) => {
 	if (playoffRoundsWon >= 0) {
 		if (playoffRoundsWon === numPlayoffRounds) {
-			return "League champs" as const;
+			return "League champs";
 		}
 
 		// Put this above "made playoffs" to handle the 2 team playoff case
 		if (playoffRoundsWon === numPlayoffRounds - 1) {
-			return playoffsByConf === 2
-				? "Conference champs"
-				: ("Made finals" as const);
+			return playoffsByConf === 2 ? "Conference champs" : "Made finals";
 		}
 
 		// Put this early so as to not glorify just making the playoffs with some fancier text
 		if (playoffRoundsWon === 0) {
-			return "Made playoffs" as const;
+			return "Made playoffs";
 		}
 
 		const confChampionshipRound =
@@ -1326,11 +1373,11 @@ const roundsWonText = (
 		}
 
 		if (playoffRoundsWon === numPlayoffRounds - 2) {
-			return "Made semifinals" as const;
+			return "Made semifinals";
 		}
 
 		if (playoffRoundsWon === numPlayoffRounds - 3) {
-			return "Made quarterfinals" as const;
+			return "Made quarterfinals";
 		}
 
 		if (playoffRoundsWon >= 1) {
@@ -1565,6 +1612,7 @@ export default {
 	roundWinp,
 	upperCaseFirstLetter,
 	keys,
+	playoffRoundName,
 	roundsWonText,
 	ratio,
 	percentage,

@@ -1345,9 +1345,15 @@ const roundsWonText = (
 			return "League champs";
 		}
 
+		const roundName = playoffRoundName(
+			playoffRoundsWon,
+			numPlayoffRounds,
+			playoffsByConf,
+		);
+
 		// Put this above "made playoffs" to handle the 2 team playoff case
 		if (playoffRoundsWon === numPlayoffRounds - 1) {
-			return playoffsByConf === 2 ? "Conference champs" : "Made finals";
+			return playoffsByConf === 2 ? "Conference champs" : `Made ${roundName}`;
 		}
 
 		// Put this early so as to not glorify just making the playoffs with some fancier text
@@ -1364,28 +1370,18 @@ const roundsWonText = (
 			if (playoffRoundsWon === confChampionshipRound) {
 				return "Conference champs";
 			}
-			if (playoffRoundsWon === confChampionshipRound - 1) {
-				return "Made conference finals";
+			if (
+				roundName === "conference finals" ||
+				roundName === "conference semifinals"
+			) {
+				return `Made ${roundName}`;
 			}
-			if (playoffRoundsWon === confChampionshipRound - 2) {
-				return "Made conference semifinals";
-			}
 		}
 
-		if (playoffRoundsWon === numPlayoffRounds - 2) {
-			return "Made semifinals";
-		}
-
-		if (playoffRoundsWon === numPlayoffRounds - 3) {
-			return "Made quarterfinals";
-		}
-
-		if (playoffRoundsWon >= 1) {
-			return `Made ${ordinal(playoffRoundsWon + 1)} round` as const;
-		}
+		return `Made ${roundName}`;
 	}
 
-	return showMissedPlayoffs ? "Missed playoffs" : ("" as const);
+	return showMissedPlayoffs ? "Missed playoffs" : "";
 };
 
 // Based on the currnet number of active teams, the number of draft rounds, and the number of expansion teams, what is the minimum valid number for the max number of players that can be taken per team?

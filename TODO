@@ -1,4 +1,9 @@
-Use playoffRoundName in roundsWonText
+customize names of playoff rounds
+- see playoffRoundName
+- where are all the places it's used as a string now?
+  - typeof roundsWonText in frivolitiesTeamSeasons
+- somehow allow default to apply (like for byConf difference) but override is strictly round by round
+- also override name of finals and "league champs" and name of playoffs in the first place?
 
 forceHistoricalRosters
 - later
@@ -893,14 +898,6 @@ custom awards
 - store top 10 for each individual award, so it can be displayed easily on player profile pages
 - should still be able to add an arbitrary one-off custom award - have some place for those in the awards object, and use it for unknown awards in upgraded leagues
 - support awards per div/conf
-
-names of playoff rounds
-- centralize to one place
-- where are all the places it's used?
-  - "made conference finals"
-  - "conference champs"
-  - notifications about winning rounds or buzzer beaters
-- should it be possible to customize, like is it 2nd round or quarterfinals?
 
 accessibility
 - team finances graphs don't show up on screen reader https://discord.com/channels/@me/1121892283986477237/1121898840245682316

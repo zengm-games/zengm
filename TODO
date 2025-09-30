@@ -37,7 +37,7 @@ use import with json attribute for loading json files, rather than special effor
 - needs import assertions (and .default of imported value!) https://caniuse.com/?search=import%20attributes - browser support not great now: Chrome 123, Firefox 138, Safari 17.2
 - might fix issue with dev mode not letting you create new league if you killed it and did a prod build in background (if file is unchanged, bundler should bundle it to the same extension?)
 - this will also allow fairly easy switching to vitest browser mode, since no fancy handling of static files will be needed (see vitest-browser branch)
-  - if i want to get crazy, could rewrite the import to fetch in a plugin maybe, and then maybe have it keep the original json file in its module graph if that gets processed first. not sure if possible. wait until rolldown-only
+- if i want to get crazy, could rewrite the import to fetch in a plugin maybe, and then maybe have it keep the original json file in its module graph if that gets processed first. not sure if possible. wait until rolldown-only
 
 add legends mode based on league to UI somehow
 - should be able to select from "New legends league" or "New custom league"

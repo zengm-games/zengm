@@ -192,6 +192,13 @@ export const getRoundsWonText = (ts: TeamSeason, playoffsByConf: ByConf) => {
 	);
 };
 
+// 0 = won championship, 1 = lost in finals, 2 = lost in semifinals, etc.
+const getRoundsFromChamipionship = (ts: TeamSeason) => {
+	const numPlayoffRounds = g.get("numGamesPlayoffSeries", ts.season).length;
+
+	return numPlayoffRounds - ts.playoffRoundsWon;
+};
+
 const updateFrivolitiesTeamSeasons = async (
 	{ type }: ViewInput<"frivolitiesTeamSeasons">,
 	updateEvents: UpdateEvents,
@@ -283,12 +290,9 @@ const updateFrivolitiesTeamSeasons = async (
 			getValue = (ts, playoffsByConf) => {
 				const roundsWonText = getRoundsWonText(ts, playoffsByConf);
 
-				const validTexts: (typeof roundsWonText)[] = [
-					"League champs",
-					"Conference champs",
-					"Made finals",
-				];
-				if (!validTexts.includes(roundsWonText)) {
+				const roundsFromChampionship = getRoundsFromChamipionship(ts);
+				if (roundsFromChampionship > 1) {
+					// Must have at least made finals
 					return;
 				}
 				return {
@@ -304,31 +308,22 @@ const updateFrivolitiesTeamSeasons = async (
 			title = "Worst Championship Teams";
 			description =
 				"These are the worst seasons from teams that somehow won the title.";
-			extraCols.push(
-				{
-					key: "seed",
-					colName: "Seed",
-				},
-				{
-					key: ["most", "roundsWonText"],
-					keySort: "playoffRoundsWon",
-					colName: "Rounds Won",
-				},
-			);
+			extraCols.push({
+				key: "seed",
+				colName: "Seed",
+			});
 
 			filter = (ts) =>
 				ts.playoffRoundsWon >= 0 &&
 				(season > ts.season || phase > PHASE.PLAYOFFS);
-			getValue = (ts, playoffsByConf) => {
-				const roundsWonText = getRoundsWonText(ts, playoffsByConf);
-
-				const validTexts: (typeof roundsWonText)[] = ["League champs"];
-				if (!validTexts.includes(roundsWonText)) {
+			getValue = (ts) => {
+				const roundsFromChampionship = getRoundsFromChamipionship(ts);
+				if (roundsFromChampionship > 0) {
+					// Must have won championship
 					return;
 				}
 				return {
 					value: -helpers.calcWinp(ts),
-					roundsWonText,
 				};
 			};
 			sortParams = [
@@ -391,11 +386,10 @@ const updateFrivolitiesTeamSeasons = async (
 				ts.avgAge !== undefined &&
 				ts.playoffRoundsWon >= 0 &&
 				(season > ts.season || phase > PHASE.PLAYOFFS);
-			getValue = (ts, playoffsByConf) => {
-				const roundsWonText = getRoundsWonText(ts, playoffsByConf);
-
-				const validTexts: (typeof roundsWonText)[] = ["League champs"];
-				if (!validTexts.includes(roundsWonText)) {
+			getValue = (ts) => {
+				const roundsFromChampionship = getRoundsFromChamipionship(ts);
+				if (roundsFromChampionship > 0) {
+					// Must have won championship
 					return;
 				}
 

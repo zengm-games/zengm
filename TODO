@@ -1,7 +1,5 @@
 customize names of playoff rounds
 - see playoffRoundName
-- where are all the places it's used as a string now?
-  - typeof roundsWonText in frivolitiesTeamSeasons
 - somehow allow default to apply (like for byConf difference) but override is strictly round by round
 - also override name of finals and "league champs" and name of playoffs in the first place?
 

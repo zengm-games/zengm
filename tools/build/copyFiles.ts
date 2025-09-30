@@ -145,6 +145,9 @@ export const copyFiles = async (
 	Header set Cache-Control "public,max-age=31536000"
 </IfModule>`;
 	await fs.writeFile("build/img/flags/.htaccess", flagHtaccess, { signal });
+	if (signal?.aborted) {
+		return;
+	}
 
 	await setSport(signal);
 };

@@ -29,6 +29,9 @@ import real players
 - include stats - do it by team srID, and treat as DOES_NOT_EXIST otherwise https://old.reddit.com/r/BasketballGM/comments/1kwal9w/version_202505261259_new_import_real_players/n0bfsbr/?context=3
 
 worker modules Safari 15
+- code spitting in worker
+- single bundle between ui and worker
+- maybe not worth worrying about until switching to rolldown
 
 use import with json attribute for loading json files, rather than special effort to copy/fetch them
 - needs import assertions (and .default of imported value!) https://caniuse.com/?search=import%20attributes - browser support not great now: Chrome 123, Firefox 138, Safari 17.2

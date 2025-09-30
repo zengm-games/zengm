@@ -147,22 +147,15 @@ export const rolldownConfig = (
 	return {
 		input: infile,
 		output: {
-			...(envOptions.nodeEnv === "production"
-				? {
-						entryFileNames: `${name}-${envOptions.versionNumber}.js`,
-						chunkFileNames: `chunk-[hash].js`,
-						dir: "build/gen",
-					}
-				: {
-						file: watchOutfile,
-						inlineDynamicImports: true,
-					}),
+			entryFileNames:
+				envOptions.nodeEnv === "production"
+					? `${name}-${envOptions.versionNumber}.js`
+					: `${name}.js`,
+			chunkFileNames: `${name}-chunk-[hash].js`,
+			dir: "build/gen",
 			sourcemap: true,
 			externalLiveBindings: false,
-
-			// ES modules don't work in workers in all the browsers currently supported, otherwise could use "es" everywhere. Also at that point could evaluate things like code splitting in the worker, or code splitting between ui/worker bundles (building them together)
-			// Safari 15
-			format: name === "ui" ? "es" : "iife",
+			format: "es", // Assumes Safari 15 will be minimum requirement before I switch to rolldown for prod build
 		},
 		jsx: "react-jsx",
 		define: {
@@ -171,9 +164,5 @@ export const rolldownConfig = (
 		},
 		plugins,
 		preserveEntrySignatures: false,
-		experimental: {
-			// Needed to add this when upgrading from rolldown@1.0.0-beta.31 to rolldown@1.0.0-beta.32, https://github.com/rolldown/rolldown/pull/5629 looks like the most relevant PR from that release
-			strictExecutionOrder: true,
-		},
 	};
 };

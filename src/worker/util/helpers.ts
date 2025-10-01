@@ -447,67 +447,53 @@ const roundsWonText = ({
 	numPlayoffRounds,
 	playoffsByConf,
 	showMissedPlayoffs,
-	lowerCase,
 }: {
 	playoffRoundsWon: number;
 	numPlayoffRounds: number;
 	playoffsByConf: ByConf;
 	showMissedPlayoffs?: boolean;
-	lowerCase?: boolean;
 }) => {
-	let text;
-	let appendText = "";
-
 	if (playoffRoundsWon >= 0) {
 		if (playoffRoundsWon === numPlayoffRounds) {
-			text = "League champs";
-		} else {
-			const roundName = playoffRoundName(
-				playoffRoundsWon,
-				numPlayoffRounds,
-				playoffsByConf,
-			);
-
-			// Put this above "made playoffs" to handle the 2 team playoff case
-			if (playoffRoundsWon === numPlayoffRounds - 1) {
-				if (playoffsByConf === 2) {
-					text = "Conference champs";
-				} else {
-					text = "Made ";
-					appendText = roundName;
-				}
-			} else if (playoffRoundsWon === 0) {
-				// Put this early so as to not glorify just making the playoffs with some fancier text
-				text = "Made playoffs";
-			} else {
-				const confChampionshipRound =
-					playoffsByConf === false
-						? undefined
-						: numPlayoffRounds - Math.log2(playoffsByConf);
-
-				if (
-					confChampionshipRound !== undefined &&
-					playoffRoundsWon === confChampionshipRound
-				) {
-					text = "Conference champs";
-				} else {
-					text = "Made ";
-					appendText = roundName;
-				}
-			}
+			return "league champs";
 		}
+
+		const roundName = playoffRoundName(
+			playoffRoundsWon,
+			numPlayoffRounds,
+			playoffsByConf,
+		);
+
+		// Put this above "made playoffs" to handle the 2 team playoff case
+		if (playoffRoundsWon === numPlayoffRounds - 1) {
+			if (playoffsByConf === 2) {
+				return "conference champs";
+			}
+
+			return `made ${roundName}`;
+		}
+
+		if (playoffRoundsWon === 0) {
+			// Put this early so as to not glorify just making the playoffs with some fancier text
+			return "made playoffs";
+		}
+
+		const confChampionshipRound =
+			playoffsByConf === false
+				? undefined
+				: numPlayoffRounds - Math.log2(playoffsByConf);
+
+		if (
+			confChampionshipRound !== undefined &&
+			playoffRoundsWon === confChampionshipRound
+		) {
+			return "conference champs";
+		}
+
+		return `made ${roundName}`;
 	}
 
-	if (text === undefined) {
-		text = showMissedPlayoffs ? "Missed playoffs" : "";
-	}
-
-	// Only convert the prefix text to lower case, in case the round name is to always be displayed with some upper case letters
-	if (lowerCase) {
-		return `${text.toLowerCase()}${appendText}`;
-	} else {
-		return `${text}${appendText}`;
-	}
+	return showMissedPlayoffs ? "missed playoffs" : "";
 };
 
 const helpers = {

@@ -81,42 +81,42 @@ describe("roundsWonText", () => {
 
 	test("Default league, byConf", () => {
 		assert.strictEqual(roundsWonText(-1, 4, 2), "");
-		assert.strictEqual(roundsWonText(0, 4, 2), "Made playoffs");
-		assert.strictEqual(roundsWonText(1, 4, 2), "Made conference semifinals");
-		assert.strictEqual(roundsWonText(2, 4, 2), "Made conference finals");
-		assert.strictEqual(roundsWonText(3, 4, 2), "Conference champs");
-		assert.strictEqual(roundsWonText(4, 4, 2), "League champs");
+		assert.strictEqual(roundsWonText(0, 4, 2), "made playoffs");
+		assert.strictEqual(roundsWonText(1, 4, 2), "made conference semifinals");
+		assert.strictEqual(roundsWonText(2, 4, 2), "made conference finals");
+		assert.strictEqual(roundsWonText(3, 4, 2), "conference champs");
+		assert.strictEqual(roundsWonText(4, 4, 2), "league champs");
 	});
 
 	test("Default league, no byConf", () => {
 		assert.strictEqual(roundsWonText(-1, 4, false), "");
-		assert.strictEqual(roundsWonText(0, 4, false), "Made playoffs");
-		assert.strictEqual(roundsWonText(1, 4, false), "Made quarterfinals");
-		assert.strictEqual(roundsWonText(2, 4, false), "Made semifinals");
-		assert.strictEqual(roundsWonText(3, 4, false), "Made finals");
-		assert.strictEqual(roundsWonText(4, 4, false), "League champs");
+		assert.strictEqual(roundsWonText(0, 4, false), "made playoffs");
+		assert.strictEqual(roundsWonText(1, 4, false), "made quarterfinals");
+		assert.strictEqual(roundsWonText(2, 4, false), "made semifinals");
+		assert.strictEqual(roundsWonText(3, 4, false), "made finals");
+		assert.strictEqual(roundsWonText(4, 4, false), "league champs");
 	});
 
 	test("More conferences", () => {
 		assert.strictEqual(roundsWonText(-1, 4, 4), "");
-		assert.strictEqual(roundsWonText(0, 4, 4), "Made playoffs");
-		assert.strictEqual(roundsWonText(1, 4, 4), "Made conference finals");
-		assert.strictEqual(roundsWonText(2, 4, 4), "Conference champs");
-		assert.strictEqual(roundsWonText(3, 4, 4), "Made finals");
-		assert.strictEqual(roundsWonText(4, 4, 4), "League champs");
+		assert.strictEqual(roundsWonText(0, 4, 4), "made playoffs");
+		assert.strictEqual(roundsWonText(1, 4, 4), "made conference finals");
+		assert.strictEqual(roundsWonText(2, 4, 4), "conference champs");
+		assert.strictEqual(roundsWonText(3, 4, 4), "made finals");
+		assert.strictEqual(roundsWonText(4, 4, 4), "league champs");
 
 		assert.strictEqual(roundsWonText(-1, 4, 8), "");
-		assert.strictEqual(roundsWonText(0, 4, 8), "Made playoffs");
-		assert.strictEqual(roundsWonText(1, 4, 8), "Conference champs");
-		assert.strictEqual(roundsWonText(2, 4, 8), "Made semifinals");
-		assert.strictEqual(roundsWonText(3, 4, 8), "Made finals");
-		assert.strictEqual(roundsWonText(4, 4, 8), "League champs");
+		assert.strictEqual(roundsWonText(0, 4, 8), "made playoffs");
+		assert.strictEqual(roundsWonText(1, 4, 8), "conference champs");
+		assert.strictEqual(roundsWonText(2, 4, 8), "made semifinals");
+		assert.strictEqual(roundsWonText(3, 4, 8), "made finals");
+		assert.strictEqual(roundsWonText(4, 4, 8), "league champs");
 
 		assert.strictEqual(roundsWonText(-1, 4, 16), "");
-		assert.strictEqual(roundsWonText(0, 4, 16), "Made playoffs");
-		assert.strictEqual(roundsWonText(1, 4, 16), "Made quarterfinals");
-		assert.strictEqual(roundsWonText(2, 4, 16), "Made semifinals");
-		assert.strictEqual(roundsWonText(3, 4, 16), "Made finals");
-		assert.strictEqual(roundsWonText(4, 4, 16), "League champs");
+		assert.strictEqual(roundsWonText(0, 4, 16), "made playoffs");
+		assert.strictEqual(roundsWonText(1, 4, 16), "made quarterfinals");
+		assert.strictEqual(roundsWonText(2, 4, 16), "made semifinals");
+		assert.strictEqual(roundsWonText(3, 4, 16), "made finals");
+		assert.strictEqual(roundsWonText(4, 4, 16), "league champs");
 	});
 });

@@ -5,7 +5,7 @@ const RecordAndPlayoffs = ({
 	className,
 	lost,
 	option,
-	roundsWonTextLower,
+	roundsWonText,
 	season,
 	tied,
 	otl,
@@ -16,7 +16,7 @@ const RecordAndPlayoffs = ({
 	className?: string;
 	lost: number;
 	option?: "noSeason";
-	roundsWonTextLower?: string;
+	roundsWonText?: string;
 	season: number;
 	tied?: number;
 	otl?: number;
@@ -44,12 +44,9 @@ const RecordAndPlayoffs = ({
 		<a href={helpers.leagueUrl(["standings", season])}>{record}</a>
 	);
 	const extraText =
-		roundsWonTextLower !== undefined && roundsWonTextLower !== "" ? (
+		roundsWonText !== undefined && roundsWonText !== "" ? (
 			<span>
-				,{" "}
-				<a href={helpers.leagueUrl(["playoffs", season])}>
-					{roundsWonTextLower}
-				</a>
+				, <a href={helpers.leagueUrl(["playoffs", season])}>{roundsWonText}</a>
 			</span>
 		) : null;
 	return (

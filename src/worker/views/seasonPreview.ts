@@ -153,11 +153,10 @@ const updateSeasonPreview = async (
 						lost: teamSeasonPrev.lost,
 						tied: teamSeasonPrev.tied,
 						otl: teamSeasonPrev.otl,
-						roundsWonTextLower: helpers.roundsWonText({
+						roundsWonText: helpers.roundsWonText({
 							playoffRoundsWon: teamSeasonPrev.playoffRoundsWon,
 							numPlayoffRounds,
 							playoffsByConf,
-							lowerCase: true,
 						}),
 					}
 				: undefined;

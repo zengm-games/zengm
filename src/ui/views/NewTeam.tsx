@@ -321,7 +321,7 @@ const NewTeam = ({
 									tied={t.seasonAttrs.tied}
 									otl={t.seasonAttrs.otl}
 									won={t.seasonAttrs.won}
-									roundsWonTextLower={t.roundsWonTextLower}
+									roundsWonText={t.roundsWonText}
 								/>
 								{!challengeNoRatings ? (
 									<>

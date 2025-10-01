@@ -203,11 +203,10 @@ const updateTeamSelect = async (
 		const teamsWithOvr = orderedTeams.map((t) => ({
 			...t,
 			ovr: 0,
-			roundsWonTextLower: helpers.roundsWonText({
+			roundsWonText: helpers.roundsWonText({
 				playoffRoundsWon: t.seasonAttrs.playoffRoundsWon,
 				numPlayoffRounds,
 				playoffsByConf,
-				lowerCase: true,
 			}),
 		}));
 		for (const t of teamsWithOvr) {

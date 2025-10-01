@@ -39,7 +39,7 @@ const Seasons = ({ history }: Pick<View<"teamHistory">, "history">) => {
 				}
 				lost={h.lost}
 				otl={h.otl}
-				roundsWonTextLower={h.roundsWonTextLower}
+				roundsWonText={h.roundsWonText}
 				season={h.season}
 				tid={h.tid}
 				tied={h.tied}

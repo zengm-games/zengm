@@ -192,6 +192,10 @@ export const getRoundsWonText = (ts: TeamSeason, playoffsByConf: ByConf) => {
 	});
 };
 
+const getRoundsWonTextUpper = (ts: TeamSeason, playoffsByConf: ByConf) => {
+	return helpers.upperCaseFirstLetter(getRoundsWonText(ts, playoffsByConf));
+};
+
 // 0 = won championship, 1 = lost in finals, 2 = lost in semifinals, etc.
 const getRoundsFromChamipionship = (ts: TeamSeason) => {
 	const numPlayoffRounds = g.get("numGamesPlayoffSeries", ts.season).length;
@@ -262,7 +266,7 @@ const updateFrivolitiesTeamSeasons = async (
 				(season > ts.season || phase > PHASE.PLAYOFFS);
 			getValue = (ts, playoffsByConf) => ({
 				value: -helpers.calcWinp(ts),
-				roundsWonText: getRoundsWonText(ts, playoffsByConf),
+				roundsWonText: getRoundsWonTextUpper(ts, playoffsByConf),
 			});
 			sortParams = [
 				[mostValue, "mov"],
@@ -288,7 +292,7 @@ const updateFrivolitiesTeamSeasons = async (
 				ts.playoffRoundsWon >= 0 &&
 				(season > ts.season || phase > PHASE.PLAYOFFS);
 			getValue = (ts, playoffsByConf) => {
-				const roundsWonText = getRoundsWonText(ts, playoffsByConf);
+				const roundsWonText = getRoundsWonTextUpper(ts, playoffsByConf);
 
 				const roundsFromChampionship = getRoundsFromChamipionship(ts);
 				if (roundsFromChampionship > 1) {
@@ -347,7 +351,7 @@ const updateFrivolitiesTeamSeasons = async (
 			filter = (ts) => season > ts.season || phase > PHASE.PLAYOFFS;
 			getValue = (ts, playoffsByConf) => ({
 				value: helpers.calcWinp(ts),
-				roundsWonText: getRoundsWonText(ts, playoffsByConf),
+				roundsWonText: getRoundsWonTextUpper(ts, playoffsByConf),
 			});
 			sortParams = [
 				[mostValue, "mov"],

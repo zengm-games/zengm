@@ -428,7 +428,7 @@ const SelectTeam = ({
 										{t.seasonInfo
 											? ` ${helpers.formatRecord(t.seasonInfo)}${
 													t.seasonInfo.roundsWonText
-														? `, ${t.seasonInfo.roundsWonText.toLowerCase()}`
+														? `, ${t.seasonInfo.roundsWonText}`
 														: ""
 												}`
 											: null}

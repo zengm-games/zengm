@@ -366,7 +366,7 @@ const getSeasonsToPlot = async (
 					roundsWonText: getRoundsWonText(
 						teamSeason,
 						await getPlayoffsByConf(teamSeason.season),
-					).toLocaleLowerCase(),
+					),
 				};
 			}
 

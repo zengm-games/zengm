@@ -33,7 +33,7 @@ export const getHistoryTeam = (
 		otl?: number;
 		playoffRoundsWon: number;
 		numPlayoffRounds: number;
-		roundsWonTextLower: string;
+		roundsWonText: string;
 		name?: string;
 		tid: number;
 		abbrev: string;
@@ -62,11 +62,10 @@ export const getHistoryTeam = (
 			tied: teamSeason.tied,
 			otl: teamSeason.otl,
 			playoffRoundsWon: teamSeason.playoffRoundsWon,
-			roundsWonTextLower: helpers.roundsWonText({
+			roundsWonText: helpers.roundsWonText({
 				playoffRoundsWon: teamSeason.playoffRoundsWon,
 				numPlayoffRounds,
 				playoffsByConf: playoffsByConfBySeason.get(teamSeason.season),
-				lowerCase: true,
 			}),
 			numPlayoffRounds,
 			name:

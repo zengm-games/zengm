@@ -209,7 +209,7 @@ const TopStuff = ({
 					lost={t.seasonAttrs.lost}
 					otl={t.seasonAttrs.otl}
 					tied={t.seasonAttrs.tied}
-					roundsWonTextLower={t.roundsWonTextLower}
+					roundsWonText={t.roundsWonText}
 					option="noSeason"
 					tid={tid}
 				/>

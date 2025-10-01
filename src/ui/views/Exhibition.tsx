@@ -384,7 +384,9 @@ const SelectTeam = ({
 						{t.seasonInfo ? (
 							<>
 								<h2 className="mb-0">{record}</h2>
-								{t.seasonInfo.roundsWonText}
+								{t.seasonInfo.roundsWonText !== undefined
+									? helpers.upperCaseFirstLetter(t.seasonInfo.roundsWonText)
+									: null}
 							</>
 						) : null}
 					</div>

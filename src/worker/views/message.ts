@@ -99,7 +99,7 @@ const updateMessage = async (
 						const roundsWonText = getRoundsWonText(
 							teamSeason,
 							await getPlayoffsByConf(teamSeason.season),
-						).toLocaleLowerCase();
+						);
 
 						seasonInfo = {
 							won: teamSeason.won,

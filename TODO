@@ -2,9 +2,6 @@ customize names of playoff rounds
 - see playoffRoundName
 - somehow allow default to apply (like for byConf difference) but override is strictly round by round
 - also override name of finals and "league champs" and name of playoffs in the first place?
-- check places turning all of roundsWonText into lower case
-  - check all .toLowerCase(), for example in RecordAndPlayoffs
-  - case should only apply to roundsWonText prefix part, not playoffRoundName
 - should be possible to edit only one round (such as finals) and keep others default
 
 forceHistoricalRosters

@@ -124,6 +124,7 @@
 		"@types/wicg-file-system-access": "^2023.10.6",
 		"@vitest/browser": "^3.2.4",
 		"browserslist": "^4.26.2",
+		"browserstack-local": "^1.5.8",
 		"cheerio": "^1.1.2",
 		"chokidar": "^4.0.3",
 		"cloudflare": "^5.1.0",

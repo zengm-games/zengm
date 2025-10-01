@@ -54,6 +54,20 @@ function numInArrayEqualTo<T>(array: T[], x: T): number {
 	return n;
 }
 
+export const overridePostMessage = () => {
+	// Hack because promise-worker-bi 2.2.1 always sends back hostID, but the worker tests don't run in an actual worker, so
+	// self.postMessage causes an error because it requires a different number of arguments inside and outside of a worker.
+	const originalPostMessage = globalThis.postMessage;
+	globalThis.postMessage = (...args) => {
+		if (Array.isArray(args[0]) && JSON.stringify(args[0]) === "[2,-1,0]") {
+			// Skip hostID message
+		} else {
+			// @ts-expect-error
+			originalPostMessage(...args);
+		}
+	};
+};
+
 const resetCache = async (data?: Partial<Record<Store, any[]>>) => {
 	idb.cache = new Cache(); // We want these to do nothing while testing, usually
 

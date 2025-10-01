@@ -1,20 +1,11 @@
 import { IDBKeyRange } from "fake-indexeddb";
 import fs from "node:fs/promises";
+import { overridePostMessage } from "./helpers.ts";
 
 // When mockIDBLeague is used, sometimes IDBKeyRange still gets called even though there is no actual database
 globalThis.IDBKeyRange = IDBKeyRange;
 
-// Hack because promise-worker-bi 2.2.1 always sends back hostID, but the worker tests don't run in an actual worker, so
-// self.postMessage causes an error because it requires a different number of arguments inside and outside of a worker.
-const originalPostMessage = globalThis.postMessage;
-globalThis.postMessage = (...args) => {
-	if (Array.isArray(args[0]) && JSON.stringify(args[0]) === "[2,-1,0]") {
-		// Skip hostID message
-	} else {
-		// @ts-expect-error
-		originalPostMessage(...args);
-	}
-};
+overridePostMessage();
 
 const fetchCache: Record<string, any> = {};
 (globalThis as any).fetch = async (url: string) => {

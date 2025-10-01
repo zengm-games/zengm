@@ -14,7 +14,7 @@ import { visualizer } from "rollup-plugin-visualizer";
 import type { Plugin } from "rollup";
 
 // Use babel to run babel-plugin-sport-functions. This is needed even in dev mode because the way bySport is defined, the sport-specific code will run if it's present, which can produce errors. It's not actually needed for isSport in dev mode.
-const pluginSportFunctions = (
+export const pluginSportFunctions = (
 	nodeEnv: "development" | "production",
 	sport: Sport,
 ): RolldownPlugin => {

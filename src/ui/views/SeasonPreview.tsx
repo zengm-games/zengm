@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/index.ts";
-import type { ByConf, View } from "../../common/types.ts";
+import type { View } from "../../common/types.ts";
 import {
 	MoreLinks,
 	PlayerNameLabels,
@@ -110,15 +110,11 @@ const PlayerList = ({
 
 const TeamList = ({
 	challengeNoRatings,
-	numPlayoffRounds,
-	playoffsByConf,
 	teams,
 	season,
 	userTid,
 }: {
 	challengeNoRatings: boolean;
-	numPlayoffRounds: number;
-	playoffsByConf: ByConf;
 	teams: View<"seasonPreview">["teamsTop"];
 	season: number;
 	userTid: number;
@@ -168,10 +164,8 @@ const TeamList = ({
 								abbrev={t.abbrev}
 								lost={t.lastSeason.lost}
 								option="noSeason"
-								playoffsByConf={playoffsByConf}
-								numPlayoffRounds={numPlayoffRounds}
 								otl={t.lastSeason.otl}
-								playoffRoundsWon={t.lastSeason.playoffRoundsWon}
+								roundsWonTextLower={t.lastSeason.roundsWonTextLower}
 								season={season - 1}
 								tid={t.tid}
 								tied={t.lastSeason.tied}
@@ -207,13 +201,11 @@ const TeamList = ({
 
 const SeasonPreview = ({
 	challengeNoRatings,
-	numPlayoffRounds,
 	playersDeclining,
 	playersImproving,
 	playersNewTeam,
 	playersTop,
 	playersTopRookies,
-	playoffsByConf,
 	season,
 	teamsDeclining,
 	teamsImproving,
@@ -273,8 +265,6 @@ const SeasonPreview = ({
 						<h2>Top Teams</h2>
 						<TeamList
 							challengeNoRatings={challengeNoRatings}
-							numPlayoffRounds={numPlayoffRounds}
-							playoffsByConf={playoffsByConf}
 							teams={teamsTop}
 							season={season}
 							userTid={userTid}
@@ -284,8 +274,6 @@ const SeasonPreview = ({
 						<h2>Improving Teams</h2>
 						<TeamList
 							challengeNoRatings={challengeNoRatings}
-							numPlayoffRounds={numPlayoffRounds}
-							playoffsByConf={playoffsByConf}
 							teams={teamsImproving}
 							season={season}
 							userTid={userTid}
@@ -295,8 +283,6 @@ const SeasonPreview = ({
 						<h2>Declining Teams</h2>
 						<TeamList
 							challengeNoRatings={challengeNoRatings}
-							numPlayoffRounds={numPlayoffRounds}
-							playoffsByConf={playoffsByConf}
 							teams={teamsDeclining}
 							season={season}
 							userTid={userTid}

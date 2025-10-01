@@ -101,10 +101,8 @@ const NewTeam = ({
 	gameOver,
 	godMode,
 	numActiveTeams,
-	numPlayoffRounds,
 	otherTeamsWantToHire,
 	phase,
-	playoffsByConf,
 	season,
 	teams,
 	userTid,
@@ -323,9 +321,7 @@ const NewTeam = ({
 									tied={t.seasonAttrs.tied}
 									otl={t.seasonAttrs.otl}
 									won={t.seasonAttrs.won}
-									playoffsByConf={playoffsByConf}
-									numPlayoffRounds={numPlayoffRounds}
-									playoffRoundsWon={t.seasonAttrs.playoffRoundsWon}
+									roundsWonTextLower={t.roundsWonTextLower}
 								/>
 								{!challengeNoRatings ? (
 									<>

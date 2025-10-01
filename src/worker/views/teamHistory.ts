@@ -5,7 +5,6 @@ import type {
 	ViewInput,
 	TeamSeason,
 	Player,
-	ByConf,
 } from "../../common/types.ts";
 import { getBestPos } from "../core/player/checkJerseyNumberRetirement.ts";
 import { bySport } from "../../common/index.ts";
@@ -34,7 +33,7 @@ export const getHistoryTeam = (
 		otl?: number;
 		playoffRoundsWon: number;
 		numPlayoffRounds: number;
-		playoffsByConf: ByConf;
+		roundsWonTextLower: string;
 		name?: string;
 		tid: number;
 		abbrev: string;
@@ -63,7 +62,12 @@ export const getHistoryTeam = (
 			tied: teamSeason.tied,
 			otl: teamSeason.otl,
 			playoffRoundsWon: teamSeason.playoffRoundsWon,
-			playoffsByConf: playoffsByConfBySeason.get(teamSeason.season),
+			roundsWonTextLower: helpers.roundsWonText({
+				playoffRoundsWon: teamSeason.playoffRoundsWon,
+				numPlayoffRounds,
+				playoffsByConf: playoffsByConfBySeason.get(teamSeason.season),
+				lowerCase: true,
+			}),
 			numPlayoffRounds,
 			name:
 				teamSeason.region && teamSeason.name

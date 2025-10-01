@@ -6,9 +6,7 @@ customize names of playoff rounds
   - check all .toLowerCase(), for example in RecordAndPlayoffs
   - case should only apply to roundsWonText prefix part, not playoffRoundName
 - should be possible to edit only one round (such as finals) and keep others default
-- store history
-  - need in UI? only on RecordAndPlayoffs currently
-    - bold - needs to account for if won or not, like `boldChamps && playoffRoundsWon === numPlayoffRounds` - maybe better not putting in this component?
+- move playoffRoundName and roundsWonText to worker only
 
 forceHistoricalRosters
 - later

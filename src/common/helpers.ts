@@ -1394,8 +1394,9 @@ const roundsWonText = ({
 		text = showMissedPlayoffs ? "Missed playoffs" : "";
 	}
 
+	// Only convert the prefix text to lower case, in case the round name is to always be displayed with some upper case letters
 	if (lowerCase) {
-		return `${text.toLowerCase}${appendText}`;
+		return `${text.toLowerCase()}${appendText}`;
 	} else {
 		return `${text}${appendText}`;
 	}

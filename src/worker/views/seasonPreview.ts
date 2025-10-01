@@ -126,6 +126,10 @@ const updateSeasonPreview = async (
 
 		const playersByTid = groupBy(players, "tid");
 
+		// These are used when displaying last year's playoff results, so they are for last season
+		const numPlayoffRounds = g.get("numGamesPlayoffSeries", season - 1).length;
+		const playoffsByConf = await getPlayoffsByConf(season - 1);
+
 		const teamSeasons = teamSeasonsCurrent.map((teamSeason) => {
 			const teamPlayers = playersByTid[teamSeason.tid] ?? [];
 
@@ -149,7 +153,12 @@ const updateSeasonPreview = async (
 						lost: teamSeasonPrev.lost,
 						tied: teamSeasonPrev.tied,
 						otl: teamSeasonPrev.otl,
-						playoffRoundsWon: teamSeasonPrev.playoffRoundsWon,
+						roundsWonTextLower: helpers.roundsWonText({
+							playoffRoundsWon: teamSeasonPrev.playoffRoundsWon,
+							numPlayoffRounds,
+							playoffsByConf,
+							lowerCase: true,
+						}),
 					}
 				: undefined;
 
@@ -180,19 +189,13 @@ const updateSeasonPreview = async (
 			"asc",
 		).slice(0, NUM_TEAMS_TO_SHOW);
 
-		// These are used when displaying last year's playoff results, so they are for last season
-		const numPlayoffRounds = g.get("numGamesPlayoffSeries", season - 1).length;
-		const playoffsByConf = await getPlayoffsByConf(season - 1);
-
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
-			numPlayoffRounds,
 			playersDeclining,
 			playersImproving,
 			playersNewTeam,
 			playersTop,
 			playersTopRookies,
-			playoffsByConf,
 			season,
 			teamsDeclining,
 			teamsImproving,

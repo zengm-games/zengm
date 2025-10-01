@@ -1,7 +1,7 @@
 import { bySport, isSport, PHASE, POSITIONS } from "../../common/index.ts";
 import { finances, season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
-import { g } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type {
 	Player,
 	UpdateEvents,
@@ -253,6 +253,12 @@ const updateRoster = async (
 				},
 				playoffs: playoffsOvr,
 			}),
+			roundsWonTextLower: helpers.roundsWonText({
+				playoffRoundsWon: t.seasonAttrs.playoffRoundsWon,
+				numPlayoffRounds: g.get("numGamesPlayoffSeries", inputs.season).length,
+				playoffsByConf: await season.getPlayoffsByConf(inputs.season),
+				lowerCase: true,
+			}),
 		};
 		t2.seasonAttrs.avgAge = t2.seasonAttrs.avgAge ?? team.avgAge(players);
 
@@ -261,8 +267,6 @@ const updateRoster = async (
 				(award: Player["awards"][number]) => award.season === inputs.season,
 			);
 		}
-
-		const playoffsByConf = await season.getPlayoffsByConf(inputs.season);
 
 		return {
 			abbrev: inputs.abbrev,
@@ -274,7 +278,6 @@ const updateRoster = async (
 			salaryCapType: g.get("salaryCapType"),
 			maxRosterSize: g.get("maxRosterSize"),
 			numPlayersOnCourt: g.get("numPlayersOnCourt"),
-			numPlayoffRounds: g.get("numGamesPlayoffSeries", inputs.season).length,
 			luxuryPayroll: g.get("luxuryPayroll") / 1000,
 			luxuryTaxAmount,
 			minPayroll: g.get("minPayroll") / 1000,
@@ -283,7 +286,6 @@ const updateRoster = async (
 			phase: g.get("phase"),
 			playoffs: inputs.playoffs,
 			players: addFirstNameShort(players),
-			playoffsByConf,
 			salaryCap: g.get("salaryCap") / 1000,
 			season: inputs.season,
 			showSpectatorWarning:

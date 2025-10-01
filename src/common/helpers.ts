@@ -6,7 +6,6 @@ import type {
 	PlayerContract,
 	GameAttributesLeague,
 	RelativeType,
-	ByConf,
 } from "./types.ts";
 import getTeamInfos from "./getTeamInfos.ts";
 import isSport from "./isSport.ts";
@@ -1285,123 +1284,6 @@ const getJerseyNumber = (
 	return undefined;
 };
 
-const playoffRoundName = (
-	currentRound: number, // Like currentRound from PlayoffSeries, not playoffRoundsWon. Difference is that playoffRoundsWon can be 1 higher than this (for finals winner) and -1 means differnet things (here it is play-in tournament, not missed playoffs)
-	numPlayoffRounds: number,
-	playoffsByConf: ByConf,
-) => {
-	if (currentRound === -1) {
-		return "play-in tournament";
-	}
-
-	if (currentRound === numPlayoffRounds - 1) {
-		return "finals" as const;
-	}
-
-	// Put this early so as to not glorify just making the playoffs with some fancier text
-	if (currentRound === 0) {
-		return "1st round" as const;
-	}
-
-	const confChampionshipRound =
-		playoffsByConf === false
-			? undefined
-			: numPlayoffRounds - Math.log2(playoffsByConf);
-
-	if (confChampionshipRound !== undefined) {
-		if (currentRound === confChampionshipRound - 1) {
-			return "conference finals";
-		}
-		if (currentRound === confChampionshipRound - 2) {
-			return "conference semifinals";
-		}
-	}
-
-	if (currentRound === numPlayoffRounds - 2) {
-		return "semifinals";
-	}
-
-	if (currentRound === numPlayoffRounds - 3) {
-		return "quarterfinals";
-	}
-
-	if (currentRound >= 1) {
-		return `${ordinal(currentRound + 1)} round` as const;
-	}
-
-	throw new Error(
-		`Invalid roundIndex ${currentRound} ${numPlayoffRounds} ${playoffsByConf}`,
-	);
-};
-
-const roundsWonText = ({
-	playoffRoundsWon,
-	numPlayoffRounds,
-	playoffsByConf,
-	showMissedPlayoffs,
-	lowerCase,
-}: {
-	playoffRoundsWon: number;
-	numPlayoffRounds: number;
-	playoffsByConf: ByConf;
-	showMissedPlayoffs?: boolean;
-	lowerCase?: boolean;
-}) => {
-	let text;
-	let appendText = "";
-
-	if (playoffRoundsWon >= 0) {
-		if (playoffRoundsWon === numPlayoffRounds) {
-			text = "League champs";
-		} else {
-			const roundName = playoffRoundName(
-				playoffRoundsWon,
-				numPlayoffRounds,
-				playoffsByConf,
-			);
-
-			// Put this above "made playoffs" to handle the 2 team playoff case
-			if (playoffRoundsWon === numPlayoffRounds - 1) {
-				if (playoffsByConf === 2) {
-					text = "Conference champs";
-				} else {
-					text = "Made ";
-					appendText = roundName;
-				}
-			} else if (playoffRoundsWon === 0) {
-				// Put this early so as to not glorify just making the playoffs with some fancier text
-				text = "Made playoffs";
-			} else {
-				const confChampionshipRound =
-					playoffsByConf === false
-						? undefined
-						: numPlayoffRounds - Math.log2(playoffsByConf);
-
-				if (
-					confChampionshipRound !== undefined &&
-					playoffRoundsWon === confChampionshipRound
-				) {
-					text = "Conference champs";
-				} else {
-					text = "Made ";
-					appendText = roundName;
-				}
-			}
-		}
-	}
-
-	if (text === undefined) {
-		text = showMissedPlayoffs ? "Missed playoffs" : "";
-	}
-
-	// Only convert the prefix text to lower case, in case the round name is to always be displayed with some upper case letters
-	if (lowerCase) {
-		return `${text.toLowerCase()}${appendText}`;
-	} else {
-		return `${text}${appendText}`;
-	}
-};
-
 // Based on the currnet number of active teams, the number of draft rounds, and the number of expansion teams, what is the minimum valid number for the max number of players that can be taken per team?
 const getExpansionDraftMinimumPlayersPerActiveTeam = (
 	numExpansionTeams: number,
@@ -1626,8 +1508,6 @@ export default {
 	roundWinp,
 	upperCaseFirstLetter,
 	keys,
-	playoffRoundName,
-	roundsWonText,
 	ratio,
 	percentage,
 	formatRecord,

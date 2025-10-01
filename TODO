@@ -6,7 +6,6 @@ customize names of playoff rounds
   - check all .toLowerCase(), for example in RecordAndPlayoffs
   - case should only apply to roundsWonText prefix part, not playoffRoundName
 - should be possible to edit only one round (such as finals) and keep others default
-- move playoffRoundName and roundsWonText to worker only
 
 forceHistoricalRosters
 - later

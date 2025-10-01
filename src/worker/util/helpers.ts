@@ -6,7 +6,11 @@ import {
 } from "../../common/index.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
-import type { DraftPick, PlayoffSeriesTeam } from "../../common/types.ts";
+import type {
+	ByConf,
+	DraftPick,
+	PlayoffSeriesTeam,
+} from "../../common/types.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 import hasTies from "../core/season/hasTies.ts";
 import { roundContract as roundContractRaw } from "../../common/roundContract.ts";
@@ -389,6 +393,123 @@ const formatCurrency = (
 	);
 };
 
+const playoffRoundName = (
+	currentRound: number, // Like currentRound from PlayoffSeries, not playoffRoundsWon. Difference is that playoffRoundsWon can be 1 higher than this (for finals winner) and -1 means differnet things (here it is play-in tournament, not missed playoffs)
+	numPlayoffRounds: number,
+	playoffsByConf: ByConf,
+) => {
+	if (currentRound === -1) {
+		return "play-in tournament";
+	}
+
+	if (currentRound === numPlayoffRounds - 1) {
+		return "finals" as const;
+	}
+
+	// Put this early so as to not glorify just making the playoffs with some fancier text
+	if (currentRound === 0) {
+		return "1st round" as const;
+	}
+
+	const confChampionshipRound =
+		playoffsByConf === false
+			? undefined
+			: numPlayoffRounds - Math.log2(playoffsByConf);
+
+	if (confChampionshipRound !== undefined) {
+		if (currentRound === confChampionshipRound - 1) {
+			return "conference finals";
+		}
+		if (currentRound === confChampionshipRound - 2) {
+			return "conference semifinals";
+		}
+	}
+
+	if (currentRound === numPlayoffRounds - 2) {
+		return "semifinals";
+	}
+
+	if (currentRound === numPlayoffRounds - 3) {
+		return "quarterfinals";
+	}
+
+	if (currentRound >= 1) {
+		return `${commonHelpers.ordinal(currentRound + 1)} round` as const;
+	}
+
+	throw new Error(
+		`Invalid roundIndex ${currentRound} ${numPlayoffRounds} ${playoffsByConf}`,
+	);
+};
+
+const roundsWonText = ({
+	playoffRoundsWon,
+	numPlayoffRounds,
+	playoffsByConf,
+	showMissedPlayoffs,
+	lowerCase,
+}: {
+	playoffRoundsWon: number;
+	numPlayoffRounds: number;
+	playoffsByConf: ByConf;
+	showMissedPlayoffs?: boolean;
+	lowerCase?: boolean;
+}) => {
+	let text;
+	let appendText = "";
+
+	if (playoffRoundsWon >= 0) {
+		if (playoffRoundsWon === numPlayoffRounds) {
+			text = "League champs";
+		} else {
+			const roundName = playoffRoundName(
+				playoffRoundsWon,
+				numPlayoffRounds,
+				playoffsByConf,
+			);
+
+			// Put this above "made playoffs" to handle the 2 team playoff case
+			if (playoffRoundsWon === numPlayoffRounds - 1) {
+				if (playoffsByConf === 2) {
+					text = "Conference champs";
+				} else {
+					text = "Made ";
+					appendText = roundName;
+				}
+			} else if (playoffRoundsWon === 0) {
+				// Put this early so as to not glorify just making the playoffs with some fancier text
+				text = "Made playoffs";
+			} else {
+				const confChampionshipRound =
+					playoffsByConf === false
+						? undefined
+						: numPlayoffRounds - Math.log2(playoffsByConf);
+
+				if (
+					confChampionshipRound !== undefined &&
+					playoffRoundsWon === confChampionshipRound
+				) {
+					text = "Conference champs";
+				} else {
+					text = "Made ";
+					appendText = roundName;
+				}
+			}
+		}
+	}
+
+	if (text === undefined) {
+		text = showMissedPlayoffs ? "Missed playoffs" : "";
+	}
+
+	// Only convert the prefix text to lower case, in case the round name is to always be displayed with some upper case letters
+	if (lowerCase) {
+		return `${text.toLowerCase()}${appendText}`;
+	} else {
+		return `${text}${appendText}`;
+	}
+};
+
 const helpers = {
 	...commonHelpers,
 	augmentSeries,
@@ -411,6 +532,8 @@ const helpers = {
 	daysLeft,
 	gameAndSeasonLengthScaleFactor,
 	stripBbcode,
+	playoffRoundName,
+	roundsWonText,
 };
 
 export default helpers;

@@ -5,7 +5,7 @@ customize names of playoff rounds
 - check places turning all of roundsWonText into lower case
 - should be possible to edit only one round (such as finals) and keep others default
 - store history
-  - need in UI?
+  - need in UI? only on RecordAndPlayoffs currently
 
 forceHistoricalRosters
 - later

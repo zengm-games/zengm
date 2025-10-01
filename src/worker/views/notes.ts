@@ -131,6 +131,11 @@ const updateNotes = async (
 					playoffsByConfBySeason.set(ts.season, playoffsByConf);
 				}
 
+				const numPlayoffRounds = g.get(
+					"numGamesPlayoffSeries",
+					ts.season,
+				).length;
+
 				teams.push({
 					tid: ts.tid,
 					abbrev: ts.abbrev,
@@ -150,8 +155,12 @@ const updateNotes = async (
 					winp: helpers.calcWinp(ts),
 					note: ts.note,
 					playoffRoundsWon: ts.playoffRoundsWon,
-					numPlayoffRounds: g.get("numGamesPlayoffSeries", ts.season).length,
-					playoffsByConf,
+					roundsWonText: helpers.roundsWonText(
+						ts.playoffRoundsWon,
+						numPlayoffRounds,
+						playoffsByConf,
+						true,
+					),
 				});
 			}
 

@@ -256,13 +256,6 @@ const Notes = (props: View<"notes">) => {
 		});
 
 		rows = teams.map((t) => {
-			const roundsWonText = helpers.roundsWonText(
-				t.playoffRoundsWon,
-				t.numPlayoffRounds,
-				t.playoffsByConf,
-				true,
-			);
-
 			return {
 				key: JSON.stringify([t.tid, t.season]),
 				data: [
@@ -289,11 +282,11 @@ const Notes = (props: View<"notes">) => {
 									t.season,
 								])}
 							>
-								{roundsWonText}
+								{t.roundsWonText}
 							</a>
 						),
 						sortValue: t.playoffRoundsWon,
-						searchValue: roundsWonText,
+						searchValue: t.roundsWonText,
 					},
 					{
 						value: (

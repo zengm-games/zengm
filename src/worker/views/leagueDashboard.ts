@@ -41,20 +41,30 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				g.get("userTid"),
 			]),
 		]);
+
+		const playoffRoundsWon = latestSeason?.playoffRoundsWon ?? -1;
+		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
+		const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
+		const roundsWonText = helpers.roundsWonText(
+			playoffRoundsWon,
+			numPlayoffRounds,
+			playoffsByConf,
+		);
+
 		return {
-			region: t ? t.region : "",
-			name: t ? t.name : "",
-			won: latestSeason !== undefined ? latestSeason.won : 0,
-			lost: latestSeason !== undefined ? latestSeason.lost : 0,
-			tied: latestSeason !== undefined ? latestSeason.tied : 0,
-			otl: latestSeason !== undefined ? latestSeason.otl : 0,
-			cash: latestSeason !== undefined ? latestSeason.cash / 1000 : 0,
+			region: t?.region ?? "",
+			name: t?.name ?? "",
+			won: latestSeason?.won ?? 0,
+			lost: latestSeason?.lost ?? 0,
+			tied: latestSeason?.tied ?? 0,
+			otl: latestSeason?.otl ?? 0,
+			cash: latestSeason ? latestSeason.cash / 1000 : 0,
 			salaryCap: g.get("salaryCap") / 1000,
 			salaryCapType: g.get("salaryCapType"),
 			luxuryPayroll: g.get("luxuryPayroll") / 1000,
 			season: g.get("season"),
-			playoffRoundsWon:
-				latestSeason !== undefined ? latestSeason.playoffRoundsWon : 0,
+			playoffRoundsWon,
+			roundsWonText,
 			userTid: g.get("userTid"),
 		};
 	}
@@ -139,13 +149,16 @@ const updateTeams = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			value: number;
 		}[] = [];
 
-		const teamsConf = await orderTeams(
-			teams.filter((t) => t.seasonAttrs.cid === cid),
+		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
+		const teamsRank = await orderTeams(
+			teams.filter(
+				(t) => playoffsByConf === false || t.seasonAttrs.cid === cid,
+			),
 			teams,
 		);
 
-		for (const t2 of teamsConf) {
-			if (t2.seasonAttrs.cid === cid) {
+		for (const t2 of teamsRank) {
+			if (playoffsByConf === false || t2.seasonAttrs.cid === cid) {
 				if (t2.tid === g.get("userTid")) {
 					teamStats = stats.map((stat, i) => {
 						return {
@@ -457,7 +470,6 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		return {
 			numConfs: g.get("confs", "current").length,
 			numGamesToWinSeries,
-			numPlayoffRounds: g.get("numGamesPlayoffSeries", "current").length,
 			series: foundSeries,
 			seriesTitle,
 			showPlayoffSeries,

@@ -1334,54 +1334,71 @@ const playoffRoundName = (
 	);
 };
 
-const roundsWonText = (
-	playoffRoundsWon: number,
-	numPlayoffRounds: number,
-	playoffsByConf: ByConf,
-	showMissedPlayoffs?: boolean,
-) => {
+const roundsWonText = ({
+	playoffRoundsWon,
+	numPlayoffRounds,
+	playoffsByConf,
+	showMissedPlayoffs,
+	lowerCase,
+}: {
+	playoffRoundsWon: number;
+	numPlayoffRounds: number;
+	playoffsByConf: ByConf;
+	showMissedPlayoffs?: boolean;
+	lowerCase?: boolean;
+}) => {
+	let text;
+	let appendText = "";
+
 	if (playoffRoundsWon >= 0) {
 		if (playoffRoundsWon === numPlayoffRounds) {
-			return "League champs";
-		}
+			text = "League champs";
+		} else {
+			const roundName = playoffRoundName(
+				playoffRoundsWon,
+				numPlayoffRounds,
+				playoffsByConf,
+			);
 
-		const roundName = playoffRoundName(
-			playoffRoundsWon,
-			numPlayoffRounds,
-			playoffsByConf,
-		);
+			// Put this above "made playoffs" to handle the 2 team playoff case
+			if (playoffRoundsWon === numPlayoffRounds - 1) {
+				if (playoffsByConf === 2) {
+					text = "Conference champs";
+				} else {
+					text = "Made ";
+					appendText = roundName;
+				}
+			} else if (playoffRoundsWon === 0) {
+				// Put this early so as to not glorify just making the playoffs with some fancier text
+				text = "Made playoffs";
+			} else {
+				const confChampionshipRound =
+					playoffsByConf === false
+						? undefined
+						: numPlayoffRounds - Math.log2(playoffsByConf);
 
-		// Put this above "made playoffs" to handle the 2 team playoff case
-		if (playoffRoundsWon === numPlayoffRounds - 1) {
-			return playoffsByConf === 2 ? "Conference champs" : `Made ${roundName}`;
-		}
-
-		// Put this early so as to not glorify just making the playoffs with some fancier text
-		if (playoffRoundsWon === 0) {
-			return "Made playoffs";
-		}
-
-		const confChampionshipRound =
-			playoffsByConf === false
-				? undefined
-				: numPlayoffRounds - Math.log2(playoffsByConf);
-
-		if (confChampionshipRound !== undefined) {
-			if (playoffRoundsWon === confChampionshipRound) {
-				return "Conference champs";
+				if (
+					confChampionshipRound !== undefined &&
+					playoffRoundsWon === confChampionshipRound
+				) {
+					text = "Conference champs";
+				} else {
+					text = "Made ";
+					appendText = roundName;
+				}
 			}
-			if (
-				roundName === "conference finals" ||
-				roundName === "conference semifinals"
-			) {
-				return `Made ${roundName}`;
-			}
 		}
-
-		return `Made ${roundName}`;
 	}
 
-	return showMissedPlayoffs ? "Missed playoffs" : "";
+	if (text === undefined) {
+		text = showMissedPlayoffs ? "Missed playoffs" : "";
+	}
+
+	if (lowerCase) {
+		return `${text.toLowerCase}${appendText}`;
+	} else {
+		return `${text}${appendText}`;
+	}
 };
 
 // Based on the currnet number of active teams, the number of draft rounds, and the number of expansion teams, what is the minimum valid number for the max number of players that can be taken per team?

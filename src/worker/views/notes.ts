@@ -155,12 +155,12 @@ const updateNotes = async (
 					winp: helpers.calcWinp(ts),
 					note: ts.note,
 					playoffRoundsWon: ts.playoffRoundsWon,
-					roundsWonText: helpers.roundsWonText(
-						ts.playoffRoundsWon,
+					roundsWonText: helpers.roundsWonText({
+						playoffRoundsWon: ts.playoffRoundsWon,
 						numPlayoffRounds,
 						playoffsByConf,
-						true,
-					),
+						showMissedPlayoffs: true,
+					}),
 				});
 			}
 

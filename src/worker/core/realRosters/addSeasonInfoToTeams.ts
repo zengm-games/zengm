@@ -139,12 +139,12 @@ const addSeasonInfoToTeams = async <
 						}
 					}
 
-					roundsWonText = helpers.roundsWonText(
+					roundsWonText = helpers.roundsWonText({
 						playoffRoundsWon,
-						gameAttributes.numGamesPlayoffSeries!.length,
-						gameAttributes.confs.length === 2 ? 2 : false,
-						true,
-					);
+						numPlayoffRounds: gameAttributes.numGamesPlayoffSeries!.length,
+						playoffsByConf: gameAttributes.confs.length === 2 ? 2 : false,
+						showMissedPlayoffs: true,
+					});
 				}
 			}
 

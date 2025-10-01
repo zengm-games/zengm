@@ -66,7 +66,11 @@ const RecordAndPlayoffs = ({
 				,{" "}
 				<a href={helpers.leagueUrl(["playoffs", season])}>
 					{helpers
-						.roundsWonText(playoffRoundsWon, numPlayoffRounds, playoffsByConf)
+						.roundsWonText({
+							playoffRoundsWon,
+							numPlayoffRounds,
+							playoffsByConf,
+						})
 						.toLowerCase()}
 				</a>
 			</span>

@@ -185,11 +185,11 @@ const getMostXTeamSeasons = async ({
 export const getRoundsWonText = (ts: TeamSeason, playoffsByConf: ByConf) => {
 	const numPlayoffRounds = g.get("numGamesPlayoffSeries", ts.season).length;
 
-	return helpers.roundsWonText(
-		ts.playoffRoundsWon,
+	return helpers.roundsWonText({
+		playoffRoundsWon: ts.playoffRoundsWon,
 		numPlayoffRounds,
 		playoffsByConf,
-	);
+	});
 };
 
 // 0 = won championship, 1 = lost in finals, 2 = lost in semifinals, etc.

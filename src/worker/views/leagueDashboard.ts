@@ -45,11 +45,11 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const playoffRoundsWon = latestSeason?.playoffRoundsWon ?? -1;
 		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
 		const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
-		const roundsWonText = helpers.roundsWonText(
+		const roundsWonText = helpers.roundsWonText({
 			playoffRoundsWon,
 			numPlayoffRounds,
 			playoffsByConf,
-		);
+		});
 
 		return {
 			region: t?.region ?? "",

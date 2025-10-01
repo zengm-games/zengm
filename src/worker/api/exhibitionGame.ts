@@ -150,17 +150,17 @@ const getSeasonInfoLeague = async ({
 			if (season === currentSeason && currentPhase < PHASE.PLAYOFFS) {
 				roundsWonText = "";
 			} else {
-				roundsWonText = helpers.roundsWonText(
-					teamSeason.playoffRoundsWon,
-					numGamesPlayoffSeries.length,
-					await getPlayoffsByConf(teamSeason.season, {
+				roundsWonText = helpers.roundsWonText({
+					playoffRoundsWon: teamSeason.playoffRoundsWon,
+					numPlayoffRounds: numGamesPlayoffSeries.length,
+					playoffsByConf: await getPlayoffsByConf(teamSeason.season, {
 						confs,
 						playoffSeries,
 						playoffsByConf,
 						skipPlayoffSeries: false,
 					}),
-					true,
-				);
+					showMissedPlayoffs: true,
+				});
 			}
 
 			const translatePids: Record<number, number> = {};

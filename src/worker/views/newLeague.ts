@@ -429,6 +429,10 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"forceHistoricalRosters",
 		),
+		playoffRoundNames: unwrapGameAttribute(
+			defaultGameAttributes,
+			"playoffRoundNames",
+		),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

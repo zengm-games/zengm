@@ -1463,6 +1463,58 @@ export const settings: Setting[] = (
 			type: "bool",
 		},
 		{
+			category: "Playoffs",
+			key: "playoffRoundNames",
+			name: "Playoff Round Names",
+			descriptionLong: (
+				<>
+					<p>
+						To override the default playoff names (which vary depending on your
+						playoff settings), enter the name of each round on a new line,
+						starting with the play-in tournament (even if you have that feature
+						disabled, it's still the first line here). For instance if you have
+						4 rounds you could do:
+					</p>
+					<pre>
+						{"play-in tournament\n1st round\n2nd round\nsemifinals\nfinals"}
+					</pre>
+					<p>
+						You can also leave any line blank if you want to keep the default
+						name for that round. So if you only want to override the name of the
+						finals and you have 4 rounds of playoffs (so 4 blank lines before
+						the finals, for the play-in tournament and the first 3 rounds):
+					</p>
+					<pre>{"\n\n\n\nSuper Championship"}</pre>
+				</>
+			),
+			type: "custom",
+			customForm: ({ disabled, handleChange, id, state }) => {
+				let rows = 5;
+				try {
+					const numGamesPlayoffSeries = JSON.parse(state.numGamesPlayoffSeries);
+					const numRoundsToName = numGamesPlayoffSeries.length + 1; // +1 is for play-in tournament
+					rows = helpers.bound(numRoundsToName, 3, 10);
+				} catch {}
+				return (
+					<textarea
+						className="form-control"
+						disabled={disabled}
+						id={id}
+						rows={rows}
+						value={state.playoffRoundNames}
+						onChange={handleChange("playoffRoundNames", "string")}
+					/>
+				);
+			},
+			maxWidth: true,
+			parse: (value) => {
+				return value.split("\n");
+			},
+			stringify: (value: GameAttributesLeague["playoffRoundNames"]) => {
+				return value.join("\n");
+			},
+		},
+		{
 			category: "Players",
 			key: "gender",
 			name: "Gender",

@@ -1516,6 +1516,12 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					forceHistoricalRosters: {
 						type: "boolean",
 					},
+					playoffRoundNames: wrap({
+						type: "array",
+						items: {
+							type: "string",
+						},
+					}),
 				},
 			},
 			games: {

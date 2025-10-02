@@ -750,6 +750,7 @@ export type GameAttributesLeague = {
 	overtimeLengthPlayoffs: number | null;
 	forceRetireRealPlayers: boolean;
 	forceHistoricalRosters: boolean;
+	playoffRoundNames: string[];
 };
 
 export type GameAttributesLeagueWithHistory = Omit<
@@ -766,6 +767,7 @@ export type GameAttributesLeagueWithHistory = Omit<
 	| "shootoutRounds"
 	| "tiebreakers"
 	| "userTid"
+	| "playoffRoundNames"
 > & {
 	confs: GameAttributeWithHistory<GameAttributesLeague["confs"]>;
 	divs: GameAttributeWithHistory<GameAttributesLeague["divs"]>;
@@ -789,6 +791,9 @@ export type GameAttributesLeagueWithHistory = Omit<
 	>;
 	tiebreakers: GameAttributeWithHistory<GameAttributesLeague["tiebreakers"]>;
 	userTid: GameAttributeWithHistory<GameAttributesLeague["userTid"]>;
+	playoffRoundNames: GameAttributeWithHistory<
+		GameAttributesLeague["playoffRoundNames"]
+	>;
 };
 
 export type GameAttributes =

@@ -376,6 +376,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	currencyFormat: ["$", ".", ""],
 	forceRetireRealPlayers: false,
 	forceHistoricalRosters: false,
+	playoffRoundNames: wrap([]),
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!

@@ -326,7 +326,11 @@ const Option = ({
 export type HandleChange = (
 	name: Key,
 	type: FieldType,
-) => (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+) => (
+	event: ChangeEvent<
+		HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+	>,
+) => void;
 
 export type HandleChangeRaw = <Name extends Key>(
 	name: Name,

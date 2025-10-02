@@ -3,6 +3,17 @@ customize names of playoff rounds
 - somehow allow default to apply (like for byConf difference) but override is strictly round by round
 - also override name of finals and "league champs" and name of playoffs in the first place?
 - should be possible to edit only one round (such as finals) and keep others default
+- should be possibile to rename play-in tournament
+- UI
+  - list names of current rounds (need to update if settings change) and override names
+    - will it lose excess ones? could show any excess in UI too
+  - textarea where each line means something else
+- show on playoffs bracket footer, above # games in series
+- need to store history, save any change this season up to playoffs
+- test
+  - empty string or undefined means use default
+
+in a random players league, random debuts should replace the random players on teams with real players when creating a new league https://discord.com/channels/290013534023057409/290013534023057409/1423384579720482857
 
 forceHistoricalRosters
 - later

@@ -66,7 +66,7 @@ type Setting = {
 		state: State;
 	}) => ReactNode;
 	hidden?: true;
-	maxWidth?: true;
+	maxWidth?: "inline" | "newline";
 
 	// Short, one line, shown by default
 	description?: ReactNode;
@@ -459,7 +459,7 @@ export const settings: Setting[] = (
 					}
 				}
 			},
-			maxWidth: true,
+			maxWidth: "newline",
 		},
 		{
 			category: "Standings",
@@ -1506,7 +1506,7 @@ export const settings: Setting[] = (
 					/>
 				);
 			},
-			maxWidth: true,
+			maxWidth: "inline",
 			parse: (value) => {
 				return value.split("\n");
 			},
@@ -2823,7 +2823,7 @@ export const settings: Setting[] = (
 			name: "GOAT Formula",
 			type: "string",
 			description: "See Tools > Frivolities > GOAT Lab for details.",
-			maxWidth: true,
+			maxWidth: "newline",
 		},
 		{
 			category: "Players",
@@ -2831,7 +2831,7 @@ export const settings: Setting[] = (
 			name: "GOAT Season Formula",
 			type: "string",
 			description: "See Tools > Frivolities > GOAT Season for details.",
-			maxWidth: true,
+			maxWidth: "newline",
 		},
 		{
 			category: "Game Simulation",

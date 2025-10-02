@@ -54,7 +54,11 @@ const useSettingsFormState = ({
 
 	const handleChange =
 		(name: Key, type: FieldType) =>
-		(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+		(
+			event: ChangeEvent<
+				HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+			>,
+		) => {
 			let value: string;
 			if (type === "bool") {
 				value = String((event.target as any).checked);

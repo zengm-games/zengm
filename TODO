@@ -10,6 +10,12 @@ customize names of playoff rounds
   - textarea where each line means something else
 - show on playoffs bracket footer, above # games in series
 - need to store history, save any change this season up to playoffs
+  - do we really need history?
+    - if we add to playoff bracket, yes
+    - what about other screens, maybe? INVESTIGATE THIS NEXT
+- what about in column names, or random text in places?
+  - search for semifinals and finals
+- in roundsWonText, what about stuff like Conference champs which don't directly contain the round name?
 - test
   - empty string or undefined means use default
 

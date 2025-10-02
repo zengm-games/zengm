@@ -43,7 +43,7 @@ const Input = ({
 	disabled?: boolean;
 	godModeRequired?: "always" | "existingLeagueOnly";
 	id: string;
-	maxWidth?: true;
+	maxWidth?: "inline" | "newline";
 	name: string;
 	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 	type: FieldType;
@@ -61,7 +61,7 @@ const Input = ({
 			!decoration &&
 			type !== "rangePercent" &&
 			type !== "floatValuesOrCustom" &&
-			!maxWidth
+			maxWidth === undefined
 				? inputStyle
 				: undefined,
 		value,
@@ -204,7 +204,7 @@ const Option = ({
 	decoration?: Decoration;
 	godModeRequired?: "always" | "existingLeagueOnly";
 	newLeague?: boolean;
-	maxWidth?: true;
+	maxWidth?: "inline" | "newline";
 	onCancelDefaultSetting?: () => void;
 	onChange: (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
 	type: FieldType;
@@ -280,7 +280,16 @@ const Option = ({
 						/>
 					) : null}
 				</div>
-				<div className={clsx("ms-auto", maxWidth ? "w-100" : undefined)}>
+				<div
+					className={clsx(
+						"ms-auto",
+						maxWidth === "inline"
+							? "flex-grow-1 ps-2"
+							: maxWidth === "newline"
+								? "w-100"
+								: undefined,
+					)}
+				>
 					{formElement}
 				</div>
 				{onCancelDefaultSetting ? (

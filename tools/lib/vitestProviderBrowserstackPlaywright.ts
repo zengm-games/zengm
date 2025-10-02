@@ -11,7 +11,6 @@ import {
 	type Browser,
 	type BrowserType,
 } from "playwright";
-// eslint-disable-next-line import-x/no-unresolved
 import { Local, type Options } from "browserstack-local";
 
 // https://www.browserstack.com/docs/automate/playwright/playwright-capabilities?fw-lang=nodejs

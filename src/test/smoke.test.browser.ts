@@ -16,7 +16,7 @@ describe("Smoke Tests", () => {
 	test(
 		"Create a new league and simuluate a season without error",
 		{ timeout },
-		async function () {
+		async () => {
 			const stream = createStreamFromLeagueObject({});
 
 			await league.createStream(stream, {

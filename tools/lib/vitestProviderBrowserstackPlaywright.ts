@@ -1,4 +1,4 @@
-import { playwright as playwrightProvider } from "@vitest/browser/providers";
+import { playwright } from "@vitest/browser/providers";
 import type {
 	BrowserProvider,
 	BrowserProviderInitializationOptions,
@@ -12,24 +12,68 @@ import {
 	type BrowserType,
 } from "playwright";
 // eslint-disable-next-line import-x/no-unresolved
-import { Local } from "browserstack-local";
+import { Local, type Options } from "browserstack-local";
+
+// https://www.browserstack.com/docs/automate/playwright/playwright-capabilities?fw-lang=nodejs
+// https://www.browserstack.com/list-of-browsers-and-platforms/playwright
+declare module "vitest/node" {
+	interface InlineConfig {
+		browserstack?: {
+			options: Partial<Options>;
+			capabilities: Record<
+				string,
+				| {
+						os: string;
+						os_version: string;
+						browser: string;
+						browser_version: string;
+						"browserstack.geolocation"?: string;
+						project?: string;
+						build?: string;
+						name?: string;
+						buildTag?: string;
+						resolution?: string;
+						"browserstack.playwrightVersion"?: string;
+						"client.playwrightVersion"?: string;
+						"browserstack.maskCommands"?: string;
+						"browserstack.debug"?: "true" | "false";
+						"browserstack.video"?: "true" | "false";
+						"browserstack.console"?:
+							| "disable"
+							| "errors"
+							| "warnings"
+							| "info"
+							| "verbose";
+						"browserstack.networkLogs"?: "true" | "false";
+						"browserstack.networkLogsOptions"?: "true" | "false";
+						"browserstack.interactiveDebugging"?: "true" | "false";
+				  }
+				| undefined
+			>;
+		};
+	}
+}
 
 export default class BrowserStackPlaywrightProvider
-	extends playwrightProvider
+	extends playwright
 	implements BrowserProvider
 {
-	name = "browserstack-playwright";
-	testName = "";
-	supportsParallelism = false;
-	browser: Browser | undefined;
-	bsLocal = new Local();
+	override name = "browserstack-playwright";
+	override supportsParallelism = true;
 
-	getSupportedBrowsers = () =>
-		Object.assign([], {
-			includes: (value: string) => value.startsWith("browserstack:"),
+	private browser: Browser | undefined;
+	private bsLocal = new Local();
+
+	override getSupportedBrowsers = () => {
+		// Copied from @chialab/vitest-provider-browserstack - let user define whatever they want (maybe the same browser with different configurations), not just a predefined list of indivual browsers
+		return Object.assign([], {
+			includes: (value: string) => {
+				return value.startsWith("browserstack:");
+			},
 		});
+	};
 
-	async initialize(
+	override async initialize(
 		ctx: TestProject,
 		options: BrowserProviderInitializationOptions,
 	) {
@@ -39,29 +83,16 @@ export default class BrowserStackPlaywrightProvider
 		if (!browser) {
 			throw new Error("BrowserStack provider requires a browser configuration");
 		}
-
 		const browserstackConfig = config.browserstack;
-
-		this.testName = config.name;
-
 		const { browser: browserType } = options;
-		console.log("options", options);
-		console.log(
-			"config",
-			browserstackConfig,
-			"testName",
-			this.testName,
-			"browserType",
-			browserType,
-		);
 
 		const bsLocalOptions = {
 			force: true,
 			forceLocal: true,
 			user: process.env.BROWSERSTACK_USERNAME,
 			key: process.env.BROWSERSTACK_ACCESS_KEY,
-			...browserstackConfig.options,
 			localIdentifier: `vitest-${Date.now()}`,
+			...browserstackConfig.options,
 		};
 
 		await new Promise<void>((resolve, reject) => {
@@ -101,7 +132,10 @@ export default class BrowserStackPlaywrightProvider
 		let playwrightBrowser: BrowserType;
 		if (capabilities.browser === "chrome") {
 			playwrightBrowser = chromium;
-		} else if (capabilities.browser === "playwright-webkit") {
+		} else if (
+			capabilities.browser === "playwright-webkit" ||
+			capabilities.browser === "iphone"
+		) {
 			playwrightBrowser = webkit;
 		} else if (capabilities.browser === "playwright-firefox") {
 			playwrightBrowser = firefox;
@@ -116,9 +150,9 @@ export default class BrowserStackPlaywrightProvider
 		console.log("browser started");
 	}
 
-	openPage = async (sessionId: string, url: string) => {
+	override openPage = async (sessionId: string, url: string) => {
 		if (!this.browser) {
-			throw new Error("Browser is not initialized.");
+			throw new Error("Browser is not initialized");
 		}
 		const page = await this.browser.newPage();
 		await page.goto(url);

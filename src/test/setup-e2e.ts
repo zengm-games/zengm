@@ -1,4 +1,4 @@
 import "../common/polyfills.ts";
-import { overridePostMessage } from "./helpers.ts";
+import { overridePostMessage } from "./overridePostMessage.ts";
 
 overridePostMessage();

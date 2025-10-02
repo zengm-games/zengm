@@ -99,7 +99,6 @@ export default class BrowserStackPlaywrightProvider
 				if (error) {
 					reject(error);
 				} else {
-					console.log("BrowserStackLocal started");
 					resolve();
 				}
 			});
@@ -122,7 +121,6 @@ export default class BrowserStackPlaywrightProvider
 			"browserstack.localIdentifier": bsLocalOptions.localIdentifier,
 			...configCapabilities,
 		};
-		console.log("capabilities", capabilities);
 
 		const wsEndpoint = `wss://cdp.browserstack.com/playwright?caps=${encodeURIComponent(
 			JSON.stringify(capabilities),
@@ -144,9 +142,7 @@ export default class BrowserStackPlaywrightProvider
 			);
 		}
 
-		console.log("here", wsEndpoint);
 		this.browser = await playwrightBrowser.connect(wsEndpoint);
-		console.log("browser started");
 	}
 
 	override openPage = async (sessionId: string, url: string) => {
@@ -157,6 +153,7 @@ export default class BrowserStackPlaywrightProvider
 		await page.goto(url);
 	};
 
+	// idk why but this makes it work, rather than overriding close
 	async closeBrowser() {
 		await Promise.all([
 			this.browser?.close(),

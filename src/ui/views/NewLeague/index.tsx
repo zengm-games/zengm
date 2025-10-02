@@ -1059,7 +1059,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			throw new Error(`Error randomizing teams: ${response}`);
 		} else {
 			const newTeams = applyRealTeamInfos(
-				makeTIDsSequential(response.teams),
+				makeTIDsSequential({ teams: response.teams, rewriteTids: true }),
 				props.realTeamInfo,
 				"inTeamObject",
 			);

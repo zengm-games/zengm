@@ -11,7 +11,7 @@ import {
 import {
 	Conferences,
 	getAbbrevsUsedMultipleTimes,
-	reducer,
+	makeReducer,
 } from "./NewLeague/CustomizeTeams.tsx";
 import StickyBottomButtons from "../components/StickyBottomButtons.tsx";
 import type { NewLeagueTeamWithoutRank } from "./NewLeague/types.ts";
@@ -186,7 +186,7 @@ const ManageConfs = ({
 	initialDivs,
 	initialTeams,
 }: View<"manageConfs">) => {
-	const [{ confs, divs, teams }, dispatch] = useReducer(reducer, {
+	const [{ confs, divs, teams }, dispatch] = useReducer(makeReducer(false), {
 		confs: [...initialConfs],
 		divs: [...initialDivs],
 		teams: [...initialTeams],
@@ -296,7 +296,6 @@ const ManageConfs = ({
 				confs={confs as NonEmptyArray<Conf>}
 				divs={divs as NonEmptyArray<Div>}
 				onSave={(t) => {
-					console.log("EDIT", t);
 					dispatch({ type: "editTeam", t });
 					setEditTeam(undefined);
 				}}

@@ -17,9 +17,17 @@ import { countBy, orderBy } from "../../../common/utils.ts";
 import type { Continent } from "../../../common/geographicCoordinates.ts";
 import { REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 
-export const makeTIDsSequential = <T extends { tid: number }>(
-	teams: T[],
-): T[] => {
+export const makeTIDsSequential = <T extends { tid: number }>({
+	teams,
+	rewriteTids,
+}: {
+	teams: T[];
+	rewriteTids: boolean;
+}): T[] => {
+	if (!rewriteTids) {
+		return teams;
+	}
+
 	return teams.map((t, i) => ({
 		...t,
 		tid: i,
@@ -35,7 +43,10 @@ type ConfsDivsTeams = {
 const makeDIDsSequential = ({
 	divs,
 	teams,
-}: Pick<ConfsDivsTeams, "divs" | "teams">) => {
+	rewriteTids,
+}: Pick<ConfsDivsTeams, "divs" | "teams"> & {
+	rewriteTids: boolean;
+}) => {
 	const divsByDid: Record<number, Div> = {};
 	const newDivs = orderBy(divs, "cid", "asc").map((div, newDid) => {
 		const newDiv = {
@@ -48,7 +59,7 @@ const makeDIDsSequential = ({
 		return newDiv;
 	});
 
-	const newTeams = makeTIDsSequential(teams).map((t) => {
+	const newTeams = makeTIDsSequential({ teams, rewriteTids }).map((t) => {
 		const div = divsByDid[t.did];
 		if (!div) {
 			throw new Error("Invalid did");
@@ -67,7 +78,14 @@ const makeDIDsSequential = ({
 	};
 };
 
-const makeCIDsSequential = ({ confs, divs, teams }: ConfsDivsTeams) => {
+const makeCIDsSequential = ({
+	confs,
+	divs,
+	teams,
+	rewriteTids,
+}: ConfsDivsTeams & {
+	rewriteTids: boolean;
+}) => {
 	const newCids: Record<number, number> = {};
 	const newConfs = confs.map((conf, newCid) => {
 		if (newCid !== conf.cid) {
@@ -97,6 +115,7 @@ const makeCIDsSequential = ({ confs, divs, teams }: ConfsDivsTeams) => {
 		...makeDIDsSequential({
 			divs: newDivs,
 			teams,
+			rewriteTids,
 		}),
 	};
 };
@@ -157,273 +176,291 @@ type Action =
 			tid: number;
 	  };
 
-export const reducer = (state: State, action: Action): State => {
-	switch (action.type) {
-		case "setState":
-			return {
-				...state,
-				...makeCIDsSequential({
-					confs: action.confs,
-					divs: action.divs,
-					teams: action.teams,
-				}),
-			};
+export const makeReducer = (rewriteTids: boolean) => {
+	return (state: State, action: Action): State => {
+		switch (action.type) {
+			case "setState":
+				return {
+					...state,
+					...makeCIDsSequential({
+						confs: action.confs,
+						divs: action.divs,
+						teams: action.teams,
+						rewriteTids,
+					}),
+				};
 
-		case "addConf": {
-			const maxCID =
-				state.confs.length > 0
-					? Math.max(...state.confs.map((conf) => conf.cid))
-					: -1;
-			return {
-				...state,
-				confs: [
-					...state.confs,
-					{
-						cid: maxCID + 1,
-						name: "New Conference",
-					},
-				],
-			};
-		}
-
-		case "addDiv": {
-			const maxDID =
-				state.divs.length > 0
-					? Math.max(...state.divs.map((div) => div.did))
-					: -1;
-			return {
-				...state,
-				...makeDIDsSequential({
-					divs: [
-						...state.divs,
+			case "addConf": {
+				const maxCID =
+					state.confs.length > 0
+						? Math.max(...state.confs.map((conf) => conf.cid))
+						: -1;
+				return {
+					...state,
+					confs: [
+						...state.confs,
 						{
-							did: maxDID + 1,
-							cid: action.cid,
-							name: "New Division",
+							cid: maxCID + 1,
+							name: "New Conference",
 						},
 					],
-					teams: state.teams,
-				}),
-			};
-		}
-
-		case "addTeam": {
-			return {
-				...state,
-				teams: makeTIDsSequential([...state.teams, action.t]),
-			};
-		}
-
-		case "renameConf":
-			return {
-				...state,
-				confs: state.confs.map((conf) => {
-					if (action.cid !== conf.cid) {
-						return conf;
-					}
-
-					return {
-						...conf,
-						name: action.name,
-					};
-				}),
-			};
-
-		case "renameDiv":
-			return {
-				...state,
-				divs: state.divs.map((div) => {
-					if (action.did !== div.did) {
-						return div;
-					}
-
-					return {
-						...div,
-						name: action.name,
-					};
-				}),
-			};
-
-		case "editTeam": {
-			const newTeams = state.teams.map((t) => {
-				if (t.tid !== action.t.tid) {
-					return t;
-				}
-
-				return action.t;
-			});
-			return {
-				...state,
-				teams: makeTIDsSequential(newTeams),
-			};
-		}
-
-		case "moveConf": {
-			const oldIndex = state.confs.findIndex((conf) => conf.cid === action.cid);
-			const newIndex = oldIndex + action.direction;
-
-			if (newIndex < 0 || newIndex > state.confs.length - 1) {
-				return state;
+				};
 			}
 
-			const newConfs = arrayMove(state.confs, oldIndex, newIndex);
-
-			return makeCIDsSequential({
-				confs: newConfs,
-				divs: state.divs,
-				teams: state.teams,
-			});
-		}
-
-		case "moveDiv": {
-			// Make sure we're sorted by cid, to make moving between conferences easy
-			const newDivs = orderBy(state.divs, "cid", "asc");
-
-			const div = newDivs.find((div) => div.did === action.did);
-			if (!div) {
-				return state;
+			case "addDiv": {
+				const maxDID =
+					state.divs.length > 0
+						? Math.max(...state.divs.map((div) => div.did))
+						: -1;
+				return {
+					...state,
+					...makeDIDsSequential({
+						divs: [
+							...state.divs,
+							{
+								did: maxDID + 1,
+								cid: action.cid,
+								name: "New Division",
+							},
+						],
+						teams: state.teams,
+						rewriteTids,
+					}),
+				};
 			}
 
-			// See if we're moving at the boundary of the conference, in which case we need to switch to a new conference
-			const divsLocal = newDivs.filter((div2) => div2.cid === div.cid);
-			const indexLocal = divsLocal.findIndex((div) => div.did === action.did);
-			let newCID = -1;
-			if (
-				(indexLocal === 0 && action.direction === -1) ||
-				(indexLocal === divsLocal.length - 1 && action.direction === 1)
-			) {
-				const confIndex = state.confs.findIndex((conf) => conf.cid === div.cid);
-				if (confIndex > 0 && action.direction === -1) {
-					newCID = state.confs[confIndex - 1]!.cid;
-				} else if (
-					confIndex < state.confs.length - 1 &&
-					action.direction === 1
-				) {
-					newCID = state.confs[confIndex + 1]!.cid;
-				}
+			case "addTeam": {
+				return {
+					...state,
+					teams: makeTIDsSequential({
+						teams: [...state.teams, action.t],
+						rewriteTids,
+					}),
+				};
 			}
 
-			let newDivs2;
-			if (newCID >= 0) {
-				// Move to new conf
-				newDivs2 = newDivs.map((div) => {
-					if (action.did !== div.did) {
-						return div;
+			case "renameConf":
+				return {
+					...state,
+					confs: state.confs.map((conf) => {
+						if (action.cid !== conf.cid) {
+							return conf;
+						}
+
+						return {
+							...conf,
+							name: action.name,
+						};
+					}),
+				};
+
+			case "renameDiv":
+				return {
+					...state,
+					divs: state.divs.map((div) => {
+						if (action.did !== div.did) {
+							return div;
+						}
+
+						return {
+							...div,
+							name: action.name,
+						};
+					}),
+				};
+
+			case "editTeam": {
+				const newTeams = state.teams.map((t) => {
+					if (t.tid !== action.t.tid) {
+						return t;
 					}
 
-					return {
-						...div,
-						cid: newCID,
-					};
+					return action.t;
 				});
-			} else {
-				// Move within conf
-				const oldIndex = newDivs.findIndex((div) => div.did === action.did);
+				return {
+					...state,
+					teams: makeTIDsSequential({ teams: newTeams, rewriteTids }),
+				};
+			}
+
+			case "moveConf": {
+				const oldIndex = state.confs.findIndex(
+					(conf) => conf.cid === action.cid,
+				);
 				const newIndex = oldIndex + action.direction;
 
-				if (newIndex < 0 || newIndex > newDivs.length - 1) {
+				if (newIndex < 0 || newIndex > state.confs.length - 1) {
 					return state;
 				}
 
-				newDivs2 = arrayMove(newDivs, oldIndex, newIndex);
-			}
+				const newConfs = arrayMove(state.confs, oldIndex, newIndex);
 
-			return {
-				...state,
-				...makeDIDsSequential({
-					divs: newDivs2,
+				return makeCIDsSequential({
+					confs: newConfs,
+					divs: state.divs,
 					teams: state.teams,
-				}),
-			};
-		}
-
-		case "deleteConf": {
-			const { moveToCID } = action;
-
-			let newDivs;
-			let newTeams;
-			if (moveToCID === undefined) {
-				// Delete children
-				newDivs = state.divs.filter((div) => div.cid !== action.cid);
-				newTeams = state.teams.filter((t) => t.cid !== action.cid);
-			} else {
-				// Move children
-				newDivs = state.divs.map((div) => {
-					if (div.cid !== action.cid) {
-						return div;
-					}
-
-					return {
-						...div,
-						cid: moveToCID,
-					};
-				});
-				newTeams = state.teams.map((t) => {
-					if (t.cid !== action.cid) {
-						return t;
-					}
-
-					return {
-						...t,
-						cid: moveToCID,
-					};
+					rewriteTids,
 				});
 			}
 
-			const newConfs = state.confs.filter((conf) => conf.cid !== action.cid);
+			case "moveDiv": {
+				// Make sure we're sorted by cid, to make moving between conferences easy
+				const newDivs = orderBy(state.divs, "cid", "asc");
 
-			return makeCIDsSequential({
-				confs: newConfs,
-				divs: newDivs,
-				teams: newTeams,
-			});
-		}
-
-		case "deleteDiv": {
-			let newTeams;
-			if (action.moveToDID === undefined) {
-				// Delete children
-				newTeams = state.teams.filter((t) => t.did !== action.did);
-			} else {
-				// Move children
-				const div = state.divs.find((div) => div.did === action.moveToDID);
+				const div = newDivs.find((div) => div.did === action.did);
 				if (!div) {
-					throw new Error("div not found");
+					return state;
 				}
-				newTeams = state.teams.map((t) => {
-					if (t.did !== action.did) {
-						return t;
+
+				// See if we're moving at the boundary of the conference, in which case we need to switch to a new conference
+				const divsLocal = newDivs.filter((div2) => div2.cid === div.cid);
+				const indexLocal = divsLocal.findIndex((div) => div.did === action.did);
+				let newCID = -1;
+				if (
+					(indexLocal === 0 && action.direction === -1) ||
+					(indexLocal === divsLocal.length - 1 && action.direction === 1)
+				) {
+					const confIndex = state.confs.findIndex(
+						(conf) => conf.cid === div.cid,
+					);
+					if (confIndex > 0 && action.direction === -1) {
+						newCID = state.confs[confIndex - 1]!.cid;
+					} else if (
+						confIndex < state.confs.length - 1 &&
+						action.direction === 1
+					) {
+						newCID = state.confs[confIndex + 1]!.cid;
+					}
+				}
+
+				let newDivs2;
+				if (newCID >= 0) {
+					// Move to new conf
+					newDivs2 = newDivs.map((div) => {
+						if (action.did !== div.did) {
+							return div;
+						}
+
+						return {
+							...div,
+							cid: newCID,
+						};
+					});
+				} else {
+					// Move within conf
+					const oldIndex = newDivs.findIndex((div) => div.did === action.did);
+					const newIndex = oldIndex + action.direction;
+
+					if (newIndex < 0 || newIndex > newDivs.length - 1) {
+						return state;
 					}
 
-					return {
-						...t,
-						did: div.did,
-						cid: div.cid,
-					};
+					newDivs2 = arrayMove(newDivs, oldIndex, newIndex);
+				}
+
+				return {
+					...state,
+					...makeDIDsSequential({
+						divs: newDivs2,
+						teams: state.teams,
+						rewriteTids,
+					}),
+				};
+			}
+
+			case "deleteConf": {
+				const { moveToCID } = action;
+
+				let newDivs;
+				let newTeams;
+				if (moveToCID === undefined) {
+					// Delete children
+					newDivs = state.divs.filter((div) => div.cid !== action.cid);
+					newTeams = state.teams.filter((t) => t.cid !== action.cid);
+				} else {
+					// Move children
+					newDivs = state.divs.map((div) => {
+						if (div.cid !== action.cid) {
+							return div;
+						}
+
+						return {
+							...div,
+							cid: moveToCID,
+						};
+					});
+					newTeams = state.teams.map((t) => {
+						if (t.cid !== action.cid) {
+							return t;
+						}
+
+						return {
+							...t,
+							cid: moveToCID,
+						};
+					});
+				}
+
+				const newConfs = state.confs.filter((conf) => conf.cid !== action.cid);
+
+				return makeCIDsSequential({
+					confs: newConfs,
+					divs: newDivs,
+					teams: newTeams,
+					rewriteTids,
 				});
 			}
 
-			return {
-				...state,
-				...makeDIDsSequential({
-					divs: state.divs.filter((div) => div.did !== action.did),
-					teams: newTeams,
-				}),
-			};
+			case "deleteDiv": {
+				let newTeams;
+				if (action.moveToDID === undefined) {
+					// Delete children
+					newTeams = state.teams.filter((t) => t.did !== action.did);
+				} else {
+					// Move children
+					const div = state.divs.find((div) => div.did === action.moveToDID);
+					if (!div) {
+						throw new Error("div not found");
+					}
+					newTeams = state.teams.map((t) => {
+						if (t.did !== action.did) {
+							return t;
+						}
+
+						return {
+							...t,
+							did: div.did,
+							cid: div.cid,
+						};
+					});
+				}
+
+				return {
+					...state,
+					...makeDIDsSequential({
+						divs: state.divs.filter((div) => div.did !== action.did),
+						teams: newTeams,
+						rewriteTids,
+					}),
+				};
+			}
+
+			case "deleteTeam":
+				return {
+					...state,
+					teams: makeTIDsSequential({
+						teams: state.teams.filter((t) => t.tid !== action.tid),
+						rewriteTids,
+					}),
+				};
+
+			default:
+				throw new Error();
 		}
-
-		case "deleteTeam":
-			return {
-				...state,
-				teams: makeTIDsSequential(
-					state.teams.filter((t) => t.tid !== action.tid),
-				),
-			};
-
-		default:
-			throw new Error();
-	}
+	};
 };
+
+const reducer = makeReducer(true);
 
 const PlayersButton = ({
 	players,

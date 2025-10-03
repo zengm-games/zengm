@@ -490,7 +490,7 @@ const writeGameStats = async (
 			numPlayoffRounds,
 			playoffsByConf,
 		);
-		let score = round === "finals" ? 20 : 10;
+		let score = currentRound === numPlayoffRounds - 1 ? 20 : 10;
 		const gameNum = playoffInfos[0].won + playoffInfos[0].lost;
 		const gameNumText = numGamesToWinSeries > 1 ? ` game ${gameNum} of` : "";
 		let leadText = "";

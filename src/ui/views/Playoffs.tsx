@@ -18,6 +18,7 @@ const Playoffs = ({
 	matchups,
 	numGamesPlayoffSeries,
 	numGamesToWinSeries,
+	playInName,
 	playIns,
 	playoffsByConf,
 	season,
@@ -217,7 +218,7 @@ const Playoffs = ({
 
 			{playIns ? (
 				<>
-					<h2>Play-In Tournament</h2>
+					<h2>{playInName}</h2>
 					<p className="mb-2">
 						The {helpers.plural("winner", playIns.length)} of the{" "}
 						{playIns[0]![0].home.seed}/{playIns[0]![0].away.seed}{" "}

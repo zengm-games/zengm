@@ -67,6 +67,7 @@ const updatePlayoffs = async (
 			}[][];
 			numGamesPlayoffSeries: number[];
 			numGamesToWinSeries: number[];
+			playInName: string | undefined;
 			playIns: PlayIns;
 			playoffsByConf: number | false;
 			season: number;
@@ -246,6 +247,17 @@ const updatePlayoffs = async (
 			}));
 		}
 
+		const playInName = playIns2
+			? helpers.upperCaseFirstLetter(
+					helpers.playoffRoundName({
+						currentRound: -1,
+						numPlayoffRounds: numGamesPlayoffSeries.length,
+						playoffsByConf,
+						season: inputs.season,
+					}).name,
+				)
+			: undefined;
+
 		return {
 			canEdit,
 			confNames,
@@ -255,6 +267,7 @@ const updatePlayoffs = async (
 			numGamesToWinSeries: numGamesPlayoffSeries.map(
 				helpers.numGamesToWinSeries,
 			),
+			playInName,
 			playIns: playIns2,
 			playoffsByConf,
 			season: inputs.season,

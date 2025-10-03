@@ -1,15 +1,10 @@
 customize names of playoff rounds
+- IDK IS THIS REALLY WORTH IT?
 - see playoffRoundName
-- somehow allow default to apply (like for byConf difference) but override is strictly round by round
 - also override name of finals and "league champs" and name of playoffs in the first place?
-- should be possible to edit only one round (such as finals) and keep others default
-- should be possibile to rename play-in tournament
-- UI
+- settings UI
   - list names of current rounds (need to update if settings change) and override names
     - will it lose excess ones? could show any excess in UI too
-  - textarea where each line means something else
-- show on playoffs bracket footer, above # games in series
-- need to store history, save any change this season up to playoffs (keep in sync with numGamesPlayoffSeries)
 - test
   - does exhibition game still work? does it pull the right round names?
   - in menu when customizing teams and selectin real player leagues - still works?
@@ -18,6 +13,9 @@ customize names of playoff rounds
 - in roundsWonText, what about stuff like Conference champs which don't directly contain the round name?
 - test
   - empty string or undefined means use default
+
+clean up ALWAYS_WRAP
+- link it to types to make sure they are actually always wrapped
 
 in a random players league, random debuts should replace the random players on teams with real players when creating a new league https://discord.com/channels/290013534023057409/290013534023057409/1423384579720482857
 

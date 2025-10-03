@@ -461,7 +461,14 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 							found = true;
 							showPlayoffSeries = true;
 
-							seriesTitle = "Play-in tournament";
+							seriesTitle = helpers.upperCaseFirstLetter(
+								helpers.playoffRoundName({
+									currentRound: -1,
+									numPlayoffRounds,
+									playoffsByConf,
+									season: g.get("season"),
+								}).name,
+							);
 
 							numGamesToWinSeries = 1;
 							break;

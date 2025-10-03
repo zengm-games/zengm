@@ -55,6 +55,15 @@ export default tseslint.config(
 			"react/jsx-no-target-blank": "off", // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/rel/noopener  Note: Setting target="_blank" on <a>, <area> and <form> elements implicitly provides the same rel behavior as setting rel="noopener" which does not set window.opener.
 			"react/jsx-sort-props": "off",
 			"react/no-unescaped-entities": "off",
+
+			// Would be nice to enable these
+			"react-hooks/globals": "off",
+			"react-hooks/immutability": "off",
+			"react-hooks/incompatible-library": "off",
+			"react-hooks/purity": "off",
+			"react-hooks/refs": "off",
+			"react-hooks/set-state-in-effect": "off",
+
 			"react-hooks/react-compiler": "off",
 			"sort-destructure-keys/sort-destructure-keys": "off",
 			"sort-keys-fix/sort-keys-fix": "off",

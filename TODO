@@ -1,8 +1,5 @@
 customize names of playoff rounds
-- see playoffRoundName
-- somehow allow default to apply (like for byConf difference) but override is strictly round by round
-- also override name of finals and "league champs" and name of playoffs in the first place?
-- should be possible to edit only one round (such as finals) and keep others default
+- see customize-playoff-round-names branch - not sure if it's worth the complexity
 
 forceHistoricalRosters
 - later

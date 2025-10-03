@@ -485,12 +485,13 @@ const writeGameStats = async (
 			gameStats.finals = true;
 		}
 
-		const round = helpers.playoffRoundName(
+		const round = helpers.playoffRoundName({
 			currentRound,
 			numPlayoffRounds,
 			playoffsByConf,
-		);
-		let score = round === "finals" ? 20 : 10;
+			season: g.get("season"),
+		}).name;
+		let score = currentRound === numPlayoffRounds - 1 ? 20 : 10;
 		const gameNum = playoffInfos[0].won + playoffInfos[0].lost;
 		const gameNumText = numGamesToWinSeries > 1 ? ` game ${gameNum} of` : "";
 		let leadText = "";
@@ -598,11 +599,12 @@ const writeGameStats = async (
 			}`;
 
 			if (currentRound !== undefined && playoffInfos) {
-				const round = helpers.playoffRoundName(
+				const round = helpers.playoffRoundName({
 					currentRound,
 					numPlayoffRounds,
 					playoffsByConf,
-				);
+					season: g.get("season"),
+				}).name;
 
 				const gameNum = playoffInfos[0].won + playoffInfos[0].lost;
 				const numGamesThisRound =

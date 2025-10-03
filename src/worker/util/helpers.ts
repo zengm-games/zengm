@@ -393,22 +393,37 @@ const formatCurrency = (
 	);
 };
 
-const playoffRoundName = (
-	currentRound: number, // Like currentRound from PlayoffSeries, not playoffRoundsWon. Difference is that playoffRoundsWon can be 1 higher than this (for finals winner) and -1 means differnet things (here it is play-in tournament, not missed playoffs)
-	numPlayoffRounds: number,
-	playoffsByConf: ByConf,
-) => {
+const playoffRoundName = ({
+	currentRound,
+	numPlayoffRounds,
+	playoffsByConf,
+	season,
+}: {
+	currentRound: number; // Like currentRound from PlayoffSeries, not playoffRoundsWon. Difference is that playoffRoundsWon can be 1 higher than this (for finals winner) and -1 means differnet things (here it is play-in tournament, not missed playoffs)
+	numPlayoffRounds: number;
+	playoffsByConf: ByConf;
+	season: number;
+}) => {
+	const playoffRoundNames = g.get("playoffRoundNames", season);
+	const override = playoffRoundNames[currentRound + 1];
+	if (override !== undefined && override !== "") {
+		return {
+			default: false,
+			name: override,
+		} as const;
+	}
+
 	if (currentRound === -1) {
-		return "play-in tournament";
+		return { default: true, name: "play-in tournament" } as const;
 	}
 
 	if (currentRound === numPlayoffRounds - 1) {
-		return "finals" as const;
+		return { default: true, name: "finals" } as const;
 	}
 
 	// Put this early so as to not glorify just making the playoffs with some fancier text
 	if (currentRound === 0) {
-		return "1st round" as const;
+		return { default: true, name: "1st round" } as const;
 	}
 
 	const confChampionshipRound =
@@ -418,23 +433,26 @@ const playoffRoundName = (
 
 	if (confChampionshipRound !== undefined) {
 		if (currentRound === confChampionshipRound - 1) {
-			return "conference finals";
+			return { default: true, name: "conference finals" } as const;
 		}
 		if (currentRound === confChampionshipRound - 2) {
-			return "conference semifinals";
+			return { default: true, name: "conference semifinals" } as const;
 		}
 	}
 
 	if (currentRound === numPlayoffRounds - 2) {
-		return "semifinals";
+		return { default: true, name: "semifinals" } as const;
 	}
 
 	if (currentRound === numPlayoffRounds - 3) {
-		return "quarterfinals";
+		return { default: true, name: "quarterfinals" } as const;
 	}
 
 	if (currentRound >= 1) {
-		return `${commonHelpers.ordinal(currentRound + 1)} round` as const;
+		return {
+			default: true,
+			name: `${commonHelpers.ordinal(currentRound + 1)} round`,
+		} as const;
 	}
 
 	throw new Error(
@@ -446,11 +464,13 @@ const roundsWonText = ({
 	playoffRoundsWon,
 	numPlayoffRounds,
 	playoffsByConf,
+	season,
 	showMissedPlayoffs,
 }: {
 	playoffRoundsWon: number;
 	numPlayoffRounds: number;
 	playoffsByConf: ByConf;
+	season: number;
 	showMissedPlayoffs?: boolean;
 }) => {
 	if (playoffRoundsWon >= 0) {
@@ -458,19 +478,20 @@ const roundsWonText = ({
 			return "league champs";
 		}
 
-		const roundName = playoffRoundName(
-			playoffRoundsWon,
+		const roundName = playoffRoundName({
+			currentRound: playoffRoundsWon,
 			numPlayoffRounds,
 			playoffsByConf,
-		);
+			season,
+		});
 
 		// Put this above "made playoffs" to handle the 2 team playoff case
 		if (playoffRoundsWon === numPlayoffRounds - 1) {
-			if (playoffsByConf === 2) {
+			if (playoffsByConf === 2 && roundName.default) {
 				return "conference champs";
 			}
 
-			return `made ${roundName}`;
+			return `made ${roundName.name}`;
 		}
 
 		if (playoffRoundsWon === 0) {
@@ -485,12 +506,13 @@ const roundsWonText = ({
 
 		if (
 			confChampionshipRound !== undefined &&
-			playoffRoundsWon === confChampionshipRound
+			playoffRoundsWon === confChampionshipRound &&
+			roundName.default
 		) {
 			return "conference champs";
 		}
 
-		return `made ${roundName}`;
+		return `made ${roundName.name}`;
 	}
 
 	return showMissedPlayoffs ? "missed playoffs" : "";

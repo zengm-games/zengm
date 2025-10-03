@@ -9,12 +9,12 @@ customize names of playoff rounds
     - will it lose excess ones? could show any excess in UI too
   - textarea where each line means something else
 - show on playoffs bracket footer, above # games in series
-- need to store history, save any change this season up to playoffs
-  - do we really need history?
-    - if we add to playoff bracket, yes
-    - what about other screens, maybe? INVESTIGATE THIS NEXT
+- need to store history, save any change this season up to playoffs (keep in sync with numGamesPlayoffSeries)
+- test
+  - does exhibition game still work? does it pull the right round names?
+  - in menu when customizing teams and selectin real player leagues - still works?
 - what about in column names, or random text in places?
-  - search for semifinals and finals
+  - search for semifinals, finals, champ
 - in roundsWonText, what about stuff like Conference champs which don't directly contain the round name?
 - test
   - empty string or undefined means use default

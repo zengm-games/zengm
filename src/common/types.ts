@@ -762,12 +762,12 @@ export type GameAttributesLeagueWithHistory = Omit<
 	| "numGamesPlayoffSeries"
 	| "numPlayoffByes"
 	| "otl"
+	| "playoffRoundNames"
 	| "playoffsNumTeamsDiv"
 	| "pointsFormula"
 	| "shootoutRounds"
 	| "tiebreakers"
 	| "userTid"
-	| "playoffRoundNames"
 > & {
 	confs: GameAttributeWithHistory<GameAttributesLeague["confs"]>;
 	divs: GameAttributeWithHistory<GameAttributesLeague["divs"]>;
@@ -780,6 +780,9 @@ export type GameAttributesLeagueWithHistory = Omit<
 		GameAttributesLeague["numPlayoffByes"]
 	>;
 	otl: GameAttributeWithHistory<GameAttributesLeague["otl"]>;
+	playoffRoundNames: GameAttributeWithHistory<
+		GameAttributesLeague["playoffRoundNames"]
+	>;
 	playoffsNumTeamsDiv: GameAttributeWithHistory<
 		GameAttributesLeague["playoffsNumTeamsDiv"]
 	>;
@@ -791,9 +794,6 @@ export type GameAttributesLeagueWithHistory = Omit<
 	>;
 	tiebreakers: GameAttributeWithHistory<GameAttributesLeague["tiebreakers"]>;
 	userTid: GameAttributeWithHistory<GameAttributesLeague["userTid"]>;
-	playoffRoundNames: GameAttributeWithHistory<
-		GameAttributesLeague["playoffRoundNames"]
-	>;
 };
 
 export type GameAttributes =

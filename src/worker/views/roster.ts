@@ -257,6 +257,7 @@ const updateRoster = async (
 				playoffRoundsWon: t.seasonAttrs.playoffRoundsWon,
 				numPlayoffRounds: g.get("numGamesPlayoffSeries", inputs.season).length,
 				playoffsByConf: await season.getPlayoffsByConf(inputs.season),
+				season: inputs.season,
 			}),
 		};
 		t2.seasonAttrs.avgAge = t2.seasonAttrs.avgAge ?? team.avgAge(players);

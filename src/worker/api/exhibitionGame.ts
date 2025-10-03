@@ -160,6 +160,7 @@ const getSeasonInfoLeague = async ({
 						skipPlayoffSeries: false,
 					}),
 					showMissedPlayoffs: true,
+					season,
 				});
 			}
 

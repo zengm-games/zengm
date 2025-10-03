@@ -144,6 +144,7 @@ const addSeasonInfoToTeams = async <
 						numPlayoffRounds: gameAttributes.numGamesPlayoffSeries!.length,
 						playoffsByConf: gameAttributes.confs.length === 2 ? 2 : false,
 						showMissedPlayoffs: true,
+						season: options.season,
 					});
 				}
 			}

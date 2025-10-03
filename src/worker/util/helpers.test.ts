@@ -1,8 +1,9 @@
-import { assert, beforeAll, describe, test } from "vitest";
+import { afterAll, assert, beforeAll, describe, test } from "vitest";
 import { PLAYER } from "../../common/index.ts";
 import g from "./g.ts";
 import helpers from "./helpers.ts";
 import type { ByConf } from "../../common/types.ts";
+import testHelpers from "../../test/helpers.ts";
 
 beforeAll(() => {
 	g.setWithoutSavingToDB("userTid", 4);
@@ -76,8 +77,13 @@ describe("roundsWonText", () => {
 			playoffRoundsWon,
 			numPlayoffRounds,
 			playoffsByConf,
+			season: g.get("season"),
 		});
 	};
+
+	beforeAll(() => {
+		testHelpers.resetG();
+	});
 
 	test("Default league, byConf", () => {
 		assert.strictEqual(roundsWonText(-1, 4, 2), "");
@@ -118,5 +124,19 @@ describe("roundsWonText", () => {
 		assert.strictEqual(roundsWonText(2, 4, 16), "made semifinals");
 		assert.strictEqual(roundsWonText(3, 4, 16), "made finals");
 		assert.strictEqual(roundsWonText(4, 4, 16), "league champs");
+	});
+
+	test("Override with playoffRoundNames", () => {
+		g.setWithoutSavingToDB("playoffRoundNames", ["", "", "", "XXX", "YYY"]);
+		assert.strictEqual(roundsWonText(-1, 4, 2), "");
+		assert.strictEqual(roundsWonText(0, 4, 2), "made playoffs");
+		assert.strictEqual(roundsWonText(1, 4, 2), "made conference semifinals");
+		assert.strictEqual(roundsWonText(2, 4, 2), "made XXX");
+		assert.strictEqual(roundsWonText(3, 4, 2), "made YYY");
+		assert.strictEqual(roundsWonText(4, 4, 2), "league champs");
+	});
+
+	afterAll(() => {
+		testHelpers.resetG();
 	});
 });

@@ -119,11 +119,12 @@ const updatePlayoffSeries = async (
 
 			const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
 			const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
-			const currentRoundText = helpers.playoffRoundName(
-				playoffSeries.currentRound,
+			const currentRoundText = helpers.playoffRoundName({
+				currentRound: playoffSeries.currentRound,
 				numPlayoffRounds,
 				playoffsByConf,
-			);
+				season: playoffSeries.season,
+			}).name;
 
 			// Not needed, because individual game event in writeGameStats will cover this round
 			const saveToDb =

@@ -207,6 +207,7 @@ const updateTeamSelect = async (
 				playoffRoundsWon: t.seasonAttrs.playoffRoundsWon,
 				numPlayoffRounds,
 				playoffsByConf,
+				season: t.seasonAttrs.season,
 			}),
 		}));
 		for (const t of teamsWithOvr) {

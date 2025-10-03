@@ -189,6 +189,7 @@ export const getRoundsWonText = (ts: TeamSeason, playoffsByConf: ByConf) => {
 		playoffRoundsWon: ts.playoffRoundsWon,
 		numPlayoffRounds,
 		playoffsByConf,
+		season: ts.season,
 	});
 };
 

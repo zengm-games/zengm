@@ -50,6 +50,7 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				playoffRoundsWon,
 				numPlayoffRounds,
 				playoffsByConf,
+				season: g.get("season"),
 			}),
 		);
 
@@ -427,7 +428,12 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						showPlayoffSeries = true;
 
 						seriesTitle = helpers.upperCaseFirstLetter(
-							helpers.playoffRoundName(rnd, numPlayoffRounds, playoffsByConf),
+							helpers.playoffRoundName({
+								currentRound: rnd,
+								numPlayoffRounds,
+								playoffsByConf,
+								season: g.get("season"),
+							}).name,
 						);
 						numGamesToWinSeries = helpers.numGamesToWinSeries(
 							g.get("numGamesPlayoffSeries", "current")[rnd],

@@ -161,6 +161,7 @@ const updateNotes = async (
 							numPlayoffRounds,
 							playoffsByConf,
 							showMissedPlayoffs: true,
+							season: ts.season,
 						}),
 					),
 				});

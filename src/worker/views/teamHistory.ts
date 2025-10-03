@@ -66,6 +66,7 @@ export const getHistoryTeam = (
 				playoffRoundsWon: teamSeason.playoffRoundsWon,
 				numPlayoffRounds,
 				playoffsByConf: playoffsByConfBySeason.get(teamSeason.season),
+				season: teamSeason.season,
 			}),
 			numPlayoffRounds,
 			name:

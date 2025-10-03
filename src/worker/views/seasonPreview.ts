@@ -157,6 +157,7 @@ const updateSeasonPreview = async (
 							playoffRoundsWon: teamSeasonPrev.playoffRoundsWon,
 							numPlayoffRounds,
 							playoffsByConf,
+							season: teamSeasonPrev.season,
 						}),
 					}
 				: undefined;

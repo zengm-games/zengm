@@ -1453,11 +1453,13 @@ const afterDBStream = async ({
 		activePlayers.push(...extraActivePlayers);
 	}
 
+	// Run this for random debuts only in random players leagues, since in real players leagues it's done in getLeague already
 	if (
-		randomization === "debuts" ||
-		randomization === "debutsKeepCurrent" ||
-		randomization === "debutsForever" ||
-		randomization === "debutsForeverKeepCurrent"
+		!getLeagueOptions &&
+		(randomization === "debuts" ||
+			randomization === "debutsKeepCurrent" ||
+			randomization === "debutsForever" ||
+			randomization === "debutsForeverKeepCurrent")
 	) {
 		const basketball = await loadDataBasketball();
 

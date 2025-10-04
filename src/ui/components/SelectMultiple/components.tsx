@@ -26,6 +26,7 @@ export const CustomMenuList = <T extends unknown>({
 
 	const parentRef = useRef<HTMLDivElement>(null);
 
+	// eslint-disable-next-line react-hooks/incompatible-library
 	const rowVirtualizer = useVirtualizer({
 		count: childrenArray.length,
 		getScrollElement: () => parentRef.current,

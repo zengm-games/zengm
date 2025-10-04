@@ -59,7 +59,6 @@ export default tseslint.config(
 			// Would be nice to enable these
 			"react-hooks/globals": "off",
 			"react-hooks/immutability": "off",
-			"react-hooks/incompatible-library": "off",
 			"react-hooks/purity": "off",
 			"react-hooks/refs": "off",
 			"react-hooks/set-state-in-effect": "off",

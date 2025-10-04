@@ -1,6 +1,11 @@
 customize names of playoff rounds
 - see customize-playoff-round-names branch - not sure if it's worth the complexity
 
+clean up ALWAYS_WRAP
+- link it to types to make sure they are actually always wrapped
+
+in a random players league, random debuts should replace the random players on teams with real players when creating a new league https://discord.com/channels/290013534023057409/290013534023057409/1423384579720482857
+
 forceHistoricalRosters
 - later
   - handle mid season trades better

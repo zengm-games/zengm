@@ -57,7 +57,6 @@ export default tseslint.config(
 			"react/no-unescaped-entities": "off",
 
 			// Would be nice to enable these
-			"react-hooks/globals": "off",
 			"react-hooks/immutability": "off",
 			"react-hooks/purity": "off",
 			"react-hooks/refs": "off",

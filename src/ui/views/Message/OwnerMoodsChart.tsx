@@ -280,7 +280,7 @@ const OwnerMoodsChart = ({
 			</ParentSize>
 			{tooltipOpen && tooltipData ? (
 				<TooltipWithBounds
-					key={Math.random()}
+					key={tooltipData.season}
 					top={tooltipTop}
 					left={tooltipLeft}
 				>

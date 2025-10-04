@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useEffect, useId, useReducer, useRef, useState } from "react";
 import type { Dispatch } from "react";
 import type { NewLeagueTeamWithoutRank } from "./types.ts";
 import type { Conf, Div, Player, View } from "../../../common/types.ts";
@@ -469,6 +469,8 @@ const PlayersButton = ({
 	players: Player[];
 	usePlayers?: boolean;
 }) => {
+	const popoverId = useId();
+
 	if (!usePlayers) {
 		return null;
 	}
@@ -478,7 +480,7 @@ const PlayersButton = ({
 			trigger="click"
 			placement="auto"
 			overlay={
-				<Popover id={String(Math.random())}>
+				<Popover id={popoverId}>
 					<Popover.Header>Top Players</Popover.Header>
 					<Popover.Body>
 						<ul className="list-unstyled mb-0">

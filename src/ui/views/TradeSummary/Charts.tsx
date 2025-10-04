@@ -196,7 +196,7 @@ const Chart = ({
 			</ParentSize>
 			{tooltipOpen && tooltipData ? (
 				<TooltipWithBounds
-					key={Math.random()}
+					key={`${tooltipData?.season}-${tooltipData?.abbrev}`}
 					top={tooltipTop}
 					left={tooltipLeft}
 				>

@@ -179,8 +179,10 @@ export const settings: Setting[] = (
 							<>
 								<p>
 									<p>
-										<b>Random debuts:</b> Any real players not in your league
-										will appear as draft prospects.
+										<b>Random debuts:</b> Every player's draft year is
+										randomized. Starting teams (unless they already have
+										players) and future draft classes are all random
+										combinations of past, current, and future real players.
 									</p>
 									<p>
 										<b>Random debuts forever:</b> Like random debuts, except
@@ -208,8 +210,9 @@ export const settings: Setting[] = (
 						descriptionLong: (
 							<>
 								<p>
-									<b>Random debuts:</b> Any real players not in your league will
-									appear as draft prospects.
+									<b>Random debuts:</b> Every player's draft year is randomized.
+									Starting teams and future draft classes are all random
+									combinations of past, current, and future real players.
 								</p>
 								<p>
 									<b>Random debuts forever:</b> Like random debuts, except when

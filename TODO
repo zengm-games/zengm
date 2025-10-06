@@ -1,16 +1,10 @@
+button to skip schema check
+
 customize names of playoff rounds
 - see customize-playoff-round-names branch - not sure if it's worth the complexity
 
 clean up ALWAYS_WRAP
 - link it to types to make sure they are actually always wrapped
-
-in a random players league, random debuts should replace the random players on teams with real players when creating a new league https://discord.com/channels/290013534023057409/290013534023057409/1423384579720482857
-- how does it work in real players league when it doesn't keep players on teams?
-  - // If possible, use ratings from exact age
-- initRandomDebutsForRandomPlayersLeague should only run for random players, not real players
-  - could then put new logic in here
-    - how does this work with an existing league file? both with and without randomDebuts enabled already
-- fix text of setting to be more similar
 
 forceHistoricalRosters
 - later

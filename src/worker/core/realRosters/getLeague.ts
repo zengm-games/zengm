@@ -258,6 +258,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 				const tids = toRandomize.filter((p) => p.tid >= 0).map((p) => p.tid);
 				random.shuffle(tids);
 
+				const ratingsBySlug = groupBy(basketball.ratings, "slug");
+
 				for (const [i, p] of toRandomize.entries()) {
 					const draftYear = draftYears[i]!;
 					const diff = draftYear - p.draft.year;
@@ -283,10 +285,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 						const targetRatingsSeason = options.season - diff;
 
-						const rows = basketball.ratings.filter(
-							(row) => row.slug === p.srID,
-						);
-						if (rows.length === 0) {
+						const rows = ratingsBySlug[p.srID];
+						if (!rows || rows.length === 0) {
 							throw new Error(`No ratings found for "${p.srID}"`);
 						}
 

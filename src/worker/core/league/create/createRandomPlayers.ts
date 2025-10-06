@@ -1,5 +1,5 @@
 import { draft, player, freeAgents } from "../../index.ts";
-import { PHASE, POSITION_COUNTS } from "../../../../common/index.ts";
+import { PHASE, PLAYER, POSITION_COUNTS } from "../../../../common/index.ts";
 import { groupBy, groupByUnique, orderBy } from "../../../../common/utils.ts";
 import type {
 	PlayerWithoutKey,
@@ -9,12 +9,19 @@ import type {
 } from "../../../../common/types.ts";
 import { g, random } from "../../../util/index.ts";
 
+export const getNumPlayersPerTeam = () => {
+	// 13 for basketball
+	return Math.max(g.get("maxRosterSize") - 2, g.get("minRosterSize"));
+};
+
 const createRandomPlayers = async ({
 	activeTids,
+	onlyFreeAgents,
 	scoutingLevel,
 	teams,
 }: {
 	activeTids: number[];
+	onlyFreeAgents: boolean;
 	scoutingLevel: number;
 	teams: Pick<Team, "tid" | "retiredJerseyNumbers">[];
 }) => {
@@ -140,10 +147,7 @@ const createRandomPlayers = async ({
 		throw new Error("Not enough players!");
 	}
 
-	const numPlayerPerTeam = Math.max(
-		g.get("maxRosterSize") - 2,
-		g.get("minRosterSize"),
-	); // 13 for basketball
+	const numPlayerPerTeam = getNumPlayersPerTeam();
 	const maxNumFreeAgents = Math.round(
 		(activeTids.length / 3) * g.get("maxRosterSize"),
 	); // 150 for basketball
@@ -321,6 +325,11 @@ const createRandomPlayers = async ({
 				addToFreeAgents(groupedPlayers[pos]![i]);
 			}
 		}
+	}
+
+	if (onlyFreeAgents) {
+		// Okay, then why did we create the other players in the first place? Because this ensures the distribution of talnet in the free agent pool is the same as in normal leagues.
+		return players.filter((p) => p.tid === PLAYER.FREE_AGENT);
 	}
 
 	return players;

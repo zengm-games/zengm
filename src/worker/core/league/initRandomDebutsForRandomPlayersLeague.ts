@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common/index.ts";
+import { PHASE, RATINGS } from "../../../common/index.ts";
 import type {
 	GameAttributesLeagueWithHistory,
 	PlayerWithoutKey,
@@ -7,10 +7,21 @@ import { defaultGameAttributes, random } from "../../util/index.ts";
 import type { Settings } from "../../views/settings.ts";
 import formatPlayerFactory from "../realRosters/formatPlayerFactory.ts";
 import type { Basketball } from "../realRosters/loadData.basketball.ts";
-import { omit, orderBy } from "../../../common/utils.ts";
+import { countBy, groupBy, omit, orderBy } from "../../../common/utils.ts";
+import { getNumPlayersPerTeam } from "./create/createRandomPlayers.ts";
+import { choice } from "../../../common/random.ts";
+
+const getTidsWithNoPlayers = (
+	activeTids: number[],
+	players: PlayerWithoutKey[],
+) => {
+	const counts = countBy(players, "tid");
+	return activeTids.filter((tid) => counts[tid] === undefined);
+};
 
 // Code inside realPlayers is responsible for random debuts normally. But that only works for real players leagues, not random players leagues. So here is a standalone version. Maybe these should be used in realPlayers too, would be more DRY...
 const initRandomDebutsForRandomPlayersLeague = async ({
+	activeTids,
 	players,
 	basketball,
 	numActiveTeams,
@@ -18,6 +29,7 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 	phase,
 	season,
 }: {
+	activeTids: number[];
 	basketball: Basketball;
 	players: PlayerWithoutKey[];
 	realDraftRatings: Settings["realDraftRatings"];
@@ -25,6 +37,10 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 	GameAttributesLeagueWithHistory,
 	"numActiveTeams" | "phase" | "season"
 >) => {
+	console.log(
+		"initRandomDebutsForRandomPlayersLeague",
+		structuredClone(players),
+	);
 	const formatPlayer = await formatPlayerFactory(
 		basketball,
 		{
@@ -48,7 +64,7 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 		// @ts-expect-error
 		players.filter((p) => p.srID !== undefined).map((p) => p.srID),
 	);
-	const draftProspects = orderBy(basketball.ratings, ["slug", "season"])
+	const realPlayers = orderBy(basketball.ratings, ["slug", "season"])
 		.filter((ratings) => {
 			// Only keep rookie seasons
 			const seen = seenSlugs.has(ratings.slug);
@@ -61,7 +77,53 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 			}),
 		);
 
-	random.shuffle(draftProspects);
+	random.shuffle(realPlayers);
+
+	// If necessary, put some players on empty teams - this works a bit different than in real players leagues, which matches players by age, whereas this one just picks random players at random seasons
+	const tidsWithNoPlayers = getTidsWithNoPlayers(activeTids, players);
+	if (tidsWithNoPlayers.length > 0) {
+		const numPlayerPerTeam = getNumPlayersPerTeam();
+		const ratingsBySlug = groupBy(basketball.ratings, "slug");
+
+		let i = -1;
+		for (const tid of tidsWithNoPlayers) {
+			for (let j = 0; j < numPlayerPerTeam; j++) {
+				i += 1;
+
+				const p = realPlayers[i];
+				if (!p) {
+					continue;
+				}
+
+				p.tid = tid;
+
+				const allRatings = ratingsBySlug[p.srID];
+				if (!allRatings) {
+					continue;
+				}
+
+				// Pick a random row of ratings, not draft prospect ratings (the first one)
+				const ratingsToApply = choice(allRatings.slice(1));
+				if (!ratingsToApply) {
+					// Must just be a draft prospect
+					continue;
+				}
+
+				const existingRatings = p.ratings.at(-1)!;
+
+				// Adjust age
+				const diff = season - ratingsToApply.season;
+				p.born.year += diff;
+				p.draft.year += diff;
+				console.log(`${p.name}, ${p.born.year}`);
+
+				// Apply ratings
+				for (const key of RATINGS) {
+					(existingRatings as any)[key] = (ratingsToApply as any)[key];
+				}
+			}
+		}
+	}
 
 	// Normalize the size of draft classes, based on the number of teams and the number of expansion teams
 	let draftYear = initialDraftYear;
@@ -69,7 +131,12 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 	const targetDraftClassSize = Math.round(
 		(defaultGameAttributes.numDraftRounds * numActiveTeams * 7) / 6,
 	);
-	for (const p of draftProspects) {
+	for (const p of realPlayers) {
+		if (p.tid >= 0) {
+			// Skip anyone who was assigned to a team
+			continue;
+		}
+
 		const diff = draftYear - p.draft.year;
 		p.draft.year += diff;
 		p.born.year += diff;
@@ -81,7 +148,7 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 		}
 	}
 
-	return draftProspects.map((p) => omit(p, "pid"));
+	return realPlayers.map((p) => omit(p, "pid"));
 };
 
 export default initRandomDebutsForRandomPlayersLeague;

@@ -1375,11 +1375,18 @@ const afterDBStream = async ({
 		}
 	}
 
+	const randomDebuts =
+		randomization === "debuts" ||
+		randomization === "debutsKeepCurrent" ||
+		randomization === "debutsForever" ||
+		randomization === "debutsForeverKeepCurrent";
+
 	const fileHasPlayers = extraFromStream.activePlayers.length > 0;
 	let activePlayers = fileHasPlayers
 		? extraFromStream.activePlayers
 		: await createRandomPlayers({
 				activeTids,
+				onlyFreeAgents: randomDebuts,
 				scoutingLevel,
 				teams,
 			});
@@ -1454,16 +1461,11 @@ const afterDBStream = async ({
 	}
 
 	// Run this for random debuts only in random players leagues, since in real players leagues it's done in getLeague already
-	if (
-		!getLeagueOptions &&
-		(randomization === "debuts" ||
-			randomization === "debutsKeepCurrent" ||
-			randomization === "debutsForever" ||
-			randomization === "debutsForeverKeepCurrent")
-	) {
+	if (!getLeagueOptions && randomDebuts) {
 		const basketball = await loadDataBasketball();
 
 		const draftProspects = await initRandomDebutsForRandomPlayersLeague({
+			activeTids,
 			players: activePlayers,
 			basketball,
 			numActiveTeams: gameAttributes.numActiveTeams,

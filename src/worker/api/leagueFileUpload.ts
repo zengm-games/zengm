@@ -141,7 +141,10 @@ export type BasicInfo = {
 	maxGid: number;
 	hasRookieContracts: boolean;
 	name?: string;
+	skipSchemaCheck: boolean;
 };
+
+const cancelStreams = new Set<number>();
 
 const getBasicInfo = async ({
 	stream,
@@ -159,6 +162,7 @@ const getBasicInfo = async ({
 		keys: new Set(),
 		maxGid: -1,
 		hasRookieContracts: false,
+		skipSchemaCheck: false,
 	};
 
 	if (includePlayersInBasicInfo) {
@@ -171,116 +175,149 @@ const getBasicInfo = async ({
 
 	const schemaErrors = [];
 
-	const reader = await stream.pipeThrough(parseJSON()).getReader();
+	try {
+		// Can just use the stream itself rather than getReader when ReadableStream iterator support is in all browsers: Chrome 124, Firefox 110, Safari ???
+		const reader = await stream.pipeThrough(parseJSON()).getReader();
 
-	const requiredPartsNotYetSeen = new Set();
-	for (const [key, { required }] of Object.entries(validators)) {
-		if (required) {
-			requiredPartsNotYetSeen.add(key);
-		}
-	}
-
-	while (true) {
-		const { value, done } = (await reader.read()) as any;
-		if (done) {
-			break;
+		const requiredPartsNotYetSeen = new Set();
+		for (const [key, { required }] of Object.entries(validators)) {
+			if (required) {
+				requiredPartsNotYetSeen.add(key);
+			}
 		}
 
-		const cumulative = CUMULATIVE_OBJECTS.has(value.key);
+		let i = 0;
+		while (true) {
+			const { value, done } = (await reader.read()) as any;
+			if (done) {
+				break;
+			}
 
-		if (leagueCreationID !== undefined && !basicInfo.keys.has(value.key)) {
-			basicInfo.keys.add(value.key);
+			if (
+				leagueCreationID !== undefined &&
+				cancelStreams.has(leagueCreationID)
+			) {
+				basicInfo.skipSchemaCheck = true;
+				cancelStreams.delete(leagueCreationID);
+				reader.cancel(); // Purposely don't wait
+				break;
+			}
+
+			i += 1;
+
+			const cumulative = CUMULATIVE_OBJECTS.has(value.key);
+
+			if (leagueCreationID !== undefined && !basicInfo.keys.has(value.key)) {
+				basicInfo.keys.add(value.key);
+				toUI(
+					"updateLocal",
+					[
+						{
+							leagueCreation: {
+								id: leagueCreationID,
+								status: value.key,
+							},
+						},
+					],
+					conditions,
+				);
+			}
+
+			const currentValidator = validators[value.key];
+			if (currentValidator) {
+				const { validate, required } = currentValidator;
+				validate(value.value);
+				if (validate.errors) {
+					schemaErrors.push(...validate.errors);
+				}
+
+				if (required) {
+					requiredPartsNotYetSeen.delete(value.key);
+				}
+			}
+
+			if (value.key === "meta" && value.value.name) {
+				basicInfo.name = value.value.name;
+			}
+
+			// Need to store max gid from games, so generated schedule does not overwrite it
+			if (value.key === "games" && value.value.gid > basicInfo.maxGid) {
+				basicInfo.maxGid = value.value.gid;
+			}
+
+			if (value.key === "players" && value.value.contract?.rookie) {
+				basicInfo.hasRookieContracts = true;
+			}
+
+			if (cumulative) {
+				(basicInfo as any)[value.key] = value.value;
+			} else if (value.key === "teams") {
+				if (!basicInfo.teams) {
+					basicInfo.teams = [];
+				}
+
+				const t = {
+					...value.value,
+				};
+
+				if (!t.colors) {
+					t.colors = DEFAULT_TEAM_COLORS;
+				}
+
+				if (t.seasons?.length > 0) {
+					// If specified on season, copy to root
+					const maybeOnSeason = ["pop", "stadiumCapacity"] as const;
+					const ts = t.seasons.at(-1);
+					for (const prop of maybeOnSeason) {
+						if (ts[prop] !== undefined) {
+							t[prop] = ts[prop];
+						}
+					}
+				}
+
+				// stats and seasons take up a lot of space, so we don't need to keep them. But... heck, why not.
+
+				basicInfo.teams.push(value.value);
+			} else if (includePlayersInBasicInfo && value.key === "players") {
+				basicInfo.players!.push(value.value);
+			}
+
+			// This is needed for Chrome (at least as of version 141) or cancel/skip doesn't work https://github.com/dumbmatter/chrome-worker-stream-blocking
+			if (i % 100 === 0) {
+				// scheduler.postTask is faster than setTimeout but does not have great browser support https://nolanlawson.com/2025/08/31/why-do-browsers-throttle-javascript-timers/
+				// Chrome 94, Firefox 142, Safari ???
+				// @ts-expect-error https://github.com/microsoft/TypeScript-DOM-lib-generator/pull/1249
+				if (globalThis.scheduler?.postTask) {
+					// @ts-expect-error https://github.com/microsoft/TypeScript-DOM-lib-generator/pull/1249
+					await scheduler.postTask(() => {}, { priority: "user-visible" });
+				} else {
+					await new Promise<void>((resolve) => setTimeout(resolve, 0));
+				}
+			}
+		}
+
+		for (const key of requiredPartsNotYetSeen) {
+			let message = `"${key}" is required in the root of a JSON file, but is missing.`;
+			if (key === "version") {
+				message += ` The latest version is ${LEAGUE_DATABASE_VERSION}, that's probably what you want if this is a new file you're making.`;
+			}
+			schemaErrors.push(message);
+		}
+	} finally {
+		if (leagueCreationID !== undefined) {
 			toUI(
 				"updateLocal",
 				[
 					{
-						leagueCreation: {
-							id: leagueCreationID,
-							status: value.key,
-						},
+						leagueCreation: undefined,
 					},
 				],
 				conditions,
 			);
-		}
 
-		const currentValidator = validators[value.key];
-		if (currentValidator) {
-			const { validate, required } = currentValidator;
-			validate(value.value);
-			if (validate.errors) {
-				schemaErrors.push(...validate.errors);
-			}
-
-			if (required) {
-				requiredPartsNotYetSeen.delete(value.key);
-			}
-		}
-
-		if (value.key === "meta" && value.value.name) {
-			basicInfo.name = value.value.name;
-		}
-
-		// Need to store max gid from games, so generated schedule does not overwrite it
-		if (value.key === "games" && value.value.gid > basicInfo.maxGid) {
-			basicInfo.maxGid = value.value.gid;
-		}
-
-		if (value.key === "players" && value.value.contract?.rookie) {
-			basicInfo.hasRookieContracts = true;
-		}
-
-		if (cumulative) {
-			(basicInfo as any)[value.key] = value.value;
-		} else if (value.key === "teams") {
-			if (!basicInfo.teams) {
-				basicInfo.teams = [];
-			}
-
-			const t = {
-				...value.value,
-			};
-
-			if (!t.colors) {
-				t.colors = DEFAULT_TEAM_COLORS;
-			}
-
-			if (t.seasons?.length > 0) {
-				// If specified on season, copy to root
-				const maybeOnSeason = ["pop", "stadiumCapacity"] as const;
-				const ts = t.seasons.at(-1);
-				for (const prop of maybeOnSeason) {
-					if (ts[prop] !== undefined) {
-						t[prop] = ts[prop];
-					}
-				}
-			}
-
-			// stats and seasons take up a lot of space, so we don't need to keep them. But... heck, why not.
-
-			basicInfo.teams.push(value.value);
-		} else if (includePlayersInBasicInfo && value.key === "players") {
-			basicInfo.players!.push(value.value);
+			cancelStreams.delete(leagueCreationID);
 		}
 	}
-
-	for (const key of requiredPartsNotYetSeen) {
-		let message = `"${key}" is required in the root of a JSON file, but is missing.`;
-		if (key === "version") {
-			message += ` The latest version is ${LEAGUE_DATABASE_VERSION}, that's probably what you want if this is a new file you're making.`;
-		}
-		schemaErrors.push(message);
-	}
-
-	toUI(
-		"updateLocal",
-		[
-			{
-				leagueCreation: undefined,
-			},
-		],
-		conditions,
-	);
 
 	return { basicInfo, schemaErrors };
 };
@@ -469,6 +506,11 @@ const initialCheck = async (
 	};
 };
 
+const skipSchemaCheck = async (leagueCreationID: number) => {
+	cancelStreams.add(leagueCreationID);
+};
+
 export default {
 	initialCheck,
+	skipSchemaCheck,
 };

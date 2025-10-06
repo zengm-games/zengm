@@ -118,14 +118,17 @@ const addLeagueMeta = async ({
 	idb.league = await connectLeague(lid);
 };
 
+// This is usually a Set, except when skipSchemaCheck happens, and then we just assume we're keeping everything
+type KeptKeys = { has: (key: string) => boolean };
+
 class Buffer {
 	MAX_BUFFER_SIZE: number;
-	keptKeys: Set<string>;
+	keptKeys: KeptKeys;
 	keys: Set<string>;
 	rows: [string, any][];
 	previousTransaction: IDBPTransaction<any, any, any> | undefined;
 
-	constructor(keptKeys: Set<string>) {
+	constructor(keptKeys: KeptKeys) {
 		this.MAX_BUFFER_SIZE = 10000;
 		this.keptKeys = keptKeys;
 
@@ -304,7 +307,7 @@ const getSaveToDB = async ({
 	preProcessParams,
 	setLeagueCreationStatus,
 }: {
-	keptKeys: Set<string>;
+	keptKeys: KeptKeys;
 	maxGid: number | undefined;
 	preProcessParams: PreProcessParams;
 	setLeagueCreationStatus: CreateStreamProps["setLeagueCreationStatus"];
@@ -1090,7 +1093,7 @@ type CreateStreamProps = {
 		version: number | undefined;
 	};
 	getLeagueOptions: GetLeagueOptions | undefined;
-	keptKeys: Set<string>;
+	keptKeys: KeptKeys;
 	lid: number;
 	name: string;
 	setLeagueCreationStatus: (status: string) => void;

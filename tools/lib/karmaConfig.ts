@@ -1,11 +1,11 @@
-import rollupConfig from "./rollupConfig.ts";
 import browserstackLauncher from "karma-browserstack-launcher";
 import chromeLauncher from "karma-chrome-launcher";
 import firefoxLauncher from "karma-firefox-launcher";
 import mocha from "karma-mocha";
-import rollupPreprocessor from "karma-rollup-preprocessor";
+import rolldownPreprocessor from "./karmaRolldownPreprocessor.ts";
 // @ts-expect-error
 import sourceMapSupport from "karma-source-map-support";
+import { rolldownConfig } from "./rolldownConfig.ts";
 
 const files = ["src/test/mocha.ts", "src/test/smoke.ts"];
 
@@ -15,7 +15,7 @@ export default {
 		chromeLauncher,
 		firefoxLauncher,
 		mocha,
-		rollupPreprocessor,
+		rolldownPreprocessor,
 		sourceMapSupport,
 	],
 
@@ -29,19 +29,17 @@ export default {
 	}),
 
 	preprocessors: {
-		"src/**/*.{js,ts}": ["rollup"],
+		"src/**/*.{js,ts}": ["rolldown"],
 	},
 
 	autoWatch: false,
 
 	singleRun: true,
 
-	rollupPreprocessor: {
-		...rollupConfig("ui", { nodeEnv: "test" }),
+	rolldownPreprocessor: {
+		...rolldownConfig("ui", { nodeEnv: "test" }),
 		output: {
 			format: "iife",
-			indent: false,
-			name: "bbgm",
 			sourcemap: true,
 		},
 	},

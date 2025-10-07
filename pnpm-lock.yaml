@@ -237,9 +237,6 @@ importers:
       '@types/karma-mocha':
         specifier: ^1.3.4
         version: 1.3.4
-      '@types/karma-rollup-preprocessor':
-        specifier: ^7.0.3
-        version: 7.0.3
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
@@ -327,9 +324,6 @@ importers:
       karma-mocha:
         specifier: ^2.0.1
         version: 2.0.1
-      karma-rollup-preprocessor:
-        specifier: ^7.0.8
-        version: 7.0.8(rollup@4.52.4)
       karma-source-map-support:
         specifier: ^1.4.0
         version: 1.4.0
@@ -1804,9 +1798,6 @@ packages:
   '@types/karma-mocha@1.3.4':
     resolution: {integrity: sha512-Imps6TZLcBJNWaHV30/NHTg8GBiZAPZAeNdCNbX3vgEmUK5EMrxmu6OfT753w8Nwq5zWg2ielioCl3LjD0QlIA==}
 
-  '@types/karma-rollup-preprocessor@7.0.3':
-    resolution: {integrity: sha512-tLhyP158m7USYC1Hcf1IJGmc2tCq+Qo/akXsWozXrrDfmrIQLXmyI7arS1PFbcYu+L6lYoFnXS6wNX8ElQWFWw==}
-
   '@types/karma@6.3.9':
     resolution: {integrity: sha512-sjE/MHnoAZAQYAKRXAbjTOiBKyGGErEM725bruRcmDdMa2vp1bjWPhApI7/i564PTyHlzc3vIGXLL6TFIpAxFg==}
 
@@ -2683,9 +2674,6 @@ packages:
   date-format@4.0.14:
     resolution: {integrity: sha512-39BOQLs9ZjKh0/patS9nrT8wc3ioX3/eA/zgbKNopnF2wCqJEoxywwwElATYvRsXdnOxA/OQeQoFZ3rFjVajhg==}
     engines: {node: '>=4.0'}
-
-  debounce@1.2.1:
-    resolution: {integrity: sha512-XRRe6Glud4rd/ZGQfiV1ruXSfbvfJedlV9Y6zOlP+2K04vBYiJEte6stfFkCP03aMnY5tsipamumUjL14fofug==}
 
   debug@2.6.9:
     resolution: {integrity: sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==}
@@ -3745,12 +3733,6 @@ packages:
 
   karma-mocha@2.0.1:
     resolution: {integrity: sha512-Tzd5HBjm8his2OA4bouAsATYEpZrp9vC7z5E5j4C5Of5Rrs1jY67RAwXNcVmd/Bnk1wgvQRou0zGVLey44G4tQ==}
-
-  karma-rollup-preprocessor@7.0.8:
-    resolution: {integrity: sha512-WiuBCS9qsatJuR17dghiTARBZ7LF+ml+eb7qJXhw7IbsdY0lTWELDRQC/93J9i6636CsAXVBL3VJF4WtaFLZzA==}
-    engines: {node: '>= 8.0.0'}
-    peerDependencies:
-      rollup: '>= 1.0.0'
 
   karma-source-map-support@1.4.0:
     resolution: {integrity: sha512-RsBECncGO17KAoJCYXjv+ckIz+Ii9NCi+9enk+rq6XC81ezYkb4/RHE6CTXdA7IOJqoF3wcaLfVG0CPmE5ca6A==}
@@ -7011,13 +6993,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@types/karma-rollup-preprocessor@7.0.3':
-    dependencies:
-      '@types/karma': 6.3.9
-      rollup: 4.52.4
-    transitivePeerDependencies:
-      - supports-color
-
   '@types/karma@6.3.9':
     dependencies:
       '@types/node': 24.7.0
@@ -8028,8 +8003,6 @@ snapshots:
       is-data-view: 1.0.2
 
   date-format@4.0.14: {}
-
-  debounce@1.2.1: {}
 
   debug@2.6.9:
     dependencies:
@@ -9254,12 +9227,6 @@ snapshots:
   karma-mocha@2.0.1:
     dependencies:
       minimist: 1.2.8
-
-  karma-rollup-preprocessor@7.0.8(rollup@4.52.4):
-    dependencies:
-      chokidar: 3.6.0
-      debounce: 1.2.1
-      rollup: 4.52.4
 
   karma-source-map-support@1.4.0:
     dependencies:

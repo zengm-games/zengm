@@ -15,7 +15,7 @@ import type { Plugin } from "rollup";
 
 // Use babel to run babel-plugin-sport-functions. This is needed even in dev mode because the way bySport is defined, the sport-specific code will run if it's present, which can produce errors. It's not actually needed for isSport in dev mode.
 const pluginSportFunctions = (
-	nodeEnv: "development" | "production",
+	nodeEnv: "development" | "production" | "test",
 	sport: Sport,
 ): RolldownPlugin => {
 	const babelCache: Record<
@@ -88,6 +88,9 @@ export const rolldownConfig = (
 				nodeEnv: "production";
 				blacklistOptions: RegExp[];
 				versionNumber: string;
+		  }
+		| {
+				nodeEnv: "test";
 		  },
 ): BuildOptions => {
 	const infile = `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`;
@@ -127,7 +130,7 @@ export const rolldownConfig = (
 				});
 			},
 		});
-	} else {
+	} else if (envOptions.nodeEnv === "production") {
 		plugins.push(
 			blacklist(envOptions.blacklistOptions),
 			terser({

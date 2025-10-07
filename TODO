@@ -51,6 +51,7 @@ use import with json attribute for loading json files, rather than special effor
 - if i want to get crazy, could rewrite the import to fetch in a plugin maybe, and then maybe have it keep the original json file in its module graph if that gets processed first. not sure if possible. wait until rolldown-only
   - or will rollup/rolldown handle something like this automatically, maybe converting into JS chunk? it seems to be trying to do that, but not succeeding completely.
     - currently rolldown handles it automatically (converting to js chunk) and rolldown kind of does but it doesn't work right unless you remove the import attribute https://github.com/rolldown/rolldown/issues/2758
+  - https://chatgpt.com/c/68e53261-8960-8325-b295-c99adf21fb59 are some ideas, not sure if it's worth it really
 
 add legends mode based on league to UI somehow
 - should be able to select from "New legends league" or "New custom league"

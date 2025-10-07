@@ -4,9 +4,6 @@ button to skip schema check
 customize names of playoff rounds
 - see customize-playoff-round-names branch - not sure if it's worth the complexity
 
-clean up ALWAYS_WRAP
-- link it to types to make sure they are actually always wrapped
-
 forceHistoricalRosters
 - later
   - handle mid season trades better

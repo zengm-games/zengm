@@ -752,43 +752,13 @@ export type GameAttributesLeague = {
 	forceHistoricalRosters: boolean;
 };
 
+type AlwaysWrap = (typeof ALWAYS_WRAP)[number];
+
 export type GameAttributesLeagueWithHistory = Omit<
 	GameAttributesLeague,
-	| "confs"
-	| "divs"
-	| "maxOvertimes"
-	| "numGames"
-	| "numGamesPlayoffSeries"
-	| "numPlayoffByes"
-	| "otl"
-	| "playoffsNumTeamsDiv"
-	| "pointsFormula"
-	| "shootoutRounds"
-	| "tiebreakers"
-	| "userTid"
+	AlwaysWrap
 > & {
-	confs: GameAttributeWithHistory<GameAttributesLeague["confs"]>;
-	divs: GameAttributeWithHistory<GameAttributesLeague["divs"]>;
-	maxOvertimes: GameAttributeWithHistory<GameAttributesLeague["maxOvertimes"]>;
-	numGames: GameAttributeWithHistory<GameAttributesLeague["numGames"]>;
-	numGamesPlayoffSeries: GameAttributeWithHistory<
-		GameAttributesLeague["numGamesPlayoffSeries"]
-	>;
-	numPlayoffByes: GameAttributeWithHistory<
-		GameAttributesLeague["numPlayoffByes"]
-	>;
-	otl: GameAttributeWithHistory<GameAttributesLeague["otl"]>;
-	playoffsNumTeamsDiv: GameAttributeWithHistory<
-		GameAttributesLeague["playoffsNumTeamsDiv"]
-	>;
-	pointsFormula: GameAttributeWithHistory<
-		GameAttributesLeague["pointsFormula"]
-	>;
-	shootoutRounds: GameAttributeWithHistory<
-		GameAttributesLeague["shootoutRounds"]
-	>;
-	tiebreakers: GameAttributeWithHistory<GameAttributesLeague["tiebreakers"]>;
-	userTid: GameAttributeWithHistory<GameAttributesLeague["userTid"]>;
+	[T in AlwaysWrap]: GameAttributeWithHistory<GameAttributesLeague[T]>;
 };
 
 export type GameAttributes =
@@ -1661,6 +1631,7 @@ import type { TeamStatAttr as TeamStatAttrHockey } from "./types.hockey.ts";
 import type { TIEBREAKERS } from "./constants.ts";
 import type { DropdownOption } from "../ui/hooks/useDropdownOptions.tsx";
 import type { LookingForState } from "../ui/views/TradingBlock/useLookingForState.ts";
+import type { ALWAYS_WRAP } from "../worker/core/league/loadGameAttributes.ts";
 type TeamStatsPlus = Record<TeamStatAttrBaseball, number> &
 	Record<TeamStatAttrByPosBaseball, number[]> &
 	Record<TeamStatAttrBasketball, number> &

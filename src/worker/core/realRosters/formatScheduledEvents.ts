@@ -41,7 +41,7 @@ const processGameAttributes = (
 			if (
 				!gameAttributesHistory ||
 				!Object.hasOwn(prevState, key) ||
-				!ALWAYS_WRAP.includes(key)
+				!ALWAYS_WRAP.includes(key as any)
 			) {
 				prevState[key] = value;
 			} else {

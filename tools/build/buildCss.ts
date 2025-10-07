@@ -84,7 +84,7 @@ export const buildCss = async (
 				minify: true,
 				sourceMap: false,
 				targets: browserslistToTargets(
-					browserslist("Chrome >= 85, Firefox >= 115, Safari >= 14.1"),
+					browserslist("Chrome >= 85, Firefox >= 115, Safari >= 15.4"),
 				),
 			});
 

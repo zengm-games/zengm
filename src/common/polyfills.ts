@@ -1,6 +1,6 @@
 // Comments indicate where I'd have to bump minimum supported browser versions to get rid of these.
 
-// Chrome 92, Safari 15.4
+// Chrome 92
 // https://github.com/tc39/proposal-relative-indexing-method#polyfill
 if (!Array.prototype.at) {
 	for (const C of [Array, String]) {
@@ -26,7 +26,7 @@ if (!Array.prototype.at) {
 	}
 }
 
-// Chrome 97, Safari 15.4
+// Chrome 97
 if (!Array.prototype.findLast) {
 	Object.defineProperty(Array.prototype, "findLast", {
 		value(cb: any) {
@@ -42,7 +42,7 @@ if (!Array.prototype.findLast) {
 	});
 }
 
-// Chrome 93, Safari 15.4
+// Chrome 93
 if (!Object.hasOwn) {
 	Object.defineProperty(Object, "hasOwn", {
 		value: (object: object, property: PropertyKey) => {

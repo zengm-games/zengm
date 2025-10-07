@@ -23,7 +23,7 @@ const customLaunchers = [
 	{
 		base: "BrowserStack",
 		browser: "safari",
-		browser_version: "15.6", // Works back to 14.1 currently
+		browser_version: "15.6", // Works back to 15.4 currently
 		os: "OS X",
 		os_version: "Monterey",
 	},

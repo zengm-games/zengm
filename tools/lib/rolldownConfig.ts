@@ -155,7 +155,7 @@ export const rolldownConfig = (
 			dir: "build/gen",
 			sourcemap: true,
 			externalLiveBindings: false,
-			format: "es", // Assumes Safari 15 will be minimum requirement before I switch to rolldown for prod build
+			format: "es",
 		},
 		jsx: "react-jsx",
 		define: {

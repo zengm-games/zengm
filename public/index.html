@@ -174,6 +174,12 @@ function checkBrowser() {
     return false;
   }
 
+  // Safari <15.4
+  if (typeof BroadcastChannel === "undefined") {
+    // Actually it still works down to Safari 14.1 currently, just no longer "officially" supported so might as well not explicitly check here. Eventually when actually using worker modules, uncomment this
+    //return false;
+  }
+
   return true;
 };
 
@@ -212,7 +218,7 @@ goodIDB(function (idbResult) {
     if (idbResult === "open-failed") {
       errorMsg = '<p><b>Error!</b> Cannot store data.</p><p>If you have disabled cookies in your browser, you must enable them to play GAME_NAME.</p>';
     } else {
-      errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run GAME_NAME. Current supported browsers include:</p><ul class="list-unstyled mb-0"><li>Chrome 85+</li><li>Firefox 115+</li><li>Safari 14.1+</li></ul>';
+      errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run GAME_NAME. Current supported browsers include:</p><ul class="list-unstyled mb-0"><li>Chrome 85+</li><li>Firefox 115+</li><li>Safari 15.4+</li></ul>';
     }
 
     var startupError = document.getElementById("startup-error");

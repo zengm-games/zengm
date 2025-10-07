@@ -32,13 +32,9 @@ const buildFile = async (name: "ui" | "worker", versionNumber: string) => {
 		});
 		const bundle = await rollup(config);
 
-		// ES modules don't work in workers in all the browsers currently supported, otherwise could use "es" everywhere. Also at that point could evaluate things like code splitting in the worker, or code splitting between ui/worker bundles (building them together)
-		// Safari 15
-		const format = name === "ui" ? "es" : ("iife" as const);
-
 		await bundle.write({
 			compact: true,
-			format,
+			format: "es",
 			indent: false,
 			sourcemap: true,
 			externalLiveBindings: false,

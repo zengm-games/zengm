@@ -34,7 +34,7 @@ leaders on dashboard should account for qualified/non-qualified players like lea
 import real players
 - include stats - do it by team srID, and treat as DOES_NOT_EXIST otherwise https://old.reddit.com/r/BasketballGM/comments/1kwal9w/version_202505261259_new_import_real_players/n0bfsbr/?context=3
 
-worker modules Safari 15
+now that we have worker modules, what can we do with it?
 - code spitting in worker
 - single bundle between ui and worker
 - maybe not worth worrying about until switching to rolldown

@@ -1,5 +1,7 @@
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
-import clone from "just-clone";
+
+// @ts-expect-error
+import clone from "rfdc/default";
 import type {
 	TeamBasic,
 	Phase,
@@ -894,12 +896,11 @@ const getTeamsDefault = (): TeamBasic[] => {
  *
  * Taken from http://stackoverflow.com/a/3284324/786644
  */
-function deepCopy<T>(obj: T): T {
+const deepCopy = <T>(obj: T): T => {
 	// Can't use old deepCopy function because Chrome 128 had a weird bug where sometimes [{}] would get cloned to {0: {}} - this appeared when creating a league in ZGMB
 	// Can't use structuredClone because Jest handles it annoyingly enough (deepStrictEqual doesn't work) that it's not worth it
-	// @ts-expect-error https://github.com/angus-c/just/pull/582
 	return clone(obj);
-}
+};
 
 /**
  * Create a URL for a page within a league.

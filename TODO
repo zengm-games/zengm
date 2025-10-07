@@ -1,10 +1,4 @@
 button to skip schema check
-- "Use from selected league" - rather than showing this, if skipped check then just assume all are kept
-  - is this feasible? like basicInfo, fromFile stuff will be missing?
-- for validation errors, either hide or note that it's incomplete
-- test in other places LeagueFileUpload is used
-
-daily leaders at the bottom of the daily schedule page https://x.com/messages/1928999030-766833475089408000 - maybe top 5 in important stats
 
 customize names of playoff rounds
 - see customize-playoff-round-names branch - not sure if it's worth the complexity

@@ -346,34 +346,15 @@ const LeagueFileUpload = ({
 				) : null}
 				{state.status === "checking" ? (
 					<>
-						<div className="alert alert-info mt-3 d-flex gap-2">
+						<div className="alert alert-info mt-3">
 							{leagueCreationPercent?.id === leagueCreationID.current ||
 							leagueCreation?.id === leagueCreationID.current ? (
-								<>
-									<div className="flex-grow-1">
-										<ProgressBarText
-											text={`Validating ${
-												leagueCreation?.status ?? "league file"
-											}...`}
-											percent={leagueCreationPercent?.percent ?? 0}
-										/>
-									</div>
-									<div>
-										<button
-											className="btn btn-sm btn-secondary"
-											type="button"
-											onClick={async () => {
-												await toWorker(
-													"leagueFileUpload",
-													"skipSchemaCheck",
-													leagueCreationID.current,
-												);
-											}}
-										>
-											Skip
-										</button>
-									</div>
-								</>
+								<ProgressBarText
+									text={`Validating ${
+										leagueCreation?.status ?? "league file"
+									}...`}
+									percent={leagueCreationPercent?.percent ?? 0}
+								/>
 							) : null}
 						</div>
 					</>

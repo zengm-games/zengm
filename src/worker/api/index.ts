@@ -539,7 +539,6 @@ const createLeague = async (
 			gameAttributes: Record<string, unknown> | undefined;
 			hasRookieContracts: boolean;
 			maxGid: number | undefined;
-			skipSchemaCheck: boolean;
 			startingSeason: number | undefined;
 			teams: any[] | undefined;
 			version: number | undefined;
@@ -643,7 +642,6 @@ const createLeague = async (
 	}
 
 	const lid = importLid ?? (await getNewLeagueLid());
-	console.log("fromFile.skipSchemaCheck", fromFile.skipSchemaCheck);
 
 	await league.createStream(stream, {
 		conditions,
@@ -652,7 +650,7 @@ const createLeague = async (
 		fromFile,
 		getLeagueOptions,
 		lid,
-		keptKeys: fromFile.skipSchemaCheck ? { has: () => true } : keys,
+		keptKeys: keys,
 		name,
 		setLeagueCreationStatus,
 		settings,

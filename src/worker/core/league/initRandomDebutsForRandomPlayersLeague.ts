@@ -37,10 +37,6 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 	GameAttributesLeagueWithHistory,
 	"numActiveTeams" | "phase" | "season"
 >) => {
-	console.log(
-		"initRandomDebutsForRandomPlayersLeague",
-		structuredClone(players),
-	);
 	const formatPlayer = await formatPlayerFactory(
 		basketball,
 		{

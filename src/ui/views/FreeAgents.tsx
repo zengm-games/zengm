@@ -120,9 +120,6 @@ const FreeAgents = ({
 	type,
 	userPlayers,
 }: View<"freeAgents">) => {
-	const [dataTableHandle, setDataTableHandle] =
-		useState<DataTableHandle | null>(null);
-
 	const seasonsFreeAgents = useSeasonsFreeAgents();
 
 	useTitleBar({
@@ -155,7 +152,7 @@ const FreeAgents = ({
 	}
 
 	const askingForText = "Asking For";
-	const cols = getCols([
+	const colKeys = [
 		"Name",
 		"Pos",
 		"Age",
@@ -166,21 +163,38 @@ const FreeAgents = ({
 		askingForText,
 		"Exp",
 		"Negotiate",
-	]);
+	];
+	const cols = getCols(colKeys);
+
+	const [dataTableHandle, setDataTableHandle] =
+		useState<DataTableHandle | null>(null);
+
+	const showShowPlayersAffordButton = salaryCapType !== "none";
+
+	// These are used in showAffordablePlayersFilterApplied calculation every render, and then also in toggleShowAfforablePlayers when that is called
+	let askingForIndex = -1;
+	let askingForFilter = "";
+
+	let showAffordablePlayersFilterApplied = false;
+	if (showShowPlayersAffordButton && dataTableHandle) {
+		askingForIndex = colKeys.lastIndexOf(askingForText);
+		if (capSpace * 1000 > minContract && !challengeNoFreeAgents) {
+			askingForFilter = `<${capSpace}`;
+		} else {
+			askingForFilter = `<${minContract / 1000}`;
+		}
+
+		const enableFilters = dataTableHandle.getEnableFilters();
+		if (enableFilters) {
+			const filters = dataTableHandle.getFilters();
+			showAffordablePlayersFilterApplied =
+				filters[askingForIndex] === askingForFilter;
+		}
+	}
 
 	const toggleShowAfforablePlayers = () => {
 		if (dataTableHandle) {
 			const enableFilters = dataTableHandle.getEnableFilters();
-			const askingForIndex = cols.findLastIndex(
-				(col) => col.title === askingForText,
-			);
-
-			let askingForFilter;
-			if (capSpace * 1000 > minContract && !challengeNoFreeAgents) {
-				askingForFilter = `<${capSpace}`;
-			} else {
-				askingForFilter = `<${minContract / 1000}`;
-			}
 
 			// Start from either the current filters (if they are shown/enabled) or no filters at all
 			const filters: string[] = enableFilters
@@ -268,8 +282,6 @@ const FreeAgents = ({
 		};
 	});
 
-	const showShowPlayersAffordButton = salaryCapType !== "none";
-
 	return (
 		<>
 			{season === "current" ? (
@@ -293,7 +305,9 @@ const FreeAgents = ({
 							className="btn btn-secondary mb-3"
 							onClick={toggleShowAfforablePlayers}
 						>
-							Show players you can afford now
+							{showAffordablePlayersFilterApplied
+								? "Show players with any asking price"
+								: "Show players you can afford now"}
 						</button>
 					) : null}
 				</>

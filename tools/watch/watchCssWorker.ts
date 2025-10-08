@@ -6,7 +6,7 @@ const filenames = ["build/gen/light.css", "build/gen/dark.css"];
 
 let abortController: AbortController | undefined;
 
-const mybuildCss = async () => {
+const myBuildCss = async () => {
 	try {
 		abortController?.abort();
 		abortController = new AbortController();
@@ -41,9 +41,9 @@ const mybuildCss = async () => {
 	}
 };
 
-await mybuildCss();
+await myBuildCss();
 
 const watcher = watch("public/css", {});
-watcher.on("change", mybuildCss);
+watcher.on("change", myBuildCss);
 
 // No need to listen for switchingSport because CSS does not depend on sport

@@ -80,6 +80,10 @@ export const copyFiles = async (
 
 	await fs.cp("public", "build", {
 		filter: (filename) => {
+			if (signal?.aborted) {
+				return false;
+			}
+
 			// Loop through folders to ignore.
 			for (const folder of foldersToIgnore) {
 				if (filename.startsWith(`public/${folder}`)) {
@@ -104,7 +108,7 @@ export const copyFiles = async (
 	const sport = getSport();
 
 	await fs.cp(`public/${sport}`, "build", {
-		filter: (filename) => !filename.includes(".gitignore"),
+		filter: (filename) => !signal?.aborted && !filename.includes(".gitignore"),
 		recursive: true,
 	});
 
@@ -135,6 +139,7 @@ export const copyFiles = async (
 	}
 
 	await fs.cp("node_modules/flag-icons/flags/4x3", "build/img/flags", {
+		filter: () => !signal?.aborted,
 		recursive: true,
 	});
 	if (signal?.aborted) {

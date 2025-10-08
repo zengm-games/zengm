@@ -3,6 +3,7 @@
 - https://discord.com/channels/290013534023057409/1423468266768044235/1423468266768044235
 - make text change based on current state of filter
   - make sure interaction with hiding filters and button to apply works - hidden filter should not make it appear as if it's applied!
+- when showing all players, if there are absolutely no filters applied, close filter bar
 
 button to skip schema check
 - not easy because we use some info from the scan (like in fromFile) when processing the "real" stream, but see commit ee3b58dbdda31e8400518796c0509d7f39edb188 for a somewhat working implementaion besides that

@@ -7,7 +7,7 @@ import {
 	useRef,
 	type CSSProperties,
 	useImperativeHandle,
-	type RefObject,
+	type RefCallback,
 } from "react";
 import Controls from "./Controls.tsx";
 import CustomizeColumns from "./CustomizeColumns.tsx";
@@ -110,7 +110,6 @@ export type DataTableHandle = {
 };
 
 export type Props = {
-	addFilters?: (string | undefined)[];
 	className?: string;
 	classNameWrapper?: string;
 	clickable?: boolean;
@@ -127,7 +126,7 @@ export type Props = {
 	nonfluid?: boolean;
 	pagination?: boolean;
 	rankCol?: number;
-	ref?: RefObject<DataTableHandle | null>;
+	ref?: RefCallback<DataTableHandle>;
 	rows: DataTableRow[];
 	showRowLabels?: boolean;
 	small?: boolean;
@@ -149,7 +148,6 @@ export type Props = {
 };
 
 const DataTable = ({
-	addFilters,
 	alwaysShowBulkSelectRows,
 	className,
 	classNameWrapper,
@@ -376,7 +374,6 @@ const DataTable = ({
 			},
 		};
 	}, [
-		addFilters,
 		setStatePartial,
 		state.enableFilters,
 		state.filters,

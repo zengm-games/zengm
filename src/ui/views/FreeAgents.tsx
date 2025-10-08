@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useState } from "react";
 import { PHASE, PHASE_TEXT } from "../../common/index.ts";
 import {
 	DataTable,
@@ -120,7 +120,8 @@ const FreeAgents = ({
 	type,
 	userPlayers,
 }: View<"freeAgents">) => {
-	const dataTableRef = useRef<DataTableHandle>(null);
+	const [dataTableHandle, setDataTableHandle] =
+		useState<DataTableHandle | null>(null);
 
 	const seasonsFreeAgents = useSeasonsFreeAgents();
 
@@ -168,8 +169,8 @@ const FreeAgents = ({
 	]);
 
 	const toggleShowAfforablePlayers = () => {
-		if (dataTableRef.current) {
-			const enableFilters = dataTableRef.current.getEnableFilters();
+		if (dataTableHandle) {
+			const enableFilters = dataTableHandle.getEnableFilters();
 			const askingForIndex = cols.findLastIndex(
 				(col) => col.title === askingForText,
 			);
@@ -183,7 +184,7 @@ const FreeAgents = ({
 
 			// Start from either the current filters (if they are shown/enabled) or no filters at all
 			const filters: string[] = enableFilters
-				? [...dataTableRef.current.getFilters()]
+				? [...dataTableHandle.getFilters()]
 				: new Array(cols.length).fill("");
 
 			// If we currently have this exact filter set, delete it. Otherwise, add it
@@ -193,7 +194,7 @@ const FreeAgents = ({
 				filters[askingForIndex] = askingForFilter;
 			}
 
-			dataTableRef.current.setFilters(filters);
+			dataTableHandle.setFilters(filters);
 		}
 	};
 
@@ -313,7 +314,7 @@ const FreeAgents = ({
 				defaultStickyCols={window.mobile ? 0 : 1}
 				name="FreeAgents"
 				pagination
-				ref={dataTableRef}
+				ref={setDataTableHandle}
 				rows={rows}
 			/>
 		</>

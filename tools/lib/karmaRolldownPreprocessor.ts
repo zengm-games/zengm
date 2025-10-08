@@ -94,6 +94,8 @@ const createPreprocessor = (
 				}
 			}
 
+			await bundle.close();
+
 			for (const result of output) {
 				if (result.type !== "asset") {
 					const { code, map, facadeModuleId, fileName } = result;

@@ -1,5 +1,4 @@
 // Based on https://github.com/jlmakes/karma-rollup-preprocessor
-// watch mode is broken, not sure why
 
 import path from "node:path";
 import chokidar from "chokidar";
@@ -76,22 +75,13 @@ const createPreprocessor = (
 				},
 			);
 
-			if (
-				options.output.dir === undefined &&
-				options.output.file === undefined
-			) {
-				options.output.dir = path.dirname(originalPath);
-			}
-
 			log.info("Generating bundle for ./%s", location);
 			const bundle = await rolldown(options);
 			const { output } = await bundle.generate();
 
 			if (watcher) {
-				const [entry, ...dependencies] = await bundle.watchFiles;
-				if (entry !== undefined) {
-					watcher.add(entry, dependencies);
-				}
+				const watchFiles = await bundle.watchFiles;
+				watcher.add(originalPath, watchFiles);
 			}
 
 			await bundle.close();

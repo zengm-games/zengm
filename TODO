@@ -1,3 +1,9 @@
+"Show players you can afford" button should be a toggle
+- https://old.reddit.com/r/BasketballGM/comments/1e5dwvi/some_design_suggestions_to_improve_mobile_uiux/le6kljv/?context=3
+- https://discord.com/channels/290013534023057409/1423468266768044235/1423468266768044235
+- make text change based on current state of filter
+  - make sure interaction with hiding filters and button to apply works - hidden filter should not make it appear as if it's applied!
+
 button to skip schema check
 - not easy because we use some info from the scan (like in fromFile) when processing the "real" stream, but see commit ee3b58dbdda31e8400518796c0509d7f39edb188 for a somewhat working implementaion besides that
 
@@ -432,8 +438,6 @@ show how many fouls each team has, and bonus status https://old.reddit.com/r/Bas
 - show count of personal/team fouls when a foul happens in text https://old.reddit.com/r/BasketballGM/comments/1d59y20/monthly_suggestions_thread/l8bya7o/
 
 hard to click player ratings popover icon on mobile without hitting player name? https://mail.google.com/mail/u/0/#inbox/FMfcgzQVxlKSNzFsbplCJFNQHjrZjHXz?compose=DmwnWstqxPhppsXNxCfVhCxwWDdnRGXNrVbGqgdPQhDFFgXzxhKzJjlLMSJgtNznJpKSPlRNsZxV
-
-"Show players you can afford" button should be a toggle https://old.reddit.com/r/BasketballGM/comments/1e5dwvi/some_design_suggestions_to_improve_mobile_uiux/le6kljv/?context=3
 
 advanced player search
 - more filters to add https://old.reddit.com/r/BasketballGM/comments/1dsfbps/monthly_suggestions_thread/lfi9uif/

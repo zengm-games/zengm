@@ -4,9 +4,10 @@ import {
 	type SyntheticEvent,
 	type MouseEvent,
 	type ReactNode,
-	useEffect,
 	useRef,
 	type CSSProperties,
+	useImperativeHandle,
+	type RefObject,
 } from "react";
 import Controls from "./Controls.tsx";
 import CustomizeColumns from "./CustomizeColumns.tsx";
@@ -102,6 +103,12 @@ export type DataTableRow = {
 
 export type StickyCols = 0 | 1 | 2 | 3;
 
+export type DataTableHandle = {
+	setFilters: (filters: string[]) => void;
+	getEnableFilters: () => boolean;
+	getFilters: () => string[];
+};
+
 export type Props = {
 	addFilters?: (string | undefined)[];
 	className?: string;
@@ -120,6 +127,7 @@ export type Props = {
 	nonfluid?: boolean;
 	pagination?: boolean;
 	rankCol?: number;
+	ref?: RefObject<DataTableHandle | null>;
 	rows: DataTableRow[];
 	showRowLabels?: boolean;
 	small?: boolean;
@@ -161,6 +169,7 @@ const DataTable = ({
 	nonfluid,
 	pagination,
 	rankCol,
+	ref,
 	rows,
 	showRowLabels,
 	small,
@@ -350,34 +359,22 @@ const DataTable = ({
 		});
 	}
 
-	useEffect(() => {
-		if (
-			addFilters !== undefined &&
-			addFilters.length === state.filters.length
-		) {
-			// If addFilters is passed and contains a value, merge with prevState.filters and enable filters
-			const filters = helpers.deepCopy(state.filters);
-			let changed = false;
-
-			for (let i = 0; i < addFilters.length; i++) {
-				const filter = addFilters[i];
-				if (filter !== undefined) {
-					filters[i] = filter;
-					changed = true;
-				} else if (!state.enableFilters) {
-					// If there is a saved but hidden filter, remove it
-					filters[i] = "";
-				}
-			}
-
-			if (changed) {
+	useImperativeHandle(ref, () => {
+		return {
+			setFilters(filters: string[]) {
 				state.settingsCache.set("DataTableFilters", filters);
 				setStatePartial({
 					enableFilters: true,
 					filters,
 				});
-			}
-		}
+			},
+			getEnableFilters() {
+				return state.enableFilters;
+			},
+			getFilters() {
+				return state.filters;
+			},
+		};
 	}, [
 		addFilters,
 		setStatePartial,

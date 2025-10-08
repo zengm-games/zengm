@@ -224,7 +224,10 @@ const getAwards = (
 	teams: Teams,
 	options: GetLeagueOptionsReal,
 ) => {
-	if (options.realStats !== "all" && options.phase <= PHASE.PLAYOFFS) {
+	if (
+		(options.realStats !== "all" && options.phase <= PHASE.PLAYOFFS) ||
+		options.randomDebuts
+	) {
 		return;
 	}
 

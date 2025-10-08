@@ -1,5 +1,3 @@
-"tid not found" when using random debuts and starting in e.g. 1997 draft
-
 button to skip schema check
 - not easy because we use some info from the scan (like in fromFile) when processing the "real" stream, but see commit ee3b58dbdda31e8400518796c0509d7f39edb188 for a somewhat working implementaion besides that
 

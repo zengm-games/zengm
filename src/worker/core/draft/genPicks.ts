@@ -12,14 +12,19 @@ const doSeason = async (
 	})[],
 	realPlayers: boolean | undefined,
 ) => {
+	// Some real drafts included forfeited picks, so we don't want to recreate them here if this is a new real players league and there are some draft picks for this season
+	if (realPlayers && existingPicks.length > 0) {
+		for (const dp of existingPicks) {
+			dp.keep = true;
+		}
+		return;
+	}
+
 	const teams = await idb.cache.teams.getAll();
 
 	// If draft is ongoing, don't create picks because some may have already been used. And in the case that all have been used, there's no way to know for sure, so this is the best we can do.
 	const ongoingDraft =
 		g.get("season") === season && g.get("phase") === PHASE.DRAFT;
-
-	// Some real drafts included forfeited picks, so we don't want to recreate them here if this is a new real players league and there are some draft picks for this season
-	const skipRealPlayers = realPlayers && existingPicks.length > 0;
 
 	// With forceHistoricalRosters enabled, we only want picks after this mode will turn off
 	const skipForceHistoricalRosters =
@@ -56,7 +61,6 @@ const doSeason = async (
 			} else if (
 				!ongoingDraft &&
 				!skipChallengeMode &&
-				!skipRealPlayers &&
 				!skipForceHistoricalRosters &&
 				!skipRepeatSeason
 			) {

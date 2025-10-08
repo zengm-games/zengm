@@ -133,6 +133,9 @@ const FreeAgents = ({
 
 	const { gameSimInProgress } = useLocalPartial(["gameSimInProgress"]);
 
+	const [dataTableHandle, setDataTableHandle] =
+		useState<DataTableHandle | null>(null);
+
 	if (
 		((phase > PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) ||
 			phase === PHASE.FANTASY_DRAFT ||
@@ -165,9 +168,6 @@ const FreeAgents = ({
 		"Negotiate",
 	];
 	const cols = getCols(colKeys);
-
-	const [dataTableHandle, setDataTableHandle] =
-		useState<DataTableHandle | null>(null);
 
 	const showShowPlayersAffordButton = salaryCapType !== "none";
 

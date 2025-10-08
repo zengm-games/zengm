@@ -27,12 +27,12 @@ const customLaunchers = [
 		os: "OS X",
 		os_version: "Monterey",
 	},
-].reduce((acc, browser, i) => {
+].reduce<any>((acc, browser, i) => {
 	acc[i] = browser;
 	return acc;
 }, {});
 
-export default (config) => {
+export default (config: any) => {
 	config.set({
 		...karmaConfig,
 		browserStack,

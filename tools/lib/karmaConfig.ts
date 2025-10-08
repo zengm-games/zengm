@@ -46,6 +46,4 @@ export default {
 
 	browserNoActivityTimeout: 15 * 60 * 1000, // 15 minutes
 	browserDisconnectTimeout: 15 * 60 * 1000, // 15 minutes
-
-	browsers: ["ChromeHeadless", "FirefoxHeadless"],
 };

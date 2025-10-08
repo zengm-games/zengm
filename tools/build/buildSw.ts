@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import terser from "@rollup/plugin-terser";
 import { build } from "rolldown";
 import workboxBuild from "workbox-build";
-import { replace as replace2 } from "./replace.ts";
+import { replace } from "./replace.ts";
 
 const getVersionNumber = async () => {
 	const files = await fs.readdir("build/gen");
@@ -75,7 +75,7 @@ export const buildSw = async () => {
 	await bundle();
 
 	const versionNumber = await getVersionNumber();
-	await replace2({
+	await replace({
 		paths: ["build/sw.js"],
 		replaces: [
 			{

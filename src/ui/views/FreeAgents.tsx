@@ -188,13 +188,19 @@ const FreeAgents = ({
 				: new Array(cols.length).fill("");
 
 			// If we currently have this exact filter set, delete it. Otherwise, add it
+			let newEnableFilters = true;
 			if (filters[askingForIndex] === askingForFilter) {
 				filters[askingForIndex] = "";
+
+				// If no other filters are applied, hide filter bar
+				if (filters.every((filter) => filter === "")) {
+					newEnableFilters = false;
+				}
 			} else {
 				filters[askingForIndex] = askingForFilter;
 			}
 
-			dataTableHandle.setFilters(filters);
+			dataTableHandle.setFilters(filters, newEnableFilters);
 		}
 	};
 

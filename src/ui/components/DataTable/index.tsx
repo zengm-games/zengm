@@ -104,7 +104,7 @@ export type DataTableRow = {
 export type StickyCols = 0 | 1 | 2 | 3;
 
 export type DataTableHandle = {
-	setFilters: (filters: string[]) => void;
+	setFilters: (filters: string[], enableFilters: boolean) => void;
 	getEnableFilters: () => boolean;
 	getFilters: () => string[];
 };
@@ -359,10 +359,10 @@ const DataTable = ({
 
 	useImperativeHandle(ref, () => {
 		return {
-			setFilters(filters: string[]) {
+			setFilters(filters: string[], enableFilters: boolean) {
 				state.settingsCache.set("DataTableFilters", filters);
 				setStatePartial({
-					enableFilters: true,
+					enableFilters,
 					filters,
 				});
 			},

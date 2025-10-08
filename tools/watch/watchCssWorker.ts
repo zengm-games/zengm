@@ -10,6 +10,7 @@ const mybuildCss = async () => {
 	try {
 		abortController?.abort();
 		abortController = new AbortController();
+		const { signal } = abortController;
 
 		for (const filename of filenames) {
 			parentPort!.postMessage({
@@ -18,8 +19,8 @@ const mybuildCss = async () => {
 			});
 		}
 
-		await buildCss(true, abortController.signal);
-		if (abortController.signal.aborted) {
+		await buildCss(true, signal);
+		if (signal.aborted) {
 			return;
 		}
 

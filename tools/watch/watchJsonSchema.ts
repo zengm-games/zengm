@@ -25,6 +25,7 @@ export const watchJsonSchema = async (
 		try {
 			abortController?.abort();
 			abortController = new AbortController();
+			const { signal } = abortController;
 
 			const sport = getSport();
 
@@ -35,17 +36,17 @@ export const watchJsonSchema = async (
 				"../build/generateJsonSchema.ts",
 			);
 
-			if (abortController.signal.aborted) {
+			if (signal.aborted) {
 				return;
 			}
 
 			const jsonSchema = generateJsonSchema(sport);
 			const output = JSON.stringify(jsonSchema);
 			await fs.writeFile(outFilename, output, {
-				signal: abortController.signal,
+				signal,
 			});
 
-			if (abortController.signal.aborted) {
+			if (signal.aborted) {
 				return;
 			}
 

@@ -21,19 +21,20 @@ export const watchFiles = async (
 		try {
 			abortController?.abort();
 			abortController = new AbortController();
+			const { signal } = abortController;
 
 			updateStart(outFilename);
 
-			await copyFiles(true, abortController.signal);
+			await copyFiles(true, signal);
 
-			if (abortController.signal.aborted) {
+			if (signal.aborted) {
 				return;
 			}
 
 			const versionNumber = generateVersionNumber();
-			await setTimestamps(versionNumber, true, abortController.signal);
+			await setTimestamps(versionNumber, true, signal);
 
-			if (abortController.signal.aborted) {
+			if (signal.aborted) {
 				return;
 			}
 

@@ -18,7 +18,10 @@ const Injuries = ({
 	useTitleBar({
 		title: "Injuries",
 		dropdownView: "injuries",
-		dropdownFields: { teamsAndAllWatch: abbrev, seasonsAndCurrent: season },
+		dropdownFields: {
+			teamsAndAllWatchPlayoffs: abbrev,
+			seasonsAndCurrent: season,
+		},
 	});
 
 	const cols = getCols([

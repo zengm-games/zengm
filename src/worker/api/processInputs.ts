@@ -382,8 +382,10 @@ const injuries = (params: Params) => {
 	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
 		abbrev = validatedAbbrev;
 		tid = validatedTid;
-	} else if (params.abbrev && params.abbrev === "watch") {
+	} else if (params.abbrev === "watch") {
 		abbrev = "watch";
+	} else if (params.abbrev === "playoffs") {
+		abbrev = "playoffs";
 	} else {
 		abbrev = "all";
 	}

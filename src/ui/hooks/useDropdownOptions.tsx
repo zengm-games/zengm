@@ -73,6 +73,10 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	career: "Career",
 	regularSeason: makeNormalResponsive("Reg Seas", "Regular Season"),
 	playoffs: "Playoffs",
+	"playoffs|||teams": makeNormalResponsive(
+		"Playoffs",
+		"Remaining Playoff Teams",
+	),
 	"10": "Past 10 Seasons",
 	"all|||seasons": makeNormalResponsive("All", "All Seasons"),
 	perGame: makeNormalResponsive("Per G", "Per Game"),
@@ -242,6 +246,13 @@ const useDropdownOptions = (
 		keys = ["all|||teams", ...Object.keys(sortedTeams)];
 	} else if (field === "teamsAndAllWatch") {
 		keys = ["all|||teams", "watch", ...Object.keys(sortedTeams)];
+	} else if (field === "teamsAndAllWatchPlayoffs") {
+		keys = [
+			"all|||teams",
+			"playoffs|||teams",
+			"watch",
+			...Object.keys(sortedTeams),
+		];
 	} else if (field === "teamsAndYours") {
 		keys = ["your_teams", ...Object.keys(sortedTeams)];
 	} else if (

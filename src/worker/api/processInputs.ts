@@ -1,4 +1,9 @@
-import { bySport, isSport, PHASE } from "../../common/index.ts";
+import {
+	bySport,
+	isSport,
+	PHASE,
+	REMAINING_PLAYOFF_TEAMS_PHASES,
+} from "../../common/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { PlayerStatType } from "../../common/types.ts";
 import type { Params } from "../../ui/router/index.ts";
@@ -384,7 +389,10 @@ const injuries = (params: Params) => {
 		tid = validatedTid;
 	} else if (params.abbrev === "watch") {
 		abbrev = "watch";
-	} else if (params.abbrev === "playoffs") {
+	} else if (
+		params.abbrev === "playoffs" &&
+		REMAINING_PLAYOFF_TEAMS_PHASES.has(actualPhase())
+	) {
 		abbrev = "playoffs";
 	} else {
 		abbrev = "all";
@@ -651,8 +659,13 @@ const playerRatings = (params: Params) => {
 	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
 		abbrev = validatedAbbrev;
 		tid = validatedTid;
-	} else if (params.abbrev && params.abbrev === "watch") {
+	} else if (params.abbrev === "watch") {
 		abbrev = "watch";
+	} else if (
+		params.abbrev === "playoffs" &&
+		REMAINING_PLAYOFF_TEAMS_PHASES.has(actualPhase())
+	) {
+		abbrev = "playoffs";
 	} else {
 		abbrev = "all";
 	}
@@ -671,8 +684,13 @@ const playerStats = (params: Params) => {
 
 	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
 		abbrev = validatedAbbrev;
-	} else if (params.abbrev && params.abbrev === "watch") {
+	} else if (params.abbrev === "watch") {
 		abbrev = "watch";
+	} else if (
+		params.abbrev === "playoffs" &&
+		REMAINING_PLAYOFF_TEAMS_PHASES.has(actualPhase())
+	) {
+		abbrev = "playoffs";
 	} else {
 		abbrev = "all";
 	}
@@ -928,7 +946,7 @@ const transactions = (params: Params) => {
 	let tid: number;
 	if (params.abbrev && params.abbrev !== "all") {
 		[tid, abbrev] = validateAbbrev(params.abbrev);
-	} else if (params.abbrev && params.abbrev === "all") {
+	} else if (params.abbrev === "all") {
 		tid = -1;
 		abbrev = "all";
 	} else {

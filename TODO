@@ -1,8 +1,3 @@
-option to show only active playoff teams on Injuries page https://discord.com/channels/290013534023057409/331882115119448065/1424531111530332311
-- other pages too? stats/bios/ratings?
-- can i show/hide the playoffs option based on phase? what happens?
-  - regular season or playoffs only
-
 extra validation that would be nice to do during schema check
 - draft year is valid (not a draft that hasn't happened yet - breaks some indexes)
 

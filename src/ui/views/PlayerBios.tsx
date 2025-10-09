@@ -27,7 +27,7 @@ const PlayerBios = ({
 		jumpTo: true,
 		jumpToSeason: season,
 		dropdownView: "player_bios",
-		dropdownFields: { teamsAndAllWatch: abbrev, seasons: season },
+		dropdownFields: { teamsAndAllWatchPlayoffs: abbrev, seasons: season },
 	});
 
 	const cols = getCols([

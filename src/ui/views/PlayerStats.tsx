@@ -74,7 +74,7 @@ const PlayerStats = ({
 		jumpToSeason: season,
 		dropdownView: "player_stats",
 		dropdownFields: {
-			teamsAndAllWatch: abbrev,
+			teamsAndAllWatchPlayoffs: abbrev,
 			seasonsAndCareer: season,
 			statTypesAdv: statType,
 			playoffsCombined: playoffs,

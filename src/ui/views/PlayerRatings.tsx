@@ -24,7 +24,7 @@ const PlayerRatings = ({
 		jumpTo: true,
 		jumpToSeason: season,
 		dropdownView: "player_ratings",
-		dropdownFields: { teamsAndAllWatch: abbrev, seasons: season },
+		dropdownFields: { teamsAndAllWatchPlayoffs: abbrev, seasons: season },
 	});
 
 	const ovrsPotsColNames: string[] = [];

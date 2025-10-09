@@ -4,6 +4,7 @@ import {
 	PHASE,
 	PLAYER,
 	RATINGS,
+	REMAINING_PLAYOFF_TEAMS_PHASES,
 } from "../../common/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
@@ -29,7 +30,7 @@ export const extraRatings = bySport({
 const getActivePlayoffTids = async () => {
 	const tids = new Set<number>();
 	const phase = actualPhase();
-	if (phase !== PHASE.REGULAR_SEASON && phase !== PHASE.PLAYOFFS) {
+	if (!REMAINING_PLAYOFF_TEAMS_PHASES.has(phase)) {
 		return tids;
 	}
 
@@ -218,6 +219,7 @@ const updatePlayers = async (
 		(inputs.season === g.get("season") &&
 			updateEvents.includes("playerMovement")) ||
 		(updateEvents.includes("newPhase") && g.get("phase") === PHASE.PRESEASON) ||
+		(inputs.abbrev === "playoffs" && updateEvents.includes("gameSim")) ||
 		inputs.season !== state.season ||
 		inputs.abbrev !== state.abbrev
 	) {

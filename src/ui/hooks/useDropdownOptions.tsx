@@ -5,6 +5,7 @@ import {
 	bySport,
 	isSport,
 	PLAYER_STATS_TABLES,
+	REMAINING_PLAYOFF_TEAMS_PHASES,
 } from "../../common/index.ts";
 import { useLocalPartial } from "../util/index.ts";
 import type { LocalStateUI } from "../../common/types.ts";
@@ -244,12 +245,12 @@ const useDropdownOptions = (
 		keys = ["special", ...Object.keys(sortedTeams)];
 	} else if (field === "teamsAndAll") {
 		keys = ["all|||teams", ...Object.keys(sortedTeams)];
-	} else if (field === "teamsAndAllWatch") {
-		keys = ["all|||teams", "watch", ...Object.keys(sortedTeams)];
 	} else if (field === "teamsAndAllWatchPlayoffs") {
 		keys = [
 			"all|||teams",
-			"playoffs|||teams",
+			...(REMAINING_PLAYOFF_TEAMS_PHASES.has(state.phase)
+				? ["playoffs|||teams"]
+				: []),
 			"watch",
 			...Object.keys(sortedTeams),
 		];

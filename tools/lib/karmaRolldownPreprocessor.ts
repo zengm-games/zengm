@@ -1,5 +1,4 @@
 // Based on https://github.com/jlmakes/karma-rollup-preprocessor
-// This file is under the MIT License
 
 import path from "node:path";
 import chokidar from "chokidar";

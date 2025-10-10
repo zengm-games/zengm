@@ -29,7 +29,7 @@ export default {
 	}),
 
 	preprocessors: {
-		"src/**/*.{js,ts}": ["rolldown"],
+		"src/**/*.{js,jsx,ts,tsx}": ["rolldown"],
 	},
 
 	autoWatch: false,

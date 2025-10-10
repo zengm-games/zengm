@@ -3247,6 +3247,11 @@ const cols: {
 	"Power Ranking": {
 		sortType: "number",
 	},
+	"Playing Through?": {
+		desc: "Playing Through Injuyr?",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	PlayoffAppearances: {
 		desc: "Playoff Appearances",
 		sortSequence: ["desc", "asc"],

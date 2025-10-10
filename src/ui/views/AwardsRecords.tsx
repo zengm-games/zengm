@@ -5,6 +5,7 @@ import { getCols, helpers } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { wrappedCheckmarkOrCross } from "../components/CheckmarkOrCross.tsx";
 
 const formatYear = (year: {
 	[key: string]: { team: string; season: number }[];
@@ -31,14 +32,6 @@ const formatYearString = (year: {
 			return `${i > 0 ? ", " : ""}${k} (${years})`;
 		})
 		.join("");
-};
-
-const CheckmarkOrCross = ({ success }: { success: boolean }) => {
-	if (success) {
-		return <span className="glyphicon glyphicon-ok text-success" />;
-	}
-
-	return <span className="glyphicon glyphicon-remove text-danger" />;
 };
 
 const AwardsRecords = ({
@@ -86,16 +79,8 @@ const AwardsRecords = ({
 					sortValue: a.years.map((year) => year.season).sort()[0],
 				},
 				a.lastYear,
-				{
-					value: <CheckmarkOrCross success={a.retired} />,
-					searchValue: a.retired ? 1 : 0,
-					sortValue: a.retired ? 1 : 0,
-				},
-				{
-					value: <CheckmarkOrCross success={a.hof} />,
-					searchValue: a.hof ? 1 : 0,
-					sortValue: a.hof ? 1 : 0,
-				},
+				wrappedCheckmarkOrCross({ success: a.retired }),
+				wrappedCheckmarkOrCross({ success: a.hof }),
 			],
 		};
 	});

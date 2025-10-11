@@ -9,6 +9,19 @@ schedule editor
 
 A button requesting "expiring contracts" next to the "prospects" and "best current players" in trading block https://old.reddit.com/r/BasketballGM/comments/1n59zzw/monthly_suggestions_thread/nc0wt13/
 
+option to disable retiring for players signed to teams https://old.reddit.com/r/BasketballGM/comments/1n59zzw/monthly_suggestions_thread/nggas7k/
+
+jersey numbers by position and frequency
+- football
+  - make the "classic" range more likely https://operations.nfl.com/the-rules/rules-changes/nfl-jersey-numbers/
+- hockey https://discord.com/channels/@me/778760871911751700/1214961240405704757
+  - goalies are only position that wears #1. also wears 30-39 a lot
+  - defensemen usually wear 2-9
+  - forwards wear everything
+  - except for #1, anyone can wear any number
+  - make 66 and 99 more common
+- allow editing frequencies and ranges
+
 extra validation that would be nice to do during schema check
 - draft year is valid (not a draft that hasn't happened yet - breaks some indexes)
 
@@ -614,15 +627,6 @@ new achievements
 arrow navigation between players on team https://old.reddit.com/r/BasketballGM/comments/1afy7ba/monthly_suggestions_thread/kr9whzi/
 - make it a select? or listen for keyboard shortcut?
 
-jersey numbers by position and frequency
-- football - classic numbers more popular
-- hockey https://discord.com/channels/@me/778760871911751700/1214961240405704757
-  - goalies are only position that wears #1. also wears 30-39 a lot
-  - defensemen usually wear 2-9
-  - forwards wear everything
-  - except for #1, anyone can wear any number
-  - make 66 and 99 more common
-
 offsetting penalties at end of half should lead to untimed down, same as defensive penalty https://discord.com/channels/290013534023057409/290015591216054273/1215714915550232646
 
 draft pick trade logic bug https://old.reddit.com/message/messages/274jbgt AI may value the picks by team record only, even when the better record team is in the lottery and the worse record team is not
@@ -790,7 +794,6 @@ FBGM
 - too much parity? https://old.reddit.com/r/Football_GM/comments/17fvo5h/i_love_this_game_but_the_level_of_parity_is_out/
 - add "awards" for leaders, like other sports https://twitter.com/the_daymion/status/1724093113621524759
 - maybe show turnovers in scoring summary https://old.reddit.com/message/messages/21g6koz
-- jersey number probability - make the "classic" range more likely https://operations.nfl.com/the-rules/rules-changes/nfl-jersey-numbers/
 - options to enable canadian/arena football, and then put that as a preset for new leagues
 - completed pass + pass inferference at end of game when trailing - should take penalty even if fewer yards, but seems to not https://mail.google.com/mail/u/0/#inbox/FMfcgzGwHpWBjWmMMknKPFPrTBdNGkTq
 - weird penalty decline on punt return https://discord.com/channels/290013534023057409/290015591216054273/1180657662170501170

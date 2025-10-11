@@ -1,3 +1,14 @@
+import/export players should include notes https://old.reddit.com/r/BasketballGM/comments/1n59zzw/monthly_suggestions_thread/nby0jbd/
+
+schedule editor
+- grid - days vs teams
+- ability to delete a day
+- ability to auto sort into days (merging adjacent ones when possible)
+- sum up total games for each team
+  - total, conf, div, home, away
+
+A button requesting "expiring contracts" next to the "prospects" and "best current players" in trading block https://old.reddit.com/r/BasketballGM/comments/1n59zzw/monthly_suggestions_thread/nc0wt13/
+
 extra validation that would be nice to do during schema check
 - draft year is valid (not a draft that hasn't happened yet - breaks some indexes)
 

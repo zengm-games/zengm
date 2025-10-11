@@ -333,7 +333,7 @@ const defaultColleges = bySport<Record<string, number>>({
 		Vermont: 0.1,
 		Villanova: 49,
 		Virginia: 31,
-		"Virginia Commonwealth": 10,
+		VCU: 10,
 		"Virginia Military": 2,
 		"Virginia Tech": 16,
 		Wagner: 0.1,

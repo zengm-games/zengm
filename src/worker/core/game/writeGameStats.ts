@@ -129,8 +129,8 @@ export const findSeries = (
 		}
 	} else {
 		// Regular playoffs
-		const roundSeries = playoffSeries.series[playoffSeries.currentRound]!;
-		return roundSeries.find(isValidSeries);
+		const roundSeries = playoffSeries.series[playoffSeries.currentRound];
+		return roundSeries?.find(isValidSeries);
 	}
 };
 

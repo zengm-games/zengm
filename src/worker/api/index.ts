@@ -1534,15 +1534,18 @@ const getExportFilename = async (type: "league" | "players") => {
 					filename += `_Round_${playoffSeries.currentRound + 1}`;
 
 					// Find the latest playoff series with the user's team in it
-					for (const series of playoffSeries.series[rnd]!) {
-						if (series.home.tid === userTid) {
-							if (series.away) {
-								filename += `_${series.home.won}-${series.away.won}`;
-							} else {
-								filename += "_bye";
+					const roundSeries = playoffSeries.series[rnd];
+					if (roundSeries) {
+						for (const series of roundSeries) {
+							if (series.home.tid === userTid) {
+								if (series.away) {
+									filename += `_${series.home.won}-${series.away.won}`;
+								} else {
+									filename += "_bye";
+								}
+							} else if (series.away && series.away.tid === userTid) {
+								filename += `_${series.away.won}-${series.home.won}`;
 							}
-						} else if (series.away && series.away.tid === userTid) {
-							filename += `_${series.away.won}-${series.home.won}`;
 						}
 					}
 				}

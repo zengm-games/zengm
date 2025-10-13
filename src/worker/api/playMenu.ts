@@ -21,17 +21,20 @@ const getNumDaysThisRound = (playoffSeries: PlayoffSeries) => {
 	}
 
 	if (playoffSeries.series.length > 0) {
-		for (const series of playoffSeries.series[playoffSeries.currentRound]!) {
-			const num = series.away
-				? g.get("numGamesPlayoffSeries", "current")[
-						playoffSeries.currentRound
-					]! -
-					series.home.won -
-					series.away.won
-				: 0;
+		const roundSeries = playoffSeries.series[playoffSeries.currentRound];
+		if (roundSeries) {
+			for (const series of roundSeries) {
+				const num = series.away
+					? g.get("numGamesPlayoffSeries", "current")[
+							playoffSeries.currentRound
+						]! -
+						series.home.won -
+						series.away.won
+					: 0;
 
-			if (num > numDaysThisRound) {
-				numDaysThisRound = num;
+				if (num > numDaysThisRound) {
+					numDaysThisRound = num;
+				}
 			}
 		}
 	}

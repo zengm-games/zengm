@@ -91,7 +91,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			return false;
 		} else {
 			// playIn is over, so proceed to next round
-			playoffSeries.currentRound += 1;
+			playoffSeries.currentRound = 0;
 		}
 	}
 
@@ -341,7 +341,10 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		series[rnd + 1]![i / 2] = matchup;
 	}
 
-	playoffSeries.currentRound += 1;
+	// Previously was just `playoffSeries.currentRound += 1` but some people reported that playoffSeries.currentRound was somehow getting too high, resulting in errors in other parts of the code. Not sure how that happened, but maybe this fixes it? I don't see anywhere else where playoffSeries.currentRound is updated.
+	// This works because any rounds that are not yet current will have no matchups in them
+	playoffSeries.currentRound =
+		playoffSeries.series.filter((row) => row.length > 0).length - 1;
 	await idb.cache.playoffSeries.put(playoffSeries);
 
 	// Update hype for winning a series

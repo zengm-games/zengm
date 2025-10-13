@@ -417,27 +417,30 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				playoffSeries.currentRound >= 0 ? playoffSeries.currentRound : 0;
 
 			for (let rnd = lastRound; rnd >= 0; rnd--) {
-				for (const [i, { away, home }] of series[rnd]!.entries()) {
-					if (
-						home.tid === g.get("userTid") ||
-						(away && away.tid === g.get("userTid") && !away.pendingPlayIn)
-					) {
-						foundSeries = series[rnd]![i];
-						found = true;
-						showPlayoffSeries = true;
+				const roundSeries = series[rnd];
+				if (roundSeries) {
+					for (const [i, { away, home }] of roundSeries.entries()) {
+						if (
+							home.tid === g.get("userTid") ||
+							(away && away.tid === g.get("userTid") && !away.pendingPlayIn)
+						) {
+							foundSeries = roundSeries[i];
+							found = true;
+							showPlayoffSeries = true;
 
-						seriesTitle = helpers.upperCaseFirstLetter(
-							helpers.playoffRoundName(rnd, numPlayoffRounds, playoffsByConf),
-						);
-						numGamesToWinSeries = helpers.numGamesToWinSeries(
-							g.get("numGamesPlayoffSeries", "current")[rnd],
-						);
+							seriesTitle = helpers.upperCaseFirstLetter(
+								helpers.playoffRoundName(rnd, numPlayoffRounds, playoffsByConf),
+							);
+							numGamesToWinSeries = helpers.numGamesToWinSeries(
+								g.get("numGamesPlayoffSeries", "current")[rnd],
+							);
+							break;
+						}
+					}
+
+					if (found) {
 						break;
 					}
-				}
-
-				if (found) {
-					break;
 				}
 			}
 

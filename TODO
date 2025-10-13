@@ -1,11 +1,16 @@
-import/export players should include notes https://old.reddit.com/r/BasketballGM/comments/1n59zzw/monthly_suggestions_thread/nby0jbd/
-
 schedule editor
-- grid - days vs teams
-- ability to delete a day
+- main UI
+  - grid - days vs teams, like spreadsheet
+  - grid of games, but not grouped by day on one axis, instead just let it flow and put a separator between days
+- how to handle if a team is selected for two games this day?
+  - highlight red and say this day will be split into >1 days to account for this
+- ASG, trade deadline
+- ability to delete/add a day at any point (similar to excel columns, not sure about UI)
 - ability to auto sort into days (merging adjacent ones when possible)
-- sum up total games for each team
-  - total, conf, div, home, away
+- in footer, sum up total games for each team
+  - total, conf, div, before ASG, after ASG
+    - show all as like 5/4 meaning 5 home 4 away
+  - have a button to click to expand and show counts vs each team
 
 A button requesting "expiring contracts" next to the "prospects" and "best current players" in trading block https://old.reddit.com/r/BasketballGM/comments/1n59zzw/monthly_suggestions_thread/nc0wt13/
 

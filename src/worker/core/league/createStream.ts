@@ -11,6 +11,7 @@ import {
 import {
 	applyRealTeamInfo,
 	DEFAULT_STADIUM_CAPACITY,
+	DEPTH_CHART_NAME,
 	isSport,
 	LEAGUE_DATABASE_VERSION,
 	PHASE,
@@ -674,6 +675,15 @@ const processTeamInfos = async ({
 						srIDOverride: teamSeason.srID ?? t.srID,
 					});
 				}
+			}
+		}
+	}
+
+	// If these are teams uploaded from a sport with depth (like FBGM) to a sport without depth (like BBGM) need to remove depth
+	if (DEPTH_CHART_NAME === undefined) {
+		for (const t of teamInfos) {
+			if (Object.hasOwn(t, "depth")) {
+				delete t.depth;
 			}
 		}
 	}

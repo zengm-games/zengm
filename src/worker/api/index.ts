@@ -2511,7 +2511,7 @@ const importPlayers = async ({
 			p2.salaries = [];
 			p2.injuries = [];
 			p2.ratings = [ratings];
-			p2.ratings.season = p2.draft.year;
+			ratings.season = p2.draft.year;
 		} else {
 			// How many seasons to adjust player to bring him aligned with current season, as an active player at the selected age
 			const seasonOffset2 = currentSeason - (season - seasonOffset);

@@ -1,7 +1,6 @@
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
 
-// @ts-expect-error
-import clone from "rfdc/default";
+import clone from "just-clone";
 import type {
 	TeamBasic,
 	Phase,
@@ -899,6 +898,8 @@ const getTeamsDefault = (): TeamBasic[] => {
 const deepCopy = <T>(obj: T): T => {
 	// Can't use old deepCopy function because Chrome 128 had a weird bug where sometimes [{}] would get cloned to {0: {}} - this appeared when creating a league in ZGMB
 	// Can't use structuredClone because Jest handles it annoyingly enough (deepStrictEqual doesn't work) that it's not worth it
+	// rfdc does weird stuff to arrays with properties on them, which happens accidentally sometimes, like [{RATINGS}] with a .season on it winds up adding an empty ratings row to the end
+	// @ts-expect-error https://github.com/angus-c/just/pull/582
 	return clone(obj);
 };
 

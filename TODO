@@ -1,3 +1,6 @@
+JSON streaming refactor
+- structuredClone polyfill needed
+
 schedule editor
 - main UI
   - grid - days vs teams, like spreadsheet

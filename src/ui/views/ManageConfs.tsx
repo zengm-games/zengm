@@ -1,4 +1,3 @@
-import isEqual from "fast-deep-equal";
 import { useReducer, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers, logEvent, toWorker, useLocalPartial } from "../util/index.ts";
@@ -247,13 +246,6 @@ const ManageConfs = ({
 								saveToDb: false,
 							});
 							return;
-						}
-
-						// Check to make sure that somehow we didn't accidentally reassign a tid
-						const initialRegions = initialTeams.map((t) => t.region);
-						const regions = teams.map((t) => t.region);
-						if (!isEqual(initialRegions, regions)) {
-							throw new Error("tids may not be constant");
 						}
 
 						setSaving(true);

@@ -65,6 +65,7 @@
 		"flag-icons": "^7.5.0",
 		"framer-motion": "^12.23.24",
 		"html2canvas": "^1.4.1",
+		"json-web-streams": "link:../json-web-streams",
 		"just-clone": "^6.2.0",
 		"match-sorter": "^8.1.0",
 		"nanoevents": "^9.1.0",

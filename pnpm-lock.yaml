@@ -107,6 +107,9 @@ importers:
       html2canvas:
         specifier: ^1.4.1
         version: 1.4.1
+      json-web-streams:
+        specifier: link:../json-web-streams
+        version: link:../json-web-streams
       just-clone:
         specifier: ^6.2.0
         version: 6.2.0

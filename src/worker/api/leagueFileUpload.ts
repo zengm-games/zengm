@@ -1,82 +1,153 @@
 import type { ValidateFunction } from "ajv";
 import Ajv from "ajv";
+import { JSONParseStream, type JSONPath } from "json-web-streams";
 import JSONParserText from "./JSONParserText.ts";
 import schema from "../../../build/files/league-schema.json";
 import { helpers, toUI } from "../util/index.ts";
-import { highWaterMark } from "../core/league/createStream.ts";
 import type { Conditions } from "../../common/types.ts";
 import {
 	DEFAULT_TEAM_COLORS,
 	LEAGUE_DATABASE_VERSION,
 } from "../../common/index.ts";
+import type { LeagueDBStoreNames } from "../db/connectLeague.ts";
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
-export const CUMULATIVE_OBJECTS = new Set([
+const cumulativeObjects = [
 	"gameAttributes",
 	"meta",
 	"startingSeason",
 	"version",
-]);
+] as const;
+export const CUMULATIVE_OBJECTS = new Set<string>(cumulativeObjects);
+type CumulativeObjects = (typeof cumulativeObjects)[number];
 
-export const parseJSON = () => {
+const parseJSONNew = () => {
+	// This is an object rather than an array so we can easily confirm that all LeagueDBStoreNames are present
+	const keysObject: Record<LeagueDBStoreNames | CumulativeObjects, undefined> =
+		{
+			gameAttributes: undefined,
+			meta: undefined,
+			startingSeason: undefined,
+			version: undefined,
+			allStars: undefined,
+			awards: undefined,
+			draftLotteryResults: undefined,
+			draftPicks: undefined,
+			events: undefined,
+			games: undefined,
+			headToHeads: undefined,
+			messages: undefined,
+			negotiations: undefined,
+			playerFeats: undefined,
+			players: undefined,
+			playoffSeries: undefined,
+			releasedPlayers: undefined,
+			savedTrades: undefined,
+			savedTradingBlock: undefined,
+			schedule: undefined,
+			scheduledEvents: undefined,
+			seasonLeaders: undefined,
+			teamSeasons: undefined,
+			teamStats: undefined,
+			teams: undefined,
+			trade: undefined,
+		};
+	const keys = Object.keys(keysObject);
+
+	// This stuff is needed to convert from the path property of JSONParseStream output to a key like in the objectKeys array
+	const keysByPath = new Map<JSONPath, string>();
+	for (const key of keys) {
+		const path: JSONPath = `$.${key}${CUMULATIVE_OBJECTS.has(key) ? "" : "[*]"}`;
+		keysByPath.set(path, key);
+	}
+	const paths = [...keysByPath.keys()];
+	const reformatStream = new TransformStream({
+		transform(chunk, controller) {
+			const key = keysByPath.get(chunk.path);
+			if (key === undefined) {
+				throw new Error(`Invalid path: ${chunk.path}`);
+			}
+
+			controller.enqueue({
+				key,
+				value: chunk.value,
+			});
+		},
+	});
+
+	const transformStream = new JSONParseStream(paths);
+
+	return {
+		readable: transformStream.readable.pipeThrough(reformatStream),
+		writable: transformStream.writable,
+	};
+};
+
+const parseJSONOld = () => {
 	let parser: any;
 
-	const transformStream = new TransformStream(
-		{
-			start(controller) {
-				parser = new JSONParserText((value) => {
-					// This function was adapted from JSONStream, particularly the part where row.value is set to undefind at the bottom, that is important!
+	const transformStream = new TransformStream({
+		start(controller) {
+			parser = new JSONParserText((value) => {
+				// This function was adapted from JSONStream, particularly the part where row.value is set to undefind at the bottom, that is important!
 
-					// The key on the root of the object is in the stack if we're nested, or is just parser.key if we're not
-					let objectType;
-					if (parser.stack.length > 1) {
-						objectType = parser.stack[1].key;
-					} else {
-						objectType = parser.key;
-					}
+				// The key on the root of the object is in the stack if we're nested, or is just parser.key if we're not
+				let objectType;
+				if (parser.stack.length > 1) {
+					objectType = parser.stack[1].key;
+				} else {
+					objectType = parser.key;
+				}
 
-					const emitAtStackLength = CUMULATIVE_OBJECTS.has(objectType) ? 1 : 2;
+				const emitAtStackLength = CUMULATIVE_OBJECTS.has(objectType) ? 1 : 2;
 
-					if (parser.stack.length !== emitAtStackLength) {
-						// We must be deeper in the tree, still building an object to emit
-						return;
-					}
+				if (parser.stack.length !== emitAtStackLength) {
+					// We must be deeper in the tree, still building an object to emit
+					return;
+				}
 
-					controller.enqueue({
-						key: objectType,
-						value,
-					});
-
-					// Now that we have emitted the object we want, we no longer need to keep track of all the values on the stack. This avoids keeping the whole JSON object in memory.
-					for (const row of parser.stack) {
-						row.value = undefined;
-					}
-
-					// Also, when processing an array/object, this.value will contain the current state of the array/object. So we should delete the value there too, but leave the array/object so it can still be used by the parser
-					if (typeof parser.value === "object" && parser.value !== null) {
-						delete parser.value[parser.key];
-					}
+				controller.enqueue({
+					key: objectType,
+					value,
 				});
-			},
 
-			transform(chunk) {
-				parser.write(chunk);
-			},
+				// Now that we have emitted the object we want, we no longer need to keep track of all the values on the stack. This avoids keeping the whole JSON object in memory.
+				for (const row of parser.stack) {
+					row.value = undefined;
+				}
 
-			flush(controller) {
-				controller.terminate();
-			},
+				// Also, when processing an array/object, this.value will contain the current state of the array/object. So we should delete the value there too, but leave the array/object so it can still be used by the parser
+				if (typeof parser.value === "object" && parser.value !== null) {
+					delete parser.value[parser.key];
+				}
+			});
 		},
-		new CountQueuingStrategy({
-			highWaterMark,
-		}),
-		new CountQueuingStrategy({
-			highWaterMark,
-		}),
-	);
 
-	return transformStream;
+		transform(chunk) {
+			parser.write(chunk);
+		},
+
+		flush(controller) {
+			controller.terminate();
+		},
+	});
+
+	const reformatStream = new TransformStream({
+		transform(chunk, controller) {
+			controller.enqueue({
+				key: chunk.key,
+				value: chunk.value,
+			});
+		},
+	});
+
+	return {
+		readable: transformStream.readable.pipeThrough(reformatStream),
+		writable: transformStream.writable,
+	};
 };
+
+export const parseJSON = parseJSONOld;
 
 // We have one big JSON Schema file for everything, but we need to run it on individual objects as they stream though. So break it up into parts.
 const makeValidators = () => {
@@ -171,6 +242,7 @@ const getBasicInfo = async ({
 
 	const schemaErrors = [];
 
+	console.time("foo");
 	const reader = await stream.pipeThrough(parseJSON()).getReader();
 
 	const requiredPartsNotYetSeen = new Set();
@@ -263,6 +335,7 @@ const getBasicInfo = async ({
 			basicInfo.players!.push(value.value);
 		}
 	}
+	console.timeEnd("foo");
 
 	for (const key of requiredPartsNotYetSeen) {
 		let message = `"${key}" is required in the root of a JSON file, but is missing.`;

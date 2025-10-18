@@ -957,7 +957,10 @@ const processTeamInfos = async ({
 			ts.tid = t.tid;
 
 			if (isSport("basketball")) {
-				if (ts.ba !== undefined) {
+				if (
+					(typeof ts.oppBlk !== "number" || Number.isNaN(ts.oppBlk)) &&
+					ts.ba !== undefined
+				) {
 					ts.oppBlk = ts.ba;
 					delete ts.ba;
 				}

@@ -1224,6 +1224,7 @@ const BoxScoreWrapper = ({
 			{boxScore.exhibition ? null : (
 				<div className="mt-3">
 					<Note
+						key={boxScore.gid}
 						initialNote={boxScore.note}
 						info={{
 							type: "game",

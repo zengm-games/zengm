@@ -1,5 +1,5 @@
-JSON streaming refactor
-- structuredClone polyfill needed
+reseed based on standings rather than seed when the conference part of the bracket is exhausted https://discord.com/channels/290013534023057409/1428418791251120240/1428418791251120240
+- only matters for 4+ conferences
 
 schedule editor
 - main UI

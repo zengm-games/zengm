@@ -4,6 +4,7 @@ import type teamStats from "../worker/core/team/stats.baseball.ts";
 export type TeamStatAttr =
 	| (typeof teamStats)["raw"][number]
 	| "ab"
+	| "ba"
 	| "ops"
 	| "era"
 	| "po"

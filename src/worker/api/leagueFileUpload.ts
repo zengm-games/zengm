@@ -1,13 +1,8 @@
 import type { ValidateFunction } from "ajv";
 import Ajv from "ajv";
-import {
-	JSONParseStream,
-	JSONParseStreamRaw,
-	type JSONPath,
-} from "json-web-streams";
+import { JSONParseStream, type JSONPath } from "json-web-streams";
 import schema from "../../../build/files/league-schema.json";
 import { helpers, toUI } from "../util/index.ts";
-import { highWaterMark } from "../core/league/createStream.ts";
 import type { Conditions } from "../../common/types.ts";
 import {
 	DEFAULT_TEAM_COLORS,
@@ -25,7 +20,7 @@ const cumulativeObjects = [
 export const CUMULATIVE_OBJECTS = new Set<string>(cumulativeObjects);
 type CumulativeObjects = (typeof cumulativeObjects)[number];
 
-const parseJSONNew = () => {
+export const parseJSON = () => {
 	// This is an object rather than an array so we can easily confirm that all LeagueDBStoreNames are present
 	const keysObject: Record<LeagueDBStoreNames | CumulativeObjects, undefined> =
 		{
@@ -58,88 +53,16 @@ const parseJSONNew = () => {
 		};
 	const keys = Object.keys(keysObject);
 
-	// This stuff is needed to convert from the path property of JSONParseStream output to a key like in the objectKeys array
-	const keysByPath = new Map<JSONPath, string>();
-	for (const key of keys) {
+	const paths = keys.map((key) => {
 		const path: JSONPath = `$.${key}${CUMULATIVE_OBJECTS.has(key) ? "" : "[*]"}`;
-		keysByPath.set(path, key);
-	}
-	const paths = [...keysByPath.keys()];
+		return {
+			key,
+			path,
+		};
+	});
 
-	const transformStream = new JSONParseStream(paths);
-
-	return {
-		keysByPath,
-		transformStream,
-	};
+	return new JSONParseStream(paths);
 };
-
-const parseJSONOld = () => {
-	let parser: any;
-
-	const transformStream = new TransformStream(
-		{
-			start(controller) {
-				parser = new JSONParseStreamRaw({
-					multi: false,
-					onValue: (value) => {
-						// This function was adapted from JSONStream, particularly the part where row.value is set to undefind at the bottom, that is important!
-
-						// The key on the root of the object is in the stack if we're nested, or is just parser.key if we're not
-						let objectType;
-						if (parser.stack.length > 1) {
-							objectType = parser.stack[1].key;
-						} else {
-							objectType = parser.key;
-						}
-
-						const emitAtStackLength = CUMULATIVE_OBJECTS.has(objectType)
-							? 1
-							: 2;
-
-						if (parser.stack.length !== emitAtStackLength) {
-							// We must be deeper in the tree, still building an object to emit
-							return;
-						}
-
-						controller.enqueue({
-							key: objectType,
-							value,
-						});
-
-						// Now that we have emitted the object we want, we no longer need to keep track of all the values on the stack. This avoids keeping the whole JSON object in memory.
-						for (const row of parser.stack) {
-							row.value = undefined;
-						}
-
-						// Also, when processing an array/object, this.value will contain the current state of the array/object. So we should delete the value there too, but leave the array/object so it can still be used by the parser
-						if (typeof parser.value === "object" && parser.value !== null) {
-							delete parser.value[parser.key];
-						}
-					},
-				});
-			},
-
-			transform(chunk) {
-				parser.write(chunk);
-			},
-
-			flush(controller) {
-				controller.terminate();
-			},
-		},
-		new CountQueuingStrategy({
-			highWaterMark,
-		}),
-		new CountQueuingStrategy({
-			highWaterMark,
-		}),
-	);
-
-	return transformStream;
-};
-
-export const parseJSON = parseJSONNew;
 
 // We have one big JSON Schema file for everything, but we need to run it on individual objects as they stream though. So break it up into parts.
 const makeValidators = () => {
@@ -234,10 +157,7 @@ const getBasicInfo = async ({
 
 	const schemaErrors = [];
 
-	const { keysByPath, transformStream } = parseJSON();
-
-	console.time("foo");
-	const reader = await stream.pipeThrough(transformStream).getReader();
+	const reader = await stream.pipeThrough(parseJSON()).getReader();
 
 	const requiredPartsNotYetSeen = new Set();
 	for (const [key, { required }] of Object.entries(validators)) {
@@ -247,12 +167,12 @@ const getBasicInfo = async ({
 	}
 
 	while (true) {
-		const { value, done } = (await reader.read()) as any;
+		const { value: rawValue, done } = await reader.read();
 		if (done) {
 			break;
 		}
-
-		const key = keysByPath.get(value.path)!;
+		const key = rawValue.key;
+		const value = rawValue.value as any;
 
 		const cumulative = CUMULATIVE_OBJECTS.has(key);
 
@@ -275,7 +195,7 @@ const getBasicInfo = async ({
 		const currentValidator = validators[key];
 		if (currentValidator) {
 			const { validate, required } = currentValidator;
-			validate(value.value);
+			validate(value);
 			if (validate.errors) {
 				schemaErrors.push(...validate.errors);
 			}
@@ -285,28 +205,28 @@ const getBasicInfo = async ({
 			}
 		}
 
-		if (key === "meta" && value.value.name) {
-			basicInfo.name = value.value.name;
+		if (key === "meta" && value.name) {
+			basicInfo.name = value.name;
 		}
 
 		// Need to store max gid from games, so generated schedule does not overwrite it
-		if (key === "games" && value.value.gid > basicInfo.maxGid) {
-			basicInfo.maxGid = value.value.gid;
+		if (key === "games" && value.gid > basicInfo.maxGid) {
+			basicInfo.maxGid = value.gid;
 		}
 
-		if (key === "players" && value.value.contract?.rookie) {
+		if (key === "players" && value.contract?.rookie) {
 			basicInfo.hasRookieContracts = true;
 		}
 
 		if (cumulative) {
-			(basicInfo as any)[key] = value.value;
+			(basicInfo as any)[key] = value;
 		} else if (key === "teams") {
 			if (!basicInfo.teams) {
 				basicInfo.teams = [];
 			}
 
 			const t = {
-				...value.value,
+				...value,
 			};
 
 			if (!t.colors) {
@@ -326,12 +246,11 @@ const getBasicInfo = async ({
 
 			// stats and seasons take up a lot of space, so we don't need to keep them. But... heck, why not.
 
-			basicInfo.teams.push(value.value);
+			basicInfo.teams.push(value);
 		} else if (includePlayersInBasicInfo && key === "players") {
-			basicInfo.players!.push(value.value);
+			basicInfo.players!.push(value);
 		}
 	}
-	console.timeEnd("foo");
 
 	for (const key of requiredPartsNotYetSeen) {
 		let message = `"${key}" is required in the root of a JSON file, but is missing.`;

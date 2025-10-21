@@ -48,9 +48,6 @@ const injectManifest = async () => {
 
 const bundle = async () => {
 	await build({
-		define: {
-			"process.env.NODE_ENV": JSON.stringify("production"),
-		},
 		input: "build/sw.js",
 		output: {
 			externalLiveBindings: false,
@@ -67,6 +64,11 @@ const bundle = async () => {
 			}),
 		],
 		preserveEntrySignatures: false,
+		transform: {
+			define: {
+				"process.env.NODE_ENV": JSON.stringify("production"),
+			},
+		},
 	});
 };
 

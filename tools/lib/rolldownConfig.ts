@@ -160,10 +160,12 @@ export const rolldownConfig = (
 			externalLiveBindings: false,
 			format: "es",
 		},
-		jsx: "react-jsx",
-		define: {
-			"process.env.NODE_ENV": JSON.stringify(envOptions.nodeEnv),
-			"process.env.SPORT": JSON.stringify(sport),
+		transform: {
+			define: {
+				"process.env.NODE_ENV": JSON.stringify(envOptions.nodeEnv),
+				"process.env.SPORT": JSON.stringify(sport),
+			},
+			jsx: "react-jsx",
 		},
 		plugins,
 		preserveEntrySignatures: false,

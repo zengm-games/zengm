@@ -1,6 +1,10 @@
 import type { ValidateFunction } from "ajv";
 import Ajv from "ajv";
-import { JSONParseStreamRaw } from "json-web-streams";
+import {
+	JSONParseStream,
+	JSONParseStreamRaw,
+	type JSONPath,
+} from "json-web-streams";
 import schema from "../../../build/files/league-schema.json";
 import { helpers, toUI } from "../util/index.ts";
 import { highWaterMark } from "../core/league/createStream.ts";
@@ -9,16 +13,68 @@ import {
 	DEFAULT_TEAM_COLORS,
 	LEAGUE_DATABASE_VERSION,
 } from "../../common/index.ts";
+import type { LeagueDBStoreNames } from "../db/connectLeague.ts";
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
-export const CUMULATIVE_OBJECTS = new Set([
+const cumulativeObjects = [
 	"gameAttributes",
 	"meta",
 	"startingSeason",
 	"version",
-]);
+] as const;
+export const CUMULATIVE_OBJECTS = new Set<string>(cumulativeObjects);
+type CumulativeObjects = (typeof cumulativeObjects)[number];
 
-export const parseJSON = () => {
+const parseJSONNew = () => {
+	// This is an object rather than an array so we can easily confirm that all LeagueDBStoreNames are present
+	const keysObject: Record<LeagueDBStoreNames | CumulativeObjects, undefined> =
+		{
+			gameAttributes: undefined,
+			meta: undefined,
+			startingSeason: undefined,
+			version: undefined,
+			allStars: undefined,
+			awards: undefined,
+			draftLotteryResults: undefined,
+			draftPicks: undefined,
+			events: undefined,
+			games: undefined,
+			headToHeads: undefined,
+			messages: undefined,
+			negotiations: undefined,
+			playerFeats: undefined,
+			players: undefined,
+			playoffSeries: undefined,
+			releasedPlayers: undefined,
+			savedTrades: undefined,
+			savedTradingBlock: undefined,
+			schedule: undefined,
+			scheduledEvents: undefined,
+			seasonLeaders: undefined,
+			teamSeasons: undefined,
+			teamStats: undefined,
+			teams: undefined,
+			trade: undefined,
+		};
+	const keys = Object.keys(keysObject);
+
+	// This stuff is needed to convert from the path property of JSONParseStream output to a key like in the objectKeys array
+	const keysByPath = new Map<JSONPath, string>();
+	for (const key of keys) {
+		const path: JSONPath = `$.${key}${CUMULATIVE_OBJECTS.has(key) ? "" : "[*]"}`;
+		keysByPath.set(path, key);
+	}
+	const paths = [...keysByPath.keys()];
+
+	const transformStream = new JSONParseStream(paths);
+
+	return {
+		keysByPath,
+		transformStream,
+	};
+};
+
+const parseJSONOld = () => {
 	let parser: any;
 
 	const transformStream = new TransformStream(
@@ -82,6 +138,8 @@ export const parseJSON = () => {
 
 	return transformStream;
 };
+
+export const parseJSON = parseJSONNew;
 
 // We have one big JSON Schema file for everything, but we need to run it on individual objects as they stream though. So break it up into parts.
 const makeValidators = () => {
@@ -176,7 +234,10 @@ const getBasicInfo = async ({
 
 	const schemaErrors = [];
 
-	const reader = await stream.pipeThrough(parseJSON()).getReader();
+	const { keysByPath, transformStream } = parseJSON();
+
+	console.time("foo");
+	const reader = await stream.pipeThrough(transformStream).getReader();
 
 	const requiredPartsNotYetSeen = new Set();
 	for (const [key, { required }] of Object.entries(validators)) {
@@ -191,17 +252,19 @@ const getBasicInfo = async ({
 			break;
 		}
 
-		const cumulative = CUMULATIVE_OBJECTS.has(value.key);
+		const key = keysByPath.get(value.path)!;
 
-		if (leagueCreationID !== undefined && !basicInfo.keys.has(value.key)) {
-			basicInfo.keys.add(value.key);
+		const cumulative = CUMULATIVE_OBJECTS.has(key);
+
+		if (leagueCreationID !== undefined && !basicInfo.keys.has(key)) {
+			basicInfo.keys.add(key);
 			toUI(
 				"updateLocal",
 				[
 					{
 						leagueCreation: {
 							id: leagueCreationID,
-							status: value.key,
+							status: key,
 						},
 					},
 				],
@@ -209,7 +272,7 @@ const getBasicInfo = async ({
 			);
 		}
 
-		const currentValidator = validators[value.key];
+		const currentValidator = validators[key];
 		if (currentValidator) {
 			const { validate, required } = currentValidator;
 			validate(value.value);
@@ -218,26 +281,26 @@ const getBasicInfo = async ({
 			}
 
 			if (required) {
-				requiredPartsNotYetSeen.delete(value.key);
+				requiredPartsNotYetSeen.delete(key);
 			}
 		}
 
-		if (value.key === "meta" && value.value.name) {
+		if (key === "meta" && value.value.name) {
 			basicInfo.name = value.value.name;
 		}
 
 		// Need to store max gid from games, so generated schedule does not overwrite it
-		if (value.key === "games" && value.value.gid > basicInfo.maxGid) {
+		if (key === "games" && value.value.gid > basicInfo.maxGid) {
 			basicInfo.maxGid = value.value.gid;
 		}
 
-		if (value.key === "players" && value.value.contract?.rookie) {
+		if (key === "players" && value.value.contract?.rookie) {
 			basicInfo.hasRookieContracts = true;
 		}
 
 		if (cumulative) {
-			(basicInfo as any)[value.key] = value.value;
-		} else if (value.key === "teams") {
+			(basicInfo as any)[key] = value.value;
+		} else if (key === "teams") {
 			if (!basicInfo.teams) {
 				basicInfo.teams = [];
 			}
@@ -264,10 +327,11 @@ const getBasicInfo = async ({
 			// stats and seasons take up a lot of space, so we don't need to keep them. But... heck, why not.
 
 			basicInfo.teams.push(value.value);
-		} else if (includePlayersInBasicInfo && value.key === "players") {
+		} else if (includePlayersInBasicInfo && key === "players") {
 			basicInfo.players!.push(value.value);
 		}
 	}
+	console.timeEnd("foo");
 
 	for (const key of requiredPartsNotYetSeen) {
 		let message = `"${key}" is required in the root of a JSON file, but is missing.`;

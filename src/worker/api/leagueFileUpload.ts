@@ -19,39 +19,39 @@ const cumulativeObjects = [
 ] as const;
 export const CUMULATIVE_OBJECTS = new Set<string>(cumulativeObjects);
 type CumulativeObjects = (typeof cumulativeObjects)[number];
+type LeagueFileKey = LeagueDBStoreNames | CumulativeObjects;
 
 export const parseJSON = () => {
 	// This is an object rather than an array so we can easily confirm that all LeagueDBStoreNames are present
-	const keysObject: Record<LeagueDBStoreNames | CumulativeObjects, undefined> =
-		{
-			gameAttributes: undefined,
-			meta: undefined,
-			startingSeason: undefined,
-			version: undefined,
-			allStars: undefined,
-			awards: undefined,
-			draftLotteryResults: undefined,
-			draftPicks: undefined,
-			events: undefined,
-			games: undefined,
-			headToHeads: undefined,
-			messages: undefined,
-			negotiations: undefined,
-			playerFeats: undefined,
-			players: undefined,
-			playoffSeries: undefined,
-			releasedPlayers: undefined,
-			savedTrades: undefined,
-			savedTradingBlock: undefined,
-			schedule: undefined,
-			scheduledEvents: undefined,
-			seasonLeaders: undefined,
-			teamSeasons: undefined,
-			teamStats: undefined,
-			teams: undefined,
-			trade: undefined,
-		};
-	const keys = Object.keys(keysObject);
+	const keysObject: Record<LeagueFileKey, undefined> = {
+		gameAttributes: undefined,
+		meta: undefined,
+		startingSeason: undefined,
+		version: undefined,
+		allStars: undefined,
+		awards: undefined,
+		draftLotteryResults: undefined,
+		draftPicks: undefined,
+		events: undefined,
+		games: undefined,
+		headToHeads: undefined,
+		messages: undefined,
+		negotiations: undefined,
+		playerFeats: undefined,
+		players: undefined,
+		playoffSeries: undefined,
+		releasedPlayers: undefined,
+		savedTrades: undefined,
+		savedTradingBlock: undefined,
+		schedule: undefined,
+		scheduledEvents: undefined,
+		seasonLeaders: undefined,
+		teamSeasons: undefined,
+		teamStats: undefined,
+		teams: undefined,
+		trade: undefined,
+	};
+	const keys = helpers.keys(keysObject);
 
 	const paths = keys.map((key) => {
 		const path: JSONPath = `$.${key}${CUMULATIVE_OBJECTS.has(key) ? "" : "[*]"}`;
@@ -91,7 +91,7 @@ const makeValidators = () => {
 		description: "",
 	};
 
-	const parts = helpers.keys(schema.properties);
+	const parts = helpers.keys(schema.properties) satisfies LeagueFileKey[];
 
 	for (const part of parts) {
 		const cumulative = CUMULATIVE_OBJECTS.has(part);

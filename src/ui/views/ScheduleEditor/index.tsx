@@ -1,10 +1,11 @@
 import { useReducer } from "react";
-import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, logEvent } from "../util/index.ts";
-import { ResponsiveTableWrapper } from "../components/index.tsx";
-import type { View } from "../../common/types.ts";
-import { PHASE, TIME_BETWEEN_GAMES } from "../../common/constants.ts";
-import { orderBy } from "../../common/utils.ts";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import { helpers, logEvent } from "../../util/index.ts";
+import { ResponsiveTableWrapper } from "../../components/index.tsx";
+import type { View } from "../../../common/types.ts";
+import { PHASE, TIME_BETWEEN_GAMES } from "../../../common/constants.ts";
+import { orderBy } from "../../../common/utils.ts";
+import { FancySelect } from "./FancySelect.tsx";
 
 type Schedule = View<"scheduleEditor">["initialSchedule"];
 
@@ -210,8 +211,8 @@ const ScheduleEditor = ({
 										teams.map((t) => {
 											const game = row.gamesByHomeTid[t.tid];
 											return (
-												<td key={t.tid}>
-													<select
+												<td key={t.tid} className="p-0">
+													<FancySelect
 														value={game ? game.awayTid : "noGame"}
 														onChange={(event) => {
 															const value = event.target.value;
@@ -259,17 +260,17 @@ const ScheduleEditor = ({
 																}
 															}
 														}}
-													>
-														<option value="delete">None</option>
-														<option value="swapHomeAway">Swap home/away</option>
-														{teams.map((t2) => {
-															return (
-																<option key={t2.tid} value={t2.tid}>
-																	{t2.abbrev}
-																</option>
-															);
-														})}
-													</select>
+														options={[
+															{ key: "delete", value: "No game" },
+															{ key: "swapHomeAway", value: "Swap home/away" },
+															...teams.map((t2) => {
+																return {
+																	key: t2.tid,
+																	value: t2.abbrev,
+																};
+															}),
+														]}
+													/>
 												</td>
 											);
 										})

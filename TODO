@@ -17,6 +17,7 @@ schedule editor
   - move danger zone button to regenerate schedule here
   - place ASG correctly
   - place trade deadline correctly
+  - clear schedule (except ASG and trade deadline)
 - links between this and other pages, like schedule?
 - drag and drop to reorder days
   - make clickable, if not using DataTable

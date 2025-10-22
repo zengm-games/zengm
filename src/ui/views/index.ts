@@ -94,7 +94,7 @@ import Roster from "./Roster/index.tsx";
 import RosterContinuity from "./RosterContinuity.tsx";
 import SavedTrades from "./SavedTrades.tsx";
 import Schedule from "./Schedule.tsx";
-import ScheduleEditor from "./ScheduleEditor.tsx";
+import ScheduleEditor from "./ScheduleEditor/index.tsx";
 import ScheduledEvents from "./ScheduledEvents.tsx";
 import SeasonPreview from "./SeasonPreview.tsx";
 import Settings from "./Settings/index.tsx";

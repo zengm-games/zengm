@@ -4,10 +4,12 @@ import { type SelectHTMLAttributes } from "react";
 export const FancySelect = ({
 	className,
 	onChange,
+	onMiddleClick,
 	options,
 	value,
 }: {
 	className?: string;
+	onMiddleClick: (() => void) | undefined;
 	options: {
 		key: string | number;
 		value: string;
@@ -36,6 +38,16 @@ export const FancySelect = ({
 					cursor: "pointer",
 				}}
 				onChange={onChange}
+				onMouseDown={
+					onMiddleClick
+						? (event) => {
+								if (event.button === 1) {
+									event.preventDefault();
+									onMiddleClick();
+								}
+							}
+						: undefined
+				}
 				value={value}
 			>
 				{options.map((option) => {

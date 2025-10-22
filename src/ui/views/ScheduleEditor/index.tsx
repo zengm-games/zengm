@@ -207,6 +207,9 @@ const ScheduleEditor = ({
 				Home teams are shown in normal text and away teams are shown in{" "}
 				<span className="text-body-secondary">faded text</span>.
 			</p>
+			{!window.mobile ? (
+				<p>Middle click on a game to quickly swap the home and away teams.</p>
+			) : null}
 			<ResponsiveTableWrapper>
 				<table className="table table-striped table-borderless table-hover table-nonfluid">
 					<thead>
@@ -245,6 +248,7 @@ const ScheduleEditor = ({
 										teams.map((t) => {
 											const gameAway = row.gamesByAwayTid[t.tid];
 											const gameHome = row.gamesByHomeTid[t.tid];
+											const game = gameHome ?? gameAway;
 											return (
 												<td key={t.tid} className="p-0">
 													<FancySelect
@@ -266,7 +270,6 @@ const ScheduleEditor = ({
 																value === "delete" ||
 																value === "swapHomeAway"
 															) {
-																const game = gameHome ?? gameAway;
 																if (game) {
 																	dispatch({
 																		type: value,
@@ -300,9 +303,30 @@ const ScheduleEditor = ({
 																}
 															}
 														}}
+														onMiddleClick={
+															game
+																? () => {
+																		dispatch({
+																			type: "swapHomeAway",
+																			game: game,
+																		});
+																	}
+																: undefined
+														}
 														options={[
-															{ key: "delete", value: "Delete game" },
-															{ key: "swapHomeAway", value: "Swap home/away" },
+															...(game
+																? [
+																		{
+																			key: "summary",
+																			value: `${game.awayAbbrev} @ ${game.homeAbbrev}`,
+																		},
+																		{ key: "delete", value: "Delete game" },
+																		{
+																			key: "swapHomeAway",
+																			value: "Swap home/away",
+																		},
+																	]
+																: []),
 															...teams
 																.filter((t) => {
 																	// Keep team in list if it's the current opponent

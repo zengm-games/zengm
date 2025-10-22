@@ -1,10 +1,11 @@
+import type { ScheduleGameWithoutKey } from "../../common/types.ts";
 import { groupByUnique, orderBy } from "../../common/utils.ts";
 import { season } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 
 const updateScheduleEditor = async () => {
-	const scheduleRaw = await season.getSchedule();
+	const scheduleRaw: ScheduleGameWithoutKey[] = await season.getSchedule();
 
 	const teams = await idb.getCopies.teamsPlus(
 		{
@@ -21,8 +22,7 @@ const updateScheduleEditor = async () => {
 		if (isAllStarGame) {
 			return {
 				type: "allStarGame" as const,
-				day: game.day,
-				homeTid: -1 as const,
+				...game,
 			};
 		}
 
@@ -30,8 +30,7 @@ const updateScheduleEditor = async () => {
 		if (isTradeDeadline) {
 			return {
 				type: "tradeDeadline" as const,
-				day: game.day,
-				homeTid: -3 as const,
+				...game,
 			};
 		}
 

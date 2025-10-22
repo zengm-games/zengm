@@ -1,14 +1,91 @@
-import { useState, type FormEvent, type ChangeEvent, useReducer } from "react";
+import { useReducer } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, logEvent, toWorker } from "../util/index.ts";
-import { ActionButton, ResponsiveTableWrapper } from "../components/index.tsx";
+import { helpers, logEvent } from "../util/index.ts";
+import { ResponsiveTableWrapper } from "../components/index.tsx";
 import type { View } from "../../common/types.ts";
 import { PHASE, TIME_BETWEEN_GAMES } from "../../common/constants.ts";
+import { orderBy } from "../../common/utils.ts";
 
 type Schedule = View<"scheduleEditor">["initialSchedule"];
 
-const reducer = (schedule: Schedule, action: unknown): Schedule => {
-	return schedule;
+// Not All-Star Game or Trade Deadline
+type ActualGame = Extract<Schedule[number], { type: "game" }>;
+
+type ScheduleDay = {
+	day: number;
+	gamesByHomeTid: Record<number, ActualGame>;
+	special: "allStarGame" | "tradeDeadline" | undefined;
+};
+
+type Team = View<"scheduleEditor">["teams"][number];
+
+const reducer = (
+	schedule: Schedule,
+	action:
+		| {
+				type: "swapHomeAway" | "delete";
+				game: ActualGame;
+		  }
+		| {
+				type: "switchAwayTeam";
+				away: Team;
+				game: ActualGame;
+		  }
+		| {
+				type: "newGame";
+				day: number;
+				away: Team;
+				home: Team;
+		  },
+): Schedule => {
+	console.log("reducer", action);
+	switch (action.type) {
+		case "delete":
+			return schedule.filter((row) => {
+				return row !== action.game;
+			});
+		case "swapHomeAway":
+			return schedule.filter((row) => {
+				if (row !== action.game) {
+					return row;
+				}
+
+				return {
+					...row,
+					awayAbbrev: row.homeAbbrev,
+					awayTid: row.homeTid,
+					homeAbbrev: row.awayAbbrev,
+					homeTid: row.awayTid,
+				};
+			});
+		case "switchAwayTeam":
+			return schedule.map((row) => {
+				if (row !== action.game) {
+					return row;
+				}
+
+				return {
+					...row,
+					awayAbbrev: action.away.abbrev,
+					awayTid: action.away.tid,
+				};
+			});
+		case "newGame":
+			return orderBy(
+				[
+					...schedule,
+					{
+						type: "game",
+						day: action.day,
+						awayAbbrev: action.away.abbrev,
+						awayTid: action.away.tid,
+						homeAbbrev: action.home.abbrev,
+						homeTid: action.home.tid,
+					},
+				],
+				["day"],
+			);
+	}
 };
 
 const ScheduleEditor = ({
@@ -37,11 +114,7 @@ const ScheduleEditor = ({
 		);
 	}
 
-	const scheduleByDay: {
-		day: number;
-		gamesByHomeTid: Record<number, Extract<Schedule[number], { type: "game" }>>;
-		special: "allStarGame" | "tradeDeadline" | undefined;
-	}[] = [];
+	const scheduleByDay: ScheduleDay[] = [];
 	for (const game of schedule) {
 		let currentDay = scheduleByDay.at(-1);
 		if (!currentDay) {
@@ -98,7 +171,6 @@ const ScheduleEditor = ({
 			throw new Error("Schedule is not sorted by day");
 		}
 	}
-	console.log(scheduleByDay);
 
 	return (
 		<div>
@@ -138,7 +210,67 @@ const ScheduleEditor = ({
 										teams.map((t) => {
 											const game = row.gamesByHomeTid[t.tid];
 											return (
-												<td key={t.tid}>{game ? game.awayAbbrev : null}</td>
+												<td key={t.tid}>
+													<select
+														value={game ? game.awayTid : "noGame"}
+														onChange={(event) => {
+															const value = event.target.value;
+															if (value === "delete") {
+																if (game) {
+																	dispatch({
+																		type: "delete",
+																		game: game,
+																	});
+																}
+															} else if (value === "swapHomeAway") {
+																if (game) {
+																	if (row.gamesByHomeTid[game.awayTid]) {
+																		console.log("ERROR");
+																		logEvent({
+																			type: "error",
+																			text: `${game.awayAbbrev} already has a home game on ${TIME_BETWEEN_GAMES} ${row.day}.`,
+																			saveToDb: false,
+																		});
+																	} else {
+																		dispatch({
+																			type: "swapHomeAway",
+																			game: game,
+																		});
+																	}
+																}
+															} else {
+																const tid = parseInt(value);
+																const away = teams.find((t) => t.tid === tid);
+																if (away) {
+																	if (game) {
+																		dispatch({
+																			type: "switchAwayTeam",
+																			away,
+																			game: game,
+																		});
+																	} else {
+																		dispatch({
+																			type: "newGame",
+																			away,
+																			home: t,
+																			day: row.day,
+																		});
+																	}
+																}
+															}
+														}}
+													>
+														<option value="delete">None</option>
+														<option value="swapHomeAway">Swap home/away</option>
+														{teams.map((t2) => {
+															return (
+																<option key={t2.tid} value={t2.tid}>
+																	{t2.abbrev}
+																</option>
+															);
+														})}
+													</select>
+												</td>
 											);
 										})
 									)}

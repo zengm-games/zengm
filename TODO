@@ -1,24 +1,35 @@
-json-web-streams more
-- see 0f26b0109195d5cf62f13674c8aa8783db06ca24
-- slow as number of JSONPath queries increases
-- maybe could be fixed by adding filter queries so i can just look for 2 queries (cumulative and non)
-
-reseed based on standings rather than seed when the conference part of the bracket is exhausted https://discord.com/channels/290013534023057409/1428418791251120240/1428418791251120240
-- only matters for 4+ conferences
-
 schedule editor
 - main UI
   - grid - days vs teams, like spreadsheet
   - grid of games, but not grouped by day on one axis, instead just let it flow and put a separator between days
+  - how to change team or home/away or delete game?
 - how to handle if a team is selected for two games this day?
   - highlight red and say this day will be split into >1 days to account for this
 - ASG, trade deadline
 - ability to delete/add a day at any point (similar to excel columns, not sure about UI)
+  - deleting day with deleting games, or with mergeing games up/down
+    - can't merge if homeTid conflict
 - ability to auto sort into days (merging adjacent ones when possible)
 - in footer, sum up total games for each team
   - total, conf, div, before ASG, after ASG
     - show all as like 5/4 meaning 5 home 4 away
   - have a button to click to expand and show counts vs each team
+- buttons
+  - save button
+    - don't allow save if invalid (like 2 games on same day for a team)
+  - move danger zone button to regenerate schedule here
+  - place ASG correctly
+  - place trade deadline correctly
+- links between this and other pages, like schedule?
+- drag and drop to reorder days
+  - make clickable, if not using DataTable
+- make viewable but not editable outside of god mode
+
+when editing an injury, add to the "injuries" array and also delete the last entry there if there is a current injury https://old.reddit.com/r/BasketballGM/comments/1oci96x/why_doesnt_injuries_from_randomizecustom_injury/nkqffwl/?context=3
+- maybe delete only if injury hasn't existed for long yet. like if he's been injured for 99 days with 1 left, don't delete that entry
+
+reseed based on standings rather than seed when the conference part of the bracket is exhausted https://discord.com/channels/290013534023057409/1428418791251120240/1428418791251120240
+- only matters for 4+ conferences
 
 A button requesting "expiring contracts" next to the "prospects" and "best current players" in trading block https://old.reddit.com/r/BasketballGM/comments/1n59zzw/monthly_suggestions_thread/nc0wt13/
 
@@ -80,6 +91,7 @@ now that we have worker modules, what can we do with it?
 - maybe not worth worrying about until switching to rolldown
 
 use import with json attribute for loading json files, rather than special effort to copy/fetch them
+- MAYBE NOT A GOOD IDEA https://jakearchibald.com/2025/importing-vs-fetching-json/ https://x.com/jaffathecake/status/1981010343326540157
 - might fix issue with dev mode not letting you create new league if you killed it and did a prod build in background (if file is unchanged, bundler should bundle it to the same extension?)
 - this will also allow fairly easy switching to vitest browser mode, since no fancy handling of static files will be needed (see vitest-browser branch)
 - needs import assertions (and .default of imported value!) https://caniuse.com/?search=import%20attributes - browser support not great now: Chrome 123, Firefox 138, Safari 17.2

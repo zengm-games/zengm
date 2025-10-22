@@ -89,6 +89,7 @@ import roster from "./roster.ts";
 import rosterContinuity from "./rosterContinuity.ts";
 import savedTrades from "./savedTrades.ts";
 import schedule from "./schedule.ts";
+import scheduleEditor from "./scheduleEditor.ts";
 import scheduledEvents from "./scheduledEvents.ts";
 import seasonPreview from "./seasonPreview.ts";
 import settings from "./settings.ts";
@@ -200,6 +201,7 @@ export default {
 	rosterContinuity,
 	savedTrades,
 	schedule,
+	scheduleEditor,
 	scheduledEvents,
 	seasonPreview,
 	settings,

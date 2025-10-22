@@ -791,12 +791,12 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: (pageID) => pageID === "newTeam",
+				active: (pageID) => pageID === "scheduleEditor",
 				league: true,
 				commandPalette: true,
 				godMode: true,
-				path: ["new_team"],
-				text: "Switch Team",
+				path: ["schedule_editor"],
+				text: "Schedule Editor",
 			},
 			...(isSport("basketball") ? [scheduledEvents] : []),
 			{
@@ -811,6 +811,15 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 
 				prefix: <span className="glyphicon glyphicon-camera me-1" />,
 				text: "Screenshot",
+			},
+			{
+				type: "link",
+				active: (pageID) => pageID === "newTeam",
+				league: true,
+				commandPalette: true,
+				godMode: true,
+				path: ["new_team"],
+				text: "Switch Team",
 			},
 			{
 				type: "link",

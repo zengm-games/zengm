@@ -14,6 +14,7 @@ type ActualGame = Extract<Schedule[number], { type: "game" }>;
 
 type ScheduleDay = {
 	day: number;
+	gamesByAwayTid: Record<number, ActualGame>;
 	gamesByHomeTid: Record<number, ActualGame>;
 	special: "allStarGame" | "tradeDeadline" | undefined;
 };
@@ -33,6 +34,11 @@ const reducer = (
 				game: ActualGame;
 		  }
 		| {
+				type: "switchHomeTeam";
+				home: Team;
+				game: ActualGame;
+		  }
+		| {
 				type: "newGame";
 				day: number;
 				away: Team;
@@ -46,7 +52,7 @@ const reducer = (
 				return row !== action.game;
 			});
 		case "swapHomeAway":
-			return schedule.filter((row) => {
+			return schedule.map((row) => {
 				if (row !== action.game) {
 					return row;
 				}
@@ -69,6 +75,18 @@ const reducer = (
 					...row,
 					awayAbbrev: action.away.abbrev,
 					awayTid: action.away.tid,
+				};
+			});
+		case "switchHomeTeam":
+			return schedule.map((row) => {
+				if (row !== action.game) {
+					return row;
+				}
+
+				return {
+					...row,
+					homeAbbrev: action.home.abbrev,
+					homeTid: action.home.tid,
 				};
 			});
 		case "newGame":
@@ -122,12 +140,14 @@ const ScheduleEditor = ({
 			if (game.type === "game") {
 				currentDay = {
 					day: game.day,
+					gamesByAwayTid: { [game.awayTid]: game },
 					gamesByHomeTid: { [game.homeTid]: game },
 					special: undefined,
 				};
 			} else {
 				currentDay = {
 					day: game.day,
+					gamesByAwayTid: {},
 					gamesByHomeTid: {},
 					special: game.type,
 				};
@@ -143,6 +163,7 @@ const ScheduleEditor = ({
 
 				currentDay = {
 					day,
+					gamesByAwayTid: {},
 					gamesByHomeTid: {},
 					special: undefined,
 				};
@@ -151,12 +172,18 @@ const ScheduleEditor = ({
 
 			if (newDay) {
 				if (game.type === "game") {
+					currentDay.gamesByAwayTid[game.awayTid] = game;
 					currentDay.gamesByHomeTid[game.homeTid] = game;
 				} else {
 					currentDay.special = game.type;
 				}
 			} else {
-				if (currentDay.gamesByHomeTid[game.homeTid]) {
+				if (
+					currentDay.gamesByHomeTid[game.homeTid] ||
+					currentDay.gamesByHomeTid[game.awayTid] ||
+					currentDay.gamesByAwayTid[game.homeTid] ||
+					currentDay.gamesByAwayTid[game.awayTid]
+				) {
 					throw new Error(
 						`Team ${game.homeTid} has two games on day ${game.day}`,
 					);
@@ -166,6 +193,7 @@ const ScheduleEditor = ({
 						"All-Star Game and Trade Deadline must be on their own days",
 					);
 				}
+				currentDay.gamesByAwayTid[game.awayTid] = game;
 				currentDay.gamesByHomeTid[game.homeTid] = game;
 			}
 		} else {
@@ -175,6 +203,10 @@ const ScheduleEditor = ({
 
 	return (
 		<div>
+			<p>
+				Home teams are shown in normal text and away teams are shown in{" "}
+				<span className="text-body-secondary">faded text</span>.
+			</p>
 			<ResponsiveTableWrapper>
 				<table className="table table-striped table-borderless table-hover table-nonfluid">
 					<thead>
@@ -200,7 +232,7 @@ const ScheduleEditor = ({
 									key={row.day}
 									className={row.special ? "table-info" : undefined}
 								>
-									<th>{row.day}</th>
+									<th className="text-center">{row.day}</th>
 									{row.special ? (
 										<td colSpan={teams.length}>
 											{row.special === "allStarGame"
@@ -209,50 +241,56 @@ const ScheduleEditor = ({
 										</td>
 									) : (
 										teams.map((t) => {
-											const game = row.gamesByHomeTid[t.tid];
+											const gameAway = row.gamesByAwayTid[t.tid];
+											const gameHome = row.gamesByHomeTid[t.tid];
 											return (
 												<td key={t.tid} className="p-0">
 													<FancySelect
-														value={game ? game.awayTid : "noGame"}
+														value={
+															gameHome
+																? gameHome.awayTid
+																: gameAway
+																	? gameAway.homeTid
+																	: "noGame"
+														}
+														className={
+															row.gamesByAwayTid[t.tid]
+																? "text-body-secondary"
+																: undefined
+														}
 														onChange={(event) => {
 															const value = event.target.value;
-															if (value === "delete") {
+															if (
+																value === "delete" ||
+																value === "swapHomeAway"
+															) {
+																const game = gameHome ?? gameAway;
 																if (game) {
 																	dispatch({
-																		type: "delete",
+																		type: value,
 																		game: game,
 																	});
 																}
-															} else if (value === "swapHomeAway") {
-																if (game) {
-																	if (row.gamesByHomeTid[game.awayTid]) {
-																		console.log("ERROR");
-																		logEvent({
-																			type: "error",
-																			text: `${game.awayAbbrev} already has a home game on ${TIME_BETWEEN_GAMES} ${row.day}.`,
-																			saveToDb: false,
-																		});
-																	} else {
-																		dispatch({
-																			type: "swapHomeAway",
-																			game: game,
-																		});
-																	}
-																}
 															} else {
 																const tid = parseInt(value);
-																const away = teams.find((t) => t.tid === tid);
-																if (away) {
-																	if (game) {
+																const t2 = teams.find((t) => t.tid === tid);
+																if (t2) {
+																	if (gameHome) {
 																		dispatch({
 																			type: "switchAwayTeam",
-																			away,
-																			game: game,
+																			away: t2,
+																			game: gameHome,
+																		});
+																	} else if (gameAway) {
+																		dispatch({
+																			type: "switchHomeTeam",
+																			home: t2,
+																			game: gameAway,
 																		});
 																	} else {
 																		dispatch({
 																			type: "newGame",
-																			away,
+																			away: t2,
 																			home: t,
 																			day: row.day,
 																		});
@@ -261,14 +299,30 @@ const ScheduleEditor = ({
 															}
 														}}
 														options={[
-															{ key: "delete", value: "No game" },
+															{ key: "delete", value: "Delete game" },
 															{ key: "swapHomeAway", value: "Swap home/away" },
-															...teams.map((t2) => {
-																return {
-																	key: t2.tid,
-																	value: t2.abbrev,
-																};
-															}),
+															...teams
+																.filter((t) => {
+																	// Keep team in list if it's the current opponent
+																	if (
+																		gameAway?.homeTid === t.tid ||
+																		gameHome?.awayTid === t.tid
+																	) {
+																		return true;
+																	}
+
+																	// Hide all teams with other games already
+																	return (
+																		!row.gamesByAwayTid[t.tid] &&
+																		!row.gamesByHomeTid[t.tid]
+																	);
+																})
+																.map((t) => {
+																	return {
+																		key: t.tid,
+																		value: t.abbrev,
+																	};
+																}),
 														]}
 													/>
 												</td>

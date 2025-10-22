@@ -399,7 +399,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 				) : (
 					<>
 						{event.offsetStatus === "overrule" ? "overruled" : "declined"}{" "}
-						<span className="glyphicon glyphicon-stop text-secondary" />
+						<span className="glyphicon glyphicon-stop text-body-secondary" />
 					</>
 				);
 			decisionText = (

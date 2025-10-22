@@ -681,7 +681,7 @@ const SearchResults = memo(
 						>
 							{!collapseGroups && category ? (
 								<div className="card-header bg-transparent border-0">
-									<span className="fw-bold text-secondary text-uppercase">
+									<span className="fw-bold text-body-secondary text-uppercase">
 										{category}
 									</span>
 								</div>

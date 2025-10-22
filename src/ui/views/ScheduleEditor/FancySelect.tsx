@@ -1,10 +1,13 @@
-import { type SelectHTMLAttributes } from "react";
+import clsx from "clsx";
+import { type ReactNode, type SelectHTMLAttributes } from "react";
 
 export const FancySelect = ({
+	className,
 	onChange,
 	options,
 	value,
 }: {
+	className?: string;
 	options: {
 		key: string | number;
 		value: string;
@@ -14,7 +17,10 @@ export const FancySelect = ({
 
 	return (
 		<div
-			className="position-relative d-flex align-items-center"
+			className={clsx(
+				"position-relative d-flex align-items-center justify-content-center",
+				className,
+			)}
 			style={{ height: 35.5 }}
 		>
 			{selected?.value}

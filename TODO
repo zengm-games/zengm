@@ -1,7 +1,9 @@
 schedule editor
-- how to handle if a team is selected for two games this day?
-  - highlight red and say this day will be split into >1 days to account for this
-  - some visual indicator of which teams have no game and which have an away game
+- cell state
+  - home game today
+  - away game today
+  - home and away game today
+  - no game
 - ASG, trade deadline
 - ability to delete/add a day at any point (similar to excel columns, not sure about UI)
   - deleting day with deleting games, or with mergeing games up/down

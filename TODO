@@ -1,9 +1,5 @@
 schedule editor
-- cell state
-  - home game today
-  - away game today
-  - home and away game today
-  - no game
+- sticky header, or repeat header
 - ASG, trade deadline
 - ability to delete/add a day at any point (similar to excel columns, not sure about UI)
   - deleting day with deleting games, or with mergeing games up/down
@@ -12,6 +8,7 @@ schedule editor
   - total, conf, div, before ASG, after ASG
     - show all as like 5/4 meaning 5 home 4 away
   - have a button to click to expand and show counts vs each team
+  - put this in a separate table, so the first column doesn't expand too much
 - buttons
   - save button
     - don't allow save if invalid (like 2 games on same day for a team)

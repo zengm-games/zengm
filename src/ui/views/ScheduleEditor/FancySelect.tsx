@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { type ReactNode, type SelectHTMLAttributes } from "react";
+import { type SelectHTMLAttributes } from "react";
 
 export const FancySelect = ({
 	className,

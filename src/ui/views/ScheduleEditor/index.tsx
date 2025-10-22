@@ -1,6 +1,6 @@
 import { useReducer } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { helpers, logEvent } from "../../util/index.ts";
+import { helpers } from "../../util/index.ts";
 import { ResponsiveTableWrapper } from "../../components/index.tsx";
 import type { View } from "../../../common/types.ts";
 import { PHASE, TIME_BETWEEN_GAMES } from "../../../common/constants.ts";
@@ -211,7 +211,9 @@ const ScheduleEditor = ({
 				<table className="table table-striped table-borderless table-hover table-nonfluid">
 					<thead>
 						<tr>
-							<th>{helpers.upperCaseFirstLetter(TIME_BETWEEN_GAMES)}</th>
+							<th title={helpers.upperCaseFirstLetter(TIME_BETWEEN_GAMES)}>
+								{helpers.upperCaseFirstLetter(TIME_BETWEEN_GAMES[0]!)}
+							</th>
 							{teams.map((t) => {
 								return (
 									<th
@@ -232,7 +234,7 @@ const ScheduleEditor = ({
 									key={row.day}
 									className={row.special ? "table-info" : undefined}
 								>
-									<th className="text-center">{row.day}</th>
+									<th className="text-end">{row.day}</th>
 									{row.special ? (
 										<td colSpan={teams.length}>
 											{row.special === "allStarGame"

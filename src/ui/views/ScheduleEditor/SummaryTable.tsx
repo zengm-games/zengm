@@ -3,6 +3,7 @@ import { DataTable } from "../../components/index.tsx";
 import helpers from "../../util/helpers.ts";
 import { getCol } from "../../util/index.ts";
 import type { Col } from "../../components/DataTable/index.tsx";
+import { getGradientStyle } from "./getGradientStyle.ts";
 
 export const getTeamCols = (
 	teams: {
@@ -24,16 +25,21 @@ export const getTeamCols = (
 	});
 };
 
-const wrappedAwayHomeSum = ({ away, home }: { away: number; home: number }) => {
+const wrappedAwayHomeSum = (
+	{ away, home }: { away: number; home: number },
+	style: ReturnType<typeof getGradientStyle>,
+) => {
+	const total = away + home;
 	return {
 		value: (
 			<>
-				{away + home}
+				{total}
 				<br />
 				{home} / {away}
 			</>
 		),
-		searchValue: `${away + home} (${home} / ${away})`,
+		searchValue: `${total} (${home} / ${away})`,
+		style: style(total),
 	};
 };
 
@@ -148,6 +154,11 @@ export const SummaryTable = ({
 				return true;
 			})
 			.map((key) => {
+				const values = teams.map((t) => {
+					const { away, home } = counts[key][t.tid]!;
+					return away + home;
+				});
+				const gradientStyle = getGradientStyle(values);
 				return {
 					key,
 					data: [
@@ -158,12 +169,17 @@ export const SummaryTable = ({
 							title: names[key].desc,
 						},
 						...teams.map((t) => {
-							return wrappedAwayHomeSum(counts[key][t.tid]!);
+							return wrappedAwayHomeSum(counts[key][t.tid]!, gradientStyle);
 						}),
 					],
 				};
 			}),
 		...teams.map((t) => {
+			const values = teams.map((t2) => {
+				const { away, home } = countsByTid[t2.tid]![t.tid]!;
+				return away + home;
+			});
+			const gradientStyle = getGradientStyle(values);
 			return {
 				key: t.tid,
 				data: [
@@ -173,7 +189,10 @@ export const SummaryTable = ({
 						header: true,
 					},
 					...teams.map((t2) => {
-						return wrappedAwayHomeSum(countsByTid[t2.tid]![t.tid]!);
+						return wrappedAwayHomeSum(
+							countsByTid[t2.tid]![t.tid]!,
+							gradientStyle,
+						);
 					}),
 				],
 			};

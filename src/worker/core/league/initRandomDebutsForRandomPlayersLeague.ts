@@ -91,8 +91,6 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 					continue;
 				}
 
-				p.tid = tid;
-
 				const allRatings = ratingsBySlug[p.srID];
 				if (!allRatings) {
 					continue;
@@ -105,13 +103,14 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 					continue;
 				}
 
+				p.tid = tid;
+
 				const existingRatings = p.ratings.at(-1)!;
 
 				// Adjust age
 				const diff = season - ratingsToApply.season;
 				p.born.year += diff;
 				p.draft.year += diff;
-				console.log(`${p.name}, ${p.born.year}`);
 
 				// Apply ratings
 				for (const key of RATINGS) {

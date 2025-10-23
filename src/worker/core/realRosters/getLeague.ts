@@ -295,7 +295,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 							(row) => row.season === targetRatingsSeason,
 						);
 
-						// Otherwise, find closest
+						// Otherwise, find closest (like if we're replacing a 40 year old player with a guy who only played a couple seasons, so be it)
 						if (!ratings) {
 							const sorted = orderBy(
 								rows,

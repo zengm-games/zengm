@@ -43,10 +43,18 @@ const updateScheduleEditor = async () => {
 		};
 	});
 
+	const initialSchedule: (
+		| (typeof schedule)[number]
+		| {
+				type: "placeholder";
+				day: number;
+		  }
+	)[] = schedule;
+
 	return {
 		godMode: g.get("godMode"),
 		phase: g.get("phase"),
-		initialSchedule: schedule,
+		initialSchedule,
 		teams: orderBy(teams, [(t) => t.seasonAttrs.abbrev]),
 		userTid: g.get("userTid"),
 	};

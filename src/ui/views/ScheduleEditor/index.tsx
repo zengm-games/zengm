@@ -48,7 +48,7 @@ const reducer = (
 				home: Team;
 		  }
 		| {
-				type: "deleteDay" | "addDayBefore" | "addDayAfter";
+				type: "deleteDay" | "addDay";
 				day: number;
 		  },
 ): Schedule => {
@@ -124,10 +124,42 @@ const reducer = (
 						day: game.day - 1,
 					};
 				});
-		case "addDayBefore":
-			throw new Error("Not implemented");
-		case "addDayAfter":
-			throw new Error("Not implemented");
+		case "addDay": {
+			const placeholderGame = {
+				type: "placeholder",
+				day: action.day,
+			} as const;
+			let added = false;
+			const scheduleWithNewDay = schedule.flatMap((game) => {
+				if (game.day < action.day) {
+					return game;
+				}
+
+				if (!added) {
+					added = true;
+					return [
+						placeholderGame,
+						{
+							...game,
+							day: game.day + 1,
+						},
+					];
+				}
+
+				return {
+					...game,
+					day: game.day + 1,
+				};
+			});
+
+			if (!added) {
+				added = true;
+				scheduleWithNewDay.push(placeholderGame);
+			}
+
+			console.log("scheduleWithNewDay", scheduleWithNewDay);
+			return scheduleWithNewDay;
+		}
 	}
 };
 
@@ -173,7 +205,7 @@ const ScheduleEditor = ({
 					day: game.day,
 					gamesByAwayTid: {},
 					gamesByHomeTid: {},
-					special: game.type,
+					special: game.type === "placeholder" ? undefined : game.type,
 				};
 			}
 			scheduleByDay.push(currentDay);
@@ -192,6 +224,10 @@ const ScheduleEditor = ({
 					special: undefined,
 				};
 				scheduleByDay.push(currentDay);
+			}
+
+			if (game.type === "placeholder") {
+				continue;
 			}
 
 			if (newDay) {
@@ -283,7 +319,7 @@ const ScheduleEditor = ({
 												<Dropdown.Item
 													onClick={() => {
 														dispatch({
-															type: "addDayBefore",
+															type: "addDay",
 															day: row.day,
 														});
 													}}
@@ -293,8 +329,8 @@ const ScheduleEditor = ({
 												<Dropdown.Item
 													onClick={() => {
 														dispatch({
-															type: "addDayAfter",
-															day: row.day,
+															type: "addDay",
+															day: row.day + 1,
 														});
 													}}
 												>

@@ -65,7 +65,7 @@ export const SummaryTable = ({
 			seenAllStarGame = true;
 			continue;
 		}
-		if (game.type === "tradeDeadline") {
+		if (game.type !== "game") {
 			continue;
 		}
 

@@ -1,13 +1,12 @@
 import { useReducer } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/index.ts";
-import { ResponsiveTableWrapper } from "../../components/index.tsx";
+import { DataTable } from "../../components/index.tsx";
 import type { View } from "../../../common/types.ts";
 import { PHASE, TIME_BETWEEN_GAMES } from "../../../common/constants.ts";
 import { groupByUnique, orderBy } from "../../../common/utils.ts";
 import { FancySelect, height } from "./FancySelect.tsx";
-import { TeamsHeaders } from "./TeamsHeaders.tsx";
-import { SummaryTable } from "./SummaryTable.tsx";
+import { getTeamCols, SummaryTable } from "./SummaryTable.tsx";
 import { Dropdown } from "react-bootstrap";
 
 type Schedule = View<"scheduleEditor">["initialSchedule"];
@@ -157,7 +156,6 @@ const reducer = (
 				scheduleWithNewDay.push(placeholderGame);
 			}
 
-			console.log("scheduleWithNewDay", scheduleWithNewDay);
 			return scheduleWithNewDay;
 		}
 	}
@@ -263,6 +261,203 @@ const ScheduleEditor = ({
 
 	const teamsByTid = groupByUnique(teams, "tid");
 
+	const cols = [
+		{
+			desc: helpers.upperCaseFirstLetter(TIME_BETWEEN_GAMES),
+			title: helpers.upperCaseFirstLetter(TIME_BETWEEN_GAMES[0]!),
+		},
+		...getTeamCols(teams, userTid),
+	];
+
+	const rows = scheduleByDay.map((row) => {
+		return {
+			key: row.day,
+			classNames: row.special ? "table-info" : undefined,
+			data: [
+				{
+					value: (
+						<Dropdown>
+							<Dropdown.Toggle
+								bsPrefix="no-caret"
+								style={{
+									height,
+								}}
+								title="Actions"
+								variant="btn-link border-0 py-0 px-2 w-100 d-flex align-items-center justify-content-end"
+							>
+								<span>
+									{row.day}{" "}
+									<span className="glyphicon glyphicon-option-vertical text-body-secondary" />
+								</span>
+							</Dropdown.Toggle>
+							<Dropdown.Menu>
+								<Dropdown.Item
+									onClick={() => {
+										dispatch({
+											type: "deleteDay",
+											day: row.day,
+										});
+									}}
+								>
+									Delete {TIME_BETWEEN_GAMES} {row.day}
+								</Dropdown.Item>
+								<Dropdown.Item
+									onClick={() => {
+										dispatch({
+											type: "addDay",
+											day: row.day,
+										});
+									}}
+								>
+									Add {TIME_BETWEEN_GAMES} above
+								</Dropdown.Item>
+								<Dropdown.Item
+									onClick={() => {
+										dispatch({
+											type: "addDay",
+											day: row.day + 1,
+										});
+									}}
+								>
+									Add {TIME_BETWEEN_GAMES} below
+								</Dropdown.Item>
+							</Dropdown.Menu>
+						</Dropdown>
+					),
+					classNames: "p-0",
+				},
+				...(row.special
+					? [
+							{
+								value:
+									row.special === "allStarGame"
+										? "All-Star Game"
+										: "Trade Deadline",
+								classNames: "text-start",
+								colSpan: teams.length,
+							},
+						]
+					: teams.map((t) => {
+							const gameAway = row.gamesByAwayTid[t.tid];
+							const gameHome = row.gamesByHomeTid[t.tid];
+							const game = gameHome ?? gameAway;
+							return {
+								value: (
+									<FancySelect
+										value={
+											gameHome
+												? gameHome.awayTid
+												: gameAway
+													? gameAway.homeTid
+													: "noGame"
+										}
+										className={
+											row.gamesByAwayTid[t.tid]
+												? "text-body-secondary"
+												: undefined
+										}
+										onChange={(event) => {
+											const value = event.target.value;
+											if (value === "delete" || value === "swapHomeAway") {
+												if (game) {
+													dispatch({
+														type: value,
+														game: game,
+													});
+												}
+											} else {
+												const tid = parseInt(value);
+												const t2 = teamsByTid[tid];
+												if (t2) {
+													if (gameHome) {
+														dispatch({
+															type: "switchAwayTeam",
+															away: t2,
+															game: gameHome,
+														});
+													} else if (gameAway) {
+														dispatch({
+															type: "switchHomeTeam",
+															home: t2,
+															game: gameAway,
+														});
+													} else {
+														dispatch({
+															type: "newGame",
+															away: t2,
+															home: t,
+															day: row.day,
+														});
+													}
+												}
+											}
+										}}
+										onMiddleClick={
+											game
+												? () => {
+														dispatch({
+															type: "swapHomeAway",
+															game: game,
+														});
+													}
+												: undefined
+										}
+										options={[
+											...(game
+												? [
+														{
+															key: "summary",
+															value: `${game.awayAbbrev} @ ${game.homeAbbrev}`,
+														},
+														{ key: "delete", value: "Delete game" },
+														{
+															key: "swapHomeAway",
+															value: "Swap home/away",
+														},
+													]
+												: [
+														{
+															key: "summary",
+															value: `${t.seasonAttrs.abbrev} vs...`,
+														},
+													]),
+											...teams
+												.filter((t2) => {
+													// Don't show self
+													if (t2.tid === t.tid) {
+														return false;
+													}
+
+													// Keep team in list if it's the current opponent
+													if (
+														gameAway?.homeTid === t2.tid ||
+														gameHome?.awayTid === t2.tid
+													) {
+														return true;
+													}
+
+													// Hide all teams with other games already
+													return (
+														!row.gamesByAwayTid[t2.tid] &&
+														!row.gamesByHomeTid[t2.tid]
+													);
+												})
+												.map((t2) => {
+													return {
+														key: t2.tid,
+														value: t2.seasonAttrs.abbrev,
+													};
+												}),
+										]}
+									/>
+								),
+								classNames: "p-0",
+							};
+						})),
+			],
+		};
+	});
+
 	return (
 		<div>
 			<p>
@@ -273,205 +468,14 @@ const ScheduleEditor = ({
 			{!window.mobile ? (
 				<p>Middle click on a game to quickly swap the home and away teams.</p>
 			) : null}
-			<ResponsiveTableWrapper>
-				<table className="table table-striped table-borderless table-hover table-nonfluid">
-					<thead>
-						<tr>
-							<th title={helpers.upperCaseFirstLetter(TIME_BETWEEN_GAMES)}>
-								{helpers.upperCaseFirstLetter(TIME_BETWEEN_GAMES[0]!)}
-							</th>
-							<TeamsHeaders teams={teams} userTid={userTid} />
-						</tr>
-					</thead>
-					<tbody>
-						{scheduleByDay.map((row) => {
-							return (
-								<tr
-									key={row.day}
-									className={row.special ? "table-info" : undefined}
-								>
-									<th className="p-0">
-										<Dropdown>
-											<Dropdown.Toggle
-												bsPrefix="no-caret"
-												style={{
-													height,
-												}}
-												title="Actions"
-												variant="btn-link border-0 py-0 px-2 w-100 d-flex align-items-center justify-content-end"
-											>
-												<span>
-													{row.day}{" "}
-													<span className="glyphicon glyphicon-option-vertical text-body-secondary" />
-												</span>
-											</Dropdown.Toggle>
-											<Dropdown.Menu>
-												<Dropdown.Item
-													onClick={() => {
-														dispatch({
-															type: "deleteDay",
-															day: row.day,
-														});
-													}}
-												>
-													Delete {TIME_BETWEEN_GAMES} {row.day}
-												</Dropdown.Item>
-												<Dropdown.Item
-													onClick={() => {
-														dispatch({
-															type: "addDay",
-															day: row.day,
-														});
-													}}
-												>
-													Add {TIME_BETWEEN_GAMES} above
-												</Dropdown.Item>
-												<Dropdown.Item
-													onClick={() => {
-														dispatch({
-															type: "addDay",
-															day: row.day + 1,
-														});
-													}}
-												>
-													Add {TIME_BETWEEN_GAMES} below
-												</Dropdown.Item>
-											</Dropdown.Menu>
-										</Dropdown>
-									</th>
-									{row.special ? (
-										<td colSpan={teams.length}>
-											{row.special === "allStarGame"
-												? "All-Star Game"
-												: "Trade Deadline"}
-										</td>
-									) : (
-										teams.map((t) => {
-											const gameAway = row.gamesByAwayTid[t.tid];
-											const gameHome = row.gamesByHomeTid[t.tid];
-											const game = gameHome ?? gameAway;
-											return (
-												<td key={t.tid} className="p-0">
-													<FancySelect
-														value={
-															gameHome
-																? gameHome.awayTid
-																: gameAway
-																	? gameAway.homeTid
-																	: "noGame"
-														}
-														className={
-															row.gamesByAwayTid[t.tid]
-																? "text-body-secondary"
-																: undefined
-														}
-														onChange={(event) => {
-															const value = event.target.value;
-															if (
-																value === "delete" ||
-																value === "swapHomeAway"
-															) {
-																if (game) {
-																	dispatch({
-																		type: value,
-																		game: game,
-																	});
-																}
-															} else {
-																const tid = parseInt(value);
-																const t2 = teamsByTid[tid];
-																if (t2) {
-																	if (gameHome) {
-																		dispatch({
-																			type: "switchAwayTeam",
-																			away: t2,
-																			game: gameHome,
-																		});
-																	} else if (gameAway) {
-																		dispatch({
-																			type: "switchHomeTeam",
-																			home: t2,
-																			game: gameAway,
-																		});
-																	} else {
-																		dispatch({
-																			type: "newGame",
-																			away: t2,
-																			home: t,
-																			day: row.day,
-																		});
-																	}
-																}
-															}
-														}}
-														onMiddleClick={
-															game
-																? () => {
-																		dispatch({
-																			type: "swapHomeAway",
-																			game: game,
-																		});
-																	}
-																: undefined
-														}
-														options={[
-															...(game
-																? [
-																		{
-																			key: "summary",
-																			value: `${game.awayAbbrev} @ ${game.homeAbbrev}`,
-																		},
-																		{ key: "delete", value: "Delete game" },
-																		{
-																			key: "swapHomeAway",
-																			value: "Swap home/away",
-																		},
-																	]
-																: [
-																		{
-																			key: "summary",
-																			value: `${t.seasonAttrs.abbrev} vs...`,
-																		},
-																	]),
-															...teams
-																.filter((t2) => {
-																	// Don't show self
-																	if (t2.tid === t.tid) {
-																		return false;
-																	}
-
-																	// Keep team in list if it's the current opponent
-																	if (
-																		gameAway?.homeTid === t2.tid ||
-																		gameHome?.awayTid === t2.tid
-																	) {
-																		return true;
-																	}
-
-																	// Hide all teams with other games already
-																	return (
-																		!row.gamesByAwayTid[t2.tid] &&
-																		!row.gamesByHomeTid[t2.tid]
-																	);
-																})
-																.map((t2) => {
-																	return {
-																		key: t2.tid,
-																		value: t2.seasonAttrs.abbrev,
-																	};
-																}),
-														]}
-													/>
-												</td>
-											);
-										})
-									)}
-								</tr>
-							);
-						})}
-					</tbody>
-				</table>
-			</ResponsiveTableWrapper>
+			<DataTable
+				className="text-center"
+				cols={cols}
+				defaultSort="disableSort"
+				hideAllControls
+				name="ScheduleEditor"
+				rows={rows}
+			/>
 
 			<h2>Schedule Statistics</h2>
 			<p className="mb-0">

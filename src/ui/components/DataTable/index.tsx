@@ -90,6 +90,7 @@ export type DataTableRow = {
 				sortValue?: string | number;
 				header?: boolean;
 				title?: string;
+				colSpan?: number; // dangerous unless disableSort
 		  }
 	)[];
 	classNames?:

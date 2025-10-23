@@ -119,7 +119,7 @@ const Row = ({
 				const props: any = {};
 
 				const highlightCol = highlightCols.includes(i);
-				if (value && value.classNames) {
+				if (value?.classNames) {
 					props.className = clsx(
 						value.classNames,
 						highlightCol ? "sorting_highlight" : undefined,
@@ -128,23 +128,22 @@ const Row = ({
 					props.className = "sorting_highlight";
 				}
 
-				if (value && value.title) {
+				if (value?.colSpan) {
+					props.colSpan = value.colSpan;
+				}
+				if (value?.style) {
+					props.style = value.style;
+				}
+				if (value?.title) {
 					props.title = value.title;
 				}
 
-				if (value && value.style) {
-					props.style = value.style;
-				}
-
 				const singleCheckbox =
-					actualValue &&
-					actualValue.type === "input" &&
+					actualValue?.type === "input" &&
 					actualValue.props.type === "checkbox" &&
 					actualValue.props.onChange;
 				const singleButton =
-					actualValue &&
-					actualValue.type === "button" &&
-					actualValue.props.onClick;
+					actualValue?.type === "button" && actualValue.props.onClick;
 
 				// Expand clickable area of checkboxes/buttons to the whole td - similar logic is elsewhere, search for singleCheckbox
 				if (singleCheckbox || singleButton) {
@@ -164,16 +163,16 @@ const Row = ({
 					props["data-no-row-highlight"] = "true";
 				}
 
-				if (value.header) {
+				if (value?.header) {
 					return (
-						<th key={i} title={value.title} {...props}>
+						<th key={i} {...props}>
 							{actualValue}
 						</th>
 					);
 				}
 
 				return (
-					<td key={i} title={value.title} {...props}>
+					<td key={i} {...props}>
 						{actualValue}
 					</td>
 				);

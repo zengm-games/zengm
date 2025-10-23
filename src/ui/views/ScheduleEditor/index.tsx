@@ -46,6 +46,10 @@ const reducer = (
 				day: number;
 				away: Team;
 				home: Team;
+		  }
+		| {
+				type: "deleteDay" | "addDayBefore" | "addDayAfter";
+				day: number;
 		  },
 ): Schedule => {
 	console.log("reducer", action);
@@ -107,6 +111,23 @@ const reducer = (
 				],
 				["day"],
 			);
+		case "deleteDay":
+			return schedule
+				.filter((game) => game.day !== action.day)
+				.map((game) => {
+					if (game.day < action.day) {
+						return game;
+					}
+
+					return {
+						...game,
+						day: game.day - 1,
+					};
+				});
+		case "addDayBefore":
+			throw new Error("Not implemented");
+		case "addDayAfter":
+			throw new Error("Not implemented");
 	}
 };
 
@@ -249,13 +270,34 @@ const ScheduleEditor = ({
 												</span>
 											</Dropdown.Toggle>
 											<Dropdown.Menu>
-												<Dropdown.Item onClick={() => {}}>
+												<Dropdown.Item
+													onClick={() => {
+														dispatch({
+															type: "deleteDay",
+															day: row.day,
+														});
+													}}
+												>
 													Delete {TIME_BETWEEN_GAMES} {row.day}
 												</Dropdown.Item>
-												<Dropdown.Item onClick={() => {}}>
+												<Dropdown.Item
+													onClick={() => {
+														dispatch({
+															type: "addDayBefore",
+															day: row.day,
+														});
+													}}
+												>
 													Add {TIME_BETWEEN_GAMES} above
 												</Dropdown.Item>
-												<Dropdown.Item onClick={() => {}}>
+												<Dropdown.Item
+													onClick={() => {
+														dispatch({
+															type: "addDayAfter",
+															day: row.day,
+														});
+													}}
+												>
 													Add {TIME_BETWEEN_GAMES} below
 												</Dropdown.Item>
 											</Dropdown.Menu>

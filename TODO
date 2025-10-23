@@ -1,9 +1,8 @@
 schedule editor
 - sticky header, or repeat header
 - ... menu for each row
-  - delete row (will delete games)
-  - add row above
-  - add row below
+  - add row above/below
+    - need a placeholder game to keep an empty row there
 - buttons
   - save button
     - don't allow save if invalid (like 2 games on same day for a team)

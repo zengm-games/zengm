@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useReducer, useState } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/index.ts";
 import { DataTable } from "../../components/index.tsx";
@@ -234,6 +234,7 @@ const ScheduleEditor = ({
 	useTitleBar({ title: "Schedule Editor" });
 
 	const [schedule, dispatch] = useReducer(reducer, initialSchedule);
+	const [showSummaryStatistics, setShowSummaryStatistics] = useState(false);
 
 	if (phase !== PHASE.REGULAR_SEASON) {
 		return <p>You can only edit the schedule during the regular season.</p>;
@@ -533,10 +534,12 @@ const ScheduleEditor = ({
 				Home games are shown in normal text and away games are shown in{" "}
 				<span className="text-body-secondary">faded text</span>.
 			</p>
-			<p>Click anywhere in the table to create/update/delete a game.</p>
-			{!window.mobile ? (
-				<p>Middle click on a game to quickly swap the home and away teams.</p>
-			) : null}
+			<p className="mb-0">
+				Click anywhere in the table to create/update/delete a game.
+				{!window.mobile
+					? " Middle click on a game to quickly swap the home and away teams."
+					: null}
+			</p>
 			<DataTable
 				className="text-center"
 				cols={cols}
@@ -563,17 +566,32 @@ const ScheduleEditor = ({
 				}}
 			/>
 
-			<h2>Schedule Statistics</h2>
-			<p className="mb-0">
-				The numbers in this table show the total number of games for each
-				team/category above (# home games) / (# away games).
-			</p>
-			<SummaryTable
-				schedule={schedule}
-				teams={teams}
-				teamsByTid={teamsByTid}
-				userTid={userTid}
-			/>
+			{showSummaryStatistics ? (
+				<>
+					<h2>Schedule Statistics</h2>
+					<p className="mb-0">
+						The numbers in this table show the total number of games for each
+						team/category above (# home games) / (# away games).
+					</p>
+					<SummaryTable
+						schedule={schedule}
+						teams={teams}
+						teamsByTid={teamsByTid}
+						userTid={userTid}
+					/>
+				</>
+			) : (
+				<>
+					<button
+						className="btn btn-secondary"
+						onClick={() => {
+							setShowSummaryStatistics(true);
+						}}
+					>
+						Show summary statistics
+					</button>
+				</>
+			)}
 		</div>
 	);
 };

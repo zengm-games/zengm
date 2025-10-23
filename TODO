@@ -1,5 +1,9 @@
 schedule editor
 - sticky header, or repeat header
+  - https://github.com/w3c/csswg-drafts/issues/9140
+  - SummaryTable too
+  - test while editing
+  - updateVisibility and visibility needed?
 - buttons
   - save button
     - don't allow save if invalid (like 2 games on same day for a team)
@@ -8,7 +12,12 @@ schedule editor
   - place ASG correctly
   - place trade deadline correctly
   - clear schedule
+- don't need resetSchedule on initial render
 - perf?
+- video
+  - middle click
+  - mobile
+  - sticky header
 - later
   - support export/import and editing in spreadsheet
   - drag and drop to move a game

@@ -206,6 +206,7 @@ export const SummaryTable = ({
 			hideAllControls
 			name="ScheduleEditorSummary"
 			rows={rows}
+			stickyHeader
 		/>
 	);
 };

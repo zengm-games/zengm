@@ -586,11 +586,12 @@ const ScheduleEditor = ({
 							}
 						: undefined
 				}
+				stickyHeader
 			/>
 
 			{showSummaryStatistics ? (
 				<>
-					<h2>Schedule Statistics</h2>
+					<h2 className="mt-5">Schedule Statistics</h2>
 					<p className="mb-0">
 						The numbers in this table show the total number of games for each
 						team/category above (# home games) / (# away games).

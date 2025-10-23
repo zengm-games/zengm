@@ -38,6 +38,7 @@ import {
 	type HighlightHandle,
 } from "./sortableRows.tsx";
 import { DataTableContext } from "./contexts.ts";
+import { useStickyTableHeader } from "./useStickyTableHeader.ts";
 
 export type SortBy = [number, SortOrder];
 
@@ -139,6 +140,7 @@ export type Props = {
 		onChange: (a: { oldIndex: number; newIndex: number }) => void;
 		onSwap: (index1: number, index2: number) => void;
 	};
+	stickyHeader?: boolean;
 	striped?: boolean;
 	style?: CSSProperties;
 	superCols?: SuperCol[];
@@ -175,6 +177,7 @@ const DataTable = ({
 	showRowLabels,
 	small,
 	sortableRows,
+	stickyHeader,
 	striped,
 	style,
 	superCols,
@@ -443,6 +446,14 @@ const DataTable = ({
 	);
 
 	const wrapperRef = useRef<HTMLDivElement>(null);
+	const responsiveTableWrapperRef = useRef<HTMLDivElement>(null);
+
+	useStickyTableHeader({
+		className,
+		containerRef: responsiveTableWrapperRef,
+		stickyHeader,
+		tableRef,
+	});
 
 	const table = (
 		<DataTableContext value={dataTableContext}>
@@ -611,6 +622,7 @@ const DataTable = ({
 							pagination ? "fix-margin-pagination" : null,
 						)}
 						nonfluid={nonfluid}
+						ref={responsiveTableWrapperRef}
 					>
 						{sortableRows ? (
 							<SortableContextWrappers

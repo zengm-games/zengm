@@ -1,6 +1,6 @@
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { helpers } from "../../util/index.ts";
+import { helpers, useLocalPartial } from "../../util/index.ts";
 import { DataTable } from "../../components/index.tsx";
 import type { View } from "../../../common/types.ts";
 import { PHASE, TIME_BETWEEN_GAMES } from "../../../common/constants.ts";
@@ -9,7 +9,7 @@ import { FancySelect, height } from "./FancySelect.tsx";
 import { getTeamCols, SummaryTable } from "./SummaryTable.tsx";
 import { Dropdown } from "react-bootstrap";
 
-type Schedule = View<"scheduleEditor">["initialSchedule"];
+type Schedule = View<"scheduleEditor">["schedule"];
 
 // Not All-Star Game or Trade Deadline
 type ActualGame = Extract<Schedule[number], { type: "game" }>;
@@ -59,6 +59,10 @@ const reducer = (
 				type: "swapDays";
 				day1: number;
 				day2: number;
+		  }
+		| {
+				type: "resetSchedule";
+				schedule: Schedule;
 		  },
 ): Schedule => {
 	console.log("reducer", action);
@@ -221,20 +225,28 @@ const reducer = (
 				}),
 				["day"],
 			);
+		case "resetSchedule":
+			return action.schedule;
 	}
 };
 
 const ScheduleEditor = ({
-	godMode,
-	initialSchedule,
+	schedule: scheduleProp,
 	phase,
 	teams,
 	userTid,
 }: View<"scheduleEditor">) => {
 	useTitleBar({ title: "Schedule Editor" });
 
-	const [schedule, dispatch] = useReducer(reducer, initialSchedule);
+	const [schedule, dispatch] = useReducer(reducer, scheduleProp);
 	const [showSummaryStatistics, setShowSummaryStatistics] = useState(false);
+
+	// Reset the saved schedule state when simming a game or something else that will affect this
+	useEffect(() => {
+		dispatch({ type: "resetSchedule", schedule: scheduleProp });
+	}, [scheduleProp]);
+
+	const { godMode } = useLocalPartial(["godMode"]);
 
 	if (phase !== PHASE.REGULAR_SEASON) {
 		return <p>You can only edit the schedule during the regular season.</p>;

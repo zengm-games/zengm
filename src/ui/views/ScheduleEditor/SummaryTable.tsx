@@ -49,9 +49,8 @@ export const SummaryTable = ({
 	teamsByTid,
 	userTid,
 }: {
-	schedule: View<"scheduleEditor">["initialSchedule"];
 	teamsByTid: Record<number, View<"scheduleEditor">["teams"][number]>;
-} & Pick<View<"scheduleEditor">, "teams" | "userTid">) => {
+} & Pick<View<"scheduleEditor">, "schedule" | "teams" | "userTid">) => {
 	const initialCounts: Record<
 		number,
 		{

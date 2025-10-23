@@ -4,8 +4,10 @@ import { helpers } from "../../util/index.ts";
 import { ResponsiveTableWrapper } from "../../components/index.tsx";
 import type { View } from "../../../common/types.ts";
 import { PHASE, TIME_BETWEEN_GAMES } from "../../../common/constants.ts";
-import { orderBy } from "../../../common/utils.ts";
+import { groupByUnique, orderBy } from "../../../common/utils.ts";
 import { FancySelect } from "./FancySelect.tsx";
+import { TeamsHeaders } from "./TeamsHeaders.tsx";
+import { SummaryTable } from "./SummaryTable.tsx";
 
 type Schedule = View<"scheduleEditor">["initialSchedule"];
 
@@ -73,7 +75,7 @@ const reducer = (
 
 				return {
 					...row,
-					awayAbbrev: action.away.abbrev,
+					awayAbbrev: action.away.seasonAttrs.abbrev,
 					awayTid: action.away.tid,
 				};
 			});
@@ -85,7 +87,7 @@ const reducer = (
 
 				return {
 					...row,
-					homeAbbrev: action.home.abbrev,
+					homeAbbrev: action.home.seasonAttrs.abbrev,
 					homeTid: action.home.tid,
 				};
 			});
@@ -96,9 +98,9 @@ const reducer = (
 					{
 						type: "game",
 						day: action.day,
-						awayAbbrev: action.away.abbrev,
+						awayAbbrev: action.away.seasonAttrs.abbrev,
 						awayTid: action.away.tid,
-						homeAbbrev: action.home.abbrev,
+						homeAbbrev: action.home.seasonAttrs.abbrev,
 						homeTid: action.home.tid,
 					},
 				],
@@ -201,12 +203,15 @@ const ScheduleEditor = ({
 		}
 	}
 
+	const teamsByTid = groupByUnique(teams, "tid");
+
 	return (
 		<div>
 			<p>
-				Home teams are shown in normal text and away teams are shown in{" "}
+				Home games are shown in normal text and away games are shown in{" "}
 				<span className="text-body-secondary">faded text</span>.
 			</p>
+			<p>Click anywhere in the table to create/update/delete a game.</p>
 			{!window.mobile ? (
 				<p>Middle click on a game to quickly swap the home and away teams.</p>
 			) : null}
@@ -217,17 +222,7 @@ const ScheduleEditor = ({
 							<th title={helpers.upperCaseFirstLetter(TIME_BETWEEN_GAMES)}>
 								{helpers.upperCaseFirstLetter(TIME_BETWEEN_GAMES[0]!)}
 							</th>
-							{teams.map((t) => {
-								return (
-									<th
-										key={t.tid}
-										className={userTid === t.tid ? "table-info" : undefined}
-										title={`${t.region} ${t.name}`}
-									>
-										{t.abbrev}
-									</th>
-								);
-							})}
+							<TeamsHeaders teams={teams} userTid={userTid} />
 						</tr>
 					</thead>
 					<tbody>
@@ -278,7 +273,7 @@ const ScheduleEditor = ({
 																}
 															} else {
 																const tid = parseInt(value);
-																const t2 = teams.find((t) => t.tid === tid);
+																const t2 = teamsByTid[tid];
 																if (t2) {
 																	if (gameHome) {
 																		dispatch({
@@ -326,27 +321,37 @@ const ScheduleEditor = ({
 																			value: "Swap home/away",
 																		},
 																	]
-																: []),
+																: [
+																		{
+																			key: "summary",
+																			value: `${t.seasonAttrs.abbrev} vs...`,
+																		},
+																	]),
 															...teams
-																.filter((t) => {
+																.filter((t2) => {
+																	// Don't show self
+																	if (t2.tid === t.tid) {
+																		return false;
+																	}
+
 																	// Keep team in list if it's the current opponent
 																	if (
-																		gameAway?.homeTid === t.tid ||
-																		gameHome?.awayTid === t.tid
+																		gameAway?.homeTid === t2.tid ||
+																		gameHome?.awayTid === t2.tid
 																	) {
 																		return true;
 																	}
 
 																	// Hide all teams with other games already
 																	return (
-																		!row.gamesByAwayTid[t.tid] &&
-																		!row.gamesByHomeTid[t.tid]
+																		!row.gamesByAwayTid[t2.tid] &&
+																		!row.gamesByHomeTid[t2.tid]
 																	);
 																})
-																.map((t) => {
+																.map((t2) => {
 																	return {
-																		key: t.tid,
-																		value: t.abbrev,
+																		key: t2.tid,
+																		value: t2.seasonAttrs.abbrev,
 																	};
 																}),
 														]}
@@ -361,6 +366,18 @@ const ScheduleEditor = ({
 					</tbody>
 				</table>
 			</ResponsiveTableWrapper>
+
+			<h2>Schedule Statistics</h2>
+			<p>
+				The numbers in this table show the total number of games for each
+				team/category, and then below that is (# home games) / (# away games).
+			</p>
+			<SummaryTable
+				schedule={schedule}
+				teams={teams}
+				teamsByTid={teamsByTid}
+				userTid={userTid}
+			/>
 		</div>
 	);
 };

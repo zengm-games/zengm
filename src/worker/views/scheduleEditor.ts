@@ -9,7 +9,8 @@ const updateScheduleEditor = async () => {
 
 	const teams = await idb.getCopies.teamsPlus(
 		{
-			attrs: ["abbrev", "region", "name", "tid"],
+			attrs: ["tid"],
+			seasonAttrs: ["abbrev", "region", "name", "tid", "cid", "did"],
 			season: g.get("season"),
 			active: true,
 		},
@@ -37,8 +38,8 @@ const updateScheduleEditor = async () => {
 		return {
 			type: "game" as const,
 			...game,
-			homeAbbrev: teamsByTid[game.homeTid]!.abbrev,
-			awayAbbrev: teamsByTid[game.awayTid]!.abbrev,
+			homeAbbrev: teamsByTid[game.homeTid]!.seasonAttrs.abbrev,
+			awayAbbrev: teamsByTid[game.awayTid]!.seasonAttrs.abbrev,
 		};
 	});
 
@@ -46,7 +47,7 @@ const updateScheduleEditor = async () => {
 		godMode: g.get("godMode"),
 		phase: g.get("phase"),
 		initialSchedule: schedule,
-		teams: orderBy(teams, ["abbrev"]),
+		teams: orderBy(teams, [(t) => t.seasonAttrs.abbrev]),
 		userTid: g.get("userTid"),
 	};
 };

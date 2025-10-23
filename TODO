@@ -1,14 +1,9 @@
 schedule editor
 - sticky header, or repeat header
-- ASG, trade deadline
-- ability to delete/add a day at any point (similar to excel columns, not sure about UI)
-  - deleting day with deleting games, or with mergeing games up/down
-    - can't merge if homeTid conflict
-- in footer, sum up total games for each team
-  - total, conf, div, before ASG, after ASG
-    - show all as like 5/4 meaning 5 home 4 away
-  - have a button to click to expand and show counts vs each team
-  - put this in a separate table, so the first column doesn't expand too much
+- ... menu for each row
+  - delete row (will delete games)
+  - add row above
+  - add row below
 - buttons
   - save button
     - don't allow save if invalid (like 2 games on same day for a team)
@@ -16,19 +11,22 @@ schedule editor
   - move danger zone button to regenerate schedule here
   - place ASG correctly
   - place trade deadline correctly
-  - clear schedule (except ASG and trade deadline)
-- links between this and other pages, like schedule?
+  - clear schedule
+- datatable
+  - might not be possible with good perf, if we have to memoize rows or something? or maybe it's fine in prod mode
 - drag and drop to reorder days
-  - make clickable, if not using DataTable
-- drag and drop to move a game
-  - within same column
-  - to a new column - change the home team
-  - to a cell with "None" - easy
-  - to a cell with another game - swap
 - make viewable but not editable outside of god mode
-- expand click target of <select> to cover whole cell
 - perf?
-- support export/import and editing in spreadsheet
+- should forceWin still apply afted editing? probably not for teams, maybe for day?
+- color code summary table to make finding outliers easier?
+  - normal highlighting code on total games might work okay
+- later
+  - support export/import and editing in spreadsheet
+  - drag and drop to move a game
+    - within same column
+    - to a new column - change the home team
+    - to a cell with "None" - easy
+    - to a cell with another game - swap
 
 when editing an injury, add to the "injuries" array and also delete the last entry there if there is a current injury https://old.reddit.com/r/BasketballGM/comments/1oci96x/why_doesnt_injuries_from_randomizecustom_injury/nkqffwl/?context=3
 - maybe delete only if injury hasn't existed for long yet. like if he's been injured for 99 days with 1 left, don't delete that entry

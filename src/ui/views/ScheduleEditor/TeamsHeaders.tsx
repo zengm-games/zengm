@@ -1,4 +1,5 @@
 import type { View } from "../../../common/types.ts";
+import type { Col } from "../../components/DataTable/index.tsx";
 
 export const TeamsHeaders = ({
 	teams,

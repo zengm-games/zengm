@@ -88,6 +88,8 @@ export type DataTableRow = {
 				value: ReactNode;
 				searchValue?: string | number;
 				sortValue?: string | number;
+				header?: boolean;
+				title?: string;
 		  }
 	)[];
 	classNames?:

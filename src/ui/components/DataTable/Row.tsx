@@ -164,8 +164,16 @@ const Row = ({
 					props["data-no-row-highlight"] = "true";
 				}
 
+				if (value.header) {
+					return (
+						<th key={i} title={value.title} {...props}>
+							{actualValue}
+						</th>
+					);
+				}
+
 				return (
-					<td key={i} {...props}>
+					<td key={i} title={value.title} {...props}>
 						{actualValue}
 					</td>
 				);

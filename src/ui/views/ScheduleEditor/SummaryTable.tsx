@@ -1,7 +1,28 @@
 import type { View } from "../../../common/types.ts";
-import ResponsiveTableWrapper from "../../components/ResponsiveTableWrapper.tsx";
+import { DataTable } from "../../components/index.tsx";
 import helpers from "../../util/helpers.ts";
-import { TeamsHeaders } from "./TeamsHeaders.tsx";
+import { getCol } from "../../util/index.ts";
+import type { Col } from "../../components/DataTable/index.tsx";
+
+export const getTeamCols = (
+	teams: {
+		tid: number;
+		seasonAttrs: {
+			abbrev: string;
+			name: string;
+			region: string;
+		};
+	}[],
+	userTid: number,
+): Col[] => {
+	return teams.map((t) => {
+		return {
+			classNames: userTid === t.tid ? "table-info" : undefined,
+			desc: `${t.seasonAttrs.region} ${t.seasonAttrs.name}`,
+			title: t.seasonAttrs.abbrev,
+		};
+	});
+};
 
 export const SummaryTable = ({
 	schedule,
@@ -97,61 +118,81 @@ export const SummaryTable = ({
 		}
 	}
 
-	return (
-		<ResponsiveTableWrapper>
-			<table className="table table-striped table-borderless table-hover table-nonfluid">
-				<thead>
-					<tr>
-						<th />
-						<TeamsHeaders teams={teams} userTid={userTid} />
-					</tr>
-				</thead>
-				<tbody>
-					{helpers.keys(counts).map((key) => {
-						if (
-							!seenAllStarGame &&
-							(key === "beforeAllStarGame" || key === "afterAllStarGame")
-						) {
-							return;
-						}
+	const cols = [getCol(""), ...getTeamCols(teams, userTid)];
 
-						return (
-							<tr key={key}>
-								<th title={names[key].desc} className="text-end">
-									{names[key].title}
-								</th>
-								{teams.map((t) => {
-									const { away, home } = counts[key][t.tid]!;
-									return (
-										<td key={t.tid} className="text-center">
-											{away + home}
-											<br />
-											{home} / {away}
-										</td>
-									);
-								})}
-							</tr>
-						);
-					})}
-					{teams.map((t) => {
-						return (
-							<tr key={t.tid}>
-								<th className="text-end">vs. {t.seasonAttrs.abbrev}</th>
-								{teams.map((t2) => {
-									const { away, home } = countsByTid[t2.tid]![t.tid]!;
-									return (
-										<td key={t2.tid} className="text-center">
-											{away + home}
-											<br />
-											{home} / {away}
-										</td>
-									);
-								})}
-							</tr>
-						);
-					})}
-				</tbody>
-			</table>
-		</ResponsiveTableWrapper>
+	const rows = [
+		...helpers
+			.keys(counts)
+			.filter((key) => {
+				// Hide before/after ASG if no ASG
+				if (
+					!seenAllStarGame &&
+					(key === "beforeAllStarGame" || key === "afterAllStarGame")
+				) {
+					return false;
+				}
+
+				return true;
+			})
+			.map((key) => {
+				return {
+					key,
+					data: [
+						{
+							value: names[key].title,
+							classNames: "text-end",
+							header: true,
+							title: names[key].desc,
+						},
+						...teams.map((t) => {
+							const { away, home } = counts[key][t.tid]!;
+							return {
+								value: (
+									<>
+										{away + home}
+										<br />
+										{home} / {away}
+									</>
+								),
+							};
+						}),
+					],
+				};
+			}),
+		...teams.map((t) => {
+			return {
+				key: t.tid,
+				data: [
+					{
+						value: `vs. ${t.seasonAttrs.abbrev}`,
+						classNames: "text-end",
+						header: true,
+					},
+					...teams.map((t2) => {
+						const { away, home } = countsByTid[t2.tid]![t.tid]!;
+						return {
+							value: (
+								<>
+									{away + home}
+									<br />
+									{home} / {away}
+								</>
+							),
+						};
+					}),
+				],
+			};
+		}),
+	];
+
+	return (
+		<DataTable
+			className="text-center"
+			cols={cols}
+			defaultSort="disableSort"
+			hideAllControls
+			name="ScheduleEditorSummary"
+			rows={rows}
+		/>
 	);
 };

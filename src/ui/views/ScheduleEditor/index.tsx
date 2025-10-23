@@ -474,7 +474,7 @@ const ScheduleEditor = ({
 			</ResponsiveTableWrapper>
 
 			<h2>Schedule Statistics</h2>
-			<p>
+			<p className="mb-0">
 				The numbers in this table show the total number of games for each
 				team/category, and then below that is (# home games) / (# away games).
 			</p>

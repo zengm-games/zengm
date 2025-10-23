@@ -1,3 +1,6 @@
+player ages wrong in random debuts league created from random players league https://old.reddit.com/r/BasketballGM/comments/1odmxfx/found_a_bug_for_random_debuts/
+- a bit in real players too e.g. https://play.basketball-gm.com/l/1/player/379
+
 schedule editor
 - sticky header, or repeat header
 - buttons
@@ -10,6 +13,7 @@ schedule editor
   - clear schedule
 - datatable
   - might not be possible with good perf, if we have to memoize rows or something? or maybe it's fine in prod mode
+  - download spreadsheet condenses line break
 - drag and drop to reorder days
 - make viewable but not editable outside of god mode
 - perf?
@@ -23,6 +27,9 @@ schedule editor
     - to a new column - change the home team
     - to a cell with "None" - easy
     - to a cell with another game - swap
+
+on roster continuity page (and maybe others) the "table-info" class in the user team's <th> should override the background color of the "sorting" class but it doesn't
+- could only put "sorting" there if there is no other className, maybe? but that will only work if the other className applies a bg color
 
 when editing an injury, add to the "injuries" array and also delete the last entry there if there is a current injury https://old.reddit.com/r/BasketballGM/comments/1oci96x/why_doesnt_injuries_from_randomizecustom_injury/nkqffwl/?context=3
 - maybe delete only if injury hasn't existed for long yet. like if he's been injured for 99 days with 1 left, don't delete that entry

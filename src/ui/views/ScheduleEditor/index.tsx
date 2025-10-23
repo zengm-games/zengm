@@ -438,11 +438,11 @@ const ScheduleEditor = ({
 												if (game) {
 													dispatch({
 														type: value,
-														game: game,
+														game,
 													});
 												}
 											} else {
-												const tid = parseInt(value);
+												const tid = Number.parseInt(value);
 												const t2 = teamsByTid[tid];
 												if (t2) {
 													if (gameHome) {
@@ -473,7 +473,7 @@ const ScheduleEditor = ({
 												? () => {
 														dispatch({
 															type: "swapHomeAway",
-															game: game,
+															game,
 														});
 													}
 												: undefined

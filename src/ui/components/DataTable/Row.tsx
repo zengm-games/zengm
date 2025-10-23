@@ -88,6 +88,8 @@ const Row = ({
 		classNames = row.classNames;
 	}
 
+	let seenColSpanToEnd = false;
+
 	return (
 		<tr
 			className={clsx(classNames, {
@@ -112,6 +114,11 @@ const Row = ({
 			{showRowLabels ? <td>{row.rowLabel}</td> : null}
 			{sortableRows ? <SortableHandle {...sortableRows} /> : null}
 			{row.data.map((value = null, i) => {
+				if (seenColSpanToEnd) {
+					// If we've seen colSpanToEnd, don't render any more columns in this row
+					return;
+				}
+
 				// Value is either the value, or an object containing the value as a property
 				const actualValue =
 					value !== null && Object.hasOwn(value, "value") ? value.value : value;
@@ -128,8 +135,9 @@ const Row = ({
 					props.className = "sorting_highlight";
 				}
 
-				if (value?.colSpan) {
-					props.colSpan = value.colSpan;
+				if (value?.colSpanToEnd) {
+					props.colSpan = row.data.length - i;
+					seenColSpanToEnd = true;
 				}
 				if (value?.style) {
 					props.style = value.style;

@@ -12,7 +12,6 @@ schedule editor
   - place trade deadline correctly
   - clear schedule
 - datatable
-  - might not be possible with good perf, if we have to memoize rows or something? or maybe it's fine in prod mode
   - download spreadsheet condenses line break
 - drag and drop to reorder days
 - make viewable but not editable outside of god mode

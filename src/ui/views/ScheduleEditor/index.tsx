@@ -334,7 +334,7 @@ const ScheduleEditor = ({
 										? "All-Star Game"
 										: "Trade Deadline",
 								classNames: "text-start",
-								colSpan: teams.length,
+								colSpanToEnd: true,
 							},
 						]
 					: teams.map((t) => {

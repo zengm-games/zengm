@@ -49,6 +49,16 @@ const reducer = (
 		| {
 				type: "deleteDay" | "addDay";
 				day: number;
+		  }
+		| {
+				type: "dragDay";
+				oldDay: number;
+				newDay: number;
+		  }
+		| {
+				type: "swapDays";
+				day1: number;
+				day2: number;
 		  },
 ): Schedule => {
 	console.log("reducer", action);
@@ -158,6 +168,59 @@ const reducer = (
 
 			return scheduleWithNewDay;
 		}
+		case "dragDay":
+			return orderBy(
+				schedule.map((game) => {
+					const minDay = Math.min(action.newDay, action.oldDay);
+					const maxDay = Math.max(action.newDay, action.oldDay);
+
+					if (game.day < minDay || game.day > maxDay) {
+						return game;
+					}
+
+					if (game.day === action.oldDay) {
+						return {
+							...game,
+							day: action.newDay,
+						};
+					}
+
+					// By now it means we are in between newDay and oldDay
+					if (action.newDay > action.oldDay) {
+						return {
+							...game,
+							day: game.day - 1,
+						};
+					} else {
+						return {
+							...game,
+							day: game.day + 1,
+						};
+					}
+				}),
+				["day"],
+			);
+		case "swapDays":
+			return orderBy(
+				schedule.map((game) => {
+					if (game.day === action.day1) {
+						return {
+							...game,
+							day: action.day2,
+						};
+					}
+
+					if (game.day === action.day2) {
+						return {
+							...game,
+							day: action.day1,
+						};
+					}
+
+					return game;
+				}),
+				["day"],
+			);
 	}
 };
 
@@ -481,6 +544,23 @@ const ScheduleEditor = ({
 				hideAllControls
 				name="ScheduleEditor"
 				rows={rows}
+				sortableRows={{
+					onChange: ({ oldIndex, newIndex }) => {
+						console.log("onChange", oldIndex, newIndex);
+						dispatch({
+							type: "dragDay",
+							oldDay: oldIndex + 1,
+							newDay: newIndex + 1,
+						});
+					},
+					onSwap: (index1, index2) => {
+						dispatch({
+							type: "swapDays",
+							day1: index1 + 1,
+							day2: index2 + 1,
+						});
+					},
+				}}
 			/>
 
 			<h2>Schedule Statistics</h2>

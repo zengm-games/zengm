@@ -11,7 +11,6 @@ schedule editor
   - place ASG correctly
   - place trade deadline correctly
   - clear schedule
-- drag and drop to reorder days
 - make viewable but not editable outside of god mode
 - perf?
 - should forceWin still apply afted editing? probably not for teams, maybe for day?

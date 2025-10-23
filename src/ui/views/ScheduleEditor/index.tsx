@@ -5,9 +5,10 @@ import { ResponsiveTableWrapper } from "../../components/index.tsx";
 import type { View } from "../../../common/types.ts";
 import { PHASE, TIME_BETWEEN_GAMES } from "../../../common/constants.ts";
 import { groupByUnique, orderBy } from "../../../common/utils.ts";
-import { FancySelect } from "./FancySelect.tsx";
+import { FancySelect, height } from "./FancySelect.tsx";
 import { TeamsHeaders } from "./TeamsHeaders.tsx";
 import { SummaryTable } from "./SummaryTable.tsx";
+import { Dropdown } from "react-bootstrap";
 
 type Schedule = View<"scheduleEditor">["initialSchedule"];
 
@@ -232,7 +233,34 @@ const ScheduleEditor = ({
 									key={row.day}
 									className={row.special ? "table-info" : undefined}
 								>
-									<th className="text-end">{row.day}</th>
+									<th className="p-0">
+										<Dropdown>
+											<Dropdown.Toggle
+												bsPrefix="no-caret"
+												style={{
+													height,
+												}}
+												title="Actions"
+												variant="btn-link border-0 py-0 px-2 w-100 d-flex align-items-center justify-content-end"
+											>
+												<span>
+													{row.day}{" "}
+													<span className="glyphicon glyphicon-option-vertical text-body-secondary" />
+												</span>
+											</Dropdown.Toggle>
+											<Dropdown.Menu>
+												<Dropdown.Item onClick={() => {}}>
+													Delete {TIME_BETWEEN_GAMES} {row.day}
+												</Dropdown.Item>
+												<Dropdown.Item onClick={() => {}}>
+													Add {TIME_BETWEEN_GAMES} above
+												</Dropdown.Item>
+												<Dropdown.Item onClick={() => {}}>
+													Add {TIME_BETWEEN_GAMES} below
+												</Dropdown.Item>
+											</Dropdown.Menu>
+										</Dropdown>
+									</th>
 									{row.special ? (
 										<td colSpan={teams.length}>
 											{row.special === "allStarGame"

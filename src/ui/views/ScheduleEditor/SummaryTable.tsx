@@ -24,6 +24,19 @@ export const getTeamCols = (
 	});
 };
 
+const wrappedAwayHomeSum = ({ away, home }: { away: number; home: number }) => {
+	return {
+		value: (
+			<>
+				{away + home}
+				<br />
+				{home} / {away}
+			</>
+		),
+		searchValue: `${away + home} (${home} / ${away})`,
+	};
+};
+
 export const SummaryTable = ({
 	schedule,
 	teams,
@@ -145,16 +158,7 @@ export const SummaryTable = ({
 							title: names[key].desc,
 						},
 						...teams.map((t) => {
-							const { away, home } = counts[key][t.tid]!;
-							return {
-								value: (
-									<>
-										{away + home}
-										<br />
-										{home} / {away}
-									</>
-								),
-							};
+							return wrappedAwayHomeSum(counts[key][t.tid]!);
 						}),
 					],
 				};
@@ -169,16 +173,7 @@ export const SummaryTable = ({
 						header: true,
 					},
 					...teams.map((t2) => {
-						const { away, home } = countsByTid[t2.tid]![t.tid]!;
-						return {
-							value: (
-								<>
-									{away + home}
-									<br />
-									{home} / {away}
-								</>
-							),
-						};
+						return wrappedAwayHomeSum(countsByTid[t2.tid]![t.tid]!);
 					}),
 				],
 			};

@@ -11,8 +11,6 @@ schedule editor
   - place ASG correctly
   - place trade deadline correctly
   - clear schedule
-- datatable
-  - download spreadsheet condenses line break
 - drag and drop to reorder days
 - make viewable but not editable outside of god mode
 - perf?

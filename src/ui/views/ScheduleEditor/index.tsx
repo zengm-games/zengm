@@ -324,6 +324,7 @@ const ScheduleEditor = ({
 							</Dropdown.Menu>
 						</Dropdown>
 					),
+					searchValue: row.day,
 					classNames: "p-0",
 				},
 				...(row.special
@@ -451,6 +452,11 @@ const ScheduleEditor = ({
 										]}
 									/>
 								),
+								searchValue: gameHome
+									? gameHome.awayAbbrev
+									: gameAway
+										? `@${gameAway.homeAbbrev}`
+										: undefined,
 								classNames: "p-0",
 							};
 						})),
@@ -480,7 +486,7 @@ const ScheduleEditor = ({
 			<h2>Schedule Statistics</h2>
 			<p className="mb-0">
 				The numbers in this table show the total number of games for each
-				team/category, and then below that is (# home games) / (# away games).
+				team/category above (# home games) / (# away games).
 			</p>
 			<SummaryTable
 				schedule={schedule}

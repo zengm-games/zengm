@@ -5,12 +5,14 @@ export const height = 35.5;
 
 export const FancySelect = ({
 	className,
+	disabled,
 	onChange,
 	onMiddleClick,
 	options,
 	value,
 }: {
 	className?: string;
+	disabled: boolean;
 	onMiddleClick: (() => void) | undefined;
 	options: {
 		key: string | number;
@@ -29,37 +31,39 @@ export const FancySelect = ({
 		>
 			{selected?.value}
 
-			<select
-				style={{
-					position: "absolute",
-					top: 0,
-					left: 0,
-					width: "100%",
-					height: "100%",
-					opacity: 0,
-					cursor: "pointer",
-				}}
-				onChange={onChange}
-				onMouseDown={
-					onMiddleClick
-						? (event) => {
-								if (event.button === 1) {
-									event.preventDefault();
-									onMiddleClick();
+			{disabled ? undefined : (
+				<select
+					style={{
+						position: "absolute",
+						top: 0,
+						left: 0,
+						width: "100%",
+						height: "100%",
+						opacity: 0,
+						cursor: "pointer",
+					}}
+					onChange={onChange}
+					onMouseDown={
+						onMiddleClick
+							? (event) => {
+									if (event.button === 1) {
+										event.preventDefault();
+										onMiddleClick();
+									}
 								}
-							}
-						: undefined
-				}
-				value={value}
-			>
-				{options.map((option) => {
-					return (
-						<option key={option.key} value={option.key}>
-							{option.value}
-						</option>
-					);
-				})}
-			</select>
+							: undefined
+					}
+					value={value}
+				>
+					{options.map((option) => {
+						return (
+							<option key={option.key} value={option.key}>
+								{option.value}
+							</option>
+						);
+					})}
+				</select>
+			)}
 		</div>
 	);
 };

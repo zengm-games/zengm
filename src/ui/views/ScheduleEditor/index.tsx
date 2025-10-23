@@ -239,18 +239,6 @@ const ScheduleEditor = ({
 	if (phase !== PHASE.REGULAR_SEASON) {
 		return <p>You can only edit the schedule during the regular season.</p>;
 	}
-
-	if (!godMode) {
-		return (
-			<>
-				<p>
-					You can only edit the schedule in{" "}
-					<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
-				</p>
-			</>
-		);
-	}
-
 	const scheduleByDay: ScheduleDay[] = [];
 	for (const game of schedule) {
 		let currentDay = scheduleByDay.at(-1);
@@ -409,6 +397,7 @@ const ScheduleEditor = ({
 							return {
 								value: (
 									<FancySelect
+										disabled={!godMode}
 										value={
 											gameHome
 												? gameHome.awayTid
@@ -534,12 +523,19 @@ const ScheduleEditor = ({
 				Home games are shown in normal text and away games are shown in{" "}
 				<span className="text-body-secondary">faded text</span>.
 			</p>
-			<p className="mb-0">
-				Click anywhere in the table to create/update/delete a game.
-				{!window.mobile
-					? " Middle click on a game to quickly swap the home and away teams."
-					: null}
-			</p>
+			{!godMode ? (
+				<p>
+					You can only edit the schedule in{" "}
+					<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
+				</p>
+			) : (
+				<p className="mb-0">
+					Click anywhere in the table to create/update/delete a game.
+					{!window.mobile
+						? " Middle click on a game to quickly swap the home and away teams."
+						: null}
+				</p>
+			)}
 			<DataTable
 				className="text-center"
 				cols={cols}
@@ -547,23 +543,27 @@ const ScheduleEditor = ({
 				hideAllControls
 				name="ScheduleEditor"
 				rows={rows}
-				sortableRows={{
-					onChange: ({ oldIndex, newIndex }) => {
-						console.log("onChange", oldIndex, newIndex);
-						dispatch({
-							type: "dragDay",
-							oldDay: oldIndex + 1,
-							newDay: newIndex + 1,
-						});
-					},
-					onSwap: (index1, index2) => {
-						dispatch({
-							type: "swapDays",
-							day1: index1 + 1,
-							day2: index2 + 1,
-						});
-					},
-				}}
+				sortableRows={
+					godMode
+						? {
+								onChange: ({ oldIndex, newIndex }) => {
+									console.log("onChange", oldIndex, newIndex);
+									dispatch({
+										type: "dragDay",
+										oldDay: oldIndex + 1,
+										newDay: newIndex + 1,
+									});
+								},
+								onSwap: (index1, index2) => {
+									dispatch({
+										type: "swapDays",
+										day1: index1 + 1,
+										day2: index2 + 1,
+									});
+								},
+							}
+						: undefined
+				}
 			/>
 
 			{showSummaryStatistics ? (

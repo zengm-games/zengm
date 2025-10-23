@@ -11,9 +11,9 @@ schedule editor
   - place ASG correctly
   - place trade deadline correctly
   - clear schedule
-- make viewable but not editable outside of god mode
 - perf?
 - should forceWin still apply afted editing? probably not for teams, maybe for day?
+- update when simming games
 - later
   - support export/import and editing in spreadsheet
   - drag and drop to move a game

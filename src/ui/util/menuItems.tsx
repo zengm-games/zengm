@@ -794,7 +794,6 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				active: (pageID) => pageID === "scheduleEditor",
 				league: true,
 				commandPalette: true,
-				godMode: true,
 				path: ["schedule_editor"],
 				text: "Schedule Editor",
 			},

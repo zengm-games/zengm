@@ -12,7 +12,6 @@ schedule editor
   - place trade deadline correctly
   - clear schedule
 - perf?
-- should forceWin still apply afted editing? probably not for teams, maybe for day?
 - later
   - support export/import and editing in spreadsheet
   - drag and drop to move a game

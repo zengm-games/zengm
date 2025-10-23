@@ -91,6 +91,11 @@ const reducer = (
 					return row;
 				}
 
+				// New team means forceWin may no longer apply
+				if (row.forceWin !== undefined) {
+					delete row.forceWin;
+				}
+
 				return {
 					...row,
 					awayAbbrev: action.away.seasonAttrs.abbrev,
@@ -101,6 +106,11 @@ const reducer = (
 			return schedule.map((row) => {
 				if (row !== action.game) {
 					return row;
+				}
+
+				// New team means forceWin may no longer apply
+				if (row.forceWin !== undefined) {
+					delete row.forceWin;
 				}
 
 				return {

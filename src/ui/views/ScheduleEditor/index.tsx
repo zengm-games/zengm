@@ -73,6 +73,10 @@ const reducer = (
 				schedule: Schedule;
 		  }
 		| {
+				type: "clearSchedule";
+				maxDayAlreadyPlayed: number;
+		  }
+		| {
 				type: "deleteSpecial";
 				special: "allStarGame" | "tradeDeadline";
 		  },
@@ -248,6 +252,22 @@ const reducer = (
 			);
 		case "resetSchedule":
 			return action.schedule;
+		case "clearSchedule": {
+			// Can't clear completed games! Not sure why any is needed
+			const newSchedule: any[] = schedule.filter(
+				(game) => game.type === "completed",
+			);
+
+			if (newSchedule.length === 0) {
+				// If no games, need a placeholder so games can be added
+				newSchedule.push({
+					type: "placeholder",
+					day: action.maxDayAlreadyPlayed + 1,
+				});
+			}
+
+			return newSchedule;
+		}
 		case "deleteSpecial": {
 			let day: number | undefined;
 			return schedule
@@ -756,13 +776,8 @@ const ScheduleEditor = ({
 									);
 									if (proceed) {
 										dispatch({
-											type: "resetSchedule",
-											schedule: [
-												{
-													type: "placeholder",
-													day: maxDayAlreadyPlayed + 1,
-												},
-											],
+											type: "clearSchedule",
+											maxDayAlreadyPlayed,
 										});
 									}
 								}}

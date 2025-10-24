@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal } from "react-bootstrap";
 import ActionButton from "../../components/ActionButton.tsx";
 import logEvent from "../../util/logEvent.ts";
@@ -16,13 +16,14 @@ export const RegenerateScheduleModal = ({
 }) => {
 	const [regeneratingSchedule, setRegeneratingSchedule] = useState(false);
 
-	const submitButtonRef = useRef<HTMLButtonElement>(null);
+	const [submitButtonElement, setSubmitButtonElement] =
+		useState<HTMLButtonElement | null>(null);
 
 	useEffect(() => {
-		if (submitButtonRef.current) {
-			submitButtonRef.current.focus();
+		if (submitButtonElement) {
+			submitButtonElement.focus();
 		}
-	}, []);
+	}, [submitButtonElement]);
 
 	const onSubmit = async () => {
 		setRegeneratingSchedule(true);
@@ -56,7 +57,7 @@ export const RegenerateScheduleModal = ({
 					onClick={onSubmit}
 					processing={regeneratingSchedule}
 					processingText="Generating"
-					ref={submitButtonRef}
+					ref={setSubmitButtonElement}
 					variant="primary"
 				>
 					Regenerate schedule

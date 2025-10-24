@@ -1,13 +1,5 @@
 schedule editor
 - buttons
-  - move danger zone button to regenerate schedule here
-    - guard with confirm modal
-    - ActionButton inside modal like RandomizeTeamsModal?
-      - closing modal should cancel regenerating
-        - check RandomizeTeamsModal too
-      - focus button
-    - does danger zone look okay?
-    - the stuff in regenerateSchedule is tricky - would need to defer that to actually saving
   - place ASG correctly
     - what if some games are already played?
   - place trade deadline correctly

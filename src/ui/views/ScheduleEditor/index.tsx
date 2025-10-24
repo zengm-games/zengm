@@ -628,11 +628,27 @@ const ScheduleEditor = ({
 			)}
 
 			<StickyBottomButtons>
-				<form
-					className="btn-group ms-auto"
-					onSubmit={async (event) => {
-						event.preventDefault();
-
+				<Dropdown>
+					<Dropdown.Toggle variant="secondary" disabled={saving}>
+						Actions
+					</Dropdown.Toggle>
+					<Dropdown.Menu>
+						<Dropdown.Item onClick={() => {}}>
+							Place All-Star Game in correct position
+						</Dropdown.Item>
+						<Dropdown.Item onClick={() => {}}>
+							Place Trade Deadline in correct position
+						</Dropdown.Item>
+						<Dropdown.Item onClick={() => {}}>
+							Regenerate schedule
+						</Dropdown.Item>
+						<Dropdown.Item onClick={() => {}}>Clear schedule</Dropdown.Item>
+					</Dropdown.Menu>
+				</Dropdown>
+				<button
+					className="btn btn-primary ms-auto"
+					disabled={saving}
+					onClick={async () => {
 						setSaving(true);
 
 						try {
@@ -655,10 +671,8 @@ const ScheduleEditor = ({
 						setSaving(false);
 					}}
 				>
-					<button className="btn btn-primary" type="submit" disabled={saving}>
-						Save schedule
-					</button>
-				</form>
+					Save schedule
+				</button>
 			</StickyBottomButtons>
 		</div>
 	);

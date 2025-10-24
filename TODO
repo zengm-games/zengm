@@ -1,9 +1,12 @@
 schedule editor
 - buttons
   - move danger zone button to regenerate schedule here
+    - guard with confirm modal
   - place ASG correctly
   - place trade deadline correctly
   - clear schedule
+    - guard with confirm modal
+  - hide whole bar if not in god mode
 - perf?
 - video
   - middle click

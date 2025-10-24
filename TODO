@@ -1,5 +1,4 @@
 schedule editor
-- schedule table should not be clickable (row highlight)
 - buttons
   - place ASG correctly
     - what if some games are already played? numGamesPlayedAlready

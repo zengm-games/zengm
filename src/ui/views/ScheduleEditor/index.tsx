@@ -645,6 +645,7 @@ const ScheduleEditor = ({
 			)}
 			<DataTable
 				className="text-center"
+				clickable={false}
 				cols={cols}
 				defaultSort="disableSort"
 				hideAllControls

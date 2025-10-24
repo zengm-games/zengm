@@ -734,7 +734,7 @@ const ScheduleEditor = ({
 									}
 								}}
 							>
-								Place All-Star Game in correct position
+								Place All-Star Game in default position
 							</Dropdown.Item>
 							<Dropdown.Item
 								onClick={() => {
@@ -764,7 +764,7 @@ const ScheduleEditor = ({
 									}
 								}}
 							>
-								Place Trade Deadline in correct position
+								Place Trade Deadline in default position
 							</Dropdown.Item>
 							<Dropdown.Item
 								onClick={async () => {

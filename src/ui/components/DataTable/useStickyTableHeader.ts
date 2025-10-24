@@ -2,6 +2,7 @@ import clsx from "clsx";
 import { useEffect, type RefObject } from "react";
 
 // This mess is needed rather than `position: sticky` because https://github.com/w3c/csswg-drafts/issues/8286
+// See useManualSticky for a simpler version of this
 export const useStickyTableHeader = ({
 	className,
 	containerRef,
@@ -27,13 +28,12 @@ export const useStickyTableHeader = ({
 		// 52px minus 1
 		const NAVBAR_HEIGHT = 51;
 
-		// Create fixed-position clone
+		// Create fixed-position clone. In theory we could do without cloning and just move the actual header like in useManualSticky, but it was actually easier to get this working.
 		const clone = document.createElement("table");
 		clone.className = clsx(table.className, className);
 		clone.style.position = "fixed";
-		clone.style.zIndex = "9999";
+		clone.style.zIndex = "1020";
 		clone.style.display = "none";
-		clone.style.borderCollapse = getComputedStyle(table).borderCollapse;
 		document.body.append(clone);
 
 		let headerCloned = false;

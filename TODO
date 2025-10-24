@@ -1,5 +1,4 @@
 schedule editor
-- sticky z-index - don't put it over modals, dropdown
 - buttons
   - save button
     - don't allow save if invalid (like 2 games on same day for a team)
@@ -8,7 +7,6 @@ schedule editor
   - place ASG correctly
   - place trade deadline correctly
   - clear schedule
-- don't need resetSchedule on initial render
 - perf?
 - video
   - middle click

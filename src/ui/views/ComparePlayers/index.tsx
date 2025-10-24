@@ -185,7 +185,8 @@ const AwardRows = ({ players }: { players: PlayerInfoAndLegend[] }) => {
 	);
 };
 
-// This is needed rather than CSS "position: sticky" because of the table-responsive wrapper https://stackoverflow.com/q/55483466/786644
+// This is needed rather than CSS "position: sticky" because of the table-responsive wrapper https://github.com/w3c/csswg-drafts/issues/828
+// See useStickyTableHeader for a fancier version of this
 const useManualSticky = (element: HTMLElement | null, top: number) => {
 	useEffect(() => {
 		if (!element) {

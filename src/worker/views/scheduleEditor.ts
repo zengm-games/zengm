@@ -1,4 +1,5 @@
 import { PHASE } from "../../common/constants.ts";
+import getWinner from "../../common/getWinner.ts";
 import type {
 	Game,
 	ScheduleGameWithoutKey,
@@ -23,16 +24,19 @@ export const formatScheduleForEditor = (
 			.map((game) => {
 				const awayTid = game.teams[1].tid;
 				const homeTid = game.teams[0].tid;
+				const winner = getWinner(game.teams);
 
 				return {
-					type: "completed",
+					type: "completed" as const,
 					day: game.day!,
 					awayAbbrev: teamsByTid[awayTid]!.seasonAttrs.abbrev,
 					awayTid,
 					homeAbbrev: teamsByTid[homeTid]!.seasonAttrs.abbrev,
 					homeTid,
 					forceWin: undefined,
-				} as const;
+					winnerTid:
+						winner === 0 ? homeTid : winner === 1 ? awayTid : undefined,
+				};
 			}),
 		...scheduleRaw.map((game) => {
 			const isAllStarGame = game.homeTid === -1 && game.awayTid === -2;

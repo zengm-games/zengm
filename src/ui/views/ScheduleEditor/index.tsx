@@ -485,6 +485,19 @@ const ScheduleEditor = ({
 							const gameAway = row.gamesByAwayTid[t.tid];
 							const gameHome = row.gamesByHomeTid[t.tid];
 							const game = gameHome ?? gameAway;
+
+							// Highlight winner/loser of completed game
+							let completedClassName;
+							if (game?.type === "completed") {
+								if (game.winnerTid === undefined) {
+									completedClassName = "text-warning";
+								} else if (game.winnerTid === t.tid) {
+									completedClassName = "text-success";
+								} else {
+									completedClassName = "text-danger";
+								}
+							}
+
 							return {
 								value: (
 									<FancySelect
@@ -498,7 +511,9 @@ const ScheduleEditor = ({
 										}
 										className={clsx(
 											"px-1",
-											row.gamesByAwayTid[t.tid]
+											completedClassName,
+											row.gamesByAwayTid[t.tid] &&
+												completedClassName === undefined
 												? "text-body-secondary"
 												: undefined,
 										)}

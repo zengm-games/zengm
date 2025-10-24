@@ -1,6 +1,5 @@
 schedule editor
-- completed games
-  - highlight W/L
+- schedule table should not be clickable (row highlight)
 - buttons
   - place ASG correctly
     - what if some games are already played? numGamesPlayedAlready
@@ -20,6 +19,8 @@ schedule editor
     - updates score bar when saved
   - mobile
   - sticky header
+  - highlight W/L
+  - actions
 - later
   - support export/import and editing in spreadsheet
   - drag and drop to move a game

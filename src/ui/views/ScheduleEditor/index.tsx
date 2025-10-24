@@ -1,7 +1,12 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { helpers, useLocalPartial } from "../../util/index.ts";
-import { DataTable } from "../../components/index.tsx";
+import {
+	helpers,
+	logEvent,
+	toWorker,
+	useLocalPartial,
+} from "../../util/index.ts";
+import { DataTable, StickyBottomButtons } from "../../components/index.tsx";
 import type { View } from "../../../common/types.ts";
 import { PHASE, TIME_BETWEEN_GAMES } from "../../../common/constants.ts";
 import { groupByUnique, orderBy } from "../../../common/utils.ts";
@@ -261,6 +266,8 @@ const ScheduleEditor = ({
 	}, [scheduleProp]);
 
 	const { godMode } = useLocalPartial(["godMode"]);
+
+	const [saving, setSaving] = useState(false);
 
 	if (phase !== PHASE.REGULAR_SEASON) {
 		return <p>You can only edit the schedule during the regular season.</p>;
@@ -619,6 +626,40 @@ const ScheduleEditor = ({
 					</button>
 				</>
 			)}
+
+			<StickyBottomButtons>
+				<form
+					className="btn-group ms-auto"
+					onSubmit={async (event) => {
+						event.preventDefault();
+
+						setSaving(true);
+
+						try {
+							await toWorker("main", "setScheduleFromEditor", schedule);
+						} catch (error) {
+							logEvent({
+								type: "error",
+								text: `Error saving schedule: ${error.message}`,
+								saveToDb: false,
+							});
+							throw error;
+						}
+
+						logEvent({
+							type: "success",
+							text: "Saved schedule",
+							saveToDb: false,
+						});
+
+						setSaving(false);
+					}}
+				>
+					<button className="btn btn-primary" type="submit" disabled={saving}>
+						Save schedule
+					</button>
+				</form>
+			</StickyBottomButtons>
 		</div>
 	);
 };

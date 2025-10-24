@@ -89,6 +89,7 @@ import type {
 	AllStarPlayer,
 	League,
 	RealPlayerPhotos,
+	View,
 } from "../../common/types.ts";
 import {
 	addSimpleAndTeamAwardsToAwardsByPlayer,
@@ -4929,6 +4930,22 @@ const clearSavedTrades = async (hashes: string[]) => {
 	await toUI("realtimeUpdate", [["savedTrades"]]);
 };
 
+// Normally use season.setSchedule, but this skips various checks and saves exactly what the user has edited
+const setScheduleFromEditor = async (
+	schedule: View<"scheduleEditor">["schedule"],
+) => {
+	await idb.cache.schedule.clear();
+
+	for (const game of schedule) {
+		if (game.type === "placeholder") {
+			continue;
+		}
+		await idb.cache.schedule.add(omit(game, "type"));
+	}
+
+	await recomputeLocalUITeamOvrs();
+};
+
 export default {
 	actions,
 	exhibitionGame,
@@ -5037,6 +5054,7 @@ export default {
 		setLocal,
 		setNote,
 		setSavedTrade,
+		setScheduleFromEditor,
 		sign,
 		updateExpansionDraftSetup,
 		advanceToPlayerProtection,

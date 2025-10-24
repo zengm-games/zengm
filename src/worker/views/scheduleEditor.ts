@@ -100,6 +100,13 @@ const updateScheduleEditor = async (
 
 		const maxDayAlreadyPlayed = maxBy(games, "day")?.day ?? 0;
 
+		if (schedule.length === 0) {
+			schedule.push({
+				type: "placeholder",
+				day: maxDayAlreadyPlayed + 1,
+			});
+		}
+
 		return {
 			allStarGame: g.get("allStarGame"),
 			allStarGameAlreadyHappened,

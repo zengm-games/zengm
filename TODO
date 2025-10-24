@@ -1,6 +1,5 @@
 schedule editor
 - Show completed games?
-- dropdown inside overflow auto div gets cut off
 - buttons
   - place ASG correctly
     - what if some games are already played? numGamesPlayedAlready

@@ -15,6 +15,7 @@ import { FancySelect, height } from "./FancySelect.tsx";
 import { getTeamCols, SummaryTable } from "./SummaryTable.tsx";
 import { Dropdown } from "react-bootstrap";
 import { RegenerateScheduleModal } from "./RegenerateScheduleModal.tsx";
+import clsx from "clsx";
 
 type Schedule = View<"scheduleEditor">["schedule"];
 
@@ -396,6 +397,7 @@ const ScheduleEditor = ({
 			classNames: row.special ? "table-info" : undefined,
 			data: [
 				{
+					// popperConfig renderOnMount is https://github.com/react-bootstrap/react-bootstrap/issues/6750#issuecomment-2609409983
 					value: (
 						<Dropdown>
 							<Dropdown.Toggle
@@ -411,7 +413,7 @@ const ScheduleEditor = ({
 									<span className="glyphicon glyphicon-option-vertical text-body-secondary" />
 								</span>
 							</Dropdown.Toggle>
-							<Dropdown.Menu>
+							<Dropdown.Menu popperConfig={{ strategy: "fixed" }} renderOnMount>
 								<Dropdown.Item
 									onClick={() => {
 										dispatch({
@@ -474,11 +476,12 @@ const ScheduleEditor = ({
 													? gameAway.homeTid
 													: "noGame"
 										}
-										className={
+										className={clsx(
+											"px-1",
 											row.gamesByAwayTid[t.tid]
 												? "text-body-secondary"
-												: undefined
-										}
+												: undefined,
+										)}
 										onChange={(event) => {
 											const value = event.target.value;
 											if (value === "delete" || value === "swapHomeAway") {

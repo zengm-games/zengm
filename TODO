@@ -1,9 +1,4 @@
 schedule editor
-- sticky header, or repeat header
-  - https://github.com/w3c/csswg-drafts/issues/9140
-  - SummaryTable too
-  - test while editing
-  - updateVisibility and visibility needed?
 - buttons
   - save button
     - don't allow save if invalid (like 2 games on same day for a team)

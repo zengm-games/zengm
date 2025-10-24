@@ -34,7 +34,7 @@ export const useStickyTableHeader = ({
 		clone.style.zIndex = "9999";
 		clone.style.display = "none";
 		clone.style.borderCollapse = getComputedStyle(table).borderCollapse;
-		document.body.appendChild(clone);
+		document.body.append(clone);
 
 		let headerCloned = false;
 
@@ -50,7 +50,7 @@ export const useStickyTableHeader = ({
 				}
 
 				clone.innerHTML = "";
-				clone.appendChild(thead.cloneNode(true));
+				clone.append(thead.cloneNode(true));
 				headerCloned = true;
 
 				cloneThs = clone.querySelectorAll<HTMLTableCellElement>("thead th");
@@ -94,7 +94,7 @@ export const useStickyTableHeader = ({
 		window.addEventListener("scroll", syncPosition);
 		window.addEventListener("optimizedResize", syncWidths);
 
-		syncWidths();
+		syncWidths(); // Also calls syncPosition
 		syncScroll();
 
 		return () => {
@@ -104,5 +104,5 @@ export const useStickyTableHeader = ({
 			resizeObserver.disconnect();
 			clone.remove();
 		};
-	}, [containerRef, tableRef]);
+	}, [className, containerRef, stickyHeader, tableRef]);
 };

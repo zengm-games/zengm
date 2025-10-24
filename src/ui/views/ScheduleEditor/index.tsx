@@ -597,7 +597,11 @@ const ScheduleEditor = ({
 							return {
 								value: (
 									<FancySelect
-										disabled={!godMode || game?.type === "completed"}
+										disabled={
+											!godMode ||
+											game?.type === "completed" ||
+											row.day < maxDayAlreadyPlayed
+										}
 										value={
 											gameHome
 												? gameHome.awayTid

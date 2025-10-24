@@ -1,8 +1,6 @@
+random players + random debuts -> low roster sizes, why?
+
 schedule editor
-- show warning if teams don't have numGames games for clinching playoff calculation
-  - do numGamesDiv/numGamesConf matter too?
-  - can we just improve the clinching code instead?
-    - can we then get rid of the complexity in setScheduleFromEditor
 - perf?
 - video
   - middle click

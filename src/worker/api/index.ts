@@ -4914,6 +4914,7 @@ const setScheduleFromEditor = async ({
 }) => {
 	if (regenerated) {
 		// It's the regular season with 0 games played and we're allowed to regenerate the schedule (see canRegenerateSchedule). In that case, season.newSchedule uses the latest settings for numGames/numGamesConf/numGamesDiv/divs, both because that's what the user would want (tweaking schedule settings) and because numGamesConf/numGamesDiv are currently not wrapped. So if we know numGames or divs has changed for next season, we need to update the setting for those (and also confs for consistency) to apply to this season.
+		// Originally I added this so updateClinchedPlayoffs would work correctly, but now updateClinchedPlayoffs uses the actual upcoming schedule rather than (numGames - GP) so this shouldn't affect that now. TBH I'm not sure if this matters for other things, but probably it does for something at least!
 		const season = g.get("season");
 		const toAdjust = ["numGames", "divs", "confs"] as const;
 		for (const key of toAdjust) {

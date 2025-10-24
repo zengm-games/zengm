@@ -13,11 +13,7 @@ const getSchedule = async (
 ): Promise<ScheduleGame[]> => {
 	const schedule = await idb.cache.schedule.getAll();
 
-	if (!schedule[0]) {
-		return schedule;
-	}
-
-	if (oneDay) {
+	if (oneDay && schedule[0]) {
 		const partialSchedule = [];
 		const tids = new Set();
 		for (const game of schedule) {

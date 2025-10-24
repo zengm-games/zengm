@@ -31,6 +31,66 @@ type ScheduleDay = {
 
 type Team = View<"scheduleEditor">["teams"][number];
 
+const deleteSpecial = (
+	schedule: Schedule,
+	type: "allStarGame" | "tradeDeadline",
+) => {
+	let day: number | undefined;
+	return schedule
+		.filter((row) => {
+			if (row.type === type) {
+				day = row.day;
+				return false;
+			}
+			return true;
+		})
+		.map((game) => {
+			if (day === undefined || game.day <= day) {
+				return game;
+			}
+
+			return {
+				...game,
+				day: game.day - 1,
+			};
+		});
+};
+
+const addGameOnDayByItself = (
+	schedule: Schedule,
+	gameToAdd: Schedule[number],
+) => {
+	let added = false;
+	const scheduleWithNewDay = schedule.flatMap((game) => {
+		if (game.day < gameToAdd.day) {
+			return game;
+		}
+
+		if (!added) {
+			added = true;
+			return [
+				gameToAdd,
+				{
+					...game,
+					day: game.day + 1,
+				},
+			];
+		}
+
+		return {
+			...game,
+			day: game.day + 1,
+		};
+	});
+
+	if (!added) {
+		added = true;
+		scheduleWithNewDay.push(gameToAdd);
+	}
+
+	return scheduleWithNewDay;
+};
+
 const reducer = (
 	schedule: Schedule,
 	action:
@@ -79,6 +139,11 @@ const reducer = (
 		| {
 				type: "deleteSpecial";
 				special: "allStarGame" | "tradeDeadline";
+		  }
+		| {
+				type: "placeSpecial";
+				special: "allStarGame" | "tradeDeadline";
+				value: number;
 		  },
 ): Schedule => {
 	switch (action.type) {
@@ -167,35 +232,7 @@ const reducer = (
 				type: "placeholder",
 				day: action.day,
 			} as const;
-			let added = false;
-			const scheduleWithNewDay = schedule.flatMap((game) => {
-				if (game.day < action.day) {
-					return game;
-				}
-
-				if (!added) {
-					added = true;
-					return [
-						placeholderGame,
-						{
-							...game,
-							day: game.day + 1,
-						},
-					];
-				}
-
-				return {
-					...game,
-					day: game.day + 1,
-				};
-			});
-
-			if (!added) {
-				added = true;
-				scheduleWithNewDay.push(placeholderGame);
-			}
-
-			return scheduleWithNewDay;
+			return addGameOnDayByItself(schedule, placeholderGame);
 		}
 		case "dragDay":
 			return orderBy(
@@ -254,7 +291,7 @@ const reducer = (
 			return action.schedule;
 		case "clearSchedule": {
 			// Can't clear completed games! Not sure why any is needed
-			const newSchedule: any[] = schedule.filter(
+			const newSchedule: Schedule = schedule.filter(
 				(game) => game.type === "completed",
 			);
 
@@ -269,25 +306,57 @@ const reducer = (
 			return newSchedule;
 		}
 		case "deleteSpecial": {
-			let day: number | undefined;
-			return schedule
-				.filter((row) => {
-					if (row.type === action.special) {
-						day = row.day;
-						return false;
-					}
-					return true;
-				})
-				.map((game) => {
-					if (day === undefined || game.day <= day) {
-						return game;
+			return deleteSpecial(schedule, action.special);
+		}
+		case "placeSpecial": {
+			// Delete any existing ones
+			const newSchedule = deleteSpecial(schedule, action.special);
+
+			const index = Math.round(
+				helpers.bound(action.value, 0, 1) * newSchedule.length,
+			);
+
+			const existingGame = newSchedule[index];
+			const specialGame: Schedule[number] =
+				action.special === "allStarGame"
+					? {
+							type: "allStarGame",
+							day: 0,
+							homeTid: -1,
+							awayTid: -2,
+						}
+					: {
+							type: "tradeDeadline",
+							day: 0,
+							homeTid: -3,
+							awayTid: -3,
+						};
+
+			if (!existingGame) {
+				specialGame.day = (newSchedule.at(-1)?.day ?? 0) + 1;
+
+				return [...newSchedule, specialGame];
+			} else if (existingGame.type === "placeholder") {
+				specialGame.day = existingGame.day;
+
+				return newSchedule.map((game) => {
+					if (game === existingGame) {
+						return specialGame;
 					}
 
-					return {
-						...game,
-						day: game.day - 1,
-					};
+					return game;
 				});
+			} else if (existingGame.type === "completed") {
+				// Put after any completed days
+				const lastCompletedGame = newSchedule.findLast(
+					(game) => game.type === "completed",
+				)!;
+				specialGame.day = lastCompletedGame.day + 1;
+				return addGameOnDayByItself(newSchedule, specialGame);
+			} else {
+				specialGame.day = existingGame.day + 1;
+				return addGameOnDayByItself(newSchedule, specialGame);
+			}
 		}
 	}
 };
@@ -326,7 +395,7 @@ const ScheduleEditor = ({
 		useState(false);
 	const [regenerated, setRegenerated] = useState(false);
 
-	if (phase !== PHASE.REGULAR_SEASON) {
+	if (phase !== PHASE.REGULAR_SEASON && phase !== PHASE.AFTER_TRADE_DEADLINE) {
 		return <p>You can only edit the schedule during the regular season.</p>;
 	}
 	const scheduleByDay: ScheduleDay[] = [];
@@ -732,6 +801,12 @@ const ScheduleEditor = ({
 										});
 										return;
 									}
+
+									dispatch({
+										type: "placeSpecial",
+										special: "allStarGame",
+										value: allStarGame!,
+									});
 								}}
 							>
 								Place All-Star Game in default position
@@ -762,6 +837,12 @@ const ScheduleEditor = ({
 										});
 										return;
 									}
+
+									dispatch({
+										type: "placeSpecial",
+										special: "tradeDeadline",
+										value: tradeDeadline,
+									});
 								}}
 							>
 								Place Trade Deadline in default position

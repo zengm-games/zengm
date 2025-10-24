@@ -1,5 +1,4 @@
 schedule editor
-- notification about day when placing ASG/TD
 - show warning if teams don't have numGames games for clinching playoff calculation
   - do numGamesDiv/numGamesConf matter too?
   - can we just improve the clinching code instead?

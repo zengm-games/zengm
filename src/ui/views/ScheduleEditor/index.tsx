@@ -91,6 +91,20 @@ const addGameOnDayByItself = (
 	return scheduleWithNewDay;
 };
 
+const notifyPlaceSpecial = (
+	type: "allStarGame" | "tradeDeadline",
+	day: number,
+) => {
+	// Without setTimeout, React complains about updating another component when rendering
+	setTimeout(() => {
+		logEvent({
+			type: "info",
+			text: `Placed the ${type === "allStarGame" ? "All-Star Game" : "trade deadline"} on day ${day}`,
+			saveToDb: false,
+		});
+	});
+};
+
 const reducer = (
 	schedule: Schedule,
 	action:
@@ -332,14 +346,15 @@ const reducer = (
 							awayTid: -3,
 						};
 
+			let newNewSchedule;
 			if (!existingGame) {
 				specialGame.day = (newSchedule.at(-1)?.day ?? 0) + 1;
 
-				return [...newSchedule, specialGame];
+				newNewSchedule = [...newSchedule, specialGame];
 			} else if (existingGame.type === "placeholder") {
 				specialGame.day = existingGame.day;
 
-				return newSchedule.map((game) => {
+				newNewSchedule = newSchedule.map((game) => {
 					if (game === existingGame) {
 						return specialGame;
 					}
@@ -352,11 +367,17 @@ const reducer = (
 					(game) => game.type === "completed",
 				)!;
 				specialGame.day = lastCompletedGame.day + 1;
-				return addGameOnDayByItself(newSchedule, specialGame);
+
+				newNewSchedule = addGameOnDayByItself(newSchedule, specialGame);
 			} else {
 				specialGame.day = existingGame.day + 1;
-				return addGameOnDayByItself(newSchedule, specialGame);
+
+				newNewSchedule = addGameOnDayByItself(newSchedule, specialGame);
 			}
+
+			notifyPlaceSpecial(action.special, specialGame.day);
+
+			return newNewSchedule;
 		}
 	}
 };

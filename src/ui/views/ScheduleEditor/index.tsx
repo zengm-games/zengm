@@ -275,6 +275,7 @@ const ScheduleEditor = ({
 	allStarGame,
 	allStarGameAlreadyHappened,
 	canRegenerateSchedule,
+	maxDayAlreadyPlayed,
 	numGamesPlayedAlready,
 	phase,
 	schedule: scheduleProp,
@@ -292,9 +293,9 @@ const ScheduleEditor = ({
 	useEffect(() => {
 		if (isFirstRender.current) {
 			isFirstRender.current = false;
-			return;
+		} else {
+			dispatch({ type: "resetSchedule", schedule: scheduleProp });
 		}
-		dispatch({ type: "resetSchedule", schedule: scheduleProp });
 	}, [scheduleProp]);
 
 	const { godMode } = useLocalPartial(["godMode"]);
@@ -753,7 +754,12 @@ const ScheduleEditor = ({
 									if (proceed) {
 										dispatch({
 											type: "resetSchedule",
-											schedule: [],
+											schedule: [
+												{
+													type: "placeholder",
+													day: maxDayAlreadyPlayed + 1,
+												},
+											],
 										});
 									}
 								}}

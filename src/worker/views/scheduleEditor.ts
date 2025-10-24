@@ -4,7 +4,7 @@ import type {
 	TeamFiltered,
 	UpdateEvents,
 } from "../../common/types.ts";
-import { groupByUnique, orderBy } from "../../common/utils.ts";
+import { groupByUnique, maxBy, orderBy } from "../../common/utils.ts";
 import { season } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
@@ -98,10 +98,13 @@ const updateScheduleEditor = async (
 		const allStars = await idb.cache.allStars.get(g.get("season"));
 		const allStarGameAlreadyHappened = !!allStars;
 
+		const maxDayAlreadyPlayed = maxBy(games, "day")?.day ?? 0;
+
 		return {
 			allStarGame: g.get("allStarGame"),
 			allStarGameAlreadyHappened,
 			canRegenerateSchedule,
+			maxDayAlreadyPlayed,
 			numGamesPlayedAlready,
 			phase: g.get("phase"),
 			schedule,

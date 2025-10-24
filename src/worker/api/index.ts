@@ -4943,7 +4943,8 @@ const setScheduleFromEditor = async (
 		await idb.cache.schedule.add(omit(game, "type"));
 	}
 
-	await recomputeLocalUITeamOvrs();
+	// This is needed in case the upcoming game was edited/deleted
+	await initUILocalGames();
 };
 
 export default {

@@ -1,16 +1,15 @@
 schedule editor
 - buttons
-  - save button
-    - don't allow save if invalid (like 2 games on same day for a team)
-  - ability to auto sort into days (merging adjacent ones when possible)
   - move danger zone button to regenerate schedule here
   - place ASG correctly
   - place trade deadline correctly
   - clear schedule
-- delete upcoming game which is currently in score bar -> doesn't get deleted
 - perf?
 - video
   - middle click
+    - updates score bar when saved
+  - delete
+    - updates score bar when saved
   - mobile
   - sticky header
 - later

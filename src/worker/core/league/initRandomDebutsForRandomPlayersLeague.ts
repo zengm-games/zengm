@@ -84,23 +84,32 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 		let i = -1;
 		for (const tid of tidsWithNoPlayers) {
 			for (let j = 0; j < numPlayerPerTeam; j++) {
-				i += 1;
+				// Find a valid player (not just a draft prospect)
+				let p, ratingsToApply;
+				while (i < realPlayers.length && (!p || !ratingsToApply)) {
+					i += 1;
 
-				const p = realPlayers[i];
-				if (!p) {
-					continue;
+					p = realPlayers[i];
+					if (!p) {
+						continue;
+					}
+
+					const allRatings = ratingsBySlug[p.srID];
+					if (!allRatings) {
+						continue;
+					}
+
+					// Pick a random row of ratings, not draft prospect ratings (the first one)
+					ratingsToApply = choice(allRatings.slice(1));
+					if (!ratingsToApply) {
+						// Must just be a draft prospect
+						continue;
+					}
 				}
 
-				const allRatings = ratingsBySlug[p.srID];
-				if (!allRatings) {
-					continue;
-				}
-
-				// Pick a random row of ratings, not draft prospect ratings (the first one)
-				const ratingsToApply = choice(allRatings.slice(1));
-				if (!ratingsToApply) {
-					// Must just be a draft prospect
-					continue;
+				if (!p || !ratingsToApply) {
+					// Ran out of players?
+					break;
 				}
 
 				p.tid = tid;

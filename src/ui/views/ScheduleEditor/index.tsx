@@ -479,6 +479,7 @@ const ScheduleEditor = ({
 		},
 		...getTeamCols(teams, userTid),
 	];
+	console.log(maxDayAlreadyPlayed);
 
 	const rows = scheduleByDay.map((row) => {
 		return {
@@ -503,36 +504,42 @@ const ScheduleEditor = ({
 								</span>
 							</Dropdown.Toggle>
 							<Dropdown.Menu popperConfig={{ strategy: "fixed" }} renderOnMount>
-								<Dropdown.Item
-									onClick={() => {
-										dispatch({
-											type: "deleteDay",
-											day: row.day,
-										});
-									}}
-								>
-									Delete {TIME_BETWEEN_GAMES} {row.day}
-								</Dropdown.Item>
-								<Dropdown.Item
-									onClick={() => {
-										dispatch({
-											type: "addDay",
-											day: row.day,
-										});
-									}}
-								>
-									Add {TIME_BETWEEN_GAMES} above
-								</Dropdown.Item>
-								<Dropdown.Item
-									onClick={() => {
-										dispatch({
-											type: "addDay",
-											day: row.day + 1,
-										});
-									}}
-								>
-									Add {TIME_BETWEEN_GAMES} below
-								</Dropdown.Item>
+								{row.day > maxDayAlreadyPlayed ? (
+									<Dropdown.Item
+										onClick={() => {
+											dispatch({
+												type: "deleteDay",
+												day: row.day,
+											});
+										}}
+									>
+										Delete {TIME_BETWEEN_GAMES} {row.day}
+									</Dropdown.Item>
+								) : null}
+								{row.day > maxDayAlreadyPlayed ? (
+									<Dropdown.Item
+										onClick={() => {
+											dispatch({
+												type: "addDay",
+												day: row.day,
+											});
+										}}
+									>
+										Add {TIME_BETWEEN_GAMES} above
+									</Dropdown.Item>
+								) : null}
+								{row.day + 1 > maxDayAlreadyPlayed ? (
+									<Dropdown.Item
+										onClick={() => {
+											dispatch({
+												type: "addDay",
+												day: row.day + 1,
+											});
+										}}
+									>
+										Add {TIME_BETWEEN_GAMES} below
+									</Dropdown.Item>
+								) : null}
 							</Dropdown.Menu>
 						</Dropdown>
 					),

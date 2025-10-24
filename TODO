@@ -1,6 +1,5 @@
 schedule editor
 - drag and drop should not include days with completed games
-- can't add day before a completed game
 - test adding day
 - notification about day when placing ASG/TD
 - buttons

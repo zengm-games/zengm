@@ -36,31 +36,37 @@ export const useStickyTableHeader = ({
 		clone.style.borderCollapse = getComputedStyle(table).borderCollapse;
 		document.body.appendChild(clone);
 
-		const syncWidths = () => {
-			const thead = table.querySelector("thead");
-			if (!thead) {
-				return;
-			}
-			const theadClone = thead.cloneNode(true);
+		let headerCloned = false;
 
-			clone.innerHTML = "";
-			clone.appendChild(theadClone);
+		const syncWidths = () => {
+			const origThs = table.querySelectorAll<HTMLTableCellElement>("thead th");
+			let cloneThs = headerCloned
+				? clone.querySelectorAll<HTMLTableCellElement>("thead th")
+				: undefined;
+			if (!headerCloned || origThs.length !== cloneThs?.length) {
+				const thead = table.querySelector("thead");
+				if (!thead) {
+					return;
+				}
+
+				clone.innerHTML = "";
+				clone.appendChild(thead.cloneNode(true));
+				headerCloned = true;
+
+				cloneThs = clone.querySelectorAll<HTMLTableCellElement>("thead th");
+			}
 
 			// Match table width
 			const rect = table.getBoundingClientRect();
 			clone.style.width = rect.width + "px";
 
 			// Match column widths
-			const origThs = table.querySelectorAll<HTMLTableCellElement>("thead th");
-			const cloneThs = clone.querySelectorAll<HTMLTableCellElement>("thead th");
 			for (const [i, th] of Array.from(origThs).entries()) {
 				const width = th.getBoundingClientRect().width;
 				if (cloneThs[i]) {
 					cloneThs[i].style.width = `${width}px`;
 				}
 			}
-
-			syncPosition();
 
 			clone.style.visibility = "visible";
 		};
@@ -91,6 +97,7 @@ export const useStickyTableHeader = ({
 		window.addEventListener("optimizedResize", syncWidths);
 
 		syncWidths();
+		syncPosition();
 		syncScroll();
 		updateVisibility();
 

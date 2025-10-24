@@ -70,6 +70,10 @@ const reducer = (
 		| {
 				type: "resetSchedule";
 				schedule: Schedule;
+		  }
+		| {
+				type: "deleteSpecial";
+				special: "allStarGame" | "tradeDeadline";
 		  },
 ): Schedule => {
 	switch (action.type) {
@@ -243,14 +247,39 @@ const reducer = (
 			);
 		case "resetSchedule":
 			return action.schedule;
+		case "deleteSpecial": {
+			let day: number | undefined;
+			return schedule
+				.filter((row) => {
+					if (row.type === action.special) {
+						day = row.day;
+						return false;
+					}
+					return true;
+				})
+				.map((game) => {
+					if (day === undefined || game.day <= day) {
+						return game;
+					}
+
+					return {
+						...game,
+						day: game.day - 1,
+					};
+				});
+		}
 	}
 };
 
 const ScheduleEditor = ({
+	allStarGame,
+	allStarGameAlreadyHappened,
 	canRegenerateSchedule,
+	numGamesPlayedAlready,
 	phase,
 	schedule: scheduleProp,
 	teams,
+	tradeDeadline,
 	userTid,
 }: View<"scheduleEditor">) => {
 	useTitleBar({ title: "Schedule Editor" });
@@ -640,10 +669,61 @@ const ScheduleEditor = ({
 							Actions
 						</Dropdown.Toggle>
 						<Dropdown.Menu>
-							<Dropdown.Item onClick={() => {}}>
+							<Dropdown.Item
+								onClick={() => {
+									let errorMessage;
+									if (allStarGameAlreadyHappened) {
+										errorMessage =
+											"The All-Star Game already happened this season.";
+									} else if (allStarGame === null) {
+										errorMessage =
+											"The All-Star Game is disabled. Go to Tools > League Settings if you want to change that.";
+									} else if (allStarGame === -1) {
+										errorMessage =
+											"The All-Star Game happens during the playoffs. Go to Tools > League Settings if you want to change that.";
+									}
+
+									if (errorMessage) {
+										dispatch({ type: "deleteSpecial", special: "allStarGame" });
+										logEvent({
+											type: "info",
+											text: errorMessage,
+											saveToDb: false,
+										});
+										return;
+									}
+								}}
+							>
 								Place All-Star Game in correct position
 							</Dropdown.Item>
-							<Dropdown.Item onClick={() => {}}>
+							<Dropdown.Item
+								onClick={() => {
+									let errorMessage;
+									if (phase >= PHASE.AFTER_TRADE_DEADLINE) {
+										errorMessage =
+											"The trade deadline already happened this season.";
+									} else if (tradeDeadline === 1) {
+										errorMessage =
+											"The trade deadline is disabled. Go to Tools > League Settings if you want to change that.";
+									} else if (allStarGame === -1) {
+										errorMessage =
+											"The All-Star Game happens during the playoffs. Go to Tools > League Settings if you want to change that.";
+									}
+
+									if (errorMessage) {
+										dispatch({
+											type: "deleteSpecial",
+											special: "tradeDeadline",
+										});
+										logEvent({
+											type: "info",
+											text: errorMessage,
+											saveToDb: false,
+										});
+										return;
+									}
+								}}
+							>
 								Place Trade Deadline in correct position
 							</Dropdown.Item>
 							<Dropdown.Item

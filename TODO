@@ -1,9 +1,9 @@
 schedule editor
 - buttons
   - place ASG correctly
-    - what if some games are already played?
+    - what if some games are already played? numGamesPlayedAlready
   - place trade deadline correctly
-    - what if some games are already played?
+    - what if some games are already played? numGamesPlayedAlready
 - show warning if teams don't have numGames games for clinching playoff calculation
   - do numGamesDiv/numGamesConf matter too?
   - can we just improve the clinching code instead?

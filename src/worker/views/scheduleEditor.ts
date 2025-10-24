@@ -93,11 +93,20 @@ const updateScheduleEditor = async (
 			}
 		}
 
+		const games = await idb.cache.games.getAll();
+		const numGamesPlayedAlready = games.length;
+		const allStars = await idb.cache.allStars.get(g.get("season"));
+		const allStarGameAlreadyHappened = !!allStars;
+
 		return {
+			allStarGame: g.get("allStarGame"),
+			allStarGameAlreadyHappened,
 			canRegenerateSchedule,
+			numGamesPlayedAlready,
 			phase: g.get("phase"),
 			schedule,
 			teams: orderBy(teams, [(t) => t.seasonAttrs.abbrev]),
+			tradeDeadline: g.get("tradeDeadline"),
 			userTid: g.get("userTid"),
 		};
 	}

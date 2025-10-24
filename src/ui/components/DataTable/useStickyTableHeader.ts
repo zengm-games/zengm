@@ -31,10 +31,7 @@ export const useStickyTableHeader = ({
 		const clone = document.createElement("table");
 		clone.className = clsx(table.className, className);
 		clone.style.position = "fixed";
-		//clone.style.top = `${HEADER_HEIGHT}px`;
 		clone.style.zIndex = "9999";
-		//clone.style.pointerEvents = "none";
-		//clone.style.background = "var(--white)";
 		clone.style.visibility = "hidden";
 		clone.style.borderCollapse = getComputedStyle(table).borderCollapse;
 		document.body.appendChild(clone);
@@ -44,8 +41,7 @@ export const useStickyTableHeader = ({
 			if (!thead) {
 				return;
 			}
-			const theadClone = thead.cloneNode(true) as HTMLTableSectionElement;
-			console.log(thead, theadClone);
+			const theadClone = thead.cloneNode(true);
 
 			clone.innerHTML = "";
 			clone.appendChild(theadClone);
@@ -55,8 +51,8 @@ export const useStickyTableHeader = ({
 			clone.style.width = rect.width + "px";
 
 			// Match column widths
-			const origThs = table.querySelectorAll("thead th");
-			const cloneThs = clone.querySelectorAll("thead th");
+			const origThs = table.querySelectorAll<HTMLTableCellElement>("thead th");
+			const cloneThs = clone.querySelectorAll<HTMLTableCellElement>("thead th");
 			for (const [i, th] of Array.from(origThs).entries()) {
 				const width = th.getBoundingClientRect().width;
 				if (cloneThs[i]) {
@@ -92,7 +88,7 @@ export const useStickyTableHeader = ({
 
 		container.addEventListener("scroll", syncScroll);
 		window.addEventListener("scroll", syncPosition);
-		window.addEventListener("resize", syncWidths);
+		window.addEventListener("optimizedResize", syncWidths);
 
 		syncWidths();
 		syncScroll();
@@ -101,7 +97,7 @@ export const useStickyTableHeader = ({
 		return () => {
 			container.removeEventListener("scroll", syncScroll);
 			window.removeEventListener("scroll", syncPosition);
-			window.removeEventListener("resize", syncWidths);
+			window.removeEventListener("optimizedResize", syncWidths);
 			resizeObserver.disconnect();
 			clone.remove();
 		};

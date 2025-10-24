@@ -14,6 +14,7 @@ import { groupByUnique, orderBy } from "../../../common/utils.ts";
 import { FancySelect, height } from "./FancySelect.tsx";
 import { getTeamCols, SummaryTable } from "./SummaryTable.tsx";
 import { Dropdown } from "react-bootstrap";
+import { RegenerateScheduleModal } from "./RegenerateScheduleModal.tsx";
 
 type Schedule = View<"scheduleEditor">["schedule"];
 
@@ -246,8 +247,9 @@ const reducer = (
 };
 
 const ScheduleEditor = ({
-	schedule: scheduleProp,
+	canRegenerateSchedule,
 	phase,
+	schedule: scheduleProp,
 	teams,
 	userTid,
 }: View<"scheduleEditor">) => {
@@ -269,6 +271,9 @@ const ScheduleEditor = ({
 	const { godMode } = useLocalPartial(["godMode"]);
 
 	const [saving, setSaving] = useState(false);
+	const [showRegenerateScheduleModal, setShowRegenerateScheduleModal] =
+		useState(false);
+	const [regenerated, setRegenerated] = useState(false);
 
 	if (phase !== PHASE.REGULAR_SEASON) {
 		return <p>You can only edit the schedule during the regular season.</p>;
@@ -641,7 +646,20 @@ const ScheduleEditor = ({
 							<Dropdown.Item onClick={() => {}}>
 								Place Trade Deadline in correct position
 							</Dropdown.Item>
-							<Dropdown.Item onClick={() => {}}>
+							<Dropdown.Item
+								onClick={async () => {
+									if (!canRegenerateSchedule) {
+										logEvent({
+											type: "error",
+											text: "You can only regenerate the schedule at the start of the regular season, when no games have been played.",
+											saveToDb: false,
+										});
+										return;
+									}
+
+									setShowRegenerateScheduleModal(true);
+								}}
+							>
 								Regenerate schedule
 							</Dropdown.Item>
 							<Dropdown.Item
@@ -671,7 +689,10 @@ const ScheduleEditor = ({
 							setSaving(true);
 
 							try {
-								await toWorker("main", "setScheduleFromEditor", schedule);
+								await toWorker("main", "setScheduleFromEditor", {
+									regenerated,
+									schedule,
+								});
 							} catch (error) {
 								logEvent({
 									type: "error",
@@ -694,6 +715,20 @@ const ScheduleEditor = ({
 					</button>
 				</StickyBottomButtons>
 			) : null}
+			<RegenerateScheduleModal
+				show={showRegenerateScheduleModal}
+				onCancel={() => {
+					setShowRegenerateScheduleModal(false);
+				}}
+				onRegenerated={(schedule) => {
+					setRegenerated(true);
+					dispatch({
+						type: "resetSchedule",
+						schedule,
+					});
+					setShowRegenerateScheduleModal(false);
+				}}
+			/>
 		</div>
 	);
 };

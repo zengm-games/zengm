@@ -1,50 +1,18 @@
-import { useState } from "react";
 import { PHASE, WEBSITE_ROOT } from "../../../common/index.ts";
 import type { View } from "../../../common/types.ts";
-import { ActionButton } from "../../components/index.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers, logEvent, toWorker } from "../../util/index.ts";
 import AutoSave from "./AutoSave.tsx";
 import WorkerConsole from "./WorkerConsole.tsx";
 
-const DangerZone = ({
-	autoSave,
-	canRegenerateSchedule,
-	godMode,
-	phase,
-}: View<"dangerZone">) => {
+const DangerZone = ({ autoSave, godMode, phase }: View<"dangerZone">) => {
 	useTitleBar({
 		title: "Danger Zone",
 	});
 
-	const [regeneratingSchedule, setRegeneratingSchedule] = useState(false);
-
 	return (
 		<div className="row">
 			<div className="col-md-6">
-				<div className="mb-5">
-					<h2>Regenerate schedule</h2>
-
-					<p className={canRegenerateSchedule ? undefined : "text-warning"}>
-						This can only be done at the start of the regular season, when no
-						games have been played.
-					</p>
-
-					<ActionButton
-						type="submit"
-						variant="light-bordered"
-						disabled={!canRegenerateSchedule || regeneratingSchedule}
-						processing={regeneratingSchedule}
-						onClick={async () => {
-							setRegeneratingSchedule(true);
-							await toWorker("main", "regenerateSchedule", undefined);
-							setRegeneratingSchedule(false);
-						}}
-					>
-						Regenerate schedule
-					</ActionButton>
-				</div>
-
 				<h2>Skip to...</h2>
 
 				<p className="alert alert-danger">

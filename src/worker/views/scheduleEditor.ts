@@ -1,11 +1,55 @@
+import { PHASE } from "../../common/constants.ts";
 import type {
 	ScheduleGameWithoutKey,
+	TeamFiltered,
 	UpdateEvents,
 } from "../../common/types.ts";
 import { groupByUnique, orderBy } from "../../common/utils.ts";
 import { season } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
+
+export const formatScheduleForEditor = (
+	scheduleRaw: ScheduleGameWithoutKey[],
+	teams: TeamFiltered<["tid"], ["abbrev"], any, number>[],
+) => {
+	const teamsByTid = groupByUnique(teams, "tid");
+
+	const schedule = scheduleRaw.map((game) => {
+		const isAllStarGame = game.homeTid === -1 && game.awayTid === -2;
+		if (isAllStarGame) {
+			return {
+				type: "allStarGame" as const,
+				...game,
+			};
+		}
+
+		const isTradeDeadline = game.homeTid === -3 && game.awayTid === -3;
+		if (isTradeDeadline) {
+			return {
+				type: "tradeDeadline" as const,
+				...game,
+			};
+		}
+
+		return {
+			type: "game" as const,
+			...game,
+			homeAbbrev: teamsByTid[game.homeTid]!.seasonAttrs.abbrev,
+			awayAbbrev: teamsByTid[game.awayTid]!.seasonAttrs.abbrev,
+		};
+	});
+
+	const schedule2: (
+		| (typeof schedule)[number]
+		| {
+				type: "placeholder";
+				day: number;
+		  }
+	)[] = schedule;
+
+	return schedule2;
+};
 
 const updateScheduleEditor = async (
 	inputs: void,
@@ -16,7 +60,7 @@ const updateScheduleEditor = async (
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("newPhase")
 	) {
-		const scheduleRaw: ScheduleGameWithoutKey[] = await season.getSchedule();
+		const scheduleRaw = await season.getSchedule();
 
 		const teams = await idb.getCopies.teamsPlus(
 			{
@@ -27,44 +71,32 @@ const updateScheduleEditor = async (
 			},
 			"noCopyCache",
 		);
-		const teamsByTid = groupByUnique(teams, "tid");
 
-		const schedule = scheduleRaw.map((game) => {
-			const isAllStarGame = game.homeTid === -1 && game.awayTid === -2;
-			if (isAllStarGame) {
-				return {
-					type: "allStarGame" as const,
-					...game,
-				};
+		const schedule = formatScheduleForEditor(scheduleRaw, teams);
+
+		let canRegenerateSchedule = g.get("phase") === PHASE.REGULAR_SEASON;
+		if (canRegenerateSchedule) {
+			const teams = await idb.getCopies.teamsPlus(
+				{
+					attrs: ["tid"],
+					stats: ["gp"],
+					season: g.get("season"),
+				},
+				"noCopyCache",
+			);
+
+			for (const t of teams) {
+				if (t.stats.gp !== 0) {
+					canRegenerateSchedule = false;
+					break;
+				}
 			}
-
-			const isTradeDeadline = game.homeTid === -3 && game.awayTid === -3;
-			if (isTradeDeadline) {
-				return {
-					type: "tradeDeadline" as const,
-					...game,
-				};
-			}
-
-			return {
-				type: "game" as const,
-				...game,
-				homeAbbrev: teamsByTid[game.homeTid]!.seasonAttrs.abbrev,
-				awayAbbrev: teamsByTid[game.awayTid]!.seasonAttrs.abbrev,
-			};
-		});
-
-		const schedule2: (
-			| (typeof schedule)[number]
-			| {
-					type: "placeholder";
-					day: number;
-			  }
-		)[] = schedule;
+		}
 
 		return {
+			canRegenerateSchedule,
 			phase: g.get("phase"),
-			schedule: schedule2,
+			schedule,
 			teams: orderBy(teams, [(t) => t.seasonAttrs.abbrev]),
 			userTid: g.get("userTid"),
 		};

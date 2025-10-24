@@ -157,6 +157,7 @@ import { applyRealPlayerPhotos } from "../core/league/processPlayerNewLeague.ts"
 import { actualPhase } from "../util/actualPhase.ts";
 import getCol from "../../common/getCol.ts";
 import getCols from "../../common/getCols.ts";
+import { formatScheduleForEditor } from "../views/scheduleEditor.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -2893,53 +2894,26 @@ const regenerateDraftClass = async (season: number, conditions: Conditions) => {
 };
 
 const regenerateSchedule = async (param: unknown, conditions: Conditions) => {
-	const teams = await idb.getCopies.teamsPlus({
-		attrs: ["tid"],
-		seasonAttrs: ["cid", "did"],
-		season: g.get("season"),
-		active: true,
-	});
-
-	// If it's the regular season, that means there were 0 games played and we're allowed to regenerate the schedule (see canRegenerateSchedule). In that case, season.newSchedule uses the latest settings for numGames/numGamesConf/numGamesDiv/divs, both because that's what the user would want (tweaking schedule settings) and because numGamesConf/numGamesDiv are currently not wrapped. So if we know numGames or divs has changed for next season, we need to update the setting for those (and also confs for consistency) to apply to this season.
-	if (g.get("phase") === PHASE.REGULAR_SEASON) {
-		const season = g.get("season");
-		const toAdjust = ["numGames", "divs", "confs"] as const;
-		for (const key of toAdjust) {
-			const value = g.getRaw(key);
-			if (value.length > 1) {
-				const updated = helpers.deepCopy(value);
-
-				const lastValue = updated.at(-1)!;
-				if (lastValue.start === season + 1) {
-					// We need to update! Either change last entry to current season, or delete 2nd-last entry and overwrite 2nd-last one with current value (if 2nd-last entry was only for this season).
-
-					const secondLastValue = updated.at(-2)!;
-					if (secondLastValue.start === season) {
-						updated.pop();
-						secondLastValue.value = lastValue.value;
-					} else {
-						lastValue.start = season;
-					}
-
-					await idb.cache.gameAttributes.put({
-						key,
-						value: updated,
-					});
-					g.setWithoutSavingToDB(key, updated);
-				}
-			}
-		}
-	}
-
-	const newSchedule = season.newSchedule(teams, conditions);
-
-	await toUI("updateLocal", [
+	const teams = await idb.getCopies.teamsPlus(
 		{
-			games: [],
+			attrs: ["tid"],
+			seasonAttrs: ["cid", "did", "abbrev"],
+			season: g.get("season"),
+			active: true,
 		},
-	]);
+		"noCopyCache",
+	);
 
-	await season.setSchedule(newSchedule);
+	const tids = season.newSchedule(teams, conditions);
+
+	const schedule = season.addDaysToSchedule(
+		tids.map(([homeTid, awayTid]) => ({
+			homeTid,
+			awayTid,
+		})),
+	);
+
+	return formatScheduleForEditor(schedule, teams);
 };
 
 const releasePlayer = async ({ pids }: { pids: number[] }) => {
@@ -4931,9 +4905,44 @@ const clearSavedTrades = async (hashes: string[]) => {
 };
 
 // Normally use season.setSchedule, but this skips various checks and saves exactly what the user has edited
-const setScheduleFromEditor = async (
-	schedule: View<"scheduleEditor">["schedule"],
-) => {
+const setScheduleFromEditor = async ({
+	regenerated,
+	schedule,
+}: {
+	regenerated: boolean;
+	schedule: View<"scheduleEditor">["schedule"];
+}) => {
+	if (regenerated) {
+		// It's the regular season with 0 games played and we're allowed to regenerate the schedule (see canRegenerateSchedule). In that case, season.newSchedule uses the latest settings for numGames/numGamesConf/numGamesDiv/divs, both because that's what the user would want (tweaking schedule settings) and because numGamesConf/numGamesDiv are currently not wrapped. So if we know numGames or divs has changed for next season, we need to update the setting for those (and also confs for consistency) to apply to this season.
+		const season = g.get("season");
+		const toAdjust = ["numGames", "divs", "confs"] as const;
+		for (const key of toAdjust) {
+			const value = g.getRaw(key);
+			if (value.length > 1) {
+				const updated = helpers.deepCopy(value);
+
+				const lastValue = updated.at(-1)!;
+				if (lastValue.start === season + 1) {
+					// We need to update! Either change last entry to current season, or delete 2nd-last entry and overwrite 2nd-last one with current value (if 2nd-last entry was only for this season).
+
+					const secondLastValue = updated.at(-2)!;
+					if (secondLastValue.start === season) {
+						updated.pop();
+						secondLastValue.value = lastValue.value;
+					} else {
+						lastValue.start = season;
+					}
+
+					await idb.cache.gameAttributes.put({
+						key,
+						value: updated,
+					});
+					g.setWithoutSavingToDB(key, updated);
+				}
+			}
+		}
+	}
+
 	await idb.cache.schedule.clear();
 
 	for (const game of schedule) {

@@ -2913,7 +2913,7 @@ const regenerateSchedule = async (param: unknown, conditions: Conditions) => {
 		})),
 	);
 
-	return formatScheduleForEditor(schedule, teams);
+	return formatScheduleForEditor(schedule, teams, []);
 };
 
 const releasePlayer = async ({ pids }: { pids: number[] }) => {
@@ -4946,7 +4946,7 @@ const setScheduleFromEditor = async ({
 	await idb.cache.schedule.clear();
 
 	for (const game of schedule) {
-		if (game.type === "placeholder") {
+		if (game.type === "placeholder" || game.type === "completed") {
 			continue;
 		}
 		await idb.cache.schedule.add(omit(game, "type"));

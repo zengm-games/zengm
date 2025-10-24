@@ -104,7 +104,7 @@ export const SummaryTable = ({
 			seenAllStarGame = true;
 			continue;
 		}
-		if (game.type !== "game") {
+		if (game.type !== "game" && game.type !== "completed") {
 			continue;
 		}
 

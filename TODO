@@ -1,5 +1,6 @@
 schedule editor
-- Show completed games?
+- completed games
+  - highlight W/L
 - buttons
   - place ASG correctly
     - what if some games are already played? numGamesPlayedAlready

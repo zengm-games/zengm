@@ -1,5 +1,6 @@
 import { PHASE } from "../../common/constants.ts";
 import type {
+	Game,
 	ScheduleGameWithoutKey,
 	TeamFiltered,
 	UpdateEvents,
@@ -12,33 +13,52 @@ import { g } from "../util/index.ts";
 export const formatScheduleForEditor = (
 	scheduleRaw: ScheduleGameWithoutKey[],
 	teams: TeamFiltered<["tid"], ["abbrev"], any, number>[],
+	completedGames: Game[],
 ) => {
 	const teamsByTid = groupByUnique(teams, "tid");
 
-	const schedule = scheduleRaw.map((game) => {
-		const isAllStarGame = game.homeTid === -1 && game.awayTid === -2;
-		if (isAllStarGame) {
-			return {
-				type: "allStarGame" as const,
-				...game,
-			};
-		}
+	const schedule = [
+		...completedGames
+			.filter((game) => game.day !== undefined)
+			.map((game) => {
+				const awayTid = game.teams[1].tid;
+				const homeTid = game.teams[0].tid;
 
-		const isTradeDeadline = game.homeTid === -3 && game.awayTid === -3;
-		if (isTradeDeadline) {
-			return {
-				type: "tradeDeadline" as const,
-				...game,
-			};
-		}
+				return {
+					type: "completed",
+					day: game.day!,
+					awayAbbrev: teamsByTid[awayTid]!.seasonAttrs.abbrev,
+					awayTid,
+					homeAbbrev: teamsByTid[homeTid]!.seasonAttrs.abbrev,
+					homeTid,
+					forceWin: undefined,
+				} as const;
+			}),
+		...scheduleRaw.map((game) => {
+			const isAllStarGame = game.homeTid === -1 && game.awayTid === -2;
+			if (isAllStarGame) {
+				return {
+					type: "allStarGame" as const,
+					...game,
+				};
+			}
 
-		return {
-			type: "game" as const,
-			...game,
-			homeAbbrev: teamsByTid[game.homeTid]!.seasonAttrs.abbrev,
-			awayAbbrev: teamsByTid[game.awayTid]!.seasonAttrs.abbrev,
-		};
-	});
+			const isTradeDeadline = game.homeTid === -3 && game.awayTid === -3;
+			if (isTradeDeadline) {
+				return {
+					type: "tradeDeadline" as const,
+					...game,
+				};
+			}
+
+			return {
+				type: "game" as const,
+				...game,
+				awayAbbrev: teamsByTid[game.awayTid]!.seasonAttrs.abbrev,
+				homeAbbrev: teamsByTid[game.homeTid]!.seasonAttrs.abbrev,
+			};
+		}),
+	];
 
 	const schedule2: (
 		| (typeof schedule)[number]
@@ -72,8 +92,6 @@ const updateScheduleEditor = async (
 			"noCopyCache",
 		);
 
-		const schedule = formatScheduleForEditor(scheduleRaw, teams);
-
 		let canRegenerateSchedule = g.get("phase") === PHASE.REGULAR_SEASON;
 		if (canRegenerateSchedule) {
 			const teams = await idb.getCopies.teamsPlus(
@@ -99,6 +117,8 @@ const updateScheduleEditor = async (
 		const allStarGameAlreadyHappened = !!allStars;
 
 		const maxDayAlreadyPlayed = maxBy(games, "day")?.day ?? 0;
+
+		const schedule = formatScheduleForEditor(scheduleRaw, teams, games);
 
 		if (schedule.length === 0) {
 			schedule.push({

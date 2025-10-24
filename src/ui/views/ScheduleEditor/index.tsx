@@ -20,7 +20,7 @@ import clsx from "clsx";
 type Schedule = View<"scheduleEditor">["schedule"];
 
 // Not All-Star Game or Trade Deadline
-type ActualGame = Extract<Schedule[number], { type: "game" }>;
+type ActualGame = Extract<Schedule[number], { type: "completed" | "game" }>;
 
 type ScheduleDay = {
 	day: number;
@@ -313,7 +313,7 @@ const ScheduleEditor = ({
 	for (const game of schedule) {
 		let currentDay = scheduleByDay.at(-1);
 		if (!currentDay) {
-			if (game.type === "game") {
+			if (game.type === "game" || game.type === "completed") {
 				currentDay = {
 					day: game.day,
 					gamesByAwayTid: { [game.awayTid]: game },
@@ -351,7 +351,7 @@ const ScheduleEditor = ({
 			}
 
 			if (newDay) {
-				if (game.type === "game") {
+				if (game.type === "game" || game.type === "completed") {
 					currentDay.gamesByAwayTid[game.awayTid] = game;
 					currentDay.gamesByHomeTid[game.homeTid] = game;
 				} else {
@@ -468,7 +468,7 @@ const ScheduleEditor = ({
 							return {
 								value: (
 									<FancySelect
-										disabled={!godMode}
+										disabled={!godMode || game?.type === "completed"}
 										value={
 											gameHome
 												? gameHome.awayTid

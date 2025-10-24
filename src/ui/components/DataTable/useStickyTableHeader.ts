@@ -32,7 +32,7 @@ export const useStickyTableHeader = ({
 		clone.className = clsx(table.className, className);
 		clone.style.position = "fixed";
 		clone.style.zIndex = "9999";
-		clone.style.visibility = "hidden";
+		clone.style.display = "none";
 		clone.style.borderCollapse = getComputedStyle(table).borderCollapse;
 		document.body.appendChild(clone);
 
@@ -68,7 +68,7 @@ export const useStickyTableHeader = ({
 				}
 			}
 
-			clone.style.visibility = "visible";
+			syncPosition();
 		};
 
 		const syncPosition = () => {
@@ -77,16 +77,14 @@ export const useStickyTableHeader = ({
 			clone.style.left = `${rect.left}px`;
 			clone.style.top = `${top}px`;
 			clone.style.width = `${table.offsetWidth}px`;
+
+			// "bottom > NAVBAR_HEIGHT" means "we haven't scrolled past the table yet", and "top <= NAVBAR_HEIGHT" means "header needs to be sticky now, because we have scrolled it under the navbar". These are the situations where we actually want to show the cloned sticky header.
+			const visible = rect.bottom > NAVBAR_HEIGHT && rect.top <= NAVBAR_HEIGHT;
+			clone.style.display = visible ? "" : "none";
 		};
 
 		const syncScroll = () => {
 			clone.style.transform = `translateX(${-container.scrollLeft}px)`;
-		};
-
-		const updateVisibility = () => {
-			const rect = container.getBoundingClientRect();
-			const visible = rect.bottom > 0 && rect.top < window.innerHeight;
-			clone.style.display = visible ? "" : "none";
 		};
 
 		const resizeObserver = new ResizeObserver(syncWidths);
@@ -97,9 +95,7 @@ export const useStickyTableHeader = ({
 		window.addEventListener("optimizedResize", syncWidths);
 
 		syncWidths();
-		syncPosition();
 		syncScroll();
-		updateVisibility();
 
 		return () => {
 			container.removeEventListener("scroll", syncScroll);

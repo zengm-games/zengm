@@ -1,4 +1,5 @@
 schedule editor
+- sticky z-index - don't put it over modals, dropdown
 - buttons
   - save button
     - don't allow save if invalid (like 2 games on same day for a team)

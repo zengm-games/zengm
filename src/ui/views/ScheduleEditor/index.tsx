@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useState } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers, useLocalPartial } from "../../util/index.ts";
 import { DataTable } from "../../components/index.tsx";
@@ -65,7 +65,6 @@ const reducer = (
 				schedule: Schedule;
 		  },
 ): Schedule => {
-	console.log("reducer", action);
 	switch (action.type) {
 		case "delete":
 			return schedule.filter((row) => {
@@ -252,7 +251,12 @@ const ScheduleEditor = ({
 	const [showSummaryStatistics, setShowSummaryStatistics] = useState(false);
 
 	// Reset the saved schedule state when simming a game or something else that will affect this
+	const isFirstRender = useRef(true);
 	useEffect(() => {
+		if (isFirstRender.current) {
+			isFirstRender.current = false;
+			return;
+		}
 		dispatch({ type: "resetSchedule", schedule: scheduleProp });
 	}, [scheduleProp]);
 

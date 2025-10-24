@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
+	confirm,
 	helpers,
 	logEvent,
 	toWorker,
@@ -627,53 +628,72 @@ const ScheduleEditor = ({
 				</>
 			)}
 
-			<StickyBottomButtons>
-				<Dropdown>
-					<Dropdown.Toggle variant="secondary" disabled={saving}>
-						Actions
-					</Dropdown.Toggle>
-					<Dropdown.Menu>
-						<Dropdown.Item onClick={() => {}}>
-							Place All-Star Game in correct position
-						</Dropdown.Item>
-						<Dropdown.Item onClick={() => {}}>
-							Place Trade Deadline in correct position
-						</Dropdown.Item>
-						<Dropdown.Item onClick={() => {}}>
-							Regenerate schedule
-						</Dropdown.Item>
-						<Dropdown.Item onClick={() => {}}>Clear schedule</Dropdown.Item>
-					</Dropdown.Menu>
-				</Dropdown>
-				<button
-					className="btn btn-primary ms-auto"
-					disabled={saving}
-					onClick={async () => {
-						setSaving(true);
+			{godMode ? (
+				<StickyBottomButtons>
+					<Dropdown>
+						<Dropdown.Toggle variant="secondary" disabled={saving}>
+							Actions
+						</Dropdown.Toggle>
+						<Dropdown.Menu>
+							<Dropdown.Item onClick={() => {}}>
+								Place All-Star Game in correct position
+							</Dropdown.Item>
+							<Dropdown.Item onClick={() => {}}>
+								Place Trade Deadline in correct position
+							</Dropdown.Item>
+							<Dropdown.Item onClick={() => {}}>
+								Regenerate schedule
+							</Dropdown.Item>
+							<Dropdown.Item
+								onClick={async () => {
+									const proceed = await confirm(
+										"Are you sure you want to delete the entire schedule?",
+										{
+											okText: "Clear schedule",
+										},
+									);
+									if (proceed) {
+										dispatch({
+											type: "resetSchedule",
+											schedule: [],
+										});
+									}
+								}}
+							>
+								Clear schedule
+							</Dropdown.Item>
+						</Dropdown.Menu>
+					</Dropdown>
+					<button
+						className="btn btn-primary ms-auto"
+						disabled={saving}
+						onClick={async () => {
+							setSaving(true);
 
-						try {
-							await toWorker("main", "setScheduleFromEditor", schedule);
-						} catch (error) {
+							try {
+								await toWorker("main", "setScheduleFromEditor", schedule);
+							} catch (error) {
+								logEvent({
+									type: "error",
+									text: `Error saving schedule: ${error.message}`,
+									saveToDb: false,
+								});
+								throw error;
+							}
+
 							logEvent({
-								type: "error",
-								text: `Error saving schedule: ${error.message}`,
+								type: "success",
+								text: "Saved schedule",
 								saveToDb: false,
 							});
-							throw error;
-						}
 
-						logEvent({
-							type: "success",
-							text: "Saved schedule",
-							saveToDb: false,
-						});
-
-						setSaving(false);
-					}}
-				>
-					Save schedule
-				</button>
-			</StickyBottomButtons>
+							setSaving(false);
+						}}
+					>
+						Save schedule
+					</button>
+				</StickyBottomButtons>
+			) : null}
 		</div>
 	);
 };

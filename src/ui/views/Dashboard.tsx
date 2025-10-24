@@ -318,7 +318,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 								onClick={async () => {
 									const newName = await confirm("League name:", {
 										defaultValue: league.name,
-										okText: "Rename League",
+										okText: "Rename league",
 									});
 
 									if (typeof newName === "string") {

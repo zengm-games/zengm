@@ -3,10 +3,11 @@ schedule editor
   - move danger zone button to regenerate schedule here
     - guard with confirm modal
   - place ASG correctly
+    - what if some games are already played?
   - place trade deadline correctly
-  - clear schedule
-    - guard with confirm modal
-  - hide whole bar if not in god mode
+    - what if some games are already played?
+- disable dropdowns while saving
+  - do it like in non god mode, or some other way?
 - perf?
 - video
   - middle click

@@ -1,18 +1,9 @@
 schedule editor
 - notification about day when placing ASG/TD
-- buttons
-  - place ASG correctly
-    - what if some games are already played? numGamesPlayedAlready
-    - test with empty schedule
-  - place trade deadline correctly
-    - what if some games are already played? numGamesPlayedAlready
-    - test with empty schedule
 - show warning if teams don't have numGames games for clinching playoff calculation
   - do numGamesDiv/numGamesConf matter too?
   - can we just improve the clinching code instead?
     - can we then get rid of the complexity in setScheduleFromEditor
-- disable dropdowns while saving
-  - do it like in non god mode, or some other way?
 - perf?
 - video
   - middle click

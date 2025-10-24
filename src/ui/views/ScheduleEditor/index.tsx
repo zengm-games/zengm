@@ -316,7 +316,7 @@ const reducer = (
 				helpers.bound(action.value, 0, 1) * newSchedule.length,
 			);
 
-			const existingGame = newSchedule[index];
+			const existingGame = newSchedule[index] ?? newSchedule[index - 1];
 			const specialGame: Schedule[number] =
 				action.special === "allStarGame"
 					? {
@@ -479,7 +479,6 @@ const ScheduleEditor = ({
 		},
 		...getTeamCols(teams, userTid),
 	];
-	console.log(maxDayAlreadyPlayed);
 
 	const rows = scheduleByDay.map((row) => {
 		return {

@@ -730,8 +730,15 @@ const ScheduleEditor = ({
 				sortableRows={
 					godMode
 						? {
+								disableRow: (index) => {
+									if (!scheduleByDay[index]) {
+										return true;
+									}
+									return Object.values(
+										scheduleByDay[index].gamesByAwayTid,
+									).some((game) => game.type === "completed");
+								},
 								onChange: ({ oldIndex, newIndex }) => {
-									console.log("onChange", oldIndex, newIndex);
 									dispatch({
 										type: "dragDay",
 										oldDay: oldIndex + 1,

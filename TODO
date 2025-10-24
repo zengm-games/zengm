@@ -1,6 +1,4 @@
 schedule editor
-- drag and drop should not include days with completed games
-- test adding day
 - notification about day when placing ASG/TD
 - buttons
   - place ASG correctly

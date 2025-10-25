@@ -29,9 +29,9 @@ export const formatScheduleForEditor = (
 				return {
 					type: "completed" as const,
 					day: game.day!,
-					awayAbbrev: teamsByTid[awayTid]!.seasonAttrs.abbrev,
+					awayAbbrev: teamsByTid[awayTid]?.seasonAttrs.abbrev ?? "???",
 					awayTid,
-					homeAbbrev: teamsByTid[homeTid]!.seasonAttrs.abbrev,
+					homeAbbrev: teamsByTid[homeTid]?.seasonAttrs.abbrev ?? "???",
 					homeTid,
 					forceWin: undefined,
 					winnerTid:

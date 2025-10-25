@@ -116,7 +116,6 @@ const updateScheduleEditor = async (
 		}
 
 		const games = await idb.cache.games.getAll();
-		const numGamesPlayedAlready = games.length;
 		const allStars = await idb.cache.allStars.get(g.get("season"));
 		const allStarGameAlreadyHappened = !!allStars;
 
@@ -136,7 +135,6 @@ const updateScheduleEditor = async (
 			allStarGameAlreadyHappened,
 			canRegenerateSchedule,
 			maxDayAlreadyPlayed,
-			numGamesPlayedAlready,
 			phase: g.get("phase"),
 			schedule,
 			teams: orderBy(teams, [(t) => t.seasonAttrs.abbrev]),

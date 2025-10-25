@@ -387,7 +387,6 @@ const ScheduleEditor = ({
 	allStarGameAlreadyHappened,
 	canRegenerateSchedule,
 	maxDayAlreadyPlayed,
-	numGamesPlayedAlready,
 	phase,
 	schedule: scheduleProp,
 	teams,
@@ -523,44 +522,49 @@ const ScheduleEditor = ({
 									<span className="glyphicon glyphicon-option-vertical text-body-secondary" />
 								</span>
 							</Dropdown.Toggle>
-							<Dropdown.Menu popperConfig={{ strategy: "fixed" }} renderOnMount>
-								{row.day > maxDayAlreadyPlayed ? (
-									<Dropdown.Item
-										onClick={() => {
-											dispatch({
-												type: "deleteDay",
-												day: row.day,
-											});
-										}}
-									>
-										Delete {TIME_BETWEEN_GAMES} {row.day}
-									</Dropdown.Item>
-								) : null}
-								{row.day > maxDayAlreadyPlayed ? (
-									<Dropdown.Item
-										onClick={() => {
-											dispatch({
-												type: "addDay",
-												day: row.day,
-											});
-										}}
-									>
-										Add {TIME_BETWEEN_GAMES} above
-									</Dropdown.Item>
-								) : null}
-								{row.day + 1 > maxDayAlreadyPlayed ? (
-									<Dropdown.Item
-										onClick={() => {
-											dispatch({
-												type: "addDay",
-												day: row.day + 1,
-											});
-										}}
-									>
-										Add {TIME_BETWEEN_GAMES} below
-									</Dropdown.Item>
-								) : null}
-							</Dropdown.Menu>
+							{godMode ? (
+								<Dropdown.Menu
+									popperConfig={{ strategy: "fixed" }}
+									renderOnMount
+								>
+									{row.day > maxDayAlreadyPlayed ? (
+										<Dropdown.Item
+											onClick={() => {
+												dispatch({
+													type: "deleteDay",
+													day: row.day,
+												});
+											}}
+										>
+											Delete {TIME_BETWEEN_GAMES} {row.day}
+										</Dropdown.Item>
+									) : null}
+									{row.day > maxDayAlreadyPlayed ? (
+										<Dropdown.Item
+											onClick={() => {
+												dispatch({
+													type: "addDay",
+													day: row.day,
+												});
+											}}
+										>
+											Add {TIME_BETWEEN_GAMES} above
+										</Dropdown.Item>
+									) : null}
+									{row.day + 1 > maxDayAlreadyPlayed ? (
+										<Dropdown.Item
+											onClick={() => {
+												dispatch({
+													type: "addDay",
+													day: row.day + 1,
+												});
+											}}
+										>
+											Add {TIME_BETWEEN_GAMES} below
+										</Dropdown.Item>
+									) : null}
+								</Dropdown.Menu>
+							) : null}
 						</Dropdown>
 					),
 					searchValue: row.day,

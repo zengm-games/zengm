@@ -69,6 +69,10 @@ export const processTeam = (
 				teamStats[key] = 0;
 			}
 		}
+		if (isSport("basketball")) {
+			// ba is still recorded as a player stat for some reason, but not a team stat, so we need to add it here so it gets tracked for the box score correctly
+			teamStats.ba = 0;
+		}
 	}
 
 	const allStarGame = teamInput.tid === -1 || teamInput.tid === -2;

@@ -1,15 +1,4 @@
 schedule editor
-- perf?
-- video
-  - middle click
-    - updates score bar when saved
-  - delete
-    - updates score bar when saved
-  - drag row
-  - sticky header
-  - row actions
-  - bottom actions
-  - highlight W/L
 - later
   - support export/import and editing in spreadsheet
   - drag and drop to move a game
@@ -1772,8 +1761,6 @@ genSchedulePlayoffsDay -> genSchedulePlayoffsRound
 - when series ends, delete remaining games from schedule
 - remove forceWin hack in setSchedule
 - https://old.reddit.com/r/BasketballGM/comments/jd9vyg/new_feature_in_god_mode_to_select_the_winner_of_a/g9hgt09/
-
-schedule editor
 
 trade stuff
 - more penalty for bad contracts

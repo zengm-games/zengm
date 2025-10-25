@@ -105,7 +105,7 @@ const augmentRealTeams = async (teams: MyTeam[]) => {
 
 		for (const t of teamsWithSeasonInfo) {
 			output.push({
-				...omit(t, "weight"),
+				...omit(t, ["weight"]),
 				usePlayers: true,
 			});
 		}

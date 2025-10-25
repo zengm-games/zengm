@@ -3823,10 +3823,9 @@ const updateGameAttributesGodMode = async (
 	settings: Settings,
 	conditions: Conditions,
 ) => {
-	const gameAttributes: Partial<GameAttributesLeague> = omit(
-		settings,
+	const gameAttributes: Partial<GameAttributesLeague> = omit(settings, [
 		"repeatSeason",
-	);
+	]);
 
 	const currentRepeatSeasonType = g.get("repeatSeason")?.type ?? "disabled";
 	const repeatSeason = settings.repeatSeason;
@@ -4950,7 +4949,7 @@ const setScheduleFromEditor = async ({
 		if (game.type === "placeholder" || game.type === "completed") {
 			continue;
 		}
-		await idb.cache.schedule.add(omit(game, "type"));
+		await idb.cache.schedule.add(omit(game, ["gid", "type"]));
 	}
 
 	// This is needed in case the upcoming game was edited/deleted

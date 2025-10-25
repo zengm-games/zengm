@@ -152,7 +152,7 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 		}
 	}
 
-	return realPlayers.map((p) => omit(p, "pid"));
+	return realPlayers.map((p) => omit(p, ["pid"]));
 };
 
 export default initRandomDebutsForRandomPlayersLeague;

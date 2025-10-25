@@ -51,7 +51,7 @@ test("omit", () => {
 		c: 3,
 	};
 
-	assert.deepStrictEqual(omit(object, "b"), {
+	assert.deepStrictEqual(omit(object, ["b"]), {
 		a: 1,
 		c: 3,
 	});

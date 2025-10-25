@@ -235,8 +235,6 @@ rolldown
 - prod build
   - minify?
   - bundle size?
-  - other plugins, like blacklist and visualizer
-  - does it make sense to specify output options within rolldownConfig, or leave that to be done separately by caller?
   - switch from timestamps in filename to hash
 
 hide least popular menu items

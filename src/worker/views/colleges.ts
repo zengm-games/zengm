@@ -79,7 +79,7 @@ const reducer = (
 		gp += stats.gp;
 		valueStat += getValueStatsRow(stats);
 		for (const displayStatName of displayStatNames) {
-			displayStat += stats[displayStatName];
+			displayStat += stats[displayStatName] ?? 0;
 		}
 	}
 

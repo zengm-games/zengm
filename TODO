@@ -233,8 +233,6 @@ If you go onto a team and start spam releasing players quickly (best way to do t
 
 rolldown
 - prod build
-  - minify?
-  - bundle size?
   - switch from timestamps in filename to hash
 
 hide least popular menu items

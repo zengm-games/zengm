@@ -159,6 +159,7 @@ export const rolldownConfig = (
 			sourcemap: true,
 			externalLiveBindings: false,
 			format: "es",
+			minify: true,
 		},
 		transform: {
 			define: {

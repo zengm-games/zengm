@@ -18,14 +18,10 @@ const BLACKLIST = {
 };
 
 const buildFile = async (name: "ui" | "worker", versionNumber: string) => {
-	if (process.env.BUNDLER === "rolldown") {
-		const config = rolldownConfig(name, {
-			nodeEnv: "production",
-			blacklistOptions: BLACKLIST[name],
-			versionNumber,
-		});
-		await build(config);
-	} else {
+	if (process.env.BUNDLER === "rollup") {
+		if (name === "ui") {
+			console.log("Bundler: rollup");
+		}
 		const config = rollupConfig(name, {
 			nodeEnv: "production",
 			blacklistOptions: BLACKLIST[name],
@@ -44,6 +40,16 @@ const buildFile = async (name: "ui" | "worker", versionNumber: string) => {
 		});
 
 		await bundle.close();
+	} else {
+		if (name === "ui") {
+			console.log("Bundler: rolldown");
+		}
+		const config = rolldownConfig(name, {
+			nodeEnv: "production",
+			blacklistOptions: BLACKLIST[name],
+			versionNumber,
+		});
+		await build(config);
 	}
 
 	parentPort!.postMessage("done");

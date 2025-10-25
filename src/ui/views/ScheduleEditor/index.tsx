@@ -864,9 +864,6 @@ const ScheduleEditor = ({
 									} else if (tradeDeadline === 1) {
 										errorMessage =
 											"The trade deadline is disabled. Go to Tools > League Settings if you want to change that.";
-									} else if (allStarGame === -1) {
-										errorMessage =
-											"The All-Star Game happens during the playoffs. Go to Tools > League Settings if you want to change that.";
 									}
 
 									if (errorMessage) {

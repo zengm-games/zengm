@@ -731,10 +731,12 @@ const ScheduleEditor = ({
 				<span className="text-body-secondary">faded text</span>.
 			</p>
 			{!godMode ? (
-				<p>
-					You can only edit the schedule in{" "}
-					<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
-				</p>
+				<div>
+					<span className="alert alert-warning d-inline-block mb-0">
+						You can only edit the schedule in{" "}
+						<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
+					</span>
+				</div>
 			) : (
 				<p className="mb-0">
 					Click anywhere in the table to create/update/delete a game.

@@ -5,10 +5,11 @@ schedule editor
     - updates score bar when saved
   - delete
     - updates score bar when saved
-  - mobile
+  - drag row
   - sticky header
+  - row actions
+  - bottom actions
   - highlight W/L
-  - actions
 - later
   - support export/import and editing in spreadsheet
   - drag and drop to move a game

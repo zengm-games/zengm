@@ -1,3 +1,16 @@
+"are you sure you want to exit without saving" for any complicated forms https://discord.com/channels/290013534023057409/331882115119448065/1431474408815329361
+- implementation
+  - component level - maybe in useEffect unmounting, can we cancel at that point?
+  - settings pages already have an implementation using dirtySettings variable and routeMatched evnt
+  - what do other systems (react router, tanstack router, etc) do?
+  - how does Modal onHide do it? I use confirm in that, for example in PlayerBioInfo.tsx
+- places
+  - manage teams
+  - league settings
+  - global settings
+  - schedule editor
+  - edit teams when making new league
+
 customizable keyboard shortcuts
 - firefox profiles menu is alt+p https://chat.reddit.com/room/!Zyxd2hED8-Mn4j0Jm56-nHOXZCKgujJIUa3pjm3NwMc%3Areddit.com
 - browser extensions can be anything

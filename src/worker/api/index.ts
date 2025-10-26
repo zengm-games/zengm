@@ -4688,6 +4688,49 @@ const upsertCustomizedPlayer = async (
 				}
 			}
 		}
+
+		// If the injury was added in this edit, do some stuff depending on what the previous injury was
+		const editedInjuryType = p.injury.type !== prevPlayer.injury.type;
+		const editedInjuryGames =
+			p.injury.gamesRemaining !== prevPlayer.injury.gamesRemaining;
+		if (editedInjuryType || editedInjuryGames) {
+			let lastInjuriesEntry = p.injuries.at(-1);
+			if (lastInjuriesEntry?.type !== prevPlayer.injury.type) {
+				// If somehow injuries does not contain the previous injury, ignore it
+				lastInjuriesEntry = undefined;
+			}
+
+			// Was the injury type changed, or just the duration of injury?
+			if (editedInjuryType) {
+				// Adjust prevInjuriesEntry, since that old injury no longer applies and it healed prematurely
+				if (lastInjuriesEntry) {
+					lastInjuriesEntry.games -= prevPlayer.injury.gamesRemaining;
+					if (lastInjuriesEntry.games <= 0) {
+						// Injury was edited before any days were simmed
+						p.injuries.pop();
+					}
+				}
+
+				if (p.injury.type !== "Healthy") {
+					p.injuries.push({
+						season: g.get("season"),
+						games: p.injury.gamesRemaining,
+						type: p.injury.type,
+					});
+				}
+			} else {
+				// Only the duration of injury was changed, so adjust lastInjuriesEntry to reflect that
+				if (lastInjuriesEntry) {
+					const extraGames =
+						p.injury.gamesRemaining - prevPlayer.injury.gamesRemaining;
+					lastInjuriesEntry.games += extraGames;
+					if (lastInjuriesEntry.games <= 0) {
+						// Injury was edited before any days were simmed
+						p.injuries.pop();
+					}
+				}
+			}
+		}
 	}
 
 	const jerseyNumber = p.jerseyNumber;

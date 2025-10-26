@@ -1,3 +1,7 @@
+customizable keyboard shortcuts
+- firefox profiles menu is alt+p https://chat.reddit.com/room/!Zyxd2hED8-Mn4j0Jm56-nHOXZCKgujJIUa3pjm3NwMc%3Areddit.com
+- browser extensions can be anything
+
 schedule editor
 - later
   - support export/import and editing in spreadsheet
@@ -7,12 +11,7 @@ schedule editor
     - to a cell with "None" - easy
     - to a cell with another game - swap
 
-on roster continuity page (and maybe others) the "table-info" class in the user team's <th> should override the background color of the "sorting" class but it doesn't
-- could only put "sorting" there if there is no other className, maybe? but that will only work if the other className applies a bg color
-- or have color applied in tr of datatable header, rather than sorting class
-
-when editing an injury, add to the "injuries" array and also delete the last entry there if there is a current injury https://old.reddit.com/r/BasketballGM/comments/1oci96x/why_doesnt_injuries_from_randomizecustom_injury/nkqffwl/?context=3
-- maybe delete only if injury hasn't existed for long yet. like if he's been injured for 99 days with 1 left, don't delete that entry
+on roster continuity page (and maybe others) the "table-info" class in the user team's <th> should override the background color of th
 
 reseed based on standings rather than seed when the conference part of the bracket is exhausted https://discord.com/channels/290013534023057409/1428418791251120240/1428418791251120240
 - only matters for 4+ conferences

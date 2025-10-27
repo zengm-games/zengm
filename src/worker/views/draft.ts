@@ -5,6 +5,7 @@ import { idb } from "../db/index.ts";
 import { g, helpers, local } from "../util/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { minBy } from "../../common/utils.ts";
+import { getDraftTeamsByTid } from "./draftHistory.ts";
 
 const getUserNextPickYear = async () => {
 	const userTids = g.get("userTids");
@@ -245,6 +246,8 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		const userNextPickYear = await getUserNextPickYear();
 
+		const teamsByTid = await getDraftTeamsByTid(g.get("season"));
+
 		return {
 			challengeNoDraftPicks: g.get("challengeNoDraftPicks"),
 			challengeNoRatings: g.get("challengeNoRatings"),
@@ -257,6 +260,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			season: g.get("season"),
 			spectator: g.get("spectator"),
 			stats,
+			teamsByTid,
 			undrafted,
 			userNextPickYear,
 			userPlayers,

@@ -843,7 +843,11 @@ wrong team abbrev various places
   - AbbrevsCache - loads the abbrevs for only specified team/seasons
 - using teamInfoCache from UI is probably wrong too
 - anything using DraftAbbrev without passing in t/originalT is wrong
-  - remove teamInfoCache when done
+  - draftTeamHistory is tricky because any team could be in originalTid
+    - maybe integrate with playersPlus AbbrevsCache so it also pulls in imgURLs when necessary somehow
+    - then remove hacky code setting originalT and t for other uses of DraftAbbrev and just use playersPlus
+  - remove teamInfoCache from DraftAbbrev when done
+  - make tid and originalTid children of t and originalT
 
 button to randomize all contracts as if a new league https://old.reddit.com/r/nba/comments/w8igiw/basketball_gm_is_ready_to_get_you_through_the/ihriglz/?context=3
 - handle contract history

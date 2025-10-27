@@ -38,6 +38,7 @@ const Draft = ({
 	season,
 	spectator,
 	stats,
+	teamsByTid,
 	undrafted,
 	userNextPickYear,
 	userPlayers,
@@ -231,6 +232,8 @@ const Draft = ({
 				{
 					originalTid: p.draft.originalTid,
 					tid: p.draft.tid,
+					originalT: teamsByTid[p.draft.originalTid],
+					t: teamsByTid[p.draft.tid],
 				},
 				teamInfoCache,
 			),

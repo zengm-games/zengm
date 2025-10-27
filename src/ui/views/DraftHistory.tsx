@@ -221,6 +221,7 @@ const DraftHistory = ({
 	season,
 	stats,
 	summaryStat,
+	teamsByTid,
 	userTid,
 }: View<"draftHistory">) => {
 	const noDraft = draftType === "freeAgents";
@@ -309,6 +310,8 @@ const DraftHistory = ({
 					{
 						originalTid: p.draft.originalTid,
 						tid: p.draft.tid,
+						originalT: teamsByTid[p.draft.originalTid],
+						t: teamsByTid[p.draft.tid],
 					},
 					teamInfoCache,
 				),

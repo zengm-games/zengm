@@ -1,3 +1,5 @@
+populate ovrDrop when editing injury and ratings at same time? https://discord.com/channels/290013534023057409/1432096932938907709/1432102253682233346
+
 "are you sure you want to exit without saving" for any complicated forms https://discord.com/channels/290013534023057409/331882115119448065/1431474408815329361
 - implementation
   - component level - maybe in useEffect unmounting, can we cancel at that point?
@@ -838,12 +840,7 @@ wrong team abbrev various places
 - functions for helping
   - loadAbbrevs in gameLog - gets all abbrevs by tid for one season
   - getTeamInfoBySeason - gets all info for one team/season
-  - fixRatingsStatsAbbrevs - updates abbrevs in player object (ratings/stats)
-    - can be replaced by more AbbrevsCache usage, but the logic for which ratings/stats rows is kind of messy and fixRatingsStatsAbbrevs hack is already in place, so whatever
-      - would it be bad to refactor everything to be async, so we can await AbbrevsCache.get and load abbrevs as needed? need to benchmark
   - AbbrevsCache - loads the abbrevs for only specified team/seasons
-- any abbrev returned in stats or ratings from playersPlus is wrong
-  - fixRatingsStatsAbbrevs can hackily fix, and see above about AbbrevsCache for long term fix
 - using teamInfoCache from UI is probably wrong too
 - anything using DraftAbbrev without passing in t/originalT is wrong
 

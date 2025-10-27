@@ -27,35 +27,6 @@ import type {
 } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
 
-const fixRatingsStatsAbbrevs = async (p: {
-	ratings?: {
-		abbrev: string;
-		season: number;
-		tid?: number;
-	}[];
-	stats?: {
-		abbrev: string;
-		season: number;
-		tid?: number;
-	}[];
-}) => {
-	const keys = ["ratings", "stats"] as const;
-
-	for (const key of keys) {
-		const rows = p[key];
-		if (rows) {
-			for (const row of rows) {
-				if (row.tid !== undefined) {
-					const info = await getTeamInfoBySeason(row.tid, row.season);
-					if (info) {
-						row.abbrev = info.abbrev;
-					}
-				}
-			}
-		}
-	}
-};
-
 export const getPlayerProfileStats = () => {
 	const stats = [];
 	for (const info of Object.values(PLAYER_STATS_TABLES)) {
@@ -182,8 +153,6 @@ export const getPlayer = async (
 	if (!p) {
 		return;
 	}
-
-	await fixRatingsStatsAbbrevs(p);
 
 	// Filter out rows with no games played
 	p.stats = p.stats.filter((row) => row.gp! > 0);

@@ -51,22 +51,33 @@ const getLatestTransaction = (
 };
 
 class AbbrevsCache {
-	// First key is tid, second is season, value is undefined (not loaded, either because tid/season not found or because load not yet called) or string (loaded abbrev)
+	// First key is season, second is tid, value is undefined (not loaded, either because tid/season not found or because load not yet called) or string (loaded abbrev)
 	private data = new Map<number, Map<number, string | undefined>>();
 	private state: "init" | "loading" | "loaded" = "init";
 
-	add(tid: number, season: number) {
+	add(season: number, tid: number) {
 		if (this.state !== "init") {
 			throw new Error("Cannot call add after load");
 		}
 
-		let abbrevsBySeason = this.data.get(tid);
-		if (!abbrevsBySeason) {
-			abbrevsBySeason = new Map();
-			this.data.set(tid, abbrevsBySeason);
+		let abbrevsByTid = this.data.get(season);
+		if (!abbrevsByTid) {
+			abbrevsByTid = new Map();
+			this.data.set(season, abbrevsByTid);
 		}
 
-		abbrevsBySeason.set(season, undefined);
+		abbrevsByTid.set(tid, undefined);
+	}
+
+	private saveAbbrev(
+		abbrevsByTid: Map<number, string | undefined>,
+		tid: number,
+		abbrev: string | undefined,
+	) {
+		abbrevsByTid.set(
+			tid,
+			abbrev ?? g.get("teamInfoCache")[tid]?.abbrev ?? "???",
+		);
 	}
 
 	async load() {
@@ -75,28 +86,46 @@ class AbbrevsCache {
 		}
 		this.state = "loading";
 
-		for (const [tid, abbrevsBySeason] of this.data) {
-			for (const season of abbrevsBySeason.keys()) {
-				const row = await idb.getCopy.teamSeasons({ season, tid });
-				abbrevsBySeason.set(
-					season,
-					row?.abbrev ?? g.get("teamInfoCache")[tid]?.abbrev,
-				);
+		for (const [season, abbrevsByTid] of this.data) {
+			// When should we fetch all for season vs not? I'm not sure what the ideal value is, I just guessed
+			const bulkFetch = abbrevsByTid.size >= 6;
+
+			if (bulkFetch) {
+				const rows = await idb.getCopies.teamSeasons({ season });
+				for (const row of rows) {
+					this.saveAbbrev(abbrevsByTid, row.tid, row.abbrev);
+				}
+			}
+
+			// This handles when abbrevsByTid.size < 3, or when teamSeason is missing for one of the requested tids
+			for (const [tid, existingAbbrev] of abbrevsByTid) {
+				if (bulkFetch && existingAbbrev === undefined) {
+					// If teamSeason existed, it would have been found above
+					this.saveAbbrev(abbrevsByTid, tid, undefined);
+				} else {
+					const row = await idb.getCopy.teamSeasons({ season, tid });
+					this.saveAbbrev(abbrevsByTid, tid, row?.abbrev);
+				}
 			}
 		}
 
 		this.state = "loaded";
 	}
 
-	get(tid: number, season: number) {
+	get(season: number, tid: number) {
 		if (this.state !== "loaded") {
 			throw new Error("Cannot call get before load completes");
 		}
 
-		const abbrev = this.data.get(tid)?.get(season);
+		if (tid < 0) {
+			return helpers.getAbbrev(tid);
+		}
 
-		// ! because in this.load it sets all values to a string, and that is guaranteed to have run if this.state is "loaded", and nothing else can edit this.data at that point
-		return abbrev!;
+		const abbrev = this.data.get(season)?.get(tid);
+		if (abbrev === undefined) {
+			throw new Error("Invalid season/tid");
+		}
+		return abbrev;
 	}
 }
 
@@ -160,9 +189,9 @@ const processAttrs = (
 
 			// Inject abbrevs
 			output.draft.abbrev =
-				abbrevsCache?.get(output.draft.tid, output.draft.year) ?? "???";
+				abbrevsCache?.get(output.draft.year, output.draft.tid) ?? "???";
 			output.draft.originalAbbrev =
-				abbrevsCache?.get(output.draft.originalTid, output.draft.year) ?? "???";
+				abbrevsCache?.get(output.draft.year, output.draft.originalTid) ?? "???";
 		} else if (attr === "draftPosition") {
 			// Estimate pick number from draft round and pick. Would be better to store the real value
 			if (p.draft.round > 0 && p.draft.pick > 0) {
@@ -263,7 +292,7 @@ const processAttrs = (
 					output.latestTransaction = `Free agent signing in ${transaction.season}`;
 				} else if (transaction.type === "trade") {
 					const abbrev =
-						abbrevsCache?.get(transaction.fromTid, transaction.season) ?? "???";
+						abbrevsCache?.get(transaction.season, transaction.fromTid) ?? "???";
 					const url =
 						transaction.eid !== undefined
 							? helpers.leagueUrl(["trade_summary", transaction.eid])
@@ -275,7 +304,7 @@ const processAttrs = (
 					output.latestTransaction = `Imported in ${transaction.season}`;
 				} else if (transaction.type === "sisyphus") {
 					const abbrev =
-						abbrevsCache?.get(transaction.fromTid, transaction.season) ?? "???";
+						abbrevsCache?.get(transaction.season, transaction.fromTid) ?? "???";
 					const url = helpers.leagueUrl(["roster", abbrev, transaction.season]);
 					output.latestTransaction = `Sisyphus Mode with <a href="${url}">${abbrev} in ${transaction.season}</a>`;
 				}
@@ -322,6 +351,7 @@ const processRatings = (
 		season,
 		tid,
 	}: PlayersPlusOptionsRequired,
+	abbrevsCache: AbbrevsCache | undefined,
 ) => {
 	let playerRatings = playerRatingsInput;
 
@@ -417,17 +447,21 @@ const processRatings = (
 						tidTemp = ps.tid;
 					}
 				}
+
+				let tidTemp2;
 				if (
 					pr.season === g.get("season") &&
 					tidTemp === undefined &&
 					p.tid >= 0
 				) {
-					tidTemp = p.tid;
+					tidTemp2 = p.tid;
 				}
 
 				if (attr === "abbrev") {
 					if (tidTemp !== undefined) {
-						row.abbrev = helpers.getAbbrev(tidTemp);
+						row.abbrev = abbrevsCache?.get(pr.season, tidTemp) ?? "???";
+					} else if (tidTemp2 !== undefined) {
+						row.abbrev = helpers.getAbbrev(tidTemp2);
 					} else {
 						row.abbrev = "";
 					}
@@ -847,6 +881,7 @@ const processPlayerStats = (
 	statType: PlayerStatType,
 	keepWithNoStats: boolean,
 	season: number | "career" | undefined, // undefined means showNoStats was used with career totals, but this is an individual stat season so idk
+	abbrevsCache: AbbrevsCache | undefined,
 	statSumsExtra?: StatSumsExtra,
 ) => {
 	const output = processPlayerStats2(
@@ -870,6 +905,8 @@ const processPlayerStats = (
 			} else {
 				output.abbrev = "???";
 			}
+		} else if (typeof season === "number") {
+			output.abbrev = abbrevsCache?.get(season, statSums.tid) ?? "???";
 		} else {
 			output.abbrev = helpers.getAbbrev(statSums.tid);
 		}
@@ -934,6 +971,7 @@ const processStats = (
 		stats,
 	}: PlayersPlusOptionsRequired,
 	keepWithNoStats: boolean,
+	abbrevsCache: AbbrevsCache | undefined,
 ) => {
 	// Only season(s) and team in question
 	let playerStats = getPlayerStats(
@@ -992,6 +1030,7 @@ const processStats = (
 			statType,
 			keepWithNoStats,
 			ps.season ?? season,
+			abbrevsCache,
 		);
 	});
 
@@ -1090,6 +1129,7 @@ const processStats = (
 				statType,
 				keepWithNoStats,
 				"career",
+				undefined,
 				statSumsExtra.regularSeason,
 			);
 		}
@@ -1102,6 +1142,7 @@ const processStats = (
 				statType,
 				keepWithNoStats,
 				"career",
+				undefined,
 				statSumsExtra.playoffs,
 			);
 		}
@@ -1114,6 +1155,7 @@ const processStats = (
 				statType,
 				keepWithNoStats,
 				"career",
+				undefined,
 				statSumsExtra.combined,
 			);
 		}
@@ -1172,7 +1214,14 @@ const processPlayer = (
 		(showNoStats && (season === undefined || season > p.draft.year));
 
 	if (options.stats.length > 0 || keepWithNoStats) {
-		processStats(output, p, playerStats, options, keepWithNoStats);
+		processStats(
+			output,
+			p,
+			playerStats,
+			options,
+			keepWithNoStats,
+			abbrevsCache,
+		);
 
 		// Only add a player if filterStats finds something (either stats that season, or options overriding that check)
 		if (output.stats === undefined && !keepWithNoStats) {
@@ -1182,7 +1231,7 @@ const processPlayer = (
 
 	// processRatings must be after processStats for abbrev hack
 	if (ratings.length > 0) {
-		processRatings(output, p, playerRatings, options);
+		processRatings(output, p, playerRatings, options, abbrevsCache);
 
 		// This should be mostly redundant with hasRatingsSeason above
 		// output.ratings.length check is for seasonRange where all seasons are filtered out
@@ -1279,15 +1328,17 @@ const getCopies = async (
 	};
 
 	// Preload any abbrevs we need for past seasons, so we don't need to make all functions async and do it on demand
+	// Why no need to check ratings? Since tidTemp comes from stats, if stats row is missing, we can't find ratings abbrev for that season anyway, except current season which is special cased to use current abbrev.
 	let abbrevsCache: AbbrevsCache | undefined;
 	const hasDraft = attrs.includes("draft");
 	const hasLatestTransaction = attrs.includes("latestTransaction");
-	if (hasDraft || hasLatestTransaction) {
+	const hasStats = stats.includes("abbrev");
+	if (hasDraft || hasLatestTransaction || hasStats) {
 		abbrevsCache = new AbbrevsCache();
 		for (const p of players) {
 			if (hasDraft) {
 				for (const tid of [p.draft.tid, p.draft.originalTid]) {
-					abbrevsCache.add(tid, p.draft.year);
+					abbrevsCache.add(p.draft.year, tid);
 				}
 			}
 
@@ -1297,7 +1348,19 @@ const getCopies = async (
 					transaction &&
 					(transaction.type === "trade" || transaction.type === "sisyphus")
 				) {
-					abbrevsCache.add(transaction.fromTid, transaction.season);
+					abbrevsCache.add(transaction.season, transaction.fromTid);
+				}
+			}
+
+			if (hasStats) {
+				for (const row of p.stats) {
+					if (
+						(season === undefined || season === row.season) &&
+						(seasonRange === undefined ||
+							(row.season >= seasonRange[0] && row.season <= seasonRange[1]))
+					) {
+						abbrevsCache.add(row.season, row.tid);
+					}
 				}
 			}
 		}

@@ -70,7 +70,7 @@ export default tseslint.config(
 			"unicorn/numeric-separators-style": "off",
 			"unicorn/prefer-string-replace-all": "off", // replaceAll fails in some cases, idk why, but shows up in error logs and someone complained
 			"unicorn/prefer-ternary": "off",
-			"unicorn/prefer-top-level-await": "off", // Chrome 89
+			"unicorn/prefer-top-level-await": "off", // Chrome 89, Safari ?
 
 			// Nice for catching if(0){} but too many false positives for object checks that can't be disabled
 			/*"@typescript-eslint/strict-boolean-expressions": ["error", {

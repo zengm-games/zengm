@@ -11,8 +11,8 @@ test("start a negotiation with a free agent", async () => {
 	await givePlayerMinContract(pid);
 	const error = await contractNegotiation.create(pid, false);
 	assert.strictEqual(
-		typeof error,
-		"undefined",
+		error,
+		undefined,
 		`Unexpected error message from contractNegotiation.create: "${error}"`,
 	);
 	const negotiations = await idb.cache.negotiations.getAll();
@@ -39,8 +39,8 @@ test("only allow one concurrent negotiation if resigning is false", async () => 
 	await givePlayerMinContract(pid2);
 	let error = await contractNegotiation.create(pid1, false);
 	assert.strictEqual(
-		typeof error,
-		"undefined",
+		error,
+		undefined,
 		`Unexpected error message from contractNegotiation.create: "${error}"`,
 	);
 	let negotiations = await idb.cache.negotiations.getAll();
@@ -48,8 +48,8 @@ test("only allow one concurrent negotiation if resigning is false", async () => 
 	assert.strictEqual(negotiations[0]!.pid, pid1);
 	error = await contractNegotiation.create(pid2, false);
 	assert.strictEqual(
-		typeof error,
-		"undefined",
+		error,
+		undefined,
 		`Unexpected error message from contractNegotiation.create: "${error}"`,
 	);
 	negotiations = await idb.cache.negotiations.getAll();
@@ -64,8 +64,8 @@ test("allow multiple concurrent negotiations if resigning is true", async () => 
 	await givePlayerMinContract(pid2);
 	let error = await contractNegotiation.create(pid1, true);
 	assert.strictEqual(
-		typeof error,
-		"undefined",
+		error,
+		undefined,
 		`Unexpected error message from contractNegotiation.create: "${error}"`,
 	);
 	let negotiations = await idb.cache.negotiations.getAll();
@@ -73,8 +73,8 @@ test("allow multiple concurrent negotiations if resigning is true", async () => 
 	assert.strictEqual(negotiations[0]!.pid, pid1);
 	error = await contractNegotiation.create(pid2, true);
 	assert.strictEqual(
-		typeof error,
-		"undefined",
+		error,
+		undefined,
 		`Unexpected error message from contractNegotiation.create: "${error}"`,
 	);
 	negotiations = await idb.cache.negotiations.getAll();

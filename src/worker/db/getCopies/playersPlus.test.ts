@@ -44,7 +44,7 @@ test("return requested info if tid/season match", async () => {
 	const pf = await idb.getCopy.playersPlus(p, {
 		attrs: ["tid", "awards"],
 		ratings: ["season", "ovr"],
-		stats: ["season", "abbrev", "fg", "fgp", "per"],
+		stats: ["season", "tid", "fg", "fgp", "per"],
 		tid: 4,
 		season: 2012,
 	});
@@ -59,7 +59,7 @@ test("return requested info if tid/season match", async () => {
 	assert.strictEqual(typeof pf.ratings.ovr, "number");
 	assert.strictEqual(Object.keys(pf.ratings).length, 2);
 	assert.strictEqual(pf.stats.season, 2012);
-	assert.strictEqual(pf.stats.abbrev, "CIN");
+	assert.strictEqual(pf.stats.tid, 4);
 	assert.strictEqual(typeof pf.stats.fg, "number");
 	assert.strictEqual(typeof pf.stats.fgp, "number");
 	assert.strictEqual(typeof pf.stats.per, "number");
@@ -72,7 +72,7 @@ test("return requested info if tid/season match for an array of player objects",
 	const pf = await idb.getCopies.playersPlus([p, p], {
 		attrs: ["tid", "awards"],
 		ratings: ["season", "ovr"],
-		stats: ["season", "abbrev", "fg", "fgp", "per"],
+		stats: ["season", "tid", "fg", "fgp", "per"],
 		tid: 4,
 		season: 2012,
 	});
@@ -84,7 +84,7 @@ test("return requested info if tid/season match for an array of player objects",
 		assert.strictEqual(typeof pf[i].ratings.ovr, "number");
 		assert.strictEqual(Object.keys(pf[i].ratings).length, 2);
 		assert.strictEqual(pf[i].stats.season, 2012);
-		assert.strictEqual(pf[i].stats.abbrev, "CIN");
+		assert.strictEqual(pf[i].stats.tid, 4);
 		assert.strictEqual(typeof pf[i].stats.fg, "number");
 		assert.strictEqual(typeof pf[i].stats.fgp, "number");
 		assert.strictEqual(typeof pf[i].stats.per, "number");
@@ -97,7 +97,7 @@ test("return requested info if tid/season match for an array of player objects",
 test("return requested info if tid/season match, even when no attrs requested", async () => {
 	const pf = await idb.getCopy.playersPlus(p, {
 		ratings: ["season", "ovr"],
-		stats: ["season", "abbrev", "fg", "fgp", "per"],
+		stats: ["season", "tid", "fg", "fgp", "per"],
 		tid: 4,
 		season: 2012,
 	});
@@ -110,7 +110,7 @@ test("return requested info if tid/season match, even when no attrs requested", 
 	assert.strictEqual(typeof pf.ratings.ovr, "number");
 	assert.strictEqual(Object.keys(pf.ratings).length, 2);
 	assert.strictEqual(pf.stats.season, 2012);
-	assert.strictEqual(pf.stats.abbrev, "CIN");
+	assert.strictEqual(pf.stats.tid, 4);
 	assert.strictEqual(typeof pf.stats.fg, "number");
 	assert.strictEqual(typeof pf.stats.fgp, "number");
 	assert.strictEqual(typeof pf.stats.per, "number");
@@ -122,7 +122,7 @@ test("return requested info if tid/season match, even when no attrs requested", 
 test("return requested info if tid/season match, even when no ratings requested", async () => {
 	const pf = await idb.getCopy.playersPlus(p, {
 		attrs: ["tid", "awards"],
-		stats: ["season", "abbrev", "fg", "fgp", "per"],
+		stats: ["season", "tid", "fg", "fgp", "per"],
 		tid: 4,
 		season: 2012,
 	});
@@ -135,7 +135,7 @@ test("return requested info if tid/season match, even when no ratings requested"
 	assert.strictEqual(pf.awards.length, 0);
 	assert(!Object.hasOwn(pf, "ratings"));
 	assert.strictEqual(pf.stats.season, 2012);
-	assert.strictEqual(pf.stats.abbrev, "CIN");
+	assert.strictEqual(pf.stats.tid, 4);
 	assert.strictEqual(typeof pf.stats.fg, "number");
 	assert.strictEqual(typeof pf.stats.fgp, "number");
 	assert.strictEqual(typeof pf.stats.per, "number");
@@ -170,11 +170,11 @@ test("return undefined if tid does not match any on record", async () => {
 	const pf = await idb.getCopy.playersPlus(p, {
 		attrs: ["tid", "awards"],
 		ratings: ["season", "ovr"],
-		stats: ["season", "abbrev", "fg", "fgp", "per"],
+		stats: ["season", "tid", "fg", "fgp", "per"],
 		tid: 5,
 		season: 2012,
 	});
-	assert.strictEqual(typeof pf, "undefined");
+	assert.strictEqual(pf, undefined);
 });
 
 test("return undefined if season does not match any on record", async () => {
@@ -185,7 +185,7 @@ test("return undefined if season does not match any on record", async () => {
 		tid: 4,
 		season: 2014,
 	});
-	assert.strictEqual(typeof pf, "undefined");
+	assert.strictEqual(pf, undefined);
 });
 test('return season totals is options.statType is "totals", and per-game averages otherwise', async () => {
 	let pf = await idb.getCopy.playersPlus(p, {
@@ -271,7 +271,7 @@ test("not return undefined with options.showRookies if the player was drafted th
 		season: 2011,
 		showRookies: true,
 	});
-	assert.strictEqual(typeof pf, "undefined");
+	assert.strictEqual(pf, undefined);
 });
 
 test("fuzz ratings if options.fuzz is true", async () => {
@@ -326,7 +326,7 @@ test("return stats from previous season if options.oldStats is true and current 
 		season: 2014,
 		oldStats: false,
 	});
-	assert.strictEqual(typeof pf, "undefined");
+	assert.strictEqual(pf, undefined);
 	g.setWithoutSavingToDB("season", 2014);
 	pf = await idb.getCopy.playersPlus(p, {
 		stats: ["gp", "fg"],
@@ -388,7 +388,7 @@ test("return stats and ratings from all seasons and teams if no season or team i
 	const pf = await idb.getCopy.playersPlus(p, {
 		attrs: ["tid", "awards"],
 		ratings: ["season", "ovr"],
-		stats: ["season", "abbrev", "fg"],
+		stats: ["season", "tid", "fg"],
 		statType: "totals",
 	});
 
@@ -405,10 +405,10 @@ test("return stats and ratings from all seasons and teams if no season or team i
 	assert.strictEqual(pf.ratings[2].season, 2013);
 	assert.strictEqual(typeof pf.ratings[2].ovr, "number");
 	assert.strictEqual(pf.stats[0].season, 2012);
-	assert.strictEqual(pf.stats[0].abbrev, "CIN");
+	assert.strictEqual(pf.stats[0].tid, 4);
 	assert.strictEqual(pf.stats[0].fg, 20);
 	assert.strictEqual(pf.stats[1].season, 2013);
-	assert.strictEqual(pf.stats[1].abbrev, "ATL");
+	assert.strictEqual(pf.stats[1].tid, 0);
 	assert.strictEqual(pf.stats[1].fg, 56);
 	assert.strictEqual(pf.careerStats.fg, 76);
 	assert(!Object.hasOwn(pf, "careerStatsPlayoffs"));
@@ -418,7 +418,7 @@ test("return stats and ratings from all seasons with a specific team if no seaso
 	const pf = await idb.getCopy.playersPlus(p, {
 		attrs: ["tid", "awards"],
 		ratings: ["season", "ovr"],
-		stats: ["season", "abbrev", "fg"],
+		stats: ["season", "tid", "fg"],
 		tid: 4,
 		statType: "totals",
 	});
@@ -433,7 +433,7 @@ test("return stats and ratings from all seasons with a specific team if no seaso
 	assert.strictEqual(typeof pf.ratings[0].ovr, "number");
 	assert.strictEqual(pf.ratings.length, 1);
 	assert.strictEqual(pf.stats[0].season, 2012);
-	assert.strictEqual(pf.stats[0].abbrev, "CIN");
+	assert.strictEqual(pf.stats[0].tid, 4);
 	assert.strictEqual(pf.stats[0].fg, 20);
 	assert.strictEqual(pf.stats.length, 1);
 	assert.strictEqual(pf.careerStats.fg, 20);
@@ -488,8 +488,8 @@ test("mergeStats totAndTeams results ", async () => {
 
 	const pf = await idb.getCopy.playersPlus(p2, {
 		attrs: ["tid"],
-		stats: ["season", "fg", "tid", "abbrev"],
-		ratings: ["season", "abbrev"],
+		stats: ["season", "fg", "tid"],
+		ratings: ["season", "tid"],
 		mergeStats: "totAndTeams",
 	});
 
@@ -522,19 +522,19 @@ test("mergeStats totAndTeams results ", async () => {
 	assert.deepStrictEqual(pf.ratings, [
 		{
 			season: 2011,
-			abbrev: "",
+			tid: undefined,
 		},
 		{
 			season: 2012,
-			abbrev: "POR",
+			tid: 20,
 		},
 		{
 			season: 2013,
-			abbrev: "ATL",
+			tid: 0,
 		},
 		{
 			season: 2014,
-			abbrev: "",
+			tid: undefined,
 		},
 	]);
 });

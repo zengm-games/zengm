@@ -1,10 +1,5 @@
 import { Fragment, useState } from "react";
-import {
-	DataTable,
-	DraftAbbrev,
-	SkillsBlock,
-	MoreLinks,
-} from "../components/index.tsx";
+import { DataTable, SkillsBlock, MoreLinks } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import {
 	getCol,
@@ -20,6 +15,7 @@ import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { orderBy } from "../../common/utils.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { wrappedDraftAbbrev } from "../components/DraftAbbrev.tsx";
 
 const Summary = ({
 	players,
@@ -309,19 +305,13 @@ const DraftHistory = ({
 					lastName: p.lastName,
 				}),
 				p.pos,
-				{
-					searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${
-						teamInfoCache[p.draft.originalTid]?.abbrev
-					}`,
-					sortValue: `${p.draft.tid} ${p.draft.originalTid}`,
-					value: (
-						<DraftAbbrev
-							originalTid={p.draft.originalTid}
-							tid={p.draft.tid}
-							season={season}
-						/>
-					),
-				},
+				wrappedDraftAbbrev(
+					{
+						originalTid: p.draft.originalTid,
+						tid: p.draft.tid,
+					},
+					teamInfoCache,
+				),
 				p.draft.age,
 				showRatings ? p.draft.ovr : null,
 				showRatings ? p.draft.pot : null,

@@ -11,7 +11,6 @@ import {
 } from "../../util/index.ts";
 import {
 	DataTable,
-	DraftAbbrev,
 	MoreLinks,
 	RosterComposition,
 } from "../../components/index.tsx";
@@ -25,6 +24,7 @@ import type { DataTableRow } from "../../components/DataTable/index.tsx";
 import { arrayMove } from "@dnd-kit/sortable";
 import { groupByUnique } from "../../../common/utils.ts";
 import { StickyDraftInfo } from "./StickyDraftInfo.tsx";
+import { wrappedDraftAbbrev } from "../../components/DraftAbbrev.tsx";
 
 const Draft = ({
 	challengeNoDraftPicks,
@@ -227,15 +227,13 @@ const Draft = ({
 	const rowsDrafted: DataTableRow[] = draftedSorted.map((p, i) => {
 		const data = [
 			`${p.draft.round}-${p.draft.pick}`,
-			{
-				searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${
-					teamInfoCache[p.draft.originalTid]?.abbrev
-				}`,
-				sortValue: `${p.draft.tid} ${p.draft.originalTid}`,
-				value: (
-					<DraftAbbrev originalTid={p.draft.originalTid} tid={p.draft.tid} />
-				),
-			},
+			wrappedDraftAbbrev(
+				{
+					originalTid: p.draft.originalTid,
+					tid: p.draft.tid,
+				},
+				teamInfoCache,
+			),
 			p.pid >= 0 ? (
 				wrappedPlayerNameLabels({
 					pid: p.pid,

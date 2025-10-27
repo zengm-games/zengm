@@ -1,3 +1,4 @@
+import type { LocalStateUI } from "../../common/types.ts";
 import { helpers, useLocal } from "../util/index.ts";
 import TeamLogoInline from "./TeamLogoInline.tsx";
 
@@ -7,8 +8,17 @@ type TeamOverride = {
 	imgURLSmall?: string;
 };
 
-// Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
 // Supply t and originalT if you want historical abbrevs/logos to be accurate, otherwise current values will be used.
+type Props = {
+	originalT?: TeamOverride;
+	originalTid: number;
+	t?: TeamOverride;
+	tid: number;
+	season?: number;
+	showLogos?: boolean;
+};
+
+// Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
 const DraftAbbrev = ({
 	originalT: originalTInput,
 	originalTid,
@@ -16,14 +26,7 @@ const DraftAbbrev = ({
 	tid,
 	season,
 	showLogos,
-}: {
-	originalT?: TeamOverride;
-	originalTid: number;
-	t?: TeamOverride;
-	tid: number;
-	season?: number;
-	showLogos?: boolean;
-}) => {
+}: Props) => {
 	const teamInfoCache = useLocal((state) => state.teamInfoCache);
 
 	const t = tInput ?? teamInfoCache[tid];
@@ -69,6 +72,23 @@ const DraftAbbrev = ({
 			) : null}
 		</div>
 	);
+};
+
+export const wrappedDraftAbbrev = (
+	props: Props,
+	teamInfoCache: LocalStateUI["teamInfoCache"],
+) => {
+	const { tid, originalTid } = props;
+
+	const searchSortValue = `${teamInfoCache[tid]?.abbrev} ${
+		teamInfoCache[originalTid]?.abbrev
+	}`;
+
+	return {
+		searchValue: searchSortValue,
+		sortValue: searchSortValue,
+		value: <DraftAbbrev {...props} />,
+	};
 };
 
 export default DraftAbbrev;

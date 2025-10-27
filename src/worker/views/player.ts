@@ -28,11 +28,6 @@ import type {
 import { orderBy } from "../../common/utils.ts";
 
 const fixRatingsStatsAbbrevs = async (p: {
-	draft?: {
-		abbrev: string;
-		tid: number;
-		year: number;
-	};
 	ratings?: {
 		abbrev: string;
 		season: number;
@@ -57,13 +52,6 @@ const fixRatingsStatsAbbrevs = async (p: {
 					}
 				}
 			}
-		}
-	}
-
-	if (p.draft) {
-		const info = await getTeamInfoBySeason(p.draft.tid, p.draft.year);
-		if (info) {
-			p.draft.abbrev = info.abbrev;
 		}
 	}
 };

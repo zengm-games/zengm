@@ -12,6 +12,7 @@ import type {
 	PlayersPlusOptions,
 } from "../../../common/types.ts";
 import type { StatSumsExtra } from "../../../common/processPlayerStats.basketball.ts";
+import { idb } from "../index.ts";
 
 type PlayersPlusOptionsRequired = Required<
 	Omit<PlayersPlusOptions, "season" | "seasonRange" | "tid">
@@ -20,6 +21,84 @@ type PlayersPlusOptionsRequired = Required<
 	seasonRange?: [number, number];
 	tid?: number;
 };
+
+const getLatestTransaction = (
+	transactions: Player["transactions"],
+	season: number | undefined,
+	tid: number | undefined,
+) => {
+	if (transactions && transactions.length > 0) {
+		if (season === undefined || season >= g.get("season")) {
+			return transactions.at(-1);
+		} else {
+			// Iterate over transactions backwards, find most recent one that was before the supplied season
+			for (let i = transactions.length - 1; i >= 0; i--) {
+				const currentTransaction = transactions[i]!;
+				if (tid !== undefined && currentTransaction.tid !== tid) {
+					continue;
+				}
+
+				if (
+					currentTransaction.season < season ||
+					(currentTransaction.season === season &&
+						currentTransaction.phase <= PHASE.PLAYOFFS)
+				) {
+					return transactions[i];
+				}
+			}
+		}
+	}
+};
+
+class AbbrevsCache {
+	// First key is tid, second is season, value is undefined (not loaded, either because tid/season not found or because load not yet called) or string (loaded abbrev)
+	private data = new Map<number, Map<number, string | undefined>>();
+	private state: "init" | "loading" | "loaded" = "init";
+
+	add(tid: number, season: number) {
+		if (this.state !== "init") {
+			throw new Error("Cannot call add after load");
+		}
+
+		let abbrevsBySeason = this.data.get(tid);
+		if (!abbrevsBySeason) {
+			abbrevsBySeason = new Map();
+			this.data.set(tid, abbrevsBySeason);
+		}
+
+		abbrevsBySeason.set(season, undefined);
+	}
+
+	async load() {
+		if (this.state !== "init") {
+			throw new Error("Cannot call load multiple times");
+		}
+		this.state = "loading";
+
+		for (const [tid, abbrevsBySeason] of this.data) {
+			for (const season of abbrevsBySeason.keys()) {
+				const row = await idb.getCopy.teamSeasons({ season, tid });
+				abbrevsBySeason.set(
+					season,
+					row?.abbrev ?? g.get("teamInfoCache")[tid]?.abbrev,
+				);
+			}
+		}
+
+		this.state = "loaded";
+	}
+
+	get(tid: number, season: number) {
+		if (this.state !== "loaded") {
+			throw new Error("Cannot call get before load completes");
+		}
+
+		const abbrev = this.data.get(tid)?.get(season);
+
+		// ! because in this.load it sets all values to a string, and that is guaranteed to have run if this.state is "loaded", and nothing else can edit this.data at that point
+		return abbrev!;
+	}
+}
 
 const processAttrs = (
 	output: PlayerFiltered,
@@ -32,6 +111,7 @@ const processAttrs = (
 		seasonRange,
 		tid,
 	}: PlayersPlusOptionsRequired,
+	abbrevsCache: AbbrevsCache | undefined,
 ) => {
 	const getSalary = () => {
 		let total = 0;
@@ -79,9 +159,10 @@ const processAttrs = (
 			}
 
 			// Inject abbrevs
-			output.draft.abbrev = g.get("teamInfoCache")[output.draft.tid]?.abbrev;
+			output.draft.abbrev =
+				abbrevsCache?.get(output.draft.tid, output.draft.year) ?? "???";
 			output.draft.originalAbbrev =
-				g.get("teamInfoCache")[output.draft.originalTid]?.abbrev;
+				abbrevsCache?.get(output.draft.originalTid, output.draft.year) ?? "???";
 		} else if (attr === "draftPosition") {
 			// Estimate pick number from draft round and pick. Would be better to store the real value
 			if (p.draft.round > 0 && p.draft.pick > 0) {
@@ -161,29 +242,7 @@ const processAttrs = (
 						(a.season >= seasonRange[0] && a.season <= seasonRange[1])),
 			).length;
 		} else if (attr === "latestTransaction") {
-			let transaction;
-			if (p.transactions && p.transactions.length > 0) {
-				if (season === undefined || season >= g.get("season")) {
-					transaction = p.transactions.at(-1);
-				} else {
-					// Iterate over transactions backwards, find most recent one that was before the supplied season
-					for (let i = p.transactions.length - 1; i >= 0; i--) {
-						const currentTransaction = p.transactions[i]!;
-						if (tid !== undefined && currentTransaction.tid !== tid) {
-							continue;
-						}
-
-						if (
-							currentTransaction.season < season ||
-							(currentTransaction.season === season &&
-								currentTransaction.phase <= PHASE.PLAYOFFS)
-						) {
-							transaction = p.transactions[i];
-							break;
-						}
-					}
-				}
-			}
+			const transaction = getLatestTransaction(p.transactions, season, tid);
 
 			if (transaction) {
 				if (transaction.type === "draft") {
@@ -203,7 +262,8 @@ const processAttrs = (
 				} else if (transaction.type === "freeAgent") {
 					output.latestTransaction = `Free agent signing in ${transaction.season}`;
 				} else if (transaction.type === "trade") {
-					const abbrev = g.get("teamInfoCache")[transaction.fromTid]?.abbrev;
+					const abbrev =
+						abbrevsCache?.get(transaction.fromTid, transaction.season) ?? "???";
 					const url =
 						transaction.eid !== undefined
 							? helpers.leagueUrl(["trade_summary", transaction.eid])
@@ -214,7 +274,8 @@ const processAttrs = (
 				} else if (transaction.type === "import") {
 					output.latestTransaction = `Imported in ${transaction.season}`;
 				} else if (transaction.type === "sisyphus") {
-					const abbrev = g.get("teamInfoCache")[transaction.fromTid]?.abbrev;
+					const abbrev =
+						abbrevsCache?.get(transaction.fromTid, transaction.season) ?? "???";
 					const url = helpers.leagueUrl(["roster", abbrev, transaction.season]);
 					output.latestTransaction = `Sisyphus Mode with <a href="${url}">${abbrev} in ${transaction.season}</a>`;
 				}
@@ -1059,7 +1120,11 @@ const processStats = (
 	}
 };
 
-const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
+const processPlayer = (
+	p: Player,
+	options: PlayersPlusOptionsRequired,
+	abbrevsCache: AbbrevsCache | undefined,
+) => {
 	const {
 		attrs,
 		ratings,
@@ -1127,7 +1192,7 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
 	}
 
 	if (attrs.length > 0) {
-		processAttrs(output, p, options);
+		processAttrs(output, p, options, abbrevsCache);
 	}
 
 	return output;
@@ -1213,8 +1278,35 @@ const getCopies = async (
 		mergeStats,
 	};
 
+	// Preload any abbrevs we need for past seasons, so we don't need to make all functions async and do it on demand
+	let abbrevsCache: AbbrevsCache | undefined;
+	const hasDraft = attrs.includes("draft");
+	const hasLatestTransaction = attrs.includes("latestTransaction");
+	if (hasDraft || hasLatestTransaction) {
+		abbrevsCache = new AbbrevsCache();
+		for (const p of players) {
+			if (hasDraft) {
+				for (const tid of [p.draft.tid, p.draft.originalTid]) {
+					abbrevsCache.add(tid, p.draft.year);
+				}
+			}
+
+			if (hasLatestTransaction) {
+				const transaction = getLatestTransaction(p.transactions, season, tid);
+				if (
+					transaction &&
+					(transaction.type === "trade" || transaction.type === "sisyphus")
+				) {
+					abbrevsCache.add(transaction.fromTid, transaction.season);
+				}
+			}
+		}
+
+		await abbrevsCache.load();
+	}
+
 	return players
-		.map((p) => processPlayer(p, options))
+		.map((p) => processPlayer(p, options, abbrevsCache))
 		.filter((p) => p !== undefined);
 };
 

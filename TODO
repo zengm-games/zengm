@@ -848,6 +848,8 @@ wrong team abbrev various places
     - then remove hacky code setting originalT and t for other uses of DraftAbbrev and just use playersPlus
   - remove teamInfoCache from DraftAbbrev when done
   - make tid and originalTid children of t and originalT
+- processPlayersHallOfFame returns legacyTid - should be a way to get legacyAbbrev, ideally not just based on tid but based on the most common abbrev over the range of years the player was on that team, or maybe weighted by WS
+- any use of disableAbbrevsCacheDatabaseAccess
 
 button to randomize all contracts as if a new league https://old.reddit.com/r/nba/comments/w8igiw/basketball_gm_is_ready_to_get_you_through_the/ihriglz/?context=3
 - handle contract history

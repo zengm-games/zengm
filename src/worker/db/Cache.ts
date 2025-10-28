@@ -110,6 +110,8 @@ export const STORES: Store[] = [
 ];
 const AUTO_FLUSH_INTERVAL = 4000; // 4 seconds
 
+export const NUM_PRIOR_SEASONS_TEAM_SEASONS = 2;
+
 // Hacks to support stringifying/parsing an array containing strings and numbers, including Infinity. Currently used for retiredYear.
 const stringifyInfinity = (array: (number | string | boolean)[]) => {
 	return JSON.stringify(array);
@@ -508,7 +510,12 @@ class Cache {
 					return tx
 						.objectStore("teamSeasons")
 						.index("season, tid")
-						.getAll(IDBKeyRange.bound([this._season - 2], [this._season, ""]));
+						.getAll(
+							IDBKeyRange.bound(
+								[this._season - NUM_PRIOR_SEASONS_TEAM_SEASONS],
+								[this._season, ""],
+							),
+						);
 				},
 				indexes: [
 					{

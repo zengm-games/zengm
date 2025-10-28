@@ -15,7 +15,10 @@ import type { StatSumsExtra } from "../../../common/processPlayerStats.basketbal
 import { idb } from "../index.ts";
 
 type PlayersPlusOptionsRequired = Required<
-	Omit<PlayersPlusOptions, "season" | "seasonRange" | "tid">
+	Omit<
+		PlayersPlusOptions,
+		"disableAbbrevsCacheDatabaseAccess" | "season" | "seasonRange" | "tid"
+	>
 > & {
 	season?: number;
 	seasonRange?: [number, number];
@@ -54,6 +57,14 @@ class AbbrevsCache {
 	// First key is season, second is tid, value is undefined (not loaded, either because tid/season not found or because load not yet called) or string (loaded abbrev)
 	private data = new Map<number, Map<number, string | undefined>>();
 	private state: "init" | "loading" | "loaded" = "init";
+	private minSafeSeason: number;
+
+	// Set disableDatabaseAccess to true if you're calling this during another IndexedDB transaction that you don't want to auto close. Then it will only look up abbrevs that are safe to access in the cache
+	constructor(disableDatabaseAccess: boolean) {
+		this.minSafeSeason = disableDatabaseAccess
+			? g.get("season") - 2
+			: -Infinity;
+	}
 
 	add(season: number, tid: number) {
 		if (this.state !== "init") {
@@ -86,9 +97,12 @@ class AbbrevsCache {
 		}
 		this.state = "loading";
 
-		for (const [season, abbrevsByTid] of this.data) {
+		for (const [seasonTemp, abbrevsByTid] of this.data) {
 			// When should we fetch all for season vs not? I'm not sure what the ideal value is, I just guessed
 			const bulkFetch = abbrevsByTid.size >= 6;
+
+			const season =
+				seasonTemp >= this.minSafeSeason ? seasonTemp : this.minSafeSeason;
 
 			if (bulkFetch) {
 				const rows = await idb.getCopies.teamSeasons({ season }, "noCopyCache");
@@ -1301,6 +1315,7 @@ const getCopies = async (
 		numGamesRemaining = 0,
 		statType = "perGame",
 		mergeStats = "none",
+		disableAbbrevsCacheDatabaseAccess = false,
 	}: PlayersPlusOptions,
 ): Promise<PlayerFiltered[]> => {
 	if (mergeStats === "totAndTeams" && season !== undefined) {
@@ -1337,7 +1352,7 @@ const getCopies = async (
 	const hasLatestTransaction = attrs.includes("latestTransaction");
 	const hasStats = stats.includes("abbrev");
 	if (hasDraft || hasLatestTransaction || hasStats) {
-		abbrevsCache = new AbbrevsCache();
+		abbrevsCache = new AbbrevsCache(disableAbbrevsCacheDatabaseAccess);
 		for (const p of players) {
 			if (hasDraft) {
 				for (const tid of [p.draft.tid, p.draft.originalTid]) {

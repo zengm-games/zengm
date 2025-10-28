@@ -17,6 +17,9 @@ import TeamForm from "./ManageTeams/TeamForm.tsx";
 import { getGodModeWarnings } from "./NewLeague/UpsertTeamModal.tsx";
 import { TeamsSplitNorthAmericaWorld } from "../components/TeamsSplitNorthAmericaWorld.tsx";
 
+// Hacky, but it's in a <option> so what can you do
+const BLANK_TEAM_ABBREV = "_BLANK_TEAM_ABBREV_";
+
 const ExpansionDraft = ({
 	builtInTeams,
 	confs,
@@ -51,7 +54,7 @@ const ExpansionDraft = ({
 		initialNumProtectedPlayers,
 	);
 	const [numPerTeam, setNumPerTeam2] = useState(initialNumPerTeam);
-	const [addTeamAbbrev, setAddTeamAbbrev] = useState("");
+	const [addTeamAbbrev, setAddTeamAbbrev] = useState(BLANK_TEAM_ABBREV);
 
 	const setNumProtectedPlayers = async (newNum: string) => {
 		setNumProtectedPlayers2(newNum);
@@ -141,10 +144,12 @@ const ExpansionDraft = ({
 		event.preventDefault();
 
 		const newTeam =
-			builtInTeams.find((t) => t.abbrev === addTeamAbbrev) || defaultTeam;
+			builtInTeams.find(
+				(t) => t.abbrev !== BLANK_TEAM_ABBREV && t.abbrev === addTeamAbbrev,
+			) ?? defaultTeam;
 
 		await setTeams([...teams, helpers.deepCopy(newTeam)]);
-		setAddTeamAbbrev("");
+		setAddTeamAbbrev(BLANK_TEAM_ABBREV);
 	};
 
 	const handleSubmit = async (event: FormEvent) => {
@@ -316,7 +321,7 @@ const ExpansionDraft = ({
 										setAddTeamAbbrev(event.target.value);
 									}}
 								>
-									<option value="">Blank Team</option>
+									<option value={BLANK_TEAM_ABBREV}>Blank Team</option>
 									<TeamsSplitNorthAmericaWorld
 										teams={builtInTeams.filter(
 											(t) => !currentAbbrevs.includes(t.abbrev),

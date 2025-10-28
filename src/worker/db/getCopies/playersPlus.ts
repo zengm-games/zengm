@@ -140,6 +140,7 @@ class AbbrevsCache {
 
 		const abbrev = this.data.get(season)?.get(tid);
 		if (abbrev === undefined) {
+			console.log(this.data);
 			throw new Error("Invalid season/tid");
 		}
 		return abbrev;
@@ -1346,12 +1347,12 @@ const getCopies = async (
 	};
 
 	// Preload any abbrevs we need for past seasons, so we don't need to make all functions async and do it on demand
-	// Why no need to check ratings? Since tidTemp comes from stats, if stats row is missing, we can't find ratings abbrev for that season anyway, except current season which is special cased to use current abbrev.
 	let abbrevsCache: AbbrevsCache | undefined;
 	const hasDraft = attrs.includes("draft");
 	const hasLatestTransaction = attrs.includes("latestTransaction");
+	const hasRatings = ratings.includes("abbrev");
 	const hasStats = stats.includes("abbrev");
-	if (hasDraft || hasLatestTransaction || hasStats) {
+	if (hasDraft || hasLatestTransaction || hasRatings || hasStats) {
 		abbrevsCache = new AbbrevsCache(disableAbbrevsCacheDatabaseAccess);
 		for (const p of players) {
 			if (hasDraft) {
@@ -1370,7 +1371,8 @@ const getCopies = async (
 				}
 			}
 
-			if (hasStats) {
+			// Ratings uses the tid from stats, so have ratings and stats both trigger a stats check
+			if (hasRatings || hasStats) {
 				for (const row of p.stats) {
 					if (
 						(season === undefined || season === row.season) &&

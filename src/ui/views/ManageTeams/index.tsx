@@ -1,4 +1,4 @@
-import { Fragment, useReducer, type FormEvent } from "react";
+import { Fragment, useCallback, useReducer, type FormEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers, logEvent, toWorker } from "../../util/index.ts";
 import AddRemove from "./AddRemove.tsx";
@@ -6,6 +6,7 @@ import type { Phase, View } from "../../../common/types.ts";
 import { PHASE } from "../../../common/index.ts";
 import TeamForm from "./TeamForm.tsx";
 import { groupBy } from "../../../common/utils.ts";
+import { useBlocker } from "../../hooks/useBlocker.ts";
 
 export const nextSeasonWarning =
 	"Because the regular season is already over, changes will not be fully applied until next season.";
@@ -128,10 +129,20 @@ export const PHASES_WHERE_TEAMS_CAN_BE_DISABLED: Phase[] = [
 ];
 
 const ManageTeams = (props: View<"manageTeams">) => {
-	const [state, dispatch] = useReducer(reducer, {
+	const [state, dispatchUnwrapped] = useReducer(reducer, {
 		saving: false,
 		teams: props.teams,
 	});
+
+	const { setDirty } = useBlocker();
+
+	const dispatch: typeof dispatchUnwrapped = useCallback(
+		(action) => {
+			setDirty(action.type !== "doneSaving");
+			dispatchUnwrapped(action);
+		},
+		[setDirty],
+	);
 
 	const handleInputChange =
 		(tid: number) => (field: string, event: { target: { value: string } }) => {

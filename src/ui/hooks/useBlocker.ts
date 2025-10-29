@@ -4,7 +4,7 @@ import confirm from "../util/confirm.tsx";
 
 export const useBlocker = ({
 	message = "Are you sure you want to discard any unsaved changes?",
-	okText = "Discard",
+	okText = "Discard changes",
 	cancelText = "Stay here",
 }: {
 	message?: string;

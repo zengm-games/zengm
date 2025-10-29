@@ -1,4 +1,4 @@
-import { useEffect, useReducer, useRef, useState } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
 	confirm,
@@ -16,6 +16,7 @@ import { getTeamCols, SummaryTable } from "./SummaryTable.tsx";
 import { Dropdown } from "react-bootstrap";
 import { RegenerateScheduleModal } from "./RegenerateScheduleModal.tsx";
 import clsx from "clsx";
+import { useBlocker } from "../../hooks/useBlocker.ts";
 
 type Schedule = View<"scheduleEditor">["schedule"];
 
@@ -395,8 +396,18 @@ const ScheduleEditor = ({
 }: View<"scheduleEditor">) => {
 	useTitleBar({ title: "Schedule Editor" });
 
-	const [schedule, dispatch] = useReducer(reducer, scheduleProp);
+	const [schedule, dispatchUnwrapped] = useReducer(reducer, scheduleProp);
 	const [showSummaryStatistics, setShowSummaryStatistics] = useState(false);
+
+	const { setDirty } = useBlocker();
+
+	const dispatch: typeof dispatchUnwrapped = useCallback(
+		(action) => {
+			setDirty(true);
+			dispatchUnwrapped(action);
+		},
+		[setDirty],
+	);
 
 	// Reset the saved schedule state when simming a game or something else that will affect this
 	const isFirstRender = useRef(true);
@@ -406,7 +417,7 @@ const ScheduleEditor = ({
 		} else {
 			dispatch({ type: "resetSchedule", schedule: scheduleProp });
 		}
-	}, [scheduleProp]);
+	}, [dispatch, scheduleProp]);
 
 	const { godMode } = useLocalPartial(["godMode"]);
 
@@ -950,6 +961,7 @@ const ScheduleEditor = ({
 								saveToDb: false,
 							});
 
+							setDirty(false);
 							setSaving(false);
 						}}
 					>

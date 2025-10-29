@@ -16,6 +16,7 @@ import {
 	PHASE_TEXT,
 } from "../../../common/index.ts";
 import { HelpPopover, MoreLinks } from "../../components/index.tsx";
+import { useBlocker } from "../../hooks/useBlocker.ts";
 
 const GlobalSettings = (props: View<"globalSettings">) => {
 	const [state, setState] = useState(() => {
@@ -50,6 +51,8 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 		};
 	});
 
+	const { setDirty } = useBlocker();
+
 	const handleChange =
 		(name: string) =>
 		(event: ChangeEvent<HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -58,6 +61,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 				...state2,
 				[name]: value,
 			}));
+			setDirty(true);
 		};
 
 	const handleFormSubmit = async (event: FormEvent) => {
@@ -86,6 +90,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 				text: "Settings successfully updated.",
 				saveToDb: false,
 			});
+			setDirty(false);
 		} catch (error) {
 			logEvent({
 				type: "error",

@@ -15,7 +15,6 @@ populate ovrDrop when editing injury and ratings at same time? https://discord.c
   - have some isDirty function rather than setDirty? could then handle some situations easier, like deepEqual between settings.
     - downside is you need to memo and shit
 - places
-  - global settings
   - team finances
   - live sim
   - exhibition live sim

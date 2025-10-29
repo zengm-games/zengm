@@ -3,7 +3,7 @@ import router from "../router/index.ts";
 import confirm from "../util/confirm.tsx";
 
 export const useBlocker = ({
-	message = "Are you sure you want to discard all unsaved changes?",
+	message = "Are you sure you want to discard any unsaved changes?",
 	okText = "Discard",
 	cancelText = "Stay here",
 }: {

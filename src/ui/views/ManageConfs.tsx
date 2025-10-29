@@ -20,6 +20,7 @@ import {
 	nextSeasonWarning,
 	PHASES_WHERE_TEAMS_CAN_BE_DISABLED,
 } from "./ManageTeams/index.tsx";
+import { useBlocker } from "../hooks/useBlocker.ts";
 
 const EditTeamModal = ({
 	t,
@@ -185,11 +186,16 @@ const ManageConfs = ({
 	initialDivs,
 	initialTeams,
 }: View<"manageConfs">) => {
-	const [{ confs, divs, teams }, dispatch] = useReducer(makeReducer(false), {
-		confs: [...initialConfs],
-		divs: [...initialDivs],
-		teams: [...initialTeams],
-	});
+	const { setDirty } = useBlocker();
+
+	const [{ confs, divs, teams }, dispatch] = useReducer(
+		makeReducer(false, setDirty),
+		{
+			confs: [...initialConfs],
+			divs: [...initialDivs],
+			teams: [...initialTeams],
+		},
+	);
 	const [saving, setSaving] = useState(false);
 
 	const [editTeam, setEditTeam] = useState<
@@ -268,6 +274,7 @@ const ManageConfs = ({
 							saveToDb: false,
 						});
 
+						setDirty(false);
 						setSaving(false);
 					}}
 				>

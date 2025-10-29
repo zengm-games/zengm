@@ -1,5 +1,5 @@
 import { useEffect, useId, useReducer, useRef, useState } from "react";
-import type { Dispatch } from "react";
+import type { Dispatch, SetStateAction } from "react";
 import type { NewLeagueTeamWithoutRank } from "./types.ts";
 import type { Conf, Div, Player, View } from "../../../common/types.ts";
 import clsx from "clsx";
@@ -176,8 +176,15 @@ type Action =
 			tid: number;
 	  };
 
-export const makeReducer = (rewriteTids: boolean) => {
+export const makeReducer = (
+	rewriteTids: boolean,
+	setDirty?: Dispatch<SetStateAction<boolean>>,
+) => {
 	return (state: State, action: Action): State => {
+		if (setDirty) {
+			setDirty(true);
+		}
+
 		switch (action.type) {
 			case "setState":
 				return {

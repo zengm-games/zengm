@@ -13,14 +13,15 @@ populate ovrDrop when editing injury and ratings at same time? https://discord.c
   - handle beforeUnload too?
   - works with back/forward?
   - remove existing code in routematched
+  - have some isDirty function rather than setDirty? could then handle some situations easier, like deepEqual between settings.
+    - downside is you need to memo and shit
 - places
   - manage teams
-  - manage confs
   - global settings
   - schedule editor
   - team finances
-  - edit teams when making new league
   - live sim
+  - exhibition live sim
 
 customizable keyboard shortcuts
 - firefox profiles menu is alt+p https://chat.reddit.com/room/!Zyxd2hED8-Mn4j0Jm56-nHOXZCKgujJIUa3pjm3NwMc%3Areddit.com

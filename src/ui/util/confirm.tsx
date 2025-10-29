@@ -77,8 +77,25 @@ const Confirm = confirmable<
 
 const confirmFunction = createConfirmation(Confirm);
 
-// Pass "defaultValue" and it's used as the default value, like window.prompt. Don't pass "defaultValue" and it's like window.confirm.
-const confirm = (
+function confirm(
+	message: string,
+	options: {
+		defaultValue: string;
+		okText?: string;
+		cancelText?: string;
+	},
+): Promise<string | null>;
+
+function confirm(
+	message: string,
+	options?: {
+		defaultValue?: undefined;
+		okText?: string;
+		cancelText?: string;
+	},
+): Promise<boolean>;
+
+function confirm(
 	message: string,
 	{
 		defaultValue,
@@ -88,14 +105,14 @@ const confirm = (
 		defaultValue?: string;
 		okText?: string;
 		cancelText?: string;
-	},
-) => {
+	} = {},
+) {
 	return confirmFunction({
 		confirmation: message,
 		defaultValue,
 		okText,
 		cancelText,
 	});
-};
+}
 
 export default confirm;

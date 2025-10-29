@@ -10,12 +10,17 @@ populate ovrDrop when editing injury and ratings at same time? https://discord.c
   - settings pages already have an implementation using dirtySettings variable and routeMatched evnt
   - what do other systems (react router, tanstack router, etc) do?
   - how does Modal onHide do it? I use confirm in that, for example in PlayerBioInfo.tsx
-  - handle beforeUnload and normal navigation
+  - handle beforeUnload too?
+  - works with back/forward?
+  - remove existing code in routematched
 - places
   - manage teams
   - league settings
   - global settings
+  - default new league settings
   - schedule editor
+  - team finances
+  - dirtySettings
   - edit teams when making new league
 
 customizable keyboard shortcuts

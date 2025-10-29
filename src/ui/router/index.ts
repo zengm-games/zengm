@@ -143,6 +143,7 @@ class Router {
 	private navigationEnd: NavigationEnd | undefined;
 	private routes: Route[];
 	private lastNavigatedPath: string | undefined;
+	public shouldBlock: ((refresh: boolean) => Promise<boolean>) | undefined;
 
 	constructor() {
 		this.routes = [];
@@ -174,6 +175,13 @@ class Router {
 				context.params = params;
 
 				try {
+					if (this.shouldBlock) {
+						const shouldBlock = await this.shouldBlock(refresh);
+						if (shouldBlock) {
+							return;
+						}
+					}
+
 					if (this.routeMatched) {
 						const output = await this.routeMatched({
 							context,

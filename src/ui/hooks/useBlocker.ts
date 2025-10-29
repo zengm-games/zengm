@@ -28,13 +28,13 @@ export const useBlocker = ({
 
 				return !proceed;
 			};
+
+			return () => {
+				router.shouldBlock = undefined;
+			};
 		} else {
 			router.shouldBlock = undefined;
 		}
-
-		return () => {
-			router.shouldBlock = undefined;
-		};
 	}, [cancelText, dirty, message, okText]);
 
 	return { dirty, setDirty };

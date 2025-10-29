@@ -986,7 +986,6 @@ export type LocalStateUI = {
 	challengeNoRatings: boolean;
 	currencyFormat: GameAttributesLeague["currencyFormat"];
 	customMenu?: MenuItemHeader;
-	dirtySettings: boolean;
 	email?: string;
 	flagOverrides: Record<string, string>;
 	gameSimInProgress: boolean;

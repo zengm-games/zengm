@@ -61,7 +61,6 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 		challengeNoRatings: false,
 		currencyFormat: defaultGameAttributes.currencyFormat,
 		customMenu: undefined,
-		dirtySettings: false,
 		email: undefined,
 		fantasyPoints: undefined,
 		flagOverrides: {},

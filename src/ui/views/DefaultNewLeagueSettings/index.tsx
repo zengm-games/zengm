@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import Select from "react-select";
 import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
@@ -9,7 +9,6 @@ import { MoreLinks } from "../../components/index.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
 	helpers,
-	localActions,
 	logEvent,
 	realtimeUpdate,
 	toWorker,
@@ -19,18 +18,13 @@ import SettingsForm from "../Settings/SettingsForm.tsx";
 import type { Key } from "../Settings/types.ts";
 import ExportButton from "./ExportButton.tsx";
 import ImportButton from "./ImportButton.tsx";
+import { useBlocker } from "../../hooks/useBlocker.ts";
 
 const DefaultNewLeagueSettings = ({
 	defaultSettings,
 	overrides,
 }: View<"defaultNewLeagueSettings">) => {
 	useTitleBar({ title: "Default New League Settings" });
-
-	useEffect(() => {
-		localActions.update({
-			dirtySettings: false,
-		});
-	}, []);
 
 	const [importErrorMessage, setImportErrorMessage] = useState<
 		string | undefined
@@ -97,11 +91,11 @@ const DefaultNewLeagueSettings = ({
 		})),
 	}));
 
+	const { dirty, setDirty } = useBlocker();
+
 	const onAnyChange = () => {
 		setImportErrorMessage(undefined);
-		localActions.update({
-			dirtySettings: true,
-		});
+		setDirty(true);
 	};
 
 	const removeSettingsEqualToDefault = (settings: Partial<Settings>) => {
@@ -242,7 +236,7 @@ const DefaultNewLeagueSettings = ({
 								setOverridesLocalCounter((counter) => counter + 1);
 							}}
 						/>
-						<ExportButton />
+						<ExportButton dirty={dirty} />
 					</div>
 				</div>
 			</div>
@@ -300,9 +294,7 @@ const DefaultNewLeagueSettings = ({
 						newDefaultSettings2,
 					);
 
-					localActions.update({
-						dirtySettings: false,
-					});
+					setDirty(false);
 
 					logEvent({
 						type: "success",
@@ -318,9 +310,7 @@ const DefaultNewLeagueSettings = ({
 					setSettingsShown((shown) => shown.filter((key2) => key2 !== key));
 				}}
 				onUpdateExtra={() => {
-					localActions.update({
-						dirtySettings: true,
-					});
+					setDirty(true);
 				}}
 				saveText="Save Default Settings"
 				initialSettings={{

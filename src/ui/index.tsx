@@ -217,32 +217,6 @@ const setupRoutes = () => {
 						return false;
 					}
 				}
-
-				// Checks for Settings (includes because of league ID in URL) and DefaultSettings
-				if (
-					(window.location.pathname.includes("/settings") &&
-						!context.path.includes("/settings")) ||
-					(window.location.pathname === "/settings/default" &&
-						context.path !== "/settings/default")
-				) {
-					const dirtySettings = local.getState().dirtySettings;
-					if (dirtySettings) {
-						const proceed = await confirm(
-							"Are you sure you want to discard your unsaved settings changes?",
-							{
-								okText: "Discard",
-								cancelText: "Stay Here",
-							},
-						);
-						if (!proceed) {
-							return false;
-						}
-
-						local.getState().actions.update({
-							dirtySettings: false,
-						});
-					}
-				}
 			}
 
 			if (!context.state.noTrack) {

@@ -37,5 +37,5 @@ export const useBlocker = ({
 		};
 	}, [cancelText, dirty, message, okText]);
 
-	return setDirty;
+	return { dirty, setDirty };
 };

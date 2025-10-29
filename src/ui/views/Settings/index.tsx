@@ -7,7 +7,7 @@ import { useBlocker } from "../../hooks/useBlocker.ts";
 const Settings = ({ initialSettings }: View<"settings">) => {
 	useTitleBar({ title: "League Settings" });
 
-	const setDirty = useBlocker();
+	const { setDirty } = useBlocker();
 
 	return (
 		<SettingsForm

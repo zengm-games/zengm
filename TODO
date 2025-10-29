@@ -7,7 +7,7 @@ populate ovrDrop when editing injury and ratings at same time? https://discord.c
 "are you sure you want to exit without saving" for any complicated forms https://discord.com/channels/290013534023057409/331882115119448065/1431474408815329361
 - implementation
   - component level - maybe in useEffect unmounting, can we cancel at that point?
-  - settings pages already have an implementation using dirtySettings variable and routeMatched evnt
+  - settings pages already have an implementation using routeMatched evnt
   - what do other systems (react router, tanstack router, etc) do?
   - how does Modal onHide do it? I use confirm in that, for example in PlayerBioInfo.tsx
   - handle beforeUnload too?
@@ -15,13 +15,12 @@ populate ovrDrop when editing injury and ratings at same time? https://discord.c
   - remove existing code in routematched
 - places
   - manage teams
-  - league settings
+  - manage confs
   - global settings
-  - default new league settings
   - schedule editor
   - team finances
-  - dirtySettings
   - edit teams when making new league
+  - live sim
 
 customizable keyboard shortcuts
 - firefox profiles menu is alt+p https://chat.reddit.com/room/!Zyxd2hED8-Mn4j0Jm56-nHOXZCKgujJIUa3pjm3NwMc%3Areddit.com

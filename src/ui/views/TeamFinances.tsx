@@ -38,6 +38,7 @@ import {
 	scoutingEffectStddev,
 } from "../../common/budgetLevels.ts";
 import { CurrencyInputGroup } from "../components/CurrencyInputGroup.tsx";
+import { useBlocker } from "../hooks/useBlocker.ts";
 
 const paddingLeft85 = { paddingLeft: 85 };
 
@@ -171,8 +172,9 @@ const FinancesForm = ({
 > & {
 	gameSimInProgress: boolean;
 }) => {
+	const { dirty, setDirty } = useBlocker();
+
 	const [state, setState] = useState({
-		dirty: false,
 		saving: false,
 		coaching: String(t.budget.coaching),
 		facilities: String(t.budget.facilities),
@@ -184,7 +186,7 @@ const FinancesForm = ({
 	});
 
 	useEffect(() => {
-		if (!state.dirty) {
+		if (!dirty) {
 			setState((state2) => ({
 				...state2,
 				coaching: String(t.budget.coaching),
@@ -196,17 +198,17 @@ const FinancesForm = ({
 				autoTicketPrice: t.autoTicketPrice,
 			}));
 		}
-	}, [state.dirty, t]);
+	}, [dirty, t]);
 
 	const setStateValue = (
-		name: Exclude<keyof typeof state, "dirty" | "saving">,
+		name: Exclude<keyof typeof state, "saving">,
 		value: any,
 	) => {
 		setState((state2) => ({
 			...state2,
-			dirty: true,
 			[name]: value,
 		}));
+		setDirty(true);
 	};
 
 	const handleChange =
@@ -271,9 +273,9 @@ const FinancesForm = ({
 
 		setState((state2) => ({
 			...state2,
-			dirty: false,
 			saving: false,
 		}));
+		setDirty(false);
 	};
 
 	const warningMessage =

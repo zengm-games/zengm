@@ -147,6 +147,16 @@ class Router {
 
 	constructor() {
 		this.routes = [];
+
+		window.addEventListener("beforeunload", (event) => {
+			// Only show prompt when needed
+			if (this.shouldBlock) {
+				// Cancel the event
+				event.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
+				// Chrome requires returnValue to be set
+				event.returnValue = "";
+			}
+		});
 	}
 
 	public async navigate(

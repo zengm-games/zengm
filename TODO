@@ -1,12 +1,4 @@
-iOS safari zooms in when you select a text input field, and then does not zoom out when you're done
-- reported in iOS 26, but on browserstack seems to happen back to at least iOS 15
-- also affects Chrome on iOS
-
 populate ovrDrop when editing injury and ratings at same time? https://discord.com/channels/290013534023057409/1432096932938907709/1432102253682233346
-
-"are you sure you want to exit without saving" for any complicated forms https://discord.com/channels/290013534023057409/331882115119448065/1431474408815329361
-- implementation
-  - handle beforeUnload too?
 
 customizable keyboard shortcuts
 - firefox profiles menu is alt+p https://chat.reddit.com/room/!Zyxd2hED8-Mn4j0Jm56-nHOXZCKgujJIUa3pjm3NwMc%3Areddit.com

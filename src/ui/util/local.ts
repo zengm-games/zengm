@@ -24,14 +24,6 @@ type LocalActions = {
 const defaultUnits: "metric" | "us" =
 	window.navigator.language === "en-US" ? "us" : "metric";
 
-// https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onbeforeunload
-const blockCloseTab = (e: BeforeUnloadEvent) => {
-	// Cancel the event
-	e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
-	// Chrome requires returnValue to be set
-	e.returnValue = "";
-};
-
 type LocalStateWithActions = LocalStateUI & {
 	actions: LocalActions;
 };
@@ -166,7 +158,6 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 					userTid: 0,
 					userTids: [],
 				});
-				window.removeEventListener("beforeunload", blockCloseTab);
 			},
 
 			setShowLeagueTopBar(showLeagueTopBar: boolean) {
@@ -193,14 +184,6 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 			update(obj: Partial<LocalStateUI>) {
 				if (Object.hasOwn(obj, "units") && obj.units === undefined) {
 					obj.units = defaultUnits;
-				}
-
-				if (Object.hasOwn(obj, "liveGameInProgress")) {
-					if (obj.liveGameInProgress) {
-						window.addEventListener("beforeunload", blockCloseTab);
-					} else {
-						window.removeEventListener("beforeunload", blockCloseTab);
-					}
 				}
 
 				if (obj.email && !obj.gold) {

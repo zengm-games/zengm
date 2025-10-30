@@ -233,7 +233,10 @@ class Cache {
 			pk: string;
 			pkType: "number" | "string";
 			autoIncrement: boolean;
-			getData?: (a: IDBPTransaction<LeagueDB>) => Promise<any[]> | any[];
+			getData?: (
+				tx: IDBPTransaction<LeagueDB>,
+				season: number,
+			) => Promise<any[]> | any[];
 			indexes?: {
 				name: Index;
 				filter?: (a: any) => boolean;
@@ -241,7 +244,7 @@ class Cache {
 				unique?: boolean;
 			}[];
 
-			// Should be true if we want to fetch data from getData on a new season, even with autoSave disabled. This happens if you use this._season in getData such that there are objects for future seasons left out of the cache.
+			// Should be true if we want to fetch data from getData on a new season, even with autoSave disabled. This happens if you use season in getData such that there are objects for future seasons left out of the cache.
 			getDataWithAutoSaveDisabled?: boolean;
 		}
 	>;
@@ -320,8 +323,7 @@ class Cache {
 				pkType: "number",
 				autoIncrement: false,
 				// Current season
-				getData: (tx: IDBPTransaction<LeagueDB>) =>
-					tx.objectStore("allStars").getAll(this._season),
+				getData: (tx, season) => tx.objectStore("allStars").getAll(season),
 			},
 			awards: {
 				pk: "season",
@@ -337,8 +339,7 @@ class Cache {
 				pk: "dpid",
 				pkType: "number",
 				autoIncrement: true,
-				getData: (tx: IDBPTransaction<LeagueDB>) =>
-					tx.objectStore("draftPicks").getAll(),
+				getData: (tx) => tx.objectStore("draftPicks").getAll(),
 				indexes: [
 					{
 						name: "draftPicksBySeason",
@@ -359,24 +360,22 @@ class Cache {
 				pk: "key",
 				pkType: "string",
 				autoIncrement: false,
-				getData: (tx: IDBPTransaction<LeagueDB>) =>
-					tx.objectStore("gameAttributes").getAll(),
+				getData: (tx) => tx.objectStore("gameAttributes").getAll(),
 			},
 			games: {
 				pk: "gid",
 				pkType: "number",
 				autoIncrement: false,
 				// Current season
-				getData: (tx: IDBPTransaction<LeagueDB>) =>
-					getAll(tx.objectStore("games").index("season"), this._season),
+				getData: (tx, season) =>
+					getAll(tx.objectStore("games").index("season"), season),
 			},
 			headToHeads: {
 				pk: "season",
 				pkType: "number",
 				autoIncrement: false,
 				// Current season
-				getData: (tx: IDBPTransaction<LeagueDB>) =>
-					tx.objectStore("headToHeads").getAll(this._season),
+				getData: (tx, season) => tx.objectStore("headToHeads").getAll(season),
 			},
 			messages: {
 				pk: "mid",
@@ -387,8 +386,7 @@ class Cache {
 				pk: "pid",
 				pkType: "number",
 				autoIncrement: false,
-				getData: (tx: IDBPTransaction<LeagueDB>) =>
-					tx.objectStore("negotiations").getAll(),
+				getData: (tx) => tx.objectStore("negotiations").getAll(),
 			},
 			playerFeats: {
 				pk: "fid",
@@ -399,7 +397,7 @@ class Cache {
 				pk: "pid",
 				pkType: "number",
 				autoIncrement: true,
-				getData: async (tx: IDBPTransaction<LeagueDB>) => {
+				getData: async (tx) => {
 					// Non-retired players
 					const players1 = await tx
 						.objectStore("players")
@@ -427,15 +425,13 @@ class Cache {
 				pkType: "number",
 				autoIncrement: false,
 				// Current season
-				getData: (tx: IDBPTransaction<LeagueDB>) =>
-					tx.objectStore("playoffSeries").getAll(this._season),
+				getData: (tx, season) => tx.objectStore("playoffSeries").getAll(season),
 			},
 			releasedPlayers: {
 				pk: "rid",
 				pkType: "number",
 				autoIncrement: true,
-				getData: (tx: IDBPTransaction<LeagueDB>) =>
-					tx.objectStore("releasedPlayers").getAll(),
+				getData: (tx) => tx.objectStore("releasedPlayers").getAll(),
 				indexes: [
 					{
 						name: "releasedPlayersByTid",
@@ -447,35 +443,29 @@ class Cache {
 				pk: "hash",
 				pkType: "string",
 				autoIncrement: false,
-				getData: (tx: IDBPTransaction<LeagueDB>) =>
-					tx.objectStore("savedTrades").getAll(),
+				getData: (tx) => tx.objectStore("savedTrades").getAll(),
 			},
 			savedTradingBlock: {
 				pk: "rid",
 				pkType: "number",
 				autoIncrement: false,
-				getData: (tx: IDBPTransaction<LeagueDB>) =>
-					tx.objectStore("savedTradingBlock").getAll(),
+				getData: (tx) => tx.objectStore("savedTradingBlock").getAll(),
 			},
 			schedule: {
 				pk: "gid",
 				pkType: "number",
 				autoIncrement: true,
-				getData: (tx: IDBPTransaction<LeagueDB>) =>
-					tx.objectStore("schedule").getAll(),
+				getData: (tx) => tx.objectStore("schedule").getAll(),
 			},
 			scheduledEvents: {
 				pk: "id",
 				pkType: "number",
 				autoIncrement: true,
-				getData: (tx: IDBPTransaction<LeagueDB>) => {
-					if (this._season === undefined) {
-						throw new Error("this._season is undefined");
-					}
+				getData: (tx, season) => {
 					return tx
 						.objectStore("scheduledEvents")
 						.index("season")
-						.getAll(this._season);
+						.getAll(season);
 				},
 				getDataWithAutoSaveDisabled: true,
 			},
@@ -484,17 +474,11 @@ class Cache {
 				pkType: "number",
 				autoIncrement: false,
 				// Get enough for any non-retired player
-				getData: (tx: IDBPTransaction<LeagueDB>) => {
-					if (this._season === undefined) {
-						throw new Error("this._season is undefined");
-					}
+				getData: (tx, season) => {
 					return tx
 						.objectStore("seasonLeaders")
 						.getAll(
-							IDBKeyRange.bound(
-								this._season - NUM_SEASON_LEADERS_CACHE,
-								Infinity,
-							),
+							IDBKeyRange.bound(season - NUM_SEASON_LEADERS_CACHE, Infinity),
 						);
 				},
 			},
@@ -503,17 +487,14 @@ class Cache {
 				pkType: "number",
 				autoIncrement: true,
 				// Past 3 seasons
-				getData: (tx: IDBPTransaction<LeagueDB>) => {
-					if (this._season === undefined) {
-						throw new Error("this._season is undefined");
-					}
+				getData: (tx, season) => {
 					return tx
 						.objectStore("teamSeasons")
 						.index("season, tid")
 						.getAll(
 							IDBKeyRange.bound(
-								[this._season - NUM_PRIOR_SEASONS_TEAM_SEASONS],
-								[this._season, ""],
+								[season - NUM_PRIOR_SEASONS_TEAM_SEASONS],
+								[season, ""],
 							),
 						);
 				},
@@ -535,11 +516,11 @@ class Cache {
 				pkType: "number",
 				autoIncrement: true,
 				// Current season
-				getData: (tx: IDBPTransaction<LeagueDB>) => {
+				getData: (tx, season) => {
 					return tx
 						.objectStore("teamStats")
 						.index("season, tid")
-						.getAll(IDBKeyRange.bound([this._season], [this._season, ""]));
+						.getAll(IDBKeyRange.bound([season], [season, ""]));
 				},
 				indexes: [
 					{
@@ -712,7 +693,8 @@ class Cache {
 	async _loadStore(
 		store: Store,
 		transaction: IDBPTransaction<LeagueDB>,
-		append?: boolean,
+		season: number,
+		append: boolean,
 	) {
 		const storeInfo = this.storeInfos[store];
 		if (!append) {
@@ -723,7 +705,7 @@ class Cache {
 		{
 			// No getData implies no need to store any records in cache except new ones
 			const data = storeInfo.getData
-				? await storeInfo.getData(transaction)
+				? await storeInfo.getData(transaction, season)
 				: [];
 			if (!append) {
 				this._data[store] = {};
@@ -758,31 +740,27 @@ class Cache {
 
 		this._setStatus("filling");
 
-		// This is crap and should be fixed ASAP
-		this._season = season;
+		let season2 = season;
 
-		if (this._season === undefined) {
+		if (season2 === undefined) {
 			try {
-				this._season = g.get("season");
+				season2 = g.get("season");
 			} catch {}
 		}
 
-		if (this._season === undefined) {
+		if (season2 === undefined) {
 			const seasonAttr = await idb.league.get("gameAttributes", "season");
 
 			if (seasonAttr) {
-				this._season = seasonAttr.value;
+				season2 = seasonAttr.value;
 			}
 		}
 
-		if (this._season === undefined) {
+		if (season2 === undefined) {
 			// Seems that gameAttributes is empty when this happens, possibly due to Chrome inappropriately deleting things?
-			console.log("Passed season", season);
-			console.log(
-				"game attributes",
-				JSON.stringify(await idb.league.getAll("gameAttributes"), undefined, 2),
+			throw new Error(
+				"Undefined season - an error may have occurred while creating this league",
 			);
-			throw new Error("Undefined season");
 		}
 
 		if (local.autoSave) {
@@ -792,9 +770,19 @@ class Cache {
 
 		for (const store of STORES) {
 			if (local.autoSave) {
-				await this._loadStore(store, idb.league.transaction([store]));
+				await this._loadStore(
+					store,
+					idb.league.transaction([store]),
+					season2,
+					false,
+				);
 			} else if (this.storeInfos[store].getDataWithAutoSaveDisabled) {
-				await this._loadStore(store, idb.league.transaction([store]), true);
+				await this._loadStore(
+					store,
+					idb.league.transaction([store]),
+					season2,
+					true,
+				);
 			}
 		}
 

@@ -292,8 +292,6 @@ apply checkbox td hack to buttons too
 show career totals per team at bottom of stats tables in player profile pages
 - add some extra option to playersPlus like careerStatsPerTeam
 
-retire players button in god mode, along with delete players in bulk actions https://discord.com/channels/290013534023057409/1333871313898573904/1333884981835075584
-
 more aggressively use closers in playoffs https://discord.com/channels/290013534023057409/290015591216054273/1332735406176735263
 
 in FBGM game sim, simming until the next change of position doesn't trigger when a team scores a TD but throws an incomplete pass on the 2-point conversion. It simply skips through the next possession as well
@@ -304,24 +302,26 @@ in late game critical situations (like tied, 0 outs, bases loaded) there should 
 
 zgmb should have more doubles and triples https://discord.com/channels/290013534023057409/944392892905037885/1332600467502661717
 
-tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
-- later
-  - some way in typescript to impose the type of metadata in a table - rows can only have one type of metadata (or no metadata in some rows is fine, like drafted players table) 
-    - if this was done, then most metadata type checks like `metadata.type === "player"` in BulkActions and ExportPlayers would not be needed, those are just for typescript
-    - something like this works, but is kind of annoying with the generic being needed in various places:
-      `type RowOfType<T extends RowMetadata["type"]> = T extends RowMetadata["type"] ? { metadata: Extract<RowMetadata, { type: T }>; other: string } : never;`
-  - other places to use
-    - trading block - would still need separate logic for selecting picks, so maybe not worth it
-    - trade - would still need separate logic for selecting picks and untradeable players, so maybe not worth it
-    - ProtectPlayers - maybe not worth it considering all below
-      - use disableBulkSelectKeys for disabling when hit threshold
-      - loading initial cache state from storage and then pass to DataTable selectedRows
-      - "select all" should not actually select all, there is a limit
-  - when table is filtered to 1 row, checkbox dropdown menu in header is cut off by wrapper div
-    - interaction between table-responsive and dropdown in bootstrap, many discussions online, many potential solutions, but none of them seem to work
-  - sticky/sorting interplay
-    - sorting a row with table scrolled to the right needs to account for scroll in overlay somehow
-      - same issue for the animation moving the row into place
+bulk actions - tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
+- some way in typescript to impose the type of metadata in a table - rows can only have one type of metadata (or no metadata in some rows is fine, like drafted players table) 
+  - if this was done, then most metadata type checks like `metadata.type === "player"` in BulkActions and ExportPlayers would not be needed, those are just for typescript
+  - something like this works, but is kind of annoying with the generic being needed in various places:
+    `type RowOfType<T extends RowMetadata["type"]> = T extends RowMetadata["type"] ? { metadata: Extract<RowMetadata, { type: T }>; other: string } : never;`
+- other places to use
+  - re-signing player and free agents table - sign multiple players at the same time https://mail.google.com/mail/u/0/#inbox/FMfcgxwKkHjZVVXMJCrJkQVrDlmZjHph
+    - button needs to be disabled if not allowed under the cap
+  - trading block - would still need separate logic for selecting picks, so maybe not worth it
+  - trade - would still need separate logic for selecting picks and untradeable players, so maybe not worth it
+  - retire players button in god mode, along with delete players in bulk actions https://discord.com/channels/290013534023057409/1333871313898573904/1333884981835075584
+  - ProtectPlayers - maybe not worth it considering all below
+    - use disableBulkSelectKeys for disabling when hit threshold
+    - loading initial cache state from storage and then pass to DataTable selectedRows
+    - "select all" should not actually select all, there is a limit
+- when table is filtered to 1 row, checkbox dropdown menu in header is cut off by wrapper div
+  - interaction between table-responsive and dropdown in bootstrap, many discussions online, many potential solutions, but none of them seem to work
+- sticky/sorting interplay
+  - sorting a row with table scrolled to the right needs to account for scroll in overlay somehow
+    - same issue for the animation moving the row into place
 
 datatable should support unsorted sort state
 - leaders, award races - so we don't have to highlight by default

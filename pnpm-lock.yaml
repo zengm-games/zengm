@@ -27,23 +27,23 @@ importers:
         specifier: ^3.13.12
         version: 3.13.12(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@uiw/color-convert':
-        specifier: ^2.9.1
-        version: 2.9.1(@babel/runtime@7.28.4)
+        specifier: ^2.9.2
+        version: 2.9.2(@babel/runtime@7.28.4)
       '@uiw/react-color-editable-input':
-        specifier: ^2.9.1
-        version: 2.9.1(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^2.9.2
+        version: 2.9.2(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@uiw/react-color-editable-input-rgba':
-        specifier: ^2.9.1
-        version: 2.9.1(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^2.9.2
+        version: 2.9.2(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@uiw/react-color-hue':
-        specifier: ^2.9.1
-        version: 2.9.1(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^2.9.2
+        version: 2.9.2(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@uiw/react-color-saturation':
-        specifier: ^2.9.1
-        version: 2.9.1(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^2.9.2
+        version: 2.9.2(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@uiw/react-color-swatch':
-        specifier: ^2.9.1
-        version: 2.9.1(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^2.9.2
+        version: 2.9.2(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@visx/axis':
         specifier: ^3.12.0
         version: 3.12.0(react@19.2.0)
@@ -1428,24 +1428,28 @@ packages:
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   '@rolldown/binding-linux-arm64-musl@1.0.0-beta.45':
     resolution: {integrity: sha512-tdy8ThO/fPp40B81v0YK3QC+KODOmzJzSUOO37DinQxzlTJ026gqUSOM8tzlVixRbQJltgVDCTYF8HNPRErQTA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   '@rolldown/binding-linux-x64-gnu@1.0.0-beta.45':
     resolution: {integrity: sha512-lS082ROBWdmOyVY/0YB3JmsiClaWoxvC+dA8/rbhyB9VLkvVEaihLEOr4CYmrMse151C4+S6hCw6oa1iewox7g==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@rolldown/binding-linux-x64-musl@1.0.0-beta.45':
     resolution: {integrity: sha512-Hi73aYY0cBkr1/SvNQqH8Cd+rSV6S9RB5izCv0ySBcRnd/Wfn5plguUoGYwBnhHgFbh6cPw9m2dUVBR6BG1gxA==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   '@rolldown/binding-openharmony-arm64@1.0.0-beta.45':
     resolution: {integrity: sha512-fljEqbO7RHHogNDxYtTzr+GNjlfOx21RUyGmF+NrkebZ8emYYiIqzPxsaMZuRx0rgZmVmliOzEp86/CQFDKhJQ==}
@@ -1611,56 +1615,67 @@ packages:
     resolution: {integrity: sha512-PsNAbcyv9CcecAUagQefwX8fQn9LQ4nZkpDboBOttmyffnInRy8R8dSg6hxxl2Re5QhHBf6FYIDhIj5v982ATQ==}
     cpu: [arm]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-arm-musleabihf@4.52.5':
     resolution: {integrity: sha512-Fw4tysRutyQc/wwkmcyoqFtJhh0u31K+Q6jYjeicsGJJ7bbEq8LwPWV/w0cnzOqR2m694/Af6hpFayLJZkG2VQ==}
     cpu: [arm]
     os: [linux]
+    libc: [musl]
 
   '@rollup/rollup-linux-arm64-gnu@4.52.5':
     resolution: {integrity: sha512-a+3wVnAYdQClOTlyapKmyI6BLPAFYs0JM8HRpgYZQO02rMR09ZcV9LbQB+NL6sljzG38869YqThrRnfPMCDtZg==}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-arm64-musl@4.52.5':
     resolution: {integrity: sha512-AvttBOMwO9Pcuuf7m9PkC1PUIKsfaAJ4AYhy944qeTJgQOqJYJ9oVl2nYgY7Rk0mkbsuOpCAYSs6wLYB2Xiw0Q==}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   '@rollup/rollup-linux-loong64-gnu@4.52.5':
     resolution: {integrity: sha512-DkDk8pmXQV2wVrF6oq5tONK6UHLz/XcEVow4JTTerdeV1uqPeHxwcg7aFsfnSm9L+OO8WJsWotKM2JJPMWrQtA==}
     cpu: [loong64]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-ppc64-gnu@4.52.5':
     resolution: {integrity: sha512-W/b9ZN/U9+hPQVvlGwjzi+Wy4xdoH2I8EjaCkMvzpI7wJUs8sWJ03Rq96jRnHkSrcHTpQe8h5Tg3ZzUPGauvAw==}
     cpu: [ppc64]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-riscv64-gnu@4.52.5':
     resolution: {integrity: sha512-sjQLr9BW7R/ZiXnQiWPkErNfLMkkWIoCz7YMn27HldKsADEKa5WYdobaa1hmN6slu9oWQbB6/jFpJ+P2IkVrmw==}
     cpu: [riscv64]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-riscv64-musl@4.52.5':
     resolution: {integrity: sha512-hq3jU/kGyjXWTvAh2awn8oHroCbrPm8JqM7RUpKjalIRWWXE01CQOf/tUNWNHjmbMHg/hmNCwc/Pz3k1T/j/Lg==}
     cpu: [riscv64]
     os: [linux]
+    libc: [musl]
 
   '@rollup/rollup-linux-s390x-gnu@4.52.5':
     resolution: {integrity: sha512-gn8kHOrku8D4NGHMK1Y7NA7INQTRdVOntt1OCYypZPRt6skGbddska44K8iocdpxHTMMNui5oH4elPH4QOLrFQ==}
     cpu: [s390x]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-x64-gnu@4.52.5':
     resolution: {integrity: sha512-hXGLYpdhiNElzN770+H2nlx+jRog8TyynpTVzdlc6bndktjKWyZyiCsuDAlpd+j+W+WNqfcyAWz9HxxIGfZm1Q==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@rollup/rollup-linux-x64-musl@4.52.5':
     resolution: {integrity: sha512-arCGIcuNKjBoKAXD+y7XomR9gY6Mw7HnFBv5Rw7wQRvwYLR7gBAgV7Mb2QTyjXfTveBNFAtPt46/36vV9STLNg==}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   '@rollup/rollup-openharmony-arm64@4.52.5':
     resolution: {integrity: sha512-QoFqB6+/9Rly/RiPjaomPLmR/13cgkIGfA40LHly9zcH1S0bN2HVFYk3a1eAyHQyjs3ZJYlXvIGtcCs5tko9Cw==}
@@ -1930,55 +1945,55 @@ packages:
     resolution: {integrity: sha512-tUFMXI4gxzzMXt4xpGJEsBsTox0XbNQ1y94EwlD/CuZwFcQP79xfQqMhau9HsRc/J0cAPA/HZt1dZPtGn9V/7w==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@uiw/color-convert@2.9.1':
-    resolution: {integrity: sha512-BBVsxjwTrhUgEWg6oTc2lwNseuLpZShHEojySWH3vGcjHLtzWKVlE0UkiOjbNUaLb2+Xejh+aGcZwwya0GOUMQ==}
+  '@uiw/color-convert@2.9.2':
+    resolution: {integrity: sha512-ibw9OS29S7GlL+vDwU3p5XG3vhR7XdzUecydpZbakUeg2Td6nfsnrCAX9sbLwQ73p0abO42v+V4qRaWq+7/BjQ==}
     peerDependencies:
       '@babel/runtime': '>=7.19.0'
 
-  '@uiw/react-color-alpha@2.9.1':
-    resolution: {integrity: sha512-yOe6s2cqeafrE/jsBvXQD9UsRLKm96dsNsjHjYDXptv3nsMlds3KZ8yR4WUz2PqeR176hLtAyiAcACTkhlhHBQ==}
-    peerDependencies:
-      '@babel/runtime': '>=7.19.0'
-      react: '>=16.9.0'
-      react-dom: '>=16.9.0'
-
-  '@uiw/react-color-editable-input-rgba@2.9.1':
-    resolution: {integrity: sha512-wd2ZSWQsBTC1afqtZQQYXefx/ElzREgY8bfK3a8wPvR5V1nt01/Du33zokSXu3YVJMnQIKpSqrfLSnxeSqGfFw==}
+  '@uiw/react-color-alpha@2.9.2':
+    resolution: {integrity: sha512-a2ACkE2vZIS4xnN9DaRfkQtAX/t8oK5NRSbX2QeOL23WIMHP1VNs7Yq5gXB68RHYenFgvs2JHuMOxZ2mK1W5Mw==}
     peerDependencies:
       '@babel/runtime': '>=7.19.0'
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
 
-  '@uiw/react-color-editable-input@2.9.1':
-    resolution: {integrity: sha512-jpDt4M1FTCqbEZDGWqm5Kp1oGvKSNO/Bu4vLbtq6WoC0dDM6SoMDdT6S/zB5lYsAA8y1GlgmSxHHYl9Ne1DHAQ==}
+  '@uiw/react-color-editable-input-rgba@2.9.2':
+    resolution: {integrity: sha512-sQW3tSao754954aQuVK4qvn1i+KC2piE4UftaBubD3QxC02gg5VfgZRoI6AV+nLr73Ifv3mCXewjN1BcP/+x4A==}
     peerDependencies:
       '@babel/runtime': '>=7.19.0'
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
 
-  '@uiw/react-color-hue@2.9.1':
-    resolution: {integrity: sha512-IjeuTaNWppGde4fF3T2uCzWy0aNxKmQFiMRTcw21nFqZC0Ho+GJo+Q6M6IoOVABrcEX/oVdOd/uGYrrLqc7IvA==}
+  '@uiw/react-color-editable-input@2.9.2':
+    resolution: {integrity: sha512-DY7pu12+LDRn6cxDMvsy1/quaPTxicAPz/kfODV7KBf8+Hq4rFWeJ4KS6m22IKIbQxrBQgmQG0WFJLaPeY7cPw==}
     peerDependencies:
       '@babel/runtime': '>=7.19.0'
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
 
-  '@uiw/react-color-saturation@2.9.1':
-    resolution: {integrity: sha512-DIo2EEYL3l7wCG/BwOs0MfUmxgYqU6Fop0drlEsCnMtUKWUfZG3zZIoUPvMXh5DyORB/G3/NQQGqDqsg03NFNA==}
+  '@uiw/react-color-hue@2.9.2':
+    resolution: {integrity: sha512-vDGN5YCzw09BfxkQeDvAeQ7zAy141uJ3HkFk1lsXL7ha8xZ35AItE1s/C6d60vFjGdoloKShh0yA7df3pnjmxA==}
     peerDependencies:
       '@babel/runtime': '>=7.19.0'
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
 
-  '@uiw/react-color-swatch@2.9.1':
-    resolution: {integrity: sha512-dOV4jQjNURHsCFg0KPJ1vliDH2dhf8kstJy4EsGzvUQqD39iba7xNRMP3X569KAv7Lj74v1y8gBEmKTlO2Qnmg==}
+  '@uiw/react-color-saturation@2.9.2':
+    resolution: {integrity: sha512-w1aUU+g6Axwbr1nLvF8k/zg5v7UW8z80eH6C7w+tdiOFOQKkKQlXqeOG0IIUUIj3v/ji+yM90IuOH+Ku7zsJrg==}
     peerDependencies:
       '@babel/runtime': '>=7.19.0'
       react: '>=16.9.0'
       react-dom: '>=16.9.0'
 
-  '@uiw/react-drag-event-interactive@2.9.1':
-    resolution: {integrity: sha512-Hg+8QAhYgs6YPJ3lVF8jN7AsXDz7XFAlcCXSAa2hlCVU5O41xs2QDbEX3JdJVe4AAflna2AOG5B4wOg09prozg==}
+  '@uiw/react-color-swatch@2.9.2':
+    resolution: {integrity: sha512-6zBy+E9NzZR672M2wPsbbNRqKy9Wi9jOuuxxyzov1CEZp+pPX7UwMlCX6RUhKdO0PzTSPCVQmbz5bplu5vsW0w==}
+    peerDependencies:
+      '@babel/runtime': '>=7.19.0'
+      react: '>=16.9.0'
+      react-dom: '>=16.9.0'
+
+  '@uiw/react-drag-event-interactive@2.9.2':
+    resolution: {integrity: sha512-6gxQz+Ij7JkXlEOpfZhOu+Gdp/sI9VnMeDl8AJeYl3+0YXP31lXGmyb0NkNYnoUmJO+RrAf68c1raMpaDWs+Ow==}
     peerDependencies:
       '@babel/runtime': '>=7.19.0'
       react: '>=16.9.0'
@@ -2023,41 +2038,49 @@ packages:
     resolution: {integrity: sha512-34gw7PjDGB9JgePJEmhEqBhWvCiiWCuXsL9hYphDF7crW7UgI05gyBAi6MF58uGcMOiOqSJ2ybEeCvHcq0BCmQ==}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   '@unrs/resolver-binding-linux-arm64-musl@1.11.1':
     resolution: {integrity: sha512-RyMIx6Uf53hhOtJDIamSbTskA99sPHS96wxVE/bJtePJJtpdKGXO1wY90oRdXuYOGOTuqjT8ACccMc4K6QmT3w==}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   '@unrs/resolver-binding-linux-ppc64-gnu@1.11.1':
     resolution: {integrity: sha512-D8Vae74A4/a+mZH0FbOkFJL9DSK2R6TFPC9M+jCWYia/q2einCubX10pecpDiTmkJVUH+y8K3BZClycD8nCShA==}
     cpu: [ppc64]
     os: [linux]
+    libc: [glibc]
 
   '@unrs/resolver-binding-linux-riscv64-gnu@1.11.1':
     resolution: {integrity: sha512-frxL4OrzOWVVsOc96+V3aqTIQl1O2TjgExV4EKgRY09AJ9leZpEg8Ak9phadbuX0BA4k8U5qtvMSQQGGmaJqcQ==}
     cpu: [riscv64]
     os: [linux]
+    libc: [glibc]
 
   '@unrs/resolver-binding-linux-riscv64-musl@1.11.1':
     resolution: {integrity: sha512-mJ5vuDaIZ+l/acv01sHoXfpnyrNKOk/3aDoEdLO/Xtn9HuZlDD6jKxHlkN8ZhWyLJsRBxfv9GYM2utQ1SChKew==}
     cpu: [riscv64]
     os: [linux]
+    libc: [musl]
 
   '@unrs/resolver-binding-linux-s390x-gnu@1.11.1':
     resolution: {integrity: sha512-kELo8ebBVtb9sA7rMe1Cph4QHreByhaZ2QEADd9NzIQsYNQpt9UkM9iqr2lhGr5afh885d/cB5QeTXSbZHTYPg==}
     cpu: [s390x]
     os: [linux]
+    libc: [glibc]
 
   '@unrs/resolver-binding-linux-x64-gnu@1.11.1':
     resolution: {integrity: sha512-C3ZAHugKgovV5YvAMsxhq0gtXuwESUKc5MhEtjBpLoHPLYM+iuwSj3lflFwK3DPm68660rZ7G8BMcwSro7hD5w==}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   '@unrs/resolver-binding-linux-x64-musl@1.11.1':
     resolution: {integrity: sha512-rV0YSoyhK2nZ4vEswT/QwqzqQXw5I6CjoaYMOX0TqBlWhojUf8P94mvI7nuJTeaCkkds3QE4+zS8Ko+GdXuZtA==}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   '@unrs/resolver-binding-wasm32-wasi@1.11.1':
     resolution: {integrity: sha512-5u4RkfxJm+Ng7IWgkzi3qrFOvLvQYnPBmjmZQ8+szTK/b31fQCnleNl1GgEt7nIsZRIf5PLhPwT0WM+q45x/UQ==}
@@ -2819,8 +2842,8 @@ packages:
     engines: {node: '>=0.10.0'}
     hasBin: true
 
-  electron-to-chromium@1.5.240:
-    resolution: {integrity: sha512-OBwbZjWgrCOH+g6uJsA2/7Twpas2OlepS9uvByJjR2datRDuKGYeD+nP8lBBks2qnB7bGJNHDUx7c/YLaT3QMQ==}
+  electron-to-chromium@1.5.241:
+    resolution: {integrity: sha512-ILMvKX/ZV5WIJzzdtuHg8xquk2y0BOGlFOxBVwTpbiXqWIH0hamG45ddU4R3PQ0gYu+xgo0vdHXHli9sHIGb4w==}
 
   emoji-regex@10.6.0:
     resolution: {integrity: sha512-toUI84YS5YmxW219erniWD0CIVOo46xGKColeNQRgOzDorgBi1v4D71/OFzgD9GO2UGKIv1C3Sp8DAn0+j5w7A==}
@@ -3799,24 +3822,28 @@ packages:
     engines: {node: '>= 12.0.0'}
     cpu: [arm64]
     os: [linux]
+    libc: [glibc]
 
   lightningcss-linux-arm64-musl@1.30.2:
     resolution: {integrity: sha512-5Vh9dGeblpTxWHpOx8iauV02popZDsCYMPIgiuw97OJ5uaDsL86cnqSFs5LZkG3ghHoX5isLgWzMs+eD1YzrnA==}
     engines: {node: '>= 12.0.0'}
     cpu: [arm64]
     os: [linux]
+    libc: [musl]
 
   lightningcss-linux-x64-gnu@1.30.2:
     resolution: {integrity: sha512-Cfd46gdmj1vQ+lR6VRTTadNHu6ALuw2pKR9lYq4FnhvgBc4zWY1EtZcAc6EffShbb1MFrIPfLDXD6Xprbnni4w==}
     engines: {node: '>= 12.0.0'}
     cpu: [x64]
     os: [linux]
+    libc: [glibc]
 
   lightningcss-linux-x64-musl@1.30.2:
     resolution: {integrity: sha512-XJaLUUFXb6/QG2lGIW6aIk6jKdtjtcffUT0NKvIqhSBY3hh9Ch+1LCeH80dR9q9LBjG3ewbDjnumefsLsP6aiA==}
     engines: {node: '>= 12.0.0'}
     cpu: [x64]
     os: [linux]
+    libc: [musl]
 
   lightningcss-win32-arm64-msvc@1.30.2:
     resolution: {integrity: sha512-FZn+vaj7zLv//D/192WFFVA0RgHawIcHqLX9xuWiQt7P0PtdFEVaxgF9rjM/IRYHQXNnk61/H/gb2Ei+kUQ4xQ==}
@@ -7143,56 +7170,56 @@ snapshots:
       '@typescript-eslint/types': 8.46.2
       eslint-visitor-keys: 4.2.1
 
-  '@uiw/color-convert@2.9.1(@babel/runtime@7.28.4)':
+  '@uiw/color-convert@2.9.2(@babel/runtime@7.28.4)':
     dependencies:
       '@babel/runtime': 7.28.4
 
-  '@uiw/react-color-alpha@2.9.1(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+  '@uiw/react-color-alpha@2.9.2(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
       '@babel/runtime': 7.28.4
-      '@uiw/color-convert': 2.9.1(@babel/runtime@7.28.4)
-      '@uiw/react-drag-event-interactive': 2.9.1(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@uiw/color-convert': 2.9.2(@babel/runtime@7.28.4)
+      '@uiw/react-drag-event-interactive': 2.9.2(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
 
-  '@uiw/react-color-editable-input-rgba@2.9.1(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+  '@uiw/react-color-editable-input-rgba@2.9.2(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
       '@babel/runtime': 7.28.4
-      '@uiw/color-convert': 2.9.1(@babel/runtime@7.28.4)
-      '@uiw/react-color-editable-input': 2.9.1(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@uiw/color-convert': 2.9.2(@babel/runtime@7.28.4)
+      '@uiw/react-color-editable-input': 2.9.2(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
 
-  '@uiw/react-color-editable-input@2.9.1(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+  '@uiw/react-color-editable-input@2.9.2(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
       '@babel/runtime': 7.28.4
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
 
-  '@uiw/react-color-hue@2.9.1(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+  '@uiw/react-color-hue@2.9.2(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
       '@babel/runtime': 7.28.4
-      '@uiw/color-convert': 2.9.1(@babel/runtime@7.28.4)
-      '@uiw/react-color-alpha': 2.9.1(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@uiw/color-convert': 2.9.2(@babel/runtime@7.28.4)
+      '@uiw/react-color-alpha': 2.9.2(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
 
-  '@uiw/react-color-saturation@2.9.1(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+  '@uiw/react-color-saturation@2.9.2(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
       '@babel/runtime': 7.28.4
-      '@uiw/color-convert': 2.9.1(@babel/runtime@7.28.4)
-      '@uiw/react-drag-event-interactive': 2.9.1(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@uiw/color-convert': 2.9.2(@babel/runtime@7.28.4)
+      '@uiw/react-drag-event-interactive': 2.9.2(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
 
-  '@uiw/react-color-swatch@2.9.1(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+  '@uiw/react-color-swatch@2.9.2(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
       '@babel/runtime': 7.28.4
-      '@uiw/color-convert': 2.9.1(@babel/runtime@7.28.4)
+      '@uiw/color-convert': 2.9.2(@babel/runtime@7.28.4)
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
 
-  '@uiw/react-drag-event-interactive@2.9.1(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+  '@uiw/react-drag-event-interactive@2.9.2(@babel/runtime@7.28.4)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
       '@babel/runtime': 7.28.4
       react: 19.2.0
@@ -7638,7 +7665,7 @@ snapshots:
     dependencies:
       baseline-browser-mapping: 2.8.20
       caniuse-lite: 1.0.30001751
-      electron-to-chromium: 1.5.240
+      electron-to-chromium: 1.5.241
       node-releases: 2.0.26
       update-browserslist-db: 1.1.4(browserslist@4.27.0)
 
@@ -8110,7 +8137,7 @@ snapshots:
     dependencies:
       jake: 10.9.4
 
-  electron-to-chromium@1.5.240: {}
+  electron-to-chromium@1.5.241: {}
 
   emoji-regex@10.6.0: {}
 

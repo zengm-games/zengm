@@ -34,14 +34,19 @@ export const applyRealPlayerPhotos = (
 			if (realPlayerPhoto !== undefined) {
 				p.imgURL = realPlayerPhoto;
 			} else {
-				const name = p.name ?? `${p.firstName} ${p.lastName}`;
+				const name = (p.name ?? `${p.firstName} ${p.lastName}`)
+					.replaceAll(" ", "_")
+					.toLowerCase();
 
 				// Keep in sync with bbgm-rosters
-				const key = `dp_${p.draft.year}_${name
-					.replaceAll(" ", "_")
-					.toLowerCase()}`;
+				const key = `dp_${p.draft.year}_${name}`;
 				if (realPlayerPhotos[key] !== undefined) {
 					p.imgURL = realPlayerPhotos[key];
+				} else {
+					const key = `dp_${name}`;
+					if (realPlayerPhotos[key] !== undefined) {
+						p.imgURL = realPlayerPhotos[key];
+					}
 				}
 			}
 		}

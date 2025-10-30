@@ -26,6 +26,7 @@ import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_BASEBALL } from "../util/pro
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_FOOTBALL } from "../util/processLiveGameEvents.football.tsx";
 import { HeadlineScoreLive } from "../components/BoxScoreWrapper.tsx";
 import { useIsStuck } from "../hooks/useIsStuck.ts";
+import { useBlocker } from "../hooks/useBlocker.ts";
 
 type PlayerRowProps = {
 	exhibition?: boolean;
@@ -260,6 +261,12 @@ const speedToMs = (speed: number) => {
 	return 4000 / 1.2 ** speed;
 };
 
+const getNavigateWarning = (exhibition: boolean | undefined) => {
+	return exhibition
+		? "If you navigate away from this page, you won't be able to see this box score again."
+		: "If you navigate away from this page, you won't be able to see these play-by-play results again. The results of this game are already final, though.";
+};
+
 export const LiveGame = (props: View<"liveGame">) => {
 	const [paused, setPaused] = useState(false);
 	const pausedRef = useRef(paused);
@@ -291,6 +298,13 @@ export const LiveGame = (props: View<"liveGame">) => {
 	);
 
 	const playByPlayEntries = useRef<PlayByPlayEntryInfo[]>([]);
+
+	const navigateWarning = getNavigateWarning(boxScore.current.exhibition);
+
+	const { setDirty } = useBlocker({
+		message: navigateWarning,
+		initialDirty: true,
+	});
 
 	// Make sure to call setPlayIndex after calling this! Can't be done inside because React is not always smart enough to batch renders
 	const processToNextPause = useCallback(
@@ -464,6 +478,9 @@ export const LiveGame = (props: View<"liveGame">) => {
 					}
 				}
 
+				if (!boxScore.current.exhibition) {
+					setDirty(false);
+				}
 				onLiveSimOver();
 			}
 
@@ -473,7 +490,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 			const elapsedSeconds = startSeconds - endSeconds;
 			return elapsedSeconds;
 		},
-		[props.confetti, props.otl],
+		[props.confetti, props.otl, setDirty],
 	);
 
 	useEffect(() => {
@@ -949,9 +966,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 			{showWarning ? (
 				<p className="text-danger">
-					{boxScore.current.exhibition
-						? "If you navigate away from this page, you won't be able to see this box score again."
-						: "If you navigate away from this page, you won't be able to see these play-by-play results again. The results of this game are already final, though."}
+					{navigateWarning}
 					<>
 						{" "}
 						<button

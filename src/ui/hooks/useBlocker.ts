@@ -3,15 +3,17 @@ import router from "../router/index.ts";
 import confirm from "../util/confirm.tsx";
 
 export const useBlocker = ({
-	message = "Are you sure you want to discard any unsaved changes?",
-	okText = "Discard changes",
+	message = "If you navigate away from this page, you will lose any unsaved changes.",
+	okText = "Navigate away",
 	cancelText = "Stay here",
+	initialDirty = false,
 }: {
 	message?: string;
 	okText?: string;
 	cancelText?: string;
+	initialDirty?: boolean;
 } = {}) => {
-	const [dirty, setDirty] = useState(false);
+	const [dirty, setDirty] = useState(initialDirty);
 
 	useEffect(() => {
 		if (dirty) {

@@ -13,10 +13,8 @@ window.bbgm = { api, ...util };
 const {
 	analyticsEvent,
 	compareVersions,
-	confirm,
 	genStaticPage,
 	leagueNotFoundMessage,
-	local,
 	logEvent,
 	promiseWorker,
 	routes,
@@ -193,32 +191,6 @@ const setupRoutes = () => {
 	let initialLoad = true;
 	router.start({
 		routeMatched: async ({ context }) => {
-			if (!context.state.backendRedirect) {
-				const liveGame =
-					window.location.pathname.includes("/live_game") &&
-					!context.path.includes("/live_game") &&
-					local.getState().liveGameInProgress;
-				const liveGameExhibition =
-					window.location.pathname.includes("/exhibition/game") &&
-					!context.path.includes("/exhibition/game");
-				if (liveGame || liveGameExhibition) {
-					const proceed = await confirm(
-						`If you navigate away from this page, you won't be able to see ${
-							window.location.pathname.includes("/exhibition")
-								? "this box score"
-								: "these play-by-play results"
-						} again.`,
-						{
-							okText: "Navigate Away",
-							cancelText: "Stay Here",
-						},
-					);
-					if (!proceed) {
-						return false;
-					}
-				}
-			}
-
 			if (!context.state.noTrack) {
 				if (initialLoad) {
 					initialLoad = false;

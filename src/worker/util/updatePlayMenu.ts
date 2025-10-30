@@ -356,7 +356,12 @@ const updatePlayMenu = async () => {
 		keys = ["stop"];
 	}
 
-	if (negotiationInProgress && g.get("phase") !== PHASE.RESIGN_PLAYERS) {
+	// AFTER_DRAFT check is because if there is any negotiation then, it's very likely because a prior advance to RESIGN_PLAYERS failed after starting negotiations with some players, in which case we'd rather not block the UI in the case that advancing again somehow succeeds. (Would rather have phase updates be transactional, but oh well.)
+	if (
+		negotiationInProgress &&
+		g.get("phase") !== PHASE.RESIGN_PLAYERS &&
+		g.get("phase") !== PHASE.AFTER_DRAFT
+	) {
 		keys = ["contractNegotiation"];
 	}
 

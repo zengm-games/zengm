@@ -25,7 +25,16 @@ const newPhaseResignPlayers = async (
 	// In case some weird situation results in games still in the schedule, clear them
 	await idb.cache.schedule.clear();
 
-	await idb.cache.negotiations.clear();
+	// Clear any negotiations that still somehow exist, except if it's a re-signing negotiation for the user, because that could be from a prior failed attempt to run this function and we want to keep those guys. (Would rather have phase updates be transactional, but oh well.)
+	const existingNegotiations = await idb.cache.negotiations.getAll();
+	const userTids = g.get("userTids");
+	for (const negotiation of existingNegotiations) {
+		if (negotiation.resigning && userTids.includes(negotiation.tid)) {
+			continue;
+		}
+
+		await idb.cache.negotiations.delete(negotiation.pid);
+	}
 
 	const repeatSeasonType = g.get("repeatSeason")?.type;
 

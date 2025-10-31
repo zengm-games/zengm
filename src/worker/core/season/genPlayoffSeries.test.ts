@@ -47,6 +47,7 @@ afterAll(() => {
 	testHelpers.resetG();
 });
 
+// makeMatchups is now called separately per conference, so this test would need to be refactored to call genPlayoffSeriesFromTeams, which is a little more complicated because it calls orderTeams
 test.skip("split teams by conference if there are two conferences", () => {
 	const teams = [
 		{
@@ -147,6 +148,7 @@ test("pick teams regardless of conference if there are not two conferences", () 
 	assert.strictEqual(series.length, 2);
 });
 
+// makeMatchups is now called separately per conference, so this test would need to be refactored to call genPlayoffSeriesFromTeams, which is a little more complicated because it calls orderTeams
 test.skip("split teams by conference if there are two conferences, including byes", () => {
 	const teams = [
 		{

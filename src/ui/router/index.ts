@@ -143,7 +143,9 @@ class Router {
 	private navigationEnd: NavigationEnd | undefined;
 	private routes: Route[];
 	private lastNavigatedPath: string | undefined;
-	public shouldBlock: ((refresh: boolean) => Promise<boolean>) | undefined;
+	public shouldBlock:
+		| ((refresh: boolean) => boolean | Promise<boolean>)
+		| undefined;
 
 	constructor() {
 		this.routes = [];

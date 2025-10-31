@@ -188,3 +188,23 @@ test("passes state to callback", async () => {
 	assert.strictEqual(window.location.pathname, "/state");
 	assert.strictEqual(counts["/state"], countBefore + 1);
 });
+
+test("shouldBlock true blocks navigation", async () => {
+	await router.navigate("/0");
+	assert.strictEqual(window.location.pathname, "/0");
+
+	router.shouldBlock = () => true;
+
+	await router.navigate("/");
+	assert.strictEqual(window.location.pathname, "/0");
+});
+
+test("shouldBlock false allows navigation", async () => {
+	await router.navigate("/0");
+	assert.strictEqual(window.location.pathname, "/0");
+
+	router.shouldBlock = () => false;
+
+	await router.navigate("/");
+	assert.strictEqual(window.location.pathname, "/");
+});

@@ -27,4 +27,5 @@ const fetchCache: Record<string, any> = {};
 // Removes the need for jsdom in most test files
 (globalThis as any).self = globalThis;
 (globalThis as any).window = globalThis;
+(globalThis as any).location = {};
 globalThis.addEventListener = () => {};

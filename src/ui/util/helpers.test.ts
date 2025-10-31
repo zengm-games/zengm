@@ -1,5 +1,3 @@
-// @vitest-environment jsdom
-
 import { assert, describe, test } from "vitest";
 import helpers from "./helpers.ts";
 

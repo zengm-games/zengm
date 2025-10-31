@@ -228,18 +228,6 @@ importers:
       '@types/html-minifier-terser':
         specifier: ^7.0.2
         version: 7.0.2
-      '@types/karma-browserstack-launcher':
-        specifier: ^1.6.5
-        version: 1.6.5
-      '@types/karma-chrome-launcher':
-        specifier: ^3.1.4
-        version: 3.1.4
-      '@types/karma-firefox-launcher':
-        specifier: ^2.1.4
-        version: 2.1.4
-      '@types/karma-mocha':
-        specifier: ^1.3.4
-        version: 1.3.4
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
@@ -1735,21 +1723,6 @@ packages:
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
-  '@types/karma-browserstack-launcher@1.6.5':
-    resolution: {integrity: sha512-lY3wKT6umw1pQ7vkv/hjQDWxaWzYxxwJ2kYYgdCubAKQuzMBVBaOqJccIOYSrOLmMS8TZuCLHrXMgd1oHdMOlg==}
-
-  '@types/karma-chrome-launcher@3.1.4':
-    resolution: {integrity: sha512-DmZXMnOG1zcl/GqtWbfAePFqWLuDFOYdfa+TpvlNvGHiT8GxJjr5RKTptX8K8ZUokjX1pZGAf4KeC46iok3VcA==}
-
-  '@types/karma-firefox-launcher@2.1.4':
-    resolution: {integrity: sha512-LvTzhKUPR1Qid8rHOPjdEi4eqggFXCf77KVGhpu2D8y8eTSCYpfi+enz1k+avUUo6QxoE2rC/YVijt0COp0gUg==}
-
-  '@types/karma-mocha@1.3.4':
-    resolution: {integrity: sha512-Imps6TZLcBJNWaHV30/NHTg8GBiZAPZAeNdCNbX3vgEmUK5EMrxmu6OfT753w8Nwq5zWg2ielioCl3LjD0QlIA==}
-
-  '@types/karma@6.3.9':
-    resolution: {integrity: sha512-sjE/MHnoAZAQYAKRXAbjTOiBKyGGErEM725bruRcmDdMa2vp1bjWPhApI7/i564PTyHlzc3vIGXLL6TFIpAxFg==}
-
   '@types/lodash-es@4.17.12':
     resolution: {integrity: sha512-0NgftHUcV4v34VhXm8QBSftKVXtbkBG3ViCjs6+eJ5a6y6Mi/jiFGPc1sC7QK+9BFhWrURE3EOggmWaSxL9OzQ==}
 
@@ -2537,10 +2510,6 @@ packages:
     resolution: {integrity: sha512-BS8PfmtDGnrgYdOonGZQdLZslWIeCGFP9tpan0hi1Co2Zr2NKADsvGYA8XxuG/4UWgJ6Cjtv+YJnB6MM69QGlQ==}
     engines: {node: '>= 0.4'}
 
-  date-format@4.0.14:
-    resolution: {integrity: sha512-39BOQLs9ZjKh0/patS9nrT8wc3ioX3/eA/zgbKNopnF2wCqJEoxywwwElATYvRsXdnOxA/OQeQoFZ3rFjVajhg==}
-    engines: {node: '>=4.0'}
-
   debug@4.4.3:
     resolution: {integrity: sha512-RGwwWnwQvkVfavKVt22FGLw+xYSdzARwm0ru6DhTVA3umU5hZc28V3kO4stgYryrTlLpuvgI9GiijltAjNbcqA==}
     engines: {node: '>=6.0'}
@@ -2969,10 +2938,6 @@ packages:
       react-dom:
         optional: true
 
-  fs-extra@8.1.0:
-    resolution: {integrity: sha512-yhlQgA6mnOJUKOsRUFsgJdQCvkKhcz8tlZG5HBQfReYZy46OwLcY+Zia0mtdHsOo9y/hP+CxMN0TU9QxoOtG4g==}
-    engines: {node: '>=6 <7 || >=8'}
-
   fs-extra@9.1.0:
     resolution: {integrity: sha512-hcg3ZmepS30/7BSFqRvoo3DOMQu7IjqxO5nCDt+zM9XWjb33Wg7ziNT+Qvqbuc3+gWpzO02JubVyk2G4Zvo1OQ==}
     engines: {node: '>=10'}
@@ -3392,9 +3357,6 @@ packages:
     engines: {node: '>=6'}
     hasBin: true
 
-  jsonfile@4.0.0:
-    resolution: {integrity: sha512-m6F1R3z8jjlf2imQHS2Qez5sjKWQzbuuhuJ/FKYFRZvPE3PuHcSMVZzfsLhGVOkfd20obL5SWEBew5ShlquNxg==}
-
   jsonfile@6.2.0:
     resolution: {integrity: sha512-FGuPw30AdOIUTRMC2OMRtQV+jkVj2cfPqSeWXv1NEAJ1qZ5zb1X6z1mFhbfOB/iy3ssJCD+3KuZ8r8C3uVFlAg==}
 
@@ -3536,10 +3498,6 @@ packages:
   log-update@6.1.0:
     resolution: {integrity: sha512-9ie8ItPR6tjY5uYJh8K/Zrv/RMZ5VOlOWvtZdEHYSTFKZfIBPQa9tOAEeAWhd+AnIneLJ22w5fjOYtoutpWq5w==}
     engines: {node: '>=18'}
-
-  log4js@6.9.1:
-    resolution: {integrity: sha512-1somDdy9sChrr9/f4UlzhdaGfDR2c/SaD2a4T7qEkG4jTS57/B3qmnjLYePwQ8cqWnUHZI0iAKxMBpCZICiZ2g==}
-    engines: {node: '>=8.0'}
 
   loose-envify@1.4.0:
     resolution: {integrity: sha512-lyuxPGr/Wfhrlem2CL/UcnUc1zcqKAImBDzukY7Y5F/yQiNdko6+fRLevlw1HgMySw7f611UIY408EtxRSoK3Q==}
@@ -4323,10 +4281,6 @@ packages:
     resolution: {integrity: sha512-eLoXW/DHyl62zxY4SCaIgnRhuMr6ri4juEYARS8E6sCEqzKpOiE521Ucofdx+KnDZl5xmvGYaaKCk5FEOxJCoQ==}
     engines: {node: '>= 0.4'}
 
-  streamroller@3.1.5:
-    resolution: {integrity: sha512-KFxaM7XT+irxvdqSP1LGLgNWbYN7ay5owZ3r/8t77p+EtSUAfUgtl7be3xtqtOmGUl9K9YPO2ca8133RlTjvKw==}
-    engines: {node: '>=8.0'}
-
   streamsaver@2.0.6:
     resolution: {integrity: sha512-LK4e7TfCV8HzuM0PKXuVUfKyCB1FtT9L0EGxsFk5Up8njj0bXK8pJM9+Wq2Nya7/jslmCQwRK39LFm55h7NBTw==}
 
@@ -4556,10 +4510,6 @@ packages:
   unique-string@2.0.0:
     resolution: {integrity: sha512-uNaeirEPvpZWSgzwsPGtU2zVSTrn/8L5q/IexZmH0eH6SA73CmAA5U4GwORTxQAZs95TAXLNqeLoPPNO5gZfWg==}
     engines: {node: '>=8'}
-
-  universalify@0.1.2:
-    resolution: {integrity: sha512-rBJeI5CXAlmy1pV+617WB9J63U6XcazHHF2f2dbJix4XzpUF0RS3Zbj0FGIOCAva5P/d/GBOYaACQ1w+0azUkg==}
-    engines: {node: '>= 4.0.0'}
 
   universalify@2.0.1:
     resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
@@ -6349,37 +6299,6 @@ snapshots:
 
   '@types/json-schema@7.0.15': {}
 
-  '@types/karma-browserstack-launcher@1.6.5':
-    dependencies:
-      '@types/karma': 6.3.9
-    transitivePeerDependencies:
-      - supports-color
-
-  '@types/karma-chrome-launcher@3.1.4':
-    dependencies:
-      '@types/karma': 6.3.9
-    transitivePeerDependencies:
-      - supports-color
-
-  '@types/karma-firefox-launcher@2.1.4':
-    dependencies:
-      '@types/karma': 6.3.9
-    transitivePeerDependencies:
-      - supports-color
-
-  '@types/karma-mocha@1.3.4':
-    dependencies:
-      '@types/karma': 6.3.9
-    transitivePeerDependencies:
-      - supports-color
-
-  '@types/karma@6.3.9':
-    dependencies:
-      '@types/node': 24.9.2
-      log4js: 6.9.1
-    transitivePeerDependencies:
-      - supports-color
-
   '@types/lodash-es@4.17.12':
     dependencies:
       '@types/lodash': 4.17.20
@@ -7272,8 +7191,6 @@ snapshots:
       es-errors: 1.3.0
       is-data-view: 1.0.2
 
-  date-format@4.0.14: {}
-
   debug@4.4.3:
     dependencies:
       ms: 2.1.3
@@ -7839,12 +7756,6 @@ snapshots:
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
 
-  fs-extra@8.1.0:
-    dependencies:
-      graceful-fs: 4.2.11
-      jsonfile: 4.0.0
-      universalify: 0.1.2
-
   fs-extra@9.1.0:
     dependencies:
       at-least-node: 1.0.0
@@ -8250,10 +8161,6 @@ snapshots:
 
   json5@2.2.3: {}
 
-  jsonfile@4.0.0:
-    optionalDependencies:
-      graceful-fs: 4.2.11
-
   jsonfile@6.2.0:
     dependencies:
       universalify: 2.0.1
@@ -8379,16 +8286,6 @@ snapshots:
       slice-ansi: 7.1.2
       strip-ansi: 7.1.2
       wrap-ansi: 9.0.2
-
-  log4js@6.9.1:
-    dependencies:
-      date-format: 4.0.14
-      debug: 4.4.3
-      flatted: 3.3.3
-      rfdc: 1.4.1
-      streamroller: 3.1.5
-    transitivePeerDependencies:
-      - supports-color
 
   loose-envify@1.4.0:
     dependencies:
@@ -9169,14 +9066,6 @@ snapshots:
       es-errors: 1.3.0
       internal-slot: 1.1.0
 
-  streamroller@3.1.5:
-    dependencies:
-      date-format: 4.0.14
-      debug: 4.4.3
-      fs-extra: 8.1.0
-    transitivePeerDependencies:
-      - supports-color
-
   streamsaver@2.0.6: {}
 
   string-argv@0.3.2: {}
@@ -9434,8 +9323,6 @@ snapshots:
   unique-string@2.0.0:
     dependencies:
       crypto-random-string: 2.0.0
-
-  universalify@0.1.2: {}
 
   universalify@2.0.1: {}
 

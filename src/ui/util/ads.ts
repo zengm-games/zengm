@@ -259,7 +259,7 @@ class Ads {
 	trackPageview(path: string) {
 		// https://freestarhelp.zendesk.com/hc/en-us/articles/34417159798804-Track-Page-Views
 		window.freestar.queue.push(() => {
-			window.freestar.trackPageview({ path });
+			window.freestar.trackPageview?.({ path });
 		});
 	}
 

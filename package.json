@@ -24,7 +24,7 @@
 		"test": "node --run pre-test && vitest --run",
 		"test-e2e": "node --run pre-test && vitest --config vitest-e2e.config.ts --run",
 		"prepare": "husky",
-		"postinstall": "pnpm playwright install"
+		"postinstall": "playwright install"
 	},
 	"lint-staged": {
 		"*.{js,cjs,mjs,jsx,json,scss,ts,cts,mts,tsx}": "prettier --write"
@@ -137,6 +137,7 @@
 		"jsdom": "^27.0.1",
 		"lightningcss": "^1.30.2",
 		"lint-staged": "^16.2.6",
+		"playwright": "^1.56.1",
 		"prettier": "^3.6.2",
 		"purgecss": "^7.0.2",
 		"rolldown": "1.0.0-beta.45",

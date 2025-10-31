@@ -321,6 +321,9 @@ importers:
       lint-staged:
         specifier: ^16.2.6
         version: 16.2.6
+      playwright:
+        specifier: ^1.56.1
+        version: 1.56.1
       prettier:
         specifier: ^3.6.2
         version: 3.6.2

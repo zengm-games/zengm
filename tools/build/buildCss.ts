@@ -1,4 +1,5 @@
 import { Buffer } from "node:buffer";
+import path from "node:path";
 import fs from "node:fs/promises";
 import { promisify } from "node:util";
 import browserslist from "browserslist";
@@ -84,7 +85,9 @@ export const buildCss = async (
 				minify: true,
 				sourceMap: false,
 				targets: browserslistToTargets(
-					browserslist("Chrome >= 85, Firefox >= 115, Safari >= 15.4"),
+					browserslist(undefined, {
+						config: path.join(import.meta.dirname, "../../.browserslistrc"),
+					}),
 				),
 			});
 

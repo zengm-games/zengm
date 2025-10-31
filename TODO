@@ -1,3 +1,10 @@
+highlight or color code player ratings in more places, similar to ratingsstatspopover
+- compare to position average, or all players? maybe depends on sport
+- compare to predefined range, or based on league?
+- places
+  - player profile
+  - player ratings
+
 does dp_FIRSTNAME_LASTNAME key in roster actually get propagated here?
 
 populate ovrDrop when editing injury and ratings at same time? https://discord.com/channels/290013534023057409/1432096932938907709/1432102253682233346
@@ -2138,10 +2145,6 @@ teams play better/worse when down/up
 - @nicidob
 - reference http://apbr.org/metrics/viewtopic.php?f=2&t=8501&start=0 in comment
 - https://github.com/zengm-games/zengm/pull/276
-
-player page UI improvements https://old.reddit.com/r/BasketballGM/comments/fbja8g/more_ideas/
-- deltas for ratings at the top
-- highlight ratings based on comparison to position average (maybe like popover)
 
 @nicidob Add an option to float the salary cap. Have it come from something like Sum(hype * population). So if NY/LA/CHI/MXC have bad teams, it's worse! Maybe even have hype depend on team rating (so if the whole league is playing crappy teams then the cap goes down).
 

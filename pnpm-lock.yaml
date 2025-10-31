@@ -312,9 +312,6 @@ importers:
       husky:
         specifier: ^9.1.7
         version: 9.1.7
-      jsdom:
-        specifier: ^27.0.1
-        version: 27.0.1(postcss@8.5.6)
       lightningcss:
         specifier: ^1.30.2
         version: 1.30.2
@@ -5031,6 +5028,7 @@ snapshots:
       '@csstools/css-parser-algorithms': 3.0.5(@csstools/css-tokenizer@3.0.4)
       '@csstools/css-tokenizer': 3.0.4
       lru-cache: 11.2.2
+    optional: true
 
   '@asamuzakjp/dom-selector@6.7.3':
     dependencies:
@@ -5039,8 +5037,10 @@ snapshots:
       css-tree: 3.1.0
       is-potential-custom-element-name: 1.0.1
       lru-cache: 11.2.2
+    optional: true
 
-  '@asamuzakjp/nwsapi@2.3.9': {}
+  '@asamuzakjp/nwsapi@2.3.9':
+    optional: true
 
   '@babel/code-frame@7.27.1':
     dependencies:
@@ -5791,12 +5791,14 @@ snapshots:
 
   '@bugsnag/safe-json-stringify@6.1.0': {}
 
-  '@csstools/color-helpers@5.1.0': {}
+  '@csstools/color-helpers@5.1.0':
+    optional: true
 
   '@csstools/css-calc@2.1.4(@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4))(@csstools/css-tokenizer@3.0.4)':
     dependencies:
       '@csstools/css-parser-algorithms': 3.0.5(@csstools/css-tokenizer@3.0.4)
       '@csstools/css-tokenizer': 3.0.4
+    optional: true
 
   '@csstools/css-color-parser@3.1.0(@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4))(@csstools/css-tokenizer@3.0.4)':
     dependencies:
@@ -5804,16 +5806,20 @@ snapshots:
       '@csstools/css-calc': 2.1.4(@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4))(@csstools/css-tokenizer@3.0.4)
       '@csstools/css-parser-algorithms': 3.0.5(@csstools/css-tokenizer@3.0.4)
       '@csstools/css-tokenizer': 3.0.4
+    optional: true
 
   '@csstools/css-parser-algorithms@3.0.5(@csstools/css-tokenizer@3.0.4)':
     dependencies:
       '@csstools/css-tokenizer': 3.0.4
+    optional: true
 
   '@csstools/css-syntax-patches-for-csstree@1.0.14(postcss@8.5.6)':
     dependencies:
       postcss: 8.5.6
+    optional: true
 
-  '@csstools/css-tokenizer@3.0.4': {}
+  '@csstools/css-tokenizer@3.0.4':
+    optional: true
 
   '@dnd-kit/accessibility@3.1.1(react@19.2.0)':
     dependencies:
@@ -7016,7 +7022,8 @@ snapshots:
 
   acorn@8.15.0: {}
 
-  agent-base@7.1.4: {}
+  agent-base@7.1.4:
+    optional: true
 
   agentkeepalive@4.6.0:
     dependencies:
@@ -7172,6 +7179,7 @@ snapshots:
   bidi-js@1.0.3:
     dependencies:
       require-from-string: 2.0.2
+    optional: true
 
   boolbase@1.0.0: {}
 
@@ -7392,6 +7400,7 @@ snapshots:
     dependencies:
       mdn-data: 2.12.2
       source-map-js: 1.2.1
+    optional: true
 
   css-what@6.2.2: {}
 
@@ -7404,6 +7413,7 @@ snapshots:
       css-tree: 3.1.0
     transitivePeerDependencies:
       - postcss
+    optional: true
 
   csstype@3.1.3: {}
 
@@ -7461,6 +7471,7 @@ snapshots:
     dependencies:
       whatwg-mimetype: 4.0.0
       whatwg-url: 15.1.0
+    optional: true
 
   data-view-buffer@1.0.2:
     dependencies:
@@ -7486,7 +7497,8 @@ snapshots:
     dependencies:
       ms: 2.1.3
 
-  decimal.js@10.6.0: {}
+  decimal.js@10.6.0:
+    optional: true
 
   deep-is@0.1.4: {}
 
@@ -8199,6 +8211,7 @@ snapshots:
   html-encoding-sniffer@4.0.0:
     dependencies:
       whatwg-encoding: 3.1.1
+    optional: true
 
   html-minifier-terser@7.2.0:
     dependencies:
@@ -8228,6 +8241,7 @@ snapshots:
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   https-proxy-agent@7.0.6:
     dependencies:
@@ -8235,6 +8249,7 @@ snapshots:
       debug: 4.4.3
     transitivePeerDependencies:
       - supports-color
+    optional: true
 
   humanize-ms@1.2.1:
     dependencies:
@@ -8373,7 +8388,8 @@ snapshots:
 
   is-obj@1.0.1: {}
 
-  is-potential-custom-element-name@1.0.1: {}
+  is-potential-custom-element-name@1.0.1:
+    optional: true
 
   is-reference@1.2.1:
     dependencies:
@@ -8484,6 +8500,7 @@ snapshots:
       - postcss
       - supports-color
       - utf-8-validate
+    optional: true
 
   jsesc@3.0.2: {}
 
@@ -8679,7 +8696,8 @@ snapshots:
 
   math-intrinsics@1.1.0: {}
 
-  mdn-data@2.12.2: {}
+  mdn-data@2.12.2:
+    optional: true
 
   memoize-one@6.0.0: {}
 
@@ -8862,6 +8880,7 @@ snapshots:
   parse5@8.0.0:
     dependencies:
       entities: 6.0.1
+    optional: true
 
   pascal-case@3.1.2:
     dependencies:
@@ -9187,7 +9206,8 @@ snapshots:
 
   roman-numerals@0.3.2: {}
 
-  rrweb-cssom@0.8.0: {}
+  rrweb-cssom@0.8.0:
+    optional: true
 
   run-parallel@1.2.0:
     dependencies:
@@ -9317,6 +9337,7 @@ snapshots:
   saxes@6.0.0:
     dependencies:
       xmlchars: 2.2.0
+    optional: true
 
   scheduler@0.27.0: {}
 
@@ -9562,7 +9583,8 @@ snapshots:
 
   svgpath@2.6.0: {}
 
-  symbol-tree@3.2.4: {}
+  symbol-tree@3.2.4:
+    optional: true
 
   temp-dir@2.0.0: {}
 
@@ -9595,11 +9617,13 @@ snapshots:
 
   tinyrainbow@3.0.3: {}
 
-  tldts-core@7.0.17: {}
+  tldts-core@7.0.17:
+    optional: true
 
   tldts@7.0.17:
     dependencies:
       tldts-core: 7.0.17
+    optional: true
 
   to-regex-range@5.0.1:
     dependencies:
@@ -9610,6 +9634,7 @@ snapshots:
   tough-cookie@6.0.0:
     dependencies:
       tldts: 7.0.17
+    optional: true
 
   tr46@0.0.3: {}
 
@@ -9620,6 +9645,7 @@ snapshots:
   tr46@6.0.0:
     dependencies:
       punycode: 2.3.1
+    optional: true
 
   tree-kill@1.2.2: {}
 
@@ -9843,6 +9869,7 @@ snapshots:
   w3c-xmlserializer@5.0.0:
     dependencies:
       xml-name-validator: 5.0.0
+    optional: true
 
   warning@4.0.3:
     dependencies:
@@ -9854,7 +9881,8 @@ snapshots:
 
   webidl-conversions@4.0.2: {}
 
-  webidl-conversions@8.0.0: {}
+  webidl-conversions@8.0.0:
+    optional: true
 
   whatwg-encoding@3.1.1:
     dependencies:
@@ -9866,6 +9894,7 @@ snapshots:
     dependencies:
       tr46: 6.0.0
       webidl-conversions: 8.0.0
+    optional: true
 
   whatwg-url@5.0.0:
     dependencies:
@@ -10065,9 +10094,11 @@ snapshots:
 
   ws@8.18.3: {}
 
-  xml-name-validator@5.0.0: {}
+  xml-name-validator@5.0.0:
+    optional: true
 
-  xmlchars@2.2.0: {}
+  xmlchars@2.2.0:
+    optional: true
 
   y18n@5.0.8: {}
 

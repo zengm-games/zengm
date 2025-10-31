@@ -134,7 +134,6 @@
 		"globals": "^16.4.0",
 		"html-minifier-terser": "^7.2.0",
 		"husky": "^9.1.7",
-		"jsdom": "^27.0.1",
 		"lightningcss": "^1.30.2",
 		"lint-staged": "^16.2.6",
 		"playwright": "^1.56.1",

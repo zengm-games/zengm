@@ -1,5 +1,3 @@
-// @vitest-environment jsdom
-
 /* eslint-disable no-async-promise-executor */
 import { assert, test } from "vitest";
 import router from "./index.ts";
@@ -7,10 +5,13 @@ import type { Context } from "./index.ts";
 
 const counts: Record<string, number> = {};
 const countCallback = async (context: Context) => {
-	if (context.path.startsWith("/3/")) {
+	// This is to remove the query string that vitest adds to the URL
+	const { pathname } = new URL(context.path, window.location.origin);
+
+	if (pathname.startsWith("/3/")) {
 		counts["/3/:foo"]! += 1;
 	} else {
-		counts[context.path]! += 1;
+		counts[pathname]! += 1;
 	}
 };
 const routes = {
@@ -53,7 +54,6 @@ test("navigates", async () => {
 	assert.strictEqual(counts["/0"], countBefore + 1);
 });
 
-// https://github.com/jsdom/jsdom/issues/1565
 test.skip("handles back/forward navigation", () => {
 	assert.strictEqual(window.location.pathname, "/0");
 	window.history.back();

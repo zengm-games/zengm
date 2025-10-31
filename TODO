@@ -1,6 +1,6 @@
 vitest browser once https://github.com/vitest-dev/vitest/issues/8887 is fixed
 - uncomment as project in normal tests, delete separate e2e config
-- could also move the router test to browser mode and get rid of jsdom
+- unskip router test
 
 browserstack in vitest
 - semi-working in vitest-browser-replace-karma branch

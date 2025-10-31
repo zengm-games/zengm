@@ -22,10 +22,9 @@
 		"pre-test": "node tools/pre-test.ts",
 		"prettier": "prettier --write \"*.{mjs,cjs,js,json,scss,ts,tsx}\" \"public/**/*.{mjs,cjs,js,json,scss,ts,tsx}\" \"src/**/*.{mjs,cjs,js,json,scss,ts,tsx}\" \"tools/**/*.{mjs,cjs,js,json,scss,ts,tsx}\"",
 		"test": "node --run pre-test && vitest --run",
-		"test-e2e": "node --run pre-test && karma start karma.conf.ts",
-		"test-e2e-watch": "node --run pre-test && karma start karma.conf.ts --auto-watch --no-single-run",
-		"test-e2e-browserstack": "node --run pre-test && karma start karma-browserstack.conf.ts",
-		"prepare": "husky"
+		"test-e2e": "node --run pre-test && vitest --config vitest-e2e.config.ts --run",
+		"prepare": "husky",
+		"postinstall": "pnpm playwright install"
 	},
 	"lint-staged": {
 		"*.{js,cjs,mjs,jsx,json,scss,ts,cts,mts,tsx}": "prettier --write"
@@ -121,6 +120,7 @@
 		"@types/stripe-checkout": "^1.0.7",
 		"@types/stripe-v2": "^2.0.6",
 		"@types/wicg-file-system-access": "^2023.10.7",
+		"@vitest/browser-playwright": "^4.0.4",
 		"browserslist": "^4.27.0",
 		"cheerio": "^1.1.2",
 		"chokidar": "^4.0.3",
@@ -135,15 +135,8 @@
 		"html-minifier-terser": "^7.2.0",
 		"husky": "^9.1.7",
 		"jsdom": "^27.0.1",
-		"karma": "^6.4.4",
-		"karma-browserstack-launcher": "^1.6.0",
-		"karma-chrome-launcher": "^3.2.0",
-		"karma-firefox-launcher": "^2.1.3",
-		"karma-mocha": "^2.0.1",
-		"karma-source-map-support": "^1.4.0",
 		"lightningcss": "^1.30.2",
 		"lint-staged": "^16.2.6",
-		"mocha": "^11.7.4",
 		"prettier": "^3.6.2",
 		"purgecss": "^7.0.2",
 		"rolldown": "1.0.0-beta.45",

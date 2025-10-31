@@ -1,3 +1,10 @@
+vitest browser
+- as project in normal tests?
+- could also move the router test to vitest and get rid of jsdom (add simple mock for the other file using jsdom)
+
+browserstack in vitest
+- semi-working in vitest-browser-replace-karma branch
+
 highlight or color code player ratings in more places, similar to ratingsstatspopover
 - compare to position average, or all players? maybe depends on sport
 - compare to predefined range, or based on league?
@@ -497,10 +504,6 @@ some generic way to hide ratings in challengeNoRatings
 - should be done on worker, so UI never gets an opportunity to display ratings. this is better than a Rating component because it handles all cases, including when ratings are shown inline in some text
 
 show amount in $ over trade limit rather than % https://mail.google.com/mail/u/0/#inbox/FMfcgzQVxRJVkhtPLhkSrSXlJxJVWgrN?compose=DmwnWrRrmRLLHDwLtgDWrwnTFPXrFqTcCQpnNNqHJKtNMsbmsqNqfhtmtPQrTQKMrQjSNfCLSJcg
-
-vitest
-- when browser testing is stable, could replace the karma/mocha stuff with vitest
-  - could also move the router test to vitest and get rid of jsdom (add simple mock for the other file using jsdom)
 
 option to sort playoff teams by power ranking
 

@@ -1616,6 +1616,7 @@ type TeamSeasonPlus = Omit<TeamSeason, "lastTen"> & {
 	ptsMax: number;
 	ptsPct: number;
 	avgAge: number | undefined;
+	gp: number;
 };
 export type TeamSeasonAttr = keyof TeamSeasonPlus;
 

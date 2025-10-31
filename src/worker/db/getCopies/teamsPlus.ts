@@ -201,6 +201,8 @@ const processSeasonAttrs = async <
 							};
 						}
 					}
+				} else if (attr === "gp") {
+					row.gp = ts.won + ts.lost + (ts.tied ?? 0) + (ts.otl ?? 0);
 				} else {
 					// @ts-expect-error
 					row[attr] = ts[attr];

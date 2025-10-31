@@ -128,6 +128,7 @@ const updateLeadersProgressive = async (
 				combined: inputs.playoffs === "combined",
 				mergeStats: "totOnly" as const,
 				statType: inputs.statType,
+				disableAbbrevsCacheDatabaseAccess: true,
 			};
 
 			{

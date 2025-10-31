@@ -106,6 +106,7 @@ const updateLeadersYears = async (
 				combined: inputs.playoffs === "combined",
 				mergeStats: "totOnly",
 				statType: inputs.statType,
+				disableAbbrevsCacheDatabaseAccess: true,
 			});
 			if (!p) {
 				return;

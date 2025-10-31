@@ -256,10 +256,10 @@ class Ads {
 		);
 	}
 
-	trackPageview() {
-		// https://help.freestar.com/help/how-to-track-virtual-page-views
+	trackPageview(path: string) {
+		// https://freestarhelp.zendesk.com/hc/en-us/articles/34417159798804-Track-Page-Views
 		window.freestar.queue.push(() => {
-			window.freestar.trackPageview();
+			window.freestar.trackPageview({ path });
 		});
 	}
 

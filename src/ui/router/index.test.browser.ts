@@ -54,11 +54,27 @@ test("navigates", async () => {
 	assert.strictEqual(counts["/0"], countBefore + 1);
 });
 
-test.skip("handles back/forward navigation", () => {
+test("handles back/forward navigation", async () => {
+	// This is to wait for the asynchronous effect of window.history.back() and window.history.forward() to occur
+	const waitForPopstate = () => {
+		return new Promise((resolve) => {
+			window.addEventListener("popstate", resolve, { once: true });
+		});
+	};
+	let promise;
+
+	await router.navigate("/");
+	await router.navigate("/0");
 	assert.strictEqual(window.location.pathname, "/0");
+
+	promise = waitForPopstate();
 	window.history.back();
+	await promise;
 	assert.strictEqual(window.location.pathname, "/");
+
+	promise = waitForPopstate();
 	window.history.forward();
+	await promise;
 	assert.strictEqual(window.location.pathname, "/0");
 });
 

@@ -93,6 +93,9 @@ const summary = async (teams: TradeTeams): Promise<TradeSummary> => {
 				s.teams[i].picks.push({
 					dpid: dp.dpid,
 					desc: await helpers.pickDesc(dp, "short"),
+					pick: dp.pick,
+					round: dp.round,
+					season: dp.season,
 				});
 			}
 		}

@@ -1796,6 +1796,9 @@ type TradeSummaryTeam = {
 	payrollBeforeTrade: number;
 	picks: {
 		dpid: number;
+		season: DraftPickSeason;
+		round: number;
+		pick: number;
 		desc: string;
 	}[];
 	total: number;

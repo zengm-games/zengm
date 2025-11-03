@@ -2371,17 +2371,6 @@ class GameSim extends GameSimBase {
 			return;
 		}
 
-		// Runners on 2nd and 3rd, less than 2 outs
-		if (
-			this.outs < 2 &&
-			!this.bases[0] &&
-			this.bases[1] &&
-			this.bases[2] &&
-			Math.random() < 0.5
-		) {
-			return true;
-		}
-
 		const batter = this.team[this.o].getBatter().p;
 		const onDeck = this.team[this.o].getOnDeck().p;
 		const score = (p: PlayerGameSim) =>
@@ -2390,10 +2379,9 @@ class GameSim extends GameSimBase {
 		const onDeckScore = score(onDeck);
 		const diffScore = batterScore - onDeckScore; // Each score ranges from 0 to 2, so the most this could be is 2
 
-		// Runner on just 2nd, less than 2 outs - maybe if the next hitter is worse
-		if (this.outs < 2 && !this.bases[0] && this.bases[1] && !this.bases[2]) {
-			const ibb = Math.random() < diffScore - 0.1;
-			return ibb;
+		// Runner on 2nd, 1st base empty - maybe if the next hitter is worse
+		if (this.outs < 2 && !this.bases[0] && this.bases[1]) {
+			return Math.random() < diffScore - 0.1;
 		}
 
 		// If the current batter is just very scary

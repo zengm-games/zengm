@@ -29,13 +29,6 @@ export const validateAbbrev = (
 
 	if (abbrev !== undefined) {
 		{
-			const int = Number.parseInt(abbrev);
-			if (!Number.isNaN(int) && teamInfoCache[int]) {
-				return [int, teamInfoCache[int].abbrev];
-			}
-		}
-
-		{
 			const tid = teamInfoCache.findIndex((t) => t.abbrev === abbrev);
 			if (tid >= 0) {
 				return [tid, abbrev];
@@ -56,12 +49,7 @@ export const validateAbbrev = (
 	}
 
 	const tid = g.get("userTid");
-	abbrev = teamInfoCache[tid]?.abbrev;
-	if (abbrev === undefined) {
-		abbrev = "???";
-	}
-
-	return [tid, abbrev];
+	return [tid, teamInfoCache[tid]?.abbrev ?? "???"];
 };
 
 /**

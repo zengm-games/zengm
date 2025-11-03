@@ -454,6 +454,7 @@ export class GamesPlayedCache {
 
 			const teams = await idb.getCopies.teamsPlus({
 				attrs: ["tid"],
+				stats: ["gp"], // Use this only for playoffs, since seasonAttrs.gp does not increment for playoffs
 				seasonAttrs: ["gp"], // Use seasonAttrs.gp rather than stats.gp for real player historical data which has no team stats
 				season,
 				playoffs,
@@ -463,7 +464,7 @@ export class GamesPlayedCache {
 			const cache: Record<number, number> = {};
 			for (const t of teams) {
 				if (playoffs) {
-					cache[t.tid] = Math.max(minGpPlayoffs, t.seasonAttrs.gp);
+					cache[t.tid] = Math.max(minGpPlayoffs, t.stats.gp);
 				} else {
 					cache[t.tid] = t.seasonAttrs.gp;
 				}

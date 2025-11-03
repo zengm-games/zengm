@@ -3737,68 +3737,6 @@ const updateBudget = async ({
 	await toUI("realtimeUpdate", [["teamFinances"]]);
 };
 
-const updateConfsDivs = async ({
-	confs,
-	divs,
-	teams,
-}: {
-	confs: Conf[];
-	divs: Div[];
-	teams: { cid: number; did: number; tid: number }[];
-}) => {
-	// First some sanity checks to make sure they're consistent
-	for (const div of divs) {
-		const conf = confs.find((c) => c.cid === div.cid);
-		if (!conf) {
-			throw new Error("div has invalid cid");
-		}
-	}
-	for (const t of teams) {
-		const div = divs.find((d) => d.did === t.did);
-		if (!div) {
-			throw new Error("team has invalid did");
-		}
-		if (div.cid !== t.cid) {
-			throw new Error("team has invalid cid");
-		}
-	}
-
-	const currentTeams = await idb.cache.teams.getAll();
-	for (const t of currentTeams) {
-		if (t.disabled) {
-			continue;
-		}
-
-		const info = teams.find((row) => row.tid === t.tid);
-		if (!info) {
-			throw new Error("Inconsistent teams");
-		}
-		if (t.cid !== info.cid || t.did !== info.did) {
-			t.cid = info.cid;
-			t.did = info.did;
-			await idb.cache.teams.put(t);
-
-			// Also apply team info changes to this season
-			if (actualPhase() < PHASE.PLAYOFFS) {
-				const teamSeason = await idb.cache.teamSeasons.indexGet(
-					"teamSeasonsByTidSeason",
-					[t.tid, g.get("season")],
-				);
-
-				if (teamSeason) {
-					teamSeason.cid = t.cid;
-					teamSeason.did = t.did;
-					await idb.cache.teamSeasons.put(teamSeason);
-				}
-			}
-		}
-	}
-
-	await league.setGameAttributes({ confs: confs as any, divs: divs as any });
-
-	await toUI("realtimeUpdate", [["gameAttributes"]]);
-};
-
 const updateDefaultSettingsOverrides = async (
 	defaultSettingsOverrides: Partial<Settings>,
 ) => {
@@ -4280,8 +4218,11 @@ const updatePlayoffTeams = async (
 	}
 };
 
-const updateTeamInfo = async (
-	newTeams: {
+const updateTeamInfo = async ({
+	teams: newTeams,
+	from,
+}: {
+	teams: {
 		tid: number;
 		cid?: number;
 		did: number;
@@ -4295,14 +4236,20 @@ const updateTeamInfo = async (
 		colors: [string, string, string];
 		jersey: string;
 		disabled?: boolean;
-	}[],
-) => {
+	}[];
+	from: "manageTeams" | "manageConfs";
+}) => {
 	const teams = await idb.cache.teams.getAll();
 
 	for (const t of teams) {
 		const newTeam = newTeams.find((t2) => t2.tid === t.tid);
 		if (!newTeam) {
-			throw new Error(`New team not found for tid ${t.tid}`);
+			// manageConfs doesn't include disabled teams, on purpose
+			if (from === "manageConfs" && t.disabled) {
+				continue;
+			} else {
+				throw new Error(`New team not found for tid ${t.tid}`);
+			}
 		}
 
 		if (newTeam.did !== undefined) {
@@ -4421,6 +4368,51 @@ const updateTeamInfo = async (
 	});
 
 	await league.updateMeta();
+};
+
+const updateConfsDivs = async ({
+	confs,
+	divs,
+	teams,
+}: {
+	confs: Conf[];
+	divs: Div[];
+	teams: (Omit<Parameters<typeof updateTeamInfo>[0]["teams"][number], "cid"> & {
+		cid: number;
+	})[];
+}) => {
+	// First some sanity checks to make sure they're consistent
+	for (const div of divs) {
+		const conf = confs.find((c) => c.cid === div.cid);
+		if (!conf) {
+			throw new Error("div has invalid cid");
+		}
+	}
+	for (const t of teams) {
+		const div = divs.find((d) => d.did === t.did);
+		if (!div) {
+			throw new Error("team has invalid did");
+		}
+		if (div.cid !== t.cid) {
+			throw new Error("team has invalid cid");
+		}
+	}
+
+	const currentTeams = await idb.cache.teams.getAll();
+	for (const t of currentTeams) {
+		if (t.disabled) {
+			continue;
+		}
+
+		const info = teams.find((row) => row.tid === t.tid);
+		if (!info) {
+			throw new Error("Inconsistent teams");
+		}
+	}
+
+	await league.setGameAttributes({ confs: confs as any, divs: divs as any });
+
+	await updateTeamInfo({ teams, from: "manageConfs" });
 };
 
 const updateAwards = async (

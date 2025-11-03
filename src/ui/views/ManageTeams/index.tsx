@@ -156,7 +156,10 @@ const ManageTeams = (props: View<"manageTeams">) => {
 		dispatch({ type: "startSaving" });
 
 		try {
-			await toWorker("main", "updateTeamInfo", state.teams);
+			await toWorker("main", "updateTeamInfo", {
+				teams: state.teams,
+				from: "manageTeams",
+			});
 
 			let text = "Saved team info.";
 

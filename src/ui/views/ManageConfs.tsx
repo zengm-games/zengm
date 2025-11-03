@@ -4,6 +4,7 @@ import { helpers, logEvent, toWorker, useLocalPartial } from "../util/index.ts";
 import type { Conf, Div, NonEmptyArray, View } from "../../common/types.ts";
 import {
 	DEFAULT_JERSEY,
+	DEFAULT_STADIUM_CAPACITY,
 	DEFAULT_TEAM_COLORS,
 	PHASE,
 } from "../../common/index.ts";
@@ -259,7 +260,17 @@ const ManageConfs = ({
 						await toWorker("main", "updateConfsDivs", {
 							confs,
 							divs,
-							teams,
+							teams: teams.map((t) => {
+								return {
+									...t,
+
+									// I don't think this is necessary, but it's complicated getting the types right!
+									colors: t.colors ?? DEFAULT_TEAM_COLORS,
+									jersey: t.jersey ?? DEFAULT_JERSEY,
+									stadiumCapacity:
+										t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY,
+								};
+							}),
 						});
 
 						let text = "Saved conferences and divisions.";

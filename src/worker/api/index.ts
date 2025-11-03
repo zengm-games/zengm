@@ -4253,11 +4253,10 @@ const updateTeamInfo = async ({
 		}
 
 		if (newTeam.did !== undefined) {
-			const newDiv = g.get("divs").find((div) => div.did === newTeam.did);
-			if (newDiv) {
-				t.did = newDiv.did;
-				t.cid = newDiv.cid;
-			}
+			const divs = g.get("divs");
+			const newDiv = divs.find((div) => div.did === newTeam.did) ?? divs[0];
+			t.did = newDiv.did;
+			t.cid = newDiv.cid;
 		}
 
 		t.region = newTeam.region;

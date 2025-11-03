@@ -2,7 +2,7 @@ import { Children, useEffect, useMemo, useRef } from "react";
 import { useVirtualizer, type ScrollToOptions } from "@tanstack/react-virtual";
 import { components, type MenuListProps, type OptionProps } from "react-select";
 
-const DefaultItemHeight = 32;
+const DEFAULT_ITEM_HEIGHT = 32;
 
 // https://www.botsplash.com/post/optimize-your-react-select-component-to-smoothly-render-10k-data
 export const CustomOption = <T extends unknown>({
@@ -20,9 +20,9 @@ export const CustomMenuList = <T extends unknown>({
 }: MenuListProps<T>) => {
 	const childrenArray = Children.toArray(children);
 	const wrapperHeight =
-		maxHeight < childrenArray.length * DefaultItemHeight
+		maxHeight < childrenArray.length * DEFAULT_ITEM_HEIGHT
 			? maxHeight
-			: childrenArray.length * DefaultItemHeight;
+			: childrenArray.length * DEFAULT_ITEM_HEIGHT;
 
 	const parentRef = useRef<HTMLDivElement>(null);
 
@@ -30,7 +30,7 @@ export const CustomMenuList = <T extends unknown>({
 	const rowVirtualizer = useVirtualizer({
 		count: childrenArray.length,
 		getScrollElement: () => parentRef.current,
-		estimateSize: () => DefaultItemHeight,
+		estimateSize: () => DEFAULT_ITEM_HEIGHT,
 	});
 
 	const currentIndexFocused = useMemo(

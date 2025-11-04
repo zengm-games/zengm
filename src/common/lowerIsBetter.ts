@@ -102,6 +102,8 @@ export const lowerIsBetter = new Set(
 			"oppTd",
 			"oppQd",
 			"oppFxf",
+			"oppEfg",
+			"oppFtpFga",
 		],
 		football: [
 			"lost",

@@ -1,3 +1,17 @@
+make ovr drop get saved from edited injury too https://old.reddit.com/r/BasketballGM/comments/1nutcno/monthly_suggestions_thread/nhr94ld/
+
+some way to export play-by-play and box score
+- https://discord.com/channels/290013534023057409/1357064671118753904/1357521047934734397
+- https://mail.google.com/mail/u/0/#inbox/FMfcgzQbfBvvgXvRgXKHVmHDcgXhJpTq?compose=DmwnWrRttWQWxCKltqpwbvvmKRwvbRxjQBlPPgZnpqcsrSzGXWNdCjCFnGmPkwpmsxkSpsqDZFjG
+- https://old.reddit.com/r/BasketballGM/comments/1nutcno/monthly_suggestions_thread/nhaadkv/
+
+some way to export season summary https://old.reddit.com/r/BasketballGM/comments/1nutcno/monthly_suggestions_thread/nhaadkv/
+
+retired jersey number should not block the player it was retired for, and instead they should favor it https://discord.com/channels/290013534023057409/331882115119448065/1434939012585488515
+
+button to undo or redo a players preseason progs https://discord.com/channels/290013534023057409/331882115119448065/1433886857481162893
+- some way to bulk do it?
+
 vitest browser once https://github.com/vitest-dev/vitest/issues/8887 is fixed
 - uncomment as project in normal tests, delete separate e2e config
 - run all tests in browser mode?
@@ -237,10 +251,6 @@ store list of prior worker console commands https://discord.com/channels/2900135
 - also allow searching and other DataTable features
 - do this in popup window?
 - won't this get filled with a bunk of junk, like running the same code with different parameters? idk, maybe not worth it
-
-some way to export play-by-play and box score
-- https://discord.com/channels/290013534023057409/1357064671118753904/1357521047934734397
-- https://mail.google.com/mail/u/0/#inbox/FMfcgzQbfBvvgXvRgXKHVmHDcgXhJpTq?compose=DmwnWrRttWQWxCKltqpwbvvmKRwvbRxjQBlPPgZnpqcsrSzGXWNdCjCFnGmPkwpmsxkSpsqDZFjG
 
 population rounding should be dynamic https://discord.com/channels/290013534023057409/331882115119448065/1353247122224451675
 
@@ -1006,6 +1016,7 @@ frivolities
   - hardest carry - highest fraction of WS/VORP https://old.reddit.com/r/BasketballGM/comments/1kbv9ei/monthly_suggestions_thread/mr32bkm/
   - Most playoff games played, no championship https://discord.com/channels/@me/1099138438147624990/1386910170159775745
   - best FA signing (best player in season right after signing as FA) https://discord.com/channels/290013534023057409/331882115119448065/1428817707880546595
+  - best player without an All-Star appearance https://old.reddit.com/r/BasketballGM/comments/1nutcno/monthly_suggestions_thread/nit6g9b/
 - team seasons
   - most consecutive seasons w/ championships/finals/playoffs/no-playoffs
   - best playoffs (record in individual playoffs) - annoying to implement in frivolitiesTeamSeasons

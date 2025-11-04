@@ -489,6 +489,24 @@ const TEAM_STATS_TABLES = {
 			"tovp",
 			"orbp",
 			"ftpFga",
+			"oppEfg",
+			"oppTovp",
+			"drbp",
+			"oppFtpFga",
+		],
+		superCols: [
+			{
+				title: "",
+				colspan: 13,
+			},
+			{
+				title: "Offensive Four Factors",
+				colspan: 4,
+			},
+			{
+				title: "Defensive Four Factors",
+				colspan: 4,
+			},
 		],
 	},
 };

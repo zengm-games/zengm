@@ -1040,13 +1040,13 @@ const sportSpecificCols = bySport<{
 			desc: "Free Throws per Field Goal Attempted",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
-			title: "FTr",
+			title: "FT/FGA",
 		},
 		"stat:ftr": {
 			desc: "Free Throw Attempt Rate (FTA / FGA)",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
-			title: "FT/FGA",
+			title: "FTr",
 		},
 		"stat:gmsc": {
 			desc: "Game Score",

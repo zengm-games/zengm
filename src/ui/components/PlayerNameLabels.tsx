@@ -28,7 +28,6 @@ type Props = {
 	style?: {
 		[key: string]: string;
 	};
-	watch?: number;
 
 	firstName?: string;
 	lastName?: string;
@@ -45,7 +44,17 @@ type Props = {
 
 	// Override the alwaysShowCountry feature to always be disabled, in the case where we know the country is displayed elsewhere nearby already
 	neverShowCountry?: boolean;
-};
+} & (
+	| {
+			// See RatingsStastOverview props for an explanation
+			initialWatch?: number;
+			watch?: undefined;
+	  }
+	| {
+			initialWatch?: undefined;
+			watch?: number;
+	  }
+);
 
 const parseLegacyName = (name: string) => {
 	// Used to be `const parts = name.split(" (")[0].split(" ");`, not sure why, but that messes up names with parentheses in them
@@ -152,6 +161,7 @@ const PlayerNameLabels = (props: Props) => {
 		skills,
 		style,
 		tid,
+		initialWatch,
 		watch,
 	} = props;
 
@@ -233,6 +243,7 @@ const PlayerNameLabels = (props: Props) => {
 				<RatingsStatsPopover
 					pid={pid}
 					season={season}
+					initialWatch={initialWatch as any}
 					watch={watch}
 					disableNameLink={disableNameLink}
 				/>

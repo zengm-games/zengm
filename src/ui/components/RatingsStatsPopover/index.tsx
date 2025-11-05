@@ -55,11 +55,22 @@ type Props = {
 	disableNameLink?: boolean;
 	pid: number;
 	season?: number;
-	watch?: number;
-};
+} & (
+	| {
+			// If initialWatch is passed, that is the initial value only and we need to keep track of local changes
+			// If neither is passed, then we need to fetch the initial value ourselves too!
+			initialWatch?: number;
+			watch?: undefined;
+	  }
+	| {
+			initialWatch?: undefined;
+			watch?: number;
+	  }
+);
 
 const RatingsStatsPopover = ({
 	disableNameLink,
+	initialWatch,
 	pid,
 	season,
 	watch,
@@ -93,17 +104,17 @@ const RatingsStatsPopover = ({
 
 	// If watch is undefined, fetch it from worker
 	const LOCAL_WATCH = watch === undefined;
-	const [localWatch, setLocalWatch] = useState(0);
+	const [localWatch, setLocalWatch] = useState(initialWatch ?? 0);
 	useEffect(() => {
 		const run = async () => {
-			if (LOCAL_WATCH) {
+			if (LOCAL_WATCH && initialWatch === undefined) {
 				const newLocalWatch = await toWorker("main", "getPlayerWatch", pid);
 				setLocalWatch(newLocalWatch);
 			}
 		};
 
 		run();
-	}, [LOCAL_WATCH, pid]);
+	}, [initialWatch, LOCAL_WATCH, pid]);
 
 	const actualWatch = watch ?? localWatch;
 

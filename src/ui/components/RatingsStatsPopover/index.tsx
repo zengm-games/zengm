@@ -5,6 +5,7 @@ import WatchBlock from "../WatchBlock.tsx";
 import { helpers, toWorker } from "../../util/index.ts";
 import ResponsivePopover from "../ResponsivePopover.tsx";
 import { PLAYER } from "../../../common/index.ts";
+import { bulkActionsEmitter } from "../DataTable/BulkActions.tsx";
 
 const PlayerNote = ({
 	className,
@@ -106,12 +107,25 @@ const RatingsStatsPopover = ({
 	const LOCAL_WATCH = watch === undefined;
 	const [localWatch, setLocalWatch] = useState(initialWatch ?? 0);
 	useEffect(() => {
-		const run = async () => {
-			if (LOCAL_WATCH && initialWatch === undefined) {
-				const newLocalWatch = await toWorker("main", "getPlayerWatch", pid);
-				setLocalWatch(newLocalWatch);
-			}
+		const updateLocalWatch = async () => {
+			const newLocalWatch = await toWorker("main", "getPlayerWatch", pid);
+			setLocalWatch(newLocalWatch);
 		};
+
+		if (LOCAL_WATCH) {
+			if (initialWatch === undefined) {
+				// Need to fetch initial value
+				updateLocalWatch();
+			}
+
+			// Need to listen for bulk action updates
+			const unbind = bulkActionsEmitter.on("updateWatch", async (pids) => {
+				if (pids.includes(pid)) {
+					await updateLocalWatch();
+				}
+			});
+			return unbind;
+		}
 
 		run();
 	}, [initialWatch, LOCAL_WATCH, pid]);

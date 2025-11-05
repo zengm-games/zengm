@@ -22,7 +22,7 @@ import { createPortal } from "react-dom";
 import Modal from "../Modal.tsx";
 import type { DataTableRowMetadata, Props } from "./index.tsx";
 import clsx from "clsx";
-import { createNanoEvents } from "nanoevents";
+import { crossTabEmitter } from "../../util/crossTabEmitter.ts";
 
 // Even at 20 the UI is kind of silly, and if you put in too many players it gets slow/crashes
 const MAX_NUM_TO_COMPARE = 20;
@@ -74,11 +74,6 @@ const getSeason = (
 
 	return season[type] ?? season.default;
 };
-
-// This is for any RatingsStatsOverview with uncontrolled watch (such as watch is undefined, or initialWatch) so they can update. It doesn't handle other tabs currently.
-export const bulkActionsEmitter = createNanoEvents<{
-	updateWatch: (pids: number[]) => void;
-}>();
 
 export type BulkAction = {
 	godMode?: boolean;
@@ -259,7 +254,7 @@ export const BulkActions = ({
 			}
 		}
 
-		bulkActionsEmitter.emit("updateWatch", pids);
+		await crossTabEmitter.emitAllTabs("updateWatch", pids);
 	};
 
 	const onDeletePlayers = async () => {

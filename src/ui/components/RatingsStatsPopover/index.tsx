@@ -5,7 +5,7 @@ import WatchBlock from "../WatchBlock.tsx";
 import { helpers, toWorker } from "../../util/index.ts";
 import ResponsivePopover from "../ResponsivePopover.tsx";
 import { PLAYER } from "../../../common/index.ts";
-import { bulkActionsEmitter } from "../DataTable/BulkActions.tsx";
+import { crossTabEmitter } from "../../util/crossTabEmitter.ts";
 
 const PlayerNote = ({
 	className,
@@ -119,7 +119,7 @@ const RatingsStatsPopover = ({
 			}
 
 			// Need to listen for bulk action updates
-			const unbind = bulkActionsEmitter.on("updateWatch", async (pids) => {
+			const unbind = crossTabEmitter.on("updateWatch", async (pids) => {
 				if (pids.includes(pid)) {
 					await updateLocalWatch();
 				}

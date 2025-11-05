@@ -158,6 +158,7 @@ import { actualPhase } from "../util/actualPhase.ts";
 import getCol from "../../common/getCol.ts";
 import getCols from "../../common/getCols.ts";
 import { formatScheduleForEditor } from "../views/scheduleEditor.ts";
+import type { CrossTabeEmitterParameters } from "../../ui/util/crossTabEmitter.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -679,6 +680,10 @@ const createLeague = async (
 	);
 
 	return lid;
+};
+
+const crossTabEmit = async (parameters: CrossTabeEmitterParameters) => {
+	await toUI("crossTabEmit", [parameters]);
 };
 
 const deleteOldData = async (options: {
@@ -5019,6 +5024,7 @@ export default {
 		countNegotiations,
 		createLeague,
 		createTrade,
+		crossTabEmit,
 		deleteOldData,
 		deleteScheduledEvents,
 		discardUnsavedProgress,

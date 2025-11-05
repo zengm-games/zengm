@@ -17,6 +17,10 @@ import type {
 	UpdateEvents,
 	GameAttributesLeague,
 } from "../../common/types.ts";
+import {
+	crossTabEmitter,
+	type CrossTabeEmitterParameters,
+} from "../util/crossTabEmitter.ts";
 
 const initAds = (type: "accountChecked" | "uiRendered") => {
 	ads.setLoadingDone(type);
@@ -126,11 +130,16 @@ const updateTeamOvrs = (ovrs: number[]) => {
 	}
 };
 
+const crossTabEmit = (parameters: CrossTabeEmitterParameters) => {
+	crossTabEmitter.emit(...parameters);
+};
+
 export default {
 	analyticsEvent,
 	autoPlayDialog,
 	confirm,
 	confirmDeleteAllLeagues,
+	crossTabEmit,
 	deleteGames,
 	initAds,
 	initGold,

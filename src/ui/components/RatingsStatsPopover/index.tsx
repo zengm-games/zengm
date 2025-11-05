@@ -126,8 +126,6 @@ const RatingsStatsPopover = ({
 			});
 			return unbind;
 		}
-
-		run();
 	}, [initialWatch, LOCAL_WATCH, pid]);
 
 	const actualWatch = watch ?? localWatch;

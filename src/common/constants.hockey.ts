@@ -195,6 +195,7 @@ const PLAYER_STATS_TABLES = {
 			"gp",
 			"gMax",
 			"aMax",
+			"ptsMax",
 			"pmMax",
 			"pimMax",
 			"evGMax",

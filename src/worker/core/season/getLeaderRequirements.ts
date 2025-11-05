@@ -521,6 +521,7 @@ const getLeaderRequirements = () => {
 			ps: {},
 			gMax: {},
 			aMax: {},
+			ptsMax: {},
 			pmMax: {},
 			pimMax: {},
 			evGMax: {},

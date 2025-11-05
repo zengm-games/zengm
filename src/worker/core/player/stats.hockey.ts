@@ -90,6 +90,7 @@ const stats = {
 		"svMax",
 		"gMax",
 		"aMax",
+		"ptsMax",
 	] as const,
 };
 

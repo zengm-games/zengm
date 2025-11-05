@@ -468,7 +468,7 @@ const writePlayerStats = async (
 						const derivedMaxStats = bySport({
 							baseball: ["ab", "ip", "tb"],
 							basketball: ["2p", "2pa", "trb", "gmsc"],
-							hockey: ["g", "a"],
+							hockey: ["g", "a", "pts"],
 							football: undefined,
 						});
 						const derivedMaxValues: Record<string, number> | undefined =

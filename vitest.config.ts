@@ -17,7 +17,7 @@ export const getCommon = (
 ): TestProjectInlineConfiguration => {
 	return {
 		isolate: false,
-		// Unsure why but the browser tests like `define` more, and the football tests like `test.env` more
+		// Unsure why but the browser tests need `define` and the node tests need `test.env`
 		define: {
 			"process.env.NODE_ENV": JSON.stringify("test"),
 			"process.env.SPORT": JSON.stringify(sport),

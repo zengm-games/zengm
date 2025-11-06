@@ -254,7 +254,7 @@ const getRealFinalsMvp = async (
 	for (const game of finalsGames) {
 		for (const t of game.teams) {
 			for (const p of t.players) {
-				const info = playerInfos.get(p.pid) || {
+				const info = playerInfos.get(p.pid) ?? {
 					pid: p.pid,
 					score: 0,
 				};

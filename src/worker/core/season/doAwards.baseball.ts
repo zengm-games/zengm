@@ -213,7 +213,7 @@ const getRealFinalsMvp = async (
 					continue;
 				}
 
-				const info = playerInfos.get(p.pid) || {
+				const info = playerInfos.get(p.pid) ?? {
 					pid: p.pid,
 					score: 0,
 					tid: t.tid,

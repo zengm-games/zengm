@@ -1,8 +1,6 @@
 enforce that either watch or defaultWatch is always passed to RatingsStatsPopover (including from PlayerNameLabels which doesn't have proper type checking on those props currently), so we never have to lazy load initial watch state
 - maybe deprecate "watch" and listening for watchList events, if we can use crossTabEmitter for normal updates (not just bulk) too
-  - would fix cross tab updates on heavy pages like AdvancedPlayerSearch that don't listen to watchList. Although kind of silly because they don't listen to many other updates too (such as playerMovement) but hey it's something
   - make sure this handles anything that emits watchList, such as the actions from the Watch List page
-  - make sure this handles exhibition games
   - watchList event still needed for Watch List page?
 
 make ovr drop get saved from edited injury too https://old.reddit.com/r/BasketballGM/comments/1nutcno/monthly_suggestions_thread/nhr94ld/ https://discord.com/channels/290013534023057409/1432096932938907709/1432102253682233346

@@ -189,7 +189,14 @@ const RatingsStatsPopover = ({
 				{age !== undefined ? (
 					<div className="ms-1 flex-shrink-0">{age} yo</div>
 				) : null}
-				<WatchBlock pid={pid} watch={watch} />
+				<WatchBlock
+					pid={pid}
+					watch={watch}
+					onChange={(newWatch) => {
+						// Update locally even though we'll get a crossTabEmitter event too, both for responsiveness and so it works in exhibition games
+						setWatch(newWatch);
+					}}
+				/>
 			</div>
 		);
 	}

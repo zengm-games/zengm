@@ -8,13 +8,15 @@ type Props = {
 	pid: number;
 } & (
 	| {
-			// Do we want to make this controlled or not? Similar to defaultValue vs value in React, except "uncontrolled" means it's actually controlled by crossTabEmitter
+			// Do we want to make this controlled or not? Similar to defaultValue vs value in React, except "uncontrolled" means it's actually controlled by crossTabEmitter. Because of crossTabEmitter onChange is not required (since some reaction to state change will happen automatically) but it is required if you want this to work in exhibition games or if you want to respond a tick faster than waiting for crossTabEmitter.
 			defaultWatch?: undefined;
 			watch: number;
+			onChange?: (watch: number) => void;
 	  }
 	| {
 			defaultWatch: number;
 			watch?: undefined;
+			onChange?: undefined;
 	  }
 );
 
@@ -42,49 +44,58 @@ export const Flag = ({
 	);
 };
 
-const WatchBlock = memo(({ className, defaultWatch, pid, watch }: Props) => {
-	const { numWatchColors } = useLocalPartial(["numWatchColors"]);
+const WatchBlock = memo(
+	({ className, defaultWatch, onChange, pid, watch }: Props) => {
+		const { numWatchColors } = useLocalPartial(["numWatchColors"]);
 
-	const [localWatch, setLocalWatch] = useState(defaultWatch ?? 0);
-	const actualWatch = watch ?? localWatch;
+		const [localWatch, setLocalWatch] = useState(defaultWatch ?? 0);
+		const actualWatch = watch ?? localWatch;
 
-	const handleClick = async (event: SyntheticEvent) => {
-		event.preventDefault();
-		const newWatch = (actualWatch + 1) % (numWatchColors + 1);
-		await toWorker("main", "updatePlayerWatch", { pid, watch: newWatch });
-	};
+		const handleClick = async (event: SyntheticEvent) => {
+			event.preventDefault();
+			const newWatch = (actualWatch + 1) % (numWatchColors + 1);
 
-	useEffect(() => {
-		if (defaultWatch !== undefined) {
-			const updateLocalWatch = async () => {
-				const newLocalWatch = await toWorker("main", "getPlayerWatch", pid);
-				setLocalWatch(newLocalWatch);
-			};
-
-			// Need to listen for bulk action updates
-			const unbind = crossTabEmitter.on("updateWatch", async (pids) => {
-				if (pids.includes(pid)) {
-					await updateLocalWatch();
-				}
-			});
-			return unbind;
-		}
-	}, [defaultWatch, pid]);
-
-	return (
-		<Flag
-			className={className}
-			onClick={handleClick}
-			title={
-				actualWatch !== undefined && actualWatch > 0
-					? numWatchColors > 1
-						? "Cycle watch list"
-						: "Remove from watch list"
-					: "Add to watch list"
+			// Update locally first, both for responsiveness and so it works in exhibition games
+			setLocalWatch(newWatch);
+			if (onChange) {
+				onChange(newWatch);
 			}
-			watch={actualWatch}
-		/>
-	);
-});
+
+			await toWorker("main", "updatePlayerWatch", { pid, watch: newWatch });
+		};
+
+		useEffect(() => {
+			if (defaultWatch !== undefined) {
+				const updateLocalWatch = async () => {
+					const newLocalWatch = await toWorker("main", "getPlayerWatch", pid);
+					setLocalWatch(newLocalWatch);
+				};
+
+				// Need to listen for bulk action updates
+				const unbind = crossTabEmitter.on("updateWatch", async (pids) => {
+					if (pids.includes(pid)) {
+						await updateLocalWatch();
+					}
+				});
+				return unbind;
+			}
+		}, [defaultWatch, pid]);
+
+		return (
+			<Flag
+				className={className}
+				onClick={handleClick}
+				title={
+					actualWatch !== undefined && actualWatch > 0
+						? numWatchColors > 1
+							? "Cycle watch list"
+							: "Remove from watch list"
+						: "Add to watch list"
+				}
+				watch={actualWatch}
+			/>
+		);
+	},
+);
 
 export default WatchBlock;

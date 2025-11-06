@@ -563,7 +563,7 @@ export const ContestantProfiles = ({
 								season={season}
 								jerseyNumber={p.stats.jerseyNumber}
 								pos={p.ratings.pos}
-								watch={p.watch}
+								defaultWatch={p.watch}
 								firstName={p.firstName}
 								lastName={p.lastName}
 							/>
@@ -718,7 +718,7 @@ export const ScoreTable = ({
 								<td>
 									<PlayerNameLabels
 										pid={p.pid}
-										watch={p.watch}
+										defaultWatch={p.watch}
 										season={season}
 										firstName={p.firstName}
 										lastName={p.lastName}

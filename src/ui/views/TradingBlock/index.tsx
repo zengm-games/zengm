@@ -722,7 +722,7 @@ const TradingBlock = ({
 					injury: p.injury,
 					jerseyNumber: p.jerseyNumber,
 					skills: p.ratings.skills,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,

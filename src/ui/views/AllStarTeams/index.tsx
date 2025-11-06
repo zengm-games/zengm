@@ -86,7 +86,7 @@ const PlayersTable = ({
 					jerseyNumber: p.stats.jerseyNumber,
 					pos: p.ratings.pos,
 					skills: p.skills,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					legacyName: p.name,
 					count: p.numAllStar,
 				}),

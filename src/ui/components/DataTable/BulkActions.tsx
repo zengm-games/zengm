@@ -22,7 +22,6 @@ import { createPortal } from "react-dom";
 import Modal from "../Modal.tsx";
 import type { DataTableRowMetadata, Props } from "./index.tsx";
 import clsx from "clsx";
-import { crossTabEmitter } from "../../util/crossTabEmitter.ts";
 
 // Even at 20 the UI is kind of silly, and if you put in too many players it gets slow/crashes
 const MAX_NUM_TO_COMPARE = 20;
@@ -253,8 +252,6 @@ export const BulkActions = ({
 				await toWorker("main", "updatePlayersWatch", { pids, watch });
 			}
 		}
-
-		await crossTabEmitter.emitAllTabs("updateWatch", pids);
 	};
 
 	const onDeletePlayers = async () => {

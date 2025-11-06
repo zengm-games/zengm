@@ -142,7 +142,7 @@ const TradeSummary = ({
 													pos={asset.pos}
 													season={season}
 													skills={asset.skills}
-													watch={asset.watch}
+													defaultWatch={asset.watch}
 													legacyName={asset.name}
 												/>
 											</div>
@@ -200,7 +200,7 @@ const TradeSummary = ({
 													pid={asset.pid}
 													pos={asset.pos}
 													skills={asset.skills}
-													watch={asset.watch}
+													defaultWatch={asset.watch}
 													legacyName={asset.name}
 												/>
 											</div>

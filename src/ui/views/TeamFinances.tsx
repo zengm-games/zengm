@@ -774,7 +774,7 @@ const TeamFinances = ({
 				pid: p.pid,
 				skills: p.skills,
 				style: { fontStyle: p.released ? "italic" : "normal" },
-				watch: p.watch,
+				defaultWatch: p.watch,
 				firstName: p.firstName,
 				firstNameShort: p.firstNameShort,
 				lastName: p.lastName,

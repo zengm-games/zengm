@@ -22,7 +22,6 @@ const updateNotes = async (
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("notes") ||
-		(type === "player" && updateEvents.includes("watchList")) ||
 		type !== state.type
 	) {
 		if (type === "draftPick") {

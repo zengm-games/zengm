@@ -72,7 +72,7 @@ const UpcomingFreeAgents = ({
 					jerseyNumber: p.jerseyNumber,
 					pid: p.pid,
 					skills: p.ratings.skills,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,

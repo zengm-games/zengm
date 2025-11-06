@@ -184,7 +184,7 @@ const PlayerStats = ({
 					season: numericSeason,
 					skills: p.ratings.skills,
 					jerseyNumber: p.stats.jerseyNumber,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,

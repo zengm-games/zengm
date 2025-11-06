@@ -90,7 +90,7 @@ const AwardRaces = ({
 								pid: p.pid,
 								season,
 								skills: pr ? pr.skills : [],
-								watch: p.watch,
+								defaultWatch: p.watch,
 								firstName: p.firstName,
 								firstNameShort: p.firstNameShort,
 								lastName: p.lastName,

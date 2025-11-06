@@ -158,7 +158,6 @@ import { actualPhase } from "../util/actualPhase.ts";
 import getCol from "../../common/getCol.ts";
 import getCols from "../../common/getCols.ts";
 import { formatScheduleForEditor } from "../views/scheduleEditor.ts";
-import type { CrossTabeEmitterParameters } from "../../ui/util/crossTabEmitter.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -500,7 +499,10 @@ const clearWatchList = async (type: "all" | number) => {
 		}
 	}
 
-	await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);
+	await Promise.all([
+		toUI("crossTabEmit", [["updateWatch", players.map((p) => p.pid)]]),
+		toUI("realtimeUpdate", [["playerMovement", "watchList"]]),
+	]);
 };
 
 const countNegotiations = async () => {
@@ -680,10 +682,6 @@ const createLeague = async (
 	);
 
 	return lid;
-};
-
-const crossTabEmit = async (parameters: CrossTabeEmitterParameters) => {
-	await toUI("crossTabEmit", [parameters]);
 };
 
 const deleteOldData = async (options: {
@@ -4072,7 +4070,10 @@ const updatePlayerWatch = async ({
 		}
 		if (!local.exhibitionGamePlayers) {
 			await idb.cache.players.put(p);
-			await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);
+			await Promise.all([
+				toUI("crossTabEmit", [["updateWatch", [p.pid]]]),
+				toUI("realtimeUpdate", [["playerMovement", "watchList"]]),
+			]);
 		}
 	}
 };
@@ -4134,7 +4135,10 @@ const updatePlayersWatch = async ({
 		}
 	}
 
-	await toUI("realtimeUpdate", [["playerMovement", "watchList"]]);
+	await Promise.all([
+		toUI("crossTabEmit", [["updateWatch", pids]]),
+		toUI("realtimeUpdate", [["playerMovement", "watchList"]]),
+	]);
 };
 
 const updatePlayingTime = async ({
@@ -5024,7 +5028,6 @@ export default {
 		countNegotiations,
 		createLeague,
 		createTrade,
-		crossTabEmit,
 		deleteOldData,
 		deleteScheduledEvents,
 		discardUnsavedProgress,

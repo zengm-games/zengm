@@ -78,7 +78,7 @@ const LeadersYears = ({
 								<PlayerNameLabels
 									pid={p.pid}
 									season={season}
-									watch={p.watch}
+									defaultWatch={p.watch}
 									firstName={p.firstName}
 									firstNameShort={p.firstNameShort}
 									lastName={p.lastName}

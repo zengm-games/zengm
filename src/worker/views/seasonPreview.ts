@@ -12,11 +12,7 @@ const updateSeasonPreview = async (
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("watchList") ||
-		state.season !== season
-	) {
+	if (updateEvents.includes("firstRun") || state.season !== season) {
 		const NUM_PLAYERS_TO_SHOW = 10;
 		const NUM_TEAMS_TO_SHOW = 5;
 

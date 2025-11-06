@@ -93,7 +93,7 @@ const LeadersProgressive = ({
 								...wrappedPlayerNameLabels({
 									pid: p.pid,
 									season,
-									watch: p.watch,
+									defaultWatch: p.watch,
 									skills: p.skills,
 									jerseyNumber: p.jerseyNumber,
 									firstName: p.firstName,

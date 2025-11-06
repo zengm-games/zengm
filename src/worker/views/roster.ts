@@ -29,7 +29,6 @@ const updateRoster = async (
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
-		updateEvents.includes("watchList") ||
 		updateEvents.includes("gameAttributes") ||
 		updateEvents.includes("playerMovement") ||
 		updateEvents.includes("team") ||

@@ -111,7 +111,7 @@ const DraftTeamHistory = ({
 					pid: p.pid,
 					season: p.draft.year,
 					skills: p.currentSkills,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,

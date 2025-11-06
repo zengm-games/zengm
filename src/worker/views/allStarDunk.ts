@@ -41,7 +41,6 @@ const updateAllStarDunk = async (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes") ||
 		updateEvents.includes("allStarDunk") ||
-		updateEvents.includes("watchList") ||
 		season !== state.season
 	) {
 		const allStars = await allStar.getOrCreate(season);

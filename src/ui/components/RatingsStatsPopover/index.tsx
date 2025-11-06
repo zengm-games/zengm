@@ -54,27 +54,16 @@ const Icon = ({
 
 type Props = {
 	disableNameLink?: boolean;
+	defaultWatch?: number; // "default" means this is the default of an uncontrolled value, similar to defaultValue in React
 	pid: number;
 	season?: number;
-} & (
-	| {
-			// If initialWatch is passed, that is the initial value only and we need to keep track of local changes
-			// If neither is passed, then we need to fetch the initial value ourselves too!
-			initialWatch?: number;
-			watch?: undefined;
-	  }
-	| {
-			initialWatch?: undefined;
-			watch?: number;
-	  }
-);
+};
 
 const RatingsStatsPopover = ({
 	disableNameLink,
-	initialWatch,
+	defaultWatch,
 	pid,
 	season,
-	watch,
 }: Props) => {
 	const [loadingData, setLoadingData] = useState<boolean>(false);
 	const [player, setPlayer] = useState<{
@@ -103,32 +92,26 @@ const RatingsStatsPopover = ({
 		pid,
 	});
 
-	// If watch is undefined, fetch it from worker
-	const LOCAL_WATCH = watch === undefined;
-	const [localWatch, setLocalWatch] = useState(initialWatch ?? 0);
+	const [watch, setWatch] = useState(defaultWatch ?? 0);
 	useEffect(() => {
 		const updateLocalWatch = async () => {
 			const newLocalWatch = await toWorker("main", "getPlayerWatch", pid);
-			setLocalWatch(newLocalWatch);
+			setWatch(newLocalWatch);
 		};
 
-		if (LOCAL_WATCH) {
-			if (initialWatch === undefined) {
-				// Need to fetch initial value
-				updateLocalWatch();
-			}
-
-			// Need to listen for bulk action updates
-			const unbind = crossTabEmitter.on("updateWatch", async (pids) => {
-				if (pids.includes(pid)) {
-					await updateLocalWatch();
-				}
-			});
-			return unbind;
+		if (defaultWatch === undefined) {
+			// Need to fetch initial value
+			updateLocalWatch();
 		}
-	}, [initialWatch, LOCAL_WATCH, pid]);
 
-	const actualWatch = watch ?? localWatch;
+		// Need to listen for bulk action updates
+		const unbind = crossTabEmitter.on("updateWatch", async (pids) => {
+			if (pids.includes(pid)) {
+				await updateLocalWatch();
+			}
+		});
+		return unbind;
+	}, [defaultWatch, pid]);
 
 	// Object.is to handle NaN
 	if (!Object.is(player.pid, pid)) {
@@ -208,14 +191,10 @@ const RatingsStatsPopover = ({
 				) : null}
 				<WatchBlock
 					pid={pid}
-					watch={actualWatch}
-					onChange={
-						LOCAL_WATCH
-							? (newWatch) => {
-									setLocalWatch(newWatch);
-								}
-							: undefined
-					}
+					watch={watch}
+					onChange={(newWatch) => {
+						setWatch(newWatch);
+					}}
 				/>
 			</div>
 		);
@@ -250,7 +229,7 @@ const RatingsStatsPopover = ({
 	}: {
 		forwardedRef?: Ref<HTMLSpanElement>;
 		onClick?: () => void;
-	}) => <Icon ref={forwardedRef} onClick={onClick} watch={actualWatch} />;
+	}) => <Icon ref={forwardedRef} onClick={onClick} watch={watch} />;
 
 	return (
 		<ResponsivePopover

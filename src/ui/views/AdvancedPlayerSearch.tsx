@@ -668,7 +668,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 						season: p.ratings.season,
 						skills: p.ratings.skills,
 						jerseyNumber: p.stats.jerseyNumber,
-						initialWatch: p.watch,
+						defaultWatch: p.watch,
 						firstName: p.firstName,
 						firstNameShort: p.firstNameShort,
 						lastName: p.lastName,

@@ -18,7 +18,6 @@ const updateAllStarThree = async (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes") ||
 		updateEvents.includes("allStarThree") ||
-		updateEvents.includes("watchList") ||
 		season !== state.season
 	) {
 		const allStars = await allStar.getOrCreate(season);

@@ -123,7 +123,7 @@ const ExportPlayers = ({
 				pid: p.pid,
 				season,
 				skills: p.ratings.skills,
-				watch: p.watch,
+				defaultWatch: p.watch,
 				firstName: p.firstName,
 				firstNameShort: p.firstNameShort,
 				lastName: p.lastName,

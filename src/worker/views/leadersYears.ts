@@ -33,7 +33,6 @@ const updateLeadersYears = async (
 	// Respond to watchList in case players are listed twice in different categories
 	if (
 		updateEvents.includes("firstRun") ||
-		updateEvents.includes("watchList") ||
 		inputs.stat !== state.stat ||
 		inputs.playoffs !== state.playoffs ||
 		inputs.statType !== state.statType

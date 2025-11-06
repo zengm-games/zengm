@@ -733,7 +733,6 @@ const updateLeaders = async (
 	// Respond to watchList in case players are listed twice in different categories
 	if (
 		updateEvents.includes("firstRun") ||
-		updateEvents.includes("watchList") ||
 		(inputs.season === g.get("season") && updateEvents.includes("gameSim")) ||
 		inputs.season !== state.season ||
 		inputs.playoffs !== state.playoffs ||

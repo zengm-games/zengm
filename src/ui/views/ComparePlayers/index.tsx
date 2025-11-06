@@ -373,7 +373,7 @@ const ComparePlayers = ({
 											<PlayerNameLabels
 												pid={p.pid}
 												season={season === "career" ? undefined : season}
-												watch={p.watch}
+												defaultWatch={p.watch}
 												firstName={p.firstName}
 												lastName={p.lastName}
 											/>

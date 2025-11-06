@@ -392,7 +392,11 @@ const TopStuff = ({
 	if (retired && season === undefined) {
 		statusInfo = (
 			<div className="d-flex align-items-center">
-				<WatchBlock className="ms-0" pid={player.pid} watch={player.watch} />
+				<WatchBlock
+					className="ms-0"
+					pid={player.pid}
+					defaultWatch={player.watch}
+				/>
 			</div>
 		);
 	} else {
@@ -413,7 +417,11 @@ const TopStuff = ({
 					className={injured ? undefined : "skills-alone"}
 					skills={skills}
 				/>
-				<WatchBlock className="ms-2" pid={player.pid} watch={player.watch} />
+				<WatchBlock
+					className="ms-2"
+					pid={player.pid}
+					defaultWatch={player.watch}
+				/>
 				{player.tid === PLAYER.FREE_AGENT ||
 				player.tid === PLAYER.UNDRAFTED ||
 				player.tid >= PLAYER.FREE_AGENT ? (

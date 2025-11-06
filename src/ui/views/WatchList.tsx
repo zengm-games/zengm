@@ -36,7 +36,7 @@ const ClearButton = ({
 		}
 	}
 
-	if (watchNumbers.size > 0) {
+	if (watchNumbers.size > 1) {
 		const numbers = Array.from(watchNumbers).sort((a, b) => a - b);
 
 		return (
@@ -77,6 +77,7 @@ const ClearButton = ({
 			onClick={() => {
 				onClick("all");
 			}}
+			disabled={watchNumbers.size === 0}
 			processing={processing}
 			variant="danger"
 		>
@@ -156,7 +157,7 @@ export const getWatchListColsAndRows = ({
 			},
 			data: [
 				{
-					value: <WatchBlock pid={p.pid} watch={p.watch} />,
+					value: <WatchBlock pid={p.pid} defaultWatch={p.watch} />,
 					searchValue: p.watch,
 					sortValue: p.watch,
 				},

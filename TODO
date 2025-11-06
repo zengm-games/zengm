@@ -3,11 +3,9 @@ enforce that either watch or defaultWatch is always passed to RatingsStatsPopove
   - would fix cross tab updates on heavy pages like AdvancedPlayerSearch that don't listen to watchList. Although kind of silly because they don't listen to many other updates too (such as playerMovement) but hey it's something
   - make sure this handles anything that emits watchList, such as the actions from the Watch List page
   - make sure this handles exhibition games
-  - make sure it works on pages that used to respond to watchList like league leaders
-  - make sure flag icon on player notes page works, through both buttons
-    - WatchBlock needs to be listening too, ugh
-      - make it controlled or uncontrolled, and only call it controlled from RatingsStatsPopover
   - watchList event still needed for Watch List page?
+
+ClearButton on WatchList should show dropdown always if multiple watch lists are enabled, to save misclicks
 
 make ovr drop get saved from edited injury too https://old.reddit.com/r/BasketballGM/comments/1nutcno/monthly_suggestions_thread/nhr94ld/ https://discord.com/channels/290013534023057409/1432096932938907709/1432102253682233346
 - add ratings row too

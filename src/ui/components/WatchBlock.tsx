@@ -1,15 +1,22 @@
 import clsx from "clsx";
-import { memo, type SyntheticEvent } from "react";
+import { memo, useEffect, useState, type SyntheticEvent } from "react";
 import { toWorker, useLocalPartial } from "../util/index.ts";
+import { crossTabEmitter } from "../util/crossTabEmitter.ts";
 
 type Props = {
 	className?: string;
 	pid: number;
-	watch: number;
-
-	// Not needed if you pass watch down all the way from a worker view, only needed if you're handling it in the UI only
-	onChange?: (watch: number) => void;
-};
+} & (
+	| {
+			// Do we want to make this controlled or not? Similar to defaultValue vs value in React, except "uncontrolled" means it's actually controlled by crossTabEmitter
+			defaultWatch?: undefined;
+			watch: number;
+	  }
+	| {
+			defaultWatch: number;
+			watch?: undefined;
+	  }
+);
 
 export const Flag = ({
 	className,
@@ -35,30 +42,47 @@ export const Flag = ({
 	);
 };
 
-const WatchBlock = memo(({ className, onChange, pid, watch }: Props) => {
+const WatchBlock = memo(({ className, defaultWatch, pid, watch }: Props) => {
 	const { numWatchColors } = useLocalPartial(["numWatchColors"]);
+
+	const [localWatch, setLocalWatch] = useState(defaultWatch ?? 0);
+	const actualWatch = watch ?? localWatch;
 
 	const handleClick = async (event: SyntheticEvent) => {
 		event.preventDefault();
-		const newWatch = (watch + 1) % (numWatchColors + 1);
-		if (onChange) {
-			onChange(newWatch);
-		}
+		const newWatch = (actualWatch + 1) % (numWatchColors + 1);
 		await toWorker("main", "updatePlayerWatch", { pid, watch: newWatch });
 	};
+
+	useEffect(() => {
+		if (defaultWatch !== undefined) {
+			const updateLocalWatch = async () => {
+				const newLocalWatch = await toWorker("main", "getPlayerWatch", pid);
+				setLocalWatch(newLocalWatch);
+			};
+
+			// Need to listen for bulk action updates
+			const unbind = crossTabEmitter.on("updateWatch", async (pids) => {
+				if (pids.includes(pid)) {
+					await updateLocalWatch();
+				}
+			});
+			return unbind;
+		}
+	}, [defaultWatch, pid]);
 
 	return (
 		<Flag
 			className={className}
 			onClick={handleClick}
 			title={
-				watch !== undefined && watch > 0
+				actualWatch !== undefined && actualWatch > 0
 					? numWatchColors > 1
 						? "Cycle watch list"
 						: "Remove from watch list"
 					: "Add to watch list"
 			}
-			watch={watch}
+			watch={actualWatch}
 		/>
 	);
 });

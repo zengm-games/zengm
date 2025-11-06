@@ -189,13 +189,7 @@ const RatingsStatsPopover = ({
 				{age !== undefined ? (
 					<div className="ms-1 flex-shrink-0">{age} yo</div>
 				) : null}
-				<WatchBlock
-					pid={pid}
-					watch={watch}
-					onChange={(newWatch) => {
-						setWatch(newWatch);
-					}}
-				/>
+				<WatchBlock pid={pid} watch={watch} />
 			</div>
 		);
 	}

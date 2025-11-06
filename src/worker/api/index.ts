@@ -485,6 +485,14 @@ const clearNotes = async (type: NoteInfo["type"]) => {
 	await toUI("realtimeUpdate", [noteUpdateEvents[type]]);
 };
 
+const getUpdateWatch = (players: Player[]) => {
+	const updateWatch: Record<number, number> = {};
+	for (const p of players) {
+		updateWatch[p.pid] = p.watch ?? 0;
+	}
+	return updateWatch;
+};
+
 const clearWatchList = async (type: "all" | number) => {
 	const players = await idb.getCopies.players(
 		{
@@ -500,7 +508,7 @@ const clearWatchList = async (type: "all" | number) => {
 	}
 
 	await Promise.all([
-		toUI("crossTabEmit", [["updateWatch", players.map((p) => p.pid)]]),
+		toUI("crossTabEmit", [["updateWatch", getUpdateWatch(players)]]),
 		toUI("realtimeUpdate", [["playerMovement", "watchList"]]),
 	]);
 };
@@ -4071,7 +4079,7 @@ const updatePlayerWatch = async ({
 		if (!local.exhibitionGamePlayers) {
 			await idb.cache.players.put(p);
 			await Promise.all([
-				toUI("crossTabEmit", [["updateWatch", [p.pid]]]),
+				toUI("crossTabEmit", [["updateWatch", getUpdateWatch([p])]]),
 				toUI("realtimeUpdate", [["playerMovement", "watchList"]]),
 			]);
 		}
@@ -4136,7 +4144,7 @@ const updatePlayersWatch = async ({
 	}
 
 	await Promise.all([
-		toUI("crossTabEmit", [["updateWatch", pids]]),
+		toUI("crossTabEmit", [["updateWatch", getUpdateWatch(players)]]),
 		toUI("realtimeUpdate", [["playerMovement", "watchList"]]),
 	]);
 };

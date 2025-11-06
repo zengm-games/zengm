@@ -96,20 +96,19 @@ const RatingsStatsPopover = ({
 
 	const [watch, setWatch] = useState(defaultWatch ?? 0);
 	useEffect(() => {
-		const updateLocalWatch = async () => {
-			const newLocalWatch = await toWorker("main", "getPlayerWatch", pid);
-			setWatch(newLocalWatch);
-		};
-
 		if (defaultWatch === undefined) {
 			// Need to fetch initial value
-			updateLocalWatch();
+			(async () => {
+				const newLocalWatch = await toWorker("main", "getPlayerWatch", pid);
+				setWatch(newLocalWatch);
+			})();
 		}
 
 		// Need to listen for bulk action updates
-		const unbind = crossTabEmitter.on("updateWatch", async (pids) => {
-			if (pids.includes(pid)) {
-				await updateLocalWatch();
+		const unbind = crossTabEmitter.on("updateWatch", async (watchByPid) => {
+			const newWatch = watchByPid[pid];
+			if (newWatch !== undefined) {
+				setWatch(newWatch);
 			}
 		});
 		return unbind;

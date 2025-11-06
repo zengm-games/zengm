@@ -66,15 +66,11 @@ const WatchBlock = memo(
 
 		useEffect(() => {
 			if (defaultWatch !== undefined) {
-				const updateLocalWatch = async () => {
-					const newLocalWatch = await toWorker("main", "getPlayerWatch", pid);
-					setLocalWatch(newLocalWatch);
-				};
-
 				// Need to listen for bulk action updates
-				const unbind = crossTabEmitter.on("updateWatch", async (pids) => {
-					if (pids.includes(pid)) {
-						await updateLocalWatch();
+				const unbind = crossTabEmitter.on("updateWatch", async (watchByPid) => {
+					const newWatch = watchByPid[pid];
+					if (newWatch !== undefined) {
+						setLocalWatch(newWatch);
 					}
 				});
 				return unbind;

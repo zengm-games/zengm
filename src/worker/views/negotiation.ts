@@ -133,7 +133,7 @@ const updateNegotiation = async (
 		let p;
 		if (p2) {
 			p = await idb.getCopy.playersPlus(p2, {
-				attrs: ["pid", "name", "age", "contract", "face", "imgURL"],
+				attrs: ["pid", "name", "age", "contract", "face", "imgURL", "watch"],
 				ratings: ["ovr", "pot"],
 				season: g.get("season"),
 				showNoStats: true,

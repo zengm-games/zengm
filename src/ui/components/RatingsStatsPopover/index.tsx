@@ -53,15 +53,17 @@ const Icon = ({
 };
 
 type Props = {
+	// "default" means this is the default of an uncontrolled value, similar to defaultValue in React
+	// undefined means "we don't know the watch value, so get it on initial load"
+	defaultWatch?: number;
 	disableNameLink?: boolean;
-	defaultWatch?: number; // "default" means this is the default of an uncontrolled value, similar to defaultValue in React
 	pid: number;
 	season?: number;
 };
 
 const RatingsStatsPopover = ({
-	disableNameLink,
 	defaultWatch,
+	disableNameLink,
 	pid,
 	season,
 }: Props) => {

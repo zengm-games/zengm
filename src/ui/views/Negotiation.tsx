@@ -156,7 +156,7 @@ const Negotiation = ({
 						</h1>
 						<div className="d-flex align-items-center">
 							<Mood defaultType="user" p={p} />
-							<RatingsStatsPopover pid={p.pid} />
+							<RatingsStatsPopover pid={p.pid} defaultWatch={p.watch} />
 						</div>
 					</div>
 					<div>

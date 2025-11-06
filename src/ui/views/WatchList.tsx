@@ -29,6 +29,8 @@ const ClearButton = ({
 	players: any[];
 	processing: boolean;
 }) => {
+	const { numWatchColors } = useLocalPartial(["numWatchColors"]);
+
 	const watchNumbers = new Set<number>();
 	for (const p of players) {
 		if (p.watch !== undefined) {
@@ -36,7 +38,7 @@ const ClearButton = ({
 		}
 	}
 
-	if (watchNumbers.size > 1) {
+	if (numWatchColors > 1) {
 		const numbers = Array.from(watchNumbers).sort((a, b) => a - b);
 
 		return (
@@ -77,7 +79,7 @@ const ClearButton = ({
 			onClick={() => {
 				onClick("all");
 			}}
-			disabled={watchNumbers.size === 0}
+			disabled={players.length === 0}
 			processing={processing}
 			variant="danger"
 		>

@@ -704,7 +704,8 @@ auto export to folder every N seasons
 - chrome only?
 - include box scores?
 
-"field-sizing: content" to replace hacky sizing of top bar selects, when it has browser support https://chromestatus.com/feature/5176596826161152
+"field-sizing: content" to replace hacky sizing of top bar selects, when it has browser support https://caniuse.com/?search=field-sizing
+- Chrome 123, Firefox ?, Safari ?
 
 BBGM injury rate too low? https://discord.com/channels/290013534023057409/290015591216054273/1190784110763970600
 

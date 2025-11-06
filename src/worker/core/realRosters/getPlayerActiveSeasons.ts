@@ -56,14 +56,25 @@ export const getPlayerActiveSeasons = async () => {
 			}
 		}
 
-		for (const row of basketball.ratings) {
-			if (row.retiredUntil !== undefined) {
-				const row2 = local.realPlayerActiveSeasons![row.slug];
-				if (row2) {
-					if (!row2.retiredUntil) {
-						row2.retiredUntil = {};
+		// Add retiredUntil - not the same as retiredUntil from basketball.ratings because we want to include anyone who is not on a team, even if not strictly "retired", but it should also pick up any retiredUntil ones
+		for (const row of Object.values(local.realPlayerActiveSeasons)) {
+			const seasons = Object.keys(row)
+				.map((season) => Number.parseInt(season))
+				.sort((a, b) => a - b);
+			for (let i = 1; i < seasons.length; i++) {
+				const season = seasons[i]!;
+				const prevSeason = seasons[i - 1]!;
+				if (season - prevSeason > 1) {
+					if (!row.retiredUntil) {
+						row.retiredUntil = {};
 					}
-					row2.retiredUntil[row.season] = row.retiredUntil;
+					for (
+						let tempSeason = prevSeason + 1;
+						tempSeason < season;
+						tempSeason++
+					) {
+						row.retiredUntil[tempSeason] = season;
+					}
 				}
 			}
 		}

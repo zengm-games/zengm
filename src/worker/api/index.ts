@@ -2439,6 +2439,12 @@ const importPlayers = async ({
 		seasonOffset,
 		tid,
 	} of players) {
+		const stats = (p.stats ?? []) as any[];
+		for (const row of stats) {
+			// Not worth trying to match up tids - even with srID it's not the same league so those aren't actually the same teams
+			row.tid = PLAYER.DOES_NOT_EXIST;
+		}
+
 		const p2 = {
 			born: p.born,
 			college: p.college,
@@ -2457,11 +2463,12 @@ const importPlayers = async ({
 			firstName: p.firstName,
 			hgt: p.hgt,
 			imgURL: p.imgURL,
-			injuries: p.injuries || [],
+			injuries: p.injuries ?? [],
 			lastName: p.lastName,
 			ratings: p.ratings,
-			salaries: p.salaries || [],
+			salaries: p.salaries ?? [],
 			srID: p.srID,
+			stats,
 			tid,
 			transactions: [
 				{
@@ -2535,7 +2542,9 @@ const importPlayers = async ({
 			p2.born.year += seasonOffset2;
 			p2.draft.year += seasonOffset2;
 
-			const adjustAndFilter = (key: "injuries" | "ratings" | "salaries") => {
+			const adjustAndFilter = (
+				key: "injuries" | "ratings" | "salaries" | "stats",
+			) => {
 				for (const row of p2[key]) {
 					row.season += seasonOffset2;
 				}
@@ -2547,6 +2556,9 @@ const importPlayers = async ({
 				} else if (key === "salaries") {
 					// Current season salary will be added later
 					offset = -1;
+				} else if (key === "stats" && currentPhase <= PHASE.PLAYOFFS) {
+					// Don't include current season stats if the season has not started yet. Might be good to separate playoff stats and non-playoff stats and use differnet phase cutoffs, but whatever.
+					offset = -1;
 				}
 
 				p2[key] = p2[key].filter(
@@ -2556,6 +2568,7 @@ const importPlayers = async ({
 			adjustAndFilter("injuries");
 			adjustAndFilter("ratings");
 			adjustAndFilter("salaries");
+			adjustAndFilter("stats");
 
 			player.setContract(p2, p2.contract, tid >= 0);
 		}
@@ -2586,7 +2599,7 @@ const importPlayersGetReal = async () => {
 			randomDebuts: false,
 			randomDebutsKeepCurrent: false,
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",
-			realStats: "none",
+			realStats: "all", // Maybe should default to "none" on mobile, but then I'd need a UI to change it, and most people probably want "all"  if they are using this feature
 			includePlayers: true,
 		},
 		REAL_PLAYERS_INFO!.MAX_SEASON,
@@ -2617,6 +2630,7 @@ const importPlayersGetReal = async () => {
 		applyRealPlayerPhotos(realPlayerPhotos, p);
 		p.contract = { ...contract };
 		p.salaries = helpers.deepCopy(salaries);
+
 		const p2 = await player.augmentPartialPlayer(
 			p,
 			DEFAULT_LEVEL,

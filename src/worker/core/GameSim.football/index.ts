@@ -2167,7 +2167,7 @@ class GameSim extends GameSimBase {
 			positions = ["RB"];
 			const rand = Math.random();
 
-			const rbs = this.playersOnField[o].RB || [];
+			const rbs = this.playersOnField[o].RB ?? [];
 
 			if (rand < 0.5 || rbs.length === 0) {
 				positions.push("QB");

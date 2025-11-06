@@ -98,9 +98,6 @@ feasible AI features from Chrome's built-in AI
 
 leaders on dashboard should account for qualified/non-qualified players like league leaders page https://discord.com/channels/290013534023057409/1403842951574192228/1403842951574192228
 
-import real players
-- include stats - do it by team srID, and treat as DOES_NOT_EXIST otherwise https://old.reddit.com/r/BasketballGM/comments/1kwal9w/version_202505261259_new_import_real_players/n0bfsbr/?context=3
-
 now that we have worker modules, what can we do with it?
 - code spitting in worker
 - single bundle between ui and worker

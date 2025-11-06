@@ -247,7 +247,7 @@ const updateTeamHistory = async (
 		);
 
 		const retiredJerseyNumbers = await Promise.all(
-			(t.retiredJerseyNumbers || []).map(async (row) => {
+			(t.retiredJerseyNumbers ?? []).map(async (row) => {
 				const ts = teamSeasons.find((ts) => ts.season === row.seasonTeamInfo);
 				const teamInfo = {
 					colors: ts ? ts.colors : t.colors,

@@ -1,5 +1,5 @@
 import { idb } from "../db/index.ts";
-import { g, processPlayersHallOfFame } from "../util/index.ts";
+import { g, helpers, processPlayersHallOfFame } from "../util/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 import { bySport } from "../../common/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
@@ -68,7 +68,10 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				const event = events.find(
 					(event2) => event2.pids && event2.pids.includes(p.pid),
 				);
-				const details = event?.text ?? "";
+				const details =
+					event?.text !== undefined
+						? helpers.correctLinkLid(g.get("lid"), event.text)
+						: "";
 				return {
 					...p,
 					details,

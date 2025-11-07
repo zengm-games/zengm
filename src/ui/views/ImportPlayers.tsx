@@ -14,6 +14,7 @@ import { orderBy } from "../../common/utils.ts";
 import { useSelectedRows } from "../components/DataTable/useBulkSelectRows.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { CurrencyInputGroup } from "../components/CurrencyInputGroup.tsx";
+import useLocalStorageState from "use-local-storage-state";
 
 export const ImportPlayersInner = ({
 	challengeNoRatings,
@@ -42,6 +43,12 @@ export const ImportPlayersInner = ({
 			tid: number;
 		}[]
 	>([]);
+	const [includeStats, setIncludeStats] = useLocalStorageState(
+		"importIncludeStats",
+		{
+			defaultValue: true,
+		},
+	);
 
 	const teamInfoCache = useLocal((state) => state.teamInfoCache);
 
@@ -467,6 +474,20 @@ export const ImportPlayersInner = ({
 						alwaysShowBulkSelectRows
 					/>
 
+					<div className="form-check mt-3">
+						<label className="form-check-label">
+							<input
+								className="form-check-input"
+								onChange={() => {
+									setIncludeStats((value) => !value);
+								}}
+								type="checkbox"
+								checked={includeStats}
+							/>
+							Include stats
+						</label>
+					</div>
+
 					<ActionButton
 						className="my-3"
 						disabled={disableButtons || selectedRows.map.size === 0}
@@ -476,6 +497,7 @@ export const ImportPlayersInner = ({
 
 							try {
 								await toWorker("main", "importPlayers", {
+									includeStats,
 									leagueFileVersion,
 									players: players.filter((p, i) => selectedRows.map.has(i)),
 								});

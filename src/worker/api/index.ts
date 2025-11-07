@@ -2413,9 +2413,11 @@ const idbCacheFlush = async () => {
 };
 
 const importPlayers = async ({
+	includeStats,
 	leagueFileVersion,
 	players,
 }: {
+	includeStats: boolean;
 	leagueFileVersion: number | undefined;
 	players: {
 		p: any;
@@ -2439,7 +2441,7 @@ const importPlayers = async ({
 		seasonOffset,
 		tid,
 	} of players) {
-		const stats = (p.stats ?? []) as any[];
+		const stats = (p.stats && includeStats ? p.stats : []) as any[];
 		for (const row of stats) {
 			// Not worth trying to match up tids - even with srID it's not the same league so those aren't actually the same teams
 			row.tid = PLAYER.DOES_NOT_EXIST;

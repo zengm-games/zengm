@@ -1627,6 +1627,7 @@ const exportDraftClass = async ({
 			pid: p.pid,
 			pos: p.pos,
 			ratings: [p.ratings[retiredPlayers ? p.ratings.length - 1 : 0]],
+			stats: p.stats,
 			real: p.real,
 			relatives: p.relatives,
 			srID: p.srID,
@@ -2381,6 +2382,9 @@ const handleUploadedDraftClass = async ({
 			// Hopefully never happens
 			p.born.year = draftYear - 19;
 		}
+
+		// Would be nice to allow keeping it, but it's kind of messy to duplicate the logic here and in importPlayers and to add a UI
+		delete p.stats;
 
 		// Make sure player object is fully defined
 		const p2 = await player.augmentPartialPlayer(

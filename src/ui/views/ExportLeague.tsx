@@ -29,6 +29,8 @@ import {
 
 const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 
+const CANCEL_BUTTON = "Cancel button";
+
 export type ExportLeagueKey =
 	| "players"
 	| "gameHighs"
@@ -489,8 +491,6 @@ const RenderOption = ({
 	);
 };
 
-const SUPPORTS_CANCEL = typeof AbortController !== "undefined";
-
 const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	const [state, setState] = useState<"idle" | "download" | "dropbox">("idle");
 	const [aborting, setAborting] = useState(false);
@@ -539,6 +539,8 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				"../util/exportLeague.ts"
 			);
 
+			abortController.current = new AbortController();
+
 			const readableStream = await makeExportStream(stores, {
 				compressed,
 				filter,
@@ -551,12 +553,24 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				onProcessingStore: (store) => {
 					setProcessingStore(store);
 				},
+				signal: abortController.current.signal,
 			});
 
 			let fileStream;
 			let status: ReactNode;
 			if (type === "download") {
-				fileStream = await downloadFileStream(streamDownload, filename, gzip);
+				try {
+					fileStream = await downloadFileStream(streamDownload, filename, gzip);
+				} catch (error) {
+					if (error.name === "AbortError") {
+						// User clicked "cancel" in the file picker
+						abortController.current.abort();
+						cleanupAfterStream();
+						return;
+					} else {
+						throw error;
+					}
+				}
 			} else {
 				if (!dropboxAccessToken) {
 					throw new Error("Missing dropboxAccessToken");
@@ -605,10 +619,6 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				});
 			}
 
-			if (SUPPORTS_CANCEL) {
-				abortController.current = new AbortController();
-			}
-
 			let tempStream = readableStream.pipeThrough(new TextEncoderStream());
 
 			if (gzip && typeof CompressionStream !== "undefined") {
@@ -621,12 +631,16 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 
 			cleanupAfterStream(status);
 		} catch (error) {
-			cleanupAfterStream(
-				<span className="text-danger">
-					<b>Error:</b> {error.message}
-				</span>,
-			);
-			throw error;
+			if (error.message === CANCEL_BUTTON) {
+				cleanupAfterStream();
+			} else {
+				cleanupAfterStream(
+					<span className="text-danger">
+						<b>Error:</b> {error.message}
+					</span>,
+				);
+				throw error;
+			}
 		}
 	};
 
@@ -867,14 +881,14 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 							)
 						) : null}
 
-						{SUPPORTS_CANCEL && state !== "idle" ? (
+						{state !== "idle" ? (
 							<button
 								className="btn btn-secondary"
 								type="button"
 								disabled={aborting}
 								onClick={() => {
 									if (abortController.current) {
-										abortController.current.abort();
+										abortController.current.abort(new Error(CANCEL_BUTTON));
 										if (state === "dropbox") {
 											setAborting(true);
 										} else {

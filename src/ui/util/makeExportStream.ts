@@ -55,6 +55,7 @@ const makeExportStream = async (
 		name,
 		onPercentDone,
 		onProcessingStore,
+		signal,
 	}: {
 		abortSignal?: AbortSignal;
 		compressed?: boolean;
@@ -70,6 +71,7 @@ const makeExportStream = async (
 		name?: string;
 		onPercentDone?: (percentDone: number) => void;
 		onProcessingStore?: (processingStore: string) => void;
+		signal?: AbortSignal;
 	},
 ) => {
 	const lid = local.getState().lid;
@@ -143,6 +145,10 @@ const makeExportStream = async (
 	return new ReadableStream<string>(
 		{
 			async start(controller) {
+				signal?.addEventListener("abort", () => {
+					controller.error(new DOMException("Aborted", "AbortError"));
+				});
+
 				const tx = leagueDB.transaction(storesInput as any);
 				for (const store of storesInput) {
 					if (store === "gameAttributes") {

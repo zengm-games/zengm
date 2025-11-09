@@ -1,3 +1,5 @@
+block game sim when schedule editor is dirty so simming a game doesn't overwrite changes
+
 make ovr drop get saved from edited injury too https://old.reddit.com/r/BasketballGM/comments/1nutcno/monthly_suggestions_thread/nhr94ld/ https://discord.com/channels/290013534023057409/1432096932938907709/1432102253682233346
 - add ratings row too
 

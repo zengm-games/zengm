@@ -261,6 +261,9 @@ class GameSim extends GameSimBase {
 		this.paceFactor +=
 			0.025 * helpers.bound((this.paceFactor - 1) / 0.2, -1, 1);
 
+		// Sanity check for very small values - things behave weirdly below this
+		this.paceFactor = Math.max(this.paceFactor, 0.1);
+
 		this.foulsThisQuarter = [0, 0];
 		this.foulsLastTwoMinutes = [0, 0];
 

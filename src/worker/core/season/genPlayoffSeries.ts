@@ -196,6 +196,8 @@ export const genPlayoffSeriesFromTeams = async (
 		});
 
 		const numPlayoffTeams = 2 ** numRounds - numPlayoffByes;
+		const numPlayoffAndPlayInTeams =
+			numPlayoffTeams + (g.get("playIn") ? 2 : 0);
 
 		const teamsByCid = groupBy(teams, (t) => t.seasonAttrs.cid);
 
@@ -231,7 +233,10 @@ export const genPlayoffSeriesFromTeams = async (
 			for (const conf of g.get("confs", "current")) {
 				const teamsConf = teamsByCid[conf.cid];
 
-				if (teamsConf && teamsConf.length >= numPlayoffTeams / byConf) {
+				if (
+					teamsConf &&
+					teamsConf.length >= numPlayoffAndPlayInTeams / byConf
+				) {
 					const { round, playIn } = await makeMatchups(
 						await orderTeams(teamsConf, teams, orderTeamsOptions),
 						numPlayoffTeams / byConf,

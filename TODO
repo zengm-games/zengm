@@ -1,3 +1,6 @@
+hardcode known good schedule for default FBGM settings, to minimize bye weeks
+- take a template (or multiple templates) from the NFL, labeling each game by category (division, conference, non-conference specific division, non-conference random). then generate those games and put them in order of the template. randomize teams
+
 block game sim when schedule editor is dirty so simming a game doesn't overwrite changes
 
 make ovr drop get saved from edited injury too https://old.reddit.com/r/BasketballGM/comments/1nutcno/monthly_suggestions_thread/nhr94ld/ https://discord.com/channels/290013534023057409/1432096932938907709/1432102253682233346
@@ -66,6 +69,7 @@ jersey numbers by position and frequency
 
 extra validation that would be nice to do during schema check
 - draft year is valid (not a draft that hasn't happened yet - breaks some indexes)
+- tid is valid for players, draftPicks, etc
 
 button to skip schema check
 - not easy because we use some info from the scan (like in fromFile) when processing the "real" stream, but see commit ee3b58dbdda31e8400518796c0509d7f39edb188 for a somewhat working implementaion besides that
@@ -281,6 +285,10 @@ add ability to export at any season/phase https://old.reddit.com/r/BasketballGM/
 - would need better log of player movement
   - player.transactions might be good enough
 - should a trade/signing in regular season before any games are played be treated as preseason?
+- player contracts
+- draft picks
+- expansion teams
+- scheduled events
 
 starters should start the second half https://old.reddit.com/r/BasketballGM/comments/1hqsb4w/monthly_suggestions_thread/m7rpcrd/
 
@@ -419,9 +427,6 @@ too many non-shooting fouls in late game situations when defense is in the bonus
 - https://discord.com/channels/290013534023057409/331882115119448065/1304329744774336522
 
 hype should impact the magnitude of the home court advantage
-
-hardcode known good schedule for default FBGM settings, to minimize bye weeks
-- take a template (or multiple templates) from the NFL, labeling each game by category (division, conference, non-conference specific division, non-conference random). then generate those games and put them in order of the template. randomize teams
 
 add option to make rookie contracts not signed, even if there is no hard cap https://discord.com/channels/@me/1256311871980441670/1297925653685080136
 
@@ -1131,8 +1136,6 @@ exhibition game
   - store historical settings better. either wrap everything or come up with a new plan
 
 on season summary page, show counts for team finishes, player awards (individual and team) https://old.reddit.com/r/BasketballGM/comments/wd2soz/monthly_suggestions_thread/iihwll3/
-
-past season roster - query by active season or statsTid based on number of teams and seasons
 
 modal fullscreen setting for small screens https://react-bootstrap.github.io/components/modal/#api
 
@@ -2118,11 +2121,6 @@ support changing team logos at any season, from predefined real team logos
     - neiether of those is perfect
   - make player photo overrides dynamic too?
 
-game sim improvements
-- big men should shoot fewer 3s, and shoot better at the rim https://old.reddit.com/r/BasketballGM/comments/g26svo/all_of_bbgms_game_simulation_flaws_in_a_single/
-  - https://discordapp.com/channels/@me/604773209837010944/700376777473654784
-- ask what kind of players are not common enough
-
 some kind of global status/finances menu, above titlebar
 - EVENTUALLY
   - more info, not just games
@@ -2171,8 +2169,6 @@ Game list redesign
   - show ovr in box score too
   - show player with highest game score under completed game
 
-nicidob - Something like "Team Hall of Fame" based on wins/MOV/playoff
-
 FBGM football sim bugs
 - pass interference not giving first down https://old.reddit.com/r/Football_GM/comments/emhcfy/pi_penalty_not_resetting_to_1st_down/
 - negative yard line https://i.imgur.com/fSHX6md.png
@@ -2181,13 +2177,6 @@ FBGM football sim bugs
   - https://media.discordapp.net/attachments/569726303926878219/738325008895705158/EvilQBFromChicagoZachTodd01.JPG?width=1141&height=581
 
 typescript
-- to do
-  - backboard -> idb
-    - my branch has two fixes:
-      - https://github.com/jakearchibald/idb/pull/151
-      - https://github.com/jakearchibald/idb/issues/152
-  - any -> unknown
-    - also in dependencies, like bbgm-router
 - later
   - playersPlus
     - finish teamsPlus first, it's easier!
@@ -2199,8 +2188,6 @@ switch Dropdown to DropdownLinks rather than Select?
 - https://stackoverflow.com/questions/40692950/how-to-make-long-bootstrap-dropdown-menus-vertically-scrollable
 
 I should add easter eggs so that real historical figures sometimes appear in the game if you're simulating at that time. How dope would it be if you're simulating the 12th century and Genghis Khan shows up in the draft
-
-Salary cap trade stuff
 
 FBGM rookie contract length
 - https://old.reddit.com/r/Football_GM/comments/eddhp1/fixing_ai_team_contract_logic/
@@ -2306,8 +2293,6 @@ injury later
 - height influences injury probability (see same paper as age)
 - career ending injuries
 
-can i get SideBar to have open state simply passed to it? performance might be ok now
-
 button on free agents screen to fill out roster with players making up to 2x the minimum
 
 exportPlayerGamesCsv only supports basketball currently, and it's disabled in ExportStats.js. football box scores are more complicated, more derived stats
@@ -2346,8 +2331,6 @@ RatingsOverview - could put in deion, with config to specify categories and name
 - RatingsForm has this already! re-use
 
 ---
-
-on import, error if any player/draftPick references an invalid tid
 
 during free agency, after you sign all your free agents it should automatically take you to the league free agents and skip the step of having to continue
 

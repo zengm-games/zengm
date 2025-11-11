@@ -717,7 +717,7 @@ const DraftLotteryTable = (props: Props) => {
 				<div className="text-warning mb-3">
 					<b>Warning:</b> Computing exact odds for so many teams and picks is
 					slow, so estimates are shown below. When the actual lottery occurs it
-					is simulated done with complete accuracy.
+					is simulated with complete accuracy.
 				</div>
 			) : null}
 

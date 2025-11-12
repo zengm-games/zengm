@@ -98,7 +98,6 @@ export const getRealSchedule = async (
 		tidsByDid[did].push(tid);
 	}
 
-	console.log(cids, didsByCid, tidsByDid);
 	const tids: [number, number][] = [];
 
 	// Add trade deadline and All-Star Game - do it here rather than in newSchedule so we can put it neatly in between days

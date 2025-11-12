@@ -95,7 +95,30 @@ export const getRealSchedule = async (
 	console.log(cids, didsByCid, tidsByDid);
 	const tids: [number, number][] = [];
 
+	// Add trade deadline and All-Star Game - do it here rather than in newSchedule so we can put it neatly in between days
+	let tradeDeadlineDay;
+	let allStarGameDay;
+	const tradeDeadline = g.get("tradeDeadline");
+	const allStarGame = g.get("allStarGame");
+	const numDays = schedule.length;
+	if (tradeDeadline < 1) {
+		tradeDeadlineDay = Math.round(tradeDeadline * numDays) + 1;
+	}
+	if (allStarGame !== null && allStarGame >= 0) {
+		allStarGameDay = Math.round(allStarGame * numDays) + 1;
+	}
+
+	let addedAllStarGame = false;
+
 	for (const { day, matchups } of schedule) {
+		if (day === tradeDeadlineDay) {
+			tids.push([-3, -3]);
+		}
+		if (day === allStarGameDay) {
+			tids.push([-1, -2]);
+			addedAllStarGame = true;
+		}
+
 		for (const matchup of matchups) {
 			const actualMatcup = matchup.map((teamInfosIndex) => {
 				const teamInfo = teamInfos[teamInfosIndex];
@@ -110,6 +133,11 @@ export const getRealSchedule = async (
 			}) as [number, number];
 			tids.push(actualMatcup);
 		}
+	}
+
+	// In case All-Star Game is after the last day. Trade deadline doesn't matter at this point so leave it out.
+	if (!addedAllStarGame && allStarGameDay !== undefined) {
+		tids.push([-1, -2]);
 	}
 
 	return tids;

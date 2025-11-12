@@ -2,9 +2,6 @@ real-schedules
 - baseball - would be nice for better series
 - hockey - idk, maybe nice?
 - basketball - could use for historical mode, but is it too much data/trouble to be worth it?
-- football
-  - trade deadline and ASG should slot neatly between days
-- push repo
 
 hardcode known good schedule for default FBGM settings, to minimize bye weeks
 - take a template (or multiple templates) from the NFL, labeling each game by category (division, conference, non-conference specific division, non-conference random). then generate those games and put them in order of the template. randomize teams

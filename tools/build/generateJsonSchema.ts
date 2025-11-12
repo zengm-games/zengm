@@ -1310,6 +1310,8 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					},
 					tradeDeadline: {
 						type: "number",
+						minimum: 0,
+						maximum: 1,
 					},
 					tragicDeathRate: {
 						type: "number",

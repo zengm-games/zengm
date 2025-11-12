@@ -26,14 +26,14 @@ const newSchedule = async (
 	// Add trade deadline
 	const tradeDeadline = g.get("tradeDeadline");
 	if (tradeDeadline < 1) {
-		const ind = Math.round(helpers.bound(tradeDeadline, 0, 1) * tids.length);
+		const ind = Math.round(tradeDeadline * tids.length);
 		tids.splice(ind, 0, [-3, -3]);
 	}
 
 	// Add an All-Star Game
 	const allStarGame = g.get("allStarGame");
 	if (allStarGame !== null && allStarGame >= 0) {
-		const ind = Math.round(helpers.bound(allStarGame, 0, 1) * tids.length);
+		const ind = Math.round(allStarGame * tids.length);
 		tids.splice(ind, 0, [-1, -2]);
 	}
 

@@ -423,6 +423,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 					"marginOfVictory",
 					"coinFlip",
 				]),
+				tradeDeadline: 0.5,
 				playoffsReseed: true,
 				playoffsNumTeamsDiv: wrap(1),
 				playIn: false,

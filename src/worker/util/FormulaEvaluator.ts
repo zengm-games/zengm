@@ -95,7 +95,7 @@ const shuntingYard = (string: string) => {
 	const tokens = string.match(
 		new RegExp(
 			String.raw`\d+(?:[\.]\d+)?(?:[eE]\d+)?|[()]` +
-				`|${operatorsString}|[a-zA-Z\\d]+`,
+				String.raw`|${operatorsString}|[a-zA-Z\d]+`,
 			"g",
 		),
 	);

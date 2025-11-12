@@ -1,9 +1,10 @@
-import { WEBSITE_ROOT } from "../../../common/index.ts";
+import { isSport, WEBSITE_ROOT } from "../../../common/index.ts";
 import type { Conditions } from "../../../common/types.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
+import { getRealSchedule } from "./getRealSchedule.football.ts";
 import newScheduleGood from "./newScheduleGood.ts";
 
-const newSchedule = (
+const newSchedule = async (
 	teams: {
 		seasonAttrs: {
 			cid: number;
@@ -13,6 +14,13 @@ const newSchedule = (
 	}[],
 	conditions?: Conditions,
 ) => {
+	if (isSport("football")) {
+		const tids = await getRealSchedule(teams);
+		if (tids) {
+			return tids;
+		}
+	}
+
 	const { tids, warning } = newScheduleGood(teams);
 
 	// Add trade deadline

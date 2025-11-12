@@ -116,7 +116,11 @@ export const copyFiles = async (
 		return;
 	}
 
-	const realPlayerFilenames = ["real-player-data", "real-player-stats"];
+	const realPlayerFilenames = [
+		"real-player-data",
+		"real-player-stats",
+		"real-schedules",
+	];
 	for (const filename of realPlayerFilenames) {
 		const sourcePath = `data/${filename}.${sport}.json`;
 		if (existsSync(sourcePath)) {

@@ -149,7 +149,7 @@ const newPhaseRegularSeason = async (
 		"noCopyCache",
 	);
 
-	await season.setSchedule(season.newSchedule(teams));
+	await season.setSchedule(await season.newSchedule(teams));
 
 	await deleteOldBoxScores();
 

@@ -17,7 +17,7 @@
   </IfModule>
 </FilesMatch>
 
-<FilesMatch "^(names|real-player)-.*\.json$">
+<FilesMatch "^(names|real-player|real-schedules)-.*\.json$">
   <IfModule mod_headers.c>
     Header set Cache-Control "public,max-age=31536000"
   </IfModule>

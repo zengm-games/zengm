@@ -4,7 +4,9 @@ import g from "../../util/g.ts";
 const NUM_CONFS = 2;
 const NUM_DIVS_PER_CONF = 4;
 const NUM_TEAMS_PER_DIV = 4;
-const NUM_GAMES_PER_TEAM = 17;
+const NUM_GAMES = 17;
+const NUM_GAMES_CONF = 6;
+const NUM_GAMES_DIV = 6;
 
 type RealSchedules = {
 	schedules: {
@@ -33,7 +35,11 @@ export const getRealSchedule = async (
 		tid: number;
 	}[],
 ) => {
-	if (g.get("numGames") !== NUM_GAMES_PER_TEAM) {
+	if (
+		g.get("numGames") !== NUM_GAMES ||
+		g.get("numGamesConf") !== NUM_GAMES_CONF ||
+		g.get("numGamesDiv") !== NUM_GAMES_DIV
+	) {
 		return;
 	}
 

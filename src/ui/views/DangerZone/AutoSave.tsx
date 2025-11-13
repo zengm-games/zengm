@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { helpers, toWorker } from "../../util/index.ts";
+import { toWorker } from "../../util/index.ts";
 
 const AutoSave = ({
 	autoSave,
@@ -24,12 +24,6 @@ const AutoSave = ({
 				)}
 			</p>
 
-			{!godMode ? (
-				<p className="text-warning">
-					This feature is only available in{" "}
-					<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
-				</p>
-			) : null}
 			{autoSaveTemp ? (
 				<button
 					className="btn btn-light-bordered"

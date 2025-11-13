@@ -165,6 +165,7 @@ const setChampNoPlayoffs = async (conditions: Conditions) => {
 
 	teamSeason.playoffRoundsWon = 0;
 	teamSeason.hype += 0.2;
+	teamSeason.hype = helpers.bound(teamSeason.hype, 0, 1);
 
 	logEvent(
 		{

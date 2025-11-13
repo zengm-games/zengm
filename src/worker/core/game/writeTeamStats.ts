@@ -214,12 +214,7 @@ const writeTeamStats = async (results: GameResults) => {
 
 			teamSeason.hype =
 				teamSeason.hype + 0.01 * (winp - 0.55) + 0.015 * (winp - winpOld);
-
-			if (teamSeason.hype > 1) {
-				teamSeason.hype = 1;
-			} else if (teamSeason.hype < 0) {
-				teamSeason.hype = 0;
-			}
+			teamSeason.hype = helpers.bound(teamSeason.hype, 0, 1);
 		}
 
 		// 5% bonus for easy, 5% penalty for hard, 20% penalty for insane

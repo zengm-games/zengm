@@ -2512,6 +2512,34 @@ const importPlayers = async ({
 			(p2 as any).injury = p.injury;
 		}
 
+		const adjustAndFilter = (
+			key: "injuries" | "ratings" | "salaries" | "stats",
+			seasonOffset: number,
+			draftProspect: boolean,
+		) => {
+			for (const row of p2[key]) {
+				row.season += seasonOffset;
+			}
+
+			let offset = 0;
+			if (!draftProspect) {
+				if (key === "injuries" && currentPhase < PHASE.REGULAR_SEASON) {
+					// No injuries from current season, if current season has not started yet
+					offset = -1;
+				} else if (key === "salaries") {
+					// Current season salary will be added later
+					offset = -1;
+				} else if (key === "stats" && currentPhase <= PHASE.PLAYOFFS) {
+					// Don't include current season stats if the season has not started yet. Might be good to separate playoff stats and non-playoff stats and use differnet phase cutoffs, but whatever.
+					offset = -1;
+				}
+			}
+
+			p2[key] = p2[key].filter(
+				(row: any) => row.season <= currentSeason + offset,
+			);
+		};
+
 		if (tid === PLAYER.UNDRAFTED) {
 			const draftYearInt = Number.parseInt(draftYear);
 			if (
@@ -2540,6 +2568,7 @@ const importPlayers = async ({
 			p2.salaries = [];
 			p2.injuries = [];
 			p2.ratings = [ratings];
+			adjustAndFilter("stats", currentSeason - ratingsSeason, true);
 			ratings.season = p2.draft.year;
 		} else {
 			// How many seasons to adjust player to bring him aligned with current season, as an active player at the selected age
@@ -2548,33 +2577,10 @@ const importPlayers = async ({
 			p2.born.year += seasonOffset2;
 			p2.draft.year += seasonOffset2;
 
-			const adjustAndFilter = (
-				key: "injuries" | "ratings" | "salaries" | "stats",
-			) => {
-				for (const row of p2[key]) {
-					row.season += seasonOffset2;
-				}
-
-				let offset = 0;
-				if (key === "injuries" && currentPhase < PHASE.REGULAR_SEASON) {
-					// No injuries from current season, if current season has not started yet
-					offset = -1;
-				} else if (key === "salaries") {
-					// Current season salary will be added later
-					offset = -1;
-				} else if (key === "stats" && currentPhase <= PHASE.PLAYOFFS) {
-					// Don't include current season stats if the season has not started yet. Might be good to separate playoff stats and non-playoff stats and use differnet phase cutoffs, but whatever.
-					offset = -1;
-				}
-
-				p2[key] = p2[key].filter(
-					(row: any) => row.season <= currentSeason + offset,
-				);
-			};
-			adjustAndFilter("injuries");
-			adjustAndFilter("ratings");
-			adjustAndFilter("salaries");
-			adjustAndFilter("stats");
+			adjustAndFilter("injuries", seasonOffset2, false);
+			adjustAndFilter("ratings", seasonOffset2, false);
+			adjustAndFilter("salaries", seasonOffset2, false);
+			adjustAndFilter("stats", seasonOffset2, false);
 
 			player.setContract(p2, p2.contract, tid >= 0);
 		}

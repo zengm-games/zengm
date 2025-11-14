@@ -67,6 +67,8 @@ const raw = [
 	"ko",
 	"koYds",
 	"koTB",
+	"ok",
+	"okRec",
 	"pnt",
 	"pntYds",
 	"pntLng",

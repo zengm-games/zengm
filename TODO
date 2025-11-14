@@ -1,9 +1,7 @@
 scrimmageTouchbackKickoff
 - test change probability of kick distance
 - kickoff stats
-  - onside kick stats for kickers
   - update opponnet for separate k/p tables too
-  - make sure it looks good everywhere (compare players, depth chart, box score, player/team stats, player profile)
   - test different scrimmageTouchbackKickoff values and look at season stats
 
 https://www.youtube.com/watch?v=aEx2g636m-4

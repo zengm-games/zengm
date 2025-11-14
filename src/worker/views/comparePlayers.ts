@@ -249,6 +249,9 @@ const getStatsByPositions = (positions: string[]) => {
 						"koYdsPerAtt",
 						"koTB",
 						"koTBPct",
+						"ok",
+						"okRec",
+						"okRecPct",
 					);
 				} else if (pos === "P") {
 					stats.push(

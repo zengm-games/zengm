@@ -1250,6 +1250,7 @@ class GameSim extends GameSimBase {
 			const kickTo = random.randInt(40, 55);
 			this.currentPlay.addEvent({
 				type: "onsideKick",
+				p: kicker,
 				kickTo,
 			});
 			this.playByPlay.logEvent({
@@ -1278,6 +1279,7 @@ class GameSim extends GameSimBase {
 			const { td } = this.currentPlay.addEvent({
 				type: "onsideKickRecovery",
 				success,
+				kicker,
 				p,
 				yds,
 			});

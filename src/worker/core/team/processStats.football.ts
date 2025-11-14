@@ -117,6 +117,8 @@ const processStats = (
 				row[stat] = helpers.percentage(ts.koTB, ts.ko);
 			} else if (stat === "koYdsPerAtt") {
 				row[stat] = helpers.ratio(ts.koYds, ts.ko);
+			} else if (stat === "okRecPct") {
+				row[stat] = helpers.percentage(ts.okRec, ts.ok);
 			} else if (stat === "oppYds") {
 				row[stat] = ts.oppPssYds + ts.oppRusYds;
 			} else if (stat === "oppYdsPerPlay") {
@@ -228,6 +230,8 @@ const processStats = (
 				row[stat] = helpers.percentage(ts.oppKoTB, ts.oppKo);
 			} else if (stat === "oppKoYdsPerAtt") {
 				row[stat] = helpers.ratio(ts.oppKoYds, ts.oppKo);
+			} else if (stat === "oppokRecPct") {
+				row[stat] = helpers.percentage(ts.oppOkRec, ts.oppOk);
 			} else {
 				row[stat] = ts[stat];
 			}

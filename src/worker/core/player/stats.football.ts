@@ -65,6 +65,8 @@ const stats = {
 		"ko",
 		"koYds",
 		"koTB",
+		"ok",
+		"okRec",
 		"pnt",
 		"pntYds",
 		"pntLng",

@@ -2029,6 +2029,24 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "TB%",
 		},
+		"stat:ok": {
+			desc: "Onside Kicks",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "OK",
+		},
+		"stat:okRec": {
+			desc: "Recovered Onside Kicks",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "OKR",
+		},
+		"stat:okRecPct": {
+			desc: "Recovered Onside Kick Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "OK%",
+		},
 		"stat:pen": {
 			desc: "Penalties",
 			sortSequence: ["desc", "asc"],

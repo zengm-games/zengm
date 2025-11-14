@@ -114,6 +114,8 @@ const processStats = (
 			row[stat] = helpers.percentage(ps.koTB, ps.ko);
 		} else if (stat === "koYdsPerAtt") {
 			row[stat] = helpers.ratio(ps.koYds, ps.ko);
+		} else if (stat === "okRecPct") {
+			row[stat] = helpers.percentage(ps.okRec, ps.ok);
 		} else if (stat === "fp") {
 			row[stat] =
 				ps.pssYds / 25 +

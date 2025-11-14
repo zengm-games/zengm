@@ -52,6 +52,7 @@ type PlayEvent =
 	  }
 	| {
 			type: "onsideKick";
+			p: PlayerGameSim;
 			kickTo: number;
 	  }
 	| {
@@ -66,6 +67,7 @@ type PlayEvent =
 	| {
 			type: "onsideKickRecovery";
 			success: boolean;
+			kicker: PlayerGameSim;
 			p: PlayerGameSim;
 			yds: number;
 	  }
@@ -463,8 +465,12 @@ class Play {
 					[state.o, event.p, "krYds", event.yds],
 					[state.o, event.p, "krLng", event.yds],
 				);
+			} else if (event.type === "onsideKick") {
+				statChanges.push([state.o, event.p, "ok"]);
 			} else if (event.type === "onsideKickRecovery") {
-				if (!event.success) {
+				if (event.success) {
+					statChanges.push([state.o, event.kicker, "okRec"]);
+				} else if (!event.success) {
 					statChanges.push(
 						[state.o, event.p, "kr"],
 						[state.o, event.p, "krYds", event.yds],

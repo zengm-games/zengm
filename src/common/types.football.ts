@@ -43,6 +43,7 @@ export type TeamStatAttr =
 	| "allTD"
 	| "koTBPct"
 	| "koYdsPerAtt"
+	| "okRecPct"
 	| "oppYds"
 	| "oppYdsPerPlay"
 	| "oppTov"
@@ -81,7 +82,8 @@ export type TeamStatAttr =
 	| "oppQbRat"
 	| "oppCmpPct"
 	| "oppKoTBPct"
-	| "oppKoYdsPerAtt";
+	| "oppKoYdsPerAtt"
+	| "oppokRecPct";
 
 type AwardTeam = {
 	tid: number;

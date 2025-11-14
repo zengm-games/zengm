@@ -7,9 +7,6 @@ real-schedules
 - basketball - could use for historical mode, but is it too much data/trouble to be worth it?
 - football - also do for 16 games?
 
-hardcode known good schedule for default FBGM settings, to minimize bye weeks
-- take a template (or multiple templates) from the NFL, labeling each game by category (division, conference, non-conference specific division, non-conference random). then generate those games and put them in order of the template. randomize teams
-
 block game sim when schedule editor is dirty so simming a game doesn't overwrite changes
 
 make ovr drop get saved from edited injury too https://old.reddit.com/r/BasketballGM/comments/1nutcno/monthly_suggestions_thread/nhr94ld/ https://discord.com/channels/290013534023057409/1432096932938907709/1432102253682233346
@@ -116,7 +113,7 @@ leaders on dashboard should account for qualified/non-qualified players like lea
 now that we have worker modules, what can we do with it?
 - code spitting in worker
 - single bundle between ui and worker
-- maybe not worth worrying about until switching to rolldown
+  - tricky with blacklist
 
 use import with json attribute for loading json files, rather than special effort to copy/fetch them
 - MAYBE NOT A GOOD IDEA https://jakearchibald.com/2025/importing-vs-fetching-json/ https://x.com/jaffathecake/status/1981010343326540157

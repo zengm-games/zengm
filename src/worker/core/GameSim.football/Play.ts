@@ -8,8 +8,42 @@ export const SCRIMMAGE_KICKOFF = 35;
 const SCRIMMAGE_KICKOFF_SAFETY = 20;
 export const SCRIMMAGE_EXTRA_POINT = 85;
 export const SCRIMMAGE_TWO_POINT_CONVERSION = 98;
-const SCRIMMAGE_TOUCHBACK_KICKOFF = 25;
+const SCRIMMAGE_TOUCHBACK_KICKOFF = 35;
 const SCRIMMAGE_TOUCHBACK = 20;
+
+const UPDATE_SPOT_OF_ENFORCEMENT = new Set<PlayType>([
+	"possessionChange",
+	"k",
+	"onsideKick",
+	"touchbackKick",
+	"kr",
+	"onsideKickRecovery",
+	"p",
+	"touchbackPunt",
+	"touchbackInt",
+	"pr",
+	"rus",
+	"kneel",
+	"sk",
+	"pssCmp",
+	"int",
+	"fg",
+	"xp",
+	"fmb",
+	"fmbRec",
+]);
+
+const TOUCHDOWN_IS_POSSIBLE = new Set<PlayType>([
+	"kr",
+	"onsideKickRecovery",
+	"pr",
+	"rus",
+	"pssCmp",
+	"int",
+	"fmbRec",
+]);
+
+const SAFETY_IS_POSSIBLE = new Set<PlayType>(["rus", "pssCmp", "sk"]);
 
 type PlayEvent =
 	| {
@@ -751,17 +785,7 @@ class Play {
 		let safety = false;
 		let touchback = false;
 
-		const TOUCHDOWN_IS_POSSIBLE: PlayType[] = [
-			"kr",
-			"onsideKickRecovery",
-			"pr",
-			"rus",
-			"pssCmp",
-			"int",
-			"fmbRec",
-		];
-
-		if (state.scrimmage >= 100 && TOUCHDOWN_IS_POSSIBLE.includes(event.type)) {
+		if (state.scrimmage >= 100 && TOUCHDOWN_IS_POSSIBLE.has(event.type)) {
 			td = true;
 		}
 
@@ -784,10 +808,8 @@ class Play {
 		touchback = touchbackIsPossible();
 
 		if (state.scrimmage <= 0) {
-			const SAFETY_IS_POSSIBLE: PlayType[] = ["rus", "pssCmp", "sk"];
-
 			const safetyIsPossible = () => {
-				if (SAFETY_IS_POSSIBLE.includes(event.type)) {
+				if (SAFETY_IS_POSSIBLE.has(event.type)) {
 					return true;
 				} else if (event.type === "fmbRec" && !event.lost) {
 					// Safety only if it's not a lost fumble
@@ -963,28 +985,7 @@ class Play {
 		}
 
 		// Basically, anything that affects scrimmage
-		const UPDATE_SPOT_OF_ENFORCEMENT: PlayType[] = [
-			"possessionChange",
-			"k",
-			"onsideKick",
-			"touchbackKick",
-			"kr",
-			"onsideKickRecovery",
-			"p",
-			"touchbackPunt",
-			"touchbackInt",
-			"pr",
-			"rus",
-			"kneel",
-			"sk",
-			"pssCmp",
-			"int",
-			"fg",
-			"xp",
-			"fmb",
-			"fmbRec",
-		];
-		if (UPDATE_SPOT_OF_ENFORCEMENT.includes(event.type)) {
+		if (UPDATE_SPOT_OF_ENFORCEMENT.has(event.type)) {
 			this.spotOfEnforcementIndexes.push(this.events.length - 1);
 		}
 

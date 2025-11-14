@@ -750,6 +750,7 @@ export type GameAttributesLeague = {
 	overtimeLengthPlayoffs: number | null;
 	forceRetireRealPlayers: boolean;
 	forceHistoricalRosters: boolean;
+	scrimmageTouchbackKickoff: number;
 };
 
 type AlwaysWrap = (typeof ALWAYS_WRAP)[number];

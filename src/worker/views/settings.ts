@@ -175,7 +175,8 @@ type Key =
 	| "overtimeLength"
 	| "overtimeLengthPlayoffs"
 	| "forceRetireRealPlayers"
-	| "forceHistoricalRosters";
+	| "forceHistoricalRosters"
+	| "scrimmageTouchbackKickoff";
 
 export type Settings = Pick<
 	GameAttributesLeague,
@@ -392,6 +393,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			overtimeLengthPlayoffs: g.get("overtimeLengthPlayoffs"),
 			forceRetireRealPlayers: g.get("forceRetireRealPlayers"),
 			forceHistoricalRosters: g.get("forceHistoricalRosters"),
+			scrimmageTouchbackKickoff: g.get("scrimmageTouchbackKickoff"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

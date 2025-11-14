@@ -2796,6 +2796,19 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Game Simulation",
+			key: "scrimmageTouchbackKickoff",
+			name: "Kickoff Touchback Yards",
+			godModeRequired: "always",
+			type: "int",
+			decoration: "yards",
+			validator: (value) => {
+				if (value < 1 || value > 99) {
+					throw new Error("Value must be between 1 and 99");
+				}
+			},
+		},
+		{
+			category: "Game Simulation",
 			key: "numPlayersOnCourt",
 			name: `# Players On ${helpers.upperCaseFirstLetter(COURT)}`,
 			godModeRequired: "always",

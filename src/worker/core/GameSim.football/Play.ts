@@ -8,7 +8,6 @@ export const SCRIMMAGE_KICKOFF = 35;
 const SCRIMMAGE_KICKOFF_SAFETY = 20;
 export const SCRIMMAGE_EXTRA_POINT = 85;
 export const SCRIMMAGE_TWO_POINT_CONVERSION = 98;
-const SCRIMMAGE_TOUCHBACK_KICKOFF = 35;
 const SCRIMMAGE_TOUCHBACK = 20;
 
 const UPDATE_SPOT_OF_ENFORCEMENT = new Set<PlayType>([
@@ -688,7 +687,7 @@ class Play {
 		} else if (event.type === "k" || event.type === "onsideKick") {
 			state.scrimmage = 100 - event.kickTo;
 		} else if (event.type === "touchbackKick") {
-			state.scrimmage = SCRIMMAGE_TOUCHBACK_KICKOFF;
+			state.scrimmage = g.get("scrimmageTouchbackKickoff");
 		} else if (event.type === "kr") {
 			state.scrimmage += event.yds;
 		} else if (event.type === "onsideKickRecovery") {

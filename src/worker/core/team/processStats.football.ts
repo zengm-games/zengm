@@ -113,6 +113,10 @@ const processStats = (
 			} else if (stat === "allTD") {
 				row[stat] =
 					ts.rusTD + ts.recTD + ts.prTD + ts.krTD + ts.defFmbTD + ts.defIntTD;
+			} else if (stat === "koTBPct") {
+				row[stat] = helpers.percentage(ts.koTB, ts.ko);
+			} else if (stat === "koYdsPerAtt") {
+				row[stat] = helpers.ratio(ts.koYds, ts.ko);
 			} else if (stat === "oppYds") {
 				row[stat] = ts.oppPssYds + ts.oppRusYds;
 			} else if (stat === "oppYdsPerPlay") {
@@ -220,6 +224,10 @@ const processStats = (
 				});
 			} else if (stat === "oppCmpPct") {
 				row[stat] = helpers.percentage(ts.oppPssCmp, ts.oppPss);
+			} else if (stat === "oppKoTBPct") {
+				row[stat] = helpers.percentage(ts.oppKoTB, ts.oppKo);
+			} else if (stat === "oppKoYdsPerAtt") {
+				row[stat] = helpers.ratio(ts.oppKoYds, ts.oppKo);
 			} else {
 				row[stat] = ts[stat];
 			}

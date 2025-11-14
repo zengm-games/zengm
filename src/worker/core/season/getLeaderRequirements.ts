@@ -451,6 +451,19 @@ const getLeaderRequirements = () => {
 			fga: {},
 			xp: {},
 			xpa: {},
+			ko: {},
+			koYds: {},
+			koYdsPerAtt: {
+				minStats: {
+					ko: 2.5 * numGames,
+				},
+			},
+			koTB: {},
+			koTBPct: {
+				minStats: {
+					ko: 2.5 * numGames,
+				},
+			},
 			pnt: {},
 			pntYds: {},
 			pntLng: {},

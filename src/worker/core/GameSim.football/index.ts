@@ -1304,8 +1304,8 @@ class GameSim extends GameSimBase {
 		} else {
 			// Penalty of up to 30 yards for bad kickers
 			const adjust =
-				kicker.compositeRating.kickingPower < 0.75
-					? Math.round(30 * (0.75 - kicker.compositeRating.kickingPower))
+				kicker.compositeRating.kickingPower < 0.7
+					? Math.round(30 * (0.7 - kicker.compositeRating.kickingPower))
 					: 0;
 
 			let kickToRange: [number, number];

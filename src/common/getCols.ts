@@ -2027,7 +2027,7 @@ const sportSpecificCols = bySport<{
 			desc: "Kickoff Touchback Percentage",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
-			title: "TB",
+			title: "TB%",
 		},
 		"stat:pen": {
 			desc: "Penalties",

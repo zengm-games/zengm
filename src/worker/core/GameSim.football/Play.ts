@@ -47,6 +47,7 @@ const SAFETY_IS_POSSIBLE = new Set<PlayType>(["rus", "pssCmp", "sk"]);
 type PlayEvent =
 	| {
 			type: "k";
+			p: PlayerGameSim;
 			kickTo: number;
 	  }
 	| {
@@ -451,7 +452,12 @@ class Play {
 					[event.t, event.p, "penYds", actualPenYds],
 				);
 			}
-			if (event.type === "kr") {
+			if (event.type === "k") {
+				statChanges.push(
+					[state.o, event.p, "ko"],
+					[state.o, event.p, "koYds", 65 - event.kickTo],
+				);
+			} else if (event.type === "kr") {
 				statChanges.push(
 					[state.o, event.p, "kr"],
 					[state.o, event.p, "krYds", event.yds],

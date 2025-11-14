@@ -1338,6 +1338,7 @@ class GameSim extends GameSimBase {
 			const touchback = kickTo <= -10 || (kickTo < 0 && Math.random() < 0.8);
 			this.currentPlay.addEvent({
 				type: "k",
+				p: kicker,
 				kickTo,
 			});
 			this.playByPlay.logEvent({

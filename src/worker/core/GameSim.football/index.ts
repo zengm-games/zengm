@@ -1302,10 +1302,46 @@ class GameSim extends GameSimBase {
 				td,
 			});
 		} else {
+			// Penalty of up to 30 yards for bad kickers
+			const adjust =
+				kicker.compositeRating.kickingPower < 0.75
+					? Math.round(30 * (0.75 - kicker.compositeRating))
+					: 0;
+
+			let kickToRange: [number, number];
+			if (this.awaitingAfterSafety) {
+				kickToRange = [15 + adjust, 35 + adjust];
+			} else {
+				kickToRange = [-15 + adjust, 5 + adjust];
+
+				// If kickToRange is possibly a touchback, adjust likelihood of that based on touchback settings.
+				const scrimmageTouchbackKickoff = g.get("scrimmageTouchbackKickoff");
+				if (scrimmageTouchbackKickoff > 25) {
+					let maxMinKickToRange;
+					if (scrimmageTouchbackKickoff < 35) {
+						// Get less willing to accept a touchback as we move from 25 to 35
+						maxMinKickToRange = scrimmageTouchbackKickoff - 35;
+					} else {
+						// Continue moving more slowly after, up to 10 yards beyond the endzone
+						maxMinKickToRange = Math.round(
+							(scrimmageTouchbackKickoff - 35) / 2,
+						);
+					}
+
+					if (maxMinKickToRange > 10) {
+						maxMinKickToRange = 10;
+					}
+
+					if (maxMinKickToRange > kickToRange[0]) {
+						const diff = maxMinKickToRange - kickToRange[0];
+						kickToRange[0] += diff;
+						kickToRange[1] += diff;
+					}
+				}
+			}
+
 			const kickReturner = this.getTopPlayerOnField(this.d, "KR");
-			const kickTo = this.awaitingAfterSafety
-				? random.randInt(15, 35)
-				: random.randInt(-10, 10);
+			const kickTo = random.randInt(...kickToRange);
 			const touchback = kickTo <= -10 || (kickTo < 0 && Math.random() < 0.8);
 			this.currentPlay.addEvent({
 				type: "k",

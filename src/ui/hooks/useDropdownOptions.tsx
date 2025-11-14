@@ -341,6 +341,7 @@ const useDropdownOptions = (
 				"rushingReceiving",
 				"defense",
 				"kicking",
+				"punting",
 				"returns",
 			],
 			hockey: [

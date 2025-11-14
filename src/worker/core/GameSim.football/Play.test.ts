@@ -81,6 +81,7 @@ describe("penalty situations", () => {
 
 		play.addEvent({
 			type: "k",
+			p: po,
 			kickTo: 40,
 		});
 		play.addEvent({
@@ -136,12 +137,14 @@ describe("penalty situations", () => {
 		game.currentPlay = new Play(game);
 
 		game.updatePlayersOnField("kickoff");
+		const po = game.pickPlayer(game.o);
 		const pd = game.pickPlayer(game.d);
 
 		const play = game.currentPlay;
 
 		play.addEvent({
 			type: "k",
+			p: po,
 			kickTo: 40,
 		});
 		play.addEvent({
@@ -908,6 +911,7 @@ describe("one penalty on each team", () => {
 
 		play.addEvent({
 			type: "k",
+			p: po,
 			kickTo: 40,
 		});
 		play.addEvent({
@@ -991,6 +995,7 @@ describe("one penalty on each team", () => {
 
 		play.addEvent({
 			type: "k",
+			p: po,
 			kickTo: 40,
 		});
 		play.addEvent({

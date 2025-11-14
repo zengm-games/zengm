@@ -1319,11 +1319,21 @@ class GameSim extends GameSimBase {
 				// If kickToRange is possibly a touchback, adjust likelihood of that based on touchback settings.
 				const scrimmageTouchbackKickoff = g.get("scrimmageTouchbackKickoff");
 				if (scrimmageTouchbackKickoff > 25) {
+					/**
+					 * 25 -> -15
+					 * 35 -> -5
+					 * 40 -> -3
+					 * continue increasing 2 per 5
+					 */
 					let maxMinKickToRange;
-					if (scrimmageTouchbackKickoff < 50) {
-						// Get less willing to accept a touchback as we move from 25 to 50
-						maxMinKickToRange = scrimmageTouchbackKickoff - 40;
+					if (scrimmageTouchbackKickoff < 35) {
+						maxMinKickToRange = -15 + (scrimmageTouchbackKickoff - 25);
 					} else {
+						maxMinKickToRange = -5 + ((scrimmageTouchbackKickoff - 35) * 2) / 5;
+					}
+
+					maxMinKickToRange = Math.round(maxMinKickToRange);
+					if (maxMinKickToRange > 10) {
 						maxMinKickToRange = 10;
 					}
 

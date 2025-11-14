@@ -454,6 +454,8 @@ const getLeaderRequirements = () => {
 			pnt: {},
 			pntYds: {},
 			pntLng: {},
+			pntIn20: {},
+			pntTB: {},
 			pntBlk: {},
 			pr: {},
 			prYds: {},

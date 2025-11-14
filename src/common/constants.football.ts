@@ -177,7 +177,15 @@ const PLAYER_GAME_STATS = {
 	},
 	punting: {
 		name: "Punting",
-		stats: ["pnt", "pntYdsPerAtt", "pntIn20", "pntTB", "pntLng", "pntBlk"],
+		stats: [
+			"pnt",
+			"pntYds",
+			"pntYdsPerAtt",
+			"pntLng",
+			"pntIn20",
+			"pntTB",
+			"pntBlk",
+		],
 		sortBy: ["pnt"],
 	},
 	returns: {
@@ -358,8 +366,8 @@ const PLAYER_STATS_TABLES = {
 		],
 	},
 	kicking: {
-		name: "Kicking and Punting",
-		onlyShowIf: ["fga", "xpa", "pnt"],
+		name: "Kicking",
+		onlyShowIf: ["fga", "xpa", "ko"],
 		stats: [
 			"gp",
 			"gs",
@@ -381,12 +389,21 @@ const PLAYER_STATS_TABLES = {
 			"xpa",
 			"xpPct",
 			"kickingPts",
+			"fp",
+			"av",
+		],
+	},
+	punting: {
+		name: "Punting",
+		onlyShowIf: ["pnt"],
+		stats: [
 			"pnt",
 			"pntYds",
-			"pntLng",
-			"pntBlk",
 			"pntYdsPerAtt",
-			"fp",
+			"pntLng",
+			"pntIn20",
+			"pntTB",
+			"pntBlk",
 			"av",
 		],
 	},
@@ -527,11 +544,18 @@ const TEAM_STATS_TABLES = {
 			"xpa",
 			"xpPct",
 			"kickingPts",
+		],
+	},
+	punting: {
+		name: "Punting",
+		stats: [
 			"pnt",
 			"pntYds",
-			"pntLng",
-			"pntBlk",
 			"pntYdsPerAtt",
+			"pntLng",
+			"pntIn20",
+			"pntTB",
+			"pntBlk",
 		],
 	},
 	returns: {

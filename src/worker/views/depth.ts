@@ -104,7 +104,7 @@ const stats = bySport<Record<string, string[]>>({
 		CB: defenseStats,
 		S: defenseStats,
 		K: ["fg", "fga", "fgPct", "fgLng", "xp", "xpa", "xpPct", "kickingPts"],
-		P: ["pnt", "pntYdsPerAtt", "pntIn20", "pntTB", "pntLng", "pntBlk"],
+		P: ["pnt", "pntYdsPerAtt", "pntLng", "pntIn20", "pntTB", "pntBlk"],
 		KR: ["kr", "krYds", "krYdsPerAtt", "krLng", "krTD"],
 		PR: ["pr", "prYds", "prYdsPerAtt", "prLng", "prTD"],
 	},

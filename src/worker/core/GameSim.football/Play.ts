@@ -55,6 +55,7 @@ type PlayEvent =
 	  }
 	| {
 			type: "touchbackKick";
+			p: PlayerGameSim;
 	  }
 	| {
 			type: "kr";
@@ -478,6 +479,8 @@ class Play {
 				}
 			} else if (event.type === "touchbackPunt") {
 				statChanges.push([state.d, event.p, "pntTB"]);
+			} else if (event.type === "touchbackKick") {
+				statChanges.push([state.d, event.p, "koTB"]);
 			} else if (event.type === "pr") {
 				statChanges.push(
 					[state.o, event.p, "pr"],

@@ -1357,6 +1357,7 @@ class GameSim extends GameSimBase {
 			if (touchback) {
 				this.currentPlay.addEvent({
 					type: "touchbackKick",
+					p: kicker,
 				});
 			} else {
 				let ydsRaw = Math.round(random.truncGauss(20, 5, -10, 109));

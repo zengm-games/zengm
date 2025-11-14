@@ -244,6 +244,11 @@ const getStatsByPositions = (positions: string[]) => {
 						"xpa",
 						"xpPct",
 						"kickingPts",
+						"ko",
+						"koYds",
+						"koYdsPerAtt",
+						"koTB",
+						"koTBPct",
 					);
 				} else if (pos === "P") {
 					stats.push(

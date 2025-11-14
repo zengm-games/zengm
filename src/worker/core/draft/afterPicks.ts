@@ -80,9 +80,6 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 					phase: g.get("nextPhase"),
 					nextPhase: undefined,
 				});
-				await updatePhase();
-				await updatePlayMenu();
-				await updateStatus("Idle");
 			} else if (currentPhase === PHASE.EXPANSION_DRAFT) {
 				// Refresh draft results without redirecting away
 				await toUI("realtimeUpdate", [["playerMovement"]]);
@@ -92,14 +89,16 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 					phase: g.get("nextPhase"),
 					nextPhase: undefined,
 				});
-				await updatePhase();
-				await updatePlayMenu();
-				await updateStatus("Idle");
 
 				await expansionDraft.finalize();
 			}
 		} finally {
 			await lock.set("newPhase", false);
+
+			// Do this after unlocking newPhase or it messes up the menu
+			await updatePhase();
+			await updatePlayMenu();
+			await updateStatus("Idle");
 		}
 	} else {
 		await updatePlayMenu();

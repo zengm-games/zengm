@@ -83,7 +83,7 @@ export type TeamStatAttr =
 	| "oppCmpPct"
 	| "oppKoTBPct"
 	| "oppKoYdsPerAtt"
-	| "oppokRecPct";
+	| "oppOkRecPct";
 
 type AwardTeam = {
 	tid: number;

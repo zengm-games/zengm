@@ -230,7 +230,7 @@ const processStats = (
 				row[stat] = helpers.percentage(ts.oppKoTB, ts.oppKo);
 			} else if (stat === "oppKoYdsPerAtt") {
 				row[stat] = helpers.ratio(ts.oppKoYds, ts.oppKo);
-			} else if (stat === "oppokRecPct") {
+			} else if (stat === "oppOkRecPct") {
 				row[stat] = helpers.percentage(ts.oppOkRec, ts.oppOk);
 			} else {
 				row[stat] = ts[stat];

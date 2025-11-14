@@ -1305,7 +1305,7 @@ class GameSim extends GameSimBase {
 			// Penalty of up to 30 yards for bad kickers
 			const adjust =
 				kicker.compositeRating.kickingPower < 0.75
-					? Math.round(30 * (0.75 - kicker.compositeRating))
+					? Math.round(30 * (0.75 - kicker.compositeRating.kickingPower))
 					: 0;
 
 			let kickToRange: [number, number];
@@ -1318,17 +1318,10 @@ class GameSim extends GameSimBase {
 				const scrimmageTouchbackKickoff = g.get("scrimmageTouchbackKickoff");
 				if (scrimmageTouchbackKickoff > 25) {
 					let maxMinKickToRange;
-					if (scrimmageTouchbackKickoff < 35) {
-						// Get less willing to accept a touchback as we move from 25 to 35
-						maxMinKickToRange = scrimmageTouchbackKickoff - 35;
+					if (scrimmageTouchbackKickoff < 50) {
+						// Get less willing to accept a touchback as we move from 25 to 50
+						maxMinKickToRange = scrimmageTouchbackKickoff - 40;
 					} else {
-						// Continue moving more slowly after, up to 10 yards beyond the endzone
-						maxMinKickToRange = Math.round(
-							(scrimmageTouchbackKickoff - 35) / 2,
-						);
-					}
-
-					if (maxMinKickToRange > 10) {
 						maxMinKickToRange = 10;
 					}
 

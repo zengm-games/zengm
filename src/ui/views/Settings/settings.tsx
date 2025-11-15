@@ -2800,7 +2800,6 @@ export const settings: Setting[] = (
 			name: "Kickoff Touchback Yards",
 			godModeRequired: "always",
 			type: "int",
-			decoration: "yards",
 			validator: (value) => {
 				if (value < 1 || value > 99) {
 					throw new Error("Value must be between 1 and 99");

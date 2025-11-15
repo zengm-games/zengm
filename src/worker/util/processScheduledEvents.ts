@@ -18,6 +18,7 @@ import type {
 } from "../../common/types.ts";
 import { PHASE, applyRealTeamInfo } from "../../common/index.ts";
 import local from "./local.ts";
+import { orderBy } from "../../common/utils.ts";
 
 const processTeamInfo = async (
 	info: Extract<ScheduledEvent, { type: "teamInfo" }>["info"],
@@ -503,7 +504,16 @@ const processScheduledEvents = async (
 
 	const unretiredPids = [];
 
-	for (const scheduledEvent of scheduledEvents) {
+	const scheduledEventsOrdered = orderBy(scheduledEvents, [
+		"season",
+		"phase",
+		(scheduledEvent) => {
+			// When running the expansionDraft event, it calls newPhase again which calls other scheduled events and other things. So this should be the last scheduled event of this season/phase, so any prior ones happen before all that other stuff. Previously this was causing bugs in auto play, where unretirePlayer for forceHistoricalRosters was being called after expansionDraft and then those players would not be unretired in time.
+			return scheduledEvent.type === "expansionDraft" ? 1 : 0;
+		},
+	]);
+
+	for (const scheduledEvent of scheduledEventsOrdered) {
 		if (scheduledEvent.season !== season || scheduledEvent.phase !== phase) {
 			if (
 				scheduledEvent.season < season ||
@@ -545,7 +555,7 @@ const processScheduledEvents = async (
 		await idb.cache.scheduledEvents.delete(scheduledEvent.id);
 	}
 
-	if (scheduledEvents.length > 0) {
+	if (scheduledEventsOrdered.length > 0) {
 		// Non-default scheduled events (or default plus bulk delete) could leave a team orphanied in a division or conference that no longer exists
 		await team.ensureValidDivsConfs();
 	}

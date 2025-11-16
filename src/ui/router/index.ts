@@ -30,6 +30,8 @@ type RouteMatched = (arg: {
 
 type NavigationEnd = (arg: { context: Context; error: Error | null }) => void;
 
+// Switch to URLPattern when supported: Chrome 95, Firefox 142, Safari 26
+
 const decodeURLEncodedURIComponent = (val: string) => {
 	if (typeof val !== "string") {
 		return val;

@@ -1,14 +1,3 @@
-in baseball show projected starting pitchers in scorebox https://discord.com/channels/290013534023057409/331882115119448065/1440145317864542321
-- `upcoming` on dailySchedule page only needs to go up to the current day's games, not beyond
-- test
-  - DailySchedule and Schedule
-  - injury healing
-  - fatigue resting
-  - make sure home/away order is corect
-- test with ASG
-  - baseball
-  - non-baseball
-
 injuries should depend on position
 - wildcard?
 - multiple positions per injury?

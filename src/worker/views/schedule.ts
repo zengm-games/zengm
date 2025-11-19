@@ -166,6 +166,9 @@ export const getUpcoming = async ({
 export const getTopPlayers = async <T extends any[]>(
 	skipTid: number | undefined,
 	numPerTeam: number,
+
+	// On daily schedule, for baseball SP calculation, we don't need to look at any games beyond the requested day
+	targetDay?: number,
 ) => {
 	const playersPlusOptions = (tid: number) => {
 		return {
@@ -226,7 +229,12 @@ export const getTopPlayers = async <T extends any[]>(
 		}
 
 		// We need the whole schedule even if just displaying a single game on daily_schedule so we know how many games a team has played before a given game, so we can estimate fatigue
-		const upcoming = await season.getSchedule();
+		let upcoming = await season.getSchedule();
+		if (targetDay !== undefined) {
+			upcoming = upcoming.filter((game) => game.day <= targetDay);
+		}
+		console.log(upcoming.length);
+
 		let currentDay = upcoming[0]?.day;
 		if (currentDay !== undefined) {
 			const addSimulatedInfo = (pitchers: any[]) => {

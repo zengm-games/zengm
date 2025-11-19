@@ -1,3 +1,16 @@
+injuries should depend on position
+- wildcard?
+- multiple positions per injury?
+
+injuries
+- make more representative of football: https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf
+  - https://discord.com/channels/290013534023057409/290015468939640832/859264726247800832
+- hockey
+  - https://discord.com/channels/290013534023057409/290015468939640832/859262222873526272
+  - more goalie injuries? https://discord.com/channels/@me/926178075614523402/930545643578081320
+- baseball
+  - https://discord.com/channels/290013534023057409/944392892905037885/1440445305232298027
+
 https://www.youtube.com/watch?v=aEx2g636m-4
 - when creating a league with custom teams, you can select teams from a god mode league and put them in a non god mode league
 
@@ -1312,8 +1325,6 @@ when starting a new league, contracts should be set not based on current state o
 
 no awards if 0 games in regular season? https://discord.com/channels/290013534023057409/331882115119448065/930867153878544454
 
-more goalie injuries? https://discord.com/channels/@me/926178075614523402/930545643578081320
-
 redesign season summary
 - dramatic reveal of awards and award voting results, similar to draft lottery
   - https://discord.com/channels/290013534023057409/331882115119448065/935293110710317087
@@ -1474,12 +1485,6 @@ ratings distributions by position https://discord.com/channels/29001353402305740
 all advanced stats have always disregarded the previous team's stats for traded players, but that can have a big impact on things like normalizing PER to an average of 15 leaguewide if there are a lot of high minutes high/low PER traded players.
 
 Fix hardcoded 90000 in attendance.ts and writeTeamStats.ts
-
-injuries
-- make more representative of football: https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf
-  - https://discord.com/channels/290013534023057409/290015468939640832/859264726247800832
-- hockey
-  - https://discord.com/channels/290013534023057409/290015468939640832/859262222873526272
 
 FBGM
 - lower salaries https://discord.com/channels/290013534023057409/331882115119448065/856734085191041024

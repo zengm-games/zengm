@@ -259,7 +259,7 @@ const updateCompleted = async (
 			includeAllStarGame: true,
 		});
 
-		const topPlayers = await getTopPlayers(inputs.tid, 2);
+		const topPlayers = (await getTopPlayers(inputs.tid, 2)) as [any, any];
 
 		return {
 			completed,
@@ -282,7 +282,7 @@ const updateCompleted = async (
 			completed.unshift(games[i]!);
 		}
 
-		const topPlayers = await getTopPlayers(inputs.tid, 2);
+		const topPlayers = (await getTopPlayers(inputs.tid, 2)) as [any, any];
 
 		return {
 			completed,

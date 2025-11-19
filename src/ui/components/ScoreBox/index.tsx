@@ -89,7 +89,7 @@ const ScoreBox = memo(
 			numPeriods?: number;
 			overtimes?: number;
 		};
-		playersUpcoming?: any[];
+		playersUpcoming?: [any, any];
 		playersUpcomingAbbrev?: boolean;
 		small?: boolean;
 	}) => {

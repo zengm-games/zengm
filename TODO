@@ -1,3 +1,11 @@
+in baseball show projected starting pitchers in scorebox https://discord.com/channels/290013534023057409/331882115119448065/1440145317864542321
+- for future games, account for injuries healing and the normal rotation
+- DailySchedule and Schedule
+- rather than just getTopPlayers, need to run some code separately for each game
+- test with ASG
+  - baseball
+  - non-baseball
+
 injuries should depend on position
 - wildcard?
 - multiple positions per injury?
@@ -10,6 +18,8 @@ injuries
   - more goalie injuries? https://discord.com/channels/@me/926178075614523402/930545643578081320
 - baseball
   - https://discord.com/channels/290013534023057409/944392892905037885/1440445305232298027
+
+baseball bug - injuries somehow lead to teams scoring thousands of runs due to endless walks https://discord.com/channels/290013534023057409/1429553391499218955/1429553391499218955
 
 https://www.youtube.com/watch?v=aEx2g636m-4
 - when creating a league with custom teams, you can select teams from a god mode league and put them in a non god mode league

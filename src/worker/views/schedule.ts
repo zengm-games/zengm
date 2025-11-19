@@ -1,10 +1,16 @@
 import { player, season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, getProcessedGames } from "../util/index.ts";
-import type { UpdateEvents, ViewInput, Game } from "../../common/types.ts";
+import type {
+	UpdateEvents,
+	ViewInput,
+	Game,
+	Player,
+} from "../../common/types.ts";
 import { bySport, isSport } from "../../common/index.ts";
 import { groupBy, groupByUnique, orderBy } from "../../common/utils.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
+import { getStartingPitcher } from "../core/GameSim.baseball/getStartingPitcher.ts";
 
 export const getUpcoming = async ({
 	day,
@@ -161,9 +167,50 @@ export const getTopPlayers = async <T extends any[]>(
 	numPerTeam: number,
 	games: Awaited<ReturnType<typeof getUpcoming>>,
 ) => {
+	const playersPlusOptions = (tid: number) => {
+		return {
+			attrs: ["pid", "name", "injury", "abbrev", "tid", "pFatigue"],
+			ratings: ["ovr", "pos"],
+			season: g.get("season"),
+			stats: bySport({
+				baseball: ["keyStatsShort"],
+				basketball: ["pts", "trb", "ast"],
+				football: undefined, // football keyStats is too long
+				hockey: ["keyStats"],
+			}),
+			showNoStats: true,
+			showRookies: true,
+			fuzz: true,
+		};
+	};
+
 	if (isSport("baseball")) {
 		// Show SP rather than best player
 		const startingPitchersByGid: Record<number, [any, any]> = {};
+
+		const players = await idb.cache.players.getAll();
+		const playersByPid = groupByUnique(players, "pid");
+		const teams = await idb.cache.teams.getAll();
+		const pitchersByTid: Record<number, Player[]> = {};
+		for (const t of teams) {
+			pitchersByTid[t.tid] = await idb.getCopies.playersPlus(
+				(t.depth as { P: number[] }).P.map((pid) => playersByPid[pid]).filter(
+					(p) => p !== undefined,
+				),
+				playersPlusOptions(t.tid),
+			);
+		}
+
+		for (const game of games) {
+			const pitchers0 = pitchersByTid[game.teams[0].tid];
+			const pitchers1 = pitchersByTid[game.teams[1].tid];
+			if (pitchers0 && pitchers1) {
+				startingPitchersByGid[game.gid] = [
+					getStartingPitcher(pitchers0, false),
+					getStartingPitcher(pitchers1, false),
+				];
+			}
+		}
 
 		return {
 			type: "byGid" as const,
@@ -192,21 +239,10 @@ export const getTopPlayers = async <T extends any[]>(
 				.slice(0, numPerTeam)
 				.reverse();
 
-			const players = await idb.getCopies.playersPlus(playersRaw, {
-				attrs: ["pid", "name", "injury", "abbrev", "tid"],
-				ratings: ["ovr", "pos"],
-				season: g.get("season"),
-				stats: bySport({
-					baseball: ["keyStatsShort"],
-					basketball: ["pts", "trb", "ast"],
-					football: undefined, // football keyStats is too long
-					hockey: ["keyStats"],
-				}),
-				tid,
-				showNoStats: true,
-				showRookies: true,
-				fuzz: true,
-			});
+			const players = await idb.getCopies.playersPlus(
+				playersRaw,
+				playersPlusOptions(tid),
+			);
 
 			topPlayers[tid] = players as T;
 		}

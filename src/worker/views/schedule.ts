@@ -273,6 +273,10 @@ export const getTopPlayers = async <T extends any[]>(
 						pitchersByPid[p0.pid],
 						pitchersByPid[p1.pid],
 					];
+
+					for (const { pid } of [p0, p1]) {
+						simulatedInfo[pid]!.pFatigue = P_FATIGUE_DAILY_REDUCTION * 5;
+					}
 				}
 			}
 		}

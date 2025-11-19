@@ -2,7 +2,7 @@ import { player, season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, getProcessedGames } from "../util/index.ts";
 import type { UpdateEvents, ViewInput, Game } from "../../common/types.ts";
-import { bySport } from "../../common/index.ts";
+import { bySport, isSport } from "../../common/index.ts";
 import { groupBy, groupByUnique, orderBy } from "../../common/utils.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 
@@ -194,52 +194,65 @@ const updateUpcoming = async (
 	}
 };
 
-export const getTopPlayers = async (
+export const getTopPlayers = async <T extends any[]>(
 	skipTid: number | undefined,
 	numPerTeam: number,
 ) => {
-	const topPlayers: Record<number, any[]> = {};
+	if (isSport("baseball")) {
+		// Show SP rather than best player
+		const startingPitchersByGid: Record<number, [any, any]> = {};
 
-	const teamInfoCache = g.get("teamInfoCache");
+		return {
+			type: "byGid" as const,
+			startingPitchersByGid,
+		};
+	} else {
+		const topPlayers: Record<number, T> = {};
 
-	for (let tid = 0; tid < teamInfoCache.length; tid++) {
-		const t = teamInfoCache[tid]!;
-		if (t.disabled || tid === skipTid) {
-			continue;
+		const teamInfoCache = g.get("teamInfoCache");
+
+		for (let tid = 0; tid < teamInfoCache.length; tid++) {
+			const t = teamInfoCache[tid]!;
+			if (t.disabled || tid === skipTid) {
+				continue;
+			}
+
+			const playersRaw = orderBy(
+				await idb.cache.players.indexGetAll("playersByTid", tid),
+				(t) => {
+					const ratings = t.ratings.at(-1)!;
+					const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
+					return ovr;
+				},
+				"desc",
+			)
+				.slice(0, numPerTeam)
+				.reverse();
+
+			const players = await idb.getCopies.playersPlus(playersRaw, {
+				attrs: ["pid", "name", "injury", "abbrev", "tid"],
+				ratings: ["ovr", "pos"],
+				season: g.get("season"),
+				stats: bySport({
+					baseball: ["keyStatsShort"],
+					basketball: ["pts", "trb", "ast"],
+					football: undefined, // football keyStats is too long
+					hockey: ["keyStats"],
+				}),
+				tid,
+				showNoStats: true,
+				showRookies: true,
+				fuzz: true,
+			});
+
+			topPlayers[tid] = players as T;
 		}
 
-		const playersRaw = orderBy(
-			await idb.cache.players.indexGetAll("playersByTid", tid),
-			(t) => {
-				const ratings = t.ratings.at(-1)!;
-				const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
-				return ovr;
-			},
-			"desc",
-		)
-			.slice(0, numPerTeam)
-			.reverse();
-
-		const players = await idb.getCopies.playersPlus(playersRaw, {
-			attrs: ["pid", "name", "injury", "abbrev", "tid"],
-			ratings: ["ovr", "pos"],
-			season: g.get("season"),
-			stats: bySport({
-				baseball: ["keyStatsShort"],
-				basketball: ["pts", "trb", "ast"],
-				football: undefined, // football keyStats is too long
-				hockey: ["keyStats"],
-			}),
-			tid,
-			showNoStats: true,
-			showRookies: true,
-			fuzz: true,
-		});
-
-		topPlayers[tid] = players;
+		return {
+			type: "byTid" as const,
+			playersByTid: topPlayers,
+		};
 	}
-
-	return topPlayers;
 };
 
 // Based on views.gameLog.updateGamesList
@@ -259,7 +272,7 @@ const updateCompleted = async (
 			includeAllStarGame: true,
 		});
 
-		const topPlayers = (await getTopPlayers(inputs.tid, 2)) as [any, any];
+		const topPlayers = await getTopPlayers<[any, any]>(inputs.tid, 2);
 
 		return {
 			completed,
@@ -282,7 +295,7 @@ const updateCompleted = async (
 			completed.unshift(games[i]!);
 		}
 
-		const topPlayers = (await getTopPlayers(inputs.tid, 2)) as [any, any];
+		const topPlayers = await getTopPlayers<[any, any]>(inputs.tid, 2);
 
 		return {
 			completed,

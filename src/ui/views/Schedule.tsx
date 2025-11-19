@@ -141,8 +141,12 @@ const Schedule = ({
 											season: game.season,
 											teams: game.teams,
 										}}
-										playersUpcoming={topPlayers[otherTid]}
-										playersUpcomingAbbrev
+										playersUpcoming={
+											topPlayers.type === "byTid"
+												? topPlayers.playersByTid[otherTid]
+												: topPlayers.startingPitchersByGid[game.gid]
+										}
+										playersUpcomingAbbrev={topPlayers.type === "byTid"}
 										actions={actions}
 									/>
 									<ForceWin

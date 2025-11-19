@@ -1,16 +1,17 @@
 import { player, season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
-import { g, getProcessedGames } from "../util/index.ts";
+import { g, getProcessedGames, helpers } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
 	Game,
-	Player,
+	PlayerInjury,
 } from "../../common/types.ts";
 import { bySport, isSport } from "../../common/index.ts";
 import { groupBy, groupByUnique, orderBy } from "../../common/utils.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 import { getStartingPitcher } from "../core/GameSim.baseball/getStartingPitcher.ts";
+import { P_FATIGUE_DAILY_REDUCTION } from "../core/game/writePlayerStats.ts";
 
 export const getUpcoming = async ({
 	day,
@@ -165,11 +166,10 @@ export const getUpcoming = async ({
 export const getTopPlayers = async <T extends any[]>(
 	skipTid: number | undefined,
 	numPerTeam: number,
-	games: Awaited<ReturnType<typeof getUpcoming>>,
 ) => {
 	const playersPlusOptions = (tid: number) => {
 		return {
-			attrs: ["pid", "name", "injury", "abbrev", "tid", "pFatigue"],
+			attrs: ["pid", "name", "injury", "abbrev", "tid"],
 			ratings: ["ovr", "pos"],
 			season: g.get("season"),
 			stats: bySport({
@@ -191,24 +191,89 @@ export const getTopPlayers = async <T extends any[]>(
 		const players = await idb.cache.players.getAll();
 		const playersByPid = groupByUnique(players, "pid");
 		const teams = await idb.cache.teams.getAll();
-		const pitchersByTid: Record<number, Player[]> = {};
+		const pitchersByTid: Record<number, any[]> = {};
+		const pitchersByPid: Record<number, any> = {};
+
+		// Need to keep track of injury without mutating player objects (since injuries are shown in UI), to predict future day starters. Might as well track pFatigue here too, for clarity.
+		const simulatedInfo: Record<
+			number,
+			{
+				pFatigue: number;
+				injury: PlayerInjury;
+			}
+		> = {};
+
 		for (const t of teams) {
-			pitchersByTid[t.tid] = await idb.getCopies.playersPlus(
-				(t.depth as { P: number[] }).P.map((pid) => playersByPid[pid]).filter(
-					(p) => p !== undefined,
-				),
+			const depthPlayers = (t.depth as { P: number[] }).P.map(
+				(pid) => playersByPid[pid],
+			).filter((p) => p !== undefined);
+			const depthPlayersProcessed = await idb.getCopies.playersPlus(
+				depthPlayers,
 				playersPlusOptions(t.tid),
 			);
+
+			for (const p of depthPlayers) {
+				simulatedInfo[p.pid] = {
+					pFatigue: p.pFatigue ?? 0,
+					injury: { ...p.injury },
+				};
+			}
+			for (const p of depthPlayersProcessed) {
+				pitchersByPid[p.pid] = p;
+			}
+
+			pitchersByTid[t.tid] = depthPlayersProcessed;
 		}
 
-		for (const game of games) {
-			const pitchers0 = pitchersByTid[game.teams[0].tid];
-			const pitchers1 = pitchersByTid[game.teams[1].tid];
-			if (pitchers0 && pitchers1) {
-				startingPitchersByGid[game.gid] = [
-					getStartingPitcher(pitchers0, false),
-					getStartingPitcher(pitchers1, false),
-				];
+		// We need the whole schedule even if just displaying a single game on daily_schedule so we know how many games a team has played before a given game, so we can estimate fatigue
+		const upcoming = await season.getSchedule();
+		let currentDay = upcoming[0]?.day;
+		if (currentDay !== undefined) {
+			const addSimulatedInfo = (pitchers: any[]) => {
+				return pitchers.map((p) => {
+					const info = simulatedInfo[p.pid]!;
+					return {
+						...p,
+						pFatigue: info.pFatigue,
+						injured: info.injury.gamesRemaining > 0,
+					};
+				});
+			};
+
+			for (const game of upcoming) {
+				if (game.day !== currentDay) {
+					// Rest/heal 1 day
+					for (const p of Object.values(pitchersByTid).flat()) {
+						const info = simulatedInfo[p.pid]!;
+						info.pFatigue = helpers.bound(
+							info.pFatigue - P_FATIGUE_DAILY_REDUCTION,
+							0,
+							80,
+						);
+
+						if (info.injury.gamesRemaining > 0) {
+							info.injury.gamesRemaining -= 1;
+							if (info.injury.gamesRemaining === 0) {
+								info.injury = { type: "Healthy", gamesRemaining: 0 };
+							}
+						}
+					}
+
+					currentDay = game.day;
+				}
+
+				const pitchers0 = pitchersByTid[game.homeTid];
+				const pitchers1 = pitchersByTid[game.awayTid];
+				if (pitchers0 && pitchers1) {
+					const p0 = getStartingPitcher(addSimulatedInfo(pitchers0), false);
+					const p1 = getStartingPitcher(addSimulatedInfo(pitchers1), false);
+
+					startingPitchersByGid[game.gid] = [
+						// Get original injury values in pitchersByPid, whereas p0/p1 have them from simulatedInfo
+						pitchersByPid[p0.pid],
+						pitchersByPid[p1.pid],
+					];
+				}
 			}
 		}
 
@@ -279,7 +344,7 @@ const updateUpcoming = async (
 			);
 		}
 
-		const topPlayers = await getTopPlayers<[any, any]>(inputs.tid, 2, upcoming);
+		const topPlayers = await getTopPlayers<[any, any]>(inputs.tid, 2);
 
 		return {
 			abbrev: inputs.abbrev,

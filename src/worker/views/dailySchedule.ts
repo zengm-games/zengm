@@ -157,7 +157,7 @@ const updateDailySchedule = async (
 
 		const { completed, day, days, isToday, upcoming } = info;
 
-		const topPlayers = await getTopPlayers(undefined, 1);
+		const topPlayers = await getTopPlayers(undefined, 1, upcoming);
 
 		return {
 			completed,

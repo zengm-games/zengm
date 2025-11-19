@@ -156,47 +156,10 @@ export const getUpcoming = async ({
 	return upcoming;
 };
 
-const updateUpcoming = async (
-	inputs: ViewInput<"schedule">,
-	updateEvents: UpdateEvents,
-	state: any,
-) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("gameAttributes") ||
-		updateEvents.includes("gameSim") ||
-		updateEvents.includes("newPhase") ||
-		inputs.abbrev !== state.abbrev
-	) {
-		const upcoming = await getUpcoming({
-			tid: inputs.tid,
-		});
-
-		let canLiveSimFirstGame = false;
-		const upcoming0 = upcoming[0];
-		if (upcoming0) {
-			const scheduleToday = await season.getSchedule(true);
-			canLiveSimFirstGame = scheduleToday.some(
-				(game) => game.gid === upcoming0.gid,
-			);
-		}
-
-		return {
-			abbrev: inputs.abbrev,
-			canLiveSimFirstGame,
-			elam: g.get("elam"),
-			elamASG: g.get("elamASG"),
-			phase: g.get("phase"),
-			tid: inputs.tid,
-			ties: season.hasTies("current"),
-			upcoming,
-		};
-	}
-};
-
 export const getTopPlayers = async <T extends any[]>(
 	skipTid: number | undefined,
 	numPerTeam: number,
+	games: Awaited<ReturnType<typeof getUpcoming>>,
 ) => {
 	if (isSport("baseball")) {
 		// Show SP rather than best player
@@ -255,6 +218,47 @@ export const getTopPlayers = async <T extends any[]>(
 	}
 };
 
+const updateUpcoming = async (
+	inputs: ViewInput<"schedule">,
+	updateEvents: UpdateEvents,
+	state: any,
+) => {
+	if (
+		updateEvents.includes("firstRun") ||
+		updateEvents.includes("gameAttributes") ||
+		updateEvents.includes("gameSim") ||
+		updateEvents.includes("newPhase") ||
+		inputs.abbrev !== state.abbrev
+	) {
+		const upcoming = await getUpcoming({
+			tid: inputs.tid,
+		});
+
+		let canLiveSimFirstGame = false;
+		const upcoming0 = upcoming[0];
+		if (upcoming0) {
+			const scheduleToday = await season.getSchedule(true);
+			canLiveSimFirstGame = scheduleToday.some(
+				(game) => game.gid === upcoming0.gid,
+			);
+		}
+
+		const topPlayers = await getTopPlayers<[any, any]>(inputs.tid, 2, upcoming);
+
+		return {
+			abbrev: inputs.abbrev,
+			canLiveSimFirstGame,
+			elam: g.get("elam"),
+			elamASG: g.get("elamASG"),
+			phase: g.get("phase"),
+			tid: inputs.tid,
+			ties: season.hasTies("current"),
+			topPlayers,
+			upcoming,
+		};
+	}
+};
+
 // Based on views.gameLog.updateGamesList
 const updateCompleted = async (
 	inputs: ViewInput<"schedule">,
@@ -272,11 +276,8 @@ const updateCompleted = async (
 			includeAllStarGame: true,
 		});
 
-		const topPlayers = await getTopPlayers<[any, any]>(inputs.tid, 2);
-
 		return {
 			completed,
-			topPlayers,
 		};
 	}
 
@@ -295,11 +296,8 @@ const updateCompleted = async (
 			completed.unshift(games[i]!);
 		}
 
-		const topPlayers = await getTopPlayers<[any, any]>(inputs.tid, 2);
-
 		return {
 			completed,
-			topPlayers,
 		};
 	}
 };

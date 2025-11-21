@@ -12,6 +12,9 @@ import { groupBy, groupByUnique, orderBy } from "../../common/utils.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 import { getStartingPitcher } from "../core/GameSim.baseball/getStartingPitcher.ts";
 import { P_FATIGUE_DAILY_REDUCTION } from "../core/game/writePlayerStats.ts";
+import playThroughInjuriesFactor from "../../common/playThroughInjuriesFactor.ts";
+import { COMPOSITE_WEIGHTS } from "../../common/constants.hockey.ts";
+import { getStartingAndBackupGoalies } from "../core/GameSim.hockey/getStartingAndBackupGoalies.ts";
 
 export const getUpcoming = async ({
 	day,
@@ -188,45 +191,81 @@ export const getTopPlayers = async <T extends any[]>(
 		};
 	};
 
-	if (isSport("baseball")) {
-		// Show SP rather than best player
+	if (
+		bySport({
+			baseball: true,
+			basketball: false,
+			football: false,
+			hockey: true,
+		})
+	) {
+		// Show SP/G rather than best player
 		const playersByGid: Record<number, [any, any]> = {};
 
 		const players = await idb.cache.players.getAll();
 		const playersByPid = groupByUnique(players, "pid");
 		const teams = await idb.cache.teams.getAll();
-		const pitchersByTid: Record<number, any[]> = {};
-		const pitchersByPid: Record<number, any> = {};
+		const processedPlayersByTid: Record<number, any[]> = {};
+		const processedPlayersByPid: Record<number, any> = {};
 
 		// Need to keep track of injury without mutating player objects (since injuries are shown in UI), to predict future day starters. Might as well track pFatigue here too, for clarity.
 		const extraInfo: Record<
 			number,
 			{
-				pFatigue: number;
 				injury: PlayerInjury;
+
+				// Baseball
+				pFatigue: number;
+
+				// Hockey
+				numConsecutiveGamesG: number;
+				compositeRating: {
+					goalkeeping: number;
+				};
+				pos: string;
 			}
 		> = {};
 
 		for (const t of teams) {
-			const depthPlayers = (t.depth as { P: number[] }).P.map(
-				(pid) => playersByPid[pid],
-			).filter((p) => p !== undefined);
+			const depth = bySport({
+				baseball: (t.depth as { P: number[] }).P,
+				basketball: [],
+				football: [],
+				hockey: (t.depth as { G: number[] }).G,
+			});
+			const depthPlayers = depth
+				.map((pid) => playersByPid[pid])
+				.filter((p) => p !== undefined);
+			for (const p of depthPlayers) {
+				const ratings = p.ratings.at(-1)!;
+
+				extraInfo[p.pid] = {
+					injury: { ...p.injury },
+					pFatigue: p.pFatigue ?? 0,
+					numConsecutiveGamesG: p.numConsecutiveGamesG ?? 0,
+					compositeRating: {
+						goalkeeping: isSport("hockey")
+							? player.compositeRating(
+									ratings,
+									COMPOSITE_WEIGHTS.goalkeeping!.ratings,
+									COMPOSITE_WEIGHTS.goalkeeping!.weights,
+									false,
+								)
+							: 0,
+					},
+					pos: ratings.pos,
+				};
+			}
+
 			const depthPlayersProcessed = await idb.getCopies.playersPlus(
 				depthPlayers,
 				playersPlusOptions(t.tid),
 			);
-
-			for (const p of depthPlayers) {
-				extraInfo[p.pid] = {
-					pFatigue: p.pFatigue ?? 0,
-					injury: { ...p.injury },
-				};
-			}
 			for (const p of depthPlayersProcessed) {
-				pitchersByPid[p.pid] = p;
+				processedPlayersByPid[p.pid] = p;
 			}
 
-			pitchersByTid[t.tid] = depthPlayersProcessed;
+			processedPlayersByTid[t.tid] = depthPlayersProcessed;
 		}
 
 		// We need the whole schedule even if just displaying a single game on daily_schedule so we know how many games a team has played before a given game, so we can estimate fatigue
@@ -237,21 +276,46 @@ export const getTopPlayers = async <T extends any[]>(
 
 		let currentDay = upcoming[0]?.day;
 		if (currentDay !== undefined) {
-			const addExtraInfo = (pitchers: any[]) => {
-				return pitchers.map((p) => {
+			const addExtraInfo = (players: any[]) => {
+				return players.map((p) => {
 					const info = extraInfo[p.pid]!;
-					return {
-						...p,
-						pFatigue: info.pFatigue,
-						injured: info.injury.gamesRemaining > 0,
-					};
+					const injuryFactor = playThroughInjuriesFactor(
+						info.injury.gamesRemaining,
+					);
+					if (isSport("baseball")) {
+						return {
+							...p,
+							injured: info.injury.gamesRemaining > 0,
+							pFatigue: info.pFatigue,
+						};
+					} else if (isSport("hockey")) {
+						return {
+							...p,
+							injured: info.injury.gamesRemaining > 0,
+							numConsecutiveGamesG: info.numConsecutiveGamesG,
+							compositeRating: {
+								goalkeeping: info.compositeRating.goalkeeping * injuryFactor,
+							},
+							pos: info.pos,
+						};
+					}
 				});
+			};
+
+			const getStarter = (players: any[]) => {
+				if (isSport("baseball")) {
+					return getStartingPitcher(addExtraInfo(players), false);
+				} else if (isSport("hockey")) {
+					return getStartingAndBackupGoalies(addExtraInfo(players))[0];
+				}
+
+				throw new Error("Should never happen");
 			};
 
 			for (const game of upcoming) {
 				if (game.day !== currentDay) {
 					// Rest/heal 1 day
-					for (const p of Object.values(pitchersByTid).flat()) {
+					for (const p of Object.values(processedPlayersByTid).flat()) {
 						const info = extraInfo[p.pid]!;
 						info.pFatigue = helpers.bound(
 							info.pFatigue - P_FATIGUE_DAILY_REDUCTION,
@@ -270,20 +334,36 @@ export const getTopPlayers = async <T extends any[]>(
 					currentDay = game.day;
 				}
 
-				const pitchers0 = pitchersByTid[game.homeTid];
-				const pitchers1 = pitchersByTid[game.awayTid];
-				if (pitchers0 && pitchers1) {
-					const p0 = getStartingPitcher(addExtraInfo(pitchers0), false);
-					const p1 = getStartingPitcher(addExtraInfo(pitchers1), false);
+				const players0 = processedPlayersByTid[game.homeTid];
+				const players1 = processedPlayersByTid[game.awayTid];
+				if (players0 && players1) {
+					const p0 = getStarter(players0);
+					const p1 = getStarter(players1);
 
 					playersByGid[game.gid] = [
 						// Get original injury values in pitchersByPid, whereas p0/p1 have them from simulatedInfo
-						pitchersByPid[p0.pid],
-						pitchersByPid[p1.pid],
+						processedPlayersByPid[p0.pid],
+						processedPlayersByPid[p1.pid],
 					];
 
 					for (const { pid } of [p0, p1]) {
-						extraInfo[pid]!.pFatigue = P_FATIGUE_DAILY_REDUCTION * 5;
+						const info = extraInfo[pid]!;
+						if (isSport("baseball")) {
+							info.pFatigue = P_FATIGUE_DAILY_REDUCTION * 5;
+						} else if (isSport("hockey")) {
+							info.numConsecutiveGamesG += 1;
+
+							for (const [starter, players] of [
+								[p0, players0],
+								[p1, players1],
+							]) {
+								for (const p of players) {
+									if (p.pid !== starter.pid) {
+										extraInfo[p.pid]!.numConsecutiveGamesG = 0;
+									}
+								}
+							}
+						}
 					}
 				}
 			}

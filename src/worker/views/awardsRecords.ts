@@ -320,6 +320,7 @@ type LocalPlayerAward = {
 
 type LocalPlayer = {
 	awards: LocalPlayerAward[];
+	draft: { round: number; pick: number; year: number };
 	firstName: string;
 	hof: boolean;
 	lastName: string;
@@ -406,6 +407,7 @@ const getPlayerAwards = (p: LocalPlayer, awardType: string) => {
 		retired: p.retiredYear !== Infinity,
 		hof: p.hof,
 		pos: maxPos,
+		draft: p.draft,
 	};
 };
 
@@ -426,7 +428,15 @@ const updateAwardsRecords = async (
 			"noCopyCache",
 		);
 		const players: LocalPlayer[] = await idb.getCopies.playersPlus(playersAll, {
-			attrs: ["awards", "firstName", "lastName", "pid", "retiredYear", "hof"],
+			attrs: [
+				"awards",
+				"firstName",
+				"lastName",
+				"pid",
+				"retiredYear",
+				"hof",
+				"draft",
+			],
 			ratings: ["pos", "season"],
 			stats: ["abbrev", "season"],
 		});

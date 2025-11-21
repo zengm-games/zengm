@@ -47,11 +47,14 @@ const AwardsRecords = ({
 			awardType,
 		},
 	});
-	const cols = getCols(["Name", "Count", "Year", "Last", "Retired", "HOF"], {
-		Year: {
-			searchType: "string",
+	const cols = getCols(
+		["Name", "Count", "Year", "Last", "Pick", "Retired", "HOF"],
+		{
+			Year: {
+				searchType: "string",
+			},
 		},
-	});
+	);
 
 	const rows: DataTableRow[] = awardsRecords.map((a) => {
 		const yearsGrouped = groupBy(a.years, "team");
@@ -79,6 +82,11 @@ const AwardsRecords = ({
 					sortValue: a.years.map((year) => year.season).sort()[0],
 				},
 				a.lastYear,
+				a.draft.round > 0 ? (
+					<a
+						href={helpers.leagueUrl(["draft_history", a.draft.year])}
+					>{`${a.draft.round}-${a.draft.pick}`}</a>
+				) : null,
 				wrappedCheckmarkOrCross({ success: a.retired }),
 				wrappedCheckmarkOrCross({ success: a.hof }),
 			],

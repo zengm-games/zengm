@@ -1,5 +1,9 @@
-in scorebox, treat hockey goalies like SP?
-- test baseball still works
+baseball pitching tendencies https://old.reddit.com/r/ZenGMBaseball/comments/1p2dwqx/is_there_a_way_to_slider_the_number_of_pitches_a/
+- take a look at current way it works, should default be tweaked?
+- new setttings
+  - control how many pitches pitchers throw
+  - control how fast they recover between starts
+- account for these in getTopPlayers in schedule.ts (projected starting pitchers)
 
 don't use positions in substitution, or be less rigid about it https://discord.com/channels/@me/667557235479674880
 - ideally - look at ratings, not positions

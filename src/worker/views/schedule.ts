@@ -7,9 +7,12 @@ import type {
 	Game,
 	PlayerInjury,
 } from "../../common/types.ts";
-import { bySport, isSport } from "../../common/index.ts";
+import { bySport, isSport, PHASE } from "../../common/index.ts";
 import { groupBy, groupByUnique, orderBy } from "../../common/utils.ts";
-import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
+import {
+	getActualPlayThroughInjuries,
+	getNumConsecutiveGamesGFactor,
+} from "../core/game/loadTeams.ts";
 import { getStartingPitcher } from "../core/GameSim.baseball/getStartingPitcher.ts";
 import { P_FATIGUE_DAILY_REDUCTION } from "../core/game/writePlayerStats.ts";
 import playThroughInjuriesFactor from "../../common/playThroughInjuriesFactor.ts";
@@ -294,7 +297,13 @@ export const getTopPlayers = async <T extends any[]>(
 							injured: info.injury.gamesRemaining > 0,
 							numConsecutiveGamesG: info.numConsecutiveGamesG,
 							compositeRating: {
-								goalkeeping: info.compositeRating.goalkeeping * injuryFactor,
+								goalkeeping:
+									info.compositeRating.goalkeeping *
+									injuryFactor *
+									getNumConsecutiveGamesGFactor(
+										info.numConsecutiveGamesG,
+										g.get("phase") === PHASE.PLAYOFFS,
+									),
 							},
 							pos: info.pos,
 						};

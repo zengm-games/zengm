@@ -1,6 +1,6 @@
 import { allStar, player, season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
-import { g, helpers, random } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import type {
 	Player,
 	MinimalPlayerRatings,
@@ -18,6 +18,18 @@ import statsRowIsCurrent from "../player/statsRowIsCurrent.ts";
 const MAX_NUM_PLAYERS_PACE = 7;
 
 const SKIP_PLAYER_STATS = new Set(["minAvailable"]);
+
+export const getNumConsecutiveGamesGFactor = (
+	numConsecutiveGamesG: number,
+	playoffs: boolean,
+) => {
+	const playoffsFactor = playoffs ? 2 : 1;
+	return helpers.bound(
+		1 - (numConsecutiveGamesG / playoffsFactor) * 0.045,
+		0.6,
+		1,
+	);
+};
 
 let playerStats: Record<string, number | number[]>;
 let teamStats: Record<string, number>;
@@ -183,11 +195,7 @@ export const processTeam = (
 				) * injuryFactor;
 
 			if (isSport("hockey") && k === "goalkeeping") {
-				let numConsecutiveGamesG = p.numConsecutiveGamesG ?? 0;
-
-				if (playoffs) {
-					numConsecutiveGamesG /= 2;
-				}
+				const numConsecutiveGamesG = p.numConsecutiveGamesG ?? 0;
 
 				if (p.numConsecutiveGamesG !== undefined) {
 					(p2 as any).numConsecutiveGamesG = p.numConsecutiveGamesG;
@@ -195,10 +203,9 @@ export const processTeam = (
 
 				if (numConsecutiveGamesG > 0) {
 					// Decrease rating by up to 40%
-					p2.compositeRating[k] *= helpers.bound(
-						1 - numConsecutiveGamesG * random.uniform(0.0, 0.09),
-						0.6,
-						1,
+					p2.compositeRating[k] *= getNumConsecutiveGamesGFactor(
+						numConsecutiveGamesG,
+						playoffs,
 					);
 				}
 			}

@@ -190,7 +190,7 @@ export const getTopPlayers = async <T extends any[]>(
 
 	if (isSport("baseball")) {
 		// Show SP rather than best player
-		const startingPitchersByGid: Record<number, [any, any]> = {};
+		const playersByGid: Record<number, [any, any]> = {};
 
 		const players = await idb.cache.players.getAll();
 		const playersByPid = groupByUnique(players, "pid");
@@ -199,7 +199,7 @@ export const getTopPlayers = async <T extends any[]>(
 		const pitchersByPid: Record<number, any> = {};
 
 		// Need to keep track of injury without mutating player objects (since injuries are shown in UI), to predict future day starters. Might as well track pFatigue here too, for clarity.
-		const simulatedInfo: Record<
+		const extraInfo: Record<
 			number,
 			{
 				pFatigue: number;
@@ -217,7 +217,7 @@ export const getTopPlayers = async <T extends any[]>(
 			);
 
 			for (const p of depthPlayers) {
-				simulatedInfo[p.pid] = {
+				extraInfo[p.pid] = {
 					pFatigue: p.pFatigue ?? 0,
 					injury: { ...p.injury },
 				};
@@ -237,9 +237,9 @@ export const getTopPlayers = async <T extends any[]>(
 
 		let currentDay = upcoming[0]?.day;
 		if (currentDay !== undefined) {
-			const addSimulatedInfo = (pitchers: any[]) => {
+			const addExtraInfo = (pitchers: any[]) => {
 				return pitchers.map((p) => {
-					const info = simulatedInfo[p.pid]!;
+					const info = extraInfo[p.pid]!;
 					return {
 						...p,
 						pFatigue: info.pFatigue,
@@ -252,7 +252,7 @@ export const getTopPlayers = async <T extends any[]>(
 				if (game.day !== currentDay) {
 					// Rest/heal 1 day
 					for (const p of Object.values(pitchersByTid).flat()) {
-						const info = simulatedInfo[p.pid]!;
+						const info = extraInfo[p.pid]!;
 						info.pFatigue = helpers.bound(
 							info.pFatigue - P_FATIGUE_DAILY_REDUCTION,
 							0,
@@ -273,17 +273,17 @@ export const getTopPlayers = async <T extends any[]>(
 				const pitchers0 = pitchersByTid[game.homeTid];
 				const pitchers1 = pitchersByTid[game.awayTid];
 				if (pitchers0 && pitchers1) {
-					const p0 = getStartingPitcher(addSimulatedInfo(pitchers0), false);
-					const p1 = getStartingPitcher(addSimulatedInfo(pitchers1), false);
+					const p0 = getStartingPitcher(addExtraInfo(pitchers0), false);
+					const p1 = getStartingPitcher(addExtraInfo(pitchers1), false);
 
-					startingPitchersByGid[game.gid] = [
+					playersByGid[game.gid] = [
 						// Get original injury values in pitchersByPid, whereas p0/p1 have them from simulatedInfo
 						pitchersByPid[p0.pid],
 						pitchersByPid[p1.pid],
 					];
 
 					for (const { pid } of [p0, p1]) {
-						simulatedInfo[pid]!.pFatigue = P_FATIGUE_DAILY_REDUCTION * 5;
+						extraInfo[pid]!.pFatigue = P_FATIGUE_DAILY_REDUCTION * 5;
 					}
 				}
 			}
@@ -291,7 +291,7 @@ export const getTopPlayers = async <T extends any[]>(
 
 		return {
 			type: "byGid" as const,
-			startingPitchersByGid,
+			playersByGid,
 		};
 	} else {
 		const topPlayers: Record<number, T> = {};

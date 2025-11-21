@@ -133,8 +133,7 @@ const DailySchedule = ({
 
 									let playersUpcoming: [any, any] | undefined;
 									if (topPlayers.type === "byGid") {
-										playersUpcoming =
-											topPlayers.startingPitchersByGid[game.gid];
+										playersUpcoming = topPlayers.playersByGid[game.gid];
 									} else {
 										const x0 = topPlayers.playersByTid[game.teams[0].tid];
 										const x1 = topPlayers.playersByTid[game.teams[1].tid];

@@ -144,7 +144,7 @@ const Schedule = ({
 										playersUpcoming={
 											topPlayers.type === "byTid"
 												? topPlayers.playersByTid[otherTid]
-												: topPlayers.startingPitchersByGid[game.gid]
+												: topPlayers.playersByGid[game.gid]
 										}
 										playersUpcomingAbbrev={topPlayers.type === "byTid"}
 										actions={actions}

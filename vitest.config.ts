@@ -1,12 +1,13 @@
 import {
 	configDefaults,
 	defineConfig,
-	TestProjectInlineConfiguration,
+	type TestProjectInlineConfiguration,
 } from "vitest/config";
 import { pluginSportFunctions } from "./tools/lib/rolldownConfig.ts";
 //import { playwright } from "@vitest/browser-playwright";
-import { Sport } from "./tools/lib/getSport.ts";
-import { ProjectConfig } from "vitest/node";
+//import { playwright } from "@vitest/browser-playwright";
+import type { Sport } from "./tools/lib/getSport.ts";
+import type { ProjectConfig } from "vitest/node";
 
 const footballTests = ["**/*.football/*.test.ts", "**/*.football.test.ts"];
 

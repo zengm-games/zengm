@@ -1,6 +1,9 @@
 // https://stackoverflow.com/a/53593328
-const JSONstringifyOrder = (obj, space) => {
-	const allKeys = [];
+export const JSONstringifyOrder = (
+	obj: any,
+	space?: string | number | undefined,
+) => {
+	const allKeys: string[] = [];
 	JSON.stringify(obj, (key, value) => {
 		allKeys.push(key);
 		return value;
@@ -9,16 +12,26 @@ const JSONstringifyOrder = (obj, space) => {
 	return JSON.stringify(obj, allKeys, space);
 };
 
-const filterAndOutput = (fnsByCountry, lnsByCountry) => {
+type FirstOrLastNamesByCountry = Record<string, Record<string, number>>;
+
+type NamesByCountry = Record<
+	string,
+	{ first: Record<string, number>; last: Record<string, number> }
+>;
+
+export const filterAndOutput = (
+	fnsByCountry: FirstOrLastNamesByCountry,
+	lnsByCountry: FirstOrLastNamesByCountry,
+) => {
 	const dropped = [];
 
 	const countryNames = Object.keys(fnsByCountry).sort();
 
-	const countries = {};
+	const countries: NamesByCountry = {};
 
 	for (const country of countryNames) {
-		const fns = fnsByCountry[country];
-		const lns = lnsByCountry[country];
+		const fns = fnsByCountry[country]!;
+		const lns = lnsByCountry[country]!;
 
 		let sum = 0;
 		for (const count of Object.values(fns)) {
@@ -54,7 +67,7 @@ const filterAndOutput = (fnsByCountry, lnsByCountry) => {
 	};
 };
 
-const juniors = [
+export const juniors = [
 	"II",
 	"III",
 	"IV",
@@ -67,9 +80,19 @@ const juniors = [
 	"Senior",
 ];
 
-const provinces = ["AB", "BC", "MB", "NL", "NS", "ON", "QC", "QLD", "SK"];
+export const provinces = [
+	"AB",
+	"BC",
+	"MB",
+	"NL",
+	"NS",
+	"ON",
+	"QC",
+	"QLD",
+	"SK",
+];
 
-const states = [
+export const states = [
 	"AL",
 	"AK",
 	"AS",
@@ -130,5 +153,3 @@ const states = [
 	"WI",
 	"WY",
 ];
-
-export { JSONstringifyOrder, filterAndOutput, juniors, provinces, states };

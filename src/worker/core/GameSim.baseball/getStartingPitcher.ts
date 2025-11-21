@@ -6,7 +6,7 @@ export const CLOSER_INDEX = NUM_STARTING_PITCHERS;
 
 export const getStartingPitcher = <
 	T extends {
-		injured?: boolean;
+		injured: boolean;
 		pFatigue?: number;
 	},
 >(

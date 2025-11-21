@@ -20,6 +20,7 @@ import PenaltyBox from "./PenaltyBox.ts";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate.ts";
 import GameSimBase from "../GameSimBase.ts";
 import { orderBy, range } from "../../../common/utils.ts";
+import { getStartingAndBackupGoalies } from "./getStartingAndBackupGoalies.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -221,28 +222,16 @@ class GameSim extends GameSimBase {
 
 			// Then, assign players to lines, moving up lower players to replace injured ones
 			for (const pos of ["G", "D"] as const) {
-				const players = this.team[t].depth[pos];
+				let players = this.team[t].depth[pos];
 
 				// Handle rest days for goalie
 				if (pos === "G") {
-					const starter = players.find((p) => !p.injured);
-					if (
-						starter &&
-						starter.numConsecutiveGamesG !== undefined &&
-						starter.numConsecutiveGamesG > 1
-					) {
-						// Swap starter and backup, if appropriate based on composite rating OR if starter has played 10+ consecutive games and the backup is actually a goalie
-						const backup = players.find((p) => !p.injured && p !== starter);
-						if (
-							backup &&
-							(backup.compositeRating.goalkeeping >
-								starter.compositeRating.goalkeeping ||
-								(starter.numConsecutiveGamesG >= 10 && backup.pos === "G"))
-						) {
-							players[0] = backup;
-							players[1] = starter;
-						}
-					}
+					const [starter, backup] = getStartingAndBackupGoalies(players);
+					players = [
+						starter,
+						backup,
+						...players.filter((p) => p !== starter && p !== backup),
+					];
 				}
 
 				const numInDepthChart = NUM_LINES[pos] * NUM_PLAYERS_PER_LINE[pos];

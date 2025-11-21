@@ -183,6 +183,7 @@ export const getTopPlayers = async <T extends any[]>(
 			}),
 			showNoStats: true,
 			showRookies: true,
+			tid,
 			fuzz: true,
 		};
 	};
@@ -233,7 +234,6 @@ export const getTopPlayers = async <T extends any[]>(
 		if (targetDay !== undefined) {
 			upcoming = upcoming.filter((game) => game.day <= targetDay);
 		}
-		console.log(upcoming.length);
 
 		let currentDay = upcoming[0]?.day;
 		if (currentDay !== undefined) {

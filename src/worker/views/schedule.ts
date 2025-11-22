@@ -12,6 +12,7 @@ import { groupBy, groupByUnique, orderBy } from "../../common/utils.ts";
 import {
 	getActualPlayThroughInjuries,
 	getNumConsecutiveGamesGFactor,
+	isGame6EliminationGameOrGame7,
 } from "../core/game/loadTeams.ts";
 import { getStartingPitcher } from "../core/GameSim.baseball/getStartingPitcher.ts";
 import { P_FATIGUE_DAILY_REDUCTION } from "../core/game/writePlayerStats.ts";
@@ -271,6 +272,8 @@ export const getTopPlayers = async <T extends any[]>(
 			processedPlayersByTid[t.tid] = depthPlayersProcessed;
 		}
 
+		const playoffs = g.get("phase") === PHASE.PLAYOFFS;
+
 		// We need the whole schedule even if just displaying a single game on daily_schedule so we know how many games a team has played before a given game, so we can estimate fatigue
 		let upcoming = await season.getSchedule();
 		if (targetDay !== undefined) {
@@ -279,7 +282,16 @@ export const getTopPlayers = async <T extends any[]>(
 
 		let currentDay = upcoming[0]?.day;
 		if (currentDay !== undefined) {
-			const addExtraInfo = (players: any[]) => {
+			const addExtraInfo = async (players: any[]) => {
+				let game6EliminationGameOrGame7: boolean | undefined;
+				if (playoffs && players[0]) {
+					const tid = players[0].tid;
+					game6EliminationGameOrGame7 = await isGame6EliminationGameOrGame7(
+						playoffs,
+						tid,
+					);
+				}
+
 				return players.map((p) => {
 					const info = extraInfo[p.pid]!;
 					const injuryFactor = playThroughInjuriesFactor(
@@ -302,7 +314,8 @@ export const getTopPlayers = async <T extends any[]>(
 									injuryFactor *
 									getNumConsecutiveGamesGFactor(
 										info.numConsecutiveGamesG,
-										g.get("phase") === PHASE.PLAYOFFS,
+										playoffs,
+										game6EliminationGameOrGame7,
 									),
 							},
 							pos: info.pos,
@@ -311,11 +324,12 @@ export const getTopPlayers = async <T extends any[]>(
 				});
 			};
 
-			const getStarter = (players: any[]) => {
+			const getStarter = async (players: any[]) => {
+				const augmentedPlayers = await addExtraInfo(players);
 				if (isSport("baseball")) {
-					return getStartingPitcher(addExtraInfo(players), false);
+					return getStartingPitcher(augmentedPlayers, false);
 				} else if (isSport("hockey")) {
-					return getStartingAndBackupGoalies(addExtraInfo(players))[0];
+					return getStartingAndBackupGoalies(augmentedPlayers)[0];
 				}
 
 				throw new Error("Should never happen");
@@ -346,8 +360,8 @@ export const getTopPlayers = async <T extends any[]>(
 				const players0 = processedPlayersByTid[game.homeTid];
 				const players1 = processedPlayersByTid[game.awayTid];
 				if (players0 && players1) {
-					const p0 = getStarter(players0);
-					const p1 = getStarter(players1);
+					const p0 = await getStarter(players0);
+					const p1 = await getStarter(players1);
 
 					playersByGid[game.gid] = [
 						// Get original injury values in pitchersByPid, whereas p0/p1 have them from simulatedInfo

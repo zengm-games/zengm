@@ -80,11 +80,11 @@
 		"streamsaver": "^2.0.6",
 		"use-local-storage-state": "^19.5.0",
 		"use-sync-external-store": "^1.6.0",
-		"workbox-core": "^7.3.0",
-		"workbox-precaching": "^7.3.0",
-		"workbox-routing": "^7.3.0",
-		"workbox-strategies": "^7.3.0",
-		"workbox-window": "^7.3.0",
+		"workbox-core": "^7.4.0",
+		"workbox-precaching": "^7.4.0",
+		"workbox-routing": "^7.4.0",
+		"workbox-strategies": "^7.4.0",
+		"workbox-window": "^7.4.0",
 		"zustand": "^5.0.8"
 	},
 	"devDependencies": {
@@ -129,7 +129,7 @@
 		"html-minifier-terser": "^7.2.0",
 		"husky": "^9.1.7",
 		"lightningcss": "^1.30.2",
-		"lint-staged": "^16.2.6",
+		"lint-staged": "^16.2.7",
 		"playwright": "^1.56.1",
 		"prettier": "^3.6.2",
 		"purgecss": "^7.0.2",
@@ -141,7 +141,7 @@
 		"typescript": "^5.9.3",
 		"typescript-eslint": "^8.47.0",
 		"vitest": "^4.0.10",
-		"workbox-build": "^7.3.0"
+		"workbox-build": "^7.4.0"
 	},
 	"engines": {
 		"node": "^24.0.0",

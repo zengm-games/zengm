@@ -221,7 +221,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		updateEvents.includes("newPhase")
 	) {
 		const startersStats = bySport({
-			baseball: ["hr", "ba", "ops", "era", "ip"],
+			baseball: ["war", "hr", "ba", "ops", "era", "ip"],
 			basketball: ["gp", "min", "pts", "trb", "ast", "per"],
 			football: ["gp", "keyStats", "av"],
 			hockey: ["gp", "keyStats", "ops", "dps", "ps"],

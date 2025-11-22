@@ -179,6 +179,7 @@ const PLAYER_STATS_TABLES = {
 	batting: {
 		name: "Batting",
 		stats: [
+			"war",
 			"gp",
 			"gs",
 			"pa",
@@ -209,6 +210,7 @@ const PLAYER_STATS_TABLES = {
 	pitching: {
 		name: "Pitching",
 		stats: [
+			"war",
 			"w",
 			"l",
 			"winp",

@@ -105,7 +105,7 @@ const newPhaseResignPlayers = async (
 		}
 	}
 
-	const payrollsByTid = new Map();
+	const payrollsByTid = new Map<number, number>();
 
 	if (g.get("salaryCapType") === "hard") {
 		for (let tid = 0; tid < g.get("numTeams"); tid++) {
@@ -204,13 +204,12 @@ const newPhaseResignPlayers = async (
 			const pos = p.ratings.at(-1)!.pos;
 
 			if (g.get("salaryCapType") === "hard") {
+				if (payroll === undefined) {
+					throw new Error(
+						"Payroll should always be defined if there is a hard cap",
+					);
+				}
 				if (contract.amount + payroll > g.get("salaryCap")) {
-					if (payroll === undefined) {
-						throw new Error(
-							"Payroll should always be defined if there is a hard cap",
-						);
-					}
-
 					reSignPlayer = false;
 				}
 

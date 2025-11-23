@@ -232,7 +232,7 @@ export const processTeam = async (
 		};
 
 		// Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
-		if (!g.get("userTids").includes(t.id)) {
+		if (!g.get("userTids").includes(t.id) || g.get("spectator")) {
 			p2.ptModifier = 1;
 		}
 

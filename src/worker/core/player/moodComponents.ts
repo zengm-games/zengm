@@ -329,7 +329,7 @@ const moodComponents = async (
 
 	// Apply difficulty modulation
 	const difficulty = g.get("difficulty");
-	if (g.get("userTids").includes(tid)) {
+	if (g.get("userTids").includes(tid) && !g.get("spectator")) {
 		if (difficulty !== 0) {
 			for (const key of helpers.keys(components)) {
 				if (key === "custom") {

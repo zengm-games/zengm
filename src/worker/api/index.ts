@@ -432,28 +432,29 @@ const checkParticipationAchievement = async (
 	}
 };
 
-const clearInjuries = async (pid: number[] | "all") => {
-	if (pid === "all") {
-		const players = await idb.cache.players.getAll();
-		for (const p of players) {
-			if (p.injury.gamesRemaining > 0) {
-				p.injury = {
-					type: "Healthy",
-					gamesRemaining: 0,
-				};
-				await idb.cache.players.put(p);
+const clearInjuries = async (pids: number[] | "all") => {
+	const players =
+		pids === "all"
+			? await idb.cache.players.getAll()
+			: await idb.getCopies.players({ pids }, "noCopyCache");
+
+	for (const p of players) {
+		if (p.injury.gamesRemaining > 0) {
+			// Adjust injuries log
+			const lastInjuriesEntry = p.injuries.at(-1);
+			if (lastInjuriesEntry?.type === p.injury.type) {
+				lastInjuriesEntry.games -= p.injury.gamesRemaining;
+				if (lastInjuriesEntry.games <= 0) {
+					// Injury was cleared before any days were simmed
+					p.injuries.pop();
+				}
 			}
-		}
-	} else {
-		for (const pids of pid) {
-			const p = await idb.cache.players.get(pids);
-			if (p) {
-				p.injury = {
-					type: "Healthy",
-					gamesRemaining: 0,
-				};
-				await idb.cache.players.put(p);
-			}
+
+			p.injury = {
+				type: "Healthy",
+				gamesRemaining: 0,
+			};
+			await idb.cache.players.put(p);
 		}
 	}
 

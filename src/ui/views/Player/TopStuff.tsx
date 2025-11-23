@@ -650,7 +650,7 @@ const TopStuff = ({
 									await toWorker("main", "clearInjuries", [player.pid]);
 								}}
 							>
-								Heal Injury
+								Heal injury
 							</button>
 						) : null}
 						{!godMode ? buttonsAvailableOutsideGodMode : null}

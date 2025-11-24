@@ -1,3 +1,9 @@
+GM History should not count seasons in spectator mode, ideally
+
+make "export as draft class" move team region to college https://old.reddit.com/r/Football_GM/comments/1ovb0tf/version_202511120731_for_leagues_with_the_default/nqg9suy/?context=3
+
+retire player with scheduled event https://discord.com/channels/@me/361954501365858304/1442064796047507457
+
 baseball pitching tendencies https://old.reddit.com/r/ZenGMBaseball/comments/1p2dwqx/is_there_a_way_to_slider_the_number_of_pitches_a/
 - take a look at current way it works, should default be tweaked?
 - new setttings
@@ -36,6 +42,7 @@ real-schedules
 - football - also do for 16 games?
 
 block game sim when schedule editor is dirty so simming a game doesn't overwrite changes
+- how does backend know what pages are open in UI?
 
 make ovr drop get saved from edited injury too https://old.reddit.com/r/BasketballGM/comments/1nutcno/monthly_suggestions_thread/nhr94ld/ https://discord.com/channels/290013534023057409/1432096932938907709/1432102253682233346
 - add ratings row too

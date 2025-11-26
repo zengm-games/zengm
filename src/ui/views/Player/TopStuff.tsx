@@ -556,7 +556,7 @@ const TopStuff = ({
 								<CountryFlag className="ms-1" country={player.born.loc} />
 							</a>
 							<br />
-							{player.ageAtDeath === null ? (
+							{player.ageAtDeath === null || season !== undefined ? (
 								<>
 									Age: {player.age}
 									<br />

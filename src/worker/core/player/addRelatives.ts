@@ -1,4 +1,3 @@
-import romanNumerals from "roman-numerals";
 import { idb } from "../../db/index.ts";
 import { face, g, helpers, random } from "../../util/index.ts";
 import type { Player, Relative, RelativeType } from "../../../common/types.ts";
@@ -8,6 +7,11 @@ import {
 	getTeammateJerseyNumbers,
 	JERSEY_NUMBERS_BY_POSITION,
 } from "./genJerseyNumber.ts";
+import {
+	fromRoman,
+	isValidRomanNumeral,
+	toRoman,
+} from "../../util/romanNumerals.ts";
 
 const parseLastName = (lastName: string): [string, number | undefined] => {
 	const parts = lastName.split(" ");
@@ -27,16 +31,12 @@ const parseLastName = (lastName: string): [string, number | undefined] => {
 		return [parsedName, 2];
 	}
 
-	try {
-		const suffixNumber = romanNumerals.toArabic(suffix);
+	if (isValidRomanNumeral(suffix)) {
+		const suffixNumber = fromRoman(suffix);
 		return [parsedName, suffixNumber];
-	} catch (error) {
-		if (error.message !== "toArabic expects a valid roman number") {
-			throw error;
-		}
-
-		return [lastName, undefined];
 	}
+
+	return [lastName, undefined];
 };
 
 const getSuffix = (suffixNumber: number): string => {
@@ -44,7 +44,7 @@ const getSuffix = (suffixNumber: number): string => {
 		return "Jr.";
 	}
 
-	return romanNumerals.toRoman(suffixNumber);
+	return toRoman(suffixNumber);
 };
 
 const hasRelative = (p: Player, type: RelativeType) => {

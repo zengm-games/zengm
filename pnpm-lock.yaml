@@ -140,9 +140,6 @@ importers:
       react-select:
         specifier: ^5.10.2
         version: 5.10.2(@types/react@19.2.6)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-      roman-numerals:
-        specifier: ^0.3.2
-        version: 0.3.2
       s-ago:
         specifier: ^2.2.0
         version: 2.2.0
@@ -237,9 +234,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.2.3
         version: 19.2.3(@types/react@19.2.6)
-      '@types/roman-numerals':
-        specifier: ^0.3.2
-        version: 0.3.2
       '@types/streamsaver':
         specifier: ^2.0.5
         version: 2.0.5
@@ -1742,9 +1736,6 @@ packages:
 
   '@types/resolve@1.20.2':
     resolution: {integrity: sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==}
-
-  '@types/roman-numerals@0.3.2':
-    resolution: {integrity: sha512-5hnxBbrSFgquSF6cBU+m/H1fUdheoBz1k3c0Fe1yzP1L29vSLPOLzlyWzU8FWfY/TSMuZfm6FoK/D4n6jc05gA==}
 
   '@types/streamsaver@2.0.5':
     resolution: {integrity: sha512-93o0zjV8swEhR2YI57h/2ytbJF8bJh7sI9GNB02TLJHdM4fWDxZuChwfWhyD8vt2ub4kw4rsfZ0C0yAUX+3gcg==}
@@ -3951,9 +3942,6 @@ packages:
     resolution: {integrity: sha512-w8GmOxZfBmKknvdXU1sdM9NHcoQejwF/4mNgj2JuEEdRaHwwF12K7e9eXn1nLZ07ad+du76mkVsyeb2rKGllsA==}
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
-
-  roman-numerals@0.3.2:
-    resolution: {integrity: sha512-aTmaKtxczT3K4ZhtJDauOZ6LY3e1xNDf2SBn7aRY/ErAtCCuVYuwNQbPuh+SWTjGmbg9p5Nlt8sJbQNkto8uyg==}
 
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
@@ -6269,8 +6257,6 @@ snapshots:
       csstype: 3.2.3
 
   '@types/resolve@1.20.2': {}
-
-  '@types/roman-numerals@0.3.2': {}
 
   '@types/streamsaver@2.0.5': {}
 
@@ -8719,8 +8705,6 @@ snapshots:
       '@rollup/rollup-win32-x64-gnu': 4.53.3
       '@rollup/rollup-win32-x64-msvc': 4.53.3
       fsevents: 2.3.3
-
-  roman-numerals@0.3.2: {}
 
   run-parallel@1.2.0:
     dependencies:

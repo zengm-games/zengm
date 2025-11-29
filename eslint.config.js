@@ -1,9 +1,9 @@
 import globals from "globals";
-import tseslint from "typescript-eslint";
 import nkzw from "@nkzw/eslint-config";
+import { defineConfig } from "eslint/config";
 import pluginJsxA11y from "eslint-plugin-jsx-a11y";
 
-export default tseslint.config(
+export default defineConfig(
 	{
 		ignores: [
 			"analysis/",

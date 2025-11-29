@@ -17,7 +17,7 @@
 		"dev": "node tools/watch/cli.ts",
 		"preview": "node tools/preview.ts",
 		"lint": "concurrently --raw \"node --run lint-js\" \"node --run lint-ts\"",
-		"lint-js": "node --run pre-test && eslint --flag unstable_native_nodejs_ts_config",
+		"lint-js": "node --run pre-test && eslint",
 		"lint-ts": "node --run pre-test && tsc",
 		"pre-test": "node tools/pre-test.ts",
 		"prettier": "prettier --write \"*.{mjs,cjs,js,json,scss,ts,tsx}\" \"public/**/*.{mjs,cjs,js,json,scss,ts,tsx}\" \"src/**/*.{mjs,cjs,js,json,scss,ts,tsx}\" \"tools/**/*.{mjs,cjs,js,json,scss,ts,tsx}\"",

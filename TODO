@@ -1,3 +1,5 @@
+error after expansion https://old.reddit.com/r/BasketballGM/comments/1pa4635/error_whenever_i_try_loading_my_league/
+
 global untouchable players (persist over reloads and multiple features, like trades, trading block, trade proposals)
 - some ideas https://old.reddit.com/r/BasketballGM/comments/1p80kca/i_made_a_chrome_extension_to_set_players_as/nr279ut/?context=1
 - UI?
@@ -60,6 +62,13 @@ real-schedules
 
 block game sim when schedule editor is dirty so simming a game doesn't overwrite changes
 - how does backend know what pages are open in UI?
+  - https://developer.mozilla.org/en-US/docs/Web/API/Web_Locks_API
+    - write useLock hook, have it manage setting and clearing this value on mount/unmount. then check it in worker before simming games
+      - should i replace my whole lock module with this? would need to make lock.get async. but then i could get rid of gameSimInProgress synchronization - tabs could just read the real value? but how would they know it changed?
+        - would need to keep gameSimInProgress, so UI components can be reactive to it
+  - could send message to shared worker on lock/unlock
+    - lock when dirty, unlock when not dirty
+    - how would this handle multiple tabs with schedule editor open? would need to keep track of all host IDs
 
 make ovr drop get saved from edited injury too https://old.reddit.com/r/BasketballGM/comments/1nutcno/monthly_suggestions_thread/nhr94ld/ https://discord.com/channels/290013534023057409/1432096932938907709/1432102253682233346
 - add ratings row too
@@ -881,6 +890,7 @@ FBGM
   - chance for either team to return (very slim for offense)
 - OL stats
 - re-evaluate team value formula, especially WR now that speed matters more
+  - actually speed might matter too much now, and some other ratings balance issues https://discord.com/channels/290013534023057409/331882115119448065/1441529240309989436
 - if you have 0 healthy kickers, go for 2 https://discord.com/channels/@me/778760871911751700/1160420973019934750
   - it really should be based on probability of making XP and probability of making TP making TP
   - similar for 4th down situations, like 4th and 1 on the 30 with a bad kicker, don't punt!

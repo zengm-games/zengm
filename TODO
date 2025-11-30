@@ -1,3 +1,8 @@
+global untouchable players (persist over reloads and multiple features, like trades, trading block, trade proposals)
+- some ideas https://old.reddit.com/r/BasketballGM/comments/1p80kca/i_made_a_chrome_extension_to_set_players_as/nr279ut/?context=1
+- UI?
+- what happens if we click "trade for" or "trade away" on one?
+
 when neutralSite is active, disable boise special field color
 
 sentry

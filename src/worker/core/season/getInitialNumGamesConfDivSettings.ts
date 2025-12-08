@@ -5,6 +5,7 @@ export const TOO_MANY_TEAMS_TOO_SLOW = 150;
 
 const getInitialNumGamesConfDivSettings = (
 	teams: {
+		disabled?: boolean;
 		tid: number;
 		cid: number;
 		did: number;
@@ -15,18 +16,20 @@ const getInitialNumGamesConfDivSettings = (
 		...settingsInput,
 	};
 
-	const scheduleTeams = teams.map((t) => ({
-		tid: t.tid,
-		seasonAttrs: {
-			did: t.did,
-			cid: t.cid,
-		},
-	}));
+	const scheduleTeams = teams
+		.filter((t) => !t.disabled)
+		.map((t) => ({
+			tid: t.tid,
+			seasonAttrs: {
+				did: t.did,
+				cid: t.cid,
+			},
+		}));
 
 	if (
 		settings.numGamesDiv !== null &&
 		settings.numGamesConf !== null &&
-		teams.length < TOO_MANY_TEAMS_TOO_SLOW
+		scheduleTeams.length < TOO_MANY_TEAMS_TOO_SLOW
 	) {
 		const { warning } = newScheduleGood(scheduleTeams, settings);
 		if (warning !== undefined) {

@@ -4285,16 +4285,22 @@ const updateTeamInfo = async ({
 }) => {
 	const teams = await idb.cache.teams.getAll();
 
+	const newTeamsByTid = groupByUnique(newTeams, "tid");
+
+	const newTeamsIncludingDisabled = [];
+
 	for (const t of teams) {
-		const newTeam = newTeams.find((t2) => t2.tid === t.tid);
+		const newTeam = newTeamsByTid[t.tid];
 		if (!newTeam) {
 			// manageConfs doesn't include disabled teams, on purpose
 			if (from === "manageConfs" && t.disabled) {
+				newTeamsIncludingDisabled.push(t);
 				continue;
 			} else {
 				throw new Error(`New team not found for tid ${t.tid}`);
 			}
 		}
+		newTeamsIncludingDisabled.push(newTeam);
 
 		if (newTeam.did !== undefined) {
 			const divs = g.get("divs");
@@ -4396,7 +4402,7 @@ const updateTeamInfo = async ({
 	}
 
 	await league.setGameAttributes({
-		teamInfoCache: orderBy(newTeams, "tid").map((t) => ({
+		teamInfoCache: orderBy(newTeamsIncludingDisabled, "tid").map((t) => ({
 			abbrev: t.abbrev,
 			disabled: t.disabled,
 			imgURL: t.imgURL,
@@ -4406,8 +4412,8 @@ const updateTeamInfo = async ({
 		})),
 
 		// numActiveTeams is only needed when enabling a disabled team, and numTeams should never be needed. But might as well do these every time just to be sure, because it's easy.
-		numActiveTeams: newTeams.filter((t) => !t.disabled).length,
-		numTeams: newTeams.length,
+		numActiveTeams: newTeamsIncludingDisabled.filter((t) => !t.disabled).length,
+		numTeams: newTeamsIncludingDisabled.length,
 	});
 
 	await league.updateMeta();

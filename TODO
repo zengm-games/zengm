@@ -1,4 +1,5 @@
 error after expansion https://old.reddit.com/r/BasketballGM/comments/1pa4635/error_whenever_i_try_loading_my_league/
+- https://x.com/TJMags5/status/1996683016173986257
 
 global untouchable players (persist over reloads and multiple features, like trades, trading block, trade proposals)
 - some ideas https://old.reddit.com/r/BasketballGM/comments/1p80kca/i_made_a_chrome_extension_to_set_players_as/nr279ut/?context=1
@@ -36,10 +37,6 @@ don't use positions in substitution, or be less rigid about it https://discord.c
 
 point spreads should account for starting pitcher/goalie
 
-injuries should depend on position
-- wildcard?
-- multiple positions per injury?
-
 injuries
 - make more representative of football: https://footballplayershealth.harvard.edu/wp-content/uploads/2017/05/06_Ch2_Injuries.pdf
   - https://discord.com/channels/290013534023057409/290015468939640832/859264726247800832
@@ -48,6 +45,10 @@ injuries
   - more goalie injuries? https://discord.com/channels/@me/926178075614523402/930545643578081320
 - baseball
   - https://discord.com/channels/290013534023057409/944392892905037885/1440445305232298027
+- customize ratings decline https://discord.com/channels/@me/778760871911751700/1445209955010478162
+- injuries should depend on position
+  - wildcard?
+  - multiple positions per injury?
 
 baseball bug - injuries somehow lead to teams scoring thousands of runs due to endless walks https://discord.com/channels/290013534023057409/1429553391499218955/1429553391499218955
 

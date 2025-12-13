@@ -176,5 +176,8 @@ export const rolldownConfig = (
 				return true;
 			}
 		},
+		checks: {
+			pluginTimings: false,
+		},
 	};
 };

@@ -69,6 +69,9 @@ const bundle = async () => {
 				"process.env.NODE_ENV": JSON.stringify("production"),
 			},
 		},
+		checks: {
+			pluginTimings: false,
+		},
 	});
 };
 

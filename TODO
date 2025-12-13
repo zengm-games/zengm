@@ -484,7 +484,9 @@ runner stealing base should only very rarely be caught in double play
 make player graphs remember selections https://old.reddit.com/r/BasketballGM/comments/1gplx7g/could_you_make_the_player_graphs_remember_what/
 - other pages?
 
-FBGM -  declines penalty when it would have given untimed down in 4th quarter with a chance to win https://discord.com/channels/290013534023057409/290015591216054273/1313017959035179008
+FBGM end of game penalties
+-  declines penalty when it would have given untimed down in 4th quarter with a chance to win https://discord.com/channels/290013534023057409/290015591216054273/1313017959035179008
+- accepts penalty on a scoring play (made FG) that would have won the game in overtime https://discord.com/channels/290013534023057409/1448891925837910228/1448891925837910228
 
 condense develop0 and updateValues into a single function, mainly for worker console
 
@@ -868,6 +870,7 @@ scheduled events for roster size changes https://discord.com/channels/2900135340
 - 18 in 2024
 
 FBGM
+- scorigami
 - hail mary as clock runs down
 - too many block in the back penalties? https://mail.google.com/mail/u/0/#inbox/FMfcgzQXJGkWRpLHMglFTjVxwkhwRlrP?compose=DmwnWrRnZVhxHCNkTVdJSMmbHbGPgCRltRlKvmhtGwHmGsdBjvVRTGPpCVpwjFrcmmLvVZMKmdrl
 - for recovered onside kick, kick shows as 1st and goal in drive chart https://discord.com/channels/290013534023057409/290015591216054273/1270384918748200972

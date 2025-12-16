@@ -1,3 +1,7 @@
+rapm
+- https://github.com/EyimofeA/zengm/tree/codex/implement-rapm-calculation-and-display
+- only takes like a minute to run
+
 in a new real players league, 2029 has a few prospects, which makes draft pick value wonky https://discord.com/channels/290013534023057409/290013534023057409/1448079050886221916
 - should generate full class for any partial ones on league creation
   - make sure it works with random debuts

@@ -833,7 +833,7 @@ const Conference = ({
 							}));
 						const { proceed, key } = await confirmDeleteWithChildren({
 							text: `When the "${conf.name}" conference is deleted, what should happen to its divisions?`,
-							deleteButtonText: "Delete Conference",
+							deleteButtonText: "Delete conference",
 							deleteChildrenText: allowDeleteTeams
 								? `Delete all divisions in the "${conf.name}" conference`
 								: undefined,

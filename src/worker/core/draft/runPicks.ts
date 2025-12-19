@@ -122,88 +122,87 @@ const runPicks = async (
 	// This will actually draft "untilUserOrEnd"
 	const autoSelectPlayer = async (): Promise<number[]> => {
 		if (draftPicks[0]) {
+			const expansionDraft2 = g.get("expansionDraft"); // Get again, might have changed
+			if (
+				expansionDraft2.phase === "draft" &&
+				expansionDraft2.numPerTeam !== undefined
+			) {
+				// Keep logic in sync with draft.ts
+				const tidsOverLimit: number[] = [];
+				for (const [tidString, numPerTeam] of Object.entries(
+					expansionDraft2.numPerTeamDrafted,
+				)) {
+					if (numPerTeam >= expansionDraft2.numPerTeam) {
+						const tid = Number.parseInt(tidString);
+						tidsOverLimit.push(tid);
+					}
+				}
+				if (tidsOverLimit.length > 0) {
+					playersAll = playersAll.filter((p) => !tidsOverLimit.includes(p.tid));
+				}
+			}
+
 			// If there are no players, delete the rest of the picks and draft is done
 			if (playersAll.length === 0) {
 				for (const dp of draftPicks) {
 					await idb.cache.draftPicks.delete(dp.dpid);
 				}
 				draftPicks = await getOrder();
-			} else {
-				const dp = draftPicks[0];
+				return afterDoneAuto();
+			}
 
-				const singleUserPickInSpectatorMode =
-					g.get("spectator") && action.type === "onePick";
-				const pauseForUserPick =
-					g.get("userTids").includes(dp.tid) &&
-					!local.autoPlayUntil &&
-					!singleUserPickInSpectatorMode &&
-					action.type !== "untilEnd" &&
-					action.type !== "untilPick";
+			const dp = draftPicks[0];
 
-				const pauseForDpid =
-					action.type === "untilPick" && dp.dpid === action.dpid;
+			const singleUserPickInSpectatorMode =
+				g.get("spectator") && action.type === "onePick";
+			const pauseForUserPick =
+				g.get("userTids").includes(dp.tid) &&
+				!local.autoPlayUntil &&
+				!singleUserPickInSpectatorMode &&
+				action.type !== "untilEnd" &&
+				action.type !== "untilPick";
 
-				if (pauseForUserPick || pauseForDpid) {
-					return afterDoneAuto();
+			const pauseForDpid =
+				action.type === "untilPick" && dp.dpid === action.dpid;
+
+			if (pauseForUserPick || pauseForDpid) {
+				return afterDoneAuto();
+			}
+
+			draftPicks.shift();
+
+			const teamPlayers = await idb.cache.players.indexGetAll(
+				"playersByTid",
+				dp.tid,
+			);
+			const teamOvrDiffs = await getTeamOvrDiffs(teamPlayers, playersAll);
+
+			const score = (p: Player<MinimalPlayerRatings>, i: number) => {
+				if (DRAFT_BY_TEAM_OVR) {
+					return (teamOvrDiffs[i]! + 0.05 * p.value) ** 40;
 				}
 
-				draftPicks.shift();
+				return p.value ** 69;
+			};
+			/*let sum = 0;
+			for (const p of playersAll) {
+				sum += score(p);
+			}
+			for (let i = 0; i < playersAll.length; i++) {
+				const p = playersAll[i];
+				console.log(p.firstName, p.lastName, teamOvrDiffs[i], 0.05 * p.value, score(p) / sum);
+			}
+			console.log(sum);*/
 
-				const expansionDraft2 = g.get("expansionDraft"); // Get again, might have changed
-				if (
-					expansionDraft2.phase === "draft" &&
-					expansionDraft2.numPerTeam !== undefined
-				) {
-					// Keep logic in sync with draft.ts
-					const tidsOverLimit: number[] = [];
-					for (const [tidString, numPerTeam] of Object.entries(
-						expansionDraft2.numPerTeamDrafted,
-					)) {
-						if (numPerTeam >= expansionDraft2.numPerTeam) {
-							const tid = Number.parseInt(tidString);
-							tidsOverLimit.push(tid);
-						}
-					}
-					if (tidsOverLimit.length > 0) {
-						playersAll = playersAll.filter(
-							(p) => !tidsOverLimit.includes(p.tid),
-						);
-					}
-				}
+			const selection = random.choice(playersAll, score);
 
-				const teamPlayers = await idb.cache.players.indexGetAll(
-					"playersByTid",
-					dp.tid,
-				);
-				const teamOvrDiffs = await getTeamOvrDiffs(teamPlayers, playersAll);
+			const pid = selection.pid;
+			await selectPlayer(dp, pid);
+			pids.push(pid);
+			playersAll = playersAll.filter((p) => p !== selection); // Delete from the list of undrafted players
 
-				const score = (p: Player<MinimalPlayerRatings>, i: number) => {
-					if (DRAFT_BY_TEAM_OVR) {
-						return (teamOvrDiffs[i]! + 0.05 * p.value) ** 40;
-					}
-
-					return p.value ** 69;
-				};
-				/*let sum = 0;
-				for (const p of playersAll) {
-					sum += score(p);
-				}
-				for (let i = 0; i < playersAll.length; i++) {
-					const p = playersAll[i];
-					console.log(p.firstName, p.lastName, teamOvrDiffs[i], 0.05 * p.value, score(p) / sum);
-				}
-				console.log(sum);*/
-
-				const selection = random.choice(playersAll, score);
-
-				const pid = selection.pid;
-				await selectPlayer(dp, pid);
-				pids.push(pid);
-				playersAll = playersAll.filter((p) => p !== selection); // Delete from the list of undrafted players
-
-				if (action.type !== "onePick") {
-					return autoSelectPlayer();
-				}
+			if (action.type !== "onePick") {
+				return autoSelectPlayer();
 			}
 		}
 

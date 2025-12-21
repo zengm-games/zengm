@@ -102,6 +102,9 @@ const RatingsStatsPopover = ({
 				const newLocalWatch = await toWorker("main", "getPlayerWatch", pid);
 				setWatch(newLocalWatch);
 			})();
+		} else {
+			// This happens when switching to a new pid but defaultWatch is supplied
+			setWatch(defaultWatch);
 		}
 
 		// Need to listen for bulk action updates

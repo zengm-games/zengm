@@ -1376,11 +1376,9 @@ const NewLeague = (props: View<"newLeague">) => {
 											return leagueInfo;
 										}}
 										onLoading={(legend) => {
-											console.log("legend", legend);
 											dispatch({ type: "setLegend", legend });
 										}}
 										onDone={(info) => {
-											console.log("info", info);
 											handleNewLeagueInfo({
 												...info,
 												randomization: "debuts",

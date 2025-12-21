@@ -1479,7 +1479,10 @@ const afterDBStream = async ({
 	}
 
 	// Run this for random debuts only in random players leagues, since in real players leagues it's done in getLeague already
-	if (!getLeagueOptions && randomDebuts) {
+	if (
+		(!getLeagueOptions || getLeagueOptions.type === "legends") &&
+		randomDebuts
+	) {
 		// Delete any random players that are somehow in draft class, such as if this is an imported league
 		activePlayers = activePlayers.filter((p) => p.tid !== PLAYER.UNDRAFTED);
 

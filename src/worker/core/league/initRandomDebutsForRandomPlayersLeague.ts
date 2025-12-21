@@ -19,7 +19,7 @@ const getTidsWithNoPlayers = (
 	return activeTids.filter((tid) => counts[tid] === undefined);
 };
 
-// Code inside realPlayers is responsible for random debuts normally. But that only works for real players leagues, not random players leagues. So here is a standalone version. Maybe these should be used in realPlayers too, would be more DRY...
+// Code inside realPlayers is responsible for random debuts normally. But that only works for normal real players leagues, not random players leagues or legends leagues. So here is a standalone version. Maybe these should be used in realPlayers too, would be more DRY...
 const initRandomDebutsForRandomPlayersLeague = async ({
 	activeTids,
 	players,

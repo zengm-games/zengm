@@ -1,3 +1,5 @@
+when doing an expansion draft after the season involving previously existing teams, if you export and import at any time before next year (during or after expansion draft) it will create an erroneous teamseason entry for the current season https://discord.com/channels/290013534023057409/1451312720698802347
+
 rapm
 - https://github.com/EyimofeA/zengm/tree/codex/implement-rapm-calculation-and-display
 - only takes like a minute to run

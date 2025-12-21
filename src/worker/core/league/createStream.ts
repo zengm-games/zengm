@@ -755,7 +755,12 @@ const processTeamInfos = async ({
 			teamSeasonsLocal = teamInfo.seasons;
 			const last = teamSeasonsLocal.at(-1);
 
-			if (last && last.season !== g.get("season") && !t.disabled) {
+			// This used to check for `last.season !== g.get("season")` but that is a false positive when re-activating teams in the offseason such as with an expansion draft
+			if (
+				last &&
+				(last.season > g.get("season") || last.season === undefined) &&
+				!t.disabled
+			) {
 				last.season = g.get("season");
 
 				// Remove any past seasons that claim to be from this season or a future season

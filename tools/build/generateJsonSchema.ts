@@ -962,7 +962,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						type: "number",
 					},
 					luxuryPayroll: {
-						type: "integer",
+						type: "number",
 						minimum: 0,
 					},
 					luxuryTax: {
@@ -970,7 +970,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						minimum: 0,
 					},
 					maxContract: {
-						type: "integer",
+						type: "number",
 						minimum: 0,
 					},
 					maxContractLength: {
@@ -982,7 +982,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						minimum: 0,
 					},
 					minContract: {
-						type: "integer",
+						type: "number",
 						minimum: 0,
 					},
 					minContractLength: {
@@ -990,7 +990,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						minimum: 1,
 					},
 					minPayroll: {
-						type: "integer",
+						type: "number",
 						minimum: 0,
 					},
 					minRetireAge: {
@@ -1222,7 +1222,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						type: "boolean",
 					},
 					salaryCap: {
-						type: "integer",
+						type: "number",
 						minimum: 0,
 					},
 					salaryCapType: {

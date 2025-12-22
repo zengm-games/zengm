@@ -237,9 +237,10 @@ export const getTopPlayers = async <T extends any[]>(
 				football: [],
 				hockey: (t.depth as { G: number[] }).G,
 			});
+			const depthPidsSet = new Set(depth);
 			const depthPlayers = depth
 				.map((pid) => playersByPid[pid])
-				.concat(players.map((p) => (depth.includes(p.pid) ? undefined : p)))
+				.concat(players.map((p) => (depthPidsSet.has(p.pid) ? undefined : p)))
 				.filter((p) => p !== undefined);
 			for (const p of depthPlayers) {
 				const ratings = p.ratings.at(-1)!;

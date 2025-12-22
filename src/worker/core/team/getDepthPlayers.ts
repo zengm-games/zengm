@@ -36,15 +36,14 @@ const getDepthPlayers = <
 				return obj;
 			}
 
+			const depthPidsSet = new Set((depth as any)[pos]);
+
 			// @ts-expect-error
 			obj[pos] = (depth[pos] as number[])
 				.map((pid) => playersByPid[pid])
 				.concat(
 					players.map((p) =>
-						(depth as any)[pos].includes(p.pid) ||
-						(depth as any)[pos].includes((p as any).id)
-							? undefined
-							: p,
+						depthPidsSet.has(p.pid ?? (p as any).id) ? undefined : p,
 					),
 				)
 				.filter((p) => p !== undefined);

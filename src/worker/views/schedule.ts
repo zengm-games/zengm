@@ -239,6 +239,7 @@ export const getTopPlayers = async <T extends any[]>(
 			});
 			const depthPlayers = depth
 				.map((pid) => playersByPid[pid])
+				.concat(players.map((p) => (depth.includes(p.pid) ? undefined : p)))
 				.filter((p) => p !== undefined);
 			for (const p of depthPlayers) {
 				const ratings = p.ratings.at(-1)!;

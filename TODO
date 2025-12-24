@@ -1,3 +1,9 @@
+"random" draft lottery type Draft Lottery page issues
+- erroneously called Draft Order
+- "Draft lottery type" displayed as "No lottery"
+- all teams are non-lottery, but would be better to show them all as lottery and have the "Start lottery" button and other normal lottery features, since it still is a lottery
+- part of https://github.com/zengm-games/zengm/issues/491
+
 rapm
 - https://github.com/EyimofeA/zengm/tree/codex/implement-rapm-calculation-and-display
 - only takes like a minute to run

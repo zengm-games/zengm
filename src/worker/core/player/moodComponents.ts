@@ -109,6 +109,8 @@ const moodComponents = async (
 		rookieContract: 0,
 		difficulty: 0,
 		relatives: 0,
+		championshipContender: 0,
+		hometown: 0,
 	};
 
 	if (p.customMoodItems) {
@@ -327,6 +329,114 @@ const moodComponents = async (
 		}
 	}
 
+	{
+		// CHAMPIONSHIP CONTENDER: Players are willing to take less to win
+		// Based on team's championship odds - recent playoff success and current roster strength
+		if (currentTeamSeason) {
+			let contenderScore = 0;
+
+			// Recent championship or finals appearance
+			const playoffRoundsWon = currentTeamSeason.playoffRoundsWon;
+			const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
+
+			if (playoffRoundsWon >= numPlayoffRounds) {
+				// Won championship last year
+				contenderScore += 2;
+			} else if (playoffRoundsWon >= numPlayoffRounds - 1) {
+				// Made finals
+				contenderScore += 1.5;
+			} else if (playoffRoundsWon >= numPlayoffRounds - 2) {
+				// Conference finals
+				contenderScore += 1;
+			} else if (playoffRoundsWon > 0) {
+				// Made playoffs
+				contenderScore += 0.5;
+			}
+
+			// Current roster strength - look at team's top players
+			const teamPlayers = await idb.cache.players.indexGetAll(
+				"playersByTid",
+				tid,
+			);
+			const topPlayerValues = teamPlayers
+				.map((tp) => tp.value)
+				.sort((a, b) => b - a)
+				.slice(0, 5);
+			const avgTopValue =
+				topPlayerValues.length > 0
+					? topPlayerValues.reduce((a, b) => a + b, 0) / topPlayerValues.length
+					: 0;
+
+			// If team has strong core (avg top 5 players > 60 value)
+			if (avgTopValue >= 70) {
+				contenderScore += 1.5;
+			} else if (avgTopValue >= 60) {
+				contenderScore += 1;
+			} else if (avgTopValue >= 50) {
+				contenderScore += 0.5;
+			}
+
+			// Scale to -2 to 2 range (but mostly positive for contenders)
+			components.championshipContender = helpers.bound(contenderScore - 1, -1, 2);
+		}
+	}
+
+	{
+		// HOMETOWN: Players prefer teams in their birth region/country
+		// This creates interesting regional dynamics
+		const playerCountry = p.born?.loc?.split(", ").pop() || "";
+		const teamRegion = t.region || "";
+
+		if (playerCountry && teamRegion) {
+			// Same country/region bonus
+			const teamCountry = teamRegion.split(", ").pop() || "";
+
+			if (
+				playerCountry === teamCountry ||
+				playerCountry === teamRegion ||
+				teamRegion.includes(playerCountry)
+			) {
+				// Strong hometown connection
+				components.hometown = 1.5;
+			} else {
+				// Check for same general region (e.g., both in USA, both in Europe)
+				const usaStates = [
+					"Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
+					"Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho",
+					"Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana",
+					"Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota",
+					"Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
+					"New Hampshire", "New Jersey", "New Mexico", "New York",
+					"North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon",
+					"Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+					"Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
+					"West Virginia", "Wisconsin", "Wyoming",
+				];
+				const canadaProvinces = [
+					"Ontario", "Quebec", "British Columbia", "Alberta", "Manitoba",
+					"Saskatchewan", "Nova Scotia", "New Brunswick",
+					"Newfoundland and Labrador", "Prince Edward Island",
+				];
+
+				const playerInUSA =
+					playerCountry === "USA" || usaStates.includes(playerCountry);
+				const teamInUSA =
+					teamCountry === "USA" || usaStates.some((s) => teamRegion.includes(s));
+
+				const playerInCanada =
+					playerCountry === "Canada" || canadaProvinces.includes(playerCountry);
+				const teamInCanada =
+					teamCountry === "Canada" ||
+					canadaProvinces.some((p) => teamRegion.includes(p));
+
+				if ((playerInUSA && teamInUSA) || (playerInCanada && teamInCanada)) {
+					// Same country, different region - small bonus
+					components.hometown = 0.5;
+				}
+			}
+		}
+	}
+
 	// Apply difficulty modulation
 	const difficulty = g.get("difficulty");
 	if (g.get("userTids").includes(tid) && !g.get("spectator")) {
@@ -393,6 +503,12 @@ const moodComponents = async (
 		0,
 		Infinity,
 	);
+	components.championshipContender = helpers.bound(
+		components.championshipContender,
+		-1,
+		2,
+	);
+	components.hometown = helpers.bound(components.hometown, 0, 2);
 
 	// Apply traits modulation
 	if (g.get("playerMoodTraits")) {
@@ -405,16 +521,19 @@ const moodComponents = async (
 			components.marketSize *= 0.5;
 			components.loyalty *= 2.5;
 			components.trades *= 2.5;
+			components.hometown *= 2.0; // Loyal players care more about hometown
 		}
 		if (p.moodTraits.includes("$")) {
 			components.facilities *= 1.5;
 			components.marketSize *= 0.5;
 			components.teamPerformance *= 0.5;
+			components.championshipContender *= 0.5; // Money-focused players care less about rings
 		}
 		if (p.moodTraits.includes("W")) {
 			components.marketSize *= 0.5;
 			components.playingTime *= 0.5;
 			components.teamPerformance *= 2.5;
+			components.championshipContender *= 2.5; // Winners want to win championships
 		}
 	}
 

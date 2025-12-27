@@ -7,6 +7,58 @@ import type {
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
 
+/**
+ * Generate draft class strength modifier.
+ * Some years produce generational talent classes, others are historically weak.
+ * This adds realistic variance to draft outcomes.
+ */
+const getDraftClassStrength = (): {
+	strengthModifier: number;
+	eliteChanceMultiplier: number;
+	description: "weak" | "average" | "strong" | "historic";
+} => {
+	const roll = random.random();
+
+	if (roll < 0.1) {
+		// 10% chance: Weak draft class
+		return {
+			strengthModifier: -5,
+			eliteChanceMultiplier: 0.5,
+			description: "weak",
+		};
+	}
+	if (roll < 0.25) {
+		// 15% chance: Below average
+		return {
+			strengthModifier: -2,
+			eliteChanceMultiplier: 0.75,
+			description: "weak",
+		};
+	}
+	if (roll < 0.75) {
+		// 50% chance: Average draft class
+		return {
+			strengthModifier: 0,
+			eliteChanceMultiplier: 1.0,
+			description: "average",
+		};
+	}
+	if (roll < 0.9) {
+		// 15% chance: Strong draft class
+		return {
+			strengthModifier: 3,
+			eliteChanceMultiplier: 1.5,
+			description: "strong",
+		};
+	}
+	// 10% chance: Historic/generational draft class
+	return {
+		strengthModifier: 6,
+		eliteChanceMultiplier: 2.5,
+		description: "historic",
+	};
+};
+
 // To improve the distribution of DP ages in leagues with modified draftAges, this code will change the % of players who declare for draft each year to work better with modified draftAges settings. Previously, it was just a constant defaultFractionPerYear.
 const defaultFractionPerYear = bySport({
 	baseball: 0.5,
@@ -106,6 +158,9 @@ const genPlayersWithoutSaving = async (
 	}
 	const minMaxAgeDiff = draftAges[1] - draftAges[0];
 
+	// Determine draft class strength - some years are better than others
+	const draftClassStrength = getDraftClassStrength();
+
 	let remaining = [];
 	for (let i = 0; i < numPlayers; i++) {
 		const name = await player.name();
@@ -120,6 +175,35 @@ const genPlayersWithoutSaving = async (
 
 		// Just for ovr/pot
 		await player.develop(p, 0);
+
+		// Apply draft class strength modifier to ratings
+		if (draftClassStrength.strengthModifier !== 0) {
+			const ratings = p.ratings[0];
+			// Apply modifier with some variance per player
+			const playerModifier =
+				draftClassStrength.strengthModifier +
+				random.realGauss(0, Math.abs(draftClassStrength.strengthModifier) / 2);
+
+			// Adjust key ratings (not height, which is more fixed)
+			for (const key of Object.keys(ratings)) {
+				if (
+					typeof ratings[key] === "number" &&
+					key !== "hgt" &&
+					key !== "fuzz" &&
+					key !== "ovr" &&
+					key !== "pot" &&
+					key !== "season"
+				) {
+					ratings[key] = Math.max(
+						0,
+						Math.min(100, ratings[key] + playerModifier),
+					);
+				}
+			}
+
+			// Recalculate ovr/pot after modifying ratings
+			await player.develop(p, 0);
+		}
 
 		// Add a fudge factor, used when sorting below to add a little randomness to players entering draft. This may
 		// seem quite large, but empirically it seems to work well.
@@ -164,14 +248,30 @@ const genPlayersWithoutSaving = async (
 	}
 
 	// Small chance of making top 4 players (in 70 player draft) special - on average, one per draft class
+	// Adjusted by draft class strength - strong classes have more elite players
 	if (existingPlayers.length === 0) {
-		const numSpecialPlayerChances = Math.round((4 / 70) * numPlayers);
+		const baseSpecialChances = Math.round((4 / 70) * numPlayers);
+		const numSpecialPlayerChances = Math.round(
+			baseSpecialChances * draftClassStrength.eliteChanceMultiplier,
+		);
 
-		for (let i = 0; i < numSpecialPlayerChances; i++) {
-			if (Math.random() < 1 / numSpecialPlayerChances) {
+		// In historic draft classes, ensure at least some elite players
+		const minElitePlayers =
+			draftClassStrength.description === "historic" ? 2 : 0;
+		let elitePlayersCreated = 0;
+
+		for (let i = 0; i < Math.max(numSpecialPlayerChances, minElitePlayers); i++) {
+			if (i >= enteringDraft.length) break;
+
+			const shouldBeElite =
+				elitePlayersCreated < minElitePlayers ||
+				Math.random() < draftClassStrength.eliteChanceMultiplier / numSpecialPlayerChances;
+
+			if (shouldBeElite) {
 				const p = enteringDraft[i];
 				player.bonus(p);
 				await player.develop(p, 0); // Recalculate ovr/pot
+				elitePlayersCreated++;
 			}
 		}
 	}

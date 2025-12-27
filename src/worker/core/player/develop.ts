@@ -10,11 +10,112 @@ import ovr from "./ovr.ts";
 import pos from "./pos.ts";
 import skills from "./skills.ts";
 import { g, helpers, random } from "../../util/index.ts";
-import type { MinimalPlayerRatings } from "../../../common/types.ts";
+import type { MinimalPlayerRatings, PlayerInjury } from "../../../common/types.ts";
 import genWeight from "./genWeight.ts";
 import potEstimator from "./potEstimator.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
+import limitRating from "./limitRating.ts";
+
+/**
+ * Apply injury impact on development.
+ * Major injuries can stunt development or cause permanent rating loss.
+ * @param ratings Player ratings to modify
+ * @param injuries Recent injury history
+ * @param age Player's current age
+ */
+const applyInjuryImpact = (
+	ratings: MinimalPlayerRatings,
+	injuries: PlayerInjury[] | undefined,
+	age: number,
+): void => {
+	if (!injuries || injuries.length === 0) {
+		return;
+	}
+
+	// Look at injuries from the most recent season
+	const currentSeason = g.get("season");
+	const recentInjuries = injuries.filter(
+		(inj) => inj.season === currentSeason || inj.season === currentSeason - 1,
+	);
+
+	if (recentInjuries.length === 0) {
+		return;
+	}
+
+	// Calculate total games missed recently
+	let totalGamesMissed = 0;
+	let hasSeriousInjury = false;
+
+	for (const injury of recentInjuries) {
+		totalGamesMissed += injury.gamesRemaining || 0;
+
+		// Check for serious injuries that cause lasting damage
+		const seriousInjuries = [
+			"ACL", "Achilles", "Torn", "Fractured", "Broken",
+			"Ruptured", "Torn Meniscus", "Labrum",
+		];
+		if (seriousInjuries.some((s) => injury.type.includes(s))) {
+			hasSeriousInjury = true;
+		}
+	}
+
+	// Minor injuries (< 10 games): No lasting impact
+	if (totalGamesMissed < 10 && !hasSeriousInjury) {
+		return;
+	}
+
+	// Moderate injuries (10-30 games): Slight development penalty
+	if (totalGamesMissed >= 10 && totalGamesMissed < 30 && !hasSeriousInjury) {
+		// Young players recover better
+		const recoveryPenalty = age <= 25 ? 0.5 : 1;
+		const penaltyAmount = Math.floor(recoveryPenalty);
+
+		// Apply small penalty to physical attributes
+		if (typeof (ratings as any).spd === "number") {
+			(ratings as any).spd = limitRating((ratings as any).spd - penaltyAmount);
+		}
+		if (typeof (ratings as any).jmp === "number") {
+			(ratings as any).jmp = limitRating((ratings as any).jmp - penaltyAmount);
+		}
+		return;
+	}
+
+	// Serious injuries (30+ games or major injury type): Significant impact
+	const basePenalty = hasSeriousInjury ? 3 : 2;
+	const ageFactor = age <= 25 ? 0.6 : age <= 30 ? 0.8 : 1.0;
+	const penaltyAmount = Math.floor(basePenalty * ageFactor);
+
+	// Physical attributes take the biggest hit
+	const physicalRatings = ["spd", "jmp", "endu"];
+	for (const key of physicalRatings) {
+		if (typeof (ratings as any)[key] === "number") {
+			(ratings as any)[key] = limitRating(
+				(ratings as any)[key] - penaltyAmount - random.randInt(0, 2),
+			);
+		}
+	}
+
+	// For very serious injuries, some skill ratings may also decline slightly
+	if (hasSeriousInjury && totalGamesMissed >= 40) {
+		const skillPenalty = Math.floor(penaltyAmount / 2);
+		const allRatingKeys = Object.keys(ratings).filter(
+			(k) =>
+				typeof (ratings as any)[k] === "number" &&
+				!["hgt", "fuzz", "ovr", "pot", "season"].includes(k),
+		);
+
+		// Apply small penalty to 2-3 random skill ratings
+		const numSkillsAffected = random.randInt(2, 3);
+		const affectedSkills = random.sample(allRatingKeys, numSkillsAffected);
+
+		for (const key of affectedSkills) {
+			(ratings as any)[key] = limitRating(
+				(ratings as any)[key] - skillPenalty,
+			);
+		}
+	}
+};
 
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
 
@@ -114,6 +215,7 @@ const develop = async (
 			pot: number;
 			skills: string[];
 		};
+		injuries?: PlayerInjury[];
 		pos?: string;
 		ratings: MinimalPlayerRatings[];
 		tid: number;
@@ -137,6 +239,11 @@ const develop = async (
 		if (!ratings.locked) {
 			await developSeason(ratings, age, p.srID, coachingLevel, false);
 		}
+	}
+
+	// Apply injury impact on development (only for existing players, not new ones)
+	if (!newPlayer && years > 0 && !ratings.locked) {
+		applyInjuryImpact(ratings, p.injuries, age);
 	}
 
 	// years===0 condition is so editing locked player in God Mode will update ovr and pot

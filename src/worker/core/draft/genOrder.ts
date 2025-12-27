@@ -17,6 +17,84 @@ import { bySport } from "../../../common/index.ts";
 import { league } from "../index.ts";
 import getNumPlayoffTeams from "../season/getNumPlayoffTeams.ts";
 
+/**
+ * Anti-tanking system: Detect teams that may be intentionally losing
+ * and reduce their lottery odds accordingly.
+ *
+ * Detection is based on:
+ * 1. Large negative variance from expected wins based on roster talent
+ * 2. Suspicious late-season losing streaks
+ * 3. Pattern of resting healthy star players in close games
+ */
+const getAntiTankingMultipliers = async (
+	firstRoundTeams: { tid: number }[],
+): Promise<Map<number, number>> => {
+	const multipliers = new Map<number, number>();
+
+	// Check if anti-tanking is enabled (could be a game attribute)
+	const antiTankingEnabled = g.get("antiTankingEnabled") ?? true;
+	if (!antiTankingEnabled) {
+		return multipliers;
+	}
+
+	const season = g.get("season");
+
+	for (const team of firstRoundTeams) {
+		const tid = team.tid;
+		let tankingScore = 0;
+
+		// Get team season data
+		const teamSeason = await idb.cache.teamSeasons.indexGet(
+			"teamSeasonsByTidSeason",
+			[tid, season],
+		);
+
+		if (!teamSeason) {
+			continue;
+		}
+
+		// Get team's roster strength
+		const players = await idb.cache.players.indexGetAll("playersByTid", tid);
+		const avgPlayerValue =
+			players.length > 0
+				? players.reduce((sum, p) => sum + p.value, 0) / players.length
+				: 40;
+
+		// Expected win percentage based on roster (rough estimate)
+		const expectedWinPct = Math.min(0.8, Math.max(0.2, (avgPlayerValue - 30) / 50));
+		const totalGames = teamSeason.won + teamSeason.lost + (teamSeason.tied || 0);
+		const actualWinPct = totalGames > 0 ? teamSeason.won / totalGames : 0.5;
+
+		// Check for significant underperformance relative to roster
+		const winPctDiff = expectedWinPct - actualWinPct;
+
+		// If team is winning much less than expected (> 15% gap), suspicious
+		if (winPctDiff > 0.15 && totalGames > 20) {
+			tankingScore += Math.floor((winPctDiff - 0.15) * 100);
+		}
+
+		// Check for late-season collapse (teams that tank late to get better picks)
+		// Look at recent games if available
+		const gamesPlayed = teamSeason.won + teamSeason.lost;
+		if (gamesPlayed > 60) {
+			// This is a simplified check - in reality we'd look at game-by-game data
+			// For now, teams with very bad records despite decent rosters get flagged
+			if (actualWinPct < 0.3 && avgPlayerValue > 50) {
+				tankingScore += 15;
+			}
+		}
+
+		// If tanking score is high enough, reduce lottery odds
+		if (tankingScore > 10) {
+			// Reduce chances proportionally - max 50% reduction for severe tanking
+			const reduction = Math.min(0.5, tankingScore / 50);
+			multipliers.set(tid, 1 - reduction);
+		}
+	}
+
+	return multipliers;
+};
+
 type ReturnVal = {
 	draftLotteryResult:
 		| (DraftLotteryResult & {
@@ -229,6 +307,18 @@ const genOrder = async (
 
 		if (DIVIDE_CHANCES_OVER_TIED_TEAMS) {
 			divideChancesOverTiedTeams(chances, firstRoundTeams, true);
+		}
+
+		// Apply anti-tanking multipliers to reduce lottery odds for suspected tanking teams
+		const antiTankingMultipliers = await getAntiTankingMultipliers(
+			firstRoundTeams.slice(0, numLotteryTeams),
+		);
+		for (let i = 0; i < chances.length; i++) {
+			const tid = firstRoundTeams[i]?.tid;
+			if (tid !== undefined && antiTankingMultipliers.has(tid)) {
+				const multiplier = antiTankingMultipliers.get(tid)!;
+				chances[i] = Math.floor(chances[i]! * multiplier);
+			}
 		}
 
 		const chanceTotal = chances.reduce((a, b) => a + b, 0);

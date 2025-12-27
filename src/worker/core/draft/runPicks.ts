@@ -1,4 +1,9 @@
-import { DRAFT_BY_TEAM_OVR, PHASE, PLAYER } from "../../../common/index.ts";
+import {
+	DRAFT_BY_TEAM_OVR,
+	PHASE,
+	PLAYER,
+	bySport,
+} from "../../../common/index.ts";
 import afterPicks from "./afterPicks.ts";
 import getOrder from "./getOrder.ts";
 import selectPlayer from "./selectPlayer.ts";
@@ -11,6 +16,203 @@ import type {
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
 import { player, team } from "../index.ts";
+
+/**
+ * Calculate positional needs for a team.
+ * Returns a map of position -> need score (higher = more need)
+ */
+const getPositionalNeeds = (
+	teamPlayers: PlayerWithoutKey<MinimalPlayerRatings>[],
+): Map<string, number> => {
+	const needs = new Map<string, number>();
+
+	// Define ideal roster composition by sport
+	const idealComposition = bySport<Record<string, number>>({
+		basketball: {
+			PG: 2,
+			SG: 2,
+			SF: 2,
+			PF: 2,
+			C: 2,
+			G: 2,
+			F: 2,
+			FC: 1,
+			GF: 1,
+		},
+		football: {
+			QB: 3,
+			RB: 4,
+			WR: 6,
+			TE: 3,
+			OL: 9,
+			DL: 6,
+			LB: 6,
+			CB: 5,
+			S: 4,
+			K: 1,
+			P: 1,
+		},
+		baseball: {
+			SP: 5,
+			RP: 7,
+			C: 2,
+			"1B": 1,
+			"2B": 2,
+			"3B": 1,
+			SS: 2,
+			LF: 2,
+			CF: 2,
+			RF: 2,
+			DH: 1,
+		},
+		hockey: {
+			C: 4,
+			W: 8,
+			D: 6,
+			G: 2,
+		},
+	});
+
+	// Count current players by position
+	const currentCount = new Map<string, number>();
+	for (const p of teamPlayers) {
+		const pos = p.ratings.at(-1)?.pos || "";
+		currentCount.set(pos, (currentCount.get(pos) || 0) + 1);
+	}
+
+	// Calculate need scores
+	for (const [pos, ideal] of Object.entries(idealComposition)) {
+		const current = currentCount.get(pos) || 0;
+		const deficit = ideal - current;
+
+		if (deficit > 0) {
+			// Higher score for bigger deficits
+			needs.set(pos, 1 + deficit * 0.3);
+		} else if (deficit === 0) {
+			// At ideal count - slight positive
+			needs.set(pos, 1);
+		} else {
+			// Over-stocked - reduced priority
+			needs.set(pos, Math.max(0.5, 1 + deficit * 0.15));
+		}
+	}
+
+	// Also check quality at each position - if existing players are weak, increase need
+	for (const p of teamPlayers) {
+		const pos = p.ratings.at(-1)?.pos || "";
+		const ovr = p.ratings.at(-1)?.ovr || 0;
+
+		if (ovr < 45 && needs.has(pos)) {
+			// Weak player at position - increase need slightly
+			needs.set(pos, (needs.get(pos) || 1) + 0.1);
+		}
+	}
+
+	return needs;
+};
+
+/**
+ * Get positional need multiplier for a prospect.
+ * Returns a value typically between 0.7 and 1.5
+ */
+const getPositionalNeedMultiplier = (
+	prospectPos: string,
+	positionalNeeds: Map<string, number>,
+): number => {
+	return positionalNeeds.get(prospectPos) || 1.0;
+};
+
+/**
+ * Draft philosophy types that affect how AI teams evaluate prospects.
+ */
+type DraftPhilosophy = "bpa" | "need" | "upside" | "safe" | "balanced";
+
+/**
+ * Get a team's draft philosophy based on their situation.
+ * Teams in different situations have different draft tendencies.
+ */
+const getTeamDraftPhilosophy = async (tid: number): Promise<DraftPhilosophy> => {
+	// Get team info to determine philosophy
+	const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
+		"teamSeasonsByTidSeason",
+		[
+			[tid, g.get("season") - 1],
+			[tid, g.get("season")],
+		],
+	);
+
+	const currentSeason = teamSeasons.find((ts) => ts.season === g.get("season"));
+	const prevSeason = teamSeasons.find((ts) => ts.season === g.get("season") - 1);
+
+	// Contending teams (made deep playoff run) prioritize need-based drafting
+	if (prevSeason && prevSeason.playoffRoundsWon >= 2) {
+		// Slight randomization but lean toward need
+		const roll = random.random();
+		if (roll < 0.5) return "need";
+		if (roll < 0.75) return "safe";
+		return "balanced";
+	}
+
+	// Rebuilding teams (bad record) go for upside
+	if (currentSeason) {
+		const winPct =
+			currentSeason.won / Math.max(1, currentSeason.won + currentSeason.lost);
+		if (winPct < 0.35) {
+			const roll = random.random();
+			if (roll < 0.4) return "upside";
+			if (roll < 0.7) return "bpa";
+			return "balanced";
+		}
+	}
+
+	// Middle-of-the-pack teams are more random in approach
+	const roll = random.random();
+	if (roll < 0.25) return "bpa";
+	if (roll < 0.45) return "need";
+	if (roll < 0.6) return "upside";
+	if (roll < 0.75) return "safe";
+	return "balanced";
+};
+
+/**
+ * Apply draft philosophy modifier to prospect scoring.
+ */
+const applyPhilosophyModifier = (
+	baseScore: number,
+	prospect: Player<MinimalPlayerRatings>,
+	philosophy: DraftPhilosophy,
+): number => {
+	const ratings = prospect.ratings.at(-1)!;
+	const ovr = ratings.ovr;
+	const pot = ratings.pot;
+
+	switch (philosophy) {
+		case "bpa":
+			// Pure best player available - slight bonus to high OVR players
+			return baseScore * (1 + (ovr / 100) * 0.1);
+
+		case "need":
+			// Need-based is already handled by positionalNeeds
+			// This philosophy doubles down on it
+			return baseScore;
+
+		case "upside":
+			// Prioritize potential over current ability
+			const upsideGap = pot - ovr;
+			return baseScore * (1 + (upsideGap / 100) * 0.3);
+
+		case "safe":
+			// Prefer players with small gap between OVR and POT (safer picks)
+			const safeGap = pot - ovr;
+			const safePenalty = safeGap > 15 ? 0.85 : 1.0;
+			return baseScore * safePenalty * (1 + (ovr / 100) * 0.15);
+
+		case "balanced":
+		default:
+			// Mix of OVR and POT
+			return baseScore * (1 + ((ovr + pot) / 200) * 0.05);
+	}
+};
 
 export const getTeamOvrDiffs = (
 	teamPlayers: PlayerWithoutKey<MinimalPlayerRatings>[],
@@ -177,12 +379,41 @@ const runPicks = async (
 			);
 			const teamOvrDiffs = await getTeamOvrDiffs(teamPlayers, playersAll);
 
+			// Calculate positional needs for this team
+			const positionalNeeds = getPositionalNeeds(teamPlayers);
+
+			// Get team's draft philosophy
+			const philosophy = await getTeamDraftPhilosophy(dp.tid);
+
 			const score = (p: Player<MinimalPlayerRatings>, i: number) => {
-				if (DRAFT_BY_TEAM_OVR) {
-					return (teamOvrDiffs[i]! + 0.05 * p.value) ** 40;
+				const prospectPos = p.ratings.at(-1)?.pos || "";
+				let needMultiplier = getPositionalNeedMultiplier(
+					prospectPos,
+					positionalNeeds,
+				);
+
+				// Need-focused teams double down on positional needs
+				if (philosophy === "need") {
+					needMultiplier = 0.5 + needMultiplier * 0.7;
 				}
 
-				return p.value ** 69;
+				let baseScore: number;
+				if (DRAFT_BY_TEAM_OVR) {
+					// For football/baseball/hockey: combine team improvement with positional need
+					baseScore = teamOvrDiffs[i]! + 0.05 * p.value;
+					// Apply need multiplier - bigger impact for positions team really needs
+					baseScore = baseScore * needMultiplier;
+				} else {
+					// For basketball: blend BPA with positional need
+					// Need multiplier has less impact in basketball (more fluid positions)
+					const adjustedNeedMultiplier = 0.8 + needMultiplier * 0.2;
+					baseScore = p.value * adjustedNeedMultiplier;
+				}
+
+				// Apply philosophy modifier
+				const modifiedScore = applyPhilosophyModifier(baseScore, p, philosophy);
+
+				return modifiedScore ** (DRAFT_BY_TEAM_OVR ? 40 : 69);
 			};
 			/*let sum = 0;
 			for (const p of playersAll) {

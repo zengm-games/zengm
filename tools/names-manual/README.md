@@ -33,7 +33,7 @@ https://forebears.io/canada/surnames is a good data source. Here is a script you
             const frequency = Number.parseInt(row.children[3].textContent.replaceAll(",", ""));
             const malePct = Number.parseInt(row.children[1].querySelector(".m")?.textContent ?? "0");
             
-            if (malePct >= 75) {
+            if (Number.isNaN(malePct) || malePct < 75) {
                 output.push({
                     name,
                     frequency,

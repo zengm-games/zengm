@@ -92,7 +92,7 @@ for (const [group, countries] of Object.entries(groups)) {
 								row.children[1]!.querySelector(".m")?.textContent ?? "0",
 							);
 
-							if (malePct < 75) {
+							if (Number.isNaN(malePct) || malePct < 75) {
 								continue;
 							}
 						} else {
@@ -116,6 +116,13 @@ for (const [group, countries] of Object.entries(groups)) {
 			if (rows === undefined) {
 				console.log(`No gender: ${slug}`);
 				continue;
+			}
+			if (rows.some((row) => row.name === "Maria")) {
+				console.log(
+					"Maria",
+					slug,
+					rows.find((row) => row.name === "Maria"),
+				);
 			}
 
 			const nameOverrides: Record<string, string> =

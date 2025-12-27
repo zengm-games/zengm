@@ -135,13 +135,16 @@ for (const [group, countries] of Object.entries(groups)) {
 					: {};
 
 			for (const { name, frequency } of rows) {
-				const actualName = nameOverrides[name] ?? name;
+				let actualName = nameOverrides[name] ?? name;
+				if (actualName.toLowerCase().startsWith("de la ")) {
+					actualName = `de la ${actualName.slice("de la ".length)}`;
+				}
 
 				const object = counts[type];
 				if (object[actualName] === undefined) {
 					object[actualName] = 0;
 				}
-				object[actualName] += frequency;
+				object[actualName]! += frequency;
 			}
 		}
 	}

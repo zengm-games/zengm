@@ -207,6 +207,7 @@ export const getTopPlayers = async <T extends any[]>(
 		const playersByGid: Record<number, [any, any]> = {};
 
 		const players = await idb.cache.players.getAll();
+		const playersByTid = groupBy(players, "tid");
 		const playersByPid = groupByUnique(players, "pid");
 		const teams = await idb.cache.teams.getAll();
 		const processedPlayersByTid: Record<number, any[]> = {};
@@ -240,7 +241,11 @@ export const getTopPlayers = async <T extends any[]>(
 			const depthPidsSet = new Set(depth);
 			const depthPlayers = depth
 				.map((pid) => playersByPid[pid])
-				.concat(players.map((p) => (depthPidsSet.has(p.pid) ? undefined : p)))
+				.concat(
+					(playersByTid[t.tid] ?? []).map((p) =>
+						depthPidsSet.has(p.pid) ? undefined : p,
+					),
+				)
 				.filter((p) => p !== undefined);
 			for (const p of depthPlayers) {
 				const ratings = p.ratings.at(-1)!;
@@ -371,21 +376,16 @@ export const getTopPlayers = async <T extends any[]>(
 						processedPlayersByPid[p1.pid],
 					];
 
-					for (const { pid } of [p0, p1]) {
-						const info = extraInfo[pid]!;
+					for (const starter of [p0, p1]) {
+						const info = extraInfo[starter.pid]!;
 						if (isSport("baseball")) {
 							info.pFatigue = P_FATIGUE_DAILY_REDUCTION * 5;
 						} else if (isSport("hockey")) {
 							info.numConsecutiveGamesG += 1;
 
-							for (const [starter, players] of [
-								[p0, players0],
-								[p1, players1],
-							]) {
-								for (const p of players) {
-									if (p.pid !== starter.pid) {
-										extraInfo[p.pid]!.numConsecutiveGamesG = 0;
-									}
+							for (const p of processedPlayersByTid[starter.tid]!) {
+								if (p.pid !== starter.pid) {
+									extraInfo[p.pid]!.numConsecutiveGamesG = 0;
 								}
 							}
 						}

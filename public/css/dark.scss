@@ -1,37 +1,46 @@
 @use "sass:math";
 
+// ============================================
+// shadcn-inspired Dark Mode Theme
+// Modern, sleek dark design with improved contrast
+// ============================================
+
 // These are so clicking on an element in one of the top navbar dropdown lists does not flash blue
 $dropdown-link-active-color: #fff; // Matches hover
-$dropdown-link-active-bg: #343a40; // Matches hover: $gray-100
+$dropdown-link-active-bg: #27272a; // Zinc-800 for modern feel
 
 // For datatable.scss
-$sorting-highlight-bg: #424549; // Matches var(--bs-table-hover-bg) but without transparency, which is needed for sticky-x
+$sorting-highlight-bg: #27272a; // Zinc-800
 
-$white: #212529;
-$gray-100: #343a40;
-$gray-200: #495057;
-$gray-300: #6c757d;
-$gray-400: #adb5bd;
-$gray-500: #ced4da;
-$gray-600: #dee2e6;
-$gray-700: #e9ecef;
-$gray-800: #f8f9fa;
-$gray-900: #f8f9fa;
-$black: #fff;
-$blue: lighten(#007bff, 25);
-$indigo: lighten(#6610f2, 20);
-$purple: lighten(#6f42c1, 20);
-$pink: lighten(#e83e8c, 20);
-$red: #dc3545;
-$orange: lighten(#fd7e14, 10);
-$yellow: lighten(#ffc107, 20);
-$green: lighten(#28a745, 10);
-$teal: lighten(#20c997, 20);
-$cyan: lighten(#17a2b8, 20);
+// Modern dark color palette inspired by shadcn/ui
+$white: #09090b; // Almost black background (zinc-950)
+$gray-100: #18181b; // zinc-900
+$gray-200: #27272a; // zinc-800
+$gray-300: #3f3f46; // zinc-700
+$gray-400: #71717a; // zinc-500
+$gray-500: #a1a1aa; // zinc-400
+$gray-600: #d4d4d8; // zinc-300
+$gray-700: #e4e4e7; // zinc-200
+$gray-800: #fafafa; // zinc-50
+$gray-900: #fafafa; // zinc-50
+$black: #fafafa; // Near-white text
 
+// Modern vibrant colors
+$blue: #60a5fa; // blue-400
+$indigo: #a78bfa; // violet-400
+$purple: #c084fc; // purple-400
+$pink: #f472b6; // pink-400
+$red: #f87171; // red-400
+$orange: #fb923c; // orange-400
+$yellow: #fbbf24; // amber-400
+$green: #4ade80; // green-400
+$teal: #2dd4bf; // teal-400
+$cyan: #22d3ee; // cyan-400
+
+// Primary is a warm orange for brand identity
 $primary: $orange;
 $secondary: $gray-300;
-$body-secondary-color: $gray-400; // Previously was $text-muted before Bootstrap 5.3
+$body-secondary-color: $gray-400;
 $input-placeholder-color: $gray-400;
 
 $table-bg-scale: 70%;
@@ -39,11 +48,11 @@ $table-hover-bg-factor: 0.1;
 
 $border-color: $gray-200;
 
-// Otherwise, it complains about contrast for buttons
+// Contrast for dark mode
 $min-contrast-ratio: 3;
 
-$small-scrollbar-thumb-color: darken($gray-500, 10%);
-$small-scrollbar-thumb-hover-color: $gray-600;
+$small-scrollbar-thumb-color: $gray-300;
+$small-scrollbar-thumb-hover-color: $gray-400;
 
 @import "light";
 
@@ -112,71 +121,127 @@ $list-group-item-bg-scale: 70%;
 	);
 }
 
+// ============================================
+// Modern Button Styles - shadcn inspired
+// Subtle shadows, smooth transitions, better focus states
+// ============================================
+
 .btn {
 	color: $black;
+	transition: all 0.2s ease;
+	border-radius: 0.5rem;
 
 	&:hover {
 		color: $black;
+		transform: translateY(-1px);
+	}
+
+	&:active {
+		transform: translateY(0);
+	}
+
+	&:focus-visible {
+		outline: 2px solid $primary;
+		outline-offset: 2px;
 	}
 
 	&:disabled {
-		color: $gray-700;
+		color: $gray-500;
+		opacity: 0.5;
 	}
 }
+
 .btn-link,
 .btn-link:hover {
 	color: $primary;
 }
 
 .text-danger {
-	color: lighten($red, 10) !important;
+	color: $red !important;
 }
 
 .btn-danger {
-	border-color: darken($red, 20);
-	background-color: darken($red, 20);
+	border-color: rgba($red, 0.8);
+	background-color: rgba($red, 0.15);
+	color: $red !important;
+	box-shadow: 0 0 0 1px rgba($red, 0.3);
 
 	&:active,
 	&:focus,
 	&:not(:disabled):hover {
-		border-color: darken($red, 25) !important;
-		background-color: darken($red, 25) !important;
-		color: $black !important;
+		border-color: $red !important;
+		background-color: rgba($red, 0.25) !important;
+		color: $red !important;
+		box-shadow: 0 0 12px rgba($red, 0.3);
 	}
 }
 
-// btn-danger dropdown text color while cliking an item
+// btn-danger dropdown text color while clicking an item
 .btn-danger:not(:disabled):not(.disabled):active,
 .btn-danger:not(:disabled):not(.disabled).active,
 .show > .btn-danger.dropdown-toggle {
 	color: $black !important;
+	background-color: $red !important;
 }
 
 .btn-primary {
-	border-color: darken($orange, 25);
-	background-color: darken($orange, 25);
-	color: #fff !important;
+	border-color: transparent;
+	background-color: $orange;
+	color: #09090b !important;
+	font-weight: 500;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba($orange, 0.2);
 
 	&:active,
 	&:focus,
 	&:not(:disabled):hover {
-		border-color: darken($orange, 30) !important;
-		background-color: darken($orange, 30) !important;
+		border-color: transparent !important;
+		background-color: lighten($orange, 5%) !important;
+		box-shadow: 0 4px 12px rgba($orange, 0.4);
+	}
+}
+
+.btn-secondary {
+	background-color: $gray-200;
+	border-color: $gray-300;
+	color: $black !important;
+
+	&:active,
+	&:focus,
+	&:not(:disabled):hover {
+		background-color: $gray-300 !important;
+		border-color: $gray-400 !important;
+	}
+}
+
+.btn-outline-primary {
+	border-color: $gray-300;
+	color: $black !important;
+	background-color: transparent;
+
+	&:active,
+	&:focus,
+	&:not(:disabled):hover {
+		background-color: $gray-200 !important;
+		border-color: $gray-400 !important;
+		color: $black !important;
 	}
 }
 
 .btn-light-bordered,
 .btn-light-bordered-2 {
-	// Both these are needed for disabled buttons, for some reason
 	color: $black !important;
+	background-color: $gray-100;
+	border-color: $gray-200;
+
 	&:disabled {
-		color: $black !important;
+		color: $gray-500 !important;
 	}
 
 	&:active,
 	&:focus,
 	&:not(:disabled):hover {
 		background-color: $gray-200 !important;
+		border-color: $gray-300 !important;
 		color: $black !important;
 	}
 }
@@ -231,32 +296,37 @@ a.god-mode.active {
 }
 
 .play-button-success {
-	background-color: darken($green, 20);
+	background-color: $green;
+	color: #09090b !important;
 
 	&:hover,
 	&:active,
 	&:focus {
-		background-color: shade-color(
-			darken($green, 20),
-			$btn-hover-bg-shade-amount
-		);
+		background-color: lighten($green, 5%);
+		box-shadow: 0 4px 12px rgba($green, 0.4);
 	}
 }
 
 .btn-success {
-	border-color: darken($green, 20);
-	background-color: darken($green, 20);
+	border-color: transparent;
+	background-color: $green;
+	color: #09090b !important;
+	font-weight: 500;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 
 	&:active,
 	&:focus,
 	&:not(:disabled):hover {
-		border-color: darken($green, 25) !important;
-		background-color: darken($green, 25) !important;
-		color: $black !important;
+		border-color: transparent !important;
+		background-color: lighten($green, 5%) !important;
+		color: #09090b !important;
+		box-shadow: 0 4px 12px rgba($green, 0.4);
 	}
 }
+
 .bg-success {
-	background-color: darken($green, 20) !important;
+	background-color: rgba($green, 0.15) !important;
+	color: $green !important;
 }
 
 .btn-god-mode {
@@ -451,14 +521,321 @@ $highlight-leader-color: lighten($yellow, 18%);
 
 // https://github.com/uiwjs/react-color?tab=readme-ov-file#support-darknight-theme
 .w-color-sketch {
-	--sketch-background: #323232 !important;
+	--sketch-background: #18181b !important;
 }
 .w-color-swatch {
-	--sketch-swatch-border-top: 1px solid #525252 !important;
+	--sketch-swatch-border-top: 1px solid #27272a !important;
 }
 .w-color-editable-input {
-	--editable-input-label-color: #757575 !important;
-	--editable-input-box-shadow: #616161 0px 0px 0px 1px inset !important;
-	--editable-input-color: #fff !important;
-	--editable-input-label-color: #aaa !important;
+	--editable-input-label-color: #71717a !important;
+	--editable-input-box-shadow: #3f3f46 0px 0px 0px 1px inset !important;
+	--editable-input-color: #fafafa !important;
+	--editable-input-label-color: #a1a1aa !important;
+}
+
+// ============================================
+// Global Dark Mode Enhancements - shadcn inspired
+// ============================================
+
+// Smoother scrolling and transitions
+html {
+	scroll-behavior: smooth;
+}
+
+// Better focus states globally
+*:focus-visible {
+	outline: 2px solid $primary;
+	outline-offset: 2px;
+}
+
+// Modern card styling
+.card {
+	background-color: $gray-100;
+	border: 1px solid $gray-200;
+	border-radius: 0.75rem;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+	transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+	&:hover {
+		box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+	}
+}
+
+.card-header {
+	background-color: rgba($gray-200, 0.5);
+	border-bottom: 1px solid $gray-200;
+	border-radius: 0.75rem 0.75rem 0 0;
+}
+
+.card-footer {
+	background-color: rgba($gray-200, 0.5);
+	border-top: 1px solid $gray-200;
+}
+
+// Modern modal styling
+.modal-content {
+	background-color: $gray-100;
+	border: 1px solid $gray-200;
+	border-radius: 0.75rem;
+	box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+	border-bottom: 1px solid $gray-200;
+}
+
+.modal-footer {
+	border-top: 1px solid $gray-200;
+}
+
+.modal-backdrop.show {
+	opacity: 0.6;
+	backdrop-filter: blur(4px);
+}
+
+// Better form inputs
+.form-control {
+	background-color: $white;
+	border: 1px solid $gray-200;
+	color: $black;
+	border-radius: 0.5rem;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+	&:focus {
+		background-color: $white;
+		border-color: $primary;
+		box-shadow: 0 0 0 3px rgba($primary, 0.15);
+		color: $black;
+	}
+
+	&::placeholder {
+		color: $gray-400;
+	}
+}
+
+.form-select {
+	background-color: $white;
+	border: 1px solid $gray-200;
+	color: $black;
+	border-radius: 0.5rem;
+
+	&:focus {
+		background-color: $white;
+		border-color: $primary;
+		box-shadow: 0 0 0 3px rgba($primary, 0.15);
+	}
+}
+
+// Better dropdown menus
+.dropdown-menu {
+	background-color: $gray-100;
+	border: 1px solid $gray-200;
+	border-radius: 0.5rem;
+	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+	padding: 0.25rem;
+}
+
+.dropdown-item {
+	border-radius: 0.375rem;
+	color: $black;
+	transition: background-color 0.15s ease;
+
+	&:hover,
+	&:focus {
+		background-color: $gray-200;
+		color: $black;
+	}
+}
+
+.dropdown-divider {
+	border-color: $gray-200;
+	margin: 0.25rem 0;
+}
+
+// Better tables
+.table {
+	--bs-table-bg: transparent;
+	--bs-table-hover-bg: #{$gray-100};
+	border-color: $gray-200;
+}
+
+.table > thead {
+	background-color: $gray-100;
+}
+
+.table > tbody > tr {
+	transition: background-color 0.15s ease;
+}
+
+// Better alerts
+.alert {
+	border-radius: 0.5rem;
+	border: 1px solid;
+}
+
+.alert-info {
+	background-color: rgba($cyan, 0.1);
+	border-color: rgba($cyan, 0.3);
+	color: $cyan;
+}
+
+.alert-warning {
+	background-color: rgba($yellow, 0.1);
+	border-color: rgba($yellow, 0.3);
+	color: $yellow;
+}
+
+.alert-danger {
+	background-color: rgba($red, 0.1);
+	border-color: rgba($red, 0.3);
+	color: $red;
+}
+
+.alert-success {
+	background-color: rgba($green, 0.1);
+	border-color: rgba($green, 0.3);
+	color: $green;
+}
+
+// Better badges
+.badge {
+	font-weight: 500;
+	border-radius: 0.375rem;
+}
+
+// Better navigation
+.nav-tabs {
+	border-bottom: 1px solid $gray-200;
+}
+
+.nav-tabs .nav-link {
+	border-radius: 0.5rem 0.5rem 0 0;
+	color: $gray-500;
+	transition: color 0.15s ease, background-color 0.15s ease;
+
+	&:hover {
+		color: $black;
+		background-color: $gray-200;
+		border-color: transparent;
+	}
+
+	&.active {
+		background-color: $gray-100;
+		border-color: $gray-200 $gray-200 $gray-100;
+		color: $black;
+	}
+}
+
+.nav-pills .nav-link {
+	border-radius: 0.5rem;
+	color: $gray-500;
+
+	&:hover {
+		background-color: $gray-200;
+		color: $black;
+	}
+
+	&.active {
+		background-color: $primary;
+		color: #09090b;
+	}
+}
+
+// Sidebar enhancements
+.sidebar {
+	background-color: $white;
+	border-right: 1px solid $gray-200;
+}
+
+// Navbar enhancements
+.navbar {
+	background-color: rgba($white, 0.95) !important;
+	backdrop-filter: blur(8px);
+	border-bottom: 1px solid $gray-200;
+}
+
+// Progress bars
+.progress {
+	background-color: $gray-200;
+	border-radius: 0.5rem;
+	overflow: hidden;
+}
+
+.progress-bar {
+	background-color: $primary;
+	transition: width 0.3s ease;
+}
+
+// Tooltips
+.tooltip-inner {
+	background-color: $gray-100;
+	border: 1px solid $gray-200;
+	color: $black;
+	border-radius: 0.375rem;
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+// List groups
+.list-group-item {
+	background-color: $gray-100;
+	border-color: $gray-200;
+	color: $black;
+
+	&:hover {
+		background-color: $gray-200;
+	}
+}
+
+// Pagination
+.page-link {
+	background-color: $gray-100;
+	border-color: $gray-200;
+	color: $black;
+
+	&:hover {
+		background-color: $gray-200;
+		border-color: $gray-300;
+		color: $black;
+	}
+}
+
+.page-item.active .page-link {
+	background-color: $primary;
+	border-color: $primary;
+	color: #09090b;
+}
+
+.page-item.disabled .page-link {
+	background-color: $gray-100;
+	color: $gray-400;
+}
+
+// Subtle glow effects for interactive elements
+a:not(.btn):hover {
+	text-decoration-color: rgba($primary, 0.5);
+}
+
+// Better scrollbars (webkit)
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+::-webkit-scrollbar-track {
+	background: $white;
+}
+
+::-webkit-scrollbar-thumb {
+	background: $gray-300;
+	border-radius: 5px;
+
+	&:hover {
+		background: $gray-400;
+	}
+}
+
+// Selection color
+::selection {
+	background-color: rgba($primary, 0.3);
+	color: $black;
 }

@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+/* shadcn/ui inspired design tokens */
+@theme {
+  /* Colors - Dark mode focused palette inspired by shadcn */
+  --color-background: oklch(0.145 0 0);
+  --color-foreground: oklch(0.985 0 0);
+
+  --color-card: oklch(0.145 0 0);
+  --color-card-foreground: oklch(0.985 0 0);
+
+  --color-popover: oklch(0.145 0 0);
+  --color-popover-foreground: oklch(0.985 0 0);
+
+  --color-primary: oklch(0.75 0.18 50);
+  --color-primary-foreground: oklch(0.145 0 0);
+
+  --color-secondary: oklch(0.269 0 0);
+  --color-secondary-foreground: oklch(0.985 0 0);
+
+  --color-muted: oklch(0.269 0 0);
+  --color-muted-foreground: oklch(0.708 0 0);
+
+  --color-accent: oklch(0.269 0 0);
+  --color-accent-foreground: oklch(0.985 0 0);
+
+  --color-destructive: oklch(0.396 0.141 25.723);
+  --color-destructive-foreground: oklch(0.985 0 0);
+
+  --color-success: oklch(0.5 0.15 145);
+  --color-success-foreground: oklch(0.985 0 0);
+
+  --color-border: oklch(0.269 0 0);
+  --color-input: oklch(0.269 0 0);
+  --color-ring: oklch(0.556 0 0);
+
+  /* Sidebar colors for dark mode */
+  --color-sidebar: oklch(0.12 0 0);
+  --color-sidebar-foreground: oklch(0.985 0 0);
+  --color-sidebar-primary: oklch(0.75 0.18 50);
+  --color-sidebar-primary-foreground: oklch(0.145 0 0);
+  --color-sidebar-accent: oklch(0.22 0 0);
+  --color-sidebar-accent-foreground: oklch(0.985 0 0);
+  --color-sidebar-border: oklch(0.269 0 0);
+  --color-sidebar-ring: oklch(0.556 0 0);
+
+  /* Chart colors */
+  --color-chart-1: oklch(0.75 0.18 50);
+  --color-chart-2: oklch(0.6 0.15 145);
+  --color-chart-3: oklch(0.55 0.18 250);
+  --color-chart-4: oklch(0.7 0.12 330);
+  --color-chart-5: oklch(0.65 0.2 45);
+
+  /* Border radius - shadcn uses larger radii */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Shadows for dark mode */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5);
+
+  /* Animation timing */
+  --animate-duration-fast: 150ms;
+  --animate-duration-normal: 200ms;
+  --animate-duration-slow: 300ms;
+}
+
+/* Base styles */
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+  }
+}
+
+/* Custom utilities for shadcn-like components */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .glass-effect {
+    backdrop-filter: blur(12px);
+    background-color: oklch(0.145 0 0 / 0.8);
+  }
+
+  .glow-primary {
+    box-shadow: 0 0 20px oklch(0.75 0.18 50 / 0.3);
+  }
+
+  .glow-success {
+    box-shadow: 0 0 20px oklch(0.5 0.15 145 / 0.3);
+  }
+}

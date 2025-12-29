@@ -22,8 +22,6 @@ global untouchable players (persist over reloads and multiple features, like tra
 - UI?
 - what happens if we click "trade for" or "trade away" on one?
 
-when neutralSite is active, disable boise special field color
-
 sentry
 - https://docs.sentry.io/platforms/javascript/configuration/filtering/#using-thirdpartyerrorfilterintegration
 - one project per sport?

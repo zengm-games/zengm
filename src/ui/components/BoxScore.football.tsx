@@ -49,6 +49,7 @@ type BoxScore = {
 	numPeriods?: number;
 	exhibition?: boolean;
 	shootout?: boolean;
+	neutralSite: boolean;
 };
 
 export const StatsHeader = ({
@@ -428,7 +429,15 @@ const ScoringSummary = memo(
 const NUM_SECTIONS = 12;
 const DEFAULT_HEIGHT = 200;
 
-const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
+const FieldBackground = ({
+	neutralSite,
+	t,
+	t2,
+}: {
+	neutralSite: boolean | undefined;
+	t: Team;
+	t2: Team;
+}) => {
 	return (
 		<div className="d-flex align-items-stretch position-absolute w-100 h-100">
 			{range(NUM_SECTIONS).map((i) => {
@@ -449,7 +458,7 @@ const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 					style.color = endzoneTeam.colors[1];
 					style.writingMode = "vertical-lr";
 				} else {
-					if (t2.region.startsWith("Boise")) {
+					if (!neutralSite && t2.region.startsWith("Boise")) {
 						style.backgroundColor = boiseBlue;
 					} else {
 						style.backgroundColor = darkGreen;
@@ -772,7 +781,11 @@ const FieldAndDrive = ({
 					minHeight: DEFAULT_HEIGHT,
 				}}
 			>
-				<FieldBackground t={boxScore.teams[0]} t2={boxScore.teams[1]} />
+				<FieldBackground
+					t={boxScore.teams[0]}
+					t2={boxScore.teams[1]}
+					neutralSite={boxScore.neutralSite}
+				/>
 				{!sportState.newPeriodText ? (
 					<>
 						<VerticalLine

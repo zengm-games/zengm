@@ -1,3 +1,58 @@
+custom awards
+- fields
+  - formula
+  - short name
+    - MUST BE UNIQUE
+  - long name
+  - some way to filter for SMOY
+  - MIP filter
+  - stats range (regular season, playoffs, semifinals, finals, combined)
+  - team or individual
+  - if team
+    - way to specify if it's position based or not
+      - maybe just automatically handle this per sport
+    - number of players per team
+      - maybe just automatically handle this per sport
+    - how many teams
+  - order
+    - use on...
+      - player profile page
+      - league history table
+      - season summary
+  - show in league history table?
+  - SeasonIcon
+    - icon (give a few options)
+    - color
+  - some way to label as an "important" award like MVP equivalent, ROY equivalent
+    - football has two ROY equivalents, so that shouldn't be unique
+- should be able to add/edit/delete awards over time, and still have awards races page show the old awards
+  - only allow delete if an award has not been assigned yet. otherwise, only allow disabling
+- extra things that get stored in player awards, but not in awards object
+  - should these even be stored in Player.awards, or elsewhere? probably Player.awards makes sense for normalization, might need additional prop to distinguish built-in vs custom awards
+  - see awardsOrder in groupAwards for list
+    - All-Star
+    - Won Championship
+    - Dunk Contest
+    - Three Point Contest
+    - Hall of Fame
+- UI to update
+  - award races
+  - groupAwards
+  - awards editor
+  - player profile
+  - league history table
+  - season summary
+  - awards records
+  - team records
+  - GOAT formula
+- add triple crown for baseball, like league leader awards
+- store top 10 for each individual award, so it can be displayed easily on player profile pages
+- should still be able to add an arbitrary one-off custom award - have some place for those in the awards object, and use it for unknown awards in upgraded leagues
+- support awards per div/conf
+- upgrade
+  - indexeddb
+  - import
+
 positions with a hard cap in ovr (G, K, P) should also have a hard cap in pot
 
 "random" draft lottery type Draft Lottery page issues
@@ -92,6 +147,7 @@ some way to export play-by-play and box score
 - https://discord.com/channels/290013534023057409/1357064671118753904/1357521047934734397
 - https://mail.google.com/mail/u/0/#inbox/FMfcgzQbfBvvgXvRgXKHVmHDcgXhJpTq?compose=DmwnWrRttWQWxCKltqpwbvvmKRwvbRxjQBlPPgZnpqcsrSzGXWNdCjCFnGmPkwpmsxkSpsqDZFjG
 - https://old.reddit.com/r/BasketballGM/comments/1nutcno/monthly_suggestions_thread/nhaadkv/
+- tricky to handle all the sport-specific stuff!
 
 some way to export season summary https://old.reddit.com/r/BasketballGM/comments/1nutcno/monthly_suggestions_thread/nhaadkv/
 
@@ -130,9 +186,6 @@ schedule editor
     - to a cell with another game - swap
 
 on roster continuity page (and maybe others) the "table-info" class in the user team's <th> should override the background color of th
-
-reseed based on standings rather than seed when the conference part of the bracket is exhausted https://discord.com/channels/290013534023057409/1428418791251120240/1428418791251120240
-- only matters for 4+ conferences
 
 A button requesting "expiring contracts" next to the "prospects" and "best current players" in trading block https://old.reddit.com/r/BasketballGM/comments/1n59zzw/monthly_suggestions_thread/nc0wt13/
 
@@ -1002,52 +1055,6 @@ contract extensions, available if player mood is high enough and contract is exp
 - maybe also trade demands if mood is low enough https://discord.com/channels/@me/1159143934623236146/1273473474064810046
 
 cancelling expansion draft in real players league breaks tids? https://mail.google.com/mail/u/0/#inbox/FMfcgzGtwggXJHtMpFDRKPDccCjSnCQc
-
-custom awards
-- fields
-  - formula
-  - abbrev
-  - short name
-  - long name
-  - some way to filter for SMOY
-  - MIP filter
-  - stats range (regular season, playoffs, semifinals, finals)
-  - team or individual
-  - if team
-    - way to specify if it's position based or not
-    - number of players per team
-    - how many teams
-  - active (so order/name/etc can be maintained for awards that no longer exist)
-  - order (for listing in player profile page)
-  - show in league history table?
-    - might need some other UI ones too
-  - SeasonIcon color
-  - some way to label as an "important" award like MVP equivalent, ROY equivalent
-    - football has two ROY equivalents, so that shouldn't be unique
-- should be able to add/edit/delete awards over time, and still have awards races page show the old awards
-  - only allow delete if an award has not been assigned yet. otherwise, only allow disabling
-- extra things that get stored in player awards, but not in awards object
-  - should these even be stored in Player.awards, or elsewhere? probably Player.awards makes sense for normalization, might need additional prop to distinguish built-in vs custom awards
-  - see awardsOrder in groupAwards for list
-    - All-Star
-    - Won Championship
-    - Dunk Contest
-    - Three Point Contest
-    - Hall of Fame
-- UI to update
-  - award races
-  - groupAwards
-  - awards editor
-  - player profile
-  - league history table
-  - season summary
-  - awards records
-  - team records
-  - GOAT formula
-- add triple crown for baseball, like league leader awards
-- store top 10 for each individual award, so it can be displayed easily on player profile pages
-- should still be able to add an arbitrary one-off custom award - have some place for those in the awards object, and use it for unknown awards in upgraded leagues
-- support awards per div/conf
 
 accessibility
 - team finances graphs don't show up on screen reader https://discord.com/channels/@me/1121892283986477237/1121898840245682316

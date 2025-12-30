@@ -4,7 +4,7 @@ import { g, helpers, local, lock, orderTeams } from "../../util/index.ts";
 import type { PlayoffSeriesTeam } from "../../../common/types.ts";
 import { season } from "../index.ts";
 import { isSport } from "../../../common/index.ts";
-import { chunk } from "../../../common/utils.ts";
+import { chunk, groupByUnique } from "../../../common/utils.ts";
 
 // Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.
 const betterSeedHome = (numGamesPlayoffSeries: number, gameNum: number) => {
@@ -31,6 +31,36 @@ const seriesIsNotOver = (
 	numGamesToWin: number,
 ): away is PlayoffSeriesTeam =>
 	!!(away && home.won < numGamesToWin && away.won < numGamesToWin);
+
+const getTeamsForOrderTeams = async () => {
+	return idb.getCopies.teamsPlus(
+		{
+			attrs: ["tid"],
+			seasonAttrs: [
+				"winp",
+				"pts",
+				"won",
+				"lost",
+				"otl",
+				"tied",
+				"did",
+				"cid",
+				"wonDiv",
+				"lostDiv",
+				"otlDiv",
+				"tiedDiv",
+				"wonConf",
+				"lostConf",
+				"otlConf",
+				"tiedConf",
+			],
+			stats: ["pts", "oppPts", "gp"],
+			season: g.get("season"),
+			showNoStats: true,
+		},
+		"noCopyCache",
+	);
+};
 
 /**
  * Create a single day's schedule for an in-progress playoffs.
@@ -238,6 +268,8 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	// Can't just look in playoffSeries.byConf because of upgraded leagues and real players leagues started in the playoffs
 	const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
 
+	let teamsForOrderTeams; // cache
+
 	// Need to reorder for reseeding?
 	if (g.get("playoffsReseed")) {
 		let groups: PlayoffSeriesTeam[][];
@@ -250,16 +282,35 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			groups = [[...teamsWon]];
 		}
 
+		if (!teamsForOrderTeams) {
+			teamsForOrderTeams = await getTeamsForOrderTeams();
+		}
+
 		// Sort the groups so that each 2 teams are a matchup (best team, worst team, 2nd best team, 2nd worst team, etc)
 		for (const [i, group] of groups.entries()) {
-			group.sort((a, b) => a.seed - b.seed);
+			let orderedGroup;
+
+			// If playoffByConf, we can only reseed based on seed if we're still in the conference bracket, otherwise the seeds are not comparable. This matters if you have 4 conferences, because then it's not just the home/away in the finals that matter, it's the actual matchups too!
+			if (playoffsByConf !== false && teamsWon.length <= playoffsByConf) {
+				const groupByTid = groupByUnique(group, "tid");
+				const orderedTeams = await orderTeams(
+					teamsForOrderTeams.filter((t) => !!groupByTid[t.tid]),
+					teamsForOrderTeams,
+					{
+						skipDivisionLeaders: true,
+					},
+				);
+				orderedGroup = orderedTeams.map((t) => groupByTid[t.tid]!);
+			} else {
+				orderedGroup = group.sort((a, b) => a.seed - b.seed);
+			}
 
 			const interleaved: PlayoffSeriesTeam[] = [];
-			while (group.length > 0) {
+			while (orderedGroup.length > 0) {
 				if (interleaved.length % 2 === 0) {
-					interleaved.push(group.shift() as PlayoffSeriesTeam);
+					interleaved.push(orderedGroup.shift() as PlayoffSeriesTeam);
 				} else {
-					interleaved.push(group.pop() as PlayoffSeriesTeam);
+					interleaved.push(orderedGroup.pop() as PlayoffSeriesTeam);
 				}
 			}
 			groups[i] = interleaved;
@@ -268,8 +319,6 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		teamsWon = groups.flat();
 	}
 
-	let teamsForPlayoffsByConf; // cache
-
 	for (let i = 0; i < teamsWon.length; i += 2) {
 		const team1 = teamsWon[i]!;
 		const team2 = teamsWon[i + 1]!;
@@ -277,44 +326,18 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		// Set home/away in the next round - seed ties should be impossible except maybe in the finals, which is handled below
 		let firstTeamHome = team1.seed < team2.seed;
 
-		// Special case for after the byConf rounds end - go by winp not seed, since the seeds are not directly comparable
+		// Special case for after the byConf rounds end - go by winp not seed, since the seeds are not directly comparable. This is somewhat redundant if the above orderTeams code ran, but is necessary if reseeding is disabled. Probably this could be refactored so there is only one orderTeams
 		if (playoffsByConf !== false && teamsWon.length <= playoffsByConf) {
-			if (!teamsForPlayoffsByConf) {
-				teamsForPlayoffsByConf = await idb.getCopies.teamsPlus(
-					{
-						attrs: ["tid"],
-						seasonAttrs: [
-							"winp",
-							"pts",
-							"won",
-							"lost",
-							"otl",
-							"tied",
-							"did",
-							"cid",
-							"wonDiv",
-							"lostDiv",
-							"otlDiv",
-							"tiedDiv",
-							"wonConf",
-							"lostConf",
-							"otlConf",
-							"tiedConf",
-						],
-						stats: ["pts", "oppPts", "gp"],
-						season: g.get("season"),
-						showNoStats: true,
-					},
-					"noCopyCache",
-				);
+			if (!teamsForOrderTeams) {
+				teamsForOrderTeams = await getTeamsForOrderTeams();
 			}
-			const matchupTeams = teamsForPlayoffsByConf.filter(
+			const matchupTeams = teamsForOrderTeams.filter(
 				(t) => t.tid === team1.tid || t.tid === team2.tid,
 			);
 			if (matchupTeams.length === 2) {
 				const orderedTeams = await orderTeams(
 					matchupTeams,
-					teamsForPlayoffsByConf,
+					teamsForOrderTeams,
 					{
 						skipDivisionLeaders: true,
 					},

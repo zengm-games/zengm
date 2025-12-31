@@ -42,6 +42,8 @@ export const boxScoreToLiveSim = async ({
 	}
 
 	if (isSport("basketball")) {
+		resetStatsTeam.push("ba");
+
 		boxScore.elam = allStars ? g.get("elamASG") : g.get("elam");
 		boxScore.elamOvertime = g.get("elamOvertime");
 	}

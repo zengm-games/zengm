@@ -147,6 +147,7 @@ some way to export play-by-play and box score
 - https://discord.com/channels/290013534023057409/1357064671118753904/1357521047934734397
 - https://mail.google.com/mail/u/0/#inbox/FMfcgzQbfBvvgXvRgXKHVmHDcgXhJpTq?compose=DmwnWrRttWQWxCKltqpwbvvmKRwvbRxjQBlPPgZnpqcsrSzGXWNdCjCFnGmPkwpmsxkSpsqDZFjG
 - https://old.reddit.com/r/BasketballGM/comments/1nutcno/monthly_suggestions_thread/nhaadkv/
+- https://old.reddit.com/r/BasketballGM/comments/188okm0/is_there_a_way_to_copy_the_playbyplay/kbq4bei/?context=3
 - tricky to handle all the sport-specific stuff!
 
 some way to export season summary https://old.reddit.com/r/BasketballGM/comments/1nutcno/monthly_suggestions_thread/nhaadkv/
@@ -840,7 +841,7 @@ auto export to folder every N seasons
 - include box scores?
 
 "field-sizing: content" to replace hacky sizing of top bar selects, when it has browser support https://caniuse.com/?search=field-sizing
-- Chrome 123, Firefox ?, Safari ?
+- Chrome 123, Firefox ?, Safari 26.2
 
 BBGM injury rate too low? https://discord.com/channels/290013534023057409/290015591216054273/1190784110763970600
 
@@ -865,9 +866,6 @@ better clock handling in BBGM - calculate time as you go in the play
 - fast breaks
 - fewer out of bounds after missed free throws, maybe other shot types too
 - ORB% should vary by shot type
-
-better copy/paste or export of play-by-play
-- https://old.reddit.com/r/BasketballGM/comments/188okm0/is_there_a_way_to_copy_the_playbyplay/kbq4bei/?context=3
 
 subs shouldn't happen after offensive rebound https://old.reddit.com/r/BasketballGM/comments/18829x9/substitution_on_offensive_rebounds_shouldnt_be/
 

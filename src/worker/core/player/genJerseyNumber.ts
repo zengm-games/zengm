@@ -385,13 +385,17 @@ const weightFunctionsByPosition = bySport({
 export const JERSEY_NUMBERS_BY_POSITION =
 	weightFunctionsByPosition !== undefined;
 
-export const getTeammateJerseyNumbers = async (tid: number, pid?: number) => {
+export const getTeammateJerseyNumbers = async (
+	tid: number,
+	pidsIgnore: number[],
+) => {
+	const pidsIgnoreSet = new Set(pidsIgnore);
 	const jerseyNumbers = [];
 
 	if (tid >= 0) {
 		const teammates = (
 			await idb.cache.players.indexGetAll("playersByTid", tid)
-		).filter((p) => p.pid !== pid);
+		).filter((p) => !pidsIgnoreSet.has(p.pid));
 		for (const p of teammates) {
 			if (p.stats.length > 0) {
 				const teamJerseyNumber = p.jerseyNumber;
@@ -445,7 +449,8 @@ const genJerseyNumber = async (
 	}
 
 	const teamJerseyNumbers =
-		teamJerseyNumbersInput ?? (await getTeammateJerseyNumbers(p.tid, p.pid));
+		teamJerseyNumbersInput ??
+		(await getTeammateJerseyNumbers(p.tid, p.pid !== undefined ? [p.pid] : []));
 	const retiredJerseyNumbers =
 		retiredJerseyNumbersInput ?? (await getRetiredJerseyNumbers(p.tid));
 

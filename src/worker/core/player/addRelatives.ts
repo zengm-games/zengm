@@ -107,7 +107,7 @@ const makeSimilarJerseyNumber = async (
 	if (newRelative.tid >= 0) {
 		const teammateJerseyNumbers = await getTeammateJerseyNumbers(
 			newRelative.tid,
-			newRelative.pid,
+			[newRelative.pid],
 		);
 		if (teammateJerseyNumbers.includes(existingRelative.jerseyNumber)) {
 			return;

@@ -97,13 +97,4 @@ export default defineConfig(
 			"@typescript-eslint/no-var-requires": "off",
 		},
 	},
-	{
-		files: ["src/test/*.{js,ts}"],
-
-		languageOptions: {
-			globals: {
-				...globals.jest,
-			},
-		},
-	},
 );

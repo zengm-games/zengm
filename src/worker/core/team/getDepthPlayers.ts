@@ -38,6 +38,7 @@ const getDepthPlayers = <
 
 			const depthPidsSet = new Set((depth as any)[pos]);
 
+			// Keep in sync with schedule.ts
 			// @ts-expect-error
 			obj[pos] = (depth[pos] as number[])
 				.map((pid) => playersByPid[pid])

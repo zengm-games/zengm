@@ -239,14 +239,18 @@ export const getTopPlayers = async <T extends any[]>(
 				hockey: (t.depth as { G: number[] }).G,
 			});
 			const depthPidsSet = new Set(depth);
+
+			// Keep in sync with getDepthPlayers.ts
 			const depthPlayers = depth
 				.map((pid) => playersByPid[pid])
+				.filter((p) => p?.tid === t.tid) // Before season, AI teams may not have updated depth
 				.concat(
 					(playersByTid[t.tid] ?? []).map((p) =>
 						depthPidsSet.has(p.pid) ? undefined : p,
 					),
 				)
 				.filter((p) => p !== undefined);
+
 			for (const p of depthPlayers) {
 				const ratings = p.ratings.at(-1)!;
 

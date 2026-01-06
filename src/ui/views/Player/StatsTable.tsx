@@ -17,7 +17,8 @@ const hasStats = (
 	careerStats: View<"player">["player"]["careerStats"],
 	onlyShowIf: string[] | undefined,
 ) => {
-	if (careerStats.gp === 0) {
+	// For careerStatPlayoffs gp is undefined if there are no stats rows, ugh
+	if (careerStats.gp === 0 || careerStats.gp === undefined) {
 		return false;
 	}
 

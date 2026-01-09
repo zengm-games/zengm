@@ -67,9 +67,7 @@ rapm
 - https://github.com/EyimofeA/zengm/tree/codex/implement-rapm-calculation-and-display
 - only takes like a minute to run
 
-in a new real players league, 2029 has a few prospects, which makes draft pick value wonky https://discord.com/channels/290013534023057409/290013534023057409/1448079050886221916
-- should generate full class for any partial ones on league creation
-  - make sure it works with random debuts
+partial draft class from random debuts messing up draft pick valuation - see 3166dbc0f for non random debuts league. ideally should trigger next generation to start being generated rather than leave a partial draft class
 
 error after expansion https://old.reddit.com/r/BasketballGM/comments/1pa4635/error_whenever_i_try_loading_my_league/
 - https://x.com/TJMags5/status/1996683016173986257

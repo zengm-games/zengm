@@ -9,6 +9,7 @@ const getValueByIteratee = (iteratee: any, item: any) => {
 	return item[iteratee];
 };
 
+// Chrome 117, Firefox 119, Safari 17.4 - replace groupBy and groupByMap with built-in, rename groupByUnique to keyBy or something
 export const groupBy = <T extends Record<string, unknown>>(
 	rows: T[],
 	key: string | ((row: T) => string | number),
@@ -21,6 +22,28 @@ export const groupBy = <T extends Record<string, unknown>>(
 			grouped[keyValue].push(row);
 		} else {
 			grouped[keyValue] = [row];
+		}
+	}
+
+	return grouped;
+};
+
+export const groupByMap = <
+	T extends Record<string, unknown>,
+	Key extends string | number,
+>(
+	rows: T[],
+	key: string | ((row: T) => Key),
+) => {
+	const grouped = new Map<Key, T[]>();
+
+	for (const row of rows) {
+		const keyValue = getValueByIteratee(key, row);
+		const array = grouped.get(keyValue);
+		if (array) {
+			array.push(row);
+		} else {
+			grouped.set(keyValue, [row]);
 		}
 	}
 

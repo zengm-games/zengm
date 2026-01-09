@@ -1532,10 +1532,13 @@ const afterDBStream = async ({
 		addRelatives(activePlayers as unknown as Player[], basketball.relatives);
 	}
 
-	await addDraftProspects({
-		players: activePlayers,
-		scoutingLevel,
-	});
+	// For random debuts we don't want addDraftProspects to be called, since it will fill in with random players. However this does imply that future pick value is going to be messed up for those transition years between random debuts generations, since getPickValues does not support partial draft classes.
+	if (!randomDebuts) {
+		await addDraftProspects({
+			players: activePlayers,
+			scoutingLevel,
+		});
+	}
 
 	// Unless we got strategy from a league file, calculate it here
 	for (const [i, t] of teams.entries()) {

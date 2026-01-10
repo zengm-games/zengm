@@ -175,14 +175,18 @@ class Team<DH extends boolean> {
 					["asc", "desc"],
 				);
 				const p2 = sortedBench.find((p) => !playersInGame[p.id]);
+				let found = false;
 				if (!p2) {
-					console.log(this.t.id);
-					throw new Error("Not enough players");
+					// If we're looking for a sub because the player is injured (not because they are already in the game somehow), then just keep the injured player in the game
+					if (playersInGame[p.id]) {
+						throw new Error("Not enough players");
+					}
 				} else {
 					p = p2;
+					found = true;
 				}
 
-				if (minBattingOrderWithSubstitution === undefined) {
+				if (found && minBattingOrderWithSubstitution === undefined) {
 					minBattingOrderWithSubstitution = i;
 				}
 			}

@@ -1808,7 +1808,7 @@ class GameSim extends GameSimBase {
 						let injuryRate = getInjuryRate(
 							this.baseInjuryRate,
 							p.age,
-							p.injury.playingThrough,
+							p.injury.gamesRemaining > 0,
 						);
 
 						// Fewer injuries for G

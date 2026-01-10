@@ -35,7 +35,7 @@ const doInjury = async (
 
 	// Is this a reinjury or not?
 	let reaggravateExtraDays;
-	if (p.injury.playingThrough) {
+	if (p.injury.gamesRemaining > 0) {
 		if (
 			p2.injury.gamesRemaining < p.injury.gamesRemaining ||
 			Math.random() < 0.33

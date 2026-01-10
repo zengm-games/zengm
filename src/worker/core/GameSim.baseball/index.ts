@@ -2610,7 +2610,7 @@ class GameSim extends GameSimBase {
 			const p = info.p.p;
 
 			const injuryRate =
-				getInjuryRate(this.baseInjuryRate, p.age, p.injury.playingThrough) *
+				getInjuryRate(this.baseInjuryRate, p.age, p.injury.gamesRemaining > 0) *
 				info.weight;
 
 			if (Math.random() < injuryRate) {

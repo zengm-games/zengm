@@ -176,6 +176,7 @@ class Team<DH extends boolean> {
 				);
 				const p2 = sortedBench.find((p) => !playersInGame[p.id]);
 				if (!p2) {
+					console.log(this.t.id);
 					throw new Error("Not enough players");
 				} else {
 					p = p2;

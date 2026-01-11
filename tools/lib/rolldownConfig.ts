@@ -11,7 +11,6 @@ import { getSport, type Sport } from "./getSport.ts";
 import blacklist from "rollup-plugin-blacklist";
 import terser from "@rollup/plugin-terser";
 import { visualizer } from "rollup-plugin-visualizer";
-import type { Plugin } from "rollup";
 
 // Use babel to run babel-plugin-sport-functions. This is needed even in dev mode because the way bySport is defined, the sport-specific code will run if it's present, which can produce errors. It's not actually needed for isSport in dev mode.
 export const pluginSportFunctions = (
@@ -98,7 +97,7 @@ export const rolldownConfig = (
 
 	const sport = getSport();
 
-	const plugins: (Plugin | RolldownPlugin)[] = [
+	const plugins: BuildOptions["plugins"] = [
 		pluginSportFunctions(envOptions.nodeEnv, sport),
 	];
 

@@ -8,6 +8,7 @@ import { pluginSportFunctions } from "./tools/lib/rolldownConfig.ts";
 //import { playwright } from "@vitest/browser-playwright";
 import type { Sport } from "./tools/lib/getSport.ts";
 import type { ProjectConfig } from "vitest/node";
+import { playwright } from "@vitest/browser-playwright";
 
 const footballTests = ["**/*.football/*.test.ts", "**/*.football.test.ts"];
 
@@ -17,8 +18,6 @@ export const getCommon = (
 	projectConfig: ProjectConfig,
 ): TestProjectInlineConfiguration => {
 	return {
-		isolate: false,
-		// Unsure why but the browser tests need `define` and the node tests need `test.env`
 		define: {
 			"process.env.NODE_ENV": JSON.stringify("test"),
 			"process.env.SPORT": JSON.stringify(sport),
@@ -30,10 +29,6 @@ export const getCommon = (
 
 		test: {
 			...projectConfig,
-			env: {
-				NODE_ENV: "test",
-				SPORT: sport,
-			},
 			setupFiles:
 				environment === "node"
 					? ["./src/test/setup.ts", "./src/worker/index.ts"]
@@ -58,11 +53,10 @@ export default defineConfig({
 					include: footballTests,
 				}),
 			},
-			// https://github.com/vitest-dev/vitest/issues/8887
-			/*{
+			{
 				...getCommon("basketball", "browser", {
 					name: "browser",
-					include: ["**QQQQQQQQQQQQQQQQQQQQ/*.test.browser.ts"],
+					include: ["**/*.test.browser.ts"],
 					browser: {
 						enabled: true,
 						headless: true,
@@ -75,7 +69,7 @@ export default defineConfig({
 						screenshotFailures: false,
 					},
 				}),
-			}*/
+			},
 		],
 	},
 });

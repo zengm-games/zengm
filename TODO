@@ -155,9 +155,7 @@ retired jersey number should not block the player it was retired for, and instea
 button to undo or redo a players preseason progs https://discord.com/channels/290013534023057409/331882115119448065/1433886857481162893
 - some way to bulk do it?
 
-vitest browser once https://github.com/vitest-dev/vitest/issues/8887 is fixed
-- uncomment as project in normal tests, delete separate e2e config
-- run all tests in browser mode?
+run all vitest tests in browser mode?
 
 browserstack in vitest
 - semi-working in vitest-browser-replace-karma branch

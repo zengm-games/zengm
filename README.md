@@ -76,11 +76,6 @@ Coverage is not great. They can be run from the command line with:
 
     node --run test
 
-There is also a single end-to-end test which creates a league and simulates a
-season. To execute the end-to-end test, run:
-
-    node --run test-e2e
-
 Like the dev command, you can stick `SPORT=football ` or whatever in front of
 this command to run it for a non-basketball sport.
 

@@ -22,7 +22,6 @@
 		"pre-test": "node tools/pre-test.ts",
 		"prettier": "prettier --write \"*.{mjs,cjs,js,json,scss,ts,tsx}\" \"public/**/*.{mjs,cjs,js,json,scss,ts,tsx}\" \"src/**/*.{mjs,cjs,js,json,scss,ts,tsx}\" \"tools/**/*.{mjs,cjs,js,json,scss,ts,tsx}\"",
 		"test": "node --run pre-test && vitest --run",
-		"test-e2e": "node --run pre-test && vitest --config vitest-e2e.config.ts --run",
 		"prepare": "husky",
 		"postinstall": "playwright install"
 	},

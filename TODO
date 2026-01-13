@@ -1299,8 +1299,6 @@ baseball bugs
 - thr not important enough or maybe broken https://discord.com/channels/290013534023057409/290015468939640832/997136405895585802
 - should be possible for a pitcher at DH to enter game as relief pitcher https://discord.com/channels/290013534023057409/290015591216054273/1002304562562093086
 
-when u change a players position the displayed OVR does not change to the OVR at that position https://discord.com/channels/290013534023057409/290015591216054273/991836318709600287
-
 stop on injury spoils live sim https://discord.com/channels/290013534023057409/290015591216054273/966465865090465852
 
 1 and 1 free throws option https://old.reddit.com/r/BasketballGM/comments/t3v3bj/monthly_suggestions_thread/i01a2dk/
@@ -1358,14 +1356,10 @@ put playoff/champ odds on power rankings https://old.reddit.com/r/BasketballGM/c
 
 put position ranks (from power rankings) in roster composition block https://discord.com/channels/290013534023057409/331882115119448065/937446267859107870
 
-Deleting old box scores deletes stat feats from player pages, but they’re all still saved on the stat feat page? I don’t believe they should disappear from a player’s page https://discord.com/channels/290013534023057409/290015591216054273/937547547663278152
-
 load real player info from url/file https://discord.com/channels/290013534023057409/290015591216054273/937276075841572874
 
 use nicidob's model but fit to random players instead of real players, to get linear prog formula that behaves like the current one
 - running average progs https://discord.com/channels/290013534023057409/290015468939640832/936461665862549505
-
-some UI in draft to show you skill labels a player is close to
 
 add options to control expansion team draft pick position
 - FBGM should default to #1

@@ -31,8 +31,8 @@ export const getCommon = (
 		test: {
 			...projectConfig,
 			env: {
-				SPORT: sport,
 				NODE_ENV: "test",
+				SPORT: sport,
 			},
 			setupFiles:
 				environment === "node"

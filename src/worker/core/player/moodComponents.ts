@@ -3,7 +3,7 @@ import { isSport, PHASE, PLAYER } from "../../../common/index.ts";
 import { facilitiesEffectMood } from "../../../common/budgetLevels.ts";
 import type { MoodComponents, Player } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
-import { g, helpers, local } from "../../util/index.ts";
+import { defaultGameAttributes, g, helpers, local } from "../../util/index.ts";
 import { getNegotiationPids } from "../../views/negotiationList.ts";
 
 const getMinFractionDiff = async (pid: number, tid: number) => {
@@ -328,7 +328,9 @@ const moodComponents = async (
 	}
 
 	// Apply difficulty modulation
-	const difficulty = g.get("difficulty");
+	const difficulty = g.get("spectator")
+		? defaultGameAttributes.difficulty
+		: g.get("difficulty");
 	if (g.get("userTids").includes(tid) && !g.get("spectator")) {
 		if (difficulty !== 0) {
 			for (const key of helpers.keys(components)) {

@@ -17,6 +17,8 @@ jobs:
         cache: 'pnpm'
     - name: Install dependencies
       run: pnpm install
+    - name: Install playwright dependencies
+      run: pnpx playwright install-deps
     - name: ESLint
       run: pnpm run lint-js
     - name: TypeScript

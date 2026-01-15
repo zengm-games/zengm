@@ -18,10 +18,10 @@ jobs:
     - name: Install dependencies
       run: pnpm install
     - name: Install playwright dependencies
-      run: pnpx playwright install-deps
+      run: pnpx playwright install --with-deps
     - name: ESLint
       run: pnpm run lint-js
     - name: TypeScript
       run: pnpm run lint-ts
-    - name: Unit tests
+    - name: Tests
       run: pnpm test

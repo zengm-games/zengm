@@ -1,3 +1,7 @@
+players constantly being signed and released https://discord.com/channels/@me/662077709836484618/1461143613776986163
+- happens up until team hits the salary cap
+- getBest is working by teamOvrDiffs, checkRosterSizes is working by player value
+
 custom awards
 - fields
   - formula

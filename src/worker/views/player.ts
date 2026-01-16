@@ -457,7 +457,6 @@ export const getCommon = async (pid?: number, season?: number) => {
 			randomDebutsForeverPids = undefined;
 		}
 	}
-	console.log("bestPos", bestPos);
 
 	return {
 		type: "normal" as const,

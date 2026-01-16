@@ -84,7 +84,7 @@ const PlayersTable = ({
 					pid: p.pid,
 					injury: p.injury,
 					jerseyNumber: p.stats.jerseyNumber,
-					pos: p.ratings.pos,
+					pos: p.bestPos,
 					skills: p.skills,
 					defaultWatch: p.watch,
 					legacyName: p.name,

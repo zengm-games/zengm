@@ -11,6 +11,8 @@ import type {
 import { bySport, isSport, PHASE } from "../../common/index.ts";
 import { sortByPos } from "./roster.ts";
 import { orderBy } from "../../common/utils.ts";
+import { extraStats } from "./hallOfFame.ts";
+import { getPosByGpF } from "../core/season/doAwards.baseball.ts";
 
 const stats = bySport({
 	baseball: ["keyStats"],
@@ -33,7 +35,7 @@ const getPlayerInfo = async (
 		attrs: ["pid", "injury", "watch", "age", "numAllStar"],
 		ratings: ["ovr", "skills", "pos"],
 		season,
-		stats: [...stats, "jerseyNumber", "tid", "abbrev"],
+		stats: [...stats, "jerseyNumber", "tid", "abbrev", ...extraStats],
 		fuzz: true,
 		showNoStats: true,
 		mergeStats: "totOnly",
@@ -45,6 +47,10 @@ const getPlayerInfo = async (
 	p2.abbrev =
 		(await getTeamInfoBySeason(tid, season))?.abbrev ??
 		helpers.getAbbrev(p.tid);
+	p2.bestPos =
+		(isSport("baseball") && p2.stats.gpF
+			? getPosByGpF(p2.stats.gpF)
+			: undefined) ?? p2.ratings.pos;
 
 	return p2;
 };
@@ -98,7 +104,7 @@ const updateAllStarTeams = async (
 
 			// https://stackoverflow.com/a/59923262/786644
 			const returnValue = {
-				errorMessage: "All-Star draft not found",
+				errorMessage: "All-Star teams not found",
 			};
 			return returnValue;
 		}

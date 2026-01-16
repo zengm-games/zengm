@@ -1,3 +1,14 @@
+calcuate bestPos in playersPlus, rather than in processPlayersHallOfFame
+- simplifies a lot of consuming code
+- for baseball, use gpF rather than ratings to determine pos
+  - base on career stats if more than one row is returned, or the returned stats row if only that one is used
+    - a little refactoring is needed to support this - need to separate "identify the stats rows to process" from "process them". similar for ratings - base it only on the season(s) output from playersPlus
+- where to use?
+  - internally in processPlayersHallOfFame, and therefore any place that calls processPlayersHallOfFame
+    - can all of processPlayersHallOfFame go in playersPlus?
+  - anywhere the extraStats variable is used, since that was just for baseball processPlayersHallOfFame
+  - in playersByPos in allStar/create
+
 players constantly being signed and released https://discord.com/channels/@me/662077709836484618/1461143613776986163
 - happens up until team hits the salary cap
 - getBest is working by teamOvrDiffs, checkRosterSizes is working by player value

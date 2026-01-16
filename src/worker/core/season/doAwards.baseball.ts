@@ -136,7 +136,7 @@ export const getPosByGpF = (gpF: (number | undefined)[]) => {
 			maxGP = gp;
 		}
 	}
-	return (POS_NUMBERS_INVERSE as any)[posIndex + 1] ?? "?";
+	return (POS_NUMBERS_INVERSE as unknown as string[])[posIndex + 1];
 };
 
 const getRealFinalsMvp = async (
@@ -308,7 +308,7 @@ const getRealFinalsMvp = async (
 	if (p) {
 		const info = playerArray[0];
 
-		const pos = getPosByGpF(info.gpF);
+		const pos = getPosByGpF(info.gpF) ?? "?";
 
 		return {
 			pid: p.pid,

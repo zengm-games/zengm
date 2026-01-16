@@ -1,5 +1,6 @@
-import { bySport } from "../../common/index.ts";
+import { bySport, isSport } from "../../common/index.ts";
 import { maxBy } from "../../common/utils.ts";
+import { getPosByGpF } from "../core/season/doAwards.baseball.ts";
 
 // Would be better as part of idb.getCopies.playersPlus
 const processPlayersHallOfFame = <
@@ -38,8 +39,24 @@ const processPlayersHallOfFame = <
 
 		const posBySeason: Record<number, string> = {};
 
+		if (isSport("baseball")) {
+			// In baseball, go based on games played on defense by position - this is not ideal for traded players, will just use last entry
+			for (const row of p.stats) {
+				if (!row.playoffs && row.gpF) {
+					const pos = getPosByGpF(row.gpF);
+					if (pos !== undefined) {
+						posBySeason[row.season] = pos;
+					}
+				}
+			}
+		}
+
 		for (const row of p.ratings) {
 			if (row.pos !== undefined && row.season !== undefined) {
+				if (isSport("baseball") && posBySeason[row.season] !== undefined) {
+					// Skip if already found from defensive stats above
+					continue;
+				}
 				posBySeason[row.season] = row.pos;
 			}
 		}
@@ -89,6 +106,7 @@ const processPlayersHallOfFame = <
 		if (bestStats === undefined) {
 			bestStats = p.careerStats;
 		}
+		console.log(posBySeason, posByEWA);
 		if (bestPos === undefined) {
 			bestPos =
 				maxBy(Object.entries(posByEWA), ([, ewa]) => ewa)?.[0] ??

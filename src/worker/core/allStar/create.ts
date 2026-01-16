@@ -104,7 +104,10 @@ const create = async (conditions: Conditions) => {
 			const playersByPos = groupBy(candidates, (p) => {
 				if (isSport("baseball")) {
 					// Find actual played position based on highest gpF value
-					return getPosByGpF(p.currentStats.gpF);
+					const pos = getPosByGpF(p.currentStats.gpF);
+					if (pos !== undefined) {
+						return pos;
+					}
 				}
 
 				return p.ratings.at(-1).pos;

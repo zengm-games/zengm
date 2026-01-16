@@ -302,10 +302,8 @@ export const getCommon = async (pid?: number, season?: number) => {
 	let teamColors;
 	let teamJersey;
 	let bestPos;
-	console.log("hi", p.tid);
 	if (p.tid === PLAYER.RETIRED) {
 		const info = processPlayersHallOfFame([p])[0]!;
-		console.log("info", info);
 		const legacyTid = info.legacyTid;
 		bestPos = info.bestPos;
 

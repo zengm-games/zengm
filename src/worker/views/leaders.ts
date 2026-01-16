@@ -18,6 +18,7 @@ import type {
 import { groupByUnique, range } from "../../common/utils.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { season } from "../core/index.ts";
+import { extraStats } from "./hallOfFame.ts";
 
 export const getCategoriesAndStats = (onlyStat?: string) => {
 	let categories = bySport<
@@ -787,7 +788,7 @@ const updateLeaders = async (
 						? ["season", "ovr", "skills", "pos"]
 						: ["skills", "pos"],
 
-				stats: ["abbrev", "tid", ...stats],
+				stats: ["abbrev", "tid", ...stats, ...extraStats],
 				season: season === "career" ? undefined : season,
 				playoffs: inputs.playoffs === "playoffs",
 				regularSeason: inputs.playoffs === "regularSeason",

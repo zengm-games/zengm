@@ -4,6 +4,7 @@ import type { UpdateEvents, Player } from "../../common/types.ts";
 import { bySport } from "../../common/index.ts";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { extraStats } from "./hallOfFame.ts";
 
 type InfoTemp = {
 	numPlayers: number;
@@ -146,7 +147,7 @@ export const genView = (
 							"jerseyNumber",
 						],
 						ratings: ["season", "ovr", "pos"],
-						stats: ["season", "abbrev", "tid", ...stats],
+						stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
 						fuzz: true,
 					});
 

@@ -8,6 +8,7 @@ import type {
 import { bySport, PHASE } from "../../common/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { orderBy } from "../../common/utils.ts";
+import { extraStats } from "./hallOfFame.ts";
 
 const playerValue = (p: Player<MinimalPlayerRatings>) => {
 	let sum = 0;
@@ -133,7 +134,7 @@ const updateFrivolitiesDraftClasses = async (
 						"jerseyNumber",
 					],
 					ratings: ["season", "ovr", "pos"],
-					stats: ["season", "abbrev", "tid", ...stats],
+					stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
 					fuzz: true,
 				}),
 			),

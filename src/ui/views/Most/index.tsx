@@ -135,7 +135,7 @@ const Most = ({
 					}
 					return value;
 				}),
-				p.ratings.at(-1).pos,
+				p.bestPos,
 				p.draft.year,
 				p.retiredYear === Infinity ? null : p.retiredYear,
 				draftPick,

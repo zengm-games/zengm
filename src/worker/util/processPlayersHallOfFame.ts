@@ -106,7 +106,6 @@ const processPlayersHallOfFame = <
 		if (bestStats === undefined) {
 			bestStats = p.careerStats;
 		}
-		console.log(posBySeason, posByEWA);
 		if (bestPos === undefined) {
 			bestPos =
 				maxBy(Object.entries(posByEWA), ([, ewa]) => ewa)?.[0] ??

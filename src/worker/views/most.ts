@@ -16,6 +16,7 @@ import { bySport, PLAYER } from "../../common/index.ts";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts";
 import goatFormula from "../util/goatFormula.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { extraStats } from "./hallOfFame.ts";
 
 type Most = {
 	value: number;
@@ -93,7 +94,7 @@ const getMostXPlayers = async ({
 			"awards",
 		],
 		ratings: ["season", "ovr", "pos"],
-		stats: ["season", "abbrev", "tid", ...stats],
+		stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
 		fuzz: true,
 		mergeStats: "totOnly",
 	});

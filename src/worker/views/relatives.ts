@@ -8,6 +8,7 @@ import type {
 } from "../../common/types.ts";
 import { bySport } from "../../common/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { extraStats } from "./hallOfFame.ts";
 
 const getRelationText = (
 	gender: GameAttributesLeague["gender"],
@@ -253,7 +254,7 @@ const updatePlayers = async (
 				"jerseyNumber",
 			],
 			ratings: ["season", "ovr", "pos"],
-			stats: ["season", "abbrev", "tid", ...stats],
+			stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
 			fuzz: true,
 		});
 		if (generations.length > 0) {

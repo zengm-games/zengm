@@ -3,6 +3,7 @@ import { g, helpers, processPlayersHallOfFame } from "../util/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 import { bySport } from "../../common/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { extraStats } from "./hallOfFame.ts";
 
 const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	// In theory should update more frequently, but the list is potentially expensive to update and rarely changes
@@ -59,7 +60,7 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"hof",
 			],
 			ratings: ["season", "ovr", "pos"],
-			stats: ["season", "abbrev", "tid", ...stats],
+			stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
 			fuzz: true,
 		});
 

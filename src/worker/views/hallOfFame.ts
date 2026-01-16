@@ -4,6 +4,14 @@ import { g, processPlayersHallOfFame } from "../util/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 
+// gpF is used on processPlayersHallOfFame for baseball
+export const extraStats = bySport({
+	baseball: ["gpF"],
+	basketball: [],
+	football: [],
+	hockey: [],
+});
+
 const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (
 		updateEvents.includes("firstRun") ||
@@ -42,7 +50,7 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"statsTids",
 			],
 			ratings: ["season", "ovr", "pos"],
-			stats: ["season", "abbrev", "tid", ...stats],
+			stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
 			fuzz: true,
 		});
 

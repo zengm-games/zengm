@@ -255,6 +255,8 @@ now that we have worker modules, what can we do with it?
 - code spitting in worker
 - single bundle between ui and worker
   - tricky with blacklist
+- move static files, css into rolldown/vite build?
+  - for generateJsonSchema see 89674d46cd149cc6276cc0bbac0edbc0de15b3e8 but reverted it because i'm worried about cache busting (no hash in file name, and dynamically loading file rather than putting it in build is tricky) and it actually makes the watch build slower because it reruns generateJsonSchema every time (could short circuit based on fs stat)
 
 use import with json attribute for loading json files, rather than special effort to copy/fetch them
 - MAYBE NOT A GOOD IDEA https://jakearchibald.com/2025/importing-vs-fetching-json/ https://x.com/jaffathecake/status/1981010343326540157

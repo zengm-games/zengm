@@ -20,6 +20,7 @@ const fetchCache: Record<string, any> = {};
 	}
 
 	return {
+		ok: true,
 		json: async () => fetchCache[url],
 	};
 };

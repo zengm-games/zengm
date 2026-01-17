@@ -27,7 +27,6 @@ const injectManifest = async () => {
 		globDirectory: "build",
 		globPatterns: [
 			"**/*.{js,css,html}",
-			"files/*",
 			"fonts/*",
 			"gen/*.json",
 			"img/logos-primary/*.svg",

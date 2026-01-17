@@ -64,9 +64,6 @@ const loadData = async () => {
 		return cachedJSON;
 	}
 	const response = await fetch("/gen/real-player-stats.json");
-	if (!response.ok) {
-		throw new Error(`HTTP error ${response.status}`);
-	}
 	cachedJSON = await response.json();
 	return cachedJSON;
 };

@@ -40,9 +40,6 @@ const fetchWrapper = async ({
 		body,
 		credentials,
 	});
-	if (!response.ok) {
-		throw new Error(`HTTP error ${response.status}`);
-	}
 
 	// HACK HACK HACK! Some of my APIs (logout) return no content, rather than JSON
 	if (url.includes("logout.php")) {

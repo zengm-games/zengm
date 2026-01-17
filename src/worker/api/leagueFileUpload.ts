@@ -1,6 +1,7 @@
 import type { ValidateFunction } from "ajv";
 import Ajv from "ajv";
 import { JSONParseStream, type JSONPath } from "json-web-streams";
+import schema from "../../../build/files/league-schema.json";
 import { helpers, toUI } from "../util/index.ts";
 import type { Conditions } from "../../common/types.ts";
 import {
@@ -8,7 +9,6 @@ import {
 	LEAGUE_DATABASE_VERSION,
 } from "../../common/index.ts";
 import type { LeagueDBStoreNames } from "../db/connectLeague.ts";
-import type { generateJsonSchema } from "../../../tools/build/generateJsonSchema.ts";
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
 const cumulativeObjects = [
@@ -65,23 +65,7 @@ export const parseJSON = () => {
 };
 
 // We have one big JSON Schema file for everything, but we need to run it on individual objects as they stream though. So break it up into parts.
-const makeValidators = async () => {
-	let response;
-
-	// Ignore network errors, in which case we just skip validation
-	try {
-		response = await fetch("/files/league-schema.json");
-		if (!response.ok) {
-			throw new Error(`HTTP error ${response.status}`);
-		}
-	} catch (error) {
-		console.error(error);
-		return;
-	}
-	const schema = (await response.json()) as ReturnType<
-		typeof generateJsonSchema
-	>;
-
+const makeValidators = () => {
 	const ajv = new Ajv({
 		allErrors: true,
 		verbose: true,
@@ -130,7 +114,7 @@ const makeValidators = async () => {
 	return validators;
 };
 
-let validators: Awaited<ReturnType<typeof makeValidators>> | undefined;
+let validators: ReturnType<typeof makeValidators> | undefined;
 
 export type BasicInfo = {
 	gameAttributes?: any;
@@ -168,7 +152,7 @@ const getBasicInfo = async ({
 	}
 
 	if (!validators) {
-		validators = await makeValidators();
+		validators = makeValidators();
 	}
 
 	const schemaErrors = [];
@@ -176,11 +160,9 @@ const getBasicInfo = async ({
 	const reader = await stream.pipeThrough(parseJSON()).getReader();
 
 	const requiredPartsNotYetSeen = new Set();
-	if (validators) {
-		for (const [key, { required }] of Object.entries(validators)) {
-			if (required) {
-				requiredPartsNotYetSeen.add(key);
-			}
+	for (const [key, { required }] of Object.entries(validators)) {
+		if (required) {
+			requiredPartsNotYetSeen.add(key);
 		}
 	}
 
@@ -210,7 +192,7 @@ const getBasicInfo = async ({
 			);
 		}
 
-		const currentValidator = validators?.[key];
+		const currentValidator = validators[key];
 		if (currentValidator) {
 			const { validate, required } = currentValidator;
 			validate(value);
@@ -288,7 +270,7 @@ const getBasicInfo = async ({
 		conditions,
 	);
 
-	return { basicInfo, schemaErrors, validationSkipped: !validators };
+	return { basicInfo, schemaErrors };
 };
 
 export const emitProgressStream = (
@@ -460,7 +442,7 @@ const initialCheck = async (
 			),
 		)
 	).pipeThrough(new TextDecoderStream());
-	const { basicInfo, schemaErrors, validationSkipped } = await getBasicInfo({
+	const { basicInfo, schemaErrors } = await getBasicInfo({
 		stream: stream2,
 		includePlayersInBasicInfo,
 		leagueCreationID,
@@ -472,7 +454,6 @@ const initialCheck = async (
 	return {
 		basicInfo,
 		schemaErrors,
-		validationSkipped,
 	};
 };
 

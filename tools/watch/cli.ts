@@ -3,6 +3,7 @@ import { spinners } from "./spinners.ts";
 import { watchCss } from "./watchCss.ts";
 import { watchFiles } from "./watchFiles.ts";
 import { watchJs } from "./watchJs.ts";
+import { watchJsonSchema } from "./watchJsonSchema.ts";
 import { startServer } from "../lib/server.ts";
 
 const param = process.argv[2];
@@ -50,6 +51,14 @@ const updateError = (filename: string, error: Error) => {
 await watchFiles(updateStart, updateEnd, updateError, spinners.eventEmitter);
 
 watchCss(updateStart, updateEnd, updateError);
+
+// Schema is needed for JS bunlde, and watchJsonSchema is async
+await watchJsonSchema(
+	updateStart,
+	updateEnd,
+	updateError,
+	spinners.eventEmitter,
+);
 
 watchJs(updateStart, updateEnd, updateError, spinners.eventEmitter);
 

@@ -626,6 +626,9 @@ const createLeague = async (
 			sizeInBytes = file.size;
 		} else {
 			const response = await fetch(url!);
+			if (!response.ok) {
+				throw new Error(`HTTP error ${response.status}`);
+			}
 			baseStream = response.body as ReadableStream;
 			const size = response.headers.get("content-length");
 			if (size) {

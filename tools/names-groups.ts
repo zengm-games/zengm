@@ -68,6 +68,9 @@ for (const [group, countries] of Object.entries(groups)) {
 			const filePath = path.join(rawFolder, `${type}-${slug}.html`);
 			if (!existsSync(filePath)) {
 				const response = await fetch(`https://forebears.io/${slug}/${type}`);
+				if (!response.ok) {
+					throw new Error(`HTTP error ${response.status}`);
+				}
 				const html = await response.text();
 				await fs.writeFile(filePath, html);
 				console.log("save", filePath);

@@ -3,12 +3,10 @@ import {
 	defineConfig,
 	type TestProjectInlineConfiguration,
 } from "vitest/config";
-import { pluginSportFunctions } from "./tools/lib/rolldownConfig.ts";
-//import { playwright } from "@vitest/browser-playwright";
-//import { playwright } from "@vitest/browser-playwright";
 import type { Sport } from "./tools/lib/getSport.ts";
 import type { ProjectConfig } from "vitest/node";
 import { playwright } from "@vitest/browser-playwright";
+import { sportFunctions } from "./tools/lib/rolldownPlugins/sportFunctions.ts";
 
 const footballTests = ["**/*.football/*.test.ts", "**/*.football.test.ts"];
 
@@ -24,7 +22,7 @@ export const getCommon = (
 		},
 		plugins: [
 			// @ts-expect-error
-			pluginSportFunctions("production", sport),
+			sportFunctions("test", sport),
 		],
 
 		test: {

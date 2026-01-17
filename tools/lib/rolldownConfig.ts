@@ -7,6 +7,7 @@ import blacklist from "rollup-plugin-blacklist";
 import terser from "@rollup/plugin-terser";
 import { visualizer } from "rollup-plugin-visualizer";
 import { sportFunctions } from "./rolldownPlugins/sportFunctions.ts";
+import { jsonSchema } from "./rolldownPlugins/jsonSchema.ts";
 
 export const rolldownConfig = (
 	name: "ui" | "worker",
@@ -32,6 +33,10 @@ export const rolldownConfig = (
 	const plugins: BuildOptions["plugins"] = [
 		sportFunctions(envOptions.nodeEnv, sport),
 	];
+
+	if (name === "worker") {
+		plugins.push(jsonSchema(envOptions.nodeEnv, sport));
+	}
 
 	if (envOptions.nodeEnv === "development") {
 		plugins.push({

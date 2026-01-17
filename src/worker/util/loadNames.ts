@@ -86,6 +86,9 @@ export const initDefaults = async (
 			};
 		} else {
 			const response = await fetch("/gen/names.json");
+			if (!response.ok) {
+				throw new Error(`HTTP error ${response.status}`);
+			}
 			const names = await response.json();
 			defaultNamesCountries = names.countries;
 			defaultNamesGroups = names.groups;
@@ -106,6 +109,9 @@ export const initDefaults = async (
 		// Handle female names
 		if (gender === "female") {
 			const response = await fetch("/gen/names-female.json");
+			if (!response.ok) {
+				throw new Error(`HTTP error ${response.status}`);
+			}
 			const parsed = await response.json();
 			const femaleNames = parsed.countries as Record<
 				string,

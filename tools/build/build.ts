@@ -5,7 +5,6 @@ import { copyFiles } from "./copyFiles.ts";
 import { getSport } from "../lib/getSport.ts";
 import { minifyIndexHtml } from "./minifyIndexHtml.ts";
 import { reset } from "./reset.ts";
-import { createJsonSchemaFile } from "./createJsonSchemaFile.ts";
 
 export const build = async () => {
 	const sport = getSport();
@@ -14,7 +13,6 @@ export const build = async () => {
 
 	await reset();
 	await copyFiles();
-	await createJsonSchemaFile(sport);
 
 	console.log("Bundling JavaScript files...");
 	await buildJs();

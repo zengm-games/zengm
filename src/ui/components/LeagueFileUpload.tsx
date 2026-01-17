@@ -58,12 +58,14 @@ type State = {
 	error: Error | null;
 	schemaErrors: any[];
 	status: "initial" | "checking" | "error" | "done";
+	validationSkipped: boolean;
 };
 
 const initialState: State = {
 	error: null,
 	schemaErrors: [],
 	status: "initial",
+	validationSkipped: false,
 };
 
 const reducer = (state: State, action: any): State => {
@@ -73,6 +75,7 @@ const reducer = (state: State, action: any): State => {
 				error: null,
 				schemaErrors: [],
 				status: "initial",
+				validationSkipped: false,
 			};
 
 		case "schemaErrors":
@@ -86,13 +89,19 @@ const reducer = (state: State, action: any): State => {
 		}
 
 		case "done":
-			return { ...state, error: null, status: "done" };
+			return {
+				...state,
+				error: null,
+				status: "done",
+				validationSkipped: action.validationSkipped,
+			};
 
 		case "checking":
 			return {
 				error: null,
 				schemaErrors: [],
 				status: "checking",
+				validationSkipped: false,
 			};
 
 		default:
@@ -148,8 +157,10 @@ const LeagueFileUpload = ({
 		file,
 		schemaErrors,
 		url,
+		validationSkipped,
 	}: LeagueFileUploadOutput & {
 		schemaErrors: any[];
+		validationSkipped: boolean;
 	}) => {
 		if (schemaErrors.length > 0) {
 			dispatch({
@@ -205,6 +216,7 @@ const LeagueFileUpload = ({
 		if (isMounted.current) {
 			dispatch({
 				type: "done",
+				validationSkipped,
 			});
 		}
 	};
@@ -219,7 +231,7 @@ const LeagueFileUpload = ({
 		});
 
 		try {
-			const { basicInfo, schemaErrors } = await toWorker(
+			const { basicInfo, schemaErrors, validationSkipped } = await toWorker(
 				"leagueFileUpload",
 				"initialCheck",
 				{
@@ -232,6 +244,7 @@ const LeagueFileUpload = ({
 			await afterCheck({
 				basicInfo,
 				schemaErrors,
+				validationSkipped,
 				url,
 			});
 
@@ -268,7 +281,7 @@ const LeagueFileUpload = ({
 		});
 
 		try {
-			const { basicInfo, schemaErrors } = await toWorker(
+			const { basicInfo, schemaErrors, validationSkipped } = await toWorker(
 				"leagueFileUpload",
 				"initialCheck",
 				{
@@ -282,6 +295,7 @@ const LeagueFileUpload = ({
 				basicInfo,
 				file,
 				schemaErrors,
+				validationSkipped,
 			});
 		} catch (error) {
 			if (isMounted.current) {
@@ -329,6 +343,11 @@ const LeagueFileUpload = ({
 				{state.status === "error" ? (
 					<p className="alert alert-danger mt-3">
 						Error: <ErrorMessage error={state.error} />
+					</p>
+				) : null}
+				{state.validationSkipped ? (
+					<p className="alert alert-warning mt-3">
+						Warning: League file validation skipped due to error loading schema.
 					</p>
 				) : null}
 				{state.schemaErrors.length > 0 ? (

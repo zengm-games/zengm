@@ -152,7 +152,7 @@ export const choice = <T>(
 	};
 
 	if (weightInput === undefined) {
-		return x[Math.floor(uniformSeed(getSeed()) * x.length)];
+		return x[Math.floor(uniformSeed(getSeed()) * x.length)]!;
 	}
 
 	let weights;
@@ -169,7 +169,7 @@ export const choice = <T>(
 		if (i === 0) {
 			array[0] = weight;
 		} else {
-			array[i] = array[i - 1] + weight;
+			array[i] = array[i - 1]! + weight;
 		}
 
 		return array;
@@ -177,7 +177,7 @@ export const choice = <T>(
 	const max = cumsums.at(-1)!;
 	const rand = uniformSeed(getSeed()) * max;
 	const ind = cumsums.findIndex((cumsum) => cumsum >= rand);
-	return x[ind];
+	return x[ind]!;
 };
 
 /**

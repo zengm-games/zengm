@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { arrayMoveImmutable } from "array-move";
+import { arrayMove } from "@dnd-kit/sortable";
 import {
 	bySport,
 	isSport,
@@ -107,12 +107,10 @@ const Roster = ({
 	minPayroll,
 	minPayrollAmount,
 	numPlayersOnCourt,
-	numPlayoffRounds,
 	payroll,
 	phase,
 	players,
 	playoffs,
-	playoffsByConf,
 	salaryCap,
 	salaryCapType,
 	season,
@@ -150,9 +148,8 @@ const Roster = ({
 	// Use the result of drag and drop to sort players, before the "official" order comes back as props
 	let playersSorted: typeof players;
 	if (sortedPids !== undefined) {
-		playersSorted = sortedPids.map((pid) => {
-			return players.find((p) => p.pid === pid);
-		});
+		const playersByPid = groupByUnique(players, "pid");
+		playersSorted = sortedPids.map((pid) => playersByPid[pid]);
 	} else {
 		playersSorted = players;
 	}
@@ -278,7 +275,7 @@ const Roster = ({
 					(sortBys === undefined ||
 						(!isSport("basketball") &&
 							sortBys.length === 1 &&
-							sortBys[0][0] === defaultSortCol)) &&
+							sortBys[0]![0] === defaultSortCol)) &&
 					((isSport("basketball") &&
 						i === numPlayersOnCourt - 1 &&
 						season === currentSeason) ||
@@ -295,7 +292,7 @@ const Roster = ({
 					jerseyNumber: p.stats.jerseyNumber,
 					season,
 					skills: p.ratings.skills,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
@@ -401,10 +398,8 @@ const Roster = ({
 				luxuryTaxAmount={luxuryTaxAmount}
 				minPayroll={minPayroll}
 				minPayrollAmount={minPayrollAmount}
-				numPlayoffRounds={numPlayoffRounds}
 				openRosterSpots={maxRosterSize - players.length}
 				players={players}
-				playoffsByConf={playoffsByConf}
 				season={season}
 				payroll={payroll}
 				profit={profit}
@@ -414,6 +409,7 @@ const Roster = ({
 				showTradingBlock={showTradingBlock}
 				t={t}
 				tid={tid}
+				userTid={userTid}
 			/>
 
 			{showSpectatorWarning ? (
@@ -533,11 +529,7 @@ const Roster = ({
 										return;
 									}
 									const pids = players.map((p) => p.pid);
-									const newSortedPids = arrayMoveImmutable(
-										pids,
-										oldIndex,
-										newIndex,
-									);
+									const newSortedPids = arrayMove(pids, oldIndex, newIndex);
 									setSortedPids(newSortedPids);
 									await toWorker("main", "reorderRosterDrag", newSortedPids);
 								},

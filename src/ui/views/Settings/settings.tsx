@@ -5,29 +5,37 @@ import {
 	DIFFICULTY,
 	GAME_NAME,
 	isSport,
-	SPORT_HAS_REAL_PLAYERS,
+	REAL_PLAYERS_INFO,
 	TIEBREAKERS,
 	WEBSITE_ROOT,
 } from "../../../common/index.ts";
 import { toWorker, helpers } from "../../util/index.ts";
-import type { ReactNode } from "react";
+import type { ChangeEvent, CSSProperties, ReactNode } from "react";
 import type { Category, Decoration, FieldType, Key, Values } from "./types.ts";
 import type { Settings } from "../../../worker/views/settings.ts";
 import { draftTypeDescriptions } from "../../../common/draftLottery.ts";
 import defaultGameAttributes, {
 	gameAttributesKeysOtherSports,
 } from "../../../common/defaultGameAttributes.ts";
+import type { HandleChange, HandleChangeRaw } from "./SettingsFormOptions.tsx";
+import type { State } from "./SettingsForm.tsx";
+import RowsEditor from "./RowsEditor.tsx";
+import PlayerBioInfo2 from "./PlayerBioInfo.tsx";
+import type { GameAttributesLeague } from "../../../common/types.ts";
+import { parseCurrencyFormat } from "../../util/parseCurrencyFormat.ts";
 
 export const descriptions = {
 	difficulty:
 		"Increasing difficulty makes AI teams more reluctant to trade with you, makes players less likely to sign with you, and makes it harder to turn a profit.",
 };
 
+type GodModeRequired = "always" | "existingLeagueOnly" | undefined;
+
 type Setting = {
 	category: Category;
 	key: Key;
 	name: string;
-	godModeRequired?: "always" | "existingLeagueOnly";
+	godModeRequired?: GodModeRequired;
 	type: FieldType;
 	decoration?: Decoration;
 	values?: Values;
@@ -48,7 +56,15 @@ type Setting = {
 		newLeague?: boolean;
 		realPlayers?: boolean;
 	}) => boolean | undefined;
-	customForm?: true;
+	customForm?: (props: {
+		disabled: boolean;
+		godModeRequired: GodModeRequired;
+		handleChange: HandleChange;
+		handleChangeRaw: HandleChangeRaw;
+		id: string;
+		inputStyle: CSSProperties;
+		state: State;
+	}) => ReactNode;
 	hidden?: true;
 	maxWidth?: true;
 
@@ -79,7 +95,7 @@ export const settings: Setting[] = (
 				{ key: "all", value: "All seasons, teams, and players" },
 			],
 		},
-		...(SPORT_HAS_REAL_PLAYERS
+		...(REAL_PLAYERS_INFO
 			? ([
 					{
 						category: "New League",
@@ -163,8 +179,10 @@ export const settings: Setting[] = (
 							<>
 								<p>
 									<p>
-										<b>Random debuts:</b> Any real players not in your league
-										will appear as draft prospects.
+										<b>Random debuts:</b> Every player's draft year is
+										randomized. Starting teams (unless they already have
+										players) and future draft classes are all random
+										combinations of past, current, and future real players.
 									</p>
 									<p>
 										<b>Random debuts forever:</b> Like random debuts, except
@@ -192,8 +210,9 @@ export const settings: Setting[] = (
 						descriptionLong: (
 							<>
 								<p>
-									<b>Random debuts:</b> Any real players not in your league will
-									appear as draft prospects.
+									<b>Random debuts:</b> Every player's draft year is randomized.
+									Starting teams and future draft classes are all random
+									combinations of past, current, and future real players.
 								</p>
 								<p>
 									<b>Random debuts forever:</b> Like random debuts, except when
@@ -232,7 +251,7 @@ export const settings: Setting[] = (
 			showOnlyIf: ({ newLeague, hasPlayers, realPlayers }) =>
 				newLeague &&
 				((hasPlayers && realPlayers) ||
-					(SPORT_HAS_REAL_PLAYERS && !hasPlayers && !realPlayers)),
+					(REAL_PLAYERS_INFO && !hasPlayers && !realPlayers)),
 			type: "string",
 			values: [
 				{ key: "rookie", value: "Based on rookie season stats" },
@@ -471,8 +490,8 @@ export const settings: Setting[] = (
 			name: "# First Round Byes",
 			godModeRequired: "existingLeagueOnly",
 			type: "int",
-			description:
-				"Number of playoff teams who will get a bye in the first round. For leagues with two conferences, byes will be split evenly across conferences.",
+			descriptionLong:
+				'Number of playoff teams who will get a bye in the first round. If "Split By Conference" is enabled, byes will be divided evenly into each conference, and it will round up if necessary so every conference gets the same number of byes. For instance if you have 4 conferences and you put "2" in here, it will round up to 4 total byes (one in each conference).',
 			validator: (value) => {
 				if (value < 0) {
 					throw new Error("Value cannot be less than 0");
@@ -996,7 +1015,7 @@ export const settings: Setting[] = (
 						If you set it too high and run out of players, then you'll have to
 						use God Mode to either create more or bring some back from the dead.
 					</p>
-					{SPORT_HAS_REAL_PLAYERS ? (
+					{REAL_PLAYERS_INFO ? (
 						<p>
 							If you're using the built-in rosters with real players, please be
 							aware that real players can never experience tragic deaths, no
@@ -1011,7 +1030,17 @@ export const settings: Setting[] = (
 			key: "tragicDeaths",
 			name: "Tragic Death Types",
 			type: "custom",
-			customForm: true,
+			customForm: ({ disabled, handleChangeRaw, godModeRequired, state }) => {
+				return (
+					<RowsEditor
+						defaultValue={state.tragicDeaths}
+						disabled={disabled}
+						godModeRequired={godModeRequired}
+						onChange={handleChangeRaw("tragicDeaths")}
+						type="tragicDeaths"
+					/>
+				);
+			},
 		},
 		{
 			category: "Events",
@@ -1402,8 +1431,20 @@ export const settings: Setting[] = (
 			key: "playoffsByConf",
 			name: "Split By Conference",
 			godModeRequired: "existingLeagueOnly",
-			descriptionLong:
-				"If your league has two conferences and there are enough teams in each conference to fill up half of the playoff bracket, then enabling this setting will put the top N teams of each conference into separate sides of the bracket.",
+			descriptionLong: (
+				<>
+					<p>
+						If your league has two conferences and there are enough teams in
+						each conference to fill up half of the playoff bracket, then
+						enabling this setting will put the top N teams of each conference
+						into separate sides of the bracket.
+					</p>
+					<p>
+						This also works for any power of two - like 4 conferences, 8
+						conferences, 16 conferences, etc.
+					</p>
+				</>
+			),
 			type: "bool",
 		},
 		{
@@ -1458,7 +1499,17 @@ export const settings: Setting[] = (
 			type: "custom",
 			description:
 				"Customize the home countries and names of generated players.",
-			customForm: true,
+			customForm: ({ disabled, handleChangeRaw, godModeRequired, state }) => {
+				return (
+					<PlayerBioInfo2
+						defaultValue={state.playerBioInfo}
+						disabled={disabled}
+						godModeRequired={godModeRequired}
+						onChange={handleChangeRaw("playerBioInfo")}
+						gender={state.gender as any}
+					/>
+				);
+			},
 		},
 		{
 			category: "Players",
@@ -1781,7 +1832,7 @@ export const settings: Setting[] = (
 		{
 			category: "Tendencies",
 			key: "foulRateFactor",
-			name: `${isSport("football") ? "Penalty" : "Foul"} Rate Factor`,
+			name: `${isSport("basketball") ? "Foul" : "Penalty"} Rate Factor`,
 			godModeRequired: "always",
 			type: "float",
 			description: bySport({
@@ -1790,7 +1841,7 @@ export const settings: Setting[] = (
 					"The baseline rates for shooting and non-shooting fouls are multiplied by this number.",
 				football:
 					"The baseline rate for penalties is multiplied by this number. Max is 10 because beyond that there is basically a penalty every play.",
-				hockey: undefined,
+				hockey: "The baseline rate for penalties is multiplied by this number.",
 			}),
 			validator: (value) => {
 				if (isSport("football") && value > 10) {
@@ -2031,7 +2082,7 @@ export const settings: Setting[] = (
 				"The probability of a takeaway happening is multiplied by this number.",
 		},
 		{
-			category: "Players",
+			category: "Real Players",
 			key: "realPlayerDeterminism",
 			name: "Real Player Determinism",
 			godModeRequired: "existingLeagueOnly",
@@ -2062,7 +2113,7 @@ export const settings: Setting[] = (
 			},
 		},
 		{
-			category: "Players",
+			category: "Real Players",
 			key: "rpdPot",
 			name: "RPD Affects Potential",
 			godModeRequired: "always",
@@ -2089,6 +2140,40 @@ export const settings: Setting[] = (
 						setting because the Pot rating is so important in player value that
 						the AI can't be tricked into drafting players near their real life
 						draft positions.
+					</p>
+				</>
+			),
+		},
+		{
+			category: "Real Players",
+			key: "forceRetireRealPlayers",
+			name: "Force Retire Real Players",
+			godModeRequired: "always",
+			type: "bool",
+			description:
+				"This makes real players retire at the same age they did in real life.",
+		},
+		{
+			category: "Real Players",
+			key: "forceHistoricalRosters",
+			name: "Force Historical Rosters",
+			godModeRequired: "always",
+			type: "bool",
+			descriptionLong: (
+				<>
+					<p>
+						Every preseason, all real players will be moved to the same team
+						they played for in real life.
+					</p>
+					<p>
+						While this is enabled, various other settings will always be
+						applied, such as enabling Force Retire Real Players, disabling
+						tradable draft picks, disabling AI-to-AI trades, and disabling
+						tragic deaths.
+					</p>
+					<p>
+						This setting will automatically turn off after the current season (
+						{REAL_PLAYERS_INFO?.MAX_SEASON}).
 					</p>
 				</>
 			),
@@ -2132,7 +2217,7 @@ export const settings: Setting[] = (
 					value > output.quarterLength
 				) {
 					throw new Error(
-						"Value must be less than or equal to the quarter length",
+						"Value must be less than or equal to the period length",
 					);
 				}
 			},
@@ -2178,16 +2263,35 @@ export const settings: Setting[] = (
 			name: "Period Length (minutes)",
 			godModeRequired: "always",
 			type: "float",
+			validator: (value) => {
+				if (value < 0) {
+					throw new Error("Value must be greater than or equal to 0");
+				}
+			},
 		},
 		{
 			category: "Game Simulation",
-			key: "homeCourtAdvantage",
-			name: `Home ${helpers.upperCaseFirstLetter(COURT)} Advantage`,
-			godModeRequired: "always",
+			key: "overtimeLength",
+			name: "Overtime Period Length (minutes)",
 			type: "float",
-			decoration: "percent",
+			validator: (value) => {
+				if (value <= 0) {
+					throw new Error("Value must be greater than 0");
+				}
+			},
+		},
+		{
+			category: "Game Simulation",
+			key: "overtimeLengthPlayoffs",
+			name: "Playoff Overtime Period Length (minutes)",
+			type: "floatOrNull",
 			description:
-				"This is the percentage boost/penalty given to home/away player ratings. Default is 1%.",
+				"Leave blank and it will be the same as the normal Overtime Period Length.",
+			validator: (value) => {
+				if (value !== null && value <= 0) {
+					throw new Error("Value must be blank or greater than 0");
+				}
+			},
 		},
 		{
 			category: "Game Simulation",
@@ -2360,7 +2464,41 @@ export const settings: Setting[] = (
 			type: "int",
 			description:
 				"This will stop game simulation if one of your players is injured for more than N games. In auto play mode (Tools > Auto Play Seasons), this has no effect.",
-			customForm: true,
+			customForm: ({ disabled, handleChange, id, inputStyle, state }) => {
+				const key2 = "stopOnInjury";
+				const checked = state[key2] === "true";
+				return (
+					<div style={inputStyle} className="d-flex align-items-center">
+						<div
+							className="form-check form-switch"
+							title={checked ? "Enabled" : "Disabled"}
+						>
+							<input
+								type="checkbox"
+								className="form-check-input"
+								checked={checked}
+								disabled={disabled}
+								onChange={handleChange("stopOnInjury", "bool")}
+								id={id + "2"}
+								value={state[key2]}
+							/>
+							<label className="form-check-label" htmlFor={id + "2"} />
+						</div>
+						<div className="input-group">
+							<input
+								id={id}
+								disabled={!checked || disabled}
+								className="form-control"
+								type="text"
+								onChange={handleChange("stopOnInjuryGames", "int")}
+								value={state.stopOnInjuryGames}
+								inputMode="numeric"
+							/>
+							<div className="input-group-text">Games</div>
+						</div>
+					</div>
+				);
+			},
 			partners: ["stopOnInjury"],
 		},
 		{
@@ -2368,7 +2506,17 @@ export const settings: Setting[] = (
 			key: "injuries",
 			name: "Injury Types",
 			type: "custom",
-			customForm: true,
+			customForm: ({ disabled, handleChangeRaw, godModeRequired, state }) => {
+				return (
+					<RowsEditor
+						defaultValue={state.injuries}
+						disabled={disabled}
+						godModeRequired={godModeRequired}
+						onChange={handleChangeRaw("injuries")}
+						type="injuries"
+					/>
+				);
+			},
 		},
 		{
 			category: "General",
@@ -2379,11 +2527,180 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "General",
-			key: "autoDeleteOldBoxScores",
-			name: "Auto Delete Old Box Scores",
-			type: "bool",
-			description:
-				"This will automatically delete box scores older than the past three seasons because box scores use a lot of disk space. See Tools > Delete Old Data for more.",
+			key: "saveOldBoxScores",
+			name: "Save Old Box Scores",
+			type: "custom",
+			customForm: ({ disabled, handleChangeRaw, id, state }) => {
+				const saveOldBoxScores = state.saveOldBoxScores;
+
+				type NormalKey = Exclude<keyof typeof saveOldBoxScores, "pastSeasons">;
+
+				const commonRows: {
+					key: NormalKey;
+					title: string;
+				}[] = [
+					{
+						key: "note",
+						title: "Games with notes",
+					},
+					{
+						key: "playoffs",
+						title: "Playoff games",
+					},
+					{
+						key: "finals",
+						title: "Finals games",
+					},
+					{
+						key: "playerFeat",
+						title: "Games with statistical feats",
+					},
+
+					// Only basketball has clutchPlays currently, so no point showing this option for others
+					...(bySport({
+						baseball: false,
+						basketball: true,
+						football: false,
+						hockey: false,
+					})
+						? [
+								{
+									key: "clutchPlays",
+									title: "Games with clutch plays",
+								} as const,
+							]
+						: []),
+				];
+
+				const SELECT_WIDTH = 80;
+
+				const myHandleChange = handleChangeRaw("saveOldBoxScores");
+
+				const handleChangeSelect =
+					(key: NormalKey) => (event: ChangeEvent<HTMLSelectElement>) => {
+						myHandleChange({
+							...saveOldBoxScores,
+							[key]:
+								event.target.value === "none"
+									? undefined
+									: (event.target.value as any),
+						});
+					};
+
+				return (
+					<div className="d-flex flex-column gap-1">
+						<div className="d-flex align-items-center justify-content-end gap-2">
+							<div>
+								Past{" "}
+								<input
+									disabled={disabled}
+									type="text"
+									className="form-control form-control-sm d-inline-block"
+									value={saveOldBoxScores.pastSeasons}
+									style={{ width: 35 }}
+									onChange={(event) => {
+										myHandleChange({
+											...saveOldBoxScores,
+											pastSeasons: event.target.value,
+										});
+									}}
+								/>{" "}
+								seasons
+							</div>
+							<select
+								disabled={disabled}
+								className="form-select form-select-sm"
+								value={saveOldBoxScores.pastSeasonsType ?? "none"}
+								style={{ width: SELECT_WIDTH }}
+								onChange={handleChangeSelect("pastSeasonsType")}
+							>
+								<option value="your">Your team</option>
+								<option value="all">All</option>
+								<option value="none">None</option>
+							</select>
+						</div>
+						{commonRows.map(({ key, title }) => {
+							return (
+								<div
+									key={key}
+									className="d-flex align-items-center justify-content-end gap-2"
+								>
+									<div>{title}</div>
+									<select
+										disabled={disabled}
+										className="form-select form-select-sm"
+										value={saveOldBoxScores[key] ?? "none"}
+										style={{ width: SELECT_WIDTH }}
+										onChange={handleChangeSelect(key)}
+									>
+										<option value="your">Your team</option>
+										<option value="all">All</option>
+										<option value="none">None</option>
+									</select>
+								</div>
+							);
+						})}
+						<div className="d-flex align-items-center justify-content-end gap-2">
+							<div>All-Star Games</div>
+							<select
+								disabled={disabled}
+								className="form-select form-select-sm"
+								value={saveOldBoxScores.allStar ?? "none"}
+								style={{ width: SELECT_WIDTH }}
+								onChange={handleChangeSelect("allStar")}
+							>
+								<option value="all">All</option>
+								<option value="none">None</option>
+							</select>
+						</div>
+					</div>
+				);
+			},
+			descriptionLong: (
+				<>
+					<p>
+						Box scores take up a lot of disk space, so by default they
+						eventually are deleted. Box scores from the current season are
+						always saved. The options here allow you to save additional box
+						scores from past seasons.
+					</p>
+					<p>
+						Any box score that meets at least one of the selected criteria is
+						saved. For example, if you have "Playoff games" set to "All" and
+						"Games with statistical feats" set to "None", all playoff games will
+						be saved, including those with statistical feats.
+					</p>
+					<p>To keep all past seasons, enter "all" instead of a number.</p>
+				</>
+			),
+			stringify: (
+				value: GameAttributesLeague["saveOldBoxScores"],
+			): State["saveOldBoxScores"] => {
+				return {
+					...value,
+					pastSeasons: String(value.pastSeasons),
+				};
+			},
+			parse: (
+				value: State["saveOldBoxScores"],
+			): GameAttributesLeague["saveOldBoxScores"] => {
+				let pastSeasons: "all" | number;
+				if (value.pastSeasons === "all") {
+					pastSeasons = "all";
+				} else {
+					pastSeasons = Number.parseInt(value.pastSeasons);
+					if (Number.isNaN(pastSeasons) || pastSeasons < 0) {
+						throw new Error(
+							'Invalid number of seasons - should be a positive integer or "all"',
+						);
+					}
+				}
+
+				return {
+					...value,
+					pastSeasons,
+				};
+			},
 		},
 		{
 			category: "UI",
@@ -2415,6 +2732,43 @@ export const settings: Setting[] = (
 				"This will show a player's birth country flag in most places his name is displayed.",
 		},
 		{
+			category: "UI",
+			key: "currencyFormat",
+			name: "Currency Format",
+			type: "custom",
+			descriptionLong: (
+				<>
+					<p>
+						When displaying an amount of money, it will take this text and
+						replace <code>x.y</code> with the amount. The default is{" "}
+						<code>$x.y</code> for US-style currency formatting, but you can put
+						anything you want before or after the <code>x.y</code> part.
+					</p>
+					<p>
+						For example, some countries have a space between the symbol and
+						number like South Korea <code>₩ x.y</code> or put the symbol in the
+						back like Turkey <code>x.y ₺</code>
+					</p>
+					<p>
+						And some countries use a comma instead of a period for the decimal
+						separator, which you can do by changing <code>x.y</code> to{" "}
+						<code>x,y</code>. For example Euros like <code>x,y €</code>
+					</p>
+				</>
+			),
+			parse: (value) => {
+				const parsed = parseCurrencyFormat(value);
+				if (parsed === undefined) {
+					throw new Error("Must contain x.y or x,y");
+				}
+
+				return parsed;
+			},
+			stringify: (value: GameAttributesLeague["currencyFormat"]) => {
+				return `${value[0]}x${value[1]}y${value[2]}`;
+			},
+		},
+		{
 			category: "Players",
 			key: "goatFormula",
 			name: "GOAT Formula",
@@ -2432,8 +2786,30 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Game Simulation",
+			key: "homeCourtAdvantage",
+			name: `Home ${helpers.upperCaseFirstLetter(COURT)} Advantage`,
+			godModeRequired: "always",
+			type: "float",
+			decoration: "percent",
+			description:
+				"This is the percentage boost/penalty given to home/away player ratings. Default is 1%.",
+		},
+		{
+			category: "Game Simulation",
+			key: "scrimmageTouchbackKickoff",
+			name: "Kickoff Touchback Yards",
+			godModeRequired: "always",
+			type: "int",
+			validator: (value) => {
+				if (value < 1 || value > 99) {
+					throw new Error("Value must be between 1 and 99");
+				}
+			},
+		},
+		{
+			category: "Game Simulation",
 			key: "numPlayersOnCourt",
-			name: `# Players On ${COURT}`,
+			name: `# Players On ${helpers.upperCaseFirstLetter(COURT)}`,
 			godModeRequired: "always",
 			type: "int",
 			description: "By default BBGM is 5-on-5, but you can change that here",

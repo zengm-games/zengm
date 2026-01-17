@@ -18,16 +18,12 @@ const updateAllStarThree = async (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes") ||
 		updateEvents.includes("allStarThree") ||
-		updateEvents.includes("watchList") ||
 		season !== state.season
 	) {
 		const allStars = await allStar.getOrCreate(season);
 		const three = allStars?.three;
 		if (three === undefined) {
-			if (
-				season === g.get("season") &&
-				g.get("phase") <= PHASE.REGULAR_SEASON
-			) {
+			if (season === g.get("season") && g.get("phase") < PHASE.PLAYOFFS) {
 				return {
 					redirectUrl: helpers.leagueUrl(["all_star", "three", season - 1]),
 				};
@@ -90,9 +86,9 @@ const updateAllStarThree = async (
 		const godMode = g.get("godMode");
 
 		const started =
-			three.rounds[0].results.length > 0 &&
-			three.rounds[0].results[0].racks.length > 0 &&
-			three.rounds[0].results[0].racks[0].length > 0;
+			three.rounds[0]!.results.length > 0 &&
+			three.rounds[0]!.results[0]!.racks.length > 0 &&
+			three.rounds[0]!.results[0]!.racks[0]!.length > 0;
 
 		let allPossibleContestants: {
 			pid: number;

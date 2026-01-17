@@ -28,15 +28,11 @@ const findPrevNextGids = (games: Game[], currentGid: number) => {
 	let nextGid;
 	let currentGidInList = false;
 
-	for (let i = 0; i < games.length; i++) {
-		if (games[i].gid === currentGid) {
+	for (const [i, game] of games.entries()) {
+		if (game.gid === currentGid) {
 			currentGidInList = true;
-			if (i > 0) {
-				nextGid = games[i - 1].gid;
-			}
-			if (i < games.length - 1) {
-				prevGid = games[i + 1].gid;
-			}
+			nextGid = games[i - 1]?.gid;
+			prevGid = games[i + 1]?.gid;
 			break;
 		}
 	}
@@ -55,10 +51,11 @@ export const NoGamesMessage = ({
 			<>
 				{" "}
 				By default, box scores from old seasons are automatically deleted after
-				3 years.{" "}
+				2 seasons. You can edit this behavior with the{" "}
 				<a href={helpers.leagueUrl(["settings"])}>
-					You can change this behavior on the League Settings page.
+					Save Old Box Scores setting on the League Settings page
 				</a>
+				.
 			</>
 		) : null}
 	</div>

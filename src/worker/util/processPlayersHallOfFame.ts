@@ -1,5 +1,6 @@
-import { bySport } from "../../common/index.ts";
+import { bySport, isSport } from "../../common/index.ts";
 import { maxBy } from "../../common/utils.ts";
+import { getPosByGpF } from "../core/season/doAwards.baseball.ts";
 
 // Would be better as part of idb.getCopies.playersPlus
 const processPlayersHallOfFame = <
@@ -36,10 +37,26 @@ const processPlayersHallOfFame = <
 
 		const hasSeasonWithGamesPlayed = p.stats.some((ps) => ps.gp > 0);
 
-		const posBySeason: Record<number, string | undefined> = {};
+		const posBySeason: Record<number, string> = {};
+
+		if (isSport("baseball")) {
+			// In baseball, go based on games played on defense by position - this is not ideal for traded players, will just use last entry
+			for (const row of p.stats) {
+				if (!row.playoffs && row.gpF) {
+					const pos = getPosByGpF(row.gpF);
+					if (pos !== undefined) {
+						posBySeason[row.season] = pos;
+					}
+				}
+			}
+		}
 
 		for (const row of p.ratings) {
 			if (row.pos !== undefined && row.season !== undefined) {
+				if (isSport("baseball") && posBySeason[row.season] !== undefined) {
+					// Skip if already found from defensive stats above
+					continue;
+				}
 				posBySeason[row.season] = row.pos;
 			}
 		}
@@ -98,7 +115,7 @@ const processPlayersHallOfFame = <
 		const legacyTid = Number.parseInt(
 			Object.keys(teamSums).reduce(
 				(teamA: any, teamB: any) =>
-					teamSums[teamA] > teamSums[teamB] ? teamA : teamB,
+					teamSums[teamA]! > teamSums[teamB]! ? teamA : teamB,
 				-1,
 			),
 		);

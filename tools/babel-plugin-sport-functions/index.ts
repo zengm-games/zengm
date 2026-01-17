@@ -47,9 +47,9 @@ export const babelPluginSportFunctions = (
 						// into either true or false, depending on if the current sport is basketball or not.
 
 						const argument = path.node.arguments[0];
-						if (argument.type !== "StringLiteral") {
+						if (argument?.type !== "StringLiteral") {
 							throw new Error(
-								`Unexpected isSport argument type "${argument.type}"`,
+								`Unexpected isSport argument type "${argument?.type}"`,
 							);
 						}
 
@@ -83,15 +83,14 @@ export const babelPluginSportFunctions = (
 						// const whatever = "default thing";
 
 						const argument = path.node.arguments[0];
-						if (argument.type !== "ObjectExpression") {
+						if (argument?.type !== "ObjectExpression") {
 							throw new Error(
-								`Unexpected bySport argument type "${argument.type}"`,
+								`Unexpected bySport argument type "${argument?.type}"`,
 							);
 						}
 
 						const properties = argument.properties;
-						const propertiesByKey: Record<string, ObjectProperty | undefined> =
-							{};
+						const propertiesByKey: Record<string, ObjectProperty> = {};
 						for (const property of properties) {
 							if (property.type !== "ObjectProperty") {
 								throw new Error(

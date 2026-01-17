@@ -3,6 +3,7 @@ import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEven
 import { helpers, local } from "./index.ts";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim.football/PlayByPlayLogger.ts";
 import type { ReactNode } from "react";
+import { formatClock } from "../../common/formatClock.ts";
 
 let playersByPidGid: number | undefined;
 let playersByPid:
@@ -173,22 +174,6 @@ export const getScoreInfoOld = (text: string) => {
 			sPts: undefined as undefined | number,
 		};
 	}
-};
-
-// Convert clock in minutes to min:sec, like 1.5 -> 1:30
-export const formatClock = (clock: number) => {
-	const secNum = Math.ceil((clock % 1) * 60);
-
-	let sec;
-	if (secNum >= 60) {
-		sec = "59";
-	} else if (secNum < 10) {
-		sec = `0${secNum}`;
-	} else {
-		sec = `${secNum}`;
-	}
-
-	return `${Math.floor(clock)}:${sec}`;
 };
 
 export const formatDownAndDistance = (
@@ -414,7 +399,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 				) : (
 					<>
 						{event.offsetStatus === "overrule" ? "overruled" : "declined"}{" "}
-						<span className="glyphicon glyphicon-stop text-secondary" />
+						<span className="glyphicon glyphicon-stop text-body-secondary" />
 					</>
 				);
 			decisionText = (
@@ -448,9 +433,17 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 			</>
 		);
 	} else if (event.type === "extraPointAttempt") {
-		text = "Extra point attempt";
+		text = `${event.names[0]} comes on for an extra point attempt`;
+	} else if (event.type === "fieldGoalAttempt") {
+		text = `${event.names[0]} comes on for a ${
+			event.yds
+		} yard field goal attempt`;
 	} else if (event.type === "twoPointConversion") {
 		text = "Two-point conversion attempt";
+	} else if (event.type === "goingForItOn4th") {
+		text = "The offense stays on the field, they're going for it on 4th down!";
+	} else if (event.type === "puntTeam") {
+		text = "The punt team takes the field";
 	} else if (event.type === "twoPointConversionFailed") {
 		text = "Two-point conversion failed";
 	} else if (event.type === "turnoverOnDowns") {
@@ -680,8 +673,10 @@ const processLiveGameEvents = ({
 						boxScore.teams[otherT].abbrev,
 					);
 
-					textParts.push(formatDownAndDistance(e.down, e.toGo, e.scrimmage));
-					textParts.push(fieldPos);
+					textParts.push(
+						formatDownAndDistance(e.down, e.toGo, e.scrimmage),
+						fieldPos,
+					);
 				}
 				t = actualT;
 
@@ -880,7 +875,7 @@ const processLiveGameEvents = ({
 				// Realize the flag by replacing the blank flag with the penalty details. Need to search prior plays in case the current play is a sub-play (like interception return, but flag was for offsides before the interception)
 				let flagFound = false;
 				for (let i = sportState.plays.length - 1; i >= 0; i--) {
-					const flagPlay = sportState.plays[i];
+					const flagPlay = sportState.plays[i]!;
 					const flagIndex = flagPlay.flags.indexOf(null);
 					if (flagIndex >= 0) {
 						flagPlay.flags[flagIndex] = {

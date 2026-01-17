@@ -5,7 +5,7 @@ import {
 	EXHIBITION_GAME_SETTINGS,
 	isSport,
 	PHASE,
-	SPORT_HAS_REAL_PLAYERS,
+	REAL_PLAYERS_INFO,
 } from "../../common/index.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 import type {
@@ -23,17 +23,10 @@ import {
 	safeLocalStorage,
 	toWorker,
 } from "../util/index.ts";
-import {
-	applyRealTeamInfos,
-	MAX_SEASON,
-	MIN_SEASON,
-} from "./NewLeague/index.tsx";
+import { applyRealTeamInfos } from "./NewLeague/index.tsx";
 import SettingsForm from "./Settings/SettingsForm.tsx";
 import { orderBy, range } from "../../common/utils.ts";
-
-export const getRandomSeason = (start: number, end: number) => {
-	return Math.floor(Math.random() * (1 + end - start)) + start;
-};
+import { choice, randInt } from "../../common/random.ts";
 
 export type ExhibitionTeam = {
 	season: number;
@@ -164,8 +157,8 @@ const SelectTeam = ({
 		if (lid === "real") {
 			newLeague = {
 				type: "real",
-				seasonStart: MIN_SEASON,
-				seasonEnd: MAX_SEASON,
+				seasonStart: REAL_PLAYERS_INFO?.MIN_SEASON ?? 0,
+				seasonEnd: REAL_PLAYERS_INFO?.MAX_SEASON ?? 0,
 			};
 		} else {
 			const { seasonStart, seasonEnd } = await toWorker(
@@ -220,8 +213,7 @@ const SelectTeam = ({
 		const prevTeam = teams.find((t) => t.tid === tid);
 		let newTeam;
 		if (tidInput === "random") {
-			const index = Math.floor(Math.random() * newTeams.length);
-			newTeam = newTeams[index];
+			newTeam = choice(newTeams);
 		} else {
 			if (typeof tidInput === "number") {
 				newTeam = newTeams.find((t) => t.tid === tidInput);
@@ -230,7 +222,7 @@ const SelectTeam = ({
 				newTeam =
 					newTeams.find((t) => t.abbrev === prevTeam?.abbrev) ??
 					newTeams.find((t) => t.region === prevTeam?.region) ??
-					newTeams[0];
+					newTeams[0]!;
 			}
 		}
 
@@ -250,7 +242,7 @@ const SelectTeam = ({
 			// We only want to do this once, on initial load ideally, but we may have to wait for leagues to be provided
 			if (
 				!awaitingInitialLoad.current ||
-				(!SPORT_HAS_REAL_PLAYERS && leagues.length === 0)
+				(!REAL_PLAYERS_INFO && leagues.length === 0)
 			) {
 				return;
 			}
@@ -269,12 +261,9 @@ const SelectTeam = ({
 			}
 
 			const league = await loadLeague(
-				SPORT_HAS_REAL_PLAYERS ? "real" : leagues[0].lid,
+				REAL_PLAYERS_INFO ? "real" : leagues[0]!.lid,
 			);
-			const randomSeason = getRandomSeason(
-				league.seasonStart,
-				league.seasonEnd,
-			);
+			const randomSeason = randInt(league.seasonStart, league.seasonEnd);
 			setSeason(randomSeason);
 			await loadTeams(league, randomSeason, "random");
 		};
@@ -310,7 +299,7 @@ const SelectTeam = ({
 							await loadTeams(league, league.seasonEnd);
 						}}
 					>
-						{SPORT_HAS_REAL_PLAYERS ? (
+						{REAL_PLAYERS_INFO ? (
 							<option value="real">Real historical teams</option>
 						) : null}
 						{leagues.map((league) => (
@@ -367,7 +356,7 @@ const SelectTeam = ({
 						type="button"
 						disabled={disabled || !league}
 						onClick={async () => {
-							const randomSeason = getRandomSeason(
+							const randomSeason = randInt(
 								league!.seasonStart,
 								league!.seasonEnd,
 							);
@@ -395,7 +384,9 @@ const SelectTeam = ({
 						{t.seasonInfo ? (
 							<>
 								<h2 className="mb-0">{record}</h2>
-								{t.seasonInfo.roundsWonText}
+								{t.seasonInfo.roundsWonText !== undefined
+									? helpers.upperCaseFirstLetter(t.seasonInfo.roundsWonText)
+									: null}
 							</>
 						) : null}
 					</div>
@@ -629,7 +620,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 
 	const leaguesDefined = useMemo(() => leagues ?? [], [leagues]);
 
-	if (!SPORT_HAS_REAL_PLAYERS && leagues?.length === 0) {
+	if (!REAL_PLAYERS_INFO && leagues?.length === 0) {
 		return (
 			<p>
 				You need to <a href="/new_league">create some leagues</a> before you

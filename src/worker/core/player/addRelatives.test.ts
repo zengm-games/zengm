@@ -57,11 +57,11 @@ describe("makeBrother", () => {
 		}
 
 		assert.strictEqual(p.relatives.length, 1);
-		assert.strictEqual(p.relatives[0].type, "brother");
-		assert.strictEqual(p.relatives[0].pid, brother.pid);
+		assert.strictEqual(p.relatives[0]!.type, "brother");
+		assert.strictEqual(p.relatives[0]!.pid, brother.pid);
 		assert.strictEqual(brother.relatives.length, 1);
-		assert.strictEqual(brother.relatives[0].type, "brother");
-		assert.strictEqual(brother.relatives[0].pid, p.pid);
+		assert.strictEqual(brother.relatives[0]!.type, "brother");
+		assert.strictEqual(brother.relatives[0]!.pid, p.pid);
 		assert.strictEqual(p.lastName, brother.lastName);
 		assert.strictEqual(p.born.loc, brother.born.loc);
 	});
@@ -105,15 +105,15 @@ describe("makeBrother", () => {
 		}
 
 		assert.strictEqual(p.relatives.length, 2);
-		assert.strictEqual(p.relatives[0].type, "father");
-		assert.strictEqual(p.relatives[0].pid, 1);
-		assert.strictEqual(p.relatives[1].type, "brother");
-		assert.strictEqual(p.relatives[1].pid, brother.pid);
+		assert.strictEqual(p.relatives[0]!.type, "father");
+		assert.strictEqual(p.relatives[0]!.pid, 1);
+		assert.strictEqual(p.relatives[1]!.type, "brother");
+		assert.strictEqual(p.relatives[1]!.pid, brother.pid);
 		assert.strictEqual(brother.relatives.length, 2);
-		assert.strictEqual(brother.relatives[0].type, "father");
-		assert.strictEqual(brother.relatives[0].pid, 1);
-		assert.strictEqual(brother.relatives[1].type, "brother");
-		assert.strictEqual(brother.relatives[1].pid, p.pid);
+		assert.strictEqual(brother.relatives[0]!.type, "father");
+		assert.strictEqual(brother.relatives[0]!.pid, 1);
+		assert.strictEqual(brother.relatives[1]!.type, "brother");
+		assert.strictEqual(brother.relatives[1]!.pid, p.pid);
 	});
 
 	test("handle case where source has a father", async () => {
@@ -212,16 +212,16 @@ describe("makeBrother", () => {
 		}
 
 		assert.strictEqual(p.relatives.length, 2);
-		assert.strictEqual(p.relatives[0].type, "brother");
-		assert.strictEqual(p.relatives[0].pid, 1);
-		assert.strictEqual(p.relatives[1].type, "brother");
-		assert.strictEqual(p.relatives[1].pid, brother.pid);
+		assert.strictEqual(p.relatives[0]!.type, "brother");
+		assert.strictEqual(p.relatives[0]!.pid, 1);
+		assert.strictEqual(p.relatives[1]!.type, "brother");
+		assert.strictEqual(p.relatives[1]!.pid, brother.pid);
 
 		assert.strictEqual(brother.relatives.length, 2);
-		assert.strictEqual(brother.relatives[0].type, "brother");
-		assert.strictEqual(brother.relatives[0].pid, 1);
-		assert.strictEqual(brother.relatives[1].type, "brother");
-		assert.strictEqual(brother.relatives[1].pid, p.pid);
+		assert.strictEqual(brother.relatives[0]!.type, "brother");
+		assert.strictEqual(brother.relatives[0]!.pid, 1);
+		assert.strictEqual(brother.relatives[1]!.type, "brother");
+		assert.strictEqual(brother.relatives[1]!.pid, p.pid);
 	});
 
 	test("handle case where source has a brother", async () => {
@@ -276,11 +276,11 @@ describe("makeSon", () => {
 		}
 
 		assert.strictEqual(son.relatives.length, 1);
-		assert.strictEqual(son.relatives[0].type, "father");
-		assert.strictEqual(son.relatives[0].pid, father.pid);
+		assert.strictEqual(son.relatives[0]!.type, "father");
+		assert.strictEqual(son.relatives[0]!.pid, father.pid);
 		assert.strictEqual(father.relatives.length, 1);
-		assert.strictEqual(father.relatives[0].type, "son");
-		assert.strictEqual(father.relatives[0].pid, son.pid);
+		assert.strictEqual(father.relatives[0]!.type, "son");
+		assert.strictEqual(father.relatives[0]!.pid, son.pid);
 		assert.strictEqual(son.born.loc, father.born.loc);
 	});
 
@@ -363,18 +363,18 @@ describe("makeSon", () => {
 		const son2 = await getPlayer(0);
 		const brother2 = await getPlayer(1);
 		assert.strictEqual(son2.relatives.length, 2);
-		assert.strictEqual(son2.relatives[0].type, "father");
-		assert.strictEqual(son2.relatives[0].pid, father.pid);
-		assert.strictEqual(son2.relatives[1].type, "brother");
-		assert.strictEqual(son2.relatives[1].pid, brother2.pid);
+		assert.strictEqual(son2.relatives[0]!.type, "father");
+		assert.strictEqual(son2.relatives[0]!.pid, father.pid);
+		assert.strictEqual(son2.relatives[1]!.type, "brother");
+		assert.strictEqual(son2.relatives[1]!.pid, brother2.pid);
 		assert.strictEqual(brother2.relatives.length, 2);
-		assert.strictEqual(brother2.relatives[0].type, "father");
-		assert.strictEqual(brother2.relatives[0].pid, father.pid);
-		assert.strictEqual(brother2.relatives[1].type, "brother");
-		assert.strictEqual(brother2.relatives[1].pid, son2.pid);
+		assert.strictEqual(brother2.relatives[0]!.type, "father");
+		assert.strictEqual(brother2.relatives[0]!.pid, father.pid);
+		assert.strictEqual(brother2.relatives[1]!.type, "brother");
+		assert.strictEqual(brother2.relatives[1]!.pid, son2.pid);
 		assert.strictEqual(father.relatives.length, 2);
-		assert.strictEqual(father.relatives[0].type, "son");
-		assert.strictEqual(father.relatives[1].type, "son");
+		assert.strictEqual(father.relatives[0]!.type, "son");
+		assert.strictEqual(father.relatives[1]!.type, "son");
 		assert.deepStrictEqual(
 			father.relatives.map((relative) => relative.pid).sort(),
 			[0, 1],
@@ -402,9 +402,8 @@ describe("makeSon", () => {
 		const otherSons = await idb.cache.players.indexGetAll("playersByTid", 0);
 		assert.strictEqual(fathers.length, otherSons.length);
 
-		for (let i = 0; i < fathers.length; i++) {
-			const father = fathers[i];
-			const otherSon = otherSons[i];
+		for (const [i, father] of fathers.entries()) {
+			const otherSon = otherSons[i]!;
 			father.relatives.push({
 				type: "son",
 				pid: otherSon.pid,
@@ -440,18 +439,18 @@ describe("makeSon", () => {
 
 		const son2 = await getPlayer(0);
 		assert.strictEqual(son2.relatives.length, 2);
-		assert.strictEqual(son2.relatives[0].type, "father");
-		assert.strictEqual(son2.relatives[0].pid, father.pid);
-		assert.strictEqual(son2.relatives[1].type, "brother");
-		assert.strictEqual(son2.relatives[1].pid, otherSon.pid);
+		assert.strictEqual(son2.relatives[0]!.type, "father");
+		assert.strictEqual(son2.relatives[0]!.pid, father.pid);
+		assert.strictEqual(son2.relatives[1]!.type, "brother");
+		assert.strictEqual(son2.relatives[1]!.pid, otherSon.pid);
 		assert.strictEqual(otherSon.relatives.length, 2);
-		assert.strictEqual(otherSon.relatives[0].type, "father");
-		assert.strictEqual(otherSon.relatives[0].pid, father.pid);
-		assert.strictEqual(otherSon.relatives[1].type, "brother");
-		assert.strictEqual(otherSon.relatives[1].pid, son2.pid);
+		assert.strictEqual(otherSon.relatives[0]!.type, "father");
+		assert.strictEqual(otherSon.relatives[0]!.pid, father.pid);
+		assert.strictEqual(otherSon.relatives[1]!.type, "brother");
+		assert.strictEqual(otherSon.relatives[1]!.pid, son2.pid);
 		assert.strictEqual(father.relatives.length, 2);
-		assert.strictEqual(father.relatives[0].type, "son");
-		assert.strictEqual(father.relatives[1].type, "son");
+		assert.strictEqual(father.relatives[0]!.type, "son");
+		assert.strictEqual(father.relatives[1]!.type, "son");
 		assert.deepStrictEqual(
 			father.relatives.map((relative) => relative.pid).sort(),
 			[son2.pid, otherSon.pid],

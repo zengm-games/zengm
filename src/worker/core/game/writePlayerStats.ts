@@ -18,13 +18,6 @@ import getWinner from "../../../common/getWinner.ts";
 
 export const P_FATIGUE_DAILY_REDUCTION = 20;
 
-export const STAT_PLAYED_IN_GAME_IF_NONZERO = bySport({
-	baseball: "gp",
-	basketball: "min",
-	football: "min",
-	hockey: "min",
-});
-
 const gameOrWeek = bySport({ default: "game", football: "week" });
 
 const doInjury = async (
@@ -42,7 +35,7 @@ const doInjury = async (
 
 	// Is this a reinjury or not?
 	let reaggravateExtraDays;
-	if (p.injury.playingThrough) {
+	if (p.injury.gamesRemaining > 0) {
 		if (
 			p2.injury.gamesRemaining < p.injury.gamesRemaining ||
 			Math.random() < 0.33
@@ -291,7 +284,7 @@ const writePlayerStats = async (
 			}
 		}
 
-		for (let i = 0; i < result.team.length; i++) {
+		for (const i of [0, 1] as const) {
 			const t = result.team[i];
 			let goaliePID: number | undefined;
 
@@ -384,34 +377,43 @@ const writePlayerStats = async (
 					}
 				}
 
-				player.checkStatisticalFeat(p.id, t.id, p, result, conditions);
+				const hasFeat = player.checkStatisticalFeat(
+					p.id,
+					t.id,
+					p,
+					result,
+					conditions,
+				);
+				if (hasFeat) {
+					t.playerFeat = true;
+				}
 
 				const p2 = await idb.cache.players.get(p.id);
 				if (!p2) {
 					throw new Error("Invalid pid");
 				}
 
-				if (isSport("hockey")) {
-					if (p2.pid === goaliePID) {
-						if (p2.numConsecutiveGamesG === undefined) {
+				if (!allStarGame) {
+					if (isSport("hockey")) {
+						if (p2.pid === goaliePID) {
+							if (p2.numConsecutiveGamesG === undefined) {
+								p2.numConsecutiveGamesG = 0;
+							}
+							p2.numConsecutiveGamesG += 1;
+						} else if (p2.numConsecutiveGamesG !== undefined) {
 							p2.numConsecutiveGamesG = 0;
 						}
-						p2.numConsecutiveGamesG += 1;
-					} else if (p2.numConsecutiveGamesG !== undefined) {
-						p2.numConsecutiveGamesG = 0;
-					}
-				} else if (isSport("baseball")) {
-					if (p.stat.pc > 0) {
-						if (p2.pFatigue === undefined) {
-							p2.pFatigue = 0;
+					} else if (isSport("baseball")) {
+						if (p.stat.pc > 0) {
+							if (p2.pFatigue === undefined) {
+								p2.pFatigue = 0;
+							}
+
+							// Need to add P_FATIGUE_DAILY_REDUCTION for anyone who pitched in this game, cause that will be subtracted later
+							p2.pFatigue += p.stat.pc + P_FATIGUE_DAILY_REDUCTION;
 						}
-
-						// Need to add P_FATIGUE_DAILY_REDUCTION for anyone who pitched in this game, cause that will be subtracted later
-						p2.pFatigue += p.stat.pc + P_FATIGUE_DAILY_REDUCTION;
 					}
-				}
 
-				if (!allStarGame) {
 					let ps = p2.stats.at(-1);
 
 					// This should never happen, but sometimes does
@@ -421,7 +423,7 @@ const writePlayerStats = async (
 					}
 
 					// Update stats
-					const playedInGame = p.stat[STAT_PLAYED_IN_GAME_IF_NONZERO] > 0;
+					const playedInGame = p.stat.gp > 0;
 					if (playedInGame) {
 						// Too many other parts of the codebase use "min", so put a dummy value there
 						if (isSport("baseball")) {
@@ -452,18 +454,6 @@ const writePlayerStats = async (
 							}
 						}
 
-						// baseball handles this in GameSim
-						if (
-							bySport({
-								baseball: false,
-								basketball: true,
-								football: true,
-								hockey: true,
-							})
-						) {
-							ps.gp += 1;
-						}
-
 						if (isSport("football") || isSport("hockey")) {
 							const result = qbgResults.get(p.id);
 							if (result) {
@@ -478,7 +468,7 @@ const writePlayerStats = async (
 						const derivedMaxStats = bySport({
 							baseball: ["ab", "ip", "tb"],
 							basketball: ["2p", "2pa", "trb", "gmsc"],
-							hockey: ["g", "a"],
+							hockey: ["g", "a", "pts"],
 							football: undefined,
 						});
 						const derivedMaxValues: Record<string, number> | undefined =

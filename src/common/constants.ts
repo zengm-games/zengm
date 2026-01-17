@@ -28,7 +28,7 @@ const DRAFT_BY_TEAM_OVR = bySport({
 	hockey: true,
 });
 
-const LEAGUE_DATABASE_VERSION = 64;
+const LEAGUE_DATABASE_VERSION = 69;
 
 const NO_LOTTERY_DRAFT_TYPES: DraftType[] = [
 	"freeAgents",
@@ -37,19 +37,7 @@ const NO_LOTTERY_DRAFT_TYPES: DraftType[] = [
 	"random",
 ];
 
-const PHASE: {
-	EXPANSION_DRAFT: Phase;
-	FANTASY_DRAFT: Phase;
-	PRESEASON: Phase;
-	REGULAR_SEASON: Phase;
-	AFTER_TRADE_DEADLINE: Phase;
-	PLAYOFFS: Phase;
-	DRAFT_LOTTERY: Phase;
-	DRAFT: Phase;
-	AFTER_DRAFT: Phase;
-	RESIGN_PLAYERS: Phase;
-	FREE_AGENCY: Phase;
-} = {
+const PHASE = {
 	EXPANSION_DRAFT: -2,
 	FANTASY_DRAFT: -1,
 	PRESEASON: 0,
@@ -61,7 +49,13 @@ const PHASE: {
 	AFTER_DRAFT: 6,
 	RESIGN_PLAYERS: 7,
 	FREE_AGENCY: 8,
-};
+} satisfies Record<string, Phase>;
+
+const REMAINING_PLAYOFF_TEAMS_PHASES = new Set<Phase>([
+	PHASE.REGULAR_SEASON,
+	PHASE.AFTER_TRADE_DEADLINE,
+	PHASE.PLAYOFFS,
+]);
 
 const PLAYER = {
 	FREE_AGENT: -1,
@@ -285,18 +279,17 @@ const FACEBOOK_USERNAME = bySport({
 	default: "ZenGMGames",
 });
 
-const SPORT_HAS_REAL_PLAYERS = bySport({
-	baseball: false,
-	basketball: true,
-	football: false,
-	hockey: false,
-});
-
-const SPORT_HAS_LEGENDS = bySport({
-	baseball: false,
-	basketball: true,
-	football: false,
-	hockey: false,
+const REAL_PLAYERS_INFO = bySport({
+	baseball: undefined,
+	basketball: {
+		legends: true,
+		FIRST_SEASON_WITH_ALEXNOOB_ROSTERS: 2020,
+		MIN_SEASON: 1947,
+		MAX_SEASON: 2026,
+		MAX_PHASE: PHASE.PRESEASON as Phase,
+	},
+	football: undefined,
+	hockey: undefined,
 });
 
 const WEBSITE_PLAY = bySport({
@@ -431,6 +424,8 @@ const EXHIBITION_GAME_SETTINGS = [
 	"foulsNeededToFoulOut",
 	"numPlayersOnCourt",
 	"quarterLength",
+	"overtimeLength",
+	"overtimeLengthPlayoffs",
 	"numPeriods",
 	"pace",
 	"homeCourtAdvantage",
@@ -487,6 +482,7 @@ const EXHIBITION_GAME_SETTINGS = [
 	"saveFactor",
 	"gender",
 	"neutralSite",
+	"scrimmageTouchbackKickoff",
 ] as const;
 
 const MOBILE_AD_BOTTOM_MARGIN = 52;
@@ -516,7 +512,7 @@ export const STARTING_NUM_TIMEOUTS = bySport({
 export const VIDEO_ADS = false;
 export const VIDEO_AD_PADDING = 225 + 10 + 10;
 
-export const SKILLS: Record<string, string | undefined> = bySport({
+export const SKILLS = bySport<Record<string, string>>({
 	baseball: {
 		Pp: "Power pitcher",
 		Pf: "Finesse pitcher",
@@ -603,8 +599,8 @@ export {
 	PHASE,
 	PLAYER,
 	PHASE_TEXT,
-	SPORT_HAS_LEGENDS,
-	SPORT_HAS_REAL_PLAYERS,
+	REAL_PLAYERS_INFO,
+	REMAINING_PLAYOFF_TEAMS_PHASES,
 	STRIPE_PUBLISHABLE_KEY,
 	COMPOSITE_WEIGHTS,
 	PLAYER_GAME_STATS,

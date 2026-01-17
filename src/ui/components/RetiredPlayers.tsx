@@ -36,6 +36,7 @@ const RetiredPlayers = ({
 					columns: "12em",
 				}}
 			>
+				{retiredPlayers.length === 0 ? "None" : null}
 				{retiredPlayers.map((p) => (
 					<span
 						key={p.pid}
@@ -70,28 +71,29 @@ const RetiredPlayers = ({
 					</span>
 				))}
 			</p>
-			<ActionButton
-				variant="light-bordered"
-				disabled={exporting}
-				onClick={async () => {
-					try {
-						setExporting(true);
+			{retiredPlayers.length > 0 ? (
+				<ActionButton
+					variant="light-bordered"
+					onClick={async () => {
+						try {
+							setExporting(true);
 
-						const { filename, json } = await toWorker(
-							"main",
-							"exportDraftClass",
-							{ season, retiredPlayers: true },
-						);
-						downloadFile(filename, json, "application/json");
-					} finally {
-						setExporting(false);
-					}
-				}}
-				processing={exporting}
-				processingText="Exporting"
-			>
-				Export as draft class
-			</ActionButton>
+							const { filename, json } = await toWorker(
+								"main",
+								"exportDraftClass",
+								{ season, retiredPlayers: true },
+							);
+							downloadFile(filename, json, "application/json");
+						} finally {
+							setExporting(false);
+						}
+					}}
+					processing={exporting}
+					processingText="Exporting"
+				>
+					Export as draft class
+				</ActionButton>
+			) : null}
 		</>
 	);
 };

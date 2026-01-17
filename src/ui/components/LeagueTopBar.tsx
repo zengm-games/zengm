@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { useLocalPartial, safeLocalStorage } from "../util/index.ts";
+import { useLocalPartial, localActions } from "../util/index.ts";
 import ScoreBox from "./ScoreBox/index.tsx";
 import { emitter } from "./Modal.tsx";
 
@@ -29,22 +29,12 @@ const hiddenStyle = {
 const IS_SAFARI = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
 const LeagueTopBar = memo(() => {
-	const { games, lid, liveGameInProgress } = useLocalPartial([
+	const { games, lid, liveGameInProgress, showLeagueTopBar } = useLocalPartial([
 		"games",
 		"lid",
 		"liveGameInProgress",
+		"showLeagueTopBar",
 	]);
-
-	const [show, setShow] = useState(() => {
-		const showTemp = safeLocalStorage.getItem("bbgmShowLeagueTopBar");
-		if (showTemp === "true") {
-			return true;
-		}
-		if (showTemp === "false") {
-			return false;
-		}
-		return true;
-	});
 
 	const keepScrollToRightRef = useRef(true);
 
@@ -74,7 +64,7 @@ const LeagueTopBar = memo(() => {
 	}, [keepScrolledToRightIfNecessary]);
 
 	useEffect(() => {
-		if (!wrapperElement || !show) {
+		if (!wrapperElement || !showLeagueTopBar) {
 			return;
 		}
 
@@ -129,13 +119,13 @@ const LeagueTopBar = memo(() => {
 			wrapperElement.removeEventListener("scroll", handleScroll);
 			resizeObserver.disconnect();
 		};
-	}, [keepScrolledToRightIfNecessary, show, wrapperElement]);
+	}, [keepScrolledToRightIfNecessary, showLeagueTopBar, wrapperElement]);
 
 	// If you take control of an expansion team after the season, the ASG is the only game, and it looks weird to show just it
 	const onlyAllStarGame =
 		games.length === 1 &&
-		games[0].teams[0].tid === -1 &&
-		games[0].teams[1].tid === -2;
+		games[0]!.teams[0].tid === -1 &&
+		games[0]!.teams[1].tid === -2;
 
 	if (lid === undefined || games.length === 0 || onlyAllStarGame) {
 		return <div className="mt-2" />;
@@ -146,7 +136,7 @@ const LeagueTopBar = memo(() => {
 		prevGames.current = games;
 	}
 
-	if (show) {
+	if (showLeagueTopBar) {
 		// Show only the first upcoming game
 		for (const game of prevGames.current) {
 			games2.push(game);
@@ -169,23 +159,23 @@ const LeagueTopBar = memo(() => {
 			className={`league-top-bar${
 				IS_SAFARI ? " league-top-bar-safari" : ""
 			} flex-shrink-0 d-flex overflow-auto small-scrollbar flex-row ps-1 mt-2`}
-			style={show ? undefined : hiddenStyle}
+			style={showLeagueTopBar ? undefined : hiddenStyle}
 			ref={(element) => {
+				// Shit is wild, if I just do ref={setWrapperElement} it somehow breaks scrolling to the right, idk why
 				setWrapperElement(element);
 			}}
 		>
 			<Toggle
-				show={show}
+				show={showLeagueTopBar}
 				toggle={() => {
-					if (show === false) {
+					if (showLeagueTopBar === false) {
 						// When showing, always scroll to right
 						keepScrollToRightRef.current = true;
 					}
-					setShow(!show);
-					safeLocalStorage.setItem("bbgmShowLeagueTopBar", String(!show));
+					localActions.setShowLeagueTopBar(!showLeagueTopBar);
 				}}
 			/>
-			{show
+			{showLeagueTopBar
 				? games2.map((game, i) => (
 						<ScoreBox
 							key={game.gid}

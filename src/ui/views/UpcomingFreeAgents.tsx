@@ -6,6 +6,7 @@ import type { View } from "../../common/types.ts";
 import { dataTableWrappedMood } from "../components/Mood.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { wrappedCurrency } from "../components/wrappedCurrency.ts";
 
 const UpcomingFreeAgents = ({
 	challengeNoRatings,
@@ -53,8 +54,8 @@ const UpcomingFreeAgents = ({
 		...(phase === PHASE.RESIGN_PLAYERS ? [] : ["Current Contract"]),
 		"Projected Contract",
 	]);
-	cols[6 + stats.length].title = "Your Team";
-	cols[7 + stats.length].title = "Current Team";
+	cols[6 + stats.length]!.title = "Your Team";
+	cols[7 + stats.length]!.title = "Current Team";
 
 	const rows: DataTableRow[] = players.map((p) => {
 		return {
@@ -71,7 +72,7 @@ const UpcomingFreeAgents = ({
 					jerseyNumber: p.jerseyNumber,
 					pid: p.pid,
 					skills: p.ratings.skills,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
@@ -96,8 +97,8 @@ const UpcomingFreeAgents = ({
 				}),
 				...(phase === PHASE.RESIGN_PLAYERS
 					? []
-					: [helpers.formatCurrency(p.contract.amount, "M")]),
-				helpers.formatCurrency(p.contractDesired.amount, "M"),
+					: [wrappedCurrency(p.contract.amount, "M")]),
+				wrappedCurrency(p.contractDesired.amount, "M"),
 			],
 			classNames: {
 				"table-info": p.tid === userTid,

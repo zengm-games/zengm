@@ -119,7 +119,7 @@ const AwardsAndChamp = ({
 					.map((t: any, i: number) =>
 						t !== undefined ? (
 							<p key={t.tid}>
-								{confs[i].name}:<br />
+								{confs[i]!.name}:<br />
 								<span className={t.tid === userTid ? "table-info" : undefined}>
 									<a
 										href={helpers.leagueUrl([

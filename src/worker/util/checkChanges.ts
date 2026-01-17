@@ -10,10 +10,9 @@ const FETCH_LIMIT = 10;
 
 const checkChanges = async (conditions: Conditions) => {
 	// Fall back to LAST_VERSION_BEFORE_THIS_EXISTED if data doesn't exist - must be a user from before then
-	const lastChangesVersion = ((await idb.meta.get(
-		"attributes",
-		"lastChangesVersion",
-	)) ?? (LAST_VERSION_BEFORE_THIS_EXISTED as unknown)) as string;
+	const lastChangesVersion =
+		(await idb.meta.get("attributes", "lastChangesVersion")) ??
+		(LAST_VERSION_BEFORE_THIS_EXISTED as unknown as string);
 
 	if (CURRENT_VERSION > lastChangesVersion) {
 		const changes = (await fetchWrapper({
@@ -36,10 +35,10 @@ const checkChanges = async (conditions: Conditions) => {
 		if (changes && changes.length > 0) {
 			let text = "";
 
-			for (let i = 0; i < changes.length; i++) {
-				text += `<p class="mt-1 mb-0"><strong>v${changes[i].version}</strong>: ${changes[i].text}`;
+			for (const [i, change] of changes.entries()) {
+				text += `<p class="mt-1 mb-0"><strong>v${change.version}</strong>: ${change.text}`;
 
-				const links = changes[i].links;
+				const links = change.links;
 				if (links) {
 					const link =
 						links.find((link) => link.startsWith("/blog/")) ??

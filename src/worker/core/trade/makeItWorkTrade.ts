@@ -32,7 +32,7 @@ const makeItWorkTrade = async () => {
 
 	let updated = false;
 
-	for (let i = 0; i < 2; i++) {
+	for (const i of [0, 1] as const) {
 		if (teams[i].tid !== teams0[i].tid) {
 			updated = true;
 			break;

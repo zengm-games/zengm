@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { arrayMoveImmutable } from "array-move";
+import { arrayMove } from "@dnd-kit/sortable";
 import { PHASE } from "../../common/index.ts";
 import { DataTable } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
@@ -94,17 +94,13 @@ const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
 				sortableRows={{
 					highlightHandle: ({ row }) => userTids.includes(row.key as number),
 					onChange: async ({ oldIndex, newIndex }) => {
-						const newSortedTids = arrayMoveImmutable(
-							sortedTids,
-							oldIndex,
-							newIndex,
-						);
+						const newSortedTids = arrayMove(sortedTids, oldIndex, newIndex);
 						setSortedTids(newSortedTids);
 					},
 					onSwap: async (index1, index2) => {
 						const newSortedTids = [...sortedTids];
-						newSortedTids[index1] = sortedTids[index2];
-						newSortedTids[index2] = sortedTids[index1];
+						newSortedTids[index1] = sortedTids[index2]!;
+						newSortedTids[index2] = sortedTids[index1]!;
 						setSortedTids(newSortedTids);
 					},
 				}}

@@ -186,6 +186,7 @@ const routeInfos = {
 	"/l/:lid/export_players": "exportPlayers",
 	"/l/:lid/export_players/:season": "exportPlayers",
 	"/l/:lid/import_players": "importPlayers",
+	"/l/:lid/import_players_real": "importPlayersReal",
 	"/l/:lid/gm_history": "gmHistory",
 	"/l/:lid/settings": "settings",
 	"/l/:lid/trade_summary/:eid": "tradeSummary",
@@ -215,6 +216,8 @@ const routeInfos = {
 	"/l/:lid/notes/:type": "notes",
 	"/l/:lid/draft_picks": "draftPicks",
 	"/l/:lid/draft_picks/:abbrev": "draftPicks",
+	"/l/:lid/upgrade65": "upgrade65",
+	"/l/:lid/schedule_editor": "scheduleEditor",
 };
 
 export default routeInfos;

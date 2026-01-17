@@ -48,8 +48,8 @@ const getSortVal = (
 
 				if (sortVal.includes(":")) {
 					const parts = sortVal.split(":");
-					const minutes = Number.parseInt(parts[0]);
-					const seconds = Number.parseInt(parts[1]);
+					const minutes = parts[0] ? Number.parseInt(parts[0]) : 0;
+					const seconds = parts[1] ? Number.parseInt(parts[1]) : 0;
 					return minutes + seconds / 60;
 				}
 
@@ -68,7 +68,12 @@ const getSortVal = (
 				return null;
 			}
 
-			return Number.parseInt(sortVal.split("-")[0]);
+			const [won] = sortVal.split("-");
+			if (won === undefined) {
+				return null;
+			}
+
+			return Number.parseInt(won);
 		}
 
 		if (sortType === "draftPick") {
@@ -78,50 +83,15 @@ const getSortVal = (
 
 			const [round, pick] = sortVal.split("-"); // This assumes no league has more than a million teams lol
 
-			const number = Number.parseInt(round) * 1000000 + Number.parseInt(pick);
+			let number;
+			if (round !== undefined && pick !== undefined) {
+				number = Number.parseInt(round) * 1000000 + Number.parseInt(pick);
+			}
 
 			// Handle any weird values, like "none" or "undrafted" or whatever. Such as on "Best Player at Every Pick"
-			if (Number.isNaN(number)) {
+			if (number === undefined || Number.isNaN(number)) {
 				return Infinity;
 			}
-			return number;
-		}
-
-		if (sortType === "currency") {
-			if (sortVal === null || sortVal === "") {
-				return -Infinity;
-			}
-
-			// Keep in sync with helpers.formatCurrency
-			let factor;
-			if (sortVal.endsWith("Q")) {
-				factor = 1e15;
-			} else if (sortVal.endsWith("T")) {
-				factor = 1e12;
-			} else if (sortVal.endsWith("B")) {
-				factor = 1e9;
-			} else if (sortVal.endsWith("M")) {
-				factor = 1e6;
-			} else if (sortVal.endsWith("k")) {
-				factor = 1e3;
-			} else {
-				factor = 1;
-			}
-
-			// Drop $ and parseFloat will just keep the numeric part at the beginning of the string
-			const parsedNumber = helpers.localeParseFloat(sortVal.replace("$", ""));
-
-			if (!exportCSV) {
-				// This gets called by filter functions, which expect it to be in millions
-				factor /= 1e6;
-			}
-
-			const number = parsedNumber * factor;
-			if (factor > 1) {
-				// Get rid of floating point errors if we're multiplying by a large number
-				return Math.round(number);
-			}
-
 			return number;
 		}
 

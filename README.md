@@ -44,7 +44,7 @@ from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
 
 ## Setup 
 
-First install [Node.js](https://nodejs.org/) 22 and [pnpm](https://pnpm.io/) 10.
+First install [Node.js](https://nodejs.org/) 24 and [pnpm](https://pnpm.io/) 10.
 
 Then install the dependencies:
 
@@ -75,11 +75,6 @@ Integration and unit tests spread out through the codebase in *.test.ts files.
 Coverage is not great. They can be run from the command line with:
 
     node --run test
-
-There is also a single end-to-end test which creates a league and simulates a
-season. To execute the end-to-end test, run:
-
-    node --run test-e2e
 
 Like the dev command, you can stick `SPORT=football ` or whatever in front of
 this command to run it for a non-basketball sport.

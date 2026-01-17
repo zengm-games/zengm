@@ -1,5 +1,8 @@
 import type { ReactNode } from "react";
-import geographicCoordinates from "../../common/geographicCoordinates.ts";
+import geographicCoordinates, {
+	continents,
+} from "../../common/geographicCoordinates.ts";
+import { groupBy } from "../../common/utils.ts";
 
 export const TeamsSplitNorthAmericaWorld = <
 	T extends {
@@ -12,31 +15,32 @@ export const TeamsSplitNorthAmericaWorld = <
 	teams: T[];
 	option: (t: T, i: number) => ReactNode;
 }) => {
-	const teamsNorthAmerica = [];
-	const teamsWorld = [];
-	for (let i = 0; i < teams.length; i++) {
-		const t = teams[i];
-		if (geographicCoordinates[t.region]?.outsideNorthAmerica) {
-			teamsWorld.push({
-				i,
-				t,
-			});
-		} else {
-			teamsNorthAmerica.push({
-				i,
-				t,
-			});
+	const teamsByContinent = groupBy(teams, (t) => {
+		const continent = geographicCoordinates[t.region]?.continent;
+		if (continent === undefined) {
+			return "Unknown";
 		}
+
+		return continent;
+	});
+
+	// Needed because the i in option is referring to the original teams array
+	const indexes = new Map<T, number>();
+	for (const [i, t] of teams.entries()) {
+		indexes.set(t, i);
 	}
 
-	return (
-		<>
-			<optgroup label="North America">
-				{teamsNorthAmerica.map(({ t, i }) => option(t, i))}
+	return continents.map((continent) => {
+		const continentTeams = teamsByContinent[continent];
+
+		if (!continentTeams) {
+			return null;
+		}
+
+		return (
+			<optgroup key={continent} label={continent}>
+				{continentTeams.map((t) => option(t, indexes.get(t)!))}
 			</optgroup>
-			<optgroup label="World">
-				{teamsWorld.map(({ t, i }) => option(t, i))}
-			</optgroup>
-		</>
-	);
+		);
+	});
 };

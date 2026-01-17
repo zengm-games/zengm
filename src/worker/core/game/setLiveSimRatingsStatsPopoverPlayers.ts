@@ -1,4 +1,4 @@
-import type { GameResults } from "../../../common/types.ts";
+import type { GameResults, NonEmptyArray } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { helpers, local } from "../../util/index.ts";
 
@@ -22,7 +22,7 @@ export const setLiveSimRatingsStatsPopoverPlayers = async (
 
 			return {
 				...p,
-				ratings: [...p.ratings],
+				ratings: [...p.ratings] as NonEmptyArray<any>,
 				stats: [...p.stats.slice(0, -1), currentStats],
 			};
 		},

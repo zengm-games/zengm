@@ -44,7 +44,7 @@ class Trie {
 		let bestYetNumHere = Infinity;
 		let node = this.root;
 		for (const char of word) {
-			node = node.children[char];
+			node = node.children[char]!;
 			length += 1;
 
 			// This is a potential candidate if there are fewer distinct names at this node
@@ -80,7 +80,7 @@ const addFirstNameShort = <
 })[] => {
 	const playersByLastName = groupBy(players, "lastName");
 
-	const tries: Record<string, Trie | undefined> = {};
+	const tries: Record<string, Trie> = {};
 	for (const [lastName, playersGroup] of Object.entries(playersByLastName)) {
 		if (playersGroup.length <= 1 || lastName === "") {
 			continue;

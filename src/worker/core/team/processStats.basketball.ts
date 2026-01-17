@@ -157,6 +157,21 @@ const processStats = (
 			} else if (stat === "ftpFga") {
 				row[stat] = helpers.ratio(ts.ft, ts.fga);
 				scale = false;
+			} else if (stat === "oppEfg") {
+				row[stat] = helpers.percentage(ts.oppFg + 0.5 * ts.oppTp, ts.oppFga);
+				scale = false;
+			} else if (stat === "oppTovp") {
+				row[stat] = helpers.percentage(
+					ts.oppTov,
+					ts.oppFga + 0.44 * ts.oppFta + ts.oppTov,
+				);
+				scale = false;
+			} else if (stat === "drbp") {
+				row[stat] = helpers.percentage(ts.drb, ts.drb + ts.oppOrb);
+				scale = false;
+			} else if (stat === "oppFtpFga") {
+				row[stat] = helpers.ratio(ts.oppFt, ts.oppFga);
+				scale = false;
 			} else if (
 				stat === "season" ||
 				stat === "playoffs" ||

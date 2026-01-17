@@ -70,15 +70,13 @@ const finalize = async (
 		}
 	}
 
+	// await is needed on these toUI calls, otherwise when auto playing two quick phase updates could happen in a row, and then the worker view might not be called until the phase has advanced twice, and then some updateEvents checks for a specific newPhase phase might be missed
 	if (redirectToNewURL && redirect !== undefined) {
-		toUI("realtimeUpdate", [updateEvents, redirect.url], conditions).then(
-			() => {
-				// This will refresh the url above inadvertently, because there is no way currently to say "refresh tabs except the one in conditions"
-				return toUI("realtimeUpdate", [updateEvents]);
-			},
-		);
+		await toUI("realtimeUpdate", [updateEvents, redirect.url], conditions);
+		// This will refresh the url above inadvertently, because there is no way currently to say "refresh tabs except the one in conditions"
+		await toUI("realtimeUpdate", [updateEvents]);
 	} else {
-		toUI("realtimeUpdate", [updateEvents]);
+		await toUI("realtimeUpdate", [updateEvents]);
 
 		if (redirect !== undefined && !local.autoPlayUntil) {
 			await logEvent({

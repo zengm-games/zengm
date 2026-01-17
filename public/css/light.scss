@@ -172,6 +172,9 @@ h5 {
 }
 
 .navbar-brand {
+	// Not sure why, but without this it's 35.5px which screws up alignment of the dropdowns and the border
+	height: 35px;
+
 	img {
 		vertical-align: -3px;
 	}
@@ -179,9 +182,6 @@ h5 {
 	span {
 		padding-left: 5px;
 	}
-
-	// Not sure why, but without this it's 35.5px which screws up alignment of the dropdowns and the border
-	height: 35px;
 }
 
 .spin {
@@ -595,22 +595,22 @@ $jersey-number-width: 15px;
 	background-color: $blue;
 }
 .bar-graph-2 {
-	background-color: $pink;
+	background-color: $red;
 }
 .bar-graph-3 {
-	background-color: $yellow;
+	background-color: $green;
 }
 .bar-graph-4 {
-	background-color: $cyan;
+	background-color: $yellow;
 }
 .bar-graph-5 {
 	background-color: $indigo;
 }
 .bar-graph-6 {
-	background-color: $red;
+	background-color: $pink;
 }
 .bar-graph-7 {
-	background-color: $green;
+	background-color: $cyan;
 }
 .bar-graph-8 {
 	background-color: $orange;
@@ -698,20 +698,18 @@ tr.table-warning:hover > td {
 	.live-game-affix {
 		position: sticky;
 		margin-top: 0;
-		top: 60px;
+		top: 52px;
 	}
 	.live-game-playbyplay {
 		overflow: auto;
 	}
 }
-@include media-breakpoint-down(md) {
-	.live-game-affix-mobile {
-		position: sticky;
-		top: 51px; // 52px leaves a gap for some reason
+.live-game-sticky {
+	position: sticky;
+	top: 52px;
 
-		// Puts it over sticky column headers
-		z-index: 1;
-	}
+	// Puts it over sticky column headers
+	z-index: 1;
 }
 
 // Keep in sync with trade/index.tsx
@@ -970,6 +968,13 @@ tr.table-warning:hover > td {
 }
 
 .title-bar {
+	gap: 0 10px;
+	min-height: 32px;
+
+	// Like .container-fluid
+	padding-left: var(--bs-gutter-x, 0.5rem);
+	padding-right: var(--bs-gutter-x, 0.5rem);
+
 	h1 {
 		font-size: 20px;
 		margin-bottom: 7px; // Needed in addition to .title-bar min-height when it wraps onto multiple lines
@@ -980,12 +985,6 @@ tr.table-warning:hover > td {
 	.dropdown-links .dropdown.show.nav-item {
 		background-color: $gray-100;
 	}
-	gap: 0 10px;
-	min-height: 32px;
-
-	// Like .container-fluid
-	padding-left: var(--bs-gutter-x, 0.5rem);
-	padding-right: var(--bs-gutter-x, 0.5rem);
 }
 .title-bar-right-links {
 	.nav-item {
@@ -1039,10 +1038,10 @@ tr.table-warning:hover > td {
 		font-size: 14px;
 	}
 	.title-bar {
+		min-height: 38px;
 		h1 {
 			font-size: 24px;
 		}
-		min-height: 38px;
 	}
 	.title-bar-right-links {
 		.nav-item {
@@ -1135,6 +1134,8 @@ $small-scrollbar-thumb-hover-color: darken($gray-500, 10%) !default;
 }
 
 .score-box-action {
+	height: 96px;
+
 	.btn {
 		border-bottom-left-radius: 0px !important;
 		border-top-left-radius: 0px !important;
@@ -1145,8 +1146,6 @@ $small-scrollbar-thumb-hover-color: darken($gray-500, 10%) !default;
 	.btn:not(:first-child) {
 		border-top: 1px solid $gray-300;
 	}
-
-	height: 96px;
 }
 
 .score-box-left-wrapper {
@@ -1190,8 +1189,17 @@ $small-scrollbar-thumb-hover-color: darken($gray-500, 10%) !default;
 	color: $black !important;
 }
 
+.bg-success {
+	color: $white !important;
+}
+
 .bg-tertiary {
 	background-color: $gray-300 !important;
+}
+
+$bg-secondary-very-subtle: $gray-100;
+.bg-secondary-very-subtle {
+	background-color: $bg-secondary-very-subtle !important;
 }
 
 .touch-action-none {
@@ -1715,5 +1723,26 @@ tr.text-body-secondary {
 	&:focus {
 		color: $body-secondary-color !important;
 		text-decoration-color: inherit !important;
+	}
+}
+
+@include media-breakpoint-down(md) {
+	.live-game-score-wrapper {
+		background-color: $white !important;
+	}
+	.live-game-score-actual {
+		width: 100%;
+	}
+
+	.live-game-score-actual-stuck {
+		background-color: $white;
+	}
+}
+
+@include media-breakpoint-up(md) {
+	.live-game-score-actual-stuck {
+		background-color: $bg-secondary-very-subtle;
+		border: $border-width $border-style $border-color;
+		border-top: 0;
 	}
 }

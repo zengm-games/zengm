@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import { NextPrevButtons } from "../../components/index.tsx";
 import { logEvent } from "../../util/index.ts";
 import type { LeagueInfo } from "./types.ts";
+import { choice } from "../../../common/random.ts";
 
 const quickValuesStyle = { height: 19 };
 
@@ -131,11 +132,11 @@ const LeagueMenu = <Value extends string>({
 					type="button"
 					onClick={() => {
 						const keys = values.map((v) => v.key);
-						const random = keys[Math.floor(Math.random() * keys.length)];
+						const random = choice(keys);
 
 						if (value2 !== undefined && values2 && onNewValue2) {
 							const keys2 = values2.map((v) => v.key);
-							const random2 = keys2[Math.floor(Math.random() * keys2.length)];
+							const random2 = choice(keys2);
 							onNewValue2(random2);
 						}
 

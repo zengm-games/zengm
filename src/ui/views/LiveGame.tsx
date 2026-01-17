@@ -24,7 +24,9 @@ import { bySport, getPeriodName, isSport } from "../../common/index.ts";
 import useLocalStorageState from "use-local-storage-state";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_BASEBALL } from "../util/processLiveGameEvents.baseball.tsx";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_FOOTBALL } from "../util/processLiveGameEvents.football.tsx";
-import { HeadlineScore } from "../components/BoxScoreWrapper.tsx";
+import { HeadlineScoreLive } from "../components/BoxScoreWrapper.tsx";
+import { useIsStuck } from "../hooks/useIsStuck.ts";
+import { useBlocker } from "../hooks/useBlocker.ts";
 
 type PlayerRowProps = {
 	exhibition?: boolean;
@@ -97,7 +99,7 @@ const getSeconds = (time: string | undefined) => {
 		// Seconds only being displayed
 		return Number.parseFloat(time);
 	}
-	const [min, sec] = parts;
+	const [min, sec] = parts as [number, number];
 	return min * 60 + sec;
 };
 
@@ -171,7 +173,6 @@ const PlayByPlayEntry = memo(
 						imgURL={boxScore.teams[entry.t].imgURL}
 						imgURLSmall={boxScore.teams[entry.t].imgURLSmall}
 						includePlaceholderIfNoLogo
-						size={24}
 					/>
 				) : null}
 				<div
@@ -260,6 +261,12 @@ const speedToMs = (speed: number) => {
 	return 4000 / 1.2 ** speed;
 };
 
+const getNavigateWarning = (exhibition: boolean | undefined) => {
+	return exhibition
+		? "If you navigate away from this page, you won't be able to see this box score again."
+		: "If you navigate away from this page, you won't be able to see these play-by-play results again. The results of this game are already final, though.";
+};
+
 export const LiveGame = (props: View<"liveGame">) => {
 	const [paused, setPaused] = useState(false);
 	const pausedRef = useRef(paused);
@@ -291,6 +298,13 @@ export const LiveGame = (props: View<"liveGame">) => {
 	);
 
 	const playByPlayEntries = useRef<PlayByPlayEntryInfo[]>([]);
+
+	const navigateWarning = getNavigateWarning(boxScore.current.exhibition);
+
+	const { setDirty } = useBlocker({
+		message: navigateWarning,
+		initialDirty: true,
+	});
 
 	// Make sure to call setPlayIndex after calling this! Can't be done inside because React is not always smart enough to batch renders
 	const processToNextPause = useCallback(
@@ -464,6 +478,9 @@ export const LiveGame = (props: View<"liveGame">) => {
 					}
 				}
 
+				if (!boxScore.current.exhibition) {
+					setDirty(false);
+				}
 				onLiveSimOver();
 			}
 
@@ -473,7 +490,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 			const elapsedSeconds = startSeconds - endSeconds;
 			return elapsedSeconds;
 		},
-		[props.confetti, props.otl],
+		[props.confetti, props.otl, setDirty],
 	);
 
 	useEffect(() => {
@@ -938,6 +955,10 @@ export const LiveGame = (props: View<"liveGame">) => {
 		},
 	);
 
+	const [liveGameStickyDiv, setLiveGameStickyDiv] =
+		useState<HTMLElement | null>(null);
+	const isStuck = useIsStuck(liveGameStickyDiv);
+
 	// Needs to return actual div, not fragment, for AutoAffix!!!
 	return (
 		<div>
@@ -945,9 +966,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 
 			{showWarning ? (
 				<p className="text-danger">
-					{boxScore.current.exhibition
-						? "If you navigate away from this page, you won't be able to see this box score again because it is not stored anywhere."
-						: "If you navigate away from this page, you won't be able to see these play-by-play results again because they are not stored anywhere. The results of this game are already final, though."}
+					{navigateWarning}
 					<>
 						{" "}
 						<button
@@ -962,85 +981,6 @@ export const LiveGame = (props: View<"liveGame">) => {
 				</p>
 			) : null}
 
-			{boxScore.current.gid >= 0 ? (
-				<div className="live-game-affix-mobile mb-3 d-md-none">
-					<div className="bg-white">
-						<HeadlineScore boxScore={boxScore.current} small />
-						<div className="d-flex align-items-center">
-							<PlayPauseNext
-								className="me-2"
-								disabled={boxScore.current.gameOver}
-								fastForwardAlignRight
-								fastForwards={fastForwardMenuItems}
-								onPlay={handlePlay}
-								onPause={handlePause}
-								onNext={handleNextPlay}
-								paused={paused}
-								titlePlay="Resume Simulation"
-								titlePause="Pause Simulation"
-								titleNext="Show Next Play"
-								// Since we have two PlayPauseNexts rendered, ignore shortcuts on one
-								ignoreKeyboardShortcuts
-							/>
-							<input
-								type="range"
-								className="form-range flex-grow-1"
-								min="1"
-								max="33"
-								step="1"
-								value={speed}
-								onChange={handleSpeedChange}
-								title="Speed"
-							/>
-						</div>
-					</div>
-					<div className="d-flex">
-						<div className="ms-auto btn-group">
-							<button
-								className="btn btn-light-bordered"
-								onClick={() => {
-									scrollTop.current?.scrollIntoView();
-								}}
-							>
-								Top
-							</button>
-							{!isSport("football") ? (
-								<>
-									<button
-										className="btn btn-light-bordered"
-										onClick={() => {
-											document
-												.getElementById("scroll-team-1")
-												?.scrollIntoView();
-										}}
-									>
-										{boxScore.current.teams[0].abbrev}
-									</button>
-									<button
-										className="btn btn-light-bordered"
-										onClick={() => {
-											document
-												.getElementById("scroll-team-2")
-												?.scrollIntoView();
-										}}
-									>
-										{boxScore.current.teams[1].abbrev}
-									</button>
-								</>
-							) : null}
-							<button
-								className="btn btn-light-bordered"
-								onClick={() => {
-									playByPlayDiv.current?.scrollIntoView();
-								}}
-							>
-								Plays
-							</button>
-						</div>
-					</div>
-				</div>
-			) : null}
-
 			<div
 				className="row"
 				ref={scrollTop}
@@ -1050,9 +990,91 @@ export const LiveGame = (props: View<"liveGame">) => {
 			>
 				<div className="col-md-9">
 					{boxScore.current.gid >= 0 ? (
+						<div className="live-game-sticky mb-3" ref={setLiveGameStickyDiv}>
+							<div className="pt-1 pt-md-0 live-game-score-wrapper">
+								<HeadlineScoreLive
+									boxScore={boxScore.current}
+									isStuck={isStuck}
+								/>
+								<div className="d-flex align-items-center d-md-none pt-2">
+									<PlayPauseNext
+										className="me-2"
+										disabled={boxScore.current.gameOver}
+										fastForwardAlignRight
+										fastForwards={fastForwardMenuItems}
+										onPlay={handlePlay}
+										onPause={handlePause}
+										onNext={handleNextPlay}
+										paused={paused}
+										titlePlay="Resume Simulation"
+										titlePause="Pause Simulation"
+										titleNext="Show Next Play"
+										// Since we have two PlayPauseNexts rendered, ignore shortcuts on one
+										ignoreKeyboardShortcuts
+									/>
+									<input
+										type="range"
+										className="form-range flex-grow-1"
+										min="1"
+										max="33"
+										step="1"
+										value={speed}
+										onChange={handleSpeedChange}
+										title="Speed"
+									/>
+								</div>
+							</div>
+							<div className="d-flex d-md-none">
+								<div className="ms-auto btn-group">
+									<button
+										className="btn btn-light-bordered"
+										onClick={() => {
+											scrollTop.current?.scrollIntoView();
+										}}
+									>
+										Top
+									</button>
+									{!isSport("football") ? (
+										<>
+											<button
+												className="btn btn-light-bordered"
+												onClick={() => {
+													document
+														.getElementById("scroll-team-1")
+														?.scrollIntoView();
+												}}
+											>
+												{boxScore.current.teams[0].abbrev}
+											</button>
+											<button
+												className="btn btn-light-bordered"
+												onClick={() => {
+													document
+														.getElementById("scroll-team-2")
+														?.scrollIntoView();
+												}}
+											>
+												{boxScore.current.teams[1].abbrev}
+											</button>
+										</>
+									) : null}
+									<button
+										className="btn btn-light-bordered"
+										onClick={() => {
+											playByPlayDiv.current?.scrollIntoView();
+										}}
+									>
+										Plays
+									</button>
+								</div>
+							</div>
+						</div>
+					) : null}
+					{boxScore.current.gid >= 0 ? (
 						<BoxScoreWrapper
-							boxScore={boxScore.current}
 							Row={PlayerRow}
+							boxScore={boxScore.current}
+							live
 							playIndex={playIndex}
 							sportState={sportState.current}
 						/>
@@ -1062,7 +1084,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 				</div>
 				<div className="col-md-3">
 					<div className="live-game-affix">
-						<div className="d-none d-md-flex align-items-center mb-3">
+						<div className="d-none d-md-flex align-items-center mb-3 pt-md-2">
 							<PlayPauseNext
 								className="me-2"
 								disabled={boxScore.current.gameOver}

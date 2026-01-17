@@ -53,6 +53,7 @@ export const buildJs = async () => {
 		"names-female",
 		"real-player-data",
 		"real-player-stats",
+		"real-schedules",
 	];
 	const replaces = [];
 	for (const filename of jsonFiles) {

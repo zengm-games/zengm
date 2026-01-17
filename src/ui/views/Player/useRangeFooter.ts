@@ -143,7 +143,7 @@ export const useRangeFooter = (pid: number, playerStats: PlayerStats) => {
 				// If loading/open in an invalid state, set to valid state
 				const newSeasonRange: [number, number] = [0, 0];
 				if (!seasons.includes(state.seasonRange[0])) {
-					newSeasonRange[0] = seasons[0];
+					newSeasonRange[0] = seasons[0]!;
 				}
 				if (!seasons.includes(state.seasonRange[1])) {
 					newSeasonRange[1] = seasons.at(-1)!;
@@ -167,7 +167,7 @@ export const useRangeFooter = (pid: number, playerStats: PlayerStats) => {
 			return;
 		}
 
-		await loadData(state.seasons, [state.seasons[0], state.seasons.at(-1)!]);
+		await loadData(state.seasons, [state.seasons[0]!, state.seasons.at(-1)!]);
 	};
 
 	const setSeasonRange = async (seasonRange: [number, number]) => {

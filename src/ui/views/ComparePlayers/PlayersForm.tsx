@@ -23,7 +23,7 @@ type PlayerInfo = {
 const OptionDropdown = ({ value }: { value: DropdownOption }) => {
 	return (
 		<option value={value.key}>
-			{Array.isArray(value.value) ? value.value[0].text : value.value}
+			{Array.isArray(value.value) ? value.value[0]!.text : value.value}
 		</option>
 	);
 };
@@ -115,7 +115,7 @@ const PlayersForm = ({
 										const newPlayers = [...players];
 
 										newPlayers[i] = {
-											...newPlayers[i],
+											...newPlayers[i]!,
 											season: newSeason,
 											p: {
 												...p,
@@ -143,7 +143,7 @@ const PlayersForm = ({
 									setCurrentPlayers((players) => {
 										const newPlayers = [...players];
 										newPlayers[i] = {
-											...newPlayers[i],
+											...newPlayers[i]!,
 											season: newSeason,
 										};
 
@@ -195,7 +195,7 @@ const PlayersForm = ({
 									setCurrentPlayers((players) => {
 										const newPlayers = [...players];
 										newPlayers[i] = {
-											...newPlayers[i],
+											...newPlayers[i]!,
 											playoffs: newPlayoffs,
 										};
 										return newPlayers;

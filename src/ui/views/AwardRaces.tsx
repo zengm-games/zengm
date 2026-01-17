@@ -90,7 +90,7 @@ const AwardRaces = ({
 								pid: p.pid,
 								season,
 								skills: pr ? pr.skills : [],
-								watch: p.watch,
+								defaultWatch: p.watch,
 								firstName: p.firstName,
 								firstNameShort: p.firstNameShort,
 								lastName: p.lastName,
@@ -143,8 +143,6 @@ const AwardRaces = ({
 										</StatWithChange>
 									);
 								}),
-							);
-							data.push(
 								<a
 									href={helpers.leagueUrl([
 										"compare_players",

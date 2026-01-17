@@ -41,16 +41,12 @@ const updateAllStarDunk = async (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameAttributes") ||
 		updateEvents.includes("allStarDunk") ||
-		updateEvents.includes("watchList") ||
 		season !== state.season
 	) {
 		const allStars = await allStar.getOrCreate(season);
 		const dunk = allStars?.dunk;
 		if (dunk === undefined) {
-			if (
-				season === g.get("season") &&
-				g.get("phase") <= PHASE.REGULAR_SEASON
-			) {
+			if (season === g.get("season") && g.get("phase") < PHASE.PLAYOFFS) {
 				return {
 					redirectUrl: helpers.leagueUrl(["all_star", "dunk", season - 1]),
 				};
@@ -158,8 +154,7 @@ const updateAllStarDunk = async (
 					seenDunkers.add(index);
 				}
 
-				for (let i = 0; i < attempts.length; i++) {
-					const attempt = attempts[i];
+				for (const [i, attempt] of attempts.entries()) {
 					log.push({
 						type: "attempt",
 						player: index,

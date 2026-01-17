@@ -460,6 +460,7 @@ const overrides = {
 	"Utah Valley State College": "Utah Valley",
 	"Texas-El Paso": "UTEP",
 	"University of Texas at San Antonio": "UTSA",
+	"Virginia Commonwealth": "VCU",
 	"Virginia Military Institute": "Virginia Military",
 	"College of William & Mary": "William & Mary",
 };

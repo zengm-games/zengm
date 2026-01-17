@@ -1,7 +1,7 @@
 import { csvParse } from "d3-dsv";
 import fs from "node:fs";
 import path from "node:path";
-import { JSONstringifyOrder, filterAndOutput } from "./lib/namesHelpers.js";
+import { JSONstringifyOrder, filterAndOutput } from "./lib/namesHelpers.ts";
 
 const countryFreqs = ({ fnsByCountry }) => {
 	return Object.fromEntries(

@@ -1,4 +1,9 @@
-import { AWARD_NAMES, PHASE, PLAYER } from "../../../common/index.ts";
+import {
+	AWARD_NAMES,
+	PHASE,
+	PLAYER,
+	REAL_PLAYERS_INFO,
+} from "../../../common/index.ts";
 import { groupByUnique } from "../../../common/utils.ts";
 import type {
 	GetLeagueOptionsReal,
@@ -219,7 +224,10 @@ const getAwards = (
 	teams: Teams,
 	options: GetLeagueOptionsReal,
 ) => {
-	if (options.realStats !== "all") {
+	if (
+		(options.realStats !== "all" && options.phase <= PHASE.PLAYOFFS) ||
+		options.randomDebuts
+	) {
 		return;
 	}
 
@@ -235,7 +243,12 @@ const getAwards = (
 		playersBySlug = groupByUnique(players, "srID");
 	}
 
-	const seasonsRange = [1947, options.season - 1];
+	const seasonsRange: [number, number] = [
+		options.realStats === "all"
+			? REAL_PLAYERS_INFO!.MIN_SEASON
+			: options.season,
+		options.season - 1,
+	];
 	if (options.phase > PHASE.PLAYOFFS) {
 		seasonsRange[1] += 1;
 	}
@@ -256,24 +269,27 @@ const getAwards = (
 		}
 		for (const teamSeason of t.seasons) {
 			const { cid, season } = teamSeason;
-			if (!bestRecordInfoBySeason[season]) {
-				bestRecordInfoBySeason[season] = {
-					best: teamSeason,
-					bestConfs: [],
-				};
-			} else {
-				if (teamSeason.won > bestRecordInfoBySeason[season].best.won) {
-					bestRecordInfoBySeason[season].best = teamSeason;
-				}
-			}
 
-			if (!bestRecordInfoBySeason[season].bestConfs[cid]) {
-				bestRecordInfoBySeason[season].bestConfs[cid] = teamSeason;
-			} else {
-				if (
-					teamSeason.won > bestRecordInfoBySeason[season].bestConfs[cid].won
-				) {
+			if (options.realStats === "all" || options.season === season) {
+				if (!bestRecordInfoBySeason[season]) {
+					bestRecordInfoBySeason[season] = {
+						best: teamSeason,
+						bestConfs: [],
+					};
+				} else {
+					if (teamSeason.won > bestRecordInfoBySeason[season].best.won) {
+						bestRecordInfoBySeason[season].best = teamSeason;
+					}
+				}
+
+				if (!bestRecordInfoBySeason[season].bestConfs[cid]) {
 					bestRecordInfoBySeason[season].bestConfs[cid] = teamSeason;
+				} else {
+					if (
+						teamSeason.won > bestRecordInfoBySeason[season].bestConfs[cid].won
+					) {
+						bestRecordInfoBySeason[season].bestConfs[cid] = teamSeason;
+					}
 				}
 			}
 		}
@@ -323,8 +339,8 @@ const getAwards = (
 
 		const awards: Awards<string, string> = {
 			season,
-			bestRecord: awardTeam(bestRecordInfoBySeason[season].best),
-			bestRecordConfs: bestRecordInfoBySeason[season].bestConfs.map(awardTeam),
+			bestRecord: awardTeam(bestRecordInfoBySeason[season]!.best),
+			bestRecordConfs: bestRecordInfoBySeason[season]!.bestConfs.map(awardTeam),
 
 			roy: simple.roy,
 			allRookie,

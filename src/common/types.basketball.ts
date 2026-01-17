@@ -38,7 +38,11 @@ export type TeamStatAttr =
 	| "2pp"
 	| "opp2p"
 	| "opp2pa"
-	| "opp2pp";
+	| "opp2pp"
+	| "oppEfg"
+	| "oppTovp"
+	| "drbp"
+	| "oppFtpFga";
 
 type AwardTeam = {
 	tid: number;

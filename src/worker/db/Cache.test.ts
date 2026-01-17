@@ -19,18 +19,18 @@ beforeEach(() => {
 
 describe("get", () => {
 	test("retrieve an object", async () => {
-		const p = (await idb.cache.players.getAll())[0];
+		const p = (await idb.cache.players.getAll())[0]!;
 		const p2 = (await idb.cache.players.get(p.pid)) as Player;
 		assert.strictEqual(p.pid, p2.pid);
 	});
 
 	test("return undefined for invalid ID", async () => {
 		const p = await idb.cache.players.get(-1);
-		assert.strictEqual(typeof p, "undefined");
+		assert.strictEqual(p, undefined);
 	});
 
 	test("wait until filling complete before resolving query", async () => {
-		const p = (await idb.cache.players.getAll())[0];
+		const p = (await idb.cache.players.getAll())[0]!;
 
 		idb.cache._status = "filling";
 		let setTimeoutCalled = false;

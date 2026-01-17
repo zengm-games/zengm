@@ -18,6 +18,7 @@ import type {
 import { groupByUnique, range } from "../../common/utils.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { season } from "../core/index.ts";
+import { extraStats } from "./hallOfFame.ts";
 
 export const getCategoriesAndStats = (onlyStat?: string) => {
 	let categories = bySport<
@@ -430,7 +431,7 @@ export class GamesPlayedCache {
 				// This only matters if there is a play-in tournament
 				if (playoffSeries?.playIns) {
 					// Find any non-bye first round series and see how many games have been played so far
-					for (const series of playoffSeries.series[0]) {
+					for (const series of playoffSeries.series[0]!) {
 						if (series.away) {
 							// Number of games played so far - can't require more than this!
 							const numGamesFirstRoundSoFar = series.home.won + series.away.won;
@@ -454,7 +455,8 @@ export class GamesPlayedCache {
 
 			const teams = await idb.getCopies.teamsPlus({
 				attrs: ["tid"],
-				stats: ["gp"],
+				stats: ["gp"], // Use this only for playoffs, since seasonAttrs.gp does not increment for playoffs
+				seasonAttrs: ["gp"], // Use seasonAttrs.gp rather than stats.gp for real player historical data which has no team stats
 				season,
 				playoffs,
 				regularSeason: !playoffs,
@@ -465,7 +467,7 @@ export class GamesPlayedCache {
 				if (playoffs) {
 					cache[t.tid] = Math.max(minGpPlayoffs, t.stats.gp);
 				} else {
-					cache[t.tid] = t.stats.gp;
+					cache[t.tid] = t.seasonAttrs.gp;
 				}
 			}
 
@@ -482,11 +484,11 @@ export class GamesPlayedCache {
 		type: "regularSeason" | "playoffs" | "combined",
 		tid: number,
 		career: boolean,
-	): number | null {
+	): number {
 		if (type === "combined") {
 			return (
-				(this.get(season, "regularSeason", tid, career) ?? 0) +
-				(this.get(season, "playoffs", tid, career) ?? 0)
+				this.get(season, "regularSeason", tid, career) +
+				this.get(season, "playoffs", tid, career)
 			);
 		}
 
@@ -518,11 +520,19 @@ export class GamesPlayedCache {
 			return g.get("numGames");
 		}
 
+		// Fallback will happen if there is missing data or if it's realRosters for a past season. For the latter case, we actually do have the correct historical values in g, which mostly works. Same is true for some other cases with missing data, probably. The regularSeason estimate is better than playoffs, because we don't know how many rounds a team played in the playoffs (at least without doing more work, like looking in the playoffSeries database, and whatever who cares).
 		if (playoffs) {
-			return this.playoffsCache[season]?.[tid] ?? null;
+			const gp = this.playoffsCache[season]?.[tid];
+			if (gp !== undefined) {
+				return gp;
+			}
+
+			return helpers.numGamesToWinSeries(
+				g.get("numGamesPlayoffSeries", season)[0],
+			);
 		}
 
-		return this.regularSeasonCache[season]?.[tid] ?? null;
+		return this.regularSeasonCache[season]?.[tid] ?? g.get("numGames", season);
 	}
 }
 
@@ -645,12 +655,6 @@ export const playerMeetsCategoryRequirements = ({
 				career,
 			);
 
-			if (gpTeam === null) {
-				// Just include everyone, since there was some issue getting gamesPlayed (such as playoffs season before startingSeason)
-				pass = true;
-				break;
-			}
-
 			// Special case GP
 			if (minStat === "gp") {
 				if (
@@ -730,7 +734,6 @@ const updateLeaders = async (
 	// Respond to watchList in case players are listed twice in different categories
 	if (
 		updateEvents.includes("firstRun") ||
-		updateEvents.includes("watchList") ||
 		(inputs.season === g.get("season") && updateEvents.includes("gameSim")) ||
 		inputs.season !== state.season ||
 		inputs.playoffs !== state.playoffs ||
@@ -785,13 +788,14 @@ const updateLeaders = async (
 						? ["season", "ovr", "skills", "pos"]
 						: ["skills", "pos"],
 
-				stats: ["abbrev", "tid", ...stats],
+				stats: ["abbrev", "tid", ...stats, ...extraStats],
 				season: season === "career" ? undefined : season,
 				playoffs: inputs.playoffs === "playoffs",
 				regularSeason: inputs.playoffs === "regularSeason",
 				combined: inputs.playoffs === "combined",
 				mergeStats: "totOnly",
 				statType: inputs.statType,
+				disableAbbrevsCacheDatabaseAccess: true,
 			});
 			if (!p) {
 				return;
@@ -811,10 +815,14 @@ const updateLeaders = async (
 			}
 
 			for (let i = 0; i < categories.length; i++) {
-				const cat = categories[i];
-				const outputCat = outputCategories[i];
+				const cat = categories[i]!;
+				const outputCat = outputCategories[i]!;
 
 				const value = playerStats[cat.stat];
+				if (value === undefined) {
+					// value should only be undefined in historical data before certain stats were tracked
+					continue;
+				}
 				const lastValue = outputCat.leaders.at(-1)?.stat;
 				if (
 					lastValue !== undefined &&

@@ -51,14 +51,14 @@ const History = (props: View<"history">) => {
 				<div className="col-md-3 col-sm-4 col-6">
 					<Team
 						className="mb-3"
-						name={AWARD_NAMES.allOffense}
+						name={AWARD_NAMES.allOffense!}
 						season={season}
 						team={awards.allOffense}
 						userTid={userTid}
 					/>
 					<Team
 						className="mb-3"
-						name={AWARD_NAMES.allDefense}
+						name={AWARD_NAMES.allDefense!}
 						season={season}
 						team={awards.allDefense}
 						userTid={userTid}

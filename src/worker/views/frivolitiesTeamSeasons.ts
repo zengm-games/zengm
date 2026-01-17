@@ -4,6 +4,7 @@ import type {
 	UpdateEvents,
 	ViewInput,
 	TeamSeason,
+	ByConf,
 } from "../../common/types.ts";
 import { isSport, PHASE } from "../../common/index.ts";
 import { team } from "../core/index.ts";
@@ -40,7 +41,7 @@ class DefaultKeyMap<Key, Value> extends Map<Key, Value> {
 
 export const getPlayoffsByConfBySeason = async () => {
 	const currentSeason = g.get("season");
-	const playoffsByConfBySeason = new DefaultKeyMap<number, boolean>(
+	const playoffsByConfBySeason = new DefaultKeyMap<number, ByConf>(
 		currentSeason,
 	);
 	for (
@@ -61,7 +62,7 @@ const getMostXTeamSeasons = async ({
 	sortParams,
 }: {
 	filter?: (ts: TeamSeason) => boolean;
-	getValue: (ts: TeamSeason, playoffsByConf: boolean) => Most | undefined;
+	getValue: (ts: TeamSeason, playoffsByConf: ByConf) => Most | undefined;
 	after?: (most: Most) => Promise<Most> | Most;
 	sortParams: OrderBySortParams;
 }) => {
@@ -105,9 +106,12 @@ const getMostXTeamSeasons = async ({
 			return {
 				tid: ts.tid,
 				season: ts.season,
-				abbrev: ts.abbrev || g.get("teamInfoCache")[ts.tid]?.abbrev,
-				region: ts.region || g.get("teamInfoCache")[ts.tid]?.region,
-				name: ts.name || g.get("teamInfoCache")[ts.tid]?.name,
+				abbrev: ts.abbrev ?? g.get("teamInfoCache")[ts.tid]?.abbrev,
+				region: ts.region ?? g.get("teamInfoCache")[ts.tid]?.region,
+				name: ts.name ?? g.get("teamInfoCache")[ts.tid]?.name,
+				imgURL: ts.imgURL ?? g.get("teamInfoCache")[ts.tid]?.imgURL,
+				imgURLSmall:
+					ts.imgURLSmall ?? g.get("teamInfoCache")[ts.tid]?.imgURLSmall,
 				won: ts.won,
 				lost: ts.lost,
 				tied: ts.tied,
@@ -155,7 +159,7 @@ const getMostXTeamSeasons = async ({
 			const playoffSeries = await tx
 				.objectStore("playoffSeries")
 				.get(ts.season);
-			if (playoffSeries && playoffSeries.series.length > 0) {
+			if (playoffSeries?.series[0]) {
 				const matchups = playoffSeries.series[0];
 				for (const matchup of matchups) {
 					if (matchup.home.tid === ts.tid) {
@@ -171,21 +175,32 @@ const getMostXTeamSeasons = async ({
 	}
 
 	const ordered = orderBy(teamSeasons, ...sortParams);
-	for (let i = 0; i < ordered.length; i++) {
-		ordered[i].rank = i + 1;
+	for (const [i, row] of ordered.entries()) {
+		row.rank = i + 1;
 	}
 
 	return ordered;
 };
 
-export const getRoundsWonText = (ts: TeamSeason, playoffsByConf: boolean) => {
+export const getRoundsWonText = (ts: TeamSeason, playoffsByConf: ByConf) => {
 	const numPlayoffRounds = g.get("numGamesPlayoffSeries", ts.season).length;
 
-	return helpers.roundsWonText(
-		ts.playoffRoundsWon,
+	return helpers.roundsWonText({
+		playoffRoundsWon: ts.playoffRoundsWon,
 		numPlayoffRounds,
 		playoffsByConf,
-	);
+	});
+};
+
+const getRoundsWonTextUpper = (ts: TeamSeason, playoffsByConf: ByConf) => {
+	return helpers.upperCaseFirstLetter(getRoundsWonText(ts, playoffsByConf));
+};
+
+// 0 = won championship, 1 = lost in finals, 2 = lost in semifinals, etc.
+const getRoundsFromChamipionship = (ts: TeamSeason) => {
+	const numPlayoffRounds = g.get("numGamesPlayoffSeries", ts.season).length;
+
+	return numPlayoffRounds - ts.playoffRoundsWon;
 };
 
 const updateFrivolitiesTeamSeasons = async (
@@ -251,7 +266,7 @@ const updateFrivolitiesTeamSeasons = async (
 				(season > ts.season || phase > PHASE.PLAYOFFS);
 			getValue = (ts, playoffsByConf) => ({
 				value: -helpers.calcWinp(ts),
-				roundsWonText: getRoundsWonText(ts, playoffsByConf),
+				roundsWonText: getRoundsWonTextUpper(ts, playoffsByConf),
 			});
 			sortParams = [
 				[mostValue, "mov"],
@@ -277,14 +292,11 @@ const updateFrivolitiesTeamSeasons = async (
 				ts.playoffRoundsWon >= 0 &&
 				(season > ts.season || phase > PHASE.PLAYOFFS);
 			getValue = (ts, playoffsByConf) => {
-				const roundsWonText = getRoundsWonText(ts, playoffsByConf);
+				const roundsWonText = getRoundsWonTextUpper(ts, playoffsByConf);
 
-				const validTexts: (typeof roundsWonText)[] = [
-					"League champs",
-					"Conference champs",
-					"Made finals",
-				];
-				if (!validTexts.includes(roundsWonText)) {
+				const roundsFromChampionship = getRoundsFromChamipionship(ts);
+				if (roundsFromChampionship > 1) {
+					// Must have at least made finals
 					return;
 				}
 				return {
@@ -300,31 +312,22 @@ const updateFrivolitiesTeamSeasons = async (
 			title = "Worst Championship Teams";
 			description =
 				"These are the worst seasons from teams that somehow won the title.";
-			extraCols.push(
-				{
-					key: "seed",
-					colName: "Seed",
-				},
-				{
-					key: ["most", "roundsWonText"],
-					keySort: "playoffRoundsWon",
-					colName: "Rounds Won",
-				},
-			);
+			extraCols.push({
+				key: "seed",
+				colName: "Seed",
+			});
 
 			filter = (ts) =>
 				ts.playoffRoundsWon >= 0 &&
 				(season > ts.season || phase > PHASE.PLAYOFFS);
-			getValue = (ts, playoffsByConf) => {
-				const roundsWonText = getRoundsWonText(ts, playoffsByConf);
-
-				const validTexts: (typeof roundsWonText)[] = ["League champs"];
-				if (!validTexts.includes(roundsWonText)) {
+			getValue = (ts) => {
+				const roundsFromChampionship = getRoundsFromChamipionship(ts);
+				if (roundsFromChampionship > 0) {
+					// Must have won championship
 					return;
 				}
 				return {
 					value: -helpers.calcWinp(ts),
-					roundsWonText,
 				};
 			};
 			sortParams = [
@@ -348,7 +351,7 @@ const updateFrivolitiesTeamSeasons = async (
 			filter = (ts) => season > ts.season || phase > PHASE.PLAYOFFS;
 			getValue = (ts, playoffsByConf) => ({
 				value: helpers.calcWinp(ts),
-				roundsWonText: getRoundsWonText(ts, playoffsByConf),
+				roundsWonText: getRoundsWonTextUpper(ts, playoffsByConf),
 			});
 			sortParams = [
 				[mostValue, "mov"],
@@ -387,11 +390,10 @@ const updateFrivolitiesTeamSeasons = async (
 				ts.avgAge !== undefined &&
 				ts.playoffRoundsWon >= 0 &&
 				(season > ts.season || phase > PHASE.PLAYOFFS);
-			getValue = (ts, playoffsByConf) => {
-				const roundsWonText = getRoundsWonText(ts, playoffsByConf);
-
-				const validTexts: (typeof roundsWonText)[] = ["League champs"];
-				if (!validTexts.includes(roundsWonText)) {
+			getValue = (ts) => {
+				const roundsFromChampionship = getRoundsFromChamipionship(ts);
+				if (roundsFromChampionship > 0) {
+					// Must have won championship
 					return;
 				}
 

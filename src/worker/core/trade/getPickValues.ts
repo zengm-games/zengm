@@ -43,17 +43,19 @@ const getPickValues = async (): Promise<TradePickValues> => {
 
 	// Handle case where draft is in progress
 	if (g.get("phase") === PHASE.DRAFT) {
-		const numPicks = g.get("numDraftPicksCurrent") ?? numPicksDefault;
+		const players = await idb.cache.players.indexGetAll("playersByTid", [
+			0,
+			Infinity,
+		]);
+		const numDrafted = players.filter(
+			(p) => p.draft.year === g.get("season"),
+		).length;
 
-		// See what the lowest remaining pick is
-		const draftPicks = (await idb.cache.draftPicks.getAll()).filter(
-			(dp) => dp.season === currentSeason,
-		);
-		const diff = numPicks - draftPicks.length;
-
-		if (diff > 0) {
+		if (numDrafted > 0) {
 			// Value of PLACEHOLDER_VALUE_ALREADY_PICKED is arbitrary since these entries should never appear in a trade since the picks don't exist anymore
-			const fakeValues = Array(diff).fill(PLACEHOLDER_VALUE_ALREADY_PICKED);
+			const fakeValues = Array(numDrafted).fill(
+				PLACEHOLDER_VALUE_ALREADY_PICKED,
+			);
 			pickValues[currentSeason] = fakeValues.concat(
 				pickValues[currentSeason] ?? [],
 			);
@@ -79,7 +81,7 @@ const getPickValues = async (): Promise<TradePickValues> => {
 
 				return true;
 			})
-			.map((season) => (pickValues[season] as number[])[i]);
+			.map((season) => pickValues[season]![i]!);
 		return vals.reduce((total, val) => total + val, 0) / vals.length;
 	});
 

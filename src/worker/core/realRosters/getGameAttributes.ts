@@ -1,9 +1,8 @@
-import { PHASE } from "../../../common/index.ts";
+import { PHASE, REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import type {
 	GameAttributesLeague,
 	GetLeagueOptions,
 } from "../../../common/types.ts";
-import { FIRST_SEASON_WITH_ALEXNOOB_ROSTERS } from "./getLeague.ts";
 
 type MyGameAttributes = Partial<GameAttributesLeague> &
 	Pick<
@@ -22,7 +21,7 @@ const getGameAttributes = (
 		};
 
 		if (
-			options.season >= FIRST_SEASON_WITH_ALEXNOOB_ROSTERS &&
+			options.season >= REAL_PLAYERS_INFO!.FIRST_SEASON_WITH_ALEXNOOB_ROSTERS &&
 			!options.randomDebuts
 		) {
 			gameAttributes.numSeasonsFutureDraftPicks = 7;

@@ -21,17 +21,20 @@ const getNumDaysThisRound = (playoffSeries: PlayoffSeries) => {
 	}
 
 	if (playoffSeries.series.length > 0) {
-		for (const series of playoffSeries.series[playoffSeries.currentRound]) {
-			const num = series.away
-				? g.get("numGamesPlayoffSeries", "current")[
-						playoffSeries.currentRound
-					] -
-					series.home.won -
-					series.away.won
-				: 0;
+		const roundSeries = playoffSeries.series[playoffSeries.currentRound];
+		if (roundSeries) {
+			for (const series of roundSeries) {
+				const num = series.away
+					? g.get("numGamesPlayoffSeries", "current")[
+							playoffSeries.currentRound
+						]! -
+						series.home.won -
+						series.away.won
+					: 0;
 
-			if (num > numDaysThisRound) {
-				numDaysThisRound = num;
+				if (num > numDaysThisRound) {
+					numDaysThisRound = num;
+				}
 			}
 		}
 	}
@@ -79,7 +82,7 @@ const getNumDaysPlayoffs = async () => {
 		i < g.get("numGamesPlayoffSeries", "current").length;
 		i++
 	) {
-		numDaysFutureRounds += g.get("numGamesPlayoffSeries", "current")[i];
+		numDaysFutureRounds += g.get("numGamesPlayoffSeries", "current")[i]!;
 	}
 
 	const numDaysPlayIn = await getNumDaysPlayIn();
@@ -144,8 +147,10 @@ const playAmount = async (
 
 		await freeAgents.play(numDays, conditions);
 	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
-		const type = g.get("repeatSeason")?.type;
-		if (type === "playersAndRosters") {
+		if (
+			g.get("repeatSeason")?.type === "playersAndRosters" ||
+			g.get("forceHistoricalRosters")
+		) {
 			await phase.newPhase(PHASE.PRESEASON, conditions);
 		}
 	}
@@ -241,7 +246,6 @@ const playMenu = {
 		await runDraft({ type: "untilEnd" }, conditions);
 	},
 	untilResignPlayers: async (param: unknown, conditions: Conditions) => {
-		console.log("untilResignPlayers");
 		if (
 			g.get("draftType") === "freeAgents" &&
 			g.get("phase") === PHASE.DRAFT_LOTTERY
@@ -266,7 +270,7 @@ const playMenu = {
 
 			if (numRemaining > 0) {
 				// This function always returns a boolean if no defaultValue is supplied, but couldn't figure out how to get it to work correctly with TypeScript.
-				proceed = (await toUI(
+				proceed = await toUI(
 					"confirm",
 					[
 						`Are you sure you want to proceed to free agency while ${numRemaining} of your players remain unsigned? If you do not re-sign them before free agency begins, they will be free to sign with any team${
@@ -279,7 +283,7 @@ const playMenu = {
 						},
 					],
 					conditions,
-				)) as unknown as boolean;
+				);
 			}
 
 			if (proceed) {

@@ -10,6 +10,7 @@ import {
 } from "../../util/index.ts";
 import { PHASE } from "../../../common/index.ts";
 import deleteUnreadMessages from "./deleteUnreadMessages.ts";
+import { actualPhase } from "../../util/actualPhase.ts";
 
 const disable = async (tid: number) => {
 	const t = await idb.cache.teams.get(tid);
@@ -87,7 +88,7 @@ const disable = async (tid: number) => {
 	}
 
 	// In preseason, need to delete teamSeason and teamStats
-	if (g.get("phase") < PHASE.PLAYOFFS) {
+	if (actualPhase() < PHASE.PLAYOFFS) {
 		const teamSeason = await idb.cache.teamSeasons.indexGet(
 			"teamSeasonsByTidSeason",
 			[t.tid, g.get("season")],

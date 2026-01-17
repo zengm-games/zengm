@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import Select from "react-select";
-import { SPORT_HAS_REAL_PLAYERS } from "../../../common/index.ts";
+import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import { groupBy } from "../../../common/utils.ts";
 import type { View } from "../../../common/types.ts";
 import type { Settings } from "../../../worker/views/settings.ts";
@@ -9,7 +9,6 @@ import { MoreLinks } from "../../components/index.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
 	helpers,
-	localActions,
 	logEvent,
 	realtimeUpdate,
 	toWorker,
@@ -19,18 +18,13 @@ import SettingsForm from "../Settings/SettingsForm.tsx";
 import type { Key } from "../Settings/types.ts";
 import ExportButton from "./ExportButton.tsx";
 import ImportButton from "./ImportButton.tsx";
+import { useBlocker } from "../../hooks/useBlocker.ts";
 
 const DefaultNewLeagueSettings = ({
 	defaultSettings,
 	overrides,
 }: View<"defaultNewLeagueSettings">) => {
 	useTitleBar({ title: "Default New League Settings" });
-
-	useEffect(() => {
-		localActions.update({
-			dirtySettings: false,
-		});
-	}, []);
 
 	const [importErrorMessage, setImportErrorMessage] = useState<
 		string | undefined
@@ -83,7 +77,7 @@ const DefaultNewLeagueSettings = ({
 				setting.showOnlyIf({
 					hasPlayers: true,
 					newLeague: true,
-					realPlayers: SPORT_HAS_REAL_PLAYERS,
+					realPlayers: !!REAL_PLAYERS_INFO,
 				})),
 	);
 
@@ -97,11 +91,11 @@ const DefaultNewLeagueSettings = ({
 		})),
 	}));
 
+	const { dirty, setDirty } = useBlocker();
+
 	const onAnyChange = () => {
 		setImportErrorMessage(undefined);
-		localActions.update({
-			dirtySettings: true,
-		});
+		setDirty(true);
 	};
 
 	const removeSettingsEqualToDefault = (settings: Partial<Settings>) => {
@@ -151,7 +145,7 @@ const DefaultNewLeagueSettings = ({
 				not have that setting specified. So if you are uploading an exported
 				league containing league settings, it will not be changed by whatever
 				you specify here.
-				{SPORT_HAS_REAL_PLAYERS
+				{REAL_PLAYERS_INFO
 					? " Also, real players leagues have some non-default settings already applied, and those will also not be altered by your specified defaults."
 					: null}
 			</p>
@@ -242,7 +236,7 @@ const DefaultNewLeagueSettings = ({
 								setOverridesLocalCounter((counter) => counter + 1);
 							}}
 						/>
-						<ExportButton />
+						<ExportButton dirty={dirty} />
 					</div>
 				</div>
 			</div>
@@ -276,7 +270,7 @@ const DefaultNewLeagueSettings = ({
 						const godModeKeys = [];
 
 						for (const key of helpers.keys(newDefaultSettings2)) {
-							const setting = settingsByKey[key][0];
+							const setting = settingsByKey[key]![0];
 							if (setting?.godModeRequired === "always") {
 								godModeKeys.push(setting.name);
 							}
@@ -300,9 +294,7 @@ const DefaultNewLeagueSettings = ({
 						newDefaultSettings2,
 					);
 
-					localActions.update({
-						dirtySettings: false,
-					});
+					setDirty(false);
 
 					logEvent({
 						type: "success",
@@ -318,9 +310,7 @@ const DefaultNewLeagueSettings = ({
 					setSettingsShown((shown) => shown.filter((key2) => key2 !== key));
 				}}
 				onUpdateExtra={() => {
-					localActions.update({
-						dirtySettings: true,
-					});
+					setDirty(true);
 				}}
 				saveText="Save Default Settings"
 				initialSettings={{

@@ -36,7 +36,11 @@ const Notes = (props: View<"notes">) => {
 
 		moreLinks = <MoreLinks type="draft" page="notes" draftType={draftType} />;
 
-		const output = getDraftPicksColsAndRows({ challengeNoRatings, draftPicks });
+		const output = getDraftPicksColsAndRows({
+			challengeNoRatings,
+			draftPicks,
+			draftPicksOutgoing: [],
+		});
 		cols = [
 			...output.cols,
 			...getCols([""], {
@@ -235,8 +239,7 @@ const Notes = (props: View<"notes">) => {
 			colNames.push("T");
 		}
 		if (usePts) {
-			colNames.push("PTS");
-			colNames.push("PTS%");
+			colNames.push("PTS", "PTS%");
 		} else {
 			colNames.push("%");
 		}
@@ -253,13 +256,6 @@ const Notes = (props: View<"notes">) => {
 		});
 
 		rows = teams.map((t) => {
-			const roundsWonText = helpers.roundsWonText(
-				t.playoffRoundsWon,
-				t.numPlayoffRounds,
-				t.playoffsByConf,
-				true,
-			);
-
 			return {
 				key: JSON.stringify([t.tid, t.season]),
 				data: [
@@ -286,11 +282,11 @@ const Notes = (props: View<"notes">) => {
 									t.season,
 								])}
 							>
-								{roundsWonText}
+								{t.roundsWonText}
 							</a>
 						),
 						sortValue: t.playoffRoundsWon,
-						searchValue: roundsWonText,
+						searchValue: t.roundsWonText,
 					},
 					{
 						value: (

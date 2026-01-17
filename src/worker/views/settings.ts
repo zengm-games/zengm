@@ -1,6 +1,5 @@
 import { defaultInjuries, defaultTragicDeaths, g } from "../util/index.ts";
 import type {
-	Conf,
 	GameAttributesLeague,
 	GetLeagueOptionsReal,
 	InjuriesSetting,
@@ -87,7 +86,6 @@ type Key =
 	| "numPlayersOnCourt"
 	| "numDraftRounds"
 	| "tradeDeadline"
-	| "autoDeleteOldBoxScores"
 	| "difficulty"
 	| "stopOnInjury"
 	| "stopOnInjuryGames"
@@ -171,7 +169,14 @@ type Key =
 	| "autoRelocateRebrand"
 	| "alwaysShowCountry"
 	| "neutralSite"
-	| "rpdPot";
+	| "rpdPot"
+	| "saveOldBoxScores"
+	| "currencyFormat"
+	| "overtimeLength"
+	| "overtimeLengthPlayoffs"
+	| "forceRetireRealPlayers"
+	| "forceHistoricalRosters"
+	| "scrimmageTouchbackKickoff";
 
 export type Settings = Pick<
 	GameAttributesLeague,
@@ -206,7 +211,7 @@ export type Settings = Pick<
 	tragicDeaths: TragicDeaths;
 	goatFormula: string;
 	goatSeasonFormula: string;
-	confs?: Conf[];
+	confs?: GameAttributesLeague["confs"];
 	giveMeWorstRoster: boolean;
 
 	// undefined in DefaultNewLeagueSettings - then it is not possible to validate some settings that depend on it
@@ -296,7 +301,6 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			numPlayersOnCourt: g.get("numPlayersOnCourt"),
 			numDraftRounds: g.get("numDraftRounds"),
 			tradeDeadline: g.get("tradeDeadline"),
-			autoDeleteOldBoxScores: g.get("autoDeleteOldBoxScores"),
 			difficulty: g.get("difficulty"),
 			stopOnInjury: g.get("stopOnInjury"),
 			stopOnInjuryGames: g.get("stopOnInjuryGames"),
@@ -383,6 +387,13 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			alwaysShowCountry: g.get("alwaysShowCountry"),
 			neutralSite: g.get("neutralSite"),
 			rpdPot: g.get("rpdPot"),
+			saveOldBoxScores: g.get("saveOldBoxScores"),
+			currencyFormat: g.get("currencyFormat"),
+			overtimeLength: g.get("overtimeLength"),
+			overtimeLengthPlayoffs: g.get("overtimeLengthPlayoffs"),
+			forceRetireRealPlayers: g.get("forceRetireRealPlayers"),
+			forceHistoricalRosters: g.get("forceHistoricalRosters"),
+			scrimmageTouchbackKickoff: g.get("scrimmageTouchbackKickoff"),
 
 			// Might as well be undefined, because it will never be saved from this form, only the new league form
 			realDraftRatings: g.get("realDraftRatings") ?? "rookie",

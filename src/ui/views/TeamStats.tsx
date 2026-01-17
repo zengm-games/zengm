@@ -53,8 +53,7 @@ const TeamStats = ({
 		}
 	}
 	if (usePts) {
-		basicColNames.push("PTS");
-		basicColNames.push("PTS%");
+		basicColNames.push("PTS", "PTS%");
 		if (superCols) {
 			superCols[0].colspan += 2;
 		}
@@ -106,8 +105,7 @@ const TeamStats = ({
 		otherStatColumns.push("tied");
 	}
 	if (usePts) {
-		otherStatColumns.push("pts");
-		otherStatColumns.push("ptsPct");
+		otherStatColumns.push("pts", "ptsPct");
 	} else {
 		otherStatColumns.push("winp");
 	}

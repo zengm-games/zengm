@@ -2,10 +2,9 @@
 
 import { idb } from "../../db/index.ts";
 import { g, local } from "../../util/index.ts";
-import { LATEST_SEASON, MIN_SEASON } from "../realRosters/getLeague.ts";
 import type { SeasonLeaders } from "../../../common/types.ts";
 import { league, season } from "../index.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE, REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import loadData from "../realRosters/loadData.basketball.ts";
 
 const recomputeRealSeasonLeaders = async () => {
@@ -20,7 +19,11 @@ const recomputeRealSeasonLeaders = async () => {
 
 	const realData = await loadData();
 
-	for (let season2 = MIN_SEASON; season2 <= LATEST_SEASON; season2++) {
+	for (
+		let season2 = REAL_PLAYERS_INFO!.MIN_SEASON;
+		season2 <= REAL_PLAYERS_INFO!.MAX_SEASON;
+		season2++
+	) {
 		if (season2 === currentSeason && currentPhase <= PHASE.PLAYOFFS) {
 			console.log(
 				`Skipping current season (${season2}) because playoffs are not done yet`,

@@ -105,7 +105,7 @@ const GOATFormula = ({
 					>
 						{stats.map((stat, i) => (
 							<li key={stat}>
-								<abbr className="font-monospace" title={cols[i].desc}>
+								<abbr className="font-monospace" title={cols[i]!.desc}>
 									{stat}
 								</abbr>
 							</li>

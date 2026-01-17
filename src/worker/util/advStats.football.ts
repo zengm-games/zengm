@@ -169,9 +169,11 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 			throw new Error("Should never happen");
 		}
 
+		const pInidivudalPoints = individualPts[i]!;
+
 		// OL
 		if (p.ratings.pos === "OL" || p.ratings.pos === "TE") {
-			score += (individualPts[i] / t.stats.individualPtsOL) * t.stats.ptsOL;
+			score += (pInidivudalPoints / t.stats.individualPtsOL) * t.stats.ptsOL;
 		}
 
 		// Rushing
@@ -202,12 +204,12 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 		// Defense
 		if (p.ratings.pos === "DL" || p.ratings.pos === "LB") {
 			score +=
-				(individualPts[i] / t.stats.individualPtsFront7) * t.stats.ptsFront7;
+				(pInidivudalPoints / t.stats.individualPtsFront7) * t.stats.ptsFront7;
 		}
 
 		if (p.ratings.pos === "S" || p.ratings.pos === "CB") {
 			score +=
-				(individualPts[i] / t.stats.individualPtsSecondary) *
+				(pInidivudalPoints / t.stats.individualPtsSecondary) *
 				t.stats.ptsSecondary;
 		}
 

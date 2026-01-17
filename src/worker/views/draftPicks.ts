@@ -41,7 +41,7 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 
 	const teamsRaw = await idb.getCopies.teamsPlus(
 		{
-			attrs: ["tid", "abbrev"],
+			attrs: ["tid", "abbrev", "playThroughInjuries"],
 			seasonAttrs: ["lastTen", "won", "lost", "tied", "otl"],
 			stats: ["gp", "mov"],
 			season: g.get("season"),
@@ -79,7 +79,7 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 			}
 
 			projectedPick = adjustProjectedPick({
-				projectedPick: estPicksCache[dp.originalTid],
+				projectedPick: estPicksCache[dp.originalTid]!,
 				numSeasons: dp.season - g.get("season"),
 				numTeams: teamsWithRankings.length,
 			});
@@ -100,7 +100,7 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 
 				// Which team traded the pick?
 				if (event.teams) {
-					for (let i = 0; i < 2; i++) {
+					for (const i of [0, 1] as const) {
 						if (
 							event.teams[i].assets.some(
 								(asset) => (asset as any).dpid === dp.dpid,
@@ -121,6 +121,7 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 
 		draftPicks.push({
 			...dp,
+			abbrev: teams[dp.tid]?.abbrev ?? "???",
 			originalAbbrev: t?.abbrev ?? "???",
 			avgAge: t?.powerRankings.avgAge,
 			ovr: t?.powerRankings.ovr,
@@ -151,17 +152,28 @@ const updateDraftPicks = async (
 		updateEvents.includes("newPhase") ||
 		abbrev !== state.abbrev
 	) {
-		const draftPicksRaw = await idb.cache.draftPicks.indexGetAll(
-			"draftPicksByTid",
-			tid,
+		const draftPicksRaw = (await idb.cache.draftPicks.getAll()).filter(
+			(dp) => dp.tid === tid || dp.originalTid === tid,
 		);
 
-		const draftPicks = await processDraftPicks(draftPicksRaw);
+		const draftPicksProcessed = await processDraftPicks(draftPicksRaw);
+
+		// Do this after processDraftPicks so processDraftPicks can use the same caches for both
+		const draftPicks = [];
+		const draftPicksOutgoing = [];
+		for (const dp of draftPicksProcessed) {
+			if (dp.tid === tid) {
+				draftPicks.push(dp);
+			} else if (dp.originalTid === tid) {
+				draftPicksOutgoing.push(dp);
+			}
+		}
 
 		return {
 			abbrev,
 			challengeNoRatings: g.get("challengeNoRatings"),
 			draftPicks,
+			draftPicksOutgoing,
 			draftType: g.get("draftType"),
 			tid,
 		};

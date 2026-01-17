@@ -1609,7 +1609,7 @@ describe("sleeper_pick", () => {
 		let awarded = await get("sleeper_pick").check();
 		assert.strictEqual(awarded, false);
 
-		const p = (await idb.cache.players.getAll())[0];
+		const p = (await idb.cache.players.getAll())[0]!;
 		p.tid = g.get("userTid");
 		p.draft.tid = g.get("userTid");
 		p.draft.round = 1;
@@ -1638,7 +1638,7 @@ describe("sleeper_pick", () => {
 	});
 
 	test("don't award achievement if not currently on user's team", async () => {
-		const p = (await idb.cache.players.getAll())[0];
+		const p = (await idb.cache.players.getAll())[0]!;
 		p.tid = 15;
 		await idb.cache.players.put(p);
 
@@ -1647,7 +1647,7 @@ describe("sleeper_pick", () => {
 	});
 
 	test("don't award achievement if not drafted by user", async () => {
-		const p = (await idb.cache.players.getAll())[0];
+		const p = (await idb.cache.players.getAll())[0]!;
 		p.tid = g.get("userTid");
 		p.draft.tid = 15;
 		await idb.cache.players.put(p);
@@ -1657,7 +1657,7 @@ describe("sleeper_pick", () => {
 	});
 
 	test("don't award achievement if lottery pick", async () => {
-		const p = (await idb.cache.players.getAll())[0];
+		const p = (await idb.cache.players.getAll())[0]!;
 		p.draft.tid = g.get("userTid");
 		p.draft.pick = 7;
 		await idb.cache.players.put(p);
@@ -1667,7 +1667,7 @@ describe("sleeper_pick", () => {
 	});
 
 	test("don't award achievement if old pick", async () => {
-		const p = (await idb.cache.players.getAll())[0];
+		const p = (await idb.cache.players.getAll())[0]!;
 		p.draft.pick = 15;
 		p.draft.year = g.get("season") - 2;
 		await idb.cache.players.put(p);
@@ -1678,7 +1678,7 @@ describe("sleeper_pick", () => {
 
 	test("don't award achievement if not ROY", async () => {
 		// Switch to another player
-		const p = (await idb.cache.players.getAll())[1];
+		const p = (await idb.cache.players.getAll())[1]!;
 
 		const awards = {
 			season: 2013,

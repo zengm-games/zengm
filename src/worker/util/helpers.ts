@@ -6,7 +6,11 @@ import {
 } from "../../common/index.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
-import type { DraftPick, PlayoffSeriesTeam } from "../../common/types.ts";
+import type {
+	ByConf,
+	DraftPick,
+	PlayoffSeriesTeam,
+} from "../../common/types.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 import hasTies from "../core/season/hasTies.ts";
 import { roundContract as roundContractRaw } from "../../common/roundContract.ts";
@@ -171,11 +175,12 @@ const getAbbrev = (tid: number | string): string => {
 		tid = g.get("userTid");
 	}
 
-	return g.get("teamInfoCache")[tid]?.abbrev;
+	return g.get("teamInfoCache")[tid]!.abbrev;
 };
 
-const leagueUrl = (components: (number | string | undefined)[]): string =>
-	commonHelpers.leagueUrlFactory(g.get("lid"), components);
+const leagueUrl = (components: (number | string | undefined)[]): string => {
+	return commonHelpers.leagueUrlBase(g.get("lid"), components);
+};
 
 const numGamesToWinSeries = (numGamesPlayoffSeries: number | undefined) => {
 	if (
@@ -360,6 +365,137 @@ const getTeamSeasonGp = (teamSeason: {
 	return teamSeason.won + teamSeason.lost + teamSeason.tied + teamSeason.otl;
 };
 
+// Strips BBCode from strings like:
+// [url=https://imgbb.com/][img]https://i.ibb.co/HTGQNH5P/RIO.png[/img][/url]
+// [img]https://i.ibb.co/HTGQNH5P/RIO.png[/img]
+const stripBbcode = (imgURL: string) => {
+	if (!imgURL.trim().startsWith("[")) {
+		return imgURL;
+	}
+
+	const matches = imgURL.match(/\[img[^\]]*](.*?)\[\/img]/i);
+	if (matches?.[1] !== undefined) {
+		return matches[1];
+	}
+	return imgURL;
+};
+
+const formatCurrency = (
+	amount: number,
+	initialUnits?: "M" | "",
+	precision?: number,
+): string => {
+	return commonHelpers.formatCurrencyBase(
+		g.get("currencyFormat"),
+		amount,
+		initialUnits,
+		precision,
+	);
+};
+
+const playoffRoundName = (
+	currentRound: number, // Like currentRound from PlayoffSeries, not playoffRoundsWon. Difference is that playoffRoundsWon can be 1 higher than this (for finals winner) and -1 means differnet things (here it is play-in tournament, not missed playoffs)
+	numPlayoffRounds: number,
+	playoffsByConf: ByConf,
+) => {
+	if (currentRound === -1) {
+		return "play-in tournament";
+	}
+
+	if (currentRound === numPlayoffRounds - 1) {
+		return "finals" as const;
+	}
+
+	// Put this early so as to not glorify just making the playoffs with some fancier text
+	if (currentRound === 0) {
+		return "1st round" as const;
+	}
+
+	const confChampionshipRound =
+		playoffsByConf === false
+			? undefined
+			: numPlayoffRounds - Math.log2(playoffsByConf);
+
+	if (confChampionshipRound !== undefined) {
+		if (currentRound === confChampionshipRound - 1) {
+			return "conference finals";
+		}
+		if (currentRound === confChampionshipRound - 2) {
+			return "conference semifinals";
+		}
+	}
+
+	if (currentRound === numPlayoffRounds - 2) {
+		return "semifinals";
+	}
+
+	if (currentRound === numPlayoffRounds - 3) {
+		return "quarterfinals";
+	}
+
+	if (currentRound >= 1) {
+		return `${commonHelpers.ordinal(currentRound + 1)} round` as const;
+	}
+
+	throw new Error(
+		`Invalid roundIndex ${currentRound} ${numPlayoffRounds} ${playoffsByConf}`,
+	);
+};
+
+const roundsWonText = ({
+	playoffRoundsWon,
+	numPlayoffRounds,
+	playoffsByConf,
+	showMissedPlayoffs,
+}: {
+	playoffRoundsWon: number;
+	numPlayoffRounds: number;
+	playoffsByConf: ByConf;
+	showMissedPlayoffs?: boolean;
+}) => {
+	if (playoffRoundsWon >= 0) {
+		if (playoffRoundsWon === numPlayoffRounds) {
+			return "league champs";
+		}
+
+		const roundName = playoffRoundName(
+			playoffRoundsWon,
+			numPlayoffRounds,
+			playoffsByConf,
+		);
+
+		// Put this above "made playoffs" to handle the 2 team playoff case
+		if (playoffRoundsWon === numPlayoffRounds - 1) {
+			if (playoffsByConf === 2) {
+				return "conference champs";
+			}
+
+			return `made ${roundName}`;
+		}
+
+		if (playoffRoundsWon === 0) {
+			// Put this early so as to not glorify just making the playoffs with some fancier text
+			return "made playoffs";
+		}
+
+		const confChampionshipRound =
+			playoffsByConf === false
+				? undefined
+				: numPlayoffRounds - Math.log2(playoffsByConf);
+
+		if (
+			confChampionshipRound !== undefined &&
+			playoffRoundsWon === confChampionshipRound
+		) {
+			return "conference champs";
+		}
+
+		return `made ${roundName}`;
+	}
+
+	return showMissedPlayoffs ? "missed playoffs" : "";
+};
+
 const helpers = {
 	...commonHelpers,
 	augmentSeries,
@@ -367,6 +503,7 @@ const helpers = {
 	correctLinkLid,
 	defaultTicketPrice,
 	effectiveGameLength,
+	formatCurrency,
 	gb,
 	getAbbrev,
 	getTeamSeasonGp,
@@ -380,6 +517,9 @@ const helpers = {
 	sigmoid,
 	daysLeft,
 	gameAndSeasonLengthScaleFactor,
+	stripBbcode,
+	playoffRoundName,
+	roundsWonText,
 };
 
 export default helpers;

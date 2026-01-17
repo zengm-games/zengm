@@ -3,7 +3,7 @@ import type { SortType, View } from "../../../common/types.ts";
 import { PlayerNameLabels, PlayerPicture } from "../../components/index.tsx";
 import { PLAYER, bySport } from "../../../common/index.ts";
 import {
-	getCols,
+	getCol,
 	groupAwards,
 	helpers,
 	realtimeUpdate,
@@ -175,7 +175,7 @@ const AwardRows = ({ players }: { players: PlayerInfoAndLegend[] }) => {
 						}}
 						values={playersToValues(
 							players,
-							(_, i) => awardsGrouped[i][award.type]?.count,
+							(_, i) => awardsGrouped[i]![award.type]?.count,
 						)}
 						sortType="number"
 					/>
@@ -185,7 +185,8 @@ const AwardRows = ({ players }: { players: PlayerInfoAndLegend[] }) => {
 	);
 };
 
-// This is needed rather than CSS "position: sticky" because of the table-responsive wrapper https://stackoverflow.com/q/55483466/786644
+// This is needed rather than CSS "position: sticky" because of the table-responsive wrapper https://github.com/w3c/csswg-drafts/issues/828
+// See useStickyTableHeader for a fancier version of this
 const useManualSticky = (element: HTMLElement | null, top: number) => {
 	useEffect(() => {
 		if (!element) {
@@ -279,17 +280,17 @@ const ComparePlayers = ({
 		legendColumn === 0
 			? [{ p: "legend", season: undefined } as const, ...players]
 			: [
-					players[0],
+					players[0]!,
 					{ p: "legend", season: undefined } as const,
 					...players.slice(1),
 				];
 
 	// If one is career, all are career
-	const career = players.length > 0 && players[0].season === "career";
+	const career = players[0]?.season === "career";
 
 	const ageRow = (
 		<InfoRow
-			col={getCols(["Age"])[0]}
+			col={getCol("Age")}
 			values={playersToValues(
 				playersAndLegend,
 				(p) => p.ratings.season - p.born.year,
@@ -300,7 +301,7 @@ const ComparePlayers = ({
 	);
 
 	const contractValues = playersToValues(playersAndLegend, (p, i) => {
-		const season = playersAndLegend[i].season;
+		const season = playersAndLegend[i]!.season;
 
 		if (
 			p.tid === PLAYER.UNDRAFTED ||
@@ -372,7 +373,7 @@ const ComparePlayers = ({
 											<PlayerNameLabels
 												pid={p.pid}
 												season={season === "career" ? undefined : season}
-												watch={p.watch}
+												defaultWatch={p.watch}
 												firstName={p.firstName}
 												lastName={p.lastName}
 											/>
@@ -405,14 +406,14 @@ const ComparePlayers = ({
 									ageRow
 								)}
 								<InfoRow
-									col={getCols(["Pos"])[0]}
+									col={getCol("Pos")}
 									values={playersToValues(
 										playersAndLegend,
 										(p) => p.ratings.pos,
 									)}
 								/>
 								<InfoRow
-									col={getCols(["Draft"])[0]}
+									col={getCol("Draft")}
 									values={playersToValues(playersAndLegend, (p) =>
 										p.tid === PLAYER.UNDRAFTED
 											? "Draft prospect"
@@ -424,10 +425,7 @@ const ComparePlayers = ({
 									sortAsc
 								/>
 								{showContracts ? (
-									<InfoRow
-										col={getCols(["Contract"])[0]}
-										values={contractValues}
-									/>
+									<InfoRow col={getCol("Contract")} values={contractValues} />
 								) : null}
 							</>
 						) : null}
@@ -453,7 +451,7 @@ const ComparePlayers = ({
 											} else {
 												key = `rating:${rating}`;
 											}
-											const col = getCols([key])[0];
+											const col = getCol(key);
 											return (
 												<InfoRow
 													key={rating}
@@ -479,7 +477,7 @@ const ComparePlayers = ({
 						</HeaderRow>
 						{openStats
 							? stats.map((stat) => {
-									const col = getCols([`stat:${stat}`])[0];
+									const col = getCol(`stat:${stat}`);
 									return (
 										<InfoRow
 											key={stat}

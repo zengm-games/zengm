@@ -4,7 +4,6 @@ import gameSimPresets from "./gameSimPresets.ts";
 import { settings } from "./settings.tsx";
 import {
 	encodeDecodeFunctions,
-	type SpecialStateOthers,
 	SPECIAL_STATE_ALL,
 	SPECIAL_STATE_BOOLEANS,
 	SPECIAL_STATE_OTHERS,
@@ -85,7 +84,7 @@ const useSettingsFormState = ({
 		};
 
 	const handleChangeRaw =
-		<Name extends SpecialStateOthers>(name: Name) =>
+		<Name extends Key>(name: Name) =>
 		(value: State[Name]) => {
 			setState((prevState) => ({
 				...prevState,

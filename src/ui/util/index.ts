@@ -33,6 +33,7 @@ export { default as confirm } from "./confirm.tsx";
 export { default as confirmDeleteAllLeagues } from "./confirmDeleteAllLeagues.tsx";
 export { default as downloadFile } from "./downloadFile.ts";
 export { default as genStaticPage } from "./genStaticPage.tsx";
+export { default as getCol } from "../../common/getCol.ts";
 export { default as getCols } from "../../common/getCols.ts";
 export { default as getScript } from "./getScript.ts";
 export { default as gradientStyleFactory } from "./gradientStyleFactory.ts";

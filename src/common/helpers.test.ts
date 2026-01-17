@@ -33,72 +33,131 @@ describe("deepCopy", () => {
 
 describe("formatCurrency", () => {
 	test("work with no extra options", () => {
-		assert.strictEqual(helpers.formatCurrency(52.766), "$52.77");
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 52.766),
+			"$52.77",
+		);
 	});
 
 	test("append a string, if supplied", () => {
-		assert.strictEqual(helpers.formatCurrency(64.764376, "M"), "$64.76M");
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 64.764376, "M"),
+			"$64.76M",
+		);
 	});
 
 	test("round to any precision", () => {
 		assert.strictEqual(
-			helpers.formatCurrency(64363.764376, "M", 5),
+			helpers.formatCurrencyBase(["$", ".", ""], 64363.764376, "M", 5),
 			"$64.36376B",
 		);
-		assert.strictEqual(helpers.formatCurrency(0.794123, "M", 0), "$794k");
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 0.794123, "M", 0),
+			"$794k",
+		);
 	});
 
 	test("truncate trailing 0s", () => {
-		assert.strictEqual(helpers.formatCurrency(64.99, "M", 2), "$64.99M");
-		assert.strictEqual(helpers.formatCurrency(64.9, "M", 2), "$64.9M");
-		assert.strictEqual(helpers.formatCurrency(64.0, "M", 2), "$64M");
-		assert.strictEqual(helpers.formatCurrency(64, "M", 2), "$64M");
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 64.99, "M", 2),
+			"$64.99M",
+		);
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 64.9, "M", 2),
+			"$64.9M",
+		);
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 64.0, "M", 2),
+			"$64M",
+		);
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 64, "M", 2),
+			"$64M",
+		);
 	});
 
 	test("large numbers and scientific notation", () => {
-		assert.strictEqual(helpers.formatCurrency(64.363, "", 2), "$64.36");
-		assert.strictEqual(helpers.formatCurrency(64000, "", 2), "$64k");
-		assert.strictEqual(helpers.formatCurrency(6400000, "", 2), "$6.4M");
-		assert.strictEqual(helpers.formatCurrency(6400000000, "", 2), "$6.4B");
-		assert.strictEqual(helpers.formatCurrency(6400000000000, "", 2), "$6.4T");
 		assert.strictEqual(
-			helpers.formatCurrency(6400000000000000, "", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 64.363, "", 2),
+			"$64.36",
+		);
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 64000, "", 2),
+			"$64k",
+		);
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 6400000, "", 2),
+			"$6.4M",
+		);
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 6400000000, "", 2),
+			"$6.4B",
+		);
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 6400000000000, "", 2),
+			"$6.4T",
+		);
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 6400000000000000, "", 2),
 			"$6.4Q",
 		);
 		assert.strictEqual(
-			helpers.formatCurrency(6400000000000000000, "", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 6400000000000000000, "", 2),
 			"$6.4e18",
 		);
 		assert.strictEqual(
-			helpers.formatCurrency(64000000000000000000, "", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 64000000000000000000, "", 2),
 			"$6.4e19",
 		);
 	});
 
 	test("large numbers and scientific notation, in millions", () => {
-		assert.strictEqual(helpers.formatCurrency(64363, "M", 2), "$64.36B");
-		assert.strictEqual(helpers.formatCurrency(64363000, "M", 2), "$64.36T");
-		assert.strictEqual(helpers.formatCurrency(64363000000, "M", 2), "$64.36Q");
 		assert.strictEqual(
-			helpers.formatCurrency(643630000000, "M", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 64363, "M", 2),
+			"$64.36B",
+		);
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 64363000, "M", 2),
+			"$64.36T",
+		);
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 64363000000, "M", 2),
+			"$64.36Q",
+		);
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 643630000000, "M", 2),
 			"$643.63Q",
 		);
 		assert.strictEqual(
-			helpers.formatCurrency(6436300000000, "M", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 6436300000000, "M", 2),
 			"$6.44e18",
 		);
 		assert.strictEqual(
-			helpers.formatCurrency(64363000000000, "M", 2),
+			helpers.formatCurrencyBase(["$", ".", ""], 64363000000000, "M", 2),
 			"$6.44e19",
 		);
 	});
 
 	test("number under 1 with no unit", () => {
-		assert.strictEqual(helpers.formatCurrency(0.5, ""), "$0.50");
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 0.5, ""),
+			"$0.50",
+		);
 	});
 
 	test("$1000M", () => {
-		assert.strictEqual(helpers.formatCurrency(1000, "M"), "$1B");
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["$", ".", ""], 1000, "M"),
+			"$1B",
+		);
+	});
+
+	test("Euros", () => {
+		assert.strictEqual(
+			helpers.formatCurrencyBase(["", ",", " €"], 64363, "M"),
+			"64,36B €",
+		);
+		assert.strictEqual(helpers.formatCurrencyBase(["", ",", " €"], 0), "0 €");
 	});
 });
 
@@ -155,25 +214,25 @@ describe("getRelativeType", () => {
 	});
 });
 
-describe("leagueUrlFactory", () => {
+describe("leagueUrlBase", () => {
 	test("should construct a valid URL with components", () => {
 		const lid = 123;
 		const components = ["team", 45, "roster", undefined, "stats"];
 		const assertedUrl = "/l/123/team/45/roster/stats";
-		assert.strictEqual(helpers.leagueUrlFactory(lid, components), assertedUrl);
+		assert.strictEqual(helpers.leagueUrlBase(lid, components), assertedUrl);
 	});
 
 	test("should construct a valid URL without undefined components", () => {
 		const lid = 456;
 		const components = ["players", undefined, "schedule", "results"];
 		const assertedUrl = "/l/456/players/schedule/results";
-		assert.strictEqual(helpers.leagueUrlFactory(lid, components), assertedUrl);
+		assert.strictEqual(helpers.leagueUrlBase(lid, components), assertedUrl);
 	});
 
 	test("should construct a valid URL with only the league ID", () => {
 		const lid = 789;
 		const components: (number | string | undefined)[] = [];
 		const assertedUrl = "/l/789";
-		assert.strictEqual(helpers.leagueUrlFactory(lid, components), assertedUrl);
+		assert.strictEqual(helpers.leagueUrlBase(lid, components), assertedUrl);
 	});
 });

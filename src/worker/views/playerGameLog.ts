@@ -39,7 +39,7 @@ const updatePlayerGameLog = async (
 		const seasonsWithStats = Array.from(
 			new Set(
 				topStuff.player.stats
-					.filter((row) => row.gp > 0)
+					.filter((row) => row.gp! > 0)
 					.map((row) => row.season),
 			),
 		).reverse();
@@ -78,7 +78,7 @@ const updatePlayerGameLog = async (
 		const gameLog = [];
 		for (const game of games) {
 			let row = game.teams[0].players.find((p) => p.pid === pid);
-			let t0 = 0;
+			let t0: 0 | 1 = 0;
 			if (!row) {
 				row = game.teams[1].players.find((p) => p.pid === pid);
 				t0 = 1;
@@ -121,7 +121,7 @@ const updatePlayerGameLog = async (
 				seasonStats?: Record<string, number>;
 			} = {};
 			for (const type of types) {
-				const info = PLAYER_GAME_STATS[type];
+				const info = PLAYER_GAME_STATS[type]!;
 
 				// Filter gets rid of dupes, like how fmbLost appears for both Passing and Rushing in FBGM
 				const newStats = info.stats.filter((stat) => !stats.includes(stat));
@@ -144,11 +144,11 @@ const updatePlayerGameLog = async (
 					for (const key of extraBaseballStats) {
 						gameStats.seasonStats[key] = p.seasonStats[key];
 						gameStats[key] = p[key];
-						if (gameStats[key] > 0) {
+						if (gameStats[key]! > 0) {
 							showDecisionColumn = true;
 
 							// seasonStats is from before game, so add to reflect after game
-							gameStats.seasonStats[key] += gameStats[key];
+							gameStats.seasonStats[key]! += gameStats[key]!;
 						}
 					}
 				}

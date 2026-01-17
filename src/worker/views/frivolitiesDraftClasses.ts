@@ -8,6 +8,7 @@ import type {
 import { bySport, PHASE } from "../../common/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { orderBy } from "../../common/utils.ts";
+import { extraStats } from "./hallOfFame.ts";
 
 const playerValue = (p: Player<MinimalPlayerRatings>) => {
 	let sum = 0;
@@ -46,14 +47,18 @@ const updateFrivolitiesDraftClasses = async (
 		let draftClass: DraftClass | undefined;
 		const draftClasses: DraftClass[] = [];
 
+		const mostRecentDraftYear =
+			g.get("phase") >= PHASE.DRAFT ? g.get("season") : g.get("season") - 1;
+
 		for await (const { value: p } of idb.league
 			.transaction("players")
 			.store.index("draft.year, retiredYear")
-			.iterate(IDBKeyRange.lowerBound([g.get("startingSeason")]))) {
-			if (p.draft.round < 1) {
-				continue;
-			}
-
+			.iterate(
+				IDBKeyRange.bound(
+					[Math.min(mostRecentDraftYear, g.get("startingSeason"))],
+					[mostRecentDraftYear, Infinity],
+				),
+			)) {
 			const value = playerValue(p);
 
 			if (draftClass === undefined || p.draft.year !== draftClass.season) {
@@ -129,7 +134,7 @@ const updateFrivolitiesDraftClasses = async (
 						"jerseyNumber",
 					],
 					ratings: ["season", "ovr", "pos"],
-					stats: ["season", "abbrev", "tid", ...stats],
+					stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
 					fuzz: true,
 				}),
 			),

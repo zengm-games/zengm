@@ -98,7 +98,7 @@ const Leaders = ({
 				<div className="row" style={{ marginTop: -14 }}>
 					{categories.map((cat) => {
 						const cols = getCols(["#", "Name", `stat:${cat.stat}`]);
-						const statCol = cols[2];
+						const statCol = cols[2]!;
 						if (cat.titleOverride === statCol.desc) {
 							throw new Error("Useless titleOverride");
 						}
@@ -149,7 +149,7 @@ const Leaders = ({
 											injury={p.injury}
 											season={numericSeason}
 											skills={p.skills}
-											watch={p.watch}
+											defaultWatch={p.watch}
 											firstName={p.firstNameShort}
 											firstNameShort={p.firstNameShort}
 											lastName={p.lastName}

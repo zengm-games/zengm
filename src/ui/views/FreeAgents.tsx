@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { PHASE, PHASE_TEXT } from "../../common/index.ts";
 import {
 	DataTable,
@@ -19,7 +19,10 @@ import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { range } from "../../common/utils.ts";
 import type { DropdownOption } from "../hooks/useDropdownOptions.tsx";
 import type { FreeAgentTransaction } from "../../worker/views/freeAgents.ts";
-import type { DataTableRow } from "../components/DataTable/index.tsx";
+import {
+	type DataTableHandle,
+	type DataTableRow,
+} from "../components/DataTable/index.tsx";
 
 const useSeasonsFreeAgents = () => {
 	const { phase, season, startingSeason } = useLocalPartial([
@@ -117,28 +120,6 @@ const FreeAgents = ({
 	type,
 	userPlayers,
 }: View<"freeAgents">) => {
-	const [addFilters, setAddFilters] = useState<
-		(string | undefined)[] | undefined
-	>();
-
-	const showAfforablePlayers = useCallback(() => {
-		const newAddFilters: (string | undefined)[] = new Array(9 + stats.length);
-		if (capSpace * 1000 > minContract && !challengeNoFreeAgents) {
-			newAddFilters[newAddFilters.length - 3] = `<${capSpace}`;
-		} else {
-			newAddFilters[newAddFilters.length - 3] = `<${minContract / 1000}`;
-		}
-
-		setAddFilters(newAddFilters);
-
-		// This is a hack to make the addFilters passed to DataTable only happen once, otherwise it will keep getting
-		// applied every refresh (like when playing games) even if the user had disabled or edited the filter. Really, it'd
-		// be better if sent as some kind of signal or event rather than as a prop, because it is transient.
-		setTimeout(() => {
-			setAddFilters(undefined);
-		}, 0);
-	}, [capSpace, challengeNoFreeAgents, minContract, stats]);
-
 	const seasonsFreeAgents = useSeasonsFreeAgents();
 
 	useTitleBar({
@@ -151,6 +132,9 @@ const FreeAgents = ({
 	});
 
 	const { gameSimInProgress } = useLocalPartial(["gameSimInProgress"]);
+
+	const [dataTableHandle, setDataTableHandle] =
+		useState<DataTableHandle | null>(null);
 
 	if (
 		((phase > PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) ||
@@ -170,7 +154,8 @@ const FreeAgents = ({
 		);
 	}
 
-	const cols = getCols([
+	const askingForText = "Asking For";
+	const colKeys = [
 		"Name",
 		"Pos",
 		"Age",
@@ -178,10 +163,60 @@ const FreeAgents = ({
 		"Pot",
 		...stats.map((stat) => `stat:${stat}`),
 		"Mood",
-		"Asking For",
+		askingForText,
 		"Exp",
 		"Negotiate",
-	]);
+	];
+	const cols = getCols(colKeys);
+
+	const showShowPlayersAffordButton = salaryCapType !== "none";
+
+	// These are used in showAffordablePlayersFilterApplied calculation every render, and then also in toggleShowAfforablePlayers when that is called
+	let askingForIndex = -1;
+	let askingForFilter = "";
+
+	let showAffordablePlayersFilterApplied = false;
+	if (showShowPlayersAffordButton && dataTableHandle) {
+		askingForIndex = colKeys.lastIndexOf(askingForText);
+		if (capSpace * 1000 > minContract && !challengeNoFreeAgents) {
+			askingForFilter = `<${capSpace}`;
+		} else {
+			askingForFilter = `<${minContract / 1000}`;
+		}
+
+		const enableFilters = dataTableHandle.getEnableFilters();
+		if (enableFilters) {
+			const filters = dataTableHandle.getFilters();
+			showAffordablePlayersFilterApplied =
+				filters[askingForIndex] === askingForFilter;
+		}
+	}
+
+	const toggleShowAfforablePlayers = () => {
+		if (dataTableHandle) {
+			const enableFilters = dataTableHandle.getEnableFilters();
+
+			// Start from either the current filters (if they are shown/enabled) or no filters at all
+			const filters: string[] = enableFilters
+				? [...dataTableHandle.getFilters()]
+				: new Array(cols.length).fill("");
+
+			// If we currently have this exact filter set, delete it. Otherwise, add it
+			let newEnableFilters = true;
+			if (filters[askingForIndex] === askingForFilter) {
+				filters[askingForIndex] = "";
+
+				// If no other filters are applied, hide filter bar
+				if (filters.every((filter) => filter === "")) {
+					newEnableFilters = false;
+				}
+			} else {
+				filters[askingForIndex] = askingForFilter;
+			}
+
+			dataTableHandle.setFilters(filters, newEnableFilters);
+		}
+	};
 
 	const playerInfoSeason =
 		freeAgencySeason +
@@ -202,7 +237,7 @@ const FreeAgents = ({
 					injury: p.injury,
 					jerseyNumber: p.jerseyNumber,
 					skills: p.ratings.skills,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
@@ -247,8 +282,6 @@ const FreeAgents = ({
 		};
 	});
 
-	const showShowPlayersAffordButton = salaryCapType !== "none";
-
 	return (
 		<>
 			{season === "current" ? (
@@ -270,9 +303,11 @@ const FreeAgents = ({
 					{showShowPlayersAffordButton ? (
 						<button
 							className="btn btn-secondary mb-3"
-							onClick={showAfforablePlayers}
+							onClick={toggleShowAfforablePlayers}
 						>
-							Show players you can afford now
+							{showAffordablePlayersFilterApplied
+								? "Show players with any asking price"
+								: "Show players you can afford now"}
 						</button>
 					) : null}
 				</>
@@ -299,8 +334,8 @@ const FreeAgents = ({
 				defaultStickyCols={window.mobile ? 0 : 1}
 				name="FreeAgents"
 				pagination
+				ref={setDataTableHandle}
 				rows={rows}
-				addFilters={addFilters}
 			/>
 		</>
 	);

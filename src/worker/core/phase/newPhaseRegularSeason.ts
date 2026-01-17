@@ -1,7 +1,7 @@
 import { season } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, local, logEvent, toUI } from "../../util/index.ts";
-import type { Conditions, PhaseReturn } from "../../../common/types.ts";
+import type { Conditions, Game, PhaseReturn } from "../../../common/types.ts";
 import {
 	EMAIL_ADDRESS,
 	FACEBOOK_USERNAME,
@@ -10,6 +10,131 @@ import {
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
 } from "../../../common/index.ts";
+
+class GameHasYourTeamCache {
+	cache: Record<number, boolean> = {};
+	userTidCache: Record<number, number> = {};
+
+	getUserTid(season: number) {
+		let userTid = this.userTidCache[season];
+		if (userTid === undefined) {
+			userTid = g.get("userTid", season);
+			this.userTidCache[season] = userTid;
+		}
+
+		return userTid;
+	}
+
+	check(game: Game) {
+		const cached = this.cache[game.gid];
+		if (cached !== undefined) {
+			return cached;
+		}
+
+		const userTid = this.getUserTid(game.season);
+
+		const value =
+			game.teams[0].tid === userTid || game.teams[1].tid === userTid;
+		this.cache[game.gid] = value;
+
+		return value;
+	}
+}
+
+const deleteOldBoxScores = async () => {
+	const saveOldBoxScores = g.get("saveOldBoxScores");
+	if (
+		saveOldBoxScores.pastSeasons === "all" &&
+		saveOldBoxScores.pastSeasonsType === "all"
+	) {
+		// Not deleting anything
+	} else {
+		// Extra flush before reading games from IndexedDB, in case there is a game in memory with an added/deleted note
+		await idb.cache.flush(["games"]);
+
+		// readwrite index is slow here in Firefox unless we iterate using openKeyCursor, but that means it's difficult to apply complex logic to deciding when to delete a game. So iterate with full objects in a readonly cursor, and save the deleting for later (happens at the end of phase change, so very soon) because just deleting a bunch of games by their primary key is fast (well, kind of... if you have like 100k games or something it's fairly slow, but that shouldn't happen unless the user does something weird).
+		const gameIndex = idb.league.transaction("games").store.index("season");
+
+		let range;
+		if (
+			saveOldBoxScores.pastSeasonsType === "all" &&
+			saveOldBoxScores.pastSeasons !== "all" &&
+			saveOldBoxScores.pastSeasons > 0
+		) {
+			// If we're saving all box scores in the past N seasons, we can use an IDBKeyRange to avoid event looking at those box scores
+			range = IDBKeyRange.upperBound(
+				g.get("season") - saveOldBoxScores.pastSeasons,
+				true,
+			);
+		}
+
+		// For performance, not sure how much it actually matters
+		const gameHasYourTeamCache = new GameHasYourTeamCache();
+
+		const saveIfMeetsConditions = (
+			type: Exclude<keyof typeof saveOldBoxScores, "pastSeasons">,
+			game: Game,
+		) => {
+			return (
+				saveOldBoxScores[type] === "all" ||
+				(saveOldBoxScores[type] === "your" && gameHasYourTeamCache.check(game))
+			);
+		};
+
+		for await (const { value: game } of gameIndex.iterate(range)) {
+			if (saveIfMeetsConditions("pastSeasonsType", game)) {
+				if (
+					saveOldBoxScores.pastSeasons === "all" ||
+					game.season >= g.get("season") - saveOldBoxScores.pastSeasons
+				) {
+					continue;
+				}
+			}
+			if (saveIfMeetsConditions("note", game)) {
+				if (game.noteBool) {
+					continue;
+				}
+			}
+			if (saveIfMeetsConditions("playoffs", game)) {
+				if (game.playoffs) {
+					continue;
+				}
+			}
+			if (saveIfMeetsConditions("finals", game)) {
+				if (game.finals) {
+					continue;
+				}
+			}
+			if (saveIfMeetsConditions("playerFeat", game)) {
+				const userTid = gameHasYourTeamCache.getUserTid(game.season);
+				if (
+					game.teams.some(
+						(t) =>
+							t.playerFeat &&
+							(saveOldBoxScores.playerFeat === "all" || t.tid === userTid),
+					)
+				) {
+					continue;
+				}
+			}
+			if (saveIfMeetsConditions("clutchPlays", game)) {
+				if (game.clutchPlays && game.clutchPlays.length > 0) {
+					continue;
+				}
+			}
+			if (saveIfMeetsConditions("allStar", game)) {
+				const isAllStarGame =
+					game.teams[0].tid === -1 && game.teams[1].tid === -2;
+				if (isAllStarGame) {
+					continue;
+				}
+			}
+
+			// If we made it this far, game is not to be saved
+			await idb.cache.games.delete(game.gid);
+		}
+	}
+};
 
 const newPhaseRegularSeason = async (
 	conditions: Conditions,
@@ -24,25 +149,9 @@ const newPhaseRegularSeason = async (
 		"noCopyCache",
 	);
 
-	await season.setSchedule(season.newSchedule(teams));
+	await season.setSchedule(await season.newSchedule(teams));
 
-	if (g.get("autoDeleteOldBoxScores")) {
-		const tx = idb.league.transaction("games", "readwrite");
-		const gameStore = tx.store;
-		const gameIndex = gameStore.index("season");
-
-		// openKeyCursor is crucial for performance in Firefox
-		let cursor = await gameIndex.openKeyCursor(
-			IDBKeyRange.upperBound(g.get("season") - 3),
-		);
-
-		while (cursor) {
-			gameStore.delete(cursor.primaryKey);
-			cursor = await cursor.continue();
-		}
-
-		await tx.done;
-	}
+	await deleteOldBoxScores();
 
 	// Without this, then there is a race condition creating it on demand in addGame, and some of the first day's games are lost
 	await idb.cache.headToHeads.put({

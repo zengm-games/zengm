@@ -24,6 +24,7 @@ const printQuartiles = async (age?: number) => {
 
 	const players = await createRandomPlayers({
 		activeTids: range(30),
+		onlyFreeAgents: false,
 		scoutingLevel: DEFAULT_LEVEL,
 		teams: range(30).map((tid) => ({ tid })),
 	});

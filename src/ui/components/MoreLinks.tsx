@@ -3,6 +3,7 @@ import {
 	bySport,
 	isSport,
 	NO_LOTTERY_DRAFT_TYPES,
+	REAL_PLAYERS_INFO,
 } from "../../common/index.ts";
 import type { DraftType, PlayerStatType } from "../../common/types.ts";
 import { helpers, useLocalPartial } from "../util/index.ts";
@@ -17,7 +18,7 @@ const MoreLinks = (
 		  }
 		| {
 				type: "draft";
-				draftType: DraftType;
+				draftType: DraftType | "dummy" | undefined;
 				abbrev?: string;
 				tid?: number;
 				season?: number;
@@ -205,36 +206,38 @@ const MoreLinks = (
 				name:
 					draftType === "freeAgents" ? "Upcoming Prospects" : "Draft Scouting",
 			},
-		];
-		links.push({
-			url:
-				abbrev !== undefined && tid !== undefined
-					? ["draft_picks", `${abbrev}_${tid}`]
-					: ["draft_picks"],
-			name: "Draft Picks",
-		});
-		if (!NO_LOTTERY_DRAFT_TYPES.includes(draftType)) {
-			links.push({
+			{
+				url:
+					abbrev !== undefined && tid !== undefined
+						? ["draft_picks", `${abbrev}_${tid}`]
+						: ["draft_picks"],
+				name: "Draft Picks",
+			},
+			{
 				url:
 					season !== undefined ? ["draft_lottery", season] : ["draft_lottery"],
-				name: "Draft Lottery",
-			});
-		}
-		links.push({
-			url: season !== undefined ? ["draft_history", season] : ["draft_history"],
-			name: draftType === "freeAgents" ? "Prospects History" : "Draft History",
-		});
-		links.push({
-			url:
-				abbrev !== undefined && tid !== undefined
-					? ["draft_team_history", `${abbrev}_${tid}`]
-					: ["draft_team_history"],
-			name: "Team History",
-		});
-		links.push({
-			url: ["notes", "draftPick"],
-			name: "Draft Pick Notes",
-		});
+				name: NO_LOTTERY_DRAFT_TYPES.includes(draftType as any)
+					? "Draft Order"
+					: "Draft Lottery",
+			},
+			{
+				url:
+					season !== undefined ? ["draft_history", season] : ["draft_history"],
+				name:
+					draftType === "freeAgents" ? "Prospects History" : "Draft History",
+			},
+			{
+				url:
+					abbrev !== undefined && tid !== undefined
+						? ["draft_team_history", `${abbrev}_${tid}`]
+						: ["draft_team_history"],
+				name: "Team History",
+			},
+			{
+				url: ["notes", "draftPick"],
+				name: "Draft Pick Notes",
+			},
+		];
 	} else if (props.type == "awards") {
 		const { season } = props;
 
@@ -331,6 +334,9 @@ const MoreLinks = (
 	} else if (props.type === "importExport") {
 		links = [
 			{ url: ["import_players"], name: "Import Players" },
+			...(REAL_PLAYERS_INFO
+				? [{ url: ["import_players_real"], name: "Import Real Players" }]
+				: []),
 			{ url: ["export_players"], name: "Export Players" },
 			{ url: ["export_league"], name: "Export League" },
 		];

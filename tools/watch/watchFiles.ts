@@ -3,7 +3,7 @@ import { copyFiles } from "../build/copyFiles.ts";
 import { generateVersionNumber } from "../build/generateVersionNumber.ts";
 import { reset } from "../build/reset.ts";
 import { setTimestamps } from "../build/setTimestamps.ts";
-import { spinners, type Spinners } from "./spinners.ts";
+import { type Spinners } from "./spinners.ts";
 
 // Would be better to only copy individual files on update, but this is fast enough
 
@@ -15,27 +15,30 @@ export const watchFiles = async (
 ) => {
 	const outFilename = "static files";
 
-	let buildCount = 0;
+	let abortController: AbortController | undefined;
 
 	const buildWatchFiles = async () => {
 		try {
-			buildCount += 1;
-			const initialBuildCount = buildCount;
+			abortController?.abort();
+			abortController = new AbortController();
+			const { signal } = abortController;
 
 			updateStart(outFilename);
 
-			await copyFiles(true);
+			await copyFiles(true, signal);
 
-			if (buildCount !== initialBuildCount || spinners.switchingSport) {
+			if (signal.aborted) {
 				return;
 			}
 
 			const versionNumber = generateVersionNumber();
-			await setTimestamps(versionNumber, true);
+			await setTimestamps(versionNumber, true, signal);
 
-			if (buildCount !== initialBuildCount || spinners.switchingSport) {
+			if (signal.aborted) {
 				return;
 			}
+
+			abortController = undefined;
 
 			updateEnd(outFilename);
 		} catch (error) {
@@ -49,4 +52,7 @@ export const watchFiles = async (
 	const watcher = watch(["public", "data", "node_modules/flag-icons"], {});
 	watcher.on("change", buildWatchFiles);
 	eventEmitter.on("newSport", buildWatchFiles);
+	eventEmitter.on("switchingSport", () => {
+		abortController?.abort();
+	});
 };

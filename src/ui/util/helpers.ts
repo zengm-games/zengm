@@ -8,7 +8,7 @@ const leagueUrl = (components: (number | string | undefined)[]): string => {
 		return "/";
 	}
 
-	return commonHelpers.leagueUrlFactory(lid, components);
+	return commonHelpers.leagueUrlBase(lid, components);
 };
 
 const plusMinus = (arg: number, d: number): string => {
@@ -30,7 +30,7 @@ type RoundType =
 	| "minutes";
 
 // This only works for stats that are displayed the same in all contexts (per game, totals, individual game - yes, min in BBGM has a special override for individual games) - ideally would have a more comprehensive system. Currently it just assumes things that aren't the same in all contexts are 0 decimal places when totals and 1 otherwise.
-const roundOverrides: Record<string, RoundType | undefined> = bySport({
+const roundOverrides = bySport<Record<string, RoundType>>({
 	baseball: {
 		gp: "noDecimalPlace",
 		gs: "noDecimalPlace",
@@ -302,9 +302,19 @@ const roundOverrides: Record<string, RoundType | undefined> = bySport({
 		tp: "noDecimalPlace",
 		tpa: "noDecimalPlace",
 		allTD: "noDecimalPlace",
+		ko: "noDecimalPlace",
+		koYds: "noDecimalPlace",
+		koYdsPerAtt: "oneDecimalPlace",
+		koTB: "noDecimalPlace",
+		koTBPct: "oneDecimalPlace",
+		ok: "noDecimalPlace",
+		okRec: "noDecimalPlace",
+		okRecPct: "oneDecimalPlace",
 		pnt: "noDecimalPlace",
 		pntYds: "noDecimalPlace",
 		pntLng: "noDecimalPlace",
+		pntIn20: "noDecimalPlace",
+		pntTB: "noDecimalPlace",
 		pntBlk: "noDecimalPlace",
 		pr: "noDecimalPlace",
 		prYds: "noDecimalPlace",
@@ -397,6 +407,7 @@ const roundOverrides: Record<string, RoundType | undefined> = bySport({
 		svMax: "noDecimalPlace",
 		gMax: "noDecimalPlace",
 		aMax: "noDecimalPlace",
+		ptsMax: "noDecimalPlace",
 	},
 });
 
@@ -522,35 +533,51 @@ const yearRanges = (arrInput: number[]): string[] => {
 	arr.sort((a, b) => a - b);
 
 	const runArr: string[] = [];
-	const tempArr = [[arr[0]]];
+	const tempArr = [[arr[0]!]];
 
 	for (let i = 1; i < arr.length; i++) {
+		// @ts-expect-error
 		if (arr[i] - arr[i - 1] > 1) {
 			tempArr.push([]);
 		}
 
-		tempArr.at(-1)!.push(arr[i]);
+		tempArr.at(-1)!.push(arr[i]!);
 	}
 
-	for (let i = 0; i < tempArr.length; i++) {
+	for (const row of tempArr) {
 		// runs of up to 2 consecutive years are displayed individually
-		if (tempArr[i].length <= 2) {
-			runArr.push(String(tempArr[i][0]));
+		if (row.length <= 2) {
+			runArr.push(String(row[0]));
 
-			if (tempArr[i].length === 2) {
-				runArr.push(String(tempArr[i][1]));
+			if (row.length === 2) {
+				runArr.push(String(row[1]));
 			}
 		} else {
 			// runs of 3 or more are displayed as a range
-			runArr.push(`${tempArr[i][0]}-${tempArr[i].at(-1)}`);
+			runArr.push(`${row[0]}-${row.at(-1)}`);
 		}
 	}
 
 	return runArr;
 };
 
+const formatCurrency = (
+	amount: number,
+	initialUnits?: "M" | "",
+	precision?: number,
+): string => {
+	const currencyFormat = local.getState().currencyFormat;
+	return commonHelpers.formatCurrencyBase(
+		currencyFormat,
+		amount,
+		initialUnits,
+		precision,
+	);
+};
+
 const helpers = {
 	...commonHelpers,
+	formatCurrency,
 	formatNumber,
 	leagueUrl,
 	plusMinus,

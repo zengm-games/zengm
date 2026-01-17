@@ -78,8 +78,8 @@ const GraphCreation = ({
 		return <div>No data for the selected options.</div>;
 	}
 
-	const titleX = getStatsWithLabels([stat[0]], statType[0])[0];
-	const titleY = getStatsWithLabels([stat[1]], statType[1])[0];
+	const titleX = getStatsWithLabels([stat[0]], statType[0])[0]!;
+	const titleY = getStatsWithLabels([stat[1]], statType[1])[0]!;
 	const descShort: [string, string] = [titleX.title, titleY.title];
 
 	return (
@@ -101,7 +101,7 @@ const GraphCreation = ({
 							"Undrafted"
 						) : (
 							<>
-								{getFormattedStat(value, stat[i], statType[i])} {descShort[i]}
+								{getFormattedStat(value, stat[i]!, statType[i]!)} {descShort[i]}
 							</>
 						)}
 					</div>
@@ -158,8 +158,8 @@ const PickStat = ({
 	const statsXEnriched = getStatsWithLabels(stats, state.statType) as (Col & {
 		stat: string;
 	})[];
-	for (let i = 0; i < statsXEnriched.length; i++) {
-		statsXEnriched[i].stat = stats[i];
+	for (const [i, row] of statsXEnriched.entries()) {
+		row.stat = stats[i]!;
 	}
 
 	const seasons = useDropdownOptions("seasons");

@@ -7,7 +7,10 @@ type AdvancedPlayerSearchField = {
 	colKey: string;
 	colOverrides?: Partial<Col>;
 	valueType: "numeric" | "string";
-	getValue: (p: any) => string | number;
+	getValue: (
+		p: any,
+		singleSeason: "totals" | "singleSeason",
+	) => string | number;
 
 	// Used in worker to determine what data to fetch from playersPlus, if it's not just the string value in "key".
 	// null means don't fetch anything.
@@ -78,7 +81,13 @@ const allFiltersTemp: Record<
 			age: {
 				colKey: "Age",
 				valueType: "numeric",
-				getValue: (p) => p.age,
+				getValue: (p, singleSeason) => {
+					if (singleSeason === "totals") {
+						return p.ageAtDeath ?? p.age;
+					}
+
+					return p.age;
+				},
 			},
 			jerseyNumber: {
 				colKey: "stat:jerseyNumber",
@@ -215,16 +224,16 @@ export const getStatsTableByType = (statTypePlus: string) => {
 	let table;
 	if (isSport("basketball")) {
 		if (statTypePlus === "advanced") {
-			table = PLAYER_STATS_TABLES.advanced;
+			table = PLAYER_STATS_TABLES.advanced!;
 		} else if (statTypePlus === "shotLocations") {
-			table = PLAYER_STATS_TABLES.shotLocations;
+			table = PLAYER_STATS_TABLES.shotLocations!;
 		} else if (statTypePlus === "gameHighs") {
-			table = PLAYER_STATS_TABLES.gameHighs;
+			table = PLAYER_STATS_TABLES.gameHighs!;
 		} else {
-			table = PLAYER_STATS_TABLES.regular;
+			table = PLAYER_STATS_TABLES.regular!;
 		}
 	} else {
-		table = PLAYER_STATS_TABLES[statTypePlus];
+		table = PLAYER_STATS_TABLES[statTypePlus]!;
 	}
 
 	return processStatsTable(table);
@@ -260,7 +269,7 @@ export const getExtraStatTypeKeys = (
 
 	for (const statType of showStatTypes) {
 		if (statType === "bio") {
-			for (const [key, info] of Object.entries(allFilters.bio.options)) {
+			for (const [key, info] of Object.entries(allFilters.bio!.options)) {
 				if (key === "jerseyNumber") {
 					// Already shown by player name
 					continue;

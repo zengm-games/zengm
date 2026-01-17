@@ -1,7 +1,8 @@
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { DraftPick } from "../../../common/types.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE, REAL_PLAYERS_INFO } from "../../../common/index.ts";
+import { groupBy } from "../../../common/utils.ts";
 
 // Add a new set of draft picks, or confirm that the existing picks are correct (because this is idempotent!)
 const doSeason = async (
@@ -9,12 +10,28 @@ const doSeason = async (
 	existingPicks: (DraftPick & {
 		keep?: boolean;
 	})[],
+	realPlayers: boolean | undefined,
 ) => {
+	// Some real drafts included forfeited picks, so we don't want to recreate them here if this is a new real players league and there are some draft picks for this season
+	if (realPlayers && existingPicks.length > 0) {
+		for (const dp of existingPicks) {
+			dp.keep = true;
+		}
+		return;
+	}
+
 	const teams = await idb.cache.teams.getAll();
 
 	// If draft is ongoing, don't create picks because some may have already been used. And in the case that all have been used, there's no way to know for sure, so this is the best we can do.
 	const ongoingDraft =
 		g.get("season") === season && g.get("phase") === PHASE.DRAFT;
+
+	// With forceHistoricalRosters enabled, we only want picks after this mode will turn off
+	const skipForceHistoricalRosters =
+		REAL_PLAYERS_INFO &&
+		g.get("forceHistoricalRosters") &&
+		season < REAL_PLAYERS_INFO.MAX_SEASON;
+	const skipRepeatSeason = !!g.get("repeatSeason");
 
 	const userTids = g.get("userTids");
 	const challengeNoDraftPicks = g.get("challengeNoDraftPicks");
@@ -27,30 +44,33 @@ const doSeason = async (
 
 			// If a pick already exists in the database, no need to create it
 			const existingPick = existingPicks.find((dp) => {
-				return (
-					t.tid === dp.originalTid && round === dp.round && season === dp.season
-				);
+				return t.tid === dp.originalTid && round === dp.round;
 			});
 
 			const skipChallengeMode =
 				challengeNoDraftPicks && userTids.includes(t.tid);
 
 			if (existingPick) {
-				const deletePickChallengeMode =
-					skipChallengeMode && userTids.includes(existingPick.tid);
-				if (!deletePickChallengeMode) {
+				const deletePick =
+					(skipChallengeMode && userTids.includes(existingPick.tid)) ||
+					skipForceHistoricalRosters ||
+					skipRepeatSeason;
+				if (!deletePick) {
 					existingPick.keep = true;
 				}
-			} else if (!ongoingDraft) {
-				if (!skipChallengeMode) {
-					await idb.cache.draftPicks.add({
-						tid: t.tid,
-						originalTid: t.tid,
-						round,
-						pick: 0,
-						season,
-					});
-				}
+			} else if (
+				!ongoingDraft &&
+				!skipChallengeMode &&
+				!skipForceHistoricalRosters &&
+				!skipRepeatSeason
+			) {
+				await idb.cache.draftPicks.add({
+					tid: t.tid,
+					originalTid: t.tid,
+					round,
+					pick: 0,
+					season,
+				});
 			}
 		}
 	}
@@ -81,9 +101,14 @@ const genPicks = async ({
 	}
 
 	const dpOffset = g.get("phase") > PHASE.DRAFT || afterDraft ? 1 : 0;
+	const existingPicksBySeason = groupBy(existingPicks, "season");
 	for (let i = 0; i < numSeasons; i++) {
 		const draftYear = g.get("season") + dpOffset + i;
-		await doSeason(draftYear, existingPicks);
+		await doSeason(
+			draftYear,
+			existingPicksBySeason[draftYear] ?? [],
+			realPlayers,
+		);
 	}
 
 	if (g.get("phase") === PHASE.FANTASY_DRAFT) {
@@ -95,12 +120,6 @@ const genPicks = async ({
 	} else if (g.get("phase") === PHASE.EXPANSION_DRAFT) {
 		for (const existingPick of existingPicks) {
 			if (existingPick.season === "expansion") {
-				existingPick.keep = true;
-			}
-		}
-	} else if (realPlayers) {
-		for (const existingPick of existingPicks) {
-			if (existingPick.season === g.get("season")) {
 				existingPick.keep = true;
 			}
 		}

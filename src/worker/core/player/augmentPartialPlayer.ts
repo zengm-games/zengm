@@ -19,11 +19,6 @@ const addStatsRowWrapped = async (
 	await addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
 		ignoreJerseyNumberConflicts,
 	});
-
-	// For real players leagues starting in the preseason, there could be a previous season with stats and a different jersey number, but the root jerseyNumber will be the one for the upcoming season
-	if (p.jerseyNumber !== undefined) {
-		p.stats.at(-1).jerseyNumber = p.jerseyNumber;
-	}
 };
 
 /**
@@ -480,6 +475,18 @@ const augmentPartialPlayer = async (
 		p.noteBool = 1;
 	} else {
 		delete p.note;
+	}
+
+	// Version 66
+	// jerseyNumber should always be defined in version 66+, except for players with no stats entry such as draft prospects. But still check for this just in case there is some weird custom file. Besides that, we need to restrict updates by version because we only want to overwrite an existing value in jerseyNumber if it is possibly stale (which is the case for versions before 66)
+	if ((version !== undefined && version < 66) || p.jerseyNumber === undefined) {
+		const row = p.stats.at(-1);
+		if (
+			row?.jerseyNumber !== undefined &&
+			row.jerseyNumber !== p.jerseyNumber
+		) {
+			p.jerseyNumber = row.jerseyNumber;
+		}
 	}
 
 	return p;

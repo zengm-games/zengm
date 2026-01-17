@@ -54,8 +54,8 @@ const DailySchedule = ({
 
 	const tradeDeadline =
 		upcoming.length === 1 &&
-		upcoming[0].teams[0].tid === -3 &&
-		upcoming[0].teams[1].tid === -3;
+		upcoming[0]!.teams[0].tid === -3 &&
+		upcoming[0]!.teams[1].tid === -3;
 
 	let noGamesMessage;
 	if (days.length === 0) {
@@ -131,6 +131,19 @@ const DailySchedule = ({
 										ties,
 									});
 
+									let playersUpcoming: [any, any] | undefined;
+									if (topPlayers.type === "byGid") {
+										playersUpcoming = topPlayers.playersByGid[game.gid];
+									} else {
+										const x0 = topPlayers.playersByTid[game.teams[0].tid];
+										const x1 = topPlayers.playersByTid[game.teams[1].tid];
+
+										// Undefined for ASG
+										if (x0 && x1) {
+											playersUpcoming = [x0[0], x1[0]];
+										}
+									}
+
 									return (
 										<div
 											className="flex-grow-1"
@@ -145,11 +158,7 @@ const DailySchedule = ({
 													season: game.season,
 													teams: game.teams,
 												}}
-												playersUpcoming={[
-													// ?. is for All-Star Game
-													topPlayers[game.teams[0].tid]?.[0],
-													topPlayers[game.teams[1].tid]?.[0],
-												]}
+												playersUpcoming={playersUpcoming}
 												actions={actions}
 											/>
 											<ForceWin allowTie={allowTie} game={game} />

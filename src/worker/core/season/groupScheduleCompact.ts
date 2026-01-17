@@ -57,14 +57,13 @@ const groupScheduleCompact = (tids: [number, number][]) => {
 		startIndex--
 	) {
 		for (let i = startIndex; i < dailyMatchups.length - 1; i++) {
-			const today = dailyMatchups[i];
-			const tomorrow = dailyMatchups[i + 1];
+			const today = dailyMatchups[i]!;
+			const tomorrow = dailyMatchups[i + 1]!;
 
 			const tidsTomorrow = new Set(tomorrow.flat());
 
 			const toRemove = [];
-			for (let k = 0; k < today.length; k++) {
-				const matchup = today[k];
+			for (const [k, matchup] of today.entries()) {
 				if (!tidsTomorrow.has(matchup[0]) && !tidsTomorrow.has(matchup[1])) {
 					tomorrow.push(matchup);
 					toRemove.push(k);

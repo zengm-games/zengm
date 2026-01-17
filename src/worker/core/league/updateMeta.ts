@@ -7,8 +7,12 @@ const updateMeta = async (
 	lidInput?: number,
 	noExtraStuff?: boolean,
 ) => {
-	if (idb.meta && local.autoSave) {
-		const transation = idb.meta.transaction("leagues", "readwrite");
+	if (process.env.NODE_ENV === "test") {
+		return;
+	}
+
+	if (local.autoSave) {
+		const transation = await idb.meta.transaction("leagues", "readwrite");
 
 		const lid = lidInput ?? g.get("lid");
 		const l = await transation.store.get(lid);

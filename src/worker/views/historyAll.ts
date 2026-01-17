@@ -1,25 +1,29 @@
 import { bySport, PHASE, SIMPLE_AWARDS } from "../../common/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type { UpdateEvents, PlayoffSeriesTeam } from "../../common/types.ts";
+import type { UpdateEvents } from "../../common/types.ts";
+import { groupByUnique, range } from "../../common/utils.ts";
 
 const addAbbrev = (
 	award: any,
-	teams: {
-		tid: number;
-		abbrev: string;
-		seasonAttrs: {
+	teams: Record<
+		number,
+		{
+			tid: number;
 			abbrev: string;
-			season: number;
-		}[];
-	}[],
+			seasonAttrs: {
+				abbrev: string;
+				season: number;
+			}[];
+		}
+	>,
 	season: number,
 ) => {
 	if (!award) {
 		return;
 	}
 
-	const t = teams.find((t) => t.tid === award.tid);
+	const t = teams[award.tid];
 	if (!t) {
 		return {
 			...award,
@@ -67,41 +71,63 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			},
 			"noCopyCache",
 		);
+		const teamsByTid = groupByUnique(teams, "tid");
 
 		const awards = await idb.getCopies.awards(undefined, "noCopyCache");
-		const seasons: any[] = awards.map((a) => {
-			return {
-				season: a.season,
-				finalsMvp: addAbbrev(a.finalsMvp, teams, a.season),
-				mvp: addAbbrev(a.mvp, teams, a.season),
-				dpoy: addAbbrev(a.dpoy, teams, a.season),
-				dfoy: addAbbrev(a.dfoy, teams, a.season),
-				goy: addAbbrev(a.goy, teams, a.season),
-				smoy: addAbbrev(a.smoy, teams, a.season),
-				mip: addAbbrev(a.mip, teams, a.season),
-				roy: addAbbrev(a.roy, teams, a.season),
-				oroy: addAbbrev(a.oroy, teams, a.season),
-				droy: addAbbrev(a.droy, teams, a.season),
-				poy: addAbbrev(a.poy, teams, a.season),
-				rpoy: addAbbrev(a.rpoy, teams, a.season),
+		const awardsBySeason = groupByUnique(awards, "season");
+
+		// Start with the oldest season we have team or awards history for
+		const maxSeason =
+			g.get("phase") > PHASE.PLAYOFFS ? g.get("season") : g.get("season") - 1;
+		let minSeason = Infinity;
+		for (const t of teams) {
+			if (t.seasonAttrs.length > 0 && t.seasonAttrs[0]!.season < minSeason) {
+				minSeason = t.seasonAttrs[0]!.season;
+			}
+		}
+		if (awards.length > 0 && awards[0].season < minSeason) {
+			minSeason = awards[0].season;
+		}
+
+		const awardTypes = bySport({
+			baseball: ["finalsMvp", "mvp", "poy", "rpoy", "roy"],
+			basketball: ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"],
+			football: ["finalsMvp", "mvp", "dpoy", "oroy", "droy"],
+			hockey: ["finalsMvp", "mvp", "dpoy", "dfoy", "goy", "roy"],
+		});
+
+		const seasons: any[] = range(minSeason, maxSeason + 1).map((season) => {
+			const a = awardsBySeason[season];
+
+			const row: any = {
+				season,
 				runnerUp: undefined,
 				champ: undefined,
 			};
+
+			for (const awardType of awardTypes) {
+				row[awardType] = a
+					? addAbbrev(a[awardType], teamsByTid, a.season)
+					: undefined;
+			}
+
+			return row;
 		});
 
 		const playoffSeries = await idb.getCopies.playoffSeries(
 			undefined,
 			"noCopyCache",
 		);
+		const playoffSeriesBySeason = groupByUnique(playoffSeries, "season");
 
-		for (let i = 0; i < seasons.length; i++) {
-			const season = seasons[i].season;
+		for (const row of seasons) {
+			const season = row.season;
 
 			// Only check for finals result for seasons that are over
-			const series = playoffSeries.find((ps) => ps.season === season);
+			const series = playoffSeriesBySeason[season];
 
 			type MyTeam = (typeof teams)[number];
-			const formatTeam = (t: MyTeam, seed: number) => {
+			const formatTeam = (t: MyTeam, seed: number | undefined) => {
 				const tid = t.tid;
 
 				const teamSeason = t.seasonAttrs.find((ts) => ts.season === season);
@@ -128,6 +154,20 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					count: 0,
 				};
 			};
+			const formatTeamWrapper = ({
+				seed,
+				tid,
+			}: {
+				seed: number | undefined;
+				tid: number;
+			}) => {
+				const t = teamsByTid[tid];
+				if (!t) {
+					throw new Error(`Team not found for tid ${tid}`);
+				}
+
+				return formatTeam(t, seed);
+			};
 
 			if (series) {
 				if (series.series.length === 0) {
@@ -139,7 +179,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					);
 
 					if (t) {
-						seasons[i].champ = formatTeam(t, 1);
+						row.champ = formatTeam(t, 1);
 					}
 				} else {
 					const finals = series.series.at(-1)![0];
@@ -149,8 +189,8 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						continue;
 					}
 
-					let champ: PlayoffSeriesTeam;
-					let runnerUp: PlayoffSeriesTeam;
+					let champ;
+					let runnerUp;
 					if (finals.home.won > finals.away.won) {
 						champ = finals.home;
 						runnerUp = finals.away;
@@ -159,17 +199,43 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						runnerUp = finals.home;
 					}
 
-					const formatTeamWrapper = ({ seed, tid }: PlayoffSeriesTeam) => {
-						const t = teams.find((t) => t.tid === tid);
-						if (!t) {
-							throw new Error(`Team not found for tid ${tid}`);
-						}
+					row.champ = formatTeamWrapper(champ);
+					row.runnerUp = formatTeamWrapper(runnerUp);
+				}
+			} else {
+				// This is for people with some missing playoffSeries data, either because it was deleted or because it never existed (like adding teamSeasons manually for past years)
+				const teamSeasons = await idb.getCopies.teamSeasons(
+					{ season },
+					"noCopyCache",
+				);
 
-						return formatTeam(t, seed);
-					};
+				const numPlayoffRounds = g.get("numGamesPlayoffSeries", season).length;
 
-					seasons[i].champ = formatTeamWrapper(champ);
-					seasons[i].runnerUp = formatTeamWrapper(runnerUp);
+				let champ;
+				let runnerUp;
+				for (const row of teamSeasons) {
+					if (row.playoffRoundsWon === numPlayoffRounds) {
+						champ = {
+							seed: undefined,
+							tid: row.tid,
+						};
+					} else if (row.playoffRoundsWon === numPlayoffRounds - 1) {
+						runnerUp = {
+							seed: undefined,
+							tid: row.tid,
+						};
+					}
+
+					if (champ && runnerUp) {
+						break;
+					}
+				}
+
+				if (champ) {
+					row.champ = formatTeamWrapper(champ);
+				}
+				if (runnerUp) {
+					row.runnerUp = formatTeamWrapper(runnerUp);
 				}
 			}
 		}
@@ -191,11 +257,12 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				}
 
 				const tid = row[category].tid;
-				if (counts[category][tid] === undefined) {
-					counts[category][tid] = 0;
+				const categoryCounts = counts[category]!;
+				if (categoryCounts[tid] === undefined) {
+					categoryCounts[tid] = 0;
 				}
-				counts[category][tid] += 1;
-				row[category].count = counts[category][tid];
+				categoryCounts[tid] += 1;
+				row[category].count = categoryCounts[tid];
 			}
 
 			for (const category of SIMPLE_AWARDS) {
@@ -204,23 +271,17 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				}
 
 				const pid = row[category].pid;
-				if (counts[category][pid] === undefined) {
-					counts[category][pid] = 0;
+				const categoryCounts = counts[category]!;
+				if (categoryCounts[pid] === undefined) {
+					categoryCounts[pid] = 0;
 				}
-				counts[category][pid] += 1;
-				row[category].count = counts[category][pid];
+				categoryCounts[pid] += 1;
+				row[category].count = categoryCounts[pid];
 			}
 		}
 
-		const awardNames = bySport({
-			baseball: ["finalsMvp", "mvp", "poy", "rpoy", "roy"],
-			basketball: ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"],
-			football: ["finalsMvp", "mvp", "dpoy", "oroy", "droy"],
-			hockey: ["finalsMvp", "mvp", "dpoy", "dfoy", "goy", "roy"],
-		});
-
 		return {
-			awards: awardNames,
+			awards: awardTypes,
 			seasons,
 			userTid: g.get("userTid"),
 		};

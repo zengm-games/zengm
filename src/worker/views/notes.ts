@@ -2,6 +2,7 @@ import { season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, getTeamInfoBySeason, helpers } from "../util/index.ts";
 import {
+	type ByConf,
 	type PlayerStatType,
 	type UpdateEvents,
 	type ViewInput,
@@ -21,7 +22,6 @@ const updateNotes = async (
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("notes") ||
-		(type === "player" && updateEvents.includes("watchList")) ||
 		type !== state.type
 	) {
 		if (type === "draftPick") {
@@ -120,7 +120,7 @@ const updateNotes = async (
 			const pointsFormula = g.get("pointsFormula");
 			const usePts = pointsFormula !== "";
 
-			const playoffsByConfBySeason = new Map<number, boolean>();
+			const playoffsByConfBySeason = new Map<number, ByConf>();
 
 			const teams = [];
 			for (const ts of teamSeasons) {
@@ -129,6 +129,11 @@ const updateNotes = async (
 					playoffsByConf = await getPlayoffsByConf(ts.season);
 					playoffsByConfBySeason.set(ts.season, playoffsByConf);
 				}
+
+				const numPlayoffRounds = g.get(
+					"numGamesPlayoffSeries",
+					ts.season,
+				).length;
 
 				teams.push({
 					tid: ts.tid,
@@ -149,8 +154,14 @@ const updateNotes = async (
 					winp: helpers.calcWinp(ts),
 					note: ts.note,
 					playoffRoundsWon: ts.playoffRoundsWon,
-					numPlayoffRounds: g.get("numGamesPlayoffSeries", ts.season).length,
-					playoffsByConf,
+					roundsWonText: helpers.upperCaseFirstLetter(
+						helpers.roundsWonText({
+							playoffRoundsWon: ts.playoffRoundsWon,
+							numPlayoffRounds,
+							playoffsByConf,
+							showMissedPlayoffs: true,
+						}),
+					),
 				});
 			}
 

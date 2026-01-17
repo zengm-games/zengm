@@ -15,6 +15,7 @@ import {
 	LEAGUE_DATABASE_VERSION,
 	PHASE,
 	PLAYER,
+	REAL_PLAYERS_INFO,
 	unwrapGameAttribute,
 } from "../../../common/index.ts";
 import { player, team } from "../index.ts";
@@ -33,10 +34,10 @@ import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatin
 import getInjury from "./getInjury.ts";
 import { averageSalary } from "./averageSalary.ts";
 
-export const MIN_SEASON = 1947;
-export const LATEST_SEASON = 2025;
-export const FIRST_SEASON_WITH_ALEXNOOB_ROSTERS = 2020;
 const FREE_AGENTS_SEASON = 2020;
+
+// Set true after the lottery happens, then false again after the playoffs end
+const INCLUDE_LATEST_SEASON_DRAFT_LOTTERY_RESULTS = false;
 
 const getLeague = async (options: GetLeagueOptions) => {
 	if (!isSport("basketball")) {
@@ -126,7 +127,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 			let groupedRatings = Object.values(groupBy(ratingsRows, "slug")).filter(
 				(allRatings) => {
 					// Ignore players in upcoming draft
-					const bio = basketball.bios[allRatings[0].slug];
+					const bio = basketball.bios[allRatings[0]!.slug];
 					if (
 						bio &&
 						(bio.draftYear > options.season ||
@@ -257,10 +258,12 @@ const getLeague = async (options: GetLeagueOptions) => {
 				const tids = toRandomize.filter((p) => p.tid >= 0).map((p) => p.tid);
 				random.shuffle(tids);
 
-				for (let i = 0; i < toRandomize.length; i++) {
-					const p = toRandomize[i];
-					const diff = draftYears[i] - p.draft.year;
-					p.draft.year = draftYears[i];
+				const ratingsBySlug = groupBy(basketball.ratings, "slug");
+
+				for (const [i, p] of toRandomize.entries()) {
+					const draftYear = draftYears[i]!;
+					const diff = draftYear - p.draft.year;
+					p.draft.year = draftYear;
 					p.born.year += diff;
 
 					p.draft.tid = -1;
@@ -282,10 +285,8 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 						const targetRatingsSeason = options.season - diff;
 
-						const rows = basketball.ratings.filter(
-							(row) => row.slug === p.srID,
-						);
-						if (rows.length === 0) {
+						const rows = ratingsBySlug[p.srID];
+						if (!rows || rows.length === 0) {
 							throw new Error(`No ratings found for "${p.srID}"`);
 						}
 
@@ -294,14 +295,14 @@ const getLeague = async (options: GetLeagueOptions) => {
 							(row) => row.season === targetRatingsSeason,
 						);
 
-						// Otherwise, find closest
+						// Otherwise, find closest (like if we're replacing a 40 year old player with a guy who only played a couple seasons, so be it)
 						if (!ratings) {
 							const sorted = orderBy(
 								rows,
 								(row) => Math.abs(row.season - targetRatingsSeason),
 								"asc",
 							);
-							ratings = sorted[0];
+							ratings = sorted[0]!;
 						}
 
 						p.ratings = [getOnlyRatings(ratings)];
@@ -369,7 +370,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				t2 = t;
 			}
 
-			return [t, t2];
+			return [t, t2] as const;
 		};
 
 		let draftPicks: DraftPickWithoutKey[] | undefined;
@@ -379,77 +380,79 @@ const getLeague = async (options: GetLeagueOptions) => {
 			options.season >= 2020 &&
 			!options.randomDebuts &&
 			!!basketball.draftPicks[options.season];
-		const includeRealizedDraftPicksThisSeason = options.phase === PHASE.DRAFT;
+		const includeRealizedDraftPicksThisSeason =
+			options.phase === PHASE.DRAFT ||
+			(options.phase === PHASE.PLAYOFFS &&
+				options.season === REAL_PLAYERS_INFO!.MAX_SEASON &&
+				INCLUDE_LATEST_SEASON_DRAFT_LOTTERY_RESULTS);
 		if (includeDraftPicks2020AndFuture || includeRealizedDraftPicksThisSeason) {
-			draftPicks = basketball.draftPicks[options.season]
-				.filter((dp) => {
-					if (dp.round > 2) {
-						return false;
-					}
+			draftPicks = basketball.draftPicks[options.season]!.filter((dp) => {
+				if (dp.round > 2) {
+					return false;
+				}
 
-					// For alexnoob traded draft picks, don't include current season if starting after draft
-					if (
-						options.phase > PHASE.DRAFT &&
-						dp.season !== undefined &&
-						dp.season === options.season
-					) {
-						return false;
-					}
+				// For alexnoob traded draft picks, don't include current season if starting after draft
+				if (
+					options.phase > PHASE.DRAFT &&
+					dp.season !== undefined &&
+					dp.season === options.season
+				) {
+					return false;
+				}
 
-					// Handle draft picks with trade history
-					if (dp.range) {
-						// Return true for null because we only test the first/last range component with the before/after function
-						const isBeforeRequestedSeasonPhase = (
-							rangeComponent: [number, number] | null,
-						) => {
-							if (rangeComponent === null) {
-								return true;
-							}
-							return (
-								rangeComponent[0] < options.season ||
-								(rangeComponent[0] === options.season &&
-									rangeComponent[1] <= options.phase)
-							);
-						};
-						const isAfterRequestedSeasonPhase = (
-							rangeComponent: [number, number] | null,
-						) => {
-							if (rangeComponent === null) {
-								return true;
-							}
-							return (
-								rangeComponent[0] > options.season ||
-								(rangeComponent[0] === options.season &&
-									rangeComponent[1] >= options.phase)
-							);
-						};
-
-						if (
-							isBeforeRequestedSeasonPhase(dp.range[0]) &&
-							isAfterRequestedSeasonPhase(dp.range[1])
-						) {
+				// Handle draft picks with trade history
+				if (dp.range) {
+					// Return true for null because we only test the first/last range component with the before/after function
+					const isBeforeRequestedSeasonPhase = (
+						rangeComponent: [number, number] | null,
+					) => {
+						if (rangeComponent === null) {
 							return true;
 						}
+						return (
+							rangeComponent[0] < options.season ||
+							(rangeComponent[0] === options.season &&
+								rangeComponent[1] <= options.phase)
+						);
+					};
+					const isAfterRequestedSeasonPhase = (
+						rangeComponent: [number, number] | null,
+					) => {
+						if (rangeComponent === null) {
+							return true;
+						}
+						return (
+							rangeComponent[0] > options.season ||
+							(rangeComponent[0] === options.season &&
+								rangeComponent[1] >= options.phase)
+						);
+					};
 
-						return false;
+					if (
+						isBeforeRequestedSeasonPhase(dp.range[0]) &&
+						isAfterRequestedSeasonPhase(dp.range[1])
+					) {
+						return true;
 					}
 
-					return true;
-				})
-				.map((dp) => {
-					const [t, t2] = getDraftPickTeams(dp);
+					return false;
+				}
 
-					return {
-						tid: t.tid,
-						originalTid: t2.tid,
-						round: dp.round,
-						pick:
-							includeRealizedDraftPicksThisSeason && dp.pick !== undefined
-								? dp.pick
-								: 0,
-						season: dp.season ?? options.season,
-					};
-				});
+				return true;
+			}).map((dp) => {
+				const [t, t2] = getDraftPickTeams(dp);
+
+				return {
+					tid: t.tid,
+					originalTid: t2.tid,
+					round: dp.round,
+					pick:
+						includeRealizedDraftPicksThisSeason && dp.pick !== undefined
+							? dp.pick
+							: 0,
+					season: dp.season ?? options.season,
+				};
+			});
 		}
 		if (includeRealizedDraftPicksThisSeason) {
 			draftLotteryResults = [
@@ -464,7 +467,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 		let playoffSeries;
 		let playoffSeriesRange: [number, number] | undefined;
 		if (options.realStats === "all") {
-			playoffSeriesRange = [MIN_SEASON, options.season - 1];
+			playoffSeriesRange = [REAL_PLAYERS_INFO!.MIN_SEASON, options.season - 1];
 			if (options.phase >= PHASE.PLAYOFFS) {
 				playoffSeriesRange[1] += 1;
 			}
@@ -505,7 +508,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				// Find who actually won title
 				let champTid: number | undefined;
 				if (completeBracket) {
-					const { home, away } = seasonPlayoffSeries.series.at(-1)![0];
+					const { home, away } = seasonPlayoffSeries.series.at(-1)![0]!;
 					if (away) {
 						champTid = (home.won > away.won ? home : away).tid;
 					}
@@ -517,7 +520,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 						throw new Error("t2 not found");
 					}
 					const teamSeasonData =
-						basketball.teamSeasons[season][oldAbbrevTo2020BBGMAbbrev(t.srID)];
+						basketball.teamSeasons[season]![oldAbbrevTo2020BBGMAbbrev(t.srID)];
 					if (!teamSeasonData) {
 						// Must be an expansion team
 						continue;
@@ -556,8 +559,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 					teamSeason.srID = t.srID;
 
-					for (let i = 0; i < seasonPlayoffSeries.series.length; i++) {
-						const round = seasonPlayoffSeries.series[i];
+					for (const [i, round] of seasonPlayoffSeries.series.entries()) {
 						for (const matchup of round) {
 							if (
 								(matchup.away && matchup.away.tid === t.tid) ||
@@ -613,7 +615,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 					if (!t) {
 						throw new Error("Missing team");
 					}
-					const teamSeason = basketball.teamSeasons[options.season][abbrev];
+					const teamSeason = basketball.teamSeasons[options.season]![abbrev];
 					if (!teamSeason) {
 						throw new Error("Missing teamSeason");
 					}
@@ -653,7 +655,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 							if (away && playInSeeds.includes(away.seed)) {
 								away.pendingPlayIn = true;
 
-								const playInGames = currentPlayoffSeries.playIns[away.cid];
+								const playInGames = currentPlayoffSeries.playIns[away.cid]!;
 								let tid;
 								for (const matchup of playInGames) {
 									if (matchup.home.seed === away.seed) {
@@ -666,7 +668,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 								}
 
 								// Update teamSeason for this team - they did not make the playoffs yet!
-								const teamSeason = initialTeams[away.tid].seasons?.at(-1);
+								const teamSeason = initialTeams[away.tid]!.seasons?.at(-1);
 								if (teamSeason) {
 									teamSeason.playoffRoundsWon = -1;
 								}
@@ -742,7 +744,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				!options.randomDebuts
 			) {
 				for (const [abbrev, slugs] of Object.entries(
-					basketball.expansionDrafts[options.season],
+					basketball.expansionDrafts[options.season]!,
 				)) {
 					const t = initialTeams.find(
 						(t) => abbrev === oldAbbrevTo2020BBGMAbbrev(t.abbrev),
@@ -765,14 +767,14 @@ const getLeague = async (options: GetLeagueOptions) => {
 			if (
 				options.phase > PHASE.DRAFT &&
 				!options.randomDebuts &&
-				options.season < LATEST_SEASON
+				options.season < REAL_PLAYERS_INFO!.MAX_SEASON
 			) {
 				const applyRookieContractAndFixRatings = (p: {
 					draft: {
 						round: number | undefined;
 					};
 					contract: PlayerContract | undefined;
-					ratings: OnlyRatings[];
+					ratings: [OnlyRatings, ...OnlyRatings[]];
 					srID: string;
 				}) => {
 					// Contract - this should work pretty well for players with contract data. Other players (like from the old days) will have this randomly generated in augmentPartialPlayer.
@@ -815,7 +817,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 				};
 
 				const playersBySlug = groupBy(players, "srID");
-				for (const dp of basketball.draftPicks[options.season]) {
+				for (const dp of basketball.draftPicks[options.season]!) {
 					if (!dp.slug) {
 						continue;
 					}
@@ -942,7 +944,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 							? options.season
 							: options.season - 1;
 
-					seasonLeadersSeasons = range(MIN_SEASON, mostRecentLeadersSeason + 1);
+					seasonLeadersSeasons = range(
+						REAL_PLAYERS_INFO!.MIN_SEASON,
+						mostRecentLeadersSeason + 1,
+					);
 				}
 
 				const basketballStats = await loadStatsBasketball();
@@ -960,7 +965,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 		return {
 			version: LEAGUE_DATABASE_VERSION,
-			startingSeason: options.realStats === "all" ? MIN_SEASON : options.season,
+			startingSeason:
+				options.realStats === "all"
+					? REAL_PLAYERS_INFO!.MIN_SEASON
+					: options.season,
 			players,
 			teams: initialTeams,
 			scheduledEvents,

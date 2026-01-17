@@ -10,12 +10,14 @@ import type {
 	Conditions,
 	GameAttributesLeague,
 	GameAttributesLeagueWithHistory,
+	GameAttributeWithHistory,
 } from "../../../common/types.ts";
 import { defaultGameAttributes, logEvent } from "../../util/index.ts";
 import { wrap } from "../../util/g.ts";
 import getInitialNumGamesConfDivSettings from "../season/getInitialNumGamesConfDivSettings.ts";
 import type { TeamInfo } from "./createStream.ts";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries.ts";
+import { actualPhase } from "../../util/actualPhase.ts";
 
 const createGameAttributes = async (
 	{
@@ -33,12 +35,6 @@ const createGameAttributes = async (
 	},
 	conditions?: Conditions,
 ) => {
-	// Can't get fired for the first two seasons
-	const inputPhase = gameAttributesInput.nextPhase ?? gameAttributesInput.phase;
-	const gracePeriodEnd =
-		startingSeason +
-		(inputPhase !== undefined && inputPhase >= PHASE.PLAYOFFS ? 3 : 2);
-
 	const gameAttributes: GameAttributesLeagueWithHistory = {
 		...defaultGameAttributes,
 		userTid: [
@@ -58,7 +54,6 @@ const createGameAttributes = async (
 			name: t.name,
 			region: t.region,
 		})),
-		gracePeriodEnd,
 		numTeams: teamInfos.length,
 		numActiveTeams: teamInfos.filter((t) => !t.disabled).length,
 	};
@@ -107,9 +102,10 @@ const createGameAttributes = async (
 
 						// Keep in sync with g.wrap
 						let currentSeason = gameAttributes.season;
-						const actualPhase =
-							gameAttributes.nextPhase ?? gameAttributes.phase;
-						if (actualPhase > PHASE.PLAYOFFS) {
+						if (
+							actualPhase(gameAttributes.phase, gameAttributes.nextPhase) >
+							PHASE.PLAYOFFS
+						) {
 							currentSeason += 1;
 						}
 
@@ -132,6 +128,15 @@ const createGameAttributes = async (
 		if (!gameAttributes.userTids.includes(userTid)) {
 			gameAttributes.userTids = [userTid];
 		}
+	}
+
+	// Can't get fired for the first two seasons
+	if (gameAttributesInput?.gracePeriodEnd === undefined) {
+		const inputPhase =
+			gameAttributesInput.nextPhase ?? gameAttributesInput.phase;
+		gameAttributes.gracePeriodEnd =
+			gameAttributes.season +
+			(inputPhase !== undefined && inputPhase >= PHASE.PLAYOFFS ? 3 : 2);
 	}
 
 	// Extra check for lowestDifficulty, so that it won't be overwritten by a league file if the user selects Easy
@@ -162,12 +167,18 @@ const createGameAttributes = async (
 	let newNumGames = oldNumGames;
 	let legacyPlayoffs = (gameAttributes as any).numPlayoffRounds !== undefined;
 	try {
+		const byConf = await season.getPlayoffsByConf(gameAttributes.season, {
+			skipPlayoffSeries: true,
+			playoffsByConf: gameAttributes.playoffsByConf,
+			confs: unwrapGameAttribute(gameAttributes, "confs"),
+		});
+
 		season.validatePlayoffSettings({
 			numRounds: oldNumGames.length,
 			numPlayoffByes: unwrapGameAttribute(gameAttributes, "numPlayoffByes"),
 			numActiveTeams: gameAttributes.numActiveTeams,
 			playIn: gameAttributes.playIn,
-			byConf: gameAttributes.playoffsByConf,
+			byConf,
 		});
 	} catch {
 		legacyPlayoffs = true;
@@ -202,19 +213,21 @@ const createGameAttributes = async (
 			gameAttributesInput.season !== undefined &&
 			gameAttributesInput.phase !== undefined
 		) {
-			const actualPhase =
-				gameAttributesInput.nextPhase ?? gameAttributesInput.phase;
-
 			let currentSeason = gameAttributesInput.season;
-			if (actualPhase >= PHASE.PLAYOFFS) {
+			if (
+				actualPhase(gameAttributesInput.phase, gameAttributesInput.nextPhase) >=
+				PHASE.PLAYOFFS
+			) {
 				currentSeason += 1;
 			}
 
 			// Apply default tiebreakers, while keeping track of when that happened
-			const tiebreakers = [
+			const tiebreakers: GameAttributeWithHistory<
+				GameAttributesLeague["tiebreakers"]
+			> = [
 				{
 					start: -Infinity,
-					value: ["coinFlip"] as GameAttributesLeague["tiebreakers"],
+					value: ["coinFlip"],
 				},
 				{
 					start: currentSeason,

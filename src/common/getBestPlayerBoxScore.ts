@@ -27,7 +27,7 @@ const getBestPlayerBoxScore = (players: any[]) => {
 			};
 		});
 
-		const best = orderBy(scores, "score", "desc")[0];
+		const best = orderBy(scores, "score", "desc")[0]!;
 
 		const componentsSorted = orderBy(best.components, "1", "desc").slice(0, 3);
 

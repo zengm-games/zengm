@@ -1,4 +1,4 @@
-import { g } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { averageTeamStats, getStats, ignoreStats } from "./teamStats.ts";
 import { PHASE, TEAM_STATS_TABLES } from "../../common/index.ts";
@@ -78,14 +78,23 @@ const updateLeagueStats = async (
 			}
 		}
 
+		const lengthBefore = stats.length;
 		stats = stats.filter((stat) => !ignoreStats.includes(stat));
+		const lengthAfter = stats.length;
+
+		// Adjust superCols if ignoreStats removed some
+		const superCols = helpers.deepCopy(statsTable.superCols);
+		if (superCols && lengthBefore !== lengthAfter) {
+			const diff = lengthAfter - lengthBefore;
+			superCols[0].colspan += diff;
+		}
 
 		return {
 			abbrev: inputs.abbrev,
 			playoffs: inputs.playoffs,
 			seasons,
 			stats,
-			superCols: statsTable.superCols,
+			superCols,
 			teamOpponent: inputs.teamOpponent,
 			tid: inputs.tid,
 			ties: season.hasTies(Infinity) || ties,

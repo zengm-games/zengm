@@ -1,6 +1,7 @@
 import { unwrap } from "@dumbmatter/idb";
 import {
 	DEFAULT_PLAY_THROUGH_INJURIES,
+	DEFAULT_STADIUM_CAPACITY,
 	DEFAULT_TEAM_COLORS,
 	DIFFICULTY,
 	gameAttributesArrayToObject,
@@ -50,6 +51,7 @@ import type {
 import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings.ts";
 import { amountToLevel } from "../../common/budgetLevels.ts";
 import { orderBy } from "../../common/utils.ts";
+import { actualPhase } from "../util/actualPhase.ts";
 
 export interface LeagueDB extends DBSchema {
 	allStars: {
@@ -117,6 +119,7 @@ export interface LeagueDB extends DBSchema {
 			"draft.year, retiredYear": [number, number];
 			hof: 1;
 			noteBool: 1;
+			srID: string;
 			statsTids: number;
 			tid: number;
 			watch: 1;
@@ -419,6 +422,98 @@ const upgrade45 = (transaction: VersionChangeTransaction) => {
 	};
 };
 
+export const upgradeGamesVersion65 = async ({
+	transaction,
+	stopIfTooMany,
+	lid,
+}: {
+	transaction: IDBPTransaction<
+		LeagueDB,
+		("games" | "playerFeats" | "playoffSeries")[],
+		"readwrite"
+	>;
+	stopIfTooMany: boolean;
+	lid: number;
+}) => {
+	const gamesStore = transaction.objectStore("games");
+
+	// cursor is null if there are no saved box scores. Using IDBObjectStore.count() is slower if there are a lot of games
+	const cursor = await gamesStore.openKeyCursor();
+	if (!cursor) {
+		return;
+	}
+
+	const LIMIT_PLAYOFF_SERIES = 1000;
+	const LIMIT_PLAYER_FEATS = 10000;
+
+	const tooMany = async () => {
+		logEvent({
+			type: "error",
+			text: `<div class="mt-2">League upgrade is taking too long, so skipping some stuff doesn't matter unless you want to save box scores from finals games or games with statistical feats.</div><div class="mt-2">If you want to finish the upgrade and use those features, <a href="/l/${lid}/upgrade65">click here</a>.</div>`,
+			saveToDb: false,
+			persistent: true,
+		});
+	};
+
+	// Add finals to game objects
+	let countPlayoffSeries = 0;
+	for await (const { value: playoffSeries } of transaction.objectStore(
+		"playoffSeries",
+	)) {
+		if (stopIfTooMany) {
+			countPlayoffSeries += 1;
+			if (countPlayoffSeries >= LIMIT_PLAYOFF_SERIES) {
+				tooMany();
+				return;
+			}
+		}
+
+		const lastRound = playoffSeries.series.at(-1);
+
+		// Finals is the only one where there is only one series in the round
+		const finalsSeries = lastRound?.[0];
+		if (finalsSeries) {
+			const gids = finalsSeries.gids;
+			if (gids) {
+				for (const gid of gids) {
+					const game = await gamesStore.get(gid);
+					if (game && !game.finals) {
+						game.finals = true;
+						await gamesStore.put(game);
+					}
+				}
+			}
+		}
+	}
+
+	// Add playerFeat to game objects
+	let countPlayerFeats = 0;
+	for await (const { value: feat } of transaction.objectStore("playerFeats")) {
+		if (stopIfTooMany) {
+			countPlayerFeats += 1;
+			if (countPlayerFeats >= LIMIT_PLAYER_FEATS) {
+				tooMany();
+				return;
+			}
+		}
+
+		const game = await gamesStore.get(feat.gid);
+		if (game) {
+			let updated;
+			for (const t of game.teams) {
+				if (t.tid === feat.tid && !t.playerFeat) {
+					t.playerFeat = true;
+					updated = true;
+				}
+			}
+
+			if (updated) {
+				await gamesStore.put(game);
+			}
+		}
+	}
+};
+
 /**
  * Create a new league database with the latest structure.
  *
@@ -496,69 +591,42 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 	db.createObjectStore("allStars", {
 		keyPath: "season",
 	});
-	eventStore.createIndex("season", "season", {
-		unique: false,
-	});
+	eventStore.createIndex("season", "season");
 	eventStore.createIndex("pids", "pids", {
-		unique: false,
 		multiEntry: true,
 	});
 	eventStore.createIndex("dpids", "dpids", {
-		unique: false,
 		multiEntry: true,
 	});
-	gameStore.createIndex("noteBool", "noteBool", {
-		unique: false,
-	});
-	gameStore.createIndex("season", "season", {
-		unique: false,
-	});
-	playerStore.createIndex(
-		"draft.year, retiredYear",
-		["draft.year", "retiredYear"],
-		{
-			unique: false,
-		},
-	);
+	gameStore.createIndex("noteBool", "noteBool");
+	gameStore.createIndex("season", "season");
+	playerStore.createIndex("draft.year, retiredYear", [
+		"draft.year",
+		"retiredYear",
+	]);
 	playerStore.createIndex("statsTids", "statsTids", {
-		unique: false,
 		multiEntry: true,
 	});
-	playerStore.createIndex("tid", "tid", {
-		unique: false,
-	});
-	playerStore.createIndex("hof", "hof", {
-		unique: false,
-	});
-	playerStore.createIndex("noteBool", "noteBool", {
-		unique: false,
-	});
-	playerStore.createIndex("watch", "watch", {
-		unique: false,
-	});
+	playerStore.createIndex("tid", "tid");
+	playerStore.createIndex("hof", "hof");
+	playerStore.createIndex("noteBool", "noteBool");
+	playerStore.createIndex("srID", "srID");
+	playerStore.createIndex("watch", "watch");
 	teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {
 		unique: true,
 	});
 	teamSeasonsStore.createIndex("tid, season", ["tid", "season"], {
-		unique: false,
+		unique: true,
 	});
-	teamSeasonsStore.createIndex("noteBool", "noteBool", {
-		unique: false,
-	});
-	teamStatsStore.createIndex("season, tid", ["season", "tid"], {
-		unique: false,
-	});
-	teamStatsStore.createIndex("tid", "tid", {
-		unique: false,
-	});
+	teamSeasonsStore.createIndex("noteBool", "noteBool");
+	teamStatsStore.createIndex("season, tid", ["season", "tid"]);
+	teamStatsStore.createIndex("tid", "tid");
 
 	const scheduledEventsStore = db.createObjectStore("scheduledEvents", {
 		keyPath: "id",
 		autoIncrement: true,
 	});
-	scheduledEventsStore.createIndex("season", "season", {
-		unique: false,
-	});
+	scheduledEventsStore.createIndex("season", "season");
 
 	db.createObjectStore("savedTrades", {
 		keyPath: "hash",
@@ -600,11 +668,11 @@ const migrate = async ({
 	};
 
 	if (isSport("basketball") || isSport("football")) {
-		if (oldVersion <= 15) {
+		if (oldVersion < 16) {
 			throw new Error(`League is too old to upgrade (version ${oldVersion})`);
 		}
 
-		if (oldVersion <= 16) {
+		if (oldVersion < 17) {
 			const teamSeasonsStore = db.createObjectStore("teamSeasons", {
 				keyPath: "rid",
 				autoIncrement: true,
@@ -614,17 +682,13 @@ const migrate = async ({
 				autoIncrement: true,
 			});
 			teamSeasonsStore.createIndex("tid, season", ["tid", "season"], {
-				unique: false,
+				unique: true,
 			});
 			teamSeasonsStore.createIndex("season, tid", ["season", "tid"], {
 				unique: true,
 			});
-			teamStatsStore.createIndex("tid", "tid", {
-				unique: false,
-			});
-			teamStatsStore.createIndex("season, tid", ["season", "tid"], {
-				unique: false,
-			});
+			teamStatsStore.createIndex("tid", "tid");
+			teamStatsStore.createIndex("season, tid", ["season", "tid"]);
 
 			for await (const cursor of transaction.objectStore("teams")) {
 				const t = cursor.value;
@@ -649,11 +713,11 @@ const migrate = async ({
 			}
 		}
 
-		if (oldVersion <= 17) {
+		if (oldVersion < 18) {
 			// This used to upgrade team logos to the new ones, but Firefox
 		}
 
-		if (oldVersion <= 18) {
+		if (oldVersion < 19) {
 			// Split old single string p.name into two names
 			for await (const cursor of transaction.objectStore("players")) {
 				const p = cursor.value;
@@ -668,7 +732,7 @@ const migrate = async ({
 			}
 		}
 
-		if (oldVersion <= 19) {
+		if (oldVersion < 20) {
 			// New best records format in awards
 			for await (const cursor of transaction.objectStore("awards")) {
 				const a = cursor.value;
@@ -682,7 +746,7 @@ const migrate = async ({
 			}
 		}
 
-		if (oldVersion <= 20) {
+		if (oldVersion < 21) {
 			// Removing indexes when upgrading to cache version
 			transaction.objectStore("draftPicks").deleteIndex("season");
 			transaction.objectStore("draftPicks").deleteIndex("tid");
@@ -694,12 +758,10 @@ const migrate = async ({
 			transaction.objectStore("releasedPlayers").deleteIndex("contract.exp");
 		}
 
-		if (oldVersion <= 21) {
+		if (oldVersion < 22) {
 			transaction
 				.objectStore("players")
-				.createIndex("draft.year, retiredYear", ["draft.year", "retiredYear"], {
-					unique: false,
-				});
+				.createIndex("draft.year, retiredYear", ["draft.year", "retiredYear"]);
 			for await (const cursor of transaction.objectStore("players")) {
 				const p = cursor.value;
 				if (p.retiredYear === null || p.retiredYear === undefined) {
@@ -709,13 +771,13 @@ const migrate = async ({
 			}
 		}
 
-		if (oldVersion <= 22) {
+		if (oldVersion < 23) {
 			db.createObjectStore("draftLotteryResults", {
 				keyPath: "season",
 			});
 		}
 
-		if (oldVersion <= 23) {
+		if (oldVersion < 24) {
 			for await (const cursor of transaction.objectStore("players")) {
 				const p = cursor.value;
 				for (const r of p.ratings) {
@@ -726,7 +788,7 @@ const migrate = async ({
 			}
 		}
 
-		if (oldVersion <= 24) {
+		if (oldVersion < 25) {
 			for await (const cursor of transaction.objectStore("teamStats")) {
 				const ts = cursor.value;
 				ts.oppBlk = ts.ba;
@@ -735,7 +797,7 @@ const migrate = async ({
 			}
 		}
 
-		if (oldVersion <= 25) {
+		if (oldVersion < 26) {
 			for await (const cursor of transaction.objectStore("games")) {
 				const gm = cursor.value;
 				for (const t of gm.teams) {
@@ -763,7 +825,7 @@ const migrate = async ({
 			}
 		}
 
-		if (oldVersion <= 26) {
+		if (oldVersion < 27) {
 			slowUpgrade();
 
 			// Only non-retired players, for efficiency
@@ -841,7 +903,7 @@ const migrate = async ({
 			}
 		}
 
-		if (oldVersion <= 27) {
+		if (oldVersion < 28) {
 			for await (const cursor of transaction.objectStore("teamSeasons")) {
 				const ts = cursor.value;
 				if (typeof ts.stadiumCapacity !== "number") {
@@ -851,7 +913,7 @@ const migrate = async ({
 			}
 		}
 
-		if (oldVersion <= 28) {
+		if (oldVersion < 30) {
 			slowUpgrade();
 			upgrade29(unwrap(transaction));
 		}
@@ -867,11 +929,11 @@ const migrate = async ({
 			}
 		}
 
-		if (oldVersion <= 30) {
+		if (oldVersion < 31) {
 			upgrade31(unwrap(transaction));
 		}
 
-		if (oldVersion <= 31) {
+		if (oldVersion < 32) {
 			// Gets need to use raw IDB API because Firefox < 60
 			const tx = unwrap(transaction);
 
@@ -895,37 +957,36 @@ const migrate = async ({
 					value: difficulty,
 				});
 
-				unwrap(idb.meta.transaction("leagues").objectStore("leagues")).get(
-					lid,
-				).onsuccess = (event2: any) => {
-					const l = event2.target.result;
-					l.difficulty = difficulty;
-					idb.meta.put("leagues", l);
-				};
+				idb.meta.transaction("leagues").then((transaction) => {
+					unwrap(transaction.objectStore("leagues")).get(lid).onsuccess = (
+						event2: any,
+					) => {
+						const l = event2.target.result;
+						l.difficulty = difficulty;
+						idb.meta.put("leagues", l);
+					};
+				});
 			};
 		}
 
-		if (oldVersion <= 32) {
+		if (oldVersion < 33) {
 			upgrade33(transaction);
 		}
 
-		if (oldVersion <= 33) {
+		if (oldVersion < 34) {
 			db.createObjectStore("allStars", {
 				keyPath: "season",
 			});
 		}
 
-		if (oldVersion <= 34) {
+		if (oldVersion < 35) {
 			const teamsDefault = helpers.getTeamsDefault();
 			for await (const cursor of transaction.objectStore("teams")) {
 				const t = cursor.value;
 				if (!(t as any).colors) {
-					if (
-						(teamsDefault as any)[t.tid] &&
-						teamsDefault[t.tid].region === t.region &&
-						teamsDefault[t.tid].name === t.name
-					) {
-						t.colors = teamsDefault[t.tid].colors;
+					const td = teamsDefault[t.tid];
+					if (td?.region === t.region && td.name === t.name) {
+						t.colors = td.colors;
 					} else {
 						t.colors = DEFAULT_TEAM_COLORS;
 					}
@@ -935,7 +996,7 @@ const migrate = async ({
 			}
 		}
 
-		if (oldVersion <= 35) {
+		if (oldVersion < 36) {
 			slowUpgrade();
 			for await (const cursor of transaction.objectStore("players")) {
 				const p = cursor.value;
@@ -946,21 +1007,19 @@ const migrate = async ({
 			}
 		}
 
-		if (oldVersion <= 36) {
+		if (oldVersion < 37) {
 			const scheduledEventsStore = db.createObjectStore("scheduledEvents", {
 				keyPath: "id",
 				autoIncrement: true,
 			});
-			scheduledEventsStore.createIndex("season", "season", {
-				unique: false,
-			});
+			scheduledEventsStore.createIndex("season", "season");
 		}
 
-		if (oldVersion <= 37) {
+		if (oldVersion < 38) {
 			upgrade38(transaction);
 		}
 
-		if (oldVersion <= 38) {
+		if (oldVersion < 39) {
 			slowUpgrade();
 
 			let lastCentury = 0; // Iterate over players
@@ -992,14 +1051,13 @@ const migrate = async ({
 			}
 		}
 
-		if (oldVersion <= 39) {
+		if (oldVersion < 40) {
 			transaction.objectStore("events").createIndex("dpids", "dpids", {
-				unique: false,
 				multiEntry: true,
 			});
 		}
 
-		if (oldVersion <= 40) {
+		if (oldVersion < 41) {
 			const tx = unwrap(transaction);
 			tx.objectStore("gameAttributes").get("userTids").onsuccess = (
 				event: any,
@@ -1036,13 +1094,13 @@ const migrate = async ({
 			};
 		}
 
-		if (oldVersion <= 41) {
+		if (oldVersion < 42) {
 			db.createObjectStore("headToHeads", {
 				keyPath: "season",
 			});
 		}
 
-		if (oldVersion <= 42) {
+		if (oldVersion < 43) {
 			const tx = unwrap(transaction);
 			tx.objectStore("gameAttributes").get("season").onsuccess = (
 				event: any,
@@ -1080,10 +1138,9 @@ const migrate = async ({
 						}
 
 						const nextPhase = event3.target.result.value;
-						const actualPhase = nextPhase ?? phase;
 
 						let currentSeason = season;
-						if (actualPhase >= PHASE.PLAYOFFS) {
+						if (actualPhase(phase as any, nextPhase) >= PHASE.PLAYOFFS) {
 							currentSeason += 1;
 						}
 
@@ -1109,7 +1166,7 @@ const migrate = async ({
 		}
 	}
 
-	if (oldVersion <= 43) {
+	if (oldVersion < 44) {
 		for await (const cursor of transaction.objectStore("teams")) {
 			const t = cursor.value;
 			if (!t.playThroughInjuries) {
@@ -1119,18 +1176,18 @@ const migrate = async ({
 		}
 	}
 
-	if (oldVersion <= 44) {
+	if (oldVersion < 45) {
 		upgrade45(transaction);
 	}
 
-	if (oldVersion <= 45) {
+	if (oldVersion < 46) {
 		transaction.objectStore("gameAttributes").put({
 			key: "playIn",
 			value: false,
 		});
 	}
 
-	if (oldVersion <= 46) {
+	if (oldVersion < 47) {
 		slowUpgrade();
 
 		for await (const cursor of transaction.objectStore("players")) {
@@ -1143,7 +1200,7 @@ const migrate = async ({
 		}
 	}
 
-	if (oldVersion <= 47) {
+	if (oldVersion < 49) {
 		// Gets need to use raw IDB API because Firefox < 60
 		const tx = unwrap(transaction);
 
@@ -1185,7 +1242,7 @@ const migrate = async ({
 		};
 	}
 
-	if (oldVersion <= 49) {
+	if (oldVersion < 48) {
 		slowUpgrade();
 
 		for await (const cursor of transaction.objectStore("players")) {
@@ -1210,20 +1267,14 @@ const migrate = async ({
 		const playerStore = transaction.objectStore("players");
 
 		// Had hof index in version 49, others in 50. Merged together here so the upgrade could happen together for people who have not yet upgraded to 49
-		if (oldVersion <= 48) {
-			playerStore.createIndex("hof", "hof", {
-				unique: false,
-			});
+		if (oldVersion < 50) {
+			playerStore.createIndex("hof", "hof");
 		}
-		playerStore.createIndex("noteBool", "noteBool", {
-			unique: false,
-		});
-		playerStore.createIndex("watch", "watch", {
-			unique: false,
-		});
+		playerStore.createIndex("noteBool", "noteBool");
+		playerStore.createIndex("watch", "watch");
 	}
 
-	if (oldVersion <= 50) {
+	if (oldVersion < 51) {
 		const store = transaction.objectStore("gameAttributes");
 		const hardCap = await store.get("hardCap");
 
@@ -1237,7 +1288,7 @@ const migrate = async ({
 		}
 	}
 
-	if (oldVersion <= 51) {
+	if (oldVersion < 52) {
 		// Non-basketball sports may have had a basketball pace stored in gameAttributes if they were created before gameAttributesKeysSportSpecific
 		if (!isSport("basketball")) {
 			const store = transaction.objectStore("gameAttributes");
@@ -1252,13 +1303,13 @@ const migrate = async ({
 		}
 	}
 
-	if (oldVersion <= 52) {
+	if (oldVersion < 53) {
 		db.createObjectStore("seasonLeaders", {
 			keyPath: "season",
 		});
 	}
 
-	if (oldVersion <= 53) {
+	if (oldVersion < 54) {
 		const store = transaction.objectStore("gameAttributes");
 		const challengeThanosMode = await store.get("challengeThanosMode");
 
@@ -1268,7 +1319,7 @@ const migrate = async ({
 		});
 	}
 
-	if (oldVersion <= 54) {
+	if (oldVersion < 55) {
 		type OldBudgetItem = {
 			amount: number;
 			rank: number;
@@ -1343,7 +1394,7 @@ const migrate = async ({
 			] as const;
 			ts.expenseLevels = {} as any;
 			for (const key of expenseLevelsKeys) {
-				ts.expenseLevels[key] = gp * budgetsByTid[ts.tid][key];
+				ts.expenseLevels[key] = gp * budgetsByTid[ts.tid]![key];
 			}
 
 			await cursor.update(ts);
@@ -1351,7 +1402,7 @@ const migrate = async ({
 	}
 
 	// Bug here! But leave so upgrade below works
-	if (oldVersion <= 55) {
+	if (oldVersion < 56) {
 		const store = transaction.objectStore("gameAttributes");
 		const repeatSeason = await store.get("repeatSeason");
 
@@ -1367,7 +1418,7 @@ const migrate = async ({
 	}
 
 	// Fix old broken upgrade
-	if (oldVersion <= 56) {
+	if (oldVersion < 57) {
 		const store = transaction.objectStore("gameAttributes");
 		const repeatSeason = (await store.get("repeatSeason"))?.value;
 
@@ -1389,7 +1440,7 @@ const migrate = async ({
 		}
 	}
 
-	if (oldVersion <= 57) {
+	if (oldVersion < 58) {
 		const store = transaction.objectStore("gameAttributes");
 		const ties = (await store.get("ties"))?.value as
 			| boolean
@@ -1412,7 +1463,7 @@ const migrate = async ({
 						start: row.start,
 						value: row.value ? 1 : null,
 					};
-				});
+				}) as any;
 			}
 
 			await store.put({
@@ -1424,17 +1475,20 @@ const migrate = async ({
 		await store.delete("ties");
 	}
 
-	if (oldVersion <= 58) {
+	if (oldVersion < 59) {
 		db.createObjectStore("savedTrades", {
 			keyPath: "hash",
 		});
 	}
 
-	if (oldVersion <= 59) {
+	if (oldVersion < 60) {
 		for await (const cursor of transaction.objectStore("playerFeats")) {
 			const feat = cursor.value;
 
-			const pts = feat.score.split("-").map((x) => Number.parseInt(x));
+			const pts = feat.score.split("-").map((x) => Number.parseInt(x)) as [
+				number,
+				number,
+			];
 			let diff = -Infinity;
 			if (!Number.isNaN(pts[0]) && !Number.isNaN(pts[1])) {
 				diff = pts[0] - pts[1];
@@ -1448,7 +1502,7 @@ const migrate = async ({
 		}
 	}
 
-	if (oldVersion <= 60) {
+	if (oldVersion < 61) {
 		if (isSport("hockey")) {
 			for await (const cursor of transaction.objectStore("players")) {
 				const p = cursor.value;
@@ -1465,23 +1519,126 @@ const migrate = async ({
 		}
 	}
 
-	if (oldVersion <= 61) {
+	if (oldVersion < 62) {
 		const teamSeasonsStore = transaction.objectStore("teamSeasons");
-		teamSeasonsStore.createIndex("noteBool", "noteBool", {
-			unique: false,
-		});
+		teamSeasonsStore.createIndex("noteBool", "noteBool");
 	}
 
-	if (oldVersion <= 62) {
+	if (oldVersion < 63) {
 		db.createObjectStore("savedTradingBlock", {
 			keyPath: "rid",
 		});
 	}
 
-	if (oldVersion <= 63) {
-		transaction.objectStore("games").createIndex("noteBool", "noteBool", {
-			unique: false,
+	if (oldVersion < 64) {
+		transaction.objectStore("games").createIndex("noteBool", "noteBool");
+	}
+
+	if (oldVersion < 65) {
+		slowUpgrade();
+
+		// Convert autoDeleteOldBoxScores to saveOldBoxScores
+		const gameAttributesStore = transaction.objectStore("gameAttributes");
+		const autoDeleteOldBoxScores = (
+			await gameAttributesStore.get("autoDeleteOldBoxScores")
+		)?.value;
+		// If autoDeleteOldBoxScores was true, just let the new default apply. Only override if it was false
+		if (autoDeleteOldBoxScores === false) {
+			const saveOldBoxScores = {
+				pastSeasons: "all",
+				pastSeasonsType: "all",
+			};
+			await gameAttributesStore.put({
+				key: "saveOldBoxScores",
+				value: saveOldBoxScores,
+			});
+			await gameAttributesStore.delete("autoDeleteOldBoxScores");
+		}
+
+		await upgradeGamesVersion65({
+			transaction: transaction as any,
+			stopIfTooMany: true,
+			lid,
 		});
+	}
+
+	if (oldVersion < 66) {
+		for await (const cursor of transaction
+			.objectStore("players")
+			.index("tid")
+			.iterate(IDBKeyRange.lowerBound(PLAYER.FREE_AGENT))) {
+			const p = cursor.value;
+			const row = p.stats.at(-1);
+			if (
+				row?.jerseyNumber !== undefined &&
+				row.jerseyNumber !== p.jerseyNumber
+			) {
+				// Previously, p.jerseyNumber was only used for new players (new real players league, relative, or custom league file) so it'd be stale in existing leagues. Now we need it to match the current value, because it is the actual source of truth.
+				p.jerseyNumber = row.jerseyNumber;
+				await cursor.update(p);
+			}
+		}
+	}
+
+	if (oldVersion < 67) {
+		slowUpgrade();
+
+		transaction.objectStore("players").createIndex("srID", "srID");
+	}
+
+	if (oldVersion < 68) {
+		const keys = ["imgURL", "imgURLSmall"] as const;
+		const stores = ["teams", "teamSeasons"] as const;
+		for (const store of stores) {
+			for await (const cursor of transaction.objectStore(store)) {
+				const t = cursor.value;
+
+				let updated;
+				for (const key of keys) {
+					if (t[key] === "/img/logos-primary/CHI.svg") {
+						t[key] = "/img/logos-primary/CHW.svg";
+						updated = true;
+					} else if (t[key] === "/img/logos-secondary/CHI.svg") {
+						t[key] = "/img/logos-secondary/CHW.svg";
+						updated = true;
+					}
+				}
+
+				if (updated) {
+					await cursor.update(t);
+				}
+			}
+		}
+	}
+
+	if (oldVersion < 69) {
+		// By thorough with recent Team change, even though it only affects very old leagues
+		for await (const cursor of transaction.objectStore("teams").iterate()) {
+			const t = cursor.value;
+			if (t.pop === undefined || t.stadiumCapacity === undefined) {
+				// Get most recent teamSeason
+				const cursor2 = await transaction
+					.objectStore("teamSeasons")
+					.index("tid, season")
+					.openCursor(IDBKeyRange.bound([t.tid], [t.tid, []]), "prev");
+				const teamSeason = cursor2?.value;
+
+				t.pop = teamSeason?.pop ?? 1;
+				t.stadiumCapacity = teamSeason?.pop ?? DEFAULT_STADIUM_CAPACITY;
+				await cursor.update(t);
+			}
+		}
+
+		for await (const cursor of transaction
+			.objectStore("playoffSeries")
+			.iterate()) {
+			const row = cursor.value;
+			if ((row as any).byConf === true) {
+				// This setting only worked with 2 conferences in the past, so 2 is what `true` used to mean
+				row.byConf = 2;
+				await cursor.update(row);
+			}
+		}
 	}
 };
 

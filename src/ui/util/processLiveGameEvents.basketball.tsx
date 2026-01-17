@@ -3,6 +3,8 @@ import { choice } from "../../common/random.ts";
 import { helpers, local } from "./index.ts";
 import type { PlayByPlayEvent } from "../../worker/core/GameSim.basketball/PlayByPlayLogger.ts";
 import type { ReactNode } from "react";
+import { formatClock } from "../../common/formatClock.ts";
+
 const getPronoun = (pronoun: Parameters<typeof helpers.pronoun>[1]) => {
 	return helpers.pronoun(local.getState().gender, pronoun);
 };
@@ -260,10 +262,16 @@ export const getText = (
 		];
 	} else if (event.type === "sub") {
 		texts = [
-			`Substitution: ${getName(event.pid)} for ${getName(event.pidOff)}`,
+			<>
+				On: {event.pids.map((pid) => getName(pid)).join(", ")}
+				<br />
+				Off: {event.pidsOff.map((pid) => getName(pid)).join(", ")}
+			</>,
 		];
 	} else if (event.type === "jumpBall") {
-		texts = [`${getName(event.pid)} won the jump ball`];
+		texts = [
+			`${getName(event.pid)} won the jump ball against ${getName(event.pid2)}`,
+		];
 	} else if (event.type === "elamActive") {
 		texts = [`Elam Ending activated! First team to ${event.target} wins.`];
 	} else if (event.type === "timeout") {
@@ -470,7 +478,7 @@ const processLiveGameEvents = ({
 					}
 				}
 			} else if (e.s === "gs") {
-				const p = playersByPid[e.pid!];
+				const p = playersByPid[e.pid!]!;
 				p.inGame = true;
 			} else if (e.s === "sPts" || e.s === "sAtt") {
 				// Shootout
@@ -495,19 +503,7 @@ const processLiveGameEvents = ({
 			let time;
 			if (eAny.clock !== undefined) {
 				const seconds = eAny.clock;
-				if (seconds <= 59.9) {
-					const centiSecondsRounded = Math.ceil(seconds * 10);
-					const remainingSeconds = Math.floor(centiSecondsRounded / 10);
-					const remainingCentiSeconds = centiSecondsRounded % 10;
-					time = `${remainingSeconds}.${remainingCentiSeconds}`;
-				} else {
-					const secondsRounded = Math.ceil(seconds);
-					const minutes = Math.floor(secondsRounded / 60);
-					const remainingSeconds = secondsRounded % 60;
-					const formattedSeconds =
-						remainingSeconds < 10 ? `0${remainingSeconds}` : remainingSeconds;
-					time = `${minutes}:${formattedSeconds}`;
-				}
+				time = formatClock(seconds);
 			}
 
 			if (e.type === "injury") {
@@ -521,8 +517,12 @@ const processLiveGameEvents = ({
 			}
 
 			if (e.type === "sub") {
-				playersByPid[e.pid].inGame = true;
-				playersByPid[e.pidOff].inGame = false;
+				for (const pid of e.pids) {
+					playersByPid[pid]!.inGame = true;
+				}
+				for (const pid of e.pidsOff) {
+					playersByPid[pid]!.inGame = false;
+				}
 			} else if (e.type === "elamActive") {
 				boxScore.elamTarget = e.target;
 			}

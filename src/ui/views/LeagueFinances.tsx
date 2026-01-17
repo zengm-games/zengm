@@ -4,6 +4,7 @@ import { DataTable } from "../components/index.tsx";
 import type { View } from "../../common/types.ts";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { wrappedCurrency } from "../components/wrappedCurrency.ts";
 
 const LeagueFinances = ({
 	budget,
@@ -83,24 +84,21 @@ const LeagueFinances = ({
 			helpers.numberWithCommas(Math.round(t.seasonAttrs.att)),
 			...(budget
 				? [
-						showTicketPrice
-							? helpers.formatCurrency(t.budget.ticketPrice, "")
-							: null,
-						helpers.formatCurrency(t.seasonAttrs.revenue, "M"),
-						helpers.formatCurrency(t.seasonAttrs.profit, "M"),
-						helpers.formatCurrency(t.seasonAttrs.cash, "M"),
+						showTicketPrice ? wrappedCurrency(t.budget.ticketPrice, "") : null,
+						wrappedCurrency(t.seasonAttrs.revenue, "M"),
+						wrappedCurrency(t.seasonAttrs.profit, "M"),
+						wrappedCurrency(t.seasonAttrs.cash, "M"),
 					]
 				: []),
-			helpers.formatCurrency(payroll, "M"),
+			wrappedCurrency(payroll, "M"),
 		];
 
 		// Since we don't store historical salary cap data, only show cap space for current season
 		if (season === currentSeason) {
 			if (showCapSpaceForReal) {
-				data.push(helpers.formatCurrency(salaryCap - payroll, "M"));
+				data.push(wrappedCurrency(salaryCap - payroll, "M"));
 			}
-			data.push(t.rosterSpots);
-			data.push(helpers.upperCaseFirstLetter(t.strategy));
+			data.push(t.rosterSpots, helpers.upperCaseFirstLetter(t.strategy));
 		} else {
 			if (showCapSpaceForReal) {
 				data.push(null);
@@ -117,9 +115,6 @@ const LeagueFinances = ({
 			>
 				Trade With
 			</button>,
-		);
-
-		data.push(
 			t.seasonAttrs.expenseLevels.scouting,
 			t.seasonAttrs.expenseLevels.coaching,
 			t.seasonAttrs.expenseLevels.health,

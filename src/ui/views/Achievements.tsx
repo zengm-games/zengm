@@ -153,8 +153,7 @@ const Category = ({
 			};
 			const maxDifficulties = achievements.map((achievement) => {
 				let index = -1; // -1 means no achievements at any difficulty level
-				for (let i = 0; i < DIFFICULTIES.length; i++) {
-					const difficulty = DIFFICULTIES[i];
+				for (const [i, difficulty] of DIFFICULTIES.entries()) {
 					if (achievement[difficulty] > 0) {
 						index = i;
 					}
@@ -163,9 +162,10 @@ const Category = ({
 			});
 			const minDifficulty = Math.min(...maxDifficulties);
 			if (minDifficulty >= 0) {
-				fakeCounts[DIFFICULTIES[minDifficulty]] = 1;
+				fakeCounts[DIFFICULTIES[minDifficulty]!] = 1;
 			}
-			const highlight = highlightSlug === achievements[0].slug;
+			const achievement0 = achievements[0]!;
+			const highlight = highlightSlug === achievement0.slug;
 			const rowClassNames = {
 				...achievementClassNames(fakeCounts),
 				"d-flex": true,
@@ -173,25 +173,25 @@ const Category = ({
 			};
 
 			return {
-				key: achievements[0].slug,
+				key: achievement0.slug,
 				data: [
 					{
 						value: (
 							<>
-								{achievements[0].name}
+								{achievement0.name}
 
 								<a
 									className="btn btn-xs btn-secondary ms-auto"
-									href={`/new_league/real#rebuild=${achievements[0].slug}`}
+									href={`/new_league/real#rebuild=${achievement0.slug}`}
 									role="button"
-									id={makeAchievementId(achievements[0].slug)}
+									id={makeAchievementId(achievement0.slug)}
 								>
 									New league
 								</a>
 							</>
 						),
-						sortValue: achievements[0].name,
-						searchValue: achievements[0].name,
+						sortValue: achievement0.name,
+						searchValue: achievement0.name,
 						classNames: rowClassNames,
 					},
 					...achievements.flatMap((achievement) => {

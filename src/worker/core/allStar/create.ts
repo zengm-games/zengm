@@ -104,7 +104,10 @@ const create = async (conditions: Conditions) => {
 			const playersByPos = groupBy(candidates, (p) => {
 				if (isSport("baseball")) {
 					// Find actual played position based on highest gpF value
-					return getPosByGpF(p.currentStats.gpF);
+					const pos = getPosByGpF(p.currentStats.gpF);
+					if (pos !== undefined) {
+						return pos;
+					}
 				}
 
 				return p.ratings.at(-1).pos;
@@ -237,7 +240,7 @@ const create = async (conditions: Conditions) => {
 
 		const grouped = groupBy(
 			sortedPlayers.filter((p) => p.tid >= 0),
-			(p) => cidsByTid[p.tid],
+			(p) => cidsByTid[p.tid]!,
 		);
 
 		// Sorting is to make sure lowest cid is first
@@ -288,7 +291,7 @@ const create = async (conditions: Conditions) => {
 
 	const assignTopPlayerToTeam = (team: (typeof allStars)["teams"][number]) => {
 		const ind = allStars.remaining.findIndex(({ pid }) => healthyPids.has(pid));
-		team.push(allStars.remaining[ind]);
+		team.push(allStars.remaining[ind]!);
 		allStars.remaining.splice(ind, 1);
 	};
 
@@ -300,7 +303,7 @@ const create = async (conditions: Conditions) => {
 
 		// @ts-expect-error
 		allStars.teamNames = allStars.teams.map((teamPlayers) => {
-			const captainPID = teamPlayers[0].pid;
+			const captainPID = teamPlayers[0]!.pid;
 			const p = players.find((p2) => p2.pid === captainPID);
 			return `Team ${p.firstName}`;
 		});
@@ -310,7 +313,7 @@ const create = async (conditions: Conditions) => {
 		}
 	} else if (allStarType === "byConf") {
 		// First half of allStars.remaining is 1st conference, second half is 2nd conference
-		for (let i = 0; i < 2; i++) {
+		for (const i of [0, 1] as const) {
 			while (allStars.teams[i].length < allStarNum) {
 				assignTopPlayerToTeam(allStars.teams[i]);
 			}
@@ -330,8 +333,8 @@ const create = async (conditions: Conditions) => {
 			allStars.teams[0].length + allStars.teams[1].length <
 			healthyPids.size
 		) {
-			const teamIndex = snakeOrder[i % snakeOrder.length];
-			assignTopPlayerToTeam(allStars.teams[teamIndex]);
+			const teamIndex = snakeOrder[i % snakeOrder.length]!;
+			assignTopPlayerToTeam(allStars.teams[teamIndex]!);
 			i += 1;
 		}
 
@@ -350,11 +353,11 @@ const create = async (conditions: Conditions) => {
 		);
 		let prevWinnerDunk: number | undefined;
 		if (lastYear?.dunk?.winner !== undefined) {
-			prevWinnerDunk = lastYear.dunk.players[lastYear.dunk.winner].pid;
+			prevWinnerDunk = lastYear.dunk.players[lastYear.dunk.winner]!.pid;
 		}
 		let prevWinnerThree: number | undefined;
 		if (lastYear?.three?.winner !== undefined) {
-			prevWinnerThree = lastYear.three.players[lastYear.three.winner].pid;
+			prevWinnerThree = lastYear.three.players[lastYear.three.winner]!.pid;
 		}
 
 		const activePlayers = await idb.cache.players.indexGetAll("playersByTid", [
@@ -385,8 +388,8 @@ const create = async (conditions: Conditions) => {
 				random.shuffle(dunkers);
 
 				const controlling = [];
-				for (let i = 0; i < dunkers.length; i++) {
-					if (dunkers[i].tid === g.get("userTid")) {
+				for (const [i, dunker] of dunkers.entries()) {
+					if (dunker.tid === g.get("userTid")) {
 						controlling.push(i);
 					}
 				}
@@ -403,10 +406,10 @@ const create = async (conditions: Conditions) => {
 				random.shuffle(indexes);
 
 				// -1 is because we want to turn .at(0) into .at(-1)
-				const shortIndexes = [-indexes[0] - 1, -indexes[1] - 1];
+				const shortIndexes = [-indexes[0]! - 1, -indexes[1]! - 1] as const;
 
 				random.shuffle(indexes);
-				const longIndexes = [indexes[0], indexes[1]];
+				const longIndexes = [indexes[0]!, indexes[1]!] as const;
 
 				allStars.dunk = {
 					players: dunkers,
@@ -423,8 +426,8 @@ const create = async (conditions: Conditions) => {
 						orderedByHeight.at(shortIndexes[1])!.pid,
 					],
 					pidsTall: [
-						orderedByHeight[longIndexes[0]].pid,
-						orderedByHeight[longIndexes[1]].pid,
+						orderedByHeight[longIndexes[0]]!.pid,
+						orderedByHeight[longIndexes[1]]!.pid,
 					],
 				};
 			}

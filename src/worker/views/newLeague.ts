@@ -207,10 +207,6 @@ export const getDefaultSettings = () => {
 			"numDraftRounds",
 		),
 		tradeDeadline: unwrapGameAttribute(defaultGameAttributes, "tradeDeadline"),
-		autoDeleteOldBoxScores: unwrapGameAttribute(
-			defaultGameAttributes,
-			"autoDeleteOldBoxScores",
-		),
 		difficulty: unwrapGameAttribute(defaultGameAttributes, "difficulty"),
 		stopOnInjury: unwrapGameAttribute(defaultGameAttributes, "stopOnInjury"),
 		stopOnInjuryGames: unwrapGameAttribute(
@@ -409,6 +405,34 @@ export const getDefaultSettings = () => {
 		),
 		neutralSite: unwrapGameAttribute(defaultGameAttributes, "neutralSite"),
 		rpdPot: unwrapGameAttribute(defaultGameAttributes, "rpdPot"),
+		saveOldBoxScores: unwrapGameAttribute(
+			defaultGameAttributes,
+			"saveOldBoxScores",
+		),
+		currencyFormat: unwrapGameAttribute(
+			defaultGameAttributes,
+			"currencyFormat",
+		),
+		overtimeLength: unwrapGameAttribute(
+			defaultGameAttributes,
+			"overtimeLength",
+		),
+		overtimeLengthPlayoffs: unwrapGameAttribute(
+			defaultGameAttributes,
+			"overtimeLengthPlayoffs",
+		),
+		forceRetireRealPlayers: unwrapGameAttribute(
+			defaultGameAttributes,
+			"forceRetireRealPlayers",
+		),
+		forceHistoricalRosters: unwrapGameAttribute(
+			defaultGameAttributes,
+			"forceHistoricalRosters",
+		),
+		scrimmageTouchbackKickoff: unwrapGameAttribute(
+			defaultGameAttributes,
+			"scrimmageTouchbackKickoff",
+		),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

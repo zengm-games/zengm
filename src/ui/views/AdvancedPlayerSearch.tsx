@@ -4,7 +4,13 @@ import useDropdownOptions from "../hooks/useDropdownOptions.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { OptionDropdown } from "./PlayerGraphs/index.tsx";
 import { isSport, PLAYER, PLAYER_STATS_TABLES } from "../../common/index.ts";
-import { getCols, helpers, realtimeUpdate, toWorker } from "../util/index.ts";
+import {
+	getCol,
+	getCols,
+	helpers,
+	realtimeUpdate,
+	toWorker,
+} from "../util/index.ts";
 import { ActionButton, DataTable, PlusMinus } from "../components/index.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import {
@@ -17,6 +23,7 @@ import {
 } from "../components/contract.tsx";
 import clsx from "clsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];
@@ -51,7 +58,7 @@ type AdvancedPlayerSearchFilterEditing = Omit<
 };
 
 const getFilterInfo = (category: string, key: string) => {
-	const info = allFilters[category].options[key];
+	const info = allFilters[category]!.options[key];
 	if (!info) {
 		throw new Error("Should never happen");
 	}
@@ -276,8 +283,8 @@ const Filters = ({
 										onChange={(event) => {
 											const newCategory = event.target.value as any;
 											const newKey = Object.keys(
-												allFilters[newCategory].options,
-											)[0];
+												allFilters[newCategory]!.options,
+											)[0]!;
 											const newFilter = getInitialFilterEditing(
 												newCategory,
 												newKey,
@@ -308,16 +315,9 @@ const Filters = ({
 											width: 150,
 										}}
 									>
-										{Object.values(allFilters[filter.category].options).map(
+										{Object.values(allFilters[filter.category]!.options).map(
 											(row, i) => {
-												const col = getCols(
-													[row.colKey],
-													row.colOverrides
-														? {
-																[row.colKey]: row.colOverrides,
-															}
-														: undefined,
-												)[0];
+												const col = getCol(row.colKey, row.colOverrides);
 												return (
 													<option key={i} value={row.key} title={col.desc}>
 														{col.title}
@@ -607,21 +607,21 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 			if (statType === "bio") {
 				uniqueStatTypeInfos.push(
 					...keys.attrs.map((key) => {
-						const info = allFilters.bio.options[key];
+						const info = allFilters.bio!.options[key]!;
 						return info;
 					}),
 				);
 			} else if (statType === "ratings") {
 				uniqueStatTypeInfos.push(
 					...keys.ratings.map((key) => {
-						const info = allFilters.ratings.options[key];
+						const info = allFilters.ratings!.options[key]!;
 						return info;
 					}),
 				);
 			} else {
 				uniqueStatTypeInfos.push(
 					...keys.stats.map((key) => {
-						const info = allFilters[statType].options[key];
+						const info = allFilters[statType]!.options[key]!;
 						return info;
 					}),
 				);
@@ -668,7 +668,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 						season: p.ratings.season,
 						skills: p.ratings.skills,
 						jerseyNumber: p.stats.jerseyNumber,
-						watch: p.watch,
+						defaultWatch: p.watch,
 						firstName: p.firstName,
 						firstNameShort: p.firstNameShort,
 						lastName: p.lastName,
@@ -683,7 +683,9 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 					>
 						{p.stats.abbrev}
 					</a>,
-					p.age,
+					rendered.singleSeason === "totals"
+						? wrappedAgeAtDeath(p.age, p.ageAtDeath)
+						: p.age,
 					p.contract.amount > 0 ? wrappedContractAmount(p) : null,
 					p.contract.amount > 0 && currentSeasonOnly
 						? wrappedContractExp(p)
@@ -697,7 +699,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 						...uniqueColFiltersWithInfo.map((row) => row.info),
 						...uniqueStatTypeInfos,
 					].map((info) => {
-						const value = info.getValue(p);
+						const value = info.getValue(p, rendered.singleSeason);
 						if (info.category === "bio") {
 							return value;
 						} else if (info.category === "ratings") {
@@ -724,6 +726,7 @@ const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
 		currentSeasonOnly,
 		playoffs,
 		rendered.players,
+		rendered.singleSeason,
 		rendered.statType,
 		uniqueColFiltersWithInfo,
 		uniqueStatTypeInfos,

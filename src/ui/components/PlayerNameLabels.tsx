@@ -12,6 +12,7 @@ type Props = {
 	awardsSeason?: number;
 	count?: number;
 	jerseyNumber?: string;
+	defaultWatch?: number;
 	injury?: PlayerInjury & {
 		playingThrough?: boolean;
 	};
@@ -28,7 +29,6 @@ type Props = {
 	style?: {
 		[key: string]: string;
 	};
-	watch?: number;
 
 	firstName?: string;
 	lastName?: string;
@@ -152,7 +152,7 @@ const PlayerNameLabels = (props: Props) => {
 		skills,
 		style,
 		tid,
-		watch,
+		defaultWatch,
 	} = props;
 
 	let { firstName, lastName } = getFirstLastNames(props);
@@ -233,7 +233,7 @@ const PlayerNameLabels = (props: Props) => {
 				<RatingsStatsPopover
 					pid={pid}
 					season={season}
-					watch={watch}
+					defaultWatch={defaultWatch}
 					disableNameLink={disableNameLink}
 				/>
 			) : null}

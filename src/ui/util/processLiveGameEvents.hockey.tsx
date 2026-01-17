@@ -6,6 +6,7 @@ import type {
 } from "../../worker/core/GameSim.hockey/PlayByPlayLogger.ts";
 import type { PlayerInjury } from "../../common/types.ts";
 import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.hockey.ts";
+import { formatClock } from "../../common/formatClock.ts";
 
 let playersByPidGid: number | undefined;
 let playersByPid:
@@ -19,22 +20,6 @@ let playersByPid:
 			}
 	  >
 	| undefined;
-
-// Convert clock in minutes to min:sec, like 1.5 -> 1:30
-export const formatClock = (clock: number) => {
-	const secNum = Math.ceil((clock % 1) * 60);
-
-	let sec;
-	if (secNum >= 60) {
-		sec = "59";
-	} else if (secNum < 10) {
-		sec = `0${secNum}`;
-	} else {
-		sec = `${secNum}`;
-	}
-
-	return `${Math.floor(clock)}:${sec}`;
-};
 
 // false means assign possession to other team
 const newPossessionTypes: Record<string, boolean> = {
@@ -273,16 +258,16 @@ const processLiveGameEvents = ({
 			}
 		} else if (e.type !== "init") {
 			if (e.type === "injury") {
-				const p = playersByPid[e.injuredPID];
+				const p = playersByPid[e.injuredPID]!;
 				p.injury = {
 					type: "Injured",
 					gamesRemaining: -1,
 				};
 			} else if (e.type === "penalty") {
-				const p = playersByPid[e.penaltyPID];
+				const p = playersByPid[e.penaltyPID]!;
 				p.inPenaltyBox = true;
 			} else if (e.type === "penaltyOver") {
-				const p = playersByPid[e.penaltyPID];
+				const p = playersByPid[e.penaltyPID]!;
 				p.inPenaltyBox = false;
 			}
 

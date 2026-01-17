@@ -1,25 +1,29 @@
 import { useCallback, useEffect, useState } from "react";
-import { applyRealTeamInfos, MAX_SEASON, MIN_SEASON } from "./index.tsx";
+import { applyRealTeamInfos } from "./index.tsx";
 import {
 	DEFAULT_JERSEY,
 	DEFAULT_STADIUM_CAPACITY,
 	DEFAULT_TEAM_COLORS,
-	SPORT_HAS_REAL_PLAYERS,
+	REAL_PLAYERS_INFO,
 } from "../../../common/index.ts";
 import getTeamInfos from "../../../common/getTeamInfos.ts";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs.ts";
-import type { Conf, Div, Player, View } from "../../../common/types.ts";
+import type {
+	Conf,
+	Div,
+	NonEmptyArray,
+	Player,
+	View,
+} from "../../../common/types.ts";
 import Modal from "../../components/Modal.tsx";
 import { helpers, logEvent, toWorker } from "../../util/index.ts";
-import {
-	type ExhibitionLeagueWithSeasons,
-	getRandomSeason,
-} from "../Exhibition.tsx";
+import { type ExhibitionLeagueWithSeasons } from "../Exhibition.tsx";
 import TeamForm from "../ManageTeams/TeamForm.tsx";
 import type { AddEditTeamInfo } from "./CustomizeTeams.tsx";
 import type { NewLeagueTeamWithoutRank } from "./types.ts";
 import { TeamsSplitNorthAmericaWorld } from "../../components/TeamsSplitNorthAmericaWorld.tsx";
 import { orderBy, range } from "../../../common/utils.ts";
+import { choice, randInt } from "../../../common/random.ts";
 
 export const getGodModeWarnings = ({
 	is,
@@ -191,8 +195,7 @@ const SelectTeam = ({
 
 		let newTeam;
 		if (tidInput === "random") {
-			const index = Math.floor(Math.random() * newTeams.length);
-			newTeam = newTeams[index];
+			newTeam = choice(newTeams);
 		} else {
 			if (typeof tidInput === "number") {
 				newTeam = newTeams.find((t) => t.tid === tidInput);
@@ -213,8 +216,8 @@ const SelectTeam = ({
 		if (lid === "real") {
 			newLeague = {
 				type: "real",
-				seasonStart: MIN_SEASON,
-				seasonEnd: MAX_SEASON,
+				seasonStart: REAL_PLAYERS_INFO!.MIN_SEASON,
+				seasonEnd: REAL_PLAYERS_INFO!.MAX_SEASON,
 			};
 		} else {
 			const { seasonStart, seasonEnd } = await toWorker(
@@ -264,7 +267,7 @@ const SelectTeam = ({
 					undefined,
 				);
 				setLeagues(allLeagues);
-				if (allLeagues.length > 0) {
+				if (allLeagues[0]) {
 					const lid = addEditTeamInfo.lid ?? allLeagues[0].lid;
 					const league = await loadLeague(lid);
 					await loadTeams(
@@ -320,7 +323,7 @@ const SelectTeam = ({
 					}}
 				>
 					<option value="random">Random players team</option>
-					{SPORT_HAS_REAL_PLAYERS ? (
+					{REAL_PLAYERS_INFO ? (
 						<option value="real">Real historical teams</option>
 					) : null}
 					<option value="league">Team from existing league</option>
@@ -425,7 +428,7 @@ const SelectTeam = ({
 										{t.seasonInfo
 											? ` ${helpers.formatRecord(t.seasonInfo)}${
 													t.seasonInfo.roundsWonText
-														? `, ${t.seasonInfo.roundsWonText.toLowerCase()}`
+														? `, ${t.seasonInfo.roundsWonText}`
 														: ""
 												}`
 											: null}
@@ -439,17 +442,14 @@ const SelectTeam = ({
 							disabled={actualDisabled}
 							onClick={async () => {
 								if (addEditTeamInfo.addType !== "random" && league) {
-									const randomSeason = getRandomSeason(
+									const randomSeason = randInt(
 										league.seasonStart,
 										league.seasonEnd,
 									);
 									setSeason(randomSeason);
 									await loadTeams(league, randomSeason, "random");
 								} else if (availableTeams) {
-									const t =
-										availableTeams[
-											Math.floor(Math.random() * availableTeams.length)
-										];
+									const t = choice(availableTeams);
 									onChange(t);
 								}
 							}}
@@ -494,8 +494,8 @@ const UpsertTeamModal = ({
 	addEditTeamInfo: AddEditTeamInfo;
 	setAddEditTeamInfo: SetAddEditTeamInfo;
 	teams: NewLeagueTeamWithoutRank[];
-	confs: Conf[];
-	divs: Div[];
+	confs: NonEmptyArray<Conf>;
+	divs: NonEmptyArray<Div>;
 	onCancel: () => void;
 	onSave: (t: NewLeagueTeamWithoutRank) => void;
 } & Pick<View<"newLeague">, "godModeLimits" | "realTeamInfo">) => {
@@ -525,9 +525,6 @@ const UpsertTeamModal = ({
 			} else {
 				setControlledTeam({
 					...t,
-					region: t.region,
-					name: t.name,
-					abbrev: t.abbrev,
 					pop: String(t.pop),
 					stadiumCapacity: String(
 						t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY,
@@ -633,7 +630,7 @@ const UpsertTeamModal = ({
 		>
 			<Modal.Header closeButton>
 				<Modal.Title>
-					{addEditTeamInfo.type === "edit" ? "Edit" : "Add"} Team
+					{addEditTeamInfo.type === "edit" ? "Edit" : "Add"} team
 				</Modal.Title>
 			</Modal.Header>
 			{addEditTeamInfo.type !== "edit" ? (
@@ -655,7 +652,6 @@ const UpsertTeamModal = ({
 			<Modal.Body>
 				{controlledTeam ? (
 					<form
-						id="foo"
 						onSubmit={(event) => {
 							event.preventDefault();
 							save();
@@ -710,7 +706,7 @@ const UpsertTeamModal = ({
 								showPlayers={!!controlledTeam.players}
 							/>
 						</div>
-						<button className="d-none" type="submit"></button>
+						<button className="d-none" type="submit" />
 					</form>
 				) : (
 					"Loading..."
@@ -729,7 +725,7 @@ const UpsertTeamModal = ({
 					onClick={save}
 					disabled={!controlledTeam}
 				>
-					{addEditTeamInfo.type === "edit" ? "Save Team" : "Add Team"}
+					{addEditTeamInfo.type === "edit" ? "Save team" : "Add team"}
 				</button>
 			</Modal.Footer>
 		</Modal>

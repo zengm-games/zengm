@@ -19,7 +19,7 @@ const madeHof = (
 ): boolean => {
 	let earliestSeason = Infinity;
 
-	const wars = p.stats.map((ps) => {
+	const wars: number[] = p.stats.map((ps) => {
 		if (ps.season < earliestSeason) {
 			earliestSeason = ps.season;
 		}
@@ -33,11 +33,11 @@ const madeHof = (
 	let total = 0;
 	let df = -30;
 
-	for (let i = 0; i < wars.length; i++) {
-		total += wars[i];
+	for (const [i, war] of wars.entries()) {
+		total += war;
 
 		if (i < 5) {
-			df += wars[i];
+			df += war;
 		}
 	}
 
@@ -45,7 +45,7 @@ const madeHof = (
 	const fudgeSeasons =
 		Math.min(earliestSeason, g.get("startingSeason")) - p.draft.year - 5;
 
-	if (fudgeSeasons > 0) {
+	if (fudgeSeasons > 0 && wars[0] !== undefined) {
 		total += wars[0] * fudgeSeasons;
 	}
 

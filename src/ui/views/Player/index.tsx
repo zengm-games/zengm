@@ -11,10 +11,11 @@ import type { View } from "../../../common/types.ts";
 import SeasonIcons from "./SeasonIcons.tsx";
 import TopStuff from "./TopStuff.tsx";
 import { PLAYER } from "../../../common/index.ts";
-import TeamAbbrevLink from "../../components/TeamAbbrevLink.tsx";
 import HideableSection from "../../components/HideableSection.tsx";
 import { StatsTable } from "./StatsTable.tsx";
 import { highlightLeaderText, MaybeBold, SeasonLink } from "./common.tsx";
+import { wrappedTeamAbbrevLink } from "../../components/TeamAbbrevLink.tsx";
+import { wrappedCurrency } from "../../components/wrappedCurrency.ts";
 
 const Player2 = ({
 	bestPos,
@@ -30,6 +31,7 @@ const Player2 = ({
 	leaders,
 	phase,
 	player,
+	randomDebutsForeverPids,
 	ratings,
 	retired,
 	showContract,
@@ -97,6 +99,7 @@ const Player2 = ({
 				jerseyNumberInfos={jerseyNumberInfos}
 				phase={phase}
 				player={player}
+				randomDebutsForeverPids={randomDebutsForeverPids}
 				retired={retired}
 				showContract={showContract}
 				showRatings={showRatings}
@@ -159,7 +162,7 @@ const Player2 = ({
 											player.injuries[r.injuryIndex] ? (
 												<InjuryIcon
 													injury={{
-														type: player.injuries[r.injuryIndex].type,
+														type: player.injuries[r.injuryIndex]!.type,
 														gamesRemaining: -1,
 													}}
 												/>
@@ -167,11 +170,11 @@ const Player2 = ({
 										</>
 									),
 								},
-								<TeamAbbrevLink
-									abbrev={r.abbrev}
-									season={r.season}
-									tid={r.tid}
-								/>,
+								wrappedTeamAbbrevLink({
+									abbrev: r.abbrev,
+									season: r.season,
+									tid: r.tid,
+								}),
 								<MaybeBold bold={leaders[r.season]?.attrs.has("age")}>
 									{r.age}
 								</MaybeBold>,
@@ -253,7 +256,7 @@ const Player2 = ({
 												</>
 											),
 										},
-										helpers.formatCurrency(s.amount, "M"),
+										wrappedCurrency(s.amount, "M"),
 									],
 								};
 							})}

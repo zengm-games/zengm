@@ -151,9 +151,9 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 			awardsGrouped.push({
 				type,
 				long: originalType,
-				count: awardsGroupedTemp[type].length,
+				count: awardsGroupedTemp[type]!.length,
 				seasons: helpers.yearRanges(
-					awardsGroupedTemp[type].map((a) => a.season),
+					awardsGroupedTemp[type]!.map((a) => a.season),
 				),
 			});
 			seen.add(type);

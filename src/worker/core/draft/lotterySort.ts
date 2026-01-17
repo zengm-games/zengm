@@ -54,8 +54,7 @@ const lotterySort = async (
 		}
 	}
 
-	for (let i = 0; i < teams.length; i++) {
-		const t = teams[i];
+	for (const [i, t] of teams.entries()) {
 		(t as any).randVal = randValues[i];
 
 		// Expansion teams and re-activated teams who did not play this season

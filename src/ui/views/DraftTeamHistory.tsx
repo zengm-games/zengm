@@ -1,6 +1,5 @@
 import {
 	DataTable,
-	DraftAbbrev,
 	SkillsBlock,
 	MoreLinks,
 	PlusMinus,
@@ -11,6 +10,8 @@ import type { View } from "../../common/types.ts";
 import { PLAYER } from "../../common/index.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
+import { wrappedDraftAbbrev } from "../components/DraftAbbrev.tsx";
 
 const DraftTeamHistory = ({
 	abbrev,
@@ -110,25 +111,19 @@ const DraftTeamHistory = ({
 					pid: p.pid,
 					season: p.draft.year,
 					skills: p.currentSkills,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
 				}),
 				p.pos,
-				{
-					searchValue: `${teamInfoCache[p.draft.tid]?.abbrev} ${
-						teamInfoCache[p.draft.originalTid]?.abbrev
-					}`,
-					sortValue: `${p.draft.tid} ${p.draft.originalTid}`,
-					value: (
-						<DraftAbbrev
-							originalTid={p.draft.originalTid}
-							tid={p.draft.tid}
-							season={p.draft.year}
-						/>
-					),
-				},
+				wrappedDraftAbbrev(
+					{
+						originalTid: p.draft.originalTid,
+						tid: p.draft.tid,
+					},
+					teamInfoCache,
+				),
 				p.draft.age,
 				showRatings ? p.draft.ovr : null,
 				showRatings ? p.draft.pot : null,
@@ -143,7 +138,7 @@ const DraftTeamHistory = ({
 				>
 					{p.currentAbbrev}
 				</a>,
-				p.currentAge,
+				wrappedAgeAtDeath(p.currentAge, p.ageAtDeath),
 				showRatings ? p.currentOvr : null,
 				showRatings ? p.currentPot : null,
 				<span className="skills-alone">

@@ -24,7 +24,6 @@ const LeagueDashboard = ({
 	numConfs,
 	numGamesToWinSeries,
 	numPlayersOnCourt,
-	numPlayoffRounds,
 	otl,
 	payroll,
 	playoffRoundsWon,
@@ -34,6 +33,7 @@ const LeagueDashboard = ({
 	rank,
 	region,
 	revenue,
+	roundsWonText,
 	salaryCap,
 	salaryCapType,
 	season,
@@ -99,15 +99,12 @@ const LeagueDashboard = ({
 								<br />
 								<span style={{ fontSize: "1.5rem" }}>
 									{playoffRoundsWon < 0 ? (
-										<span>{helpers.ordinal(rank)} in conference</span>
-									) : (
-										<span className="d-none d-sm-inline">
-											{helpers.roundsWonText(
-												playoffRoundsWon,
-												numPlayoffRounds,
-												playoffsByConf,
-											)}
+										<span>
+											{helpers.ordinal(rank)} in{" "}
+											{playoffsByConf !== false ? "conference" : "league"}
 										</span>
+									) : (
+										<span className="d-none d-sm-inline">{roundsWonText}</span>
 									)}
 								</span>
 							</div>

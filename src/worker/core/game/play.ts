@@ -32,12 +32,14 @@ import {
 import type {
 	Conditions,
 	GameResults,
+	LocalStateUI,
 	ScheduleGame,
 	UpdateEvents,
 } from "../../../common/types.ts";
 import allowForceTie from "../../../common/allowForceTie.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { setLiveSimRatingsStatsPopoverPlayers } from "./setLiveSimRatingsStatsPopoverPlayers.ts";
+import { getOneUpcomingGame } from "../../util/recomputeLocalUITeamOvrs.ts";
 
 /**
  * Play one or more days of games.
@@ -119,10 +121,16 @@ const play = async (
 		const { injuryTexts, pidsInjuredOneGameOrLess, stopPlay } =
 			await writePlayerStats(results, conditions);
 
+		let gameToUi: LocalStateUI["games"][number] | undefined;
 		const gidsFinished = await Promise.all(
 			results.map(async (result) => {
 				const att = await writeTeamStats(result);
-				await writeGameStats(result, att, conditions);
+
+				const maybeGameToUi = await writeGameStats(result, att, conditions);
+				if (maybeGameToUi) {
+					gameToUi = maybeGameToUi;
+				}
+
 				return result.gid;
 			}),
 		);
@@ -259,7 +267,8 @@ const play = async (
 			if (
 				g.get("phase") !== PHASE.PLAYOFFS &&
 				Math.random() < g.get("tragicDeathRate") &&
-				!g.get("repeatSeason")
+				!g.get("repeatSeason") &&
+				!g.get("forceHistoricalRosters")
 			) {
 				await player.killOne(conditions);
 
@@ -284,8 +293,22 @@ const play = async (
 			}
 		}
 
-		// More stuff for LeagueTopBar - update ovrs based on injuries
-		await recomputeLocalUITeamOvrs();
+		// More stuff for LeagueTopBar - update ovrs based on injuries, and (if user just played a game) update the score of the user's last game and add their next game
+		// This is safe to do down here because injuries have been processed (if necessay) and games have been deleted from the schedule
+		if (gameToUi) {
+			const gamesToUi = [gameToUi];
+
+			// Also show next game
+			const upcomingGame = await getOneUpcomingGame();
+			if (upcomingGame) {
+				gamesToUi.push(upcomingGame);
+			}
+
+			await toUI("mergeGames", [gamesToUi]);
+		} else {
+			// This loads next game and calls mergeGames internally
+			await recomputeLocalUITeamOvrs();
+		}
 
 		await advStats();
 
@@ -298,11 +321,11 @@ const play = async (
 
 		// If there was a play by play done for one of these games, get it
 		if (gidOneGame !== undefined && playByPlay) {
-			for (let i = 0; i < results.length; i++) {
-				if (results[i].playByPlay !== undefined) {
+			for (const result of results) {
+				if (result.playByPlay !== undefined) {
 					raw = {
 						gidOneGame,
-						playByPlay: results[i].playByPlay,
+						playByPlay: result.playByPlay,
 					};
 					url = helpers.leagueUrl(["live_game"]);
 				}
@@ -480,18 +503,19 @@ const play = async (
 
 					let suffix: string;
 					if (game.forceWin === "tie") {
-						suffix = `the ${teamInfoCache[game.homeTid].region} ${
-							teamInfoCache[game.homeTid].name
-						} tied the ${teamInfoCache[game.awayTid].region} ${
-							teamInfoCache[game.awayTid].name
+						const t = teamInfoCache[game.homeTid]!;
+						const t2 = teamInfoCache[game.awayTid]!;
+
+						suffix = `the ${t.region} ${t.name} tied the ${t2.region} ${
+							t2.name
 						}`;
 					} else {
 						const otherTid = forceWinHome ? game.awayTid : game.homeTid;
+						const t = teamInfoCache[game.forceWin]!;
+						const t2 = teamInfoCache[otherTid]!;
 
-						suffix = `the ${teamInfoCache[game.forceWin].region} ${
-							teamInfoCache[game.forceWin].name
-						} beat the ${teamInfoCache[otherTid].region} ${
-							teamInfoCache[otherTid].name
+						suffix = `the ${t.region} ${t.name} beat the ${t2.region} ${
+							t2.name
 						}`;
 					}
 
@@ -549,11 +573,7 @@ const play = async (
 			}
 		}
 
-		if (
-			schedule.length > 0 &&
-			schedule[0].homeTid === -3 &&
-			schedule[0].awayTid === -3
-		) {
+		if (schedule[0]?.homeTid === -3 && schedule[0].awayTid === -3) {
 			await idb.cache.schedule.delete(schedule[0].gid);
 			await phase.newPhase(PHASE.AFTER_TRADE_DEADLINE, conditions);
 			await toUI("deleteGames", [[schedule[0].gid]]);

@@ -64,7 +64,7 @@ export const getRoundResults = (round: Three["rounds"][number]) => {
 			for (let i = 0; i < rack.length; i++) {
 				const value = i === NUM_BALLS_PER_RACK - 1 ? 2 : 1;
 				if (rack[i]) {
-					resultsByIndex[result.index].score += value;
+					resultsByIndex[result.index]!.score += value;
 				}
 			}
 		}
@@ -112,7 +112,7 @@ export const simNextThreeEvent = async (
 		} else {
 			// New shot attempt
 			const p = await idb.cache.players.get(
-				three.players[nextShooterIndex].pid,
+				three.players[nextShooterIndex]!.pid,
 			);
 
 			let success;
@@ -152,7 +152,7 @@ export const simNextThreeEvent = async (
 				indexes: indexesForNextRound,
 				results: [
 					{
-						index: indexesForNextRound[0],
+						index: indexesForNextRound[0]!,
 						racks: [[]],
 					},
 				],
@@ -164,7 +164,7 @@ export const simNextThreeEvent = async (
 				indexes: indexesForNextTiebreaker,
 				results: [
 					{
-						index: indexesForNextTiebreaker[0],
+						index: indexesForNextTiebreaker[0]!,
 						racks: [[]],
 					},
 				],
@@ -175,7 +175,7 @@ export const simNextThreeEvent = async (
 
 			three.winner = indexesForNextRound[0];
 
-			const p = three.players[three.winner];
+			const p = three.players[three.winner!]!;
 
 			await saveAwardsByPlayer(
 				[

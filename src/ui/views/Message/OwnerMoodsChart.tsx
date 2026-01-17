@@ -45,7 +45,7 @@ export const ReferenceLine = ({
 				className="chart-line"
 				data={x}
 				x={(d) => d}
-				y={(d, i) => y[i]}
+				y={(d, i) => y[i]!}
 				stroke={color}
 				strokeDasharray="5 5"
 			/>
@@ -280,7 +280,7 @@ const OwnerMoodsChart = ({
 			</ParentSize>
 			{tooltipOpen && tooltipData ? (
 				<TooltipWithBounds
-					key={Math.random()}
+					key={tooltipData.season}
 					top={tooltipTop}
 					left={tooltipLeft}
 				>

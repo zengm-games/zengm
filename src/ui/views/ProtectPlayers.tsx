@@ -73,7 +73,7 @@ const PlayerList = ({
 					injury: p.injury,
 					jerseyNumber: p.jerseyNumber,
 					skills: p.ratings.skills,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
@@ -160,7 +160,7 @@ const ProtectPlayers = ({
 
 	useTitleBar({ title: "Protect Players" });
 
-	const protectedPids = expansionDraft.protectedPids[userTid] || [];
+	const protectedPids = expansionDraft.protectedPids[userTid] ?? [];
 
 	const maxNumCanProtext = Math.min(
 		expansionDraft.numProtectedPlayers,
@@ -204,7 +204,7 @@ const ProtectPlayers = ({
 					continue;
 				}
 
-				const protectedPids2 = expansionDraft.protectedPids[tid] || [];
+				const protectedPids2 = expansionDraft.protectedPids[tid] ?? [];
 				const numRemaining2 =
 					expansionDraft.numProtectedPlayers - protectedPids2.length;
 				if (numRemaining2 > 0) {

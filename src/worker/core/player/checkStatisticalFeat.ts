@@ -79,7 +79,7 @@ const checkStatisticalFeat = (
 			if (feats[stat] === 1 && stat.endsWith("s")) {
 				const singular = stat.slice(0, -1);
 				const vowels = ["a", "e", "i", "o", "u"];
-				return `${vowels.includes(singular[0]) ? "an" : "a"} ${singular}`;
+				return `${vowels.includes(singular[0]!) ? "an" : "a"} ${singular}`;
 			}
 
 			return `${feats[stat]} ${stat}`;
@@ -139,6 +139,8 @@ const checkStatisticalFeat = (
 			result,
 		});
 	}
+
+	return !!feats;
 };
 
 export default checkStatisticalFeat;

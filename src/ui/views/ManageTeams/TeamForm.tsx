@@ -222,7 +222,7 @@ const TeamForm = ({
 				<div className="mb-3">
 					<label className={classNameLabel}>Jersey</label>
 					<div className="input-group">
-						{[0, 1, 2].map((j) => (
+						{([0, 1, 2] as const).map((j) => (
 							<ColorPicker
 								key={j}
 								onClick={async () => {

@@ -12,14 +12,13 @@ const handleResetPT = async () => {
 const InstructionsAndSortButtons = ({
 	keepRosterSorted,
 	editable,
-	godMode,
 	tid,
-}: Pick<View<"roster">, "editable" | "godMode" | "tid"> & {
+}: Pick<View<"roster">, "editable" | "tid"> & {
 	keepRosterSorted: boolean;
 }) => {
 	return (
 		<>
-			{editable || godMode ? (
+			{editable ? (
 				<div className="mb-3">
 					<div className="d-flex flex-wrap gap-2">
 						{editable ? (

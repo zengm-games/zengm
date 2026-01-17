@@ -12,8 +12,8 @@ test("no signing non-minimum contracts that cause team to exceed the salary cap"
 	await givePlayerMinContract(pid);
 	const error = await contractNegotiation.create(pid, false);
 	assert.strictEqual(
-		typeof error,
-		"undefined",
+		error,
+		undefined,
 		`Unexpected error message from contractNegotiation.create: "${error}"`,
 	);
 	const error2 = await contractNegotiation.accept({

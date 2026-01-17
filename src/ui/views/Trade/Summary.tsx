@@ -2,11 +2,12 @@ import { helpers } from "../../util/index.ts";
 import type { View } from "../../../common/types.ts";
 import clsx from "clsx";
 import { PlayerNameLabels, SafeHtml } from "../../components/index.tsx";
-import { ContractAmount } from "../../components/contract.tsx";
+import { ContractAmount, ContractExp } from "../../components/contract.tsx";
 import type { HandleToggle } from "./index.tsx";
 import { isSport } from "../../../common/index.ts";
 import type { MissingAsset } from "../../../worker/views/savedTrades.ts";
 import type { Ref } from "react";
+import { orderBy } from "../../../common/utils.ts";
 
 // Arrow is https://icons.getbootstrap.com/icons/arrow-right/ v1.8.1
 export const arrow = (
@@ -152,8 +153,8 @@ export const SummaryTeam = ({
 									pid={p.pid}
 									legacyName={p.name}
 								/>
-								<div className="ms-2" title={`Expires ${p.contract.exp}`}>
-									<ContractAmount p={p} />
+								<div className="ms-2">
+									<ContractAmount p={p} /> / <ContractExp p={p} />
 								</div>
 								{handleRemove ? (
 									<button
@@ -190,21 +191,23 @@ export const SummaryTeam = ({
 						</li>
 					);
 				})}
-				{summary.teams[t.other].picks.map((pick) => (
-					<li key={pick.dpid} className="d-flex">
-						<SafeHtml dirty={pick.desc} />
-						{handleRemove ? (
-							<button
-								type="button"
-								className="btn-close ms-1"
-								title="Remove pick from trade"
-								onClick={() => {
-									handleRemove("pick", pick.dpid);
-								}}
-							/>
-						) : undefined}
-					</li>
-				))}
+				{orderBy(summary.teams[t.other].picks, ["round", "pick", "season"]).map(
+					(pick) => (
+						<li key={pick.dpid} className="d-flex">
+							<SafeHtml dirty={pick.desc} />
+							{handleRemove ? (
+								<button
+									type="button"
+									className="btn-close ms-1"
+									title="Remove pick from trade"
+									onClick={() => {
+										handleRemove("pick", pick.dpid);
+									}}
+								/>
+							) : undefined}
+						</li>
+					),
+				)}
 				{summary.teams[t.other].trade.length > 0 ? (
 					<li className="mt-1">
 						{helpers.formatCurrency(summary.teams[t.other].total, "M")} total

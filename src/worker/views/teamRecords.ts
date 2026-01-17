@@ -354,7 +354,7 @@ const sumRecordsFor = (name: string, teams: Team[]) => {
 	const colsMin = ["start"] as const;
 	const colsMax = ["end", "lastPlayoffs", "lastFinals", "lastTitle"] as const;
 
-	const output = { ...teams[0] };
+	const output = { ...teams[0]! };
 	delete output.disabled;
 	for (const col of colsSum) {
 		output[col] = sumBy(teams, col);
@@ -458,9 +458,9 @@ const updateTeamRecords = async (
 					partials.push({
 						root: false,
 						tid,
-						abbrev: seasonAttrs[0].abbrev,
-						region: seasonAttrs[0].region,
-						name: seasonAttrs[0].name,
+						abbrev: seasonAttrs[0]!.abbrev,
+						region: seasonAttrs[0]!.region,
+						name: seasonAttrs[0]!.name,
 						...getRowInfo(tid, seasonAttrs, awards, allStars),
 						sortValue: teams.length + partials.length,
 					});

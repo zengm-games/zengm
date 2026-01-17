@@ -4,7 +4,6 @@ import { getCols, helpers } from "../../util/index.ts";
 import { isSport } from "../../../common/index.ts";
 import { highlightLeaderText, MaybeBold, SeasonLink } from "./common.tsx";
 import { expandFieldingStats } from "../../util/expandFieldingStats.baseball.ts";
-import TeamAbbrevLink from "../../components/TeamAbbrevLink.tsx";
 import { formatStatGameHigh } from "../PlayerStats.tsx";
 import SeasonIcons from "./SeasonIcons.tsx";
 import HideableSection from "../../components/HideableSection.tsx";
@@ -12,6 +11,33 @@ import { DataTable } from "../../components/index.tsx";
 import clsx from "clsx";
 import { useRangeFooter } from "./useRangeFooter.ts";
 import type { FooterRow } from "../../components/DataTable/Footer.tsx";
+import { wrappedTeamAbbrevLink } from "../../components/TeamAbbrevLink.tsx";
+
+const hasStats = (
+	careerStats: View<"player">["player"]["careerStats"],
+	onlyShowIf: string[] | undefined,
+) => {
+	// For careerStatPlayoffs gp is undefined if there are no stats rows, ugh
+	if (careerStats.gp === 0 || careerStats.gp === undefined) {
+		return false;
+	}
+
+	if (onlyShowIf !== undefined) {
+		for (const stat of onlyShowIf) {
+			if (
+				careerStats[stat]! > 0 ||
+				(Array.isArray(careerStats[stat]) &&
+					(careerStats[stat] as any).length > 0)
+			) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	return true;
+};
 
 export const StatsTable = ({
 	name,
@@ -28,8 +54,8 @@ export const StatsTable = ({
 	superCols?: any[];
 	leaders: View<"player">["leaders"];
 }) => {
-	const hasRegularSeasonStats = p.careerStats.gp > 0;
-	const hasPlayoffStats = p.careerStatsPlayoffs.gp > 0;
+	const hasRegularSeasonStats = hasStats(p.careerStats, onlyShowIf);
+	const hasPlayoffStats = hasStats(p.careerStatsPlayoffs, onlyShowIf);
 
 	// Show playoffs by default if that's all we have
 	const [playoffs, setPlayoffs] = useState<boolean | "combined">(
@@ -45,12 +71,6 @@ export const StatsTable = ({
 	}
 
 	let playerStats = p.stats.filter((ps) => ps.playoffs === playoffs);
-	const careerStats =
-		playoffs === "combined"
-			? p.careerStatsCombined
-			: playoffs
-				? p.careerStatsPlayoffs
-				: p.careerStats;
 
 	const rangeFooter = useRangeFooter(p.pid, playerStats);
 
@@ -58,23 +78,12 @@ export const StatsTable = ({
 		return null;
 	}
 
-	if (onlyShowIf !== undefined) {
-		let display = false;
-		for (const stat of onlyShowIf) {
-			if (
-				careerStats[stat] > 0 ||
-				(Array.isArray(careerStats[stat]) &&
-					(careerStats[stat] as any).length > 0)
-			) {
-				display = true;
-				break;
-			}
-		}
-
-		if (!display) {
-			return null;
-		}
-	}
+	const careerStats =
+		playoffs === "combined"
+			? p.careerStatsCombined
+			: playoffs
+				? p.careerStatsPlayoffs
+				: p.careerStats;
 
 	const cols = getCols([
 		"Year",
@@ -235,9 +244,7 @@ export const StatsTable = ({
 	const rows = [];
 
 	let prevSeason;
-	for (let i = 0; i < playerStats.length; i++) {
-		const ps = playerStats[i];
-
+	for (const [i, ps] of playerStats.entries()) {
 		// Add blank rows for gap years if necessary
 		if (prevSeason !== undefined && prevSeason < ps.season - 1) {
 			const gapSeason = prevSeason + 1;
@@ -286,12 +293,12 @@ export const StatsTable = ({
 						</>
 					),
 				},
-				<TeamAbbrevLink
-					abbrev={ps.abbrev}
-					className={className}
-					season={ps.season}
-					tid={ps.tid}
-				/>,
+				wrappedTeamAbbrevLink({
+					abbrev: ps.abbrev,
+					className,
+					season: ps.season,
+					tid: ps.tid,
+				}),
 				<MaybeBold bold={leaders[ps.season]?.attrs.has("age")}>
 					{ps.age}
 				</MaybeBold>,

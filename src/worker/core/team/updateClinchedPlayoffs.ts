@@ -3,6 +3,7 @@ import type {
 	TeamSeason,
 	Conditions,
 	TeamStats,
+	ByConf,
 } from "../../../common/types.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import {
@@ -24,7 +25,27 @@ const getClinchedPlayoffs = async (
 
 	const usePts = g.get("pointsFormula", "current") !== "";
 
-	const numGames = g.get("numGames", "current");
+	const schedule = await season.getSchedule();
+	const gamesLeftByTid: Record<number, number> = {};
+	for (const t of teamSeasons) {
+		gamesLeftByTid[t.tid] = 0;
+	}
+	for (const { awayTid, homeTid } of schedule) {
+		if (gamesLeftByTid[awayTid] !== undefined) {
+			gamesLeftByTid[awayTid] += 1;
+		}
+		if (gamesLeftByTid[homeTid] !== undefined) {
+			gamesLeftByTid[homeTid] += 1;
+		}
+	}
+
+	const getGamesLeft = (tid: number) => {
+		const gamesLeft = gamesLeftByTid[tid];
+		if (gamesLeft === undefined) {
+			throw new Error("Should never happen");
+		}
+		return gamesLeft;
+	};
 
 	// We can skip tiebreakers because we add an extra 0.1 to the best/worst case win totals. Without skipping tiebreakers, it's way too slow. You could imagine using tiebreakers only on the last few games of the season... but really it doesn't even work. The bestCases check below isn't actually using the schedule, and it doesn't consider all permutations of game outcomes (which technically would be necessary for all possible tiebreakers) - that would be needed.
 	// const skipTiebreakers = teamSeasons.every(row => numGames - helpers.getTeamSeasonGp(row) > 3);
@@ -33,10 +54,7 @@ const getClinchedPlayoffs = async (
 	const output: ClinchedPlayoffs[] = [];
 	for (const t of teamSeasons) {
 		const worstCases = teamSeasons.map((t2) => {
-			const gp = helpers.getTeamSeasonGp(t2);
-
-			// Will be wrong if a team is missing a game due to scheduling constraints
-			const gamesLeft = numGames - gp;
+			const gamesLeft = getGamesLeft(t2.tid);
 
 			const stats = teamStats.get(t2.tid);
 
@@ -108,7 +126,7 @@ const getClinchedPlayoffs = async (
 			// Play-in dominates any other classification
 			clinchedPlayoffs = "w";
 		} else {
-			const matchups = result.series[0];
+			const matchups = result.series[0]!;
 			for (const matchup of matchups) {
 				if (matchup.home.tid === t.tid && matchup.home.seed === 1) {
 					clinchedPlayoffs = "z";
@@ -126,10 +144,7 @@ const getClinchedPlayoffs = async (
 
 		if (!clinchedPlayoffs) {
 			const bestCases = teamSeasons.map((t2) => {
-				const gp = helpers.getTeamSeasonGp(t2);
-
-				// Will be wrong if a team is missing a game due to scheduling constraints
-				const gamesLeft = g.get("numGames", "current") - gp;
+				const gamesLeft = getGamesLeft(t2.tid);
 
 				const stats = teamStats.get(t2.tid);
 
@@ -286,9 +301,8 @@ const updateClinchedPlayoffs = async (
 		clinchedPlayoffs = await getClinchedPlayoffs(teamSeasons, teamStats);
 	}
 
-	let playoffsByConf: boolean | undefined;
-	for (let i = 0; i < teamSeasons.length; i++) {
-		const ts = teamSeasons[i];
+	let playoffsByConf: ByConf | undefined;
+	for (const [i, ts] of teamSeasons.entries()) {
 		if (clinchedPlayoffs[i] !== ts.clinchedPlayoffs) {
 			ts.clinchedPlayoffs = clinchedPlayoffs[i];
 

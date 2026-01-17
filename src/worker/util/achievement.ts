@@ -77,7 +77,7 @@ async function add(
 	};
 
 	const addToIndexedDB = async (slugs2: string[]) => {
-		const tx = idb.meta.transaction("achievements", "readwrite");
+		const tx = await idb.meta.transaction("achievements", "readwrite");
 		for (const slug of slugs2) {
 			tx.store.add({
 				slug,

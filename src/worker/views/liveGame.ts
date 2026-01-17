@@ -9,10 +9,12 @@ import {
 import type { AllStars, UpdateEvents, ViewInput } from "../../common/types.ts";
 import {
 	bySport,
+	getPeriodName,
 	isSport,
 	PHASE,
 	STARTING_NUM_TIMEOUTS,
 } from "../../common/index.ts";
+import { formatClock } from "../../common/formatClock.ts";
 
 export const boxScoreToLiveSim = async ({
 	allStars,
@@ -40,18 +42,33 @@ export const boxScoreToLiveSim = async ({
 	}
 
 	if (isSport("basketball")) {
+		resetStatsTeam.push("ba");
+
 		boxScore.elam = allStars ? g.get("elamASG") : g.get("elam");
 		boxScore.elamOvertime = g.get("elamOvertime");
 	}
 
 	boxScore.overtime = "";
 	boxScore.quarter = "";
-	boxScore.quarterShort = "";
-	boxScore.time = `${g.get("quarterLength")}:00`;
+
+	// Initialize quarterShort so there is something to display immediately
+	boxScore.quarterShort = bySport({
+		baseball: "1",
+		default:
+			boxScore.numPeriods === 0
+				? "OT"
+				: `${getPeriodName(boxScore.numPeriods, true)}1`,
+	});
+
+	// Basketball clock is in seconds
+	const clock = isSport("basketball")
+		? g.get("quarterLength") * 60
+		: g.get("quarterLength");
+	boxScore.time = formatClock(clock);
 	boxScore.gameOver = false;
 	delete boxScore.shootout;
 
-	for (let i = 0; i < boxScore.teams.length; i++) {
+	for (const i of [0, 1] as const) {
 		const t = boxScore.teams[i];
 
 		// Fix records, taking out result of this game
@@ -190,7 +207,7 @@ const updatePlayByPlay = async (
 			if (playoffSeries) {
 				const finalRound = playoffSeries.series.at(-1);
 				if (finalRound?.length === 1) {
-					const finalMatchup = finalRound[0];
+					const finalMatchup = finalRound[0]!;
 					if (
 						(finalMatchup.home.tid === boxScore.teams[0].tid &&
 							finalMatchup.away?.tid === boxScore.teams[1].tid) ||

@@ -31,8 +31,7 @@ const getCompositeFactor = ({
 		let numerator = 0;
 		let denominator = 0;
 
-		for (let i = 0; i < players.length; i++) {
-			const p = players[i];
+		for (const [i, p] of players.entries()) {
 			const main = i < weightsMain.length;
 			const weight = main
 				? weightsMain[i]

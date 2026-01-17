@@ -10,6 +10,7 @@ import {
 	recomputeLocalUITeamOvrs,
 } from "../../util/index.ts";
 import type { TradeEventTeams } from "../../../common/types.ts";
+import { getTeammateJerseyNumbers } from "../player/genJerseyNumber.ts";
 
 const processTrade = async (
 	tids: [number, number],
@@ -30,7 +31,7 @@ const processTrade = async (
 
 	let maxPlayerValue = -Infinity;
 	let maxPid: number | undefined;
-	for (const j of [0, 1]) {
+	for (const j of [0, 1] as const) {
 		for (const pid of pids[j]) {
 			const p = await idb.cache.players.get(pid);
 			if (p && p.valueFuzz > maxPlayerValue) {
@@ -56,7 +57,7 @@ const processTrade = async (
 		phase: g.get("phase"),
 	});
 
-	for (const j of [0, 1]) {
+	for (const j of [0, 1] as const) {
 		const k = j === 0 ? 1 : 0;
 
 		let teamSeason;
@@ -66,6 +67,8 @@ const processTrade = async (
 				[g.get("season"), tids[j]],
 			);
 		}
+
+		let teamJerseyNumbers;
 
 		for (const pid of pids[j]) {
 			const p = await idb.cache.players.get(pid);
@@ -78,7 +81,17 @@ const processTrade = async (
 			p.ptModifier = 1; // Reset
 
 			if (g.get("phase") <= PHASE.PLAYOFFS) {
-				await player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
+				if (!teamJerseyNumbers) {
+					// If two players being traded for each other have the same jersey number, that shouldn't be treated as conflict and they should be able to keep their jersey numbers
+					teamJerseyNumbers = await getTeammateJerseyNumbers(p.tid, [
+						p.pid,
+						...pids[k],
+					]);
+				}
+
+				await player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
+					team: teamJerseyNumbers,
+				});
 			}
 
 			if (!p.transactions) {

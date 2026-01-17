@@ -263,6 +263,21 @@ const Controls = ({
 							>
 								Clear
 							</Dropdown.Item>
+							<Dropdown.Item
+								onClick={() => {
+									setInfoState((data) => ({
+										...data,
+										countries: data.countries.map((row) => {
+											return {
+												...row,
+												frequency: "1",
+											};
+										}),
+									}));
+								}}
+							>
+								Set all frequencies to 1
+							</Dropdown.Item>
 						</Dropdown.Menu>
 					</Dropdown>
 					<PlayerBioInfoSortButton

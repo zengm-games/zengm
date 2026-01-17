@@ -84,7 +84,8 @@ const formatTeam = (
 			<div className="d-flex align-items-center">
 				<TeamLogoInline imgURL={t.imgURL} imgURLSmall={t.imgURLSmall} />
 				<div className="ms-1 me-auto">
-					{t.seed}. {teamName(t, season)}
+					{t.seed !== undefined ? `${t.seed}. ` : null}
+					{teamName(t, season)}
 				</div>
 				<CountBadge count={t.count} />
 			</div>

@@ -4,6 +4,7 @@ import type {
 	GameAttributesLeagueWithHistory,
 } from "../../common/types.ts";
 import { PHASE, helpers, gameAttributeHasHistory } from "../../common/index.ts";
+import { actualPhase } from "./actualPhase.ts";
 
 // This will get filled by values from IndexedDB
 const g: GameAttributes & {
@@ -101,39 +102,36 @@ export const wrap = <T extends keyof GameAttributesLeague>(
 	const latestRow = cloned.at(-1);
 
 	let currentSeason;
-	let actualPhase;
+	let phase;
 
 	if (override) {
 		currentSeason = override.season;
-		actualPhase = override.phase;
+		phase = override.phase;
 	} else {
 		currentSeason =
 			gameAttributes.season !== undefined
 				? gameAttributes.season
 				: g.get("season");
 
-		actualPhase = gameAttributes.phase ?? g.get("phase");
-		if (actualPhase < 0) {
-			const nextPhase = g.get("nextPhase");
-			if (nextPhase !== undefined) {
-				actualPhase = nextPhase;
-			}
-		}
+		phase = actualPhase(
+			gameAttributes.phase ?? g.get("phase"),
+			g.get("nextPhase"),
+		);
 	}
 
 	if (key === "userTid") {
 		// For userTid, final update for current season happens in newPhaseBeforeDraft, where it's still PHASE.PLAYOFFS
-		if (actualPhase > PHASE.PLAYOFFS) {
+		if (phase > PHASE.PLAYOFFS) {
 			currentSeason += 1;
 		}
 	} else if (key === "numGames") {
 		// For userTid, apply to next regular season
-		if (actualPhase >= PHASE.REGULAR_SEASON) {
+		if (phase >= PHASE.REGULAR_SEASON) {
 			currentSeason += 1;
 		}
 	} else {
 		// Currently this applies to confs, divs, numGamesPlayoffSeries, and numPlayoffByes, which all can only be changed for this season before the playoffs. For otl/ties/tiebreakers it might be better to do this for REGULAR_SEASON too, but that'd also be confusing for people who don't see the change immediately happen.
-		if (actualPhase >= PHASE.PLAYOFFS) {
+		if (phase >= PHASE.PLAYOFFS) {
 			currentSeason += 1;
 		}
 	}

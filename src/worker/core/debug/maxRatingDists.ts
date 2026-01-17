@@ -52,8 +52,8 @@ const maxRatingDists = async (numPlayers: number = 100) => {
 		}
 
 		for (const key of Object.keys(ratings)) {
-			ratings[key].push(maxRatings[key]);
-			ages[key].push(maxAges[key]);
+			ratings[key]!.push(maxRatings[key]);
+			ages[key]!.push(maxAges[key]);
 		}
 	}
 
@@ -63,24 +63,24 @@ const maxRatingDists = async (numPlayers: number = 100) => {
 	console.log("Ranges are min/q1/median/q3/max");
 
 	for (const key of Object.keys(ratings)) {
-		ratings[key].sort((a, b) => a - b);
+		ratings[key]!.sort((a, b) => a - b);
 
-		ages[key].sort((a, b) => a - b);
+		ages[key]!.sort((a, b) => a - b);
 		const ranges = [
-			ratings[key][0],
-			ratings[key][q1],
-			ratings[key][q2],
-			ratings[key][q3],
-			ratings[key].at(-1),
+			ratings[key]![0],
+			ratings[key]![q1],
+			ratings[key]![q2],
+			ratings[key]![q3],
+			ratings[key]!.at(-1),
 		];
 		const ageRanges = [
-			ages[key][0],
-			ages[key][q1],
-			ages[key][q2],
-			ages[key][q3],
-			ages[key][ratings[key].length - 1],
+			ages[key]![0],
+			ages[key]![q1],
+			ages[key]![q2],
+			ages[key]![q3],
+			ages[key]![ratings[key]!.length - 1],
 		];
-		const num100s = ratings[key].filter((x) => x === 100).length;
+		const num100s = ratings[key]!.filter((x) => x === 100).length;
 		console.log(`${key}:`);
 		console.log(`Max ratings: ${JSON.stringify(ranges)}`);
 		console.log(`Ages of max ratings: ${JSON.stringify(ageRanges)}`);

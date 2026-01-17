@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { BoxPlot, MoreLinks } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols } from "../util/index.ts";
+import { getCol } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
 import { isSport } from "../../common/index.ts";
 
@@ -107,7 +107,7 @@ const PlayerStatDists = ({
 					{Object.keys(statsAll)
 						.filter((stat) => typeof statsAll[stat][0] === "number")
 						.map((stat) => {
-							const col = getCols([`stat:${stat}`])[0];
+							const col = getCol(`stat:${stat}`);
 							const bbgmPlot = (
 								<tr key={`${stat}-bbgm`}>
 									<td className="pe-3 text-end" title={col.desc}>

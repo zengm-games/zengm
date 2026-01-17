@@ -32,6 +32,7 @@ import { orderBy } from "../../../common/utils.ts";
 import CustomMoodItemsForm from "./CustomMoodItemsForm.tsx";
 import { roundContract } from "../../../common/roundContract.ts";
 import { Face } from "./Face.tsx";
+import { CurrencyInputGroup } from "../../components/CurrencyInputGroup.tsx";
 
 const copyValidValues = (
 	source: PlayerWithoutKey,
@@ -74,18 +75,10 @@ const copyValidValues = (
 	}
 	target.hof = source.hof;
 
-	// jerseyNumber? could be in root or stats
 	if (target.jerseyNumber !== source.jerseyNumber) {
 		target.jerseyNumber = source.jerseyNumber;
 		if (target.jerseyNumber === "") {
 			target.jerseyNumber = undefined;
-		}
-	}
-	if (target.stats.length > 0 && source.stats.length > 0) {
-		target.stats.at(-1).jerseyNumber = source.stats.at(-1).jerseyNumber;
-		if (target.stats.at(-1).jerseyNumber === "") {
-			target.jerseyNumber = undefined;
-			target.stats.at(-1).jerseyNumber = undefined;
 		}
 	}
 
@@ -459,11 +452,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						delete p[field];
 					}
 				} else if (field === "jerseyNumber") {
-					if (p.stats.length > 0) {
-						p.stats.at(-1).jerseyNumber = val;
-					} else {
-						p.jerseyNumber = val;
-					}
+					p.jerseyNumber = val;
 				} else if (field === "pos") {
 					if (val === "auto") {
 						delete p.pos;
@@ -1079,8 +1068,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						<div className="row">
 							<div className="col-6 mb-3">
 								<label className="form-label">Contract Amount</label>
-								<div className="input-group">
-									<div className="input-group-text">$</div>
+								<CurrencyInputGroup displayUnit="M">
 									<input
 										type="text"
 										className="form-control"
@@ -1088,8 +1076,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 										value={p.contract.amount}
 										disabled={!godMode}
 									/>
-									<div className="input-group-text">M per year</div>
-								</div>
+								</CurrencyInputGroup>
 							</div>
 							<div className="col-6 mb-3">
 								<label className="form-label">Contract Expiration</label>
@@ -1193,8 +1180,14 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									<a href="http://imgur.com/" target="_blank">
 										imgur
 									</a>
-									. For ideal display, crop your image so it has a 2:3 aspect
-									ratio (such as 100px wide and 150px tall).
+									. For more details, see{" "}
+									<a
+										href={`https://${WEBSITE_ROOT}/manual/customization/player-photos-team-logos/`}
+										target="_blank"
+									>
+										the manual
+									</a>
+									.
 								</span>
 							</div>
 						)}

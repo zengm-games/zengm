@@ -187,7 +187,7 @@ const EditAllStars = ({
 	const onChange =
 		(sectionIndex: number, prevPlayer: MyAllStarPlayer) =>
 		(p: MyAllStarPlayer | null) => {
-			const players = sections[sectionIndex].players;
+			const players = sections[sectionIndex]!.players;
 			const playerIndex = players.indexOf(prevPlayer);
 
 			if (playerIndex >= 0) {
@@ -225,7 +225,7 @@ const EditAllStars = ({
 
 	const onAdd = (sectionIndex: number) => (p: MyAllStarPlayer | null) => {
 		if (p) {
-			const players = sections[sectionIndex].players;
+			const players = sections[sectionIndex]!.players;
 			setSections(
 				sections.map((section, i) => {
 					if (i === sectionIndex) {
@@ -271,13 +271,13 @@ const EditAllStars = ({
 					remaining: [] as AllStarPlayer[],
 				};
 				if (type === "draft") {
-					players.teams[0].push(minimalSections[0].players[0]);
-					players.teams[1].push(minimalSections[0].players[1]);
-					players.remaining.push(...minimalSections[1].players);
+					players.teams[0].push(minimalSections[0]!.players[0]!);
+					players.teams[1].push(minimalSections[0]!.players[1]!);
+					players.remaining.push(...minimalSections[1]!.players);
 				} else {
-					players.teams[0].push(...minimalSections[0].players);
-					players.teams[1].push(...minimalSections[1].players);
-					players.remaining.push(...minimalSections[2].players);
+					players.teams[0].push(...minimalSections[0]!.players);
+					players.teams[1].push(...minimalSections[1]!.players);
+					players.remaining.push(...minimalSections[2]!.players);
 				}
 
 				await toWorker("main", "allStarDraftSetPlayers", players);

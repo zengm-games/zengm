@@ -47,6 +47,7 @@ afterAll(() => {
 	testHelpers.resetG();
 });
 
+// makeMatchups is now called separately per conference, so this test would need to be refactored to call genPlayoffSeriesFromTeams, which is a little more complicated because it calls orderTeams
 test.skip("split teams by conference if there are two conferences", () => {
 	const teams = [
 		{
@@ -147,6 +148,7 @@ test("pick teams regardless of conference if there are not two conferences", () 
 	assert.strictEqual(series.length, 2);
 });
 
+// makeMatchups is now called separately per conference, so this test would need to be refactored to call genPlayoffSeriesFromTeams, which is a little more complicated because it calls orderTeams
 test.skip("split teams by conference if there are two conferences, including byes", () => {
 	const teams = [
 		{
@@ -202,14 +204,13 @@ test.skip("split teams by conference if there are two conferences, including bye
 	];
 	assert.strictEqual(series.length, tids.length);
 
-	for (let i = 0; i < series.length; i++) {
-		const { away, home } = series[i];
-		assert.strictEqual(tids[i][0], home.tid);
+	for (const [i, { away, home }] of series.entries()) {
+		assert.strictEqual(tids[i]![0], home.tid);
 
 		if (away === undefined) {
-			assert.strictEqual(tids[i][1], undefined);
+			assert.strictEqual(tids[i]![1], undefined);
 		} else {
-			assert.strictEqual(tids[i][1], away.tid);
+			assert.strictEqual(tids[i]![1], away.tid);
 		}
 	}
 });
@@ -273,14 +274,13 @@ test("pick teams regardless of conference if there are not two conferences, incl
 	];
 	assert.strictEqual(series.length, tids.length);
 
-	for (let i = 0; i < series.length; i++) {
-		const { away, home } = series[i];
-		assert.strictEqual(tids[i][0], home.tid);
+	for (const [i, { away, home }] of series.entries()) {
+		assert.strictEqual(tids[i]![0], home.tid);
 
 		if (away === undefined) {
-			assert.strictEqual(tids[i][1], undefined);
+			assert.strictEqual(tids[i]![1], undefined);
 		} else {
-			assert.strictEqual(tids[i][1], away.tid);
+			assert.strictEqual(tids[i]![1], away.tid);
 		}
 	}
 });
@@ -373,14 +373,13 @@ test("handle 16 teams", () => {
 	];
 	assert.strictEqual(series.length, tids.length);
 
-	for (let i = 0; i < series.length; i++) {
-		const { away, home } = series[i];
-		assert.strictEqual(tids[i][0], home.tid);
+	for (const [i, { away, home }] of series.entries()) {
+		assert.strictEqual(tids[i]![0], home.tid);
 
 		if (away === undefined) {
-			assert.strictEqual(tids[i][1], undefined);
+			assert.strictEqual(tids[i]![1], undefined);
 		} else {
-			assert.strictEqual(tids[i][1], away.tid);
+			assert.strictEqual(tids[i]![1], away.tid);
 		}
 	}
 });

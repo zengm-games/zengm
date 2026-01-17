@@ -382,6 +382,42 @@ const weightFunctionsByPosition = bySport({
 	default: undefined,
 });
 
+export const JERSEY_NUMBERS_BY_POSITION =
+	weightFunctionsByPosition !== undefined;
+
+export const getTeammateJerseyNumbers = async (
+	tid: number,
+	pidsIgnore: number[],
+) => {
+	const pidsIgnoreSet = new Set(pidsIgnore);
+	const jerseyNumbers = [];
+
+	if (tid >= 0) {
+		const teammates = (
+			await idb.cache.players.indexGetAll("playersByTid", tid)
+		).filter((p) => !pidsIgnoreSet.has(p.pid));
+		for (const p of teammates) {
+			if (p.stats.length > 0) {
+				const teamJerseyNumber = p.jerseyNumber;
+				if (teamJerseyNumber) {
+					jerseyNumbers.push(teamJerseyNumber);
+				}
+			}
+		}
+	}
+
+	return jerseyNumbers;
+};
+
+const getRetiredJerseyNumbers = async (tid: number) => {
+	const t = await idb.cache.teams.get(tid);
+	if (t?.retiredJerseyNumbers) {
+		return t.retiredJerseyNumbers.map((row) => row.number);
+	}
+
+	return [];
+};
+
 const genJerseyNumber = async (
 	p: {
 		pid?: number;
@@ -402,46 +438,21 @@ const genJerseyNumber = async (
 
 	// When all jersey numbers are retired, it will add a prefix and try again
 	prefix?: number,
-): Promise<string | undefined> => {
+): Promise<string> => {
 	let prevJerseyNumber;
 	if (!pickRandomNumber) {
 		prevJerseyNumber = helpers.getJerseyNumber(p);
 
-		if (p.tid < 0) {
+		if (p.tid < 0 && prevJerseyNumber !== undefined) {
 			return prevJerseyNumber;
 		}
 	}
 
-	const teamJerseyNumbers: string[] = teamJerseyNumbersInput
-		? teamJerseyNumbersInput
-		: [];
-	if (!teamJerseyNumbersInput) {
-		if (p.tid >= 0) {
-			const teammates = (
-				await idb.cache.players.indexGetAll("playersByTid", p.tid)
-			).filter((p2) => p2.pid !== p.pid);
-			for (const teammate of teammates) {
-				if (teammate.stats.length > 0) {
-					const teamJerseyNumber = teammate.stats.at(-1).jerseyNumber;
-					if (teamJerseyNumber) {
-						teamJerseyNumbers.push(teamJerseyNumber);
-					}
-				}
-			}
-		}
-	}
-
-	const retiredJerseyNumbers: string[] = retiredJerseyNumbersInput
-		? retiredJerseyNumbersInput
-		: [];
-	if (!retiredJerseyNumbersInput) {
-		const t = await idb.cache.teams.get(p.tid);
-		if (t?.retiredJerseyNumbers) {
-			retiredJerseyNumbers.push(
-				...t.retiredJerseyNumbers.map((row) => row.number),
-			);
-		}
-	}
+	const teamJerseyNumbers =
+		teamJerseyNumbersInput ??
+		(await getTeammateJerseyNumbers(p.tid, p.pid !== undefined ? [p.pid] : []));
+	const retiredJerseyNumbers =
+		retiredJerseyNumbersInput ?? (await getRetiredJerseyNumbers(p.tid));
 
 	let validJerseyNumbers;
 	if (prefix === undefined) {

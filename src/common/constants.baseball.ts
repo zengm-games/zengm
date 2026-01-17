@@ -1,4 +1,4 @@
-import type { CompositeWeights, Conf, Div } from "./types.ts";
+import type { CompositeWeights, Conf, Div, NonEmptyArray } from "./types.ts";
 import type { Position, RatingKey } from "./types.baseball.ts";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
@@ -179,6 +179,7 @@ const PLAYER_STATS_TABLES = {
 	batting: {
 		name: "Batting",
 		stats: [
+			"war",
 			"gp",
 			"gs",
 			"pa",
@@ -209,6 +210,7 @@ const PLAYER_STATS_TABLES = {
 	pitching: {
 		name: "Pitching",
 		stats: [
+			"war",
 			"w",
 			"l",
 			"winp",
@@ -426,7 +428,7 @@ const TEAM_STATS_TABLES = {
 		stats: [
 			"oppPa",
 			"oppAb",
-			"oppR",
+			"oppPts",
 			"oppH",
 			"opp2b",
 			"opp3b",
@@ -587,7 +589,7 @@ const AWARD_NAMES = {
 	allRookie: "All-Rookie Team",
 } as const;
 
-const DEFAULT_CONFS: Conf[] = [
+const DEFAULT_CONFS: NonEmptyArray<Conf> = [
 	{
 		cid: 0,
 		name: "American Conference",
@@ -598,7 +600,7 @@ const DEFAULT_CONFS: Conf[] = [
 	},
 ];
 
-const DEFAULT_DIVS: Div[] = [
+const DEFAULT_DIVS: NonEmptyArray<Div> = [
 	{
 		did: 0,
 		cid: 0,

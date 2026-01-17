@@ -2,7 +2,7 @@ import teamInfos from "./teamInfos.ts";
 
 export const noSmallLogo = ["LAE", "VAN"];
 
-export const abbrevRewrites: Record<string, string | undefined> = {
+export const abbrevRewrites: Record<string, string> = {
 	LAC: "LAE",
 	LAL: "LA",
 	GS: "SF",

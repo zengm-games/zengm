@@ -1,4 +1,4 @@
-import { defaultGameAttributes, g, helpers, random } from "../../util/index.ts";
+import { g, helpers, random } from "../../util/index.ts";
 import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession.ts";
 import getInjuryRate from "./getInjuryRate.ts";
@@ -7,7 +7,7 @@ import type {
 	PlayerInjury,
 } from "../../../common/types.ts";
 import GameSimBase from "../GameSimBase.ts";
-import { maxBy, range } from "../../../common/utils.ts";
+import { maxBy } from "../../../common/utils.ts";
 import PlayByPlayLogger, {
 	type BlockType,
 	type FgaType,
@@ -15,6 +15,7 @@ import PlayByPlayLogger, {
 	type FgMissType,
 } from "./PlayByPlayLogger.ts";
 import getWinner from "../../../common/getWinner.ts";
+import { formatClock } from "../../../common/formatClock.ts";
 
 const SHOT_CLOCK = 24;
 // const NUM_TIMEOUTS_MAX_FINAL_PERIOD = 4;
@@ -51,6 +52,7 @@ type Stat =
 	| "fgaMidRange"
 	| "ft"
 	| "fta"
+	| "gp"
 	| "gs"
 	| "min"
 	| "orb"
@@ -62,7 +64,6 @@ type Stat =
 	| "tpa"
 	| "sAtt"
 	| "sPts";
-type PlayerNumOnCourt = number;
 type TeamNum = 0 | 1;
 type CompositeRating =
 	| "blocking"
@@ -119,45 +120,6 @@ type ClockFactor = ReturnType<GameSim["getClockFactor"]>;
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
-/**
- * Pick a player to do something.
- *
- * @param {Array.<number>} ratios output of this.ratingArray.
- * @param {number} exempt An integer representing a player that can't be picked (i.e. you can't assist your own shot, which is the only current use of exempt). The value of exempt ranges from 0 to 4, corresponding to the index of the player in this.playersOnCourt. This is *NOT* the same value as the player ID *or* the index of the this.team[t].player list. Yes, that's confusing.
- */
-const pickPlayer = (
-	ratios: number[],
-	exempt?: PlayerNumOnCourt,
-): PlayerNumOnCourt => {
-	if (exempt !== undefined) {
-		ratios[exempt] = 0;
-	}
-
-	let sum = 0;
-	for (const ratio of ratios) {
-		sum += ratio;
-	}
-
-	// Special case for all 0 rated players - randomly pick one
-	if (sum === 0) {
-		const candidates = range(ratios.length).filter((i) => i !== exempt);
-		return random.choice(candidates);
-	}
-
-	const rand = Math.random() * sum;
-
-	let runningSum = 0;
-
-	for (let i = 0; i < ratios.length; i++) {
-		runningSum += ratios[i];
-		if (rand < runningSum) {
-			return i;
-		}
-	}
-
-	return 0;
-};
-
 // Return the indexes of the elements in ovrs, sorted from smallest to largest.
 // So [50, 70, 10, 20, 60] => [2, 3, 0, 4, 1]
 // The set is to handle ties.
@@ -183,19 +145,10 @@ const getSortedIndexes = (ovrs: number[]) => {
 // Use if denominator of prob might be 0
 const boundProb = (prob: number) => helpers.bound(prob, 0.001, 0.999);
 
-// Keep time formatting in sync with processLiveGameEvents.basketball.tsx
-// Currently just used for end of game, so assume under 1 minute left.
-const formatClock = (t: number) => {
-	const centiSecondsRounded = Math.ceil(t * 10);
-	const remainingSeconds = Math.floor(centiSecondsRounded / 10);
-	const remainingCentiSeconds = centiSecondsRounded % 10;
-	return `${remainingSeconds}.${remainingCentiSeconds}`;
-};
-
 class GameSim extends GameSimBase {
 	team: [TeamGameSim, TeamGameSim];
 
-	playersOnCourt: [number[], number[]];
+	playersOnCourt: [PlayerGameSim[], PlayerGameSim[]];
 
 	t: number;
 
@@ -210,8 +163,8 @@ class GameSim extends GameSimBase {
 	synergyFactor: number;
 
 	lastScoringPlay: {
-		team: number;
-		player: number;
+		team: TeamNum;
+		player: PlayerGameSim;
 		type: ShotType;
 		time: number;
 	}[];
@@ -250,7 +203,7 @@ class GameSim extends GameSimBase {
 	// Individual possession state
 	prevPossessionOutcome: PossessionOutcome | undefined;
 	possessionLength = 0;
-	lastOrbPlayer: PlayerNumOnCourt = 0;
+	lastOrbPlayer: PlayerGameSim | undefined;
 
 	/**
 	 * Initialize the two teams that are playing this game.
@@ -291,8 +244,8 @@ class GameSim extends GameSimBase {
 		// Starting lineups, which will be reset by updatePlayersOnCourt. This must be done because of injured players in the top 5.
 		this.numPlayersOnCourt = g.get("numPlayersOnCourt");
 		this.playersOnCourt = [
-			range(this.numPlayersOnCourt),
-			range(this.numPlayersOnCourt),
+			this.team[0].player.slice(0, this.numPlayersOnCourt),
+			this.team[1].player.slice(0, this.numPlayersOnCourt),
 		];
 
 		this.updatePlayersOnCourt({
@@ -307,6 +260,9 @@ class GameSim extends GameSimBase {
 		this.paceFactor = g.get("pace") / 100;
 		this.paceFactor +=
 			0.025 * helpers.bound((this.paceFactor - 1) / 0.2, -1, 1);
+
+		// Sanity check for very small values - things behave weirdly below this
+		this.paceFactor = Math.max(this.paceFactor, 0.1);
 
 		this.foulsThisQuarter = [0, 0];
 		this.foulsLastTwoMinutes = [0, 0];
@@ -357,14 +313,14 @@ class GameSim extends GameSimBase {
 			}
 
 			for (let p = 0; p < this.team[t].player.length; p++) {
-				for (const r of Object.keys(this.team[t].player[p].compositeRating)) {
+				for (const r of Object.keys(this.team[t].player[p]!.compositeRating)) {
 					if (r !== "endurance") {
 						if (r === "turnovers" || r === "fouling") {
 							// These are negative ratings, so the bonus or penalty should be inversed
-							this.team[t].player[p].compositeRating[r] /= factor;
+							this.team[t].player[p]!.compositeRating[r] /= factor;
 						} else {
 							// Apply bonus or penalty
-							this.team[t].player[p].compositeRating[r] *= factor;
+							this.team[t].player[p]!.compositeRating[r] *= factor;
 						}
 					}
 				}
@@ -429,19 +385,19 @@ class GameSim extends GameSimBase {
 			// @ts-expect-error
 			delete this.team[t].pace;
 
-			for (let p = 0; p < this.team[t].player.length; p++) {
+			for (const p of this.team[t].player) {
 				// @ts-expect-error
-				delete this.team[t].player[p].age;
+				delete p.age;
 
 				// @ts-expect-error
-				delete this.team[t].player[p].valueNoPot;
-				delete this.team[t].player[p].compositeRating;
+				delete p.valueNoPot;
+				delete p.compositeRating;
 
 				// @ts-expect-error
-				delete this.team[t].player[p].ptModifier;
-				delete this.team[t].player[p].stat.benchTime;
-				delete this.team[t].player[p].stat.courtTime;
-				delete this.team[t].player[p].stat.energy;
+				delete p.ptModifier;
+				delete p.stat.benchTime;
+				delete p.stat.courtTime;
+				delete p.stat.energy;
 			}
 		}
 
@@ -573,11 +529,11 @@ class GameSim extends GameSimBase {
 				ind = 0;
 			}
 			return this.playersOnCourt[t][ind];
-		});
+		}) as [PlayerGameSim, PlayerGameSim];
 		const prob =
 			0.5 *
-			(this.team[0].player[jumpers[0]].compositeRating.jumpBall /
-				this.team[1].player[jumpers[1]].compositeRating.jumpBall) **
+			(jumpers[0].compositeRating.jumpBall /
+				jumpers[1].compositeRating.jumpBall) **
 				3;
 
 		// Team assignments are the opposite of what you'd expect, cause in simPossession it swaps possession at top
@@ -586,7 +542,8 @@ class GameSim extends GameSimBase {
 		this.playByPlay.logEvent({
 			type: "jumpBall",
 			t: this.d,
-			pid: this.team[this.d].player[jumpers[this.d]].id,
+			pid: jumpers[this.d].id,
+			pid2: jumpers[this.o].id,
 			clock: this.t,
 		});
 		return this.d;
@@ -694,13 +651,7 @@ class GameSim extends GameSimBase {
 	}
 
 	simOvertime() {
-		// 5 minutes by default, but scales
-		this.t = Math.ceil(
-			(g.get("quarterLength") * 60 * 5) / defaultGameAttributes.quarterLength,
-		);
-		if (this.t === 0) {
-			this.t = 5 * 60;
-		}
+		this.t = 60 * this.getOvertimeLength();
 
 		this.timeouts = [NUM_TIMEOUTS_OVERTIME, NUM_TIMEOUTS_OVERTIME];
 		this.logTimeouts();
@@ -970,7 +921,7 @@ class GameSim extends GameSimBase {
 		shooter = undefined,
 	}: {
 		recordStarters?: boolean;
-		shooter?: PlayerNumOnCourt;
+		shooter?: PlayerGameSim;
 	} = {}) {
 		let substitutions = false;
 		let blowout = false;
@@ -1004,37 +955,34 @@ class GameSim extends GameSimBase {
 		for (const t of teamNums) {
 			const getOvrs = (includeFouledOut: boolean) => {
 				// Overall values scaled by fatigue, etc
-				const ovrs: number[] = [];
+				const ovrs: Record<number, number> = {};
 
-				for (let p = 0; p < this.team[t].player.length; p++) {
+				for (const [i, p] of this.team[t].player.entries()) {
 					// Injured or fouled out players can't play
 					if (
-						this.team[t].player[p].injured ||
+						p.injured ||
 						(!includeFouledOut &&
 							foulsNeededToFoulOut > 0 &&
-							this.team[t].player[p].stat.pf >= foulsNeededToFoulOut)
+							p.stat.pf >= foulsNeededToFoulOut)
 					) {
-						ovrs[p] = -Infinity;
+						ovrs[p.id] = -Infinity;
 					} else {
-						ovrs[p] =
-							this.team[t].player[p].valueNoPot *
-							this.fatigue(this.team[t].player[p].stat.energy) *
+						ovrs[p.id] =
+							p.valueNoPot *
+							this.fatigue(p.stat.energy) *
 							(!lateGame ? random.uniform(0.9, 1.1) : 1);
 
 						if (!this.allStarGame) {
-							ovrs[p] *= this.team[t].player[p].ptModifier;
+							ovrs[p.id]! *= p.ptModifier;
 						}
 
 						// Also scale based on margin late in games, so stars play less in blowouts (this doesn't really work that well, but better than nothing)
 						if (blowout) {
-							ovrs[p] *= (p + 1) / 10;
+							ovrs[p.id]! *= (i + 1) / 10;
 						} else {
 							// If it's not a blowout, worry about foul trouble
-							const foulTroubleFactor = this.getFoulTroubleFactor(
-								this.team[t].player[p],
-								foulLimit,
-							);
-							ovrs[p] *= foulTroubleFactor;
+							const foulTroubleFactor = this.getFoulTroubleFactor(p, foulLimit);
+							ovrs[p.id]! *= foulTroubleFactor;
 						}
 					}
 				}
@@ -1042,9 +990,9 @@ class GameSim extends GameSimBase {
 				return ovrs;
 			};
 
-			const numEligiblePlayers = (ovrs: number[]) => {
+			const numEligiblePlayers = (ovrs: Record<number, number>) => {
 				let count = 0;
-				for (const ovr of ovrs) {
+				for (const ovr of Object.values(ovrs)) {
 					if (ovr > -Infinity) {
 						count += 1;
 					}
@@ -1060,29 +1008,32 @@ class GameSim extends GameSimBase {
 				ovrs = getOvrs(true);
 			}
 
-			const ovrsOnCourt = this.playersOnCourt[t].map((p) => ovrs[p]);
+			const ovrsOnCourt = this.playersOnCourt[t].map((p) => ovrs[p.id]!);
+
+			const pids = [];
+			const pidsOff = [];
 
 			// Sub off the lowest ovr guy first
 			for (const pp of getSortedIndexes(ovrsOnCourt)) {
-				const p = this.playersOnCourt[t][pp];
-				const onCourtIsIneligible = ovrs[p] === -Infinity;
-				this.playersOnCourt[t][pp] = p; // Don't sub out guy shooting FTs!
+				const p = this.playersOnCourt[t][pp]!;
+				const onCourtIsIneligible = ovrs[p.id] === -Infinity;
+				this.playersOnCourt[t][pp]! = p; // Don't sub out guy shooting FTs!
 
-				if (t === this.o && pp === shooter) {
+				if (t === this.o && p === shooter) {
 					continue;
 				}
 
 				// Loop through bench players (in order of current roster position) to see if any should be subbed in)
-				for (let b = 0; b < this.team[t].player.length; b++) {
+				for (const b of this.team[t].player) {
 					if (this.playersOnCourt[t].includes(b)) {
 						continue;
 					}
 
 					const benchIsValidAndBetter =
-						this.team[t].player[p].stat.courtTime > 2 &&
-						this.team[t].player[b].stat.benchTime > 2 &&
-						ovrs[b] > ovrs[p];
-					const benchIsEligible = ovrs[b] !== -Infinity;
+						p.stat.courtTime > 2 &&
+						b.stat.benchTime > 2 &&
+						ovrs[b.id]! > ovrs[p.id]!;
+					const benchIsEligible = ovrs[b.id] !== -Infinity;
 
 					if (
 						benchIsValidAndBetter ||
@@ -1093,11 +1044,11 @@ class GameSim extends GameSimBase {
 
 						for (let j = 0; j < this.playersOnCourt[t].length; j++) {
 							if (j !== pp) {
-								pos.push(this.team[t].player[this.playersOnCourt[t][j]].pos);
+								pos.push(this.playersOnCourt[t][j]!.pos);
 							}
 						}
 
-						pos.push(this.team[t].player[b].pos);
+						pos.push(b.pos);
 
 						// Requre 2 Gs (or 1 PG) and 2 Fs (or 1 C)
 						let numG = 0;
@@ -1105,20 +1056,20 @@ class GameSim extends GameSimBase {
 						let numF = 0;
 						let numC = 0;
 
-						for (let j = 0; j < pos.length; j++) {
-							if (pos[j].includes("G")) {
+						for (const pos2 of pos) {
+							if (pos2.includes("G")) {
 								numG += 1;
 							}
 
-							if (pos[j] === "PG") {
+							if (pos2 === "PG") {
 								numPG += 1;
 							}
 
-							if (pos[j].includes("F")) {
+							if (pos2.includes("F")) {
 								numF += 1;
 							}
 
-							if (pos[j] === "C") {
+							if (pos2 === "C") {
 								numC += 1;
 							}
 						}
@@ -1133,10 +1084,7 @@ class GameSim extends GameSimBase {
 							(numG < cutoff && numPG === 0) ||
 							(numF < cutoff && numC === 0)
 						) {
-							if (
-								this.fatigue(this.team[t].player[p].stat.energy) > 0.728 &&
-								!onCourtIsIneligible
-							) {
+							if (this.fatigue(p.stat.energy) > 0.728 && !onCourtIsIneligible) {
 								// Exception for ridiculously tired players, so really unbalanced teams won't play starters whole game
 								continue;
 							}
@@ -1146,46 +1094,50 @@ class GameSim extends GameSimBase {
 
 						// Substitute player
 						this.playersOnCourt[t][pp] = b;
-						this.team[t].player[b].stat.courtTime = random.uniform(-2, 2);
-						this.team[t].player[b].stat.benchTime = random.uniform(-2, 2);
-						this.team[t].player[p].stat.courtTime = random.uniform(-2, 2);
-						this.team[t].player[p].stat.benchTime = random.uniform(-2, 2);
+						b.stat.courtTime = random.uniform(-2, 2);
+						b.stat.benchTime = random.uniform(-2, 2);
+						p.stat.courtTime = random.uniform(-2, 2);
+						p.stat.benchTime = random.uniform(-2, 2);
 
 						/*// Keep track of deviations from the normal starting lineup for the play-by-play
 						if (this.playByPlay !== undefined) {
 							this.playByPlay.push({
 								type: "sub",
 								t,
-								on: this.team[t].player[b].id,
-								off: this.team[t].player[p].id,
+								on: b.id,
+								off: p.id,
 							});
 						}*/
 
 						// It's only a "substitution" if it's not the starting lineup
 						if (!recordStarters) {
-							this.playByPlay.logEvent({
-								type: "sub",
-								t,
-								pid: this.team[t].player[b].id,
-								pidOff: this.team[t].player[p].id,
-								clock: this.t,
-							});
+							pids.push(b.id);
+							pidsOff.push(p.id);
 						}
 
 						break;
 					}
 				}
 			}
+
+			if (pids.length > 0) {
+				this.playByPlay.logEvent({
+					type: "sub",
+					t,
+					pids,
+					pidsOff,
+					clock: this.t,
+				});
+			}
 		}
 
 		// Record starters if that hasn't been done yet. This should run the first time this function is called, and never again.
-		if (recordStarters) {
-			for (const t of teamNums) {
-				for (let p = 0; p < this.team[t].player.length; p++) {
-					if (this.playersOnCourt[t].includes(p)) {
-						this.recordStat(t, p, "gs");
-					}
+		for (const t of teamNums) {
+			for (const p of this.playersOnCourt[t]) {
+				if (recordStarters) {
+					this.recordStat(t, p, "gs");
 				}
+				this.recordStat(t, p, "gp");
 			}
 		}
 
@@ -1212,48 +1164,40 @@ class GameSim extends GameSimBase {
 			};
 
 			for (let i = 0; i < this.numPlayersOnCourt; i++) {
-				const p = this.playersOnCourt[t][i];
+				const p = this.playersOnCourt[t][i]!;
 
 				// 1 / (1 + e^-(15 * (x - 0.61))) from 0 to 1
 				// 0.61 is not always used - keep in sync with skills.js!
 
 				skillsCount["3"] += helpers.sigmoid(
-					this.team[t].player[p].compositeRating.shootingThreePointer,
+					p.compositeRating.shootingThreePointer,
 					15,
 					0.59,
 				);
 				skillsCount.A += helpers.sigmoid(
-					this.team[t].player[p].compositeRating.athleticism,
+					p.compositeRating.athleticism,
 					15,
 					0.63,
 				);
-				skillsCount.B += helpers.sigmoid(
-					this.team[t].player[p].compositeRating.dribbling,
-					15,
-					0.68,
-				);
+				skillsCount.B += helpers.sigmoid(p.compositeRating.dribbling, 15, 0.68);
 				skillsCount.Di += helpers.sigmoid(
-					this.team[t].player[p].compositeRating.defenseInterior,
+					p.compositeRating.defenseInterior,
 					15,
 					0.57,
 				);
 				skillsCount.Dp += helpers.sigmoid(
-					this.team[t].player[p].compositeRating.defensePerimeter,
+					p.compositeRating.defensePerimeter,
 					15,
 					0.61,
 				);
 				skillsCount.Po += helpers.sigmoid(
-					this.team[t].player[p].compositeRating.shootingLowPost,
+					p.compositeRating.shootingLowPost,
 					15,
 					0.61,
 				);
-				skillsCount.Ps += helpers.sigmoid(
-					this.team[t].player[p].compositeRating.passing,
-					15,
-					0.63,
-				);
+				skillsCount.Ps += helpers.sigmoid(p.compositeRating.passing, 15, 0.63);
 				skillsCount.R += helpers.sigmoid(
-					this.team[t].player[p].compositeRating.rebounding,
+					p.compositeRating.rebounding,
 					15,
 					0.61,
 				);
@@ -1328,19 +1272,18 @@ class GameSim extends GameSimBase {
 		const foulLimit = this.getFoulTroubleLimit();
 
 		// Scale composite ratings
-		for (let k = 0; k < teamNums.length; k++) {
-			const t = teamNums[k];
-			const oppT = teamNums[1 - k];
+		for (const t of teamNums) {
+			const oppT = teamNums[1 - t]!;
 			const diff = this.team[t].stat.pts - this.team[oppT].stat.pts;
 
 			const perfFactor = 1 - 0.2 * Math.tanh(diff / 60);
 
 			for (let j = 0; j < toUpdate.length; j++) {
-				const rating = toUpdate[j];
+				const rating = toUpdate[j]!;
 				this.team[t].compositeRating[rating] = 0;
 
 				for (let i = 0; i < this.numPlayersOnCourt; i++) {
-					const p = this.playersOnCourt[t][i];
+					const p = this.playersOnCourt[t][i]!;
 
 					let foulLimitFactor = 1;
 					if (
@@ -1348,7 +1291,7 @@ class GameSim extends GameSimBase {
 						rating === "defensePerimeter" ||
 						rating === "blocking"
 					) {
-						const pf = this.team[t].player[p].stat.pf;
+						const pf = p.stat.pf;
 						if (pf === foulLimit) {
 							foulLimitFactor *= 0.9;
 						} else if (pf > foulLimit) {
@@ -1357,8 +1300,8 @@ class GameSim extends GameSimBase {
 					}
 
 					this.team[t].compositeRating[rating] +=
-						this.team[t].player[p].compositeRating[rating] *
-						this.fatigue(this.team[t].player[p].stat.energy) *
+						p.compositeRating[rating] *
+						this.fatigue(p.stat.energy) *
 						perfFactor *
 						foulLimitFactor;
 				}
@@ -1390,7 +1333,7 @@ class GameSim extends GameSimBase {
 		const min = possessionLength / 60;
 		for (const t of teamNums) {
 			// Update minutes (overall, court, and bench)
-			for (let p = 0; p < this.team[t].player.length; p++) {
+			for (const p of this.team[t].player) {
 				if (this.playersOnCourt[t].includes(p)) {
 					this.recordStat(t, p, "min", min);
 					this.recordStat(t, p, "courtTime", min);
@@ -1400,20 +1343,18 @@ class GameSim extends GameSimBase {
 						t,
 						p,
 						"energy",
-						-min *
-							this.fatigueFactor *
-							(1 - this.team[t].player[p].compositeRating.endurance),
+						-min * this.fatigueFactor * (1 - p.compositeRating.endurance),
 					);
 
-					if (this.team[t].player[p].stat.energy < 0) {
-						this.team[t].player[p].stat.energy = 0;
+					if (p.stat.energy < 0) {
+						p.stat.energy = 0;
 					}
 				} else {
 					this.recordStat(t, p, "benchTime", min);
 					this.recordStat(t, p, "energy", min * 0.094);
 
-					if (this.team[t].player[p].stat.energy > 1) {
-						this.team[t].player[p].stat.energy = 1;
+					if (p.stat.energy > 1) {
+						p.stat.energy = 1;
 					}
 				}
 			}
@@ -1437,23 +1378,23 @@ class GameSim extends GameSimBase {
 		baseRate *= 100 / g.get("pace");
 
 		for (const t of teamNums) {
-			for (let p = 0; p < this.team[t].player.length; p++) {
+			for (const p of this.team[t].player) {
 				// Only players on the court can be injured
 				if (this.playersOnCourt[t].includes(p)) {
 					const injuryRate = getInjuryRate(
 						baseRate,
-						this.team[t].player[p].age,
-						this.team[t].player[p].injury.playingThrough,
+						p.age,
+						p.injury.gamesRemaining > 0,
 					);
 
 					if (Math.random() < injuryRate) {
-						this.team[t].player[p].injured = true;
-						this.team[t].player[p].newInjury = true;
+						p.injured = true;
+						p.newInjury = true;
 						newInjury = true;
 						this.playByPlay.logEvent({
 							type: "injury",
 							t,
-							pid: this.team[t].player[p].id,
+							pid: p.id,
 							clock: this.t,
 						});
 					}
@@ -1647,8 +1588,7 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		const ratios = this.ratingArray("usage", this.o, 1.25);
-		const shooter = pickPlayer(ratios);
+		const shooter = this.pickPlayer("usage", this.o, 1.25);
 
 		// Non-shooting foul?
 		if (
@@ -1749,14 +1689,8 @@ class GameSim extends GameSimBase {
 	 *
 	 * @return {string} Either "tov" or "stl" depending on whether the turnover was caused by a steal or not.
 	 */
-	doTov(pOverride?: number) {
-		let p;
-		if (pOverride) {
-			p = pOverride;
-		} else {
-			const ratios = this.ratingArray("turnovers", this.o, 2);
-			p = this.playersOnCourt[this.o][pickPlayer(ratios)];
-		}
+	doTov(pOverride?: PlayerGameSim) {
+		const p = pOverride ?? this.pickPlayer("turnovers", this.o, 2);
 		this.recordStat(this.o, p, "tov");
 
 		if (this.probStl() > Math.random()) {
@@ -1772,7 +1706,7 @@ class GameSim extends GameSimBase {
 		this.playByPlay.logEvent({
 			type: "tov",
 			t: this.o,
-			pid: this.team[this.o].player[p].id,
+			pid: p.id,
 			outOfBounds,
 			clock: this.t,
 		});
@@ -1799,21 +1733,20 @@ class GameSim extends GameSimBase {
 	 *
 	 * @return {string} Currently always returns "stl".
 	 */
-	doStl(pStoleFrom: number) {
+	doStl(pStoleFrom: PlayerGameSim) {
 		// Ball could go out of bounds on the steal
 		const outOfBounds = Math.random() < 0.1;
 		if (outOfBounds) {
 			this.isClockRunning = false;
 		}
 
-		const ratios = this.ratingArray("stealing", this.d, 4);
-		const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
+		const p = this.pickPlayer("stealing", this.d, 4);
 		this.recordStat(this.d, p, "stl");
 		this.playByPlay.logEvent({
 			type: "stl",
 			t: this.d,
-			pid: this.team[this.d].player[p].id,
-			pidTov: this.team[this.o].player[pStoleFrom].id,
+			pid: p.id,
+			pidTov: pStoleFrom.id,
 			outOfBounds,
 			clock: this.t,
 		});
@@ -1830,8 +1763,194 @@ class GameSim extends GameSimBase {
 		);
 	}
 
+	getShotInfo({
+		currentFatigue,
+		lateGamePutBack,
+		p,
+		passer,
+		tipInFromOutOfBounds,
+		putBack,
+	}: {
+		currentFatigue: number;
+		lateGamePutBack: boolean;
+		p: PlayerGameSim;
+		passer: PlayerGameSim | undefined;
+		tipInFromOutOfBounds: boolean;
+		putBack: boolean;
+	}) {
+		let shootingThreePointerScaled = p.compositeRating.shootingThreePointer;
+
+		// Too many players shooting 3s at the high end - scale 0.55-1.0 to 0.55-0.85
+		if (shootingThreePointerScaled > 0.55) {
+			shootingThreePointerScaled =
+				0.55 + (shootingThreePointerScaled - 0.55) * (0.3 / 0.45);
+		}
+
+		// Too many players shooting 3s at the low end - scale 0.35-0.45 to 0.1-0.45, and 0-0.35 to 0-0.1
+		let shootingThreePointerScaled2 = shootingThreePointerScaled;
+		if (shootingThreePointerScaled2 < 0.35) {
+			shootingThreePointerScaled2 =
+				0 + shootingThreePointerScaled2 * (0.1 / 0.35);
+		} else if (shootingThreePointerScaled2 < 0.45) {
+			shootingThreePointerScaled2 =
+				0.1 + (shootingThreePointerScaled2 - 0.35) * (0.35 / 0.1);
+		}
+
+		// In some situations (4th quarter late game situations depending on score, and last second heaves in other quarters) players shoot more 3s
+		const diff = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
+		const quarter = this.team[this.o].stat.ptsQtrs.length;
+		const forceThreePointer =
+			(diff >= 3 &&
+				diff <= 10 &&
+				this.t <= 10 &&
+				quarter >= this.numPeriods &&
+				Math.random() > this.t / 60) ||
+			(quarter < this.numPeriods &&
+				this.t < 2 &&
+				this.possessionLength <= 3 &&
+				!this.sideOutOfBounds());
+
+		const rushed = this.t < 2 && this.possessionLength < 6;
+
+		if (this.t <= 0) {
+			throw new Error("Clock at 0 when a shot is taken");
+		}
+
+		// Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
+		let probAndOne;
+		let probMake;
+		let probMissAndFoul;
+		let type: ShotType;
+		let fgaLogType: FgaType | "fgaTpFake" | "fgaTp" | "fgaTipIn";
+		if (tipInFromOutOfBounds && passer !== undefined) {
+			fgaLogType = "fgaTipIn";
+			type = "tipIn";
+			probMissAndFoul = 0.02;
+			probMake = 0.1 + p.compositeRating.shootingAtRim * 0.1;
+			probAndOne = 0.01;
+		} else if (putBack) {
+			type = "putBack";
+			fgaLogType = "fgaPutBack";
+			probMissAndFoul = 0.37;
+			probMake = p.compositeRating.shootingAtRim * 0.41 + 0.54;
+			probAndOne = 0.25;
+
+			if (lateGamePutBack) {
+				probMissAndFoul *= 0.75;
+				probMake *= 0.75;
+				probAndOne *= 0.75;
+			}
+		} else if (
+			forceThreePointer ||
+			Math.random() <
+				0.67 * shootingThreePointerScaled2 * g.get("threePointTendencyFactor")
+		) {
+			// Three pointer
+			type = "threePointer";
+			fgaLogType = g.get("threePointers") ? "fgaTp" : "fgaTpFake";
+			probMissAndFoul = 0.02;
+			probMake = shootingThreePointerScaled * 0.3 + 0.36;
+			probAndOne = 0.01;
+
+			// Better shooting in the ASG, why not?
+			if (this.allStarGame) {
+				probMake += 0.02;
+			}
+			probMake *= g.get("threePointAccuracyFactor");
+		} else {
+			const r1 = 0.8 * Math.random() * p.compositeRating.shootingMidRange;
+			const r2 =
+				Math.random() *
+				(p.compositeRating.shootingAtRim +
+					this.synergyFactor *
+						(this.team[this.o].synergy.off - this.team[this.d].synergy.def)); // Synergy makes easy shots either more likely or less likely
+
+			const r3 =
+				Math.random() *
+				(p.compositeRating.shootingLowPost +
+					this.synergyFactor *
+						(this.team[this.o].synergy.off - this.team[this.d].synergy.def)); // Synergy makes easy shots either more likely or less likely
+
+			if (r1 > r2 && r1 > r3) {
+				// Two point jumper
+				type = "midRange";
+				fgaLogType = "fgaMidRange";
+				probMissAndFoul = 0.07;
+				probMake = p.compositeRating.shootingMidRange * 0.32 + 0.42;
+				probAndOne = 0.05;
+			} else if (r2 > r3) {
+				// Dunk, fast break or half court
+				type = "atRim";
+				fgaLogType = "fgaAtRim";
+				probMissAndFoul = 0.37;
+				probMake = p.compositeRating.shootingAtRim * 0.41 + 0.54;
+				probAndOne = 0.25;
+			} else {
+				// Post up
+				fgaLogType = "fgaLowPost";
+				type = "lowPost";
+				probMissAndFoul = 0.33;
+				probMake = p.compositeRating.shootingLowPost * 0.32 + 0.34;
+				probAndOne = 0.15;
+			}
+			// Better shooting in the ASG, why not?
+			if (this.allStarGame) {
+				probMake += 0.1;
+			}
+
+			probMake *= g.get("twoPointAccuracyFactor");
+		}
+
+		let blocked;
+		if (this.probBlk() > Math.random()) {
+			blocked = true;
+		} else {
+			blocked = false;
+
+			let foulFactor =
+				0.65 *
+				(p.compositeRating.drawingFouls / 0.5) ** 2 *
+				g.get("foulRateFactor");
+
+			if (this.allStarGame) {
+				foulFactor *= 0.4;
+			}
+
+			probMissAndFoul *= foulFactor;
+			probAndOne *= foulFactor;
+			probMake =
+				(probMake -
+					0.25 * this.team[this.d].compositeRating.defense +
+					this.synergyFactor *
+						(this.team[this.o].synergy.off - this.team[this.d].synergy.def)) *
+				currentFatigue;
+
+			if (!tipInFromOutOfBounds) {
+				// Adjust probMake for end of quarter situations, where shot quality will be lower without much time
+				if (rushed) {
+					probMake *= Math.sqrt(this.possessionLength / 8);
+				}
+
+				// Assisted shots are easier
+				if (passer !== undefined) {
+					probMake += 0.025;
+				}
+			}
+		}
+
+		return {
+			blocked,
+			desperation: forceThreePointer || rushed,
+			fgaLogType,
+			probAndOne,
+			probMake,
+			probMissAndFoul,
+			type,
+		};
+	}
+
 	doShot(
-		shooter: PlayerNumOnCourt,
+		p: PlayerGameSim,
 		clockFactor: ClockFactor,
 		possessionStartsInFrontcourt: boolean,
 		tipInFromOutOfBounds: boolean,
@@ -1840,25 +1959,21 @@ class GameSim extends GameSimBase {
 		const putBack = lateGamePutBack; // Eventually use this in more situations
 
 		// If it's a putback, override shooter selection with whoever got the last offensive rebound
-		if (putBack) {
-			shooter = this.lastOrbPlayer;
+		if (putBack && this.lastOrbPlayer !== undefined) {
+			p = this.lastOrbPlayer;
 		}
 
-		const p = this.playersOnCourt[this.o][shooter];
-		const currentFatigue = this.fatigue(
-			this.team[this.o].player[p].stat.energy,
-		);
+		const currentFatigue = this.fatigue(p.stat.energy);
 
 		// Is this an "assisted" attempt (i.e. an assist will be recorded if it's made)
-		let passer: PlayerNumOnCourt | undefined;
+		let passer: PlayerGameSim | undefined;
 		if (
 			(tipInFromOutOfBounds ||
 				(this.t > 1 && this.probAst() > Math.random())) &&
 			!putBack &&
 			this.numPlayersOnCourt > 1
 		) {
-			const ratios = this.ratingArray("passing", this.o, 10);
-			passer = pickPlayer(ratios, shooter);
+			passer = this.pickPlayer("passing", this.o, 10, p);
 		}
 
 		// Ball is already in frontcourt. How long until the shot goes up?
@@ -1905,7 +2020,7 @@ class GameSim extends GameSimBase {
 				if (tipInFromOutOfBounds) {
 					pTurnover = passer;
 				} else if (putBack) {
-					pTurnover = shooter;
+					pTurnover = p;
 				}
 				return this.doTov(pTurnover);
 			}
@@ -1916,144 +2031,26 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		let shootingThreePointerScaled =
-			this.team[this.o].player[p].compositeRating.shootingThreePointer;
+		const {
+			blocked,
+			desperation,
+			fgaLogType,
+			probAndOne,
+			probMake,
+			probMissAndFoul,
+			type,
+		} = this.getShotInfo({
+			currentFatigue,
+			lateGamePutBack,
+			p,
+			passer,
+			tipInFromOutOfBounds,
+			putBack,
+		});
 
-		// Too many players shooting 3s at the high end - scale 0.55-1.0 to 0.55-0.85
-		if (shootingThreePointerScaled > 0.55) {
-			shootingThreePointerScaled =
-				0.55 + (shootingThreePointerScaled - 0.55) * (0.3 / 0.45);
-		}
-
-		// Too many players shooting 3s at the low end - scale 0.35-0.45 to 0.1-0.45, and 0-0.35 to 0-0.1
-		let shootingThreePointerScaled2 = shootingThreePointerScaled;
-		if (shootingThreePointerScaled2 < 0.35) {
-			shootingThreePointerScaled2 =
-				0 + shootingThreePointerScaled2 * (0.1 / 0.35);
-		} else if (shootingThreePointerScaled2 < 0.45) {
-			shootingThreePointerScaled2 =
-				0.1 + (shootingThreePointerScaled2 - 0.35) * (0.35 / 0.1);
-		}
-
-		// In some situations (4th quarter late game situations depending on score, and last second heaves in other quarters) players shoot more 3s
-		const diff = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
-		const quarter = this.team[this.o].stat.ptsQtrs.length;
-		const forceThreePointer =
-			(diff >= 3 &&
-				diff <= 10 &&
-				this.t <= 10 &&
-				quarter >= this.numPeriods &&
-				Math.random() > this.t / 60) ||
-			(quarter < this.numPeriods &&
-				this.t < 2 &&
-				this.possessionLength <= 3 &&
-				!this.sideOutOfBounds());
-
-		const rushed = this.t < 2 && this.possessionLength < 6;
-
-		if (this.t <= 0) {
-			throw new Error("Clock at 0 when a shot is taken");
-		}
-
-		// Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
-		let probAndOne;
-		let probMake;
-		let probMissAndFoul;
-		let type: ShotType;
-		let fgaLogType: FgaType | "fgaTpFake" | "fgaTp" | "fgaTipIn";
-		const pAst = passer ? this.playersOnCourt[this.o][passer] : undefined;
-		if (tipInFromOutOfBounds && passer !== undefined) {
-			fgaLogType = "fgaTipIn";
-			type = "tipIn";
-			probMissAndFoul = 0.02;
-			probMake =
-				0.1 + this.team[this.o].player[p].compositeRating.shootingAtRim * 0.1;
-			probAndOne = 0.01;
-		} else if (putBack) {
-			type = "putBack";
-			fgaLogType = "fgaPutBack";
-			probMissAndFoul = 0.37;
-			probMake =
-				this.team[this.o].player[p].compositeRating.shootingAtRim * 0.41 + 0.54;
-			probAndOne = 0.25;
-
-			if (lateGamePutBack) {
-				probMissAndFoul *= 0.75;
-				probMake *= 0.75;
-				probAndOne *= 0.75;
-			}
-		} else if (
-			forceThreePointer ||
-			Math.random() <
-				0.67 * shootingThreePointerScaled2 * g.get("threePointTendencyFactor")
-		) {
-			// Three pointer
-			type = "threePointer";
-			fgaLogType = g.get("threePointers") ? "fgaTp" : "fgaTpFake";
-			probMissAndFoul = 0.02;
-			probMake = shootingThreePointerScaled * 0.3 + 0.36;
-			probAndOne = 0.01;
-
-			// Better shooting in the ASG, why not?
-			if (this.allStarGame) {
-				probMake += 0.02;
-			}
-			probMake *= g.get("threePointAccuracyFactor");
-		} else {
-			const r1 =
-				0.8 *
-				Math.random() *
-				this.team[this.o].player[p].compositeRating.shootingMidRange;
-			const r2 =
-				Math.random() *
-				(this.team[this.o].player[p].compositeRating.shootingAtRim +
-					this.synergyFactor *
-						(this.team[this.o].synergy.off - this.team[this.d].synergy.def)); // Synergy makes easy shots either more likely or less likely
-
-			const r3 =
-				Math.random() *
-				(this.team[this.o].player[p].compositeRating.shootingLowPost +
-					this.synergyFactor *
-						(this.team[this.o].synergy.off - this.team[this.d].synergy.def)); // Synergy makes easy shots either more likely or less likely
-
-			if (r1 > r2 && r1 > r3) {
-				// Two point jumper
-				type = "midRange";
-				fgaLogType = "fgaMidRange";
-				probMissAndFoul = 0.07;
-				probMake =
-					this.team[this.o].player[p].compositeRating.shootingMidRange * 0.32 +
-					0.42;
-				probAndOne = 0.05;
-			} else if (r2 > r3) {
-				// Dunk, fast break or half court
-				type = "atRim";
-				fgaLogType = "fgaAtRim";
-				probMissAndFoul = 0.37;
-				probMake =
-					this.team[this.o].player[p].compositeRating.shootingAtRim * 0.41 +
-					0.54;
-				probAndOne = 0.25;
-			} else {
-				// Post up
-				fgaLogType = "fgaLowPost";
-				type = "lowPost";
-				probMissAndFoul = 0.33;
-				probMake =
-					this.team[this.o].player[p].compositeRating.shootingLowPost * 0.32 +
-					0.34;
-				probAndOne = 0.15;
-			}
-			// Better shooting in the ASG, why not?
-			if (this.allStarGame) {
-				probMake += 0.1;
-			}
-
-			probMake *= g.get("twoPointAccuracyFactor");
-		}
 		const baseLogInformation = {
 			t: this.o,
-			pid: this.team[this.o].player[p].id,
+			pid: p.id,
 			clock: this.t,
 		};
 		if (
@@ -2069,47 +2066,17 @@ class GameSim extends GameSimBase {
 			this.playByPlay.logEvent({
 				...baseLogInformation,
 				type: fgaLogType,
-				desperation: rushed && forceThreePointer,
+				desperation,
 			});
-		} else if (fgaLogType === "fgaTipIn" && pAst !== undefined) {
+		} else if (fgaLogType === "fgaTipIn" && passer !== undefined) {
 			this.playByPlay.logEvent({
 				...baseLogInformation,
 				type: fgaLogType,
-				pidPass: this.team[this.o].player[pAst].id,
+				pidPass: passer.id,
 			});
 		}
-		if (this.probBlk() > Math.random()) {
-			return this.doBlk(shooter, type); // orb or drb
-		}
-
-		let foulFactor =
-			0.65 *
-			(this.team[this.o].player[p].compositeRating.drawingFouls / 0.5) ** 2 *
-			g.get("foulRateFactor");
-
-		if (this.allStarGame) {
-			foulFactor *= 0.4;
-		}
-
-		probMissAndFoul *= foulFactor;
-		probAndOne *= foulFactor;
-		probMake =
-			(probMake -
-				0.25 * this.team[this.d].compositeRating.defense +
-				this.synergyFactor *
-					(this.team[this.o].synergy.off - this.team[this.d].synergy.def)) *
-			currentFatigue;
-
-		if (!tipInFromOutOfBounds) {
-			// Adjust probMake for end of quarter situations, where shot quality will be lower without much time
-			if (rushed) {
-				probMake *= Math.sqrt(this.possessionLength / 8);
-			}
-
-			// Assisted shots are easier
-			if (passer !== undefined) {
-				probMake += 0.025;
-			}
+		if (blocked) {
+			return this.doBlk(p, type); // orb or drb
 		}
 
 		const advanceClock = () => {
@@ -2142,7 +2109,7 @@ class GameSim extends GameSimBase {
 				this.isClockRunning = false;
 			}
 			advanceClock();
-			return this.doFg(shooter, passer, type, andOne);
+			return this.doFg(p, passer, type, andOne);
 		}
 
 		// Miss, but fouled
@@ -2151,13 +2118,17 @@ class GameSim extends GameSimBase {
 			advanceClock();
 			const threePointer = type === "threePointer" && g.get("threePointers");
 
-			this.doPf({ t: this.d, type: threePointer ? "pfTP" : "pfFG", shooter });
+			this.doPf({
+				t: this.d,
+				type: threePointer ? "pfTP" : "pfFG",
+				shooter: p,
+			});
 
 			if (threePointer) {
-				return this.doFt(shooter, 3);
+				return this.doFt(p, 3);
 			}
 
-			return this.doFt(shooter, 2);
+			return this.doFt(p, 2);
 		}
 
 		// Miss
@@ -2189,7 +2160,7 @@ class GameSim extends GameSimBase {
 		this.playByPlay.logEvent({
 			type: fgMissLogType,
 			t: this.o,
-			pid: this.team[this.o].player[p].id,
+			pid: p.id,
 			clock: this.t,
 		});
 
@@ -2215,8 +2186,7 @@ class GameSim extends GameSimBase {
 	 * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
 	 * @return {string} Output of this.doReb.
 	 */
-	doBlk(shooter: PlayerNumOnCourt, type: ShotType) {
-		const p = this.playersOnCourt[this.o][shooter];
+	doBlk(p: PlayerGameSim, type: ShotType) {
 		this.recordStat(this.o, p, "ba");
 		this.recordStat(this.o, p, "fga");
 
@@ -2230,8 +2200,7 @@ class GameSim extends GameSimBase {
 			this.recordStat(this.o, p, "tpa");
 		}
 
-		const ratios = this.ratingArray("blocking", this.d, 10);
-		const p2 = this.playersOnCourt[this.d][pickPlayer(ratios)];
+		const p2 = this.pickPlayer("blocking", this.d, 10);
 		this.recordStat(this.d, p2, "blk");
 		let blockLogType: BlockType | undefined;
 		if (type === "tipIn") {
@@ -2252,7 +2221,7 @@ class GameSim extends GameSimBase {
 		this.playByPlay.logEvent({
 			type: blockLogType,
 			t: this.d,
-			pid: this.team[this.d].player[p2].id,
+			pid: p2.id,
 			clock: this.t,
 		});
 		return this.doReb();
@@ -2269,23 +2238,19 @@ class GameSim extends GameSimBase {
 	 * @return {string} fg, orb, or drb (latter two are for and ones)
 	 */
 	doFg(
-		shooter: PlayerNumOnCourt,
-		passer: PlayerNumOnCourt | undefined,
+		p: PlayerGameSim,
+		passer: PlayerGameSim | undefined,
 		type: ShotType,
 		andOne: boolean = false,
 	) {
-		const p = this.playersOnCourt[this.o][shooter];
-		const pid = this.team[this.o].player[p].id;
+		const pid = p.id;
 		this.recordStat(this.o, p, "fga");
 		this.recordStat(this.o, p, "fg");
 		this.recordStat(this.o, p, "pts", 2); // 2 points for 2's
 
 		let fouler;
-		let pidFoul;
 		if (andOne) {
-			fouler = pickPlayer(this.ratingArray("fouling", this.d));
-			const p2 = this.playersOnCourt[this.d][fouler];
-			pidFoul = this.team[this.d].player[p2].id;
+			fouler = this.pickPlayer("fouling", this.d, 1);
 		}
 
 		let pAst;
@@ -2341,34 +2306,32 @@ class GameSim extends GameSimBase {
 			fgMakeLogType === "fgAtRimAndOne" ||
 			fgMakeLogType === "fgAtRim"
 		) {
-			let pidDefense;
 			// Randomly pick a name to be dunked on
-			if (pidFoul !== undefined) {
-				pidDefense = pidFoul;
-			} else {
-				const ratios = this.ratingArray("blocking", this.d, 5);
-				const p = this.playersOnCourt[this.d][pickPlayer(ratios)];
-				pidDefense = this.team[this.d].player[p].id;
-			}
+			const pidDefense =
+				fouler?.id ?? this.pickPlayer("blocking", this.d, 5).id;
 
 			this.playByPlay.logEvent({
 				...baseLogInformation,
 				type: fgMakeLogType,
 				pidDefense,
-				pidAst,
+				pidAst: passer?.id,
 			});
 		} else {
 			this.playByPlay.logEvent({
 				...baseLogInformation,
 				type: fgMakeLogType,
-				pidAst,
+				pidAst: passer?.id,
 			});
 		}
 		this.recordLastScore(this.o, p, type);
 
+		if (passer !== undefined) {
+			this.recordStat(this.o, passer, "ast");
+		}
+
 		if (andOne && !this.elamDone) {
-			this.doPf({ t: this.d, type: "pfAndOne", shooter, fouler });
-			return this.doFt(shooter, 1); // fg, orb, or drb
+			this.doPf({ t: this.d, type: "pfAndOne", shooter: p, fouler });
+			return this.doFt(p, 1); // fg, orb, or drb
 		}
 
 		// In the last 2 minutes of a period, stop clock after made FG
@@ -2394,13 +2357,13 @@ class GameSim extends GameSimBase {
 
 	// This runs before an overtime period is played, so all these shots lead to another overtime period, not the end of the game
 	checkGameTyingShot() {
-		if (this.lastScoringPlay.length === 0 || this.elamActive) {
+		// can assume that the last scoring play tied the game
+		const play = this.lastScoringPlay.at(-1);
+
+		if (!play || this.elamActive) {
 			return;
 		}
 
-		// can assume that the last scoring play tied the game
-		const i = this.lastScoringPlay.length - 1;
-		const play = this.lastScoringPlay[i];
 		let shotType = "a basket";
 
 		switch (play.type) {
@@ -2415,12 +2378,11 @@ class GameSim extends GameSimBase {
 				shotType = "a three-pointer";
 				break;
 
-			case "ft":
+			case "ft": {
 				shotType = "a free throw";
 
-				if (i > 0) {
-					const prevPlay = this.lastScoringPlay[i - 1];
-
+				const prevPlay = this.lastScoringPlay.at(-2);
+				if (play && prevPlay) {
 					if (prevPlay.team === play.team) {
 						switch (prevPlay.type) {
 							case "atRim":
@@ -2437,9 +2399,8 @@ class GameSim extends GameSimBase {
 
 							case "ft":
 								if (
-									i > 1 &&
-									this.lastScoringPlay[i - 2].team === play.team &&
-									this.lastScoringPlay[i - 2].type === "ft"
+									this.lastScoringPlay.at(-3)?.team === play.team &&
+									this.lastScoringPlay.at(-3)?.type === "ft"
 								) {
 									shotType = "three free throws";
 								} else {
@@ -2454,14 +2415,15 @@ class GameSim extends GameSimBase {
 				}
 
 				break;
+			}
 
 			default:
 		}
 
 		const team = this.team[play.team];
-		const player = this.team[play.team].player[play.player];
-		let eventText = `<a href="${helpers.leagueUrl(["player", player.id])}">${
-			player.name
+		const p = play.player;
+		let eventText = `<a href="${helpers.leagueUrl(["player", p.id])}">${
+			p.name
 		}</a> made ${shotType}`;
 
 		if (play.time > 0) {
@@ -2477,7 +2439,7 @@ class GameSim extends GameSimBase {
 		this.clutchPlays.push({
 			text: eventText,
 			showNotification: team.id === g.get("userTid"),
-			pids: [player.id],
+			pids: [p.id],
 			tids: [team.id],
 		});
 	}
@@ -2500,7 +2462,7 @@ class GameSim extends GameSimBase {
 		let pts = 0;
 		let shotType = "basket";
 		for (let i = this.lastScoringPlay.length - 1; i >= 0; i--) {
-			const play = this.lastScoringPlay[i];
+			const play = this.lastScoringPlay[i]!;
 
 			switch (play.type) {
 				case "atRim":
@@ -2521,7 +2483,7 @@ class GameSim extends GameSimBase {
 					shotType = "free throw";
 
 					if (i > 0) {
-						const prevPlay = this.lastScoringPlay[i - 1];
+						const prevPlay = this.lastScoringPlay[i - 1]!;
 
 						if (prevPlay.team === play.team) {
 							switch (prevPlay.type) {
@@ -2553,14 +2515,14 @@ class GameSim extends GameSimBase {
 
 			if (margin <= 0) {
 				const team = this.team[play.team];
-				const player = this.team[play.team].player[play.player];
+				const p = play.player;
 
 				const winningOrTying = winner === -1 ? "game-tying" : "game-winning";
 
 				let eventText = `<a href="${helpers.leagueUrl([
 					"player",
-					player.id,
-				])}">${player.name}</a> made a ${winningOrTying} ${shotType}`;
+					p.id,
+				])}">${p.name}</a> made a ${winningOrTying} ${shotType}`;
 
 				if (!this.elamActive) {
 					if (play.time > 0) {
@@ -2580,7 +2542,7 @@ class GameSim extends GameSimBase {
 				this.clutchPlays.push({
 					text: eventText,
 					showNotification: team.id === g.get("userTid"),
-					pids: [player.id],
+					pids: [p.id],
 					tids: [team.id],
 				});
 				return;
@@ -2588,7 +2550,7 @@ class GameSim extends GameSimBase {
 		}
 	}
 
-	recordLastScore(teamnum: TeamNum, playernum: number, type: ShotType) {
+	recordLastScore(teamnum: TeamNum, playernum: PlayerGameSim, type: ShotType) {
 		// only record plays in the fourth quarter or overtime...
 		if (this.team[0].stat.ptsQtrs.length < this.numPeriods) {
 			return;
@@ -2611,7 +2573,7 @@ class GameSim extends GameSimBase {
 			time: this.t,
 		};
 
-		if (this.lastScoringPlay.length === 0) {
+		if (!this.lastScoringPlay[0]) {
 			this.lastScoringPlay.push(currPlay);
 		} else {
 			const lastPlay = this.lastScoringPlay[0];
@@ -2624,14 +2586,10 @@ class GameSim extends GameSimBase {
 		}
 	}
 
-	doFt(shooter: PlayerNumOnCourt, amount: number) {
-		const p = this.playersOnCourt[this.o][shooter]; // 95% max, a 75 FT rating gets you 90%, and a 25 FT rating gets you 60%
-
+	doFt(p: PlayerGameSim, amount: number) {
+		// 95% max, a 75 FT rating gets you 90%, and a 25 FT rating gets you 60%
 		const ftp = helpers.bound(
-			g.get("ftAccuracyFactor") *
-				this.team[this.o].player[p].compositeRating.shootingFT *
-				0.6 +
-				0.45,
+			g.get("ftAccuracyFactor") * p.compositeRating.shootingFT * 0.6 + 0.45,
 			0,
 			0.95,
 		);
@@ -2648,7 +2606,7 @@ class GameSim extends GameSimBase {
 				this.playByPlay.logEvent({
 					type: "ft",
 					t: this.o,
-					pid: this.team[this.o].player[p].id,
+					pid: p.id,
 					clock: this.t,
 				});
 				outcome = "ft";
@@ -2661,7 +2619,7 @@ class GameSim extends GameSimBase {
 				this.playByPlay.logEvent({
 					type: "missFt",
 					t: this.o,
-					pid: this.team[this.o].player[p].id,
+					pid: p.id,
 					clock: this.t,
 				});
 				outcome = undefined;
@@ -2689,22 +2647,21 @@ class GameSim extends GameSimBase {
 					t: TeamNum;
 					type: "pfNonShooting";
 					shooter?: undefined;
-					fouler?: PlayerNumOnCourt;
+					fouler?: PlayerGameSim;
 			  }
 			| {
 					t: TeamNum;
 					type: "pfBonus" | "pfFG" | "pfTP" | "pfAndOne";
-					shooter: PlayerNumOnCourt;
-					fouler?: PlayerNumOnCourt;
+					shooter: PlayerGameSim;
+					fouler?: PlayerGameSim;
 			  },
 	) {
 		const t = info.t;
-		const fouler = info.fouler ?? pickPlayer(this.ratingArray("fouling", t));
-		const p = this.playersOnCourt[t][fouler];
+		const p = info.fouler ?? this.pickPlayer("fouling", t, 1);
 		this.recordStat(t, p, "pf");
 		const baseLogInformation = {
 			t,
-			pid: this.team[t].player[p].id,
+			pid: p.id,
 			clock: this.t,
 		};
 		if (info.type === "pfNonShooting" || info.type === "pfAndOne") {
@@ -2716,23 +2673,17 @@ class GameSim extends GameSimBase {
 			this.playByPlay.logEvent({
 				...baseLogInformation,
 				type: info.type,
-				pidShooting:
-					this.team[this.o].player[
-						this.playersOnCourt[this.o][(info as any).shooter]
-					].id,
+				pidShooting: info.shooter.id,
 			});
 		}
 
 		// Foul out
 		const foulsNeededToFoulOut = g.get("foulsNeededToFoulOut");
-		if (
-			foulsNeededToFoulOut > 0 &&
-			this.team[t].player[p].stat.pf >= foulsNeededToFoulOut
-		) {
+		if (foulsNeededToFoulOut > 0 && p.stat.pf >= foulsNeededToFoulOut) {
 			this.playByPlay.logEvent({
 				type: "foulOut",
 				t,
-				pid: this.team[t].player[p].id,
+				pid: p.id,
 				clock: this.t,
 			});
 
@@ -2752,7 +2703,6 @@ class GameSim extends GameSimBase {
 
 	doReb() {
 		let p;
-		let ratios;
 
 		if (this.t === 0) {
 			return "endOfPeriod";
@@ -2774,26 +2724,24 @@ class GameSim extends GameSimBase {
 					(2 + this.team[this.o].compositeRating.rebounding)) >
 			Math.random()
 		) {
-			ratios = this.ratingArray("rebounding", this.d, 3);
-			p = this.playersOnCourt[this.d][pickPlayer(ratios)];
+			p = this.pickPlayer("rebounding", this.d, 3);
 			this.recordStat(this.d, p, "drb");
 			this.playByPlay.logEvent({
 				type: "drb",
 				t: this.d,
-				pid: this.team[this.d].player[p].id,
+				pid: p.id,
 				clock: this.t,
 			});
 			return "drb" as const;
 		}
 
-		ratios = this.ratingArray("rebounding", this.o, 5);
-		this.lastOrbPlayer = pickPlayer(ratios);
-		p = this.playersOnCourt[this.o][this.lastOrbPlayer];
+		this.lastOrbPlayer = this.pickPlayer("rebounding", this.o, 5);
+		p = this.lastOrbPlayer;
 		this.recordStat(this.o, p, "orb");
 		this.playByPlay.logEvent({
 			type: "orb",
 			t: this.o,
-			pid: this.team[this.o].player[p].id,
+			pid: p.id,
 			clock: this.t,
 		});
 		return "orb" as const;
@@ -2808,19 +2756,15 @@ class GameSim extends GameSimBase {
 	 * @return {Array.<number>} Array of composite ratings of the players on the court for the given rating and team.
 	 */
 	ratingArray(rating: CompositeRating, t: TeamNum, power: number = 1) {
-		const array: number[] = Array(this.numPlayersOnCourt).fill(0);
+		const foulLimit = rating === "fouling" ? this.getFoulTroubleLimit() : 0;
 		let total = 0;
 
-		const foulLimit = rating === "fouling" ? this.getFoulTroubleLimit() : 0;
-
 		// Scale composite ratings
-		for (let i = 0; i < this.numPlayersOnCourt; i++) {
-			const p = this.playersOnCourt[t][i];
-
-			let compositeRating = this.team[t].player[p].compositeRating[rating];
+		const array = this.playersOnCourt[t].map((p, i) => {
+			let compositeRating = p.compositeRating[rating];
 
 			if (rating === "fouling") {
-				const pf = this.team[t].player[p].stat.pf;
+				const pf = p.stat.pf;
 				if (pf === foulLimit - 1) {
 					compositeRating *= 0.8;
 				} else if (pf === foulLimit) {
@@ -2830,23 +2774,64 @@ class GameSim extends GameSimBase {
 				}
 			}
 
-			array[i] =
-				(compositeRating * this.fatigue(this.team[t].player[p].stat.energy)) **
-				power;
+			const value = (compositeRating * this.fatigue(p.stat.energy)) ** power;
 
-			total += array[i];
-		}
+			total += value;
+
+			return value;
+		});
 
 		// Set floor (5% of total)
 		const floor = 0.05 * total;
 
 		for (let i = 0; i < this.numPlayersOnCourt; i++) {
-			if (array[i] < floor) {
+			if (array[i]! < floor) {
 				array[i] = floor;
 			}
 		}
 
 		return array;
+	}
+
+	pickPlayer(
+		rating: CompositeRating,
+		t: TeamNum,
+		power: number,
+		exempt?: PlayerGameSim,
+	) {
+		const ratios = this.ratingArray(rating, t, power);
+		const playersOnCourt = this.playersOnCourt[t];
+
+		if (exempt !== undefined) {
+			const index = playersOnCourt.indexOf(exempt);
+			if (index >= 0) {
+				ratios[index] = 0;
+			}
+		}
+
+		let sum = 0;
+		for (const ratio of ratios) {
+			sum += ratio;
+		}
+
+		// Special case for all 0 rated players - randomly pick one
+		if (sum === 0) {
+			const candidates = playersOnCourt.filter((p) => p !== exempt);
+			return random.choice(candidates);
+		}
+
+		const rand = Math.random() * sum;
+
+		let runningSum = 0;
+
+		for (const [i, ratio] of ratios.entries()) {
+			runningSum += ratio;
+			if (rand < runningSum) {
+				return playersOnCourt[i]!;
+			}
+		}
+
+		return playersOnCourt[0]!;
 	}
 
 	/**
@@ -2857,23 +2842,32 @@ class GameSim extends GameSimBase {
 	 * @param {string} s Key for the property of this.team[t].player[p].stat to increment.
 	 * @param {number} amt Amount to increment (default is 1).
 	 */
-	recordStat(t: TeamNum, p: number | undefined, s: Stat, amt: number = 1) {
+	recordStat(
+		t: TeamNum,
+		p: PlayerGameSim | undefined,
+		s: Stat,
+		amt: number = 1,
+	) {
 		if (p !== undefined) {
-			this.team[t].player[p].stat[s] += amt;
+			if (s === "gp") {
+				p.stat[s] = 1;
+			} else {
+				p.stat[s] += amt;
+			}
 		}
 
 		if (s !== "courtTime" && s !== "benchTime" && s !== "energy") {
-			if (s !== "gs") {
+			if (s !== "gs" && s !== "gp") {
 				this.team[t].stat[s] += amt; // Record quarter-by-quarter scoring too
 
 				if (s === "pts") {
 					this.team[t].stat.ptsQtrs[this.team[t].stat.ptsQtrs.length - 1] +=
 						amt;
 
-					for (let i = 0; i < 2; i++) {
+					for (const i of [0, 1] as const) {
 						for (let j = 0; j < this.numPlayersOnCourt; j++) {
-							const k = this.playersOnCourt[i][j];
-							this.team[i].player[k].stat.pm += i === t ? amt : -amt;
+							const p2 = this.playersOnCourt[i][j]!;
+							p2.stat.pm += i === t ? amt : -amt;
 						}
 					}
 
@@ -2888,12 +2882,7 @@ class GameSim extends GameSimBase {
 			}
 
 			if (this.playByPlay !== undefined) {
-				this.playByPlay.logStat(
-					t,
-					p === undefined ? undefined : this.team[t].player[p].id,
-					s,
-					amt,
-				);
+				this.playByPlay.logStat(t, p === undefined ? undefined : p.id, s, amt);
 			}
 		}
 	}

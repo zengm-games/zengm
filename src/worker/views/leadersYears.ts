@@ -33,7 +33,6 @@ const updateLeadersYears = async (
 	// Respond to watchList in case players are listed twice in different categories
 	if (
 		updateEvents.includes("firstRun") ||
-		updateEvents.includes("watchList") ||
 		inputs.stat !== state.stat ||
 		inputs.playoffs !== state.playoffs ||
 		inputs.statType !== state.statType
@@ -43,7 +42,7 @@ const updateLeadersYears = async (
 
 		const { categories, stats } = getCategoriesAndStats(inputs.stat);
 
-		const cat = categories[0];
+		const cat = categories[0]!;
 
 		const seasons = range(g.get("startingSeason"), g.get("season") + 1);
 
@@ -106,12 +105,18 @@ const updateLeadersYears = async (
 				combined: inputs.playoffs === "combined",
 				mergeStats: "totOnly",
 				statType: inputs.statType,
+				disableAbbrevsCacheDatabaseAccess: true,
 			});
 			if (!p) {
 				return;
 			}
 
 			const value = p.stats[cat.stat];
+			if (value === undefined) {
+				// value should only be undefined in historical data before certain stats were tracked
+				return;
+			}
+
 			const lastValue = current.leaders.at(-1)?.stat;
 			if (
 				lastValue !== undefined &&

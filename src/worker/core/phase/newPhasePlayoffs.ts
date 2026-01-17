@@ -1,4 +1,4 @@
-import { finances, player, season, team } from "../index.ts";
+import { finances, player, realRosters, season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { achievement, g, helpers, local, logEvent } from "../../util/index.ts";
 import type {
@@ -6,6 +6,7 @@ import type {
 	PhaseReturn,
 	PlayoffSeries,
 } from "../../../common/types.ts";
+import { PHASE } from "../../../common/constants.ts";
 
 const newPhasePlayoffs = async (
 	conditions: Conditions,
@@ -77,18 +78,11 @@ const newPhasePlayoffs = async (
 
 			// More hype for making the playoffs
 			teamSeason.hype += 0.05;
-
-			if (teamSeason.hype > 1) {
-				teamSeason.hype = 1;
-			}
 		} else {
 			// Less hype for missing the playoffs
 			teamSeason.hype -= 0.05;
-
-			if (teamSeason.hype < 0) {
-				teamSeason.hype = 0;
-			}
 		}
+		teamSeason.hype = helpers.bound(teamSeason.hype, 0, 1);
 
 		// Average age and team ovr, cache now that season is over
 		const playersRaw = await idb.cache.players.indexGetAll(
@@ -96,7 +90,7 @@ const newPhasePlayoffs = async (
 			teamSeason.tid,
 		);
 		const players = await idb.getCopies.playersPlus(playersRaw, {
-			attrs: ["age", "value", "pid"],
+			attrs: ["age", "injury", "value", "pid"],
 			fuzz: true,
 			stats: ["gp", "min"],
 			ratings: ["ovr", "pos", "ovrs"],
@@ -124,6 +118,11 @@ const newPhasePlayoffs = async (
 
 	// Update clinchedPlayoffs with final values
 	await team.updateClinchedPlayoffs(true, conditions);
+
+	await realRosters.checkDisableForceHistoricalRosters(
+		g.get("season"),
+		PHASE.PLAYOFFS,
+	);
 
 	// Don't redirect if we're viewing a live game now
 	let redirect;

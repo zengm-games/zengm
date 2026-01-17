@@ -192,7 +192,7 @@ export const formatPlayerBioInfoState = (
 		const defaultRaces2 =
 			defaults.races[country] ??
 			playerBioInfo?.default?.races ??
-			defaults.races.USA;
+			defaults.races.USA!;
 		const races = mergedCountry.races ?? defaultRaces2;
 		const defaultRaces = allDefaults || isEqual(races, defaultRaces2);
 		const racesText = objectToArray(races, "race", "race");
@@ -236,7 +236,7 @@ export const formatPlayerBioInfoState = (
 		...playerBioInfoSort.colleges,
 	);
 	const defaultRacesText = objectToArray(
-		playerBioInfo?.default?.races ?? defaults.races.USA,
+		playerBioInfo?.default?.races ?? defaults.races.USA!,
 		"race",
 		"race",
 	);
@@ -676,7 +676,7 @@ const PlayerBioInfo2 = ({
 			const countryName =
 				pageInfo.index === "default"
 					? "Default"
-					: infoState.countries[pageInfo.index].country;
+					: infoState.countries[pageInfo.index]!.country;
 			title += ` - ${countryName} - ${helpers.upperCaseFirstLetter(
 				pageInfo.name,
 			)}`;
@@ -695,7 +695,7 @@ const PlayerBioInfo2 = ({
 						handleChange={handleChange}
 						handleSave={handleSave}
 						onSetDefault={(type, i) => {
-							const country = infoState.countries[i].country;
+							const country = infoState.countries[i]!.country;
 
 							let array: any;
 
@@ -781,7 +781,7 @@ const PlayerBioInfo2 = ({
 						rows={
 							pageInfo.index === "default"
 								? infoState.defaultRaces
-								: infoState.countries[pageInfo.index].races
+								: infoState.countries[pageInfo.index]!.races
 						}
 						onCancel={onCancel}
 						onSave={handleChange2("races", pageInfo.index)}
@@ -798,7 +798,7 @@ const PlayerBioInfo2 = ({
 							rows={
 								pageInfo.index === "default"
 									? infoState.defaultColleges
-									: infoState.countries[pageInfo.index].colleges
+									: infoState.countries[pageInfo.index]!.colleges
 							}
 							onCancel={onCancel}
 							onSave={handleChange2("colleges", pageInfo.index)}
@@ -806,7 +806,7 @@ const PlayerBioInfo2 = ({
 							fractionSkipCollege={
 								pageInfo.index === "default"
 									? infoState.defaultFractionSkipCollege
-									: infoState.countries[pageInfo.index].fractionSkipCollege
+									: infoState.countries[pageInfo.index]!.fractionSkipCollege
 							}
 							onSaveFractionSkipCollege={handleChange2(
 								"fractionSkipCollege",
@@ -820,10 +820,11 @@ const PlayerBioInfo2 = ({
 							defaultRows={
 								defaultsState.countries.find(
 									(row) =>
-										row.country === infoState.countries[pageInfo.index].country,
+										row.country ===
+										infoState.countries[pageInfo.index]!.country,
 								)?.names
 							}
-							rows={infoState.countries[pageInfo.index].names}
+							rows={infoState.countries[pageInfo.index]!.names}
 							onCancel={onCancel}
 							onSave={handleChange2("names", pageInfo.index)}
 						/>
@@ -831,7 +832,7 @@ const PlayerBioInfo2 = ({
 				) : pageInfo.name === "flag" ? (
 					<>
 						<FlagEditor
-							flag={infoState.countries[pageInfo.index].flag}
+							flag={infoState.countries[pageInfo.index]!.flag}
 							onCancel={onCancel}
 							onSave={handleChange2("flag", pageInfo.index)}
 						/>

@@ -4,6 +4,7 @@ import type { UpdateEvents, Player } from "../../common/types.ts";
 import { bySport } from "../../common/index.ts";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { extraStats } from "./hallOfFame.ts";
 
 type InfoTemp = {
 	numPlayers: number;
@@ -79,7 +80,7 @@ const reducer = (
 		gp += stats.gp;
 		valueStat += getValueStatsRow(stats);
 		for (const displayStatName of displayStatNames) {
-			displayStat += stats[displayStatName];
+			displayStat += stats[displayStatName] ?? 0;
 		}
 	}
 
@@ -146,7 +147,7 @@ export const genView = (
 							"jerseyNumber",
 						],
 						ratings: ["season", "ovr", "pos"],
-						stats: ["season", "abbrev", "tid", ...stats],
+						stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
 						fuzz: true,
 					});
 
@@ -173,7 +174,7 @@ export const genView = (
 							if (retiredCounts[row.number] === undefined) {
 								retiredCounts[row.number] = 1;
 							} else {
-								retiredCounts[row.number] += 1;
+								retiredCounts[row.number]! += 1;
 							}
 						}
 					}
@@ -187,8 +188,8 @@ export const genView = (
 			// Hacky crap because p is nested
 			const players = infos.map((info) => info.p);
 			const playersWithFirstNameShort = addFirstNameShort(players);
-			for (let i = 0; i < infos.length; i++) {
-				infos[i].p = playersWithFirstNameShort[i];
+			for (const [i, info] of infos.entries()) {
+				info.p = playersWithFirstNameShort[i];
 			}
 
 			return {

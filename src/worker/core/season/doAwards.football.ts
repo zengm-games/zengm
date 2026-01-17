@@ -254,7 +254,7 @@ const getRealFinalsMvp = async (
 	for (const game of finalsGames) {
 		for (const t of game.teams) {
 			for (const p of t.players) {
-				const info = playerInfos.get(p.pid) || {
+				const info = playerInfos.get(p.pid) ?? {
 					pid: p.pid,
 					score: 0,
 				};
@@ -290,7 +290,7 @@ const getRealFinalsMvp = async (
 		"desc",
 	);
 
-	if (playerArray.length === 0) {
+	if (!playerArray[0]) {
 		return;
 	}
 
@@ -308,26 +308,24 @@ const getRealFinalsMvp = async (
 	}
 };
 
-const SKILL_POSITIONS = ["QB", "RB", "WR", "TE"];
+const SKILL_POSITIONS = new Set(["QB", "RB", "WR", "TE"]);
 export const mvpScore = (p: PlayerFiltered) => {
-	const posMultiplier = SKILL_POSITIONS.includes(p.pos) ? 1.2 : 1;
+	const posMultiplier = SKILL_POSITIONS.has(p.pos) ? 1.2 : 1;
 	return posMultiplier * p.currentStats.av;
 };
+
+// https://discord.com/channels/860302515501400094/861442922498359306/1385455960188780634
+// Would be nice to use this for MVP too, but unclear how to combine with AV since we don't store separate offensive/defensive AV. If mvpScore is ever updated to not use AV or if offensive/defensive AV were stored separately, this could be done.
 export const dpoyScore = (p: PlayerFiltered) => {
-	const posBonus = p.pos === "LB" ? 8 : 0;
 	return (
-		posBonus +
-		p.currentStats.av +
-		1.75 * p.currentStats.defSk +
-		p.currentStats.defTck / 10 +
-		p.currentStats.defInt * 4 +
-		p.currentStats.defPssDef +
-		p.currentStats.defFmbFrc * 2 +
-		p.currentStats.defFmbRec * 2 +
-		5 *
-			(p.currentStats.defFmbTD +
-				p.currentStats.defIntTD +
-				p.currentStats.defSft)
+		(p.currentStats.defSk * 1.5 +
+			p.currentStats.defTckLoss * 2.2 +
+			p.currentStats.defFmbFrc * 3 +
+			p.currentStats.defInt * 3 +
+			p.currentStats.defPssDef * 3.15 +
+			p.currentStats.defTckAst / 12 +
+			p.currentStats.defTckSolo / 8) /
+		8.2
 	);
 };
 

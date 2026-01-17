@@ -1,6 +1,6 @@
 import { bySport, isSport, POSITIONS } from "../../../common/index.ts";
 import type { Team } from "../../../common/types.ts";
-import { range } from "../../../common/utils.ts";
+import { groupByUnique, range } from "../../../common/utils.ts";
 
 // Translate team.depth from pids to player objects, while validating that it contains all players on the team (supplied by `players`) and no extraneous players.
 const getDepthPlayers = <
@@ -23,6 +23,8 @@ const getDepthPlayers = <
 		throw new Error("Not implemented");
 	}
 
+	const playersByPid = groupByUnique(players, (p) => p.pid ?? (p as any).id);
+
 	// @ts-expect-error
 	const depths: Record<string, T[]> = Object.keys(depth).reduce(
 		(obj, pos: string) => {
@@ -34,17 +36,15 @@ const getDepthPlayers = <
 				return obj;
 			}
 
+			const depthPidsSet = new Set((depth as any)[pos]);
+
+			// Keep in sync with schedule.ts
 			// @ts-expect-error
 			obj[pos] = (depth[pos] as number[])
-				.map((pid) =>
-					players.find((p) => p.pid === pid || (p as any).id === pid),
-				)
+				.map((pid) => playersByPid[pid])
 				.concat(
 					players.map((p) =>
-						(depth as any)[pos].includes(p.pid) ||
-						(depth as any)[pos].includes((p as any).id)
-							? undefined
-							: p,
+						depthPidsSet.has(p.pid ?? (p as any).id) ? undefined : p,
 					),
 				)
 				.filter((p) => p !== undefined);
@@ -93,9 +93,9 @@ const getDepthPlayers = <
 					};
 				}
 
-				if (depths.D[i]) {
+				if (depths.D![i]) {
 					// IMPORTANT - maintain referential integrity
-					return Object.assign(depths[defenseKey][i], {
+					return Object.assign(depths[defenseKey]![i]!, {
 						lineupPos: POSITIONS[2 + i],
 						lineupIndex: i,
 					});

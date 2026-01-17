@@ -1,16 +1,17 @@
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
-import type { Achievement, Player } from "../../common/types.ts";
+import type { Achievement, NonEmptyArray, Player } from "../../common/types.ts";
 import { bySport, isSport, PLAYER } from "../../common/index.ts";
 import helpers from "./helpers.ts";
+import { range } from "../../common/utils.ts";
 
-const goldenOldiesCutoffs = bySport({
+const goldenOldiesCutoffs: [number, number, number] = bySport({
 	baseball: [30, 33, 36],
 	basketball: [30, 33, 36],
 	football: [28, 30, 32],
 	hockey: [30, 33, 36],
 });
-const youngGunsCutoffs = bySport({
+const youngGunsCutoffs: [number, number] = bySport({
 	baseball: [25, 22],
 	basketball: [25, 22],
 	football: [26, 24],
@@ -114,18 +115,18 @@ const checkSmallMarket = async (popCutoff: number) => {
 	);
 };
 
-const userWonTitle = async () => {
+const userWonTitle = async (season = g.get("season")) => {
 	const t = await idb.getCopy.teamsPlus(
 		{
 			seasonAttrs: ["playoffRoundsWon"],
-			season: g.get("season"),
+			season,
 			tid: g.get("userTid"),
 		},
 		"noCopyCache",
 	);
 	return t
 		? t.seasonAttrs.playoffRoundsWon ===
-				g.get("numGamesPlayoffSeries", "current").length
+				g.get("numGamesPlayoffSeries", season).length
 		: false;
 };
 
@@ -292,7 +293,7 @@ const getUserSeed = async () => {
 		return;
 	}
 
-	for (const matchup of playoffSeries.series[0]) {
+	for (const matchup of playoffSeries.series[0]!) {
 		if (matchup.away && matchup.away.tid === g.get("userTid")) {
 			return matchup.away.seed;
 		}
@@ -419,6 +420,37 @@ const checkSleeperPick = async (checkPlayer: (p: Player) => boolean) => {
 	}
 
 	return false;
+};
+
+const checkRunItBack = async (numRepeats: number) => {
+	// Includes current season
+	const seasons = new Set(
+		range(g.get("season") - numRepeats, g.get("season") + 1),
+	);
+
+	for (const season of seasons) {
+		const wonTitle = await userWonTitle(season);
+
+		if (!wonTitle) {
+			return false;
+		}
+	}
+
+	const players = await idb.cache.players.indexGetAll(
+		"playersByTid",
+		g.get("userTid"),
+	);
+
+	return players.every((p) => {
+		const champSeasons = new Set(
+			p.awards
+				.filter((award) => award.type === "Won Championship")
+				.map((award) => award.season),
+		);
+
+		// If any season is missing the championship award, then this doesn't qualify
+		return seasons.isSubsetOf(champSeasons);
+	});
 };
 
 const internationalCountries = bySport({
@@ -1564,6 +1596,64 @@ if (isSport("hockey") || isSport("basketball")) {
 			when: "afterPlayoffs",
 		},
 		{
+			slug: "one_draft_class",
+			name: "One Draft Class",
+			desc: "Win a title when your entire roster comes from the same draft class.",
+			category: "Team Composition",
+
+			async check() {
+				const wonTitle = await userWonTitle();
+
+				if (!wonTitle) {
+					return false;
+				}
+
+				const players = await idb.cache.players.indexGetAll(
+					"playersByTid",
+					g.get("userTid"),
+				);
+
+				if (players[0]) {
+					const year = players[0].draft.year;
+					return players.every((p) => p.draft.year === year);
+				}
+
+				return false;
+			},
+
+			when: "afterPlayoffs",
+		},
+		{
+			slug: "run_it_back",
+			name: "Run It Back",
+			desc: "Win 2 championships in a row without adding any new players to your playoff roster after the first championship.",
+			category: "Team Composition",
+			check() {
+				return checkRunItBack(1);
+			},
+			when: "afterPlayoffs",
+		},
+		{
+			slug: "run_it_back_2",
+			name: "Run It Back 2",
+			desc: "Win 3 championships in a row without adding any new players to your playoff roster after the first championship.",
+			category: "Team Composition",
+			check() {
+				return checkRunItBack(2);
+			},
+			when: "afterPlayoffs",
+		},
+		{
+			slug: "run_it_back_3",
+			name: "Run It Back 3",
+			desc: "Win 5 championships in a row without adding any new players to your playoff roster after the first championship.",
+			category: "Team Composition",
+			check() {
+				return checkRunItBack(4);
+			},
+			when: "afterPlayoffs",
+		},
+		{
 			slug: "finals_choke",
 			name: "Finals Choke",
 			desc: "Blow a 3-0 lead in the finals.",
@@ -1685,10 +1775,39 @@ if (isSport("basketball")) {
 
 			when: "afterAwards",
 		},
+		{
+			slug: "small_ball",
+			name: "Small Ball",
+			desc: "Win a championship without any players over 6'5\".",
+			category: "Team Composition",
+
+			async check() {
+				const wonTitle = await userWonTitle();
+
+				if (!wonTitle) {
+					return false;
+				}
+
+				const players = await idb.cache.players.indexGetAll(
+					"playersByTid",
+					g.get("userTid"),
+				);
+
+				const cutoff = 77; // 6'5" in inches
+
+				return players.every((p) => p.hgt <= cutoff);
+			},
+
+			when: "afterPlayoffs",
+		},
 	);
 
 	// Rebuilds!
-	const rebuilds = [
+	const rebuilds: {
+		season: number;
+		srIDs: NonEmptyArray<string>;
+		name: string;
+	}[] = [
 		{
 			season: 1980,
 			srIDs: ["SDC", "LAC"],
@@ -1913,6 +2032,11 @@ if (isSport("basketball")) {
 			season: 2024,
 			srIDs: ["POR"],
 			name: "Portland",
+		},
+		{
+			season: 2025,
+			srIDs: ["CHO"],
+			name: "Charlotte",
 		},
 	];
 

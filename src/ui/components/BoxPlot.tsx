@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import { helpers } from "../util/index.ts";
 
 const quartile = (data: number[], quart: 1 | 2 | 3) => {
-	return data[Math.round((data.length * quart) / 4)];
+	return data[Math.round((data.length * quart) / 4)]!;
 };
 
 const calculateValues = (data: number[]) => {
@@ -11,7 +11,7 @@ const calculateValues = (data: number[]) => {
 
 	// Quartiles, min, max
 	return {
-		min: data[0],
+		min: data[0]!,
 		q1: quartile(data, 1),
 		median: quartile(data, 2),
 		q3: quartile(data, 3),

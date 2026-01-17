@@ -1,9 +1,10 @@
-import { WEBSITE_ROOT } from "../../../common/index.ts";
+import { isSport, WEBSITE_ROOT } from "../../../common/index.ts";
 import type { Conditions } from "../../../common/types.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
+import { getRealSchedule } from "./getRealSchedule.football.ts";
 import newScheduleGood from "./newScheduleGood.ts";
 
-const newSchedule = (
+const newSchedule = async (
 	teams: {
 		seasonAttrs: {
 			cid: number;
@@ -13,19 +14,26 @@ const newSchedule = (
 	}[],
 	conditions?: Conditions,
 ) => {
+	if (isSport("football")) {
+		const tids = await getRealSchedule(teams);
+		if (tids) {
+			return tids;
+		}
+	}
+
 	const { tids, warning } = newScheduleGood(teams);
 
 	// Add trade deadline
 	const tradeDeadline = g.get("tradeDeadline");
 	if (tradeDeadline < 1) {
-		const ind = Math.round(helpers.bound(tradeDeadline, 0, 1) * tids.length);
+		const ind = Math.round(tradeDeadline * tids.length);
 		tids.splice(ind, 0, [-3, -3]);
 	}
 
 	// Add an All-Star Game
 	const allStarGame = g.get("allStarGame");
 	if (allStarGame !== null && allStarGame >= 0) {
-		const ind = Math.round(helpers.bound(allStarGame, 0, 1) * tids.length);
+		const ind = Math.round(allStarGame * tids.length);
 		tids.splice(ind, 0, [-1, -2]);
 	}
 

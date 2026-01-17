@@ -113,6 +113,10 @@ export const fixPlayers = (
 	playersWithStats: any[],
 ) => {
 	const t = offer.summary.teams[summaryTeamsIndex];
+	if (!t) {
+		throw new Error("Should never happen");
+	}
+
 	for (const p of t.trade) {
 		const p2 = playersWithStats.find((p2) => p2.pid === p.pid);
 		p.stats = p2.stats;

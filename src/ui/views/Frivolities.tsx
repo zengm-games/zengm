@@ -196,6 +196,12 @@ export const frivolities = {
 				"See the most accomplished players who never made the playoffs.",
 		},
 		{
+			urlParts: ["most", "retired_jersey_numbers"],
+			name: "Most Retired Jersey Numbers",
+			description:
+				"See the players who have the most different jerseys retired.",
+		},
+		{
 			urlParts: ["most", "teams"],
 			name: "Most Teams",
 			description:

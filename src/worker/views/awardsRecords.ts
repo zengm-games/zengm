@@ -2,6 +2,7 @@ import { idb } from "../db/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts"; // Keep in sync with Dropdown.js
 import { bySport } from "../../common/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { countBy, maxBy } from "../../common/utils.ts";
 
 // Sync with useDropdownOptions
 const optionsTmp = bySport({
@@ -319,18 +320,23 @@ type LocalPlayerAward = {
 
 type LocalPlayer = {
 	awards: LocalPlayerAward[];
+	draft: { round: number; pick: number; year: number };
 	firstName: string;
 	hof: boolean;
 	lastName: string;
 	pid: number;
 	retiredYear: number;
+	ratings: {
+		pos: string;
+		season: number;
+	}[];
 	stats: {
 		abbrev: string;
 		season: number;
 	}[];
 };
 
-function getPlayerAwards(p: LocalPlayer, awardType: string) {
+const getPlayerAwards = (p: LocalPlayer, awardType: string) => {
 	const aType = awardOptions[awardType];
 
 	let filter;
@@ -368,6 +374,11 @@ function getPlayerAwards(p: LocalPlayer, awardType: string) {
 	};
 
 	const awards = p.awards.filter(filter);
+
+	if (awards.length === 0) {
+		return;
+	}
+
 	const years = awards.map((a) => {
 		return {
 			team: getTeam(a.season),
@@ -375,6 +386,16 @@ function getPlayerAwards(p: LocalPlayer, awardType: string) {
 		};
 	});
 	const lastYear = Math.max(...years.map((y) => y.season));
+
+	// Find most common pos that this player had for this type of award
+	let maxPos;
+	const yearsSet = new Set(years.map((row) => row.season));
+	const allPos = p.ratings.filter((row) => yearsSet.has(row.season));
+	if (allPos.length > 0) {
+		const posCounts = Object.entries(countBy(allPos, "pos"));
+		maxPos = maxBy(posCounts, 1)![0]!;
+	}
+
 	return {
 		firstName: p.firstName,
 		lastName: p.lastName,
@@ -385,8 +406,10 @@ function getPlayerAwards(p: LocalPlayer, awardType: string) {
 		lastYear,
 		retired: p.retiredYear !== Infinity,
 		hof: p.hof,
+		pos: maxPos,
+		draft: p.draft,
 	};
-}
+};
 
 const updateAwardsRecords = async (
 	inputs: ViewInput<"awardsRecords">,
@@ -405,7 +428,16 @@ const updateAwardsRecords = async (
 			"noCopyCache",
 		);
 		const players: LocalPlayer[] = await idb.getCopies.playersPlus(playersAll, {
-			attrs: ["awards", "firstName", "lastName", "pid", "retiredYear", "hof"],
+			attrs: [
+				"awards",
+				"firstName",
+				"lastName",
+				"pid",
+				"retiredYear",
+				"hof",
+				"draft",
+			],
+			ratings: ["pos", "season"],
 			stats: ["abbrev", "season"],
 		});
 		const awardType = inputs.awardType;
@@ -421,7 +453,7 @@ const updateAwardsRecords = async (
 		const awardsRecords = addFirstNameShort(
 			players
 				.map((p) => getPlayerAwards(p, awardType))
-				.filter((o) => o.count > 0),
+				.filter((p) => p !== undefined),
 		);
 
 		return {

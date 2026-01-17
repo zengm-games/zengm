@@ -40,7 +40,7 @@ type Trade = {
 };
 
 const genTeam = async (event: TradeEvent, i: 0 | 1): Promise<Team> => {
-	const tid = event.tids[i];
+	const tid = event.tids[i]!;
 	const teamInfo = await getTeamInfoBySeason(tid, event.season);
 	if (!teamInfo) {
 		throw new Error("teamInfo not found");
@@ -124,8 +124,8 @@ const getMostXRows = async ({
 	}
 
 	const ordered = orderBy(trades, ...sortParams);
-	for (let i = 0; i < ordered.length; i++) {
-		ordered[i].rank = i + 1;
+	for (const [i, row] of ordered.entries()) {
+		row.rank = i + 1;
 	}
 
 	return ordered;

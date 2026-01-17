@@ -13,6 +13,7 @@ import {
 	isSport,
 } from "../../common/index.ts";
 import hasTies from "../core/season/hasTies.ts";
+import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 
 const otherToRanks = (
 	teams: {
@@ -27,19 +28,24 @@ const otherToRanks = (
 	}
 
 	for (const field of ["other", "otherCurrent"] as const) {
-		for (const key of Object.keys(teams[0].powerRankings[field])) {
-			const values = teams.map((t) => t.powerRankings[field][key]);
+		for (const key of Object.keys(teams[0]!.powerRankings[field])) {
+			const values = teams.map((t) => t.powerRankings[field][key]!);
 			const sorted = values.slice().sort((a, b) => b - a);
 			const ranks = values.map((value) => sorted.indexOf(value) + 1);
-			for (let i = 0; i < teams.length; i++) {
-				teams[i].powerRankings[field][key] = ranks[i];
+			for (const [i, t] of teams.entries()) {
+				t.powerRankings[field][key] = ranks[i]!;
 			}
 		}
 	}
 };
 
 export const addPowerRankingsStuffToTeams = async <
-	T extends TeamFiltered<["tid"], ["lastTen"], ["gp", "mov"], number>,
+	T extends TeamFiltered<
+		["playThroughInjuries", "tid"],
+		["lastTen"],
+		["gp", "mov"],
+		number
+	>,
 >(
 	teams: T[],
 	season: number,
@@ -80,14 +86,17 @@ export const addPowerRankingsStuffToTeams = async <
 				fuzz: true,
 				tid: t.tid,
 			});
-			const teamPlayersCurrent = teamPlayers.filter(
-				(p) => p.injury.gamesRemaining === 0,
-			);
+
+			const playThroughInjuries = getActualPlayThroughInjuries(t);
 
 			const ovr = team.ovr(teamPlayers, {
 				playoffs: playoffs === "playoffs",
 			});
-			const ovrCurrent = team.ovr(teamPlayersCurrent, {
+			const ovrCurrent = team.ovr(teamPlayers, {
+				accountForInjuredPlayers: {
+					numDaysInFuture: 0,
+					playThroughInjuries,
+				},
 				playoffs: playoffs === "playoffs",
 			});
 
@@ -99,7 +108,7 @@ export const addPowerRankingsStuffToTeams = async <
 			// Add estimated MOV from ovr (0/100 to -30/30)
 			const estimatedMOV = ovr * 0.6 - 30;
 			score += estimatedMOV;
-			let winsLastTen = Number.parseInt(t.seasonAttrs.lastTen.split("-")[0]);
+			let winsLastTen = Number.parseInt(t.seasonAttrs.lastTen.split("-")[0]!);
 
 			if (Number.isNaN(winsLastTen)) {
 				winsLastTen = 0;
@@ -116,7 +125,11 @@ export const addPowerRankingsStuffToTeams = async <
 						playoffs: playoffs === "playoffs",
 						rating,
 					});
-					otherCurrent[rating] = team.ovr(teamPlayersCurrent, {
+					otherCurrent[rating] = team.ovr(teamPlayers, {
+						accountForInjuredPlayers: {
+							numDaysInFuture: 0,
+							playThroughInjuries,
+						},
 						playoffs: playoffs === "playoffs",
 						rating,
 					});
@@ -130,7 +143,11 @@ export const addPowerRankingsStuffToTeams = async <
 						playoffs: playoffs === "playoffs",
 						onlyPos: pos,
 					});
-					otherCurrent[pos] = team.ovr(teamPlayersCurrent, {
+					otherCurrent[pos] = team.ovr(teamPlayers, {
+						accountForInjuredPlayers: {
+							numDaysInFuture: 0,
+							playThroughInjuries,
+						},
 						playoffs: playoffs === "playoffs",
 						onlyPos: pos,
 					});
@@ -160,8 +177,8 @@ export const addPowerRankingsStuffToTeams = async <
 		(a, b) => b.powerRankings.score - a.powerRankings.score,
 	);
 
-	for (let i = 0; i < teamsWithRankings.length; i++) {
-		teamsWithRankings[i].powerRankings.rank = i + 1;
+	for (const [i, t] of teamsWithRankings.entries()) {
+		t.powerRankings.rank = i + 1;
 	}
 
 	return teamsWithRankings;
@@ -179,7 +196,7 @@ const updatePowerRankings = async (
 	) {
 		const teams = await idb.getCopies.teamsPlus(
 			{
-				attrs: ["tid", "depth"],
+				attrs: ["tid", "depth", "playThroughInjuries"],
 				seasonAttrs: [
 					"won",
 					"lost",

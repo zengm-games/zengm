@@ -29,7 +29,7 @@ class Buffer {
 	dropbox: Dropbox;
 	lid: number;
 
-	buffer: Uint8Array[];
+	buffer: Uint8Array<ArrayBuffer>[];
 	bufferSize: number;
 	uploadedSize: number;
 
@@ -47,7 +47,7 @@ class Buffer {
 		this.uploadedSize = 0;
 	}
 
-	async add(chunk: Uint8Array) {
+	async add(chunk: Uint8Array<ArrayBuffer>) {
 		this.bufferSize += chunk.byteLength;
 		this.buffer.push(chunk);
 

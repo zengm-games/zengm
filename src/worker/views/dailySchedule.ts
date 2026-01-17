@@ -31,7 +31,7 @@ const updateDailySchedule = async (
 			const daysAndPlayoffs = new Map<number, boolean>();
 			for (const game of games) {
 				if (game.day !== undefined) {
-					daysAndPlayoffs.set(game.day, game.playoffs);
+					daysAndPlayoffs.set(game.day, !!game.playoffs);
 				}
 			}
 
@@ -63,7 +63,7 @@ const updateDailySchedule = async (
 				const schedule = await season.getSchedule();
 
 				if (day === -1) {
-					if (schedule.length > 0 && schedule[0].day !== undefined) {
+					if (schedule[0]?.day !== undefined) {
 						day = schedule[0].day;
 					}
 				}
@@ -72,8 +72,7 @@ const updateDailySchedule = async (
 				}
 
 				const scheduleDay = schedule.filter((game) => game.day === day);
-				isToday =
-					scheduleDay.length > 0 && schedule[0].gid === scheduleDay[0].gid;
+				isToday = !!scheduleDay[0] && schedule[0]!.gid === scheduleDay[0].gid;
 
 				const isPlayoffs = g.get("phase") === PHASE.PLAYOFFS;
 
@@ -109,7 +108,7 @@ const updateDailySchedule = async (
 			if (inputs.season !== currentSeason) {
 				// Add team branding info, in case that was different in past season. Otherwise, ScoreBox uses teamInfoCache for latest values
 				for (let i = 0; i < completed.length; i++) {
-					const game = { ...completed[i] };
+					const game = { ...completed[i]! };
 					completed[i] = game;
 
 					for (const t of game.teams) {
@@ -158,7 +157,7 @@ const updateDailySchedule = async (
 
 		const { completed, day, days, isToday, upcoming } = info;
 
-		const topPlayers = await getTopPlayers(undefined, 1);
+		const topPlayers = await getTopPlayers(undefined, 1, day);
 
 		return {
 			completed,

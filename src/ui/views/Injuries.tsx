@@ -5,6 +5,7 @@ import type { View } from "../../common/types.ts";
 import { PLAYER } from "../../common/index.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { wrappedCheckmarkOrCross } from "../components/CheckmarkOrCross.tsx";
 
 const Injuries = ({
 	abbrev,
@@ -18,7 +19,10 @@ const Injuries = ({
 	useTitleBar({
 		title: "Injuries",
 		dropdownView: "injuries",
-		dropdownFields: { teamsAndAllWatch: abbrev, seasonsAndCurrent: season },
+		dropdownFields: {
+			teamsAndAllWatchPlayoffs: abbrev,
+			seasonsAndCurrent: season,
+		},
 	});
 
 	const cols = getCols([
@@ -31,6 +35,7 @@ const Injuries = ({
 		...stats.map((stat) => `stat:${stat}`),
 		"TypeInjury",
 		"Games",
+		"Playing Through?",
 		"Ovr Drop",
 		"Pot Drop",
 	]);
@@ -53,7 +58,7 @@ const Injuries = ({
 					pid: p.pid,
 					season: typeof season === "number" ? season : undefined,
 					skills: p.ratings.skills,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
@@ -76,6 +81,7 @@ const Injuries = ({
 				...stats.map((stat) => helpers.roundStat(p.stats[stat], stat)),
 				p.type,
 				p.games,
+				wrappedCheckmarkOrCross({ hideCross: true, success: p.playingThrough }),
 				showRatings ? p.ovrDrop : null,
 				showRatings ? p.potDrop : null,
 			],

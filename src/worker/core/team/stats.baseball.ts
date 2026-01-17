@@ -1,10 +1,9 @@
 import { helpers } from "../../util/index.ts";
 
-const rawAndOpp = [
+const raw = [
 	// Batting
 	"pts",
 	"pa",
-	"r",
 	"h",
 	"2b",
 	"3b",
@@ -55,7 +54,7 @@ const rawAndOpp = [
 	"csF",
 ] as const;
 
-const byPosAndOpp = [
+const byPos = [
 	// Fielding
 	"outsF",
 	"po",
@@ -72,16 +71,12 @@ const stats = {
 	raw: [
 		"gp",
 		"min",
-		...rawAndOpp,
-		...rawAndOpp.map(
-			(stat) => `opp${helpers.upperCaseFirstLetter(stat)}` as const,
-		),
+		...raw,
+		...raw.map((stat) => `opp${helpers.upperCaseFirstLetter(stat)}` as const),
 	] as const,
 	byPos: [
-		...byPosAndOpp,
-		...byPosAndOpp.map(
-			(stat) => `opp${helpers.upperCaseFirstLetter(stat)}` as const,
-		),
+		...byPos,
+		...byPos.map((stat) => `opp${helpers.upperCaseFirstLetter(stat)}` as const),
 	] as const,
 };
 

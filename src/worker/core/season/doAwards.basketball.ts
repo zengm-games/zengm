@@ -115,7 +115,7 @@ const getPlayoffSeriesMVP = (players: PlayerFiltered[], games: Game[]) => {
 	for (const game of games) {
 		for (const t of game.teams) {
 			for (const p of t.players) {
-				const info = playerInfos.get(p.pid) || {
+				const info = playerInfos.get(p.pid) ?? {
 					pid: p.pid,
 					score: 0,
 					tid: t.tid,
@@ -145,7 +145,7 @@ const getPlayoffSeriesMVP = (players: PlayerFiltered[], games: Game[]) => {
 		"desc",
 	);
 
-	if (playerArray.length === 0) {
+	if (!playerArray[0]) {
 		return;
 	}
 

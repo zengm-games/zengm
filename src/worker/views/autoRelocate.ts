@@ -48,8 +48,7 @@ const getRealignInfo = (
 	}
 
 	// Add any empty divs
-	for (let divIndex = 0; divIndex < divs.length; divIndex++) {
-		const div = divs[divIndex];
+	for (const [divIndex, div] of divs.entries()) {
 		const confIndex = confs.findIndex((conf) => conf.cid === div.cid);
 
 		if (!current[confIndex]) {
@@ -61,8 +60,8 @@ const getRealignInfo = (
 	}
 
 	// Indexed on divIndex, so there are gaps unless we filter out undefined. Then it's no longer indexed by divIndex but that's fine.
-	for (let confIndex = 0; confIndex < current.length; confIndex++) {
-		current[confIndex] = current[confIndex]
+	for (const [confIndex, currentConf] of current.entries()) {
+		current[confIndex] = currentConf
 			.filter((row) => row !== undefined)
 			.map((row) => orderBy(row, ["region", "name"]));
 	}
@@ -105,7 +104,7 @@ const updateRelocate = async (inputs: void, updateEvents: UpdateEvents) => {
 				did: -1,
 				abbrev: autoRelocate.abbrev,
 			},
-		])[0];
+		])[0]!;
 
 		const teams = (await idb.cache.teams.getAll()).filter((t) => !t.disabled);
 
@@ -127,8 +126,7 @@ const updateRelocate = async (inputs: void, updateEvents: UpdateEvents) => {
 				const confs = g.get("confs");
 				const divs = g.get("divs");
 
-				for (let i = 0; i < divs.length; i++) {
-					const div = divs[i];
+				for (const [i, div] of divs.entries()) {
 					const tids = autoRelocate.realigned[i];
 					if (tids) {
 						const confIndex = confs.findIndex((conf) => conf.cid === div.cid);

@@ -50,6 +50,7 @@ import headToHeadAll from "./headToHeadAll.ts";
 import history from "./history.ts";
 import historyAll from "./historyAll.ts";
 import importPlayers from "./importPlayers.ts";
+import importPlayersReal from "./importPlayersReal.ts";
 import inbox from "./inbox.ts";
 import injuries from "./injuries.ts";
 import leaders from "./leaders.ts";
@@ -88,6 +89,7 @@ import roster from "./roster.ts";
 import rosterContinuity from "./rosterContinuity.ts";
 import savedTrades from "./savedTrades.ts";
 import schedule from "./schedule.ts";
+import scheduleEditor from "./scheduleEditor.ts";
 import scheduledEvents from "./scheduledEvents.ts";
 import seasonPreview from "./seasonPreview.ts";
 import settings from "./settings.ts";
@@ -160,6 +162,7 @@ export default {
 	history,
 	historyAll,
 	importPlayers,
+	importPlayersReal,
 	injuries,
 	inbox,
 	leaders,
@@ -198,6 +201,7 @@ export default {
 	rosterContinuity,
 	savedTrades,
 	schedule,
+	scheduleEditor,
 	scheduledEvents,
 	seasonPreview,
 	settings,

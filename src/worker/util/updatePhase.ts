@@ -16,6 +16,7 @@ async function updatePhase(conditions?: Conditions) {
 	if (
 		g.get("phase") === PHASE.DRAFT_LOTTERY &&
 		(g.get("repeatSeason") ||
+			g.get("forceHistoricalRosters") ||
 			NO_LOTTERY_DRAFT_TYPES.includes(g.get("draftType")))
 	) {
 		text = "after playoffs";

@@ -142,7 +142,7 @@ class ViewManager {
 			if (action.url) {
 				// It's a "navigation event" if it is moving to a new page, rather than just changing some parameter of a page (like abbrev or season). So we need to get the id of this url and compare it to idLoaded.
 				let id;
-				const urlToMatch = action.url.split("?")[0].split("#")[0];
+				const urlToMatch = action.url.split("?")[0]!.split("#")[0]!;
 				for (const route of this.routes) {
 					const m = route.regex.exec(decodeURIComponent(urlToMatch));
 
@@ -222,11 +222,11 @@ class ViewManager {
 
 		const updateEvents = context.state.updateEvents ?? [];
 
-		let newLid: number | undefined;
+		let lidUrl: number | undefined;
 		if (typeof context.params.lid === "string") {
 			const newLidInt = Number.parseInt(context.params.lid);
 			if (!Number.isNaN(newLidInt)) {
-				newLid = newLidInt;
+				lidUrl = newLidInt;
 			}
 		}
 
@@ -243,23 +243,19 @@ class ViewManager {
 			};
 		}
 
-		const lid = local.getState().lid;
+		const lidCurrent = local.getState().lid;
 
-		if (inLeague) {
-			if (newLid !== lid && newLid !== undefined) {
-				await toWorker("main", "beforeViewLeague", {
-					newLid,
-					loadedLid: lid,
-				});
-			}
-		} else {
-			// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line no-lonely-if
-			if (lid !== undefined) {
-				await toWorker("main", "beforeViewNonLeague", undefined);
-				localActions.updateGameAttributes({
-					lid: undefined,
-				});
-			}
+		// Previously this was only called if necessary (switching to a new league, or leaving a league) but sometimes Safari seems to kill/restart the worker and then league state (g, idb) needs to be reset. And that can happen at any time!
+		await toWorker("main", "beforeView", {
+			inLeague,
+			lidCurrent,
+			lidUrl,
+		});
+
+		if (!inLeague && lidCurrent !== undefined) {
+			localActions.updateGameAttributes({
+				lid: undefined,
+			});
 		}
 
 		if (navigationSymbol !== this.lastNavigationSymbol) {

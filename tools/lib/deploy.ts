@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { setTimeout } from "node:timers/promises";
 import Cloudflare from "cloudflare";
 import { readFile } from "node:fs/promises";
 import { build } from "../build/build.ts";
@@ -6,16 +7,13 @@ import { bySport } from "./bySport.ts";
 import { getSport } from "./getSport.ts";
 
 const getSubdomain = () => {
-	const inputSubdomain = process.argv[2];
+	const inputSubdomain = process.argv[2] ?? "play";
 
 	// test is basketball-gm.com only
 	const validSubdomains = ["beta", "play", "test"];
 
 	if (validSubdomains.includes(inputSubdomain)) {
 		return inputSubdomain;
-	}
-	if (inputSubdomain === undefined) {
-		return "play";
 	}
 	throw new Error(
 		`Invalid subdomain ${inputSubdomain} - should be ${validSubdomains.join(
@@ -24,19 +22,36 @@ const getSubdomain = () => {
 	);
 };
 
-const mySpawn = (command: string, args: string[]) => {
-	return new Promise<void>((resolve) => {
+const NUM_RETRIES = 10;
+const mySpawn = async (command: string, args: string[]) => {
+	for (let attempt = 0; attempt <= NUM_RETRIES; attempt++) {
 		console.log(`${command} ${args.join(" ")}`);
 
-		const cmd = spawn(command, args, { shell: true, stdio: "inherit" });
-		cmd.on("close", (code) => {
-			if (code !== 0) {
-				console.log(`child process exited with code ${code}`);
-				process.exit(code);
-			}
-			resolve();
+		const exitCode = await new Promise<number | null>((resolve, reject) => {
+			const cmd = spawn(command, args, { stdio: "inherit" });
+
+			cmd.on("error", (error) => {
+				reject(error);
+			});
+			cmd.on("close", (code) => {
+				resolve(code);
+			});
 		});
-	});
+
+		if (exitCode === 0) {
+			// Success!
+			return;
+		}
+
+		if (exitCode === 255 && attempt < NUM_RETRIES) {
+			await setTimeout(2000);
+			console.log(
+				`Retrying after error code ${exitCode} (attempt #${attempt + 1})`,
+			);
+		} else {
+			throw new Error(`child process exited with code ${exitCode}`);
+		}
+	}
 };
 
 export const deploy = async () => {
@@ -65,7 +80,6 @@ export const deploy = async () => {
 	// .well-known is here because we never want to delete anything in it
 	const copyAndKeep = ["gen", "files", ".well-known"]; // MAKE SURE TO EXCLUDE FROM DELETION BELOW
 	for (const folder of copyAndKeep) {
-		console.log(`Copying ${folder}...`);
 		await mySpawn("rsync", [
 			"-hrl",
 			`./build/${folder}/`,
@@ -73,7 +87,6 @@ export const deploy = async () => {
 		]);
 	}
 
-	console.log("Copying other files...");
 	// files and leagues are here because real-player-data was briefly there in May 2020, so we don't want to delete them
 	const excludes = [
 		"--exclude",

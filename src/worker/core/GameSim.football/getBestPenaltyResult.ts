@@ -21,7 +21,7 @@ const getBestPenaltyResult = <
 
 	if (results.length === 1) {
 		// Happens with penalties on both teams, enforcement is automatic
-		return results[0];
+		return results[0]!;
 	}
 
 	const t2 = t === 0 ? 1 : 0;
@@ -29,7 +29,7 @@ const getBestPenaltyResult = <
 	const scores = results.map(({ state }) => {
 		const ptsScoredThisPlay = ([0, 1] as const).map(
 			(t) => state.pts[t] - initialState.pts[t],
-		);
+		) as [number, number];
 
 		// Does not handle situation where a tie is particularly desirable or not desirable for a team
 		let overtimeScore = 0;
@@ -162,7 +162,7 @@ const getBestPenaltyResult = <
 		];
 	});
 
-	const numScores = scores[0].length;
+	const numScores = scores[0]!.length;
 	const scoreIndexes = range(numScores);
 	const orders = ([...scoreIndexes] as any[]).fill("desc");
 	const orderedScores = orderBy(scores, scoreIndexes, orders);

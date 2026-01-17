@@ -123,7 +123,7 @@ const ExportPlayers = ({
 				pid: p.pid,
 				season,
 				skills: p.ratings.skills,
-				watch: p.watch,
+				defaultWatch: p.watch,
 				firstName: p.firstName,
 				firstNameShort: p.firstNameShort,
 				lastName: p.lastName,
@@ -298,7 +298,12 @@ const ExportPlayers = ({
 									size="lg"
 									variant="primary"
 								>
-									Export<span className="d-none d-sm-inline"> players</span>
+									Export
+									<span className="d-none d-sm-inline">
+										{" "}
+										{selected.length}{" "}
+										{helpers.plural("player", selected.length)}
+									</span>
 								</ActionButton>
 								<button
 									className="btn btn-secondary"

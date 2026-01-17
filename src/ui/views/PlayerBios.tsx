@@ -27,7 +27,7 @@ const PlayerBios = ({
 		jumpTo: true,
 		jumpToSeason: season,
 		dropdownView: "player_bios",
-		dropdownFields: { teamsAndAllWatch: abbrev, seasons: season },
+		dropdownFields: { teamsAndAllWatchPlayoffs: abbrev, seasons: season },
 	});
 
 	const cols = getCols([
@@ -69,7 +69,7 @@ const PlayerBios = ({
 					injury: p.injury,
 					season,
 					skills: p.ratings.skills,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,

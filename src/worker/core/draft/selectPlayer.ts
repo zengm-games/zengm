@@ -96,7 +96,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 			player.setContract(
 				p,
 				{
-					amount: rookieSalaries[i],
+					amount: rookieSalaries[i]!,
 					exp,
 					rookie: true,
 				},
@@ -199,7 +199,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 		score,
 	});
 
-	if (g.get("userTids").includes(dp.tid)) {
+	if (g.get("userTids").includes(dp.tid) && !g.get("spectator")) {
 		const t = await idb.cache.teams.get(dp.tid);
 		const onlyNewPlayers = t ? !t.keepRosterSorted : false;
 		await team.rosterAutoSort(dp.tid, onlyNewPlayers);

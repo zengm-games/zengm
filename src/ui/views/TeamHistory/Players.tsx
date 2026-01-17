@@ -91,7 +91,7 @@ const Players = ({
 					injury: p.injury,
 					jerseyNumber: p.jerseyNumber,
 					pid: p.pid,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,

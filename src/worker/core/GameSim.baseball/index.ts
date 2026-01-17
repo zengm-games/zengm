@@ -366,9 +366,7 @@ class GameSim extends GameSimBase {
 		let distance;
 
 		if (direction === "outOfPlay") {
-			// If it's obviously out of play, just log it as a foul ball immmediately
-			this.doFoul();
-
+			// If it's obviously out of play, no need to announce hit type, it'll just be logged as a foul right away
 			return {
 				type: "outOfPlay",
 			} as const;
@@ -672,7 +670,7 @@ class GameSim extends GameSimBase {
 
 			const mustAdvanceWithHitter = this.isForceOut(i, runners);
 
-			const pRunner = this.team[this.o].playersByPid[runner.pid];
+			const pRunner = this.team[this.o].playersByPid[runner.pid]!;
 			const hitToPos = POS_NUMBERS_INVERSE[hitTo];
 			const fielder = this.team[this.d].playersInGameByPos[hitToPos].p;
 
@@ -1135,7 +1133,7 @@ class GameSim extends GameSimBase {
 				3: 0.38,
 			},
 		};
-		let ballProb = BALL_PROB_BY_COUNT[this.strikes][this.balls];
+		let ballProb = BALL_PROB_BY_COUNT[this.strikes]![this.balls]!;
 
 		if (this.balls === NUM_BALLS_PER_WALK - 1) {
 			ballProb -= 0.2 * pitcher.compositeRating.controlPitcher;
@@ -1248,19 +1246,19 @@ class GameSim extends GameSimBase {
 			) as (typeof infielders)[number];
 
 			defenseWeights.infieldRange =
-				infoDefense[posToTakeRatingsFrom].infieldRange[0];
+				infoDefense[posToTakeRatingsFrom].infieldRange![0];
 			defenseWeights.groundBallDefense =
-				infoDefense[posToTakeRatingsFrom].groundBallDefense[0];
-			defenseWeights.arm = infoDefense[posToTakeRatingsFrom].arm[0];
+				infoDefense[posToTakeRatingsFrom].groundBallDefense![0];
+			defenseWeights.arm = infoDefense[posToTakeRatingsFrom].arm![0];
 		} else {
 			const posToTakeRatingsFrom = (
 				outfielders.includes(hitToPos as any) ? hitToPos : "LF"
 			) as (typeof outfielders)[number];
 
 			defenseWeights.outfieldRange =
-				infoDefense[posToTakeRatingsFrom].outfieldRange[0];
+				infoDefense[posToTakeRatingsFrom].outfieldRange![0];
 			defenseWeights.flyBallDefense =
-				infoDefense[posToTakeRatingsFrom].flyBallDefense[0];
+				infoDefense[posToTakeRatingsFrom].flyBallDefense![0];
 
 			if (battedBallInfo.type === "line") {
 				defenseWeights.groundBallDefense = defenseWeights.flyBallDefense;
@@ -1875,7 +1873,7 @@ class GameSim extends GameSimBase {
 					this.recordStat(this.d, pError, "e", 1, "fielding");
 					const pidError = pError.id;
 
-					this.outsIfNoErrorsByPitcherPid[pitcher.id] += 1;
+					this.outsIfNoErrorsByPitcherPid[pitcher.id]! += 1;
 					this.outsIfNoErrors += 1;
 
 					const runners = getRunners();
@@ -1952,16 +1950,17 @@ class GameSim extends GameSimBase {
 	}
 
 	doScore(runInfo: OccupiedBase, rbi?: PlayerGameSim) {
-		const pitcher =
-			this.team[this.d].playersByPid[runInfo.responsiblePitcherPid];
+		const responsiblePitcher =
+			this.team[this.d].playersByPid[runInfo.responsiblePitcherPid]!;
 
 		const unearned =
 			runInfo.reachedOnError ||
-			(this.outsIfNoErrorsByPitcherPid[pitcher.id] ?? 0) >= NUM_OUTS_PER_INNING;
+			(this.outsIfNoErrorsByPitcherPid[responsiblePitcher.id] ?? 0) >=
+				NUM_OUTS_PER_INNING;
 
-		this.recordStat(this.d, pitcher, "rPit");
+		this.recordStat(this.d, responsiblePitcher, "rPit");
 		if (!unearned) {
-			this.recordStat(this.d, pitcher, "er");
+			this.recordStat(this.d, responsiblePitcher, "er");
 		}
 
 		this.recordStat(this.o, runInfo.p, "r");
@@ -1975,7 +1974,9 @@ class GameSim extends GameSimBase {
 
 			// Game was just tied up, so this could be a blown save
 			if (this.team[this.d].saveSituation !== undefined) {
-				this.recordStat(this.d, pitcher, "bs");
+				// BS applies to the current pitcher in the game, not the pitcher responsible for the run
+				const currentPitcher = this.team[this.d].playersInGameByPos.P.p;
+				this.recordStat(this.d, currentPitcher, "bs");
 
 				// No longer save eligible
 				this.team[this.d].saveSituation = undefined;
@@ -1986,7 +1987,7 @@ class GameSim extends GameSimBase {
 		) {
 			// This run just broke the tie, now someone is winning
 			this.winEligiblePid = this.team[this.o].playersInGameByPos.P.p.id;
-			this.lossEligiblePid = pitcher.id;
+			this.lossEligiblePid = responsiblePitcher.id;
 		}
 	}
 
@@ -2096,7 +2097,7 @@ class GameSim extends GameSimBase {
 		if (this.outsIfNoErrorsByPitcherPid[pitcher.id] === undefined) {
 			this.outsIfNoErrorsByPitcherPid[pitcher.id] = 0;
 		}
-		this.outsIfNoErrorsByPitcherPid[pitcher.id] += 1;
+		this.outsIfNoErrorsByPitcherPid[pitcher.id]! += 1;
 		this.outsIfNoErrors += 1;
 	}
 
@@ -2143,7 +2144,7 @@ class GameSim extends GameSimBase {
 			homeCourtFactor *
 			helpers.bound(1 + g.get("homeCourtAdvantage") / 100, 0.01, Infinity);
 
-		for (let t = 0; t < 2; t++) {
+		for (const t of teamNums) {
 			let factor;
 
 			if (t === 0) {
@@ -2152,10 +2153,10 @@ class GameSim extends GameSimBase {
 				factor = 1.0 / homeCourtModifier; // Penalty for away team
 			}
 
-			for (let p = 0; p < this.team[t].t.player.length; p++) {
-				for (const r of Object.keys(this.team[t].t.player[p].compositeRating)) {
+			for (const p of this.team[t].t.player) {
+				for (const r of Object.keys(p.compositeRating)) {
 					if (r !== "endurance") {
-						this.team[t].t.player[p].compositeRating[r] *= factor;
+						p.compositeRating[r] *= factor;
 					}
 				}
 			}
@@ -2237,19 +2238,19 @@ class GameSim extends GameSimBase {
 			// @ts-expect-error
 			delete this.team[t].t.pace;
 
-			for (let p = 0; p < this.team[t].t.player.length; p++) {
+			for (const p of this.team[t].t.player) {
 				// @ts-expect-error
-				delete this.team[t].t.player[p].age;
+				delete p.age;
 				// @ts-expect-error
-				delete this.team[t].t.player[p].valueNoPot;
-				delete this.team[t].t.player[p].compositeRating;
+				delete p.valueNoPot;
+				delete p.compositeRating;
 				// @ts-expect-error
-				delete this.team[t].t.player[p].ptModifier;
-				delete this.team[t].t.player[p].stat.benchTime;
-				delete this.team[t].t.player[p].stat.courtTime;
-				delete this.team[t].t.player[p].stat.energy;
+				delete p.ptModifier;
+				delete p.stat.benchTime;
+				delete p.stat.courtTime;
+				delete p.stat.energy;
 				// @ts-expect-error
-				delete this.team[t].t.player[p].pFatigue;
+				delete p.pFatigue;
 			}
 
 			this.team[t] = this.team[t].t as any;
@@ -2384,17 +2385,6 @@ class GameSim extends GameSimBase {
 			return;
 		}
 
-		// Runners on 2nd and 3rd, less than 2 outs
-		if (
-			this.outs < 2 &&
-			!this.bases[0] &&
-			this.bases[1] &&
-			this.bases[2] &&
-			Math.random() < 0.5
-		) {
-			return true;
-		}
-
 		const batter = this.team[this.o].getBatter().p;
 		const onDeck = this.team[this.o].getOnDeck().p;
 		const score = (p: PlayerGameSim) =>
@@ -2403,10 +2393,9 @@ class GameSim extends GameSimBase {
 		const onDeckScore = score(onDeck);
 		const diffScore = batterScore - onDeckScore; // Each score ranges from 0 to 2, so the most this could be is 2
 
-		// Runner on just 2nd, less than 2 outs - maybe if the next hitter is worse
-		if (this.outs < 2 && !this.bases[0] && this.bases[1] && !this.bases[2]) {
-			const ibb = Math.random() < diffScore - 0.1;
-			return ibb;
+		// Runner on 2nd, 1st base empty - maybe if the next hitter is worse
+		if (this.outs < 2 && !this.bases[0] && this.bases[1]) {
+			return Math.random() < diffScore - 0.1;
 		}
 
 		// If the current batter is just very scary
@@ -2479,7 +2468,7 @@ class GameSim extends GameSimBase {
 			this.recordStat(teamNum, on, "gpPit");
 
 			t.saveSituation = this.isSaveSituation(teamNum);
-			this.outsIfNoErrorsByPitcherPid[on.id] += this.outsIfNoErrors;
+			this.outsIfNoErrorsByPitcherPid[on.id]! += this.outsIfNoErrors;
 		}
 
 		this.recordStat(teamNum, on, "gp");
@@ -2557,8 +2546,8 @@ class GameSim extends GameSimBase {
 
 		if (this.inning > 3) {
 			const runsPerOut =
-				pitcher.seasonStats.outs > 0
-					? pitcher.seasonStats.er / pitcher.seasonStats.outs
+				pitcher.seasonStats.outs! > 0
+					? pitcher.seasonStats.er! / pitcher.seasonStats.outs!
 					: 4 / 27;
 			const excessRuns = pitcher.stat.rPit - pitcher.stat.outs * runsPerOut;
 			if (excessRuns > (starterIsIn ? 3 : 1)) {
@@ -2599,7 +2588,7 @@ class GameSim extends GameSimBase {
 			}
 
 			// Actually apply the substitution
-			this.substitution(this.d, t.playersInGame[pitcher.id], candidate.p);
+			this.substitution(this.d, t.playersInGame[pitcher.id]!, candidate.p);
 			this.playByPlay.logEvent({
 				type: "reliefPitcher",
 				pidOn: candidate.p.id,
@@ -2635,7 +2624,7 @@ class GameSim extends GameSimBase {
 			const p = info.p.p;
 
 			const injuryRate =
-				getInjuryRate(this.baseInjuryRate, p.age, p.injury.playingThrough) *
+				getInjuryRate(this.baseInjuryRate, p.age, p.injury.gamesRemaining > 0) *
 				info.weight;
 
 			if (Math.random() < injuryRate) {
@@ -2753,7 +2742,7 @@ class GameSim extends GameSimBase {
 
 		if (p !== undefined) {
 			if (type === "fielding") {
-				const pos = this.team[t].playersInGame[p.id].pos;
+				const pos = this.team[t].playersInGame[p.id]!.pos;
 				const posIndex = POS_NUMBERS[pos] - 1;
 
 				if (p.stat[s][posIndex] === undefined) {
@@ -2768,7 +2757,13 @@ class GameSim extends GameSimBase {
 		// Filter out stats that don't get saved to box score
 		if (s !== "courtTime" && s !== "benchTime" && s !== "energy") {
 			// Filter out stats that are only for player, not team
-			if (s !== "gsF" && s !== "gpF" && s !== "poSo" && s !== "cgF") {
+			if (
+				s !== "gp" &&
+				s !== "gsF" &&
+				s !== "gpF" &&
+				s !== "poSo" &&
+				s !== "cgF"
+			) {
 				if (s === "r") {
 					this.team[t].t.stat.pts += amt;
 					this.team[t].t.stat.ptsQtrs[qtr] += amt;
@@ -2780,7 +2775,7 @@ class GameSim extends GameSimBase {
 						this.team[t].t.stat.er += amt;
 					}
 				} else if (type === "fielding") {
-					const pos = this.team[t].playersInGame[p!.id].pos;
+					const pos = this.team[t].playersInGame[p!.id]!.pos;
 					const posIndex = POS_NUMBERS[pos] - 1;
 
 					if (this.team[t].t.stat[s][posIndex] === undefined) {

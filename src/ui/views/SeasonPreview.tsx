@@ -50,7 +50,7 @@ const PlayerList = ({
 							season={season}
 							pos={p.ratings.pos}
 							skills={p.ratings.skills}
-							watch={p.watch}
+							defaultWatch={p.watch}
 							firstName={p.firstName}
 							lastName={p.lastName}
 						/>
@@ -110,15 +110,11 @@ const PlayerList = ({
 
 const TeamList = ({
 	challengeNoRatings,
-	numPlayoffRounds,
-	playoffsByConf,
 	teams,
 	season,
 	userTid,
 }: {
 	challengeNoRatings: boolean;
-	numPlayoffRounds: number;
-	playoffsByConf: boolean;
 	teams: View<"seasonPreview">["teamsTop"];
 	season: number;
 	userTid: number;
@@ -168,10 +164,8 @@ const TeamList = ({
 								abbrev={t.abbrev}
 								lost={t.lastSeason.lost}
 								option="noSeason"
-								playoffsByConf={playoffsByConf}
-								numPlayoffRounds={numPlayoffRounds}
 								otl={t.lastSeason.otl}
-								playoffRoundsWon={t.lastSeason.playoffRoundsWon}
+								roundsWonText={t.lastSeason.roundsWonText}
 								season={season - 1}
 								tid={t.tid}
 								tied={t.lastSeason.tied}
@@ -186,7 +180,7 @@ const TeamList = ({
 								season={season}
 								pos={p.ratings.pos}
 								skills={p.ratings.skills}
-								watch={p.watch}
+								defaultWatch={p.watch}
 								firstName={p.firstName}
 								lastName={p.lastName}
 							/>
@@ -207,13 +201,11 @@ const TeamList = ({
 
 const SeasonPreview = ({
 	challengeNoRatings,
-	numPlayoffRounds,
 	playersDeclining,
 	playersImproving,
 	playersNewTeam,
 	playersTop,
 	playersTopRookies,
-	playoffsByConf,
 	season,
 	teamsDeclining,
 	teamsImproving,
@@ -273,8 +265,6 @@ const SeasonPreview = ({
 						<h2>Top Teams</h2>
 						<TeamList
 							challengeNoRatings={challengeNoRatings}
-							numPlayoffRounds={numPlayoffRounds}
-							playoffsByConf={playoffsByConf}
 							teams={teamsTop}
 							season={season}
 							userTid={userTid}
@@ -284,8 +274,6 @@ const SeasonPreview = ({
 						<h2>Improving Teams</h2>
 						<TeamList
 							challengeNoRatings={challengeNoRatings}
-							numPlayoffRounds={numPlayoffRounds}
-							playoffsByConf={playoffsByConf}
 							teams={teamsImproving}
 							season={season}
 							userTid={userTid}
@@ -295,8 +283,6 @@ const SeasonPreview = ({
 						<h2>Declining Teams</h2>
 						<TeamList
 							challengeNoRatings={challengeNoRatings}
-							numPlayoffRounds={numPlayoffRounds}
-							playoffsByConf={playoffsByConf}
 							teams={teamsDeclining}
 							season={season}
 							userTid={userTid}

@@ -2,6 +2,7 @@ import { idb } from "../index.ts";
 import { maybeDeepCopy, mergeByPk } from "./helpers.ts";
 import { g } from "../../util/index.ts";
 import type { GetCopyType, TeamSeason } from "../../../common/types.ts";
+import { NUM_PRIOR_SEASONS_TEAM_SEASONS } from "../Cache.ts";
 
 const getCopies = async (
 	{
@@ -32,15 +33,16 @@ const getCopies = async (
 
 	if (tid !== undefined && season !== undefined) {
 		// Return array of length 1
-		let teamSeason = maybeDeepCopy(
-			await idb.cache.teamSeasons.indexGet("teamSeasonsBySeasonTid", [
-				season,
-				tid,
-			]),
-			type,
-		);
-
-		if (!teamSeason) {
+		let teamSeason;
+		if (season >= g.get("season") - NUM_PRIOR_SEASONS_TEAM_SEASONS) {
+			teamSeason = maybeDeepCopy(
+				await idb.cache.teamSeasons.indexGet("teamSeasonsBySeasonTid", [
+					season,
+					tid,
+				]),
+				type,
+			);
+		} else {
 			teamSeason = await idb.league
 				.transaction("teamSeasons")
 				.store.index("season, tid")
@@ -55,7 +57,7 @@ const getCopies = async (
 
 	if (tid === undefined) {
 		if (season !== undefined) {
-			if (season >= g.get("season") - 2) {
+			if (season >= g.get("season") - NUM_PRIOR_SEASONS_TEAM_SEASONS) {
 				// Single season, from cache
 				return maybeDeepCopy(
 					await idb.cache.teamSeasons.indexGetAll("teamSeasonsBySeasonTid", [

@@ -28,6 +28,7 @@ export const setTeamInfo = async (
 		const ind = t.tid === -1 ? 0 : 1;
 
 		if (allStars.type === "byConf" || allStars.type === "top") {
+			t.region = "";
 			t.name = allStars.teamNames[ind];
 		} else {
 			// Covers type==="draft" and undefind type, from when draft was the only option
@@ -148,7 +149,7 @@ const boxScore = async (gid: number) => {
 		}
 	}
 
-	for (let i = 0; i < game.teams.length; i++) {
+	for (const i of [0, 1] as const) {
 		const t = game.teams[i];
 		await setTeamInfo(t, i, allStars, game);
 
@@ -189,6 +190,7 @@ const boxScore = async (gid: number) => {
 			name: game.teams[wonInd].name,
 			abbrev: game.teams[wonInd].abbrev,
 			imgURL: game.teams[wonInd].imgURL,
+			imgURLSmall: game.teams[wonInd].imgURLSmall,
 			won: game.teams[wonInd].won,
 			lost: game.teams[wonInd].lost,
 			tied: game.teams[wonInd].tied,
@@ -201,6 +203,7 @@ const boxScore = async (gid: number) => {
 			name: game.teams[lostInd].name,
 			abbrev: game.teams[lostInd].abbrev,
 			imgURL: game.teams[lostInd].imgURL,
+			imgURLSmall: game.teams[lostInd].imgURLSmall,
 			won: game.teams[lostInd].won,
 			lost: game.teams[lostInd].lost,
 			tied: game.teams[lostInd].tied,
@@ -277,8 +280,8 @@ export const loadAbbrevs = async (season: number) => {
 	// If no old abbrevs found, or if this is the current season, use cache
 	if (!loaded) {
 		const teamInfoCache = g.get("teamInfoCache");
-		for (let tid = 0; tid < teamInfoCache.length; tid++) {
-			abbrevs[tid] = teamInfoCache[tid].abbrev;
+		for (const [tid, t] of teamInfoCache.entries()) {
+			abbrevs[tid] = t.abbrev;
 		}
 	}
 
@@ -343,7 +346,7 @@ const updateGamesList = async (
 			games = newGames;
 		} else {
 			for (let i = newGames.length - 1; i >= 0; i--) {
-				games.unshift(newGames[i]);
+				games.unshift(newGames[i]!);
 			}
 		}
 

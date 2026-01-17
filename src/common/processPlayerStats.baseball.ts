@@ -185,7 +185,7 @@ const processStats = (
 		} else if (stat === "inn") {
 			row[stat] = derivedByPosStat((i) => outsToInnings(ps.outsF[i]));
 		} else if (stat === "babip") {
-			row[stat] = helpers.ratio(ps.h - ps.hr, ab - ps.so - ps.hr - ps.sf);
+			row[stat] = helpers.ratio(ps.h - ps.hr, ab - ps.so - ps.hr + ps.sf);
 		} else if (stat === "iso") {
 			row[stat] = helpers.ratio(tb - ps.h, ab);
 		} else {

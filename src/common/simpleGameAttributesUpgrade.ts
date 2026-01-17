@@ -52,12 +52,27 @@ const simpleGameAttributesUpgrade = (
 					start: row.start,
 					value: row.value ? 1 : null,
 				};
-			});
+			}) as any;
 		}
 
 		gameAttributes.maxOvertimes = maxOvertimes;
+
+		delete (gameAttributes as any).ties;
 	}
-	delete (gameAttributes as any).ties;
+
+	const autoDeleteOldBoxScores = (gameAttributes as any)
+		.autoDeleteOldBoxScores as boolean | undefined;
+	if (autoDeleteOldBoxScores !== undefined) {
+		// If autoDeleteOldBoxScores was true, just let the new default apply. Only override if it was false
+		if (autoDeleteOldBoxScores === false) {
+			gameAttributes.saveOldBoxScores = {
+				pastSeasons: "all",
+				pastSeasonsType: "all",
+			};
+		}
+
+		delete (gameAttributes as any).autoDeleteOldBoxScores;
+	}
 };
 
 export default simpleGameAttributesUpgrade;

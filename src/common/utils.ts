@@ -9,6 +9,7 @@ const getValueByIteratee = (iteratee: any, item: any) => {
 	return item[iteratee];
 };
 
+// Chrome 117, Firefox 119, Safari 17.4 - replace groupBy and groupByMap with built-in, rename groupByUnique to keyBy or something
 export const groupBy = <T extends Record<string, unknown>>(
 	rows: T[],
 	key: string | ((row: T) => string | number),
@@ -17,10 +18,32 @@ export const groupBy = <T extends Record<string, unknown>>(
 
 	for (const row of rows) {
 		const keyValue = getValueByIteratee(key, row);
-		if (Object.hasOwn(grouped, keyValue)) {
+		if (grouped[keyValue]) {
 			grouped[keyValue].push(row);
 		} else {
 			grouped[keyValue] = [row];
+		}
+	}
+
+	return grouped;
+};
+
+export const groupByMap = <
+	T extends Record<string, unknown>,
+	Key extends string | number,
+>(
+	rows: T[],
+	key: string | ((row: T) => Key),
+) => {
+	const grouped = new Map<Key, T[]>();
+
+	for (const row of rows) {
+		const keyValue = getValueByIteratee(key, row);
+		const array = grouped.get(keyValue);
+		if (array) {
+			array.push(row);
+		} else {
+			grouped.set(keyValue, [row]);
 		}
 	}
 
@@ -91,17 +114,17 @@ export const maxBy = maxMinByFactory("max");
 
 export const minBy = maxMinByFactory("min");
 
-export const omit = <T extends Record<string, unknown>, U extends keyof T>(
+export const omit = <T extends Record<string, unknown>, U extends (keyof T)[]>(
 	object: T,
 	remove: U,
 ) => {
 	const output: any = {};
 	for (const key of Object.keys(object)) {
-		if (remove !== key) {
+		if (!remove.includes(key)) {
 			output[key] = object[key];
 		}
 	}
-	return output as Omit<T, U>;
+	return output as Omit<T, U[number]>;
 };
 
 export const countBy = <T>(
@@ -144,6 +167,15 @@ const createSortFunction = <Item, Key extends OrderByKey<Item>>(
 
 			const descending = order === "desc";
 
+			const typeA = typeof valueA;
+			const typeB = typeof valueB;
+			if (typeA === "number" && typeB === "string") {
+				return descending ? -1 : 1;
+			}
+			if (typeA === "string" && typeB === "number") {
+				return descending ? 1 : -1;
+			}
+
 			if (valueA < valueB) {
 				return descending ? 1 : -1;
 			}
@@ -173,3 +205,11 @@ export const orderBy = <Item, Key extends OrderByKey<Item>>(
 
 type OrderByParams = Parameters<typeof orderBy>;
 export type OrderBySortParams = [OrderByParams[1], OrderByParams[2]];
+
+export const chunk = <T>(array: T[], chunkSize: number): T[][] => {
+	const chunks: T[][] = [];
+	for (let i = 0; i < array.length; i += chunkSize) {
+		chunks.push(array.slice(i, i + chunkSize));
+	}
+	return chunks;
+};

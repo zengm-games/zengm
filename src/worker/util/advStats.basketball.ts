@@ -55,7 +55,7 @@ const calculateOnOff = (players: any[], teamsByTid: Record<string, Team>) => {
 
 	for (let i = 0; i < players.length; i++) {
 		const ps = players[i].stats;
-		const t = teamsByTid[players[i].tid];
+		const t = teamsByTid[players[i].tid]!;
 
 		const tminAvg = t.stats.min / numPlayersOnCourt;
 		const onPerMin = ps.pm / (ps.min + 1e-6);
@@ -159,8 +159,8 @@ const calculatePER = (
 			uPER = 0;
 		}
 
-		aPER[i] = paceAdj[t.tid] * uPER;
-		league.aPER += aPER[i] * players[i].stats.min;
+		aPER[i] = paceAdj[t.tid]! * uPER;
+		league.aPER += aPER[i]! * players[i].stats.min;
 		mins[i] = players[i].stats.min; // Save for EWA calculation
 	}
 
@@ -175,7 +175,7 @@ const calculatePER = (
 		(defaultGameAttributes.numPeriods * defaultGameAttributes.quarterLength);
 	for (let i = 0; i < players.length; i++) {
 		EWA[i] = getEWA(
-			PER[i],
+			PER[i]!,
 			players[i].stats.min,
 			players[i].ratings.pos,
 			gameLengthFactor,
@@ -287,7 +287,7 @@ const calculateBPM = (
 		if (!t) {
 			throw new Error("No team found");
 		}
-		const team_pts_tsa = teamAverages[players[i].tid].ptsTSA;
+		const team_pts_tsa = teamAverages[players[i].tid]!.ptsTSA;
 
 		const p = players[i].stats;
 		const tsa = p.fga + p.fta * 0.44;
@@ -295,7 +295,7 @@ const calculateBPM = (
 		const adj_pts = (pts_tsa - team_pts_tsa + 1) * tsa;
 		const poss = 1e-6 + (p.min * t.stats.pace) / 48;
 		const thresh_pts = tsa * (pts_tsa - (team_pts_tsa - 0.33));
-		teamAverages[players[i].tid].teamThresh += thresh_pts;
+		teamAverages[players[i].tid]!.teamThresh += thresh_pts;
 		playerPoss[i] = poss;
 		adjPts[i] = adj_pts;
 		threshPts[i] = thresh_pts;
@@ -328,7 +328,8 @@ const calculateBPM = (
 		const pfp = t.stats.pf > 0 ? p.pf / t.stats.pf / minp : 0;
 		const astp = t.stats.ast > 0 ? p.ast / t.stats.ast / minp : 0;
 		const blkp = t.stats.blk > 0 ? p.blk / t.stats.blk / minp : 0;
-		const thsp = threshPts[i] / teamAverages[players[i].tid].teamThresh / minp;
+		const thsp =
+			threshPts[i]! / teamAverages[players[i].tid]!.teamThresh / minp;
 
 		const est_pos1 =
 			2.13 +
@@ -339,32 +340,32 @@ const calculateBPM = (
 			1.667 * blkp;
 		const min_adj1 = (est_pos1 * p.min + prl * 50) / (50 + p.min);
 		const trim1 = Math.max(1, Math.min(min_adj1, 5));
-		teamAverages[players[i].tid].trim1t += trim1;
-		teamAverages[players[i].tid].trim1c += 1;
+		teamAverages[players[i].tid]!.trim1t += trim1;
+		teamAverages[players[i].tid]!.trim1c += 1;
 		playerPos[i] = min_adj1;
 		playerMin[i] = minp;
 
 		const orole = 6 - 6.642 * astp - 8.544 * thsp;
 		const orole_min1 = (orole * p.min + 4 * 50) / (50 + p.min);
 		const otrim1 = Math.max(1, Math.min(orole_min1, 5));
-		teamAverages[players[i].tid].trim2t += otrim1;
-		teamAverages[players[i].tid].trim2c += 1;
+		teamAverages[players[i].tid]!.trim2t += otrim1;
+		teamAverages[players[i].tid]!.trim2c += 1;
 		playerRole[i] = orole_min1;
 	}
 
 	// Do a converging iteration, BPM usually does 2 but this is just 1
 	for (let i = 0; i < players.length; i++) {
 		const trim2 =
-			playerPos[i] -
-			(teamAverages[players[i].tid].trim1t /
-				teamAverages[players[i].tid].trim1c -
+			playerPos[i]! -
+			(teamAverages[players[i].tid]!.trim1t /
+				teamAverages[players[i].tid]!.trim1c -
 				3);
 		playerPos[i] = Math.max(1, Math.min(trim2, 5));
 
 		const orole2 =
-			playerRole[i] -
-			(teamAverages[players[i].tid].trim2t /
-				teamAverages[players[i].tid].trim2c -
+			playerRole[i]! -
+			(teamAverages[players[i].tid]!.trim2t /
+				teamAverages[players[i].tid]!.trim2c -
 				3);
 		playerRole[i] = Math.max(1, Math.min(orole2, 5));
 	}
@@ -391,11 +392,11 @@ const calculateBPM = (
 
 	for (let i = 0; i < players.length; i++) {
 		const p = players[i].stats;
-		const role = playerRole[i];
-		const pos = playerPos[i];
+		const role = playerRole[i]!;
+		const pos = playerPos[i]!;
 
-		const poss = playerPoss[i];
-		const pts100 = (adjPts[i] / poss) * 100;
+		const poss = playerPoss[i]!;
+		const pts100 = (adjPts[i]! / poss) * 100;
 		const fga100 = (p.fga / poss) * 100;
 		const fta100 = (p.fta / poss) * 100;
 		const tp100 = (p.tp / poss) * 100;
@@ -408,7 +409,7 @@ const calculateBPM = (
 		const orb100 = (p.orb / poss) * 100;
 		const drb100 = (p.drb / poss) * 100;
 		const trb100 = (p.trb / poss) * 100;
-		const minp = playerMin[i];
+		const minp = playerMin[i]!;
 
 		const coeffsBPM: number[] = [];
 		const coeffsORBPM: number[] = [];
@@ -426,63 +427,64 @@ const calculateBPM = (
 			const posB = j === 1 || j === 2 ? role : pos;
 
 			coeffsBPM[j] =
-				((5 - posB) / 4) * coeffsBPM1[j] + ((posB - 1) / 4) * coeffsBPM5[j];
+				((5 - posB) / 4) * coeffsBPM1[j]! + ((posB - 1) / 4) * coeffsBPM5[j]!;
 			coeffsORBPM[j] =
-				((5 - posB) / 4) * coeffsORBPM1[j] + ((posB - 1) / 4) * coeffsORBPM5[j];
+				((5 - posB) / 4) * coeffsORBPM1[j]! +
+				((posB - 1) / 4) * coeffsORBPM5[j]!;
 		}
 
 		const scoring =
-			pts100 * coeffsBPM[0] +
-			fga100 * coeffsBPM[1] +
-			fta100 * coeffsBPM[2] +
-			tp100 * coeffsBPM[3];
+			pts100 * coeffsBPM[0]! +
+			fga100 * coeffsBPM[1]! +
+			fta100 * coeffsBPM[2]! +
+			tp100 * coeffsBPM[3]!;
 		const scoring2 =
-			pts100 * coeffsORBPM[0] +
-			fga100 * coeffsORBPM[1] +
-			fta100 * coeffsORBPM[2] +
-			tp100 * coeffsORBPM[3];
+			pts100 * coeffsORBPM[0]! +
+			fga100 * coeffsORBPM[1]! +
+			fta100 * coeffsORBPM[2]! +
+			tp100 * coeffsORBPM[3]!;
 
-		const ballhandle = ast100 * coeffsBPM[4] + to100 * coeffsBPM[5];
-		const ballhandle2 = ast100 * coeffsORBPM[4] + to100 * coeffsORBPM[5];
+		const ballhandle = ast100 * coeffsBPM[4]! + to100 * coeffsBPM[5]!;
+		const ballhandle2 = ast100 * coeffsORBPM[4]! + to100 * coeffsORBPM[5]!;
 
 		const defense =
-			orb100 * coeffsBPM[6] +
-			drb100 * coeffsBPM[7] +
-			trb100 * coeffsBPM[8] +
-			stl100 * coeffsBPM[9] +
-			blk100 * coeffsBPM[10] +
-			pf100 * coeffsBPM[11];
+			orb100 * coeffsBPM[6]! +
+			drb100 * coeffsBPM[7]! +
+			trb100 * coeffsBPM[8]! +
+			stl100 * coeffsBPM[9]! +
+			blk100 * coeffsBPM[10]! +
+			pf100 * coeffsBPM[11]!;
 		const defense2 =
-			orb100 * coeffsORBPM[6] +
-			drb100 * coeffsORBPM[7] +
-			trb100 * coeffsORBPM[8] +
-			stl100 * coeffsORBPM[9] +
-			blk100 * coeffsORBPM[10] +
-			pf100 * coeffsORBPM[11];
+			orb100 * coeffsORBPM[6]! +
+			drb100 * coeffsORBPM[7]! +
+			trb100 * coeffsORBPM[8]! +
+			stl100 * coeffsORBPM[9]! +
+			blk100 * coeffsORBPM[10]! +
+			pf100 * coeffsORBPM[11]!;
 		const rawBPM = scoring + ballhandle + defense + interBPM;
 		const rawOBPM = scoring2 + ballhandle2 + defense2 + interORBPM;
 
 		BPM[i] = rawBPM;
 		OBPM[i] = rawOBPM;
 
-		teamAverages[players[i].tid].teamBPM += rawBPM * minp;
-		teamAverages[players[i].tid].teamOBPM += rawOBPM * minp;
+		teamAverages[players[i].tid]!.teamBPM += rawBPM * minp;
+		teamAverages[players[i].tid]!.teamOBPM += rawOBPM * minp;
 	}
 
 	for (const t of teams) {
-		teamAverages[t.tid].teamAdjBPM =
-			(teamAverages[t.tid].tmRate - teamAverages[t.tid].teamBPM) /
+		teamAverages[t.tid]!.teamAdjBPM =
+			(teamAverages[t.tid]!.tmRate - teamAverages[t.tid]!.teamBPM) /
 			numPlayersOnCourt;
-		teamAverages[t.tid].teamAdjOBPM =
-			(teamAverages[t.tid].ofRate - teamAverages[t.tid].teamOBPM) /
+		teamAverages[t.tid]!.teamAdjOBPM =
+			(teamAverages[t.tid]!.ofRate - teamAverages[t.tid]!.teamOBPM) /
 			numPlayersOnCourt;
 	}
 	const DBPM: number[] = [];
 	const VORP: number[] = [];
 	for (let i = 0; i < players.length; i++) {
-		BPM[i] += teamAverages[players[i].tid].teamAdjBPM;
-		OBPM[i] += teamAverages[players[i].tid].teamAdjOBPM;
-		DBPM[i] = BPM[i] - OBPM[i];
+		BPM[i]! += teamAverages[players[i].tid]!.teamAdjBPM;
+		OBPM[i]! += teamAverages[players[i].tid]!.teamAdjOBPM;
+		DBPM[i] = BPM[i]! - OBPM[i]!;
 
 		const t = teamsByTid[players[i].tid];
 		if (!t) {
@@ -490,7 +492,7 @@ const calculateBPM = (
 		}
 
 		VORP[i] =
-			((BPM[i] + 2) * playerMin[i] * t.stats.gp) /
+			((BPM[i]! + 2) * playerMin[i]! * t.stats.gp) /
 			defaultGameAttributes.numGames.at(-1)!.value;
 	}
 
@@ -652,7 +654,7 @@ const calculateRatings = (
 			const marginalDefense =
 				(p.stats.min / t.stats.min) *
 				t.stats.poss *
-				(1.08 * (league.pts / league.poss) - drtg[i] / 100);
+				(1.08 * (league.pts / league.poss) - drtg[i]! / 100);
 			const marginalPtsPerWin =
 				0.32 * (league.pts / league.gp) * (t.stats.pace / league.pace);
 			dws[i] = marginalDefense / marginalPtsPerWin;

@@ -3,6 +3,9 @@ import { g } from "../util/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { getPlayers } from "./playerRatings.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { idb } from "../db/index.ts";
+import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
+import { actualPhase } from "../util/actualPhase.ts";
 
 const updateInjuries = async (
 	inputs: ViewInput<"injuries">,
@@ -63,6 +66,26 @@ const updateInjuries = async (
 		}
 
 		const userTid = g.get("userTid");
+
+		if (inputs.season === "current") {
+			const teams = await idb.cache.teams.getAll();
+			const playingThrough: Record<number, number> = {};
+			const index = actualPhase() === PHASE.PLAYOFFS ? 1 : 0;
+			for (const t of teams) {
+				if (t.disabled) {
+					continue;
+				}
+
+				playingThrough[t.tid] = getActualPlayThroughInjuries(t)[index];
+			}
+
+			for (const injury of injuries) {
+				const cutoff = playingThrough[injury.tid];
+				if (cutoff !== undefined && injury.games <= cutoff) {
+					injury.playingThrough = true;
+				}
+			}
+		}
 
 		return {
 			abbrev: inputs.abbrev,

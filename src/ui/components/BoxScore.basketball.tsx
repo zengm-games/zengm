@@ -38,8 +38,8 @@ const StatsTable = ({
 			if (
 				newSortBys.length === 1 &&
 				prevSortBys.length === 1 &&
-				newSortBys[0][0] === prevSortBys[0][0] &&
-				newSortBys[0][1] === "desc"
+				newSortBys[0]![0] === prevSortBys[0]![0] &&
+				newSortBys[0]![1] === "desc"
 			) {
 				// User just clicked twice on the same column. Reset sort.
 				return [];
@@ -126,6 +126,7 @@ const StatsTable = ({
 		);
 	}
 
+	const allStarGame = t.tid === -1 || t.tid === -2;
 	const players = [...playersActiveOrPlayed, ...playersInjuredOrDNP];
 
 	return (
@@ -147,6 +148,7 @@ const StatsTable = ({
 				<tbody>
 					{players.map((p, i) => (
 						<Row
+							allStarGame={allStarGame}
 							key={p.pid}
 							exhibition={exhibition}
 							lastStarter={sortBys.length === 0 && i + 1 === numPlayersOnCourt}

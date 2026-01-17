@@ -12,7 +12,7 @@ import {
 } from "../../util/index.ts";
 import { godModeRequiredMessage } from "./SettingsFormOptions.tsx";
 import clsx from "clsx";
-import { SPORT_HAS_REAL_PLAYERS } from "../../../common/index.ts";
+import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import Modal from "../../components/Modal.tsx";
 
 type Rows<Type> = Type extends "injuries" ? InjuriesSetting : TragicDeaths;
@@ -32,7 +32,7 @@ type RowsState<Type> = Type extends "injuries"
 const formatRows = <Type extends "injuries" | "tragicDeaths">(
 	rows: Rows<Type>,
 ): RowsState<Type> => {
-	const keys = Object.keys(rows[0]) as any[];
+	const keys = Object.keys(rows[0]!) as any[];
 	return rows.map((row: any) => {
 		const formatted = {
 			id: Math.random(),
@@ -224,6 +224,21 @@ const Controls = <Type extends "injuries" | "tragicDeaths">({
 								}}
 							>
 								Clear
+							</Dropdown.Item>
+							<Dropdown.Item
+								onClick={() => {
+									setRows(
+										// @ts-expect-error
+										rows.map((row) => {
+											return {
+												...row,
+												frequency: "1",
+											};
+										}),
+									);
+								}}
+							>
+								Set all frequencies to 1
 							</Dropdown.Item>
 						</Dropdown.Menu>
 					</Dropdown>
@@ -441,7 +456,7 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 								<code>SPECIAL_GIFTS</code> because internally they have some
 								randomly generated parts.
 							</p>
-							{SPORT_HAS_REAL_PLAYERS ? (
+							{REAL_PLAYERS_INFO ? (
 								<p>
 									If you're using the built-in rosters with real players, please
 									be aware that real players can never experience tragic deaths.

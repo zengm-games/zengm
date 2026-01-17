@@ -17,13 +17,24 @@ import { g, helpers, local, logEvent } from "../../util/index.ts";
 import type { Conditions, PhaseReturn } from "../../../common/types.ts";
 import { orderBy } from "../../../common/utils.ts";
 
+export const FREE_AGENCY_DAYS = 30;
+
 const newPhaseResignPlayers = async (
 	conditions: Conditions,
 ): Promise<PhaseReturn> => {
 	// In case some weird situation results in games still in the schedule, clear them
 	await idb.cache.schedule.clear();
 
-	await idb.cache.negotiations.clear();
+	// Clear any negotiations that still somehow exist, except if it's a re-signing negotiation for the user, because that could be from a prior failed attempt to run this function and we want to keep those guys. (Would rather have phase updates be transactional, but oh well.)
+	const existingNegotiations = await idb.cache.negotiations.getAll();
+	const userTids = g.get("userTids");
+	for (const negotiation of existingNegotiations) {
+		if (negotiation.resigning && userTids.includes(negotiation.tid)) {
+			continue;
+		}
+
+		await idb.cache.negotiations.delete(negotiation.pid);
+	}
 
 	const repeatSeasonType = g.get("repeatSeason")?.type;
 
@@ -33,14 +44,15 @@ const newPhaseResignPlayers = async (
 		"playersByTid",
 		PLAYER.FREE_AGENT,
 	);
-	const undraftedPlayers = !repeatSeasonType
-		? (
-				await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
-					[g.get("season")],
-					[g.get("season"), Infinity],
-				])
-			).filter((p) => p.tid === PLAYER.UNDRAFTED)
-		: [];
+	const undraftedPlayers =
+		!repeatSeasonType && !g.get("forceHistoricalRosters")
+			? (
+					await idb.cache.players.indexGetAll("playersByDraftYearRetiredYear", [
+						[g.get("season")],
+						[g.get("season"), Infinity],
+					])
+				).filter((p) => p.tid === PLAYER.UNDRAFTED)
+			: [];
 
 	for (const p of [...existingFreeAgents, ...undraftedPlayers]) {
 		player.addToFreeAgents(p);
@@ -93,7 +105,7 @@ const newPhaseResignPlayers = async (
 		}
 	}
 
-	const payrollsByTid = new Map();
+	const payrollsByTid = new Map<number, number>();
 
 	if (g.get("salaryCapType") === "hard") {
 		for (let tid = 0; tid < g.get("numTeams"); tid++) {
@@ -192,13 +204,12 @@ const newPhaseResignPlayers = async (
 			const pos = p.ratings.at(-1)!.pos;
 
 			if (g.get("salaryCapType") === "hard") {
+				if (payroll === undefined) {
+					throw new Error(
+						"Payroll should always be defined if there is a hard cap",
+					);
+				}
 				if (contract.amount + payroll > g.get("salaryCap")) {
-					if (payroll === undefined) {
-						throw new Error(
-							"Payroll should always be defined if there is a hard cap",
-						);
-					}
-
 					reSignPlayer = false;
 				}
 
@@ -334,7 +345,7 @@ const newPhaseResignPlayers = async (
 
 	// Set daysLeft here because this is "basically" free agency, so some functions based on daysLeft need to treat it that way (such as the trade AI being more reluctant)
 	await league.setGameAttributes({
-		daysLeft: 30,
+		daysLeft: FREE_AGENCY_DAYS,
 	});
 
 	return {

@@ -10,10 +10,10 @@ const genOrderFantasy = async (
 
 	// Set total draft order, snaking picks each round
 	for (let round = 1; round <= numRounds; round++) {
-		for (let i = 0; i < tids.length; i++) {
+		for (const [i, tid] of tids.entries()) {
 			await idb.cache.draftPicks.add({
-				tid: tids[i],
-				originalTid: tids[i],
+				tid,
+				originalTid: tid,
 				round,
 				pick: i + 1,
 				season,

@@ -6,42 +6,13 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { orderBy } from "../../common/utils.ts";
 import Note from "./Player/Note.tsx";
 
-export const getDraftPicksColsAndRows = ({
+const processRows = ({
 	challengeNoRatings,
 	draftPicks,
-}: Pick<View<"draftPicks">, "challengeNoRatings" | "draftPicks">) => {
-	const cols = getCols(
-		[
-			"Year",
-			"Draft Round",
-			"Draft Pick",
-			"Team",
-			"Power Ranking",
-			"Ovr",
-			"Record",
-			"AvgAge",
-			"Trades",
-			"Note",
-		],
-		{
-			"Draft Round": {
-				title: "Round",
-			},
-			"Draft Pick": {
-				title: "Pick",
-			},
-			AvgAge: {
-				title: "Avg Age",
-			},
-			Ovr: {
-				title: "Team Ovr",
-			},
-			Note: {
-				classNames: "w-100",
-			},
-		},
-	);
-
+	outgoing,
+}: Pick<View<"draftPicks">, "challengeNoRatings" | "draftPicks"> & {
+	outgoing: boolean;
+}) => {
 	const rows: DataTableRow[] = orderBy(
 		draftPicks,
 		[
@@ -73,14 +44,20 @@ export const getDraftPicksColsAndRows = ({
 					<i className="text-body-secondary">{dp.projectedPick}</i>
 				) : null,
 				dp.originalTid !== dp.tid ? (
-					<a
-						href={helpers.leagueUrl([
-							"roster",
-							`${dp.originalAbbrev}_${dp.originalTid}`,
-						])}
-					>
-						{dp.originalAbbrev}
-					</a>
+					outgoing ? (
+						<a href={helpers.leagueUrl(["roster", `${dp.abbrev}_${dp.tid}`])}>
+							{dp.abbrev}
+						</a>
+					) : (
+						<a
+							href={helpers.leagueUrl([
+								"roster",
+								`${dp.originalAbbrev}_${dp.originalTid}`,
+							])}
+						>
+							{dp.originalAbbrev}
+						</a>
+					)
 				) : null,
 				dp.powerRanking,
 				!challengeNoRatings ? dp.ovr : null,
@@ -129,9 +106,65 @@ export const getDraftPicksColsAndRows = ({
 		};
 	});
 
+	return rows;
+};
+
+export const getDraftPicksColsAndRows = ({
+	challengeNoRatings,
+	draftPicks,
+	draftPicksOutgoing,
+}: Pick<
+	View<"draftPicks">,
+	"challengeNoRatings" | "draftPicks" | "draftPicksOutgoing"
+>) => {
+	const cols = getCols(
+		[
+			"Year",
+			"Draft Round",
+			"Draft Pick",
+			"Team",
+			"Power Ranking",
+			"Ovr",
+			"Record",
+			"AvgAge",
+			"Trades",
+			"Note",
+		],
+		{
+			"Draft Round": {
+				title: "Round",
+			},
+			"Draft Pick": {
+				title: "Pick",
+			},
+			AvgAge: {
+				title: "Avg Age",
+			},
+			Ovr: {
+				title: "Team Ovr",
+			},
+			Note: {
+				classNames: "w-100",
+			},
+		},
+	);
+
+	const rows = processRows({
+		challengeNoRatings,
+		draftPicks,
+		outgoing: false,
+	});
+
+	const rowsOutgoing = processRows({
+		challengeNoRatings,
+		draftPicks: draftPicksOutgoing,
+		outgoing: true,
+	});
+
 	return {
 		cols,
 		rows,
+		rowsOutgoing,
 	};
 };
 
@@ -139,6 +172,7 @@ const DraftPicks = ({
 	abbrev,
 	challengeNoRatings,
 	draftPicks,
+	draftPicksOutgoing,
 	draftType,
 	tid,
 }: View<"draftPicks">) => {
@@ -148,9 +182,10 @@ const DraftPicks = ({
 		dropdownFields: { teams: abbrev },
 	});
 
-	const { rows, cols } = getDraftPicksColsAndRows({
+	const { rows, rowsOutgoing, cols } = getDraftPicksColsAndRows({
 		challengeNoRatings,
 		draftPicks,
+		draftPicksOutgoing,
 	});
 
 	return (
@@ -168,12 +203,35 @@ const DraftPicks = ({
 				<i className="text-body-secondary">faded italics</i>.
 			</p>
 
-			<DataTable
-				cols={cols}
-				defaultSort={[0, "asc"]}
-				name="DraftPicks"
-				rows={rows}
-			/>
+			{rows.length > 0 ? (
+				<DataTable
+					cols={cols}
+					defaultSort={[0, "asc"]}
+					name="DraftPicks"
+					rows={rows}
+					title={<h2>Owned picks</h2>}
+				/>
+			) : (
+				<>
+					<h2>Owned picks</h2>
+					<p>None</p>
+				</>
+			)}
+
+			{rowsOutgoing.length > 0 ? (
+				<DataTable
+					cols={cols}
+					defaultSort={[0, "asc"]}
+					name="DraftPicksOutgoing"
+					rows={rowsOutgoing}
+					title={<h2>Outgoing picks</h2>}
+				/>
+			) : (
+				<>
+					<h2>Outgoing picks</h2>
+					<p>None</p>
+				</>
+			)}
 		</>
 	);
 };

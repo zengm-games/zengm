@@ -12,8 +12,9 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { buffOvrDH } from "../views/depth.ts";
 import { iterateActivePlayersSeasonRange } from "../views/rosterContinuity.ts";
 import type { SeasonType } from "./processInputs.ts";
+import { actualPhase } from "../util/actualPhase.ts";
 
-export const getPlayers = async (
+const getPlayers = async (
 	season: number | undefined,
 	attrs: string[],
 	ratings: string[],
@@ -39,6 +40,7 @@ export const getPlayers = async (
 			"firstName",
 			"lastName",
 			"age",
+			"ageAtDeath", // Only needed for "totals" but oh well
 			"contract",
 			"injury",
 			"hof",
@@ -107,7 +109,7 @@ export const advancedPlayerSearch = async ({
 		if (filter.category === "ratings") {
 			extraRatings.push(filter.key);
 		} else if (filter.category === "bio") {
-			const filterInfo = allFilters[filter.category].options[filter.key];
+			const filterInfo = allFilters[filter.category]!.options[filter.key];
 			if (filterInfo && filterInfo.workerFieldOverride !== null) {
 				const key = filterInfo.workerFieldOverride ?? filter.key;
 				extraAttrs.push(key);
@@ -169,7 +171,7 @@ export const advancedPlayerSearch = async ({
 		(tid === undefined || tid === PLAYER.UNDRAFTED)
 	) {
 		// Show the upcoming draft class too
-		actualSeasonEnd += g.get("phase") > PHASE.DRAFT ? 2 : 1;
+		actualSeasonEnd += actualPhase() > PHASE.DRAFT ? 2 : 1;
 
 		// Set to "unique" so the draft prospects are the only ones appearing in the excess seasons. This works only because we confirm seasonStart === seasonEnd, in which case normally the unique/all setting doesn't matter
 		seasonRangeType = "unique";
@@ -230,12 +232,12 @@ export const advancedPlayerSearch = async ({
 			p.stats = p[obj];
 
 			const matchesAll = filters.every((filter) => {
-				const filterInfo = allFilters[filter.category].options[filter.key];
+				const filterInfo = allFilters[filter.category]!.options[filter.key];
 				if (!filterInfo) {
 					return true;
 				}
 
-				const pValue = filterInfo.getValue(p);
+				const pValue = filterInfo.getValue(p, singleSeason);
 				if (filterInfo.valueType === "numeric") {
 					if (filter.value === null) {
 						return true;

@@ -37,13 +37,13 @@ const takeScreenshotChunk = async () => {
 
 	// Add notifications
 	const notifications = document
-		.getElementsByClassName("notification-container")[0]
+		.getElementsByClassName("notification-container")[0]!
 		.cloneNode(true);
 	if (notifications instanceof HTMLDivElement) {
 		notifications.classList.remove("notification-container");
 		for (let i = 0; i < notifications.childNodes.length; i++) {
 			// Otherwise screeenshot is taken before fade in is complete
-			const el = notifications.children[0];
+			const el = notifications.children[0]!;
 			if (el.classList && typeof el.classList.remove === "function") {
 				el.classList.remove("notification-fadein");
 			}

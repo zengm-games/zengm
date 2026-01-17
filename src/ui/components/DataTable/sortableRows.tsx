@@ -26,6 +26,8 @@ import {
 import type { DataTableRow } from "./index.tsx";
 import clsx from "clsx";
 
+export type DisableRow = (index: number) => boolean;
+
 export type HighlightHandle = (a: {
 	index: number;
 	row: DataTableRow;
@@ -33,8 +35,9 @@ export type HighlightHandle = (a: {
 
 export const SortableTableContext = createContext<{
 	clickedIndex: number | undefined;
+	disableRow: DisableRow | undefined;
 	draggedIndex: number | undefined;
-	highlightHandle: HighlightHandle;
+	highlightHandle: HighlightHandle | undefined;
 	renderRow: (props: RenderRowProps) => ReactNode;
 	rows: DataTableRow[];
 	tableRef: RefObject<HTMLTableElement | null>;
@@ -60,7 +63,7 @@ export const SortableHandle = ({
 	listeners,
 	setActivatorNodeRef,
 }: SortableHandleProps) => {
-	const { clickedIndex, draggedIndex, highlightHandle, tableRef } =
+	const { clickedIndex, disableRow, draggedIndex, highlightHandle, tableRef } =
 		use(SortableTableContext);
 
 	const sortableHandleRef = useRef<HTMLTableCellElement | null>(null);
@@ -69,7 +72,7 @@ export const SortableHandle = ({
 		if (overlay && tableRef.current && sortableHandleRef.current) {
 			// All tds in the first row of the actual table
 			const tableTds =
-				tableRef.current.querySelector("tbody")!.children[0].children;
+				tableRef.current.querySelector("tbody")!.children[0]!.children;
 
 			// All tds in the overlay row
 			const overlayTds = sortableHandleRef.current.parentElement!.children;
@@ -88,10 +91,15 @@ export const SortableHandle = ({
 		}
 	}, [overlay, tableRef]);
 
+	if (disableRow?.(index)) {
+		return <td className="roster-handle p-0" />;
+	}
+
 	const isDragged = draggedIndex !== undefined;
 	const selected = clickedIndex === index;
 
-	const highlight = highlightHandle({ index, row });
+	// If highlightHandle is not defined, highlight them all
+	const highlight = !highlightHandle || highlightHandle({ index, row });
 
 	return (
 		<td
@@ -168,6 +176,7 @@ export const getId = (row: DataTableRow) => {
 
 export const SortableContextWrappers = ({
 	children,
+	disableRow,
 	highlightHandle,
 	onChange,
 	onSwap,
@@ -176,7 +185,8 @@ export const SortableContextWrappers = ({
 	tableRef,
 }: {
 	children: ReactNode;
-	highlightHandle: HighlightHandle;
+	disableRow?: DisableRow;
+	highlightHandle?: HighlightHandle;
 	onChange: (a: { oldIndex: number; newIndex: number }) => void;
 	onSwap: (index1: number, index2: number) => void;
 	renderRow: (props: RenderRowProps) => ReactNode;
@@ -202,13 +212,22 @@ export const SortableContextWrappers = ({
 	const context = useMemo(
 		() => ({
 			clickedIndex,
+			disableRow,
 			draggedIndex,
 			highlightHandle,
 			renderRow,
 			tableRef,
 			rows,
 		}),
-		[clickedIndex, draggedIndex, highlightHandle, renderRow, rows, tableRef],
+		[
+			clickedIndex,
+			disableRow,
+			draggedIndex,
+			highlightHandle,
+			renderRow,
+			rows,
+			tableRef,
+		],
 	);
 
 	const ids = rows.map((row) => getId(row));
@@ -294,7 +313,7 @@ export const MyDragOverlay = () => {
 						draggedIndex,
 						index: draggedIndex,
 						overlay: true,
-						row: rows[draggedIndex],
+						row: rows[draggedIndex]!,
 					})
 				: null}
 		</DragOverlay>

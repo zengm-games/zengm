@@ -68,17 +68,27 @@ const Row = ({
 	const { clicked, toggleClicked } = useClickable();
 
 	let classNames;
-	if (typeof row.classNames === "function") {
-		const { draggedIndex } = use(SortableTableContext);
+	let disableSort;
+	if (sortableRows || typeof row.classNames === "function") {
+		const { disableRow, draggedIndex } = use(SortableTableContext);
 
-		classNames = row.classNames({
-			isDragged: draggedIndex !== undefined,
-			isFiltered,
-			sortBys,
-		});
-	} else {
+		if (sortableRows && disableRow) {
+			disableSort = disableRow(sortableRows.index);
+		}
+
+		if (typeof row.classNames === "function") {
+			classNames = row.classNames({
+				isDragged: draggedIndex !== undefined,
+				isFiltered,
+				sortBys,
+			});
+		}
+	}
+	if (typeof row.classNames !== "function") {
 		classNames = row.classNames;
 	}
+
+	let seenColSpanToEnd = false;
 
 	return (
 		<tr
@@ -90,7 +100,8 @@ const Row = ({
 					sortableRows.draggedIndex === sortableRows.index,
 			})}
 			onClick={clickable ? toggleClicked : undefined}
-			ref={sortableRows?.setNodeRef}
+			// Not sure why this works to disable sorting for certain rows, but it seems to work!
+			ref={disableSort ? undefined : sortableRows?.setNodeRef}
 			style={sortableRows?.style}
 		>
 			{showBulkSelectCheckboxes ? (
@@ -103,6 +114,11 @@ const Row = ({
 			{showRowLabels ? <td>{row.rowLabel}</td> : null}
 			{sortableRows ? <SortableHandle {...sortableRows} /> : null}
 			{row.data.map((value = null, i) => {
+				if (seenColSpanToEnd) {
+					// If we've seen colSpanToEnd, don't render any more columns in this row
+					return;
+				}
+
 				// Value is either the value, or an object containing the value as a property
 				const actualValue =
 					value !== null && Object.hasOwn(value, "value") ? value.value : value;
@@ -110,7 +126,7 @@ const Row = ({
 				const props: any = {};
 
 				const highlightCol = highlightCols.includes(i);
-				if (value && value.classNames) {
+				if (value?.classNames) {
 					props.className = clsx(
 						value.classNames,
 						highlightCol ? "sorting_highlight" : undefined,
@@ -119,23 +135,23 @@ const Row = ({
 					props.className = "sorting_highlight";
 				}
 
-				if (value && value.title) {
+				if (value?.colSpanToEnd) {
+					props.colSpan = row.data.length - i;
+					seenColSpanToEnd = true;
+				}
+				if (value?.style) {
+					props.style = value.style;
+				}
+				if (value?.title) {
 					props.title = value.title;
 				}
 
-				if (value && value.style) {
-					props.style = value.style;
-				}
-
 				const singleCheckbox =
-					actualValue &&
-					actualValue.type === "input" &&
+					actualValue?.type === "input" &&
 					actualValue.props.type === "checkbox" &&
 					actualValue.props.onChange;
 				const singleButton =
-					actualValue &&
-					actualValue.type === "button" &&
-					actualValue.props.onClick;
+					actualValue?.type === "button" && actualValue.props.onClick;
 
 				// Expand clickable area of checkboxes/buttons to the whole td - similar logic is elsewhere, search for singleCheckbox
 				if (singleCheckbox || singleButton) {
@@ -153,6 +169,14 @@ const Row = ({
 						}
 					};
 					props["data-no-row-highlight"] = "true";
+				}
+
+				if (value?.header) {
+					return (
+						<th key={i} {...props}>
+							{actualValue}
+						</th>
+					);
 				}
 
 				return (

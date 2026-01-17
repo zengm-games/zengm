@@ -52,7 +52,7 @@ export const dropPlayers = async (
 
 		let validPositions = [];
 		for (const [pos, count] of Object.entries(counts)) {
-			if (count > POSITION_COUNTS[count]) {
+			if (count > POSITION_COUNTS[pos]!) {
 				validPositions.push(pos);
 			}
 		}
@@ -83,7 +83,7 @@ export const dropPlayers = async (
 			if (countsHealthyKey) {
 				// If this is a key position and there is only one healthy player, keep the healthy player
 				if (
-					countsHealthyKey[pos] <= (KEY_POSITIONS_NEEDED?.[pos] ?? 1) &&
+					countsHealthyKey[pos]! <= (KEY_POSITIONS_NEEDED?.[pos] ?? 1) &&
 					p.injury.gamesRemaining === 0
 				) {
 					continue;
@@ -91,11 +91,11 @@ export const dropPlayers = async (
 			}
 
 			// Use 1 as fallback limit rather than POSITION_COUNTS[pos], just to be sure it's not some weird league where POSITION_COUNTS don't apply
-			if (counts[pos] <= (KEY_POSITIONS_NEEDED?.[pos] ?? 1)) {
+			if (counts[pos]! <= (KEY_POSITIONS_NEEDED?.[pos] ?? 1)) {
 				continue;
 			}
 
-			counts[pos] -= 1;
+			counts[pos]! -= 1;
 
 			if (countsHealthyKey?.[pos] !== undefined) {
 				countsHealthyKey[pos] -= 1;
@@ -212,9 +212,9 @@ const checkRosterSizes = async (
 	);
 
 	// List of free agents looking for minimum contracts, sorted by value. This is used to bump teams up to the minimum roster size.
-	for (let i = 0; i < players.length; i++) {
-		if (players[i].contract.amount === g.get("minContract")) {
-			minFreeAgents.push(players[i]);
+	for (const p of players) {
+		if (p.contract.amount === g.get("minContract")) {
+			minFreeAgents.push(p);
 		}
 	}
 

@@ -25,11 +25,10 @@ export type Ratings = {
 export type Basketball = {
 	awards: Record<
 		string,
-		| {
-				type: string;
-				season: number;
-		  }[]
-		| undefined
+		{
+			type: string;
+			season: number;
+		}[]
 	>;
 	teams: {
 		slug: string;
@@ -42,21 +41,20 @@ export type Basketball = {
 	}[];
 	bios: Record<
 		string,
-		| {
-				name: string;
-				bornYear: number;
-				diedYear: number;
-				country: string;
-				weight: number;
-				pos: string;
-				height: number;
-				college: string;
-				draftYear: number;
-				draftRound?: number;
-				draftPick?: number;
-				draftAbbrev?: string;
-		  }
-		| undefined
+		{
+			name: string;
+			bornYear: number;
+			diedYear: number;
+			country: string;
+			weight: number;
+			pos: string;
+			height: number;
+			college: string;
+			draftYear: number;
+			draftRound?: number;
+			draftPick?: number;
+			draftAbbrev?: string;
+		}
 	>;
 	ratings: Ratings[];
 	relatives: {
@@ -72,13 +70,12 @@ export type Basketball = {
 	}[];
 	injuries: Record<
 		string,
-		| {
-				season: number;
-				phase: Phase;
-				type: string;
-				gamesRemaining: number;
-		  }[]
-		| undefined
+		{
+			season: number;
+			phase: Phase;
+			type: string;
+			gamesRemaining: number;
+		}[]
 	>;
 	scheduledEventsGameAttributes: ScheduledEventWithoutKey[];
 	scheduledEventsTeams: ScheduledEventWithoutKey[];

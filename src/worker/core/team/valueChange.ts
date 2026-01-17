@@ -26,6 +26,7 @@ type Asset =
 			contractValue: number;
 			injury: PlayerInjury;
 			age: number;
+			dp: DraftPick;
 			draftPick: number;
 			draftYear: number;
 	  };
@@ -132,7 +133,6 @@ const getPlayers = async ({
 
 	for (const p of players) {
 		const value = zscore(p.value);
-
 		if (!pidsRemove.includes(p.pid)) {
 			roster.push({
 				type: "player",
@@ -193,13 +193,17 @@ const getPickNumber = async (
 		estPick = dp.pick;
 	} else {
 		let temp = cache.estPicks[dp.originalTid];
+
+		// Used to know when to overvalue own pick
+		const tradeWithUser = tradingPartnerTid === g.get("userTid");
+
 		// if trading with the user, make sure the AI pick is accurately judged
 		// based on what players are outgoing in the trade
 		// and just use the cached estimated pick if no players are being exchanged
 		if (
 			tid !== g.get("userTid") &&
 			dp.originalTid === tid &&
-			tradingPartnerTid === g.get("userTid") &&
+			tradeWithUser &&
 			pidsAdd.length + pidsRemove.length > 0
 		) {
 			temp = await getModifiedPickRank(tid, pidsAdd, pidsRemove);
@@ -208,9 +212,6 @@ const getPickNumber = async (
 
 		// tid rather than originalTid, because it's about what the user can control
 		const usersPick = dp.tid === g.get("userTid");
-
-		// Used to know when to overvalue own pick
-		const tradeWithUser = tradingPartnerTid === g.get("userTid");
 
 		// For future draft picks, add some uncertainty.
 		const regressionTarget = (usersPick ? 0.75 : 0.25) * numPicksPerRound;
@@ -319,6 +320,7 @@ const getPickInfo = async (
 			type: "Healthy",
 			gamesRemaining: 0,
 		},
+		dp,
 
 		// Would be better to store age in estValues, but oh well
 		age: 20,
@@ -383,6 +385,49 @@ const getPicks = async ({
 			);
 			remove.push(pickInfo);
 		}
+
+		// Be wary about giving away too many 1st round draft picks!
+		if (remove.length > 0) {
+			// More value for individual players in basketball, similar to EXPONENT
+			const SPORT_FACTOR = bySport({
+				baseball: 2.5,
+				basketball: 5,
+				hockey: 2.5,
+				football: 2.5,
+			});
+
+			const firstRoundPicks = [];
+			const otherPicks = [];
+			for (const asset of remove) {
+				if (asset.type === "pick") {
+					if (asset.dp.round === 1) {
+						firstRoundPicks.push(asset);
+					} else {
+						otherPicks.push(asset);
+					}
+				}
+			}
+
+			// If there are more than 2 picks in the trade, make them a bit more valuable to the AI
+			const numBeyond2 = firstRoundPicks.length - 2;
+			if (numBeyond2 > 0) {
+				for (const pick of firstRoundPicks) {
+					if (pick.value > 0) {
+						pick.value *= 1 + numBeyond2 / SPORT_FACTOR;
+					}
+				}
+			}
+
+			// Similar but less extreme for other picks
+			const numBeyond2Other = otherPicks.length - 2;
+			if (numBeyond2Other > 0) {
+				for (const pick of otherPicks) {
+					if (pick.value > 0) {
+						pick.value *= 1 + numBeyond2 / (SPORT_FACTOR * pick.dp.round);
+					}
+				}
+			}
+		}
 	}
 };
 
@@ -412,6 +457,7 @@ const sumValues = (
 		const treatAsFutureDraftPick =
 			p.type === "pick" && (season !== p.draftYear || phase <= PHASE.PLAYOFFS);
 
+		// These factors don't make sense for negative value players!!!
 		if (strategy === "rebuilding") {
 			// Value young/cheap players and draft picks more. Penalize expensive/old players
 			if (treatAsFutureDraftPick) {
@@ -468,7 +514,6 @@ const sumValues = (
 
 		const contractsFactor = strategy === "rebuilding" ? 2 : 0.5;
 		playerValue += contractsFactor * p.contractValue;
-		// console.log(playerValue, p);
 
 		// if a player was just drafted and can be released, they shouldn't have negative value
 		if (p.type == "player" && p.justDrafted) {
@@ -507,7 +552,7 @@ export const getEstPicks = async (
 		);
 		let record: [number, number];
 
-		if (teamSeasons.length === 0) {
+		if (!teamSeasons[0]) {
 			// Expansion team?
 			record = [0, 0];
 		} else {
@@ -535,8 +580,8 @@ export const getEstPicks = async (
 
 	// For each team, what is their estimated draft position?
 	const estPicks: Record<number, number> = {};
-	for (let i = 0; i < wps.length; i++) {
-		estPicks[wps[i].tid] = i + 1;
+	for (const [i, wp] of wps.entries()) {
+		estPicks[wp.tid] = i + 1;
 	}
 
 	return {
@@ -559,6 +604,7 @@ const refreshCache = async () => {
 		const ovr = team.ovr(
 			players.map((p) => ({
 				pid: p.pid,
+				injury: p.injury,
 				value: p.value,
 				ratings: {
 					ovr: p.ratings.at(-1)!.ovr,
@@ -592,11 +638,6 @@ const valueChange = async (
 	valueChangeKey: number = Math.random(),
 	tradingPartnerTid?: number,
 ): Promise<number> => {
-	// UGLY HACK: Don't include more than 2 draft picks in a trade for AI team
-	if (dpidsRemove.length > 2) {
-		return -1;
-	}
-
 	await player.updateOvrMeanStd();
 
 	// Get value and skills for each player on team or involved in the proposed transaction
@@ -674,6 +715,7 @@ const getModifiedPickRank = async (
 	}
 	const playerRatings = playersAfterTrade.map((p) => ({
 		pid: p.pid,
+		injury: p.injury,
 		value: p.value,
 		ratings: {
 			ovr: p.ratings.at(-1)!.ovr,

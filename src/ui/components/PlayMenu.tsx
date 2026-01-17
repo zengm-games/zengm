@@ -3,6 +3,7 @@ import { Dropdown, Nav } from "react-bootstrap";
 import { confirm, local, realtimeUpdate, toWorker } from "../util/index.ts";
 import type { Option } from "../../common/types.ts";
 import clsx from "clsx";
+import { formatModifierKeyLabel } from "../util/formatModifierKeyLabel.ts";
 
 const handleOptionClick = (option: Option, event: MouseEvent) => {
 	if (!option.url) {
@@ -101,7 +102,7 @@ const PlayMenu = ({
 							{option.label}
 							{option.key ? (
 								<span className="text-body-secondary kbd">
-									Alt+{option.key.toUpperCase()}
+									{formatModifierKeyLabel(option.key.toUpperCase())}
 								</span>
 							) : null}
 						</Dropdown.Item>

@@ -12,7 +12,7 @@ beforeEach(async () => {
 
 	const teamsDefault = helpers.getTeamsDefault();
 	await testHelpers.resetCache({
-		teamSeasons: [team.genSeasonRow(teamsDefault[g.get("userTid")])],
+		teamSeasons: [team.genSeasonRow(teamsDefault[g.get("userTid")]!)],
 	});
 
 	idb.league = testHelpers.mockIDBLeague();
@@ -21,7 +21,7 @@ beforeEach(async () => {
 test("even when already at the max, recognizes excellent performance", async () => {
 	const teamSeasons = await idb.cache.teamSeasons.getAll();
 	assert.strictEqual(teamSeasons.length, 1);
-	teamSeasons[0].ownerMood = {
+	teamSeasons[0]!.ownerMood = {
 		money: 1,
 		playoffs: 1,
 		wins: 1,
@@ -42,7 +42,7 @@ test("even when already at the max, recognizes excellent performance", async () 
 
 	const messages = await idb.cache.messages.getAll();
 	assert.strictEqual(messages.length, 1);
-	const message = messages[0];
+	const message = messages[0]!;
 
 	assert(message.text.includes("This year: Excellent!"));
 	assert(message.text.includes("Overall: Excellent!"));
@@ -51,7 +51,7 @@ test("even when already at the max, recognizes excellent performance", async () 
 test("when at max for one component, message falls in between what you'd expect when using the uncapped or capped deltas alone", async () => {
 	const teamSeasons = await idb.cache.teamSeasons.getAll();
 	assert.strictEqual(teamSeasons.length, 1);
-	teamSeasons[0].ownerMood = {
+	teamSeasons[0]!.ownerMood = {
 		money: 1,
 		playoffs: -0.6,
 		wins: -0.6,
@@ -72,7 +72,7 @@ test("when at max for one component, message falls in between what you'd expect 
 
 	const messages = await idb.cache.messages.getAll();
 	assert.strictEqual(messages.length, 1);
-	const message = messages[0];
+	const message = messages[0]!;
 
 	assert(message.text.includes("This year: Good."));
 	assert(message.text.includes("Overall: Bad."));

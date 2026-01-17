@@ -1,4 +1,9 @@
-import type { DBSchema, IDBPDatabase } from "@dumbmatter/idb";
+import type {
+	DBSchema,
+	IDBPDatabase,
+	IDBPTransaction,
+	StoreNames,
+} from "@dumbmatter/idb";
 import { isSport } from "../../common/index.ts";
 import type {
 	League,
@@ -9,7 +14,7 @@ import type {
 import type { Settings } from "../views/settings.ts";
 import connectIndexedDB from "./connectIndexedDB.ts";
 
-export interface MetaDB extends DBSchema {
+interface MetaDB extends DBSchema {
 	achievements: {
 		key: number;
 		value: {
@@ -55,41 +60,63 @@ const create = (db: IDBPDatabase<MetaDB>) => {
 	attributeStore.put("VERSION_NUMBER", "lastChangesVersion");
 };
 
+type VersionChangeTransaction = IDBPTransaction<
+	MetaDB,
+	StoreNames<MetaDB>[],
+	"versionchange"
+>;
+
 const migrate = async ({
 	db,
 	oldVersion,
+	transaction,
 }: {
 	db: IDBPDatabase<MetaDB>;
 	oldVersion: number;
+	transaction: VersionChangeTransaction;
 }) => {
 	console.log(
 		`Upgrading meta database from version ${oldVersion} to version ${db.version}`,
 	);
 
 	if (isSport("basketball") || isSport("football")) {
-		if (oldVersion <= 6) {
+		if (oldVersion < 7) {
 			db.createObjectStore("achievements", {
 				keyPath: "aid",
 				autoIncrement: true,
 			});
 		}
 
-		if (oldVersion <= 7) {
+		if (oldVersion < 8) {
 			const attributeStore = db.createObjectStore("attributes");
 			attributeStore.put(0, "nagged");
 		}
 	}
 
-	// New ones here!
+	if (oldVersion < 9) {
+		for await (const cursor of transaction.objectStore("leagues")) {
+			const league = cursor.value;
 
-	// In next version, can do:
-	// attributeStore.delete("lastSelectedTid");
+			let updated;
+			if (league.imgURL === "/img/logos-primary/CHI.svg") {
+				league.imgURL = "/img/logos-primary/CHW.svg";
+				updated = true;
+			} else if (league.imgURL === "/img/logos-secondary/CHI.svg") {
+				league.imgURL = "/img/logos-secondary/CHW.svg";
+				updated = true;
+			}
+
+			if (updated) {
+				await cursor.update(league);
+			}
+		}
+	}
 };
 
 const connectMeta = () =>
 	connectIndexedDB<MetaDB>({
 		name: "meta",
-		version: 8,
+		version: 9,
 		lid: -1,
 		create,
 		migrate,

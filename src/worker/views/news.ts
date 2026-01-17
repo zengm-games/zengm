@@ -11,7 +11,7 @@ import type { FaceConfig } from "facesjs";
 const IGNORE_EVENT_TYPES = ["retiredList", "newTeam"];
 
 const getTid = (event: { tids?: number[]; type: LogEventType }) => {
-	if (!event.tids || event.tids.length === 0 || event.tids[0] < 0) {
+	if (!event.tids || event.tids.length === 0 || event.tids[0]! < 0) {
 		return;
 	}
 

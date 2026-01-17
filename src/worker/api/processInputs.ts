@@ -1,10 +1,16 @@
-import { bySport, isSport, PHASE } from "../../common/index.ts";
+import {
+	bySport,
+	isSport,
+	PHASE,
+	REMAINING_PLAYOFF_TEAMS_PHASES,
+} from "../../common/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { PlayerStatType } from "../../common/types.ts";
 import type { Params } from "../../ui/router/index.ts";
 import type { boxScoreToLiveSim } from "../views/liveGame.ts";
 import type { AdvancedPlayerSearchFilter } from "../../ui/views/AdvancedPlayerSearch.tsx";
 import type { NoteInfo } from "../../ui/views/Player/Note.tsx";
+import { actualPhase } from "../util/actualPhase.ts";
 
 /**
  * Validate that a given abbreviation corresponds to a team.
@@ -19,16 +25,11 @@ export const validateAbbrev = (
 	abbrev?: string,
 	strict?: boolean,
 ): [number, string] => {
+	const teamInfoCache = g.get("teamInfoCache");
+
 	if (abbrev !== undefined) {
 		{
-			const int = Number.parseInt(abbrev);
-			if (!Number.isNaN(int) && int < g.get("teamInfoCache").length) {
-				return [int, g.get("teamInfoCache")[int]?.abbrev];
-			}
-		}
-
-		{
-			const tid = g.get("teamInfoCache").findIndex((t) => t.abbrev === abbrev);
+			const tid = teamInfoCache.findIndex((t) => t.abbrev === abbrev);
 			if (tid >= 0) {
 				return [tid, abbrev];
 			}
@@ -37,8 +38,8 @@ export const validateAbbrev = (
 		{
 			const parts = abbrev.split("_");
 			const int = Number.parseInt(parts.at(-1)!);
-			if (!Number.isNaN(int) && int < g.get("teamInfoCache").length) {
-				return [int, g.get("teamInfoCache")[int]?.abbrev];
+			if (!Number.isNaN(int) && teamInfoCache[int]) {
+				return [int, teamInfoCache[int].abbrev];
 			}
 		}
 	}
@@ -48,12 +49,7 @@ export const validateAbbrev = (
 	}
 
 	const tid = g.get("userTid");
-	abbrev = g.get("teamInfoCache")[tid]?.abbrev;
-	if (abbrev === undefined) {
-		abbrev = "???";
-	}
-
-	return [tid, abbrev];
+	return [tid, teamInfoCache[tid]?.abbrev ?? "???"];
 };
 
 /**
@@ -379,8 +375,13 @@ const injuries = (params: Params) => {
 	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
 		abbrev = validatedAbbrev;
 		tid = validatedTid;
-	} else if (params.abbrev && params.abbrev === "watch") {
+	} else if (params.abbrev === "watch") {
 		abbrev = "watch";
+	} else if (
+		params.abbrev === "playoffs" &&
+		REMAINING_PLAYOFF_TEAMS_PHASES.has(actualPhase())
+	) {
+		abbrev = "playoffs";
 	} else {
 		abbrev = "all";
 	}
@@ -646,8 +647,13 @@ const playerRatings = (params: Params) => {
 	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
 		abbrev = validatedAbbrev;
 		tid = validatedTid;
-	} else if (params.abbrev && params.abbrev === "watch") {
+	} else if (params.abbrev === "watch") {
 		abbrev = "watch";
+	} else if (
+		params.abbrev === "playoffs" &&
+		REMAINING_PLAYOFF_TEAMS_PHASES.has(actualPhase())
+	) {
+		abbrev = "playoffs";
 	} else {
 		abbrev = "all";
 	}
@@ -666,8 +672,13 @@ const playerStats = (params: Params) => {
 
 	if (params.abbrev !== undefined && validatedAbbrev !== "???") {
 		abbrev = validatedAbbrev;
-	} else if (params.abbrev && params.abbrev === "watch") {
+	} else if (params.abbrev === "watch") {
 		abbrev = "watch";
+	} else if (
+		params.abbrev === "playoffs" &&
+		REMAINING_PLAYOFF_TEAMS_PHASES.has(actualPhase())
+	) {
+		abbrev = "playoffs";
 	} else {
 		abbrev = "all";
 	}
@@ -923,12 +934,12 @@ const transactions = (params: Params) => {
 	let tid: number;
 	if (params.abbrev && params.abbrev !== "all") {
 		[tid, abbrev] = validateAbbrev(params.abbrev);
-	} else if (params.abbrev && params.abbrev === "all") {
+	} else if (params.abbrev === "all") {
 		tid = -1;
 		abbrev = "all";
 	} else {
 		tid = g.get("userTid");
-		abbrev = g.get("teamInfoCache")[tid]?.abbrev;
+		abbrev = g.get("teamInfoCache")[tid]!.abbrev;
 	}
 
 	let season: number | "all";
@@ -952,8 +963,8 @@ const transactions = (params: Params) => {
 const upcomingFreeAgents = (params: Params) => {
 	let season = validateSeason(params.season);
 
-	const actualPhase = g.get("nextPhase") ?? g.get("phase");
-	if (actualPhase >= 0 && actualPhase <= PHASE.RESIGN_PLAYERS) {
+	const phase = actualPhase();
+	if (phase >= 0 && phase <= PHASE.RESIGN_PLAYERS) {
 		if (season < g.get("season")) {
 			season = g.get("season");
 		}
@@ -1013,8 +1024,8 @@ const comparePlayers = (params: Params) => {
 			...info.split(",").map((pidSeasonPlayoffs) => {
 				const parts = pidSeasonPlayoffs.split("-");
 				return {
-					pid: Number.parseInt(parts[0]),
-					season: parts[1] === "career" ? "career" : Number.parseInt(parts[1]),
+					pid: Number.parseInt(parts[0]!),
+					season: parts[1] === "career" ? "career" : Number.parseInt(parts[1]!),
 					playoffs:
 						parts[2] === "c"
 							? "combined"

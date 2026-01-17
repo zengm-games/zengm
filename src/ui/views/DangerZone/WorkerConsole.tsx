@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { ActionButton } from "../../components/index.tsx";
-import { helpers, toWorker } from "../../util/index.ts";
+import { toWorker } from "../../util/index.ts";
 import useLocalStorageState from "use-local-storage-state";
 
 const LogOutput = ({ value }: { value: string }) => {
@@ -53,13 +53,6 @@ const WorkerConsole = ({ godMode }: { godMode: boolean }) => {
 
 	return (
 		<>
-			{!godMode ? (
-				<p className="text-warning">
-					This feature is only available in{" "}
-					<a href={helpers.leagueUrl(["god_mode"])}>God Mode</a>.
-				</p>
-			) : null}
-
 			<form
 				onSubmit={async (event) => {
 					event.preventDefault();

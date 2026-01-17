@@ -45,8 +45,8 @@ const Playoffs = ({
 		...numGamesPlayoffSeries,
 		...[...numGamesPlayoffSeries].reverse().slice(1),
 	];
-	for (let i = 0; i < series.length; i++) {
-		if (series[i].length === 0) {
+	for (const [i, row] of series.entries()) {
+		if (row.length === 0) {
 			numGamesPlayoffSeriesReflected[i] = undefined;
 			numGamesPlayoffSeriesReflected[
 				numGamesPlayoffSeriesReflected.length - 1 - i
@@ -106,6 +106,11 @@ const Playoffs = ({
 			}
 		: undefined;
 
+	// Hide "Best of X" footer if it's the same number of games every series
+	const showFooter = numGamesPlayoffSeries.some(
+		(numGames) => numGames !== numGamesPlayoffSeries[0],
+	);
+
 	return (
 		<div style={{ maxWidth }}>
 			{!finalMatchups ? (
@@ -126,7 +131,7 @@ const Playoffs = ({
 							}
 						}}
 					>
-						{editing ? "Save Changes" : "Edit Playoff Teams"}
+						{editing ? "Save changes" : "Edit playoff teams"}
 					</button>
 					{editing ? (
 						<button
@@ -142,13 +147,14 @@ const Playoffs = ({
 				</div>
 			) : null}
 
-			{playoffsByConf && numRounds > 1 ? (
-				<h2 className="d-none d-sm-block">
-					{confNames[1]} <span className="float-end">{confNames[0]}</span>
+			{(playoffsByConf === 2 || playoffsByConf === 4) && numRounds > 1 ? (
+				<h2 className="d-none d-sm-block mb-2">
+					{confNames[playoffsByConf === 2 ? 1 : 2]}{" "}
+					<span className="float-end">{confNames[0]}</span>
 				</h2>
 			) : null}
 
-			<ResponsiveTableWrapper>
+			<ResponsiveTableWrapper className={showFooter ? "mb-1" : "mb-3"}>
 				<table className="table-sm w-100">
 					<tbody>
 						{matchups.map((row, i) => (
@@ -163,7 +169,7 @@ const Playoffs = ({
 											<PlayoffMatchup
 												numGamesToWinSeries={numGamesToWinSeries[m.matchup[0]]}
 												season={season}
-												series={series[m.matchup[0]][m.matchup[1]]}
+												series={series[m.matchup[0]]![m.matchup[1]]}
 												userTid={userTid}
 												editing={editingInfo}
 											/>
@@ -173,41 +179,53 @@ const Playoffs = ({
 							</tr>
 						))}
 					</tbody>
-					<tfoot>
-						<tr className="text-center text-body-secondary">
-							{numGamesPlayoffSeriesReflected.map((numGames, i) => {
-								let text = null;
-								if (numGames !== undefined) {
-									text = `Best of ${numGames}`;
-								}
+					{showFooter ? (
+						<tfoot>
+							<tr className="text-center text-body-secondary">
+								{numGamesPlayoffSeriesReflected.map((numGames, i) => {
+									let text = null;
+									if (numGames !== undefined) {
+										text = `Best of ${numGames}`;
+									}
 
-								// Div wrapper is needed if you have a play-in tournament and one playoff round
-								return (
-									<td key={i}>
-										<div
-											style={numRoundsWithPlayIn === 1.5 ? tdStyle : undefined}
-										>
-											{text}
-										</div>
-									</td>
-								);
-							})}
-						</tr>
-					</tfoot>
+									// Div wrapper is needed if you have a play-in tournament and one playoff round
+									return (
+										<td key={i}>
+											<div
+												style={
+													numRoundsWithPlayIn === 1.5 ? tdStyle : undefined
+												}
+											>
+												{text}
+											</div>
+										</td>
+									);
+								})}
+							</tr>
+						</tfoot>
+					) : null}
 				</table>
 			</ResponsiveTableWrapper>
+
+			{playoffsByConf === 4 ? (
+				<h2 className="d-none d-sm-block mb-3">
+					{confNames[3]} <span className="float-end">{confNames[1]}</span>
+				</h2>
+			) : (
+				<div className="mb-3" />
+			)}
 
 			{playIns ? (
 				<>
 					<h2>Play-In Tournament</h2>
 					<p className="mb-2">
 						The {helpers.plural("winner", playIns.length)} of the{" "}
-						{playIns[0][0].home.seed}/{playIns[0][0].away.seed}{" "}
+						{playIns[0]![0].home.seed}/{playIns[0]![0].away.seed}{" "}
 						{helpers.plural("game makes", playIns.length, "games make")} the{" "}
 						playoffs. Then the{" "}
 						{helpers.plural("loser plays", playIns.length, "losers play")} the{" "}
 						{helpers.plural("winner", playIns.length)} of the{" "}
-						{playIns[0][1].home.seed}/{playIns[0][1].away.seed}{" "}
+						{playIns[0]![1].home.seed}/{playIns[0]![1].away.seed}{" "}
 						{helpers.plural("game", playIns.length)} for the final playoffs{" "}
 						{helpers.plural("spot", playIns.length)}.
 					</p>

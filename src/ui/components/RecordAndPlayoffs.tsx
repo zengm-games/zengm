@@ -2,12 +2,10 @@ import { helpers } from "../util/index.ts";
 
 const RecordAndPlayoffs = ({
 	abbrev,
-	boldChamps,
+	className,
 	lost,
-	playoffsByConf,
-	numPlayoffRounds,
 	option,
-	playoffRoundsWon,
+	roundsWonText,
 	season,
 	tied,
 	otl,
@@ -15,27 +13,16 @@ const RecordAndPlayoffs = ({
 	won,
 }: {
 	abbrev: string;
+	className?: string;
 	lost: number;
 	option?: "noSeason";
+	roundsWonText?: string;
 	season: number;
 	tied?: number;
 	otl?: number;
 	tid: number;
 	won: number;
-} & (
-	| {
-			boldChamps?: boolean;
-			numPlayoffRounds: number;
-			playoffRoundsWon: number;
-			playoffsByConf: boolean;
-	  }
-	| {
-			boldChamps?: void;
-			numPlayoffRounds?: void;
-			playoffRoundsWon?: void;
-			playoffsByConf?: void;
-	  }
-)) => {
+}) => {
 	const seasonText =
 		option !== "noSeason" ? (
 			<span>
@@ -57,27 +44,13 @@ const RecordAndPlayoffs = ({
 		<a href={helpers.leagueUrl(["standings", season])}>{record}</a>
 	);
 	const extraText =
-		playoffsByConf !== undefined &&
-		numPlayoffRounds !== undefined &&
-		playoffRoundsWon !== undefined &&
-		playoffRoundsWon >= 0 ? (
+		roundsWonText !== undefined && roundsWonText !== "" ? (
 			<span>
-				,{" "}
-				<a href={helpers.leagueUrl(["playoffs", season])}>
-					{helpers
-						.roundsWonText(playoffRoundsWon, numPlayoffRounds, playoffsByConf)
-						.toLowerCase()}
-				</a>
+				, <a href={helpers.leagueUrl(["playoffs", season])}>{roundsWonText}</a>
 			</span>
 		) : null;
 	return (
-		<span
-			className={
-				boldChamps && playoffRoundsWon === numPlayoffRounds
-					? "fw-bold"
-					: undefined
-			}
-		>
+		<span className={className}>
 			{seasonText}
 			{recordText}
 			{extraText}

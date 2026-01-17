@@ -238,6 +238,20 @@ const CollegesControls = ({
 						>
 							Clear
 						</Dropdown.Item>
+						<Dropdown.Item
+							onClick={() => {
+								onSave(
+									rows.map((row) => {
+										return {
+											...row,
+											frequency: "1",
+										};
+									}),
+								);
+							}}
+						>
+							Set all frequencies to 1
+						</Dropdown.Item>
 					</Dropdown.Menu>
 				</Dropdown>
 				<PlayerBioInfoSortButton
@@ -543,6 +557,20 @@ const NamesControls = ({
 							}}
 						>
 							Clear
+						</Dropdown.Item>
+						<Dropdown.Item
+							onClick={() => {
+								onSave(
+									rows.map((row) => {
+										return {
+											...row,
+											frequency: "1",
+										};
+									}),
+								);
+							}}
+						>
+							Set all frequencies to 1
 						</Dropdown.Item>
 					</Dropdown.Menu>
 				</Dropdown>

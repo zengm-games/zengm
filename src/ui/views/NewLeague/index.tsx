@@ -7,8 +7,7 @@ import {
 	PHASE_TEXT,
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
-	SPORT_HAS_LEGENDS,
-	SPORT_HAS_REAL_PLAYERS,
+	REAL_PLAYERS_INFO,
 	gameAttributesArrayToObject,
 	WEBSITE_ROOT,
 	unwrapGameAttribute,
@@ -40,6 +39,7 @@ import type {
 	Div,
 	Conf,
 	GameAttributesLeague,
+	Phase,
 } from "../../../common/types.ts";
 import clsx from "clsx";
 import { descriptions } from "../Settings/settings.tsx";
@@ -53,6 +53,8 @@ import type { BasicInfo } from "../../../worker/api/leagueFileUpload.ts";
 import { SelectSeasonRange } from "./SelectSeasonRange.tsx";
 import { orderBy } from "../../../common/utils.ts";
 import { analyticsEventLocal } from "../../../common/analyticsEventLocal.ts";
+import { choice } from "../../../common/random.ts";
+import { realContinents } from "../../../common/geographicCoordinates.ts";
 
 const animationVariants = {
 	visible: {
@@ -67,7 +69,7 @@ const animationVariants = {
 		x: "100vw",
 		transition: { duration: 0.25, ease: "easeInOut" },
 	},
-};
+} as const;
 
 export const applyRealTeamInfos = <
 	T extends Parameters<typeof applyRealTeamInfo>[0] & {
@@ -142,22 +144,28 @@ const initKeptKeys = ({
 	};
 };
 
-export const MIN_SEASON = 1947;
-export const MAX_SEASON = 2025;
-const MAX_PHASE = PHASE.PLAYOFFS;
-
 const seasons: { key: string; value: string }[] = [];
-for (let i = MAX_SEASON; i >= MIN_SEASON; i--) {
-	seasons.push({
-		key: String(i),
-		value: String(i),
-	});
+if (REAL_PLAYERS_INFO) {
+	for (
+		let i = REAL_PLAYERS_INFO.MAX_SEASON;
+		i >= REAL_PLAYERS_INFO.MIN_SEASON;
+		i--
+	) {
+		seasons.push({
+			key: String(i),
+			value: String(i),
+		});
+	}
 }
 
 const legends = [
 	{
 		key: "all" as const,
 		value: "All Time",
+	},
+	{
+		key: "2020s" as const,
+		value: "2020s",
 	},
 	{
 		key: "2010s" as const,
@@ -215,6 +223,11 @@ const phases = [
 
 type State = {
 	creating: boolean;
+	season: number;
+	phase: Phase;
+	name: string;
+
+	// Many of the settings below only apply to some of these "customize" types, but store them all in the root of one big object so that switching between them remembers state.
 	customize:
 		| "default"
 		| "custom-rosters"
@@ -222,9 +235,6 @@ type State = {
 		| "legends"
 		| "real"
 		| "crossEra";
-	season: number;
-	phase: number;
-	name: string;
 
 	// Why keep difficulty here, rather than just using settings.difficulty? Because then it won't get reset every time settings change (new league file, etc).
 	difficulty: number;
@@ -267,7 +277,7 @@ type Action =
 	  }
 	| {
 			type: "setPhase";
-			phase: number;
+			phase: Phase;
 	  }
 	| {
 			type: "setKeptKeys";
@@ -507,7 +517,7 @@ const reducer = (state: State, action: Action): State => {
 
 		case "setTid": {
 			const t = state.teams.find((t) => t.tid === action.tid);
-			const tid = t ? t.tid : state.teams.length > 0 ? state.teams[0].tid : 0;
+			const tid = t ? t.tid : state.teams.length > 0 ? state.teams[0]!.tid : 0;
 
 			return {
 				...state,
@@ -644,8 +654,8 @@ const getRebuildInfo = () => {
 	if (location.hash.startsWith("#rebuild=")) {
 		const rebuildSlug = location.hash.replace("#rebuild=", "");
 		const parts = rebuildSlug.split("_");
-		const abbrev = parts[1].toUpperCase();
-		const season = Number.parseInt(parts[2]);
+		const abbrev = parts[1]?.toUpperCase();
+		const season = Number.parseInt(parts[2]!);
 		if (abbrev && !Number.isNaN(season)) {
 			return {
 				abbrev,
@@ -706,7 +716,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			}
 
 			let season;
-			let phase;
+			let phase: Phase;
 			const rebuildInfo = getRebuildInfo();
 			if (rebuildInfo) {
 				season = rebuildInfo.season;
@@ -715,9 +725,11 @@ const NewLeague = (props: View<"newLeague">) => {
 			} else {
 				season = Number.parseInt(safeLocalStorage.getItem("prevSeason") as any);
 				if (Number.isNaN(season)) {
-					season = MAX_SEASON;
+					season = REAL_PLAYERS_INFO?.MAX_SEASON ?? new Date().getFullYear();
 				}
-				phase = Number.parseInt(safeLocalStorage.getItem("prevPhase") as any);
+				phase = Number.parseInt(
+					safeLocalStorage.getItem("prevPhase") as any,
+				) as any;
 				if (Number.isNaN(phase)) {
 					phase = PHASE.PRESEASON;
 				}
@@ -767,7 +779,7 @@ const NewLeague = (props: View<"newLeague">) => {
 	if (importing) {
 		title = "Import League";
 	} else if (props.type === "custom") {
-		title = SPORT_HAS_REAL_PLAYERS ? "New Custom League" : "New League";
+		title = REAL_PLAYERS_INFO ? "New Custom League" : "New League";
 	} else if (props.type === "random") {
 		title = "New Random Players League";
 	} else if (props.type === "legends") {
@@ -1019,8 +1031,12 @@ const NewLeague = (props: View<"newLeague">) => {
 	);
 
 	const [showSeasonRange, setShowSeasonRange] = useState(false);
-	const [seasonCrossEraStart, setSeasonCrossEraStart] = useState(MIN_SEASON);
-	const [seasonCrossEraEnd, setSeasonCrossEraEnd] = useState(MAX_SEASON);
+	const [seasonCrossEraStart, setSeasonCrossEraStart] = useState(
+		REAL_PLAYERS_INFO?.MIN_SEASON ?? 0,
+	);
+	const [seasonCrossEraEnd, setSeasonCrossEraEnd] = useState(
+		REAL_PLAYERS_INFO?.MAX_SEASON ?? 0,
+	);
 	const seasonRange: [number, number] = [
 		seasonCrossEraStart,
 		seasonCrossEraEnd,
@@ -1033,9 +1049,9 @@ const NewLeague = (props: View<"newLeague">) => {
 			divInfo: {
 				type: "autoSeasonRange",
 			},
+			populationFactor: "random",
 			real: true,
-			weightByPopulation: false,
-			northAmericaOnly: false,
+			continents: realContinents,
 			seasonRange,
 		});
 
@@ -1043,7 +1059,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			throw new Error(`Error randomizing teams: ${response}`);
 		} else {
 			const newTeams = applyRealTeamInfos(
-				makeTIDsSequential(response.teams),
+				makeTIDsSequential({ teams: response.teams, rewriteTids: true }),
 				props.realTeamInfo,
 				"inTeamObject",
 			);
@@ -1182,9 +1198,15 @@ const NewLeague = (props: View<"newLeague">) => {
 		invalidSeasonPhaseMessage =
 			"Starting after the playoffs is not yet supported for seasons where league mergers occurred.";
 	}
-	if (state.season === MAX_SEASON && state.phase > MAX_PHASE) {
-		invalidSeasonPhaseMessage = `Sorry, I'm not allowed to share the results of the ${MAX_SEASON} ${
-			MAX_PHASE === PHASE.PRESEASON ? "season" : (PHASE_TEXT as any)[MAX_PHASE]
+	if (
+		REAL_PLAYERS_INFO &&
+		state.season === REAL_PLAYERS_INFO.MAX_SEASON &&
+		state.phase > REAL_PLAYERS_INFO.MAX_PHASE
+	) {
+		invalidSeasonPhaseMessage = `Sorry, I'm not allowed to share the results of the ${REAL_PLAYERS_INFO.MAX_SEASON} ${
+			REAL_PLAYERS_INFO.MAX_PHASE === PHASE.PRESEASON
+				? "season"
+				: (PHASE_TEXT as any)[REAL_PLAYERS_INFO.MAX_PHASE]
 		} yet.`;
 	}
 
@@ -1311,11 +1333,11 @@ const NewLeague = (props: View<"newLeague">) => {
 												"1984",
 												"1996",
 												"2003",
-												`${MAX_SEASON}`,
+												`${REAL_PLAYERS_INFO!.MAX_SEASON}`,
 											]}
 											value2={state.phase}
 											values2={phases}
-											onNewValue2={(phase) => {
+											onNewValue2={(phase: any) => {
 												dispatch({
 													type: "setPhase",
 													phase,
@@ -1426,10 +1448,7 @@ const NewLeague = (props: View<"newLeague">) => {
 										disabled={disableWhileLoadingLeagueFile}
 										type="button"
 										onClick={() => {
-											const t =
-												displayedTeams[
-													Math.floor(Math.random() * displayedTeams.length)
-												];
+											const t = choice(displayedTeams);
 											dispatch({ type: "setTid", tid: t.tid });
 										}}
 									>
@@ -1571,7 +1590,10 @@ const NewLeague = (props: View<"newLeague">) => {
 										<>
 											<ul className="list-group list-group-flush">
 												<li className="list-group-item bg-light">
-													<h3>Start in any season back to {MIN_SEASON}</h3>
+													<h3>
+														Start in any season back to{" "}
+														{REAL_PLAYERS_INFO!.MIN_SEASON}
+													</h3>
 													<p className="mb-0">
 														Players, teams, rosters, and contracts are generated
 														from real data. Draft classes are included up to
@@ -1581,8 +1603,9 @@ const NewLeague = (props: View<"newLeague">) => {
 												<li className="list-group-item bg-light">
 													<h3>Watch your league evolve over time</h3>
 													<p className="mb-0">
-														There were only 11 teams in {MIN_SEASON}, playing a
-														very different brand of basketball than today. Live
+														There were only 11 teams in{" "}
+														{REAL_PLAYERS_INFO!.MIN_SEASON}, playing a very
+														different brand of basketball than today. Live
 														through expansion drafts, league rule changes, team
 														relocations, economic growth, and changes in style
 														of play.
@@ -1685,17 +1708,17 @@ const NewLeague = (props: View<"newLeague">) => {
 													value={state.customize}
 												>
 													<option value="default">
-														{SPORT_HAS_REAL_PLAYERS
+														{REAL_PLAYERS_INFO
 															? "Random players and teams"
 															: "Default"}
 													</option>
-													{SPORT_HAS_REAL_PLAYERS ? (
+													{REAL_PLAYERS_INFO ? (
 														<option value="real">Real players and teams</option>
 													) : null}
-													{SPORT_HAS_LEGENDS ? (
+													{REAL_PLAYERS_INFO ? (
 														<option value="crossEra">Cross-era</option>
 													) : null}
-													{SPORT_HAS_LEGENDS ? (
+													{REAL_PLAYERS_INFO?.legends ? (
 														<option value="legends">Legends</option>
 													) : null}
 													<option value="custom-rosters">

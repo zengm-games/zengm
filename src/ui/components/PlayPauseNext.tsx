@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { useEffect } from "react";
 import { Dropdown } from "react-bootstrap";
+import { formatModifierKeyLabel } from "../util/formatModifierKeyLabel.ts";
 
 const PlayPauseNext = ({
 	className,
@@ -87,7 +88,7 @@ const PlayPauseNext = ({
 					className="btn btn-light-bordered"
 					disabled={disabled}
 					onClick={onPlay}
-					title={`${titlePlay} (Alt+B)`}
+					title={`${titlePlay} (${formatModifierKeyLabel("B")})`}
 				>
 					<span className="glyphicon glyphicon-play" />
 				</button>
@@ -96,7 +97,7 @@ const PlayPauseNext = ({
 					className="btn btn-light-bordered"
 					disabled={disabled}
 					onClick={onPause}
-					title={`${titlePause} (Alt+B)`}
+					title={`${titlePause} (${formatModifierKeyLabel("B")})`}
 				>
 					<span className="glyphicon glyphicon-pause" />
 				</button>
@@ -105,7 +106,7 @@ const PlayPauseNext = ({
 				className="btn btn-light-bordered"
 				disabled={disabled || !paused}
 				onClick={onNext}
-				title={`${titleNext} (Alt+N)`}
+				title={`${titleNext} (${formatModifierKeyLabel("N")})`}
 			>
 				<span className="glyphicon glyphicon-step-forward" />
 			</button>
@@ -130,7 +131,7 @@ const PlayPauseNext = ({
 								{item.label}
 								{item.key ? (
 									<span className="text-body-secondary kbd">
-										Alt+{item.key}
+										{formatModifierKeyLabel(item.key)}
 									</span>
 								) : null}
 							</Dropdown.Item>

@@ -4,7 +4,7 @@ import logEvent from "./logEvent.ts";
 
 const ONE_HOUR = 60 * 60 * 1000;
 
-if ("serviceWorker" in navigator) {
+if ("serviceWorker" in navigator && process.env.NODE_ENV !== "development") {
 	const wb = new Workbox("/sw.js");
 
 	let updateAvailable = false;

@@ -22,7 +22,7 @@ const groupScheduleSeries = (tids: [number, number][]) => {
 	// Divide into groups of 3 or 4
 	const seriesGroupedByTeams: Record<MatchupKey, (1 | 2 | 3 | 4)[]> = {};
 	for (const key of helpers.keys(matchupsGroupedByTeams)) {
-		let numGamesLeft = matchupsGroupedByTeams[key];
+		let numGamesLeft = matchupsGroupedByTeams[key]!;
 		seriesGroupedByTeams[key] = [];
 
 		// Take series of 3 or 4 as long as possible
@@ -87,17 +87,17 @@ const groupScheduleSeries = (tids: [number, number][]) => {
 		// Order by number of series reamining, otherwise it tends to have some bunched series against the same team at the end of the season
 		seriesKeys = orderBy(
 			seriesKeys,
-			(key) => seriesGroupedByTeams[key].length,
+			(key) => seriesGroupedByTeams[key]!.length,
 			"desc",
 		);
 
 		for (const key of seriesKeys) {
-			const seriesAvailable = seriesGroupedByTeams[key];
+			const seriesAvailable = seriesGroupedByTeams[key]!;
 			if (seriesAvailable.length === 0) {
 				continue;
 			}
 
-			const matchup = matchupsByKey[key];
+			const matchup = matchupsByKey[key]!;
 
 			if (tidsForTomorrow.has(matchup[0]) || tidsForTomorrow.has(matchup[1])) {
 				continue;
@@ -124,14 +124,13 @@ const groupScheduleSeries = (tids: [number, number][]) => {
 		startIndex--
 	) {
 		for (let i = startIndex; i < dailyMatchups.length - 1; i++) {
-			const today = dailyMatchups[i];
-			const tomorrow = dailyMatchups[i + 1];
+			const today = dailyMatchups[i]!;
+			const tomorrow = dailyMatchups[i + 1]!;
 
 			const tidsTomorrow = new Set(tomorrow.flat());
 
 			const toRemove = [];
-			for (let k = 0; k < today.length; k++) {
-				const matchup = today[k];
+			for (const [k, matchup] of today.entries()) {
 				if (!tidsTomorrow.has(matchup[0]) && !tidsTomorrow.has(matchup[1])) {
 					tomorrow.push(matchup);
 					toRemove.push(k);

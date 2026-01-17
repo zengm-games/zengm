@@ -175,13 +175,18 @@ class Team<DH extends boolean> {
 					["asc", "desc"],
 				);
 				const p2 = sortedBench.find((p) => !playersInGame[p.id]);
+				let found = false;
 				if (!p2) {
-					throw new Error("Not enough players");
+					// If we're looking for a sub because the player is injured (not because they are already in the game somehow), then just keep the injured player in the game
+					if (playersInGame[p.id]) {
+						throw new Error("Not enough players");
+					}
 				} else {
 					p = p2;
+					found = true;
 				}
 
-				if (minBattingOrderWithSubstitution === undefined) {
+				if (found && minBattingOrderWithSubstitution === undefined) {
 					minBattingOrderWithSubstitution = i;
 				}
 			}
@@ -220,8 +225,7 @@ class Team<DH extends boolean> {
 				),
 			];
 
-			for (let i = 0; i < newBattingOrder.length; i++) {
-				const p = newBattingOrder[i];
+			for (const [i, p] of newBattingOrder.entries()) {
 				p.battingOrder = i;
 			}
 		}
@@ -250,13 +254,13 @@ class Team<DH extends boolean> {
 	}
 
 	getBatter() {
-		return this.playersInGameByBattingOrder[this.atBat];
+		return this.playersInGameByBattingOrder[this.atBat]!;
 	}
 
 	getOnDeck() {
 		return this.playersInGameByBattingOrder[
 			(this.atBat + 1) % NUM_BATTERS_PER_SIDE
-		];
+		]!;
 	}
 
 	advanceToNextBatter() {

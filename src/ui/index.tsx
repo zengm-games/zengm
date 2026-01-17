@@ -13,10 +13,8 @@ window.bbgm = { api, ...util };
 const {
 	analyticsEvent,
 	compareVersions,
-	confirm,
 	genStaticPage,
 	leagueNotFoundMessage,
-	local,
 	logEvent,
 	promiseWorker,
 	routes,
@@ -189,69 +187,26 @@ const render = () => {
 	);
 };
 
+const getUrlForAnalytics = (path: string) => {
+	// Track page_view here rather than in routeMatched so logged title is correct
+	const pagePath = path.replace(/^\/l\/\d+/, "/l/0");
+
+	return `${location.origin}${pagePath}`;
+};
+
 const setupRoutes = () => {
 	let initialLoad = true;
 	router.start({
 		routeMatched: async ({ context }) => {
-			if (!context.state.backendRedirect) {
-				const liveGame =
-					window.location.pathname.includes("/live_game") &&
-					!context.path.includes("/live_game") &&
-					local.getState().liveGameInProgress;
-				const liveGameExhibition =
-					window.location.pathname.includes("/exhibition/game") &&
-					!context.path.includes("/exhibition/game");
-				if (liveGame || liveGameExhibition) {
-					const proceed = await confirm(
-						`If you navigate away from this page, you won't be able to see ${
-							window.location.pathname.includes("/exhibition")
-								? "this box score"
-								: "these play-by-play results"
-						} again.`,
-						{
-							okText: "Navigate Away",
-							cancelText: "Stay Here",
-						},
-					);
-					if (!proceed) {
-						return false;
-					}
-				}
-
-				// Checks for Settings (includes because of league ID in URL) and DefaultSettings
-				if (
-					(window.location.pathname.includes("/settings") &&
-						!context.path.includes("/settings")) ||
-					(window.location.pathname === "/settings/default" &&
-						context.path !== "/settings/default")
-				) {
-					const dirtySettings = local.getState().dirtySettings;
-					if (dirtySettings) {
-						const proceed = await confirm(
-							"Are you sure you want to discard your unsaved settings changes?",
-							{
-								okText: "Discard",
-								cancelText: "Stay Here",
-							},
-						);
-						if (!proceed) {
-							return false;
-						}
-
-						local.getState().actions.update({
-							dirtySettings: false,
-						});
-					}
-				}
-			}
-
 			if (!context.state.noTrack) {
 				if (initialLoad) {
 					initialLoad = false;
 				} else {
 					// This will only do something if ads are already initialized, so it's (mostly) safe to call here even though this could be an error page, since at least it won't show on an error page for the initial pageview
 					util.ads.refreshAll();
-					util.ads.trackPageview();
+
+					// There is no way to fix the URL for initial pageviews, according to the current docs, but I guess that's not a big deal for me, we'll see
+					util.ads.trackPageview(getUrlForAnalytics(context.path));
 				}
 			}
 		},
@@ -320,12 +275,9 @@ const setupRoutes = () => {
 			}
 
 			if (!context.state.noTrack && window.enableLogging) {
-				// Track page_view here rather than in routeMatched so logged title is correct
-				const pagePath = context.path.replace(/^\/l\/\d+/, "/l/0");
-
 				// https://developers.google.com/analytics/devguides/collection/ga4/views?client_type=gtag
 				analyticsEvent("page_view", {
-					page_location: `${location.origin}${pagePath}`,
+					page_location: getUrlForAnalytics(context.path),
 				});
 			}
 		},

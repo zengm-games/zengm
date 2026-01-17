@@ -48,7 +48,7 @@ export const getBestPos = (
 	},
 	tid: number | undefined,
 ): string => {
-	const posBySeason: Record<number, string | undefined> = {};
+	const posBySeason: Record<number, string> = {};
 
 	for (const row of p.ratings) {
 		if (row.pos !== undefined && row.season !== undefined) {
@@ -125,82 +125,17 @@ export const getScore = (p: Player, tid: number) => {
 	return score;
 };
 
-const checkJerseyNumberRetirement = async (p: Player) => {
-	if (!g.get("aiJerseyRetirement")) {
-		return;
-	}
-
-	let tid: number | undefined;
-	let number: string | undefined;
-
-	// Find team he played the most with
-	const scoresByTid = new Map<number, number>();
-
-	for (const ps of p.stats) {
-		if (!scoresByTid.has(ps.tid)) {
-			scoresByTid.set(ps.tid, getScore(p, ps.tid));
-		}
-	}
-
-	if (scoresByTid.size === 0) {
-		return;
-	}
-
-	let maxScore = -Infinity;
-	let maxTid: number | undefined;
-	for (const [tid, score] of scoresByTid) {
-		if (score > maxScore) {
-			maxScore = score;
-			maxTid = tid;
-		}
-	}
-
-	if (maxTid === undefined) {
-		return;
-	}
-
-	if (maxScore > 1) {
-		tid = maxTid;
-
-		// Figure out most common jersey number
-		const valuesByJerseyNumber = new Map<string, number>();
-		for (const ps of p.stats) {
-			if (ps.tid !== tid || !ps.jerseyNumber) {
-				continue;
-			}
-			const value = getValueStatsRow(ps);
-			const prevValue = valuesByJerseyNumber.get(ps.jerseyNumber) ?? 0;
-			valuesByJerseyNumber.set(ps.jerseyNumber, prevValue + value);
-		}
-
-		if (valuesByJerseyNumber.size === 0) {
-			return;
-		}
-
-		let maxValue = -Infinity;
-		for (const [jerseyNumber, value] of valuesByJerseyNumber) {
-			if (value > maxValue) {
-				maxValue = value;
-				number = jerseyNumber;
-			}
-		}
-	} else {
-		return;
-	}
-
-	if (tid === undefined || number === undefined) {
-		return;
-	}
-
-	// Only for AI teams!
-	if (
-		g.get("userTids").includes(tid) &&
-		!local.autoPlayUntil &&
-		!g.get("spectator")
-	) {
-		return;
-	}
-
+const retireJerseyNumber = async ({
+	number,
+	p,
+	score,
+	tid,
+}: {
+	number: string;
+	p: Player;
+	score: number;
+	tid: number;
+}) => {
 	const t = await idb.cache.teams.get(tid);
 	if (!t) {
 		return;
@@ -220,11 +155,11 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 			"score",
 			"asc",
 		);
-		const worstRetiredJersey = sorted[0];
+		const worstRetiredJersey = sorted[0]!;
 
 		if (
 			worstRetiredJersey.score !== undefined &&
-			worstRetiredJersey.score > maxScore
+			worstRetiredJersey.score > score
 		) {
 			return;
 		}
@@ -246,7 +181,7 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 		seasonTeamInfo,
 		pid: p.pid,
 		text: "",
-		score: maxScore,
+		score,
 	});
 
 	/*if (!posCounts[mostCommonPosition]) {
@@ -268,6 +203,76 @@ const checkJerseyNumberRetirement = async (p: Player) => {
 		tids: [t.tid],
 		score: 20,
 	});
+};
+
+const checkJerseyNumberRetirement = async (p: Player) => {
+	if (!g.get("aiJerseyRetirement")) {
+		return;
+	}
+
+	// Find team he played the most with
+	const scoresByTid = new Map<number, number>();
+
+	for (const ps of p.stats) {
+		if (!scoresByTid.has(ps.tid)) {
+			scoresByTid.set(ps.tid, getScore(p, ps.tid));
+		}
+	}
+
+	if (scoresByTid.size === 0) {
+		return;
+	}
+
+	for (const [tid, score] of scoresByTid) {
+		if (score <= 1) {
+			continue;
+		}
+
+		let number;
+
+		// Figure out most common jersey number
+		const valuesByJerseyNumber = new Map<string, number>();
+		for (const ps of p.stats) {
+			if (ps.tid !== tid || ps.jerseyNumber === undefined) {
+				continue;
+			}
+			const value = getValueStatsRow(ps);
+			const prevValue = valuesByJerseyNumber.get(ps.jerseyNumber) ?? 0;
+			valuesByJerseyNumber.set(ps.jerseyNumber, prevValue + value);
+		}
+
+		if (valuesByJerseyNumber.size === 0) {
+			return;
+		}
+
+		let maxValue = -Infinity;
+		for (const [jerseyNumber, value] of valuesByJerseyNumber) {
+			if (value > maxValue) {
+				maxValue = value;
+				number = jerseyNumber;
+			}
+		}
+
+		if (number === undefined) {
+			continue;
+		}
+
+		// Only for AI teams!
+		if (
+			g.get("userTids").includes(tid) &&
+			!local.autoPlayUntil &&
+			!g.get("spectator")
+		) {
+			continue;
+		}
+
+		await retireJerseyNumber({
+			number,
+			p,
+			score,
+			tid,
+		});
+	}
 };
 
 export default checkJerseyNumberRetirement;

@@ -30,6 +30,8 @@ import LookingFor from "./LookingFor.tsx";
 import useLookingForState from "./useLookingForState.ts";
 import { Dropdown, SplitButton } from "react-bootstrap";
 import type { FooterRow } from "../../components/DataTable/Footer.tsx";
+import { wrappedCurrency } from "../../components/wrappedCurrency.ts";
+import { orderBy } from "../../../common/utils.ts";
 
 export type OfferType = Awaited<
 	ReturnType<(typeof api)["main"]["getTradingBlockOffers"]>
@@ -343,10 +345,10 @@ export const OfferTable = ({
 			},
 		},
 	);
-	offerCols[4].title = "Your Ovr";
-	offerCols[4].desc = "Your team's change in ovr rating";
-	offerCols[5].title = "Other Ovr";
-	offerCols[5].desc = "Other team's change in ovr rating";
+	offerCols[4]!.title = "Your Ovr";
+	offerCols[4]!.desc = "Your team's change in ovr rating";
+	offerCols[5]!.title = "Other Ovr";
+	offerCols[5]!.desc = "Other team's change in ovr rating";
 	offerCols.splice(6, 0, ...assetCols);
 
 	const offerRows = offers.map((offer, i) => {
@@ -408,7 +410,7 @@ export const OfferTable = ({
 						}
 					: null,
 				...getAssetColContents(offer),
-				helpers.formatCurrency(salaryCapOrPayroll / 1000, "M"),
+				wrappedCurrency(salaryCapOrPayroll / 1000, "M"),
 				{
 					value: offer.summary.warning ? (
 						<HelpPopover className="fs-4">{offer.summary.warning}</HelpPopover>
@@ -720,7 +722,7 @@ const TradingBlock = ({
 					injury: p.injury,
 					jerseyNumber: p.jerseyNumber,
 					skills: p.ratings.skills,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
@@ -842,6 +844,8 @@ const TradingBlock = ({
 						},
 					})}
 					getAssetColContents={(offer) => {
+						const picks = orderBy(offer.picks, ["round", "pick", "season"]);
+
 						return [
 							{
 								value: (
@@ -871,15 +875,15 @@ const TradingBlock = ({
 							{
 								value: (
 									<ul className="list-unstyled mb-0">
-										{offer.picks.map((pick) => (
+										{picks.map((pick) => (
 											<li key={pick.dpid}>
 												<SafeHtml dirty={pick.desc} />
 											</li>
 										))}
 									</ul>
 								),
-								searchValue: offer.picks.map((pick) => pick.desc).join(" "),
-								sortValue: pickScore(offer.picks),
+								searchValue: picks.map((pick) => pick.desc).join(" "),
+								sortValue: pickScore(picks),
 							},
 						];
 					}}
@@ -899,6 +903,8 @@ const TradingBlock = ({
 			) : (
 				<>
 					{state.offers.map((offer, i) => {
+						const picks = orderBy(offer.picks, ["round", "pick", "season"]);
+
 						return (
 							<Offer
 								key={offer.tid}
@@ -911,7 +917,7 @@ const TradingBlock = ({
 								}}
 								salaryCap={salaryCap}
 								salaryCapType={salaryCapType}
-								teamInfo={teamInfoCache[offer.tid]}
+								teamInfo={teamInfoCache[offer.tid]!}
 								first={i === 0}
 								{...offer}
 							>
@@ -935,7 +941,7 @@ const TradingBlock = ({
 												) : null}
 											</div>
 										) : null}
-										{offer.picks.length > 0 ? (
+										{picks.length > 0 ? (
 											<div className="col-md-4">
 												<table className="table table-striped table-borderless table-sm">
 													<thead>
@@ -944,7 +950,7 @@ const TradingBlock = ({
 														</tr>
 													</thead>
 													<tbody>
-														{offer.picks.map((pick) => (
+														{picks.map((pick) => (
 															<tr key={pick.dpid}>
 																<td>
 																	<SafeHtml dirty={pick.desc} />

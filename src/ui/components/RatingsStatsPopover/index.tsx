@@ -5,6 +5,7 @@ import WatchBlock from "../WatchBlock.tsx";
 import { helpers, toWorker } from "../../util/index.ts";
 import ResponsivePopover from "../ResponsivePopover.tsx";
 import { PLAYER } from "../../../common/index.ts";
+import { crossTabEmitter } from "../../util/crossTabEmitter.ts";
 
 const PlayerNote = ({
 	className,
@@ -52,17 +53,19 @@ const Icon = ({
 };
 
 type Props = {
+	// "default" means this is the default of an uncontrolled value, similar to defaultValue in React
+	// undefined means "we don't know the watch value, so get it on initial load"
+	defaultWatch?: number;
 	disableNameLink?: boolean;
 	pid: number;
 	season?: number;
-	watch?: number;
 };
 
 const RatingsStatsPopover = ({
+	defaultWatch,
 	disableNameLink,
 	pid,
 	season,
-	watch,
 }: Props) => {
 	const [loadingData, setLoadingData] = useState<boolean>(false);
 	const [player, setPlayer] = useState<{
@@ -91,21 +94,28 @@ const RatingsStatsPopover = ({
 		pid,
 	});
 
-	// If watch is undefined, fetch it from worker
-	const LOCAL_WATCH = watch === undefined;
-	const [localWatch, setLocalWatch] = useState(0);
+	const [watch, setWatch] = useState(defaultWatch ?? 0);
 	useEffect(() => {
-		const run = async () => {
-			if (LOCAL_WATCH) {
+		if (defaultWatch === undefined) {
+			// Need to fetch initial value
+			(async () => {
 				const newLocalWatch = await toWorker("main", "getPlayerWatch", pid);
-				setLocalWatch(newLocalWatch);
+				setWatch(newLocalWatch);
+			})();
+		} else {
+			// This happens when switching to a new pid but defaultWatch is supplied
+			setWatch(defaultWatch);
+		}
+
+		// Need to listen for bulk action updates
+		const unbind = crossTabEmitter.on("updateWatch", async (watchByPid) => {
+			const newWatch = watchByPid[pid];
+			if (newWatch !== undefined) {
+				setWatch(newWatch);
 			}
-		};
-
-		run();
-	}, [LOCAL_WATCH, pid]);
-
-	const actualWatch = watch ?? localWatch;
+		});
+		return unbind;
+	}, [defaultWatch, pid]);
 
 	// Object.is to handle NaN
 	if (!Object.is(player.pid, pid)) {
@@ -185,14 +195,11 @@ const RatingsStatsPopover = ({
 				) : null}
 				<WatchBlock
 					pid={pid}
-					watch={actualWatch}
-					onChange={
-						LOCAL_WATCH
-							? (newWatch) => {
-									setLocalWatch(newWatch);
-								}
-							: undefined
-					}
+					watch={watch}
+					onChange={(newWatch) => {
+						// Update locally even though we'll get a crossTabEmitter event too, both for responsiveness and so it works in exhibition games
+						setWatch(newWatch);
+					}}
 				/>
 			</div>
 		);
@@ -227,7 +234,7 @@ const RatingsStatsPopover = ({
 	}: {
 		forwardedRef?: Ref<HTMLSpanElement>;
 		onClick?: () => void;
-	}) => <Icon ref={forwardedRef} onClick={onClick} watch={actualWatch} />;
+	}) => <Icon ref={forwardedRef} onClick={onClick} watch={watch} />;
 
 	return (
 		<ResponsivePopover

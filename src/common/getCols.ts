@@ -1040,13 +1040,13 @@ const sportSpecificCols = bySport<{
 			desc: "Free Throws per Field Goal Attempted",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
-			title: "FTr",
+			title: "FT/FGA",
 		},
 		"stat:ftr": {
 			desc: "Free Throw Attempt Rate (FTA / FGA)",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
-			title: "FT/FGA",
+			title: "FTr",
 		},
 		"stat:gmsc": {
 			desc: "Game Score",
@@ -1981,6 +1981,72 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "Blk",
 		},
+		"stat:pntYdsPerAtt": {
+			desc: "Yards Per Punt",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Y/A",
+		},
+		"stat:pntTB": {
+			desc: "Punt Touchbacks",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "TB",
+		},
+		"stat:pntIn20": {
+			desc: "Punts Inside 20",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "In20",
+		},
+		"stat:ko": {
+			desc: "Kickoffs",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "KO",
+		},
+		"stat:koYds": {
+			desc: "Total Kickoff Yardage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Yds",
+		},
+		"stat:koYdsPerAtt": {
+			desc: "Yards Per Kickoff",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Y/A",
+		},
+		"stat:koTB": {
+			desc: "Kickoff Touchbacks",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "TB",
+		},
+		"stat:koTBPct": {
+			desc: "Kickoff Touchback Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "TB%",
+		},
+		"stat:ok": {
+			desc: "Onside Kicks",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "OK",
+		},
+		"stat:okRec": {
+			desc: "Recovered Onside Kicks",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "OKR",
+		},
+		"stat:okRecPct": {
+			desc: "Recovered Onside Kick Percentage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "OK%",
+		},
 		"stat:pen": {
 			desc: "Penalties",
 			sortSequence: ["desc", "asc"],
@@ -2040,24 +2106,6 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 			title: "Pts",
-		},
-		"stat:pntYdsPerAtt": {
-			desc: "Yards Per Punt",
-			sortSequence: ["desc", "asc"],
-			sortType: "number",
-			title: "Y/A",
-		},
-		"stat:pntTB": {
-			desc: "Punt Touchbacks",
-			sortSequence: ["desc", "asc"],
-			sortType: "number",
-			title: "TB",
-		},
-		"stat:pntIn20": {
-			desc: "Punts Inside 20",
-			sortSequence: ["desc", "asc"],
-			sortType: "number",
-			title: "In20",
 		},
 		"stat:krYdsPerAtt": {
 			desc: "Yards Per Kick Return",
@@ -2752,6 +2800,84 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "GOTL",
 		},
+		"stat:g60": {
+			desc: "Goals Per 60 Minutes",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "G/60",
+		},
+		"stat:a60": {
+			desc: "Assists Per 60 Minutes",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "A/60",
+		},
+		"stat:pts60": {
+			desc: "Points Per 60 Minutes",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "PTS/60",
+		},
+		"stat:s60": {
+			desc: "Shots Per 60 Minutes",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "S/60",
+		},
+		"stat:evG60": {
+			desc: "Even Strength Goals Per 60 Minutes",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "evG/60",
+		},
+		"stat:ppG60": {
+			desc: "Power Play Goals Per 60 Minutes",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "ppG/60",
+		},
+		"stat:shG60": {
+			desc: "Short-Handed Goals Per 60 Minutes",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "shG/60",
+		},
+		"stat:evA60": {
+			desc: "Even Strength Assists Per 60 Minutes",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "evA/60",
+		},
+		"stat:ppA60": {
+			desc: "Power Play Assists Per 60 Minutes",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "ppA/60",
+		},
+		"stat:shA60": {
+			desc: "Short-Handed Assists Per 60 Minutes",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "shA/60",
+		},
+		"stat:evPts60": {
+			desc: "Even Strength Points Per 60 Minutes",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "evPTS/60",
+		},
+		"stat:shPts60": {
+			desc: "Short-Handed Points Per 60 Minutes",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "shPTS/60",
+		},
+		"stat:ppPts60": {
+			desc: "Power Play Points Per 60 Minutes",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "ppPTS/60",
+		},
 	},
 });
 const cols: {
@@ -2788,6 +2914,11 @@ const cols: {
 		sortType: "number",
 	},
 	"# Fathers": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
+	"# Jerseys": {
+		desc: "Number of Retired Jersey Numbers",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
@@ -2834,11 +2965,11 @@ const cols: {
 	},
 	Amount: {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	"Asking For": {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	"Avg Attendance": {
 		sortSequence: ["desc", "asc"],
@@ -2868,13 +2999,13 @@ const cols: {
 	},
 	"Cap Space": {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	"Captain 1": {},
 	"Captain 2": {},
 	Cash: {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	Change: {
 		desc: "Difference between pre-lottery rank and draft lottery result",
@@ -2893,7 +3024,7 @@ const cols: {
 	Conference: {},
 	Contract: {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	Count: {
 		sortSequence: ["desc", "asc"],
@@ -2916,13 +3047,13 @@ const cols: {
 	"Current Contract": {
 		desc: "Current Contract",
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 		title: "Current",
 	},
 	"Projected Contract": {
 		desc: "Projected Contract",
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 		title: "Projected",
 	},
 	Decision: {},
@@ -3140,7 +3271,7 @@ const cols: {
 	},
 	Payroll: {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	"Peak Ovr": {
 		desc: "Peak Overall Rating",
@@ -3162,6 +3293,11 @@ const cols: {
 		sortType: "number",
 	},
 	"Power Ranking": {
+		sortType: "number",
+	},
+	"Playing Through?": {
+		desc: "Playing Through Injuyr?",
+		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
 	PlayoffAppearances: {
@@ -3197,7 +3333,7 @@ const cols: {
 	},
 	Profit: {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	PT: {
 		desc: "Playing Time Modifier",
@@ -3234,7 +3370,7 @@ const cols: {
 	},
 	Revenue: {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	"Rookie Ovr": {
 		desc: "Rookie Overall Rating",
@@ -3258,7 +3394,7 @@ const cols: {
 	"Runner Up": {},
 	Salary: {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	Scouting: {
 		desc: "Scouting Level",
@@ -3287,7 +3423,7 @@ const cols: {
 	},
 	"Ticket Price": {
 		sortSequence: ["desc", "asc"],
-		sortType: "currency",
+		sortType: "number",
 	},
 	Trade: {
 		noSearch: true,
@@ -3599,7 +3735,7 @@ const getCols = (
 
 		return {
 			...cols[title],
-			title: cols[title].title ?? title,
+			title: cols[title]!.title ?? title,
 			...overrides[title],
 		};
 	});

@@ -16,6 +16,7 @@ import { bySport, PLAYER } from "../../common/index.ts";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts";
 import goatFormula from "../util/goatFormula.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { extraStats } from "./hallOfFame.ts";
 
 type Most = {
 	value: number;
@@ -93,7 +94,7 @@ const getMostXPlayers = async ({
 			"awards",
 		],
 		ratings: ["season", "ovr", "pos"],
-		stats: ["season", "abbrev", "tid", ...stats],
+		stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
 		fuzz: true,
 		mergeStats: "totOnly",
 	});
@@ -225,8 +226,8 @@ const updatePlayers = async (
 				pick = 0;
 			} else {
 				const parts = arg.split("-");
-				round = Number.parseInt(parts[0]);
-				pick = Number.parseInt(parts[1]);
+				round = parts[0] !== undefined ? Number.parseInt(parts[0]) : Number.NaN;
+				pick = parts[1] !== undefined ? Number.parseInt(parts[1]) : Number.NaN;
 
 				if (Number.isNaN(round) || Number.isNaN(pick)) {
 					throw new Error("Invalid pick");
@@ -264,7 +265,10 @@ const updatePlayers = async (
 			getValue = (p) => {
 				let sum = 0;
 				for (const ps of p.stats) {
-					sum += ps.gp;
+					const numRounds = g.get("numGamesPlayoffSeries", ps.season).length;
+					if (numRounds > 0) {
+						sum += ps.gp;
+					}
 				}
 				return { value: sum };
 			};
@@ -620,18 +624,20 @@ const updatePlayers = async (
 			title = "Most Years on One Team";
 			description =
 				"These are the players who played the most seasons for a single team.";
-			extraCols.push({
-				key: ["most", "value"],
-				colName: "# Seasons",
-			});
-			extraCols.push({
-				key: ["most", "extra", "gp"],
-				colName: "stat:gp",
-			});
-			extraCols.push({
-				key: ["most", "extra"],
-				colName: "Team",
-			});
+			extraCols.push(
+				{
+					key: ["most", "value"],
+					colName: "# Seasons",
+				},
+				{
+					key: ["most", "extra", "gp"],
+					colName: "stat:gp",
+				},
+				{
+					key: ["most", "extra"],
+					colName: "Team",
+				},
+			);
 
 			getValue = (p) => {
 				let maxNumSeasons = 0;
@@ -643,8 +649,8 @@ const updatePlayers = async (
 					(ps) => ps.tid,
 				);
 				for (const tid of Object.keys(statsByTid)) {
-					const numSeasons = new Set(statsByTid[tid].map((row) => row.season))
-						.size;
+					const stats = statsByTid[tid]!;
+					const numSeasons = new Set(stats.map((row) => row.season)).size;
 					if (numSeasons > maxNumSeasons) {
 						maxNumSeasons = numSeasons;
 
@@ -652,7 +658,7 @@ const updatePlayers = async (
 						maxTid = Number.parseInt(tid);
 
 						maxGP = 0;
-						for (const ps of statsByTid[tid]) {
+						for (const ps of stats) {
 							maxGP += ps.gp;
 							maxSeason = ps.season;
 						}
@@ -672,22 +678,24 @@ const updatePlayers = async (
 		} else if (type === "oldest") {
 			title = "Oldest to Play in a Game";
 			description = "These are the oldest players who ever played in a game.";
-			extraCols.push({
-				key: ["most", "value"],
-				colName: "Age",
-			});
-			extraCols.push({
-				key: ["most", "extra", "season"],
-				colName: "Season",
-			});
-			extraCols.push({
-				key: ["most", "extra"],
-				colName: "Team",
-			});
-			extraCols.push({
-				key: ["most", "extra", "ovr"],
-				colName: "Ovr",
-			});
+			extraCols.push(
+				{
+					key: ["most", "value"],
+					colName: "Age",
+				},
+				{
+					key: ["most", "extra", "season"],
+					colName: "Season",
+				},
+				{
+					key: ["most", "extra"],
+					colName: "Team",
+				},
+				{
+					key: ["most", "extra", "ovr"],
+					colName: "Ovr",
+				},
+			);
 
 			getValue = (p) => {
 				let maxAge = 0;
@@ -731,22 +739,24 @@ const updatePlayers = async (
 			description = `These are the players who peaked in ovr at the ${
 				oldest ? "oldest" : "youngest"
 			} age (min 5 seasons in career${oldest ? "" : " and 30+ years old"}).`;
-			extraCols.push({
-				key: ["most", "extra", "age"],
-				colName: "Age",
-			});
-			extraCols.push({
-				key: ["most", "extra", "bestSeasonOverride"],
-				colName: "Season",
-			});
-			extraCols.push({
-				key: ["most", "extra"],
-				colName: "Team",
-			});
-			extraCols.push({
-				key: ["most", "extra", "ovr"],
-				colName: "Ovr",
-			});
+			extraCols.push(
+				{
+					key: ["most", "extra", "age"],
+					colName: "Age",
+				},
+				{
+					key: ["most", "extra", "bestSeasonOverride"],
+					colName: "Season",
+				},
+				{
+					key: ["most", "extra"],
+					colName: "Team",
+				},
+				{
+					key: ["most", "extra", "ovr"],
+					colName: "Ovr",
+				},
+			);
 
 			sortParams = [
 				[(x: any) => x.most.value, (x: any) => x.most.extra.ovr],
@@ -819,18 +829,20 @@ const updatePlayers = async (
 			description = `These are the ${
 				oldest ? "oldest" : "youngest"
 			} players who won an MVP award.`;
-			extraCols.push({
-				key: ["most", "extra", "age"],
-				colName: "Age",
-			});
-			extraCols.push({
-				key: ["most", "extra"],
-				colName: "Team",
-			});
-			extraCols.push({
-				key: ["most", "extra", "ovr"],
-				colName: "Ovr",
-			});
+			extraCols.push(
+				{
+					key: ["most", "extra", "age"],
+					colName: "Age",
+				},
+				{
+					key: ["most", "extra"],
+					colName: "Team",
+				},
+				{
+					key: ["most", "extra", "ovr"],
+					colName: "Ovr",
+				},
+			);
 
 			sortParams = [
 				[(x: any) => x.most.value, (x: any) => x.most.extra.ovr],
@@ -876,18 +888,20 @@ const updatePlayers = async (
 			if (g.get("challengeNoRatings")) {
 				description += challengeNoRatingsText;
 			}
-			extraCols.push({
-				key: ["most", "extra", "type"],
-				colName: "Injury",
-			});
-			extraCols.push({
-				key: ["most", "extra", "season"],
-				colName: "Season",
-			});
-			extraCols.push({
-				key: ["most", "value"],
-				colName: "Ovr Drop",
-			});
+			extraCols.push(
+				{
+					key: ["most", "extra", "type"],
+					colName: "Injury",
+				},
+				{
+					key: ["most", "extra", "season"],
+					colName: "Season",
+				},
+				{
+					key: ["most", "value"],
+					colName: "Ovr Drop",
+				},
+			);
 
 			filter = (p) =>
 				p.injuries.length > 0 &&
@@ -996,6 +1010,37 @@ const updatePlayers = async (
 				};
 			};
 			after = tidAndSeasonToAbbrev;
+		} else if (type === "retired_jersey_numbers") {
+			title = "Most Retired Jersey Numbers";
+			description =
+				"These are the players who have the most jersey numbers retired (minimum 2). Two numbers retired by the same team counts, as does the same number retired by different teams.";
+			extraCols.push({
+				key: ["most", "value"],
+				colName: "# Jerseys",
+			});
+
+			const teams = await idb.cache.teams.getAll();
+			const retiredJerseyNumbersByPid: Record<number, number> = {};
+			for (const t of teams) {
+				if (t.retiredJerseyNumbers) {
+					for (const { pid } of t.retiredJerseyNumbers) {
+						if (pid !== undefined) {
+							if (retiredJerseyNumbersByPid[pid] === undefined) {
+								retiredJerseyNumbersByPid[pid] = 0;
+							}
+							retiredJerseyNumbersByPid[pid] += 1;
+						}
+					}
+				}
+			}
+
+			getValue = (p) => {
+				const value = retiredJerseyNumbersByPid[p.pid];
+				if (value === undefined || value <= 1) {
+					return;
+				}
+				return { value };
+			};
 		} else {
 			throw new Error(`Unknown type "${type}"`);
 		}

@@ -1,4 +1,4 @@
-import type { CompositeWeights, Conf, Div } from "./types.ts";
+import type { CompositeWeights, Conf, Div, NonEmptyArray } from "./types.ts";
 import type { Position, RatingKey } from "./types.hockey.ts";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
@@ -167,7 +167,27 @@ const PLAYER_STATS_TABLES = {
 	},
 	advanced: {
 		name: "Advanced",
-		stats: ["gp", "gc", "ops", "dps", "gps", "ps"],
+		stats: [
+			"gp",
+			"gc",
+			"ops",
+			"dps",
+			"gps",
+			"ps",
+			"g60",
+			"a60",
+			"pts60",
+			"s60",
+			"evG60",
+			"ppG60",
+			"shG60",
+			"evA60",
+			"ppA60",
+			"shA60",
+			"evPts60",
+			"ppPts60",
+			"shPts60",
+		],
 	},
 	gameHighs: {
 		name: "Game Highs",
@@ -175,6 +195,7 @@ const PLAYER_STATS_TABLES = {
 			"gp",
 			"gMax",
 			"aMax",
+			"ptsMax",
 			"pmMax",
 			"pimMax",
 			"evGMax",
@@ -312,7 +333,7 @@ const AWARD_NAMES = {
 	allRookie: "All-Rookie Team",
 } as const;
 
-const DEFAULT_CONFS: Conf[] = [
+const DEFAULT_CONFS: NonEmptyArray<Conf> = [
 	{
 		cid: 0,
 		name: "Eastern Conference",
@@ -323,7 +344,7 @@ const DEFAULT_CONFS: Conf[] = [
 	},
 ];
 
-const DEFAULT_DIVS: Div[] = [
+const DEFAULT_DIVS: NonEmptyArray<Div> = [
 	{
 		did: 0,
 		cid: 0,

@@ -9,11 +9,11 @@ import ResponsiveTableWrapper from "./ResponsiveTableWrapper.tsx";
 import { getCols, helpers, processPlayerStats } from "../util/index.ts";
 import { filterPlayerStats, getPeriodName } from "../../common/index.ts";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.hockey/PlayByPlayLogger.ts";
-import { formatClock } from "../util/processLiveGameEvents.hockey.tsx";
 import { PLAYER_GAME_STATS } from "../../common/constants.hockey.ts";
 import { sortByStats, StatsHeader } from "./BoxScore.football.tsx";
 import updateSortBys from "./DataTable/updateSortBys.ts";
 import type { SortBy } from "./DataTable/index.tsx";
+import { formatClock } from "../../common/formatClock.ts";
 
 type Team = {
 	abbrev: string;
@@ -21,6 +21,7 @@ type Team = {
 	region: string;
 	players: any[];
 	season?: number;
+	tid: number;
 };
 
 type BoxScore = {
@@ -70,6 +71,7 @@ const StatsTable = ({
 		);
 	};
 
+	const allStarGame = t.tid === -1 || t.tid === -2;
 	const players = t.players
 		.map((p) => {
 			return {
@@ -89,8 +91,10 @@ const StatsTable = ({
 					helpers.percentage(sumsByStat.sv, sumsByStat.sa) ?? 0;
 			} else if (stat === "foPct") {
 				sumsByStat[stat] =
-					helpers.percentage(sumsByStat.fow, sumsByStat.fow + sumsByStat.fol) ??
-					0;
+					helpers.percentage(
+						sumsByStat.fow,
+						sumsByStat.fow! + sumsByStat.fol!,
+					) ?? 0;
 			} else if (stat === "sPct") {
 				sumsByStat[stat] = helpers.percentage(sumsByStat.g, sumsByStat.s) ?? 0;
 			} else {
@@ -125,6 +129,7 @@ const StatsTable = ({
 					<tbody>
 						{players.map((p, i) => (
 							<Row
+								allStarGame={allStarGame}
 								key={p.pid}
 								exhibition={exhibition}
 								i={i}
@@ -144,7 +149,7 @@ const StatsTable = ({
 									<th key={stat}>
 										{stat === "pm"
 											? null
-											: helpers.roundStat(sumsByStat[stat], stat, true)}
+											: helpers.roundStat(sumsByStat[stat]!, stat, true)}
 									</th>
 								))}
 							</tr>

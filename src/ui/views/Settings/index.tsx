@@ -1,32 +1,24 @@
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import type { View } from "../../../common/types.ts";
 import SettingsForm from "./SettingsForm.tsx";
-import { localActions, logEvent, toWorker } from "../../util/index.ts";
-import { useEffect } from "react";
+import { logEvent, toWorker } from "../../util/index.ts";
+import { useBlocker } from "../../hooks/useBlocker.ts";
 
 const Settings = ({ initialSettings }: View<"settings">) => {
 	useTitleBar({ title: "League Settings" });
 
-	useEffect(() => {
-		localActions.update({
-			dirtySettings: false,
-		});
-	}, []);
+	const { setDirty } = useBlocker();
 
 	return (
 		<SettingsForm
 			initialSettings={initialSettings}
 			onUpdateExtra={() => {
-				localActions.update({
-					dirtySettings: true,
-				});
+				setDirty(true);
 			}}
 			onSave={async (settings) => {
 				await toWorker("main", "updateGameAttributesGodMode", settings);
 
-				localActions.update({
-					dirtySettings: false,
-				});
+				setDirty(false);
 
 				logEvent({
 					type: "success",

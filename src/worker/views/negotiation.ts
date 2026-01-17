@@ -54,17 +54,17 @@ const generateContractOptions = async (
 	});
 
 	if (found === undefined) {
-		contractOptions[0].amount = contract.amount;
-		contractOptions[0].smallestAmount = true;
+		contractOptions[0]!.amount = contract.amount;
+		contractOptions[0]!.smallestAmount = true;
 		found = 0;
 	}
 
 	// From the desired contract, ask for more money for less or more years
-	for (let i = 0; i < contractOptions.length; i++) {
+	for (const [i, contractOption] of contractOptions.entries()) {
 		const factor = 1 + Math.abs(found - i) * growthFactor;
-		contractOptions[i].amount = contractOptions[found].amount * factor;
-		contractOptions[i].amount =
-			helpers.roundContract(contractOptions[i].amount * 1000) / 1000;
+		contractOption.amount = contractOptions[found]!.amount * factor;
+		contractOption.amount =
+			helpers.roundContract(contractOption.amount * 1000) / 1000;
 	}
 
 	const possible = contractOptions.filter((contractOption) => {
@@ -133,7 +133,7 @@ const updateNegotiation = async (
 		let p;
 		if (p2) {
 			p = await idb.getCopy.playersPlus(p2, {
-				attrs: ["pid", "name", "age", "contract", "face", "imgURL"],
+				attrs: ["pid", "name", "age", "contract", "face", "imgURL", "watch"],
 				ratings: ["ovr", "pot"],
 				season: g.get("season"),
 				showNoStats: true,
@@ -198,6 +198,7 @@ const updateNegotiation = async (
 			salaryCapType: g.get("salaryCapType"),
 			payroll: payroll / 1000,
 			p,
+			phase: g.get("phase"),
 			resigning: negotiation.resigning,
 			salaryCap: g.get("salaryCap") / 1000,
 			t,

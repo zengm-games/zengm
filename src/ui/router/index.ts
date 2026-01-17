@@ -30,6 +30,8 @@ type RouteMatched = (arg: {
 
 type NavigationEnd = (arg: { context: Context; error: Error | null }) => void;
 
+// Switch to URLPattern when supported: Chrome 95, Firefox 142, Safari 26
+
 const decodeURLEncodedURIComponent = (val: string) => {
 	if (typeof val !== "string") {
 		return val;
@@ -41,14 +43,14 @@ const match = (route: Route, path: string) => {
 	const params: Params = {};
 	let matches = false;
 
-	const pathname = path.split("?")[0].split("#")[0];
+	const pathname = path.split("?")[0]!.split("#")[0]!;
 	const m = route.regex.exec(decodeURIComponent(pathname));
 
 	if (m) {
 		matches = true;
 		for (let i = 1, len = m.length; i < len; ++i) {
-			const key = route.keys[i - 1];
-			const val = decodeURLEncodedURIComponent(m[i]);
+			const key = route.keys[i - 1]!;
+			const val = decodeURLEncodedURIComponent(m[i]!);
 			if (val !== undefined) {
 				params[key] = val;
 			}
@@ -143,9 +145,22 @@ class Router {
 	private navigationEnd: NavigationEnd | undefined;
 	private routes: Route[];
 	private lastNavigatedPath: string | undefined;
+	public shouldBlock:
+		| ((refresh: boolean) => boolean | Promise<boolean>)
+		| undefined;
 
 	constructor() {
 		this.routes = [];
+
+		window.addEventListener("beforeunload", (event) => {
+			// Only show prompt when needed
+			if (this.shouldBlock) {
+				// Cancel the event
+				event.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
+				// Chrome requires returnValue to be set
+				event.returnValue = "";
+			}
+		});
 	}
 
 	public async navigate(
@@ -174,6 +189,13 @@ class Router {
 				context.params = params;
 
 				try {
+					if (this.shouldBlock) {
+						const shouldBlock = await this.shouldBlock(refresh);
+						if (shouldBlock) {
+							return;
+						}
+					}
+
 					if (this.routeMatched) {
 						const output = await this.routeMatched({
 							context,

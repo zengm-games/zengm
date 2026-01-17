@@ -3,6 +3,7 @@ import {
 	type ButtonHTMLAttributes,
 	type MouseEvent,
 	type ReactNode,
+	type Ref,
 } from "react";
 
 export const ProcessingSpinner = ({
@@ -35,6 +36,7 @@ const ActionButton = ({
 	onClick,
 	processing,
 	processingText,
+	ref,
 	size,
 	type,
 	variant = "primary",
@@ -46,6 +48,7 @@ const ActionButton = ({
 	onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 	processing: boolean;
 	processingText?: string;
+	ref?: Ref<HTMLButtonElement>;
 	size?: "lg";
 	type?: ButtonHTMLAttributes<HTMLButtonElement>["type"];
 	variant?: "primary" | "secondary" | "god-mode" | "danger" | "light-bordered";
@@ -62,6 +65,7 @@ const ActionButton = ({
 			)}
 			disabled={disabled || processing}
 			onClick={onClick}
+			ref={ref}
 		>
 			{maintainWidth ? (
 				<>

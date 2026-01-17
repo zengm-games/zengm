@@ -11,6 +11,8 @@ import type {
 import { bySport, isSport, PHASE } from "../../common/index.ts";
 import { sortByPos } from "./roster.ts";
 import { orderBy } from "../../common/utils.ts";
+import { extraStats } from "./hallOfFame.ts";
+import { getPosByGpF } from "../core/season/doAwards.baseball.ts";
 
 const stats = bySport({
 	baseball: ["keyStats"],
@@ -33,9 +35,10 @@ const getPlayerInfo = async (
 		attrs: ["pid", "injury", "watch", "age", "numAllStar"],
 		ratings: ["ovr", "skills", "pos"],
 		season,
-		stats: [...stats, "jerseyNumber", "tid", "abbrev"],
+		stats: [...stats, "jerseyNumber", "tid", "abbrev", ...extraStats],
 		fuzz: true,
 		showNoStats: true,
+		mergeStats: "totOnly",
 	});
 
 	// Use values at time of draft
@@ -44,6 +47,10 @@ const getPlayerInfo = async (
 	p2.abbrev =
 		(await getTeamInfoBySeason(tid, season))?.abbrev ??
 		helpers.getAbbrev(p.tid);
+	p2.bestPos =
+		(isSport("baseball") && p2.stats.gpF
+			? getPosByGpF(p2.stats.gpF)
+			: undefined) ?? p2.ratings.pos;
 
 	return p2;
 };
@@ -54,11 +61,11 @@ const augment = async (allStars: AllStars) => {
 			allStars.remaining.map((info) => getPlayerInfo(info, allStars.season)),
 		)
 	).filter((p) => p !== undefined);
-	const teams = await Promise.all(
+	const teams = (await Promise.all(
 		allStars.teams.map((players) =>
 			Promise.all(players.map((info) => getPlayerInfo(info, allStars.season))),
 		),
-	);
+	)) as [any[], any[]];
 
 	if (!isSport("basketball")) {
 		for (const t of teams) {
@@ -89,10 +96,7 @@ const updateAllStarTeams = async (
 	) {
 		const allStars = await allStar.getOrCreate(season);
 		if (allStars === undefined) {
-			if (
-				season === g.get("season") &&
-				g.get("phase") <= PHASE.REGULAR_SEASON
-			) {
+			if (season === g.get("season") && g.get("phase") < PHASE.PLAYOFFS) {
 				return {
 					redirectUrl: helpers.leagueUrl(["all_star", "teams", season - 1]),
 				};
@@ -100,7 +104,7 @@ const updateAllStarTeams = async (
 
 			// https://stackoverflow.com/a/59923262/786644
 			const returnValue = {
-				errorMessage: "All-Star draft not found",
+				errorMessage: "All-Star teams not found",
 			};
 			return returnValue;
 		}
@@ -113,7 +117,7 @@ const updateAllStarTeams = async (
 
 		const godMode = g.get("godMode");
 
-		const started = teams[0].length > 1;
+		const started = teams[0]!.length > 1;
 
 		let allPossiblePlayers: {
 			pid: number;

@@ -126,10 +126,21 @@ const processSeasonAttrs = async <
 						row.payrollOrSalaryPaid = ts.expenses.salary / 1000; // [millions of dollars]
 					}
 				} else if (attr === "lastTen") {
-					const lastTenWon = ts.lastTen.filter((x) => x === 1).length;
-					const lastTenLost = ts.lastTen.filter((x) => x === 0).length;
-					const lastTenOTL = ts.lastTen.filter((x) => x === "OTL").length;
-					const lastTenTied = ts.lastTen.filter((x) => x === -1).length;
+					let lastTenWon = 0;
+					let lastTenLost = 0;
+					let lastTenOTL = 0;
+					let lastTenTied = 0;
+					for (const x of ts.lastTen) {
+						if (x === 1) {
+							lastTenWon += 1;
+						} else if (x === 0) {
+							lastTenLost += 1;
+						} else if (x === "OTL") {
+							lastTenOTL += 1;
+						} else if (x === -1) {
+							lastTenTied += 1;
+						}
+					}
 					row.lastTen = `${lastTenWon}-${lastTenLost}`;
 
 					if (lastTenOTL > 0) {
@@ -190,6 +201,8 @@ const processSeasonAttrs = async <
 							};
 						}
 					}
+				} else if (attr === "gp") {
+					row.gp = ts.won + ts.lost + (ts.tied ?? 0) + (ts.otl ?? 0);
 				} else {
 					// @ts-expect-error
 					row[attr] = ts[attr];

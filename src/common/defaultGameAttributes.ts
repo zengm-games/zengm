@@ -8,9 +8,10 @@ import isSport from "./isSport.ts";
 import type {
 	GameAttributeKey,
 	GameAttributesLeagueWithHistory,
+	GameAttributeWithHistory,
 } from "./types.ts";
 
-const wrap = <T>(value: T) => [
+const wrap = <T>(value: T): GameAttributeWithHistory<T> => [
 	{
 		start: -Infinity,
 		value,
@@ -91,15 +92,21 @@ const gameAttributesKeysSportSpecific = {
 		"numPlayersDunk",
 		"numPlayersThree",
 		"quarterLength",
+		"overtimeLength",
+		"overtimeLengthPlayoffs",
 		"numPlayersOnCourt",
 		"pace",
 		"allStarDunk",
 		"allStarThree",
+		"forceRetireRealPlayers",
+		"forceHistoricalRosters",
 	] as GameAttributeKey[],
 	football: [
 		"fantasyPoints",
 		"foulRateFactor",
 		"quarterLength",
+		"overtimeLength",
+		"overtimeLengthPlayoffs",
 		"passFactor",
 		"rushYdsFactor",
 		"passYdsFactor",
@@ -113,9 +120,13 @@ const gameAttributesKeysSportSpecific = {
 		"onsideFactor",
 		"onsideRecoveryFactor",
 		"pace",
+		"scrimmageTouchbackKickoff",
 	] as GameAttributeKey[],
 	hockey: [
+		"foulRateFactor",
 		"quarterLength",
+		"overtimeLength",
+		"overtimeLengthPlayoffs",
 		"hitFactor",
 		"giveawayFactor",
 		"takeawayFactor",
@@ -147,12 +158,12 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	gameOver: false,
 	godMode: false,
 	godModeInPast: false,
-	salaryCap: 125000, // [thousands of dollars]
-	minPayroll: 80000, // [thousands of dollars]
-	luxuryPayroll: 140000, // [thousands of dollars]
+	salaryCap: 150000, // [thousands of dollars]
+	minPayroll: 95000, // [thousands of dollars]
+	luxuryPayroll: 168000, // [thousands of dollars]
 	luxuryTax: 1.5,
-	minContract: 1000, // [thousands of dollars]
-	maxContract: 42000, // [thousands of dollars]
+	minContract: 1200, // [thousands of dollars]
+	maxContract: 50000, // [thousands of dollars]
 	minContractLength: 1,
 	maxContractLength: 5,
 	minRosterSize: 10,
@@ -164,12 +175,13 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	otherTeamsWantToHire: false,
 	numPeriods: 4, // per game
 	quarterLength: 12, // [minutes]
+	overtimeLength: 5,
+	overtimeLengthPlayoffs: null,
 	confs: wrap(DEFAULT_CONFS),
 	divs: wrap(DEFAULT_DIVS),
 	numGamesPlayoffSeries: wrap([7, 7, 7, 7]),
 	numPlayoffByes: wrap(0),
 	aiTradesFactor: 1,
-	autoDeleteOldBoxScores: true,
 	stopOnInjury: false,
 	stopOnInjuryGames: 20,
 	// According to data/injuries.ods, 0.25 injuries occur every game. Divided over 10 players and ~200 possessions, that means each player on the court has P = 0.25 / 10 / 200 = 0.000125 probability of being injured this play.
@@ -330,6 +342,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	fourthDownFactor: 1,
 	onsideFactor: 1,
 	onsideRecoveryFactor: 1,
+	scrimmageTouchbackKickoff: 35,
 
 	// These are only for ZGMH, but for TypeScript define them here
 	hitFactor: 1,
@@ -357,6 +370,14 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	neutralSite: "never",
 	tradeProposalsSeed: 0,
 	rpdPot: true,
+	saveOldBoxScores: {
+		pastSeasons: 2,
+		pastSeasonsType: "all",
+		note: "all",
+	},
+	currencyFormat: ["$", ".", ""],
+	forceRetireRealPlayers: false,
+	forceHistoricalRosters: false,
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!
@@ -367,6 +388,8 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				numGamesDiv: 6,
 				numGamesConf: 6,
 				quarterLength: 15,
+				overtimeLength: 10,
+				overtimeLengthPlayoffs: 15,
 				numGamesPlayoffSeries: wrap([1, 1, 1, 1]),
 				numPlayoffByes: wrap(2),
 				stopOnInjuryGames: 1,
@@ -402,6 +425,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 					"marginOfVictory",
 					"coinFlip",
 				]),
+				tradeDeadline: 0.5,
 				playoffsReseed: true,
 				playoffsNumTeamsDiv: wrap(1),
 				playIn: false,
@@ -419,6 +443,8 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				numGamesDiv: 26,
 				numGamesConf: 24,
 				quarterLength: 20,
+				overtimeLength: 5,
+				overtimeLengthPlayoffs: 20,
 				numPeriods: 3,
 				salaryCapType: "hard",
 				salaryCap: 80000,

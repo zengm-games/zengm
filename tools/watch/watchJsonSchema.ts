@@ -1,7 +1,7 @@
 import { watch } from "chokidar";
 import fs from "node:fs/promises";
 import { getSport } from "../lib/getSport.ts";
-import { spinners, type Spinners } from "./spinners.ts";
+import { type Spinners } from "./spinners.ts";
 
 // https://ar.al/2021/02/22/cache-busting-in-node.js-dynamic-esm-imports/
 const importFresh = async (modulePath: string) => {
@@ -19,13 +19,15 @@ export const watchJsonSchema = async (
 
 	const outFilename = "build/files/league-schema.json";
 
-	let buildCount = 0;
+	let abortController: AbortController | undefined;
 
 	const buildJSONSchema = async () => {
 		try {
+			abortController?.abort();
+			abortController = new AbortController();
+			const { signal } = abortController;
+
 			const sport = getSport();
-			buildCount += 1;
-			const initialBuildCount = buildCount;
 
 			updateStart(outFilename);
 
@@ -34,15 +36,17 @@ export const watchJsonSchema = async (
 				"../build/generateJsonSchema.ts",
 			);
 
-			if (buildCount !== initialBuildCount || spinners.switchingSport) {
+			if (signal.aborted) {
 				return;
 			}
 
 			const jsonSchema = generateJsonSchema(sport);
-			const output = JSON.stringify(jsonSchema, null, 2);
-			await fs.writeFile(outFilename, output);
+			const output = JSON.stringify(jsonSchema);
+			await fs.writeFile(outFilename, output, {
+				signal,
+			});
 
-			if (buildCount !== initialBuildCount || spinners.switchingSport) {
+			if (signal.aborted) {
 				return;
 			}
 
@@ -57,6 +61,9 @@ export const watchJsonSchema = async (
 	const watcher = watch("tools/build/generateJsonSchema.ts", {});
 	watcher.on("change", buildJSONSchema);
 	eventEmitter.on("newSport", buildJSONSchema);
+	eventEmitter.on("switchingSport", () => {
+		abortController?.abort();
+	});
 };
 
 // watchJsonSchema((filename) => console.log('updateStart', filename), (filename) => console.log('updateEnd', filename), (filename, error) => console.log('updateError', filename, error));

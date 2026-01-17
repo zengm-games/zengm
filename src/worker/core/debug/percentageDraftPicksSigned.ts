@@ -26,9 +26,9 @@ const percentageDraftPicksSigned = async () => {
 			p.draft.year >= g.get("startingSeason")
 		) {
 			const key = `${p.draft.round}-${p.draft.pick}`;
-			counts[key].total += 1;
+			counts[key]!.total += 1;
 			if (p.stats.length > 0 && p.draft.tid === p.stats[0].tid) {
-				counts[key].signed += 1;
+				counts[key]!.signed += 1;
 			}
 		}
 	}

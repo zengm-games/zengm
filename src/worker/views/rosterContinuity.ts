@@ -86,8 +86,8 @@ const updateSeasons = async (
 			for (const p of players) {
 				for (const ps of p.stats) {
 					if (ps.season === season && !ps.playoffs && minutesAll[ps.tid]) {
-						const min = minutesAll[ps.tid].get(p.pid) ?? 0;
-						minutesAll[ps.tid].set(p.pid, min + ps.min);
+						const min = minutesAll[ps.tid]!.get(p.pid) ?? 0;
+						minutesAll[ps.tid]!.set(p.pid, min + ps.min);
 					}
 				}
 			}
@@ -100,7 +100,7 @@ const updateSeasons = async (
 							if (!prevMinutesAll) {
 								throw new Error("undefined prevMinutesAll");
 							}
-							const prevMinutes = prevMinutesAll[i];
+							const prevMinutes = prevMinutesAll[i]!;
 							let sumMinutes = 0;
 							let sumMinutesContinuity = 0;
 
@@ -155,7 +155,7 @@ const updateSeasons = async (
 				Array.from(tidsSortedSeasonSet).filter(
 					(tid) => !tidsSorted.includes(tid),
 				),
-				(tid) => abbrevs[tid],
+				(tid) => abbrevs[tid]!,
 			);
 			tidsSorted.push(...tidsSortedSeason);
 		}
@@ -167,12 +167,12 @@ const updateSeasons = async (
 			}
 		}
 		if (remainingTids.length > 0) {
-			const tidsSortedSeason = orderBy(remainingTids, (tid) => abbrevs[tid]);
+			const tidsSortedSeason = orderBy(remainingTids, (tid) => abbrevs[tid]!);
 			tidsSorted.push(...tidsSortedSeason);
 		}
 
 		// Actually reorder all
-		const abbrevsSorted = tidsSorted.map((tid) => abbrevs[tid]);
+		const abbrevsSorted = tidsSorted.map((tid) => abbrevs[tid]!);
 		const seasonsSorted = seasons.map((season) =>
 			tidsSorted.map((tid) => season[tid]),
 		);

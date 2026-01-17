@@ -4,16 +4,26 @@ import { buildCss } from "../build/buildCss.ts";
 
 const filenames = ["build/gen/light.css", "build/gen/dark.css"];
 
-const mybuildCss = async () => {
-	for (const filename of filenames) {
-		parentPort!.postMessage({
-			type: "start",
-			filename,
-		});
-	}
+let abortController: AbortController | undefined;
 
+const myBuildCss = async () => {
 	try {
-		await buildCss(true);
+		abortController?.abort();
+		abortController = new AbortController();
+		const { signal } = abortController;
+
+		for (const filename of filenames) {
+			parentPort!.postMessage({
+				type: "start",
+				filename,
+			});
+		}
+
+		await buildCss(true, signal);
+		if (signal.aborted) {
+			return;
+		}
+
 		for (const filename of filenames) {
 			parentPort!.postMessage({
 				type: "end",
@@ -31,7 +41,9 @@ const mybuildCss = async () => {
 	}
 };
 
-await mybuildCss();
+await myBuildCss();
 
 const watcher = watch("public/css", {});
-watcher.on("change", mybuildCss);
+watcher.on("change", myBuildCss);
+
+// No need to listen for switchingSport because CSS does not depend on sport

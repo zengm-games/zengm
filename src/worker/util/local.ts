@@ -17,6 +17,7 @@ const defaultLocal: Local = {
 	playerOvrMean: 47,
 	playerOvrStd: 10,
 	playerOvrMeanStdStale: true,
+	realPlayerActiveSeasons: undefined,
 	seasonLeaders: undefined,
 	playingUntilEndOfRound: false,
 	statusText: "Idle",
@@ -43,6 +44,7 @@ const local: Local & {
 	playerOvrStd: defaultLocal.playerOvrStd,
 	playerOvrMeanStdStale: defaultLocal.playerOvrMeanStdStale,
 	playingUntilEndOfRound: defaultLocal.playingUntilEndOfRound,
+	realPlayerActiveSeasons: defaultLocal.realPlayerActiveSeasons,
 	seasonLeaders: defaultLocal.seasonLeaders,
 	statusText: defaultLocal.statusText,
 	unviewedSeasonSummary: defaultLocal.unviewedSeasonSummary,
@@ -51,7 +53,6 @@ const local: Local & {
 		// These variables will be reset if the user switches leagues
 		local.autoPlayUntil = defaultLocal.autoPlayUntil;
 		local.autoSave = defaultLocal.autoSave;
-		local.email = defaultLocal.email;
 		local.exhibitionGamePlayers = defaultLocal.exhibitionGamePlayers;
 		local.fantasyDraftResults = defaultLocal.fantasyDraftResults;
 		local.leagueLoaded = defaultLocal.leagueLoaded;
@@ -64,12 +65,12 @@ const local: Local & {
 		local.playerOvrStd = defaultLocal.playerOvrStd;
 		local.playerOvrMeanStdStale = defaultLocal.playerOvrMeanStdStale;
 		local.playingUntilEndOfRound = defaultLocal.playingUntilEndOfRound;
+		local.realPlayerActiveSeasons = defaultLocal.realPlayerActiveSeasons; // Since there may be different tids in different leagues
 		local.seasonLeaders = defaultLocal.seasonLeaders;
 		local.statusText = defaultLocal.statusText;
 		local.unviewedSeasonSummary = defaultLocal.unviewedSeasonSummary;
-		local.username = defaultLocal.username;
 
-		// Don't reset goldUntil because that persists across leagues. Probably it shouldn't be in this file, but should
+		// Don't reset email/goldUntil/username because that persists across leagues. Probably it shouldn't be in this file, but should
 		// be somewhere else (like how g used to have some variables not persisted to database).
 	},
 };

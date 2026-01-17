@@ -1,4 +1,4 @@
-import type { CompositeWeights, Conf, Div } from "./types.ts";
+import type { CompositeWeights, Conf, Div, NonEmptyArray } from "./types.ts";
 import type { RatingKey } from "./types.basketball.ts";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
@@ -157,7 +157,19 @@ const PLAYER_GAME_STATS = {
 const PLAYER_SUMMARY = {
 	summary: {
 		name: "Summary",
-		stats: ["gp", "pts", "trb", "ast", "fgp", "tpp", "ftp", "tsp", "per", "ws"],
+		stats: [
+			"gp",
+			"min",
+			"pts",
+			"trb",
+			"ast",
+			"fgp",
+			"tpp",
+			"ftp",
+			"tsp",
+			"per",
+			"ws",
+		],
 	},
 };
 
@@ -477,6 +489,24 @@ const TEAM_STATS_TABLES = {
 			"tovp",
 			"orbp",
 			"ftpFga",
+			"oppEfg",
+			"oppTovp",
+			"drbp",
+			"oppFtpFga",
+		],
+		superCols: [
+			{
+				title: "",
+				colspan: 13,
+			},
+			{
+				title: "Offensive Four Factors",
+				colspan: 4,
+			},
+			{
+				title: "Defensive Four Factors",
+				colspan: 4,
+			},
 		],
 	},
 };
@@ -525,7 +555,7 @@ const AWARD_NAMES = {
 	allRookie: "All-Rookie Team",
 } as const;
 
-const DEFAULT_CONFS: Conf[] = [
+const DEFAULT_CONFS: NonEmptyArray<Conf> = [
 	{
 		cid: 0,
 		name: "Eastern Conference",
@@ -536,7 +566,7 @@ const DEFAULT_CONFS: Conf[] = [
 	},
 ];
 
-const DEFAULT_DIVS: Div[] = [
+const DEFAULT_DIVS: NonEmptyArray<Div> = [
 	{
 		did: 0,
 		cid: 0,

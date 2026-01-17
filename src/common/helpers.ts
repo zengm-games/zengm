@@ -1,4 +1,5 @@
 // This should never be directly imported. Instead, ui/util/helpers and ui/worker/helpers should be used.
+
 import clone from "just-clone";
 import type {
 	TeamBasic,
@@ -28,8 +29,7 @@ const getPopRanks = (
 		// Find the starting and ending ranks of all teams tied with the current team (if no tie, then startRank and endRank will be the same)
 		let startRank;
 		let endRank;
-		for (let i = 0; i < teamsSorted.length; i++) {
-			const t2 = teamsSorted[i];
+		for (const [i, t2] of teamsSorted.entries()) {
 			if (t2.pop === t.pop || t2.tid === t.tid) {
 				if (startRank === undefined) {
 					startRank = i + 1;
@@ -54,11 +54,27 @@ function addPopRank<
 
 	return teams.map((t, i) => ({
 		...t,
-		popRank: popRanks[i],
+		popRank: popRanks[i]!,
 	}));
 }
 
-const gameScore = (arg: { [key: string]: number }): number => {
+const gameScore = (
+	arg: Record<
+		| "pts"
+		| "fg"
+		| "fga"
+		| "fta"
+		| "ft"
+		| "orb"
+		| "drb"
+		| "stl"
+		| "ast"
+		| "blk"
+		| "pf"
+		| "tov",
+		number
+	>,
+): number => {
 	return (
 		arg.pts +
 		0.4 * arg.fg -
@@ -110,45 +126,45 @@ const getTeamsDefault = (): TeamBasic[] => {
 			},
 			{
 				tid: 5,
+				cid: 0,
+				did: 1,
+				abbrev: "CHW",
+			},
+			{
+				tid: 6,
 				cid: 1,
 				did: 4,
 				abbrev: "CIN",
 			},
 			{
-				tid: 6,
+				tid: 7,
 				cid: 0,
 				did: 1,
 				abbrev: "CLE",
 			},
 			{
-				tid: 7,
+				tid: 8,
 				cid: 0,
 				did: 2,
 				abbrev: "DAL",
 			},
 			{
-				tid: 8,
+				tid: 9,
 				cid: 1,
 				did: 5,
 				abbrev: "DEN",
 			},
 			{
-				tid: 9,
+				tid: 10,
 				cid: 0,
 				did: 1,
 				abbrev: "DET",
 			},
 			{
-				tid: 10,
+				tid: 11,
 				cid: 0,
 				did: 2,
 				abbrev: "HOU",
-			},
-			{
-				tid: 11,
-				cid: 0,
-				did: 1,
-				abbrev: "IND",
 			},
 			{
 				tid: 12,
@@ -554,33 +570,33 @@ const getTeamsDefault = (): TeamBasic[] => {
 			},
 			{
 				tid: 13,
-				cid: 1,
-				did: 2,
-				abbrev: "MEM",
-			},
-			{
-				tid: 14,
 				cid: 0,
 				did: 0,
 				abbrev: "MIA",
 			},
 			{
-				tid: 15,
+				tid: 14,
 				cid: 1,
 				did: 2,
 				abbrev: "MIN",
 			},
 			{
-				tid: 16,
+				tid: 15,
 				cid: 0,
 				did: 0,
 				abbrev: "MON",
 			},
 			{
-				tid: 17,
+				tid: 16,
 				cid: 0,
 				did: 1,
 				abbrev: "NJ",
+			},
+			{
+				tid: 17,
+				cid: 1,
+				did: 2,
+				abbrev: "NSH",
 			},
 			{
 				tid: 18,
@@ -741,7 +757,7 @@ const getTeamsDefault = (): TeamBasic[] => {
 				tid: 11,
 				cid: 0,
 				did: 2,
-				abbrev: "MEM",
+				abbrev: "NSH",
 			},
 
 			{
@@ -879,12 +895,13 @@ const getTeamsDefault = (): TeamBasic[] => {
  *
  * Taken from http://stackoverflow.com/a/3284324/786644
  */
-function deepCopy<T>(obj: T): T {
+const deepCopy = <T>(obj: T): T => {
 	// Can't use old deepCopy function because Chrome 128 had a weird bug where sometimes [{}] would get cloned to {0: {}} - this appeared when creating a league in ZGMB
 	// Can't use structuredClone because Jest handles it annoyingly enough (deepStrictEqual doesn't work) that it's not worth it
+	// rfdc does weird stuff to arrays with properties on them, which happens accidentally sometimes, like [{RATINGS}] with a .season on it winds up adding an empty ratings row to the end
 	// @ts-expect-error https://github.com/angus-c/just/pull/582
 	return clone(obj);
-}
+};
 
 /**
  * Create a URL for a page within a league.
@@ -892,7 +909,7 @@ function deepCopy<T>(obj: T): T {
  * @param {Array.<string|number>} components Array of components for the URL after the league ID, which will be combined with / in between.
  * @return {string} URL
  */
-const leagueUrlFactory = (
+const leagueUrlBase = (
 	lid: number,
 	components: (number | string | undefined)[],
 ) => {
@@ -907,16 +924,8 @@ const leagueUrlFactory = (
 	return url;
 };
 
-/**
- * Format a number as currency, correctly handling negative values.
- *
- * @memberOf util.helpers
- * @param {number} amount Input value.
- * @param {string=} append Suffix to append to the number, like "M" for things like $2M.
- * @param {number|string|undefined} precision Number of decimal places. Default is 2 (like $17.62).
- * @return {string} Formatted currency string.
- */
-const formatCurrency = (
+const formatCurrencyBase = (
+	currencyFormat: GameAttributesLeague["currencyFormat"],
 	amount: number,
 	initialUnits: "M" | "" = "",
 	precision: number = 2,
@@ -927,7 +936,7 @@ const formatCurrency = (
 	let abs = Math.abs(amount);
 
 	if (abs === 0) {
-		return "$0";
+		return `${currencyFormat[0]}0${currencyFormat[2]}`;
 	}
 
 	let append = "";
@@ -938,7 +947,7 @@ const formatCurrency = (
 
 		const exponent = Math.floor(Math.log10(abs));
 		const suffixIndex = Math.floor((exponent + baseExponent) / 3);
-		if (suffixIndex < currencySuffixes.length) {
+		if (currencySuffixes[suffixIndex] !== undefined) {
 			append = currencySuffixes[suffixIndex];
 			abs /= 1000 ** (suffixIndex - baseExponent / 3);
 		} else {
@@ -969,7 +978,11 @@ const formatCurrency = (
 		}
 	}
 
-	return `${sign}$${numberString}${append}`;
+	if (currencyFormat[1] === ",") {
+		numberString = numberString.replace(".", ",");
+	}
+
+	return `${sign}${currencyFormat[0]}${numberString}${append}${currencyFormat[2]}`;
 };
 
 /**
@@ -1232,12 +1245,18 @@ const getJerseyNumber = (
 	type: "mostCommon" | "current" = "current",
 ): string | undefined => {
 	if (type === "current") {
+		// jerseyNumber at root of the file is the player's real current jersey number. Could be undefined if not set yet (draft prospect, or just signed and hasn't played yet)
+		if (p.jerseyNumber !== undefined) {
+			return p.jerseyNumber;
+		}
+
+		// This used to be the primary source of truth, but is now just historical data. Use it for players from before p.jerseyNumber was mandatory
 		if (p.stats.length > 0) {
 			return p.stats.at(-1).jerseyNumber;
 		}
 
-		// For uploaded league files, or real players leagues with no old stats (with new old stats, relies on augmentPartialPlayer to set jerseyNumber from root in latest stats row)
-		return p.jerseyNumber;
+		// None found? Return undefind. This happens for players who have never been on a team during the season
+		return;
 	}
 
 	// Find most common from career
@@ -1265,45 +1284,6 @@ const getJerseyNumber = (
 	}
 
 	return undefined;
-};
-
-const roundsWonText = (
-	playoffRoundsWon: number,
-	numPlayoffRounds: number,
-	playoffsByConf: boolean,
-	showMissedPlayoffs?: boolean,
-) => {
-	if (playoffRoundsWon >= 0) {
-		if (playoffRoundsWon === numPlayoffRounds) {
-			return "League champs" as const;
-		}
-
-		if (playoffRoundsWon === numPlayoffRounds - 1) {
-			return playoffsByConf ? "Conference champs" : ("Made finals" as const);
-		}
-
-		if (playoffRoundsWon === 0) {
-			return "Made playoffs" as const;
-		}
-
-		if (playoffRoundsWon === numPlayoffRounds - 2) {
-			return playoffsByConf
-				? "Made conference finals"
-				: ("Made semifinals" as const);
-		}
-
-		if (playoffRoundsWon === numPlayoffRounds - 3) {
-			return playoffsByConf
-				? "Made conference semifinals"
-				: ("Made quarterfinals" as const);
-		}
-
-		if (playoffRoundsWon >= 1) {
-			return `Made ${ordinal(playoffRoundsWon + 1)} round` as const;
-		}
-	}
-
-	return showMissedPlayoffs ? "Missed playoffs" : ("" as const);
 };
 
 // Based on the currnet number of active teams, the number of draft rounds, and the number of expansion teams, what is the minimum valid number for the max number of players that can be taken per team?
@@ -1478,7 +1458,7 @@ const getRecordNumericValue = (record: string | null) => {
 		return -Infinity;
 	}
 
-	let [won, lost, otl, tied] = record
+	let [won = 0, lost = 0, otl, tied] = record
 		.split("-")
 		.map((num) => Number.parseInt(num));
 
@@ -1520,17 +1500,16 @@ export default {
 	getJerseyNumber,
 	getTeamsDefault,
 	deepCopy,
-	formatCurrency,
+	formatCurrencyBase,
 	isAmerican,
 	bound,
-	leagueUrlFactory,
+	leagueUrlBase,
 	numberWithCommas,
 	ordinal,
 	plural,
 	roundWinp,
 	upperCaseFirstLetter,
 	keys,
-	roundsWonText,
 	ratio,
 	percentage,
 	formatRecord,

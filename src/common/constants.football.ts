@@ -1,4 +1,4 @@
-import type { CompositeWeights, Conf, Div } from "./types.ts";
+import type { CompositeWeights, Conf, Div, NonEmptyArray } from "./types.ts";
 import type { Position, PrimaryPosition, RatingKey } from "./types.football.ts";
 
 const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
@@ -172,12 +172,28 @@ const PLAYER_GAME_STATS = {
 			"xpPct",
 			"kickingPts",
 			"fp",
+			"ko",
+			"koYds",
+			"koYdsPerAtt",
+			"koTB",
+			"koTBPct",
+			"ok",
+			"okRec",
+			"okRecPct",
 		],
 		sortBy: ["kickingPts"],
 	},
 	punting: {
 		name: "Punting",
-		stats: ["pnt", "pntYdsPerAtt", "pntIn20", "pntTB", "pntLng", "pntBlk"],
+		stats: [
+			"pnt",
+			"pntYds",
+			"pntYdsPerAtt",
+			"pntLng",
+			"pntIn20",
+			"pntTB",
+			"pntBlk",
+		],
 		sortBy: ["pnt"],
 	},
 	returns: {
@@ -358,8 +374,8 @@ const PLAYER_STATS_TABLES = {
 		],
 	},
 	kicking: {
-		name: "Kicking and Punting",
-		onlyShowIf: ["fga", "xpa", "pnt"],
+		name: "Kicking",
+		onlyShowIf: ["fga", "xpa", "ko"],
 		stats: [
 			"gp",
 			"gs",
@@ -381,12 +397,29 @@ const PLAYER_STATS_TABLES = {
 			"xpa",
 			"xpPct",
 			"kickingPts",
+			"fp",
+			"ko",
+			"koYds",
+			"koYdsPerAtt",
+			"koTB",
+			"koTBPct",
+			"ok",
+			"okRec",
+			"okRecPct",
+			"av",
+		],
+	},
+	punting: {
+		name: "Punting",
+		onlyShowIf: ["pnt"],
+		stats: [
 			"pnt",
 			"pntYds",
-			"pntLng",
-			"pntBlk",
 			"pntYdsPerAtt",
-			"fp",
+			"pntLng",
+			"pntIn20",
+			"pntTB",
+			"pntBlk",
 			"av",
 		],
 	},
@@ -527,11 +560,26 @@ const TEAM_STATS_TABLES = {
 			"xpa",
 			"xpPct",
 			"kickingPts",
+			"ko",
+			"koYds",
+			"koYdsPerAtt",
+			"koTB",
+			"koTBPct",
+			"ok",
+			"okRec",
+			"okRecPct",
+		],
+	},
+	punting: {
+		name: "Punting",
+		stats: [
 			"pnt",
 			"pntYds",
-			"pntLng",
-			"pntBlk",
 			"pntYdsPerAtt",
+			"pntLng",
+			"pntIn20",
+			"pntTB",
+			"pntBlk",
 		],
 	},
 	returns: {
@@ -686,11 +734,26 @@ const TEAM_STATS_TABLES = {
 			"oppXpa",
 			"oppXpPct",
 			"oppKickingPts",
+			"oppKo",
+			"oppKoYds",
+			"oppKoYdsPerAtt",
+			"oppKoTB",
+			"oppKoTBPct",
+			"oppOk",
+			"oppOkRec",
+			"oppOkRecPct",
+		],
+	},
+	opponentPunting: {
+		name: "Opponent Punting",
+		stats: [
 			"oppPnt",
 			"oppPntYds",
-			"oppPntLng",
-			"oppPntBlk",
 			"oppPntYdsPerAtt",
+			"oppPntLng",
+			"oppPntIn20",
+			"oppPntTB",
+			"oppPntBlk",
 		],
 	},
 	opponnetReturns: {
@@ -796,7 +859,7 @@ const AWARD_NAMES = {
 	allRookie: "All-Rookie Team",
 } as const;
 
-const DEFAULT_CONFS: Conf[] = [
+const DEFAULT_CONFS: NonEmptyArray<Conf> = [
 	{
 		cid: 0,
 		name: "American Conference",
@@ -807,7 +870,7 @@ const DEFAULT_CONFS: Conf[] = [
 	},
 ];
 
-const DEFAULT_DIVS: Div[] = [
+const DEFAULT_DIVS: NonEmptyArray<Div> = [
 	{
 		did: 0,
 		cid: 0,

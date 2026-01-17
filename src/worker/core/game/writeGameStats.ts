@@ -5,18 +5,18 @@ import {
 } from "../../../common/index.ts";
 import { saveAwardsByPlayer } from "../season/awards.ts";
 import { idb } from "../../db/index.ts";
-import { g, helpers, logEvent, toUI } from "../../util/index.ts";
+import { g, helpers, logEvent } from "../../util/index.ts";
 import type {
 	Conditions,
 	Game,
 	GameResults,
+	LocalStateUI,
 	LogEventType,
 	PlayoffSeries,
 } from "../../../common/types.ts";
 import { headToHead, season } from "../index.ts";
 import getWinner from "../../../common/getWinner.ts";
 import formatScoreWithShootout from "../../../common/formatScoreWithShootout.ts";
-import { STAT_PLAYED_IN_GAME_IF_NONZERO } from "./writePlayerStats.ts";
 
 const allStarMVP = async (
 	game: Game,
@@ -130,7 +130,7 @@ export const findSeries = (
 	} else {
 		// Regular playoffs
 		const roundSeries = playoffSeries.series[playoffSeries.currentRound];
-		return roundSeries.find(isValidSeries);
+		return roundSeries?.find(isValidSeries);
 	}
 };
 
@@ -191,8 +191,6 @@ const getPlayoffInfos = async (game: Game) => {
 };
 
 export const gameSimToBoxScore = async (results: GameResults, att: number) => {
-	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
-
 	const gameStats: Game = {
 		gid: results.gid,
 		day: results.day,
@@ -200,7 +198,6 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 		clutchPlays: [],
 		numPlayersOnCourt: results.numPlayersOnCourt,
 		season: g.get("season"),
-		playoffs,
 		numPeriods: g.get("numPeriods"),
 		overtimes: results.overtimes,
 		won: {
@@ -241,6 +238,10 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 	if (results.neutralSite) {
 		gameStats.neutralSite = true;
 	}
+	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
+	if (playoffs) {
+		gameStats.playoffs = true;
+	}
 
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
 	let allStars;
@@ -249,15 +250,19 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 		allStars = await idb.cache.allStars.get(g.get("season"));
 	}
 
-	for (let t = 0; t < 2; t++) {
+	for (const t of [0, 1] as const) {
 		for (const key of Object.keys(results.team[t].stat)) {
 			(gameStats.teams[t] as any)[key] = results.team[t].stat[key];
+		}
+
+		if (results.team[t].playerFeat) {
+			gameStats.teams[t].playerFeat = true;
 		}
 
 		for (const p0 of results.team[t].player) {
 			// In basketball, players who didn't play are shown in box score. In other sports, they aren't. So only save box score stats for players who actually played
 			if (!isSport("basketball")) {
-				if (p0.stat[STAT_PLAYED_IN_GAME_IF_NONZERO] === 0) {
+				if (p0.stat.gp === 0) {
 					continue;
 				}
 			}
@@ -307,7 +312,7 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 	// Store some extra junk to make box scores easy
 	const otl = gameStats.overtimes > 0 && g.get("otl", "current");
 	const winner = getWinner([results.team[0].stat, results.team[1].stat]);
-	const [tw, tl] = winner === 0 ? [0, 1] : [1, 0];
+	const [tw, tl] = winner === 0 ? ([0, 1] as const) : ([1, 0] as const);
 	gameStats.won.tid = results.team[tw].id;
 	gameStats.lost.tid = results.team[tl].id;
 	gameStats.won.pts = results.team[tw].stat.pts;
@@ -475,13 +480,17 @@ const writeGameStats = async (
 		currentRound >= 0 &&
 		playoffInfos
 	) {
-		const round =
-			currentRound >= numPlayoffRounds - 1
-				? "finals"
-				: playoffsByConf
-					? "conference finals"
-					: "semifinals";
-		let score = round === "finals" ? 20 : 10;
+		const finals = currentRound >= numPlayoffRounds - 1;
+		if (finals) {
+			gameStats.finals = true;
+		}
+
+		const round = helpers.playoffRoundName(
+			currentRound,
+			numPlayoffRounds,
+			playoffsByConf,
+		);
+		let score = currentRound === numPlayoffRounds - 1 ? 20 : 10;
 		const gameNum = playoffInfos[0].won + playoffInfos[0].lost;
 		const gameNumText = numGamesToWinSeries > 1 ? ` game ${gameNum} of` : "";
 		let leadText = "";
@@ -536,37 +545,34 @@ const writeGameStats = async (
 		);
 	}
 
+	let gameToUi: LocalStateUI["games"][number] | undefined;
 	if (
 		results.team[0].id === g.get("userTid") ||
 		results.team[1].id === g.get("userTid") ||
 		allStarGame
 	) {
-		await toUI("mergeGames", [
-			[
+		gameToUi = {
+			forceWin: results.forceWin,
+			gid: results.gid,
+			overtimes: results.overtimes,
+			numPeriods: g.get("numPeriods"),
+			teams: [
 				{
-					forceWin: results.forceWin,
-					gid: results.gid,
-					overtimes: results.overtimes,
-					numPeriods: g.get("numPeriods"),
-					teams: [
-						{
-							ovr: results.team[0].ovr,
-							pts: results.team[0].stat.pts,
-							sPts: results.team[0].stat.sPts,
-							tid: results.team[0].id,
-							playoffs: gameStats.teams[0].playoffs,
-						},
-						{
-							ovr: results.team[1].ovr,
-							pts: results.team[1].stat.pts,
-							sPts: results.team[1].stat.sPts,
-							tid: results.team[1].id,
-							playoffs: gameStats.teams[1].playoffs,
-						},
-					],
+					ovr: results.team[0].ovr,
+					pts: results.team[0].stat.pts,
+					sPts: results.team[0].stat.sPts,
+					tid: results.team[0].id,
+					playoffs: gameStats.teams[0].playoffs,
+				},
+				{
+					ovr: results.team[1].ovr,
+					pts: results.team[1].stat.pts,
+					sPts: results.team[1].stat.sPts,
+					tid: results.team[1].id,
+					playoffs: gameStats.teams[1].playoffs,
 				},
 			],
-		]);
+		};
 	}
 
 	for (const clutchPlay of results.clutchPlays) {
@@ -592,22 +598,17 @@ const writeGameStats = async (
 			}`;
 
 			if (currentRound !== undefined && playoffInfos) {
-				const round =
-					currentRound === -1
-						? "play-in tournament game"
-						: currentRound >= numPlayoffRounds - 1
-							? "finals"
-							: currentRound >= numPlayoffRounds - 2
-								? playoffsByConf
-									? "conference finals"
-									: "semifinals"
-								: `${helpers.ordinal(currentRound + 1)} round of the playoffs`;
+				const round = helpers.playoffRoundName(
+					currentRound,
+					numPlayoffRounds,
+					playoffsByConf,
+				);
 
 				const gameNum = playoffInfos[0].won + playoffInfos[0].lost;
 				const numGamesThisRound =
 					currentRound === -1
 						? 1
-						: g.get("numGamesPlayoffSeries", "current")[currentRound];
+						: g.get("numGamesPlayoffSeries", "current")[currentRound]!;
 
 				if (numGamesThisRound > 1) {
 					const numGamesToWinSeries =
@@ -701,6 +702,8 @@ const writeGameStats = async (
 	});
 
 	await idb.cache.games.put(gameStats);
+
+	return gameToUi;
 };
 
 export default writeGameStats;

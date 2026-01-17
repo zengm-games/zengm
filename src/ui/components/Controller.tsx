@@ -100,7 +100,7 @@ const Controller = () => {
 			<div className="h-100 d-flex">
 				<SideBar pageID={sidebarPageID} pathname={pathname} />
 				<div className="h-100 w-100 d-flex flex-column" style={minWidth0}>
-					<LeagueTopBar />
+					{popup ? null : <LeagueTopBar />}
 					<TitleBar />
 					<div className="container-fluid position-relative mt-2 flex-grow-1 h-100">
 						<div className="d-flex" style={minHeight100}>

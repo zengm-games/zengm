@@ -1,4 +1,5 @@
 import { Buffer } from "node:buffer";
+import path from "node:path";
 import fs from "node:fs/promises";
 import { promisify } from "node:util";
 import browserslist from "browserslist";
@@ -8,7 +9,10 @@ import { render } from "sass-embedded";
 import { fileHash } from "./fileHash.ts";
 import { replace } from "./replace.ts";
 
-export const buildCss = async (watch: boolean = false) => {
+export const buildCss = async (
+	watch: boolean = false,
+	signal?: AbortSignal,
+) => {
 	const filenames = ["light", "dark"];
 	const rawCss = await Promise.all(
 		filenames.map(async (filename) => {
@@ -19,6 +23,9 @@ export const buildCss = async (watch: boolean = false) => {
 			return sassResult!.css.toString();
 		}),
 	);
+	if (signal?.aborted) {
+		return;
+	}
 
 	const purgeCssResults = watch
 		? []
@@ -49,25 +56,28 @@ export const buildCss = async (watch: boolean = false) => {
 					],
 				},
 			});
+	if (signal?.aborted) {
+		return;
+	}
 
 	const replaces: Parameters<typeof replace>[0]["replaces"] | undefined = watch
 		? undefined
 		: [];
 
 	for (let i = 0; i < filenames.length; i++) {
-		const filename = filenames[i];
+		const filename = filenames[i]!;
 
 		let output;
 		if (!watch) {
 			// https://zengm.com/blog/2022/07/investigating-a-tricky-performance-bug/
 			const DANGER_CSS = ".input-group.has-validation";
-			if (!rawCss[i].includes(DANGER_CSS)) {
+			if (!rawCss[i]!.includes(DANGER_CSS)) {
 				throw new Error(
 					`rawCss no longer contains ${DANGER_CSS} - same problem might exist with another name?`,
 				);
 			}
 
-			const purgeCSSResult = purgeCssResults[i].css;
+			const purgeCSSResult = purgeCssResults[i]!.css;
 
 			const { code } = transform({
 				filename: `${filename}.css`,
@@ -75,7 +85,9 @@ export const buildCss = async (watch: boolean = false) => {
 				minify: true,
 				sourceMap: false,
 				targets: browserslistToTargets(
-					browserslist("Chrome >= 85, Firefox >= 115, Safari >= 14.1"),
+					browserslist(undefined, {
+						config: path.join(import.meta.dirname, "../../.browserslistrc"),
+					}),
 				),
 			});
 
@@ -85,7 +97,7 @@ export const buildCss = async (watch: boolean = false) => {
 				throw new Error(`CSS output contains ${DANGER_CSS}`);
 			}
 		} else {
-			output = rawCss[i];
+			output = rawCss[i]!;
 		}
 
 		let outFilename;
@@ -101,13 +113,17 @@ export const buildCss = async (watch: boolean = false) => {
 			});
 		}
 
-		await fs.writeFile(outFilename, output);
+		await fs.writeFile(outFilename, output, { signal });
+		if (signal?.aborted) {
+			return;
+		}
 	}
 
 	if (replaces) {
 		await replace({
 			paths: ["build/index.html"],
 			replaces,
+			signal,
 		});
 	}
 };

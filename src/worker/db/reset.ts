@@ -23,7 +23,7 @@ const reset = async (type: "all" | "unstarred") => {
 
 	// Delete all leagues from meta database, completely! For zombie entries in meta.
 	if (type === "all") {
-		await idb.meta.transaction("leagues", "readwrite").store.clear();
+		await (await idb.meta.transaction("leagues", "readwrite")).store.clear();
 	}
 };
 

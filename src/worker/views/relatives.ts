@@ -8,6 +8,7 @@ import type {
 } from "../../common/types.ts";
 import { bySport } from "../../common/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { extraStats } from "./hallOfFame.ts";
 
 const getRelationText = (
 	gender: GameAttributesLeague["gender"],
@@ -253,18 +254,18 @@ const updatePlayers = async (
 				"jerseyNumber",
 			],
 			ratings: ["season", "ovr", "pos"],
-			stats: ["season", "abbrev", "tid", ...stats],
+			stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
 			fuzz: true,
 		});
 		if (generations.length > 0) {
-			for (let i = 0; i < players.length; i++) {
-				if (generations[i] === undefined) {
+			for (const [i, p] of players.entries()) {
+				const generation = generations[i];
+				if (generation === undefined) {
 					break;
 				}
-				const p = players[i];
 				p.relationText = getRelationText(
 					g.get("gender"),
-					generations[i],
+					generation,
 					fatherLinePids.has(p.pid) || sonLinePids.has(p.pid),
 					brotherPids.has(p.pid),
 					spousePids.has(p.pid),

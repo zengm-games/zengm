@@ -12,11 +12,7 @@ const updateSeasonPreview = async (
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
-	if (
-		updateEvents.includes("firstRun") ||
-		updateEvents.includes("watchList") ||
-		state.season !== season
-	) {
+	if (updateEvents.includes("firstRun") || state.season !== season) {
 		const NUM_PLAYERS_TO_SHOW = 10;
 		const NUM_TEAMS_TO_SHOW = 5;
 
@@ -66,6 +62,7 @@ const updateSeasonPreview = async (
 				"watch",
 				"value",
 				"draft",
+				"injury",
 			],
 			ratings: ["ovr", "pot", "dovr", "dpot", "pos", "skills", "ovrs"],
 			season,
@@ -125,6 +122,10 @@ const updateSeasonPreview = async (
 
 		const playersByTid = groupBy(players, "tid");
 
+		// These are used when displaying last year's playoff results, so they are for last season
+		const numPlayoffRounds = g.get("numGamesPlayoffSeries", season - 1).length;
+		const playoffsByConf = await getPlayoffsByConf(season - 1);
+
 		const teamSeasons = teamSeasonsCurrent.map((teamSeason) => {
 			const teamPlayers = playersByTid[teamSeason.tid] ?? [];
 
@@ -140,7 +141,7 @@ const updateSeasonPreview = async (
 			const ovrPrev = teamSeasonPrev?.ovrEnd ?? ovrStart;
 			const dovr = ovrStart - ovrPrev;
 
-			const teamInfoCache = g.get("teamInfoCache")[teamSeason.tid];
+			const teamInfoCache = g.get("teamInfoCache")[teamSeason.tid]!;
 
 			const lastSeason = teamSeasonPrev
 				? {
@@ -148,7 +149,11 @@ const updateSeasonPreview = async (
 						lost: teamSeasonPrev.lost,
 						tied: teamSeasonPrev.tied,
 						otl: teamSeasonPrev.otl,
-						playoffRoundsWon: teamSeasonPrev.playoffRoundsWon,
+						roundsWonText: helpers.roundsWonText({
+							playoffRoundsWon: teamSeasonPrev.playoffRoundsWon,
+							numPlayoffRounds,
+							playoffsByConf,
+						}),
 					}
 				: undefined;
 
@@ -179,19 +184,13 @@ const updateSeasonPreview = async (
 			"asc",
 		).slice(0, NUM_TEAMS_TO_SHOW);
 
-		// These are used when displaying last year's playoff results, so they are for last season
-		const numPlayoffRounds = g.get("numGamesPlayoffSeries", season - 1).length;
-		const playoffsByConf = await getPlayoffsByConf(season - 1);
-
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
-			numPlayoffRounds,
 			playersDeclining,
 			playersImproving,
 			playersNewTeam,
 			playersTop,
 			playersTopRookies,
-			playoffsByConf,
 			season,
 			teamsDeclining,
 			teamsImproving,

@@ -5,6 +5,7 @@ import { defaultGameAttributes, g, helpers } from "../../util/index.ts";
 // This is for league leaders pages and player profile page stat tables
 // https://www.basketball-reference.com/about/rate_stat_req.html has some info for basketball, can use as rough guide
 // sortAscending can't use lowerIsBetter because some of these (like "tov") are considered "bad" if you lead it
+// minStats with multiple values are "OR"ed together
 const getLeaderRequirements = () => {
 	const numGames = defaultGameAttributes.numGames[0].value;
 
@@ -42,6 +43,10 @@ const getLeaderRequirements = () => {
 	};
 	const footballRecStats = {
 		minStats: { rec: 1.875 * numGames },
+	};
+
+	const hockeyRateStats = {
+		minStats: { s: numGames },
 	};
 
 	return bySport<
@@ -244,15 +249,9 @@ const getLeaderRequirements = () => {
 			},
 		},
 		basketball: {
-			pts: {
-				minStats: { gp: 58, pts: 1400 },
-			},
-			trb: {
-				minStats: { gp: 58, trb: 800 },
-			},
-			ast: {
-				minStats: { gp: 58, ast: 400 },
-			},
+			pts: basketballPerGameStats,
+			trb: basketballPerGameStats,
+			ast: basketballPerGameStats,
 			orb: basketballPerGameStats,
 			drb: basketballPerGameStats,
 			tov: basketballPerGameStats,
@@ -279,15 +278,9 @@ const getLeaderRequirements = () => {
 			fgMidRange: { minStats: { fgMidRange: basketballMinFg / 5 } },
 			fgaMidRange: { minStats: { fgMidRange: basketballMinFg / 5 } },
 			fgpMidRange: { minStats: { fgMidRange: basketballMinFg / 5 } },
-			blk: {
-				minStats: { gp: 58, blk: 100 },
-			},
-			stl: {
-				minStats: { gp: 58, stl: 125 },
-			},
-			min: {
-				minStats: { gp: 58, min: 1500 },
-			},
+			blk: basketballPerGameStats,
+			stl: basketballPerGameStats,
+			min: basketballPerGameStats,
 			per: basketballAdvancedStats,
 			ewa: basketballAdvancedStats,
 			ws48: basketballAdvancedStats,
@@ -458,9 +451,27 @@ const getLeaderRequirements = () => {
 			fga: {},
 			xp: {},
 			xpa: {},
+			ko: {},
+			koYds: {},
+			koYdsPerAtt: {
+				minStats: {
+					ko: 2.5 * numGames,
+				},
+			},
+			koTB: {},
+			koTBPct: {
+				minStats: {
+					ko: 2.5 * numGames,
+				},
+			},
+			ok: {},
+			okRec: {},
+			okRecPct: {},
 			pnt: {},
 			pntYds: {},
 			pntLng: {},
+			pntIn20: {},
+			pntTB: {},
 			pntBlk: {},
 			pr: {},
 			prYds: {},
@@ -528,6 +539,7 @@ const getLeaderRequirements = () => {
 			ps: {},
 			gMax: {},
 			aMax: {},
+			ptsMax: {},
 			pmMax: {},
 			pimMax: {},
 			evGMax: {},
@@ -553,12 +565,23 @@ const getLeaderRequirements = () => {
 			gRec: {
 				sortValue: helpers.getRecordNumericValue,
 			},
-			sPct: {
-				minStats: { s: numGames },
-			},
+			sPct: hockeyRateStats,
 			foPct: {
 				minStats: { fow: 2 * numGames },
 			},
+			g60: hockeyRateStats,
+			a60: hockeyRateStats,
+			pts60: hockeyRateStats,
+			s60: hockeyRateStats,
+			evG60: hockeyRateStats,
+			evA60: hockeyRateStats,
+			evPts60: hockeyRateStats,
+			ppG60: hockeyRateStats,
+			ppA60: hockeyRateStats,
+			ppPts60: hockeyRateStats,
+			shG60: hockeyRateStats,
+			shA60: hockeyRateStats,
+			shPts60: hockeyRateStats,
 		},
 	});
 };

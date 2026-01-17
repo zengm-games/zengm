@@ -19,6 +19,7 @@ import { range } from "../../common/utils.ts";
 import getWinner from "../../common/getWinner.ts";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import Note from "../views/Player/Note.tsx";
+import TeamLogoInline from "./TeamLogoInline.tsx";
 
 const TeamNameLink = ({
 	children,
@@ -84,7 +85,9 @@ const TeamLogo = ({
 				>
 					<img className="mw-100 mh-100" src={t.imgURL} alt="" />
 				</TeamNameLink>
-				<div className="mt-1 mb-3 fw-bold">{helpers.formatRecord(t)}</div>
+				<div className="mt-1 mb-3 fw-bold text-center">
+					{helpers.formatRecord(t)}
+				</div>
 			</div>
 		</div>
 	) : null;
@@ -92,45 +95,70 @@ const TeamLogo = ({
 
 const TeamNameAndScore = ({
 	boxScore,
+	live,
 	possessionNum,
-	small,
+	shootout,
 	t,
 }: {
 	boxScore: any;
+	live: boolean | undefined;
 	possessionNum: 0 | 1;
-	small: boolean | undefined;
+	shootout: boolean;
 	t: any;
 }) => {
-	const className = small
-		? "d-none"
-		: `d-none d-${boxScore.exhibition ? "md" : "sm"}-inline`;
+	const LOGO_SIZE = 24;
 
 	return (
 		<div className="d-flex">
-			{boxScore.possession !== undefined ? (
-				<span
+			{live && !boxScore.gameOver ? (
+				<div
 					className={
-						boxScore.possession === possessionNum
-							? "text-warning"
-							: "text-white"
+						boxScore.possession === possessionNum ? "text-warning" : "opacity-0"
 					}
+					style={{ marginTop: -1 }}
 				>
 					●&nbsp;
-				</span>
+				</div>
 			) : null}
 			{t.playoffs ? (
-				<span className="text-body-secondary">{t.playoffs.seed}.&nbsp;</span>
+				<div
+					className="text-body-secondary fs-5 align-self-end"
+					style={{ paddingBottom: STARTING_NUM_TIMEOUTS !== undefined ? 8 : 1 }}
+				>
+					{t.playoffs.seed}.&nbsp;
+				</div>
 			) : null}
 			<div>
-				<TeamNameLink season={boxScore.season} t={t}>
-					{t.season !== undefined ? `${t.season} ` : null}
-					<span className={className}>{t.region} </span>
-					{t.name}
+				<TeamNameLink
+					className="d-flex align-items-center gap-1"
+					season={boxScore.season}
+					t={t}
+				>
+					<TeamLogoInline
+						imgURL={t.imgURL}
+						imgURLSmall={t.imgURLSmall}
+						size={LOGO_SIZE}
+					/>
+					<div>
+						{t.season !== undefined ? `${t.season} ` : null}
+						<span className="d-none d-xl-inline">
+							{t.region} {t.name}
+						</span>
+						<span className="d-none d-lg-inline d-xl-none">
+							{boxScore.exhibition ? "" : `${t.region} `}
+							{t.name}
+						</span>
+						<span className="d-none d-sm-inline d-lg-none">
+							{boxScore.exhibition ? t.abbrev : t.name}
+						</span>
+						<span className="d-inline d-sm-none">{t.abbrev}</span>
+					</div>
 				</TeamNameLink>
 				{t.timeouts !== undefined && STARTING_NUM_TIMEOUTS !== undefined ? (
 					<div
 						className="d-flex gap-1 pt-1"
 						title={`${t.timeouts} ${helpers.plural("timeout", t.timeouts)} remaining`}
+						style={{ marginLeft: LOGO_SIZE + 4 }}
 					>
 						{range(STARTING_NUM_TIMEOUTS).map((i) => (
 							<div
@@ -143,21 +171,87 @@ const TeamNameAndScore = ({
 				) : null}
 			</div>
 			<div>&nbsp;{t.pts}</div>
+			{shootout ? (
+				<div className="text-body-secondary">&nbsp;({t.sPts})</div>
+			) : null}
 		</div>
 	);
 };
 
-export const HeadlineScore = ({
+export const HeadlineScoreLive = ({
 	boxScore,
-	small,
+	isStuck,
 }: {
 	boxScore: any;
-	small?: boolean;
+	isStuck: boolean;
 }) => {
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
 	// change in the future.
-	const liveGameSim = boxScore.won?.name === undefined;
+	const t0 =
+		boxScore.won?.name !== undefined ? boxScore.won : boxScore.teams[0];
+	const t1 =
+		boxScore.lost?.name !== undefined ? boxScore.lost : boxScore.teams[1];
+
+	const shootout = t0.sPts !== undefined;
+
+	const clockText = boxScore.gameOver
+		? "F"
+		: boxScore.elamTarget !== undefined
+			? `Target: ${boxScore.elamTarget} pts`
+			: isSport("baseball")
+				? `${
+						boxScore.teams[0].ptsQtrs.length ===
+						boxScore.teams[1].ptsQtrs.length
+							? "B"
+							: "T"
+					}${boxScore.quarterShort}`
+				: `${boxScore.quarterShort}, ${boxScore.time}`;
+
+	return (
+		<div className="d-flex justify-content-center">
+			<div
+				className={`d-flex flex-wrap align-items-center ${isStuck ? "live-game-score-actual-stuck" : "bg-white"} py-md-1 px-md-2 rounded-bottom-4 live-game-score-actual`}
+			>
+				<div className="d-flex h2 mb-0">
+					<TeamNameAndScore
+						boxScore={boxScore}
+						possessionNum={0}
+						live
+						shootout={shootout}
+						t={t0}
+					/>
+				</div>
+				<div className="d-flex h2 mb-0 ms-3">
+					<TeamNameAndScore
+						boxScore={boxScore}
+						possessionNum={1}
+						live
+						shootout={shootout}
+						t={t1}
+					/>
+					{boxScore.overtime ? <div>&nbsp;{boxScore.overtime}</div> : null}
+				</div>
+				<div className="d-flex h2 mb-0 ms-auto ms-md-3">
+					<div
+						className="text-nowrap fs-6 align-self-end"
+						style={{
+							paddingBottom: 2,
+							paddingTop: STARTING_NUM_TIMEOUTS !== undefined ? 0 : 7,
+						}}
+					>
+						{clockText}
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+const HeadlineScore = ({ boxScore }: { boxScore: any }) => {
+	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
+	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
+	// change in the future.
 	const t0 =
 		boxScore.won?.name !== undefined ? boxScore.won : boxScore.teams[0];
 	const t1 =
@@ -166,73 +260,28 @@ export const HeadlineScore = ({
 	const shootout = t0.sPts !== undefined;
 
 	return (
-		<div
-			className={
-				small
-					? "d-flex align-items-center flex-wrap justify-content-between gap-3 row-gap-0 mb-2"
-					: liveGameSim
-						? "d-none d-md-block"
-						: undefined
-			}
-		>
-			<h2
-				className={`d-flex justify-content-center ${small ? "mb-0" : liveGameSim ? "mb-1" : "mb-2"}`}
-			>
-				<TeamNameAndScore
-					boxScore={boxScore}
-					possessionNum={0}
-					small={small}
-					t={t0}
-				/>
-				{shootout ? (
-					<div className="text-body-secondary">&nbsp;({t0.sPts})</div>
-				) : null}
-				<div>,&nbsp;</div>
-				<TeamNameAndScore
-					boxScore={boxScore}
-					possessionNum={1}
-					small={small}
-					t={t1}
-				/>
-				{shootout ? (
-					<div className="text-body-secondary">&nbsp;({t1.sPts})</div>
-				) : null}
-				{boxScore.overtime ? <div>&nbsp;{boxScore.overtime}</div> : null}
-			</h2>
-			{liveGameSim ? (
-				<div className={small ? undefined : "mb-2"}>
-					<span className="d-none d-sm-inline">
-						{boxScore.gameOver
-							? "Final score"
-							: boxScore.shootout
-								? "Shootout"
-								: boxScore.elamTarget !== undefined
-									? `Elam Ending target: ${boxScore.elamTarget} points`
-									: isSport("baseball")
-										? `${
-												boxScore.teams[0].ptsQtrs.length ===
-												boxScore.teams[1].ptsQtrs.length
-													? "Bottom"
-													: "Top"
-											} of the ${boxScore.quarter}`
-										: `${boxScore.quarter}, ${boxScore.time} remaining`}
-					</span>
-					<span className="d-sm-none">
-						{boxScore.gameOver
-							? "F"
-							: boxScore.elamTarget !== undefined
-								? `Elam Ending target: ${boxScore.elamTarget} points`
-								: isSport("baseball")
-									? `${
-											boxScore.teams[0].ptsQtrs.length ===
-											boxScore.teams[1].ptsQtrs.length
-												? "B"
-												: "T"
-										}${boxScore.quarterShort}`
-									: `${boxScore.quarterShort}, ${boxScore.time}`}
-					</span>
+		<div>
+			<h2 className="d-flex flex-wrap justify-content-center mb-2 gap-3">
+				<div className="d-flex">
+					<TeamNameAndScore
+						boxScore={boxScore}
+						possessionNum={0}
+						live={false}
+						shootout={shootout}
+						t={t0}
+					/>
 				</div>
-			) : null}
+				<div className="d-flex">
+					<TeamNameAndScore
+						boxScore={boxScore}
+						possessionNum={1}
+						live={false}
+						shootout={shootout}
+						t={t1}
+					/>
+					{boxScore.overtime ? <div>&nbsp;{boxScore.overtime}</div> : null}
+				</div>
+			</h2>
 		</div>
 	);
 };
@@ -788,21 +837,23 @@ const DetailedScore = ({
 	});
 
 	if (isSport("baseball")) {
-		qtrs.push({
-			label: "R",
-			title: "Runs",
-			bold: true,
-		});
-		qtrs.push({
-			label: "H",
-			title: "Hits",
-			bold: true,
-		});
-		qtrs.push({
-			label: "E",
-			title: "Errors",
-			bold: true,
-		});
+		qtrs.push(
+			{
+				label: "R",
+				title: "Runs",
+				bold: true,
+			},
+			{
+				label: "H",
+				title: "Hits",
+				bold: true,
+			},
+			{
+				label: "E",
+				title: "Errors",
+				bold: true,
+			},
+		);
 	} else {
 		qtrs.push({
 			label: "F",
@@ -821,6 +872,9 @@ const DetailedScore = ({
 		});
 	}
 
+	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
+	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
+	// change in the future.
 	const liveGameSim = boxScore.won?.name === undefined;
 
 	return (
@@ -1009,6 +1063,7 @@ const BoxScoreWrapper = ({
 	abbrev,
 	boxScore,
 	currentGidInList,
+	live,
 	nextGid,
 	playIndex,
 	prevGid,
@@ -1020,6 +1075,7 @@ const BoxScoreWrapper = ({
 	abbrev?: string;
 	boxScore: any;
 	currentGidInList?: boolean;
+	live?: boolean;
 	nextGid?: number;
 	playIndex?: number;
 	prevGid?: number;
@@ -1125,10 +1181,10 @@ const BoxScoreWrapper = ({
 
 	return (
 		<>
-			<div className="d-flex text-center">
+			<div className="d-flex align-items-center">
 				<TeamLogo season={boxScore.season} t={t0} />
-				<div className="mx-auto flex-shrink-0 mb-2">
-					<HeadlineScore boxScore={boxScore} />
+				<div className="mx-auto flex-shrink-0 mb-2 mw-100">
+					{!live ? <HeadlineScore boxScore={boxScore} /> : null}
 					<DetailedScore
 						abbrev={abbrev}
 						boxScore={boxScore}
@@ -1140,7 +1196,7 @@ const BoxScoreWrapper = ({
 						sportState={sportState}
 						tid={tid}
 					/>
-					<div className="mt-sm-1">
+					<div className="mt-sm-1 text-center">
 						<PlayoffRecord
 							numGamesToWinSeries={boxScore.numGamesToWinSeries}
 							season={boxScore.season}
@@ -1168,6 +1224,7 @@ const BoxScoreWrapper = ({
 			{boxScore.exhibition ? null : (
 				<div className="mt-3">
 					<Note
+						key={boxScore.gid}
 						initialNote={boxScore.note}
 						info={{
 							type: "game",

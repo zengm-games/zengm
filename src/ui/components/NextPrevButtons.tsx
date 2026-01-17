@@ -17,10 +17,15 @@ const NextPrevButtons = <T extends unknown>({
 }) => {
 	const index = items.indexOf(currentItem as any);
 
-	const buttonInfo = [
+	type ButtonInfo = {
+		disabled: boolean;
+		onClick: (event: SyntheticEvent) => void;
+	};
+
+	const buttonInfo: [ButtonInfo, ButtonInfo] = [
 		{
 			disabled: disabled || index <= 0,
-			onClick: (event: SyntheticEvent) => {
+			onClick: (event) => {
 				event.preventDefault();
 				const newItem = items[index - 1];
 				if (newItem !== undefined) {
@@ -30,7 +35,7 @@ const NextPrevButtons = <T extends unknown>({
 		},
 		{
 			disabled: disabled || index >= items.length - 1,
-			onClick: (event: SyntheticEvent) => {
+			onClick: (event) => {
 				event.preventDefault();
 				const newItem = items[index + 1];
 				if (newItem !== undefined) {

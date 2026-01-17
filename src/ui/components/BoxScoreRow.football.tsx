@@ -9,6 +9,7 @@ const width100 = {
 };
 
 const BoxScoreRow = ({
+	allStarGame,
 	className,
 	exhibition,
 	highlightCols,
@@ -18,6 +19,7 @@ const BoxScoreRow = ({
 	season,
 	seasonStats,
 }: {
+	allStarGame?: boolean;
 	className?: string;
 	exhibition?: boolean;
 	highlightCols?: number[];
@@ -44,7 +46,7 @@ const BoxScoreRow = ({
 					<BaseballDecision
 						className="ms-2"
 						p={p}
-						exhibition={exhibition}
+						hideRecord={!!(allStarGame || exhibition)}
 						wlColors
 					/>
 				) : null}

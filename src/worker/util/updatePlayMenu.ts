@@ -294,7 +294,10 @@ const updatePlayMenu = async () => {
 		}
 	} else if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
 		const repeatSeasonType = g.get("repeatSeason")?.type;
-		if (repeatSeasonType === "playersAndRosters") {
+		if (
+			repeatSeasonType === "playersAndRosters" ||
+			g.get("forceHistoricalRosters")
+		) {
 			keys = ["untilPreseason"];
 		} else {
 			if (
@@ -353,7 +356,12 @@ const updatePlayMenu = async () => {
 		keys = ["stop"];
 	}
 
-	if (negotiationInProgress && g.get("phase") !== PHASE.RESIGN_PLAYERS) {
+	// AFTER_DRAFT check is because if there is any negotiation then, it's very likely because a prior advance to RESIGN_PLAYERS failed after starting negotiations with some players, in which case we'd rather not block the UI in the case that advancing again somehow succeeds. (Would rather have phase updates be transactional, but oh well.)
+	if (
+		negotiationInProgress &&
+		g.get("phase") !== PHASE.RESIGN_PLAYERS &&
+		g.get("phase") !== PHASE.AFTER_DRAFT
+	) {
 		keys = ["contractNegotiation"];
 	}
 
@@ -386,7 +394,7 @@ const updatePlayMenu = async () => {
 	});
 
 	// Set first key to always be p
-	if (someOptions.length > 0) {
+	if (someOptions[0]) {
 		someOptions[0].key = "p";
 		someOptions[0].code = "KeyP";
 	}

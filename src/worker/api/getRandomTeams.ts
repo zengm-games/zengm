@@ -3,13 +3,16 @@ import getTeamInfos from "../../common/getTeamInfos.ts";
 import teamInfos from "../../common/teamInfos.ts";
 import type { Conf, Div } from "../../common/types.ts";
 import { realRosters } from "../core/index.ts";
-import geographicCoordinates from "../../common/geographicCoordinates.ts";
+import geographicCoordinates, {
+	type Continent,
+} from "../../common/geographicCoordinates.ts";
 import { random } from "../util/index.ts";
 import type { NewLeagueTeamWithoutRank } from "../../ui/views/NewLeague/types.ts";
 import { groupBy, omit, orderBy, range } from "../../common/utils.ts";
 import addSeasonInfoToTeams from "../core/realRosters/addSeasonInfoToTeams.ts";
 import loadDataBasketball from "../core/realRosters/loadData.basketball.ts";
 import { kmeansFixedSize, sortByDivs } from "../core/team/cluster.ts";
+import type { PopulationFactor } from "../../ui/views/NewLeague/RandomizeTeamsModal.tsx";
 
 type MyTeam = NewLeagueTeamWithoutRank & {
 	weight?: number;
@@ -53,10 +56,11 @@ const getAllRealTeamInfos = async (seasonRange: [number, number]) => {
 	const infosByAbbrev: Record<string, (typeof teamInfos)[number]> = {};
 
 	return teamInfos.filter((t) => {
+		// TODO - This code is mostly doing nothing and infosByAbbrev is probably not needed
 		if (abbrevsSeen.has(t.abbrev)) {
 			const toAdd = [];
 			if (infosByAbbrev[t.abbrev]) {
-				toAdd.push(infosByAbbrev[t.abbrev]);
+				toAdd.push(infosByAbbrev[t.abbrev]!);
 			}
 			for (const t of toAdd) {
 				t.weight += 1 / toAdd.length;
@@ -101,7 +105,7 @@ const augmentRealTeams = async (teams: MyTeam[]) => {
 
 		for (const t of teamsWithSeasonInfo) {
 			output.push({
-				...omit(t, "weight"),
+				...omit(t, ["weight"]),
 				usePlayers: true,
 			});
 		}
@@ -113,8 +117,8 @@ const augmentRealTeams = async (teams: MyTeam[]) => {
 const getRandomTeams = async ({
 	divInfo,
 	real,
-	weightByPopulation,
-	northAmericaOnly,
+	populationFactor,
+	continents,
 	seasonRange,
 }: {
 	divInfo:
@@ -128,8 +132,8 @@ const getRandomTeams = async ({
 				type: "autoSeasonRange";
 		  };
 	real: boolean;
-	weightByPopulation: boolean;
-	northAmericaOnly: boolean;
+	populationFactor: PopulationFactor;
+	continents: ReadonlyArray<Continent>;
 	seasonRange: [number, number]; // Only does something if real is true
 }) => {
 	let confs;
@@ -177,41 +181,49 @@ const getRandomTeams = async ({
 		);
 	}
 
-	if (northAmericaOnly) {
-		allTeamInfos = allTeamInfos.filter(
-			(t) => !geographicCoordinates[t.region]?.outsideNorthAmerica,
-		);
+	const continentsSet = new Set(continents);
+	allTeamInfos = allTeamInfos.filter((t) =>
+		continentsSet.has(geographicCoordinates[t.region]?.continent ?? "Unknown"),
+	);
+
+	if (allTeamInfos.length < numTeamsTotal) {
+		return `There are only ${allTeamInfos.length} teams available to select based on your settings, but your league has ${numTeamsTotal} teams in it. Either make your league smaller or change your settings to create more candidate teams.`;
 	}
 
-	let weightFunction:
-		| ((teamInfo: { pop: number; weight?: number }) => number)
-		| undefined;
-	if (weightByPopulation) {
-		weightFunction = (teamInfo) => teamInfo.pop;
-	} else if (real) {
-		weightFunction = (teamInfo) => teamInfo.weight ?? 1;
-	}
+	let selectedTeamInfos: typeof allTeamInfos;
+	if (populationFactor === "largest" || populationFactor === "smallest") {
+		selectedTeamInfos = orderBy(
+			allTeamInfos,
+			"pop",
+			populationFactor === "largest" ? "desc" : "asc",
+		).slice(0, numTeamsTotal);
+	} else {
+		let weightFunction:
+			| ((teamInfo: { pop: number; weight?: number }) => number)
+			| undefined;
+		if (populationFactor === "randomWeighted") {
+			weightFunction = (teamInfo) => teamInfo.pop;
+		} else if (real) {
+			weightFunction = (teamInfo) => teamInfo.weight ?? 1;
+		}
 
-	const teamsRemaining = new Set(allTeamInfos);
-	if (teamsRemaining.size < numTeamsTotal) {
-		return `There are only ${teamsRemaining.size} built-in ${
-			real ? `franchises from ${seasonRange[0]}-${seasonRange[1]}` : "teams"
-		}, so a league of ${numTeamsTotal} teams cannot be created.${
-			real ? " Delete some teams or select a wider range of seasons." : ""
-		}`;
-	}
-	const selectedTeamInfos: typeof allTeamInfos = [];
-	for (let i = 0; i < numTeamsTotal; i++) {
-		const teamInfo = random.choice(Array.from(teamsRemaining), weightFunction);
-		selectedTeamInfos.push(teamInfo);
-		teamsRemaining.delete(teamInfo);
+		selectedTeamInfos = [];
+		const teamsRemaining = new Set(allTeamInfos);
+		for (let i = 0; i < numTeamsTotal; i++) {
+			const teamInfo = random.choice(
+				Array.from(teamsRemaining),
+				weightFunction,
+			);
+			selectedTeamInfos.push(teamInfo);
+			teamsRemaining.delete(teamInfo);
+		}
 	}
 
 	const teamInfoCluster = selectedTeamInfos.map(
 		(teamInfo) =>
 			[
-				geographicCoordinates[teamInfo.region].latitude,
-				geographicCoordinates[teamInfo.region].longitude,
+				geographicCoordinates[teamInfo.region]!.latitude,
+				geographicCoordinates[teamInfo.region]!.longitude,
 			] as [number, number],
 	);
 
@@ -223,18 +235,16 @@ const getRandomTeams = async ({
 	).clusters;
 
 	let teamsOutput = [];
-	for (let i = 0; i < divs.length; i++) {
-		const div = divs[i];
-
+	for (const [i, div] of divs.entries()) {
 		// Sort teams within a division by region/name so they look nicer
-		const tidsSorted = orderBy(clusters[i].pointIndexes, (teamIndex) => {
-			const teamInfo = selectedTeamInfos[teamIndex];
+		const tidsSorted = orderBy(clusters[i]!.pointIndexes, (teamIndex) => {
+			const teamInfo = selectedTeamInfos[teamIndex]!;
 			return `${teamInfo.region} ${teamInfo.name}`;
 		});
 
 		for (const tid of tidsSorted) {
 			teamsOutput.push({
-				...selectedTeamInfos[tid],
+				...selectedTeamInfos[tid]!,
 				tid,
 				cid: div.cid,
 				did: div.did,

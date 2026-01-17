@@ -19,7 +19,6 @@ import updateSortBys from "./DataTable/updateSortBys.ts";
 import { getSortClassName } from "./DataTable/Header.tsx";
 import clsx from "clsx";
 import {
-	formatClock,
 	formatDownAndDistance,
 	getScoreInfo,
 	getScoreInfoOld,
@@ -30,6 +29,7 @@ import {
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.football/PlayByPlayLogger.ts";
 import { range } from "../../common/utils.ts";
+import { formatClock } from "../../common/formatClock.ts";
 
 type Team = {
 	abbrev: string;
@@ -38,6 +38,7 @@ type Team = {
 	region: string;
 	players: any[];
 	season?: number;
+	tid: number;
 };
 
 type BoxScore = {
@@ -48,6 +49,7 @@ type BoxScore = {
 	numPeriods?: number;
 	exhibition?: boolean;
 	shootout?: boolean;
+	neutralSite: boolean;
 };
 
 export const StatsHeader = ({
@@ -104,8 +106,8 @@ export const sortByStats = (
 				statsObject = "seasonStats";
 			}
 
-			const aValue = getValue?.(a, stat) ?? a[statsObject][stat];
-			const bValue = getValue?.(b, stat) ?? b[statsObject][stat];
+			const aValue = getValue?.(a, stat!) ?? a[statsObject][stat!];
+			const bValue = getValue?.(b, stat!) ?? b[statsObject][stat!];
 
 			if (bValue !== aValue) {
 				const diff = bValue - aValue;
@@ -153,6 +155,7 @@ const StatsTableIndividual = ({
 		);
 	};
 
+	const allStarGame = t.tid === -1 || t.tid === -2;
 	const players = t.players
 		.map((p) => {
 			return {
@@ -189,6 +192,7 @@ const StatsTableIndividual = ({
 					<tbody>
 						{players.map((p, i) => (
 							<Row
+								allStarGame={allStarGame}
 								key={p.pid}
 								exhibition={exhibition}
 								i={i}
@@ -425,7 +429,15 @@ const ScoringSummary = memo(
 const NUM_SECTIONS = 12;
 const DEFAULT_HEIGHT = 200;
 
-const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
+const FieldBackground = ({
+	neutralSite,
+	t,
+	t2,
+}: {
+	neutralSite: boolean | undefined;
+	t: Team;
+	t2: Team;
+}) => {
 	return (
 		<div className="d-flex align-items-stretch position-absolute w-100 h-100">
 			{range(NUM_SECTIONS).map((i) => {
@@ -446,7 +458,11 @@ const FieldBackground = ({ t, t2 }: { t: Team; t2: Team }) => {
 					style.color = endzoneTeam.colors[1];
 					style.writingMode = "vertical-lr";
 				} else {
-					style.backgroundColor = darkGreen;
+					if (!neutralSite && t2.region.startsWith("Boise")) {
+						style.backgroundColor = boiseBlue;
+					} else {
+						style.backgroundColor = darkGreen;
+					}
 				}
 				if (ENDZONE_OFFENSE) {
 					style.transform = "rotate(180deg)";
@@ -529,6 +545,7 @@ const darkGreen = "#1e7e34";
 const lightGray = "#adb5bd";
 const darkGray = "#495057";
 const red = "#dc3545";
+const boiseBlue = "#0480ff";
 
 const PlayBar = ({
 	first,
@@ -764,7 +781,11 @@ const FieldAndDrive = ({
 					minHeight: DEFAULT_HEIGHT,
 				}}
 			>
-				<FieldBackground t={boxScore.teams[0]} t2={boxScore.teams[1]} />
+				<FieldBackground
+					t={boxScore.teams[0]}
+					t2={boxScore.teams[1]}
+					neutralSite={boxScore.neutralSite}
+				/>
 				{!sportState.newPeriodText ? (
 					<>
 						<VerticalLine

@@ -29,6 +29,8 @@ import {
 
 const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 
+const CANCEL_BUTTON = "Cancel button";
+
 export type ExportLeagueKey =
 	| "players"
 	| "gameHighs"
@@ -271,7 +273,7 @@ const loadCompressed = (): boolean => {
 };
 
 const loadGzip = (): boolean => {
-	// Safari 16.4 (can remove this and other checks for the existence of DecompressionStream)
+	// Safari 16.4 (can remove this and other checks for the existence of DecompressionStream and CompressionStream)
 	if (typeof DecompressionStream === "undefined") {
 		return false;
 	}
@@ -331,6 +333,13 @@ const getExportInfo = (
 
 	const stores = Array.from(storesSet);
 
+	const includeAtLeastSeasonAndStartingSeason =
+		checked.players ||
+		checked.teams ||
+		checked.headToHead ||
+		checked.schedule ||
+		checked.draftPicks;
+
 	const filter: any = {};
 	if (checked.newsFeedTransactions && !checked.newsFeedOther) {
 		filter.events = (event: EventBBGM) => {
@@ -345,9 +354,26 @@ const getExportInfo = (
 	} else if (
 		checked.leagueSettings ||
 		checked.gameState ||
-		checked.teamsBasic
+		checked.teamsBasic ||
+		includeAtLeastSeasonAndStartingSeason
 	) {
 		filter.gameAttributes = (row: GameAttribute<any>) => {
+			if (includeAtLeastSeasonAndStartingSeason) {
+				if (row.key === "season" || row.key === "startingSeason") {
+					return true;
+				}
+
+				// Short circuit if none of the other settings are enabled
+				if (
+					!checked.leagueSettings &&
+					!checked.gameState &&
+					!checked.teamsBasic
+				) {
+					return false;
+				}
+			}
+
+			// If leagueSettings is not checked, that means at least one of gameState or teamsBasic is, so filter out any other settings
 			if (!checked.leagueSettings) {
 				if (
 					!gameAttributesKeysGameState.includes(row.key) &&
@@ -357,18 +383,19 @@ const getExportInfo = (
 				}
 			}
 
+			// If gameState or teamBasic is not checked, filter out any associated settings
 			if (!checked.gameState) {
 				if (gameAttributesKeysGameState.includes(row.key)) {
 					return false;
 				}
 			}
-
 			if (!checked.teamsBasic) {
 				if (gameAttributesKeysTeams.includes(row.key)) {
 					return false;
 				}
 			}
 
+			// Made it this far, must be something to keep
 			return true;
 		};
 	}
@@ -407,20 +434,11 @@ const getExportInfo = (
 		};
 	}
 
-	// Include startingSeason when necessary (historical data but no game state)
-	const hasHistoricalData =
-		checked.players ||
-		checked.teams ||
-		checked.headToHead ||
-		checked.schedule ||
-		checked.draftPicks;
-
 	return {
 		stores,
 		filter,
 		forEach,
 		map,
-		hasHistoricalData,
 	};
 };
 
@@ -473,8 +491,6 @@ const RenderOption = ({
 	);
 };
 
-const SUPPORTS_CANCEL = typeof AbortController !== "undefined";
-
 const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	const [state, setState] = useState<"idle" | "download" | "dropbox">("idle");
 	const [aborting, setAborting] = useState(false);
@@ -517,14 +533,13 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				filename += ".gz";
 			}
 
-			const { stores, filter, forEach, map, hasHistoricalData } = getExportInfo(
-				stats,
-				checked,
-			);
+			const { stores, filter, forEach, map } = getExportInfo(stats, checked);
 
 			const { downloadFileStream, makeExportStream } = await import(
 				"../util/exportLeague.ts"
 			);
+
+			abortController.current = new AbortController();
 
 			const readableStream = await makeExportStream(stores, {
 				compressed,
@@ -532,19 +547,30 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				forEach,
 				map,
 				name: await toWorker("main", "getLeagueName", undefined),
-				hasHistoricalData,
 				onPercentDone: (percent) => {
 					setPercentDone(percent);
 				},
 				onProcessingStore: (store) => {
 					setProcessingStore(store);
 				},
+				signal: abortController.current.signal,
 			});
 
 			let fileStream;
 			let status: ReactNode;
 			if (type === "download") {
-				fileStream = await downloadFileStream(streamDownload, filename, gzip);
+				try {
+					fileStream = await downloadFileStream(streamDownload, filename, gzip);
+				} catch (error) {
+					if (error.name === "AbortError") {
+						// User clicked "cancel" in the file picker
+						abortController.current.abort();
+						cleanupAfterStream();
+						return;
+					} else {
+						throw error;
+					}
+				}
 			} else {
 				if (!dropboxAccessToken) {
 					throw new Error("Missing dropboxAccessToken");
@@ -593,10 +619,6 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 				});
 			}
 
-			if (SUPPORTS_CANCEL) {
-				abortController.current = new AbortController();
-			}
-
 			let tempStream = readableStream.pipeThrough(new TextEncoderStream());
 
 			if (gzip && typeof CompressionStream !== "undefined") {
@@ -609,12 +631,16 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 
 			cleanupAfterStream(status);
 		} catch (error) {
-			cleanupAfterStream(
-				<span className="text-danger">
-					<b>Error:</b> {error.message}
-				</span>,
-			);
-			throw error;
+			if (error.message === CANCEL_BUTTON) {
+				cleanupAfterStream();
+			} else {
+				cleanupAfterStream(
+					<span className="text-danger">
+						<b>Error:</b> {error.message}
+					</span>,
+				);
+				throw error;
+			}
 		}
 	};
 
@@ -855,14 +881,14 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 							)
 						) : null}
 
-						{SUPPORTS_CANCEL && state !== "idle" ? (
+						{state !== "idle" ? (
 							<button
 								className="btn btn-secondary"
 								type="button"
 								disabled={aborting}
 								onClick={() => {
 									if (abortController.current) {
-										abortController.current.abort();
+										abortController.current.abort(new Error(CANCEL_BUTTON));
 										if (state === "dropbox") {
 											setAborting(true);
 										} else {

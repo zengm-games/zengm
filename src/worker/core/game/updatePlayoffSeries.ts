@@ -117,43 +117,18 @@ const updatePlayoffSeries = async (
 				loserWon = series.away.won;
 			}
 
-			let currentRoundText = "";
-
 			const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
+			const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
+			const currentRoundText = helpers.playoffRoundName(
+				playoffSeries.currentRound,
+				numPlayoffRounds,
+				playoffsByConf,
+			);
 
-			let saveToDb = true;
-			if (playoffSeries.currentRound === -1) {
-				currentRoundText = "play-in tournament";
-			} else if (playoffSeries.currentRound === 0) {
-				currentRoundText = `${helpers.ordinal(1)} round of the playoffs`;
-			} else if (
-				playoffSeries.currentRound ===
-				g.get("numGamesPlayoffSeries", "current").length - 3
-			) {
-				currentRoundText = playoffsByConf
-					? "conference semifinals"
-					: "quarterfinals";
-			} else if (
-				playoffSeries.currentRound ===
-				g.get("numGamesPlayoffSeries", "current").length - 2
-			) {
-				currentRoundText = playoffsByConf ? "conference finals" : "semifinals";
-
-				// Not needed, because individual game event in writeGameStats will cover this round
-				saveToDb = false;
-			} else if (
-				playoffSeries.currentRound ===
-				g.get("numGamesPlayoffSeries", "current").length - 1
-			) {
-				currentRoundText = "finals";
-
-				// Not needed, because individual game event in writeGameStats will cover this round
-				saveToDb = false;
-			} else {
-				currentRoundText = `${helpers.ordinal(
-					playoffSeries.currentRound + 1,
-				)} round of the playoffs`;
-			}
+			// Not needed, because individual game event in writeGameStats will cover this round
+			const saveToDb =
+				playoffSeries.currentRound >= 0 &&
+				playoffSeries.currentRound >= numPlayoffRounds - 2;
 
 			const showPts =
 				winnerPts !== undefined &&
@@ -203,10 +178,8 @@ const updatePlayoffSeries = async (
 			if (playoffSeries.currentRound === -1 && playoffSeries.playIns) {
 				let playInsIndex;
 				let playInIndex;
-				for (let i = 0; i < playoffSeries.playIns.length; i++) {
-					const playIn = playoffSeries.playIns[i];
-					for (let j = 0; j < playIn.length; j++) {
-						const matchup = playIn[j];
+				for (const [i, playIn] of playoffSeries.playIns.entries()) {
+					for (const [j, matchup] of playIn.entries()) {
 						if (matchup === series) {
 							playInsIndex = i;
 							playInIndex = j;
@@ -222,16 +195,16 @@ const updatePlayoffSeries = async (
 				// If this is the first game (top 2 teams) or last game (2nd round) of a play-in tournament, move the winner to the appropriate spot in the playoffs
 				let targetTid; // Team to replace in initial playoff matchups
 				if (playInIndex === 0) {
-					targetTid = playoffSeries.playIns[playInsIndex][0].home.tid;
+					targetTid = playoffSeries.playIns[playInsIndex]![0].home.tid;
 				} else if (playInIndex === 2) {
-					targetTid = playoffSeries.playIns[playInsIndex][0].away.tid;
+					targetTid = playoffSeries.playIns[playInsIndex]![0].away.tid;
 				}
 				if (targetTid !== undefined) {
 					const winner =
 						series.away.tid === winnerTid ? series.away : series.home;
 
 					// Find target team in playoffSeries and replace with winner of this game
-					for (const matchup of playoffSeries.series[0]) {
+					for (const matchup of playoffSeries.series[0]!) {
 						for (const type of ["home", "away"] as const) {
 							const matchupTeam = matchup[type];
 							if (

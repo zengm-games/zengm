@@ -1,13 +1,12 @@
 import { allStar, player, season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
-import { g, helpers, random } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import type {
 	Player,
 	MinimalPlayerRatings,
 	Conditions,
 } from "../../../common/types.ts";
 import {
-	bySport,
 	COMPOSITE_WEIGHTS,
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	isSport,
@@ -18,17 +17,88 @@ import statsRowIsCurrent from "../player/statsRowIsCurrent.ts";
 
 const MAX_NUM_PLAYERS_PACE = 7;
 
-const skipPlayerStats = bySport({
-	baseball: ["minAvailable"],
-	basketball: ["gp", "minAvailable"],
-	football: ["gp", "minAvailable"],
-	hockey: ["gp", "minAvailable"],
-});
+const SKIP_PLAYER_STATS = new Set(["minAvailable"]);
+
+// Is this a game 7, or an elimination game 7 (generalized to other playoff series lengths than 7)
+export const isGame6EliminationGameOrGame7 = async (
+	playoffs: boolean,
+	tid: number,
+) => {
+	if (!playoffs) {
+		return false;
+	}
+
+	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
+	if (playoffSeries) {
+		if (playoffSeries.currentRound === -1) {
+			return true;
+		}
+
+		const roundSeries = playoffSeries.series[playoffSeries.currentRound];
+		const numGames = g.get("numGamesPlayoffSeries", "current")[
+			playoffSeries.currentRound
+		];
+		if (roundSeries !== undefined && numGames !== undefined) {
+			for (const series of roundSeries) {
+				if (
+					series.away?.tid !== undefined &&
+					(tid === series.home.tid || tid === series.away.tid)
+				) {
+					const numGamesSeries = series.away.won + series.home.won;
+
+					// Game 7?
+					if (numGamesSeries === numGames - 1) {
+						return true;
+					}
+
+					// Elimination game 6?
+					if (numGamesSeries === numGames - 2) {
+						const eliminationGame =
+							series.home.tid === tid
+								? series.home.won < series.away.won
+								: series.away.won < series.home.won;
+						return eliminationGame;
+					}
+				}
+			}
+		}
+	}
+
+	return false;
+};
+
+// Decrease rating by up to 40%
+export const getNumConsecutiveGamesGFactor = (
+	numConsecutiveGamesG: number,
+	playoffs: boolean,
+	game6EliminationGameOrGame7: boolean | undefined,
+) => {
+	const playoffsFactor = playoffs ? (game6EliminationGameOrGame7 ? 4 : 2) : 1;
+	return helpers.bound(
+		1 - (numConsecutiveGamesG / playoffsFactor) * 0.045,
+		0.6,
+		1,
+	);
+};
 
 let playerStats: Record<string, number | number[]>;
 let teamStats: Record<string, number>;
 
-export const processTeam = (
+export const getActualPlayThroughInjuries = (
+	t: { tid: number; playThroughInjuries: [number, number] } | "default",
+) => {
+	if (t === "default" || g.get("spectator")) {
+		return DEFAULT_PLAY_THROUGH_INJURIES;
+	}
+
+	if (g.get("userTids").includes(t.tid)) {
+		return t.playThroughInjuries;
+	}
+
+	return DEFAULT_PLAY_THROUGH_INJURIES;
+};
+
+export const processTeam = async (
 	teamInput: {
 		tid: number;
 		playThroughInjuries: [number, number];
@@ -46,24 +116,25 @@ export const processTeam = (
 	exhibitionGame?: boolean,
 ) => {
 	if (!playerStats) {
-		playerStats = player.stats.raw.reduce<Record<string, number>>(
-			(stats, stat) => {
-				if (skipPlayerStats.includes(stat)) {
-					return stats;
-				}
-
-				stats[stat] = 0;
-				return stats;
-			},
-			{},
-		);
+		playerStats = {};
+		for (const key of player.stats.raw) {
+			if (!SKIP_PLAYER_STATS.has(key) && !key.startsWith("opp")) {
+				playerStats[key] = 0;
+			}
+		}
 	}
 
 	if (!teamStats) {
-		teamStats = team.stats.raw.reduce<Record<string, number>>((stats, stat) => {
-			stats[stat] = 0;
-			return stats;
-		}, {});
+		teamStats = {};
+		for (const key of team.stats.raw) {
+			if (!key.startsWith("opp")) {
+				teamStats[key] = 0;
+			}
+		}
+		if (isSport("basketball")) {
+			// ba is still recorded as a player stat for some reason, but not a team stat, so we need to add it here so it gets tracked for the box score correctly
+			teamStats.ba = 0;
+		}
 	}
 
 	const allStarGame = teamInput.tid === -1 || teamInput.tid === -2;
@@ -83,19 +154,24 @@ export const processTeam = (
 
 	const playoffs = g.get("phase") === PHASE.PLAYOFFS;
 
+	const actualPlayThroughInjuries = getActualPlayThroughInjuries(teamInput);
+
 	// Injury-adjusted ovr
-	const playersCurrent = players
-		.filter((p: any) => p.injury.gamesRemaining === 0)
-		.map((p) => ({
-			pid: p.pid,
-			value: p.value,
-			ratings: {
-				ovr: player.fuzzRating(p.ratings.at(-1)!.ovr, p.ratings.at(-1)!.fuzz),
-				ovrs: player.fuzzOvrs(p.ratings.at(-1)!.ovrs, p.ratings.at(-1)!.fuzz),
-				pos: p.ratings.at(-1)!.pos,
-			},
-		}));
+	const playersCurrent = players.map((p) => ({
+		pid: p.pid,
+		injury: p.injury,
+		value: p.value,
+		ratings: {
+			ovr: player.fuzzRating(p.ratings.at(-1)!.ovr, p.ratings.at(-1)!.fuzz),
+			ovrs: player.fuzzOvrs(p.ratings.at(-1)!.ovrs, p.ratings.at(-1)!.fuzz),
+			pos: p.ratings.at(-1)!.pos,
+		},
+	}));
 	const ovr = team.ovr(playersCurrent, {
+		accountForInjuredPlayers: {
+			numDaysInFuture: 0,
+			playThroughInjuries: actualPlayThroughInjuries,
+		},
 		playoffs,
 	});
 
@@ -120,14 +196,9 @@ export const processTeam = (
 		depth: teamInput.depth,
 	};
 
-	let playThroughInjuriesBoth;
-	if (g.get("userTids").includes(teamInput.tid) && !g.get("spectator")) {
-		playThroughInjuriesBoth = teamInput.playThroughInjuries;
-	} else {
-		playThroughInjuriesBoth = DEFAULT_PLAY_THROUGH_INJURIES;
-	}
+	const playThroughInjuries = actualPlayThroughInjuries[playoffs ? 1 : 0];
 
-	const playThroughInjuries = playThroughInjuriesBoth[playoffs ? 1 : 0];
+	let game6EliminationGameOrGame7: boolean | undefined;
 
 	for (const p of players) {
 		const injuryFactor = playThroughInjuriesFactor(p.injury.gamesRemaining);
@@ -161,38 +232,40 @@ export const processTeam = (
 		};
 
 		// Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.
-		if (!g.get("userTids").includes(t.id)) {
+		if (!g.get("userTids").includes(t.id) || g.get("spectator")) {
 			p2.ptModifier = 1;
 		}
 		const seasonStats: Record<string, number> = {};
 
 		// These use the same formulas as the skill definitions in player.skills!
-		for (const k of Object.keys(COMPOSITE_WEIGHTS)) {
+		for (const [k, weightInfo] of Object.entries(COMPOSITE_WEIGHTS)) {
 			p2.compositeRating[k] =
 				player.compositeRating(
 					rating,
-					COMPOSITE_WEIGHTS[k].ratings,
-					COMPOSITE_WEIGHTS[k].weights,
+					weightInfo.ratings,
+					weightInfo.weights,
 					false,
 				) * injuryFactor;
 
 			if (isSport("hockey") && k === "goalkeeping") {
-				let numConsecutiveGamesG = p.numConsecutiveGamesG ?? 0;
-
-				if (playoffs) {
-					numConsecutiveGamesG /= 2;
-				}
+				const numConsecutiveGamesG = p.numConsecutiveGamesG ?? 0;
 
 				if (p.numConsecutiveGamesG !== undefined) {
 					(p2 as any).numConsecutiveGamesG = p.numConsecutiveGamesG;
 				}
 
 				if (numConsecutiveGamesG > 0) {
-					// Decrease rating by up to 40%
-					p2.compositeRating[k] *= helpers.bound(
-						1 - numConsecutiveGamesG * random.uniform(0.0, 0.09),
-						0.6,
-						1,
+					if (playoffs && game6EliminationGameOrGame7 === undefined) {
+						game6EliminationGameOrGame7 = await isGame6EliminationGameOrGame7(
+							playoffs,
+							teamInput.tid,
+						);
+					}
+
+					p2.compositeRating[k] *= await getNumConsecutiveGamesGFactor(
+						numConsecutiveGamesG,
+						playoffs,
+						game6EliminationGameOrGame7,
 					);
 				}
 			}
@@ -229,7 +302,7 @@ export const processTeam = (
 			let ps;
 			if (allStarGame) {
 				// Only look at regular season stats, in case All-Star Game is in playoffs
-				ps = p.stats.filter((ps) => !ps.playoffs).at(-1);
+				ps = p.stats.findLast((ps) => !ps.playoffs);
 				hasStats = !!ps && ps.season === g.get("season");
 			} else {
 				ps = p.stats.at(-1);
@@ -266,8 +339,6 @@ export const processTeam = (
 		}
 
 		p2.stat = {
-			gs: 0,
-			min: 0,
 			...playerStats,
 
 			// Starters will play at least 3 minutes before being subbed out, after that the default here doesn't matter
@@ -318,7 +389,9 @@ export const processTeam = (
 
 	if (team.stats.byPos) {
 		for (const key of team.stats.byPos) {
-			t.stat[key] = [];
+			if (!key.startsWith("opp")) {
+				t.stat[key] = [];
+			}
 		}
 	}
 
@@ -335,7 +408,10 @@ export const processTeam = (
  * @returns {Promise<Record<number, undefined | ReturnType<typeof processTeam>>>} Resolves to a record of team objects, ordered by tid.
  */
 const loadTeams = async (tids: number[], conditions: Conditions) => {
-	const teams: Record<number, undefined | ReturnType<typeof processTeam>> = {};
+	const teams: Record<
+		number,
+		undefined | Awaited<ReturnType<typeof processTeam>>
+	> = {};
 	if (tids.length === 2 && tids.includes(-1) && tids.includes(-2)) {
 		// All-Star Game
 		const allStars = await allStar.getOrCreate(g.get("season"));
@@ -381,7 +457,7 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 
 			const depth = await team.genDepth(players);
 
-			teams[tid] = processTeam(
+			teams[tid] = await processTeam(
 				{
 					tid,
 					playThroughInjuries: [0, 0],
@@ -417,7 +493,7 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 					throw new Error("Team season not found");
 				}
 
-				teams[tid] = processTeam(team, teamSeason, players);
+				teams[tid] = await processTeam(team, teamSeason, players);
 			}),
 		);
 	}

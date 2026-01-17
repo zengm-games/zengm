@@ -1,4 +1,3 @@
-// KEEP IN SYNC WITH WORKER VERSION
 export const roundContract = (amount: number, minContract: number) => {
 	if (minContract >= 3) {
 		// Round to some integer

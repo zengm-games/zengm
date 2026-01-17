@@ -1,17 +1,14 @@
 import { PLAYER } from "../../common/index.ts";
 import { helpers } from "../util/index.ts";
 
-const TeamAbbrev = ({
-	tid,
-	abbrev,
-	className,
-	season,
-}: {
+type Props = {
 	tid: number;
 	abbrev: string;
 	className?: string;
 	season?: number;
-}) => {
+};
+
+const TeamAbbrevLink = ({ tid, abbrev, className, season }: Props) => {
 	if (!abbrev) {
 		return null;
 	}
@@ -55,4 +52,35 @@ const TeamAbbrev = ({
 	);
 };
 
-export default TeamAbbrev;
+export const wrappedTeamAbbrevLink = ({
+	tid,
+	abbrev,
+	className,
+	season,
+}: Props) => {
+	let text;
+	if (!abbrev) {
+		text = undefined;
+	} else if (tid === PLAYER.DOES_NOT_EXIST) {
+		text = "DNE";
+	} else if (tid === PLAYER.TOT) {
+		text = "TOT";
+	} else if (tid < 0) {
+		text = undefined;
+	} else {
+		text = abbrev;
+	}
+
+	return {
+		value: (
+			<TeamAbbrevLink
+				tid={tid}
+				abbrev={abbrev}
+				className={className}
+				season={season}
+			/>
+		),
+		sortValue: text,
+		searchValue: text,
+	};
+};

@@ -194,7 +194,7 @@ const writeTeamStats = async (results: GameResults) => {
 			let winpOld = 0; // Avg winning percentage of last 0-2 seasons (as available)
 
 			for (let i = 0; i < teamSeasons.length - 1; i++) {
-				winpOld += helpers.calcWinp(teamSeasons[i]);
+				winpOld += helpers.calcWinp(teamSeasons[i]!);
 			}
 
 			if (teamSeasons.length > 1) {
@@ -214,12 +214,7 @@ const writeTeamStats = async (results: GameResults) => {
 
 			teamSeason.hype =
 				teamSeason.hype + 0.01 * (winp - 0.55) + 0.015 * (winp - winpOld);
-
-			if (teamSeason.hype > 1) {
-				teamSeason.hype = 1;
-			} else if (teamSeason.hype < 0) {
-				teamSeason.hype = 0;
-			}
+			teamSeason.hype = helpers.bound(teamSeason.hype, 0, 1);
 		}
 
 		// 5% bonus for easy, 5% penalty for hard, 20% penalty for insane
@@ -302,10 +297,8 @@ const writeTeamStats = async (results: GameResults) => {
 
 		// For historical reasons, "ba" is special in basketball (stored in box score, not in team stats)
 		const skip = bySport({
-			baseball: ["ptsQtrs", "gp"],
-			basketball: ["ptsQtrs", "ba"],
-			football: ["ptsQtrs"],
-			hockey: ["ptsQtrs"],
+			basketball: ["ptsQtrs", "gp", "ba"],
+			default: ["ptsQtrs", "gp"],
 		});
 
 		for (const key of Object.keys(results.team[t1].stat)) {
@@ -459,7 +452,7 @@ const writeTeamStats = async (results: GameResults) => {
 				teamSeason.tid,
 			);
 			const players = await idb.getCopies.playersPlus(playersRaw, {
-				attrs: ["pid", "value"],
+				attrs: ["pid", "injury", "value"],
 				fuzz: true,
 				ratings: ["ovr", "pos", "ovrs"],
 				season: g.get("season"),

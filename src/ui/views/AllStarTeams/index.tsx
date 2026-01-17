@@ -84,9 +84,9 @@ const PlayersTable = ({
 					pid: p.pid,
 					injury: p.injury,
 					jerseyNumber: p.stats.jerseyNumber,
-					pos: p.ratings.pos,
+					pos: p.bestPos,
 					skills: p.skills,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					legacyName: p.name,
 					count: p.numAllStar,
 				}),
@@ -315,7 +315,8 @@ const AllStars = ({
 		);
 	}
 
-	const teamDisplayOrder = type === "draft" ? [0, 1] : [1, 0];
+	const teamDisplayOrder =
+		type === "draft" ? ([0, 1] as const) : ([1, 0] as const);
 
 	return (
 		<>

@@ -132,13 +132,14 @@ const monteCarloLotteryProbs = (
 	for (let i = 0; i < ITERATIONS; i++) {
 		const result = simLottery(chances, numToPick);
 		for (let j = 0; j < result.length; j++) {
-			const k = result[j];
+			const k = result[j]!;
 			if (!probs[k]) {
 				probs[k] = [];
 			}
 			if (probs[k][j] === undefined) {
 				probs[k][j] = 1 / ITERATIONS;
 			} else {
+				// @ts-expect-error
 				probs[k][j] += 1 / ITERATIONS;
 			}
 		}
@@ -177,10 +178,7 @@ export const getDraftLotteryProbs = (
 
 	if (draftType === "randomLottery") {
 		for (let i = 0; i < result.length; i++) {
-			probs[i] = [];
-			for (let j = 0; j < result.length; j++) {
-				probs[i][j] = 1 / result.length;
-			}
+			probs[i] = new Array(result.length).fill(1 / result.length);
 		}
 
 		return {
@@ -191,18 +189,19 @@ export const getDraftLotteryProbs = (
 
 	if (draftType === "coinFlip") {
 		for (let i = 0; i < result.length; i++) {
-			probs[i] = [];
+			const row = [];
 			for (let j = 0; j < result.length; j++) {
 				if (i === 0 && j <= 1) {
-					probs[i][j] = 0.5;
+					row[j] = 0.5;
 				} else if (i === 1 && j <= 1) {
-					probs[i][j] = 0.5;
+					row[j] = 0.5;
 				} else if (i === j) {
-					probs[i][j] = 1;
+					row[j] = 1;
 				} else {
-					probs[i][j] = 0;
+					row[j] = 0;
 				}
 			}
+			probs[i] = row;
 		}
 
 		return {
@@ -487,24 +486,20 @@ export const getDraftLotteryProbs = (
 
 	// Get probabilities of top N picks for all teams
 	for (let i = 0; i < result.length; i++) {
-		probs[i] = [];
-
 		// Initialize values that we'll definitely fill in soon
-		for (let j = 0; j < numToPick; j++) {
-			probs[i][j] = 0;
-		}
+		probs[i] = new Array(numToPick).fill(0);
 
 		// +1 is to handle the case of 0 skips to N skips
 		skipped[i] = Array(numToPick + 1).fill(0);
 	}
 
 	const getProb = (indexes: number[]): number => {
-		const currentTeamIndex = indexes[0];
+		const currentTeamIndex = indexes[0]!;
 		const prevLotteryWinnerIndexes = indexes.slice(1);
 
 		let chancesLeft = totalChances;
 		for (const prevTeamIndex of prevLotteryWinnerIndexes) {
-			chancesLeft -= result[prevTeamIndex].chances;
+			chancesLeft -= result[prevTeamIndex]!.chances;
 		}
 
 		const priorProb =
@@ -512,7 +507,7 @@ export const getDraftLotteryProbs = (
 				? 1
 				: getProb(prevLotteryWinnerIndexes);
 
-		const prob = (priorProb * result[currentTeamIndex].chances) / chancesLeft;
+		const prob = (priorProb * result[currentTeamIndex]!.chances) / chancesLeft;
 
 		return prob;
 	};
@@ -530,6 +525,7 @@ export const getDraftLotteryProbs = (
 
 			// We're looking at every combination of lottery results. getProb will fill in the probability of this result in probs
 			const prob = getProb(indexes);
+			// @ts-expect-error
 			probs[currentTeamIndex][pickIndex] += prob;
 
 			// For the later picks, account for how many times each team was "skipped" (lower lottery team won lottery and moved ahead) and keep track of those probabilities
@@ -546,6 +542,7 @@ export const getDraftLotteryProbs = (
 						}
 					}
 
+					// @ts-expect-error
 					skipped[i][skipCount] += prob;
 				}
 			}
@@ -557,6 +554,7 @@ export const getDraftLotteryProbs = (
 		// Fill in table after first N picks
 		for (let j = 0; j < numToPick + 1; j++) {
 			if (i + j > numToPick - 1 && i + j < result.length) {
+				// @ts-expect-error
 				probs[i][i + j] = skipped[i][j];
 			}
 		}

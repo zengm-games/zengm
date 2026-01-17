@@ -3,6 +3,8 @@ import type { MouseEvent, ReactNode } from "react";
 import type processInputs from "../worker/api/processInputs.ts";
 import type views from "../worker/views/index.ts";
 
+export type NonEmptyArray<T> = [T, ...T[]];
+
 export type Env = {
 	enableLogging: boolean;
 	heartbeatID: string;
@@ -243,9 +245,14 @@ type TradeEventAsset =
 			originalTid: number;
 	  };
 
-export type TradeEventTeams = {
-	assets: TradeEventAsset[];
-}[];
+export type TradeEventTeams = [
+	{
+		assets: TradeEventAsset[];
+	},
+	{
+		assets: TradeEventAsset[];
+	},
+];
 
 export type DiscriminateUnion<T, K extends keyof T, V extends T[K]> =
 	T extends Record<K, V> ? T : never;
@@ -269,7 +276,7 @@ export type EventBBGMWithoutKey =
 	  }
 	| {
 			type: "sisyphus";
-			pids: number[];
+			pids: [number];
 			tids: number[];
 			season: number;
 			wonTitle: boolean;
@@ -284,7 +291,7 @@ export type EventBBGMWithoutKey =
 			text?: string; // Only legacy will have text
 			pids: number[];
 			dpids: number[];
-			tids: number[];
+			tids: [number, number];
 			season: number;
 
 			// These three will only be undefind in legacy events
@@ -322,6 +329,7 @@ type GameTeam = {
 	tied?: number; // Undefined for legacy objects or if there are no ties in this sport
 	otl?: number; // Undefined for legacy objects or if there are no otls in this sport
 
+	playerFeat?: boolean;
 	playoffs?: {
 		seed: number;
 		won: number;
@@ -342,6 +350,7 @@ export type Game = {
 	att: number;
 	clutchPlays?: string[];
 	day?: number; // Only optional for legacy
+	finals?: boolean;
 	forceWin?: number; // If defined, it's the number of iterations that were used to force the win/tie
 	gid: number;
 	lost: {
@@ -355,7 +364,7 @@ export type Game = {
 	numGamesToWinSeries?: number;
 	numPeriods?: number; // Optional only for legacy, otherwise it's the number of periods in the game, defined at the start
 	numPlayersOnCourt?: number;
-	playoffs: boolean;
+	playoffs?: boolean;
 	overtimes: number;
 	scoringSummary?: any;
 	season: number;
@@ -434,10 +443,10 @@ export type ScheduledEventWithoutKey =
 
 export type ScheduledEvent = ScheduledEventWithoutKey & { id: number };
 
-export type GameAttributeWithHistory<T> = {
+export type GameAttributeWithHistory<T> = NonEmptyArray<{
 	start: number;
 	value: T;
-}[];
+}>;
 
 export type ExpansionDraftSetupTeam = {
 	abbrev: string;
@@ -488,7 +497,6 @@ export type GameAttributesLeague = {
 	allStarDunk: boolean;
 	allStarThree: boolean;
 	alwaysShowCountry: boolean;
-	autoDeleteOldBoxScores: boolean;
 	autoExpand:
 		| {
 				phase: "vote";
@@ -523,12 +531,12 @@ export type GameAttributesLeague = {
 	challengeSisyphusMode: boolean;
 	challengeThanosMode: number;
 	thanosCooldownEnd: number | undefined;
-	confs: Conf[];
+	confs: NonEmptyArray<Conf>;
 	daysLeft: number;
 	defaultStadiumCapacity: number;
 	dh: "all" | "none" | number[];
 	difficulty: number;
-	divs: Div[];
+	divs: NonEmptyArray<Div>;
 	draftAges: [number, number];
 	draftPickAutoContract: boolean;
 	draftPickAutoContractPercent: number;
@@ -546,7 +554,7 @@ export type GameAttributesLeague = {
 	forceRetireAge: number;
 	forceRetireSeasons: number;
 	foulsNeededToFoulOut: number;
-	foulsUntilBonus: number[];
+	foulsUntilBonus: [number, number, number];
 	foulRateFactor: number;
 	gameOver: boolean;
 	gender: "female" | "male";
@@ -638,6 +646,16 @@ export type GameAttributesLeague = {
 	rookiesCanRefuse: boolean;
 	salaryCap: number;
 	salaryCapType: "hard" | "none" | "soft";
+	saveOldBoxScores: {
+		pastSeasons: number | "all";
+		pastSeasonsType?: "your" | "all";
+		note?: "your" | "all";
+		playoffs?: "your" | "all";
+		finals?: "your" | "all";
+		playerFeat?: "your" | "all";
+		clutchPlays?: "your" | "all";
+		allStar?: "all";
+	};
 	season: number;
 	softCapTradeSalaryMatch: number;
 	sonRate: number;
@@ -727,45 +745,21 @@ export type GameAttributesLeague = {
 	contactFactor: number;
 	neutralSite: "never" | "finals" | "playoffs";
 	rpdPot: boolean;
+	currencyFormat: [string, "." | ",", string];
+	overtimeLength: number;
+	overtimeLengthPlayoffs: number | null;
+	forceRetireRealPlayers: boolean;
+	forceHistoricalRosters: boolean;
+	scrimmageTouchbackKickoff: number;
 };
+
+type AlwaysWrap = (typeof ALWAYS_WRAP)[number];
 
 export type GameAttributesLeagueWithHistory = Omit<
 	GameAttributesLeague,
-	| "confs"
-	| "divs"
-	| "maxOvertimes"
-	| "numGames"
-	| "numGamesPlayoffSeries"
-	| "numPlayoffByes"
-	| "otl"
-	| "playoffsNumTeamsDiv"
-	| "pointsFormula"
-	| "shootoutRounds"
-	| "tiebreakers"
-	| "userTid"
+	AlwaysWrap
 > & {
-	confs: GameAttributeWithHistory<GameAttributesLeague["confs"]>;
-	divs: GameAttributeWithHistory<GameAttributesLeague["divs"]>;
-	maxOvertimes: GameAttributeWithHistory<GameAttributesLeague["maxOvertimes"]>;
-	numGames: GameAttributeWithHistory<GameAttributesLeague["numGames"]>;
-	numGamesPlayoffSeries: GameAttributeWithHistory<
-		GameAttributesLeague["numGamesPlayoffSeries"]
-	>;
-	numPlayoffByes: GameAttributeWithHistory<
-		GameAttributesLeague["numPlayoffByes"]
-	>;
-	otl: GameAttributeWithHistory<GameAttributesLeague["otl"]>;
-	playoffsNumTeamsDiv: GameAttributeWithHistory<
-		GameAttributesLeague["playoffsNumTeamsDiv"]
-	>;
-	pointsFormula: GameAttributeWithHistory<
-		GameAttributesLeague["pointsFormula"]
-	>;
-	shootoutRounds: GameAttributeWithHistory<
-		GameAttributesLeague["shootoutRounds"]
-	>;
-	tiebreakers: GameAttributeWithHistory<GameAttributesLeague["tiebreakers"]>;
-	userTid: GameAttributeWithHistory<GameAttributesLeague["userTid"]>;
+	[T in AlwaysWrap]: GameAttributeWithHistory<GameAttributesLeague[T]>;
 };
 
 export type GameAttributes =
@@ -991,10 +985,10 @@ export type Options = {
 export type LocalStateUI = {
 	alwaysShowCountry: boolean;
 	challengeNoRatings: boolean;
+	currencyFormat: GameAttributesLeague["currencyFormat"];
 	customMenu?: MenuItemHeader;
-	dirtySettings: boolean;
 	email?: string;
-	flagOverrides: Record<string, string | undefined>;
+	flagOverrides: Record<string, string>;
 	gameSimInProgress: boolean;
 	games: {
 		finals?: boolean;
@@ -1047,12 +1041,13 @@ export type LocalStateUI = {
 	neutralSite: GameAttributesLeague["neutralSite"];
 	numPeriods: number;
 	numWatchColors: number;
-	phase: number;
+	phase: Phase;
 	phaseText: string;
 	playMenuOptions: Option[];
 	popup: boolean;
 	quarterLength: number;
 	season: number;
+	showLeagueTopBar: boolean;
 	showNagModal: boolean;
 	sidebarOpen: boolean;
 	spectator: boolean;
@@ -1220,7 +1215,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 		ovrDrop?: number;
 		potDrop?: number;
 	}[];
-	jerseyNumber?: string;
+	jerseyNumber?: string; // Should be undefined only for a player who has never been on a team, or a player signed to his first team before the preseason
 	lastName: string;
 	moodTraits: MoodTrait[];
 	note?: string;
@@ -1229,7 +1224,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	pid?: number;
 	pos?: string; // Only in players from custom league files
 	ptModifier: number;
-	ratings: PlayerRatings[];
+	ratings: NonEmptyArray<PlayerRatings>;
 	real?: boolean;
 	relatives: Relative[];
 	retiredYear: number;
@@ -1322,6 +1317,7 @@ export type PlayersPlusOptions = {
 	numGamesRemaining?: number;
 	statType?: PlayerStatType;
 	mergeStats?: "none" | "totOnly" | "totAndTeams";
+	disableAbbrevsCacheDatabaseAccess?: boolean;
 };
 
 export type Race = "asian" | "black" | "brown" | "white";
@@ -1390,7 +1386,7 @@ export type Local = {
 	email: string | undefined;
 	exhibitionGamePlayers?: Record<number, Player>;
 	fantasyDraftResults: (Player<any> & {
-		prevAbbrev: string;
+		prevAbbrev: string | undefined;
 		prevTid: number;
 	})[];
 	goldUntil: number;
@@ -1400,11 +1396,10 @@ export type Local = {
 	minFractionDiffs:
 		| Record<
 				number,
-				| {
-						tid: number;
-						diff: number;
-				  }
-				| undefined
+				{
+					tid: number;
+					diff: number;
+				}
 		  >
 		| undefined;
 	phaseText: string;
@@ -1412,8 +1407,16 @@ export type Local = {
 	playerOvrMean: number;
 	playerOvrStd: number;
 	playerOvrMeanStdStale: boolean;
-	seasonLeaders: SeasonLeaders | undefined;
 	playingUntilEndOfRound: boolean;
+	realPlayerActiveSeasons:
+		| Record<
+				string,
+				Record<number, number | undefined> & {
+					retiredUntil?: Record<number, number>;
+				}
+		  >
+		| undefined;
+	seasonLeaders: SeasonLeaders | undefined;
 	statusText: string;
 	unviewedSeasonSummary: boolean;
 	username: string | undefined;
@@ -1452,8 +1455,10 @@ export type PlayInTournament =
 	| [PlayInMatchup, PlayInMatchup]
 	| [PlayInMatchup, PlayInMatchup, PlayInMatchup];
 
+export type ByConf = number | false;
+
 export type PlayoffSeries = {
-	byConf?: boolean; // undefined is for upgraded leagues and real players leagues
+	byConf?: ByConf; // undefined is for upgraded leagues and real players leagues
 	currentRound: number;
 	season: number;
 	series: {
@@ -1500,9 +1505,7 @@ export type ScheduleGameWithoutKey = {
 	homeTid: number;
 	forceWin?: number | "tie"; // either awayTid or homeTid, if defined
 	finals?: boolean; // Used for easily checking neutralSite "finals" setting
-
-	// Just used to enable multiple live sims per day. Besides that, not used for anything, not persisted anywhere, and in the playoffs the values are kind of weird.
-	day: number;
+	day: number; // In the playoffs the values are kind of weird
 };
 
 export type ScheduleGame = ScheduleGameWithoutKey & {
@@ -1513,7 +1516,6 @@ export type SortOrder = "asc" | "desc";
 
 export type SortType =
 	| "country"
-	| "currency"
 	| "draftPick"
 	| "lastTen"
 	| "name"
@@ -1575,9 +1577,8 @@ export type Team = {
 	firstSeasonAfterExpansion?: number;
 	srID?: string;
 
-	// Optional because upgrade code was not written on 2020-05-04. Ideally should have populated these with the most recent value of teamSeason.
-	pop?: number;
-	stadiumCapacity?: number;
+	pop: number;
+	stadiumCapacity: number;
 
 	adjustForInflation: boolean;
 	disabled: boolean;
@@ -1602,7 +1603,7 @@ export type Team = {
 
 export type TeamAttr = keyof Team;
 
-type TeamSeasonPlus = TeamSeason & {
+type TeamSeasonPlus = Omit<TeamSeason, "lastTen"> & {
 	winp: number;
 	revenue: number;
 	profit: number;
@@ -1616,6 +1617,7 @@ type TeamSeasonPlus = TeamSeason & {
 	ptsMax: number;
 	ptsPct: number;
 	avgAge: number | undefined;
+	gp: number;
 };
 export type TeamSeasonAttr = keyof TeamSeasonPlus;
 
@@ -1629,6 +1631,7 @@ import type { TeamStatAttr as TeamStatAttrHockey } from "./types.hockey.ts";
 import type { TIEBREAKERS } from "./constants.ts";
 import type { DropdownOption } from "../ui/hooks/useDropdownOptions.tsx";
 import type { LookingForState } from "../ui/views/TradingBlock/useLookingForState.ts";
+import type { ALWAYS_WRAP } from "../worker/core/league/loadGameAttributes.ts";
 type TeamStatsPlus = Record<TeamStatAttrBaseball, number> &
 	Record<TeamStatAttrByPosBaseball, number[]> &
 	Record<TeamStatAttrBasketball, number> &
@@ -1794,6 +1797,9 @@ type TradeSummaryTeam = {
 	payrollBeforeTrade: number;
 	picks: {
 		dpid: number;
+		season: DraftPickSeason;
+		round: number;
+		pick: number;
 		desc: string;
 	}[];
 	total: number;
@@ -1844,6 +1850,8 @@ export type UpdateEvents = (
 	| "retiredJerseys"
 	| "team"
 	| "teamFinances"
+
+	// This should be used for things that do stuff like "select all players on watch list", not updating the watch property for individual players. crossTabEmit handles that automatically.
 	| "watchList"
 )[];
 
@@ -1893,6 +1901,7 @@ export type GetLeagueOptions =
 				| "1990s"
 				| "2000s"
 				| "2010s"
+				| "2020s"
 				| "all";
 	  };
 

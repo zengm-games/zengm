@@ -2,6 +2,7 @@ import { draft } from "../../index.ts";
 import { PHASE, PLAYER } from "../../../../common/index.ts";
 import type { PlayerWithoutKey } from "../../../../common/types.ts";
 import { g } from "../../../util/index.ts";
+import { groupByMap } from "../../../../common/utils.ts";
 
 const addDraftProspects = async ({
 	players,
@@ -10,50 +11,50 @@ const addDraftProspects = async ({
 	players: PlayerWithoutKey[];
 	scoutingLevel: number;
 }) => {
+	const draftProspectsByDraftYear = groupByMap(
+		players.filter((p) => p.tid === PLAYER.UNDRAFTED),
+		(p) => p.draft.year,
+	);
+
 	const seasonOffset = g.get("phase") >= PHASE.RESIGN_PLAYERS ? 1 : 0;
-	const existingDraftClasses: [any[], any[], any[]] = [[], [], []];
-	for (const p of players) {
-		if (p.tid === PLAYER.UNDRAFTED) {
-			if (p.draft.year === g.get("season") + seasonOffset) {
-				existingDraftClasses[0].push(p);
-			} else if (p.draft.year === g.get("season") + seasonOffset + 1) {
-				existingDraftClasses[1].push(p);
-			} else if (p.draft.year === g.get("season") + seasonOffset + 2) {
-				existingDraftClasses[2].push(p);
-			}
+	const requiredYears = [
+		g.get("season") + seasonOffset,
+		g.get("season") + seasonOffset + 1,
+		g.get("season") + seasonOffset + 2,
+	];
+	for (const year of requiredYears) {
+		if (!draftProspectsByDraftYear.has(year)) {
+			draftProspectsByDraftYear.set(year, []);
 		}
 	}
 
-	// If the draft has already happened this season but next year's class hasn't been bumped up, don't create any PLAYER.UNDRAFTED
 	if (g.get("phase") >= 0) {
-		if (
-			g.get("phase") <= PHASE.DRAFT_LOTTERY ||
-			g.get("phase") >= PHASE.RESIGN_PLAYERS
-		) {
-			const draftClass = await draft.genPlayersWithoutSaving(
-				g.get("season") + seasonOffset,
-				scoutingLevel,
-				existingDraftClasses[0],
-			);
-			players.push(...draftClass);
-		}
-
-		{
-			const draftClass = await draft.genPlayersWithoutSaving(
-				g.get("season") + 1 + seasonOffset,
-				scoutingLevel,
-				existingDraftClasses[1],
-			);
-			players.push(...draftClass);
-		}
-
-		{
-			const draftClass = await draft.genPlayersWithoutSaving(
-				g.get("season") + 2 + seasonOffset,
-				scoutingLevel,
-				existingDraftClasses[2],
-			);
-			players.push(...draftClass);
+		const upcomingDraftYear = g.get("season") + seasonOffset;
+		for (const [season, draftClass] of draftProspectsByDraftYear) {
+			if (season < upcomingDraftYear) {
+				// Should never happen, but maybe in custom file or God Mode
+				continue;
+			} else if (season === upcomingDraftYear) {
+				// If the draft has already happened this season but next year's class hasn't been bumped up, don't create any PLAYER.UNDRAFTED
+				if (
+					g.get("phase") <= PHASE.DRAFT_LOTTERY ||
+					g.get("phase") >= PHASE.RESIGN_PLAYERS
+				) {
+					const extraPlayers = await draft.genPlayersWithoutSaving(
+						season,
+						scoutingLevel,
+						draftClass,
+					);
+					players.push(...extraPlayers);
+				}
+			} else {
+				const extraPlayers = await draft.genPlayersWithoutSaving(
+					season,
+					scoutingLevel,
+					draftClass,
+				);
+				players.push(...extraPlayers);
+			}
 		}
 	}
 };

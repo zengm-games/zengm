@@ -1,13 +1,18 @@
-import { bySport, isSport, PLAYER } from "../../../common/index.ts";
+import {
+	bySport,
+	isSport,
+	PHASE,
+	PLAYER,
+	REAL_PLAYERS_INFO,
+} from "../../../common/index.ts";
 import { g, random } from "../../util/index.ts";
-import type {
-	MinimalPlayerRatings,
-	Player,
-	PlayerWithoutKey,
-} from "../../../common/types.ts"; // Players meeting one of these cutoffs might retire
+import type { MinimalPlayerRatings, Player } from "../../../common/types.ts"; // Players meeting one of these cutoffs might retire
 import { range } from "../../../common/utils.ts";
+import loadDataBasketball from "../realRosters/loadData.basketball.ts";
+import realRosters from "../realRosters/index.ts";
+import { idb } from "../../db/index.ts";
 
-const checkforceRetireSeasons = (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
+const checkForceRetireSeasons = (p: Player<MinimalPlayerRatings>) => {
 	// No redshirt seasons before league was created, since we have no stats then
 	const firstPossibleRedshirtSeason = Math.max(
 		g.get("startingSeason"),
@@ -36,12 +41,65 @@ const checkforceRetireSeasons = (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
 	return numSeasonsInLeague - numRedshirtSeasons >= g.get("forceRetireSeasons");
 };
 
-const shouldRetire = (
-	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
-): boolean => {
+// retire -> Real player has no ratings for the season where he is one year older than he is now, so retire him
+// noRetire -> Real player does have ratings, so don't retire him
+// passThrough -> This age would put the player past the latest season we have real player data for, so don't decide anything here, let the normal retirement algorithm apply
+const checkForceRetireRealPlayers = async (
+	p: Player<MinimalPlayerRatings>,
+): Promise<"retire" | "noRetire" | "passThrough"> => {
+	const srID = p.srID;
+	if (srID === undefined) {
+		return "passThrough";
+	}
+
+	const basketball = await loadDataBasketball();
+	const bio = basketball.bios[srID];
+	if (!bio) {
+		return "passThrough";
+	}
+
+	const age = g.get("season") - p.born.year;
+
+	const targetSeason = bio.bornYear + age + 1;
+
+	if (REAL_PLAYERS_INFO && targetSeason > REAL_PLAYERS_INFO.MAX_SEASON) {
+		// We are beyond the latest season of real players data, so just keep him active
+		return "passThrough";
+	}
+
+	const playerActiveSeasons = await realRosters.getPlayerActiveSeasons();
+
+	// Object.hasOwn check is because the value could be undefined if the team doesn't exist in this league (imported player or deleted team or whatever) but we still want to recognize the player as being active that season
+	const active = playerActiveSeasons[srID]
+		? Object.hasOwn(playerActiveSeasons[srID], targetSeason)
+		: false;
+
+	// Do we need to schedule unretirement?
+	if (!active) {
+		const retiredUntil = playerActiveSeasons[srID]?.retiredUntil;
+		if (retiredUntil) {
+			const unretireYear = retiredUntil[targetSeason];
+			if (unretireYear !== undefined) {
+				await idb.cache.scheduledEvents.add({
+					type: "unretirePlayer",
+					season: unretireYear - 1,
+					phase: PHASE.DRAFT_LOTTERY,
+					info: {
+						pid: p.pid,
+					},
+				});
+			}
+		}
+	}
+
+	return active ? "noRetire" : "retire";
+};
+
+const shouldRetire = async (
+	p: Player<MinimalPlayerRatings>,
+): Promise<boolean> => {
 	const season = g.get("season");
 	const forceRetireAge = g.get("forceRetireAge");
-	const forceRetireSeasons = g.get("forceRetireSeasons");
 
 	const age = season - p.born.year;
 
@@ -49,8 +107,20 @@ const shouldRetire = (
 		return true;
 	}
 
-	if (forceRetireSeasons > 0 && checkforceRetireSeasons(p)) {
+	if (g.get("forceRetireSeasons") > 0 && checkForceRetireSeasons(p)) {
 		return true;
+	}
+
+	if (
+		(g.get("forceRetireRealPlayers") || g.get("forceHistoricalRosters")) &&
+		p.srID !== undefined
+	) {
+		const response = await checkForceRetireRealPlayers(p);
+		if (response === "noRetire") {
+			return false;
+		} else if (response === "retire") {
+			return true;
+		}
 	}
 
 	if (age < g.get("minRetireAge")) {
@@ -124,6 +194,11 @@ const shouldRetire = (
 				return true;
 			}
 		}
+	}
+
+	// Retire players who have been free agents for more than one years
+	if (p.tid === PLAYER.FREE_AGENT && p.yearsFreeAgent >= 1) {
+		return true;
 	}
 
 	return false;

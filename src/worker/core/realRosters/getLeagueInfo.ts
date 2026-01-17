@@ -1,6 +1,6 @@
 import loadDataBasketball from "./loadData.basketball.ts";
 import formatScheduledEvents from "./formatScheduledEvents.ts";
-import { isSport } from "../../../common/index.ts";
+import { isSport, REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import getGameAttributes from "./getGameAttributes.ts";
 import type { GetLeagueOptions } from "../../../common/types.ts";
 import addSeasonInfoToTeams from "./addSeasonInfoToTeams.ts";
@@ -34,9 +34,13 @@ export const legendsInfo = {
 		start: 2010,
 		end: 2019,
 	},
+	"2020s": {
+		start: 2020,
+		end: 2029,
+	},
 	all: {
 		start: -Infinity,
-		end: 2020,
+		end: REAL_PLAYERS_INFO?.MAX_SEASON ?? Infinity,
 	},
 };
 

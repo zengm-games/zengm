@@ -179,7 +179,7 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 					classNames: classNamesCaptain1,
 					value: (
 						<PlayerTeam p={row.captain1} season={row.season}>
-							{row.captain1 ? row.captain1.abbrev : "???"}
+							{row.captain1?.abbrev ?? "???"}
 						</PlayerTeam>
 					),
 				},
@@ -191,7 +191,7 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 					classNames: classNamesCaptain2,
 					value: (
 						<PlayerTeam p={row.captain2} season={row.season}>
-							{row.captain2 ? row.captain2.abbrev : "???"}
+							{row.captain2?.abbrev ?? "???"}
 						</PlayerTeam>
 					),
 				},
@@ -203,7 +203,7 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 					classNames: classNamesMVP,
 					value: (
 						<PlayerTeam p={row.mvp} season={row.season}>
-							{row.mvp ? row.mvp.abbrev : "???"}
+							{row.mvp?.abbrev ?? "???"}
 						</PlayerTeam>
 					),
 				},
@@ -217,7 +217,7 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 								classNames: classNamesDunk,
 								value: (
 									<PlayerTeam p={row.dunk} season={row.season}>
-										{row.dunk ? row.dunk.abbrev : "???"}
+										{row.dunk?.abbrev ?? "???"}
 									</PlayerTeam>
 								),
 							},
@@ -229,7 +229,7 @@ const AllStarHistory = ({ allAllStars, userTid }: View<"allStarHistory">) => {
 								classNames: classNamesThree,
 								value: (
 									<PlayerTeam p={row.three} season={row.season}>
-										{row.three ? row.three.abbrev : "???"}
+										{row.three?.abbrev ?? "???"}
 									</PlayerTeam>
 								),
 							},

@@ -10,7 +10,7 @@ import type { UpdateEvents } from "../../common/types.ts";
 export const getTeamOvr = async (tid: number) => {
 	const playersAll = await idb.cache.players.indexGetAll("playersByTid", tid);
 	const players = await idb.getCopies.playersPlus(playersAll, {
-		attrs: ["value", "pid"],
+		attrs: ["injury", "pid", "value"],
 		ratings: ["ovr", "pot", "ovrs", "pos"],
 		season: g.get("season"),
 		tid,
@@ -196,17 +196,24 @@ const updateTeamSelect = async (
 			}
 		}
 
+		const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
+
+		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
+
 		const teamsWithOvr = orderedTeams.map((t) => ({
 			...t,
 			ovr: 0,
+			roundsWonText: helpers.roundsWonText({
+				playoffRoundsWon: t.seasonAttrs.playoffRoundsWon,
+				numPlayoffRounds,
+				playoffsByConf,
+			}),
 		}));
 		for (const t of teamsWithOvr) {
 			t.ovr = await getTeamOvr(t.tid);
 		}
 
 		const finalTeams = await addHistoryAndPicksAndPlayers(teamsWithOvr);
-
-		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
 
 		return {
 			challengeNoRatings: g.get("challengeNoRatings"),
@@ -216,10 +223,8 @@ const updateTeamSelect = async (
 			gameOver: g.get("gameOver"),
 			godMode: g.get("godMode"),
 			numActiveTeams,
-			numPlayoffRounds: g.get("numGamesPlayoffSeries", "current").length,
 			otherTeamsWantToHire,
 			phase: g.get("phase"),
-			playoffsByConf,
 			season: g.get("season"),
 			teams: finalTeams,
 			userTid: g.get("userTid"),

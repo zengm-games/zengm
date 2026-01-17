@@ -1,7 +1,7 @@
 import { bySport, isSport, PHASE, POSITIONS } from "../../common/index.ts";
 import { finances, season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
-import { g } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type {
 	Player,
 	UpdateEvents,
@@ -10,6 +10,7 @@ import type {
 } from "../../common/types.ts";
 import { addMood } from "./freeAgents.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 
 export const sortByPos = (p: {
 	ratings: {
@@ -28,7 +29,6 @@ const updateRoster = async (
 ) => {
 	if (
 		updateEvents.includes("firstRun") ||
-		updateEvents.includes("watchList") ||
 		updateEvents.includes("gameAttributes") ||
 		updateEvents.includes("playerMovement") ||
 		updateEvents.includes("team") ||
@@ -142,11 +142,8 @@ const updateRoster = async (
 			// numGamesRemaining doesn't need to be calculated except for userTid, but it is.
 			let numGamesRemaining = 0;
 
-			for (let i = 0; i < schedule.length; i++) {
-				if (
-					inputs.tid === schedule[i].homeTid ||
-					inputs.tid === schedule[i].awayTid
-				) {
+			for (const matchup of schedule) {
+				if (inputs.tid === matchup.homeTid || inputs.tid === matchup.awayTid) {
 					numGamesRemaining += 1;
 				}
 			}
@@ -243,16 +240,22 @@ const updateRoster = async (
 				g.get("season") === inputs.season) ||
 			inputs.playoffs === "playoffs";
 
-		const playersCurrent = players.filter(
-			(p: any) => p.injury.gamesRemaining === 0,
-		);
 		const t2 = {
 			...t,
 			ovr: team.ovr(players, {
 				playoffs: playoffsOvr,
 			}),
-			ovrCurrent: team.ovr(playersCurrent, {
+			ovrCurrent: team.ovr(players, {
+				accountForInjuredPlayers: {
+					numDaysInFuture: 0,
+					playThroughInjuries: getActualPlayThroughInjuries(t),
+				},
 				playoffs: playoffsOvr,
+			}),
+			roundsWonText: helpers.roundsWonText({
+				playoffRoundsWon: t.seasonAttrs.playoffRoundsWon,
+				numPlayoffRounds: g.get("numGamesPlayoffSeries", inputs.season).length,
+				playoffsByConf: await season.getPlayoffsByConf(inputs.season),
 			}),
 		};
 		t2.seasonAttrs.avgAge = t2.seasonAttrs.avgAge ?? team.avgAge(players);
@@ -262,8 +265,6 @@ const updateRoster = async (
 				(award: Player["awards"][number]) => award.season === inputs.season,
 			);
 		}
-
-		const playoffsByConf = await season.getPlayoffsByConf(inputs.season);
 
 		return {
 			abbrev: inputs.abbrev,
@@ -275,7 +276,6 @@ const updateRoster = async (
 			salaryCapType: g.get("salaryCapType"),
 			maxRosterSize: g.get("maxRosterSize"),
 			numPlayersOnCourt: g.get("numPlayersOnCourt"),
-			numPlayoffRounds: g.get("numGamesPlayoffSeries", inputs.season).length,
 			luxuryPayroll: g.get("luxuryPayroll") / 1000,
 			luxuryTaxAmount,
 			minPayroll: g.get("minPayroll") / 1000,
@@ -284,7 +284,6 @@ const updateRoster = async (
 			phase: g.get("phase"),
 			playoffs: inputs.playoffs,
 			players: addFirstNameShort(players),
-			playoffsByConf,
 			salaryCap: g.get("salaryCap") / 1000,
 			season: inputs.season,
 			showSpectatorWarning:

@@ -63,7 +63,7 @@ export const processRows = ({
 
 						if (
 							filterFunctions[i] &&
-							filterFunctions[i](row.data[i]) === false
+							filterFunctions[i]!(row.data[i]) === false
 						) {
 							return false;
 						}
@@ -84,7 +84,7 @@ export const processRows = ({
 				i = 0;
 			}
 
-			return getSortVal(row.data[i], cols[i].sortType);
+			return getSortVal(row.data[i], cols[i]!.sortType);
 		});
 
 		rowsOrdered = orderBy(

@@ -196,24 +196,25 @@ const name = async (
 		throw new Error(`Country "${country}" missing in playerBioInfo countries`);
 	}
 
-	const firstCountry = playerBioInfo.countries[country].first;
+	const infoCountry = playerBioInfo.countries[country]!;
+
+	const firstCountry = infoCountry.first;
 	if (!firstCountry || firstCountry.length === 0) {
 		throw new Error(`No first names found for ${country}`);
 	}
 	const firstName = getFromCumSumArray(firstCountry);
 
-	const lastCountry = playerBioInfo.countries[country].last;
+	const lastCountry = infoCountry.last;
 	if (!lastCountry || lastCountry.length === 0) {
 		throw new Error(`No last names found for ${country}`);
 	}
 	const lastName = getFromCumSumArray(lastCountry);
 
 	let college = "";
-	const colleges =
-		playerBioInfo.countries[country].colleges ?? playerBioInfo.default.colleges;
+	const colleges = infoCountry.colleges ?? playerBioInfo.default.colleges;
 	if (colleges && colleges.length > 0) {
 		const fractionSkipCollege =
-			playerBioInfo.countries[country].fractionSkipCollege ??
+			infoCountry.fractionSkipCollege ??
 			playerBioInfo.default.fractionSkipCollege;
 
 		if (Math.random() > fractionSkipCollege) {
@@ -221,8 +222,7 @@ const name = async (
 		}
 	}
 
-	const races =
-		playerBioInfo.countries[country].races ?? playerBioInfo.default.races;
+	const races = infoCountry.races ?? playerBioInfo.default.races;
 	const race = getFromCumSumArray(races);
 
 	return {

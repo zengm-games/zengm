@@ -37,6 +37,8 @@ import {
 	scoutingEffectCutoff,
 	scoutingEffectStddev,
 } from "../../common/budgetLevels.ts";
+import { CurrencyInputGroup } from "../components/CurrencyInputGroup.tsx";
+import { useBlocker } from "../hooks/useBlocker.ts";
 
 const paddingLeft85 = { paddingLeft: 85 };
 
@@ -170,8 +172,9 @@ const FinancesForm = ({
 > & {
 	gameSimInProgress: boolean;
 }) => {
+	const { dirty, setDirty } = useBlocker();
+
 	const [state, setState] = useState({
-		dirty: false,
 		saving: false,
 		coaching: String(t.budget.coaching),
 		facilities: String(t.budget.facilities),
@@ -183,7 +186,7 @@ const FinancesForm = ({
 	});
 
 	useEffect(() => {
-		if (!state.dirty) {
+		if (!dirty) {
 			setState((state2) => ({
 				...state2,
 				coaching: String(t.budget.coaching),
@@ -195,17 +198,17 @@ const FinancesForm = ({
 				autoTicketPrice: t.autoTicketPrice,
 			}));
 		}
-	}, [state.dirty, t]);
+	}, [dirty, t]);
 
 	const setStateValue = (
-		name: Exclude<keyof typeof state, "dirty" | "saving">,
+		name: Exclude<keyof typeof state, "saving">,
 		value: any,
 	) => {
 		setState((state2) => ({
 			...state2,
-			dirty: true,
 			[name]: value,
 		}));
+		setDirty(true);
 	};
 
 	const handleChange =
@@ -270,9 +273,9 @@ const FinancesForm = ({
 
 		setState((state2) => ({
 			...state2,
-			dirty: false,
 			saving: false,
 		}));
+		setDirty(false);
 	};
 
 	const warningMessage =
@@ -467,13 +470,11 @@ const FinancesForm = ({
 				</HelpPopover>
 			</h2>
 			<div className="d-flex align-items-center">
-				<div
-					className="input-group"
+				<CurrencyInputGroup
 					style={{
 						width: 115,
 					}}
 				>
-					<div className="input-group-text">$</div>
 					{state.autoTicketPrice ? (
 						<input
 							type="text"
@@ -491,7 +492,7 @@ const FinancesForm = ({
 							inputMode="decimal"
 						/>
 					)}
-				</div>
+				</CurrencyInputGroup>
 				<div className="ms-3">
 					<div>Ticket price rank: #{ticketPriceRank}</div>
 					<div>
@@ -759,7 +760,7 @@ const TeamFinances = ({
 			return {
 				title: String(season),
 				sortSequence: ["desc", "asc"],
-				sortType: "currency",
+				sortType: "number",
 			};
 		}),
 	);
@@ -773,7 +774,7 @@ const TeamFinances = ({
 				pid: p.pid,
 				skills: p.skills,
 				style: { fontStyle: p.released ? "italic" : "normal" },
-				watch: p.watch,
+				defaultWatch: p.watch,
 				firstName: p.firstName,
 				firstNameShort: p.firstNameShort,
 				lastName: p.lastName,
@@ -784,12 +785,21 @@ const TeamFinances = ({
 		// Loop through the salaries for the next five years for this player.
 		for (let j = 0; j < salariesSeasons.length; j++) {
 			if (p.amounts[j]) {
-				const formattedAmount = helpers.formatCurrency(p.amounts[j], "M");
+				const amount = p.amounts[j]!;
+				const formattedAmount = helpers.formatCurrency(amount, "M");
 
 				if (p.released) {
-					data.push(<i>{formattedAmount}</i>);
+					data.push({
+						value: <i>{formattedAmount}</i>,
+						sortValue: amount,
+						searchValue: formattedAmount,
+					});
 				} else {
-					data.push(formattedAmount);
+					data.push({
+						value: formattedAmount,
+						sortValue: amount,
+						searchValue: formattedAmount,
+					});
 				}
 			} else {
 				data.push(null);
@@ -965,22 +975,22 @@ const TeamFinances = ({
 								data={barData}
 								y={[
 									"expensesSalary",
-									"expensesMinTax",
-									"expensesLuxuryTax",
 									"expensesScouting",
 									"expensesCoaching",
 									"expensesHealth",
 									"expensesFacilities",
+									"expensesMinTax",
+									"expensesLuxuryTax",
 								]}
 								tooltip={(row, y) => {
 									const text = {
 										expensesSalary: "player salaries",
-										expensesMinTax: "minimum payroll tax",
-										expensesLuxuryTax: "luxury tax",
 										expensesScouting: "scouting",
 										expensesCoaching: "coaching",
 										expensesHealth: "health",
 										expensesFacilities: "facilities",
+										expensesMinTax: "minimum payroll tax",
+										expensesLuxuryTax: "luxury tax",
 									};
 
 									return `${row.season} ${text[y]}: ${helpers.formatCurrency(

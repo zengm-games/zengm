@@ -60,7 +60,7 @@ const genPlayerRows = (
 					injury: p.injury,
 					jerseyNumber: p.jerseyNumber,
 					skills: p.ratings.skills,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
@@ -183,7 +183,7 @@ const AssetList = ({
 	);
 	const pickRows = genPickRows(picks, handleToggle, userOrOther);
 
-	const userOrOtherKey = `${userOrOther[0].toUpperCase()}${userOrOther.slice(
+	const userOrOtherKey = `${userOrOther[0]!.toUpperCase()}${userOrOther.slice(
 		1,
 	)}`;
 

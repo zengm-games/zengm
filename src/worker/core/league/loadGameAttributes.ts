@@ -8,6 +8,7 @@ import {
 } from "../../../common/index.ts";
 import gameAttributesToUI from "./gameAttributesToUI.ts";
 import { gameAttributesKeysOtherSports } from "../../../common/defaultGameAttributes.ts";
+import type { GameAttributesLeague } from "../../../common/types.ts";
 
 export const ALWAYS_WRAP = [
 	"confs",
@@ -22,7 +23,7 @@ export const ALWAYS_WRAP = [
 	"shootoutRounds",
 	"tiebreakers",
 	"userTid",
-];
+] as const satisfies (keyof GameAttributesLeague)[];
 
 /**
  * Load game attributes from the database and update the global variable g.

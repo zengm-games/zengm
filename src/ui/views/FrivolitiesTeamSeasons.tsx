@@ -1,6 +1,6 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers } from "../util/index.ts";
-import { DataTable } from "../components/index.tsx";
+import { DataTable, TeamLogoInline } from "../components/index.tsx";
 import type { View } from "../../common/types.ts";
 import { frivolitiesMenu } from "./Frivolities.tsx";
 import { getValue } from "./Most/index.tsx";
@@ -36,19 +36,30 @@ const FrivolitiesTeamSeasons = ({
 	]);
 
 	const rows = teamSeasons.map((ts) => {
+		const teamRegionAndName = `${ts.region} ${ts.name}`;
+
 		return {
 			key: ts.rank,
 			data: [
 				ts.rank,
-				<a
-					href={helpers.leagueUrl([
-						"roster",
-						`${ts.abbrev}_${ts.tid}`,
-						ts.season,
-					])}
-				>
-					{ts.region} {ts.name}
-				</a>,
+				{
+					value: (
+						<div className="d-flex align-items-center gap-1">
+							<TeamLogoInline imgURL={ts.imgURL} imgURLSmall={ts.imgURLSmall} />
+							<a
+								href={helpers.leagueUrl([
+									"roster",
+									`${ts.abbrev}_${ts.tid}`,
+									ts.season,
+								])}
+							>
+								{teamRegionAndName}
+							</a>
+						</div>
+					),
+					searchValue: teamRegionAndName,
+					sortValue: teamRegionAndName,
+				},
 				ts.season,
 				ts.won,
 				ts.lost,

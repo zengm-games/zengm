@@ -10,12 +10,13 @@ const updateOptions = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("options")) {
 		const options = await getGlobalSettings();
 
-		const realPlayerPhotos = (await idb.meta.get(
-			"attributes",
-			"realPlayerPhotos",
-		)) as RealPlayerPhotos | undefined;
+		const attributesStore = (await idb.meta.transaction("attributes")).store;
 
-		const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
+		const realPlayerPhotos = (await attributesStore.get("realPlayerPhotos")) as
+			| RealPlayerPhotos
+			| undefined;
+
+		const realTeamInfo = (await attributesStore.get("realTeamInfo")) as
 			| RealTeamInfo
 			| undefined;
 

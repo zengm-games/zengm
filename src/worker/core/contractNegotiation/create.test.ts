@@ -11,13 +11,13 @@ test("start a negotiation with a free agent", async () => {
 	await givePlayerMinContract(pid);
 	const error = await contractNegotiation.create(pid, false);
 	assert.strictEqual(
-		typeof error,
-		"undefined",
+		error,
+		undefined,
 		`Unexpected error message from contractNegotiation.create: "${error}"`,
 	);
 	const negotiations = await idb.cache.negotiations.getAll();
 	assert.strictEqual(negotiations.length, 1);
-	assert.strictEqual(negotiations[0].pid, pid);
+	assert.strictEqual(negotiations[0]!.pid, pid);
 });
 
 test("fail to start a negotiation with anyone but a free agent", async () => {
@@ -39,22 +39,22 @@ test("only allow one concurrent negotiation if resigning is false", async () => 
 	await givePlayerMinContract(pid2);
 	let error = await contractNegotiation.create(pid1, false);
 	assert.strictEqual(
-		typeof error,
-		"undefined",
+		error,
+		undefined,
 		`Unexpected error message from contractNegotiation.create: "${error}"`,
 	);
 	let negotiations = await idb.cache.negotiations.getAll();
 	assert.strictEqual(negotiations.length, 1);
-	assert.strictEqual(negotiations[0].pid, pid1);
+	assert.strictEqual(negotiations[0]!.pid, pid1);
 	error = await contractNegotiation.create(pid2, false);
 	assert.strictEqual(
-		typeof error,
-		"undefined",
+		error,
+		undefined,
 		`Unexpected error message from contractNegotiation.create: "${error}"`,
 	);
 	negotiations = await idb.cache.negotiations.getAll();
 	assert.strictEqual(negotiations.length, 1);
-	assert.strictEqual(negotiations[0].pid, pid2);
+	assert.strictEqual(negotiations[0]!.pid, pid2);
 });
 
 test("allow multiple concurrent negotiations if resigning is true", async () => {
@@ -64,21 +64,21 @@ test("allow multiple concurrent negotiations if resigning is true", async () => 
 	await givePlayerMinContract(pid2);
 	let error = await contractNegotiation.create(pid1, true);
 	assert.strictEqual(
-		typeof error,
-		"undefined",
+		error,
+		undefined,
 		`Unexpected error message from contractNegotiation.create: "${error}"`,
 	);
 	let negotiations = await idb.cache.negotiations.getAll();
 	assert.strictEqual(negotiations.length, 1);
-	assert.strictEqual(negotiations[0].pid, pid1);
+	assert.strictEqual(negotiations[0]!.pid, pid1);
 	error = await contractNegotiation.create(pid2, true);
 	assert.strictEqual(
-		typeof error,
-		"undefined",
+		error,
+		undefined,
 		`Unexpected error message from contractNegotiation.create: "${error}"`,
 	);
 	negotiations = await idb.cache.negotiations.getAll();
 	assert.strictEqual(negotiations.length, 2);
-	assert.strictEqual(negotiations[0].pid, pid1);
-	assert.strictEqual(negotiations[1].pid, pid2);
+	assert.strictEqual(negotiations[0]!.pid, pid1);
+	assert.strictEqual(negotiations[1]!.pid, pid2);
 });

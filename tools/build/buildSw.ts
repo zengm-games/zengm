@@ -1,18 +1,18 @@
 import fs from "node:fs/promises";
-import { babel } from "@rollup/plugin-babel";
-import replace from "@rollup/plugin-replace";
-import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
-import { rollup } from "rollup";
+import { build } from "rolldown";
 import workboxBuild from "workbox-build";
-import { replace as replace2 } from "./replace.ts";
+import { replace } from "./replace.ts";
 
 const getVersionNumber = async () => {
 	const files = await fs.readdir("build/gen");
 	for (const file of files) {
-		if (file.endsWith(".js")) {
-			const versionNumber = file.split("-")[1].replace(".js", "");
-			return versionNumber;
+		if (file.startsWith("ui") && file.endsWith(".js")) {
+			const filePart = file.split("-")[1];
+			if (filePart !== undefined) {
+				const versionNumber = filePart.replace(".js", "");
+				return versionNumber;
+			}
 		}
 	}
 
@@ -47,32 +47,31 @@ const injectManifest = async () => {
 };
 
 const bundle = async () => {
-	const bundle = await rollup({
+	await build({
 		input: "build/sw.js",
+		output: {
+			externalLiveBindings: false,
+			file: "build/sw.js",
+			format: "iife",
+			minify: true,
+			sourcemap: true,
+		},
 		plugins: [
-			replace({
-				preventAssignment: true,
-				values: {
-					"process.env.NODE_ENV": JSON.stringify("production"),
-				},
-			}),
-			babel({
-				babelHelpers: "bundled",
-			}),
-			resolve(),
 			terser({
 				format: {
 					comments: false,
 				},
 			}),
 		],
-	});
-
-	await bundle.write({
-		file: `build/sw.js`,
-		format: "iife",
-		indent: false,
-		sourcemap: true,
+		preserveEntrySignatures: false,
+		transform: {
+			define: {
+				"process.env.NODE_ENV": JSON.stringify("production"),
+			},
+		},
+		checks: {
+			pluginTimings: false,
+		},
 	});
 };
 
@@ -81,7 +80,7 @@ export const buildSw = async () => {
 	await bundle();
 
 	const versionNumber = await getVersionNumber();
-	await replace2({
+	await replace({
 		paths: ["build/sw.js"],
 		replaces: [
 			{

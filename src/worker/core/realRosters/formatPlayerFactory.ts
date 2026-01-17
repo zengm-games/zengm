@@ -1,14 +1,13 @@
 import loadStatsBasketball, {
 	type BasketballStats,
 } from "./loadStats.basketball.ts";
-import { PHASE, PLAYER } from "../../../common/index.ts";
+import { PHASE, PLAYER, REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import type {
 	GetLeagueOptions,
 	PlayerContract,
 	PlayerInjury,
 } from "../../../common/types.ts";
-import { LATEST_SEASON } from "./getLeague.ts";
-import getOnlyRatings from "./getOnlyRatings.ts";
+import getOnlyRatings, { type OnlyRatings } from "./getOnlyRatings.ts";
 import type { Basketball, Ratings } from "./loadData.basketball.ts";
 import nerfDraftProspect from "./nerfDraftProspect.ts";
 import oldAbbrevTo2020BBGMAbbrev from "./oldAbbrevTo2020BBGMAbbrev.ts";
@@ -143,7 +142,7 @@ const formatPlayerFactory = async (
 			if (options.type === "real" && options.phase >= PHASE.PLAYOFFS) {
 				// Search backwards - last team a player was on that season
 				for (let i = basketball.teams.length - 1; i >= 0; i--) {
-					const row = basketball.teams[i];
+					const row = basketball.teams[i]!;
 					if (
 						row.slug === slug &&
 						row.season === ratings.season &&
@@ -227,7 +226,7 @@ const formatPlayerFactory = async (
 				}
 
 				// Auto-apply extensions, otherwise will feel weird
-				if (season >= LATEST_SEASON) {
+				if (season >= REAL_PLAYERS_INFO!.MAX_SEASON) {
 					return true;
 				}
 
@@ -238,14 +237,14 @@ const formatPlayerFactory = async (
 				// Complicated stuff rather than just taking last entry because these can be out of order, particularly due to merging data sources. But still search backwards
 				let salaryRow;
 				for (let i = salaryRows.length - 1; i >= 0; i--) {
-					const row = salaryRows[i];
+					const row = salaryRows[i]!;
 
 					if (row.start <= season && row.exp >= season) {
 						salaryRow = row;
 						break;
 					}
 				}
-				if (season >= LATEST_SEASON) {
+				if (season >= REAL_PLAYERS_INFO!.MAX_SEASON) {
 					// Auto-apply extensions, otherwise will feel weird
 					const salaryRowExtension = salaryRows.find(
 						(row) => row.start > season,
@@ -285,7 +284,7 @@ const formatPlayerFactory = async (
 
 							// Historical salary, use exact value every year
 							salaries.push({
-								amount: helpers.roundContract(row.amounts[i] / 1000),
+								amount: helpers.roundContract(row.amounts[i]! / 1000),
 								season: season2,
 							});
 						}
@@ -325,7 +324,9 @@ const formatPlayerFactory = async (
 		}
 
 		// Whitelist, to get rid of any other columns
-		const processedRatings = allRatings.map((row) => getOnlyRatings(row, true));
+		const processedRatings = allRatings.map((row) =>
+			getOnlyRatings(row, true),
+		) as [OnlyRatings, ...OnlyRatings[]];
 
 		const addDummyRookieRatings =
 			!draftProspect &&
@@ -486,7 +487,7 @@ const formatPlayerFactory = async (
 				: "/img/blank-face.png",
 			real: true,
 			draft,
-			ratings: processedRatings,
+			ratings: processedRatings as [OnlyRatings, ...OnlyRatings[]],
 			stats,
 			injury: undefined as PlayerInjury | undefined,
 			contract,

@@ -28,6 +28,7 @@ import {
 } from "../../common/draftLottery.ts";
 import useStickyXX from "../components/DataTable/useStickyXX.ts";
 import { range } from "../../common/utils.ts";
+import { NO_LOTTERY_DRAFT_TYPES } from "../../common/constants.ts";
 
 type Props = View<"draftLottery">;
 type State = {
@@ -145,7 +146,7 @@ const Row = ({
 
 	let revealedPickNumber = null;
 	const pickCols = range(NUM_PICKS).map((j) => {
-		const prob = probs[i][j];
+		const prob = probs[i]![j]!;
 		const pct = prob !== undefined ? `${(prob * 100).toFixed(1)}%` : undefined;
 
 		let highlighted = false;
@@ -461,12 +462,12 @@ const DraftLotteryTable = (props: Props) => {
 
 			const toReveal: number[] = [];
 
-			for (let i = 0; i < result.length; i++) {
-				const pick = result[i].pick;
+			for (const [i, row] of result.entries()) {
+				const pick = row.pick;
 				if (pick !== undefined) {
 					toReveal[pick - 1] = i;
 				}
-				result[i].pick = undefined;
+				row.pick = undefined;
 			}
 			toReveal.reverse();
 
@@ -716,7 +717,7 @@ const DraftLotteryTable = (props: Props) => {
 				<div className="text-warning mb-3">
 					<b>Warning:</b> Computing exact odds for so many teams and picks is
 					slow, so estimates are shown below. When the actual lottery occurs it
-					is simulated done with complete accuracy.
+					is simulated with complete accuracy.
 				</div>
 			) : null}
 
@@ -738,7 +739,9 @@ const DraftLotteryTable = (props: Props) => {
 
 const DraftLottery = (props: Props) => {
 	useTitleBar({
-		title: "Draft Lottery",
+		title: NO_LOTTERY_DRAFT_TYPES.includes(props.draftType as any)
+			? "Draft Order"
+			: "Draft Lottery",
 		jumpTo: true,
 		jumpToSeason: props.season,
 		dropdownView: "draft_lottery",
@@ -752,11 +755,11 @@ const DraftLottery = (props: Props) => {
 			<MoreLinks
 				type="draft"
 				page="draft_lottery"
-				draftType="nba1994"
+				draftType={props.draftType}
 				season={props.season}
 			/>
 
-			{props.type === "projected" ? (
+			{props.type === "projected" && props.draftType !== "noLottery" ? (
 				<p>
 					This is what the draft lottery probabilities would be if the lottery
 					was held right now.

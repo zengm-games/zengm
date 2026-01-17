@@ -25,7 +25,7 @@ import Play, {
 } from "./Play.ts";
 import LngTracker from "./LngTracker.ts";
 import GameSimBase from "../GameSimBase.ts";
-import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
+import { STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -37,7 +37,11 @@ const FIELD_GOAL_DISTANCE_YARDS_ADDED_FROM_SCRIMMAGE = 17;
  * @param {number} energy A player's energy level, from 0 to 1 (0 = lots of energy, 1 = none).
  * @return {number} Fatigue, from 0 to 1 (0 = lots of fatigue, 1 = none).
  */
-const fatigue = (energy: number): number => {
+const fatigue = (energy: number, injured: boolean): number => {
+	if (injured) {
+		return 0;
+	}
+
 	energy += 0.05;
 
 	if (energy > 1) {
@@ -162,7 +166,7 @@ class GameSim extends GameSimBase {
 			homeCourtFactor *
 			helpers.bound(1 + g.get("homeCourtAdvantage") / 100, 0.01, Infinity);
 
-		for (let t = 0; t < 2; t++) {
+		for (const t of [0, 1] as const) {
 			let factor;
 
 			if (t === 0) {
@@ -171,10 +175,10 @@ class GameSim extends GameSimBase {
 				factor = 1.0 / homeCourtModifier; // Penalty for away team
 			}
 
-			for (let p = 0; p < this.team[t].player.length; p++) {
-				for (const r of Object.keys(this.team[t].player[p].compositeRating)) {
+			for (const p of this.team[t].player) {
+				for (const r of Object.keys(p.compositeRating)) {
 					if (r !== "endurance") {
-						this.team[t].player[p].compositeRating[r] *= factor;
+						p.compositeRating[r] *= factor;
 					}
 				}
 			}
@@ -202,34 +206,33 @@ class GameSim extends GameSimBase {
 		});
 
 		// Delete stuff that isn't needed before returning
-		for (let t = 0; t < 2; t++) {
+		for (const t of [0, 1] as const) {
 			delete this.team[t].compositeRating;
 			// @ts-expect-error
 			delete this.team[t].pace;
 
-			for (let p = 0; p < this.team[t].player.length; p++) {
+			for (const p of this.team[t].player) {
 				// @ts-expect-error
-				delete this.team[t].player[p].age;
+				delete p.age;
 				// @ts-expect-error
-				delete this.team[t].player[p].valueNoPot;
-				delete this.team[t].player[p].compositeRating;
+				delete p.valueNoPot;
+				delete p.compositeRating;
 				// @ts-expect-error
-				delete this.team[t].player[p].ptModifier;
-				delete this.team[t].player[p].stat.benchTime;
-				delete this.team[t].player[p].stat.courtTime;
-				delete this.team[t].player[p].stat.energy;
+				delete p.ptModifier;
+				delete p.stat.benchTime;
+				delete p.stat.courtTime;
+				delete p.stat.energy;
 			}
 		}
 
 		const scoringSummary: PlayByPlayEventScore[] = [];
 
 		// Remove any scores that were negated by penalties
-		for (let i = 0; i < this.playByPlay.scoringSummary.length; i++) {
-			const current = this.playByPlay.scoringSummary[i];
+		for (const [i, current] of this.playByPlay.scoringSummary.entries()) {
 			const next = this.playByPlay.scoringSummary[i + 1];
 
 			// Must have been reversed by a penalty
-			if (next && next.type === "removeLastScore") {
+			if (next?.type === "removeLastScore") {
 				continue;
 			}
 
@@ -397,13 +400,7 @@ class GameSim extends GameSimBase {
 	}
 
 	simOvertime() {
-		const playoffs = g.get("phase") === PHASE.PLAYOFFS;
-
-		// 10 minutes in regular season, 15 in playoffs
-		this.clock = Math.ceil(g.get("quarterLength") * (playoffs ? 1 : 2 / 3));
-		if (this.clock <= 0) {
-			this.clock = playoffs ? 15 : 10;
-		}
+		this.clock = this.getOvertimeLength();
 
 		this.overtime = true;
 		this.overtimes += 1;
@@ -447,7 +444,7 @@ class GameSim extends GameSimBase {
 	getTopPlayerOnField(t: TeamNum, pos: Position) {
 		const players = this.playersOnField[t][pos];
 
-		if (!players || players.length === 0) {
+		if (!players || !players[0]) {
 			throw new Error(`No player found at position ${pos}`);
 		}
 
@@ -865,8 +862,22 @@ class GameSim extends GameSimBase {
 		} else if (playType === "punt") {
 			dt = this.doPunt();
 		} else if (playType === "pass") {
+			if (this.down === 4) {
+				this.playByPlay.logEvent({
+					type: "goingForItOn4th",
+					clock: this.clock,
+					t: this.o,
+				});
+			}
 			dt = this.doPass();
 		} else if (playType === "run") {
+			if (this.down === 4) {
+				this.playByPlay.logEvent({
+					type: "goingForItOn4th",
+					clock: this.clock,
+					t: this.o,
+				});
+			}
 			dt = this.doRun();
 		} else if (playType === "kneel") {
 			dt = this.doKneel();
@@ -1125,7 +1136,7 @@ class GameSim extends GameSimBase {
 		let formation: Formation;
 
 		if (playType === "starters") {
-			formation = formations.normal[0];
+			formation = formations.normal[0]!;
 		} else if (playType === "run" || playType === "pass") {
 			formation = random.choice(formations.normal);
 		} else if (playType === "extraPoint" || playType === "fieldGoal") {
@@ -1140,7 +1151,7 @@ class GameSim extends GameSimBase {
 
 		const sides = ["off", "def"] as const;
 
-		for (let i = 0; i < 2; i++) {
+		for (const i of [0, 1] as const) {
 			const t = i === 0 ? this.o : this.d;
 			const side = sides[i];
 
@@ -1149,7 +1160,7 @@ class GameSim extends GameSimBase {
 			this.playersOnField[t] = {};
 
 			for (const pos of helpers.keys(formation[side])) {
-				const numPlayers = formation[side][pos];
+				const numPlayers = formation[side][pos]!;
 				const players = this.team[t].depth[pos]
 					.filter((p) => !p.injured)
 					.filter((p) => !pidsUsed.has(p.id))
@@ -1161,18 +1172,50 @@ class GameSim extends GameSimBase {
 							return true;
 						}
 
-						return Math.random() < fatigue(p.stat.energy);
+						return Math.random() < fatigue(p.stat.energy, p.injured);
 					});
 				this.playersOnField[t][pos] = players.slice(0, numPlayers);
-
 				for (const p of this.playersOnField[t][pos]) {
 					pidsUsed.add(p.id);
 				}
 
-				if (playType === "starters") {
+				if (this.playersOnField[t][pos].length < numPlayers) {
+					// Retry without ignoring fatigued players
+					const players = this.team[t].depth[pos]
+						.filter((p) => !p.injured)
+						.filter((p) => !pidsUsed.has(p.id));
+					this.playersOnField[t][pos].push(
+						...players.slice(
+							0,
+							numPlayers - this.playersOnField[t][pos].length,
+						),
+					);
 					for (const p of this.playersOnField[t][pos]) {
+						pidsUsed.add(p.id);
+					}
+
+					// Retry without ignoring injured players
+					if (this.playersOnField[t][pos].length < numPlayers) {
+						const players = this.team[t].depth[pos].filter(
+							(p) => !pidsUsed.has(p.id),
+						);
+						this.playersOnField[t][pos].push(
+							...players.slice(
+								0,
+								numPlayers - this.playersOnField[t][pos].length,
+							),
+						);
+						for (const p of this.playersOnField[t][pos]) {
+							pidsUsed.add(p.id);
+						}
+					}
+				}
+
+				for (const p of this.playersOnField[t][pos]) {
+					if (playType === "starters") {
 						this.recordStat(t, p, "gs");
 					}
+					this.recordStat(t, p, "gp");
 				}
 			}
 		}
@@ -1207,6 +1250,7 @@ class GameSim extends GameSimBase {
 			const kickTo = random.randInt(40, 55);
 			this.currentPlay.addEvent({
 				type: "onsideKick",
+				p: kicker,
 				kickTo,
 			});
 			this.playByPlay.logEvent({
@@ -1235,6 +1279,7 @@ class GameSim extends GameSimBase {
 			const { td } = this.currentPlay.addEvent({
 				type: "onsideKickRecovery",
 				success,
+				kicker,
 				p,
 				yds,
 			});
@@ -1259,13 +1304,53 @@ class GameSim extends GameSimBase {
 				td,
 			});
 		} else {
+			// Penalty of up to 30 yards for bad kickers
+			const adjust =
+				kicker.compositeRating.kickingPower < 0.7
+					? Math.round(30 * (0.7 - kicker.compositeRating.kickingPower))
+					: 0;
+
+			let kickToRange: [number, number];
+			if (this.awaitingAfterSafety) {
+				kickToRange = [15 + adjust, 35 + adjust];
+			} else {
+				kickToRange = [-15 + adjust, 5 + adjust];
+
+				// If kickToRange is possibly a touchback, adjust likelihood of that based on touchback settings.
+				const scrimmageTouchbackKickoff = g.get("scrimmageTouchbackKickoff");
+				if (scrimmageTouchbackKickoff > 25) {
+					/**
+					 * 25 -> -15
+					 * 35 -> -5
+					 * 40 -> -3
+					 * continue increasing 2 per 5
+					 */
+					let maxMinKickToRange;
+					if (scrimmageTouchbackKickoff < 35) {
+						maxMinKickToRange = -15 + (scrimmageTouchbackKickoff - 25);
+					} else {
+						maxMinKickToRange = -5 + ((scrimmageTouchbackKickoff - 35) * 2) / 5;
+					}
+
+					maxMinKickToRange = Math.round(maxMinKickToRange);
+					if (maxMinKickToRange > 10) {
+						maxMinKickToRange = 10;
+					}
+
+					if (maxMinKickToRange > kickToRange[0]) {
+						const diff = maxMinKickToRange - kickToRange[0];
+						kickToRange[0] += diff;
+						kickToRange[1] += diff;
+					}
+				}
+			}
+
 			const kickReturner = this.getTopPlayerOnField(this.d, "KR");
-			const kickTo = this.awaitingAfterSafety
-				? random.randInt(15, 35)
-				: random.randInt(-10, 10);
+			const kickTo = random.randInt(...kickToRange);
 			const touchback = kickTo <= -10 || (kickTo < 0 && Math.random() < 0.8);
 			this.currentPlay.addEvent({
 				type: "k",
+				p: kicker,
 				kickTo,
 			});
 			this.playByPlay.logEvent({
@@ -1285,6 +1370,7 @@ class GameSim extends GameSimBase {
 			if (touchback) {
 				this.currentPlay.addEvent({
 					type: "touchbackKick",
+					p: kicker,
 				});
 			} else {
 				let ydsRaw = Math.round(random.truncGauss(20, 5, -10, 109));
@@ -1341,6 +1427,12 @@ class GameSim extends GameSimBase {
 	}
 
 	doPunt() {
+		this.playByPlay.logEvent({
+			type: "puntTeam",
+			clock: this.clock,
+			t: this.o,
+		});
+
 		this.updatePlayersOnField("punt");
 		const penInfo = this.checkPenalties("beforeSnap");
 
@@ -1543,17 +1635,20 @@ class GameSim extends GameSimBase {
 	}
 
 	doFieldGoal(playType: "extraPoint" | "fieldGoal" | "fieldGoalLate") {
-		const extraPoint = playType === "extraPoint";
-
-		if (extraPoint) {
-			this.playByPlay.logEvent({
-				type: "extraPointAttempt",
-				clock: this.clock,
-				t: this.o,
-			});
-		}
-
 		this.updatePlayersOnField("fieldGoal");
+
+		const extraPoint = playType === "extraPoint";
+		const distance =
+			100 - this.scrimmage + FIELD_GOAL_DISTANCE_YARDS_ADDED_FROM_SCRIMMAGE;
+		const kicker = this.getTopPlayerOnField(this.o, "K");
+
+		this.playByPlay.logEvent({
+			type: extraPoint ? "extraPointAttempt" : "fieldGoalAttempt",
+			clock: this.clock,
+			names: [kicker.name],
+			t: this.o,
+			yds: distance,
+		});
 
 		if (!extraPoint) {
 			const penInfo = this.checkPenalties("beforeSnap");
@@ -1563,9 +1658,6 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		const distance =
-			100 - this.scrimmage + FIELD_GOAL_DISTANCE_YARDS_ADDED_FROM_SCRIMMAGE;
-		const kicker = this.getTopPlayerOnField(this.o, "K");
 		const made = Math.random() < this.probMadeFieldGoal(kicker);
 		const dt = extraPoint ? 0 : random.randInt(4, 6);
 		if (!extraPoint) {
@@ -2118,7 +2210,7 @@ class GameSim extends GameSimBase {
 			positions = ["RB"];
 			const rand = Math.random();
 
-			const rbs = this.playersOnField[o].RB || [];
+			const rbs = this.playersOnField[o].RB ?? [];
 
 			if (rand < 0.5 || rbs.length === 0) {
 				positions.push("QB");
@@ -2479,7 +2571,7 @@ class GameSim extends GameSimBase {
 				const injuryRate = getInjuryRate(
 					this.baseInjuryRate,
 					p.age,
-					p.injury.playingThrough,
+					p.injury.gamesRemaining > 0,
 				);
 
 				if (Math.random() < injuryRate) {
@@ -2512,7 +2604,8 @@ class GameSim extends GameSimBase {
 		const weightFunc =
 			rating !== undefined
 				? (p: PlayerGameSim) =>
-						(p.compositeRating[rating] * fatigue(p.stat.energy)) ** power
+						(p.compositeRating[rating] * fatigue(p.stat.energy, p.injured)) **
+						power
 				: undefined;
 		return random.choice(players, weightFunc);
 	}
@@ -2532,8 +2625,8 @@ class GameSim extends GameSimBase {
 		const isLng = s.endsWith("Lng");
 
 		if (p !== undefined) {
-			if (s === "gs") {
-				// In case player starts on offense and defense, only record once
+			if (s === "gs" || s === "gp") {
+				// gs check is in case player starts on offense and defense, only record once
 				p.stat[s] = 1;
 			} else if (isLng) {
 				p.stat[s] = this.lngTracker.log("player", p.id, s, amt, remove);
@@ -2544,6 +2637,7 @@ class GameSim extends GameSimBase {
 
 		if (
 			s !== "gs" &&
+			s !== "gp" &&
 			s !== "courtTime" &&
 			s !== "benchTime" &&
 			s !== "energy"

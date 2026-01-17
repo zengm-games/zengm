@@ -12,14 +12,140 @@ import type {
 	PlayersPlusOptions,
 } from "../../../common/types.ts";
 import type { StatSumsExtra } from "../../../common/processPlayerStats.basketball.ts";
+import { idb } from "../index.ts";
 
 type PlayersPlusOptionsRequired = Required<
-	Omit<PlayersPlusOptions, "season" | "seasonRange" | "tid">
+	Omit<
+		PlayersPlusOptions,
+		"disableAbbrevsCacheDatabaseAccess" | "season" | "seasonRange" | "tid"
+	>
 > & {
 	season?: number;
 	seasonRange?: [number, number];
 	tid?: number;
 };
+
+const getLatestTransaction = (
+	transactions: Player["transactions"],
+	season: number | undefined,
+	tid: number | undefined,
+) => {
+	if (transactions && transactions.length > 0) {
+		if (season === undefined || season >= g.get("season")) {
+			return transactions.at(-1);
+		} else {
+			// Iterate over transactions backwards, find most recent one that was before the supplied season
+			for (let i = transactions.length - 1; i >= 0; i--) {
+				const currentTransaction = transactions[i]!;
+				if (tid !== undefined && currentTransaction.tid !== tid) {
+					continue;
+				}
+
+				if (
+					currentTransaction.season < season ||
+					(currentTransaction.season === season &&
+						currentTransaction.phase <= PHASE.PLAYOFFS)
+				) {
+					return transactions[i];
+				}
+			}
+		}
+	}
+};
+
+class AbbrevsCache {
+	// First key is season, second is tid, value is undefined (not loaded, either because tid/season not found or because load not yet called) or string (loaded abbrev)
+	private data = new Map<number, Map<number, string | undefined>>();
+	private state: "init" | "loading" | "loaded" = "init";
+	private minSafeSeason: number;
+
+	// Set disableDatabaseAccess to true if you're calling this during another IndexedDB transaction that you don't want to auto close. Then it will only look up abbrevs that are safe to access in the cache
+	constructor(disableDatabaseAccess: boolean) {
+		this.minSafeSeason = disableDatabaseAccess
+			? g.get("season") - 2
+			: -Infinity;
+	}
+
+	add(season: number, tid: number) {
+		if (this.state !== "init") {
+			throw new Error("Cannot call add after load");
+		}
+
+		let abbrevsByTid = this.data.get(season);
+		if (!abbrevsByTid) {
+			abbrevsByTid = new Map();
+			this.data.set(season, abbrevsByTid);
+		}
+
+		abbrevsByTid.set(tid, undefined);
+	}
+
+	private saveAbbrev(
+		abbrevsByTid: Map<number, string | undefined>,
+		tid: number,
+		abbrev: string | undefined,
+	) {
+		abbrevsByTid.set(
+			tid,
+			abbrev ?? g.get("teamInfoCache")[tid]?.abbrev ?? "???",
+		);
+	}
+
+	async load() {
+		if (this.state !== "init") {
+			throw new Error("Cannot call load multiple times");
+		}
+		this.state = "loading";
+
+		for (const [seasonTemp, abbrevsByTid] of this.data) {
+			// When should we fetch all for season vs not? I'm not sure what the ideal value is, I just guessed
+			const bulkFetch = abbrevsByTid.size >= 6;
+
+			const season =
+				seasonTemp >= this.minSafeSeason ? seasonTemp : this.minSafeSeason;
+
+			if (bulkFetch) {
+				const rows = await idb.getCopies.teamSeasons({ season }, "noCopyCache");
+				for (const row of rows) {
+					this.saveAbbrev(abbrevsByTid, row.tid, row.abbrev);
+				}
+			}
+
+			// This handles when abbrevsByTid.size < 3, or when teamSeason is missing for one of the requested tids
+			for (const [tid, existingAbbrev] of abbrevsByTid) {
+				if (bulkFetch && existingAbbrev === undefined) {
+					// If teamSeason existed, it would have been found above
+					this.saveAbbrev(abbrevsByTid, tid, undefined);
+				} else {
+					const row = await idb.getCopy.teamSeasons(
+						{ season, tid },
+						"noCopyCache",
+					);
+					this.saveAbbrev(abbrevsByTid, tid, row?.abbrev);
+				}
+			}
+		}
+
+		this.state = "loaded";
+	}
+
+	get(season: number, tid: number) {
+		if (this.state !== "loaded") {
+			throw new Error("Cannot call get before load completes");
+		}
+
+		if (tid < 0) {
+			return helpers.getAbbrev(tid);
+		}
+
+		const abbrev = this.data.get(season)?.get(tid);
+		if (abbrev === undefined) {
+			console.log(this.data);
+			throw new Error("Invalid season/tid");
+		}
+		return abbrev;
+	}
+}
 
 const processAttrs = (
 	output: PlayerFiltered,
@@ -32,6 +158,7 @@ const processAttrs = (
 		seasonRange,
 		tid,
 	}: PlayersPlusOptionsRequired,
+	abbrevsCache: AbbrevsCache | undefined,
 ) => {
 	const getSalary = () => {
 		let total = 0;
@@ -79,9 +206,10 @@ const processAttrs = (
 			}
 
 			// Inject abbrevs
-			output.draft.abbrev = g.get("teamInfoCache")[output.draft.tid]?.abbrev;
+			output.draft.abbrev =
+				abbrevsCache?.get(output.draft.year, output.draft.tid) ?? "???";
 			output.draft.originalAbbrev =
-				g.get("teamInfoCache")[output.draft.originalTid]?.abbrev;
+				abbrevsCache?.get(output.draft.year, output.draft.originalTid) ?? "???";
 		} else if (attr === "draftPosition") {
 			// Estimate pick number from draft round and pick. Would be better to store the real value
 			if (p.draft.round > 0 && p.draft.pick > 0) {
@@ -161,27 +289,7 @@ const processAttrs = (
 						(a.season >= seasonRange[0] && a.season <= seasonRange[1])),
 			).length;
 		} else if (attr === "latestTransaction") {
-			let transaction;
-			if (p.transactions && p.transactions.length > 0) {
-				if (season === undefined || season >= g.get("season")) {
-					transaction = p.transactions.at(-1);
-				} else {
-					// Iterate over transactions backwards, find most recent one that was before the supplied season
-					for (let i = p.transactions.length - 1; i >= 0; i--) {
-						if (tid !== undefined && p.transactions[i].tid !== tid) {
-							continue;
-						}
-
-						if (
-							p.transactions[i].season < season ||
-							(p.transactions[i].season === season &&
-								p.transactions[i].phase <= PHASE.PLAYOFFS)
-						) {
-							transaction = p.transactions[i];
-						}
-					}
-				}
-			}
+			const transaction = getLatestTransaction(p.transactions, season, tid);
 
 			if (transaction) {
 				if (transaction.type === "draft") {
@@ -201,7 +309,8 @@ const processAttrs = (
 				} else if (transaction.type === "freeAgent") {
 					output.latestTransaction = `Free agent signing in ${transaction.season}`;
 				} else if (transaction.type === "trade") {
-					const abbrev = g.get("teamInfoCache")[transaction.fromTid]?.abbrev;
+					const abbrev =
+						abbrevsCache?.get(transaction.season, transaction.fromTid) ?? "???";
 					const url =
 						transaction.eid !== undefined
 							? helpers.leagueUrl(["trade_summary", transaction.eid])
@@ -212,7 +321,8 @@ const processAttrs = (
 				} else if (transaction.type === "import") {
 					output.latestTransaction = `Imported in ${transaction.season}`;
 				} else if (transaction.type === "sisyphus") {
-					const abbrev = g.get("teamInfoCache")[transaction.fromTid]?.abbrev;
+					const abbrev =
+						abbrevsCache?.get(transaction.season, transaction.fromTid) ?? "???";
 					const url = helpers.leagueUrl(["roster", abbrev, transaction.season]);
 					output.latestTransaction = `Sisyphus Mode with <a href="${url}">${abbrev} in ${transaction.season}</a>`;
 				}
@@ -226,14 +336,10 @@ const processAttrs = (
 				output.latestTransactionSeason = undefined;
 			}
 		} else if (attr === "jerseyNumber") {
-			if (p.stats.length === 0) {
-				output.jerseyNumber = undefined;
-			} else if (p.tid === PLAYER.RETIRED) {
-				output.jerseyNumber = helpers.getJerseyNumber(p, "mostCommon");
-			} else {
-				// Latest
-				output.jerseyNumber = p.stats.at(-1).jerseyNumber;
-			}
+			output.jerseyNumber = helpers.getJerseyNumber(
+				p,
+				p.tid === PLAYER.RETIRED ? "mostCommon" : "current",
+			);
 		} else if (attr === "experience") {
 			const seasons = new Set();
 			for (const row of p.stats) {
@@ -263,6 +369,7 @@ const processRatings = (
 		season,
 		tid,
 	}: PlayersPlusOptionsRequired,
+	abbrevsCache: AbbrevsCache | undefined,
 ) => {
 	let playerRatings = playerRatingsInput;
 
@@ -358,22 +465,26 @@ const processRatings = (
 						tidTemp = ps.tid;
 					}
 				}
+
+				let tidTemp2;
 				if (
 					pr.season === g.get("season") &&
 					tidTemp === undefined &&
 					p.tid >= 0
 				) {
-					tidTemp = p.tid;
+					tidTemp2 = p.tid;
 				}
 
 				if (attr === "abbrev") {
 					if (tidTemp !== undefined) {
-						row.abbrev = helpers.getAbbrev(tidTemp);
+						row.abbrev = abbrevsCache?.get(pr.season, tidTemp) ?? "???";
+					} else if (tidTemp2 !== undefined) {
+						row.abbrev = helpers.getAbbrev(tidTemp2);
 					} else {
 						row.abbrev = "";
 					}
 				} else {
-					row.tid = tidTemp;
+					row.tid = tidTemp ?? tidTemp2;
 				}
 			} else if (attr === "ovrs" || attr === "pots") {
 				row[attr] = player.fuzzOvrs(pr[attr], pr.fuzz);
@@ -788,6 +899,7 @@ const processPlayerStats = (
 	statType: PlayerStatType,
 	keepWithNoStats: boolean,
 	season: number | "career" | undefined, // undefined means showNoStats was used with career totals, but this is an individual stat season so idk
+	abbrevsCache: AbbrevsCache | undefined,
 	statSumsExtra?: StatSumsExtra,
 ) => {
 	const output = processPlayerStats2(
@@ -811,6 +923,8 @@ const processPlayerStats = (
 			} else {
 				output.abbrev = "???";
 			}
+		} else if (typeof season === "number") {
+			output.abbrev = abbrevsCache?.get(season, statSums.tid) ?? "???";
 		} else {
 			output.abbrev = helpers.getAbbrev(statSums.tid);
 		}
@@ -875,6 +989,7 @@ const processStats = (
 		stats,
 	}: PlayersPlusOptionsRequired,
 	keepWithNoStats: boolean,
+	abbrevsCache: AbbrevsCache | undefined,
 ) => {
 	// Only season(s) and team in question
 	let playerStats = getPlayerStats(
@@ -933,6 +1048,7 @@ const processStats = (
 			statType,
 			keepWithNoStats,
 			ps.season ?? season,
+			abbrevsCache,
 		);
 	});
 
@@ -1031,6 +1147,7 @@ const processStats = (
 				statType,
 				keepWithNoStats,
 				"career",
+				undefined,
 				statSumsExtra.regularSeason,
 			);
 		}
@@ -1043,6 +1160,7 @@ const processStats = (
 				statType,
 				keepWithNoStats,
 				"career",
+				undefined,
 				statSumsExtra.playoffs,
 			);
 		}
@@ -1055,13 +1173,18 @@ const processStats = (
 				statType,
 				keepWithNoStats,
 				"career",
+				undefined,
 				statSumsExtra.combined,
 			);
 		}
 	}
 };
 
-const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
+const processPlayer = (
+	p: Player,
+	options: PlayersPlusOptionsRequired,
+	abbrevsCache: AbbrevsCache | undefined,
+) => {
 	const {
 		attrs,
 		ratings,
@@ -1109,7 +1232,14 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
 		(showNoStats && (season === undefined || season > p.draft.year));
 
 	if (options.stats.length > 0 || keepWithNoStats) {
-		processStats(output, p, playerStats, options, keepWithNoStats);
+		processStats(
+			output,
+			p,
+			playerStats,
+			options,
+			keepWithNoStats,
+			abbrevsCache,
+		);
 
 		// Only add a player if filterStats finds something (either stats that season, or options overriding that check)
 		if (output.stats === undefined && !keepWithNoStats) {
@@ -1119,7 +1249,7 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
 
 	// processRatings must be after processStats for abbrev hack
 	if (ratings.length > 0) {
-		processRatings(output, p, playerRatings, options);
+		processRatings(output, p, playerRatings, options, abbrevsCache);
 
 		// This should be mostly redundant with hasRatingsSeason above
 		// output.ratings.length check is for seasonRange where all seasons are filtered out
@@ -1129,7 +1259,7 @@ const processPlayer = (p: Player, options: PlayersPlusOptionsRequired) => {
 	}
 
 	if (attrs.length > 0) {
-		processAttrs(output, p, options);
+		processAttrs(output, p, options, abbrevsCache);
 	}
 
 	return output;
@@ -1186,6 +1316,7 @@ const getCopies = async (
 		numGamesRemaining = 0,
 		statType = "perGame",
 		mergeStats = "none",
+		disableAbbrevsCacheDatabaseAccess = false,
 	}: PlayersPlusOptions,
 ): Promise<PlayerFiltered[]> => {
 	if (mergeStats === "totAndTeams" && season !== undefined) {
@@ -1215,8 +1346,50 @@ const getCopies = async (
 		mergeStats,
 	};
 
+	// Preload any abbrevs we need for past seasons, so we don't need to make all functions async and do it on demand
+	let abbrevsCache: AbbrevsCache | undefined;
+	const hasDraft = attrs.includes("draft");
+	const hasLatestTransaction = attrs.includes("latestTransaction");
+	const hasRatings = ratings.includes("abbrev");
+	const hasStats = stats.includes("abbrev");
+	if (hasDraft || hasLatestTransaction || hasRatings || hasStats) {
+		abbrevsCache = new AbbrevsCache(disableAbbrevsCacheDatabaseAccess);
+		for (const p of players) {
+			if (hasDraft) {
+				for (const tid of [p.draft.tid, p.draft.originalTid]) {
+					abbrevsCache.add(p.draft.year, tid);
+				}
+			}
+
+			if (hasLatestTransaction) {
+				const transaction = getLatestTransaction(p.transactions, season, tid);
+				if (
+					transaction &&
+					(transaction.type === "trade" || transaction.type === "sisyphus")
+				) {
+					abbrevsCache.add(transaction.season, transaction.fromTid);
+				}
+			}
+
+			// Ratings uses the tid from stats, so have ratings and stats both trigger a stats check
+			if (hasRatings || hasStats) {
+				for (const row of p.stats) {
+					if (
+						(season === undefined || season === row.season) &&
+						(seasonRange === undefined ||
+							(row.season >= seasonRange[0] && row.season <= seasonRange[1]))
+					) {
+						abbrevsCache.add(row.season, row.tid);
+					}
+				}
+			}
+		}
+
+		await abbrevsCache.load();
+	}
+
 	return players
-		.map((p) => processPlayer(p, options))
+		.map((p) => processPlayer(p, options, abbrevsCache))
 		.filter((p) => p !== undefined);
 };
 

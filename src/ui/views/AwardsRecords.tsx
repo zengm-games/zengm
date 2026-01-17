@@ -5,12 +5,13 @@ import { getCols, helpers } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { wrappedCheckmarkOrCross } from "../components/CheckmarkOrCross.tsx";
 
 const formatYear = (year: {
 	[key: string]: { team: string; season: number }[];
 }) => {
-	return Object.keys(year).map((k, i) => {
-		const years = helpers.yearRanges(year[k].map((y) => y.season)).join(", ");
+	return Object.entries(year).map(([k, yearInfo], i) => {
+		const years = helpers.yearRanges(yearInfo.map((y) => y.season)).join(", ");
 		return (
 			<span key={k}>
 				{i > 0 ? ", " : null}
@@ -23,20 +24,14 @@ const formatYear = (year: {
 const formatYearString = (year: {
 	[key: string]: { team: string; season: number }[];
 }) => {
-	return Object.keys(year)
-		.map((k, i) => {
-			const years = helpers.yearRanges(year[k].map((y) => y.season)).join(", ");
+	return Object.entries(year)
+		.map(([k, yearInfo], i) => {
+			const years = helpers
+				.yearRanges(yearInfo.map((y) => y.season))
+				.join(", ");
 			return `${i > 0 ? ", " : ""}${k} (${years})`;
 		})
 		.join("");
-};
-
-const CheckmarkOrCross = ({ success }: { success: boolean }) => {
-	if (success) {
-		return <span className="glyphicon glyphicon-ok text-success" />;
-	}
-
-	return <span className="glyphicon glyphicon-remove text-danger" />;
 };
 
 const AwardsRecords = ({
@@ -52,11 +47,14 @@ const AwardsRecords = ({
 			awardType,
 		},
 	});
-	const cols = getCols(["Name", "Count", "Year", "Last", "Retired", "HOF"], {
-		Year: {
-			searchType: "string",
+	const cols = getCols(
+		["Name", "Count", "Year", "Last", "Pick", "Retired", "HOF"],
+		{
+			Year: {
+				searchType: "string",
+			},
 		},
-	});
+	);
 
 	const rows: DataTableRow[] = awardsRecords.map((a) => {
 		const yearsGrouped = groupBy(a.years, "team");
@@ -75,6 +73,7 @@ const AwardsRecords = ({
 					firstName: a.firstName,
 					firstNameShort: a.firstNameShort,
 					lastName: a.lastName,
+					pos: a.pos,
 				}),
 				a.count,
 				{
@@ -83,14 +82,13 @@ const AwardsRecords = ({
 					sortValue: a.years.map((year) => year.season).sort()[0],
 				},
 				a.lastYear,
-				{
-					value: <CheckmarkOrCross success={a.retired} />,
-					sortValue: a.retired ? 1 : 0,
-				},
-				{
-					value: <CheckmarkOrCross success={a.hof} />,
-					sortValue: a.hof ? 1 : 0,
-				},
+				a.draft.round > 0 ? (
+					<a
+						href={helpers.leagueUrl(["draft_history", a.draft.year])}
+					>{`${a.draft.round}-${a.draft.pick}`}</a>
+				) : null,
+				wrappedCheckmarkOrCross({ success: a.retired }),
+				wrappedCheckmarkOrCross({ success: a.hof }),
 			],
 		};
 	});

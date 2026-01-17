@@ -27,47 +27,6 @@ import type {
 } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
 
-const fixRatingsStatsAbbrevs = async (p: {
-	draft?: {
-		abbrev: string;
-		tid: number;
-		year: number;
-	};
-	ratings?: {
-		abbrev: string;
-		season: number;
-		tid?: number;
-	}[];
-	stats?: {
-		abbrev: string;
-		season: number;
-		tid?: number;
-	}[];
-}) => {
-	const keys = ["ratings", "stats"] as const;
-
-	for (const key of keys) {
-		const rows = p[key];
-		if (rows) {
-			for (const row of rows) {
-				if (row.tid !== undefined) {
-					const info = await getTeamInfoBySeason(row.tid, row.season);
-					if (info) {
-						row.abbrev = info.abbrev;
-					}
-				}
-			}
-		}
-	}
-
-	if (p.draft) {
-		const info = await getTeamInfoBySeason(p.draft.tid, p.draft.year);
-		if (info) {
-			p.draft.abbrev = info.abbrev;
-		}
-	}
-};
-
 export const getPlayerProfileStats = () => {
 	const stats = [];
 	for (const info of Object.values(PLAYER_STATS_TABLES)) {
@@ -195,10 +154,8 @@ export const getPlayer = async (
 		return;
 	}
 
-	await fixRatingsStatsAbbrevs(p);
-
 	// Filter out rows with no games played
-	p.stats = p.stats.filter((row) => row.gp > 0);
+	p.stats = p.stats.filter((row) => row.gp! > 0);
 
 	return p;
 };
@@ -346,7 +303,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 	let teamJersey;
 	let bestPos;
 	if (p.tid === PLAYER.RETIRED) {
-		const info = processPlayersHallOfFame([p])[0];
+		const info = processPlayersHallOfFame([p])[0]!;
 		const legacyTid = info.legacyTid;
 		bestPos = info.bestPos;
 
@@ -485,6 +442,22 @@ export const getCommon = async (pid?: number, season?: number) => {
 		}
 	}
 
+	let randomDebutsForeverPids;
+	if (g.get("randomDebutsForever") !== undefined && p.srID !== undefined) {
+		randomDebutsForeverPids = [];
+		for await (const { value: p2 } of idb.league
+			.transaction("players")
+			.store.index("srID")
+			.iterate(p.srID)) {
+			randomDebutsForeverPids.push(p2.pid);
+		}
+
+		// No point showing if there are no other versions
+		if (randomDebutsForeverPids.length === 1) {
+			randomDebutsForeverPids = undefined;
+		}
+	}
+
 	return {
 		type: "normal" as const,
 		bestPos,
@@ -499,6 +472,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 		phase: g.get("phase"),
 		pid, // Needed for state.pid check
 		player: p,
+		randomDebutsForeverPids,
 		retired,
 		showContract:
 			p.tid !== PLAYER.UNDRAFTED &&

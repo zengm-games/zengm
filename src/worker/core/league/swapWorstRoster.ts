@@ -25,7 +25,7 @@ const swapWorstRoster = async (addSisyphusLogs: boolean) => {
 	const teamsSorted = orderBy(teams, "ovr", "asc");
 
 	const userTid = g.get("userTid");
-	const worstTid = teamsSorted[0].tid;
+	const worstTid = teamsSorted[0]!.tid;
 
 	if (userTid === worstTid) {
 		return {

@@ -66,10 +66,16 @@ type PlayByPlayEventInputNoScore =
 				| "orb"
 				| "foulOut"
 				| "injury"
-				| "jumpBall"
 				| "missFt";
 			t: TeamNum;
 			pid: number;
+			clock: number;
+	  }
+	| {
+			type: "jumpBall";
+			t: TeamNum;
+			pid: number;
+			pid2: number;
 			clock: number;
 	  }
 	| {
@@ -117,8 +123,8 @@ type PlayByPlayEventInputNoScore =
 	| {
 			type: "sub";
 			t: TeamNum;
-			pid: number;
-			pidOff: number;
+			pids: number[];
+			pidsOff: number[];
 			clock: number;
 	  }
 	| {

@@ -74,7 +74,7 @@ const PlayerStats = ({
 		jumpToSeason: season,
 		dropdownView: "player_stats",
 		dropdownFields: {
-			teamsAndAllWatch: abbrev,
+			teamsAndAllWatchPlayoffs: abbrev,
 			seasonsAndCareer: season,
 			statTypesAdv: statType,
 			playoffsCombined: playoffs,
@@ -184,7 +184,7 @@ const PlayerStats = ({
 					season: numericSeason,
 					skills: p.ratings.skills,
 					jerseyNumber: p.stats.jerseyNumber,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,

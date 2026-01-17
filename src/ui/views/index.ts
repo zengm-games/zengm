@@ -21,7 +21,7 @@ import Dashboard from "./Dashboard.tsx";
 import DefaultNewLeagueSettings from "./DefaultNewLeagueSettings/index.tsx";
 import DeleteOldData from "./DeleteOldData.tsx";
 import Depth from "./Depth.tsx";
-import Draft from "./Draft.tsx";
+import Draft from "./Draft/index.tsx";
 import DraftHistory from "./DraftHistory.tsx";
 import DraftLottery from "./DraftLottery.tsx";
 import DraftPicks from "./DraftPicks.tsx";
@@ -53,6 +53,7 @@ import HeadToHeadAll from "./HeadToHeadAll.tsx";
 import History from "./History.tsx";
 import HistoryAll from "./HistoryAll.tsx";
 import ImportPlayers from "./ImportPlayers.tsx";
+import ImportPlayersReal from "./ImportPlayersReal.tsx";
 import Inbox from "./Inbox.tsx";
 import Injuries from "./Injuries.tsx";
 import Leaders from "./Leaders.tsx";
@@ -93,6 +94,7 @@ import Roster from "./Roster/index.tsx";
 import RosterContinuity from "./RosterContinuity.tsx";
 import SavedTrades from "./SavedTrades.tsx";
 import Schedule from "./Schedule.tsx";
+import ScheduleEditor from "./ScheduleEditor/index.tsx";
 import ScheduledEvents from "./ScheduledEvents.tsx";
 import SeasonPreview from "./SeasonPreview.tsx";
 import Settings from "./Settings/index.tsx";
@@ -110,6 +112,7 @@ import TradeSummary from "./TradeSummary/index.tsx";
 import TradingBlock from "./TradingBlock/index.tsx";
 import Transactions from "./Transactions.tsx";
 import UpcomingFreeAgents from "./UpcomingFreeAgents.tsx";
+import Upgrade65 from "./Upgrade65.tsx";
 import WatchList from "./WatchList.tsx";
 
 export default {
@@ -168,6 +171,7 @@ export default {
 	History,
 	HistoryAll,
 	ImportPlayers,
+	ImportPlayersReal,
 	Inbox,
 	Injuries,
 	Leaders,
@@ -208,6 +212,7 @@ export default {
 	RosterContinuity,
 	SavedTrades,
 	Schedule,
+	ScheduleEditor,
 	ScheduledEvents,
 	SeasonPreview,
 	Settings,
@@ -225,5 +230,6 @@ export default {
 	TragicDeaths,
 	Transactions,
 	UpcomingFreeAgents,
+	Upgrade65,
 	WatchList,
 };

@@ -7,6 +7,7 @@ import { settings } from "./settings.tsx";
 import type { Key, Values } from "./types.ts";
 import type { Settings } from "../../../worker/views/settings.ts";
 import type {
+	GameAttributesLeague,
 	InjuriesSetting,
 	PlayerBioInfo,
 	TragicDeaths,
@@ -178,7 +179,7 @@ export const getVisibleCategories = ({
 			continue;
 		}
 
-		const catSettings = groupedSettings[category.name].filter((option) => {
+		const catSettings = groupedSettings[category.name]!.filter((option) => {
 			return (
 				(showGodModeSettings ||
 					settingIsEnabled(godMode, newLeague, option.godModeRequired)) &&
@@ -213,11 +214,21 @@ export type SpecialStateOthers = (typeof SPECIAL_STATE_OTHERS)[number];
 type SpecialStateBoolean = (typeof SPECIAL_STATE_BOOLEANS)[number];
 type SpecialStateAll = (typeof SPECIAL_STATE_ALL)[number];
 
-export type State = Record<Exclude<Key, SpecialStateAll>, string> &
-	Record<SpecialStateBoolean, boolean> &
-	Record<"injuries", InjuriesSetting> &
-	Record<"tragicDeaths", TragicDeaths> &
-	Record<"playerBioInfo", PlayerBioInfo | undefined>;
+export type State = Record<
+	Exclude<Key, SpecialStateAll | "saveOldBoxScores">,
+	string
+> &
+	Record<SpecialStateBoolean, boolean> & {
+		injuries: InjuriesSetting;
+		tragicDeaths: TragicDeaths;
+		playerBioInfo: PlayerBioInfo | undefined;
+		saveOldBoxScores: Omit<
+			GameAttributesLeague["saveOldBoxScores"],
+			"pastSeasons"
+		> & {
+			pastSeasons: string;
+		};
+	};
 
 const SettingsForm = ({
 	onCancel,

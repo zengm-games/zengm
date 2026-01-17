@@ -229,7 +229,7 @@ const AutoRelocate = ({
 																	"text-info":
 																		realign &&
 																		t.tid !== newTeam.tid &&
-																		!realignInfo.current[i][j].some(
+																		!realignInfo.current[i]![j]!.some(
 																			(t2) => t2.tid === t.tid,
 																		),
 																})}

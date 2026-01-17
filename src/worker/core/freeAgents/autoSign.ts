@@ -61,6 +61,14 @@ const autoSign = async () => {
 			t.tid,
 		);
 
+		// With forceHistoricalRosters, only sign FAs if we have to
+		if (
+			playersOnRoster.length >= g.get("minRosterSize") &&
+			g.get("forceHistoricalRosters")
+		) {
+			continue;
+		}
+
 		// Ignore roster size, will drop bad player if necessary in checkRosterSizes, and getBest won't sign min contract player unless under the roster limit
 		const payroll = await team.getPayroll(t.tid);
 		const p = getBest(playersOnRoster, playersSorted, payroll);

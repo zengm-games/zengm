@@ -56,7 +56,7 @@ const findMaxBy = <T>(
 			if (output[i] === undefined) {
 				output[i] = x;
 				return;
-			} else if (output[i].score < x.score) {
+			} else if (output[i]!.score < x.score) {
 				output.splice(i, 0, x);
 				return;
 			}
@@ -65,10 +65,9 @@ const findMaxBy = <T>(
 		output[count - 1] = x;
 	};
 
-	for (let i = 0; i < records.length; i++) {
-		const record = records[i];
+	for (const [i, record] of records.entries()) {
 		const score = getScore(record);
-		if (output.length < count || score > output[count - 1].score) {
+		if (output.length < count || score > output[count - 1]!.score) {
 			addToOutput({
 				index: i,
 				record,
@@ -100,9 +99,9 @@ export const getDepthDefense = (
 		for (const scorePos of defPositions) {
 			const maxIndex = findMaxBy(playersRemaining, 1, (p) =>
 				score(p, scorePos),
-			)[0].index;
+			)[0]!.index;
 
-			defensivePlayersSorted.push(playersRemaining[maxIndex]);
+			defensivePlayersSorted.push(playersRemaining[maxIndex]!);
 			playersRemaining.splice(maxIndex, 1);
 			if (playersRemaining.length === 0) {
 				break;
@@ -113,12 +112,12 @@ export const getDepthDefense = (
 	playersRemaining.sort((a, b) => {
 		const bOvr =
 			b.ratings.pos === "RP" || b.ratings.pos === "SP"
-				? b.ratings.ovrs.LF
-				: b.ratings.ovrs[b.ratings.pos];
+				? b.ratings.ovrs.LF!
+				: b.ratings.ovrs[b.ratings.pos]!;
 		const aOvr =
 			a.ratings.pos === "RP" || a.ratings.pos === "SP"
-				? a.ratings.ovrs.LF
-				: a.ratings.ovrs[a.ratings.pos];
+				? a.ratings.ovrs.LF!
+				: a.ratings.ovrs[a.ratings.pos]!;
 		const diff = bOvr - aOvr;
 		if (diff === 0) {
 			// Deterministic order
@@ -148,7 +147,7 @@ export const getDepthDefense = (
 
 				const p = defensivePlayersSorted[i];
 				const p2 = defensivePlayersSorted[j];
-				const pos2 = defPositions[j];
+				const pos2 = defPositions[j]!;
 
 				// Needed for empty roster, like expansion draft
 				if (!p || !p2) {
@@ -156,11 +155,11 @@ export const getDepthDefense = (
 				}
 
 				if (
-					p.ratings.ovrs[pos2] + p2.ratings.ovrs[pos] >
-					p.ratings.ovrs[pos] + p2.ratings.ovrs[pos2]
+					p.ratings.ovrs[pos2]! + p2.ratings.ovrs[pos]! >
+					p.ratings.ovrs[pos]! + p2.ratings.ovrs[pos2]!
 				) {
 					const temp: any = defensivePlayersSorted[i];
-					defensivePlayersSorted[i] = defensivePlayersSorted[j];
+					defensivePlayersSorted[i] = defensivePlayersSorted[j]!;
 					defensivePlayersSorted[j] = temp;
 					swapped = true;
 				}
@@ -192,7 +191,7 @@ export const getDepthPitchers = (
 		const indexes = new Set();
 		const records = findMaxBy(playersRemaining, numToAdd, (p) => score(p, pos));
 		for (const record of records) {
-			pids.push(playersRemaining[record.index].pid);
+			pids.push(playersRemaining[record.index]!.pid);
 			indexes.add(record.index);
 		}
 
@@ -217,7 +216,7 @@ export const getDepthPitchers = (
 	}
 	playersRemaining.sort((a, b) => {
 		// Inlining this improves performance significantly, for some reason
-		const diff = b.ratings.ovrs.RP - a.ratings.ovrs.RP;
+		const diff = b.ratings.ovrs.RP! - a.ratings.ovrs.RP!;
 		if (diff === 0) {
 			// Deterministic order
 			return b.pid - a.pid;
@@ -299,8 +298,7 @@ const genDepth = async (
 					let added = false;
 
 					// Put in starting lineup if better than existing starter
-					for (let i = 0; i < defPositions.length; i++) {
-						const scorePos = defPositions[i];
+					for (const [i, scorePos] of defPositions.entries()) {
 						const pScore = score(p, scorePos);
 						const p2 = players.find((p2) => p2.pid === depth[pos2][i]);
 						if (!p2 || pScore > score(p2, scorePos)) {

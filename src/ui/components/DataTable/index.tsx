@@ -4,9 +4,10 @@ import {
 	type SyntheticEvent,
 	type MouseEvent,
 	type ReactNode,
-	useEffect,
 	useRef,
 	type CSSProperties,
+	useImperativeHandle,
+	type RefCallback,
 } from "react";
 import Controls from "./Controls.tsx";
 import CustomizeColumns from "./CustomizeColumns.tsx";
@@ -21,7 +22,7 @@ import getSortVal from "./getSortVal.tsx";
 import ResponsiveTableWrapper from "../ResponsiveTableWrapper.tsx";
 import { downloadFile, helpers, safeLocalStorage } from "../../util/index.ts";
 import type { SortOrder, SortType } from "../../../common/types.ts";
-import { arrayMoveImmutable } from "array-move";
+import { arrayMove } from "@dnd-kit/sortable";
 import updateSortBys from "./updateSortBys.ts";
 import useStickyXX from "./useStickyXX.ts";
 import { useDataTableState } from "./useDataTableState.ts";
@@ -33,9 +34,11 @@ import {
 	getId,
 	MyDragOverlay,
 	SortableContextWrappers,
+	type DisableRow,
 	type HighlightHandle,
 } from "./sortableRows.tsx";
 import { DataTableContext } from "./contexts.ts";
+import { useStickyTableHeader } from "./useStickyTableHeader.ts";
 
 export type SortBy = [number, SortOrder];
 
@@ -86,6 +89,9 @@ export type DataTableRow = {
 				value: ReactNode;
 				searchValue?: string | number;
 				sortValue?: string | number;
+				header?: boolean;
+				title?: string;
+				colSpanToEnd?: boolean; // Maybe dangerous unless disableSort
 		  }
 	)[];
 	classNames?:
@@ -101,8 +107,13 @@ export type DataTableRow = {
 
 export type StickyCols = 0 | 1 | 2 | 3;
 
+export type DataTableHandle = {
+	setFilters: (filters: string[], enableFilters: boolean) => void;
+	getEnableFilters: () => boolean;
+	getFilters: () => string[];
+};
+
 export type Props = {
-	addFilters?: (string | undefined)[];
 	className?: string;
 	classNameWrapper?: string;
 	clickable?: boolean;
@@ -119,14 +130,17 @@ export type Props = {
 	nonfluid?: boolean;
 	pagination?: boolean;
 	rankCol?: number;
+	ref?: RefCallback<DataTableHandle>;
 	rows: DataTableRow[];
 	showRowLabels?: boolean;
 	small?: boolean;
 	sortableRows?: {
-		highlightHandle: HighlightHandle;
+		disableRow?: DisableRow;
+		highlightHandle?: HighlightHandle;
 		onChange: (a: { oldIndex: number; newIndex: number }) => void;
 		onSwap: (index1: number, index2: number) => void;
 	};
+	stickyHeader?: boolean;
 	striped?: boolean;
 	style?: CSSProperties;
 	superCols?: SuperCol[];
@@ -139,7 +153,6 @@ export type Props = {
 };
 
 const DataTable = ({
-	addFilters,
 	alwaysShowBulkSelectRows,
 	className,
 	classNameWrapper,
@@ -159,19 +172,33 @@ const DataTable = ({
 	nonfluid,
 	pagination,
 	rankCol,
+	ref,
 	rows,
 	showRowLabels,
 	small,
 	sortableRows,
+	stickyHeader,
 	striped,
 	style,
 	superCols,
 	title,
 }: Props) => {
-	if (sortableRows && !hideAllControls) {
-		throw new Error(
-			`If you enable sortable, you must also enable hideAllControls`,
-		);
+	if (sortableRows) {
+		if (!hideAllControls) {
+			throw new Error(
+				`If you enable sortableRows, you must also enable hideAllControls`,
+			);
+		}
+		if (!hideAllControls) {
+			throw new Error(
+				`If you enable sortableRows, you cannot enable pagination`,
+			);
+		}
+		if (defaultSort !== "disableSort") {
+			throw new Error(
+				`If you enable sortableRows, you must set defaultSort to "disableSort"`,
+			);
+		}
 	}
 
 	const hideAllControlsBool = !!hideAllControls;
@@ -221,7 +248,7 @@ const DataTable = ({
 		const colOrderFiltered = state.colOrder.filter(
 			({ hidden, colIndex }) => !hidden && cols[colIndex],
 		);
-		const columns = colOrderFiltered.map(({ colIndex }) => cols[colIndex]);
+		const columns = colOrderFiltered.map(({ colIndex }) => cols[colIndex]!);
 		const colNames = columns.map((col) => col.title);
 		const processedRows = processRows({
 			cols,
@@ -230,8 +257,8 @@ const DataTable = ({
 			state,
 		}).map((row) =>
 			row.data.map((val, i) => {
-				const sortType = columns[i].sortType;
-				if (sortType === "currency" || sortType === "number") {
+				const sortType = columns[i]!.sortType;
+				if (sortType === "number") {
 					return getSortVal(val, sortType, true);
 				}
 				return getSearchVal(val, false);
@@ -336,36 +363,23 @@ const DataTable = ({
 		});
 	}
 
-	useEffect(() => {
-		if (
-			addFilters !== undefined &&
-			addFilters.length === state.filters.length
-		) {
-			// If addFilters is passed and contains a value, merge with prevState.filters and enable filters
-			const filters = helpers.deepCopy(state.filters);
-			let changed = false;
-
-			for (let i = 0; i < addFilters.length; i++) {
-				const filter = addFilters[i];
-				if (filter !== undefined) {
-					filters[i] = filter;
-					changed = true;
-				} else if (!state.enableFilters) {
-					// If there is a saved but hidden filter, remove it
-					filters[i] = "";
-				}
-			}
-
-			if (changed) {
+	useImperativeHandle(ref, () => {
+		return {
+			setFilters(filters: string[], enableFilters: boolean) {
 				state.settingsCache.set("DataTableFilters", filters);
 				setStatePartial({
-					enableFilters: true,
+					enableFilters,
 					filters,
 				});
-			}
-		}
+			},
+			getEnableFilters() {
+				return state.enableFilters;
+			},
+			getFilters() {
+				return state.filters;
+			},
+		};
 	}, [
-		addFilters,
 		setStatePartial,
 		state.enableFilters,
 		state.filters,
@@ -406,7 +420,7 @@ const DataTable = ({
 							}
 
 							// Make sure sortSequence is not an empty array - same code is in Header
-							const sortSequence = cols[colIndex].sortSequence;
+							const sortSequence = cols[colIndex]!.sortSequence;
 							if (sortSequence && sortSequence.length === 0) {
 								return false;
 							}
@@ -432,6 +446,14 @@ const DataTable = ({
 	);
 
 	const wrapperRef = useRef<HTMLDivElement>(null);
+	const responsiveTableWrapperRef = useRef<HTMLDivElement>(null);
+
+	useStickyTableHeader({
+		className,
+		containerRef: responsiveTableWrapperRef,
+		stickyHeader,
+		tableRef,
+	});
 
 	const table = (
 		<DataTableContext value={dataTableContext}>
@@ -507,11 +529,7 @@ const DataTable = ({
 					state.settingsCache.clear("DataTableStickyCols");
 				}}
 				onChange={({ oldIndex, newIndex }) => {
-					const newOrder = arrayMoveImmutable(
-						state.colOrder,
-						oldIndex,
-						newIndex,
-					);
+					const newOrder = arrayMove(state.colOrder, oldIndex, newIndex);
 					setStatePartial({
 						colOrder: newOrder,
 					});
@@ -604,6 +622,7 @@ const DataTable = ({
 							pagination ? "fix-margin-pagination" : null,
 						)}
 						nonfluid={nonfluid}
+						ref={responsiveTableWrapperRef}
 					>
 						{sortableRows ? (
 							<SortableContextWrappers

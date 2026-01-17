@@ -341,7 +341,7 @@ const Trade = (props: View<"trade">) => {
 								className="btn btn-light-bordered btn-xs"
 								disabled={otherTeamIndex <= 0}
 								onClick={() => {
-									handleChangeTeam(teams[otherTeamIndex - 1].tid);
+									handleChangeTeam(teams[otherTeamIndex - 1]!.tid);
 								}}
 								title="Previous"
 							>
@@ -351,7 +351,7 @@ const Trade = (props: View<"trade">) => {
 								className="btn btn-light-bordered btn-xs"
 								disabled={otherTeamIndex >= teams.length - 1}
 								onClick={() => {
-									handleChangeTeam(teams[otherTeamIndex + 1].tid);
+									handleChangeTeam(teams[otherTeamIndex + 1]!.tid);
 								}}
 								title="Next"
 							>

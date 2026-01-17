@@ -1,12 +1,13 @@
 import { helpers, g } from "../../util/index.ts";
 import type { Team } from "../../../common/types.ts";
 import {
-	DEFAULT_JERSEY,
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	DEFAULT_TEAM_COLORS,
 	isSport,
 } from "../../../common/index.ts";
 import finances from "../finances/index.ts";
+import genRandomJersey from "./genRandomJersey.ts";
+import isValidJersey from "./isValidJersey.ts";
 
 /**
  * Create a new team object.
@@ -26,6 +27,8 @@ const generate = (tm: any): Team => {
 		scouting: finances.defaultBudgetLevel(tm.popRank),
 		ticketPrice: helpers.defaultTicketPrice(tm.popRank),
 	};
+
+	const jersey = isValidJersey(tm.jersey) ? tm.jersey : genRandomJersey();
 
 	const t: Team = {
 		tid: tm.tid,
@@ -49,7 +52,7 @@ const generate = (tm: any): Team => {
 		strategy,
 		depth: tm.depth,
 		colors: tm.colors ? tm.colors : DEFAULT_TEAM_COLORS,
-		jersey: tm.jersey ?? DEFAULT_JERSEY,
+		jersey,
 		pop: tm.pop ?? 0,
 		stadiumCapacity: tm.stadiumCapacity ?? g.get("defaultStadiumCapacity"),
 		retiredJerseyNumbers: tm.retiredJerseyNumbers ?? [],

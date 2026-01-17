@@ -38,8 +38,8 @@ const hasPlayerInfoChanged = (
 	}
 
 	for (let i = 0; i < inputPlayers.length; i++) {
-		const inputP = inputPlayers[i];
-		const stateP = statePlayers[i];
+		const inputP = inputPlayers[i]!;
+		const stateP = statePlayers[i]!;
 
 		if (
 			inputP.pid !== stateP.p.pid ||
@@ -244,6 +244,14 @@ const getStatsByPositions = (positions: string[]) => {
 						"xpa",
 						"xpPct",
 						"kickingPts",
+						"ko",
+						"koYds",
+						"koYdsPerAtt",
+						"koTB",
+						"koTBPct",
+						"ok",
+						"okRec",
+						"okRecPct",
 					);
 				} else if (pos === "P") {
 					stats.push(

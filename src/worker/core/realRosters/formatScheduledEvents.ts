@@ -41,7 +41,7 @@ const processGameAttributes = (
 			if (
 				!gameAttributesHistory ||
 				!Object.hasOwn(prevState, key) ||
-				!ALWAYS_WRAP.includes(key)
+				!ALWAYS_WRAP.includes(key as any)
 			) {
 				prevState[key] = value;
 			} else {
@@ -218,8 +218,7 @@ const processTeams = (
 
 	// Rewrite tids, to remove gaps in initialTeams caused by contractions prior to `season`
 	const tidOverrides: Record<number, number> = {};
-	for (let tid = 0; tid < initialTeams.length; tid++) {
-		const t = initialTeams[tid];
+	for (const [tid, t] of initialTeams.entries()) {
 		if (t.tid === tid) {
 			tidOverrides[t.tid] = tid;
 			continue;

@@ -44,7 +44,7 @@ const testDraftUser = async (round: number) => {
 			[g.get("season"), Infinity],
 		])
 	).filter((p) => p.tid === PLAYER.UNDRAFTED);
-	const p = players[0];
+	const p = players[0]!;
 	await draft.selectPlayer(dp, p.pid);
 	assert.strictEqual(p.tid, g.get("userTid"));
 };

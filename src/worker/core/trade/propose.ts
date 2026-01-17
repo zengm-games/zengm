@@ -79,7 +79,10 @@ const propose = async (
 		for (const tid of tids) {
 			const t = await idb.cache.teams.get(tid);
 			const onlyNewPlayers =
-				g.get("userTids").includes(tid) && t && !t.keepRosterSorted;
+				g.get("userTids").includes(tid) &&
+				!g.get("spectator") &&
+				t &&
+				!t.keepRosterSorted;
 
 			await team.rosterAutoSort(tid, onlyNewPlayers);
 		}

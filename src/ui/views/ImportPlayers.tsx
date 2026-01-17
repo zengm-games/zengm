@@ -1,9 +1,5 @@
 import { useState, type ChangeEvent } from "react";
-import {
-	PLAYER,
-	PHASE,
-	gameAttributesArrayToObject,
-} from "../../common/index.ts";
+import { PLAYER, PHASE, LEAGUE_DATABASE_VERSION } from "../../common/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, toWorker, useLocal } from "../util/index.ts";
 import {
@@ -17,23 +13,25 @@ import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { orderBy } from "../../common/utils.ts";
 import { useSelectedRows } from "../components/DataTable/useBulkSelectRows.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { CurrencyInputGroup } from "../components/CurrencyInputGroup.tsx";
+import useLocalStorageState from "use-local-storage-state";
 
-const ImportPlayers = ({
+export const ImportPlayersInner = ({
 	challengeNoRatings,
 	currentSeason,
 	godMode,
 	phase,
-}: View<"importPlayers">) => {
+	real,
+}: View<"importPlayers"> & {
+	real: boolean;
+}) => {
 	const [status, setStatus] = useState<
-		undefined | "loading" | "importing" | "success"
+		undefined | "loading" | "loadingReal" | "importing" | "success"
 	>();
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
-	const [leagueFile, setLeagueFile] = useState<{
-		startingSeason: number;
-		version?: number;
-	}>({
-		startingSeason: currentSeason,
-	});
+	const [leagueFileVersion, setLeagueFileVersion] = useState<
+		number | undefined
+	>();
 	const [players, setPlayers] = useState<
 		{
 			p: any;
@@ -45,6 +43,12 @@ const ImportPlayers = ({
 			tid: number;
 		}[]
 	>([]);
+	const [includeStats, setIncludeStats] = useLocalStorageState(
+		"importIncludeStats",
+		{
+			defaultValue: true,
+		},
+	);
 
 	const teamInfoCache = useLocal((state) => state.teamInfoCache);
 
@@ -69,14 +73,14 @@ const ImportPlayers = ({
 		),
 	];
 
-	useTitleBar({
-		title: "Import Players",
-		dropdownView: "import_players",
-	});
-
 	const selectedRows = useSelectedRows();
 
-	const links = <MoreLinks type="importExport" page="import_players" />;
+	const links = (
+		<MoreLinks
+			type="importExport"
+			page={real ? "import_players_real" : "import_players"}
+		/>
+	);
 
 	if (!godMode) {
 		return (
@@ -109,7 +113,7 @@ const ImportPlayers = ({
 		) =>
 		(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
 			const player = {
-				...players[index],
+				...players[index]!,
 			};
 
 			if (name === "age") {
@@ -267,18 +271,16 @@ const ImportPlayers = ({
 				tid >= PLAYER.FREE_AGENT ? (
 					{
 						value: (
-							<div className="input-group" style={{ minWidth: 180 }}>
-								<div className="input-group-text">$</div>
+							<CurrencyInputGroup displayUnit="M" style={{ minWidth: 180 }}>
 								<input
 									type="text"
 									className="form-control"
 									onChange={handleChange("contractAmount", i)}
 									value={contractAmount}
 								/>
-								<div className="input-group-text">M per year</div>
-							</div>
+							</CurrencyInputGroup>
 						),
-						sortValue: `$${contractAmount}M`,
+						sortValue: contractAmount,
 					}
 				) : (
 					<div style={{ minWidth: 180 }} />
@@ -307,123 +309,157 @@ const ImportPlayers = ({
 		<>
 			{links}
 
-			<p>
-				Upload an exported players file or a league file below. You will be able
-				to select the specific players you want from that file before actually
-				importing them.
-			</p>
+			{!real ? (
+				<>
+					<p>
+						Upload an exported players file or a league file below. You will be
+						able to select the specific players you want from that file before
+						actually importing them.
+					</p>
 
-			<LeagueFileUpload
-				disabled={disableButtons}
-				includePlayersInBasicInfo
-				onLoading={() => {
-					setStatus("loading");
-				}}
-				onDone={async (error, output) => {
-					setStatus(undefined);
+					<LeagueFileUpload
+						disabled={disableButtons}
+						includePlayersInBasicInfo
+						onLoading={() => {
+							setStatus("loading");
+						}}
+						onDone={async (error, output) => {
+							setStatus(undefined);
 
-					if (error || !output) {
-						return;
-					}
+							if (error || !output) {
+								return;
+							}
 
-					const leagueFile = output.basicInfo;
+							const leagueFile = output.basicInfo;
+							setLeagueFileVersion(leagueFile.version);
 
-					let startingSeason = leagueFile.startingSeason;
-					if (typeof startingSeason !== "number" && leagueFile.gameAttributes) {
-						if (Array.isArray(leagueFile.gameAttributes)) {
-							leagueFile.gameAttributes = gameAttributesArrayToObject(
-								leagueFile.gameAttributes,
-							);
-						}
-						startingSeason = leagueFile.gameAttributes.startingSeason;
-					}
-					if (typeof startingSeason !== "number") {
-						throw new Error("League file must include startingSeason");
-					}
+							const rawPlayers: any[] = leagueFile.players ?? [];
 
-					setLeagueFile({
-						startingSeason,
-						version: leagueFile.version,
-					});
+							const players = rawPlayers.map((p) => {
+								const exportedSeason: number | undefined =
+									typeof p.exportedSeason === "number"
+										? p.exportedSeason
+										: undefined;
 
-					const rawPlayers: any[] = leagueFile.players ?? [];
+								const season =
+									exportedSeason !== undefined
+										? p.exportedSeason
+										: p.ratings.at(-1).season;
 
-					const players = rawPlayers.map((p) => {
-						const exportedSeason: number | undefined =
-							typeof p.exportedSeason === "number"
-								? p.exportedSeason
-								: undefined;
-
-						const season =
-							exportedSeason !== undefined
-								? p.exportedSeason
-								: p.ratings.at(-1).season;
-
-						let tid;
-						if (
-							Array.isArray(p.stats) &&
-							p.stats.length > 0 &&
-							exportedSeason !== undefined
-						) {
-							for (let i = p.stats.length - 1; i >= 0; i--) {
-								const ps = p.stats[i];
-								if (ps.season === p.exportedSeason) {
-									if (
-										ps.tid < teamInfoCache.length &&
-										!teamInfoCache[ps.tid].disabled
-									) {
-										tid = ps.tid;
+								let tid;
+								if (
+									Array.isArray(p.stats) &&
+									p.stats.length > 0 &&
+									exportedSeason !== undefined
+								) {
+									for (let i = p.stats.length - 1; i >= 0; i--) {
+										const ps = p.stats[i];
+										if (ps.season === p.exportedSeason) {
+											if (
+												ps.tid < teamInfoCache.length &&
+												!teamInfoCache[ps.tid]!.disabled
+											) {
+												tid = ps.tid;
+											}
+											break;
+										}
 									}
-									break;
 								}
-							}
-						}
-						if (typeof tid !== "number") {
-							tid = p.tid;
-						}
+								if (typeof tid !== "number") {
+									tid = p.tid;
+								}
 
-						if (
-							tid < PLAYER.UNDRAFTED ||
-							tid >= teamInfoCache.length ||
-							(tid >= 0 && teamInfoCache[tid].disabled)
-						) {
-							tid = PLAYER.FREE_AGENT;
-						}
+								if (
+									tid < PLAYER.UNDRAFTED ||
+									tid >= teamInfoCache.length ||
+									(tid >= 0 && teamInfoCache[tid]!.disabled)
+								) {
+									tid = PLAYER.FREE_AGENT;
+								}
 
-						let contractAmount = 1;
-						let contractExp = season + 1;
-						if (p.contract && season === p.ratings.at(-1).season) {
-							// Exported the latest season for this player
-							contractAmount = p.contract.amount / 1000;
-							contractExp = p.contract.exp;
-						} else {
-							// Exported some historical season, try to figure out contract
-							const salaryRow = Array.isArray(p.salaries)
-								? p.salaries.find((row: any) => row.season === season)
-								: undefined;
-							if (salaryRow) {
-								contractAmount = salaryRow.amount / 1000;
-							}
-						}
+								let contractAmount = 1;
+								let contractExp = season + 1;
+								if (p.contract && season === p.ratings.at(-1).season) {
+									// Exported the latest season for this player
+									contractAmount = p.contract.amount / 1000;
+									contractExp = p.contract.exp;
+								} else {
+									// Exported some historical season, try to figure out contract
+									const salaryRow = Array.isArray(p.salaries)
+										? p.salaries.find((row: any) => row.season === season)
+										: undefined;
+									if (salaryRow) {
+										contractAmount = salaryRow.amount / 1000;
+									}
+								}
 
-						const seasonOffset = currentSeason - season;
+								const seasonOffset = currentSeason - season;
 
-						return {
-							p,
-							checked: false,
-							contractAmount: String(contractAmount),
-							contractExp: String(contractExp + seasonOffset),
-							draftYear: String(currentSeason + (phase >= PHASE.DRAFT ? 1 : 0)),
-							season: season + seasonOffset,
-							seasonOffset,
-							tid,
-						};
-					});
+								return {
+									p,
+									checked: false,
+									contractAmount: String(contractAmount),
+									contractExp: String(contractExp + seasonOffset),
+									draftYear: String(
+										currentSeason + (phase >= PHASE.DRAFT ? 1 : 0),
+									),
+									season: season + seasonOffset,
+									seasonOffset,
+									tid,
+								};
+							});
 
-					selectedRows.clear();
-					setPlayers(players);
-				}}
-			/>
+							selectedRows.clear();
+							setPlayers(players);
+						}}
+					/>
+				</>
+			) : players.length === 0 ? (
+				<ActionButton
+					className="mb-3"
+					disabled={disableButtons}
+					onClick={async () => {
+						setStatus("loadingReal");
+
+						const players2 = await toWorker(
+							"main",
+							"importPlayersGetReal",
+							undefined,
+						);
+
+						const players = players2.map((p) => {
+							// Rookie season, not draft prospect season, when possible
+							const season = (p.ratings[1] ?? p.ratings[0]).season;
+
+							const seasonOffset = currentSeason - season;
+
+							return {
+								p,
+								checked: false,
+								contractAmount: String(p.contract.amount / 1000),
+								contractExp: String(p.contract.exp),
+								draftYear: String(
+									currentSeason + (phase >= PHASE.DRAFT ? 1 : 0),
+								),
+								season: season + seasonOffset,
+								seasonOffset,
+								tid: PLAYER.FREE_AGENT,
+							};
+						});
+
+						selectedRows.clear();
+						setPlayers(players);
+						setLeagueFileVersion(LEAGUE_DATABASE_VERSION);
+						setStatus(undefined);
+					}}
+					processing={status === "loadingReal"}
+					processingText="Loading..."
+					size="lg"
+					variant="primary"
+				>
+					Load real players
+				</ActionButton>
+			) : null}
 
 			{rows.length > 0 ? (
 				<>
@@ -438,6 +474,20 @@ const ImportPlayers = ({
 						alwaysShowBulkSelectRows
 					/>
 
+					<div className="form-check mt-3">
+						<label className="form-check-label">
+							<input
+								className="form-check-input"
+								onChange={() => {
+									setIncludeStats((value) => !value);
+								}}
+								type="checkbox"
+								checked={includeStats}
+							/>
+							Include stats
+						</label>
+					</div>
+
 					<ActionButton
 						className="my-3"
 						disabled={disableButtons || selectedRows.map.size === 0}
@@ -447,7 +497,8 @@ const ImportPlayers = ({
 
 							try {
 								await toWorker("main", "importPlayers", {
-									leagueFile,
+									includeStats,
+									leagueFileVersion,
 									players: players.filter((p, i) => selectedRows.map.has(i)),
 								});
 								setStatus("success");
@@ -462,7 +513,8 @@ const ImportPlayers = ({
 						size="lg"
 						variant="primary"
 					>
-						Import {selectedRows.map.size} players
+						Import {selectedRows.map.size}{" "}
+						{helpers.plural("player", selectedRows.map.size)}
 					</ActionButton>
 
 					{status === "success" ? (
@@ -484,6 +536,15 @@ const ImportPlayers = ({
 			) : null}
 		</>
 	);
+};
+
+const ImportPlayers = (props: View<"importPlayers">) => {
+	useTitleBar({
+		title: "Import Players",
+		dropdownView: "import_players",
+	});
+
+	return <ImportPlayersInner {...props} real={false} />;
 };
 
 export default ImportPlayers;

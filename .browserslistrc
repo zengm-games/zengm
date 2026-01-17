@@ -1,0 +1,6 @@
+# Currently this is just used by lightningcss in buildCss.ts, I think
+
+# Chrome 87 is the last on Mac 10.10
+Chrome >= 85
+Firefox >= 115
+Safari >= 15.4

@@ -153,7 +153,7 @@ const setChampNoPlayoffs = async (conditions: Conditions) => {
 
 	const ordered = await orderTeams(teams, teams);
 
-	const { tid } = ordered[0];
+	const { tid } = ordered[0]!;
 
 	const teamSeason = await idb.cache.teamSeasons.indexGet(
 		"teamSeasonsByTidSeason",
@@ -165,6 +165,7 @@ const setChampNoPlayoffs = async (conditions: Conditions) => {
 
 	teamSeason.playoffRoundsWon = 0;
 	teamSeason.hype += 0.2;
+	teamSeason.hype = helpers.bound(teamSeason.hype, 0, 1);
 
 	logEvent(
 		{
@@ -249,7 +250,7 @@ const doThanosMode = async (conditions: Conditions) => {
 				numPlayers,
 			)}: `;
 			for (let i = 0; i < numPlayers; i++) {
-				const p = userSnappedPlayers[i];
+				const p = userSnappedPlayers[i]!;
 				if (i > 0 && numPlayers === 2) {
 					text += " and ";
 				} else if (i > 0 && i === numPlayers - 1) {
@@ -288,7 +289,7 @@ const doSisyphusMode = async (conditions: Conditions) => {
 	let text = "Sisyphus Mode activated! ";
 	const tids = [g.get("userTid")];
 	if (swappedTid !== undefined) {
-		const teamInfo = g.get("teamInfoCache")[swappedTid];
+		const teamInfo = g.get("teamInfoCache")[swappedTid]!;
 		text += `Your roster has been swapped with the worst team in the league, the ${teamInfo.region} ${teamInfo.name}.`;
 		tids.push(swappedTid);
 	} else {
@@ -323,8 +324,6 @@ const newPhaseBeforeDraft = async (
 		await setChampNoPlayoffs(conditions);
 	}
 
-	await achievement.check("afterPlayoffs", conditions);
-
 	await season.doAwards(conditions);
 	const teams = await idb.getCopies.teamsPlus(
 		{
@@ -354,6 +353,9 @@ const newPhaseBeforeDraft = async (
 			await idb.cache.players.put(p);
 		}
 	}
+
+	// Check here after adding awards, for run_it_back
+	await achievement.check("afterPlayoffs", conditions);
 
 	if (g.get("challengeLoseBestPlayer")) {
 		const tids = g.get("userTids");
@@ -426,27 +428,17 @@ const newPhaseBeforeDraft = async (
 			let update = false;
 
 			if (!repeatSeasonType) {
-				if (player.shouldRetire(p)) {
+				if (await player.shouldRetire(p)) {
 					if (p.tid >= 0) {
 						if (!retiredPlayersByTeam[p.tid]) {
 							retiredPlayersByTeam[p.tid] = [];
 						}
-						retiredPlayersByTeam[p.tid].push(p);
+						retiredPlayersByTeam[p.tid]!.push(p);
 					}
 					await player.retire(p, conditions);
 					update = true;
-				}
-
-				// Update "free agent years" counter and retire players who have been free agents for more than one years
-				if (p.tid === PLAYER.FREE_AGENT) {
-					const age = g.get("season") - p.born.year;
-					if (p.yearsFreeAgent >= 1 && age >= g.get("minRetireAge")) {
-						await player.retire(p, conditions);
-						update = true;
-					} else {
-						p.yearsFreeAgent += 1;
-					}
-
+				} else if (p.tid === PLAYER.FREE_AGENT) {
+					p.yearsFreeAgent += 1;
 					update = true;
 				} else if (p.tid >= 0 && p.yearsFreeAgent > 0) {
 					p.yearsFreeAgent = 0;

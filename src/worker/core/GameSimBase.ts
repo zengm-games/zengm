@@ -1,4 +1,4 @@
-import { PHASE, bySport } from "../../common/index.ts";
+import { PHASE, bySport, isSport } from "../../common/index.ts";
 import { g } from "../util/index.ts";
 
 class GameSimBase {
@@ -87,6 +87,18 @@ class GameSimBase {
 
 			return false;
 		}
+	}
+
+	getOvertimeLength() {
+		if (isSport("baseball")) {
+			throw new Error("Should never happen");
+		}
+
+		const playoffs = g.get("phase") === PHASE.PLAYOFFS;
+		if (playoffs) {
+			return g.get("overtimeLengthPlayoffs") ?? g.get("overtimeLength");
+		}
+		return g.get("overtimeLength");
 	}
 }
 

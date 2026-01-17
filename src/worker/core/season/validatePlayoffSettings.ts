@@ -1,3 +1,4 @@
+import type { ByConf } from "../../../common/types.ts";
 import { getNumPlayoffTeamsRaw } from "./getNumPlayoffTeams.ts";
 
 const validatePlayoffSettings = ({
@@ -11,16 +12,25 @@ const validatePlayoffSettings = ({
 	numPlayoffByes: number;
 	numActiveTeams: number | undefined; // For DefaultNewLeagueSettings where we can know everything but this
 	playIn: boolean;
-	byConf: boolean;
+	byConf: ByConf;
 }) => {
 	if (numPlayoffByes < 0) {
 		throw new Error("Cannot have a negative number of byes");
 	}
 
-	if (numRounds === 2 && numPlayoffByes > 0 && byConf) {
+	// This would be handled by the below check too, but this is a nicer error message for the common case
+	if (numRounds === 2 && numPlayoffByes > 0 && byConf !== false) {
 		throw new Error(
 			"You cannot have any byes in a two round playoff split by conference.",
 		);
+	}
+
+	if (byConf !== false && numPlayoffByes > 0 && numRounds > 0) {
+		// Make sure there are not too many byes
+		const numFirstRoundMatchups = 2 ** (numRounds - 1);
+		if (numPlayoffByes >= numFirstRoundMatchups) {
+			throw new Error("Too many byes for your playoff settings.");
+		}
 	}
 
 	if (numRounds === 1 && numPlayoffByes > 0) {
@@ -31,7 +41,7 @@ const validatePlayoffSettings = ({
 		throw new Error("You cannot have any byes if the playoffs are disabled.");
 	}
 
-	if (numRounds === 1 && playIn && byConf) {
+	if (numRounds === 1 && playIn && byConf !== false) {
 		throw new Error(
 			"You cannot have a play-in tournament if there is only one playoff round and the playoffs are split by conference.",
 		);

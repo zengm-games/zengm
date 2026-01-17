@@ -51,14 +51,14 @@ const updatePlayers = async (
 				hockey: true,
 			})
 		) {
-			stats = PLAYER_STATS_TABLES[inputs.statType].stats;
+			stats = PLAYER_STATS_TABLES[inputs.statType]!.stats;
 		} else {
 			if (inputs.statType === "advanced") {
-				stats = PLAYER_STATS_TABLES.advanced.stats;
+				stats = PLAYER_STATS_TABLES.advanced!.stats;
 			} else if (inputs.statType === "shotLocations") {
-				stats = PLAYER_STATS_TABLES.shotLocations.stats;
+				stats = PLAYER_STATS_TABLES.shotLocations!.stats;
 			} else {
-				stats = PLAYER_STATS_TABLES.regular.stats;
+				stats = PLAYER_STATS_TABLES.regular!.stats;
 				if (inputs.statType === "totals") {
 					statType = "totals";
 				} else if (inputs.statType === "per36") {
@@ -81,7 +81,7 @@ const updatePlayers = async (
 				hockey: true,
 			})
 		) {
-			const statTable = PLAYER_STATS_TABLES[inputs.statType];
+			const statTable = PLAYER_STATS_TABLES[inputs.statType]!;
 			const onlyShowIf = statTable.onlyShowIf;
 			if (onlyShowIf) {
 				players = players.filter((p) => {

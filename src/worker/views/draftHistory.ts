@@ -3,7 +3,39 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { ViewInput } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { maxBy } from "../../common/utils.ts";
+import { groupByUnique, maxBy } from "../../common/utils.ts";
+
+export const getDraftTeamsByTid = async (season: number) => {
+	const teamsByTid = groupByUnique(
+		(
+			await idb.getCopies.teamsPlus({
+				attrs: ["tid"],
+				seasonAttrs: ["abbrev", "imgURL", "imgURLSmall"],
+				season,
+			})
+		).map((t) => {
+			return {
+				...t.seasonAttrs,
+				tid: t.tid,
+			};
+		}),
+		"tid",
+	);
+
+	// Make sure we have all teams, even if missing teamSeason
+	for (const [tid, t] of g.get("teamInfoCache").entries()) {
+		if (!teamsByTid[tid]) {
+			teamsByTid[tid] = {
+				tid,
+				abbrev: t.abbrev,
+				imgURL: t.imgURL,
+				imgURLSmall: t.imgURLSmall,
+			};
+		}
+	}
+
+	return teamsByTid;
+};
 
 const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 	// Update every time because anything could change this (unless all players from class are retired)
@@ -116,6 +148,9 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 				careerStats: p.careerStats,
 			};
 		});
+
+	const teamsByTid = await getDraftTeamsByTid(inputs.season);
+
 	return {
 		challengeNoRatings: g.get("challengeNoRatings"),
 		draftType: g.get("draftType"),
@@ -123,6 +158,7 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 		season: inputs.season,
 		stats,
 		summaryStat,
+		teamsByTid,
 		userTid: g.get("userTid"),
 	};
 };

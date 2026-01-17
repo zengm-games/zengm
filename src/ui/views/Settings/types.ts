@@ -74,7 +74,6 @@ export type Key =
 	| "numPlayersOnCourt"
 	| "numDraftRounds"
 	| "tradeDeadline"
-	| "autoDeleteOldBoxScores"
 	| "difficulty"
 	| "stopOnInjuryGames"
 	| "stopOnInjury"
@@ -161,7 +160,14 @@ export type Key =
 	| "autoRelocateRealign"
 	| "alwaysShowCountry"
 	| "neutralSite"
-	| "rpdPot";
+	| "rpdPot"
+	| "saveOldBoxScores"
+	| "currencyFormat"
+	| "overtimeLength"
+	| "overtimeLengthPlayoffs"
+	| "forceRetireRealPlayers"
+	| "forceHistoricalRosters"
+	| "scrimmageTouchbackKickoff";
 
 export type Category =
 	| "New League"
@@ -184,6 +190,7 @@ export type Category =
 	| "Challenge Modes"
 	| "Game Modes"
 	| "Players"
+	| "Real Players"
 	| "UI";
 
 export type FieldType =

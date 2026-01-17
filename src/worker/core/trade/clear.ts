@@ -12,9 +12,7 @@ const clear = async (
 	const tr = await idb.cache.trade.get(0);
 
 	if (tr) {
-		for (let i = 0; i < tr.teams.length; i++) {
-			const t = tr.teams[i];
-
+		for (const [i, t] of tr.teams.entries()) {
 			const clearPlayers =
 				type === "all" ||
 				(type === "user" && i === 0) ||

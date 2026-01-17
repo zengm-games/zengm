@@ -42,7 +42,7 @@ export const wrappedContractAmount = (p: ContractPlayer, override?: number) => {
 
 	return {
 		value: <ContractAmount p={p} override={override} />,
-		sortValue: formatted,
+		sortValue: p.contract.amount,
 		searchValue: formatted,
 	};
 };
@@ -112,7 +112,7 @@ export const wrappedContract = (p: ContractPlayer) => {
 
 	return {
 		value: <Contract p={p} />,
-		sortValue: formattedAmount,
+		sortValue: p.contract.amount,
 		searchValue: formatted,
 	};
 };

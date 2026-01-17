@@ -72,8 +72,6 @@ const Notification = ({
 	);
 };
 
-const transition = { duration: 0.2, type: "tween" };
-
 // Listen for notifications sent before Notifications component is mounted
 const initialNotifications: Message[] = [];
 const unbind = emitter.on("notification", (notification) => {
@@ -192,7 +190,7 @@ const Notifications = () => {
 							initial={{ opacity: 0, y: 100 }}
 							animate={{ opacity: 1, y: 0 }}
 							exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
-							transition={transition}
+							transition={{ duration: 0.2, type: "tween" }}
 						>
 							<Notification
 								{...notification}

@@ -1,39 +1,74 @@
-//import babel from "vite-plugin-babel";
-import { configDefaults, defineConfig } from "vitest/config"; // eslint-disable-line import/no-unresolved
+import {
+	configDefaults,
+	defineConfig,
+	type TestProjectInlineConfiguration,
+} from "vitest/config";
+import { pluginSportFunctions } from "./tools/lib/rolldownConfig.ts";
+//import { playwright } from "@vitest/browser-playwright";
+//import { playwright } from "@vitest/browser-playwright";
+import type { Sport } from "./tools/lib/getSport.ts";
+import type { ProjectConfig } from "vitest/node";
+import { playwright } from "@vitest/browser-playwright";
 
 const footballTests = ["**/*.football/*.test.ts", "**/*.football.test.ts"];
 
+export const getCommon = (
+	sport: Sport,
+	environment: "node" | "browser",
+	projectConfig: ProjectConfig,
+): TestProjectInlineConfiguration => {
+	return {
+		define: {
+			"process.env.NODE_ENV": JSON.stringify("test"),
+			"process.env.SPORT": JSON.stringify(sport),
+		},
+		plugins: [
+			// @ts-expect-error
+			pluginSportFunctions("production", sport),
+		],
+
+		test: {
+			...projectConfig,
+			setupFiles:
+				environment === "node"
+					? ["./src/test/setup.ts", "./src/worker/index.ts"]
+					: ["./src/test/setup-e2e.ts"],
+		},
+	};
+};
+
 export default defineConfig({
-	// This can be used with vite-plugin-babel for babel-plugin-sport-functions, but it's not necessary and it slows the tests down
-	/*plugins: [
-		babel({
-			filter: /\.[cjt]sx?$/,
-		}),
-	],*/
 	test: {
-		isolate: false,
-		setupFiles: ["./src/test/setup.ts", "./src/worker/index.ts"],
-		workspace: [
+		projects: [
 			{
-				extends: true,
-				test: {
+				...getCommon("basketball", "node", {
 					name: "basketball",
-					env: {
-						SPORT: "basketball",
-					},
 					include: ["**/*.test.ts"],
 					exclude: [...configDefaults.exclude, ...footballTests],
-				},
+				}),
 			},
 			{
-				extends: true,
-				test: {
+				...getCommon("football", "node", {
 					name: "football",
-					env: {
-						SPORT: "football",
-					},
 					include: footballTests,
-				},
+				}),
+			},
+			{
+				...getCommon("basketball", "browser", {
+					name: "browser",
+					include: ["**/*.test.browser.ts"],
+					browser: {
+						enabled: true,
+						headless: true,
+						provider: playwright(),
+						instances: [
+							{ browser: "chromium" },
+							{ browser: "firefox" },
+							{ browser: "webkit" },
+						],
+						screenshotFailures: false,
+					},
+				}),
 			},
 		],
 	},

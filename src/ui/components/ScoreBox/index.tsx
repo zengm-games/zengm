@@ -5,7 +5,7 @@ import {
 	isSport,
 	PHASE,
 } from "../../../common/index.ts";
-import { getCols, helpers, useLocalPartial } from "../../util/index.ts";
+import { getCol, helpers, useLocalPartial } from "../../util/index.ts";
 import React, { memo, type ReactNode } from "react";
 import TeamLogoInline from "../TeamLogoInline.tsx";
 import defaultGameAttributes from "../../../common/defaultGameAttributes.ts";
@@ -89,7 +89,7 @@ const ScoreBox = memo(
 			numPeriods?: number;
 			overtimes?: number;
 		};
-		playersUpcoming?: any[];
+		playersUpcoming?: [any, any];
 		playersUpcomingAbbrev?: boolean;
 		small?: boolean;
 	}) => {
@@ -265,7 +265,7 @@ const ScoreBox = memo(
 						))
 					) : (
 						[1, 0].map((i) => {
-							const t = game.teams[i];
+							const t = game.teams[i]!;
 							let scoreClass;
 							let scoreClassForceWin;
 							if (winner !== undefined) {
@@ -333,7 +333,7 @@ const ScoreBox = memo(
 										) : null}
 										{!challengeNoRatings ? `${p.ratings.ovr} ovr` : null}
 										{bySport({
-											baseball: `${!challengeNoRatings ? ", " : ""}${
+											baseball: `${!challengeNoRatings && p.stats.keyStatsShort ? ", " : ""}${
 												p.stats.keyStatsShort
 											}`,
 											basketball: `${
@@ -342,7 +342,7 @@ const ScoreBox = memo(
 												1,
 											)} / ${p.stats.ast.toFixed(1)}`,
 											football: null,
-											hockey: `${!challengeNoRatings ? ", " : ""}${
+											hockey: `${!challengeNoRatings && p.stats.keyStats ? ", " : ""}${
 												p.stats.keyStats
 											}`,
 										})}
@@ -353,7 +353,7 @@ const ScoreBox = memo(
 								if (best) {
 									p = best.p;
 									playerStatText = best.statTexts.map((stat, i) => {
-										const col = getCols([`stat:${stat}`])[0];
+										const col = getCol(`stat:${stat}`);
 
 										let title = col.title;
 										// Add back in prefix for some football ones

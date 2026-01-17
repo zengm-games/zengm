@@ -2,6 +2,7 @@ import { assert, beforeAll, describe, test } from "vitest";
 import testHelpers from "../../../test/helpers.ts";
 import { g } from "../../util/index.ts";
 
+// League creation is always streaming to the database now, so would need to do some extra work to gather the output for these tests, but these tests aren't very useful to begin with
 describe.skip("worker/core/league/create", () => {
 	let leagueData: any;
 	beforeAll(async () => {
@@ -52,7 +53,7 @@ describe.skip("worker/core/league/create", () => {
 		assert.strictEqual(leagueData.teams.length, g.get("numActiveTeams"));
 		assert.strictEqual(leagueData.teams.length, g.get("numTeams"));
 
-		for (let i = 0; i < 2; i++) {
+		for (const i of [0, 1] as const) {
 			assert.strictEqual(testHelpers.numInArrayEqualTo(cids, i), 15);
 		}
 

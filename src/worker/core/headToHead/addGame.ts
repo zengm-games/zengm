@@ -32,7 +32,7 @@ const addGame = async ({
 	};
 
 	const minTid = Math.min(...tids);
-	const i = tids.indexOf(minTid);
+	const i = tids.indexOf(minTid) as 0 | 1;
 	const j = i === 0 ? 1 : 0;
 	const t0 = tids[i];
 	const t1 = tids[j];

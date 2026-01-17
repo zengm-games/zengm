@@ -1,22 +1,27 @@
 import { idb } from "../db/index.ts";
 import { g, helpers, orderTeams } from "../util/index.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts";
+import type { ByConf, UpdateEvents, ViewInput } from "../../common/types.ts";
 import { getTiebreakers } from "../util/orderTeams.ts";
 import { season } from "../core/index.ts";
 
 export const getMaxPlayoffSeed = async (
 	playoffSeason: number,
-	playoffsByConf: boolean,
+	playoffsByConf: ByConf,
 ) => {
 	const { numPlayoffTeams, numPlayInTeams } =
 		await season.getNumPlayoffTeams(playoffSeason);
 	const numTotalPlayoffs = numPlayoffTeams + numPlayInTeams;
 
-	const maxPlayoffSeed = playoffsByConf
-		? numTotalPlayoffs / 2
-		: numTotalPlayoffs;
+	const maxPlayoffSeed =
+		playoffsByConf !== false
+			? numTotalPlayoffs / playoffsByConf
+			: numTotalPlayoffs;
 	const maxPlayoffSeedNoPlayIn =
-		maxPlayoffSeed - 2 * (playoffsByConf ? numPlayInTeams / 2 : numPlayInTeams);
+		maxPlayoffSeed -
+		2 *
+			(playoffsByConf !== false
+				? numPlayInTeams / playoffsByConf
+				: numPlayInTeams);
 
 	return {
 		maxPlayoffSeed,
@@ -37,9 +42,12 @@ const updateStandings = async (
 	) {
 		const confs = g.get("confs", inputs.season);
 		const divs = g.get("divs", inputs.season);
-		const numPlayoffByes = g.get("numPlayoffByes", inputs.season);
 
 		const playoffsByConf = await season.getPlayoffsByConf(inputs.season);
+		const numPlayoffByes = season.getNumPlayoffByes({
+			numPlayoffByes: g.get("numPlayoffByes", inputs.season),
+			byConf: playoffsByConf,
+		});
 
 		const { maxPlayoffSeed, maxPlayoffSeedNoPlayIn } = await getMaxPlayoffSeed(
 			inputs.season,
@@ -138,11 +146,10 @@ const updateStandings = async (
 
 		for (const type of helpers.keys(rankingGroups)) {
 			for (const group of rankingGroups[type]) {
-				for (let i = 0; i < group.length; i++) {
-					const t = group[i];
+				for (const [i, t] of group.entries()) {
 					if (!usePts) {
 						t.gb[type] =
-							i === 0 ? 0 : helpers.gb(group[0].seasonAttrs, t.seasonAttrs);
+							i === 0 ? 0 : helpers.gb(group[0]!.seasonAttrs, t.seasonAttrs);
 					}
 					t.rank[type] = i + 1;
 				}
@@ -187,7 +194,7 @@ const updateStandings = async (
 		const playIn =
 			inputs.season === g.get("season")
 				? g.get("playIn")
-				: rankingGroups.league[0].some(
+				: rankingGroups.league[0]!.some(
 						(t) => t.seasonAttrs.clinchedPlayoffs === "w",
 					);
 

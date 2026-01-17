@@ -63,7 +63,7 @@ const GmHistory = ({
 					{teamHistories.map((teamHistory, i) => (
 						<HideableSection
 							key={i}
-							title={teamHistory.history[0].name ?? ""}
+							title={teamHistory.history[0]!.name ?? ""}
 							titleExtraKey={i}
 							className={showOverall ? "mt-3" : undefined}
 						>

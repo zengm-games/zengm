@@ -55,7 +55,6 @@ const updateLeadersProgressive = async (
 	// Respond to watchList in case players are listed twice in different categories
 	if (
 		updateEvents.includes("firstRun") ||
-		updateEvents.includes("watchList") ||
 		inputs.stat !== state.stat ||
 		inputs.playoffs !== state.playoffs ||
 		inputs.statType !== state.statType
@@ -65,7 +64,7 @@ const updateLeadersProgressive = async (
 
 		const { categories, stats } = getCategoriesAndStats(inputs.stat);
 
-		const cat = categories[0];
+		const cat = categories[0]!;
 
 		const seasons = range(g.get("startingSeason"), g.get("season") + 1);
 
@@ -128,6 +127,7 @@ const updateLeadersProgressive = async (
 				combined: inputs.playoffs === "combined",
 				mergeStats: "totOnly" as const,
 				statType: inputs.statType,
+				disableAbbrevsCacheDatabaseAccess: true,
 			};
 
 			{
@@ -138,6 +138,11 @@ const updateLeadersProgressive = async (
 				});
 				if (p) {
 					const value = p.stats[cat.stat];
+					if (value === undefined) {
+						// value should only be undefined in historical data before certain stats were tracked
+						return;
+					}
+
 					const lastValue = current.yearByYear?.stat;
 					if (
 						lastValue === undefined ||
@@ -254,16 +259,16 @@ const updateLeadersProgressive = async (
 
 						const startIndex = allLeaders.indexOf(current);
 						for (let i = startIndex; i < allLeaders.length; i++) {
-							const lastValue = allLeaders[i].career?.stat;
+							const lastValue = allLeaders[i]!.career?.stat;
 							if (
 								lastValue === undefined ||
 								(cat.sortAscending && value < lastValue) ||
 								(!cat.sortAscending && value > lastValue)
 							) {
-								allLeaders[i].career = leader;
+								allLeaders[i]!.career = leader;
 							}
 
-							if (allLeaders[i].season === maxSeasonCareer) {
+							if (allLeaders[i]!.season === maxSeasonCareer) {
 								break;
 							}
 						}
@@ -291,7 +296,7 @@ const updateLeadersProgressive = async (
 		allLeaders = allLeaders.filter((row) => row.yearByYear);
 		leadersProgressiveAddFirstNameShort(allLeaders);
 
-		const yearByYearCounts: Record<number, number | undefined> = {};
+		const yearByYearCounts: Record<number, number> = {};
 		for (const row of allLeaders) {
 			if (!row.yearByYear) {
 				continue;

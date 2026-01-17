@@ -36,15 +36,15 @@ test("schedule 8 home games and 8 away games for each team", () => {
 
 	const home: Record<number, number> = {}; // Number of home games for each team
 	const away: Record<number, number> = {}; // Number of away games for each team
-	for (let i = 0; i < tids.length; i++) {
-		if (home[tids[i][0]] === undefined) {
-			home[tids[i][0]] = 0;
+	for (const matchup of tids) {
+		if (home[matchup[0]] === undefined) {
+			home[matchup[0]] = 0;
 		}
-		if (away[tids[i][1]] === undefined) {
-			away[tids[i][1]] = 0;
+		if (away[matchup[1]] === undefined) {
+			away[matchup[1]] = 0;
 		}
-		home[tids[i][0]] += 1;
-		away[tids[i][1]] += 1;
+		home[matchup[0]]! += 1;
+		away[matchup[1]]! += 1;
 	}
 
 	assert.strictEqual(Object.keys(home).length, defaultTeams.length);
@@ -63,30 +63,30 @@ test("schedule each team two home games against every team in the same division"
 	// Each element in this object is an object representing the number of home games against each other team (only the ones in the same division will be populated)
 	const home: Record<number, Record<number, number>> = {};
 
-	for (let i = 0; i < tids.length; i++) {
-		const t0 = defaultTeams.find((t) => t.tid === tids[i][0]);
-		const t1 = defaultTeams.find((t) => t.tid === tids[i][1]);
+	for (const matchup of tids) {
+		const t0 = defaultTeams.find((t) => t.tid === matchup[0]);
+		const t1 = defaultTeams.find((t) => t.tid === matchup[1]);
 		if (!t0 || !t1) {
-			console.log(tids[i]);
+			console.log(matchup);
 			throw new Error("Team not found");
 		}
 		if (t0.seasonAttrs.did === t1.seasonAttrs.did) {
-			if (home[tids[i][1]] === undefined) {
-				home[tids[i][1]] = {};
+			if (home[matchup[1]] === undefined) {
+				home[matchup[1]] = {};
 			}
-			if (home[tids[i][1]][tids[i][0]] === undefined) {
-				home[tids[i][1]][tids[i][0]] = 0;
+			if (home[matchup[1]]![matchup[0]] === undefined) {
+				home[matchup[1]]![matchup[0]] = 0;
 			}
-			home[tids[i][1]][tids[i][0]] += 1;
+			home[matchup[1]]![matchup[0]]! += 1;
 		}
 	}
 
 	assert.strictEqual(Object.keys(home).length, defaultTeams.length);
 
 	for (const { tid } of defaultTeams) {
-		assert.strictEqual(Object.values(home[tid]).length, 3);
+		assert.strictEqual(Object.values(home[tid]!).length, 3);
 		assert.strictEqual(
-			testHelpers.numInArrayEqualTo(Object.values(home[tid]), 1),
+			testHelpers.numInArrayEqualTo(Object.values(home[tid]!), 1),
 			3,
 		);
 	}

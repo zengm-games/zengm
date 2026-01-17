@@ -2,7 +2,7 @@ import g from "./g.ts";
 import getProcessedGames from "./getProcessedGames.ts";
 import toUI from "./toUI.ts";
 import type { LocalStateUI } from "../../common/types.ts";
-import { getUpcoming } from "../views/schedule.ts";
+import { getOneUpcomingGame } from "./recomputeLocalUITeamOvrs.ts";
 
 const initUILocalGames = async () => {
 	const userTid = g.get("userTid");
@@ -38,25 +38,10 @@ const initUILocalGames = async () => {
 	}));
 	games.reverse();
 
-	// Add upcoming games
-	const upcoming = await getUpcoming({ tid: userTid });
-	for (const game of upcoming) {
-		games.push({
-			finals: game.finals,
-			gid: game.gid,
-			teams: [
-				{
-					ovr: game.teams[0].ovr,
-					tid: game.teams[0].tid,
-					playoffs: game.teams[0].playoffs,
-				},
-				{
-					ovr: game.teams[1].ovr,
-					tid: game.teams[1].tid,
-					playoffs: game.teams[1].playoffs,
-				},
-			],
-		});
+	// Add one upcoming game - that's all that's ever shown in the UI
+	const upcomingGame = await getOneUpcomingGame();
+	if (upcomingGame) {
+		games.push(upcomingGame);
 	}
 
 	await toUI("updateLocal", [

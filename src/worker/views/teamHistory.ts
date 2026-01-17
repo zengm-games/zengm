@@ -33,7 +33,7 @@ export const getHistoryTeam = (
 		otl?: number;
 		playoffRoundsWon: number;
 		numPlayoffRounds: number;
-		playoffsByConf: boolean;
+		roundsWonText: string;
 		name?: string;
 		tid: number;
 		abbrev: string;
@@ -62,7 +62,11 @@ export const getHistoryTeam = (
 			tied: teamSeason.tied,
 			otl: teamSeason.otl,
 			playoffRoundsWon: teamSeason.playoffRoundsWon,
-			playoffsByConf: playoffsByConfBySeason.get(teamSeason.season),
+			roundsWonText: helpers.roundsWonText({
+				playoffRoundsWon: teamSeason.playoffRoundsWon,
+				numPlayoffRounds,
+				playoffsByConf: playoffsByConfBySeason.get(teamSeason.season),
+			}),
 			numPlayoffRounds,
 			name:
 				teamSeason.region && teamSeason.name
@@ -70,7 +74,7 @@ export const getHistoryTeam = (
 					: undefined,
 			tid: teamSeason.tid,
 			abbrev:
-				teamSeason.abbrev || g.get("teamInfoCache")[teamSeason.tid]?.abbrev,
+				teamSeason.abbrev || g.get("teamInfoCache")[teamSeason.tid]!.abbrev,
 			note: teamSeason.note,
 		});
 		totalWon += teamSeason.won;
@@ -243,7 +247,7 @@ const updateTeamHistory = async (
 		);
 
 		const retiredJerseyNumbers = await Promise.all(
-			(t.retiredJerseyNumbers || []).map(async (row) => {
+			(t.retiredJerseyNumbers ?? []).map(async (row) => {
 				const ts = teamSeasons.find((ts) => ts.season === row.seasonTeamInfo);
 				const teamInfo = {
 					colors: ts ? ts.colors : t.colors,
@@ -302,7 +306,7 @@ const updateTeamHistory = async (
 					!playoffs &&
 					gp > 0 &&
 					jerseyNumber !== undefined &&
-					(!retiredByPid[p.pid] || !retiredByPid[p.pid].has(jerseyNumber))
+					!retiredByPid[p.pid]?.has(jerseyNumber)
 				) {
 					if (!retirableJerseyNumbers[jerseyNumber]) {
 						retirableJerseyNumbers[jerseyNumber] = [];

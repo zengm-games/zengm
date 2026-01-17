@@ -1,129 +1,209 @@
-import {
-	useState,
-	type ChangeEvent,
-	type FormEvent,
-	type MouseEvent,
-} from "react";
+import { useReducer, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, logEvent, toWorker } from "../util/index.ts";
-import type { View } from "../../common/types.ts";
-import { PHASE } from "../../common/index.ts";
+import { helpers, logEvent, toWorker, useLocalPartial } from "../util/index.ts";
+import type { Conf, Div, NonEmptyArray, View } from "../../common/types.ts";
+import {
+	DEFAULT_JERSEY,
+	DEFAULT_STADIUM_CAPACITY,
+	DEFAULT_TEAM_COLORS,
+	PHASE,
+} from "../../common/index.ts";
+import {
+	Conferences,
+	getAbbrevsUsedMultipleTimes,
+	makeReducer,
+} from "./NewLeague/CustomizeTeams.tsx";
+import StickyBottomButtons from "../components/StickyBottomButtons.tsx";
+import type { NewLeagueTeamWithoutRank } from "./NewLeague/types.ts";
+import { Modal } from "react-bootstrap";
+import TeamForm from "./ManageTeams/TeamForm.tsx";
+import {
+	nextSeasonWarning,
+	PHASES_WHERE_TEAMS_CAN_BE_DISABLED,
+} from "./ManageTeams/index.tsx";
+import { useBlocker } from "../hooks/useBlocker.ts";
 
-const nextSeasonWarning =
-	"Because the regular season is already over, changes will not be fully applied until next season.";
-
-const ManageTeams = ({
-	autoRelocate,
+const EditTeamModal = ({
+	t,
 	confs,
 	divs,
-	phase,
+	onCancel,
+	onSave,
+}: {
+	t: NewLeagueTeamWithoutRank | undefined;
+	confs: NonEmptyArray<Conf>;
+	divs: NonEmptyArray<Div>;
+	onCancel: () => void;
+	onSave: (t: NewLeagueTeamWithoutRank) => void;
+}) => {
+	const { godMode, phase } = useLocalPartial(["godMode", "phase"]);
+
+	const [controlledTeam, setControlledTeam] = useState<
+		| {
+				tid: number;
+				region: string;
+				name: string;
+				abbrev: string;
+				pop: string;
+				stadiumCapacity: string;
+				colors: [string, string, string];
+				jersey: string;
+				did: string;
+				imgURL: string;
+				imgURLSmall: string;
+		  }
+		| undefined
+	>();
+
+	if (t && (!controlledTeam || controlledTeam.tid !== t.tid)) {
+		setControlledTeam({
+			...t,
+			pop: String(t.pop),
+			stadiumCapacity: String(t.stadiumCapacity),
+			colors: t.colors ?? DEFAULT_TEAM_COLORS,
+			jersey: t.jersey ?? DEFAULT_JERSEY,
+			did: String(t.did),
+			imgURL: t.imgURL ?? "",
+			imgURLSmall: t.imgURLSmall ?? "",
+		});
+	}
+
+	// See comments in ColorPicker explaining why this is needed
+	const enforceFocus = false;
+
+	if (!controlledTeam || !t) {
+		return null;
+	}
+
+	const disableStatus =
+		!godMode || !PHASES_WHERE_TEAMS_CAN_BE_DISABLED.includes(phase);
+
+	const save = () => {
+		const did = Number.parseInt(controlledTeam.did);
+		const div = divs.find((div) => div.did === did);
+		if (!div) {
+			throw new Error("Invalid div");
+		}
+
+		onSave({
+			tid: controlledTeam.tid,
+			region: controlledTeam.region,
+			name: controlledTeam.name,
+			abbrev: controlledTeam.abbrev,
+			pop: helpers.localeParseFloat(controlledTeam.pop),
+			stadiumCapacity: Number.parseInt(controlledTeam.stadiumCapacity),
+			colors: controlledTeam.colors,
+			jersey: controlledTeam.jersey,
+			did,
+			cid: div.cid,
+			imgURL: controlledTeam.imgURL,
+			imgURLSmall:
+				controlledTeam.imgURLSmall === ""
+					? undefined
+					: controlledTeam.imgURLSmall,
+		});
+	};
+
+	return (
+		<Modal size="lg" show={!!t} onHide={onCancel} enforceFocus={enforceFocus}>
+			<Modal.Header closeButton>
+				<Modal.Title>Edit team</Modal.Title>
+			</Modal.Header>
+			<Modal.Body>
+				<form
+					onSubmit={(event) => {
+						event.preventDefault();
+						save();
+					}}
+				>
+					<div className="row">
+						<TeamForm
+							classNamesCol={[
+								"col-6",
+								"col-6",
+								"col-6",
+								"col-6",
+								"col-6",
+								"col-6",
+								"col-6",
+								"col-6",
+								"col-6",
+								"col-6",
+								"d-none",
+							]}
+							confs={confs}
+							divs={divs}
+							handleInputChange={(field, event) => {
+								if (field.startsWith("colors")) {
+									const ind = Number.parseInt(field.replace("colors", ""));
+									if (ind >= 0 && ind <= 2) {
+										const colors = [...controlledTeam.colors] as [
+											string,
+											string,
+											string,
+										];
+										colors[ind] = event.target.value;
+										setControlledTeam({
+											...controlledTeam,
+											colors,
+										});
+									}
+								} else {
+									setControlledTeam({
+										...controlledTeam,
+										[field]: event.target.value,
+									});
+								}
+							}}
+							disablePop={!godMode}
+							disableStatus={disableStatus}
+							disableStadiumCapacity={!godMode}
+							t={controlledTeam}
+						/>
+					</div>
+					<button className="d-none" type="submit" />
+				</form>
+			</Modal.Body>
+			<Modal.Footer>
+				<button className="btn btn-secondary" onClick={onCancel}>
+					Cancel
+				</button>
+				<button
+					className="btn btn-primary"
+					onClick={save}
+					disabled={!controlledTeam}
+				>
+					Save team
+				</button>
+			</Modal.Footer>
+		</Modal>
+	);
+};
+
+const ManageConfs = ({
+	actualPhase,
+	autoRelocate,
+	initialConfs,
+	initialDivs,
+	initialTeams,
 }: View<"manageConfs">) => {
-	const [liveConfs, setLiveConfs] = useState(confs);
-	const [liveDivs, setLiveDivs] = useState(divs);
+	const { setDirty } = useBlocker();
+
+	const [{ confs, divs, teams }, dispatch] = useReducer(
+		makeReducer(false, setDirty),
+		{
+			confs: [...initialConfs],
+			divs: [...initialDivs],
+			teams: [...initialTeams],
+		},
+	);
 	const [saving, setSaving] = useState(false);
 
+	const [editTeam, setEditTeam] = useState<
+		NewLeagueTeamWithoutRank | undefined
+	>();
+
 	useTitleBar({ title: "Manage Conferences" });
-
-	const updateConfName =
-		(cid: number) => (event: ChangeEvent<HTMLInputElement>) => {
-			const newConfs = [...liveConfs];
-			const conf = newConfs.find((c) => c.cid === cid);
-			if (conf) {
-				conf.name = event.target.value;
-				setLiveConfs(newConfs);
-			}
-		};
-
-	const updateDivName =
-		(did: number) => (event: ChangeEvent<HTMLInputElement>) => {
-			const newDivs = [...liveDivs];
-			const div = newDivs.find((d) => d.did === did);
-			if (div) {
-				div.name = event.target.value;
-				setLiveDivs(newDivs);
-			}
-		};
-
-	const deleteConf = (cid: number) => () => {
-		setLiveConfs(liveConfs.filter((conf) => conf.cid !== cid));
-		setLiveDivs(liveDivs.filter((div) => div.cid !== cid));
-	};
-
-	const deleteDiv = (did: number) => () => {
-		setLiveDivs(liveDivs.filter((div) => div.did !== did));
-	};
-
-	const addConf = (event: MouseEvent) => {
-		event.preventDefault();
-
-		let newCid = 0;
-		for (const conf of liveConfs) {
-			if (conf.cid >= newCid) {
-				newCid = conf.cid + 1;
-			}
-		}
-
-		setLiveConfs([
-			...liveConfs,
-			{
-				cid: newCid,
-				name: "New Conference",
-			},
-		]);
-	};
-
-	const addDiv = (cid: number) => (event: MouseEvent) => {
-		event.preventDefault();
-
-		let newDid = 0;
-		for (const div of liveDivs) {
-			if (div.did >= newDid) {
-				newDid = div.did + 1;
-			}
-		}
-
-		setLiveDivs([
-			...liveDivs,
-			{
-				cid,
-				did: newDid,
-				name: "New Division",
-			},
-		]);
-	};
-
-	const handleSubmit = async (event: FormEvent) => {
-		event.preventDefault();
-		setSaving(true);
-
-		await toWorker("main", "updateConfsDivs", {
-			confs: liveConfs,
-			divs: liveDivs,
-		});
-
-		let text = "Saved conferences and divisions.";
-
-		if (phase >= PHASE.PLAYOFFS) {
-			text += `<br /><br />${nextSeasonWarning}`;
-		}
-
-		logEvent({
-			type: "success",
-			text,
-			saveToDb: false,
-		});
-
-		setSaving(false);
-	};
-
-	if (phase < 0) {
-		return (
-			<p>
-				Wait until after your fantasy or expansion draft to edit conferences and
-				divisions.
-			</p>
-		);
-	}
 
 	if (autoRelocate) {
 		return (
@@ -135,122 +215,106 @@ const ManageTeams = ({
 		);
 	}
 
+	const abbrevsUsedMultipleTimes = getAbbrevsUsedMultipleTimes(teams);
+
 	return (
 		<>
-			<p>
-				If you delete a conference, all divisions in that conference will be
-				deleted too.
-			</p>
-			<p>
-				If you delete a division, all teams belonging to that division will be
-				assigned to some other division. You can reassign them on the{" "}
-				<a href={helpers.leagueUrl(["manage_teams"])}>manage teams page</a>.
-			</p>
-
-			{phase >= PHASE.PLAYOFFS ? (
+			{actualPhase >= PHASE.PLAYOFFS ? (
 				<p className="alert alert-warning d-inline-block">
 					{nextSeasonWarning}
 				</p>
 			) : null}
 
-			<form onSubmit={handleSubmit}>
-				<div className="row">
-					{liveConfs.map((conf) => {
-						return (
-							<div key={conf.cid} className="col-xl-3 col-lg-4 col-md-6 mb-3">
-								<div className="card">
-									<div className="card-body">
-										<div className="d-flex align-items-end mb-3">
-											<div className="flex-grow-1">
-												<label
-													className="form-label"
-													htmlFor={`conf-name-${conf.cid}`}
-												>
-													Conference Name
-												</label>
-												<input
-													className="form-control"
-													id={`conf-name-${conf.cid}`}
-													value={conf.name}
-													onChange={updateConfName(conf.cid)}
-												/>
-											</div>
-											<button
-												className="btn btn-danger ms-3"
-												onClick={deleteConf(conf.cid)}
-												type="button"
-											>
-												Delete
-											</button>
-										</div>
-										{liveDivs
-											.filter((div) => div.cid === conf.cid)
-											.map((div) => (
-												<div
-													key={div.did}
-													className="d-flex align-items-end mb-3 ms-4"
-												>
-													<div className="flex-grow-1">
-														<label
-															className="form-label"
-															htmlFor={`div-name-${div.did}`}
-														>
-															Division Name
-														</label>
-														<input
-															className="form-control"
-															id={`div-name-${div.did}`}
-															value={div.name}
-															onChange={updateDivName(div.did)}
-														/>
-													</div>
-													<button
-														className="btn btn-danger ms-3"
-														onClick={deleteDiv(div.did)}
-														type="button"
-													>
-														Delete
-													</button>
-												</div>
-											))}
-										<button
-											className="btn btn-secondary ms-4"
-											onClick={addDiv(conf.cid)}
-											type="button"
-										>
-											Add Division
-										</button>
-									</div>
-								</div>
-							</div>
-						);
-					})}
-					<div className="col-xl-3 col-lg-4 col-md-6 mb-3">
-						<div className="card">
-							<div className="card-body">
-								<button
-									className="btn btn-secondary"
-									onClick={addConf}
-									type="button"
-								>
-									Add Conference
-								</button>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div className="text-center">
+			<Conferences
+				confs={confs}
+				divs={divs}
+				teams={teams}
+				dispatch={dispatch}
+				allowDeleteTeams={false}
+				addTeam={undefined}
+				editTeam={(tid) => {
+					setEditTeam(teams.find((t) => t.tid === tid));
+				}}
+				abbrevsUsedMultipleTimes={abbrevsUsedMultipleTimes}
+			/>
+
+			<StickyBottomButtons>
+				<form
+					className="btn-group ms-auto"
+					onSubmit={async (event) => {
+						event.preventDefault();
+
+						if (abbrevsUsedMultipleTimes.length > 0) {
+							logEvent({
+								type: "error",
+								text: `You cannot use the same abbrev for multiple teams: ${abbrevsUsedMultipleTimes.join(
+									", ",
+								)}`,
+								saveToDb: false,
+							});
+							return;
+						}
+
+						setSaving(true);
+
+						await toWorker("main", "updateConfsDivs", {
+							confs,
+							divs,
+							teams: teams.map((t) => {
+								return {
+									...t,
+
+									// I don't think this is necessary, but it's complicated getting the types right!
+									colors: t.colors ?? DEFAULT_TEAM_COLORS,
+									jersey: t.jersey ?? DEFAULT_JERSEY,
+									stadiumCapacity:
+										t.stadiumCapacity ?? DEFAULT_STADIUM_CAPACITY,
+								};
+							}),
+						});
+
+						let text = "Saved conferences and divisions.";
+
+						if (actualPhase >= PHASE.PLAYOFFS) {
+							text += `<br /><br />${nextSeasonWarning}`;
+						}
+
+						logEvent({
+							type: "success",
+							text,
+							saveToDb: false,
+						});
+
+						setDirty(false);
+						setSaving(false);
+					}}
+				>
 					<button
+						className="btn btn-primary me-2"
 						type="submit"
-						className="btn btn-primary"
-						disabled={saving || liveConfs.length === 0 || liveDivs.length === 0}
+						disabled={saving || confs.length === 0 || divs.length === 0}
 					>
-						Save Conferences and Divisions
+						Save conferences
 					</button>
-				</div>
-			</form>
+				</form>
+			</StickyBottomButtons>
+
+			<EditTeamModal
+				key={editTeam?.tid}
+				t={editTeam}
+				// Can never actually get down to 0 confs/divs through ManageConfs, but the reducer function is shared with CustomizeTeams where you can!
+				confs={confs as NonEmptyArray<Conf>}
+				divs={divs as NonEmptyArray<Div>}
+				onSave={(t) => {
+					dispatch({ type: "editTeam", t });
+					setEditTeam(undefined);
+				}}
+				onCancel={() => {
+					setEditTeam(undefined);
+				}}
+			/>
 		</>
 	);
 };
 
-export default ManageTeams;
+export default ManageConfs;

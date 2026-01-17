@@ -1,6 +1,7 @@
 import { PHASE } from "../../../common/index.ts";
 import type { PlayerInjury } from "../../../common/types.ts";
 import { defaultGameAttributes } from "../../util/index.ts";
+import { FREE_AGENCY_DAYS } from "../phase/newPhaseResignPlayers.ts";
 import type { Basketball } from "./loadData.basketball.ts";
 
 const getGamesToHeal = ({
@@ -20,21 +21,18 @@ const getGamesToHeal = ({
 
 	let passedRegularSeason;
 	let passedPlayoffs;
-	let passedAfterPlayoffs;
 	let passedFreeAgency;
 
 	if (season === row.season) {
 		passedRegularSeason =
-			row.phase <= PHASE.REGULAR_SEASON && phase > PHASE.REGULAR_SEASON;
+			row.phase <= PHASE.AFTER_TRADE_DEADLINE &&
+			phase > PHASE.AFTER_TRADE_DEADLINE;
 		passedPlayoffs = row.phase <= PHASE.PLAYOFFS && phase > PHASE.PLAYOFFS;
-		passedAfterPlayoffs =
-			row.phase <= PHASE.DRAFT_LOTTERY && phase > PHASE.DRAFT_LOTTERY;
 		passedFreeAgency =
 			row.phase <= PHASE.FREE_AGENCY && phase > PHASE.FREE_AGENCY;
-	} else if (season === row.season + 1 && phase <= PHASE.PLAYOFFS) {
-		passedRegularSeason = row.phase <= PHASE.REGULAR_SEASON;
+	} else if (season === row.season + 1 && phase <= PHASE.FREE_AGENCY) {
+		passedRegularSeason = row.phase <= PHASE.AFTER_TRADE_DEADLINE;
 		passedPlayoffs = row.phase <= PHASE.PLAYOFFS;
-		passedAfterPlayoffs = row.phase <= PHASE.DRAFT_LOTTERY;
 		passedFreeAgency = row.phase <= PHASE.FREE_AGENCY;
 	} else {
 		throw new Error("Unexpected season");
@@ -48,14 +46,13 @@ const getGamesToHeal = ({
 		for (const games of numGamesPlayoffSeries) {
 			gamesToHeal += games;
 		}
-	}
 
-	if (passedAfterPlayoffs) {
+		// This is how many games are healed during the offseason, which happens immediately after the playoffs in newPhaseBeforeDraft
 		gamesToHeal += defaultGameAttributes.numGames[0].value;
 	}
 
 	if (passedFreeAgency) {
-		gamesToHeal += 30;
+		gamesToHeal += FREE_AGENCY_DAYS;
 	}
 
 	return gamesToHeal;

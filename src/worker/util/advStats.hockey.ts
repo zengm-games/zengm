@@ -120,7 +120,7 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 
 				// Offensive point shares
 				const marginalGoals =
-					gc[i] -
+					gc[i]! -
 					(7 / 12) * p.stats.min * (sumsByType[type].gc / sumsByType[type].min);
 				ops[i] = marginalGoals / marginalGoalsPerPoint;
 

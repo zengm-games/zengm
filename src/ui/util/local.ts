@@ -3,6 +3,7 @@ import { shallow } from "zustand/shallow";
 import type { LocalStateUI, GameAttributesLeague } from "../../common/types.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 import safeLocalStorage from "./safeLocalStorage.ts";
+import { gameAttributesSyncedToUi } from "../../common/gameAttributesSyncedToUi.ts";
 
 // These are variables that are needed to display parts of the UI not driven explicitly by worker/views/*.js files. Like
 // the top navbar, the multi team menu, etc. They come from gameAttributes, the account system, and elsewhere.
@@ -11,6 +12,7 @@ type LocalActions = {
 	deleteGames: (gids: number[]) => void;
 	mergeGames: (games: LocalStateUI["games"]) => void;
 	resetLeague: () => void;
+	setShowLeagueTopBar: (showLeagueTopBar: boolean) => void;
 	setSidebarOpen: (sidebarOpen: boolean) => void;
 	update: (obj: Partial<LocalStateUI>) => void;
 	updateGameAttributes: (
@@ -21,14 +23,6 @@ type LocalActions = {
 
 const defaultUnits: "metric" | "us" =
 	window.navigator.language === "en-US" ? "us" : "metric";
-
-// https://developer.mozilla.org/en-US/docs/Web/API/WindowEventHandlers/onbeforeunload
-const blockCloseTab = (e: BeforeUnloadEvent) => {
-	// Cancel the event
-	e.preventDefault(); // If you prevent default behavior in Mozilla Firefox prompt will always be shown
-	// Chrome requires returnValue to be set
-	e.returnValue = "";
-};
 
 type LocalStateWithActions = LocalStateUI & {
 	actions: LocalActions;
@@ -43,12 +37,22 @@ if (window.innerWidth >= 1200) {
 	initialSidebarOpen = false;
 }
 
+let initialShowLeagueTopBar: boolean;
+const showTemp = safeLocalStorage.getItem("bbgmShowLeagueTopBar");
+if (showTemp === "true") {
+	initialShowLeagueTopBar = true;
+} else if (showTemp === "false") {
+	initialShowLeagueTopBar = false;
+} else {
+	initialShowLeagueTopBar = true;
+}
+
 const useLocal = createWithEqualityFn<LocalStateWithActions>(
 	(set) => ({
 		alwaysShowCountry: false,
 		challengeNoRatings: false,
+		currencyFormat: defaultGameAttributes.currencyFormat,
 		customMenu: undefined,
-		dirtySettings: false,
 		email: undefined,
 		fantasyPoints: undefined,
 		flagOverrides: {},
@@ -71,6 +75,7 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 		popup: window.location.search === "?w=popup",
 		quarterLength: defaultGameAttributes.quarterLength,
 		season: 0,
+		showLeagueTopBar: initialShowLeagueTopBar,
 		showNagModal: false,
 		sidebarOpen: initialSidebarOpen,
 		spectator: false,
@@ -153,7 +158,14 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 					userTid: 0,
 					userTids: [],
 				});
-				window.removeEventListener("beforeunload", blockCloseTab);
+			},
+
+			setShowLeagueTopBar(showLeagueTopBar: boolean) {
+				set({ showLeagueTopBar });
+				safeLocalStorage.setItem(
+					"bbgmShowLeagueTopBar",
+					String(showLeagueTopBar),
+				);
 			},
 
 			setSidebarOpen(sidebarOpen: boolean) {
@@ -174,14 +186,6 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 					obj.units = defaultUnits;
 				}
 
-				if (Object.hasOwn(obj, "liveGameInProgress")) {
-					if (obj.liveGameInProgress) {
-						window.addEventListener("beforeunload", blockCloseTab);
-					} else {
-						window.removeEventListener("beforeunload", blockCloseTab);
-					}
-				}
-
 				if (obj.email && !obj.gold) {
 					window.freestar.queue.push(() => {
 						window.freestar.identity.setIdentity({
@@ -197,34 +201,11 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 				gameAttributes: Partial<GameAttributesLeague>,
 				flagOverrides?: LocalStateUI["flagOverrides"],
 			) {
-				// Keep in sync with gameAttributesToUI - this is just for TypeScript
-				const keys = [
-					"alwaysShowCountry",
-					"challengeNoRatings",
-					"fantasyPoints",
-					"gender",
-					"godMode",
-					"hideDisabledTeams",
-					"homeCourtAdvantage",
-					"lid",
-					"neutralSite",
-					"numPeriods",
-					"numWatchColors",
-					"phase",
-					"quarterLength",
-					"season",
-					"spectator",
-					"startingSeason",
-					"teamInfoCache",
-					"userTid",
-					"userTids",
-				] as const;
-
 				let update = false;
 
 				const updates: Partial<LocalStateUI> = {};
 
-				for (const key of keys) {
+				for (const key of gameAttributesSyncedToUi) {
 					if (
 						Object.hasOwn(gameAttributes, key) &&
 						updates[key] !== gameAttributes[key]

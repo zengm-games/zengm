@@ -45,7 +45,7 @@ const evaluatePointsFormula = (
 	if (!formulaCache[pointsFormula]) {
 		formulaCache[pointsFormula] = new PointsFormulaEvaluator(pointsFormula);
 	}
-	return formulaCache[pointsFormula].evaluate({
+	return formulaCache[pointsFormula]!.evaluate({
 		W: data.won,
 		L: data.lost,
 		OTL: data.otl,

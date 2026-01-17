@@ -4,6 +4,7 @@
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"target": "esnext",
+		"allowJs": true,
 		"resolveJsonModule": true,
 		"moduleDetection": "force",
 		"isolatedModules": true,
@@ -15,15 +16,15 @@
 
 		// Extra strictness
 		"noFallthroughCasesInSwitch": true,
+		"noUncheckedIndexedAccess": true,
 		"noUnusedLocals": true,
 
 		// Maybe would be nice, but too much legacy crap
-		"noUncheckedIndexedAccess": false,
 		"useUnknownInCatchVariables": false,
 
 		"allowImportingTsExtensions": true,
 		"erasableSyntaxOnly": true,
 		"jsx": "react-jsx"
 	},
-	"include": ["src", "tools"]
+	"exclude": ["node_modules", "build"]
 }

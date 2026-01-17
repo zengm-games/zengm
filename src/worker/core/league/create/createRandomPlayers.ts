@@ -1,6 +1,6 @@
 import { draft, player, freeAgents } from "../../index.ts";
-import { PHASE, POSITION_COUNTS } from "../../../../common/index.ts";
-import { groupBy, orderBy } from "../../../../common/utils.ts";
+import { PHASE, PLAYER, POSITION_COUNTS } from "../../../../common/index.ts";
+import { groupBy, groupByUnique, orderBy } from "../../../../common/utils.ts";
 import type {
 	PlayerWithoutKey,
 	MinimalPlayerRatings,
@@ -9,12 +9,19 @@ import type {
 } from "../../../../common/types.ts";
 import { g, random } from "../../../util/index.ts";
 
+export const getNumPlayersPerTeam = () => {
+	// 13 for basketball
+	return Math.max(g.get("maxRosterSize") - 2, g.get("minRosterSize"));
+};
+
 const createRandomPlayers = async ({
 	activeTids,
+	onlyFreeAgents,
 	scoutingLevel,
 	teams,
 }: {
 	activeTids: number[];
+	onlyFreeAgents: boolean;
 	scoutingLevel: number;
 	teams: Pick<Team, "tid" | "retiredJerseyNumbers">[];
 }) => {
@@ -75,8 +82,7 @@ const createRandomPlayers = async ({
 		const tids = [...activeTids];
 		random.shuffle(tids);
 
-		for (let i = 0; i < draftClass.length; i++) {
-			const p = draftClass[i];
+		for (const [i, p] of draftClass.entries()) {
 			let round = 0;
 			let pick = 0;
 			const roundTemp = Math.floor(i / activeTids.length) + 1;
@@ -100,9 +106,9 @@ const createRandomPlayers = async ({
 			p.draft = {
 				round,
 				pick,
-				tid: round === 0 ? -1 : tids[pick - 1],
+				tid: round === 0 ? -1 : tids[pick - 1]!,
 				year: g.get("season") - numYearsAgo,
-				originalTid: round === 0 ? -1 : tids[pick - 1],
+				originalTid: round === 0 ? -1 : tids[pick - 1]!,
 				pot,
 				ovr,
 				skills,
@@ -121,7 +127,7 @@ const createRandomPlayers = async ({
 				}
 
 				const contract: PlayerContract = {
-					amount: rookieSalaries[i],
+					amount: rookieSalaries[i]!,
 					exp: g.get("season") - numYearsAgo + years,
 				};
 				if (g.get("draftPickAutoContract")) {
@@ -141,10 +147,7 @@ const createRandomPlayers = async ({
 		throw new Error("Not enough players!");
 	}
 
-	const numPlayerPerTeam = Math.max(
-		g.get("maxRosterSize") - 2,
-		g.get("minRosterSize"),
-	); // 13 for basketball
+	const numPlayerPerTeam = getNumPlayersPerTeam();
 	const maxNumFreeAgents = Math.round(
 		(activeTids.length / 3) * g.get("maxRosterSize"),
 	); // 150 for basketball
@@ -167,27 +170,26 @@ const createRandomPlayers = async ({
 
 	const teamJerseyNumbers: Record<number, string[]> = {};
 
+	const teamsByTid = groupByUnique(teams, "tid");
+
 	const addPlayerToTeam = async (p: PlayerWithoutKey, tid2: number) => {
 		if (!teamJerseyNumbers[tid2]) {
 			teamJerseyNumbers[tid2] = [];
 		}
 
-		const t = teams.find((t) => t.tid === tid2);
+		const t = teamsByTid[tid2];
 		const retiredJerseyNumbers =
-			t && t.retiredJerseyNumbers
-				? t.retiredJerseyNumbers.map((row) => row.number)
-				: [];
+			t?.retiredJerseyNumbers?.map((row) => row.number) ?? [];
 
-		numPlayersByTid[tid2] += 1;
+		numPlayersByTid[tid2]! += 1;
 		p.tid = tid2;
 		await player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
 			retired: retiredJerseyNumbers,
 			team: teamJerseyNumbers[tid2],
 		});
 
-		const jerseyNumber = p.stats.at(-1).jerseyNumber;
-		if (jerseyNumber) {
-			teamJerseyNumbers[tid2].push(jerseyNumber);
+		if (p.jerseyNumber !== undefined) {
+			teamJerseyNumbers[tid2].push(p.jerseyNumber);
 		}
 
 		// Keep rookie contract, or no?
@@ -233,12 +235,12 @@ const createRandomPlayers = async ({
 	// Drafted players kept with own team, with some probability
 	const playersStayedOnOwnTeam = new Set();
 	for (let i = 0; i < numPlayerPerTeam * activeTids.length; i++) {
-		const p = keptPlayers[i];
+		const p = keptPlayers[i]!;
 
 		if (
 			p.draft.tid >= 0 &&
 			Math.random() < probStillOnDraftTeam(p) &&
-			numPlayersByTid[p.draft.tid] < numPlayerPerTeam
+			numPlayersByTid[p.draft.tid]! < numPlayerPerTeam
 		) {
 			await addPlayerToTeam(p, p.draft.tid);
 			playersStayedOnOwnTeam.add(p);
@@ -254,7 +256,7 @@ const createRandomPlayers = async ({
 		let numTeamsDone = 0;
 
 		for (const currentTid of tids) {
-			if (numPlayersByTid[currentTid] >= numPlayerPerTeam) {
+			if (numPlayersByTid[currentTid]! >= numPlayerPerTeam) {
 				numTeamsDone += 1;
 				continue;
 			}
@@ -316,13 +318,18 @@ const createRandomPlayers = async ({
 
 		for (const pos of Object.keys(groupedPlayers)) {
 			const limit = Math.round(
-				(maxNumFreeAgents * POSITION_COUNTS[pos]) / positionCountsSum,
+				(maxNumFreeAgents * POSITION_COUNTS[pos]!) / positionCountsSum,
 			);
 
 			for (let i = 0; i < limit; i++) {
-				addToFreeAgents(groupedPlayers[pos][i]);
+				addToFreeAgents(groupedPlayers[pos]![i]);
 			}
 		}
+	}
+
+	if (onlyFreeAgents) {
+		// Okay, then why did we create the other players in the first place? Because this ensures the distribution of talnet in the free agent pool is the same as in normal leagues.
+		return players.filter((p) => p.tid === PLAYER.FREE_AGENT);
 	}
 
 	return players;

@@ -39,19 +39,19 @@ describe("tiebreakers", () => {
 		test(tiebreaker, async () => {
 			const teams = helpers.deepCopy(baseTeams);
 			if (type === "conf") {
-				teams[2].seasonAttrs.wonConf = 9;
-				teams[2].seasonAttrs.lostConf = 3;
-				teams[3].seasonAttrs.wonConf = 8;
-				teams[3].seasonAttrs.lostConf = 4;
-				teams[0].seasonAttrs.wonConf = 7;
-				teams[0].seasonAttrs.lostConf = 5;
+				teams[2]!.seasonAttrs.wonConf = 9;
+				teams[2]!.seasonAttrs.lostConf = 3;
+				teams[3]!.seasonAttrs.wonConf = 8;
+				teams[3]!.seasonAttrs.lostConf = 4;
+				teams[0]!.seasonAttrs.wonConf = 7;
+				teams[0]!.seasonAttrs.lostConf = 5;
 			} else {
-				teams[2].seasonAttrs.wonDiv = 7;
-				teams[2].seasonAttrs.lostDiv = 1;
-				teams[3].seasonAttrs.wonDiv = 6;
-				teams[3].seasonAttrs.lostDiv = 2;
-				teams[0].seasonAttrs.wonDiv = 5;
-				teams[0].seasonAttrs.lostDiv = 3;
+				teams[2]!.seasonAttrs.wonDiv = 7;
+				teams[2]!.seasonAttrs.lostDiv = 1;
+				teams[3]!.seasonAttrs.wonDiv = 6;
+				teams[3]!.seasonAttrs.lostDiv = 2;
+				teams[0]!.seasonAttrs.wonDiv = 5;
+				teams[0]!.seasonAttrs.lostDiv = 3;
 			}
 
 			const teamsSorted = breakTies(teams, teams, {
@@ -137,12 +137,12 @@ describe("tiebreakers", () => {
 
 	test("divWinner", async () => {
 		const teams = helpers.deepCopy(baseTeams);
-		teams[2].seasonAttrs.wonConf = 9;
-		teams[2].seasonAttrs.lostConf = 3;
-		teams[3].seasonAttrs.wonConf = 8;
-		teams[3].seasonAttrs.lostConf = 4;
-		teams[0].seasonAttrs.wonConf = 7;
-		teams[0].seasonAttrs.lostConf = 5;
+		teams[2]!.seasonAttrs.wonConf = 9;
+		teams[2]!.seasonAttrs.lostConf = 3;
+		teams[3]!.seasonAttrs.wonConf = 8;
+		teams[3]!.seasonAttrs.lostConf = 4;
+		teams[0]!.seasonAttrs.wonConf = 7;
+		teams[0]!.seasonAttrs.lostConf = 5;
 
 		const teamsSorted = breakTies(teams, teams, {
 			addTiebreakersField: true,
@@ -219,9 +219,9 @@ describe("tiebreakers", () => {
 
 	test("marginOfVictory", async () => {
 		const teams = helpers.deepCopy(baseTeams);
-		teams[2].stats.pts = 500;
-		teams[3].stats.pts = 400;
-		teams[1].stats.pts = 300;
+		teams[2]!.stats.pts = 500;
+		teams[3]!.stats.pts = 400;
+		teams[1]!.stats.pts = 300;
 
 		const teamsSorted = breakTies(teams, teams, {
 			addTiebreakersField: true,
@@ -245,10 +245,10 @@ describe("tiebreakers", () => {
 
 	test("strengthOfSchedule", async () => {
 		const teams = helpers.deepCopy(baseTeams);
-		teams[0].seasonAttrs.won = 5;
-		teams[0].seasonAttrs.lost = 15;
-		teams[1].seasonAttrs.won = 15;
-		teams[1].seasonAttrs.lost = 5;
+		teams[0]!.seasonAttrs.won = 5;
+		teams[0]!.seasonAttrs.lost = 15;
+		teams[1]!.seasonAttrs.won = 15;
+		teams[1]!.seasonAttrs.lost = 5;
 
 		const headToHeadEntry = (won: number, lost: number) => ({
 			won,
@@ -276,7 +276,7 @@ describe("tiebreakers", () => {
 			playoffs: {},
 		};
 
-		const teamsSorted = breakTies([teams[2], teams[3]], teams, {
+		const teamsSorted = breakTies([teams[2]!, teams[3]!], teams, {
 			addTiebreakersField: true,
 			divisionWinners: new Set(),
 			headToHead,
@@ -294,10 +294,10 @@ describe("tiebreakers", () => {
 
 	test("strengthOfVictory", async () => {
 		const teams = helpers.deepCopy(baseTeams);
-		teams[0].seasonAttrs.won = 5;
-		teams[0].seasonAttrs.lost = 15;
-		teams[1].seasonAttrs.won = 15;
-		teams[1].seasonAttrs.lost = 5;
+		teams[0]!.seasonAttrs.won = 5;
+		teams[0]!.seasonAttrs.lost = 15;
+		teams[1]!.seasonAttrs.won = 15;
+		teams[1]!.seasonAttrs.lost = 5;
 
 		const headToHeadEntry = (won: number, lost: number) => ({
 			won,
@@ -325,7 +325,7 @@ describe("tiebreakers", () => {
 			playoffs: {},
 		};
 
-		const teamsSorted = breakTies([teams[2], teams[3]], teams, {
+		const teamsSorted = breakTies([teams[2]!, teams[3]!], teams, {
 			addTiebreakersField: true,
 			divisionWinners: new Set(),
 			headToHead,

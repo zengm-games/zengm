@@ -72,7 +72,7 @@ const relocateVote = async ({
 			did: -1,
 			abbrev: autoRelocate.abbrev,
 		},
-	])[0];
+	])[0]!;
 
 	let eventText;
 
@@ -104,9 +104,8 @@ const relocateVote = async ({
 		const realigned = autoRelocate.realigned;
 		if (realign && realigned) {
 			const divs = g.get("divs");
-			for (let i = 0; i < divs.length; i++) {
-				const div = divs[i];
-				const tids = realigned[i];
+			for (const [i, div] of divs.entries()) {
+				const tids = realigned[i]!;
 				for (const tid of tids) {
 					const t = await idb.cache.teams.get(tid);
 					if (t) {

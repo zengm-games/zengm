@@ -2,18 +2,17 @@ import {
 	GAME_ACRONYM,
 	LEAGUE_DATABASE_VERSION,
 } from "../../../common/index.ts";
-import { confirm, downloadFile, local, toWorker } from "../../util/index.ts";
+import { confirm, downloadFile, toWorker } from "../../util/index.ts";
 
-const ExportButton = () => (
+const ExportButton = ({ dirty }: { dirty?: boolean }) => (
 	<button
 		className="btn btn-light-bordered"
 		onClick={async () => {
-			const dirtySettings = local.getState().dirtySettings;
-			if (dirtySettings) {
+			if (dirty) {
 				const proceed = await confirm(
 					"This export will not contain any unsaved changes. Is that okay?",
 					{
-						okText: "Download Last Saved Defaults",
+						okText: "Download last saved defaults",
 						cancelText: "Cancel",
 					},
 				);

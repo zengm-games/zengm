@@ -12,8 +12,8 @@ const compositeRatingDists = async () => {
 		.map((p) => {
 			return player.compositeRating(
 				p.ratings.at(-1)!,
-				COMPOSITE_WEIGHTS.shootingThreePointer.ratings,
-				COMPOSITE_WEIGHTS.shootingThreePointer.weights,
+				COMPOSITE_WEIGHTS.shootingThreePointer!.ratings,
+				COMPOSITE_WEIGHTS.shootingThreePointer!.weights,
 				false,
 			);
 		})

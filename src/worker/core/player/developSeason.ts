@@ -10,7 +10,7 @@ import type { Ratings } from "../realRosters/loadData.basketball.ts";
 import limitRating from "./limitRating.ts";
 
 // Cache for performance
-let groupedRatings: Record<string, Ratings | undefined> | undefined;
+let groupedRatings: Record<string, Ratings> | undefined;
 
 const developSeason = async (
 	ratings: MinimalPlayerRatings,
@@ -34,9 +34,13 @@ const developSeason = async (
 		return;
 	}
 
+	if (srID === undefined) {
+		return;
+	}
+
 	const realPlayerDeterminism =
 		helpers.bound(g.get("realPlayerDeterminism"), 0, 1) ** 2;
-	if (realPlayerDeterminism === 0 || srID === undefined) {
+	if (realPlayerDeterminism === 0) {
 		return;
 	}
 

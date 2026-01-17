@@ -19,9 +19,8 @@ const sign = async (
 	p.numDaysFreeAgent = 0;
 	p.gamesUntilTradable = isRookie ? 0 : Math.round(0.17 * g.get("numGames")); // 14 for basketball, 3 for football
 
-	// Handle stats if the season is in progress
+	// Handle stats if the season is in progress. Otherwise, not needed until next season.
 	if (phase <= PHASE.PLAYOFFS) {
-		// Otherwise, not needed until next season
 		await addStatsRow(p, phase === PHASE.PLAYOFFS);
 	}
 

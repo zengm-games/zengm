@@ -48,23 +48,23 @@ const getExpiration = (
 	return g.get("season") + years + offset;
 };
 
-const stableSoftmax = (x: number[], param: number) => {
-	let maxX = -Infinity;
-	for (let i = 0; i < x.length; i++) {
-		if (x[i] > maxX) {
-			maxX = x[i];
+const stableSoftmax = (values: number[], param: number) => {
+	let maxValue = -Infinity;
+	for (const value of values) {
+		if (value > maxValue) {
+			maxValue = value;
 		}
 	}
 
-	const numerators = Array(x.length);
+	const numerators = Array(values.length);
 	let denominator = 0;
-	for (let i = 0; i < x.length; i++) {
+	for (const [i, value] of values.entries()) {
 		// Divide rather than subtract, because sometimes maxX was so large that this was getting rounded to 0
-		numerators[i] = Math.exp((param * x[i]) / maxX);
+		numerators[i] = Math.exp((param * value) / maxValue);
 		denominator += numerators[i];
 	}
 
-	if (maxX === 0 || denominator === 0) {
+	if (maxValue === 0 || denominator === 0) {
 		return numerators.map(() => 1);
 	}
 	return numerators.map((numerator) => numerator / denominator);
@@ -295,7 +295,7 @@ const normalizeContractDemands = async ({
 		if (rookieSalaries && p.draft.year === season) {
 			const pickIndex =
 				(p.draft.round - 1) * g.get("numActiveTeams") + p.draft.pick - 1;
-			info.contractAmount = rookieSalaries[pickIndex] ?? rookieSalaries.at(-1);
+			info.contractAmount = rookieSalaries[pickIndex] ?? rookieSalaries.at(-1)!;
 		} else if (numRounds === 0) {
 			info.contractAmount = player.genContract(p, type === "newLeague").amount;
 		} else if (type === "newLeague") {
@@ -340,8 +340,7 @@ const normalizeContractDemands = async ({
 			// For the top free agents (up to the available number of roster spots), adjust their contract demands up/down based on available cap space. Anyone beyond the available number of roster spots, set to a min contract
 			let topPlayersAmountSum = 0;
 			let topPlayersCount = 0; // In case there are fewer than roster spots, somehow
-			for (let i = 0; i < playerInfosToUpdateSorted.length; i++) {
-				const info = playerInfosToUpdateSorted[i];
+			for (const [i, info] of playerInfosToUpdateSorted.entries()) {
 				const playerNum = i + 1;
 
 				if (playerNum < numOpenRosterSpots) {

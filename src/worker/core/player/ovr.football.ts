@@ -94,8 +94,8 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 	for (const k of Object.keys(COMPOSITE_WEIGHTS)) {
 		compositeRatings[k] = compositeRating(
 			ratings,
-			COMPOSITE_WEIGHTS[k].ratings,
-			COMPOSITE_WEIGHTS[k].weights,
+			COMPOSITE_WEIGHTS[k]!.ratings,
+			COMPOSITE_WEIGHTS[k]!.weights,
 			false,
 		);
 	}
@@ -109,7 +109,7 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 		// @ts-expect-error
 		for (const [key, [coeff, power]] of Object.entries(info[pos2])) {
 			const powerFactor = 100 / 100 ** power;
-			r += coeff * powerFactor * compositeRatings[key] ** power;
+			r += coeff * powerFactor * compositeRatings[key]! ** power;
 			sumCoeffs += coeff;
 		}
 

@@ -23,9 +23,6 @@ export type MoveModalTeamFinal = MoveModalTeam & {
 	imgURL: string;
 };
 
-let abbrevs: string[] | undefined;
-let moveOptions: MoveModalTeamFinal[] | undefined;
-
 const MoveModal = ({
 	show,
 	onHide,
@@ -37,23 +34,21 @@ const MoveModal = ({
 	onSave: (newTeamInfo: MoveModalTeamFinal, rebrand: boolean) => void;
 	currentTeam: MoveModalTeam;
 }) => {
-	if (!abbrevs || !moveOptions) {
-		abbrevs = Object.keys(teamInfos);
-		moveOptions = orderBy(
-			getTeamInfos(
-				abbrevs.map((abbrev) => ({
-					abbrev,
-					tid: -1,
-					cid: -1,
-					did: -1,
-				})),
-			),
-			["region", "name"],
-		);
-	}
+	const abbrevs = Object.keys(teamInfos);
+	const moveOptions = orderBy(
+		getTeamInfos(
+			abbrevs.map((abbrev) => ({
+				abbrev,
+				tid: -1,
+				cid: -1,
+				did: -1,
+			})),
+		),
+		["region", "name"],
+	);
 
 	const [selectedRegion, setSelectedRegion] = useState(0);
-	const selectedTeam = moveOptions[selectedRegion];
+	const selectedTeam = moveOptions[selectedRegion]!;
 
 	const [rebrandTeam, setRebrandTeam] = useState(true);
 

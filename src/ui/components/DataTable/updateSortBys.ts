@@ -13,7 +13,7 @@ const updateSortBys = ({
 	i: number;
 	prevSortBys: SortBy[];
 }) => {
-	const col = cols[i];
+	const col = cols[i]!;
 
 	// Ignore click on unsortable column
 	if (col.sortSequence && col.sortSequence.length === 0) {
@@ -34,7 +34,7 @@ const updateSortBys = ({
 				j = 0;
 			}
 
-			return sortSequence[j];
+			return sortSequence[j]!;
 		}
 
 		// Default asc/desc toggle
@@ -53,20 +53,20 @@ const updateSortBys = ({
 
 		// If this column is not in sortBys and shift is pressed, append
 		if (!found) {
-			sortBys.push([i, col.sortSequence ? col.sortSequence[0] : "asc"]);
+			sortBys.push([i, col.sortSequence ? col.sortSequence[0]! : "asc"]);
 			found = true;
 		}
 	}
 
 	// If this column is the only one in sortBys, update order
-	if (!found && sortBys.length === 1 && sortBys[0][0] === i) {
-		sortBys[0][1] = nextOrder(col, sortBys[0]);
+	if (!found && sortBys.length === 1 && sortBys[0]![0] === i) {
+		sortBys[0]![1] = nextOrder(col, sortBys[0]!);
 		found = true;
 	}
 
 	// Otherwise, reset to sorting only by this column, default order
 	if (!found) {
-		sortBys = [[i, col.sortSequence ? col.sortSequence[0] : "asc"]];
+		sortBys = [[i, col.sortSequence ? col.sortSequence[0]! : "asc"]];
 	}
 
 	return sortBys;

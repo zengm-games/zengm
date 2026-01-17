@@ -4,7 +4,7 @@ import {
 	DAILY_SCHEDULE,
 	DEPTH_CHART_NAME,
 	isSport,
-	SPORT_HAS_REAL_PLAYERS,
+	REAL_PLAYERS_INFO,
 	WEBSITE_ROOT,
 } from "../../common/index.ts";
 import type { MenuItemLink, MenuItemHeader } from "../../common/types.ts";
@@ -69,7 +69,7 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		path: "/",
 		text: "Leagues",
 	},
-	...(SPORT_HAS_REAL_PLAYERS
+	...(REAL_PLAYERS_INFO
 		? ([
 				{
 					type: "link",
@@ -791,12 +791,11 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
-				active: (pageID) => pageID === "newTeam",
+				active: (pageID) => pageID === "scheduleEditor",
 				league: true,
 				commandPalette: true,
-				godMode: true,
-				path: ["new_team"],
-				text: "Switch Team",
+				path: ["schedule_editor"],
+				text: "Schedule Editor",
 			},
 			...(isSport("basketball") ? [scheduledEvents] : []),
 			{
@@ -811,6 +810,15 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 
 				prefix: <span className="glyphicon glyphicon-camera me-1" />,
 				text: "Screenshot",
+			},
+			{
+				type: "link",
+				active: (pageID) => pageID === "newTeam",
+				league: true,
+				commandPalette: true,
+				godMode: true,
+				path: ["new_team"],
+				text: "Switch Team",
 			},
 			{
 				type: "link",

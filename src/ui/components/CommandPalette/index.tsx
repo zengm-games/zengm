@@ -27,10 +27,7 @@ import {
 	useLocalPartial,
 } from "../../util/index.ts";
 import { getText, makeAnchorProps } from "../SideBar.tsx";
-import {
-	SPORT_HAS_LEGENDS,
-	SPORT_HAS_REAL_PLAYERS,
-} from "../../../common/index.ts";
+import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import Modal from "../Modal.tsx";
 import { normalizeIntl } from "../../../common/normalizeIntl.ts";
 
@@ -285,7 +282,7 @@ const getResultsGroupedLeagues = async ({
 	const leagues = await toWorker("main", "getLeagues", undefined);
 
 	const newLeagueResults = [];
-	if (SPORT_HAS_REAL_PLAYERS) {
+	if (REAL_PLAYERS_INFO) {
 		newLeagueResults.push(
 			{
 				text: "New League - Real Players",
@@ -297,7 +294,7 @@ const getResultsGroupedLeagues = async ({
 			},
 		);
 
-		if (SPORT_HAS_LEGENDS) {
+		if (REAL_PLAYERS_INFO.legends) {
 			newLeagueResults.push({
 				text: "New League - Legends",
 				href: "/new_league/legends",
@@ -511,7 +508,7 @@ const ResultText = ({
 	searchText: string;
 	text: string | string[];
 }) => {
-	const textArray = Array.isArray(text) ? text : [text];
+	const textArray = Array.isArray(text) ? [...text] : [text];
 
 	if (categoryPrefix) {
 		textArray[0] = `${categoryPrefix} > ${textArray[0]}`;
@@ -593,7 +590,7 @@ const ResultText = ({
 	}
 
 	return (
-		<div>
+		<div className="text-truncate" style={{ minWidth: 0 }}>
 			{prefix}
 			{highlightedTextArray.map((line, i) => {
 				return (
@@ -684,7 +681,7 @@ const SearchResults = memo(
 						>
 							{!collapseGroups && category ? (
 								<div className="card-header bg-transparent border-0">
-									<span className="fw-bold text-secondary text-uppercase">
+									<span className="fw-bold text-body-secondary text-uppercase">
 										{category}
 									</span>
 								</div>
@@ -699,15 +696,16 @@ const SearchResults = memo(
 										<a
 											key={j}
 											{...result.anchorProps}
-											className={`d-flex cursor-pointer list-group-item list-group-item-action border-0 ${
+											className={`d-flex cursor-pointer list-group-item list-group-item-action border-0 text-nowrap ${
 												active ? ACTIVE_CLASS : ""
 											}`}
-											style={{ whiteSpace: "pre" }}
 										>
 											{highlightedResult}
 
 											{active ? (
-												<div className="ms-auto">Press enter to select</div>
+												<div className="ms-auto ps-1">
+													Press enter to select
+												</div>
 											) : null}
 										</a>
 									);

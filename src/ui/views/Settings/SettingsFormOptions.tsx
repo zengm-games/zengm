@@ -5,17 +5,15 @@ import { type ChangeEvent, Fragment, type ReactNode, useState } from "react";
 import { isSport } from "../../../common/index.ts";
 import { HelpPopover } from "../../components/index.tsx";
 import gameSimPresets from "./gameSimPresets.ts";
-import PlayerBioInfo2 from "./PlayerBioInfo.tsx";
-import RowsEditor from "./RowsEditor.tsx";
 import {
 	getVisibleCategories,
 	settingIsEnabled,
 	settingNeedsGodMode,
-	type SpecialStateOthers,
 	type State,
 } from "./SettingsForm.tsx";
 import type { Decoration, FieldType, Key, Values } from "./types.ts";
 import { helpers } from "../../util/index.ts";
+import { CurrencyInputGroup } from "../../components/CurrencyInputGroup.tsx";
 
 export const godModeRequiredMessage = (
 	godModeRequired?: "always" | "existingLeagueOnly",
@@ -163,11 +161,9 @@ const Input = ({
 
 	if (decoration === "currency") {
 		return (
-			<div className="input-group" style={inputStyle}>
-				<div className="input-group-text">$</div>
+			<CurrencyInputGroup displayUnit="M" style={inputStyle}>
 				{inputElement}
-				<div className="input-group-text">M</div>
-			</div>
+			</CurrencyInputGroup>
 		);
 	}
 
@@ -241,9 +237,13 @@ const Option = ({
 		);
 	}
 
+	// flex-wrap is so wide custom controls (like saveOldBoxScores) wraps when necessary, and also maxWidth ones wrap all the time
 	return (
 		<>
-			<div className="d-flex align-items-center" style={{ minHeight: 33 }}>
+			<div
+				className="d-flex flex-wrap gap-1 align-items-top"
+				style={{ minHeight: 33 }}
+			>
 				<div className="me-auto text-nowrap">
 					<label
 						className="form-label mb-0"
@@ -254,6 +254,7 @@ const Option = ({
 								event.preventDefault();
 							}
 						}}
+						style={{ marginTop: 7 }}
 					>
 						{settingNeedsGodMode(godModeRequired, newLeague) ? (
 							<span
@@ -322,6 +323,15 @@ const Option = ({
 	);
 };
 
+export type HandleChange = (
+	name: Key,
+	type: FieldType,
+) => (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+
+export type HandleChangeRaw = <Name extends Key>(
+	name: Name,
+) => (value: State[Name]) => void;
+
 const SettingsFormOptions = ({
 	disabled,
 	gameSimPreset,
@@ -338,13 +348,8 @@ const SettingsFormOptions = ({
 	disabled: boolean;
 	gameSimPreset: string;
 	godMode: boolean;
-	handleChange: (
-		name: Key,
-		type: FieldType,
-	) => (event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
-	handleChangeRaw: <Name extends SpecialStateOthers>(
-		name: Name,
-	) => (value: State[Name]) => void;
+	handleChange: HandleChange;
+	handleChangeRaw: HandleChangeRaw;
 	newLeague?: boolean;
 	onCancelDefaultSetting?: (key: Key) => void;
 	setGameSimPreset: (gameSimPreset: string) => void;
@@ -418,70 +423,17 @@ const SettingsFormOptions = ({
 									);
 									const id = `settings-${category.name}-${name}`;
 
-									let customFormNode;
-									if (customForm) {
-										if (key === "stopOnInjuryGames") {
-											const key2 = "stopOnInjury";
-											const checked = state[key2] === "true";
-											customFormNode = (
-												<div
-													style={inputStyle}
-													className="d-flex align-items-center"
-												>
-													<div
-														className="form-check form-switch"
-														title={checked ? "Enabled" : "Disabled"}
-													>
-														<input
-															type="checkbox"
-															className="form-check-input"
-															checked={checked}
-															disabled={!enabled || disabled}
-															onChange={handleChange(key2, "bool")}
-															id={id + "2"}
-															value={state[key2]}
-														/>
-														<label
-															className="form-check-label"
-															htmlFor={id + "2"}
-														/>
-													</div>
-													<div className="input-group">
-														<input
-															id={id}
-															disabled={!checked || !enabled || disabled}
-															className="form-control"
-															type="text"
-															onChange={handleChange(key, type)}
-															value={state[key]}
-															inputMode="numeric"
-														/>
-														<div className="input-group-text">Games</div>
-													</div>
-												</div>
-											);
-										} else if (key === "injuries" || key === "tragicDeaths") {
-											customFormNode = (
-												<RowsEditor
-													defaultValue={state[key]}
-													disabled={!enabled || disabled}
-													godModeRequired={godModeRequired}
-													onChange={handleChangeRaw(key)}
-													type={key}
-												/>
-											);
-										} else if (key === "playerBioInfo") {
-											customFormNode = (
-												<PlayerBioInfo2
-													defaultValue={state[key]}
-													disabled={!enabled || disabled}
-													godModeRequired={godModeRequired}
-													onChange={handleChangeRaw(key)}
-													gender={state.gender as any}
-												/>
-											);
-										}
-									}
+									const customFormNode = customForm
+										? customForm({
+												disabled: !enabled || disabled,
+												godModeRequired,
+												handleChange,
+												handleChangeRaw,
+												id,
+												inputStyle,
+												state,
+											})
+										: undefined;
 
 									return (
 										<div

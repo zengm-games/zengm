@@ -9,6 +9,7 @@ import {
 	team,
 	player,
 	finances,
+	freeAgents,
 } from "../core/index.ts";
 import type {
 	ScheduledEvent,
@@ -17,6 +18,7 @@ import type {
 } from "../../common/types.ts";
 import { PHASE, applyRealTeamInfo } from "../../common/index.ts";
 import local from "./local.ts";
+import { orderBy } from "../../common/utils.ts";
 
 const processTeamInfo = async (
 	info: Extract<ScheduledEvent, { type: "teamInfo" }>["info"],
@@ -379,13 +381,15 @@ const processExpansionDraft = async (
 			return true;
 		}
 
+		const t2 = teams[t.tid];
+
 		// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-		if (!teams[t.tid]) {
+		if (!t2) {
 			return true;
 		}
 
 		// If team is already enabled, no need for expansion draft
-		return teams[t.tid].disabled;
+		return t2.disabled;
 	});
 
 	if (realTeamInfo) {
@@ -498,7 +502,18 @@ const processScheduledEvents = async (
 		| RealTeamInfo
 		| undefined;
 
-	for (const scheduledEvent of scheduledEvents) {
+	const unretiredPids = [];
+
+	const scheduledEventsOrdered = orderBy(scheduledEvents, [
+		"season",
+		"phase",
+		(scheduledEvent) => {
+			// When running the expansionDraft event, it calls newPhase again which calls other scheduled events and other things. So this should be the last scheduled event of this season/phase, so any prior ones happen before all that other stuff. Previously this was causing bugs in auto play, where unretirePlayer for forceHistoricalRosters was being called after expansionDraft and then those players would not be unretired in time.
+			return scheduledEvent.type === "expansionDraft" ? 1 : 0;
+		},
+	]);
+
+	for (const scheduledEvent of scheduledEventsOrdered) {
 		if (scheduledEvent.season !== season || scheduledEvent.phase !== phase) {
 			if (
 				scheduledEvent.season < season ||
@@ -527,6 +542,7 @@ const processScheduledEvents = async (
 		} else if (scheduledEvent.type === "contraction") {
 			eventLogTexts.push(...(await processContraction(scheduledEvent.info)));
 		} else if (scheduledEvent.type === "unretirePlayer") {
+			unretiredPids.push(scheduledEvent.info.pid);
 			eventLogTexts.push(
 				...(await processUnretirePlayer(scheduledEvent.info.pid)),
 			);
@@ -539,9 +555,16 @@ const processScheduledEvents = async (
 		await idb.cache.scheduledEvents.delete(scheduledEvent.id);
 	}
 
-	if (scheduledEvents.length > 0) {
+	if (scheduledEventsOrdered.length > 0) {
 		// Non-default scheduled events (or default plus bulk delete) could leave a team orphanied in a division or conference that no longer exists
 		await team.ensureValidDivsConfs();
+	}
+
+	if (unretiredPids.length > 0) {
+		await freeAgents.normalizeContractDemands({
+			type: "freeAgentsOnly",
+			pids: unretiredPids,
+		});
 	}
 
 	if (eventLogTexts.length > 0) {

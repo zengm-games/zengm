@@ -17,6 +17,7 @@ import type { View } from "../../common/types.ts";
 import { dataTableWrappedMood } from "../components/Mood.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { wrappedCurrency } from "../components/wrappedCurrency.ts";
 
 const NegotiationList = ({
 	capSpace,
@@ -86,7 +87,7 @@ const NegotiationList = ({
 					injury: p.injury,
 					jerseyNumber: p.jerseyNumber,
 					skills: p.ratings.skills,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,
@@ -106,7 +107,7 @@ const NegotiationList = ({
 					maxWidth: true,
 					p,
 				}),
-				helpers.formatCurrency(p.mood.user.contractAmount / 1000, "M"),
+				wrappedCurrency(p.mood.user.contractAmount / 1000, "M"),
 				p.contract.exp,
 				{
 					value: (

@@ -2,15 +2,22 @@ import { idb } from "../../db/index.ts";
 import { league } from "../index.ts";
 import { g, toUI } from "../../util/index.ts";
 import deleteUnreadMessages from "./deleteUnreadMessages.ts";
+import { PHASE } from "../../../common/constants.ts";
 
 const switchTo = async (tid: number, tids?: number[]) => {
 	const prevTid = g.get("userTid");
+
+	let gracePeriodSeasons = 2;
+	if (g.get("phase") >= PHASE.PLAYOFFS) {
+		// +3 is the same as +2 when staring a new league, since this happens at the end of a season
+		gracePeriodSeasons += 1;
+	}
 
 	await league.setGameAttributes({
 		gameOver: false,
 		userTid: tid,
 		userTids: tids ? tids : [tid],
-		gracePeriodEnd: g.get("season") + 3, // +3 is the same as +2 when staring a new league, since this happens at the end of a season
+		gracePeriodEnd: g.get("season") + gracePeriodSeasons,
 		otherTeamsWantToHire: false,
 	});
 

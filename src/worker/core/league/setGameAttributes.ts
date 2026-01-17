@@ -112,8 +112,8 @@ const setGameAttributes = async (
 				);
 				const popRanks = helpers.getPopRanks(teamSeasons);
 
-				for (let i = 0; i < teamSeasons.length; i++) {
-					const t = teams.find((t) => t.tid === teamSeasons[i].tid);
+				for (const [i, teamSeason] of teamSeasons.entries()) {
+					const t = teams.find((t) => t.tid === teamSeason.tid);
 					const popRank = popRanks[i];
 					if (popRank === undefined || t === undefined) {
 						continue;
@@ -172,6 +172,7 @@ const setGameAttributes = async (
 		toUpdate.includes("numSeasonsFutureDraftPicks") ||
 		toUpdate.includes("challengeNoDraftPicks") ||
 		toUpdate.includes("numDraftRounds") ||
+		toUpdate.includes("forceHistoricalRosters") ||
 		(toUpdate.includes("userTids") && g.get("challengeNoDraftPicks"))
 	) {
 		await draft.genPicks();

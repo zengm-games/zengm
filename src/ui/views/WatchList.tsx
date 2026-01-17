@@ -29,6 +29,8 @@ const ClearButton = ({
 	players: any[];
 	processing: boolean;
 }) => {
+	const { numWatchColors } = useLocalPartial(["numWatchColors"]);
+
 	const watchNumbers = new Set<number>();
 	for (const p of players) {
 		if (p.watch !== undefined) {
@@ -36,7 +38,7 @@ const ClearButton = ({
 		}
 	}
 
-	if (watchNumbers.size > 0) {
+	if (numWatchColors > 1) {
 		const numbers = Array.from(watchNumbers).sort((a, b) => a - b);
 
 		return (
@@ -77,6 +79,7 @@ const ClearButton = ({
 			onClick={() => {
 				onClick("all");
 			}}
+			disabled={players.length === 0}
 			processing={processing}
 			variant="danger"
 		>
@@ -156,7 +159,7 @@ export const getWatchListColsAndRows = ({
 			},
 			data: [
 				{
-					value: <WatchBlock pid={p.pid} watch={p.watch} />,
+					value: <WatchBlock pid={p.pid} defaultWatch={p.watch} />,
 					searchValue: p.watch,
 					sortValue: p.watch,
 				},
@@ -165,7 +168,7 @@ export const getWatchListColsAndRows = ({
 					injury: p.injury,
 					jerseyNumber: p.jerseyNumber,
 					skills: p.ratings.skills,
-					watch: p.watch,
+					defaultWatch: p.watch,
 					firstName: p.firstName,
 					firstNameShort: p.firstNameShort,
 					lastName: p.lastName,

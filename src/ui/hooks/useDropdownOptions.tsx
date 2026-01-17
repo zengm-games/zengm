@@ -5,6 +5,7 @@ import {
 	bySport,
 	isSport,
 	PLAYER_STATS_TABLES,
+	REMAINING_PLAYOFF_TEAMS_PHASES,
 } from "../../common/index.ts";
 import { useLocalPartial } from "../util/index.ts";
 import type { LocalStateUI } from "../../common/types.ts";
@@ -73,6 +74,10 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	career: "Career",
 	regularSeason: makeNormalResponsive("Reg Seas", "Regular Season"),
 	playoffs: "Playoffs",
+	"playoffs|||teams": makeNormalResponsive(
+		"Playoffs",
+		"Remaining Playoff Teams",
+	),
 	"10": "Past 10 Seasons",
 	"all|||seasons": makeNormalResponsive("All", "All Seasons"),
 	perGame: makeNormalResponsive("Per G", "Per Game"),
@@ -174,9 +179,9 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 
 if (isSport("baseball")) {
 	Object.assign(dropdownValues, {
-		batting: PLAYER_STATS_TABLES.batting.name,
-		pitching: PLAYER_STATS_TABLES.pitching.name,
-		fielding: PLAYER_STATS_TABLES.fielding.name,
+		batting: PLAYER_STATS_TABLES.batting!.name,
+		pitching: PLAYER_STATS_TABLES.pitching!.name,
+		fielding: PLAYER_STATS_TABLES.fielding!.name,
 	});
 }
 
@@ -240,8 +245,15 @@ const useDropdownOptions = (
 		keys = ["special", ...Object.keys(sortedTeams)];
 	} else if (field === "teamsAndAll") {
 		keys = ["all|||teams", ...Object.keys(sortedTeams)];
-	} else if (field === "teamsAndAllWatch") {
-		keys = ["all|||teams", "watch", ...Object.keys(sortedTeams)];
+	} else if (field === "teamsAndAllWatchPlayoffs") {
+		keys = [
+			"all|||teams",
+			...(REMAINING_PLAYOFF_TEAMS_PHASES.has(state.phase)
+				? ["playoffs|||teams"]
+				: []),
+			"watch",
+			...Object.keys(sortedTeams),
+		];
 	} else if (field === "teamsAndYours") {
 		keys = ["your_teams", ...Object.keys(sortedTeams)];
 	} else if (
@@ -329,6 +341,7 @@ const useDropdownOptions = (
 				"rushingReceiving",
 				"defense",
 				"kicking",
+				"punting",
 				"returns",
 			],
 			hockey: [
@@ -475,7 +488,7 @@ const useDropdownOptions = (
 	const newOptions: DropdownOption[] = keys.map((rawKey) => {
 		const key =
 			typeof rawKey === "string" && rawKey.includes("|||")
-				? rawKey.split("|||")[0]
+				? rawKey.split("|||")[0]!
 				: rawKey;
 		return {
 			key,

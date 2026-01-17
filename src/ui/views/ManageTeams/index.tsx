@@ -1,13 +1,14 @@
-import { Fragment, useReducer, type FormEvent } from "react";
+import { Fragment, useCallback, useReducer, type FormEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers, logEvent, toWorker } from "../../util/index.ts";
 import AddRemove from "./AddRemove.tsx";
-import type { View } from "../../../common/types.ts";
+import type { Phase, View } from "../../../common/types.ts";
 import { PHASE } from "../../../common/index.ts";
 import TeamForm from "./TeamForm.tsx";
 import { groupBy } from "../../../common/utils.ts";
+import { useBlocker } from "../../hooks/useBlocker.ts";
 
-const nextSeasonWarning =
+export const nextSeasonWarning =
 	"Because the regular season is already over, changes will not be fully applied until next season.";
 
 type State = {
@@ -96,7 +97,7 @@ const getUniqueAbbrevsErrorMessage = (teams: { abbrev: string }[]) => {
 	}
 
 	if (duplicateInfos.length === 1) {
-		const { abbrev, count } = duplicateInfos[0];
+		const { abbrev, count } = duplicateInfos[0]!;
 		return (
 			<>
 				{count} teams have the same abbrev <b>{abbrev}</b> which can cause
@@ -119,11 +120,29 @@ const getUniqueAbbrevsErrorMessage = (teams: { abbrev: string }[]) => {
 	);
 };
 
+export const PHASES_WHERE_TEAMS_CAN_BE_DISABLED: Phase[] = [
+	PHASE.PRESEASON,
+	PHASE.DRAFT_LOTTERY,
+	PHASE.AFTER_DRAFT,
+	PHASE.RESIGN_PLAYERS,
+	PHASE.FREE_AGENCY,
+];
+
 const ManageTeams = (props: View<"manageTeams">) => {
-	const [state, dispatch] = useReducer(reducer, {
+	const [state, dispatchUnwrapped] = useReducer(reducer, {
 		saving: false,
 		teams: props.teams,
 	});
+
+	const { setDirty } = useBlocker();
+
+	const dispatch: typeof dispatchUnwrapped = useCallback(
+		(action) => {
+			setDirty(action.type !== "doneSaving");
+			dispatchUnwrapped(action);
+		},
+		[setDirty],
+	);
 
 	const handleInputChange =
 		(tid: number) => (field: string, event: { target: { value: string } }) => {
@@ -137,7 +156,10 @@ const ManageTeams = (props: View<"manageTeams">) => {
 		dispatch({ type: "startSaving" });
 
 		try {
-			await toWorker("main", "updateTeamInfo", state.teams);
+			await toWorker("main", "updateTeamInfo", {
+				teams: state.teams,
+				from: "manageTeams",
+			});
 
 			let text = "Saved team info.";
 
@@ -175,14 +197,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 	}
 
 	const disableStatus =
-		!props.godMode ||
-		![
-			PHASE.PRESEASON,
-			PHASE.DRAFT_LOTTERY,
-			PHASE.AFTER_DRAFT,
-			PHASE.RESIGN_PLAYERS,
-			PHASE.FREE_AGENCY,
-		].includes(props.phase);
+		!props.godMode || !PHASES_WHERE_TEAMS_CAN_BE_DISABLED.includes(props.phase);
 
 	const { saving, teams } = state;
 

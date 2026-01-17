@@ -4,6 +4,7 @@ import type {
 	DraftPickSeason,
 	EventBBGM,
 	MinimalPlayerRatings,
+	NonEmptyArray,
 	Phase,
 	Player,
 	PlayerContract,
@@ -19,7 +20,7 @@ import { assetIsPlayer, getPlayerFromPick } from "../util/formatEventText.ts";
 import { getRoundsWonText } from "./frivolitiesTeamSeasons.ts";
 
 const findRatingsRow = (
-	allRatings: MinimalPlayerRatings[],
+	allRatings: NonEmptyArray<MinimalPlayerRatings>,
 	ratingsIndex: number,
 	season: number,
 	phase: Phase,
@@ -40,7 +41,7 @@ const findRatingsRow = (
 		return allRatings.at(-1)!;
 	} else {
 		for (let i = allRatings.length - 1; i >= 0; i--) {
-			const ratings = allRatings[i];
+			const ratings = allRatings[i]!;
 			if (ratings.season <= season) {
 				return ratings;
 			}
@@ -125,9 +126,9 @@ const findStatSum = (
 						statTeam: 0,
 					};
 				}
-				statSumsBySeason[row.season].stat += stat;
+				statSumsBySeason[row.season]!.stat += stat;
 				if (row.tid === tid && !seenOtherTeam) {
-					statSumsBySeason[row.season].statTeam += stat;
+					statSumsBySeason[row.season]!.statTeam += stat;
 				}
 			}
 		}
@@ -332,8 +333,7 @@ const getSeasonsToPlot = async (
 				season: i,
 			},
 		];
-		for (let j = 0; j < tids.length; j++) {
-			const tid = tids[j];
+		for (const [j, tid] of tids.entries()) {
 			const teamSeason = await idb.getCopy.teamSeasons(
 				{
 					season: i,
@@ -350,7 +350,7 @@ const getSeasonsToPlot = async (
 					teamSeason.otl > 0)
 			) {
 				teams[j] = {
-					...teams[j],
+					...teams[j]!,
 					won: teamSeason.won,
 					lost: teamSeason.lost,
 					tied: teamSeason.tied,
@@ -360,21 +360,23 @@ const getSeasonsToPlot = async (
 					champ:
 						teamSeason.playoffRoundsWon ===
 						g.get("numGamesPlayoffSeries", teamSeason.season).length,
-					region: teamSeason.region ?? g.get("teamInfoCache")[tid].region,
-					name: teamSeason.name ?? g.get("teamInfoCache")[tid].name,
-					abbrev: teamSeason.abbrev ?? g.get("teamInfoCache")[tid].abbrev,
+					region: teamSeason.region ?? g.get("teamInfoCache")[tid]!.region,
+					name: teamSeason.name ?? g.get("teamInfoCache")[tid]!.name,
+					abbrev: teamSeason.abbrev ?? g.get("teamInfoCache")[tid]!.abbrev,
 					roundsWonText: getRoundsWonText(
 						teamSeason,
 						await getPlayoffsByConf(teamSeason.season),
-					).toLocaleLowerCase(),
+					),
 				};
 			}
 
-			if (statSumsBySeason[j][i]?.stat > 0) {
-				teams[j].stat = statSumsBySeason[j][i]?.stat;
+			const record = statSumsBySeason[j]![i];
+
+			if (record !== undefined && record?.stat > 0) {
+				teams[j]!.stat = record.stat;
 			}
-			if (statSumsBySeason[j][i]?.statTeam > 0) {
-				teams[j].statTeam = statSumsBySeason[j][i]?.statTeam;
+			if (record !== undefined && record?.statTeam > 0) {
+				teams[j]!.statTeam = record.statTeam;
 			}
 		}
 
@@ -419,7 +421,7 @@ type TradeEvent = DiscriminateUnion<EventBBGM, "type", "trade">;
 
 export const processAssets = async (
 	event: TradeEvent,
-	i: number,
+	i: 0 | 1,
 	statSumsBySeason?: StatSumsBySeasons,
 ) => {
 	if (!event.teams || event.phase === undefined) {
@@ -563,7 +565,7 @@ const updateTradeSummary = async (
 
 		const statSumsBySeason: StatSumsBySeasons = [{}, {}];
 
-		for (let i = 0; i < event.tids.length; i++) {
+		for (const i of [0, 1] as const) {
 			const tid = event.tids[i];
 			const teamInfo = await getTeamInfoBySeason(tid, event.season);
 			if (!teamInfo) {

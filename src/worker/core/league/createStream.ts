@@ -11,11 +11,12 @@ import {
 import {
 	applyRealTeamInfo,
 	DEFAULT_STADIUM_CAPACITY,
+	DEPTH_CHART_NAME,
 	isSport,
 	LEAGUE_DATABASE_VERSION,
 	PHASE,
 	PLAYER,
-	SPORT_HAS_REAL_PLAYERS,
+	REAL_PLAYERS_INFO,
 } from "../../../common/index.ts";
 import type {
 	Conditions,
@@ -63,6 +64,7 @@ import processPlayerNewLeague from "./processPlayerNewLeague.ts";
 import remove from "./remove.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { DEFAULT_LEVEL, amountToLevel } from "../../../common/budgetLevels.ts";
+import { upgradeGamesVersion65 } from "../../db/connectLeague.ts";
 
 export type TeamInfo = TeamBasic & {
 	disabled?: boolean;
@@ -85,13 +87,15 @@ const addLeagueMeta = async ({
 	teams: Team[];
 	tid: number;
 }) => {
+	const t = teams[tid]!;
+
 	const l: League = {
 		lid,
 		name,
 		tid,
 		phaseText: "",
-		teamName: teams[tid].name,
-		teamRegion: teams[tid].region,
+		teamName: t.name,
+		teamRegion: t.region,
 		heartbeatID: undefined,
 		heartbeatTimestamp: undefined,
 		difficulty: g.get("difficulty"),
@@ -99,7 +103,7 @@ const addLeagueMeta = async ({
 		lastPlayed: new Date(),
 		startingSeason: g.get("startingSeason"),
 		season: g.get("season"),
-		imgURL: teams[tid].imgURLSmall ?? teams[tid].imgURL,
+		imgURL: t.imgURLSmall ?? t.imgURL,
 	};
 
 	// In case we are importing over an old league
@@ -267,7 +271,9 @@ const preProcess = async (
 			x.result === undefined &&
 			typeof x.score === "string"
 		) {
-			const pts = (x.score as string).split("-").map((y) => Number.parseInt(y));
+			const pts = (x.score as string)
+				.split("-")
+				.map((y) => Number.parseInt(y)) as [number, number];
 			let diff = -Infinity;
 			if (!Number.isNaN(pts[0]) && !Number.isNaN(pts[1])) {
 				diff = pts[0] - pts[1];
@@ -276,6 +282,11 @@ const preProcess = async (
 			x.result = diff === 0 ? "T" : x.won ? "W" : "L";
 
 			delete x.won;
+		}
+	} else if (key === "playoffSeries") {
+		// Version 69 upgrade
+		if (x.byConf === true) {
+			x.byConf = 2;
 		}
 	}
 
@@ -640,6 +651,7 @@ const processTeamInfos = async ({
 	realTeamInfo,
 	teamInfos,
 	userTid,
+	version,
 }: {
 	gameAttributes: {
 		salaryCap: number;
@@ -648,6 +660,7 @@ const processTeamInfos = async ({
 	realTeamInfo: RealTeamInfo | undefined;
 	teamInfos: any[];
 	userTid: number;
+	version: number | undefined;
 }) => {
 	const { salaryCap, season } = gameAttributes;
 
@@ -662,6 +675,15 @@ const processTeamInfos = async ({
 						srIDOverride: teamSeason.srID ?? t.srID,
 					});
 				}
+			}
+		}
+	}
+
+	// If these are teams uploaded from a sport with depth (like FBGM) to a sport without depth (like BBGM) need to remove depth
+	if (DEPTH_CHART_NAME === undefined) {
+		for (const t of teamInfos) {
+			if (Object.hasOwn(t, "depth")) {
+				delete t.depth;
 			}
 		}
 	}
@@ -687,6 +709,31 @@ const processTeamInfos = async ({
 		}
 	}
 
+	// Version 68 upgrade
+	if (version !== undefined && version < 68) {
+		const keys = ["imgURL", "imgURLSmall"] as const;
+		for (const t of teamInfos) {
+			for (const key of keys) {
+				if (t[key] === "/img/logos-primary/CHI.svg") {
+					t[key] = "/img/logos-primary/CHW.svg";
+				} else if (t[key] === "/img/logos-secondary/CHI.svg") {
+					t[key] = "/img/logos-secondary/CHW.svg";
+				}
+			}
+		}
+	}
+
+	// Version 69 upgrade
+	if (version !== undefined && version < 69) {
+		for (const t of teamInfos) {
+			if (t.pop === undefined || t.stadiumCapacity === undefined) {
+				const teamSeason = t.seasons?.at(-1);
+				t.pop = teamSeason?.pop ?? 1;
+				t.stadiumCapacity = teamSeason?.pop ?? DEFAULT_STADIUM_CAPACITY;
+			}
+		}
+	}
+
 	const teams = teamInfos.map((t) => team.generate(t));
 
 	// Version 55 upgrade
@@ -700,8 +747,7 @@ const processTeamInfos = async ({
 
 	let scoutingLevel: number | undefined;
 
-	for (let i = 0; i < teams.length; i++) {
-		const t = teams[i];
+	for (const [i, t] of teams.entries()) {
 		const teamInfo = teamInfos[i];
 		let teamSeasonsLocal: TeamSeasonWithoutKey[];
 
@@ -709,7 +755,12 @@ const processTeamInfos = async ({
 			teamSeasonsLocal = teamInfo.seasons;
 			const last = teamSeasonsLocal.at(-1);
 
-			if (last && last.season !== g.get("season") && !t.disabled) {
+			// This used to check for `last.season !== g.get("season")` but that is a false positive when re-activating teams in the offseason such as with an expansion draft
+			if (
+				last &&
+				(last.season > g.get("season") || last.season === undefined) &&
+				!t.disabled
+			) {
 				last.season = g.get("season");
 
 				// Remove any past seasons that claim to be from this season or a future season
@@ -752,6 +803,18 @@ const processTeamInfos = async ({
 						// Careful, teamSeason.tid might not be defined for imported leagues yet!
 						teamSeason.expenseLevels[key] =
 							gp * (budgetsByTid[t.tid]?.[key] ?? DEFAULT_LEVEL);
+					}
+				}
+
+				// Version 68 upgrade
+				if (version !== undefined && version < 68) {
+					const keys = ["imgURL", "imgURLSmall"] as const;
+					for (const key of keys) {
+						if (teamSeason[key] === "/img/logos-primary/CHI.svg") {
+							teamSeason[key] = "/img/logos-primary/CHW.svg";
+						} else if (teamSeason[key] === "/img/logos-secondary/CHI.svg") {
+							teamSeason[key] = "/img/logos-secondary/CHW.svg";
+						}
 					}
 				}
 
@@ -868,9 +931,10 @@ const processTeamInfos = async ({
 				}
 			}
 		} else if (!t.disabled) {
-			teamSeasonsLocal = [team.genSeasonRow(t)];
-			teamSeasonsLocal[0].pop = teamInfo.pop;
-			teamSeasonsLocal[0].stadiumCapacity = teamInfo.stadiumCapacity;
+			const row = team.genSeasonRow(t);
+			row.pop = teamInfo.pop;
+			row.stadiumCapacity = teamInfo.stadiumCapacity;
+			teamSeasonsLocal = [row];
 		} else {
 			teamSeasonsLocal = [];
 		}
@@ -898,7 +962,10 @@ const processTeamInfos = async ({
 			ts.tid = t.tid;
 
 			if (isSport("basketball")) {
-				if (ts.ba !== undefined) {
+				if (
+					(typeof ts.oppBlk !== "number" || Number.isNaN(ts.oppBlk)) &&
+					ts.ba !== undefined
+				) {
 					ts.oppBlk = ts.ba;
 					delete ts.ba;
 				}
@@ -951,8 +1018,12 @@ const finalizeActivePlayers = async ({
 	for (const p of players1) {
 		if (fileHasPlayers) {
 			// Fix jersey numbers, which matters for league files where that data might be invalid (conflicts) or incomplete
-			if (p.tid >= 0 && p.stats.length > 0 && !p.stats.at(-1).jerseyNumber) {
-				p.stats.at(-1).jerseyNumber = await player.genJerseyNumber(p);
+			if (
+				p.tid >= 0 &&
+				p.stats.length > 0 &&
+				p.stats.at(-1).jerseyNumber === undefined
+			) {
+				player.setJerseyNumber(p, await player.genJerseyNumber(p));
 			}
 		}
 
@@ -1100,7 +1171,7 @@ const beforeDBStream = async ({
 
 	// This setting is allowed to be undefined, so make it that way when appropriate
 	if (
-		!SPORT_HAS_REAL_PLAYERS &&
+		!REAL_PLAYERS_INFO &&
 		(!getLeagueOptions || getLeagueOptions.type !== "real")
 	) {
 		delete gameAttributeOverrides.realDraftRatings;
@@ -1121,6 +1192,13 @@ const beforeDBStream = async ({
 	};
 
 	let teamInfos = helpers.addPopRank(filteredFromFile.teams ?? teamsFromInput);
+	for (const t of teamInfos) {
+		for (const key of ["imgURL", "imgURLSmall"] as const) {
+			if (typeof t[key] === "string") {
+				t[key] = helpers.stripBbcode(t[key]);
+			}
+		}
+	}
 
 	// Validation of some identifiers
 	confirmSequential(teamInfos, "tid", "team");
@@ -1179,19 +1257,18 @@ const beforeDBStream = async ({
 			realTeamInfo,
 			teamInfos,
 			userTid: tid,
+			version: fromFile.version,
 		});
 
-	// Update after applying real team info
-	if (realTeamInfo) {
-		gameAttributes.teamInfoCache = teams.map((t) => ({
-			abbrev: t.abbrev,
-			disabled: t.disabled,
-			imgURL: t.imgURL,
-			imgURLSmall: t.imgURLSmall,
-			name: t.name,
-			region: t.region,
-		}));
-	}
+	// Update after applying real team info and any other changes in processTeamInfos
+	gameAttributes.teamInfoCache = teams.map((t) => ({
+		abbrev: t.abbrev,
+		disabled: t.disabled,
+		imgURL: t.imgURL,
+		imgURLSmall: t.imgURLSmall,
+		name: t.name,
+		region: t.region,
+	}));
 
 	const activeTids = teams.filter((t) => !t.disabled).map((t) => t.tid);
 
@@ -1316,11 +1393,18 @@ const afterDBStream = async ({
 		}
 	}
 
+	const randomDebuts =
+		randomization === "debuts" ||
+		randomization === "debutsKeepCurrent" ||
+		randomization === "debutsForever" ||
+		randomization === "debutsForeverKeepCurrent";
+
 	const fileHasPlayers = extraFromStream.activePlayers.length > 0;
 	let activePlayers = fileHasPlayers
 		? extraFromStream.activePlayers
 		: await createRandomPlayers({
 				activeTids,
+				onlyFreeAgents: randomDebuts,
 				scoutingLevel,
 				teams,
 			});
@@ -1341,6 +1425,10 @@ const afterDBStream = async ({
 				delete p.contract;
 				delete p.salaries;
 				delete p.awards;
+				delete p.hof;
+				delete p.diedYear;
+				p.gamesUntilTradable = 0;
+				p.ptModifier = 1;
 				p.stats = [];
 				p.tid = t.tid;
 				adjustSeasonPlayer(p);
@@ -1362,7 +1450,7 @@ const afterDBStream = async ({
 					player.setContract(
 						p2,
 						{
-							amount: rookieSalaries[pickIndex] ?? rookieSalaries.at(-1),
+							amount: rookieSalaries[pickIndex] ?? rookieSalaries.at(-1)!,
 							exp: p2.contract.exp,
 						},
 						true,
@@ -1390,15 +1478,18 @@ const afterDBStream = async ({
 		activePlayers.push(...extraActivePlayers);
 	}
 
+	// Run this for random debuts only in random players leagues, since in real players leagues it's done in getLeague already
 	if (
-		randomization === "debuts" ||
-		randomization === "debutsKeepCurrent" ||
-		randomization === "debutsForever" ||
-		randomization === "debutsForeverKeepCurrent"
+		(!getLeagueOptions || getLeagueOptions.type === "legends") &&
+		randomDebuts
 	) {
+		// Delete any random players that are somehow in draft class, such as if this is an imported league
+		activePlayers = activePlayers.filter((p) => p.tid !== PLAYER.UNDRAFTED);
+
 		const basketball = await loadDataBasketball();
 
 		const draftProspects = await initRandomDebutsForRandomPlayersLeague({
+			activeTids,
 			players: activePlayers,
 			basketball,
 			numActiveTeams: gameAttributes.numActiveTeams,
@@ -1441,23 +1532,27 @@ const afterDBStream = async ({
 		addRelatives(activePlayers as unknown as Player[], basketball.relatives);
 	}
 
-	await addDraftProspects({
-		players: activePlayers,
-		scoutingLevel,
-	});
+	// For random debuts we don't want addDraftProspects to be called, since it will fill in with random players. However this does imply that future pick value is going to be messed up for those transition years between random debuts generations, since getPickValues does not support partial draft classes.
+	if (!randomDebuts) {
+		await addDraftProspects({
+			players: activePlayers,
+			scoutingLevel,
+		});
+	}
 
 	// Unless we got strategy from a league file, calculate it here
-	for (let i = 0; i < teams.length; i++) {
+	for (const [i, t] of teams.entries()) {
 		if (teamInfos[i].strategy === undefined) {
 			const teamPlayers = activePlayers
 				.filter((p) => p.tid === i)
 				.map((p) => ({
 					pid: p.pid,
+					injury: p.injury,
 					value: p.value,
 					ratings: p.ratings.at(-1),
 				}));
 			const ovr = team.ovr(teamPlayers);
-			teams[i].strategy = ovr >= 60 ? "contending" : "rebuilding";
+			t.strategy = ovr >= 60 ? "contending" : "rebuilding";
 		}
 	}
 
@@ -1609,6 +1704,19 @@ const afterDBStream = async ({
 	await idb.cache.flush();
 	idb.cache.startAutoFlush();
 	local.leagueLoaded = true;
+
+	// Version 65 upgrade
+	if (fromFile.version !== undefined && fromFile.version < 65) {
+		const transaction = idb.league.transaction(
+			["games", "playerFeats", "playoffSeries"],
+			"readwrite",
+		);
+		await upgradeGamesVersion65({
+			transaction,
+			stopIfTooMany: true,
+			lid,
+		});
+	}
 };
 
 const createStream = async (

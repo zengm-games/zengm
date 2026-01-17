@@ -9,8 +9,8 @@ import type {
 } from "@dumbmatter/idb";
 import type { LeagueDB } from "./connectLeague.ts";
 
-// Helper function to use cursors to iterate over an index or object store, without awaiting a promise (for Firefox <60 support).
-// If you don't care about Firefox <60 for a feature and want to use await in the callback, just use a cursor and loop from idb https://github.com/jakearchibald/idb#idbcursor-enhancements
+// This should never be used! It's just left here for worker console backwards compatibility.
+// Instead, use async iterators https://github.com/jakearchibald/idb#idbcursor-enhancements
 const iterate = async <StoreName extends StoreNames<LeagueDB>>(
 	store:
 		| IDBPObjectStore<

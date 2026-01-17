@@ -39,7 +39,7 @@ const getBestDid = (
 	}
 
 	if (candidateDids.length === 1) {
-		return candidateDids[0];
+		return candidateDids[0]!;
 	}
 
 	// If we know the location of the current divisions (either based on their team regions, or based on averaging together all the teams), then use that information to pick the best did
@@ -90,8 +90,8 @@ const getBestDid = (
 	if (didsMissingCenters.size === 0) {
 		// We know the coords of all the divisions, so use that to pick the closest one
 		const newCenter: [number, number] = [
-			geographicCoordinates[region].latitude,
-			geographicCoordinates[region].longitude,
+			geographicCoordinates[region]!.latitude,
+			geographicCoordinates[region]!.longitude,
 		];
 		return minBy(candidateDids, (did) =>
 			calcDistance(divCenters.get(did)!, newCenter),

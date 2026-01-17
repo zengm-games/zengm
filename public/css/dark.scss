@@ -167,16 +167,16 @@ $list-group-item-bg-scale: 70%;
 
 .btn-light-bordered,
 .btn-light-bordered-2 {
+	// Both these are needed for disabled buttons, for some reason
+	color: $black !important;
+	&:disabled {
+		color: $black !important;
+	}
+
 	&:active,
 	&:focus,
 	&:not(:disabled):hover {
 		background-color: $gray-200 !important;
-		color: $black !important;
-	}
-
-	// Both these are needed for disabled buttons, for some reason
-	color: $black !important;
-	&:disabled {
 		color: $black !important;
 	}
 }
@@ -303,7 +303,19 @@ a.god-mode.active {
 	}
 }
 
+// Keeping ::after for dark mode only cause I couldn't get it to look quite right otherwise. Ideally would fix by having a separate PNG for dark mode
+table.table thead .sorting {
+	background: unset;
+}
 table.table thead .sorting::after {
+	content: "";
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nMXUMQqDQBCF4U2jEMgp0nkGmxzD0trae8QDeI9UXsS/s7dIE0wzQRhhWYQw64YU02zxscy8GSciLlW5n2OAX2fgDmT+u0RiLfAGmqNYAUyAACNwjcVOQK/QVp2+m7EbMAfYEyit2AUYAmirB5BbsBpYgNdOLUD1t5xVX35WW7Bce7PXs2HtqXWapU7Ph2adclTOugDrY3PmNPGjQpNuhDuym43uZpti0TO9Guv1sGNJcxaLfQBK2D1y8JFl2wAAAABJRU5ErkJggg==)
+		no-repeat center right;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	position: absolute;
 	opacity: 0.4;
 }
 
@@ -372,6 +384,17 @@ table.table thead .sorting::after {
 // Without this, the background flashes white on fast scroll
 .dark-select__menu {
 	background-color: $white !important;
+}
+
+.dark-select__multi-value {
+	background-color: $gray-200 !important;
+}
+.dark-select__multi-value__label {
+	color: $black !important;
+}
+.dark-select__multi-value__remove {
+	// !important would override hover
+	color: $black;
 }
 
 .modal-backdrop.show {

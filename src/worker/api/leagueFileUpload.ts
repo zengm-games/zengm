@@ -1,84 +1,67 @@
 import type { ValidateFunction } from "ajv";
 import Ajv from "ajv";
-import JSONParserText from "./JSONParserText.ts";
-
-// This is dynamically resolved with rollup-plugin-alias
-// @ts-ignore
+import { JSONParseStream, type JSONPath } from "json-web-streams";
 import schema from "../../../build/files/league-schema.json";
 import { helpers, toUI } from "../util/index.ts";
-import { highWaterMark } from "../core/league/createStream.ts";
 import type { Conditions } from "../../common/types.ts";
 import {
 	DEFAULT_TEAM_COLORS,
 	LEAGUE_DATABASE_VERSION,
 } from "../../common/index.ts";
+import type { LeagueDBStoreNames } from "../db/connectLeague.ts";
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array
-export const CUMULATIVE_OBJECTS = new Set([
+const cumulativeObjects = [
 	"gameAttributes",
 	"meta",
 	"startingSeason",
 	"version",
-]);
+] as const;
+export const CUMULATIVE_OBJECTS = new Set<string>(cumulativeObjects);
+type CumulativeObjects = (typeof cumulativeObjects)[number];
+type LeagueFileKey = LeagueDBStoreNames | CumulativeObjects;
 
 export const parseJSON = () => {
-	let parser: any;
+	// This is an object rather than an array so we can easily confirm that all LeagueDBStoreNames are present
+	const keysObject: Record<LeagueFileKey, undefined> = {
+		gameAttributes: undefined,
+		meta: undefined,
+		startingSeason: undefined,
+		version: undefined,
+		allStars: undefined,
+		awards: undefined,
+		draftLotteryResults: undefined,
+		draftPicks: undefined,
+		events: undefined,
+		games: undefined,
+		headToHeads: undefined,
+		messages: undefined,
+		negotiations: undefined,
+		playerFeats: undefined,
+		players: undefined,
+		playoffSeries: undefined,
+		releasedPlayers: undefined,
+		savedTrades: undefined,
+		savedTradingBlock: undefined,
+		schedule: undefined,
+		scheduledEvents: undefined,
+		seasonLeaders: undefined,
+		teamSeasons: undefined,
+		teamStats: undefined,
+		teams: undefined,
+		trade: undefined,
+	};
+	const keys = helpers.keys(keysObject);
 
-	const transformStream = new TransformStream(
-		{
-			start(controller) {
-				parser = new JSONParserText((value) => {
-					// This function was adapted from JSONStream, particularly the part where row.value is set to undefind at the bottom, that is important!
+	const paths = keys.map((key) => {
+		const path: JSONPath = `$.${key}${CUMULATIVE_OBJECTS.has(key) ? "" : "[*]"}`;
+		return {
+			key,
+			path,
+		};
+	});
 
-					// The key on the root of the object is in the stack if we're nested, or is just parser.key if we're not
-					let objectType;
-					if (parser.stack.length > 1) {
-						objectType = parser.stack[1].key;
-					} else {
-						objectType = parser.key;
-					}
-
-					const emitAtStackLength = CUMULATIVE_OBJECTS.has(objectType) ? 1 : 2;
-
-					if (parser.stack.length !== emitAtStackLength) {
-						// We must be deeper in the tree, still building an object to emit
-						return;
-					}
-
-					controller.enqueue({
-						key: objectType,
-						value,
-					});
-
-					// Now that we have emitted the object we want, we no longer need to keep track of all the values on the stack. This avoids keeping the whole JSON object in memory.
-					for (const row of parser.stack) {
-						row.value = undefined;
-					}
-
-					// Also, when processing an array/object, this.value will contain the current state of the array/object. So we should delete the value there too, but leave the array/object so it can still be used by the parser
-					if (typeof parser.value === "object" && parser.value !== null) {
-						delete parser.value[parser.key];
-					}
-				});
-			},
-
-			transform(chunk) {
-				parser.write(chunk);
-			},
-
-			flush(controller) {
-				controller.terminate();
-			},
-		},
-		new CountQueuingStrategy({
-			highWaterMark,
-		}),
-		new CountQueuingStrategy({
-			highWaterMark,
-		}),
-	);
-
-	return transformStream;
+	return new JSONParseStream(paths);
 };
 
 // We have one big JSON Schema file for everything, but we need to run it on individual objects as they stream though. So break it up into parts.
@@ -108,7 +91,7 @@ const makeValidators = () => {
 		description: "",
 	};
 
-	const parts = helpers.keys(schema.properties);
+	const parts = helpers.keys(schema.properties) satisfies LeagueFileKey[];
 
 	for (const part of parts) {
 		const cumulative = CUMULATIVE_OBJECTS.has(part);
@@ -184,22 +167,24 @@ const getBasicInfo = async ({
 	}
 
 	while (true) {
-		const { value, done } = (await reader.read()) as any;
+		const { value: rawValue, done } = await reader.read();
 		if (done) {
 			break;
 		}
+		const key = rawValue.key;
+		const value = rawValue.value as any;
 
-		const cumulative = CUMULATIVE_OBJECTS.has(value.key);
+		const cumulative = CUMULATIVE_OBJECTS.has(key);
 
-		if (leagueCreationID !== undefined && !basicInfo.keys.has(value.key)) {
-			basicInfo.keys.add(value.key);
+		if (leagueCreationID !== undefined && !basicInfo.keys.has(key)) {
+			basicInfo.keys.add(key);
 			toUI(
 				"updateLocal",
 				[
 					{
 						leagueCreation: {
 							id: leagueCreationID,
-							status: value.key,
+							status: key,
 						},
 					},
 				],
@@ -207,40 +192,41 @@ const getBasicInfo = async ({
 			);
 		}
 
-		if (validators[value.key]) {
-			const { validate, required } = validators[value.key];
-			validate(value.value);
+		const currentValidator = validators[key];
+		if (currentValidator) {
+			const { validate, required } = currentValidator;
+			validate(value);
 			if (validate.errors) {
 				schemaErrors.push(...validate.errors);
 			}
 
 			if (required) {
-				requiredPartsNotYetSeen.delete(value.key);
+				requiredPartsNotYetSeen.delete(key);
 			}
 		}
 
-		if (value.key === "meta" && value.value.name) {
-			basicInfo.name = value.value.name;
+		if (key === "meta" && value.name) {
+			basicInfo.name = value.name;
 		}
 
 		// Need to store max gid from games, so generated schedule does not overwrite it
-		if (value.key === "games" && value.value.gid > basicInfo.maxGid) {
-			basicInfo.maxGid = value.value.gid;
+		if (key === "games" && value.gid > basicInfo.maxGid) {
+			basicInfo.maxGid = value.gid;
 		}
 
-		if (value.key === "players" && value.value.contract?.rookie) {
+		if (key === "players" && value.contract?.rookie) {
 			basicInfo.hasRookieContracts = true;
 		}
 
 		if (cumulative) {
-			(basicInfo as any)[value.key] = value.value;
-		} else if (value.key === "teams") {
+			(basicInfo as any)[key] = value;
+		} else if (key === "teams") {
 			if (!basicInfo.teams) {
 				basicInfo.teams = [];
 			}
 
 			const t = {
-				...value.value,
+				...value,
 			};
 
 			if (!t.colors) {
@@ -260,9 +246,9 @@ const getBasicInfo = async ({
 
 			// stats and seasons take up a lot of space, so we don't need to keep them. But... heck, why not.
 
-			basicInfo.teams.push(value.value);
-		} else if (includePlayersInBasicInfo && value.key === "players") {
-			basicInfo.players!.push(value.value);
+			basicInfo.teams.push(value);
+		} else if (includePlayersInBasicInfo && key === "players") {
+			basicInfo.players!.push(value);
 		}
 	}
 

@@ -36,6 +36,7 @@ import release from "./release.ts";
 import remove from "./remove.ts";
 import retire from "./retire.ts";
 import setContract from "./setContract.ts";
+import setJerseyNumber from "./setJerseyNumber.ts";
 import sign from "./sign.ts";
 import shouldRetire from "./shouldRetire.ts";
 import skills from "./skills.ts";
@@ -85,6 +86,7 @@ export default {
 	retire,
 	sign,
 	setContract,
+	setJerseyNumber,
 	shouldRetire,
 	skills,
 	stats,

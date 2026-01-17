@@ -6,9 +6,9 @@ import {
 	TeamLogoInline,
 } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers } from "../util/index.ts";
+import { getCol, helpers } from "../util/index.ts";
 import useClickable from "../hooks/useClickable.tsx";
-import type { TeamSeason, View } from "../../common/types.ts";
+import type { ByConf, TeamSeason, View } from "../../common/types.ts";
 import { bySport, isSport, TIEBREAKERS } from "../../common/index.ts";
 
 type StandingsTeam =
@@ -185,7 +185,7 @@ export const ColPtsOrGB = ({
 	pointsFormula: string;
 	usePts: boolean;
 }) => {
-	const col = getCols([usePts ? "PTS" : "GB"])[0];
+	const col = getCol(usePts ? "PTS" : "GB");
 	if (usePts) {
 		col.desc = `Points (${pointsFormula})`;
 	}
@@ -309,7 +309,7 @@ const SmallStandingsRow = ({
 	maxPlayoffSeed: number;
 	maxPlayoffSeedNoPlayIn: number;
 	maxRank: number;
-	playoffsByConf: boolean;
+	playoffsByConf: ByConf;
 	season: number;
 	t: StandingsTeam;
 	usePts: boolean;
@@ -329,14 +329,14 @@ const SmallStandingsRow = ({
 		>
 			<TeamColumn
 				maxRank={maxRank}
-				rank={playoffsByConf ? t.rank.conf : t.rank.league}
+				rank={playoffsByConf !== false ? t.rank.conf : t.rank.league}
 				season={season}
 				t={t}
 			/>
 			<td className="text-end">
 				{usePts
 					? Math.round(t.seasonAttrs.pts)
-					: playoffsByConf
+					: playoffsByConf !== false
 						? t.gb.conf
 						: t.gb.league}
 			</td>
@@ -461,7 +461,7 @@ const Standings = ({
 				subgroups: [
 					{
 						separatorIndexes,
-						teams: rankingGroups.league[0],
+						teams: rankingGroups.league[0]!,
 					},
 				],
 			},
@@ -479,7 +479,7 @@ const Standings = ({
 			subgroups: [
 				{
 					separatorIndexes,
-					teams: rankingGroups.conf[i],
+					teams: rankingGroups.conf[i]!,
 				},
 			],
 		}));
@@ -500,7 +500,7 @@ const Standings = ({
 					return {
 						name: div.name,
 						separatorIndexes,
-						teams: rankingGroups.div[j],
+						teams: rankingGroups.div[j]!,
 					};
 				}),
 		}));
@@ -576,7 +576,7 @@ const Standings = ({
 				<div style={{ minWidth: 0 }}>{groupStandings}</div>
 			</div>
 		);
-	} else if (playoffsByConf) {
+	} else if (playoffsByConf !== false) {
 		// Show small standings alongside each conference
 		allStandings = (
 			<Fragment>
@@ -595,7 +595,7 @@ const Standings = ({
 									playoffsByConf={playoffsByConf}
 									pointsFormula={pointsFormula}
 									season={season}
-									teams={rankingGroups.conf[i]}
+									teams={rankingGroups.conf[i]!}
 									userTid={userTid}
 									usePts={usePts}
 								/>
@@ -621,7 +621,7 @@ const Standings = ({
 						playoffsByConf={playoffsByConf}
 						pointsFormula={pointsFormula}
 						season={season}
-						teams={rankingGroups.league[0]}
+						teams={rankingGroups.league[0]!}
 						userTid={userTid}
 						usePts={usePts}
 					/>

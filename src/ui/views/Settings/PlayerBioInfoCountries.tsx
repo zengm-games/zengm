@@ -18,9 +18,10 @@ import {
 } from "./PlayerBioInfo.tsx";
 import PlayerBioInfoSortButton from "./PlayerBioInfoSortButton.tsx";
 import { IMPORT_FILE_STYLE } from "./RowsEditor.tsx";
-import { CountryFlag } from "../../components/index.tsx";
+import { CountryFlag, HelpPopover } from "../../components/index.tsx";
 import Modal from "../../components/Modal.tsx";
 import { orderBy } from "../../../common/utils.ts";
+import { WEBSITE_ROOT } from "../../../common/constants.ts";
 
 export const smallColStyle = {
 	marginLeft: 10,
@@ -188,7 +189,7 @@ const Controls = ({
 
 	return (
 		<>
-			<div className="d-flex justify-content-between">
+			<div className="d-flex align-items-center">
 				<div className="btn-group">
 					<Dropdown>
 						<Dropdown.Toggle
@@ -306,7 +307,7 @@ const Controls = ({
 						}}
 					/>
 				</div>
-				<div className="btn-group">
+				<div className="btn-group ms-auto me-2">
 					<ImportButton
 						defaults={defaults}
 						setErrorMessage={setImportErrorMessage}
@@ -314,6 +315,16 @@ const Controls = ({
 					/>
 					<ExportButton defaults={defaults} infoState={infoState} />
 				</div>
+				<HelpPopover>
+					See{" "}
+					<a
+						href={`https://${WEBSITE_ROOT}/manual/customization/names-countries-colleges/`}
+						target="_blank"
+					>
+						the manual
+					</a>{" "}
+					for more info on editing a player bio info file.
+				</HelpPopover>
 			</div>
 
 			{importErrorMessage ? (

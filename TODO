@@ -995,6 +995,7 @@ FBGM
 - better timeout management
   - offense shouldn't take timeout if it's just saving time for the other team, like after 3rd down in a tied game when they are about to punt
 - 2025 overtime rules are now the same for regular season and playoffs, both teams get a chance to possess
+  - should have option to switch to different overtime rules for regular season and playoffs
 
 wrong team abbrev various places
 - functions for helping

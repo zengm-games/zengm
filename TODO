@@ -1,3 +1,17 @@
+fbgm now
+- kick and punt return should be based on ratings of returner and other special teams players
+- make tackling more important, currently it just assigns blame
+  - also LB in general, since LB ovr is not used in composite ratings currently
+  - make it affect forced fumbles
+- fast WR OP? https://discord.com/channels/@me/1216830279272890378/1260586368153681930
+- kickers/punters should get injured less https://old.reddit.com/r/Football_GM/comments/1b03rbb/kicker_got_injured_in_the_playoffs/
+- re-evaluate team value formula, especially WR now that speed matters more
+  - actually speed might matter too much now, and some other ratings balance issues https://discord.com/channels/290013534023057409/331882115119448065/1441529240309989436
+- add "awards" for leaders, like other sports https://twitter.com/the_daymion/status/1724093113621524759
+- in play-by-play, distinguish between timeout due to low play clock and timeout due to clock management https://discord.com/channels/290013534023057409/1416078039837839360/1418244324033958048
+- missed FG should put the ball at least on the 20 https://mail.google.com/mail/u/0/#inbox/FMfcgzGwJmDMcvCdTBhDpQRBpZbRlDnB
+- option to disable 2 point conversions https://discord.com/channels/290013534023057409/1453064622713208963/1453064622713208963
+
 calcuate bestPos in playersPlus, rather than in processPlayersHallOfFame
 - simplifies a lot of consuming code
 - for baseball, use gpF rather than ratings to determine pos
@@ -727,9 +741,6 @@ baseball colleges
 
 green highlight (players from your team) most places should be aware of userTid history
 
-When exporting Bio Info, export even default values, then dedupe on import https://old.reddit.com/r/BasketballGM/comments/1ch7wik/monthly_suggestions_thread/l3kvqv1/
-- or better, include option
-
 on trading block, if salary cap is disabled, hide the Payroll and Cap columns since they are not relevant
 - maybe better - show your payroll after trade, rather than the other team's payroll https://mail.google.com/mail/u/0/#sent/FMfcgzGxTFZTnfhSTRFBmTLcjmNhDksw
 
@@ -949,13 +960,7 @@ FBGM
 - When you're drafting, you can see how many players you have at each position-but that includes expiring contracts. show both https://discord.com/channels/290013534023057409/331882115119448065/1266520868193046730
 - some way to automate contract signing. Generally I want to always sign all of my rookies to 5 years, so a way to set that up could be cool-obviously it would not fully complete if the cap is met but it would greatly reduce the amount of clicks needed to sign a big draft class https://discord.com/channels/290013534023057409/331882115119448065/1266521363183833199
 - show whether clock is running or not after plays late in half https://mail.google.com/mail/u/0/#inbox/FMfcgzQVxRJWqCTMxsxMTBbZBllDZbzl
-- kick and punt return should be based on ratings of returner and other special teams players
-- make tackling more important, currently it just assigns blame
-  - also LB in general, since LB ovr is not used in composite ratings currently
-  - make it affect forced fumbles
-- fast WR OP? https://discord.com/channels/@me/1216830279272890378/1260586368153681930
 - fix the glitch where passes get picked off in the end zone from like 80 yards out
-- kickers/punters should get injured less https://old.reddit.com/r/Football_GM/comments/1b03rbb/kicker_got_injured_in_the_playoffs/
 - more running plays on 3rd/4th and short?
 - inappropriate half the distance to the goal https://discord.com/channels/290013534023057409/290015591216054273/1167368228369072158
 - make it harder to gain yards in the red zone https://discord.com/channels/290013534023057409/331882115119448065/1171978572940976210
@@ -970,13 +975,10 @@ FBGM
   - count as missed field goal
   - chance for either team to return (very slim for offense)
 - OL stats
-- re-evaluate team value formula, especially WR now that speed matters more
-  - actually speed might matter too much now, and some other ratings balance issues https://discord.com/channels/290013534023057409/331882115119448065/1441529240309989436
 - if you have 0 healthy kickers, go for 2 https://discord.com/channels/@me/778760871911751700/1160420973019934750
   - it really should be based on probability of making XP and probability of making TP making TP
   - similar for 4th down situations, like 4th and 1 on the 30 with a bad kicker, don't punt!
 - too much parity? https://old.reddit.com/r/Football_GM/comments/17fvo5h/i_love_this_game_but_the_level_of_parity_is_out/
-- add "awards" for leaders, like other sports https://twitter.com/the_daymion/status/1724093113621524759
 - maybe show turnovers in scoring summary https://old.reddit.com/message/messages/21g6koz
 - options to enable canadian/arena football, and then put that as a preset for new leagues
 - completed pass + pass inferference at end of game when trailing - should take penalty even if fewer yards, but seems to not https://mail.google.com/mail/u/0/#inbox/FMfcgzGwHpWBjWmMMknKPFPrTBdNGkTq
@@ -988,13 +990,11 @@ FBGM
   - in hurryUp, should try to end play out of bounds
   - need some kind of "milking the clock" mode, where you take longer between plays, and also actively try to not go out of bounds
 - interception in the enzone showing outside the endzone in drive chart, why? https://discord.com/channels/290013534023057409/290015591216054273/1195441266029232220
-- missed FG should put the ball at least on the 20 https://mail.google.com/mail/u/0/#inbox/FMfcgzGwJmDMcvCdTBhDpQRBpZbRlDnB?compose=GTvVlcRzBlKZpWSJKcGwhBWJsgxgxdqPxQPmDLdmNdGrSGjdShXVtnVbPplhHMkvhhNnRBFngBljz
 - drive chart weirdness for successful onside kicks https://mail.google.com/mail/u/0/#inbox/FMfcgzGwJmLJLlZPKfvvFDnjqDfFXwpq
 - drive chart weirdness for penalty overturning a play and having a loss of downs resulting in turnover on downs https://discord.com/channels/290013534023057409/1414344458194911243
 - better timeout management
   - offense shouldn't take timeout if it's just saving time for the other team, like after 3rd down in a tied game when they are about to punt
 - 2025 overtime rules are now the same for regular season and playoffs, both teams get a chance to possess
-- in play-by-play, distinguish between timeout due to low play clock and timeout due to clock management https://discord.com/channels/290013534023057409/1416078039837839360/1418244324033958048
 
 wrong team abbrev various places
 - functions for helping

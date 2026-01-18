@@ -116,23 +116,29 @@ const ExportButton = ({
 }: {
 	defaults: Defaults;
 	infoState: PlayerBioInfoState;
-}) => (
-	<button
-		className="btn btn-light-bordered"
-		onClick={() => {
-			const parsed = parseAndValidate(infoState);
-			const pruned = prune(parsed, defaults);
+}) => {
+	return (
+		<button
+			className="btn btn-light-bordered"
+			onClick={() => {
+				const parsed = parseAndValidate(infoState);
+				const pruned = prune(parsed, defaults, true);
 
-			downloadFile(
-				"playerBioInfo.json",
-				JSON.stringify({ gameAttributes: { playerBioInfo: pruned } }),
-				"application/json",
-			);
-		}}
-	>
-		Export
-	</button>
-);
+				downloadFile(
+					"playerBioInfo.json",
+					JSON.stringify(
+						{ gameAttributes: { playerBioInfo: pruned } },
+						undefined,
+						2,
+					),
+					"application/json",
+				);
+			}}
+		>
+			Export
+		</button>
+	);
+};
 
 export type SetInfoState = (
 	infoState:

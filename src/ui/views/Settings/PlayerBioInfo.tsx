@@ -325,6 +325,9 @@ export const parseAndValidate = (state: PlayerBioInfoState) => {
 export const prune = (
 	info: Required<PlayerBioInfo>,
 	defaults: Defaults,
+
+	// When true, then we want to prune only the properties of countries (leave the defaults) except the names (leave all country names)
+	forExport: boolean,
 ): PlayerBioInfo | undefined => {
 	// This is what would happen with the current defaults applied to the built-ins
 	const defaultMergedCountries = mergeCountries(
@@ -343,34 +346,36 @@ export const prune = (
 			continue;
 		}
 
-		for (const key of ["first", "last"] as const) {
-			if (isEqual(country[key], mergedCountry[key])) {
-				delete country[key];
+		if (!forExport) {
+			for (const key of ["first", "last"] as const) {
+				if (isEqual(country[key], mergedCountry[key])) {
+					delete country[key];
+				}
 			}
-		}
 
-		if (
-			(name === "USA" || name === "Canada") &&
-			country.fractionSkipCollege === undefined
-		) {
-			// Would be better to have it undefined, as in using the global default. But that can't be persisted to JSON, so we need some other way to encode it. Until that exists, just set the default here, better than nothing. Actually seems to work, just results in a bit of extra storage overhead.
-			country.fractionSkipCollege = info.default.fractionSkipCollege;
-		}
+			if (
+				(name === "USA" || name === "Canada") &&
+				country.fractionSkipCollege === undefined
+			) {
+				// Would be better to have it undefined, as in using the global default. But that can't be persisted to JSON, so we need some other way to encode it. Until that exists, just set the default here, better than nothing. Actually seems to work, just results in a bit of extra storage overhead.
+				country.fractionSkipCollege = info.default.fractionSkipCollege;
+			}
 
-		if (
-			((name === "USA" || name === "Canada") &&
-				country.fractionSkipCollege === 0.02) ||
-			country.fractionSkipCollege === 0.98
-		) {
-			delete country.fractionSkipCollege;
+			if (
+				((name === "USA" || name === "Canada") &&
+					country.fractionSkipCollege === 0.02) ||
+				country.fractionSkipCollege === 0.98
+			) {
+				delete country.fractionSkipCollege;
+			}
+
+			if (isEqual(country.races, defaults.races[name] ?? defaults.races.USA)) {
+				delete country.races;
+			}
 		}
 
 		if (isEqual(country.colleges, defaults.colleges)) {
 			delete country.colleges;
-		}
-
-		if (isEqual(country.races, defaults.races[name] ?? defaults.races.USA)) {
-			delete country.races;
 		}
 
 		if (Object.keys(country).length === 0) {
@@ -378,26 +383,28 @@ export const prune = (
 		}
 	}
 
-	// Check defaults
-	if (isEqual(info.default.colleges, defaults.colleges)) {
-		delete info.default.colleges;
-	}
-	if (info.default.fractionSkipCollege === 0.98) {
-		delete info.default.fractionSkipCollege;
-	}
-	if (isEqual(info.default.races, defaults.races.USA)) {
-		delete info.default.races;
-	}
+	if (!forExport) {
+		// Check defaults
+		if (isEqual(info.default.colleges, defaults.colleges)) {
+			delete info.default.colleges;
+		}
+		if (info.default.fractionSkipCollege === 0.98) {
+			delete info.default.fractionSkipCollege;
+		}
+		if (isEqual(info.default.races, defaults.races.USA)) {
+			delete info.default.races;
+		}
 
-	// Check frequencies
-	const defaultFrequencies = getFrequencies(
-		{
-			countries: info.countries,
-		},
-		defaults.countries,
-	);
-	if (isEqual(defaultFrequencies, info.frequencies)) {
-		info.frequencies = {};
+		// Check frequencies
+		const defaultFrequencies = getFrequencies(
+			{
+				countries: info.countries,
+			},
+			defaults.countries,
+		);
+		if (isEqual(defaultFrequencies, info.frequencies)) {
+			info.frequencies = {};
+		}
 	}
 
 	const output: PlayerBioInfo = {};
@@ -537,7 +544,7 @@ const PlayerBioInfo2 = ({
 		let parsed;
 		try {
 			parsed = parseAndValidate(infoState);
-			parsed = prune(parsed, defaults);
+			parsed = prune(parsed, defaults, false);
 		} catch (error) {
 			logEvent({
 				type: "error",

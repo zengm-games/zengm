@@ -1018,7 +1018,6 @@ class GameSim extends GameSimBase {
 				this.recordStat(this.o, p, "sb");
 				this.recordStat(this.d, catcher, "sbF");
 			}
-			console.log("STEAL: END", p.seasonStats.sb);
 			this.playByPlay.logEvent({
 				type: "stealEnd",
 				pid: p!.id,
@@ -1027,7 +1026,7 @@ class GameSim extends GameSimBase {
 				throw: throwAt === i,
 				outAtNextBase: false,
 				...this.getSportState(),
-				seasonStolenBases: success ? p.seasonStats.sb : null,
+				seasonStolenBases: success ? p.seasonStats.sb + p.stat["sb"] : null,
 			});
 		}
 	}
@@ -1916,18 +1915,24 @@ class GameSim extends GameSimBase {
 							);
 						}
 					}
-					const determineSeasonNumberOfHits = (numBases: 1 | 2 | 3 | 4) => {
+					const returnHitType = (numBases: 1 | 2 | 3 | 4) => {
 						switch (numBases) {
 							case 1:
-								return batter.seasonStats["h"];
+								return "h";
 							case 2:
-								return batter.seasonStats["2b"];
+								return "2b";
 							case 3:
-								return batter.seasonStats["3b"];
+								return "3b";
 							case 4:
-								return batter.seasonStats["hr"];
+								return "hr";
 						}
 					};
+					const determineSeasonHitsBeforeGame = (
+						hitType: "h" | "2b" | "3b" | "hr",
+					): number => {
+						return batter.seasonStats[hitType] ?? 0;
+					};
+
 					this.playByPlay.logEvent({
 						type: "hitResult",
 						result,
@@ -1938,7 +1943,9 @@ class GameSim extends GameSimBase {
 						numBases,
 						outAtNextBase: false,
 						...this.getSportState(),
-						seasonNumberOfHits: determineSeasonNumberOfHits(numBases),
+						seasonNumberOfHits:
+							batter.stat[returnHitType(numBases)] +
+							determineSeasonHitsBeforeGame(returnHitType(numBases)),
 					});
 				}
 
@@ -2739,8 +2746,10 @@ class GameSim extends GameSimBase {
 		type?: "fielding",
 	) {
 		const qtr = this.team[t].t.stat.ptsQtrs.length - 1;
-
 		if (p !== undefined) {
+			if ((type as any) === "2b") {
+				console.log("3rd check", p, s, amt);
+			}
 			if (type === "fielding") {
 				const pos = this.team[t].playersInGame[p.id]!.pos;
 				const posIndex = POS_NUMBERS[pos] - 1;

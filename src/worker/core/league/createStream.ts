@@ -1230,6 +1230,11 @@ const beforeDBStream = async ({
 
 		for (const t of teamInfos) {
 			t.pop = averagePopulation;
+
+			const last = t.seasons?.at(-1);
+			if (last) {
+				last.pop = t.pop;
+			}
 		}
 		teamInfos = helpers.addPopRank(teamInfos);
 	}

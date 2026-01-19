@@ -35,6 +35,8 @@ custom awards
   - long name
   - some way to filter for SMOY
   - MIP filter
+  - rookie filter
+    - support some kind of games played limit, like for players who miss a whole season, or baseball
   - stats range (regular season, playoffs, semifinals, finals, combined)
   - team or individual
   - if team

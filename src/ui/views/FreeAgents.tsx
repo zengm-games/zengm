@@ -314,18 +314,24 @@ const FreeAgents = ({
 			) : null}
 
 			{gameSimInProgress && !spectator ? (
-				<p className="text-danger">Stop game simulation to sign free agents.</p>
+				<div className="text-danger">
+					Stop game simulation to sign free agents.
+				</div>
 			) : null}
 
 			{spectator ? (
-				<p className="alert alert-danger d-inline-block">
-					The AI will handle signing free agents in spectator mode.
-				</p>
+				<div>
+					<div className="alert alert-danger d-inline-block">
+						The AI will handle signing free agents in spectator mode.
+					</div>
+				</div>
 			) : challengeNoFreeAgents ? (
-				<p className="alert alert-danger d-inline-block">
-					<b>Challenge Mode:</b> You are not allowed to sign free agents, except
-					to minimum contracts.
-				</p>
+				<div>
+					<div className="alert alert-danger d-inline-block">
+						<b>Challenge Mode:</b> You are not allowed to sign free agents,
+						except to minimum contracts.
+					</div>
+				</div>
 			) : null}
 
 			<DataTable

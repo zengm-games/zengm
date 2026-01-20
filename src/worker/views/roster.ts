@@ -13,12 +13,12 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 
 export const sortByPos = (p: {
+	bestPos: string;
 	ratings: {
-		pos: string;
 		ovr: number;
 	};
 }) => {
-	const ind = POSITIONS.indexOf(p.ratings.pos);
+	const ind = POSITIONS.indexOf(p.bestPos);
 	return (POSITIONS.length - ind) * 1000 + p.ratings.ovr;
 };
 

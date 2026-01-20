@@ -2254,10 +2254,10 @@ class GameSim extends GameSimBase {
 		}
 
 		let pAst;
-		let pidAst;
 		if (passer !== undefined) {
-			pAst = this.playersOnCourt[this.o][passer];
-			pidAst = this.team[this.o].player[pAst].id;
+			pAst = this.playersOnCourt[this.o].find(
+				(player) => player.id === passer.id,
+			);
 			this.recordStat(this.o, pAst, "ast");
 		}
 		let fgMakeLogType: FgMakeType | undefined;

@@ -190,8 +190,8 @@ export const getText = (
 		case "strikeOut": {
 			const strikeOutText = event.numOfStrikeouts;
 			text = event.swinging
-				? `${helpers.pronoun(local.getState().gender, "He")} goes down swinging - ${getName(event.pitcherPid)} (${strikeOutText} SO)`
-				: `Called strike three - ${getName(event.pitcherPid)} (${strikeOutText} SO)`;
+				? `${helpers.pronoun(local.getState().gender, "He")} goes down swinging (${strikeOutText} SO)`
+				: `Called strike three (${strikeOutText} SO)`;
 			bold = true;
 			break;
 		}
@@ -299,13 +299,13 @@ export const getText = (
 				if (event.numBases === 1) {
 					text = "Single!";
 				} else if (event.numBases === 2) {
-					text = `Double! (${event.seasonNumberOfHits})`;
+					text = `Double (${event.seasonNumberOfHits} 2B)!`;
 				} else if (event.numBases === 3) {
-					text = `Triple! (${event.seasonNumberOfHits})`;
+					text = `Triple (${event.seasonNumberOfHits} 3B)!`;
 				} else if (event.runners.length === 3) {
-					text = `Grand slam! (${event.seasonNumberOfHits})`;
+					text = `Grand slam (${event.seasonNumberOfHits} HR)!`;
 				} else {
-					text = `Home run! (${event.seasonNumberOfHits})`;
+					text = `Home run (${event.seasonNumberOfHits} HR)!`;
 				}
 			} else if (event.result === "flyOut") {
 				text = `Caught by the ${
@@ -379,7 +379,6 @@ export const getText = (
 			break;
 		}
 		case "stealEnd": {
-			console.log("STEAL END EVENT", event);
 			if (event.out) {
 				text = `${getName(event.pid)} is thrown out at ${getBaseName(
 					event.to,
@@ -387,11 +386,11 @@ export const getText = (
 			} else if (event.throw) {
 				text = `${getName(
 					event.pid,
-				)} beats the throw and is safe at ${getBaseName(event.to)} (${event.seasonStolenBases})`;
+				)} beats the throw and is safe at ${getBaseName(event.to)} (${event.seasonStolenBases} SB)`;
 			} else {
 				text = `${getName(event.pid)} steals ${getBaseName(
 					event.to,
-				)} with no throw`;
+				)}  (${event.seasonStolenBases} SB) with no throw`;
 			}
 			bold = true;
 			break;

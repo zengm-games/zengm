@@ -36,6 +36,7 @@ export type PlayByPlayEventInputScore =
 			type: "interception";
 			clock: number;
 			names: string[];
+			seasonInterceptionStats: number[];
 			t: TeamNum;
 			twoPointConversionTeam: TeamNum | undefined;
 			yds: number;
@@ -44,6 +45,7 @@ export type PlayByPlayEventInputScore =
 			type: "interceptionReturn";
 			clock: number;
 			names: string[];
+			seasonInterceptionStats: number[];
 			t: TeamNum;
 			td: boolean;
 			touchback: boolean;
@@ -54,6 +56,7 @@ export type PlayByPlayEventInputScore =
 			type: "passComplete";
 			clock: number;
 			names: string[];
+			seasonPassTouchdownStats: number[];
 			safety: boolean;
 			t: TeamNum;
 			td: boolean;
@@ -64,6 +67,7 @@ export type PlayByPlayEventInputScore =
 			type: "run";
 			clock: number;
 			names: string[];
+			seasonRushTouchdownStats: number[];
 			safety: boolean;
 			t: TeamNum;
 			td: boolean;
@@ -97,6 +101,7 @@ export type PlayByPlayEventInputScore =
 			type: "sack";
 			clock: number;
 			names: string[];
+			seasonSackStats: number[];
 			safety: boolean;
 			t: TeamNum;
 			yds: number;
@@ -161,6 +166,7 @@ export type PlayByPlayEventInput =
 			type: "fumble";
 			clock: number;
 			names: string[];
+			seasonFumbleStats: number[];
 			t: TeamNum;
 	  }
 	| {

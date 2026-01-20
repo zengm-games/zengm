@@ -1285,6 +1285,7 @@ class GameSim extends GameSimBase {
 			});
 
 			if (td) {
+				// TODO2: KR
 				this.currentPlay.addEvent({
 					type: "krTD",
 					p,
@@ -1500,6 +1501,7 @@ class GameSim extends GameSimBase {
 			});
 
 			if (td) {
+				// TODO2: PUNT RETURN TD?
 				this.currentPlay.addEvent({
 					type: "prTD",
 					p: puntReturner,
@@ -1770,10 +1772,14 @@ class GameSim extends GameSimBase {
 			yds: spotYds,
 		});
 
+		// TODO2: EDIT THIS TO SHOW SEASON FUMBLES
 		this.playByPlay.logEvent({
 			type: "fumble",
 			clock: this.clock,
 			names: [pFumbled.name, pForced.name],
+			seasonFumbleStats: [
+				pForced.seasonStats["defFmbFrc"]! + pForced.stat["defFmbFrc"]!,
+			],
 			t: o,
 		});
 
@@ -1851,6 +1857,7 @@ class GameSim extends GameSimBase {
 			type: "interception",
 			clock: this.clock,
 			names: [p.name],
+			seasonInterceptionStats: [p.seasonStats["defInt"] + p.stat["defInt"]],
 			t: this.currentPlay.state.current.d,
 			twoPointConversionTeam: this.twoPointConversionTeam,
 			yds: ydsPass,
@@ -1900,6 +1907,7 @@ class GameSim extends GameSimBase {
 			type: "interceptionReturn",
 			clock: this.clock,
 			names: [p.name],
+			seasonInterceptionStats: [p.seasonStats["defInt"] + p.stat["defInt"]],
 			t: this.currentPlay.state.current.o,
 			td,
 			touchback,
@@ -1953,6 +1961,7 @@ class GameSim extends GameSimBase {
 			type: "sack",
 			clock: this.clock,
 			names: [qb.name, p.name],
+			seasonSackStats: [p.seasonStats["defSk"] + p.stat["defSk"]],
 			safety,
 			t: this.currentPlay.state.initial.o,
 			yds,
@@ -2145,7 +2154,13 @@ class GameSim extends GameSimBase {
 				// Fumble after catch... only if nothing else is going on, too complicated otherwise
 				if (!td && !safety) {
 					if (Math.random() < this.probFumble(target)) {
-						this.playByPlay.logEvent(completeEvent);
+						this.playByPlay.logEvent({
+							seasonPassTouchdownStats: [
+								qb.seasonStats["pssTD"] + qb.stat["pssTD"],
+								target.seasonStats["recTD"] + target.stat["recTD"],
+							] as number[],
+							...completeEvent,
+						});
 						return dt + this.doFumble(target, 0);
 					}
 				}
@@ -2163,7 +2178,13 @@ class GameSim extends GameSimBase {
 					this.doSafety();
 				}
 
-				this.playByPlay.logEvent(completeEvent);
+				this.playByPlay.logEvent({
+					seasonPassTouchdownStats: [
+						qb.seasonStats["pssTD"] + qb.stat["pssTD"],
+						target.seasonStats["recTD"] + target.stat["recTD"],
+					] as number[],
+					...completeEvent,
+				});
 
 				if (!td && !safety) {
 					this.doTackle({
@@ -2286,6 +2307,9 @@ class GameSim extends GameSimBase {
 			type: "run",
 			clock: this.clock,
 			names: [p.name],
+			seasonRushTouchdownStats: [
+				p.seasonStats["rusTD"] + p.stat["rusTD"],
+			] as number[],
 			safety,
 			t: o,
 			td,

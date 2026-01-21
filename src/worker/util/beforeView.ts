@@ -11,8 +11,6 @@ import {
 	updatePlayMenu,
 	updateStatus,
 } from "./index.ts";
-import * as cloudSync from "./cloudSync.ts";
-import { getCloudIdForLeague } from "../../common/cloudTypes.ts";
 import type { Conditions, League } from "../../common/types.ts";
 
 let heartbeatIntervalID: number;
@@ -167,25 +165,6 @@ export const beforeLeague = async (newLid: number, conditions?: Conditions) => {
 		return;
 	}
 
-	// Auto-connect to cloud sync if this league has a cloud ID
-	const leagueMeta = await idb.meta.get("leagues", newLid);
-	const cloudId = leagueMeta?.cloudId || getCloudIdForLeague(newLid);
-	if (cloudId) {
-		// Get userId from UI (stored in localStorage on main thread)
-		// We'll request it via a toUI call that returns the value
-		try {
-			const userId = await toUI("getCloudUserId", []);
-			if (userId) {
-				// Enable cloud sync on the cache
-				idb.cache.enableCloudSync();
-				await cloudSync.connectToCloud(cloudId, userId);
-				console.log(`Connected to cloud sync for league ${newLid}`);
-			}
-		} catch (error) {
-			console.error("Failed to connect to cloud sync:", error);
-		}
-	}
-
 	if (loadingNewLid !== newLid) {
 		return;
 	}
@@ -217,12 +196,6 @@ export const beforeNonLeague = async (conditions: Conditions) => {
 	if (!beforeNonLeagueRunning) {
 		try {
 			beforeNonLeagueRunning = true;
-
-			// Disconnect from cloud sync when leaving league
-			if (idb.cache) {
-				idb.cache.disableCloudSync();
-			}
-			await cloudSync.disconnectFromCloud();
 
 			await league.close(false);
 			await toUI("resetLeague", [], conditions);

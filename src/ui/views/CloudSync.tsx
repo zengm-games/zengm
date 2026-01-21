@@ -3,16 +3,13 @@
  *
  * Allows users to manage cloud-synced leagues:
  * - Sign in with Firebase (Google or email)
- * - Create a new cloud league
  * - Upload existing league to cloud
  * - Join a cloud league from another device
  * - View sync status
  */
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { toWorker, realtimeUpdate } from "../util/index.ts";
-import { useLocalPartial } from "../util/local.ts";
 import {
 	isFirebaseConfigured,
 	isSignedIn,
@@ -24,33 +21,7 @@ import {
 	getUserEmail,
 	waitForAuth,
 	onAuthChange,
-	getUserIdToken,
-	createCloudLeagueDoc,
-	uploadToCloudStore,
 } from "../util/firebase.ts";
-import type { CloudLeague } from "../../common/cloudTypes.ts";
-
-// Sync status indicator component
-const SyncStatusBadge = ({ status }: { status?: string }) => {
-	const defaultConfig = { color: "secondary", text: "Disconnected" };
-	const statusConfig: Record<string, { color: string; text: string }> = {
-		disconnected: defaultConfig,
-		connecting: { color: "warning", text: "Connecting..." },
-		syncing: { color: "info", text: "Syncing..." },
-		synced: { color: "success", text: "Synced" },
-		conflict: { color: "danger", text: "Conflict" },
-		error: { color: "danger", text: "Error" },
-	};
-
-	const key = status || "disconnected";
-	const config = key in statusConfig ? statusConfig[key]! : defaultConfig;
-
-	return (
-		<span className={`badge bg-${config.color}`}>
-			{config.text}
-		</span>
-	);
-};
 
 // Firebase auth section
 const AuthSection = ({
@@ -206,65 +177,6 @@ const UserInfoSection = ({
 	);
 };
 
-// Cloud leagues list
-const CloudLeaguesList = ({
-	leagues,
-	onJoin,
-	onDelete,
-	currentLeagueId,
-}: {
-	leagues: CloudLeague[];
-	onJoin: (league: CloudLeague) => void;
-	onDelete: (league: CloudLeague) => void;
-	currentLeagueId?: string;
-}) => {
-	if (leagues.length === 0) {
-		return (
-			<div className="alert alert-secondary">
-				No cloud leagues found. Create a new one or upload an existing league.
-			</div>
-		);
-	}
-
-	return (
-		<div className="list-group">
-			{leagues.map((league) => (
-				<div
-					key={league.cloudId}
-					className={`list-group-item d-flex justify-content-between align-items-center ${
-						currentLeagueId === league.cloudId ? "active" : ""
-					}`}
-				>
-					<div>
-						<h6 className="mb-1">{league.name}</h6>
-						<small className="text-muted">
-							{league.sport.charAt(0).toUpperCase() + league.sport.slice(1)} |
-							Season {league.season} |
-							Updated {new Date(league.updatedAt).toLocaleDateString()}
-						</small>
-					</div>
-					<div>
-						{currentLeagueId !== league.cloudId && (
-							<button
-								className="btn btn-sm btn-primary me-2"
-								onClick={() => onJoin(league)}
-							>
-								Open
-							</button>
-						)}
-						<button
-							className="btn btn-sm btn-outline-danger"
-							onClick={() => onDelete(league)}
-						>
-							Delete
-						</button>
-					</div>
-				</div>
-			))}
-		</div>
-	);
-};
-
 // Main CloudSync view
 const CloudSync = () => {
 	useTitleBar({
@@ -272,36 +184,11 @@ const CloudSync = () => {
 		hideNewWindow: true,
 	});
 
-	const { cloudSyncStatus, cloudLeagueId, lid } = useLocalPartial([
-		"cloudSyncStatus",
-		"cloudLeagueId",
-		"lid",
-	]);
-
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
-	const [cloudLeagues, setCloudLeagues] = useState<CloudLeague[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState<string | null>(null);
-	const [uploadProgress, setUploadProgress] = useState<string | null>(null);
 
 	// Check Firebase configuration
 	const firebaseConfigured = isFirebaseConfigured();
-
-	// Get userId from localStorage (available in main thread)
-	const getUserId = () => localStorage.getItem("cloudUserId") || "";
-
-	// Load cloud leagues
-	const loadCloudLeagues = useCallback(async () => {
-		if (!isAuthenticated) return;
-
-		try {
-			const userId = getUserId();
-			const leagues = await toWorker("main", "getCloudLeagues", userId);
-			setCloudLeagues(leagues || []);
-		} catch (err) {
-			console.error("Failed to load cloud leagues:", err);
-		}
-	}, [isAuthenticated]);
 
 	// Initialize auth state
 	useEffect(() => {
@@ -331,128 +218,12 @@ const CloudSync = () => {
 		return unsubscribe;
 	}, [firebaseConfigured]);
 
-	// Load leagues when authenticated
-	useEffect(() => {
-		if (isAuthenticated) {
-			loadCloudLeagues();
-		}
-	}, [isAuthenticated, loadCloudLeagues]);
-
 	const handleSignInSuccess = () => {
 		setIsAuthenticated(true);
 	};
 
 	const handleSignOut = () => {
 		setIsAuthenticated(false);
-		setCloudLeagues([]);
-	};
-
-	const handleUploadToCloud = async () => {
-		// Wrap everything in try-catch to catch any possible error
-		try {
-			console.log("[CloudSync UI] handleUploadToCloud called", { lid });
-
-			if (!lid) {
-				setError("No league is currently loaded. Please load a league first.");
-				return;
-			}
-
-			const userId = getUserId();
-			console.log("[CloudSync UI] userId:", userId);
-			if (!userId) {
-				setError("Not signed in. Please sign in first.");
-				return;
-			}
-
-			setError(null);
-			setUploadProgress("Starting upload...");
-
-			// Step 1: Get league name from worker
-			console.log("[CloudSync UI] Getting league name...");
-			setUploadProgress("Getting league info...");
-			let leagueName: string;
-			try {
-				leagueName = (await toWorker("main", "getLeagueName")) || `League ${lid}`;
-			} catch (e) {
-				console.error("[CloudSync UI] Failed to get league name:", e);
-				leagueName = `League ${lid}`;
-			}
-			console.log("[CloudSync UI] League name:", leagueName);
-
-			// Step 2: Create cloud league document (UI thread - Firebase works here)
-			console.log("[CloudSync UI] Creating cloud league doc...");
-			setUploadProgress("Creating cloud league...");
-			const sport = "basketball";
-			const cloudId = await createCloudLeagueDoc(leagueName, sport, userId);
-			console.log("[CloudSync UI] Cloud league created:", cloudId);
-
-			// Step 3: Get all data from worker
-			console.log("[CloudSync UI] Getting league data from worker...");
-			setUploadProgress("Collecting league data...");
-			const allData = (await toWorker("main", "getLeagueDataForUpload")) as Record<string, any[]>;
-			console.log("[CloudSync UI] Got league data");
-
-			// Step 4: Upload each store (UI thread)
-			const stores = Object.keys(allData);
-			let totalRecords = 0;
-			for (const store of stores) {
-				totalRecords += (allData[store] || []).length;
-			}
-			console.log(`[CloudSync UI] Uploading ${totalRecords} records across ${stores.length} stores`);
-
-			let uploadedRecords = 0;
-			for (const store of stores) {
-				const records = allData[store] || [];
-				if (records.length === 0) continue;
-
-				const pct = Math.round((uploadedRecords / totalRecords) * 100);
-				setUploadProgress(`Uploading ${store} (${records.length})... ${pct}%`);
-				console.log(`[CloudSync UI] Uploading ${store}: ${records.length} records`);
-
-				await uploadToCloudStore(cloudId, store, records);
-				uploadedRecords += records.length;
-			}
-
-			// Step 5: Tell worker to save cloudId and connect for real-time sync
-			console.log("[CloudSync UI] Finalizing upload...");
-			setUploadProgress("Finalizing...");
-			await toWorker("main", "finalizeCloudUpload", { cloudId, userId });
-
-			console.log("[CloudSync UI] Upload completed successfully");
-			setUploadProgress(null);
-			await loadCloudLeagues();
-			await realtimeUpdate(["firstRun"]);
-		} catch (err: any) {
-			console.error("[CloudSync UI] Upload failed:", err);
-			setUploadProgress(null);
-			setError(err?.message || String(err) || "Failed to upload league to cloud");
-		}
-	};
-
-	const handleJoinLeague = async (league: CloudLeague) => {
-		const userId = getUserId();
-		setError(null);
-		try {
-			await toWorker("main", "joinCloudLeague", { cloudId: league.cloudId, userId });
-			await realtimeUpdate(["firstRun"], `/l/${lid}`);
-		} catch (err: any) {
-			setError(err.message || "Failed to join cloud league");
-		}
-	};
-
-	const handleDeleteLeague = async (league: CloudLeague) => {
-		if (!confirm(`Are you sure you want to delete "${league.name}" from the cloud? This cannot be undone.`)) {
-			return;
-		}
-
-		const userId = getUserId();
-		setError(null);
-		try {
-			await toWorker("main", "deleteCloudLeague", { cloudId: league.cloudId, userId });
-			await loadCloudLeagues();
-		} catch (err: any) {
-			setError(err.message || "Failed to delete cloud league");
-		}
 	};
 
 	if (!firebaseConfigured) {
@@ -489,77 +260,18 @@ const CloudSync = () => {
 					changes in real-time across multiple devices.
 				</p>
 
-				{error && (
-					<div className="alert alert-danger" role="alert">
-						{error}
-						<button
-							type="button"
-							className="btn-close float-end"
-							onClick={() => setError(null)}
-						/>
-					</div>
-				)}
-
 				{!isAuthenticated ? (
 					<AuthSection onSignInSuccess={handleSignInSuccess} />
 				) : (
 					<>
 						<UserInfoSection onSignOut={handleSignOut} />
 
-						{/* Current League Status */}
-						{lid && (
-							<div className="card mb-4">
-								<div className="card-body">
-									<h5 className="card-title">
-										Current League Status{" "}
-										<SyncStatusBadge status={cloudSyncStatus} />
-									</h5>
-
-									{cloudLeagueId ? (
-										<p className="text-success">
-											This league is synced to the cloud. Changes will be
-											automatically synced across all your devices.
-										</p>
-									) : (
-										<>
-											<p>
-												This league is not yet synced to the cloud.
-											</p>
-											<button
-												className="btn btn-primary"
-												onClick={handleUploadToCloud}
-												disabled={!!uploadProgress}
-											>
-												{uploadProgress || "Upload to Cloud"}
-											</button>
-										</>
-									)}
-								</div>
-							</div>
-						)}
-
-						{/* Cloud Leagues */}
 						<div className="card">
 							<div className="card-body">
-								<h5 className="card-title">Your Cloud Leagues</h5>
+								<h5 className="card-title">Cloud Sync</h5>
 								<p className="text-muted">
-									These leagues are stored in the cloud and can be accessed from
-									any device.
+									Cloud sync functionality is being rebuilt. Check back soon!
 								</p>
-
-								<CloudLeaguesList
-									leagues={cloudLeagues}
-									onJoin={handleJoinLeague}
-									onDelete={handleDeleteLeague}
-									currentLeagueId={cloudLeagueId}
-								/>
-
-								<button
-									className="btn btn-outline-primary mt-3"
-									onClick={loadCloudLeagues}
-								>
-									Refresh List
-								</button>
 							</div>
 						</div>
 					</>

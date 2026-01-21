@@ -21,12 +21,12 @@ import toUI from "./toUI.ts";
 
 // Firebase configuration - must match UI config
 const firebaseConfig = {
-	apiKey: "YOUR_API_KEY",
-	authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-	projectId: "YOUR_PROJECT_ID",
-	storageBucket: "YOUR_PROJECT_ID.firebasestorage.app",
-	messagingSenderId: "YOUR_SENDER_ID",
-	appId: "YOUR_APP_ID",
+	apiKey: "AIzaSyBgfN6pDk6kwDl1lcGEMCkQdN1HUqJ8fnw",
+	authDomain: "bbgm-2fb86.firebaseapp.com",
+	projectId: "bbgm-2fb86",
+	storageBucket: "bbgm-2fb86.firebasestorage.app",
+	messagingSenderId: "631082495567",
+	appId: "1:631082495567:web:3150c71b2cf84bc0d5443a",
 };
 
 // Check if Firebase is configured

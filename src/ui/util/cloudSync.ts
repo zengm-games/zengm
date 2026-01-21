@@ -176,7 +176,8 @@ export const uploadLeagueData = async (
 		}
 
 		let uploadedRecords = 0;
-		const BATCH_SIZE = 400; // Firestore limit is 500
+		// Use smaller batch size to avoid payload limit (10MB max per request)
+		const BATCH_SIZE = 50;
 
 		for (const store of ALL_STORES) {
 			const records = allData[store] || [];

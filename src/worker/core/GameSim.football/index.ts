@@ -1718,6 +1718,7 @@ class GameSim extends GameSimBase {
 				this.currentPlay.addEvent({
 					type: "possessionChange",
 					yds: -7,
+					scrimmageAtLeastTouchback: true,
 				});
 			}
 		}

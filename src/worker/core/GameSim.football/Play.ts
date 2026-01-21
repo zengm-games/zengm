@@ -206,6 +206,13 @@ type PlayEvent =
 			type: "possessionChange";
 			yds: number;
 			kickoff?: boolean;
+			scrimmageAtLeastTouchback?: undefined;
+	  }
+	| {
+			type: "possessionChange";
+			yds: number;
+			kickoff?: undefined;
+			scrimmageAtLeastTouchback?: boolean;
 	  }
 	| {
 			type: "tck";
@@ -692,6 +699,13 @@ class Play {
 		} else if (event.type === "possessionChange") {
 			state.scrimmage += event.yds;
 			state.possessionChange();
+
+			if (
+				event.scrimmageAtLeastTouchback &&
+				state.scrimmage < SCRIMMAGE_TOUCHBACK
+			) {
+				state.scrimmage = SCRIMMAGE_TOUCHBACK;
+			}
 
 			if (event.kickoff) {
 				state.awaitingKickoff = undefined;

@@ -5054,28 +5054,39 @@ const getCloudLeagues = async (userId: string) => {
 };
 
 const uploadLeagueToCloud = async (userId: string) => {
+	console.log("[API] uploadLeagueToCloud started", { userId });
+	const startTime = performance.now();
+
 	if (!userId) {
+		console.error("[API] uploadLeagueToCloud: No userId");
 		throw new Error("Not signed in to cloud");
 	}
 
 	const lid = g.get("lid");
 	if (lid === undefined) {
+		console.error("[API] uploadLeagueToCloud: No league loaded");
 		throw new Error("No league loaded");
 	}
+	console.log("[API] League ID:", lid);
 
 	// Check if already cloud-synced
 	const existingCloudId = getCloudIdForLeague(lid);
 	if (existingCloudId) {
+		console.error("[API] uploadLeagueToCloud: Already synced", { existingCloudId });
 		throw new Error("This league is already synced to the cloud");
 	}
 
 	// Create cloud league
+	console.log("[API] Creating cloud league...");
 	const leagueName = (await league.getName()) || `League ${lid}`;
 	const sport = process.env.SPORT as "basketball" | "football" | "baseball" | "hockey";
 	const cloudId = await cloudSync.createCloudLeague(leagueName, sport, userId);
+	console.log("[API] Cloud league created:", cloudId);
 
 	// Get all data from cache to upload
 	const getAllData = async () => {
+		console.log("[API] getAllData: Starting to collect data from cache...");
+		const getAllDataStart = performance.now();
 		const data: Record<string, any[]> = {};
 		const stores = [
 			"allStars", "awards", "draftLotteryResults", "draftPicks", "events",
@@ -5086,16 +5097,25 @@ const uploadLeagueToCloud = async (userId: string) => {
 		];
 
 		for (const store of stores) {
+			const storeStart = performance.now();
 			data[store] = await (idb.cache as any)[store].getAll();
+			const storeDuration = performance.now() - storeStart;
+			console.log(`[API] getAllData: ${store} - ${data[store].length} records in ${storeDuration.toFixed(0)}ms`);
 		}
+
+		const getAllDataDuration = performance.now() - getAllDataStart;
+		console.log(`[API] getAllData: Completed in ${getAllDataDuration.toFixed(0)}ms`);
 
 		return data;
 	};
 
 	// Upload to cloud
+	console.log("[API] Starting upload to cloud...");
 	await cloudSync.uploadLeagueToCloud(cloudId, getAllData);
+	console.log("[API] Upload completed");
 
 	// Save cloudId to league metadata in IndexedDB
+	console.log("[API] Saving cloudId to league metadata...");
 	const leagueMeta = await idb.meta.get("leagues", lid);
 	if (leagueMeta) {
 		leagueMeta.cloudId = cloudId;
@@ -5109,9 +5129,11 @@ const uploadLeagueToCloud = async (userId: string) => {
 	idb.cache.enableCloudSync();
 
 	// Connect to cloud for real-time sync
+	console.log("[API] Connecting to cloud for real-time sync...");
 	await cloudSync.connectToCloud(cloudId, userId);
 
 	// Update league metadata
+	console.log("[API] Updating cloud league metadata...");
 	await cloudSync.updateCloudLeagueMeta({
 		season: g.get("season"),
 		phase: g.get("phase"),
@@ -5123,6 +5145,9 @@ const uploadLeagueToCloud = async (userId: string) => {
 		cloudSyncStatus: "synced",
 		cloudLeagueId: cloudId,
 	}]);
+
+	const totalDuration = performance.now() - startTime;
+	console.log(`[API] uploadLeagueToCloud completed in ${(totalDuration / 1000).toFixed(1)}s`, { cloudId });
 
 	return cloudId;
 };

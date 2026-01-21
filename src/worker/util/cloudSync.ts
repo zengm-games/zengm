@@ -185,14 +185,18 @@ export const connectToCloud = async (
 	cloudId: string,
 	userId: string,
 ): Promise<boolean> => {
+	console.log("[CloudSync] connectToCloud started", { cloudId, userId });
+	const startTime = performance.now();
+
 	const firestore = await getDb();
 	if (!firestore) {
-		console.error("Firestore not available");
+		console.error("[CloudSync] connectToCloud: Firestore not available");
 		return false;
 	}
 
 	// Disconnect from any existing cloud league
 	if (currentCloudId) {
+		console.log("[CloudSync] Disconnecting from existing cloud league:", currentCloudId);
 		await disconnectFromCloud();
 	}
 
@@ -202,26 +206,32 @@ export const connectToCloud = async (
 
 	try {
 		// Verify league exists and user has access
+		console.log("[CloudSync] Verifying league access...");
 		const { doc, getDoc } = firestoreModule;
 		const leagueRef = doc(firestore, CLOUD_PATHS.leagueMeta(cloudId));
 		const leagueDoc = await getDoc(leagueRef);
 
 		if (!leagueDoc.exists()) {
+			console.error("[CloudSync] League not found:", cloudId);
 			throw new Error("Cloud league not found");
 		}
 
 		const leagueData = leagueDoc.data() as CloudLeague;
 		if (!leagueData.members.includes(userId)) {
+			console.error("[CloudSync] User not a member:", { userId, members: leagueData.members });
 			throw new Error("You don't have access to this league");
 		}
 
+		console.log("[CloudSync] Access verified, starting real-time listeners...");
 		// Start real-time listeners for configured stores
 		await startRealtimeListeners(cloudId);
 
+		const duration = performance.now() - startTime;
+		console.log(`[CloudSync] connectToCloud completed in ${duration.toFixed(0)}ms`);
 		setSyncStatus("synced");
 		return true;
 	} catch (error) {
-		console.error("Failed to connect to cloud:", error);
+		console.error("[CloudSync] Failed to connect to cloud:", error);
 		setSyncStatus("error");
 		currentCloudId = null;
 		currentUserId = null;
@@ -325,11 +335,14 @@ const handleRemoteChanges = async (
 	store: Store,
 	changes: Array<{ type: "added" | "modified" | "removed"; doc: any; id: string }>
 ): Promise<void> => {
+	console.log(`[CloudSync] handleRemoteChanges: ${store} - ${changes.length} changes received`);
+	const startTime = performance.now();
+
 	// Import cache dynamically to avoid circular dependency
 	const { idb } = await import("../db/index.ts");
 
 	if (!idb.cache) {
-		console.warn("Cache not available for remote changes");
+		console.warn("[CloudSync] Cache not available for remote changes");
 		return;
 	}
 
@@ -418,6 +431,11 @@ const handleRemoteChanges = async (
 			cloudSyncLastUpdate: Date.now(),
 			cloudSyncPendingChanges: false,
 		}]);
+
+		const duration = performance.now() - startTime;
+		console.log(`[CloudSync] handleRemoteChanges completed: ${appliedChanges} changes applied in ${duration.toFixed(0)}ms`);
+	} else {
+		console.log(`[CloudSync] handleRemoteChanges: no changes applied`);
 	}
 };
 
@@ -463,13 +481,20 @@ export const syncChangesToCloud = async (
 	deletedIds: (string | number)[],
 ): Promise<void> => {
 	const firestore = await getDb();
-	if (!firestore || !currentCloudId) return;
+	if (!firestore || !currentCloudId) {
+		console.log("[CloudSync] syncChangesToCloud: skipped (no firestore or cloudId)");
+		return;
+	}
 
 	// Skip if not a synced store
 	if (!DEFAULT_SYNC_CONFIG.realtime.includes(store) &&
 		!DEFAULT_SYNC_CONFIG.onDemand.includes(store)) {
+		console.log(`[CloudSync] syncChangesToCloud: skipped store ${store} (not in sync config)`);
 		return;
 	}
+
+	console.log(`[CloudSync] syncChangesToCloud started`, { store, records: records.length, deletedIds: deletedIds.length });
+	const startTime = performance.now();
 
 	isSyncing = true;
 	setSyncStatus("syncing");
@@ -505,8 +530,12 @@ export const syncChangesToCloud = async (
 			});
 		}
 
+		console.log(`[CloudSync] syncChangesToCloud: ${allOperations.length} total operations`);
+
 		// Execute in batches
+		let batchNum = 0;
 		for (let i = 0; i < allOperations.length; i += BATCH_SIZE) {
+			batchNum++;
 			const batch = writeBatch(firestore);
 			const batchOps = allOperations.slice(i, i + BATCH_SIZE);
 
@@ -519,16 +548,21 @@ export const syncChangesToCloud = async (
 				}
 			}
 
+			const batchStart = performance.now();
 			await batch.commit();
+			const batchDuration = performance.now() - batchStart;
+			console.log(`[CloudSync] syncChangesToCloud: batch ${batchNum} committed (${batchOps.length} ops) in ${batchDuration.toFixed(0)}ms`);
 		}
 
 		// Update league metadata to reflect the sync time
 		// This allows other devices to see that there are new changes
 		await updateCloudLeagueMeta({ updatedAt: Date.now() });
 
+		const totalDuration = performance.now() - startTime;
+		console.log(`[CloudSync] syncChangesToCloud completed in ${totalDuration.toFixed(0)}ms`);
 		setSyncStatus("synced");
 	} catch (error) {
-		console.error(`Failed to sync ${store} to cloud:`, error);
+		console.error(`[CloudSync] Failed to sync ${store} to cloud:`, error);
 		setSyncStatus("error");
 		throw error;
 	} finally {
@@ -575,25 +609,33 @@ export const downloadCloudLeague = async (
 	cloudId: string,
 	userId: string,
 ): Promise<{ meta: CloudLeague; data: Record<Store, any[]> }> => {
+	console.log("[CloudSync] downloadCloudLeague started", { cloudId, userId });
+	const startTime = performance.now();
+
 	const firestore = await getDb();
 	if (!firestore) {
+		console.error("[CloudSync] downloadCloudLeague: Firestore not available");
 		throw new Error("Firestore not available");
 	}
 
 	const { doc, getDoc, collection, getDocs } = firestoreModule;
 
 	// Get league metadata
+	console.log("[CloudSync] Fetching league metadata...");
 	const leagueRef = doc(firestore, CLOUD_PATHS.leagueMeta(cloudId));
 	const leagueDoc = await getDoc(leagueRef);
 
 	if (!leagueDoc.exists()) {
+		console.error("[CloudSync] League not found:", cloudId);
 		throw new Error("Cloud league not found");
 	}
 
 	const meta = leagueDoc.data() as CloudLeague;
+	console.log("[CloudSync] League metadata:", { name: meta.name, sport: meta.sport });
 
 	// Verify user has access
 	if (!meta.members.includes(userId)) {
+		console.error("[CloudSync] User not a member");
 		throw new Error("You don't have access to this league");
 	}
 
@@ -608,9 +650,12 @@ export const downloadCloudLeague = async (
 	];
 
 	const data: Record<Store, any[]> = {} as any;
+	let totalRecords = 0;
 
-	for (const store of allStores) {
-		console.log(`Downloading ${store}...`);
+	for (let i = 0; i < allStores.length; i++) {
+		const store = allStores[i]!;
+		const storeStart = performance.now();
+		console.log(`[CloudSync] Downloading ${store}... (${i + 1}/${allStores.length})`);
 		const collectionPath = CLOUD_PATHS.leagueStore(cloudId, store);
 		const collectionRef = collection(firestore, collectionPath);
 
@@ -627,12 +672,17 @@ export const downloadCloudLeague = async (
 			});
 
 			data[store] = records;
-			console.log(`Downloaded ${store}: ${records.length} records`);
+			totalRecords += records.length;
+			const storeDuration = performance.now() - storeStart;
+			console.log(`[CloudSync] Downloaded ${store}: ${records.length} records in ${storeDuration.toFixed(0)}ms`);
 		} catch (error) {
-			console.error(`Failed to download ${store}:`, error);
+			console.error(`[CloudSync] Failed to download ${store}:`, error);
 			data[store] = [];
 		}
 	}
+
+	const totalDuration = performance.now() - startTime;
+	console.log(`[CloudSync] downloadCloudLeague completed: ${totalRecords} total records in ${(totalDuration / 1000).toFixed(1)}s`);
 
 	return { meta, data };
 };
@@ -645,8 +695,12 @@ export const createCloudLeague = async (
 	sport: "basketball" | "football" | "baseball" | "hockey",
 	userId: string,
 ): Promise<string> => {
+	console.log("[CloudSync] createCloudLeague started", { name, sport, userId });
+	const startTime = performance.now();
+
 	const firestore = await getDb();
 	if (!firestore) {
+		console.error("[CloudSync] createCloudLeague: Firestore not available");
 		throw new Error("Firestore not available");
 	}
 
@@ -654,6 +708,7 @@ export const createCloudLeague = async (
 
 	// Generate a new cloud ID
 	const cloudId = `league-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+	console.log("[CloudSync] Generated cloudId:", cloudId);
 
 	const leagueData: CloudLeague = {
 		cloudId,
@@ -670,8 +725,12 @@ export const createCloudLeague = async (
 	};
 
 	// Create the league document
+	console.log("[CloudSync] Creating league document...");
 	const leagueRef = doc(firestore, CLOUD_PATHS.leagueMeta(cloudId));
 	await setDoc(leagueRef, leagueData);
+
+	const duration = performance.now() - startTime;
+	console.log(`[CloudSync] createCloudLeague completed in ${duration.toFixed(0)}ms`, { cloudId });
 
 	return cloudId;
 };
@@ -694,34 +753,61 @@ export const uploadLeagueToCloud = async (
 	cloudId: string,
 	getAllData: () => Promise<Record<Store, any[]>>,
 ): Promise<void> => {
+	console.log("[CloudSync] uploadLeagueToCloud started", { cloudId });
+	const uploadStartTime = performance.now();
+
 	const firestore = await getDb();
 	if (!firestore) {
+		console.error("[CloudSync] Firestore not available");
 		throw new Error("Firestore not available");
 	}
+	console.log("[CloudSync] Firestore initialized");
 
 	const { doc, writeBatch, serverTimestamp } = firestoreModule;
 
 	setSyncStatus("syncing");
 
 	try {
+		console.log("[CloudSync] Calling getAllData()...");
+		const getAllDataStart = performance.now();
 		const allData = await getAllData();
+		const getAllDataDuration = performance.now() - getAllDataStart;
+		console.log(`[CloudSync] getAllData() completed in ${getAllDataDuration.toFixed(0)}ms`);
+
 		const stores = Object.keys(allData) as Store[];
+		console.log(`[CloudSync] Total stores to upload: ${stores.length}`, stores);
+
+		// Calculate total records
+		let totalRecords = 0;
+		for (const store of stores) {
+			totalRecords += (allData[store] || []).length;
+		}
+		console.log(`[CloudSync] Total records across all stores: ${totalRecords}`);
+
+		let uploadedRecords = 0;
 
 		for (let i = 0; i < stores.length; i++) {
 			const store = stores[i]!;
 			const records = allData[store] || [];
 
-			if (records.length === 0) continue;
+			if (records.length === 0) {
+				console.log(`[CloudSync] Skipping ${store} (empty)`);
+				continue;
+			}
 
-			console.log(`Uploading ${store}: ${records.length} records`);
+			const storeStartTime = performance.now();
+			console.log(`[CloudSync] Uploading ${store}: ${records.length} records (store ${i + 1}/${stores.length})`);
 			const collectionPath = CLOUD_PATHS.leagueStore(cloudId, store);
 
 			// Upload with size-aware batching
 			let batch = writeBatch(firestore);
 			let batchCount = 0;
 			let batchSize = 0;
+			let batchNum = 1;
+			let totalBatches = Math.ceil(records.length / BATCH_SIZE);
 
-			for (const record of records) {
+			for (let j = 0; j < records.length; j++) {
+				const record = records[j];
 				const docId = getDocId(store, record);
 				const docRef = doc(firestore, collectionPath, docId);
 				// Clean undefined values - Firestore doesn't accept them
@@ -736,10 +822,15 @@ export const uploadLeagueToCloud = async (
 
 				// Commit batch if we hit count or size limit
 				if (batchCount > 0 && (batchCount >= BATCH_SIZE || batchSize + recordSize > MAX_PAYLOAD_SIZE)) {
+					const batchStart = performance.now();
+					console.log(`[CloudSync] ${store}: Committing batch ${batchNum}/${totalBatches} (${batchCount} records, ${(batchSize / 1024).toFixed(1)}KB)`);
 					await batch.commit();
+					const batchDuration = performance.now() - batchStart;
+					console.log(`[CloudSync] ${store}: Batch ${batchNum} committed in ${batchDuration.toFixed(0)}ms`);
 					batch = writeBatch(firestore);
 					batchCount = 0;
 					batchSize = 0;
+					batchNum++;
 				}
 
 				batch.set(docRef, recordData);
@@ -749,12 +840,24 @@ export const uploadLeagueToCloud = async (
 
 			// Commit remaining records
 			if (batchCount > 0) {
+				const batchStart = performance.now();
+				console.log(`[CloudSync] ${store}: Committing final batch ${batchNum} (${batchCount} records, ${(batchSize / 1024).toFixed(1)}KB)`);
 				await batch.commit();
+				const batchDuration = performance.now() - batchStart;
+				console.log(`[CloudSync] ${store}: Final batch committed in ${batchDuration.toFixed(0)}ms`);
 			}
+
+			uploadedRecords += records.length;
+			const storeDuration = performance.now() - storeStartTime;
+			console.log(`[CloudSync] ${store}: Completed in ${storeDuration.toFixed(0)}ms (${uploadedRecords}/${totalRecords} total records done)`);
 		}
 
+		const totalDuration = performance.now() - uploadStartTime;
+		console.log(`[CloudSync] uploadLeagueToCloud completed in ${(totalDuration / 1000).toFixed(1)}s`);
 		setSyncStatus("synced");
 	} catch (error) {
+		const errorDuration = performance.now() - uploadStartTime;
+		console.error(`[CloudSync] Upload failed after ${(errorDuration / 1000).toFixed(1)}s:`, error);
 		setSyncStatus("error");
 		throw error;
 	}
@@ -902,8 +1005,14 @@ export const updateCloudLeagueMeta = async (
  * Get list of cloud leagues user has access to
  */
 export const getCloudLeagues = async (userId: string): Promise<CloudLeague[]> => {
+	console.log("[CloudSync] getCloudLeagues started", { userId });
+	const startTime = performance.now();
+
 	const firestore = await getDb();
-	if (!firestore) return [];
+	if (!firestore) {
+		console.log("[CloudSync] getCloudLeagues: Firestore not available");
+		return [];
+	}
 
 	try {
 		const { collection, query, where, getDocs } = firestoreModule;
@@ -916,9 +1025,12 @@ export const getCloudLeagues = async (userId: string): Promise<CloudLeague[]> =>
 			leagues.push(docSnap.data() as CloudLeague);
 		});
 
+		const duration = performance.now() - startTime;
+		console.log(`[CloudSync] getCloudLeagues completed: ${leagues.length} leagues in ${duration.toFixed(0)}ms`);
+
 		return leagues.sort((a, b) => b.updatedAt - a.updatedAt);
 	} catch (error) {
-		console.error("Failed to get cloud leagues:", error);
+		console.error("[CloudSync] Failed to get cloud leagues:", error);
 		return [];
 	}
 };

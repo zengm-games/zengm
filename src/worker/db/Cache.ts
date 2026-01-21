@@ -1,7 +1,7 @@
 import { PLAYER, helpers } from "../../common/index.ts";
 import { idb } from "./index.ts";
 import cmp from "./cmp.ts";
-import { g, local, lock } from "../util/index.ts";
+import { g, local, lock, toUI } from "../util/index.ts";
 import type {
 	AllStars,
 	DraftLotteryResult,
@@ -814,9 +814,19 @@ class Cache {
 			return;
 		}
 
+		// Capture changes for cloud sync BEFORE clearing them
+		const cloudSyncChanges: Array<{
+			store: Store;
+			records: any[];
+			deletedIds: (string | number)[];
+		}> = [];
+
 		const transaction = idb.league.transaction(stores, "readwrite");
 
 		for (const store of stores) {
+			// Capture deleted IDs for cloud sync
+			const deletedIds = Array.from(this._deletes[store]);
+
 			for (const id of this._deletes[store]) {
 				// This is synchronous to prevent any race condition
 				transaction.objectStore(store).delete(id);
@@ -824,6 +834,8 @@ class Cache {
 
 			this._deletes[store].clear();
 
+			// Capture modified records for cloud sync
+			const records: any[] = [];
 			for (const id of this._dirtyRecords[store]) {
 				const record = this._data[store][id];
 
@@ -831,10 +843,17 @@ class Cache {
 				if (record !== undefined) {
 					// This is synchronous to prevent any race condition
 					transaction.objectStore(store).put(record);
+					// Capture for cloud sync
+					records.push(record);
 				}
 			}
 
 			this._dirtyRecords[store].clear();
+
+			// Add to cloud sync changes if there are any changes
+			if (records.length > 0 || deletedIds.length > 0) {
+				cloudSyncChanges.push({ store, records, deletedIds });
+			}
 		}
 
 		await transaction.done;
@@ -845,6 +864,13 @@ class Cache {
 			// Update lastPlayed
 			await league.updateMeta({
 				lastPlayed: new Date(),
+			});
+		}
+
+		// Sync changes to cloud (non-blocking - don't await)
+		if (cloudSyncChanges.length > 0) {
+			toUI("syncCloudChanges", [cloudSyncChanges]).catch((error) => {
+				console.error("[CloudSync] Failed to sync changes:", error);
 			});
 		}
 	}

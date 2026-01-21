@@ -18,6 +18,8 @@ import type {
 	GameAttributesLeague,
 } from "../../common/types.ts";
 import { crossTabEmitter } from "../util/crossTabEmitter.ts";
+import { syncLocalChanges, getCurrentCloudId } from "../util/cloudSync.ts";
+import type { Store } from "../../common/cloudTypes.ts";
 
 const initAds = (type: "accountChecked" | "uiRendered") => {
 	ads.setLoadingDone(type);
@@ -132,6 +134,31 @@ const getCloudUserId = (): string | null => {
 	return safeLocalStorage.getItem("cloudUserId");
 };
 
+// Sync local changes to cloud - called by worker after flush
+const syncCloudChanges = async (
+	changes: Array<{
+		store: Store;
+		records: any[];
+		deletedIds: (string | number)[];
+	}>,
+): Promise<void> => {
+	// Only sync if connected to a cloud league
+	if (!getCurrentCloudId()) {
+		return;
+	}
+
+	// Sync each store's changes
+	for (const { store, records, deletedIds } of changes) {
+		if (records.length > 0 || deletedIds.length > 0) {
+			try {
+				await syncLocalChanges(store, records, deletedIds);
+			} catch (error) {
+				console.error(`[CloudSync] Failed to sync ${store}:`, error);
+			}
+		}
+	}
+};
+
 const crossTabEmit = (
 	parameters: Parameters<(typeof crossTabEmitter)["emit"]>,
 ) => {
@@ -156,6 +183,7 @@ export default {
 	setGameAttributes,
 	showEvent: showEvent2,
 	showModal,
+	syncCloudChanges,
 	updateLocal,
 	updateTeamOvrs,
 };

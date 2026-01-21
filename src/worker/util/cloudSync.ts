@@ -332,12 +332,15 @@ const handleRemoteChanges = async (
 		return;
 	}
 
+	let appliedChanges = 0;
+
 	for (const change of changes) {
 		try {
 			if (change.type === "removed") {
 				// Delete from local cache using remote method (won't mark as dirty)
 				const id = isNaN(Number(change.id)) ? change.id : Number(change.id);
 				await idb.cache._deleteFromRemote(store, id);
+				appliedChanges++;
 			} else {
 				// Add or update in local cache using remote method (won't mark as dirty)
 				const record = change.doc;
@@ -346,16 +349,34 @@ const handleRemoteChanges = async (
 				delete record._cloudDeviceId;
 
 				await idb.cache._putFromRemote(store, record);
+				appliedChanges++;
 			}
 		} catch (error) {
 			console.error(`Failed to apply remote change to ${store}:`, error);
 		}
 	}
 
-	// Trigger UI refresh
-	const updateEvents = getUpdateEventsForStore(store);
-	if (updateEvents.length > 0) {
-		toUI("realtimeUpdate", [updateEvents as any]);
+	// Trigger UI refresh and show notification
+	if (appliedChanges > 0) {
+		const updateEvents = getUpdateEventsForStore(store);
+		if (updateEvents.length > 0) {
+			toUI("realtimeUpdate", [updateEvents as any]);
+		}
+
+		// Notify user about the sync
+		toUI("showEvent", [{
+			type: "info",
+			text: `Cloud sync: ${appliedChanges} ${store} update${appliedChanges > 1 ? "s" : ""} received from another device`,
+			saveToDb: false,
+			showNotification: true,
+			persistent: false,
+		}]);
+
+		// Update the cloud sync status in UI
+		toUI("updateLocal", [{
+			cloudSyncLastUpdate: Date.now(),
+			cloudSyncPendingChanges: false,
+		}]);
 	}
 };
 
@@ -459,6 +480,10 @@ export const syncChangesToCloud = async (
 
 			await batch.commit();
 		}
+
+		// Update league metadata to reflect the sync time
+		// This allows other devices to see that there are new changes
+		await updateCloudLeagueMeta({ updatedAt: Date.now() });
 
 		setSyncStatus("synced");
 	} catch (error) {

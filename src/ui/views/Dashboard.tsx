@@ -595,6 +595,12 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 										(l: any) => l.cloudId === cloudLeague.cloudId
 									);
 									const isLocallyAvailable = !!localLeague;
+
+									// Check if cloud has newer changes than local
+									const cloudUpdatedAt = cloudLeague.updatedAt || 0;
+									const localLastPlayed = localLeague?.lastPlayed?.getTime?.() || 0;
+									const needsSync = isLocallyAvailable && cloudUpdatedAt > localLastPlayed;
+
 									const disabled =
 										deletingLID !== undefined ||
 										loadingLID !== undefined ||
@@ -604,13 +610,24 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 										<tr key={cloudLeague.cloudId}>
 											<td>
 												{isLocallyAvailable ? (
-													<a
-														className={`btn btn-sm btn-success ${loadingLID === localLeague.lid ? "dashboard-play-loading" : ""}`}
-														href={`/l/${localLeague.lid}`}
-														onClick={() => setLoadingLID(localLeague.lid)}
-													>
-														Play
-													</a>
+													needsSync ? (
+														<a
+															className={`btn btn-sm btn-warning ${loadingLID === localLeague.lid ? "dashboard-play-loading" : ""}`}
+															href={`/l/${localLeague.lid}`}
+															onClick={() => setLoadingLID(localLeague.lid)}
+															title="Cloud has newer changes - click to sync and play"
+														>
+															Sync
+														</a>
+													) : (
+														<a
+															className={`btn btn-sm btn-success ${loadingLID === localLeague.lid ? "dashboard-play-loading" : ""}`}
+															href={`/l/${localLeague.lid}`}
+															onClick={() => setLoadingLID(localLeague.lid)}
+														>
+															Play
+														</a>
+													)
 												) : isJoining ? (
 													<button
 														className="btn btn-sm btn-primary"
@@ -631,6 +648,11 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 											<td>
 												<span className="glyphicon glyphicon-cloud text-primary me-2" />
 												{cloudLeague.name}
+												{needsSync && (
+													<span className="badge bg-warning text-dark ms-2" title="Updates available from cloud">
+														New
+													</span>
+												)}
 											</td>
 											<td style={{ textTransform: "capitalize" }}>
 												{cloudLeague.sport}

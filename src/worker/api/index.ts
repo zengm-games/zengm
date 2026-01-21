@@ -5049,6 +5049,9 @@ const setScheduleFromEditor = async ({
 
 // Get all league data for cloud upload
 const getLeagueDataForCloud = async (): Promise<Record<string, any[]>> => {
+	// CRITICAL: Flush the cache first so all recent changes are written to IndexedDB
+	await idb.cache.flush();
+
 	const data: Record<string, any[]> = {};
 	const stores = [
 		"allStars", "awards", "draftLotteryResults", "draftPicks", "events",
@@ -5056,10 +5059,13 @@ const getLeagueDataForCloud = async (): Promise<Record<string, any[]>> => {
 		"playerFeats", "players", "playoffSeries", "releasedPlayers", "savedTrades",
 		"savedTradingBlock", "schedule", "scheduledEvents", "seasonLeaders",
 		"teamSeasons", "teamStats", "teams", "trade",
-	];
+	] as const;
 
+	// Read directly from IndexedDB (not cache) to get ALL data including historical records
 	for (const store of stores) {
-		data[store] = await (idb.cache as any)[store].getAll();
+		// Use getAll on the IndexedDB store, which includes all historical data
+		const allFromDb = await idb.league.getAll(store);
+		data[store] = allFromDb;
 	}
 
 	return data;

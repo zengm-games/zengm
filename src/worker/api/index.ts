@@ -5180,6 +5180,68 @@ const uploadLeagueToCloud = async (params: { userId: string; idToken: string }) 
 	}
 };
 
+// Get all league data for upload (UI will handle Firestore writes)
+const getLeagueDataForUpload = async (): Promise<Record<string, any[]>> => {
+	console.log("[API] getLeagueDataForUpload started");
+	const data: Record<string, any[]> = {};
+	const stores = [
+		"allStars", "awards", "draftLotteryResults", "draftPicks", "events",
+		"gameAttributes", "games", "headToHeads", "messages", "negotiations",
+		"playerFeats", "players", "playoffSeries", "releasedPlayers", "savedTrades",
+		"savedTradingBlock", "schedule", "scheduledEvents", "seasonLeaders",
+		"teamSeasons", "teamStats", "teams", "trade",
+	];
+
+	for (const store of stores) {
+		data[store] = await (idb.cache as any)[store].getAll();
+		console.log(`[API] getLeagueDataForUpload: ${store} - ${data[store].length} records`);
+	}
+
+	console.log("[API] getLeagueDataForUpload completed");
+	return data;
+};
+
+// Finalize cloud upload - save cloudId and connect for real-time sync
+const finalizeCloudUpload = async ({ cloudId, userId }: { cloudId: string; userId: string }): Promise<void> => {
+	console.log("[API] finalizeCloudUpload started", { cloudId, userId });
+
+	const lid = g.get("lid");
+	if (lid === undefined) {
+		throw new Error("No league loaded");
+	}
+
+	// Save cloudId to league metadata in IndexedDB
+	const leagueMeta = await idb.meta.get("leagues", lid);
+	if (leagueMeta) {
+		leagueMeta.cloudId = cloudId;
+		await idb.meta.put("leagues", leagueMeta);
+	}
+
+	// Also save to localStorage for backward compatibility
+	setCloudIdForLeague(lid, cloudId);
+
+	// Enable cloud sync
+	idb.cache.enableCloudSync();
+
+	// Connect to cloud for real-time sync
+	await cloudSync.connectToCloud(cloudId, userId);
+
+	// Update league metadata
+	await cloudSync.updateCloudLeagueMeta({
+		season: g.get("season"),
+		phase: g.get("phase"),
+		userTid: g.get("userTid"),
+	});
+
+	// Update UI
+	toUI("updateLocal", [{
+		cloudSyncStatus: "synced",
+		cloudLeagueId: cloudId,
+	}]);
+
+	console.log("[API] finalizeCloudUpload completed");
+};
+
 const joinCloudLeague = async ({ cloudId, userId }: { cloudId: string; userId: string }): Promise<number> => {
 	if (!userId) {
 		throw new Error("Not signed in to cloud");
@@ -5454,5 +5516,7 @@ export default {
 		deleteCloudLeague,
 		disconnectFromCloud,
 		getCloudSyncStatus,
+		getLeagueDataForUpload,
+		finalizeCloudUpload,
 	},
 };

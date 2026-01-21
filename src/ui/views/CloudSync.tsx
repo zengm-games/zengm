@@ -25,6 +25,8 @@ import {
 	waitForAuth,
 	onAuthChange,
 	getUserIdToken,
+	createCloudLeagueDoc,
+	uploadToCloudStore,
 } from "../util/firebase.ts";
 import type { CloudLeague } from "../../common/cloudTypes.ts";
 
@@ -361,24 +363,59 @@ const CloudSync = () => {
 			return;
 		}
 
-		// Get the ID token for worker authentication
-		const idToken = await getUserIdToken();
-		console.log("[CloudSync UI] Got ID token:", idToken ? "yes" : "no");
-		if (!idToken) {
-			setError("Failed to get authentication token. Please sign in again.");
-			return;
-		}
-
 		setError(null);
-		console.log("[CloudSync UI] Calling toWorker with userId and idToken...");
+
+		// Use UI-thread Firebase to avoid SharedWorker issues
+		const setProgress = (msg: string) => {
+			// Update local state for UI
+			console.log("[CloudSync UI] Progress:", msg);
+		};
 
 		try {
-			await toWorker("main", "uploadLeagueToCloud", { userId, idToken });
+			// Step 1: Create cloud league document (UI thread - Firebase works here)
+			setProgress("Creating cloud league...");
+			console.log("[CloudSync UI] Creating cloud league doc...");
+
+			const leagueName = await toWorker("main", "getLeagueName") || `League ${lid}`;
+			const sport = "basketball"; // TODO: get from game
+			const cloudId = await createCloudLeagueDoc(leagueName, sport, userId);
+
+			console.log("[CloudSync UI] Cloud league created:", cloudId);
+			setProgress("Collecting league data...");
+
+			// Step 2: Get all data from worker (worker can read from IndexedDB fine)
+			console.log("[CloudSync UI] Getting league data from worker...");
+			const allData = await toWorker("main", "getLeagueDataForUpload") as Record<string, any[]>;
+
+			// Step 3: Upload each store (UI thread)
+			const stores = Object.keys(allData);
+			let totalRecords = 0;
+			for (const store of stores) {
+				totalRecords += (allData[store] || []).length;
+			}
+
+			console.log(`[CloudSync UI] Uploading ${totalRecords} records across ${stores.length} stores`);
+			let uploadedRecords = 0;
+
+			for (const store of stores) {
+				const records = allData[store] || [];
+				if (records.length === 0) continue;
+
+				const pct = Math.round((uploadedRecords / totalRecords) * 100);
+				setProgress(`Uploading ${store} (${records.length} records)... ${pct}%`);
+				console.log(`[CloudSync UI] Uploading ${store}: ${records.length} records`);
+
+				await uploadToCloudStore(cloudId, store, records, setProgress);
+				uploadedRecords += records.length;
+			}
+
+			// Step 4: Tell worker to save cloudId and connect for real-time sync
+			console.log("[CloudSync UI] Finalizing upload...");
+			setProgress("Finalizing...");
+			await toWorker("main", "finalizeCloudUpload", { cloudId, userId });
+
 			console.log("[CloudSync UI] Upload completed successfully");
-
 			await loadCloudLeagues();
-
-			// Refresh to show updated status
 			await realtimeUpdate(["firstRun"]);
 		} catch (err: any) {
 			console.error("[CloudSync UI] Upload failed:", err);

@@ -127,6 +127,11 @@ const updateTeamOvrs = (ovrs: number[]) => {
 	}
 };
 
+// Get cloud user ID from localStorage for worker cloud sync
+const getCloudUserId = (): string | null => {
+	return safeLocalStorage.getItem("cloudUserId");
+};
+
 const crossTabEmit = (
 	parameters: Parameters<(typeof crossTabEmitter)["emit"]>,
 ) => {
@@ -140,6 +145,7 @@ export default {
 	confirmDeleteAllLeagues,
 	crossTabEmit,
 	deleteGames,
+	getCloudUserId,
 	initAds,
 	initGold,
 	mergeGames,

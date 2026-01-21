@@ -272,17 +272,17 @@ const CloudSync = () => {
 		hideNewWindow: true,
 	});
 
-	const { cloudSyncStatus, cloudLeagueId, lid, cloudUploadProgress } = useLocalPartial([
+	const { cloudSyncStatus, cloudLeagueId, lid } = useLocalPartial([
 		"cloudSyncStatus",
 		"cloudLeagueId",
 		"lid",
-		"cloudUploadProgress",
 	]);
 
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [cloudLeagues, setCloudLeagues] = useState<CloudLeague[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
+	const [uploadProgress, setUploadProgress] = useState<string | null>(null);
 
 	// Check Firebase configuration
 	const firebaseConfigured = isFirebaseConfigured();
@@ -348,78 +348,84 @@ const CloudSync = () => {
 	};
 
 	const handleUploadToCloud = async () => {
-		console.log("[CloudSync UI] handleUploadToCloud called", { lid, cloudUploadProgress });
-
-		if (!lid) {
-			console.log("[CloudSync UI] No lid");
-			setError("No league is currently loaded. Please load a league first.");
-			return;
-		}
-
-		const userId = getUserId();
-		console.log("[CloudSync UI] userId:", userId);
-		if (!userId) {
-			setError("Not signed in. Please sign in first.");
-			return;
-		}
-
-		setError(null);
-
-		// Use UI-thread Firebase to avoid SharedWorker issues
-		const setProgress = (msg: string) => {
-			// Update local state for UI
-			console.log("[CloudSync UI] Progress:", msg);
-		};
-
+		// Wrap everything in try-catch to catch any possible error
 		try {
-			// Step 1: Create cloud league document (UI thread - Firebase works here)
-			setProgress("Creating cloud league...");
+			console.log("[CloudSync UI] handleUploadToCloud called", { lid });
+
+			if (!lid) {
+				setError("No league is currently loaded. Please load a league first.");
+				return;
+			}
+
+			const userId = getUserId();
+			console.log("[CloudSync UI] userId:", userId);
+			if (!userId) {
+				setError("Not signed in. Please sign in first.");
+				return;
+			}
+
+			setError(null);
+			setUploadProgress("Starting upload...");
+
+			// Step 1: Get league name from worker
+			console.log("[CloudSync UI] Getting league name...");
+			setUploadProgress("Getting league info...");
+			let leagueName: string;
+			try {
+				leagueName = (await toWorker("main", "getLeagueName")) || `League ${lid}`;
+			} catch (e) {
+				console.error("[CloudSync UI] Failed to get league name:", e);
+				leagueName = `League ${lid}`;
+			}
+			console.log("[CloudSync UI] League name:", leagueName);
+
+			// Step 2: Create cloud league document (UI thread - Firebase works here)
 			console.log("[CloudSync UI] Creating cloud league doc...");
-
-			const leagueName = await toWorker("main", "getLeagueName") || `League ${lid}`;
-			const sport = "basketball"; // TODO: get from game
+			setUploadProgress("Creating cloud league...");
+			const sport = "basketball";
 			const cloudId = await createCloudLeagueDoc(leagueName, sport, userId);
-
 			console.log("[CloudSync UI] Cloud league created:", cloudId);
-			setProgress("Collecting league data...");
 
-			// Step 2: Get all data from worker (worker can read from IndexedDB fine)
+			// Step 3: Get all data from worker
 			console.log("[CloudSync UI] Getting league data from worker...");
-			const allData = await toWorker("main", "getLeagueDataForUpload") as Record<string, any[]>;
+			setUploadProgress("Collecting league data...");
+			const allData = (await toWorker("main", "getLeagueDataForUpload")) as Record<string, any[]>;
+			console.log("[CloudSync UI] Got league data");
 
-			// Step 3: Upload each store (UI thread)
+			// Step 4: Upload each store (UI thread)
 			const stores = Object.keys(allData);
 			let totalRecords = 0;
 			for (const store of stores) {
 				totalRecords += (allData[store] || []).length;
 			}
-
 			console.log(`[CloudSync UI] Uploading ${totalRecords} records across ${stores.length} stores`);
-			let uploadedRecords = 0;
 
+			let uploadedRecords = 0;
 			for (const store of stores) {
 				const records = allData[store] || [];
 				if (records.length === 0) continue;
 
 				const pct = Math.round((uploadedRecords / totalRecords) * 100);
-				setProgress(`Uploading ${store} (${records.length} records)... ${pct}%`);
+				setUploadProgress(`Uploading ${store} (${records.length})... ${pct}%`);
 				console.log(`[CloudSync UI] Uploading ${store}: ${records.length} records`);
 
-				await uploadToCloudStore(cloudId, store, records, setProgress);
+				await uploadToCloudStore(cloudId, store, records);
 				uploadedRecords += records.length;
 			}
 
-			// Step 4: Tell worker to save cloudId and connect for real-time sync
+			// Step 5: Tell worker to save cloudId and connect for real-time sync
 			console.log("[CloudSync UI] Finalizing upload...");
-			setProgress("Finalizing...");
+			setUploadProgress("Finalizing...");
 			await toWorker("main", "finalizeCloudUpload", { cloudId, userId });
 
 			console.log("[CloudSync UI] Upload completed successfully");
+			setUploadProgress(null);
 			await loadCloudLeagues();
 			await realtimeUpdate(["firstRun"]);
 		} catch (err: any) {
 			console.error("[CloudSync UI] Upload failed:", err);
-			setError(err.message || "Failed to upload league to cloud");
+			setUploadProgress(null);
+			setError(err?.message || String(err) || "Failed to upload league to cloud");
 		}
 	};
 
@@ -519,16 +525,12 @@ const CloudSync = () => {
 											<p>
 												This league is not yet synced to the cloud.
 											</p>
-											{/* Debug info */}
-											<p className="text-muted small">
-												Debug: lid={lid}, progress={cloudUploadProgress || "null"}
-											</p>
 											<button
 												className="btn btn-primary"
 												onClick={handleUploadToCloud}
-												disabled={!!cloudUploadProgress}
+												disabled={!!uploadProgress}
 											>
-												{cloudUploadProgress || "Upload to Cloud"}
+												{uploadProgress || "Upload to Cloud"}
 											</button>
 										</>
 									)}

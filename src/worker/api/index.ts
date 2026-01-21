@@ -5046,16 +5046,14 @@ const setScheduleFromEditor = async ({
 };
 
 // Cloud sync API functions
-const getCloudLeagues = async () => {
-	const userId = localStorage.getItem("cloudUserId");
+const getCloudLeagues = async (userId: string) => {
 	if (!userId) {
 		return [];
 	}
 	return cloudSync.getCloudLeagues(userId);
 };
 
-const uploadLeagueToCloud = async () => {
-	const userId = localStorage.getItem("cloudUserId");
+const uploadLeagueToCloud = async (userId: string) => {
 	if (!userId) {
 		throw new Error("Not signed in to cloud");
 	}
@@ -5122,8 +5120,7 @@ const uploadLeagueToCloud = async () => {
 	return cloudId;
 };
 
-const joinCloudLeague = async (cloudId: string) => {
-	const userId = localStorage.getItem("cloudUserId");
+const joinCloudLeague = async ({ cloudId, userId }: { cloudId: string; userId: string }) => {
 	if (!userId) {
 		throw new Error("Not signed in to cloud");
 	}
@@ -5141,8 +5138,7 @@ const joinCloudLeague = async (cloudId: string) => {
 	}]);
 };
 
-const deleteCloudLeague = async (cloudId: string) => {
-	const userId = localStorage.getItem("cloudUserId");
+const deleteCloudLeague = async ({ cloudId, userId }: { cloudId: string; userId: string }) => {
 	if (!userId) {
 		throw new Error("Not signed in to cloud");
 	}

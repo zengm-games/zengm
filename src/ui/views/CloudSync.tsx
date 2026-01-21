@@ -284,12 +284,16 @@ const CloudSync = () => {
 	// Check Firebase configuration
 	const firebaseConfigured = isFirebaseConfigured();
 
+	// Get userId from localStorage (available in main thread)
+	const getUserId = () => localStorage.getItem("cloudUserId") || "";
+
 	// Load cloud leagues
 	const loadCloudLeagues = useCallback(async () => {
 		if (!isAuthenticated) return;
 
 		try {
-			const leagues = await toWorker("main", "getCloudLeagues", undefined);
+			const userId = getUserId();
+			const leagues = await toWorker("main", "getCloudLeagues", userId);
 			setCloudLeagues(leagues || []);
 		} catch (err) {
 			console.error("Failed to load cloud leagues:", err);
@@ -346,11 +350,17 @@ const CloudSync = () => {
 			return;
 		}
 
+		const userId = getUserId();
+		if (!userId) {
+			setError("Not signed in. Please sign in first.");
+			return;
+		}
+
 		setError(null);
 		setUploadProgress("Uploading league to cloud... This may take a moment.");
 
 		try {
-			await toWorker("main", "uploadLeagueToCloud", undefined);
+			await toWorker("main", "uploadLeagueToCloud", userId);
 
 			setUploadProgress(null);
 			await loadCloudLeagues();
@@ -364,9 +374,10 @@ const CloudSync = () => {
 	};
 
 	const handleJoinLeague = async (league: CloudLeague) => {
+		const userId = getUserId();
 		setError(null);
 		try {
-			await toWorker("main", "joinCloudLeague", league.cloudId);
+			await toWorker("main", "joinCloudLeague", { cloudId: league.cloudId, userId });
 			await realtimeUpdate(["firstRun"], `/l/${lid}`);
 		} catch (err: any) {
 			setError(err.message || "Failed to join cloud league");
@@ -378,9 +389,10 @@ const CloudSync = () => {
 			return;
 		}
 
+		const userId = getUserId();
 		setError(null);
 		try {
-			await toWorker("main", "deleteCloudLeague", league.cloudId);
+			await toWorker("main", "deleteCloudLeague", { cloudId: league.cloudId, userId });
 			await loadCloudLeagues();
 		} catch (err: any) {
 			setError(err.message || "Failed to delete cloud league");

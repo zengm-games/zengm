@@ -809,6 +809,7 @@ export type League = {
 	startingSeason?: number;
 	season?: number;
 	imgURL?: string; // Should contain imgURLSmall if it exists
+	cloudId?: string; // Cloud sync ID if this league is synced to cloud
 };
 
 export type Locks = {

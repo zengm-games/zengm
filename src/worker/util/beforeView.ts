@@ -168,7 +168,8 @@ export const beforeLeague = async (newLid: number, conditions?: Conditions) => {
 	}
 
 	// Auto-connect to cloud sync if this league has a cloud ID
-	const cloudId = getCloudIdForLeague(newLid);
+	const leagueMeta = await idb.meta.get("leagues", newLid);
+	const cloudId = leagueMeta?.cloudId || getCloudIdForLeague(newLid);
 	if (cloudId) {
 		// Get userId from UI (stored in localStorage on main thread)
 		// We'll request it via a toUI call that returns the value

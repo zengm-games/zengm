@@ -5095,7 +5095,14 @@ const uploadLeagueToCloud = async (userId: string) => {
 	// Upload to cloud
 	await cloudSync.uploadLeagueToCloud(cloudId, getAllData);
 
-	// Save mapping
+	// Save cloudId to league metadata in IndexedDB
+	const leagueMeta = await idb.meta.get("leagues", lid);
+	if (leagueMeta) {
+		leagueMeta.cloudId = cloudId;
+		await idb.meta.put("leagues", leagueMeta);
+	}
+
+	// Also save to localStorage for backward compatibility
 	setCloudIdForLeague(lid, cloudId);
 
 	// Enable cloud sync
@@ -5159,6 +5166,7 @@ const joinCloudLeague = async ({ cloudId, userId }: { cloudId: string; userId: s
 		imgURL: userTeam.imgURLSmall || userTeam.imgURL,
 		created: new Date(),
 		lastPlayed: new Date(),
+		cloudId, // Store cloud ID for sync
 	};
 
 	await idb.meta.add("leagues", leagueMeta);

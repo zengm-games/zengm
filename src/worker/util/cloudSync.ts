@@ -60,6 +60,29 @@ let lockRefreshInterval: ReturnType<typeof setInterval> | null = null;
 const BATCH_SIZE = 500; // Firestore limit
 
 /**
+ * Recursively remove undefined values from an object.
+ * Firestore doesn't accept undefined values.
+ */
+const removeUndefinedValues = (obj: any): any => {
+	if (obj === null || obj === undefined) {
+		return null;
+	}
+	if (Array.isArray(obj)) {
+		return obj.map(removeUndefinedValues);
+	}
+	if (typeof obj === "object" && obj !== null) {
+		const cleaned: Record<string, any> = {};
+		for (const [key, value] of Object.entries(obj)) {
+			if (value !== undefined) {
+				cleaned[key] = removeUndefinedValues(value);
+			}
+		}
+		return cleaned;
+	}
+	return obj;
+};
+
+/**
  * Dynamically load Firebase modules
  */
 const loadFirebase = async (): Promise<boolean> => {
@@ -387,11 +410,13 @@ export const syncChangesToCloud = async (
 		// Add updates
 		for (const record of records) {
 			const docId = getDocId(store, record);
+			// Clean undefined values - Firestore doesn't accept them
+			const cleanedRecord = removeUndefinedValues(record);
 			allOperations.push({
 				type: "set",
 				id: docId,
 				data: {
-					...record,
+					...cleanedRecord,
 					_cloudUpdatedAt: serverTimestamp(),
 					_cloudDeviceId: deviceId,
 				},
@@ -539,8 +564,10 @@ export const uploadLeagueToCloud = async (
 				for (const record of batchRecords) {
 					const docId = getDocId(store, record);
 					const docRef = doc(firestore, collectionPath, docId);
+					// Clean undefined values - Firestore doesn't accept them
+					const cleanedRecord = removeUndefinedValues(record);
 					batch.set(docRef, {
-						...record,
+						...cleanedRecord,
 						_cloudUpdatedAt: serverTimestamp(),
 						_cloudDeviceId: deviceId,
 					});

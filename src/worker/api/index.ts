@@ -5043,6 +5043,133 @@ const setScheduleFromEditor = async ({
 	await initUILocalGames();
 };
 
+// ============================================
+// Cloud Sync API Functions
+// ============================================
+
+// Get all league data for cloud upload
+const getLeagueDataForCloud = async (): Promise<Record<string, any[]>> => {
+	const data: Record<string, any[]> = {};
+	const stores = [
+		"allStars", "awards", "draftLotteryResults", "draftPicks", "events",
+		"gameAttributes", "games", "headToHeads", "messages", "negotiations",
+		"playerFeats", "players", "playoffSeries", "releasedPlayers", "savedTrades",
+		"savedTradingBlock", "schedule", "scheduledEvents", "seasonLeaders",
+		"teamSeasons", "teamStats", "teams", "trade",
+	];
+
+	for (const store of stores) {
+		data[store] = await (idb.cache as any)[store].getAll();
+	}
+
+	return data;
+};
+
+// Apply changes received from cloud to local IndexedDB
+const applyCloudChanges = async ({
+	store,
+	changes,
+}: {
+	store: string;
+	changes: Array<{ type: string; id: string; data: any }>;
+}): Promise<void> => {
+	const storeCache = (idb.cache as any)[store];
+	if (!storeCache) {
+		console.warn(`Store ${store} not found in cache`);
+		return;
+	}
+
+	for (const change of changes) {
+		if (change.type === "removed") {
+			// Delete from local
+			const id = isNaN(Number(change.id)) ? change.id : Number(change.id);
+			await storeCache.delete(id);
+		} else {
+			// Add or update
+			await storeCache.put(change.data);
+		}
+	}
+};
+
+// Create a new local league from cloud data
+const createLeagueFromCloud = async ({
+	cloudId,
+	name,
+	data,
+}: {
+	cloudId: string;
+	name: string;
+	data: Record<string, any[]>;
+}): Promise<number> => {
+	// Get new league ID
+	const lid = await getNewLeagueLid();
+
+	// Extract info from gameAttributes
+	const gameAttributesArray = data.gameAttributes || [];
+	const gameAttributesObj: Record<string, any> = {};
+	for (const ga of gameAttributesArray) {
+		if (ga.key) {
+			gameAttributesObj[ga.key] = ga.value;
+		}
+	}
+
+	// Get user's team info
+	const userTid = gameAttributesObj.userTid ?? 0;
+	const teams = data.teams || [];
+	const userTeam = teams.find((t: any) => t.tid === userTid) || teams[0] || {};
+
+	// Create league metadata entry
+	const leagueMeta: League = {
+		lid,
+		name,
+		tid: userTid,
+		phaseText: gameAttributesObj.phaseText || PHASE_TEXT[gameAttributesObj.phase] || "",
+		teamName: userTeam.name || "???",
+		teamRegion: userTeam.region || "???",
+		difficulty: gameAttributesObj.difficulty,
+		startingSeason: gameAttributesObj.startingSeason,
+		season: gameAttributesObj.season,
+		imgURL: userTeam.imgURLSmall || userTeam.imgURL,
+		created: new Date(),
+		lastPlayed: new Date(),
+		cloudId,
+	};
+
+	await idb.meta.add("leagues", leagueMeta);
+
+	// Connect to the new league database
+	const db = await connectLeague(lid);
+
+	try {
+		// Write all the data to each store
+		const stores = Object.keys(data) as (keyof typeof data)[];
+
+		for (const store of stores) {
+			const records = data[store];
+			if (!records || records.length === 0) continue;
+
+			// Write in batches
+			const BATCH_SIZE = 1000;
+			for (let i = 0; i < records.length; i += BATCH_SIZE) {
+				const batchRecords = records.slice(i, i + BATCH_SIZE);
+				const tx = db.transaction(store as any, "readwrite");
+
+				for (const record of batchRecords) {
+					tx.store.put(record);
+				}
+
+				await tx.done;
+			}
+		}
+	} finally {
+		await db.close();
+	}
+
+	// Trigger league list refresh
+	toUI("realtimeUpdate", [["leagues"]]);
+
+	return lid;
+};
 
 export default {
 	actions,
@@ -5189,5 +5316,10 @@ export default {
 		upsertCustomizedPlayer,
 		validatePointsFormula,
 		validatePlayoffSettings,
+
+		// Cloud sync API functions
+		getLeagueDataForCloud,
+		applyCloudChanges,
+		createLeagueFromCloud,
 	},
 };

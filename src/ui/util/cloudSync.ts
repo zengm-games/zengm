@@ -127,7 +127,7 @@ export const createCloudLeague = async (
 		member.email = email;
 	}
 
-	const leagueData: Omit<CloudLeague, "members"> & { members: CloudMember[] } = {
+	const leagueData = {
 		cloudId,
 		name,
 		sport,
@@ -140,7 +140,7 @@ export const createCloudLeague = async (
 		schemaVersion: 1,
 	};
 
-	await setDoc(doc(db, "leagues", cloudId), leagueData);
+	await setDoc(doc(db, "leagues", cloudId), removeUndefined(leagueData));
 
 	return cloudId;
 };

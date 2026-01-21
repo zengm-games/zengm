@@ -269,17 +269,17 @@ const CloudSync = () => {
 		hideNewWindow: true,
 	});
 
-	const { cloudSyncStatus, cloudLeagueId, lid } = useLocalPartial([
+	const { cloudSyncStatus, cloudLeagueId, lid, cloudUploadProgress } = useLocalPartial([
 		"cloudSyncStatus",
 		"cloudLeagueId",
 		"lid",
+		"cloudUploadProgress",
 	]);
 
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [cloudLeagues, setCloudLeagues] = useState<CloudLeague[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
-	const [uploadProgress, setUploadProgress] = useState<string | null>(null);
 
 	// Check Firebase configuration
 	const firebaseConfigured = isFirebaseConfigured();
@@ -357,19 +357,17 @@ const CloudSync = () => {
 		}
 
 		setError(null);
-		setUploadProgress("Uploading league to cloud... This may take a moment.");
+		// Progress will be updated by the worker via cloudUploadProgress
 
 		try {
 			await toWorker("main", "uploadLeagueToCloud", userId);
 
-			setUploadProgress(null);
 			await loadCloudLeagues();
 
 			// Refresh to show updated status
 			await realtimeUpdate(["firstRun"]);
 		} catch (err: any) {
 			setError(err.message || "Failed to upload league to cloud");
-			setUploadProgress(null);
 		}
 	};
 
@@ -472,9 +470,9 @@ const CloudSync = () => {
 											<button
 												className="btn btn-primary"
 												onClick={handleUploadToCloud}
-												disabled={!!uploadProgress}
+												disabled={!!cloudUploadProgress}
 											>
-												{uploadProgress || "Upload to Cloud"}
+												{cloudUploadProgress || "Upload to Cloud"}
 											</button>
 										</>
 									)}

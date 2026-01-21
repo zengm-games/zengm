@@ -1089,6 +1089,7 @@ export type LocalStateUI = {
 	cloudLockOperation?: string | null;
 	cloudSyncLastUpdate?: number; // Timestamp of last remote update received
 	cloudSyncPendingChanges?: boolean; // True if there are unapplied remote changes
+	cloudUploadProgress?: string | null; // Progress message during upload
 };
 
 export type PartialTopMenu = {

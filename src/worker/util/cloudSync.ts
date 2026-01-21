@@ -746,6 +746,12 @@ const estimateSize = (obj: any): number => {
 	}
 };
 
+// Helper to update upload progress in UI
+const setUploadProgress = (message: string | null) => {
+	console.log(`[CloudSync] Progress: ${message}`);
+	toUI("updateLocal", [{ cloudUploadProgress: message }]);
+};
+
 /**
  * Upload entire local league to cloud
  */
@@ -756,9 +762,12 @@ export const uploadLeagueToCloud = async (
 	console.log("[CloudSync] uploadLeagueToCloud started", { cloudId });
 	const uploadStartTime = performance.now();
 
+	setUploadProgress("Initializing upload...");
+
 	const firestore = await getDb();
 	if (!firestore) {
 		console.error("[CloudSync] Firestore not available");
+		setUploadProgress(null);
 		throw new Error("Firestore not available");
 	}
 	console.log("[CloudSync] Firestore initialized");
@@ -768,6 +777,7 @@ export const uploadLeagueToCloud = async (
 	setSyncStatus("syncing");
 
 	try {
+		setUploadProgress("Collecting league data...");
 		console.log("[CloudSync] Calling getAllData()...");
 		const getAllDataStart = performance.now();
 		const allData = await getAllData();
@@ -783,6 +793,7 @@ export const uploadLeagueToCloud = async (
 			totalRecords += (allData[store] || []).length;
 		}
 		console.log(`[CloudSync] Total records across all stores: ${totalRecords}`);
+		setUploadProgress(`Uploading ${totalRecords.toLocaleString()} records...`);
 
 		let uploadedRecords = 0;
 
@@ -796,6 +807,8 @@ export const uploadLeagueToCloud = async (
 			}
 
 			const storeStartTime = performance.now();
+			const progressPct = Math.round((uploadedRecords / totalRecords) * 100);
+			setUploadProgress(`Uploading ${store} (${records.length} records)... ${progressPct}%`);
 			console.log(`[CloudSync] Uploading ${store}: ${records.length} records (store ${i + 1}/${stores.length})`);
 			const collectionPath = CLOUD_PATHS.leagueStore(cloudId, store);
 
@@ -823,6 +836,8 @@ export const uploadLeagueToCloud = async (
 				// Commit batch if we hit count or size limit
 				if (batchCount > 0 && (batchCount >= BATCH_SIZE || batchSize + recordSize > MAX_PAYLOAD_SIZE)) {
 					const batchStart = performance.now();
+					const currentPct = Math.round(((uploadedRecords + j) / totalRecords) * 100);
+					setUploadProgress(`Uploading ${store} batch ${batchNum}/${totalBatches}... ${currentPct}%`);
 					console.log(`[CloudSync] ${store}: Committing batch ${batchNum}/${totalBatches} (${batchCount} records, ${(batchSize / 1024).toFixed(1)}KB)`);
 					await batch.commit();
 					const batchDuration = performance.now() - batchStart;
@@ -841,6 +856,8 @@ export const uploadLeagueToCloud = async (
 			// Commit remaining records
 			if (batchCount > 0) {
 				const batchStart = performance.now();
+				const currentPct = Math.round(((uploadedRecords + records.length) / totalRecords) * 100);
+				setUploadProgress(`Uploading ${store} (final batch)... ${currentPct}%`);
 				console.log(`[CloudSync] ${store}: Committing final batch ${batchNum} (${batchCount} records, ${(batchSize / 1024).toFixed(1)}KB)`);
 				await batch.commit();
 				const batchDuration = performance.now() - batchStart;
@@ -854,10 +871,14 @@ export const uploadLeagueToCloud = async (
 
 		const totalDuration = performance.now() - uploadStartTime;
 		console.log(`[CloudSync] uploadLeagueToCloud completed in ${(totalDuration / 1000).toFixed(1)}s`);
+		setUploadProgress("Upload complete!");
+		// Clear progress after a brief delay
+		setTimeout(() => setUploadProgress(null), 2000);
 		setSyncStatus("synced");
 	} catch (error) {
 		const errorDuration = performance.now() - uploadStartTime;
 		console.error(`[CloudSync] Upload failed after ${(errorDuration / 1000).toFixed(1)}s:`, error);
+		setUploadProgress(`Upload failed: ${error instanceof Error ? error.message : "Unknown error"}`);
 		setSyncStatus("error");
 		throw error;
 	}

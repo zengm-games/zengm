@@ -696,19 +696,25 @@ export const createCloudLeague = async (
 	userId: string,
 ): Promise<string> => {
 	console.log("[CloudSync] createCloudLeague started", { name, sport, userId });
+	setUploadProgress("Creating cloud league: initializing...");
 	const startTime = performance.now();
 
+	console.log("[CloudSync] Getting Firestore instance...");
+	setUploadProgress("Creating cloud league: connecting to Firestore...");
 	const firestore = await getDb();
 	if (!firestore) {
 		console.error("[CloudSync] createCloudLeague: Firestore not available");
 		throw new Error("Firestore not available");
 	}
+	console.log("[CloudSync] Firestore instance obtained");
 
 	const { doc, setDoc } = firestoreModule;
+	console.log("[CloudSync] Got doc and setDoc from firestoreModule");
 
 	// Generate a new cloud ID
 	const cloudId = `league-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 	console.log("[CloudSync] Generated cloudId:", cloudId);
+	setUploadProgress(`Creating cloud league: ${cloudId.substring(0, 20)}...`);
 
 	const leagueData: CloudLeague = {
 		cloudId,
@@ -723,14 +729,30 @@ export const createCloudLeague = async (
 		userTid: 0,
 		schemaVersion: 1,
 	};
+	console.log("[CloudSync] League data prepared:", leagueData);
 
 	// Create the league document
-	console.log("[CloudSync] Creating league document...");
-	const leagueRef = doc(firestore, CLOUD_PATHS.leagueMeta(cloudId));
-	await setDoc(leagueRef, leagueData);
+	console.log("[CloudSync] Creating league document reference...");
+	setUploadProgress("Creating cloud league: preparing document...");
+	const leaguePath = CLOUD_PATHS.leagueMeta(cloudId);
+	console.log("[CloudSync] League path:", leaguePath);
+	const leagueRef = doc(firestore, leaguePath);
+	console.log("[CloudSync] Document reference created");
+
+	console.log("[CloudSync] Calling setDoc...");
+	setUploadProgress("Creating cloud league: saving to Firestore...");
+	try {
+		await setDoc(leagueRef, leagueData);
+		console.log("[CloudSync] setDoc completed successfully");
+	} catch (setDocError) {
+		console.error("[CloudSync] setDoc failed:", setDocError);
+		setUploadProgress(`Error creating league: ${setDocError instanceof Error ? setDocError.message : "Unknown error"}`);
+		throw setDocError;
+	}
 
 	const duration = performance.now() - startTime;
 	console.log(`[CloudSync] createCloudLeague completed in ${duration.toFixed(0)}ms`, { cloudId });
+	setUploadProgress("Cloud league created, preparing upload...");
 
 	return cloudId;
 };

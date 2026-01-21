@@ -668,6 +668,15 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: (pageID) => pageID === "cloudSync",
+				league: true,
+				nonLeague: true,
+				commandPalette: true,
+				path: "/cloud_sync",
+				text: "Cloud Sync",
+			},
+			{
+				type: "link",
 				league: true,
 				commandPalette: true,
 

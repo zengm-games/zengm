@@ -3,26 +3,11 @@
  *
  * This module handles real-time synchronization between the local IndexedDB
  * cache and Firebase Firestore, enabling multi-device live updates.
+ *
+ * IMPORTANT: Firebase is loaded dynamically to avoid breaking the SharedWorker
+ * on initial load (Firebase SDK requires browser APIs).
  */
 
-import { initializeApp, type FirebaseApp } from "firebase/app";
-import {
-	getFirestore,
-	collection,
-	doc,
-	getDoc,
-	getDocs,
-	setDoc,
-	deleteDoc,
-	writeBatch,
-	onSnapshot,
-	query,
-	where,
-	serverTimestamp,
-	type Firestore,
-	type Unsubscribe,
-	type DocumentData,
-} from "firebase/firestore";
 import type { Store } from "../db/Cache.ts";
 import {
 	type CloudLeague,
@@ -45,20 +30,25 @@ const firebaseConfig = {
 };
 
 // Check if Firebase is configured
-const isFirebaseConfigured = (): boolean => {
+export const isFirebaseConfigured = (): boolean => {
 	return firebaseConfig.apiKey !== "YOUR_API_KEY" &&
 		firebaseConfig.projectId !== "YOUR_PROJECT_ID";
 };
 
-// Singleton instances
-let app: FirebaseApp | null = null;
-let db: Firestore | null = null;
+// Lazy-loaded Firebase instances
+let firebaseApp: any = null;
+let firestoreDb: any = null;
+let firebaseLoaded = false;
+
+// Firebase module references (loaded dynamically)
+let firebaseAppModule: any = null;
+let firestoreModule: any = null;
 
 // Current sync state
 let currentCloudId: string | null = null;
 let currentUserId: string | null = null;
 let syncStatus: CloudSyncStatus = "disconnected";
-const listeners: Map<string, Unsubscribe> = new Map();
+const listeners: Map<string, () => void> = new Map();
 let isSyncing = false;
 const deviceId: string = getDeviceId();
 
@@ -69,30 +59,56 @@ let lockRefreshInterval: ReturnType<typeof setInterval> | null = null;
 // Batch write settings
 const BATCH_SIZE = 500; // Firestore limit
 
-// Initialize Firestore for worker
-const initFirestore = (): Firestore => {
-	if (!isFirebaseConfigured()) {
-		throw new Error("Firebase not configured");
-	}
+/**
+ * Dynamically load Firebase modules
+ */
+const loadFirebase = async (): Promise<boolean> => {
+	if (firebaseLoaded) return true;
+	if (!isFirebaseConfigured()) return false;
 
-	if (!app) {
-		app = initializeApp(firebaseConfig, "worker");
-		db = getFirestore(app);
+	try {
+		// Dynamic imports - only loads when called
+		firebaseAppModule = await import("firebase/app");
+		firestoreModule = await import("firebase/firestore");
+		firebaseLoaded = true;
+		return true;
+	} catch (error) {
+		console.error("Failed to load Firebase:", error);
+		return false;
 	}
-
-	return db!;
 };
 
-// Get Firestore instance
-export const getDb = (): Firestore | null => {
-	if (!db && isFirebaseConfigured()) {
-		try {
-			return initFirestore();
-		} catch {
-			return null;
-		}
+/**
+ * Initialize Firestore (call after loadFirebase)
+ */
+const initFirestore = async (): Promise<any> => {
+	if (!firebaseLoaded) {
+		const loaded = await loadFirebase();
+		if (!loaded) throw new Error("Firebase not configured or failed to load");
 	}
-	return db;
+
+	if (!firebaseApp) {
+		firebaseApp = firebaseAppModule.initializeApp(firebaseConfig, "worker");
+		firestoreDb = firestoreModule.getFirestore(firebaseApp);
+	}
+
+	return firestoreDb;
+};
+
+/**
+ * Get Firestore instance (lazy-loading)
+ */
+export const getDb = async (): Promise<any | null> => {
+	if (!isFirebaseConfigured()) return null;
+
+	try {
+		if (!firestoreDb) {
+			return await initFirestore();
+		}
+		return firestoreDb;
+	} catch {
+		return null;
+	}
 };
 
 // Update sync status and notify UI
@@ -142,7 +158,7 @@ export const connectToCloud = async (
 	cloudId: string,
 	userId: string,
 ): Promise<boolean> => {
-	const firestore = getDb();
+	const firestore = await getDb();
 	if (!firestore) {
 		console.error("Firestore not available");
 		return false;
@@ -159,6 +175,7 @@ export const connectToCloud = async (
 
 	try {
 		// Verify league exists and user has access
+		const { doc, getDoc } = firestoreModule;
 		const leagueRef = doc(firestore, CLOUD_PATHS.leagueMeta(cloudId));
 		const leagueDoc = await getDoc(leagueRef);
 
@@ -209,8 +226,10 @@ export const disconnectFromCloud = async (): Promise<void> => {
  * Start real-time listeners for all configured stores
  */
 const startRealtimeListeners = async (cloudId: string): Promise<void> => {
-	const firestore = getDb();
+	const firestore = await getDb();
 	if (!firestore) return;
+
+	const { collection, doc, onSnapshot } = firestoreModule;
 
 	for (const store of DEFAULT_SYNC_CONFIG.realtime) {
 		const collectionPath = CLOUD_PATHS.leagueStore(cloudId, store);
@@ -218,13 +237,13 @@ const startRealtimeListeners = async (cloudId: string): Promise<void> => {
 
 		const unsubscribe = onSnapshot(
 			collectionRef,
-			(snapshot) => {
+			(snapshot: any) => {
 				// Don't process our own changes
 				if (isSyncing) return;
 
-				const changes: Array<{ type: "added" | "modified" | "removed"; doc: DocumentData; id: string }> = [];
+				const changes: Array<{ type: "added" | "modified" | "removed"; doc: any; id: string }> = [];
 
-				snapshot.docChanges().forEach((change) => {
+				snapshot.docChanges().forEach((change: any) => {
 					changes.push({
 						type: change.type,
 						doc: change.doc.data(),
@@ -236,7 +255,7 @@ const startRealtimeListeners = async (cloudId: string): Promise<void> => {
 					handleRemoteChanges(store, changes);
 				}
 			},
-			(error) => {
+			(error: any) => {
 				console.error(`Listener error for ${store}:`, error);
 				setSyncStatus("error");
 			}
@@ -247,7 +266,7 @@ const startRealtimeListeners = async (cloudId: string): Promise<void> => {
 
 	// Also listen for lock changes
 	const lockRef = doc(firestore, CLOUD_PATHS.leagueLock(cloudId));
-	const lockUnsubscribe = onSnapshot(lockRef, (snapshot) => {
+	const lockUnsubscribe = onSnapshot(lockRef, (snapshot: any) => {
 		if (snapshot.exists()) {
 			const lockData = snapshot.data() as CloudLock;
 			// Notify UI if another device acquired the lock
@@ -272,7 +291,7 @@ const startRealtimeListeners = async (cloudId: string): Promise<void> => {
  */
 const handleRemoteChanges = async (
 	store: Store,
-	changes: Array<{ type: "added" | "modified" | "removed"; doc: DocumentData; id: string }>
+	changes: Array<{ type: "added" | "modified" | "removed"; doc: any; id: string }>
 ): Promise<void> => {
 	// Import cache dynamically to avoid circular dependency
 	const { idb } = await import("../db/index.ts");
@@ -346,7 +365,7 @@ export const syncChangesToCloud = async (
 	records: any[],
 	deletedIds: (string | number)[],
 ): Promise<void> => {
-	const firestore = getDb();
+	const firestore = await getDb();
 	if (!firestore || !currentCloudId) return;
 
 	// Skip if not a synced store
@@ -359,6 +378,7 @@ export const syncChangesToCloud = async (
 	setSyncStatus("syncing");
 
 	try {
+		const { doc, writeBatch, serverTimestamp } = firestoreModule;
 		const collectionPath = CLOUD_PATHS.leagueStore(currentCloudId, store);
 
 		// Process in batches
@@ -419,17 +439,18 @@ export const syncChangesToCloud = async (
 export const loadStoreFromCloud = async (
 	store: Store,
 ): Promise<any[]> => {
-	const firestore = getDb();
+	const firestore = await getDb();
 	if (!firestore || !currentCloudId) return [];
 
 	try {
+		const { collection, getDocs } = firestoreModule;
 		const collectionPath = CLOUD_PATHS.leagueStore(currentCloudId, store);
 		const collectionRef = collection(firestore, collectionPath);
 		const snapshot = await getDocs(collectionRef);
 
 		const records: any[] = [];
-		snapshot.forEach((doc) => {
-			const data = doc.data();
+		snapshot.forEach((docSnap: any) => {
+			const data = docSnap.data();
 			// Remove Firestore metadata
 			delete data._cloudUpdatedAt;
 			delete data._cloudDeviceId;
@@ -451,10 +472,12 @@ export const createCloudLeague = async (
 	sport: "basketball" | "football" | "baseball" | "hockey",
 	userId: string,
 ): Promise<string> => {
-	const firestore = getDb();
+	const firestore = await getDb();
 	if (!firestore) {
 		throw new Error("Firestore not available");
 	}
+
+	const { doc, setDoc } = firestoreModule;
 
 	// Generate a new cloud ID
 	const cloudId = `league-${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -488,10 +511,12 @@ export const uploadLeagueToCloud = async (
 	getAllData: () => Promise<Record<Store, any[]>>,
 	onProgress?: (store: Store, current: number, total: number) => void,
 ): Promise<void> => {
-	const firestore = getDb();
+	const firestore = await getDb();
 	if (!firestore) {
 		throw new Error("Firestore not available");
 	}
+
+	const { doc, writeBatch, serverTimestamp } = firestoreModule;
 
 	setSyncStatus("syncing");
 
@@ -545,11 +570,12 @@ export const acquireLock = async (
 	operation: CloudLock["operation"],
 	timeoutMs: number = 60000, // 1 minute default
 ): Promise<boolean> => {
-	const firestore = getDb();
+	const firestore = await getDb();
 	if (!firestore || !currentCloudId || !currentUserId) {
 		return true; // Allow operation if not connected to cloud
 	}
 
+	const { doc, getDoc, setDoc } = firestoreModule;
 	const lockRef = doc(firestore, CLOUD_PATHS.leagueLock(currentCloudId));
 
 	try {
@@ -609,13 +635,14 @@ export const releaseLock = async (): Promise<void> => {
 		lockRefreshInterval = null;
 	}
 
-	const firestore = getDb();
+	const firestore = await getDb();
 	if (!firestore || !currentCloudId || !currentLock) {
 		currentLock = null;
 		return;
 	}
 
 	try {
+		const { doc, deleteDoc } = firestoreModule;
 		const lockRef = doc(firestore, CLOUD_PATHS.leagueLock(currentCloudId));
 		await deleteDoc(lockRef);
 	} catch (error) {
@@ -659,10 +686,11 @@ export const getCurrentCloudId = (): string | null => {
 export const updateCloudLeagueMeta = async (
 	updates: Partial<CloudLeague>,
 ): Promise<void> => {
-	const firestore = getDb();
+	const firestore = await getDb();
 	if (!firestore || !currentCloudId) return;
 
 	try {
+		const { doc, setDoc } = firestoreModule;
 		const leagueRef = doc(firestore, CLOUD_PATHS.leagueMeta(currentCloudId));
 		await setDoc(leagueRef, {
 			...updates,
@@ -677,17 +705,18 @@ export const updateCloudLeagueMeta = async (
  * Get list of cloud leagues user has access to
  */
 export const getCloudLeagues = async (userId: string): Promise<CloudLeague[]> => {
-	const firestore = getDb();
+	const firestore = await getDb();
 	if (!firestore) return [];
 
 	try {
+		const { collection, query, where, getDocs } = firestoreModule;
 		const leaguesRef = collection(firestore, "leagues");
 		const q = query(leaguesRef, where("members", "array-contains", userId));
 		const snapshot = await getDocs(q);
 
 		const leagues: CloudLeague[] = [];
-		snapshot.forEach((doc) => {
-			leagues.push(doc.data() as CloudLeague);
+		snapshot.forEach((docSnap: any) => {
+			leagues.push(docSnap.data() as CloudLeague);
 		});
 
 		return leagues.sort((a, b) => b.updatedAt - a.updatedAt);
@@ -704,10 +733,12 @@ export const deleteCloudLeague = async (
 	cloudId: string,
 	userId: string,
 ): Promise<boolean> => {
-	const firestore = getDb();
+	const firestore = await getDb();
 	if (!firestore) return false;
 
 	try {
+		const { doc, getDoc, deleteDoc } = firestoreModule;
+
 		// Verify ownership
 		const leagueRef = doc(firestore, CLOUD_PATHS.leagueMeta(cloudId));
 		const leagueDoc = await getDoc(leagueRef);

@@ -57,7 +57,10 @@ let currentLock: CloudLock | null = null;
 let lockRefreshInterval: ReturnType<typeof setInterval> | null = null;
 
 // Batch write settings
-const BATCH_SIZE = 500; // Firestore limit
+// Firestore allows 500 ops per batch, but HTTP payload limit is ~10MB
+// Use smaller batches to avoid payload size errors with large records (games, players)
+const BATCH_SIZE = 50;
+const MAX_PAYLOAD_SIZE = 8 * 1024 * 1024; // 8MB safety margin
 
 /**
  * Recursively remove undefined values from an object.
@@ -529,6 +532,17 @@ export const createCloudLeague = async (
 };
 
 /**
+ * Estimate JSON size of an object (rough approximation)
+ */
+const estimateSize = (obj: any): number => {
+	try {
+		return JSON.stringify(obj).length;
+	} catch {
+		return 10000; // Default estimate for non-serializable objects
+	}
+};
+
+/**
  * Upload entire local league to cloud
  */
 export const uploadLeagueToCloud = async (
@@ -554,25 +568,42 @@ export const uploadLeagueToCloud = async (
 
 			if (records.length === 0) continue;
 
+			console.log(`Uploading ${store}: ${records.length} records`);
 			const collectionPath = CLOUD_PATHS.leagueStore(cloudId, store);
 
-			// Upload in batches
-			for (let j = 0; j < records.length; j += BATCH_SIZE) {
-				const batch = writeBatch(firestore);
-				const batchRecords = records.slice(j, j + BATCH_SIZE);
+			// Upload with size-aware batching
+			let batch = writeBatch(firestore);
+			let batchCount = 0;
+			let batchSize = 0;
 
-				for (const record of batchRecords) {
-					const docId = getDocId(store, record);
-					const docRef = doc(firestore, collectionPath, docId);
-					// Clean undefined values - Firestore doesn't accept them
-					const cleanedRecord = removeUndefinedValues(record);
-					batch.set(docRef, {
-						...cleanedRecord,
-						_cloudUpdatedAt: serverTimestamp(),
-						_cloudDeviceId: deviceId,
-					});
+			for (const record of records) {
+				const docId = getDocId(store, record);
+				const docRef = doc(firestore, collectionPath, docId);
+				// Clean undefined values - Firestore doesn't accept them
+				const cleanedRecord = removeUndefinedValues(record);
+				const recordData = {
+					...cleanedRecord,
+					_cloudUpdatedAt: serverTimestamp(),
+					_cloudDeviceId: deviceId,
+				};
+
+				const recordSize = estimateSize(recordData);
+
+				// Commit batch if we hit count or size limit
+				if (batchCount > 0 && (batchCount >= BATCH_SIZE || batchSize + recordSize > MAX_PAYLOAD_SIZE)) {
+					await batch.commit();
+					batch = writeBatch(firestore);
+					batchCount = 0;
+					batchSize = 0;
 				}
 
+				batch.set(docRef, recordData);
+				batchCount++;
+				batchSize += recordSize;
+			}
+
+			// Commit remaining records
+			if (batchCount > 0) {
 				await batch.commit();
 			}
 		}

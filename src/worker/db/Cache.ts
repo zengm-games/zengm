@@ -2,7 +2,7 @@ import { PLAYER, helpers } from "../../common/index.ts";
 import { idb } from "./index.ts";
 import cmp from "./cmp.ts";
 import { g, local, lock } from "../util/index.ts";
-import * as cloudSync from "../util/cloudSync.ts";
+// cloudSync is imported dynamically to avoid loading Firebase at worker startup
 import type {
 	AllStars,
 	DraftLotteryResult,
@@ -889,6 +889,8 @@ class Cache {
 	private async _syncToCloud(
 		data: Map<Store, { records: any[]; deletedIds: (string | number)[] }>,
 	) {
+		// Dynamic import to avoid loading Firebase at worker startup
+		const cloudSync = await import("../util/cloudSync.ts");
 		for (const [store, { records, deletedIds }] of data) {
 			try {
 				await cloudSync.syncChangesToCloud(store, records, deletedIds);

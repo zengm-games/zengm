@@ -194,7 +194,8 @@ export const uploadLeagueData = async (
 				for (const record of batchRecords) {
 					const docId = String(record[pk]);
 					const docRef = doc(db, collectionPath, docId);
-					batch.set(docRef, removeUndefined(record));
+					// Serialize as JSON to avoid Firestore limitations (nested arrays, undefined, etc.)
+					batch.set(docRef, { _json: JSON.stringify(record) });
 				}
 
 				await batch.commit();
@@ -240,7 +241,13 @@ export const downloadLeagueData = async (
 
 			data[store] = [];
 			snapshot.forEach((docSnap) => {
-				data[store].push(docSnap.data());
+				const docData = docSnap.data();
+				// Parse JSON back to original format
+				if (docData._json) {
+					data[store].push(JSON.parse(docData._json));
+				} else {
+					data[store].push(docData);
+				}
 			});
 
 			storeIndex++;
@@ -341,10 +348,13 @@ export const startRealtimeSync = async (cloudId: string): Promise<void> => {
 				const changes: Array<{ type: string; id: string; data: any }> = [];
 
 				snapshot.docChanges().forEach((change) => {
+					const docData = change.doc.data();
+					// Parse JSON back to original format
+					const data = docData._json ? JSON.parse(docData._json) : docData;
 					changes.push({
 						type: change.type,
 						id: change.doc.id,
-						data: change.doc.data(),
+						data,
 					});
 				});
 
@@ -422,7 +432,8 @@ export const syncLocalChanges = async (
 		for (const record of batchRecords) {
 			const docId = String(record[pk]);
 			const docRef = doc(db, collectionPath, docId);
-			batch.set(docRef, removeUndefined(record));
+			// Serialize as JSON to avoid Firestore limitations
+			batch.set(docRef, { _json: JSON.stringify(record) });
 		}
 
 		await batch.commit();

@@ -362,26 +362,38 @@ const CloudSync = () => {
 
 		try {
 			// Get league name and user's team ID
+			console.log("[CloudSync] Getting league name...");
 			const leagueName = await toWorker("main", "getLeagueName") as string;
+			console.log("[CloudSync] Got league name:", leagueName);
+
+			console.log("[CloudSync] Getting userTid...");
 			const userTid = await toWorker("main", "getLocal", "userTid") as number;
+			console.log("[CloudSync] Got userTid:", userTid);
 
 			// Create cloud league
 			setUploadProgress({ message: "Creating cloud league...", percent: 5 });
+			console.log("[CloudSync] Creating cloud league...");
 			const cloudId = await createCloudLeague(leagueName, "basketball", userTid);
+			console.log("[CloudSync] Cloud league created:", cloudId);
 
 			// Upload data
+			console.log("[CloudSync] Starting data upload...");
 			await uploadLeagueData(cloudId, (message, percent) => {
+				console.log("[CloudSync] Upload progress:", message, percent);
 				setUploadProgress({ message, percent: 5 + percent * 0.95 });
 			});
+			console.log("[CloudSync] Data upload complete");
 
 			setUploadProgress(null);
 			await loadCloudLeagues();
 
 			// Start real-time sync
+			console.log("[CloudSync] Starting real-time sync...");
 			await startRealtimeSync(cloudId);
+			console.log("[CloudSync] All done!");
 
 		} catch (err: any) {
-			console.error("Upload failed:", err);
+			console.error("[CloudSync] Upload failed:", err);
 			setError(err.message || "Upload failed");
 			setUploadProgress(null);
 		}

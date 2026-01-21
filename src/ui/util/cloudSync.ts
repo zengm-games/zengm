@@ -108,11 +108,15 @@ export const createCloudLeague = async (
 	sport: "basketball" | "football" | "baseball" | "hockey",
 	userTeamId: number,
 ): Promise<string> => {
+	console.log("[createCloudLeague] Starting...");
 	const db = getFirebaseDb();
+	console.log("[createCloudLeague] Got db");
 	const userId = getCurrentUserId();
+	console.log("[createCloudLeague] userId:", userId);
 	if (!userId) throw new Error("Not signed in");
 
 	const cloudId = `league-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+	console.log("[createCloudLeague] cloudId:", cloudId);
 
 	const email = getUserEmail();
 	const member: CloudMember = {
@@ -140,7 +144,9 @@ export const createCloudLeague = async (
 		schemaVersion: 1,
 	};
 
+	console.log("[createCloudLeague] Calling setDoc...");
 	await setDoc(doc(db, "leagues", cloudId), removeUndefined(leagueData));
+	console.log("[createCloudLeague] setDoc complete!");
 
 	return cloudId;
 };
@@ -152,13 +158,16 @@ export const uploadLeagueData = async (
 	cloudId: string,
 	onProgress?: (message: string, percent: number) => void,
 ): Promise<void> => {
+	console.log("[uploadLeagueData] Starting for cloudId:", cloudId);
 	const db = getFirebaseDb();
 	setSyncStatus("syncing");
 
 	try {
 		// Get all data from worker
+		console.log("[uploadLeagueData] Calling toWorker getLeagueDataForCloud...");
 		onProgress?.("Collecting league data...", 0);
 		const allData = await toWorker("main", "getLeagueDataForCloud") as Record<Store, any[]>;
+		console.log("[uploadLeagueData] Got data from worker");
 
 		// Count total records
 		let totalRecords = 0;

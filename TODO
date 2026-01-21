@@ -986,8 +986,6 @@ FBGM
 - completed pass + pass inferference at end of game when trailing - should take penalty even if fewer yards, but seems to not https://mail.google.com/mail/u/0/#inbox/FMfcgzGwHpWBjWmMMknKPFPrTBdNGkTq
 - weird penalty decline on punt return https://discord.com/channels/290013534023057409/290015591216054273/1180657662170501170
 - winning team late in game seems to be playing hurry up offense https://discord.com/channels/290013534023057409/290015591216054273/1180661367531905144
-- kneeling logic
-  - instead of scrimmage 10 cutoff, estimate if there is enough room to kneel out the clock, depending on how many times we need to kneel and the distance in doKneel. if not enough room, should very strongly favor running plays
 - late game clock management
   - in hurryUp, should try to end play out of bounds
   - need some kind of "milking the clock" mode, where you take longer between plays, and also actively try to not go out of bounds
@@ -996,7 +994,6 @@ FBGM
 - drive chart weirdness for penalty overturning a play and having a loss of downs resulting in turnover on downs https://discord.com/channels/290013534023057409/1414344458194911243
 - better time management
   - offense shouldn't take timeout if it's just saving time for the other team, like after 3rd down in a tied game when they are about to punt
-  - shouldn't punt if other team can kneel out the clock https://discord.com/channels/@me/778760871911751700/1463338510609023018
 - 2025 overtime rules are now the same for regular season and playoffs, both teams get a chance to possess
   - should have option to switch to different overtime rules for regular season and playoffs
 

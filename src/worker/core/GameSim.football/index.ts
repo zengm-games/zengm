@@ -31,6 +31,13 @@ const teamNums: [TeamNum, TeamNum] = [0, 1];
 
 const FIELD_GOAL_DISTANCE_YARDS_ADDED_FROM_SCRIMMAGE = 17;
 
+const ESTIMATED_SECONDS_PER_KNEEL = 42;
+const ESTIMATED_SECONDS_PER_KNEEL_TIMEOUT = 2;
+const YARDS_NEEDED_TO_KNEEL = 3;
+
+const NUM_DOWNS = 4; // Not used everywhere!
+const TWO_MINUTE_WARNING_TIME = 2; // Not used everywhere!
+
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
  *
@@ -681,20 +688,28 @@ class GameSim extends GameSimBase {
 			return Math.random() < 0.95 ? "extraPoint" : "twoPointConversion";
 		}
 
-		if (quarter >= this.numPeriods && ptsDown < 0 && this.scrimmage > 10) {
+		if (quarter >= this.numPeriods && ptsDown < 0) {
 			// Does it make sense to kneel? Depends on clock time and opponent timeouts
-			const downsRemaining = 4 - this.down;
-			const timeoutDownsRemaining = Math.min(
-				this.timeouts[this.d] + (this.clock > 2 ? 1 : 0),
-				downsRemaining,
-			);
+			const numTimeouts =
+				this.timeouts[this.d] + (this.clock > TWO_MINUTE_WARNING_TIME ? 1 : 0);
+			const downsRemaining = NUM_DOWNS - this.down;
+			const timeoutDownsRemaining = Math.min(numTimeouts, downsRemaining);
 			const clockRunningDownsRemaining = downsRemaining - timeoutDownsRemaining;
-
 			const timeRemainingAfterKeels =
 				this.clock -
-				(timeoutDownsRemaining * 2 + clockRunningDownsRemaining * 42) / 60;
+				(ESTIMATED_SECONDS_PER_KNEEL_TIMEOUT * timeoutDownsRemaining +
+					ESTIMATED_SECONDS_PER_KNEEL * clockRunningDownsRemaining) /
+					60;
+
 			if (timeRemainingAfterKeels < 0) {
-				return "kneel";
+				if (this.scrimmage > YARDS_NEEDED_TO_KNEEL * downsRemaining) {
+					return "kneel";
+				} else {
+					// We don't have room to kneel, so probably just run
+					if (Math.random() < 0.9) {
+						return "run";
+					}
+				}
 			}
 		}
 
@@ -704,9 +719,28 @@ class GameSim extends GameSimBase {
 			ptsDown > 3 &&
 			(this.clock <= 2 || this.overtimeState === "secondPossession");
 
-		const neverPunt =
-			(quarter === this.numPeriods && ptsDown > 0 && this.clock <= 2) ||
-			(quarter > this.numPeriods && ptsDown > 0);
+		let neverPunt = false;
+		if (quarter === this.numPeriods && ptsDown > 0) {
+			// Losing in 4th quarter, maybe don't punt if there's not much time left. Also depends on how many timeouts are left
+			const numTimeouts =
+				this.timeouts[this.o] + (this.clock > TWO_MINUTE_WARNING_TIME ? 1 : 0);
+			const downsRemaining = NUM_DOWNS - 1;
+			const timeoutDownsRemaining = Math.min(numTimeouts, downsRemaining);
+			const clockRunningDownsRemaining = downsRemaining - timeoutDownsRemaining;
+			const timeRemainingAfterKeels =
+				this.clock -
+				(ESTIMATED_SECONDS_PER_KNEEL_TIMEOUT * timeoutDownsRemaining +
+					ESTIMATED_SECONDS_PER_KNEEL * clockRunningDownsRemaining) /
+					60;
+
+			// We want at least 30 seconds after getting the ball back
+			if (timeRemainingAfterKeels < 0.5) {
+				neverPunt = true;
+			}
+		} else if (quarter > this.numPeriods && ptsDown > 0) {
+			// Losing in overtime, never punt
+			neverPunt = true;
+		}
 
 		// If there are under 10 seconds left in the half/overtime, maybe try a field goal
 		if (
@@ -2312,7 +2346,7 @@ class GameSim extends GameSimBase {
 
 		const qb = this.getTopPlayerOnField(o, "QB");
 
-		const yds = random.randInt(0, -3);
+		const yds = random.randInt(0, -YARDS_NEEDED_TO_KNEEL);
 
 		this.currentPlay.addEvent({
 			type: "kneel",
@@ -2328,7 +2362,10 @@ class GameSim extends GameSimBase {
 			yds,
 		});
 
-		const dt = random.randInt(42, 44);
+		const dt = random.randInt(
+			ESTIMATED_SECONDS_PER_KNEEL - 1,
+			ESTIMATED_SECONDS_PER_KNEEL,
+		);
 
 		return dt;
 	}

@@ -337,6 +337,9 @@ export const startRealtimeSync = async (cloudId: string): Promise<void> => {
 	currentCloudId = cloudId;
 	setSyncStatus("connecting");
 
+	// Load current user's membership info for permission checks
+	await loadCurrentCloudMember();
+
 	try {
 		// Listen for changes on each store
 		for (const store of ALL_STORES) {
@@ -384,6 +387,7 @@ export const stopRealtimeSync = () => {
 	}
 	listeners.clear();
 	currentCloudId = null;
+	currentCloudMember = null;
 	setSyncStatus("disconnected");
 };
 
@@ -630,4 +634,79 @@ export const getCloudLeagueTeams = async (cloudId: string): Promise<CloudTeam[]>
 	teams.sort((a, b) => a.tid - b.tid);
 
 	return teams;
+};
+
+// ==== Cloud Permission System ====
+
+// Current user's cloud membership (cached for the active league)
+let currentCloudMember: CloudMember | null = null;
+
+/**
+ * Get the current user's membership info for the active cloud league
+ */
+export const getCurrentCloudMember = (): CloudMember | null => currentCloudMember;
+
+/**
+ * Load/refresh the current user's cloud membership
+ */
+export const loadCurrentCloudMember = async (): Promise<CloudMember | null> => {
+	if (!currentCloudId) {
+		currentCloudMember = null;
+		return null;
+	}
+
+	const userId = getCurrentUserId();
+	if (!userId) {
+		currentCloudMember = null;
+		return null;
+	}
+
+	const league = await getCloudLeague(currentCloudId);
+	if (!league) {
+		currentCloudMember = null;
+		return null;
+	}
+
+	currentCloudMember = league.members.find(m => m.userId === userId) || null;
+	return currentCloudMember;
+};
+
+/**
+ * Check if the current user is the commissioner of the active cloud league
+ */
+export const isCloudCommissioner = (): boolean => {
+	return currentCloudMember?.role === "commissioner";
+};
+
+/**
+ * Get the team ID the current user controls in the cloud league
+ */
+export const getCloudUserTeamId = (): number | null => {
+	return currentCloudMember?.teamId ?? null;
+};
+
+/**
+ * Check if the current user can control a specific team
+ */
+export const canControlTeam = (teamId: number): boolean => {
+	// If not in a cloud league, allow all teams
+	if (!currentCloudId || !currentCloudMember) {
+		return true;
+	}
+
+	// User can only control their assigned team
+	return currentCloudMember.teamId === teamId;
+};
+
+/**
+ * Check if the current user can simulate games (commissioner only)
+ */
+export const canSimulateGames = (): boolean => {
+	// If not in a cloud league, allow simulation
+	if (!currentCloudId || !currentCloudMember) {
+		return true;
+	}
+
+	// Only commissioner can simulate
+	return currentCloudMember.role === "commissioner";
 };

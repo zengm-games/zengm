@@ -4,6 +4,7 @@ import { confirm, local, realtimeUpdate, toWorker } from "../util/index.ts";
 import type { Option } from "../../common/types.ts";
 import clsx from "clsx";
 import { formatModifierKeyLabel } from "../util/formatModifierKeyLabel.ts";
+import { canSimulateGames, getCurrentCloudId } from "../util/cloudSync.ts";
 
 const handleOptionClick = (option: Option, event: MouseEvent) => {
 	if (!option.url) {
@@ -69,6 +70,28 @@ const PlayMenu = ({
 
 	if (lid === undefined) {
 		return null;
+	}
+
+	// Check cloud permissions - only commissioner can simulate in cloud leagues
+	const isCloudLeague = !!getCurrentCloudId();
+	const canSim = canSimulateGames();
+
+	// If in a cloud league and user can't simulate, show disabled button with explanation
+	if (isCloudLeague && !canSim) {
+		return (
+			<div
+				className={`play-button-wrapper${window.mobile ? " dropdown-mobile" : ""}`}
+				style={{ display: "inline-block" }}
+			>
+				<button
+					className="btn btn-secondary play-button"
+					disabled
+					title="Only the commissioner can simulate games in cloud leagues"
+				>
+					Play (Commissioner Only)
+				</button>
+			</div>
+		);
 	}
 
 	return (

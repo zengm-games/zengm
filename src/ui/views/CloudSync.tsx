@@ -23,6 +23,7 @@ import {
 	getUserEmail,
 	waitForAuth,
 	onAuthChange,
+	getCurrentUserId,
 } from "../util/firebase.ts";
 import {
 	createCloudLeague,
@@ -611,6 +612,11 @@ const CloudSync = () => {
 		setUploadProgress({ message: "Downloading league...", percent: 0 });
 
 		try {
+			// Get the current user's membership to find their assigned team
+			const userId = getCurrentUserId();
+			const member = userId ? league.members.find(m => m.userId === userId) : undefined;
+			const memberTeamId = member?.teamId;
+
 			// Download data
 			const data = await downloadLeagueData(league.cloudId, (message, percent) => {
 				setUploadProgress({ message, percent: percent * 0.8 });
@@ -622,6 +628,7 @@ const CloudSync = () => {
 				cloudId: league.cloudId,
 				name: league.name,
 				data,
+				memberTeamId, // Set userTid to the member's assigned team
 			});
 
 			setUploadProgress(null);

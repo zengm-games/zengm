@@ -5102,10 +5102,12 @@ const createLeagueFromCloud = async ({
 	cloudId,
 	name,
 	data,
+	memberTeamId,
 }: {
 	cloudId: string;
 	name: string;
 	data: Record<string, any[]>;
+	memberTeamId?: number; // The team this user controls (from cloud membership)
 }): Promise<number> => {
 	// Get new league ID
 	const lid = await getNewLeagueLid();
@@ -5119,10 +5121,22 @@ const createLeagueFromCloud = async ({
 		}
 	}
 
-	// Get user's team info
-	const userTid = gameAttributesObj.userTid ?? 0;
+	// Use member's assigned team if provided, otherwise fall back to league's userTid
+	const userTid = memberTeamId ?? gameAttributesObj.userTid ?? 0;
 	const teams = data.teams || [];
 	const userTeam = teams.find((t: any) => t.tid === userTid) || teams[0] || {};
+
+	// Update gameAttributes to reflect this user's team
+	if (memberTeamId !== undefined) {
+		// Update userTid and userTids in gameAttributes data
+		for (const ga of data.gameAttributes || []) {
+			if (ga.key === "userTid") {
+				ga.value = memberTeamId;
+			} else if (ga.key === "userTids") {
+				ga.value = [memberTeamId];
+			}
+		}
+	}
 
 	// Create league metadata entry
 	const leagueMeta: League = {

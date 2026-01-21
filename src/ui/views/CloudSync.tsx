@@ -345,28 +345,34 @@ const CloudSync = () => {
 	};
 
 	const handleUploadToCloud = async () => {
+		console.log("[CloudSync UI] handleUploadToCloud called", { lid, cloudUploadProgress });
+
 		if (!lid) {
+			console.log("[CloudSync UI] No lid");
 			setError("No league is currently loaded. Please load a league first.");
 			return;
 		}
 
 		const userId = getUserId();
+		console.log("[CloudSync UI] userId:", userId);
 		if (!userId) {
 			setError("Not signed in. Please sign in first.");
 			return;
 		}
 
 		setError(null);
-		// Progress will be updated by the worker via cloudUploadProgress
+		console.log("[CloudSync UI] Calling toWorker...");
 
 		try {
 			await toWorker("main", "uploadLeagueToCloud", userId);
+			console.log("[CloudSync UI] Upload completed successfully");
 
 			await loadCloudLeagues();
 
 			// Refresh to show updated status
 			await realtimeUpdate(["firstRun"]);
 		} catch (err: any) {
+			console.error("[CloudSync UI] Upload failed:", err);
 			setError(err.message || "Failed to upload league to cloud");
 		}
 	};
@@ -466,6 +472,10 @@ const CloudSync = () => {
 										<>
 											<p>
 												This league is not yet synced to the cloud.
+											</p>
+											{/* Debug info */}
+											<p className="text-muted small">
+												Debug: lid={lid}, progress={cloudUploadProgress || "null"}
 											</p>
 											<button
 												className="btn btn-primary"

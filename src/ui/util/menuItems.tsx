@@ -670,6 +670,13 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				type: "link",
 				active: (pageID) => pageID === "cloudSync",
 				league: true,
+				commandPalette: true,
+				path: ["cloud_sync"],
+				text: "Cloud Sync",
+			},
+			{
+				type: "link",
+				active: (pageID) => pageID === "cloudSync",
 				nonLeague: true,
 				commandPalette: true,
 				path: "/cloud_sync",

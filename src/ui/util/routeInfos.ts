@@ -146,6 +146,7 @@ const routeInfos = {
 	"/l/:lid/transactions/:abbrev": "transactions",
 	"/l/:lid/transactions/:abbrev/:season": "transactions",
 	"/l/:lid/transactions/:abbrev/:season/:eventType": "transactions",
+	"/l/:lid/cloud_sync": "cloudSync",
 	"/l/:lid/danger_zone": "dangerZone",
 	"/l/:lid/depth": "depth",
 	"/l/:lid/depth/:pos": "depth",

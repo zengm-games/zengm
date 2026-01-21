@@ -18,6 +18,7 @@ import {
 	getDeviceId,
 } from "../../common/cloudTypes.ts";
 import toUI from "./toUI.ts";
+import { g } from "./index.ts";
 
 // Firebase configuration - must match UI config
 const firebaseConfig = {
@@ -333,6 +334,7 @@ const handleRemoteChanges = async (
 	}
 
 	let appliedChanges = 0;
+	const gameAttributeUpdates: Array<{ key: string; value: any }> = [];
 
 	for (const change of changes) {
 		try {
@@ -350,23 +352,62 @@ const handleRemoteChanges = async (
 
 				await idb.cache._putFromRemote(store, record);
 				appliedChanges++;
+
+				// Track gameAttributes changes to update the g object
+				if (store === "gameAttributes" && record.key && record.value !== undefined) {
+					gameAttributeUpdates.push({ key: record.key, value: record.value });
+				}
 			}
 		} catch (error) {
 			console.error(`Failed to apply remote change to ${store}:`, error);
 		}
 	}
 
+	// Update the g object with any gameAttributes changes
+	// This is critical - the g object is what views actually read from
+	if (gameAttributeUpdates.length > 0) {
+		for (const { key, value } of gameAttributeUpdates) {
+			try {
+				g.setWithoutSavingToDB(key as any, value);
+			} catch (error) {
+				console.error(`Failed to update g.${key}:`, error);
+			}
+		}
+		// Also update UI with the new game attributes
+		const gameAttributesObj: Record<string, any> = {};
+		for (const { key, value } of gameAttributeUpdates) {
+			gameAttributesObj[key] = value;
+		}
+		toUI("setGameAttributes", [gameAttributesObj, undefined]);
+	}
+
 	// Trigger UI refresh and show notification
 	if (appliedChanges > 0) {
-		const updateEvents = getUpdateEventsForStore(store);
-		if (updateEvents.length > 0) {
-			toUI("realtimeUpdate", [updateEvents as any]);
+		// For gameAttributes, we need a comprehensive refresh since these affect everything
+		if (store === "gameAttributes") {
+			// Trigger a full refresh of most views
+			toUI("realtimeUpdate", [["firstRun", "gameSim", "playerMovement", "team", "gameAttributes"] as any]);
+		} else {
+			const updateEvents = getUpdateEventsForStore(store);
+			if (updateEvents.length > 0) {
+				toUI("realtimeUpdate", [updateEvents as any]);
+			}
+		}
+
+		// Create a more descriptive notification
+		let notificationText = `Cloud sync: ${appliedChanges} ${store} update${appliedChanges > 1 ? "s" : ""} received`;
+		if (store === "gameAttributes" && gameAttributeUpdates.length > 0) {
+			const phaseUpdate = gameAttributeUpdates.find(u => u.key === "phase");
+			const seasonUpdate = gameAttributeUpdates.find(u => u.key === "season");
+			if (phaseUpdate || seasonUpdate) {
+				notificationText = "Cloud sync: Game state updated from another device";
+			}
 		}
 
 		// Notify user about the sync
 		toUI("showEvent", [{
 			type: "info",
-			text: `Cloud sync: ${appliedChanges} ${store} update${appliedChanges > 1 ? "s" : ""} received from another device`,
+			text: notificationText,
 			saveToDb: false,
 			showNotification: true,
 			persistent: false,

@@ -5054,11 +5054,7 @@ const getCloudLeagues = async () => {
 	return cloudSync.getCloudLeagues(userId);
 };
 
-const uploadLeagueToCloud = async ({
-	onProgress,
-}: {
-	onProgress?: (store: string, current: number, total: number) => void;
-}) => {
+const uploadLeagueToCloud = async () => {
 	const userId = localStorage.getItem("cloudUserId");
 	if (!userId) {
 		throw new Error("Not signed in to cloud");
@@ -5099,7 +5095,7 @@ const uploadLeagueToCloud = async ({
 	};
 
 	// Upload to cloud
-	await cloudSync.uploadLeagueToCloud(cloudId, getAllData, onProgress);
+	await cloudSync.uploadLeagueToCloud(cloudId, getAllData);
 
 	// Save mapping
 	setCloudIdForLeague(lid, cloudId);

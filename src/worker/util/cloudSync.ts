@@ -509,7 +509,6 @@ export const createCloudLeague = async (
 export const uploadLeagueToCloud = async (
 	cloudId: string,
 	getAllData: () => Promise<Record<Store, any[]>>,
-	onProgress?: (store: Store, current: number, total: number) => void,
 ): Promise<void> => {
 	const firestore = await getDb();
 	if (!firestore) {
@@ -523,15 +522,10 @@ export const uploadLeagueToCloud = async (
 	try {
 		const allData = await getAllData();
 		const stores = Object.keys(allData) as Store[];
-		const totalStores = stores.length;
 
 		for (let i = 0; i < stores.length; i++) {
 			const store = stores[i]!;
 			const records = allData[store] || [];
-
-			if (onProgress) {
-				onProgress(store, i + 1, totalStores);
-			}
 
 			if (records.length === 0) continue;
 

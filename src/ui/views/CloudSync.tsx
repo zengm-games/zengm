@@ -347,14 +347,10 @@ const CloudSync = () => {
 		}
 
 		setError(null);
-		setUploadProgress("Preparing upload...");
+		setUploadProgress("Uploading league to cloud... This may take a moment.");
 
 		try {
-			await toWorker("main", "uploadLeagueToCloud", {
-				onProgress: (store: string, current: number, total: number) => {
-					setUploadProgress(`Uploading ${store}... (${current}/${total})`);
-				},
-			});
+			await toWorker("main", "uploadLeagueToCloud", undefined);
 
 			setUploadProgress(null);
 			await loadCloudLeagues();

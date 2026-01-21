@@ -314,9 +314,7 @@ const FreeAgents = ({
 			) : null}
 
 			{gameSimInProgress && !spectator ? (
-				<div className="text-danger">
-					Stop game simulation to sign free agents.
-				</div>
+				<p className="text-danger">Stop game simulation to sign free agents.</p>
 			) : null}
 
 			{spectator ? (

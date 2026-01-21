@@ -296,7 +296,10 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 		},
 	);
 
-	const rows = leagues.map((league) => {
+	// Filter out cloud leagues - they're shown in the Cloud Leagues section
+	const localOnlyLeagues = leagues.filter((league: any) => !league.cloudId);
+
+	const rows = localOnlyLeagues.map((league) => {
 		const disabled =
 			deletingLID !== undefined ||
 			loadingLID !== undefined ||
@@ -588,19 +591,26 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 							<tbody>
 								{cloudLeagues.map((cloudLeague) => {
 									const isJoining = joiningCloudId === cloudLeague.cloudId;
-									const isLocallyAvailable = leagues.some(
+									const localLeague = leagues.find(
 										(l: any) => l.cloudId === cloudLeague.cloudId
 									);
+									const isLocallyAvailable = !!localLeague;
+									const disabled =
+										deletingLID !== undefined ||
+										loadingLID !== undefined ||
+										cloningLID !== undefined ||
+										joiningCloudId !== undefined;
 									return (
 										<tr key={cloudLeague.cloudId}>
 											<td>
 												{isLocallyAvailable ? (
-													<span
-														className="badge bg-success"
-														title="Already downloaded"
+													<a
+														className={`btn btn-sm btn-success ${loadingLID === localLeague.lid ? "dashboard-play-loading" : ""}`}
+														href={`/l/${localLeague.lid}`}
+														onClick={() => setLoadingLID(localLeague.lid)}
 													>
-														Local
-													</span>
+														Play
+													</a>
 												) : isJoining ? (
 													<button
 														className="btn btn-sm btn-primary"
@@ -612,7 +622,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 													<button
 														className="btn btn-sm btn-primary"
 														onClick={() => handleJoinCloudLeague(cloudLeague)}
-														disabled={joiningCloudId !== undefined}
+														disabled={disabled}
 													>
 														Download
 													</button>

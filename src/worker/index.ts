@@ -1,29 +1,43 @@
-import "../common/polyfills.ts";
-import api from "./api/index.ts";
-import * as common from "../common/index.ts";
-import * as core from "./core/index.ts";
-import * as db from "./db/index.ts";
-import * as util from "./util/index.ts";
+// Debug: Capture any errors during worker initialization
+self.onerror = (event) => {
+	console.error("[Worker] Global error:", event);
+};
 
-self.bbgm = { api, ...common, ...core, ...db, ...util };
+self.onunhandledrejection = (event) => {
+	console.error("[Worker] Unhandled rejection:", event.reason);
+};
 
-if (process.env.NODE_ENV === "development") {
-	import("./core/debug/index.ts").then(({ default: debug }) => {
-		self.bbgm.debug = debug;
-	});
-}
+console.log("[Worker] Error handlers set up, starting imports...");
 
-export type WorkerAPICategory =
-	| "actions"
-	| "exhibitionGame"
-	| "leagueFileUpload"
-	| "main"
-	| "playMenu"
-	| "toolsMenu";
+try {
+	// Dynamic imports to catch errors
+	await import("../common/polyfills.ts");
+	console.log("[Worker] 1/6 Polyfills loaded");
 
-// API functions should have at most 2 arguments. First argument is passed here from toWorker. If you need to pass multiple variables, use an object/array. Second argument is Conditions.
+	const api = (await import("./api/index.ts")).default;
+	console.log("[Worker] 2/6 API loaded");
 
-(async () => {
+	const common = await import("../common/index.ts");
+	console.log("[Worker] 3/6 Common loaded");
+
+	const core = await import("./core/index.ts");
+	console.log("[Worker] 4/6 Core loaded");
+
+	const db = await import("./db/index.ts");
+	console.log("[Worker] 5/6 DB loaded");
+
+	const util = await import("./util/index.ts");
+	console.log("[Worker] 6/6 Util loaded");
+
+	self.bbgm = { api, ...common, ...core, ...db, ...util };
+	console.log("[Worker] self.bbgm assigned");
+
+	if (process.env.NODE_ENV === "development") {
+		import("./core/debug/index.ts").then(({ default: debug }) => {
+			self.bbgm.debug = debug;
+		});
+	}
+
 	util.promiseWorker.register(([type, name, param], hostID) => {
 		const conditions = {
 			hostID,
@@ -40,4 +54,18 @@ export type WorkerAPICategory =
 		// @ts-expect-error
 		return api[type][name](param, conditions);
 	});
-})();
+
+	console.log("[Worker] Worker fully initialized!");
+} catch (error) {
+	console.error("[Worker] INITIALIZATION ERROR:", error);
+	// Try to send error to main thread
+	self.postMessage({ type: "error", error: String(error) });
+}
+
+export type WorkerAPICategory =
+	| "actions"
+	| "exhibitionGame"
+	| "leagueFileUpload"
+	| "main"
+	| "playMenu"
+	| "toolsMenu";

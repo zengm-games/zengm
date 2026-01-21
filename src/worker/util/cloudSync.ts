@@ -8,8 +8,8 @@
  * on initial load (Firebase SDK requires browser APIs).
  */
 
-import type { Store } from "../db/Cache.ts";
 import {
+	type Store,
 	type CloudLeague,
 	type CloudLock,
 	type CloudSyncStatus,

@@ -5,7 +5,32 @@
  * real-time multi-device synchronization.
  */
 
-import type { Store } from "../worker/db/Cache.ts";
+// Store type duplicated here to avoid circular dependency with Cache.ts
+// Keep in sync with src/worker/db/Cache.ts
+export type Store =
+	| "allStars"
+	| "awards"
+	| "draftLotteryResults"
+	| "draftPicks"
+	| "events"
+	| "gameAttributes"
+	| "games"
+	| "headToHeads"
+	| "messages"
+	| "negotiations"
+	| "playerFeats"
+	| "players"
+	| "playoffSeries"
+	| "releasedPlayers"
+	| "savedTrades"
+	| "savedTradingBlock"
+	| "schedule"
+	| "scheduledEvents"
+	| "seasonLeaders"
+	| "teamSeasons"
+	| "teamStats"
+	| "teams"
+	| "trade";
 
 // Cloud league metadata stored in Firestore
 export type CloudLeague = {

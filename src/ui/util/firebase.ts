@@ -206,3 +206,15 @@ export const getUserEmail = (): string | null => {
 	const user = getCurrentUser();
 	return user?.email ?? null;
 };
+
+// Get user's ID token for passing to worker
+export const getUserIdToken = async (): Promise<string | null> => {
+	const user = getCurrentUser();
+	if (!user) return null;
+	try {
+		return await user.getIdToken();
+	} catch (error) {
+		console.error("Failed to get ID token:", error);
+		return null;
+	}
+};

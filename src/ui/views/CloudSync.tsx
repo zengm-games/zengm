@@ -24,6 +24,7 @@ import {
 	getUserEmail,
 	waitForAuth,
 	onAuthChange,
+	getUserIdToken,
 } from "../util/firebase.ts";
 import type { CloudLeague } from "../../common/cloudTypes.ts";
 
@@ -360,11 +361,19 @@ const CloudSync = () => {
 			return;
 		}
 
+		// Get the ID token for worker authentication
+		const idToken = await getUserIdToken();
+		console.log("[CloudSync UI] Got ID token:", idToken ? "yes" : "no");
+		if (!idToken) {
+			setError("Failed to get authentication token. Please sign in again.");
+			return;
+		}
+
 		setError(null);
-		console.log("[CloudSync UI] Calling toWorker...");
+		console.log("[CloudSync UI] Calling toWorker with userId and idToken...");
 
 		try {
-			await toWorker("main", "uploadLeagueToCloud", userId);
+			await toWorker("main", "uploadLeagueToCloud", { userId, idToken });
 			console.log("[CloudSync UI] Upload completed successfully");
 
 			await loadCloudLeagues();

@@ -39,11 +39,14 @@ export const isFirebaseConfigured = (): boolean => {
 // Lazy-loaded Firebase instances
 let firebaseApp: any = null;
 let firestoreDb: any = null;
+let firebaseAuth: any = null;
 let firebaseLoaded = false;
+let isWorkerAuthenticated = false;
 
 // Firebase module references (loaded dynamically)
 let firebaseAppModule: any = null;
 let firestoreModule: any = null;
+let authModule: any = null;
 
 // Current sync state
 let currentCloudId: string | null = null;
@@ -97,6 +100,7 @@ const loadFirebase = async (): Promise<boolean> => {
 		// Dynamic imports - only loads when called
 		firebaseAppModule = await import("firebase/app");
 		firestoreModule = await import("firebase/firestore");
+		authModule = await import("firebase/auth");
 		firebaseLoaded = true;
 		return true;
 	} catch (error) {
@@ -117,6 +121,7 @@ const initFirestore = async (): Promise<any> => {
 	if (!firebaseApp) {
 		firebaseApp = firebaseAppModule.initializeApp(firebaseConfig, "worker");
 		firestoreDb = firestoreModule.getFirestore(firebaseApp);
+		firebaseAuth = authModule.getAuth(firebaseApp);
 	}
 
 	return firestoreDb;
@@ -135,6 +140,49 @@ export const getDb = async (): Promise<any | null> => {
 		return firestoreDb;
 	} catch {
 		return null;
+	}
+};
+
+/**
+ * Authenticate the worker using an ID token from the UI
+ * Note: This is tricky because Firebase ID tokens can't be used directly for signInWithCredential.
+ * For now, we'll try anonymous auth or proceed without worker auth.
+ */
+export const authenticateWorker = async (idToken: string): Promise<boolean> => {
+	console.log("[CloudSync] authenticateWorker called, idToken length:", idToken?.length);
+
+	try {
+		await initFirestore(); // Ensure Firebase is initialized
+
+		if (!firebaseAuth || !authModule) {
+			console.error("[CloudSync] Auth not initialized");
+			return false;
+		}
+
+		// Check if already authenticated
+		if (firebaseAuth.currentUser) {
+			console.log("[CloudSync] Already authenticated as:", firebaseAuth.currentUser.uid);
+			isWorkerAuthenticated = true;
+			return true;
+		}
+
+		// Try anonymous sign in as a fallback - this at least gives us an authenticated session
+		// The Firestore rules should be configured to check the userId field in the document
+		console.log("[CloudSync] Attempting anonymous sign in for worker...");
+		try {
+			await authModule.signInAnonymously(firebaseAuth);
+			isWorkerAuthenticated = true;
+			console.log("[CloudSync] Worker signed in anonymously:", firebaseAuth.currentUser?.uid);
+			return true;
+		} catch (anonError) {
+			console.error("[CloudSync] Anonymous sign in failed:", anonError);
+		}
+
+		console.log("[CloudSync] Proceeding without worker auth - Firestore rules may block writes");
+		return false;
+	} catch (error) {
+		console.error("[CloudSync] Worker authentication failed:", error);
+		return false;
 	}
 };
 
@@ -741,12 +789,23 @@ export const createCloudLeague = async (
 
 	console.log("[CloudSync] Calling setDoc...");
 	setUploadProgress("Creating cloud league: saving to Firestore...");
+
+	// Add timeout to detect hanging
+	const timeoutMs = 30000; // 30 seconds
+	const timeoutPromise = new Promise((_, reject) => {
+		setTimeout(() => reject(new Error(`setDoc timed out after ${timeoutMs / 1000}s - check Firestore rules and network`)), timeoutMs);
+	});
+
 	try {
-		await setDoc(leagueRef, leagueData);
+		await Promise.race([
+			setDoc(leagueRef, leagueData),
+			timeoutPromise,
+		]);
 		console.log("[CloudSync] setDoc completed successfully");
 	} catch (setDocError) {
 		console.error("[CloudSync] setDoc failed:", setDocError);
-		setUploadProgress(`Error creating league: ${setDocError instanceof Error ? setDocError.message : "Unknown error"}`);
+		const errorMessage = setDocError instanceof Error ? setDocError.message : "Unknown error";
+		setUploadProgress(`Error creating league: ${errorMessage}`);
 		throw setDocError;
 	}
 

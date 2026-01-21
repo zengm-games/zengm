@@ -5053,11 +5053,13 @@ const getCloudLeagues = async (userId: string) => {
 	return cloudSync.getCloudLeagues(userId);
 };
 
-const uploadLeagueToCloud = async (userId: string) => {
+const uploadLeagueToCloud = async (params: { userId: string; idToken: string }) => {
+	const { userId, idToken } = params;
+
 	// Immediately notify UI that we received the call
 	toUI("updateLocal", [{ cloudUploadProgress: "Starting upload..." }]);
 
-	console.log("[API] uploadLeagueToCloud started", { userId });
+	console.log("[API] uploadLeagueToCloud started", { userId, hasToken: !!idToken });
 	const startTime = performance.now();
 
 	try {
@@ -5065,6 +5067,14 @@ const uploadLeagueToCloud = async (userId: string) => {
 			console.error("[API] uploadLeagueToCloud: No userId");
 			toUI("updateLocal", [{ cloudUploadProgress: "Error: Not signed in" }]);
 			throw new Error("Not signed in to cloud");
+		}
+
+		// Authenticate the worker with the ID token
+		if (idToken) {
+			toUI("updateLocal", [{ cloudUploadProgress: "Authenticating..." }]);
+			console.log("[API] Authenticating worker...");
+			const authResult = await cloudSync.authenticateWorker(idToken);
+			console.log("[API] Worker auth result:", authResult);
 		}
 
 		const lid = g.get("lid");

@@ -2,6 +2,7 @@ import { PLAYER, helpers } from "../../common/index.ts";
 import { idb } from "./index.ts";
 import cmp from "./cmp.ts";
 import { g, local, lock } from "../util/index.ts";
+import * as cloudSync from "../util/cloudSync.ts";
 import type {
 	AllStars,
 	DraftLotteryResult,
@@ -227,6 +228,10 @@ class Cache {
 
 	_stopAutoFlush: boolean;
 
+	// Cloud sync state
+	_cloudSyncEnabled: boolean;
+	_cloudSyncPending: Map<Store, { records: any[]; deletedIds: (string | number)[] }>;
+
 	storeInfos: Record<
 		Store,
 		{
@@ -317,6 +322,8 @@ class Cache {
 		this._requestQueue = new Map();
 		this._requestInd = 0;
 		this._stopAutoFlush = false;
+		this._cloudSyncEnabled = false;
+		this._cloudSyncPending = new Map();
 		this.storeInfos = {
 			allStars: {
 				pk: "season",
@@ -814,6 +821,30 @@ class Cache {
 			return;
 		}
 
+		// Collect records for cloud sync before clearing dirty flags
+		const cloudSyncData: Map<Store, { records: any[]; deletedIds: (string | number)[] }> = new Map();
+		if (this._cloudSyncEnabled) {
+			for (const store of stores) {
+				const records: any[] = [];
+				const deletedIds: (string | number)[] = [];
+
+				for (const id of this._dirtyRecords[store]) {
+					const record = this._data[store][id];
+					if (record !== undefined) {
+						records.push(record);
+					}
+				}
+
+				for (const id of this._deletes[store]) {
+					deletedIds.push(id);
+				}
+
+				if (records.length > 0 || deletedIds.length > 0) {
+					cloudSyncData.set(store, { records, deletedIds });
+				}
+			}
+		}
+
 		const transaction = idb.league.transaction(stores, "readwrite");
 
 		for (const store of stores) {
@@ -847,6 +878,40 @@ class Cache {
 				lastPlayed: new Date(),
 			});
 		}
+
+		// Sync to cloud if enabled (don't await to avoid blocking)
+		if (this._cloudSyncEnabled && cloudSyncData.size > 0) {
+			this._syncToCloud(cloudSyncData);
+		}
+	}
+
+	// Sync changes to Firestore (called after IndexedDB flush)
+	private async _syncToCloud(
+		data: Map<Store, { records: any[]; deletedIds: (string | number)[] }>,
+	) {
+		for (const [store, { records, deletedIds }] of data) {
+			try {
+				await cloudSync.syncChangesToCloud(store, records, deletedIds);
+			} catch (error) {
+				console.error(`Cloud sync failed for ${store}:`, error);
+			}
+		}
+	}
+
+	// Enable cloud sync for this cache
+	enableCloudSync() {
+		this._cloudSyncEnabled = true;
+	}
+
+	// Disable cloud sync for this cache
+	disableCloudSync() {
+		this._cloudSyncEnabled = false;
+		this._cloudSyncPending.clear();
+	}
+
+	// Check if cloud sync is enabled
+	isCloudSyncEnabled(): boolean {
+		return this._cloudSyncEnabled;
 	}
 
 	async _autoFlush() {

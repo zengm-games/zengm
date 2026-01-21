@@ -12,6 +12,7 @@ const routeInfos = {
 	"/settings": "globalSettings",
 	"/settings/default": "defaultNewLeagueSettings",
 	"/dropbox": "dropbox",
+	"/cloud_sync": "cloudSync",
 	"/exhibition": "exhibition",
 	"/exhibition/game": "exhibitionGame",
 

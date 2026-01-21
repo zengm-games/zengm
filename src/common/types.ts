@@ -1080,6 +1080,12 @@ export type LocalStateUI = {
 	moreInfoTid?: number;
 	stickyFooterAd: boolean;
 	stickyFormButtons: boolean;
+
+	// Cloud sync properties
+	cloudSyncStatus?: "disconnected" | "connecting" | "syncing" | "synced" | "conflict" | "error";
+	cloudLeagueId?: string;
+	cloudLockHolder?: string | null;
+	cloudLockOperation?: string | null;
 };
 
 export type PartialTopMenu = {

@@ -11,6 +11,7 @@ import AutoExpand from "./AutoExpand.tsx";
 import AutoRelocate from "./AutoRelocate.tsx";
 import AwardRaces from "./AwardRaces.tsx";
 import AwardsRecords from "./AwardsRecords.tsx";
+import CloudSync from "./CloudSync.tsx";
 import Colleges from "./Colleges.tsx";
 import ComparePlayers from "./ComparePlayers/index.tsx";
 import Countries from "./Countries.tsx";
@@ -129,6 +130,7 @@ export default {
 	AutoRelocate,
 	AwardRaces,
 	AwardsRecords,
+	CloudSync,
 	Colleges,
 	ComparePlayers,
 	Countries,

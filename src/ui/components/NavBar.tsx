@@ -11,6 +11,37 @@ import DropdownLinks from "./DropdownLinks.tsx";
 import LogoAndText from "./LogoAndText.tsx";
 import PlayMenu from "./PlayMenu.tsx";
 
+// Cloud sync status indicator
+const CloudSyncIndicator = () => {
+	const { cloudSyncStatus } = useLocalPartial(["cloudSyncStatus"]);
+
+	if (!cloudSyncStatus || cloudSyncStatus === "disconnected") {
+		return null;
+	}
+
+	const statusConfig: Record<string, { color: string; icon: string; title: string }> = {
+		connecting: { color: "text-warning", icon: "glyphicon-refresh", title: "Connecting to cloud..." },
+		syncing: { color: "text-info", icon: "glyphicon-refresh", title: "Syncing..." },
+		synced: { color: "text-success", icon: "glyphicon-cloud", title: "Synced to cloud" },
+		conflict: { color: "text-danger", icon: "glyphicon-exclamation-sign", title: "Sync conflict" },
+		error: { color: "text-danger", icon: "glyphicon-remove", title: "Sync error" },
+	};
+
+	const config = statusConfig[cloudSyncStatus];
+	if (!config) return null;
+
+	return (
+		<Nav.Link
+			href="/cloud_sync"
+			className={`${config.color} me-2`}
+			title={config.title}
+			aria-label={config.title}
+		>
+			<span className={`glyphicon ${config.icon}`} />
+		</Nav.Link>
+	);
+};
+
 const PhaseStatusBlock = () => {
 	const { liveGameInProgress, phase, phaseText, statusText } = useLocalPartial([
 		"liveGameInProgress",
@@ -152,6 +183,7 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 					/>
 				</div>
 				<Nav id="top-user-block" navbar>
+					<Nav.Item><CloudSyncIndicator /></Nav.Item>
 					<Nav.Item>{userBlock}</Nav.Item>
 				</Nav>
 			</div>

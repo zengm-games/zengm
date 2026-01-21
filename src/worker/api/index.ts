@@ -62,6 +62,8 @@ import {
 	defaultInjuries,
 	defaultTragicDeaths,
 } from "../util/index.ts";
+import * as cloudSync from "../util/cloudSync.ts";
+import { setCloudIdForLeague, getCloudIdForLeague, removeCloudIdForLeague } from "../../common/cloudTypes.ts";
 import views from "../views/index.ts";
 import type {
 	Conditions,
@@ -5043,6 +5045,138 @@ const setScheduleFromEditor = async ({
 	await initUILocalGames();
 };
 
+// Cloud sync API functions
+const getCloudLeagues = async () => {
+	const userId = localStorage.getItem("cloudUserId");
+	if (!userId) {
+		return [];
+	}
+	return cloudSync.getCloudLeagues(userId);
+};
+
+const uploadLeagueToCloud = async ({
+	onProgress,
+}: {
+	onProgress?: (store: string, current: number, total: number) => void;
+}) => {
+	const userId = localStorage.getItem("cloudUserId");
+	if (!userId) {
+		throw new Error("Not signed in to cloud");
+	}
+
+	const lid = g.get("lid");
+	if (lid === undefined) {
+		throw new Error("No league loaded");
+	}
+
+	// Check if already cloud-synced
+	const existingCloudId = getCloudIdForLeague(lid);
+	if (existingCloudId) {
+		throw new Error("This league is already synced to the cloud");
+	}
+
+	// Create cloud league
+	const leagueName = (await league.getName()) || `League ${lid}`;
+	const sport = process.env.SPORT as "basketball" | "football" | "baseball" | "hockey";
+	const cloudId = await cloudSync.createCloudLeague(leagueName, sport, userId);
+
+	// Get all data from cache to upload
+	const getAllData = async () => {
+		const data: Record<string, any[]> = {};
+		const stores = [
+			"allStars", "awards", "draftLotteryResults", "draftPicks", "events",
+			"gameAttributes", "games", "headToHeads", "messages", "negotiations",
+			"playerFeats", "players", "playoffSeries", "releasedPlayers", "savedTrades",
+			"savedTradingBlock", "schedule", "scheduledEvents", "seasonLeaders",
+			"teamSeasons", "teamStats", "teams", "trade",
+		];
+
+		for (const store of stores) {
+			data[store] = await (idb.cache as any)[store].getAll();
+		}
+
+		return data;
+	};
+
+	// Upload to cloud
+	await cloudSync.uploadLeagueToCloud(cloudId, getAllData, onProgress);
+
+	// Save mapping
+	setCloudIdForLeague(lid, cloudId);
+
+	// Enable cloud sync
+	idb.cache.enableCloudSync();
+
+	// Connect to cloud for real-time sync
+	await cloudSync.connectToCloud(cloudId, userId);
+
+	// Update league metadata
+	await cloudSync.updateCloudLeagueMeta({
+		season: g.get("season"),
+		phase: g.get("phase"),
+		userTid: g.get("userTid"),
+	});
+
+	// Update UI
+	toUI("updateLocal", [{
+		cloudSyncStatus: "synced",
+		cloudLeagueId: cloudId,
+	}]);
+
+	return cloudId;
+};
+
+const joinCloudLeague = async (cloudId: string) => {
+	const userId = localStorage.getItem("cloudUserId");
+	if (!userId) {
+		throw new Error("Not signed in to cloud");
+	}
+
+	// Connect to the cloud league
+	const success = await cloudSync.connectToCloud(cloudId, userId);
+	if (!success) {
+		throw new Error("Failed to connect to cloud league");
+	}
+
+	// Update UI
+	toUI("updateLocal", [{
+		cloudSyncStatus: "synced",
+		cloudLeagueId: cloudId,
+	}]);
+};
+
+const deleteCloudLeague = async (cloudId: string) => {
+	const userId = localStorage.getItem("cloudUserId");
+	if (!userId) {
+		throw new Error("Not signed in to cloud");
+	}
+
+	const success = await cloudSync.deleteCloudLeague(cloudId, userId);
+	if (!success) {
+		throw new Error("Failed to delete cloud league");
+	}
+};
+
+const disconnectFromCloud = async () => {
+	await cloudSync.disconnectFromCloud();
+
+	const lid = g.get("lid");
+	if (lid !== undefined) {
+		removeCloudIdForLeague(lid);
+	}
+
+	idb.cache.disableCloudSync();
+
+	toUI("updateLocal", [{
+		cloudSyncStatus: "disconnected",
+		cloudLeagueId: undefined,
+	}]);
+};
+
+const getCloudSyncStatus = () => {
+	return cloudSync.getSyncStatus();
+};
+
 export default {
 	actions,
 	exhibitionGame,
@@ -5188,5 +5322,13 @@ export default {
 		upsertCustomizedPlayer,
 		validatePointsFormula,
 		validatePlayoffSettings,
+
+		// Cloud sync functions
+		getCloudLeagues,
+		uploadLeagueToCloud,
+		joinCloudLeague,
+		deleteCloudLeague,
+		disconnectFromCloud,
+		getCloudSyncStatus,
 	},
 };

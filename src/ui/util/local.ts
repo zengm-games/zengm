@@ -100,6 +100,12 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 		stickyFooterAd: false,
 		stickyFormButtons: false,
 
+		// Cloud sync properties
+		cloudSyncStatus: undefined,
+		cloudLeagueId: undefined,
+		cloudLockHolder: null,
+		cloudLockOperation: null,
+
 		actions: {
 			deleteGames(gids: number[]) {
 				set((state) => {

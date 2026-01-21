@@ -114,14 +114,18 @@ export const createCloudLeague = async (
 
 	const cloudId = `league-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
+	const email = getUserEmail();
 	const member: CloudMember = {
 		userId: userId,
 		displayName: getUserDisplayName() || "Unknown",
-		email: getUserEmail() || undefined,
 		teamId: userTeamId,
 		role: "commissioner",
 		joinedAt: Date.now(),
 	};
+	// Only add email if it exists (Firestore doesn't accept undefined)
+	if (email) {
+		member.email = email;
+	}
 
 	const leagueData: Omit<CloudLeague, "members"> & { members: CloudMember[] } = {
 		cloudId,
@@ -455,11 +459,14 @@ export const addLeagueMember = async (
 	const member: CloudMember = {
 		userId: userId,
 		displayName,
-		email,
 		teamId,
 		role: "member",
 		joinedAt: Date.now(),
 	};
+	// Only add email if it exists (Firestore doesn't accept undefined)
+	if (email) {
+		member.email = email;
+	}
 
 	// Add to members array
 	await setDoc(doc(db, "leagues", cloudId), {

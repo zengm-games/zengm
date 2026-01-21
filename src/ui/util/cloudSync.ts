@@ -16,10 +16,9 @@ import {
 	where,
 	writeBatch,
 	onSnapshot,
-	serverTimestamp,
 	type Unsubscribe,
 } from "firebase/firestore";
-import { getFirebaseDb, getCurrentUserId, getUserDisplayName, getUserEmail } from "./firebase.ts";
+import { getFirebaseDb, getFirebaseAuth, getCurrentUserId, getUserDisplayName, getUserEmail } from "./firebase.ts";
 import type { Store, CloudLeague, CloudMember, CloudSyncStatus } from "../../common/cloudTypes.ts";
 import { toWorker, realtimeUpdate } from "./index.ts";
 
@@ -166,7 +165,7 @@ export const uploadLeagueData = async (
 		// Get all data from worker
 		console.log("[uploadLeagueData] Calling toWorker getLeagueDataForCloud...");
 		onProgress?.("Collecting league data...", 0);
-		const allData = await toWorker("main", "getLeagueDataForCloud") as Record<Store, any[]>;
+		const allData = await toWorker("main", "getLeagueDataForCloud", undefined) as Record<Store, any[]>;
 		console.log("[uploadLeagueData] Got data from worker");
 
 		// Count total records
@@ -494,4 +493,95 @@ export const addLeagueMember = async (
 		members: [...league.members, member],
 		updatedAt: Date.now(),
 	}, { merge: true });
+};
+
+/**
+ * Join a cloud league as a member (for non-owners)
+ * The user provides the cloudId (shared by the commissioner)
+ */
+export const joinCloudLeague = async (
+	cloudId: string,
+	teamId: number,
+): Promise<CloudLeague> => {
+	const db = getFirebaseDb();
+	const auth = getFirebaseAuth();
+	const user = auth.currentUser;
+	if (!user) throw new Error("Not signed in");
+
+	// Get the league
+	const league = await getCloudLeague(cloudId);
+	if (!league) throw new Error("League not found. Check the league ID and try again.");
+
+	// Check if already a member
+	const existingMember = league.members.find(m => m.userId === user.uid);
+	if (existingMember) {
+		throw new Error("You are already a member of this league");
+	}
+
+	// Check if team is already taken
+	const teamTaken = league.members.find(m => m.teamId === teamId);
+	if (teamTaken) {
+		throw new Error(`Team ${teamId} is already claimed by ${teamTaken.displayName}`);
+	}
+
+	// Add self as member
+	const member: CloudMember = {
+		userId: user.uid,
+		displayName: user.displayName || user.email || "Unknown",
+		teamId,
+		role: "member",
+		joinedAt: Date.now(),
+	};
+	if (user.email) {
+		member.email = user.email;
+	}
+
+	// Update league with new member
+	await setDoc(doc(db, "leagues", cloudId), {
+		members: [...league.members, member],
+		updatedAt: Date.now(),
+	}, { merge: true });
+
+	return { ...league, members: [...league.members, member] };
+};
+
+/**
+ * Get leagues the current user is a member of (but not owner)
+ */
+export const getJoinedLeagues = async (): Promise<CloudLeague[]> => {
+	const db = getFirebaseDb();
+	const auth = getFirebaseAuth();
+	const user = auth.currentUser;
+	if (!user) return [];
+
+	// Note: Firestore array-contains needs exact object match, so we can't query by userId alone
+	// For now, fetch all leagues and filter client-side
+	// TODO: Use a separate "memberships" subcollection for better scalability
+
+	const allLeaguesSnapshot = await getDocs(collection(db, "leagues"));
+	const leagues: CloudLeague[] = [];
+
+	allLeaguesSnapshot.forEach((docSnap) => {
+		const data = docSnap.data() as CloudLeague;
+		// Check if user is a member (but not owner - those are in getCloudLeagues)
+		if (data.ownerId !== user.uid) {
+			const isMember = data.members?.some(m => m.userId === user.uid);
+			if (isMember) {
+				leagues.push({
+					...data,
+					cloudId: docSnap.id,
+				});
+			}
+		}
+	});
+
+	return leagues;
+};
+
+/**
+ * Get list of teams and their current owners for a league
+ */
+export const getLeagueMembers = async (cloudId: string): Promise<CloudMember[]> => {
+	const league = await getCloudLeague(cloudId);
+	return league?.members || [];
 };

@@ -23,17 +23,18 @@ import {
 	getUserEmail,
 	waitForAuth,
 	onAuthChange,
-	getCurrentUserId,
 } from "../util/firebase.ts";
 import {
 	createCloudLeague,
 	uploadLeagueData,
 	getCloudLeagues,
+	getJoinedLeagues,
 	deleteCloudLeague,
 	downloadLeagueData,
 	startRealtimeSync,
 	getSyncStatus,
 	onSyncStatusChange,
+	joinCloudLeague,
 } from "../util/cloudSync.ts";
 import type { CloudLeague } from "../../common/cloudTypes.ts";
 
@@ -218,12 +219,22 @@ const CloudLeaguesList = ({
 	onOpen,
 	onDelete,
 	loading,
+	isOwner = true,
 }: {
 	leagues: CloudLeague[];
 	onOpen: (league: CloudLeague) => void;
 	onDelete: (league: CloudLeague) => void;
 	loading: boolean;
+	isOwner?: boolean;
 }) => {
+	const [copiedId, setCopiedId] = useState<string | null>(null);
+
+	const copyLeagueId = async (cloudId: string) => {
+		await navigator.clipboard.writeText(cloudId);
+		setCopiedId(cloudId);
+		setTimeout(() => setCopiedId(null), 2000);
+	};
+
 	if (loading) {
 		return <div className="text-muted">Loading...</div>;
 	}
@@ -231,7 +242,9 @@ const CloudLeaguesList = ({
 	if (leagues.length === 0) {
 		return (
 			<div className="alert alert-secondary">
-				No cloud leagues found. Upload a league to get started!
+				{isOwner
+					? "No cloud leagues found. Upload a league to get started!"
+					: "You haven't joined any leagues yet."}
 			</div>
 		);
 	}
@@ -241,31 +254,144 @@ const CloudLeaguesList = ({
 			{leagues.map((league) => (
 				<div
 					key={league.cloudId}
-					className="list-group-item d-flex justify-content-between align-items-center"
+					className="list-group-item"
 				>
-					<div>
-						<h6 className="mb-1">{league.name}</h6>
-						<small className="text-muted">
-							Season {league.season} |{" "}
-							Updated {new Date(league.updatedAt).toLocaleDateString()}
-						</small>
-					</div>
-					<div>
-						<button
-							className="btn btn-sm btn-primary me-2"
-							onClick={() => onOpen(league)}
-						>
-							Open
-						</button>
-						<button
-							className="btn btn-sm btn-outline-danger"
-							onClick={() => onDelete(league)}
-						>
-							Delete
-						</button>
+					<div className="d-flex justify-content-between align-items-start">
+						<div>
+							<h6 className="mb-1">{league.name}</h6>
+							<small className="text-muted d-block">
+								Season {league.season} |{" "}
+								{league.members?.length || 1} member(s) |{" "}
+								Updated {new Date(league.updatedAt).toLocaleDateString()}
+							</small>
+							{isOwner && (
+								<small className="text-muted d-block mt-1">
+									<strong>League ID:</strong>{" "}
+									<code className="user-select-all">{league.cloudId}</code>
+									<button
+										className="btn btn-link btn-sm p-0 ms-2"
+										onClick={() => copyLeagueId(league.cloudId)}
+										title="Copy League ID"
+									>
+										{copiedId === league.cloudId ? "Copied!" : "Copy"}
+									</button>
+								</small>
+							)}
+						</div>
+						<div>
+							<button
+								className="btn btn-sm btn-primary me-2"
+								onClick={() => onOpen(league)}
+							>
+								Open
+							</button>
+							{isOwner && (
+								<button
+									className="btn btn-sm btn-outline-danger"
+									onClick={() => onDelete(league)}
+								>
+									Delete
+								</button>
+							)}
+						</div>
 					</div>
 				</div>
 			))}
+		</div>
+	);
+};
+
+// Join league section
+const JoinLeagueSection = ({
+	onJoinSuccess,
+}: {
+	onJoinSuccess: () => void;
+}) => {
+	const [leagueId, setLeagueId] = useState("");
+	const [teamId, setTeamId] = useState("0");
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const [success, setSuccess] = useState<string | null>(null);
+
+	const handleJoin = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setError(null);
+		setSuccess(null);
+		setLoading(true);
+
+		try {
+			const league = await joinCloudLeague(leagueId.trim(), parseInt(teamId, 10));
+			setSuccess(`Successfully joined "${league.name}"!`);
+			setLeagueId("");
+			setTeamId("0");
+			onJoinSuccess();
+		} catch (err: any) {
+			setError(err.message || "Failed to join league");
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return (
+		<div className="card mb-4">
+			<div className="card-body">
+				<h5 className="card-title">Join a Cloud League</h5>
+				<p className="text-muted">
+					Enter the League ID shared by the commissioner to join their league.
+				</p>
+
+				{error && (
+					<div className="alert alert-danger" role="alert">
+						{error}
+					</div>
+				)}
+
+				{success && (
+					<div className="alert alert-success" role="alert">
+						{success}
+					</div>
+				)}
+
+				<form onSubmit={handleJoin}>
+					<div className="row g-3">
+						<div className="col-md-6">
+							<label htmlFor="leagueId" className="form-label">League ID</label>
+							<input
+								type="text"
+								className="form-control"
+								id="leagueId"
+								placeholder="e.g., league-1234567890-abc123"
+								value={leagueId}
+								onChange={(e) => setLeagueId(e.target.value)}
+								required
+							/>
+						</div>
+						<div className="col-md-4">
+							<label htmlFor="teamId" className="form-label">Your Team ID</label>
+							<input
+								type="number"
+								className="form-control"
+								id="teamId"
+								min="0"
+								max="31"
+								value={teamId}
+								onChange={(e) => setTeamId(e.target.value)}
+								required
+							/>
+							<small className="text-muted">0-31 (coordinate with commissioner)</small>
+						</div>
+						<div className="col-md-2 d-flex align-items-end">
+							<button
+								type="submit"
+								className="btn btn-primary w-100"
+								disabled={loading || !leagueId.trim()}
+							>
+								{loading ? "Joining..." : "Join"}
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
 		</div>
 	);
 };
@@ -277,11 +403,12 @@ const CloudSync = () => {
 		hideNewWindow: true,
 	});
 
-	const { lid } = useLocalPartial(["lid"]);
+	const { lid, userTid } = useLocalPartial(["lid", "userTid"]);
 
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [loading, setLoading] = useState(true);
 	const [cloudLeagues, setCloudLeagues] = useState<CloudLeague[]>([]);
+	const [joinedLeagues, setJoinedLeagues] = useState<CloudLeague[]>([]);
 	const [loadingLeagues, setLoadingLeagues] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [uploadProgress, setUploadProgress] = useState<{ message: string; percent: number } | null>(null);
@@ -290,13 +417,17 @@ const CloudSync = () => {
 	// Check Firebase configuration
 	const firebaseConfigured = isFirebaseConfigured();
 
-	// Load cloud leagues
+	// Load cloud leagues (both owned and joined)
 	const loadCloudLeagues = useCallback(async () => {
 		if (!isAuthenticated) return;
 		setLoadingLeagues(true);
 		try {
-			const leagues = await getCloudLeagues();
-			setCloudLeagues(leagues);
+			const [owned, joined] = await Promise.all([
+				getCloudLeagues(),
+				getJoinedLeagues(),
+			]);
+			setCloudLeagues(owned);
+			setJoinedLeagues(joined);
 		} catch (err: any) {
 			console.error("Failed to load cloud leagues:", err);
 		} finally {
@@ -349,6 +480,7 @@ const CloudSync = () => {
 	const handleSignOut = () => {
 		setIsAuthenticated(false);
 		setCloudLeagues([]);
+		setJoinedLeagues([]);
 	};
 
 	const handleUploadToCloud = async () => {
@@ -363,12 +495,10 @@ const CloudSync = () => {
 		try {
 			// Get league name and user's team ID
 			console.log("[CloudSync] Getting league name...");
-			const leagueName = await toWorker("main", "getLeagueName") as string;
+			const leagueName = await toWorker("main", "getLeagueName", undefined) as string;
 			console.log("[CloudSync] Got league name:", leagueName);
 
-			console.log("[CloudSync] Getting userTid...");
-			const userTid = await toWorker("main", "getLocal", "userTid") as number;
-			console.log("[CloudSync] Got userTid:", userTid);
+			console.log("[CloudSync] Got userTid from local state:", userTid);
 
 			// Create cloud league
 			setUploadProgress({ message: "Creating cloud league...", percent: 5 });
@@ -522,12 +652,15 @@ const CloudSync = () => {
 							</div>
 						)}
 
-						{/* Cloud Leagues */}
-						<div className="card">
+						{/* Join a League */}
+						<JoinLeagueSection onJoinSuccess={loadCloudLeagues} />
+
+						{/* Your Cloud Leagues (owned) */}
+						<div className="card mb-4">
 							<div className="card-body">
-								<h5 className="card-title">Your Cloud Leagues</h5>
+								<h5 className="card-title">Your Cloud Leagues (Commissioner)</h5>
 								<p className="text-muted">
-									These leagues are stored in the cloud and can be accessed from any device.
+									Leagues you created. Share the League ID with friends so they can join.
 								</p>
 
 								<CloudLeaguesList
@@ -535,6 +668,7 @@ const CloudSync = () => {
 									onOpen={handleOpenLeague}
 									onDelete={handleDeleteLeague}
 									loading={loadingLeagues}
+									isOwner={true}
 								/>
 
 								<button
@@ -544,6 +678,24 @@ const CloudSync = () => {
 								>
 									Refresh List
 								</button>
+							</div>
+						</div>
+
+						{/* Joined Leagues */}
+						<div className="card">
+							<div className="card-body">
+								<h5 className="card-title">Joined Leagues</h5>
+								<p className="text-muted">
+									Leagues you've joined as a team owner.
+								</p>
+
+								<CloudLeaguesList
+									leagues={joinedLeagues}
+									onOpen={handleOpenLeague}
+									onDelete={() => {}} // Can't delete leagues you don't own
+									loading={loadingLeagues}
+									isOwner={false}
+								/>
 							</div>
 						</div>
 					</>

@@ -37,7 +37,7 @@ import {
 	freeAgents,
 	season,
 } from "../core/index.ts";
-import { idb } from "../db/index.ts";
+import { idb, connectLeague } from "../db/index.ts";
 import {
 	achievement,
 	checkAccount,
@@ -5120,15 +5120,81 @@ const uploadLeagueToCloud = async (userId: string) => {
 	return cloudId;
 };
 
-const joinCloudLeague = async ({ cloudId, userId }: { cloudId: string; userId: string }) => {
+const joinCloudLeague = async ({ cloudId, userId }: { cloudId: string; userId: string }): Promise<number> => {
 	if (!userId) {
 		throw new Error("Not signed in to cloud");
 	}
 
-	// Connect to the cloud league
-	const success = await cloudSync.connectToCloud(cloudId, userId);
-	if (!success) {
-		throw new Error("Failed to connect to cloud league");
+	// Download all the cloud league data
+	const { meta, data } = await cloudSync.downloadCloudLeague(cloudId, userId);
+
+	// Create new local league
+	const lid = await getNewLeagueLid();
+
+	// Extract info from gameAttributes
+	const gameAttributesArray = data.gameAttributes || [];
+	const gameAttributesObj: Record<string, any> = {};
+	for (const ga of gameAttributesArray) {
+		if (ga.key) {
+			gameAttributesObj[ga.key] = ga.value;
+		}
+	}
+
+	// Get user's team info
+	const userTid = gameAttributesObj.userTid ?? meta.userTid ?? 0;
+	const teams = data.teams || [];
+	const userTeam = teams.find((t: any) => t.tid === userTid) || teams[0] || {};
+
+	// Create league metadata entry
+	const leagueMeta: League = {
+		lid,
+		name: meta.name,
+		tid: userTid,
+		phaseText: gameAttributesObj.phaseText || PHASE_TEXT[gameAttributesObj.phase] || "",
+		teamName: userTeam.name || "???",
+		teamRegion: userTeam.region || "???",
+		difficulty: gameAttributesObj.difficulty,
+		startingSeason: gameAttributesObj.startingSeason,
+		season: gameAttributesObj.season,
+		imgURL: userTeam.imgURLSmall || userTeam.imgURL,
+		created: new Date(),
+		lastPlayed: new Date(),
+	};
+
+	await idb.meta.add("leagues", leagueMeta);
+
+	// Connect to the new league database
+	const db = await connectLeague(lid);
+
+	try {
+		// Write all the data to each store
+		const stores = Object.keys(data) as (keyof typeof data)[];
+
+		for (const store of stores) {
+			const records = data[store];
+			if (!records || records.length === 0) continue;
+
+			console.log(`Writing ${store}: ${records.length} records`);
+
+			// Write in batches
+			const BATCH_SIZE = 1000;
+			for (let i = 0; i < records.length; i += BATCH_SIZE) {
+				const batchRecords = records.slice(i, i + BATCH_SIZE);
+				const tx = db.transaction(store as any, "readwrite");
+
+				for (const record of batchRecords) {
+					tx.store.put(record);
+				}
+
+				await tx.done;
+			}
+		}
+
+		// Store the cloud ID association
+		setCloudIdForLeague(lid, cloudId);
+
+	} finally {
+		await db.close();
 	}
 
 	// Update UI
@@ -5136,6 +5202,11 @@ const joinCloudLeague = async ({ cloudId, userId }: { cloudId: string; userId: s
 		cloudSyncStatus: "synced",
 		cloudLeagueId: cloudId,
 	}]);
+
+	// Trigger league list refresh
+	toUI("realtimeUpdate", [["leagues"]]);
+
+	return lid;
 };
 
 const deleteCloudLeague = async ({ cloudId, userId }: { cloudId: string; userId: string }) => {

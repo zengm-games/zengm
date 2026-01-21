@@ -493,6 +493,76 @@ export const loadStoreFromCloud = async (
 };
 
 /**
+ * Download all data from a cloud league
+ * Returns the data organized by store, plus the league metadata
+ */
+export const downloadCloudLeague = async (
+	cloudId: string,
+	userId: string,
+): Promise<{ meta: CloudLeague; data: Record<Store, any[]> }> => {
+	const firestore = await getDb();
+	if (!firestore) {
+		throw new Error("Firestore not available");
+	}
+
+	const { doc, getDoc, collection, getDocs } = firestoreModule;
+
+	// Get league metadata
+	const leagueRef = doc(firestore, CLOUD_PATHS.leagueMeta(cloudId));
+	const leagueDoc = await getDoc(leagueRef);
+
+	if (!leagueDoc.exists()) {
+		throw new Error("Cloud league not found");
+	}
+
+	const meta = leagueDoc.data() as CloudLeague;
+
+	// Verify user has access
+	if (!meta.members.includes(userId)) {
+		throw new Error("You don't have access to this league");
+	}
+
+	// Download all stores
+	const allStores: Store[] = [
+		"allStars", "awards", "draftLotteryResults", "draftPicks",
+		"events", "gameAttributes", "games", "headToHeads",
+		"messages", "negotiations", "playerFeats", "players",
+		"playoffSeries", "releasedPlayers", "savedTrades",
+		"savedTradingBlock", "schedule", "scheduledEvents",
+		"seasonLeaders", "teamSeasons", "teamStats", "teams", "trade",
+	];
+
+	const data: Record<Store, any[]> = {} as any;
+
+	for (const store of allStores) {
+		console.log(`Downloading ${store}...`);
+		const collectionPath = CLOUD_PATHS.leagueStore(cloudId, store);
+		const collectionRef = collection(firestore, collectionPath);
+
+		try {
+			const snapshot = await getDocs(collectionRef);
+			const records: any[] = [];
+
+			snapshot.forEach((docSnap: any) => {
+				const record = docSnap.data();
+				// Remove Firestore metadata
+				delete record._cloudUpdatedAt;
+				delete record._cloudDeviceId;
+				records.push(record);
+			});
+
+			data[store] = records;
+			console.log(`Downloaded ${store}: ${records.length} records`);
+		} catch (error) {
+			console.error(`Failed to download ${store}:`, error);
+			data[store] = [];
+		}
+	}
+
+	return { meta, data };
+};
+
+/**
  * Create a new cloud league from local data
  */
 export const createCloudLeague = async (

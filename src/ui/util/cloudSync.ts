@@ -585,3 +585,49 @@ export const getLeagueMembers = async (cloudId: string): Promise<CloudMember[]> 
 	const league = await getCloudLeague(cloudId);
 	return league?.members || [];
 };
+
+/**
+ * Get teams from a cloud league for team selection UI
+ */
+export type CloudTeam = {
+	tid: number;
+	region: string;
+	name: string;
+	abbrev: string;
+	claimedBy?: string; // displayName of user who claimed this team
+};
+
+export const getCloudLeagueTeams = async (cloudId: string): Promise<CloudTeam[]> => {
+	const db = getFirebaseDb();
+
+	// Get the league to check members
+	const league = await getCloudLeague(cloudId);
+	if (!league) throw new Error("League not found");
+
+	// Get teams from Firestore
+	const teamsPath = `leagues/${cloudId}/stores/teams/data`;
+	const teamsSnapshot = await getDocs(collection(db, teamsPath));
+
+	const teams: CloudTeam[] = [];
+	teamsSnapshot.forEach((docSnap) => {
+		const data = docSnap.data();
+		// Parse JSON if stored that way
+		const teamData = data._json ? JSON.parse(data._json) : data;
+
+		// Check if this team is claimed
+		const claimer = league.members.find(m => m.teamId === teamData.tid);
+
+		teams.push({
+			tid: teamData.tid,
+			region: teamData.region || "???",
+			name: teamData.name || "???",
+			abbrev: teamData.abbrev || "???",
+			claimedBy: claimer?.displayName,
+		});
+	});
+
+	// Sort by tid
+	teams.sort((a, b) => a.tid - b.tid);
+
+	return teams;
+};

@@ -5129,7 +5129,7 @@ const createLeagueFromCloud = async ({
 		lid,
 		name,
 		tid: userTid,
-		phaseText: gameAttributesObj.phaseText || PHASE_TEXT[gameAttributesObj.phase] || "",
+		phaseText: gameAttributesObj.phaseText || PHASE_TEXT[gameAttributesObj.phase as keyof typeof PHASE_TEXT] || "",
 		teamName: userTeam.name || "???",
 		teamRegion: userTeam.region || "???",
 		difficulty: gameAttributesObj.difficulty,

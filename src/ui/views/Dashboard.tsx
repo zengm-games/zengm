@@ -13,6 +13,7 @@ import type { CloudLeague } from "../../common/cloudTypes.ts";
 import { DataTable, TeamLogoInline } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { confirm, getCols, logEvent, toWorker } from "../util/index.ts";
+import { getCloudLeagues, downloadLeagueData } from "../util/cloudSync.ts";
 import type { View } from "../../common/types.ts";
 import { choice } from "../../common/random.ts";
 
@@ -218,7 +219,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 			}
 
 			try {
-				const leagues = await toWorker("main", "getCloudLeagues", userId);
+				const leagues = await getCloudLeagues();
 				setCloudLeagues(leagues);
 			} catch (error) {
 				console.error("Failed to fetch cloud leagues:", error);
@@ -251,10 +252,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 				showNotification: true,
 			});
 
-			const lid = await toWorker("main", "joinCloudLeague", {
-				cloudId: cloudLeague.cloudId,
-				userId,
-			});
+			const lid = await downloadLeagueData(cloudLeague.cloudId);
 
 			logEvent({
 				type: "info",

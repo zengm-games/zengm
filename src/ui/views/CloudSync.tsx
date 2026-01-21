@@ -35,6 +35,8 @@ import {
 	getSyncStatus,
 	onSyncStatusChange,
 	joinCloudLeague,
+	getCloudLeagueTeams,
+	type CloudTeam,
 } from "../util/cloudSync.ts";
 import type { CloudLeague } from "../../common/cloudTypes.ts";
 
@@ -308,22 +310,56 @@ const JoinLeagueSection = ({
 	onJoinSuccess: () => void;
 }) => {
 	const [leagueId, setLeagueId] = useState("");
-	const [teamId, setTeamId] = useState("0");
+	const [teamId, setTeamId] = useState<number | null>(null);
+	const [teams, setTeams] = useState<CloudTeam[]>([]);
+	const [loadingTeams, setLoadingTeams] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState<string | null>(null);
 
+	const handleLoadTeams = async () => {
+		if (!leagueId.trim()) {
+			setError("Please enter a League ID first");
+			return;
+		}
+
+		setError(null);
+		setLoadingTeams(true);
+		setTeams([]);
+		setTeamId(null);
+
+		try {
+			const fetchedTeams = await getCloudLeagueTeams(leagueId.trim());
+			setTeams(fetchedTeams);
+			// Auto-select first available team
+			const firstAvailable = fetchedTeams.find(t => !t.claimedBy);
+			if (firstAvailable) {
+				setTeamId(firstAvailable.tid);
+			}
+		} catch (err: any) {
+			setError(err.message || "Failed to load teams. Check the League ID.");
+		} finally {
+			setLoadingTeams(false);
+		}
+	};
+
 	const handleJoin = async (e: React.FormEvent) => {
 		e.preventDefault();
+		if (teamId === null) {
+			setError("Please select a team");
+			return;
+		}
+
 		setError(null);
 		setSuccess(null);
 		setLoading(true);
 
 		try {
-			const league = await joinCloudLeague(leagueId.trim(), parseInt(teamId, 10));
+			const league = await joinCloudLeague(leagueId.trim(), teamId);
 			setSuccess(`Successfully joined "${league.name}"!`);
 			setLeagueId("");
-			setTeamId("0");
+			setTeamId(null);
+			setTeams([]);
 			onJoinSuccess();
 		} catch (err: any) {
 			setError(err.message || "Failed to join league");
@@ -332,12 +368,15 @@ const JoinLeagueSection = ({
 		}
 	};
 
+	const availableTeams = teams.filter(t => !t.claimedBy);
+	const takenTeams = teams.filter(t => t.claimedBy);
+
 	return (
 		<div className="card mb-4">
 			<div className="card-body">
 				<h5 className="card-title">Join a Cloud League</h5>
 				<p className="text-muted">
-					Enter the League ID shared by the commissioner to join their league.
+					Enter the League ID shared by the commissioner, then select your team.
 				</p>
 
 				{error && (
@@ -353,43 +392,81 @@ const JoinLeagueSection = ({
 				)}
 
 				<form onSubmit={handleJoin}>
-					<div className="row g-3">
-						<div className="col-md-6">
-							<label htmlFor="leagueId" className="form-label">League ID</label>
+					{/* Step 1: Enter League ID */}
+					<div className="row g-3 mb-3">
+						<div className="col-md-8">
+							<label htmlFor="leagueId" className="form-label">Step 1: League ID</label>
 							<input
 								type="text"
 								className="form-control"
 								id="leagueId"
-								placeholder="e.g., league-1234567890-abc123"
+								placeholder="Paste the League ID from the commissioner"
 								value={leagueId}
-								onChange={(e) => setLeagueId(e.target.value)}
+								onChange={(e) => {
+									setLeagueId(e.target.value);
+									setTeams([]);
+									setTeamId(null);
+								}}
 								required
 							/>
 						</div>
-						<div className="col-md-4">
-							<label htmlFor="teamId" className="form-label">Your Team ID</label>
-							<input
-								type="number"
-								className="form-control"
-								id="teamId"
-								min="0"
-								max="31"
-								value={teamId}
-								onChange={(e) => setTeamId(e.target.value)}
-								required
-							/>
-							<small className="text-muted">0-31 (coordinate with commissioner)</small>
-						</div>
-						<div className="col-md-2 d-flex align-items-end">
+						<div className="col-md-4 d-flex align-items-end">
 							<button
-								type="submit"
-								className="btn btn-primary w-100"
-								disabled={loading || !leagueId.trim()}
+								type="button"
+								className="btn btn-outline-secondary w-100"
+								onClick={handleLoadTeams}
+								disabled={loadingTeams || !leagueId.trim()}
 							>
-								{loading ? "Joining..." : "Join"}
+								{loadingTeams ? "Loading..." : "Load Teams"}
 							</button>
 						</div>
 					</div>
+
+					{/* Step 2: Select Team (shown after teams are loaded) */}
+					{teams.length > 0 && (
+						<>
+							<div className="mb-3">
+								<label htmlFor="teamSelect" className="form-label">
+									Step 2: Select Your Team ({availableTeams.length} available)
+								</label>
+								<select
+									className="form-select"
+									id="teamSelect"
+									value={teamId ?? ""}
+									onChange={(e) => setTeamId(parseInt(e.target.value, 10))}
+									required
+								>
+									<option value="" disabled>Choose a team...</option>
+									{availableTeams.length > 0 && (
+										<optgroup label="Available Teams">
+											{availableTeams.map((team) => (
+												<option key={team.tid} value={team.tid}>
+													{team.region} {team.name} ({team.abbrev})
+												</option>
+											))}
+										</optgroup>
+									)}
+									{takenTeams.length > 0 && (
+										<optgroup label="Already Taken">
+											{takenTeams.map((team) => (
+												<option key={team.tid} value={team.tid} disabled>
+													{team.region} {team.name} - {team.claimedBy}
+												</option>
+											))}
+										</optgroup>
+									)}
+								</select>
+							</div>
+
+							<button
+								type="submit"
+								className="btn btn-primary"
+								disabled={loading || teamId === null}
+							>
+								{loading ? "Joining..." : "Join League"}
+							</button>
+						</>
+					)}
 				</form>
 			</div>
 		</div>

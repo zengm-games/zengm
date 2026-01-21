@@ -264,15 +264,20 @@ const startRealtimeListeners = async (cloudId: string): Promise<void> => {
 		const unsubscribe = onSnapshot(
 			collectionRef,
 			(snapshot: any) => {
-				// Don't process our own changes
+				// Don't process while we're syncing to avoid race conditions
 				if (isSyncing) return;
 
 				const changes: Array<{ type: "added" | "modified" | "removed"; doc: any; id: string }> = [];
 
 				snapshot.docChanges().forEach((change: any) => {
+					const data = change.doc.data();
+					// Skip changes from our own device
+					if (data._cloudDeviceId === deviceId) {
+						return;
+					}
 					changes.push({
 						type: change.type,
-						doc: change.doc.data(),
+						doc: data,
 						id: change.doc.id,
 					});
 				});
@@ -322,21 +327,25 @@ const handleRemoteChanges = async (
 	// Import cache dynamically to avoid circular dependency
 	const { idb } = await import("../db/index.ts");
 
+	if (!idb.cache) {
+		console.warn("Cache not available for remote changes");
+		return;
+	}
+
 	for (const change of changes) {
 		try {
-			const cacheStore = (idb.cache as any)[store];
 			if (change.type === "removed") {
-				// Delete from local cache
+				// Delete from local cache using remote method (won't mark as dirty)
 				const id = isNaN(Number(change.id)) ? change.id : Number(change.id);
-				await cacheStore.delete(id);
+				await idb.cache._deleteFromRemote(store, id);
 			} else {
-				// Add or update in local cache
+				// Add or update in local cache using remote method (won't mark as dirty)
 				const record = change.doc;
 				// Remove Firestore metadata fields
 				delete record._cloudUpdatedAt;
 				delete record._cloudDeviceId;
 
-				await cacheStore.put(record);
+				await idb.cache._putFromRemote(store, record);
 			}
 		} catch (error) {
 			console.error(`Failed to apply remote change to ${store}:`, error);

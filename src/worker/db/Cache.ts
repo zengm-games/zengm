@@ -1095,6 +1095,48 @@ class Cache {
 		return this._storeObj("put", store, obj);
 	}
 
+	// Put a record from a remote source (cloud sync) without marking it dirty
+	// This prevents feedback loops where remote changes get re-uploaded
+	async _putFromRemote(store: Store, obj: any): Promise<void> {
+		await this._waitForStatus("full");
+		const pk = this.storeInfos[store].pk;
+
+		if (!Object.hasOwn(obj, pk)) {
+			throw new Error(`Primary key field "${pk}" is required for remote update to "${store}"`);
+		}
+
+		// Update in-memory data
+		this._data[store][obj[pk]] = obj;
+
+		// Write directly to IndexedDB (not through the dirty record system)
+		if (idb.league) {
+			const tx = idb.league.transaction(store, "readwrite");
+			tx.store.put(obj);
+			await tx.done;
+		}
+
+		// Update indexes
+		this._markDirtyIndexes(store, obj);
+	}
+
+	// Delete a record from a remote source (cloud sync) without marking it dirty
+	async _deleteFromRemote(store: Store, id: number | string): Promise<void> {
+		await this._waitForStatus("full");
+
+		if (Object.hasOwn(this._data[store], id)) {
+			delete this._data[store][id];
+		}
+
+		// Write directly to IndexedDB
+		if (idb.league) {
+			const tx = idb.league.transaction(store, "readwrite");
+			tx.store.delete(id);
+			await tx.done;
+		}
+
+		this._markDirtyIndexes(store);
+	}
+
 	async _delete(store: Store, id: number | string) {
 		await this._waitForStatus("full");
 

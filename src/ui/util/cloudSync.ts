@@ -16,7 +16,13 @@ import {
 	where,
 	writeBatch,
 	onSnapshot,
+	limit,
+	startAfter,
+	orderBy,
 	type Unsubscribe,
+	type QueryDocumentSnapshot,
+	type DocumentData,
+	type QuerySnapshot,
 } from "firebase/firestore";
 import { getFirebaseDb, getFirebaseAuth, getCurrentUserId, getUserDisplayName, getUserEmail } from "./firebase.ts";
 import type { Store, CloudLeague, CloudMember, CloudSyncStatus } from "../../common/cloudTypes.ts";
@@ -255,6 +261,139 @@ export const downloadLeagueData = async (
 		setSyncStatus("synced");
 		onProgress?.("Download complete!", 100);
 		return data;
+	} catch (error) {
+		setSyncStatus("error");
+		throw error;
+	}
+};
+
+/**
+ * STREAMING download - Downloads league data from Firestore in small batches
+ * to avoid memory exhaustion on mobile devices.
+ *
+ * Instead of loading all data into memory at once, this function:
+ * 1. Creates the league database first
+ * 2. Streams each store from Firestore using pagination (500 docs at a time)
+ * 3. Immediately writes each batch to IndexedDB via worker
+ * 4. Finalizes the league after all data is downloaded
+ *
+ * This approach keeps memory usage low and works well on mobile devices.
+ */
+export const streamDownloadLeagueData = async (
+	cloudId: string,
+	leagueName: string,
+	memberTeamId: number | undefined,
+	onProgress?: (message: string, percent: number) => void,
+): Promise<number> => {
+	const db = getFirebaseDb();
+	setSyncStatus("syncing");
+
+	const BATCH_SIZE = 500; // Documents per Firestore query
+
+	// Calculate total documents first for accurate progress
+	let totalDocs = 0;
+	let downloadedDocs = 0;
+
+	onProgress?.("Calculating download size...", 0);
+
+	try {
+		// First pass: count total documents
+		for (const store of ALL_STORES) {
+			const collectionPath = `leagues/${cloudId}/stores/${store}/data`;
+			const snapshot = await getDocs(collection(db, collectionPath));
+			totalDocs += snapshot.size;
+		}
+
+		if (totalDocs === 0) {
+			throw new Error("League has no data");
+		}
+
+		onProgress?.("Initializing league...", 1);
+
+		// Initialize the league in worker (creates empty database)
+		const lid = await toWorker("main", "initCloudLeagueDownload", {
+			cloudId,
+			name: leagueName,
+		});
+
+		try {
+			// Stream each store
+			let storeIndex = 0;
+			for (const store of ALL_STORES) {
+				const baseProgress = Math.round((storeIndex / ALL_STORES.length) * 95) + 2;
+				onProgress?.(`Downloading ${store}...`, baseProgress);
+
+				const collectionPath = `leagues/${cloudId}/stores/${store}/data`;
+				const collectionRef = collection(db, collectionPath);
+
+				// Use pagination to fetch in batches
+				let lastDoc: QueryDocumentSnapshot<DocumentData> | null = null;
+				let hasMore = true;
+
+				while (hasMore) {
+					// Build query with pagination
+					const baseQuery = query(collectionRef, orderBy("__name__"), limit(BATCH_SIZE));
+					const paginatedQuery = lastDoc
+						? query(collectionRef, orderBy("__name__"), startAfter(lastDoc), limit(BATCH_SIZE))
+						: baseQuery;
+
+					const snapshot: QuerySnapshot<DocumentData> = await getDocs(paginatedQuery);
+
+					if (snapshot.empty) {
+						hasMore = false;
+						break;
+					}
+
+					// Parse the batch
+					const records: any[] = [];
+					snapshot.forEach((docSnap: QueryDocumentSnapshot) => {
+						const docData = docSnap.data();
+						// Parse JSON back to original format
+						if (docData._json) {
+							records.push(JSON.parse(docData._json));
+						} else {
+							records.push(docData);
+						}
+					});
+
+					// Send batch to worker to write to IndexedDB
+					await toWorker("main", "writeCloudStoreBatch", {
+						store,
+						records,
+					});
+
+					downloadedDocs += records.length;
+
+					// Update progress
+					const percent = Math.round((downloadedDocs / totalDocs) * 90) + 5;
+					onProgress?.(`Downloading ${store}... (${downloadedDocs}/${totalDocs})`, percent);
+
+					// Check if there are more documents
+					if (snapshot.docs.length < BATCH_SIZE) {
+						hasMore = false;
+					} else {
+						lastDoc = snapshot.docs[snapshot.docs.length - 1] ?? null;
+					}
+				}
+
+				storeIndex++;
+			}
+
+			// Finalize the league (updates metadata from actual data)
+			onProgress?.("Finalizing league...", 97);
+			await toWorker("main", "finalizeCloudLeagueDownload", {
+				memberTeamId,
+			});
+
+			setSyncStatus("synced");
+			onProgress?.("Download complete!", 100);
+
+			return lid;
+		} catch (error) {
+			// Clean up partial download
+			await toWorker("main", "cancelCloudLeagueDownload", undefined);
+			throw error;
+		}
 	} catch (error) {
 		setSyncStatus("error");
 		throw error;

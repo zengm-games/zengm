@@ -31,7 +31,7 @@ import {
 	getCloudLeagues,
 	getJoinedLeagues,
 	deleteCloudLeague,
-	downloadLeagueData,
+	streamDownloadLeagueData,
 	startRealtimeSync,
 	getSyncStatus,
 	onSyncStatusChange,
@@ -609,7 +609,7 @@ const CloudSync = () => {
 
 	const handleOpenLeague = async (league: CloudLeague) => {
 		setError(null);
-		setUploadProgress({ message: "Downloading league...", percent: 0 });
+		setUploadProgress({ message: "Preparing download...", percent: 0 });
 
 		try {
 			// Get the current user's membership to find their assigned team
@@ -617,19 +617,16 @@ const CloudSync = () => {
 			const member = userId ? league.members.find(m => m.userId === userId) : undefined;
 			const memberTeamId = member?.teamId;
 
-			// Download data
-			const data = await downloadLeagueData(league.cloudId, (message, percent) => {
-				setUploadProgress({ message, percent: percent * 0.8 });
-			});
-
-			// Create local league from cloud data
-			setUploadProgress({ message: "Creating local league...", percent: 85 });
-			const newLid = await toWorker("main", "createLeagueFromCloud", {
-				cloudId: league.cloudId,
-				name: league.name,
-				data,
-				memberTeamId, // Set userTid to the member's assigned team
-			});
+			// Use streaming download to avoid memory exhaustion on mobile
+			// This downloads in small batches and writes directly to IndexedDB
+			const newLid = await streamDownloadLeagueData(
+				league.cloudId,
+				league.name,
+				memberTeamId,
+				(message, percent) => {
+					setUploadProgress({ message, percent });
+				},
+			);
 
 			setUploadProgress(null);
 

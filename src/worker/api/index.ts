@@ -5191,6 +5191,171 @@ const createLeagueFromCloud = async ({
 	return lid;
 };
 
+// ============ Streaming Cloud Download ============
+// These functions allow downloading cloud leagues in small batches
+// to avoid memory exhaustion on mobile devices.
+
+// Holds reference to open database during streaming download
+let streamingDownloadDb: Awaited<ReturnType<typeof connectLeague>> | null = null;
+let streamingDownloadLid: number | null = null;
+
+/**
+ * Initialize a streaming cloud league download.
+ * Creates the league database but doesn't populate it yet.
+ */
+const initCloudLeagueDownload = async ({
+	cloudId,
+	name,
+}: {
+	cloudId: string;
+	name: string;
+}): Promise<number> => {
+	// Get new league ID
+	const lid = await getNewLeagueLid();
+
+	// Create minimal league metadata - will be updated later
+	const leagueMeta: League = {
+		lid,
+		name,
+		tid: 0,
+		phaseText: "",
+		teamName: "???",
+		teamRegion: "???",
+		difficulty: undefined,
+		startingSeason: undefined,
+		season: undefined,
+		imgURL: undefined,
+		created: new Date(),
+		lastPlayed: new Date(),
+		cloudId,
+	};
+
+	await idb.meta.add("leagues", leagueMeta);
+
+	// Connect and keep open for batch writes
+	streamingDownloadDb = await connectLeague(lid);
+	streamingDownloadLid = lid;
+
+	return lid;
+};
+
+/**
+ * Write a batch of records to a store during streaming download.
+ * Call this repeatedly with small batches from each Firestore collection.
+ */
+const writeCloudStoreBatch = async ({
+	store,
+	records,
+}: {
+	store: string;
+	records: any[];
+}): Promise<void> => {
+	if (!streamingDownloadDb) {
+		throw new Error("No streaming download in progress. Call initCloudLeagueDownload first.");
+	}
+
+	if (records.length === 0) return;
+
+	// Write records in transaction
+	const tx = streamingDownloadDb.transaction(store as any, "readwrite");
+	for (const record of records) {
+		tx.store.put(record);
+	}
+	await tx.done;
+};
+
+/**
+ * Finalize the streaming cloud league download.
+ * Updates league metadata with actual values and closes the database.
+ */
+const finalizeCloudLeagueDownload = async ({
+	memberTeamId,
+}: {
+	memberTeamId?: number;
+}): Promise<number> => {
+	if (!streamingDownloadDb || streamingDownloadLid === null) {
+		throw new Error("No streaming download in progress.");
+	}
+
+	const lid = streamingDownloadLid;
+	const db = streamingDownloadDb;
+
+	try {
+		// Read gameAttributes to get actual values
+		const gameAttributesArray = await db.getAll("gameAttributes");
+		const gameAttributesObj: Record<string, any> = {};
+		for (const ga of gameAttributesArray) {
+			if (ga.key) {
+				gameAttributesObj[ga.key] = ga.value;
+			}
+		}
+
+		// Determine user's team
+		const userTid = memberTeamId ?? gameAttributesObj.userTid ?? 0;
+
+		// Update userTid/userTids in gameAttributes if member team specified
+		if (memberTeamId !== undefined) {
+			const userTidTx = db.transaction("gameAttributes", "readwrite");
+			const userTidRecord = await userTidTx.store.get("userTid");
+			if (userTidRecord) {
+				userTidRecord.value = memberTeamId;
+				await userTidTx.store.put(userTidRecord);
+			}
+			await userTidTx.done;
+
+			const userTidsTx = db.transaction("gameAttributes", "readwrite");
+			const userTidsRecord = await userTidsTx.store.get("userTids");
+			if (userTidsRecord) {
+				userTidsRecord.value = [memberTeamId];
+				await userTidsTx.store.put(userTidsRecord);
+			}
+			await userTidsTx.done;
+		}
+
+		// Get team info
+		const teams = await db.getAll("teams");
+		const userTeam = (teams.find((t: any) => t.tid === userTid) || teams[0] || {}) as any;
+
+		// Update league metadata with actual values
+		const leagueMeta = await idb.meta.get("leagues", lid);
+		if (leagueMeta) {
+			leagueMeta.tid = userTid;
+			leagueMeta.phaseText = gameAttributesObj.phaseText || PHASE_TEXT[gameAttributesObj.phase as keyof typeof PHASE_TEXT] || "";
+			leagueMeta.teamName = userTeam?.name || "???";
+			leagueMeta.teamRegion = userTeam?.region || "???";
+			leagueMeta.difficulty = gameAttributesObj.difficulty;
+			leagueMeta.startingSeason = gameAttributesObj.startingSeason;
+			leagueMeta.season = gameAttributesObj.season;
+			leagueMeta.imgURL = userTeam?.imgURLSmall || userTeam?.imgURL;
+			await idb.meta.put("leagues", leagueMeta);
+		}
+	} finally {
+		await db.close();
+		streamingDownloadDb = null;
+		streamingDownloadLid = null;
+	}
+
+	// Trigger league list refresh
+	toUI("realtimeUpdate", [["leagues"]]);
+
+	return lid;
+};
+
+/**
+ * Cancel/cleanup a streaming download if it fails midway.
+ */
+const cancelCloudLeagueDownload = async (): Promise<void> => {
+	if (streamingDownloadDb) {
+		await streamingDownloadDb.close();
+		streamingDownloadDb = null;
+	}
+	if (streamingDownloadLid !== null) {
+		// Remove the partial league
+		await idb.meta.delete("leagues", streamingDownloadLid);
+		streamingDownloadLid = null;
+	}
+};
+
 export default {
 	actions,
 	exhibitionGame,
@@ -5341,5 +5506,11 @@ export default {
 		getLeagueDataForCloud,
 		applyCloudChanges,
 		createLeagueFromCloud,
+
+		// Streaming cloud download functions
+		initCloudLeagueDownload,
+		writeCloudStoreBatch,
+		finalizeCloudLeagueDownload,
+		cancelCloudLeagueDownload,
 	},
 };

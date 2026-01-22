@@ -13,7 +13,8 @@ import type { CloudLeague } from "../../common/cloudTypes.ts";
 import { DataTable, TeamLogoInline } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { confirm, getCols, logEvent, toWorker } from "../util/index.ts";
-import { getCloudLeagues, downloadLeagueData } from "../util/cloudSync.ts";
+import { getCloudLeagues, streamDownloadLeagueData } from "../util/cloudSync.ts";
+import { getCurrentUserId } from "../util/firebase.ts";
 import type { View } from "../../common/types.ts";
 import { choice } from "../../common/random.ts";
 
@@ -232,7 +233,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 	}, []);
 
 	const handleJoinCloudLeague = async (cloudLeague: CloudLeague) => {
-		const userId = localStorage.getItem("cloudUserId");
+		const userId = getCurrentUserId();
 		if (!userId) {
 			logEvent({
 				type: "error",
@@ -243,6 +244,10 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 			return;
 		}
 
+		// Find user's membership to get their assigned team
+		const member = cloudLeague.members.find(m => m.userId === userId);
+		const memberTeamId = member?.teamId;
+
 		try {
 			setJoiningCloudId(cloudLeague.cloudId);
 			logEvent({
@@ -252,7 +257,12 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 				showNotification: true,
 			});
 
-			const lid = await downloadLeagueData(cloudLeague.cloudId);
+			// Use streaming download to avoid memory exhaustion on mobile
+			const lid = await streamDownloadLeagueData(
+				cloudLeague.cloudId,
+				cloudLeague.name,
+				memberTeamId,
+			);
 
 			logEvent({
 				type: "info",

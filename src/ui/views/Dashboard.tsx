@@ -13,8 +13,13 @@ import type { CloudLeague } from "../../common/cloudTypes.ts";
 import { DataTable, TeamLogoInline } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { confirm, getCols, logEvent, toWorker } from "../util/index.ts";
-import { getCloudLeagues, streamDownloadLeagueData } from "../util/cloudSync.ts";
-import { getCurrentUserId } from "../util/firebase.ts";
+import {
+	getCloudLeagues,
+	getJoinedLeagues,
+	streamDownloadLeagueData,
+	startRealtimeSync,
+} from "../util/cloudSync.ts";
+import { getCurrentUserId, isSignedIn } from "../util/firebase.ts";
 import type { View } from "../../common/types.ts";
 import { choice } from "../../common/random.ts";
 
@@ -120,6 +125,35 @@ const PlayButton = ({
 	);
 };
 
+// Download button for cloud leagues that aren't downloaded yet
+const DownloadCloudButton = ({
+	disabled,
+	downloading,
+	onClick,
+}: {
+	disabled: boolean;
+	downloading: boolean;
+	onClick: () => void;
+}) => {
+	if (downloading) {
+		return (
+			<button className="btn btn-lg btn-primary dashboard-play-loading">
+				Downloading...
+			</button>
+		);
+	}
+
+	return (
+		<button
+			className="btn btn-lg btn-primary"
+			disabled={disabled}
+			onClick={onClick}
+		>
+			Download
+		</button>
+	);
+};
+
 const glyphiconStyle = {
 	cursor: "pointer",
 	fontSize: "larger",
@@ -165,15 +199,23 @@ const LeagueName = ({
 	starred,
 	disabled,
 	onClick,
+	isCloud,
 }: {
 	lid: number;
 	children: string;
 	starred?: boolean;
 	disabled: boolean;
 	onClick: () => void;
+	isCloud?: boolean;
 }) => {
 	return (
 		<div className="d-flex align-items-center">
+			{isCloud && (
+				<span
+					className="glyphicon glyphicon-cloud text-primary me-2"
+					title="Cloud League - syncs with other players"
+				/>
+			)}
 			<div className="me-1">
 				{!disabled ? (
 					<a href={`/l/${lid}`} onClick={onClick}>
@@ -206,33 +248,40 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 	const [deletingLID, setDeletingLID] = useState<number | undefined>();
 	const [cloningLID, setCloningLID] = useState<number | undefined>();
 	const [cloudLeagues, setCloudLeagues] = useState<CloudLeague[]>([]);
-	const [loadingCloudLeagues, setLoadingCloudLeagues] = useState(true);
-	const [joiningCloudId, setJoiningCloudId] = useState<string | undefined>();
+	const [downloadingCloudId, setDownloadingCloudId] = useState<string | undefined>();
 	useTitleBar();
 
-	// Fetch cloud leagues on mount
+	// Fetch cloud leagues on mount (both owned and joined)
 	useEffect(() => {
 		const fetchCloudLeagues = async () => {
-			const userId = localStorage.getItem("cloudUserId");
-			if (!userId) {
-				setLoadingCloudLeagues(false);
+			if (!isSignedIn()) {
 				return;
 			}
 
 			try {
-				const leagues = await getCloudLeagues();
-				setCloudLeagues(leagues);
+				// Get both owned leagues and joined leagues
+				const [owned, joined] = await Promise.all([
+					getCloudLeagues(),
+					getJoinedLeagues(),
+				]);
+				// Combine and dedupe
+				const allCloud = [...owned];
+				for (const league of joined) {
+					if (!allCloud.find(l => l.cloudId === league.cloudId)) {
+						allCloud.push(league);
+					}
+				}
+				setCloudLeagues(allCloud);
 			} catch (error) {
 				console.error("Failed to fetch cloud leagues:", error);
-			} finally {
-				setLoadingCloudLeagues(false);
 			}
 		};
 
 		fetchCloudLeagues();
 	}, []);
 
-	const handleJoinCloudLeague = async (cloudLeague: CloudLeague) => {
+	// Handle downloading a cloud league
+	const handleDownloadCloudLeague = async (cloudLeague: CloudLeague) => {
 		const userId = getCurrentUserId();
 		if (!userId) {
 			logEvent({
@@ -249,10 +298,10 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 		const memberTeamId = member?.teamId;
 
 		try {
-			setJoiningCloudId(cloudLeague.cloudId);
+			setDownloadingCloudId(cloudLeague.cloudId);
 			logEvent({
 				type: "info",
-				text: `Downloading cloud league "${cloudLeague.name}". This may take a while for large leagues...`,
+				text: `Downloading "${cloudLeague.name}"...`,
 				saveToDb: false,
 				showNotification: true,
 			});
@@ -264,9 +313,12 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 				memberTeamId,
 			);
 
+			// Start real-time sync listener
+			await startRealtimeSync(cloudLeague.cloudId);
+
 			logEvent({
 				type: "info",
-				text: `Cloud league "${cloudLeague.name}" downloaded successfully!`,
+				text: `"${cloudLeague.name}" ready to play!`,
 				saveToDb: false,
 				showNotification: true,
 			});
@@ -281,8 +333,20 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 				showNotification: true,
 			});
 		} finally {
-			setJoiningCloudId(undefined);
+			setDownloadingCloudId(undefined);
 		}
+	};
+
+	// Handle playing a cloud league (starts sync listener)
+	const handlePlayCloudLeague = async (lid: number, cloudId: string) => {
+		setLoadingLID(lid);
+		try {
+			// Start real-time sync for cloud leagues
+			await startRealtimeSync(cloudId);
+		} catch (error) {
+			console.error("Failed to start cloud sync:", error);
+		}
+		// Navigation happens via the href
 	};
 
 	const cols = getCols(
@@ -304,15 +368,17 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 		},
 	);
 
-	// Filter out cloud leagues - they're shown in the Cloud Leagues section
-	const localOnlyLeagues = leagues.filter((league: any) => !league.cloudId);
+	const disabled =
+		deletingLID !== undefined ||
+		loadingLID !== undefined ||
+		cloningLID !== undefined ||
+		downloadingCloudId !== undefined;
 
-	const rows = localOnlyLeagues.map((league) => {
-		const disabled =
-			deletingLID !== undefined ||
-			loadingLID !== undefined ||
-			cloningLID !== undefined;
+	// Build unified rows from local leagues
+	const localRows = leagues.map((league: any) => {
+		const isCloud = !!league.cloudId;
 		const throbbing = loadingLID === league.lid;
+
 		return {
 			key: league.lid,
 			data: [
@@ -320,13 +386,26 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 					lid={league.lid}
 					disabled={disabled}
 					throbbing={throbbing}
-					onClick={() => setLoadingLID(league.lid)}
+					onClick={() => {
+						if (isCloud) {
+							handlePlayCloudLeague(league.lid, league.cloudId);
+						} else {
+							setLoadingLID(league.lid);
+						}
+					}}
 				/>,
 				<LeagueName
 					lid={league.lid}
 					starred={league.starred}
 					disabled={disabled}
-					onClick={() => setLoadingLID(league.lid)}
+					onClick={() => {
+						if (isCloud) {
+							handlePlayCloudLeague(league.lid, league.cloudId);
+						} else {
+							setLoadingLID(league.lid);
+						}
+					}}
+					isCloud={isCloud}
 				>
 					{league.name}
 				</LeagueName>,
@@ -477,6 +556,67 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 		};
 	});
 
+	// Add rows for cloud leagues that aren't downloaded yet
+	const downloadedCloudIds = new Set(
+		leagues.filter((l: any) => l.cloudId).map((l: any) => l.cloudId)
+	);
+
+	const cloudOnlyRows = cloudLeagues
+		.filter(cl => !downloadedCloudIds.has(cl.cloudId))
+		.map((cloudLeague) => {
+			const isDownloading = downloadingCloudId === cloudLeague.cloudId;
+
+			return {
+				key: `cloud-${cloudLeague.cloudId}`,
+				data: [
+					<DownloadCloudButton
+						disabled={disabled}
+						downloading={isDownloading}
+						onClick={() => handleDownloadCloudLeague(cloudLeague)}
+					/>,
+					<div className="d-flex align-items-center">
+						<span
+							className="glyphicon glyphicon-cloud text-primary me-2"
+							title="Cloud League - needs download"
+						/>
+						<span>{cloudLeague.name}</span>
+						<span className="badge bg-secondary ms-2">Not Downloaded</span>
+					</div>,
+					// Team - unknown until downloaded
+					{
+						value: <span className="text-body-secondary">—</span>,
+						sortValue: "",
+					},
+					// Phase
+					cloudLeague.phase !== undefined ? `Phase ${cloudLeague.phase}` : "—",
+					// Seasons
+					"—",
+					// Difficulty
+					{
+						value: <span className="text-body-secondary">—</span>,
+						sortValue: 0,
+					},
+					// Created
+					{
+						searchValue: "",
+						sortValue: cloudLeague.createdAt || 0,
+						value: cloudLeague.createdAt ? <Ago date={new Date(cloudLeague.createdAt)} /> : null,
+					},
+					// Last Updated (instead of Last Played)
+					{
+						searchValue: cloudLeague.updatedAt ? ago(new Date(cloudLeague.updatedAt)) : "",
+						sortValue: cloudLeague.updatedAt || 0,
+						value: cloudLeague.updatedAt ? <Ago date={new Date(cloudLeague.updatedAt)} /> : null,
+					},
+					// Actions - none for undownloaded
+					null,
+				],
+			};
+		});
+
+	// Combine all rows
+	const rows = [...localRows, ...cloudOnlyRows];
+
 	const pagination = rows.length > 100;
 
 	return (
@@ -577,113 +717,6 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 					<br /> games!
 				</a>
 			</div>
-
-			{/* Cloud Leagues Section */}
-			{!loadingCloudLeagues && cloudLeagues.length > 0 && (
-				<div className="mb-4">
-					<h4 className="mb-3">
-						<span className="glyphicon glyphicon-cloud me-2" />
-						Cloud Leagues
-					</h4>
-					<div className="table-responsive">
-						<table className="table table-striped table-hover">
-							<thead>
-								<tr>
-									<th style={{ width: "1%" }}></th>
-									<th>League</th>
-									<th>Sport</th>
-									<th>Season</th>
-									<th>Last Updated</th>
-								</tr>
-							</thead>
-							<tbody>
-								{cloudLeagues.map((cloudLeague) => {
-									const isJoining = joiningCloudId === cloudLeague.cloudId;
-									const localLeague = leagues.find(
-										(l: any) => l.cloudId === cloudLeague.cloudId
-									);
-									const isLocallyAvailable = !!localLeague;
-
-									// Check if cloud has newer changes than local
-									const cloudUpdatedAt = cloudLeague.updatedAt || 0;
-									const localLastPlayed = localLeague?.lastPlayed?.getTime?.() || 0;
-									const needsSync = isLocallyAvailable && cloudUpdatedAt > localLastPlayed;
-
-									const disabled =
-										deletingLID !== undefined ||
-										loadingLID !== undefined ||
-										cloningLID !== undefined ||
-										joiningCloudId !== undefined;
-									return (
-										<tr key={cloudLeague.cloudId}>
-											<td>
-												{isLocallyAvailable ? (
-													needsSync ? (
-														<a
-															className={`btn btn-sm btn-warning ${loadingLID === localLeague.lid ? "dashboard-play-loading" : ""}`}
-															href={`/l/${localLeague.lid}`}
-															onClick={() => setLoadingLID(localLeague.lid)}
-															title="Cloud has newer changes - click to sync and play"
-														>
-															Sync
-														</a>
-													) : (
-														<a
-															className={`btn btn-sm btn-success ${loadingLID === localLeague.lid ? "dashboard-play-loading" : ""}`}
-															href={`/l/${localLeague.lid}`}
-															onClick={() => setLoadingLID(localLeague.lid)}
-														>
-															Play
-														</a>
-													)
-												) : isJoining ? (
-													<button
-														className="btn btn-sm btn-primary"
-														disabled
-													>
-														Downloading...
-													</button>
-												) : (
-													<button
-														className="btn btn-sm btn-primary"
-														onClick={() => handleJoinCloudLeague(cloudLeague)}
-														disabled={disabled}
-													>
-														Download
-													</button>
-												)}
-											</td>
-											<td>
-												<span className="glyphicon glyphicon-cloud text-primary me-2" />
-												{cloudLeague.name}
-												{needsSync && (
-													<span className="badge bg-warning text-dark ms-2" title="Updates available from cloud">
-														New
-													</span>
-												)}
-											</td>
-											<td style={{ textTransform: "capitalize" }}>
-												{cloudLeague.sport}
-											</td>
-											<td>{cloudLeague.season || "—"}</td>
-											<td>
-												{cloudLeague.updatedAt
-													? ago(new Date(cloudLeague.updatedAt))
-													: "—"}
-											</td>
-										</tr>
-									);
-								})}
-							</tbody>
-						</table>
-					</div>
-				</div>
-			)}
-
-			{/* Local Leagues Section */}
-			{rows.length > 0 && cloudLeagues.length > 0 && (
-				<h4 className="mb-3">Local Leagues</h4>
-			)}
 
 			{rows.length > 0 ? (
 				<DataTable

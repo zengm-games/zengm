@@ -40,6 +40,10 @@ export type CloudLeague = {
 	season: number;
 	phase: number;
 	schemaVersion: number;
+	// For notification-based sync - who made the last update
+	lastUpdatedBy?: string; // displayName
+	lastUpdatedByUserId?: string;
+	lastUpdateMessage?: string;
 };
 
 // Member of a cloud league

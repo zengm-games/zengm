@@ -1,3 +1,4 @@
+import { useState, useEffect, useCallback } from "react";
 import { Nav, Navbar } from "react-bootstrap";
 import { PHASE } from "../../common/index.ts";
 import {
@@ -10,10 +11,60 @@ import { useViewData } from "../util/viewManager.tsx";
 import DropdownLinks from "./DropdownLinks.tsx";
 import LogoAndText from "./LogoAndText.tsx";
 import PlayMenu from "./PlayMenu.tsx";
+import {
+	onPendingUpdate,
+	refreshFromCloud,
+	type PendingUpdateInfo,
+} from "../util/cloudSync.ts";
 
-// Cloud sync status indicator
+// Cloud sync status indicator with update notification
 const CloudSyncIndicator = () => {
 	const { cloudSyncStatus } = useLocalPartial(["cloudSyncStatus"]);
+	const [pendingUpdate, setPendingUpdate] = useState<PendingUpdateInfo | null>(null);
+	const [refreshing, setRefreshing] = useState(false);
+
+	// Subscribe to pending update notifications
+	useEffect(() => {
+		onPendingUpdate((info) => {
+			setPendingUpdate(info);
+		});
+	}, []);
+
+	const handleRefresh = useCallback(async () => {
+		setRefreshing(true);
+		try {
+			await refreshFromCloud();
+		} catch (error) {
+			console.error("Failed to refresh from cloud:", error);
+			setRefreshing(false);
+		}
+		// Page will reload, so we don't need to reset refreshing
+	}, []);
+
+	// If there's a pending update, show a prominent notification
+	if (pendingUpdate && !refreshing) {
+		return (
+			<button
+				onClick={handleRefresh}
+				className="btn btn-warning btn-sm me-2 d-flex align-items-center"
+				style={{ animation: "pulse 2s infinite" }}
+				title={`${pendingUpdate.updatedBy} made changes. Click to update.`}
+			>
+				<span className="glyphicon glyphicon-refresh me-1" />
+				<span className="d-none d-md-inline">Update Available</span>
+				<span className="d-md-none">Update</span>
+			</button>
+		);
+	}
+
+	if (refreshing) {
+		return (
+			<button className="btn btn-secondary btn-sm me-2" disabled>
+				<span className="glyphicon glyphicon-refresh" style={{ animation: "spin 1s linear infinite" }} />
+				<span className="d-none d-md-inline ms-1">Refreshing...</span>
+			</button>
+		);
+	}
 
 	if (!cloudSyncStatus || cloudSyncStatus === "disconnected") {
 		return null;

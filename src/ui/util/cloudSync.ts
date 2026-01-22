@@ -311,25 +311,9 @@ export const streamDownloadLeagueData = async (
 	setSyncStatus("syncing");
 
 	const BATCH_SIZE = 500; // Documents per Firestore query
-
-	// Calculate total documents first for accurate progress
-	let totalDocs = 0;
-	let downloadedDocs = 0;
-
-	onProgress?.("Calculating download size...", 0);
+	const totalStores = ALL_STORES.length;
 
 	try {
-		// First pass: count total documents
-		for (const store of ALL_STORES) {
-			const collectionPath = `leagues/${cloudId}/stores/${store}/data`;
-			const snapshot = await getDocs(collection(db, collectionPath));
-			totalDocs += snapshot.size;
-		}
-
-		if (totalDocs === 0) {
-			throw new Error("League has no data");
-		}
-
 		onProgress?.("Initializing league...", 1);
 
 		// Initialize the league in worker (creates empty database)
@@ -342,8 +326,8 @@ export const streamDownloadLeagueData = async (
 			// Stream each store
 			let storeIndex = 0;
 			for (const store of ALL_STORES) {
-				const baseProgress = Math.round((storeIndex / ALL_STORES.length) * 95) + 2;
-				onProgress?.(`Downloading ${store}...`, baseProgress);
+				const storePercent = Math.round((storeIndex / totalStores) * 90) + 5;
+				onProgress?.(`Downloading ${store}...`, storePercent);
 
 				const collectionPath = `leagues/${cloudId}/stores/${store}/data`;
 				const collectionRef = collection(db, collectionPath);
@@ -351,6 +335,7 @@ export const streamDownloadLeagueData = async (
 				// Use pagination to fetch in batches
 				let lastDoc: QueryDocumentSnapshot<DocumentData> | null = null;
 				let hasMore = true;
+				let batchCount = 0;
 
 				while (hasMore) {
 					// Build query with pagination
@@ -384,11 +369,11 @@ export const streamDownloadLeagueData = async (
 						records,
 					});
 
-					downloadedDocs += records.length;
+					batchCount++;
 
-					// Update progress
-					const percent = Math.round((downloadedDocs / totalDocs) * 90) + 5;
-					onProgress?.(`Downloading ${store}... (${downloadedDocs}/${totalDocs})`, percent);
+					// Update progress within the store
+					const batchPercent = storePercent + Math.min(batchCount, 5);
+					onProgress?.(`Downloading ${store}... (batch ${batchCount})`, batchPercent);
 
 					// Check if there are more documents
 					if (snapshot.docs.length < BATCH_SIZE) {

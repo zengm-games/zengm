@@ -31,11 +31,14 @@ This document tracks what's implemented vs what's missing for the cloud sync mul
 - Creates local league via `createLeagueFromCloud()` in worker
 - Sets user's teamId based on their cloud membership
 
-### 4. Real-time Listeners (Receiving Changes)
+### 4. Notification-Based Sync (Receiving Changes) [UPDATED]
 - **Location:** `src/ui/util/cloudSync.ts` → `startRealtimeSync()`
-- Sets up Firestore `onSnapshot` listeners for all stores
-- When remote changes detected, calls `handleRemoteChanges()`
-- Applies changes to local IndexedDB via `applyCloudChanges()` worker function
+- **Lightweight approach**: Only ONE listener on league metadata document
+- When another user makes changes, shows "Update Available" button in navbar
+- User clicks to refresh and download latest data
+- **Why**: Previous approach had 22 listeners causing severe lag
+- Shows who made the change (e.g., "John made changes")
+- No automatic background writes = no lag!
 
 ### 5. Pushing Local Changes to Cloud [NEW]
 - **Location:** `src/worker/db/Cache.ts` → `flush()` method

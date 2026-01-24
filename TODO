@@ -4,6 +4,8 @@ fbgm now
   - also LB in general, since LB ovr is not used in composite ratings currently
   - make it affect forced fumbles
 - fast WR OP? https://discord.com/channels/@me/1216830279272890378/1260586368153681930
+  - make spd less important for WR https://discord.com/channels/290013534023057409/331882115119448065/1361879407400063176
+    - also recalculate ovr formula
 - kickers/punters should get injured less https://old.reddit.com/r/Football_GM/comments/1b03rbb/kicker_got_injured_in_the_playoffs/
 - re-evaluate team value formula, especially WR now that speed matters more
   - actually speed might matter too much now, and some other ratings balance issues https://discord.com/channels/290013534023057409/331882115119448065/1441529240309989436
@@ -12,6 +14,27 @@ fbgm now
 - option to disable 2 point conversions https://discord.com/channels/290013534023057409/1453064622713208963/1453064622713208963
 - 2025 overtime rules are now the same for regular season and playoffs, both teams get a chance to possess
   - should have option to switch to different overtime rules for regular season and playoffs
+
+customizable keyboard shortcuts
+- why
+  - firefox profiles menu is alt+p https://chat.reddit.com/room/!Zyxd2hED8-Mn4j0Jm56-nHOXZCKgujJIUa3pjm3NwMc%3Areddit.com
+  - browser extensions can be anything
+- look for "keydown" events
+  - BoxScoreWrapper
+  - PlayMenu
+  - PlayPauseNext
+    - where is this used?
+  - CommandPalette
+- editor ui
+  - action
+  - context (like "ctrl+k command palette" or "play menu")
+  - shortcut
+    - click to edit, press what you want, similar to vs code
+    - editing shouldn't activate other ones
+    - collision? maybe show in UI highlighted in red
+- in-game UI
+  - need to actually render shortcut
+  - mac vs pc
 
 calcuate bestPos in playersPlus, rather than in processPlayersHallOfFame
 - simplifies a lot of consuming code
@@ -199,10 +222,6 @@ highlight or color code player ratings in more places, similar to ratingsstatspo
   - player profile
   - player ratings
 
-customizable keyboard shortcuts
-- firefox profiles menu is alt+p https://chat.reddit.com/room/!Zyxd2hED8-Mn4j0Jm56-nHOXZCKgujJIUa3pjm3NwMc%3Areddit.com
-- browser extensions can be anything
-
 in box score, show revenue next to attendance https://discord.com/channels/290013534023057409/331882115119448065/1429340260193534064
 
 schedule editor
@@ -378,9 +397,6 @@ option to disable notification popups https://old.reddit.com/r/BasketballGM/comm
 more options to set real rookie ratings https://old.reddit.com/r/BasketballGM/comments/166rgf3/monthly_suggestions_thread/jzri5zh/
 - rookie season, draft position, peak performance, and career performance - allow weight of each of those for how important it is
 - also random (generate a random players draft class and just put the real names on it)
-
-make spd less important for WR https://discord.com/channels/290013534023057409/331882115119448065/1361879407400063176
-- also recalculate ovr formula
 
 add way to rig all star contests https://chat.reddit.com/room/!nVGBL_XbTU7q__4Ga_viICk5YF1A5gNCR74Sr7aqhUE%3Areddit.com
 

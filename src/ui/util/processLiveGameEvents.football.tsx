@@ -219,7 +219,7 @@ const descriptionYdsTD = (
 			return "";
 		}
 		if (seasonTouchdownStats.length === 1) {
-			return `(${seasonTouchdownStats[0]} TD)`;
+			return `(${seasonTouchdownStats[0]} RushTD)`;
 		} else if (seasonTouchdownStats.length === 2) {
 			return `(${seasonTouchdownStats[0]} PssTD, ${seasonTouchdownStats[1]} RecTD)`;
 		}
@@ -307,7 +307,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 			event.yds
 		} yard field goal`;
 	} else if (event.type === "fumble") {
-		text = `${event.names[0]} fumbled the ball! (${event.seasonFumbleStats[0]} FUM)`;
+		text = `${event.names[0]} fumbled the ball! (${event.seasonFumbleStats[0]} Fmb)`;
 	} else if (event.type === "fumbleRecovery") {
 		if (event.safety || event.touchback) {
 			text = (
@@ -328,7 +328,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 				<>
 					<span className="text-danger">Turnover!</span> {event.names[0]}{" "}
 					recovered the fumble, {event.names[1]} forced it (
-					{event.seasonFumbleForcedStats[0]} FUM Forced)!
+					{event.seasonFumbleForcedStats[0]} DefFmbFrc)!
 					{event.td && event.yds < 1
 						? ` in the endzone for ${touchdownText}!`
 						: ` and returned it ${event.yds} yards${
@@ -346,7 +346,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 			<span className="text-danger">Intercepted by {event.names[0]}!</span>
 		);
 	} else if (event.type === "interceptionReturn") {
-		text = `${event.names[0]} (${event.seasonInterceptionStats[0]} INT) `;
+		text = `${event.names[0]} (${event.seasonInterceptionStats[0]} Int) `;
 		if (event.touchback) {
 			text += "stays in the endzone for a touchback";
 		} else {
@@ -355,7 +355,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 			}`;
 		}
 	} else if (event.type === "sack") {
-		text = `${event.names[0]} was sacked by ${event.names[1]} (${event.seasonSackStats[0]} SK) for a ${
+		text = `${event.names[0]} was sacked by ${event.names[1]} (${event.seasonSackStats[0]} Sk) for a ${
 			event.safety ? "safety!" : `${Math.abs(event.yds)} yard loss`
 		}`;
 	} else if (event.type === "dropback") {

@@ -1026,7 +1026,7 @@ class GameSim extends GameSimBase {
 				throw: throwAt === i,
 				outAtNextBase: false,
 				...this.getSportState(),
-				seasonStolenBases: success ? p.seasonStats.sb + p.stat["sb"] : null,
+				totalSb: p.seasonStats.sb + p.stat["sb"],
 			});
 		}
 	}
@@ -2135,8 +2135,7 @@ class GameSim extends GameSimBase {
 		this.playByPlay.logEvent({
 			type: "strikeOut",
 			swinging,
-			numOfStrikeouts: pitcher.stat.soPit,
-			pitcherPid: pitcher.id,
+			totalSoPit: pitcher.stat.soPit,
 			...this.getSportState(),
 		});
 	}

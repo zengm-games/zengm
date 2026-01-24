@@ -188,7 +188,7 @@ export const getText = (
 			break;
 		}
 		case "strikeOut": {
-			const strikeOutText = event.numOfStrikeouts;
+			const strikeOutText = event.totalSoPit;
 			text = event.swinging
 				? `${helpers.pronoun(local.getState().gender, "He")} goes down swinging (${strikeOutText} SO)`
 				: `Called strike three (${strikeOutText} SO)`;
@@ -386,11 +386,11 @@ export const getText = (
 			} else if (event.throw) {
 				text = `${getName(
 					event.pid,
-				)} beats the throw and is safe at ${getBaseName(event.to)} (${event.seasonStolenBases} SB)`;
+				)} beats the throw and is safe at ${getBaseName(event.to)} (${event.totalSb} SB)`;
 			} else {
 				text = `${getName(event.pid)} steals ${getBaseName(
 					event.to,
-				)}  (${event.seasonStolenBases} SB) with no throw`;
+				)}  (${event.totalSb} SB) with no throw`;
 			}
 			bold = true;
 			break;

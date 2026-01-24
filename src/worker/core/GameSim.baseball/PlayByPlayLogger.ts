@@ -54,8 +54,7 @@ export type PlayByPlayEventInput =
 			type: "strikeOut";
 			swinging: boolean;
 			outs: number;
-			pitcherPid: number;
-			numOfStrikeouts: number;
+			totalSoPit: number;
 			bases: [number | undefined, number | undefined, number | undefined];
 	  }
 	| {
@@ -143,7 +142,7 @@ export type PlayByPlayEventInput =
 			outAtNextBase: boolean; // For if the runner was thrown out when trying to advance one more base
 			outs: number;
 			bases: [number | undefined, number | undefined, number | undefined];
-			seasonStolenBases: number | null;
+			totalSb?: number;
 	  }
 	| {
 			type: "balk" | "wildPitch" | "passedBall";

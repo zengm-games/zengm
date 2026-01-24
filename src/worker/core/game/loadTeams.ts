@@ -336,6 +336,22 @@ export const processTeam = async (
 				seasonStats[key] = hasStats ? ps[key] : 0;
 			}
 			(p2 as any).seasonStats = seasonStats;
+		} else if (isSport("hockey")) {
+			const seasonStatsKeysHockey = ["shG", "evG", "ppG", "shA", "evA", "ppA"];
+			let hasStats;
+			let ps;
+			if (allStarGame) {
+				// Only look at regular season stats, in case All-Star Game is in playoffs
+				ps = p.stats.filter((ps) => !ps.playoffs).at(-1);
+				hasStats = !!ps && ps.season === g.get("season");
+			} else {
+				ps = p.stats.at(-1);
+				hasStats = exhibitionGame || statsRowIsCurrent(ps, t.id, playoffs);
+			}
+			for (const key of seasonStatsKeysHockey) {
+				seasonStats[key] = hasStats ? ps[key] : 0;
+			}
+			(p2 as any).seasonStats = seasonStats;
 		}
 
 		p2.stat = {

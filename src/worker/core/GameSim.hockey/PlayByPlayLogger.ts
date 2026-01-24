@@ -11,6 +11,7 @@ type PlayByPlayEventInputScore =
 			pids: [number] | [number, number] | [number, number, number];
 			goalType: "ev" | "sh" | "pp" | "en";
 			shotType: string;
+			seasonStats: [number] | [number, number] | [number, number, number];
 	  }
 	| {
 			type: "shootoutShot";

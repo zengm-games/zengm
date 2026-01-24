@@ -14,7 +14,6 @@ import type {
 	PlayerGameSim,
 	PlayersOnField,
 	TeamGameSim,
-	TeamNum,
 	Formation,
 } from "./types.ts";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate.ts";
@@ -26,6 +25,7 @@ import Play, {
 import LngTracker from "./LngTracker.ts";
 import GameSimBase from "../GameSimBase.ts";
 import { STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
+import type { TeamNum } from "../../../common/types.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 

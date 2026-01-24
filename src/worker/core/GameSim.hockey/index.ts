@@ -12,7 +12,6 @@ import type {
 	PlayerGameSim,
 	PlayersOnIce,
 	TeamGameSim,
-	TeamNum,
 } from "./types.ts";
 import getCompositeFactor from "./getCompositeFactor.ts";
 import { penalties, penaltyTypes } from "../GameSim.hockey/penalties.ts";
@@ -21,6 +20,7 @@ import getInjuryRate from "../GameSim.basketball/getInjuryRate.ts";
 import GameSimBase from "../GameSimBase.ts";
 import { orderBy, range } from "../../../common/utils.ts";
 import { getStartingAndBackupGoalies } from "./getStartingAndBackupGoalies.ts";
+import type { TeamNum } from "../../../common/types.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 

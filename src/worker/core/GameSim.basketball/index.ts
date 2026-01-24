@@ -5,6 +5,7 @@ import getInjuryRate from "./getInjuryRate.ts";
 import type {
 	GameAttributesLeague,
 	PlayerInjury,
+	TeamNum,
 } from "../../../common/types.ts";
 import GameSimBase from "../GameSimBase.ts";
 import { maxBy } from "../../../common/utils.ts";
@@ -64,7 +65,6 @@ type Stat =
 	| "tpa"
 	| "sAtt"
 	| "sPts";
-type TeamNum = 0 | 1;
 type CompositeRating =
 	| "blocking"
 	| "fouling"

@@ -35,6 +35,12 @@ customizable keyboard shortcuts
   - need to actually render shortcut
   - mac vs pc
 
+dev usability stuff
+- send message to any open tabs to pop up notification when a new worker process is built, then send message to worker to mark it as stale, then any new UI tab opened with stale worker show a popup with error message. to prevent accidentally having multiple tabs open
+- when loading in dev check if there is an active service worker, and if so warn about it
+  - what would this look like? 404 error when checking for sw.js?
+    - in initServiceWorker could check for sw.js being a 404 error. but then that would have to run in prod too, since this would be the prod build code identifying that dev mode is maybe supposed to be running
+
 calcuate bestPos in playersPlus, rather than in processPlayersHallOfFame
 - simplifies a lot of consuming code
 - for baseball, use gpF rather than ratings to determine pos

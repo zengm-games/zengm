@@ -4,7 +4,6 @@ import {
 	NUM_PLAYERS_PER_LINE,
 	POSITIONS,
 } from "../../../common/constants.hockey.ts";
-import PlayByPlayLogger from "./PlayByPlayLogger.ts";
 import getPlayers from "./getPlayers.ts";
 import type { Position } from "../../../common/types.hockey.ts";
 import type {
@@ -21,6 +20,8 @@ import GameSimBase from "../GameSimBase.ts";
 import { orderBy, range } from "../../../common/utils.ts";
 import { getStartingAndBackupGoalies } from "./getStartingAndBackupGoalies.ts";
 import type { TeamNum } from "../../../common/types.ts";
+import type HockeyPlayByPlayLogger from "./PlayByPlayLogger.ts";
+import { LoggerFactory } from "../LoggerFactory.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -66,7 +67,7 @@ class GameSim extends GameSimBase {
 
 	d: TeamNum;
 
-	playByPlay: PlayByPlayLogger;
+	playByPlay: HockeyPlayByPlayLogger;
 
 	minutesSinceLineChange: [
 		{
@@ -117,8 +118,10 @@ class GameSim extends GameSimBase {
 			neutralSite,
 		});
 
-		// TODO: Replace with a factory pattern
-		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
+		this.playByPlay = LoggerFactory.createPlayByPlayLogger(
+			"hockey",
+			doPlayByPlay,
+		);
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
 
 		this.synergyFactor = 1;

@@ -17,6 +17,7 @@ import PlayByPlayLogger, {
 } from "./PlayByPlayLogger.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { formatClock } from "../../../common/formatClock.ts";
+import { LoggerFactory } from "../LoggerFactory.ts";
 
 const SHOT_CLOCK = 24;
 // const NUM_TIMEOUTS_MAX_FINAL_PERIOD = 4;
@@ -236,8 +237,10 @@ class GameSim extends GameSimBase {
 			baseInjuryRate,
 			neutralSite,
 		});
-		// TODO: Replace with a factory pattern
-		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
+		this.playByPlay = LoggerFactory.createPlayByPlayLogger(
+			"basketball",
+			doPlayByPlay,
+		);
 
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
 

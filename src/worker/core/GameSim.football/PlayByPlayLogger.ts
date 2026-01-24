@@ -1,9 +1,6 @@
 import { formatScoringSummaryEvent } from "../../../common/formatScoringSummaryEvent.football.ts";
-import {
-	AbstractPlayByPlayLogger,
-	BaseLogger,
-} from "../abstractPlayByPlayLoggerFactory.ts";
-import type { TeamNum } from "./types.ts";
+import type { TeamNum } from "../../../common/types.ts";
+import { BaseLogger } from "../abstractPlayByPlayLogger.ts";
 
 export type PlayByPlayEventInputScore =
 	| {
@@ -272,20 +269,7 @@ export type PlayByPlayEventInput =
 	  };
 
 export type PlayByPlayEvent =
-	| (
-			| PlayByPlayEventInput
-			| {
-					type: "stat";
-					t: TeamNum;
-					pid: number | undefined | null;
-					s: string;
-					amt: number;
-			  }
-	  )
-	| {
-			type: "init";
-			boxScore: any;
-	  }
+	| PlayByPlayEventInput
 	| {
 			type: "removeLastScore";
 	  }
@@ -304,7 +288,7 @@ export type PlayByPlayEventScore = PlayByPlayEventInputScore & {
 	quarter: number;
 };
 
-class PlayByPlayLogger extends BaseLogger {
+class FootballPlayByPlayLogger extends BaseLogger<PlayByPlayEvent> {
 	scoringSummary: (
 		| PlayByPlayEventScore
 		| {
@@ -312,7 +296,7 @@ class PlayByPlayLogger extends BaseLogger {
 		  }
 	)[] = [];
 
-	quarter = 1;
+	private quarter = 1;
 
 	constructor(active: boolean) {
 		super(active);
@@ -334,20 +318,6 @@ class PlayByPlayLogger extends BaseLogger {
 		if (scoringSummaryEvent) {
 			this.scoringSummary.push(scoringSummaryEvent);
 		}
-	}
-
-	logStat(t: TeamNum, pid: number | undefined | null, s: string, amt: number) {
-		if (!this.active) {
-			return;
-		}
-
-		this.playByPlay.push({
-			type: "stat",
-			t,
-			pid,
-			s,
-			amt,
-		});
 	}
 
 	logClock({
@@ -396,4 +366,4 @@ class PlayByPlayLogger extends BaseLogger {
 	}
 }
 
-export default PlayByPlayLogger;
+export default FootballPlayByPlayLogger;

@@ -18,6 +18,7 @@ import getWinner from "../../../common/getWinner.ts";
 import { maxBy } from "../../../common/utils.ts";
 import { choice } from "../../../common/random.ts";
 import { PHASE } from "../../../common/index.ts";
+import { LoggerFactory } from "../LoggerFactory.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -95,8 +96,10 @@ class GameSim extends GameSimBase {
 			neutralSite,
 		});
 
-		// TODO: Replace with a factory pattern
-		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
+		this.playByPlay = LoggerFactory.createPlayByPlayLogger(
+			"baseball",
+			doPlayByPlay,
+		);
 
 		// If a team plays twice in a day, this needs to be a deep copy
 		const playoffs = g.get("phase") === PHASE.PLAYOFFS;

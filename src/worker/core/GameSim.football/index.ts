@@ -26,6 +26,7 @@ import LngTracker from "./LngTracker.ts";
 import GameSimBase from "../GameSimBase.ts";
 import { STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
 import type { TeamNum } from "../../../common/types.ts";
+import { LoggerFactory } from "../LoggerFactory.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -140,8 +141,10 @@ class GameSim extends GameSimBase {
 			neutralSite,
 		});
 
-		// TODO: Replace with a factory pattern
-		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
+		this.playByPlay = LoggerFactory.createPlayByPlayLogger(
+			"football",
+			doPlayByPlay,
+		);
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
 
 		this.playersOnField = [{}, {}];

@@ -7,6 +7,7 @@ import type {
 	Conditions,
 } from "../../../common/types.ts";
 import {
+	bySport,
 	COMPOSITE_WEIGHTS,
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	isSport,
@@ -274,12 +275,8 @@ export const processTeam = async (
 		if (isSport("basketball")) {
 			p2.compositeRating.usage = p2.compositeRating.usage ** 1.9;
 		}
-
-		if (isSport("baseball")) {
-			(p2 as any).pFatigue = p.pFatigue ?? 0;
-
-			// Store some pre-game season stats that are displayed in box score
-			const seasonStatsKeysBaseball = [
+		const seasonStatsKeys = bySport({
+			baseball: [
 				"pa",
 				"bb",
 				"hbp",
@@ -296,8 +293,22 @@ export const processTeam = async (
 				"bs",
 				"hld",
 				"sb",
-			];
-
+			],
+			basketball: undefined,
+			football: [
+				"pssTD",
+				"rusTD",
+				"recTD",
+				"defSk",
+				"fmb",
+				"defInt",
+				"krTD",
+				"prTD",
+				"defFmbFrc",
+			],
+			hockey: ["shG", "evG", "ppG", "shA", "evA", "ppA"],
+		});
+		if (seasonStatsKeys !== undefined) {
 			let hasStats;
 			let ps;
 			if (allStarGame) {
@@ -308,53 +319,13 @@ export const processTeam = async (
 				ps = p.stats.at(-1);
 				hasStats = exhibitionGame || statsRowIsCurrent(ps, t.id, playoffs);
 			}
-			for (const key of seasonStatsKeysBaseball) {
+			for (const key of seasonStatsKeys) {
 				seasonStats[key] = hasStats ? ps[key] : 0;
 			}
 			(p2 as any).seasonStats = seasonStats;
-		} else if (isSport("football")) {
-			const seasonStatsKeysFootball = [
-				"pssTD",
-				"rusTD",
-				"recTD",
-				"defSk",
-				"fmb",
-				"defInt",
-				"krTD",
-				"prTD",
-				"defFmbFrc",
-			] as const;
-
-			let hasStats;
-			let ps;
-			if (allStarGame) {
-				// Only look at regular season stats, in case All-Star Game is in playoffs
-				ps = p.stats.filter((ps) => !ps.playoffs).at(-1);
-				hasStats = !!ps && ps.season === g.get("season");
-			} else {
-				ps = p.stats.at(-1);
-				hasStats = exhibitionGame || statsRowIsCurrent(ps, t.id, playoffs);
-			}
-			for (const key of seasonStatsKeysFootball) {
-				seasonStats[key] = hasStats ? ps[key] : 0;
-			}
-			(p2 as any).seasonStats = seasonStats;
-		} else if (isSport("hockey")) {
-			const seasonStatsKeysHockey = ["shG", "evG", "ppG", "shA", "evA", "ppA"];
-			let hasStats;
-			let ps;
-			if (allStarGame) {
-				// Only look at regular season stats, in case All-Star Game is in playoffs
-				ps = p.stats.filter((ps) => !ps.playoffs).at(-1);
-				hasStats = !!ps && ps.season === g.get("season");
-			} else {
-				ps = p.stats.at(-1);
-				hasStats = exhibitionGame || statsRowIsCurrent(ps, t.id, playoffs);
-			}
-			for (const key of seasonStatsKeysHockey) {
-				seasonStats[key] = hasStats ? ps[key] : 0;
-			}
-			(p2 as any).seasonStats = seasonStats;
+		}
+		if (isSport("baseball")) {
+			(p2 as any).pFatigue = p.pFatigue ?? 0;
 		}
 
 		p2.stat = {

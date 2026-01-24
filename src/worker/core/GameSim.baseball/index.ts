@@ -2747,9 +2747,6 @@ class GameSim extends GameSimBase {
 	) {
 		const qtr = this.team[t].t.stat.ptsQtrs.length - 1;
 		if (p !== undefined) {
-			if ((type as any) === "2b") {
-				console.log("3rd check", p, s, amt);
-			}
 			if (type === "fielding") {
 				const pos = this.team[t].playersInGame[p.id]!.pos;
 				const posIndex = POS_NUMBERS[pos] - 1;

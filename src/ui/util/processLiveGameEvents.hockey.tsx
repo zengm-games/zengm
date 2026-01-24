@@ -92,9 +92,9 @@ const getText = (
 		text = ` (${event.names[0]} ${event.seasonStats[0]} G)`;
 		if (event.names.length > 1) {
 			if (event.seasonStats.length === 2) {
-				text += ` (assist: ${event.names[1]} ${event.seasonStats[1]} AST)`;
+				text += ` (assist: ${event.names[1]} ${event.seasonStats[1]} A)`;
 			} else if (event.seasonStats.length === 3) {
-				text += ` (assist: ${event.names[1]} ${event.seasonStats[1]} AST, ${event.names[2]} ${event.seasonStats[2]} AST)`;
+				text += ` (assist: ${event.names[1]} ${event.seasonStats[1]} A, ${event.names[2]} ${event.seasonStats[2]} A)`;
 			}
 		}
 	} else if (event.type === "offensiveLineChange") {

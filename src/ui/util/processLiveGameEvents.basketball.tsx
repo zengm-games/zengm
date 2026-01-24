@@ -322,7 +322,7 @@ export const getText = (
 
 		const eAny = event as any;
 		if (eAny.pidAst !== undefined) {
-			const ast = playersByPid[eAny.pidAst]!.ast; // +1 because I think the assist is added after the log?
+			const ast = playersByPid[eAny.pidAst]!.ast;
 			text += ` Assisted by ${getName(eAny.pidAst)} (${ast} AST)`;
 		}
 

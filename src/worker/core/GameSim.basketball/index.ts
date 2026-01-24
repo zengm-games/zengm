@@ -2253,13 +2253,6 @@ class GameSim extends GameSimBase {
 			fouler = this.pickPlayer("fouling", this.d, 1);
 		}
 
-		let pAst;
-		if (passer !== undefined) {
-			pAst = this.playersOnCourt[this.o].find(
-				(player) => player.id === passer.id,
-			);
-			this.recordStat(this.o, pAst, "ast");
-		}
 		let fgMakeLogType: FgMakeType | undefined;
 		if (type === "tipIn") {
 			this.recordStat(this.o, p, "fgaAtRim");
@@ -2291,6 +2284,10 @@ class GameSim extends GameSimBase {
 		} else {
 			throw new Error(`Should never happen ${type}`);
 		}
+		if (passer !== undefined) {
+			this.recordStat(this.o, passer, "ast");
+		}
+
 		const baseLogInformation = {
 			t: this.o,
 			pid,
@@ -2324,10 +2321,6 @@ class GameSim extends GameSimBase {
 			});
 		}
 		this.recordLastScore(this.o, p, type);
-
-		if (passer !== undefined) {
-			this.recordStat(this.o, passer, "ast");
-		}
 
 		if (andOne && !this.elamDone) {
 			this.doPf({ t: this.d, type: "pfAndOne", shooter: p, fouler });

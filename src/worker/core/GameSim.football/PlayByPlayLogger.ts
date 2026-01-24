@@ -1,4 +1,8 @@
 import { formatScoringSummaryEvent } from "../../../common/formatScoringSummaryEvent.football.ts";
+import {
+	AbstractPlayByPlayLogger,
+	BaseLogger,
+} from "../abstractPlayByPlayLoggerFactory.ts";
 import type { TeamNum } from "./types.ts";
 
 export type PlayByPlayEventInputScore =
@@ -300,11 +304,7 @@ export type PlayByPlayEventScore = PlayByPlayEventInputScore & {
 	quarter: number;
 };
 
-class PlayByPlayLogger {
-	active: boolean;
-
-	playByPlay: PlayByPlayEvent[] = [];
-
+class PlayByPlayLogger extends BaseLogger {
 	scoringSummary: (
 		| PlayByPlayEventScore
 		| {
@@ -315,6 +315,7 @@ class PlayByPlayLogger {
 	quarter = 1;
 
 	constructor(active: boolean) {
+		super(active);
 		this.active = active;
 	}
 
@@ -380,20 +381,6 @@ class PlayByPlayLogger {
 			t,
 			toGo,
 		});
-	}
-
-	getPlayByPlay(boxScore: any) {
-		if (!this.active) {
-			return;
-		}
-
-		return [
-			{
-				type: "init",
-				boxScore,
-			},
-			...this.playByPlay,
-		];
 	}
 
 	removeLastScore() {

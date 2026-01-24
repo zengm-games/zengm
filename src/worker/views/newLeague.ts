@@ -433,6 +433,10 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"scrimmageTouchbackKickoff",
 		),
+		twoPointConversions: unwrapGameAttribute(
+			defaultGameAttributes,
+			"twoPointConversions",
+		),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

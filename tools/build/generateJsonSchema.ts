@@ -1523,6 +1523,9 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						minimum: 1,
 						maximum: 99,
 					},
+					twoPointConversions: {
+						type: "boolean",
+					},
 				},
 			},
 			games: {

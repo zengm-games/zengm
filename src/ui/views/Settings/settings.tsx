@@ -2808,6 +2808,12 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Game Simulation",
+			key: "twoPointConversions",
+			name: "Two Point Conversions",
+			type: "bool",
+		},
+		{
+			category: "Game Simulation",
 			key: "numPlayersOnCourt",
 			name: `# Players On ${helpers.upperCaseFirstLetter(COURT)}`,
 			godModeRequired: "always",

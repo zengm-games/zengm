@@ -483,6 +483,7 @@ const EXHIBITION_GAME_SETTINGS = [
 	"gender",
 	"neutralSite",
 	"scrimmageTouchbackKickoff",
+	"twoPointConversions",
 ] as const;
 
 const MOBILE_AD_BOTTOM_MARGIN = 52;

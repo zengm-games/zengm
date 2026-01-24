@@ -167,7 +167,8 @@ export type Key =
 	| "overtimeLengthPlayoffs"
 	| "forceRetireRealPlayers"
 	| "forceHistoricalRosters"
-	| "scrimmageTouchbackKickoff";
+	| "scrimmageTouchbackKickoff"
+	| "twoPointConversions";
 
 export type Category =
 	| "New League"

@@ -751,6 +751,7 @@ export type GameAttributesLeague = {
 	forceRetireRealPlayers: boolean;
 	forceHistoricalRosters: boolean;
 	scrimmageTouchbackKickoff: number;
+	twoPointConversions: boolean;
 };
 
 type AlwaysWrap = (typeof ALWAYS_WRAP)[number];

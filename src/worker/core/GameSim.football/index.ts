@@ -603,6 +603,10 @@ class GameSim extends GameSimBase {
 		const quarter = this.team[0].stat.ptsQtrs.length;
 
 		if (this.awaitingAfterTouchdown) {
+			if (!g.get("twoPointConversions")) {
+				return "extraPoint";
+			}
+
 			if (ptsDown === 2 && Math.random() < 0.7) {
 				return "twoPointConversion";
 			}

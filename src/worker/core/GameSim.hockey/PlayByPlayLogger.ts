@@ -1,6 +1,6 @@
 import { formatScoringSummaryEvent } from "../../../common/formatScoringSummaryEvent.hockey.ts";
 import type { TeamNum } from "../../../common/types.ts";
-import { BaseLogger } from "../abstractPlayByPlayLogger.ts";
+import { BaseLogger } from "../GameSim/abstractPlayByPlayLogger.ts";
 import type { penaltyTypes } from "./penalties.ts";
 
 type PlayByPlayEventInputScore =

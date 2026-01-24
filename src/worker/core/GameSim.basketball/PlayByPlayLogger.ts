@@ -1,5 +1,5 @@
 import type { TeamNum } from "../../../common/types";
-import { BaseLogger } from "../abstractPlayByPlayLogger";
+import { BaseLogger } from "../GameSim/abstractPlayByPlayLogger";
 
 export type BlockType =
 	| "blkAtRim"

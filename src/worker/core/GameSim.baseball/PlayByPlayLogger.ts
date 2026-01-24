@@ -1,7 +1,7 @@
 import type { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball.ts";
 import { formatScoringSummaryEvent } from "../../../common/formatScoringSummaryEvent.baseball.ts";
 import type { TeamNum } from "../../../common/types.ts";
-import { BaseLogger } from "../abstractPlayByPlayLogger.ts";
+import { BaseLogger } from "../GameSim/abstractPlayByPlayLogger.ts";
 import type { Runner } from "./types.ts";
 
 export type PlayByPlayEventInput =

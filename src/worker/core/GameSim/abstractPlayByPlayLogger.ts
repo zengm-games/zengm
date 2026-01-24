@@ -1,8 +1,8 @@
-import { type PlayByPlayEvent as BaseballEvent } from "./GameSim.baseball/PlayByPlayLogger";
-import type { PlayByPlayEvent as FootballEvent } from "./GameSim.football/PlayByPlayLogger";
-import type { PlayByPlayEvent as BasketballEvent } from "./GameSim.basketball/PlayByPlayLogger";
-import type { PlayByPlayEvent as HockeyEvent } from "./GameSim.hockey/PlayByPlayLogger";
-import type { TeamNum } from "../../common/types";
+import { type PlayByPlayEvent as BaseballEvent } from "../GameSim.baseball/PlayByPlayLogger";
+import type { PlayByPlayEvent as FootballEvent } from "../GameSim.football/PlayByPlayLogger";
+import type { PlayByPlayEvent as BasketballEvent } from "../GameSim.basketball/PlayByPlayLogger";
+import type { PlayByPlayEvent as HockeyEvent } from "../GameSim.hockey/PlayByPlayLogger";
+import type { TeamNum } from "../../../common/types";
 
 type PlayByPlayEventStat = {
 	type: "stat";
@@ -16,7 +16,7 @@ type PlayByPlayInitEvent = {
 	type: "init";
 	boxScore: any;
 };
-// Need to make an abstract
+
 export type BasePlayByPlayEvent =
 	| FootballEvent
 	| BaseballEvent

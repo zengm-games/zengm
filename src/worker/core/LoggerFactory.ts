@@ -2,7 +2,7 @@ import type { Sport } from "../../../tools/lib/getSport";
 import type {
 	BaseLogger,
 	BasePlayByPlayEvent,
-} from "./abstractPlayByPlayLogger";
+} from "./GameSim/abstractPlayByPlayLogger";
 import BaseballPlayByPlayLogger from "./GameSim.baseball/PlayByPlayLogger";
 import BasketballPlayByPlayLogger from "./GameSim.basketball/PlayByPlayLogger";
 import FootballPlayByPlayLogger from "./GameSim.football/PlayByPlayLogger";

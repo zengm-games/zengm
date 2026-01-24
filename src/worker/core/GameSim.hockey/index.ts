@@ -16,12 +16,11 @@ import getCompositeFactor from "./getCompositeFactor.ts";
 import { penalties, penaltyTypes } from "../GameSim.hockey/penalties.ts";
 import PenaltyBox from "./PenaltyBox.ts";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate.ts";
-import GameSimBase from "../GameSimBase.ts";
+import GameSimBase from "../../core/GameSim/GameSimBase.ts";
 import { orderBy, range } from "../../../common/utils.ts";
 import { getStartingAndBackupGoalies } from "./getStartingAndBackupGoalies.ts";
 import type { TeamNum } from "../../../common/types.ts";
-import type HockeyPlayByPlayLogger from "./PlayByPlayLogger.ts";
-import { LoggerFactory } from "../LoggerFactory.ts";
+import HockeyPlayByPlayLogger from "./PlayByPlayLogger.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -118,10 +117,7 @@ class GameSim extends GameSimBase {
 			neutralSite,
 		});
 
-		this.playByPlay = LoggerFactory.createPlayByPlayLogger(
-			"hockey",
-			doPlayByPlay,
-		);
+		this.playByPlay = new HockeyPlayByPlayLogger(doPlayByPlay);
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
 
 		this.synergyFactor = 1;

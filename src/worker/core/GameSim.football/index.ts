@@ -1,8 +1,6 @@
 import { g, helpers, random } from "../../util/index.ts";
 import { POSITIONS } from "../../../common/constants.football.ts";
-import PlayByPlayLogger, {
-	type PlayByPlayEventScore,
-} from "./PlayByPlayLogger.ts";
+import { type PlayByPlayEventScore } from "./PlayByPlayLogger.ts";
 import getCompositeFactor from "./getCompositeFactor.ts";
 import getPlayers from "./getPlayers.ts";
 import formations from "./formations.ts";
@@ -23,10 +21,10 @@ import Play, {
 	SCRIMMAGE_TWO_POINT_CONVERSION,
 } from "./Play.ts";
 import LngTracker from "./LngTracker.ts";
-import GameSimBase from "../GameSimBase.ts";
+import GameSimBase from "../../core/GameSim/GameSimBase.ts";
 import { STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
 import type { TeamNum } from "../../../common/types.ts";
-import { LoggerFactory } from "../LoggerFactory.ts";
+import FootballPlayByPlayLogger from "./PlayByPlayLogger.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -88,7 +86,7 @@ class GameSim extends GameSimBase {
 
 	d: TeamNum;
 
-	playByPlay: PlayByPlayLogger;
+	playByPlay: FootballPlayByPlayLogger;
 
 	awaitingAfterTouchdown = false;
 
@@ -141,10 +139,7 @@ class GameSim extends GameSimBase {
 			neutralSite,
 		});
 
-		this.playByPlay = LoggerFactory.createPlayByPlayLogger(
-			"football",
-			doPlayByPlay,
-		);
+		this.playByPlay = new FootballPlayByPlayLogger(doPlayByPlay);
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy
 
 		this.playersOnField = [{}, {}];

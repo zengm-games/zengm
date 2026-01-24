@@ -10,6 +10,7 @@ export type PlayByPlayEventInputScore =
 			t: TeamNum;
 			td: boolean;
 			yds: number;
+			seasonKickReturnTd: number[];
 	  }
 	| {
 			type: "puntReturn";
@@ -18,6 +19,7 @@ export type PlayByPlayEventInputScore =
 			t: TeamNum;
 			td: boolean;
 			yds: number;
+			seasonPuntReturnTd: number[];
 	  }
 	| {
 			type: "fumbleRecovery";
@@ -31,6 +33,7 @@ export type PlayByPlayEventInputScore =
 			twoPointConversionTeam: TeamNum | undefined;
 			yds: number;
 			ydsBefore: number;
+			seasonFumbleForcedStats: number[]; // TODO: I dont know if this is appropriate; forced vs recovery? Might need to change the actual text
 	  }
 	| {
 			type: "interception";

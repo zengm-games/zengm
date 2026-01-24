@@ -320,6 +320,9 @@ export const processTeam = async (
 				"defSk",
 				"fmb",
 				"defInt",
+				"krTD",
+				"prTD",
+				"defFmbFrc",
 			] as const;
 
 			let hasStats;

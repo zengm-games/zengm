@@ -1285,7 +1285,6 @@ class GameSim extends GameSimBase {
 			});
 
 			if (td) {
-				// TODO2: KR
 				this.currentPlay.addEvent({
 					type: "krTD",
 					p,
@@ -1412,6 +1411,9 @@ class GameSim extends GameSimBase {
 					t: this.currentPlay.state.current.o,
 					td,
 					yds: returnLength,
+					seasonKickReturnTd: [
+						kickReturner.seasonStats["krTD"] + kickReturner.stat["krTD"],
+					],
 				});
 			}
 		}
@@ -1501,7 +1503,6 @@ class GameSim extends GameSimBase {
 			});
 
 			if (td) {
-				// TODO2: PUNT RETURN TD?
 				this.currentPlay.addEvent({
 					type: "prTD",
 					p: puntReturner,
@@ -1519,6 +1520,9 @@ class GameSim extends GameSimBase {
 				t: this.currentPlay.state.current.o,
 				td,
 				yds: returnLength,
+				seasonPuntReturnTd: [
+					puntReturner.seasonStats["prTD"] + puntReturner.stat["prTD"],
+				],
 			});
 		}
 
@@ -1772,13 +1776,13 @@ class GameSim extends GameSimBase {
 			yds: spotYds,
 		});
 
-		// TODO2: EDIT THIS TO SHOW SEASON FUMBLES
 		this.playByPlay.logEvent({
 			type: "fumble",
 			clock: this.clock,
 			names: [pFumbled.name, pForced.name],
 			seasonFumbleStats: [
-				pForced.seasonStats["defFmbFrc"]! + pForced.stat["defFmbFrc"]!,
+				pFumbled.seasonStats["fmb"] + pFumbled.stat["fmb"],
+				// pForced.seasonStats["defFmbFrc"] + pForced.stat["defFmbFrc"],
 			],
 			t: o,
 		});
@@ -1830,12 +1834,11 @@ class GameSim extends GameSimBase {
 				});
 			}
 		}
-
 		this.playByPlay.logEvent({
 			type: "fumbleRecovery",
 			clock: this.clock,
 			lost,
-			names: [pRecovered.name],
+			names: [pRecovered.name, pForced.name],
 			safety,
 			t: tRecovered,
 			td,
@@ -1843,6 +1846,9 @@ class GameSim extends GameSimBase {
 			twoPointConversionTeam: this.twoPointConversionTeam,
 			yds,
 			ydsBefore: spotYds,
+			seasonFumbleForcedStats: [
+				pForced.seasonStats["defFmbFrc"] + pForced.stat["defFmbFrc"],
+			],
 		});
 
 		if (fumble) {

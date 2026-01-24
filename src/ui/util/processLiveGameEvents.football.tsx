@@ -274,7 +274,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 		}`;
 	} else if (event.type === "kickoffReturn") {
 		text = `${event.names[0]} returned the kickoff ${event.yds} yards${
-			event.td ? " for a touchdown!" : ""
+			event.td ? ` for a touchdown! (${event.seasonKickReturnTd[0]} TD)` : ""
 		}`;
 	} else if (event.type === "onsideKick") {
 		text = `${event.names[0]} gets ready to attempt an onside kick`;
@@ -296,7 +296,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 		}`;
 	} else if (event.type === "puntReturn") {
 		text = `${event.names[0]} returned the punt ${event.yds} yards${
-			event.td ? " for a touchdown!" : ""
+			event.td ? ` for a touchdown! (${event.seasonPuntReturnTd[0]} TD)` : ""
 		}`;
 	} else if (event.type === "extraPoint") {
 		text = `${event.names[0]} ${
@@ -307,7 +307,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 			event.yds
 		} yard field goal`;
 	} else if (event.type === "fumble") {
-		text = `${event.names[0]} fumbled the ball!`;
+		text = `${event.names[0]} fumbled the ball! (${event.seasonFumbleStats[0]} FUM)`;
 	} else if (event.type === "fumbleRecovery") {
 		if (event.safety || event.touchback) {
 			text = (
@@ -327,7 +327,8 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 			text = (
 				<>
 					<span className="text-danger">Turnover!</span> {event.names[0]}{" "}
-					recovered the fumble
+					recovered the fumble, {event.names[1]} forced it (
+					{event.seasonFumbleForcedStats[0]} FUM Forced)!
 					{event.td && event.yds < 1
 						? ` in the endzone for ${touchdownText}!`
 						: ` and returned it ${event.yds} yards${

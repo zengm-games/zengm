@@ -1,8 +1,6 @@
 import type { PlayerInjury } from "../../../common/types.ts";
 import type { Position } from "../../../common/types.hockey.ts";
 
-export type TeamNum = 0 | 1;
-
 export type CompositeRating =
 	| "pace"
 	| "playmaker"

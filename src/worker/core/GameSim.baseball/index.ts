@@ -6,17 +6,18 @@ import {
 	POS_NUMBERS,
 	POS_NUMBERS_INVERSE,
 } from "../../../common/constants.baseball.ts";
-import PlayByPlayLogger from "./PlayByPlayLogger.ts";
-import type { PlayerGameSim, Runner, TeamGameSim, TeamNum } from "./types.ts";
+import type { PlayerGameSim, Runner, TeamGameSim } from "./types.ts";
+import type { TeamNum } from "../../../../src/common/types.ts";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate.ts";
 import Team from "./Team.ts";
 import { fatigueFactor } from "./fatigueFactor.ts";
 import { infoDefense } from "../player/ovr.baseball.ts";
-import GameSimBase from "../GameSimBase.ts";
+import GameSimBase from "../../core/GameSim/GameSimBase.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { maxBy } from "../../../common/utils.ts";
 import { choice } from "../../../common/random.ts";
 import { PHASE } from "../../../common/index.ts";
+import BaseballPlayByPlayLogger from "./PlayByPlayLogger.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -55,7 +56,7 @@ class GameSim extends GameSimBase {
 
 	d: TeamNum;
 
-	playByPlay: PlayByPlayLogger;
+	playByPlay: BaseballPlayByPlayLogger;
 
 	// When the third out of an inning would have happened except for an error, any further runs are unearned to the team. Same applies to the pitcher if it's the same pitcher, but for a new reliever mid inning, they start with ERs unless another error happens to put it over the limit
 	outsIfNoErrors!: number;
@@ -94,7 +95,7 @@ class GameSim extends GameSimBase {
 			neutralSite,
 		});
 
-		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
+		this.playByPlay = new BaseballPlayByPlayLogger(doPlayByPlay);
 
 		// If a team plays twice in a day, this needs to be a deep copy
 		const playoffs = g.get("phase") === PHASE.PLAYOFFS;

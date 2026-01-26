@@ -2098,6 +2098,7 @@ class GameSim extends GameSimBase {
 			o,
 			Math.random() < 0.2 ? "catching" : "gettingOpen",
 			["WR", "TE", "RB"],
+			1.5,
 		);
 
 		// RB passes are often short, so 50% chance of a decrease in yardage, which is more severe for players with low gettingOpen
@@ -2111,7 +2112,7 @@ class GameSim extends GameSimBase {
 				// Bound is so (in extreme contrived cases like 0 ovr teams) meanYds can't go too far above/below the truncGauss limits
 				helpers.bound(
 					rbFactor *
-						8.3 *
+						8.6 *
 						(this.team[o].compositeRating.passBlocking /
 							this.team[d].compositeRating.passRushing),
 					-5,
@@ -2128,8 +2129,8 @@ class GameSim extends GameSimBase {
 		}
 
 		// Adjust for receiver speed
-		ydsRaw += Math.round((target.compositeRating.speed - 0.5) * 10);
-		if (Math.random() < target.compositeRating.speed * 0.03) {
+		ydsRaw += Math.round((target.compositeRating.speed - 0.5) * 6);
+		if (Math.random() < target.compositeRating.speed * 0.025) {
 			ydsRaw += random.randInt(0, 109);
 		}
 

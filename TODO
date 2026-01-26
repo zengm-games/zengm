@@ -3,11 +3,8 @@ fbgm now
 - make tackling more important, currently it just assigns blame
   - also LB in general, since LB ovr is not used in composite ratings currently
   - make it affect forced fumbles
-- fast WR OP? https://discord.com/channels/@me/1216830279272890378/1260586368153681930
-  - make spd less important for WR https://discord.com/channels/290013534023057409/331882115119448065/1361879407400063176
-    - also recalculate ovr formula
-- re-evaluate team value formula, especially WR now that speed matters more
-  - actually speed might matter too much now, and some other ratings balance issues https://discord.com/channels/290013534023057409/331882115119448065/1441529240309989436
+- re-calculate player ovr
+- re-calculate team ovr
 - add "awards" for leaders, like other sports https://twitter.com/the_daymion/status/1724093113621524759
 - in play-by-play, distinguish between timeout due to low play clock and timeout due to clock management https://discord.com/channels/290013534023057409/1416078039837839360/1418244324033958048
 - 2025 overtime rules are now the same for regular season and playoffs, both teams get a chance to possess

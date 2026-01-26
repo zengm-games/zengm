@@ -38,6 +38,8 @@ const YARDS_NEEDED_TO_KNEEL = 3;
 const NUM_DOWNS = 4; // Not used everywhere!
 const TWO_MINUTE_WARNING_TIME = 2; // Not used everywhere!
 
+const FEWER_INJURIES_POS = new Set(["QB", "P", "K"]);
+
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
  *
@@ -2617,8 +2619,8 @@ class GameSim extends GameSimBase {
 				);
 
 				if (Math.random() < injuryRate) {
-					// 50% as many injuries for QB
-					if (p.pos === "QB" && Math.random() < 0.5) {
+					// 50% as many injuries for some positions
+					if (FEWER_INJURIES_POS.has(p.pos) && Math.random() < 0.5) {
 						continue;
 					}
 

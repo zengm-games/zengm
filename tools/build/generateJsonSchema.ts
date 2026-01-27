@@ -581,7 +581,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 									},
 									chances: {
 										type: "integer",
-										minimum: 1,
+										minimum: 0,
 									},
 									pick: {
 										type: "integer",
@@ -837,7 +837,8 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					draftLotteryCustomChances: {
 						type: "array",
 						items: {
-							type: "number",
+							type: "integer",
+							minimum: 0,
 						},
 					},
 					draftLotteryCustomNumPicks: {

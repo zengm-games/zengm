@@ -642,6 +642,9 @@ export const settings: Setting[] = (
 					if (!Number.isInteger(num)) {
 						throw new Error("Array must contain only integers");
 					}
+					if (num < 0) {
+						throw new Error("Values cannot be less than 0");
+					}
 				}
 			},
 		},

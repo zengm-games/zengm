@@ -44,6 +44,14 @@ export type TeamStatAttr =
 	| "koTBPct"
 	| "koYdsPerAtt"
 	| "okRecPct"
+	| "recYdsPerRec"
+	| "recPerGame"
+	| "recYdsPerGame"
+	| "recCatchPct"
+	| "touches"
+	| "ydsPerTouch"
+	| "ydsFromScrimmage"
+	| "rusRecTD"
 	| "oppYds"
 	| "oppYdsPerPlay"
 	| "oppTov"
@@ -83,7 +91,15 @@ export type TeamStatAttr =
 	| "oppCmpPct"
 	| "oppKoTBPct"
 	| "oppKoYdsPerAtt"
-	| "oppOkRecPct";
+	| "oppOkRecPct"
+	| "oppRecYdsPerRec"
+	| "oppRecPerGame"
+	| "oppRecYdsPerGame"
+	| "oppRecCatchPct"
+	| "oppTouches"
+	| "oppYdsPerTouch"
+	| "oppYdsFromScrimmage"
+	| "oppRusRecTD";
 
 type AwardTeam = {
 	tid: number;

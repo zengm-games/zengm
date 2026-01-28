@@ -119,6 +119,22 @@ const processStats = (
 				row[stat] = helpers.ratio(ts.koYds, ts.ko);
 			} else if (stat === "okRecPct") {
 				row[stat] = helpers.percentage(ts.okRec, ts.ok);
+			} else if (stat === "recYdsPerRec") {
+				row[stat] = ts.recYds / ts.rec;
+			} else if (stat === "recPerGame") {
+				row[stat] = ts.rec / ts.gp;
+			} else if (stat === "recYdsPerGame") {
+				row[stat] = ts.recYds / ts.gp;
+			} else if (stat === "recCatchPct") {
+				row[stat] = helpers.percentage(ts.rec, ts.tgt);
+			} else if (stat === "touches") {
+				row[stat] = ts.rus + ts.rec;
+			} else if (stat === "ydsPerTouch") {
+				row[stat] = (ts.rusYds + ts.recYds) / (ts.rus + ts.rec);
+			} else if (stat === "ydsFromScrimmage") {
+				row[stat] = ts.rusYds + ts.recYds;
+			} else if (stat === "rusRecTD") {
+				row[stat] = ts.rusTD + ts.recTD;
 			} else if (stat === "oppYds") {
 				row[stat] = ts.oppPssYds + ts.oppRusYds;
 			} else if (stat === "oppYdsPerPlay") {
@@ -232,6 +248,22 @@ const processStats = (
 				row[stat] = helpers.ratio(ts.oppKoYds, ts.oppKo);
 			} else if (stat === "oppOkRecPct") {
 				row[stat] = helpers.percentage(ts.oppOkRec, ts.oppOk);
+			} else if (stat === "oppRecYdsPerRec") {
+				row[stat] = ts.oppRecYds / ts.oppRec;
+			} else if (stat === "oppRecPerGame") {
+				row[stat] = ts.oppRec / ts.gp;
+			} else if (stat === "oppRecYdsPerGame") {
+				row[stat] = ts.oppRecYds / ts.gp;
+			} else if (stat === "oppRecCatchPct") {
+				row[stat] = helpers.percentage(ts.oppRec, ts.oppTgt);
+			} else if (stat === "oppTouches") {
+				row[stat] = ts.oppRus + ts.oppRec;
+			} else if (stat === "oppYdsPerTouch") {
+				row[stat] = (ts.oppRusYds + ts.oppRecYds) / (ts.oppRus + ts.oppRec);
+			} else if (stat === "oppYdsFromScrimmage") {
+				row[stat] = ts.oppRusYds + ts.oppRecYds;
+			} else if (stat === "oppRusRecTD") {
+				row[stat] = ts.oppRusTD + ts.oppRecTD;
 			} else {
 				row[stat] = ts[stat];
 			}

@@ -88,7 +88,7 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	gameHighs: "Game Highs",
 	passing: "Passing",
 	rushing: "Rushing",
-	rushingReceiving: "Rushing/Receiving",
+	rushingReceiving: "Rushing and Receiving",
 	defense: "Defense",
 	kicking: "Kicking",
 	returns: "Returns",

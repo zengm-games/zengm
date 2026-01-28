@@ -1413,9 +1413,10 @@ class GameSim extends GameSimBase {
 					p: kicker,
 				});
 			} else {
-				let ydsRaw = Math.round(random.truncGauss(20, 5, -10, 109));
+				const meanYds = 15 + 10 * kickReturner.compositeRating.rushing;
+				let ydsRaw = Math.round(random.truncGauss(meanYds, 5, -10, 109));
 
-				if (Math.random() < 0.02) {
+				if (Math.random() < kickReturner.compositeRating.speed ** 3 * 0.025) {
 					ydsRaw += random.randInt(0, 109);
 				}
 
@@ -1520,9 +1521,10 @@ class GameSim extends GameSimBase {
 			});
 		} else {
 			const maxReturnLength = 100 - this.currentPlay.state.current.scrimmage;
-			let ydsRaw = Math.round(random.truncGauss(10, 10, -10, 109));
+			const meanYds = 4 + 10 * puntReturner.compositeRating.rushing;
+			let ydsRaw = Math.round(random.truncGauss(meanYds, 10, -10, 109));
 
-			if (Math.random() < 0.03) {
+			if (Math.random() < puntReturner.compositeRating.speed ** 3 * 0.06) {
 				ydsRaw += random.randInt(0, 109);
 			}
 

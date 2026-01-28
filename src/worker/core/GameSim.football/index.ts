@@ -40,6 +40,9 @@ const TWO_MINUTE_WARNING_TIME = 2; // Not used everywhere!
 
 const FEWER_INJURIES_POS = new Set(["QB", "P", "K"]);
 
+// For some positions, filter out some players based on fatigue
+const FATIGUE_POS = new Set(["RB", "WR", "TE", "DL", "LB", "CB", "S"]);
+
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
  *
@@ -1205,10 +1208,7 @@ class GameSim extends GameSimBase {
 					.filter((p) => !p.injured)
 					.filter((p) => !pidsUsed.has(p.id))
 					.filter((p) => {
-						// For some positions, filter out some players based on fatigue
-						const positions = ["RB", "WR", "TE", "DL", "LB", "CB", "S"];
-
-						if (!positions.includes(pos)) {
+						if (!FATIGUE_POS.has(pos)) {
 							return true;
 						}
 

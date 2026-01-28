@@ -46,7 +46,7 @@ const normal: Formation[] = [
 			S: 2,
 		},
 	},
-	// No 5 wide, cause it led to too many QB runs. Not a great solution, but it works!
+	// No 5 wide, cause it led to too many QB runs. Not a great solution, but it works! Similar with 4 wide and leaving off a TE/RB
 ];
 
 const fieldGoal: Formation[] = [

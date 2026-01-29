@@ -1204,6 +1204,10 @@ class GameSim extends GameSimBase {
 
 			for (const pos of helpers.keys(formation[side])) {
 				const numPlayers = formation[side][pos]!;
+
+				// Not sure why this adjustment is needed, but without it, basically only the top 3 WR play. Maybe because formations with fewer than 3 WR let some of them rest, so you'd need 3 WR sets called very frequently to ever get them all tired.
+				const FATIGUE_MODIFIER = pos === "WR" ? 0.75 : 1;
+
 				const players = this.team[t].depth[pos]
 					.filter((p) => !p.injured)
 					.filter((p) => !pidsUsed.has(p.id))
@@ -1212,7 +1216,10 @@ class GameSim extends GameSimBase {
 							return true;
 						}
 
-						return Math.random() < fatigue(p.stat.energy, p.injured);
+						return (
+							Math.random() <
+							FATIGUE_MODIFIER * fatigue(p.stat.energy, p.injured)
+						);
 					});
 				this.playersOnField[t][pos] = players.slice(0, numPlayers);
 				for (const p of this.playersOnField[t][pos]) {

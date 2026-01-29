@@ -25,7 +25,7 @@ import Play, {
 } from "./Play.ts";
 import LngTracker from "./LngTracker.ts";
 import GameSimBase from "../GameSimBase.ts";
-import { STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
+import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -119,6 +119,11 @@ class GameSim extends GameSimBase {
 	playUntimedPossession = false;
 
 	twoPointConversionTeam: TeamNum | undefined;
+
+	overtimeType =
+		g.get("phase") === PHASE.PLAYOFFS
+			? g.get("footballOvertimePlayoffs", "current")
+			: g.get("footballOvertime", "current");
 
 	constructor({
 		gid,
@@ -763,7 +768,8 @@ class GameSim extends GameSimBase {
 
 		// If a field goal will win it in overtime and odds of success are high, go for it
 		if (
-			(this.overtimeState === "secondPossession" ||
+			(this.overtimeType === "suddenDeath" ||
+				this.overtimeState === "secondPossession" ||
 				this.overtimeState === "bothTeamsPossessed") &&
 			ptsDown < 3 &&
 			this.probMadeFieldGoal() >= 0.9
@@ -791,7 +797,8 @@ class GameSim extends GameSimBase {
 					(() => {
 						// In overtime, if tied and a field goal would win, try it
 						if (
-							this.overtimeState !== "firstPossession" &&
+							(this.overtimeType === "suddenDeath" ||
+								this.overtimeState !== "firstPossession") &&
 							ptsDown === 0 &&
 							probMadeFieldGoal >= 0.7
 						) {
@@ -1033,7 +1040,8 @@ class GameSim extends GameSimBase {
 		}
 
 		if (
-			this.overtimeState === "bothTeamsPossessed" &&
+			(this.overtimeType === "suddenDeath" ||
+				this.overtimeState === "bothTeamsPossessed") &&
 			this.team[0].stat.pts !== this.team[1].stat.pts &&
 			(!this.awaitingAfterTouchdown ||
 				Math.abs(this.team[0].stat.pts - this.team[1].stat.pts) > 2)

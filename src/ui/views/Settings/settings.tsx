@@ -2357,12 +2357,12 @@ export const settings: Setting[] = (
 					name: `Overtime Type ${playoffs ? " (Playoffs)" : ""}`,
 					type: "string",
 					values: [
-						{ key: "suddenDeath", value: "Sudden death" },
+						{ key: "bothPossess", value: "Both teams must possess" },
 						{
 							key: "exceptFg",
 							value: "Sudden death (except FG on first possession)",
 						},
-						{ key: "bothPossess", value: "Both teams must possess" },
+						{ key: "suddenDeath", value: "Sudden death" },
 					],
 					descriptionLong: (
 						<>

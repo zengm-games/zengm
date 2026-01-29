@@ -1,5 +1,4 @@
 import type GameSim from "./index.ts";
-import { PHASE } from "../../../common/index.ts";
 import { g } from "../../util/index.ts";
 import getBestPenaltyResult from "./getBestPenaltyResult.ts";
 import type { PlayerGameSim, TeamNum } from "./types.ts";
@@ -238,6 +237,7 @@ type PlayState = Pick<
 	| "awaitingAfterSafety"
 	| "awaitingAfterTouchdown"
 	| "overtimeState"
+	| "overtimeType"
 	| "playUntimedPossession"
 >;
 
@@ -254,6 +254,7 @@ export class State {
 	awaitingAfterSafety: PlayState["awaitingAfterSafety"];
 	awaitingAfterTouchdown: PlayState["awaitingAfterTouchdown"];
 	overtimeState: PlayState["overtimeState"];
+	overtimeType: PlayState["overtimeType"];
 	playUntimedPossession: PlayState["playUntimedPossession"];
 
 	downIncremented: boolean;
@@ -297,6 +298,7 @@ export class State {
 		this.awaitingAfterSafety = gameSim.awaitingAfterSafety;
 		this.awaitingAfterTouchdown = gameSim.awaitingAfterTouchdown;
 		this.overtimeState = gameSim.overtimeState;
+		this.overtimeType = gameSim.overtimeType;
 		this.playUntimedPossession = gameSim.playUntimedPossession;
 
 		this.downIncremented = downIncremented;
@@ -867,7 +869,7 @@ class Play {
 			if (
 				(state.overtimeState === "initialKickoff" ||
 					state.overtimeState === "firstPossession") &&
-				g.get("phase") !== PHASE.PLAYOFFS
+				state.overtimeType !== "bothPossess"
 			) {
 				state.overtimeState = "over";
 			}
@@ -885,21 +887,14 @@ class Play {
 			const t = event.type === "defSft" ? state.d : state.o;
 			state.pts[t] += pts;
 
-			if (state.overtimeState === "secondPossession") {
+			if (
+				state.overtimeState === "secondPossession" ||
+				state.overtimeType === "suddenDeath"
+			) {
 				const t2 = t === 0 ? 1 : 0;
 
 				if (state.pts[t] > state.pts[t2]) {
 					state.overtimeState = "over";
-				}
-			}
-
-			if (pts === 2) {
-				if (state.overtimeState === "secondPossession") {
-					const t2 = t === 0 ? 1 : 0;
-
-					if (state.pts[t] > state.pts[t2]) {
-						state.overtimeState = "over";
-					}
 				}
 			}
 		}

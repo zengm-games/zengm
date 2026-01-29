@@ -15,6 +15,9 @@ export type BoxScorePlayer = {
 	name: string;
 	pid: number;
 	injury: PlayerInjury;
+	seasonStats: {
+		[stat: string]: number;
+	};
 };
 type BoxScoreTeam = {
 	abbrev: string;
@@ -148,7 +151,6 @@ export const getText = (
 	let text;
 
 	let bold = false;
-
 	switch (event.type) {
 		case "sideStart": {
 			text = `${event.t === 0 ? "Bottom" : "Top"} of the ${helpers.ordinal(
@@ -186,9 +188,10 @@ export const getText = (
 			break;
 		}
 		case "strikeOut": {
+			const strikeOutText = event.totalSoPit;
 			text = event.swinging
-				? `${helpers.pronoun(local.getState().gender, "He")} goes down swinging`
-				: "Called strike three";
+				? `${helpers.pronoun(local.getState().gender, "He")} goes down swinging (${strikeOutText} SO)`
+				: `Called strike three (${strikeOutText} SO)`;
 			bold = true;
 			break;
 		}
@@ -284,7 +287,6 @@ export const getText = (
 		}
 		case "hitResult": {
 			const sideRetired = event.outs === NUM_OUTS_PER_INNING;
-
 			text = "";
 			if (event.result === "error") {
 				text = `${helpers.pronoun(
@@ -297,13 +299,13 @@ export const getText = (
 				if (event.numBases === 1) {
 					text = "Single!";
 				} else if (event.numBases === 2) {
-					text = "Double!";
+					text = `Double (${event.seasonNumberOfHits} 2B)!`;
 				} else if (event.numBases === 3) {
-					text = "Triple!";
+					text = `Triple (${event.seasonNumberOfHits} 3B)!`;
 				} else if (event.runners.length === 3) {
-					text = "Grand slam!";
+					text = `Grand slam (${event.seasonNumberOfHits} HR)!`;
 				} else {
-					text = "Home run!";
+					text = `Home run (${event.seasonNumberOfHits} HR)!`;
 				}
 			} else if (event.result === "flyOut") {
 				text = `Caught by the ${
@@ -384,11 +386,11 @@ export const getText = (
 			} else if (event.throw) {
 				text = `${getName(
 					event.pid,
-				)} beats the throw and is safe at ${getBaseName(event.to)}`;
+				)} beats the throw and is safe at ${getBaseName(event.to)} (${event.totalSb} SB)`;
 			} else {
 				text = `${getName(event.pid)} steals ${getBaseName(
 					event.to,
-				)} with no throw`;
+				)}  (${event.totalSb} SB) with no throw`;
 			}
 			bold = true;
 			break;

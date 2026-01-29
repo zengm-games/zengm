@@ -1029,6 +1029,36 @@ class GameSim extends GameSimBase {
 		if (goalie) {
 			this.recordStat(this.d, goalie, "ga");
 		}
+		const getShooterStats = () => {
+			return (
+				actualShooter.stat["evG"] +
+				actualShooter.stat["ppG"] +
+				actualShooter.stat["shG"] +
+				actualShooter.seasonStats["evG"] +
+				actualShooter.seasonStats["ppG"] +
+				actualShooter.seasonStats["shG"]
+			);
+		};
+		const getAssisterOneStats = () => {
+			return assister1
+				? assister1.stat["evA"] +
+						assister1.stat["ppA"] +
+						assister1.stat["shA"] +
+						assister1.seasonStats["evA"] +
+						assister1.seasonStats["ppA"] +
+						assister1.seasonStats["shA"]
+				: null;
+		};
+		const getAssisterTwoStats = () => {
+			return assister2
+				? assister2.stat["evA"] +
+						assister2.stat["ppA"] +
+						assister2.stat["shA"] +
+						assister2.seasonStats["evA"] +
+						assister2.seasonStats["ppA"] +
+						assister2.seasonStats["shA"]
+				: null;
+		};
 		this.playByPlay.logEvent({
 			type: "goal",
 			clock: this.clock,
@@ -1037,6 +1067,11 @@ class GameSim extends GameSimBase {
 			pids: [actualShooter.id, ...assisterPIDs],
 			shotType: deflector ? "deflection" : type,
 			goalType: this.pulledGoalie[this.d] ? "en" : strengthType,
+			seasonStats: [
+				getShooterStats(),
+				getAssisterOneStats(),
+				getAssisterTwoStats(),
+			],
 		});
 
 		this.penaltyBox.goal(this.o);

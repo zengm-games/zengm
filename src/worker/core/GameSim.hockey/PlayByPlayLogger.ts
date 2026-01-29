@@ -1,6 +1,7 @@
 import { formatScoringSummaryEvent } from "../../../common/formatScoringSummaryEvent.hockey.ts";
+import type { TeamNum } from "../../../common/types.ts";
+import { BaseLogger } from "../GameSim/abstractPlayByPlayLogger.ts";
 import type { penaltyTypes } from "./penalties.ts";
-import type { TeamNum } from "./types.ts";
 
 type PlayByPlayEventInputScore =
 	| {
@@ -118,39 +119,19 @@ type PlayByPlayEventInput =
 			clock: number;
 	  };
 
-export type PlayByPlayEvent =
-	| ((
-			| PlayByPlayEventInput
-			| {
-					type: "stat";
-					t: TeamNum;
-					pid: number | undefined | null;
-					s: string;
-					amt: number;
-			  }
-	  ) & {
-			quarter: number;
-	  })
-	| {
-			type: "init";
-			boxScore: any;
-	  };
+export type PlayByPlayEvent = PlayByPlayEventInput & {
+	quarter: number;
+};
 
 export type PlayByPlayEventScore = PlayByPlayEventInputScore & {
 	quarter: number;
 };
 
-class PlayByPlayLogger {
-	active: boolean;
-
-	playByPlay: PlayByPlayEvent[] = [];
-
+class HockeyPlayByPlayLogger extends BaseLogger<PlayByPlayEvent> {
 	scoringSummary: PlayByPlayEventScore[] = [];
-
-	quarter = 1;
-
+	private quarter = 1;
 	constructor(active: boolean) {
-		this.active = active;
+		super(active);
 	}
 
 	logEvent(event: PlayByPlayEventInput) {
@@ -172,35 +153,6 @@ class PlayByPlayLogger {
 			this.scoringSummary.push(scoringSummaryEvent);
 		}
 	}
-
-	logStat(t: TeamNum, pid: number | undefined | null, s: string, amt: number) {
-		if (!this.active) {
-			return;
-		}
-
-		this.playByPlay.push({
-			type: "stat",
-			quarter: this.quarter,
-			t,
-			pid,
-			s,
-			amt,
-		});
-	}
-
-	getPlayByPlay(boxScore: any): PlayByPlayEvent[] | undefined {
-		if (!this.active) {
-			return;
-		}
-
-		return [
-			{
-				type: "init",
-				boxScore,
-			},
-			...this.playByPlay,
-		];
-	}
 }
 
-export default PlayByPlayLogger;
+export default HockeyPlayByPlayLogger;

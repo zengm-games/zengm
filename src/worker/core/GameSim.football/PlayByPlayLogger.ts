@@ -1,5 +1,6 @@
 import { formatScoringSummaryEvent } from "../../../common/formatScoringSummaryEvent.football.ts";
-import type { TeamNum } from "./types.ts";
+import type { TeamNum } from "../../../common/types.ts";
+import { BaseLogger } from "../GameSim/abstractPlayByPlayLogger.ts";
 
 export type PlayByPlayEventInputScore =
 	| {
@@ -268,20 +269,7 @@ export type PlayByPlayEventInput =
 	  };
 
 export type PlayByPlayEvent =
-	| (
-			| PlayByPlayEventInput
-			| {
-					type: "stat";
-					t: TeamNum;
-					pid: number | undefined | null;
-					s: string;
-					amt: number;
-			  }
-	  )
-	| {
-			type: "init";
-			boxScore: any;
-	  }
+	| PlayByPlayEventInput
 	| {
 			type: "removeLastScore";
 	  }
@@ -300,11 +288,7 @@ export type PlayByPlayEventScore = PlayByPlayEventInputScore & {
 	quarter: number;
 };
 
-class PlayByPlayLogger {
-	active: boolean;
-
-	playByPlay: PlayByPlayEvent[] = [];
-
+class FootballPlayByPlayLogger extends BaseLogger<PlayByPlayEvent> {
 	scoringSummary: (
 		| PlayByPlayEventScore
 		| {
@@ -312,9 +296,10 @@ class PlayByPlayLogger {
 		  }
 	)[] = [];
 
-	quarter = 1;
+	private quarter = 1;
 
 	constructor(active: boolean) {
+		super(active);
 		this.active = active;
 	}
 
@@ -333,20 +318,6 @@ class PlayByPlayLogger {
 		if (scoringSummaryEvent) {
 			this.scoringSummary.push(scoringSummaryEvent);
 		}
-	}
-
-	logStat(t: TeamNum, pid: number | undefined | null, s: string, amt: number) {
-		if (!this.active) {
-			return;
-		}
-
-		this.playByPlay.push({
-			type: "stat",
-			t,
-			pid,
-			s,
-			amt,
-		});
 	}
 
 	logClock({
@@ -382,20 +353,6 @@ class PlayByPlayLogger {
 		});
 	}
 
-	getPlayByPlay(boxScore: any) {
-		if (!this.active) {
-			return;
-		}
-
-		return [
-			{
-				type: "init",
-				boxScore,
-			},
-			...this.playByPlay,
-		];
-	}
-
 	removeLastScore() {
 		if (this.active) {
 			this.playByPlay.push({
@@ -409,4 +366,4 @@ class PlayByPlayLogger {
 	}
 }
 
-export default PlayByPlayLogger;
+export default FootballPlayByPlayLogger;

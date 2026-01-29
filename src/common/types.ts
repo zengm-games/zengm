@@ -488,6 +488,8 @@ export type TragicDeaths = {
 	frequency: number;
 }[];
 
+type FootballOvertime = "suddenDeath" | "exceptFg" | "bothPossess";
+
 export type GameAttributesLeague = {
 	aiJerseyRetirement: boolean;
 	aiTradesFactor: number;
@@ -752,6 +754,8 @@ export type GameAttributesLeague = {
 	forceHistoricalRosters: boolean;
 	scrimmageTouchbackKickoff: number;
 	twoPointConversions: boolean;
+	footballOvertime: FootballOvertime;
+	footballOvertimePlayoffs: FootballOvertime;
 };
 
 type AlwaysWrap = (typeof ALWAYS_WRAP)[number];

@@ -122,6 +122,8 @@ const gameAttributesKeysSportSpecific = {
 		"pace",
 		"scrimmageTouchbackKickoff",
 		"twoPointConversions",
+		"footballOvertime",
+		"footballOvertimePlayoffs",
 	] as GameAttributeKey[],
 	hockey: [
 		"foulRateFactor",
@@ -345,6 +347,8 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	onsideRecoveryFactor: 1,
 	scrimmageTouchbackKickoff: 35,
 	twoPointConversions: true,
+	footballOvertime: "bothPossess",
+	footballOvertimePlayoffs: "bothPossess",
 
 	// These are only for ZGMH, but for TypeScript define them here
 	hitFactor: 1,

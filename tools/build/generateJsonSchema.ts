@@ -1527,6 +1527,12 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					twoPointConversions: {
 						type: "boolean",
 					},
+					footballOvertime: {
+						enum: ["suddenDeath", "exceptFg", "bothPossess"],
+					},
+					footballOvertimePlayoffs: {
+						enum: ["suddenDeath", "exceptFg", "bothPossess"],
+					},
 				},
 			},
 			games: {

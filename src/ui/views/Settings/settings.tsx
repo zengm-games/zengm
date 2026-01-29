@@ -2347,6 +2347,43 @@ export const settings: Setting[] = (
 
 			return setting;
 		}),
+		...(["footballOvertime", "footballOvertimePlayoffs"] as const).map(
+			(key) => {
+				const playoffs = key === "footballOvertimePlayoffs";
+
+				const setting: Setting = {
+					category: "Game Simulation",
+					key,
+					name: `Overtime Type ${playoffs ? " (Playoffs)" : ""}`,
+					type: "string",
+					values: [
+						{ key: "suddenDeath", value: "Sudden death" },
+						{
+							key: "exceptFg",
+							value: "Sudden death (except FG on first possession)",
+						},
+						{ key: "bothPossess", value: "Both teams must possess" },
+					],
+					descriptionLong: (
+						<>
+							<p>
+								By default, both teams are guaranteed a possession in overtime,
+								even if the first team with possession scores.
+							</p>
+							<p>
+								The other options are for overtime rules that have been used in
+								the past - either sudden death (if first team scores the game is
+								over) or sudden death with an exception for field goals, so the
+								second team gets a possession unless the first team scores a
+								touchdown.
+							</p>
+						</>
+					),
+				};
+
+				return setting;
+			},
+		),
 		...(["shootoutRounds", "shootoutRoundsPlayoffs"] as const).map((key) => {
 			const playoffs = key === "shootoutRoundsPlayoffs";
 			const overtimePeriods = isSport("baseball")

@@ -484,6 +484,8 @@ const EXHIBITION_GAME_SETTINGS = [
 	"neutralSite",
 	"scrimmageTouchbackKickoff",
 	"twoPointConversions",
+	"footballOvertime",
+	"footballOvertimePlayoffs",
 ] as const;
 
 const MOBILE_AD_BOTTOM_MARGIN = 52;

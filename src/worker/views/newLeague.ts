@@ -437,6 +437,14 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"twoPointConversions",
 		),
+		footballOvertime: unwrapGameAttribute(
+			defaultGameAttributes,
+			"footballOvertime",
+		),
+		footballOvertimePlayoffs: unwrapGameAttribute(
+			defaultGameAttributes,
+			"footballOvertimePlayoffs",
+		),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

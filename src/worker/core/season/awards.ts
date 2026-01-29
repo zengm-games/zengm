@@ -148,6 +148,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 				"defTckSolo",
 				"defTckAst",
 				"defTckLoss",
+				"totTD",
 			],
 			hockey: [
 				"keyStats",

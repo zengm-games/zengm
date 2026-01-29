@@ -396,6 +396,21 @@ const doAwards = async (conditions: Conditions) => {
 			stat: "ydsFromScrimmage",
 			minValue: 0,
 		},
+		{
+			name: "League Interceptions Leader",
+			stat: "defInt",
+			minValue: 0,
+		},
+		{
+			name: "League Sacks Leader",
+			stat: "defSk",
+			minValue: 0,
+		},
+		{
+			name: "League TD Leader",
+			stat: "totTD",
+			minValue: 0,
+		},
 	];
 	leagueLeaders(players, categories, awardsByPlayer);
 

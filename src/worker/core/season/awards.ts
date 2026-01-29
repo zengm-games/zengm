@@ -22,7 +22,6 @@ import type {
 import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball.ts";
 import season from "./index.ts";
 import addAward from "../player/addAward.ts";
-import { maxBy } from "../../../common/utils.ts";
 
 export type AwardsByPlayer = {
 	pid: number;
@@ -357,24 +356,32 @@ const leagueLeaders = (
 		helpers.quarterLengthFactor(); // To handle changes in number of games and playing time
 
 	for (const cat of categories) {
-		const p = maxBy(
-			players.filter((p2) => {
-				// In basketball, everything except gp is a per-game average, so we need to scale them by games played to check against minValue. In other sports, this whole check is unneccessary currently, because the stats are season totals not per game averages.
-				let playerValue;
-				if (!isSport("basketball")) {
-					playerValue = p2.currentStats[cat.stat];
-				} else {
-					playerValue = p2.currentStats[cat.stat] * p2.currentStats.gp;
-				}
-				return (
-					playerValue >= cat.minValue * factor ||
-					p2.currentStats.gp >= 0.85 * numGames
-				);
-			}),
-			(p) => p.currentStats[cat.stat],
-		);
+		let leaders = [];
+		let leaderValue = -Infinity;
+		for (const p of players) {
+			const actualValue = p.currentStats[cat.stat];
 
-		if (p) {
+			// In basketball, everything except gp is a per-game average, so we need to scale them by games played to check against minValue. In other sports, this whole check is unneccessary currently, because the stats are season totals not per game averages.
+			let playerValue;
+			if (!isSport("basketball")) {
+				playerValue = actualValue;
+			} else {
+				playerValue = actualValue * p.currentStats.gp;
+			}
+			if (
+				playerValue >= cat.minValue * factor ||
+				p.currentStats.gp >= 0.85 * numGames
+			) {
+				if (actualValue > leaderValue) {
+					leaders = [p];
+					leaderValue = actualValue;
+				} else if (actualValue === leaderValue) {
+					leaders.push(p);
+				}
+			}
+		}
+
+		for (const p of leaders) {
 			awardsByPlayer.push({
 				pid: p.pid,
 				tid: p.tid,

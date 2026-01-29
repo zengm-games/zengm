@@ -1,5 +1,4 @@
 fbgm now
-- leagueLeaders should handle ties
 - make tackling more important, currently it just assigns blame
   - also LB in general, since LB ovr is not used in composite ratings currently
   - make it affect forced fumbles

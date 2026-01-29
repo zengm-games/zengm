@@ -217,6 +217,7 @@ export type PlayByPlayEventInput =
 			offense: boolean;
 			numLeft: number;
 			t: TeamNum;
+			toStopClock: boolean;
 	  }
 	| {
 			type: "twoMinuteWarning";

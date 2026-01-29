@@ -420,7 +420,7 @@ export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
 	} else if (event.type === "timeout") {
 		text = `Timeout, ${event.offense ? "offense" : "defense"} (${
 			event.numLeft
-		} remaining)`;
+		} remaining)${event.toStopClock ? " to stop the cock" : ""}`;
 	} else if (event.type === "twoMinuteWarning") {
 		text = "Two minute warning";
 	} else if (event.type === "kneel") {

@@ -4,7 +4,6 @@ fbgm now
   - make it affect forced fumbles
 - re-calculate player ovr
 - re-calculate team ovr
-- in play-by-play, distinguish between timeout due to low play clock and timeout due to clock management https://discord.com/channels/290013534023057409/1416078039837839360/1418244324033958048
 
 customizable keyboard shortcuts
 - why
@@ -1010,6 +1009,7 @@ FBGM
 - drive chart weirdness for penalty overturning a play and having a loss of downs resulting in turnover on downs https://discord.com/channels/290013534023057409/1414344458194911243
 - better time management
   - offense shouldn't take timeout if it's just saving time for the other team, like after 3rd down in a tied game when they are about to punt
+  - at end of 2nd quarter, offense shouldn't take timeout just to punt when they could have let the clock run out. defense should take a timeout then though, to force a punt
 
 wrong team abbrev various places
 - functions for helping

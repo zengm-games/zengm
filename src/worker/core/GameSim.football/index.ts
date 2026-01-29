@@ -966,25 +966,35 @@ class GameSim extends GameSimBase {
 		if (clockAtEndOfPlay > 0 && !twoMinuteWarningHappening) {
 			// Timeouts - small chance at any time
 			if (Math.random() < 0.01) {
-				this.doTimeout(this.o);
+				this.doTimeout(this.o, false);
 			} else if (Math.random() < 0.003) {
-				this.doTimeout(this.d);
+				this.doTimeout(this.d, false);
 			}
 
 			// Timeouts - late in game when clock is running
 			if (this.kickoffAfterEndOfPeriod(quarter) && this.isClockRunning) {
 				const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
 
-				// No point in the 4th quarter of a blowout
-				if (diff < 24 || quarter < this.numPeriods) {
-					if (diff > 0) {
-						// If offense is winning, defense uses timeouts when near the end
-						if (this.clock < 2.5) {
-							this.doTimeout(this.d);
+				const finalPeriod = quarter >= this.numPeriods;
+				if (finalPeriod) {
+					// No point in the 4th quarter of a blowout
+					if (diff < 24) {
+						if (diff > 0) {
+							// If offense is winning, defense uses timeouts when near the end
+							if (this.clock < 2.5) {
+								this.doTimeout(this.d, true);
+							}
+						} else {
+							if (this.clock < 1.5) {
+								// If offense is losing or tied, offense uses timeouts when even nearer the end
+								this.doTimeout(this.o, true);
+							}
 						}
-					} else if (this.clock < 1.5) {
-						// If offense is losing or tied, offense uses timeouts when even nearer the end
-						this.doTimeout(this.o);
+					}
+				} else {
+					// Before halftime, less aggressive and don't care about score
+					if (this.clock < 1.5) {
+						this.doTimeout(this.o, true);
 					}
 				}
 			}
@@ -1278,7 +1288,7 @@ class GameSim extends GameSimBase {
 		this.updateTeamCompositeRatings();
 	}
 
-	doTimeout(t: TeamNum) {
+	doTimeout(t: TeamNum, toStopClock: boolean) {
 		if (this.timeouts[t] <= 0) {
 			return;
 		}
@@ -1292,6 +1302,7 @@ class GameSim extends GameSimBase {
 			offense: t === this.o,
 			numLeft: this.timeouts[t],
 			t,
+			toStopClock,
 		});
 	}
 

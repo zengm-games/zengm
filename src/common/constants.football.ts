@@ -73,7 +73,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	},
 	passRushing: {
 		ratings: ["hgt", "stre", "spd", "prs", "tck"],
-		weights: [1, 1, 0.5, 1, 0.1],
+		weights: [1, 1, 0.5, 1, 0.25],
 		skill: {
 			label: "PR",
 			cutoff: 0.63,
@@ -81,7 +81,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	},
 	runStopping: {
 		ratings: ["hgt", "stre", "spd", "rns", "tck"],
-		weights: [0.5, 1, 0.5, 1, 0.25],
+		weights: [0.5, 1, 0.5, 1, 0.75],
 		skill: {
 			label: "RS",
 		},

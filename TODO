@@ -1,13 +1,4 @@
 fbgm now
-- make tackling more important, currently it just assigns blame
-  - composite rating ranges from like 0.4 to 0.6, average is about 0.55
-    - for simplicity, use this rather than individual tackler rating
-  - make it affect
-    - forced fumbles
-    - yards per carry
-    - yards after catch
-- fix test
-- re-calculate player ovr
 - re-calculate team ovr
 
 customizable keyboard shortcuts

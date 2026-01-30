@@ -1,7 +1,6 @@
 import { assert, beforeAll, describe, test } from "vitest";
 import Play from "./Play.ts";
 import { genTwoTeams, initGameSim } from "./index.test.ts";
-import { PHASE } from "../../../common/index.ts";
 import { g } from "../../util/index.ts";
 
 beforeAll(async () => {
@@ -689,118 +688,130 @@ describe("overtime", () => {
 		return game;
 	};
 
-	test("touchdown on first possession -> over", async () => {
-		const game = await initOvertime();
-		game.overtimeState = "firstPossession";
-		game.currentPlay = new Play(game);
+	test("touchdown on first possession", async () => {
+		const types = [
+			["suddenDeath", "over"],
+			["exceptFg", "over"],
+			["bothPossess", "firstPossession"],
+		] as const;
+		for (const [footballOvertime, overtimeState] of types) {
+			g.setWithoutSavingToDB("footballOvertime", footballOvertime);
 
-		game.updatePlayersOnField("run");
-		const p = game.pickPlayer(game.o);
+			const game = await initOvertime();
+			game.overtimeState = "firstPossession";
+			game.currentPlay = new Play(game);
 
-		const play = game.currentPlay;
+			game.updatePlayersOnField("run");
+			const p = game.pickPlayer(game.o);
 
-		play.addEvent({
-			type: "rusTD",
-			p,
-		});
+			const play = game.currentPlay;
 
-		play.commit(false);
+			play.addEvent({
+				type: "rusTD",
+				p,
+			});
 
-		assert.deepEqual(game.overtimeState, "over");
+			play.commit(false);
+
+			assert.deepEqual(game.overtimeState, overtimeState);
+		}
 	});
 
-	test("touchdown on first possession -> not over in playoffs", async () => {
-		g.setWithoutSavingToDB("phase", PHASE.PLAYOFFS);
+	test("FG on first possession", async () => {
+		const types = [
+			["suddenDeath", "over"],
+			["exceptFg", "firstPossession"],
+			["bothPossess", "firstPossession"],
+		] as const;
+		for (const [footballOvertime, overtimeState] of types) {
+			g.setWithoutSavingToDB("footballOvertime", footballOvertime);
 
-		const game = await initOvertime();
-		game.overtimeState = "firstPossession";
-		game.currentPlay = new Play(game);
+			const game = await initOvertime();
+			game.overtimeState = "firstPossession";
+			game.currentPlay = new Play(game);
 
-		game.updatePlayersOnField("run");
-		const p = game.pickPlayer(game.o);
+			game.updatePlayersOnField("fieldGoal");
+			const p = game.pickPlayer(game.o);
 
-		const play = game.currentPlay;
+			const play = game.currentPlay;
 
-		play.addEvent({
-			type: "rusTD",
-			p,
-		});
+			play.addEvent({
+				type: "fg",
+				p,
+				distance: 30,
+				made: true,
+				late: false,
+			});
 
-		play.commit(false);
+			play.commit(false);
 
-		assert.deepEqual(game.overtimeState, "firstPossession");
-
-		// Reset everything
-		await genTwoTeams();
+			assert.deepEqual(game.overtimeState, overtimeState);
+		}
 	});
 
-	test("FG on first possession -> not over", async () => {
-		const game = await initOvertime();
-		game.overtimeState = "firstPossession";
-		game.currentPlay = new Play(game);
+	test("FG on second possession", async () => {
+		const types = [
+			["exceptFg", "over"],
+			["bothPossess", "over"],
+		] as const;
+		for (const [footballOvertime, overtimeState] of types) {
+			g.setWithoutSavingToDB("footballOvertime", footballOvertime);
 
-		game.updatePlayersOnField("fieldGoal");
-		const p = game.pickPlayer(game.o);
+			const game = await initOvertime();
+			game.overtimeState = "secondPossession";
+			game.currentPlay = new Play(game);
 
-		const play = game.currentPlay;
+			game.updatePlayersOnField("fieldGoal");
+			const p = game.pickPlayer(game.o);
 
-		play.addEvent({
-			type: "fg",
-			p,
-			distance: 30,
-			made: true,
-			late: false,
-		});
+			const play = game.currentPlay;
 
-		play.commit(false);
+			play.addEvent({
+				type: "fg",
+				p,
+				distance: 30,
+				made: true,
+				late: false,
+			});
 
-		assert.deepEqual(game.overtimeState, "firstPossession");
-	});
+			play.commit(false);
 
-	test("FG on second possession -> over", async () => {
-		const game = await initOvertime();
-		game.overtimeState = "secondPossession";
-		game.currentPlay = new Play(game);
-
-		game.updatePlayersOnField("fieldGoal");
-		const p = game.pickPlayer(game.o);
-
-		const play = game.currentPlay;
-
-		play.addEvent({
-			type: "fg",
-			p,
-			distance: 30,
-			made: true,
-			late: false,
-		});
-
-		play.commit(false);
-
-		assert.deepEqual(game.overtimeState, "over");
+			assert.deepEqual(game.overtimeState, overtimeState);
+		}
 	});
 
 	test("safety on first possession -> over", async () => {
-		const game = await initOvertime();
-		game.overtimeState = "firstPossession";
-		game.currentPlay = new Play(game);
+		const types = [
+			["suddenDeath", "over"],
+			["exceptFg", "over"],
+			["bothPossess", "over"],
+		] as const;
+		for (const [footballOvertime, overtimeState] of types) {
+			g.setWithoutSavingToDB("footballOvertime", footballOvertime);
 
-		game.updatePlayersOnField("run");
-		const p = game.pickPlayer(game.d);
+			const game = await initOvertime();
+			game.overtimeState = "firstPossession";
+			game.currentPlay = new Play(game);
 
-		const play = game.currentPlay;
+			game.updatePlayersOnField("run");
+			const p = game.pickPlayer(game.d);
 
-		play.addEvent({
-			type: "defSft",
-			p,
-		});
+			const play = game.currentPlay;
 
-		play.commit(false);
+			play.addEvent({
+				type: "defSft",
+				p,
+			});
 
-		assert.deepEqual(game.overtimeState, "over");
+			play.commit(false);
+
+			assert.deepEqual(game.overtimeState, overtimeState);
+		}
 	});
 
 	test("touchdown on first possession negated by penalty -> not over", async () => {
+		g.setWithoutSavingToDB("footballOvertime", "suddenDeath");
+
 		const game = await initOvertime();
 		game.overtimeState = "firstPossession";
 		game.currentPlay = new Play(game);

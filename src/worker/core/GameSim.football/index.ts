@@ -43,6 +43,9 @@ const FEWER_INJURIES_POS = new Set(["QB", "P", "K"]);
 // For some positions, filter out some players based on fatigue
 const FATIGUE_POS = new Set(["RB", "WR", "TE", "DL", "LB", "CB", "S"]);
 
+// Only apples to default ratings leagues
+const AVERAGE_TACKLING_COMPOSITE = 0.56;
+
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
  *
@@ -1182,6 +1185,14 @@ class GameSim extends GameSimBase {
 			weightsBonus: [1, 0.5],
 			valFunc: (p) => (p.ovrs.CB / 100 + p.compositeRating.passCoverage) / 2,
 		});
+		this.team[this.d].compositeRating.tackling = getCompositeFactor({
+			playersOnField: this.playersOnField[this.d],
+			positions: ["DL", "LB", "S"],
+			orderFunc: (p) => p.ovrs.LB,
+			weightsMain: [5, 4, 3, 2, 1],
+			weightsBonus: [],
+			valFunc: (p) => (p.ovrs.LB / 100 + p.compositeRating.tackling) / 2,
+		});
 	}
 
 	updatePlayersOnField(
@@ -1824,8 +1835,27 @@ class GameSim extends GameSimBase {
 	}
 
 	probFumble(p: PlayerGameSim) {
+		const { d, o } = this.currentPlay.state.current;
+		const offenseHasBall =
+			this.playersOnField[o].QB ||
+			this.playersOnField[o].RB ||
+			this.playersOnField[o].P ||
+			this.playersOnField[o].K;
+		let tacklingFactor;
+		if (!offenseHasBall) {
+			// Offense is on defense, after a turnover
+			tacklingFactor = 0.5;
+		} else {
+			tacklingFactor =
+				(this.team[d].compositeRating.tackling / AVERAGE_TACKLING_COMPOSITE) **
+				2;
+		}
+
 		return (
-			0.0125 * (1.5 - p.compositeRating.ballSecurity) * g.get("fumbleFactor")
+			0.0125 *
+			(1.5 - p.compositeRating.ballSecurity) *
+			g.get("fumbleFactor") *
+			tacklingFactor
 		);
 	}
 

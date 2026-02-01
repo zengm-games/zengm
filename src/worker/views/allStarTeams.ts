@@ -8,11 +8,20 @@ import type {
 	AllStarPlayer,
 	PlayerInjury,
 } from "../../common/types.ts";
-import { bySport, isSport, PHASE } from "../../common/index.ts";
-import { sortByPos } from "./roster.ts";
+import { bySport, isSport, PHASE, POSITIONS } from "../../common/index.ts";
 import { orderBy } from "../../common/utils.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { getPosByGpF } from "../core/season/doAwards.baseball.ts";
+
+const sortByPos = (p: {
+	bestPos: string;
+	ratings: {
+		ovr: number;
+	};
+}) => {
+	const ind = POSITIONS.indexOf(p.bestPos);
+	return (POSITIONS.length - ind) * 1000 + p.ratings.ovr;
+};
 
 const stats = bySport({
 	baseball: ["keyStats"],

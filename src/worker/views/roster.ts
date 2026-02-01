@@ -12,13 +12,13 @@ import { addMood } from "./freeAgents.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 
-export const sortByPos = (p: {
-	bestPos: string;
+const sortByPos = (p: {
 	ratings: {
 		ovr: number;
+		pos: string;
 	};
 }) => {
-	const ind = POSITIONS.indexOf(p.bestPos);
+	const ind = POSITIONS.indexOf(p.ratings.pos);
 	return (POSITIONS.length - ind) * 1000 + p.ratings.ovr;
 };
 

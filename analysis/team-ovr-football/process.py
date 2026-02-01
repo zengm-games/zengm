@@ -39,6 +39,7 @@ def get_cols():
     print(files)
 
     for file in files:
+        print(file)
         with open(file, "r", encoding='utf-8-sig') as read_file:
             data = json.load(read_file)
 
@@ -118,10 +119,11 @@ def get_cols():
     return cols
 
 cols = get_cols()
+print("done get_cols")
 
 dataset = pd.DataFrame(cols)
 
-reg = LinearRegression(normalize=True)
+reg = LinearRegression()
 fit_cols = ['QB1', 'RB1', 'TE1', 'WR1', 'WR2', 'WR3', 'OL1', 'OL2', 'OL3', 'OL4', 'OL5', 'CB1', 'CB2', 'S1', 'S2', 'LB1', 'LB2', 'DL1', 'DL2', 'DL3', 'DL4', 'K', 'P']
 reg.fit(dataset[fit_cols], dataset['mov'])
 dataset['mov_predicted'] = reg.predict(dataset[fit_cols])
@@ -129,9 +131,6 @@ dataset['mov_predicted'] = reg.predict(dataset[fit_cols])
 print('Intercept: \n', reg.intercept_)
 print('Coefficients: \n', reg.coef_)
 print('r2: ', r2_score(dataset['mov'], dataset['mov_predicted']))
-
-print(dataset)
-
 
 dataset.plot.hexbin(x='mov', y='mov_predicted', gridsize=20)
 # dataset.plot.scatter(x='mov', y='mov_predicted', alpha=0.2)

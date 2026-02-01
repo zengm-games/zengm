@@ -37,7 +37,7 @@ const componentText = (
 			case "rookieContract":
 				return "Eager to sign first non-rookie contract";
 			case "relatives":
-				return `Wants to play with his ${helpers.plural("relative", value / 2)}`;
+				return `Wants to play with ${helpers.pronoun(gender, "his")} ${helpers.plural("relative", value / 2)}`;
 		}
 	}
 

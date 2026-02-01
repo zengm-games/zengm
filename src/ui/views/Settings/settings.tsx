@@ -2849,7 +2849,7 @@ export const settings: Setting[] = (
 		{
 			category: "Game Simulation",
 			key: "twoPointConversions",
-			name: "Two Point Conversions",
+			name: "Two-Point Conversions",
 			type: "bool",
 		},
 		{

@@ -771,6 +771,7 @@ class GameSim extends GameSimBase {
 
 		// If a field goal will win it in overtime and odds of success are high, go for it
 		if (
+			quarter > this.numPeriods &&
 			(this.overtimeType === "suddenDeath" ||
 				this.overtimeState === "secondPossession" ||
 				this.overtimeState === "bothTeamsPossessed") &&

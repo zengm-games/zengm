@@ -473,7 +473,7 @@ class GameSim extends GameSimBase {
 
 	probPass() {
 		// Hack!! Basically, we want to see what kind of talent we have before picking if it's a run or pass play, so put the starter (minus fatigue) out there and compute these
-		this.updatePlayersOnField("starters");
+		this.updatePlayersOnField("startersFake");
 		this.updateTeamCompositeRatings();
 
 		const ptsDown = this.team[this.d].stat.pts - this.team[this.o].stat.pts;
@@ -1198,6 +1198,7 @@ class GameSim extends GameSimBase {
 	updatePlayersOnField(
 		playType:
 			| "starters"
+			| "startersFake"
 			| "run"
 			| "pass"
 			| "extraPoint"
@@ -1207,7 +1208,7 @@ class GameSim extends GameSimBase {
 	) {
 		let formation: Formation;
 
-		if (playType === "starters") {
+		if (playType === "starters" || playType === "startersFake") {
 			formation = formations.normal[0]!;
 		} else if (playType === "run" || playType === "pass") {
 			formation = random.choice(formations.normal);

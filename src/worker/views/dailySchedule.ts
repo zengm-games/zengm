@@ -125,7 +125,6 @@ const updateDailySchedule = async (
 								imgURL: teamSeason.imgURL,
 								imgURLSmall: teamSeason.imgURLSmall,
 							};
-							console.log(t.branding);
 						}
 					}
 				}

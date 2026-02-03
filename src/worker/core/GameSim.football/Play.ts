@@ -865,20 +865,29 @@ class Play {
 			}
 		}
 
-		if (event.type.endsWith("TD")) {
-			if (
-				(state.overtimeState === "initialKickoff" ||
-					state.overtimeState === "firstPossession") &&
-				state.overtimeType !== "bothPossess"
-			) {
-				state.overtimeState = "over";
-			}
-		} else if (event.type === "defSft") {
-			if (
-				state.overtimeState === "initialKickoff" ||
-				state.overtimeState === "firstPossession"
-			) {
-				state.overtimeState = "over";
+		// Check for plays that should end the game immediately in overtime, without waiting for possession change
+		if (state.overtimeState !== undefined) {
+			if (event.type.endsWith("TD")) {
+				if (
+					(state.overtimeState === "initialKickoff" ||
+						state.overtimeState === "firstPossession") &&
+					state.overtimeType !== "bothPossess"
+				) {
+					state.overtimeState = "over";
+				}
+			} else if (event.type === "defSft") {
+				if (
+					state.overtimeState === "initialKickoff" ||
+					state.overtimeState === "firstPossession"
+				) {
+					state.overtimeState = "over";
+				}
+			} else if ((event.type === "fg" || event.type === "xp") && !event.made) {
+				// Missed FG/XP while losing
+				const losing = state.pts[state.o] < state.pts[state.d];
+				if (losing) {
+					state.overtimeState = "over";
+				}
 			}
 		}
 

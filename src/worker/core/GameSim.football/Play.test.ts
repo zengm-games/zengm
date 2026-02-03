@@ -683,7 +683,7 @@ describe("overtime", () => {
 		game.o = 0;
 		game.d = 1;
 		game.team[0].stat.ptsQtrs = [0, 0, 0, 0, 0];
-		game.team[0].stat.ptsQtrs = [0, 0, 0, 0, 0];
+		game.team[1].stat.ptsQtrs = [0, 0, 0, 0, 0];
 
 		return game;
 	};
@@ -840,6 +840,49 @@ describe("overtime", () => {
 		play.commit(false);
 
 		assert.deepEqual(game.overtimeState, "firstPossession");
+	});
+
+	test("missed XP and losing -> over", async () => {
+		const scenarios = [
+			{
+				made: true,
+				overtimeState: "bothTeamsPossessed",
+			},
+			{
+				made: false,
+				overtimeState: "over",
+			},
+		];
+
+		for (const { made, overtimeState } of scenarios) {
+			g.setWithoutSavingToDB("footballOvertime", "bothPossess");
+
+			const game = await initOvertime();
+			game.team[0].stat.pts = 6;
+			game.team[1].stat.pts = 7;
+			game.overtimeState = "bothTeamsPossessed";
+			game.currentPlay = new Play(game);
+
+			game.updatePlayersOnField("run");
+			const p = game.pickPlayer(game.o);
+
+			const play = game.currentPlay;
+
+			play.addEvent({
+				type: "xp",
+				p,
+				distance: 35,
+				made,
+			});
+
+			play.commit(false);
+
+			assert.deepEqual(
+				game.overtimeState,
+				overtimeState,
+				`${made ? "made" : "missed"} XP`,
+			);
+		}
 	});
 });
 

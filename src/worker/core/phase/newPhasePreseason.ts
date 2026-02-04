@@ -30,7 +30,7 @@ import type {
 	RealTeamInfo,
 	TeamSeason,
 } from "../../../common/types.ts";
-import { groupBy, maxBy } from "../../../common/utils.ts";
+import { groupBy, groupByUnique, maxBy } from "../../../common/utils.ts";
 
 const newPhasePreseason = async (
 	conditions: Conditions,
@@ -54,6 +54,7 @@ const newPhasePreseason = async (
 	]);
 
 	const teams = await idb.cache.teams.getAll();
+	const teamsByTid = groupByUnique(teams, "tid");
 
 	const realTeamInfo = (await idb.meta.get("attributes", "realTeamInfo")) as
 		| RealTeamInfo
@@ -403,7 +404,16 @@ const newPhasePreseason = async (
 				p.tid = PLAYER.FREE_AGENT;
 			} else {
 				const playerActiveSeasons = await realRosters.getPlayerActiveSeasons();
-				p.tid = playerActiveSeasons[p.srID]?.[newSeason] ?? PLAYER.FREE_AGENT;
+				let tid = playerActiveSeasons[p.srID]?.[newSeason];
+				if (tid !== undefined) {
+					const newTeam = teamsByTid[tid];
+					if (!newTeam || newTeam.disabled) {
+						// When editing league, a team that should exist could be deleted or disabled. In which case it makes no sense to use forceHistoricalRosters probably, but we still shouldn't assign to an invalid tid because that causes many other errors.
+						tid = undefined;
+					}
+				}
+
+				p.tid = tid ?? PLAYER.FREE_AGENT;
 
 				if (p.tid >= 0 && p.contract.exp < newSeason) {
 					p.contract = {

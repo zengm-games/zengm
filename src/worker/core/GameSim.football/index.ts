@@ -1182,8 +1182,8 @@ class GameSim extends GameSimBase {
 			playersOnField: this.playersOnField[this.d],
 			positions: ["CB", "S", "LB"],
 			orderFunc: (p) => p.ovrs.CB,
-			weightsMain: [5, 4, 3, 2],
-			weightsBonus: [1, 0.5],
+			weightsMain: [5, 4, 3, 2, 1, 1],
+			weightsBonus: [0.5, 0.5],
 			valFunc: (p) => (p.ovrs.CB / 100 + p.compositeRating.passCoverage) / 2,
 		});
 		this.team[this.d].compositeRating.tackling = getCompositeFactor({

@@ -88,8 +88,6 @@
 	"devDependencies": {
 		"@babel/core": "7.29.0",
 		"@babel/plugin-syntax-typescript": "7.28.6",
-		"@babel/preset-react": "7.28.5",
-		"@babel/preset-typescript": "7.28.5",
 		"@nkzw/eslint-config": "3.3.0",
 		"@restart/ui": "1.9.4",
 		"@rolldown/pluginutils": "1.0.0-rc.2",

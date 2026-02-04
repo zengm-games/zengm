@@ -123,7 +123,7 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 			logEvent(
 				{
 					type: "error",
-					text: `Critical error during phase change. <a href="https://${WEBSITE_ROOT}/manual/debugging/"><b>Read this to learn about debugging.</b></a>`,
+					text: `<p>Critical error during phase change:</p><p>${error.message}</p><a href="https://${WEBSITE_ROOT}/manual/debugging/"><b>Read this to learn about debugging.</b></a>`,
 					saveToDb: false,
 					persistent: true,
 				},

@@ -1,39 +1,13 @@
-let lid;
-async function simSeason() {
-	await bbgm.toUI("realtimeUpdate", [[], "/"]);
-	await bbgm.league.close(true);
-	if (lid !== undefined) {
-		await bbgm.league.remove(lid);
-	}
-
-	lid = await bbgm.league.create({
-		name: "League Name",
-		tid: 0,
-		leagueFile: {
-			startingSeason: 2020,
-		},
-	});
-
-	await bbgm.phase.newPhase(bbgm.PHASE.REGULAR_SEASON);
-	await bbgm.game.play(1000); // Regular season
-	await bbgm.game.play(100); // Playoffs
-
-	const playoffSeries = await bbgm.idb.cache.playoffSeries.get(bbgm.g.season);
-	return playoffSeries.series.map((round) =>
+const playoffSeries = await bbgm.idb.getCopies.playoffSeries();
+const seedWinsByRound = [{}, {}, {}, {}];
+for (const row of playoffSeries) {
+	const result = row.series.map((round) =>
 		round.map((matchup) =>
-			matchup.home.won > matchup.away.won
-				? matchup.home.seed
-				: matchup.away.seed,
+			matchup.away && matchup.away.won > matchup.home.won
+				? matchup.away.seed
+				: matchup.home.seed,
 		),
 	);
-}
-
-const N = 100;
-
-const seedWinsByRound = [{}, {}, {}, {}];
-for (let i = 0; i < N; i++) {
-	const result = await simSeason();
-	console.log(result);
 	for (let i = 0; i < result.length; i++) {
 		const round = result[i];
 		for (const seed of round) {
@@ -44,5 +18,7 @@ for (let i = 0; i < N; i++) {
 			}
 		}
 	}
-	console.log(i + 1, seedWinsByRound);
+}
+for (const [round, info] of Object.entries(seedWinsByRound)) {
+	console.log(`Round ${Number.parseInt(round) + 1}:`, info);
 }

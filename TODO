@@ -1,3 +1,15 @@
+trade player back to original team with 0 GP in between - now there are duplicate stats rows https://discord.com/channels/290013534023057409/1468414393116004442/1468414393116004442
+- don't call addStatsRow until saving player stats?
+  - but stats row is where jersey number is stored, does that matter?
+    - solution 1: be more careful when calling addStatsRow
+      - delete previous row with no GP
+      - recompute statsTids
+      - add new stats row only if necessary, otherwise use previous one
+    - solution 2:
+      - factor out jerseyNumber logic from addStatsRow, store in p.jerseyNumber rather than stats immediately. then any time fetching current jersey number, be aware there may be no stats row (complicated)
+    - solution 3: just never store jersey number in stats row, come up with some other place to store it
+      - could support saving multiple numbers that were actually used this year - track if number is used yet, and if so then append rather than overwrite
+
 FBGM option to disable FG/XP/punt
 - https://app.fastmail.com/mail/Archive/AOc4VisnZIYZ.StqyBxW1iGns?u=433e4054
 
@@ -1008,6 +1020,7 @@ FBGM
   - breakaway runs, based on speed, similar to passes https://discord.com/channels/290013534023057409/569726303926878219/1467871533929070612
   - broken tackles leading to bigger chunks https://discord.com/channels/290013534023057409/569726303926878219/1467871533929070612
 - nerf yardage of RB catches https://discord.com/channels/290013534023057409/569726303926878219/1467870075309785219
+- XP/2P decision should depend on probability of making XP, in the case where the kicker is really bad or the league settings make XP hard https://discord.com/channels/@me/778760871911751700/1469061366810804448
 
 wrong team abbrev various places
 - functions for helping

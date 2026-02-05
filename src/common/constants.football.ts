@@ -81,7 +81,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	},
 	runStopping: {
 		ratings: ["hgt", "stre", "spd", "rns", "tck"],
-		weights: [0.5, 1, 0.5, 1, 0.75],
+		weights: [0.5, 1, 0.5, 1, 0.5],
 		skill: {
 			label: "RS",
 		},

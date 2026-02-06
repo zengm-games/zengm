@@ -54,6 +54,7 @@ calcuate bestPos in playersPlus, rather than in processPlayersHallOfFame
     - can all of processPlayersHallOfFame go in playersPlus?
   - anywhere the extraStats variable is used, since that was just for baseball processPlayersHallOfFame
   - in playersByPos in allStar/create
+  - PlayerStats page https://discord.com/channels/290013534023057409/944392892905037885/1468895828323205287
 
 players constantly being signed and released https://discord.com/channels/@me/662077709836484618/1461143613776986163
 - happens up until team hits the salary cap

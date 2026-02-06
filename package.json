@@ -86,13 +86,13 @@
 		"zustand": "5.0.11"
 	},
 	"devDependencies": {
-		"@babel/core": "7.29.0",
-		"@babel/plugin-syntax-typescript": "7.28.6",
+		"@babel/core": "8.0.0-rc.1",
+		"@babel/plugin-syntax-jsx": "8.0.0-rc.1",
+		"@babel/plugin-syntax-typescript": "8.0.0-rc.1",
 		"@nkzw/eslint-config": "3.3.0",
 		"@restart/ui": "1.9.4",
 		"@rolldown/pluginutils": "1.0.0-rc.2",
 		"@rollup/plugin-terser": "0.4.4",
-		"@types/babel__core": "7.20.5",
 		"@types/d3-dsv": "3.0.7",
 		"@types/d3-scale": "4.0.9",
 		"@types/gtag.js": "0.0.20",

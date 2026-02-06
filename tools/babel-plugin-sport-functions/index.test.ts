@@ -1,13 +1,15 @@
 import { assert, describe, test } from "vitest";
-import { transform } from "@babel/core";
-import { babelPluginSportFunctions } from "./index.ts";
+import { transformSync } from "@babel/core";
+import { babelPluginSportFunctionsFactory } from "./index.ts";
+
+const babelPluginSportFunctions =
+	babelPluginSportFunctionsFactory("basketball");
 
 const compare = (input: string, output: string) => {
-	const compiled = transform(input, {
+	const compiled = transformSync(input, {
 		babelrc: false,
 		configFile: false,
-		filename: "test.js",
-		plugins: [[babelPluginSportFunctions, { sport: "basketball" }]],
+		plugins: [babelPluginSportFunctions],
 	})!.code;
 	assert.strictEqual(compiled, output);
 };

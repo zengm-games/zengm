@@ -1,10 +1,8 @@
 import fs from "node:fs/promises";
-import babel from "@babel/core";
-// @ts-expect-error
-import babelPluginSyntaxTypescript from "@babel/plugin-syntax-typescript";
+import { transformAsync } from "@babel/core";
 import { and, code, include, moduleType, or } from "@rolldown/pluginutils";
-import type { RolldownPlugin, TransformResult } from "rolldown";
-import { babelPluginSportFunctions } from "../../babel-plugin-sport-functions/index.ts";
+import type { RolldownPlugin, SourceMapInput, TransformResult } from "rolldown";
+import { babelPluginSportFunctionsFactory } from "../../babel-plugin-sport-functions/index.ts";
 import type { Sport } from "../getSport.ts";
 
 // Use babel to run babel-plugin-sport-functions. This is needed even in dev mode because the way bySport is defined, the sport-specific code will run if it's present, which can produce errors. It's not actually needed for isSport in dev mode.
@@ -19,6 +17,8 @@ export const sportFunctions = (
 			result: TransformResult;
 		}
 	> = {};
+
+	const babelPluginSportFunctions = babelPluginSportFunctionsFactory(sport);
 
 	return {
 		name: "sport-functions",
@@ -41,21 +41,22 @@ export const sportFunctions = (
 					}
 				}
 
-				const isTSX = moduleType === "tsx";
+				const isTsx = moduleType === "tsx";
 
-				const babelResult = await babel.transformAsync(code, {
+				const babelResult = await transformAsync(code, {
 					babelrc: false,
 					configFile: false,
 					sourceMaps: true,
 					plugins: [
-						[babelPluginSyntaxTypescript, { isTSX }],
-						[babelPluginSportFunctions, { sport }],
+						"@babel/plugin-syntax-typescript",
+						...(isTsx ? ["@babel/plugin-syntax-jsx"] : []),
+						babelPluginSportFunctions,
 					],
 				});
 
 				const result = {
 					code: babelResult!.code!,
-					map: babelResult!.map,
+					map: babelResult!.map as SourceMapInput,
 				};
 
 				if (nodeEnv === "development") {

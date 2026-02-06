@@ -310,7 +310,7 @@ const getRealFinalsMvp = async (
 
 const SKILL_POSITIONS = new Set(["QB", "RB", "WR", "TE"]);
 export const mvpScore = (p: PlayerFiltered) => {
-	const posMultiplier = SKILL_POSITIONS.has(p.pos) ? 1.2 : 1;
+	const posMultiplier = SKILL_POSITIONS.has(p.pos) ? 1.4 : 1;
 	return posMultiplier * p.currentStats.av;
 };
 

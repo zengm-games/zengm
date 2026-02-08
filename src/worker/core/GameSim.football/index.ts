@@ -801,7 +801,8 @@ class GameSim extends GameSimBase {
 					(() => {
 						// In overtime, if tied and a field goal would win, try it
 						if (
-							(this.overtimeType === "suddenDeath" ||
+							((quarter > this.numPeriods &&
+								this.overtimeType === "suddenDeath") ||
 								this.overtimeState !== "firstPossession") &&
 							ptsDown === 0 &&
 							probMadeFieldGoal >= 0.7
@@ -1055,7 +1056,8 @@ class GameSim extends GameSimBase {
 
 		if (
 			this.team[0].stat.pts !== this.team[1].stat.pts &&
-			(this.overtimeType === "suddenDeath" ||
+			((this.overtimeState !== undefined &&
+				this.overtimeType === "suddenDeath") ||
 				(this.overtimeState === "bothTeamsPossessed" &&
 					(!this.awaitingAfterTouchdown ||
 						Math.abs(this.team[0].stat.pts - this.team[1].stat.pts) > 2)))

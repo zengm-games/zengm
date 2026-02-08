@@ -898,7 +898,8 @@ class Play {
 
 			if (
 				state.overtimeState === "secondPossession" ||
-				state.overtimeType === "suddenDeath"
+				(state.overtimeState !== undefined &&
+					state.overtimeType === "suddenDeath")
 			) {
 				const t2 = t === 0 ? 1 : 0;
 

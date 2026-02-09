@@ -1,5 +1,3 @@
-Add position to Yearly Leaders and Progressive Leaders, at least in some sports, similar to normal Leaders
-
 trade player back to original team with 0 GP in between - now there are duplicate stats rows https://discord.com/channels/290013534023057409/1468414393116004442/1468414393116004442
 - don't call addStatsRow until saving player stats?
   - but stats row is where jersey number is stored, does that matter?
@@ -673,7 +671,11 @@ fuite
 use team ovr in updateStrategies https://old.reddit.com/r/nba/comments/1estlxk/basketball_gm_rnba_post_2024_edition/lielvo3/?context=3
 - maybe top X% guaranteed to be contending, bottom X% guaranteed to not be?
 
-in FBGM, teams sometimes take timeout right after the kickoff, before 1st and 10 even shows up https://discord.com/channels/290013534023057409/290015591216054273/1274484873167507488
+FBGM timeouts
+- don't take timeouts after some plays
+  -in FBGM, teams sometimes take timeout right after the kickoff, before 1st and 10 even shows up https://discord.com/channels/290013534023057409/290015591216054273/1274484873167507488
+  - also right before kickoff, such as after missed XP https://discord.com/channels/290013534023057409/1469165154624081951/1469165154624081951
+- timeout in last 2 minutes when injury stops clock
 
 Can processPlayersHallOfFame use gpF for baseball? spread season's WAR around by that, if it's available? https://discord.com/channels/290013534023057409/944392892905037885/1272548695459631210
 

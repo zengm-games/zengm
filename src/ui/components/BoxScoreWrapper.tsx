@@ -20,6 +20,7 @@ import getWinner from "../../common/getWinner.ts";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import Note from "../views/Player/Note.tsx";
 import TeamLogoInline from "./TeamLogoInline.tsx";
+import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts.ts";
 
 const TeamNameLink = ({
 	children,
@@ -1099,47 +1100,35 @@ const BoxScoreWrapper = ({
 		forceRowUpdate = true;
 	}
 
-	const handleKeydown = useCallback(
-		(e: KeyboardEvent) => {
-			if (showNextPrev) {
-				if (e.altKey || e.ctrlKey || e.shiftKey || e.isComposing || e.metaKey) {
-					return;
-				}
+	useKeyboardShortcuts(
+		"boxScore",
+		useCallback(
+			(key) => {
+				if (showNextPrev) {
+					let gid;
 
-				if (e.keyCode === 37 && boxScore && prevGid !== undefined) {
-					// prev
-					realtimeUpdate(
-						[],
-						helpers.leagueUrl([
-							"game_log",
-							`${abbrev}_${tid}`,
-							boxScore.season,
-							prevGid,
-						]),
-					);
-				} else if (e.keyCode === 39 && boxScore && nextGid !== undefined) {
-					// next
-					realtimeUpdate(
-						[],
-						helpers.leagueUrl([
-							"game_log",
-							`${abbrev}_${tid}`,
-							boxScore.season,
-							nextGid,
-						]),
-					);
+					if (key === "previous" && prevGid !== undefined) {
+						gid = prevGid;
+					} else if (key === "next" && nextGid !== undefined) {
+						gid = nextGid;
+					}
+
+					if (gid !== undefined) {
+						realtimeUpdate(
+							[],
+							helpers.leagueUrl([
+								"game_log",
+								`${abbrev}_${tid}`,
+								boxScore.season,
+								gid,
+							]),
+						);
+					}
 				}
-			}
-		},
-		[abbrev, boxScore, nextGid, prevGid, showNextPrev, tid],
+			},
+			[abbrev, boxScore.season, nextGid, prevGid, showNextPrev, tid],
+		),
 	);
-
-	useEffect(() => {
-		document.addEventListener("keydown", handleKeydown);
-		return () => {
-			document.removeEventListener("keydown", handleKeydown);
-		};
-	}, [handleKeydown]);
 
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll

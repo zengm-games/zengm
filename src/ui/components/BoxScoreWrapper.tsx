@@ -1102,6 +1102,7 @@ const BoxScoreWrapper = ({
 
 	useKeyboardShortcuts(
 		"boxScore",
+		undefined,
 		useCallback(
 			(key) => {
 				if (showNextPrev) {

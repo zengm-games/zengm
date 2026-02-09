@@ -30,6 +30,7 @@ import { getText, makeAnchorProps } from "../SideBar.tsx";
 import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import Modal from "../Modal.tsx";
 import { normalizeIntl } from "../../../common/normalizeIntl.ts";
+import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts.ts";
 
 const TWO_MONTHS_IN_MILLISECONDS = 2 * 30 * 24 * 60 * 60 * 1000;
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
@@ -45,26 +46,19 @@ const saveLastUsed = (init?: boolean) => {
 	safeLocalStorage.setItem("commandPaletteLastUsed", String(now));
 };
 
+const KEYBOARD_SHORTCUT_KEYS_OPEN = ["open"] as const;
+
 const useCommandPalette = () => {
 	const [show, setShow] = useState(false);
 
-	useEffect(() => {
-		const handleKeydown = (event: KeyboardEvent) => {
-			if (event.altKey || event.shiftKey || event.isComposing) {
-				return;
-			}
-
-			if (event.code === "KeyK" && (event.ctrlKey || event.metaKey)) {
-				event.preventDefault();
-				setShow((current) => !current);
-			}
-		};
-
-		document.addEventListener("keydown", handleKeydown);
-		return () => {
-			document.removeEventListener("keydown", handleKeydown);
-		};
-	}, []);
+	useKeyboardShortcuts(
+		"commandPallete",
+		KEYBOARD_SHORTCUT_KEYS_OPEN,
+		useCallback((key, event) => {
+			event.preventDefault();
+			setShow((current) => !current);
+		}, []),
+	);
 
 	const onHide = useCallback(() => {
 		setShow(false);
@@ -740,7 +734,7 @@ const ModeText = ({ inLeague }: { inLeague: boolean }) => {
 	);
 };
 
-const ComandPalette = ({
+const CommandPalette = ({
 	show,
 	onHide,
 }: {
@@ -993,7 +987,7 @@ const ComandPalette = ({
 };
 
 // Wrapper so useEffect stuff in CommandPalette does not run until it shows
-const ComandPaletteWrapper = () => {
+const CommandPaletteWrapper = () => {
 	const { show, onHide } = useCommandPalette();
 
 	useEffect(() => {
@@ -1027,10 +1021,10 @@ const ComandPaletteWrapper = () => {
 	}, []);
 
 	if (show) {
-		return <ComandPalette show={show} onHide={onHide} />;
+		return <CommandPalette show={show} onHide={onHide} />;
 	}
 
 	return null;
 };
 
-export default ComandPaletteWrapper;
+export default CommandPaletteWrapper;

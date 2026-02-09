@@ -1,4 +1,7 @@
 import { useEffect } from "react";
+import helpers from "../util/helpers.ts";
+
+const IS_APPLE = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
 
 type KeyboardShortcut = { name: string } & Pick<
 	KeyboardEvent,
@@ -24,9 +27,18 @@ const keyboardShortcuts = {
 			code: "ArrowRight",
 		},
 	},
-	"Play menue": {},
-	"Play/pause/next": {},
-	"Command Palette": {},
+	playMenu: {},
+	playPauseNext: {},
+	commandPallete: {
+		open: {
+			name: "Open command pallete",
+			altKey: false,
+			shiftKey: false,
+			ctrlKey: !IS_APPLE,
+			metaKey: IS_APPLE,
+			code: "KeyK",
+		},
+	},
 } satisfies Record<string, Record<string, KeyboardShortcut>>;
 
 type KeyboardShortcuts = typeof keyboardShortcuts;
@@ -35,7 +47,8 @@ type KeyboardShortcutCategories = keyof KeyboardShortcuts;
 
 export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 	category: T,
-	callback: (key: keyof KeyboardShortcuts[T]) => void,
+	keys: ReadonlyArray<keyof KeyboardShortcuts[T]> | undefined,
+	callback: (key: keyof KeyboardShortcuts[T], event: KeyboardEvent) => void,
 ) => {
 	return useEffect(() => {
 		const handleKeydown = (event: KeyboardEvent) => {
@@ -43,9 +56,11 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 				return;
 			}
 
-			for (const [key, shortcut] of Object.entries(
-				keyboardShortcuts[category],
-			)) {
+			const actualKeys = keys ?? helpers.keys(keyboardShortcuts[category]);
+			const shortcuts = keyboardShortcuts[category];
+
+			for (const key of actualKeys) {
+				const shortcut = shortcuts[key] as KeyboardShortcut;
 				if (
 					event.altKey === shortcut.altKey &&
 					event.ctrlKey === shortcut.ctrlKey &&
@@ -53,7 +68,7 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 					event.shiftKey === shortcut.shiftKey &&
 					event.code === shortcut.code
 				) {
-					callback(key as any);
+					callback(key as any, event);
 					break;
 				}
 			}
@@ -63,5 +78,5 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 		return () => {
 			document.removeEventListener("keydown", handleKeydown);
 		};
-	}, [category, callback]);
+	}, [callback, category, keys]);
 };

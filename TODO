@@ -32,6 +32,8 @@ customizable keyboard shortcuts
     - collision? maybe show in UI highlighted in red
 - in-game UI
   - need to actually render shortcut
+    - ctrl+k in event message
+    - how to render arbitrary "code" like KeyK or ArrowLeft to string
   - mac vs pc
 
 positions dropdown filter in table, rather than free text https://old.reddit.com/r/Football_GM/comments/1qocv9w/searching_for_player_position_on_free_agents/

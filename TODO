@@ -20,6 +20,7 @@ customizable keyboard shortcuts
 - look for "keydown" events
   - BoxScoreWrapper
   - PlayMenu
+    - use cmd+option on mac rather than option
   - PlayPauseNext
     - where is this used?
   - CommandPalette

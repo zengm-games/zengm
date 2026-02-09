@@ -5,7 +5,7 @@ const IS_APPLE = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
 
 type KeyboardShortcut = { name: string } & Pick<
 	KeyboardEvent,
-	"altKey" | "ctrlKey" | "metaKey" | "shiftKey" | "code"
+	"altKey" | "ctrlKey" | "metaKey" | "shiftKey" | "key"
 >;
 
 const keyboardShortcuts = {
@@ -16,7 +16,7 @@ const keyboardShortcuts = {
 			shiftKey: false,
 			ctrlKey: false,
 			metaKey: false,
-			code: "ArrowLeft",
+			key: "ArrowLeft",
 		},
 		next: {
 			name: "View next game",
@@ -24,7 +24,7 @@ const keyboardShortcuts = {
 			shiftKey: false,
 			ctrlKey: false,
 			metaKey: false,
-			code: "ArrowRight",
+			key: "ArrowRight",
 		},
 	},
 	playMenu: {},
@@ -36,7 +36,7 @@ const keyboardShortcuts = {
 			shiftKey: false,
 			ctrlKey: !IS_APPLE,
 			metaKey: IS_APPLE,
-			code: "KeyK",
+			key: "k",
 		},
 	},
 } satisfies Record<string, Record<string, KeyboardShortcut>>;
@@ -45,10 +45,56 @@ type KeyboardShortcuts = typeof keyboardShortcuts;
 
 type KeyboardShortcutCategories = keyof KeyboardShortcuts;
 
+const normalizeKey = (key: string) => {
+	// Ignore pure modifiers
+	if (
+		key === "Shift" ||
+		key === "Control" ||
+		key === "Alt" ||
+		key === "Meta" ||
+		key === "CapsLock" ||
+		key === "Fn"
+	) {
+		return;
+	}
+
+	// Dead keys (macOS / intl layouts)
+	if (key === "Dead") {
+		return;
+	}
+
+	// Legacy / cross-browser normalization
+	if (key === "Esc") {
+		return "Escape";
+	}
+	if (key === "Spacebar") {
+		return " ";
+	}
+	if (key === "Left") {
+		return "ArrowLeft";
+	}
+	if (key === "Right") {
+		return "ArrowRight";
+	}
+	if (key === "Up") {
+		return "ArrowUp";
+	}
+	if (key === "Down") {
+		return "ArrowDown";
+	}
+
+	// Normalize printable characters
+	if (key.length === 1) {
+		return key.toLowerCase();
+	}
+
+	return key;
+};
+
 export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 	category: T,
-	keys: ReadonlyArray<keyof KeyboardShortcuts[T]> | undefined,
-	callback: (key: keyof KeyboardShortcuts[T], event: KeyboardEvent) => void,
+	ids: ReadonlyArray<keyof KeyboardShortcuts[T]> | undefined,
+	callback: (id: keyof KeyboardShortcuts[T], event: KeyboardEvent) => void,
 ) => {
 	return useEffect(() => {
 		const handleKeydown = (event: KeyboardEvent) => {
@@ -56,19 +102,21 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 				return;
 			}
 
-			const actualKeys = keys ?? helpers.keys(keyboardShortcuts[category]);
+			const actualIds = ids ?? helpers.keys(keyboardShortcuts[category]);
 			const shortcuts = keyboardShortcuts[category];
 
-			for (const key of actualKeys) {
-				const shortcut = shortcuts[key] as KeyboardShortcut;
+			const eventKey = normalizeKey(event.key);
+
+			for (const id of actualIds) {
+				const shortcut = shortcuts[id] as KeyboardShortcut;
 				if (
 					event.altKey === shortcut.altKey &&
 					event.ctrlKey === shortcut.ctrlKey &&
 					event.metaKey === shortcut.metaKey &&
 					event.shiftKey === shortcut.shiftKey &&
-					event.code === shortcut.code
+					eventKey === shortcut.key
 				) {
-					callback(key as any, event);
+					callback(id as any, event);
 					break;
 				}
 			}
@@ -78,5 +126,5 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 		return () => {
 			document.removeEventListener("keydown", handleKeydown);
 		};
-	}, [callback, category, keys]);
+	}, [callback, category, ids]);
 };

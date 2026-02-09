@@ -1104,13 +1104,13 @@ const BoxScoreWrapper = ({
 		"boxScore",
 		undefined,
 		useCallback(
-			(key) => {
+			(id) => {
 				if (showNextPrev) {
 					let gid;
 
-					if (key === "previous" && prevGid !== undefined) {
+					if (id === "previous" && prevGid !== undefined) {
 						gid = prevGid;
-					} else if (key === "next" && nextGid !== undefined) {
+					} else if (id === "next" && nextGid !== undefined) {
 						gid = nextGid;
 					}
 

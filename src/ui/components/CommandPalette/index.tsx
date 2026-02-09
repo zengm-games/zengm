@@ -47,6 +47,7 @@ const saveLastUsed = (init?: boolean) => {
 };
 
 const KEYBOARD_SHORTCUT_KEYS_OPEN = ["open"] as const;
+const KEYBOARD_SHORTCUT_KEYS_OTHER = ["up", "down"] as const;
 
 const useCommandPalette = () => {
 	const [show, setShow] = useState(false);
@@ -54,7 +55,7 @@ const useCommandPalette = () => {
 	useKeyboardShortcuts(
 		"commandPallete",
 		KEYBOARD_SHORTCUT_KEYS_OPEN,
-		useCallback((key, event) => {
+		useCallback((id, event) => {
 			event.preventDefault();
 			setShow((current) => !current);
 		}, []),
@@ -823,54 +824,44 @@ const CommandPalette = ({
 		}
 	}, [show]);
 
-	useEffect(() => {
-		if (!show) {
-			return;
-		}
+	useKeyboardShortcuts(
+		"commandPallete",
+		KEYBOARD_SHORTCUT_KEYS_OTHER,
+		useCallback(
+			(id) => {
+				if (!show) {
+					return;
+				}
 
-		const handleKeydown = (event: KeyboardEvent) => {
-			if (
-				event.altKey ||
-				event.ctrlKey ||
-				event.metaKey ||
-				event.shiftKey ||
-				event.isComposing
-			) {
-				return;
-			}
+				if (id === "up") {
+					setActiveIndex((index) => {
+						if (index === undefined) {
+							return 0;
+						}
 
-			if (event.code === "ArrowDown") {
-				setActiveIndex((index) => {
-					if (index === undefined) {
-						return 0;
-					}
+						if (index - 1 < 0) {
+							return count - 1;
+						}
 
-					if (index + 1 >= count) {
-						return 0;
-					}
+						return index - 1;
+					});
+				} else if (id === "down") {
+					setActiveIndex((index) => {
+						if (index === undefined) {
+							return 0;
+						}
 
-					return index + 1;
-				});
-			} else if (event.code === "ArrowUp") {
-				setActiveIndex((index) => {
-					if (index === undefined) {
-						return 0;
-					}
+						if (index + 1 >= count) {
+							return 0;
+						}
 
-					if (index - 1 < 0) {
-						return count - 1;
-					}
-
-					return index - 1;
-				});
-			}
-		};
-
-		document.addEventListener("keydown", handleKeydown);
-		return () => {
-			document.removeEventListener("keydown", handleKeydown);
-		};
-	}, [count, setActiveIndex, show]);
+						return index + 1;
+					});
+				}
+			},
+			[count, setActiveIndex, show],
+		),
+	);
 
 	if (!show) {
 		return null;

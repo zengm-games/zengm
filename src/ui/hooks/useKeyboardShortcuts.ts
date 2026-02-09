@@ -3,7 +3,7 @@ import helpers from "../util/helpers.ts";
 
 const IS_APPLE = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
 
-type KeyboardShortcut = { name: string } & Pick<
+type KeyboardShortcut = { name: string; customizable: boolean } & Pick<
 	KeyboardEvent,
 	"altKey" | "ctrlKey" | "metaKey" | "shiftKey" | "key"
 >;
@@ -12,6 +12,7 @@ const keyboardShortcuts = {
 	boxScore: {
 		previous: {
 			name: "View previous game",
+			customizable: true,
 			altKey: false,
 			shiftKey: false,
 			ctrlKey: false,
@@ -20,6 +21,7 @@ const keyboardShortcuts = {
 		},
 		next: {
 			name: "View next game",
+			customizable: true,
 			altKey: false,
 			shiftKey: false,
 			ctrlKey: false,
@@ -32,11 +34,30 @@ const keyboardShortcuts = {
 	commandPallete: {
 		open: {
 			name: "Open command pallete",
+			customizable: true,
 			altKey: false,
 			shiftKey: false,
 			ctrlKey: !IS_APPLE,
 			metaKey: IS_APPLE,
 			key: "k",
+		},
+		up: {
+			name: "",
+			customizable: false,
+			altKey: false,
+			shiftKey: false,
+			ctrlKey: false,
+			metaKey: false,
+			key: "ArrowUp",
+		},
+		down: {
+			name: "",
+			customizable: false,
+			altKey: false,
+			shiftKey: false,
+			ctrlKey: false,
+			metaKey: false,
+			key: "ArrowDown",
 		},
 	},
 } satisfies Record<string, Record<string, KeyboardShortcut>>;

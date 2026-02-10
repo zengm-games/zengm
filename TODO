@@ -17,9 +17,12 @@ customizable keyboard shortcuts
 - why
   - firefox profiles menu is alt+p https://chat.reddit.com/room/!Zyxd2hED8-Mn4j0Jm56-nHOXZCKgujJIUa3pjm3NwMc%3Areddit.com
   - browser extensions can be anything
+- make dynamic
+  - race condition with reading custom shortcuts and rendering initial UI (both listener and formatKeyboardShortcut)?
 - editor ui
   - support undefined key (disable binding)
-    - check before calling formatKeyboardShortcut in some places
+    - make sure looks okay in play menu
+  - support only modifier with nothing else
   - action
   - context (like "ctrl+k command palette" or "play menu")
   - shortcut

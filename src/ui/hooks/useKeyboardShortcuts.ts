@@ -4,24 +4,34 @@ import { TIME_BETWEEN_GAMES } from "../../common/constants.ts";
 
 const IS_APPLE = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
 
-type KeyboardShortcut = { name: string; customizable: boolean } & Pick<
+type KeyboardShortcut = Pick<
 	KeyboardEvent,
 	"altKey" | "ctrlKey" | "metaKey" | "shiftKey" | "key"
 >;
 
+type KeyboardShortcutInfo = {
+	name: string;
+	customizable: boolean;
+	shortcut?: KeyboardShortcut;
+};
+
 const fastForwardKeys = ["o", "t", "s", "c", "q", "g", "u"] as const;
 
-const fastForwards: Record<(typeof fastForwardKeys)[number], KeyboardShortcut> =
-	{} as any;
+const fastForwards: Record<
+	(typeof fastForwardKeys)[number],
+	KeyboardShortcutInfo
+> = {} as any;
 for (const [i, key] of fastForwardKeys.entries()) {
 	fastForwards[key] = {
 		name: `Fast forward ${i + 1}`,
 		customizable: true,
-		altKey: true,
-		shiftKey: false,
-		ctrlKey: false,
-		metaKey: IS_APPLE,
-		key,
+		shortcut: {
+			altKey: true,
+			shiftKey: false,
+			ctrlKey: false,
+			metaKey: IS_APPLE,
+			key,
+		},
 	};
 }
 
@@ -30,114 +40,138 @@ const keyboardShortcuts = {
 		previous: {
 			name: "View previous game",
 			customizable: true,
-			altKey: false,
-			shiftKey: false,
-			ctrlKey: false,
-			metaKey: false,
-			key: "ArrowLeft",
+			shortcut: {
+				altKey: false,
+				shiftKey: false,
+				ctrlKey: false,
+				metaKey: false,
+				key: "ArrowLeft",
+			},
 		},
 		next: {
 			name: "View next game",
 			customizable: true,
-			altKey: false,
-			shiftKey: false,
-			ctrlKey: false,
-			metaKey: false,
-			key: "ArrowRight",
+			shortcut: {
+				altKey: false,
+				shiftKey: false,
+				ctrlKey: false,
+				metaKey: false,
+				key: "ArrowRight",
+			},
 		},
 	},
 	playMenu: {
 		primary: {
 			name: "Primary option",
 			customizable: true,
-			altKey: true,
-			shiftKey: false,
-			ctrlKey: false,
-			metaKey: IS_APPLE,
-			key: "p",
+			shortcut: {
+				altKey: true,
+				shiftKey: false,
+				ctrlKey: false,
+				metaKey: IS_APPLE,
+				key: "p",
+			},
 		},
 		secondary: {
 			name: "Secondary option",
 			customizable: true,
-			altKey: true,
-			shiftKey: false,
-			ctrlKey: false,
-			metaKey: IS_APPLE,
-			key: "y",
+			shortcut: {
+				altKey: true,
+				shiftKey: false,
+				ctrlKey: false,
+				metaKey: IS_APPLE,
+				key: "y",
+			},
 		},
 		week: {
 			name: "Play one week",
 			customizable: true,
-			altKey: true,
-			shiftKey: false,
-			ctrlKey: false,
-			metaKey: IS_APPLE,
-			key: "w",
+			shortcut: {
+				altKey: true,
+				shiftKey: false,
+				ctrlKey: false,
+				metaKey: IS_APPLE,
+				key: "w",
+			},
 		},
 		month: {
 			name: "Play one month",
 			customizable: true,
-			altKey: true,
-			shiftKey: false,
-			ctrlKey: false,
-			metaKey: IS_APPLE,
-			key: "m",
+			shortcut: {
+				altKey: true,
+				shiftKey: false,
+				ctrlKey: false,
+				metaKey: IS_APPLE,
+				key: "m",
+			},
 		},
 		live: {
 			name: `Play one ${TIME_BETWEEN_GAMES} (live)`,
 			customizable: true,
-			altKey: true,
-			shiftKey: false,
-			ctrlKey: false,
-			metaKey: IS_APPLE,
-			key: "l",
+			shortcut: {
+				altKey: true,
+				shiftKey: false,
+				ctrlKey: false,
+				metaKey: IS_APPLE,
+				key: "l",
+			},
 		},
 		allStarGame: {
 			name: "Play one month",
 			customizable: true,
-			altKey: true,
-			shiftKey: false,
-			ctrlKey: false,
-			metaKey: IS_APPLE,
-			key: "a",
+			shortcut: {
+				altKey: true,
+				shiftKey: false,
+				ctrlKey: false,
+				metaKey: IS_APPLE,
+				key: "a",
+			},
 		},
 		tradeDeadline: {
 			name: "Play one month",
 			customizable: true,
-			altKey: true,
-			shiftKey: false,
-			ctrlKey: false,
-			metaKey: IS_APPLE,
-			key: "r",
+			shortcut: {
+				altKey: true,
+				shiftKey: false,
+				ctrlKey: false,
+				metaKey: IS_APPLE,
+				key: "r",
+			},
 		},
 		stop: {
 			name: "Stop",
 			customizable: true,
-			altKey: true,
-			shiftKey: false,
-			ctrlKey: false,
-			metaKey: IS_APPLE,
-			key: "s",
+			shortcut: {
+				altKey: true,
+				shiftKey: false,
+				ctrlKey: false,
+				metaKey: IS_APPLE,
+				key: "s",
+			},
 		},
 	},
 	playPauseNext: {
 		playPause: {
 			name: "Play/pause",
 			customizable: true,
-			altKey: true,
-			shiftKey: false,
-			ctrlKey: false,
-			metaKey: IS_APPLE,
-			key: "b",
+			shortcut: {
+				altKey: true,
+				shiftKey: false,
+				ctrlKey: false,
+				metaKey: IS_APPLE,
+				key: "b",
+			},
 		},
 		next: {
 			name: "Next",
 			customizable: true,
-			altKey: true,
-			shiftKey: false,
-			ctrlKey: false,
-			metaKey: IS_APPLE,
-			key: "n",
+			shortcut: {
+				altKey: true,
+				shiftKey: false,
+				ctrlKey: false,
+				metaKey: IS_APPLE,
+				key: "n",
+			},
 		},
 		...fastForwards,
 	},
@@ -145,32 +179,38 @@ const keyboardShortcuts = {
 		open: {
 			name: "Open command pallete",
 			customizable: true,
-			altKey: false,
-			shiftKey: false,
-			ctrlKey: !IS_APPLE,
-			metaKey: IS_APPLE,
-			key: "k",
+			shortcut: {
+				altKey: false,
+				shiftKey: false,
+				ctrlKey: !IS_APPLE,
+				metaKey: IS_APPLE,
+				key: "k",
+			},
 		},
 		up: {
 			name: "",
 			customizable: false,
-			altKey: false,
-			shiftKey: false,
-			ctrlKey: false,
-			metaKey: false,
-			key: "ArrowUp",
+			shortcut: {
+				altKey: false,
+				shiftKey: false,
+				ctrlKey: false,
+				metaKey: false,
+				key: "ArrowUp",
+			},
 		},
 		down: {
 			name: "",
 			customizable: false,
-			altKey: false,
-			shiftKey: false,
-			ctrlKey: false,
-			metaKey: false,
-			key: "ArrowDown",
+			shortcut: {
+				altKey: false,
+				shiftKey: false,
+				ctrlKey: false,
+				metaKey: false,
+				key: "ArrowDown",
+			},
 		},
 	},
-} satisfies Record<string, Record<string, KeyboardShortcut>>;
+} satisfies Record<string, Record<string, KeyboardShortcutInfo>>;
 
 export type KeyboardShortcuts = typeof keyboardShortcuts;
 
@@ -239,8 +279,9 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 			const eventKey = normalizeKey(event.key);
 
 			for (const id of actualIds) {
-				const shortcut = shortcuts[id] as KeyboardShortcut;
+				const shortcut = (shortcuts[id] as KeyboardShortcutInfo).shortcut;
 				if (
+					shortcut &&
 					event.altKey === shortcut.altKey &&
 					event.ctrlKey === shortcut.ctrlKey &&
 					event.metaKey === shortcut.metaKey &&
@@ -289,7 +330,12 @@ export const formatKeyboardShortcut = <T extends KeyboardShortcutCategories>(
 	category: T,
 	id: keyof KeyboardShortcuts[T],
 ) => {
-	const shortcut = keyboardShortcuts[category][id] as KeyboardShortcut;
+	const shortcut = (keyboardShortcuts[category][id] as KeyboardShortcutInfo)
+		.shortcut;
+
+	if (!shortcut) {
+		return;
+	}
 
 	const parts: string[] = [];
 

@@ -1003,13 +1003,16 @@ const CommandPaletteWrapper = () => {
 
 		const diff = Date.now() - lastDate;
 		if (diff >= TWO_MONTHS_IN_MILLISECONDS) {
-			logEvent({
-				extraClass: "",
-				type: "info",
-				text: `Pro tip: press ${formatKeyboardShortcut("commandPallete", "open")} to open the command palette, which allows easy keyboard navigation of your league.`,
-				saveToDb: false,
-				persistent: true,
-			});
+			const formatted = formatKeyboardShortcut("commandPallete", "open");
+			if (formatted !== undefined) {
+				logEvent({
+					extraClass: "",
+					type: "info",
+					text: `Pro tip: press ${formatted} to open the command palette, which allows easy keyboard navigation of your league.`,
+					saveToDb: false,
+					persistent: true,
+				});
+			}
 			saveLastUsed();
 		}
 	}, []);

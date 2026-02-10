@@ -80,6 +80,12 @@ const PlayPauseNext = ({
 		),
 	);
 
+	const formattedShortcutPlayPause = formatKeyboardShortcut(
+		"playPauseNext",
+		"playPause",
+	);
+	const formattedShortcutNext = formatKeyboardShortcut("playPauseNext", "next");
+
 	return (
 		<div className={clsx("btn-group", className)}>
 			{paused ? (
@@ -87,7 +93,7 @@ const PlayPauseNext = ({
 					className="btn btn-light-bordered"
 					disabled={disabled}
 					onClick={onPlay}
-					title={`${titlePlay} (${formatKeyboardShortcut("playPauseNext", "playPause")})`}
+					title={`${titlePlay}${formattedShortcutPlayPause !== undefined ? ` (${formattedShortcutPlayPause})` : ""}`}
 				>
 					<span className="glyphicon glyphicon-play" />
 				</button>
@@ -96,7 +102,7 @@ const PlayPauseNext = ({
 					className="btn btn-light-bordered"
 					disabled={disabled}
 					onClick={onPause}
-					title={`${titlePause} (${formatKeyboardShortcut("playPauseNext", "playPause")})`}
+					title={`${titlePause}${formattedShortcutPlayPause !== undefined ? ` (${formattedShortcutPlayPause})` : ""}`}
 				>
 					<span className="glyphicon glyphicon-pause" />
 				</button>
@@ -105,7 +111,7 @@ const PlayPauseNext = ({
 				className="btn btn-light-bordered"
 				disabled={disabled || !paused}
 				onClick={onNext}
-				title={`${titleNext} (${formatKeyboardShortcut("playPauseNext", "next")})`}
+				title={`${titleNext}${formattedShortcutNext !== undefined ? ` (${formattedShortcutNext})` : ""}`}
 			>
 				<span className="glyphicon glyphicon-step-forward" />
 			</button>

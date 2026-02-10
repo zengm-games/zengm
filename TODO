@@ -26,10 +26,12 @@ customizable keyboard shortcuts
   - look at how fullNames is propagated to UI by calling updateLocal
   - store in DB as KeyboardShortcutsLocal and store that directly in local, override default as necessary when using
 - editor ui
+  - put in columns
   - hide link on mobile
   - flicker in modal when clicking save
   - formatting raw modifier
-  - don't trigger while editing
+  - don't trigger ctrl+k while editing
+    - also which of stopPropagation etc do we need?
   - support null shortcut (disable binding)
     - make sure looks okay in play menu
   - shortcut

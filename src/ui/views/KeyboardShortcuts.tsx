@@ -1,11 +1,5 @@
 import fastDeepEqual from "fast-deep-equal";
-import {
-	Fragment,
-	useEffect,
-	useState,
-	type ChangeEvent,
-	type SubmitEvent,
-} from "react";
+import { useEffect, useState, type SubmitEvent } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers, logEvent, toWorker, useLocal } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
@@ -162,7 +156,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 
 	return (
 		<>
-			<MoreLinks type="globalSettings" page="/settings" />
+			<MoreLinks type="globalSettings" page="/settings/keyboard" />
 
 			<form onSubmit={handleFormSubmit}>
 				<div className="d-flex flex-column gap-3">
@@ -173,64 +167,77 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 						return (
 							<div key={key}>
 								<h2>{categories[key]}</h2>
-								{actions.map((action) => {
-									const info = category[action] as KeyboardShortcutInfo;
-									if (!info.customizable) {
-										return;
-									}
+								<div className="d-flex flex-column gap-2">
+									{actions.map((action, i) => {
+										const info = category[action] as KeyboardShortcutInfo;
+										if (!info.customizable) {
+											return;
+										}
 
-									let shortcut = keyboardShortcutsEdited?.[key]?.[action] as
-										| ShortcutOrNull
-										| undefined;
-									let edited = true;
-									if (shortcut === undefined) {
-										shortcut = info.shortcut;
-										edited = false;
-									} else if (fastDeepEqual(shortcut, info.shortcut)) {
-										edited = false;
-									}
+										let shortcut = keyboardShortcutsEdited?.[key]?.[action] as
+											| ShortcutOrNull
+											| undefined;
+										let edited = true;
+										if (shortcut === undefined) {
+											shortcut = info.shortcut;
+											edited = false;
+										} else if (fastDeepEqual(shortcut, info.shortcut)) {
+											edited = false;
+										}
 
-									return (
-										<div
-											className={clsx("row", edited ? "text-info" : undefined)}
-											key={action}
-										>
-											<div className="col-4">{info.name}</div>
-											<div className="col-4">
-												{formatKeyboardShortcutRaw(shortcut)}
-											</div>
-											<div className="col-4">
-												<button
-													className="btn btn-secondary"
-													type="button"
-													onClick={() => {
-														setEdit([key, action]);
-														setEditShortcut(shortcut);
-													}}
+										return (
+											<div
+												className={clsx(
+													"d-flex",
+													edited ? "text-info" : undefined,
+												)}
+												key={action}
+											>
+												<div
+													className="d-flex align-items-center"
+													style={{ width: 200 }}
 												>
-													Edit
-												</button>
-												{edited ? (
+													{info.name}
+												</div>
+												<div
+													className="d-flex align-items-center"
+													style={{ width: 100 }}
+												>
+													{formatKeyboardShortcutRaw(shortcut)}
+												</div>
+												<div className="d-flex align-items-center">
 													<button
-														className="btn btn-danger ms-2"
+														className="btn btn-secondary"
 														type="button"
 														onClick={() => {
-															setKeyboardShortcutsEdited({
-																...keyboardShortcutsEdited,
-																[key]: {
-																	...keyboardShortcutsEdited[key],
-																	[action]: undefined,
-																},
-															});
+															setEdit([key, action]);
+															setEditShortcut(shortcut);
 														}}
 													>
-														Reset
+														Edit
 													</button>
-												) : null}
+													{edited ? (
+														<button
+															className="btn btn-danger ms-2"
+															type="button"
+															onClick={() => {
+																setKeyboardShortcutsEdited({
+																	...keyboardShortcutsEdited,
+																	[key]: {
+																		...keyboardShortcutsEdited[key],
+																		[action]: undefined,
+																	},
+																});
+															}}
+														>
+															Reset
+														</button>
+													) : null}
+												</div>
 											</div>
-										</div>
-									);
-								})}
+										);
+									})}
+								</div>
 							</div>
 						);
 					})}

@@ -1,4 +1,4 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type SubmitEvent } from "react";
 import {
 	ACCOUNT_API_URL,
 	STRIPE_PUBLISHABLE_KEY,
@@ -44,7 +44,7 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 			}));
 		};
 
-	const handleSubmit = (event: FormEvent) => {
+	const handleSubmit = (event: SubmitEvent) => {
 		event.preventDefault();
 
 		setState((prevState) => ({

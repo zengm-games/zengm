@@ -19,25 +19,26 @@ customizable keyboard shortcuts
   - browser extensions can be anything
 - make dynamic
   - formatKeyboardShortcut
+    - needs to take shortcut obejct not action/name, for KeyboardShortcuts.tsx
     - race condition with getting initial value?
     - make formatKeyboardShortcut reactive, for updates?
   - store in own key in attributes
   - look at how fullNames is propagated to UI by calling updateLocal
   - store in DB as KeyboardShortcutsLocal and store that directly in local, override default as necessary when using
 - editor ui
+  - hide link on mobile
+  - flicker in modal when clicking save
+  - formatting raw modifier
+  - don't trigger while editing
   - support null shortcut (disable binding)
     - make sure looks okay in play menu
-  - support only modifier with nothing else
-  - action
-  - context (like "ctrl+k command palette" or "play menu")
   - shortcut
     - click to edit, press what you want, similar to vs code
     - editing shouldn't activate other ones
     - collision? maybe show in UI highlighted in red
-  - customizable: false
   - reset all
-  - reset one, and show in bold if non default
   - highlight conflicts in red, block saving
+    - or show in modal
   - dedupe when saving
   - send to local.keyboardShortcuts
 - in-game UI
@@ -46,6 +47,9 @@ customizable keyboard shortcuts
     - mac vs pc
       - test both
 - move out of hooks folder, since there are multiple exports?
+- test
+  - custom shortcuts
+  - weird ones, like raw modifier
 
 positions dropdown filter in table, rather than free text https://old.reddit.com/r/Football_GM/comments/1qocv9w/searching_for_player_position_on_free_agents/
 

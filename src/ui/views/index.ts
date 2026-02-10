@@ -56,6 +56,7 @@ import ImportPlayers from "./ImportPlayers.tsx";
 import ImportPlayersReal from "./ImportPlayersReal.tsx";
 import Inbox from "./Inbox.tsx";
 import Injuries from "./Injuries.tsx";
+import KeyboardShortcuts from "./KeyboardShortcuts.tsx";
 import Leaders from "./Leaders.tsx";
 import LeadersProgressive from "./LeadersProgressive.tsx";
 import LeadersYears from "./LeadersYears.tsx";
@@ -174,6 +175,7 @@ export default {
 	ImportPlayersReal,
 	Inbox,
 	Injuries,
+	KeyboardShortcuts,
 	Leaders,
 	LeadersProgressive,
 	LeadersYears,

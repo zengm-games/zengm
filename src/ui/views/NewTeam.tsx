@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import { PHASE } from "../../common/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers, realtimeUpdate, toWorker } from "../util/index.ts";
@@ -118,7 +118,7 @@ const NewTeam = ({
 		setTid(Number.parseInt(event.currentTarget.value));
 	};
 
-	const handleNewTeam = async (event: FormEvent) => {
+	const handleNewTeam = async (event: SubmitEvent) => {
 		event.preventDefault();
 
 		if (tid !== undefined) {

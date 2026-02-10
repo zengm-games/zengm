@@ -1,4 +1,4 @@
-import { type FormEvent, useRef, useState } from "react";
+import { type SubmitEvent, useRef, useState } from "react";
 import {
 	ACCOUNT_API_URL,
 	fetchWrapper,
@@ -17,7 +17,7 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const formRef = useRef<HTMLFormElement>(null);
 
-	const handleSubmit = async (event: FormEvent) => {
+	const handleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
 
 		setSubmitting(true);

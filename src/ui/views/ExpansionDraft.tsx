@@ -1,7 +1,7 @@
 import {
 	useState,
 	type ChangeEvent,
-	type FormEvent,
+	type SubmitEvent,
 	type MouseEvent,
 } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
@@ -152,7 +152,7 @@ const ExpansionDraft = ({
 		setAddTeamAbbrev(BLANK_TEAM_ABBREV);
 	};
 
-	const handleSubmit = async (event: FormEvent) => {
+	const handleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
 
 		if (saving) {

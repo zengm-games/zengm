@@ -346,6 +346,7 @@ const MoreLinks = (
 		links = [
 			{ url: "/settings", name: "Global Settings" },
 			{ url: "/settings/default", name: "Default New League Settings" },
+			{ url: "/settings/keyboard", name: "Keyboard Shortcuts" },
 		];
 	} else if (props.type === "leaders") {
 		const { playoffs, season, statType } = props;

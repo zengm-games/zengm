@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
 	helpers,
@@ -64,7 +64,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 			setDirty(true);
 		};
 
-	const handleFormSubmit = async (event: FormEvent) => {
+	const handleFormSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
 
 		if (state.theme === "default") {
@@ -263,7 +263,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 					</>
 				) : null}
 
-				<button className="btn btn-primary mt-3">Save Global Settings</button>
+				<button className="btn btn-primary mt-3">Save global settings</button>
 			</form>
 		</>
 	);

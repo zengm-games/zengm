@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ChangeEvent } from "react";
+import { useState, type SubmitEvent, type ChangeEvent } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers, logEvent, toWorker } from "../util/index.ts";
 import { ActionButton } from "../components/index.tsx";
@@ -24,7 +24,7 @@ const DeleteOldData = () => {
 			});
 		};
 
-	const handleSubmit = async (event: FormEvent) => {
+	const handleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
 		setDeleting(true);
 

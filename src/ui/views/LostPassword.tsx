@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useState, type SubmitEvent } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../common/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { ajaxErrorMsg } from "./LoginOrRegister/index.tsx";
@@ -14,7 +14,7 @@ const LostPassword = () => {
 		successMessage: undefined,
 	});
 
-	const handleSubmit = async (event: FormEvent) => {
+	const handleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
 
 		const element = document.getElementById("lostpw");

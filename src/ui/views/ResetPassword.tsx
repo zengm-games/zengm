@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useEffect, useState, type ReactNode, type FormEvent } from "react";
+import { useEffect, useState, type ReactNode, type SubmitEvent } from "react";
 import {
 	ACCOUNT_API_URL,
 	EMAIL_ADDRESS,
@@ -71,7 +71,7 @@ const ResetPassword = ({ token }: View<"resetPassword">) => {
 		checkToken();
 	}, [token]);
 
-	const handleSubmit = async (event: FormEvent) => {
+	const handleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
 
 		setState({

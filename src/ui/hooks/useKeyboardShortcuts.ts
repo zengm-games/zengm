@@ -10,7 +10,7 @@ type KeyboardShortcut = Pick<
 	"altKey" | "ctrlKey" | "metaKey" | "shiftKey" | "key"
 >;
 
-type KeyboardShortcutInfo = {
+export type KeyboardShortcutInfo = {
 	name: string;
 	customizable: boolean;
 	shortcut: KeyboardShortcut;
@@ -36,7 +36,7 @@ for (const [i, key] of fastForwardKeys.entries()) {
 	};
 }
 
-const keyboardShortcuts = {
+export const keyboardShortcuts = {
 	boxScore: {
 		previous: {
 			name: "View previous game",
@@ -223,7 +223,7 @@ export type KeyboardShortcutsLocal =
 	  }
 	| undefined;
 
-type KeyboardShortcutCategories = keyof KeyboardShortcuts;
+export type KeyboardShortcutCategories = keyof KeyboardShortcuts;
 
 const normalizeKey = (key: string) => {
 	// Ignore pure modifiers
@@ -344,13 +344,9 @@ const formatKey = (key: string) => {
 	return key;
 };
 
-export const formatKeyboardShortcut = <T extends KeyboardShortcutCategories>(
-	category: T,
-	action: keyof KeyboardShortcuts[T],
+export const formatKeyboardShortcutRaw = (
+	shortcut: KeyboardShortcut | null,
 ) => {
-	const shortcut = (keyboardShortcuts[category][action] as KeyboardShortcutInfo)
-		.shortcut;
-
 	if (!shortcut) {
 		return;
 	}
@@ -388,4 +384,13 @@ export const formatKeyboardShortcut = <T extends KeyboardShortcutCategories>(
 	parts.push(formatKey(shortcut.key));
 
 	return parts.join(IS_APPLE ? "" : "+");
+};
+
+export const formatKeyboardShortcut = <T extends KeyboardShortcutCategories>(
+	category: T,
+	action: keyof KeyboardShortcuts[T],
+) => {
+	const shortcut = (keyboardShortcuts[category][action] as KeyboardShortcutInfo)
+		.shortcut;
+	return formatKeyboardShortcutRaw(shortcut);
 };

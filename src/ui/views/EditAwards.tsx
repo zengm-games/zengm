@@ -1,4 +1,4 @@
-import { type FormEvent, useState, useEffect } from "react";
+import { type SubmitEvent, useState, useEffect } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { logEvent, toWorker, helpers, realtimeUpdate } from "../util/index.ts";
@@ -220,7 +220,7 @@ const EditAwards = ({
 			return error;
 		};
 
-	const handleFormSubmit = async (event: FormEvent) => {
+	const handleFormSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
 		try {
 			await toWorker("main", "updateAwards", aws);

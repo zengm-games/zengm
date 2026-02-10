@@ -13,7 +13,7 @@ import {
 import { godModeRequiredMessage } from "./SettingsFormOptions.tsx";
 import type { initDefaults } from "../../../worker/util/loadNames.ts";
 import { getFrequencies, mergeCountries } from "../../../common/names.ts";
-import isEqual from "fast-deep-equal";
+import fastDeepEqual from "fast-deep-equal";
 import {
 	CollegesEditor,
 	FlagEditor,
@@ -157,8 +157,8 @@ export const formatPlayerBioInfoState = (
 				if (namesCountry) {
 					defaultNames =
 						builtIn &&
-						isEqual(names.first, namesCountry.first) &&
-						isEqual(names.last, namesCountry.last);
+						fastDeepEqual(names.first, namesCountry.first) &&
+						fastDeepEqual(names.last, namesCountry.last);
 				}
 			}
 		}
@@ -182,7 +182,8 @@ export const formatPlayerBioInfoState = (
 		}
 
 		const colleges = mergedCountry.colleges ?? defaultColleges2;
-		const defaultColleges = allDefaults || isEqual(colleges, defaultColleges2);
+		const defaultColleges =
+			allDefaults || fastDeepEqual(colleges, defaultColleges2);
 		const collegesText = objectToArray(
 			colleges,
 			"name",
@@ -194,7 +195,7 @@ export const formatPlayerBioInfoState = (
 			playerBioInfo?.default?.races ??
 			defaults.races.USA!;
 		const races = mergedCountry.races ?? defaultRaces2;
-		const defaultRaces = allDefaults || isEqual(races, defaultRaces2);
+		const defaultRaces = allDefaults || fastDeepEqual(races, defaultRaces2);
 		const racesText = objectToArray(races, "race", "race");
 
 		const fractionSkipCollege =
@@ -348,7 +349,7 @@ export const prune = (
 
 		if (!forExport) {
 			for (const key of ["first", "last"] as const) {
-				if (isEqual(country[key], mergedCountry[key])) {
+				if (fastDeepEqual(country[key], mergedCountry[key])) {
 					delete country[key];
 				}
 			}
@@ -369,12 +370,14 @@ export const prune = (
 				delete country.fractionSkipCollege;
 			}
 
-			if (isEqual(country.races, defaults.races[name] ?? defaults.races.USA)) {
+			if (
+				fastDeepEqual(country.races, defaults.races[name] ?? defaults.races.USA)
+			) {
 				delete country.races;
 			}
 		}
 
-		if (isEqual(country.colleges, defaults.colleges)) {
+		if (fastDeepEqual(country.colleges, defaults.colleges)) {
 			delete country.colleges;
 		}
 
@@ -385,13 +388,13 @@ export const prune = (
 
 	if (!forExport) {
 		// Check defaults
-		if (isEqual(info.default.colleges, defaults.colleges)) {
+		if (fastDeepEqual(info.default.colleges, defaults.colleges)) {
 			delete info.default.colleges;
 		}
 		if (info.default.fractionSkipCollege === 0.98) {
 			delete info.default.fractionSkipCollege;
 		}
-		if (isEqual(info.default.races, defaults.races.USA)) {
+		if (fastDeepEqual(info.default.races, defaults.races.USA)) {
 			delete info.default.races;
 		}
 
@@ -402,7 +405,7 @@ export const prune = (
 			},
 			defaults.countries,
 		);
-		if (isEqual(defaultFrequencies, info.frequencies)) {
+		if (fastDeepEqual(defaultFrequencies, info.frequencies)) {
 			info.frequencies = {};
 		}
 	}

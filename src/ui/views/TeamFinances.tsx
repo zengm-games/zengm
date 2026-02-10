@@ -1,6 +1,6 @@
 import {
 	type ChangeEvent,
-	type FormEvent,
+	type SubmitEvent,
 	Fragment,
 	useEffect,
 	useState,
@@ -221,7 +221,7 @@ const FinancesForm = ({
 			}
 		};
 
-	const handleSubmit = async (event: FormEvent) => {
+	const handleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
 
 		setState((state2) => ({ ...state2, saving: true }));

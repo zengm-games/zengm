@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useState, type SubmitEvent, type ReactNode } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import {
 	confirm,
@@ -169,7 +169,7 @@ const ProtectPlayers = ({
 
 	const numRemaining = maxNumCanProtext - protectedPids.length;
 
-	const handleSubmit = async (event: FormEvent) => {
+	const handleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
 
 		if (saving) {

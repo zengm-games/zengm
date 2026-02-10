@@ -1,6 +1,6 @@
 import {
 	useState,
-	type FormEvent,
+	type SubmitEvent,
 	type ChangeEvent,
 	type MouseEvent,
 	useEffect,
@@ -380,7 +380,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		};
 	}, [lastRatings]);
 
-	const handleSubmit = async (event: FormEvent) => {
+	const handleSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
 		setState((prevState) => ({
 			...prevState,

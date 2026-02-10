@@ -53,6 +53,7 @@ import importPlayers from "./importPlayers.ts";
 import importPlayersReal from "./importPlayersReal.ts";
 import inbox from "./inbox.ts";
 import injuries from "./injuries.ts";
+import keyboardShortcuts from "./keyboardShortcuts.ts";
 import leaders from "./leaders.ts";
 import leadersProgressive from "./leadersProgressive.ts";
 import leadersYears from "./leadersYears.ts";
@@ -165,6 +166,7 @@ export default {
 	importPlayersReal,
 	injuries,
 	inbox,
+	keyboardShortcuts,
 	leaders,
 	leadersProgressive,
 	leadersYears,

@@ -840,7 +840,9 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			{
 				type: "link",
 				active: (pageID) =>
-					pageID === "globalSettings" || pageID === "defaultNewLeagueSettings",
+					pageID === "globalSettings" ||
+					pageID === "defaultNewLeagueSettings" ||
+					pageID === "keyboardShortcuts",
 				league: true,
 				nonLeague: true,
 				commandPalette: true,

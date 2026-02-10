@@ -1,0 +1,269 @@
+import fastDeepEqual from "fast-deep-equal";
+import {
+	Fragment,
+	useEffect,
+	useState,
+	type ChangeEvent,
+	type SubmitEvent,
+} from "react";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { helpers, logEvent, toWorker, useLocal } from "../util/index.ts";
+import type { View } from "../../common/types.ts";
+import { MoreLinks } from "../components/index.tsx";
+import { useBlocker } from "../hooks/useBlocker.ts";
+import {
+	formatKeyboardShortcutRaw,
+	keyboardShortcuts,
+	type KeyboardShortcutCategories,
+	type KeyboardShortcutInfo,
+} from "../hooks/useKeyboardShortcuts.ts";
+import clsx from "clsx";
+import Modal from "../components/Modal.tsx";
+
+type ShortcutOrNull = KeyboardShortcutInfo["shortcut"] | null;
+
+const KeyboardShortcutModal = ({
+	cancel,
+	save,
+	initialShortcut,
+	categoryAndAction,
+}: {
+	cancel: () => void;
+	categoryAndAction: [KeyboardShortcutCategories, string] | undefined;
+	save: (shortcut: ShortcutOrNull) => void;
+	initialShortcut: ShortcutOrNull;
+}) => {
+	const [shortcut, setShortcut] = useState(initialShortcut);
+
+	const category = categoryAndAction?.[0];
+	const action = categoryAndAction?.[1];
+
+	useEffect(() => {
+		setShortcut(initialShortcut);
+	}, [initialShortcut, category, action]);
+
+	const show = categoryAndAction !== undefined;
+
+	useEffect(() => {
+		if (show) {
+			const handleKeydown = (event: KeyboardEvent) => {
+				if (event.isComposing) {
+					return;
+				}
+
+				if (
+					event.key === "Enter" &&
+					!event.altKey &&
+					!event.shiftKey &&
+					!event.ctrlKey &&
+					!event.metaKey
+				) {
+					save(shortcut);
+				}
+
+				console.log(event.key);
+
+				event.stopPropagation();
+				event.preventDefault();
+				event.stopImmediatePropagation();
+
+				setShortcut({
+					altKey: event.altKey,
+					shiftKey: event.shiftKey,
+					ctrlKey: event.ctrlKey,
+					metaKey: event.metaKey,
+					key: event.key,
+				});
+			};
+
+			document.addEventListener("keydown", handleKeydown);
+			return () => {
+				document.removeEventListener("keydown", handleKeydown);
+			};
+		}
+	}, [save, shortcut, show]);
+
+	return (
+		<Modal animation show={show} onHide={cancel}>
+			<Modal.Body>
+				<div className="text-center mb-3">
+					Press the desired key combination and then press ENTER
+				</div>
+				<div className="text-center fw-bold">
+					{formatKeyboardShortcutRaw(shortcut)}
+				</div>
+			</Modal.Body>
+			<Modal.Footer>
+				<button className="btn btn-secondary" onClick={cancel}>
+					Cancel
+				</button>
+				<button
+					className="btn btn-primary"
+					onClick={() => {
+						save(shortcut);
+					}}
+				>
+					Save
+				</button>
+			</Modal.Footer>
+		</Modal>
+	);
+};
+
+const GlobalSettings = (props: View<"globalSettings">) => {
+	const categories = {
+		playMenu: "Play menu",
+		playPauseNext: "Play/pause/next",
+		commandPallete: "Command pallete",
+		boxScore: "Box score",
+	};
+
+	const keyboardShortcutsLocal = useLocal((state) => state.keyboardShortcuts);
+
+	const [keyboardShortcutsEdited, setKeyboardShortcutsEdited] = useState(
+		keyboardShortcutsLocal ?? {},
+	);
+
+	const [edit, setEdit] = useState<
+		[KeyboardShortcutCategories, string] | undefined
+	>(undefined);
+	const [editShortcut, setEditShortcut] = useState<ShortcutOrNull>(null);
+
+	const { setDirty } = useBlocker();
+
+	const handleFormSubmit = async (event: SubmitEvent) => {
+		event.preventDefault();
+
+		try {
+			await toWorker("main", "updateOptions", {
+				fullNames: state.fullNames === "always",
+				phaseChangeRedirects: state.phaseChangeRedirects,
+				realPlayerPhotos: state.realPlayerPhotos,
+				realTeamInfo: state.realTeamInfo,
+				units,
+			});
+			logEvent({
+				type: "success",
+				text: "Settings successfully updated.",
+				saveToDb: false,
+			});
+			setDirty(false);
+		} catch (error) {
+			logEvent({
+				type: "error",
+				text: error.message,
+				saveToDb: false,
+				persistent: true,
+			});
+		}
+	};
+
+	useTitleBar({ title: "Keyboard Shortcuts" });
+
+	return (
+		<>
+			<MoreLinks type="globalSettings" page="/settings" />
+
+			<form onSubmit={handleFormSubmit}>
+				<div className="d-flex flex-column gap-3">
+					{helpers.keys(categories).map((key) => {
+						const category = keyboardShortcuts[key];
+						const actions = helpers.keys(category);
+
+						return (
+							<div key={key}>
+								<h2>{categories[key]}</h2>
+								{actions.map((action) => {
+									const info = category[action] as KeyboardShortcutInfo;
+									if (!info.customizable) {
+										return;
+									}
+
+									let shortcut = keyboardShortcutsEdited?.[key]?.[action] as
+										| ShortcutOrNull
+										| undefined;
+									let edited = true;
+									if (shortcut === undefined) {
+										shortcut = info.shortcut;
+										edited = false;
+									} else if (fastDeepEqual(shortcut, info.shortcut)) {
+										edited = false;
+									}
+
+									return (
+										<div
+											className={clsx("row", edited ? "text-info" : undefined)}
+											key={action}
+										>
+											<div className="col-4">{info.name}</div>
+											<div className="col-4">
+												{formatKeyboardShortcutRaw(shortcut)}
+											</div>
+											<div className="col-4">
+												<button
+													className="btn btn-secondary"
+													type="button"
+													onClick={() => {
+														setEdit([key, action]);
+														setEditShortcut(shortcut);
+													}}
+												>
+													Edit
+												</button>
+												{edited ? (
+													<button
+														className="btn btn-danger ms-2"
+														type="button"
+														onClick={() => {
+															setKeyboardShortcutsEdited({
+																...keyboardShortcutsEdited,
+																[key]: {
+																	...keyboardShortcutsEdited[key],
+																	[action]: undefined,
+																},
+															});
+														}}
+													>
+														Reset
+													</button>
+												) : null}
+											</div>
+										</div>
+									);
+								})}
+							</div>
+						);
+					})}
+				</div>
+
+				<button className="btn btn-primary mt-3">
+					Save keyboard shortcuts
+				</button>
+			</form>
+
+			<KeyboardShortcutModal
+				categoryAndAction={edit}
+				cancel={() => {
+					setEdit(undefined);
+				}}
+				save={(shortcut) => {
+					if (edit) {
+						const [category, action] = edit;
+						setKeyboardShortcutsEdited({
+							...keyboardShortcutsEdited,
+							[category]: {
+								...keyboardShortcutsEdited[category],
+								[action]: shortcut,
+							},
+						});
+						setDirty(true);
+						setEdit(undefined);
+					}
+				}}
+				initialShortcut={editShortcut}
+			/>
+		</>
+	);
+};
+
+export default GlobalSettings;

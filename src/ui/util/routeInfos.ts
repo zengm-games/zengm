@@ -11,6 +11,7 @@ const routeInfos = {
 	"/account/update_card": "accountUpdateCard",
 	"/settings": "globalSettings",
 	"/settings/default": "defaultNewLeagueSettings",
+	"/settings/keyboard": "keyboardShortcuts",
 	"/dropbox": "dropbox",
 	"/exhibition": "exhibition",
 	"/exhibition/game": "exhibitionGame",

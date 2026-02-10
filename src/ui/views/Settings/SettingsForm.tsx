@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { useState, type FormEvent, useEffect } from "react";
+import { useState, type SubmitEvent, useEffect } from "react";
 import { groupBy } from "../../../common/utils.ts";
 import { ActionButton, StickyBottomButtons } from "../../components/index.tsx";
 import { confirm, localActions, logEvent, helpers } from "../../util/index.ts";
@@ -376,7 +376,7 @@ const SettingsForm = ({
 
 	const [submitting, setSubmitting] = useState(false);
 
-	const handleFormSubmit = async (event: FormEvent) => {
+	const handleFormSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
 		setSubmitting(true);
 

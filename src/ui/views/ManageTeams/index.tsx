@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useReducer, type FormEvent } from "react";
+import { Fragment, useCallback, useReducer, type SubmitEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers, logEvent, toWorker } from "../../util/index.ts";
 import AddRemove from "./AddRemove.tsx";
@@ -151,7 +151,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 			dispatch({ type: "updateTeam", tid, field, value });
 		};
 
-	const handleSubmit = async (e: FormEvent) => {
+	const handleSubmit = async (e: SubmitEvent) => {
 		e.preventDefault();
 		dispatch({ type: "startSaving" });
 

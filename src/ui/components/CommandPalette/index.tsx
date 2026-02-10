@@ -58,7 +58,7 @@ const useCommandPalette = () => {
 	useKeyboardShortcuts(
 		"commandPallete",
 		KEYBOARD_SHORTCUT_KEYS_OPEN,
-		useCallback((id, event) => {
+		useCallback((action, event) => {
 			event.preventDefault();
 			setShow((current) => !current);
 		}, []),
@@ -831,12 +831,12 @@ const CommandPalette = ({
 		"commandPallete",
 		KEYBOARD_SHORTCUT_KEYS_OTHER,
 		useCallback(
-			(id) => {
+			(action) => {
 				if (!show) {
 					return;
 				}
 
-				if (id === "up") {
+				if (action === "up") {
 					setActiveIndex((index) => {
 						if (index === undefined) {
 							return 0;
@@ -848,7 +848,7 @@ const CommandPalette = ({
 
 						return index - 1;
 					});
-				} else if (id === "down") {
+				} else if (action === "down") {
 					setActiveIndex((index) => {
 						if (index === undefined) {
 							return 0;

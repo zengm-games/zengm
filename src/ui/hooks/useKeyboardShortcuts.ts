@@ -264,8 +264,8 @@ const normalizeKey = (key: string) => {
 
 export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 	category: T,
-	ids: ReadonlyArray<keyof KeyboardShortcuts[T]> | undefined,
-	callback: (id: keyof KeyboardShortcuts[T], event: KeyboardEvent) => void,
+	actions: ReadonlyArray<keyof KeyboardShortcuts[T]> | undefined,
+	callback: (action: keyof KeyboardShortcuts[T], event: KeyboardEvent) => void,
 ) => {
 	return useEffect(() => {
 		const handleKeydown = (event: KeyboardEvent) => {
@@ -273,13 +273,14 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 				return;
 			}
 
-			const actualIds = ids ?? helpers.keys(keyboardShortcuts[category]);
+			const actualActions =
+				actions ?? helpers.keys(keyboardShortcuts[category]);
 			const shortcuts = keyboardShortcuts[category];
 
 			const eventKey = normalizeKey(event.key);
 
-			for (const id of actualIds) {
-				const shortcut = (shortcuts[id] as KeyboardShortcutInfo).shortcut;
+			for (const action of actualActions) {
+				const shortcut = (shortcuts[action] as KeyboardShortcutInfo).shortcut;
 				if (
 					shortcut &&
 					event.altKey === shortcut.altKey &&
@@ -288,7 +289,7 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 					event.shiftKey === shortcut.shiftKey &&
 					eventKey === shortcut.key
 				) {
-					callback(id as any, event);
+					callback(action as any, event);
 					break;
 				}
 			}
@@ -298,7 +299,7 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 		return () => {
 			document.removeEventListener("keydown", handleKeydown);
 		};
-	}, [callback, category, ids]);
+	}, [callback, category, actions]);
 };
 
 const formatKey = (key: string) => {
@@ -328,9 +329,9 @@ const formatKey = (key: string) => {
 
 export const formatKeyboardShortcut = <T extends KeyboardShortcutCategories>(
 	category: T,
-	id: keyof KeyboardShortcuts[T],
+	action: keyof KeyboardShortcuts[T],
 ) => {
-	const shortcut = (keyboardShortcuts[category][id] as KeyboardShortcutInfo)
+	const shortcut = (keyboardShortcuts[category][action] as KeyboardShortcutInfo)
 		.shortcut;
 
 	if (!shortcut) {

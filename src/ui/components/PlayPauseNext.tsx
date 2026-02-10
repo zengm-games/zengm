@@ -47,22 +47,22 @@ const PlayPauseNext = ({
 		"playPauseNext",
 		undefined,
 		useCallback(
-			(id) => {
+			(action) => {
 				if (!ignoreKeyboardShortcuts && !disabled) {
 					if (paused) {
 						const option = fastForwards?.find(
-							(option2) => option2.keyboardShortcut === id,
+							(option2) => option2.keyboardShortcut === action,
 						);
 
 						if (option) {
 							option.onClick();
-						} else if (id === "playPause") {
+						} else if (action === "playPause") {
 							onPlay();
-						} else if (id === "next") {
+						} else if (action === "next") {
 							onNext();
 						}
 					} else {
-						if (id === "playPause") {
+						if (action === "playPause") {
 							onPause();
 						}
 					}

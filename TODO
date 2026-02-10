@@ -19,6 +19,10 @@ customizable keyboard shortcuts
   - browser extensions can be anything
 - make dynamic
   - race condition with reading custom shortcuts and rendering initial UI (both listener and formatKeyboardShortcut)?
+    - make reactive?
+  - store in own key in attributes
+  - look at how fullNames is propagated to UI by calling updateLocal
+  - store in DB as Record<Category, Id, KeyboardShortcut> and store that directly in local, override default as necessary when using
 - editor ui
   - support undefined key (disable binding)
     - make sure looks okay in play menu
@@ -33,6 +37,7 @@ customizable keyboard shortcuts
   - reset all
   - reset one, and show in bold if non default
   - highlight conflicts in red, block saving
+  - dedupe when saving
 - in-game UI
   - need to actually render shortcut
     - how to render arbitrary "key" like ArrowLeft to string

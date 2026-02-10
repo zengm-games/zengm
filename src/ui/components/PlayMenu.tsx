@@ -28,9 +28,9 @@ const PlayMenu = ({
 		"playMenu",
 		undefined,
 		useCallback(
-			async (id) => {
+			async (action) => {
 				const option = options.find(
-					(option2) => option2.keyboardShortcut === id,
+					(option2) => option2.keyboardShortcut === action,
 				);
 
 				if (!option) {

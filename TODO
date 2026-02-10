@@ -29,13 +29,8 @@ customizable keyboard shortcuts
   - put in columns
   - hide link on mobile
   - flicker in modal when clicking save
-  - formatting raw modifier
   - support null shortcut (disable binding)
     - make sure looks okay in play menu
-  - shortcut
-    - click to edit, press what you want, similar to vs code
-    - editing shouldn't activate other ones
-    - collision? maybe show in UI highlighted in red
   - reset all
   - highlight conflicts in red, block saving
     - or show in modal
@@ -50,6 +45,7 @@ customizable keyboard shortcuts
 - test
   - custom shortcuts
   - weird ones, like raw modifier
+  - null shortcut propagating to UI
 
 positions dropdown filter in table, rather than free text https://old.reddit.com/r/Football_GM/comments/1qocv9w/searching_for_player_position_on_free_agents/
 

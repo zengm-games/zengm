@@ -345,6 +345,8 @@ const formatKey = (key: string) => {
 	return key;
 };
 
+const MODIFIER_KEYS = new Set(["Shift", "Control", "Alt", "Meta"]);
+
 export const formatKeyboardShortcutRaw = (
 	shortcut: KeyboardShortcut | null,
 ) => {
@@ -382,7 +384,9 @@ export const formatKeyboardShortcutRaw = (
 		}
 	}
 
-	parts.push(formatKey(shortcut.key));
+	if (!MODIFIER_KEYS.has(shortcut.key)) {
+		parts.push(formatKey(shortcut.key));
+	}
 
 	return parts.join(IS_APPLE ? "" : "+");
 };

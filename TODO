@@ -18,13 +18,14 @@ customizable keyboard shortcuts
   - firefox profiles menu is alt+p https://chat.reddit.com/room/!Zyxd2hED8-Mn4j0Jm56-nHOXZCKgujJIUa3pjm3NwMc%3Areddit.com
   - browser extensions can be anything
 - make dynamic
-  - race condition with reading custom shortcuts and rendering initial UI (both listener and formatKeyboardShortcut)?
-    - make reactive?
+  - formatKeyboardShortcut
+    - race condition with getting initial value?
+    - make formatKeyboardShortcut reactive, for updates?
   - store in own key in attributes
   - look at how fullNames is propagated to UI by calling updateLocal
-  - store in DB as Record<Category, Id, KeyboardShortcut> and store that directly in local, override default as necessary when using
+  - store in DB as KeyboardShortcutsLocal and store that directly in local, override default as necessary when using
 - editor ui
-  - support undefined key (disable binding)
+  - support null shortcut (disable binding)
     - make sure looks okay in play menu
   - support only modifier with nothing else
   - action
@@ -38,6 +39,7 @@ customizable keyboard shortcuts
   - reset one, and show in bold if non default
   - highlight conflicts in red, block saving
   - dedupe when saving
+  - send to local.keyboardShortcuts
 - in-game UI
   - need to actually render shortcut
     - how to render arbitrary "key" like ArrowLeft to string

@@ -1032,6 +1032,7 @@ export type LocalStateUI = {
 	godMode: boolean;
 	hideDisabledTeams: boolean;
 	homeCourtAdvantage: GameAttributesLeague["homeCourtAdvantage"];
+	keyboardShortcuts: KeyboardShortcutsLocal;
 	leagueCreation?: {
 		id: number;
 		status: string;
@@ -1636,7 +1637,10 @@ import type { TIEBREAKERS } from "./constants.ts";
 import type { DropdownOption } from "../ui/hooks/useDropdownOptions.tsx";
 import type { LookingForState } from "../ui/views/TradingBlock/useLookingForState.ts";
 import type { ALWAYS_WRAP } from "../worker/core/league/loadGameAttributes.ts";
-import type { KeyboardShortcuts } from "../ui/hooks/useKeyboardShortcuts.ts";
+import type {
+	KeyboardShortcuts,
+	KeyboardShortcutsLocal,
+} from "../ui/hooks/useKeyboardShortcuts.ts";
 type TeamStatsPlus = Record<TeamStatAttrBaseball, number> &
 	Record<TeamStatAttrByPosBaseball, number[]> &
 	Record<TeamStatAttrBasketball, number> &

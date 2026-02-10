@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import helpers from "../util/helpers.ts";
 import { TIME_BETWEEN_GAMES } from "../../common/constants.ts";
+import { useLocal } from "../util/local.ts";
 
 const IS_APPLE = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
 
@@ -12,7 +13,7 @@ type KeyboardShortcut = Pick<
 type KeyboardShortcutInfo = {
 	name: string;
 	customizable: boolean;
-	shortcut?: KeyboardShortcut;
+	shortcut: KeyboardShortcut;
 };
 
 const fastForwardKeys = ["o", "t", "s", "c", "q", "g", "u"] as const;
@@ -214,6 +215,14 @@ const keyboardShortcuts = {
 
 export type KeyboardShortcuts = typeof keyboardShortcuts;
 
+export type KeyboardShortcutsLocal =
+	| {
+			[Category in keyof KeyboardShortcuts]?: {
+				[Action in keyof KeyboardShortcuts[Category]]?: KeyboardShortcut | null;
+			};
+	  }
+	| undefined;
+
 type KeyboardShortcutCategories = keyof KeyboardShortcuts;
 
 const normalizeKey = (key: string) => {
@@ -267,20 +276,28 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 	actions: ReadonlyArray<keyof KeyboardShortcuts[T]> | undefined,
 	callback: (action: keyof KeyboardShortcuts[T], event: KeyboardEvent) => void,
 ) => {
+	const keyboardShortcutsLocal = useLocal((state) => state.keyboardShortcuts);
+
 	return useEffect(() => {
 		const handleKeydown = (event: KeyboardEvent) => {
 			if (event.isComposing) {
 				return;
 			}
 
-			const actualActions =
-				actions ?? helpers.keys(keyboardShortcuts[category]);
 			const shortcuts = keyboardShortcuts[category];
+			const actualActions = actions ?? helpers.keys(shortcuts);
 
 			const eventKey = normalizeKey(event.key);
 
 			for (const action of actualActions) {
-				const shortcut = (shortcuts[action] as KeyboardShortcutInfo).shortcut;
+				const shortcutLocal = keyboardShortcutsLocal?.[category]?.[action];
+				if (shortcutLocal === null) {
+					// Disabled shortcut
+					continue;
+				}
+
+				const shortcut =
+					shortcutLocal ?? (shortcuts[action] as KeyboardShortcutInfo).shortcut;
 				if (
 					shortcut &&
 					event.altKey === shortcut.altKey &&
@@ -299,7 +316,7 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 		return () => {
 			document.removeEventListener("keydown", handleKeydown);
 		};
-	}, [callback, category, actions]);
+	}, [callback, category, actions, keyboardShortcutsLocal]);
 };
 
 const formatKey = (key: string) => {

@@ -27,6 +27,7 @@ import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_FOOTBALL } from "../util/pro
 import { HeadlineScoreLive } from "../components/BoxScoreWrapper.tsx";
 import { useIsStuck } from "../hooks/useIsStuck.ts";
 import { useBlocker } from "../hooks/useBlocker.ts";
+import type { FastForward } from "../components/PlayPauseNext.tsx";
 
 type PlayerRowProps = {
 	exhibition?: boolean;
@@ -654,7 +655,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 				: [
 						{
 							minutes: 1,
-							key: "O",
+							keyboardShortcut: "o",
 						},
 						{
 							minutes: helpers.bound(
@@ -662,7 +663,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 								1,
 								Infinity,
 							),
-							key: "T",
+							keyboardShortcut: "t",
 						},
 						{
 							minutes: helpers.bound(
@@ -670,7 +671,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 								1,
 								Infinity,
 							),
-							key: "S",
+							keyboardShortcut: "s",
 						},
 					];
 
@@ -691,20 +692,23 @@ export const LiveGame = (props: View<"liveGame">) => {
 				: boxScore.current.teams[0].ptsQtrs.length +
 					boxScore.current.teams[1].ptsQtrs.length;
 
-		const menuItems = [
-			...skipMinutes.map(({ minutes, key }) => ({
-				label: `${minutes} ${helpers.plural("minute", minutes)}`,
-				key,
-				onClick: () => {
-					playSeconds(60 * minutes);
-				},
-			})),
+		const menuItems: FastForward[] = [
+			...skipMinutes.map(
+				({ minutes, keyboardShortcut }) =>
+					({
+						label: `${minutes} ${helpers.plural("minute", minutes)}`,
+						keyboardShortcut,
+						onClick: () => {
+							playSeconds(60 * minutes);
+						},
+					}) as FastForward,
+			),
 			...(isSport("baseball")
 				? !boxScore.current.shootout
-					? [
+					? ([
 							{
 								label: "Next batter",
-								key: "O",
+								keyboardShortcut: "o",
 								onClick: () => {
 									let numPlays = 0;
 
@@ -728,7 +732,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 							},
 							{
 								label: "Next baserunner",
-								key: "T",
+								keyboardShortcut: "t",
 								onClick: () => {
 									const sportStateBaseball =
 										sportState.current as typeof DEFAULT_SPORT_STATE_BASEBALL;
@@ -774,7 +778,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 							},
 							{
 								label: "Side is retired",
-								key: "C",
+								keyboardShortcut: "c",
 								onClick: () => {
 									let numPlays = 0;
 
@@ -796,7 +800,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 							},
 							{
 								label: "End of inning",
-								key: "Q",
+								keyboardShortcut: "q",
 								onClick: () => {
 									let numPlays = 0;
 
@@ -821,7 +825,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 								? [
 										{
 											label: `${helpers.ordinal(boxScore.current.numPeriods)} inning`,
-											key: "U",
+											keyboardShortcut: "u",
 											onClick: () => {
 												let numPlays = 0;
 
@@ -839,17 +843,17 @@ export const LiveGame = (props: View<"liveGame">) => {
 										},
 									]
 								: []),
-						]
-					: [
+						] as FastForward[])
+					: ([
 							{
 								label: "End of shootout",
-								key: "Q",
+								keyboardShortcut: "q",
 								onClick: () => {
 									playSeconds(Infinity);
 								},
 							},
-						]
-				: [
+						] as FastForward[])
+				: ([
 						{
 							label: `End of ${
 								boxScore.current.elamTarget !== undefined
@@ -860,12 +864,12 @@ export const LiveGame = (props: View<"liveGame">) => {
 											? "period"
 											: getPeriodName(boxScore.current.numPeriods)
 							}`,
-							key: "Q",
+							keyboardShortcut: "q",
 							onClick: () => {
 								playSeconds(Infinity);
 							},
 						},
-					]),
+					] as FastForward[])),
 		];
 
 		if (
@@ -875,7 +879,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 		) {
 			menuItems.push({
 				label: "Last 2 minutes",
-				key: "U",
+				keyboardShortcut: "u",
 				onClick: () => {
 					playUntilLastTwoMinutes();
 				},
@@ -893,7 +897,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 		) {
 			menuItems.push({
 				label: "Change of possession",
-				key: "C",
+				keyboardShortcut: "c",
 				onClick: () => {
 					playUntilChangeOfPossession();
 				},
@@ -914,7 +918,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 					hockey: "goal",
 					default: "score",
 				})}`,
-				key: "G",
+				keyboardShortcut: "g",
 				onClick: () => {
 					playUntilNextScore();
 				},
@@ -928,7 +932,7 @@ export const LiveGame = (props: View<"liveGame">) => {
 		) {
 			menuItems.push({
 				label: "Elam Ending",
-				key: "U",
+				keyboardShortcut: "u",
 				onClick: () => {
 					playUntilElamEnding();
 				},

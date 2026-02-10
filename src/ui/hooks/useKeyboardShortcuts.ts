@@ -9,6 +9,22 @@ type KeyboardShortcut = { name: string; customizable: boolean } & Pick<
 	"altKey" | "ctrlKey" | "metaKey" | "shiftKey" | "key"
 >;
 
+const fastForwardKeys = ["o", "t", "s", "c", "q", "g", "u"] as const;
+
+const fastForwards: Record<(typeof fastForwardKeys)[number], KeyboardShortcut> =
+	{} as any;
+for (const [i, key] of fastForwardKeys.entries()) {
+	fastForwards[key] = {
+		name: `Fast forward ${i + 1}`,
+		customizable: true,
+		altKey: true,
+		shiftKey: false,
+		ctrlKey: false,
+		metaKey: IS_APPLE,
+		key,
+	};
+}
+
 const keyboardShortcuts = {
 	boxScore: {
 		previous: {
@@ -104,7 +120,27 @@ const keyboardShortcuts = {
 			key: "s",
 		},
 	},
-	playPauseNext: {},
+	playPauseNext: {
+		playPause: {
+			name: "Play/pause",
+			customizable: true,
+			altKey: true,
+			shiftKey: false,
+			ctrlKey: false,
+			metaKey: IS_APPLE,
+			key: "b",
+		},
+		next: {
+			name: "Next",
+			customizable: true,
+			altKey: true,
+			shiftKey: false,
+			ctrlKey: false,
+			metaKey: IS_APPLE,
+			key: "n",
+		},
+		...fastForwards,
+	},
 	commandPallete: {
 		open: {
 			name: "Open command pallete",

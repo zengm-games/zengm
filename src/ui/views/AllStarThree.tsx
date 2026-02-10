@@ -198,28 +198,28 @@ const AllStarThree = ({
 					fastForwards={[
 						{
 							label: "Complete rack",
-							key: "O",
+							keyboardShortcut: "o",
 							onClick: async () => {
 								await toWorker("main", "threeSimNext", "rack");
 							},
 						},
 						{
 							label: "Complete player",
-							key: "T",
+							keyboardShortcut: "t",
 							onClick: async () => {
 								await toWorker("main", "threeSimNext", "player");
 							},
 						},
 						{
 							label: "End of round",
-							key: "S",
+							keyboardShortcut: "s",
 							onClick: async () => {
 								await toWorker("main", "threeSimNext", "round");
 							},
 						},
 						{
 							label: "End of contest",
-							key: "Q",
+							keyboardShortcut: "q",
 							onClick: async () => {
 								await toWorker("main", "threeSimNext", "all");
 							},

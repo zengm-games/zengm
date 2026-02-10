@@ -17,13 +17,9 @@ customizable keyboard shortcuts
 - why
   - firefox profiles menu is alt+p https://chat.reddit.com/room/!Zyxd2hED8-Mn4j0Jm56-nHOXZCKgujJIUa3pjm3NwMc%3Areddit.com
   - browser extensions can be anything
-- replace "keydown" events
-  - use cmd+option on mac rather than option
-  - PlayMenu
-    - unify day/dayLive and week/weekLive for football and non-football
-      - week still needed for non-football
-  - PlayPauseNext
-    - where is this used?
+- PlayMenu
+  - unify day/dayLive and week/weekLive for football and non-football
+    - week still needed for non-football
 - editor ui
   - action
   - context (like "ctrl+k command palette" or "play menu")
@@ -32,6 +28,9 @@ customizable keyboard shortcuts
     - editing shouldn't activate other ones
     - collision? maybe show in UI highlighted in red
   - customizable: false
+  - reset all
+  - reset one, and show in bold if non default
+  - highlight conflicts in red, block saving
 - in-game UI
   - need to actually render shortcut
     - ctrl+k in event message
@@ -39,7 +38,6 @@ customizable keyboard shortcuts
     - how to render arbitrary "key" like ArrowLeft to string
     - mac vs pc
       - test both
-  - delete formatModifierKeyLabel
 - move out of hooks folder, since there are multiple exports?
 - use spacebar rather than alt+p for primary?
   - what about in live sim?

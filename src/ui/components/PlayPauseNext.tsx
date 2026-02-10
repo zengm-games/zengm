@@ -1,7 +1,20 @@
 import clsx from "clsx";
-import { useEffect } from "react";
+import { useCallback } from "react";
 import { Dropdown } from "react-bootstrap";
-import { formatModifierKeyLabel } from "../util/formatModifierKeyLabel.ts";
+import {
+	formatKeyboardShortcut,
+	useKeyboardShortcuts,
+	type KeyboardShortcuts,
+} from "../hooks/useKeyboardShortcuts.ts";
+
+export type FastForward = {
+	keyboardShortcut?: Exclude<
+		keyof KeyboardShortcuts["playPauseNext"],
+		"next" | "playPause"
+	>;
+	onClick: () => void;
+	label: string;
+};
 
 const PlayPauseNext = ({
 	className,
@@ -20,11 +33,7 @@ const PlayPauseNext = ({
 	className?: string;
 	disabled?: boolean;
 	fastForwardAlignRight?: boolean;
-	fastForwards?: {
-		key?: string;
-		onClick: () => void;
-		label: string;
-	}[];
+	fastForwards?: FastForward[];
 	onPlay: () => void;
 	onPause: () => void;
 	onNext: () => void;
@@ -34,52 +43,42 @@ const PlayPauseNext = ({
 	titleNext?: string;
 	ignoreKeyboardShortcuts?: boolean;
 }) => {
-	useEffect(() => {
-		if (!ignoreKeyboardShortcuts) {
-			const handleKeydown = (event: KeyboardEvent) => {
-				// alt + letter
-				if (
-					!disabled &&
-					event.altKey &&
-					!event.ctrlKey &&
-					!event.shiftKey &&
-					!event.isComposing &&
-					!event.metaKey
-				) {
+	useKeyboardShortcuts(
+		"playPauseNext",
+		undefined,
+		useCallback(
+			(id) => {
+				if (!ignoreKeyboardShortcuts && !disabled) {
 					if (paused) {
 						const option = fastForwards?.find(
-							(option2) => `Key${option2.key}` === event.code,
+							(option2) => option2.keyboardShortcut === id,
 						);
 
 						if (option) {
 							option.onClick();
-						} else if (event.code === "KeyB") {
+						} else if (id === "playPause") {
 							onPlay();
-						} else if (event.code === "KeyN") {
+						} else if (id === "next") {
 							onNext();
 						}
 					} else {
-						if (event.code === "KeyB") {
+						if (id === "playPause") {
 							onPause();
 						}
 					}
 				}
-			};
-
-			document.addEventListener("keydown", handleKeydown);
-			return () => {
-				document.removeEventListener("keydown", handleKeydown);
-			};
-		}
-	}, [
-		fastForwards,
-		disabled,
-		ignoreKeyboardShortcuts,
-		onPause,
-		onNext,
-		onPlay,
-		paused,
-	]);
+			},
+			[
+				fastForwards,
+				disabled,
+				ignoreKeyboardShortcuts,
+				onPause,
+				onNext,
+				onPlay,
+				paused,
+			],
+		),
+	);
 
 	return (
 		<div className={clsx("btn-group", className)}>
@@ -88,7 +87,7 @@ const PlayPauseNext = ({
 					className="btn btn-light-bordered"
 					disabled={disabled}
 					onClick={onPlay}
-					title={`${titlePlay} (${formatModifierKeyLabel("B")})`}
+					title={`${titlePlay} (${formatKeyboardShortcut("playPauseNext", "playPause")})`}
 				>
 					<span className="glyphicon glyphicon-play" />
 				</button>
@@ -97,7 +96,7 @@ const PlayPauseNext = ({
 					className="btn btn-light-bordered"
 					disabled={disabled}
 					onClick={onPause}
-					title={`${titlePause} (${formatModifierKeyLabel("B")})`}
+					title={`${titlePause} (${formatKeyboardShortcut("playPauseNext", "playPause")})`}
 				>
 					<span className="glyphicon glyphicon-pause" />
 				</button>
@@ -106,7 +105,7 @@ const PlayPauseNext = ({
 				className="btn btn-light-bordered"
 				disabled={disabled || !paused}
 				onClick={onNext}
-				title={`${titleNext} (${formatModifierKeyLabel("N")})`}
+				title={`${titleNext} (${formatKeyboardShortcut("playPauseNext", "next")})`}
 			>
 				<span className="glyphicon glyphicon-step-forward" />
 			</button>
@@ -129,9 +128,12 @@ const PlayPauseNext = ({
 								className="kbd-parent"
 							>
 								{item.label}
-								{item.key ? (
+								{item.keyboardShortcut ? (
 									<span className="text-body-secondary kbd">
-										{formatModifierKeyLabel(item.key)}
+										{formatKeyboardShortcut(
+											"playPauseNext",
+											item.keyboardShortcut,
+										)}
 									</span>
 								) : null}
 							</Dropdown.Item>

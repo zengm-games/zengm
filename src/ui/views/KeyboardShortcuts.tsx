@@ -1,5 +1,5 @@
 import fastDeepEqual from "fast-deep-equal";
-import { useEffect, useState, type SubmitEvent } from "react";
+import { useEffect, useRef, useState, type SubmitEvent } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers, logEvent, toWorker, useLocal } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
@@ -38,47 +38,58 @@ const KeyboardShortcutModal = ({
 
 	const show = categoryAndAction !== undefined;
 
+	const modalRef = useRef<{
+		dialog: HTMLDivElement;
+	} | null>(null);
+
 	useEffect(() => {
-		if (show) {
-			const handleKeydown = (event: KeyboardEvent) => {
-				if (event.isComposing) {
-					return;
-				}
-
-				if (
-					event.key === "Enter" &&
-					!event.altKey &&
-					!event.shiftKey &&
-					!event.ctrlKey &&
-					!event.metaKey
-				) {
-					save(shortcut);
-				}
-
-				console.log(event.key);
-
-				event.stopPropagation();
-				event.preventDefault();
-				event.stopImmediatePropagation();
-
-				setShortcut({
-					altKey: event.altKey,
-					shiftKey: event.shiftKey,
-					ctrlKey: event.ctrlKey,
-					metaKey: event.metaKey,
-					key: event.key,
-				});
-			};
-
-			document.addEventListener("keydown", handleKeydown);
-			return () => {
-				document.removeEventListener("keydown", handleKeydown);
-			};
+		if (!show) {
+			return;
 		}
+
+		const modalElement = modalRef.current?.dialog;
+		if (!modalElement) {
+			return;
+		}
+
+		const handleKeydown = (event: KeyboardEvent) => {
+			if (event.isComposing) {
+				return;
+			}
+
+			if (
+				event.key === "Enter" &&
+				!event.altKey &&
+				!event.shiftKey &&
+				!event.ctrlKey &&
+				!event.metaKey
+			) {
+				save(shortcut);
+			}
+
+			// Prevent default browser shortcuts from running
+			event.preventDefault();
+
+			// Prevent other ZenGM shortcuts from running, like ctrl+k
+			event.stopPropagation();
+
+			setShortcut({
+				altKey: event.altKey,
+				shiftKey: event.shiftKey,
+				ctrlKey: event.ctrlKey,
+				metaKey: event.metaKey,
+				key: event.key,
+			});
+		};
+
+		modalElement.addEventListener("keydown", handleKeydown);
+		return () => {
+			modalElement.removeEventListener("keydown", handleKeydown);
+		};
 	}, [save, shortcut, show]);
 
 	return (
-		<Modal animation show={show} onHide={cancel}>
+		<Modal animation show={show} onHide={cancel} ref={modalRef}>
 			<Modal.Body>
 				<div className="text-center mb-3">
 					Press the desired key combination and then press ENTER

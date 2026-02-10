@@ -58,8 +58,7 @@ const useCommandPalette = () => {
 	useKeyboardShortcuts(
 		"commandPallete",
 		KEYBOARD_SHORTCUT_KEYS_OPEN,
-		useCallback((action, event) => {
-			event.preventDefault();
+		useCallback(() => {
 			setShow((current) => !current);
 		}, []),
 	);

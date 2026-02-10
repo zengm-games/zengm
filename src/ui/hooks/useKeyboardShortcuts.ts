@@ -274,7 +274,7 @@ const normalizeKey = (key: string) => {
 export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 	category: T,
 	actions: ReadonlyArray<keyof KeyboardShortcuts[T]> | undefined,
-	callback: (action: keyof KeyboardShortcuts[T], event: KeyboardEvent) => void,
+	callback: (action: keyof KeyboardShortcuts[T]) => void,
 ) => {
 	const keyboardShortcutsLocal = useLocal((state) => state.keyboardShortcuts);
 
@@ -306,7 +306,8 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 					event.shiftKey === shortcut.shiftKey &&
 					eventKey === shortcut.key
 				) {
-					callback(action as any, event);
+					event.preventDefault();
+					callback(action as any);
 					break;
 				}
 			}

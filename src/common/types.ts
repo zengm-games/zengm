@@ -977,8 +977,7 @@ export type Option = {
 	id: string;
 	label: string;
 	url?: string;
-	key?: string;
-	code?: string;
+	keyboardShortcut?: keyof KeyboardShortcuts["playMenu"];
 };
 
 export type Options = {
@@ -1637,6 +1636,7 @@ import type { TIEBREAKERS } from "./constants.ts";
 import type { DropdownOption } from "../ui/hooks/useDropdownOptions.tsx";
 import type { LookingForState } from "../ui/views/TradingBlock/useLookingForState.ts";
 import type { ALWAYS_WRAP } from "../worker/core/league/loadGameAttributes.ts";
+import type { KeyboardShortcuts } from "../ui/hooks/useKeyboardShortcuts.ts";
 type TeamStatsPlus = Record<TeamStatAttrBaseball, number> &
 	Record<TeamStatAttrByPosBaseball, number[]> &
 	Record<TeamStatAttrBasketball, number> &

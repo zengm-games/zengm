@@ -17,13 +17,13 @@ customizable keyboard shortcuts
 - why
   - firefox profiles menu is alt+p https://chat.reddit.com/room/!Zyxd2hED8-Mn4j0Jm56-nHOXZCKgujJIUa3pjm3NwMc%3Areddit.com
   - browser extensions can be anything
-- look for "keydown" events
-  - BoxScoreWrapper
+- replace "keydown" events
+  - use cmd+option on mac rather than option
   - PlayMenu
-    - use cmd+option on mac rather than option
+    - unify day/dayLive and week/weekLive for football and non-football
+      - week still needed for non-football
   - PlayPauseNext
     - where is this used?
-  - CommandPalette
 - editor ui
   - action
   - context (like "ctrl+k command palette" or "play menu")
@@ -31,12 +31,18 @@ customizable keyboard shortcuts
     - click to edit, press what you want, similar to vs code
     - editing shouldn't activate other ones
     - collision? maybe show in UI highlighted in red
+  - customizable: false
 - in-game UI
   - need to actually render shortcut
     - ctrl+k in event message
+      - search for any other ctrl+ alt+
     - how to render arbitrary "key" like ArrowLeft to string
     - mac vs pc
-- customizable: false
+      - test both
+  - delete formatModifierKeyLabel
+- move out of hooks folder, since there are multiple exports?
+- use spacebar rather than alt+p for primary?
+  - what about in live sim?
 
 positions dropdown filter in table, rather than free text https://old.reddit.com/r/Football_GM/comments/1qocv9w/searching_for_player_position_on_free_agents/
 

@@ -3,6 +3,7 @@ import {
 	NO_LOTTERY_DRAFT_TYPES,
 	bySport,
 	ALL_STAR_GAME_ONLY,
+	TIME_BETWEEN_GAMES,
 } from "../../common/index.ts";
 import { draft, season } from "../core/index.ts";
 import g from "./g.ts";
@@ -25,27 +26,27 @@ const updatePlayMenu = async () => {
 	const allOptions = {
 		stop: {
 			label: "Stop",
-			key: "s",
+			keyboardShortcut: "stop",
 		},
 		day: {
 			label: "One day",
-			key: "y",
+			keyboardShortcut: "secondary",
 		},
 		week: {
 			label: "One week",
-			key: "w",
+			keyboardShortcut: "week",
 		},
 		month: {
 			label: "One month",
-			key: "m",
+			keyboardShortcut: "month",
 		},
 		untilAllStarGame: {
 			label: `Until All-Star ${ALL_STAR_GAME_ONLY ? "game" : "events"}`,
-			key: "a",
+			keyboardShortcut: "allStarGame",
 		},
 		untilTradeDeadline: {
 			label: "Until trade deadline",
-			key: "r",
+			keyboardShortcut: "tradeDeadline",
 		},
 		viewAllStar: {
 			url: helpers.leagueUrl(
@@ -59,29 +60,24 @@ const updatePlayMenu = async () => {
 		},
 		untilPlayoffs: {
 			label: "Until playoffs",
-			key: "y",
+			keyboardShortcut: "secondary",
 		},
 		untilEndOfRound: {
 			label: "Until end of round",
-			key: "w",
+			keyboardShortcut: "week",
 		},
 		untilEndOfPlayIn: {
 			label: "Until end of play-in tournament",
-			key: "m",
+			keyboardShortcut: "month",
 		},
 		throughPlayoffs: {
 			label: "Through playoffs",
-			key: "y",
+			keyboardShortcut: "secondary",
 		},
 		dayLive: {
 			url: helpers.leagueUrl(["daily_schedule", "today"]),
-			label: "One day (live)",
-			key: "l",
-		},
-		weekLive: {
-			url: helpers.leagueUrl(["daily_schedule", "today"]),
-			label: "One week (live)",
-			key: "l",
+			label: `One ${TIME_BETWEEN_GAMES} (live)`,
+			keyboardShortcut: "live",
 		},
 		viewDraftLottery: {
 			url: helpers.leagueUrl(["draft_lottery"]),
@@ -89,7 +85,7 @@ const updatePlayMenu = async () => {
 		},
 		untilDraft: {
 			label: "Until draft",
-			key: "y",
+			keyboardShortcut: "secondary",
 		},
 		onePick: {
 			label: "One pick",
@@ -112,11 +108,11 @@ const updatePlayMenu = async () => {
 		},
 		untilFreeAgency: {
 			label: "Until free agency",
-			key: "y",
+			keyboardShortcut: "secondary",
 		},
 		untilPreseason: {
 			label: "Until preseason",
-			key: "y",
+			keyboardShortcut: "secondary",
 		},
 		untilRegularSeason: {
 			label: "Until regular season",
@@ -169,10 +165,9 @@ const updatePlayMenu = async () => {
 	} satisfies Record<
 		string,
 		{
-			id?: string;
+			keyboardShortcut?: Option["keyboardShortcut"];
 			label: string;
 			url?: string;
-			key?: string;
 		}
 	>;
 
@@ -229,7 +224,7 @@ const updatePlayMenu = async () => {
 
 		// Regular season - pre trading deadline
 		keys = bySport<typeof keys>({
-			football: ["week", "weekLive", "month", ...untilMore, "untilPlayoffs"],
+			football: ["week", "dayLive", "month", ...untilMore, "untilPlayoffs"],
 			default: [
 				"day",
 				"dayLive",
@@ -263,7 +258,7 @@ const updatePlayMenu = async () => {
 		} else {
 			keys = [
 				"week",
-				"weekLive",
+				"dayLive",
 				"untilEndOfRound",
 				"untilEndOfPlayIn",
 				"throughPlayoffs",
@@ -393,10 +388,9 @@ const updatePlayMenu = async () => {
 		};
 	});
 
-	// Set first key to always be p
+	// Set first option to always be primary
 	if (someOptions[0]) {
-		someOptions[0].key = "p";
-		someOptions[0].code = "KeyP";
+		someOptions[0].keyboardShortcut = "primary";
 	}
 
 	toUI("updateLocal", [

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import helpers from "../util/helpers.ts";
+import { TIME_BETWEEN_GAMES } from "../../common/constants.ts";
 
 const IS_APPLE = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
 
@@ -29,7 +30,80 @@ const keyboardShortcuts = {
 			key: "ArrowRight",
 		},
 	},
-	playMenu: {},
+	playMenu: {
+		primary: {
+			name: "Primary option",
+			customizable: true,
+			altKey: true,
+			shiftKey: false,
+			ctrlKey: false,
+			metaKey: IS_APPLE,
+			key: "p",
+		},
+		secondary: {
+			name: "Secondary option",
+			customizable: true,
+			altKey: true,
+			shiftKey: false,
+			ctrlKey: false,
+			metaKey: IS_APPLE,
+			key: "y",
+		},
+		week: {
+			name: "Play one week",
+			customizable: true,
+			altKey: true,
+			shiftKey: false,
+			ctrlKey: false,
+			metaKey: IS_APPLE,
+			key: "w",
+		},
+		month: {
+			name: "Play one month",
+			customizable: true,
+			altKey: true,
+			shiftKey: false,
+			ctrlKey: false,
+			metaKey: IS_APPLE,
+			key: "m",
+		},
+		live: {
+			name: `Play one ${TIME_BETWEEN_GAMES} (live)`,
+			customizable: true,
+			altKey: true,
+			shiftKey: false,
+			ctrlKey: false,
+			metaKey: IS_APPLE,
+			key: "l",
+		},
+		allStarGame: {
+			name: "Play one month",
+			customizable: true,
+			altKey: true,
+			shiftKey: false,
+			ctrlKey: false,
+			metaKey: IS_APPLE,
+			key: "a",
+		},
+		tradeDeadline: {
+			name: "Play one month",
+			customizable: true,
+			altKey: true,
+			shiftKey: false,
+			ctrlKey: false,
+			metaKey: IS_APPLE,
+			key: "r",
+		},
+		stop: {
+			name: "Stop",
+			customizable: true,
+			altKey: true,
+			shiftKey: false,
+			ctrlKey: false,
+			metaKey: IS_APPLE,
+			key: "s",
+		},
+	},
 	playPauseNext: {},
 	commandPallete: {
 		open: {
@@ -62,7 +136,7 @@ const keyboardShortcuts = {
 	},
 } satisfies Record<string, Record<string, KeyboardShortcut>>;
 
-type KeyboardShortcuts = typeof keyboardShortcuts;
+export type KeyboardShortcuts = typeof keyboardShortcuts;
 
 type KeyboardShortcutCategories = keyof KeyboardShortcuts;
 
@@ -148,4 +222,70 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 			document.removeEventListener("keydown", handleKeydown);
 		};
 	}, [callback, category, ids]);
+};
+
+const formatKey = (key: string) => {
+	const SPECIAL_KEYS: Record<string, string> = {
+		ArrowLeft: "←",
+		ArrowRight: "→",
+		ArrowUp: "↑",
+		ArrowDown: "↓",
+		Enter: "Enter",
+		Escape: "Esc",
+		Backspace: "⌫",
+		Delete: "Del",
+		Tab: "Tab",
+		" ": "Space",
+	};
+
+	if (SPECIAL_KEYS[key]) {
+		return SPECIAL_KEYS[key];
+	}
+
+	if (key.length === 1) {
+		return key.toUpperCase();
+	}
+
+	return key;
+};
+
+export const formatKeyboardShortcut = <T extends KeyboardShortcutCategories>(
+	category: T,
+	id: keyof KeyboardShortcuts[T],
+) => {
+	const shortcut = keyboardShortcuts[category][id] as KeyboardShortcut;
+
+	const parts: string[] = [];
+
+	if (IS_APPLE) {
+		if (shortcut.ctrlKey) {
+			parts.push("⌃");
+		}
+		if (shortcut.altKey) {
+			parts.push("⌥");
+		}
+		if (shortcut.shiftKey) {
+			parts.push("⇧");
+		}
+		if (shortcut.metaKey) {
+			parts.push("⌘");
+		}
+	} else {
+		if (shortcut.ctrlKey) {
+			parts.push("Ctrl");
+		}
+		if (shortcut.altKey) {
+			parts.push("Alt");
+		}
+		if (shortcut.shiftKey) {
+			parts.push("Shift");
+		}
+		if (shortcut.metaKey) {
+			parts.push("Win");
+		}
+	}
+
+	parts.push(formatKey(shortcut.key));
+
+	return parts.join(IS_APPLE ? "" : "+");
 };

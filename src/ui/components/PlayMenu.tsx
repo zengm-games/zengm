@@ -1,9 +1,12 @@
-import { useEffect, type MouseEvent } from "react";
+import { useCallback, type MouseEvent } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
 import { confirm, local, realtimeUpdate, toWorker } from "../util/index.ts";
 import type { Option } from "../../common/types.ts";
 import clsx from "clsx";
-import { formatModifierKeyLabel } from "../util/formatModifierKeyLabel.ts";
+import {
+	formatKeyboardShortcut,
+	useKeyboardShortcuts,
+} from "../hooks/useKeyboardShortcuts.ts";
 
 const handleOptionClick = (option: Option, event: MouseEvent) => {
 	if (!option.url) {
@@ -21,17 +24,14 @@ const PlayMenu = ({
 	spectator: boolean;
 	options: Option[];
 }) => {
-	useEffect(() => {
-		const handleKeydown = async (event: KeyboardEvent) => {
-			// alt + letter -  CANNOT USE KeyboardEvent.key BECAUSE ALT+P ON MAC IS PI!
-			if (
-				event.altKey &&
-				!event.ctrlKey &&
-				!event.shiftKey &&
-				!event.isComposing &&
-				!event.metaKey
-			) {
-				const option = options.find((option2) => option2.code === event.code);
+	useKeyboardShortcuts(
+		"playMenu",
+		undefined,
+		useCallback(
+			async (id) => {
+				const option = options.find(
+					(option2) => option2.keyboardShortcut === id,
+				);
 
 				if (!option) {
 					return;
@@ -58,14 +58,10 @@ const PlayMenu = ({
 				} else {
 					toWorker("playMenu", option.id as any, undefined);
 				}
-			}
-		};
-
-		document.addEventListener("keydown", handleKeydown);
-		return () => {
-			document.removeEventListener("keydown", handleKeydown);
-		};
-	}, [options]);
+			},
+			[options],
+		),
+	);
 
 	if (lid === undefined) {
 		return null;
@@ -100,9 +96,9 @@ const PlayMenu = ({
 							className="kbd-parent"
 						>
 							{option.label}
-							{option.key ? (
+							{option.keyboardShortcut ? (
 								<span className="text-body-secondary kbd">
-									{formatModifierKeyLabel(option.key.toUpperCase())}
+									{formatKeyboardShortcut("playMenu", option.keyboardShortcut)}
 								</span>
 							) : null}
 						</Dropdown.Item>

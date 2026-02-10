@@ -17,9 +17,6 @@ customizable keyboard shortcuts
 - why
   - firefox profiles menu is alt+p https://chat.reddit.com/room/!Zyxd2hED8-Mn4j0Jm56-nHOXZCKgujJIUa3pjm3NwMc%3Areddit.com
   - browser extensions can be anything
-- PlayMenu
-  - unify day/dayLive and week/weekLive for football and non-football
-    - week still needed for non-football
 - editor ui
   - action
   - context (like "ctrl+k command palette" or "play menu")
@@ -39,8 +36,6 @@ customizable keyboard shortcuts
     - mac vs pc
       - test both
 - move out of hooks folder, since there are multiple exports?
-- use spacebar rather than alt+p for primary?
-  - what about in live sim?
 
 positions dropdown filter in table, rather than free text https://old.reddit.com/r/Football_GM/comments/1qocv9w/searching_for_player_position_on_free_agents/
 

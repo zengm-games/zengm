@@ -18,6 +18,8 @@ customizable keyboard shortcuts
   - firefox profiles menu is alt+p https://chat.reddit.com/room/!Zyxd2hED8-Mn4j0Jm56-nHOXZCKgujJIUa3pjm3NwMc%3Areddit.com
   - browser extensions can be anything
 - editor ui
+  - support undefined key (disable binding)
+    - check before calling formatKeyboardShortcut in some places
   - action
   - context (like "ctrl+k command palette" or "play menu")
   - shortcut
@@ -30,8 +32,6 @@ customizable keyboard shortcuts
   - highlight conflicts in red, block saving
 - in-game UI
   - need to actually render shortcut
-    - ctrl+k in event message
-      - search for any other ctrl+ alt+
     - how to render arbitrary "key" like ArrowLeft to string
     - mac vs pc
       - test both

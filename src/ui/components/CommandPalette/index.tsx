@@ -30,7 +30,10 @@ import { getText, makeAnchorProps } from "../SideBar.tsx";
 import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import Modal from "../Modal.tsx";
 import { normalizeIntl } from "../../../common/normalizeIntl.ts";
-import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts.ts";
+import {
+	formatKeyboardShortcut,
+	useKeyboardShortcuts,
+} from "../../hooks/useKeyboardShortcuts.ts";
 
 const TWO_MONTHS_IN_MILLISECONDS = 2 * 30 * 24 * 60 * 60 * 1000;
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
@@ -1003,7 +1006,7 @@ const CommandPaletteWrapper = () => {
 			logEvent({
 				extraClass: "",
 				type: "info",
-				text: "Pro tip: press ctrl+k or cmd+k to open the command palette, which allows easy keyboard navigation of your league.",
+				text: `Pro tip: press ${formatKeyboardShortcut("commandPallete", "open")} to open the command palette, which allows easy keyboard navigation of your league.`,
 				saveToDb: false,
 				persistent: true,
 			});

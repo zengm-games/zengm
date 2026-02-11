@@ -14,16 +14,6 @@ FBGM option to disable FG/XP/punt
 - https://app.fastmail.com/mail/Archive/AOc4VisnZIYZ.StqyBxW1iGns?u=433e4054
 
 customizable keyboard shortcuts
-- why
-  - firefox profiles menu is alt+p https://chat.reddit.com/room/!Zyxd2hED8-Mn4j0Jm56-nHOXZCKgujJIUa3pjm3NwMc%3Areddit.com
-  - browser extensions can be anything
-- make dynamic
-  - formatKeyboardShortcut
-    - race condition with getting initial value?
-    - make formatKeyboardShortcut reactive, for updates?
-  - store in own key in attributes
-  - look at how fullNames is propagated to UI by calling updateLocal
-  - store in DB as KeyboardShortcutsLocal and store that directly in local, override default as necessary when using
 - editor ui
   - put in columns
   - hide link on mobile
@@ -32,11 +22,11 @@ customizable keyboard shortcuts
   - highlight conflicts in red, block saving
     - or show in modal
 - in-game UI
-  - need to actually render shortcut
-    - render local one!
-    - how to render arbitrary "key" like ArrowLeft to string
-    - mac vs pc
-      - test both
+- for single key shortcuts, be careful about inputs
+    el instanceof HTMLInputElement ||
+    el instanceof HTMLTextAreaElement ||
+    (el instanceof HTMLElement && el.isContentEditable)
+- for mac default to shift rather than alt
 - move out of hooks folder, since there are multiple exports?
 - test
   - custom shortcuts

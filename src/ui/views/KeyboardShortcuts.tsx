@@ -4,7 +4,6 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers, logEvent, toWorker, useLocal } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
 import { MoreLinks } from "../components/index.tsx";
-import { useBlocker } from "../hooks/useBlocker.ts";
 import {
 	formatKeyboardShortcutRaw,
 	keyboardShortcuts,
@@ -141,8 +140,6 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 	const [editShortcut, setEditShortcut] = useState<ShortcutOrNull>(null);
 
 	const handleFormSubmit = async (event: SubmitEvent) => {
-		event.preventDefault();
-
 		try {
 			await toWorker("main", "updateOptions", {
 				fullNames: state.fullNames === "always",
@@ -150,11 +147,6 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 				realPlayerPhotos: state.realPlayerPhotos,
 				realTeamInfo: state.realTeamInfo,
 				units,
-			});
-			logEvent({
-				type: "success",
-				text: "Settings successfully updated.",
-				saveToDb: false,
 			});
 		} catch (error) {
 			logEvent({
@@ -285,6 +277,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 							},
 						});
 						setEdit(undefined);
+						setEditShortcut(shortcut); // So it doesn't flicker as animating out
 					}
 				}}
 				initialShortcut={editShortcut}

@@ -21,9 +21,6 @@ customizable keyboard shortcuts
     - make sure looks okay in play menu
   - highlight conflicts in red, block saving
     - or show in modal
-- in-game UI
-- disable shortcuts if modal is open?
-- for mac default to shift rather than alt
 - move out of hooks folder, since there are multiple exports?
 - test
   - custom shortcuts

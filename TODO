@@ -22,10 +22,7 @@ customizable keyboard shortcuts
   - highlight conflicts in red, block saving
     - or show in modal
 - in-game UI
-- for single key shortcuts, be careful about inputs
-    el instanceof HTMLInputElement ||
-    el instanceof HTMLTextAreaElement ||
-    (el instanceof HTMLElement && el.isContentEditable)
+- disable shortcuts if modal is open?
 - for mac default to shift rather than alt
 - move out of hooks folder, since there are multiple exports?
 - test

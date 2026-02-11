@@ -284,6 +284,16 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 				return;
 			}
 
+			// Disable if we are typing in a text field
+			const element = event.target;
+			if (
+				element instanceof HTMLInputElement ||
+				element instanceof HTMLTextAreaElement ||
+				(element instanceof HTMLElement && element.isContentEditable)
+			) {
+				return;
+			}
+
 			const shortcuts = keyboardShortcuts[category];
 			const actualActions = actions ?? helpers.keys(shortcuts);
 

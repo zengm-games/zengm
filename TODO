@@ -27,6 +27,7 @@ customizable keyboard shortcuts
   - store in DB as KeyboardShortcutsLocal and store that directly in local, override default as necessary when using
 - editor ui
   - put in columns
+  - save to backend on edit/reset
   - hide link on mobile
   - flicker in modal when clicking save
   - support null shortcut (disable binding)

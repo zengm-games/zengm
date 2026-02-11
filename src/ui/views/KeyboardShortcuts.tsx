@@ -129,12 +129,16 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 		keyboardShortcutsLocal ?? {},
 	);
 
+	const setAndSaveKeyboardShortcutsEdited = (
+		newShortcuts: typeof keyboardShortcutsEdited,
+	) => {
+		setKeyboardShortcutsEdited(newShortcuts);
+	};
+
 	const [edit, setEdit] = useState<
 		[KeyboardShortcutCategories, string] | undefined
 	>(undefined);
 	const [editShortcut, setEditShortcut] = useState<ShortcutOrNull>(null);
-
-	const { setDirty } = useBlocker();
 
 	const handleFormSubmit = async (event: SubmitEvent) => {
 		event.preventDefault();
@@ -152,7 +156,6 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 				text: "Settings successfully updated.",
 				saveToDb: false,
 			});
-			setDirty(false);
 		} catch (error) {
 			logEvent({
 				type: "error",
@@ -169,7 +172,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 		<>
 			<MoreLinks type="globalSettings" page="/settings/keyboard" />
 
-			<form onSubmit={handleFormSubmit}>
+			<form>
 				<div className="d-flex flex-column gap-3">
 					{helpers.keys(categories).map((key) => {
 						const category = keyboardShortcuts[key];
@@ -232,7 +235,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 															className="btn btn-danger ms-2"
 															type="button"
 															onClick={() => {
-																setKeyboardShortcutsEdited({
+																setAndSaveKeyboardShortcutsEdited({
 																	...keyboardShortcutsEdited,
 																	[key]: {
 																		...keyboardShortcutsEdited[key],
@@ -254,8 +257,15 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 					})}
 				</div>
 
-				<button className="btn btn-primary mt-3">
-					Save keyboard shortcuts
+				<button
+					className="btn btn-danger mt-3"
+					type="button"
+					disabled={Object.keys(keyboardShortcutsEdited).length === 0}
+					onClick={() => {
+						setAndSaveKeyboardShortcutsEdited({});
+					}}
+				>
+					Reset all
 				</button>
 			</form>
 
@@ -267,14 +277,13 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 				save={(shortcut) => {
 					if (edit) {
 						const [category, action] = edit;
-						setKeyboardShortcutsEdited({
+						setAndSaveKeyboardShortcutsEdited({
 							...keyboardShortcutsEdited,
 							[category]: {
 								...keyboardShortcutsEdited[category],
 								[action]: shortcut,
 							},
 						});
-						setDirty(true);
 						setEdit(undefined);
 					}
 				}}

@@ -6,6 +6,7 @@ import {
 	useKeyboardShortcuts,
 	type KeyboardShortcuts,
 } from "../hooks/useKeyboardShortcuts.ts";
+import { useLocal } from "../util/index.ts";
 
 export type FastForward = {
 	keyboardShortcut?: Exclude<
@@ -80,11 +81,17 @@ const PlayPauseNext = ({
 		),
 	);
 
+	const keyboardShortcutsLocal = useLocal((state) => state.keyboardShortcuts);
 	const formattedShortcutPlayPause = formatKeyboardShortcut(
 		"playPauseNext",
 		"playPause",
+		keyboardShortcutsLocal,
 	);
-	const formattedShortcutNext = formatKeyboardShortcut("playPauseNext", "next");
+	const formattedShortcutNext = formatKeyboardShortcut(
+		"playPauseNext",
+		"next",
+		keyboardShortcutsLocal,
+	);
 
 	return (
 		<div className={clsx("btn-group", className)}>
@@ -139,6 +146,7 @@ const PlayPauseNext = ({
 										{formatKeyboardShortcut(
 											"playPauseNext",
 											item.keyboardShortcut,
+											keyboardShortcutsLocal,
 										)}
 									</span>
 								) : null}

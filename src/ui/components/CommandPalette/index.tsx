@@ -19,6 +19,7 @@ import type {
 } from "../../../common/types.ts";
 import {
 	helpers,
+	local,
 	logEvent,
 	menuItems,
 	realtimeUpdate,
@@ -1002,7 +1003,11 @@ const CommandPaletteWrapper = () => {
 
 		const diff = Date.now() - lastDate;
 		if (diff >= TWO_MONTHS_IN_MILLISECONDS) {
-			const formatted = formatKeyboardShortcut("commandPallete", "open");
+			const formatted = formatKeyboardShortcut(
+				"commandPallete",
+				"open",
+				local.getState().keyboardShortcuts,
+			);
 			if (formatted !== undefined) {
 				logEvent({
 					extraClass: "",

@@ -19,7 +19,6 @@ customizable keyboard shortcuts
   - browser extensions can be anything
 - make dynamic
   - formatKeyboardShortcut
-    - needs to take shortcut obejct not action/name, for KeyboardShortcuts.tsx
     - race condition with getting initial value?
     - make formatKeyboardShortcut reactive, for updates?
   - store in own key in attributes

@@ -1,6 +1,12 @@
 import { useCallback, type MouseEvent } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
-import { confirm, local, realtimeUpdate, toWorker } from "../util/index.ts";
+import {
+	confirm,
+	local,
+	realtimeUpdate,
+	toWorker,
+	useLocal,
+} from "../util/index.ts";
 import type { Option } from "../../common/types.ts";
 import clsx from "clsx";
 import {
@@ -63,6 +69,8 @@ const PlayMenu = ({
 		),
 	);
 
+	const keyboardShortcutsLocal = useLocal((state) => state.keyboardShortcuts);
+
 	if (lid === undefined) {
 		return null;
 	}
@@ -98,7 +106,11 @@ const PlayMenu = ({
 							{option.label}
 							{option.keyboardShortcut ? (
 								<span className="text-body-secondary kbd">
-									{formatKeyboardShortcut("playMenu", option.keyboardShortcut)}
+									{formatKeyboardShortcut(
+										"playMenu",
+										option.keyboardShortcut,
+										keyboardShortcutsLocal,
+									)}
 								</span>
 							) : null}
 						</Dropdown.Item>

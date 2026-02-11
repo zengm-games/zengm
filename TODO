@@ -31,7 +31,6 @@ customizable keyboard shortcuts
     - make sure looks okay in play menu
   - highlight conflicts in red, block saving
     - or show in modal
-  - send to local.keyboardShortcuts
 - in-game UI
   - need to actually render shortcut
     - render local one!

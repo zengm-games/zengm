@@ -2703,11 +2703,14 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 	}
 
 	// Send options to all new tabs
-	const options = ((await idb.meta.get("attributes", "options")) ??
-		{}) as unknown as Options;
+	const attributesStore = (await idb.meta.transaction("attributes")).store;
+	const options = ((await attributesStore.get("options")) ?? {}) as Options;
+	const keyboardShortcuts = (await attributesStore.get(
+		"keyboardShortcuts",
+	)) as KeyboardShortcutsLocal;
 	await toUI(
 		"updateLocal",
-		[{ units: options.units, fullNames: options.fullNames }],
+		[{ fullNames: options.fullNames, keyboardShortcuts, units: options.units }],
 		conditions,
 	);
 };

@@ -9,7 +9,7 @@ import {
 	keyboardShortcuts,
 	type KeyboardShortcutCategories,
 	type KeyboardShortcutInfo,
-} from "../hooks/useKeyboardShortcuts.ts";
+} from "../util/keyboardShortcuts.ts";
 import clsx from "clsx";
 import Modal from "../components/Modal.tsx";
 

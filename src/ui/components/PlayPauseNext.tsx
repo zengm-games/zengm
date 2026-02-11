@@ -5,7 +5,7 @@ import {
 	formatKeyboardShortcut,
 	useKeyboardShortcuts,
 	type KeyboardShortcuts,
-} from "../hooks/useKeyboardShortcuts.ts";
+} from "../util/keyboardShortcuts.ts";
 import { useLocal } from "../util/index.ts";
 
 export type FastForward = {

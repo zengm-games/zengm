@@ -1640,7 +1640,7 @@ import type { ALWAYS_WRAP } from "../worker/core/league/loadGameAttributes.ts";
 import type {
 	KeyboardShortcuts,
 	KeyboardShortcutsLocal,
-} from "../ui/hooks/useKeyboardShortcuts.ts";
+} from "../ui/util/keyboardShortcuts.ts";
 type TeamStatsPlus = Record<TeamStatAttrBaseball, number> &
 	Record<TeamStatAttrByPosBaseball, number[]> &
 	Record<TeamStatAttrBasketball, number> &

@@ -158,7 +158,7 @@ import { actualPhase } from "../util/actualPhase.ts";
 import getCol from "../../common/getCol.ts";
 import getCols from "../../common/getCols.ts";
 import { formatScheduleForEditor } from "../views/scheduleEditor.ts";
-import type { KeyboardShortcutsLocal } from "../../ui/hooks/useKeyboardShortcuts.ts";
+import type { KeyboardShortcutsLocal } from "../../ui/util/keyboardShortcuts.ts";
 
 const acceptContractNegotiation = async ({
 	pid,

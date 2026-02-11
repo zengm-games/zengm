@@ -1,6 +1,6 @@
 import { idb } from "../db/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
-import type { KeyboardShortcutsLocal } from "../../ui/hooks/useKeyboardShortcuts.ts";
+import type { KeyboardShortcutsLocal } from "../../ui/util/keyboardShortcuts.ts";
 
 const updateKeyboardShortcuts = async (
 	inputs: unknown,

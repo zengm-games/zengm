@@ -34,7 +34,7 @@ import { normalizeIntl } from "../../../common/normalizeIntl.ts";
 import {
 	formatKeyboardShortcut,
 	useKeyboardShortcuts,
-} from "../../hooks/useKeyboardShortcuts.ts";
+} from "../../util/keyboardShortcuts.ts";
 
 const TWO_MONTHS_IN_MILLISECONDS = 2 * 30 * 24 * 60 * 60 * 1000;
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;

@@ -13,7 +13,7 @@ import type {
 } from "../../common/types.ts";
 import type { Settings } from "../views/settings.ts";
 import connectIndexedDB from "./connectIndexedDB.ts";
-import type { KeyboardShortcutsLocal } from "../../ui/hooks/useKeyboardShortcuts.ts";
+import type { KeyboardShortcutsLocal } from "../../ui/util/keyboardShortcuts.ts";
 
 interface MetaDB extends DBSchema {
 	achievements: {

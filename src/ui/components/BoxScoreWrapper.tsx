@@ -20,7 +20,7 @@ import getWinner from "../../common/getWinner.ts";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import Note from "../views/Player/Note.tsx";
 import TeamLogoInline from "./TeamLogoInline.tsx";
-import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts.ts";
+import { useKeyboardShortcuts } from "../util/keyboardShortcuts.ts";
 
 const TeamNameLink = ({
 	children,

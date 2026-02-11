@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import helpers from "../util/helpers.ts";
+import helpers from "./helpers.ts";
 import { TIME_BETWEEN_GAMES } from "../../common/constants.ts";
-import { useLocal } from "../util/local.ts";
+import { useLocal } from "./local.ts";
 
 const IS_APPLE = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
 

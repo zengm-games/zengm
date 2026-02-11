@@ -12,7 +12,7 @@ import clsx from "clsx";
 import {
 	formatKeyboardShortcut,
 	useKeyboardShortcuts,
-} from "../hooks/useKeyboardShortcuts.ts";
+} from "../util/keyboardShortcuts.ts";
 
 const handleOptionClick = (option: Option, event: MouseEvent) => {
 	if (!option.url) {

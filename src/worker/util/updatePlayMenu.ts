@@ -26,7 +26,6 @@ const updatePlayMenu = async () => {
 	const allOptions = {
 		stop: {
 			label: "Stop",
-			keyboardShortcut: "stop",
 		},
 		day: {
 			label: "One day",

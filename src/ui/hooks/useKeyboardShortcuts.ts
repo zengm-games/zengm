@@ -139,17 +139,6 @@ export const keyboardShortcuts = {
 				key: "r",
 			},
 		},
-		stop: {
-			name: "Stop",
-			customizable: true,
-			shortcut: {
-				altKey: true,
-				shiftKey: false,
-				ctrlKey: false,
-				metaKey: IS_APPLE,
-				key: "s",
-			},
-		},
 	},
 	playPauseNext: {
 		playPause: {
@@ -225,52 +214,6 @@ export type KeyboardShortcutsLocal =
 
 export type KeyboardShortcutCategories = keyof KeyboardShortcuts;
 
-const normalizeKey = (key: string) => {
-	// Ignore pure modifiers
-	if (
-		key === "Shift" ||
-		key === "Control" ||
-		key === "Alt" ||
-		key === "Meta" ||
-		key === "CapsLock" ||
-		key === "Fn"
-	) {
-		return;
-	}
-
-	// Dead keys (macOS / intl layouts)
-	if (key === "Dead") {
-		return;
-	}
-
-	// Legacy / cross-browser normalization
-	if (key === "Esc") {
-		return "Escape";
-	}
-	if (key === "Spacebar") {
-		return " ";
-	}
-	if (key === "Left") {
-		return "ArrowLeft";
-	}
-	if (key === "Right") {
-		return "ArrowRight";
-	}
-	if (key === "Up") {
-		return "ArrowUp";
-	}
-	if (key === "Down") {
-		return "ArrowDown";
-	}
-
-	// Normalize printable characters
-	if (key.length === 1) {
-		return key.toLowerCase();
-	}
-
-	return key;
-};
-
 export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 	category: T,
 	actions: ReadonlyArray<keyof KeyboardShortcuts[T]> | undefined,
@@ -297,7 +240,8 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 			const shortcuts = keyboardShortcuts[category];
 			const actualActions = actions ?? helpers.keys(shortcuts);
 
-			const eventKey = normalizeKey(event.key);
+			const eventKey =
+				event.key.length === 1 ? event.key.toLowerCase() : event.key;
 
 			for (const action of actualActions) {
 				const shortcutLocal = keyboardShortcutsLocal?.[category]?.[action];

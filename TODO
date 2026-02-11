@@ -16,7 +16,6 @@ FBGM option to disable FG/XP/punt
 customizable keyboard shortcuts
 - editor ui
   - put in columns
-  - hide link on mobile
   - support null shortcut (disable binding)
     - make sure looks okay in play menu
   - highlight conflicts in red, block saving

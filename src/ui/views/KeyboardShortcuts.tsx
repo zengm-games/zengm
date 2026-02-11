@@ -181,6 +181,42 @@ const KeyboardShortcuts = ({
 
 	useTitleBar({ title: "Keyboard Shortcuts" });
 
+	const shortcutsWithOverrides: Record<
+		KeyboardShortcutCategories,
+		Record<
+			string,
+			{
+				edited: boolean;
+				shortcut: ShortcutOrNull;
+			}
+		>
+	> = {} as any;
+	for (const key of helpers.keys(categories)) {
+		const category = keyboardShortcuts[key];
+		for (const action of helpers.keys(category)) {
+			const info = category[action] as KeyboardShortcutInfo;
+			if (!info.customizable) {
+				continue;
+			}
+
+			let shortcut = keyboardShortcutsEdited?.[key]?.[action] as
+				| ShortcutOrNull
+				| undefined;
+			let edited = true;
+			if (shortcut === undefined) {
+				shortcut = info.shortcut;
+				edited = false;
+			} else if (fastDeepEqual(shortcut, info.shortcut)) {
+				edited = false;
+			}
+
+			if (!shortcutsWithOverrides[key]) {
+				shortcutsWithOverrides[key] = {};
+			}
+			shortcutsWithOverrides[key][action] = { edited, shortcut };
+		}
+	}
+
 	return (
 		<>
 			<MoreLinks type="globalSettings" page="/settings/keyboard" />
@@ -201,16 +237,8 @@ const KeyboardShortcuts = ({
 											return;
 										}
 
-										let shortcut = keyboardShortcutsEdited?.[key]?.[action] as
-											| ShortcutOrNull
-											| undefined;
-										let edited = true;
-										if (shortcut === undefined) {
-											shortcut = info.shortcut;
-											edited = false;
-										} else if (fastDeepEqual(shortcut, info.shortcut)) {
-											edited = false;
-										}
+										const { edited, shortcut } =
+											shortcutsWithOverrides[key][action]!;
 
 										return (
 											<div

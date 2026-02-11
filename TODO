@@ -27,16 +27,15 @@ customizable keyboard shortcuts
   - store in DB as KeyboardShortcutsLocal and store that directly in local, override default as necessary when using
 - editor ui
   - put in columns
-  - save to backend on edit/reset
   - hide link on mobile
   - support null shortcut (disable binding)
     - make sure looks okay in play menu
   - highlight conflicts in red, block saving
     - or show in modal
-  - dedupe when saving
   - send to local.keyboardShortcuts
 - in-game UI
   - need to actually render shortcut
+    - render local one!
     - how to render arbitrary "key" like ArrowLeft to string
     - mac vs pc
       - test both

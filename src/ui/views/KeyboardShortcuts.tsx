@@ -1,7 +1,7 @@
 import fastDeepEqual from "fast-deep-equal";
-import { useEffect, useRef, useState, type SubmitEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, logEvent, toWorker, useLocal } from "../util/index.ts";
+import { helpers, logEvent, toWorker } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
 import { MoreLinks } from "../components/index.tsx";
 import {
@@ -114,7 +114,9 @@ const KeyboardShortcutModal = ({
 	);
 };
 
-const GlobalSettings = (props: View<"globalSettings">) => {
+const KeyboardShortcuts = ({
+	keyboardShortcutsLocal,
+}: View<"keyboardShortcuts">) => {
 	const categories = {
 		playMenu: "Play menu",
 		playPauseNext: "Play/pause/next",
@@ -122,32 +124,38 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 		boxScore: "Box score",
 	};
 
-	const keyboardShortcutsLocal = useLocal((state) => state.keyboardShortcuts);
-
 	const [keyboardShortcutsEdited, setKeyboardShortcutsEdited] = useState(
 		keyboardShortcutsLocal ?? {},
 	);
 
-	const setAndSaveKeyboardShortcutsEdited = (
+	const setAndSaveKeyboardShortcutsEdited = async (
 		newShortcuts: typeof keyboardShortcutsEdited,
 	) => {
 		setKeyboardShortcutsEdited(newShortcuts);
-	};
 
-	const [edit, setEdit] = useState<
-		[KeyboardShortcutCategories, string] | undefined
-	>(undefined);
-	const [editShortcut, setEditShortcut] = useState<ShortcutOrNull>(null);
+		// Remove any that are equal to the defaults
+		const pruned: typeof newShortcuts = {};
+		for (const category of helpers.keys(newShortcuts)) {
+			const shortcuts = newShortcuts[category];
+			if (shortcuts) {
+				for (const [action, shortcut] of Object.entries(shortcuts)) {
+					if (shortcut !== undefined) {
+						const defaultInfo = (keyboardShortcuts as any)[category][
+							action
+						] as KeyboardShortcutInfo;
+						if (!fastDeepEqual(shortcut, defaultInfo.shortcut)) {
+							if (!pruned[category]) {
+								pruned[category] = {};
+							}
+							(pruned[category] as any)[action] = shortcut;
+						}
+					}
+				}
+			}
+		}
 
-	const handleFormSubmit = async (event: SubmitEvent) => {
 		try {
-			await toWorker("main", "updateOptions", {
-				fullNames: state.fullNames === "always",
-				phaseChangeRedirects: state.phaseChangeRedirects,
-				realPlayerPhotos: state.realPlayerPhotos,
-				realTeamInfo: state.realTeamInfo,
-				units,
-			});
+			await toWorker("main", "updateKeyboardShortcuts", pruned);
 		} catch (error) {
 			logEvent({
 				type: "error",
@@ -157,6 +165,11 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 			});
 		}
 	};
+
+	const [edit, setEdit] = useState<
+		[KeyboardShortcutCategories, string] | undefined
+	>(undefined);
+	const [editShortcut, setEditShortcut] = useState<ShortcutOrNull>(null);
 
 	useTitleBar({ title: "Keyboard Shortcuts" });
 
@@ -207,7 +220,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 												</div>
 												<div
 													className="d-flex align-items-center"
-													style={{ width: 100 }}
+													style={{ width: 120 }}
 												>
 													{formatKeyboardShortcutRaw(shortcut)}
 												</div>
@@ -286,4 +299,4 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 	);
 };
 
-export default GlobalSettings;
+export default KeyboardShortcuts;

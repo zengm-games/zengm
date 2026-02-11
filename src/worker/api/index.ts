@@ -158,6 +158,7 @@ import { actualPhase } from "../util/actualPhase.ts";
 import getCol from "../../common/getCol.ts";
 import getCols from "../../common/getCols.ts";
 import { formatScheduleForEditor } from "../views/scheduleEditor.ts";
+import type { KeyboardShortcutsLocal } from "../../ui/hooks/useKeyboardShortcuts.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -3898,6 +3899,16 @@ const updateKeepRosterSorted = async ({
 	await toUI("realtimeUpdate", [["team"]]);
 };
 
+const updateKeyboardShortcuts = async (
+	keyboardShortcuts: NonNullable<KeyboardShortcutsLocal>,
+) => {
+	const attributesStore = (
+		await idb.meta.transaction("attributes", "readwrite")
+	).store;
+	await attributesStore.put(keyboardShortcuts, "keyboardShortcuts");
+	await toUI("updateLocal", [{ keyboardShortcuts }]);
+};
+
 const updateLeague = async ({
 	lid,
 	obj,
@@ -5173,6 +5184,7 @@ export default {
 		updateGameAttributes,
 		updateGameAttributesGodMode,
 		updateKeepRosterSorted,
+		updateKeyboardShortcuts,
 		updateLeague,
 		updateMultiTeamMode,
 		updateOptions,

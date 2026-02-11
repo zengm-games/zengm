@@ -13,6 +13,7 @@ import type {
 } from "../../common/types.ts";
 import type { Settings } from "../views/settings.ts";
 import connectIndexedDB from "./connectIndexedDB.ts";
+import type { KeyboardShortcutsLocal } from "../../ui/hooks/useKeyboardShortcuts.ts";
 
 interface MetaDB extends DBSchema {
 	achievements: {
@@ -29,7 +30,8 @@ interface MetaDB extends DBSchema {
 			| Options
 			| RealPlayerPhotos
 			| RealTeamInfo
-			| Partial<Settings>;
+			| Partial<Settings>
+			| KeyboardShortcutsLocal;
 		key:
 			| "lastChangesVersion"
 			| "nagged"
@@ -37,7 +39,8 @@ interface MetaDB extends DBSchema {
 			| "options"
 			| "realPlayerPhotos"
 			| "realTeamInfo"
-			| "defaultSettingsOverrides";
+			| "defaultSettingsOverrides"
+			| "keyboardShortcuts";
 	};
 	leagues: {
 		value: League;

@@ -98,6 +98,14 @@ const KeyboardShortcutModal = ({
 				</div>
 			</Modal.Body>
 			<Modal.Footer>
+				<button
+					className="btn btn-danger"
+					onClick={() => {
+						save(null);
+					}}
+				>
+					Clear shortcut
+				</button>
 				<button className="btn btn-secondary" onClick={cancel}>
 					Cancel
 				</button>
@@ -222,7 +230,11 @@ const KeyboardShortcuts = ({
 													className="d-flex align-items-center"
 													style={{ width: 120 }}
 												>
-													{formatKeyboardShortcutRaw(shortcut)}
+													{shortcut === null ? (
+														<i>None</i>
+													) : (
+														formatKeyboardShortcutRaw(shortcut)
+													)}
 												</div>
 												<div className="d-flex align-items-center">
 													<button

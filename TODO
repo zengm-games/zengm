@@ -1,3 +1,5 @@
+LB/DL AV being elevated
+
 trade player back to original team with 0 GP in between - now there are duplicate stats rows https://discord.com/channels/290013534023057409/1468414393116004442/1468414393116004442
 - don't call addStatsRow until saving player stats?
   - but stats row is where jersey number is stored, does that matter?
@@ -15,16 +17,12 @@ FBGM option to disable FG/XP/punt
 
 customizable keyboard shortcuts
 - editor ui
-  - put in columns
-  - support null shortcut (disable binding)
-    - make sure looks okay in play menu
   - highlight conflicts in red, block saving
     - or show in modal
 - move out of hooks folder, since there are multiple exports?
 - test
   - custom shortcuts
   - weird ones, like raw modifier
-  - null shortcut propagating to UI
 
 positions dropdown filter in table, rather than free text https://old.reddit.com/r/Football_GM/comments/1qocv9w/searching_for_player_position_on_free_agents/
 

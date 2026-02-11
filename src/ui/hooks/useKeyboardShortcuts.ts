@@ -406,8 +406,10 @@ export const formatKeyboardShortcut = <T extends KeyboardShortcutCategories>(
 	action: keyof KeyboardShortcuts[T],
 	keyboardShortcutsLocal: KeyboardShortcutsLocal,
 ) => {
-	const shortcut =
-		keyboardShortcutsLocal?.[category]?.[action] ??
-		(keyboardShortcuts[category][action] as KeyboardShortcutInfo).shortcut;
+	let shortcut = keyboardShortcutsLocal?.[category]?.[action];
+	if (shortcut === undefined) {
+		shortcut = (keyboardShortcuts[category][action] as KeyboardShortcutInfo)
+			.shortcut;
+	}
 	return formatKeyboardShortcutRaw(shortcut);
 };

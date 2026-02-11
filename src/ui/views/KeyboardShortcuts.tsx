@@ -122,6 +122,20 @@ const KeyboardShortcutModal = ({
 	);
 };
 
+const stringifyShortcut = (shortcut: ShortcutOrNull) => {
+	if (shortcut === null) {
+		return "null";
+	}
+
+	return JSON.stringify([
+		shortcut.altKey,
+		shortcut.ctrlKey,
+		shortcut.metaKey,
+		shortcut.shiftKey,
+		shortcut.key,
+	]);
+};
+
 const KeyboardShortcuts = ({
 	keyboardShortcutsLocal,
 }: View<"keyboardShortcuts">) => {
@@ -186,11 +200,13 @@ const KeyboardShortcuts = ({
 		Record<
 			string,
 			{
+				conflictKey: string;
 				edited: boolean;
 				shortcut: ShortcutOrNull;
 			}
 		>
 	> = {} as any;
+	const shortcutCounts: Record<string, number> = {};
 	for (const key of helpers.keys(categories)) {
 		const category = keyboardShortcuts[key];
 		for (const action of helpers.keys(category)) {
@@ -210,10 +226,17 @@ const KeyboardShortcuts = ({
 				edited = false;
 			}
 
+			const conflictKey = stringifyShortcut(shortcut);
+			if (shortcutCounts[conflictKey] === undefined) {
+				shortcutCounts[conflictKey] = 1;
+			} else {
+				shortcutCounts[conflictKey] += 1;
+			}
+
 			if (!shortcutsWithOverrides[key]) {
 				shortcutsWithOverrides[key] = {};
 			}
-			shortcutsWithOverrides[key][action] = { edited, shortcut };
+			shortcutsWithOverrides[key][action] = { conflictKey, edited, shortcut };
 		}
 	}
 
@@ -237,14 +260,20 @@ const KeyboardShortcuts = ({
 											return;
 										}
 
-										const { edited, shortcut } =
+										const { conflictKey, edited, shortcut } =
 											shortcutsWithOverrides[key][action]!;
+
+										const conflict = shortcutCounts[conflictKey]! > 1;
 
 										return (
 											<div
 												className={clsx(
 													"d-flex",
-													edited ? "text-info" : undefined,
+													conflict
+														? "text-danger"
+														: edited
+															? "text-info"
+															: undefined,
 												)}
 												key={action}
 											>

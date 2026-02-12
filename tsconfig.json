@@ -9,7 +9,6 @@
 		"moduleDetection": "force",
 		"isolatedModules": true,
 		"verbatimModuleSyntax": true,
-		"strict": true,
 		"noImplicitOverride": true,
 		"module": "preserve",
 		"noEmit": true,
@@ -24,7 +23,13 @@
 
 		"allowImportingTsExtensions": true,
 		"erasableSyntaxOnly": true,
-		"jsx": "react-jsx"
+		"jsx": "react-jsx",
+		"types": [
+			"gtag.js",
+			"stripe-checkout",
+			"stripe-v2",
+			"wicg-file-system-access"
+		]
 	},
 	"exclude": ["node_modules", "build"]
 }

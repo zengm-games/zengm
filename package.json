@@ -127,7 +127,7 @@
 		"rollup-plugin-blacklist": "1.0.1",
 		"rollup-plugin-visualizer": "6.0.5",
 		"sass-embedded": "1.78.0",
-		"typescript": "5.9.3",
+		"typescript": "6.0.0-beta",
 		"vitest": "4.0.18",
 		"workbox-build": "7.4.0"
 	},

@@ -98,6 +98,9 @@ const KeyboardShortcutModal = ({
 				</div>
 			</Modal.Body>
 			<Modal.Footer>
+				<button className="btn btn-secondary" onClick={cancel}>
+					Cancel
+				</button>
 				<button
 					className="btn btn-danger"
 					onClick={() => {
@@ -105,9 +108,6 @@ const KeyboardShortcutModal = ({
 					}}
 				>
 					Clear shortcut
-				</button>
-				<button className="btn btn-secondary" onClick={cancel}>
-					Cancel
 				</button>
 				<button
 					className="btn btn-primary"

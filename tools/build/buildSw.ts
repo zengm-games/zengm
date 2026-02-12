@@ -55,6 +55,7 @@ const bundle = async () => {
 			format: "iife",
 			minify: true,
 			sourcemap: true,
+			comments: false,
 		},
 		plugins: [
 			terser({

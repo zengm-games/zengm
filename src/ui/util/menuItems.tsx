@@ -860,6 +860,15 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				league: true,
+				nonLeague: true,
+				commandPalette: true,
+				commandPaletteOnly: true,
+				path: "/settings/keyboard",
+				text: "Keyboard Shortcuts",
+			},
+			{
+				type: "link",
 				active: (pageID) => pageID === "settings",
 				league: true,
 				commandPalette: true,

@@ -129,7 +129,7 @@ export const keyboardShortcuts = {
 			},
 		},
 		tradeDeadline: {
-			name: "Play trade deadline",
+			name: "Play until trade deadline",
 			customizable: true,
 			shortcut: {
 				altKey: true,

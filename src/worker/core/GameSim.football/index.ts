@@ -2106,7 +2106,7 @@ class GameSim extends GameSimBase {
 				this.team[this.o].compositeRating.passBlocking /
 					this.team[this.d].compositeRating.passRushing,
 			);
-		const p = (0.24 + 0.4 * factor ** 1.25) * g.get("completionFactor");
+		const p = (0.19 + 0.4 * factor ** 1.25) * g.get("completionFactor");
 		return helpers.bound(p, 0, 0.95);
 	}
 

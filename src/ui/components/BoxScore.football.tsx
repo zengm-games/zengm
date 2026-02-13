@@ -34,6 +34,8 @@ import { formatClock } from "../../common/formatClock.ts";
 type Team = {
 	abbrev: string;
 	colors: [string, string, string];
+	imgURL: string;
+	imgURLSmall: string | undefined;
 	name: string;
 	region: string;
 	players: any[];
@@ -440,6 +442,20 @@ const FieldBackground = ({
 }) => {
 	return (
 		<div className="d-flex align-items-stretch position-absolute w-100 h-100">
+			<img
+				src={t2.imgURLSmall ?? t2.imgURL}
+				className="position-absolute"
+				style={{
+					left: "50%",
+					top: "50%",
+					maxWidth: "8%",
+					maxHeight: 0.4 * DEFAULT_HEIGHT,
+					minWidth: 50,
+					transform: "translate(-50%, -50%)",
+					opacity: 0.8,
+				}}
+				alt=""
+			/>
 			{range(NUM_SECTIONS).map((i) => {
 				const style: CSSProperties = {
 					width: `${(1 / 12) * 100}%`,

@@ -1,3 +1,6 @@
+shortcuts
+- option+letter on mac https://github.com/TanStack/hotkeys/blob/af1d4ec4a980b6f3d49fa4eebbf7a14d1d80d1ea/packages/hotkeys/src/match.ts#L68
+
 trade player back to original team with 0 GP in between - now there are duplicate stats rows https://discord.com/channels/290013534023057409/1468414393116004442/1468414393116004442
 - don't call addStatsRow until saving player stats?
   - but stats row is where jersey number is stored, does that matter?

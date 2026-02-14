@@ -440,15 +440,22 @@ const FieldBackground = ({
 	t: Team;
 	t2: Team;
 }) => {
+	let midfieldLogo;
+	if (neutralSite) {
+		midfieldLogo = `https://zengm.com/files/logo-${process.env.SPORT}.svg`;
+	} else {
+		midfieldLogo = t2.imgURLSmall ?? t2.imgURL;
+	}
+
 	return (
 		<div className="d-flex align-items-stretch position-absolute w-100 h-100">
 			<img
-				src={t2.imgURLSmall ?? t2.imgURL}
+				src={midfieldLogo}
 				className="position-absolute"
 				style={{
 					left: "50%",
 					top: "50%",
-					maxWidth: "8%",
+					maxWidth: "9%",
 					maxHeight: 0.4 * DEFAULT_HEIGHT,
 					minWidth: 50,
 					transform: "translate(-50%, -50%)",

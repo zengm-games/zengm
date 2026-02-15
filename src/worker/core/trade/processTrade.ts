@@ -81,13 +81,12 @@ const processTrade = async (
 			p.ptModifier = 1; // Reset
 
 			if (g.get("phase") <= PHASE.PLAYOFFS) {
-				if (!teamJerseyNumbers) {
-					// If two players being traded for each other have the same jersey number, that shouldn't be treated as conflict and they should be able to keep their jersey numbers
-					teamJerseyNumbers = await getTeammateJerseyNumbers(p.tid, [
-						p.pid,
-						...pids[k],
-					]);
-				}
+				// If two players being traded for each other have the same jersey number, that shouldn't be treated as conflict and they should be able to keep their jersey numbers - that's what the pids[k] part does.
+				// Recompute this for every player, otherwise two incoming players could pick the same jersey number.
+				const teamJerseyNumbers = await getTeammateJerseyNumbers(p.tid, [
+					p.pid,
+					...pids[k],
+				]);
 
 				await player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
 					team: teamJerseyNumbers,

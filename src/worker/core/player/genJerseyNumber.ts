@@ -429,7 +429,7 @@ const genJerseyNumber = async (
 		stats: any[];
 	},
 
-	// When this is undefined, it'll read from the database to find what it should be. But that won't work during league creation.
+	// When this is undefined, it'll read from the database to find what it should be. But that won't work during league creation. Also sometimes "teamJerseyNumbersInput" needs to be overwritten, like when processing trades
 	teamJerseyNumbersInput?: string[],
 	retiredJerseyNumbersInput?: string[],
 

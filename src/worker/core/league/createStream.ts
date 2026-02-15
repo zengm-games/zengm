@@ -26,6 +26,7 @@ import type {
 	GameAttributesLeagueWithHistory,
 	GetLeagueOptions,
 	League,
+	Phase,
 	Player,
 	PlayerWithoutKey,
 	RealPlayerPhotos,
@@ -1002,8 +1003,10 @@ const processTeamInfos = async ({
 
 const finalizeActivePlayers = async ({
 	fileHasPlayers,
+	phase,
 }: {
 	fileHasPlayers: boolean;
+	phase: Phase;
 }) => {
 	// If no players were uploaded in custom league file, add some relatives!
 	if (!fileHasPlayers && g.get("numTeams") < TOO_MANY_TEAMS_TOO_SLOW) {
@@ -1017,11 +1020,11 @@ const finalizeActivePlayers = async ({
 	const players1 = await idb.cache.players.getAll();
 	for (const p of players1) {
 		if (fileHasPlayers) {
-			// Fix jersey numbers, which matters for league files where that data might be invalid (conflicts) or incomplete
+			// Fix jersey numbers, which matters for league files where that data might be invalid (conflicts) or incomplete. Important to do this here at the end, so incomplete jersey numbers can be filled in with full knowledge of any teammate jersey numbers, otherwise you might randomly pick one on import and have that unknowingly conflict with a manually specified one
 			if (
 				p.tid >= 0 &&
-				p.stats.length > 0 &&
-				p.stats.at(-1).jerseyNumber === undefined
+				p.jerseyNumber === undefined &&
+				phase <= PHASE.PLAYOFFS
 			) {
 				player.setJerseyNumber(p, await player.genJerseyNumber(p));
 			}
@@ -1601,6 +1604,7 @@ const afterDBStream = async ({
 	}
 	await finalizeActivePlayers({
 		fileHasPlayers,
+		phase: gameAttributes.phase,
 	});
 
 	// Handle repeatSeason after creating league, so we know what random players were created

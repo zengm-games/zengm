@@ -1,17 +1,5 @@
 add tragic deaths to statistical feats or transactions on player pages https://discord.com/channels/290013534023057409/290013534023057409/1471788426024976394
 
-trade player back to original team with 0 GP in between - now there are duplicate stats rows https://discord.com/channels/290013534023057409/1468414393116004442/1468414393116004442
-- don't call addStatsRow until saving player stats?
-  - but stats row is where jersey number is stored, does that matter?
-    - solution 1: be more careful when calling addStatsRow
-      - delete previous row with no GP
-      - recompute statsTids
-      - add new stats row only if necessary, otherwise use previous one
-    - solution 2:
-      - factor out jerseyNumber logic from addStatsRow, store in p.jerseyNumber rather than stats immediately. then any time fetching current jersey number, be aware there may be no stats row (complicated)
-    - solution 3: just never store jersey number in stats row, come up with some other place to store it
-      - could support saving multiple numbers that were actually used this year - track if number is used yet, and if so then append rather than overwrite
-
 FBGM option to disable FG/XP/punt
 - https://app.fastmail.com/mail/Archive/AOc4VisnZIYZ.StqyBxW1iGns?u=433e4054
 
@@ -1889,6 +1877,7 @@ genSchedulePlayoffsDay -> genSchedulePlayoffsRound
 - when series ends, delete remaining games from schedule
 - remove forceWin hack in setSchedule
 - https://old.reddit.com/r/BasketballGM/comments/jd9vyg/new_feature_in_god_mode_to_select_the_winner_of_a/g9hgt09/
+- would also fix the minor bug where exporting during the playoffs without box scores means you restart at gid 0 since there are no games in the schedule, which breaks some old links which should be 404 but instead go to a new box score https://discord.com/channels/290013534023057409/1465134799244230688/1471647134196433109
 
 trade stuff
 - more penalty for bad contracts

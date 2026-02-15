@@ -2595,6 +2595,10 @@ const importPlayers = async ({
 			DEFAULT_LEVEL,
 			leagueFileVersion,
 		);
+		if (p3.jerseyNumber !== undefined && g.get("phase") <= PHASE.PLAYOFFS) {
+			// Make sure there is no conflict with the team we're importing to
+			player.setJerseyNumber(p3, await player.genJerseyNumber(p3));
+		}
 		await player.updateValues(p3);
 
 		await idb.cache.players.put(p3);
@@ -2652,7 +2656,6 @@ const importPlayersGetReal = async () => {
 			p,
 			DEFAULT_LEVEL,
 			LEAGUE_DATABASE_VERSION,
-			true,
 		);
 		players.push(p2);
 	}
@@ -4626,12 +4629,6 @@ const upsertCustomizedPlayer = async (
 		p.ratings.at(-1).pot = originalPot;
 	}
 	await player.updateValues(p);
-
-	// Add regular season or playoffs stat row, if necessary
-	if (p.tid >= 0 && p.tid !== originalTid && g.get("phase") <= PHASE.PLAYOFFS) {
-		// If it is the playoffs, this is only necessary if p.tid actually made the playoffs, but causes only cosmetic harm otherwise.
-		await player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS);
-	}
 
 	if (p.tid >= 0 && p.tid !== originalTid) {
 		if (!p.transactions) {

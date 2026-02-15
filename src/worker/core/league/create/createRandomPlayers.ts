@@ -183,10 +183,14 @@ const createRandomPlayers = async ({
 
 		numPlayersByTid[tid2]! += 1;
 		p.tid = tid2;
-		await player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
-			retired: retiredJerseyNumbers,
-			team: teamJerseyNumbers[tid2],
-		});
+		player.setJerseyNumber(
+			p,
+			await player.genJerseyNumber(
+				p,
+				teamJerseyNumbers[tid2],
+				retiredJerseyNumbers,
+			),
+		);
 
 		if (p.jerseyNumber !== undefined) {
 			teamJerseyNumbers[tid2].push(p.jerseyNumber);

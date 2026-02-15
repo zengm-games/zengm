@@ -429,13 +429,6 @@ const newPhasePreseason = async (
 				}
 			}
 		}
-
-		// Add row to player stats if they are on a team
-		if (p.tid >= 0) {
-			await player.addStatsRow(p, false, {
-				ignoreJerseyNumberConflicts: true,
-			});
-		}
 	}
 
 	// Again, so updateValues can happen after new mean/std is calculated
@@ -460,7 +453,7 @@ const newPhasePreseason = async (
 
 	// Handle jersey number conflicts
 	const playersByTeam = groupBy(
-		players.filter((p) => p.tid >= 0 && p.stats.length > 0),
+		players.filter((p) => p.tid >= 0),
 		"tid",
 	);
 	for (const roster of Object.values(playersByTeam)) {
@@ -507,10 +500,7 @@ const newPhasePreseason = async (
 
 		// One more pass, for players without jersey numbers at all (draft picks)
 		for (const p of roster) {
-			if (
-				p.jerseyNumber === undefined ||
-				(p.stats.length > 0 && p.stats.at(-1).jerseyNumber === undefined)
-			) {
+			if (p.jerseyNumber === undefined) {
 				player.setJerseyNumber(p, await player.genJerseyNumber(p), {
 					phase: PHASE.PRESEASON,
 				});

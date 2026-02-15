@@ -416,9 +416,9 @@ const writePlayerStats = async (
 
 					let ps = p2.stats.at(-1);
 
-					// This should never happen, but sometimes does
+					// Previously we called addStatsRow when joining a team, but now we do it dynamically
 					if (!statsRowIsCurrent(ps, t.id, playoffs)) {
-						await player.addStatsRow(p2, playoffs);
+						player.addStatsRow(p2, playoffs);
 						ps = p2.stats.at(-1);
 					}
 

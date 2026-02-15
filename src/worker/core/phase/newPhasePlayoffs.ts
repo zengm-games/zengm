@@ -1,4 +1,4 @@
-import { finances, player, realRosters, season, team } from "../index.ts";
+import { finances, realRosters, season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { achievement, g, helpers, local, logEvent } from "../../util/index.ts";
 import type {
@@ -108,7 +108,6 @@ const newPhasePlayoffs = async (
 		const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 
 		for (const p of players) {
-			await player.addStatsRow(p, true);
 			await idb.cache.players.put(p);
 		}
 	}

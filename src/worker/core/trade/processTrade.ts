@@ -100,9 +100,10 @@ const processTrade = async (
 					}
 				}
 
-				await player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
-					team: teamJerseyNumbers,
-				});
+				player.setJerseyNumber(
+					p,
+					await player.genJerseyNumber(p, teamJerseyNumbers),
+				);
 			}
 
 			if (!p.transactions) {

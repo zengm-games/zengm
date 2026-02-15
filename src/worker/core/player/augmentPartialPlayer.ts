@@ -1,5 +1,4 @@
 import { bySport, isSport, PHASE, PLAYER } from "../../../common/index.ts";
-import addStatsRow from "./addStatsRow.ts";
 import develop, { monteCarloPot } from "./develop.ts";
 import generate from "./generate.ts";
 import heightToRating from "./heightToRating.ts";
@@ -12,15 +11,6 @@ import stats from "./stats.ts";
 import { g, helpers, random } from "../../util/index.ts";
 import type { MinimalPlayerRatings, Player } from "../../../common/types.ts";
 
-const addStatsRowWrapped = async (
-	p: any,
-	ignoreJerseyNumberConflicts?: boolean,
-) => {
-	await addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
-		ignoreJerseyNumberConflicts,
-	});
-};
-
 /**
  * Take a partial player object, such as from an uploaded JSON file, and add everything it needs to be a real player object.
  *
@@ -32,7 +22,6 @@ const augmentPartialPlayer = async (
 	p: any,
 	scoutingLevel: number,
 	version: number | undefined,
-	ignoreJerseyNumberConflicts?: boolean,
 ): Promise<Player<MinimalPlayerRatings>> => {
 	let age;
 
@@ -398,12 +387,12 @@ const augmentPartialPlayer = async (
 		delete p.contract.temp;
 	}
 
+	if (p.jerseyNumber === undefined && p.stats.length > 0) {
+		p.jerseyNumber = helpers.getJerseyNumber(p);
+	}
+
 	// If no stats in League File, create blank stats rows for active players if necessary
-	if (p.stats.length === 0) {
-		if (p.tid >= 0 && g.get("phase") <= PHASE.PLAYOFFS) {
-			await addStatsRowWrapped(p, ignoreJerseyNumberConflicts);
-		}
-	} else {
+	if (p.stats.length > 0) {
 		let yearsWithTeam = 1;
 		let prevTid;
 		for (const ps of p.stats) {
@@ -431,15 +420,6 @@ const augmentPartialPlayer = async (
 						ps[key] = [];
 					}
 				}
-			}
-		}
-
-		// Add stats row if this is the preseason and all stats are historical, both for people making rosters by hand and for historical rosters
-		if (g.get("phase") === PHASE.PRESEASON) {
-			const lastSeason = p.stats.at(-1).season;
-
-			if (p.tid >= 0 && lastSeason < currentSeason) {
-				await addStatsRowWrapped(p, ignoreJerseyNumberConflicts);
 			}
 		}
 	}

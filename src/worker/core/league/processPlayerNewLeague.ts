@@ -78,7 +78,6 @@ const processPlayerNewLeague = async ({
 		{ ...p },
 		scoutingLevel,
 		version,
-		true,
 	);
 	if (!p.contract) {
 		p2.contract.temp = true;

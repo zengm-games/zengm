@@ -112,7 +112,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 		nextPhase !== undefined &&
 		nextPhase <= PHASE.PLAYOFFS
 	) {
-		await player.addStatsRow(p, g.get("nextPhase") === PHASE.PLAYOFFS);
+		player.setJerseyNumber(p, await player.genJerseyNumber(p));
 	}
 
 	const pickNum =

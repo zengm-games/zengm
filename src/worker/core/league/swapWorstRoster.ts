@@ -1,9 +1,8 @@
 import { idb } from "../../db/index.ts";
 import { g, logEvent } from "../../util/index.ts";
 import { getTeamOvr } from "../../views/newTeam.ts";
-import player from "../player/index.ts";
-import { PHASE } from "../../../common/index.ts";
 import { orderBy } from "../../../common/utils.ts";
+import player from "../player/index.ts";
 
 // Swap the user's roster with the roster of the worst team in the league, by ovr
 const swapWorstRoster = async (addSisyphusLogs: boolean) => {
@@ -33,9 +32,6 @@ const swapWorstRoster = async (addSisyphusLogs: boolean) => {
 		};
 	}
 
-	const season = g.get("season");
-	const phase = g.get("phase");
-
 	const userTeam = await idb.cache.players.indexGetAll("playersByTid", userTid);
 	const worstTeam = await idb.cache.players.indexGetAll(
 		"playersByTid",
@@ -56,20 +52,6 @@ const swapWorstRoster = async (addSisyphusLogs: boolean) => {
 	]) {
 		for (const p of players) {
 			p.tid = newTid;
-
-			// Remove obsolete stats row if necessary
-			const lastStats = p.stats.at(-1);
-			if (
-				lastStats &&
-				lastStats.tid === oldTid &&
-				lastStats.gp === 0 &&
-				lastStats.season === season &&
-				phase <= PHASE.PLAYOFFS
-			) {
-				p.stats.pop();
-				p.statsTids = Array.from(new Set(p.stats.map((row) => row.tid)));
-				player.addStatsRow(p, phase === PHASE.PLAYOFFS);
-			}
 
 			if (addSisyphusLogs) {
 				await logEvent({
@@ -93,6 +75,13 @@ const swapWorstRoster = async (addSisyphusLogs: boolean) => {
 			}
 
 			await idb.cache.players.put(p);
+		}
+	}
+
+	// Check for retired jersey numbers (would be more efficient to get retiredJerseyNumbers once per team and check before calling genJerseyNumber, but oh well)
+	for (const p of [...userTeam, ...worstTeam]) {
+		if (p.jerseyNumber !== undefined) {
+			await player.setJerseyNumber(p, await player.genJerseyNumber(p));
 		}
 	}
 

@@ -1,8 +1,9 @@
 import { isSport, PHASE } from "../../../common/index.ts";
-import addStatsRow from "./addStatsRow.ts";
 import setContract from "./setContract.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type { Phase, Player, PlayerContract } from "../../../common/types.ts";
+import genJerseyNumber from "./genJerseyNumber.ts";
+import setJerseyNumber from "./setJerseyNumber.ts";
 
 const sign = async (
 	p: Player,
@@ -21,7 +22,7 @@ const sign = async (
 
 	// Handle stats if the season is in progress. Otherwise, not needed until next season.
 	if (phase <= PHASE.PLAYOFFS) {
-		await addStatsRow(p, phase === PHASE.PLAYOFFS);
+		setJerseyNumber(p, await genJerseyNumber(p));
 	}
 
 	let score = p.valueFuzz - 45;

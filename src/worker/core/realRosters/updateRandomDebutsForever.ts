@@ -66,7 +66,6 @@ const updateRandomDebutsForever = async (
 			p,
 			scoutingLevel,
 			LEAGUE_DATABASE_VERSION,
-			true,
 		);
 		await player.updateValues(p2);
 		await idb.cache.players.put(p2);

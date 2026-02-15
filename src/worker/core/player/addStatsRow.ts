@@ -1,7 +1,6 @@
 import stats from "./stats.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
-import genJerseyNumber from "./genJerseyNumber.ts";
 import { isSport } from "../../../common/index.ts";
 import statsRowIsCurrent from "./statsRowIsCurrent.ts";
 
@@ -16,14 +15,9 @@ import statsRowIsCurrent from "./statsRowIsCurrent.ts";
  * @param {Object} p Player object.
  * @param {=boolean} playoffs Is this stats row for the playoffs or not? Default false.
  */
-const addStatsRow = async (
+const addStatsRow = (
 	p: Player | PlayerWithoutKey,
 	playoffs: boolean = false,
-	jerseyNumbers: {
-		ignoreJerseyNumberConflicts?: boolean;
-		team?: string[];
-		retired?: string[];
-	} = {},
 ) => {
 	// Never add duplicate row, such as player beign signed as FA by team who released him
 	const ps = p.stats.at(-1);
@@ -78,17 +72,8 @@ const addStatsRow = async (
 		}
 	}
 
-	if (jerseyNumbers.ignoreJerseyNumberConflicts) {
-		// Just carry over the previous jersey number. This is intended for situations where we'll check for conflicts later, like augmentPartialPlayer in a new league from a file. There is another pass of genJerseyNumber in league/createStream.ts that will clean up any conflicts. Don't want to call genJerseyNumber here because it'll generate random numbers for players with no jersey number, which could conflict with manually specified jersey numbers for other players, and the wrong one could be keypt in league/createStream.ts.
-		p.jerseyNumber = helpers.getJerseyNumber(p); // Undefined for rookies just drafted!
-	} else {
-		p.jerseyNumber = await genJerseyNumber(
-			p,
-			jerseyNumbers.team,
-			jerseyNumbers.retired,
-		);
-	}
-	statsRow.jerseyNumber = p.jerseyNumber; // Undefined for rookies just drafted!
+	// This ignores conflicts and assumes p.jerseyNumber is already defined. If that's a problem, call genJerseyNumber before calling addStatsRow
+	statsRow.jerseyNumber = helpers.getJerseyNumber(p);
 
 	p.stats.push(statsRow);
 };

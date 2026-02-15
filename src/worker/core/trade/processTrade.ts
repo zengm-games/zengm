@@ -68,13 +68,15 @@ const processTrade = async (
 			);
 		}
 
-		let teamJerseyNumbers;
+		const players = await idb.getCopies.players(
+			{ pids: pids[j] },
+			"noCopyCache",
+		);
+		if (players.length !== pids[j].length) {
+			throw new Error("Invalid pid");
+		}
 
-		for (const pid of pids[j]) {
-			const p = await idb.cache.players.get(pid);
-			if (!p) {
-				throw new Error("Invalid pid");
-			}
+		for (const p of players) {
 			p.tid = tids[k];
 
 			// p.gamesUntilTradable = 14; // Don't make traded players untradable
@@ -87,6 +89,16 @@ const processTrade = async (
 					p.pid,
 					...pids[k],
 				]);
+
+				// Also add other traded players coming along with this one, if they haven't been processed yet, so their current number doesn't get stolen before they get processed
+				for (const p2 of players) {
+					if (p2.pid !== p.pid && p2.tid !== tids[k]) {
+						const currentNumber = helpers.getJerseyNumber(p2);
+						if (currentNumber !== undefined) {
+							teamJerseyNumbers.push(currentNumber);
+						}
+					}
+				}
 
 				await player.addStatsRow(p, g.get("phase") === PHASE.PLAYOFFS, {
 					team: teamJerseyNumbers,
@@ -108,7 +120,7 @@ const processTrade = async (
 			await idb.cache.players.put(p);
 
 			teams[k].assets.push({
-				pid,
+				pid: p.pid,
 				name: `${p.firstName} ${p.lastName}`,
 				contract: p.contract,
 				ratingsIndex: p.ratings.length - 1,

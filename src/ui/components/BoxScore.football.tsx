@@ -509,7 +509,7 @@ const FieldBackground = ({
 					>
 						{endzoneTeam ? (
 							<div
-								className="fs-2 text-center overflow-hidden"
+								className="fs-2 text-center overflow-hidden text-uppercase fw-bold"
 								style={{ whiteSpace: "nowrap" }}
 							>
 								{endzoneTeam.name}

@@ -149,6 +149,7 @@ type Key =
 	| "hitByPitchFactor"
 	| "swingFactor"
 	| "contactFactor"
+	| "errorFactor"
 	| "softCapTradeSalaryMatch"
 	| "gender"
 	| "heightFactor"
@@ -370,6 +371,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			hitByPitchFactor: g.get("hitByPitchFactor"),
 			swingFactor: g.get("swingFactor"),
 			contactFactor: g.get("contactFactor"),
+			errorFactor: g.get("errorFactor"),
 			softCapTradeSalaryMatch: g.get("softCapTradeSalaryMatch"),
 			gender: g.get("gender"),
 			heightFactor: g.get("heightFactor"),

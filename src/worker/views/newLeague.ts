@@ -351,6 +351,7 @@ export const getDefaultSettings = () => {
 		),
 		swingFactor: unwrapGameAttribute(defaultGameAttributes, "swingFactor"),
 		contactFactor: unwrapGameAttribute(defaultGameAttributes, "contactFactor"),
+		errorFactor: unwrapGameAttribute(defaultGameAttributes, "errorFactor"),
 		softCapTradeSalaryMatch: unwrapGameAttribute(
 			defaultGameAttributes,
 			"softCapTradeSalaryMatch",

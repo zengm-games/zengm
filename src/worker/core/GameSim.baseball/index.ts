@@ -1303,7 +1303,7 @@ class GameSim extends GameSimBase {
 							2);
 		}
 
-		if (prob > Math.random()) {
+		if (prob * g.get("errorFactor") > Math.random()) {
 			return p;
 		}
 
@@ -1318,7 +1318,7 @@ class GameSim extends GameSimBase {
 							firstBaseman.compositeRating.groundBallDefense) /
 							2);
 
-			if (prob > Math.random()) {
+			if (prob * g.get("errorFactor") > Math.random()) {
 				return firstBaseman;
 			}
 		}

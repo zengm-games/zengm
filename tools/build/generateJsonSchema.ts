@@ -1473,6 +1473,9 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					contactFactor: {
 						type: "number",
 					},
+					errorFactor: {
+						type: "number",
+					},
 					neutralSite: {
 						enum: ["never", "finals", "playoffs"],
 					},

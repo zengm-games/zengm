@@ -65,6 +65,7 @@ const gameAttributesKeysSportSpecific = {
 		"swingFactor",
 		"contactFactor",
 		"hitFactor",
+		"errorFactor",
 	] as GameAttributeKey[],
 	basketball: [
 		"threePointers",
@@ -372,6 +373,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	hitByPitchFactor: 1,
 	swingFactor: 1,
 	contactFactor: 1,
+	errorFactor: 1,
 
 	neutralSite: "never",
 	tradeProposalsSeed: 0,

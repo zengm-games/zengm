@@ -745,6 +745,7 @@ export type GameAttributesLeague = {
 	hitByPitchFactor: number;
 	swingFactor: number;
 	contactFactor: number;
+	errorFactor: number;
 	neutralSite: "never" | "finals" | "playoffs";
 	rpdPot: boolean;
 	currencyFormat: [string, "." | ",", string];

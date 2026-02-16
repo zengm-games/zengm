@@ -2031,6 +2031,15 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Tendencies",
+			key: "errorFactor",
+			name: "Error Factor",
+			godModeRequired: "always",
+			type: "float",
+			description:
+				"The probability of an error happening is multiplied by this number.",
+		},
+		{
+			category: "Tendencies",
 			key: "deflectionFactor",
 			name: "Deflection Factor",
 			godModeRequired: "always",

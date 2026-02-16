@@ -462,6 +462,7 @@ const EXHIBITION_GAME_SETTINGS = [
 	"swingFactor",
 	"contactFactor",
 	"hitFactor",
+	"errorFactor",
 	"fantasyPoints",
 	"passFactor",
 	"rushYdsFactor",

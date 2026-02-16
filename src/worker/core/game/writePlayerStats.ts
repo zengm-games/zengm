@@ -332,6 +332,21 @@ const writePlayerStats = async (
 			}
 
 			for (const p of t.player) {
+				// For consistency across sports (since updatePlayer is always true in BBGM but not yet in other sports) we want to always call addStatsRow when necessary
+				const p2 = await idb.cache.players.get(p.id);
+				if (!p2) {
+					throw new Error("Invalid pid");
+				}
+
+				let ps = p2.stats.at(-1);
+
+				// Previously we called addStatsRow when joining a team, but now we do it dynamically
+				const addNewStatsRow = !statsRowIsCurrent(ps, t.id, playoffs);
+				if (addNewStatsRow) {
+					player.addStatsRow(p2, playoffs);
+					ps = p2.stats.at(-1);
+				}
+
 				// Only need to write stats if player got minutes, except for minAvailable in BBGM
 				const updatePlayer = bySport({
 					baseball: p.stat.gp > 0,
@@ -340,6 +355,9 @@ const writePlayerStats = async (
 					hockey: p.pos === "G" || p.stat.min > 0,
 				});
 				if (!updatePlayer) {
+					if (addNewStatsRow) {
+						await idb.cache.players.put(p2);
+					}
 					continue;
 				}
 
@@ -388,11 +406,6 @@ const writePlayerStats = async (
 					t.playerFeat = true;
 				}
 
-				const p2 = await idb.cache.players.get(p.id);
-				if (!p2) {
-					throw new Error("Invalid pid");
-				}
-
 				if (!allStarGame) {
 					if (isSport("hockey")) {
 						if (p2.pid === goaliePID) {
@@ -412,14 +425,6 @@ const writePlayerStats = async (
 							// Need to add P_FATIGUE_DAILY_REDUCTION for anyone who pitched in this game, cause that will be subtracted later
 							p2.pFatigue += p.stat.pc + P_FATIGUE_DAILY_REDUCTION;
 						}
-					}
-
-					let ps = p2.stats.at(-1);
-
-					// Previously we called addStatsRow when joining a team, but now we do it dynamically
-					if (!statsRowIsCurrent(ps, t.id, playoffs)) {
-						player.addStatsRow(p2, playoffs);
-						ps = p2.stats.at(-1);
 					}
 
 					// Update stats

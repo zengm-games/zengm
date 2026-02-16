@@ -1,6 +1,14 @@
+addStatsRow
+- 168 vs 179 http://localhost/l/237/roster/PHI/2015/regularSeason
+
 somewhere in league settings show total number of playoff teams https://app.fastmail.com/mail/Archive/A8bAfE0dqDdo.StqkZ1WgCv0J?u=433e4054
 
 add tragic deaths to statistical feats or transactions on player pages https://discord.com/channels/290013534023057409/290013534023057409/1471788426024976394
+
+trade player back to original team with 0 GP in between - now there are duplicate stats rows https://discord.com/channels/290013534023057409/1468414393116004442/1468414393116004442
+- don't call addStatsRow until saving actual player stats? tricky because (at least in BBGM) we track minAvailable in stats, so even with 0 GP we need a stats row
+  - minAvailable is not needed once season is over, so in theory could just track that somewhere else, or delete rows with 0 GP when they are not needed. but in theory we might also want to track other things without a GP (like DNP reason) so we should keep these rows with 0 GP. however we don't need to actually create them until saving in writePlayerStats, but we should always create rows there.
+- real solution is to be able to merge stats rows
 
 FBGM option to disable FG/XP/punt
 - https://app.fastmail.com/mail/Archive/AOc4VisnZIYZ.StqyBxW1iGns?u=433e4054

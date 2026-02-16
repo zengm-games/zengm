@@ -96,13 +96,9 @@ const augmentPartialPlayer = async (
 	}
 
 	if (!p.statsTids) {
-		p.statsTids = Array.isArray(p.stats) ? p.stats.map((s: any) => s.tid) : [];
-
-		if (p.tid >= 0 && g.get("phase") <= PHASE.PLAYOFFS) {
-			p.statsTids.push(p.tid);
-		}
-
-		p.statsTids = Array.from(new Set(p.statsTids));
+		p.statsTids = Array.from(
+			new Set(Array.isArray(p.stats) ? p.stats.map((s: any) => s.tid) : []),
+		);
 	}
 
 	if (!p.draft) {

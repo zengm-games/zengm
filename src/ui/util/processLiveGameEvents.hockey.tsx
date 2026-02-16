@@ -17,6 +17,7 @@ let playersByPid:
 				inGame: boolean;
 				inPenaltyBox: boolean;
 				injury: PlayerInjury;
+				seasonStats: Record<string, number>;
 			}
 	  >
 	| undefined;
@@ -87,9 +88,14 @@ const getText = (
 		text = `${event.names[0]} wins the faceoff against ${event.names[1]}`;
 	} else if (event.type === "goal") {
 		// text empty because PlayByPlayEntry handles it
-		text = "";
+		// Not empty anymore to handle showing stats
+		text = ` (${event.names[0]} ${event.seasonStats[0]} G)`;
 		if (event.names.length > 1) {
-			text += ` (assist: ${event.names.slice(1).join(", ")})`;
+			if (event.seasonStats.length === 2) {
+				text += ` (assist: ${event.names[1]} ${event.seasonStats[1]} A)`;
+			} else if (event.seasonStats.length === 3) {
+				text += ` (assist: ${event.names[1]} ${event.seasonStats[1]} A, ${event.names[2]} ${event.seasonStats[2]} A)`;
+			}
 		}
 	} else if (event.type === "offensiveLineChange") {
 		text = "Offensive line change";

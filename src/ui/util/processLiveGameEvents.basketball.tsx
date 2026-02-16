@@ -14,6 +14,7 @@ let playersByPid:
 	| Record<
 			number,
 			{
+				[key: string]: number | string | boolean; // bit of a hack, generic key names which can be either a number, string or boolean. essentially an any type
 				name: string;
 				inGame: boolean;
 			}
@@ -28,11 +29,14 @@ export const getText = (
 	event: PlayByPlayEvent,
 	boxScore: {
 		numPeriods: number;
-		teams: [{ pts: number }, { pts: number }];
+		teams: [{ pts: number; players: any[] }, { pts: number; players: any[] }];
 	},
 ) => {
 	let texts: ReactNode[] | undefined;
 	let weights;
+	if (playersByPid === undefined) {
+		throw new Error("playersByPid is undefined");
+	}
 
 	if (event.type === "period") {
 		texts = [
@@ -50,21 +54,26 @@ export const getText = (
 	} else if (event.type === "injury") {
 		texts = [`${getName(event.pid)} was injured!`];
 	} else if (event.type === "tov") {
-		if (event.outOfBounds) {
-			texts = [`${getName(event.pid)} loses the ball out of bounds`];
-		} else {
-			texts = [`${getName(event.pid)} turns the ball over`];
-		}
-	} else if (event.type === "stl") {
+		const tov = playersByPid[event.pid]!.tov;
 		if (event.outOfBounds) {
 			texts = [
-				`${getName(event.pid)} knocks the ball out of bounds off ${getName(
+				`${getName(event.pid)} loses the ball out of bounds (${tov} TOV)`,
+			];
+		} else {
+			texts = [`${getName(event.pid)} turns the ball over (${tov} TOV)`];
+		}
+	} else if (event.type === "stl") {
+		const stl = playersByPid[event.pid]!.stl;
+		const tov = playersByPid[event.pidTov]!.tov;
+		if (event.outOfBounds) {
+			texts = [
+				`${getName(event.pid)} knocks the ball out of bounds (${stl} STL) off ${getName(
 					event.pidTov,
-				)}`,
+				)} (${tov} TOV)`,
 			];
 		} else {
 			texts = [
-				`${getName(event.pid)} stole the ball from ${getName(event.pidTov)}`,
+				`${getName(event.pid)} stole (${stl} STL) the ball from ${getName(event.pidTov)} (${tov} TOV)`,
 			];
 		}
 	} else if (event.type === "fgaTipIn") {
@@ -100,46 +109,54 @@ export const getText = (
 		}
 	} else if (event.type === "fgTipIn") {
 		const he = getPronoun("He");
-
-		texts = [`${he} slams it home!`, `${he} tips it in!`];
+		const pts = playersByPid[event.pid]!.pts;
+		texts = [
+			`${he} slams it home! (${pts} PTS)`,
+			`${he} tips it in! (${pts} PTS)`,
+		]; // Not sure if the pronoun should be replaced
 		weights = local.getState().gender === "male" ? [1, 1] : [0, 1];
 	} else if (event.type === "fgTipInAndOne") {
 		const he = getPronoun("He");
-
+		const pts = playersByPid[event.pid]!.pts;
 		texts = [
-			`${he} slams it home, and a foul!`,
-			`${he} tips it in, and a foul!`,
+			`${he} slams it home (${pts} PTS), and a foul!`,
+			`${he} tips it in (${pts} PTS), and a foul!`,
 		];
 		weights = local.getState().gender === "male" ? [1, 1] : [0, 1];
 	} else if (event.type === "fgPutBack") {
 		const he = getPronoun("He");
-
-		texts = [`${he} slams it home!`, `${he} lays it in!`];
+		const pts = playersByPid[event.pid]!.pts;
+		texts = [
+			`${he} slams it home! (${pts} PTS)`,
+			`${he} lays it in! (${pts} PTS)`,
+		];
 		weights = local.getState().gender === "male" ? [1, 1] : [0, 1];
 	} else if (event.type === "fgPutBackAndOne") {
 		const he = getPronoun("He");
+		const pts = playersByPid[event.pid]!.pts;
 
 		texts = [
-			`${he} slams it home, and a foul!`,
-			`${he} lays it in, and a foul!`,
+			`${he} (${pts} PTS) slams it home, and a foul!`,
+			`${he} (${pts} PTS) lays it in, and a foul!`,
 		];
 		weights = local.getState().gender === "male" ? [1, 1] : [0, 1];
 	} else if (event.type === "fgAtRim") {
 		const he = getPronoun("He");
+		const pts = playersByPid[event.pid]!.pts;
 
 		texts = [
-			`${he} throws it down on ${getName(event.pidDefense)}!`,
-			`${he} slams it home`,
-			"The layup is good",
+			`${he} (${pts} PTS) throws it down on ${getName(event.pidDefense)}!`,
+			`${he} (${pts} PTS) slams it home`,
+			`The layup is good (${pts} PTS)`,
 		];
 		weights = local.getState().gender === "male" ? [1, 2, 2] : [1, 10, 1000];
 	} else if (event.type === "fgAtRimAndOne") {
 		const he = getPronoun("He");
-
+		const pts = playersByPid[event.pid]!.pts;
 		texts = [
-			`${he} throws it down on ${getName(event.pidDefense)}, and a foul!`,
-			`${he} slams it home, and a foul!`,
-			"The layup is good, and a foul!",
+			`${he} (${pts} PTS) throws it down on ${getName(event.pidDefense)}, and a foul!`,
+			`${he} (${pts} PTS) slams it home, and a foul!`,
+			`The layup is good (${pts} PTS), and a foul!`,
 		];
 		weights = local.getState().gender === "male" ? [1, 2, 2] : [1, 10, 1000];
 	} else if (
@@ -147,21 +164,24 @@ export const getText = (
 		event.type === "fgMidRange" ||
 		event.type === "tp"
 	) {
-		texts = ["It's good!"];
+		const pts = playersByPid[event.pid]!.pts;
+		texts = [`It's good! (${pts} PTS)`];
 	} else if (
 		event.type === "fgLowPostAndOne" ||
 		event.type === "fgMidRangeAndOne" ||
 		event.type === "tpAndOne"
 	) {
-		texts = ["It's good, and a foul!"];
+		const pts = playersByPid[event.pid]!.pts;
+		texts = [`It's good (${pts} PTS), and a foul!`];
 	} else if (
 		event.type === "blkAtRim" ||
 		event.type === "blkTipIn" ||
 		event.type === "blkPutBack"
 	) {
+		const blk = playersByPid[event.pid]!.blk;
 		texts = [
-			`${getName(event.pid)} blocked the layup attempt`,
-			`${getName(event.pid)} blocked the dunk attempt`,
+			`${getName(event.pid)} (${blk} BLK) blocked the layup attempt`,
+			`${getName(event.pid)} (${blk} BLK) blocked the dunk attempt`,
 		];
 		if (local.getState().gender === "female") {
 			weights = [1, 0];
@@ -171,7 +191,8 @@ export const getText = (
 		event.type === "blkMidRange" ||
 		event.type === "blkTp"
 	) {
-		texts = [`Blocked by ${getName(event.pid)}!`];
+		const blk = playersByPid[event.pid]!.blk;
+		texts = [`Blocked by ${getName(event.pid)} (${blk} BLK)!`];
 	} else if (event.type === "missTipIn") {
 		const he = getPronoun("He");
 		texts = [`${he} blows the layup`, `${he} blows the dunk`, "No good"];
@@ -193,40 +214,53 @@ export const getText = (
 		texts = ["The shot rims out", "No good", `${getPronoun("He")} bricks it`];
 		weights = [1, 4, 1];
 	} else if (event.type === "orb") {
-		texts = [`${getName(event.pid)} grabbed the offensive rebound`];
+		const orb = playersByPid[event.pid]!.orb;
+		texts = [
+			`${getName(event.pid)} grabbed the offensive rebound (${orb} ORB)`,
+		];
 	} else if (event.type === "drb") {
-		texts = [`${getName(event.pid)} grabbed the defensive rebound`];
+		const drb = playersByPid[event.pid]!.drb;
+
+		texts = [
+			`${getName(event.pid)} grabbed the defensive rebound (${drb} DRB)`,
+		];
 	} else if (event.type === "gameOver") {
 		texts = ["End of game"];
 	} else if (event.type === "ft") {
-		texts = [`${getName(event.pid)} made a free throw`];
+		const pts = playersByPid[event.pid]!.pts;
+		texts = [`${getName(event.pid)} made a free throw (${pts} PTS)`];
 	} else if (event.type === "missFt") {
 		texts = [`${getName(event.pid)} missed a free throw`];
 	} else if (event.type === "pfNonShooting") {
-		texts = [`Non-shooting foul on ${getName(event.pid)}`];
+		const pf = playersByPid[event.pid]!.pf;
+		texts = [`Non-shooting foul on ${getName(event.pid)} (${pf} FL)`];
 	} else if (event.type === "pfBonus") {
+		const pf = playersByPid[event.pid]!.pf;
 		texts = [
 			`Non-shooting foul on ${getName(
 				event.pid,
-			)}. They are in the penalty, so two FTs for ${getName(
+			)} (${pf} FL). They are in the penalty, so two FTs for ${getName(
 				event.pidShooting,
 			)}`,
 		];
 	} else if (event.type === "pfFG") {
+		const pf = playersByPid[event.pid]!.pf;
 		texts = [
-			`Shooting foul on ${getName(event.pid)}, two FTs for ${getName(
+			`Shooting foul on ${getName(event.pid)} (${pf} FL), two FTs for ${getName(
 				event.pidShooting,
 			)}`,
 		];
 	} else if (event.type === "pfTP") {
+		const pf = playersByPid[event.pid]!.pf;
 		texts = [
-			`Shooting foul on ${getName(event.pid)}, three FTs for ${getName(
+			`Shooting foul on ${getName(event.pid)} (${pf} FL), three FTs for ${getName(
 				event.pidShooting,
 			)}`,
 		];
 	} else if (event.type === "pfAndOne") {
+		const pf = playersByPid[event.pid]!.pf;
 		// More description is already in the shot text
-		texts = [`Foul on ${getName(event.pid)}`];
+		texts = [`Foul on ${getName(event.pid)} (${pf} FL)`];
 	} else if (event.type === "foulOut") {
 		texts = [
 			<span className="text-danger">{getName(event.pid)} fouled out</span>,
@@ -288,7 +322,8 @@ export const getText = (
 
 		const eAny = event as any;
 		if (eAny.pidAst !== undefined) {
-			text += ` (assist: ${getName(eAny.pidAst)})`;
+			const ast = playersByPid[eAny.pidAst]!.ast;
+			text += ` Assisted by ${getName(eAny.pidAst)} (${ast} AST)`;
 		}
 
 		return text;

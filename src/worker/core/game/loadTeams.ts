@@ -7,6 +7,7 @@ import type {
 	Conditions,
 } from "../../../common/types.ts";
 import {
+	bySport,
 	COMPOSITE_WEIGHTS,
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	isSport,
@@ -235,6 +236,7 @@ export const processTeam = async (
 		if (!g.get("userTids").includes(t.id) || g.get("spectator")) {
 			p2.ptModifier = 1;
 		}
+		const seasonStats: Record<string, number> = {};
 
 		// These use the same formulas as the skill definitions in player.skills!
 		for (const [k, weightInfo] of Object.entries(COMPOSITE_WEIGHTS)) {
@@ -273,13 +275,8 @@ export const processTeam = async (
 		if (isSport("basketball")) {
 			p2.compositeRating.usage = p2.compositeRating.usage ** 1.9;
 		}
-
-		if (isSport("baseball")) {
-			(p2 as any).pFatigue = p.pFatigue ?? 0;
-
-			// Store some pre-game season stats that are displayed in box score
-			const seasonStats: Record<string, number> = {};
-			const seasonStatsKeys = [
+		const seasonStatsKeys = bySport({
+			baseball: [
 				"pa",
 				"bb",
 				"hbp",
@@ -295,8 +292,23 @@ export const processTeam = async (
 				"sv",
 				"bs",
 				"hld",
-			];
-
+				"sb",
+			],
+			basketball: undefined,
+			football: [
+				"pssTD",
+				"rusTD",
+				"recTD",
+				"defSk",
+				"fmb",
+				"defInt",
+				"krTD",
+				"prTD",
+				"defFmbFrc",
+			],
+			hockey: ["shG", "evG", "ppG", "shA", "evA", "ppA"],
+		});
+		if (seasonStatsKeys !== undefined) {
 			let hasStats;
 			let ps;
 			if (allStarGame) {
@@ -311,6 +323,9 @@ export const processTeam = async (
 				seasonStats[key] = hasStats ? ps[key] : 0;
 			}
 			(p2 as any).seasonStats = seasonStats;
+		}
+		if (isSport("baseball")) {
+			(p2 as any).pFatigue = p.pFatigue ?? 0;
 		}
 
 		p2.stat = {
@@ -380,7 +395,7 @@ export const processTeam = async (
  *
  * @memberOf core.game
  * @param {IDBTransaction} ot An IndexedDB transaction on players and teams.
- * @param {Promise} Resolves to an array of team objects, ordered by tid.
+ * @returns {Promise<Record<number, undefined | ReturnType<typeof processTeam>>>} Resolves to a record of team objects, ordered by tid.
  */
 const loadTeams = async (tids: number[], conditions: Conditions) => {
 	const teams: Record<

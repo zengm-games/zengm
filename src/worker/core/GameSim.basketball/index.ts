@@ -2284,6 +2284,10 @@ class GameSim extends GameSimBase {
 		} else {
 			throw new Error(`Should never happen ${type}`);
 		}
+		if (passer !== undefined) {
+			this.recordStat(this.o, passer, "ast");
+		}
+
 		const baseLogInformation = {
 			t: this.o,
 			pid,
@@ -2317,10 +2321,6 @@ class GameSim extends GameSimBase {
 			});
 		}
 		this.recordLastScore(this.o, p, type);
-
-		if (passer !== undefined) {
-			this.recordStat(this.o, passer, "ast");
-		}
 
 		if (andOne && !this.elamDone) {
 			this.doPf({ t: this.d, type: "pfAndOne", shooter: p, fouler });

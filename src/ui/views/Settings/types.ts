@@ -123,6 +123,7 @@ export type Key =
 	| "hitByPitchFactor"
 	| "swingFactor"
 	| "contactFactor"
+	| "errorFactor"
 	| "hitFactor"
 	| "fantasyPoints"
 	| "passFactor"

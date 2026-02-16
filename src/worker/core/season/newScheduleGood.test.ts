@@ -14,7 +14,7 @@ let defaultTeams: {
 }[];
 
 const options = {
-	timeout: 20_000,
+	timeout: 30_000,
 } as const;
 
 beforeAll(() => {

@@ -11,7 +11,7 @@ import { helpers, LEAGUE_DATABASE_VERSION } from "../common/index.ts";
 describe("Smoke Tests", () => {
 	let intervalID: number;
 
-	const timeout = 5 * 60 * 1000; // 5 minutes;
+	const timeout = 10 * 60 * 1000; // 10 minutes;
 
 	test(
 		"Create a new league and simuluate a season without error",

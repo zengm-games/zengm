@@ -7,14 +7,15 @@ COLA https://arxiv.org/html/2602.02487
   - current value - team objects
   - past values (at start of lottery) - draftlottery objects
     - plus whatever else is needed for draft lottery UI
+- at end of reg season add COLA_ALPHA for lottery teams
 - at end of lottery, decrease for lottery winners (up to first 4, or less depending on draftLotteryCustomNumPicks)
-- at end of playoff round, decrease for winner (up to last 4, or less depending on # playoff rounds)
 - round lottery index to integer when updating
 - initialization when switching to COLA - look back over past playoffs/drafts
   - what about new league? needs to have access to all that data when initializing
 - add option to Draft Lottery page to opt out of lottery
   - costs 2*COLA_ALPHA points
   - still get pick in non-lottery-winning position
+  - need ability to opt back in, so state needs to be stored somewhere
 - line for being in the lottery or not - if static, make it include first round losers
   - could make this a generic setting for other lottery types too
 - when enabling/adding a team to the league, how to set lottery index?
@@ -36,6 +37,11 @@ COLA https://arxiv.org/html/2602.02487
   - link to paper https://arxiv.org/html/2602.02487
   - draft type setting
   - draftLotteryCustomNumPicks
+- test
+  - different number of playoff rounds
+    - more or less than normal
+    - no playoffs
+    - apply updateLotteryIndexesAfterPlayoffs correctly
 
 somewhere in league settings show total number of playoff teams https://app.fastmail.com/mail/Archive/A8bAfE0dqDdo.StqkZ1WgCv0J?u=433e4054
 

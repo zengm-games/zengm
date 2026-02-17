@@ -26,6 +26,10 @@ import setGameAttributes from "../league/setGameAttributes.ts";
 import { doExpand, doRelocate } from "./relocateExpand.ts";
 import addAward from "../player/addAward.ts";
 import { analyticsEventLocal } from "../../../common/analyticsEventLocal.ts";
+import {
+	updateLotteryIndexesAfterNoPlayoffs,
+	updateLotteryIndexesAfterPlayoffs,
+} from "../draft/cola.ts";
 
 const INFLATION_GAME_ATTRIBUTES = [
 	"salaryCap",
@@ -187,6 +191,8 @@ const setChampNoPlayoffs = async (conditions: Conditions) => {
 	);
 
 	await idb.cache.teamSeasons.put(teamSeason);
+
+	await updateLotteryIndexesAfterNoPlayoffs(tid);
 };
 
 const doThanosMode = async (conditions: Conditions) => {
@@ -523,6 +529,8 @@ const newPhaseBeforeDraft = async (
 	}
 
 	await doInflation(conditions);
+
+	await updateLotteryIndexesAfterPlayoffs();
 
 	// Randomize order of doRelocate and doExpand, because we want one to block the other but not always the same one
 	if (Math.random() > 0.5) {

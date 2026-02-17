@@ -12,7 +12,6 @@ COLA https://arxiv.org/html/2602.02487
 - round lottery index to integer when updating
 - initialization when switching to COLA - look back over past playoffs/drafts
   - what about new league? needs to have access to all that data when initializing
-- traded picks cannot win the lottery
 - add option to Draft Lottery page to opt out of lottery
   - costs 2*COLA_ALPHA points
   - still get pick in non-lottery-winning position

@@ -231,7 +231,15 @@ const genOrder = async (
 			const addAlpha = g.get("phase") < PHASE.PLAYOFFS ? COLA_ALPHA : 0;
 
 			const lotteryTeams = firstRoundTeams.slice(0, numLotteryTeams);
-			chances = lotteryTeams.map((t) => (t.cola ?? 0) + addAlpha);
+			chances = lotteryTeams.map((t) => {
+				// Traded picks are not eligible for the lottery
+				const currentTid = draftPicksIndexed[t.tid]?.[1]?.tid;
+				if (currentTid !== t.tid) {
+					return 0;
+				}
+
+				return (t.cola ?? 0) + addAlpha;
+			});
 		} else {
 			chances = info.chances;
 		}

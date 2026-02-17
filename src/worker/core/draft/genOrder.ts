@@ -13,7 +13,7 @@ import type {
 } from "../../../common/types.ts";
 import genOrderGetPicks from "./genOrderGetPicks.ts";
 import getTeamsByRound from "./getTeamsByRound.ts";
-import { bySport } from "../../../common/index.ts";
+import { bySport, COLA_ALPHA, PHASE } from "../../../common/index.ts";
 import { league } from "../index.ts";
 import getNumPlayoffTeams from "../season/getNumPlayoffTeams.ts";
 
@@ -40,6 +40,7 @@ const LOTTERY_DRAFT_TYPES = [
 	"nhl2021",
 	"mlb2022",
 	"custom",
+	"cola",
 ] as const;
 
 // chances does not have to be the perfect length. If chances is too long for numLotteryTeams, it will be truncated. If it's too short, the last entry will be repeated until it's long enough.
@@ -124,6 +125,13 @@ const getLotteryInfo = (draftType: DraftType, numLotteryTeams: number) => {
 		};
 	}
 
+	if (draftType === "cola") {
+		return {
+			numToPick: g.get("draftLotteryCustomNumPicks"),
+			chances: [1], // Placeholder, will be filled with real values later
+		};
+	}
+
 	throw new Error(`Unsupported draft type "${draftType}"`);
 };
 
@@ -203,7 +211,6 @@ const genOrder = async (
 			firstRoundTeams.length - numPlayoffTeams,
 		);
 		const numToPick = info.numToPick;
-		chances = info.chances;
 
 		if (firstRoundTeams.length < numToPick) {
 			const error = new Error(
@@ -219,6 +226,16 @@ const genOrder = async (
 			draftType === "coinFlip" ? numToPick : firstRoundTeams.length,
 		);
 
+		if (draftType === "cola") {
+			// If it's not the playoffs yet, then we haven't yet added COLA_ALPHA to all the lottery teams
+			const addAlpha = g.get("phase") < PHASE.PLAYOFFS ? COLA_ALPHA : 0;
+
+			const lotteryTeams = firstRoundTeams.slice(0, numLotteryTeams);
+			chances = lotteryTeams.map((t) => (t.cola ?? 0) + addAlpha);
+		} else {
+			chances = info.chances;
+		}
+
 		if (numLotteryTeams < chances.length) {
 			chances = chances.slice(0, numLotteryTeams);
 		} else {
@@ -227,7 +244,7 @@ const genOrder = async (
 			}
 		}
 
-		if (DIVIDE_CHANCES_OVER_TIED_TEAMS) {
+		if (DIVIDE_CHANCES_OVER_TIED_TEAMS && draftType !== "cola") {
 			divideChancesOverTiedTeams(chances, firstRoundTeams, true);
 		}
 

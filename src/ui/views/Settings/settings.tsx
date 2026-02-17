@@ -13,7 +13,6 @@ import { toWorker, helpers } from "../../util/index.ts";
 import type { ChangeEvent, CSSProperties, ReactNode } from "react";
 import type { Category, Decoration, FieldType, Key, Values } from "./types.ts";
 import type { Settings } from "../../../worker/views/settings.ts";
-import { draftTypeDescriptions } from "../../../common/draftLottery.ts";
 import defaultGameAttributes, {
 	gameAttributesKeysOtherSports,
 } from "../../../common/defaultGameAttributes.ts";
@@ -23,6 +22,7 @@ import RowsEditor from "./RowsEditor.tsx";
 import PlayerBioInfo2 from "./PlayerBioInfo.tsx";
 import type { GameAttributesLeague } from "../../../common/types.ts";
 import { parseCurrencyFormat } from "../../util/parseCurrencyFormat.ts";
+import { getDraftTypeDescription } from "../DraftLottery.tsx";
 
 export const descriptions = {
 	difficulty:
@@ -515,31 +515,33 @@ export const settings: Setting[] = (
 			descriptionLong: (
 				<>
 					<p>
-						<b>NBA 2019:</b> {draftTypeDescriptions.nba2019}
+						<b>NBA 2019:</b> {getDraftTypeDescription("nba2019")}
 					</p>
 					<p>
-						<b>NBA 1994:</b> {draftTypeDescriptions.nba1994}
+						<b>NBA 1994:</b> {getDraftTypeDescription("nba1994")}
 					</p>
 					<p>
-						<b>NBA 1990:</b> {draftTypeDescriptions.nba1990}
+						<b>NBA 1990:</b> {getDraftTypeDescription("nba1990")}
 					</p>
 					<p>
-						<b>NHL 2017:</b> {draftTypeDescriptions.nhl2017}
+						<b>NHL 2017:</b> {getDraftTypeDescription("nhl2017")}
 					</p>
 					<p>
-						<b>NHL 2021:</b> {draftTypeDescriptions.nhl2021}
+						<b>NHL 2021:</b> {getDraftTypeDescription("nhl2021")}
 					</p>
 					<p>
-						<b>MLB 2022:</b> {draftTypeDescriptions.mlb2022}
+						<b>MLB 2022:</b> {getDraftTypeDescription("mlb2022")}
 					</p>
 					<p>
-						<b>Random, first 3:</b> {draftTypeDescriptions.randomLotteryFirst3}
+						<b>Random, first 3:</b>{" "}
+						{getDraftTypeDescription("randomLotteryFirst3")}
 					</p>
 					<p>
-						<b>Random, lottery only:</b> {draftTypeDescriptions.randomLottery}
+						<b>Random, lottery only:</b>{" "}
+						{getDraftTypeDescription("randomLottery")}
 					</p>
 					<p>
-						<b>Coin flip:</b> {draftTypeDescriptions.coinFlip}
+						<b>Coin flip:</b> {getDraftTypeDescription("coinFlip")}
 					</p>
 					<p>
 						<b>Random:</b> order the draft completely randomly, with no regard
@@ -548,20 +550,25 @@ export const settings: Setting[] = (
 						next round.
 					</p>
 					<p>
-						<b>No lottery, worst to best:</b> {draftTypeDescriptions.noLottery}
+						<b>No lottery, worst to best:</b>{" "}
+						{getDraftTypeDescription("noLottery")}
 					</p>
 					<p>
 						<b>No lottery, best to worst:</b>{" "}
-						{draftTypeDescriptions.noLotteryReverse}
+						{getDraftTypeDescription("noLotteryReverse")}
 					</p>
 					<p>
-						<b>Custom lottery:</b> {draftTypeDescriptions.custom} Set the
+						<b>Custom lottery:</b> {getDraftTypeDescription("custom")} Set the
 						lottery parameters in the "Custom # lottery selections" and "Custom
 						lottery chances" settings.
 					</p>
 					<p>
 						<b>No draft, rookies are free agents:</b> There is no draft and all
 						rookies simply become free agents who can be signed by any team.
+					</p>
+					<p>
+						<b>Carry-Over Lottery Allocation (COLA):</b>{" "}
+						{getDraftTypeDescription("cola")}.
 					</p>
 				</>
 			),
@@ -581,6 +588,7 @@ export const settings: Setting[] = (
 				{ key: "noLotteryReverse", value: "No lottery, best to worst" },
 				{ key: "custom", value: "Custom lottery" },
 				{ key: "freeAgents", value: "No draft, rookies are free agents" },
+				{ key: "cola", value: "Carry-Over Lottery Allocation (COLA)" },
 			],
 		},
 		{
@@ -590,7 +598,7 @@ export const settings: Setting[] = (
 			godModeRequired: "existingLeagueOnly",
 			type: "int",
 			description:
-				'This only applies if Draft Type is set to "Custom lottery".',
+				'This only applies if Draft Type is set to "Custom lottery" or "Carry-Over Lottery Allocation (COLA)".',
 			descriptionLong: (
 				<>
 					<p>This only applies if Draft Type is set to "Custom lottery".</p>

@@ -226,7 +226,8 @@ export type DraftType =
 	| "nhl2017"
 	| "nhl2021"
 	| "mlb2022"
-	| "custom";
+	| "custom"
+	| "cola";
 
 // Key is team ID receiving this asset
 // Why store name and extra draft pick info? For performance a bit, but mostly in case old players are deleted in a league, the trade event will still show something reasonable
@@ -1605,6 +1606,8 @@ export type Team = {
 		score?: number;
 		text: string;
 	}[];
+
+	cola?: number;
 };
 
 export type TeamAttr = keyof Team;

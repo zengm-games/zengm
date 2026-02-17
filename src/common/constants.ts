@@ -573,6 +573,8 @@ export const NOT_REAL_POSITIONS = bySport({
 	hockey: [],
 });
 
+export const COLA_ALPHA = 1000;
+
 export {
 	AD_DIVS,
 	ALL_STAR_GAME_ONLY,

@@ -56,30 +56,6 @@ class MultiDimensionalRange {
 	}
 }
 
-export const draftTypeDescriptions: Record<DraftType | "dummy", string> = {
-	nba2019: "Weighted lottery for the top 4 picks, like the NBA since 2019",
-	nba1994: "Weighted lottery for the top 3 picks, like the NBA from 1994-2018",
-	nba1990: "Weighted lottery for the top 3 picks, like the NBA from 1990-1993",
-	nhl2017: "Weighted lottery for the top 3 picks, like the NHL from 2017-2020",
-	nhl2021: "Weighted lottery for the top 2 picks, like the NHL since 2021",
-	mlb2022: "Weighted lottery for the top 6 picks, like the MLB since 2022",
-	randomLotteryFirst3:
-		"Random lottery for the top 3 picks, like the NBA from 1987-1989",
-	randomLottery:
-		"Non-playoff teams draft in random order, like the NBA from 1985-1986",
-	coinFlip:
-		"Coin flip to determine the top 2 picks, like the NBA from 1966-1984",
-	noLottery:
-		"No lottery, teams draft in order of their record, from worst to best with non-playoff teams coming first",
-	noLotteryReverse:
-		"No lottery, teams draft in order of their record, from best to worst with playoff teams coming first",
-	random: "Teams draft in random order, including playoff teams",
-	freeAgents:
-		"There is no draft and all, rookies simply become free agents who can be signed by any team",
-	custom: "Custom weighted lottery for the top N picks.",
-	dummy: "From historical data",
-};
-
 const draftLotteryProbsTooSlow = (numTeams: number, numToPick: number) => {
 	const count = numTeams ** numToPick;
 

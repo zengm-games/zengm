@@ -1,3 +1,43 @@
+COLA https://arxiv.org/html/2602.02487
+- new draft type
+- settings
+  - draftLotteryCustomNumPicks
+    - update settings text
+- store lottery index somewhere
+  - current value - team objects
+  - past values (at start of lottery) - draftlottery objects
+    - plus whatever else is needed for draft lottery UI
+- at end of lottery, decrease for lottery winners (up to first 4, or less depending on draftLotteryCustomNumPicks)
+- at end of playoff round, decrease for winner (up to last 4, or less depending on # playoff rounds)
+- round lottery index to integer when updating
+- initialization when switching to COLA - look back over past playoffs/drafts
+  - what about new league? needs to have access to all that data when initializing
+- traded picks cannot win the lottery
+- add option to Draft Lottery page to opt out of lottery
+  - costs 2*COLA_ALPHA points
+  - still get pick in non-lottery-winning position
+- line for being in the lottery or not - if static, make it include first round losers
+  - could make this a generic setting for other lottery types too
+- when enabling/adding a team to the league, how to set lottery index?
+  - average of all non-zero values
+- draft lottery UI
+  - show text info box with major points like
+    - lottery eligibility cutoff
+    - COLA_ALPHA increase each year
+    - COLA_ALPHA decrease for winning lottery or playoffs
+    - traded picks can't win lottery
+    - opt out penalty and behavior
+  - columns
+    - lottery index
+      - during season, add COLA_ALPHA to current non-playoff teams
+      - also show for non-lottery teams
+    - lottery tickets
+      - set to 0 for ineligible teams (traded pick or opted out) - need to either log eligibility state in draftlotteryresult, or enough info to derive it (if pick was traded, if team opted out)
+- blog
+  - link to paper https://arxiv.org/html/2602.02487
+  - draft type setting
+  - draftLotteryCustomNumPicks
+
 somewhere in league settings show total number of playoff teams https://app.fastmail.com/mail/Archive/A8bAfE0dqDdo.StqkZ1WgCv0J?u=433e4054
 
 add tragic deaths to statistical feats or transactions on player pages https://discord.com/channels/290013534023057409/290013534023057409/1471788426024976394

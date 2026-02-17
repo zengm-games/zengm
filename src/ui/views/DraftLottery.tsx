@@ -22,13 +22,55 @@ import type {
 	DraftPickWithoutKey,
 } from "../../common/types.ts";
 import useClickable from "../hooks/useClickable.tsx";
-import {
-	draftTypeDescriptions,
-	getDraftLotteryProbs,
-} from "../../common/draftLottery.ts";
+import { getDraftLotteryProbs } from "../../common/draftLottery.ts";
 import useStickyXX from "../components/DataTable/useStickyXX.ts";
 import { range } from "../../common/utils.ts";
 import { NO_LOTTERY_DRAFT_TYPES } from "../../common/constants.ts";
+
+type MyDraftType = DraftType | "dummy";
+export const getDraftTypeDescription = (
+	type: MyDraftType,
+	showPrefix: boolean = false,
+) => {
+	const types: Record<MyDraftType, ReactNode> = {
+		nba2019: "Weighted lottery for the top 4 picks, like the NBA since 2019",
+		nba1994:
+			"Weighted lottery for the top 3 picks, like the NBA from 1994-2018",
+		nba1990:
+			"Weighted lottery for the top 3 picks, like the NBA from 1990-1993",
+		nhl2017:
+			"Weighted lottery for the top 3 picks, like the NHL from 2017-2020",
+		nhl2021: "Weighted lottery for the top 2 picks, like the NHL since 2021",
+		mlb2022: "Weighted lottery for the top 6 picks, like the MLB since 2022",
+		randomLotteryFirst3:
+			"Random lottery for the top 3 picks, like the NBA from 1987-1989",
+		randomLottery:
+			"Non-playoff teams draft in random order, like the NBA from 1985-1986",
+		coinFlip:
+			"Coin flip to determine the top 2 picks, like the NBA from 1966-1984",
+		noLottery:
+			"No lottery, teams draft in order of their record, from worst to best with non-playoff teams coming first",
+		noLotteryReverse:
+			"No lottery, teams draft in order of their record, from best to worst with playoff teams coming first",
+		random: "Teams draft in random order, including playoff teams",
+		freeAgents:
+			"There is no draft and all, rookies simply become free agents who can be signed by any team",
+		custom: "Custom weighted lottery for the top N picks.",
+		dummy: "From historical data",
+		cola: (
+			<>
+				{showPrefix ? "Carry-Over Lottery Allocation (COLA), a" : "A"} new draft
+				lottery method that eliminates tanking while also giving the best picks
+				to bad teams, based on{" "}
+				<a href="https://arxiv.org/html/2602.02487" target="_blank">
+					this paper
+				</a>
+			</>
+		),
+	};
+
+	return types[type];
+};
 
 type Props = View<"draftLottery">;
 type State = {
@@ -675,7 +717,8 @@ const DraftLotteryTable = (props: Props) => {
 			<p>
 				{draftType !== undefined ? (
 					<>
-						<b>Draft lottery type:</b> {draftTypeDescriptions[draftType]}
+						<b>Draft lottery type:</b>{" "}
+						{getDraftTypeDescription(draftType, true)}
 					</>
 				) : null}
 			</p>

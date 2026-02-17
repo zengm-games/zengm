@@ -11,12 +11,13 @@ import { wrap } from "../../util/g.ts";
 import type { GameAttributesLeague } from "../../../common/types.ts";
 import { draft, team } from "../index.ts";
 import gameAttributesToUI from "./gameAttributesToUI.ts";
-import { unwrapGameAttribute } from "../../../common/index.ts";
+import { COLA_ALPHA, unwrapGameAttribute } from "../../../common/index.ts";
 import { getAutoTicketPriceByTid } from "../game/attendance.ts";
 import goatFormula from "../../util/goatFormula.ts";
 import updateMeta from "./updateMeta.ts";
 import { initDefaults } from "../../util/loadNames.ts";
 import { gameAttributesKeysOtherSports } from "../../../common/defaultGameAttributes.ts";
+import { randInt } from "../../../common/random.ts";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	await updateMeta({
@@ -147,6 +148,25 @@ const setGameAttributes = async (
 					}
 
 					if (updated) {
+						await idb.cache.teams.put(t);
+					}
+				}
+			}
+		} else if (key === "draftType") {
+			const teams = await idb.cache.teams.getAll();
+			if (value === "cola") {
+				// Initialize COLA lottery index
+				for (const t of teams) {
+					if (!t.disabled) {
+						t.cola = randInt(0, 10 * COLA_ALPHA);
+						await idb.cache.teams.put(t);
+					}
+				}
+			} else {
+				// Delete COLA lottery index
+				for (const t of teams) {
+					if (t.cola !== undefined) {
+						delete t.cola;
 						await idb.cache.teams.put(t);
 					}
 				}

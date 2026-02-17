@@ -59,7 +59,7 @@ const ORDER_AFTER_FIRST_ROUND = bySport<"record" | "firstRound">({
 
 const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 	const allTeams = await idb.getCopies.teamsPlus({
-		attrs: ["tid"],
+		attrs: ["tid", "cola"],
 		seasonAttrs: [
 			"playoffRoundsWon",
 			"cid",

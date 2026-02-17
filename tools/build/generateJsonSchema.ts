@@ -2737,6 +2737,9 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						keepRosterSorted: {
 							type: "boolean",
 						},
+						cola: {
+							type: "integer",
+						},
 						...depth,
 					},
 					required: ["cid", "did", "region", "name", "abbrev"],

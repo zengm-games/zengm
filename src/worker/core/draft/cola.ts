@@ -3,6 +3,7 @@ import { idb } from "../../db/index.ts";
 import g from "../../util/g.ts";
 import helpers from "../../util/helpers.ts";
 import logEvent from "../../util/logEvent.ts";
+import getNumPlayoffTeams from "../season/getNumPlayoffTeams.ts";
 
 const logDecrease = (before: number, t: Team) => {
 	const text = `The lottery index for the <a href="${helpers.leagueUrl([
@@ -99,4 +100,20 @@ export const updateLotteryIndexesAfterNoPlayoffs = async (tid: number) => {
 	await idb.cache.teams.put(t);
 
 	logDecrease(before, t);
+};
+
+// All teams up to the final 3 rounds of playoffs
+export const getNumLotteryTeams = async () => {
+	const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
+	let numPlayoffTeams;
+	if (numPlayoffRounds <= 3) {
+		// This handles byes
+		numPlayoffTeams = (await getNumPlayoffTeams(g.get("season")))
+			.numPlayoffTeams;
+	} else {
+		// Final 3 rounds
+		numPlayoffTeams = 2 ** 3;
+	}
+
+	return g.get("numActiveTeams") - numPlayoffTeams;
 };

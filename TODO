@@ -1,5 +1,4 @@
 COLA https://arxiv.org/html/2602.02487
-- new draft type
 - settings
   - draftLotteryCustomNumPicks
     - update settings text
@@ -16,10 +15,9 @@ COLA https://arxiv.org/html/2602.02487
   - costs 2*COLA_ALPHA points
   - still get pick in non-lottery-winning position
   - need ability to opt back in, so state needs to be stored somewhere
-- line for being in the lottery or not - if static, make it include first round losers
-  - could make this a generic setting for other lottery types too
 - when enabling/adding a team to the league, how to set lottery index?
-  - average of all non-zero values
+  - average of all values
+  - multiple teams should get same value
 - draft lottery UI
   - show text info box with major points like
     - lottery eligibility cutoff

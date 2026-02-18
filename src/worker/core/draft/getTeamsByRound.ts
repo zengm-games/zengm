@@ -186,13 +186,18 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 		(t) => t.seasonAttrs.playoffRoundsWon >= 0 || tidPlayoffs.includes(t.tid),
 	);
 	if (playoffTeams.length > 0) {
-		if (FIRST_ROUND_PLAYOFF_TEAMS_ORDER === "record") {
+		// For COLA, since first round losers get to be in the draft lottery, we need to sort by playoff performance regardless of the sport's default behavior
+		const firstRoundPlayoffTeamsOrder =
+			g.get("draftType") === "cola"
+				? "playoffs"
+				: FIRST_ROUND_PLAYOFF_TEAMS_ORDER;
+		if (firstRoundPlayoffTeamsOrder === "record") {
 			const playoffTeamsOrdered = (
 				await orderTeams(playoffTeams, allTeams, orderTeamsSettings)
 			).reverse();
 			checkForTies(playoffTeamsOrdered, 1);
 			firstRound.push(...playoffTeamsOrdered);
-		} else if (FIRST_ROUND_PLAYOFF_TEAMS_ORDER === "playoffs") {
+		} else if (firstRoundPlayoffTeamsOrder === "playoffs") {
 			let minPlayoffRoundsWon = Infinity;
 			let maxPlayoffRoundsWon = -Infinity;
 			for (const t of playoffTeams) {

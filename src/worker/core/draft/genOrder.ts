@@ -16,6 +16,7 @@ import getTeamsByRound from "./getTeamsByRound.ts";
 import { bySport, COLA_ALPHA, PHASE } from "../../../common/index.ts";
 import { league } from "../index.ts";
 import getNumPlayoffTeams from "../season/getNumPlayoffTeams.ts";
+import { getNumLotteryTeams } from "./cola.ts";
 
 type ReturnVal = {
 	draftLotteryResult:
@@ -220,11 +221,15 @@ const genOrder = async (
 			throw error;
 		}
 
-		numLotteryTeams = helpers.bound(
-			firstRoundTeams.length - numPlayoffTeams,
-			numToPick,
-			draftType === "coinFlip" ? numToPick : firstRoundTeams.length,
-		);
+		if (draftType === "cola") {
+			numLotteryTeams = await getNumLotteryTeams();
+		} else {
+			numLotteryTeams = helpers.bound(
+				firstRoundTeams.length - numPlayoffTeams,
+				numToPick,
+				draftType === "coinFlip" ? numToPick : firstRoundTeams.length,
+			);
+		}
 
 		if (draftType === "cola") {
 			// If it's not the playoffs yet, then we haven't yet added COLA_ALPHA to all the lottery teams

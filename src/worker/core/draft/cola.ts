@@ -1,4 +1,4 @@
-import { COLA_ALPHA } from "../../../common/constants.ts";
+import { COLA_ALPHA, COLA_OPT_OUT_PENALTY } from "../../../common/constants.ts";
 import type { Team } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import g from "../../util/g.ts";
@@ -191,5 +191,36 @@ export const updateLotteryIndexesAfterLottery = async (tids: number[]) => {
 			tids: [t.tid],
 			score: 0,
 		});
+	}
+
+	// Reset colaOptOut
+	const teams = await idb.cache.teams.getAll();
+	for (const t of teams) {
+		if (t.colaOptOut !== undefined) {
+			if (t.colaOptOut) {
+				t.cola ??= 0;
+				const before = t.cola;
+				t.cola = Math.max(0, t.cola - COLA_OPT_OUT_PENALTY);
+
+				const text = `The lottery index for the <a href="${helpers.leagueUrl([
+					"roster",
+					`${t.abbrev}_${t.tid}`,
+					g.get("season"),
+				])}">${t.name}</a> decreased from ${before} to ${t.cola} due to opting out of the lottery.`;
+
+				logEvent({
+					type: "draftLottery",
+					text,
+					showNotification: false,
+					pids: [],
+					tids: [t.tid],
+					score: 0,
+				});
+			}
+
+			delete t.colaOptOut;
+
+			await idb.cache.teams.put(t);
+		}
 	}
 };

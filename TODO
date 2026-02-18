@@ -8,8 +8,7 @@ COLA https://arxiv.org/html/2602.02487
     - plus whatever else is needed for draft lottery UI
 - initialization when switching to COLA - look back over past playoffs/drafts
   - what about new league? needs to have access to all that data when initializing
-- add option to Draft Lottery page to opt out of lottery
-  - reset colaOptOut after lottery for all teams
+  - what about real players league without history?
 - when enabling/adding a team to the league, how to set lottery index?
   - average of all values
   - multiple teams should get same value
@@ -17,7 +16,7 @@ COLA https://arxiv.org/html/2602.02487
   - show text info box with major points like
     - lottery eligibility cutoff
     - COLA_ALPHA increase each year
-    - COLA_ALPHA decrease for winning lottery or playoffs
+    - decrease for winning lottery or playoffs
     - traded picks can't win lottery
     - opt out penalty and behavior
   - columns

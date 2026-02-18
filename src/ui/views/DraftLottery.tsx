@@ -728,7 +728,7 @@ const DraftLotteryTable = (props: Props) => {
 					</>
 				) : null}
 			</p>
-			{colaOptOutAvailable ? (
+			{showStartButton && colaOptOutAvailable ? (
 				<div className="mb-3 d-flex align-items-center gap-2">
 					<button
 						className="btn btn-danger"

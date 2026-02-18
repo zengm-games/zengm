@@ -4891,6 +4891,18 @@ const proposeTrade = async (forceTrade: boolean, conditions: Conditions) => {
 	return output;
 };
 
+const toggleColaOptOut = async () => {
+	const t = await idb.cache.teams.get(g.get("userTid"));
+	if (!t) {
+		throw new Error("Should never happen");
+	}
+
+	t.colaOptOut = !t.colaOptOut;
+	await idb.cache.teams.put(t);
+
+	await toUI("realtimeUpdate", [["draftLottery"]]);
+};
+
 const toggleTradeDeadline = async () => {
 	const currentPhase = g.get("phase");
 	if (currentPhase === PHASE.AFTER_TRADE_DEADLINE) {
@@ -5174,6 +5186,7 @@ export default {
 		switchTeam,
 		takeControlTeam,
 		threeSimNext,
+		toggleColaOptOut,
 		toggleTradeDeadline,
 		tradeCounterOffer,
 		onLiveSimOver,

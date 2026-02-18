@@ -729,8 +729,13 @@ const DraftLotteryTable = (props: Props) => {
 				) : null}
 			</p>
 			{colaOptOutAvailable ? (
-				<div className="mb-3 d-flex align-items-center gap-3">
-					<button className="btn btn-danger" onClick={async () => {}}>
+				<div className="mb-3 d-flex align-items-center gap-2">
+					<button
+						className="btn btn-danger"
+						onClick={async () => {
+							await toWorker("main", "toggleColaOptOut", undefined);
+						}}
+					>
 						Opt {colaOptOutStatus ? "in to" : "out of"} lottery
 					</button>
 					<HelpPopover title="Opt out of COLA lottery">

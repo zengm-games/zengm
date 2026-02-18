@@ -246,6 +246,10 @@ const genOrder = async (
 					return 0;
 				}
 
+				if (t.colaOptOut) {
+					return 0;
+				}
+
 				return (t.cola ?? 0) + addAlpha;
 			});
 		} else {

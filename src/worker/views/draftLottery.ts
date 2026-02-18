@@ -79,6 +79,7 @@ const updateDraftLottery = async (
 	if (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("newPhase") ||
+		updateEvents.includes("draftLottery") ||
 		season !== state.season ||
 		(season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||

@@ -26,10 +26,7 @@ import setGameAttributes from "../league/setGameAttributes.ts";
 import { doExpand, doRelocate } from "./relocateExpand.ts";
 import addAward from "../player/addAward.ts";
 import { analyticsEventLocal } from "../../../common/analyticsEventLocal.ts";
-import {
-	updateLotteryIndexesAfterNoPlayoffs,
-	updateLotteryIndexesAfterPlayoffs,
-} from "../draft/cola.ts";
+import { updateLotteryIndexesAfterPlayoffs } from "../draft/cola.ts";
 
 const INFLATION_GAME_ATTRIBUTES = [
 	"salaryCap",
@@ -191,8 +188,6 @@ const setChampNoPlayoffs = async (conditions: Conditions) => {
 	);
 
 	await idb.cache.teamSeasons.put(teamSeason);
-
-	await updateLotteryIndexesAfterNoPlayoffs(tid);
 };
 
 const doThanosMode = async (conditions: Conditions) => {

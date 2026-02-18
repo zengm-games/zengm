@@ -16,7 +16,10 @@ import getTeamsByRound from "./getTeamsByRound.ts";
 import { bySport, COLA_ALPHA, PHASE } from "../../../common/index.ts";
 import { league } from "../index.ts";
 import getNumPlayoffTeams from "../season/getNumPlayoffTeams.ts";
-import { getNumLotteryTeams } from "./cola.ts";
+import {
+	getNumLotteryTeams,
+	updateLotteryIndexesAfterLottery,
+} from "./cola.ts";
 
 type ReturnVal = {
 	draftLotteryResult:
@@ -369,6 +372,11 @@ const genOrder = async (
 
 			pick += 1;
 		}
+	}
+
+	if (!mock && draftType === "cola") {
+		const tids = firstRoundOrderAfterLottery.map((t) => t.tid);
+		await updateLotteryIndexesAfterLottery(tids);
 	}
 
 	// First round - everyone else

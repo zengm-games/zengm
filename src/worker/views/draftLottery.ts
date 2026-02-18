@@ -224,7 +224,6 @@ const updateDraftLottery = async (
 		let draftPicks;
 		try {
 			const result = await draft.genOrder(true);
-			console.log("result", result);
 			draftLotteryResult = result.draftLotteryResult;
 			draftPicks = result.draftPicks;
 		} catch (error) {

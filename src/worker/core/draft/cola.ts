@@ -157,3 +157,39 @@ export const updateLotteryIndexesAfterNoPlayoffs = async (tid: number) => {
 
 	logDecrease(before, t);
 };
+
+// Top 4 picks have their draft index multiplied by this amount
+const DRAFT_LOTTERY_FACTORS = [0, 0.25, 0.5, 0.75];
+
+export const updateLotteryIndexesAfterLottery = async (tids: number[]) => {
+	for (const [i, tid] of tids.entries()) {
+		const factor = DRAFT_LOTTERY_FACTORS[i];
+		if (factor === undefined) {
+			continue;
+		}
+
+		const t = await idb.cache.teams.get(tid);
+		if (!t) {
+			throw new Error("Should never happen");
+		}
+		t.cola ??= 0;
+		const before = t.cola;
+		t.cola = Math.round(t.cola * factor);
+		await idb.cache.teams.put(t);
+
+		const text = `The lottery index for the <a href="${helpers.leagueUrl([
+			"roster",
+			`${t.abbrev}_${t.tid}`,
+			g.get("season"),
+		])}">${t.name}</a> decreased from ${before} to ${t.cola} due to winning the ${helpers.ordinal(i + 1)} pick.`;
+
+		logEvent({
+			type: "draftLottery",
+			text,
+			showNotification: false,
+			pids: [],
+			tids: [t.tid],
+			score: 0,
+		});
+	}
+};

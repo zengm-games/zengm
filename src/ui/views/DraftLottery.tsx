@@ -9,6 +9,7 @@ import {
 } from "react";
 import {
 	DraftAbbrev,
+	HelpPopover,
 	MoreLinks,
 	PlayPauseNext,
 	ResponsiveTableWrapper,
@@ -25,7 +26,10 @@ import useClickable from "../hooks/useClickable.tsx";
 import { getDraftLotteryProbs } from "../../common/draftLottery.ts";
 import useStickyXX from "../components/DataTable/useStickyXX.ts";
 import { range } from "../../common/utils.ts";
-import { NO_LOTTERY_DRAFT_TYPES } from "../../common/constants.ts";
+import {
+	COLA_OPT_OUT_PENALTY,
+	NO_LOTTERY_DRAFT_TYPES,
+} from "../../common/constants.ts";
 
 type MyDraftType = DraftType | "dummy";
 export const getDraftTypeDescription = (
@@ -541,6 +545,8 @@ const DraftLotteryTable = (props: Props) => {
 	};
 
 	const {
+		colaOptOutAvailable,
+		colaOptOutStatus,
 		dpidsAvailableToTrade,
 		draftPicks,
 		godMode,
@@ -722,6 +728,31 @@ const DraftLotteryTable = (props: Props) => {
 					</>
 				) : null}
 			</p>
+			{colaOptOutAvailable ? (
+				<div className="mb-3 d-flex align-items-center gap-3">
+					<button className="btn btn-danger" onClick={async () => {}}>
+						Opt {colaOptOutStatus ? "in to" : "out of"} lottery
+					</button>
+					<HelpPopover title="Opt out of COLA lottery">
+						<p>
+							With the COLA draft type, your lottery index points accumulate
+							over multiple seasons until you win the lottery and get reset to 0
+							(or -75% for 2nd pick, -50% for 3rd pick, -25% for 4th pick).
+						</p>
+						<p>
+							If the current draft class is weak, you might prefer to keep your
+							lottery index points rather than risk winning the lottery. In that
+							case, you can click this button to opt out of the lottery. You
+							will still get your pick at the normal order in the draft, you
+							will just not have any chance of winning the top picks.
+						</p>
+						<p>
+							There is a penalty of {COLA_OPT_OUT_PENALTY} lottery index points
+							for opting out of the lottery.
+						</p>
+					</HelpPopover>
+				</div>
+			) : null}
 			<div className="mb-3">
 				{showStartButton ? (
 					<button

@@ -40,6 +40,8 @@ const updateDraftLottery = async (
 	| {
 			challengeWarning: boolean;
 			notEnoughTeams: boolean;
+			colaOptOutAvailable: boolean;
+			colaOptOutStatus: boolean;
 			draftPicks: DraftPickWithoutKey[] | undefined;
 			draftType?: DraftType | "dummy";
 			dpidsAvailableToTrade: Set<number | undefined>;
@@ -193,6 +195,8 @@ const updateDraftLottery = async (
 					challengeWarning: false,
 					notEnoughTeams: false,
 					godMode: g.get("godMode"),
+					colaOptOutAvailable: false,
+					colaOptOutStatus: false,
 				};
 			}
 
@@ -215,6 +219,8 @@ const updateDraftLottery = async (
 					challengeWarning: false,
 					notEnoughTeams: false,
 					godMode: g.get("godMode"),
+					colaOptOutAvailable: false,
+					colaOptOutStatus: false,
 				};
 			}
 		}
@@ -277,6 +283,8 @@ const updateDraftLottery = async (
 			type,
 			usePts,
 			userTid: g.get("userTid"),
+			colaOptOutAvailable: true,
+			colaOptOutStatus: true,
 		};
 	}
 };

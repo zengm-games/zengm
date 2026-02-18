@@ -574,6 +574,7 @@ export const NOT_REAL_POSITIONS = bySport({
 });
 
 export const COLA_ALPHA = 1000;
+export const COLA_OPT_OUT_PENALTY = 2000;
 
 export {
 	AD_DIVS,

@@ -28,7 +28,7 @@ const updateMetaDifficulty = async (difficulty: number) => {
 const setGameAttributes = async (
 	gameAttributes: Partial<GameAttributesLeague>,
 ) => {
-	const toUpdate: (keyof GameAttributesLeague)[] = [];
+	const toUpdate = new Set<keyof GameAttributesLeague>();
 
 	if (
 		gameAttributes.difficulty !== undefined &&
@@ -86,7 +86,7 @@ const setGameAttributes = async (
 					continue;
 				}
 			}
-			toUpdate.push(key);
+			toUpdate.add(key);
 		}
 	}
 
@@ -99,107 +99,113 @@ const setGameAttributes = async (
 		const value = wrap(g, key, gameAttributes[key]);
 		updatedGameAttributes[key] = value;
 
-		if (key === "salaryCap") {
-			// Adjust budget items for inflation
-			if (
-				(g as any).salaryCap !== undefined &&
-				(g as any).season !== undefined &&
-				(g as any).userTids !== undefined
-			) {
-				const teams = await idb.cache.teams.getAll();
-				const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
-					"teamSeasonsBySeasonTid",
-					[[g.get("season")], [g.get("season"), "Z"]],
-				);
-				const popRanks = helpers.getPopRanks(teamSeasons);
-
-				for (const [i, teamSeason] of teamSeasons.entries()) {
-					const t = teams.find((t) => t.tid === teamSeason.tid);
-					const popRank = popRanks[i];
-					if (popRank === undefined || t === undefined) {
-						continue;
-					}
-
-					let updated = false;
-
-					if (
-						g.get("userTids").includes(t.tid) &&
-						!local.autoPlayUntil &&
-						!g.get("spectator")
-					) {
-						if (t.adjustForInflation) {
-							if (t.autoTicketPrice !== false) {
-								t.budget.ticketPrice = await getAutoTicketPriceByTid(t.tid);
-							} else {
-								const factor =
-									helpers.defaultTicketPrice(popRank, value) /
-									helpers.defaultTicketPrice(popRank);
-
-								t.budget.ticketPrice = helpers.localeParseFloat(
-									(t.budget.ticketPrice * factor).toFixed(2),
-								);
-							}
-
-							updated = true;
-						}
-					} else {
-						await team.resetTicketPrice(t, popRank, value);
-						updated = true;
-					}
-
-					if (updated) {
-						await idb.cache.teams.put(t);
-					}
-				}
-			}
-		} else if (key === "draftType") {
-			const teams = await idb.cache.teams.getAll();
-			if (value === "cola") {
-				// Initialize COLA lottery chances
-				for (const t of teams) {
-					if (!t.disabled) {
-						t.cola = randInt(0, 10 * COLA_ALPHA);
-						await idb.cache.teams.put(t);
-					}
-				}
-			} else {
-				// Delete COLA lottery chances
-				for (const t of teams) {
-					if (t.cola !== undefined) {
-						delete t.cola;
-						await idb.cache.teams.put(t);
-					}
-				}
-			}
-		}
-
 		await idb.cache.gameAttributes.put({
 			key,
 			value,
 		});
 		g.setWithoutSavingToDB(key, value);
-
-		if (key === "difficulty") {
-			await updateMetaDifficulty(g.get(key));
-		}
 	}
 
 	await gameAttributesToUI(updatedGameAttributes);
 
-	if (toUpdate.includes("userTid")) {
+	if (toUpdate.has("salaryCap")) {
+		// Adjust budget items for inflation
+		if (
+			(g as any).salaryCap !== undefined &&
+			(g as any).season !== undefined &&
+			(g as any).userTids !== undefined
+		) {
+			const value = updatedGameAttributes.salaryCap;
+
+			const teams = await idb.cache.teams.getAll();
+			const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
+				"teamSeasonsBySeasonTid",
+				[[g.get("season")], [g.get("season"), "Z"]],
+			);
+			const popRanks = helpers.getPopRanks(teamSeasons);
+
+			for (const [i, teamSeason] of teamSeasons.entries()) {
+				const t = teams.find((t) => t.tid === teamSeason.tid);
+				const popRank = popRanks[i];
+				if (popRank === undefined || t === undefined) {
+					continue;
+				}
+
+				let updated = false;
+
+				if (
+					g.get("userTids").includes(t.tid) &&
+					!local.autoPlayUntil &&
+					!g.get("spectator")
+				) {
+					if (t.adjustForInflation) {
+						if (t.autoTicketPrice !== false) {
+							t.budget.ticketPrice = await getAutoTicketPriceByTid(t.tid);
+						} else {
+							const factor =
+								helpers.defaultTicketPrice(popRank, value) /
+								helpers.defaultTicketPrice(popRank);
+
+							t.budget.ticketPrice = helpers.localeParseFloat(
+								(t.budget.ticketPrice * factor).toFixed(2),
+							);
+						}
+
+						updated = true;
+					}
+				} else {
+					await team.resetTicketPrice(t, popRank, value);
+					updated = true;
+				}
+
+				if (updated) {
+					await idb.cache.teams.put(t);
+				}
+			}
+		}
+	}
+
+	if (toUpdate.has("draftType")) {
+		const teams = await idb.cache.teams.getAll();
+		if (updatedGameAttributes.draftType === "cola") {
+			// Initialize COLA lottery chances
+			for (const t of teams) {
+				if (!t.disabled) {
+					t.cola = randInt(0, 10 * COLA_ALPHA);
+					await idb.cache.teams.put(t);
+				}
+			}
+		} else {
+			// Delete COLA lottery chances
+			for (const t of teams) {
+				if (t.cola !== undefined) {
+					delete t.cola;
+					await idb.cache.teams.put(t);
+				}
+			}
+		}
+	}
+
+	if (toUpdate.has("difficulty")) {
+		await updateMetaDifficulty(g.get("difficulty"));
+	}
+
+	if (toUpdate.has("userTid")) {
 		await initUILocalGames();
-	} else if (
-		toUpdate.includes("numSeasonsFutureDraftPicks") ||
-		toUpdate.includes("challengeNoDraftPicks") ||
-		toUpdate.includes("numDraftRounds") ||
-		toUpdate.includes("forceHistoricalRosters") ||
-		(toUpdate.includes("userTids") && g.get("challengeNoDraftPicks"))
+	}
+
+	if (
+		toUpdate.has("numSeasonsFutureDraftPicks") ||
+		toUpdate.has("challengeNoDraftPicks") ||
+		toUpdate.has("numDraftRounds") ||
+		toUpdate.has("forceHistoricalRosters") ||
+		(toUpdate.has("userTids") && g.get("challengeNoDraftPicks"))
 	) {
 		await draft.genPicks();
 	}
 
 	// Reset playerBioInfo caches
-	if (toUpdate.includes("playerBioInfo")) {
+	if (toUpdate.has("playerBioInfo")) {
 		local.playerBioInfo = undefined;
 		await initDefaults({
 			force: true,

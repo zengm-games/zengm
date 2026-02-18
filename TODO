@@ -32,7 +32,7 @@ COLA https://arxiv.org/html/2602.02487
   - different number of playoff rounds
     - more or less than normal
     - no playoffs
-    - apply updateLotteryIndexesAfterPlayoffs correctly
+    - apply updateLotteryChancesAfterPlayoffs correctly
   - higher draftLotteryCustomNumPicks
   - lower draftLotteryCustomNumPicks
 

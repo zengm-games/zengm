@@ -18,7 +18,7 @@ import { league } from "../index.ts";
 import getNumPlayoffTeams from "../season/getNumPlayoffTeams.ts";
 import {
 	getNumLotteryTeams,
-	updateLotteryIndexesAfterLottery,
+	updateLotteryChancesAfterLottery,
 } from "./cola.ts";
 
 type ReturnVal = {
@@ -235,8 +235,8 @@ const genOrder = async (
 		}
 
 		if (draftType === "cola") {
-			// If it's not the playoffs yet, then we haven't yet added COLA_ALPHA to all the lottery teams
-			const addAlpha = g.get("phase") < PHASE.PLAYOFFS ? COLA_ALPHA : 0;
+			// If the playoffs aren't over yet, then we haven't yet added COLA_ALPHA to all the lottery teams
+			const addAlpha = g.get("phase") <= PHASE.PLAYOFFS ? COLA_ALPHA : 0;
 
 			const lotteryTeams = firstRoundTeams.slice(0, numLotteryTeams);
 			chances = lotteryTeams.map((t) => {
@@ -272,7 +272,7 @@ const genOrder = async (
 		const chancePct = chances.map((c) => (c / chanceTotal) * 100);
 
 		// Idenfity chances indexes protected by riggedLottery, and set to 0 in chancesCumsum
-		const riggedLotteryIndexes = riggedLottery
+		const riggedLotteryChances = riggedLottery
 			? riggedLottery.map((dpid) => {
 					if (typeof dpid === "number") {
 						const originalTid = draftPicks.find((dp) => {
@@ -293,11 +293,11 @@ const genOrder = async (
 			: undefined;
 
 		const chancesCumsum = chances.slice();
-		if (riggedLotteryIndexes?.includes(0)) {
+		if (riggedLotteryChances?.includes(0)) {
 			chancesCumsum[0] = 0;
 		}
 		for (let i = 1; i < chancesCumsum.length; i++) {
-			if (riggedLotteryIndexes?.includes(i)) {
+			if (riggedLotteryChances?.includes(i)) {
 				chancesCumsum[i] = chancesCumsum[i - 1]!;
 			} else {
 				chancesCumsum[i]! += chancesCumsum[i - 1]!;
@@ -309,8 +309,8 @@ const genOrder = async (
 		// Pick first 3 or 4 picks based on chancesCumsum
 		let iterations = 0;
 		while (firstN.length < numToPick) {
-			if (riggedLotteryIndexes) {
-				const index = riggedLotteryIndexes[firstN.length];
+			if (riggedLotteryChances) {
+				const index = riggedLotteryChances[firstN.length];
 				if (typeof index === "number") {
 					firstN.push(index);
 					continue;
@@ -380,7 +380,7 @@ const genOrder = async (
 
 	if (!mock && draftType === "cola") {
 		const tids = firstRoundOrderAfterLottery.map((t) => t.tid);
-		await updateLotteryIndexesAfterLottery(tids);
+		await updateLotteryChancesAfterLottery(tids);
 	}
 
 	// First round - everyone else

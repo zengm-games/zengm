@@ -48,7 +48,7 @@ const logChange = (
 // Champion gets their lottery chances multiplied by 0. Loser of the finals, 0.25. Loser of the semifinals, 0.5. Loser of the quarterfinals, 0.75.
 const PLAYOFF_FACTORS = [0.75, 0.5, 0.25, 0];
 
-const decreaseLotteryIndexesAfterPlayoffs = async () => {
+const decreaseLotteryChancesAfterPlayoffs = async () => {
 	const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
 
 	// Add this to playoffRoundsWon and we can index into PLAYOFF_FACTORS
@@ -78,7 +78,7 @@ const decreaseLotteryIndexesAfterPlayoffs = async () => {
 	}
 };
 
-const increaseLotteryIndexesAfterPlayoffs = async () => {
+const increaseLotteryChancesAfterPlayoffs = async () => {
 	const { draftLotteryResult } = await genOrder(true);
 	if (!draftLotteryResult) {
 		throw new Error("Should never happen");
@@ -99,19 +99,19 @@ const increaseLotteryIndexesAfterPlayoffs = async () => {
 };
 
 // Call this at the end of the playoffs
-export const updateLotteryIndexesAfterPlayoffs = async () => {
+export const updateLotteryChancesAfterPlayoffs = async () => {
 	if (g.get("draftType") !== "cola") {
 		return;
 	}
 
-	await increaseLotteryIndexesAfterPlayoffs();
-	await decreaseLotteryIndexesAfterPlayoffs();
+	await increaseLotteryChancesAfterPlayoffs();
+	await decreaseLotteryChancesAfterPlayoffs();
 };
 
 // Top 4 picks have their draft index multiplied by this amount
 const DRAFT_LOTTERY_FACTORS = [0, 0.25, 0.5, 0.75];
 
-export const updateLotteryIndexesAfterLottery = async (tids: number[]) => {
+export const updateLotteryChancesAfterLottery = async (tids: number[]) => {
 	for (const [i, tid] of tids.entries()) {
 		const factor = DRAFT_LOTTERY_FACTORS[i];
 		if (factor === undefined) {

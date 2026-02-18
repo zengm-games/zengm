@@ -1608,6 +1608,7 @@ export type Team = {
 	}[];
 
 	cola?: number;
+	colaOptOut?: boolean;
 };
 
 export type TeamAttr = keyof Team;

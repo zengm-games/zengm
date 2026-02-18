@@ -11,8 +11,8 @@ COLA https://arxiv.org/html/2602.02487
 - add option to Draft Lottery page to opt out of lottery
   - UI
     - button click should trigger refresh, because we need to set chances to 0 too
-  - need ability to opt back in, so state needs to be stored somewhere
-    - need to store for all teams, in case multi team mode
+  - reset colaOptOut after lottery for all teams
+  - use colaOptOut when calculating lottery chances
 - when enabling/adding a team to the league, how to set lottery index?
   - average of all values
   - multiple teams should get same value

@@ -2739,6 +2739,10 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						},
 						cola: {
 							type: "integer",
+							minimum: 0,
+						},
+						colaOptOut: {
+							type: "boolean",
 						},
 						...depth,
 					},

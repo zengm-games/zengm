@@ -258,6 +258,23 @@ const updateDraftLottery = async (
 			draftPicks = filterDraftPicks(draftPicks, draftLotteryResult);
 		}
 
+		const userTid = g.get("userTid");
+
+		let colaOptOutAvailable = false;
+		let colaOptOutStatus = false;
+		if (draftType === "cola" && draftLotteryResult) {
+			const t = await idb.cache.teams.get(userTid);
+			if (!t) {
+				throw new Error("Should never happen");
+			}
+			colaOptOutStatus = !!t.colaOptOut;
+
+			// Opt out is available if user has their own lottery pick
+			colaOptOutAvailable = draftLotteryResult.result.some(
+				(row) => row.tid === userTid && row.originalTid === userTid,
+			);
+		}
+
 		return {
 			challengeWarning:
 				!draftLotteryResult &&
@@ -282,9 +299,9 @@ const updateDraftLottery = async (
 			teams,
 			type,
 			usePts,
-			userTid: g.get("userTid"),
-			colaOptOutAvailable: true,
-			colaOptOutStatus: true,
+			userTid,
+			colaOptOutAvailable,
+			colaOptOutStatus,
 		};
 	}
 };

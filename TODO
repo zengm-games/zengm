@@ -6,7 +6,6 @@ COLA https://arxiv.org/html/2602.02487
   - current value - team objects
   - past values (at start of lottery) - draftlottery objects
     - plus whatever else is needed for draft lottery UI
-- at end of reg season add COLA_ALPHA for lottery teams
 - at end of lottery, decrease for lottery winners (up to first 4, or less depending on draftLotteryCustomNumPicks)
 - round lottery index to integer when updating
 - initialization when switching to COLA - look back over past playoffs/drafts

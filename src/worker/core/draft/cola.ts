@@ -1,9 +1,27 @@
+import { COLA_ALPHA } from "../../../common/constants.ts";
 import type { Team } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import g from "../../util/g.ts";
 import helpers from "../../util/helpers.ts";
 import logEvent from "../../util/logEvent.ts";
 import getNumPlayoffTeams from "../season/getNumPlayoffTeams.ts";
+import genOrder from "./genOrder.ts";
+
+// All teams up to the final 3 rounds of playoffs
+export const getNumLotteryTeams = async () => {
+	const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
+	let numPlayoffTeams;
+	if (numPlayoffRounds <= 3) {
+		// This handles byes
+		numPlayoffTeams = (await getNumPlayoffTeams(g.get("season")))
+			.numPlayoffTeams;
+	} else {
+		// Final 3 rounds
+		numPlayoffTeams = 2 ** 3;
+	}
+
+	return g.get("numActiveTeams") - numPlayoffTeams;
+};
 
 const logDecrease = (before: number, t: Team) => {
 	const text = `The lottery index for the <a href="${helpers.leagueUrl([
@@ -26,12 +44,7 @@ const logDecrease = (before: number, t: Team) => {
 const PLAYOFF_FACTOR_CHAMP = 0;
 const PLAYOFF_FACTORS_LOSERS = [0.75, 0.5, 0.25];
 
-// Call this at the end of the playoffs
-export const updateLotteryIndexesAfterPlayoffs = async () => {
-	if (g.get("draftType") !== "cola") {
-		return;
-	}
-
+const decreaseLotteryIndexesAfterPlayoffs = async () => {
 	const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
 	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 	if (!playoffSeries) {
@@ -84,6 +97,49 @@ export const updateLotteryIndexesAfterPlayoffs = async () => {
 	}
 };
 
+const increaseLotteryIndexesAfterPlayoffs = async () => {
+	const { draftLotteryResult } = await genOrder(true);
+	if (!draftLotteryResult) {
+		throw new Error("Should never happen");
+	}
+
+	for (const row of draftLotteryResult.result) {
+		const t = await idb.cache.teams.get(row.originalTid);
+		if (!t) {
+			throw new Error("Should never happen");
+		}
+		t.cola ??= 0;
+		const before = t.cola;
+		t.cola += COLA_ALPHA;
+		await idb.cache.teams.put(t);
+
+		const text = `The lottery index for the <a href="${helpers.leagueUrl([
+			"roster",
+			`${t.abbrev}_${t.tid}`,
+			g.get("season"),
+		])}">${t.name}</a> increased from ${before} to ${t.cola}.`;
+
+		logEvent({
+			type: "draftLottery",
+			text,
+			showNotification: false,
+			pids: [],
+			tids: [t.tid],
+			score: 0,
+		});
+	}
+};
+
+// Call this at the end of the playoffs
+export const updateLotteryIndexesAfterPlayoffs = async () => {
+	if (g.get("draftType") !== "cola") {
+		return;
+	}
+
+	await increaseLotteryIndexesAfterPlayoffs();
+	await decreaseLotteryIndexesAfterPlayoffs();
+};
+
 // Call this to handle the case where there are no playoffs
 export const updateLotteryIndexesAfterNoPlayoffs = async (tid: number) => {
 	if (g.get("draftType") !== "cola") {
@@ -100,20 +156,4 @@ export const updateLotteryIndexesAfterNoPlayoffs = async (tid: number) => {
 	await idb.cache.teams.put(t);
 
 	logDecrease(before, t);
-};
-
-// All teams up to the final 3 rounds of playoffs
-export const getNumLotteryTeams = async () => {
-	const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
-	let numPlayoffTeams;
-	if (numPlayoffRounds <= 3) {
-		// This handles byes
-		numPlayoffTeams = (await getNumPlayoffTeams(g.get("season")))
-			.numPlayoffTeams;
-	} else {
-		// Final 3 rounds
-		numPlayoffTeams = 2 ** 3;
-	}
-
-	return g.get("numActiveTeams") - numPlayoffTeams;
 };

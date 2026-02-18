@@ -1595,13 +1595,15 @@ const afterDBStream = async ({
 	g.setWithoutSavingToDB("teamInfoCache", gameAttributes.teamInfoCache);
 	delete gameAttributesToUpdate.teamInfoCache;
 
+	// Need this before calling setGameAttributes, so the "cola" draftType can see recent top draft picks
+	for (const p of activePlayers) {
+		await idb.cache.players.put(p);
+	}
+
 	// Write gameAttributes to DB in special way, to get extra functionality from setGameAttributes and because it's not in the database native format in leagueData (object, not array like others).
 	// BUT - league.setGameAttributes is not expecting gameAttributes with history, so this could break in subtle ways in the future!
 	await league.setGameAttributes(gameAttributesToUpdate as any);
 
-	for (const p of activePlayers) {
-		await idb.cache.players.put(p);
-	}
 	await finalizeActivePlayers({
 		fileHasPlayers,
 		phase: gameAttributes.phase,

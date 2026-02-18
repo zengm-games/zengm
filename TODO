@@ -1,5 +1,6 @@
 COLA https://arxiv.org/html/2602.02487
 - refactor - increase and decrease after playoffs together, both based on playoffRoundsWon
+- DRY initializeCola logic and elsewhere similar logic
 - store lottery index somewhere
   - current value - team objects
   - past values (at start of lottery) - draftlottery objects
@@ -27,6 +28,7 @@ COLA https://arxiv.org/html/2602.02487
   - link to paper https://arxiv.org/html/2602.02487
   - draft type setting
   - draftLotteryCustomNumPicks
+  - if league has history when swithing to COLA, past 20 seasons will be used to get values
 - limitations/changes
   - lottery chances rather than lottery index or lottery index points
 - test

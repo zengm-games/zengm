@@ -4,6 +4,7 @@ import {
 	PHASE,
 } from "../../../common/constants.ts";
 import type { Team } from "../../../common/types.ts";
+import { range } from "../../../common/utils.ts";
 import { idb } from "../../db/index.ts";
 import g from "../../util/g.ts";
 import helpers from "../../util/helpers.ts";
@@ -166,20 +167,27 @@ export const initializeCola = async () => {
 	const offset = g.get("phase") <= PHASE.PLAYOFFS ? -1 : 0;
 	const seasons = [season - 20 + offset, season + offset] as const;
 
-	console.time("initializeCola");
-	for (const t of teams) {
-		if (t.disabled) {
+	const colaByTid: Record<number, number> = {};
+
+	for (const season of range(seasons[0], seasons[1] + 1)) {
+		const teamSeasons = await idb.getCopies.teamSeasons(
+			{ season },
+			"noCopyCache",
+		);
+		if (teamSeasons.length === 0) {
+			// No log of playoff history, so just skip this season
 			continue;
 		}
 
-		let cola = 0;
-
-		const teamSeasons = await idb.getCopies.teamSeasons(
-			{ tid: t.tid, seasons },
-			"noCopyCache",
-		);
+		// Increase/decrease based on playoff success
 		for (const row of teamSeasons) {
-			// Increase/decrease based on playoff success
+			const t = teams[row.tid]!;
+			if (t.disabled) {
+				continue;
+			}
+
+			let cola = colaByTid[t.tid] ?? 0;
+
 			if (row.playoffRoundsWon < 0) {
 				cola += COLA_ALPHA;
 			} else {
@@ -197,13 +205,36 @@ export const initializeCola = async () => {
 					cola = Math.round(cola * factor);
 				}
 			}
-		}
-		console.log(t.abbrev, teamSeasons, cola);
 
-		t.cola = 10 * COLA_ALPHA;
+			colaByTid[t.tid] = cola;
+		}
+
+		// Decrease based on lotery success
+		const players = await idb.getCopies.players(
+			{ draftYear: season },
+			"noCopyCache",
+		);
+		for (const p of players) {
+			if (p.draft.round === 1 && p.draft.pick <= 4) {
+				const factor = DRAFT_LOTTERY_FACTORS[p.draft.pick - 1];
+				if (factor === undefined) {
+					throw new Error("Should never happen");
+				}
+				const tid = p.draft.tid;
+				colaByTid[tid] ??= 0;
+				colaByTid[tid] = Math.round(colaByTid[tid] * factor);
+			}
+		}
+	}
+
+	for (const t of teams) {
+		if (t.disabled) {
+			continue;
+		}
+
+		t.cola = colaByTid[t.tid] ?? 0;
 		await idb.cache.teams.put(t);
 	}
-	console.timeEnd("initializeCola");
 };
 
 export const disableCola = async () => {

@@ -13,7 +13,7 @@ const getCopies = async (
 	}: {
 		tid?: number;
 		season?: number;
-		seasons?: [number, number];
+		seasons?: Readonly<[number, number]>;
 		note?: boolean;
 	} = {},
 	type?: GetCopyType,

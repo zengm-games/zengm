@@ -1,4 +1,8 @@
-import { COLA_ALPHA, COLA_OPT_OUT_PENALTY } from "../../../common/constants.ts";
+import {
+	COLA_ALPHA,
+	COLA_OPT_OUT_PENALTY,
+	PHASE,
+} from "../../../common/constants.ts";
 import type { Team } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import g from "../../util/g.ts";
@@ -157,12 +161,49 @@ export const updateLotteryChancesAfterLottery = async (tids: number[]) => {
 export const initializeCola = async () => {
 	const teams = await idb.cache.teams.getAll();
 
+	// Look back to the past 20 completed seasons
+	const season = g.get("season");
+	const offset = g.get("phase") <= PHASE.PLAYOFFS ? -1 : 0;
+	const seasons = [season - 20 + offset, season + offset] as const;
+
+	console.time("initializeCola");
 	for (const t of teams) {
-		if (!t.disabled) {
-			t.cola = 10 * COLA_ALPHA;
-			await idb.cache.teams.put(t);
+		if (t.disabled) {
+			continue;
 		}
+
+		let cola = 0;
+
+		const teamSeasons = await idb.getCopies.teamSeasons(
+			{ tid: t.tid, seasons },
+			"noCopyCache",
+		);
+		for (const row of teamSeasons) {
+			// Increase/decrease based on playoff success
+			if (row.playoffRoundsWon < 0) {
+				cola += COLA_ALPHA;
+			} else {
+				const numPlayoffRounds = g.get(
+					"numGamesPlayoffSeries",
+					row.season,
+				).length;
+				const offset = numPlayoffRounds - PLAYOFF_FACTORS.length + 1;
+				const factor = PLAYOFF_FACTORS[row.playoffRoundsWon - offset];
+				if (factor === undefined) {
+					// In the lottery
+					cola += COLA_ALPHA;
+				} else {
+					// In the final 3 rounds of playoffs
+					cola = Math.round(cola * factor);
+				}
+			}
+		}
+		console.log(t.abbrev, teamSeasons, cola);
+
+		t.cola = 10 * COLA_ALPHA;
+		await idb.cache.teams.put(t);
 	}
+	console.timeEnd("initializeCola");
 };
 
 export const disableCola = async () => {

@@ -1,4 +1,5 @@
 COLA https://arxiv.org/html/2602.02487
+- refactor - increase and decrease after playoffs together, both based on playoffRoundsWon
 - store lottery index somewhere
   - current value - team objects
   - past values (at start of lottery) - draftlottery objects
@@ -35,6 +36,7 @@ COLA https://arxiv.org/html/2602.02487
     - apply updateLotteryChancesAfterPlayoffs correctly
   - higher draftLotteryCustomNumPicks
   - lower draftLotteryCustomNumPicks
+  - initializeCola in large league with FBGM
 
 somewhere in league settings show total number of playoff teams https://app.fastmail.com/mail/Archive/A8bAfE0dqDdo.StqkZ1WgCv0J?u=433e4054
 

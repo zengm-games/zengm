@@ -131,7 +131,7 @@ const getLotteryInfo = (draftType: DraftType, numLotteryTeams: number) => {
 
 	if (draftType === "cola") {
 		return {
-			numToPick: g.get("draftLotteryCustomNumPicks"),
+			numToPick: 4,
 			chances: [1], // Placeholder, will be filled with real values later
 		};
 	}

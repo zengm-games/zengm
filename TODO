@@ -1,7 +1,4 @@
 COLA https://arxiv.org/html/2602.02487
-- settings
-  - draftLotteryCustomNumPicks
-    - update settings text
 - store lottery index somewhere
   - current value - team objects
   - past values (at start of lottery) - draftlottery objects

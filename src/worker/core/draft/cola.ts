@@ -23,12 +23,17 @@ export const getNumLotteryTeams = async () => {
 	return g.get("numActiveTeams") - numPlayoffTeams;
 };
 
-const logDecrease = (before: number, t: Team) => {
+const logChange = (
+	before: number,
+	t: Team,
+	direction: "increased" | "decreased",
+	reason: string,
+) => {
 	const text = `The lottery chances for the <a href="${helpers.leagueUrl([
 		"roster",
 		`${t.abbrev}_${t.tid}`,
 		g.get("season"),
-	])}">${t.name}</a> decreased from ${before} to ${t.cola} due to their playoff success.`;
+	])}">${t.name}</a> ${direction} from ${before} to ${t.cola}${reason}.`;
 
 	logEvent({
 		type: "draftLottery",
@@ -68,7 +73,7 @@ const decreaseLotteryIndexesAfterPlayoffs = async () => {
 			t.cola = Math.round(t.cola * factor);
 			await idb.cache.teams.put(t);
 
-			logDecrease(before, t);
+			logChange(before, t, "decreased", " due to their playoff success");
 		}
 	}
 };
@@ -89,20 +94,7 @@ const increaseLotteryIndexesAfterPlayoffs = async () => {
 		t.cola += COLA_ALPHA;
 		await idb.cache.teams.put(t);
 
-		const text = `The lottery chances for the <a href="${helpers.leagueUrl([
-			"roster",
-			`${t.abbrev}_${t.tid}`,
-			g.get("season"),
-		])}">${t.name}</a> increased from ${before} to ${t.cola}.`;
-
-		logEvent({
-			type: "draftLottery",
-			text,
-			showNotification: false,
-			pids: [],
-			tids: [t.tid],
-			score: 0,
-		});
+		logChange(before, t, "increased", "");
 	}
 };
 
@@ -135,20 +127,12 @@ export const updateLotteryIndexesAfterLottery = async (tids: number[]) => {
 		t.cola = Math.round(t.cola * factor);
 		await idb.cache.teams.put(t);
 
-		const text = `The lottery chances for the <a href="${helpers.leagueUrl([
-			"roster",
-			`${t.abbrev}_${t.tid}`,
-			g.get("season"),
-		])}">${t.name}</a> decreased from ${before} to ${t.cola} due to winning the ${helpers.ordinal(i + 1)} pick.`;
-
-		logEvent({
-			type: "draftLottery",
-			text,
-			showNotification: false,
-			pids: [],
-			tids: [t.tid],
-			score: 0,
-		});
+		logChange(
+			before,
+			t,
+			"decreased",
+			` due to winning the ${helpers.ordinal(i + 1)} pick`,
+		);
 	}
 
 	// Reset colaOptOut
@@ -160,20 +144,7 @@ export const updateLotteryIndexesAfterLottery = async (tids: number[]) => {
 				const before = t.cola;
 				t.cola = Math.max(0, t.cola - COLA_OPT_OUT_PENALTY);
 
-				const text = `The lottery chances for the <a href="${helpers.leagueUrl([
-					"roster",
-					`${t.abbrev}_${t.tid}`,
-					g.get("season"),
-				])}">${t.name}</a> decreased from ${before} to ${t.cola} due to opting out of the lottery.`;
-
-				logEvent({
-					type: "draftLottery",
-					text,
-					showNotification: false,
-					pids: [],
-					tids: [t.tid],
-					score: 0,
-				});
+				logChange(before, t, "decreased", " due to opting out of the lottery");
 			}
 
 			delete t.colaOptOut;

@@ -1,7 +1,4 @@
 COLA https://arxiv.org/html/2602.02487
-- when enabling/adding a team to the league, how to set lottery index?
-  - average of all values
-  - multiple teams should get same value
 - draft lottery UI
   - show text info box with major points like
     - lottery eligibility cutoff

@@ -27,6 +27,7 @@ import { getDraftLotteryProbs } from "../../common/draftLottery.ts";
 import useStickyXX from "../components/DataTable/useStickyXX.ts";
 import { range } from "../../common/utils.ts";
 import {
+	COLA_ALPHA,
 	COLA_OPT_OUT_PENALTY,
 	NO_LOTTERY_DRAFT_TYPES,
 } from "../../common/constants.ts";
@@ -65,10 +66,46 @@ export const getDraftTypeDescription = (
 			<>
 				{showPrefix ? "Carry-Over Lottery Allocation (COLA), a" : "A"} new draft
 				lottery method that eliminates tanking while also giving the best picks
-				to bad teams, based on{" "}
-				<a href="https://arxiv.org/html/2602.02487" target="_blank">
-					this paper
-				</a>
+				to bad teams.{" "}
+				<HelpPopover title="Carry-Over Lottery Allocation (COLA)">
+					<p>
+						Based on{" "}
+						<a href="https://arxiv.org/html/2602.02487" target="_blank">
+							this paper
+						</a>
+						, COLA works by having the "lottery chances" carry over from year to
+						year.
+					</p>
+					<p>
+						Each year, all lottery teams get {COLA_ALPHA} chances added to their
+						total.
+					</p>
+					<p>
+						The top 4 picks are determined by a lottery based on these chances.
+						The winner of the #1 pick has their chances set to 0 for next
+						season. For the #2 pick, it's a 75% chance decline. 50% for the #3
+						pick, and 25% for the #4 pick.
+					</p>
+					<p>
+						Only teams that make the final 3 rounds of playoffs are out of the
+						lottery. So in a default league, teams losing in the first round
+						will still be in the lottery. The champion has their chances for
+						next season set to 0. Runner up, 75% decline. Semifinalist, 50%
+						decline. Quarterfinalist, 25% decline.
+					</p>
+					<p>
+						All other teams (don't make the quarterfinals, don't win a lottery
+						pick) retain all of their chances for next season.
+					</p>
+					<p>Traded picks are not eligible to win the lottery.</p>
+					<p>
+						You can "opt out" of the lottery if you want to preserve your
+						chances rather than risk winning the #1 pick in a weak draft. There
+						is a button to do this on the Draft Lottery page before the lottery
+						starts. There is a penalty of {COLA_OPT_OUT_PENALTY} chances to do
+						this.
+					</p>
+				</HelpPopover>
 			</>
 		),
 	};

@@ -153,3 +153,26 @@ export const updateLotteryIndexesAfterLottery = async (tids: number[]) => {
 		}
 	}
 };
+
+export const initializeCola = async () => {
+	const teams = await idb.cache.teams.getAll();
+
+	for (const t of teams) {
+		if (!t.disabled) {
+			t.cola = 10 * COLA_ALPHA;
+			await idb.cache.teams.put(t);
+		}
+	}
+};
+
+export const disableCola = async () => {
+	const teams = await idb.cache.teams.getAll();
+
+	for (const t of teams) {
+		if (t.cola !== undefined || t.colaOptOut !== undefined) {
+			delete t.cola;
+			delete t.colaOptOut;
+			await idb.cache.teams.put(t);
+		}
+	}
+};

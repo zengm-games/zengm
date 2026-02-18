@@ -10,7 +10,6 @@ import g from "../../util/g.ts";
 import helpers from "../../util/helpers.ts";
 import logEvent from "../../util/logEvent.ts";
 import getNumPlayoffTeams from "../season/getNumPlayoffTeams.ts";
-import genOrder from "./genOrder.ts";
 
 // All teams up to the final 3 rounds of playoffs
 export const getNumLotteryTeams = async () => {
@@ -53,7 +52,12 @@ const logChange = (
 // Champion gets their lottery chances multiplied by 0. Loser of the finals, 0.25. Loser of the semifinals, 0.5. Loser of the quarterfinals, 0.75.
 const PLAYOFF_FACTORS = [0.75, 0.5, 0.25, 0];
 
-const decreaseLotteryChancesAfterPlayoffs = async () => {
+// Call this at the end of the playoffs
+export const updateLotteryChancesAfterPlayoffs = async () => {
+	if (g.get("draftType") !== "cola") {
+		return;
+	}
+
 	const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
 
 	// Add this to playoffRoundsWon and we can index into PLAYOFF_FACTORS
@@ -64,53 +68,24 @@ const decreaseLotteryChancesAfterPlayoffs = async () => {
 		"noCopyCache",
 	);
 	for (const row of teamSeasons) {
-		if (row.playoffRoundsWon < 0) {
-			continue;
-		}
-		const factor = PLAYOFF_FACTORS[row.playoffRoundsWon - offset];
-		if (factor !== undefined) {
-			const t = await idb.cache.teams.get(row.tid);
-			if (!t) {
-				throw new Error("Should never happen");
-			}
-			t.cola ??= 0;
-			const before = t.cola;
-			t.cola = Math.round(t.cola * factor);
-			await idb.cache.teams.put(t);
-
-			logChange(before, t, "decreased", " due to their playoff success");
-		}
-	}
-};
-
-const increaseLotteryChancesAfterPlayoffs = async () => {
-	const { draftLotteryResult } = await genOrder(true);
-	if (!draftLotteryResult) {
-		throw new Error("Should never happen");
-	}
-
-	for (const row of draftLotteryResult.result) {
-		const t = await idb.cache.teams.get(row.originalTid);
+		const t = await idb.cache.teams.get(row.tid);
 		if (!t) {
 			throw new Error("Should never happen");
 		}
 		t.cola ??= 0;
 		const before = t.cola;
-		t.cola += COLA_ALPHA;
+
+		const factor = PLAYOFF_FACTORS[row.playoffRoundsWon - offset];
+		if (row.playoffRoundsWon >= 0 && factor !== undefined) {
+			t.cola = Math.round(t.cola * factor);
+			logChange(before, t, "decreased", " due to their playoff success");
+		} else {
+			t.cola += COLA_ALPHA;
+			logChange(before, t, "increased", "");
+		}
+
 		await idb.cache.teams.put(t);
-
-		logChange(before, t, "increased", "");
 	}
-};
-
-// Call this at the end of the playoffs
-export const updateLotteryChancesAfterPlayoffs = async () => {
-	if (g.get("draftType") !== "cola") {
-		return;
-	}
-
-	await increaseLotteryChancesAfterPlayoffs();
-	await decreaseLotteryChancesAfterPlayoffs();
 };
 
 // Top 4 picks have their draft index multiplied by this amount

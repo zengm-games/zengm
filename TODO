@@ -1,13 +1,4 @@
 COLA https://arxiv.org/html/2602.02487
-- refactor - increase and decrease after playoffs together, both based on playoffRoundsWon
-- DRY initializeCola logic and elsewhere similar logic
-- store lottery index somewhere
-  - current value - team objects
-  - past values (at start of lottery) - draftlottery objects
-    - plus whatever else is needed for draft lottery UI
-- initialization when switching to COLA - look back over past playoffs/drafts
-  - what about new league? needs to have access to all that data when initializing
-  - what about real players league without history?
 - when enabling/adding a team to the league, how to set lottery index?
   - average of all values
   - multiple teams should get same value

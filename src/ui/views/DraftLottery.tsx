@@ -740,20 +740,20 @@ const DraftLotteryTable = (props: Props) => {
 					</button>
 					<HelpPopover title="Opt out of COLA lottery">
 						<p>
-							With the COLA draft type, your lottery index points accumulate
-							over multiple seasons until you win the lottery and get reset to 0
-							(or -75% for 2nd pick, -50% for 3rd pick, -25% for 4th pick).
+							With the COLA draft type, your lottery chances accumulate over
+							multiple seasons until you win the lottery and get reset to 0 (or
+							-75% for 2nd pick, -50% for 3rd pick, -25% for 4th pick).
 						</p>
 						<p>
 							If the current draft class is weak, you might prefer to keep your
-							lottery index points rather than risk winning the lottery. In that
+							lottery chances rather than risk winning the lottery. In that
 							case, you can click this button to opt out of the lottery. You
 							will still get your pick at the normal order in the draft, you
 							will just not have any chance of winning the top picks.
 						</p>
 						<p>
-							There is a penalty of {COLA_OPT_OUT_PENALTY} lottery index points
-							for opting out of the lottery.
+							There is a penalty of {COLA_OPT_OUT_PENALTY} lottery chances for
+							opting out of the lottery.
 						</p>
 					</HelpPopover>
 				</div>

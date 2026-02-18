@@ -29,6 +29,8 @@ COLA https://arxiv.org/html/2602.02487
   - link to paper https://arxiv.org/html/2602.02487
   - draft type setting
   - draftLotteryCustomNumPicks
+- limitations/changes
+  - lottery chances rather than lottery index or lottery index points
 - test
   - different number of playoff rounds
     - more or less than normal

@@ -155,7 +155,7 @@ const setGameAttributes = async (
 		} else if (key === "draftType") {
 			const teams = await idb.cache.teams.getAll();
 			if (value === "cola") {
-				// Initialize COLA lottery index
+				// Initialize COLA lottery chances
 				for (const t of teams) {
 					if (!t.disabled) {
 						t.cola = randInt(0, 10 * COLA_ALPHA);
@@ -163,7 +163,7 @@ const setGameAttributes = async (
 					}
 				}
 			} else {
-				// Delete COLA lottery index
+				// Delete COLA lottery chances
 				for (const t of teams) {
 					if (t.cola !== undefined) {
 						delete t.cola;

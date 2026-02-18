@@ -24,7 +24,7 @@ export const getNumLotteryTeams = async () => {
 };
 
 const logDecrease = (before: number, t: Team) => {
-	const text = `The lottery index for the <a href="${helpers.leagueUrl([
+	const text = `The lottery chances for the <a href="${helpers.leagueUrl([
 		"roster",
 		`${t.abbrev}_${t.tid}`,
 		g.get("season"),
@@ -40,7 +40,7 @@ const logDecrease = (before: number, t: Team) => {
 	});
 };
 
-// Champion gets their lottery index multiplied by 0. Loser of the finals, 0.25. Loser of the semifinals, 0.5. Loser of the quarterfinals, 0.75.
+// Champion gets their lottery chances multiplied by 0. Loser of the finals, 0.25. Loser of the semifinals, 0.5. Loser of the quarterfinals, 0.75.
 const PLAYOFF_FACTOR_CHAMP = 0;
 const PLAYOFF_FACTORS_LOSERS = [0.75, 0.5, 0.25];
 
@@ -113,7 +113,7 @@ const increaseLotteryIndexesAfterPlayoffs = async () => {
 		t.cola += COLA_ALPHA;
 		await idb.cache.teams.put(t);
 
-		const text = `The lottery index for the <a href="${helpers.leagueUrl([
+		const text = `The lottery chances for the <a href="${helpers.leagueUrl([
 			"roster",
 			`${t.abbrev}_${t.tid}`,
 			g.get("season"),
@@ -177,7 +177,7 @@ export const updateLotteryIndexesAfterLottery = async (tids: number[]) => {
 		t.cola = Math.round(t.cola * factor);
 		await idb.cache.teams.put(t);
 
-		const text = `The lottery index for the <a href="${helpers.leagueUrl([
+		const text = `The lottery chances for the <a href="${helpers.leagueUrl([
 			"roster",
 			`${t.abbrev}_${t.tid}`,
 			g.get("season"),
@@ -202,7 +202,7 @@ export const updateLotteryIndexesAfterLottery = async (tids: number[]) => {
 				const before = t.cola;
 				t.cola = Math.max(0, t.cola - COLA_OPT_OUT_PENALTY);
 
-				const text = `The lottery index for the <a href="${helpers.leagueUrl([
+				const text = `The lottery chances for the <a href="${helpers.leagueUrl([
 					"roster",
 					`${t.abbrev}_${t.tid}`,
 					g.get("season"),

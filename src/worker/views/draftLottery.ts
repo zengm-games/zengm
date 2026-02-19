@@ -42,6 +42,9 @@ const updateDraftLottery = async (
 			notEnoughTeams: boolean;
 			colaOptOutAvailable: boolean;
 			colaOptOutStatus: boolean;
+			colaTable?: TeamFiltered<
+				["tid", "abbrev", "name", "region", "cola", "imgURL", "imgURLSmall"]
+			>[];
 			draftPicks: DraftPickWithoutKey[] | undefined;
 			draftType?: DraftType | "dummy";
 			dpidsAvailableToTrade: Set<number | undefined>;
@@ -276,6 +279,22 @@ const updateDraftLottery = async (
 			);
 		}
 
+		let colaTable;
+		if (draftType === "cola") {
+			colaTable = await idb.getCopies.teamsPlus({
+				attrs: [
+					"tid",
+					"abbrev",
+					"name",
+					"region",
+					"imgURL",
+					"imgURLSmall",
+					"cola",
+				],
+				active: true,
+			});
+		}
+
 		return {
 			challengeWarning:
 				!draftLotteryResult &&
@@ -303,6 +322,7 @@ const updateDraftLottery = async (
 			userTid,
 			colaOptOutAvailable,
 			colaOptOutStatus,
+			colaTable,
 		};
 	}
 };

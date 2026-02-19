@@ -14,10 +14,12 @@ type Team = {
 const TeamLogoAndName = ({
 	t,
 	url,
+	noAbbrev,
 	noLogo,
 }: {
 	t: Team;
 	url: string;
+	noAbbrev?: boolean;
 	noLogo?: boolean;
 }) => {
 	return (
@@ -30,18 +32,27 @@ const TeamLogoAndName = ({
 			) : null}
 			<div>
 				<a href={url}>
-					<span className="d-none d-sm-inline">
+					<span className={noAbbrev ? "" : "d-none d-sm-inline"}>
 						{t.seasonAttrs.region} {t.seasonAttrs.name}
 					</span>
-					<span className="d-sm-none">{t.seasonAttrs.abbrev}</span>
+					<span className={noAbbrev ? "d-none" : "d-sm-none"}>
+						{t.seasonAttrs.abbrev}
+					</span>
 				</a>
 			</div>
 		</div>
 	);
 };
 
-export const wrappedTeamLogoAndName = (t: Team, url: string) => ({
-	value: <TeamLogoAndName t={t} url={url} />,
+export const wrappedTeamLogoAndName = (
+	t: Team,
+	url: string,
+	options?: {
+		noAbbrev?: boolean;
+		noLogo?: boolean;
+	},
+) => ({
+	value: <TeamLogoAndName t={t} url={url} {...options} />,
 	searchValue: `${t.seasonAttrs.region} ${t.seasonAttrs.name} ${t.seasonAttrs.abbrev}`,
 	sortValue: `${t.seasonAttrs.region} ${t.seasonAttrs.name} ${t.seasonAttrs.abbrev}`,
 });

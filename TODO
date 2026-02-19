@@ -1,18 +1,6 @@
-COLA https://arxiv.org/html/2602.02487
-- draft lottery UI
-  - columns
-    - lottery index
-      - during season, add COLA_ALPHA to current non-playoff teams
-      - also show for non-lottery teams
-    - lottery tickets
-      - set to 0 for ineligible teams (traded pick or opted out) - need to either log eligibility state in draftlotteryresult, or enough info to derive it (if pick was traded, if team opted out)
-- blog
-  - link to paper https://arxiv.org/html/2602.02487
-  - draft type setting
-  - draftLotteryCustomNumPicks
-  - if league has history when swithing to COLA, past 20 seasons will be used to get values
-  - contributions history
-  - collect feedback for how it'd be IRL - link to reddit post
+add option for where the lottery eligibility cutoff is
+- currently cola is hardcoded to be before the last 3 rounds of playoffs, and others are hardcoded to be non-playoff teams
+- for cola, it's hardcoded in getNumLotteryTeams and also in other parts of cola.ts that look at playoffRoundsWon. then in getTeamsByRound it's hardcoded to sort playoff teams by playoff success, which is necessary to take only first round losers and put them in the lottery
 
 somewhere in league settings show total number of playoff teams https://app.fastmail.com/mail/Archive/A8bAfE0dqDdo.StqkZ1WgCv0J?u=433e4054
 

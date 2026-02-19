@@ -3721,6 +3721,10 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		title: "DROY",
 	},
+	Chances: {
+		desc: "Lottery Chances",
+		sortSequence: ["desc", "asc"],
+	},
 	...sportSpecificCols,
 };
 

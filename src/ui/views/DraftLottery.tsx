@@ -8,6 +8,7 @@ import {
 	type ReactNode,
 } from "react";
 import {
+	DataTable,
 	DraftAbbrev,
 	HelpPopover,
 	MoreLinks,
@@ -15,7 +16,7 @@ import {
 	ResponsiveTableWrapper,
 } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, toWorker, useLocal } from "../util/index.ts";
+import { getCols, helpers, toWorker, useLocal } from "../util/index.ts";
 import type {
 	DraftLotteryResultArray,
 	View,
@@ -31,6 +32,7 @@ import {
 	COLA_OPT_OUT_PENALTY,
 	NO_LOTTERY_DRAFT_TYPES,
 } from "../../common/constants.ts";
+import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 
 type MyDraftType = DraftType | "dummy";
 export const getDraftTypeDescription = (
@@ -853,6 +855,68 @@ const DraftLotteryTable = (props: Props) => {
 	);
 };
 
+const ColaTable = ({
+	colaTable,
+	userTid,
+}: {
+	colaTable: NonNullable<Props["colaTable"]>;
+	userTid: Props["userTid"];
+}) => {
+	const cols = getCols(["Team", "Chances"]);
+
+	const rows = colaTable.map((t) => {
+		return {
+			key: t.tid,
+			data: [
+				wrappedTeamLogoAndName(
+					{
+						tid: t.tid,
+						seasonAttrs: t,
+					},
+					helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`]),
+					{
+						noAbbrev: true,
+					},
+				),
+				t.cola ?? 0,
+			],
+		};
+	});
+
+	return (
+		<div className="mt-5">
+			<h2 className="mb-0">
+				COLA lottery chances{" "}
+				<HelpPopover title="COLA lottery chances">
+					<p>
+						This table has two differences compared to the main lottery table
+						above:
+					</p>
+					<ol className="mb-0">
+						<li>It shows all teams, not just lottery-eligible teams.</li>
+						<li>
+							It shows the exact current value, whereas the table above includes
+							the projected {COLA_ALPHA} bonus lottery teams recieve each year.
+							So the values are the same after the playoffs, but different
+							before.
+						</li>
+					</ol>
+				</HelpPopover>
+			</h2>
+			<DataTable
+				className="mb-0"
+				cols={cols}
+				defaultSort={[1, "desc"]}
+				hideAllControls
+				nonfluid
+				name="DraftLotteryCola"
+				rows={rows}
+				pagination={false}
+			/>
+		</div>
+	);
+};
+
 const DraftLottery = (props: Props) => {
 	useTitleBar({
 		title: NO_LOTTERY_DRAFT_TYPES.includes(props.draftType as any)
@@ -865,6 +929,8 @@ const DraftLottery = (props: Props) => {
 			seasons: props.season,
 		},
 	});
+
+	const { colaTable, userTid } = props;
 
 	return (
 		<>
@@ -890,6 +956,8 @@ const DraftLottery = (props: Props) => {
 			) : null}
 
 			<DraftLotteryTable {...props} />
+
+			{colaTable ? <ColaTable colaTable={colaTable} userTid={userTid} /> : null}
 		</>
 	);
 };

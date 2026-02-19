@@ -1,3 +1,5 @@
+pulled goalie adds player who is in penalty box, then he is released from the penalty box right after! https://discord.com/channels/@me/778760871911751700/1473861582550204673
+
 add option for where the lottery eligibility cutoff is
 - currently cola is hardcoded to be before the last 3 rounds of playoffs, and others are hardcoded to be non-playoff teams
 - for cola, it's hardcoded in getNumLotteryTeams and also in other parts of cola.ts that look at playoffRoundsWon. then in getTeamsByRound it's hardcoded to sort playoff teams by playoff success, which is necessary to take only first round losers and put them in the lottery

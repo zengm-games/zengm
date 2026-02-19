@@ -6,6 +6,7 @@ import type { View } from "../../common/types.ts";
 import { MoreLinks } from "../components/index.tsx";
 import {
 	formatKeyboardShortcutRaw,
+	getEventKey,
 	keyboardShortcuts,
 	type KeyboardShortcutCategories,
 	type KeyboardShortcutInfo,
@@ -77,7 +78,7 @@ const KeyboardShortcutModal = ({
 				shiftKey: event.shiftKey,
 				ctrlKey: event.ctrlKey,
 				metaKey: event.metaKey,
-				key: event.key,
+				key: getEventKey(event),
 			});
 		};
 

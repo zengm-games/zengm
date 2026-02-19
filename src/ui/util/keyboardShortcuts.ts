@@ -30,7 +30,7 @@ for (const [i, key] of fastForwardKeys.entries()) {
 			altKey: true,
 			shiftKey: false,
 			ctrlKey: false,
-			metaKey: IS_APPLE,
+			metaKey: false,
 			key,
 		},
 	};
@@ -69,7 +69,7 @@ export const keyboardShortcuts = {
 				altKey: true,
 				shiftKey: false,
 				ctrlKey: false,
-				metaKey: IS_APPLE,
+				metaKey: false,
 				key: "p",
 			},
 		},
@@ -80,7 +80,7 @@ export const keyboardShortcuts = {
 				altKey: true,
 				shiftKey: false,
 				ctrlKey: false,
-				metaKey: IS_APPLE,
+				metaKey: false,
 				key: "y",
 			},
 		},
@@ -91,7 +91,7 @@ export const keyboardShortcuts = {
 				altKey: true,
 				shiftKey: false,
 				ctrlKey: false,
-				metaKey: IS_APPLE,
+				metaKey: false,
 				key: "w",
 			},
 		},
@@ -102,7 +102,7 @@ export const keyboardShortcuts = {
 				altKey: true,
 				shiftKey: false,
 				ctrlKey: false,
-				metaKey: IS_APPLE,
+				metaKey: false,
 				key: "m",
 			},
 		},
@@ -113,7 +113,7 @@ export const keyboardShortcuts = {
 				altKey: true,
 				shiftKey: false,
 				ctrlKey: false,
-				metaKey: IS_APPLE,
+				metaKey: false,
 				key: "l",
 			},
 		},
@@ -124,7 +124,7 @@ export const keyboardShortcuts = {
 				altKey: true,
 				shiftKey: false,
 				ctrlKey: false,
-				metaKey: IS_APPLE,
+				metaKey: false,
 				key: "a",
 			},
 		},
@@ -135,7 +135,7 @@ export const keyboardShortcuts = {
 				altKey: true,
 				shiftKey: false,
 				ctrlKey: false,
-				metaKey: IS_APPLE,
+				metaKey: false,
 				key: "r",
 			},
 		},
@@ -148,7 +148,7 @@ export const keyboardShortcuts = {
 				altKey: true,
 				shiftKey: false,
 				ctrlKey: false,
-				metaKey: IS_APPLE,
+				metaKey: false,
 				key: "b",
 			},
 		},
@@ -159,7 +159,7 @@ export const keyboardShortcuts = {
 				altKey: true,
 				shiftKey: false,
 				ctrlKey: false,
-				metaKey: IS_APPLE,
+				metaKey: false,
 				key: "n",
 			},
 		},
@@ -214,6 +214,27 @@ export type KeyboardShortcutsLocal =
 
 export type KeyboardShortcutCategories = keyof KeyboardShortcuts;
 
+export const getEventKey = (event: KeyboardEvent) => {
+	// Special case for Apple, allow alt+letter/number rather than like alt+p = pi
+	if (IS_APPLE && event.altKey && event.key.length === 1) {
+		// https://github.com/TanStack/hotkeys/blob/4744399d0a350553ca3ecb409640d4cc5040cf64/packages/hotkeys/src/match.ts#L68-L83
+		if (event.code && event.code.startsWith("Key")) {
+			const codeLetter = event.code.slice(3); // Remove "Key" prefix
+			if (codeLetter.length === 1 && /^[A-Za-z]$/.test(codeLetter)) {
+				return codeLetter;
+			}
+		}
+		if (event.code && event.code.startsWith("Digit")) {
+			const codeDigit = event.code.slice(5); // Remove "Digit" prefix
+			if (codeDigit.length === 1 && /^\d$/.test(codeDigit)) {
+				return codeDigit;
+			}
+		}
+	}
+
+	return event.key.length === 1 ? event.key.toLowerCase() : event.key;
+};
+
 export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 	category: T,
 	actions: ReadonlyArray<keyof KeyboardShortcuts[T]> | undefined,
@@ -240,8 +261,7 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>(
 			const shortcuts = keyboardShortcuts[category];
 			const actualActions = actions ?? helpers.keys(shortcuts);
 
-			const eventKey =
-				event.key.length === 1 ? event.key.toLowerCase() : event.key;
+			const eventKey = getEventKey(event);
 
 			for (const action of actualActions) {
 				const shortcutLocal = keyboardShortcutsLocal?.[category]?.[action];

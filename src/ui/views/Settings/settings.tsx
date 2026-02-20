@@ -568,7 +568,7 @@ export const settings: Setting[] = (
 					</p>
 					<p>
 						<b>Carry-Over Lottery Allocation (COLA):</b>{" "}
-						{getDraftTypeDescription("cola")}.
+						{getDraftTypeDescription("cola")}
 					</p>
 				</>
 			),

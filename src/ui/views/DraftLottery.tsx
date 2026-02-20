@@ -895,10 +895,11 @@ const ColaTable = ({
 					<ol className="mb-0">
 						<li>It shows all teams, not just lottery-eligible teams.</li>
 						<li>
-							It shows the exact current value, whereas the table above includes
-							the projected {COLA_ALPHA} bonus lottery teams recieve each year.
-							So the values are the same after the playoffs, but different
-							before.
+							It shows the exact current values. The table above shows either
+							the values from this season's completed draft lottery, or the
+							projected values for the upcoming draft lottery (possibly
+							including the projected {COLA_ALPHA} bonus lottery teams recieve
+							each year).
 						</li>
 					</ol>
 				</HelpPopover>

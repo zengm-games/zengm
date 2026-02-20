@@ -42,9 +42,11 @@ const updateDraftLottery = async (
 			notEnoughTeams: boolean;
 			colaOptOutAvailable: boolean;
 			colaOptOutStatus: boolean;
-			colaTable?: TeamFiltered<
-				["tid", "abbrev", "name", "region", "cola", "imgURL", "imgURLSmall"]
-			>[];
+			colaTable:
+				| TeamFiltered<
+						["tid", "abbrev", "name", "region", "cola", "imgURL", "imgURLSmall"]
+				  >[]
+				| undefined;
 			draftPicks: DraftPickWithoutKey[] | undefined;
 			draftType?: DraftType | "dummy";
 			dpidsAvailableToTrade: Set<number | undefined>;
@@ -133,6 +135,22 @@ const updateDraftLottery = async (
 		const pointsFormula = g.get("pointsFormula", season);
 		const usePts = pointsFormula !== "";
 
+		let colaTable;
+		if (g.get("draftType") === "cola" && season === g.get("season")) {
+			colaTable = await idb.getCopies.teamsPlus({
+				attrs: [
+					"tid",
+					"abbrev",
+					"name",
+					"region",
+					"imgURL",
+					"imgURLSmall",
+					"cola",
+				],
+				active: true,
+			});
+		}
+
 		// View completed draft lottery
 		if (
 			season < g.get("season") ||
@@ -201,6 +219,7 @@ const updateDraftLottery = async (
 					godMode: g.get("godMode"),
 					colaOptOutAvailable: false,
 					colaOptOutStatus: false,
+					colaTable,
 				};
 			}
 
@@ -225,6 +244,7 @@ const updateDraftLottery = async (
 					godMode: g.get("godMode"),
 					colaOptOutAvailable: false,
 					colaOptOutStatus: false,
+					colaTable,
 				};
 			}
 		}
@@ -277,22 +297,6 @@ const updateDraftLottery = async (
 			colaOptOutAvailable = draftLotteryResult.result.some(
 				(row) => row.tid === userTid && row.originalTid === userTid,
 			);
-		}
-
-		let colaTable;
-		if (draftType === "cola") {
-			colaTable = await idb.getCopies.teamsPlus({
-				attrs: [
-					"tid",
-					"abbrev",
-					"name",
-					"region",
-					"imgURL",
-					"imgURLSmall",
-					"cola",
-				],
-				active: true,
-			});
 		}
 
 		return {

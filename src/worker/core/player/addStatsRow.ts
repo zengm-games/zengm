@@ -60,16 +60,13 @@ const addStatsRow = (
 	p.statsTids = Array.from(new Set(p.statsTids));
 
 	// Calculate yearsWithTeam
-	const playerStats = p.stats.filter((ps) => !ps.playoffs);
-	if (playerStats.length > 0) {
-		const i = playerStats.length - 1;
-
-		if (
-			playerStats[i].season === g.get("season") - 1 &&
-			playerStats[i].tid === p.tid
-		) {
-			statsRow.yearsWithTeam = playerStats[i].yearsWithTeam + 1;
-		}
+	const prevStats = p.stats.findLast((row) => !row.playoffs);
+	if (
+		prevStats &&
+		prevStats.season === g.get("season") - 1 &&
+		prevStats.tid === p.tid
+	) {
+		statsRow.yearsWithTeam = prevStats.yearsWithTeam + 1;
 	}
 
 	// This ignores conflicts and assumes p.jerseyNumber is already defined. If that's a problem, call genJerseyNumber before calling addStatsRow

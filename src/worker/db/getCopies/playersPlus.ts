@@ -1027,9 +1027,25 @@ const processStats = (
 	if (playerStats.length === 0 && showNoStats) {
 		if (g.get("season") === season) {
 			// Player is on a team but has not played with them yet (like this is the offseason before their first season with team) - override blank jersey number
-			playerStats.push({
+			const row: any = {
 				jerseyNumber: helpers.getJerseyNumber(p),
-			});
+			};
+
+			// Dynamically calculate yearsWithTeam, based on prior season, otherwise it shows up as 0
+			if (stats.includes("yearsWithTeam")) {
+				const prevStats = p.stats.findLast((row) => !row.playoffs);
+				if (
+					prevStats &&
+					prevStats.season === season - 1 &&
+					prevStats.tid === tid
+				) {
+					row.yearsWithTeam = prevStats.yearsWithTeam + 1;
+				} else {
+					row.yearsWithTeam = g.get("phase") > PHASE.PLAYOFFS ? 0 : 1;
+				}
+			}
+
+			playerStats.push(row);
 		} else {
 			playerStats.push({});
 		}

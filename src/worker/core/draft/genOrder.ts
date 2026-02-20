@@ -320,6 +320,11 @@ const genOrder = async (
 			const draw = random.randInt(0, totalChances - 1);
 			const i = chancesCumsum.findIndex((chance) => chance > draw);
 
+			// This happens if all the chances are 0, such which can happen in cola if everyone opts out. In that case, just pick teams from uniform random. In that case, don't make any lottery selection and just proceed in order. UI is still messed up in that case, showing NaNs, but whatever.
+			if (i < 0) {
+				break;
+			}
+
 			if (
 				!firstN.includes(i) &&
 				i < firstRoundTeams.length &&

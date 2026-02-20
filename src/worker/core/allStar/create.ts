@@ -443,7 +443,7 @@ const create = async (conditions: Conditions) => {
 				[
 					(p) => {
 						const stats = p.stats.at(-1);
-						return stats.tp;
+						return stats?.tp ?? 0;
 					},
 					(p) => {
 						const ratings = p.ratings.at(-1) as PlayerRatings;

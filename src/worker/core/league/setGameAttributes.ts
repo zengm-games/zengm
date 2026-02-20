@@ -27,6 +27,11 @@ const updateMetaDifficulty = async (difficulty: number) => {
 
 const setGameAttributes = async (
 	gameAttributes: Partial<GameAttributesLeague>,
+	{
+		skipDraftGenPicks,
+	}: {
+		skipDraftGenPicks?: boolean;
+	} = {},
 ) => {
 	const toUpdate = new Set<keyof GameAttributesLeague>();
 
@@ -182,11 +187,12 @@ const setGameAttributes = async (
 	}
 
 	if (
-		toUpdate.has("numSeasonsFutureDraftPicks") ||
-		toUpdate.has("challengeNoDraftPicks") ||
-		toUpdate.has("numDraftRounds") ||
-		toUpdate.has("forceHistoricalRosters") ||
-		(toUpdate.has("userTids") && g.get("challengeNoDraftPicks"))
+		!skipDraftGenPicks &&
+		(toUpdate.has("numSeasonsFutureDraftPicks") ||
+			toUpdate.has("challengeNoDraftPicks") ||
+			toUpdate.has("numDraftRounds") ||
+			toUpdate.has("forceHistoricalRosters") ||
+			(toUpdate.has("userTids") && g.get("challengeNoDraftPicks")))
 	) {
 		await draft.genPicks();
 	}

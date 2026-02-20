@@ -1602,7 +1602,10 @@ const afterDBStream = async ({
 
 	// Write gameAttributes to DB in special way, to get extra functionality from setGameAttributes and because it's not in the database native format in leagueData (object, not array like others).
 	// BUT - league.setGameAttributes is not expecting gameAttributes with history, so this could break in subtle ways in the future!
-	await league.setGameAttributes(gameAttributesToUpdate as any);
+	await league.setGameAttributes(gameAttributesToUpdate as any, {
+		// This is needed or some real draft picks may be overwritten
+		skipDraftGenPicks: true,
+	});
 
 	await finalizeActivePlayers({
 		fileHasPlayers,

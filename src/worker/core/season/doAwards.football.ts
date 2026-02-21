@@ -145,7 +145,6 @@ export const makeTeams = (
 
 	const kickers = getTopPlayers(
 		{
-			allowNone: rookie,
 			amount: 2,
 			score: (p: PlayerFiltered) => p.currentStats.fg,
 		},
@@ -153,7 +152,6 @@ export const makeTeams = (
 	);
 	const punters = getTopPlayers(
 		{
-			allowNone: rookie,
 			amount: 2,
 			score: (p: PlayerFiltered) => p.currentStats.pntYds,
 		},
@@ -161,7 +159,6 @@ export const makeTeams = (
 	);
 	const kickReturners = getTopPlayers(
 		{
-			allowNone: rookie,
 			amount: 2,
 			score: (p: PlayerFiltered) =>
 				p.currentStats.krYds + 500 * p.currentStats.krTD,
@@ -170,7 +167,6 @@ export const makeTeams = (
 	);
 	const puntReturners = getTopPlayers(
 		{
-			allowNone: rookie,
 			amount: 2,
 			score: (p: PlayerFiltered) =>
 				p.currentStats.prYds + 500 * p.currentStats.prTD,
@@ -187,7 +183,7 @@ export const makeTeams = (
 			punters[0],
 			kickReturners[0],
 			puntReturners[0],
-		];
+		].filter((p) => p !== undefined);
 	}
 
 	return [
@@ -201,7 +197,7 @@ export const makeTeams = (
 				punters[0],
 				kickReturners[0],
 				puntReturners[0],
-			],
+			].filter((p) => p !== undefined),
 		},
 		{
 			title: "Second Team",
@@ -213,7 +209,7 @@ export const makeTeams = (
 				punters[1],
 				kickReturners[1],
 				puntReturners[1],
-			],
+			].filter((p) => p !== undefined),
 		},
 	];
 };
@@ -434,7 +430,6 @@ const doAwards = async (conditions: Conditions) => {
 
 	const oroyPlayers = getTopPlayers(
 		{
-			allowNone: true,
 			amount: Infinity,
 			filter: royFilter,
 			score: mvpScore,
@@ -445,7 +440,6 @@ const doAwards = async (conditions: Conditions) => {
 
 	const droyPlayers = getTopPlayers(
 		{
-			allowNone: true,
 			amount: Infinity,
 			filter: royFilter,
 			score: dpoyScore,

@@ -188,17 +188,15 @@ const doAwards = async (conditions: Conditions) => {
 
 	const dpoyPlayers = getTopPlayers(
 		{
-			allowNone: true,
 			amount: 1,
 			score: dpoyScore,
 		},
 		players,
 	).map(getPlayerInfo);
-	const dpoy = dpoyPlayers[0]!;
+	const dpoy = dpoyPlayers[0];
 
 	let mvpPlayers = getTopPlayers(
 		{
-			allowNone: true,
 			amount: Infinity,
 			score: mvpScore,
 		},
@@ -207,12 +205,13 @@ const doAwards = async (conditions: Conditions) => {
 	const mvp = mvpPlayers[0];
 
 	// Move dpoy to top, so he's always on All-League team
-	mvpPlayers = [dpoy, ...mvpPlayers.filter((p) => p.pid !== dpoy.pid)];
+	if (dpoy) {
+		mvpPlayers = [dpoy, ...mvpPlayers.filter((p) => p.pid !== dpoy.pid)];
+	}
 
 	const allLeague = makeTeams(mvpPlayers);
 	const royPlayers = getTopPlayers(
 		{
-			allowNone: true,
 			amount: Infinity,
 			filter: royFilter,
 			score: royScore,
@@ -226,24 +225,22 @@ const doAwards = async (conditions: Conditions) => {
 
 	const dfoyPlayers = getTopPlayers(
 		{
-			allowNone: true,
 			amount: 1,
 			filter: dfoyFilter,
 			score: dpoyScore,
 		},
 		players,
 	).map(getPlayerInfo);
-	const dfoy = dfoyPlayers[0]!;
+	const dfoy = dfoyPlayers[0];
 
 	const goyPlayers = getTopPlayers(
 		{
-			allowNone: true,
 			amount: 1,
 			score: goyScore,
 		},
 		players,
 	).map(getPlayerInfo);
-	const goy = goyPlayers[0]!;
+	const goy = goyPlayers[0];
 
 	let finalsMvp;
 	const champTeam = teams.find(

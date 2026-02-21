@@ -16,7 +16,6 @@ const getAwardCandidates = async (season: number) => {
 			name: "Most Valuable Player",
 			players: getTopPlayers(
 				{
-					allowNone: true,
 					amount: 10,
 					score: mvpScore,
 				},
@@ -28,7 +27,6 @@ const getAwardCandidates = async (season: number) => {
 			name: "Defensive Player of the Year",
 			players: getTopPlayers(
 				{
-					allowNone: true,
 					amount: 10,
 					score: dpoyScore,
 				},
@@ -40,7 +38,6 @@ const getAwardCandidates = async (season: number) => {
 			name: "Defensive Forward of the Year",
 			players: getTopPlayers(
 				{
-					allowNone: true,
 					amount: 10,
 					filter: dfoyFilter,
 					score: dpoyScore,
@@ -53,7 +50,6 @@ const getAwardCandidates = async (season: number) => {
 			name: "Goalie of the Year",
 			players: getTopPlayers(
 				{
-					allowNone: true,
 					amount: 10,
 					score: goyScore,
 				},
@@ -65,7 +61,6 @@ const getAwardCandidates = async (season: number) => {
 			name: "Rookie of the Year",
 			players: getTopPlayers(
 				{
-					allowNone: true,
 					amount: 10,
 					filter: royFilter,
 					score: royScore,

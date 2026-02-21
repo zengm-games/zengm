@@ -402,7 +402,6 @@ const doAwards = async (conditions: Conditions) => {
 
 	const mvpPlayers = getTopPlayers(
 		{
-			allowNone: true,
 			amount: Infinity,
 			score: mvpScore,
 		},
@@ -412,7 +411,6 @@ const doAwards = async (conditions: Conditions) => {
 
 	const royPlayers = getTopPlayers(
 		{
-			allowNone: true,
 			amount: Infinity,
 			filter: royFilter,
 			score: mvpScore,
@@ -423,7 +421,6 @@ const doAwards = async (conditions: Conditions) => {
 
 	const offensePlayers = getTopPlayers(
 		{
-			allowNone: true,
 			amount: Infinity,
 			score: (p) => p.currentStats.rbr + p.currentStats.rbat,
 		},
@@ -435,7 +432,6 @@ const doAwards = async (conditions: Conditions) => {
 
 	const poyPlayers = getTopPlayers(
 		{
-			allowNone: true,
 			amount: 1,
 			score: poyScore,
 		},
@@ -445,7 +441,6 @@ const doAwards = async (conditions: Conditions) => {
 
 	const rpoyPlayers = getTopPlayers(
 		{
-			allowNone: true,
 			amount: 1,
 			filter: rpoyFilter,
 			score: poyScore,

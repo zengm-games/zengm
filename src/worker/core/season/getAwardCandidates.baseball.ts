@@ -15,7 +15,6 @@ const getAwardCandidates = async (season: number) => {
 			name: AWARD_NAMES.mvp,
 			players: getTopPlayers(
 				{
-					allowNone: true,
 					amount: 10,
 					score: mvpScore,
 				},
@@ -27,7 +26,6 @@ const getAwardCandidates = async (season: number) => {
 			name: AWARD_NAMES.poy,
 			players: getTopPlayers(
 				{
-					allowNone: true,
 					amount: 10,
 					score: poyScore,
 				},
@@ -39,7 +37,6 @@ const getAwardCandidates = async (season: number) => {
 			name: AWARD_NAMES.rpoy,
 			players: getTopPlayers(
 				{
-					allowNone: true,
 					amount: 10,
 					filter: rpoyFilter,
 					score: poyScore,
@@ -52,7 +49,6 @@ const getAwardCandidates = async (season: number) => {
 			name: AWARD_NAMES.roy,
 			players: getTopPlayers(
 				{
-					allowNone: true,
 					amount: 10,
 					filter: royFilter,
 					score: mvpScore,

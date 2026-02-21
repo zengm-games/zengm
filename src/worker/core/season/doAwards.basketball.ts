@@ -192,10 +192,11 @@ const getSemiFinalsMvp = async (
 	const games = await idb.cache.games.getAll();
 
 	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
-	if (!playoffSeries || playoffSeries.series.length < 2) {
+
+	const semifinalsSeries = playoffSeries?.series.at(-2);
+	if (!semifinalsSeries) {
 		return [];
 	}
-	const semifinalsSeries = playoffSeries.series.at(-2)!;
 
 	const mvps = [];
 
@@ -426,7 +427,6 @@ const doAwards = async (conditions: Conditions) => {
 
 	const mvpPlayers = getTopPlayersOffense(
 		{
-			allowNone: true,
 			amount: 15,
 			score: mvpScore,
 		},
@@ -439,7 +439,6 @@ const doAwards = async (conditions: Conditions) => {
 
 	const [smoy] = getTopPlayersOffense(
 		{
-			allowNone: true,
 			filter: getSmoyFilter(players),
 			score: smoyScore,
 		},
@@ -448,7 +447,6 @@ const doAwards = async (conditions: Conditions) => {
 
 	const royPlayers = getTopPlayersOffense(
 		{
-			allowNone: true,
 			amount: 5,
 			filter: royFilter,
 			score: royScore,
@@ -461,7 +459,6 @@ const doAwards = async (conditions: Conditions) => {
 	const allRookie = royPlayers.slice(0, 5);
 	const dpoyPlayers: AwardPlayerDefense[] = getTopPlayersDefense(
 		{
-			allowNone: true,
 			amount: 15,
 			score: dpoyScore,
 		},
@@ -471,7 +468,6 @@ const doAwards = async (conditions: Conditions) => {
 	const allDefensive = makeTeams(dpoyPlayers);
 	const [mip] = getTopPlayersOffense(
 		{
-			allowNone: true,
 			filter: mipFilter,
 			score: mipScore,
 		},

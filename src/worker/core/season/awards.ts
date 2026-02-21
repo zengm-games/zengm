@@ -393,15 +393,11 @@ const leagueLeaders = (
 };
 
 const getTopPlayers = (
-	{ allowNone, amount, filter, score }: GetTopPlayersOptions,
+	{ amount, filter, score }: GetTopPlayersOptions,
 	playersUnsorted: PlayerFiltered[],
 ): PlayerFiltered[] => {
 	if (playersUnsorted.length === 0) {
-		if (allowNone) {
-			return [];
-		}
-
-		throw new Error("No players");
+		return [];
 	}
 
 	const actualFilter = filter ?? (() => true);
@@ -424,16 +420,6 @@ const getTopPlayers = (
 
 		return bScore - aScore;
 	});
-
-	// For the ones returning multiple players (for all league teams), enforce length
-	if (
-		!allowNone &&
-		actualAmount !== Infinity &&
-		actualAmount > 1 &&
-		players.length < actualAmount
-	) {
-		throw new Error("Not enough players");
-	}
 
 	// If all players are filtered out above (like MIP initial year), then this will return an empty array
 	return players.slice(0, actualAmount);

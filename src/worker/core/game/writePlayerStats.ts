@@ -341,7 +341,8 @@ const writePlayerStats = async (
 				let ps = p2.stats.at(-1);
 
 				// Previously we called addStatsRow when joining a team, but now we do it dynamically
-				const addNewStatsRow = !statsRowIsCurrent(ps, t.id, playoffs);
+				const addNewStatsRow =
+					!statsRowIsCurrent(ps, t.id, playoffs) && !allStarGame;
 				if (addNewStatsRow) {
 					player.addStatsRow(p2, playoffs);
 					ps = p2.stats.at(-1);

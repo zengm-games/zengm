@@ -50,20 +50,10 @@ const AwardRaces = ({
 					}
 
 					const rows: DataTableRow[] = players.map((p, j) => {
-						let ps: any;
-						for (let i = p.stats.length - 1; i >= 0; i--) {
-							if (p.stats[i].season === season && !p.stats[i].playoffs) {
-								ps = p.stats[i];
-								break;
-							}
-						}
-						let pr;
-						for (let i = p.ratings.length - 1; i >= 0; i--) {
-							if (p.ratings[i].season === season) {
-								pr = p.ratings[i];
-								break;
-							}
-						}
+						const ps = p.currentStats;
+						const pr = (p.ratings as any[]).findLast(
+							(row) => row.season === season,
+						);
 
 						const pos = pr ? pr.pos : "?";
 						const abbrev = ps ? ps.abbrev : undefined;

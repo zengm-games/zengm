@@ -16,6 +16,7 @@ import {
 } from "../../util/index.ts";
 import type {
 	Conditions,
+	Player,
 	PlayerFiltered,
 	TeamFiltered,
 } from "../../../common/types.ts";
@@ -37,21 +38,11 @@ export type GetTopPlayersOptions = {
 	score: (a: PlayerFiltered) => number;
 };
 
-const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
-	let playersAll;
-	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
-		playersAll = await idb.cache.players.indexGetAll("playersByTid", [
-			PLAYER.FREE_AGENT,
-			Infinity,
-		]);
-	} else {
-		playersAll = await idb.getCopies.players(
-			{
-				activeSeason: season,
-			},
-			"noCopyCache",
-		);
-	}
+const getProcessedPlayers = async (
+	playersAll: Player[],
+	season: number,
+	playoffs?: boolean,
+) => {
 	let players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
@@ -169,15 +160,42 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 				"jerseyNumber",
 			],
 		}),
+		playoffs,
+		regularSeason: !playoffs,
 		fuzz: true,
 		mergeStats: "totOnly",
 	});
 
 	// Only keep players who actually have a stats entry for the latest season
-	players = players.filter(
-		(p) =>
-			p.stats.length > 0 && p.stats.some((ps: any) => ps.season === season),
+	players = players.filter((p) =>
+		p.stats.some((ps: any) => ps.season === season),
 	);
+
+	// This can happen if there are 0 games in the regular season - in that case, might as well look for playoff stats too
+	if (players.length === 0 && !playoffs) {
+		return getProcessedPlayers(playersAll, season, true);
+	}
+
+	return players;
+};
+
+const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
+	let playersAll;
+	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
+		playersAll = await idb.cache.players.indexGetAll("playersByTid", [
+			PLAYER.FREE_AGENT,
+			Infinity,
+		]);
+	} else {
+		playersAll = await idb.getCopies.players(
+			{
+				activeSeason: season,
+			},
+			"noCopyCache",
+		);
+	}
+
+	const players = await getProcessedPlayers(playersAll, season);
 
 	// Add winp, for later
 	const teamSeasons = await idb.getCopies.teamSeasons(

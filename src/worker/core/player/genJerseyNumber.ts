@@ -397,11 +397,9 @@ export const getTeammateJerseyNumbers = async (
 			await idb.cache.players.indexGetAll("playersByTid", tid)
 		).filter((p) => !pidsIgnoreSet.has(p.pid));
 		for (const p of teammates) {
-			if (p.stats.length > 0) {
-				const teamJerseyNumber = p.jerseyNumber;
-				if (teamJerseyNumber) {
-					jerseyNumbers.push(teamJerseyNumber);
-				}
+			const teamJerseyNumber = p.jerseyNumber;
+			if (teamJerseyNumber) {
+				jerseyNumbers.push(teamJerseyNumber);
 			}
 		}
 	}

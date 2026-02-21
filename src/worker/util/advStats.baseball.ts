@@ -231,6 +231,12 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 	}
 	const teamsByTid = groupByUnique(teams, "tid");
 
+	// For playoffs would be better to be team specific, but this is better than just using numGames directly, which is what it used to do!
+	const numGames =
+		g.get("phase") === PHASE.PLAYOFFS
+			? g.get("numGamesPlayoffSeries").reduce((prev, curr) => prev + curr, 0)
+			: g.get("numGames");
+
 	for (let i = 0; i < players.length; i++) {
 		const p = players[i];
 		const t = teamsByTid[p.tid]!;
@@ -257,8 +263,7 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 					POS_NUMBERS_INVERSE[(j + 1) as keyof typeof POS_NUMBERS_INVERSE];
 
 				// Positional Adjustment Runs
-				rpos[i]! +=
-					(gpF / g.get("numGames")) * POSITIONAL_ADJUSTMENT_COEFFICIENTS[pos];
+				rpos[i]! += (gpF / numGames) * POSITIONAL_ADJUSTMENT_COEFFICIENTS[pos];
 
 				// Fielding Runs
 				if (pos !== "DH") {

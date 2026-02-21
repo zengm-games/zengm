@@ -1,8 +1,4 @@
-import {
-	getPlayers,
-	getTopPlayers,
-	saveAwardsByPlayer,
-} from "../season/awards.ts";
+import { saveAwardsByPlayer } from "../season/awards.ts";
 import { g, random } from "../../util/index.ts";
 import type {
 	AllStars,
@@ -10,7 +6,7 @@ import type {
 	PlayerFiltered,
 	AllStarPlayer,
 } from "../../../common/types.ts";
-import { bySport, isSport } from "../../../common/index.ts";
+import { bySport, isSport, PLAYER } from "../../../common/index.ts";
 import { idb } from "../../db/index.ts";
 import type { PlayerRatings } from "../../../common/types.basketball.ts";
 import { groupBy, orderBy, range } from "../../../common/utils.ts";
@@ -27,24 +23,45 @@ const create = async (conditions: Conditions) => {
 		finalized: false,
 		type: "top",
 	};
-	const players = await getPlayers(g.get("season"));
+	const playersAll = await idb.cache.players.indexGetAll("playersByTid", [
+		PLAYER.FREE_AGENT,
+		Infinity,
+	]);
+	const players = await idb.getCopies.playersPlus(playersAll, {
+		attrs: ["pid", "name", "tid", "injury"],
+		ratings: ["pos", "ovr"],
+		stats: bySport({
+			baseball: [
+				"war",
+
+				// For position determination
+				"gpF",
+			],
+			basketball: ["ewa", "ws"],
+			football: ["av"],
+			hockey: ["ps"],
+		}),
+		season: g.get("season"),
+		mergeStats: "totOnly",
+
+		// This is needed if the ASG happens before any normal games are played
+		showNoStats: true,
+	});
 
 	const allStarNum = g.get("allStarNum");
 
 	const score = (p: PlayerFiltered) =>
 		bySport({
-			baseball: p.currentStats.war,
-			football: p.currentStats.av,
-			basketball: 2.5 * p.currentStats.ewa + p.currentStats.ws,
-			hockey: p.currentStats.ps,
+			baseball: p.stats.war,
+			football: p.stats.av,
+			basketball: 2.5 * p.stats.ewa + p.stats.ws,
+			hockey: p.stats.ps,
 		});
 
-	const sortedPlayers = getTopPlayers(
-		{
-			amount: Infinity,
-			score,
-		},
+	const sortedPlayers = orderBy(
 		players,
+		[score, (p) => p.ratings.ovr],
+		["desc", "desc"],
 	);
 
 	let allStarType = g.get("allStarType");
@@ -104,13 +121,13 @@ const create = async (conditions: Conditions) => {
 			const playersByPos = groupBy(candidates, (p) => {
 				if (isSport("baseball")) {
 					// Find actual played position based on highest gpF value
-					const pos = getPosByGpF(p.currentStats.gpF);
+					const pos = getPosByGpF(p.stats.gpF);
 					if (pos !== undefined) {
 						return pos;
 					}
 				}
 
-				return p.ratings.at(-1).pos;
+				return p.ratings.pos;
 			});
 
 			let failed = false;
@@ -173,7 +190,7 @@ const create = async (conditions: Conditions) => {
 							return false;
 						}
 
-						const pos = getPosByGpF(p.currentStats.gpF);
+						const pos = getPosByGpF(p.stats.gpF);
 						if (pos === "P") {
 							return false;
 						}

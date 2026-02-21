@@ -1,5 +1,7 @@
 import fs from "node:fs/promises";
 import { transformAsync } from "@babel/core";
+import babelPluginSyntaxTypescript from "@babel/plugin-syntax-typescript";
+import babelPluginSyntaxJsx from "@babel/plugin-syntax-jsx";
 import { and, code, include, moduleType, or } from "@rolldown/pluginutils";
 import type { RolldownPlugin, SourceMapInput, TransformResult } from "rolldown";
 import { babelPluginSportFunctionsFactory } from "../../babel-plugin-sport-functions/index.ts";
@@ -48,8 +50,12 @@ export const sportFunctions = (
 					configFile: false,
 					sourceMaps: true,
 					plugins: [
-						"@babel/plugin-syntax-typescript",
-						...(isTsx ? ["@babel/plugin-syntax-jsx"] : []),
+						// THese should eventually get fixed https://github.com/babel/babel/issues/17777
+						// @ts-expect-error
+						babelPluginSyntaxTypescript,
+						// @ts-expect-error
+						...(isTsx ? [babelPluginSyntaxJsx] : []),
+						// @ts-expect-error
 						babelPluginSportFunctions,
 					],
 				});

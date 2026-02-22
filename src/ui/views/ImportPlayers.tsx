@@ -357,7 +357,7 @@ export const ImportPlayersInner = ({
 										if (ps.season === p.exportedSeason) {
 											if (
 												ps.tid < teamInfoCache.length &&
-												!teamInfoCache[ps.tid]!.disabled
+												!teamInfoCache[ps.tid]?.disabled
 											) {
 												tid = ps.tid;
 											}

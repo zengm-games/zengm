@@ -111,6 +111,7 @@ const Roster = ({
 	phase,
 	players,
 	playoffs,
+	playoffsByConf,
 	salaryCap,
 	salaryCapType,
 	season,
@@ -400,6 +401,7 @@ const Roster = ({
 				minPayrollAmount={minPayrollAmount}
 				openRosterSpots={maxRosterSize - players.length}
 				players={players}
+				playoffsByConf={playoffsByConf}
 				season={season}
 				payroll={payroll}
 				profit={profit}

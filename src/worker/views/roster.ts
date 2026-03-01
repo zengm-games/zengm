@@ -1,7 +1,7 @@
 import { bySport, isSport, PHASE, POSITIONS } from "../../common/index.ts";
 import { finances, season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
-import { g, helpers } from "../util/index.ts";
+import { g, helpers, orderTeams } from "../util/index.ts";
 import type {
 	Player,
 	UpdateEvents,
@@ -20,6 +20,73 @@ const sortByPos = (p: {
 }) => {
 	const ind = POSITIONS.indexOf(p.ratings.pos);
 	return (POSITIONS.length - ind) * 1000 + p.ratings.ovr;
+};
+
+const getStandingsInfo = async (info: { season: number; tid: number }) => {
+	const teams = await idb.getCopies.teamsPlus(
+		{
+			attrs: ["tid"],
+			seasonAttrs: [
+				"won",
+				"lost",
+				"tied",
+				"otl",
+				"wonDiv",
+				"lostDiv",
+				"tiedDiv",
+				"otlDiv",
+				"wonConf",
+				"lostConf",
+				"tiedConf",
+				"otlConf",
+				"winp",
+				"pts",
+				"cid",
+				"did",
+			],
+			stats: ["pts", "oppPts", "gp"],
+			season: info.season,
+			showNoStats: true,
+		},
+		"noCopyCache",
+	);
+
+	const cid = teams.find((t) => t.tid === info.tid)?.seasonAttrs.cid;
+
+	const playoffsByConf = await season.getPlayoffsByConf(info.season);
+
+	const confOrAllTeams = await orderTeams(
+		teams.filter((t) => !playoffsByConf || t.seasonAttrs.cid === cid),
+		teams,
+	);
+
+	const pointsFormula = g.get("pointsFormula", info.season);
+	const usePts = pointsFormula !== "";
+
+	const showGb = !usePts;
+
+	let rank = 1;
+	for (const t of confOrAllTeams) {
+		if (!playoffsByConf || t.seasonAttrs.cid === cid) {
+			if (t.tid === info.tid) {
+				return {
+					gb: showGb
+						? helpers.gb(confOrAllTeams[0]!.seasonAttrs, t.seasonAttrs)
+						: 0,
+					playoffsByConf,
+					rank,
+				};
+			}
+
+			rank += 1;
+		}
+	}
+
+	return {
+		gb: 0,
+		playoffsByConf,
+		rank: undefined,
+	};
 };
 
 const updateRoster = async (
@@ -240,6 +307,8 @@ const updateRoster = async (
 				g.get("season") === inputs.season) ||
 			inputs.playoffs === "playoffs";
 
+		const { gb, playoffsByConf, rank } = await getStandingsInfo(inputs);
+
 		const t2 = {
 			...t,
 			ovr: team.ovr(players, {
@@ -257,6 +326,8 @@ const updateRoster = async (
 				numPlayoffRounds: g.get("numGamesPlayoffSeries", inputs.season).length,
 				playoffsByConf: await season.getPlayoffsByConf(inputs.season),
 			}),
+			gb,
+			rank,
 		};
 		t2.seasonAttrs.avgAge = t2.seasonAttrs.avgAge ?? team.avgAge(players);
 
@@ -283,6 +354,7 @@ const updateRoster = async (
 			payroll,
 			phase: g.get("phase"),
 			playoffs: inputs.playoffs,
+			playoffsByConf,
 			players: addFirstNameShort(players),
 			salaryCap: g.get("salaryCap") / 1000,
 			season: inputs.season,

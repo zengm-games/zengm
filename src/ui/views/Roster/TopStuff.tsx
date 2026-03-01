@@ -155,6 +155,7 @@ const TopStuff = ({
 	openRosterSpots,
 	payroll,
 	players,
+	playoffsByConf,
 	profit,
 	salaryCap,
 	salaryCapType,
@@ -178,6 +179,7 @@ const TopStuff = ({
 	| "minPayrollAmount"
 	| "payroll"
 	| "players"
+	| "playoffsByConf"
 	| "salaryCap"
 	| "salaryCapType"
 	| "season"
@@ -255,6 +257,14 @@ const TopStuff = ({
 						<div>
 							<span style={fontSizeLarger}>{recordAndPlayoffs}</span>
 							<br />
+							{t.rank !== undefined ? (
+								<>
+									{helpers.ordinal(t.rank)} in{" "}
+									{playoffsByConf ? "conference" : "league"}
+									{t.gb > 0 ? `, ${t.gb} games back` : null}
+									<br />
+								</>
+							) : null}
 							{!challengeNoRatings ? (
 								<>
 									Team rating:{" "}

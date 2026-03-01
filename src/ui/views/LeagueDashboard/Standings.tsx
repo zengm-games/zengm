@@ -11,7 +11,6 @@ const Standings = ({
 	confOrAllTeams,
 	maxPlayoffSeed,
 	maxPlayoffSeedNoPlayIn,
-	numConfs,
 	playoffsByConf,
 	pointsFormula,
 	usePts,
@@ -21,7 +20,6 @@ const Standings = ({
 	| "confOrAllTeams"
 	| "maxPlayoffSeed"
 	| "maxPlayoffSeedNoPlayIn"
-	| "numConfs"
 	| "playoffsByConf"
 	| "pointsFormula"
 	| "usePts"

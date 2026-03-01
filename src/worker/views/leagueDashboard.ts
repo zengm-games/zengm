@@ -473,7 +473,6 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		return {
-			numConfs: g.get("confs", "current").length,
 			numGamesToWinSeries,
 			series: foundSeries,
 			seriesTitle,
@@ -510,7 +509,7 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					"imgURL",
 					"imgURLSmall",
 				],
-				stats: ["pts", "oppPts", "gp"] as const,
+				stats: ["pts", "oppPts", "gp"],
 				season: g.get("season"),
 				showNoStats: true,
 			},
@@ -523,10 +522,7 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
 
-		let confOrAllTeams: ((typeof teams)[number] & {
-			rank: number;
-			gb: number;
-		})[] = (
+		let confOrAllTeams = (
 			await orderTeams(
 				teams.filter((t) => !playoffsByConf || t.seasonAttrs.cid === cid),
 				teams,

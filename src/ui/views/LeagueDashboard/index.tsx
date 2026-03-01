@@ -21,7 +21,6 @@ const LeagueDashboard = ({
 	maxPlayoffSeedNoPlayIn,
 	messages,
 	name,
-	numConfs,
 	numGamesToWinSeries,
 	numPlayersOnCourt,
 	otl,
@@ -81,7 +80,6 @@ const LeagueDashboard = ({
 									confOrAllTeams={confOrAllTeams}
 									maxPlayoffSeed={maxPlayoffSeed}
 									maxPlayoffSeedNoPlayIn={maxPlayoffSeedNoPlayIn}
-									numConfs={numConfs}
 									playoffsByConf={playoffsByConf}
 									pointsFormula={pointsFormula}
 									usePts={usePts}

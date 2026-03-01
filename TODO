@@ -1,3 +1,13 @@
+trading away players should not change willingness to sign of existing free agents https://old.reddit.com/r/BasketballGM/comments/1qsjzds/monthly_suggestions_thread/o5rge16/
+- somehow freeze that mood component when a player becomes a free agent
+  - could save state in player object
+    - state could be the number of players traded away for each team
+- any other components that should be frozen?
+
+show projected pick number in more places, like anywhere a realized pick number is shown https://old.reddit.com/r/BasketballGM/comments/1qsjzds/monthly_suggestions_thread/o2x0kao/
+- currently only on Draft Picks page
+- use real value that is calculated internally for draft pick projection
+
 https://main.vitest.dev/config/detectasyncleaks
 
 button to sign all rookies on re-sign page https://app.fastmail.com/mail/Archive/AOc4VisnZIYZ.StqmYwT3NgFZ?u=433e4054

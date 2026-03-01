@@ -518,20 +518,17 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		);
 
 		// Find user's conference
-		let cid: number | undefined;
-		for (const t of teams) {
-			if (t.tid === g.get("userTid")) {
-				cid = t.seasonAttrs.cid;
-				break;
-			}
-		}
+		const userTid = g.get("userTid");
+		const cid = teams.find((t) => t.tid === userTid)?.seasonAttrs.cid;
 
-		const confTeams: ((typeof teams)[number] & {
+		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
+
+		let confOrAllTeams: ((typeof teams)[number] & {
 			rank: number;
 			gb: number;
 		})[] = (
 			await orderTeams(
-				teams.filter((t) => t.seasonAttrs.cid === cid),
+				teams.filter((t) => !playoffsByConf || t.seasonAttrs.cid === cid),
 				teams,
 			)
 		).map((t) => ({
@@ -544,28 +541,43 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const usePts = pointsFormula !== "";
 
 		let rank = 1;
-		for (const t of confTeams) {
-			if (cid === t.seasonAttrs.cid) {
+		for (const t of confOrAllTeams) {
+			if (!playoffsByConf || t.seasonAttrs.cid === cid) {
 				t.rank = rank;
 				if (!usePts) {
 					t.gb =
 						rank === 1
 							? 0
-							: helpers.gb(confTeams[0]!.seasonAttrs, t.seasonAttrs);
+							: helpers.gb(confOrAllTeams[0]!.seasonAttrs, t.seasonAttrs);
 				}
 
 				rank += 1;
 			}
 		}
 
-		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
+		// Keep only up to 16 teams or else it looks ugly, and always keep userTid
+		const NUM_TEAMS_TO_SHOW = 16;
+		let seenUserTid = false;
+		confOrAllTeams = confOrAllTeams.filter((t) => {
+			if (t.tid === userTid) {
+				seenUserTid = true;
+				return true;
+			}
+
+			if (seenUserTid) {
+				return t.rank <= NUM_TEAMS_TO_SHOW;
+			} else {
+				return t.rank < NUM_TEAMS_TO_SHOW;
+			}
+		});
+
 		const { maxPlayoffSeed, maxPlayoffSeedNoPlayIn } = await getMaxPlayoffSeed(
 			g.get("season"),
 			playoffsByConf,
 		);
 
 		return {
-			confTeams,
+			confOrAllTeams,
 			maxPlayoffSeed,
 			maxPlayoffSeedNoPlayIn,
 			playoffsByConf,

@@ -12,7 +12,7 @@ const LeagueDashboard = ({
 	att,
 	cash,
 	challengeNoRatings,
-	confTeams,
+	confOrAllTeams,
 	events,
 	leagueLeaders,
 	lost,
@@ -78,7 +78,7 @@ const LeagueDashboard = ({
 							) : null}
 							<div className="d-none d-sm-block mt-2">
 								<Standings
-									confTeams={confTeams}
+									confOrAllTeams={confOrAllTeams}
 									maxPlayoffSeed={maxPlayoffSeed}
 									maxPlayoffSeedNoPlayIn={maxPlayoffSeedNoPlayIn}
 									numConfs={numConfs}

@@ -5,10 +5,11 @@ import getInjuryRate from "./getInjuryRate.ts";
 import type {
 	GameAttributesLeague,
 	PlayerInjury,
+	TeamNum,
 } from "../../../common/types.ts";
-import GameSimBase from "../GameSimBase.ts";
+import GameSimBase from "../GameSim/GameSimBase.ts";
 import { maxBy } from "../../../common/utils.ts";
-import PlayByPlayLogger, {
+import {
 	type BlockType,
 	type FgaType,
 	type FgMakeType,
@@ -16,6 +17,7 @@ import PlayByPlayLogger, {
 } from "./PlayByPlayLogger.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { formatClock } from "../../../common/formatClock.ts";
+import PlayByPlayLogger from "./PlayByPlayLogger.ts";
 
 const SHOT_CLOCK = 24;
 // const NUM_TIMEOUTS_MAX_FINAL_PERIOD = 4;
@@ -64,7 +66,6 @@ type Stat =
 	| "tpa"
 	| "sAtt"
 	| "sPts";
-type TeamNum = 0 | 1;
 type CompositeRating =
 	| "blocking"
 	| "fouling"
@@ -236,7 +237,6 @@ class GameSim extends GameSimBase {
 			baseInjuryRate,
 			neutralSite,
 		});
-
 		this.playByPlay = new PlayByPlayLogger(doPlayByPlay);
 
 		this.team = teams; // If a team plays twice in a day, this needs to be a deep copy

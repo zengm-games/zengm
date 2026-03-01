@@ -1,5 +1,4 @@
 import type {
-	PlayByPlayEvent,
 	PlayByPlayEventInput,
 	PlayByPlayEventScore,
 } from "../worker/core/GameSim.baseball/PlayByPlayLogger.ts";
@@ -15,8 +14,9 @@ export const formatScoringSummaryEvent = (
 	} else if (event.type === "shootoutShot") {
 		scored = true;
 	} else {
-		const runners = (event as Extract<PlayByPlayEvent, { type: "hitResult" }>)
-			.runners;
+		const runners = (
+			event as Extract<PlayByPlayEventInput, { type: "hitResult" }>
+		).runners;
 		if (runners?.some((runner) => runner.scored)) {
 			scored = true;
 		}

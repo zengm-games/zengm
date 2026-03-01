@@ -2,13 +2,14 @@ import { getPeriodName } from "../../common/index.ts";
 import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.football.ts";
 import { helpers, local } from "./index.ts";
 import type {
-	PlayByPlayEvent,
+	PlayByPlayEventOutput,
 	PlayByPlayEventScore,
 } from "../../worker/core/GameSim.football/PlayByPlayLogger.ts";
 import type { ReactNode } from "react";
 import { formatClock } from "../../common/formatClock.ts";
 import type { PlayerInjury } from "../../common/types.ts";
 import { formatLiveGameStat } from "./formatLiveGameStat.ts";
+import type { PlayByPlayEvent } from "../../worker/core/GameSim/PlayByPlayLoggerBase.ts";
 type BoxScorePlayer = {
 	name: string;
 	pid: number;
@@ -93,7 +94,7 @@ export const scrimmageToFieldPos = (
 	}
 };
 
-export const getScoreInfo = (event: PlayByPlayEvent) => {
+export const getScoreInfo = (event: PlayByPlayEventOutput) => {
 	let type: "XP" | "FG" | "TD" | "2P" | "SF" | "SH" | undefined;
 	let long: string | undefined;
 	let points = 0;
@@ -237,7 +238,7 @@ const descriptionYdsTD = (
 	return `${yds} yards`;
 };
 
-export const getText = (event: PlayByPlayEvent, numPeriods: number) => {
+export const getText = (event: PlayByPlayEventOutput, numPeriods: number) => {
 	// Handle touchdowns, 2 point conversions, and 2 point conversion returns by the defense
 	let touchdownText = "a touchdown";
 	let showYdsOnTD = true;
@@ -522,7 +523,7 @@ const processLiveGameEvents = ({
 	quarters,
 	sportState,
 }: {
-	events: PlayByPlayEvent[];
+	events: PlayByPlayEvent<PlayByPlayEventOutput>[];
 	boxScore: {
 		gid: number;
 		quarter: string;

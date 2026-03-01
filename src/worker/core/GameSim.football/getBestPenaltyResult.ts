@@ -1,7 +1,7 @@
 import type { State } from "./Play.ts";
-import type { TeamNum } from "./types.ts";
 import { random } from "../../util/index.ts";
 import { orderBy, range } from "../../../common/utils.ts";
+import type { TeamNum } from "../../../common/types.ts";
 
 // Sort by looking at a bunch of different factors in order of importance
 const getBestPenaltyResult = <

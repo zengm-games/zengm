@@ -1990,3 +1990,5 @@ export type SavedTradingBlock = {
 	}[];
 	lookingFor?: LookingForState;
 };
+
+export type TeamNum = 0 | 1;

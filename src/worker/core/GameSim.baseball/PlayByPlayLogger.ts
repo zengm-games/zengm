@@ -1,6 +1,8 @@
 import type { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball.ts";
 import { formatScoringSummaryEvent } from "../../../common/formatScoringSummaryEvent.baseball.ts";
-import type { Runner, TeamNum } from "./types.ts";
+import type { TeamNum } from "../../../common/types.ts";
+import { PlayByPlayLoggerBase } from "../GameSim/PlayByPlayLoggerBase.ts";
+import type { Runner } from "./types.ts";
 
 export type PlayByPlayEventInput =
 	| {
@@ -178,38 +180,18 @@ export type PlayByPlayEventInput =
 			type: "shootoutTie";
 	  };
 
-type PlayByPlayEventStat = {
-	type: "stat";
-	t: TeamNum;
-	pid: number | undefined | null;
-	s: string;
-	amt: number;
-};
-
-export type PlayByPlayEvent =
-	| (PlayByPlayEventInput | PlayByPlayEventStat)
-	| {
-			type: "init";
-			boxScore: any;
-	  };
-
-export type PlayByPlayEventScore = PlayByPlayEvent & {
+export type PlayByPlayEventScore = PlayByPlayEventInput & {
 	inning: number;
 	t: TeamNum;
 	pid: number;
 };
 
-class PlayByPlayLogger {
-	active: boolean;
-
-	playByPlay: PlayByPlayEvent[] = [];
-
+class BaseballPlayByPlayLogger extends PlayByPlayLoggerBase<PlayByPlayEventInput> {
 	scoringSummary: PlayByPlayEventScore[] = [];
-
-	period = 1;
+	private period = 1;
 
 	constructor(active: boolean) {
-		this.active = active;
+		super(active);
 	}
 
 	logEvent(event: PlayByPlayEventInput) {
@@ -224,34 +206,6 @@ class PlayByPlayLogger {
 			this.scoringSummary.push(scoringSummaryEvent);
 		}
 	}
-
-	logStat(t: TeamNum, pid: number | undefined | null, s: string, amt: number) {
-		if (!this.active) {
-			return;
-		}
-
-		this.playByPlay.push({
-			type: "stat",
-			t,
-			pid,
-			s,
-			amt,
-		});
-	}
-
-	getPlayByPlay(boxScore: any): PlayByPlayEvent[] | undefined {
-		if (!this.active) {
-			return;
-		}
-
-		return [
-			{
-				type: "init",
-				boxScore,
-			},
-			...this.playByPlay,
-		];
-	}
 }
 
-export default PlayByPlayLogger;
+export default BaseballPlayByPlayLogger;

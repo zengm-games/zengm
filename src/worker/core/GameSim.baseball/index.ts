@@ -6,17 +6,18 @@ import {
 	POS_NUMBERS,
 	POS_NUMBERS_INVERSE,
 } from "../../../common/constants.baseball.ts";
-import PlayByPlayLogger from "./PlayByPlayLogger.ts";
-import type { PlayerGameSim, Runner, TeamGameSim, TeamNum } from "./types.ts";
+import type { PlayerGameSim, Runner, TeamGameSim } from "./types.ts";
+import type { TeamNum } from "../../../../src/common/types.ts";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate.ts";
 import Team from "./Team.ts";
 import { fatigueFactor } from "./fatigueFactor.ts";
 import { infoDefense } from "../player/ovr.baseball.ts";
-import GameSimBase from "../GameSimBase.ts";
+import GameSimBase from "../GameSim/GameSimBase.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { maxBy } from "../../../common/utils.ts";
 import { choice } from "../../../common/random.ts";
 import { PHASE } from "../../../common/index.ts";
+import PlayByPlayLogger from "./PlayByPlayLogger.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 

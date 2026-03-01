@@ -1,7 +1,7 @@
 import { getPeriodName } from "../../common/index.ts";
 import { helpers, local } from "./index.ts";
 import type {
-	PlayByPlayEvent,
+	PlayByPlayEventInput,
 	PlayByPlayEventScore,
 } from "../../worker/core/GameSim.baseball/PlayByPlayLogger.ts";
 import {
@@ -11,6 +11,7 @@ import {
 import type { PlayerInjury } from "../../common/types.ts";
 import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.baseball.ts";
 import { formatLiveGameStat } from "./formatLiveGameStat.ts";
+import type { PlayByPlayEvent } from "../../worker/core/GameSim/PlayByPlayLoggerBase.ts";
 
 export type BoxScorePlayer = {
 	name: string;
@@ -34,7 +35,7 @@ export let playersByPid: Record<number, BoxScorePlayer> = {};
 const getName = (pid: number) => playersByPid[pid]?.name ?? "???";
 
 const getDirectionInfield = (
-	direction: Extract<PlayByPlayEvent, { type: "fly" }>["direction"],
+	direction: Extract<PlayByPlayEventInput, { type: "fly" }>["direction"],
 ) => {
 	if (direction === "left" || direction === "right") {
 		return `to the ${direction} side of the field`;
@@ -56,7 +57,7 @@ const getDirectionInfield = (
 };
 
 const getDirectionOutfield = (
-	direction: Extract<PlayByPlayEvent, { type: "fly" }>["direction"],
+	direction: Extract<PlayByPlayEventInput, { type: "fly" }>["direction"],
 ) => {
 	if (direction === "left" || direction === "right") {
 		return `to ${direction} field`;
@@ -87,7 +88,7 @@ const getBaseName = (base: 1 | 2 | 3 | 4) => {
 
 const formatRunners = (
 	getName: (pid: number) => string,
-	runners: Extract<PlayByPlayEvent, { type: "walk" }>["runners"],
+	runners: Extract<PlayByPlayEventInput, { type: "walk" }>["runners"],
 	{
 		ignoreStationary,
 		sideRetired,
@@ -146,7 +147,7 @@ const formatRunners = (
 };
 
 export const getText = (
-	event: PlayByPlayEvent,
+	event: PlayByPlayEventInput,
 	getName: (pid: number) => string,
 	sportState: SportState | undefined,
 ) => {
@@ -500,7 +501,7 @@ const processLiveGameEvents = ({
 	quarters,
 	sportState,
 }: {
-	events: PlayByPlayEvent[];
+	events: PlayByPlayEvent<PlayByPlayEventInput>[];
 	boxScore: {
 		gid: number;
 		quarter: string;

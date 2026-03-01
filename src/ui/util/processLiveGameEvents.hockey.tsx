@@ -1,12 +1,13 @@
 import { getPeriodName } from "../../common/index.ts";
 import { helpers, local } from "./index.ts";
 import type {
-	PlayByPlayEvent,
+	PlayByPlayEventOutput,
 	PlayByPlayEventScore,
 } from "../../worker/core/GameSim.hockey/PlayByPlayLogger.ts";
 import type { PlayerInjury } from "../../common/types.ts";
 import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.hockey.ts";
 import { formatClock } from "../../common/formatClock.ts";
+import type { PlayByPlayEvent } from "../../worker/core/GameSim/PlayByPlayLoggerBase.ts";
 
 let playersByPidGid: number | undefined;
 let playersByPid:
@@ -35,7 +36,7 @@ const newPossessionTypes: Record<string, boolean> = {
 };
 
 const getText = (
-	event: PlayByPlayEvent,
+	event: PlayByPlayEventOutput,
 	boxScore: {
 		numPeriods: number;
 		time: string;
@@ -162,7 +163,7 @@ const processLiveGameEvents = ({
 	overtimes,
 	quarters,
 }: {
-	events: PlayByPlayEvent[];
+	events: PlayByPlayEvent<PlayByPlayEventOutput>[];
 	boxScore: {
 		gid: number;
 		quarter: string;
@@ -207,7 +208,12 @@ const processLiveGameEvents = ({
 		// Swap teams order, so home team is at bottom in box score
 		const actualT = eAny.t === 0 ? 1 : eAny.t === 1 ? 0 : undefined;
 
-		if (e.type !== "init" && !quarters.includes(e.quarter)) {
+		if (
+			e.type !== "init" &&
+			e.type !== "stat" &&
+			e.quarter !== undefined &&
+			!quarters.includes(e.quarter)
+		) {
 			quarters.push(e.quarter);
 			boxScore.teams[0].ptsQtrs.push(0);
 			boxScore.teams[1].ptsQtrs.push(0);
@@ -232,7 +238,7 @@ const processLiveGameEvents = ({
 				)}${quarter}`;
 			}
 
-			if (e.type !== "stat" && e.type !== "playersOnIce") {
+			if (e.type !== "playersOnIce") {
 				boxScore.time = formatClock(e.clock);
 			}
 		}

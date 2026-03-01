@@ -24,7 +24,7 @@ import processStats, {
 	outsToInnings,
 } from "../../common/processPlayerStats.baseball.ts";
 import type {
-	PlayByPlayEvent,
+	PlayByPlayEventInput,
 	PlayByPlayEventScore,
 } from "../../worker/core/GameSim.baseball/PlayByPlayLogger.ts";
 import { orderBy } from "../../common/utils.ts";
@@ -235,8 +235,9 @@ const processEvents = (events: PlayByPlayEventScore[]) => {
 			// Home run
 			numRuns += 1;
 		}
-		const runners = (event as Extract<PlayByPlayEvent, { type: "hitResult" }>)
-			.runners;
+		const runners = (
+			event as Extract<PlayByPlayEventInput, { type: "hitResult" }>
+		).runners;
 		if (runners) {
 			for (const runner of runners) {
 				if (runner.to === 4 && !runner.out) {

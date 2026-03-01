@@ -1,4 +1,6 @@
-type TeamNum = 0 | 1;
+import type { TeamNum } from "../../../common/types";
+import { PlayByPlayLoggerBase } from "../GameSim/PlayByPlayLoggerBase.ts";
+
 export type BlockType =
 	| "blkAtRim"
 	| "blkLowPost"
@@ -188,29 +190,16 @@ type PlayByPlayEventInputNoScore =
 			timeouts: [number, number];
 	  };
 
-type PlayByPlayEventInput =
+export type PlayByPlayEventInput =
 	| PlayByPlayEventInputScore
 	| PlayByPlayEventInputNoScore;
 
 // Only add period to scoring events, since they are used for scoringSummary
 type PlayByPlayEventScore = PlayByPlayEventInputScore & { period: number };
 
-export type PlayByPlayEvent =
-	| (
-			| PlayByPlayEventScore
-			| PlayByPlayEventInputNoScore
-			| {
-					type: "stat";
-					t: TeamNum;
-					pid: number | undefined | null;
-					s: string;
-					amt: number;
-			  }
-	  )
-	| {
-			type: "init";
-			boxScore: any;
-	  };
+export type PlayByPlayEventOutput =
+	| PlayByPlayEventScore
+	| PlayByPlayEventInputNoScore;
 
 const scoringTypes: Set<PlayByPlayEventInput["type"]> = new Set([
 	"fgAtRim",
@@ -230,17 +219,10 @@ const isScoringPlay = (
 	return scoringTypes.has(event.type);
 };
 
-class PlayByPlayLogger {
-	active: boolean;
-
-	playByPlay: PlayByPlayEvent[] = [];
-
-	// scoringSummary: PlayByPlayEventScore[] = [];
-
-	period = 1;
-
+class BasketballPlayByPlayLogger extends PlayByPlayLoggerBase<PlayByPlayEventOutput> {
+	private period = 1;
 	constructor(active: boolean) {
-		this.active = active;
+		super(active);
 	}
 
 	logEvent(event: PlayByPlayEventInput) {
@@ -253,7 +235,6 @@ class PlayByPlayLogger {
 				...event,
 				period: this.period,
 			};
-			// this.scoringSummary.push(event2);
 			if (this.active) {
 				this.playByPlay.push(event2);
 			}
@@ -263,34 +244,6 @@ class PlayByPlayLogger {
 			}
 		}
 	}
-
-	logStat(t: TeamNum, pid: number | undefined | null, s: string, amt: number) {
-		if (!this.active) {
-			return;
-		}
-
-		this.playByPlay.push({
-			type: "stat",
-			t,
-			pid,
-			s,
-			amt,
-		});
-	}
-
-	getPlayByPlay(boxScore: any): PlayByPlayEvent[] | undefined {
-		if (!this.active) {
-			return;
-		}
-
-		return [
-			{
-				type: "init",
-				boxScore,
-			},
-			...this.playByPlay,
-		];
-	}
 }
 
-export default PlayByPlayLogger;
+export default BasketballPlayByPlayLogger;

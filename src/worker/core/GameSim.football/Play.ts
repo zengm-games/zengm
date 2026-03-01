@@ -1,7 +1,8 @@
 import type GameSim from "./index.ts";
 import { g } from "../../util/index.ts";
 import getBestPenaltyResult from "./getBestPenaltyResult.ts";
-import type { PlayerGameSim, TeamNum } from "./types.ts";
+import type { PlayerGameSim } from "./types.ts";
+import type { TeamNum } from "../../../common/types.ts";
 
 export const SCRIMMAGE_KICKOFF = 35;
 const SCRIMMAGE_KICKOFF_SAFETY = 20;

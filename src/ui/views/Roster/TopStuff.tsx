@@ -261,7 +261,11 @@ const TopStuff = ({
 								<>
 									{helpers.ordinal(t.rank)} in{" "}
 									{playoffsByConf ? "conference" : "league"}
-									{t.gb > 0 ? `, ${t.gb} games back` : null}
+									{t.gb > 0 ? (
+										<>
+											, {t.gb} <span title="Games Back">GB</span>
+										</>
+									) : null}
 									<br />
 								</>
 							) : null}
@@ -272,11 +276,13 @@ const TopStuff = ({
 									<br />
 								</>
 							) : null}
-							<span title="Average margin of victory">Average MOV</span>:{" "}
+							<span title="Average margin of victory">MOV</span>:{" "}
 							<PlusMinus>{marginOfVictory}</PlusMinus>
-							<br />
-							<span title="Average age, weighted by minutes played">
-								Average age
+							<span
+								title="Average age, weighted by minutes played"
+								className="ms-3"
+							>
+								Age
 							</span>
 							: {t.seasonAttrs.avgAge?.toFixed(1)}
 						</div>

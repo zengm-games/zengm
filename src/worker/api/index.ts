@@ -161,6 +161,7 @@ import getCols from "../../common/getCols.ts";
 import { formatScheduleForEditor } from "../views/scheduleEditor.ts";
 import type { KeyboardShortcutsLocal } from "../../ui/util/keyboardShortcuts.ts";
 import { getNumPlayoffTeamsRaw } from "../core/season/getNumPlayoffTeams.ts";
+import type { NewLeagueSettings } from "../views/newLeague.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -551,7 +552,7 @@ const createLeague = async (
 		confs: Conf[];
 		divs: Div[];
 		teamsFromInput: NewLeagueTeam[];
-		settings: Omit<Settings, "numActiveTeams">;
+		settings: NewLeagueSettings;
 		fromFile: {
 			gameAttributes: Record<string, unknown> | undefined;
 			hasRookieContracts: boolean;

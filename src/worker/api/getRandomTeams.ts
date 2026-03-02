@@ -1,7 +1,7 @@
 import { PHASE } from "../../common/index.ts";
 import getTeamInfos from "../../common/getTeamInfos.ts";
 import teamInfos from "../../common/teamInfos.ts";
-import type { Conf, Div } from "../../common/types.ts";
+import type { Conf, Div, NonEmptyArray } from "../../common/types.ts";
 import { realRosters } from "../core/index.ts";
 import geographicCoordinates, {
 	type Continent,
@@ -124,8 +124,8 @@ const getRandomTeams = async ({
 	divInfo:
 		| {
 				type: "explicit";
-				confs: Conf[];
-				divs: Div[];
+				confs: NonEmptyArray<Conf>;
+				divs: NonEmptyArray<Div>;
 				numTeamsPerDiv: number[];
 		  }
 		| {

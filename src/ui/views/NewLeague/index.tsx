@@ -40,6 +40,7 @@ import type {
 	Conf,
 	GameAttributesLeague,
 	Phase,
+	NonEmptyArray,
 } from "../../../common/types.ts";
 import clsx from "clsx";
 import { descriptions } from "../Settings/settings.tsx";
@@ -48,13 +49,13 @@ import LeaguePartPicker from "./LeaguePartPicker.tsx";
 import type { LeagueInfo, NewLeagueTeam } from "./types.ts";
 import CustomizeSettings from "./CustomizeSettings.tsx";
 import CustomizeTeams, { makeTIDsSequential } from "./CustomizeTeams.tsx";
-import type { Settings } from "../../../worker/views/settings.ts";
 import type { BasicInfo } from "../../../worker/api/leagueFileUpload.ts";
 import { SelectSeasonRange } from "./SelectSeasonRange.tsx";
 import { orderBy } from "../../../common/utils.ts";
 import { analyticsEventLocal } from "../../../common/analyticsEventLocal.ts";
 import { choice } from "../../../common/random.ts";
 import { realContinents } from "../../../common/geographicCoordinates.ts";
+import type { NewLeagueSettings } from "../../../worker/views/newLeague.ts";
 
 const animationVariants = {
 	visible: {
@@ -246,13 +247,13 @@ type State = {
 	legend: string;
 	loadingLeagueFile: boolean;
 	teams: NewLeagueTeam[];
-	confs: Conf[];
-	divs: Div[];
+	confs: NonEmptyArray<Conf>;
+	divs: NonEmptyArray<Div>;
 	tid: number;
 	pendingInitialLeagueInfo: boolean;
 	allKeys: string[];
 	keptKeys: string[];
-	settings: Omit<Settings, "numActiveTeams">;
+	settings: NewLeagueSettings;
 	rebuildAbbrevPending?: string;
 };
 
@@ -298,14 +299,14 @@ type Action =
 	| {
 			type: "setTeams";
 			teams: NewLeagueTeam[];
-			confs: Conf[];
-			divs: Div[];
+			confs: NonEmptyArray<Conf>;
+			divs: NonEmptyArray<Div>;
 	  }
 	| {
 			type: "setTeamsCrossEra";
 			teams: NewLeagueTeam[];
-			confs: Conf[];
-			divs: Div[];
+			confs: NonEmptyArray<Conf>;
+			divs: NonEmptyArray<Div>;
 			defaultSettings: State["settings"];
 	  }
 	| {
@@ -1111,8 +1112,8 @@ const NewLeague = (props: View<"newLeague">) => {
 					onSave={({ confs, divs, teams }) => {
 						dispatch({
 							type: "setTeams",
-							confs,
-							divs,
+							confs: confs as NonEmptyArray<Conf>,
+							divs: divs as NonEmptyArray<Div>,
 							teams: helpers.addPopRank(teams),
 						});
 						setCurrentScreen("default");
@@ -1156,6 +1157,7 @@ const NewLeague = (props: View<"newLeague">) => {
 						...state.settings,
 						numActiveTeams: displayedTeams.length,
 						difficulty: state.difficulty,
+						confs: state.confs,
 					}}
 					saveText={createLeagueText}
 					hasPlayers={state.keptKeys.includes("players")}

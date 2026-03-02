@@ -1,7 +1,6 @@
 import {
 	bySport,
 	COURT,
-	DEFAULT_CONFS,
 	DIFFICULTY,
 	GAME_NAME,
 	isSport,
@@ -417,9 +416,7 @@ export const settings: Setting[] = (
 					numActiveTeams: initialSettings.numActiveTeams,
 					playIn: output.playIn,
 					playoffsByConf: output.playoffsByConf,
-
-					// Fallback is for when creating a new league and editing settings, confs are not available here
-					confs: initialSettings.confs ?? DEFAULT_CONFS,
+					confs: initialSettings.confs,
 				});
 			},
 		},

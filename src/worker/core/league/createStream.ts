@@ -66,6 +66,7 @@ import remove from "./remove.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { DEFAULT_LEVEL, amountToLevel } from "../../../common/budgetLevels.ts";
 import { upgradeGamesVersion65 } from "../../db/connectLeague.ts";
+import type { NewLeagueSettings } from "../../views/newLeague.ts";
 
 export type TeamInfo = TeamBasic & {
 	disabled?: boolean;
@@ -1115,7 +1116,7 @@ type CreateStreamProps = {
 	lid: number;
 	name: string;
 	setLeagueCreationStatus: (status: string) => void;
-	settings: Omit<Settings, "numActiveTeams">;
+	settings: NewLeagueSettings;
 	shuffleRosters: boolean;
 	startingSeasonFromInput: string | undefined;
 	teamsFromInput: NewLeagueTeam[];

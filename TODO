@@ -1,7 +1,10 @@
-when creating a new league, we don't know how many conferences there are, which affects some minor parts of the UI
-- anywhere initialSettings.confs is used will assume 2 confs and be wrong
-- fix - somehow apply conf/div/numTeams/numActiveTeams settings from team customization editor to initialSettings
-- make sure it plays nice with all uses of SettingsForm (including DefaultNewLeagueSettings and Exhibition)
+when calling getNumPlayoffTeams from SettingsForm, we don't know how many conferences are empty (or don't have enough teams for byConf playoff bracket), which may result in a different number of playoff teams
+- could affect other calls of getNumPlayoffTeams and validatePlayoffSettings
+  - ideally we would replace the contents functions with the one that actually generates playoff series, and then derive the info we need from that (parse, don't validate)
+
+when creating a new league, we don't know numActiveTeams, which gets propagated from initialSettings.numActiveTeams to validatePlayoffSettings, resulting in that validation check not running
+- need to store team disabled state, since it could come from league file or real players league, and then dynamically recompute initialSettings.numActiveTeams (similar to how initialSettings.confs is needed in other places)
+- currently it assumes none are disabled: `numActiveTeams: displayedTeams.length` when passing value to CustomizeSettings
 
 Navigation API
 - can integrate with browser loading indicator

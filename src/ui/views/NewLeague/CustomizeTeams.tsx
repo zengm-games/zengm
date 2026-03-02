@@ -1,7 +1,13 @@
 import { useEffect, useId, useReducer, useRef, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import type { NewLeagueTeamWithoutRank } from "./types.ts";
-import type { Conf, Div, Player, View } from "../../../common/types.ts";
+import type {
+	Conf,
+	Div,
+	NonEmptyArray,
+	Player,
+	View,
+} from "../../../common/types.ts";
 import clsx from "clsx";
 import { arrayMove } from "@dnd-kit/sortable";
 import UpsertTeamModal from "./UpsertTeamModal.tsx";
@@ -1114,8 +1120,8 @@ const CustomizeTeams = ({
 		const response = await toWorker("main", "getRandomTeams", {
 			divInfo: {
 				type: "explicit",
-				confs: myConfs,
-				divs: myDivs,
+				confs: myConfs as NonEmptyArray<Conf>,
+				divs: myDivs as NonEmptyArray<Div>,
 				numTeamsPerDiv,
 			},
 			real,

@@ -16,8 +16,9 @@ const getDefaultRealStats = () => {
 	return env.mobile ? "none" : "allActiveHOF";
 };
 
+export type NewLeagueSettings = Omit<Settings, "confs" | "numActiveTeams">;
 export const getDefaultSettings = () => {
-	const defaultSettings: Omit<Settings, "numActiveTeams"> = {
+	const defaultSettings: NewLeagueSettings = {
 		godMode: unwrapGameAttribute(defaultGameAttributes, "godMode"),
 		godModeInPast: unwrapGameAttribute(defaultGameAttributes, "godModeInPast"),
 		numGames: unwrapGameAttribute(defaultGameAttributes, "numGames"),

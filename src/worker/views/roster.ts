@@ -63,22 +63,25 @@ const getStandingsInfo = async (info: { season: number; tid: number }) => {
 	const pointsFormula = g.get("pointsFormula", info.season);
 	const usePts = pointsFormula !== "";
 
-	const showGb = !usePts;
+	const firstPlaceTeam = confOrAllTeams[0];
 
-	let rank = 1;
-	for (const t of confOrAllTeams) {
-		if (!playoffsByConf || t.seasonAttrs.cid === cid) {
-			if (t.tid === info.tid) {
-				return {
-					gb: showGb
-						? helpers.gb(confOrAllTeams[0]!.seasonAttrs, t.seasonAttrs)
-						: 0,
-					playoffsByConf,
-					rank,
-				};
+	if (firstPlaceTeam) {
+		let rank = 1;
+		for (const t of confOrAllTeams) {
+			if (!playoffsByConf || t.seasonAttrs.cid === cid) {
+				if (t.tid === info.tid) {
+					return {
+						gb: usePts
+							? firstPlaceTeam.seasonAttrs.pts - t.seasonAttrs.pts
+							: helpers.gb(firstPlaceTeam.seasonAttrs, t.seasonAttrs),
+						playoffsByConf,
+						rank,
+						usePts,
+					};
+				}
+
+				rank += 1;
 			}
-
-			rank += 1;
 		}
 	}
 
@@ -86,6 +89,7 @@ const getStandingsInfo = async (info: { season: number; tid: number }) => {
 		gb: 0,
 		playoffsByConf,
 		rank: undefined,
+		usePts,
 	};
 };
 
@@ -307,7 +311,7 @@ const updateRoster = async (
 				g.get("season") === inputs.season) ||
 			inputs.playoffs === "playoffs";
 
-		const { gb, playoffsByConf, rank } = await getStandingsInfo(inputs);
+		const { gb, playoffsByConf, rank, usePts } = await getStandingsInfo(inputs);
 
 		const t2 = {
 			...t,
@@ -374,6 +378,7 @@ const updateRoster = async (
 			stats,
 			t: t2,
 			tid: inputs.tid,
+			usePts,
 			userTid: g.get("userTid"),
 		};
 	}

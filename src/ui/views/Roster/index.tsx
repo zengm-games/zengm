@@ -122,6 +122,7 @@ const Roster = ({
 	stats,
 	t,
 	tid,
+	usePts,
 	userTid,
 }: View<"roster">) => {
 	const [sortedPids, setSortedPids] = useState<number[] | undefined>(undefined);
@@ -412,6 +413,7 @@ const Roster = ({
 				t={t}
 				tid={tid}
 				userTid={userTid}
+				usePts={usePts}
 			/>
 
 			{showSpectatorWarning ? (

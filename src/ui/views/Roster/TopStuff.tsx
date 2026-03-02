@@ -164,6 +164,7 @@ const TopStuff = ({
 	showTradingBlock,
 	t,
 	tid,
+	usePts,
 	userTid,
 }: Pick<
 	View<"roster">,
@@ -187,6 +188,7 @@ const TopStuff = ({
 	| "showTradingBlock"
 	| "t"
 	| "tid"
+	| "usePts"
 	| "userTid"
 > & {
 	openRosterSpots: number;
@@ -263,7 +265,12 @@ const TopStuff = ({
 									{playoffsByConf ? "conference" : "league"}
 									{t.gb > 0 ? (
 										<>
-											, {t.gb} <span title="Games Back">GB</span>
+											, {t.gb}{" "}
+											{usePts ? (
+												<span title="Points Back">PB</span>
+											) : (
+												<span title="Games Back">GB</span>
+											)}
 										</>
 									) : null}
 									<br />

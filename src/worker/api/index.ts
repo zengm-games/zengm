@@ -90,6 +90,7 @@ import type {
 	League,
 	RealPlayerPhotos,
 	View,
+	NonEmptyArray,
 } from "../../common/types.ts";
 import {
 	addSimpleAndTeamAwardsToAwardsByPlayer,
@@ -1786,12 +1787,33 @@ const getLeagues = async () => {
 	return idb.meta.getAll("leagues");
 };
 
-const getNumPlayoffTeams = (
-	param: Parameters<typeof getNumPlayoffTeamsRaw>[0],
-) => {
-	const numTeams = getNumPlayoffTeamsRaw(param);
+const getNumPlayoffTeams = ({
+	confs,
+	numRounds,
+	numPlayoffByes,
+	playIn,
+	playoffsByConf,
+}: {
+	confs: NonEmptyArray<Conf>;
+	numRounds: number;
+	numPlayoffByes: number;
+	playIn: boolean;
+	playoffsByConf: boolean;
+}) => {
+	const byConf = playoffsByConf ? confs.length : false;
+
+	const actualNumPlayoffByes = season.getNumPlayoffByes({
+		numPlayoffByes,
+		byConf,
+	});
+
+	const numTeams = getNumPlayoffTeamsRaw({
+		byConf,
+		numRounds,
+		numPlayoffByes: actualNumPlayoffByes,
+		playIn,
+	});
 	const numPlayoffTeams = numTeams.numPlayoffTeams + numTeams.numPlayInTeams;
-	console.log(param, numTeams, numPlayoffTeams);
 	return numPlayoffTeams;
 };
 

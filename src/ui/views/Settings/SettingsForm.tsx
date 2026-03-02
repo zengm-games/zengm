@@ -22,6 +22,7 @@ import SettingsFormOptions from "./SettingsFormOptions.tsx";
 import categories from "./categories.tsx";
 import useSettingsFormState from "./useSettingsFormState.ts";
 import getSearchVal from "../../components/DataTable/getSearchVal.tsx";
+import { DEFAULT_CONFS } from "../../../common/constants.ts";
 
 export const encodeDecodeFunctions = {
 	bool: {
@@ -521,19 +522,21 @@ const SettingsForm = ({
 			};
 
 			try {
-				const byConf = parse("playoffsByConf", state.playoffsByConf);
 				const numRounds = parse(
 					"numGamesPlayoffSeries",
 					state.numGamesPlayoffSeries,
 				).length;
 				const numPlayoffByes = parse("numPlayoffByes", state.numPlayoffByes);
 				const playIn = parse("playIn", state.playIn);
+				const playoffsByConf = parse("playoffsByConf", state.playoffsByConf);
 
 				const num = await toWorker("main", "getNumPlayoffTeams", {
-					byConf,
+					// Fallback is for when creating a new league and editing settings, confs are not available here
+					confs: initialSettings.confs ?? DEFAULT_CONFS,
 					numRounds,
 					numPlayoffByes,
 					playIn,
+					playoffsByConf,
 				});
 
 				setNumPlayoffTeams(num);
@@ -542,6 +545,7 @@ const SettingsForm = ({
 			}
 		})();
 	}, [
+		initialSettings.confs,
 		state.playoffsByConf,
 		state.numGamesPlayoffSeries,
 		state.numPlayoffByes,

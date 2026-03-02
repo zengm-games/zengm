@@ -2,7 +2,13 @@ import clsx from "clsx";
 import { useState, type SubmitEvent, useEffect } from "react";
 import { groupBy } from "../../../common/utils.ts";
 import { ActionButton, StickyBottomButtons } from "../../components/index.tsx";
-import { confirm, localActions, logEvent, helpers } from "../../util/index.ts";
+import {
+	confirm,
+	localActions,
+	logEvent,
+	helpers,
+	toWorker,
+} from "../../util/index.ts";
 import { settings } from "./settings.tsx";
 import type { Key, Values } from "./types.ts";
 import type { Settings } from "../../../worker/views/settings.ts";
@@ -481,6 +487,67 @@ const SettingsForm = ({
 
 	const showGodModeSettingsButton = !godMode && !alwaysShowGodModeSettings;
 
+	const [numPlayoffTeams, setNumPlayoffTeams] = useState<number | undefined>();
+	useEffect(() => {
+		(async () => {
+			type MyKey = (typeof keysWanted)[number];
+			const keysWanted = [
+				"playoffsByConf",
+				"numGamesPlayoffSeries",
+				"numPlayoffByes",
+				"playIn",
+			] as const;
+			const keySet = new Set<MyKey>(keysWanted);
+			const isMyKey = (key: Key): key is MyKey => {
+				return keySet.has(key as MyKey);
+			};
+
+			const groupedSettings: Record<MyKey, (typeof settings)[number]> =
+				{} as any;
+			for (const setting of settings) {
+				if (isMyKey(setting.key)) {
+					groupedSettings[setting.key] = setting;
+				}
+			}
+
+			const parse = (key: MyKey, value: string) => {
+				const option = groupedSettings[key];
+
+				// https://github.com/microsoft/TypeScript/issues/21732
+				// @ts-expect-error
+				return (option.parse ?? encodeDecodeFunctions[option.type].parse)(
+					value,
+				);
+			};
+
+			try {
+				const byConf = parse("playoffsByConf", state.playoffsByConf);
+				const numRounds = parse(
+					"numGamesPlayoffSeries",
+					state.numGamesPlayoffSeries,
+				).length;
+				const numPlayoffByes = parse("numPlayoffByes", state.numPlayoffByes);
+				const playIn = parse("playIn", state.playIn);
+
+				const num = await toWorker("main", "getNumPlayoffTeams", {
+					byConf,
+					numRounds,
+					numPlayoffByes,
+					playIn,
+				});
+
+				setNumPlayoffTeams(num);
+			} catch {
+				setNumPlayoffTeams(undefined);
+			}
+		})();
+	}, [
+		state.playoffsByConf,
+		state.numGamesPlayoffSeries,
+		state.numPlayoffByes,
+		state.playIn,
+	]);
+
 	return (
 		<div className="settings-wrapper">
 			<form
@@ -506,6 +573,7 @@ const SettingsForm = ({
 					handleChange={handleChange}
 					handleChangeRaw={handleChangeRaw}
 					newLeague={newLeague}
+					numPlayoffTeams={numPlayoffTeams}
 					onCancelDefaultSetting={onCancelDefaultSetting}
 					setGameSimPreset={setGameSimPreset}
 					showGodModeSettings={showGodModeSettings}

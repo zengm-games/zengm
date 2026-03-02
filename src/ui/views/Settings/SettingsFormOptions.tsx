@@ -339,6 +339,7 @@ const SettingsFormOptions = ({
 	handleChange,
 	handleChangeRaw,
 	newLeague,
+	numPlayoffTeams,
 	onCancelDefaultSetting,
 	setGameSimPreset,
 	showGodModeSettings,
@@ -351,6 +352,7 @@ const SettingsFormOptions = ({
 	handleChange: HandleChange;
 	handleChangeRaw: HandleChangeRaw;
 	newLeague?: boolean;
+	numPlayoffTeams: number | undefined;
 	onCancelDefaultSetting?: (key: Key) => void;
 	setGameSimPreset: (gameSimPreset: string) => void;
 	showGodModeSettings: boolean;
@@ -365,6 +367,9 @@ const SettingsFormOptions = ({
 						<a className="anchor" id={category.name} />
 						<h2 className="mb-3">
 							{category.name}
+							{category.appendNumTeams
+								? ` (${numPlayoffTeams ?? "?"} ${helpers.plural("team", numPlayoffTeams ?? 0)})`
+								: null}
 							{category.helpText ? (
 								<HelpPopover title={category.name} className="ms-1">
 									{category.helpText}

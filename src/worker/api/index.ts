@@ -159,6 +159,7 @@ import getCol from "../../common/getCol.ts";
 import getCols from "../../common/getCols.ts";
 import { formatScheduleForEditor } from "../views/scheduleEditor.ts";
 import type { KeyboardShortcutsLocal } from "../../ui/util/keyboardShortcuts.ts";
+import { getNumPlayoffTeamsRaw } from "../core/season/getNumPlayoffTeams.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1783,6 +1784,15 @@ const getLeagueName = () => {
 
 const getLeagues = async () => {
 	return idb.meta.getAll("leagues");
+};
+
+const getNumPlayoffTeams = (
+	param: Parameters<typeof getNumPlayoffTeamsRaw>[0],
+) => {
+	const numTeams = getNumPlayoffTeamsRaw(param);
+	const numPlayoffTeams = numTeams.numPlayoffTeams + numTeams.numPlayInTeams;
+	console.log(param, numTeams, numPlayoffTeams);
+	return numPlayoffTeams;
 };
 
 const getPlayerGraphStat = ({
@@ -5121,6 +5131,7 @@ export default {
 		getLeagueInfo,
 		getLeagueName,
 		getLeagues,
+		getNumPlayoffTeams,
 		getPlayerGraphStat,
 		getPlayersCommandPalette,
 		getLocal,

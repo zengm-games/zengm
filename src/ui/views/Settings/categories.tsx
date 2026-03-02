@@ -7,6 +7,7 @@ import type { Category } from "./types.ts";
 const categories: {
 	name: Category;
 	helpText?: ReactNode;
+	appendNumTeams?: boolean;
 }[] = [
 	{
 		name: "New League",
@@ -46,6 +47,7 @@ const categories: {
 	},
 	{
 		name: "Playoffs",
+		appendNumTeams: true,
 	},
 	{
 		name: "Players",

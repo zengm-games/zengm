@@ -2,6 +2,7 @@ import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Modal } from "react-bootstrap";
 import {
 	COURT,
+	DEFAULT_CONFS,
 	EXHIBITION_GAME_SETTINGS,
 	isSport,
 	PHASE,
@@ -852,6 +853,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						initialSettings={{
 							...defaultSettings,
 							...getGameAttributesByType(),
+							confs: DEFAULT_CONFS,
 							godMode: true,
 						}}
 						settingsShown={EXHIBITION_GAME_SETTINGS}

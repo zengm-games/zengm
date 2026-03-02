@@ -5,6 +5,7 @@ when calling getNumPlayoffTeams from SettingsForm, we don't know how many confer
 when creating a new league, we don't know numActiveTeams, which gets propagated from initialSettings.numActiveTeams to validatePlayoffSettings, resulting in that validation check not running
 - need to store team disabled state, since it could come from league file or real players league, and then dynamically recompute initialSettings.numActiveTeams (similar to how initialSettings.confs is needed in other places)
 - currently it assumes none are disabled: `numActiveTeams: displayedTeams.length` when passing value to CustomizeSettings
+- make sure it works for all uses of SettingsForm (exhibition game and default new league settings too)
 
 Navigation API
 - can integrate with browser loading indicator

@@ -9,6 +9,7 @@ import {
 	getVisibleCategories,
 	settingIsEnabled,
 	settingNeedsGodMode,
+	type NumPlayoffTeamsInfo,
 	type State,
 } from "./SettingsForm.tsx";
 import type { Decoration, FieldType, Key, Values } from "./types.ts";
@@ -339,7 +340,7 @@ const SettingsFormOptions = ({
 	handleChange,
 	handleChangeRaw,
 	newLeague,
-	numPlayoffTeams,
+	numPlayoffTeamsInfo,
 	onCancelDefaultSetting,
 	setGameSimPreset,
 	showGodModeSettings,
@@ -352,7 +353,7 @@ const SettingsFormOptions = ({
 	handleChange: HandleChange;
 	handleChangeRaw: HandleChangeRaw;
 	newLeague?: boolean;
-	numPlayoffTeams: number | undefined;
+	numPlayoffTeamsInfo: NumPlayoffTeamsInfo;
 	onCancelDefaultSetting?: (key: Key) => void;
 	setGameSimPreset: (gameSimPreset: string) => void;
 	showGodModeSettings: boolean;
@@ -367,9 +368,19 @@ const SettingsFormOptions = ({
 						<a className="anchor" id={category.name} />
 						<h2 className="mb-3">
 							{category.name}
-							{category.appendNumTeams
-								? ` (${numPlayoffTeams ?? "?"} ${helpers.plural("team", numPlayoffTeams ?? 0)})`
-								: null}
+							{category.appendNumTeams ? (
+								<span
+									className={
+										numPlayoffTeamsInfo.state === "done"
+											? undefined
+											: "text-body-secondary"
+									}
+								>
+									{" "}
+									({numPlayoffTeamsInfo.value ?? "?"}{" "}
+									{helpers.plural("team", numPlayoffTeamsInfo.value ?? 0)})
+								</span>
+							) : null}
 							{category.helpText ? (
 								<HelpPopover title={category.name} className="ms-1">
 									{category.helpText}

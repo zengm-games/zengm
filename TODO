@@ -1,6 +1,7 @@
 when creating a new league, we don't know how many conferences there are, which affects some minor parts of the UI
 - anywhere initialSettings.confs is used will assume 2 confs and be wrong
 - fix - somehow apply conf/div/numTeams/numActiveTeams settings from team customization editor to initialSettings
+- make sure it plays nice with all uses of SettingsForm (including DefaultNewLeagueSettings and Exhibition)
 
 Navigation API
 - can integrate with browser loading indicator

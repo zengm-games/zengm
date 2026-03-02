@@ -237,6 +237,16 @@ export type State = Record<
 		};
 	};
 
+export type NumPlayoffTeamsInfo =
+	| {
+			value: number;
+			state: "error" | "loading" | "done";
+	  }
+	| {
+			value: undefined;
+			state: "error" | "loading";
+	  };
+
 const SettingsForm = ({
 	onCancel,
 	onCancelDefaultSetting,
@@ -488,9 +498,18 @@ const SettingsForm = ({
 
 	const showGodModeSettingsButton = !godMode && !alwaysShowGodModeSettings;
 
-	const [numPlayoffTeams, setNumPlayoffTeams] = useState<number | undefined>();
+	const [numPlayoffTeamsInfo, setNumPlayoffTeamsInfo] =
+		useState<NumPlayoffTeamsInfo>({
+			value: undefined,
+			state: "loading",
+		});
 	useEffect(() => {
 		(async () => {
+			setNumPlayoffTeamsInfo(({ value }) => ({
+				value,
+				state: "loading",
+			}));
+
 			type MyKey = (typeof keysWanted)[number];
 			const keysWanted = [
 				"playoffsByConf",
@@ -530,7 +549,7 @@ const SettingsForm = ({
 				const playIn = parse("playIn", state.playIn);
 				const playoffsByConf = parse("playoffsByConf", state.playoffsByConf);
 
-				const num = await toWorker("main", "getNumPlayoffTeams", {
+				const value = await toWorker("main", "getNumPlayoffTeams", {
 					// Fallback is for when creating a new league and editing settings, confs are not available here
 					confs: initialSettings.confs ?? DEFAULT_CONFS,
 					numRounds,
@@ -539,9 +558,15 @@ const SettingsForm = ({
 					playoffsByConf,
 				});
 
-				setNumPlayoffTeams(num);
+				setNumPlayoffTeamsInfo({
+					value,
+					state: "done",
+				});
 			} catch {
-				setNumPlayoffTeams(undefined);
+				setNumPlayoffTeamsInfo(({ value }) => ({
+					value,
+					state: "error",
+				}));
 			}
 		})();
 	}, [
@@ -577,7 +602,7 @@ const SettingsForm = ({
 					handleChange={handleChange}
 					handleChangeRaw={handleChangeRaw}
 					newLeague={newLeague}
-					numPlayoffTeams={numPlayoffTeams}
+					numPlayoffTeamsInfo={numPlayoffTeamsInfo}
 					onCancelDefaultSetting={onCancelDefaultSetting}
 					setGameSimPreset={setGameSimPreset}
 					showGodModeSettings={showGodModeSettings}

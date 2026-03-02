@@ -257,10 +257,9 @@ const TopStuff = ({
 					<div className="team-picture" style={logoStyle} />
 					<div>
 						<div>
-							<span style={fontSizeLarger}>{recordAndPlayoffs}</span>
-							<br />
+							<div style={fontSizeLarger}>{recordAndPlayoffs}</div>
 							{t.rank !== undefined ? (
-								<>
+								<div>
 									{helpers.ordinal(t.rank)} in{" "}
 									{playoffsByConf ? "conference" : "league"}
 									{t.gb > 0 ? (
@@ -273,25 +272,26 @@ const TopStuff = ({
 											)}
 										</>
 									) : null}
-									<br />
-								</>
+								</div>
 							) : null}
 							{!challengeNoRatings ? (
-								<>
+								<div>
 									Team rating:{" "}
 									<TeamRating ovr={t.ovr} ovrCurrent={t.ovrCurrent} />
-									<br />
-								</>
+								</div>
 							) : null}
-							<span title="Average margin of victory">MOV</span>:{" "}
-							<PlusMinus>{marginOfVictory}</PlusMinus>
-							<span
-								title="Average age, weighted by minutes played"
-								className="ms-3"
-							>
-								Age
-							</span>
-							: {t.seasonAttrs.avgAge?.toFixed(1)}
+							<div className="d-flex gap-3">
+								<div>
+									<span title="Average margin of victory">MOV</span>:{" "}
+									<PlusMinus>{marginOfVictory}</PlusMinus>
+								</div>
+								<div>
+									<span title="Average age, weighted by minutes played">
+										Age
+									</span>
+									: {t.seasonAttrs.avgAge?.toFixed(1)}
+								</div>
+							</div>
 						</div>
 
 						{isCurrentSeason ? (

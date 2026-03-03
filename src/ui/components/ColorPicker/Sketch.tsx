@@ -96,8 +96,10 @@ const PRESET_COLORS = [
 	"#FFFFFF",
 ];
 
-export interface SketchProps
-	extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "color"> {
+export interface SketchProps extends Omit<
+	React.HTMLAttributes<HTMLDivElement>,
+	"onChange" | "color"
+> {
 	prefixCls?: string;
 	width?: number;
 	color?: string | HsvaColor;

@@ -32,7 +32,7 @@ do with the code. Nothing else is allowed.)
 
 # Things you are not allowed to do with the source code.
 
-(This is *not* an exhaustive list! These are simply examples of things that you
+(This is _not_ an exhaustive list! These are simply examples of things that you
 cannot do, based on the previous exhaustive list of things you are allowed to
 do.)
 

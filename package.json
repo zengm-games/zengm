@@ -20,13 +20,13 @@
 		"lint-js": "node --run pre-test && eslint",
 		"lint-ts": "node --run pre-test && tsc",
 		"pre-test": "node tools/pre-test.ts",
-		"prettier": "prettier --write \"*.{mjs,cjs,js,json,scss,ts,tsx}\" \"public/**/*.{mjs,cjs,js,json,scss,ts,tsx}\" \"src/**/*.{mjs,cjs,js,json,scss,ts,tsx}\" \"tools/**/*.{mjs,cjs,js,json,scss,ts,tsx}\"",
+		"format": "oxfmt",
 		"test": "node --run pre-test && vitest --run",
 		"prepare": "husky",
 		"postinstall": "playwright install"
 	},
 	"lint-staged": {
-		"*.{js,cjs,mjs,jsx,json,scss,ts,cts,mts,tsx}": "prettier --write"
+		"*": "oxfmt --no-error-on-unmatched-pattern"
 	},
 	"type": "module",
 	"dependencies": {
@@ -121,8 +121,8 @@
 		"husky": "9.1.7",
 		"lightningcss": "1.31.1",
 		"lint-staged": "16.2.7",
+		"oxfmt": "^0.35.0",
 		"playwright": "1.58.2",
-		"prettier": "3.8.1",
 		"purgecss": "8.0.0",
 		"rolldown": "1.0.0-rc.5",
 		"rollup-plugin-blacklist": "1.0.1",

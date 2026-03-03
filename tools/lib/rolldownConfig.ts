@@ -69,13 +69,17 @@ export const rolldownConfig = (
 					comments: false,
 				},
 			}),
-			visualizer({
-				filename: `stats-${name}.html`,
-				gzipSize: true,
-				sourcemap: true,
-				template: "sunburst",
-			}),
 		);
+		if (process.env.VISUALIZE) {
+			plugins.push(
+				visualizer({
+					filename: `stats-${name}.html`,
+					gzipSize: true,
+					sourcemap: true,
+					template: "sunburst",
+				}),
+			);
+		}
 	}
 
 	return {

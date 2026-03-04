@@ -15,6 +15,7 @@ import type {
 	PlayersOnField,
 	TeamGameSim,
 	Formation,
+	teamPlayType,
 } from "./types.ts";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate.ts";
 import Play, {
@@ -609,7 +610,7 @@ class GameSim extends GameSimBase {
 		);
 	}
 
-	getPlayType() {
+	getPlayType(): teamPlayType {
 		if (this.awaitingKickoff !== undefined) {
 			return Math.random() < this.probOnside() ? "onsideKick" : "kickoff";
 		}
@@ -973,9 +974,9 @@ class GameSim extends GameSimBase {
 		if (clockAtEndOfPlay > 0 && !twoMinuteWarningHappening) {
 			// Timeouts - small chance at any time
 			if (Math.random() < 0.01) {
-				this.doTimeout(this.o, false);
+				this.doTimeout(this.o, false, playType);
 			} else if (Math.random() < 0.003) {
-				this.doTimeout(this.d, false);
+				this.doTimeout(this.d, false, playType);
 			}
 
 			// Timeouts - late in game when clock is running
@@ -989,19 +990,19 @@ class GameSim extends GameSimBase {
 						if (diff > 0) {
 							// If offense is winning, defense uses timeouts when near the end
 							if (this.clock < 2.5) {
-								this.doTimeout(this.d, true);
+								this.doTimeout(this.d, true, playType);
 							}
 						} else {
 							if (this.clock < 1.5) {
 								// If offense is losing or tied, offense uses timeouts when even nearer the end
-								this.doTimeout(this.o, true);
+								this.doTimeout(this.o, true, playType);
 							}
 						}
 					}
 				} else {
 					// Before halftime, less aggressive and don't care about score
 					if (this.clock < 1.5) {
-						this.doTimeout(this.o, true);
+						this.doTimeout(this.o, true, playType);
 					}
 				}
 			}
@@ -1305,7 +1306,16 @@ class GameSim extends GameSimBase {
 		this.updateTeamCompositeRatings();
 	}
 
-	doTimeout(t: TeamNum, toStopClock: boolean) {
+	doTimeout(t: TeamNum, toStopClock: boolean, playType: teamPlayType) {
+		if (playType === "kickoff" || playType === "punt") {
+			return;
+		}
+		if (playType === "extraPoint" || playType === "twoPointConversion") {
+			return;
+		}
+		if (this.awaitingKickoff) {
+			return;
+		}
 		if (this.timeouts[t] <= 0) {
 			return;
 		}

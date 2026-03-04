@@ -1,4 +1,4 @@
-import { assert, beforeAll, test } from "vitest";
+import { assert, beforeAll, describe, test } from "vitest";
 import GameSim from "./index.ts";
 import { player, team } from "../index.ts";
 import loadTeams from "../game/loadTeams.ts";
@@ -7,6 +7,7 @@ import testHelpers from "../../../test/helpers.ts";
 import Play from "./Play.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import { range } from "../../../common/utils.ts";
+import type { teamPlayType } from "./types.ts";
 
 export const genTwoTeams = async () => {
 	testHelpers.resetG();
@@ -63,6 +64,50 @@ test("kick a field goal when down 2 at the end of the game and there is little t
 	assert.strictEqual(game.getPlayType(), "fieldGoalLate");
 });
 
+describe("doTimeout", () => {
+	test("doesn't allow timeouts if team is out of timeouts", async () => {
+		const game = await initGameSim();
+		game.timeouts = [0, 3];
+		game.awaitingKickoff = undefined;
+		game.doTimeout(0, true, "fieldGoal");
+		assert.strictEqual(game.timeouts[0], 0);
+		game.doTimeout(1, true, "fieldGoal");
+		assert.strictEqual(game.timeouts[1], 2);
+	});
+
+	test("doesn't allow timeouts if a team is currently kicking an extra point", async () => {
+		const game = await initGameSim();
+		game.timeouts = [3, 3];
+		game.awaitingAfterTouchdown = true;
+		game.doTimeout(0, true, "extraPoint");
+		game.doTimeout(1, true, "extraPoint");
+		assert.strictEqual(game.timeouts[0], 3);
+		assert.strictEqual(game.timeouts[1], 3);
+	});
+
+	test("doesn't allow timeouts if the play is a kickoff", async () => {
+		// Test both offense and defense
+		const game = await initGameSim();
+		game.timeouts = [3, 3];
+		game.awaitingKickoff = 0;
+		game.doTimeout(0, true, "kickoff");
+		assert.strictEqual(game.timeouts[0], 3);
+		game.doTimeout(1, true, "kickoff");
+		assert.strictEqual(game.timeouts[1], 3);
+	});
+
+	test("doesn't allow timeouts if team is waiting for kickoff", async () => {
+		const game = await initGameSim();
+		game.timeouts = [3, 3];
+		game.overtimes = 1;
+		game.awaitingKickoff = 0;
+		const playType: teamPlayType = "kickoff";
+		game.doTimeout(0, true, playType);
+		assert.strictEqual(game.timeouts[0], 3);
+		game.doTimeout(1, true, playType);
+		assert.strictEqual(game.timeouts[1], 3);
+	});
+});
 test("kick a field goal on 4th down to take the lead late in the game", async () => {
 	const game = await initGameSim();
 	game.probMadeFieldGoal = () => 0.75;

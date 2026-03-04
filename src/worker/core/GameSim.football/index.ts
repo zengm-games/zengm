@@ -129,6 +129,7 @@ class GameSim extends GameSimBase {
 			? g.get("footballOvertimePlayoffs", "current")
 			: g.get("footballOvertime", "current");
 
+	startOfNewPeriod = false;
 	constructor({
 		gid,
 		day,
@@ -391,6 +392,7 @@ class GameSim extends GameSimBase {
 				this.playUntimedPossession
 			) {
 				this.simPlay();
+				this.startOfNewPeriod = false;
 			}
 
 			// Who gets the ball after halftime?
@@ -409,6 +411,9 @@ class GameSim extends GameSimBase {
 			}
 
 			quarter += 1;
+			// Once quarter is locked, set clock running to false until next play ran
+			this.isClockRunning = false;
+			this.startOfNewPeriod = true;
 
 			this.team[0].stat.ptsQtrs.push(0);
 			this.team[1].stat.ptsQtrs.push(0);
@@ -1314,6 +1319,12 @@ class GameSim extends GameSimBase {
 			return;
 		}
 		if (this.awaitingKickoff) {
+			return;
+		}
+		// If first play of a quarter, not allowed to call timeout since ball is technically dead
+		// If clock is at 0,
+		if (!this.isClockRunning && this.startOfNewPeriod) {
+			console.log("start of quarter, can't call timeout");
 			return;
 		}
 		if (this.timeouts[t] <= 0) {

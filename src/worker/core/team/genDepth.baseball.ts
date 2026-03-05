@@ -2,7 +2,7 @@ import { idb } from "../../db/index.ts";
 import { g, helpers, local, random } from "../../util/index.ts";
 import type { Position } from "../../../common/types.baseball.ts";
 import type { Player, PlayerFiltered } from "../../../common/types.ts";
-import { groupByUnique, orderBy } from "../../../common/utils.ts";
+import { groupByUnique, maxBy } from "../../../common/utils.ts";
 
 const score = (p: PlayerFiltered, pos?: Position) => {
 	if (pos === undefined) {
@@ -38,7 +38,84 @@ const DEF_POSITIONS_DH = [
 ] as const;
 const NUM_STARTERS = 5;
 
-export const lineupSort = (ovrDH: number, spd: number) => ovrDH + 0.2 * spd;
+const sortBattingOrder = (
+	starters: {
+		i: number;
+		p: {
+			ratings: {
+				con: number;
+				hpw: number;
+				eye: number;
+				spd: number;
+			};
+		};
+	}[],
+) => {
+	let hasDh;
+	if (starters.length === 9) {
+		hasDh = true;
+	} else if (starters.length === 8) {
+		hasDh = false;
+	} else {
+		throw new Error("Should never happen");
+	}
+
+	const availablePlayers = new Set(starters);
+
+	const lineup = [];
+
+	// Helper function: scores players using all 4 ratings with custom weights
+	const pluckBestPlayer = (weights: {
+		con: number;
+		hpw: number;
+		eye: number;
+		spd: number;
+	}) => {
+		const p = maxBy(
+			availablePlayers,
+			({ p }) =>
+				p.ratings.con * weights.con +
+				p.ratings.hpw * weights.hpw +
+				p.ratings.eye * weights.eye +
+				p.ratings.spd * weights.spd,
+		);
+		if (!p) {
+			throw new Error("Should never happen");
+		}
+
+		availablePlayers.delete(p);
+
+		return p;
+	};
+
+	const bestHitter = { con: 1, hpw: 1, eye: 1, spd: 0.2 };
+
+	// Best hitters 2nd and 3rd
+	lineup[1] = pluckBestPlayer(bestHitter);
+	lineup[2] = pluckBestPlayer(bestHitter);
+
+	// Next best hitter 1st, but also value speed
+	lineup[0] = pluckBestPlayer({ con: 1, hpw: 1, eye: 1, spd: 1 });
+
+	// Best remaining power hitters 4th and 5th
+	lineup[3] = pluckBestPlayer({ con: 0.5, hpw: 1, eye: 0.5, spd: 0.1 });
+	lineup[4] = pluckBestPlayer({ con: 0.5, hpw: 1, eye: 0.5, spd: 0.1 });
+
+	// If we have a DH, then make 9th "second leadoff". Otherwise, put them 6th
+	const secondLeadoff = pluckBestPlayer({ con: 1, hpw: 0.25, eye: 1, spd: 1 });
+	if (hasDh) {
+		lineup[5] = pluckBestPlayer(bestHitter);
+		lineup[6] = pluckBestPlayer(bestHitter);
+		lineup[7] = pluckBestPlayer(bestHitter);
+		lineup[8] = secondLeadoff;
+	} else {
+		lineup[5] = secondLeadoff;
+		lineup[6] = pluckBestPlayer(bestHitter);
+		lineup[7] = pluckBestPlayer(bestHitter);
+	}
+
+	return lineup;
+};
 
 const findMaxBy = <T>(
 	records: T[],
@@ -263,7 +340,7 @@ const genDepth = async (
 	} else {
 		players = await idb.getCopies.playersPlus(playersRaw, {
 			attrs: ["pid"],
-			ratings: ["spd", "pos", "ovrs"],
+			ratings: ["spd", "con", "hpw", "eye", "pos", "ovrs"],
 			season: g.get("season"),
 			showNoStats: true,
 			showRookies: true,
@@ -401,11 +478,7 @@ const genDepth = async (
 						p: playersByPid[pid],
 					}));
 
-				const sortedStarters = orderBy(
-					starters,
-					(info) => lineupSort(info.p.ratings.ovrs.DH, info.p.ratings.spd),
-					"desc",
-				);
+				const sortedStarters = sortBattingOrder(starters);
 
 				const indexes = sortedStarters.map((info) => info.i);
 

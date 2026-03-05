@@ -93,7 +93,7 @@ export const range = (start: number, stop?: number) => {
 const maxMinByFactory = (type: "max" | "min") => {
 	const max = type === "max";
 
-	return <T>(items: T[], iteratee: keyof T | ((item: T) => number)) => {
+	return <T>(items: Iterable<T>, iteratee: keyof T | ((item: T) => number)) => {
 		let bestItem = undefined;
 		let bestScore = max ? -Infinity : Infinity;
 
@@ -128,7 +128,7 @@ export const omit = <T extends Record<string, unknown>, U extends (keyof T)[]>(
 };
 
 export const countBy = <T>(
-	items: T[],
+	items: Iterable<T>,
 	iteratee: string | ((item: T) => number | string),
 ) => {
 	const output: Record<string, number> = {};

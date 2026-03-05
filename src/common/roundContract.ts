@@ -1,4 +1,9 @@
 export const roundContract = (amount: number, minContract: number) => {
+	// Without this, then sometimes rounding means min contracts are never set, which messes up FA
+	if (amount === minContract) {
+		return minContract;
+	}
+
 	if (minContract >= 3) {
 		// Round to some integer
 		// 30-299 -> 1 digit (thousands)

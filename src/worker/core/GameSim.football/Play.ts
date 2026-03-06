@@ -97,6 +97,7 @@ type PlayEvent =
 			type: "rus";
 			p: PlayerGameSim;
 			yds: number;
+			rbw?: Map<PlayerGameSim, boolean>;
 	  }
 	| {
 			type: "rusTD";
@@ -111,10 +112,12 @@ type PlayEvent =
 			type: "sk";
 			qb: PlayerGameSim;
 			p: PlayerGameSim;
+			ol: PlayerGameSim;
 			yds: number;
 	  }
 	| {
 			type: "dropback";
+			pbw: Map<PlayerGameSim, boolean>;
 	  }
 	| {
 			type: "pss";
@@ -517,6 +520,15 @@ class Play {
 					[state.o, event.p, "rusYds", event.yds],
 					[state.o, event.p, "rusLng", event.yds],
 				);
+
+				if (event.rbw) {
+					for (const [p, won] of event.rbw) {
+						statChanges.push([state.o, p, "rba"]);
+						if (won) {
+							statChanges.push([state.o, p, "rbw"]);
+						}
+					}
+				}
 			} else if (event.type === "rusTD") {
 				statChanges.push([state.o, event.p, "rusTD"]);
 			} else if (event.type === "kneel") {
@@ -529,6 +541,7 @@ class Play {
 				statChanges.push(
 					[state.o, event.qb, "pssSk"],
 					[state.o, event.qb, "pssSkYds", Math.abs(event.yds)],
+					[state.o, event.ol, "sckAlw"],
 					[state.d, event.p, "defSk"],
 					[state.d, event.p, "defTckSolo"],
 					[state.d, event.p, "defTckLoss"],
@@ -634,6 +647,13 @@ class Play {
 
 					if (event.loss) {
 						statChanges.push([state.d, tackler, "defTckLoss"]);
+					}
+				}
+			} else if (event.type === "dropback") {
+				for (const [p, won] of event.pbw) {
+					statChanges.push([state.o, p, "pba"]);
+					if (won) {
+						statChanges.push([state.o, p, "pbw"]);
 					}
 				}
 			}

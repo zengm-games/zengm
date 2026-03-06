@@ -75,6 +75,11 @@ const stats = {
 		"pntBlk",
 		"pen",
 		"penYds",
+		"pbw",
+		"pba",
+		"rbw",
+		"rba",
+		"sckAlw",
 	] as const,
 	max: [] as const,
 };

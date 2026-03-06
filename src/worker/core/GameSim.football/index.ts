@@ -2051,19 +2051,19 @@ class GameSim extends GameSimBase {
 	}
 
 	doSack(qb: PlayerGameSim) {
-		const p = this.pickPlayer(
-			this.currentPlay.state.initial.d,
-			"passRushing",
-			undefined,
-			5,
-		);
+		const { d, o } = this.currentPlay.state.initial;
+
+		const p = this.pickPlayer(d, "passRushing", undefined, 5);
 		const ydsRaw = random.randInt(-1, -12);
 		const yds = this.currentPlay.boundedYds(ydsRaw);
+
+		const ol = this.pickPlayer(o, "passBlocking", ["OL"], -2);
 
 		const { safety } = this.currentPlay.addEvent({
 			type: "sk",
 			qb,
 			p,
+			ol,
 			yds,
 		});
 
@@ -2151,9 +2151,22 @@ class GameSim extends GameSimBase {
 			return 0;
 		}
 
+		const ol = this.playersOnField[o].OL;
+		const pbw = new Map<PlayerGameSim, boolean>();
+		if (ol) {
+			for (const p of ol) {
+				const win =
+					Math.random() <
+					p.compositeRating.passBlocking /
+						this.team[d].compositeRating.passRushing;
+				pbw.set(p, win);
+			}
+		}
+
 		const qb = this.getTopPlayerOnField(o, "QB");
 		this.currentPlay.addEvent({
 			type: "dropback",
+			pbw,
 		});
 		this.playByPlay.logEvent({
 			type: "dropback",
@@ -2161,6 +2174,7 @@ class GameSim extends GameSimBase {
 			names: [qb.name],
 			t: o,
 		});
+
 		let dt = random.randInt(2, 6);
 
 		if (Math.random() < 0.75 && Math.random() < this.probFumble(qb)) {
@@ -2331,12 +2345,26 @@ class GameSim extends GameSimBase {
 		const o = this.o;
 		const d = this.d;
 
+		let rbw: Map<PlayerGameSim, boolean> | undefined;
+
 		if (!qbScramble) {
 			this.updatePlayersOnField("run");
 			const penInfo = this.checkPenalties("beforeSnap");
 
 			if (penInfo) {
 				return 0;
+			}
+
+			const ol = this.playersOnField[o].OL;
+			rbw = new Map<PlayerGameSim, boolean>();
+			if (ol) {
+				for (const p of ol) {
+					const win =
+						Math.random() <
+						p.compositeRating.runBlocking /
+							this.team[d].compositeRating.runStopping;
+					rbw.set(p, win);
+				}
 			}
 		}
 
@@ -2352,7 +2380,7 @@ class GameSim extends GameSimBase {
 
 			if (rand < 0.5 || rbs.length === 0) {
 				positions.push("QB");
-			} else if (rand < 0.59 || rbs.length === 0) {
+			} else if (rand < 0.58 || rbs.length === 0) {
 				positions.push("WR");
 			}
 		}
@@ -2405,6 +2433,7 @@ class GameSim extends GameSimBase {
 			type: "rus",
 			p,
 			yds,
+			rbw,
 		});
 
 		if (td) {

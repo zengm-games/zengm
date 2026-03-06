@@ -81,7 +81,7 @@ const raw = [
 	"pba",
 	"rbw",
 	"rba",
-	"sckAlw",
+	"skAlw",
 ] as const;
 
 // raw: recorded directly in game sim

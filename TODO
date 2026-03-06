@@ -1,18 +1,11 @@
 OL stats
 - player stats
-  - pass block win (pbw)
-    - 50-99%
-  - pass block attempt (pba)
-  - run block win (rbw)
-    - 35-85%
-  - run block attempt (rba)
+  - pbwr 45-95%
+  - rbwr 35-85%
   - sacks allowed
-  - sacksAllowedPct (divide by pba)
-- what about scrambles?
-- team stats - same
-- UI to view them
-  - pass/run block win rate
-  - need to somehow expose count, or rate will be low usage guys?
+    - maybe only for DL sacks?
+- team stat ranges
+- use in AV?
 
 in play by play, scoring/made FG/3PT streak like on the real app, and how long a run is https://discord.com/channels/290013534023057409/1476936717733728298/1477098494866096374
 

@@ -160,6 +160,11 @@ const PLAYER_GAME_STATS = {
 		stats: ["tgt", "rec", "recYds", "recYdsPerRec", "recLng", "recTD", "fp"],
 		sortBy: ["recYds"],
 	},
+	ol: {
+		name: "Offensive Line",
+		stats: ["pbw", "pba", "pbwr", "rbw", "rba", "rbwr", "skAlw", "skAlwPct"],
+		sortBy: ["pbw"],
+	},
 	kicking: {
 		name: "Kicking",
 		stats: [
@@ -264,7 +269,7 @@ const PLAYER_SUMMARY = {
 	summaryOL: {
 		name: "SummaryOL",
 		onlyShowIf: ["OL"],
-		stats: ["gp", "av"],
+		stats: ["gp", "av", "pbwr", "rbwr", "skAlw"],
 	},
 	summaryKic: {
 		name: "SummaryKic",
@@ -343,6 +348,22 @@ const PLAYER_STATS_TABLES = {
 			"fmbLost",
 			"fp",
 			"av",
+		],
+	},
+	ol: {
+		name: "Offensive Line",
+		onlyShowIf: ["pba", "rba"],
+		stats: [
+			"gp",
+			"gs",
+			"pbw",
+			"pba",
+			"pbwr",
+			"rbw",
+			"rba",
+			"rbwr",
+			"skAlw",
+			"skAlwPct",
 		],
 	},
 	defense: {
@@ -528,6 +549,10 @@ const TEAM_STATS_TABLES = {
 			"fmb",
 			"fmbLost",
 		],
+	},
+	ol: {
+		name: "Offensive Line",
+		stats: ["pbw", "pba", "pbwr", "rbw", "rba", "rbwr", "skAlw", "skAlwPct"],
 	},
 	defense: {
 		name: "Defense",
@@ -729,6 +754,19 @@ const TEAM_STATS_TABLES = {
 			"oppRusRecTD",
 			"oppFmb",
 			"oppFmbLost",
+		],
+	},
+	opponentOl: {
+		name: "Opponent Offensive Line",
+		stats: [
+			"oppPbw",
+			"oppPba",
+			"oppPbwr",
+			"oppRbw",
+			"oppRba",
+			"oppRbwr",
+			"oppSkAlw",
+			"oppSkAlwPct",
 		],
 	},
 	opponnetDefense: {

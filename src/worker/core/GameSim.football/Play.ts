@@ -541,7 +541,7 @@ class Play {
 				statChanges.push(
 					[state.o, event.qb, "pssSk"],
 					[state.o, event.qb, "pssSkYds", Math.abs(event.yds)],
-					[state.o, event.ol, "sckAlw"],
+					[state.o, event.ol, "skAlw"],
 					[state.d, event.p, "defSk"],
 					[state.d, event.p, "defTckSolo"],
 					[state.d, event.p, "defTckLoss"],

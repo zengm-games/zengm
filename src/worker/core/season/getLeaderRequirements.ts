@@ -486,6 +486,26 @@ const getLeaderRequirements = () => {
 			qbRec: {
 				sortValue: helpers.getRecordNumericValue,
 			},
+			pbw: {},
+			pba: {},
+			pbwr: {
+				minStats: {
+					pba: 10 * numGames,
+				},
+			},
+			rbw: {},
+			rba: {},
+			rbwr: {
+				minStats: {
+					rba: 10 * numGames,
+				},
+			},
+			skAlw: {},
+			skAlwPct: {
+				minStats: {
+					pba: 10 * numGames,
+				},
+			},
 		},
 		hockey: {
 			pm: {

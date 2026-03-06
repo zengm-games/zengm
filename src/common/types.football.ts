@@ -52,6 +52,9 @@ export type TeamStatAttr =
 	| "ydsPerTouch"
 	| "ydsFromScrimmage"
 	| "rusRecTD"
+	| "pbwr"
+	| "rbwr"
+	| "skAlwPct"
 	| "oppYds"
 	| "oppYdsPerPlay"
 	| "oppTov"
@@ -99,7 +102,10 @@ export type TeamStatAttr =
 	| "oppTouches"
 	| "oppYdsPerTouch"
 	| "oppYdsFromScrimmage"
-	| "oppRusRecTD";
+	| "oppRusRecTD"
+	| "oppPbwr"
+	| "oppRbwr"
+	| "oppSkAlwPct";
 
 type AwardTeam = {
 	tid: number;

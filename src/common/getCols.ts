@@ -2376,6 +2376,54 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "AV/Player",
 		},
+		"stat:pbw": {
+			desc: "Pass Block Wins",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "PBW",
+		},
+		"stat:pba": {
+			desc: "Pass Block Attempts",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "PBA",
+		},
+		"stat:pbwr": {
+			desc: "Pass Block Win Rate",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "PBWR",
+		},
+		"stat:rbw": {
+			desc: "Run Block Wins",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "PBW",
+		},
+		"stat:rba": {
+			desc: "Run Block Attempts",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "PBA",
+		},
+		"stat:rbwr": {
+			desc: "Run Block Win Rate",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "PBWR",
+		},
+		"stat:skAlw": {
+			desc: "Sacks Allowed",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "SkAlw",
+		},
+		"stat:skAlwPct": {
+			desc: "Sacks Allowed Per 100 Pass Block Attempts",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "SkAlw%",
+		},
 	},
 	hockey: {
 		"pos:C": {

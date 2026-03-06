@@ -139,6 +139,12 @@ const processStats = (
 			} else if (fantasyPoints === "halfPpr") {
 				row[stat] += 0.5 * ps.rec;
 			}
+		} else if (stat === "pbwr") {
+			row[stat] = helpers.percentage(ps.pbw, ps.pba);
+		} else if (stat === "rbwr") {
+			row[stat] = helpers.percentage(ps.rbw, ps.rba);
+		} else if (stat === "skAlwPct") {
+			row[stat] = helpers.percentage(ps.skAlw, ps.pba);
 		} else if (stat === "keyStats") {
 			const defTck = ps.defTckSolo + ps.defTckAst;
 			const fga = ps.fga0 + ps.fga20 + ps.fga30 + ps.fga40 + ps.fga50;
@@ -149,6 +155,7 @@ const processStats = (
 				defender: defTck,
 				kicker: fga + ps.xpa,
 				punter: ps.pnt,
+				ol: ps.pba + ps.pra,
 			};
 			let role;
 			let max = 0;
@@ -189,6 +196,9 @@ const processStats = (
 				row[stat] = `${ps.pnt} punts, ${(ps.pntYds / ps.pnt).toFixed(
 					1,
 				)} yards avg`;
+			} else if (role === "ol") {
+				row[stat] =
+					`${helpers.percentage(ps.pbw, ps.pba)}% PBWR, ${helpers.percentage(ps.rbw, ps.rba)}% RBWR`;
 			} else {
 				row[stat] = "";
 			}

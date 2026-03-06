@@ -79,7 +79,7 @@ const stats = {
 		"pba",
 		"rbw",
 		"rba",
-		"sckAlw",
+		"skAlw",
 	] as const,
 	max: [] as const,
 };

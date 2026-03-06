@@ -297,7 +297,6 @@ const processEvents = (events: PlayByPlayEventScore[], numPeriods: number) => {
 					(scoreInfo.type === "2P" && event.t === prevEvent.t))
 			) {
 				prevEvent.score = [score[0], score[1]];
-				console.log(prevEvent, event, pts);
 				prevEvent.text = (
 					<>
 						{prevEvent.text}
@@ -935,24 +934,15 @@ const BoxScore = ({
 				numPeriods={boxScore.numPeriods ?? 4}
 				teams={boxScore.teams}
 			/>
-			{[
-				"Passing",
-				"Rushing",
-				"Receiving",
-				"Kicking",
-				"Punting",
-				"Returns",
-				"Defense",
-			].map((title) => (
-				<Fragment key={title}>
-					<h2>{title}</h2>
-					<StatsTable
-						Row={Row}
-						boxScore={boxScore}
-						type={title.toLowerCase() as any}
-					/>
-				</Fragment>
-			))}
+			{helpers.keys(PLAYER_GAME_STATS).map((type) => {
+				const info = PLAYER_GAME_STATS[type];
+				return (
+					<Fragment key={type}>
+						<h2>{info.name}</h2>
+						<StatsTable Row={Row} boxScore={boxScore} type={type} />
+					</Fragment>
+				);
+			})}
 		</div>
 	);
 };

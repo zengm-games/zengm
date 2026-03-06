@@ -2057,7 +2057,13 @@ class GameSim extends GameSimBase {
 		const ydsRaw = random.randInt(-1, -12);
 		const yds = this.currentPlay.boundedYds(ydsRaw);
 
-		const ol = this.pickPlayer(o, "passBlocking", ["OL"], -2);
+		// Track skAlw only if this is a DL/LB sack
+		let ol;
+		const dl = this.playersOnField[d].DL;
+		const lb = this.playersOnField[d].LB;
+		if ((dl && dl.includes(p)) || (lb && lb.includes(p))) {
+			ol = this.pickPlayer(o, "passBlocking", ["OL"], -2);
+		}
 
 		const { safety } = this.currentPlay.addEvent({
 			type: "sk",

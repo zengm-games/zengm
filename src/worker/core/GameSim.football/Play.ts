@@ -112,7 +112,7 @@ type PlayEvent =
 			type: "sk";
 			qb: PlayerGameSim;
 			p: PlayerGameSim;
-			ol: PlayerGameSim;
+			ol: PlayerGameSim | undefined;
 			yds: number;
 	  }
 	| {
@@ -541,11 +541,14 @@ class Play {
 				statChanges.push(
 					[state.o, event.qb, "pssSk"],
 					[state.o, event.qb, "pssSkYds", Math.abs(event.yds)],
-					[state.o, event.ol, "skAlw"],
 					[state.d, event.p, "defSk"],
 					[state.d, event.p, "defTckSolo"],
 					[state.d, event.p, "defTckLoss"],
 				);
+
+				if (event.ol) {
+					statChanges.push([state.o, event.ol, "skAlw"]);
+				}
 			} else if (event.type === "pss") {
 				statChanges.push(
 					[state.o, event.qb, "pss"],

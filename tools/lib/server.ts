@@ -114,6 +114,7 @@ export const startServer = async (exposeToNetwork: boolean) => {
 	return new Promise<void>((resolve) => {
 		server.listen(port, exposeToNetwork ? "0.0.0.0" : "localhost", () => {
 			console.log(`Local: http://localhost:${port}`);
+			console.log("Worker console: chrome://inspect/#workers");
 			if (exposeToNetwork) {
 				console.log(`Network: http://${getIpAddress()}:${port}`);
 			} else {

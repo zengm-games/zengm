@@ -2050,8 +2050,8 @@ class GameSim extends GameSimBase {
 		});
 	}
 
-	doSack(qb: PlayerGameSim) {
-		const { d, o } = this.currentPlay.state.initial;
+	doSack(qb: PlayerGameSim, pbw: Map<PlayerGameSim, boolean>) {
+		const { d } = this.currentPlay.state.initial;
 
 		const p = this.pickPlayer(d, "passRushing", undefined, 5);
 		const ydsRaw = random.randInt(-1, -12);
@@ -2062,7 +2062,15 @@ class GameSim extends GameSimBase {
 		const dl = this.playersOnField[d].DL;
 		const lb = this.playersOnField[d].LB;
 		if ((dl && dl.includes(p)) || (lb && lb.includes(p))) {
-			ol = this.pickPlayer(o, "passBlocking", ["OL"], -2);
+			// Get rid of Array.from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/map - Chrome 122, Firefox 131, Safari 18.4
+			const passBlockLossPlayers = Array.from(pbw.entries())
+				.filter(([p, won]) => !won)
+				.map(([p]) => p);
+			if (passBlockLossPlayers.length > 0) {
+				ol = random.choice(passBlockLossPlayers);
+			}
+
+			// If no OL lost his pass block, then assume this was a coverage sack or QB's fault
 		}
 
 		const { safety } = this.currentPlay.addEvent({
@@ -2195,7 +2203,7 @@ class GameSim extends GameSimBase {
 		const sack = Math.random() < this.probSack(qb);
 
 		if (sack) {
-			return this.doSack(qb);
+			return this.doSack(qb, pbw);
 		}
 
 		if (this.probScramble(this.playersOnField[o].QB?.[0]) > Math.random()) {

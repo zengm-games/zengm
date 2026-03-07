@@ -166,7 +166,6 @@ const processStats = (
 					max = value;
 				}
 			}
-			console.log(counts, role);
 
 			if (role === "passer") {
 				row[stat] = `${helpers

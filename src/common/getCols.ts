@@ -2398,19 +2398,19 @@ const sportSpecificCols = bySport<{
 			desc: "Run Block Wins",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
-			title: "PBW",
+			title: "RBW",
 		},
 		"stat:rba": {
 			desc: "Run Block Attempts",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
-			title: "PBA",
+			title: "RBA",
 		},
 		"stat:rbwr": {
 			desc: "Run Block Win Rate",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
-			title: "PBWR",
+			title: "RBWR",
 		},
 		"stat:skAlw": {
 			desc: "Sacks Allowed",

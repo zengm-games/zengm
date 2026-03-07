@@ -28,7 +28,7 @@ const rows = bySport<
 			{ "Rush/Rec": ["elu", "rtr", "hnd", "bsc"] },
 		],
 		[
-			{ Blocking: ["rbk", "pbk"] },
+			{ Blocking: ["pbk", "rbk"] },
 			{ Defense: ["pcv", "tck", "prs", "rns"] },
 			{ Kicking: ["kpw", "kac", "ppw", "pac"] },
 		],

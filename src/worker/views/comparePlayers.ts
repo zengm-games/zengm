@@ -77,9 +77,9 @@ const getRatingsByPositions = (positions: string[]) => {
 				} else if (pos === "RB" || pos === "WR") {
 					ratings.push("bsc", "elu", "rtr", "hnd");
 				} else if (pos === "TE") {
-					ratings.push("bsc", "elu", "rtr", "hnd", "rbk", "pbk");
+					ratings.push("bsc", "elu", "rtr", "hnd", "pbk", "rbk");
 				} else if (pos === "OL") {
-					ratings.push("rbk", "pbk");
+					ratings.push("pbk", "rbk");
 				} else if (pos === "DL") {
 					ratings.push("tck", "prs", "rns");
 				} else if (pos === "LB" || pos === "CB" || pos === "S") {

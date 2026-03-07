@@ -155,7 +155,7 @@ const processStats = (
 				defender: defTck,
 				kicker: fga + ps.xpa,
 				punter: ps.pnt,
-				ol: ps.pba + ps.pra,
+				ol: (ps.pba ?? 0) + (ps.pra ?? 0),
 			};
 			let role;
 			let max = 0;
@@ -166,6 +166,7 @@ const processStats = (
 					max = value;
 				}
 			}
+			console.log(counts, role);
 
 			if (role === "passer") {
 				row[stat] = `${helpers
@@ -198,7 +199,7 @@ const processStats = (
 				)} yards avg`;
 			} else if (role === "ol") {
 				row[stat] =
-					`${helpers.percentage(ps.pbw, ps.pba)}% PBWR, ${helpers.percentage(ps.rbw, ps.rba)}% RBWR`;
+					`${helpers.percentage(ps.pbw, ps.pba)?.toFixed(1)}% PBWR, ${helpers.percentage(ps.rbw, ps.rba)?.toFixed(1)}% RBWR`;
 			} else {
 				row[stat] = "";
 			}

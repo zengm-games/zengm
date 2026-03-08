@@ -2134,6 +2134,7 @@ class GameSim extends GameSimBase {
 		qb: PlayerGameSim,
 		target: PlayerGameSim,
 		defender: PlayerGameSim,
+		pbwFactor: number,
 	) {
 		const factor =
 			((0.2 *
@@ -2145,10 +2146,7 @@ class GameSim extends GameSimBase {
 				(0.5 *
 					(defender.compositeRating.passCoverage +
 						this.team[this.d].compositeRating.passCoverage))) *
-			Math.sqrt(
-				this.team[this.o].compositeRating.passBlocking /
-					this.team[this.d].compositeRating.passRushing,
-			);
+			Math.sqrt(pbwFactor);
 		const p = (0.19 + 0.4 * factor ** 1.25) * g.get("completionFactor");
 		return helpers.bound(p, 0, 0.95);
 	}
@@ -2240,14 +2238,7 @@ class GameSim extends GameSimBase {
 		let ydsRaw = Math.round(
 			random.truncGauss(
 				// Bound is so (in extreme contrived cases like 0 ovr teams) meanYds can't go too far above/below the truncGauss limits
-				helpers.bound(
-					rbFactor *
-						8.6 *
-						(this.team[o].compositeRating.passBlocking /
-							this.team[d].compositeRating.passRushing),
-					-5,
-					100,
-				),
+				helpers.bound(rbFactor * 8.6 * pbwFactor, -5, 100),
 				rbFactor * 7,
 				-5,
 				100,
@@ -2274,7 +2265,8 @@ class GameSim extends GameSimBase {
 		const yds = this.currentPlay.boundedYds(ydsRaw);
 
 		const defender = this.pickPlayer(d, "passCoverage", undefined, 2);
-		const complete = Math.random() < this.probComplete(qb, target, defender);
+		const complete =
+			Math.random() < this.probComplete(qb, target, defender, pbwFactor);
 		const interception = Math.random() < this.probInt(qb, defender, pbwFactor);
 
 		this.checkPenalties("pass", {

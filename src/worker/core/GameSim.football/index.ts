@@ -615,7 +615,7 @@ class GameSim extends GameSimBase {
 		);
 	}
 
-	getPlayType(): teamPlayType {
+	getPlayType() {
 		if (this.awaitingKickoff !== undefined) {
 			return Math.random() < this.probOnside() ? "onsideKick" : "kickoff";
 		}
@@ -1311,22 +1311,128 @@ class GameSim extends GameSimBase {
 		this.updateTeamCompositeRatings();
 	}
 
-	doTimeout(t: TeamNum, toStopClock: boolean, playType: teamPlayType) {
-		if (playType === "kickoff" || playType === "punt") {
-			return;
+	/**
+	 * This function determines whether a team should call a timeout, and if so, the reasoning behind it.
+	 *
+	 * If no timeout is called, return undefined.
+	 * If a timeout is called to stop the clock, return "toStopClock".
+	 * If a timeout is called for another reason, return "other".
+	 * Stopping the clock supercedes reasons for calling a timeout.
+	 * @param t
+	 * @param playType
+	 * @returns
+	 */
+	shouldCallTimeout(
+		t: TeamNum,
+		teamHasPossession: boolean,
+		playType: ReturnType<GameSim["getPlayType"]>,
+		twoMinuteWarning: boolean,
+		quarter: number,
+		distance: number,
+		timeRemaining: number,
+		currentDown: number,
+		yardsToGo: number,
+	): undefined | "toStopClock" | "other" {
+		// Timeout cannot be called
+		if (playType === "kickoff" || playType === "onsideKick") {
+			return undefined;
 		}
 		if (playType === "extraPoint" || playType === "twoPointConversion") {
-			return;
+			return undefined;
 		}
-		if (this.awaitingKickoff) {
-			return;
+		// TODO: ADD THIS VARIABLE IN: First play of quarter cannot be interrupted
+		if (this.awaitingFirstPlayOfQuarter) {
+			return undefined;
 		}
-		// If first play of a quarter, not allowed to call timeout since ball is technically dead
-		// If clock is at 0,
-		if (!this.isClockRunning && this.startOfNewPeriod) {
-			console.log("start of quarter, can't call timeout");
-			return;
+		if (this.timeouts[t] <= 0) {
+			return undefined;
 		}
+
+		const randomChanceTimeout = Math.random();
+		const RED_ZONE_DISTANCE = 20;
+		const diff = this.team[t].stat.pts - this.team[1 - t].stat.pts;
+		const ONE_SCORE_GAME = Math.abs(diff) <= 8;
+		const inFinalPeriod = quarter >= this.numPeriods;
+		const inPeriodBeforeHalftime = quarter === Math.ceil(this.numPeriods / 2);
+		const clockRunning = this.isClockRunning;
+
+		// BEFORE TWO MINUTE WARNING
+		// Small random chance of timeout due to:
+		// - playcall confusion
+		// - substitution issues
+		// - avoiding delay of game
+		if (!twoMinuteWarning && !ONE_SCORE_GAME) {
+			const OFFENSE_TIMEOUT_PROBABILITY = 0.01;
+			const DEFENSE_TIMEOUT_PROBABILITY = 0.003;
+
+			const prob = teamHasPossession
+				? OFFENSE_TIMEOUT_PROBABILITY
+				: DEFENSE_TIMEOUT_PROBABILITY;
+
+			return randomChanceTimeout < prob ? "other" : undefined;
+		}
+
+		// RED ZONE PLAYCALL TIMEOUT
+		// Offense may want correct playcall near endzone
+		if (teamHasPossession && distance <= RED_ZONE_DISTANCE && ONE_SCORE_GAME) {
+			if (currentDown >= 3 && randomChanceTimeout < 0.08) {
+				return "other";
+			}
+		}
+
+		// 4TH DOWN DECISION TIMEOUT
+		if (teamHasPossession && currentDown === 4) {
+			if (randomChanceTimeout < 0.15) {
+				return "other";
+			}
+		}
+
+		// GOAL LINE DEFENSIVE TIMEOUT
+		if (!teamHasPossession && distance <= 5 && ONE_SCORE_GAME) {
+			if (randomChanceTimeout < 0.07) {
+				return "other";
+			}
+		}
+
+		// -------------------------
+		// CLOCK MANAGEMENT
+		// -------------------------
+
+		if (inFinalPeriod) {
+			if (clockRunning) {
+				// Defense losing stops clock
+				if (!teamHasPossession && diff < 0) {
+					if (timeRemaining < 2.5) {
+						return "toStopClock";
+					}
+				}
+
+				// Offense losing/tied saves time
+				if (teamHasPossession && diff <= 0) {
+					if (timeRemaining < 1.5) {
+						return "toStopClock";
+					}
+				}
+			}
+		}
+
+		// -------------------------
+		// END OF HALF FIELD GOAL ICING
+		// -------------------------
+
+		if (inPeriodBeforeHalftime) {
+			if (
+				playType === "fieldGoal" &&
+				!teamHasPossession &&
+				timeRemaining < 0.5
+			) {
+				return randomChanceTimeout < 0.8 ? "other" : undefined;
+			}
+		}
+
+		return undefined;
+	}
+	doTimeout(t: TeamNum, toStopClock: boolean) {
 		if (this.timeouts[t] <= 0) {
 			return;
 		}

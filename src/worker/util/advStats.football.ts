@@ -11,6 +11,7 @@ import {
 import advStatsSave from "./advStatsSave.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
+import helpers from "./helpers.ts";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -39,6 +40,10 @@ type Team = TeamFiltered<
 		"pnt",
 		"pntYds",
 		"pntBlk",
+		"pbw",
+		"pba",
+		"rbw",
+		"rba",
 	],
 	number
 >;
@@ -54,11 +59,22 @@ const DEFENSIVE_POSITIONS = new Set(["DL", "LB", "CB", "S"] as const);
 // Approximate Value: https://www.sports-reference.com/blog/approximate-value-methodology/
 const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 	const teams = teamsInput.map((t) => {
+		// Modification to algorithm - use PBWR and RBWR to determine the credit OL gets for offense, kind of arbitrary
+		const olFraction =
+			helpers.bound(
+				(5 *
+					(helpers.ratio(t.stats.pbw, t.stats.pba) +
+						helpers.ratio(t.stats.rbw, t.stats.rba))) /
+					(league.pbwr + league.rbwr),
+				4,
+				6,
+			) / 11;
+
 		const offPts =
 			league.ptsPerDrive === 0
 				? 0
 				: (100 * t.stats.ptsPerDrive) / league.ptsPerDrive;
-		const ptsOL = (5 / 11) * offPts;
+		const ptsOL = olFraction * offPts;
 		const ptsSkill = offPts - ptsOL;
 		const ptsRus =
 			t.stats.rusYds + t.stats.recYds === 0
@@ -97,7 +113,6 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 				ptsRec,
 				ptsFront7,
 				ptsSecondary,
-				individualPtsOL: 0,
 				individualPtsFront7: 0,
 				individualPtsSecondary: 0,
 				kPlayingTime,
@@ -115,25 +130,7 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 			throw new Error("Should never happen");
 		}
 
-		if (p.ratings.pos === "TE") {
-			const posMultiplier = 0.2;
-			score = p.stats.gp + 5 * p.stats.gs * posMultiplier;
-
-			t.stats.individualPtsOL += score;
-		} else if (p.ratings.pos === "OL") {
-			const posMultiplier = 1.1;
-
-			let allProMultiplier;
-			if (p.allLeagueTeam === 0) {
-				allProMultiplier = 1.5;
-			} else {
-				allProMultiplier = 1;
-			}
-
-			score = p.stats.gp + 5 * p.stats.gs * posMultiplier * allProMultiplier;
-
-			t.stats.individualPtsOL += score;
-		} else if (DEFENSIVE_POSITIONS.has(p.ratings.pos)) {
+		if (DEFENSIVE_POSITIONS.has(p.ratings.pos)) {
 			let allProLevel = 0;
 			if (p.allLeagueTeam === 0) {
 				allProLevel = 1.9;
@@ -175,8 +172,10 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 		const pInidivudalPoints = individualPts[i]!;
 
 		// OL
-		if (p.ratings.pos === "OL" || p.ratings.pos === "TE") {
-			score += (pInidivudalPoints / t.stats.individualPtsOL) * t.stats.ptsOL;
+		if (p.ratings.pos === "OL") {
+			score +=
+				((p.stats.pbw + p.stats.rbw) / (t.stats.pbw + t.stats.rbw)) *
+				t.stats.ptsOL;
 		}
 
 		// Rushing
@@ -314,6 +313,8 @@ const advStats = async () => {
 			"pnt",
 			"pntYds",
 			"pntBlk",
+			"pbw",
+			"rbw",
 		],
 		ratings: ["pos"],
 		season: g.get("season"),
@@ -350,6 +351,10 @@ const advStats = async () => {
 		"pnt",
 		"pntYds",
 		"pntBlk",
+		"pbw",
+		"pba",
+		"rbw",
+		"rba",
 	] as const;
 	const teams = await idb.getCopies.teamsPlus(
 		{
@@ -386,6 +391,8 @@ const advStats = async () => {
 	league.xpp = league.xp / league.xpa;
 	league.adjPntYPA =
 		(league.pntYds - 13 * league.pntBlk) / (league.pnt + league.pntBlk);
+	league.pbwr = league.pbw / league.pba;
+	league.rbwr = league.rbw / league.rba;
 
 	const updatedStats = { ...calculateAV(players, teams, league) };
 	await advStatsSave(players, playersRaw, updatedStats);

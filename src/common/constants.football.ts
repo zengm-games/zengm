@@ -364,6 +364,7 @@ const PLAYER_STATS_TABLES = {
 			"rbwr",
 			"skAlw",
 			"skAlwPct",
+			"av",
 		],
 	},
 	defense: {

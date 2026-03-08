@@ -49,7 +49,7 @@ const TCK_CONSTANT = {
 	CB: 0,
 	S: 0,
 };
-const DEFENSIVE_POSITIONS = ["DL", "LB", "CB", "S"] as const;
+const DEFENSIVE_POSITIONS = new Set(["DL", "LB", "CB", "S"] as const);
 
 // Approximate Value: https://www.sports-reference.com/blog/approximate-value-methodology/
 const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
@@ -115,22 +115,25 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 			throw new Error("Should never happen");
 		}
 
-		if (p.ratings.pos === "OL" || p.ratings.pos === "TE") {
-			const posMultiplier = p.ratings.pos === "OL" ? 1.1 : 0.2;
+		if (p.ratings.pos === "TE") {
+			const posMultiplier = 0.2;
+			score = p.stats.gp + 5 * p.stats.gs * posMultiplier;
 
-			let allProMultiplier = 1;
-			if (p.ratings.pos === "OL") {
-				if (p.allLeagueTeam === 0) {
-					allProMultiplier = 1.5;
-				} else if (p.allLeagueTeam === 1) {
-					allProMultiplier = 1;
-				}
+			t.stats.individualPtsOL += score;
+		} else if (p.ratings.pos === "OL") {
+			const posMultiplier = 1.1;
+
+			let allProMultiplier;
+			if (p.allLeagueTeam === 0) {
+				allProMultiplier = 1.5;
+			} else {
+				allProMultiplier = 1;
 			}
 
 			score = p.stats.gp + 5 * p.stats.gs * posMultiplier * allProMultiplier;
 
 			t.stats.individualPtsOL += score;
-		} else if (DEFENSIVE_POSITIONS.includes(p.ratings.pos)) {
+		} else if (DEFENSIVE_POSITIONS.has(p.ratings.pos)) {
 			let allProLevel = 0;
 			if (p.allLeagueTeam === 0) {
 				allProLevel = 1.9;
@@ -408,7 +411,7 @@ const advStats = async () => {
 
 		for (let i = 0; i < allLeague.length; i++) {
 			for (const p2 of allLeague[i].players) {
-				if (p2 && (p2.pos === "OL" || DEFENSIVE_POSITIONS.includes(p2.pos))) {
+				if (p2 && (p2.pos === "OL" || DEFENSIVE_POSITIONS.has(p2.pos))) {
 					const p = players.find((p3) => p3.pid === p2.pid);
 					if (p) {
 						p.allLeagueTeam = i;

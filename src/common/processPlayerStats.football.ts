@@ -198,7 +198,7 @@ const processStats = (
 				)} yards avg`;
 			} else if (role === "ol") {
 				row[stat] =
-					`${helpers.percentage(ps.pbw, ps.pba)?.toFixed(1)}% PBWR, ${helpers.percentage(ps.rbw, ps.rba)?.toFixed(1)}% RBWR`;
+					`${ps.pbw} PBW (${helpers.percentage(ps.pbw, ps.pba)?.toFixed(1)}%), ${ps.rbw} RBW (${helpers.percentage(ps.rbw, ps.rba)?.toFixed(1)}%)`;
 			} else {
 				row[stat] = "";
 			}

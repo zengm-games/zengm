@@ -990,6 +990,7 @@ scheduled events for roster size changes https://discord.com/channels/2900135340
 - 18 in 2024
 
 FBGM
+- some positions have weird heights, like really short OL/CB/LB
 - scorigami
 - hail mary as clock runs down
 - too many block in the back penalties? https://mail.google.com/mail/u/0/#inbox/FMfcgzQXJGkWRpLHMglFTjVxwkhwRlrP?compose=DmwnWrRnZVhxHCNkTVdJSMmbHbGPgCRltRlKvmhtGwHmGsdBjvVRTGPpCVpwjFrcmmLvVZMKmdrl
@@ -1011,7 +1012,6 @@ FBGM
 - blocked fg/xp
   - count as missed field goal
   - chance for either team to return (very slim for offense)
-- OL stats
 - if you have 0 healthy kickers, go for 2 https://discord.com/channels/@me/778760871911751700/1160420973019934750
   - it really should be based on probability of making XP and probability of making TP making TP
   - similar for 4th down situations, like 4th and 1 on the 30 with a bad kicker, don't punt!
@@ -2105,7 +2105,6 @@ fuzz/scouting revamp
 FBGM
 - in FBGM, tags aren't generated for custom roster's draft classes until the end of the season.
 - rosters https://raw.githubusercontent.com/nicidob/bbgm/master/fbgm_roster_2019_sss.json
-- some OL stat
 - increase value of K/P so they won't be traded for nothing
   - user report of K/P being released by AI teams during season! AI teams should take roster construction into account here
   - @geonerd#6946
@@ -2283,9 +2282,12 @@ teams play better/worse when down/up
 
 @nicidob Add an option to float the salary cap. Have it come from something like Sum(hype * population). So if NY/LA/CHI/MXC have bad teams, it's worse! Maybe even have hype depend on team rating (so if the whole league is playing crappy teams then the cap goes down).
 
-add player who tackled to play by play
-- Nate Oor Completed to pass to Jake buttham (Tackle by Shaun boof)
-- https://discordapp.com/channels/@me/625036115497451609
+FBGM play by  play
+- tackler
+  - Nate Oor Completed to pass to Jake buttham (Tackle by Shaun boof)
+  - https://discordapp.com/channels/@me/625036115497451609
+- incomplete pass distance
+- YAC
 
 in watchlist, if you have a player play the prior  year's playoffs and then they get an injury that keeps them out of the playoffs, it displays last year's playoff stats
 - https://cdn.discordapp.com/attachments/290015591216054273/679836680420589690/unknown.png
@@ -2384,8 +2386,6 @@ Just started playing the other day and it's pretty fun! A lot different than BBG
 Also I wonder if there is a way to present a player's value in regards to the position they play. What I mean is if I want to draft a good RB in the game I have to invest an early pick, but in the NFL teams find starting RBs day 3 on a pretty regular basis (although the argument there is OL is more important for the run game than the RB) so that might actually be pretty complicated to implement.
 
 Finally I saw dumbmatter mention this in the initial post, but there really should be guaranteed rookie contracts. They are basically standard in the NFL and I don't see why a simulation wouldn't mirror this. Just feels weird all my players only want 2 year contracts when they are usually stuck with the team for 4 years at least. Just some initial thoughts, great work overall!
-
-keyStats for OL should not show tiny # of tackles
 
 rookie contracts too high still?
 

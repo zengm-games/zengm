@@ -280,6 +280,15 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 				titleOverride: "Rushing and Receiving TDs",
 			},
 			{
+				stat: "pbwr",
+			},
+			{
+				stat: "rbwr",
+			},
+			{
+				stat: "skAlw",
+			},
+			{
 				stat: "defTck",
 			},
 			{

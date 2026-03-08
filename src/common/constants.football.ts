@@ -269,7 +269,7 @@ const PLAYER_SUMMARY = {
 	summaryOL: {
 		name: "SummaryOL",
 		onlyShowIf: ["OL"],
-		stats: ["gp", "av", "pbwr", "rbwr", "skAlw"],
+		stats: ["gp", "av", "pbw", "pbwr", "rbw", "rbwr", "skAlw"],
 	},
 	summaryKic: {
 		name: "SummaryKic",

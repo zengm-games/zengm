@@ -2181,7 +2181,11 @@ class GameSim extends GameSimBase {
 					this.team[d].compositeRating.passRushing;
 
 				// Scale to roughly 50%-95%
-				const probWin = (ratio - 1) * (0.45 / 0.25) + 0.5;
+				const probWin = helpers.bound(
+					(ratio - 1) * (0.45 / 0.25) + 0.5,
+					0,
+					0.96,
+				);
 				const win = Math.random() < probWin;
 				pbw.set(p, win);
 
@@ -2389,7 +2393,11 @@ class GameSim extends GameSimBase {
 						this.team[d].compositeRating.runStopping;
 
 					// Scale to roughly 30%-95%
-					const probWin = (ratio - 1) * (0.65 / 0.25) + 0.3;
+					const probWin = helpers.bound(
+						(ratio - 1) * (0.65 / 0.25) + 0.3,
+						0,
+						0.96,
+					);
 					const win = Math.random() < probWin;
 					rbw.set(p, win);
 				}

@@ -2100,25 +2100,32 @@ class GameSim extends GameSimBase {
 		return random.randInt(3, 8);
 	}
 
-	probSack(qb: PlayerGameSim) {
+	// Scaled similar to this.team[this.o].compositeRating.passBlocking / this.team[this.d].compositeRating.passRushing - higher means better blocking!
+	pbwFactor(pbw: number, pba: number) {
+		const slope = 0.1879;
+		const intercept = 0.953;
+
+		if (pba === 0) {
+			return intercept;
+		}
+
+		return (slope * pbw) / pba + intercept;
+	}
+
+	probSack(qb: PlayerGameSim, pbwFactor: number) {
 		return (
-			((0.06 * this.team[this.d].compositeRating.passRushing) /
-				(0.5 *
-					(qb.compositeRating.avoidingSacks +
-						this.team[this.o].compositeRating.passBlocking))) *
-			g.get("sackFactor")
+			0.1551 - 0.06247 * qb.compositeRating.avoidingSacks - 0.05538 * pbwFactor
 		);
 	}
 
-	probInt(qb: PlayerGameSim, defender: PlayerGameSim) {
+	probInt(qb: PlayerGameSim, defender: PlayerGameSim, pbwFactor: number) {
 		return (
-			((((0.004 * this.team[this.d].compositeRating.passCoverage +
+			((0.004 * this.team[this.d].compositeRating.passCoverage +
 				0.022 * defender.compositeRating.passCoverage) /
 				(0.5 *
 					(qb.compositeRating.passingVision +
-						qb.compositeRating.passingAccuracy))) *
-				this.team[this.d].compositeRating.passRushing) /
-				this.team[this.o].compositeRating.passBlocking) *
+						qb.compositeRating.passingAccuracy)) /
+				pbwFactor) *
 			g.get("intFactor")
 		);
 	}
@@ -2167,6 +2174,7 @@ class GameSim extends GameSimBase {
 
 		const ol = this.playersOnField[o].OL;
 		const pbw = new Map<PlayerGameSim, boolean>();
+		const pbCounts = { pba: 0, pbw: 0 };
 		if (ol) {
 			for (const p of ol) {
 				// This roughly ranges from 1 to 1.25
@@ -2178,8 +2186,14 @@ class GameSim extends GameSimBase {
 				const probWin = (ratio - 1) * (0.45 / 0.25) + 0.5;
 				const win = Math.random() < probWin;
 				pbw.set(p, win);
+
+				pbCounts.pba += 1;
+				if (win) {
+					pbCounts.pbw += 1;
+				}
 			}
 		}
+		const pbwFactor = this.pbwFactor(pbCounts.pbw, pbCounts.pba);
 
 		const qb = this.getTopPlayerOnField(o, "QB");
 		this.currentPlay.addEvent({
@@ -2200,7 +2214,7 @@ class GameSim extends GameSimBase {
 			return dt + this.doFumble(qb, yds);
 		}
 
-		const sack = Math.random() < this.probSack(qb);
+		const sack = Math.random() < this.probSack(qb, pbwFactor);
 
 		if (sack) {
 			return this.doSack(qb, pbw);
@@ -2261,7 +2275,7 @@ class GameSim extends GameSimBase {
 
 		const defender = this.pickPlayer(d, "passCoverage", undefined, 2);
 		const complete = Math.random() < this.probComplete(qb, target, defender);
-		const interception = Math.random() < this.probInt(qb, defender);
+		const interception = Math.random() < this.probInt(qb, defender, pbwFactor);
 
 		this.checkPenalties("pass", {
 			ballCarrier: target,

@@ -2374,6 +2374,7 @@ class GameSim extends GameSimBase {
 		const d = this.d;
 
 		let rbw: Map<PlayerGameSim, boolean> | undefined;
+		const rbCounts = { rba: 0, rbw: 0 };
 
 		if (!qbScramble) {
 			this.updatePlayersOnField("run");
@@ -2400,6 +2401,11 @@ class GameSim extends GameSimBase {
 					);
 					const win = Math.random() < probWin;
 					rbw.set(p, win);
+
+					rbCounts.rba += 1;
+					if (win) {
+						rbCounts.rbw += 1;
+					}
 				}
 			}
 		}
@@ -2433,14 +2439,12 @@ class GameSim extends GameSimBase {
 			names: p === qb ? [qb.name] : [qb.name, p.name],
 		});
 
+		const rbwRatio = rbCounts.rba > 0 ? rbCounts.rbw / rbCounts.rba : 0;
+
 		// Bound is so (in extreme contrived cases like 0 ovr teams) meanYds can't go too far above/below the truncGauss limits
 		const meanYds = helpers.bound(
-			(scrambleModifier *
-				(3.5 *
-					0.5 *
-					(p.compositeRating.rushing +
-						this.team[o].compositeRating.runBlocking))) /
-				this.team[d].compositeRating.runStopping,
+			scrambleModifier *
+				(1.595 + 3.031 * p.compositeRating.rushing + 0.637 * rbwRatio),
 			-5,
 			15,
 		);

@@ -56,10 +56,28 @@ const TCK_CONSTANT = {
 };
 const DEFENSIVE_POSITIONS = new Set(["DL", "LB", "CB", "S"] as const);
 
+const olScore = (
+	stats: Record<"pbw" | "pba" | "pbwr" | "rbw" | "rba" | "rbwr", number>,
+	league: Record<"pbwr" | "rbwr", number>,
+) => {
+	// Bonus for PBW/RBW above league average rate
+	return (
+		stats.pbw +
+		stats.rbw +
+		helpers.bound(
+			stats.pbw -
+				stats.pba * league.pbwr +
+				(stats.rbw - stats.rba * league.rbwr),
+			0,
+			Infinity,
+		)
+	);
+};
+
 // Approximate Value: https://www.sports-reference.com/blog/approximate-value-methodology/
 const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 	const teams = teamsInput.map((t) => {
-		// Modification to algorithm - use PBWR and RBWR to determine the credit OL gets for offense, kind of arbitrary
+		// Modification - use PBWR and RBWR to determine the credit OL gets for offense, kind of arbitrary
 		const olFraction =
 			helpers.bound(
 				(5 *
@@ -116,6 +134,7 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 				individualPtsFront7: 0,
 				individualPtsSecondary: 0,
 				kPlayingTime,
+				olScore: 0,
 			},
 		};
 	});
@@ -130,6 +149,10 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 			throw new Error("Should never happen");
 		}
 
+		if (p.ratings.pos === "OL") {
+			// Need to add this up, otherwise it doesn't get computed right at the team level
+			t.stats.olScore += olScore(p.stats, league);
+		}
 		if (DEFENSIVE_POSITIONS.has(p.ratings.pos)) {
 			let allProLevel = 0;
 			if (p.allLeagueTeam === 0) {
@@ -172,10 +195,9 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 		const pInidivudalPoints = individualPts[i]!;
 
 		// OL
+		// Modification - use PBWR and RBWR to determine the credit OL gets for offense, kind of arbitrary
 		if (p.ratings.pos === "OL") {
-			score +=
-				((p.stats.pbw + p.stats.rbw) / (t.stats.pbw + t.stats.rbw)) *
-				t.stats.ptsOL;
+			score += (olScore(p.stats, league) / t.stats.olScore) * t.stats.ptsOL;
 		}
 
 		// Rushing
@@ -314,7 +336,11 @@ const advStats = async () => {
 			"pntYds",
 			"pntBlk",
 			"pbw",
+			"pba",
+			"pbwr",
 			"rbw",
+			"rba",
+			"rbwr",
 		],
 		ratings: ["pos"],
 		season: g.get("season"),
@@ -418,7 +444,7 @@ const advStats = async () => {
 
 		for (let i = 0; i < allLeague.length; i++) {
 			for (const p2 of allLeague[i].players) {
-				if (p2 && (p2.pos === "OL" || DEFENSIVE_POSITIONS.has(p2.pos))) {
+				if (p2 && DEFENSIVE_POSITIONS.has(p2.pos)) {
 					const p = players.find((p3) => p3.pid === p2.pid);
 					if (p) {
 						p.allLeagueTeam = i;

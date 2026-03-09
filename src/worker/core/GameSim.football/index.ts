@@ -115,8 +115,6 @@ class GameSim extends GameSimBase {
 	twoMinuteWarningHappened = false;
 
 	currentPlay: Play;
-	// TODO: Why do we need to keep track of the prior play?
-	priorPlay: PlayEvent;
 
 	lngTracker: LngTracker;
 
@@ -130,7 +128,6 @@ class GameSim extends GameSimBase {
 			? g.get("footballOvertimePlayoffs", "current")
 			: g.get("footballOvertime", "current");
 
-	startOfNewPeriod = false;
 	constructor({
 		gid,
 		day,
@@ -393,7 +390,7 @@ class GameSim extends GameSimBase {
 				this.playUntimedPossession
 			) {
 				this.simPlay();
-				this.startOfNewPeriod = false;
+				this.awaitingFirstPlayOfQuarter = false;
 			}
 
 			// Who gets the ball after halftime?
@@ -414,7 +411,7 @@ class GameSim extends GameSimBase {
 			quarter += 1;
 			// Once quarter is locked, set clock running to false until next play ran
 			this.isClockRunning = false;
-			this.startOfNewPeriod = true;
+			this.awaitingFirstPlayOfQuarter = true;
 
 			this.team[0].stat.ptsQtrs.push(0);
 			this.team[1].stat.ptsQtrs.push(0);
@@ -1342,7 +1339,6 @@ class GameSim extends GameSimBase {
 		if (playType === "extraPoint" || playType === "twoPointConversion") {
 			return undefined;
 		}
-		// TODO: ADD THIS VARIABLE IN: First play of quarter cannot be interrupted
 		if (this.awaitingFirstPlayOfQuarter) {
 			return undefined;
 		}
@@ -1352,34 +1348,86 @@ class GameSim extends GameSimBase {
 		let finalDecision = undefined;
 		const randomChanceTimeout = Math.random();
 		const RED_ZONE_DISTANCE = 20;
-		const diff = this.team[t].stat.pts - this.team[1 - t].stat.pts;
+		// TODO: FIND THIS OUT. Its ball position - scrimmage, not sure if this is fully correct
+		const distanceToGoalLine = 100 - this.scrimmage;
+		const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
 		const ONE_SCORE_GAME = Math.abs(diff) <= 8;
 		const inFinalPeriod = quarter >= this.numPeriods;
 		const inPeriodBeforeHalftime = quarter === Math.ceil(this.numPeriods / 2);
 		const clockRunning = this.isClockRunning;
+		// Redzone playcall timeout. Different percentages based on down, defense, offense, and score.
+		// If score is close, timeout is more likely, especially for offense.
 		const redZonePlayCallTimeout = () => {
-			if (currentDown >= 3 && chance < 0.08) {
-				return "other";
+			const OFFENSE_TIMEOUT_PROBABILITY = 0.08;
+			const DEFENSE_TIMEOUT_PROBABILITY = 0.05;
+			// TODO: Make timeout probability 2x higher if game is close for offense, 1.5x for defense
+			if (currentDown >= 3) {
+				if (yardsToGo <= 5) {
+					if (teamHasPossession) {
+						return randomChanceTimeout < OFFENSE_TIMEOUT_PROBABILITY
+							? "other"
+							: undefined;
+					} else {
+						return randomChanceTimeout < DEFENSE_TIMEOUT_PROBABILITY
+							? "other"
+							: undefined;
+					}
+				} else if (yardsToGo <= 10) {
+					if (teamHasPossession) {
+						return randomChanceTimeout < OFFENSE_TIMEOUT_PROBABILITY * 0.5
+							? "other"
+							: undefined;
+					} else {
+						return randomChanceTimeout < DEFENSE_TIMEOUT_PROBABILITY * 0.5
+							? "other"
+							: undefined;
+					}
+				}
 			}
 			return undefined;
 		};
 		const fourthDownDecisionTimeout = () => {
-			if (currentDown === 4 && chance < 0.15) {
-				return "other";
+			const OFFENSE_TIMEOUT_PROBABILITY = 0.15;
+			const DEFENSE_TIMEOUT_PROBABILITY = 0.1;
+			if (currentDown === 4 && teamHasPossession && yardsToGo <= 3) {
+				return randomChanceTimeout < 0.15 ? "other" : undefined;
 			}
 			return undefined;
 		};
 
 		const iceFieldGoalTimeout = () => {
+			const DEFENSE_TIMEOUT_PROBABILITY = 0.8;
 			if (
 				(playType === "fieldGoalLate" || "fieldGoal") &&
 				!teamHasPossession &&
 				timeRemaining < 0.5
 			) {
-				return randomChanceTimeout < 0.8 ? "other" : undefined;
+				return randomChanceTimeout < DEFENSE_TIMEOUT_PROBABILITY
+					? "other"
+					: undefined;
+			}
+			return undefined;
+		};
+
+		const clockManagementTimeout = () => {
+			// If game is a blowout, don't stop clock
+			if (Math.abs(diff) > 24) {
+				return undefined;
+			}
+			// Defense losing stops clock
+			if (!teamHasPossession && diff > 0) {
+				if (timeRemaining < 2.5) {
+					return "toStopClock";
+				}
+			}
+
+			// Offense losing/tied saves time
+			if (teamHasPossession && diff <= 0) {
+				if (timeRemaining < 1.5) {
+					return "toStopClock";
+				}
 			}
 		};
-		const clockManagementTimeout = () => {};
 		// BEFORE TWO MINUTE WARNING
 		// Small random chance of timeout due to:
 		// - playcall confusion
@@ -1393,7 +1441,7 @@ class GameSim extends GameSimBase {
 			const prob = teamHasPossession
 				? OFFENSE_TIMEOUT_PROBABILITY
 				: DEFENSE_TIMEOUT_PROBABILITY;
-
+			// Include scenarios here
 			return randomChanceTimeout < prob ? "other" : undefined;
 		}
 
@@ -1417,22 +1465,17 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		// CLOCK MANAGEMENT
-
-		if (inFinalPeriod) {
-			if (clockRunning) {
-				// Defense losing stops clock
-				if (!teamHasPossession && diff < 0) {
-					if (timeRemaining < 2.5) {
-						return "toStopClock";
-					}
+		// IF we are in a close game (within 24 points, which could plausibly be overcome), timeouts are more common
+		if (inFinalPeriod && twoMinuteWarning) {
+			if (Math.abs(diff) <= 24) {
+				if (clockRunning) {
+					clockManagementTimeout();
 				}
-
-				// Offense losing/tied saves time
-				if (teamHasPossession && diff <= 0) {
-					if (timeRemaining < 1.5) {
-						return "toStopClock";
-					}
+				if (ONE_SCORE_GAME) {
+					// If a close game, we have to check these scenarios for if a team should call a timeout
+					iceFieldGoalTimeout();
+					redZonePlayCallTimeout();
+					fourthDownDecisionTimeout();
 				}
 			}
 		}

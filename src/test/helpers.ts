@@ -6,7 +6,7 @@ import defaultGameAttributes, {
 	footballOverrides,
 } from "../common/defaultGameAttributes.ts";
 
-const mockIDBLeague = (): any => {
+export const mockIDBLeague = (): any => {
 	const store = {
 		index() {
 			return {
@@ -42,7 +42,7 @@ const mockIDBLeague = (): any => {
  * @param {*} x Element to search for
  * @return {number} The number of times x was found in array.
  */
-function numInArrayEqualTo<T>(array: T[], x: T): number {
+export function numInArrayEqualTo<T>(array: T[], x: T): number {
 	let n = 0;
 	let idx = array.indexOf(x);
 
@@ -54,7 +54,7 @@ function numInArrayEqualTo<T>(array: T[], x: T): number {
 	return n;
 }
 
-const resetCache = async (data?: Partial<Record<Store, any[]>>) => {
+export const resetCache = async (data?: Partial<Record<Store, any[]>>) => {
 	idb.cache = new Cache(); // We want these to do nothing while testing, usually
 
 	idb.cache.fill = async () => {};
@@ -108,7 +108,7 @@ const resetCache = async (data?: Partial<Record<Store, any[]>>) => {
 	}
 };
 
-const resetG = () => {
+export const resetG = () => {
 	const season = 2016;
 	const teams = helpers.getTeamsDefault();
 	Object.assign(g, defaultGameAttributes);
@@ -134,11 +134,4 @@ const resetG = () => {
 		numTeams: teams.length,
 		numActiveTeams: teams.length,
 	});
-};
-
-export default {
-	mockIDBLeague,
-	numInArrayEqualTo,
-	resetCache,
-	resetG,
 };

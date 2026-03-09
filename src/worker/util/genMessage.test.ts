@@ -1,5 +1,5 @@
 import { assert, beforeEach, test } from "vitest";
-import testHelpers from "../../test/helpers.ts";
+import { mockIDBLeague, resetCache, resetG } from "../../test/helpers.ts";
 import { team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
@@ -7,15 +7,15 @@ import genMessage from "./genMessage.ts";
 import { helpers } from "../../common/index.ts";
 
 beforeEach(async () => {
-	testHelpers.resetG();
+	resetG();
 	g.setWithoutSavingToDB("gracePeriodEnd", g.get("season"));
 
 	const teamsDefault = helpers.getTeamsDefault();
-	await testHelpers.resetCache({
+	await resetCache({
 		teamSeasons: [team.genSeasonRow(teamsDefault[g.get("userTid")]!)],
 	});
 
-	idb.league = testHelpers.mockIDBLeague();
+	idb.league = mockIDBLeague();
 });
 
 test("even when already at the max, recognizes excellent performance", async () => {

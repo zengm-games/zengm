@@ -1,6 +1,6 @@
 import { afterAll, assert, beforeAll, test } from "vitest";
 import { g } from "../../util/index.ts";
-import testHelpers from "../../../test/helpers.ts";
+import { resetG } from "../../../test/helpers.ts";
 import { makeMatchups } from "./genPlayoffSeries.ts";
 
 const makeMatchupsWrapper = (
@@ -40,11 +40,11 @@ const makeMatchupsWrapper = (
 };
 
 beforeAll(() => {
-	testHelpers.resetG();
+	resetG();
 	g.setWithoutSavingToDB("playIn", false);
 });
 afterAll(() => {
-	testHelpers.resetG();
+	resetG();
 });
 
 // makeMatchups is now called separately per conference, so this test would need to be refactored to call genPlayoffSeriesFromTeams, which is a little more complicated because it calls orderTeams

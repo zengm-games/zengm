@@ -1,12 +1,12 @@
 import { assert, beforeAll, test } from "vitest";
 import applyRealTeamInfo from "./applyRealTeamInfo.ts";
 import generate from "../worker/core/team/generate.ts";
-import testHelpers from "../test/helpers.ts";
+import { resetG } from "../test/helpers.ts";
 import helpers from "./helpers.ts";
 import type { RealTeamInfo } from "./types.ts";
 
 beforeAll(async () => {
-	testHelpers.resetG();
+	resetG();
 });
 
 test("works with no seasons", () => {

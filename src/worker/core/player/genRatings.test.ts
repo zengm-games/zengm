@@ -10,7 +10,7 @@
 
 import { describe, test } from "vitest";
 import { PLAYER } from "../../../common/index.ts";
-import testHelpers from "../../../test/helpers.ts";
+import { resetG } from "../../../test/helpers.ts";
 import { g } from "../../util/index.ts";
 import createRandomPlayers from "../league/create/createRandomPlayers.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
@@ -18,7 +18,7 @@ import { range } from "../../../common/utils.ts";
 
 const printQuartiles = async (age?: number) => {
 	if (age !== undefined) {
-		testHelpers.resetG();
+		resetG();
 		g.setWithoutSavingToDB("draftAges", [age, age]);
 	}
 

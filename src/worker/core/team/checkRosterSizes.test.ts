@@ -1,6 +1,6 @@
 import { assert, beforeAll, test } from "vitest";
 import { PLAYER } from "../../../common/index.ts";
-import testHelpers from "../../../test/helpers.ts";
+import { resetCache, resetG } from "../../../test/helpers.ts";
 import { player, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
@@ -11,7 +11,7 @@ import type {
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 beforeAll(() => {
-	testHelpers.resetG(); // Two teams: user and AI
+	resetG(); // Two teams: user and AI
 
 	g.setWithoutSavingToDB("numTeams", 2);
 	g.setWithoutSavingToDB("numActiveTeams", 2);
@@ -41,7 +41,7 @@ const resetCacheWithPlayers = async (info: Record<string, number>) => {
 	const teamsDefault = helpers.getTeamsDefault();
 	const teams = teamsDefault.slice(0, numTeams).map(team.generate);
 
-	await testHelpers.resetCache({
+	await resetCache({
 		players,
 		teams,
 	});

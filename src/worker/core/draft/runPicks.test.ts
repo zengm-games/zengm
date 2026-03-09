@@ -1,6 +1,6 @@
 import { afterAll, assert, beforeAll, test } from "vitest";
 import { PLAYER } from "../../../common/index.ts";
-import testHelpers from "../../../test/helpers.ts";
+import { mockIDBLeague } from "../../../test/helpers.ts";
 import { draft } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
@@ -51,7 +51,7 @@ const testDraftUser = async (round: number) => {
 
 beforeAll(async () => {
 	await loadTeamSeasons();
-	idb.league = testHelpers.mockIDBLeague();
+	idb.league = mockIDBLeague();
 	await draft.genPlayers(g.get("season"), DEFAULT_LEVEL);
 	const draftTids = await getDraftTids();
 	userPick1 = draftTids.indexOf(g.get("userTid")) + 1;

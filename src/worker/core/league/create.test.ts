@@ -1,5 +1,5 @@
 import { assert, beforeAll, describe, test } from "vitest";
-import testHelpers from "../../../test/helpers.ts";
+import { numInArrayEqualTo } from "../../../test/helpers.ts";
 import { g } from "../../util/index.ts";
 
 // League creation is always streaming to the database now, so would need to do some extra work to gather the output for these tests, but these tests aren't very useful to begin with
@@ -54,11 +54,11 @@ describe.skip("worker/core/league/create", () => {
 		assert.strictEqual(leagueData.teams.length, g.get("numTeams"));
 
 		for (const i of [0, 1] as const) {
-			assert.strictEqual(testHelpers.numInArrayEqualTo(cids, i), 15);
+			assert.strictEqual(numInArrayEqualTo(cids, i), 15);
 		}
 
 		for (let i = 0; i < 6; i++) {
-			assert.strictEqual(testHelpers.numInArrayEqualTo(dids, i), 5);
+			assert.strictEqual(numInArrayEqualTo(dids, i), 5);
 		}
 
 		for (const t of leagueData.teams) {

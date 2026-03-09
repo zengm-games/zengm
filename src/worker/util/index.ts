@@ -9,7 +9,7 @@ export { default as checkNaNs } from "./checkNaNs.ts";
 export { default as defaultInjuries } from "./defaultInjuries.ts";
 export { default as defaultTragicDeaths } from "./defaultTragicDeaths.ts";
 export { default as env } from "./env.ts";
-export { default as face } from "./face.ts";
+export * as face from "./face.ts";
 export { default as formatEventText } from "./formatEventText.ts";
 export { default as g } from "./g.ts";
 export { default as genMessage } from "./genMessage.ts";

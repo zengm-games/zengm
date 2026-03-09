@@ -1,6 +1,6 @@
 import { afterAll, assert, beforeAll, describe, test } from "vitest";
 import { PLAYER } from "../../../common/index.ts";
-import testHelpers from "../../../test/helpers.ts";
+import { mockIDBLeague, resetCache, resetG } from "../../../test/helpers.ts";
 import { player } from "../index.ts";
 import { makeBrother, makeSon } from "./addRelatives.ts";
 import { idb } from "../../db/index.ts";
@@ -31,8 +31,8 @@ const getPlayer = async (pid: number) => {
 };
 
 beforeAll(() => {
-	testHelpers.resetG();
-	idb.league = testHelpers.mockIDBLeague();
+	resetG();
+	idb.league = mockIDBLeague();
 });
 afterAll(() => {
 	// @ts-expect-error
@@ -40,7 +40,7 @@ afterAll(() => {
 });
 describe("makeBrother", () => {
 	test("make player the brother of another player", async () => {
-		await testHelpers.resetCache({
+		await resetCache({
 			players: [
 				player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL),
 				...genBrothers(),
@@ -67,7 +67,7 @@ describe("makeBrother", () => {
 	});
 
 	test("skip player if no possible brother exists", async () => {
-		await testHelpers.resetCache({
+		await resetCache({
 			players: [
 				player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL),
 			],
@@ -88,7 +88,7 @@ describe("makeBrother", () => {
 			});
 		}
 
-		await testHelpers.resetCache({
+		await resetCache({
 			players: [
 				player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL),
 				player.generate(PLAYER.RETIRED, 50, season - 30, true, DEFAULT_LEVEL), // Father
@@ -131,7 +131,7 @@ describe("makeBrother", () => {
 			pid: 1,
 			name: "Foo HasFather",
 		});
-		await testHelpers.resetCache({
+		await resetCache({
 			players: [
 				initialPlayer,
 				player.generate(PLAYER.RETIRED, 50, season - 30, true, DEFAULT_LEVEL), // Father
@@ -167,7 +167,7 @@ describe("makeBrother", () => {
 			});
 		}
 
-		await testHelpers.resetCache({
+		await resetCache({
 			players,
 		});
 		const p = await getPlayer(0);
@@ -195,7 +195,7 @@ describe("makeBrother", () => {
 			});
 		}
 
-		await testHelpers.resetCache({
+		await resetCache({
 			players: [
 				initialP,
 				player.generate(PLAYER.RETIRED, 25, season - 6, true, DEFAULT_LEVEL), // Extra brother - 6 years ago means never picked by makeBrother
@@ -237,7 +237,7 @@ describe("makeBrother", () => {
 			pid: 1,
 			name: "Foo Bar",
 		});
-		await testHelpers.resetCache({
+		await resetCache({
 			players: [
 				initialPlayer,
 				player.generate(PLAYER.RETIRED, 25, season - 5, true, DEFAULT_LEVEL), // Extra brother
@@ -255,7 +255,7 @@ describe("makeBrother", () => {
 
 describe("makeSon", () => {
 	test("make player the son of another player", async () => {
-		await testHelpers.resetCache({
+		await resetCache({
 			players: [
 				// Son
 				player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL), // Fathers
@@ -285,7 +285,7 @@ describe("makeSon", () => {
 	});
 
 	test("skip player if no possible father exists", async () => {
-		await testHelpers.resetCache({
+		await resetCache({
 			players: [
 				player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL),
 			],
@@ -296,7 +296,7 @@ describe("makeSon", () => {
 	});
 
 	test("skip player if he already has a father", async () => {
-		await testHelpers.resetCache({
+		await resetCache({
 			players: [
 				// Son
 				player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL), // Fathers
@@ -322,7 +322,7 @@ describe("makeSon", () => {
 	});
 
 	test("handle case where player already has a brother", async () => {
-		await testHelpers.resetCache({
+		await resetCache({
 			players: [
 				// Son
 				player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL), // Brother
@@ -387,7 +387,7 @@ describe("makeSon", () => {
 		const initialOtherSons = initialFathers.map(() =>
 			player.generate(0, 25, season, true, DEFAULT_LEVEL),
 		);
-		await testHelpers.resetCache({
+		await resetCache({
 			players: [
 				// Son
 				player.generate(PLAYER.UNDRAFTED, 20, season, true, DEFAULT_LEVEL), // Other sons (one for each potential father)

@@ -1,12 +1,12 @@
 import { assert, test } from "vitest";
-import testHelpers from "../../../test/helpers.ts";
+import { resetCache, resetG } from "../../../test/helpers.ts";
 import { finances, player, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 test("store payroll and appropriately assess luxury and minimum payroll taxes for each team", async () => {
-	testHelpers.resetG();
+	resetG();
 
 	// Three teams. One above the luxury payroll, one below the minimum payroll, and one in between.
 	g.setWithoutSavingToDB("numTeams", 3);
@@ -26,7 +26,7 @@ test("store payroll and appropriately assess luxury and minimum payroll taxes fo
 	const teamsDefault = helpers.getTeamsDefault().slice(0, 3);
 	const teams = teamsDefault.map(team.generate);
 
-	await testHelpers.resetCache({
+	await resetCache({
 		players,
 		teamSeasons: [
 			team.genSeasonRow(teamsDefault[0]!),

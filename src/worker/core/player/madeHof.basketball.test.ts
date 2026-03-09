@@ -1,11 +1,11 @@
 import { assert, test } from "vitest";
-import testHelpers from "../../../test/helpers.ts";
+import { resetG } from "../../../test/helpers.ts";
 import { player } from "../index.ts";
 import madeHofBasketball from "./madeHof.basketball.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 test("narrowly make HoF based on dominance factor", () => {
-	testHelpers.resetG();
+	resetG();
 	const p = player.generate(0, 19, 2012, false, DEFAULT_LEVEL);
 	p.stats = [
 		{

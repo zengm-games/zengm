@@ -1,11 +1,11 @@
 import { assert, test } from "vitest";
-import testHelpers from "../../../test/helpers.ts";
+import { resetG } from "../../../test/helpers.ts";
 import player from "./index.ts";
 import { g } from "../../util/index.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 test("pick appropriate player to have a fake age", () => {
-	testHelpers.resetG();
+	resetG();
 	const players: any = [
 		player.generate(0, 19, g.get("season"), false, DEFAULT_LEVEL),
 		player.generate(0, 25, g.get("season"), false, DEFAULT_LEVEL), // Should get filtered out, too old

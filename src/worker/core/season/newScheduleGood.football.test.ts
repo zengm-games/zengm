@@ -1,5 +1,5 @@
 import { assert, beforeAll, test } from "vitest";
-import testHelpers from "../../../test/helpers.ts";
+import { numInArrayEqualTo, resetG } from "../../../test/helpers.ts";
 import newScheduleGood from "./newScheduleGood.ts";
 import { helpers } from "../../util/index.ts";
 
@@ -21,7 +21,7 @@ beforeAll(() => {
 		},
 	}));
 
-	testHelpers.resetG();
+	resetG();
 });
 
 test("schedule 272 games (17 each for 32 teams)", () => {
@@ -85,9 +85,6 @@ test("schedule each team two home games against every team in the same division"
 
 	for (const { tid } of defaultTeams) {
 		assert.strictEqual(Object.values(home[tid]!).length, 3);
-		assert.strictEqual(
-			testHelpers.numInArrayEqualTo(Object.values(home[tid]!), 1),
-			3,
-		);
+		assert.strictEqual(numInArrayEqualTo(Object.values(home[tid]!), 1), 3);
 	}
 });

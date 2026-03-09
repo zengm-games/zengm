@@ -9,7 +9,7 @@ import { bySport, DEFAULT_JERSEY, isSport } from "../../common/index.ts";
 import g from "./g.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 
-const generate = (
+export const generate = (
 	options:
 		| { race?: Race; relative?: undefined }
 		| { race?: undefined; relative?: FaceConfig } = {},
@@ -73,7 +73,7 @@ const generate = (
 	return face;
 };
 
-const upgrade = async (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
+export const upgrade = async (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
 	// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 	if (!p.face || !p.face.accessories) {
 		// @ts-expect-error
@@ -81,9 +81,4 @@ const upgrade = async (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
 		p.face = generate();
 		await idb.cache.players.put(p);
 	}
-};
-
-export default {
-	generate,
-	upgrade,
 };

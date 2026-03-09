@@ -3,16 +3,16 @@ import GameSim from "./index.ts";
 import { player, team } from "../index.ts";
 import loadTeams from "../game/loadTeams.ts";
 import { g, helpers } from "../../util/index.ts";
-import testHelpers from "../../../test/helpers.ts";
+import { resetCache, resetG } from "../../../test/helpers.ts";
 import Play from "./Play.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import { range } from "../../../common/utils.ts";
 
 export const genTwoTeams = async () => {
-	testHelpers.resetG();
+	resetG();
 	g.setWithoutSavingToDB("season", 2013);
 	const teamsDefault = helpers.getTeamsDefault().slice(0, 2);
-	await testHelpers.resetCache({
+	await resetCache({
 		players: [
 			...range(50).map(() => player.generate(0, 25, 2010, true, DEFAULT_LEVEL)),
 			...range(50).map(() => player.generate(1, 25, 2010, true, DEFAULT_LEVEL)),

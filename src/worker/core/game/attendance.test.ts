@@ -1,5 +1,5 @@
 import { assert, beforeAll, test } from "vitest";
-import testHelpers from "../../../test/helpers.ts";
+import { resetCache, resetG } from "../../../test/helpers.ts";
 import {
 	getActualAttendance,
 	getAdjustedTicketPrice,
@@ -10,12 +10,12 @@ import team from "../team/index.ts";
 import { helpers } from "../../util/index.ts";
 
 beforeAll(async () => {
-	testHelpers.resetG();
+	resetG();
 
 	const teamsDefault = helpers.getTeamsDefault().slice(0, 3);
 	const teams = teamsDefault.map(team.generate);
 
-	await testHelpers.resetCache({
+	await resetCache({
 		teams,
 	});
 });

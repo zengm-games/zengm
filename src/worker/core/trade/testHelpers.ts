@@ -1,15 +1,15 @@
 import { g } from "../../util/index.ts";
-import testHelpers from "../../../test/helpers.ts";
+import { resetCache, resetG } from "../../../test/helpers.ts";
 import { player, trade } from "../index.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 const beforeTests = async () => {
-	testHelpers.resetG();
+	resetG();
 
 	g.setWithoutSavingToDB("numTeams", 3);
 	g.setWithoutSavingToDB("numActiveTeams", 3);
 
-	await testHelpers.resetCache({
+	await resetCache({
 		players: [
 			// Two players per team
 			player.generate(0, 30, 2017, true, DEFAULT_LEVEL),

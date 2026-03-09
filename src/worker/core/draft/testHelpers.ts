@@ -1,6 +1,6 @@
 import { assert } from "vitest";
 import sampleTiebreakers from "../../../test/fixtures/sampleTiebreakers.ts";
-import testHelpers from "../../../test/helpers.ts";
+import { resetCache, resetG } from "../../../test/helpers.ts";
 import { draft } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
@@ -15,8 +15,8 @@ const getDraftTids = async () => {
 };
 
 const loadTeamSeasons = async () => {
-	testHelpers.resetG();
-	await testHelpers.resetCache();
+	resetG();
+	await resetCache();
 	g.setWithoutSavingToDB("draftType", "nba1994");
 
 	for (const st of sampleTiebreakers) {

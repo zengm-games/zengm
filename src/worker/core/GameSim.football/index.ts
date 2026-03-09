@@ -1395,10 +1395,11 @@ class GameSim extends GameSimBase {
 			return undefined;
 		};
 
+		// Icing usually happens if a team has more than 1 timeout. Does not usually happen with only 1 timeout.
 		const iceFieldGoalTimeout = () => {
 			const DEFENSE_TIMEOUT_PROBABILITY = 0.8;
 			if (
-				(playType === "fieldGoalLate" || "fieldGoal") &&
+				(playType === "fieldGoalLate" || playType === "fieldGoal") &&
 				!teamHasPossession &&
 				timeRemaining < 0.5
 			) {
@@ -1407,6 +1408,19 @@ class GameSim extends GameSimBase {
 					: undefined;
 			}
 			return undefined;
+		};
+
+		// Offenses usually call a timeout when the amount of time is < 10 second, and they have the option to stop the clock, to win off of a field goal.
+		// This scenario we need to check IF teamHasPossession, AND timeRemaining is low, AND the playType is a field goal attempt, let time trickle down to 4 seconds, and then call a timeout.
+		const prepareForFieldGoalTimeout = () => {
+			if (
+				(playType === "fieldGoalLate" &&
+					teamHasPossession &&
+					timeRemaining < 0.5) ||
+				(playType === "fieldGoal" && teamHasPossession && timeRemaining < 0.1)
+			) {
+				return randomChanceTimeout < 0.9 ? "other" : undefined;
+			}
 		};
 
 		const clockManagementTimeout = () => {

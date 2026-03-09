@@ -1,237 +1,117 @@
-import Account from "./Account/index.tsx";
-import AccountUpdateCard from "./AccountUpdateCard.tsx";
-import Achievements from "./Achievements.tsx";
-import AdvancedPlayerSearch from "./AdvancedPlayerSearch.tsx";
-import AllStar from "./AllStar.tsx";
-import AllStarDunk from "./AllStarDunk.tsx";
-import AllStarHistory from "./AllStarHistory.tsx";
-import AllStarTeams from "./AllStarTeams/index.tsx";
-import AllStarThree from "./AllStarThree.tsx";
-import AutoExpand from "./AutoExpand.tsx";
-import AutoRelocate from "./AutoRelocate.tsx";
-import AwardRaces from "./AwardRaces.tsx";
-import AwardsRecords from "./AwardsRecords.tsx";
-import Colleges from "./Colleges.tsx";
-import ComparePlayers from "./ComparePlayers/index.tsx";
-import Countries from "./Countries.tsx";
-import CustomizePlayer from "./CustomizePlayer/index.tsx";
-import DailySchedule from "./DailySchedule.tsx";
-import DangerZone from "./DangerZone/index.tsx";
-import Dashboard from "./Dashboard.tsx";
-import DefaultNewLeagueSettings from "./DefaultNewLeagueSettings/index.tsx";
-import DeleteOldData from "./DeleteOldData.tsx";
-import Depth from "./Depth.tsx";
-import Draft from "./Draft/index.tsx";
-import DraftHistory from "./DraftHistory.tsx";
-import DraftLottery from "./DraftLottery.tsx";
-import DraftPicks from "./DraftPicks.tsx";
-import DraftScouting from "./DraftScouting/index.tsx";
-import DraftTeamHistory from "./DraftTeamHistory.tsx";
-import Dropbox from "./Dropbox.tsx";
-import EditAwards from "./EditAwards.tsx";
-import Exhibition from "./Exhibition.tsx";
-import ExhibitionGame from "./ExhibitionGame.tsx";
-import ExpansionDraft from "./ExpansionDraft.tsx";
-import ExportLeague from "./ExportLeague.tsx";
-import ExportPlayers from "./ExportPlayers.tsx";
-import ExportStats from "./ExportStats.tsx";
-import FantasyDraft from "./FantasyDraft.tsx";
-import FreeAgents from "./FreeAgents.tsx";
-import Frivolities from "./Frivolities.tsx";
-import FrivolitiesDraftClasses from "./FrivolitiesDraftClasses.tsx";
-import FrivolitiesDraftPosition from "./FrivolitiesDraftPosition.tsx";
-import FrivolitiesJerseyNumbers from "./FrivolitiesJerseyNumbers.tsx";
-import FrivolitiesTeamSeasons from "./FrivolitiesTeamSeasons.tsx";
-import FrivolitiesTrades from "./FrivolitiesTrades.tsx";
-import GlobalSettings from "./GlobalSettings/index.tsx";
-import GmHistory from "./GmHistory.tsx";
-import GameLog from "./GameLog.tsx";
-import GodMode from "./GodMode.tsx";
-import HallOfFame from "./HallOfFame.tsx";
-import HeadToHead from "./HeadToHead.tsx";
-import HeadToHeadAll from "./HeadToHeadAll.tsx";
-import History from "./History.tsx";
-import HistoryAll from "./HistoryAll.tsx";
-import ImportPlayers from "./ImportPlayers.tsx";
-import ImportPlayersReal from "./ImportPlayersReal.tsx";
-import Inbox from "./Inbox.tsx";
-import Injuries from "./Injuries.tsx";
-import KeyboardShortcuts from "./KeyboardShortcuts.tsx";
-import Leaders from "./Leaders.tsx";
-import LeadersProgressive from "./LeadersProgressive.tsx";
-import LeadersYears from "./LeadersYears.tsx";
-import LeagueDashboard from "./LeagueDashboard/index.tsx";
-import LeagueFinances from "./LeagueFinances.tsx";
-import LeagueStats from "./LeagueStats.tsx";
-import LiveGame from "./LiveGame.tsx";
-import LoginOrRegister from "./LoginOrRegister/index.tsx";
-import LostPassword from "./LostPassword.tsx";
-import ManageConfs from "./ManageConfs.tsx";
-import ManageTeams from "./ManageTeams/index.tsx";
-import Message from "./Message/index.tsx";
-import Most from "./Most/index.tsx";
-import MultiTeamMode from "./MultiTeamMode.tsx";
-import Negotiation from "./Negotiation.tsx";
-import NegotiationList from "./NegotiationList.tsx";
-import NewLeague from "./NewLeague/index.tsx";
-import NewTeam from "./NewTeam.tsx";
-import News from "./News.tsx";
-import Notes from "./Notes.tsx";
-import Player from "./Player/index.tsx";
-import PlayerBios from "./PlayerBios.tsx";
-import PlayerFeats from "./PlayerFeats.tsx";
-import PlayerGameLog from "./PlayerGameLog.tsx";
-import PlayerRatingDists from "./PlayerRatingDists.tsx";
-import PlayerRatings from "./PlayerRatings.tsx";
-import PlayerStatDists from "./PlayerStatDists.tsx";
-import PlayerGraphs from "./PlayerGraphs/index.tsx";
-import PlayerStats from "./PlayerStats.tsx";
-import Playoffs from "./Playoffs.tsx";
-import PowerRankings from "./PowerRankings.tsx";
-import ProtectPlayers from "./ProtectPlayers.tsx";
-import Relatives from "./Relatives.tsx";
-import ResetPassword from "./ResetPassword.tsx";
-import Roster from "./Roster/index.tsx";
-import RosterContinuity from "./RosterContinuity.tsx";
-import SavedTrades from "./SavedTrades.tsx";
-import Schedule from "./Schedule.tsx";
-import ScheduleEditor from "./ScheduleEditor/index.tsx";
-import ScheduledEvents from "./ScheduledEvents.tsx";
-import SeasonPreview from "./SeasonPreview.tsx";
-import Settings from "./Settings/index.tsx";
-import Standings from "./Standings.tsx";
-import TeamFinances from "./TeamFinances.tsx";
-import TeamGraphs from "./TeamGraphs/index.tsx";
-import TeamHistory from "./TeamHistory/index.tsx";
-import TeamRecords from "./TeamRecords.tsx";
-import TeamStatDists from "./TeamStatDists.tsx";
-import TeamStats from "./TeamStats.tsx";
-import TragicDeaths from "./TragicDeaths.tsx";
-import Trade from "./Trade/index.tsx";
-import TradeProposals from "./TradeProposals.tsx";
-import TradeSummary from "./TradeSummary/index.tsx";
-import TradingBlock from "./TradingBlock/index.tsx";
-import Transactions from "./Transactions.tsx";
-import UpcomingFreeAgents from "./UpcomingFreeAgents.tsx";
-import Upgrade65 from "./Upgrade65.tsx";
-import WatchList from "./WatchList.tsx";
-
-export default {
-	Account,
-	AccountUpdateCard,
-	Achievements,
-	AdvancedPlayerSearch,
-	AllStar,
-	AllStarDunk,
-	AllStarHistory,
-	AllStarTeams,
-	AllStarThree,
-	AutoExpand,
-	AutoRelocate,
-	AwardRaces,
-	AwardsRecords,
-	Colleges,
-	ComparePlayers,
-	Countries,
-	CustomizePlayer,
-	DailySchedule,
-	DangerZone,
-	Dashboard,
-	DefaultNewLeagueSettings,
-	DeleteOldData,
-	Depth,
-	Draft,
-	DraftHistory,
-	DraftLottery,
-	DraftPicks,
-	DraftScouting,
-	DraftTeamHistory,
-	Dropbox,
-	EditAwards,
-	Exhibition,
-	ExhibitionGame,
-	ExpansionDraft,
-	ExportLeague,
-	ExportPlayers,
-	ExportStats,
-	FantasyDraft,
-	FreeAgents,
-	Frivolities,
-	FrivolitiesDraftClasses,
-	FrivolitiesDraftPosition,
-	FrivolitiesJerseyNumbers,
-	FrivolitiesTeamSeasons,
-	FrivolitiesTrades,
-	GlobalSettings,
-	GmHistory,
-	GameLog,
-	GodMode,
-	HallOfFame,
-	HeadToHead,
-	HeadToHeadAll,
-	History,
-	HistoryAll,
-	ImportPlayers,
-	ImportPlayersReal,
-	Inbox,
-	Injuries,
-	KeyboardShortcuts,
-	Leaders,
-	LeadersProgressive,
-	LeadersYears,
-	LeagueDashboard,
-	LeagueFinances,
-	LeagueStats,
-	LiveGame,
-	LoginOrRegister,
-	LostPassword,
-	ManageConfs,
-	ManageTeams,
-	Message,
-	Most,
-	MultiTeamMode,
-	Negotiation,
-	NegotiationList,
-	NewLeague,
-	NewTeam,
-	News,
-	Notes,
-	Player,
-	PlayerBios,
-	PlayerFeats,
-	PlayerGameLog,
-	PlayerRatingDists,
-	PlayerRatings,
-	PlayerStatDists,
-	PlayerGraphs,
-	PlayerStats,
-	Playoffs,
-	PowerRankings,
-	ProtectPlayers,
-	Relatives,
-	ResetPassword,
-	Roster,
-	RosterContinuity,
-	SavedTrades,
-	Schedule,
-	ScheduleEditor,
-	ScheduledEvents,
-	SeasonPreview,
-	Settings,
-	Standings,
-	TeamFinances,
-	TeamGraphs,
-	TeamHistory,
-	TeamRecords,
-	TeamStatDists,
-	TeamStats,
-	Trade,
-	TradeProposals,
-	TradeSummary,
-	TradingBlock,
-	TragicDeaths,
-	Transactions,
-	UpcomingFreeAgents,
-	Upgrade65,
-	WatchList,
-};
+export { default as Account } from "./Account/index.tsx";
+export { default as AccountUpdateCard } from "./AccountUpdateCard.tsx";
+export { default as Achievements } from "./Achievements.tsx";
+export { default as AdvancedPlayerSearch } from "./AdvancedPlayerSearch.tsx";
+export { default as AllStar } from "./AllStar.tsx";
+export { default as AllStarDunk } from "./AllStarDunk.tsx";
+export { default as AllStarHistory } from "./AllStarHistory.tsx";
+export { default as AllStarTeams } from "./AllStarTeams/index.tsx";
+export { default as AllStarThree } from "./AllStarThree.tsx";
+export { default as AutoExpand } from "./AutoExpand.tsx";
+export { default as AutoRelocate } from "./AutoRelocate.tsx";
+export { default as AwardRaces } from "./AwardRaces.tsx";
+export { default as AwardsRecords } from "./AwardsRecords.tsx";
+export { default as Colleges } from "./Colleges.tsx";
+export { default as ComparePlayers } from "./ComparePlayers/index.tsx";
+export { default as Countries } from "./Countries.tsx";
+export { default as CustomizePlayer } from "./CustomizePlayer/index.tsx";
+export { default as DailySchedule } from "./DailySchedule.tsx";
+export { default as DangerZone } from "./DangerZone/index.tsx";
+export { default as Dashboard } from "./Dashboard.tsx";
+export { default as DefaultNewLeagueSettings } from "./DefaultNewLeagueSettings/index.tsx";
+export { default as DeleteOldData } from "./DeleteOldData.tsx";
+export { default as Depth } from "./Depth.tsx";
+export { default as Draft } from "./Draft/index.tsx";
+export { default as DraftHistory } from "./DraftHistory.tsx";
+export { default as DraftLottery } from "./DraftLottery.tsx";
+export { default as DraftPicks } from "./DraftPicks.tsx";
+export { default as DraftScouting } from "./DraftScouting/index.tsx";
+export { default as DraftTeamHistory } from "./DraftTeamHistory.tsx";
+export { default as Dropbox } from "./Dropbox.tsx";
+export { default as EditAwards } from "./EditAwards.tsx";
+export { default as Exhibition } from "./Exhibition.tsx";
+export { default as ExhibitionGame } from "./ExhibitionGame.tsx";
+export { default as ExpansionDraft } from "./ExpansionDraft.tsx";
+export { default as ExportLeague } from "./ExportLeague.tsx";
+export { default as ExportPlayers } from "./ExportPlayers.tsx";
+export { default as ExportStats } from "./ExportStats.tsx";
+export { default as FantasyDraft } from "./FantasyDraft.tsx";
+export { default as FreeAgents } from "./FreeAgents.tsx";
+export { default as Frivolities } from "./Frivolities.tsx";
+export { default as FrivolitiesDraftClasses } from "./FrivolitiesDraftClasses.tsx";
+export { default as FrivolitiesDraftPosition } from "./FrivolitiesDraftPosition.tsx";
+export { default as FrivolitiesJerseyNumbers } from "./FrivolitiesJerseyNumbers.tsx";
+export { default as FrivolitiesTeamSeasons } from "./FrivolitiesTeamSeasons.tsx";
+export { default as FrivolitiesTrades } from "./FrivolitiesTrades.tsx";
+export { default as GlobalSettings } from "./GlobalSettings/index.tsx";
+export { default as GmHistory } from "./GmHistory.tsx";
+export { default as GameLog } from "./GameLog.tsx";
+export { default as GodMode } from "./GodMode.tsx";
+export { default as HallOfFame } from "./HallOfFame.tsx";
+export { default as HeadToHead } from "./HeadToHead.tsx";
+export { default as HeadToHeadAll } from "./HeadToHeadAll.tsx";
+export { default as History } from "./History.tsx";
+export { default as HistoryAll } from "./HistoryAll.tsx";
+export { default as ImportPlayers } from "./ImportPlayers.tsx";
+export { default as ImportPlayersReal } from "./ImportPlayersReal.tsx";
+export { default as Inbox } from "./Inbox.tsx";
+export { default as Injuries } from "./Injuries.tsx";
+export { default as KeyboardShortcuts } from "./KeyboardShortcuts.tsx";
+export { default as Leaders } from "./Leaders.tsx";
+export { default as LeadersProgressive } from "./LeadersProgressive.tsx";
+export { default as LeadersYears } from "./LeadersYears.tsx";
+export { default as LeagueDashboard } from "./LeagueDashboard/index.tsx";
+export { default as LeagueFinances } from "./LeagueFinances.tsx";
+export { default as LeagueStats } from "./LeagueStats.tsx";
+export { default as LiveGame } from "./LiveGame.tsx";
+export { default as LoginOrRegister } from "./LoginOrRegister/index.tsx";
+export { default as LostPassword } from "./LostPassword.tsx";
+export { default as ManageConfs } from "./ManageConfs.tsx";
+export { default as ManageTeams } from "./ManageTeams/index.tsx";
+export { default as Message } from "./Message/index.tsx";
+export { default as Most } from "./Most/index.tsx";
+export { default as MultiTeamMode } from "./MultiTeamMode.tsx";
+export { default as Negotiation } from "./Negotiation.tsx";
+export { default as NegotiationList } from "./NegotiationList.tsx";
+export { default as NewLeague } from "./NewLeague/index.tsx";
+export { default as NewTeam } from "./NewTeam.tsx";
+export { default as News } from "./News.tsx";
+export { default as Notes } from "./Notes.tsx";
+export { default as Player } from "./Player/index.tsx";
+export { default as PlayerBios } from "./PlayerBios.tsx";
+export { default as PlayerFeats } from "./PlayerFeats.tsx";
+export { default as PlayerGameLog } from "./PlayerGameLog.tsx";
+export { default as PlayerRatingDists } from "./PlayerRatingDists.tsx";
+export { default as PlayerRatings } from "./PlayerRatings.tsx";
+export { default as PlayerStatDists } from "./PlayerStatDists.tsx";
+export { default as PlayerGraphs } from "./PlayerGraphs/index.tsx";
+export { default as PlayerStats } from "./PlayerStats.tsx";
+export { default as Playoffs } from "./Playoffs.tsx";
+export { default as PowerRankings } from "./PowerRankings.tsx";
+export { default as ProtectPlayers } from "./ProtectPlayers.tsx";
+export { default as Relatives } from "./Relatives.tsx";
+export { default as ResetPassword } from "./ResetPassword.tsx";
+export { default as Roster } from "./Roster/index.tsx";
+export { default as RosterContinuity } from "./RosterContinuity.tsx";
+export { default as SavedTrades } from "./SavedTrades.tsx";
+export { default as Schedule } from "./Schedule.tsx";
+export { default as ScheduleEditor } from "./ScheduleEditor/index.tsx";
+export { default as ScheduledEvents } from "./ScheduledEvents.tsx";
+export { default as SeasonPreview } from "./SeasonPreview.tsx";
+export { default as Settings } from "./Settings/index.tsx";
+export { default as Standings } from "./Standings.tsx";
+export { default as TeamFinances } from "./TeamFinances.tsx";
+export { default as TeamGraphs } from "./TeamGraphs/index.tsx";
+export { default as TeamHistory } from "./TeamHistory/index.tsx";
+export { default as TeamRecords } from "./TeamRecords.tsx";
+export { default as TeamStatDists } from "./TeamStatDists.tsx";
+export { default as TeamStats } from "./TeamStats.tsx";
+export { default as TragicDeaths } from "./TragicDeaths.tsx";
+export { default as Trade } from "./Trade/index.tsx";
+export { default as TradeProposals } from "./TradeProposals.tsx";
+export { default as TradeSummary } from "./TradeSummary/index.tsx";
+export { default as TradingBlock } from "./TradingBlock/index.tsx";
+export { default as Transactions } from "./Transactions.tsx";
+export { default as UpcomingFreeAgents } from "./UpcomingFreeAgents.tsx";
+export { default as Upgrade65 } from "./Upgrade65.tsx";
+export { default as WatchList } from "./WatchList.tsx";

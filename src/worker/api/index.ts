@@ -62,7 +62,7 @@ import {
 	defaultInjuries,
 	defaultTragicDeaths,
 } from "../util/index.ts";
-import views from "../views/index.ts";
+import * as views from "../views/index.ts";
 import type {
 	Conditions,
 	Env,

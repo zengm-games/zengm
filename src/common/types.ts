@@ -1,7 +1,7 @@
 import type { FaceConfig } from "facesjs";
 import type { MouseEvent, ReactNode } from "react";
 import type processInputs from "../worker/api/processInputs.ts";
-import type views from "../worker/views/index.ts";
+import type * as views from "../worker/views/index.ts";
 
 export type NonEmptyArray<T> = [T, ...T[]];
 

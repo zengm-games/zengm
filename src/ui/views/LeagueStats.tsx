@@ -51,11 +51,11 @@ const LeagueStats = ({
 	let actualSuperCols;
 	if (superCols) {
 		actualSuperCols = helpers.deepCopy(superCols);
-		if (actualSuperCols) {
+		if (actualSuperCols?.[0]) {
 			actualSuperCols[0].colspan += 1;
 		}
 
-		if (actualSuperCols) {
+		if (actualSuperCols?.[0]) {
 			actualSuperCols[0].colspan += 1;
 			if (otl) {
 				actualSuperCols[0].colspan += 1;

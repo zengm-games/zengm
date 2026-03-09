@@ -40,21 +40,21 @@ const value = (
 	options.noPot = !!options.noPot;
 	options.fuzz = !!options.fuzz;
 
-	// Current ratings
-	const pr: any = {}; // Start blank, add what we need
-
 	// Latest season
 	const ratings = p.ratings.at(-1)!;
+	const pos = ratings.pos;
 
-	pr.pos = ratings.pos;
+	// Current values, adjusted for fuzz
+	let ovr;
+	let pot;
 
 	// Fuzz?
 	if (options.fuzz) {
-		pr.ovr = fuzzRating(ratings.ovr, ratings.fuzz);
-		pr.pot = fuzzRating(ratings.pot, ratings.fuzz);
+		ovr = fuzzRating(ratings.ovr, ratings.fuzz);
+		pot = fuzzRating(ratings.pot, ratings.fuzz);
 	} else {
-		pr.ovr = ratings.ovr;
-		pr.pot = ratings.pot;
+		ovr = ratings.ovr;
+		pot = ratings.pot;
 	}
 
 	// Normalize ovr/pot, these are values for a typical random players league
@@ -71,15 +71,15 @@ const value = (
 		hockey: 11,
 	});
 	if (options.ovrStd > 0) {
-		pr.ovr =
-			((pr.ovr - options.ovrMean) / options.ovrStd) * defaultOvrStd +
+		ovr =
+			((ovr - options.ovrMean) / options.ovrStd) * defaultOvrStd +
 			defaultOvrMean;
-		pr.pot =
-			((pr.pot - options.ovrMean) / options.ovrStd) * defaultOvrStd +
+		pot =
+			((pot - options.ovrMean) / options.ovrStd) * defaultOvrStd +
 			defaultOvrMean;
 	} else {
-		pr.ovr = pr.ovr - options.ovrMean + defaultOvrMean;
-		pr.pot = pr.pot - options.ovrMean + defaultOvrMean;
+		ovr = ovr - options.ovrMean + defaultOvrMean;
+		pot = pot - options.ovrMean + defaultOvrMean;
 	}
 
 	// From linear regression OVR ~ PER
@@ -88,7 +88,7 @@ const value = (
 
 	// 1. Account for stats (and current ratings if not enough stats)
 	const ps = p.stats.filter((playerStats) => !playerStats.playoffs);
-	let current = pr.ovr;
+	let current = ovr;
 
 	// No stats at all? Just look at ratings more, then.
 	if (isSport("basketball") && ps.length > 0) {
@@ -101,7 +101,7 @@ const value = (
 				current = intercept + slope * ps1.per;
 
 				if (ps1.min < 2000) {
-					current = (current * ps1.min) / 2000 + pr.ovr * (1 - ps1.min / 2000);
+					current = (current * ps1.min) / 2000 + ovr * (1 - ps1.min / 2000);
 				}
 			} else {
 				// Two most recent seasons
@@ -117,24 +117,24 @@ const value = (
 						if (ps1.min + ps2.min < 2000) {
 							current =
 								(current * (ps1.min + ps2.min)) / 2000 +
-								pr.ovr * (1 - (ps1.min + ps2.min) / 2000);
+								ovr * (1 - (ps1.min + ps2.min) / 2000);
 						}
 					}
 				}
 			}
 
-			current = 0.8 * pr.ovr + 0.2 * current; // Include some part of the ratings
+			current = 0.8 * ovr + 0.2 * current; // Include some part of the ratings
 		}
 	}
 
 	// 2. Potential
-	let potential = pr.pot;
+	let potential = pot;
 
 	if (isSport("football")) {
-		if (pr.pos === "QB") {
+		if (pos === "QB") {
 			current *= 1.1;
 			potential *= 1.1;
-		} else if (pr.pos === "K" || pr.pos === "P") {
+		} else if (pos === "K" || pos === "P") {
 			current *= 0.7;
 			potential *= 0.7;
 		}

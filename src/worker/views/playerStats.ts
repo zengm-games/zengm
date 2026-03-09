@@ -1,6 +1,5 @@
 import {
 	bySport,
-	helpers,
 	isSport,
 	PHASE,
 	PLAYER,
@@ -219,15 +218,15 @@ const updatePlayers = async (
 			}
 		}
 
-		let superCols;
+		const superCols = statsTable.superCols;
 		if (inputs.season === "all") {
-			if (statsTable.superCols) {
+			if (superCols?.[0]) {
 				// Account for extra "Season" column
-				superCols = helpers.deepCopy(statsTable.superCols);
-				superCols[0].colspan += 1;
+				superCols[0] = {
+					...superCols[0],
+					colspan: superCols[0].colspan + 1,
+				};
 			}
-		} else {
-			superCols = statsTable.superCols;
 		}
 
 		return {

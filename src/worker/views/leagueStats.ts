@@ -84,7 +84,7 @@ const updateLeagueStats = async (
 
 		// Adjust superCols if ignoreStats removed some
 		const superCols = helpers.deepCopy(statsTable.superCols);
-		if (superCols && lengthBefore !== lengthAfter) {
+		if (superCols?.[0] && lengthBefore !== lengthAfter) {
 			const diff = lengthAfter - lengthBefore;
 			superCols[0].colspan += diff;
 		}

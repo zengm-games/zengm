@@ -8,7 +8,7 @@ const name = workerData?.name ?? "worker";
 const makeWatcher = async () => {
 	const config = rolldownConfig(name, {
 		nodeEnv: "development",
-		postMessage(message: any) {
+		postMessage(message) {
 			parentPort?.postMessage(message);
 		},
 	});

@@ -1,3 +1,4 @@
+import type { SuperCol } from "../ui/components/DataTable/index.tsx";
 import bySport from "./bySport.ts";
 import * as constantsBaseball from "./constants.baseball.ts";
 import * as constantsBasketball from "./constants.basketball.ts";
@@ -142,7 +143,7 @@ const PLAYER_STATS_TABLES = bySport<{
 		name: string;
 		onlyShowIf?: string[];
 		stats: string[];
-		superCols?: any[];
+		superCols?: SuperCol[];
 	};
 }>({
 	baseball: constantsBaseball.PLAYER_STATS_TABLES,
@@ -180,7 +181,7 @@ const TEAM_STATS_TABLES = bySport<
 		{
 			name: string;
 			stats: string[];
-			superCols?: any[];
+			superCols?: SuperCol[];
 		}
 	>
 >({

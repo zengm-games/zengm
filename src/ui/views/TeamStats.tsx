@@ -42,34 +42,34 @@ const TeamStats = ({
 	const basicColNames = ["#", "Team", "stat:gp", "W", "L"];
 	if (otl) {
 		basicColNames.push("OTL");
-		if (superCols) {
+		if (superCols?.[0]) {
 			superCols[0].colspan += 1;
 		}
 	}
 	if (ties) {
 		basicColNames.push("T");
-		if (superCols) {
+		if (superCols?.[0]) {
 			superCols[0].colspan += 1;
 		}
 	}
 	if (usePts) {
 		basicColNames.push("PTS", "PTS%");
-		if (superCols) {
+		if (superCols?.[0]) {
 			superCols[0].colspan += 2;
 		}
 	} else {
 		basicColNames.push("%");
-		if (superCols) {
+		if (superCols?.[0]) {
 			superCols[0].colspan += 1;
 		}
 	}
 	basicColNames.push("AvgAge");
-	if (superCols) {
+	if (superCols?.[0]) {
 		superCols[0].colspan += 1;
 	}
 
 	// Account for # column
-	if (superCols) {
+	if (superCols?.[0]) {
 		superCols[0].colspan += 1;
 	}
 

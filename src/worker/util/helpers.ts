@@ -85,8 +85,8 @@ const calcWinp = ({
 	won,
 }: {
 	lost: number;
-	otl?: any;
-	tied?: any;
+	otl?: number;
+	tied?: number;
 	won: number;
 }) => {
 	const actualOtl = typeof otl !== "number" || Number.isNaN(otl) ? 0 : otl;

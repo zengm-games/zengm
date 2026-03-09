@@ -61,16 +61,3 @@ export type Formation = {
 	off: Partial<Record<Position, number>>;
 	def: Partial<Record<Position, number>>;
 };
-
-// TODO: maybe change the naming of this to be explicit to actions teams can take during their possession (mostly)
-export type teamPlayType =
-	| "fieldGoal"
-	| "punt"
-	| "pass"
-	| "run"
-	| "extraPoint"
-	| "kickoff"
-	| "onsideKick"
-	| "kneel"
-	| "twoPointConversion"
-	| "fieldGoalLate";

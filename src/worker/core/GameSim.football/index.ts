@@ -15,7 +15,6 @@ import type {
 	PlayersOnField,
 	TeamGameSim,
 	Formation,
-	teamPlayType,
 } from "./types.ts";
 import getInjuryRate from "../GameSim.basketball/getInjuryRate.ts";
 import Play, {
@@ -29,7 +28,6 @@ import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
 import type { TeamNum } from "../../../common/types.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
-
 const FIELD_GOAL_DISTANCE_YARDS_ADDED_FROM_SCRIMMAGE = 17;
 
 const ESTIMATED_SECONDS_PER_KNEEL = 42;
@@ -66,6 +64,7 @@ const fatigue = (energy: number, injured: boolean): number => {
 
 	return energy;
 };
+export type TeamPlayType = ReturnType<GameSim["getPlayType"]>;
 
 class GameSim extends GameSimBase {
 	team: [TeamGameSim, TeamGameSim];
@@ -101,7 +100,7 @@ class GameSim extends GameSimBase {
 	awaitingAfterTouchdown = false;
 
 	awaitingAfterSafety = false;
-
+	awaitingFirstPlayOfQuarter = false;
 	awaitingKickoff: TeamNum | undefined;
 	lastHalfAwaitingKickoff: TeamNum;
 
@@ -116,6 +115,8 @@ class GameSim extends GameSimBase {
 	twoMinuteWarningHappened = false;
 
 	currentPlay: Play;
+	// TODO: Why do we need to keep track of the prior play?
+	priorPlay: PlayEvent;
 
 	lngTracker: LngTracker;
 
@@ -979,9 +980,9 @@ class GameSim extends GameSimBase {
 		if (clockAtEndOfPlay > 0 && !twoMinuteWarningHappening) {
 			// Timeouts - small chance at any time
 			if (Math.random() < 0.01) {
-				this.doTimeout(this.o, false, playType);
+				this.doTimeout(this.o, false);
 			} else if (Math.random() < 0.003) {
-				this.doTimeout(this.d, false, playType);
+				this.doTimeout(this.d, false);
 			}
 
 			// Timeouts - late in game when clock is running
@@ -995,19 +996,19 @@ class GameSim extends GameSimBase {
 						if (diff > 0) {
 							// If offense is winning, defense uses timeouts when near the end
 							if (this.clock < 2.5) {
-								this.doTimeout(this.d, true, playType);
+								this.doTimeout(this.d, true);
 							}
 						} else {
 							if (this.clock < 1.5) {
 								// If offense is losing or tied, offense uses timeouts when even nearer the end
-								this.doTimeout(this.o, true, playType);
+								this.doTimeout(this.o, true);
 							}
 						}
 					}
 				} else {
 					// Before halftime, less aggressive and don't care about score
 					if (this.clock < 1.5) {
-						this.doTimeout(this.o, true, playType);
+						this.doTimeout(this.o, true);
 					}
 				}
 			}
@@ -1048,6 +1049,7 @@ class GameSim extends GameSimBase {
 			dtClockRunning = helpers.bound(clockAtEndOfPlay - 2, 0, Infinity);
 		}
 
+		// TODO: Modify this, to call the decrement clock function
 		// Clock
 		dt += dtClockRunning;
 		this.clock -= dt;
@@ -1347,7 +1349,7 @@ class GameSim extends GameSimBase {
 		if (this.timeouts[t] <= 0) {
 			return undefined;
 		}
-
+		let finalDecision = undefined;
 		const randomChanceTimeout = Math.random();
 		const RED_ZONE_DISTANCE = 20;
 		const diff = this.team[t].stat.pts - this.team[1 - t].stat.pts;
@@ -1355,7 +1357,29 @@ class GameSim extends GameSimBase {
 		const inFinalPeriod = quarter >= this.numPeriods;
 		const inPeriodBeforeHalftime = quarter === Math.ceil(this.numPeriods / 2);
 		const clockRunning = this.isClockRunning;
+		const redZonePlayCallTimeout = () => {
+			if (currentDown >= 3 && chance < 0.08) {
+				return "other";
+			}
+			return undefined;
+		};
+		const fourthDownDecisionTimeout = () => {
+			if (currentDown === 4 && chance < 0.15) {
+				return "other";
+			}
+			return undefined;
+		};
 
+		const iceFieldGoalTimeout = () => {
+			if (
+				(playType === "fieldGoalLate" || "fieldGoal") &&
+				!teamHasPossession &&
+				timeRemaining < 0.5
+			) {
+				return randomChanceTimeout < 0.8 ? "other" : undefined;
+			}
+		};
+		const clockManagementTimeout = () => {};
 		// BEFORE TWO MINUTE WARNING
 		// Small random chance of timeout due to:
 		// - playcall confusion
@@ -1363,6 +1387,7 @@ class GameSim extends GameSimBase {
 		// - avoiding delay of game
 		if (!twoMinuteWarning && !ONE_SCORE_GAME) {
 			const OFFENSE_TIMEOUT_PROBABILITY = 0.01;
+			// - Include ONE_SCORE_GAME variable here? Otherwise we cannot reach the other flows.
 			const DEFENSE_TIMEOUT_PROBABILITY = 0.003;
 
 			const prob = teamHasPossession
@@ -1375,9 +1400,7 @@ class GameSim extends GameSimBase {
 		// RED ZONE PLAYCALL TIMEOUT
 		// Offense may want correct playcall near endzone
 		if (teamHasPossession && distance <= RED_ZONE_DISTANCE && ONE_SCORE_GAME) {
-			if (currentDown >= 3 && randomChanceTimeout < 0.08) {
-				return "other";
-			}
+			redZonePlayCallTimeout(randomChanceTimeout);
 		}
 
 		// 4TH DOWN DECISION TIMEOUT
@@ -1394,9 +1417,7 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		// -------------------------
 		// CLOCK MANAGEMENT
-		// -------------------------
 
 		if (inFinalPeriod) {
 			if (clockRunning) {
@@ -1416,21 +1437,11 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		// -------------------------
 		// END OF HALF FIELD GOAL ICING
-		// -------------------------
 
 		if (inPeriodBeforeHalftime) {
-			if (
-				playType === "fieldGoal" &&
-				!teamHasPossession &&
-				timeRemaining < 0.5
-			) {
-				return randomChanceTimeout < 0.8 ? "other" : undefined;
-			}
 		}
-
-		return undefined;
+		return finalDecision;
 	}
 	doTimeout(t: TeamNum, toStopClock: boolean) {
 		if (this.timeouts[t] <= 0) {
@@ -2124,6 +2135,7 @@ class GameSim extends GameSimBase {
 			qb,
 			defender: p,
 			ydsReturn: yds,
+			// TODO: THIS IS WHAT WE ARE LOOKING FOR, A POSSESSION CHANGE!
 		});
 
 		let fumble = false;
@@ -2879,6 +2891,7 @@ class GameSim extends GameSimBase {
 						power
 				: undefined;
 		return random.choice(players, weightFunc);
+		// If there is an injury, we can call an injury timeout if possible
 	}
 
 	// Pass undefined as p for some team-only stats

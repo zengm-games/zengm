@@ -2114,7 +2114,10 @@ class GameSim extends GameSimBase {
 
 	probSack(qb: PlayerGameSim, pbwFactor: number) {
 		return (
-			0.1551 - 0.06247 * qb.compositeRating.avoidingSacks - 0.05538 * pbwFactor
+			(0.1551 -
+				0.06247 * qb.compositeRating.avoidingSacks -
+				0.05538 * pbwFactor) *
+			g.get("sackFactor")
 		);
 	}
 

@@ -1628,6 +1628,10 @@ const afterDBStream = async ({
 
 		// Auto sort rosters
 		for (const t of teams) {
+			if (t.disabled) {
+				continue;
+			}
+
 			// If league file has players with roster order set, don't auto sort even if skipNewPhase is false
 			if (
 				!extraFromStream.teamHasRosterOrder.has(t.tid) ||

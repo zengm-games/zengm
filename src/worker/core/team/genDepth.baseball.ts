@@ -51,14 +51,7 @@ const sortBattingOrder = (
 		};
 	}[],
 ) => {
-	let hasDh;
-	if (starters.length === 9) {
-		hasDh = true;
-	} else if (starters.length === 8) {
-		hasDh = false;
-	} else {
-		throw new Error("Should never happen");
-	}
+	const hasDh = starters.length === 9;
 
 	const availablePlayers = new Set(starters);
 
@@ -79,11 +72,9 @@ const sortBattingOrder = (
 				p.ratings.eye * weights.eye +
 				p.ratings.spd * weights.spd,
 		);
-		if (!p) {
-			throw new Error("Should never happen");
+		if (p) {
+			availablePlayers.delete(p);
 		}
-
-		availablePlayers.delete(p);
 
 		return p;
 	};
@@ -114,7 +105,7 @@ const sortBattingOrder = (
 		lineup[7] = pluckBestPlayer(bestHitter);
 	}
 
-	return lineup;
+	return lineup.filter((x) => x !== undefined);
 };
 
 const findMaxBy = <T>(

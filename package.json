@@ -92,7 +92,6 @@
 		"@nkzw/eslint-config": "3.3.0",
 		"@restart/ui": "1.9.4",
 		"@rolldown/pluginutils": "1.0.0-rc.8",
-		"@rollup/plugin-terser": "1.0.0",
 		"@types/d3-dsv": "3.0.7",
 		"@types/d3-scale": "4.0.9",
 		"@types/google-publisher-tag": "1.20260216.0",

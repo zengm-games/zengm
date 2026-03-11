@@ -4,7 +4,6 @@ import type { BuildOptions } from "rolldown";
 import { getSport } from "./getSport.ts";
 // @ts-expect-error
 import blacklist from "rollup-plugin-blacklist";
-import terser from "@rollup/plugin-terser";
 import { visualizer } from "rollup-plugin-visualizer";
 import { sportFunctions } from "./rolldownPlugins/sportFunctions.ts";
 
@@ -62,14 +61,7 @@ export const rolldownConfig = (
 			},
 		});
 	} else if (envOptions.nodeEnv === "production") {
-		plugins.push(
-			blacklist(envOptions.blacklistOptions),
-			terser({
-				format: {
-					comments: false,
-				},
-			}),
-		);
+		plugins.push(blacklist(envOptions.blacklistOptions));
 		if (process.env.VISUALIZE) {
 			plugins.push(
 				visualizer({

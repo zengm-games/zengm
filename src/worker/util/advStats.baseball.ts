@@ -271,7 +271,8 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 					if (po !== undefined && po > 0) {
 						const poTeam =
 							pos === "C" ? t.stats.po[j]! - t.stats.soPit : t.stats.po[j]!;
-						rfld[i]![j] = (po / poTeam) * teamFieldingRuns[t.tid]![pos];
+						rfld[i]![j] =
+							helpers.ratio(po, poTeam) * teamFieldingRuns[t.tid]![pos];
 					}
 				}
 			}

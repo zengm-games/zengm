@@ -344,7 +344,7 @@ const writePlayerStats = async (
 				const addNewStatsRow =
 					!statsRowIsCurrent(ps, t.id, playoffs) && !allStarGame;
 				if (addNewStatsRow) {
-					player.addStatsRow(p2, playoffs);
+					player.addStatsRow(p2, g.get("season"), playoffs);
 					ps = p2.stats.at(-1);
 				}
 

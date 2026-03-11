@@ -1,5 +1,5 @@
 import stats from "./stats.ts";
-import { g, helpers } from "../../util/index.ts";
+import { helpers } from "../../util/index.ts";
 import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
 import { isSport } from "../../../common/index.ts";
 import statsRowIsCurrent from "./statsRowIsCurrent.ts";
@@ -17,7 +17,8 @@ import statsRowIsCurrent from "./statsRowIsCurrent.ts";
  */
 const addStatsRow = (
 	p: Player | PlayerWithoutKey,
-	playoffs: boolean = false,
+	season: number,
+	playoffs: boolean,
 ) => {
 	// Never add duplicate row, such as player beign signed as FA by team who released him
 	const ps = p.stats.at(-1);
@@ -28,7 +29,7 @@ const addStatsRow = (
 
 	const statsRow: any = {
 		playoffs,
-		season: g.get("season"),
+		season,
 		tid: p.tid,
 		yearsWithTeam: 1,
 	};
@@ -61,11 +62,7 @@ const addStatsRow = (
 
 	// Calculate yearsWithTeam
 	const prevStats = p.stats.findLast((row) => !row.playoffs);
-	if (
-		prevStats &&
-		prevStats.season === g.get("season") - 1 &&
-		prevStats.tid === p.tid
-	) {
+	if (prevStats && prevStats.season === season - 1 && prevStats.tid === p.tid) {
 		statsRow.yearsWithTeam = prevStats.yearsWithTeam + 1;
 	}
 

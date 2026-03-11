@@ -123,7 +123,7 @@ const getSeasonInfoLeague = async ({
 			p.stats.findLast((row) => row.season === season);
 		if (isCurrentOngoingSeason && (!seasonStats || seasonStats.tid !== p.tid)) {
 			// For current season, use p.tid as source of truth, to handle players who may not have a stats row yet
-			player.addStatsRow(p, false);
+			player.addStatsRow(p, season, false);
 			seasonStats = p.stats.at(-1);
 		}
 		if (!seasonStats) {

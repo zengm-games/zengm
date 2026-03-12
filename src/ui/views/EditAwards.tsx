@@ -110,7 +110,8 @@ const EditAwards = ({
 				type == "oroy" ||
 				type == "droy" ||
 				type == "poy" ||
-				type == "rpoy"
+				type == "rpoy" ||
+				type === "opoy"
 			) {
 				// All these == and != undefined checks are because when exporting a league, undefined is changed to null
 				if (p?.pid == undefined) {

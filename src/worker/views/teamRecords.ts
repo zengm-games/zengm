@@ -52,6 +52,7 @@ const tallyAwards = (
 ) => {
 	const teamAwards = {
 		mvp: 0,
+		opoy: 0,
 		dpoy: 0,
 		dfoy: 0,
 		goy: 0,
@@ -81,48 +82,52 @@ const tallyAwards = (
 			continue;
 		}
 
-		if (a.mvp && a.mvp.tid === tid) {
+		if (a.mvp?.tid === tid) {
 			teamAwards.mvp++;
 		}
 
-		if (a.dpoy && a.dpoy.tid === tid) {
+		if (a.opoy?.tid === tid) {
+			teamAwards.opoy++;
+		}
+
+		if (a.dpoy?.tid === tid) {
 			teamAwards.dpoy++;
 		}
 
-		if (a.dfoy && a.dfoy.tid === tid) {
+		if (a.dfoy?.tid === tid) {
 			teamAwards.dfoy++;
 		}
 
-		if (a.goy && a.goy.tid === tid) {
+		if (a.goy?.tid === tid) {
 			teamAwards.goy++;
 		}
 
-		if (a.smoy && a.smoy.tid === tid) {
+		if (a.smoy?.tid === tid) {
 			teamAwards.smoy++;
 		}
 
-		if (a.mip && a.mip.tid === tid) {
+		if (a.mip?.tid === tid) {
 			teamAwards.mip++;
 		}
 
-		if (a.roy && a.roy.tid === tid) {
+		if (a.roy?.tid === tid) {
 			teamAwards.roy++;
 		}
 
-		if (a.oroy && a.oroy.tid === tid) {
+		if (a.oroy?.tid === tid) {
 			teamAwards.oroy++;
 		}
 
-		if (a.droy && a.droy.tid === tid) {
+		if (a.droy?.tid === tid) {
 			teamAwards.droy++;
 		}
 
 		if (isSport("baseball")) {
-			if (a.poy && a.poy.tid === tid) {
+			if (a.poy?.tid === tid) {
 				teamAwards.poy++;
 			}
 
-			if (a.rpoy && a.rpoy.tid === tid) {
+			if (a.rpoy?.tid === tid) {
 				teamAwards.rpoy++;
 			}
 		}
@@ -335,6 +340,7 @@ const sumRecordsFor = (name: string, teams: Team[]) => {
 		"finals",
 		"titles",
 		"mvp",
+		"opoy",
 		"dpoy",
 		"dfoy",
 		"goy",

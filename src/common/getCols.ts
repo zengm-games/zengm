@@ -3653,6 +3653,12 @@ const cols: {
 		sortType: "number",
 		title: "BRC",
 	},
+	"count:opoy": {
+		desc: "Offensive Player of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "OPOY",
+	},
 	"count:dpoy": {
 		desc: "Defensive Player of the Year",
 		sortSequence: ["desc", "asc"],
@@ -3718,6 +3724,10 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 		title: "RPOY",
+	},
+	"award:opoy": {
+		desc: "Offensive Player of the Year",
+		title: "OPOY",
 	},
 	"award:dpoy": {
 		desc: "Defensive Player of the Year",

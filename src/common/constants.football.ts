@@ -929,10 +929,18 @@ const RATINGS: RatingKey[] = [
 	"pac",
 ];
 
-const SIMPLE_AWARDS = ["mvp", "dpoy", "oroy", "droy", "finalsMvp"] as const;
+const SIMPLE_AWARDS = [
+	"mvp",
+	"opoy",
+	"dpoy",
+	"oroy",
+	"droy",
+	"finalsMvp",
+] as const;
 
 const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
+	opoy: "Offensive Player of the Year",
 	dpoy: "Defensive Player of the Year",
 	oroy: "Offensive Rookie of the Year",
 	droy: "Defensive Rookie of the Year",

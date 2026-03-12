@@ -52,6 +52,7 @@ const categories = bySport({
 	],
 	football: [
 		"mvp",
+		"opoy",
 		"dpoy",
 		"oroy",
 		"droy",

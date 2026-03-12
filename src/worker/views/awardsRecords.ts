@@ -196,6 +196,10 @@ const optionsTmp = bySport({
 			key: "finals_mvp",
 		},
 		{
+			val: "Offensive Player of the Year",
+			key: "opoy",
+		},
+		{
 			val: "Defensive Player of the Year",
 			key: "dpoy",
 		},

@@ -1,5 +1,18 @@
+redesign season summary
+- include stat leaders
+- ASG MVP
+- retired players list should highlight players who ever played for your team https://old.reddit.com/r/BasketballGM/comments/1joi4m5/monthly_suggestions_thread/mkz8q9k/
+- add more logos and pictures and stuff
+
+trading away players should not change willingness to sign of existing free agents https://old.reddit.com/r/BasketballGM/comments/1qsjzds/monthly_suggestions_thread/o5rge16/
+- somehow freeze that mood component when a player becomes a free agent
+  - could save state in player object
+    - state could be the number of players traded away for each team
+- any other components that should be frozen?
+
 FBGM after PBW/RBW update, TE and RB blocking doesn't do anything. does that matter? was it even noticeable before, when it was a pretty small factor?
 - might want to make RB matter in pass blocking and TE matter in run blocking, more than they did previously
+- could make explicit offense/defense blocking matchups, and then track blocking stats for RB/TE too
 
 in play by play, scoring/made FG/3PT streak like on the real app, and how long a run is https://discord.com/channels/290013534023057409/1476936717733728298/1477098494866096374
 
@@ -21,12 +34,6 @@ when creating a new league, we don't know numActiveTeams, which gets propagated 
 Navigation API
 - can integrate with browser loading indicator
 - Chrome 102, Firefox 147, Safari 26.2
-
-trading away players should not change willingness to sign of existing free agents https://old.reddit.com/r/BasketballGM/comments/1qsjzds/monthly_suggestions_thread/o5rge16/
-- somehow freeze that mood component when a player becomes a free agent
-  - could save state in player object
-    - state could be the number of players traded away for each team
-- any other components that should be frozen?
 
 show projected pick number in more places, like anywhere a realized pick number is shown https://old.reddit.com/r/BasketballGM/comments/1qsjzds/monthly_suggestions_thread/o2x0kao/
 - currently only on Draft Picks page
@@ -412,7 +419,6 @@ HoF should highlight your team like GM History, not your current franchise https
 - or make it configurable
 - would need to process on worker, add a flag to player object
 - other pages too?
-  - retired players list should highlight players who ever played for your team https://old.reddit.com/r/BasketballGM/comments/1joi4m5/monthly_suggestions_thread/mkz8q9k/
 
 make clone player button a dropdown that lets you pick current season or a past season https://old.reddit.com/r/BasketballGM/comments/1joi4m5/monthly_suggestions_thread/moikegn/
 

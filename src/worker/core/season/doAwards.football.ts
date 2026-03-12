@@ -8,11 +8,11 @@ import {
 	saveAwardsByPlayer,
 } from "./awards.ts";
 import { idb } from "../../db/index.ts";
-import { g } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import type { Conditions, PlayerFiltered } from "../../../common/types.ts";
 
 import type { AwardPlayer, Awards } from "../../../common/types.football.ts";
-import { orderBy } from "../../../common/utils.ts";
+import { groupByUnique, orderBy } from "../../../common/utils.ts";
 
 const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 	return {
@@ -26,7 +26,7 @@ const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 
 const getTopByPos = (
 	players: PlayerFiltered[],
-	positions?: string[],
+	positions?: Set<string>,
 	usedPids?: Set<number>,
 ) => {
 	for (const p of players) {
@@ -36,7 +36,7 @@ const getTopByPos = (
 			}
 		}
 
-		if (positions === undefined || positions.includes(p.pos)) {
+		if (positions === undefined || positions.has(p.pos)) {
 			if (usedPids) {
 				usedPids.add(p.pid);
 			}
@@ -54,91 +54,91 @@ export const makeTeams = (
 	const usedPids = new Set<number>();
 	const slots = [
 		{
-			positions: ["QB"],
+			positions: new Set(["QB"]),
 			players: playersOffense,
 		},
 		{
-			positions: ["RB"],
+			positions: new Set(["RB"]),
 			players: playersOffense,
 		},
 		{
-			positions: ["RB", "WR"],
+			positions: new Set(["RB", "WR"]),
 			players: playersOffense,
 		},
 		{
-			positions: ["WR"],
+			positions: new Set(["WR"]),
 			players: playersOffense,
 		},
 		{
-			positions: ["WR"],
+			positions: new Set(["WR"]),
 			players: playersOffense,
 		},
 		{
-			positions: ["TE"],
+			positions: new Set(["TE"]),
 			players: playersOffense,
 		},
 		{
-			positions: ["OL"],
+			positions: new Set(["OL"]),
 			players: playersOffense,
 		},
 		{
-			positions: ["OL"],
+			positions: new Set(["OL"]),
 			players: playersOffense,
 		},
 		{
-			positions: ["OL"],
+			positions: new Set(["OL"]),
 			players: playersOffense,
 		},
 		{
-			positions: ["OL"],
+			positions: new Set(["OL"]),
 			players: playersOffense,
 		},
 		{
-			positions: ["OL"],
+			positions: new Set(["OL"]),
 			players: playersOffense,
 		},
 		{
-			positions: ["DL"],
+			positions: new Set(["DL"]),
 			players: playersDefense,
 		},
 		{
-			positions: ["DL"],
+			positions: new Set(["DL"]),
 			players: playersDefense,
 		},
 		{
-			positions: ["DL"],
+			positions: new Set(["DL"]),
 			players: playersDefense,
 		},
 		{
-			positions: ["DL"],
+			positions: new Set(["DL"]),
 			players: playersDefense,
 		},
 		{
-			positions: ["LB"],
+			positions: new Set(["LB"]),
 			players: playersDefense,
 		},
 		{
-			positions: ["LB"],
+			positions: new Set(["LB"]),
 			players: playersDefense,
 		},
 		{
-			positions: ["LB"],
+			positions: new Set(["LB"]),
 			players: playersDefense,
 		},
 		{
-			positions: ["S"],
+			positions: new Set(["S"]),
 			players: playersDefense,
 		},
 		{
-			positions: ["S"],
+			positions: new Set(["S"]),
 			players: playersDefense,
 		},
 		{
-			positions: ["CB"],
+			positions: new Set(["CB"]),
 			players: playersDefense,
 		},
 		{
-			positions: ["CB"],
+			positions: new Set(["CB"]),
 			players: playersDefense,
 		},
 	];
@@ -305,6 +305,9 @@ const getRealFinalsMvp = async (
 };
 
 const SKILL_POSITIONS = new Set(["QB", "RB", "WR", "TE"]);
+const DEFENSIVE_POSITIONS = new Set(["DL", "LB", "S", "CB"]);
+const OFFENSIVE_POSITIONS = new Set(["QB", "RB", "WR", "TE", "OL"]);
+
 export const mvpScore = (p: PlayerFiltered) => {
 	const posMultiplier = SKILL_POSITIONS.has(p.pos) ? 1.4 : 1;
 	return posMultiplier * p.currentStats.av;
@@ -417,6 +420,40 @@ const doAwards = async (conditions: Conditions) => {
 		},
 		players,
 	);
+	const mvp = getTopByPos(mvpPlayers);
+
+	let opoy;
+	if (mvp) {
+		if (DEFENSIVE_POSITIONS.has(mvp.pos)) {
+			// MVP is a defensive player - OPOY is best offensive player
+			opoy = getTopByPos(mvpPlayers, OFFENSIVE_POSITIONS);
+		} else {
+			// MVP is an offensive player - OPOY is next guy up (but never both QBs) unless the MVP is way better
+			if (mvp.pos === "QB") {
+				opoy = getTopByPos(mvpPlayers, new Set(["RB", "WR", "TE", "OL"]));
+			} else {
+				opoy = getTopByPos(mvpPlayers, OFFENSIVE_POSITIONS, new Set([mvp.pid]));
+			}
+
+			if (opoy) {
+				// Give OPOY to MVP if he is way better than the other option for OPOY
+				const playersByPid = groupByUnique(mvpPlayers, "pid");
+				const ratio =
+					mvpScore(playersByPid[mvp.pid]) / mvpScore(playersByPid[opoy.pid]);
+
+				// Since generally it's harder for a non-QB to win MVP, make the cutoff for them winning MVP and OPOY lower, since it's more likely that they only narrowly won MVP
+				const cutoff = mvp.pos === "QB" ? 1.5 : 1.25;
+
+				if (ratio > cutoff) {
+					opoy = helpers.deepCopy(mvp);
+				}
+			} else {
+				// Somehow nobody besides the MVP exists?
+				opoy = helpers.deepCopy(mvp);
+			}
+		}
+	}
+
 	const dpoyPlayers = getTopPlayers(
 		{
 			amount: Infinity,
@@ -424,8 +461,8 @@ const doAwards = async (conditions: Conditions) => {
 		},
 		players,
 	);
-	const mvp = getTopByPos(mvpPlayers);
-	const dpoy = getTopByPos(dpoyPlayers, ["DL", "LB", "S", "CB"]);
+	const dpoy = getTopByPos(dpoyPlayers, DEFENSIVE_POSITIONS);
+
 	const allLeague = makeTeams(mvpPlayers, dpoyPlayers);
 
 	const oroyPlayers = getTopPlayers(
@@ -436,7 +473,7 @@ const doAwards = async (conditions: Conditions) => {
 		},
 		players,
 	);
-	const oroy = getTopByPos(oroyPlayers, ["QB", "RB", "WR", "TE", "OL"]);
+	const oroy = getTopByPos(oroyPlayers, OFFENSIVE_POSITIONS);
 
 	const droyPlayers = getTopPlayers(
 		{
@@ -446,7 +483,7 @@ const doAwards = async (conditions: Conditions) => {
 		},
 		players,
 	);
-	const droy = getTopByPos(droyPlayers, ["DL", "LB", "S", "CB"]);
+	const droy = getTopByPos(droyPlayers, DEFENSIVE_POSITIONS);
 
 	const allRookie = makeTeams(oroyPlayers, droyPlayers, true);
 	let finalsMvp;
@@ -465,6 +502,7 @@ const doAwards = async (conditions: Conditions) => {
 		bestRecord,
 		bestRecordConfs,
 		mvp,
+		opoy,
 		dpoy,
 		oroy,
 		droy,

@@ -136,6 +136,7 @@ export type Awards = {
 	droy: AwardPlayer | undefined;
 	allRookie: (AwardPlayer | undefined)[];
 	mvp: AwardPlayer | undefined;
+	opoy: AwardPlayer | undefined;
 	dpoy: AwardPlayer | undefined;
 	allLeague: [
 		{

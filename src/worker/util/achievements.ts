@@ -1096,7 +1096,7 @@ const achievements: Achievement[] = [
 			basketball:
 				"Players on your team win MVP, DPOY, SMOY, MIP, ROY, and Finals MVP in the same season.",
 			football:
-				"Players on your team win MVP, DPOY, OROY, DROY, and Finals MVP in the same season.",
+				"Players on your team win MVP, OPOY, DPOY, OROY, DROY, and Finals MVP in the same season.",
 			hockey:
 				"Players on your team win MVP, DPOY, DFOY, GOY, ROY, and Finals MVP in the same season",
 		}),
@@ -1126,6 +1126,7 @@ const achievements: Achievement[] = [
 				football:
 					awards &&
 					awards.mvp?.tid === userTid &&
+					awards.opoy?.tid === userTid &&
 					awards.dpoy?.tid === userTid &&
 					awards.oroy?.tid === userTid &&
 					awards.droy?.tid === userTid &&

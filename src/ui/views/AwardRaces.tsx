@@ -35,7 +35,7 @@ const AwardRaces = ({
 			<MoreLinks type="awards" page="award_races" season={season} />
 
 			<div className="row" style={{ marginTop: -14 }}>
-				{awardCandidates.map(({ name, players, stats }) => {
+				{awardCandidates.map(({ asterisk, name, players, stats }) => {
 					const mip = name === "Most Improved Player";
 					const roy = name === "Rookie of the Year";
 
@@ -181,14 +181,25 @@ const AwardRaces = ({
 									hideAllControls
 									name={`AwardRaces${name}`}
 									rows={rows}
-									title={<h2>{name}</h2>}
+									title={
+										<h2>
+											{name}
+											{asterisk ? "*" : null}
+										</h2>
+									}
 								/>
 							) : (
 								<>
-									<h2>{name}</h2>
+									<h2>
+										{name}
+										{asterisk ? "*" : null}
+									</h2>
 									<p>No candidates yet...</p>
 								</>
 							)}
+							{asterisk ? (
+								<div className="text-body-secondary">* {asterisk}</div>
+							) : null}
 						</div>
 					);
 				})}

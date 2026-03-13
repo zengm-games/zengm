@@ -4,7 +4,16 @@ import getAwardCandidatesBasketball from "./getAwardCandidates.basketball.ts";
 import getAwardCandidatesFootball from "./getAwardCandidates.football.ts";
 import getAwardCandidatesHockey from "./getAwardCandidates.hockey.ts";
 
-const getAwardCandidates = (season: number) => {
+const getAwardCandidates = (
+	season: number,
+): Promise<
+	{
+		asterisk?: string;
+		name: string;
+		players: any[];
+		stats: string[];
+	}[]
+> => {
 	return bySport({
 		baseball: getAwardCandidatesBaseball(season),
 		basketball: getAwardCandidatesBasketball(season),

@@ -1,4 +1,4 @@
-import { AWARD_NAMES } from "../../../common/index.ts";
+import { AWARD_NAMES } from "../../../common/constants.baseball.ts";
 import { getPlayers, getTopPlayers } from "./awards.ts";
 import {
 	mvpScore,

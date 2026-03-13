@@ -425,32 +425,29 @@ const doAwards = async (conditions: Conditions) => {
 	let opoy;
 	if (mvp) {
 		if (DEFENSIVE_POSITIONS.has(mvp.pos)) {
-			// MVP is a defensive player - OPOY is best offensive player
-			opoy = getTopByPos(mvpPlayers, OFFENSIVE_POSITIONS);
-		} else {
-			// MVP is an offensive player - OPOY is next guy up (but never both QBs) unless the MVP is way better
-			if (mvp.pos === "QB") {
-				opoy = getTopByPos(mvpPlayers, new Set(["RB", "WR", "TE", "OL"]));
-			} else {
-				opoy = getTopByPos(mvpPlayers, OFFENSIVE_POSITIONS, new Set([mvp.pid]));
-			}
+			// MVP is a defensive player - OPOY is non-QB offensive player
+			opoy = getTopByPos(mvpPlayers, new Set(["RB", "WR", "TE", "OL"]));
+		} else if (mvp.pos === "QB") {
+			// MVP is a QB - OPOY is best non-QB unless the MVP is way better
+			opoy = getTopByPos(mvpPlayers, new Set(["RB", "WR", "TE", "OL"]));
 
 			if (opoy) {
 				// Give OPOY to MVP if he is way better than the other option for OPOY
 				const playersByPid = groupByUnique(mvpPlayers, "pid");
 				const ratio =
 					mvpScore(playersByPid[mvp.pid]) / mvpScore(playersByPid[opoy.pid]);
-
-				// Since generally it's harder for a non-QB to win MVP, make the cutoff for them winning MVP and OPOY lower, since it's more likely that they only narrowly won MVP
-				const cutoff = mvp.pos === "QB" ? 1.5 : 1.25;
-
-				if (ratio > cutoff) {
+				if (ratio > 1.5) {
 					opoy = helpers.deepCopy(mvp);
 				}
-			} else {
-				// Somehow nobody besides the MVP exists?
-				opoy = helpers.deepCopy(mvp);
 			}
+		} else {
+			// MVP is a non-QB offensive player - make him OPOY too
+			opoy = helpers.deepCopy(mvp);
+		}
+
+		if (!opoy) {
+			// This probably will never happen (MVP but no OPOY) but if it does, might as well make the MVP the OPOY too
+			opoy = helpers.deepCopy(mvp);
 		}
 	}
 

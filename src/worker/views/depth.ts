@@ -98,7 +98,7 @@ const stats = bySport<Record<string, string[]>>({
 		],
 		WR: ["tgt", "rec", "recYds", "recYdsPerRec", "recTD", "recLng", "fmbLost"],
 		TE: ["tgt", "rec", "recYds", "recYdsPerRec", "recTD", "recLng", "fmbLost"],
-		OL: [],
+		OL: ["pbw", "pba", "pbwr", "rbw", "rba", "rbwr", "skAlw", "skAlwPct"],
 		DL: defenseStats,
 		LB: defenseStats,
 		CB: defenseStats,

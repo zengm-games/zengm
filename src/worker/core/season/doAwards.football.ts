@@ -432,12 +432,20 @@ const doAwards = async (conditions: Conditions) => {
 			opoy = getTopByPos(mvpPlayers, new Set(["RB", "WR", "TE", "OL"]));
 
 			if (opoy) {
-				// Give OPOY to MVP if he is way better than the other option for OPOY
-				const playersByPid = groupByUnique(mvpPlayers, "pid");
-				const ratio =
-					mvpScore(playersByPid[mvp.pid]) / mvpScore(playersByPid[opoy.pid]);
-				if (ratio > 1.5) {
-					opoy = helpers.deepCopy(mvp);
+				// Give OPOY to MVP if he is way better than any other offensive player (including other QBs)
+				const secondMvp = getTopByPos(
+					mvpPlayers,
+					OFFENSIVE_POSITIONS,
+					new Set([mvp.pid]),
+				);
+				if (secondMvp) {
+					const playersByPid = groupByUnique(mvpPlayers, "pid");
+					const ratio =
+						mvpScore(playersByPid[mvp.pid]) /
+						mvpScore(playersByPid[secondMvp.pid]);
+					if (ratio > 1.25) {
+						opoy = helpers.deepCopy(mvp);
+					}
 				}
 			}
 		} else {

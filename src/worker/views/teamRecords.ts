@@ -122,11 +122,11 @@ const tallyAwards = (
 			teamAwards.droy++;
 		}
 
-		if (isSport("baseball")) {
-			if (a.poy?.tid === tid) {
-				teamAwards.poy++;
-			}
+		if (a.poy?.tid === tid) {
+			teamAwards.poy++;
+		}
 
+		if (isSport("baseball")) {
 			if (a.rpoy?.tid === tid) {
 				teamAwards.rpoy++;
 			}

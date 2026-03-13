@@ -139,6 +139,10 @@ const getProcessedPlayers = async (
 				"defTckAst",
 				"defTckLoss",
 				"totTD",
+				"pbw",
+				"pbwr",
+				"rbw",
+				"rbwr",
 			],
 			hockey: [
 				"keyStats",

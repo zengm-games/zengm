@@ -10,6 +10,7 @@ const awardsOrder = [
 	"Finals MVP",
 	"Semifinals MVP",
 	"Offensive Player of the Year",
+	"Protector of the Year",
 	"Defensive Player of the Year",
 	"Goalie of the Year",
 	"Sixth Man of the Year",
@@ -82,6 +83,8 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 			type = "SFMVP";
 		} else if (type === "Offensive Player of the Year") {
 			type = "OPOY";
+		} else if (type === "Protector of the Year") {
+			type = "POY";
 		} else if (type === "Defensive Player of the Year") {
 			type = "DPOY";
 		} else if (type === "Defensive Forward of the Year") {

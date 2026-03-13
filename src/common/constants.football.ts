@@ -932,6 +932,7 @@ const RATINGS: RatingKey[] = [
 const SIMPLE_AWARDS = [
 	"mvp",
 	"opoy",
+	"poy",
 	"dpoy",
 	"oroy",
 	"droy",
@@ -941,6 +942,7 @@ const SIMPLE_AWARDS = [
 const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
 	opoy: "Offensive Player of the Year",
+	poy: "Protector of the Year",
 	dpoy: "Defensive Player of the Year",
 	oroy: "Offensive Rookie of the Year",
 	droy: "Defensive Rookie of the Year",

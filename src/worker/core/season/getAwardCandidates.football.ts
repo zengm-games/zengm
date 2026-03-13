@@ -48,13 +48,25 @@ const getAwardCandidates = async (season: number) => {
 			players: getTopPlayers(
 				{
 					amount: 10,
-					filter: filterPosition(season, ["RB", "WR", "TE", "OL"]),
+					filter: filterPosition(season, ["RB", "WR", "TE"]),
 					score: mvpScore,
 				},
 				players,
 			),
 			stats: ["keyStats"],
 			asterisk: "Exceptional QBs can win both MVP and OPOY in some seasons",
+		},
+		{
+			name: "Protector of the Year",
+			players: getTopPlayers(
+				{
+					amount: 10,
+					filter: filterPosition(season, ["OL"]),
+					score: mvpScore,
+				},
+				players,
+			),
+			stats: ["pbw", "pbwr", "rbw", "rbwr"],
 		},
 		{
 			name: "Defensive Player of the Year",

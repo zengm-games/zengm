@@ -101,17 +101,18 @@ const EditAwards = ({
 
 			const newAwards = { ...aws };
 			if (
-				type == "finalsMvp" ||
-				type == "mvp" ||
-				type == "goy" ||
-				type == "smoy" ||
-				type == "roy" ||
-				type == "mip" ||
-				type == "oroy" ||
-				type == "droy" ||
-				type == "poy" ||
-				type == "rpoy" ||
-				type === "opoy"
+				type === "finalsMvp" ||
+				type === "mvp" ||
+				type === "goy" ||
+				type === "smoy" ||
+				type === "roy" ||
+				type === "mip" ||
+				type === "oroy" ||
+				type === "droy" ||
+				type === "poy" ||
+				type === "rpoy" ||
+				type === "opoy" ||
+				type === "poy"
 			) {
 				// All these == and != undefined checks are because when exporting a league, undefined is changed to null
 				if (p?.pid == undefined) {
@@ -119,7 +120,7 @@ const EditAwards = ({
 				} else {
 					newAwards[type] = makeAwardPlayer(p);
 				}
-			} else if (type == "dpoy" || type === "dfoy") {
+			} else if (type === "dpoy" || type === "dfoy") {
 				if (p?.pid == undefined) {
 					newAwards[type] = undefined;
 				} else {
@@ -127,7 +128,7 @@ const EditAwards = ({
 						type: "defense",
 					});
 				}
-			} else if (type == "allDefensive") {
+			} else if (type === "allDefensive") {
 				if (p?.pid == undefined) {
 					newAwards[type][teamNumber].players[playerNumber] = undefined;
 				} else {
@@ -156,7 +157,7 @@ const EditAwards = ({
 						);
 					}
 				}
-			} else if (type == "allLeague") {
+			} else if (type === "allLeague") {
 				if (p?.pid == undefined) {
 					newAwards[type][teamNumber].players[playerNumber] = undefined;
 				} else {
@@ -185,7 +186,7 @@ const EditAwards = ({
 					}
 				}
 			} else if (
-				type == "allRookie" ||
+				type === "allRookie" ||
 				(isSport("baseball") &&
 					(type === "allOffense" || type === "allDefense")) ||
 				type === "sfmvp"

@@ -458,6 +458,8 @@ const doAwards = async (conditions: Conditions) => {
 		}
 	}
 
+	const poy = getTopByPos(mvpPlayers, new Set(["OL"]));
+
 	const dpoyPlayers = getTopPlayers(
 		{
 			amount: Infinity,
@@ -507,6 +509,7 @@ const doAwards = async (conditions: Conditions) => {
 		bestRecordConfs,
 		mvp,
 		opoy,
+		poy,
 		dpoy,
 		oroy,
 		droy,

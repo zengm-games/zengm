@@ -2425,7 +2425,7 @@ class GameSim extends GameSimBase {
 
 			if (rand < 0.5 || rbs.length === 0) {
 				positions.push("QB");
-			} else if (rand < 0.58 || rbs.length === 0) {
+			} else if (rand < 0.57 || rbs.length === 0) {
 				positions.push("WR");
 			}
 		}

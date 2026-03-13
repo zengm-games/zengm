@@ -428,25 +428,24 @@ const doAwards = async (conditions: Conditions) => {
 			// MVP is a defensive player - OPOY is non-QB offensive player
 			opoy = getTopByPos(mvpPlayers, new Set(["RB", "WR", "TE", "OL"]));
 		} else if (mvp.pos === "QB") {
-			// MVP is a QB - OPOY is best non-QB unless the MVP is way better
-			opoy = getTopByPos(mvpPlayers, new Set(["RB", "WR", "TE", "OL"]));
-
-			if (opoy) {
-				// Give OPOY to MVP if he is way better than any other offensive player (including other QBs)
-				const secondMvp = getTopByPos(
-					mvpPlayers,
-					OFFENSIVE_POSITIONS,
-					new Set([mvp.pid]),
-				);
-				if (secondMvp) {
-					const playersByPid = groupByUnique(mvpPlayers, "pid");
-					const ratio =
-						mvpScore(playersByPid[mvp.pid]) /
-						mvpScore(playersByPid[secondMvp.pid]);
-					if (ratio > 1.25) {
-						opoy = helpers.deepCopy(mvp);
-					}
+			// MVP is a QB - OPOY is best non-QB unless the MVP is way better than any other offensive player (including other QBs)
+			const secondMvp = getTopByPos(
+				mvpPlayers,
+				OFFENSIVE_POSITIONS,
+				new Set([mvp.pid]),
+			);
+			if (secondMvp) {
+				const playersByPid = groupByUnique(mvpPlayers, "pid");
+				const ratio =
+					mvpScore(playersByPid[mvp.pid]) /
+					mvpScore(playersByPid[secondMvp.pid]);
+				if (ratio > 1.25) {
+					opoy = helpers.deepCopy(mvp);
 				}
+			}
+
+			if (!opoy) {
+				opoy = getTopByPos(mvpPlayers, new Set(["RB", "WR", "TE", "OL"]));
 			}
 		} else {
 			// MVP is a non-QB offensive player - make him OPOY too

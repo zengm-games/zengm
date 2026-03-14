@@ -3714,7 +3714,7 @@ const cols: {
 		title: "DROY",
 	},
 	"count:poy": {
-		desc: `${isSport("baseball") ? "Pitcher" : "Protector"} Pitcher of the Year`,
+		desc: `${isSport("baseball") ? "Pitcher" : "Protector"} of the Year`,
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 		title: "POY",
@@ -3762,7 +3762,7 @@ const cols: {
 		title: "SMOY",
 	},
 	"award:poy": {
-		desc: `${isSport("baseball") ? "Pitcher" : "Protector"} Pitcher of the Year`,
+		desc: `${isSport("baseball") ? "Pitcher" : "Protector"} of the Year`,
 		title: "POY",
 	},
 	"award:rpoy": {

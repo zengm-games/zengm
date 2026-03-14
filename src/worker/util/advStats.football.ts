@@ -161,12 +161,15 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 				allProLevel = 1.6;
 			}
 
+			// Tweaked formula a bit to include defFmbFrc and defPssDef
 			score =
 				p.stats.gp +
 				5 * p.stats.gs +
 				p.stats.defSk +
-				4 * p.stats.defFmbRec +
+				2 * p.stats.defFmbRec +
+				2 * p.stats.defFmbFrc +
 				4 * p.stats.defInt +
+				2 * p.stats.defPssDef +
 				5 * (p.stats.defIntTD + p.stats.defFmbTD) +
 				// https://github.com/microsoft/TypeScript/issues/21732
 				// @ts-expect-error
@@ -314,7 +317,9 @@ const advStats = async () => {
 			"recYds",
 			"defSk",
 			"defFmbRec",
+			"defFmbFrc",
 			"defInt",
+			"defPssDef",
 			"defIntTD",
 			"defFmbTD",
 			"defTck",

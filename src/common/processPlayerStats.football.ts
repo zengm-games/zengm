@@ -155,7 +155,7 @@ const processStats = (
 				defender: defTck,
 				kicker: fga + ps.xpa,
 				punter: ps.pnt,
-				ol: (ps.pba ?? 0) + (ps.pra ?? 0),
+				ol: ((ps.pba ?? 0) + (ps.pra ?? 0)) / 10,
 			};
 			let role;
 			let max = 0;

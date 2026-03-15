@@ -166,6 +166,12 @@ const processStats = (
 					max = value;
 				}
 			}
+			if (
+				(role === "rusher" && ps.recYds > 0.5 * ps.rusYds) ||
+				(role === "receiver" && ps.rusYds > 0.5 * ps.recYds)
+			) {
+				role = "rusRec";
+			}
 
 			if (role === "passer") {
 				row[stat] = `${helpers
@@ -185,6 +191,10 @@ const processStats = (
 				)} catches, ${helpers.numberWithCommas(ps.recYds)} yards, ${(
 					ps.recYds / ps.rec
 				).toFixed(1)} avg, ${ps.recTD} TD`;
+			} else if (role === "rusRec") {
+				row[stat] = `${helpers.numberWithCommas(
+					ps.rec + ps.rus,
+				)} touches, ${helpers.numberWithCommas(ps.recYds + ps.rusYds)} total yards, ${ps.recTD + ps.rusTD} TD`;
 			} else if (role === "defender") {
 				row[stat] = `${helpers.numberWithCommas(defTck)} tackles, ${
 					ps.defSk

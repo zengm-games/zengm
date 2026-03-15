@@ -12,7 +12,7 @@ import { g, helpers } from "../../util/index.ts";
 import type { Conditions, PlayerFiltered } from "../../../common/types.ts";
 
 import type { AwardPlayer, Awards } from "../../../common/types.football.ts";
-import { groupByUnique, orderBy } from "../../../common/utils.ts";
+import { orderBy } from "../../../common/utils.ts";
 
 const getPlayerInfo = (p: PlayerFiltered): AwardPlayer => {
 	return {
@@ -304,28 +304,63 @@ const getRealFinalsMvp = async (
 	}
 };
 
-const SKILL_POSITIONS = new Set(["QB", "RB", "WR", "TE"]);
 const DEFENSIVE_POSITIONS = new Set(["DL", "LB", "S", "CB"]);
 const OFFENSIVE_POSITIONS = new Set(["QB", "RB", "WR", "TE", "OL"]);
 
-export const mvpScore = (p: PlayerFiltered) => {
-	const posMultiplier = SKILL_POSITIONS.has(p.pos) ? 1.4 : 1;
-	return posMultiplier * p.currentStats.av;
+const POS_FACTOR: Record<string, number> = {
+	CB: 1.05,
+	S: 0.95,
+};
+export const dpoyScore = (p: PlayerFiltered) => {
+	const s = p.currentStats;
+
+	const posFactor = POS_FACTOR[p.pos] ?? 1;
+
+	return (
+		posFactor *
+		(s.defSk * 4 +
+			s.defTckLoss * 0.4 +
+			s.defTckAst * 0.2 +
+			s.defTckSolo * 0.4 +
+			s.defFmbFrc * 3 +
+			s.defFmbRec * 3 +
+			s.defInt * 6 +
+			s.defPssDef * 2)
+	);
 };
 
-// https://discord.com/channels/860302515501400094/861442922498359306/1385455960188780634
-// Would be nice to use this for MVP too, but unclear how to combine with AV since we don't store separate offensive/defensive AV. If mvpScore is ever updated to not use AV or if offensive/defensive AV were stored separately, this could be done.
-export const dpoyScore = (p: PlayerFiltered) => {
-	return (
-		(p.currentStats.defSk * 1.5 +
-			p.currentStats.defTckLoss * 2.2 +
-			p.currentStats.defFmbFrc * 3 +
-			p.currentStats.defInt * 3 +
-			p.currentStats.defPssDef * 3.15 +
-			p.currentStats.defTckAst / 12 +
-			p.currentStats.defTckSolo / 8) /
-		8.2
-	);
+export const opoyScore = (p: PlayerFiltered) => {
+	const s = p.currentStats;
+	let rushing = s.rusYds * 0.11 + s.rusTD * 6 - s.fmbLost * 2;
+	const receiving = s.recYds * 0.09 + s.recTD * 6;
+
+	// Penalty for rushing QBs
+	if (s.pssYds > s.rusYds) {
+		rushing *= 0.75;
+	}
+
+	return rushing + receiving;
+};
+
+export const offScore = (p: PlayerFiltered) => {
+	const s = p.currentStats;
+	const passing = s.pssYds * 0.04 + s.pssTD * 4 - s.pssInt * 2.5;
+	const rushingReceiving = opoyScore(p);
+
+	return passing + rushingReceiving;
+};
+
+export const mvpScore = (p: PlayerFiltered) => {
+	const s = p.currentStats;
+	const offense = offScore(p);
+	const defense = 2.25 * dpoyScore(p);
+	const returns = (s.prTD + s.krTD) * 6;
+
+	return offense + defense + returns;
+};
+
+export const poyScore = (p: PlayerFiltered) => {
+	return p.currentStats.av;
 };
 
 // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
@@ -338,7 +373,7 @@ const royFilter = (p: PlayerFiltered) => {
 	);
 };
 
-const doAwards = async (conditions: Conditions) => {
+const doAwards = async (season: number, conditions: Conditions) => {
 	// Careful - this array is mutated in various functions called below
 	const awardsByPlayer: AwardsByPlayer = [];
 	const teams = await idb.getCopies.teamsPlus(
@@ -367,12 +402,12 @@ const doAwards = async (conditions: Conditions) => {
 				"did",
 			],
 			stats: ["pts", "oppPts", "gp"],
-			season: g.get("season"),
+			season,
 			showNoStats: true,
 		},
 		"noCopyCache",
 	);
-	const players = await getPlayers(g.get("season"));
+	const players = await getPlayers(season);
 	const { bestRecord, bestRecordConfs } = await teamAwards(teams);
 	const categories = [
 		{
@@ -422,34 +457,43 @@ const doAwards = async (conditions: Conditions) => {
 	);
 	const mvp = getTopByPos(mvpPlayers);
 
+	const opoyPlayers = getTopPlayers(
+		{
+			amount: 1,
+			score: opoyScore,
+		},
+		players,
+	);
 	let opoy;
 	if (mvp) {
-		if (DEFENSIVE_POSITIONS.has(mvp.pos)) {
-			// MVP is a defensive player - OPOY is non-QB offensive player
-			opoy = getTopByPos(mvpPlayers, new Set(["RB", "WR", "TE", "OL"]));
-		} else if (mvp.pos === "QB") {
+		if (mvp.pos === "QB") {
 			// MVP is a QB - OPOY is best non-QB unless the MVP is way better than any other offensive player (including other QBs)
-			const secondMvp = getTopByPos(
-				mvpPlayers,
-				OFFENSIVE_POSITIONS,
-				new Set([mvp.pid]),
+			const offensePlayers = getTopPlayers(
+				{
+					amount: 2,
+					score: offScore,
+				},
+				players,
 			);
-			if (secondMvp) {
-				const playersByPid = groupByUnique(mvpPlayers, "pid");
-				const ratio =
-					mvpScore(playersByPid[mvp.pid]) /
-					mvpScore(playersByPid[secondMvp.pid]);
-				if (ratio > 1.25) {
+
+			// Make sure MVP is best offensive player (in case MVP is a two way player)
+			if (
+				offensePlayers[0] &&
+				offensePlayers[1] &&
+				offensePlayers[0].pid === mvp.pid
+			) {
+				const ratio = offScore(offensePlayers[0]) / offScore(offensePlayers[1]);
+				if (ratio > 1.2) {
 					opoy = helpers.deepCopy(mvp);
 				}
 			}
-
 			if (!opoy) {
-				opoy = getTopByPos(mvpPlayers, new Set(["RB", "WR", "TE", "OL"]));
+				opoy = getTopByPos(opoyPlayers);
 			}
 		} else {
-			// MVP is a non-QB offensive player - make him OPOY too
-			opoy = helpers.deepCopy(mvp);
+			// MVP is a defensive player - OPOY is non-QB offensive player
+			// MVP is a non-QB offensive player - make him OPOY too, unless he somehow is not the best offensive player (could be two way)
+			opoy = getTopByPos(opoyPlayers);
 		}
 
 		if (!opoy) {
@@ -458,7 +502,14 @@ const doAwards = async (conditions: Conditions) => {
 		}
 	}
 
-	const poy = getTopByPos(mvpPlayers, new Set(["OL"]));
+	const poyPlayers = getTopPlayers(
+		{
+			amount: Infinity,
+			score: poyScore,
+		},
+		players,
+	);
+	const poy = getTopByPos(poyPlayers, new Set(["OL"]));
 
 	const dpoyPlayers = getTopPlayers(
 		{
@@ -496,7 +547,7 @@ const doAwards = async (conditions: Conditions) => {
 	const champTeam = teams.find(
 		(t) =>
 			t.seasonAttrs.playoffRoundsWon ===
-			g.get("numGamesPlayoffSeries", "current").length,
+			g.get("numGamesPlayoffSeries", season).length,
 	);
 
 	if (champTeam) {
@@ -516,7 +567,7 @@ const doAwards = async (conditions: Conditions) => {
 		finalsMvp,
 		allLeague,
 		allRookie,
-		season: g.get("season"),
+		season,
 	};
 	addSimpleAndTeamAwardsToAwardsByPlayer(awards, awardsByPlayer);
 	await idb.cache.awards.put(awards);

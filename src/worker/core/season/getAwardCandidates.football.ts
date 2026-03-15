@@ -1,5 +1,11 @@
 import { getPlayers, getTopPlayers } from "./awards.ts";
-import { mvpScore, dpoyScore } from "./doAwards.football.ts";
+import {
+	mvpScore,
+	dpoyScore,
+	opoyScore,
+	poyScore,
+	offScore,
+} from "./doAwards.football.ts";
 import type { PlayerFiltered } from "../../../common/types.ts";
 
 const filterPosition =
@@ -19,14 +25,13 @@ const filterPosition =
 		return positions.includes(pr.pos);
 	};
 
-const filterRoy =
-	(season: number, positions: string[]) => (p: PlayerFiltered) => {
-		if (p.draft.year !== season - 1) {
-			return false;
-		}
+const filterRoy = (season: number) => (p: PlayerFiltered) => {
+	if (p.draft.year !== season - 1) {
+		return false;
+	}
 
-		return filterPosition(season, positions)(p);
-	};
+	return true;
+};
 
 const getAwardCandidates = async (season: number) => {
 	const players = await getPlayers(season);
@@ -48,8 +53,7 @@ const getAwardCandidates = async (season: number) => {
 			players: getTopPlayers(
 				{
 					amount: 10,
-					filter: filterPosition(season, ["RB", "WR", "TE"]),
-					score: mvpScore,
+					score: opoyScore,
 				},
 				players,
 			),
@@ -62,7 +66,7 @@ const getAwardCandidates = async (season: number) => {
 				{
 					amount: 10,
 					filter: filterPosition(season, ["OL"]),
-					score: mvpScore,
+					score: poyScore,
 				},
 				players,
 			),
@@ -73,7 +77,6 @@ const getAwardCandidates = async (season: number) => {
 			players: getTopPlayers(
 				{
 					amount: 10,
-					filter: filterPosition(season, ["DL", "LB", "S", "CB"]),
 					score: dpoyScore,
 				},
 				players,
@@ -85,8 +88,8 @@ const getAwardCandidates = async (season: number) => {
 			players: getTopPlayers(
 				{
 					amount: 10,
-					filter: filterRoy(season, ["QB", "RB", "WR", "TE", "OL"]),
-					score: mvpScore,
+					filter: filterRoy(season),
+					score: offScore,
 				},
 				players,
 			),
@@ -97,7 +100,7 @@ const getAwardCandidates = async (season: number) => {
 			players: getTopPlayers(
 				{
 					amount: 10,
-					filter: filterRoy(season, ["DL", "LB", "S", "CB"]),
+					filter: filterRoy(season),
 					score: dpoyScore,
 				},
 				players,

@@ -6,6 +6,7 @@ import countPositions from "./countPositions.ts";
 import countSkills from "./countSkills.ts";
 import maxRatingDists from "./maxRatingDists.ts";
 import percentageDraftPicksSigned from "./percentageDraftPicksSigned.ts";
+import recomputeAwards from "./recomputeAwards.ts";
 import recomputeHallOfFame from "./recomputeHallOfFame.ts";
 import recomputeOvr from "./recomputeOvr.ts";
 import recomputeRealSeasonLeaders from "./recomputeRealSeasonLeaders.ts";
@@ -18,6 +19,7 @@ export default {
 	countSkills,
 	maxRatingDists,
 	percentageDraftPicksSigned,
+	recomputeAwards,
 	recomputeHallOfFame,
 	recomputeOvr,
 	recomputeRealSeasonLeaders,

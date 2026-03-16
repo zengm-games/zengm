@@ -360,7 +360,14 @@ export const mvpScore = (p: PlayerFiltered) => {
 };
 
 export const poyScore = (p: PlayerFiltered) => {
-	return p.currentStats.av;
+	const s = p.currentStats;
+	const attempts = s.pba + s.rba;
+	if (attempts === 0) {
+		return 0;
+	}
+
+	// Account for rate and volume
+	return ((s.pbw + s.rbw) / attempts) * Math.sqrt(attempts);
 };
 
 // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.

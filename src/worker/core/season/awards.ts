@@ -112,7 +112,6 @@ const getProcessedPlayers = async (
 			],
 			football: [
 				"keyStats",
-				"av",
 				"pntYds",
 				"fg",
 				"krTD",
@@ -147,8 +146,10 @@ const getProcessedPlayers = async (
 				"defTckLoss",
 				"totTD",
 				"pbw",
+				"pba",
 				"pbwr",
 				"rbw",
+				"rba",
 				"rbwr",
 			],
 			hockey: [

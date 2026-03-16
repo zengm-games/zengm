@@ -331,8 +331,8 @@ export const dpoyScore = (p: PlayerFiltered) => {
 
 export const opoyScore = (p: PlayerFiltered) => {
 	const s = p.currentStats;
-	let rushing = s.rusYds * 0.105 + s.rusTD * 6 - s.fmbLost * 2;
-	const receiving = s.recYds * 0.095 + s.recTD * 6;
+	let rushing = s.rusYds * 0.125 + s.rusTD * 6 - s.fmbLost * 2;
+	const receiving = s.recYds * 0.0975 + s.recTD * 6;
 
 	// Penalty for rushing QBs
 	if (s.pssYds > s.rusYds) {
@@ -347,7 +347,7 @@ export const offScore = (p: PlayerFiltered) => {
 	const passing = s.pssYds * 0.04 + s.pssTD * 4 - s.pssInt * 2.5;
 	const rushingReceiving = opoyScore(p);
 
-	return passing + rushingReceiving;
+	return 1.1 * passing + rushingReceiving;
 };
 
 export const mvpScore = (p: PlayerFiltered) => {

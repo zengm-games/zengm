@@ -46,8 +46,8 @@ const FATIGUE_POS = new Set(["RB", "WR", "TE", "DL", "LB", "CB", "S"]);
 // Only apples to default ratings leagues
 const AVERAGE_TACKLING_COMPOSITE = 0.56;
 
-const FUDGE_FACTOR_PASS = 25;
-const FUDGE_FACTOR_RUN = 88;
+const FUDGE_FACTOR_PASS = 50;
+const FUDGE_FACTOR_RUN = 100;
 const FUDGE_FACTOR_CUTOFF = 1.25;
 
 /**

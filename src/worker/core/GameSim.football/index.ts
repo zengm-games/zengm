@@ -46,8 +46,9 @@ const FATIGUE_POS = new Set(["RB", "WR", "TE", "DL", "LB", "CB", "S"]);
 // Only apples to default ratings leagues
 const AVERAGE_TACKLING_COMPOSITE = 0.56;
 
-const FUDGE_FACTOR_PASS = 50;
-const FUDGE_FACTOR_RUN = 100;
+const FUDGE_FACTOR_PASS = 100;
+const FUDGE_FACTOR_RUN = 70;
+const FUDGE_FACTOR_RATIO_MEAN = 1.1;
 const FUDGE_FACTOR_CUTOFF = 1.25;
 
 /**
@@ -2108,29 +2109,50 @@ class GameSim extends GameSimBase {
 		return random.randInt(3, 8);
 	}
 
-	// Scaled similar to this.team[this.o].compositeRating.passBlocking / this.team[this.d].compositeRating.passRushing - higher means better blocking!
-	pbwFactor(pbw: number, pba: number) {
-		// Hack for NZCFL, where the new blocking system was resulting in teams being more similar (like a team with great OL vs a team with horrible OL not being as big of a blowout)
+	// Hack for NZCFL, where the new blocking system was resulting in teams being more similar (like a team with great OL vs a team with horrible OL not being as big of a blowout)
+	adjustBlockingForExtremeTalentDisparity(
+		type: "pass" | "run",
+		w: number,
+		a: number,
+	): [number, number] {
+		const fudgeFactor = type === "pass" ? FUDGE_FACTOR_PASS : FUDGE_FACTOR_RUN;
+
 		const ratio =
-			this.team[this.o].compositeRating.passBlocking /
-			this.team[this.d].compositeRating.passRushing;
+			this.team[this.o].compositeRating[
+				type === "pass" ? "passBlocking" : "runBlocking"
+			] /
+			this.team[this.d].compositeRating[
+				type === "pass" ? "passRushing" : "runStopping"
+			] /
+			FUDGE_FACTOR_RATIO_MEAN;
 		if (ratio > FUDGE_FACTOR_CUTOFF) {
 			// Really good blocking
-			pbw += FUDGE_FACTOR_PASS * (ratio - FUDGE_FACTOR_CUTOFF);
+			w += fudgeFactor * (ratio - FUDGE_FACTOR_CUTOFF);
 		} else if (ratio < 1 / FUDGE_FACTOR_CUTOFF) {
 			// Really bad blocking
 			const inverse = 1 / ratio;
-			pbw -= FUDGE_FACTOR_PASS * (inverse - FUDGE_FACTOR_CUTOFF);
+			a -= fudgeFactor * (inverse - FUDGE_FACTOR_CUTOFF);
 		}
+
+		return [w, a];
+	}
+
+	// Scaled similar to this.team[this.o].compositeRating.passBlocking / this.team[this.d].compositeRating.passRushing - higher means better blocking!
+	pbwFactor(pbw: number, pba: number) {
+		const [w, a] = this.adjustBlockingForExtremeTalentDisparity(
+			"pass",
+			pbw,
+			pba,
+		);
 
 		const slope = 0.1879;
 		const intercept = 0.953;
 
-		if (pba === 0) {
+		if (a === 0) {
 			return intercept;
 		}
 
-		return (slope * pbw) / pba + intercept;
+		return (slope * w) / a + intercept;
 	}
 
 	probSack(qb: PlayerGameSim, pbwFactor: number) {
@@ -2464,19 +2486,13 @@ class GameSim extends GameSimBase {
 		});
 
 		// Hack for NZCFL, where the new blocking system was resulting in teams being more similar (like a team with great OL vs a team with horrible OL not being as big of a blowout)
-		const ratio =
-			this.team[this.o].compositeRating.runBlocking /
-			this.team[this.d].compositeRating.runStopping;
-		if (ratio > FUDGE_FACTOR_CUTOFF) {
-			// Really good blocking
-			rbCounts.rbw += FUDGE_FACTOR_RUN * (ratio - FUDGE_FACTOR_CUTOFF);
-		} else if (ratio < 1 / FUDGE_FACTOR_CUTOFF) {
-			// Really bad blocking
-			const inverse = 1 / ratio;
-			rbCounts.rbw -= FUDGE_FACTOR_RUN * (inverse - FUDGE_FACTOR_CUTOFF);
-		}
+		const [w, a] = this.adjustBlockingForExtremeTalentDisparity(
+			"run",
+			rbCounts.rbw,
+			rbCounts.rba,
+		);
 
-		const rbwRatio = rbCounts.rba > 0 ? rbCounts.rbw / rbCounts.rba : 0;
+		const rbwRatio = a === 0 ? 0 : w / a;
 
 		// Bound is so (in extreme contrived cases like 0 ovr teams) meanYds can't go too far above/below the truncGauss limits
 		const meanYds = helpers.bound(

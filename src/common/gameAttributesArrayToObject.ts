@@ -4,7 +4,7 @@ const gameAttributesArrayToObject = (
 		value: any;
 	}[],
 ) => {
-	const object: Record<string, any> = {};
+	const object: Record<string, any> = Object.create(null);
 	for (const { key, value } of array) {
 		object[key] = value;
 	}

@@ -46,6 +46,10 @@ const FATIGUE_POS = new Set(["RB", "WR", "TE", "DL", "LB", "CB", "S"]);
 // Only apples to default ratings leagues
 const AVERAGE_TACKLING_COMPOSITE = 0.56;
 
+const FUDGE_FACTOR_PASS = 25;
+const FUDGE_FACTOR_RUN = 88;
+const FUDGE_FACTOR_CUTOFF = 1.25;
+
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
  *
@@ -1198,6 +1202,10 @@ class GameSim extends GameSimBase {
 			weightsBonus: [],
 			valFunc: (p) => (p.ovrs.LB / 100 + p.compositeRating.tackling) / 2,
 		});
+		/*globalThis.valuesPass ??= [];
+		globalThis.valuesPass.push(this.team[this.o].compositeRating.passBlocking / this.team[this.d].compositeRating.passRushing)
+		globalThis.valuesRun ??= [];
+		globalThis.valuesRun.push(this.team[this.o].compositeRating.runBlocking / this.team[this.d].compositeRating.runStopping)*/
 	}
 
 	updatePlayersOnField(
@@ -2102,6 +2110,19 @@ class GameSim extends GameSimBase {
 
 	// Scaled similar to this.team[this.o].compositeRating.passBlocking / this.team[this.d].compositeRating.passRushing - higher means better blocking!
 	pbwFactor(pbw: number, pba: number) {
+		// Hack for NZCFL, where the new blocking system was resulting in teams being more similar (like a team with great OL vs a team with horrible OL not being as big of a blowout)
+		const ratio =
+			this.team[this.o].compositeRating.passBlocking /
+			this.team[this.d].compositeRating.passRushing;
+		if (ratio > FUDGE_FACTOR_CUTOFF) {
+			// Really good blocking
+			pbw += FUDGE_FACTOR_PASS * (ratio - FUDGE_FACTOR_CUTOFF);
+		} else if (ratio < 1 / FUDGE_FACTOR_CUTOFF) {
+			// Really bad blocking
+			const inverse = 1 / ratio;
+			pbw -= FUDGE_FACTOR_PASS * (inverse - FUDGE_FACTOR_CUTOFF);
+		}
+
 		const slope = 0.1879;
 		const intercept = 0.953;
 
@@ -2441,6 +2462,19 @@ class GameSim extends GameSimBase {
 			t: o,
 			names: p === qb ? [qb.name] : [qb.name, p.name],
 		});
+
+		// Hack for NZCFL, where the new blocking system was resulting in teams being more similar (like a team with great OL vs a team with horrible OL not being as big of a blowout)
+		const ratio =
+			this.team[this.o].compositeRating.runBlocking /
+			this.team[this.d].compositeRating.runStopping;
+		if (ratio > FUDGE_FACTOR_CUTOFF) {
+			// Really good blocking
+			rbCounts.rbw += FUDGE_FACTOR_RUN * (ratio - FUDGE_FACTOR_CUTOFF);
+		} else if (ratio < 1 / FUDGE_FACTOR_CUTOFF) {
+			// Really bad blocking
+			const inverse = 1 / ratio;
+			rbCounts.rbw -= FUDGE_FACTOR_RUN * (inverse - FUDGE_FACTOR_CUTOFF);
+		}
 
 		const rbwRatio = rbCounts.rba > 0 ? rbCounts.rbw / rbCounts.rba : 0;
 

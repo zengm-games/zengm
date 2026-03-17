@@ -188,10 +188,59 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 				}
 
 				if (obj.email && !obj.gold) {
-					window.freestar.queue.push(() => {
-						window.freestar.identity.setIdentity({
-							email: obj.email,
-						});
+					window.freestar.queue.push(async () => {
+						// https://freestarhelp.zendesk.com/hc/en-us/articles/34498258990868-Hashed-Email-Passthrough
+						if (obj.email !== undefined) {
+							const freestarNormalizeEmail = (email: string) => {
+								const EMAIL_REGEX = /^[^\s@]+@[^\s@]+$/;
+								if (!EMAIL_REGEX.test(email)) {
+									return;
+								}
+
+								email = email.trim().toLowerCase();
+
+								let [username, domain] = email.split("@");
+
+								if (username !== undefined && domain === "gmail.com") {
+									// Remove + and everything after
+									const plusIndex = username.indexOf("+");
+									if (plusIndex !== -1) {
+										username = username.slice(0, plusIndex);
+									}
+
+									// Remove periods
+									username = username.replace(/\./g, "");
+
+									return `${username}@${domain}`;
+								}
+
+								return email;
+							};
+
+							const email = freestarNormalizeEmail(obj.email);
+							if (email !== undefined) {
+								const data = new TextEncoder().encode(email);
+								async function hash(
+									algorithm: AlgorithmIdentifier,
+									data: Uint8Array<ArrayBuffer>,
+								) {
+									const buffer = await crypto.subtle.digest(algorithm, data);
+									const bytes = new Uint8Array(buffer);
+									return [...bytes]
+										.map((b) => b.toString(16).padStart(2, "0"))
+										.join("");
+								}
+
+								const sha1 = await hash("SHA-1", data);
+								const sha256 = await hash("SHA-256", data);
+								window.freestar.identity.setIdentity({
+									hashes: {
+										sha1,
+										sha256,
+									},
+								});
+							}
+						}
 					});
 				}
 

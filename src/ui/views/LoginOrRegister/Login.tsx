@@ -41,8 +41,8 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 				const gold = currentTimestamp <= data.gold_until;
 				localActions.update({
 					gold,
-					username: data.username === "" ? undefined : data.email,
-					email: data.username === "" ? undefined : data.username,
+					username: data.username === "" ? undefined : data.username,
+					email: data.username === "" ? undefined : data.email,
 				});
 
 				if (gold) {

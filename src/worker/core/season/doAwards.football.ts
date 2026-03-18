@@ -48,6 +48,7 @@ const getTopByPos = (
 
 export const makeTeams = (
 	playersOffense: PlayerFiltered[],
+	playersOL: PlayerFiltered[],
 	playersDefense: PlayerFiltered[],
 	rookie: boolean = false,
 ): any => {
@@ -79,23 +80,23 @@ export const makeTeams = (
 		},
 		{
 			positions: new Set(["OL"]),
-			players: playersOffense,
+			players: playersOL,
 		},
 		{
 			positions: new Set(["OL"]),
-			players: playersOffense,
+			players: playersOL,
 		},
 		{
 			positions: new Set(["OL"]),
-			players: playersOffense,
+			players: playersOL,
 		},
 		{
 			positions: new Set(["OL"]),
-			players: playersOffense,
+			players: playersOL,
 		},
 		{
 			positions: new Set(["OL"]),
-			players: playersOffense,
+			players: playersOL,
 		},
 		{
 			positions: new Set(["DL"]),
@@ -527,7 +528,7 @@ const doAwards = async (season: number, conditions: Conditions) => {
 	);
 	const dpoy = getTopByPos(dpoyPlayers, DEFENSIVE_POSITIONS);
 
-	const allLeague = makeTeams(mvpPlayers, dpoyPlayers);
+	const allLeague = makeTeams(mvpPlayers, poyPlayers, dpoyPlayers);
 
 	const oroyPlayers = getTopPlayers(
 		{
@@ -549,7 +550,16 @@ const doAwards = async (season: number, conditions: Conditions) => {
 	);
 	const droy = getTopByPos(droyPlayers, DEFENSIVE_POSITIONS);
 
-	const allRookie = makeTeams(oroyPlayers, droyPlayers, true);
+	const proyPlayers = getTopPlayers(
+		{
+			amount: Infinity,
+			filter: royFilter,
+			score: poyScore,
+		},
+		players,
+	);
+
+	const allRookie = makeTeams(oroyPlayers, proyPlayers, droyPlayers, true);
 	let finalsMvp;
 	const champTeam = teams.find(
 		(t) =>

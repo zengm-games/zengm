@@ -3,11 +3,7 @@ import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type { TeamFiltered } from "../../common/types.ts";
 import { getPlayers, getTopPlayers } from "../core/season/awards.ts";
-import {
-	dpoyScore,
-	makeTeams,
-	mvpScore,
-} from "../core/season/doAwards.football.ts";
+import { dpoyScore, makeTeams } from "../core/season/doAwards.football.ts";
 import advStatsSave from "./advStatsSave.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
@@ -431,13 +427,6 @@ const advStats = async () => {
 	// Hackily account for AV of award winners, for OL and defense. These will not exactly correspond to the "real" AV formulas, they're just intended to be simple and good enough.
 	if (PHASE.PLAYOFFS !== g.get("phase")) {
 		const players2 = await getPlayers(g.get("season"));
-		const mvpPlayers = getTopPlayers(
-			{
-				amount: Infinity,
-				score: mvpScore,
-			},
-			players2,
-		);
 		const dpoyPlayers = getTopPlayers(
 			{
 				amount: Infinity,
@@ -445,7 +434,8 @@ const advStats = async () => {
 			},
 			players2,
 		);
-		const allLeague = makeTeams(mvpPlayers, dpoyPlayers);
+		// Can pass dpoyPLayers for all becuase the offensive/OL players don't matter
+		const allLeague = makeTeams(dpoyPlayers, dpoyPlayers, dpoyPlayers);
 
 		for (let i = 0; i < allLeague.length; i++) {
 			for (const p2 of allLeague[i].players) {

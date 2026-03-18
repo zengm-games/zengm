@@ -1,3 +1,5 @@
+FBGM overtime - If team A scores in OT, And then Team B scores, They should always go for 2 bc you don’t want to give the ball back and have it be sudden death https://discord.com/channels/@me/778760871911751700/1480652733852811324
+
 redesign season summary
 - include stat leaders
 - ASG MVP
@@ -618,7 +620,7 @@ make player graphs remember selections https://old.reddit.com/r/BasketballGM/com
 - other pages?
 
 FBGM end of game penalties
--  declines penalty when it would have given untimed down in 4th quarter with a chance to win https://discord.com/channels/290013534023057409/290015591216054273/1313017959035179008
+-  declines penalty when it would have given untimed down in 4th quarter with a chance to win https://discord.com/channels/290013534023057409/290015591216054273/1313017959035179008 https://discord.com/channels/@me/778760871911751700/1481009499744763955
 - accepts penalty on a scoring play (made FG) that would have won the game in overtime https://discord.com/channels/290013534023057409/1448891925837910228/1448891925837910228
 
 condense develop0 and updateValues into a single function, mainly for worker console

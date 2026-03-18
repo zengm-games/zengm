@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { View } from "../../../common/types.ts";
-import { getCols } from "../../util/index.ts";
+import { getCols, helpers } from "../../util/index.ts";
 import { isSport } from "../../../common/index.ts";
 import { highlightLeaderText, MaybeBold, SeasonLink } from "./common.tsx";
 import { expandFieldingStats } from "../../util/expandFieldingStats.baseball.ts";
@@ -97,12 +97,13 @@ export const StatsTable = ({
 		),
 	]);
 
-	if (superCols?.[0]) {
+	if (superCols) {
+		superCols = helpers.deepCopy(superCols);
+
 		// No name
-		superCols[0] = {
-			...superCols[0],
-			colspan: superCols[0].colspan - 1,
-		};
+		if (superCols[0]) {
+			superCols[0].colspan -= 1;
+		}
 	}
 
 	if (isSport("basketball") && name === "Shot Locations") {

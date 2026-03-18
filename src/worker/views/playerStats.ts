@@ -6,7 +6,7 @@ import {
 	PLAYER_STATS_TABLES,
 } from "../../common/index.ts";
 import { idb } from "../db/index.ts";
-import { g } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
@@ -218,15 +218,17 @@ const updatePlayers = async (
 			}
 		}
 
-		const superCols = statsTable.superCols;
+		let superCols;
 		if (inputs.season === "all") {
-			if (superCols?.[0]) {
+			if (statsTable.superCols) {
 				// Account for extra "Season" column
-				superCols[0] = {
-					...superCols[0],
-					colspan: superCols[0].colspan + 1,
-				};
+				superCols = helpers.deepCopy(statsTable.superCols);
+				if (superCols[0]) {
+					superCols[0].colspan += 1;
+				}
 			}
+		} else {
+			superCols = statsTable.superCols;
 		}
 
 		return {

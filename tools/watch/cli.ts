@@ -18,7 +18,10 @@ if (param !== "--no-server") {
 		process.exit(1);
 	}
 
-	await startServer(exposeToNetwork);
+	await startServer({
+		exposeToNetwork,
+		waitForBuild: () => spinners.waitForBuild(),
+	});
 	console.log("");
 }
 

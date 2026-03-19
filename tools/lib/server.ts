@@ -77,10 +77,21 @@ const getIpAddress = () => {
 	return "0.0.0.0";
 };
 
-export const startServer = async (exposeToNetwork: boolean) => {
+export const startServer = async ({
+	exposeToNetwork,
+	waitForBuild,
+}: {
+	exposeToNetwork: boolean;
+	waitForBuild: () => Promise<void> | undefined;
+}) => {
 	const port = await getPort({ port: 3000 });
 
-	const server = http.createServer((req, res) => {
+	const server = http.createServer(async (req, res) => {
+		const wait = waitForBuild();
+		if (wait) {
+			await wait;
+		}
+
 		const prefixesStatic = [
 			"/css/",
 			"/files/",
@@ -99,17 +110,6 @@ export const startServer = async (exposeToNetwork: boolean) => {
 			showIndex(res);
 		}
 	});
-
-	/*	console.log(`
- █████████ ██████████ ██████   █████   █████████  ██████   ██████
-  ░░░░███░░ ███░░░░░█░ ██████   ███░░ ███░░░░░███  ██████ ██████░░
-     ███░░  ███░ █   ░ ███░███  ███░ ███       ░░░ ███░█████░███░
-    ███░░   ██████░    ███░ ███ ███░ ███           ███░ ███░░███░
-   ███░░    ███░░█░    ███░  ██████░ ███    █████  ███░  ░░░ ███░
-  ███░░     ███░  ░ █  ███░   █████░  ███    ░███░ ███░      ███░
- █████████ ██████████░█████    █████   █████████░░█████     █████
-  ░░░░░░░░░ ░░░░░░░░░░ ░░░░░    ░░░░░   ░░░░░░░░░  ░░░░░     ░░░░░
-`);*/
 
 	return new Promise<void>((resolve) => {
 		server.listen(port, exposeToNetwork ? "0.0.0.0" : "localhost", () => {

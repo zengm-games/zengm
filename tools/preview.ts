@@ -9,4 +9,7 @@ if (param === "--host") {
 	process.exit(1);
 }
 
-await startServer(exposeToNetwork);
+await startServer({
+	exposeToNetwork,
+	waitForBuild: () => undefined,
+});

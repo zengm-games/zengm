@@ -32,7 +32,7 @@ const FRAMES = (
 
 const interval = 80;
 
-const SPORT_EMOJIS: Record<Sport, string> = {
+const SPORT_EMOJIS = {
 	basketball: "🏀",
 	football: "🏈",
 	baseball: "⚾",
@@ -101,7 +101,7 @@ export class Spinners<Key extends string = string> {
 	private extraRenderDelays: ExtraRenderDelays | undefined;
 
 	private keys: Key[] = [];
-	private info: Record<Key, Info> = {} as any;
+	private info: Partial<Record<Key, Info>> = {};
 	private renderKey: RenderKey<Key>;
 
 	private sportIndex;
@@ -115,6 +115,8 @@ export class Spinners<Key extends string = string> {
 		return this.switchSportsTimeoutId;
 	}
 	private switchSportsTimeoutId: NodeJS.Timeout | undefined;
+
+	private waitingForBuildCompletion: ((value: void) => void)[] = [];
 
 	// Switching sports too fast (before JS has started to build) breaks rolldown somehow, so don't allow switching sports until some time later
 	initialized = false;
@@ -217,6 +219,11 @@ export class Spinners<Key extends string = string> {
 			})
 		) {
 			this.stopRendering();
+
+			for (const cb of this.waitingForBuildCompletion) {
+				cb();
+			}
+			this.waitingForBuildCompletion = [];
 		} else {
 			this.startRendering();
 		}
@@ -433,6 +440,16 @@ export class Spinners<Key extends string = string> {
 				this.exitHandler("SIGINT");
 			}
 		});
+	}
+
+	waitForBuild() {
+		const infos: Info[] = Object.values(this.info);
+		if (infos.length === 0 || infos.some((info) => info.status === "spin")) {
+			const { promise, resolve } = Promise.withResolvers<void>();
+			this.waitingForBuildCompletion.push(resolve);
+
+			return promise;
+		}
 	}
 }
 

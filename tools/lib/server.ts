@@ -100,6 +100,7 @@ export const startServer = async ({
 			"/ico/",
 			"/img/",
 			"/manifest",
+			"/sw.js",
 		];
 
 		const url = req.url!;

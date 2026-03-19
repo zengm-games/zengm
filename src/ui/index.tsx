@@ -85,12 +85,8 @@ const handleVersion = async () => {
 
 			// Don't block
 			(async () => {
-				let registrations: readonly ServiceWorkerRegistration[] = [];
-
-				if (window.navigator.serviceWorker) {
-					registrations =
-						await window.navigator.serviceWorker.getRegistrations();
-				}
+				const registrations =
+					await window.navigator.serviceWorker.getRegistrations();
 
 				const getSWVersion = () => {
 					return new Promise((resolve) => {

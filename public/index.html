@@ -87,12 +87,15 @@
 			}
 
 			window.releaseStage = "unknown";
-			if (location.host.indexOf("localhost") === 0) {
-				window.releaseStage = "development";
-			} else if (location.host.indexOf("BETA_SUBDOMAIN") === 0) {
-				window.releaseStage = "beta";
-			} else if (location.host.indexOf("PLAY_SUBDOMAIN") === 0) {
+			if (location.host === "PLAY_SUBDOMAIN") {
 				window.releaseStage = "production";
+			} else if (location.host === "BETA_SUBDOMAIN") {
+				window.releaseStage = "beta";
+			} else if (
+				location.host.startsWith("localhost") ||
+				location.endsWith(".test")
+			) {
+				window.releaseStage = "development";
 			}
 
 			window.bugsnagKey = "BUGSNAG_API_KEY";

@@ -69,10 +69,10 @@ registerRoute(navigationRoute);
 
 self.addEventListener("message", (event) => {
 	if (event.data === "getSWVersion") {
-		event.ports[0].postMessage("VERSION_NUMBER");
+		event.ports[0].postMessage("c");
 	}
 
-	if (event.data && event.data.type === "SKIP_WAITING") {
+	if (event.data?.type === "SKIP_WAITING") {
 		self.skipWaiting();
 	}
 });

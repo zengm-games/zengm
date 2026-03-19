@@ -84,67 +84,7 @@ const handleVersion = async () => {
 			);
 
 			// Don't block
-			(async () => {
-				const registrations =
-					await window.navigator.serviceWorker.getRegistrations();
-
-				const getSWVersion = () => {
-					return new Promise((resolve) => {
-						setTimeout(() => {
-							resolve("???");
-						}, 2000);
-
-						const messageChannel = new MessageChannel();
-						messageChannel.port1.onmessage = (event) => {
-							resolve(event.data);
-						};
-						if (navigator.serviceWorker.controller) {
-							navigator.serviceWorker.controller.postMessage("getSWVersion", [
-								messageChannel.port2,
-							]);
-						}
-					});
-				};
-
-				const swVersion = await getSWVersion();
-				console.log("swVersion", swVersion);
-
-				Bugsnag.notify(new Error("Game version mismatch"), (event) => {
-					event.addMetadata("custom", {
-						bbgmVersion: window.bbgmVersion,
-						bbgmVersionStored,
-						hasNavigatorServiceWorker:
-							window.navigator.serviceWorker !== undefined,
-						registrationsLength: registrations.length,
-						registrations: registrations.map((r) => {
-							return {
-								scope: r.scope,
-								active: r.active
-									? {
-											scriptURL: r.active.scriptURL,
-											state: r.active.state,
-										}
-									: null,
-								installing: r.installing
-									? {
-											scriptURL: r.installing.scriptURL,
-											state: r.installing.state,
-										}
-									: null,
-								waiting: r.waiting
-									? {
-											scriptURL: r.waiting.scriptURL,
-											state: r.waiting.state,
-										}
-									: null,
-							};
-						}),
-						swVersion,
-					});
-				});
-
-				unregisterServiceWorkers();
-			})();
+			unregisterServiceWorkers();
 		}
 	} else {
 		// Initial load, store version for future comparisons

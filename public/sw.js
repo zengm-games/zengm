@@ -68,10 +68,6 @@ const navigationRoute = new NavigationRoute(handler, {
 registerRoute(navigationRoute);
 
 self.addEventListener("message", (event) => {
-	if (event.data === "getSWVersion") {
-		event.ports[0].postMessage("c");
-	}
-
 	if (event.data?.type === "SKIP_WAITING") {
 		self.skipWaiting();
 	}

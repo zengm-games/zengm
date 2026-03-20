@@ -30,6 +30,7 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"@ai-sdk/google": "^3.0.43",
 		"@bugsnag/browser": "8.8.1",
 		"@bugsnag/plugin-react": "8.8.0",
 		"@dnd-kit/core": "6.3.1",
@@ -51,6 +52,7 @@
 		"@visx/shape": "3.12.0",
 		"@visx/text": "3.12.0",
 		"@visx/tooltip": "3.12.0",
+		"ai": "^6.0.116",
 		"ajv": "8.18.0",
 		"bootstrap": "5.3.8",
 		"clsx": "2.1.1",
@@ -83,6 +85,7 @@
 		"workbox-routing": "7.4.0",
 		"workbox-strategies": "7.4.0",
 		"workbox-window": "7.4.0",
+		"zod": "^4.3.6",
 		"zustand": "5.0.11"
 	},
 	"devDependencies": {

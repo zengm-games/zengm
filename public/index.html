@@ -93,7 +93,7 @@
 				window.releaseStage = "beta";
 			} else if (
 				location.host.startsWith("localhost") ||
-				location.endsWith(".test")
+				location.host.endsWith(".test")
 			) {
 				window.releaseStage = "development";
 			}

@@ -6,7 +6,8 @@ const ONE_HOUR = 60 * 60 * 1000;
 
 if (
 	window.releaseStage === "development" &&
-	window.navigator.serviceWorker.controller
+	// serviceWorker is undefined in an insecure context, like http://play.basketball-gm.test/
+	window.navigator.serviceWorker?.controller
 ) {
 	logEvent({
 		type: "error",

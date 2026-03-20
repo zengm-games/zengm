@@ -21,3 +21,14 @@ This feature uses a Vercel serverless function to proxy requests to Google Gemin
 
 - Never paste real API keys into source code or docs.
 - Rotate keys if they are ever exposed.
+
+## Phase 1 manual verification (E2E)
+
+1. Install dependencies: `pnpm install`.
+2. Configure `GOOGLE_GENERATIVE_AI_API_KEY` locally (e.g. `vercel env pull .env.local` after linking the project, or create `.env.local` by hand). `.env*` files are gitignored.
+3. Build the static client: `pnpm run build`.
+4. Run the full stack locally: `pnpm run dev:vercel` (requires the [Vercel CLI](https://vercel.com/docs/cli)). Alternatively, deploy the branch to Vercel and test on the preview URL.
+5. Open **Basketball GM**, load or create a league, and navigate in-season so standings exist.
+6. Open the chat via the **AI GM** button in the title bar or the floating **AI** button (bottom-right).
+7. Ask: **What is my team's current record?**
+8. **Pass criteria:** The model uses the **getStandings** tool (tool rows may appear in the panel), and the reply matches your team's **W–L** (and placement) versus the in-game **Standings** page.

@@ -13,3 +13,4 @@
 .env
 .env.*
 /tools/names-groups-html
+.vercel

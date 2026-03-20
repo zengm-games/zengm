@@ -28,6 +28,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
 	const { messages, gameContext } = body;
 
+	console.log("[api/chat] gameContext", gameContext);
+
 	if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
 		res.status(500).json({
 			error:

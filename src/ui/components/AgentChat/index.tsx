@@ -86,9 +86,11 @@ const AgentChat = () => {
 		() =>
 			new DefaultChatTransport<UIMessage>({
 				api: "/api/chat",
-				body: () => ({
-					gameContext: gameContextRef.current,
-				}),
+				body: () => {
+					const gameContext = gameContextRef.current;
+					console.log("[AgentChat] /api/chat request gameContext", gameContext);
+					return { gameContext };
+				},
 			}),
 		[],
 	);

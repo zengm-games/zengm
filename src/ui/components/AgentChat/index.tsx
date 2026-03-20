@@ -17,14 +17,28 @@ import {
 } from "../../util/agentTools.ts";
 import { useLocalPartial } from "../../util/index.ts";
 import { useAgentChatUi } from "../../util/agentChatUi.ts";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const renderMessageParts = (message: UIMessage) => {
 	if (!message.parts || message.parts.length === 0) {
 		return null;
 	}
 
+	const useMarkdown = message.role === "assistant";
+
 	return message.parts.map((part, index) => {
 		if (part.type === "text") {
+			if (useMarkdown) {
+				return (
+					<div key={index} className="agent-chat-text agent-chat-md">
+						<ReactMarkdown remarkPlugins={[remarkGfm]}>
+							{part.text}
+						</ReactMarkdown>
+					</div>
+				);
+			}
+
 			return (
 				<div key={index} className="agent-chat-text">
 					{part.text}
@@ -80,15 +94,16 @@ const AgentChat = () => {
 	);
 
 	const addToolOutputRef = useRef<
-		((args: {
-			tool: "getStandings" | "getRoster" | "getAvailablePlayers";
-			toolCallId: string;
-			output: unknown;
-		}) => void) | null
+		| ((args: {
+				tool: "getStandings" | "getRoster" | "getAvailablePlayers";
+				toolCallId: string;
+				output: unknown;
+		  }) => void)
+		| null
 	>(null);
 
-	const { messages, sendMessage, status, error, stop, addToolOutput } =
-		useChat({
+	const { messages, sendMessage, status, error, stop, addToolOutput } = useChat(
+		{
 			transport,
 			sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
 			async onToolCall({ toolCall }) {
@@ -133,7 +148,8 @@ const AgentChat = () => {
 					});
 				}
 			},
-		});
+		},
+	);
 
 	addToolOutputRef.current = addToolOutput;
 
@@ -248,6 +264,52 @@ const AgentChat = () => {
 				}
 				.agent-chat-msg.role-user .agent-chat-text {
 					white-space: pre-wrap;
+				}
+				.agent-chat-md {
+					font-size: 0.9375rem;
+					line-height: 1.45;
+				}
+				.agent-chat-md :first-child {
+					margin-top: 0;
+				}
+				.agent-chat-md :last-child {
+					margin-bottom: 0;
+				}
+				.agent-chat-md p {
+					margin: 0.35em 0;
+				}
+				.agent-chat-md h1,
+				.agent-chat-md h2,
+				.agent-chat-md h3,
+				.agent-chat-md h4 {
+					font-size: 1rem;
+					font-weight: 600;
+					margin: 0.65em 0 0.35em;
+				}
+				.agent-chat-md ul,
+				.agent-chat-md ol {
+					margin: 0.35em 0;
+					padding-left: 1.25rem;
+				}
+				.agent-chat-md li {
+					margin: 0.15em 0;
+				}
+				.agent-chat-md strong {
+					font-weight: 600;
+				}
+				.agent-chat-md a {
+					word-break: break-word;
+				}
+				.agent-chat-md pre,
+				.agent-chat-md code {
+					font-size: 0.8125rem;
+				}
+				.agent-chat-md pre {
+					margin: 0.5em 0;
+					padding: 0.5rem;
+					overflow-x: auto;
+					border-radius: 0.25rem;
+					background: var(--bs-secondary-bg, rgba(0, 0, 0, 0.05));
 				}
 			`}</style>
 		</>

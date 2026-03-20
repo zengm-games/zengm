@@ -116,7 +116,12 @@ export class Spinners<Key extends string = string> {
 	}
 	private switchSportsTimeoutId: NodeJS.Timeout | undefined;
 
-	private waitingForBuildCompletion: ((value: void) => void)[] = [];
+	private waitingForBuildCompletion:
+		| {
+				promise: Promise<void>;
+				resolve: () => void;
+		  }
+		| undefined;
 
 	// Switching sports too fast (before JS has started to build) breaks rolldown somehow, so don't allow switching sports until some time later
 	initialized = false;
@@ -220,10 +225,10 @@ export class Spinners<Key extends string = string> {
 		) {
 			this.stopRendering();
 
-			for (const cb of this.waitingForBuildCompletion) {
-				cb();
+			if (this.waitingForBuildCompletion) {
+				this.waitingForBuildCompletion.resolve();
+				this.waitingForBuildCompletion = undefined;
 			}
-			this.waitingForBuildCompletion = [];
 		} else {
 			this.startRendering();
 		}
@@ -445,10 +450,11 @@ export class Spinners<Key extends string = string> {
 	waitForBuild() {
 		const infos: Info[] = Object.values(this.info);
 		if (infos.length === 0 || infos.some((info) => info.status === "spin")) {
-			const { promise, resolve } = Promise.withResolvers<void>();
-			this.waitingForBuildCompletion.push(resolve);
+			if (!this.waitingForBuildCompletion) {
+				this.waitingForBuildCompletion = Promise.withResolvers<void>();
+			}
 
-			return promise;
+			return this.waitingForBuildCompletion.promise;
 		}
 	}
 }

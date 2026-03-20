@@ -78,7 +78,11 @@ const getIpAddress = () => {
 };
 
 export const startServer = async (exposeToNetwork: boolean) => {
-	const port = await getPort({ port: 3000 });
+	const envPort = process.env.PORT;
+	const port =
+		envPort !== undefined && envPort !== "" && !Number.isNaN(Number(envPort))
+			? Number(envPort)
+			: await getPort({ port: 3000 });
 
 	const server = http.createServer((req, res) => {
 		const prefixesStatic = [

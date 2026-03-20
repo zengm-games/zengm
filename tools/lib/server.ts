@@ -48,15 +48,6 @@ const showIndex = (res: http.ServerResponse) => {
 	sendFile(res, "index.html");
 };
 
-const startsWith = (url: string, prefixes: string[]) => {
-	for (const prefix of prefixes) {
-		if (url.indexOf(prefix) === 0) {
-			return true;
-		}
-	}
-	return false;
-};
-
 // https://stackoverflow.com/a/15075395/786644
 const getIpAddress = () => {
 	const interfaces = os.networkInterfaces();
@@ -77,6 +68,17 @@ const getIpAddress = () => {
 	return "0.0.0.0";
 };
 
+const PREFIXES_STATIC = [
+	"/css/",
+	"/files/",
+	"/fonts/",
+	"/gen/",
+	"/ico/",
+	"/img/",
+	"/manifest",
+	"/sw.js",
+];
+
 export const startServer = async ({
 	exposeToNetwork,
 	waitForBuild,
@@ -92,20 +94,9 @@ export const startServer = async ({
 			await wait;
 		}
 
-		const prefixesStatic = [
-			"/css/",
-			"/files/",
-			"/fonts/",
-			"/gen/",
-			"/ico/",
-			"/img/",
-			"/manifest",
-			"/sw.js",
-		];
-
 		const url = req.url!;
 
-		if (startsWith(url, prefixesStatic)) {
+		if (PREFIXES_STATIC.some((prefix) => url.startsWith(prefix))) {
 			showStatic(url, res);
 		} else {
 			showIndex(res);

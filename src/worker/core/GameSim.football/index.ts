@@ -2159,7 +2159,7 @@ class GameSim extends GameSimBase {
 		);
 
 		const slope = 0.1879;
-		const intercept = 0.94;
+		const intercept = 0.947;
 
 		if (a === 0) {
 			return intercept;
@@ -2464,42 +2464,10 @@ class GameSim extends GameSimBase {
 		const o = this.o;
 		const d = this.d;
 
-		let rbw: Map<PlayerGameSim, boolean> | undefined;
-		const rbCounts = { rba: 0, rbw: 0 };
-
-		if (!qbScramble) {
-			this.updatePlayersOnField("run");
-			const penInfo = this.checkPenalties("beforeSnap");
-
-			if (penInfo) {
-				return 0;
-			}
-
-			const ol = this.playersOnField[o].OL;
-			rbw = new Map<PlayerGameSim, boolean>();
-			if (ol) {
-				for (const p of ol) {
-					// This roughly ranges from 1 to 1.25
-					const ratio =
-						p.compositeRating.runBlocking /
-						this.team[d].compositeRating.runStopping;
-
-					// Scale to roughly 30%-95%
-					const probWin = helpers.bound(
-						(ratio - 1) * (0.65 / 0.25) + 0.3,
-						0,
-						0.96,
-					);
-					const win = Math.random() < probWin;
-					rbw.set(p, win);
-
-					rbCounts.rba += 1;
-					if (win) {
-						rbCounts.rbw += 1;
-					}
-				}
-			}
-		}
+		let rbw:
+			| Map<PlayerGameSim, { type: "OL" | "Other"; won: boolean }>
+			| undefined;
+		const rbCounts = { aOL: 0, aOther: 0, wOL: 0, wOther: 0 };
 
 		// Usually do normal run, but sometimes do special stuff
 		let positions: Position[];
@@ -2516,12 +2484,76 @@ class GameSim extends GameSimBase {
 			} else if (rand < 0.57 || rbs.length === 0) {
 				positions.push("WR");
 			}
+
+			this.updatePlayersOnField("run");
+			const penInfo = this.checkPenalties("beforeSnap");
+
+			if (penInfo) {
+				return 0;
+			}
 		}
 
 		// Scrambles tend to be longer runs
 		const scrambleModifier = qbScramble ? 3 : 1;
 
 		const p = this.pickPlayer(o, "rushing", positions);
+
+		if (!qbScramble) {
+			rbw = new Map();
+
+			const addBlockAttempt = (
+				p: PlayerGameSim,
+				type: "OL" | "Other",
+				baselineRatio: number,
+			) => {
+				// This roughly ranges from 1 to 1.25
+				const ratio =
+					p.compositeRating.runBlocking /
+					this.team[d].compositeRating.runStopping;
+
+				// Scale to roughly 50%-95%
+				const probWin = helpers.bound(
+					(ratio - baselineRatio) * (0.65 / 0.25) + 0.3,
+					0,
+					0.96,
+				);
+				const won = Math.random() < probWin;
+				rbw!.set(p, {
+					type,
+					won,
+				});
+
+				rbCounts[`a${type}`] += 1;
+				if (won) {
+					rbCounts[`w${type}`] += 1;
+				}
+			};
+
+			// OL always block, TE and RB sometimes do
+			const ol = this.playersOnField[o].OL;
+			if (ol) {
+				for (const p2 of ol) {
+					addBlockAttempt(p2, "OL", 1);
+				}
+			}
+			const te = this.playersOnField[o].TE;
+			if (te) {
+				for (const p2 of te) {
+					if (p !== p2 && Math.random() < 0.75) {
+						addBlockAttempt(p2, "Other", 0.85);
+					}
+				}
+			}
+			const rb = this.playersOnField[o].RB;
+			if (rb) {
+				for (const p2 of rb) {
+					if (p !== p2 && Math.random() < 0.25) {
+						addBlockAttempt(p2, "Other", 0.6);
+					}
+				}
+			}
+		}
+
 		const qb = this.getTopPlayerOnField(o, "QB");
 		this.playByPlay.logEvent({
 			type: "handoff",
@@ -2530,11 +2562,13 @@ class GameSim extends GameSimBase {
 			names: p === qb ? [qb.name] : [qb.name, p.name],
 		});
 
-		// Hack for NZCFL, where the new blocking system was resulting in teams being more similar (like a team with great OL vs a team with horrible OL not being as big of a blowout)
+		const tempRbw = rbCounts.wOL + 0.5 * rbCounts.wOther;
+		const tempRba = rbCounts.aOL; // aOther not accounted for, RB/TE blocks are seen as a bonus
+
 		const [w, a] = this.adjustBlockingForExtremeTalentDisparity(
 			"run",
-			rbCounts.rbw,
-			rbCounts.rba,
+			tempRbw,
+			tempRba,
 		);
 
 		const rbwRatio = a === 0 ? 0 : w / a;
@@ -2542,7 +2576,7 @@ class GameSim extends GameSimBase {
 		// Bound is so (in extreme contrived cases like 0 ovr teams) meanYds can't go too far above/below the truncGauss limits
 		const meanYds = helpers.bound(
 			scrambleModifier *
-				(1.595 + 3.031 * p.compositeRating.rushing + 0.637 * rbwRatio),
+				(1.59 + 3.031 * p.compositeRating.rushing + 0.637 * rbwRatio),
 			-5,
 			15,
 		);

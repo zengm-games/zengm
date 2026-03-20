@@ -97,7 +97,7 @@ type PlayEvent =
 			type: "rus";
 			p: PlayerGameSim;
 			yds: number;
-			rbw?: Map<PlayerGameSim, boolean>;
+			rbw?: Map<PlayerGameSim, { won: boolean }>;
 	  }
 	| {
 			type: "rusTD";
@@ -522,7 +522,7 @@ class Play {
 				);
 
 				if (event.rbw) {
-					for (const [p, won] of event.rbw) {
+					for (const [p, { won }] of event.rbw) {
 						statChanges.push([state.o, p, "rba"]);
 						if (won) {
 							statChanges.push([state.o, p, "rbw"]);

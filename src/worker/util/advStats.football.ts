@@ -55,18 +55,22 @@ const DEFENSIVE_POSITIONS = new Set(["DL", "LB", "CB", "S"] as const);
 const olScore = (
 	stats: Record<"pbw" | "pba" | "pbwr" | "rbw" | "rba" | "rbwr", number>,
 	league: Record<"pbwr" | "rbwr", number>,
+	pos: string,
 ) => {
+	const posMultiplier = pos === "OL" ? 1 : 0.5;
+
 	// Bonus for PBW/RBW above league average rate
 	return (
-		stats.pbw +
-		stats.rbw +
-		helpers.bound(
-			stats.pbw -
-				stats.pba * league.pbwr +
-				(stats.rbw - stats.rba * league.rbwr),
-			0,
-			Infinity,
-		)
+		(stats.pbw +
+			stats.rbw +
+			helpers.bound(
+				stats.pbw -
+					stats.pba * league.pbwr +
+					(stats.rbw - stats.rba * league.rbwr),
+				0,
+				Infinity,
+			)) *
+		posMultiplier
 	);
 };
 
@@ -145,10 +149,9 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 			throw new Error("Should never happen");
 		}
 
-		if (p.ratings.pos === "OL") {
-			// Need to add this up, otherwise it doesn't get computed right at the team level
-			t.stats.olScore += olScore(p.stats, league);
-		}
+		// Need to add this up, otherwise it doesn't get computed right at the team level
+		t.stats.olScore += olScore(p.stats, league, p.ratings.pos);
+
 		if (DEFENSIVE_POSITIONS.has(p.ratings.pos)) {
 			let allProLevel = 0;
 			if (p.allLeagueTeam === 0) {
@@ -195,9 +198,9 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 
 		// OL
 		// Modification - use PBWR and RBWR to determine the credit OL gets for offense, kind of arbitrary
-		if (p.ratings.pos === "OL") {
-			score += (olScore(p.stats, league) / t.stats.olScore) * t.stats.ptsOL;
-		}
+		score +=
+			(olScore(p.stats, league, p.ratings.pos) / t.stats.olScore) *
+			t.stats.ptsOL;
 
 		// Rushing
 		score += (p.stats.rusYds / t.stats.rusYds) * t.stats.ptsRus;

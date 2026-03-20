@@ -1,8 +1,10 @@
 import Dropdown from "./Dropdown.tsx";
 import DropdownLinks from "./DropdownLinks.tsx";
 import NewWindowLink from "./NewWindowLink.tsx";
-import { useLocalPartial } from "../util/index.ts";
+import { isSport } from "../../common/index.ts";
 import type { MenuItemHeader } from "../../common/types.ts";
+import { useAgentChatUi } from "../util/agentChatUi.ts";
+import { useLocalPartial } from "../util/index.ts";
 
 const genPath = (parts: string[], season: string | undefined) => {
 	if (season !== undefined) {
@@ -13,6 +15,8 @@ const genPath = (parts: string[], season: string | undefined) => {
 };
 
 const TitleBar = () => {
+	const toggleAgentChat = useAgentChatUi((s) => s.toggle);
+
 	const {
 		title,
 		customMenu,
@@ -184,6 +188,15 @@ const TitleBar = () => {
 			<h1>
 				{title}
 				{!hideNewWindow ? <NewWindowLink /> : null}
+				{lid !== undefined && isSport("basketball") ? (
+					<button
+						type="button"
+						className="btn btn-sm btn-outline-primary ms-2"
+						onClick={() => toggleAgentChat()}
+					>
+						AI GM
+					</button>
+				) : null}
 			</h1>
 			{dropdownView && dropdownFields ? (
 				<Dropdown

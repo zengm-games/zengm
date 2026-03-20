@@ -4,7 +4,7 @@ import path from "node:path";
 import os from "node:os";
 import getPort from "get-port";
 
-const mimeTypes = {
+const mimeTypes: Record<string, string> = {
 	".bmp": "image/bmp",
 	".css": "text/css",
 	".gif": "image/gif",
@@ -21,15 +21,32 @@ const mimeTypes = {
 	".woff": "font/woff",
 	".woff2": "font/woff2",
 };
+
+const BUILD_DIR = path.resolve("build");
+
 const sendFile = (res: http.ServerResponse, filename: string) => {
-	const filePath = path.join("build", filename);
+	const filePath = path.resolve(BUILD_DIR, filename);
+
+	res.setHeader("Cache-Control", "no-cache");
+
+	if (!filePath.startsWith(BUILD_DIR)) {
+		res.writeHead(403, {
+			"Content-Type": "text/plain",
+		});
+		res.end("Forbidden");
+		return;
+	}
+
 	if (existsSync(filePath)) {
 		const ext = path.extname(filename);
-		if (Object.hasOwn(mimeTypes, ext)) {
-			res.writeHead(200, { "Content-Type": (mimeTypes as any)[ext] });
-		} else {
-			console.log(`Unknown mime type for extension ${ext}`);
+		const mimeType = mimeTypes[ext];
+		if (mimeType === undefined) {
+			throw new Error(`Unknown mime type for extension ${ext}`);
 		}
+
+		res.writeHead(200, {
+			"Content-Type": mimeType,
+		});
 
 		createReadStream(filePath).pipe(res);
 	} else {
@@ -87,6 +104,7 @@ export const startServer = async ({
 	waitForBuild: () => Promise<void> | undefined;
 }) => {
 	const port = await getPort({ port: 3000 });
+	const localUrl = `http://localhost:${port}`;
 
 	const server = http.createServer(async (req, res) => {
 		const wait = waitForBuild();
@@ -94,10 +112,10 @@ export const startServer = async ({
 			await wait;
 		}
 
-		const url = req.url!;
+		const { pathname } = new URL(req.url!, localUrl);
 
-		if (PREFIXES_STATIC.some((prefix) => url.startsWith(prefix))) {
-			showStatic(url, res);
+		if (PREFIXES_STATIC.some((prefix) => pathname.startsWith(prefix))) {
+			showStatic(pathname, res);
 		} else {
 			showIndex(res);
 		}
@@ -105,7 +123,7 @@ export const startServer = async ({
 
 	return new Promise<void>((resolve) => {
 		server.listen(port, exposeToNetwork ? "0.0.0.0" : "localhost", () => {
-			console.log(`Local: http://localhost:${port}`);
+			console.log(`Local: ${localUrl}`);
 			if (exposeToNetwork) {
 				console.log(`Network: http://${getIpAddress()}:${port}`);
 			} else {

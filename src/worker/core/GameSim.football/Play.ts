@@ -117,7 +117,7 @@ type PlayEvent =
 	  }
 	| {
 			type: "dropback";
-			pbw: Map<PlayerGameSim, boolean>;
+			pbw: Map<PlayerGameSim, { won: boolean }>;
 	  }
 	| {
 			type: "pss";
@@ -653,7 +653,7 @@ class Play {
 					}
 				}
 			} else if (event.type === "dropback") {
-				for (const [p, won] of event.pbw) {
+				for (const [p, { won }] of event.pbw) {
 					statChanges.push([state.o, p, "pba"]);
 					if (won) {
 						statChanges.push([state.o, p, "pbw"]);

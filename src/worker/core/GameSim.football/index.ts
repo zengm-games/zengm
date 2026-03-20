@@ -2059,7 +2059,10 @@ class GameSim extends GameSimBase {
 		});
 	}
 
-	doSack(qb: PlayerGameSim, pbw: Map<PlayerGameSim, boolean>) {
+	doSack(
+		qb: PlayerGameSim,
+		pbw: Map<PlayerGameSim, { type: "OL" | "Other"; won: boolean }>,
+	) {
 		const { d } = this.currentPlay.state.initial;
 
 		const p = this.pickPlayer(d, "passRushing", undefined, 5);
@@ -2073,7 +2076,7 @@ class GameSim extends GameSimBase {
 		if ((dl && dl.includes(p)) || (lb && lb.includes(p))) {
 			// Get rid of Array.from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/map - Chrome 122, Firefox 131, Safari 18.4
 			const passBlockLossPlayers = Array.from(pbw.entries())
-				.filter(([p, won]) => !won)
+				.filter(([p, { type, won }]) => !won && type === "OL")
 				.map(([p]) => p);
 			if (passBlockLossPlayers.length > 0) {
 				ol = random.choice(passBlockLossPlayers);
@@ -2138,7 +2141,17 @@ class GameSim extends GameSimBase {
 	}
 
 	// Scaled similar to this.team[this.o].compositeRating.passBlocking / this.team[this.d].compositeRating.passRushing - higher means better blocking!
-	pbwFactor(pbw: number, pba: number) {
+	pbwFactor({
+		aOL,
+		wOL,
+		wOther,
+	}: {
+		aOL: number;
+		wOL: number;
+		wOther: number;
+	}) {
+		const pbw = wOL + 0.5 * wOther;
+		const pba = aOL; // aOther not accounted for, RB/TE blocks are seen as a bonus
 		const [w, a] = this.adjustBlockingForExtremeTalentDisparity(
 			"pass",
 			pbw,
@@ -2146,7 +2159,7 @@ class GameSim extends GameSimBase {
 		);
 
 		const slope = 0.1879;
-		const intercept = 0.953;
+		const intercept = 0.94;
 
 		if (a === 0) {
 			return intercept;
@@ -2216,32 +2229,64 @@ class GameSim extends GameSimBase {
 			return 0;
 		}
 
+		const pbw = new Map<
+			PlayerGameSim,
+			{ type: "OL" | "Other"; won: boolean }
+		>();
+		const pbCounts = { aOL: 0, aOther: 0, wOL: 0, wOther: 0 };
+		const addBlockAttempt = (
+			p: PlayerGameSim,
+			type: "OL" | "Other",
+			baselineRatio: number,
+		) => {
+			// This roughly ranges from 1 to 1.25
+			const ratio =
+				p.compositeRating.passBlocking /
+				this.team[d].compositeRating.passRushing;
+
+			// Scale to roughly 50%-95%
+			const probWin = helpers.bound(
+				(ratio - baselineRatio) * (0.45 / 0.25) + 0.5,
+				0,
+				0.96,
+			);
+			const won = Math.random() < probWin;
+			pbw.set(p, {
+				type,
+				won,
+			});
+
+			pbCounts[`a${type}`] += 1;
+			if (won) {
+				pbCounts[`w${type}`] += 1;
+			}
+		};
+
+		// OL always block, TE and RB sometimes do
 		const ol = this.playersOnField[o].OL;
-		const pbw = new Map<PlayerGameSim, boolean>();
-		const pbCounts = { pba: 0, pbw: 0 };
 		if (ol) {
 			for (const p of ol) {
-				// This roughly ranges from 1 to 1.25
-				const ratio =
-					p.compositeRating.passBlocking /
-					this.team[d].compositeRating.passRushing;
-
-				// Scale to roughly 50%-95%
-				const probWin = helpers.bound(
-					(ratio - 1) * (0.45 / 0.25) + 0.5,
-					0,
-					0.96,
-				);
-				const win = Math.random() < probWin;
-				pbw.set(p, win);
-
-				pbCounts.pba += 1;
-				if (win) {
-					pbCounts.pbw += 1;
+				addBlockAttempt(p, "OL", 1);
+			}
+		}
+		const te = this.playersOnField[o].TE;
+		if (te) {
+			for (const p of te) {
+				if (Math.random() < 0.1) {
+					addBlockAttempt(p, "Other", 0.75);
 				}
 			}
 		}
-		const pbwFactor = this.pbwFactor(pbCounts.pbw, pbCounts.pba);
+		const rb = this.playersOnField[o].RB;
+		if (rb) {
+			for (const p of rb) {
+				if (Math.random() < 0.5) {
+					addBlockAttempt(p, "Other", 0.5);
+				}
+			}
+		}
+
+		const pbwFactor = this.pbwFactor(pbCounts);
 
 		const qb = this.getTopPlayerOnField(o, "QB");
 		this.currentPlay.addEvent({

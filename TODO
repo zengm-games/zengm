@@ -1,3 +1,10 @@
+FBGM after PBW/RBW update, TE and RB blocking doesn't do anything. does that matter? was it even noticeable before, when it was a pretty small factor?
+- might want to make RB matter in pass blocking and TE matter in run blocking, more than they did previously
+- could make explicit offense/defense blocking matchups, and then track blocking stats for RB/TE too
+- should contribute to RB/TE AV
+- keyStats
+- ol -> blocking for stat tables
+
 dev usability stuff
 - send message to any open tabs to pop up notification when a new worker process is built, then send message to worker to mark it as stale, then any new UI tab opened with stale worker show a popup with error message. to prevent accidentally having multiple tabs open
 
@@ -14,11 +21,6 @@ trading away players should not change willingness to sign of existing free agen
   - could save state in player object
     - state could be the number of players traded away for each team
 - any other components that should be frozen?
-
-FBGM after PBW/RBW update, TE and RB blocking doesn't do anything. does that matter? was it even noticeable before, when it was a pretty small factor?
-- might want to make RB matter in pass blocking and TE matter in run blocking, more than they did previously
-- could make explicit offense/defense blocking matchups, and then track blocking stats for RB/TE too
-- should contribute to RB/TE AV
 
 in play by play, scoring/made FG/3PT streak like on the real app, and how long a run is https://discord.com/channels/290013534023057409/1476936717733728298/1477098494866096374
 

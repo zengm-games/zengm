@@ -340,7 +340,7 @@ const useDropdownOptions = (
 			football: [
 				"passing",
 				"rushingReceiving",
-				"ol",
+				"blocking",
 				"defense",
 				"kicking",
 				"punting",

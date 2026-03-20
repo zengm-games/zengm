@@ -160,8 +160,8 @@ const PLAYER_GAME_STATS = {
 		stats: ["tgt", "rec", "recYds", "recYdsPerRec", "recLng", "recTD", "fp"],
 		sortBy: ["recYds"],
 	},
-	ol: {
-		name: "Offensive Line",
+	blocking: {
+		name: "Blocking",
 		stats: ["pbw", "pba", "pbwr", "rbw", "rba", "rbwr", "skAlw", "skAlwPct"],
 		sortBy: ["pbw"],
 	},
@@ -350,8 +350,8 @@ const PLAYER_STATS_TABLES = {
 			"av",
 		],
 	},
-	ol: {
-		name: "Offensive Line",
+	blocking: {
+		name: "Blocking",
 		onlyShowIf: ["pba", "rba"],
 		stats: [
 			"gp",
@@ -551,8 +551,8 @@ const TEAM_STATS_TABLES = {
 			"fmbLost",
 		],
 	},
-	ol: {
-		name: "Offensive Line",
+	blocking: {
+		name: "Blocking",
 		stats: ["pbw", "pba", "pbwr", "rbw", "rba", "rbwr", "skAlw", "skAlwPct"],
 	},
 	defense: {
@@ -757,8 +757,8 @@ const TEAM_STATS_TABLES = {
 			"oppFmbLost",
 		],
 	},
-	opponentOl: {
-		name: "Opponent Offensive Line",
+	opponentBlocking: {
+		name: "Opponent Blocking",
 		stats: [
 			"oppPbw",
 			"oppPba",

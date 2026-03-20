@@ -1,5 +1,10 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { convertToModelMessages, stepCountIs, streamText, type UIMessage } from "ai";
+import {
+	convertToModelMessages,
+	stepCountIs,
+	streamText,
+	type UIMessage,
+} from "ai";
 import { google } from "@ai-sdk/google";
 import { agentChatTools } from "../src/common/agentChatTools.ts";
 
@@ -25,7 +30,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
 	if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
 		res.status(500).json({
-			error: "Server misconfiguration: GOOGLE_GENERATIVE_AI_API_KEY is not set.",
+			error:
+				"Server misconfiguration: GOOGLE_GENERATIVE_AI_API_KEY is not set.",
 		});
 		return;
 	}
@@ -43,7 +49,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 	].join("\n");
 
 	const result = streamText({
-		model: google("gemini-2.0-flash"),
+		model: google("gemini-3-flash-preview"),
 		system,
 		messages: await convertToModelMessages(messages),
 		tools: agentChatTools,

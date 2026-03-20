@@ -29,6 +29,7 @@
 	"lint-staged": {
 		"*": "oxfmt --no-error-on-unmatched-pattern"
 	},
+	"packageManager": "pnpm@10.12.1",
 	"type": "module",
 	"dependencies": {
 		"@ai-sdk/google": "^3.0.43",
@@ -134,6 +135,7 @@
 		"rollup-plugin-visualizer": "7.0.1",
 		"sass-embedded": "1.78.0",
 		"typescript": "6.0.1-rc",
+		"vercel": "^50.34.2",
 		"vitest": "4.1.0",
 		"workbox-build": "7.4.0"
 	},

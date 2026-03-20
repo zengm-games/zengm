@@ -15,6 +15,7 @@
 		"deploy": "node --run lint && node --run test && node tools/deploy.ts",
 		"deploy-all": "node --run lint && node --run test && node tools/deploy-all.ts",
 		"dev": "node tools/watch/cli.ts",
+		"dev:vercel": "vercel dev",
 		"preview": "node tools/preview.ts",
 		"lint": "concurrently --raw \"node --run lint-js\" \"node --run lint-ts\"",
 		"lint-js": "node --run pre-test && eslint",

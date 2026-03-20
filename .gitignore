@@ -10,4 +10,6 @@
 /.idea/
 /foo
 /.vscode
+.env
+.env.*
 /tools/names-groups-html

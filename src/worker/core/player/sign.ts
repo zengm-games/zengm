@@ -4,6 +4,10 @@ import { g, helpers, logEvent } from "../../util/index.ts";
 import type { Phase, Player, PlayerContract } from "../../../common/types.ts";
 import genJerseyNumber from "./genJerseyNumber.ts";
 import setJerseyNumber from "./setJerseyNumber.ts";
+import { emitFeedEvent } from "../../util/feedEvents.ts";
+import { getSocialContext } from "../../util/getSocialContext.ts";
+
+let lastPlayerSigningMs = 0;
 
 const sign = async (
 	p: Player,
@@ -56,6 +60,23 @@ const sign = async (
 			type: "freeAgent",
 			eid,
 		});
+
+		// --- PLAYER_SIGNING feed event hook (fire-and-forget) ---
+		if (Math.random() > 0.15) return; // skip most signings
+		const now = Date.now();
+		if (now - lastPlayerSigningMs < 2000) return; // cooldown
+		lastPlayerSigningMs = now;
+		const playerName = `${p.firstName} ${p.lastName}`;
+		const signingTid = p.tid;
+		void getSocialContext("PLAYER_SIGNING")
+			.then((context) =>
+				emitFeedEvent("PLAYER_SIGNING", context, {
+					playerName,
+					teamName: context.teams.find((t) => t.tid === signingTid)?.name ?? "",
+				}),
+			)
+			.catch((err) => console.error("[feedEvent] PLAYER_SIGNING failed", err));
+		// --- end PLAYER_SIGNING hook ---
 	}
 };
 

@@ -136,6 +136,7 @@
 		"rollup-plugin-visualizer": "7.0.1",
 		"sass-embedded": "1.78.0",
 		"typescript": "6.0.1-rc",
+		"vercel": "^50.35.0",
 		"vitest": "4.1.0",
 		"workbox-build": "7.4.0"
 	},

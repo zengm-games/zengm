@@ -11,6 +11,8 @@ import {
 } from "../../util/index.ts";
 import type { TradeEventTeams } from "../../../common/types.ts";
 import { getTeammateJerseyNumbers } from "../player/genJerseyNumber.ts";
+import { emitFeedEvent } from "../../util/feedEvents.ts";
+import { getSocialContext } from "../../util/getSocialContext.ts";
 
 const processTrade = async (
 	tids: [number, number],
@@ -168,6 +170,14 @@ const processTrade = async (
 	if (g.get("phase") === PHASE.DRAFT) {
 		await updatePlayMenu();
 	}
+
+	// --- Phase 11: TRADE_ALERT hook (fire-and-forget) ---
+	void getSocialContext("TRADE_ALERT")
+		.then((context) => emitFeedEvent("TRADE_ALERT", context))
+		.catch((err) =>
+			console.error("[feedHook] failed to emit TRADE_ALERT", err),
+		);
+	// --- end Phase 11 hook ---
 };
 
 export default processTrade;

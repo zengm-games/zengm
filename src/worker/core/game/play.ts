@@ -40,6 +40,8 @@ import allowForceTie from "../../../common/allowForceTie.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { setLiveSimRatingsStatsPopoverPlayers } from "./setLiveSimRatingsStatsPopoverPlayers.ts";
 import { getOneUpcomingGame } from "../../util/recomputeLocalUITeamOvrs.ts";
+import { emitFeedEvent } from "../../util/feedEvents.ts";
+import { getSocialContext } from "../../util/getSocialContext.ts";
 
 /**
  * Play one or more days of games.
@@ -311,6 +313,36 @@ const play = async (
 		}
 
 		await advStats();
+
+		// --- Phase 10 hooks ---
+		if (injuryTexts.length > 0) {
+			void getSocialContext("INJURY")
+				.then((context) => emitFeedEvent("INJURY", context))
+				.catch((err) => console.error("[feedHook] failed to emit INJURY", err));
+		}
+
+		for (const result of results) {
+			const homeTeam = result.team[0];
+			const awayTeam = result.team[1];
+			const eventMetadata = {
+				gid: result.gid,
+				homeScore: homeTeam.stat.pts,
+				awayScore: awayTeam.stat.pts,
+				homeName: homeTeam.name,
+				awayName: awayTeam.name,
+			};
+			console.log("[feed:hook] GAME_END firing");
+			void getSocialContext("GAME_END")
+				.then((context) => {
+					console.log(
+						"[feed:hook] GAME_END context ready, teams:",
+						context.teams.length,
+					);
+					emitFeedEvent("GAME_END", context, eventMetadata);
+				})
+				.catch((err) => console.error("[feed:hook] GAME_END failed", err));
+		}
+		// --- end Phase 10 hooks ---
 
 		const playoffsOver =
 			g.get("phase") === PHASE.PLAYOFFS &&

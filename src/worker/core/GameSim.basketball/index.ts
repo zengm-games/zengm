@@ -1,4 +1,4 @@
-import { g, helpers, random } from "../../util/index.ts";
+import { g, helpers, random, local } from "../../util/index.ts";
 import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession.ts";
 import getInjuryRate from "./getInjuryRate.ts";
@@ -145,6 +145,55 @@ const getSortedIndexes = (ovrs: number[]) => {
 
 // Use if denominator of prob might be 0
 const boundProb = (prob: number) => helpers.bound(prob, 0.001, 0.999);
+
+// --- Phase 9: HALFTIME stat leader assembly ---
+type StatLeader = { pid: number; name: string; stat: string; value: number };
+function assembleStatLeaders(sim: GameSim): StatLeader[] {
+	const allPlayers = [
+		...sim.team[0].player.map((p: PlayerGameSim) => ({
+			p,
+			tid: sim.team[0].id,
+		})),
+		...sim.team[1].player.map((p: PlayerGameSim) => ({
+			p,
+			tid: sim.team[1].id,
+		})),
+	];
+
+	const topScorer = allPlayers.reduce((best, cur) =>
+		cur.p.stat.pts > best.p.stat.pts ? cur : best,
+	);
+	const topRebounder = allPlayers.reduce((best, cur) =>
+		cur.p.stat.orb + cur.p.stat.drb > best.p.stat.orb + best.p.stat.drb
+			? cur
+			: best,
+	);
+	const topAssister = allPlayers.reduce((best, cur) =>
+		cur.p.stat.ast > best.p.stat.ast ? cur : best,
+	);
+
+	return [
+		{
+			pid: topScorer.p.id,
+			name: topScorer.p.name,
+			stat: "pts",
+			value: topScorer.p.stat.pts,
+		},
+		{
+			pid: topRebounder.p.id,
+			name: topRebounder.p.name,
+			stat: "reb",
+			value: topRebounder.p.stat.orb + topRebounder.p.stat.drb,
+		},
+		{
+			pid: topAssister.p.id,
+			name: topAssister.p.name,
+			stat: "ast",
+			value: topAssister.p.stat.ast,
+		},
+	];
+}
+// --- end Phase 9 helpers ---
 
 class GameSim extends GameSimBase {
 	team: [TeamGameSim, TeamGameSim];
@@ -633,6 +682,9 @@ class GameSim extends GameSimBase {
 			if (finalPeriod) {
 				break;
 			}
+
+			// --- Phase 9: HALFTIME hook (disabled — toUI circular dep in GameSim context) ---
+			// --- end Phase 9 hook ---
 
 			period += 1;
 

@@ -12,6 +12,11 @@ import {
 	updateStatus,
 } from "./index.ts";
 import type { Conditions, League } from "../../common/types.ts";
+import { initializeFeedAccounts } from "./initializeAccounts.ts";
+import type {
+	TeamSummary,
+	PlayerSummary,
+} from "../../common/types.feedEvent.ts";
 
 let heartbeatIntervalID: number;
 
@@ -160,6 +165,44 @@ export const beforeLeague = async (newLid: number, conditions?: Conditions) => {
 
 	await league.loadGameAttributes();
 	await initUILocalGames();
+
+	// Seed social feed accounts (journalists, fans, org, players) after IDB and
+	// game attributes are ready. Fire-and-forget: a failure must never crash
+	// league load. Idempotent — safe to call on every league open.
+	(async () => {
+		const [rawTeams, rawPlayers] = await Promise.all([
+			idb.cache.teams.getAll(),
+			idb.cache.players.getAll(),
+		]);
+
+		const teamSummaries: TeamSummary[] = rawTeams
+			.filter((t) => !t.disabled)
+			.map((t) => ({
+				tid: t.tid,
+				name: t.name,
+				abbrev: t.abbrev,
+				wins: 0,
+				losses: 0,
+				standing: 0,
+			}));
+
+		const teamNameByTid = new Map(rawTeams.map((t) => [t.tid, t.name]));
+
+		const playerSummaries: PlayerSummary[] = rawPlayers
+			.filter((p) => p.tid >= 0)
+			.map((p) => ({
+				pid: p.pid,
+				name: `${p.firstName} ${p.lastName}`,
+				tid: p.tid,
+				teamName: teamNameByTid.get(p.tid) ?? "",
+				position: p.ratings.at(-1)?.pos ?? "",
+				seasonAverages: { pts: 0, reb: 0, ast: 0 },
+			}));
+
+		await initializeFeedAccounts(teamSummaries, playerSummaries);
+	})().catch((err) =>
+		console.error("[feed] initializeFeedAccounts failed:", err),
+	);
 
 	if (loadingNewLid !== newLid) {
 		return;

@@ -7,6 +7,8 @@ import type {
 	PlayoffSeries,
 } from "../../../common/types.ts";
 import { PHASE } from "../../../common/constants.ts";
+import { emitFeedEvent } from "../../util/feedEvents.ts";
+import { getSocialContext } from "../../util/getSocialContext.ts";
 
 const newPhasePlayoffs = async (
 	conditions: Conditions,
@@ -117,6 +119,22 @@ const newPhasePlayoffs = async (
 
 	// Update clinchedPlayoffs with final values
 	await team.updateClinchedPlayoffs(true, conditions);
+
+	// Phase 13 — PLAYOFF_CLINCH feed event
+	// All teamSeason.clinchedPlayoffs values are finalized in cache.
+	// Single event covers all clinching teams for this season transition.
+	// context.standings reflects end-of-regular-season records.
+	// Fire-and-forget; do not await.
+	void getSocialContext("PLAYOFF_CLINCH")
+		.then((context) =>
+			emitFeedEvent("PLAYOFF_CLINCH", context, {
+				teamName: "",
+				conf: "",
+			}),
+		)
+		.catch((err) =>
+			console.error("[feedHook] failed to emit PLAYOFF_CLINCH", err),
+		);
 
 	await realRosters.checkDisableForceHistoricalRosters(
 		g.get("season"),

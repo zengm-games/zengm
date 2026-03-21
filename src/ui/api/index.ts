@@ -18,6 +18,7 @@ import type {
 	GameAttributesLeague,
 } from "../../common/types.ts";
 import { crossTabEmitter } from "../util/crossTabEmitter.ts";
+import { feedEventHandler } from "../util/feedEventHandler.ts";
 
 const initAds = (type: "accountChecked" | "uiRendered") => {
 	ads.setLoadingDone(type);
@@ -133,6 +134,12 @@ const crossTabEmit = (
 	crossTabEmitter.emit(...parameters);
 };
 
+// Phase 18: the Feed Worker lives in the game worker and handles all feed
+// processing (agent resolution, API call, IDB writes). The UI thread only needs
+// to relay the feedEvent notification to registered panel listeners so they
+// re-read socialFeedDb via their own IDB connection.
+const feedEvent = feedEventHandler;
+
 export default {
 	analyticsEvent,
 	autoPlayDialog,
@@ -140,6 +147,7 @@ export default {
 	confirmDeleteAllLeagues,
 	crossTabEmit,
 	deleteGames,
+	feedEvent,
 	initAds,
 	initGold,
 	mergeGames,

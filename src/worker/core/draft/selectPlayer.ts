@@ -5,6 +5,8 @@ import { idb } from "../../db/index.ts";
 import { g, helpers, local, logEvent } from "../../util/index.ts";
 import type { DraftPick } from "../../../common/types.ts";
 import getRookieContractLength from "./getRookieContractLength.ts";
+import { emitFeedEvent } from "../../util/feedEvents.ts";
+import { getSocialContext } from "../../util/getSocialContext.ts";
 
 /**
  * Select a player for the current drafting team.
@@ -145,6 +147,19 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 
 	await idb.cache.players.put(p);
 	await idb.cache.draftPicks.delete(dp.dpid);
+
+	// Phase 12 — DRAFT_PICK feed event
+	// Player is now in cache with correct tid and draft transaction recorded.
+	// Fire-and-forget; selectPlayer must not block the draft loop.
+	void getSocialContext("DRAFT_PICK")
+		.then((context) =>
+			emitFeedEvent("DRAFT_PICK", context, {
+				pickNumber: pickNum,
+				playerName: `${p.firstName} ${p.lastName}`,
+				teamName: g.get("teamInfoCache")[dp.tid]?.name ?? "",
+			}),
+		)
+		.catch((err) => console.error("[feedHook] failed to emit DRAFT_PICK", err));
 
 	let score = 0;
 	if (pickNum === 1) {

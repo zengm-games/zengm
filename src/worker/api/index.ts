@@ -5136,6 +5136,12 @@ const getPodcast = async ({ gid }: { gid: number }) => {
 	return idb.league.get("podcasts", gid) ?? null;
 };
 
+const storePodcast = async (
+	podcast: import("../../common/types.ts").PodcastRecord,
+) => {
+	await idb.league.put("podcasts", podcast);
+};
+
 export default {
 	actions,
 	exhibitionGame,
@@ -5145,6 +5151,7 @@ export default {
 	main: {
 		acceptContractNegotiation,
 		getPodcast,
+		storePodcast,
 		addTeam,
 		advancedPlayerSearch,
 		allStarDraftAll,

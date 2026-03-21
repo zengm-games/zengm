@@ -2,6 +2,7 @@ import clsx from "clsx";
 import {
 	BoxScoreRow,
 	BoxScoreWrapper,
+	GamePodcast,
 	MoreLinks,
 } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
@@ -219,17 +220,22 @@ const GameLog = ({
 					<div className="row">
 						<div className="col-md-10">
 							{boxScore.gid >= 0 ? (
-								<BoxScoreWrapper
-									abbrev={abbrev}
-									boxScore={boxScore}
-									currentGidInList={currentGidInList}
-									nextGid={nextGid}
-									prevGid={prevGid}
-									showNextPrev
-									sportState={undefined}
-									tid={tid}
-									Row={StatsRow}
-								/>
+								<>
+									<BoxScoreWrapper
+										abbrev={abbrev}
+										boxScore={boxScore}
+										currentGidInList={currentGidInList}
+										nextGid={nextGid}
+										prevGid={prevGid}
+										showNextPrev
+										sportState={undefined}
+										tid={tid}
+										Row={StatsRow}
+									/>
+									{isSport("basketball") ? (
+										<GamePodcast gid={boxScore.gid} boxScore={boxScore} />
+									) : null}
+								</>
 							) : (
 								<p>Select a game from the menu to view a box score.</p>
 							)}

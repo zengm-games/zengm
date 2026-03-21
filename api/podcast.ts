@@ -39,8 +39,8 @@ function buildPrompt(input: PodcastInput): string {
 	const loseScore = Math.min(input.homeScore, input.awayScore);
 
 	const allPlayers = [
-		...input.homePlayers.map(p => ({ ...p, team: input.homeTeam })),
-		...input.awayPlayers.map(p => ({ ...p, team: input.awayTeam })),
+		...input.homePlayers.map((p) => ({ ...p, team: input.homeTeam })),
+		...input.awayPlayers.map((p) => ({ ...p, team: input.awayTeam })),
 	];
 	const topScorer = allPlayers.reduce((best, p) =>
 		p.pts > best.pts ? p : best,
@@ -72,7 +72,7 @@ function buildPrompt(input: PodcastInput): string {
 			topPerformers: allPlayers
 				.sort((a, b) => b.pts - a.pts)
 				.slice(0, 5)
-				.map(p => ({
+				.map((p) => ({
 					name: p.name,
 					team: p.team,
 					pts: p.pts,
@@ -92,10 +92,9 @@ function buildPrompt(input: PodcastInput): string {
 
 	return `You are producing an "Inside the NBA" studio show podcast for a basketball simulation game.
 
-The three hosts are:
+The two hosts are:
 - Ernie: Ernie Johnson — polished TV host, professional, asks sharp follow-up questions, occasionally deadpans
 - Charles: Charles Barkley — blunt, opinionated, never afraid to criticize, Southern expressions ("I tell you what", "that's just terrible"), loves bold takes
-- Shaq: Shaquille O'Neal — big personality, playful banter with Charles, drops jokes, occasionally goes serious on dominant performances
 
 Write a 2–3 minute natural back-and-forth podcast discussion. No stage directions. No asterisks. Cover:
 1. Open with the final score and storyline (${winner} beat ${loser} ${winScore}-${loseScore}${otText}${playoffText})
@@ -110,7 +109,6 @@ ${statsJson}
 Format every line as:
 Ernie: [dialogue]
 Charles: [dialogue]
-Shaq: [dialogue]
 
 Keep it energetic, fun, and authentic to each host's voice. Minimum 20 exchanges.`;
 }
@@ -119,8 +117,8 @@ async function generateAudio(
 	script: string,
 	apiKey: string,
 ): Promise<{ audioData: string; mimeType: string }> {
-	// Gemini 2.5 Flash Preview TTS — multi-speaker, requires Google REST API directly
-	// Voice assignments: Ernie=Charon (warm/smooth), Charles=Fenrir (bold), Shaq=Orus (deep)
+	// Gemini 2.5 Flash Preview TTS — multi-speaker requires exactly 2 voices
+	// Voice assignments: Ernie=Charon (warm/smooth), Charles=Fenrir (bold)
 	const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
 
 	const response = await fetch(url, {
@@ -150,12 +148,6 @@ async function generateAudio(
 									prebuiltVoiceConfig: { voiceName: "Fenrir" },
 								},
 							},
-							{
-								speaker: "Shaq",
-								voiceConfig: {
-									prebuiltVoiceConfig: { voiceName: "Orus" },
-								},
-							},
 						],
 					},
 				},
@@ -183,7 +175,44 @@ async function generateAudio(
 		throw new Error("No audio data in Gemini TTS response");
 	}
 
+	// Gemini TTS returns raw PCM (audio/L16). Wrap in WAV so browsers can play it.
+	if (
+		part.mimeType.startsWith("audio/L16") ||
+		part.mimeType.startsWith("audio/pcm")
+	) {
+		const sampleRateMatch = part.mimeType.match(/rate=(\d+)/);
+		const sampleRate = sampleRateMatch ? parseInt(sampleRateMatch[1]) : 24000;
+		const pcmBuffer = Buffer.from(part.data, "base64");
+		const wavBuffer = pcmToWav(pcmBuffer, sampleRate);
+		return { audioData: wavBuffer.toString("base64"), mimeType: "audio/wav" };
+	}
+
 	return { audioData: part.data, mimeType: part.mimeType };
+}
+
+function pcmToWav(pcm: Buffer, sampleRate: number): Buffer {
+	const numChannels = 1;
+	const bitsPerSample = 16;
+	const byteRate = (sampleRate * numChannels * bitsPerSample) / 8;
+	const blockAlign = (numChannels * bitsPerSample) / 8;
+	const dataSize = pcm.length;
+	const header = Buffer.alloc(44);
+
+	header.write("RIFF", 0);
+	header.writeUInt32LE(36 + dataSize, 4);
+	header.write("WAVE", 8);
+	header.write("fmt ", 12);
+	header.writeUInt32LE(16, 16); // PCM chunk size
+	header.writeUInt16LE(1, 20); // PCM format
+	header.writeUInt16LE(numChannels, 22);
+	header.writeUInt32LE(sampleRate, 24);
+	header.writeUInt32LE(byteRate, 28);
+	header.writeUInt16LE(blockAlign, 32);
+	header.writeUInt16LE(bitsPerSample, 34);
+	header.write("data", 36);
+	header.writeUInt32LE(dataSize, 40);
+
+	return Buffer.concat([header, pcm]);
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {

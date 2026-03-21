@@ -1087,7 +1087,10 @@ export const LiveGame = (props: View<"liveGame">) => {
 							{boxScore.current.gameOver &&
 							!boxScore.current.exhibition &&
 							isSport("basketball") ? (
-								<GamePodcast gid={boxScore.current.gid} />
+								<GamePodcast
+									gid={boxScore.current.gid}
+									boxScore={boxScore.current}
+								/>
 							) : null}
 						</>
 					) : (

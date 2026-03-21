@@ -221,6 +221,7 @@ const routeInfos = {
 	"/l/:lid/schedule_editor": "scheduleEditor",
 	"/l/:lid/agent_chat": "agentChat",
 	"/l/:lid/agent_social": "agentSocial",
+	"/l/:lid/my_staff": "myStaff",
 };
 
 export default routeInfos;

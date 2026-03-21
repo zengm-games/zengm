@@ -4,7 +4,7 @@ import {
 	lastAssistantMessageIsCompleteWithToolCalls,
 	type UIMessage,
 } from "ai";
-import { useEffect, useMemo, useRef, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import type { AgentChatToolName } from "../../../common/agentChatTools.ts";
 import type { GmChatToolName } from "../../../common/gmChatTools.ts";
 import {
@@ -34,14 +34,20 @@ import {
 } from "../../util/agentChatUi.ts";
 import { useLocalPartial } from "../../util/index.ts";
 import TeamLogoInline from "../TeamLogoInline.tsx";
-import { renderMessageParts } from "./renderMessages.tsx";
+import {
+	hasVisibleParts,
+	hasVisibleText,
+	renderMessageParts,
+} from "./renderMessages.tsx";
 
 export default function ChatView({
 	conversation,
 	hideNav,
+	variant = "bubble",
 }: {
 	conversation: Conversation;
 	hideNav?: boolean;
+	variant?: "bubble" | "assistant";
 }) {
 	const setOpen = useAgentChatUi((s) => s.setOpen);
 	const openInbox = useAgentChatUi((s) => s.openInbox);
@@ -244,6 +250,51 @@ export default function ChatView({
 		}
 	}, [chatMessages, setMessages, conversation.id, updateConversationPreview]);
 
+	const [pendingSend, setPendingSend] = useState(false);
+
+	useEffect(() => {
+		if (status === "streaming" || status === "ready") {
+			setPendingSend(false);
+		}
+	}, [status]);
+
+	const isThinking = (() => {
+		if (pendingSend || status === "submitted") return true;
+		if (status !== "streaming") return false;
+		const lastMsg = chatMessages.at(-1);
+		if (!lastMsg || lastMsg.role !== "assistant") return true;
+		return !lastMsg.parts?.some(
+			(p) => p.type === "text" && "text" in p && p.text.length > 0,
+		);
+	})();
+
+
+	const messagesEndRef = useRef<HTMLDivElement>(null);
+	const lastAssistantRef = useRef<HTMLDivElement>(null);
+	const lastUserRef = useRef<HTMLDivElement>(null);
+	const scrollContainerRef = useRef<HTMLDivElement>(null);
+	const prevMessageCount = useRef(chatMessages.length);
+	const prevStatus = useRef(status);
+
+	useEffect(() => {
+		if (variant === "assistant") {
+			const newMessage = chatMessages.length > prevMessageCount.current;
+			prevMessageCount.current = chatMessages.length;
+
+			const container = scrollContainerRef.current;
+			const target = lastUserRef.current;
+			if ((newMessage || isThinking) && container && target) {
+				const targetTop = target.offsetTop - container.offsetTop;
+				container.scrollTo({ top: targetTop, behavior: "smooth" });
+			} else if (prevStatus.current === "streaming" && status === "ready") {
+				lastAssistantRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+			}
+		} else {
+			messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+		}
+		prevStatus.current = status;
+	}, [chatMessages, isThinking, variant, status]);
+
 	const handleSubmit = async (e: FormEvent) => {
 		e.preventDefault();
 		const form = e.target as HTMLFormElement;
@@ -253,11 +304,12 @@ export default function ChatView({
 			return;
 		}
 
+		setPendingSend(true);
 		await sendMessage({ text });
 		form.reset();
 	};
 
-	const headerName = isGm ? conversation.name : "AI GM";
+	const headerName = isGm ? conversation.name : "My Staff";
 	const placeholder = isGm
 		? `Message ${conversation.name}...`
 		: "Ask about your team...";
@@ -295,7 +347,7 @@ export default function ChatView({
 				</div>
 			)}
 			{hideNav && (
-				<div className="d-flex align-items-center gap-2 border-bottom px-3 py-2">
+				<div className="agent-chat-header d-flex align-items-center gap-2 border-bottom px-3">
 					{gmTeamInfo ? (
 						<TeamLogoInline
 							imgURL={gmTeamInfo.imgURL}
@@ -306,32 +358,152 @@ export default function ChatView({
 					<span className="fw-semibold">{headerName}</span>
 				</div>
 			)}
+			{variant === "assistant" ? (
+			<>
+			<div ref={scrollContainerRef} className="overflow-auto agent-chat-messages flex-grow-1">
+				<div className="agent-assistant-thread mx-auto px-3 py-3">
+				{error ? (
+					<div className="alert alert-warning py-2 small" role="alert">
+						{error.message}
+					</div>
+				) : null}
+				{chatMessages.map((m, i) => {
+					const isUser = m.role === "user";
+					const isLastUser = isUser && !chatMessages.slice(i + 1).some((mm) => mm.role === "user");
+					const isLastAssistant = !isUser && !chatMessages.slice(i + 1).some((mm) => mm.role === "assistant");
+					const isCurrentResponse = isLastAssistant && chatMessages.at(-1) === m;
+
+					if (!isUser && !hasVisibleParts(m) && !isCurrentResponse) {
+						return null;
+					}
+
+					if (isUser) {
+						return (
+							<div
+								key={m.id}
+								ref={isLastUser ? lastUserRef : undefined}
+								className="agent-assistant-msg agent-assistant-msg-user"
+							>
+								<div className="agent-assistant-user-text">
+									{renderMessageParts(m, status === "streaming")}
+								</div>
+							</div>
+						);
+					}
+
+					return (
+						<div
+							key={m.id}
+							ref={isLastAssistant ? lastAssistantRef : undefined}
+							className="agent-assistant-msg agent-assistant-msg-ai"
+						>
+							<div className="agent-assistant-role fw-semibold small text-muted mb-1">My Staff</div>
+							{isCurrentResponse && isThinking && (
+								<div className="agent-chat-typing text-muted small fst-italic">
+									Thinking…
+								</div>
+							)}
+							{hasVisibleParts(m) && (
+								<div>
+									{renderMessageParts(m, status === "streaming")}
+								</div>
+							)}
+						</div>
+					);
+				})}
+				{isThinking && chatMessages.at(-1)?.role !== "assistant" ? (
+					<div className="agent-assistant-msg agent-assistant-msg-ai">
+						<div className="agent-assistant-role fw-semibold small text-muted mb-1">My Staff</div>
+						<div className="agent-chat-typing text-muted small fst-italic">
+							Thinking…
+						</div>
+					</div>
+				) : null}
+				<div ref={messagesEndRef} />
+				</div>
+			</div>
+			<div className="agent-assistant-input-area border-top">
+				<form onSubmit={handleSubmit} className="agent-assistant-input mx-auto d-flex align-items-center gap-2 px-3 py-3">
+					<input
+						type="text"
+						name="message"
+						className="form-control"
+						placeholder={placeholder}
+						disabled={status !== "ready"}
+						autoComplete="off"
+					/>
+					{status === "streaming" ? (
+						<button
+							type="button"
+							className="btn btn-outline-secondary flex-shrink-0"
+							onClick={() => void stop()}
+						>
+							Stop
+						</button>
+					) : (
+						<button
+							type="submit"
+							className="btn btn-primary flex-shrink-0"
+							disabled={status !== "ready"}
+						>
+							Send
+						</button>
+					)}
+				</form>
+			</div>
+			</>
+		) : (
+			<>
 			<div className="overflow-auto agent-chat-messages flex-grow-1 p-2">
 				{error ? (
 					<div className="alert alert-warning py-2 small" role="alert">
 						{error.message}
 					</div>
 				) : null}
-				{chatMessages.map((m) => (
-					<div
-						key={m.id}
-						className={`mb-2 agent-chat-msg role-${m.role}`}
-					>
-						<div className="small text-muted text-uppercase d-flex align-items-center gap-1">
-							{m.role === "assistant" && gmTeamInfo ? (
-								<TeamLogoInline
-									imgURL={gmTeamInfo.imgURL}
-									imgURLSmall={gmTeamInfo.imgURLSmall}
-									size={16}
-								/>
-							) : null}
-							{m.role === "assistant" && isGm
-								? headerName
-								: m.role}
+		{chatMessages.map((m) => {
+			if (m.role === "assistant" && !hasVisibleText(m)) {
+				return null;
+			}
+			const isUser = m.role === "user";
+			return (
+				<div
+					key={m.id}
+					className={`mb-2 agent-chat-msg role-${m.role} d-flex ${isUser ? "justify-content-end" : "justify-content-start"}`}
+				>
+					{!isUser && gmTeamInfo ? (
+						<div className="agent-chat-avatar me-1 flex-shrink-0">
+							<TeamLogoInline
+								imgURL={gmTeamInfo.imgURL}
+								imgURLSmall={gmTeamInfo.imgURLSmall}
+								size={24}
+							/>
 						</div>
-						{renderMessageParts(m)}
+					) : null}
+					<div className={`agent-chat-bubble ${isUser ? "agent-chat-bubble-user" : "agent-chat-bubble-assistant"}`}>
+						{renderMessageParts(m, status === "streaming", { hideToolParts: true })}
 					</div>
-				))}
+				</div>
+			);
+		})}
+		{isThinking ? (
+			<div className="mb-2 agent-chat-msg role-assistant d-flex justify-content-start">
+				{gmTeamInfo ? (
+					<div className="agent-chat-avatar me-1 flex-shrink-0">
+						<TeamLogoInline
+							imgURL={gmTeamInfo.imgURL}
+							imgURLSmall={gmTeamInfo.imgURLSmall}
+							size={24}
+						/>
+					</div>
+				) : null}
+				<div className="agent-chat-bubble agent-chat-bubble-assistant">
+					<div className="agent-chat-typing text-muted small fst-italic">
+						Typing…
+					</div>
+				</div>
+			</div>
+		) : null}
+				<div ref={messagesEndRef} />
 			</div>
 			<div className="border-top px-2 py-2">
 				<form onSubmit={handleSubmit} className="d-flex gap-2">
@@ -361,6 +533,8 @@ export default function ChatView({
 					) : null}
 				</form>
 			</div>
+			</>
+		)}
 		</div>
 	);
 }

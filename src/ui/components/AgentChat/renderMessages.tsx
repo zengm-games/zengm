@@ -5,19 +5,19 @@ import remarkGfm from "remark-gfm";
 import helpers from "../../util/helpers.ts";
 
 export const TOOL_LABELS: Record<string, string> = {
-	getStandings: "League standings",
-	getRoster: "Roster",
-	getAvailablePlayers: "Free agents",
-	getPlayer: "Player profile",
-	sortRoster: "Sort roster",
-	updatePlayingTime: "Playing time",
-	releasePlayer: "Release player",
-	draftPick: "Draft pick",
-	proposeTrade: "Propose trade",
-	getMyRoster: "My roster",
-	getUserTeamRoster: "User roster",
-	evaluateTrade: "Evaluate trade",
-	acceptTrade: "Accept trade",
+	getStandings: "Checking standings",
+	getRoster: "Checking roster",
+	getAvailablePlayers: "Checking free agents",
+	getPlayer: "Looking up player",
+	sortRoster: "Sorting roster",
+	updatePlayingTime: "Updating playing time",
+	releasePlayer: "Releasing player",
+	draftPick: "Making draft pick",
+	proposeTrade: "Proposing trade",
+	getMyRoster: "Checking my roster",
+	getUserTeamRoster: "Checking your roster",
+	evaluateTrade: "Evaluating trade",
+	acceptTrade: "Accepting trade",
 };
 
 export const toolPartLabel = (partType: string) => {
@@ -72,25 +72,71 @@ const MarkdownLink = (props: AnchorHTMLAttributes<HTMLAnchorElement>) => {
 
 const mdComponents = { a: MarkdownLink };
 
-export const renderMessageParts = (message: UIMessage) => {
+export const hasVisibleParts = (message: UIMessage) =>
+	message.parts?.some(
+		(p) =>
+			(p.type === "text" && "text" in p && p.text.length > 0) ||
+			p.type.startsWith("tool-"),
+	) ?? false;
+
+export const hasVisibleText = (message: UIMessage) =>
+	message.parts?.some(
+		(p) => p.type === "text" && "text" in p && p.text.length > 0,
+	) ?? false;
+
+export const getActiveToolLabel = (message: UIMessage): string | null => {
+	if (!message.parts) return null;
+	for (let i = message.parts.length - 1; i >= 0; i--) {
+		const part = message.parts[i];
+		if (part.type.startsWith("tool-")) {
+			const state = "state" in part ? part.state : undefined;
+			if (state !== "output-available" && state !== "output-error") {
+				return toolPartLabel(part.type);
+			}
+		}
+	}
+	return null;
+};
+
+export const renderMessageParts = (
+	message: UIMessage,
+	isStreaming?: boolean,
+	options?: { hideToolParts?: boolean },
+) => {
 	if (!message.parts || message.parts.length === 0) {
 		return null;
 	}
 
 	const useMarkdown = message.role === "assistant";
+	const lastTextIndex = message.parts.findLastIndex(
+		(p) => p.type === "text",
+	);
 
 	return message.parts.map((part, index) => {
 		if (part.type === "text") {
+			const isActivelyStreaming =
+				isStreaming &&
+				message.role === "assistant" &&
+				index === lastTextIndex &&
+				"state" in part &&
+				part.state === "streaming";
+
 			if (useMarkdown) {
 				return (
-					<div key={index} className="agent-chat-text agent-chat-md">
-					<ReactMarkdown
-						remarkPlugins={[remarkGfm]}
-						urlTransform={urlTransform}
-						components={mdComponents}
+					<div
+						key={index}
+						className={`agent-chat-text agent-chat-md${isActivelyStreaming ? " agent-chat-streaming" : ""}`}
 					>
-						{part.text}
-					</ReactMarkdown>
+						<ReactMarkdown
+							remarkPlugins={[remarkGfm]}
+							urlTransform={urlTransform}
+							components={mdComponents}
+						>
+							{part.text}
+						</ReactMarkdown>
+						{isActivelyStreaming ? (
+							<span className="agent-chat-cursor" />
+						) : null}
 					</div>
 				);
 			}
@@ -103,8 +149,10 @@ export const renderMessageParts = (message: UIMessage) => {
 		}
 
 		if (part.type.startsWith("tool-")) {
+			if (options?.hideToolParts) return null;
 			const label = toolPartLabel(part.type);
-			const state = "state" in part ? toolStateMessage(part.state) : undefined;
+			const state =
+				"state" in part ? toolStateMessage(part.state) : undefined;
 			return (
 				<div key={index} className="text-muted small py-1">
 					{state && state !== "Done" ? (

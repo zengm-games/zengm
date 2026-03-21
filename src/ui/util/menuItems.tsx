@@ -161,6 +161,14 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		children: [
 			{
 				type: "link",
+				active: (pageID) => pageID === "myStaff",
+				league: true,
+				commandPalette: true,
+				path: ["my_staff"],
+				text: "My Staff",
+			},
+			{
+				type: "link",
 				active: (pageID) => pageID === "agentChat",
 				league: true,
 				commandPalette: true,

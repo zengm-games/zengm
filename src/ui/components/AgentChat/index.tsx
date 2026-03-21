@@ -1,5 +1,7 @@
+import { useEffect } from "react";
 import { isSport } from "../../../common/index.ts";
 import { useAgentChatUi } from "../../util/agentChatUi.ts";
+import { useLocalPartial } from "../../util/index.ts";
 import { useViewData } from "../../util/viewManager.tsx";
 import ChatView from "./ChatView.tsx";
 import InboxView from "./InboxView.tsx";
@@ -82,7 +84,7 @@ export const AgentChatCore = ({ mode }: { mode: "panel" | "fullPage" }) => {
 	);
 };
 
-const agentChatStyles = `
+export const agentChatStyles = `
 	.agent-chat-sidebar {
 		width: 320px;
 		min-width: 320px;
@@ -101,10 +103,40 @@ const agentChatStyles = `
 	.agent-chat-full {
 		min-height: 60vh;
 	}
+	.agent-chat-header {
+		height: 45px;
+		min-height: 45px;
+	}
+	.agent-chat-inbox-active {
+		background: var(--bs-tertiary-bg, rgba(0, 0, 0, 0.04)) !important;
+		color: inherit !important;
+	}
 	.agent-chat-messages {
 		flex: 1;
 		min-height: 0;
 		max-height: 100%;
+	}
+	.agent-chat-avatar {
+		align-self: flex-end;
+		margin-bottom: 2px;
+	}
+	.agent-chat-bubble {
+		max-width: 85%;
+		padding: 0.5rem 0.75rem;
+		border-radius: 1rem;
+		word-break: break-word;
+	}
+	.agent-chat-bubble-user {
+		background: var(--bs-primary, #0d6efd);
+		color: #fff;
+		border-bottom-right-radius: 0.25rem;
+	}
+	.agent-chat-bubble-user a {
+		color: #cfe2ff;
+	}
+	.agent-chat-bubble-assistant {
+		background: var(--bs-secondary-bg, rgba(0, 0, 0, 0.06));
+		border-bottom-left-radius: 0.25rem;
 	}
 	.agent-chat-msg.role-user .agent-chat-text {
 		white-space: pre-wrap;
@@ -144,23 +176,102 @@ const agentChatStyles = `
 	.agent-chat-md a {
 		word-break: break-word;
 	}
-	.agent-chat-md pre,
 	.agent-chat-md code {
 		font-size: 0.8125rem;
 	}
-	.agent-chat-md pre {
-		margin: 0.5em 0;
-		padding: 0.5rem;
-		overflow-x: auto;
+	.agent-chat-md :not(pre) > code {
+		padding: 0.15em 0.35em;
 		border-radius: 0.25rem;
+		background: var(--bs-secondary-bg, rgba(0, 0, 0, 0.06));
+	}
+	.agent-chat-md pre {
+		font-size: 0.8125rem;
+		margin: 0.5em 0;
+		padding: 0.5rem 0.75rem;
+		overflow-x: auto;
+		border-radius: 0.375rem;
 		background: var(--bs-secondary-bg, rgba(0, 0, 0, 0.05));
+	}
+	.agent-chat-md pre code {
+		padding: 0;
+		background: none;
+	}
+	.agent-chat-md blockquote {
+		margin: 0.5em 0;
+		padding: 0.25rem 0 0.25rem 0.75rem;
+		border-left: 3px solid var(--bs-border-color, #dee2e6);
+		color: var(--bs-secondary-color, #6c757d);
+	}
+	.agent-chat-md hr {
+		margin: 0.75em 0;
+		border: none;
+		border-top: 1px solid var(--bs-border-color, #dee2e6);
+	}
+	.agent-chat-md table {
+		width: 100%;
+		margin: 0.5em 0;
+		border-collapse: collapse;
+		font-size: 0.85rem;
+	}
+	.agent-chat-md th,
+	.agent-chat-md td {
+		padding: 0.35rem 0.6rem;
+		border: 1px solid var(--bs-border-color, #dee2e6);
+		text-align: left;
+	}
+	.agent-chat-md th {
+		font-weight: 600;
+		background: var(--bs-tertiary-bg, rgba(0, 0, 0, 0.03));
+	}
+	.agent-chat-md tbody tr:hover {
+		background: var(--bs-tertiary-bg, rgba(0, 0, 0, 0.02));
+	}
+
+	/* Typing indicator */
+	.agent-chat-typing {
+		padding: 4px 0;
+		animation: agent-chat-pulse 1.5s ease-in-out infinite;
+	}
+	@keyframes agent-chat-pulse {
+		0%, 100% { opacity: 0.4; }
+		50% { opacity: 1; }
+	}
+
+	/* Streaming cursor */
+	.agent-chat-cursor {
+		display: inline-block;
+		width: 2px;
+		height: 1em;
+		background: currentColor;
+		margin-left: 1px;
+		vertical-align: text-bottom;
+		animation: agent-chat-blink 0.8s step-end infinite;
+	}
+	@keyframes agent-chat-blink {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0; }
+	}
+
+	/* Streaming text fade-in */
+	.agent-chat-streaming {
+		animation: agent-chat-fadein 0.15s ease-out;
+	}
+	@keyframes agent-chat-fadein {
+		from { opacity: 0.7; }
+		to { opacity: 1; }
 	}
 `;
 
 const AgentChat = () => {
 	const open = useAgentChatUi((s) => s.open);
 	const toggle = useAgentChatUi((s) => s.toggle);
+	const syncLid = useAgentChatUi((s) => s.syncLid);
 	const pageID = useViewData((s) => s.idLoading ?? s.idLoaded);
+	const { lid } = useLocalPartial(["lid"]);
+
+	useEffect(() => {
+		syncLid(lid);
+	}, [lid, syncLid]);
 
 	if (!isSport("basketball")) {
 		return null;
@@ -176,7 +287,7 @@ const AgentChat = () => {
 				type="button"
 				className="btn btn-primary shadow agent-chat-fab"
 				onClick={() => toggle()}
-				title="AI GM chat"
+				title="My Staff chat"
 				aria-expanded={open}
 			>
 				AI

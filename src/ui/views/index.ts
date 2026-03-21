@@ -2,6 +2,7 @@ export { default as Account } from "./Account/index.tsx";
 export { default as AccountUpdateCard } from "./AccountUpdateCard.tsx";
 export { default as Achievements } from "./Achievements.tsx";
 export { default as AdvancedPlayerSearch } from "./AdvancedPlayerSearch.tsx";
+export { default as AgentChat } from "./AgentChat.tsx";
 export { default as AllStar } from "./AllStar.tsx";
 export { default as AllStarDunk } from "./AllStarDunk.tsx";
 export { default as AllStarHistory } from "./AllStarHistory.tsx";

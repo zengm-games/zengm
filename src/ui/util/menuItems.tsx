@@ -154,6 +154,23 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 	},
 	{
 		type: "header",
+		long: "Agent",
+		short: "A",
+		league: true,
+		commandPalette: true,
+		children: [
+			{
+				type: "link",
+				active: (pageID) => pageID === "agentChat",
+				league: true,
+				commandPalette: true,
+				path: ["agent_chat"],
+				text: "Chat",
+			},
+		],
+	},
+	{
+		type: "header",
 		long: "League",
 		short: "L",
 		league: true,

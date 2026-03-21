@@ -18,30 +18,30 @@ Nothing. This is the root phase.
 
 ```typescript
 export type FeedEventType =
-  | 'GAME_END'
-  | 'HALFTIME'
-  | 'TRADE_ALERT'
-  | 'DRAFT_PICK'
-  | 'INJURY'
-  | 'PLAYER_SIGNING'
-  | 'SEASON_AWARD'
-  | 'PLAYOFF_CLINCH';
+	| "GAME_END"
+	| "HALFTIME"
+	| "TRADE_ALERT"
+	| "DRAFT_PICK"
+	| "INJURY"
+	| "PLAYER_SIGNING"
+	| "SEASON_AWARD"
+	| "PLAYOFF_CLINCH";
 ```
 
 ### `SocialContext`
 
 ```typescript
 export type SocialContext = {
-  liveGame?: {
-    score: [number, number];
-    quarter: number;
-    statLeaders: StatLeader[];
-  };
-  teams: TeamSummary[];
-  players: PlayerSummary[];
-  recentGames: GameResult[];
-  standings: StandingEntry[];
-  transactions: TransactionSummary[];
+	liveGame?: {
+		score: [number, number];
+		quarter: number;
+		statLeaders: StatLeader[];
+	};
+	teams: TeamSummary[];
+	players: PlayerSummary[];
+	recentGames: GameResult[];
+	standings: StandingEntry[];
+	transactions: TransactionSummary[];
 };
 ```
 
@@ -49,9 +49,9 @@ export type SocialContext = {
 
 ```typescript
 export type FeedEvent = {
-  type: FeedEventType;
-  timestamp: number;
-  context: SocialContext;
+	type: FeedEventType;
+	timestamp: number;
+	context: SocialContext;
 };
 ```
 
@@ -61,16 +61,16 @@ Persistent identity record stored in `socialFeedDb`. One record per agent, keyed
 
 ```typescript
 export type Account = {
-  agentId: string;
-  handle: string;
-  displayName: string;
-  type: 'journalist' | 'player' | 'org' | 'fan';
-  pid: number | null;        // non-null for player accounts
-  tid: number | null;        // non-null for org accounts; updated on trade
-  templateId: string;        // references AgentConfig.id
-  status: 'active' | 'dormant';
-  avatarUrl: string | null;
-  createdAt: number;
+	agentId: string;
+	handle: string;
+	displayName: string;
+	type: "journalist" | "player" | "org" | "fan";
+	pid: number | null; // non-null for player accounts
+	tid: number | null; // non-null for org accounts; updated on trade
+	templateId: string; // references AgentConfig.id
+	status: "active" | "dormant";
+	avatarUrl: string | null;
+	createdAt: number;
 };
 ```
 
@@ -78,13 +78,13 @@ export type Account = {
 
 ```typescript
 export type AgentConfig = {
-  id: string;
-  handle: string;
-  type: 'journalist' | 'player' | 'org' | 'fan';
-  persona: string;
-  triggers: FeedEventType[];
-  replyEligible: boolean;   // always false in v1
-  postProbability: number;  // 0–1
+	id: string;
+	handle: string;
+	type: "journalist" | "player" | "org" | "fan";
+	persona: string;
+	triggers: FeedEventType[];
+	replyEligible: boolean; // always false in v1
+	postProbability: number; // 0–1
 };
 ```
 
@@ -92,17 +92,17 @@ export type AgentConfig = {
 
 ```typescript
 export type GeneratedPost = {
-  postId: string;
-  agentId: string;
-  handle: string;
-  body: string;
-  eventType: FeedEventType;
-  threadId: string | null;   // null in v1
-  parentId: string | null;   // null in v1
-  imageUrl: string | null;
-  createdAt: number;
-  likes: number;
-  reposts: number;
+	postId: string;
+	agentId: string;
+	handle: string;
+	body: string;
+	eventType: FeedEventType;
+	threadId: string | null; // null in v1
+	parentId: string | null; // null in v1
+	imageUrl: string | null;
+	createdAt: number;
+	likes: number;
+	reposts: number;
 };
 ```
 
@@ -110,11 +110,11 @@ export type GeneratedPost = {
 
 ```typescript
 export type ThreadRecord = {
-  threadId: string;
-  rootPostId: string;
-  openedAt: number;
-  expiresAt: number;           // openedAt + 5 minutes
-  participantAgents: string[];
+	threadId: string;
+	rootPostId: string;
+	openedAt: number;
+	expiresAt: number; // openedAt + 5 minutes
+	participantAgents: string[];
 };
 ```
 
@@ -122,57 +122,57 @@ export type ThreadRecord = {
 
 ```typescript
 export type StatLeader = {
-  playerName: string;
-  teamName: string;
-  statLabel: string;
-  value: number;
+	playerName: string;
+	teamName: string;
+	statLabel: string;
+	value: number;
 };
 
 export type TeamSummary = {
-  tid: number;
-  name: string;
-  abbrev: string;
-  wins: number;
-  losses: number;
-  standing: number;
+	tid: number;
+	name: string;
+	abbrev: string;
+	wins: number;
+	losses: number;
+	standing: number;
 };
 
 export type PlayerSummary = {
-  pid: number;
-  name: string;
-  tid: number;
-  teamName: string;
-  position: string;
-  seasonAverages: {
-    pts: number;
-    reb: number;
-    ast: number;
-  };
+	pid: number;
+	name: string;
+	tid: number;
+	teamName: string;
+	position: string;
+	seasonAverages: {
+		pts: number;
+		reb: number;
+		ast: number;
+	};
 };
 
 export type GameResult = {
-  gid: number;
-  homeName: string;
-  awayName: string;
-  homeScore: number;
-  awayScore: number;
-  date: string;
+	gid: number;
+	homeName: string;
+	awayName: string;
+	homeScore: number;
+	awayScore: number;
+	date: string;
 };
 
 export type StandingEntry = {
-  tid: number;
-  name: string;
-  abbrev: string;
-  wins: number;
-  losses: number;
-  pct: number;
-  conf: string;
+	tid: number;
+	name: string;
+	abbrev: string;
+	wins: number;
+	losses: number;
+	pct: number;
+	conf: string;
 };
 
 export type TransactionSummary = {
-  type: 'trade' | 'signing' | 'release' | 'injury';
-  description: string;
-  timestamp: number;
+	type: "trade" | "signing" | "release" | "injury";
+	description: string;
+	timestamp: number;
 };
 ```
 

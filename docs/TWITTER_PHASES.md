@@ -6,7 +6,6 @@ Each Phase is a self-contained unit of work that delivers one architectural comm
 
 ## Dependency Table
 
-
 | Phase  | Name                                   | Depends on | Can run in parallel with         |
 | ------ | -------------------------------------- | ---------- | -------------------------------- |
 | **1**  | Shared Types                           | —          | —                                |
@@ -28,7 +27,6 @@ Each Phase is a self-contained unit of work that delivers one architectural comm
 | **16** | Feed Worker → IDB Write + UI Notify    | 15, 3      | 9, 10, 11, 12, 13                |
 | **17** | UI Relay — `feedEventHandler.ts`       | 8, 16      | —                                |
 | **18** | SocialFeed Panel                       | 17, 3, 3a  | —                                |
-
 
 ---
 
@@ -73,7 +71,7 @@ Phase 1 (Types)
 
 **Types defined:** `FeedEventType`, `FeedEvent`, `SocialContext`, `AgentConfig`, `GeneratedPost`, `ThreadRecord`, `Account`, `StatLeader`, `TeamSummary`, `PlayerSummary`, `GameResult`, `StandingEntry`, `TransactionSummary`
 
-`**Account` shape:**
+`**Account` shape:\*\*
 
 ```typescript
 type Account = {
@@ -196,14 +194,12 @@ clearFeed(): Promise<void>   // clears posts + threads, leaves accounts intact
 
 **Account creation rules:**
 
-
 | Account Type | Created when     | `agentId` format  | `pid`        | `tid`        |
 | ------------ | ---------------- | ----------------- | ------------ | ------------ |
 | Journalist   | Feed system init | `"sham_charania"` | null         | null         |
 | Fan          | Feed system init | `"fan_homer_1"`   | null         | null         |
 | Org          | Feed system init | `"team_{tid}"`    | null         | team's tid   |
 | Player       | OVR ≥ threshold  | `"player_{pid}"`  | player's pid | player's tid |
-
 
 **Player account threshold:** OVR ≥ 65 (configurable constant). Checked after every phase change where player ratings update. A player who drops below the threshold has their account set to `dormant`, not deleted.
 
@@ -361,7 +357,7 @@ emitFeedEvent(type: FeedEventType, context: SocialContext): void
 
 - Simulating a 4-quarter game results in exactly one `HALFTIME` event emitted (not zero, not two)
 - The event's `context.liveGame` is populated with the score at the end of period 2
-- No IDB query is made during the HALFTIME emission — confirmed by asserting no `idb.cache.`* calls occur in the emit path
+- No IDB query is made during the HALFTIME emission — confirmed by asserting no `idb.cache.`\* calls occur in the emit path
 - All pre-existing `GameSim.basketball` tests continue to pass
 
 **Definition of done:** One event fires at the right moment. No IDB access. No regressions.

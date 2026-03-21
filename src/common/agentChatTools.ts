@@ -64,7 +64,7 @@ export const agentChatTools = {
 	},
 	updatePlayingTime: {
 		description:
-			"Set playing time modifier for a player on the user roster. Pass string values matching the PT dropdown: \"0\" (DNP), \"0.75\" (-), \"1\" (normal), \"1.25\" (+), \"1.5\" (++).",
+			'Set playing time modifier for a player on the user roster. Pass string values matching the PT dropdown: "0" (DNP), "0.75" (-), "1" (normal), "1.25" (+), "1.5" (++).',
 		inputSchema: z.object({
 			pid: z.number().int().describe("Player id from getRoster."),
 			ptModifier: ptModifierSchema.describe("Playing time tier."),

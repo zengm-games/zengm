@@ -1137,6 +1137,7 @@ export default {
 	roster,
 	schedule,
 	seasonPreview: validateSeasonOnly,
+	socialFeed: validateSeasonOnly,
 	standings,
 	teamFinances,
 	teamGraphs,

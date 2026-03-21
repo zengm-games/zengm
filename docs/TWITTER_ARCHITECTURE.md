@@ -29,6 +29,7 @@ These are the unbreakable commandments of this system. No design decision may vi
 A [Shared Worker](https://developer.mozilla.org/en-US/docs/Web/API/SharedWorker) is a browser API that runs JavaScript in a background thread, completely separate from the UI. Unlike a regular Web Worker (one per tab), a Shared Worker is shared across all open tabs of the same app — one instance, many connections.
 
 In ZenGM, the entire game engine runs inside a Shared Worker (`src/worker/`). This means:
+
 - **Game simulation never blocks the UI.** Heavy computation (play-by-play sim, stat calculation, DB writes) runs off the main thread so the page stays responsive.
 - **All game state lives here.** IndexedDB and the in-memory Cache layer are owned by the Worker. The React UI owns nothing — it's a display layer.
 - **Communication is message-based.** The UI calls `toWorker("category", "function", params)` and awaits a response. The Worker pushes updates back via `toUI("eventName", payload)`. They never share memory directly.
@@ -40,6 +41,7 @@ For the feed, this matters because: **game context (scores, stats, standings) on
 The Feed Worker is a dedicated [Web Worker](https://developer.mozilla.org/en-US/docs/Web/API/Worker) (not Shared — one per tab, owned by the UI) whose sole job is processing feed events without touching the main thread.
 
 When a feed event arrives in the UI from the Game Worker, the UI immediately hands it off to the Feed Worker via `postMessage()`. The Feed Worker then:
+
 - Determines which agents trigger on this event
 - Loads their persona configs
 - Calls `/api/feed` on Vercel
@@ -101,18 +103,18 @@ sequenceDiagram
 
 Events are the only mechanism that triggers posts. Each event carries a structured context payload assembled by the Game Worker at the moment it fires.
 
-| Event | Trigger Location | Context Payload |
-|---|---|---|
-| `GAME_END` | `core/game/play.ts` → `cbSaveResults()` | Final score, box score, stat leaders, standings impact |
-| `HALFTIME` | `core/GameSim.basketball/index.ts` → `simRegulation()` | Score at half, first-half leaders, team shooting splits |
-| `TRADE_ALERT` | `core/trade/processTrade.ts` → after trade execution | Players/picks exchanged, team needs, contract values |
-| `DRAFT_PICK` | `core/draft/selectPlayer.ts` → after `logEvent("draft")` | Pick number, player attributes, drafting team |
-| `INJURY` | `core/game/play.ts` → after `injuryTexts` processing | Player name, injury type, games out, team roster impact |
-| `PLAYER_SIGNING` | `core/freeAgents/play.ts` | Player, team, contract value, years |
-| `JOURNALIST_POST` | Triggered by other events (Sham posts first) | Reference to parent journalist post |
-| `PLAYER_POST` | Can be triggered by `GAME_END`, `TRADE_ALERT` | Player's own post triggers fan/reply agents |
-| `SEASON_AWARD` | `core/phase/newPhaseBeforeDraft.ts` | Award type, winner, runner-up, stats |
-| `PLAYOFF_CLINCH` | `core/phase/newPhasePlayoffs.ts` | Team, seed, opponent |
+| Event             | Trigger Location                                         | Context Payload                                         |
+| ----------------- | -------------------------------------------------------- | ------------------------------------------------------- |
+| `GAME_END`        | `core/game/play.ts` → `cbSaveResults()`                  | Final score, box score, stat leaders, standings impact  |
+| `HALFTIME`        | `core/GameSim.basketball/index.ts` → `simRegulation()`   | Score at half, first-half leaders, team shooting splits |
+| `TRADE_ALERT`     | `core/trade/processTrade.ts` → after trade execution     | Players/picks exchanged, team needs, contract values    |
+| `DRAFT_PICK`      | `core/draft/selectPlayer.ts` → after `logEvent("draft")` | Pick number, player attributes, drafting team           |
+| `INJURY`          | `core/game/play.ts` → after `injuryTexts` processing     | Player name, injury type, games out, team roster impact |
+| `PLAYER_SIGNING`  | `core/freeAgents/play.ts`                                | Player, team, contract value, years                     |
+| `JOURNALIST_POST` | Triggered by other events (Sham posts first)             | Reference to parent journalist post                     |
+| `PLAYER_POST`     | Can be triggered by `GAME_END`, `TRADE_ALERT`            | Player's own post triggers fan/reply agents             |
+| `SEASON_AWARD`    | `core/phase/newPhaseBeforeDraft.ts`                      | Award type, winner, runner-up, stats                    |
+| `PLAYOFF_CLINCH`  | `core/phase/newPhasePlayoffs.ts`                         | Team, seed, opponent                                    |
 
 ---
 
@@ -121,31 +123,37 @@ Events are the only mechanism that triggers posts. Each event carries a structur
 These are the exact locations in the existing codebase where we hook in. We are **additive only** — we call a new `emitFeedEvent()` utility alongside existing logic, never replacing it.
 
 ### 1. Game End
+
 **File:** `src/worker/core/game/play.ts` → `cbSaveResults()`
 
 After game stats are written and `logEvent({ type: "injuredList" })` fires, we call `emitFeedEvent("GAME_END", context)`. This is the natural post-game moment — all stats are finalized, injuries are resolved, standings have updated. The context snapshot is assembled here by calling `getSocialContext()` which queries Cache.ts for scores, stat leaders, team records.
 
 ### 2. Halftime
+
 **File:** `src/worker/core/GameSim.basketball/index.ts` → `simRegulation()`
 
 Inside the period loop, after period 2 completes (when `ptsQtrs.push(0)` is called for period 3), we emit a `HALFTIME` feed event. This is a play-by-play level event so context is limited to live game stats — scores, first-half leaders, shooting splits. No IndexedDB query needed here; all data is in the GameSim object's `this.team[*].stat`.
 
 ### 3. Trade Complete
+
 **File:** `src/worker/core/trade/processTrade.ts`
 
 After `processTrade()` executes the player/pick moves and alongside the existing `logEvent` and `toUI` calls, we emit `emitFeedEvent("TRADE_ALERT", context)`. The context includes both teams, all players and picks exchanged, and contract values — all available at this callsite.
 
 ### 4. Draft Pick
+
 **File:** `src/worker/core/draft/selectPlayer.ts`
 
 After `logEvent({ type: "draft", ... })` on line 183, we emit `emitFeedEvent("DRAFT_PICK", context)`. The player, pick number, drafting team, and player attributes are all in scope at this point.
 
 ### 5. Injury
+
 **File:** `src/worker/core/game/play.ts` → `cbSaveResults()`
 
 After `logEvent({ type: "injuredList" })` fires when `injuryTexts.length > 0`, we emit `emitFeedEvent("INJURY", context)`. Context includes player name, team, injury type, and projected games missed.
 
 ### 6. Phase Changes (Awards, Playoffs, Free Agency)
+
 **File:** `src/worker/core/phase/` → individual phase files
 
 Each phase file (`newPhaseBeforeDraft.ts`, `newPhasePlayoffs.ts`, `newPhaseFreeAgency.ts`) emits its corresponding feed event after its primary logic runs. These are lower-frequency, high-drama events — season awards, playoff bracket set, free agency opening.
@@ -175,13 +183,13 @@ src/data/socialAgents/
 
 ```json
 {
-  "id": "sham_charania",
-  "handle": "@ShamsCharania",
-  "type": "journalist",
-  "persona": "NBA insider reporter. Breaks trades, signings, and injury news first. Terse, factual, authoritative. Never speculative. Uses 'Sources tell me...' and 'x-year, $y million' contract format.",
-  "triggers": ["TRADE_ALERT", "INJURY", "PLAYER_SIGNING", "DRAFT_PICK"],
-  "replyEligible": false,
-  "postProbability": 1.0
+	"id": "sham_charania",
+	"handle": "@ShamsCharania",
+	"type": "journalist",
+	"persona": "NBA insider reporter. Breaks trades, signings, and injury news first. Terse, factual, authoritative. Never speculative. Uses 'Sources tell me...' and 'x-year, $y million' contract format.",
+	"triggers": ["TRADE_ALERT", "INJURY", "PLAYER_SIGNING", "DRAFT_PICK"],
+	"replyEligible": false,
+	"postProbability": 1.0
 }
 ```
 
@@ -199,40 +207,43 @@ An **account** is a persistent record in `socialFeedDb.accounts` that ties an ag
 
 ```typescript
 type Account = {
-  agentId: string;        // primary key — e.g. "player_42", "team_5", "sham_charania"
-  handle: string;         // "@KD", "@LakersOrg", "@ShamsCharania"
-  displayName: string;    // "Kevin Durant", "Los Angeles Lakers", "Shams Charania"
-  type: "journalist" | "player" | "org" | "fan";
-  pid: number | null;     // linked player — set for player accounts, null otherwise
-  tid: number | null;     // linked team — set for player + org accounts, null otherwise
-  templateId: string;     // which JSON config this was instantiated from
-  status: "active" | "dormant";  // dormant when player retires or is cut
-  avatarUrl: string | null;
-  createdAt: number;
+	agentId: string; // primary key — e.g. "player_42", "team_5", "sham_charania"
+	handle: string; // "@KD", "@LakersOrg", "@ShamsCharania"
+	displayName: string; // "Kevin Durant", "Los Angeles Lakers", "Shams Charania"
+	type: "journalist" | "player" | "org" | "fan";
+	pid: number | null; // linked player — set for player accounts, null otherwise
+	tid: number | null; // linked team — set for player + org accounts, null otherwise
+	templateId: string; // which JSON config this was instantiated from
+	status: "active" | "dormant"; // dormant when player retires or is cut
+	avatarUrl: string | null;
+	createdAt: number;
 };
 ```
 
 ### Account Lifecycle
 
-| Account Type | Created | Goes Dormant | Deleted |
-|---|---|---|---|
-| **Player** | When player OVR crosses threshold | Player retires or is released | Never (archive) |
-| **Org** | When feed system initialises for a league | Never | When league is deleted |
-| **Journalist** | When feed system initialises | Never | Never |
-| **Fan** | When feed system initialises | Never | Never |
+| Account Type   | Created                                   | Goes Dormant                  | Deleted                |
+| -------------- | ----------------------------------------- | ----------------------------- | ---------------------- |
+| **Player**     | When player OVR crosses threshold         | Player retires or is released | Never (archive)        |
+| **Org**        | When feed system initialises for a league | Never                         | When league is deleted |
+| **Journalist** | When feed system initialises              | Never                         | Never                  |
+| **Fan**        | When feed system initialises              | Never                         | Never                  |
 
 ### Account Creation Triggers
 
 **Feed system init** (first time the feed is opened for a league):
+
 - Creates one org account per team from `orgs/template.json`
 - Creates all journalist accounts from `journalists/*.json`
 - Creates all fan accounts from `fans/*.json` archetypes
 
 **After phase changes / player development**:
+
 - Checks if any players newly crossed the OVR threshold
 - If yes, instantiates a player account from `players/template.json`, filling in name, team, position, pid
 
 **After trades**:
+
 - Updates `tid` on any traded player's account to reflect new team
 
 ### Profile Page Routing
@@ -272,6 +283,7 @@ This context snapshot is serialized into the `toUI("feedEvent")` payload → rel
 A standalone IndexedDB database (`socialFeedDb`, separate from the league DB) written directly by the Feed Worker. Three object stores:
 
 **`accounts` store** — keyed by `agentId`:
+
 ```typescript
 {
   agentId: string,       // primary key — "player_42", "team_5", "sham_charania"
@@ -288,6 +300,7 @@ A standalone IndexedDB database (`socialFeedDb`, separate from the league DB) wr
 ```
 
 **`posts` store** — keyed by `postId`, indexed by `agentId` and `createdAt`:
+
 ```typescript
 {
   postId: string,        // uuid, primary key
@@ -306,6 +319,7 @@ A standalone IndexedDB database (`socialFeedDb`, separate from the league DB) wr
 ```
 
 **`threads` store** — keyed by `threadId`:
+
 ```typescript
 {
   threadId: string,
@@ -317,6 +331,7 @@ A standalone IndexedDB database (`socialFeedDb`, separate from the league DB) wr
 ```
 
 **Indexes on `posts`:**
+
 - `by-agentId` — powers profile pages (`/player/:pid/feed`, `/team/:abbrev/feed`)
 - `by-createdAt` — powers the main chronological feed
 
@@ -331,6 +346,7 @@ A standalone IndexedDB database (`socialFeedDb`, separate from the league DB) wr
 **V1 behaviour:** Event fires → each triggered agent creates one independent root post → stored in `socialFeedDb.posts` with `threadId = null` and `parentId = null`.
 
 **V2 (future):**
+
 - Reply pass: after primary posts land, reply-eligible agents generate threaded responses
 - Thread TTL: 5-minute hard kill enforced before any reply is generated
 - Loop prevention: max 3 levels deep, agents cannot reply to themselves, fan archetypes cannot reply to other fans
@@ -348,43 +364,44 @@ The agent decides whether to generate an image. If it does, it calls `generatePl
 ### The `post` Tool
 
 ```typescript
-import { generateText, tool } from 'ai';
-import { z } from 'zod';
+import { generateText, tool } from "ai";
+import { z } from "zod";
 
 const postTool = tool({
-  description: `Publish a post to the social feed.
+	description: `Publish a post to the social feed.
     Call this to create a new post or reply to an existing thread.
     Keep posts under 280 characters. Write in your persona's voice.`,
-  inputSchema: z.object({
-    body: z
-      .string()
-      .max(280)
-      .describe('The text content of the post'),
-    threadId: z
-      .string()
-      .optional()
-      .describe('The thread to reply into. Omit to start a new thread.'),
-    parentId: z
-      .string()
-      .optional()
-      .describe('The specific post you are replying to. Required if threadId is set.'),
-    imageUrl: z
-      .string()
-      .url()
-      .optional()
-      .describe('URL of a generated image to attach. Only set this if you called generatePlayerImage first.'),
-  }),
-  execute: async ({ body, threadId, parentId, imageUrl }) => {
-    // Runs on Vercel — validates and returns structured post data.
-    // The Feed Worker handles writing to socialFeedDb.
-    return {
-      postId: crypto.randomUUID(),
-      body,
-      threadId: threadId ?? crypto.randomUUID(), // new thread if omitted
-      parentId: parentId ?? null,
-      imageUrl: imageUrl ?? null,
-    };
-  },
+	inputSchema: z.object({
+		body: z.string().max(280).describe("The text content of the post"),
+		threadId: z
+			.string()
+			.optional()
+			.describe("The thread to reply into. Omit to start a new thread."),
+		parentId: z
+			.string()
+			.optional()
+			.describe(
+				"The specific post you are replying to. Required if threadId is set.",
+			),
+		imageUrl: z
+			.string()
+			.url()
+			.optional()
+			.describe(
+				"URL of a generated image to attach. Only set this if you called generatePlayerImage first.",
+			),
+	}),
+	execute: async ({ body, threadId, parentId, imageUrl }) => {
+		// Runs on Vercel — validates and returns structured post data.
+		// The Feed Worker handles writing to socialFeedDb.
+		return {
+			postId: crypto.randomUUID(),
+			body,
+			threadId: threadId ?? crypto.randomUUID(), // new thread if omitted
+			parentId: parentId ?? null,
+			imageUrl: imageUrl ?? null,
+		};
+	},
 });
 ```
 
@@ -393,35 +410,37 @@ const postTool = tool({
 Agents call this when they decide to attach an image to their post — a stat card after a big game, a player portrait after a trade, a highlights graphic. The agent constructs the prompt from context it already has (player name, stats, event type). The tool calls an image generation model and returns a URL.
 
 ```typescript
-import { experimental_generateImage as generateImage } from 'ai';
+import { experimental_generateImage as generateImage } from "ai";
 
 const generatePlayerImageTool = tool({
-  description: `Generate an image to attach to a post.
+	description: `Generate an image to attach to a post.
     Use for stat cards after standout performances, player portraits on trade news,
     or highlight graphics for big moments. Only call this when an image adds value.
     Do not generate an image for every post.`,
-  inputSchema: z.object({
-    prompt: z
-      .string()
-      .describe(
-        'Image generation prompt. Be specific: include player name, what is shown ' +
-        '(stat card, portrait, action shot), visual style (clean card, dramatic lighting, etc.)'
-      ),
-    type: z
-      .enum(['stat_card', 'portrait', 'action'])
-      .describe('The type of image: a stats overlay card, a player portrait, or an action shot'),
-  }),
-  execute: async ({ prompt, type }) => {
-    const { image } = await generateImage({
-      model: openai.image('dall-e-3'),
-      prompt,
-      size: type === 'stat_card' ? '1792x1024' : '1024x1024',
-    });
+	inputSchema: z.object({
+		prompt: z
+			.string()
+			.describe(
+				"Image generation prompt. Be specific: include player name, what is shown " +
+					"(stat card, portrait, action shot), visual style (clean card, dramatic lighting, etc.)",
+			),
+		type: z
+			.enum(["stat_card", "portrait", "action"])
+			.describe(
+				"The type of image: a stats overlay card, a player portrait, or an action shot",
+			),
+	}),
+	execute: async ({ prompt, type }) => {
+		const { image } = await generateImage({
+			model: openai.image("dall-e-3"),
+			prompt,
+			size: type === "stat_card" ? "1792x1024" : "1024x1024",
+		});
 
-    // image.base64 → upload to blob storage, return public URL
-    const url = await uploadToBlob(image.base64);
-    return { imageUrl: url };
-  },
+		// image.base64 → upload to blob storage, return public URL
+		const url = await uploadToBlob(image.base64);
+		return { imageUrl: url };
+	},
 });
 ```
 
@@ -434,15 +453,15 @@ Each triggered agent gets its own independent `generateText` call with both tool
 ```typescript
 // api/feed.ts (Vercel)
 const results = await Promise.all(
-  agents.map(agent =>
-    generateText({
-      model: google('gemini-2.0-flash'),
-      system: agent.persona,
-      prompt: buildPrompt(agent, event, context),
-      tools: { post: postTool, generatePlayerImage: generatePlayerImageTool },
-      maxSteps: 2, // step 1: optionally generate image — step 2: post
-    })
-  )
+	agents.map((agent) =>
+		generateText({
+			model: google("gemini-2.0-flash"),
+			system: agent.persona,
+			prompt: buildPrompt(agent, event, context),
+			tools: { post: postTool, generatePlayerImage: generatePlayerImageTool },
+			maxSteps: 2, // step 1: optionally generate image — step 2: post
+		}),
+	),
 );
 ```
 
@@ -525,15 +544,15 @@ api/                          ← Vercel deployment (existing)
 
 **Files we touch (additively):**
 
-| File | What we add |
-|---|---|
-| `src/worker/core/game/play.ts` | `emitFeedEvent("GAME_END")` and `emitFeedEvent("INJURY")` after existing logEvent calls |
-| `src/worker/core/GameSim.basketball/index.ts` | `emitFeedEvent("HALFTIME")` inside `simRegulation()` after period 2 |
-| `src/worker/core/trade/processTrade.ts` | `emitFeedEvent("TRADE_ALERT")` after trade execution |
-| `src/worker/core/draft/selectPlayer.ts` | `emitFeedEvent("DRAFT_PICK")` after logEvent("draft") |
-| `src/worker/core/phase/*.ts` | `emitFeedEvent()` calls in relevant phase files |
-| `src/ui/util/index.ts` | Register `feedEvent` handler → relay to Feed Worker |
-| `src/worker/views/index.ts` | Export `socialContext` view |
+| File                                          | What we add                                                                             |
+| --------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `src/worker/core/game/play.ts`                | `emitFeedEvent("GAME_END")` and `emitFeedEvent("INJURY")` after existing logEvent calls |
+| `src/worker/core/GameSim.basketball/index.ts` | `emitFeedEvent("HALFTIME")` inside `simRegulation()` after period 2                     |
+| `src/worker/core/trade/processTrade.ts`       | `emitFeedEvent("TRADE_ALERT")` after trade execution                                    |
+| `src/worker/core/draft/selectPlayer.ts`       | `emitFeedEvent("DRAFT_PICK")` after logEvent("draft")                                   |
+| `src/worker/core/phase/*.ts`                  | `emitFeedEvent()` calls in relevant phase files                                         |
+| `src/ui/util/index.ts`                        | Register `feedEvent` handler → relay to Feed Worker                                     |
+| `src/worker/views/index.ts`                   | Export `socialContext` view                                                             |
 
 ---
 

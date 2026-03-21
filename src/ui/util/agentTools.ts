@@ -217,12 +217,7 @@ export const runAgentUpdatePlayingTime = async (input: {
 	pid: number;
 	ptModifier: "0" | "0.75" | "1" | "1.25" | "1.5";
 }) => {
-	const ptModifier = Number(input.ptModifier) as
-		| 0
-		| 0.75
-		| 1
-		| 1.25
-		| 1.5;
+	const ptModifier = Number(input.ptModifier) as 0 | 0.75 | 1 | 1.25 | 1.5;
 	try {
 		await toWorker("main", "updatePlayingTime", {
 			pid: input.pid,

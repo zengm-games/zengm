@@ -28,10 +28,7 @@ import {
 	runGmGetMyRoster,
 	runGmGetUserTeamRoster,
 } from "../../util/gmAgentTools.ts";
-import {
-	useAgentChatUi,
-	type Conversation,
-} from "../../util/agentChatUi.ts";
+import { useAgentChatUi, type Conversation } from "../../util/agentChatUi.ts";
 import { useLocalPartial } from "../../util/index.ts";
 import TeamLogoInline from "../TeamLogoInline.tsx";
 import {
@@ -85,20 +82,14 @@ export default function ChatView({
 				api: "/api/chat",
 				body: () => {
 					const gameContext = gameContextRef.current;
-					return isGm
-						? { gameContext, entityContext }
-						: { gameContext };
+					return isGm ? { gameContext, entityContext } : { gameContext };
 				},
 			}),
 		[isGm, entityContext],
 	);
 
 	const addToolOutputRef = useRef<
-		| ((args: {
-				tool: string;
-				toolCallId: string;
-				output: unknown;
-		  }) => void)
+		| ((args: { tool: string; toolCallId: string; output: unknown }) => void)
 		| null
 	>(null);
 
@@ -150,9 +141,7 @@ export default function ChatView({
 							userPids?: number[];
 							userDpids?: number[];
 						};
-						await reply(
-							await runGmEvaluateTrade(entityContext, ctx, input),
-						);
+						await reply(await runGmEvaluateTrade(entityContext, ctx, input));
 						return;
 					}
 					case "acceptTrade": {
@@ -162,9 +151,7 @@ export default function ChatView({
 							userPids?: number[];
 							userDpids?: number[];
 						};
-						await reply(
-							await runGmAcceptTrade(entityContext, ctx, input),
-						);
+						await reply(await runGmAcceptTrade(entityContext, ctx, input));
 						return;
 					}
 					default:
@@ -242,9 +229,7 @@ export default function ChatView({
 			if (last) {
 				const textPart = last.parts?.find((p) => p.type === "text");
 				const preview =
-					textPart && "text" in textPart
-						? textPart.text.slice(0, 60)
-						: "";
+					textPart && "text" in textPart ? textPart.text.slice(0, 60) : "";
 				updateConversationPreview(conversation.id, preview);
 			}
 		}
@@ -259,15 +244,20 @@ export default function ChatView({
 	}, [status]);
 
 	const isThinking = (() => {
-		if (pendingSend || status === "submitted") return true;
-		if (status !== "streaming") return false;
+		if (pendingSend || status === "submitted") {
+			return true;
+		}
+		if (status !== "streaming") {
+			return false;
+		}
 		const lastMsg = chatMessages.at(-1);
-		if (!lastMsg || lastMsg.role !== "assistant") return true;
+		if (!lastMsg || lastMsg.role !== "assistant") {
+			return true;
+		}
 		return !lastMsg.parts?.some(
 			(p) => p.type === "text" && "text" in p && p.text.length > 0,
 		);
 	})();
-
 
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const lastAssistantRef = useRef<HTMLDivElement>(null);
@@ -287,7 +277,10 @@ export default function ChatView({
 				const targetTop = target.offsetTop - container.offsetTop;
 				container.scrollTo({ top: targetTop, behavior: "smooth" });
 			} else if (prevStatus.current === "streaming" && status === "ready") {
-				lastAssistantRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+				lastAssistantRef.current?.scrollIntoView({
+					behavior: "smooth",
+					block: "start",
+				});
 			}
 		} else {
 			messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -315,9 +308,7 @@ export default function ChatView({
 		: "Ask about your team...";
 
 	const gmTeamInfo =
-		isGm && entityContext
-			? local.teamInfoCache[entityContext.tid]
-			: undefined;
+		isGm && entityContext ? local.teamInfoCache[entityContext.tid] : undefined;
 
 	return (
 		<div className="d-flex flex-column h-100">
@@ -359,182 +350,201 @@ export default function ChatView({
 				</div>
 			)}
 			{variant === "assistant" ? (
-			<>
-			<div ref={scrollContainerRef} className="overflow-auto agent-chat-messages flex-grow-1">
-				<div className="agent-assistant-thread mx-auto px-3 py-3">
-				{error ? (
-					<div className="alert alert-warning py-2 small" role="alert">
-						{error.message}
+				<>
+					<div
+						ref={scrollContainerRef}
+						className="overflow-auto agent-chat-messages flex-grow-1"
+					>
+						<div className="agent-assistant-thread mx-auto px-3 py-3">
+							{error ? (
+								<div className="alert alert-warning py-2 small" role="alert">
+									{error.message}
+								</div>
+							) : null}
+							{chatMessages.map((m, i) => {
+								const isUser = m.role === "user";
+								const isLastUser =
+									isUser &&
+									!chatMessages.slice(i + 1).some((mm) => mm.role === "user");
+								const isLastAssistant =
+									!isUser &&
+									!chatMessages
+										.slice(i + 1)
+										.some((mm) => mm.role === "assistant");
+								const isCurrentResponse =
+									isLastAssistant && chatMessages.at(-1) === m;
+
+								if (!isUser && !hasVisibleParts(m) && !isCurrentResponse) {
+									return null;
+								}
+
+								if (isUser) {
+									return (
+										<div
+											key={m.id}
+											ref={isLastUser ? lastUserRef : undefined}
+											className="agent-assistant-msg agent-assistant-msg-user"
+										>
+											<div className="agent-assistant-user-text">
+												{renderMessageParts(m, status === "streaming")}
+											</div>
+										</div>
+									);
+								}
+
+								return (
+									<div
+										key={m.id}
+										ref={isLastAssistant ? lastAssistantRef : undefined}
+										className="agent-assistant-msg agent-assistant-msg-ai"
+									>
+										<div className="agent-assistant-role fw-semibold small text-muted mb-1">
+											My Staff
+										</div>
+										{isCurrentResponse && isThinking && (
+											<div className="agent-chat-typing text-muted small fst-italic">
+												Thinking…
+											</div>
+										)}
+										{hasVisibleParts(m) && (
+											<div>{renderMessageParts(m, status === "streaming")}</div>
+										)}
+									</div>
+								);
+							})}
+							{isThinking && chatMessages.at(-1)?.role !== "assistant" ? (
+								<div className="agent-assistant-msg agent-assistant-msg-ai">
+									<div className="agent-assistant-role fw-semibold small text-muted mb-1">
+										My Staff
+									</div>
+									<div className="agent-chat-typing text-muted small fst-italic">
+										Thinking…
+									</div>
+								</div>
+							) : null}
+							<div ref={messagesEndRef} />
+						</div>
 					</div>
-				) : null}
-				{chatMessages.map((m, i) => {
-					const isUser = m.role === "user";
-					const isLastUser = isUser && !chatMessages.slice(i + 1).some((mm) => mm.role === "user");
-					const isLastAssistant = !isUser && !chatMessages.slice(i + 1).some((mm) => mm.role === "assistant");
-					const isCurrentResponse = isLastAssistant && chatMessages.at(-1) === m;
-
-					if (!isUser && !hasVisibleParts(m) && !isCurrentResponse) {
-						return null;
-					}
-
-					if (isUser) {
-						return (
-							<div
-								key={m.id}
-								ref={isLastUser ? lastUserRef : undefined}
-								className="agent-assistant-msg agent-assistant-msg-user"
-							>
-								<div className="agent-assistant-user-text">
-									{renderMessageParts(m, status === "streaming")}
+					<div className="agent-assistant-input-area border-top">
+						<form
+							onSubmit={handleSubmit}
+							className="agent-assistant-input mx-auto d-flex align-items-center gap-2 px-3 py-3"
+						>
+							<input
+								type="text"
+								name="message"
+								className="form-control"
+								placeholder={placeholder}
+								disabled={status !== "ready"}
+								autoComplete="off"
+							/>
+							{status === "streaming" ? (
+								<button
+									type="button"
+									className="btn btn-outline-secondary flex-shrink-0"
+									onClick={() => void stop()}
+								>
+									Stop
+								</button>
+							) : (
+								<button
+									type="submit"
+									className="btn btn-primary flex-shrink-0"
+									disabled={status !== "ready"}
+								>
+									Send
+								</button>
+							)}
+						</form>
+					</div>
+				</>
+			) : (
+				<>
+					<div className="overflow-auto agent-chat-messages flex-grow-1 p-2">
+						{error ? (
+							<div className="alert alert-warning py-2 small" role="alert">
+								{error.message}
+							</div>
+						) : null}
+						{chatMessages.map((m) => {
+							if (m.role === "assistant" && !hasVisibleText(m)) {
+								return null;
+							}
+							const isUser = m.role === "user";
+							return (
+								<div
+									key={m.id}
+									className={`mb-2 agent-chat-msg role-${m.role} d-flex ${isUser ? "justify-content-end" : "justify-content-start"}`}
+								>
+									{!isUser && gmTeamInfo ? (
+										<div className="agent-chat-avatar me-1 flex-shrink-0">
+											<TeamLogoInline
+												imgURL={gmTeamInfo.imgURL}
+												imgURLSmall={gmTeamInfo.imgURLSmall}
+												size={24}
+											/>
+										</div>
+									) : null}
+									<div
+										className={`agent-chat-bubble ${isUser ? "agent-chat-bubble-user" : "agent-chat-bubble-assistant"}`}
+									>
+										{renderMessageParts(m, status === "streaming", {
+											hideToolParts: true,
+										})}
+									</div>
+								</div>
+							);
+						})}
+						{isThinking ? (
+							<div className="mb-2 agent-chat-msg role-assistant d-flex justify-content-start">
+								{gmTeamInfo ? (
+									<div className="agent-chat-avatar me-1 flex-shrink-0">
+										<TeamLogoInline
+											imgURL={gmTeamInfo.imgURL}
+											imgURLSmall={gmTeamInfo.imgURLSmall}
+											size={24}
+										/>
+									</div>
+								) : null}
+								<div className="agent-chat-bubble agent-chat-bubble-assistant">
+									<div className="agent-chat-typing text-muted small fst-italic">
+										Typing…
+									</div>
 								</div>
 							</div>
-						);
-					}
-
-					return (
-						<div
-							key={m.id}
-							ref={isLastAssistant ? lastAssistantRef : undefined}
-							className="agent-assistant-msg agent-assistant-msg-ai"
-						>
-							<div className="agent-assistant-role fw-semibold small text-muted mb-1">My Staff</div>
-							{isCurrentResponse && isThinking && (
-								<div className="agent-chat-typing text-muted small fst-italic">
-									Thinking…
-								</div>
-							)}
-							{hasVisibleParts(m) && (
-								<div>
-									{renderMessageParts(m, status === "streaming")}
-								</div>
-							)}
-						</div>
-					);
-				})}
-				{isThinking && chatMessages.at(-1)?.role !== "assistant" ? (
-					<div className="agent-assistant-msg agent-assistant-msg-ai">
-						<div className="agent-assistant-role fw-semibold small text-muted mb-1">My Staff</div>
-						<div className="agent-chat-typing text-muted small fst-italic">
-							Thinking…
-						</div>
+						) : null}
+						<div ref={messagesEndRef} />
 					</div>
-				) : null}
-				<div ref={messagesEndRef} />
-				</div>
-			</div>
-			<div className="agent-assistant-input-area border-top">
-				<form onSubmit={handleSubmit} className="agent-assistant-input mx-auto d-flex align-items-center gap-2 px-3 py-3">
-					<input
-						type="text"
-						name="message"
-						className="form-control"
-						placeholder={placeholder}
-						disabled={status !== "ready"}
-						autoComplete="off"
-					/>
-					{status === "streaming" ? (
-						<button
-							type="button"
-							className="btn btn-outline-secondary flex-shrink-0"
-							onClick={() => void stop()}
-						>
-							Stop
-						</button>
-					) : (
-						<button
-							type="submit"
-							className="btn btn-primary flex-shrink-0"
-							disabled={status !== "ready"}
-						>
-							Send
-						</button>
-					)}
-				</form>
-			</div>
-			</>
-		) : (
-			<>
-			<div className="overflow-auto agent-chat-messages flex-grow-1 p-2">
-				{error ? (
-					<div className="alert alert-warning py-2 small" role="alert">
-						{error.message}
-					</div>
-				) : null}
-		{chatMessages.map((m) => {
-			if (m.role === "assistant" && !hasVisibleText(m)) {
-				return null;
-			}
-			const isUser = m.role === "user";
-			return (
-				<div
-					key={m.id}
-					className={`mb-2 agent-chat-msg role-${m.role} d-flex ${isUser ? "justify-content-end" : "justify-content-start"}`}
-				>
-					{!isUser && gmTeamInfo ? (
-						<div className="agent-chat-avatar me-1 flex-shrink-0">
-							<TeamLogoInline
-								imgURL={gmTeamInfo.imgURL}
-								imgURLSmall={gmTeamInfo.imgURLSmall}
-								size={24}
+					<div className="border-top px-2 py-2">
+						<form onSubmit={handleSubmit} className="d-flex gap-2">
+							<input
+								type="text"
+								name="message"
+								className="form-control form-control-sm"
+								placeholder={placeholder}
+								disabled={status !== "ready"}
+								autoComplete="off"
 							/>
-						</div>
-					) : null}
-					<div className={`agent-chat-bubble ${isUser ? "agent-chat-bubble-user" : "agent-chat-bubble-assistant"}`}>
-						{renderMessageParts(m, status === "streaming", { hideToolParts: true })}
+							<button
+								type="submit"
+								className="btn btn-sm btn-primary"
+								disabled={status !== "ready"}
+							>
+								Send
+							</button>
+							{status === "streaming" ? (
+								<button
+									type="button"
+									className="btn btn-sm btn-outline-secondary"
+									onClick={() => void stop()}
+								>
+									Stop
+								</button>
+							) : null}
+						</form>
 					</div>
-				</div>
-			);
-		})}
-		{isThinking ? (
-			<div className="mb-2 agent-chat-msg role-assistant d-flex justify-content-start">
-				{gmTeamInfo ? (
-					<div className="agent-chat-avatar me-1 flex-shrink-0">
-						<TeamLogoInline
-							imgURL={gmTeamInfo.imgURL}
-							imgURLSmall={gmTeamInfo.imgURLSmall}
-							size={24}
-						/>
-					</div>
-				) : null}
-				<div className="agent-chat-bubble agent-chat-bubble-assistant">
-					<div className="agent-chat-typing text-muted small fst-italic">
-						Typing…
-					</div>
-				</div>
-			</div>
-		) : null}
-				<div ref={messagesEndRef} />
-			</div>
-			<div className="border-top px-2 py-2">
-				<form onSubmit={handleSubmit} className="d-flex gap-2">
-					<input
-						type="text"
-						name="message"
-						className="form-control form-control-sm"
-						placeholder={placeholder}
-						disabled={status !== "ready"}
-						autoComplete="off"
-					/>
-					<button
-						type="submit"
-						className="btn btn-sm btn-primary"
-						disabled={status !== "ready"}
-					>
-						Send
-					</button>
-					{status === "streaming" ? (
-						<button
-							type="button"
-							className="btn btn-sm btn-outline-secondary"
-							onClick={() => void stop()}
-						>
-							Stop
-						</button>
-					) : null}
-				</form>
-			</div>
-			</>
-		)}
+				</>
+			)}
 		</div>
 	);
 }

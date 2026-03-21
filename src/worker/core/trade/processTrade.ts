@@ -174,8 +174,8 @@ const processTrade = async (
 	// --- Phase 11: TRADE_ALERT hook (fire-and-forget) ---
 	void getSocialContext("TRADE_ALERT")
 		.then((context) => emitFeedEvent("TRADE_ALERT", context))
-		.catch((err) =>
-			console.error("[feedHook] failed to emit TRADE_ALERT", err),
+		.catch((error) =>
+			console.error("[feedHook] failed to emit TRADE_ALERT", error),
 		);
 	// --- end Phase 11 hook ---
 };

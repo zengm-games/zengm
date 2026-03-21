@@ -12,15 +12,13 @@ const styles = {
 		display: "flex",
 		justifyContent: "center",
 		minHeight: "80vh",
-		backgroundColor: "#000",
-		color: "#e7e9ea",
-		fontFamily:
-			'-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
+		backgroundColor: "var(--bs-body-bg)",
+		color: "var(--bs-body-color)",
 	} as React.CSSProperties,
 	sidebar: {
 		width: 200,
 		flexShrink: 0,
-		borderRight: "1px solid #2f3336",
+		borderRight: "1px solid var(--bs-border-color)",
 		display: "flex",
 		flexDirection: "column" as const,
 		padding: "16px 12px",
@@ -33,7 +31,7 @@ const styles = {
 		width: 40,
 		height: 40,
 		borderRadius: "50%",
-		backgroundColor: "#d35400",
+		backgroundColor: "var(--bs-primary)",
 		display: "flex",
 		alignItems: "center",
 		justifyContent: "center",
@@ -51,7 +49,7 @@ const styles = {
 		borderRadius: 24,
 		border: "none",
 		background: "none",
-		color: "#e7e9ea",
+		color: "var(--bs-body-color)",
 		cursor: "pointer",
 		fontSize: 18,
 		transition: "background-color 0.15s",
@@ -68,7 +66,7 @@ const styles = {
 		minWidth: 18,
 		height: 18,
 		borderRadius: 9,
-		backgroundColor: "#d35400",
+		backgroundColor: "var(--bs-primary)",
 		color: "#fff",
 		fontSize: 11,
 		fontWeight: 700,
@@ -80,16 +78,16 @@ const styles = {
 	main: {
 		flex: 1,
 		maxWidth: 600,
-		borderRight: "1px solid #2f3336",
+		borderRight: "1px solid var(--bs-border-color)",
 		minHeight: "80vh",
 	} as React.CSSProperties,
 	mainHeader: {
 		position: "sticky" as const,
 		top: 0,
 		zIndex: 10,
-		backgroundColor: "rgba(0,0,0,0.85)",
+		backgroundColor: "var(--bs-body-bg)",
 		backdropFilter: "blur(12px)",
-		borderBottom: "1px solid #2f3336",
+		borderBottom: "1px solid var(--bs-border-color)",
 		padding: "12px 16px",
 	} as React.CSSProperties,
 	mainHeaderTitle: {
@@ -107,7 +105,7 @@ const styles = {
 	emptyState: {
 		padding: 48,
 		textAlign: "center" as const,
-		color: "#71767b",
+		color: "var(--bs-secondary-color)",
 		fontSize: 15,
 	} as React.CSSProperties,
 };
@@ -160,9 +158,17 @@ const SocialFeedApp = ({
 						}}
 						onMouseOver={(e) => {
 							(e.currentTarget as HTMLButtonElement).style.backgroundColor =
-								"rgba(231,233,234,0.1)";
+								"var(--bs-tertiary-bg)";
+						}}
+						onFocus={(e) => {
+							(e.currentTarget as HTMLButtonElement).style.backgroundColor =
+								"var(--bs-tertiary-bg)";
 						}}
 						onMouseOut={(e) => {
+							(e.currentTarget as HTMLButtonElement).style.backgroundColor =
+								"transparent";
+						}}
+						onBlur={(e) => {
 							(e.currentTarget as HTMLButtonElement).style.backgroundColor =
 								"transparent";
 						}}

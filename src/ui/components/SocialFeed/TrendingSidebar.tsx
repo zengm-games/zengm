@@ -16,27 +16,27 @@ const styles = {
 		left: 16,
 		top: "50%",
 		transform: "translateY(-50%)",
-		color: "#71767b",
+		color: "var(--bs-secondary-color)",
 	} as React.CSSProperties,
 	searchInput: {
 		width: "100%",
-		backgroundColor: "#202327",
-		border: "1px solid transparent",
+		backgroundColor: "var(--bs-tertiary-bg)",
+		border: "1px solid var(--bs-border-color)",
 		borderRadius: 20,
 		padding: "12px 16px 12px 48px",
-		color: "#e7e9ea",
+		color: "var(--bs-body-color)",
 		fontSize: 14,
 		outline: "none",
 	} as React.CSSProperties,
 	card: {
-		backgroundColor: "#16181c",
+		backgroundColor: "var(--bs-secondary-bg)",
 		borderRadius: 16,
 		overflow: "hidden",
 	} as React.CSSProperties,
 	cardTitle: {
 		fontSize: 20,
 		fontWeight: 700,
-		color: "#e7e9ea",
+		color: "var(--bs-body-color)",
 		padding: "12px 16px",
 		margin: 0,
 	} as React.CSSProperties,
@@ -48,20 +48,20 @@ const styles = {
 		background: "none",
 		border: "none",
 		cursor: "default",
-		color: "#e7e9ea",
+		color: "var(--bs-body-color)",
 	} as React.CSSProperties,
 	label: {
 		fontSize: 12,
-		color: "#71767b",
+		color: "var(--bs-secondary-color)",
 	} as React.CSSProperties,
 	value: {
 		fontWeight: 700,
-		color: "#e7e9ea",
+		color: "var(--bs-body-color)",
 		margin: "2px 0",
 	} as React.CSSProperties,
 	sub: {
 		fontSize: 13,
-		color: "#71767b",
+		color: "var(--bs-secondary-color)",
 	} as React.CSSProperties,
 	teamRow: {
 		display: "flex",
@@ -78,22 +78,22 @@ const styles = {
 		justifyContent: "center",
 		fontWeight: 700,
 		fontSize: 12,
-		color: "#fff",
+		color: "var(--bs-body-color)",
 		flexShrink: 0,
 	} as React.CSSProperties,
 	teamName: {
 		flex: 1,
 		fontWeight: 600,
-		color: "#e7e9ea",
+		color: "var(--bs-body-color)",
 		fontSize: 14,
 	} as React.CSSProperties,
 	teamStat: {
 		fontSize: 13,
-		color: "#71767b",
+		color: "var(--bs-secondary-color)",
 	} as React.CSSProperties,
 	footer: {
 		fontSize: 12,
-		color: "#71767b",
+		color: "var(--bs-secondary-color)",
 		padding: "0 16px",
 		display: "flex",
 		flexWrap: "wrap" as const,
@@ -179,7 +179,9 @@ const TrendingSidebar = ({ events, teams, userTid }: TrendingSidebarProps) => {
 					{activeTeams.map(([tidStr, count]) => {
 						const tid = Number(tidStr);
 						const team = teams[tid];
-						if (!team) return null;
+						if (!team) {
+							return null;
+						}
 						const isUser = tid === userTid;
 						return (
 							<div key={tid} style={styles.teamRow}>

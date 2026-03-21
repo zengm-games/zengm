@@ -342,8 +342,8 @@ const newPhaseBeforeDraft = async (
 				teamName: "",
 			}),
 		)
-		.catch((err) =>
-			console.error("[feedHook] failed to emit SEASON_AWARD", err),
+		.catch((error) =>
+			console.error("[feedHook] failed to emit SEASON_AWARD", error),
 		);
 
 	const teams = await idb.getCopies.teamsPlus(

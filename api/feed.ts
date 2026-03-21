@@ -11,14 +11,14 @@ import type {
 function cleanPostBody(text: string): string {
 	let cleaned = text.trim();
 	// Strip tool_code JSON artifacts
-	cleaned = cleaned.replace(/\{"tool_code":[^}]*\}/g, "").trim();
+	cleaned = cleaned.replace(/{"tool_code":[^}]*}/g, "").trim();
 	// Strip Python-style function calls
-	cleaned = cleaned.replace(/^(Call:|print\(|post\()/i, "").trim();
+	cleaned = cleaned.replace(/^(call:|print\(|post\()/i, "").trim();
 	// Strip trailing closing parens from function calls
 	cleaned = cleaned.replace(/\)\s*$/, "").trim();
 	// Extract body from post() call if present
-	const bodyMatch = cleaned.match(/body=['"](.+?)['"]/s);
-	if (bodyMatch) {
+	const bodyMatch = cleaned.match(/body=["'](.+?)["']/s);
+	if (bodyMatch?.[1]) {
 		cleaned = bodyMatch[1];
 	}
 	return cleaned.slice(0, 280);
@@ -62,7 +62,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 				model: google("gemini-2.5-flash"),
 				system: buildSystemPrompt(agent),
 				prompt: buildEventPrompt(agent, event),
-				maxTokens: 300,
+				maxOutputTokens: 300,
 			});
 
 			const postBody = cleanPostBody(result.text);
@@ -91,10 +91,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 			};
 
 			posts.push(generatedPost);
-		} catch (err) {
+		} catch (error) {
 			console.error(
 				`[api/feed] Error generating post for agent ${agent.agentId}:`,
-				err,
+				error,
 			);
 		}
 	}

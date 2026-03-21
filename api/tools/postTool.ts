@@ -14,7 +14,7 @@ export const postTool = tool({
 		"Publish a post to the social feed. Call this as your final step to submit your content. " +
 		"Supply the text body (max 280 characters), and optionally a threadId, parentId, and imageUrl. " +
 		"If you generated an image in a previous step, pass its URL as imageUrl.",
-	parameters: z.object({
+	inputSchema: z.object({
 		body: z
 			.string()
 			.max(280)

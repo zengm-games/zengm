@@ -62,9 +62,13 @@ const sign = async (
 		});
 
 		// --- PLAYER_SIGNING feed event hook (fire-and-forget) ---
-		if (Math.random() > 0.15) return; // skip most signings
+		if (Math.random() > 0.15) {
+			return;
+		} // skip most signings
 		const now = Date.now();
-		if (now - lastPlayerSigningMs < 2000) return; // cooldown
+		if (now - lastPlayerSigningMs < 2000) {
+			return;
+		} // cooldown
 		lastPlayerSigningMs = now;
 		const playerName = `${p.firstName} ${p.lastName}`;
 		const signingTid = p.tid;
@@ -75,7 +79,9 @@ const sign = async (
 					teamName: context.teams.find((t) => t.tid === signingTid)?.name ?? "",
 				}),
 			)
-			.catch((err) => console.error("[feedEvent] PLAYER_SIGNING failed", err));
+			.catch((error) =>
+				console.error("[feedEvent] PLAYER_SIGNING failed", error),
+			);
 		// --- end PLAYER_SIGNING hook ---
 	}
 };

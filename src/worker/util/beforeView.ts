@@ -200,8 +200,8 @@ export const beforeLeague = async (newLid: number, conditions?: Conditions) => {
 			}));
 
 		await initializeFeedAccounts(teamSummaries, playerSummaries);
-	})().catch((err) =>
-		console.error("[feed] initializeFeedAccounts failed:", err),
+	})().catch((error) =>
+		console.error("[feed] initializeFeedAccounts failed:", error),
 	);
 
 	if (loadingNewLid !== newLid) {

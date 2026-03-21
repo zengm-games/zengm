@@ -159,7 +159,9 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 				teamName: g.get("teamInfoCache")[dp.tid]?.name ?? "",
 			}),
 		)
-		.catch((err) => console.error("[feedHook] failed to emit DRAFT_PICK", err));
+		.catch((error) =>
+			console.error("[feedHook] failed to emit DRAFT_PICK", error),
+		);
 
 	let score = 0;
 	if (pickNum === 1) {

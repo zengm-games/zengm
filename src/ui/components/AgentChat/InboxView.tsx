@@ -28,9 +28,7 @@ export default function InboxView({
 	const openConversation = useAgentChatUi((s) => s.openConversation);
 	const openNewDm = useAgentChatUi((s) => s.openNewDm);
 
-	const { teamInfoCache } = useLocalPartial([
-		"teamInfoCache",
-	]);
+	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
 
 	const orderRef = useRef<string[] | null>(null);
 
@@ -67,10 +65,9 @@ export default function InboxView({
 			)}
 			<div className="list-group list-group-flush flex-grow-1 overflow-auto">
 				{sorted.map((conv) => {
-					const gmTeamInfo =
-						conv.entityContext
-							? teamInfoCache[conv.entityContext.tid]
-							: undefined;
+					const gmTeamInfo = conv.entityContext
+						? teamInfoCache[conv.entityContext.tid]
+						: undefined;
 
 					return (
 						<button

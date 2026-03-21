@@ -140,7 +140,9 @@ export async function getPosts(limit?: number): Promise<GeneratedPost[]> {
 	let cursor = await index.openCursor(null, "prev");
 	while (cursor) {
 		results.push(cursor.value);
-		if (limit !== undefined && results.length >= limit) break;
+		if (limit !== undefined && results.length >= limit) {
+			break;
+		}
 		cursor = await cursor.continue();
 	}
 	await tx.done;
@@ -163,7 +165,9 @@ export async function getPostsByAgent(
 	let cursor = await index.openCursor(IDBKeyRange.only(agentId));
 	while (cursor) {
 		results.push(cursor.value);
-		if (results.length >= limit) break;
+		if (results.length >= limit) {
+			break;
+		}
 		cursor = await cursor.continue();
 	}
 	await tx.done;

@@ -15,9 +15,7 @@ const EmptyState = () => {
 				💬
 			</div>
 			<h5 className="fw-semibold mb-1">Your messages</h5>
-			<p className="text-muted small mb-3">
-				Send a message to start a chat.
-			</p>
+			<p className="text-muted small mb-3">Send a message to start a chat.</p>
 			<button
 				type="button"
 				className="btn btn-primary"
@@ -31,9 +29,7 @@ const EmptyState = () => {
 
 export const AgentChatCore = ({ mode }: { mode: "panel" | "fullPage" }) => {
 	const view = useAgentChatUi((s) => s.view);
-	const activeConversationId = useAgentChatUi(
-		(s) => s.activeConversationId,
-	);
+	const activeConversationId = useAgentChatUi((s) => s.activeConversationId);
 	const conversations = useAgentChatUi((s) => s.conversations);
 
 	const activeConversation =
@@ -42,9 +38,7 @@ export const AgentChatCore = ({ mode }: { mode: "panel" | "fullPage" }) => {
 	if (mode === "fullPage") {
 		let mainContent: React.ReactNode;
 		if (view === "chat" && activeConversation) {
-			mainContent = (
-				<ChatView conversation={activeConversation} hideNav />
-			);
+			mainContent = <ChatView conversation={activeConversation} hideNav />;
 		} else if (view === "newDm") {
 			mainContent = <NewDmView />;
 		} else {
@@ -52,14 +46,17 @@ export const AgentChatCore = ({ mode }: { mode: "panel" | "fullPage" }) => {
 		}
 
 		return (
-			<div className="agent-chat-full d-flex border rounded" style={{ height: "calc(100vh - 200px)" }}>
+			<div
+				className="agent-chat-full d-flex border rounded"
+				style={{ height: "calc(100vh - 200px)" }}
+			>
 				<div className="agent-chat-sidebar border-end d-flex flex-column">
-					<InboxView
-						activeId={activeConversationId}
-						showHeader
-					/>
+					<InboxView activeId={activeConversationId} showHeader />
 				</div>
-				<div className="flex-grow-1 d-flex flex-column" style={{ minWidth: 0, overflow: "hidden" }}>
+				<div
+					className="flex-grow-1 d-flex flex-column"
+					style={{ minWidth: 0, overflow: "hidden" }}
+				>
 					{mainContent}
 				</div>
 				<style>{agentChatStyles}</style>

@@ -90,7 +90,7 @@ export async function initializeFeedAccounts(
 			pid: null,
 			tid: null,
 			templateId: template.id,
-			status: "active",
+
 			avatarUrl: null,
 			createdAt: now,
 		};
@@ -112,7 +112,7 @@ export async function initializeFeedAccounts(
 			pid: null,
 			tid: null,
 			templateId: template.id,
-			status: "active",
+
 			avatarUrl: null,
 			createdAt: now,
 		};
@@ -135,7 +135,7 @@ export async function initializeFeedAccounts(
 			pid: null,
 			tid: team.tid,
 			templateId: org.id,
-			status: "active",
+
 			avatarUrl: null,
 			createdAt: now,
 		};
@@ -169,7 +169,7 @@ export async function initializeFeedAccounts(
 			pid: p.pid,
 			tid: p.tid,
 			templateId: player.id,
-			status: "active",
+
 			avatarUrl: null,
 			createdAt: now,
 		};
@@ -223,28 +223,17 @@ export async function syncPlayerAccounts(
 				pid: p.pid,
 				tid: p.tid,
 				templateId: player.id,
-				status: "active",
+
 				avatarUrl: null,
 				createdAt: now,
 			};
 			await putAccount(account);
 		} else {
 			// Account already exists.
-			if (p.tid === -1) {
-				// Player was cut or released — dormant the account.
-				if (existing.status !== "dormant") {
-					existing.status = "dormant";
-					await putAccount(existing);
-				}
-			} else {
-				// Player is rostered.
-				if (existing.tid !== p.tid || existing.status !== "active") {
-					// Traded or re-signed after being dormant — update tid and reactivate.
-					existing.tid = p.tid;
-					existing.status = "active";
-					await putAccount(existing);
-				}
-				// Same team and already active — no-op.
+			if (p.tid !== -1 && existing.tid !== p.tid) {
+				// Player was traded — update tid.
+				existing.tid = p.tid;
+				await putAccount(existing);
 			}
 		}
 	}

@@ -4,6 +4,7 @@
 // (no separate Web Worker spawn needed). Called fire-and-forget from emitFeedEvent.
 
 import type {
+	Account,
 	AgentConfig,
 	FeedEvent,
 	GeneratedPost,
@@ -57,9 +58,9 @@ async function handleEvent(event: FeedEvent): Promise<void> {
 		bucket.push(account);
 		byTemplate.set(account.templateId, bucket);
 	}
-	const sampled = [...byTemplate.values()].map(
-		(bucket) => bucket[Math.floor(Math.random() * bucket.length)],
-	);
+	const sampled = [...byTemplate.values()]
+		.map((bucket) => bucket[Math.floor(Math.random() * bucket.length)])
+		.filter((a): a is Account => a !== undefined);
 	console.log(
 		"[feed:process] triggered accounts:",
 		triggeredAccounts.length,
@@ -96,9 +97,9 @@ async function handleEvent(event: FeedEvent): Promise<void> {
 			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ event, agents }),
 		});
-	} catch (fetchErr) {
-		console.error("[feed:process] fetch FAILED (network error):", fetchErr);
-		throw fetchErr;
+	} catch (error) {
+		console.error("[feed:process] fetch FAILED (network error):", error);
+		throw error;
 	}
 	console.log("[feed:process] response status:", response.status);
 
@@ -113,9 +114,9 @@ async function handleEvent(event: FeedEvent): Promise<void> {
 	let data: { posts: GeneratedPost[] };
 	try {
 		data = (await response.json()) as { posts: GeneratedPost[] };
-	} catch (jsonErr) {
-		console.error("[feed:process] failed to parse JSON response:", jsonErr);
-		throw jsonErr;
+	} catch (error) {
+		console.error("[feed:process] failed to parse JSON response:", error);
+		throw error;
 	}
 	const posts = data.posts ?? [];
 	console.log("[feed:process] posts received:", posts.length);
@@ -140,12 +141,12 @@ async function processNext(): Promise<void> {
 		}
 		processing = true;
 		const event = queue.shift()!;
-		await handleEvent(event).catch((err) =>
-			console.error("[feed] error processing event:", err),
+		await handleEvent(event).catch((error) =>
+			console.error("[feed] error processing event:", error),
 		);
 		void processNext();
-	} catch (err) {
-		console.error("[feed:queue] processNext threw synchronously:", err);
+	} catch (error) {
+		console.error("[feed:queue] processNext threw synchronously:", error);
 		processing = false;
 	}
 }

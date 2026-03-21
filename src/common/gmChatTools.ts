@@ -30,7 +30,9 @@ export const gmChatTools = {
 			userDpids: z
 				.array(z.number().int())
 				.optional()
-				.describe("Draft pick ids from the USER's team that you would receive."),
+				.describe(
+					"Draft pick ids from the USER's team that you would receive.",
+				),
 		}),
 	},
 	acceptTrade: {
@@ -52,7 +54,9 @@ export const gmChatTools = {
 			userDpids: z
 				.array(z.number().int())
 				.optional()
-				.describe("Draft pick ids from the USER's team that you would receive."),
+				.describe(
+					"Draft pick ids from the USER's team that you would receive.",
+				),
 		}),
 	},
 } as const;

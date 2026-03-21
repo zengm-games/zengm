@@ -318,7 +318,9 @@ const play = async (
 		if (injuryTexts.length > 0) {
 			void getSocialContext("INJURY")
 				.then((context) => emitFeedEvent("INJURY", context))
-				.catch((err) => console.error("[feedHook] failed to emit INJURY", err));
+				.catch((error) =>
+					console.error("[feedHook] failed to emit INJURY", error),
+				);
 		}
 
 		for (const result of results) {
@@ -340,7 +342,7 @@ const play = async (
 					);
 					emitFeedEvent("GAME_END", context, eventMetadata);
 				})
-				.catch((err) => console.error("[feed:hook] GAME_END failed", err));
+				.catch((error) => console.error("[feed:hook] GAME_END failed", error));
 		}
 		// --- end Phase 10 hooks ---
 

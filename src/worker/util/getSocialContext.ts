@@ -46,7 +46,7 @@ export async function getSocialContext(
 
 	// ── Filter to current season active teams ──
 	const currentTeamSeasons = allTeamSeasons.filter(
-		(ts) => ts.season === currentSeason && !ts.disabled,
+		(ts) => ts.season === currentSeason,
 	);
 
 	// ── Sort by win pct descending to assign overall standing rank ──

@@ -118,13 +118,17 @@ async function processNext(): Promise<void> {
 	}
 	processing = true;
 	const event = queue.shift()!;
-	await handleEvent(event).catch((err) => console.error("[feedWorker]", err));
+	await handleEvent(event).catch((error) =>
+		console.error("[feedWorker]", error),
+	);
 	processNext();
 }
 
 function enqueue(event: FeedEvent): void {
 	queue.push(event);
-	if (!processing) processNext();
+	if (!processing) {
+		processNext();
+	}
 }
 
 // ─── Message entry point ──────────────────────────────────────────────────────

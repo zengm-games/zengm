@@ -132,8 +132,8 @@ const newPhasePlayoffs = async (
 				conf: "",
 			}),
 		)
-		.catch((err) =>
-			console.error("[feedHook] failed to emit PLAYOFF_CLINCH", err),
+		.catch((error) =>
+			console.error("[feedHook] failed to emit PLAYOFF_CLINCH", error),
 		);
 
 	await realRosters.checkDisableForceHistoricalRosters(

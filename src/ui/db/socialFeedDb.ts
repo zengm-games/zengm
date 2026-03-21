@@ -31,7 +31,9 @@ export async function getPosts(limit = 50): Promise<GeneratedPost[]> {
 	let cursor = await index.openCursor(null, "prev");
 	while (cursor) {
 		results.push(cursor.value);
-		if (results.length >= limit) break;
+		if (results.length >= limit) {
+			break;
+		}
 		cursor = await cursor.continue();
 	}
 	await tx.done;

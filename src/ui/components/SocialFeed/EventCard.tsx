@@ -3,7 +3,7 @@ import { VerifiedIcon } from "./Icons.tsx";
 
 const styles = {
 	article: {
-		borderBottom: "1px solid #2f3336",
+		borderBottom: "1px solid var(--bs-border-color)",
 		padding: "12px 16px",
 		transition: "background-color 0.15s",
 	} as React.CSSProperties,
@@ -16,13 +16,13 @@ const styles = {
 		height: 40,
 		borderRadius: "50%",
 		flexShrink: 0,
-		backgroundColor: "#333",
+		backgroundColor: "var(--bs-secondary-bg)",
 		display: "flex",
 		alignItems: "center",
 		justifyContent: "center",
 		fontSize: 14,
 		fontWeight: 700,
-		color: "#fff",
+		color: "var(--bs-body-color)",
 		overflow: "hidden",
 	} as React.CSSProperties,
 	avatarImg: {
@@ -42,17 +42,17 @@ const styles = {
 	} as React.CSSProperties,
 	authorName: {
 		fontWeight: 700,
-		color: "#e7e9ea",
+		color: "var(--bs-body-color)",
 	} as React.CSSProperties,
 	teamAbbrev: {
-		color: "#71767b",
+		color: "var(--bs-secondary-color)",
 		fontSize: 14,
 	} as React.CSSProperties,
 	dot: {
-		color: "#71767b",
+		color: "var(--bs-secondary-color)",
 	} as React.CSSProperties,
 	eventType: {
-		color: "#71767b",
+		color: "var(--bs-secondary-color)",
 		fontSize: 13,
 		textTransform: "capitalize" as const,
 	} as React.CSSProperties,
@@ -60,7 +60,7 @@ const styles = {
 		marginTop: 6,
 		fontSize: 15,
 		lineHeight: 1.5,
-		color: "#e7e9ea",
+		color: "var(--bs-body-color)",
 	} as React.CSSProperties,
 	scoreBadge: {
 		display: "inline-block",
@@ -73,8 +73,12 @@ const styles = {
 };
 
 const getScoreColor = (score?: number) => {
-	if (!score) return { bg: "#1d1f23", color: "#71767b" };
-	if (score >= 20) return { bg: "rgba(211, 84, 0, 0.15)", color: "#d35400" };
+	if (!score) {
+		return { bg: "var(--bs-tertiary-bg)", color: "var(--bs-secondary-color)" };
+	}
+	if (score >= 20) {
+		return { bg: "rgba(211, 84, 0, 0.15)", color: "var(--bs-primary)" };
+	}
 	return { bg: "rgba(41, 128, 185, 0.15)", color: "#3498db" };
 };
 
@@ -107,8 +111,8 @@ interface EventCardProps {
 const EventCard = ({ event, teams }: EventCardProps) => {
 	const scoreColor = getScoreColor(event.score);
 
-	// Find team color for avatar background
-	let avatarBg = "#333";
+	// Find team color for avatar background; fall back to theme-aware secondary bg
+	let avatarBg: string | undefined;
 	if (event.tids && event.tids.length > 0 && event.tids[0]! >= 0) {
 		const team = teams[event.tids[0]!];
 		if (team && team.colors && team.colors[0]) {
@@ -126,7 +130,12 @@ const EventCard = ({ event, teams }: EventCardProps) => {
 	return (
 		<article style={styles.article}>
 			<div style={styles.row}>
-				<div style={{ ...styles.avatar, backgroundColor: avatarBg }}>
+				<div
+					style={{
+						...styles.avatar,
+						...(avatarBg ? { backgroundColor: avatarBg, color: "#fff" } : {}),
+					}}
+				>
 					{event.authorImgURL ? (
 						<img
 							src={event.authorImgURL}

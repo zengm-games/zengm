@@ -109,12 +109,13 @@ const MyStaff = () => {
 		.sort((a, b) => b.updatedAt - a.updatedAt);
 
 	const activeConversation =
-		staffChats.find((c) => c.id === activeStaffChatId) ??
-		staffChats[0] ??
-		null;
+		staffChats.find((c) => c.id === activeStaffChatId) ?? staffChats[0] ?? null;
 
 	return (
-		<div className="agent-chat-full d-flex border rounded" style={{ height: "calc(100vh - 200px)" }}>
+		<div
+			className="agent-chat-full d-flex border rounded"
+			style={{ height: "calc(100vh - 200px)" }}
+		>
 			<div className="agent-staff-sidebar border-end d-flex flex-column">
 				<div className="agent-chat-header px-3 border-bottom d-flex align-items-center justify-content-between">
 					<span className="fw-bold fs-5">My Staff</span>
@@ -141,9 +142,16 @@ const MyStaff = () => {
 					))}
 				</div>
 			</div>
-			<div className="flex-grow-1 d-flex flex-column" style={{ minWidth: 0, overflow: "hidden" }}>
+			<div
+				className="flex-grow-1 d-flex flex-column"
+				style={{ minWidth: 0, overflow: "hidden" }}
+			>
 				{activeConversation ? (
-					<ChatView conversation={activeConversation} hideNav variant="assistant" />
+					<ChatView
+						conversation={activeConversation}
+						hideNav
+						variant="assistant"
+					/>
 				) : (
 					<div className="d-flex align-items-center justify-content-center h-100 text-muted">
 						Start a new chat

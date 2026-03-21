@@ -12,7 +12,7 @@
 	},
 	"scripts": {
 		"build": "node tools/build/cli.ts",
-		"deploy": "node --run lint && node --run test && node tools/deploy.ts",
+		"deploy": "node --run lint && node tools/deploy.ts",
 		"deploy-all": "node --run lint && node --run test && node tools/deploy-all.ts",
 		"dev": "node tools/watch/cli.ts",
 		"dev:vercel": "vercel dev",

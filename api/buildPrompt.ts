@@ -80,8 +80,7 @@ export function buildEventPrompt(
 		PLAYOFF_CLINCH: "A team has just clinched a playoff spot.",
 	};
 
-	lines.push(`EVENT: ${eventLabels[event.type]}`);
-	lines.push("");
+	lines.push(`EVENT: ${eventLabels[event.type]}`, "");
 
 	// Live game state (HALFTIME only)
 	if (context.liveGame) {
@@ -119,7 +118,7 @@ export function buildEventPrompt(
 			const avg = player.seasonAverages;
 			const avgLine = `${avg.pts.toFixed(1)} pts / ${avg.reb.toFixed(1)} reb / ${avg.ast.toFixed(1)} ast`;
 			lines.push(
-				`  ${player.name} — ${player.position}, ${player.teamName}, OVR ${player.ovr} (${avgLine})`,
+				`  ${player.name} — ${player.position}, ${player.teamName} (${avgLine})`,
 			);
 		}
 		lines.push("");
@@ -161,9 +160,9 @@ export function buildEventPrompt(
 
 	lines.push(
 		"React to this event in your established voice. Keep your post under 280 characters.",
+		"",
+		"Write your post now. Output ONLY the post text, nothing else:",
 	);
-	lines.push("");
-	lines.push("Write your post now. Output ONLY the post text, nothing else:");
 
 	return lines.join("\n");
 }

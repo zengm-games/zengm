@@ -118,5 +118,4 @@ export { default as TradingBlock } from "./TradingBlock/index.tsx";
 export { default as Transactions } from "./Transactions.tsx";
 export { default as UpcomingFreeAgents } from "./UpcomingFreeAgents.tsx";
 export { default as Upgrade65 } from "./Upgrade65.tsx";
-export { default as SocialFeed } from "./SocialFeed.tsx";
 export { default as WatchList } from "./WatchList.tsx";

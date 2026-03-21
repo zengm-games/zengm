@@ -35,7 +35,7 @@ const teamInfos: {
 	},
 	ATL: {
 		region: "Atlanta",
-		name: "Gold Club",
+		name: "Hawks",
 		pop: 5.3,
 		colors: ["#291091", "#ae7c00", "#00d1df"],
 		jersey: bySport({
@@ -59,7 +59,7 @@ const teamInfos: {
 	},
 	BOS: {
 		region: "Boston",
-		name: "Massacre",
+		name: "Celtics",
 		pop: 7.3,
 		colors: ["#ffffff", "#e70000", "#003188"],
 		jersey: bySport({
@@ -71,7 +71,7 @@ const teamInfos: {
 	},
 	BKN: {
 		region: "Brooklyn",
-		name: "Bagels",
+		name: "Nets",
 		pop: 21.5,
 		colors: ["#034757", "#67c7e9", "#b78254"],
 		jersey: bySport({
@@ -83,7 +83,7 @@ const teamInfos: {
 	},
 	CHA: {
 		region: "Charlotte",
-		name: "Queens",
+		name: "Hornets",
 		pop: 1.5,
 		colors: ["#009e87", "#541f3e", "#ffffff"],
 		jersey: bySport({
@@ -107,7 +107,7 @@ const teamInfos: {
 	},
 	CLE: {
 		region: "Cleveland",
-		name: "Curses",
+		name: "Cavaliers",
 		pop: 1.7,
 		colors: ["#211e1e", "#f8e3cc", "#3f1c59"],
 		jersey: bySport({
@@ -119,7 +119,7 @@ const teamInfos: {
 	},
 	DAL: {
 		region: "Dallas",
-		name: "Snipers",
+		name: "Mavericks",
 		pop: 6.6,
 		colors: ["#000000", "#e08200", "#436431"],
 		jersey: bySport({
@@ -131,7 +131,7 @@ const teamInfos: {
 	},
 	DEN: {
 		region: "Denver",
-		name: "High",
+		name: "Nuggets",
 		pop: 2.7,
 		colors: ["#2b8643", "#163a1c", "#a1d297"],
 		jersey: bySport({
@@ -143,7 +143,7 @@ const teamInfos: {
 	},
 	DET: {
 		region: "Detroit",
-		name: "Muscle",
+		name: "Pistons",
 		pop: 4.0,
 		colors: ["#007681", "#d6d6d6", "#ffa400"],
 		jersey: bySport({
@@ -155,7 +155,7 @@ const teamInfos: {
 	},
 	HOU: {
 		region: "Houston",
-		name: "Apollos",
+		name: "Rockets",
 		pop: 6.2,
 		colors: ["#4c91c2", "#c4c4c3", "#ffffff"],
 		jersey: bySport({
@@ -167,7 +167,7 @@ const teamInfos: {
 	},
 	IND: {
 		region: "Indianapolis",
-		name: "Crossroads",
+		name: "Pacers",
 		pop: 1.6,
 		colors: ["#e79f02", "#00246d", "#ffffff"],
 		jersey: bySport({
@@ -191,7 +191,7 @@ const teamInfos: {
 	},
 	LA: {
 		region: "Los Angeles",
-		name: "Lowriders",
+		name: "Lakers",
 		pop: 15.6,
 		colors: ["#00008b", "#ffaf28", "#ff24ee"],
 		jersey: bySport({
@@ -203,7 +203,7 @@ const teamInfos: {
 	},
 	LAE: {
 		region: "Los Angeles",
-		name: "Earthquakes",
+		name: "Clippers",
 		pop: 15.6,
 		colors: ["#aeaeae", "#ea4b0f", "#dedddd"],
 		jersey: bySport({
@@ -227,7 +227,7 @@ const teamInfos: {
 	},
 	MEM: {
 		region: "Memphis",
-		name: "Blues",
+		name: "Grizzlies",
 		pop: 1.3,
 		colors: ["#000000", "#ff6c49", "#00aedc"],
 		jersey: bySport({
@@ -239,7 +239,7 @@ const teamInfos: {
 	},
 	MIA: {
 		region: "Miami",
-		name: "Cyclones",
+		name: "Heat",
 		pop: 6.1,
 		colors: ["#4ac1c0", "#d8519d", "#f15949"],
 		jersey: bySport({
@@ -251,7 +251,7 @@ const teamInfos: {
 	},
 	MIL: {
 		region: "Milwaukee",
-		name: "Cheesemakers",
+		name: "Bucks",
 		pop: 1.5,
 		colors: ["#003600", "#fdc05f", "#007800"],
 		jersey: bySport({
@@ -263,7 +263,7 @@ const teamInfos: {
 	},
 	MIN: {
 		region: "Minneapolis",
-		name: "Blizzard",
+		name: "Timberwolves",
 		pop: 2.8,
 		colors: ["#8accdc", "#3d2971", "#ed9a22"],
 		jersey: bySport({
@@ -287,7 +287,7 @@ const teamInfos: {
 	},
 	NOL: {
 		region: "New Orleans",
-		name: "Bayou",
+		name: "Pelicans",
 		pop: 1.1,
 		colors: ["#195869", "#4edd61", "#0e3e33"],
 		jersey: bySport({
@@ -299,7 +299,7 @@ const teamInfos: {
 	},
 	NYC: {
 		region: "New York",
-		name: "Bankers",
+		name: "Knicks",
 		pop: 21.5,
 		colors: ["#1e73ba", "#ff8500", "#ffffff"],
 		jersey: bySport({
@@ -323,7 +323,7 @@ const teamInfos: {
 	},
 	OKC: {
 		region: "Oklahoma City",
-		name: "66ers",
+		name: "Thunder",
 		pop: 1.4,
 		colors: ["#610000", "#bbb29e", "#e4dfcf"],
 		jersey: bySport({
@@ -335,7 +335,7 @@ const teamInfos: {
 	},
 	ORL: {
 		region: "Orlando",
-		name: "Juice",
+		name: "Magic",
 		pop: 2.2,
 		colors: ["#dc5000", "#ffffff", "#0b7648"],
 		jersey: bySport({
@@ -347,7 +347,7 @@ const teamInfos: {
 	},
 	PHI: {
 		region: "Philadelphia",
-		name: "Cheesesteaks",
+		name: "76ers",
 		pop: 5.5,
 		colors: ["#46bae6", "#ffdb33", "#d9771f"],
 		jersey: bySport({
@@ -359,7 +359,7 @@ const teamInfos: {
 	},
 	PHO: {
 		region: "Phoenix",
-		name: "Vultures",
+		name: "Suns",
 		pop: 4.3,
 		colors: ["#d17d2a", "#231f20", "#c09867"],
 		jersey: bySport({
@@ -383,7 +383,7 @@ const teamInfos: {
 	},
 	POR: {
 		region: "Portland",
-		name: "Roses",
+		name: "Trail Blazers",
 		pop: 2.0,
 		colors: ["#e41d34", "#1e1e1e", "#e7a9cc"],
 		jersey: bySport({
@@ -395,7 +395,7 @@ const teamInfos: {
 	},
 	SA: {
 		region: "San Antonio",
-		name: "Churros",
+		name: "Spurs",
 		pop: 2.0,
 		colors: ["#4a2b14", "#30d9ff", "#704723"],
 		jersey: bySport({
@@ -407,7 +407,7 @@ const teamInfos: {
 	},
 	SAC: {
 		region: "Sacramento",
-		name: "Gold Rush",
+		name: "Kings",
 		pop: 1.8,
 		colors: ["#735823", "#e4c649", "#f8e19f"],
 		jersey: bySport({
@@ -443,7 +443,7 @@ const teamInfos: {
 	},
 	UTA: {
 		region: "Utah",
-		name: "Missionaries",
+		name: "Jazz",
 		pop: 2.3,
 		colors: ["#7c7c7c", "#000000", "#aea57a"],
 		jersey: bySport({
@@ -467,7 +467,7 @@ const teamInfos: {
 	},
 	WAS: {
 		region: "Washington",
-		name: "Monuments",
+		name: "Wizards",
 		pop: 6.2,
 		colors: ["#213063", "#c5ae6e", "#ffffff"],
 		jersey: bySport({
@@ -554,7 +554,7 @@ const teamInfos: {
 	},
 	SF: {
 		region: "San Francisco",
-		name: "Unicorns",
+		name: "Warriors",
 		pop: 6.5,
 		colors: ["#676ee7", "#48edfe", "#fe696e"],
 		jersey: bySport({
@@ -566,7 +566,7 @@ const teamInfos: {
 	},
 	TOR: {
 		region: "Toronto",
-		name: "Raccoons",
+		name: "Raptors",
 		pop: 6.6,
 		colors: ["#841222", "#ffffff", "#000000"],
 		jersey: bySport({
@@ -1075,7 +1075,7 @@ const teamInfos: {
 	},
 	CHI: {
 		region: "Chicago",
-		name: "Gangsters",
+		name: "Bulls",
 		pop: 9.1,
 		colors: ["#33607a", "#271919", "#a9daf6"],
 		jersey: bySport({

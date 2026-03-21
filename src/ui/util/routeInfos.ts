@@ -220,6 +220,7 @@ const routeInfos = {
 	"/l/:lid/upgrade65": "upgrade65",
 	"/l/:lid/schedule_editor": "scheduleEditor",
 	"/l/:lid/agent_chat": "agentChat",
+	"/l/:lid/agent_social": "agentSocial",
 };
 
 export default routeInfos;

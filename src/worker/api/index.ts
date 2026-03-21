@@ -4876,6 +4876,39 @@ const createTrade = async (teams: TradeTeams) => {
 	await toUI("realtimeUpdate", []);
 };
 
+const evaluateTradeValue = async (input: {
+	tid: number;
+	userPids: number[];
+	userDpids: number[];
+	otherPids: number[];
+	otherDpids: number[];
+}) => {
+	const dv = await team.valueChange(
+		input.tid,
+		input.userPids,
+		input.otherPids,
+		input.userDpids,
+		input.otherDpids,
+		undefined,
+		g.get("userTid"),
+	);
+
+	let summary: string;
+	if (dv > 5) {
+		summary = "Strongly favors your team";
+	} else if (dv > 0) {
+		summary = "Slightly favors your team";
+	} else if (dv > -2) {
+		summary = "Roughly fair trade";
+	} else if (dv > -5) {
+		summary = "Slightly favors the other team";
+	} else {
+		summary = "Strongly favors the other team";
+	}
+
+	return { dv, summary };
+};
+
 const proposeTrade = async (forceTrade: boolean, conditions: Conditions) => {
 	const { teams } = await trade.get();
 	const dv = await team.valueChange(
@@ -5139,6 +5172,7 @@ export default {
 		dunkSimNext,
 		dunkUser,
 		evalOnWorker,
+		evaluateTradeValue,
 		exportDraftClass,
 		getExportFilename,
 		exportPlayerAveragesCsv,

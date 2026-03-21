@@ -167,6 +167,14 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["agent_chat"],
 				text: "Chat",
 			},
+			{
+				type: "link",
+				active: (pageID) => pageID === "agentSocial",
+				league: true,
+				commandPalette: true,
+				path: ["agent_social"],
+				text: "Social",
+			},
 		],
 	},
 	{

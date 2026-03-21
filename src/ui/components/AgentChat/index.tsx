@@ -1,347 +1,93 @@
-import { useChat } from "@ai-sdk/react";
-import {
-	DefaultChatTransport,
-	lastAssistantMessageIsCompleteWithToolCalls,
-	type UIMessage,
-} from "ai";
-import { useEffect, useMemo, useRef, type FormEvent } from "react";
-import type { AgentChatToolName } from "../../../common/agentChatTools.ts";
 import { isSport } from "../../../common/index.ts";
-import {
-	serializeAgentGameState,
-	type AgentGameContext,
-} from "../../util/agentGameState.ts";
-import {
-	runAgentDraftPick,
-	runAgentGetAvailablePlayers,
-	runAgentGetPlayer,
-	runAgentGetRoster,
-	runAgentGetStandings,
-	runAgentProposeTrade,
-	runAgentReleasePlayer,
-	runAgentSortRoster,
-	runAgentUpdatePlayingTime,
-} from "../../util/agentTools.ts";
 import { useAgentChatUi } from "../../util/agentChatUi.ts";
-import { useLocalPartial } from "../../util/index.ts";
 import { useViewData } from "../../util/viewManager.tsx";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
+import ChatView from "./ChatView.tsx";
+import InboxView from "./InboxView.tsx";
+import NewDmView from "./NewDmView.tsx";
 
-const TOOL_LABELS: Record<AgentChatToolName, string> = {
-	getStandings: "League standings",
-	getRoster: "Roster",
-	getAvailablePlayers: "Free agents",
-	getPlayer: "Player profile",
-	sortRoster: "Sort roster",
-	updatePlayingTime: "Playing time",
-	releasePlayer: "Release player",
-	draftPick: "Draft pick",
-	proposeTrade: "Propose trade",
-};
-
-const toolPartLabel = (partType: string) => {
-	if (!partType.startsWith("tool-")) {
-		return partType;
-	}
-	const name = partType.slice("tool-".length) as AgentChatToolName;
-	return TOOL_LABELS[name] ?? name;
-};
-
-const toolStateMessage = (state: unknown) => {
-	if (state === "input-streaming" || state === "input-available") {
-		return "Preparing…";
-	}
-	if (state === "output-available") {
-		return "Done";
-	}
-	if (state === "output-error") {
-		return "Error";
-	}
-	return String(state);
-};
-
-const renderMessageParts = (message: UIMessage) => {
-	if (!message.parts || message.parts.length === 0) {
-		return null;
-	}
-
-	const useMarkdown = message.role === "assistant";
-
-	return message.parts.map((part, index) => {
-		if (part.type === "text") {
-			if (useMarkdown) {
-				return (
-					<div key={index} className="agent-chat-text agent-chat-md">
-						<ReactMarkdown remarkPlugins={[remarkGfm]}>
-							{part.text}
-						</ReactMarkdown>
-					</div>
-				);
-			}
-
-			return (
-				<div key={index} className="agent-chat-text">
-					{part.text}
-				</div>
-			);
-		}
-
-		if (part.type.startsWith("tool-")) {
-			const label = toolPartLabel(part.type);
-			const state = "state" in part ? toolStateMessage(part.state) : undefined;
-			return (
-				<div key={index} className="text-muted small py-1">
-					{state && state !== "Done" ? (
-						<span className="me-1" aria-hidden>
-							…
-						</span>
-					) : null}
-					{label}
-					{state ? ` — ${state}` : ""}
-				</div>
-			);
-		}
-
-		return null;
-	});
+const EmptyState = () => {
+	const openNewDm = useAgentChatUi((s) => s.openNewDm);
+	return (
+		<div className="d-flex flex-column align-items-center justify-content-center h-100 text-center p-4">
+			<div className="mb-3" style={{ fontSize: "3rem", opacity: 0.3 }}>
+				💬
+			</div>
+			<h5 className="fw-semibold mb-1">Your messages</h5>
+			<p className="text-muted small mb-3">
+				Send a message to start a chat.
+			</p>
+			<button
+				type="button"
+				className="btn btn-primary"
+				onClick={() => openNewDm()}
+			>
+				Send message
+			</button>
+		</div>
+	);
 };
 
 export const AgentChatCore = ({ mode }: { mode: "panel" | "fullPage" }) => {
-	const setOpen = useAgentChatUi((s) => s.setOpen);
-	const messages = useAgentChatUi((s) => s.messages);
-	const setMessages = useAgentChatUi((s) => s.setMessages);
-
-	const local = useLocalPartial([
-		"phase",
-		"phaseText",
-		"season",
-		"lid",
-		"userTid",
-		"userTids",
-		"spectator",
-		"teamInfoCache",
-		"statusText",
-	]);
-
-	const gameContextRef = useRef<AgentGameContext>(
-		serializeAgentGameState(local),
+	const view = useAgentChatUi((s) => s.view);
+	const activeConversationId = useAgentChatUi(
+		(s) => s.activeConversationId,
 	);
-	gameContextRef.current = serializeAgentGameState(local);
+	const conversations = useAgentChatUi((s) => s.conversations);
 
-	const transport = useMemo(
-		() =>
-			new DefaultChatTransport<UIMessage>({
-				api: "/api/chat",
-				body: () => {
-					const gameContext = gameContextRef.current;
-					console.log("[AgentChat] /api/chat request gameContext", gameContext);
-					return { gameContext };
-				},
-			}),
-		[],
-	);
-
-	const addToolOutputRef = useRef<
-		| ((args: {
-				tool: AgentChatToolName;
-				toolCallId: string;
-				output: unknown;
-		  }) => void)
-		| null
-	>(null);
-
-	const {
-		messages: chatMessages,
-		sendMessage,
-		status,
-		error,
-		stop,
-		addToolOutput,
-	} = useChat({
-		transport,
-		messages,
-		sendAutomaticallyWhen: lastAssistantMessageIsCompleteWithToolCalls,
-		async onToolCall({ toolCall }) {
-			if (toolCall.dynamic) {
-				return;
-			}
-
-			const addOut = addToolOutputRef.current;
-			if (!addOut) {
-				return;
-			}
-
-			const ctx = gameContextRef.current;
-			const name = toolCall.toolName as AgentChatToolName;
-
-			const reply = async (output: unknown) => {
-				void addOut({
-					tool: name,
-					toolCallId: toolCall.toolCallId,
-					output,
-				});
-			};
-
-			switch (toolCall.toolName) {
-				case "getStandings": {
-					const input = toolCall.input as { season?: number };
-					await reply(await runAgentGetStandings(ctx, input));
-					return;
-				}
-				case "getRoster": {
-					const input = toolCall.input as { teamAbbrev?: string };
-					await reply(await runAgentGetRoster(ctx, input));
-					return;
-				}
-				case "getAvailablePlayers": {
-					await reply(await runAgentGetAvailablePlayers());
-					return;
-				}
-				case "getPlayer": {
-					const input = toolCall.input as { pid: number };
-					await reply(await runAgentGetPlayer(input));
-					return;
-				}
-				case "sortRoster": {
-					const input = toolCall.input as { pos?: string };
-					await reply(await runAgentSortRoster(input));
-					return;
-				}
-				case "updatePlayingTime": {
-					const input = toolCall.input as {
-						pid: number;
-						ptModifier: "0" | "0.75" | "1" | "1.25" | "1.5";
-					};
-					await reply(await runAgentUpdatePlayingTime(input));
-					return;
-				}
-				case "releasePlayer": {
-					const input = toolCall.input as { pid: number };
-					await reply(await runAgentReleasePlayer(ctx, input));
-					return;
-				}
-				case "draftPick": {
-					const input = toolCall.input as { pid: number };
-					await reply(await runAgentDraftPick(ctx, input));
-					return;
-				}
-				case "proposeTrade": {
-					const input = toolCall.input as {
-						otherTeamAbbrev: string;
-						userPids?: number[];
-						userDpids?: number[];
-						otherPids?: number[];
-						otherDpids?: number[];
-					};
-					await reply(await runAgentProposeTrade(ctx, input));
-					return;
-				}
-				default:
-					return;
-			}
-		},
-	});
-
-	addToolOutputRef.current = addToolOutput;
-
-	useEffect(() => {
-		if (chatMessages.length > 0) {
-			setMessages(chatMessages);
-		}
-	}, [chatMessages, setMessages]);
-
-	const handleSubmit = async (e: FormEvent) => {
-		e.preventDefault();
-		const form = e.target as HTMLFormElement;
-		const fd = new FormData(form);
-		const text = String(fd.get("message") ?? "").trim();
-		if (!text) {
-			return;
-		}
-
-		await sendMessage({ text });
-		form.reset();
-	};
-
-	const messagesContent = (
-		<>
-			{error ? (
-				<div className="alert alert-warning py-2 small" role="alert">
-					{error.message}
-				</div>
-			) : null}
-			{chatMessages.map((m) => (
-				<div key={m.id} className={`mb-2 agent-chat-msg role-${m.role}`}>
-					<div className="small text-muted text-uppercase">{m.role}</div>
-					{renderMessageParts(m)}
-				</div>
-			))}
-		</>
-	);
-
-	const inputForm = (
-		<form onSubmit={handleSubmit} className="d-flex gap-2">
-			<input
-				type="text"
-				name="message"
-				className="form-control form-control-sm"
-				placeholder="Ask about your team..."
-				disabled={status !== "ready"}
-				autoComplete="off"
-			/>
-			<button
-				type="submit"
-				className="btn btn-sm btn-primary"
-				disabled={status !== "ready"}
-			>
-				Send
-			</button>
-			{status === "streaming" ? (
-				<button
-					type="button"
-					className="btn btn-sm btn-outline-secondary"
-					onClick={() => void stop()}
-				>
-					Stop
-				</button>
-			) : null}
-		</form>
-	);
+	const activeConversation =
+		conversations.find((c) => c.id === activeConversationId) ?? null;
 
 	if (mode === "fullPage") {
+		let mainContent: React.ReactNode;
+		if (view === "chat" && activeConversation) {
+			mainContent = (
+				<ChatView conversation={activeConversation} hideNav />
+			);
+		} else if (view === "newDm") {
+			mainContent = <NewDmView />;
+		} else {
+			mainContent = <EmptyState />;
+		}
+
 		return (
-			<div className="agent-chat-full d-flex flex-column">
-				<div className="overflow-auto agent-chat-messages flex-grow-1">
-					{messagesContent}
+			<div className="agent-chat-full d-flex border rounded" style={{ height: "calc(100vh - 200px)" }}>
+				<div className="agent-chat-sidebar border-end d-flex flex-column">
+					<InboxView
+						activeId={activeConversationId}
+						showHeader
+					/>
 				</div>
-				<div className="pt-3">{inputForm}</div>
+				<div className="flex-grow-1 d-flex flex-column" style={{ minWidth: 0, overflow: "hidden" }}>
+					{mainContent}
+				</div>
 				<style>{agentChatStyles}</style>
 			</div>
 		);
 	}
 
+	let content: React.ReactNode;
+	if (view === "chat" && activeConversation) {
+		content = <ChatView conversation={activeConversation} />;
+	} else if (view === "newDm") {
+		content = <NewDmView />;
+	} else {
+		content = <InboxView />;
+	}
+
 	return (
 		<div className="agent-chat-panel card shadow">
-			<div className="card-header d-flex align-items-center py-2">
-				<span className="fw-semibold">AI GM</span>
-				<button
-					type="button"
-					className="btn-close ms-auto"
-					aria-label="Close"
-					onClick={() => setOpen(false)}
-				/>
-			</div>
-			<div className="card-body overflow-auto agent-chat-messages">
-				{messagesContent}
-			</div>
-			<div className="card-footer py-2">{inputForm}</div>
+			{content}
 			<style>{agentChatStyles}</style>
 		</div>
 	);
 };
 
 const agentChatStyles = `
+	.agent-chat-sidebar {
+		width: 320px;
+		min-width: 320px;
+		max-width: 320px;
+	}
 	.agent-chat-panel {
 		position: fixed;
 		right: 16px;

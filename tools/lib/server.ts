@@ -103,7 +103,11 @@ export const startServer = async ({
 	exposeToNetwork: boolean;
 	waitForBuild: () => Promise<void> | undefined;
 }) => {
-	const port = await getPort({ port: 3000 });
+	const envPort = process.env.PORT;
+	const port =
+		envPort !== undefined && envPort !== "" && !Number.isNaN(Number(envPort))
+			? Number(envPort)
+			: await getPort({ port: 3000 });
 	const localUrl = `http://localhost:${port}`;
 
 	const server = http.createServer(async (req, res) => {

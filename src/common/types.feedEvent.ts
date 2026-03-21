@@ -81,6 +81,19 @@ export type FeedEvent = {
 	context: SocialContext;
 };
 
+export type Account = {
+	agentId: string;
+	handle: string;
+	displayName: string;
+	type: "journalist" | "player" | "org" | "fan";
+	pid: number | null;
+	tid: number | null;
+	templateId: string;
+	status: "active" | "dormant";
+	avatarUrl: string | null;
+	createdAt: number;
+};
+
 export type AgentConfig = {
 	id: string;
 	handle: string;

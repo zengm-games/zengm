@@ -6,26 +6,29 @@ Each Phase is a self-contained unit of work that delivers one architectural comm
 
 ## Dependency Table
 
-| Phase | Name | Depends on | Can run in parallel with |
-|---|---|---|---|
-| **1** | Shared Types | — | — |
-| **2** | Agent Persona Configs | 1 | 3, 4, 5, 7 |
-| **3** | socialFeedDb | 1 | 2, 4, 5, 7 |
-| **4** | `post` Tool | 1 | 2, 3, 5, 7 |
-| **5** | `generatePlayerImage` Tool | 1 | 2, 3, 4, 7 |
-| **6** | Vercel `/api/feed` Endpoint | 2, 4, 5 | 7, 8, 9, 10, 11, 12, 13 |
-| **7** | `getSocialContext()` Worker View | 1 | 2, 3, 4, 5 |
-| **8** | `emitFeedEvent()` Utility | 7 | 3, 4, 5, 6, 14 |
-| **9** | HALFTIME Hook | 8 | 10, 11, 12, 13 |
-| **10** | GAME_END + INJURY Hooks | 8 | 9, 11, 12, 13 |
-| **11** | TRADE_ALERT Hook | 8 | 9, 10, 12, 13 |
-| **12** | DRAFT_PICK Hook | 8 | 9, 10, 11, 13 |
-| **13** | SEASON_AWARD + PLAYOFF_CLINCH Hooks | 8 | 9, 10, 11, 12 |
-| **14** | Feed Worker Skeleton + Agent Selection | 2 | 6, 9, 10, 11, 12, 13 |
-| **15** | Feed Worker → Vercel Fetch | 14, 6 | 9, 10, 11, 12, 13 |
-| **16** | Feed Worker → IDB Write + UI Notify | 15, 3 | 9, 10, 11, 12, 13 |
-| **17** | UI Relay — `feedEventHandler.ts` | 8, 16 | — |
-| **18** | SocialFeed Panel | 17, 3 | — |
+
+| Phase  | Name                                   | Depends on | Can run in parallel with         |
+| ------ | -------------------------------------- | ---------- | -------------------------------- |
+| **1**  | Shared Types                           | —          | —                                |
+| **2**  | Agent Persona Configs                  | 1          | 3, 3a, 4, 5, 7                   |
+| **3**  | socialFeedDb                           | 1          | 2, 4, 5, 7                       |
+| **3a** | Account Initialization                 | 2, 3       | 4, 5, 6, 7, 8, 9, 10, 11, 12, 13 |
+| **4**  | `post` Tool                            | 1          | 2, 3, 3a, 5, 7                   |
+| **5**  | `generatePlayerImage` Tool             | 1          | 2, 3, 3a, 4, 7                   |
+| **6**  | Vercel `/api/feed` Endpoint            | 2, 4, 5    | 3a, 7, 8, 9, 10, 11, 12, 13      |
+| **7**  | `getSocialContext()` Worker View       | 1          | 2, 3, 3a, 4, 5                   |
+| **8**  | `emitFeedEvent()` Utility              | 7          | 3, 3a, 4, 5, 6, 14               |
+| **9**  | HALFTIME Hook                          | 8          | 10, 11, 12, 13                   |
+| **10** | GAME_END + INJURY Hooks                | 8          | 9, 11, 12, 13                    |
+| **11** | TRADE_ALERT Hook                       | 8          | 9, 10, 12, 13                    |
+| **12** | DRAFT_PICK Hook                        | 8          | 9, 10, 11, 13                    |
+| **13** | SEASON_AWARD + PLAYOFF_CLINCH Hooks    | 8          | 9, 10, 11, 12                    |
+| **14** | Feed Worker Skeleton + Agent Selection | 2, 3a      | 6, 9, 10, 11, 12, 13             |
+| **15** | Feed Worker → Vercel Fetch             | 14, 6      | 9, 10, 11, 12, 13                |
+| **16** | Feed Worker → IDB Write + UI Notify    | 15, 3      | 9, 10, 11, 12, 13                |
+| **17** | UI Relay — `feedEventHandler.ts`       | 8, 16      | —                                |
+| **18** | SocialFeed Panel                       | 17, 3, 3a  | —                                |
+
 
 ---
 
@@ -65,16 +68,36 @@ Phase 1 (Types)
 **Depends on:** Nothing.
 
 **Delivers:**
+
 - `src/common/types.feedEvent.ts`
 
-**Types defined:** `FeedEventType`, `FeedEvent`, `SocialContext`, `AgentConfig`, `GeneratedPost`, `ThreadRecord`, `StatLeader`, `TeamSummary`, `PlayerSummary`, `GameResult`, `StandingEntry`, `TransactionSummary`
+**Types defined:** `FeedEventType`, `FeedEvent`, `SocialContext`, `AgentConfig`, `GeneratedPost`, `ThreadRecord`, `Account`, `StatLeader`, `TeamSummary`, `PlayerSummary`, `GameResult`, `StandingEntry`, `TransactionSummary`
+
+`**Account` shape:**
+
+```typescript
+type Account = {
+	agentId: string;
+	handle: string;
+	displayName: string;
+	type: "journalist" | "player" | "org" | "fan";
+	pid: number | null;
+	tid: number | null;
+	templateId: string;
+	status: "active" | "dormant";
+	avatarUrl: string | null;
+	createdAt: number;
+};
+```
 
 **Verified by:**
-- File compiles with zero TypeScript errors and zero `any`
-- Every field in `GeneratedPost` that is nullable is explicitly typed as `T | null`, not `T | undefined`
-- `FeedEventType` is a union of exactly 8 string literals matching the event table in the architecture doc
 
-**Definition of done:** One file. Compiles. No `any`. All 8 event types present.
+- File compiles with zero TypeScript errors and zero `any`
+- Every field in `GeneratedPost` and `Account` that is nullable is explicitly typed as `T | null`, not `T | undefined`
+- `FeedEventType` is a union of exactly 8 string literals matching the event table in the architecture doc
+- `Account.pid` and `Account.tid` are both `number | null` — neither is optional
+
+**Definition of done:** One file. Compiles. No `any`. All 8 event types present. `Account` type exported.
 
 ---
 
@@ -85,6 +108,7 @@ Phase 1 (Types)
 **Depends on:** Phase 1 (AgentConfig type).
 
 **Delivers:**
+
 - `src/data/socialAgents/journalists/sham_charania.json`
 - `src/data/socialAgents/fans/homer.json`
 - `src/data/socialAgents/fans/stat_nerd.json`
@@ -94,6 +118,7 @@ Phase 1 (Types)
 - `src/data/socialAgents/orgs/template.json`
 
 **Verified by:**
+
 - Every config file parses as valid JSON
 - Every config validates against `AgentConfig` — no missing required fields, no unknown fields
 - The union of all `triggers` arrays covers all 8 `FeedEventType` values
@@ -106,30 +131,101 @@ Phase 1 (Types)
 
 ## Phase 3: socialFeedDb
 
-**Contract:** Posts and threads can be written to and read from `socialFeedDb` without touching or depending on the league's IndexedDB. The schema is stable — no migration will be needed within v1.
+**Contract:** Accounts, posts, and threads can be written to and read from `socialFeedDb` without touching or depending on the league's IndexedDB. Posts are queryable by `agentId` (for profile pages) and by `createdAt` (for the main feed). The schema is stable — no migration will be needed within v1.
 
-**Depends on:** Phase 1 (GeneratedPost, ThreadRecord types).
+**Depends on:** Phase 1 (Account, GeneratedPost, ThreadRecord types).
 
 **Delivers:**
+
 - `src/ui/db/socialFeedDb.ts`
 
+**Three object stores:**
+
+- `accounts` — keyed by `agentId`
+- `posts` — keyed by `postId`, indexed by `agentId` and `createdAt`
+- `threads` — keyed by `threadId`
+
 **Exports:**
+
 ```typescript
+// Accounts
+addAccount(account: Account): Promise<void>
+getAccount(agentId: string): Promise<Account | undefined>
+getAccountByPid(pid: number): Promise<Account | undefined>
+getAccountByTid(tid: number): Promise<Account | undefined>
+getAllAccounts(): Promise<Account[]>
+updateAccountStatus(agentId: string, status: "active" | "dormant"): Promise<void>
+
+// Posts
 addPost(post: GeneratedPost): Promise<void>
 getPosts(limit?: number): Promise<GeneratedPost[]>
+getPostsByAgent(agentId: string, limit?: number): Promise<GeneratedPost[]>
+
+// Threads
 addThread(thread: ThreadRecord): Promise<void>
 getThread(threadId: string): Promise<ThreadRecord | undefined>
-clearFeed(): Promise<void>
+
+// Maintenance
+clearFeed(): Promise<void>   // clears posts + threads, leaves accounts intact
 ```
 
 **Verified by:**
-- `addPost` followed by `getPosts` returns the same post with all fields intact
-- No operation in this file touches the league IDB — confirmed by checking that `idb.league` is never imported
-- `clearFeed` results in `getPosts` returning `[]`
-- Opening `socialFeedDb` when no league is active does not throw
-- A `GeneratedPost` with a null `imageUrl` round-trips correctly — null is not coerced to undefined or empty string
 
-**Definition of done:** All helpers work. League DB provably untouched.
+- `addPost` followed by `getPosts` returns the same post with all fields intact
+- `getPostsByAgent("player_42")` returns only posts where `agentId === "player_42"` — no full-store scan
+- `getAccountByPid(42)` returns the account for player 42 — confirmed by index lookup, not filter
+- `clearFeed()` empties `posts` and `threads` but leaves all accounts untouched
+- No operation in this file imports or touches the league IDB — `idb.league` is never referenced
+- A `GeneratedPost` with `imageUrl: null` round-trips as `null`, not `undefined`
+- Opening `socialFeedDb` when no league is active does not throw
+
+**Definition of done:** All helpers work. Profile page queries use indexes. `clearFeed` leaves accounts. League DB provably untouched.
+
+---
+
+## Phase 3a: Account Initialization
+
+**Contract:** When the feed system is opened for a league for the first time, all non-player accounts (org, journalist, fan) are seeded into `socialFeedDb.accounts`. Player accounts are created whenever a player's OVR crosses the activation threshold. After this phase, every agent that can be triggered has a corresponding `Account` record.
+
+**Depends on:** Phase 2 (agent template configs), Phase 3 (accounts store exists).
+
+**Delivers:**
+
+- `src/ui/db/initializeAccounts.ts` — seeding logic run on feed system init
+- Called from the SocialFeed Panel on first mount (before any events are processed)
+
+**Account creation rules:**
+
+
+| Account Type | Created when     | `agentId` format  | `pid`        | `tid`        |
+| ------------ | ---------------- | ----------------- | ------------ | ------------ |
+| Journalist   | Feed system init | `"sham_charania"` | null         | null         |
+| Fan          | Feed system init | `"fan_homer_1"`   | null         | null         |
+| Org          | Feed system init | `"team_{tid}"`    | null         | team's tid   |
+| Player       | OVR ≥ threshold  | `"player_{pid}"`  | player's pid | player's tid |
+
+
+**Player account threshold:** OVR ≥ 65 (configurable constant). Checked after every phase change where player ratings update. A player who drops below the threshold has their account set to `dormant`, not deleted.
+
+**After a trade:** The traded player's account `tid` is updated to their new team. This ensures their posts on the team feed reflect the current roster.
+
+**Exports:**
+
+```typescript
+initializeFeedAccounts(teams: TeamSummary[], players: PlayerSummary[]): Promise<void>
+syncPlayerAccounts(players: PlayerSummary[]): Promise<void>  // run after phase changes
+```
+
+**Verified by:**
+
+- After `initializeFeedAccounts`, `getAllAccounts()` returns accounts for all teams + all journalists + all fan archetypes
+- A player with OVR ≥ 65 has an account after `syncPlayerAccounts` runs
+- A player with OVR < 65 has no account after `syncPlayerAccounts` runs
+- Running `initializeFeedAccounts` twice does not create duplicate accounts — idempotent
+- `getAccountByPid(pid)` resolves correctly for a newly created player account
+- `getAccountByTid(tid)` resolves correctly for a team org account
+
+**Definition of done:** All accounts seeded on init. Player accounts sync with OVR threshold. Idempotent. Profile page lookups by `pid` and `tid` resolve correctly.
 
 ---
 
@@ -140,9 +236,11 @@ clearFeed(): Promise<void>
 **Depends on:** Phase 1 (GeneratedPost type).
 
 **Delivers:**
+
 - `api/tools/postTool.ts`
 
 **Verified by:**
+
 - Calling `execute` with a valid payload returns an object with `postId`, `body`, `threadId`, `parentId`, `imageUrl`
 - Calling with `body` longer than 280 characters fails zod validation before `execute` runs
 - Calling with no `threadId` causes the returned `threadId` to be a new UUID (not null, not undefined)
@@ -159,9 +257,11 @@ clearFeed(): Promise<void>
 **Depends on:** Phase 1 (no direct type dependency, but sits alongside Phase 4).
 
 **Delivers:**
+
 - `api/tools/generatePlayerImageTool.ts`
 
 **Verified by:**
+
 - Calling `execute` with a valid prompt and type returns `{ imageUrl: string }` where the URL is a valid `https://` URL
 - The `type` field controls image dimensions — `stat_card` produces a landscape image (1792×1024), others produce square (1024×1024)
 - Passing an invalid `type` value fails zod validation before `execute` runs
@@ -178,9 +278,11 @@ clearFeed(): Promise<void>
 **Depends on:** Phase 2 (agent configs to validate against), Phase 4 (`post` tool), Phase 5 (`generatePlayerImage` tool).
 
 **Delivers:**
+
 - `api/feed.ts`
 
 **Verified by:**
+
 - Calling with 3 agents returns exactly 3 posts
 - Every returned post conforms to `GeneratedPost` — no missing fields
 - All 3 agents resolve faster than `3 × single-agent-latency` — confirming `Promise.all`, not sequential
@@ -199,16 +301,19 @@ clearFeed(): Promise<void>
 **Depends on:** Phase 1 (SocialContext type).
 
 **Delivers:**
+
 - `src/worker/views/socialContext.ts`
 - `src/worker/views/index.ts` updated to export `socialContext`
 
 **Reads from:**
+
 - `idb.cache.teamSeasons` — team records, recent form
 - `idb.cache.players` + `idb.cache.teamStats` — player season averages
 - `idb.getCopies.games` — last 5 games for involved teams
 - `idb.cache.events` — recent transactions
 
 **Verified by:**
+
 - Calling `getSocialContext("GAME_END")` returns a `SocialContext` with non-empty `teams` and `standings`
 - Calling `getSocialContext("HALFTIME", { liveStats })` with a live stats object returns a context where `liveGame` is populated — without querying IDB
 - Calling does not mutate any Cache record — confirmed by checking no `put()` calls exist in the file
@@ -225,6 +330,7 @@ clearFeed(): Promise<void>
 **Depends on:** Phase 7 (getSocialContext exists to build the context payload).
 
 **Delivers:**
+
 - `src/worker/util/feedEvents.ts`
 
 ```typescript
@@ -232,6 +338,7 @@ emitFeedEvent(type: FeedEventType, context: SocialContext): void
 ```
 
 **Verified by:**
+
 - Calling `emitFeedEvent` results in `toUI("feedEvent", ...)` being called exactly once with a payload that includes `type` and `context`
 - The payload matches the `FeedEvent` type from Phase 1
 - Searching the codebase for `toUI("feedEvent"` returns exactly one result — this file
@@ -247,12 +354,14 @@ emitFeedEvent(type: FeedEventType, context: SocialContext): void
 **Depends on:** Phase 8 (emitFeedEvent exists).
 
 **Delivers:**
+
 - Additive change to `src/worker/core/GameSim.basketball/index.ts` → `simRegulation()`
 
 **Verified by:**
+
 - Simulating a 4-quarter game results in exactly one `HALFTIME` event emitted (not zero, not two)
 - The event's `context.liveGame` is populated with the score at the end of period 2
-- No IDB query is made during the HALFTIME emission — confirmed by asserting no `idb.cache.*` calls occur in the emit path
+- No IDB query is made during the HALFTIME emission — confirmed by asserting no `idb.cache.`* calls occur in the emit path
 - All pre-existing `GameSim.basketball` tests continue to pass
 
 **Definition of done:** One event fires at the right moment. No IDB access. No regressions.
@@ -266,9 +375,11 @@ emitFeedEvent(type: FeedEventType, context: SocialContext): void
 **Depends on:** Phase 8 (emitFeedEvent exists).
 
 **Delivers:**
+
 - Additive changes to `src/worker/core/game/play.ts` → `cbSaveResults()`
 
 **Verified by:**
+
 - Processing a completed game results in exactly one `GAME_END` event with `context.teams` populated
 - Processing a game with an injury results in an `INJURY` event; processing one without does not
 - Both events fire after stats are written — `context` reflects final numbers, not mid-game state
@@ -285,9 +396,11 @@ emitFeedEvent(type: FeedEventType, context: SocialContext): void
 **Depends on:** Phase 8 (emitFeedEvent exists).
 
 **Delivers:**
+
 - Additive change to `src/worker/core/trade/processTrade.ts`
 
 **Verified by:**
+
 - Accepting a trade results in exactly one `TRADE_ALERT` event
 - The event context includes the names of all players exchanged and both team names
 - A rejected trade produces no `TRADE_ALERT` event
@@ -304,9 +417,11 @@ emitFeedEvent(type: FeedEventType, context: SocialContext): void
 **Depends on:** Phase 8 (emitFeedEvent exists).
 
 **Delivers:**
+
 - Additive change to `src/worker/core/draft/selectPlayer.ts`
 
 **Verified by:**
+
 - Selecting a draft pick results in exactly one `DRAFT_PICK` event
 - Event context contains the player's name, overall rating, position, and pick number
 - Pre-existing draft tests pass unchanged
@@ -322,10 +437,12 @@ emitFeedEvent(type: FeedEventType, context: SocialContext): void
 **Depends on:** Phase 8 (emitFeedEvent exists).
 
 **Delivers:**
+
 - Additive change to `src/worker/core/phase/newPhaseBeforeDraft.ts` (`SEASON_AWARD`)
 - Additive change to `src/worker/core/phase/newPhasePlayoffs.ts` (`PLAYOFF_CLINCH`)
 
 **Verified by:**
+
 - Processing the pre-draft phase results in at least one `SEASON_AWARD` event with winner name and award type
 - Processing the playoff phase results in `PLAYOFF_CLINCH` events for each clinching team
 - Pre-existing phase tests pass unchanged
@@ -338,12 +455,14 @@ emitFeedEvent(type: FeedEventType, context: SocialContext): void
 
 **Contract:** A dedicated Web Worker exists that receives `FeedEvent` messages, filters the agent roster to those triggered by the event type and passing `postProbability`, and produces a resolved list of `AgentConfig`s ready to pass to Vercel. It does not yet call Vercel.
 
-**Depends on:** Phase 2 (agent configs to filter against).
+**Depends on:** Phase 2 (agent configs to filter against), Phase 3a (accounts exist so agent selection can verify accounts are active).
 
 **Delivers:**
+
 - `src/ui/workers/feedWorker.ts` (skeleton — message handling + agent selection only)
 
 **Verified by:**
+
 - Sending a `GAME_END` postMessage results in a filtered agent list that includes only agents with `GAME_END` in their `triggers`
 - An agent with `postProbability: 0` never appears in the filtered list
 - An agent with `postProbability: 1` always appears in the filtered list
@@ -361,9 +480,11 @@ emitFeedEvent(type: FeedEventType, context: SocialContext): void
 **Depends on:** Phase 14 (agent selection works), Phase 6 (endpoint exists to call).
 
 **Delivers:**
+
 - Updated `src/ui/workers/feedWorker.ts` — adds fetch step after agent selection
 
 **Verified by:**
+
 - A `GAME_END` event with 4 triggered agents results in a fetch to `/api/feed` with all 4 agents in the body
 - The fetch response is parsed into an array of `GeneratedPost` objects that pass type validation
 - A fetch failure (network error or non-200 response) logs an error and does not throw — the worker continues running
@@ -380,9 +501,11 @@ emitFeedEvent(type: FeedEventType, context: SocialContext): void
 **Depends on:** Phase 15 (posts are fetched), Phase 3 (socialFeedDb write helpers exist).
 
 **Delivers:**
+
 - Updated `src/ui/workers/feedWorker.ts` — adds IDB write and postMessage notification
 
 **Verified by:**
+
 - After a `GAME_END` event, all returned posts appear in `socialFeedDb.getPosts()`
 - The `postsReady` postMessage fires after — not before — all `addPost` calls resolve
 - Posts written include all fields from `GeneratedPost` — none are dropped during the write
@@ -399,10 +522,12 @@ emitFeedEvent(type: FeedEventType, context: SocialContext): void
 **Depends on:** Phase 8 (toUI("feedEvent") is emitted), Phase 16 (Feed Worker is ready to receive).
 
 **Delivers:**
+
 - `src/ui/util/feedEventHandler.ts`
 - `src/ui/util/index.ts` updated to register `feedEvent` handler
 
 **Verified by:**
+
 - Every `toUI("feedEvent")` call results in exactly one `feedWorker.postMessage` call with the same payload
 - `feedEventHandler.ts` contains exactly one executable statement in its handler body
 - Removing `feedEventHandler.ts` entirely results in zero posts appearing in `socialFeedDb` — confirming it is the only relay
@@ -414,19 +539,23 @@ emitFeedEvent(type: FeedEventType, context: SocialContext): void
 
 ## Phase 18: SocialFeed Panel
 
-**Contract:** A SocialFeed UI panel exists that listens for `postsReady` messages from the Feed Worker, reads the latest posts from `socialFeedDb`, and renders each post with its handle, body, timestamp, and image (when present). The panel updates without a page reload.
+**Contract:** A SocialFeed UI panel exists that listens for `postsReady` messages from the Feed Worker, reads the latest posts from `socialFeedDb`, and renders each post with its handle, body, timestamp, and image (when present). A profile page view renders all posts for a given account, resolved by `agentId`, `pid`, or `tid`. The panel updates without a page reload.
 
-**Depends on:** Phase 17 (full pipeline fires end-to-end), Phase 3 (socialFeedDb readable from UI).
+**Depends on:** Phase 17 (full pipeline fires end-to-end), Phase 3 (socialFeedDb readable from UI), Phase 3a (accounts exist for profile page lookups).
 
 **Delivers:**
+
 - `src/ui/components/SocialFeed/index.tsx` — panel container, listens for `postsReady`
 - `src/ui/components/SocialFeed/Post.tsx` — renders one post
 - `src/ui/components/SocialFeed/Thread.tsx` — stub only in v1
 
 **Verified by:**
+
 - Simulating a game end causes new posts to appear in the panel without any user interaction
 - A post with a non-null `imageUrl` renders an image element; a post with null `imageUrl` renders no image element and no broken placeholder
 - The panel re-reads `socialFeedDb` on `postsReady` — it does not cache posts in React state between events
+- Navigating to a player's feed page calls `getAccountByPid(pid)` and then `getPostsByAgent(agentId)` — renders only that player's posts
+- Navigating to a team's feed page calls `getAccountByTid(tid)` and then `getPostsByAgent(agentId)` — renders only that org's posts
 - `Thread.tsx` exists and exports a valid component but renders nothing — it is a v2 stub
 
-**Definition of done:** Panel renders live posts. Images conditional. Thread component stubbed. Full pipeline verified end-to-end.
+**Definition of done:** Panel renders live feed. Profile pages resolve by `pid`/`tid`. Images conditional. Thread component stubbed. Full pipeline verified end-to-end.

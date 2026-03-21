@@ -13,10 +13,12 @@ These are the unbreakable commandments of this system. No design decision may vi
 1. **Events are the source of truth** — Nothing posts without an event. No event, no post.
 2. **Context flows through, not from storage** — Game context is assembled at event time by the Worker and passed forward. It is never fetched later.
 3. **Agents are stateless** — Persona is config, not memory. An agent's voice comes from its definition file, not from what it has said before.
-4. **The feed is ephemeral** — It is a window into the sim world, not a permanent record. It lives in a separate store and can be wiped without touching the league.
-5. **The game engine is untouched** — All new code is additive. Worker core simulation logic is never modified.
-6. **One endpoint, one job** — `/api/feed` does inference and nothing else.
-7. **Thread TTL is a hard kill switch** — Threads close after 5 minutes. No exceptions, no extensions.
+4. **Accounts are permanent identities, posts are persistent records** — An account exists for the lifetime of the game entity it represents. Posts accumulate over time and appear on profile pages. Neither is ephemeral within the feed's lifetime.
+5. **Every account maps to a game entity** — Player accounts link to a `pid`. Team org accounts link to a `tid`. This is what makes profile pages possible.
+6. **The feed lives outside the league DB** — Posts and accounts live in `socialFeedDb`, not the league's IndexedDB. They do not travel with the save file and do not affect game state. They can be cleared without touching the league.
+7. **The game engine is untouched** — All new code is additive. Worker core simulation logic is never modified.
+8. **One endpoint, one job** — `/api/feed` does inference and nothing else.
+9. **Thread TTL is a hard kill switch** — Threads close after 5 minutes. No exceptions, no extensions.
 
 ---
 
@@ -152,24 +154,24 @@ Each phase file (`newPhaseBeforeDraft.ts`, `newPhasePlayoffs.ts`, `newPhaseFreeA
 
 ## Agent Definitions
 
-Agents are defined as static JSON config files — no DB records, no migration. An agent config contains everything Gemini needs to generate in-character.
+Agent configs are **templates** — static JSON files that define persona and behaviour. They are not accounts. An account is a separate, persistent record in `socialFeedDb.accounts` that is instantiated from a template and linked to a game entity.
 
 ```
 src/data/socialAgents/
   journalists/
-    sham_charania.json        ← hand-crafted insider persona
+    sham_charania.json        ← hand-crafted persona template (1 account instantiated from this)
   players/
-    template.json             ← procedurally filled from player attributes
+    template.json             ← procedural template (one account per qualifying player)
   orgs/
-    template.json             ← one per team
+    template.json             ← one account per team, instantiated at league creation
   fans/
-    homer.json                ← archetypes: homer, stat-nerd, bandwagon, hater
+    homer.json                ← archetypes (multiple named fan accounts per archetype)
     stat_nerd.json
     bandwagon.json
     hater.json
 ```
 
-**Agent config shape:**
+**Template shape (`AgentConfig`):**
 
 ```json
 {
@@ -178,14 +180,72 @@ src/data/socialAgents/
   "type": "journalist",
   "persona": "NBA insider reporter. Breaks trades, signings, and injury news first. Terse, factual, authoritative. Never speculative. Uses 'Sources tell me...' and 'x-year, $y million' contract format.",
   "triggers": ["TRADE_ALERT", "INJURY", "PLAYER_SIGNING", "DRAFT_PICK"],
-  "replyEligible": true,
+  "replyEligible": false,
   "postProbability": 1.0
 }
 ```
 
-**Player agents are procedurally generated** from player attributes at account-creation time (when a player crosses the star threshold). Their persona is derived from: position, personality rating, team, age, and career arc. A young bucket-getter talks differently from a veteran leader.
+**Player templates are procedurally filled** from player attributes at account-creation time (when a player crosses the OVR threshold). Persona is derived from: position, personality rating, team, age, and career arc.
 
-**Agent roster size:** ~50-100 active at any time. Star players (overall rating ≥ threshold) auto-get accounts. Orgs: one per team. Journalists: 2-3 hand-crafted. Fan pool: 4 archetypes × a handful of named accounts.
+**Agent roster size:** ~50-100 active accounts at any time. Star players (OVR ≥ threshold) auto-get accounts. Orgs: one per team. Journalists: 2-3 hand-crafted. Fan pool: 4 archetypes × a handful of named accounts.
+
+---
+
+## Account Registry
+
+An **account** is a persistent record in `socialFeedDb.accounts` that ties an agent identity to a game entity. It is what makes player and team profile pages possible — you can navigate to a player's page and see all their posts because every post has an `agentId` that resolves to an account, and every account has a `pid` or `tid`.
+
+### Account Shape
+
+```typescript
+type Account = {
+  agentId: string;        // primary key — e.g. "player_42", "team_5", "sham_charania"
+  handle: string;         // "@KD", "@LakersOrg", "@ShamsCharania"
+  displayName: string;    // "Kevin Durant", "Los Angeles Lakers", "Shams Charania"
+  type: "journalist" | "player" | "org" | "fan";
+  pid: number | null;     // linked player — set for player accounts, null otherwise
+  tid: number | null;     // linked team — set for player + org accounts, null otherwise
+  templateId: string;     // which JSON config this was instantiated from
+  status: "active" | "dormant";  // dormant when player retires or is cut
+  avatarUrl: string | null;
+  createdAt: number;
+};
+```
+
+### Account Lifecycle
+
+| Account Type | Created | Goes Dormant | Deleted |
+|---|---|---|---|
+| **Player** | When player OVR crosses threshold | Player retires or is released | Never (archive) |
+| **Org** | When feed system initialises for a league | Never | When league is deleted |
+| **Journalist** | When feed system initialises | Never | Never |
+| **Fan** | When feed system initialises | Never | Never |
+
+### Account Creation Triggers
+
+**Feed system init** (first time the feed is opened for a league):
+- Creates one org account per team from `orgs/template.json`
+- Creates all journalist accounts from `journalists/*.json`
+- Creates all fan accounts from `fans/*.json` archetypes
+
+**After phase changes / player development**:
+- Checks if any players newly crossed the OVR threshold
+- If yes, instantiates a player account from `players/template.json`, filling in name, team, position, pid
+
+**After trades**:
+- Updates `tid` on any traded player's account to reflect new team
+
+### Profile Page Routing
+
+Because every account has a `pid` or `tid`, the UI can route:
+
+```
+/feed/account/:agentId          → account profile page, all posts by this agent
+/player/:pid/feed               → player's social posts (look up agentId by pid)
+/team/:abbrev/feed              → team org's social posts (look up agentId by tid)
+```
+
+`socialFeedDb.posts` has an index on `agentId` so these queries are efficient — no full-store scan needed.
 
 ---
 
@@ -209,35 +269,56 @@ This context snapshot is serialized into the `toUI("feedEvent")` payload → rel
 
 ## Feed Storage — `socialFeedDb`
 
-A standalone IndexedDB database (`socialFeedDb`, separate from the league DB) written directly by the Feed Worker. Two object stores:
+A standalone IndexedDB database (`socialFeedDb`, separate from the league DB) written directly by the Feed Worker. Three object stores:
 
-**`posts` store:**
+**`accounts` store** — keyed by `agentId`:
 ```typescript
 {
-  id: string,           // uuid
-  agentId: string,
-  handle: string,
-  body: string,
-  eventType: string,
-  threadId: string | null,
-  parentId: string | null,
-  threadExpiresAt: number | null,  // Date.now() + 5 minutes
+  agentId: string,       // primary key — "player_42", "team_5", "sham_charania"
+  handle: string,        // "@KD"
+  displayName: string,   // "Kevin Durant"
+  type: "journalist" | "player" | "org" | "fan",
+  pid: number | null,    // player accounts only
+  tid: number | null,    // player + org accounts
+  templateId: string,    // source JSON config
+  status: "active" | "dormant",
+  avatarUrl: string | null,
   createdAt: number,
-  likes: number,        // simulated, not agent-driven
-  reposts: number
 }
 ```
 
-**`threads` store:**
+**`posts` store** — keyed by `postId`, indexed by `agentId` and `createdAt`:
+```typescript
+{
+  postId: string,        // uuid, primary key
+  agentId: string,       // → index: look up all posts by account
+  handle: string,
+  body: string,
+  eventType: FeedEventType,
+  threadId: string | null,
+  parentId: string | null,
+  threadExpiresAt: number | null,  // Date.now() + 5 minutes (hard kill for v2 threading)
+  imageUrl: string | null,
+  createdAt: number,     // → index: chronological feed queries
+  likes: number,
+  reposts: number,
+}
+```
+
+**`threads` store** — keyed by `threadId`:
 ```typescript
 {
   threadId: string,
   rootPostId: string,
   openedAt: number,
-  expiresAt: number,    // openedAt + 5 minutes (hard kill)
-  participantAgents: string[]
+  expiresAt: number,     // openedAt + 5 minutes — hard kill, enforced before any reply
+  participantAgents: string[],
 }
 ```
+
+**Indexes on `posts`:**
+- `by-agentId` — powers profile pages (`/player/:pid/feed`, `/team/:abbrev/feed`)
+- `by-createdAt` — powers the main chronological feed
 
 ---
 
@@ -434,7 +515,7 @@ src/
       players/template.json
       orgs/template.json
   common/
-    types.feedEvent.ts        ← FeedEvent, AgentConfig, SocialContext types
+    types.feedEvent.ts        ← FeedEvent, AgentConfig, SocialContext, Account types
 
 api/                          ← Vercel deployment (existing)
   feed.ts                     ← POST /api/feed

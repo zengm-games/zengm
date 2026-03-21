@@ -55,6 +55,25 @@ export type FeedEvent = {
 };
 ```
 
+### `Account`
+
+Persistent identity record stored in `socialFeedDb`. One record per agent, keyed by `agentId`. Links back to game entities via `pid` (player) or `tid` (team org).
+
+```typescript
+export type Account = {
+  agentId: string;
+  handle: string;
+  displayName: string;
+  type: 'journalist' | 'player' | 'org' | 'fan';
+  pid: number | null;        // non-null for player accounts
+  tid: number | null;        // non-null for org accounts; updated on trade
+  templateId: string;        // references AgentConfig.id
+  status: 'active' | 'dormant';
+  avatarUrl: string | null;
+  createdAt: number;
+};
+```
+
 ### `AgentConfig`
 
 ```typescript
@@ -170,6 +189,8 @@ export type TransactionSummary = {
 - No `any` appears anywhere in the file
 - `FeedEventType` is a union of exactly 8 string literals
 - Every field in `GeneratedPost` that can be absent is typed as `T | null`, not optional (`?`)
+- Every field in `Account` that can be absent is typed as `T | null`, not optional (`?`)
+- `Account.pid` and `Account.tid` are `number | null` (not optional) for IDB serialization
 - The file has zero imports
 
 ## Definition of Done

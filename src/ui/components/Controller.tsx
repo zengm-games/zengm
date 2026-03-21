@@ -1,6 +1,7 @@
 import { LazyMotion } from "framer-motion";
 import { memo, useCallback, useEffect } from "react";
 import { localActions, useLocalPartial } from "../util/index.ts";
+import AgentChat from "./AgentChat/index.tsx";
 import CommandPalette from "./CommandPalette/index.tsx";
 import ErrorBoundary from "./ErrorBoundary.tsx";
 import Footer from "./Footer.tsx";
@@ -121,6 +122,7 @@ const Controller = () => {
 							<Skyscraper />
 						</div>
 						<CommandPalette />
+						<AgentChat />
 						<NagModal close={closeNagModal} show={showNagModal} />
 					</div>
 				</div>

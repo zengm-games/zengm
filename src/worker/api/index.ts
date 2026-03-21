@@ -5132,6 +5132,10 @@ const setScheduleFromEditor = async ({
 	await initUILocalGames();
 };
 
+const getPodcast = async ({ gid }: { gid: number }) => {
+	return idb.league.get("podcasts", gid) ?? null;
+};
+
 export default {
 	actions,
 	exhibitionGame,
@@ -5140,6 +5144,7 @@ export default {
 	toolsMenu,
 	main: {
 		acceptContractNegotiation,
+		getPodcast,
 		addTeam,
 		advancedPlayerSearch,
 		allStarDraftAll,

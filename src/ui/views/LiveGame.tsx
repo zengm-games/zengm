@@ -14,6 +14,7 @@ import {
 	BoxScoreRow,
 	BoxScoreWrapper,
 	Confetti,
+	GamePodcast,
 	PlayPauseNext,
 	TeamLogoInline,
 } from "../components/index.tsx";
@@ -1075,13 +1076,20 @@ export const LiveGame = (props: View<"liveGame">) => {
 						</div>
 					) : null}
 					{boxScore.current.gid >= 0 ? (
-						<BoxScoreWrapper
-							Row={PlayerRow}
-							boxScore={boxScore.current}
-							live
-							playIndex={playIndex}
-							sportState={sportState.current}
-						/>
+						<>
+							<BoxScoreWrapper
+								Row={PlayerRow}
+								boxScore={boxScore.current}
+								live
+								playIndex={playIndex}
+								sportState={sportState.current}
+							/>
+							{boxScore.current.gameOver &&
+							!boxScore.current.exhibition &&
+							isSport("basketball") ? (
+								<GamePodcast gid={boxScore.current.gid} />
+							) : null}
+						</>
 					) : (
 						<h2>Loading...</h2>
 					)}

@@ -15,6 +15,7 @@ export { default as ErrorBoundary } from "./ErrorBoundary.tsx";
 export { default as Footer } from "./Footer.tsx";
 export { default as ForceWin } from "./ForceWin.tsx";
 export { default as GameLinks } from "./GameLinks.tsx";
+export { default as GamePodcast } from "./GamePodcast.tsx";
 export { default as Header } from "./Header.tsx";
 export { default as Height } from "./Height.tsx";
 export { default as HelpPopover } from "./HelpPopover.tsx";

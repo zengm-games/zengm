@@ -380,6 +380,21 @@ export type GamePlayer = any;
 
 export type GameResults = any;
 
+export type PodcastRecord = {
+	gid: number;
+	audioData: string; // base64-encoded audio
+	mimeType: string;
+	createdAt: number;
+	gameInfo: {
+		homeTeam: string;
+		awayTeam: string;
+		homeScore: number;
+		awayScore: number;
+		season: number;
+		playoffs: boolean;
+	};
+};
+
 export type GameAttributesNonLeague = { lid: undefined };
 
 export type ScheduledEventGameAttributes = {

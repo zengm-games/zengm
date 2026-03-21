@@ -17,6 +17,7 @@ import type {
 import { headToHead, season } from "../index.ts";
 import getWinner from "../../../common/getWinner.ts";
 import formatScoreWithShootout from "../../../common/formatScoreWithShootout.ts";
+import generatePodcast from "./generatePodcast.ts";
 
 const allStarMVP = async (
 	game: Game,
@@ -702,6 +703,15 @@ const writeGameStats = async (
 	});
 
 	await idb.cache.games.put(gameStats);
+
+	// Generate Inside the NBA podcast for user's team games (basketball only)
+	if (
+		isSport("basketball") &&
+		(results.team[0].id === g.get("userTid") ||
+			results.team[1].id === g.get("userTid"))
+	) {
+		generatePodcast(gameStats); // fire-and-forget
+	}
 
 	return gameToUi;
 };

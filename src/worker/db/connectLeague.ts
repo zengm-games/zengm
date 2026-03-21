@@ -47,6 +47,7 @@ import type {
 	GameAttributesLeagueWithHistory,
 	SavedTrade,
 	SavedTradingBlock,
+	PodcastRecord,
 } from "../../common/types.ts";
 import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings.ts";
 import { amountToLevel } from "../../common/budgetLevels.ts";
@@ -128,6 +129,10 @@ export interface LeagueDB extends DBSchema {
 	playoffSeries: {
 		key: number;
 		value: PlayoffSeries;
+	};
+	podcasts: {
+		key: number;
+		value: PodcastRecord;
 	};
 	releasedPlayers: {
 		key: number;
@@ -627,6 +632,10 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 		autoIncrement: true,
 	});
 	scheduledEventsStore.createIndex("season", "season");
+
+	db.createObjectStore("podcasts", {
+		keyPath: "gid",
+	});
 
 	db.createObjectStore("savedTrades", {
 		keyPath: "hash",
@@ -1639,6 +1648,12 @@ const migrate = async ({
 				await cursor.update(row);
 			}
 		}
+	}
+
+	if (oldVersion < 70) {
+		db.createObjectStore("podcasts", {
+			keyPath: "gid",
+		});
 	}
 };
 

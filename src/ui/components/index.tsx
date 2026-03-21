@@ -1,4 +1,5 @@
 export { default as ActionButton } from "./ActionButton.tsx";
+export { default as AgentChat } from "./AgentChat/index.tsx";
 export { default as BarGraph } from "./BarGraph.tsx";
 export { default as BoxPlot } from "./BoxPlot.tsx";
 export { default as BoxScore } from "./BoxScore.tsx";

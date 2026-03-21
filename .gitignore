@@ -12,3 +12,4 @@
 /.vscode
 /tools/names-groups-html
 .vercel
+.env

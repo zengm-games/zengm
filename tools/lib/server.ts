@@ -3,6 +3,7 @@ import http from "node:http";
 import path from "node:path";
 import os from "node:os";
 import getPort from "get-port";
+import { styleText } from "node:util";
 
 const mimeTypes: Record<string, string> = {
 	".bmp": "image/bmp",
@@ -93,8 +94,18 @@ const PREFIXES_STATIC = [
 	"/ico/",
 	"/img/",
 	"/manifest",
-	"/sw.js",
+
+	// Not worth the confusion unless the service worker is being worked on
+	//"/sw.js",
 ];
+
+const styleUrl = (url: string) => {
+	const parts = url.split(":");
+	if (parts.length === 3) {
+		return `${styleText("cyan", `${parts[0]!}:${parts[1]!}:`)}${styleText("cyanBright", parts[2]!)}`;
+	}
+	return styleText("cyan", url);
+};
 
 export const startServer = async ({
 	exposeToNetwork,
@@ -123,11 +134,14 @@ export const startServer = async ({
 
 	return new Promise<void>((resolve) => {
 		server.listen(port, exposeToNetwork ? "0.0.0.0" : "localhost", () => {
-			console.log(`Local: ${localUrl}`);
+			console.log("🏀🏈 ZenGM dev server ⚾🏒\n");
+			console.log(`> Local: ${styleUrl(localUrl)}`);
 			if (exposeToNetwork) {
-				console.log(`Network: http://${getIpAddress()}:${port}`);
+				console.log(
+					`> Network: ${styleUrl(`http://${getIpAddress()}:${port}`)}`,
+				);
 			} else {
-				console.log(`Network: use --host to expose`);
+				console.log(`> Network: ${styleText("dim", "use --host to expose")}`);
 			}
 			resolve();
 		});

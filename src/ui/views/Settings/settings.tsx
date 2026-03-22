@@ -1056,7 +1056,7 @@ export const settings: Setting[] = (
 			name: "Sibling Rate",
 			type: "float",
 			description:
-				"The probability that a new player will be the sibling of an existing player.",
+				"The probability that a new player will be the sibling of an existing player, from 0 (0%) to 1 (100%).",
 		},
 		{
 			category: "Events",
@@ -1064,7 +1064,7 @@ export const settings: Setting[] = (
 			name: "Child Rate",
 			type: "float",
 			description:
-				"The probability that a new player will be the child of an existing player.",
+				"The probability that a new player will be the child of an existing player, from 0 (0%) to 1 (100%).",
 		},
 		{
 			category: "Events",
@@ -1120,7 +1120,7 @@ export const settings: Setting[] = (
 			name: "Auto Expansion Probability",
 			type: "float",
 			description:
-				"Probability each offseason that there will be expansion teams.",
+				"Probability each offseason that there will be expansion teams, from 0 (0%) to 1 (100%).",
 			validator: (value) => {
 				if (value < 0 || value > 1) {
 					throw new Error("Value must be between 0 and 1");
@@ -1145,7 +1145,8 @@ export const settings: Setting[] = (
 			key: "autoExpandNumTeams",
 			name: "Auto Expansion # Teams",
 			type: "int",
-			description: "Number of teams to be added in each expansion draft.",
+			description:
+				"Number of teams to be added in each expansion draft, from 0 (0%) to 1 (100%).",
 			validator: (value) => {
 				if (value < 1) {
 					throw new Error("Value must be greater than 0");
@@ -2851,7 +2852,7 @@ export const settings: Setting[] = (
 		{
 			category: "Game Simulation",
 			key: "scrimmageTouchbackKickoff",
-			name: "Kickoff Touchback Yards",
+			name: "Kickoff Touchback Yard Line",
 			godModeRequired: "always",
 			type: "int",
 			validator: (value) => {

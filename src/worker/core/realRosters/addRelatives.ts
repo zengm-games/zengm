@@ -1,8 +1,9 @@
-import { groupBy } from "../../../common/utils.ts";
 import type { Relative } from "../../../common/types.ts";
 import type { Basketball } from "./loadData.basketball.ts";
 
-let allRelativesBySlug: Record<string, Basketball["relatives"]> | undefined;
+let allRelativesBySlug:
+	| Partial<Record<string, Basketball["relatives"]>>
+	| undefined;
 
 // players: All players to add relatives to, and also all eligible players who may be relatives of other players. This is so leagues without all players don't get broken links.
 // allRelatives: From real players data file, all possible relatives
@@ -25,11 +26,11 @@ const addRelatives = (
 	allRelatives: Basketball["relatives"],
 ) => {
 	if (!allRelativesBySlug) {
-		allRelativesBySlug = groupBy(allRelatives, "slug");
+		allRelativesBySlug = Object.groupBy(allRelatives, (row) => row.slug);
 	}
 
 	// Not groupByUnique because you could have two copies of the same player in a league, at least in 2022!
-	const playersBySlug = groupBy(players, "srID");
+	const playersBySlug = Object.groupBy(players, (p) => p.srID ?? "");
 
 	for (const p of players) {
 		if (p.srID === undefined) {

@@ -6,7 +6,7 @@ import {
 	PHASE,
 	unwrapGameAttribute,
 } from "../../common/index.ts";
-import { groupBy, orderBy } from "../../common/utils.ts";
+import { orderBy } from "../../common/utils.ts";
 import type {
 	Conditions,
 	GameAttributesLeague,
@@ -140,7 +140,7 @@ const getSeasonInfoLeague = async ({
 
 		return true;
 	});
-	const playersByTid = groupBy(players, (p) => p.stats[0].tid);
+	const playersByTid = Map.groupBy(players, (p) => p.stats[0].tid);
 
 	const playoffSeries = await league
 		.transaction("playoffSeries")
@@ -170,7 +170,7 @@ const getSeasonInfoLeague = async ({
 
 			const translatePids: Record<number, number> = {};
 
-			const teamPlayers = playersByTid[tid] ?? [];
+			const teamPlayers = playersByTid.get(tid) ?? [];
 			for (const p of teamPlayers) {
 				translatePids[p.pid] = pid;
 				p.pid = pid;

@@ -2,7 +2,7 @@ import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { team } from "../core/index.ts";
-import { groupBy, orderBy } from "../../common/utils.ts";
+import { orderBy } from "../../common/utils.ts";
 import { PHASE } from "../../common/index.ts";
 import { loadAbbrevs } from "./gameLog.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
@@ -120,14 +120,14 @@ const updateSeasonPreview = async (
 			"noCopyCache",
 		);
 
-		const playersByTid = groupBy(players, "tid");
+		const playersByTid = Map.groupBy(players, (t) => t.tid);
 
 		// These are used when displaying last year's playoff results, so they are for last season
 		const numPlayoffRounds = g.get("numGamesPlayoffSeries", season - 1).length;
 		const playoffsByConf = await getPlayoffsByConf(season - 1);
 
 		const teamSeasons = teamSeasonsCurrent.map((teamSeason) => {
-			const teamPlayers = playersByTid[teamSeason.tid] ?? [];
+			const teamPlayers = playersByTid.get(teamSeason.tid) ?? [];
 
 			let ovrStart = teamSeason.ovrStart;
 			if (ovrStart === undefined) {

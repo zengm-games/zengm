@@ -118,3 +118,37 @@ if (!Set.prototype.union) {
 		configurable: true,
 	});
 }
+
+// Chrome 117, Firefox 119, Safari 17.4
+// https://github.com/jimmywarting/groupby-polyfill/blob/98d3309c86c614c47cb9e90e61f2180b35e38f35/lib/polyfill.js
+if (!Object.groupBy) {
+	Object.groupBy = (iterable, callbackfn) => {
+		const obj = Object.create(null);
+		let i = 0;
+		for (const value of iterable) {
+			const key = callbackfn(value, i++);
+			if (key in obj) {
+				obj[key].push(value);
+			} else {
+				obj[key] = [value];
+			}
+		}
+		return obj;
+	};
+}
+if (!Map.groupBy) {
+	Map.groupBy = (iterable, callbackfn) => {
+		const map = new Map();
+		let i = 0;
+		for (const value of iterable) {
+			const key = callbackfn(value, i++);
+			const list = map.get(key);
+			if (list) {
+				list.push(value);
+			} else {
+				map.set(key, [value]);
+			}
+		}
+		return map;
+	};
+}

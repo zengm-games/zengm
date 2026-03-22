@@ -1,7 +1,5 @@
 // Ideally, firstNameShort should be the first letter of a name, like "A." for Allen. But if there is an Allen and an Arnold with the same last name, it should be "Al." and "Ar.". See addFirstNameShort.test.ts for more.
 
-import { groupBy } from "../../common/utils.ts";
-
 class TrieNode {
 	key: string | undefined;
 	parent: TrieNode | undefined;
@@ -78,10 +76,10 @@ const addFirstNameShort = <
 ): (T & {
 	firstNameShort: string;
 })[] => {
-	const playersByLastName = groupBy(players, "lastName");
+	const playersByLastName = Map.groupBy(players, (p) => p.lastName);
 
 	const tries: Record<string, Trie> = {};
-	for (const [lastName, playersGroup] of Object.entries(playersByLastName)) {
+	for (const [lastName, playersGroup] of playersByLastName) {
 		if (playersGroup.length <= 1 || lastName === "") {
 			continue;
 		}

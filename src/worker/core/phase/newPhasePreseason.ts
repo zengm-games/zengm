@@ -30,7 +30,7 @@ import type {
 	RealTeamInfo,
 	TeamSeason,
 } from "../../../common/types.ts";
-import { groupBy, groupByUnique, maxBy } from "../../../common/utils.ts";
+import { groupByUnique, maxBy } from "../../../common/utils.ts";
 
 const newPhasePreseason = async (
 	conditions: Conditions,
@@ -452,11 +452,11 @@ const newPhasePreseason = async (
 	local.minFractionDiffs = undefined;
 
 	// Handle jersey number conflicts
-	const playersByTeam = groupBy(
+	const playersByTeam = Map.groupBy(
 		players.filter((p) => p.tid >= 0),
-		"tid",
+		(p) => p.tid,
 	);
-	for (const roster of Object.values(playersByTeam)) {
+	for (const roster of playersByTeam.values()) {
 		if (!roster[0]) {
 			continue;
 		}

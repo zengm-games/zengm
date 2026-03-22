@@ -8,7 +8,6 @@ import achievement from "./achievement.ts";
 import local from "./local.ts";
 import toUI from "./toUI.ts";
 import type { Conditions, PartialTopMenu } from "../../common/types.ts";
-import { groupBy } from "../../common/utils.ts";
 
 // If it tries to add achievements from IDB to API twice at the same time, weird stuff could happen
 let adding = false;
@@ -50,7 +49,7 @@ const checkAccount = async (
 			const achievements = (await idb.meta.getAll("achievements")).map(
 				(row) => ({
 					// Default difficulty, for upgraded cases
-					difficulty: "normal",
+					difficulty: "normal" as const,
 					...row,
 				}),
 			);
@@ -58,8 +57,11 @@ const checkAccount = async (
 				await idb.meta.clear("achievements");
 			}
 
-			const rowsByDifficulty = groupBy(achievements, "difficulty");
-			for (const [difficulty, rows] of Object.entries(rowsByDifficulty)) {
+			const rowsByDifficulty = Map.groupBy(
+				achievements,
+				(achievement) => achievement.difficulty,
+			);
+			for (const [difficulty, rows] of rowsByDifficulty) {
 				const slugs = rows.map(({ slug }) => slug);
 
 				// If any exist, upload

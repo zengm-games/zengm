@@ -6,11 +6,7 @@ import type {
 	ViewInput,
 	MinimalPlayerRatings,
 } from "../../common/types.ts";
-import {
-	groupBy,
-	orderBy,
-	type OrderBySortParams,
-} from "../../common/utils.ts";
+import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
 import { player } from "../core/index.ts";
 import { bySport, PLAYER } from "../../common/index.ts";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts";
@@ -644,12 +640,11 @@ const updatePlayers = async (
 				let maxTid;
 				let maxGP;
 				let maxSeason; // Last season, for historical abbrev computation
-				const statsByTid = groupBy(
+				const statsByTid = Map.groupBy(
 					p.stats.filter((ps) => !ps.playoffs),
 					(ps) => ps.tid,
 				);
-				for (const tid of Object.keys(statsByTid)) {
-					const stats = statsByTid[tid]!;
+				for (const [tid, stats] of statsByTid) {
 					const numSeasons = new Set(stats.map((row) => row.season)).size;
 					if (numSeasons > maxNumSeasons) {
 						maxNumSeasons = numSeasons;

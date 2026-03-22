@@ -1,4 +1,4 @@
-import { groupBy, orderBy } from "../../common/utils.ts";
+import { orderBy } from "../../common/utils.ts";
 import helpers from "./helpers.ts";
 import type { TIEBREAKERS } from "../../common/index.ts";
 import type { HeadToHead } from "../../common/types.ts";
@@ -578,9 +578,8 @@ export const getDivisionRanks = async <T extends BaseTeam>(
 		return divisionRanks;
 	}
 
-	const groupedByDivision = groupBy(allTeams, (t: T) => t.seasonAttrs.did);
-	for (const [didString, teamsDiv] of Object.entries(groupedByDivision)) {
-		const did = Number.parseInt(didString);
+	const groupedByDivision = Map.groupBy(allTeams, (t) => t.seasonAttrs.did);
+	for (const [did, teamsDiv] of groupedByDivision) {
 		if (dids.has(did)) {
 			const teamsDivSorted = await orderTeams(teamsDiv, allTeams, {
 				season,

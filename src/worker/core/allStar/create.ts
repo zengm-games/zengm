@@ -9,7 +9,7 @@ import type {
 import { bySport, isSport, PLAYER } from "../../../common/index.ts";
 import { idb } from "../../db/index.ts";
 import type { PlayerRatings } from "../../../common/types.basketball.ts";
-import { groupBy, orderBy, range } from "../../../common/utils.ts";
+import { orderBy, range } from "../../../common/utils.ts";
 import { getPosByGpF } from "../season/doAwards.baseball.ts";
 
 const MIN_PLAYERS_CONTEST = 2;
@@ -118,7 +118,7 @@ const create = async (conditions: Conditions) => {
 			// If we need more than the default positions, they should be random
 			random.shuffle(positions);
 
-			const playersByPos = groupBy(candidates, (p) => {
+			const playersByPos = Object.groupBy(candidates, (p) => {
 				if (isSport("baseball")) {
 					// Find actual played position based on highest gpF value
 					const pos = getPosByGpF(p.stats.gpF);
@@ -255,17 +255,15 @@ const create = async (conditions: Conditions) => {
 			cidsByTid[t.tid] = t.cid;
 		}
 
-		const grouped = groupBy(
+		const grouped = Map.groupBy(
 			sortedPlayers.filter((p) => p.tid >= 0),
 			(p) => cidsByTid[p.tid]!,
 		);
 
 		// Sorting is to make sure lowest cid is first
-		const groupedPlayers = orderBy(
-			Object.entries(grouped),
-			(row) => row[0],
-			"asc",
-		).map((row) => row[1]);
+		const groupedPlayers = orderBy(grouped, (row) => row[0], "asc").map(
+			(row) => row[1],
+		);
 
 		let numSuccess = 0;
 

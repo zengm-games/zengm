@@ -221,7 +221,7 @@ const genPlayersWithoutSaving = async (
 	}
 
 	/*console.log(draftYear, enteringDraft.length);
-	const grouped = groupBy(enteringDraft, p => p.ratings[0].pos);
+	const grouped = Object.groupBy(enteringDraft, p => p.ratings[0].pos);
 	const table = orderBy(Object.entries(grouped), 0).map(([pos, players]) => ({
 		pos,
 		count: players.length,

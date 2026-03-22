@@ -1,6 +1,5 @@
 import clsx from "clsx";
 import { useState, type SubmitEvent, useEffect } from "react";
-import { groupBy } from "../../../common/utils.ts";
 import { ActionButton, StickyBottomButtons } from "../../components/index.tsx";
 import {
 	confirm,
@@ -178,7 +177,10 @@ export const getVisibleCategories = ({
 }) => {
 	const visibleCategories = [];
 
-	const groupedSettings = groupBy(filteredSettings, "category");
+	const groupedSettings = Object.groupBy(
+		filteredSettings,
+		(row) => row.category,
+	);
 
 	for (const category of categories) {
 		if (!groupedSettings[category.name]) {

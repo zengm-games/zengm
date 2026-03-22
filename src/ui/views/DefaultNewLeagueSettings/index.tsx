@@ -2,7 +2,6 @@ import { useMemo, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import Select from "react-select";
 import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
-import { groupBy } from "../../../common/utils.ts";
 import type { View } from "../../../common/types.ts";
 import type { Settings } from "../../../worker/views/settings.ts";
 import { MoreLinks } from "../../components/index.tsx";
@@ -34,7 +33,10 @@ const DefaultNewLeagueSettings = ({
 		useState<typeof overrides>(overrides);
 	const [overridesLocalCounter, setOverridesLocalCounter] = useState(0);
 
-	const settingsByKey = useMemo(() => groupBy(settings, "key"), []);
+	const settingsByKey = useMemo(
+		() => Map.groupBy(settings, (row) => row.key),
+		[],
+	);
 
 	const getKeysFromOverrides = (newOverrides: typeof overrides) => {
 		if (!newOverrides) {
@@ -45,7 +47,7 @@ const DefaultNewLeagueSettings = ({
 
 		// Handle adding parent of hidden key
 		return keys.flatMap((key) => {
-			const setting = settingsByKey[key]?.[0];
+			const setting = settingsByKey.get(key as Key)?.[0];
 
 			if (!setting) {
 				// Remove any non-Key elements
@@ -81,8 +83,8 @@ const DefaultNewLeagueSettings = ({
 				})),
 	);
 
-	const options = Object.entries(
-		groupBy(settingsRemainingToSelect, "category"),
+	const options = Array.from(
+		Map.groupBy(settingsRemainingToSelect, (row) => row.category),
 	).map(([category, catSettings]) => ({
 		label: category,
 		options: catSettings.map((setting) => ({
@@ -270,7 +272,7 @@ const DefaultNewLeagueSettings = ({
 						const godModeKeys = [];
 
 						for (const key of helpers.keys(newDefaultSettings2)) {
-							const setting = settingsByKey[key]![0];
+							const setting = settingsByKey.get(key as Key)![0];
 							if (setting?.godModeRequired === "always") {
 								godModeKeys.push(setting.name);
 							}

@@ -5,7 +5,6 @@ import AddRemove from "./AddRemove.tsx";
 import type { Phase, View } from "../../../common/types.ts";
 import { PHASE } from "../../../common/index.ts";
 import TeamForm from "./TeamForm.tsx";
-import { groupBy } from "../../../common/utils.ts";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 
 export const nextSeasonWarning =
@@ -78,11 +77,11 @@ const reducer = (state: State, action: Action): State => {
 };
 
 const getUniqueAbbrevsErrorMessage = (teams: { abbrev: string }[]) => {
-	const grouped = groupBy(teams, "abbrev");
+	const grouped = Map.groupBy(teams, (t) => t.abbrev);
 
 	const duplicateInfos = [];
 
-	for (const [abbrev, teams] of Object.entries(grouped)) {
+	for (const [abbrev, teams] of grouped) {
 		const count = teams.length;
 		if (count > 1) {
 			duplicateInfos.push({

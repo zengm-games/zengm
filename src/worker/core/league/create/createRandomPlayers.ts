@@ -1,6 +1,6 @@
 import { draft, player, freeAgents } from "../../index.ts";
 import { PHASE, PLAYER, POSITION_COUNTS } from "../../../../common/index.ts";
-import { groupBy, groupByUnique, orderBy } from "../../../../common/utils.ts";
+import { groupByUnique, orderBy } from "../../../../common/utils.ts";
 import type {
 	PlayerWithoutKey,
 	MinimalPlayerRatings,
@@ -318,7 +318,7 @@ const createRandomPlayers = async ({
 			positionCountsSum += positionCount;
 		}
 
-		const groupedPlayers = groupBy(keptPlayers, (p) => p.ratings[0].pos);
+		const groupedPlayers = Object.groupBy(keptPlayers, (p) => p.ratings[0].pos);
 
 		for (const pos of Object.keys(groupedPlayers)) {
 			const limit = Math.round(

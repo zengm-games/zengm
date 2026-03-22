@@ -1,4 +1,3 @@
-import { groupBy } from "../../common/utils.ts";
 import { DataTable, MoreLinks } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers } from "../util/index.ts";
@@ -57,7 +56,10 @@ const AwardsRecords = ({
 	);
 
 	const rows: DataTableRow[] = awardsRecords.map((a) => {
-		const yearsGrouped = groupBy(a.years, "team");
+		const yearsGrouped = Object.groupBy(a.years, (row) => row.team) as Record<
+			string,
+			(typeof a)["years"]
+		>;
 
 		return {
 			key: a.pid,

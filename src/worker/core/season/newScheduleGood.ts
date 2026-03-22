@@ -1,6 +1,6 @@
 import { g, helpers, random } from "../../../worker/util/index.ts";
 import {
-	groupBy,
+	countBy,
 	groupByUnique,
 	orderBy,
 	range,
@@ -344,9 +344,9 @@ const finalize = ({
 	}
 
 	const cids = new Set(settings.divs.map((div) => div.cid));
-	const teamsByCid = groupBy(teams, (t) => t.seasonAttrs.cid);
+	const numTeamsByCid = countBy(teams, (t) => t.seasonAttrs.cid);
 	for (const cid of cids) {
-		const numTeams = teamsByCid[cid]?.length ?? 0;
+		const numTeams = numTeamsByCid[cid] ?? 0;
 		allowOneTeamWithOneGameRemainingBase.conf[cid] =
 			(numTeams * numGamesConf2) % 2 === 1;
 	}

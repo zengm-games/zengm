@@ -10,7 +10,7 @@ import genPlayoffSeeds from "./genPlayoffSeeds.ts";
 import { idb } from "../../db/index.ts";
 import getPlayoffsByConf from "./getPlayoffsByConf.ts";
 import validatePlayoffSettings from "./validatePlayoffSettings.ts";
-import { groupBy, range } from "../../../common/utils.ts";
+import { range } from "../../../common/utils.ts";
 import { getNumPlayoffByes } from "./getNumPlayoffByes.ts";
 
 type MyTeam = TeamFiltered<
@@ -199,7 +199,7 @@ export const genPlayoffSeriesFromTeams = async (
 		const numPlayoffAndPlayInTeams =
 			numPlayoffTeams + (g.get("playIn") ? 2 : 0);
 
-		const teamsByCid = groupBy(teams, (t) => t.seasonAttrs.cid);
+		const teamsByCid = Map.groupBy(teams, (t) => t.seasonAttrs.cid);
 
 		const numRoundsNeeded = Math.log2(byConf);
 
@@ -207,7 +207,7 @@ export const genPlayoffSeriesFromTeams = async (
 			// Special case - we have just enough teams, meaning every team in the playoffs is a 1 seed from their conference (like 2 conferences with 1 round, or 4 conferences and 2 rounds, or 8 and 3, etc.)
 			let teamsMatchup = [];
 			for (const conf of g.get("confs", "current")) {
-				const teamsConf = teamsByCid[conf.cid];
+				const teamsConf = teamsByCid.get(conf.cid);
 
 				if (teamsConf && teamsConf.length >= 1) {
 					// This sort determines conference champ. Sort inside makeMatchups call will determine home court advantage
@@ -231,7 +231,7 @@ export const genPlayoffSeriesFromTeams = async (
 			}
 		} else if (numRounds > numRoundsNeeded) {
 			for (const conf of g.get("confs", "current")) {
-				const teamsConf = teamsByCid[conf.cid];
+				const teamsConf = teamsByCid.get(conf.cid);
 
 				if (
 					teamsConf &&

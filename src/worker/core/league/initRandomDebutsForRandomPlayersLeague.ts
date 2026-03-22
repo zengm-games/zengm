@@ -7,7 +7,7 @@ import { defaultGameAttributes, random } from "../../util/index.ts";
 import type { Settings } from "../../views/settings.ts";
 import formatPlayerFactory from "../realRosters/formatPlayerFactory.ts";
 import type { Basketball } from "../realRosters/loadData.basketball.ts";
-import { countBy, groupBy, omit, orderBy } from "../../../common/utils.ts";
+import { countBy, omit, orderBy } from "../../../common/utils.ts";
 import { getNumPlayersPerTeam } from "./create/createRandomPlayers.ts";
 import { choice } from "../../../common/random.ts";
 
@@ -79,7 +79,7 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 	const tidsWithNoPlayers = getTidsWithNoPlayers(activeTids, players);
 	if (tidsWithNoPlayers.length > 0) {
 		const numPlayerPerTeam = getNumPlayersPerTeam();
-		const ratingsBySlug = groupBy(basketball.ratings, "slug");
+		const ratingsBySlug = Object.groupBy(basketball.ratings, (row) => row.slug);
 
 		let i = -1;
 		for (const tid of tidsWithNoPlayers) {

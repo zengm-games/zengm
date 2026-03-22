@@ -122,7 +122,6 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import statsBaseball from "../core/team/stats.baseball.ts";
 import { extraRatings } from "../views/playerRatings.ts";
 import {
-	groupBy,
 	groupByUnique,
 	maxBy,
 	omit,
@@ -2642,7 +2641,7 @@ const importPlayers = async ({
 
 const importPlayersGetReal = async () => {
 	const basketball = await loadData();
-	const groupedRatings = Object.values(groupBy(basketball.ratings, "slug"));
+	const groupedRatings = Map.groupBy(basketball.ratings, (row) => row.slug);
 
 	const formatPlayer = await formatPlayerFactory(
 		basketball,
@@ -2679,7 +2678,7 @@ const importPlayersGetReal = async () => {
 	).store.get("realPlayerPhotos")) as RealPlayerPhotos | undefined;
 
 	const players = [];
-	for (const ratings of groupedRatings) {
+	for (const ratings of groupedRatings.values()) {
 		const p = formatPlayer(ratings);
 		applyRealPlayerPhotos(realPlayerPhotos, p);
 		p.contract = { ...contract };

@@ -10,7 +10,7 @@ import {
 	useState,
 	type ReactNode,
 } from "react";
-import { groupBy, orderBy } from "../../../common/utils.ts";
+import { orderBy } from "../../../common/utils.ts";
 import type {
 	LocalStateUI,
 	MenuItemHeader,
@@ -201,7 +201,7 @@ const getResultsGroupedDefault = ({
 	const output = [];
 	if (searchText === "") {
 		// No search - return groups
-		const resultsGrouped = groupBy(results, "category");
+		const resultsGrouped = Object.groupBy(results, (result) => result.category);
 		for (const category of Object.keys(resultsGrouped)) {
 			if (resultsGrouped[category]) {
 				output.push({
@@ -349,7 +349,10 @@ const getResultsGroupedLeagues = async ({
 	const output = [];
 	if (searchText === "") {
 		// No search - return groups
-		const resultsGrouped = groupBy(results, "category");
+		const resultsGrouped = Object.groupBy(
+			results,
+			(result) => result.category ?? "undefined",
+		);
 		for (const category of Object.keys(resultsGrouped)) {
 			if (resultsGrouped[category]) {
 				output.push({

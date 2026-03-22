@@ -8,7 +8,6 @@ import type {
 	PlayerInjury,
 	DraftPick,
 } from "../../../common/types.ts";
-import { groupBy } from "../../../common/utils.ts";
 import { getNumPicksPerRound } from "../trade/getPickValues.ts";
 
 type Asset =
@@ -591,16 +590,15 @@ export const getEstPicks = async (
 };
 
 const refreshCache = async () => {
-	const playersByTid = groupBy(
+	const playersByTid = Map.groupBy(
 		await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
-		"tid",
+		(p) => p.tid,
 	);
 	const teamOvrs: {
 		tid: number;
 		ovr: number;
 	}[] = [];
-	for (const [tidString, players] of Object.entries(playersByTid)) {
-		const tid = Number.parseInt(tidString);
+	for (const [tid, players] of playersByTid) {
 		const ovr = team.ovr(
 			players.map((p) => ({
 				pid: p.pid,

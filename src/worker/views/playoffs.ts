@@ -6,7 +6,6 @@ import type {
 	ViewInput,
 	PlayoffSeries,
 } from "../../common/types.ts";
-import { groupBy } from "../../common/utils.ts";
 
 type SeriesTeam = {
 	abbrev: string;
@@ -212,8 +211,11 @@ const updatePlayoffs = async (
 			let teams: typeof teamsUnsorted;
 			if (playoffsByConf !== false) {
 				teams = [];
-				const teamsByConf = groupBy(teamsUnsorted, (t) => t.seasonAttrs.cid);
-				for (const teamsConf of Object.values(teamsByConf)) {
+				const teamsByConf = Map.groupBy(
+					teamsUnsorted,
+					(t) => t.seasonAttrs.cid,
+				);
+				for (const teamsConf of teamsByConf.values()) {
 					teams.push(...(await orderTeams(teamsConf, teamsUnsorted)));
 				}
 			} else {

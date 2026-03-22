@@ -1,5 +1,4 @@
 import { bySport } from "../../common/index.ts";
-import { groupBy } from "../../common/utils.ts";
 import type { Player } from "../../common/types.ts";
 import helpers from "./helpers.ts";
 
@@ -131,7 +130,9 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 
 	const seen = new Set();
 	const awardsGrouped = [];
-	const awardsGroupedTemp = groupBy(awards, (award) => getType(award.type));
+	const awardsGroupedTemp = Object.groupBy(awards, (award) =>
+		getType(award.type),
+	);
 
 	for (const originalType of awardsOrder) {
 		const type = getType(originalType);

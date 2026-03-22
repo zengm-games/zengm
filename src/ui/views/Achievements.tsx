@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import { groupBy } from "../../common/utils.ts";
 import { Fragment, useEffect } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, useLocal } from "../util/index.ts";
@@ -138,10 +137,11 @@ const Category = ({
 		);
 
 		// Get all the same team/season grouped together
-		const achievementsGrouped = groupBy(achievementsWithTotal, (achievement) =>
-			achievement.slug.split("_").slice(0, 3).join("_"),
+		const achievementsGrouped = Map.groupBy(
+			achievementsWithTotal,
+			(achievement) => achievement.slug.split("_").slice(0, 3).join("_"),
 		);
-		const rows = Object.values(achievementsGrouped).map((achievements) => {
+		const rows = [...achievementsGrouped.values()].map((achievements) => {
 			// Minimum color of the achievements in this row, to highlight the name which represents them all
 			const fakeCounts = {
 				total: Math.min(
@@ -387,16 +387,16 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 
 			<CompletionTable achievements={achievements} />
 
-			{Object.entries(groupBy(achievements, "category")).map(
-				([category, catAchievements], i) => {
-					return (
-						<Fragment key={category}>
-							<h2 className={i > 0 ? "mt-4" : undefined}>{category}</h2>
-							<Category achievements={catAchievements} category={category} />
-						</Fragment>
-					);
-				},
-			)}
+			{Array.from(
+				Map.groupBy(achievements, (achievement) => achievement.category),
+			).map(([category, catAchievements], i) => {
+				return (
+					<Fragment key={category}>
+						<h2 className={i > 0 ? "mt-4" : undefined}>{category}</h2>
+						<Category achievements={catAchievements} category={category} />
+					</Fragment>
+				);
+			})}
 		</>
 	);
 };

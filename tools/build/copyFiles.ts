@@ -6,13 +6,27 @@ export const copyFiles = async (
 	watch: boolean = false,
 	signal?: AbortSignal,
 ) => {
-	const foldersToIgnore = [
+	const filesToIgnore = [
+		// Handled by buildIndexHtml
+		"index.html",
+	];
+	if (watch) {
+		// Remove service worker, so I don't have to deal with it being wonky in dev
+		filesToIgnore.push("sw.js");
+	}
+
+	const prefixesToIgnore = [
 		"baseball",
 		"basketball",
-		"css",
 		"football",
 		"hockey",
+
+		// Handled by buildCss
+		"css",
 	];
+
+	const filesIgnored = new Set();
+	const prefixesIgnored = new Set();
 
 	await fs.cp("public", "build", {
 		filter: (filename) => {
@@ -20,21 +34,17 @@ export const copyFiles = async (
 				return false;
 			}
 
-			// Handled by buildIndexHtml
-			if (filename === "public/index.html") {
-				return false;
-			}
-
-			// Loop through folders to ignore.
-			for (const folder of foldersToIgnore) {
-				if (filename.startsWith(`public/${folder}`)) {
+			for (const toIgnore of filesToIgnore) {
+				if (filename === `public/${toIgnore}`) {
+					filesIgnored.add(toIgnore);
 					return false;
 				}
 			}
-
-			// Remove service worker, so I don't have to deal with it being wonky in dev
-			if (watch && filename === "public/sw.js") {
-				return false;
+			for (const toIgnore of prefixesToIgnore) {
+				if (filename.startsWith(`public/${toIgnore}`)) {
+					prefixesIgnored.add(toIgnore);
+					return false;
+				}
 			}
 
 			return true;
@@ -44,6 +54,24 @@ export const copyFiles = async (
 
 	if (signal?.aborted) {
 		return;
+	}
+
+	// Make sure all of filesToIgnore/prefixesToIgnore were actually seen - if not, probably a bug!
+	const excessFilenames = filesIgnored.symmetricDifference(
+		new Set(filesToIgnore),
+	);
+	if (excessFilenames.size !== 0) {
+		throw new Error(
+			`filesIgnored and filesToIgnore are not the same: ${Array.from(excessFilenames).join(", ")}`,
+		);
+	}
+	const excessPrefixes = prefixesIgnored.symmetricDifference(
+		new Set(prefixesToIgnore),
+	);
+	if (excessPrefixes.size !== 0) {
+		throw new Error(
+			`prefixesIgnored and prefixesToIgnore are not the same: ${Array.from(excessPrefixes).join(", ")}`,
+		);
 	}
 
 	const sport = getSport();

@@ -22,8 +22,8 @@ export const build = async () => {
 	await buildJs(versionNumber);
 
 	console.log("Processing CSS/HTML files...");
-	const replaces = (await buildCss()) ?? [];
-	await buildIndexHtml({ replaces, versionNumber, watch: false });
+	const cssReplaces = (await buildCss()) ?? [];
+	await buildIndexHtml({ cssReplaces, versionNumber, watch: false });
 
 	console.log("Generating sw.js...");
 	await buildSw();

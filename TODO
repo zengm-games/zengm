@@ -1,6 +1,5 @@
 buildIndexHtml
 - build from src index.html, not copied one
-- avoid readfile
 
 BBGM clutch player award
 - currently logged as playerFeat, no good way to distinguish

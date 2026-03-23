@@ -1,4 +1,3 @@
-import { existsSync } from "node:fs";
 import fs from "node:fs/promises";
 import { Worker } from "node:worker_threads";
 import { fileHash } from "./fileHash.ts";
@@ -51,20 +50,28 @@ export const buildJs = async (versionNumber: string) => {
 	const replaces = [];
 	for (const filename of jsonFiles) {
 		const filePath = `build/gen/${filename}.json`;
-		if (existsSync(filePath)) {
-			const string = await fs.readFile(filePath, "utf8");
-			const compressed = JSON.stringify(JSON.parse(string));
-
-			const hash = fileHash(compressed);
-			const newFilename = filePath.replace(".json", `-${hash}.json`);
-			await fs.rm(filePath);
-			await fs.writeFile(newFilename, compressed);
-
-			replaces.push({
-				searchValue: `/gen/${filename}.json`,
-				replaceValue: `/gen/${filename}-${hash}.json`,
-			});
+		let string;
+		try {
+			string = await fs.readFile(filePath, "utf8");
+		} catch (error) {
+			// File doesn't exist in this sport
+			if (error.code === "ENOENT") {
+				continue;
+			}
+			throw error;
 		}
+
+		const compressed = JSON.stringify(JSON.parse(string));
+
+		const hash = fileHash(compressed);
+		const newFilename = filePath.replace(".json", `-${hash}.json`);
+		await fs.rm(filePath);
+		await fs.writeFile(newFilename, compressed);
+
+		replaces.push({
+			searchValue: `/gen/${filename}.json`,
+			replaceValue: `/gen/${filename}-${hash}.json`,
+		});
 	}
 	await replace({
 		paths: [`build/gen/worker-${versionNumber}.js`],

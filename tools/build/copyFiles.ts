@@ -1,4 +1,3 @@
-import { existsSync } from "node:fs";
 import fs from "node:fs/promises";
 import { getSport } from "../lib/getSport.ts";
 
@@ -92,12 +91,14 @@ export const copyFiles = async (
 	];
 	for (const filename of realPlayerFilenames) {
 		const sourcePath = `data/${filename}.${sport}.json`;
-		if (existsSync(sourcePath)) {
+		try {
 			await fs.copyFile(sourcePath, `build/gen/${filename}.json`);
-
-			if (signal?.aborted) {
-				return;
+		} catch (error) {
+			// File doesn't exist in this sport
+			if (error.code === "ENOENT") {
+				continue;
 			}
+			throw error;
 		}
 	}
 

@@ -2,14 +2,9 @@ import { existsSync } from "node:fs";
 import fs from "node:fs/promises";
 import { Worker } from "node:worker_threads";
 import { fileHash } from "./fileHash.ts";
-import { generateVersionNumber } from "./generateVersionNumber.ts";
 import { replace } from "./replace.ts";
-import { setTimestamps } from "./setTimestamps.ts";
 
-const versionNumber = generateVersionNumber();
-console.log(versionNumber);
-
-export const buildJs = async () => {
+export const buildJs = async (versionNumber: string) => {
 	const promises = [];
 	for (const name of ["ui", "worker"]) {
 		promises.push(
@@ -45,8 +40,6 @@ export const buildJs = async () => {
 			},
 		],
 	});
-
-	await setTimestamps(versionNumber);
 
 	const jsonFiles = [
 		"names",

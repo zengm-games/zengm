@@ -1,16 +1,18 @@
 import fs from "node:fs/promises";
 import type { PathLike } from "node:fs";
 
+export type ReplaceInfo = {
+	searchValue: string | RegExp;
+	replaceValue: string;
+};
+
 export const replace = async ({
 	paths,
 	replaces,
 	signal,
 }: {
 	paths: (PathLike | fs.FileHandle)[];
-	replaces: {
-		searchValue: string | RegExp;
-		replaceValue: string;
-	}[];
+	replaces: ReplaceInfo[];
 	signal?: AbortSignal;
 }) => {
 	for (const path of paths) {

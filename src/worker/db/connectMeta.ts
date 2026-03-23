@@ -60,7 +60,7 @@ const create = (db: IDBPDatabase<MetaDB>) => {
 		autoIncrement: true,
 	});
 	attributeStore.put(0, "nagged");
-	attributeStore.put("VERSION_NUMBER", "lastChangesVersion");
+	attributeStore.put(window.bbgmVersion, "lastChangesVersion");
 };
 
 type VersionChangeTransaction = IDBPTransaction<

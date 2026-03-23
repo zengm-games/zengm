@@ -2,8 +2,8 @@ import { watch } from "chokidar";
 import { copyFiles } from "../build/copyFiles.ts";
 import { generateVersionNumber } from "../build/generateVersionNumber.ts";
 import { reset } from "../build/reset.ts";
-import { setTimestamps } from "../build/setTimestamps.ts";
 import { type Spinners } from "./spinners.ts";
+import { buildIndexHtml } from "../build/buildIndexHtml.ts";
 
 // Would be better to only copy individual files on update, but this is fast enough
 
@@ -32,7 +32,7 @@ export const watchFiles = async (
 			}
 
 			const versionNumber = generateVersionNumber();
-			await setTimestamps(versionNumber, true, signal);
+			await buildIndexHtml({ signal, versionNumber, watch: true });
 
 			if (signal.aborted) {
 				return;

@@ -7,7 +7,7 @@ import { browserslistToTargets, transform } from "lightningcss";
 import { PurgeCSS } from "purgecss";
 import { render } from "sass-embedded";
 import { fileHash } from "./fileHash.ts";
-import { replace } from "./replace.ts";
+import { type ReplaceInfo } from "./replace.ts";
 
 export const buildCss = async (
 	watch: boolean = false,
@@ -60,9 +60,7 @@ export const buildCss = async (
 		return;
 	}
 
-	const replaces: Parameters<typeof replace>[0]["replaces"] | undefined = watch
-		? undefined
-		: [];
+	const replaces: ReplaceInfo[] | undefined = watch ? undefined : [];
 
 	for (let i = 0; i < filenames.length; i++) {
 		const filename = filenames[i]!;
@@ -119,11 +117,5 @@ export const buildCss = async (
 		}
 	}
 
-	if (replaces) {
-		await replace({
-			paths: ["build/index.html"],
-			replaces,
-			signal,
-		});
-	}
+	return replaces;
 };

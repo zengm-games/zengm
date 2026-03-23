@@ -1,3 +1,8 @@
+BBGM clutch player award
+- currently logged as playerFeat, no good way to distinguish
+  - could add separate event type
+  - could log clutch play count in stats
+
 dev usability stuff
 - send message to any open tabs to pop up notification when a new worker process is built, then send message to worker to mark it as stale, then any new UI tab opened with stale worker show a popup with error message. to prevent accidentally having multiple tabs open
 

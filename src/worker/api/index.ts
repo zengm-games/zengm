@@ -4820,22 +4820,28 @@ const upsertCustomizedPlayer = async (
 		}
 	}
 
-	const jerseyNumber = p.jerseyNumber;
-	if (jerseyNumber !== undefined && p.tid >= 0) {
-		// Update stats row if necessary
-		player.setJerseyNumber(p, jerseyNumber);
+	if (p.tid >= 0) {
+		let jerseyNumber = p.jerseyNumber;
+		if (jerseyNumber === undefined && actualPhase() <= PHASE.PLAYOFFS) {
+			// If no specified jersey number and it's during the season
+			jerseyNumber = await player.genJerseyNumber(p);
+		}
+		if (jerseyNumber !== undefined) {
+			// Update stats row if necessary
+			player.setJerseyNumber(p, jerseyNumber);
 
-		// Extra write so genJerseyNumber sees it
-		await idb.cache.players.put(p);
+			// Extra write so genJerseyNumber sees it
+			await idb.cache.players.put(p);
 
-		// If jersey number is the same as a teammate, edit the teammate's
-		const conflicts = (
-			await idb.cache.players.indexGetAll("playersByTid", p.tid)
-		).filter((p2) => p2.pid !== p.pid && p2.jerseyNumber === jerseyNumber);
-		for (const conflict of conflicts) {
-			const newJerseyNumber = await player.genJerseyNumber(conflict);
-			player.setJerseyNumber(conflict, newJerseyNumber);
-			await idb.cache.players.put(conflict);
+			// If jersey number is the same as a teammate, edit the teammate's
+			const conflicts = (
+				await idb.cache.players.indexGetAll("playersByTid", p.tid)
+			).filter((p2) => p2.pid !== p.pid && p2.jerseyNumber === jerseyNumber);
+			for (const conflict of conflicts) {
+				const newJerseyNumber = await player.genJerseyNumber(conflict);
+				player.setJerseyNumber(conflict, newJerseyNumber);
+				await idb.cache.players.put(conflict);
+			}
 		}
 	}
 

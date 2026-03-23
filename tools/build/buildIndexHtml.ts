@@ -13,7 +13,7 @@ export const buildIndexHtml = async ({
 	| { cssReplaces?: undefined; signal: AbortSignal; watch: true }
 	| { cssReplaces: ReplaceInfo[]; signal?: undefined; watch: false }
 )) => {
-	let contents = await fs.readFile("build/index.html", "utf8");
+	let contents = await fs.readFile("public/index.html", "utf8");
 
 	if (signal?.aborted) {
 		return;

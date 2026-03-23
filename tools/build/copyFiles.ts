@@ -20,6 +20,11 @@ export const copyFiles = async (
 				return false;
 			}
 
+			// Handled by buildIndexHtml
+			if (filename === "public/index.html") {
+				return false;
+			}
+
 			// Loop through folders to ignore.
 			for (const folder of foldersToIgnore) {
 				if (filename.startsWith(`public/${folder}`)) {

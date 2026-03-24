@@ -146,6 +146,7 @@ const reducer = (
 		| {
 				type: "resetSchedule";
 				schedule: Schedule;
+				dirty: boolean;
 		  }
 		| {
 				type: "clearSchedule";
@@ -403,7 +404,10 @@ const ScheduleEditor = ({
 
 	const dispatch: typeof dispatchUnwrapped = useCallback(
 		(action) => {
-			setDirty(true);
+			// Don't set dirty true when simming a game
+			if (action.type !== "resetSchedule" || action.dirty) {
+				setDirty(true);
+			}
 			dispatchUnwrapped(action);
 		},
 		[setDirty],
@@ -415,7 +419,7 @@ const ScheduleEditor = ({
 		if (isFirstRender.current) {
 			isFirstRender.current = false;
 		} else {
-			dispatch({ type: "resetSchedule", schedule: scheduleProp });
+			dispatch({ type: "resetSchedule", schedule: scheduleProp, dirty: false });
 		}
 	}, [dispatch, scheduleProp]);
 
@@ -979,6 +983,7 @@ const ScheduleEditor = ({
 					dispatch({
 						type: "resetSchedule",
 						schedule,
+						dirty: true,
 					});
 					setShowRegenerateScheduleModal(false);
 				}}

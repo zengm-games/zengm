@@ -1,5 +1,3 @@
-advStats - fix for other sports like basketball (isCurrent)
-
 dev usability stuff
 - send message to any open tabs to pop up notification when a new worker process is built, then send message to worker to mark it as stale, then any new UI tab opened with stale worker show a popup with error message. to prevent accidentally having multiple tabs open
 

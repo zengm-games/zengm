@@ -8,6 +8,7 @@ import advStatsSave from "./advStatsSave.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 import helpers from "./helpers.ts";
+import statsRowIsCurrent from "../core/player/statsRowIsCurrent.ts";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -297,60 +298,73 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 };
 
 const advStats = async () => {
+	const playoffs = PHASE.PLAYOFFS === g.get("phase");
+
 	const playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
 		0, // Active players have tid >= 0
 		Infinity,
 	]);
-	const players = await idb.getCopies.playersPlus(playersRaw, {
-		attrs: ["pid", "tid"],
-		stats: [
-			"gp",
-			"gs",
-			"pss",
-			"pssYds",
-			"pssAdjYdsPerAtt",
-			"rus",
-			"rusYds",
-			"rusYdsPerAtt",
-			"rec",
-			"recYds",
-			"defSk",
-			"defFmbRec",
-			"defFmbFrc",
-			"defInt",
-			"defPssDef",
-			"defIntTD",
-			"defFmbTD",
-			"defTck",
-			"prTD",
-			"krTD",
-			"fg0",
-			"fg20",
-			"fg30",
-			"fg40",
-			"fg50",
-			"fga0",
-			"fga20",
-			"fga30",
-			"fga40",
-			"fga50",
-			"xp",
-			"xpa",
-			"pnt",
-			"pntYds",
-			"pntBlk",
-			"pbw",
-			"pba",
-			"pbwr",
-			"rbw",
-			"rba",
-			"rbwr",
-		],
-		ratings: ["pos"],
-		season: g.get("season"),
-		playoffs: PHASE.PLAYOFFS === g.get("phase"),
-		regularSeason: PHASE.PLAYOFFS !== g.get("phase"),
+	const players = (
+		await idb.getCopies.playersPlus(playersRaw, {
+			attrs: ["pid", "tid"],
+			stats: [
+				"gp",
+				"gs",
+				"pss",
+				"pssYds",
+				"pssAdjYdsPerAtt",
+				"rus",
+				"rusYds",
+				"rusYdsPerAtt",
+				"rec",
+				"recYds",
+				"defSk",
+				"defFmbRec",
+				"defFmbFrc",
+				"defInt",
+				"defPssDef",
+				"defIntTD",
+				"defFmbTD",
+				"defTck",
+				"prTD",
+				"krTD",
+				"fg0",
+				"fg20",
+				"fg30",
+				"fg40",
+				"fg50",
+				"fga0",
+				"fga20",
+				"fga30",
+				"fga40",
+				"fga50",
+				"xp",
+				"xpa",
+				"pnt",
+				"pntYds",
+				"pntBlk",
+				"pbw",
+				"pba",
+				"pbwr",
+				"rbw",
+				"rba",
+				"rbwr",
+
+				// For statsRowIsCurrenet
+				"tid",
+				"season",
+				"playoffs",
+			],
+			ratings: ["pos"],
+			season: g.get("season"),
+			playoffs,
+			regularSeason: !playoffs,
+		})
+	).filter((p) => {
+		// Ignore players with no stats row, such as players signed/traded who haven't played a game yet, since we don't call addStatsRow when joining the roster now
+		return statsRowIsCurrent(p.stats, p.tid, playoffs);
 	});
+
 	const teamStats = [
 		"gp",
 		"ptsPerDrive",
@@ -391,8 +405,8 @@ const advStats = async () => {
 			attrs: ["tid"],
 			stats: teamStats,
 			season: g.get("season"),
-			playoffs: PHASE.PLAYOFFS === g.get("phase"),
-			regularSeason: PHASE.PLAYOFFS !== g.get("phase"),
+			playoffs,
+			regularSeason: !playoffs,
 			addDummySeason: true,
 			active: true,
 		},
@@ -428,7 +442,7 @@ const advStats = async () => {
 	await advStatsSave(players, playersRaw, updatedStats);
 
 	// Hackily account for AV of award winners, for OL and defense. These will not exactly correspond to the "real" AV formulas, they're just intended to be simple and good enough.
-	if (PHASE.PLAYOFFS !== g.get("phase")) {
+	if (!playoffs) {
 		const players2 = await getPlayers(g.get("season"));
 		const dpoyPlayers = getTopPlayers(
 			{

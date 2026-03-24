@@ -796,9 +796,6 @@ const advStats = async () => {
 		})
 	).filter((p) => {
 		// Ignore players with no stats row, such as players signed/traded who haven't played a game yet, since we don't call addStatsRow when joining the roster now
-		if (p.pid === 194) {
-			console.log(p, statsRowIsCurrent(p.stats, p.tid, playoffs));
-		}
 		return statsRowIsCurrent(p.stats, p.tid, playoffs);
 	});
 

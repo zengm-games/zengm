@@ -1,7 +1,7 @@
 import type { NewScheduleGoodSettings } from "./newScheduleGood.ts";
 import newScheduleGood from "./newScheduleGood.ts";
 
-export const TOO_MANY_TEAMS_TOO_SLOW = 150;
+export const TOO_MANY_TEAMS_TOO_SLOW = 200;
 
 const getInitialNumGamesConfDivSettings = (
 	teams: {

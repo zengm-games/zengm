@@ -100,6 +100,10 @@ export const copyFiles = async (
 			}
 			throw error;
 		}
+
+		if (signal?.aborted) {
+			return;
+		}
 	}
 
 	await fs.copyFile("data/names.json", "build/gen/names.json");
@@ -116,15 +120,4 @@ export const copyFiles = async (
 		filter: () => !signal?.aborted,
 		recursive: true,
 	});
-	if (signal?.aborted) {
-		return;
-	}
-
-	const flagHtaccess = `<IfModule mod_headers.c>
-	Header set Cache-Control "public,max-age=31536000"
-</IfModule>`;
-	await fs.writeFile("build/img/flags/.htaccess", flagHtaccess, { signal });
-	if (signal?.aborted) {
-		return;
-	}
 };

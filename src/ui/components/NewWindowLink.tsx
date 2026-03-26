@@ -23,7 +23,7 @@ const NewWindowLink = ({ parts }: Props) => {
 			className="new_window ms-2"
 			onClick={handleClick}
 		>
-			<title>Open In New Window</title>
+			<title>Open in new window</title>
 			<path fill="none" strokeWidth="20" d="M60 10h203v203H60z" />
 			<path
 				d="M107 171L216 55v75-75h-75"
@@ -31,7 +31,7 @@ const NewWindowLink = ({ parts }: Props) => {
 				strokeWidth="30"
 				strokeLinejoin="bevel"
 			/>
-			<path fill="#000" d="M205 40h26v15h-26z" />
+			<path d="M205 40h26v15h-26z" />
 			<path d="M10 50v223" strokeWidth="20" />
 			<path d="M10 263h213M1 60h60M213 220v46" strokeWidth="20" />
 		</svg>

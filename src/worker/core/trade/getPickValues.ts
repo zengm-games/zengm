@@ -63,8 +63,7 @@ const getPickValues = async (): Promise<TradePickValues> => {
 	}
 
 	// Defaults are the average of future drafts
-	const seasons = Object.keys(playersByDraftYear);
-	const currentSeasonString = String(currentSeason);
+	const seasons = Array.from(playersByDraftYear.keys());
 	pickValues.default = range(numPicksDefault).map((i) => {
 		const vals = seasons
 			.filter((season) => {
@@ -73,7 +72,7 @@ const getPickValues = async (): Promise<TradePickValues> => {
 					!seasonPickValues ||
 					seasonPickValues[i] === undefined ||
 					(g.get("phase") === PHASE.DRAFT &&
-						season === currentSeasonString &&
+						season === currentSeason &&
 						seasonPickValues[i] === PLACEHOLDER_VALUE_ALREADY_PICKED)
 				) {
 					return false;

@@ -6,8 +6,9 @@ type Props = {
 
 const NewWindowLink = ({ parts }: Props) => {
 	const handleClick = useCallback(() => {
-		const url = parts ? helpers.leagueUrl(parts) : document.URL; // Window name is set to the current time, so each window has a unique name and thus a new window is always opened
+		const url = parts ? helpers.leagueUrl(parts) : document.URL;
 
+		// Window name is set to the current time, so each window has a unique name and thus a new window is always opened
 		window.open(
 			`${url}?w=popup`,
 			String(Date.now()),

@@ -141,90 +141,92 @@ const Category = ({
 			achievementsWithTotal,
 			(achievement) => achievement.slug.split("_").slice(0, 3).join("_"),
 		);
-		const rows = [...achievementsGrouped.values()].map((achievements) => {
-			// Minimum color of the achievements in this row, to highlight the name which represents them all
-			const fakeCounts = {
-				total: Math.min(
-					...achievements.map((achievement) => achievement.total),
-				),
-				normal: 0,
-				hard: 0,
-				insane: 0,
-			};
-			const maxDifficulties = achievements.map((achievement) => {
-				let index = -1; // -1 means no achievements at any difficulty level
-				for (const [i, difficulty] of DIFFICULTIES.entries()) {
-					if (achievement[difficulty] > 0) {
-						index = i;
+		const rows = Array.from(achievementsGrouped.values()).map(
+			(achievements) => {
+				// Minimum color of the achievements in this row, to highlight the name which represents them all
+				const fakeCounts = {
+					total: Math.min(
+						...achievements.map((achievement) => achievement.total),
+					),
+					normal: 0,
+					hard: 0,
+					insane: 0,
+				};
+				const maxDifficulties = achievements.map((achievement) => {
+					let index = -1; // -1 means no achievements at any difficulty level
+					for (const [i, difficulty] of DIFFICULTIES.entries()) {
+						if (achievement[difficulty] > 0) {
+							index = i;
+						}
 					}
+					return index;
+				});
+				const minDifficulty = Math.min(...maxDifficulties);
+				if (minDifficulty >= 0) {
+					fakeCounts[DIFFICULTIES[minDifficulty]!] = 1;
 				}
-				return index;
-			});
-			const minDifficulty = Math.min(...maxDifficulties);
-			if (minDifficulty >= 0) {
-				fakeCounts[DIFFICULTIES[minDifficulty]!] = 1;
-			}
-			const achievement0 = achievements[0]!;
-			const highlight = highlightSlug === achievement0.slug;
-			const rowClassNames = {
-				...achievementClassNames(fakeCounts),
-				"d-flex": true,
-				"fw-bold": highlight,
-			};
+				const achievement0 = achievements[0]!;
+				const highlight = highlightSlug === achievement0.slug;
+				const rowClassNames = {
+					...achievementClassNames(fakeCounts),
+					"d-flex": true,
+					"fw-bold": highlight,
+				};
 
-			return {
-				key: achievement0.slug,
-				data: [
-					{
-						value: (
-							<>
-								{achievement0.name}
+				return {
+					key: achievement0.slug,
+					data: [
+						{
+							value: (
+								<>
+									{achievement0.name}
 
-								<a
-									className="btn btn-xs btn-secondary ms-auto"
-									href={`/new_league/real#rebuild=${achievement0.slug}`}
-									role="button"
-									id={makeAchievementId(achievement0.slug)}
-								>
-									New league
-								</a>
-							</>
-						),
-						sortValue: achievement0.name,
-						searchValue: achievement0.name,
-						classNames: rowClassNames,
-					},
-					...achievements.flatMap((achievement) => {
-						return [
-							{
-								value: achievement.normal,
-								classNames: {
-									...achievementClassNames(achievement),
-									"text-center": true,
-									"fw-bold": highlight,
+									<a
+										className="btn btn-xs btn-secondary ms-auto"
+										href={`/new_league/real#rebuild=${achievement0.slug}`}
+										role="button"
+										id={makeAchievementId(achievement0.slug)}
+									>
+										New league
+									</a>
+								</>
+							),
+							sortValue: achievement0.name,
+							searchValue: achievement0.name,
+							classNames: rowClassNames,
+						},
+						...achievements.flatMap((achievement) => {
+							return [
+								{
+									value: achievement.normal,
+									classNames: {
+										...achievementClassNames(achievement),
+										"text-center": true,
+										"fw-bold": highlight,
+									},
 								},
-							},
-							{
-								value: achievement.hard,
-								classNames: {
-									...achievementClassNames(achievement, "hard"),
-									"text-center": true,
-									"fw-bold": highlight,
+								{
+									value: achievement.hard,
+									classNames: {
+										...achievementClassNames(achievement, "hard"),
+										"text-center": true,
+										"fw-bold": highlight,
+									},
 								},
-							},
-							{
-								value: achievement.insane,
-								classNames: {
-									...achievementClassNames(achievement, "insane"),
-									"text-center": true,
-									"fw-bold": highlight,
+								{
+									value: achievement.insane,
+									classNames: {
+										...achievementClassNames(achievement, "insane"),
+										"text-center": true,
+										"fw-bold": highlight,
+									},
 								},
-							},
-						];
-					}),
-				],
-			};
-		});
+							];
+						}),
+					],
+				};
+			},
+		);
 
 		return (
 			<>

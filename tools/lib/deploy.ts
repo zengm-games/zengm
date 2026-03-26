@@ -78,7 +78,7 @@ export const deploy = async () => {
 	// Copy gen first, so index.html never links to partial file
 	// files is here because real-player-data was briefly there in May 2020, so we don't want to delete it
 	// .well-known is here because we never want to delete anything in it
-	const copyAndKeep = ["gen", "files", ".well-known"]; // MAKE SURE TO EXCLUDE FROM DELETION BELOW
+	const copyAndKeep = ["gen", ".well-known"]; // MAKE SURE TO EXCLUDE FROM DELETION BELOW
 	for (const folder of copyAndKeep) {
 		await mySpawn("rsync", [
 			"-hrl",
@@ -93,8 +93,6 @@ export const deploy = async () => {
 		"/gen",
 		"--exclude",
 		"/leagues",
-		"--exclude",
-		"/files",
 		"--exclude",
 		"/.well-known",
 

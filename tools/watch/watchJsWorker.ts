@@ -17,6 +17,7 @@ const makeWatcher = async () => {
 		postMessage(message) {
 			parentPort?.postMessage(message);
 		},
+		signal,
 	});
 
 	const watcher = await watch(config);
@@ -27,6 +28,10 @@ const makeWatcher = async () => {
 	}
 
 	watcher.on("event", (event) => {
+		if (signal.aborted) {
+			return;
+		}
+
 		if (event.code === "ERROR") {
 			// In case "start" wasn't set from rolldown plugin yet
 			parentPort?.postMessage({

@@ -13,6 +13,7 @@ export const rolldownConfig = (
 		| {
 				nodeEnv: "development";
 				postMessage: (message: unknown) => void;
+				signal: AbortSignal;
 		  }
 		| {
 				nodeEnv: "production";
@@ -33,18 +34,28 @@ export const rolldownConfig = (
 	];
 
 	if (envOptions.nodeEnv === "development") {
+		const { postMessage, signal } = envOptions;
+
 		plugins.push({
 			name: "start-end",
 
 			buildStart() {
-				envOptions.postMessage({
+				if (signal.aborted) {
+					return;
+				}
+
+				postMessage({
 					type: "start",
 				});
 			},
 
 			async buildEnd(error) {
+				if (signal.aborted) {
+					return;
+				}
+
 				if (error) {
-					envOptions.postMessage({
+					postMessage({
 						type: "error",
 						error,
 					});
@@ -54,8 +65,21 @@ export const rolldownConfig = (
 				}
 			},
 
+			// This (and all the other signal.aborted stuff in this file) is a hacky fix for https://github.com/rolldown/rolldown/issues/8937
+			generateBundle(outputOptions, bundle) {
+				if (signal.aborted) {
+					for (const key of Object.keys(bundle)) {
+						delete bundle[key];
+					}
+				}
+			},
+
 			writeBundle() {
-				envOptions.postMessage({
+				if (signal.aborted) {
+					return;
+				}
+
+				postMessage({
 					type: "end",
 				});
 			},

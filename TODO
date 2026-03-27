@@ -1,12 +1,3 @@
-Build race condition when switching sports during an in-progress build, sometimes the old sport finishes 2nd
-- watcher.close doesn't seem to prevent in-progress build from being written to disk https://github.com/rolldown/rolldown/issues/8937
-- possible solutions
-  - wait until this bug is fixed https://github.com/rolldown/rolldown/issues/8937 and then keep using current watcher.close method
-  - explicitly wait until any in-progress build finishes before creating new watcher, or somethings
-  - trigger rebuild by adding some dummy file to be watched, and writing the sport name there
-    - need to make sport plugin react to process.env.SPORT
-    - need to replace process.env.SPORT with reading from trigger file - messy!
-
 trading away players should not change willingness to sign of existing free agents https://old.reddit.com/r/BasketballGM/comments/1qsjzds/monthly_suggestions_thread/o5rge16/
 - somehow freeze that mood component when a player becomes a free agent
   - could save state in player object

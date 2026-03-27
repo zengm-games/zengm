@@ -37,9 +37,14 @@ const makeWatcher = async () => {
 				type: "error",
 				error: event.error,
 			});
+
+			// https://rollupjs.org/javascript-api/#rollup-watch and https://rolldown.rs/reference/Function.watch say to do this
+			event.result.close();
+		} else if (event.code === "BUNDLE_END") {
+			// https://rollupjs.org/javascript-api/#rollup-watch and https://rolldown.rs/reference/Function.watch say to do this
+			event.result.close();
 		}
 	});
-
 	return watcher;
 };
 

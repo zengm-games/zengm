@@ -4,11 +4,8 @@ Build race condition when switching sports during an in-progress build, sometime
   - wait until this bug is fixed https://github.com/rolldown/rolldown/issues/8937 and then keep using current watcher.close method
   - explicitly wait until any in-progress build finishes before creating new watcher, or somethings
   - trigger rebuild by adding some dummy file to be watched, and writing the sport name there
-    - need to make plugin react to process.env.SPORT
-
-https://rolldown.rs/reference/Function.watch
-- "Note that when using this function, it is your responsibility to call event.result.close() in response to the BUNDLE_END event to avoid resource leaks."
-  - also in rollup docs https://rollupjs.org/javascript-api/#rollup-watch
+    - need to make sport plugin react to process.env.SPORT
+    - need to replace process.env.SPORT with reading from trigger file - messy!
 
 trading away players should not change willingness to sign of existing free agents https://old.reddit.com/r/BasketballGM/comments/1qsjzds/monthly_suggestions_thread/o5rge16/
 - somehow freeze that mood component when a player becomes a free agent

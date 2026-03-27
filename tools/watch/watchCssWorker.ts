@@ -41,9 +41,9 @@ const myBuildCss = async () => {
 	}
 };
 
-await myBuildCss();
-
 const watcher = watch("public/css", {});
 watcher.on("change", myBuildCss);
+
+await myBuildCss();
 
 // No need to listen for switchingSport because CSS does not depend on sport

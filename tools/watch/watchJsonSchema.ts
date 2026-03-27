@@ -56,14 +56,14 @@ export const watchJsonSchema = async (
 		}
 	};
 
-	await buildJSONSchema();
-
 	const watcher = watch("tools/build/generateJsonSchema.ts", {});
 	watcher.on("change", buildJSONSchema);
 	eventEmitter.on("newSport", buildJSONSchema);
 	eventEmitter.on("switchingSport", () => {
 		abortController?.abort();
 	});
+
+	await buildJSONSchema();
 };
 
 // watchJsonSchema((filename) => console.log('updateStart', filename), (filename) => console.log('updateEnd', filename), (filename, error) => console.log('updateError', filename, error));

@@ -1,5 +1,5 @@
 import { parentPort, workerData } from "node:worker_threads";
-import { watch } from "rolldown";
+import { watch, type RolldownWatcher } from "rolldown";
 import { rolldownConfig } from "../lib/rolldownConfig.ts";
 
 // ?? is just so this can be run as a standalone script, for testing
@@ -32,13 +32,18 @@ const makeWatcher = async () => {
 	return watcher;
 };
 
-let watcher = await makeWatcher();
+let watcher: RolldownWatcher | undefined;
 
 parentPort?.on("message", async (message) => {
 	if (message.type === "switchingSport") {
-		await watcher.close();
+		// Is it possible that the previous makeWatcher hasn't finished but will later, and we need an AbortController to handle that?
+		if (watcher) {
+			await watcher.close();
+		}
 	} else if (message.type === "newSport") {
 		process.env.SPORT = message.sport;
 		watcher = await makeWatcher();
 	}
 });
+
+watcher = await makeWatcher();

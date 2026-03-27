@@ -46,13 +46,13 @@ export const watchFiles = async (
 		}
 	};
 
-	await reset();
-	await buildWatchFiles();
-
 	const watcher = watch(["public", "data", "node_modules/flag-icons"], {});
 	watcher.on("change", buildWatchFiles);
 	eventEmitter.on("newSport", buildWatchFiles);
 	eventEmitter.on("switchingSport", () => {
 		abortController?.abort();
 	});
+
+	await reset();
+	await buildWatchFiles();
 };

@@ -5,7 +5,13 @@ import { rolldownConfig } from "../lib/rolldownConfig.ts";
 // ?? is just so this can be run as a standalone script, for testing
 const name = workerData?.name ?? "worker";
 
+let abortController: AbortController | undefined;
+
 const makeWatcher = async () => {
+	abortController?.abort();
+	abortController = new AbortController();
+	const { signal } = abortController;
+
 	const config = rolldownConfig(name, {
 		nodeEnv: "development",
 		postMessage(message) {
@@ -14,6 +20,11 @@ const makeWatcher = async () => {
 	});
 
 	const watcher = await watch(config);
+
+	if (signal.aborted) {
+		await watcher.close();
+		return;
+	}
 
 	watcher.on("event", (event) => {
 		if (event.code === "ERROR") {
@@ -36,9 +47,11 @@ let watcher: RolldownWatcher | undefined;
 
 parentPort?.on("message", async (message) => {
 	if (message.type === "switchingSport") {
-		// Is it possible that the previous makeWatcher hasn't finished but will later, and we need an AbortController to handle that?
+		abortController?.abort();
+
 		if (watcher) {
 			await watcher.close();
+			watcher = undefined;
 		}
 	} else if (message.type === "newSport") {
 		process.env.SPORT = message.sport;

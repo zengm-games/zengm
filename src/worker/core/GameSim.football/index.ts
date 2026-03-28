@@ -46,8 +46,8 @@ const FATIGUE_POS = new Set(["RB", "WR", "TE", "DL", "LB", "CB", "S"]);
 // Only apples to default ratings leagues
 const AVERAGE_TACKLING_COMPOSITE = 0.56;
 
-const FUDGE_FACTOR_PASS = 100;
-const FUDGE_FACTOR_RUN = 70;
+const FUDGE_FACTOR_PASS = 220;
+const FUDGE_FACTOR_RUN = 154;
 const FUDGE_FACTOR_RATIO_MEAN = 1.1;
 const FUDGE_FACTOR_CUTOFF = 1.25;
 
@@ -2113,11 +2113,7 @@ class GameSim extends GameSimBase {
 	}
 
 	// Hack for NZCFL, where the new blocking system was resulting in teams being more similar (like a team with great OL vs a team with horrible OL not being as big of a blowout)
-	adjustBlockingForExtremeTalentDisparity(
-		type: "pass" | "run",
-		w: number,
-		a: number,
-	): [number, number] {
+	adjustBlockingForExtremeTalentDisparity(type: "pass" | "run") {
 		const fudgeFactor = type === "pass" ? FUDGE_FACTOR_PASS : FUDGE_FACTOR_RUN;
 
 		const ratio =
@@ -2130,14 +2126,14 @@ class GameSim extends GameSimBase {
 			FUDGE_FACTOR_RATIO_MEAN;
 		if (ratio > FUDGE_FACTOR_CUTOFF) {
 			// Really good blocking
-			w += fudgeFactor * (ratio - FUDGE_FACTOR_CUTOFF);
+			return fudgeFactor * Math.min(0.06, ratio - FUDGE_FACTOR_CUTOFF);
 		} else if (ratio < 1 / FUDGE_FACTOR_CUTOFF) {
 			// Really bad blocking
 			const inverse = 1 / ratio;
-			a -= fudgeFactor * (inverse - FUDGE_FACTOR_CUTOFF);
+			return -fudgeFactor * Math.min(0.06, inverse - FUDGE_FACTOR_CUTOFF);
 		}
 
-		return [w, a];
+		return 0;
 	}
 
 	// Scaled similar to this.team[this.o].compositeRating.passBlocking / this.team[this.d].compositeRating.passRushing - higher means better blocking!
@@ -2150,13 +2146,9 @@ class GameSim extends GameSimBase {
 		wOL: number;
 		wOther: number;
 	}) {
-		const pbw = wOL + 0.5 * wOther;
-		const pba = aOL; // aOther not accounted for, RB/TE blocks are seen as a bonus
-		const [w, a] = this.adjustBlockingForExtremeTalentDisparity(
-			"pass",
-			pbw,
-			pba,
-		);
+		const w =
+			wOL + 0.5 * wOther + this.adjustBlockingForExtremeTalentDisparity("pass");
+		const a = aOL; // aOther not accounted for, RB/TE blocks are seen as a bonus
 
 		const slope = 0.1879;
 		const intercept = 0.947;
@@ -2562,14 +2554,11 @@ class GameSim extends GameSimBase {
 			names: p === qb ? [qb.name] : [qb.name, p.name],
 		});
 
-		const tempRbw = rbCounts.wOL + 0.5 * rbCounts.wOther;
-		const tempRba = rbCounts.aOL; // aOther not accounted for, RB/TE blocks are seen as a bonus
-
-		const [w, a] = this.adjustBlockingForExtremeTalentDisparity(
-			"run",
-			tempRbw,
-			tempRba,
-		);
+		const w =
+			rbCounts.wOL +
+			0.5 * rbCounts.wOther +
+			this.adjustBlockingForExtremeTalentDisparity("run");
+		const a = rbCounts.aOL; // aOther not accounted for, RB/TE blocks are seen as a bonus
 
 		const rbwRatio = a === 0 ? 0 : w / a;
 

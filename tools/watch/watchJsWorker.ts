@@ -17,43 +17,35 @@ const makeWatcher = () => {
 		signal,
 	});
 
-	// Do this async so the abortController can be returned synchronously and therefore can be aborted before the watcher is done being created
-	(async () => {
-		const watcher = await watch(config);
+	const watcher = watch(config);
 
+	signal.addEventListener("abort", async () => {
+		await watcher.close();
+	});
+
+	watcher.on("event", (event) => {
 		if (signal.aborted) {
-			await watcher.close();
 			return;
 		}
 
-		signal.addEventListener("abort", async () => {
-			await watcher.close();
-		});
+		if (event.code === "ERROR") {
+			// In case "start" wasn't set from rolldown plugin yet
+			parentPort?.postMessage({
+				type: "start",
+			});
 
-		watcher.on("event", (event) => {
-			if (signal.aborted) {
-				return;
-			}
+			parentPort?.postMessage({
+				type: "error",
+				error: event.error,
+			});
 
-			if (event.code === "ERROR") {
-				// In case "start" wasn't set from rolldown plugin yet
-				parentPort?.postMessage({
-					type: "start",
-				});
-
-				parentPort?.postMessage({
-					type: "error",
-					error: event.error,
-				});
-
-				// https://rollupjs.org/javascript-api/#rollup-watch and https://rolldown.rs/reference/Function.watch say to do this
-				event.result.close();
-			} else if (event.code === "BUNDLE_END") {
-				// https://rollupjs.org/javascript-api/#rollup-watch and https://rolldown.rs/reference/Function.watch say to do this
-				event.result.close();
-			}
-		});
-	})();
+			// https://rollupjs.org/javascript-api/#rollup-watch and https://rolldown.rs/reference/Function.watch say to do this
+			event.result.close();
+		} else if (event.code === "BUNDLE_END") {
+			// https://rollupjs.org/javascript-api/#rollup-watch and https://rolldown.rs/reference/Function.watch say to do this
+			event.result.close();
+		}
+	});
 
 	return abortController;
 };

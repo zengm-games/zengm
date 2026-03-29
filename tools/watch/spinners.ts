@@ -400,7 +400,7 @@ export class Spinners<Key extends string = string> {
 			process.stdin.setRawMode(true); // Sets the terminal to raw mode
 		}
 
-		const directions = {
+		const directions: Record<string, -1 | 1> = {
 			"\u001b[D": -1, // Left arrow
 			"\u001b[C": 1, // Right arrow
 		};
@@ -415,7 +415,6 @@ export class Spinners<Key extends string = string> {
 				return;
 			}
 
-			// @ts-expect-error
 			const direction = directions[key.sequence];
 
 			if (direction !== undefined) {

@@ -38,8 +38,6 @@ export const watchFiles = async (
 				return;
 			}
 
-			abortController = undefined;
-
 			updateEnd(outFilename);
 		} catch (error) {
 			updateError(outFilename, error);

@@ -1,15 +1,12 @@
 import { parentPort, workerData } from "node:worker_threads";
-import { watch, type RolldownWatcher } from "rolldown";
+import { watch } from "rolldown";
 import { rolldownConfig } from "../lib/rolldownConfig.ts";
 
 // ?? is just so this can be run as a standalone script, for testing
 const name = workerData?.name ?? "worker";
 
-let abortController: AbortController | undefined;
-
-const makeWatcher = async () => {
-	abortController?.abort();
-	abortController = new AbortController();
+const makeWatcher = () => {
+	const abortController = new AbortController();
 	const { signal } = abortController;
 
 	const config = rolldownConfig(name, {
@@ -20,53 +17,55 @@ const makeWatcher = async () => {
 		signal,
 	});
 
-	const watcher = await watch(config);
+	// Do this async so the abortController can be returned synchronously and therefore can be aborted before the watcher is done being created
+	(async () => {
+		const watcher = await watch(config);
 
-	if (signal.aborted) {
-		await watcher.close();
-		return;
-	}
-
-	watcher.on("event", (event) => {
 		if (signal.aborted) {
+			await watcher.close();
 			return;
 		}
 
-		if (event.code === "ERROR") {
-			// In case "start" wasn't set from rolldown plugin yet
-			parentPort?.postMessage({
-				type: "start",
-			});
+		signal.addEventListener("abort", async () => {
+			await watcher.close();
+		});
 
-			parentPort?.postMessage({
-				type: "error",
-				error: event.error,
-			});
+		watcher.on("event", (event) => {
+			if (signal.aborted) {
+				return;
+			}
 
-			// https://rollupjs.org/javascript-api/#rollup-watch and https://rolldown.rs/reference/Function.watch say to do this
-			event.result.close();
-		} else if (event.code === "BUNDLE_END") {
-			// https://rollupjs.org/javascript-api/#rollup-watch and https://rolldown.rs/reference/Function.watch say to do this
-			event.result.close();
-		}
-	});
-	return watcher;
+			if (event.code === "ERROR") {
+				// In case "start" wasn't set from rolldown plugin yet
+				parentPort?.postMessage({
+					type: "start",
+				});
+
+				parentPort?.postMessage({
+					type: "error",
+					error: event.error,
+				});
+
+				// https://rollupjs.org/javascript-api/#rollup-watch and https://rolldown.rs/reference/Function.watch say to do this
+				event.result.close();
+			} else if (event.code === "BUNDLE_END") {
+				// https://rollupjs.org/javascript-api/#rollup-watch and https://rolldown.rs/reference/Function.watch say to do this
+				event.result.close();
+			}
+		});
+	})();
+
+	return abortController;
 };
 
-let watcher: RolldownWatcher | undefined;
+let abortController = makeWatcher();
 
 parentPort?.on("message", async (message) => {
 	if (message.type === "switchingSport") {
-		abortController?.abort();
-
-		if (watcher) {
-			await watcher.close();
-			watcher = undefined;
-		}
+		abortController.abort();
 	} else if (message.type === "newSport") {
 		process.env.SPORT = message.sport;
-		watcher = await makeWatcher();
+		abortController.abort(); // Maybe not necessary
+		abortController = makeWatcher();
 	}
 });
-
-watcher = await makeWatcher();

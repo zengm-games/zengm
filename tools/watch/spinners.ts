@@ -406,6 +406,11 @@ export class Spinners<Key extends string = string> {
 		};
 
 		process.stdin.on("keypress", (str, key) => {
+			// Always allow Ctrl+C to exit the script
+			if (key.ctrl && key.name === "c") {
+				this.exitHandler("SIGINT");
+			}
+
 			if (!this.initialized) {
 				return;
 			}
@@ -440,9 +445,6 @@ export class Spinners<Key extends string = string> {
 				if (!this.rendering) {
 					this.render();
 				}
-			} else if (key.ctrl && key.name === "c") {
-				// Allow Ctrl+C to exit the script
-				this.exitHandler("SIGINT");
 			}
 		});
 	}

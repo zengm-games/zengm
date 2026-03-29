@@ -5,11 +5,9 @@ import moodComponents from "./moodComponents.ts";
 import type { Player } from "../../../common/types.ts";
 
 const hasActiveNegotiation = async (tid: number, pid: number) => {
-	const teamNegotiations = (await idb.cache.negotiations.getAll()).filter(
-		(negotiation) => negotiation.tid === tid,
+	return (await idb.cache.negotiations.getAll()).some(
+		(negotiation) => negotiation.tid === tid && negotiation.pid === pid,
 	);
-
-	return teamNegotiations.some((negotiation) => negotiation.pid === pid);
 };
 
 const moodInfo = async (

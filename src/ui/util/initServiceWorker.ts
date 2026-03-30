@@ -17,7 +17,8 @@ if (
 	});
 }
 
-if (process.env.NODE_ENV !== "development") {
+// serviceWorker is undefined in an insecure context, like http://play.basketball-gm.test/
+if (window.navigator.serviceWorker && process.env.NODE_ENV !== "development") {
 	const wb = new Workbox("/sw.js");
 
 	let updateAvailable = false;

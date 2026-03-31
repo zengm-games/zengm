@@ -450,7 +450,10 @@ const RenderOption = ({
 }: Category & {
 	checked: Checked;
 	parent?: ExportLeagueKey;
-	onToggle: (name: ExportLeagueKey) => void;
+	onToggle: (
+		name: ExportLeagueKey,
+		parentName: ExportLeagueKey | undefined,
+	) => void;
 }) => {
 	return (
 		<>
@@ -463,10 +466,9 @@ const RenderOption = ({
 					<input
 						className="form-check-input"
 						type="checkbox"
-						checked={checked[name] && (!parent || checked[parent])}
-						disabled={parent && !checked[parent]}
+						checked={checked[name]}
 						onChange={() => {
-							onToggle(name);
+							onToggle(name, parent);
 						}}
 					/>
 					{title}
@@ -736,11 +738,22 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 						<RenderOption
 							{...cat}
 							checked={checked}
-							onToggle={(name) => {
-								setChecked((checked2) => ({
-									...checked2,
-									[name]: !checked2[name],
-								}));
+							onToggle={(name, parentName) => {
+								const newChecked = { ...checked, [name]: !checked[name] };
+
+								// If unchecking a parent, also uncheck children
+								if (cat.children && !newChecked[name]) {
+									for (const child of cat.children) {
+										newChecked[child.name] = false;
+									}
+								}
+
+								// If checking a child, also check parent
+								if (parentName !== undefined && newChecked[name]) {
+									newChecked[parentName] = true;
+								}
+
+								setChecked(newChecked);
 							}}
 						/>
 					</div>

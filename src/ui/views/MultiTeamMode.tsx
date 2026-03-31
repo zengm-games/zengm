@@ -129,6 +129,8 @@ const MultiTeamMode = ({
 				</li>
 			</ul>
 
+			<p>{statusText}</p>
+
 			<div className="d-flex gap-2 mb-3">
 				<button
 					type="button"

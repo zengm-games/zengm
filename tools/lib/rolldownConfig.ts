@@ -61,7 +61,7 @@ export const rolldownConfig = (
 					});
 
 					const js = `throw new Error(${JSON.stringify(stripVTControlCharacters(error.message))})`;
-					await fs.writeFile(watchOutfile, js);
+					await fs.writeFile(watchOutfile, js, { signal });
 				}
 			},
 

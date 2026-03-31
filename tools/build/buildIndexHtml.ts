@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import { minify } from "html-minifier-terser";
 import { type ReplaceInfo } from "./replace.ts";
 import { bySport } from "../lib/bySport.ts";
-import { bannerAdsCode } from "./bannerAdsCode.ts";
+import { getBannerAdsCode } from "./getBannerAdsCode.ts";
 
 export const buildIndexHtml = async ({
 	cssReplaces,
@@ -43,7 +43,7 @@ export const buildIndexHtml = async ({
 		},
 		{
 			searchValue: "BANNER_ADS_CODE",
-			replaceValue: bannerAdsCode,
+			replaceValue: getBannerAdsCode(),
 		},
 		{
 			searchValue: "GOOGLE_ANALYTICS_ID",
@@ -134,5 +134,5 @@ export const buildIndexHtml = async ({
 		return;
 	}
 
-	await fs.writeFile("build/index.html", minified);
+	await fs.writeFile("build/index.html", minified, { signal });
 };

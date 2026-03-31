@@ -2,7 +2,9 @@ import { bySport } from "../lib/bySport.ts";
 
 // InMobi Choice. Consent Manager Tag v3.0 (for TCF 2.2)
 // Then below that is Freestar and then Ad-Shield https://mail.google.com/mail/u/0/#inbox/FMfcgzQcqlCVRVGZzgGtPJqHMLThhmhV?compose=jrjtXVXCNTFVDcQBLjbZvbhGfdFWSNHMmsMCVfdqRjJCxSpZzvQJSvqbdSPrkfRZTFkfqBCS
-export const bannerAdsCode = `<script type="text/javascript" async=true>
+// Needs to be a function so bySport can run
+export const getBannerAdsCode =
+	() => `<script type="text/javascript" async=true>
 (function() {
   if (!window.enableLogging) {
 	  return;

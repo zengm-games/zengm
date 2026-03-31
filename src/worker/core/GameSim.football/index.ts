@@ -46,11 +46,6 @@ const FATIGUE_POS = new Set(["RB", "WR", "TE", "DL", "LB", "CB", "S"]);
 // Only apples to default ratings leagues
 const AVERAGE_TACKLING_COMPOSITE = 0.56;
 
-const FUDGE_FACTOR_PASS = 220;
-const FUDGE_FACTOR_RUN = 154;
-const FUDGE_FACTOR_RATIO_MEAN = 1.1;
-const FUDGE_FACTOR_CUTOFF = 1.25;
-
 /**
  * Convert energy into fatigue, which can be multiplied by a rating to get a fatigue-adjusted value.
  *
@@ -2112,71 +2107,25 @@ class GameSim extends GameSimBase {
 		return random.randInt(3, 8);
 	}
 
-	// Hack for NZCFL, where the new blocking system was resulting in teams being more similar (like a team with great OL vs a team with horrible OL not being as big of a blowout)
-	adjustBlockingForExtremeTalentDisparity(type: "pass" | "run") {
-		const fudgeFactor = type === "pass" ? FUDGE_FACTOR_PASS : FUDGE_FACTOR_RUN;
-
-		const ratio =
-			this.team[this.o].compositeRating[
-				type === "pass" ? "passBlocking" : "runBlocking"
-			] /
-			this.team[this.d].compositeRating[
-				type === "pass" ? "passRushing" : "runStopping"
-			] /
-			FUDGE_FACTOR_RATIO_MEAN;
-		if (ratio > FUDGE_FACTOR_CUTOFF) {
-			// Really good blocking
-			return fudgeFactor * Math.min(0.06, ratio - FUDGE_FACTOR_CUTOFF);
-		} else if (ratio < 1 / FUDGE_FACTOR_CUTOFF) {
-			// Really bad blocking
-			const inverse = 1 / ratio;
-			return -fudgeFactor * Math.min(0.06, inverse - FUDGE_FACTOR_CUTOFF);
-		}
-
-		return 0;
-	}
-
-	// Scaled similar to this.team[this.o].compositeRating.passBlocking / this.team[this.d].compositeRating.passRushing - higher means better blocking!
-	pbwFactor({
-		aOL,
-		wOL,
-		wOther,
-	}: {
-		aOL: number;
-		wOL: number;
-		wOther: number;
-	}) {
-		const w =
-			wOL + 0.5 * wOther + this.adjustBlockingForExtremeTalentDisparity("pass");
-		const a = aOL; // aOther not accounted for, RB/TE blocks are seen as a bonus
-
-		const slope = 0.1879;
-		const intercept = 0.947;
-
-		if (a === 0) {
-			return intercept;
-		}
-
-		return (slope * w) / a + intercept;
-	}
-
-	probSack(qb: PlayerGameSim, pbwFactor: number) {
+	probSack(qb: PlayerGameSim) {
 		return (
-			(0.1551 -
-				0.06247 * qb.compositeRating.avoidingSacks -
-				0.05538 * pbwFactor) *
+			((0.06 * this.team[this.d].compositeRating.passRushing) /
+				(0.5 *
+					(qb.compositeRating.avoidingSacks +
+						this.team[this.o].compositeRating.passBlocking))) *
 			g.get("sackFactor")
 		);
 	}
 
-	probInt(qb: PlayerGameSim, defender: PlayerGameSim, pbwFactor: number) {
+	probInt(qb: PlayerGameSim, defender: PlayerGameSim) {
 		return (
-			((0.004 * this.team[this.d].compositeRating.passCoverage +
+			((((0.004 * this.team[this.d].compositeRating.passCoverage +
 				0.022 * defender.compositeRating.passCoverage) /
 				(0.5 *
 					(qb.compositeRating.passingVision +
-						qb.compositeRating.passingAccuracy)) /
-				pbwFactor) *
+						qb.compositeRating.passingAccuracy))) *
+				this.team[this.d].compositeRating.passRushing) /
+				this.team[this.o].compositeRating.passBlocking) *
 			g.get("intFactor")
 		);
 	}
@@ -2185,7 +2134,6 @@ class GameSim extends GameSimBase {
 		qb: PlayerGameSim,
 		target: PlayerGameSim,
 		defender: PlayerGameSim,
-		pbwFactor: number,
 	) {
 		const factor =
 			((0.2 *
@@ -2197,7 +2145,10 @@ class GameSim extends GameSimBase {
 				(0.5 *
 					(defender.compositeRating.passCoverage +
 						this.team[this.d].compositeRating.passCoverage))) *
-			Math.sqrt(pbwFactor);
+			Math.sqrt(
+				this.team[this.o].compositeRating.passBlocking /
+					this.team[this.d].compositeRating.passRushing,
+			);
 		const p = (0.19 + 0.4 * factor ** 1.25) * g.get("completionFactor");
 		return helpers.bound(p, 0, 0.95);
 	}
@@ -2278,8 +2229,6 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		const pbwFactor = this.pbwFactor(pbCounts);
-
 		const qb = this.getTopPlayerOnField(o, "QB");
 		this.currentPlay.addEvent({
 			type: "dropback",
@@ -2299,7 +2248,7 @@ class GameSim extends GameSimBase {
 			return dt + this.doFumble(qb, yds);
 		}
 
-		const sack = Math.random() < this.probSack(qb, pbwFactor);
+		const sack = Math.random() < this.probSack(qb);
 
 		if (sack) {
 			return this.doSack(qb, pbw);
@@ -2325,7 +2274,14 @@ class GameSim extends GameSimBase {
 		let ydsRaw = Math.round(
 			random.truncGauss(
 				// Bound is so (in extreme contrived cases like 0 ovr teams) meanYds can't go too far above/below the truncGauss limits
-				helpers.bound(rbFactor * 8.6 * pbwFactor, -5, 100),
+				helpers.bound(
+					rbFactor *
+						8.6 *
+						(this.team[o].compositeRating.passBlocking /
+							this.team[d].compositeRating.passRushing),
+					-5,
+					100,
+				),
 				rbFactor * 7,
 				-5,
 				100,
@@ -2352,9 +2308,8 @@ class GameSim extends GameSimBase {
 		const yds = this.currentPlay.boundedYds(ydsRaw);
 
 		const defender = this.pickPlayer(d, "passCoverage", undefined, 2);
-		const complete =
-			Math.random() < this.probComplete(qb, target, defender, pbwFactor);
-		const interception = Math.random() < this.probInt(qb, defender, pbwFactor);
+		const complete = Math.random() < this.probComplete(qb, target, defender);
+		const interception = Math.random() < this.probInt(qb, defender);
 
 		this.checkPenalties("pass", {
 			ballCarrier: target,
@@ -2554,18 +2509,14 @@ class GameSim extends GameSimBase {
 			names: p === qb ? [qb.name] : [qb.name, p.name],
 		});
 
-		const w =
-			rbCounts.wOL +
-			0.5 * rbCounts.wOther +
-			this.adjustBlockingForExtremeTalentDisparity("run");
-		const a = rbCounts.aOL; // aOther not accounted for, RB/TE blocks are seen as a bonus
-
-		const rbwRatio = a === 0 ? 0 : w / a;
-
 		// Bound is so (in extreme contrived cases like 0 ovr teams) meanYds can't go too far above/below the truncGauss limits
 		const meanYds = helpers.bound(
-			scrambleModifier *
-				(1.59 + 3.031 * p.compositeRating.rushing + 0.637 * rbwRatio),
+			(scrambleModifier *
+				(3.5 *
+					0.5 *
+					(p.compositeRating.rushing +
+						this.team[o].compositeRating.runBlocking))) /
+				this.team[d].compositeRating.runStopping,
 			-5,
 			15,
 		);

@@ -1,4 +1,4 @@
-import { useCallback, type ChangeEvent, useRef } from "react";
+import { useRef } from "react";
 import { bySport, isSport, PHASE } from "../../common/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { toWorker, logEvent, helpers } from "../util/index.ts";
@@ -33,34 +33,32 @@ const MultiTeamMode = ({
 		}
 	};
 
-	const handleChange = useCallback(
-		async (event: ChangeEvent<HTMLSelectElement>) => {
-			const newUserTids = Array.from(event.target.selectedOptions)
-				.map((o) => Number.parseInt(o.value))
-				.filter((n) => !Number.isNaN(n));
+	const toggleTid = async (tid: number) => {
+		let newUserTids;
+		if (userTids.includes(tid)) {
+			newUserTids = userTids.filter((tid2) => tid2 !== tid);
+		} else {
+			newUserTids = [...userTids, tid];
+		}
 
-			if (newUserTids.length < 1) {
-				return;
-			}
+		if (newUserTids.length < 1) {
+			return;
+		}
 
-			if (JSON.stringify(newUserTids) !== JSON.stringify(userTids)) {
-				const gameAttributes: {
-					userTids: number[];
-					userTid?: number;
-				} = { userTids: newUserTids };
-				if (!newUserTids.includes(userTid)) {
-					gameAttributes.userTid = newUserTids[0];
-				}
+		const gameAttributes: {
+			userTids: number[];
+			userTid?: number;
+		} = { userTids: newUserTids };
+		if (!newUserTids.includes(userTid)) {
+			gameAttributes.userTid = newUserTids[0];
+		}
 
-				await toWorker("main", "updateMultiTeamMode", gameAttributes);
+		await toWorker("main", "updateMultiTeamMode", gameAttributes);
 
-				if (newUserTids.length > 1) {
-					showNotification();
-				}
-			}
-		},
-		[userTid, userTids],
-	);
+		if (userTids.length === 1 && newUserTids.length > 1) {
+			showNotification();
+		}
+	};
 
 	useTitleBar({ title: "Multi Team Mode" });
 
@@ -125,19 +123,11 @@ const MultiTeamMode = ({
 					in the same league together
 				</li>
 				<li>
-					<a href="https://www.reddit.com/r/BasketballGM/wiki/basketball_gm_multiplayer_league_list">
-						Online multiplayer
-					</a>{" "}
-					- a bunch of people coordinate on Discord/Reddit/etc to run a whole
-					league of teams, and then one person manually controls all the teams
-					in the game
+					<a href="https://zengm.com/discord/">Online multiplayer</a> - a bunch
+					of people coordinate on Discord/Reddit/etc to run a whole league of
+					teams, and then one person manually controls all the teams in the game
 				</li>
 			</ul>
-
-			<p>
-				{statusText} Use shift+click to select adjacent teams, or ctrl+click
-				(command+click on Mac) to select individual teams.
-			</p>
 
 			<div className="d-flex gap-2 mb-3">
 				<button
@@ -167,22 +157,28 @@ const MultiTeamMode = ({
 				) : null}
 			</div>
 
-			<div className="row">
-				<div className="col-sm-6">
-					<select
-						className="form-select"
-						multiple
-						onChange={handleChange}
-						size={teams.length}
-						value={userTids.map(String)}
-					>
-						{orderBy(teams, ["region", "name", "tid"]).map((t) => (
-							<option key={t.tid} value={t.tid}>
-								{t.region} {t.name}
-							</option>
-						))}
-					</select>
-				</div>
+			<div
+				style={{
+					columnWidth: 175,
+					columnGap: "2rem",
+					maxWidth: 1200,
+				}}
+			>
+				{orderBy(teams, ["region", "name", "tid"]).map((t) => (
+					<div className="form-check" key={t.tid}>
+						<label className="form-check-label py-2 py-md-0 d-block d-md-inline-block">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								checked={userTids.includes(t.tid)}
+								onChange={async () => {
+									await toggleTid(t.tid);
+								}}
+							/>
+							{t.region} {t.name}
+						</label>
+					</div>
+				))}
 			</div>
 
 			<h1 className="mt-3">Multi Team Controls</h1>

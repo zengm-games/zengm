@@ -52,6 +52,7 @@ import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGames
 import { amountToLevel } from "../../common/budgetLevels.ts";
 import { orderBy } from "../../common/utils.ts";
 import { actualPhase } from "../util/actualPhase.ts";
+import { getNumPlayersTradedAwayNormalized } from "../core/player/getNumPlayersTradedAwayNormalized.ts";
 
 export interface LeagueDB extends DBSchema {
 	allStars: {
@@ -1637,6 +1638,45 @@ const migrate = async ({
 				// This setting only worked with 2 conferences in the past, so 2 is what `true` used to mean
 				row.byConf = 2;
 				await cursor.update(row);
+			}
+		}
+	}
+
+	if (oldVersion < 70) {
+		const season = (
+			await transaction.objectStore("gameAttributes").get("season")
+		)?.value;
+		if (season !== undefined) {
+			const numPlayersTradedAwayNormalized: Record<number, number> = {};
+
+			const teamSeasons = await transaction
+				.objectStore("teamSeasons")
+				.index("season, tid")
+				.getAll(IDBKeyRange.bound([season - 2], [season, ""]));
+			const teamSeasonsByTid = Object.groupBy(teamSeasons, (row) => row.tid);
+
+			const teams = await transaction.objectStore("teams").getAll();
+			for (const t of teams) {
+				if (t.disabled) {
+					continue;
+				}
+
+				numPlayersTradedAwayNormalized[t.tid] =
+					getNumPlayersTradedAwayNormalized(
+						teamSeasonsByTid[t.tid] ?? [],
+						season,
+					);
+			}
+
+			for await (const cursor of transaction
+				.objectStore("players")
+				.index("tid")
+				.iterate(PLAYER.FREE_AGENT)) {
+				const p = cursor.value;
+				if (!p.numPlayersTradedAwayNormalized) {
+					p.numPlayersTradedAwayNormalized = numPlayersTradedAwayNormalized;
+					await cursor.update(p);
+				}
 			}
 		}
 	}

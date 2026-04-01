@@ -2421,6 +2421,11 @@ const handleUploadedDraftClass = async ({
 			p.born.year = draftYear - 19;
 		}
 
+		delete p.numPlayersTradedAwayNormalized;
+		p.numDaysFreeAgent = 0;
+		p.gamesUntilTradable = 0;
+		p.ptModifier = 1;
+
 		// Would be nice to allow keeping it, but it's kind of messy to duplicate the logic here and in importPlayers and to add a UI
 		delete p.stats;
 

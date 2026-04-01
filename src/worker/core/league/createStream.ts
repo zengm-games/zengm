@@ -67,6 +67,7 @@ import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSett
 import { DEFAULT_LEVEL, amountToLevel } from "../../../common/budgetLevels.ts";
 import { upgradeGamesVersion65 } from "../../db/connectLeague.ts";
 import type { NewLeagueSettings } from "../../views/newLeague.ts";
+import { getNumPlayersTradedAwayNormalized } from "../player/getNumPlayersTradedAwayNormalized.ts";
 
 export type TeamInfo = TeamBasic & {
 	disabled?: boolean;
@@ -1402,13 +1403,45 @@ const afterDBStream = async ({
 		}
 	}
 
+	const fileHasPlayers = extraFromStream.activePlayers.length > 0;
+
+	// Version 70 upgrade
+	if (fileHasPlayers) {
+		let numPlayersTradedAwayNormalized: Record<number, number> | undefined;
+		for (const p of extraFromStream.activePlayers) {
+			if (p.tid !== PLAYER.FREE_AGENT || p.numPlayersTradedAwayNormalized) {
+				continue;
+			}
+
+			if (!numPlayersTradedAwayNormalized) {
+				numPlayersTradedAwayNormalized = {};
+				const teamSeasonsByTid = Object.groupBy(
+					teamSeasons.filter((row) => row.season >= gameAttributes.season - 2),
+					(row) => row.tid,
+				);
+				for (const t of teams) {
+					if (t.disabled) {
+						continue;
+					}
+
+					numPlayersTradedAwayNormalized[t.tid] =
+						getNumPlayersTradedAwayNormalized(
+							teamSeasonsByTid[t.tid] ?? [],
+							gameAttributes.season,
+						);
+				}
+			}
+
+			p.numPlayersTradedAwayNormalized = numPlayersTradedAwayNormalized;
+		}
+	}
+
 	const randomDebuts =
 		randomization === "debuts" ||
 		randomization === "debutsKeepCurrent" ||
 		randomization === "debutsForever" ||
 		randomization === "debutsForeverKeepCurrent";
 
-	const fileHasPlayers = extraFromStream.activePlayers.length > 0;
 	let activePlayers = fileHasPlayers
 		? extraFromStream.activePlayers
 		: await createRandomPlayers({
@@ -1685,7 +1718,7 @@ const afterDBStream = async ({
 		}
 	}
 
-	// Gregg Brown from DNBA, RIP. Make one player on Denver have his name, assuming it's a random players league, Denver exists, and there are no custom names.
+	// Memorials
 	if (!fileHasPlayers && !g.get("playerBioInfo")) {
 		let memorials;
 		if (isSport("hockey")) {

@@ -1,9 +1,9 @@
-import type { TeamSeason } from "../../../common/types.ts";
+import type { TeamSeasonWithoutKey } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import g from "../../util/g.ts";
 
 export const getNumPlayersTradedAwayNormalized = (
-	teamSeasons: TeamSeason[],
+	teamSeasons: TeamSeasonWithoutKey[],
 	season: number,
 ) => {
 	let numPlayersTradedAwayNormalized = 0;

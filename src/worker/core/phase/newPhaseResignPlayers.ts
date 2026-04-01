@@ -16,6 +16,7 @@ import { idb } from "../../db/index.ts";
 import { g, helpers, local, logEvent } from "../../util/index.ts";
 import type { Conditions, PhaseReturn } from "../../../common/types.ts";
 import { orderBy } from "../../../common/utils.ts";
+import { getNumPlayersTradedAwayNormalizedAll } from "../player/getNumPlayersTradedAwayNormalized.ts";
 
 export const FREE_AGENCY_DAYS = 30;
 
@@ -54,8 +55,10 @@ const newPhaseResignPlayers = async (
 				).filter((p) => p.tid === PLAYER.UNDRAFTED)
 			: [];
 
+	const numPlayersTradedAwayNormalized =
+		await getNumPlayersTradedAwayNormalizedAll();
 	for (const p of [...existingFreeAgents, ...undraftedPlayers]) {
-		player.addToFreeAgents(p);
+		player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
 		await idb.cache.players.put(p);
 	}
 
@@ -176,7 +179,7 @@ const newPhaseResignPlayers = async (
 		) {
 			const tid = p.tid;
 
-			player.addToFreeAgents(p);
+			player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
 
 			await idb.cache.players.put(p);
 			const error = await contractNegotiation.create(p.pid, true, tid);
@@ -278,7 +281,7 @@ const newPhaseResignPlayers = async (
 			}
 
 			if (!reSignPlayer) {
-				player.addToFreeAgents(p);
+				player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
 			}
 
 			// Delete rookieResign for AI players, since we're done re-signing them. Leave it for user players.

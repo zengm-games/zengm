@@ -1224,6 +1224,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	jerseyNumber?: string; // Should be undefined only for a player who has never been on a team, or a player signed to his first team before the preseason
 	lastName: string;
 	moodTraits: MoodTrait[];
+	numPlayersTradedAwayNormalized?: Record<number, number>;
 	note?: string;
 	noteBool?: 1; // Keep in sync with note - for indexing
 	numDaysFreeAgent: number;

@@ -161,6 +161,7 @@ import { formatScheduleForEditor } from "../views/scheduleEditor.ts";
 import type { KeyboardShortcutsLocal } from "../../ui/util/keyboardShortcuts.ts";
 import { getNumPlayoffTeamsRaw } from "../core/season/getNumPlayoffTeams.ts";
 import type { NewLeagueSettings } from "../views/newLeague.ts";
+import { getNumPlayersTradedAwayNormalizedAll } from "../core/player/getNumPlayersTradedAwayNormalized.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -3046,8 +3047,10 @@ const removeLastTeam = async () => {
 	const tid = g.get("numTeams") - 1;
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 
+	const numPlayersTradedAwayNormalized =
+		await getNumPlayersTradedAwayNormalizedAll();
 	for (const p of players) {
-		player.addToFreeAgents(p);
+		player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
 		await idb.cache.players.put(p);
 	}
 
@@ -4609,6 +4612,20 @@ const upsertCustomizedPlayer = async (
 				);
 			}
 		}
+
+		delete p.numPlayersTradedAwayNormalized;
+
+		// When switching teams, reset some stuff, especially ptModifier
+		if (p.tid !== originalTid) {
+			p.numDaysFreeAgent = 0;
+			p.gamesUntilTradable = 0;
+			p.ptModifier = 1;
+		}
+	}
+
+	// Handle making player a FA
+	if (p.tid === PLAYER.FREE_AGENT && originalTid !== PLAYER.FREE_AGENT) {
+		player.addToFreeAgents(p, await getNumPlayersTradedAwayNormalizedAll());
 	}
 
 	p.imgURL = helpers.stripBbcode(p.imgURL);

@@ -11,6 +11,7 @@ import {
 import { PHASE } from "../../../common/index.ts";
 import deleteUnreadMessages from "./deleteUnreadMessages.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
+import { getNumPlayersTradedAwayNormalizedAll } from "../player/getNumPlayersTradedAwayNormalized.ts";
 
 const disable = async (tid: number) => {
 	const t = await idb.cache.teams.get(tid);
@@ -66,8 +67,10 @@ const disable = async (tid: number) => {
 	// Make all players free agents
 	const players = await idb.cache.players.indexGetAll("playersByTid", t.tid);
 
+	const numPlayersTradedAwayNormalized =
+		await getNumPlayersTradedAwayNormalizedAll();
 	for (const p of players) {
-		player.addToFreeAgents(p);
+		player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
 		await idb.cache.players.put(p);
 
 		logEvent({

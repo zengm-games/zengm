@@ -3,6 +3,7 @@ import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
 import { PHASE } from "../../../common/index.ts";
+import { getNumPlayersTradedAwayNormalizedAll } from "./getNumPlayersTradedAwayNormalized.ts";
 
 /**
  * Release player.
@@ -50,7 +51,7 @@ const release = async (p: Player, justDrafted: boolean) => {
 		pids: [p.pid],
 		tids: [p.tid],
 	});
-	addToFreeAgents(p);
+	addToFreeAgents(p, await getNumPlayersTradedAwayNormalizedAll());
 	await idb.cache.players.put(p);
 };
 

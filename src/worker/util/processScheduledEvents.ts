@@ -19,6 +19,7 @@ import type {
 import { PHASE, applyRealTeamInfo } from "../../common/index.ts";
 import local from "./local.ts";
 import { orderBy } from "../../common/utils.ts";
+import { getNumPlayersTradedAwayNormalizedAll } from "../core/player/getNumPlayersTradedAwayNormalized.ts";
 
 const processTeamInfo = async (
 	info: Extract<ScheduledEvent, { type: "teamInfo" }>["info"],
@@ -468,7 +469,7 @@ const processUnretirePlayer = async (pid: number) => {
 	}
 
 	p.retiredYear = Infinity;
-	player.addToFreeAgents(p);
+	player.addToFreeAgents(p, await getNumPlayersTradedAwayNormalizedAll());
 	await idb.cache.players.put(p);
 
 	const ratings = p.ratings.at(-1)!;

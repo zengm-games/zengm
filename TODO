@@ -1,9 +1,13 @@
 trading away players should not change willingness to sign of existing free agents https://old.reddit.com/r/BasketballGM/comments/1qsjzds/monthly_suggestions_thread/o5rge16/
-- somehow freeze that mood component when a player becomes a free agent
-  - could save state in player object
-    - state could be the number of players traded away for each team
-  - or save state for all teams somewhere? would be inaccurate for players who become FAs later in free agency, but that is rarely a good player... might be worth being accurate here though
+- test clear
+  - import
+- for existing FAs at start of FA, update values
 - any other components that should be frozen?
+- upgrade
+  - db
+  - file
+
+baseball walk offs - when a non-HR run is scored in the bottom of the 9th+ inning that wins the game, immediately end the game https://discord.com/channels/290013534023057409/1487962056618672309/1487962056618672309
 
 show if a foul is intentional or not in play-by-play
 
@@ -697,8 +701,6 @@ FBGM timeouts
   -in FBGM, teams sometimes take timeout right after the kickoff, before 1st and 10 even shows up https://discord.com/channels/290013534023057409/290015591216054273/1274484873167507488
   - also right before kickoff, such as after missed XP https://discord.com/channels/290013534023057409/1469165154624081951/1469165154624081951
 - timeout in last 2 minutes when injury stops clock
-
-Can processPlayersHallOfFame use gpF for baseball? spread season's WAR around by that, if it's available? https://discord.com/channels/290013534023057409/944392892905037885/1272548695459631210
 
 show how many fouls each team has, and bonus status https://old.reddit.com/r/BasketballGM/comments/1ceu3n4/version_202404271260_during_live_sim_the_number/l1ouaf9/?context=3
 - design ideas

@@ -14,12 +14,19 @@ import type {
  * @memberOf core.player
  * @param {Object} p Player object.
  */
-const addToFreeAgents = (
+const addToFreeAgents = async (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
+	numPlayersTradedAwayNormalized: Record<number, number>,
 ) => {
 	p.tid = PLAYER.FREE_AGENT;
 	p.numDaysFreeAgent = 0;
 	p.ptModifier = 1;
+
+	// Extra check is for console scripts from before numPlayersTradedAwayNormalized was a required parameter
+	// Spread is because addToFreeAgents is often called in a loop, with numPlayersTradedAwayNormalized calculated once up front
+	p.numPlayersTradedAwayNormalized = numPlayersTradedAwayNormalized
+		? { ...numPlayersTradedAwayNormalized }
+		: undefined;
 };
 
 export default addToFreeAgents;

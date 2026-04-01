@@ -85,6 +85,9 @@ const retire = async (
 		type: "Healthy",
 		gamesRemaining: 0,
 	};
+	p.numDaysFreeAgent = 0;
+	p.gamesUntilTradable = 0;
+	delete p.numPlayersTradedAwayNormalized;
 
 	await player.checkJerseyNumberRetirement(p);
 };

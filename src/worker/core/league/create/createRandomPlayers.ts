@@ -284,6 +284,12 @@ const createRandomPlayers = async ({
 		}
 	}
 
+	// Assume this is all 0 for a new league
+	const numPlayersTradedAwayNormalized: Record<number, number> = {};
+	for (const tid of activeTids) {
+		numPlayersTradedAwayNormalized[tid] = 0;
+	}
+
 	const addToFreeAgents = (
 		p: PlayerWithoutKey<MinimalPlayerRatings> | undefined,
 	) => {
@@ -301,7 +307,7 @@ const createRandomPlayers = async ({
 				false,
 			);
 			p.contract.temp = true;
-			player.addToFreeAgents(p);
+			player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
 			players.push(p);
 		}
 	};

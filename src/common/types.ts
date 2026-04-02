@@ -779,26 +779,6 @@ export type GameAttribute<T extends GameAttributeKey> = {
 	value: GameAttributesLeagueWithHistory[T];
 };
 
-export type GameProcessed = {
-	gid: number;
-	home: boolean;
-	oppPts: number;
-	oppTid: number;
-	oppAbbrev: string;
-	overtime: string;
-	result: "W" | "L" | "T";
-	tid?: number;
-	pts: number;
-};
-
-export type GameProcessedCompleted = {
-	gid: number;
-	overtime: string;
-	result: "W" | "L" | "T";
-	score: string;
-	teams: [any, any];
-};
-
 export type League = {
 	lid: number;
 	name: string;

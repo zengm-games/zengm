@@ -33,9 +33,9 @@ export const toRoman = (num: number): string => {
 	return result;
 };
 
-// This doens't validate order of characters, but wahtever
+// This doens't validate order of characters, but whatever
 type RomanChar = "M" | "D" | "C" | "L" | "X" | "V" | "I";
-export type RomanNumeral = `${RomanChar | Lowercase<RomanChar>}`;
+type RomanNumeral = `${RomanChar | Lowercase<RomanChar>}`;
 
 export const isValidRomanNumeral = (roman: string): roman is RomanNumeral => {
 	const valid = /^(m*)(cm|cd|d?c{0,3})(xc|xl|l?x{0,3})(ix|iv|v?i{0,3})$/i;

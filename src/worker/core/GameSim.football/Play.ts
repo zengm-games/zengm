@@ -384,7 +384,7 @@ type WrappedPenaltyEvent = {
 	};
 };
 
-export type WrappedPlayEvent =
+type WrappedPlayEvent =
 	| {
 			event: PlayEventNonPenalty;
 			statChanges: StatChange[];

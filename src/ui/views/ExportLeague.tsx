@@ -26,7 +26,7 @@ const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 
 const CANCEL_BUTTON = "Cancel button";
 
-export type ExportLeagueKey =
+type ExportLeagueKey =
 	| "players"
 	| "gameHighs"
 	| "teamsBasic"

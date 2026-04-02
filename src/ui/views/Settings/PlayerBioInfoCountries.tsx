@@ -141,7 +141,7 @@ const ExportButton = ({
 	);
 };
 
-export type SetInfoState = (
+type SetInfoState = (
 	infoState:
 		| PlayerBioInfoState
 		| ((infoState: PlayerBioInfoState) => PlayerBioInfoState),

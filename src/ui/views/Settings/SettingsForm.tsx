@@ -218,7 +218,6 @@ export const SPECIAL_STATE_ALL = [
 	...SPECIAL_STATE_BOOLEANS,
 	...SPECIAL_STATE_OTHERS,
 ];
-export type SpecialStateOthers = (typeof SPECIAL_STATE_OTHERS)[number];
 type SpecialStateBoolean = (typeof SPECIAL_STATE_BOOLEANS)[number];
 type SpecialStateAll = (typeof SPECIAL_STATE_ALL)[number];
 

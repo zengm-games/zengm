@@ -12,7 +12,7 @@ export interface Context {
 
 type RouteCallback = (context: Context) => Promise<void>;
 
-export interface Route {
+interface Route {
 	cb: RouteCallback;
 	keys: string[];
 	regex: RegExp;

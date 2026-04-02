@@ -9,7 +9,7 @@ import { g } from "../../util/index.ts";
 import { saveAwardsByPlayer } from "../season/awards.ts";
 import { getNextRoundType } from "./contest.ts";
 
-export type Three = NonNullable<AllStars["three"]>;
+type Three = NonNullable<AllStars["three"]>;
 
 export const NUM_SHOOTERS_IN_CONTEST = 8;
 const NUM_RACKS = 5;

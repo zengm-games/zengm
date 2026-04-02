@@ -151,7 +151,9 @@ const Roster = ({
 	let playersSorted: typeof players;
 	if (sortedPids !== undefined) {
 		const playersByPid = groupByUnique(players, "pid");
-		playersSorted = sortedPids.map((pid) => playersByPid[pid]);
+		playersSorted = sortedPids
+			.map((pid) => playersByPid[pid])
+			.filter((p) => p !== undefined);
 	} else {
 		playersSorted = players;
 	}

@@ -57,21 +57,21 @@ const Leaders = ({
 }: Pick<View<"leagueDashboard">, "leagueLeaders" | "teamLeaders">) => (
 	<>
 		<h2>Team Leaders</h2>
-		<p>
+		<div className="mb-3">
 			{teamLeaders.map((leader) => (
 				<Leader key={leader.stat} {...leader} />
 			))}
 			<a href={helpers.leagueUrl(["roster"])}>» Full Roster</a>
-		</p>
+		</div>
 		<h2>League Leaders</h2>
-		<p>
+		<div className="mb-3">
 			{leagueLeaders.map((leader) => (
 				<Leader key={leader.stat} {...leader} />
 			))}
 			<a href={helpers.leagueUrl(["leaders"])}>» League Leaders</a>
 			<br />
 			<a href={helpers.leagueUrl(["player_stats"])}>» Player Stats</a>
-		</p>
+		</div>
 	</>
 );
 

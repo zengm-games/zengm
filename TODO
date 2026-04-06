@@ -1,3 +1,5 @@
+baseball show how far home runs go in play-by-play https://app.fastmail.com/mail/Archive/AJ3IgcCOLqj3.StplqnLR-njc?u=433e4054
+
 default new league overrides and female names https://discord.com/channels/290013534023057409/290013534023057409
 - delete a country from bio info, save as default, then create a female leage -> error!
   - problem is that when we save the pruned object, we assume the underlying default (male) but it's different here (female). maybe need to store gender in the underlying object, so we can know which default one to fill it with?

@@ -150,7 +150,7 @@ const LeagueDashboard = ({
 								<div className="col-6">
 									<TeamStats teamStats={teamStats} />
 									<h2>Finances</h2>
-									<p>
+									<div className="mb-3">
 										Avg Attendance: {helpers.numberWithCommas(Math.round(att))}
 										<br />
 										Revenue (YTD): {helpers.formatCurrency(revenue, "M")}
@@ -176,7 +176,7 @@ const LeagueDashboard = ({
 										<a href={helpers.leagueUrl(["league_finances"])}>
 											» League Finances
 										</a>
-									</p>
+									</div>
 								</div>
 							</div>
 						</div>

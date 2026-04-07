@@ -657,6 +657,9 @@ class GameSim extends GameSimBase {
 			this.outs === NUM_OUTS_PER_INNING - 1 &&
 			(result === "doublePlay" || result === "fieldersChoice");
 
+		// Game winning non-HR hit means runners stop advancing when the winning run is scored
+		let gameWinningRunScored = false;
+
 		// Handle runners
 		// Start from 3rd base first, because a blocked base can't be advanced to
 		const blockedBases = new Set<0 | 1 | 2>();
@@ -727,6 +730,11 @@ class GameSim extends GameSimBase {
 							}
 						}
 					}
+
+					const maxBase = gameWinningRunScored ? 3 : 4;
+					if (runner.to > maxBase) {
+						runner.to = maxBase;
+					}
 				} else {
 					// First base
 
@@ -742,6 +750,11 @@ class GameSim extends GameSimBase {
 							(isStealing && Math.random() < 0.5))
 					) {
 						runner.to += 1;
+					}
+
+					const maxBase = gameWinningRunScored ? 3 : 4;
+					if (runner.to > maxBase) {
+						runner.to = maxBase;
 					}
 				}
 			} else {
@@ -857,7 +870,12 @@ class GameSim extends GameSimBase {
 				const pRBI = error || result === "doublePlay" ? undefined : p;
 				runner.scored = true;
 
-				this.doScore(this.bases[i]!, pRBI);
+				const gameWinningRunScoredTemp = this.doScore(this.bases[i]!, pRBI);
+
+				if (gameWinningRunScoredTemp && numBases < 4) {
+					// Game winning non-HR hit -> runners stop when winning run scores
+					gameWinningRunScored = gameWinningRunScoredTemp;
+				}
 			}
 
 			if (runner.to < 4) {
@@ -1972,6 +1990,8 @@ class GameSim extends GameSimBase {
 			this.recordStat(this.o, rbi, "rbi");
 		}
 
+		let gameWinningRunScored = false;
+
 		if (this.team[0].t.stat.pts === this.team[1].t.stat.pts) {
 			this.winEligiblePid = undefined;
 			this.lossEligiblePid = undefined;
@@ -1992,7 +2012,13 @@ class GameSim extends GameSimBase {
 			// This run just broke the tie, now someone is winning
 			this.winEligiblePid = this.team[this.o].playersInGameByPos.P.p.id;
 			this.lossEligiblePid = responsiblePitcher.id;
+
+			if (this.gameCanBeOverDuringInning()) {
+				gameWinningRunScored = true;
+			}
 		}
+
+		return gameWinningRunScored;
 	}
 
 	getRunners() {
@@ -2657,10 +2683,13 @@ class GameSim extends GameSimBase {
 		}
 	}
 
+	gameCanBeOverDuringInning() {
+		return this.o === 0 && this.inning >= this.numInnings;
+	}
+
 	gameIsOverDuringInning() {
 		if (
-			this.o === 0 &&
-			this.inning >= this.numInnings &&
+			this.gameCanBeOverDuringInning() &&
 			getWinner([this.team[0].t.stat, this.team[1].t.stat]) === 0
 		) {
 			// Game over, home team is at bat and up after 9+ innings

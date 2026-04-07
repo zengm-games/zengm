@@ -1,6 +1,6 @@
 import { helpers } from "../util/index.ts";
 
-const RecordAndPlayoffs = ({
+export const RecordAndPlayoffs = ({
 	abbrev,
 	className,
 	lost,
@@ -57,5 +57,3 @@ const RecordAndPlayoffs = ({
 		</span>
 	);
 };
-
-export default RecordAndPlayoffs;

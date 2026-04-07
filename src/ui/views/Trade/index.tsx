@@ -8,7 +8,7 @@ import type { TradeClearType } from "./Buttons.tsx";
 import Summary from "./Summary.tsx";
 import type { TradeTeams, View } from "../../../common/types.ts";
 import clsx from "clsx";
-import { SaveTrade } from "../../components/index.tsx";
+import { SaveTrade } from "../../components/SaveTrade.tsx";
 
 export type HandleToggle = (
 	userOrOther: "other" | "user",

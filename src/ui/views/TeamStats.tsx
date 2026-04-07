@@ -1,6 +1,6 @@
 import { getCols, helpers } from "../util/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { DataTable, PlusMinus, MoreLinks } from "../components/index.tsx";
+import { DataTable, MoreLinks } from "../components/index.tsx";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 import type { View } from "../../common/types.ts";
 import { isSport } from "../../common/index.ts";
@@ -9,6 +9,7 @@ import { expandFieldingStats } from "../util/expandFieldingStats.baseball.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
 import { prefixStatOpp } from "../util/prefixStatOpp.ts";
+import { PlusMinus } from "../components/PlusMinus.tsx";
 
 const TeamStats = ({
 	allStats,

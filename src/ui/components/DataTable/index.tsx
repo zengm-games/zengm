@@ -19,7 +19,7 @@ import Pagination from "./Pagination.tsx";
 import PerPage from "./PerPage.tsx";
 import getSearchVal from "./getSearchVal.tsx";
 import getSortVal from "./getSortVal.tsx";
-import ResponsiveTableWrapper from "../ResponsiveTableWrapper.tsx";
+import { ResponsiveTableWrapper } from "../ResponsiveTableWrapper.tsx";
 import { helpers, safeLocalStorage } from "../../util/index.ts";
 import type { SortOrder, SortType } from "../../../common/types.ts";
 import { arrayMove } from "@dnd-kit/sortable";

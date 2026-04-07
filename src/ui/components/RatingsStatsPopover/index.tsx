@@ -1,9 +1,9 @@
 import clsx from "clsx";
 import { type Ref, useCallback, useEffect, useState } from "react";
-import RatingsStats from "./RatingsStats.tsx";
-import WatchBlock from "../WatchBlock.tsx";
+import { RatingsStats } from "./RatingsStats.tsx";
+import { WatchBlock } from "../WatchBlock.tsx";
 import { helpers, toWorker } from "../../util/index.ts";
-import ResponsivePopover from "../ResponsivePopover.tsx";
+import { ResponsivePopover } from "../ResponsivePopover.tsx";
 import { PLAYER } from "../../../common/index.ts";
 import { crossTabEmitter } from "../../util/crossTabEmitter.ts";
 

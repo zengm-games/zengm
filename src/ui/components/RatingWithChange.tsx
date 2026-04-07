@@ -1,6 +1,6 @@
 import clsx from "clsx";
 
-const RatingWithChange = ({
+export const RatingWithChange = ({
 	change,
 	children,
 }: {
@@ -35,5 +35,3 @@ export const wrappedRatingWithChange = (rating: number, change: number) => {
 		searchValue: formatted,
 	};
 };
-
-export default RatingWithChange;

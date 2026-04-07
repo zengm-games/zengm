@@ -13,8 +13,11 @@ import {
 	unwrapGameAttribute,
 	LEAGUE_DATABASE_VERSION,
 } from "../../../common/index.ts";
-import { ActionButton, LeagueFileUpload } from "../../components/index.tsx";
-import type { LeagueFileUploadOutput } from "../../components/LeagueFileUpload.tsx";
+import { ActionButton } from "../../components/index.tsx";
+import {
+	LeagueFileUpload,
+	type LeagueFileUploadOutput,
+} from "../../components/LeagueFileUpload.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
 	confirm,

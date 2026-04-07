@@ -2,7 +2,7 @@ import { HelpPopover } from "./index.tsx";
 import type { GameAttributesLeague } from "../../common/types.ts";
 import { helpers } from "../util/index.ts";
 
-const RosterSalarySummary = ({
+export const RosterSalarySummary = ({
 	capSpace,
 	luxuryPayroll,
 	maxContract,
@@ -73,5 +73,3 @@ const RosterSalarySummary = ({
 		</div>
 	);
 };
-
-export default RosterSalarySummary;

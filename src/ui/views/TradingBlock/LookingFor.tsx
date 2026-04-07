@@ -6,7 +6,7 @@ import {
 	type LookingForState,
 	type SetLookingForState,
 } from "./useLookingForState.ts";
-import { ResponsiveTableWrapper } from "../../components/index.tsx";
+import { ResponsiveTableWrapper } from "../../components/ResponsiveTableWrapper.tsx";
 
 const LookingFor = ({
 	disabled,

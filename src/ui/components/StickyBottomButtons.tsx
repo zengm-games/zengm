@@ -1,7 +1,7 @@
 import { MOBILE_AD_BOTTOM_MARGIN } from "../../common/index.ts";
 import { useLocalPartial } from "../util/index.ts";
 
-const StickyBottomButtons = ({
+export const StickyBottomButtons = ({
 	children,
 	isInsideModal,
 }: {
@@ -31,5 +31,3 @@ const StickyBottomButtons = ({
 		</div>
 	);
 };
-
-export default StickyBottomButtons;

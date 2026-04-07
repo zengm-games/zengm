@@ -6,7 +6,7 @@ import {
 	useState,
 	type CSSProperties,
 } from "react";
-import ResponsiveTableWrapper from "./ResponsiveTableWrapper.tsx";
+import { ResponsiveTableWrapper } from "./ResponsiveTableWrapper.tsx";
 import { getCols } from "../util/index.ts";
 import {
 	filterPlayerStats,

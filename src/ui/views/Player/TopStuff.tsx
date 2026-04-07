@@ -1,11 +1,6 @@
 import { Fragment, useState } from "react";
 import type { ReactNode } from "react";
-import {
-	Height,
-	WatchBlock,
-	Weight,
-	JerseyNumber,
-} from "../../components/index.tsx";
+import { WatchBlock } from "../../components/WatchBlock.tsx";
 import {
 	confirm,
 	helpers,
@@ -30,6 +25,9 @@ import { InjuryIcon } from "../../components/InjuryIcon.tsx";
 import { SkillsBlock } from "../../components/SkillsBlock.tsx";
 import { Mood } from "../../components/Mood.tsx";
 import { PlayerPicture } from "../../components/PlayerPicture.tsx";
+import { JerseyNumber } from "../../components/JerseyNumber.tsx";
+import { Height } from "../../components/Height.tsx";
+import { Weight } from "../../components/Weight.tsx";
 
 const Relatives = ({
 	gender,

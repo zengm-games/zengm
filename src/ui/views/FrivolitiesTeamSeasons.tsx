@@ -1,11 +1,12 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers } from "../util/index.ts";
-import { DataTable, TeamLogoInline } from "../components/index.tsx";
+import { DataTable } from "../components/index.tsx";
 import type { View } from "../../common/types.ts";
 import { frivolitiesMenu } from "./Frivolities.tsx";
 import { getValue } from "./Most/index.tsx";
 import { isSport } from "../../common/index.ts";
 import { wrappedMovOrDiff } from "../components/MovOrDiff.tsx";
+import { TeamLogoInline } from "../components/TeamLogoInline.tsx";
 
 const FrivolitiesTeamSeasons = ({
 	description,

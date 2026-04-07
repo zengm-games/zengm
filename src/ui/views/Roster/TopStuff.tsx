@@ -1,16 +1,14 @@
 import { useState, type CSSProperties } from "react";
 import { OverlayTrigger, Popover } from "react-bootstrap";
-import {
-	RecordAndPlayoffs,
-	RosterComposition,
-	PlusMinus,
-} from "../../components/index.tsx";
+import { RecordAndPlayoffs } from "../../components/RecordAndPlayoffs.tsx";
 import { helpers, toWorker } from "../../util/index.ts";
 import InstructionsAndSortButtons from "./InstructionsAndSortButtons.tsx";
 import PlayThroughInjurySliders from "./PlayThroughInjuriesSliders.tsx";
 import type { View } from "../../../common/types.ts";
 import { bySport } from "../../../common/index.ts";
 import Note from "../Player/Note.tsx";
+import { RosterComposition } from "../../components/RosterComposition.tsx";
+import { PlusMinus } from "../../components/PlusMinus.tsx";
 
 const fontSizeLarger = { fontSize: "larger" };
 

@@ -13,12 +13,12 @@ import {
 	toWorker,
 	useLocalPartial,
 } from "../util/index.ts";
-import BoxScore from "./BoxScore.tsx";
+import { BoxScore } from "./BoxScore.tsx";
 import { range } from "../../common/utils.ts";
 import getWinner from "../../common/getWinner.ts";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import Note from "../views/Player/Note.tsx";
-import TeamLogoInline from "./TeamLogoInline.tsx";
+import { TeamLogoInline } from "./TeamLogoInline.tsx";
 import { useKeyboardShortcuts } from "../util/keyboardShortcuts.ts";
 import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
 
@@ -1060,7 +1060,7 @@ const PlayoffRecord = ({
 	);
 };
 
-const BoxScoreWrapper = ({
+export const BoxScoreWrapper = ({
 	abbrev,
 	boxScore,
 	currentGidInList,
@@ -1227,5 +1227,3 @@ const BoxScoreWrapper = ({
 		</>
 	);
 };
-
-export default BoxScoreWrapper;

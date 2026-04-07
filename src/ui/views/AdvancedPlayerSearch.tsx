@@ -11,7 +11,7 @@ import {
 	realtimeUpdate,
 	toWorker,
 } from "../util/index.ts";
-import { ActionButton, DataTable, PlusMinus } from "../components/index.tsx";
+import { ActionButton, DataTable } from "../components/index.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import {
 	allFilters,
@@ -24,6 +24,7 @@ import {
 import clsx from "clsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
+import { PlusMinus } from "../components/PlusMinus.tsx";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];

@@ -2,7 +2,7 @@ import type { FaceConfig } from "facesjs";
 import { useState } from "react";
 import { helpers, JERSEYS } from "../../../common/index.ts";
 import type { View, ExpansionDraftSetupTeam } from "../../../common/types.ts";
-import { JerseyNumber } from "../../components/index.tsx";
+import { JerseyNumber } from "../../components/JerseyNumber.tsx";
 import { toWorker } from "../../util/index.ts";
 import MoveModal, { type MoveModalTeamFinal } from "./MoveModal.tsx";
 import { ColorPicker } from "../../components/ColorPicker/index.tsx";

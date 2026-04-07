@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useLocalPartial, localActions } from "../../util/index.ts";
-import ScoreBox from "../ScoreBox/index.tsx";
+import { ScoreBox } from "../ScoreBox/index.tsx";
 import { emitter } from "../Modal.tsx";
 
 const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {

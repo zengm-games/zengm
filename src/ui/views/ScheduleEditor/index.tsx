@@ -7,7 +7,7 @@ import {
 	toWorker,
 	useLocalPartial,
 } from "../../util/index.ts";
-import { DataTable, StickyBottomButtons } from "../../components/index.tsx";
+import { DataTable } from "../../components/index.tsx";
 import type { View } from "../../../common/types.ts";
 import { PHASE, TIME_BETWEEN_GAMES } from "../../../common/constants.ts";
 import { groupByUnique, orderBy } from "../../../common/utils.ts";
@@ -17,6 +17,7 @@ import { Dropdown } from "react-bootstrap";
 import { RegenerateScheduleModal } from "./RegenerateScheduleModal.tsx";
 import clsx from "clsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
+import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
 
 type Schedule = View<"scheduleEditor">["schedule"];
 

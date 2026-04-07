@@ -1,4 +1,4 @@
-import { DataTable, MoreLinks, PlusMinus } from "../components/index.tsx";
+import { DataTable, MoreLinks } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, useLocal } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
@@ -8,6 +8,7 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 import { wrappedDraftAbbrev } from "../components/DraftAbbrev.tsx";
 import { SkillsBlock } from "../components/SkillsBlock.tsx";
+import { PlusMinus } from "../components/PlusMinus.tsx";
 
 const DraftTeamHistory = ({
 	abbrev,

@@ -30,7 +30,7 @@ const PositionFraction = ({
 	);
 };
 
-const RosterComposition = ({
+export const RosterComposition = ({
 	className = "",
 	players,
 }: {
@@ -162,5 +162,3 @@ const RosterComposition = ({
 		</div>
 	);
 };
-
-export default RosterComposition;

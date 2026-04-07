@@ -1,9 +1,5 @@
 import clsx from "clsx";
-import {
-	BoxScoreRow,
-	BoxScoreWrapper,
-	MoreLinks,
-} from "../components/index.tsx";
+import { MoreLinks } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/index.ts";
 import useClickable from "../hooks/useClickable.tsx";
@@ -11,6 +7,8 @@ import type { View, Game } from "../../common/types.ts";
 import { bySport, isSport } from "../../common/index.ts";
 import getWinner from "../../common/getWinner.ts";
 import formatScoreWithShootout from "../../common/formatScoreWithShootout.ts";
+import { BoxScoreWrapper } from "../components/BoxScoreWrapper.tsx";
+import { BoxScoreRow } from "../components/BoxScoreRow.tsx";
 
 const StatsRow = ({ p, ...props }: { i: number; p: any; season: number }) => {
 	const { clicked, toggleClicked } = useClickable();

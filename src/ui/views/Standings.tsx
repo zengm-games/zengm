@@ -1,15 +1,13 @@
 import clsx from "clsx";
 import { type CSSProperties, Fragment } from "react";
-import {
-	ResponsiveTableWrapper,
-	TeamLogoInline,
-} from "../components/index.tsx";
+import { TeamLogoInline } from "../components/TeamLogoInline.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCol, helpers } from "../util/index.ts";
 import useClickable from "../hooks/useClickable.tsx";
 import type { ByConf, TeamSeason, View } from "../../common/types.ts";
 import { bySport, isSport, TIEBREAKERS } from "../../common/index.ts";
 import { MovOrDiff } from "../components/MovOrDiff.tsx";
+import ResponsiveTableWrapper from "../components/ResponsiveTableWrapper.tsx";
 
 type StandingsTeam =
 	View<"standings">["rankingGroups"]["league"][number][number];

@@ -1,6 +1,6 @@
 import type { LocalStateUI } from "../../common/types.ts";
 import { helpers, useLocal } from "../util/index.ts";
-import TeamLogoInline from "./TeamLogoInline.tsx";
+import { TeamLogoInline } from "./TeamLogoInline.tsx";
 
 type TeamOverride = {
 	abbrev: string;
@@ -19,7 +19,7 @@ type Props = {
 };
 
 // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
-const DraftAbbrev = ({
+export const DraftAbbrev = ({
 	originalT: originalTInput,
 	originalTid,
 	t: tInput,
@@ -90,5 +90,3 @@ export const wrappedDraftAbbrev = (
 		value: <DraftAbbrev {...props} />,
 	};
 };
-
-export default DraftAbbrev;

@@ -3,10 +3,11 @@ import { PHASE } from "../../common/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers, realtimeUpdate, toWorker } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
-import { PlayerNameLabels, RecordAndPlayoffs } from "../components/index.tsx";
+import { PlayerNameLabels } from "../components/index.tsx";
 import clsx from "clsx";
 import { PopText } from "../components/PopText.tsx";
 import { SafeHtml } from "../components/SafeHtml.tsx";
+import { RecordAndPlayoffs } from "../components/RecordAndPlayoffs.tsx";
 
 const HistoryBlock = ({
 	won,

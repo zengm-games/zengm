@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-const TeamLogoInline = ({
+export const TeamLogoInline = ({
 	alt,
 	className,
 	imgURL,
@@ -35,5 +35,3 @@ const TeamLogoInline = ({
 		</div>
 	);
 };
-
-export default TeamLogoInline;

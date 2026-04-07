@@ -44,7 +44,7 @@ export const Flag = ({
 	);
 };
 
-const WatchBlock = memo(
+export const WatchBlock = memo(
 	({ className, defaultWatch, onChange, pid, watch }: Props) => {
 		const { numWatchColors } = useLocalPartial(["numWatchColors"]);
 
@@ -93,5 +93,3 @@ const WatchBlock = memo(
 		);
 	},
 );
-
-export default WatchBlock;

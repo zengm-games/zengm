@@ -1,12 +1,6 @@
 import { useState } from "react";
 import { PHASE, PHASE_TEXT } from "../../common/index.ts";
-import {
-	DataTable,
-	MoreLinks,
-	NegotiateButtons,
-	RosterComposition,
-	RosterSalarySummary,
-} from "../components/index.tsx";
+import { DataTable, MoreLinks } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, useLocalPartial } from "../util/index.ts";
 import type { Phase, View } from "../../common/types.ts";
@@ -23,6 +17,9 @@ import {
 	type DataTableHandle,
 	type DataTableRow,
 } from "../components/DataTable/index.tsx";
+import { NegotiateButtons } from "../components/NegotiateButtons.tsx";
+import { RosterComposition } from "../components/RosterComposition.tsx";
+import { RosterSalarySummary } from "../components/RosterSalarySummary.tsx";
 
 const useSeasonsFreeAgents = () => {
 	const { phase, season, startingSeason } = useLocalPartial([

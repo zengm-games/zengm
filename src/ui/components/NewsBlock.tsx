@@ -24,7 +24,7 @@ const Badge = ({ type }: { type: LogEventType }) => {
 const logoStyle = { maxHeight: 28, maxWidth: 28 };
 const topStyle = { height: 36 };
 
-const NewsBlock = ({
+export const NewsBlock = ({
 	event,
 	season,
 	userTid,
@@ -134,5 +134,3 @@ const NewsBlock = ({
 		</div>
 	);
 };
-
-export default NewsBlock;

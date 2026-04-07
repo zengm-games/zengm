@@ -1,4 +1,4 @@
-import TeamLogoInline from "./TeamLogoInline.tsx";
+import { TeamLogoInline } from "./TeamLogoInline.tsx";
 
 type Team = {
 	seasonAttrs: {

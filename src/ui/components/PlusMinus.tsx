@@ -1,4 +1,4 @@
-const PlusMinus = ({
+export const PlusMinus = ({
 	children,
 	decimalPlaces = 1,
 }: {
@@ -35,5 +35,3 @@ const PlusMinus = ({
 		</>
 	);
 };
-
-export default PlusMinus;

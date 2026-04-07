@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useState, type SubmitEvent, useEffect } from "react";
-import { ActionButton, StickyBottomButtons } from "../../components/index.tsx";
+import { ActionButton } from "../../components/index.tsx";
 import {
 	confirm,
 	localActions,
@@ -21,6 +21,7 @@ import SettingsFormOptions from "./SettingsFormOptions.tsx";
 import categories from "./categories.tsx";
 import useSettingsFormState from "./useSettingsFormState.ts";
 import getSearchVal from "../../components/DataTable/getSearchVal.tsx";
+import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
 
 export const encodeDecodeFunctions = {
 	bool: {

@@ -1,4 +1,4 @@
-import { ResponsiveTableWrapper } from "../components/index.tsx";
+import { ResponsiveTableWrapper } from "../components/ResponsiveTableWrapper.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { helpers, toWorker } from "../util/index.ts";

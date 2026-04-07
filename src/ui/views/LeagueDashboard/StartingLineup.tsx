@@ -1,12 +1,10 @@
-import {
-	PlayerNameLabels,
-	RatingWithChange,
-	ResponsiveTableWrapper,
-} from "../../components/index.tsx";
+import { PlayerNameLabels } from "../../components/index.tsx";
 import { getCols, helpers } from "../../util/index.ts";
 import type { View } from "../../../common/types.ts";
 import { DEPTH_CHART_NAME, isSport } from "../../../common/index.ts";
 import { Contract } from "../../components/contract.tsx";
+import ResponsiveTableWrapper from "../../components/ResponsiveTableWrapper.tsx";
+import { RatingWithChange } from "../../components/RatingWithChange.tsx";
 
 const StartingLineup = ({
 	challengeNoRatings,

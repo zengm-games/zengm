@@ -5,7 +5,7 @@ import RatingsStatsHockey from "./RatingsStats.hockey.tsx";
 import { useLocal } from "../../util/index.ts";
 import { bySport } from "../../../common/index.ts";
 
-const RatingsStats = (props: {
+export const RatingsStats = (props: {
 	ratings: any;
 	stats: any;
 	type?: "career" | "current" | "draft" | number;
@@ -31,5 +31,3 @@ const RatingsStats = (props: {
 		}),
 	});
 };
-
-export default RatingsStats;

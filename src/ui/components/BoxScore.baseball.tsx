@@ -6,7 +6,7 @@ import {
 	useEffect,
 	useMemo,
 } from "react";
-import ResponsiveTableWrapper from "./ResponsiveTableWrapper.tsx";
+import { ResponsiveTableWrapper } from "./ResponsiveTableWrapper.tsx";
 import { getCols, helpers } from "../util/index.ts";
 import { filterPlayerStats } from "../../common/index.ts";
 import { PLAYER_GAME_STATS } from "../../common/constants.baseball.ts";

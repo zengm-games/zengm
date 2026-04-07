@@ -7,7 +7,7 @@ import {
 } from "../../../common/index.ts";
 import { getCol, helpers, useLocalPartial } from "../../util/index.ts";
 import React, { memo, type ReactNode } from "react";
-import TeamLogoInline from "../TeamLogoInline.tsx";
+import { TeamLogoInline } from "../TeamLogoInline.tsx";
 import defaultGameAttributes from "../../../common/defaultGameAttributes.ts";
 import PlayerNameLabels from "../PlayerNameLabels.tsx";
 import getWinner from "../../../common/getWinner.ts";
@@ -60,7 +60,7 @@ const smallStyle = {
 };
 
 // memo is to prevent completed games from re-rendering in LeagueTopBar
-const ScoreBox = memo(
+export const ScoreBox = memo(
 	({
 		actions = [],
 		boxScoreTeamOverride,
@@ -610,5 +610,3 @@ const ScoreBox = memo(
 		return <div className={className}>{scoreBox}</div>;
 	},
 );
-
-export default ScoreBox;

@@ -1,15 +1,12 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers, getCols } from "../util/index.ts";
-import {
-	DataTable,
-	RatingWithChange,
-	StatWithChange,
-	MoreLinks,
-} from "../components/index.tsx";
+import { DataTable, MoreLinks } from "../components/index.tsx";
 import type { View } from "../../common/types.ts";
 import { PLAYER } from "../../common/index.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { RatingWithChange } from "../components/RatingWithChange.tsx";
+import { StatWithChange } from "../components/StatWithChange.tsx";
 
 const AwardRaces = ({
 	awardCandidates,

@@ -2,13 +2,10 @@ import clsx from "clsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
-import {
-	MoreLinks,
-	PlayerNameLabels,
-	RatingWithChange,
-	RecordAndPlayoffs,
-} from "../components/index.tsx";
+import { MoreLinks, PlayerNameLabels } from "../components/index.tsx";
 import { arrow } from "./Trade/Summary.tsx";
+import { RatingWithChange } from "../components/RatingWithChange.tsx";
+import { RecordAndPlayoffs } from "../components/RecordAndPlayoffs.tsx";
 
 const PlayerList = ({
 	challengeNoRatings,

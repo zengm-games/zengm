@@ -2,7 +2,7 @@ import { type ReactNode, type RefObject, useRef, useState } from "react";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import { Modal } from "./Modal.tsx";
 
-const ResponsivePopover = ({
+export const ResponsivePopover = ({
 	id,
 	modalHeader,
 	modalBody,
@@ -64,5 +64,3 @@ const ResponsivePopover = ({
 		</OverlayTrigger>
 	);
 };
-
-export default ResponsivePopover;

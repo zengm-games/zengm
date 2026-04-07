@@ -15,7 +15,7 @@ const getValidTeamColors = (t?: { colors: unknown }) => {
 	return colors;
 };
 
-const JerseyNumber = ({
+export const JerseyNumber = ({
 	className,
 	number,
 	onClick,
@@ -120,5 +120,3 @@ const JerseyNumber = ({
 		</OverlayTrigger>
 	);
 };
-
-export default JerseyNumber;

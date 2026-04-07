@@ -9,11 +9,7 @@ import {
 	toWorker,
 	useLocal,
 } from "../../util/index.ts";
-import {
-	DataTable,
-	MoreLinks,
-	RosterComposition,
-} from "../../components/index.tsx";
+import { DataTable, MoreLinks } from "../../components/index.tsx";
 import type { View } from "../../../common/types.ts";
 import {
 	wrappedContractAmount,
@@ -25,6 +21,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { groupByUnique } from "../../../common/utils.ts";
 import { StickyDraftInfo } from "./StickyDraftInfo.tsx";
 import { wrappedDraftAbbrev } from "../../components/DraftAbbrev.tsx";
+import { RosterComposition } from "../../components/RosterComposition.tsx";
 
 const Draft = ({
 	challengeNoDraftPicks,

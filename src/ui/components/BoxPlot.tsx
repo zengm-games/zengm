@@ -54,7 +54,7 @@ const boxPlotElementStyle = (color: string, style: CSSProperties) => {
  *     color: color of the lines in the boxplot (default black)
  *     labels: boolean for whether to show numeric labels (default true)
  */
-const BoxPlot = ({
+export const BoxPlot = ({
 	color = "#000000",
 	data,
 	labels = true,
@@ -278,5 +278,3 @@ const BoxPlot = ({
 		</div>
 	);
 };
-
-export default BoxPlot;

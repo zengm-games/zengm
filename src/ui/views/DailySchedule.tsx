@@ -1,4 +1,4 @@
-import { MoreLinks, ScoreBox } from "../components/index.tsx";
+import { MoreLinks } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { toWorker, useLocalPartial } from "../util/index.ts";
@@ -6,6 +6,7 @@ import { DAILY_SCHEDULE } from "../../common/index.ts";
 import { NoGamesMessage } from "./GameLog.tsx";
 import allowForceTie from "../../common/allowForceTie.ts";
 import { ForceWin } from "../components/ForceWin.tsx";
+import { ScoreBox } from "../components/ScoreBox/index.tsx";
 
 const DailySchedule = ({
 	completed,

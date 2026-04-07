@@ -11,7 +11,7 @@ import type {
 import clsx from "clsx";
 import { arrayMove } from "@dnd-kit/sortable";
 import UpsertTeamModal from "./UpsertTeamModal.tsx";
-import { StickyBottomButtons } from "../../components/index.tsx";
+import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
 import { logEvent, toWorker } from "../../util/index.ts";
 import confirmDeleteWithChildren from "./confirmDeleteWithChildren.tsx";
 import { Dropdown, OverlayTrigger, Popover } from "react-bootstrap";

@@ -3,7 +3,7 @@ import { bySport } from "../../common/index.ts";
 import BoxScoreRowBasketball from "./BoxScoreRow.basketball.tsx";
 import BoxScoreRowFootball from "./BoxScoreRow.football.tsx";
 
-const BoxScoreRow = (props: {
+export const BoxScoreRow = (props: {
 	className?: string;
 	exhibition?: boolean;
 	lastStarter?: boolean;
@@ -20,5 +20,3 @@ const BoxScoreRow = (props: {
 		hockey: BoxScoreRowFootball(props as any),
 	});
 };
-
-export default BoxScoreRow;

@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent } from "react";
-import { JerseyNumber } from "../../components/index.tsx";
+import { JerseyNumber } from "../../components/JerseyNumber.tsx";
 import { helpers, confirm, toWorker, logEvent } from "../../util/index.ts";
 import type { View } from "../../../common/types.ts";
 import { PLAYER } from "../../../common/index.ts";

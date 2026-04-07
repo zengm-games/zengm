@@ -96,7 +96,7 @@ const reducer = (state: State, action: any): State => {
 	}
 };
 
-const LeagueFileUpload = ({
+export const LeagueFileUpload = ({
 	disabled,
 	enterURL,
 	includePlayersInBasicInfo,
@@ -362,5 +362,3 @@ const LeagueFileUpload = ({
 		</>
 	);
 };
-
-export default LeagueFileUpload;

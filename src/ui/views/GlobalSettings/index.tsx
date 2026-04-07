@@ -1,11 +1,6 @@
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import {
-	helpers,
-	logEvent,
-	safeLocalStorage,
-	toWorker,
-} from "../../util/index.ts";
+import { helpers, logEvent, toWorker } from "../../util/index.ts";
 import RealData from "./RealData.tsx";
 import Storage from "./Storage.tsx";
 import type { View } from "../../../common/types.ts";
@@ -18,6 +13,7 @@ import {
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
+import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
 
 const GlobalSettings = (props: View<"globalSettings">) => {
 	const [state, setState] = useState(() => {

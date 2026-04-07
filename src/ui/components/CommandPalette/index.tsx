@@ -22,7 +22,6 @@ import {
 	local,
 	logEvent,
 	realtimeUpdate,
-	safeLocalStorage,
 	toWorker,
 	useLocalPartial,
 } from "../../util/index.ts";
@@ -35,6 +34,7 @@ import {
 	useKeyboardShortcuts,
 } from "../../util/keyboardShortcuts.ts";
 import { menuItems } from "../../util/menuItems.tsx";
+import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
 
 const TWO_MONTHS_IN_MILLISECONDS = 2 * 30 * 24 * 60 * 60 * 1000;
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;

@@ -20,7 +20,7 @@ import PerPage from "./PerPage.tsx";
 import getSearchVal from "./getSearchVal.tsx";
 import getSortVal from "./getSortVal.tsx";
 import { ResponsiveTableWrapper } from "../ResponsiveTableWrapper.tsx";
-import { helpers, safeLocalStorage } from "../../util/index.ts";
+import { helpers } from "../../util/index.ts";
 import type { SortOrder, SortType } from "../../../common/types.ts";
 import { arrayMove } from "@dnd-kit/sortable";
 import updateSortBys from "./updateSortBys.ts";
@@ -40,6 +40,7 @@ import {
 import { DataTableContext } from "./contexts.ts";
 import { useStickyTableHeader } from "./useStickyTableHeader.ts";
 import { downloadFile } from "../../util/downloadFile.ts";
+import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
 
 export type SortBy = [number, SortOrder];
 

@@ -2,7 +2,7 @@ import { Fragment, useState } from "react";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCol, getCols, helpers, toWorker, useLocal } from "../util/index.ts";
+import { getCols, helpers, toWorker, useLocal } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
 import { bySport, PLAYER } from "../../common/index.ts";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
@@ -12,6 +12,7 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedDraftAbbrev } from "../components/DraftAbbrev.tsx";
 import { downloadFile } from "../util/downloadFile.ts";
 import { SkillsBlock } from "../components/SkillsBlock.tsx";
+import getCol from "../../common/getCol.ts";
 
 const Summary = ({
 	players,

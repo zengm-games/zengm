@@ -18,13 +18,14 @@ import type {
 } from "../../common/types.ts";
 import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, safeLocalStorage, toWorker } from "../util/index.ts";
+import { helpers, toWorker } from "../util/index.ts";
 import { applyRealTeamInfos } from "./NewLeague/index.tsx";
 import SettingsForm from "./Settings/SettingsForm.tsx";
 import { orderBy, range } from "../../common/utils.ts";
 import { choice, randInt } from "../../common/random.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
 import { ActionButton } from "../components/ActionButton.tsx";
+import { safeLocalStorage } from "../util/safeLocalStorage.ts";
 
 export type ExhibitionTeam = {
 	season: number;

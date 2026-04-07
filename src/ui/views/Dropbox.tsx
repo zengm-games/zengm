@@ -1,4 +1,5 @@
-import { realtimeUpdate, safeLocalStorage } from "../util/index.ts";
+import { realtimeUpdate } from "../util/index.ts";
+import { safeLocalStorage } from "../util/safeLocalStorage.ts";
 
 const Dropbox = () => {
 	const hash = location.hash.slice(1);

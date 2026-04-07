@@ -7,12 +7,7 @@ import {
 	useState,
 	type MouseEvent,
 } from "react";
-import {
-	helpers,
-	localActions,
-	safeLocalStorage,
-	useLocalPartial,
-} from "../../util/index.ts";
+import { helpers, localActions, useLocalPartial } from "../../util/index.ts";
 import type {
 	MenuItemLink,
 	MenuItemHeader,
@@ -22,6 +17,7 @@ import CollapseArrow from "../CollapseArrow.tsx";
 import { AnimatePresence, m } from "framer-motion";
 import { VIDEO_ADS, VIDEO_AD_PADDING } from "../../../common/index.ts";
 import { menuItems } from "../../util/menuItems.tsx";
+import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
 
 export const getText = (
 	text: MenuItemLink["text"],

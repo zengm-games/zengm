@@ -10,15 +10,11 @@ import type { View } from "../../common/types.ts";
 import type { LeagueDBStoreNames } from "../../worker/db/connectLeague.ts";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import {
-	helpers,
-	safeLocalStorage,
-	toWorker,
-	useLocal,
-} from "../util/index.ts";
+import { helpers, toWorker, useLocal } from "../util/index.ts";
 import type makeExportStream from "../util/makeExportStream.ts";
 import { ProgressBarText } from "../components/ProgressBarText.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
+import { safeLocalStorage } from "../util/safeLocalStorage.ts";
 
 const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 

@@ -1,9 +1,4 @@
-import {
-	local,
-	localActions,
-	realtimeUpdate,
-	safeLocalStorage,
-} from "../util/index.ts";
+import { local, localActions, realtimeUpdate } from "../util/index.ts";
 import { showEvent } from "../util/logEvent.ts";
 import type {
 	LocalStateUI,
@@ -18,6 +13,7 @@ import { autoPlayDialog } from "../util/autoPlayDialog.tsx";
 import { confirmDeleteAllLeagues } from "../util/confirmDeleteAllLeagues.tsx";
 import { requestPersistentStorage } from "../util/requestPersistentStorage.ts";
 import { confirm } from "../util/confirm.tsx";
+import { safeLocalStorage } from "../util/safeLocalStorage.ts";
 
 const initAds = (type: "accountChecked" | "uiRendered") => {
 	ads.setLoadingDone(type);

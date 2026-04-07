@@ -8,7 +8,7 @@ import {
 import type { PlayerStats, PlayerStatType } from "../../common/types.ts";
 import { local } from "./local.ts";
 
-const processPlayerStats = (
+export const processPlayerStats = (
 	ps: PlayerStats,
 	stats: string[],
 	statType?: PlayerStatType,
@@ -23,5 +23,3 @@ const processPlayerStats = (
 		hockey: processPlayerStatsHockey(ps, stats, statType, bornYear),
 	});
 };
-
-export default processPlayerStats;

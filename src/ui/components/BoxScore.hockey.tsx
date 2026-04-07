@@ -6,7 +6,7 @@ import {
 	useMemo,
 } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper.tsx";
-import { getCols, helpers, processPlayerStats } from "../util/index.ts";
+import { getCols, helpers } from "../util/index.ts";
 import { filterPlayerStats, getPeriodName } from "../../common/index.ts";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.hockey/PlayByPlayLogger.ts";
 import { PLAYER_GAME_STATS } from "../../common/constants.hockey.ts";
@@ -14,6 +14,7 @@ import { sortByStats, StatsHeader } from "./BoxScore.football.tsx";
 import updateSortBys from "./DataTable/updateSortBys.ts";
 import type { SortBy } from "./DataTable/index.tsx";
 import { formatClock } from "../../common/formatClock.ts";
+import { processPlayerStats } from "../util/processPlayerStats.ts";
 
 type Team = {
 	abbrev: string;

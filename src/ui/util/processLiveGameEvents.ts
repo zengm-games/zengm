@@ -5,7 +5,7 @@ import processLiveGameEventsFootball from "./processLiveGameEvents.football.tsx"
 import processLiveGameEventsHockey from "./processLiveGameEvents.hockey.tsx";
 
 // Mutates boxScore!!!
-const processLiveGameEvents = ({
+export const processLiveGameEvents = ({
 	events,
 	boxScore,
 	overtimes,
@@ -47,5 +47,3 @@ const processLiveGameEvents = ({
 		}) as any,
 	});
 };
-
-export default processLiveGameEvents;

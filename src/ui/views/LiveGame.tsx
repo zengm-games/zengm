@@ -18,12 +18,13 @@ import {
 	TeamLogoInline,
 } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, processLiveGameEvents, toWorker } from "../util/index.ts";
+import { helpers, toWorker } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
 import { bySport, getPeriodName, isSport } from "../../common/index.ts";
 import useLocalStorageState from "use-local-storage-state";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_BASEBALL } from "../util/processLiveGameEvents.baseball.tsx";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_FOOTBALL } from "../util/processLiveGameEvents.football.tsx";
+import { processLiveGameEvents } from "../util/processLiveGameEvents.ts";
 import { HeadlineScoreLive } from "../components/BoxScoreWrapper.tsx";
 import { useIsStuck } from "../hooks/useIsStuck.ts";
 import { useBlocker } from "../hooks/useBlocker.ts";

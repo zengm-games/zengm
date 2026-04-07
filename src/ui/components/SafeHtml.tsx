@@ -1,4 +1,4 @@
-import { sanitize } from "../util/index.ts";
+import { sanitize } from "../util/sanitize.ts";
 
 const SafeHtml = ({
 	dirty,

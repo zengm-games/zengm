@@ -11,10 +11,7 @@ export {
 } from "./local.ts";
 export { default as logEvent } from "./logEvent.ts";
 export { default as menuItems } from "./menuItems.tsx";
-export { default as processLiveGameEvents } from "./processLiveGameEvents.ts";
-export { default as processPlayerStats } from "./processPlayerStats.ts";
 export { default as realtimeUpdate } from "./realtimeUpdate.ts";
 export { default as safeLocalStorage } from "./safeLocalStorage.ts";
-export { default as sanitize } from "./sanitize.ts";
 export { default as toWorker } from "./toWorker.ts";
 export { default as unregisterServiceWorkers } from "./unregisterServiceWorkers.ts";

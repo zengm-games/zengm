@@ -7,7 +7,7 @@ import {
 	type CSSProperties,
 } from "react";
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper.tsx";
-import { getCols, processPlayerStats } from "../util/index.ts";
+import { getCols } from "../util/index.ts";
 import {
 	filterPlayerStats,
 	getPeriodName,
@@ -30,6 +30,7 @@ import { OverlayTrigger, Popover } from "react-bootstrap";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.football/PlayByPlayLogger.ts";
 import { range } from "../../common/utils.ts";
 import { formatClock } from "../../common/formatClock.ts";
+import { processPlayerStats } from "../util/processPlayerStats.ts";
 
 type Team = {
 	abbrev: string;

@@ -17,8 +17,9 @@ import { analyticsEvent } from "./util/analyticsEvent.ts";
 import { compareVersions } from "./util/compareVersions.ts";
 import { promiseWorker } from "./util/promiseWorker.ts";
 import { routes } from "./util/routes.ts";
+import { unregisterServiceWorkers } from "./util/unregisterServiceWorkers.ts";
 window.bbgm = { api, ...util };
-const { logEvent, safeLocalStorage, toWorker, unregisterServiceWorkers } = util;
+const { logEvent, safeLocalStorage, toWorker } = util;
 
 const handleVersion = async () => {
 	window.addEventListener("storage", (e) => {

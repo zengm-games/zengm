@@ -18,7 +18,7 @@ const resizeListener = () => {
 	});
 };
 
-const Skyscraper = memo(() => {
+export const Skyscraper = memo(() => {
 	useEffect(() => {
 		if (!window.mobile) {
 			const callback = () => {
@@ -49,5 +49,3 @@ const Skyscraper = memo(() => {
 		</>
 	);
 });
-
-export default Skyscraper;

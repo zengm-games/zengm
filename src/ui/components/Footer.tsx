@@ -39,7 +39,7 @@ const footerLinks = [
 	},
 ];
 
-const Footer = memo(() => {
+export const Footer = memo(() => {
 	const { gold } = useLocalPartial(["gold"]);
 
 	const video_ad_padding = VIDEO_ADS && !gold;
@@ -143,5 +143,3 @@ const Footer = memo(() => {
 		</footer>
 	);
 });
-
-export default Footer;

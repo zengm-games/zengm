@@ -78,7 +78,7 @@ const unbind = emitter.on("notification", (notification) => {
 	initialNotifications.push(notification);
 });
 
-const Notifications = () => {
+export const Notifications = () => {
 	const { stickyFooterAd, stickyFormButtons, userTids } = useLocalPartial([
 		"stickyFooterAd",
 		"stickyFormButtons",
@@ -216,5 +216,3 @@ const Notifications = () => {
 		</div>
 	);
 };
-
-export default Notifications;

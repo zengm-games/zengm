@@ -12,7 +12,7 @@ const genPath = (parts: string[], season: string | undefined) => {
 	return parts;
 };
 
-const TitleBar = () => {
+export const TitleBar = () => {
 	const {
 		title,
 		customMenu,
@@ -203,5 +203,3 @@ const TitleBar = () => {
 		</aside>
 	);
 };
-
-export default TitleBar;

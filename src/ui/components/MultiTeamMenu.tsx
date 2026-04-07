@@ -15,7 +15,7 @@ const handleChange = async (event: ChangeEvent<HTMLSelectElement>) => {
 	await setUserTid(userTid);
 };
 
-const MultiTeamMenu = () => {
+export const MultiTeamMenu = () => {
 	const state = useLocalPartial([
 		"stickyFooterAd",
 		"stickyFormButtons",
@@ -92,5 +92,3 @@ const MultiTeamMenu = () => {
 		</div>
 	);
 };
-
-export default MultiTeamMenu;

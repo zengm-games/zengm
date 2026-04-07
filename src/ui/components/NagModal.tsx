@@ -8,7 +8,7 @@ type Props = {
 	show: boolean;
 };
 
-const NagModal = ({ close, show }: Props) => {
+export const NagModal = ({ close, show }: Props) => {
 	const adBlock = ads.adBlock();
 	return (
 		<Modal show={show} onHide={close}>
@@ -101,5 +101,3 @@ const NagModal = ({ close, show }: Props) => {
 		</Modal>
 	);
 };
-
-export default NagModal;

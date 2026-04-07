@@ -14,4 +14,3 @@ export { default as menuItems } from "./menuItems.tsx";
 export { default as realtimeUpdate } from "./realtimeUpdate.ts";
 export { default as safeLocalStorage } from "./safeLocalStorage.ts";
 export { default as toWorker } from "./toWorker.ts";
-export { default as unregisterServiceWorkers } from "./unregisterServiceWorkers.ts";

@@ -225,7 +225,7 @@ type Props = {
 // Sidebar open/close state is done with the DOM directly rather than by passing a prop down or using local.getState()
 // because then performance of the menu is independent of any other React performance issues - basically it's a hack to
 // make menu performance consistent even if there are other problems. Like on the Fantasy Draft page.
-const SideBar = memo(({ pageID, pathname }: Props) => {
+export const SideBar = memo(({ pageID, pathname }: Props) => {
 	const [node, setNode] = useState<null | HTMLDivElement>(null);
 	const [nodeFade, setNodeFade] = useState<null | HTMLDivElement>(null);
 
@@ -384,5 +384,3 @@ const SideBar = memo(({ pageID, pathname }: Props) => {
 		</>
 	);
 });
-
-export default SideBar;

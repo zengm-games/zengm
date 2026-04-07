@@ -70,7 +70,7 @@ const PhaseStatusBlock = () => {
 	);
 };
 
-const NavBar = ({ updating }: { updating: boolean }) => {
+export const NavBar = ({ updating }: { updating: boolean }) => {
 	const {
 		lid,
 		godMode,
@@ -158,5 +158,3 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 		</Navbar>
 	);
 };
-
-export default NavBar;

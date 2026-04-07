@@ -741,7 +741,7 @@ const ModeText = ({ inLeague }: { inLeague: boolean }) => {
 	);
 };
 
-const CommandPalette = ({
+const CommandPaletteInner = ({
 	show,
 	onHide,
 }: {
@@ -983,8 +983,8 @@ const CommandPalette = ({
 	);
 };
 
-// Wrapper so useEffect stuff in CommandPalette does not run until it shows
-const CommandPaletteWrapper = () => {
+// Wrapper so useEffect stuff in CommandPaletteInner does not run until it shows
+export const CommandPalette = () => {
 	const { show, onHide } = useCommandPalette();
 
 	useEffect(() => {
@@ -1025,10 +1025,8 @@ const CommandPaletteWrapper = () => {
 	}, []);
 
 	if (show) {
-		return <CommandPalette show={show} onHide={onHide} />;
+		return <CommandPaletteInner show={show} onHide={onHide} />;
 	}
 
 	return null;
 };
-
-export default CommandPaletteWrapper;

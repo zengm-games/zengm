@@ -28,7 +28,7 @@ const hiddenStyle = {
 
 const IS_SAFARI = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
-const LeagueTopBar = memo(() => {
+export const LeagueTopBar = memo(() => {
 	const { games, lid, liveGameInProgress, showLeagueTopBar } = useLocalPartial([
 		"games",
 		"lid",
@@ -188,5 +188,3 @@ const LeagueTopBar = memo(() => {
 		</div>
 	);
 });
-
-export default LeagueTopBar;

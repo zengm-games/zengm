@@ -1,7 +1,7 @@
 import { memo } from "react"; // Ensure there is enough room to display 160px wide ad with 15px margins next to 1200px wide container
 import { AD_DIVS } from "../../common/index.ts";
 
-const Header = memo(() => {
+export const Header = memo(() => {
 	return (
 		// banner-ad class is so ad blockers remove it cleanly. I'm so nice!
 		<>
@@ -28,5 +28,3 @@ const Header = memo(() => {
 		</>
 	);
 });
-
-export default Header;

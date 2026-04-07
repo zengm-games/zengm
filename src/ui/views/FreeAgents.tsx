@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { PHASE, PHASE_TEXT } from "../../common/index.ts";
-import { DataTable, MoreLinks } from "../components/index.tsx";
+import { DataTable } from "../components/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, useLocalPartial } from "../util/index.ts";
 import type { Phase, View } from "../../common/types.ts";

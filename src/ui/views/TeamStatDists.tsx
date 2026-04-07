@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { MoreLinks } from "../components/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
 import { isSport } from "../../common/index.ts";
 import { BoxPlot } from "../components/BoxPlot.tsx";

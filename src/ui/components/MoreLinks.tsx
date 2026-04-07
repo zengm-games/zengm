@@ -8,7 +8,7 @@ import {
 import type { DraftType, PlayerStatType } from "../../common/types.ts";
 import { helpers, useLocalPartial } from "../util/index.ts";
 
-const MoreLinks = (
+export const MoreLinks = (
 	props: (
 		| {
 				type: "team";
@@ -429,5 +429,3 @@ const MoreLinks = (
 		</p>
 	);
 };
-
-export default MoreLinks;

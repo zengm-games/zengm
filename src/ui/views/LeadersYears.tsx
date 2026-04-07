@@ -1,6 +1,7 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCol, helpers } from "../util/index.ts";
-import { DataTable, MoreLinks } from "../components/index.tsx";
+import { DataTable } from "../components/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
 import { LeadersTopText } from "./Leaders.tsx";
 import type { Col, DataTableRow } from "../components/DataTable/index.tsx";

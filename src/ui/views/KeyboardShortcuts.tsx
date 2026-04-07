@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers, logEvent, toWorker } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
-import { MoreLinks } from "../components/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import {
 	formatKeyboardShortcutRaw,
 	getEventKey,

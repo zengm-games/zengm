@@ -15,7 +15,7 @@ import {
 	PHASE,
 	PHASE_TEXT,
 } from "../../../common/index.ts";
-import { MoreLinks } from "../../components/index.tsx";
+import { MoreLinks } from "../../components/MoreLinks.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 

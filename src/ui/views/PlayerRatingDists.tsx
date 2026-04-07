@@ -1,4 +1,4 @@
-import { MoreLinks } from "../components/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { BoxPlot } from "../components/BoxPlot.tsx";

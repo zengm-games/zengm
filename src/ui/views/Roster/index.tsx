@@ -6,7 +6,8 @@ import {
 	PLAYER,
 	WEBSITE_ROOT,
 } from "../../../common/index.ts";
-import { MoreLinks, DataTable } from "../../components/index.tsx";
+import { DataTable } from "../../components/index.tsx";
+import { MoreLinks } from "../../components/MoreLinks.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
 	confirm,

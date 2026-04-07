@@ -8,7 +8,7 @@ import {
 import { types } from "../../common/transactionInfo.ts";
 import type { View } from "../../common/types.ts";
 import type { LeagueDBStoreNames } from "../../worker/db/connectLeague.ts";
-import { MoreLinks } from "../components/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import {
 	helpers,

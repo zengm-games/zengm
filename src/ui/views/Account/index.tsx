@@ -9,7 +9,7 @@ import {
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { confirm, realtimeUpdate, toWorker } from "../../util/index.ts";
 import type { View } from "../../../common/types.ts";
-import { GameLinks } from "../../components/index.tsx";
+import { GameLinks } from "../../components/GameLinks.tsx";
 import { ajaxErrorMsg } from "../LoginOrRegister/index.tsx";
 import AccountInfoForm from "./AccountInfoForm.tsx";
 import DeleteAccountForm from "./DeleteAccountForm.tsx";

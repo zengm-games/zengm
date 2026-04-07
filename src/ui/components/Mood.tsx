@@ -139,7 +139,7 @@ const MoodTextRow = ({ amount, text }: { amount: number; text: string }) => {
 	);
 };
 
-const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
+export const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 	const { teamInfoCache, userTid } = useLocalPartial([
 		"teamInfoCache",
 		"userTid",
@@ -337,9 +337,7 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 	);
 };
 
-export default Mood;
-
-export const dataTableWrappedMood = (props: Props) => {
+export const wrappedMood = (props: Props) => {
 	const { defaultType, p } = props;
 
 	if (!p.mood) {

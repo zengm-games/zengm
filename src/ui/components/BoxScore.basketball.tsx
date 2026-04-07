@@ -1,5 +1,5 @@
 import ResponsiveTableWrapper from "./ResponsiveTableWrapper.tsx";
-import SafeHtml from "../components/SafeHtml.tsx";
+import { SafeHtml } from "../components/SafeHtml.tsx";
 import { getCols, helpers } from "../util/index.ts";
 import { sortByStats, StatsHeader } from "./BoxScore.football.tsx";
 import { type MouseEvent, useState } from "react";

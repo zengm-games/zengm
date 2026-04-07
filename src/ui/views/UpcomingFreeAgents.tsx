@@ -3,7 +3,7 @@ import { DataTable, MoreLinks } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, useLocalPartial } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
-import { dataTableWrappedMood } from "../components/Mood.tsx";
+import { wrappedMood } from "../components/Mood.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedCurrency } from "../components/wrappedCurrency.ts";
@@ -85,12 +85,12 @@ const UpcomingFreeAgents = ({
 				!challengeNoRatings ? p.ratings.ovr : null,
 				!challengeNoRatings ? p.ratings.pot : null,
 				...stats.map((stat) => helpers.roundStat(p.stats[stat], stat)),
-				dataTableWrappedMood({
+				wrappedMood({
 					defaultType: "user",
 					maxWidth: true,
 					p,
 				}),
-				dataTableWrappedMood({
+				wrappedMood({
 					defaultType: "current",
 					maxWidth: true,
 					p,

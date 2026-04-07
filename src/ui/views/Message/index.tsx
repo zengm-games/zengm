@@ -1,5 +1,5 @@
 import OwnerMoodsChart from "./OwnerMoodsChart.tsx";
-import { SafeHtml } from "../../components/index.tsx";
+import { SafeHtml } from "../../components/SafeHtml.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/index.ts";
 import type { View } from "../../../common/types.ts";

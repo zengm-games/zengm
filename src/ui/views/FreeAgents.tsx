@@ -10,7 +10,7 @@ import {
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, useLocalPartial } from "../util/index.ts";
 import type { Phase, View } from "../../common/types.ts";
-import { dataTableWrappedMood } from "../components/Mood.tsx";
+import { wrappedMood } from "../components/Mood.tsx";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
@@ -249,7 +249,7 @@ const FreeAgents = ({
 				!challengeNoRatings ? p.ratings.pot : null,
 				...stats.map((stat) => helpers.roundStat(p.stats[stat], stat)),
 				p.freeAgentType === "available"
-					? dataTableWrappedMood({
+					? wrappedMood({
 							defaultType: "user",
 							maxWidth: true,
 							p,

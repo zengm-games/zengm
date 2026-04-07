@@ -3,7 +3,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
 import { PLAYER } from "../../common/index.ts";
-import { dataTableWrappedMood } from "../components/Mood.tsx";
+import { wrappedMood } from "../components/Mood.tsx";
 import { wrappedHeight } from "../components/Height.tsx";
 import { wrappedWeight } from "../components/Weight.tsx";
 import {
@@ -101,7 +101,7 @@ const PlayerBios = ({
 				p.age,
 				wrappedHeight(p.hgt),
 				wrappedWeight(p.weight),
-				dataTableWrappedMood({
+				wrappedMood({
 					defaultType:
 						p.tid === PLAYER.FREE_AGENT || p.tid === PLAYER.UNDRAFTED
 							? "user"

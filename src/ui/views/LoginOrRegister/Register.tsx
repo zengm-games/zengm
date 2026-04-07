@@ -2,8 +2,9 @@ import clsx from "clsx";
 import { type SubmitEvent, useRef, useState } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common/index.ts";
 import { localActions, realtimeUpdate, toWorker } from "../../util/index.ts";
-import { ActionButton, GameLinks } from "../../components/index.tsx";
+import { ActionButton } from "../../components/index.tsx";
 import { analyticsEvent } from "../../util/analyticsEvent.ts";
+import { GameLinks } from "../../components/GameLinks.tsx";
 
 export const fields = {
 	username: {

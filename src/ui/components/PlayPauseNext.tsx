@@ -17,7 +17,7 @@ export type FastForward = {
 	label: string;
 };
 
-const PlayPauseNext = ({
+export const PlayPauseNext = ({
 	className,
 	disabled,
 	fastForwardAlignRight,
@@ -158,5 +158,3 @@ const PlayPauseNext = ({
 		</div>
 	);
 };
-
-export default PlayPauseNext;

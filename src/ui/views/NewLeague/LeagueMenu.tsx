@@ -1,6 +1,6 @@
 import Bugsnag from "@bugsnag/browser";
 import { useEffect, useRef } from "react";
-import { NextPrevButtons } from "../../components/index.tsx";
+import { NextPrevButtons } from "../../components/NextPrevButtons.tsx";
 import { logEvent } from "../../util/index.ts";
 import type { LeagueInfo } from "./types.ts";
 import { choice } from "../../../common/random.ts";

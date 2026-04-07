@@ -13,11 +13,7 @@ import {
 	unwrapGameAttribute,
 	LEAGUE_DATABASE_VERSION,
 } from "../../../common/index.ts";
-import {
-	ActionButton,
-	LeagueFileUpload,
-	NextPrevButtons,
-} from "../../components/index.tsx";
+import { ActionButton, LeagueFileUpload } from "../../components/index.tsx";
 import type { LeagueFileUploadOutput } from "../../components/LeagueFileUpload.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
@@ -56,6 +52,7 @@ import type { NewLeagueSettings } from "../../../worker/views/newLeague.ts";
 import { analyticsEvent } from "../../util/analyticsEvent.ts";
 import { ProgressBarText } from "../../components/ProgressBarText.tsx";
 import { PopText } from "../../components/PopText.tsx";
+import { NextPrevButtons } from "../../components/NextPrevButtons.tsx";
 
 const animationVariants = {
 	visible: {

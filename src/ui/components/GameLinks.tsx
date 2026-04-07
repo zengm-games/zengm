@@ -1,6 +1,6 @@
 import { GAME_NAME } from "../../common/index.ts";
 
-const GameLinks = ({
+export const GameLinks = ({
 	noLinks,
 	thisGameText,
 }: {
@@ -47,5 +47,3 @@ const GameLinks = ({
 		</>
 	);
 };
-
-export default GameLinks;

@@ -3,7 +3,6 @@ import {
 	NegotiateButtons,
 	RosterComposition,
 	RosterSalarySummary,
-	SafeHtml,
 } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import {
@@ -14,10 +13,11 @@ import {
 	toWorker,
 } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
-import { dataTableWrappedMood } from "../components/Mood.tsx";
+import { wrappedMood } from "../components/Mood.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedCurrency } from "../components/wrappedCurrency.ts";
+import { SafeHtml } from "../components/SafeHtml.tsx";
 
 const NegotiationList = ({
 	capSpace,
@@ -102,7 +102,7 @@ const NegotiationList = ({
 					searchValue: p.latestTransaction,
 					sortValue: p.latestTransactionSeason,
 				},
-				dataTableWrappedMood({
+				wrappedMood({
 					defaultType: "user",
 					maxWidth: true,
 					p,

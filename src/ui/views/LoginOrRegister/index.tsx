@@ -1,4 +1,4 @@
-import { GameLinks } from "../../components/index.tsx";
+import { GameLinks } from "../../components/GameLinks.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import Login from "./Login.tsx";
 import Register from "./Register.tsx";

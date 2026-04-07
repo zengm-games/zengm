@@ -1,6 +1,6 @@
 import { sanitize } from "../util/sanitize.ts";
 
-const SafeHtml = ({
+export const SafeHtml = ({
 	dirty,
 	htmlIsSafe,
 }: {
@@ -17,5 +17,3 @@ const SafeHtml = ({
 		/>
 	);
 };
-
-export default SafeHtml;

@@ -1,4 +1,4 @@
-import { DataTable, SafeHtml } from "../../components/index.tsx";
+import { DataTable } from "../../components/index.tsx";
 import Injuries from "./Injuries.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { getCols, helpers } from "../../util/index.ts";
@@ -14,6 +14,7 @@ import { wrappedCurrency } from "../../components/wrappedCurrency.ts";
 import { groupAwards } from "../../util/groupAwards.ts";
 import { InjuryIcon } from "../../components/InjuryIcon.tsx";
 import { SkillsBlock } from "../../components/SkillsBlock.tsx";
+import { SafeHtml } from "../../components/SafeHtml.tsx";
 
 const Player2 = ({
 	bestPos,

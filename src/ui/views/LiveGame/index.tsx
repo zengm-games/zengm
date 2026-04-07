@@ -13,7 +13,6 @@ import {
 import {
 	BoxScoreRow,
 	BoxScoreWrapper,
-	PlayPauseNext,
 	TeamLogoInline,
 } from "../../components/index.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
@@ -27,7 +26,10 @@ import { processLiveGameEvents } from "../../util/processLiveGameEvents.ts";
 import { HeadlineScoreLive } from "../../components/BoxScoreWrapper.tsx";
 import { useIsStuck } from "../../hooks/useIsStuck.ts";
 import { useBlocker } from "../../hooks/useBlocker.ts";
-import type { FastForward } from "../../components/PlayPauseNext.tsx";
+import {
+	PlayPauseNext,
+	type FastForward,
+} from "../../components/PlayPauseNext.tsx";
 import { Confetti } from "./Confetti.tsx";
 
 type PlayerRowProps = {

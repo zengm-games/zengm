@@ -37,7 +37,7 @@ const style = {
 	minWidth: 41,
 };
 
-const ForceWin = ({
+export const ForceWin = ({
 	allowTie,
 	className,
 	game,
@@ -151,5 +151,3 @@ const ForceWin = ({
 
 	return <div className={className}>{form}</div>;
 };
-
-export default ForceWin;

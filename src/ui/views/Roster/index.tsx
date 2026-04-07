@@ -6,12 +6,7 @@ import {
 	PLAYER,
 	WEBSITE_ROOT,
 } from "../../../common/index.ts";
-import {
-	HelpPopover,
-	SafeHtml,
-	MoreLinks,
-	DataTable,
-} from "../../components/index.tsx";
+import { HelpPopover, MoreLinks, DataTable } from "../../components/index.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
 	confirm,
@@ -34,11 +29,12 @@ import type {
 	SortBy,
 } from "../../components/DataTable/index.tsx";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
-import { dataTableWrappedMood } from "../../components/Mood.tsx";
+import { wrappedMood } from "../../components/Mood.tsx";
 import { wrappedRatingWithChange } from "../../components/RatingWithChange.tsx";
 import type { BulkAction } from "../../components/DataTable/BulkActions.tsx";
 import { groupByUnique } from "../../../common/utils.ts";
 import { CountryFlag } from "../../components/CountryFlag.tsx";
+import { SafeHtml } from "../../components/SafeHtml.tsx";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],
@@ -335,7 +331,7 @@ const Roster = ({
 				...(editable ? [<PlayingTime p={p} userTid={userTid} />] : []),
 				...(showMood
 					? [
-							dataTableWrappedMood({
+							wrappedMood({
 								defaultType: "current",
 								maxWidth: true,
 								p,

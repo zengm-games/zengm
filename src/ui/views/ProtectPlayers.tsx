@@ -9,13 +9,14 @@ import {
 	useLocalPartial,
 } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
-import { SafeHtml, DataTable } from "../components/index.tsx";
+import { DataTable } from "../components/index.tsx";
 import { PHASE } from "../../common/index.ts";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../components/contract.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import { SafeHtml } from "../components/SafeHtml.tsx";
 
 const PlayerList = ({
 	challengeNoRatings,

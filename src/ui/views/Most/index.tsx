@@ -1,12 +1,13 @@
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { getCols, helpers } from "../../util/index.ts";
-import { DataTable, SafeHtml } from "../../components/index.tsx";
+import { DataTable } from "../../components/index.tsx";
 import type { View } from "../../../common/types.ts";
 import { frivolitiesMenu } from "../Frivolities.tsx";
 import GOATFormula from "./GOATFormula.tsx";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../../components/DataTable/index.tsx";
 import { wrappedCurrency } from "../../components/wrappedCurrency.ts";
+import { SafeHtml } from "../../components/SafeHtml.tsx";
 
 export const getValue = (
 	obj: any,

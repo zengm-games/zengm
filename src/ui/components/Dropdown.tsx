@@ -4,7 +4,7 @@ import useDropdownOptions, {
 	type ResponsiveOption,
 } from "../hooks/useDropdownOptions.tsx";
 import { helpers, realtimeUpdate } from "../util/index.ts";
-import NextPrevButtons from "./NextPrevButtons.tsx";
+import { NextPrevButtons } from "./NextPrevButtons.tsx";
 import type { LocalStateUI } from "../../common/types.ts";
 import { sanitize } from "../util/sanitize.ts";
 

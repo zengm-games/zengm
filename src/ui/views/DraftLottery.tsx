@@ -12,7 +12,6 @@ import {
 	DraftAbbrev,
 	HelpPopover,
 	MoreLinks,
-	PlayPauseNext,
 	ResponsiveTableWrapper,
 } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
@@ -33,6 +32,7 @@ import {
 	NO_LOTTERY_DRAFT_TYPES,
 } from "../../common/constants.ts";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
+import { PlayPauseNext } from "../components/PlayPauseNext.tsx";
 
 type MyDraftType = DraftType | "dummy";
 export const getDraftTypeDescription = (

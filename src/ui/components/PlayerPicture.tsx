@@ -6,7 +6,7 @@ const imgStyle = {
 	maxWidth: "100%",
 };
 
-const PlayerPicture = ({
+export const PlayerPicture = ({
 	colors,
 	face,
 	imgURL,
@@ -29,5 +29,3 @@ const PlayerPicture = ({
 
 	return null;
 };
-
-export default PlayerPicture;

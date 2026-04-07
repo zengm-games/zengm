@@ -4,8 +4,6 @@ import type { DunkAttempt, Player, View } from "../../common/types.ts";
 import {
 	Height,
 	PlayerNameLabels,
-	PlayerPicture,
-	PlayPauseNext,
 	ResponsiveTableWrapper,
 	Weight,
 } from "../components/index.tsx";
@@ -21,6 +19,8 @@ import {
 import clsx from "clsx";
 import { getHeightString } from "../components/Height.tsx";
 import { range } from "../../common/utils.ts";
+import { PlayerPicture } from "../components/PlayerPicture.tsx";
+import { PlayPauseNext } from "../components/PlayPauseNext.tsx";
 
 export const EditContestants = ({
 	allPossibleContestants,

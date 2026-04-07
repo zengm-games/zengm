@@ -1,7 +1,7 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers, toWorker } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
-import { PlayPauseNext } from "../components/index.tsx";
+import { PlayPauseNext } from "../components/PlayPauseNext.tsx";
 import { useEffect, useState } from "react";
 import { isSport } from "../../common/index.ts";
 import {

@@ -11,7 +11,6 @@ import {
 	ActionButton,
 	DataTable,
 	HelpPopover,
-	SafeHtml,
 	SaveTrade,
 } from "../../components/index.tsx";
 import type { Col } from "../../components/DataTable/index.tsx";
@@ -32,6 +31,7 @@ import { Dropdown, SplitButton } from "react-bootstrap";
 import type { FooterRow } from "../../components/DataTable/Footer.tsx";
 import { wrappedCurrency } from "../../components/wrappedCurrency.ts";
 import { orderBy } from "../../../common/utils.ts";
+import { SafeHtml } from "../../components/SafeHtml.tsx";
 
 export type OfferType = Awaited<
 	ReturnType<(typeof api)["main"]["getTradingBlockOffers"]>

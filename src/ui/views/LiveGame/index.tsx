@@ -12,7 +12,8 @@ import {
 } from "react";
 import { TeamLogoInline } from "../../components/TeamLogoInline.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { helpers, toWorker } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import type { View } from "../../../common/types.ts";
 import { bySport, getPeriodName, isSport } from "../../../common/index.ts";
 import useLocalStorageState from "use-local-storage-state";

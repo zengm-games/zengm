@@ -13,7 +13,7 @@ import {
 	WEBSITE_ROOT,
 } from "../../common/index.ts";
 import type { BasicInfo } from "../../worker/api/leagueFileUpload.ts";
-import { toWorker } from "../util/index.ts";
+import { toWorker } from "../util/toWorker.ts";
 import simpleGameAttributesUpgrade from "../../common/simpleGameAttributesUpgrade.ts";
 import { resetFileInput } from "../util/resetFileInput.ts";
 import { localActions, useLocalPartial } from "../util/local.ts";

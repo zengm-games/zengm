@@ -1,7 +1,7 @@
 import { PlayerPicture } from "./PlayerPicture.tsx";
 import { SafeHtml } from "./SafeHtml.tsx";
 import clsx from "clsx";
-import { helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
 import type { View, LogEventType } from "../../common/types.ts";
 import { categories, types } from "../../common/transactionInfo.ts";
 

@@ -6,7 +6,7 @@ import {
 	TWITTER_HANDLE,
 	isSport,
 } from "../../common/index.ts";
-import logEvent from "./logEvent.ts";
+import { logEvent } from "./logEvent.ts";
 
 const takeScreenshotChunk = async () => {
 	const theme = window.getTheme();

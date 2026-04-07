@@ -20,7 +20,7 @@ import PerPage from "./PerPage.tsx";
 import getSearchVal from "./getSearchVal.tsx";
 import getSortVal from "./getSortVal.tsx";
 import { ResponsiveTableWrapper } from "../ResponsiveTableWrapper.tsx";
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 import type { SortOrder, SortType } from "../../../common/types.ts";
 import { arrayMove } from "@dnd-kit/sortable";
 import updateSortBys from "./updateSortBys.ts";

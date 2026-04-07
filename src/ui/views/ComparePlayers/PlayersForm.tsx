@@ -3,7 +3,7 @@ import type { View } from "../../../common/types.ts";
 import { range } from "../../../common/utils.ts";
 import SelectMultiple from "../../components/SelectMultiple/index.tsx";
 import { ActionButton } from "../../components/ActionButton.tsx";
-import { toWorker } from "../../util/index.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import {
 	formatName,
 	type PlayerInfoForName,

@@ -6,7 +6,7 @@ import {
 	REAL_PLAYERS_INFO,
 } from "../../common/index.ts";
 import type { DraftType, PlayerStatType } from "../../common/types.ts";
-import { helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
 import { useLocalPartial } from "../util/local.ts";
 
 export const MoreLinks = (

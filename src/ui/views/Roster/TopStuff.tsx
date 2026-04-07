@@ -1,7 +1,8 @@
 import { useState, type CSSProperties } from "react";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import { RecordAndPlayoffs } from "../../components/RecordAndPlayoffs.tsx";
-import { helpers, toWorker } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import InstructionsAndSortButtons from "./InstructionsAndSortButtons.tsx";
 import PlayThroughInjurySliders from "./PlayThroughInjuriesSliders.tsx";
 import type { View } from "../../../common/types.ts";

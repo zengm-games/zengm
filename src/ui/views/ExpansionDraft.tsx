@@ -5,7 +5,9 @@ import {
 	type MouseEvent,
 } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, toWorker, logEvent } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { logEvent } from "../util/logEvent.ts";
+import { toWorker } from "../util/toWorker.ts";
 import type { View, ExpansionDraftSetupTeam } from "../../common/types.ts";
 import {
 	DEFAULT_JERSEY,

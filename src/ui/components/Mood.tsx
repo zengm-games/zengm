@@ -6,7 +6,7 @@ import type {
 	MoodComponents,
 	MoodTrait,
 } from "../../common/types.ts";
-import { helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
 import { ResponsivePopover } from "./ResponsivePopover.tsx";
 import { useLocalPartial } from "../util/local.ts";
 

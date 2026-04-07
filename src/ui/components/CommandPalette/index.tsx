@@ -17,7 +17,9 @@ import type {
 	MenuItemLink,
 	MenuItemText,
 } from "../../../common/types.ts";
-import { helpers, logEvent, toWorker } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import { getText, makeAnchorProps } from "../Controller/SideBar.tsx";
 import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import { Modal } from "../Modal.tsx";

@@ -1,6 +1,8 @@
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { helpers, logEvent, toWorker } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import RealData from "./RealData.tsx";
 import Storage from "./Storage.tsx";
 import type { View } from "../../../common/types.ts";

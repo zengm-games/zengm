@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
 import useClickable from "../hooks/useClickable.tsx";
 import type { View, Game } from "../../common/types.ts";
 import { bySport, isSport } from "../../common/index.ts";

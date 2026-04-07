@@ -8,7 +8,8 @@ import {
 	TIEBREAKERS,
 	WEBSITE_ROOT,
 } from "../../../common/index.ts";
-import { toWorker, helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import type { ChangeEvent, CSSProperties, ReactNode } from "react";
 import type { Category, Decoration, FieldType, Key, Values } from "./types.ts";
 import type { Settings } from "../../../worker/views/settings.ts";

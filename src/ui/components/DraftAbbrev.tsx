@@ -1,5 +1,5 @@
 import type { LocalStateUI } from "../../common/types.ts";
-import { helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
 import { useLocal } from "../util/local.ts";
 import { TeamLogoInline } from "./TeamLogoInline.tsx";
 

@@ -7,7 +7,8 @@ import {
 	type CSSProperties,
 } from "react";
 import { isSport, PHASE, STARTING_NUM_TIMEOUTS } from "../../common/index.ts";
-import { helpers, toWorker } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { BoxScore } from "./BoxScore.tsx";
 import { range } from "../../common/utils.ts";

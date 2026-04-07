@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { helpers, logEvent, toWorker } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import { useLocalPartial } from "../../util/local.ts";
 import { DataTable } from "../../components/DataTable/index.tsx";
 import type { View } from "../../../common/types.ts";

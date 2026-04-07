@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import {
 	categories,

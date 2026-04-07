@@ -6,7 +6,7 @@ import {
 	useMemo,
 } from "react";
 import { ResponsiveTableWrapper } from "./ResponsiveTableWrapper.tsx";
-import { helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import { filterPlayerStats, getPeriodName } from "../../common/index.ts";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.hockey/PlayByPlayLogger.ts";

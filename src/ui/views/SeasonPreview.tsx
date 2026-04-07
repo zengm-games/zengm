@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
 import type { View } from "../../common/types.ts";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import { arrow } from "./Trade/Summary.tsx";

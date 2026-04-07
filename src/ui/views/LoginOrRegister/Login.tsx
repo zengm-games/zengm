@@ -5,7 +5,7 @@ import {
 	GRACE_PERIOD,
 } from "../../../common/index.ts";
 import { ActionButton } from "../../components/ActionButton.tsx";
-import { toWorker } from "../../util/index.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { localActions } from "../../util/local.ts";
 import { analyticsEvent } from "../../util/analyticsEvent.ts";

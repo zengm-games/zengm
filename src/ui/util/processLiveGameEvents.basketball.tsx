@@ -1,6 +1,6 @@
 import { getPeriodName } from "../../common/index.ts";
 import { choice } from "../../common/random.ts";
-import { helpers } from "./index.ts";
+import { helpers } from "./helpers.ts";
 import { local } from "./local.ts";
 import type { PlayByPlayEventOutput } from "../../worker/core/GameSim.basketball/PlayByPlayLogger.ts";
 import type { ReactNode } from "react";

@@ -1,6 +1,6 @@
 import type { MouseEvent } from "react";
 import type { Col, SortBy } from "./index.tsx";
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 
 const updateSortBys = ({
 	cols,

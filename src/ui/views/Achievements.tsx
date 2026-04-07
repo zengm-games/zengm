@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { Fragment, useEffect } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import { useLocal } from "../util/local.ts";
 import type { View } from "../../common/types.ts";

@@ -3,7 +3,8 @@ import { groupByUnique } from "../../../common/utils.ts";
 import type { GameAttributesLeague } from "../../../common/types.ts";
 import { ActionButton } from "../../components/ActionButton.tsx";
 import SelectMultiple from "../../components/SelectMultiple/index.tsx";
-import { helpers, toWorker } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import { RatingsStatsPopover } from "../../components/RatingsStatsPopover/index.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 

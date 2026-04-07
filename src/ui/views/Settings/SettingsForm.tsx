@@ -1,7 +1,9 @@
 import clsx from "clsx";
 import { useState, type SubmitEvent, useEffect } from "react";
 import { ActionButton } from "../../components/ActionButton.tsx";
-import { logEvent, helpers, toWorker } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import { localActions } from "../../util/local.ts";
 import { settings } from "./settings.tsx";
 import type { Key, Values } from "./types.ts";

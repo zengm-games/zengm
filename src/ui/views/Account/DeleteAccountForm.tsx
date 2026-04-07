@@ -6,7 +6,7 @@ import {
 	fetchWrapper,
 	GAME_NAME,
 } from "../../../common/index.ts";
-import { toWorker } from "../../util/index.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { ajaxErrorMsg } from "../LoginOrRegister/index.tsx";
 

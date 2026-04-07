@@ -3,7 +3,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import router, { type Context, makeRegex } from "../router/index.ts";
 import { local, localActions } from "./local.ts";
 import { realtimeUpdate } from "./realtimeUpdate.ts";
-import toWorker from "./toWorker.ts";
+import { toWorker } from "./toWorker.ts";
 import { create } from "zustand";
 import { routeInfos } from "./routeInfos.ts";
 

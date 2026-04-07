@@ -7,7 +7,7 @@ import {
 	useMemo,
 } from "react";
 import { ResponsiveTableWrapper } from "./ResponsiveTableWrapper.tsx";
-import { helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import { filterPlayerStats } from "../../common/index.ts";
 import { PLAYER_GAME_STATS } from "../../common/constants.baseball.ts";

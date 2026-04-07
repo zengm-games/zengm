@@ -11,7 +11,8 @@ import {
 } from "../../common/index.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { logEvent, toWorker } from "../util/index.ts";
+import { logEvent } from "../util/logEvent.ts";
+import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
 import { choice } from "../../common/random.ts";

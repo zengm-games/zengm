@@ -1,7 +1,8 @@
 import { Fragment, useState } from "react";
 import type { ReactNode } from "react";
 import { WatchBlock } from "../../components/WatchBlock.tsx";
-import { helpers, toWorker } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import type {
 	GameAttributesLeague,
 	Phase,

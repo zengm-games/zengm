@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { View } from "../../../common/types.ts";
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { isSport } from "../../../common/index.ts";
 import { highlightLeaderText, MaybeBold, SeasonLink } from "./common.tsx";

@@ -7,7 +7,7 @@ import {
 	useState,
 	type MouseEvent,
 } from "react";
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 import { localActions, useLocalPartial } from "../../util/local.ts";
 import type {
 	MenuItemLink,

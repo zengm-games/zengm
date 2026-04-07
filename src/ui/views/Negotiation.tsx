@@ -1,7 +1,9 @@
 import clsx from "clsx";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, logEvent, toWorker } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { logEvent } from "../util/logEvent.ts";
+import { toWorker } from "../util/toWorker.ts";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { useLocalPartial } from "../util/local.ts";
 import type { View } from "../../common/types.ts";

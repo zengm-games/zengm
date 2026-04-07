@@ -1,14 +1,14 @@
 import { createLogger } from "../../common/index.ts";
-import { toWorker } from "./index.ts";
 import { local } from "./local.ts";
 import type { LogEventShowOptions } from "../../common/types.ts";
 import { notify } from "./notify.ts";
+import { toWorker } from "./toWorker.ts";
 
 const saveEvent = () => {
 	throw new Error("UI events should not be saved to DB");
 };
 
-const showEvent = ({
+export const showEvent = ({
 	extraClass,
 	hideInLiveGame,
 	htmlIsSafe,
@@ -71,6 +71,4 @@ const showEvent = ({
 	}
 };
 
-const logEvent = createLogger(saveEvent, showEvent);
-
-export { logEvent as default, showEvent };
+export const logEvent = createLogger(saveEvent, showEvent);

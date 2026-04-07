@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { type CSSProperties, Fragment } from "react";
 import { TeamLogoInline } from "../components/TeamLogoInline.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
 import useClickable from "../hooks/useClickable.tsx";
 import type { ByConf, TeamSeason, View } from "../../common/types.ts";
 import { bySport, isSport, TIEBREAKERS } from "../../common/index.ts";

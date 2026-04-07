@@ -1,4 +1,4 @@
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 import type { View } from "../../../common/types.ts";
 import { bySport } from "../../../common/index.ts";
 import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";

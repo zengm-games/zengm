@@ -9,7 +9,7 @@ import { HelpPopover } from "../../components/HelpPopover.tsx";
 import type { View } from "../../../common/types.ts";
 import { Fragment, type MouseEvent } from "react";
 import { TooltipWithBounds, useTooltip } from "@visx/tooltip";
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 import { localPoint } from "@visx/event";
 
 export const ReferenceLine = ({

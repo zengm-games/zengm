@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import helpers from "./helpers.ts";
+import { helpers } from "./helpers.ts";
 import { TIME_BETWEEN_GAMES } from "../../common/constants.ts";
 import { useLocal } from "./local.ts";
 

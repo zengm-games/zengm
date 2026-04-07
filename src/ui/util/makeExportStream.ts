@@ -9,7 +9,7 @@ import {
 	gameAttributesKeysOtherSports,
 } from "../../common/defaultGameAttributes.ts";
 import { local } from "./local.ts";
-import toWorker from "./toWorker.ts";
+import { toWorker } from "./toWorker.ts";
 import type {
 	LeagueDB,
 	LeagueDBStoreNames,

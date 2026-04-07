@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { PHASE } from "../../../common/index.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { helpers, toWorker } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import { useLocal } from "../../util/local.ts";
 import AssetList from "./AssetList.tsx";
 import Buttons from "./Buttons.tsx";

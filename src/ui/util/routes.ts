@@ -1,4 +1,4 @@
-import helpers from "./helpers.ts";
+import { helpers } from "./helpers.ts";
 import { initView } from "./initView.ts";
 import * as views from "../views/index.ts";
 import { routeInfos } from "./routeInfos.ts";

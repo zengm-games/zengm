@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { type SubmitEvent, useRef, useState } from "react";
 import { ACCOUNT_API_URL, fetchWrapper } from "../../../common/index.ts";
-import { toWorker } from "../../util/index.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { localActions } from "../../util/local.ts";
 import { ActionButton } from "../../components/ActionButton.tsx";

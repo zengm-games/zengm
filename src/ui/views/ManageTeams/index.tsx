@@ -1,6 +1,8 @@
 import { Fragment, useCallback, useReducer, type SubmitEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { helpers, logEvent, toWorker } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import AddRemove from "./AddRemove.tsx";
 import type { Phase, View } from "../../../common/types.ts";
 import { PHASE } from "../../../common/index.ts";

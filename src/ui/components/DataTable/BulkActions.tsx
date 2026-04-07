@@ -1,6 +1,8 @@
 import { Dropdown } from "react-bootstrap";
 import { Flag } from "../WatchBlock.tsx";
-import { helpers, logEvent, toWorker } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import { useLocalPartial } from "../../util/local.ts";
 import {
 	useCallback,

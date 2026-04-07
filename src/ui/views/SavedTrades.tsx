@@ -2,7 +2,8 @@ import { PHASE } from "../../common/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { SummaryTeam } from "./Trade/Summary.tsx";
-import { helpers, toWorker } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
 import { useLocalPartial } from "../util/local.ts";
 import {
 	Offer,

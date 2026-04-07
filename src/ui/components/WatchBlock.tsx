@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { memo, useEffect, useState, type SyntheticEvent } from "react";
-import { toWorker } from "../util/index.ts";
+import { toWorker } from "../util/toWorker.ts";
 import { crossTabEmitter } from "../util/crossTabEmitter.ts";
 import { useLocalPartial } from "../util/local.ts";
 

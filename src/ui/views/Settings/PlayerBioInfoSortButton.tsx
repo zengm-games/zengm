@@ -1,5 +1,5 @@
 import { Dropdown } from "react-bootstrap";
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 import type { PLAYER_BIO_INFO_SORT_DEFAULT } from "./PlayerBioInfo.tsx";
 import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
 

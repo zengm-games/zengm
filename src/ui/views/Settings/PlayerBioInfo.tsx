@@ -3,7 +3,9 @@ import type {
 	GameAttributesLeague,
 	PlayerBioInfo,
 } from "../../../common/types.ts";
-import { helpers, logEvent, toWorker } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import { godModeRequiredMessage } from "./SettingsFormOptions.tsx";
 import type { initDefaults } from "../../../worker/util/loadNames.ts";
 import { getFrequencies, mergeCountries } from "../../../common/names.ts";

@@ -583,7 +583,7 @@ const formatCurrency = (
 	);
 };
 
-const helpers = {
+export const helpers = {
 	...commonHelpers,
 	formatCurrency,
 	formatNumber,
@@ -592,5 +592,3 @@ const helpers = {
 	roundStat,
 	yearRanges,
 };
-
-export default helpers;

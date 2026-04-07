@@ -1,7 +1,9 @@
 import { PHASE, WEBSITE_ROOT } from "../../../common/index.ts";
 import type { View } from "../../../common/types.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { helpers, logEvent, toWorker } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import AutoSave from "./AutoSave.tsx";
 import WorkerConsole from "./WorkerConsole.tsx";
 

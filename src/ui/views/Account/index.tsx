@@ -7,7 +7,7 @@ import {
 	GAME_NAME,
 } from "../../../common/index.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { toWorker } from "../../util/index.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import type { View } from "../../../common/types.ts";
 import { GameLinks } from "../../components/GameLinks.tsx";

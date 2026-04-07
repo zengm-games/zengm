@@ -4,7 +4,7 @@ import {
 } from "../../../common/index.ts";
 import { confirm } from "../../util/confirm.tsx";
 import { downloadFile } from "../../util/downloadFile.ts";
-import { toWorker } from "../../util/index.ts";
+import { toWorker } from "../../util/toWorker.ts";
 
 const ExportButton = ({ dirty }: { dirty?: boolean }) => (
 	<button

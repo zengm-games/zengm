@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import type { ByConf, View } from "../../common/types.ts";
-import { helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
 import type { ReactNode } from "react";
 
 type SeriesTeam = {

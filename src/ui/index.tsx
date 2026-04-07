@@ -5,7 +5,6 @@ import { createRoot } from "react-dom/client";
 import api from "./api/index.ts";
 import { Controller } from "./components/Controller/index.tsx";
 import router from "./router/index.ts";
-import * as util from "./util/index.ts";
 import type { Env } from "../common/types.ts";
 import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common/index.ts";
 import Bugsnag from "@bugsnag/browser";
@@ -19,8 +18,9 @@ import { promiseWorker } from "./util/promiseWorker.ts";
 import { routes } from "./util/routes.ts";
 import { unregisterServiceWorkers } from "./util/unregisterServiceWorkers.ts";
 import { safeLocalStorage } from "./util/safeLocalStorage.ts";
-window.bbgm = { api, ...util };
-const { logEvent, toWorker } = util;
+import { logEvent } from "./util/logEvent.ts";
+import { toWorker } from "./util/toWorker.ts";
+window.bbgm = { api, logEvent, toWorker };
 
 const handleVersion = async () => {
 	window.addEventListener("storage", (e) => {

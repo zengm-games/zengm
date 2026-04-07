@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
-import { helpers, toWorker } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import clsx from "clsx";
 import {
 	type Defaults,

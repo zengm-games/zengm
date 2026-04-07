@@ -1,6 +1,7 @@
 import { RatingsStatsPopover } from "./RatingsStatsPopover/index.tsx";
 import { SkillsBlock } from "./SkillsBlock.tsx";
-import { helpers, toWorker } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
 import type { Player, PlayerInjury } from "../../common/types.ts";
 import { InjuryIcon } from "./InjuryIcon.tsx";
 import { SeasonIcons } from "./SeasonIcons.tsx";

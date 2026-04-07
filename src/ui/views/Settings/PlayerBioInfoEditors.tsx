@@ -1,6 +1,7 @@
 import { type ChangeEvent, useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
-import { helpers, logEvent } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
 import clsx from "clsx";
 import { isInvalidNumber, type PlayerBioInfoState } from "./PlayerBioInfo.tsx";
 import {

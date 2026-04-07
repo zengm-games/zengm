@@ -1,7 +1,7 @@
 import { DataTable } from "../../components/DataTable/index.tsx";
 import Injuries from "./Injuries.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 import { getCols } from "../../../common/getCols.ts";
 import type { View } from "../../../common/types.ts";
 import { SeasonIcons } from "../../components/SeasonIcons.tsx";

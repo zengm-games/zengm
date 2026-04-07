@@ -1,7 +1,9 @@
 import { type SubmitEvent, useState, useEffect } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
-import { logEvent, toWorker, helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { logEvent } from "../util/logEvent.ts";
+import { toWorker } from "../util/toWorker.ts";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import SelectMultiple from "../components/SelectMultiple/index.tsx";
 import {

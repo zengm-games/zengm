@@ -9,7 +9,7 @@ import {
 } from "../../../common/geographicCoordinates.ts";
 import Select from "react-select";
 import { ActionButton } from "../../components/ActionButton.tsx";
-import logEvent from "../../util/logEvent.ts";
+import { logEvent } from "../../util/logEvent.ts";
 
 export type PopulationFactor =
 	| "random"

@@ -1,4 +1,4 @@
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 import type { RatingKey } from "../../../common/types.basketball.ts";
 import { gradientStyleFactory } from "../../util/gradientStyleFactory.ts";
 

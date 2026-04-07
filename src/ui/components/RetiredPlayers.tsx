@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { isSport } from "../../common/index.ts";
-import { helpers, toWorker } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
 import { ActionButton } from "./ActionButton.tsx";
 import { downloadFile } from "../util/downloadFile.ts";
 

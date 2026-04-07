@@ -18,7 +18,9 @@ import {
 } from "../../../common/index.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { helpers, toWorker, logEvent } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import RatingsForm from "./RatingsForm.tsx";
 import RelativesForm from "./RelativesForm.tsx";
 import type { View, Phase, PlayerWithoutKey } from "../../../common/types.ts";

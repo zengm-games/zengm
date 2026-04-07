@@ -13,7 +13,7 @@ import {
 	type State,
 } from "./SettingsForm.tsx";
 import type { Decoration, FieldType, Key, Values } from "./types.ts";
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 import { CurrencyInputGroup } from "../../components/CurrencyInputGroup.tsx";
 
 export const godModeRequiredMessage = (

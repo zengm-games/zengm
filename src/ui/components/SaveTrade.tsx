@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { memo, useState, type SyntheticEvent, useLayoutEffect } from "react";
-import { toWorker } from "../util/index.ts";
+import { toWorker } from "../util/toWorker.ts";
 import { hashSavedTrade } from "../../common/hashSavedTrade.ts";
 
 export const SaveTrade = memo(

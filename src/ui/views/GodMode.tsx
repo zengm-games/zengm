@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, toWorker } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
 import type { View } from "../../common/types.ts";
 import { DAILY_SCHEDULE } from "../../common/index.ts";
 

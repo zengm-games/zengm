@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { DataTable } from "../../components/DataTable/index.tsx";
-import { helpers, toWorker } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
 import type { View } from "../../../common/types.ts";
 import { WEBSITE_ROOT } from "../../../common/index.ts";

@@ -1,4 +1,4 @@
-import { helpers } from "../../../ui/util/index.ts";
+import { helpers } from "../../../ui/util/helpers.ts";
 import type { ActualProps } from "./index.tsx";
 import { AWARD_NAMES } from "../../../common/index.ts";
 

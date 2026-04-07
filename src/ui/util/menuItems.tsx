@@ -1,4 +1,4 @@
-import { toWorker } from "./index.ts";
+import { toWorker } from "./toWorker.ts";
 import {
 	bySport,
 	DAILY_SCHEDULE,

@@ -1,5 +1,5 @@
 import { getPeriodName } from "../../common/index.ts";
-import { helpers } from "./index.ts";
+import { helpers } from "./helpers.ts";
 import { local } from "./local.ts";
 import type {
 	PlayByPlayEventInput,

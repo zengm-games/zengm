@@ -1,5 +1,5 @@
 import { assert, describe, test } from "vitest";
-import helpers from "./helpers.ts";
+import { helpers } from "./helpers.ts";
 
 describe("numberWithCommas", () => {
 	test("work", () => {

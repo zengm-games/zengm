@@ -1,4 +1,4 @@
-import { toWorker } from "../../util/index.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import { resetFileInput } from "../../util/resetFileInput.ts";
 import { IMPORT_FILE_STYLE } from "../Settings/RowsEditor.tsx";
 

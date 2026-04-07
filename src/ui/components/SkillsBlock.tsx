@@ -1,6 +1,6 @@
 import { useId } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { useLocal } from "../util/index.ts";
+import { useLocal } from "../util/local.ts";
 import { SKILLS } from "../../common/index.ts";
 
 const TruncatedSkills = ({

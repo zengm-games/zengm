@@ -1,6 +1,7 @@
 import { Nav, Navbar } from "react-bootstrap";
 import { PHASE } from "../../../common/index.ts";
-import { helpers, localActions, useLocalPartial } from "../../util/index.ts";
+import { helpers } from "../../util/index.ts";
+import { localActions, useLocalPartial } from "../../util/local.ts";
 import { useViewData } from "../../util/viewManager.tsx";
 import DropdownLinks from "../DropdownLinks.tsx";
 import LogoAndText from "../LogoAndText.tsx";

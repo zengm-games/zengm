@@ -1,4 +1,4 @@
-import { local, useLocal } from "../util/index.ts";
+import { local, useLocal } from "../util/local.ts";
 
 const getWeightString = (pounds: number, units: "metric" | "us") => {
 	if (typeof pounds !== "number") {

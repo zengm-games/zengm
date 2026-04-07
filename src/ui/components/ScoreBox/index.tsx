@@ -5,7 +5,8 @@ import {
 	isSport,
 	PHASE,
 } from "../../../common/index.ts";
-import { helpers, useLocalPartial } from "../../util/index.ts";
+import { helpers } from "../../util/index.ts";
+import { useLocalPartial } from "../../util/local.ts";
 import React, { memo, type ReactNode } from "react";
 import { TeamLogoInline } from "../TeamLogoInline.tsx";
 import defaultGameAttributes from "../../../common/defaultGameAttributes.ts";

@@ -6,8 +6,9 @@ import type {
 	MoodComponents,
 	MoodTrait,
 } from "../../common/types.ts";
-import { helpers, useLocalPartial } from "../util/index.ts"; // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
+import { helpers } from "../util/index.ts";
 import { ResponsivePopover } from "./ResponsivePopover.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
 const componentText = (
 	component: keyof MoodComponents,

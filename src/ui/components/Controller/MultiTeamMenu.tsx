@@ -1,7 +1,8 @@
 import type { ChangeEvent } from "react";
-import { realtimeUpdate, toWorker, useLocalPartial } from "../../util/index.ts";
+import { realtimeUpdate, toWorker } from "../../util/index.ts";
 import { MOBILE_AD_BOTTOM_MARGIN } from "../../../common/index.ts";
 import { orderBy } from "../../../common/utils.ts";
+import { useLocalPartial } from "../../util/local.ts";
 
 const setUserTid = async (userTid: number) => {
 	await toWorker("main", "updateGameAttributes", {

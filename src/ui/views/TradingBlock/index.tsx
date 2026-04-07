@@ -1,12 +1,8 @@
 import { useState, type ReactNode } from "react";
 import { PHASE } from "../../../common/index.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import {
-	getCols,
-	helpers,
-	toWorker,
-	useLocalPartial,
-} from "../../util/index.ts";
+import { getCols, helpers, toWorker } from "../../util/index.ts";
+import { useLocalPartial } from "../../util/local.ts";
 import { DataTable } from "../../components/DataTable/index.tsx";
 import type { Col } from "../../components/DataTable/index.tsx";
 import type { View } from "../../../common/types.ts";

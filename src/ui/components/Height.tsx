@@ -1,4 +1,4 @@
-import { local, useLocal } from "../util/index.ts";
+import { local, useLocal } from "../util/local.ts";
 
 export const getHeightString = (inches: number, units: "metric" | "us") => {
 	if (units === "metric") {

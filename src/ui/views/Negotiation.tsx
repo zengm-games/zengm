@@ -1,13 +1,8 @@
 import clsx from "clsx";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import {
-	helpers,
-	logEvent,
-	realtimeUpdate,
-	toWorker,
-	useLocalPartial,
-} from "../util/index.ts";
+import { helpers, logEvent, realtimeUpdate, toWorker } from "../util/index.ts";
+import { useLocalPartial } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
 import { HelpPopover } from "../components/HelpPopover.tsx";
 import { isSport, PHASE } from "../../common/index.ts";

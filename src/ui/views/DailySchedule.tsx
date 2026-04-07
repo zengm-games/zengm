@@ -1,7 +1,8 @@
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
-import { toWorker, useLocalPartial } from "../util/index.ts";
+import { toWorker } from "../util/index.ts";
+import { useLocalPartial } from "../util/local.ts";
 import { DAILY_SCHEDULE } from "../../common/index.ts";
 import { NoGamesMessage } from "./GameLog.tsx";
 import allowForceTie from "../../common/allowForceTie.ts";

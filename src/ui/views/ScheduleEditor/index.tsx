@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import {
-	helpers,
-	logEvent,
-	toWorker,
-	useLocalPartial,
-} from "../../util/index.ts";
+import { helpers, logEvent, toWorker } from "../../util/index.ts";
+import { useLocalPartial } from "../../util/local.ts";
 import { DataTable } from "../../components/DataTable/index.tsx";
 import type { View } from "../../../common/types.ts";
 import { PHASE, TIME_BETWEEN_GAMES } from "../../../common/constants.ts";

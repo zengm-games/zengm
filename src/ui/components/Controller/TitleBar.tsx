@@ -1,6 +1,7 @@
 import Dropdown from "../Dropdown.tsx";
 import DropdownLinks from "../DropdownLinks.tsx";
-import { helpers, useLocalPartial } from "../../util/index.ts";
+import { helpers } from "../../util/index.ts";
+import { useLocalPartial } from "../../util/local.ts";
 import type { MenuItemHeader } from "../../../common/types.ts";
 import { useCallback } from "react";
 

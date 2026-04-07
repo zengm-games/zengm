@@ -24,8 +24,8 @@ import {
 	logEvent,
 	realtimeUpdate,
 	toWorker,
-	useLocalPartial,
 } from "../../util/index.ts";
+import { useLocalPartial } from "../../util/local.ts";
 import type {
 	View,
 	RealTeamInfo,

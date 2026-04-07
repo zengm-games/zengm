@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import type { PlayerContract } from "../../common/types.ts";
-import { helpers, useLocal, useLocalPartial } from "../util/index.ts";
+import { helpers } from "../util/index.ts";
+import { useLocal, useLocalPartial } from "../util/local.ts";
 
 type ContractPlayer = {
 	draft: {

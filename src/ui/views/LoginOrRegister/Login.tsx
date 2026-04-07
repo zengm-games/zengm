@@ -5,7 +5,8 @@ import {
 	GRACE_PERIOD,
 } from "../../../common/index.ts";
 import { ActionButton } from "../../components/ActionButton.tsx";
-import { localActions, realtimeUpdate, toWorker } from "../../util/index.ts";
+import { realtimeUpdate, toWorker } from "../../util/index.ts";
+import { localActions } from "../../util/local.ts";
 import { analyticsEvent } from "../../util/analyticsEvent.ts";
 
 const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {

@@ -1,7 +1,8 @@
 import clsx from "clsx";
 import { Fragment, useEffect } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers, useLocal } from "../util/index.ts";
+import { getCols, helpers } from "../util/index.ts";
+import { useLocal } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
 import { GAME_ACRONYM, GAME_NAME } from "../../common/index.ts";
 import { DataTable } from "../components/DataTable/index.tsx";

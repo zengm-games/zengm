@@ -4,7 +4,8 @@ import { timeBetweenGames } from "../../../common/index.ts";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import CollapseArrow from "../../components/CollapseArrow.tsx";
-import { helpers, toWorker, useLocalPartial } from "../../util/index.ts";
+import { helpers, toWorker } from "../../util/index.ts";
+import { useLocalPartial } from "../../util/local.ts";
 
 const Slider = ({
 	className,

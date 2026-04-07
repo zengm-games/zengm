@@ -1,11 +1,12 @@
 import { RatingsStatsPopover } from "./RatingsStatsPopover/index.tsx";
 import { SkillsBlock } from "./SkillsBlock.tsx";
-import { helpers, toWorker, useLocalPartial } from "../util/index.ts";
+import { helpers, toWorker } from "../util/index.ts";
 import type { Player, PlayerInjury } from "../../common/types.ts";
 import { InjuryIcon } from "./InjuryIcon.tsx";
 import { SeasonIcons } from "./SeasonIcons.tsx";
 import { CountryFlag } from "./CountryFlag.tsx";
 import { useEffect, useState } from "react";
+import { useLocalPartial } from "../util/local.ts";
 
 type Props = {
 	awards?: Player["awards"];

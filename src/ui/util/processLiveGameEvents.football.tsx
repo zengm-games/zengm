@@ -1,6 +1,7 @@
 import { getPeriodName } from "../../common/index.ts";
 import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.football.ts";
-import { helpers, local } from "./index.ts";
+import { helpers } from "./index.ts";
+import { local } from "./local.ts";
 import type {
 	PlayByPlayEventOutput,
 	PlayByPlayEventScore,

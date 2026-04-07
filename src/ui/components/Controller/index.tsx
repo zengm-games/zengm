@@ -1,6 +1,6 @@
 import { LazyMotion } from "framer-motion";
 import { memo, useCallback, useEffect } from "react";
-import { localActions, useLocalPartial } from "../../util/index.ts";
+import { localActions, useLocalPartial } from "../../util/local.ts";
 import { CommandPalette } from "../CommandPalette/index.tsx";
 import { Footer } from "./Footer.tsx";
 import { Header } from "./Header.tsx";

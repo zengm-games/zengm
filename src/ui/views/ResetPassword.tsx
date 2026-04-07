@@ -6,7 +6,8 @@ import {
 	fetchWrapper,
 } from "../../common/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { localActions, realtimeUpdate } from "../util/index.ts";
+import { realtimeUpdate } from "../util/index.ts";
+import { localActions } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
 import { ajaxErrorMsg } from "./LoginOrRegister/index.tsx";
 

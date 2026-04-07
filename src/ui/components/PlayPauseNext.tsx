@@ -6,7 +6,7 @@ import {
 	useKeyboardShortcuts,
 	type KeyboardShortcuts,
 } from "../util/keyboardShortcuts.ts";
-import { useLocal } from "../util/index.ts";
+import { useLocal } from "../util/local.ts";
 
 export type FastForward = {
 	keyboardShortcut?: Exclude<

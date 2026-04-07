@@ -1,6 +1,7 @@
 import { useCallback, type MouseEvent } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
-import { local, realtimeUpdate, toWorker, useLocal } from "../util/index.ts";
+import { realtimeUpdate, toWorker } from "../util/index.ts";
+import { local, useLocal } from "../util/local.ts";
 import type { Option } from "../../common/types.ts";
 import clsx from "clsx";
 import {

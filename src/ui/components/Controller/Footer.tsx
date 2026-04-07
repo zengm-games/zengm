@@ -6,7 +6,7 @@ import {
 	VIDEO_ADS,
 	VIDEO_AD_PADDING,
 } from "../../../common/index.ts";
-import { useLocalPartial } from "../../util/index.ts";
+import { useLocalPartial } from "../../util/local.ts";
 
 const footerLinks = [
 	{

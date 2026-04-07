@@ -1,11 +1,12 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View, LocalStateUI } from "../../common/types.ts";
-import { helpers, getCols, useLocal, toWorker } from "../util/index.ts";
+import { helpers, getCols, toWorker } from "../util/index.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { PHASE_TEXT } from "../../common/index.ts";
 import { settings } from "./Settings/settings.tsx";
 import { Dropdown } from "react-bootstrap";
 import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import { useLocal } from "../util/local.ts";
 
 const godModeOptions: Partial<
 	Record<(typeof settings)[number]["key"], (typeof settings)[number]>

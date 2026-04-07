@@ -1,7 +1,8 @@
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers, useLocal } from "../util/index.ts";
+import { getCols, helpers } from "../util/index.ts";
+import { useLocal } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
 import { PLAYER } from "../../common/index.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";

@@ -1,5 +1,6 @@
 import { createLogger } from "../../common/index.ts";
-import { local, toWorker } from "./index.ts";
+import { toWorker } from "./index.ts";
+import { local } from "./local.ts";
 import type { LogEventShowOptions } from "../../common/types.ts";
 import { notify } from "./notify.ts";
 

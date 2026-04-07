@@ -9,13 +9,8 @@ import {
 import { DataTable } from "../../components/DataTable/index.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import {
-	getCols,
-	helpers,
-	logEvent,
-	toWorker,
-	useLocalPartial,
-} from "../../util/index.ts";
+import { getCols, helpers, logEvent, toWorker } from "../../util/index.ts";
+import { useLocalPartial } from "../../util/local.ts";
 import type { View } from "../../../common/types.ts";
 import { getAdjustedTicketPrice, PHASE } from "../../../common/index.ts";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";

@@ -1,5 +1,5 @@
 import { MOBILE_AD_BOTTOM_MARGIN } from "../../common/index.ts";
-import { useLocalPartial } from "../util/index.ts";
+import { useLocalPartial } from "../util/local.ts";
 
 export const StickyBottomButtons = ({
 	children,

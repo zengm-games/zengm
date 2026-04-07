@@ -3,12 +3,13 @@ import "../common/polyfills.ts";
 import type { ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import api from "./api/index.ts";
-import { Controller, ErrorBoundary } from "./components/index.tsx";
+import { Controller } from "./components/Controller.tsx";
 import router from "./router/index.ts";
 import * as util from "./util/index.ts";
 import type { Env } from "../common/types.ts";
 import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common/index.ts";
 import Bugsnag from "@bugsnag/browser";
+import { getErrorBoundary } from "./components/getErrorBoundary.tsx";
 window.bbgm = { api, ...util };
 const {
 	analyticsEvent,
@@ -116,6 +117,7 @@ const setupEnv = async () => {
 const render = () => {
 	const container = document.getElementById("content");
 	const root = createRoot(container!);
+	const ErrorBoundary = getErrorBoundary();
 	root.render(
 		<ErrorBoundary>
 			<Controller />

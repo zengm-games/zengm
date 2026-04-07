@@ -25,23 +25,26 @@ const FallbackLocal = ({ error, info }: { error: Error; info?: any }) => {
 	);
 };
 
-const ErrorBoundaryBugsnag =
-	Bugsnag.getPlugin("react")!.createErrorBoundary(React);
+// https://github.com/rolldown/rolldown/issues/9007
+export const getErrorBoundary = () => {
+	const ErrorBoundaryBugsnag =
+		Bugsnag.getPlugin("react")!.createErrorBoundary(React);
 
-const ErrorBoundary = ({
-	children,
-	local,
-}: {
-	children: any;
-	local?: boolean;
-}) => {
-	return (
-		<ErrorBoundaryBugsnag
-			FallbackComponent={local ? FallbackLocal : FallbackGlobal}
-		>
-			{children}
-		</ErrorBoundaryBugsnag>
-	);
+	const ErrorBoundary = ({
+		children,
+		local,
+	}: {
+		children: any;
+		local?: boolean;
+	}) => {
+		return (
+			<ErrorBoundaryBugsnag
+				FallbackComponent={local ? FallbackLocal : FallbackGlobal}
+			>
+				{children}
+			</ErrorBoundaryBugsnag>
+		);
+	};
+
+	return ErrorBoundary;
 };
-
-export default ErrorBoundary;

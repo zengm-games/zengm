@@ -2,7 +2,6 @@ import { LazyMotion } from "framer-motion";
 import { memo, useCallback, useEffect } from "react";
 import { localActions, useLocalPartial } from "../util/index.ts";
 import CommandPalette from "./CommandPalette/index.tsx";
-import ErrorBoundary from "./ErrorBoundary.tsx";
 import Footer from "./Footer.tsx";
 import Header from "./Header.tsx";
 import LeagueTopBar from "./LeagueTopBar.tsx";
@@ -16,6 +15,7 @@ import TitleBar from "./TitleBar.tsx";
 import { useViewData } from "../util/viewManager.tsx";
 import { isSport } from "../../common/index.ts";
 import api from "../api/index.ts";
+import { getErrorBoundary } from "./getErrorBoundary.tsx";
 
 const loadFramerMotionFeatures = () =>
 	import("../util/framerMotionFeatures.ts").then((res) => res.default);
@@ -47,7 +47,9 @@ const KeepPreviousRenderWhileUpdating = memo(
 	},
 );
 
-const Controller = () => {
+const ErrorBoundary = getErrorBoundary();
+
+export const Controller = () => {
 	const state = useViewData();
 
 	const { popup, showNagModal } = useLocalPartial(["popup", "showNagModal"]);
@@ -129,5 +131,3 @@ const Controller = () => {
 		</LazyMotion>
 	);
 };
-
-export default Controller;

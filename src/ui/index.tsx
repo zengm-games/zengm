@@ -3,7 +3,7 @@ import "../common/polyfills.ts";
 import type { ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import api from "./api/index.ts";
-import { Controller } from "./components/Controller.tsx";
+import { Controller } from "./components/Controller/index.tsx";
 import router from "./router/index.ts";
 import * as util from "./util/index.ts";
 import type { Env } from "../common/types.ts";

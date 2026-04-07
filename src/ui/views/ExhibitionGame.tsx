@@ -1,6 +1,6 @@
 import type { View } from "../../common/types.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { LiveGame } from "./LiveGame.tsx";
+import { LiveGame } from "./LiveGame/index.tsx";
 
 const ExhibitionGame = ({ liveSim }: View<"exhibitionGame">) => {
 	const teamName = (t: (typeof liveSim)["initialBoxScore"]["teams"][number]) =>

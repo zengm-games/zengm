@@ -55,7 +55,10 @@ type NumbersOnly<T> = {
 	[Key in keyof T]: T[Key] extends number ? number : never;
 };
 
-const BarGraph = <Row extends unknown, Y extends (keyof NumbersOnly<Row>)[]>({
+export const BarGraph = <
+	Row extends unknown,
+	Y extends (keyof NumbersOnly<Row>)[],
+>({
 	data,
 	y,
 	tooltip,
@@ -183,5 +186,3 @@ const BarGraph = <Row extends unknown, Y extends (keyof NumbersOnly<Row>)[]>({
 		</div>
 	);
 };
-
-export default BarGraph;

@@ -22,7 +22,7 @@ const hexToRgb = (hex: string) => {
 		: undefined;
 };
 
-const Confetti = ({ colors }: { colors?: [string, string, string] }) => {
+export const Confetti = ({ colors }: { colors?: [string, string, string] }) => {
 	const [clicked, setClicked] = useState(false);
 
 	useEffect(() => {
@@ -51,5 +51,3 @@ const Confetti = ({ colors }: { colors?: [string, string, string] }) => {
 		></canvas>
 	);
 };
-
-export default Confetti;

@@ -1,7 +1,7 @@
 import { LazyMotion } from "framer-motion";
 import { memo, useCallback, useEffect } from "react";
-import { localActions, useLocalPartial } from "../util/index.ts";
-import { CommandPalette } from "./CommandPalette/index.tsx";
+import { localActions, useLocalPartial } from "../../util/index.ts";
+import { CommandPalette } from "../CommandPalette/index.tsx";
 import { Footer } from "./Footer.tsx";
 import { Header } from "./Header.tsx";
 import { LeagueTopBar } from "./LeagueTopBar.tsx";
@@ -12,13 +12,13 @@ import { Notifications } from "./Notifications.tsx";
 import { SideBar } from "./SideBar.tsx";
 import { Skyscraper } from "./Skyscraper.tsx";
 import { TitleBar } from "./TitleBar.tsx";
-import { useViewData } from "../util/viewManager.tsx";
-import { isSport } from "../../common/index.ts";
-import api from "../api/index.ts";
-import { ErrorBoundary } from "./ErrorBoundary.tsx";
+import { useViewData } from "../../util/viewManager.tsx";
+import { isSport } from "../../../common/index.ts";
+import api from "../../api/index.ts";
+import { ErrorBoundary } from "../ErrorBoundary.tsx";
 
 const loadFramerMotionFeatures = () =>
-	import("../util/framerMotionFeatures.ts").then((res) => res.default);
+	import("../../util/framerMotionFeatures.ts").then((res) => res.default);
 
 const minHeight100 = {
 	// Just using h-100 class here results in the sticky ad in the skyscraper becoming unstuck after scrolling down 100% of the viewport, for some reason
@@ -60,7 +60,7 @@ export const Controller = () => {
 
 	useEffect(() => {
 		if (popup) {
-			document.body.style.paddingTop = "0";
+			document.body.style.paddingTop = "8px";
 			const css = document.createElement("style");
 			css.innerHTML = ".new_window { display: none }";
 			document.body.append(css);

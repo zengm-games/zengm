@@ -1,15 +1,15 @@
 import { Nav, Navbar } from "react-bootstrap";
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../../common/index.ts";
 import {
 	helpers,
 	localActions,
 	menuItems,
 	useLocalPartial,
-} from "../util/index.ts";
-import { useViewData } from "../util/viewManager.tsx";
-import DropdownLinks from "./DropdownLinks.tsx";
-import LogoAndText from "./LogoAndText.tsx";
-import PlayMenu from "./PlayMenu.tsx";
+} from "../../util/index.ts";
+import { useViewData } from "../../util/viewManager.tsx";
+import DropdownLinks from "../DropdownLinks.tsx";
+import LogoAndText from "../LogoAndText.tsx";
+import PlayMenu from "../PlayMenu.tsx";
 
 const PhaseStatusBlock = () => {
 	const { liveGameInProgress, phase, phaseText, statusText } = useLocalPartial([

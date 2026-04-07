@@ -4,7 +4,7 @@ import { helpers, toWorker } from "../util/index.ts";
 import ActionButton from "./ActionButton.tsx";
 import { downloadFile } from "../util/downloadFile.ts";
 
-const RetiredPlayers = ({
+export const RetiredPlayers = ({
 	retiredPlayers,
 	season,
 	userTid,
@@ -98,5 +98,3 @@ const RetiredPlayers = ({
 		</>
 	);
 };
-
-export default RetiredPlayers;

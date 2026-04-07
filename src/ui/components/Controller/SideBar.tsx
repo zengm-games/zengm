@@ -13,15 +13,15 @@ import {
 	menuItems,
 	safeLocalStorage,
 	useLocalPartial,
-} from "../util/index.ts";
+} from "../../util/index.ts";
 import type {
 	MenuItemLink,
 	MenuItemHeader,
 	MenuItemText,
-} from "../../common/types.ts";
-import CollapseArrow from "./CollapseArrow.tsx";
+} from "../../../common/types.ts";
+import CollapseArrow from "../CollapseArrow.tsx";
 import { AnimatePresence, m } from "framer-motion";
-import { VIDEO_ADS, VIDEO_AD_PADDING } from "../../common/index.ts";
+import { VIDEO_ADS, VIDEO_AD_PADDING } from "../../../common/index.ts";
 
 export const getText = (
 	text: MenuItemLink["text"],

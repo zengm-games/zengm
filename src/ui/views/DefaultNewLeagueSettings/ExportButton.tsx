@@ -2,8 +2,9 @@ import {
 	GAME_ACRONYM,
 	LEAGUE_DATABASE_VERSION,
 } from "../../../common/index.ts";
+import { confirm } from "../../util/confirm.tsx";
 import { downloadFile } from "../../util/downloadFile.ts";
-import { confirm, toWorker } from "../../util/index.ts";
+import { toWorker } from "../../util/index.ts";
 
 const ExportButton = ({ dirty }: { dirty?: boolean }) => (
 	<button

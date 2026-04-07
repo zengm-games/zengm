@@ -21,7 +21,6 @@ import {
 	helpers,
 	local,
 	logEvent,
-	menuItems,
 	realtimeUpdate,
 	safeLocalStorage,
 	toWorker,
@@ -35,6 +34,7 @@ import {
 	formatKeyboardShortcut,
 	useKeyboardShortcuts,
 } from "../../util/keyboardShortcuts.ts";
+import { menuItems } from "../../util/menuItems.tsx";
 
 const TWO_MONTHS_IN_MILLISECONDS = 2 * 30 * 24 * 60 * 60 * 1000;
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;

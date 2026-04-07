@@ -2,7 +2,6 @@ import { Fragment, useState } from "react";
 import type { ReactNode } from "react";
 import { WatchBlock } from "../../components/WatchBlock.tsx";
 import {
-	confirm,
 	helpers,
 	toWorker,
 	realtimeUpdate,
@@ -28,6 +27,7 @@ import { PlayerPicture } from "../../components/PlayerPicture.tsx";
 import { JerseyNumber } from "../../components/JerseyNumber.tsx";
 import { Height } from "../../components/Height.tsx";
 import { Weight } from "../../components/Weight.tsx";
+import { confirm } from "../../util/confirm.tsx";
 
 const Relatives = ({
 	gender,

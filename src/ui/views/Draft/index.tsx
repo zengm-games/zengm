@@ -2,7 +2,6 @@ import clsx from "clsx";
 import { Fragment, useState } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
-	confirm,
 	getCol,
 	getCols,
 	helpers,
@@ -23,6 +22,7 @@ import { groupByUnique } from "../../../common/utils.ts";
 import { StickyDraftInfo } from "./StickyDraftInfo.tsx";
 import { wrappedDraftAbbrev } from "../../components/DraftAbbrev.tsx";
 import { RosterComposition } from "../../components/RosterComposition.tsx";
+import { confirm } from "../../util/confirm.tsx";
 
 const Draft = ({
 	challengeNoDraftPicks,

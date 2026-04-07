@@ -10,7 +10,6 @@ import { DataTable } from "../../components/DataTable/index.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
-	confirm,
 	getCols,
 	helpers,
 	logEvent,
@@ -37,6 +36,7 @@ import { groupByUnique } from "../../../common/utils.ts";
 import { CountryFlag } from "../../components/CountryFlag.tsx";
 import { SafeHtml } from "../../components/SafeHtml.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
+import { confirm } from "../../util/confirm.tsx";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],

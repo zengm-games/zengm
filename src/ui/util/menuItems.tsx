@@ -61,7 +61,7 @@ const scheduledEvents: MenuItemLink = {
 	text: "Scheduled Events",
 };
 
-const menuItems: (MenuItemLink | MenuItemHeader)[] = [
+export const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 	{
 		type: "link",
 		active: (pageID) => pageID === "dashboard",
@@ -950,5 +950,3 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		],
 	},
 ];
-
-export default menuItems;

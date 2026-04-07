@@ -1,12 +1,13 @@
 import { useState, type ChangeEvent } from "react";
 import { JerseyNumber } from "../../components/JerseyNumber.tsx";
-import { helpers, confirm, toWorker, logEvent } from "../../util/index.ts";
+import { helpers, toWorker, logEvent } from "../../util/index.ts";
 import type { View } from "../../../common/types.ts";
 import { PLAYER } from "../../../common/index.ts";
 import clsx from "clsx";
 import useLocalStorageState from "use-local-storage-state";
 import { orderBy } from "../../../common/utils.ts";
 import HideableSection from "../../components/HideableSection.tsx";
+import { confirm } from "../../util/confirm.tsx";
 
 const PAGE_SIZE = 12;
 

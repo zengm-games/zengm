@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
-	confirm,
 	helpers,
 	logEvent,
 	toWorker,
@@ -18,6 +17,7 @@ import { RegenerateScheduleModal } from "./RegenerateScheduleModal.tsx";
 import clsx from "clsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
+import { confirm } from "../../util/confirm.tsx";
 
 type Schedule = View<"scheduleEditor">["schedule"];
 

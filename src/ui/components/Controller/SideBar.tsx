@@ -10,7 +10,6 @@ import {
 import {
 	helpers,
 	localActions,
-	menuItems,
 	safeLocalStorage,
 	useLocalPartial,
 } from "../../util/index.ts";
@@ -22,6 +21,7 @@ import type {
 import CollapseArrow from "../CollapseArrow.tsx";
 import { AnimatePresence, m } from "framer-motion";
 import { VIDEO_ADS, VIDEO_AD_PADDING } from "../../../common/index.ts";
+import { menuItems } from "../../util/menuItems.tsx";
 
 export const getText = (
 	text: MenuItemLink["text"],

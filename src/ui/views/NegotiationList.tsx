@@ -1,12 +1,6 @@
 import { DataTable } from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import {
-	confirm,
-	getCols,
-	helpers,
-	logEvent,
-	toWorker,
-} from "../util/index.ts";
+import { getCols, helpers, logEvent, toWorker } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
 import { wrappedMood } from "../components/Mood.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
@@ -16,6 +10,7 @@ import { SafeHtml } from "../components/SafeHtml.tsx";
 import { NegotiateButtons } from "../components/NegotiateButtons.tsx";
 import { RosterComposition } from "../components/RosterComposition.tsx";
 import { RosterSalarySummary } from "../components/RosterSalarySummary.tsx";
+import { confirm } from "../util/confirm.tsx";
 
 const NegotiationList = ({
 	capSpace,

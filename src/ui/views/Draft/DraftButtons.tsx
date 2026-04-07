@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { confirm, toWorker } from "../../util/index.ts";
+import { toWorker } from "../../util/index.ts";
+import { confirm } from "../../util/confirm.tsx";
 
 export const DraftButtons = ({
 	spectator,

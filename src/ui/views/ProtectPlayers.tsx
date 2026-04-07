@@ -1,7 +1,6 @@
 import { useState, type SubmitEvent, type ReactNode } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import {
-	confirm,
 	helpers,
 	toWorker,
 	realtimeUpdate,
@@ -17,6 +16,7 @@ import {
 } from "../components/contract.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { SafeHtml } from "../components/SafeHtml.tsx";
+import { confirm } from "../util/confirm.tsx";
 
 const PlayerList = ({
 	challengeNoRatings,

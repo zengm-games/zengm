@@ -20,7 +20,6 @@ import {
 } from "../../components/LeagueFileUpload.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
-	confirm,
 	helpers,
 	logEvent,
 	realtimeUpdate,
@@ -56,6 +55,7 @@ import { analyticsEvent } from "../../util/analyticsEvent.ts";
 import { ProgressBarText } from "../../components/ProgressBarText.tsx";
 import { PopText } from "../../components/PopText.tsx";
 import { NextPrevButtons } from "../../components/NextPrevButtons.tsx";
+import { confirm } from "../../util/confirm.tsx";
 
 const animationVariants = {
 	visible: {

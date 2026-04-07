@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import router from "../router/index.ts";
-import confirm from "../util/confirm.tsx";
+import { confirm } from "../util/confirm.tsx";
 
 export const useBlocker = ({
 	message = "If you navigate away from this page, you will lose any unsaved changes.",

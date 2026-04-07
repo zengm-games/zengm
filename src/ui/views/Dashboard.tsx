@@ -11,10 +11,11 @@ import {
 } from "../../common/index.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { confirm, getCols, logEvent, toWorker } from "../util/index.ts";
+import { getCols, logEvent, toWorker } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
 import { choice } from "../../common/random.ts";
 import { TeamLogoInline } from "../components/TeamLogoInline.tsx";
+import { confirm } from "../util/confirm.tsx";
 
 // Re-rendering caused this to run multiple times after "Play" click, even with useRef or useMemo
 const randomOtherSport = bySport({

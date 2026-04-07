@@ -4,7 +4,6 @@ import type {
 	PlayerBioInfo,
 } from "../../../common/types.ts";
 import {
-	confirm,
 	helpers,
 	logEvent,
 	safeLocalStorage,
@@ -23,6 +22,7 @@ import {
 import { CountriesEditor } from "./PlayerBioInfoCountries.tsx";
 import { Modal } from "../../components/Modal.tsx";
 import { orderBy } from "../../../common/utils.ts";
+import { confirm } from "../../util/confirm.tsx";
 
 export type Defaults = Awaited<ReturnType<typeof initDefaults>>;
 

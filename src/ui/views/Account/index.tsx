@@ -7,13 +7,14 @@ import {
 	GAME_NAME,
 } from "../../../common/index.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { confirm, realtimeUpdate, toWorker } from "../../util/index.ts";
+import { realtimeUpdate, toWorker } from "../../util/index.ts";
 import type { View } from "../../../common/types.ts";
 import { GameLinks } from "../../components/GameLinks.tsx";
 import { ajaxErrorMsg } from "../LoginOrRegister/index.tsx";
 import AccountInfoForm from "./AccountInfoForm.tsx";
 import DeleteAccountForm from "./DeleteAccountForm.tsx";
 import { getScript } from "../../util/getScript.ts";
+import { confirm } from "../../util/confirm.tsx";
 
 const StripeButton = ({ email }: { email: string }) => {
 	const [handler, setHandler] = useState<StripeCheckoutHandler | undefined>();

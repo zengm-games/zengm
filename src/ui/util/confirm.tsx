@@ -77,7 +77,7 @@ const Confirm = confirmable<
 
 const confirmFunction = createConfirmation(Confirm);
 
-function confirm(
+export function confirm(
 	message: string,
 	options: {
 		defaultValue: string;
@@ -86,7 +86,7 @@ function confirm(
 	},
 ): Promise<string | null>;
 
-function confirm(
+export function confirm(
 	message: string,
 	options?: {
 		defaultValue?: undefined;
@@ -95,7 +95,7 @@ function confirm(
 	},
 ): Promise<boolean>;
 
-function confirm(
+export function confirm(
 	message: string,
 	{
 		defaultValue,
@@ -114,5 +114,3 @@ function confirm(
 		cancelText,
 	});
 }
-
-export default confirm;

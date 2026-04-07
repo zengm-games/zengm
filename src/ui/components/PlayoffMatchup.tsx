@@ -233,7 +233,7 @@ const Team = ({
 	);
 };
 
-const PlayoffMatchup = ({
+export const PlayoffMatchup = ({
 	editing,
 	expandTeamNames = false,
 	extraHighlight,
@@ -305,5 +305,3 @@ const PlayoffMatchup = ({
 		</ul>
 	);
 };
-
-export default PlayoffMatchup;

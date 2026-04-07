@@ -7,7 +7,6 @@ import {
 	WEBSITE_ROOT,
 } from "../../../common/index.ts";
 import {
-	CountryFlag,
 	HelpPopover,
 	SafeHtml,
 	MoreLinks,
@@ -39,6 +38,7 @@ import { dataTableWrappedMood } from "../../components/Mood.tsx";
 import { wrappedRatingWithChange } from "../../components/RatingWithChange.tsx";
 import type { BulkAction } from "../../components/DataTable/BulkActions.tsx";
 import { groupByUnique } from "../../../common/utils.ts";
+import { CountryFlag } from "../../components/CountryFlag.tsx";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],

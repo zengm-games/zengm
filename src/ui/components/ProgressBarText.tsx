@@ -1,4 +1,4 @@
-const ProgressBarText = ({
+export const ProgressBarText = ({
 	className,
 	percent,
 	text,
@@ -25,5 +25,3 @@ const ProgressBarText = ({
 		</>
 	);
 };
-
-export default ProgressBarText;

@@ -1,10 +1,11 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, useLocalPartial } from "../util/index.ts";
-import { CountryFlag, DataTable } from "../components/index.tsx";
+import { DataTable } from "../components/index.tsx";
 import type { View } from "../../common/types.ts";
 import { frivolitiesMenu } from "./Frivolities.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { CountryFlag } from "../components/CountryFlag.tsx";
 
 export const genView = (
 	type: "college" | "country" | "draftPosition" | "jerseyNumbers",

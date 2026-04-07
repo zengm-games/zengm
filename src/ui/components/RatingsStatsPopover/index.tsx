@@ -61,7 +61,7 @@ type Props = {
 	season?: number;
 };
 
-const RatingsStatsPopover = ({
+export const RatingsStatsPopover = ({
 	defaultWatch,
 	disableNameLink,
 	pid,
@@ -247,5 +247,3 @@ const RatingsStatsPopover = ({
 		/>
 	);
 };
-
-export default RatingsStatsPopover;

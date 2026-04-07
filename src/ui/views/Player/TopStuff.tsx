@@ -1,15 +1,12 @@
 import { Fragment, useState } from "react";
 import type { ReactNode } from "react";
 import {
-	CountryFlag,
 	Height,
 	PlayerPicture,
-	SkillsBlock,
 	WatchBlock,
 	Weight,
 	JerseyNumber,
 	Mood,
-	InjuryIcon,
 } from "../../components/index.tsx";
 import {
 	confirm,
@@ -30,6 +27,9 @@ import AwardsSummary from "./AwardsSummary.tsx";
 import RatingsOverview from "./RatingsOverview.tsx";
 import Note from "./Note.tsx";
 import { ButtonGroup, Dropdown, DropdownButton } from "react-bootstrap";
+import { CountryFlag } from "../../components/CountryFlag.tsx";
+import { InjuryIcon } from "../../components/InjuryIcon.tsx";
+import { SkillsBlock } from "../../components/SkillsBlock.tsx";
 
 const Relatives = ({
 	gender,

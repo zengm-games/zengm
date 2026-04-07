@@ -5,7 +5,7 @@ import { isSport } from "../../../common/index.ts";
 import { highlightLeaderText, MaybeBold, SeasonLink } from "./common.tsx";
 import { expandFieldingStats } from "../../util/expandFieldingStats.baseball.ts";
 import { formatStatGameHigh } from "../PlayerStats.tsx";
-import SeasonIcons from "./SeasonIcons.tsx";
+import { SeasonIcons } from "../../components/SeasonIcons.tsx";
 import HideableSection from "../../components/HideableSection.tsx";
 import { DataTable } from "../../components/index.tsx";
 import clsx from "clsx";

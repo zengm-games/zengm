@@ -269,7 +269,7 @@ const countryCodes: Record<string, string> = {
 	Zimbabwe: "zw",
 };
 
-const CountryFlag = ({
+export const CountryFlag = ({
 	className,
 	country,
 	override,
@@ -316,5 +316,3 @@ const CountryFlag = ({
 	// Placeholder with same width
 	return <div className={clsx(className, "fi")} title={country2} />;
 };
-
-export default CountryFlag;

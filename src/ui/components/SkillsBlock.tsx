@@ -28,7 +28,7 @@ const TruncatedSkills = ({
 	);
 };
 
-const SkillsBlock = ({
+export const SkillsBlock = ({
 	className,
 	numSkillsBeforeTruncate,
 	skills,
@@ -67,5 +67,3 @@ const SkillsBlock = ({
 		</span>
 	);
 };
-
-export default SkillsBlock;

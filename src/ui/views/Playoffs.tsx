@@ -1,13 +1,11 @@
-import {
-	PlayoffMatchup,
-	ResponsiveTableWrapper,
-} from "../components/index.tsx";
+import { ResponsiveTableWrapper } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { helpers, toWorker } from "../util/index.ts";
 import { useState } from "react";
 import clsx from "clsx";
 import { range } from "../../common/utils.ts";
+import { PlayoffMatchup } from "../components/PlayoffMatchup.tsx";
 
 type TeamToEdit = View<"playoffs">["teamsToEdit"][number];
 

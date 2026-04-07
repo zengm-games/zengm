@@ -6,7 +6,7 @@ import {
 	type ChangeEvent,
 	type MouseEvent,
 } from "react";
-import { ProgressBarText } from "./index.tsx";
+import { ProgressBarText } from "./ProgressBarText.tsx";
 import {
 	LEAGUE_DATABASE_VERSION,
 	GAME_NAME,

@@ -1,4 +1,4 @@
-import { CountryFlag, DataTable } from "../components/index.tsx";
+import { DataTable } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
@@ -12,6 +12,7 @@ import {
 } from "../components/contract.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { CountryFlag } from "../components/CountryFlag.tsx";
 
 const PlayerBios = ({
 	abbrev,

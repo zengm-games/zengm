@@ -1,4 +1,4 @@
-const PopText = ({
+export const PopText = ({
 	className,
 	numActiveTeams,
 	teams,
@@ -45,5 +45,3 @@ const PopText = ({
 
 	return <span className={className}>Population: ?</span>;
 };
-
-export default PopText;

@@ -1,14 +1,9 @@
-import {
-	DataTable,
-	InjuryIcon,
-	SafeHtml,
-	SkillsBlock,
-} from "../../components/index.tsx";
+import { DataTable, SafeHtml } from "../../components/index.tsx";
 import Injuries from "./Injuries.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { getCols, helpers } from "../../util/index.ts";
 import type { View } from "../../../common/types.ts";
-import SeasonIcons from "./SeasonIcons.tsx";
+import { SeasonIcons } from "../../components/SeasonIcons.tsx";
 import TopStuff from "./TopStuff.tsx";
 import { PLAYER } from "../../../common/index.ts";
 import HideableSection from "../../components/HideableSection.tsx";
@@ -17,6 +12,8 @@ import { highlightLeaderText, MaybeBold, SeasonLink } from "./common.tsx";
 import { wrappedTeamAbbrevLink } from "../../components/TeamAbbrevLink.tsx";
 import { wrappedCurrency } from "../../components/wrappedCurrency.ts";
 import { groupAwards } from "../../util/groupAwards.ts";
+import { InjuryIcon } from "../../components/InjuryIcon.tsx";
+import { SkillsBlock } from "../../components/SkillsBlock.tsx";
 
 const Player2 = ({
 	bestPos,

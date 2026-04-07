@@ -9,13 +9,9 @@ import {
 	useLocalPartial,
 } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
-import {
-	HelpPopover,
-	Mood,
-	PlayerPicture,
-	RatingsStatsPopover,
-} from "../components/index.tsx";
+import { HelpPopover, Mood, PlayerPicture } from "../components/index.tsx";
 import { isSport, PHASE } from "../../common/index.ts";
+import { RatingsStatsPopover } from "../components/RatingsStatsPopover/index.tsx";
 
 // Show the negotiations list if there are more ongoing negotiations
 const redirectNegotiationOrRoster = async (cancelled: boolean) => {

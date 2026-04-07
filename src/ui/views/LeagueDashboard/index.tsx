@@ -1,6 +1,6 @@
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/index.ts";
-import { PlayoffMatchup } from "../../components/index.tsx";
+import { PlayoffMatchup } from "../../components/PlayoffMatchup.tsx";
 import Leaders from "./Leaders.tsx";
 import Standings from "./Standings.tsx";
 import StartingLineup from "./StartingLineup.tsx";

@@ -17,8 +17,6 @@ import {
 	ActionButton,
 	LeagueFileUpload,
 	NextPrevButtons,
-	PopText,
-	ProgressBarText,
 } from "../../components/index.tsx";
 import type { LeagueFileUploadOutput } from "../../components/LeagueFileUpload.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
@@ -56,6 +54,8 @@ import { choice } from "../../../common/random.ts";
 import { realContinents } from "../../../common/geographicCoordinates.ts";
 import type { NewLeagueSettings } from "../../../worker/views/newLeague.ts";
 import { analyticsEvent } from "../../util/analyticsEvent.ts";
+import { ProgressBarText } from "../../components/ProgressBarText.tsx";
+import { PopText } from "../../components/PopText.tsx";
 
 const animationVariants = {
 	visible: {

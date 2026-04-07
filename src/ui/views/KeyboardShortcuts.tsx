@@ -12,7 +12,7 @@ import {
 	type KeyboardShortcutInfo,
 } from "../util/keyboardShortcuts.ts";
 import clsx from "clsx";
-import Modal from "../components/Modal.tsx";
+import { Modal } from "../components/Modal.tsx";
 
 type ShortcutOrNull = KeyboardShortcutInfo["shortcut"] | null;
 

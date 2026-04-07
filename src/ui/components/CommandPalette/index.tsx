@@ -29,7 +29,7 @@ import {
 } from "../../util/index.ts";
 import { getText, makeAnchorProps } from "../Controller/SideBar.tsx";
 import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
-import Modal from "../Modal.tsx";
+import { Modal } from "../Modal.tsx";
 import { normalizeIntl } from "../../../common/normalizeIntl.ts";
 import {
 	formatKeyboardShortcut,

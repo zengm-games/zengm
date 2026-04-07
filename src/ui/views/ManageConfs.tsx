@@ -15,7 +15,7 @@ import {
 } from "./NewLeague/CustomizeTeams.tsx";
 import StickyBottomButtons from "../components/StickyBottomButtons.tsx";
 import type { NewLeagueTeamWithoutRank } from "./NewLeague/types.ts";
-import { Modal } from "react-bootstrap";
+import { Modal } from "../components/Modal.tsx";
 import TeamForm from "./ManageTeams/TeamForm.tsx";
 import {
 	nextSeasonWarning,

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Modal } from "react-bootstrap";
+import { Modal } from "../../components/Modal.tsx";
 import teamInfos from "../../../common/teamInfos.ts";
 import getTeamInfos from "../../../common/getTeamInfos.ts";
 import { TeamsSplitNorthAmericaWorld } from "../../components/TeamsSplitNorthAmericaWorld.tsx";

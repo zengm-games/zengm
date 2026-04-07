@@ -1,6 +1,6 @@
 import { type ReactNode, type RefObject, useRef, useState } from "react";
 import { OverlayTrigger, Popover } from "react-bootstrap";
-import Modal from "./Modal.tsx";
+import { Modal } from "./Modal.tsx";
 
 const ResponsivePopover = ({
 	id,

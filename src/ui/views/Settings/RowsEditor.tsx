@@ -6,7 +6,7 @@ import { confirm, helpers, logEvent, toWorker } from "../../util/index.ts";
 import { godModeRequiredMessage } from "./SettingsFormOptions.tsx";
 import clsx from "clsx";
 import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
-import Modal from "../../components/Modal.tsx";
+import { Modal } from "../../components/Modal.tsx";
 import { downloadFile } from "../../util/downloadFile.ts";
 import { resetFileInput } from "../../util/resetFileInput.ts";
 

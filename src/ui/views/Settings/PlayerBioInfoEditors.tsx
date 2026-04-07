@@ -8,7 +8,7 @@ import {
 	smallColStyle,
 } from "./PlayerBioInfoCountries.tsx";
 import PlayerBioInfoSortButton from "./PlayerBioInfoSortButton.tsx";
-import Modal from "../../components/Modal.tsx";
+import { Modal } from "../../components/Modal.tsx";
 import { orderBy } from "../../../common/utils.ts";
 
 type RaceRow = PlayerBioInfoState["countries"][number]["races"][number];

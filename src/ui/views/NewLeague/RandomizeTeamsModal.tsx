@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Modal } from "react-bootstrap";
+import { Modal } from "../../components/Modal.tsx";
 import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import { SelectSeasonRange } from "./SelectSeasonRange.tsx";
 import HelpPopover from "../../components/HelpPopover.tsx";

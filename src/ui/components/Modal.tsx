@@ -1,5 +1,5 @@
 import type { ContainerState } from "@restart/ui/ModalManager";
-import { Modal } from "react-bootstrap";
+import { Modal as BaseModal } from "react-bootstrap";
 import BootstrapModalManager from "react-bootstrap/BootstrapModalManager";
 import { createNanoEvents } from "nanoevents";
 
@@ -49,17 +49,18 @@ class MyModalManager extends BootstrapModalManager {
 
 const manager = new MyModalManager();
 
-const WrappedModal = ({ children, ...props }: Parameters<typeof Modal>[0]) => {
+export const Modal = ({
+	children,
+	...props
+}: Parameters<typeof BaseModal>[0]) => {
 	return (
-		<Modal animation={animation} manager={manager} {...props}>
+		<BaseModal animation={animation} manager={manager} {...props}>
 			{children}
-		</Modal>
+		</BaseModal>
 	);
 };
 
-WrappedModal.Body = Modal.Body;
-WrappedModal.Footer = Modal.Footer;
-WrappedModal.Header = Modal.Header;
-WrappedModal.Title = Modal.Title;
-
-export default WrappedModal;
+Modal.Body = BaseModal.Body;
+Modal.Footer = BaseModal.Footer;
+Modal.Header = BaseModal.Header;
+Modal.Title = BaseModal.Title;

@@ -15,7 +15,7 @@ import type {
 	Player,
 	View,
 } from "../../../common/types.ts";
-import Modal from "../../components/Modal.tsx";
+import { Modal } from "../../components/Modal.tsx";
 import { helpers, logEvent, toWorker } from "../../util/index.ts";
 import { type ExhibitionLeagueWithSeasons } from "../Exhibition.tsx";
 import TeamForm from "../ManageTeams/TeamForm.tsx";

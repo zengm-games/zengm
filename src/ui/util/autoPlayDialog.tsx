@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { confirmable, createConfirmation } from "react-confirm";
-import Modal from "../components/Modal.tsx";
+import { Modal } from "../components/Modal.tsx";
 import { PHASE, PHASE_TEXT, helpers } from "../../common/index.ts";
 
 const Confirm = confirmable<

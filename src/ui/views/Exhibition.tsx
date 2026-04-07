@@ -1,5 +1,5 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Modal } from "react-bootstrap";
+import { Modal } from "../components/Modal.tsx";
 import {
 	COURT,
 	DEFAULT_CONFS,

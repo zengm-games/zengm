@@ -21,7 +21,7 @@ import {
 	RacesEditor,
 } from "./PlayerBioInfoEditors.tsx";
 import { CountriesEditor } from "./PlayerBioInfoCountries.tsx";
-import Modal from "../../components/Modal.tsx";
+import { Modal } from "../../components/Modal.tsx";
 import { orderBy } from "../../../common/utils.ts";
 
 export type Defaults = Awaited<ReturnType<typeof initDefaults>>;

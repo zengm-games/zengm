@@ -19,7 +19,7 @@ import type { SelectedRows } from "./useBulkSelectRows.ts";
 import { watchListDialog } from "./watchListDialog.tsx";
 import { exportPlayers } from "../../views/ExportPlayers.tsx";
 import { createPortal } from "react-dom";
-import Modal from "../Modal.tsx";
+import { Modal } from "../Modal.tsx";
 import type { DataTableRowMetadata, Props } from "./index.tsx";
 import clsx from "clsx";
 

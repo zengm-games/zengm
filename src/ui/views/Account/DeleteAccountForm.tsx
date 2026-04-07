@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
-import { Modal } from "react-bootstrap";
+import { Modal } from "../../components/Modal.tsx";
 import {
 	ACCOUNT_API_URL,
 	fetchWrapper,

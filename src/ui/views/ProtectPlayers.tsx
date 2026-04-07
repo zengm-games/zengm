@@ -1,6 +1,7 @@
 import { useState, type SubmitEvent, type ReactNode } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, toWorker, realtimeUpdate, getCols } from "../util/index.ts";
+import { helpers, toWorker, getCols } from "../util/index.ts";
+import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { useLocalPartial } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
 import { DataTable } from "../components/DataTable/index.tsx";

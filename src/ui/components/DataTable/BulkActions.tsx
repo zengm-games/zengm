@@ -1,11 +1,6 @@
 import { Dropdown } from "react-bootstrap";
 import { Flag } from "../WatchBlock.tsx";
-import {
-	helpers,
-	logEvent,
-	realtimeUpdate,
-	toWorker,
-} from "../../util/index.ts";
+import { helpers, logEvent, toWorker } from "../../util/index.ts";
 import { useLocalPartial } from "../../util/local.ts";
 import {
 	useCallback,
@@ -22,6 +17,7 @@ import { Modal } from "../Modal.tsx";
 import type { DataTableRowMetadata, Props } from "./index.tsx";
 import clsx from "clsx";
 import { confirm } from "../../util/confirm.tsx";
+import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 
 // Even at 20 the UI is kind of silly, and if you put in too many players it gets slow/crashes
 const MAX_NUM_TO_COMPARE = 20;

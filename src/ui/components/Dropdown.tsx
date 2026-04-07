@@ -3,7 +3,8 @@ import type { CSSProperties } from "react";
 import useDropdownOptions, {
 	type ResponsiveOption,
 } from "../hooks/useDropdownOptions.tsx";
-import { helpers, realtimeUpdate } from "../util/index.ts";
+import { helpers } from "../util/index.ts";
+import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { NextPrevButtons } from "./NextPrevButtons.tsx";
 import type { LocalStateUI } from "../../common/types.ts";
 import { sanitize } from "../util/sanitize.ts";

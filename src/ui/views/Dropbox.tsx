@@ -1,4 +1,4 @@
-import { realtimeUpdate } from "../util/index.ts";
+import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { safeLocalStorage } from "../util/safeLocalStorage.ts";
 
 const Dropbox = () => {

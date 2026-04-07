@@ -6,18 +6,14 @@ import type { View } from "../../../common/types.ts";
 import type { Settings } from "../../../worker/views/settings.ts";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import {
-	helpers,
-	logEvent,
-	realtimeUpdate,
-	toWorker,
-} from "../../util/index.ts";
+import { helpers, logEvent, toWorker } from "../../util/index.ts";
 import { settings } from "../Settings/settings.tsx";
 import SettingsForm from "../Settings/SettingsForm.tsx";
 import type { Key } from "../Settings/types.ts";
 import ExportButton from "./ExportButton.tsx";
 import ImportButton from "./ImportButton.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
+import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 
 const DefaultNewLeagueSettings = ({
 	defaultSettings,

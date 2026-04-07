@@ -1,4 +1,4 @@
-import { realtimeUpdate } from "../util/index.ts";
+import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { local, localActions } from "../util/local.ts";
 import { showEvent } from "../util/logEvent.ts";
 import type {

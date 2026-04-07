@@ -19,12 +19,7 @@ import {
 	type LeagueFileUploadOutput,
 } from "../../components/LeagueFileUpload.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import {
-	helpers,
-	logEvent,
-	realtimeUpdate,
-	toWorker,
-} from "../../util/index.ts";
+import { helpers, logEvent, toWorker } from "../../util/index.ts";
 import { useLocalPartial } from "../../util/local.ts";
 import type {
 	View,
@@ -56,6 +51,7 @@ import { PopText } from "../../components/PopText.tsx";
 import { NextPrevButtons } from "../../components/NextPrevButtons.tsx";
 import { confirm } from "../../util/confirm.tsx";
 import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
+import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 
 const animationVariants = {
 	visible: {

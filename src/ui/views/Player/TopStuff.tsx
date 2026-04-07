@@ -1,12 +1,7 @@
 import { Fragment, useState } from "react";
 import type { ReactNode } from "react";
 import { WatchBlock } from "../../components/WatchBlock.tsx";
-import {
-	helpers,
-	toWorker,
-	realtimeUpdate,
-	getCols,
-} from "../../util/index.ts";
+import { helpers, toWorker, getCols } from "../../util/index.ts";
 import type {
 	GameAttributesLeague,
 	Phase,
@@ -28,6 +23,7 @@ import { JerseyNumber } from "../../components/JerseyNumber.tsx";
 import { Height } from "../../components/Height.tsx";
 import { Weight } from "../../components/Weight.tsx";
 import { confirm } from "../../util/confirm.tsx";
+import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 
 const Relatives = ({
 	gender,

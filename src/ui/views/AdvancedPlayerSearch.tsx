@@ -4,7 +4,8 @@ import useDropdownOptions from "../hooks/useDropdownOptions.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { OptionDropdown } from "./PlayerGraphs/index.tsx";
 import { isSport, PLAYER, PLAYER_STATS_TABLES } from "../../common/index.ts";
-import { getCols, helpers, realtimeUpdate, toWorker } from "../util/index.ts";
+import { getCols, helpers, toWorker } from "../util/index.ts";
+import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import {

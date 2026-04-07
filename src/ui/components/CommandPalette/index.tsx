@@ -17,12 +17,7 @@ import type {
 	MenuItemLink,
 	MenuItemText,
 } from "../../../common/types.ts";
-import {
-	helpers,
-	logEvent,
-	realtimeUpdate,
-	toWorker,
-} from "../../util/index.ts";
+import { helpers, logEvent, toWorker } from "../../util/index.ts";
 import { getText, makeAnchorProps } from "../Controller/SideBar.tsx";
 import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import { Modal } from "../Modal.tsx";
@@ -34,6 +29,7 @@ import {
 import { menuItems } from "../../util/menuItems.tsx";
 import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
 import { local, useLocalPartial } from "../../util/local.ts";
+import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 
 const TWO_MONTHS_IN_MILLISECONDS = 2 * 30 * 24 * 60 * 60 * 1000;
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;

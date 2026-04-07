@@ -7,7 +7,8 @@ import {
 	GAME_NAME,
 } from "../../../common/index.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { realtimeUpdate, toWorker } from "../../util/index.ts";
+import { toWorker } from "../../util/index.ts";
+import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import type { View } from "../../../common/types.ts";
 import { GameLinks } from "../../components/GameLinks.tsx";
 import { ajaxErrorMsg } from "../LoginOrRegister/index.tsx";

@@ -18,12 +18,7 @@ import {
 } from "../../../common/index.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import {
-	helpers,
-	realtimeUpdate,
-	toWorker,
-	logEvent,
-} from "../../util/index.ts";
+import { helpers, toWorker, logEvent } from "../../util/index.ts";
 import RatingsForm from "./RatingsForm.tsx";
 import RelativesForm from "./RelativesForm.tsx";
 import type { View, Phase, PlayerWithoutKey } from "../../../common/types.ts";
@@ -33,6 +28,7 @@ import CustomMoodItemsForm from "./CustomMoodItemsForm.tsx";
 import { roundContract } from "../../../common/roundContract.ts";
 import { Face } from "./Face.tsx";
 import { CurrencyInputGroup } from "../../components/CurrencyInputGroup.tsx";
+import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 
 const copyValidValues = (
 	source: PlayerWithoutKey,

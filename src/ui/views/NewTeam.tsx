@@ -1,7 +1,8 @@
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import { PHASE } from "../../common/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, realtimeUpdate, toWorker } from "../util/index.ts";
+import { helpers, toWorker } from "../util/index.ts";
+import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import type { View } from "../../common/types.ts";
 import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import clsx from "clsx";

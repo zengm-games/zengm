@@ -4,7 +4,7 @@ import { StatGraph, type TooltipData } from "../PlayerGraphs/ScatterPlot.tsx";
 import useDropdownOptions, {
 	type DropdownOption,
 } from "../../hooks/useDropdownOptions.tsx";
-import realtimeUpdate from "../../util/realtimeUpdate.ts";
+import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { getCols, helpers, toWorker } from "../../util/index.ts";
 import { groupByUnique } from "../../../common/utils.ts";
 import type { Col } from "../../components/DataTable/index.tsx";

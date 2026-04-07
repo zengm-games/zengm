@@ -131,5 +131,13 @@ export const rolldownConfig = (
 		checks: {
 			pluginTimings: false,
 		},
+		onLog(level, log, defaultHandler) {
+			// Turn warnings into errors https://rolldown.rs/reference/Interface.RolldownOptions#log
+			if (level === "warn") {
+				defaultHandler("error", log);
+			} else {
+				defaultHandler(level, log);
+			}
+		},
 	};
 };

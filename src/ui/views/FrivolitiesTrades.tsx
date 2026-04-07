@@ -1,6 +1,6 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers } from "../util/index.ts";
-import { DataTable } from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
 import { frivolitiesMenu } from "./Frivolities.tsx";
 import { bySport, PHASE_TEXT } from "../../common/index.ts";

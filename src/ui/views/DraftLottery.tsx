@@ -7,7 +7,7 @@ import {
 	useState,
 	type ReactNode,
 } from "react";
-import { DataTable } from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, toWorker, useLocal } from "../util/index.ts";

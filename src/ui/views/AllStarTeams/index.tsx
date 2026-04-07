@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { DataTable } from "../../components/index.tsx";
+import { DataTable } from "../../components/DataTable/index.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
 	getCols,

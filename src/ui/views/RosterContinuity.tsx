@@ -1,4 +1,4 @@
-import { DataTable } from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols } from "../util/index.ts";
 import type { Col } from "../components/DataTable/index.tsx";

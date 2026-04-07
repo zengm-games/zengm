@@ -4,7 +4,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, useLocal } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
 import { GAME_ACRONYM, GAME_NAME } from "../../common/index.ts";
-import { DataTable } from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
 
 const DIFFICULTIES = ["normal", "hard", "insane"] as const;
 const DIFFICULTIES_REVERSE = [...DIFFICULTIES].reverse();

@@ -9,7 +9,7 @@ import {
 	useLocalPartial,
 } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
-import { DataTable } from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
 import { PHASE } from "../../common/index.ts";
 import {
 	wrappedContractAmount,

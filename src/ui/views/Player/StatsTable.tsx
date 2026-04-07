@@ -7,7 +7,7 @@ import { expandFieldingStats } from "../../util/expandFieldingStats.baseball.ts"
 import { formatStatGameHigh } from "../PlayerStats.tsx";
 import { SeasonIcons } from "../../components/SeasonIcons.tsx";
 import HideableSection from "../../components/HideableSection.tsx";
-import { DataTable } from "../../components/index.tsx";
+import { DataTable } from "../../components/DataTable/index.tsx";
 import clsx from "clsx";
 import { useRangeFooter } from "./useRangeFooter.ts";
 import type { FooterRow } from "../../components/DataTable/Footer.tsx";

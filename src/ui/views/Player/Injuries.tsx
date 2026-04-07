@@ -1,4 +1,4 @@
-import { DataTable } from "../../components/index.tsx";
+import { DataTable } from "../../components/DataTable/index.tsx";
 import { getCols } from "../../util/index.ts";
 
 const cols = getCols(["Year", "Type", "Games", "Ovr Drop", "Pot Drop"], {

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { PLAYER } from "../../common/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, toWorker, useLocalPartial } from "../util/index.ts";
-import { DataTable } from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";

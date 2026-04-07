@@ -153,7 +153,7 @@ export type Props = {
 	disableBulkSelectKeys?: Set<DataTableRow["key"]>;
 };
 
-const DataTable = ({
+export const DataTable = ({
 	alwaysShowBulkSelectRows,
 	className,
 	classNameWrapper,
@@ -668,5 +668,3 @@ const DataTable = ({
 		</>
 	);
 };
-
-export default DataTable;

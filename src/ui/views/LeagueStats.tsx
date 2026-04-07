@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { getCols, helpers } from "../util/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { DataTable } from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
 import { isSport } from "../../common/index.ts";

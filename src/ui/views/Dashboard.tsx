@@ -9,7 +9,7 @@ import {
 	REAL_PLAYERS_INFO,
 	WEBSITE_PLAY,
 } from "../../common/index.ts";
-import { DataTable } from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { confirm, getCols, logEvent, toWorker } from "../util/index.ts";
 import type { View } from "../../common/types.ts";

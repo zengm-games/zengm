@@ -1,7 +1,7 @@
 import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers } from "../util/index.ts";
-import { DataTable } from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
 import { bySport, isSport, POSITIONS, RATINGS } from "../../common/index.ts";
 import { wrappedMovOrDiff } from "../components/MovOrDiff.tsx";

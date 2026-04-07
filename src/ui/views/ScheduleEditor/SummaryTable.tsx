@@ -1,5 +1,5 @@
 import type { View } from "../../../common/types.ts";
-import { DataTable } from "../../components/index.tsx";
+import { DataTable } from "../../components/DataTable/index.tsx";
 import helpers from "../../util/helpers.ts";
 import { getCol } from "../../util/index.ts";
 import type { Col } from "../../components/DataTable/index.tsx";

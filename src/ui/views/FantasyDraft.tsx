@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
 import { PHASE } from "../../common/index.ts";
-import { DataTable } from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, toWorker } from "../util/index.ts";
 import type { View } from "../../common/types.ts";

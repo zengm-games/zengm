@@ -11,7 +11,7 @@ import {
 	realtimeUpdate,
 	toWorker,
 } from "../util/index.ts";
-import { DataTable } from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import {
 	allFilters,

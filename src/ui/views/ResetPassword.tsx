@@ -1,15 +1,12 @@
 import clsx from "clsx";
 import { useEffect, useState, type ReactNode, type SubmitEvent } from "react";
-import {
-	ACCOUNT_API_URL,
-	EMAIL_ADDRESS,
-	fetchWrapper,
-} from "../../common/index.ts";
+import { ACCOUNT_API_URL, EMAIL_ADDRESS } from "../../common/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { localActions } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
 import { ajaxErrorMsg } from "./LoginOrRegister/index.tsx";
+import { fetchWrapper } from "../../common/fetchWrapper.ts";
 
 type State = {
 	globalMessage?: ReactNode;

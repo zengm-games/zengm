@@ -9,7 +9,7 @@ import {
 	newLeagueGodModeLimits,
 } from "../util/index.ts";
 import type { Settings } from "./settings.ts";
-import { unwrapGameAttribute } from "../../common/index.ts";
+import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
 import goatFormula from "../util/goatFormula.ts";
 
 const getDefaultRealStats = () => {

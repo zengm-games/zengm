@@ -1,8 +1,4 @@
-import {
-	getBestPlayerBoxScore,
-	isSport,
-	PHASE,
-} from "../../../common/index.ts";
+import { isSport, PHASE } from "../../../common/index.ts";
 import { saveAwardsByPlayer } from "../season/awards.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
@@ -17,6 +13,7 @@ import type {
 import { headToHead, season } from "../index.ts";
 import getWinner from "../../../common/getWinner.ts";
 import formatScoreWithShootout from "../../../common/formatScoreWithShootout.ts";
+import { getBestPlayerBoxScore } from "../../../common/getBestPlayerBoxScore.ts";
 
 const allStarMVP = async (
 	game: Game,

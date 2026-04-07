@@ -15,7 +15,7 @@ import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import type { View } from "../../../common/types.ts";
-import { bySport, getPeriodName, isSport } from "../../../common/index.ts";
+import { bySport, isSport } from "../../../common/index.ts";
 import useLocalStorageState from "use-local-storage-state";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_BASEBALL } from "../../util/processLiveGameEvents.baseball.tsx";
 import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_FOOTBALL } from "../../util/processLiveGameEvents.football.tsx";
@@ -32,6 +32,7 @@ import {
 } from "../../components/PlayPauseNext.tsx";
 import { Confetti } from "./Confetti.tsx";
 import { BoxScoreRow } from "../../components/BoxScoreRow.tsx";
+import { getPeriodName } from "../../../common/getPeriodName.ts";
 
 type PlayerRowProps = {
 	exhibition?: boolean;

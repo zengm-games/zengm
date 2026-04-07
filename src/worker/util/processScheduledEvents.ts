@@ -16,10 +16,11 @@ import type {
 	Conditions,
 	RealTeamInfo,
 } from "../../common/types.ts";
-import { PHASE, applyRealTeamInfo } from "../../common/index.ts";
+import { PHASE } from "../../common/index.ts";
 import local from "./local.ts";
 import { orderBy } from "../../common/utils.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../core/player/getNumPlayersTradedAwayNormalized.ts";
+import { applyRealTeamInfo } from "../../common/applyRealTeamInfo.ts";
 
 const processTeamInfo = async (
 	info: Extract<ScheduledEvent, { type: "teamInfo" }>["info"],

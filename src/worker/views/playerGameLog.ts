@@ -1,8 +1,4 @@
-import {
-	filterPlayerStats,
-	isSport,
-	PLAYER_GAME_STATS,
-} from "../../common/index.ts";
+import { isSport, PLAYER_GAME_STATS } from "../../common/index.ts";
 import formatScoreWithShootout from "../../common/formatScoreWithShootout.ts";
 import getWinner from "../../common/getWinner.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
@@ -14,6 +10,7 @@ import {
 	processPlayerStats,
 } from "../util/index.ts";
 import { getCommon } from "./player.ts";
+import { filterPlayerStats } from "../../common/filterPlayerStats.ts";
 
 const updatePlayerGameLog = async (
 	{ pid, season }: ViewInput<"playerGameLog">,

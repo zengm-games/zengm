@@ -1,6 +1,5 @@
 import {
 	PLAYER,
-	applyRealTeamInfo,
 	bySport,
 	isSport,
 	DEFAULT_PLAY_THROUGH_INJURIES,
@@ -31,6 +30,7 @@ import type {
 	TeamSeason,
 } from "../../../common/types.ts";
 import { groupByUnique, maxBy } from "../../../common/utils.ts";
+import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
 
 const newPhasePreseason = async (
 	conditions: Conditions,

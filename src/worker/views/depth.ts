@@ -1,7 +1,7 @@
 import { player, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import posRatings from "../../common/posRatings.ts";
+import { posRatings } from "../../common/posRatings.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { bySport, isSport } from "../../common/index.ts";
 import {

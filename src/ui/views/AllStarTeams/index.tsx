@@ -6,7 +6,7 @@ import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
 import type { View } from "../../../common/types.ts";
 import EditAllStars from "./EditAllStars.tsx";
-import { wait } from "../../../common/index.ts";
+import { wait } from "../../../common/wait.ts";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../../components/DataTable/index.tsx";
 import { useLocalPartial } from "../../util/local.ts";

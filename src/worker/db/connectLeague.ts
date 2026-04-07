@@ -4,12 +4,10 @@ import {
 	DEFAULT_STADIUM_CAPACITY,
 	DEFAULT_TEAM_COLORS,
 	DIFFICULTY,
-	gameAttributesArrayToObject,
 	isSport,
 	LEAGUE_DATABASE_VERSION,
 	PHASE,
 	PLAYER,
-	unwrapGameAttribute,
 } from "../../common/index.ts";
 import { player, season } from "../core/index.ts";
 import { idb } from "./index.ts";
@@ -53,6 +51,8 @@ import { amountToLevel } from "../../common/budgetLevels.ts";
 import { orderBy } from "../../common/utils.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 import { getNumPlayersTradedAwayNormalized } from "../core/player/getNumPlayersTradedAwayNormalized.ts";
+import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
+import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
 
 export interface LeagueDB extends DBSchema {
 	allStars: {

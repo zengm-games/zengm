@@ -1,14 +1,11 @@
 import { useEffect, useState, type ChangeEvent, type SubmitEvent } from "react";
-import {
-	ACCOUNT_API_URL,
-	STRIPE_PUBLISHABLE_KEY,
-	fetchWrapper,
-} from "../../common/index.ts";
+import { ACCOUNT_API_URL, STRIPE_PUBLISHABLE_KEY } from "../../common/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import type { View } from "../../common/types.ts";
 import { ajaxErrorMsg } from "./LoginOrRegister/index.tsx";
 import { getScript } from "../util/getScript.ts";
+import { fetchWrapper } from "../../common/fetchWrapper.ts";
 
 const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 	const [state, setState] = useState({

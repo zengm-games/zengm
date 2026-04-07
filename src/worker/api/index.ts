@@ -8,7 +8,6 @@ import {
 	RATINGS,
 	isSport,
 	bySport,
-	gameAttributesArrayToObject,
 	DEFAULT_JERSEY,
 	POSITIONS,
 	GRACE_PERIOD,
@@ -104,7 +103,6 @@ import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula.ts";
 import type { Settings } from "../views/settings.ts";
 import {
 	getActualAttendance,
-	getAdjustedTicketPrice,
 	getAutoTicketPriceByTid,
 	getBaseAttendance,
 } from "../core/game/attendance.ts";
@@ -162,6 +160,8 @@ import type { KeyboardShortcutsLocal } from "../../ui/util/keyboardShortcuts.ts"
 import { getNumPlayoffTeamsRaw } from "../core/season/getNumPlayoffTeams.ts";
 import type { NewLeagueSettings } from "../views/newLeague.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../core/player/getNumPlayersTradedAwayNormalized.ts";
+import { getAdjustedTicketPrice } from "../../common/getAdjustedTicketPrice.ts";
+import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
 
 const acceptContractNegotiation = async ({
 	pid,

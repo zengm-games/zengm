@@ -2,12 +2,12 @@ import { assert, beforeAll, test } from "vitest";
 import { resetCache, resetG } from "../../../test/helpers.ts";
 import {
 	getActualAttendance,
-	getAdjustedTicketPrice,
 	getAutoTicketPrice,
 	getBaseAttendance,
 } from "./attendance.ts";
 import team from "../team/index.ts";
 import { helpers } from "../../util/index.ts";
+import { getAdjustedTicketPrice } from "../../../common/getAdjustedTicketPrice.ts";
 
 beforeAll(async () => {
 	resetG();

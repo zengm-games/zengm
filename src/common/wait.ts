@@ -1,7 +1,5 @@
-const wait = (ms: number) => {
+export const wait = (ms: number) => {
 	return new Promise((resolve) => {
 		setTimeout(resolve, ms);
 	});
 };
-
-export default wait;

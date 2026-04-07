@@ -9,7 +9,6 @@ import {
 import { ResponsiveTableWrapper } from "./ResponsiveTableWrapper.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
-import { filterPlayerStats } from "../../common/index.ts";
 import { PLAYER_GAME_STATS } from "../../common/constants.baseball.ts";
 import { sortByStats, StatsHeader } from "./BoxScore.football.tsx";
 import updateSortBys from "./DataTable/updateSortBys.ts";
@@ -30,6 +29,7 @@ import type {
 } from "../../worker/core/GameSim.baseball/PlayByPlayLogger.ts";
 import { orderBy } from "../../common/utils.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
+import { filterPlayerStats } from "../../common/filterPlayerStats.ts";
 
 type Team = {
 	abbrev: string;

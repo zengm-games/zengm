@@ -1,9 +1,6 @@
 import { openDB } from "@dumbmatter/idb";
 import type { IDBPCursorWithValue } from "@dumbmatter/idb";
-import {
-	gameAttributesArrayToObject,
-	LEAGUE_DATABASE_VERSION,
-} from "../../common/index.ts";
+import { LEAGUE_DATABASE_VERSION } from "../../common/index.ts";
 import {
 	gameAttributesCache,
 	gameAttributesKeysOtherSports,
@@ -14,6 +11,7 @@ import type {
 	LeagueDB,
 	LeagueDBStoreNames,
 } from "../../worker/db/connectLeague.ts";
+import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
 
 // Otherwise it often pulls just one record per transaction, as it's hitting up against the high water mark
 const TWENTY_MEGABYTES_IN_BYTES = 20 * 1024 * 1024;

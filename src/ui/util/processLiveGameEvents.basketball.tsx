@@ -1,4 +1,4 @@
-import { getPeriodName } from "../../common/index.ts";
+import { getPeriodName } from "../../common/getPeriodName.ts";
 import { choice } from "../../common/random.ts";
 import { helpers } from "./helpers.ts";
 import { local } from "./local.ts";

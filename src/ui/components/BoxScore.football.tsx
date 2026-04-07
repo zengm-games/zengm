@@ -8,11 +8,7 @@ import {
 } from "react";
 import { ResponsiveTableWrapper } from "./ResponsiveTableWrapper.tsx";
 import { getCols } from "../../common/getCols.ts";
-import {
-	filterPlayerStats,
-	getPeriodName,
-	helpers,
-} from "../../common/index.ts";
+import { helpers } from "../../common/index.ts";
 import { PLAYER_GAME_STATS } from "../../common/constants.football.ts";
 import type { Col, SortBy } from "./DataTable/index.tsx";
 import updateSortBys from "./DataTable/updateSortBys.ts";
@@ -31,6 +27,8 @@ import type { PlayByPlayEventScore } from "../../worker/core/GameSim.football/Pl
 import { range } from "../../common/utils.ts";
 import { formatClock } from "../../common/formatClock.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
+import { getPeriodName } from "../../common/getPeriodName.ts";
+import { filterPlayerStats } from "../../common/filterPlayerStats.ts";
 
 type Team = {
 	abbrev: string;

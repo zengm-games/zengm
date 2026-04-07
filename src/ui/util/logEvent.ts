@@ -1,4 +1,4 @@
-import { createLogger } from "../../common/index.ts";
+import { createLogger } from "../../common/createLogger.ts";
 import { local } from "./local.ts";
 import type { LogEventShowOptions } from "../../common/types.ts";
 import { notify } from "./notify.ts";

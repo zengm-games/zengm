@@ -11,7 +11,7 @@ import { wrap } from "../../util/g.ts";
 import type { GameAttributesLeague } from "../../../common/types.ts";
 import { draft, team } from "../index.ts";
 import gameAttributesToUI from "./gameAttributesToUI.ts";
-import { unwrapGameAttribute } from "../../../common/index.ts";
+import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
 import { getAutoTicketPriceByTid } from "../game/attendance.ts";
 import goatFormula from "../../util/goatFormula.ts";
 import updateMeta from "./updateMeta.ts";

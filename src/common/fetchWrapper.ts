@@ -1,4 +1,4 @@
-const fetchWrapper = async ({
+export const fetchWrapper = async ({
 	url,
 	method,
 	headers,
@@ -44,5 +44,3 @@ const fetchWrapper = async ({
 
 	return response.json();
 };
-
-export default fetchWrapper;

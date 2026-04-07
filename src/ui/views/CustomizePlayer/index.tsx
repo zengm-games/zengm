@@ -24,7 +24,7 @@ import { toWorker } from "../../util/toWorker.ts";
 import RatingsForm from "./RatingsForm.tsx";
 import RelativesForm from "./RelativesForm.tsx";
 import type { View, Phase, PlayerWithoutKey } from "../../../common/types.ts";
-import posRatings from "../../../common/posRatings.ts";
+import { posRatings } from "../../../common/posRatings.ts";
 import { orderBy } from "../../../common/utils.ts";
 import CustomMoodItemsForm from "./CustomMoodItemsForm.tsx";
 import { roundContract } from "../../../common/roundContract.ts";

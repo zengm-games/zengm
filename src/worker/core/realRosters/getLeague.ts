@@ -16,7 +16,6 @@ import {
 	PHASE,
 	PLAYER,
 	REAL_PLAYERS_INFO,
-	unwrapGameAttribute,
 } from "../../../common/index.ts";
 import { player, team } from "../index.ts";
 import { legendsInfo } from "./getLeagueInfo.ts";
@@ -33,6 +32,7 @@ import getAwards from "./getAwards.ts";
 import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition.ts";
 import getInjury from "./getInjury.ts";
 import { averageSalary } from "./averageSalary.ts";
+import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
 
 const FREE_AGENTS_SEASON = 2020;
 

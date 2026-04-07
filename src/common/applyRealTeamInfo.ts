@@ -36,7 +36,7 @@ const applyToObject = (t: MyTeam, realInfo: IndividualRealTeamInfo) => {
 	return updated;
 };
 
-const applyRealTeamInfo = (
+export const applyRealTeamInfo = (
 	t: MyTeam,
 	realTeamInfo: RealTeamInfo,
 	season: number,
@@ -93,5 +93,3 @@ const applyRealTeamInfo = (
 
 	return applyToObject(t, realInfoMerged);
 };
-
-export default applyRealTeamInfo;

@@ -6,8 +6,8 @@ import processPlayerStatsHockey from "./processPlayerStats.hockey.ts";
 import type { PlayerStats, PlayerStatType } from "./types.ts";
 import defaultGameAttributes from "./defaultGameAttributes.ts";
 
-// ONLY USE THIS IF THE fantasySports SETTING DOES NOT MATTER!!! Otherwise, use it from ui
-const processPlayerStats = (
+// ONLY USE THIS IF THE fantasySports SETTING DOES NOT MATTER!!! Otherwise, use it from ui/worker
+export const processPlayerStats = (
 	ps: PlayerStats,
 	stats: string[],
 	statType?: PlayerStatType,
@@ -22,5 +22,3 @@ const processPlayerStats = (
 		hockey: processPlayerStatsHockey(ps, stats, statType, bornYear),
 	});
 };
-
-export default processPlayerStats;

@@ -15,7 +15,7 @@ import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { useLocalPartial } from "../../util/local.ts";
 import type { View } from "../../../common/types.ts";
-import { getAdjustedTicketPrice, PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/index.ts";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../../components/DataTable/index.tsx";
 import {
@@ -35,6 +35,7 @@ import { useBlocker } from "../../hooks/useBlocker.ts";
 import { gradientStyleFactory } from "../../util/gradientStyleFactory.ts";
 import { BarGraph } from "./BarGraph.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
+import { getAdjustedTicketPrice } from "../../../common/getAdjustedTicketPrice.ts";
 
 const paddingLeft85 = { paddingLeft: 85 };
 

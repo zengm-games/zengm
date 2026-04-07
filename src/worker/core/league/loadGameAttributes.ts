@@ -1,14 +1,12 @@
 import { league } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { defaultGameAttributes, g } from "../../util/index.ts";
-import {
-	gameAttributeHasHistory,
-	helpers,
-	unwrapGameAttribute,
-} from "../../../common/index.ts";
+import { helpers } from "../../../common/index.ts";
 import gameAttributesToUI from "./gameAttributesToUI.ts";
 import { gameAttributesKeysOtherSports } from "../../../common/defaultGameAttributes.ts";
 import type { GameAttributesLeague } from "../../../common/types.ts";
+import { gameAttributeHasHistory } from "../../../common/gameAttributeHasHistory.ts";
+import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
 
 export const ALWAYS_WRAP = [
 	"confs",

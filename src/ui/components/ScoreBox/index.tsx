@@ -1,10 +1,5 @@
 import clsx from "clsx";
-import {
-	bySport,
-	getBestPlayerBoxScore,
-	isSport,
-	PHASE,
-} from "../../../common/index.ts";
+import { bySport, isSport, PHASE } from "../../../common/index.ts";
 import { helpers } from "../../util/helpers.ts";
 import { useLocalPartial } from "../../util/local.ts";
 import React, { memo, type ReactNode } from "react";
@@ -13,6 +8,7 @@ import defaultGameAttributes from "../../../common/defaultGameAttributes.ts";
 import { PlayerNameLabels } from "../PlayerNameLabels.tsx";
 import getWinner from "../../../common/getWinner.ts";
 import { getCol } from "../../../common/getCol.ts";
+import { getBestPlayerBoxScore } from "../../../common/getBestPlayerBoxScore.ts";
 
 const roundHalf = (x: number) => {
 	return Math.round(x * 2) / 2;

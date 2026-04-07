@@ -1,5 +1,5 @@
 import { assert, beforeAll, test } from "vitest";
-import applyRealTeamInfo from "./applyRealTeamInfo.ts";
+import { applyRealTeamInfo } from "./applyRealTeamInfo.ts";
 import generate from "../worker/core/team/generate.ts";
 import { resetG } from "../test/helpers.ts";
 import helpers from "./helpers.ts";

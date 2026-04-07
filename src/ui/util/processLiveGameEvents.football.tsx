@@ -1,4 +1,4 @@
-import { getPeriodName } from "../../common/index.ts";
+import { getPeriodName } from "../../common/getPeriodName.ts";
 import { formatScoringSummaryEvent } from "../../common/formatScoringSummaryEvent.football.ts";
 import { helpers } from "./helpers.ts";
 import { local } from "./local.ts";

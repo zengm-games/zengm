@@ -1,13 +1,10 @@
-import {
-	ACCOUNT_API_URL,
-	fetchWrapper,
-	GRACE_PERIOD,
-} from "../../common/index.ts";
+import { ACCOUNT_API_URL, GRACE_PERIOD } from "../../common/index.ts";
 import { idb } from "../db/index.ts";
 import achievement from "./achievement.ts";
 import local from "./local.ts";
 import toUI from "./toUI.ts";
 import type { Conditions, PartialTopMenu } from "../../common/types.ts";
+import { fetchWrapper } from "../../common/fetchWrapper.ts";
 
 // If it tries to add achievements from IDB to API twice at the same time, weird stuff could happen
 let adding = false;

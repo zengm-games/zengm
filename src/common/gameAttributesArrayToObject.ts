@@ -1,4 +1,4 @@
-const gameAttributesArrayToObject = (
+export const gameAttributesArrayToObject = (
 	array: {
 		key: string;
 		value: any;
@@ -11,5 +11,3 @@ const gameAttributesArrayToObject = (
 
 	return object;
 };
-
-export default gameAttributesArrayToObject;

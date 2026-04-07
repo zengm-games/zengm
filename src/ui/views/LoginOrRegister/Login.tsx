@@ -1,14 +1,11 @@
 import { type SubmitEvent, useRef, useState } from "react";
-import {
-	ACCOUNT_API_URL,
-	fetchWrapper,
-	GRACE_PERIOD,
-} from "../../../common/index.ts";
+import { ACCOUNT_API_URL, GRACE_PERIOD } from "../../../common/index.ts";
 import { ActionButton } from "../../components/ActionButton.tsx";
 import { toWorker } from "../../util/toWorker.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { localActions } from "../../util/local.ts";
 import { analyticsEvent } from "../../util/analyticsEvent.ts";
+import { fetchWrapper } from "../../../common/fetchWrapper.ts";
 
 const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 	const [submitting, setSubmitting] = useState(false);

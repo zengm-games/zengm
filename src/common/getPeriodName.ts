@@ -1,6 +1,6 @@
 import isSport from "./isSport.ts";
 
-const getPeriodName = (numPeriods: number, short?: boolean) => {
+export const getPeriodName = (numPeriods: number, short?: boolean) => {
 	if (isSport("baseball")) {
 		return short ? "Inn" : "inning";
 	}
@@ -15,5 +15,3 @@ const getPeriodName = (numPeriods: number, short?: boolean) => {
 
 	return short ? "P" : "period";
 };
-
-export default getPeriodName;

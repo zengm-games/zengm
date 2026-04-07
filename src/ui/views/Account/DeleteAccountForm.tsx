@@ -1,14 +1,11 @@
 import clsx from "clsx";
 import { useEffect, useRef, useState } from "react";
 import { Modal } from "../../components/Modal.tsx";
-import {
-	ACCOUNT_API_URL,
-	fetchWrapper,
-	GAME_NAME,
-} from "../../../common/index.ts";
+import { ACCOUNT_API_URL, GAME_NAME } from "../../../common/index.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { ajaxErrorMsg } from "../LoginOrRegister/index.tsx";
+import { fetchWrapper } from "../../../common/fetchWrapper.ts";
 
 const Dialog = ({
 	username,

@@ -2,15 +2,12 @@ import { m, AnimatePresence } from "framer-motion";
 import { useState, useReducer, useRef, useCallback, useEffect } from "react";
 import {
 	DIFFICULTY,
-	applyRealTeamInfo,
 	PHASE,
 	PHASE_TEXT,
 	DEFAULT_CONFS,
 	DEFAULT_DIVS,
 	REAL_PLAYERS_INFO,
-	gameAttributesArrayToObject,
 	WEBSITE_ROOT,
-	unwrapGameAttribute,
 	LEAGUE_DATABASE_VERSION,
 } from "../../../common/index.ts";
 import { ActionButton } from "../../components/ActionButton.tsx";
@@ -54,6 +51,9 @@ import { NextPrevButtons } from "../../components/NextPrevButtons.tsx";
 import { confirm } from "../../util/confirm.tsx";
 import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
+import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
+import { gameAttributesArrayToObject } from "../../../common/gameAttributesArrayToObject.ts";
+import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
 
 const animationVariants = {
 	visible: {

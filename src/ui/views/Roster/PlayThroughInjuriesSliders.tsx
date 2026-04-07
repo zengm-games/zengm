@@ -1,6 +1,6 @@
 import { AnimatePresence, m } from "framer-motion";
 import { useState } from "react";
-import { timeBetweenGames } from "../../../common/index.ts";
+import { timeBetweenGames } from "../../../common/timeBetweenGames.ts";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import CollapseArrow from "../../components/CollapseArrow.tsx";

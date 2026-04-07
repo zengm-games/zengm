@@ -4,10 +4,11 @@ import type {
 	Team,
 	TeamSeasonWithoutKey,
 } from "../../../common/types.ts";
-import { gameAttributeHasHistory, PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/index.ts";
 import { ALWAYS_WRAP } from "../league/loadGameAttributes.ts";
 import { wrap } from "../../util/g.ts";
 import { orderBy } from "../../../common/utils.ts";
+import { gameAttributeHasHistory } from "../../../common/gameAttributeHasHistory.ts";
 
 const processGameAttributes = (
 	events: any[],

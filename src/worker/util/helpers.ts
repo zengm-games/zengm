@@ -1,7 +1,6 @@
 import {
 	PLAYER,
 	helpers as commonHelpers,
-	timeBetweenGames,
 	isSport,
 } from "../../common/index.ts";
 import { idb } from "../db/index.ts";
@@ -14,6 +13,7 @@ import type {
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 import hasTies from "../core/season/hasTies.ts";
 import { roundContract as roundContractRaw } from "../../common/roundContract.ts";
+import { timeBetweenGames } from "../../common/timeBetweenGames.ts";
 
 const augmentSeries = async (
 	series: {

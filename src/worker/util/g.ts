@@ -3,8 +3,9 @@ import type {
 	GameAttributesLeague,
 	GameAttributesLeagueWithHistory,
 } from "../../common/types.ts";
-import { PHASE, helpers, gameAttributeHasHistory } from "../../common/index.ts";
+import { PHASE, helpers } from "../../common/index.ts";
 import { actualPhase } from "./actualPhase.ts";
+import { gameAttributeHasHistory } from "../../common/gameAttributeHasHistory.ts";
 
 // This will get filled by values from IndexedDB
 const g: GameAttributes & {

@@ -5,12 +5,12 @@ import { g, helpers } from "../../util/index.ts";
 import type { GameResults } from "../../../common/types.ts";
 import {
 	getActualAttendance,
-	getAdjustedTicketPrice,
 	getAutoTicketPrice,
 	getBaseAttendance,
 } from "./attendance.ts";
 import { levelToAmount } from "../../../common/budgetLevels.ts";
 import getWinner from "../../../common/getWinner.ts";
+import { getAdjustedTicketPrice } from "../../../common/getAdjustedTicketPrice.ts";
 
 const writeTeamStats = async (results: GameResults) => {
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;

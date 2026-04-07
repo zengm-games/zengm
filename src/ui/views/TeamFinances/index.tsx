@@ -6,7 +6,7 @@ import {
 	useState,
 	type ReactNode,
 } from "react";
-import { DataTable, HelpPopover, MoreLinks } from "../../components/index.tsx";
+import { DataTable, MoreLinks } from "../../components/index.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
 	getCols,
@@ -35,6 +35,7 @@ import { CurrencyInputGroup } from "../../components/CurrencyInputGroup.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 import { gradientStyleFactory } from "../../util/gradientStyleFactory.ts";
 import { BarGraph } from "./BarGraph.tsx";
+import { HelpPopover } from "../../components/HelpPopover.tsx";
 
 const paddingLeft85 = { paddingLeft: 85 };
 

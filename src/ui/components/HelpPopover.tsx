@@ -1,7 +1,7 @@
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import type { ReactNode } from "react";
 
-const HelpPopover = ({
+export const HelpPopover = ({
 	children,
 	className,
 	style,
@@ -35,5 +35,3 @@ const HelpPopover = ({
 		</OverlayTrigger>
 	);
 };
-
-export default HelpPopover;

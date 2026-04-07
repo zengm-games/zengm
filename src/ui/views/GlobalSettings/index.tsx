@@ -15,8 +15,9 @@ import {
 	PHASE,
 	PHASE_TEXT,
 } from "../../../common/index.ts";
-import { HelpPopover, MoreLinks } from "../../components/index.tsx";
+import { MoreLinks } from "../../components/index.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
+import { HelpPopover } from "../../components/HelpPopover.tsx";
 
 const GlobalSettings = (props: View<"globalSettings">) => {
 	const [state, setState] = useState(() => {

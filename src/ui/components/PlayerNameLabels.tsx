@@ -131,7 +131,7 @@ const CountryFlagPid = ({
 	return <CountryFlag className={className} country={country ?? "Unknown"} />;
 };
 
-const PlayerNameLabels = (props: Props) => {
+export const PlayerNameLabels = (props: Props) => {
 	const localState = useLocalPartial(["alwaysShowCountry", "fullNames"]);
 	const alwaysShowCountry = localState.alwaysShowCountry;
 	const fullNames = localState.fullNames || props.fullNames;
@@ -289,5 +289,3 @@ export const wrappedPlayerNameLabels = (props: Props) => {
 		searchValue: `${firstName} ${lastName}`,
 	};
 };
-
-export default PlayerNameLabels;

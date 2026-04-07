@@ -1,7 +1,7 @@
 import { helpers } from "../../util/index.ts";
 import type { View } from "../../../common/types.ts";
 import clsx from "clsx";
-import { PlayerNameLabels } from "../../components/index.tsx";
+import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import { ContractAmount, ContractExp } from "../../components/contract.tsx";
 import type { HandleToggle } from "./index.tsx";
 import { isSport } from "../../../common/index.ts";

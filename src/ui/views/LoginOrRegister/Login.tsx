@@ -4,7 +4,7 @@ import {
 	fetchWrapper,
 	GRACE_PERIOD,
 } from "../../../common/index.ts";
-import { ActionButton } from "../../components/index.tsx";
+import { ActionButton } from "../../components/ActionButton.tsx";
 import { localActions, realtimeUpdate, toWorker } from "../../util/index.ts";
 import { analyticsEvent } from "../../util/analyticsEvent.ts";
 

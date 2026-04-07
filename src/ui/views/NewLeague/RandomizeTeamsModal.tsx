@@ -2,13 +2,13 @@ import { useState } from "react";
 import { Modal } from "../../components/Modal.tsx";
 import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import { SelectSeasonRange } from "./SelectSeasonRange.tsx";
-import HelpPopover from "../../components/HelpPopover.tsx";
+import { HelpPopover } from "../../components/HelpPopover.tsx";
 import {
 	realContinents,
 	type Continent,
 } from "../../../common/geographicCoordinates.ts";
 import Select from "react-select";
-import ActionButton from "../../components/ActionButton.tsx";
+import { ActionButton } from "../../components/ActionButton.tsx";
 import logEvent from "../../util/logEvent.ts";
 
 export type PopulationFactor =

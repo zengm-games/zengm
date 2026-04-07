@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useState, type SubmitEvent, useEffect } from "react";
-import { ActionButton } from "../../components/index.tsx";
+import { ActionButton } from "../../components/ActionButton.tsx";
 import {
 	confirm,
 	localActions,

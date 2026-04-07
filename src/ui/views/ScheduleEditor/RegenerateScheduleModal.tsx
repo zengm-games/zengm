@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Modal } from "../../components/Modal.tsx";
-import ActionButton from "../../components/ActionButton.tsx";
+import { ActionButton } from "../../components/ActionButton.tsx";
 import logEvent from "../../util/logEvent.ts";
 import type { View } from "../../../common/types.ts";
 import { toWorker } from "../../util/index.ts";

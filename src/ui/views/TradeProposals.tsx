@@ -11,7 +11,7 @@ import {
 	playerScore,
 } from "./TradingBlock/index.tsx";
 import { useEffect, useState } from "react";
-import { ActionButton } from "../components/index.tsx";
+import { ActionButton } from "../components/ActionButton.tsx";
 import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch.tsx";
 
 const TradeProposals = (props: View<"tradeProposals">) => {

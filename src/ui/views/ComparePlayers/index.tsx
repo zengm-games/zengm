@@ -1,6 +1,6 @@
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import type { SortType, View } from "../../../common/types.ts";
-import { PlayerNameLabels } from "../../components/index.tsx";
+import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import { PLAYER, bySport } from "../../../common/index.ts";
 import { getCol, helpers, realtimeUpdate } from "../../util/index.ts";
 import { useEffect, useState, type ReactNode } from "react";

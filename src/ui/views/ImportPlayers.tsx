@@ -2,7 +2,7 @@ import { useState, type ChangeEvent } from "react";
 import { PLAYER, PHASE, LEAGUE_DATABASE_VERSION } from "../../common/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, toWorker, useLocal } from "../util/index.ts";
-import { ActionButton, DataTable, MoreLinks } from "../components/index.tsx";
+import { DataTable, MoreLinks } from "../components/index.tsx";
 import type { View } from "../../common/types.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { orderBy } from "../../common/utils.ts";
@@ -11,6 +11,7 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { CurrencyInputGroup } from "../components/CurrencyInputGroup.tsx";
 import useLocalStorageState from "use-local-storage-state";
 import { LeagueFileUpload } from "../components/LeagueFileUpload.tsx";
+import { ActionButton } from "../components/ActionButton.tsx";
 
 export const ImportPlayersInner = ({
 	challengeNoRatings,

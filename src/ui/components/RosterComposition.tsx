@@ -1,4 +1,4 @@
-import HelpPopover from "./HelpPopover.tsx";
+import { HelpPopover } from "./HelpPopover.tsx";
 import { bySport, isSport, POSITION_COUNTS } from "../../common/index.ts";
 
 type Players = {

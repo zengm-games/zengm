@@ -13,7 +13,7 @@ import {
 } from "./PlayerBioInfo.tsx";
 import PlayerBioInfoSortButton from "./PlayerBioInfoSortButton.tsx";
 import { IMPORT_FILE_STYLE } from "./RowsEditor.tsx";
-import { HelpPopover } from "../../components/index.tsx";
+import { HelpPopover } from "../../components/HelpPopover.tsx";
 import { Modal } from "../../components/Modal.tsx";
 import { orderBy } from "../../../common/utils.ts";
 import { WEBSITE_ROOT } from "../../../common/constants.ts";

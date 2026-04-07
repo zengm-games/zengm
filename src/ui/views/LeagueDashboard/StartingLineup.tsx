@@ -1,4 +1,4 @@
-import { PlayerNameLabels } from "../../components/index.tsx";
+import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import { getCols, helpers } from "../../util/index.ts";
 import type { View } from "../../../common/types.ts";
 import { DEPTH_CHART_NAME, isSport } from "../../../common/index.ts";

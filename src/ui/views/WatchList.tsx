@@ -3,7 +3,7 @@ import { Dropdown } from "react-bootstrap";
 import { PHASE, PLAYER } from "../../common/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, toWorker, useLocalPartial } from "../util/index.ts";
-import { ActionButton, DataTable, MoreLinks } from "../components/index.tsx";
+import { DataTable, MoreLinks } from "../components/index.tsx";
 import type { View } from "../../common/types.ts";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 import {
@@ -14,6 +14,7 @@ import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { Flag, WatchBlock } from "../components/WatchBlock.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import Note from "./Player/Note.tsx";
+import { ActionButton } from "../components/ActionButton.tsx";
 
 const ClearButton = ({
 	onClick,

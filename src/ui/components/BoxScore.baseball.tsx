@@ -19,7 +19,7 @@ import {
 	playersByPid,
 	type SportState,
 } from "../util/processLiveGameEvents.baseball.tsx";
-import PlayerNameLabels from "./PlayerNameLabels.tsx";
+import { PlayerNameLabels } from "./PlayerNameLabels.tsx";
 import processStats, {
 	outsToInnings,
 } from "../../common/processPlayerStats.baseball.ts";

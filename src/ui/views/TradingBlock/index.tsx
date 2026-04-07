@@ -7,11 +7,7 @@ import {
 	toWorker,
 	useLocalPartial,
 } from "../../util/index.ts";
-import {
-	ActionButton,
-	DataTable,
-	HelpPopover,
-} from "../../components/index.tsx";
+import { DataTable } from "../../components/index.tsx";
 import type { Col } from "../../components/DataTable/index.tsx";
 import type { View } from "../../../common/types.ts";
 import type api from "../../../worker/api/index.ts";
@@ -32,6 +28,8 @@ import { wrappedCurrency } from "../../components/wrappedCurrency.ts";
 import { orderBy } from "../../../common/utils.ts";
 import { SafeHtml } from "../../components/SafeHtml.tsx";
 import { SaveTrade } from "../../components/SaveTrade.tsx";
+import { HelpPopover } from "../../components/HelpPopover.tsx";
+import { ActionButton } from "../../components/ActionButton.tsx";
 
 export type OfferType = Awaited<
 	ReturnType<(typeof api)["main"]["getTradingBlockOffers"]>

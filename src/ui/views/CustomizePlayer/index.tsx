@@ -16,7 +16,7 @@ import {
 	bySport,
 	NOT_REAL_POSITIONS,
 } from "../../../common/index.ts";
-import { HelpPopover } from "../../components/index.tsx";
+import { HelpPopover } from "../../components/HelpPopover.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
 	helpers,

@@ -8,7 +8,7 @@ import {
 import { types } from "../../common/transactionInfo.ts";
 import type { View } from "../../common/types.ts";
 import type { LeagueDBStoreNames } from "../../worker/db/connectLeague.ts";
-import { ActionButton, MoreLinks } from "../components/index.tsx";
+import { MoreLinks } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import {
 	helpers,
@@ -18,6 +18,7 @@ import {
 } from "../util/index.ts";
 import type makeExportStream from "../util/makeExportStream.ts";
 import { ProgressBarText } from "../components/ProgressBarText.tsx";
+import { ActionButton } from "../components/ActionButton.tsx";
 
 const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 

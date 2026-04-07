@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { ActionButton } from "../../components/index.tsx";
+import { ActionButton } from "../../components/ActionButton.tsx";
 import { toWorker } from "../../util/index.ts";
 import useLocalStorageState from "use-local-storage-state";
 

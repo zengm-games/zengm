@@ -7,7 +7,7 @@ import {
 	useState,
 	type ReactNode,
 } from "react";
-import { DataTable, HelpPopover, MoreLinks } from "../components/index.tsx";
+import { DataTable, MoreLinks } from "../components/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { getCols, helpers, toWorker, useLocal } from "../util/index.ts";
 import type {
@@ -29,6 +29,7 @@ import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 import { PlayPauseNext } from "../components/PlayPauseNext.tsx";
 import ResponsiveTableWrapper from "../components/ResponsiveTableWrapper.tsx";
 import { DraftAbbrev } from "../components/DraftAbbrev.tsx";
+import { HelpPopover } from "../components/HelpPopover.tsx";
 
 type MyDraftType = DraftType | "dummy";
 export const getDraftTypeDescription = (

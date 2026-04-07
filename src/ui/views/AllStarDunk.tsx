@@ -1,7 +1,7 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers, toWorker, useLocal, useLocalPartial } from "../util/index.ts";
 import type { DunkAttempt, Player, View } from "../../common/types.ts";
-import { PlayerNameLabels } from "../components/index.tsx";
+import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { useEffect, useState } from "react";
 import { isSport } from "../../common/index.ts";
 import SelectMultiple from "../components/SelectMultiple/index.tsx";

@@ -6,7 +6,7 @@ import {
 	PLAYER,
 	WEBSITE_ROOT,
 } from "../../../common/index.ts";
-import { HelpPopover, MoreLinks, DataTable } from "../../components/index.tsx";
+import { MoreLinks, DataTable } from "../../components/index.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import {
 	confirm,
@@ -35,6 +35,7 @@ import type { BulkAction } from "../../components/DataTable/BulkActions.tsx";
 import { groupByUnique } from "../../../common/utils.ts";
 import { CountryFlag } from "../../components/CountryFlag.tsx";
 import { SafeHtml } from "../../components/SafeHtml.tsx";
+import { HelpPopover } from "../../components/HelpPopover.tsx";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],

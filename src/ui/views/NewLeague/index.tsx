@@ -13,7 +13,7 @@ import {
 	unwrapGameAttribute,
 	LEAGUE_DATABASE_VERSION,
 } from "../../../common/index.ts";
-import { ActionButton } from "../../components/index.tsx";
+import { ActionButton } from "../../components/ActionButton.tsx";
 import {
 	LeagueFileUpload,
 	type LeagueFileUploadOutput,

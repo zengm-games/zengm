@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { isSport } from "../../common/index.ts";
 import { helpers, toWorker } from "../util/index.ts";
-import ActionButton from "./ActionButton.tsx";
+import { ActionButton } from "./ActionButton.tsx";
 import { downloadFile } from "../util/downloadFile.ts";
 
 export const RetiredPlayers = ({

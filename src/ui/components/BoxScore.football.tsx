@@ -7,7 +7,7 @@ import {
 	type CSSProperties,
 } from "react";
 import { ResponsiveTableWrapper } from "./ResponsiveTableWrapper.tsx";
-import { getCols } from "../util/index.ts";
+import { getCols } from "../../common/getCols.ts";
 import {
 	filterPlayerStats,
 	getPeriodName,

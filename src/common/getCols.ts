@@ -3786,7 +3786,7 @@ const cols: {
 	...sportSpecificCols,
 };
 
-const getCols = (
+export const getCols = (
 	titles: string[],
 	overrides: Record<string, Partial<Col>> = {},
 ): Col[] => {
@@ -3802,5 +3802,3 @@ const getCols = (
 		};
 	});
 };
-
-export default getCols;

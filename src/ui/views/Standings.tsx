@@ -8,7 +8,7 @@ import type { ByConf, TeamSeason, View } from "../../common/types.ts";
 import { bySport, isSport, TIEBREAKERS } from "../../common/index.ts";
 import { MovOrDiff } from "../components/MovOrDiff.tsx";
 import ResponsiveTableWrapper from "../components/ResponsiveTableWrapper.tsx";
-import getCol from "../../common/getCol.ts";
+import { getCol } from "../../common/getCol.ts";
 
 type StandingsTeam =
 	View<"standings">["rankingGroups"]["league"][number][number];

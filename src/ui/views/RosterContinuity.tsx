@@ -1,6 +1,6 @@
 import { DataTable } from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols } from "../util/index.ts";
+import { getCols } from "../../common/getCols.ts";
 import type { Col } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
 import { frivolitiesMenu } from "./Frivolities.tsx";

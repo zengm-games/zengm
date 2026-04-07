@@ -1,6 +1,6 @@
 import { useState, type SubmitEvent, type ReactNode } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, toWorker, getCols } from "../util/index.ts";
+import { helpers, toWorker } from "../util/index.ts";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { useLocalPartial } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
@@ -13,6 +13,7 @@ import {
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { SafeHtml } from "../components/SafeHtml.tsx";
 import { confirm } from "../util/confirm.tsx";
+import { getCols } from "../../common/getCols.ts";
 
 const PlayerList = ({
 	challengeNoRatings,

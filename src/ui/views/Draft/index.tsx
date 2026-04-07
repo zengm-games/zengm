@@ -1,7 +1,8 @@
 import clsx from "clsx";
 import { Fragment, useState } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { getCols, helpers, toWorker } from "../../util/index.ts";
+import { helpers, toWorker } from "../../util/index.ts";
+import { getCols } from "../../../common/getCols.ts";
 import { useLocal } from "../../util/local.ts";
 import { DataTable } from "../../components/DataTable/index.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
@@ -18,7 +19,7 @@ import { StickyDraftInfo } from "./StickyDraftInfo.tsx";
 import { wrappedDraftAbbrev } from "../../components/DraftAbbrev.tsx";
 import { RosterComposition } from "../../components/RosterComposition.tsx";
 import { confirm } from "../../util/confirm.tsx";
-import getCol from "../../../common/getCol.ts";
+import { getCol } from "../../../common/getCol.ts";
 
 const Draft = ({
 	challengeNoDraftPicks,

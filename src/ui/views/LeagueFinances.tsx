@@ -1,5 +1,6 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers, toWorker } from "../util/index.ts";
+import { helpers, toWorker } from "../util/index.ts";
+import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";

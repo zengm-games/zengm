@@ -1,6 +1,7 @@
 import { DataTable } from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers } from "../util/index.ts";
+import { helpers } from "../util/index.ts";
+import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
 import { bySport, isSport } from "../../common/index.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";

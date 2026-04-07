@@ -10,7 +10,8 @@ import {
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers, toWorker } from "../util/index.ts";
+import { helpers, toWorker } from "../util/index.ts";
+import { getCols } from "../../common/getCols.ts";
 import { useLocal } from "../util/local.ts";
 import type {
 	DraftLotteryResultArray,

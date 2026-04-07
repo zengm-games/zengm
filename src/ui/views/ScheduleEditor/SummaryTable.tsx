@@ -3,7 +3,7 @@ import { DataTable } from "../../components/DataTable/index.tsx";
 import helpers from "../../util/helpers.ts";
 import type { Col } from "../../components/DataTable/index.tsx";
 import { getGradientStyle } from "./getGradientStyle.ts";
-import getCol from "../../../common/getCol.ts";
+import { getCol } from "../../../common/getCol.ts";
 
 export const getTeamCols = (
 	teams: {

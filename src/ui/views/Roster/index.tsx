@@ -9,7 +9,8 @@ import {
 import { DataTable } from "../../components/DataTable/index.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { getCols, helpers, logEvent, toWorker } from "../../util/index.ts";
+import { helpers, logEvent, toWorker } from "../../util/index.ts";
+import { getCols } from "../../../common/getCols.ts";
 import { useLocalPartial } from "../../util/local.ts";
 import PlayingTime, { ptStyles } from "./PlayingTime.tsx";
 import TopStuff from "./TopStuff.tsx";

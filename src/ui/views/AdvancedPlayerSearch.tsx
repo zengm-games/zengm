@@ -4,7 +4,8 @@ import useDropdownOptions from "../hooks/useDropdownOptions.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { OptionDropdown } from "./PlayerGraphs/index.tsx";
 import { isSport, PLAYER, PLAYER_STATS_TABLES } from "../../common/index.ts";
-import { getCols, helpers, toWorker } from "../util/index.ts";
+import { helpers, toWorker } from "../util/index.ts";
+import { getCols } from "../../common/getCols.ts";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
@@ -21,7 +22,7 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 import { PlusMinus } from "../components/PlusMinus.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
-import getCol from "../../common/getCol.ts";
+import { getCol } from "../../common/getCol.ts";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];

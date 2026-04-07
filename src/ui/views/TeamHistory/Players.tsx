@@ -1,6 +1,7 @@
 import { PLAYER } from "../../../common/index.ts";
 import { DataTable } from "../../components/DataTable/index.tsx";
-import { helpers, getCols, toWorker } from "../../util/index.ts";
+import { helpers, toWorker } from "../../util/index.ts";
+import { getCols } from "../../../common/getCols.ts";
 import type { View } from "../../../common/types.ts";
 import playerRetireJerseyNumberDialog from "./playerRetireJerseyNumberDialog.tsx";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";

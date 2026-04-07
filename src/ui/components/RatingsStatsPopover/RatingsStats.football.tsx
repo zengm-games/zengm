@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import posRatings from "../../../common/posRatings.football.ts";
-import { getCols } from "../../util/index.ts";
+import { getCols } from "../../../common/getCols.ts";
 import type { RatingKey } from "../../../common/types.football.ts";
 import { gradientStyleFactory } from "../../util/gradientStyleFactory.ts";
 

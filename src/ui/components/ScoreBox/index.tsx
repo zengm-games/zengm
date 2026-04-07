@@ -12,7 +12,7 @@ import { TeamLogoInline } from "../TeamLogoInline.tsx";
 import defaultGameAttributes from "../../../common/defaultGameAttributes.ts";
 import { PlayerNameLabels } from "../PlayerNameLabels.tsx";
 import getWinner from "../../../common/getWinner.ts";
-import getCol from "../../../common/getCol.ts";
+import { getCol } from "../../../common/getCol.ts";
 
 const roundHalf = (x: number) => {
 	return Math.round(x * 2) / 2;

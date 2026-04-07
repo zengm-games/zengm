@@ -1,4 +1,5 @@
-import { getCols, helpers } from "../util/index.ts";
+import { helpers } from "../util/index.ts";
+import { getCols } from "../../common/getCols.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";

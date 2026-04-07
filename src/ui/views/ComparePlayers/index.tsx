@@ -13,7 +13,7 @@ import { lowerIsBetter } from "../../../common/lowerIsBetter.ts";
 import { Contract, ContractAmount } from "../../components/contract.tsx";
 import { groupAwards } from "../../util/groupAwards.ts";
 import { PlayerPicture } from "../../components/PlayerPicture.tsx";
-import getCol from "../../../common/getCol.ts";
+import { getCol } from "../../../common/getCol.ts";
 
 type PlayerInfo = View<"comparePlayers">["players"][number];
 type PlayerInfoAndLegend =

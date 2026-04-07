@@ -1,4 +1,4 @@
-import getCol from "../../common/getCol.ts";
+import { getCol } from "../../common/getCol.ts";
 
 // Could be the number (stat value), undefined (no stat, like old box score), player object (in which case we look inside and find number or undefined)
 type POrValue = number | undefined | any;

@@ -10,7 +10,7 @@ import type { Env } from "../common/types.ts";
 import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common/index.ts";
 import Bugsnag from "@bugsnag/browser";
 import { LeagueNotFoundMessage } from "./components/LeagueNotFoundMessage.tsx";
-import { getErrorBoundary } from "./components/getErrorBoundary.tsx";
+import { ErrorBoundary } from "./components/ErrorBoundary.tsx";
 import { ads } from "./util/ads.ts";
 import { genStaticPage } from "./util/genStaticPage.tsx";
 import { analyticsEvent } from "./util/analyticsEvent.ts";
@@ -113,7 +113,6 @@ const setupEnv = async () => {
 const render = () => {
 	const container = document.getElementById("content");
 	const root = createRoot(container!);
-	const ErrorBoundary = getErrorBoundary();
 	root.render(
 		<ErrorBoundary>
 			<Controller />

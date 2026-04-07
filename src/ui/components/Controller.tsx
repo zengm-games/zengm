@@ -15,7 +15,7 @@ import TitleBar from "./TitleBar.tsx";
 import { useViewData } from "../util/viewManager.tsx";
 import { isSport } from "../../common/index.ts";
 import api from "../api/index.ts";
-import { getErrorBoundary } from "./getErrorBoundary.tsx";
+import { ErrorBoundary } from "./ErrorBoundary.tsx";
 
 const loadFramerMotionFeatures = () =>
 	import("../util/framerMotionFeatures.ts").then((res) => res.default);
@@ -46,8 +46,6 @@ const KeepPreviousRenderWhileUpdating = memo(
 		return nextProps.updating;
 	},
 );
-
-const ErrorBoundary = getErrorBoundary();
 
 export const Controller = () => {
 	const state = useViewData();

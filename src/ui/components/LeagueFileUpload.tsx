@@ -13,13 +13,9 @@ import {
 	WEBSITE_ROOT,
 } from "../../common/index.ts";
 import type { BasicInfo } from "../../worker/api/leagueFileUpload.ts";
-import {
-	localActions,
-	resetFileInput,
-	toWorker,
-	useLocalPartial,
-} from "../util/index.ts";
+import { localActions, toWorker, useLocalPartial } from "../util/index.ts";
 import simpleGameAttributesUpgrade from "../../common/simpleGameAttributesUpgrade.ts";
+import { resetFileInput } from "../util/resetFileInput.ts";
 
 const ErrorMessage = ({ error }: { error: Error | null }) => {
 	if (!error || !error.message) {

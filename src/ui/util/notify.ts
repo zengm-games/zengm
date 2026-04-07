@@ -16,7 +16,7 @@ export const emitter = createNanoEvents<{
 
 let id = 0;
 
-const notify = (
+export const notify = (
 	message: string,
 	title?: string,
 	{
@@ -43,5 +43,3 @@ const notify = (
 
 	id += 1;
 };
-
-export default notify;

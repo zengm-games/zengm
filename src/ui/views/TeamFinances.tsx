@@ -15,7 +15,6 @@ import {
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import {
 	getCols,
-	gradientStyleFactory,
 	helpers,
 	logEvent,
 	toWorker,
@@ -39,6 +38,7 @@ import {
 } from "../../common/budgetLevels.ts";
 import { CurrencyInputGroup } from "../components/CurrencyInputGroup.tsx";
 import { useBlocker } from "../hooks/useBlocker.ts";
+import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
 
 const paddingLeft85 = { paddingLeft: 85 };
 

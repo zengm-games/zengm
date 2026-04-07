@@ -272,6 +272,4 @@ class Ads {
 	}
 }
 
-const ads = new Ads();
-
-export default ads;
+export const ads = new Ads();

@@ -30,7 +30,6 @@ import {
 	toWorker,
 	safeLocalStorage,
 	useLocalPartial,
-	analyticsEvent,
 } from "../../util/index.ts";
 import type {
 	View,
@@ -56,6 +55,7 @@ import { analyticsEventLocal } from "../../../common/analyticsEventLocal.ts";
 import { choice } from "../../../common/random.ts";
 import { realContinents } from "../../../common/geographicCoordinates.ts";
 import type { NewLeagueSettings } from "../../../worker/views/newLeague.ts";
+import { analyticsEvent } from "../../util/analyticsEvent.ts";
 
 const animationVariants = {
 	visible: {

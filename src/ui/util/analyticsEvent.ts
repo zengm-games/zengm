@@ -1,4 +1,4 @@
-const analyticsEvent = (
+export const analyticsEvent = (
 	eventName: string,
 	parameters?: Record<string, string | number>,
 ) => {
@@ -6,5 +6,3 @@ const analyticsEvent = (
 		window.gtag("event", eventName, parameters);
 	}
 };
-
-export default analyticsEvent;

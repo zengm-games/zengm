@@ -121,7 +121,7 @@ const Confirm = confirmable<
 
 const confirmFunction = createConfirmation(Confirm);
 
-const autoPlayDialog = (
+export const autoPlayDialog = (
 	currentSeason: number,
 	forceHistoricalRosters: boolean,
 	repeatSeason: "players" | "playersAndRosters" | undefined,
@@ -132,5 +132,3 @@ const autoPlayDialog = (
 		repeatSeason,
 	});
 };
-
-export default autoPlayDialog;

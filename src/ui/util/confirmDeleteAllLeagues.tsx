@@ -63,8 +63,6 @@ const Confirm = confirmable<unknown, "all" | "unstarred" | null>(
 
 const confirmFunction = createConfirmation(Confirm);
 
-const confirmDeleteAllLeagues = () => {
+export const confirmDeleteAllLeagues = () => {
 	return confirmFunction({});
 };
-
-export default confirmDeleteAllLeagues;

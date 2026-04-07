@@ -5,9 +5,10 @@ import {
 	fetchWrapper,
 } from "../../common/index.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getScript, realtimeUpdate } from "../util/index.ts";
+import { realtimeUpdate } from "../util/index.ts";
 import type { View } from "../../common/types.ts";
 import { ajaxErrorMsg } from "./LoginOrRegister/index.tsx";
+import { getScript } from "../util/getScript.ts";
 
 const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 	const [state, setState] = useState({

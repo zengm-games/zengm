@@ -1,11 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
-import {
-	downloadFile,
-	helpers,
-	resetFileInput,
-	toWorker,
-} from "../../util/index.ts";
+import { helpers, toWorker } from "../../util/index.ts";
 import clsx from "clsx";
 import {
 	type Defaults,
@@ -22,6 +17,8 @@ import { CountryFlag, HelpPopover } from "../../components/index.tsx";
 import Modal from "../../components/Modal.tsx";
 import { orderBy } from "../../../common/utils.ts";
 import { WEBSITE_ROOT } from "../../../common/constants.ts";
+import { downloadFile } from "../../util/downloadFile.ts";
+import { resetFileInput } from "../../util/resetFileInput.ts";
 
 export const smallColStyle = {
 	marginLeft: 10,

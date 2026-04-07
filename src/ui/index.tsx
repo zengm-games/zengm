@@ -10,15 +10,16 @@ import type { Env } from "../common/types.ts";
 import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common/index.ts";
 import Bugsnag from "@bugsnag/browser";
 import { getErrorBoundary } from "./components/getErrorBoundary.tsx";
+import { ads } from "./util/ads.ts";
+import { genStaticPage } from "./util/genStaticPage.tsx";
+import { analyticsEvent } from "./util/analyticsEvent.ts";
+import { compareVersions } from "./util/compareVersions.ts";
+import { promiseWorker } from "./util/promiseWorker.ts";
+import { routes } from "./util/routes.ts";
 window.bbgm = { api, ...util };
 const {
-	analyticsEvent,
-	compareVersions,
-	genStaticPage,
 	leagueNotFoundMessage,
 	logEvent,
-	promiseWorker,
-	routes,
 	safeLocalStorage,
 	toWorker,
 	unregisterServiceWorkers,
@@ -141,10 +142,10 @@ const setupRoutes = () => {
 					initialLoad = false;
 				} else {
 					// This will only do something if ads are already initialized, so it's (mostly) safe to call here even though this could be an error page, since at least it won't show on an error page for the initial pageview
-					util.ads.refreshAll();
+					ads.refreshAll();
 
 					// There is no way to fix the URL for initial pageviews, according to the current docs, but I guess that's not a big deal for me, we'll see
-					util.ads.trackPageview(getUrlForAnalytics(context.path));
+					ads.trackPageview(getUrlForAnalytics(context.path));
 				}
 			}
 		},
@@ -209,7 +210,7 @@ const setupRoutes = () => {
 				errorPage(context);
 			} else if (!context.state.noTrack) {
 				// If this is not an error page, initialize ads. init() will do nothing if it's already initialized
-				util.ads.init();
+				ads.init();
 			}
 
 			if (!context.state.noTrack && window.enableLogging) {

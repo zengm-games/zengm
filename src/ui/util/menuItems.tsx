@@ -1,4 +1,4 @@
-import { takeScreenshot, toWorker } from "./index.ts";
+import { toWorker } from "./index.ts";
 import {
 	bySport,
 	DAILY_SCHEDULE,
@@ -9,6 +9,7 @@ import {
 } from "../../common/index.ts";
 import type { MenuItemLink, MenuItemHeader } from "../../common/types.ts";
 import { frivolities } from "../views/Frivolities.tsx";
+import { takeScreenshot } from "./takeScreenshot.ts";
 
 const depthChart: MenuItemLink[] =
 	DEPTH_CHART_NAME !== undefined

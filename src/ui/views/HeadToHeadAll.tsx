@@ -1,10 +1,11 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, gradientStyleFactory, helpers } from "../util/index.ts";
+import { getCols, helpers } from "../util/index.ts";
 import { DataTable, MoreLinks } from "../components/index.tsx";
 import type { View } from "../../common/types.ts";
 import type { Col } from "../components/DataTable/index.tsx";
 import clsx from "clsx";
 import { useState } from "react";
+import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
 
 const gradientStyle = gradientStyleFactory(0.38, 0.49, 0.51, 0.62);
 

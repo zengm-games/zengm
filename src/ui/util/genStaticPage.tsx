@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import initView from "./initView.ts";
+import { initView } from "./initView.ts";
 
-const genStaticPage = (
+export const genStaticPage = (
 	name: string,
 	title: string,
 	content: ReactNode,
@@ -19,5 +19,3 @@ const genStaticPage = (
 		},
 	});
 };
-
-export default genStaticPage;

@@ -1,4 +1,4 @@
-import { promiseWorker } from "./index.ts";
+import { promiseWorker } from "./promiseWorker.ts";
 import type { WorkerAPICategory } from "../../worker/index.ts";
 import type api from "../../worker/api/index.ts";
 

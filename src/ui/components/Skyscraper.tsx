@@ -1,6 +1,6 @@
 import { memo, useEffect } from "react";
 import { AD_DIVS } from "../../common/index.ts";
-import { ads } from "../util/index.ts";
+import { ads } from "../util/ads.ts";
 
 // Ensure there is enough room to display 160px wide ad with 15px margins next to 1200px wide container
 

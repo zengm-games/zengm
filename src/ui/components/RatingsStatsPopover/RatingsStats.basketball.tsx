@@ -1,5 +1,6 @@
-import { gradientStyleFactory, helpers } from "../../util/index.ts";
+import { helpers } from "../../util/index.ts";
 import type { RatingKey } from "../../../common/types.basketball.ts";
+import { gradientStyleFactory } from "../../util/gradientStyleFactory.ts";
 
 const gradientStyle = gradientStyleFactory(25, 45, 55, 75);
 

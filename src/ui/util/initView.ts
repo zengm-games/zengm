@@ -7,7 +7,7 @@ type InitArgs = {
 	inLeague?: boolean;
 };
 
-const initView = (args: InitArgs) => {
+export const initView = (args: InitArgs) => {
 	if (!args.Component) {
 		throw new Error("Missing arg Component");
 	}
@@ -23,5 +23,3 @@ const initView = (args: InitArgs) => {
 		await viewManager.fromRouter(viewInfo);
 	};
 };
-
-export default initView;

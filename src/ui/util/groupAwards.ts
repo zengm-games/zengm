@@ -60,7 +60,7 @@ const awardsOrder = [
 	}),
 ];
 
-const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
+export const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 	const getType = (originalType: string) => {
 		if (!shortNames) {
 			return originalType;
@@ -169,5 +169,3 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 
 	return awardsGrouped;
 };
-
-export default groupAwards;

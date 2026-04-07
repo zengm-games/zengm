@@ -5,12 +5,8 @@ import {
 	GRACE_PERIOD,
 } from "../../../common/index.ts";
 import { ActionButton } from "../../components/index.tsx";
-import {
-	analyticsEvent,
-	localActions,
-	realtimeUpdate,
-	toWorker,
-} from "../../util/index.ts";
+import { localActions, realtimeUpdate, toWorker } from "../../util/index.ts";
+import { analyticsEvent } from "../../util/analyticsEvent.ts";
 
 const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 	const [submitting, setSubmitting] = useState(false);

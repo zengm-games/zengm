@@ -6,7 +6,7 @@ import {
 } from "../../components/index.tsx";
 import Injuries from "./Injuries.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { getCols, helpers, groupAwards } from "../../util/index.ts";
+import { getCols, helpers } from "../../util/index.ts";
 import type { View } from "../../../common/types.ts";
 import SeasonIcons from "./SeasonIcons.tsx";
 import TopStuff from "./TopStuff.tsx";
@@ -16,6 +16,7 @@ import { StatsTable } from "./StatsTable.tsx";
 import { highlightLeaderText, MaybeBold, SeasonLink } from "./common.tsx";
 import { wrappedTeamAbbrevLink } from "../../components/TeamAbbrevLink.tsx";
 import { wrappedCurrency } from "../../components/wrappedCurrency.ts";
+import { groupAwards } from "../../util/groupAwards.ts";
 
 const Player2 = ({
 	bestPos,

@@ -8,7 +8,6 @@ import {
 } from "react";
 import { isSport, PHASE, STARTING_NUM_TIMEOUTS } from "../../common/index.ts";
 import {
-	gradientStyleFactory,
 	helpers,
 	realtimeUpdate,
 	toWorker,
@@ -21,6 +20,7 @@ import { OverlayTrigger, Popover } from "react-bootstrap";
 import Note from "../views/Player/Note.tsx";
 import TeamLogoInline from "./TeamLogoInline.tsx";
 import { useKeyboardShortcuts } from "../util/keyboardShortcuts.ts";
+import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
 
 const TeamNameLink = ({
 	children,

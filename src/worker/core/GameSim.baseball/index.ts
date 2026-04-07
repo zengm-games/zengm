@@ -1801,37 +1801,6 @@ class GameSim extends GameSimBase {
 					pErrorIfNotHit,
 				} = this.getBattedBallOutcome(battedBallInfo, batter, pitcher);
 
-				if (result === "flyOut") {
-					const posCatch = POS_NUMBERS_INVERSE[hitTo];
-					const p = this.team[this.d].playersInGameByPos[posCatch].p;
-					this.recordStat(this.d, p, "po", 1, "fielding");
-				} else if (result === "throwOut" || result === "fieldersChoice") {
-					const p =
-						this.team[this.d].playersInGameByPos[
-							POS_NUMBERS_INVERSE[posDefense.at(-1)!]
-						].p;
-					this.recordStat(this.d, p, "po", 1, "fielding");
-				} else if (result === "doublePlay") {
-					const posFirstPutOut = POS_NUMBERS_INVERSE[posDefense.at(-2)!];
-					const fielder =
-						this.team[this.d].playersInGameByPos[posFirstPutOut].p;
-					this.recordStat(this.d, fielder, "po", 1, "fielding");
-
-					// Double play always includes batter, currently
-					const firstBaseman = this.team[this.d].playersInGameByPos["1B"].p;
-					this.recordStat(this.d, firstBaseman, "po", 1, "fielding");
-				} else if (result === "hit") {
-					this.recordStat(this.o, batter, "h");
-					this.recordStat(this.d, pitcher, "hPit");
-					if (numBases > 1) {
-						const hitType =
-							numBases === 2 ? "2b" : numBases === 3 ? "3b" : "hr";
-						this.recordStat(this.o, batter, hitType);
-
-						this.recordStat(this.d, pitcher, `${hitType}Pit`);
-					}
-				}
-
 				if (
 					["flyOut", "throwOut", "fieldersChoice", "doublePlay"].includes(
 						result,
@@ -1942,6 +1911,62 @@ class GameSim extends GameSimBase {
 						}
 					}
 					const { gameWinningRunScoredWithLiveBall, runners } = info;
+
+					// When gameWinningRunScoredWithLiveBall, the batter will stop running when the winning run has scored. For instance if only one run is needed and there is a runner on third, any non-HR will just be a single.
+					let numBasesAdjusted: typeof numBases;
+					if (gameWinningRunScoredWithLiveBall) {
+						const lastScoringRunner = runners.find((runner) => runner.scored);
+						if (!lastScoringRunner) {
+							throw new Error("Should never happen");
+						}
+						const numBasesAdvancedByWinningRun =
+							lastScoringRunner.to - lastScoringRunner.from;
+						if (numBasesAdvancedByWinningRun <= 2) {
+							// Runner was on 2nd or 3rd -> max is a single
+							numBasesAdjusted = 1;
+						} else {
+							// Runner was on 1st -> max is a double
+							numBasesAdjusted = numBases > 2 ? 2 : numBases;
+						}
+					} else {
+						numBasesAdjusted = numBases;
+					}
+
+					if (result === "flyOut") {
+						const posCatch = POS_NUMBERS_INVERSE[hitTo];
+						const p = this.team[this.d].playersInGameByPos[posCatch].p;
+						this.recordStat(this.d, p, "po", 1, "fielding");
+					} else if (result === "throwOut" || result === "fieldersChoice") {
+						const p =
+							this.team[this.d].playersInGameByPos[
+								POS_NUMBERS_INVERSE[posDefense.at(-1)!]
+							].p;
+						this.recordStat(this.d, p, "po", 1, "fielding");
+					} else if (result === "doublePlay") {
+						const posFirstPutOut = POS_NUMBERS_INVERSE[posDefense.at(-2)!];
+						const fielder =
+							this.team[this.d].playersInGameByPos[posFirstPutOut].p;
+						this.recordStat(this.d, fielder, "po", 1, "fielding");
+
+						// Double play always includes batter, currently
+						const firstBaseman = this.team[this.d].playersInGameByPos["1B"].p;
+						this.recordStat(this.d, firstBaseman, "po", 1, "fielding");
+					} else if (result === "hit") {
+						this.recordStat(this.o, batter, "h");
+						this.recordStat(this.d, pitcher, "hPit");
+						if (numBasesAdjusted > 1) {
+							const hitType =
+								numBasesAdjusted === 2
+									? "2b"
+									: numBasesAdjusted === 3
+										? "3b"
+										: "hr";
+							this.recordStat(this.o, batter, hitType);
+
+							this.recordStat(this.d, pitcher, `${hitType}Pit`);
+						}
+					}
+
 					const getHitType = (numBases: 1 | 2 | 3 | 4) => {
 						switch (numBases) {
 							case 1:
@@ -1954,7 +1979,7 @@ class GameSim extends GameSimBase {
 								return "hr";
 						}
 					};
-					const hitType = getHitType(numBases);
+					const hitType = getHitType(numBasesAdjusted);
 
 					this.playByPlay.logEvent({
 						type: "hitResult",
@@ -1963,7 +1988,7 @@ class GameSim extends GameSimBase {
 						posDefense,
 						runners: this.finalizeRunners(runners),
 						t: this.o,
-						numBases,
+						numBases: numBasesAdjusted,
 						outAtNextBase: false,
 						gameWinningRunScoredWithLiveBall,
 						...this.getSportState(),

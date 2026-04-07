@@ -122,16 +122,17 @@ test("walk-off scoring", async () => {
 			.getPlayByPlay(game)
 			?.find((event) => event.type === "hitResult");
 		assert(event);
-		console.log(event);
 
 		if (numBasesHit === 3) {
-			// Triple -> only first two runs score
+			// Triple -> only first two runs score, and recorded as a single
 			assert.strictEqual(game.team[0].t.stat.pts, 2);
 			assert.strictEqual(event.gameWinningRunScoredWithLiveBall, true);
+			assert.strictEqual(event.numBases, 1);
 		} else {
 			// HR -> all runs score
 			assert.strictEqual(game.team[0].t.stat.pts, 4);
 			assert.strictEqual(event.gameWinningRunScoredWithLiveBall, false);
+			assert.strictEqual(event.numBases, 4);
 		}
 	}
 });

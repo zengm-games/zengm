@@ -8,10 +8,9 @@ default new league overrides and female names https://discord.com/channels/29001
 
 baseball walk offs - when a non-HR run is scored in the bottom of the 9th+ inning that wins the game, immediately end the game https://discord.com/channels/290013534023057409/1487962056618672309/1487962056618672309
 - possibily implement in advanceRunners - know how many runners are needed to win the game, and if this is a walk-off situation (see gameIsOverDuringInning)
-- play-by-play shouldn't be weird if two people wind up on the same base or something
-  - maybe only show scoring/out runners if it's a walk off?
 - max number of bases for a hit === num runs needed
   - clamping should be somehow after the hit occurs, so runners advance appropriately, but before logging
+  - can we use gameWinningRunScoredWithLiveBall?
 
 show if a foul is intentional or not in play-by-play
 

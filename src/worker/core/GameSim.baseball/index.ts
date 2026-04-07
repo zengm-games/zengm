@@ -647,18 +647,21 @@ class GameSim extends GameSimBase {
 	}) {
 		const runners = this.getRunners();
 
+		// Game winning non-HR hit means runners stop advancing when the winning run is scored
+		let gameWinningRunScoredWithLiveBall = false;
+
 		// Batter is out, inning is already over
 		if (this.outs >= NUM_OUTS_PER_INNING) {
-			return runners;
+			return {
+				gameWinningRunScoredWithLiveBall,
+				runners,
+			};
 		}
 
 		// Inning ends before batter reaches first base
 		const inningOverAndNobodyAdvances =
 			this.outs === NUM_OUTS_PER_INNING - 1 &&
 			(result === "doublePlay" || result === "fieldersChoice");
-
-		// Game winning non-HR hit means runners stop advancing when the winning run is scored
-		let gameWinningRunScored = false;
 
 		// Handle runners
 		// Start from 3rd base first, because a blocked base can't be advanced to
@@ -731,7 +734,7 @@ class GameSim extends GameSimBase {
 						}
 					}
 
-					const maxBase = gameWinningRunScored ? 3 : 4;
+					const maxBase = gameWinningRunScoredWithLiveBall ? 3 : 4;
 					if (runner.to > maxBase) {
 						runner.to = maxBase;
 					}
@@ -752,7 +755,7 @@ class GameSim extends GameSimBase {
 						runner.to += 1;
 					}
 
-					const maxBase = gameWinningRunScored ? 3 : 4;
+					const maxBase = gameWinningRunScoredWithLiveBall ? 3 : 4;
 					if (runner.to > maxBase) {
 						runner.to = maxBase;
 					}
@@ -870,11 +873,11 @@ class GameSim extends GameSimBase {
 				const pRBI = error || result === "doublePlay" ? undefined : p;
 				runner.scored = true;
 
-				const gameWinningRunScoredTemp = this.doScore(this.bases[i]!, pRBI);
+				const gameWinningRunScored = this.doScore(this.bases[i]!, pRBI);
 
-				if (gameWinningRunScoredTemp && numBases < 4) {
+				if (gameWinningRunScored && numBases < 4) {
 					// Game winning non-HR hit -> runners stop when winning run scores
-					gameWinningRunScored = gameWinningRunScoredTemp;
+					gameWinningRunScoredWithLiveBall = gameWinningRunScored;
 				}
 			}
 
@@ -915,7 +918,10 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		return runners;
+		return {
+			gameWinningRunScoredWithLiveBall,
+			runners,
+		};
 	}
 
 	doBalkWildPitchPassedBall(type: "balk" | "passedBall" | "wildPitch") {
@@ -1894,7 +1900,7 @@ class GameSim extends GameSimBase {
 					this.outsIfNoErrorsByPitcherPid[pitcher.id]! += 1;
 					this.outsIfNoErrors += 1;
 
-					const runners = getRunners();
+					const { gameWinningRunScoredWithLiveBall, runners } = getRunners();
 
 					if (numBases < 4) {
 						this.bases[numBases - 1] = this.makeOccupiedBase(batter, true);
@@ -1909,22 +1915,23 @@ class GameSim extends GameSimBase {
 						t: this.o,
 						numBases,
 						outAtNextBase: false,
+						gameWinningRunScoredWithLiveBall,
 						...this.getSportState(),
 					});
 				} else {
 					// Make sure we do runners stuff after hitter out is logged, but before hitter is put on base
-					let runners;
+					let info;
 					if (result === "flyOut" || result === "throwOut") {
 						this.logOut();
 
-						runners = getRunners();
+						info = getRunners();
 					} else if (result === "doublePlay") {
 						this.recordStat(this.o, batter, "gdp");
 						this.logOut();
 
-						runners = getRunners();
+						info = getRunners();
 					} else {
-						runners = getRunners();
+						info = getRunners();
 
 						if (numBases < 4) {
 							this.bases[numBases - 1] = this.makeOccupiedBase(
@@ -1934,6 +1941,7 @@ class GameSim extends GameSimBase {
 							);
 						}
 					}
+					const { gameWinningRunScoredWithLiveBall, runners } = info;
 					const getHitType = (numBases: 1 | 2 | 3 | 4) => {
 						switch (numBases) {
 							case 1:
@@ -1957,6 +1965,7 @@ class GameSim extends GameSimBase {
 						t: this.o,
 						numBases,
 						outAtNextBase: false,
+						gameWinningRunScoredWithLiveBall,
 						...this.getSportState(),
 						totalHits: this.allStarGame
 							? undefined

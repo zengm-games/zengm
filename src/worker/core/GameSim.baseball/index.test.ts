@@ -127,9 +127,11 @@ test("walk-off scoring", async () => {
 		if (numBasesHit === 3) {
 			// Triple -> only first two runs score
 			assert.strictEqual(game.team[0].t.stat.pts, 2);
+			assert.strictEqual(event.gameWinningRunScoredWithLiveBall, true);
 		} else {
 			// HR -> all runs score
 			assert.strictEqual(game.team[0].t.stat.pts, 4);
+			assert.strictEqual(event.gameWinningRunScoredWithLiveBall, false);
 		}
 	}
 });

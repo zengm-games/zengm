@@ -93,6 +93,7 @@ export type PlayByPlayEventInput =
 			t: TeamNum;
 			numBases: 1 | 2 | 3 | 4;
 			outAtNextBase: boolean; // For if the runner was thrown out when trying to advance one more base
+			gameWinningRunScoredWithLiveBall: boolean; // Affects play-by-play output
 			outs: number;
 			bases: [number | undefined, number | undefined, number | undefined];
 			totalHits: number | undefined; // undefined in ASG or old box scores
@@ -107,6 +108,7 @@ export type PlayByPlayEventInput =
 			t: TeamNum;
 			numBases: 1 | 2 | 3 | 4;
 			outAtNextBase: boolean; // For if the runner was thrown out when trying to advance one more base
+			gameWinningRunScoredWithLiveBall: boolean; // Affects play-by-play output
 			outs: number;
 			bases: [number | undefined, number | undefined, number | undefined];
 	  }

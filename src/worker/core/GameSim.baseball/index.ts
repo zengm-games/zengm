@@ -734,9 +734,8 @@ class GameSim extends GameSimBase {
 						}
 					}
 
-					const maxBase = gameWinningRunScoredWithLiveBall ? 3 : 4;
-					if (runner.to > maxBase) {
-						runner.to = maxBase;
+					if (gameWinningRunScoredWithLiveBall && runner.to > 3) {
+						runner.to = 3;
 					}
 				} else {
 					// First base
@@ -758,6 +757,15 @@ class GameSim extends GameSimBase {
 					const maxBase = gameWinningRunScoredWithLiveBall ? 3 : 4;
 					if (runner.to > maxBase) {
 						runner.to = maxBase;
+					}
+					if (gameWinningRunScoredWithLiveBall && runner.to > 3) {
+						if (blockedBases.has(2) && !blockedBases.has(1)) {
+							// Advance to 2nd if 3rd is blocked
+							runner.to = 2;
+						} else {
+							// Otherwise advance to 3rd
+							runner.to = 3;
+						}
 					}
 				}
 			} else {
@@ -1888,29 +1896,15 @@ class GameSim extends GameSimBase {
 						...this.getSportState(),
 					});
 				} else {
-					// Make sure we do runners stuff after hitter out is logged, but before hitter is put on base
-					let info;
 					if (result === "flyOut" || result === "throwOut") {
 						this.logOut();
-
-						info = getRunners();
 					} else if (result === "doublePlay") {
 						this.recordStat(this.o, batter, "gdp");
 						this.logOut();
-
-						info = getRunners();
-					} else {
-						info = getRunners();
-
-						if (numBases < 4) {
-							this.bases[numBases - 1] = this.makeOccupiedBase(
-								batter,
-								false,
-								responsiblePitcherPid,
-							);
-						}
 					}
-					const { gameWinningRunScoredWithLiveBall, runners } = info;
+
+					// Make sure we do runners stuff after hitter out is logged, but before hitter is put on base
+					const { gameWinningRunScoredWithLiveBall, runners } = getRunners();
 
 					// When gameWinningRunScoredWithLiveBall, the batter will stop running when the winning run has scored. For instance if only one run is needed and there is a runner on third, any non-HR will just be a single.
 					let numBasesAdjusted: typeof numBases;
@@ -1930,6 +1924,17 @@ class GameSim extends GameSimBase {
 						}
 					} else {
 						numBasesAdjusted = numBases;
+					}
+
+					if (
+						(result === "hit" || result === "fieldersChoice") &&
+						numBases < 4
+					) {
+						this.bases[numBasesAdjusted - 1] = this.makeOccupiedBase(
+							batter,
+							false,
+							responsiblePitcherPid,
+						);
 					}
 
 					if (result === "flyOut") {

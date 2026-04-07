@@ -9,6 +9,7 @@ import * as util from "./util/index.ts";
 import type { Env } from "../common/types.ts";
 import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common/index.ts";
 import Bugsnag from "@bugsnag/browser";
+import { LeagueNotFoundMessage } from "./components/LeagueNotFoundMessage.tsx";
 import { getErrorBoundary } from "./components/getErrorBoundary.tsx";
 import { ads } from "./util/ads.ts";
 import { genStaticPage } from "./util/genStaticPage.tsx";
@@ -17,13 +18,7 @@ import { compareVersions } from "./util/compareVersions.ts";
 import { promiseWorker } from "./util/promiseWorker.ts";
 import { routes } from "./util/routes.ts";
 window.bbgm = { api, ...util };
-const {
-	leagueNotFoundMessage,
-	logEvent,
-	safeLocalStorage,
-	toWorker,
-	unregisterServiceWorkers,
-} = util;
+const { logEvent, safeLocalStorage, toWorker, unregisterServiceWorkers } = util;
 
 const handleVersion = async () => {
 	window.addEventListener("storage", (e) => {
@@ -156,7 +151,7 @@ const setupRoutes = () => {
 				if (errorMessage === "Matching route not found") {
 					errorMessage = "Page not found.";
 				} else if (errorMessage === "League not found.") {
-					errorMessage = leagueNotFoundMessage;
+					errorMessage = <LeagueNotFoundMessage />;
 				} else if (
 					typeof errorMessage !== "string" ||
 					!errorMessage.includes(

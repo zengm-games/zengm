@@ -9,7 +9,6 @@ export {
 	useLocalActions,
 	useLocalPartial,
 } from "./local.ts";
-export { default as leagueNotFoundMessage } from "./leagueNotFoundMessage.tsx";
 export { default as logEvent } from "./logEvent.ts";
 export { default as menuItems } from "./menuItems.tsx";
 export { default as processLiveGameEvents } from "./processLiveGameEvents.ts";

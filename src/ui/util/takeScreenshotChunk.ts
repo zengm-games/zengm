@@ -3,10 +3,10 @@ import {
 	GAME_NAME,
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
-	isSport,
 } from "../../common/index.ts";
 import { logEvent } from "./logEvent.ts";
 import { fetchWrapper } from "../../common/fetchWrapper.ts";
+import { isSport } from "../../common/isSport.ts";
 
 const takeScreenshotChunk = async () => {
 	const theme = window.getTheme();

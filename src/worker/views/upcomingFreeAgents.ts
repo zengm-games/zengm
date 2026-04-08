@@ -1,9 +1,10 @@
-import { bySport, PHASE, PLAYER } from "../../common/index.ts";
+import { PHASE, PLAYER } from "../../common/index.ts";
 import { player, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { ViewInput } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { bySport } from "../../common/bySport.ts";
 
 const updateUpcomingFreeAgents = async (
 	inputs: ViewInput<"upcomingFreeAgents">,

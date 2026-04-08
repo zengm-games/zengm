@@ -6,7 +6,7 @@ import makeItWork from "./makeItWork.ts";
 import processTrade from "./processTrade.ts";
 import summary from "./summary.ts";
 import type { TradeTeams } from "../../../common/types.ts";
-import { isSport } from "../../../common/index.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 const getAITids = async () => {
 	const teams = await idb.cache.teams.getAll();

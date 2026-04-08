@@ -1,7 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { UpdateEvents, AllStars, ViewInput } from "../../common/types.ts";
-import { isSport } from "../../common/index.ts";
+import { isSport } from "../../common/isSport.ts";
 import { season } from "../core/index.ts";
 import { orderBy } from "../../common/utils.ts";
 

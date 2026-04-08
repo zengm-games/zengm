@@ -1,5 +1,7 @@
 import { HelpPopover } from "./HelpPopover.tsx";
-import { bySport, isSport, POSITION_COUNTS } from "../../common/index.ts";
+import { POSITION_COUNTS } from "../../common/index.ts";
+import { bySport } from "../../common/bySport.ts";
+import { isSport } from "../../common/isSport.ts";
 
 type Players = {
 	ratings: {

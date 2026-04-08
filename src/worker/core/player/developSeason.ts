@@ -4,10 +4,12 @@ import developSeasonFootball from "./developSeason.football.ts";
 import developSeasonHockey from "./developSeason.hockey.ts";
 import type { MinimalPlayerRatings } from "../../../common/types.ts";
 import { g, helpers } from "../../util/index.ts";
-import { bySport, isSport, RATINGS } from "../../../common/index.ts";
+import { RATINGS } from "../../../common/constants.ts";
 import loadDataBasketball from "../realRosters/loadData.basketball.ts";
 import type { Ratings } from "../realRosters/loadData.basketball.ts";
 import limitRating from "./limitRating.ts";
+import { bySport } from "../../../common/bySport.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 // Cache for performance
 let groupedRatings: Record<string, Ratings> | undefined;

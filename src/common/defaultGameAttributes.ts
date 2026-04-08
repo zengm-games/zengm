@@ -4,7 +4,7 @@ import {
 	DEFAULT_POINTS_FORMULA,
 	DEFAULT_STADIUM_CAPACITY,
 } from "./constants.ts";
-import isSport from "./isSport.ts";
+import { isSport } from "./isSport.ts";
 import type {
 	GameAttributeKey,
 	GameAttributesLeagueWithHistory,

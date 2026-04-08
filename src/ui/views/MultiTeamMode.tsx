@@ -1,11 +1,13 @@
 import { useRef } from "react";
-import { bySport, isSport, PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { logEvent } from "../util/logEvent.ts";
 import { toWorker } from "../util/toWorker.ts";
 import type { View } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
+import { bySport } from "../../common/bySport.ts";
+import { isSport } from "../../common/isSport.ts";
 
 const handleAutoSort = async (tids: number[]) => {
 	await toWorker("main", "autoSortRoster", { tids });

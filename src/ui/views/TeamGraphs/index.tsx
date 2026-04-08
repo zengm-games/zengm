@@ -11,7 +11,8 @@ import { getCols } from "../../../common/getCols.ts";
 import { groupByUnique } from "../../../common/utils.ts";
 import type { Col } from "../../components/DataTable/index.tsx";
 import clsx from "clsx";
-import { bySport, isSport } from "../../../common/index.ts";
+import { bySport } from "../../../common/bySport.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 const suffixes = {
 	Home: "Home",

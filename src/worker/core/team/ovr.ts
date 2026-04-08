@@ -1,4 +1,4 @@
-import { bySport } from "../../../common/index.ts";
+import { bySport } from "../../../common/bySport.ts";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor.ts";
 import type { PlayerInjury } from "../../../common/types.ts";
 import ovrBaseball from "./ovr.baseball.ts";

@@ -1,4 +1,4 @@
-import { bySport, isSport, PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/index.ts";
 import { idb } from "../db/index.ts";
 import {
 	defaultGameAttributes,
@@ -19,6 +19,8 @@ import { groupByUnique, range } from "../../common/utils.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { season } from "../core/index.ts";
 import { extraStats } from "./hallOfFame.ts";
+import { bySport } from "../../common/bySport.ts";
+import { isSport } from "../../common/isSport.ts";
 
 export const getCategoriesAndStats = (onlyStat?: string) => {
 	let categories = bySport<

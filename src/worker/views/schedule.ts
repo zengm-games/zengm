@@ -7,7 +7,7 @@ import type {
 	Game,
 	PlayerInjury,
 } from "../../common/types.ts";
-import { bySport, isSport, PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/index.ts";
 import { groupByUnique, orderBy } from "../../common/utils.ts";
 import {
 	getActualPlayThroughInjuries,
@@ -19,6 +19,8 @@ import { P_FATIGUE_DAILY_REDUCTION } from "../core/game/writePlayerStats.ts";
 import playThroughInjuriesFactor from "../../common/playThroughInjuriesFactor.ts";
 import { COMPOSITE_WEIGHTS } from "../../common/constants.hockey.ts";
 import { getStartingAndBackupGoalies } from "../core/GameSim.hockey/getStartingAndBackupGoalies.ts";
+import { bySport } from "../../common/bySport.ts";
+import { isSport } from "../../common/isSport.ts";
 
 export const getUpcoming = async ({
 	day,

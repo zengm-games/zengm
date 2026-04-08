@@ -1,7 +1,7 @@
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import type { SortType, View } from "../../../common/types.ts";
 import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
-import { PLAYER, bySport } from "../../../common/index.ts";
+import { PLAYER } from "../../../common/index.ts";
 import { helpers } from "../../util/helpers.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { useEffect, useState, type ReactNode } from "react";
@@ -14,6 +14,7 @@ import { Contract, ContractAmount } from "../../components/contract.tsx";
 import { groupAwards } from "../../util/groupAwards.ts";
 import { PlayerPicture } from "../../components/PlayerPicture.tsx";
 import { getCol } from "../../../common/getCol.ts";
+import { bySport } from "../../../common/bySport.ts";
 
 type PlayerInfo = View<"comparePlayers">["players"][number];
 type PlayerInfoAndLegend =

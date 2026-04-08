@@ -1,8 +1,9 @@
 import { g } from "../../util/index.ts";
 import type { PlayerWithoutKey } from "../../../common/types.ts";
-import { DRAFT_BY_TEAM_OVR, bySport } from "../../../common/index.ts";
+import { DRAFT_BY_TEAM_OVR } from "../../../common/index.ts";
 import { getTeamOvrDiffs } from "../draft/runPicks.ts";
 import { orderBy } from "../../../common/utils.ts";
+import { bySport } from "../../../common/bySport.ts";
 
 // In some sports, extra check for certain important rare positions in case the only one was traded away. These should only be positions with weird unique skills, where you can't replace them easily with another position. Value is the number of players that should be at each position.
 export const KEY_POSITIONS_NEEDED = bySport<Record<string, number> | undefined>(

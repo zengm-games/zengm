@@ -1,4 +1,4 @@
-import { bySport } from "../../../common/index.ts";
+import { bySport } from "../../../common/bySport.ts";
 import getAwardCandidatesBaseball from "./getAwardCandidates.baseball.ts";
 import getAwardCandidatesBasketball from "./getAwardCandidates.basketball.ts";
 import getAwardCandidatesFootball from "./getAwardCandidates.football.ts";

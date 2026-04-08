@@ -9,7 +9,8 @@ import { useLocalPartial } from "../util/local.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
-import { bySport, isSport } from "../../common/index.ts";
+import { bySport } from "../../common/bySport.ts";
+import { isSport } from "../../common/isSport.ts";
 import { NUM_LINES } from "../../common/constants.hockey.ts";
 import {
 	NUM_ACTIVE_BATTERS,

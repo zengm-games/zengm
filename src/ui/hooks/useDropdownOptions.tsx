@@ -2,14 +2,14 @@ import {
 	PHASE,
 	TEAM_STATS_TABLES,
 	POSITIONS,
-	bySport,
-	isSport,
 	PLAYER_STATS_TABLES,
 	REMAINING_PLAYOFF_TEAMS_PHASES,
 } from "../../common/index.ts";
 import { useLocalPartial } from "../util/local.ts";
 import type { LocalStateUI } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
+import { bySport } from "../../common/bySport.ts";
+import { isSport } from "../../common/isSport.ts";
 
 export type ResponsiveOption = {
 	minWidth: number;

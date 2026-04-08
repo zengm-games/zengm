@@ -7,13 +7,13 @@ import type {
 	Conditions,
 } from "../../../common/types.ts";
 import {
-	bySport,
 	COMPOSITE_WEIGHTS,
 	DEFAULT_PLAY_THROUGH_INJURIES,
-	isSport,
 	PHASE,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor.ts";
+import { bySport } from "../../../common/bySport.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 const MAX_NUM_PLAYERS_PACE = 7;
 

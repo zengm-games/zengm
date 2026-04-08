@@ -5,10 +5,12 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import useClickable from "../hooks/useClickable.tsx";
 import type { ByConf, TeamSeason, View } from "../../common/types.ts";
-import { bySport, isSport, TIEBREAKERS } from "../../common/index.ts";
+import { TIEBREAKERS } from "../../common/constants.ts";
 import { MovOrDiff } from "../components/MovOrDiff.tsx";
 import ResponsiveTableWrapper from "../components/ResponsiveTableWrapper.tsx";
 import { getCol } from "../../common/getCol.ts";
+import { bySport } from "../../common/bySport.ts";
+import { isSport } from "../../common/isSport.ts";
 
 type StandingsTeam =
 	View<"standings">["rankingGroups"]["league"][number][number];

@@ -1,7 +1,8 @@
 import type { ReactNode } from "react";
-import { WEBSITE_ROOT, isSport } from "../../../common/index.ts";
+import { WEBSITE_ROOT } from "../../../common/index.ts";
 import { helpers } from "../../util/helpers.ts";
 import type { Category } from "./types.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 // Specified order for UI
 const categories: {

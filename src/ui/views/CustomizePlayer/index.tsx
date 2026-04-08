@@ -13,7 +13,6 @@ import {
 	POSITIONS,
 	MOOD_TRAITS,
 	WEBSITE_ROOT,
-	bySport,
 	NOT_REAL_POSITIONS,
 } from "../../../common/index.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
@@ -31,6 +30,7 @@ import { roundContract } from "../../../common/roundContract.ts";
 import { Face } from "./Face.tsx";
 import { CurrencyInputGroup } from "../../components/CurrencyInputGroup.tsx";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
+import { bySport } from "../../../common/bySport.ts";
 
 const copyValidValues = (
 	source: PlayerWithoutKey,

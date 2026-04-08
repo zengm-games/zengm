@@ -1,10 +1,7 @@
 import type { FaceConfig } from "facesjs";
 import { Face } from "facesjs/react";
-import {
-	DEFAULT_JERSEY,
-	DEFAULT_TEAM_COLORS,
-	isSport,
-} from "../../common/index.ts";
+import { DEFAULT_JERSEY, DEFAULT_TEAM_COLORS } from "../../common/index.ts";
+import { isSport } from "../../common/isSport.ts";
 
 export const MyFace = ({
 	colors = DEFAULT_TEAM_COLORS,

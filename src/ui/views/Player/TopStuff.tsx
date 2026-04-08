@@ -9,7 +9,7 @@ import type {
 	Player,
 	View,
 } from "../../../common/types.ts";
-import { bySport, isSport, PHASE, PLAYER } from "../../../common/index.ts";
+import { PHASE, PLAYER } from "../../../common/index.ts";
 import clsx from "clsx";
 import AwardsSummary from "./AwardsSummary.tsx";
 import RatingsOverview from "./RatingsOverview.tsx";
@@ -26,6 +26,8 @@ import { Weight } from "../../components/Weight.tsx";
 import { confirm } from "../../util/confirm.tsx";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { getCols } from "../../../common/getCols.ts";
+import { bySport } from "../../../common/bySport.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 const Relatives = ({
 	gender,

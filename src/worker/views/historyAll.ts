@@ -1,8 +1,9 @@
-import { bySport, PHASE, SIMPLE_AWARDS } from "../../common/index.ts";
+import { PHASE, SIMPLE_AWARDS } from "../../common/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 import { groupByUnique, range } from "../../common/utils.ts";
+import { bySport } from "../../common/bySport.ts";
 
 const addAbbrev = (
 	award: any,

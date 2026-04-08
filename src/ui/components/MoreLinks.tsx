@@ -1,13 +1,13 @@
 import { Fragment } from "react";
 import {
-	bySport,
-	isSport,
 	NO_LOTTERY_DRAFT_TYPES,
 	REAL_PLAYERS_INFO,
 } from "../../common/index.ts";
 import type { DraftType, PlayerStatType } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
 import { useLocalPartial } from "../util/local.ts";
+import { bySport } from "../../common/bySport.ts";
+import { isSport } from "../../common/isSport.ts";
 
 export const MoreLinks = (
 	props: (

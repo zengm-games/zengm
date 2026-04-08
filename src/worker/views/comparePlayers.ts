@@ -1,4 +1,4 @@
-import { PLAYER, RATINGS, bySport } from "../../common/index.ts";
+import { PLAYER, RATINGS } from "../../common/index.ts";
 import { idb } from "../db/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import {
@@ -10,6 +10,7 @@ import { g, getTeamInfoBySeason } from "../util/index.ts";
 import { maxBy } from "../../common/utils.ts";
 import { getPlayerProfileStats } from "./player.ts";
 import type { SeasonType } from "../api/processInputs.ts";
+import { bySport } from "../../common/bySport.ts";
 
 const hasPlayerInfoChanged = (
 	inputPlayers: ViewInput<"comparePlayers">["players"],

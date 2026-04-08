@@ -1,4 +1,4 @@
-import { bySport } from "../../common/index.ts";
+import { bySport } from "../../common/bySport.ts";
 
 const defaultColleges = bySport<Record<string, number>>({
 	baseball: {},

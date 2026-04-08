@@ -7,7 +7,7 @@ import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
 import { useLocal } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
-import { bySport, PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/index.ts";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { orderBy } from "../../common/utils.ts";
@@ -16,6 +16,7 @@ import { wrappedDraftAbbrev } from "../components/DraftAbbrev.tsx";
 import { downloadFile } from "../util/downloadFile.ts";
 import { SkillsBlock } from "../components/SkillsBlock.tsx";
 import { getCol } from "../../common/getCol.ts";
+import { bySport } from "../../common/bySport.ts";
 
 const Summary = ({
 	players,

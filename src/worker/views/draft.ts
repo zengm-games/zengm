@@ -1,4 +1,4 @@
-import { bySport, PHASE, PLAYER } from "../../common/index.ts";
+import { PHASE, PLAYER } from "../../common/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 import { draft } from "../core/index.ts";
 import { idb } from "../db/index.ts";
@@ -6,6 +6,7 @@ import { g, helpers, local } from "../util/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { minBy } from "../../common/utils.ts";
 import { getDraftTeamsByTid } from "./draftHistory.ts";
+import { bySport } from "../../common/bySport.ts";
 
 const getUserNextPickYear = async () => {
 	const userTids = g.get("userTids");

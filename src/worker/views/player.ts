@@ -4,7 +4,6 @@ import {
 	RATINGS,
 	PLAYER_SUMMARY,
 	DEFAULT_JERSEY,
-	isSport,
 } from "../../common/index.ts";
 import { player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
@@ -27,6 +26,7 @@ import type {
 	ViewInput,
 } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
+import { isSport } from "../../common/isSport.ts";
 
 export const getPlayerProfileStats = () => {
 	const stats = [];

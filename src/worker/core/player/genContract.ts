@@ -5,7 +5,7 @@ import type {
 	PlayerContract,
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
-import { isSport } from "../../../common/index.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 /**
  * Generate a contract for a player.

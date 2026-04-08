@@ -2,7 +2,7 @@
 import clsx from "clsx";
 import { AnimatePresence, m } from "framer-motion";
 import { type ChangeEvent, Fragment, type ReactNode, useState } from "react";
-import { isSport } from "../../../common/index.ts";
+import { isSport } from "../../../common/isSport.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import gameSimPresets from "./gameSimPresets.ts";
 import {

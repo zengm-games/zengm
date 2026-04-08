@@ -5,7 +5,7 @@ import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
-import { isSport } from "../../common/index.ts";
+import { isSport } from "../../common/isSport.ts";
 
 const playerName = (p?: { pid: number; name: string; count: number }) => {
 	if (!p) {

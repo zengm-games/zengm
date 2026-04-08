@@ -1,10 +1,4 @@
-import {
-	bySport,
-	isSport,
-	PHASE,
-	PLAYER,
-	PLAYER_STATS_TABLES,
-} from "../../common/index.ts";
+import { PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type {
@@ -14,6 +8,8 @@ import type {
 } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getBestPos } from "../core/player/checkJerseyNumberRetirement.ts";
+import { bySport } from "../../common/bySport.ts";
+import { isSport } from "../../common/isSport.ts";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerStats">,

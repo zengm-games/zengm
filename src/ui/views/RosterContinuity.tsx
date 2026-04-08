@@ -4,7 +4,7 @@ import { getCols } from "../../common/getCols.ts";
 import type { Col } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
 import { frivolitiesMenu } from "./Frivolities.tsx";
-import { bySport } from "../../common/index.ts";
+import { bySport } from "../../common/bySport.ts";
 import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
 
 const gradientStyle = bySport({

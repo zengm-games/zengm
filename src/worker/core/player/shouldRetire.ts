@@ -1,16 +1,12 @@
-import {
-	bySport,
-	isSport,
-	PHASE,
-	PLAYER,
-	REAL_PLAYERS_INFO,
-} from "../../../common/index.ts";
+import { PHASE, PLAYER, REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import { g, random } from "../../util/index.ts";
 import type { MinimalPlayerRatings, Player } from "../../../common/types.ts"; // Players meeting one of these cutoffs might retire
 import { range } from "../../../common/utils.ts";
 import loadDataBasketball from "../realRosters/loadData.basketball.ts";
 import realRosters from "../realRosters/index.ts";
 import { idb } from "../../db/index.ts";
+import { bySport } from "../../../common/bySport.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 const checkForceRetireSeasons = (p: Player<MinimalPlayerRatings>) => {
 	// No redshirt seasons before league was created, since we have no stats then

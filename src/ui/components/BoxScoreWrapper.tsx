@@ -6,7 +6,7 @@ import {
 	useRef,
 	type CSSProperties,
 } from "react";
-import { isSport, PHASE, STARTING_NUM_TIMEOUTS } from "../../common/index.ts";
+import { PHASE, STARTING_NUM_TIMEOUTS } from "../../common/index.ts";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
@@ -19,6 +19,7 @@ import { TeamLogoInline } from "./TeamLogoInline.tsx";
 import { useKeyboardShortcuts } from "../util/keyboardShortcuts.ts";
 import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
 import { useLocalPartial } from "../util/local.ts";
+import { isSport } from "../../common/isSport.ts";
 
 const TeamNameLink = ({
 	children,

@@ -11,12 +11,11 @@ import {
 import {
 	DEFAULT_STADIUM_CAPACITY,
 	DEPTH_CHART_NAME,
-	isSport,
 	LEAGUE_DATABASE_VERSION,
 	PHASE,
 	PLAYER,
 	REAL_PLAYERS_INFO,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import type {
 	Conditions,
 	Conf,
@@ -68,6 +67,7 @@ import { upgradeGamesVersion65 } from "../../db/connectLeague.ts";
 import type { NewLeagueSettings } from "../../views/newLeague.ts";
 import { getNumPlayersTradedAwayNormalized } from "../player/getNumPlayersTradedAwayNormalized.ts";
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 export type TeamInfo = TeamBasic & {
 	disabled?: boolean;

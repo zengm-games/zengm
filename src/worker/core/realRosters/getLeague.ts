@@ -11,7 +11,6 @@ import type {
 } from "../../../common/types.ts";
 import { defaultGameAttributes, helpers, random } from "../../util/index.ts";
 import {
-	isSport,
 	LEAGUE_DATABASE_VERSION,
 	PHASE,
 	PLAYER,
@@ -33,6 +32,7 @@ import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatin
 import getInjury from "./getInjury.ts";
 import { averageSalary } from "./averageSalary.ts";
 import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 const FREE_AGENTS_SEASON = 2020;
 

@@ -1,4 +1,4 @@
-import { isSport } from "../common/index.ts";
+import { isSport } from "../common/isSport.ts";
 import { Cache, idb } from "../worker/db/index.ts";
 import { STORES, type Store } from "../worker/db/Cache.ts";
 import { g, helpers } from "../worker/util/index.ts";

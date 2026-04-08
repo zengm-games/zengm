@@ -1,4 +1,4 @@
-import { ALL_STAR_GAME_ONLY, isSport, PHASE } from "../../../common/index.ts";
+import { ALL_STAR_GAME_ONLY, PHASE } from "../../../common/constants.ts";
 import {
 	GameSim,
 	allStar,
@@ -40,6 +40,7 @@ import allowForceTie from "../../../common/allowForceTie.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { setLiveSimRatingsStatsPopoverPlayers } from "./setLiveSimRatingsStatsPopoverPlayers.ts";
 import { getOneUpcomingGame } from "../../util/recomputeLocalUITeamOvrs.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 /**
  * Play one or more days of games.

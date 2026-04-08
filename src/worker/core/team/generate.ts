@@ -3,11 +3,11 @@ import type { Team } from "../../../common/types.ts";
 import {
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	DEFAULT_TEAM_COLORS,
-	isSport,
 } from "../../../common/index.ts";
 import finances from "../finances/index.ts";
 import genRandomJersey from "./genRandomJersey.ts";
 import isValidJersey from "./isValidJersey.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 /**
  * Create a new team object.

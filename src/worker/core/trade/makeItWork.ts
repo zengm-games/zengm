@@ -3,11 +3,8 @@ import { idb } from "../../db/index.ts";
 import type { DraftPick, Player, TradeTeams } from "../../../common/types.ts";
 import isUntradable from "./isUntradable.ts";
 import { helpers } from "../../util/index.ts";
-import {
-	COMPOSITE_WEIGHTS,
-	isSport,
-	POSITIONS,
-} from "../../../common/index.ts";
+import { COMPOSITE_WEIGHTS, POSITIONS } from "../../../common/index.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 export type LookingFor = {
 	positions: Set<string>;

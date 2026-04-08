@@ -3,7 +3,7 @@ import type { View } from "../../common/types.ts";
 import useDropdownOptions from "../hooks/useDropdownOptions.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { OptionDropdown } from "./PlayerGraphs/index.tsx";
-import { isSport, PLAYER, PLAYER_STATS_TABLES } from "../../common/index.ts";
+import { PLAYER, PLAYER_STATS_TABLES } from "../../common/index.ts";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
@@ -24,6 +24,7 @@ import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 import { PlusMinus } from "../components/PlusMinus.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { getCol } from "../../common/getCol.ts";
+import { isSport } from "../../common/isSport.ts";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];

@@ -6,7 +6,7 @@ import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { NoGamesMessage } from "./GameLog.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
-import { isSport } from "../../common/index.ts";
+import { isSport } from "../../common/isSport.ts";
 import clsx from "clsx";
 import { InjuryIcon } from "../components/InjuryIcon.tsx";
 

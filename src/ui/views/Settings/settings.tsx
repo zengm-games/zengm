@@ -1,13 +1,11 @@
 import {
-	bySport,
 	COURT,
 	DIFFICULTY,
 	GAME_NAME,
-	isSport,
 	REAL_PLAYERS_INFO,
 	TIEBREAKERS,
 	WEBSITE_ROOT,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import type { ChangeEvent, CSSProperties, ReactNode } from "react";
@@ -23,6 +21,8 @@ import PlayerBioInfo2 from "./PlayerBioInfo.tsx";
 import type { GameAttributesLeague } from "../../../common/types.ts";
 import { parseCurrencyFormat } from "../../util/parseCurrencyFormat.ts";
 import { getDraftTypeDescription } from "../DraftLottery.tsx";
+import { bySport } from "../../../common/bySport.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 export const descriptions = {
 	difficulty:

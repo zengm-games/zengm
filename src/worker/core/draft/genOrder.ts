@@ -13,13 +13,14 @@ import type {
 } from "../../../common/types.ts";
 import genOrderGetPicks from "./genOrderGetPicks.ts";
 import getTeamsByRound from "./getTeamsByRound.ts";
-import { bySport, COLA_ALPHA, PHASE } from "../../../common/index.ts";
+import { COLA_ALPHA, PHASE } from "../../../common/index.ts";
 import { league } from "../index.ts";
 import getNumPlayoffTeams from "../season/getNumPlayoffTeams.ts";
 import {
 	getNumLotteryTeams,
 	updateLotteryChancesAfterLottery,
 } from "./cola.ts";
+import { bySport } from "../../../common/bySport.ts";
 
 type ReturnVal = {
 	draftLotteryResult:

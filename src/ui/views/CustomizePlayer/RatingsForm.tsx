@@ -1,8 +1,9 @@
 import { Fragment, type ChangeEvent, useState, useEffect } from "react";
-import { bySport, RATINGS } from "../../../common/index.ts";
+import { RATINGS } from "../../../common/index.ts";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCol } from "../../../common/getCol.ts";
+import { bySport } from "../../../common/bySport.ts";
 
 const rows = bySport<
 	{

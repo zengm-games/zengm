@@ -1,4 +1,4 @@
-import { bySport } from "../../../common/index.ts";
+import { bySport } from "../../../common/bySport.ts";
 import type { Player, Team } from "../../../common/types.ts";
 import type { Position } from "../../../common/types.football.ts";
 import genDepthBaseball from "./genDepth.baseball.ts";

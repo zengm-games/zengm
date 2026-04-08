@@ -3,7 +3,7 @@ import RatingsStatsBasketball from "./RatingsStats.basketball.tsx";
 import RatingsStatsFootball from "./RatingsStats.football.tsx";
 import RatingsStatsHockey from "./RatingsStats.hockey.tsx";
 import { useLocal } from "../../util/local.ts";
-import { bySport } from "../../../common/index.ts";
+import { bySport } from "../../../common/bySport.ts";
 
 export const RatingsStats = (props: {
 	ratings: any;

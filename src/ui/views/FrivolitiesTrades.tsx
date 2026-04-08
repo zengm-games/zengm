@@ -4,9 +4,10 @@ import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
 import { frivolitiesMenu } from "./Frivolities.tsx";
-import { bySport, PHASE_TEXT } from "../../common/index.ts";
+import { PHASE_TEXT } from "../../common/index.ts";
 import PickText from "./TradeSummary/PickText.tsx";
 import TeamLogoAndName from "../components/TeamLogoAndName.tsx";
+import { bySport } from "../../common/bySport.ts";
 
 const PlayerInfo = ({
 	asset,

@@ -8,7 +8,6 @@ import Storage from "./Storage.tsx";
 import type { View } from "../../../common/types.ts";
 import {
 	DEFAULT_PHASE_CHANGE_REDIRECTS,
-	isSport,
 	PHASE,
 	PHASE_TEXT,
 } from "../../../common/index.ts";
@@ -16,6 +15,7 @@ import { MoreLinks } from "../../components/MoreLinks.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 const GlobalSettings = (props: View<"globalSettings">) => {
 	const [state, setState] = useState(() => {

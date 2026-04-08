@@ -1,9 +1,7 @@
 import {
-	bySport,
-	isSport,
 	PHASE,
 	REMAINING_PLAYOFF_TEAMS_PHASES,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import { g, helpers } from "../util/index.ts";
 import type { PlayerStatType } from "../../common/types.ts";
 import type { Params } from "../../ui/router/index.ts";
@@ -11,6 +9,8 @@ import type { boxScoreToLiveSim } from "../views/liveGame.ts";
 import type { AdvancedPlayerSearchFilter } from "../../ui/views/AdvancedPlayerSearch.tsx";
 import type { NoteInfo } from "../../ui/views/Player/Note.tsx";
 import { actualPhase } from "../util/actualPhase.ts";
+import { bySport } from "../../common/bySport.ts";
+import { isSport } from "../../common/isSport.ts";
 
 /**
  * Validate that a given abbreviation corresponds to a team.

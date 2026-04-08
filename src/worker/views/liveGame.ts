@@ -12,14 +12,11 @@ import type {
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types.ts";
-import {
-	bySport,
-	isSport,
-	PHASE,
-	STARTING_NUM_TIMEOUTS,
-} from "../../common/index.ts";
+import { PHASE, STARTING_NUM_TIMEOUTS } from "../../common/constants.ts";
 import { formatClock } from "../../common/formatClock.ts";
 import { getPeriodName } from "../../common/getPeriodName.ts";
+import { bySport } from "../../common/bySport.ts";
+import { isSport } from "../../common/isSport.ts";
 
 export const boxScoreToLiveSim = async ({
 	allStars,

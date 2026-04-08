@@ -8,10 +8,11 @@ import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { useLocalPartial } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
 import { HelpPopover } from "../components/HelpPopover.tsx";
-import { isSport, PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import { RatingsStatsPopover } from "../components/RatingsStatsPopover/index.tsx";
 import { Mood } from "../components/Mood.tsx";
 import { PlayerPicture } from "../components/PlayerPicture.tsx";
+import { isSport } from "../../common/isSport.ts";
 
 // Show the negotiations list if there are more ongoing negotiations
 const redirectNegotiationOrRoster = async (cancelled: boolean) => {

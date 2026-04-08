@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { bySport } from "../../../common/index.ts";
+import { bySport } from "../../../common/bySport.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { ActionButton } from "../../components/ActionButton.tsx";

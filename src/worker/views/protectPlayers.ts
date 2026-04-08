@@ -1,6 +1,6 @@
 import { g, helpers } from "../util/index.ts";
 import { idb } from "../db/index.ts";
-import { bySport } from "../../common/index.ts";
+import { bySport } from "../../common/bySport.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 
 const updateProtectPlayers = async () => {

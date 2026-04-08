@@ -1,4 +1,4 @@
-import { bySport, isSport, PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { finances, player } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import {
@@ -15,6 +15,8 @@ import stats from "../player/stats.ts";
 import statsRowIsCurrent from "../player/statsRowIsCurrent.ts";
 import { maxBy } from "../../../common/utils.ts";
 import getWinner from "../../../common/getWinner.ts";
+import { bySport } from "../../../common/bySport.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 export const P_FATIGUE_DAILY_REDUCTION = 20;
 

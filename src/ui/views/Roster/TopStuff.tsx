@@ -6,7 +6,7 @@ import { toWorker } from "../../util/toWorker.ts";
 import InstructionsAndSortButtons from "./InstructionsAndSortButtons.tsx";
 import PlayThroughInjurySliders from "./PlayThroughInjuriesSliders.tsx";
 import type { View } from "../../../common/types.ts";
-import { bySport } from "../../../common/index.ts";
+import { bySport } from "../../../common/bySport.ts";
 import Note from "../Player/Note.tsx";
 import { RosterComposition } from "../../components/RosterComposition.tsx";
 import { PlusMinus } from "../../components/PlusMinus.tsx";

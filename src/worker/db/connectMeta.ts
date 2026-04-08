@@ -4,7 +4,7 @@ import type {
 	IDBPTransaction,
 	StoreNames,
 } from "@dumbmatter/idb";
-import { isSport } from "../../common/index.ts";
+import { isSport } from "../../common/isSport.ts";
 import type {
 	League,
 	Options,

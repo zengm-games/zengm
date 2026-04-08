@@ -1,5 +1,5 @@
 import { Dropbox, DropboxAuth } from "dropbox";
-import { bySport } from "../../common/index.ts";
+import { bySport } from "../../common/bySport.ts";
 
 // Client ID aka app key
 const CLIENT_ID = bySport({

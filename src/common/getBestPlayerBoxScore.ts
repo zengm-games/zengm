@@ -1,4 +1,4 @@
-import bySport from "./bySport.ts";
+import { bySport } from "./bySport.ts";
 import { processPlayerStats } from "./processPlayerStats.ts";
 import { orderBy } from "./utils.ts";
 

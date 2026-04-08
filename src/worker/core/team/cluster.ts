@@ -1,4 +1,4 @@
-import { isSport } from "../../../common/index.ts";
+import { isSport } from "../../../common/isSport.ts";
 import type { Div } from "../../../common/types.ts";
 import { random } from "../../util/index.ts";
 

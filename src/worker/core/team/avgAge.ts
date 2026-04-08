@@ -1,4 +1,4 @@
-import { isSport } from "../../../common/index.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 const avgAge = (
 	players: {

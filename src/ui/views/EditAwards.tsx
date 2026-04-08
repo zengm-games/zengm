@@ -6,13 +6,10 @@ import { logEvent } from "../util/logEvent.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import SelectMultiple from "../components/SelectMultiple/index.tsx";
-import {
-	AWARD_NAMES,
-	bySport,
-	isSport,
-	SIMPLE_AWARDS,
-} from "../../common/index.ts";
+import { AWARD_NAMES, SIMPLE_AWARDS } from "../../common/index.ts";
 import { range } from "../../common/utils.ts";
+import { bySport } from "../../common/bySport.ts";
+import { isSport } from "../../common/isSport.ts";
 
 const Position = ({ index, p }: { index: number; p: any }) => {
 	if (!isSport("football")) {

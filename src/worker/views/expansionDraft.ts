@@ -3,8 +3,9 @@ import getTeamInfos from "../../common/getTeamInfos.ts";
 import type { ExpansionDraftSetupTeam } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
 import getUnusedAbbrevs from "../../common/getUnusedAbbrevs.ts";
-import { bySport, DEFAULT_JERSEY } from "../../common/index.ts";
+import { DEFAULT_JERSEY } from "../../common/index.ts";
 import { orderBy } from "../../common/utils.ts";
+import { bySport } from "../../common/bySport.ts";
 
 const updateExpansionDraft = async () => {
 	const expansionDraft = g.get("expansionDraft");

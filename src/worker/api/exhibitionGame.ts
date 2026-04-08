@@ -2,9 +2,8 @@ import {
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	DEFAULT_STADIUM_CAPACITY,
 	EXHIBITION_GAME_SETTINGS,
-	isSport,
 	PHASE,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import { orderBy } from "../../common/utils.ts";
 import type {
 	Conditions,
@@ -32,6 +31,7 @@ import {
 import { boxScoreToLiveSim } from "../views/liveGame.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
+import { isSport } from "../../common/isSport.ts";
 
 export const getLeagues = async () => {
 	const leagues = await idb.meta.getAll("leagues");

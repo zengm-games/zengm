@@ -1,5 +1,4 @@
 import {
-	isSport,
 	PHASE,
 	PLAYER,
 	PLAYER_STATS_TABLES,
@@ -18,6 +17,7 @@ import {
 	getStats,
 	getStatsTableByType,
 } from "../../common/advancedPlayerSearch.ts";
+import { isSport } from "../../common/isSport.ts";
 
 export const statTypes = [
 	"bio",

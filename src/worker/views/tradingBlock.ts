@@ -1,7 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
-import { bySport } from "../../common/index.ts";
+import { bySport } from "../../common/bySport.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { augmentOffers } from "../api/index.ts";
 import { team } from "../core/index.ts";

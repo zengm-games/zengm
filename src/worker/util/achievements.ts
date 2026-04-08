@@ -1,10 +1,12 @@
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type { Achievement, NonEmptyArray, Player } from "../../common/types.ts";
-import { bySport, isSport, PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/index.ts";
 import helpers from "./helpers.ts";
 import { range } from "../../common/utils.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
+import { bySport } from "../../common/bySport.ts";
+import { isSport } from "../../common/isSport.ts";
 
 const goldenOldiesCutoffs: [number, number, number] = bySport({
 	baseball: [30, 33, 36],

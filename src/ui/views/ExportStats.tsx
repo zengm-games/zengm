@@ -2,9 +2,10 @@ import { type SubmitEvent, useCallback, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { toWorker } from "../util/toWorker.ts";
 import type { View } from "../../common/types.ts";
-import { GAME_ACRONYM, isSport } from "../../common/index.ts";
+import { GAME_ACRONYM } from "../../common/index.ts";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { downloadFile } from "../util/downloadFile.ts";
+import { isSport } from "../../common/isSport.ts";
 
 const genFilename = (
 	leagueName: string,

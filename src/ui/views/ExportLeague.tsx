@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useState, type ReactNode, useRef } from "react";
-import { GAME_NAME, isSport, WEBSITE_ROOT } from "../../common/index.ts";
+import { GAME_NAME, WEBSITE_ROOT } from "../../common/index.ts";
 import {
 	gameAttributesKeysGameState,
 	gameAttributesKeysTeams,
@@ -17,6 +17,7 @@ import type makeExportStream from "../util/makeExportStream.ts";
 import { ProgressBarText } from "../components/ProgressBarText.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { safeLocalStorage } from "../util/safeLocalStorage.ts";
+import { isSport } from "../../common/isSport.ts";
 
 const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 

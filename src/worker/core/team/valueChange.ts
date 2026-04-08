@@ -1,4 +1,4 @@
-import { bySport, PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/index.ts";
 import { draft, player, team, trade } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, local } from "../../util/index.ts";
@@ -9,6 +9,7 @@ import type {
 	DraftPick,
 } from "../../../common/types.ts";
 import { getNumPicksPerRound } from "../trade/getPickValues.ts";
+import { bySport } from "../../../common/bySport.ts";
 
 type Asset =
 	| {

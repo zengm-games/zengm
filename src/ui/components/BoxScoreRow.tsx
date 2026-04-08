@@ -1,5 +1,5 @@
 import type { MouseEvent } from "react";
-import { bySport } from "../../common/index.ts";
+import { bySport } from "../../common/bySport.ts";
 import BoxScoreRowBasketball from "./BoxScoreRow.basketball.tsx";
 import BoxScoreRowFootball from "./BoxScoreRow.football.tsx";
 

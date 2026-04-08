@@ -1,11 +1,6 @@
 import { useState } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
-import {
-	bySport,
-	isSport,
-	PLAYER,
-	WEBSITE_ROOT,
-} from "../../../common/index.ts";
+import { PLAYER, WEBSITE_ROOT } from "../../../common/constants.ts";
 import { DataTable } from "../../components/DataTable/index.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
@@ -35,6 +30,8 @@ import { CountryFlag } from "../../components/CountryFlag.tsx";
 import { SafeHtml } from "../../components/SafeHtml.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import { confirm } from "../../util/confirm.tsx";
+import { bySport } from "../../../common/bySport.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],

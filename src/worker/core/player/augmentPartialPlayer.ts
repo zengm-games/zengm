@@ -1,4 +1,4 @@
-import { bySport, isSport, PHASE, PLAYER } from "../../../common/index.ts";
+import { PHASE, PLAYER } from "../../../common/index.ts";
 import develop, { monteCarloPot } from "./develop.ts";
 import generate from "./generate.ts";
 import heightToRating from "./heightToRating.ts";
@@ -10,6 +10,8 @@ import skills from "./skills.ts";
 import stats from "./stats.ts";
 import { g, helpers, random } from "../../util/index.ts";
 import type { MinimalPlayerRatings, Player } from "../../../common/types.ts";
+import { bySport } from "../../../common/bySport.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 /**
  * Take a partial player object, such as from an uploaded JSON file, and add everything it needs to be a real player object.

@@ -8,11 +8,12 @@ import type {
 } from "../../common/types.ts";
 import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
 import { player } from "../core/index.ts";
-import { bySport, PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/index.ts";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts";
 import goatFormula from "../util/goatFormula.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";
+import { bySport } from "../../common/bySport.ts";
 
 type Most = {
 	value: number;

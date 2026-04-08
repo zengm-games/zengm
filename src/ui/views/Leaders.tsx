@@ -4,7 +4,8 @@ import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
-import { bySport, isSport } from "../../common/index.ts";
+import { bySport } from "../../common/bySport.ts";
+import { isSport } from "../../common/isSport.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 

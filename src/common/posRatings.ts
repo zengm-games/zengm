@@ -2,7 +2,7 @@ import posRatingsBaseball from "./posRatings.baseball.ts";
 import posRatingsFootball from "./posRatings.football.ts";
 import posRatingsHockey from "./posRatings.hockey.ts";
 import { RATINGS } from "./index.ts";
-import bySport from "./bySport.ts";
+import { bySport } from "./bySport.ts";
 
 export const posRatings = (pos: string) => {
 	return bySport({

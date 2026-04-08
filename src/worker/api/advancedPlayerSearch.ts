@@ -1,4 +1,4 @@
-import { isSport, PHASE, PLAYER } from "../../common/index.ts";
+import { PHASE, PLAYER } from "../../common/constants.ts";
 import {
 	allFilters,
 	getExtraStatTypeKeys,
@@ -13,6 +13,7 @@ import { buffOvrDH } from "../views/depth.ts";
 import { iterateActivePlayersSeasonRange } from "../views/rosterContinuity.ts";
 import type { SeasonType } from "./processInputs.ts";
 import { actualPhase } from "../util/actualPhase.ts";
+import { isSport } from "../../common/isSport.ts";
 
 const getPlayers = async (
 	season: number | undefined,

@@ -1,7 +1,5 @@
 import {
 	PLAYER,
-	bySport,
-	isSport,
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	PHASE,
 } from "../../../common/index.ts";
@@ -31,6 +29,8 @@ import type {
 } from "../../../common/types.ts";
 import { groupByUnique, maxBy } from "../../../common/utils.ts";
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
+import { bySport } from "../../../common/bySport.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 const newPhasePreseason = async (
 	conditions: Conditions,

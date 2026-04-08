@@ -1,4 +1,4 @@
-import { isSport } from "../../../common/index.ts";
+import { isSport } from "../../../common/isSport.ts";
 import { g, random } from "../../util/index.ts";
 
 const genWeight = (hgt: number, stre?: number, pos?: string) => {

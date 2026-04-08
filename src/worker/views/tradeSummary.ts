@@ -1,4 +1,4 @@
-import { bySport, PHASE, PLAYER } from "../../common/index.ts";
+import { PHASE, PLAYER } from "../../common/index.ts";
 import type {
 	DiscriminateUnion,
 	DraftPickSeason,
@@ -18,6 +18,7 @@ import { idb } from "../db/index.ts";
 import { g, getTeamInfoBySeason, helpers } from "../util/index.ts";
 import { assetIsPlayer, getPlayerFromPick } from "../util/formatEventText.ts";
 import { getRoundsWonText } from "./frivolitiesTeamSeasons.ts";
+import { bySport } from "../../common/bySport.ts";
 
 const findRatingsRow = (
 	allRatings: NonEmptyArray<MinimalPlayerRatings>,

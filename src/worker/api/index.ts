@@ -6,14 +6,12 @@ import {
 	PLAYER,
 	PLAYER_STATS_TABLES,
 	RATINGS,
-	isSport,
-	bySport,
 	DEFAULT_JERSEY,
 	POSITIONS,
 	GRACE_PERIOD,
 	LEAGUE_DATABASE_VERSION,
 	REAL_PLAYERS_INFO,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import actions from "./actions.ts";
 import leagueFileUpload, {
 	decompressStreamIfNecessary,
@@ -162,6 +160,8 @@ import type { NewLeagueSettings } from "../views/newLeague.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../core/player/getNumPlayersTradedAwayNormalized.ts";
 import { getAdjustedTicketPrice } from "../../common/getAdjustedTicketPrice.ts";
 import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
+import { bySport } from "../../common/bySport.ts";
+import { isSport } from "../../common/isSport.ts";
 
 const acceptContractNegotiation = async ({
 	pid,

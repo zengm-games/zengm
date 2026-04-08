@@ -1,4 +1,4 @@
-import { bySport } from "../../../common/index.ts";
+import { bySport } from "../../../common/bySport.ts";
 import { NUM_OUTS_PER_INNING } from "../../../common/constants.baseball.ts";
 import { defaultGameAttributes, g, helpers } from "../../util/index.ts";
 

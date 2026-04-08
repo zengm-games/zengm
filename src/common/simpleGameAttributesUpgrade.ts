@@ -1,4 +1,4 @@
-import isSport from "./isSport.ts";
+import { isSport } from "./isSport.ts";
 import type {
 	GameAttributeWithHistory,
 	GameAttributesLeagueWithHistory,

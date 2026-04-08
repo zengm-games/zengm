@@ -5,9 +5,11 @@ import type {
 	PlayerWithoutKey,
 	Race,
 } from "../../common/types.ts";
-import { bySport, DEFAULT_JERSEY, isSport } from "../../common/index.ts";
+import { DEFAULT_JERSEY } from "../../common/index.ts";
 import g from "./g.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
+import { bySport } from "../../common/bySport.ts";
+import { isSport } from "../../common/isSport.ts";
 
 export const generate = (
 	options:

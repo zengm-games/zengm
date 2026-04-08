@@ -1,4 +1,4 @@
-import { bySport, PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type {
@@ -10,6 +10,7 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getDraftLotteryProbs } from "../../common/draftLottery.ts";
 import { getNumToPick } from "../core/draft/genOrder.ts";
 import { maxBy } from "../../common/utils.ts";
+import { bySport } from "../../common/bySport.ts";
 
 const updateDraftTeamHistory = async (
 	inputs: ViewInput<"draftTeamHistory">,

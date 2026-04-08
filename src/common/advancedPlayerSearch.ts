@@ -1,4 +1,5 @@
-import { isSport, PLAYER_STATS_TABLES, RATINGS } from "./index.ts";
+import { PLAYER_STATS_TABLES, RATINGS } from "./index.ts";
+import { isSport } from "./isSport.ts";
 import type { Col } from "../ui/components/DataTable/index.tsx";
 
 type AdvancedPlayerSearchField = {

@@ -3,9 +3,7 @@ import {
 	PHASE,
 	SIMPLE_AWARDS,
 	AWARD_NAMES,
-	bySport,
-	isSport,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import {
 	g,
@@ -23,6 +21,8 @@ import type {
 import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball.ts";
 import season from "./index.ts";
 import addAward from "../player/addAward.ts";
+import { bySport } from "../../../common/bySport.ts";
+import { isSport } from "../../../common/isSport.ts";
 
 export type AwardsByPlayer = {
 	pid: number;

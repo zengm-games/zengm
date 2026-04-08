@@ -13,7 +13,7 @@ import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts"
 import goatFormula from "../util/goatFormula.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 type Most = {
 	value: number;

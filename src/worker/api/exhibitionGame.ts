@@ -31,7 +31,7 @@ import {
 import { boxScoreToLiveSim } from "../views/liveGame.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 export const getLeagues = async () => {
 	const leagues = await idb.meta.getAll("leagues");

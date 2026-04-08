@@ -7,7 +7,7 @@ import type {
 	MenuItemText,
 } from "../../common/types.ts";
 import { GAME_NAME } from "../../common/index.ts";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 const style = { maxWidth: 1000 };
 

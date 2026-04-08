@@ -6,8 +6,7 @@ import type { UpdateEvents } from "../../common/types.ts";
 import { processEvents } from "./news.ts";
 import { getMaxPlayoffSeed } from "./standings.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {

@@ -4,7 +4,7 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { ViewInput } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const updateUpcomingFreeAgents = async (
 	inputs: ViewInput<"upcomingFreeAgents">,

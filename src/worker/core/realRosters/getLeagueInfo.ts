@@ -4,7 +4,7 @@ import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
 import getGameAttributes from "./getGameAttributes.ts";
 import type { GetLeagueOptions } from "../../../common/types.ts";
 import addSeasonInfoToTeams from "./addSeasonInfoToTeams.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 export const legendsInfo = {
 	"1950s": {

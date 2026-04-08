@@ -1,5 +1,5 @@
 import { svgsIndex } from "facesjs";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 const isValidJersey = (jersey: unknown) => {
 	if (typeof jersey !== "string") {

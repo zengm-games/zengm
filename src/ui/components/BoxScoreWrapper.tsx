@@ -19,7 +19,7 @@ import { TeamLogoInline } from "./TeamLogoInline.tsx";
 import { useKeyboardShortcuts } from "../util/keyboardShortcuts.ts";
 import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
 import { useLocalPartial } from "../util/local.ts";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 const TeamNameLink = ({
 	children,

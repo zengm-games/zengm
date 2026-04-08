@@ -5,7 +5,7 @@ import {
 	POSITIONS,
 	SKILLS,
 } from "../../../common/index.ts";
-import { bySport } from "../../../common/bySport.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 type Category = {
 	name: string;

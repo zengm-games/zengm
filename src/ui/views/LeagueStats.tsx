@@ -5,7 +5,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 import { expandFieldingStats } from "../util/expandFieldingStats.baseball.ts";
 
 export const formatMaybeInteger = (x: number) =>

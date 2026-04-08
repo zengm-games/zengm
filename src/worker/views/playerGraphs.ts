@@ -17,7 +17,7 @@ import {
 	getStats,
 	getStatsTableByType,
 } from "../../common/advancedPlayerSearch.ts";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 export const statTypes = [
 	"bio",

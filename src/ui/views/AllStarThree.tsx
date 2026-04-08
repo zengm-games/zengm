@@ -4,7 +4,7 @@ import { toWorker } from "../util/toWorker.ts";
 import type { View } from "../../common/types.ts";
 import { PlayPauseNext } from "../components/PlayPauseNext.tsx";
 import { useEffect, useState } from "react";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 import {
 	ContestantProfiles,
 	EditContestants,

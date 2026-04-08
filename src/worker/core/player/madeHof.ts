@@ -7,7 +7,7 @@ import type {
 	MinimalPlayerRatings,
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
-import { bySport } from "../../../common/bySport.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 const madeHof = (
 	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,

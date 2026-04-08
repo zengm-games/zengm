@@ -1,4 +1,4 @@
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import BoxScoreBaseball from "./BoxScore.baseball.tsx";
 import BoxScoreBasketball from "./BoxScore.basketball.tsx";
 import BoxScoreFootball from "./BoxScore.football.tsx";

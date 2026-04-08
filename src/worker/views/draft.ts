@@ -6,7 +6,7 @@ import { g, helpers, local } from "../util/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { minBy } from "../../common/utils.ts";
 import { getDraftTeamsByTid } from "./draftHistory.ts";
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const getUserNextPickYear = async () => {
 	const userTids = g.get("userTids");

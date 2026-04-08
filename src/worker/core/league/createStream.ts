@@ -67,7 +67,7 @@ import { upgradeGamesVersion65 } from "../../db/connectLeague.ts";
 import type { NewLeagueSettings } from "../../views/newLeague.ts";
 import { getNumPlayersTradedAwayNormalized } from "../player/getNumPlayersTradedAwayNormalized.ts";
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 export type TeamInfo = TeamBasic & {
 	disabled?: boolean;

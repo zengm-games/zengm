@@ -21,8 +21,7 @@ import PlayerBioInfo2 from "./PlayerBioInfo.tsx";
 import type { GameAttributesLeague } from "../../../common/types.ts";
 import { parseCurrencyFormat } from "../../util/parseCurrencyFormat.ts";
 import { getDraftTypeDescription } from "../DraftLottery.tsx";
-import { bySport } from "../../../common/bySport.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 export const descriptions = {
 	difficulty:

@@ -9,7 +9,7 @@ import { PHASE } from "../../common/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { orderBy } from "../../common/utils.ts";
 import { extraStats } from "./hallOfFame.ts";
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const playerValue = (p: Player<MinimalPlayerRatings>) => {
 	let sum = 0;

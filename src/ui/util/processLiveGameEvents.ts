@@ -1,4 +1,4 @@
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import processLiveGameEventsBaseball from "./processLiveGameEvents.baseball.tsx";
 import processLiveGameEventsBasketball from "./processLiveGameEvents.basketball.tsx";
 import processLiveGameEventsFootball from "./processLiveGameEvents.football.tsx";

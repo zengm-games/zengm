@@ -12,7 +12,7 @@ import { g, helpers, local, logEvent } from "../../util/index.ts";
 import type { Conditions, PhaseReturn } from "../../../common/types.ts";
 import { orderBy } from "../../../common/utils.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../player/getNumPlayersTradedAwayNormalized.ts";
-import { bySport } from "../../../common/bySport.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 export const FREE_AGENCY_DAYS = 30;
 

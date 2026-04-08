@@ -15,7 +15,7 @@ import type {
 import type { TeamStatAttr } from "../../common/types.baseball.ts";
 import { season } from "../core/index.ts";
 import { addPowerRankingsStuffToTeams } from "./powerRankings.ts";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 export const statTypes = [
 	"standings",

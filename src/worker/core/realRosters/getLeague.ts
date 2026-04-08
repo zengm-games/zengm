@@ -32,7 +32,7 @@ import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatin
 import getInjury from "./getInjury.ts";
 import { averageSalary } from "./averageSalary.ts";
 import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 const FREE_AGENTS_SEASON = 2020;
 

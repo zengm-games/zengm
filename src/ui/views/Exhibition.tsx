@@ -26,7 +26,7 @@ import { choice, randInt } from "../../common/random.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { safeLocalStorage } from "../util/safeLocalStorage.ts";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 export type ExhibitionTeam = {
 	season: number;

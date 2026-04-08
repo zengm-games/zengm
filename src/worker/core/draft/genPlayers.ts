@@ -3,7 +3,7 @@ import { finances, player, realRosters } from "../index.ts";
 import genPlayersWithoutSaving from "./genPlayersWithoutSaving.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 const genPlayers = async (
 	draftYear: number,

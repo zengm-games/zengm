@@ -20,7 +20,7 @@ import {
 	getNumLotteryTeams,
 	updateLotteryChancesAfterLottery,
 } from "./cola.ts";
-import { bySport } from "../../../common/bySport.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 type ReturnVal = {
 	draftLotteryResult:

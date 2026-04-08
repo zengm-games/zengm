@@ -9,7 +9,7 @@ import {
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
 } from "../../../common/index.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 class GameHasYourTeamCache {
 	cache: Record<number, boolean> = {};

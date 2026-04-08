@@ -29,8 +29,7 @@ import type {
 } from "../../../common/types.ts";
 import { groupByUnique, maxBy } from "../../../common/utils.ts";
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
-import { bySport } from "../../../common/bySport.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const newPhasePreseason = async (
 	conditions: Conditions,

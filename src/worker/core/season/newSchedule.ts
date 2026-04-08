@@ -3,7 +3,7 @@ import type { Conditions } from "../../../common/types.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import { getRealSchedule } from "./getRealSchedule.football.ts";
 import newScheduleGood from "./newScheduleGood.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 const newSchedule = async (
 	teams: {

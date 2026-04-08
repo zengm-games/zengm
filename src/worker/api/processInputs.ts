@@ -9,8 +9,7 @@ import type { boxScoreToLiveSim } from "../views/liveGame.ts";
 import type { AdvancedPlayerSearchFilter } from "../../ui/views/AdvancedPlayerSearch.tsx";
 import type { NoteInfo } from "../../ui/views/Player/Note.tsx";
 import { actualPhase } from "../util/actualPhase.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 /**
  * Validate that a given abbreviation corresponds to a team.

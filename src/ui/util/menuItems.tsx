@@ -8,8 +8,7 @@ import {
 import type { MenuItemLink, MenuItemHeader } from "../../common/types.ts";
 import { frivolities } from "../views/Frivolities.tsx";
 import { takeScreenshot } from "./takeScreenshot.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 const depthChart: MenuItemLink[] =
 	DEPTH_CHART_NAME !== undefined

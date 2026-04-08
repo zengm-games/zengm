@@ -11,7 +11,7 @@ import {
 } from "../util/index.ts";
 import { getCommon } from "./player.ts";
 import { filterPlayerStats } from "../../common/filterPlayerStats.ts";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 const updatePlayerGameLog = async (
 	{ pid, season }: ViewInput<"playerGameLog">,

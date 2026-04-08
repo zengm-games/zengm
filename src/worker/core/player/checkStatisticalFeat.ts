@@ -12,7 +12,7 @@ import type {
 } from "../../../common/types.ts";
 import getWinner from "../../../common/getWinner.ts";
 import formatScoreWithShootout from "../../../common/formatScoreWithShootout.ts";
-import { bySport } from "../../../common/bySport.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 const checkPlayer = bySport({
 	baseball: checkStatisticalFeatBaseball,

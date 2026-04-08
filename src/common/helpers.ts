@@ -9,7 +9,7 @@ import type {
 	RelativeType,
 } from "./types.ts";
 import getTeamInfos from "./getTeamInfos.ts";
-import { isSport } from "./isSport.ts";
+import { isSport } from "./sportFunctions.ts";
 import { PHASE } from "./constants.ts";
 import { orderBy } from "./utils.ts";
 

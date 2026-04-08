@@ -11,8 +11,7 @@ import type {
 import { addMood } from "./freeAgents.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 const sortByPos = (p: {
 	ratings: {

@@ -17,7 +17,7 @@ import type makeExportStream from "../util/makeExportStream.ts";
 import { ProgressBarText } from "../components/ProgressBarText.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { safeLocalStorage } from "../util/safeLocalStorage.ts";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 

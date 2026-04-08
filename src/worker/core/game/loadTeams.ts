@@ -12,8 +12,7 @@ import {
 	PHASE,
 } from "../../../common/constants.ts";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor.ts";
-import { bySport } from "../../../common/bySport.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const MAX_NUM_PLAYERS_PACE = 7;
 

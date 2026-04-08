@@ -15,7 +15,7 @@ import { MoreLinks } from "../../components/MoreLinks.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 const GlobalSettings = (props: View<"globalSettings">) => {
 	const [state, setState] = useState(() => {

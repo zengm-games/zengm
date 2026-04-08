@@ -1,4 +1,4 @@
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import type { Player } from "../../common/types.ts";
 import { helpers } from "./helpers.ts";
 

@@ -15,8 +15,7 @@ import stats from "../player/stats.ts";
 import statsRowIsCurrent from "../player/statsRowIsCurrent.ts";
 import { maxBy } from "../../../common/utils.ts";
 import getWinner from "../../../common/getWinner.ts";
-import { bySport } from "../../../common/bySport.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 export const P_FATIGUE_DAILY_REDUCTION = 20;
 

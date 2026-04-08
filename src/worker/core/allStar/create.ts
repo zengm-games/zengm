@@ -11,8 +11,7 @@ import { idb } from "../../db/index.ts";
 import type { PlayerRatings } from "../../../common/types.basketball.ts";
 import { orderBy, range } from "../../../common/utils.ts";
 import { getPosByGpF } from "../season/doAwards.baseball.ts";
-import { bySport } from "../../../common/bySport.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const MIN_PLAYERS_CONTEST = 2;
 

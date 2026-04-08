@@ -9,7 +9,7 @@ import type {
 	DraftPick,
 } from "../../../common/types.ts";
 import { getNumPicksPerRound } from "../trade/getPickValues.ts";
-import { bySport } from "../../../common/bySport.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 type Asset =
 	| {

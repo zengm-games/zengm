@@ -6,8 +6,7 @@ import {
 import type { DraftType, PlayerStatType } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
 import { useLocalPartial } from "../util/local.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 export const MoreLinks = (
 	props: (

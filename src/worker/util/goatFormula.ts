@@ -5,8 +5,7 @@ import { weightByMinutes } from "../db/getCopies/playersPlus.ts";
 import FormulaEvaluator from "./FormulaEvaluator.ts";
 import g from "./g.ts";
 import helpers from "./helpers.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 const DEFAULT_FORMULA = bySport({
 	baseball: "20 * mvp + war",

@@ -13,8 +13,7 @@ import genWeight from "./genWeight.ts";
 import potEstimator from "./potEstimator.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
-import { bySport } from "../../../common/bySport.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
 

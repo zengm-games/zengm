@@ -8,8 +8,7 @@ import type {
 import { DEFAULT_JERSEY } from "../../common/index.ts";
 import g from "./g.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 export const generate = (
 	options:

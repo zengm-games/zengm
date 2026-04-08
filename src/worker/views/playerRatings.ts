@@ -17,8 +17,7 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { buffOvrDH } from "./depth.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 import { season } from "../core/index.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 export const extraRatings = bySport({
 	baseball: ["ovrs", "pots"],

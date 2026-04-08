@@ -26,8 +26,7 @@ import { Weight } from "../../components/Weight.tsx";
 import { confirm } from "../../util/confirm.tsx";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { getCols } from "../../../common/getCols.ts";
-import { bySport } from "../../../common/bySport.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const Relatives = ({
 	gender,

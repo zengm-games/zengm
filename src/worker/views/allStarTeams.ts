@@ -12,8 +12,7 @@ import { PHASE, POSITIONS } from "../../common/index.ts";
 import { orderBy } from "../../common/utils.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { getPosByGpF } from "../core/season/doAwards.baseball.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 const sortByPos = (p: {
 	bestPos: string;

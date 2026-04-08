@@ -1,4 +1,4 @@
-import { bySport } from "../../../common/bySport.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { RatingWithChange } from "../../components/RatingWithChange.tsx";
 import type { ReactNode } from "react";
 

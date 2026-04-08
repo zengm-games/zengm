@@ -1,7 +1,7 @@
 import stats from "./stats.ts";
 import { helpers } from "../../util/index.ts";
 import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 import statsRowIsCurrent from "./statsRowIsCurrent.ts";
 
 /**

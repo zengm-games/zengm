@@ -8,8 +8,7 @@ import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import SelectMultiple from "../components/SelectMultiple/index.tsx";
 import { AWARD_NAMES, SIMPLE_AWARDS } from "../../common/index.ts";
 import { range } from "../../common/utils.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 const Position = ({ index, p }: { index: number; p: any }) => {
 	if (!isSport("football")) {

@@ -15,8 +15,7 @@ import type {
 import { PHASE, STARTING_NUM_TIMEOUTS } from "../../common/constants.ts";
 import { formatClock } from "../../common/formatClock.ts";
 import { getPeriodName } from "../../common/getPeriodName.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 export const boxScoreToLiveSim = async ({
 	allStars,

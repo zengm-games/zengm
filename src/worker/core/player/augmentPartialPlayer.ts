@@ -10,8 +10,7 @@ import skills from "./skills.ts";
 import stats from "./stats.ts";
 import { g, helpers, random } from "../../util/index.ts";
 import type { MinimalPlayerRatings, Player } from "../../../common/types.ts";
-import { bySport } from "../../../common/bySport.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 /**
  * Take a partial player object, such as from an uploaded JSON file, and add everything it needs to be a real player object.

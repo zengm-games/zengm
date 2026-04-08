@@ -30,8 +30,7 @@ import { CountryFlag } from "../../components/CountryFlag.tsx";
 import { SafeHtml } from "../../components/SafeHtml.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import { confirm } from "../../util/confirm.tsx";
-import { bySport } from "../../../common/bySport.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],

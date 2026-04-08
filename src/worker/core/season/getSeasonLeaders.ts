@@ -10,7 +10,7 @@ import { getPlayerProfileStats } from "../../views/player.ts";
 import { player } from "../index.ts";
 import getLeaderRequirements from "../season/getLeaderRequirements.ts";
 import { NUM_SEASON_LEADERS_CACHE } from "../../db/Cache.ts";
-import { bySport } from "../../../common/bySport.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 export const splitRegularSeasonPlayoffsCombined = (p: any) => {
 	for (const row of p.stats) {

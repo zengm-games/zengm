@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { View } from "../../../common/types.ts";
 import { helpers } from "../../util/helpers.ts";
 import { getCols } from "../../../common/getCols.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 import { highlightLeaderText, MaybeBold, SeasonLink } from "./common.tsx";
 import { expandFieldingStats } from "../../util/expandFieldingStats.baseball.ts";
 import { formatStatGameHigh } from "../PlayerStats.tsx";

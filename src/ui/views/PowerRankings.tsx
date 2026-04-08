@@ -7,8 +7,7 @@ import type { View } from "../../common/types.ts";
 import { POSITIONS, RATINGS } from "../../common/constants.ts";
 import { wrappedMovOrDiff } from "../components/MovOrDiff.tsx";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 const Other = ({
 	actualShowHealthy,

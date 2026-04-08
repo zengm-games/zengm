@@ -18,7 +18,7 @@ import { idb } from "../db/index.ts";
 import { g, getTeamInfoBySeason, helpers } from "../util/index.ts";
 import { assetIsPlayer, getPlayerFromPick } from "../util/formatEventText.ts";
 import { getRoundsWonText } from "./frivolitiesTeamSeasons.ts";
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const findRatingsRow = (
 	allRatings: NonEmptyArray<MinimalPlayerRatings>,

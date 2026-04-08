@@ -19,8 +19,7 @@ import { P_FATIGUE_DAILY_REDUCTION } from "../core/game/writePlayerStats.ts";
 import playThroughInjuriesFactor from "../../common/playThroughInjuriesFactor.ts";
 import { COMPOSITE_WEIGHTS } from "../../common/constants.hockey.ts";
 import { getStartingAndBackupGoalies } from "../core/GameSim.hockey/getStartingAndBackupGoalies.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 export const getUpcoming = async ({
 	day,

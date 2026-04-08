@@ -1,4 +1,4 @@
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import processPlayerStatsBaseball from "../../common/processPlayerStats.baseball.ts";
 import processPlayerStatsBasketball from "../../common/processPlayerStats.basketball.ts";
 import processPlayerStatsFootball from "../../common/processPlayerStats.football.ts";

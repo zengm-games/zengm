@@ -8,7 +8,7 @@ import {
 	random,
 } from "../../util/index.ts";
 import type { Conditions, Player } from "../../../common/types.ts";
-import { bySport } from "../../../common/bySport.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 const getReason = () => {
 	const tragicDeaths = g.get("tragicDeaths") ?? defaultTragicDeaths;

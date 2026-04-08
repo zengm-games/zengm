@@ -7,7 +7,7 @@ import {
 import finances from "../finances/index.ts";
 import genRandomJersey from "./genRandomJersey.ts";
 import isValidJersey from "./isValidJersey.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 /**
  * Create a new team object.

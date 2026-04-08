@@ -4,7 +4,7 @@ import type { DraftPick, Player, TradeTeams } from "../../../common/types.ts";
 import isUntradable from "./isUntradable.ts";
 import { helpers } from "../../util/index.ts";
 import { COMPOSITE_WEIGHTS, POSITIONS } from "../../../common/index.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 export type LookingFor = {
 	positions: Set<string>;

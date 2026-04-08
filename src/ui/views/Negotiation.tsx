@@ -12,7 +12,7 @@ import { PHASE } from "../../common/constants.ts";
 import { RatingsStatsPopover } from "../components/RatingsStatsPopover/index.tsx";
 import { Mood } from "../components/Mood.tsx";
 import { PlayerPicture } from "../components/PlayerPicture.tsx";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 // Show the negotiations list if there are more ongoing negotiations
 const redirectNegotiationOrRoster = async (cancelled: boolean) => {

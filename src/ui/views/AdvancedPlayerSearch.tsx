@@ -24,7 +24,7 @@ import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 import { PlusMinus } from "../components/PlusMinus.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { getCol } from "../../common/getCol.ts";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];

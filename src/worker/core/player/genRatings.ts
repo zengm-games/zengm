@@ -6,7 +6,7 @@ import genRatingsBasketball from "./genRatings.basketball.ts";
 import genRatingsFootball from "./genRatings.football.ts";
 import genRatingsHockey from "./genRatings.hockey.ts";
 import pos from "./pos.ts";
-import { bySport } from "../../../common/bySport.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 const genRatings = (season: number, scoutingLevel: number) => {
 	const { heightInInches, ratings } = bySport<{

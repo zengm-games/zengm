@@ -1,4 +1,4 @@
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 import type { Race } from "../../../common/types.ts";
 import { loadNames, local, random } from "../../util/index.ts";
 

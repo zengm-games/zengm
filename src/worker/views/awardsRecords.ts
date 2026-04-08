@@ -1,6 +1,6 @@
 import { idb } from "../db/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts"; // Keep in sync with Dropdown.js
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { countBy, maxBy } from "../../common/utils.ts";
 

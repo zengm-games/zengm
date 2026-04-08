@@ -5,7 +5,7 @@ import { DataTable } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
 import { frivolitiesMenu } from "./Frivolities.tsx";
 import { getValue } from "./Most/index.tsx";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 import { wrappedMovOrDiff } from "../components/MovOrDiff.tsx";
 import { TeamLogoInline } from "../components/TeamLogoInline.tsx";
 

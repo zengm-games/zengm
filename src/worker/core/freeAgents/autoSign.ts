@@ -4,7 +4,7 @@ import getBest from "./getBest.ts";
 import { idb } from "../../db/index.ts";
 import { g, local, random } from "../../util/index.ts";
 import { orderBy } from "../../../common/utils.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 /**
  * AI teams sign free agents.

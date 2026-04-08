@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import type { SyntheticEvent } from "react";
 import { Dropdown } from "react-bootstrap";
-import { bySport } from "../../../common/bySport.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { HelpPopover } from "../HelpPopover.tsx";
 import type { DataTableRowMetadata } from "./index.tsx";
 

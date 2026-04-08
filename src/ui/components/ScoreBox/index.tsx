@@ -9,8 +9,7 @@ import { PlayerNameLabels } from "../PlayerNameLabels.tsx";
 import getWinner from "../../../common/getWinner.ts";
 import { getCol } from "../../../common/getCol.ts";
 import { getBestPlayerBoxScore } from "../../../common/getBestPlayerBoxScore.ts";
-import { isSport } from "../../../common/isSport.ts";
-import { bySport } from "../../../common/bySport.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const roundHalf = (x: number) => {
 	return Math.round(x * 2) / 2;

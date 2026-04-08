@@ -6,7 +6,7 @@ import {
 } from "../../common/index.ts";
 import { logEvent } from "./logEvent.ts";
 import { fetchWrapper } from "../../common/fetchWrapper.ts";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 const takeScreenshotChunk = async () => {
 	const theme = window.getTheme();

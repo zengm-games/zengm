@@ -11,7 +11,7 @@ import { team } from "../core/index.ts";
 import hasTies from "../core/season/hasTies.ts";
 import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 type Most = {
 	value: number;

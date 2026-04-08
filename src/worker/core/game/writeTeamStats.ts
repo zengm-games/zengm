@@ -11,8 +11,7 @@ import {
 import { levelToAmount } from "../../../common/budgetLevels.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { getAdjustedTicketPrice } from "../../../common/getAdjustedTicketPrice.ts";
-import { bySport } from "../../../common/bySport.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const writeTeamStats = async (results: GameResults) => {
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;

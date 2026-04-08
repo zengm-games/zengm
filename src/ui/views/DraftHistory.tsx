@@ -16,7 +16,7 @@ import { wrappedDraftAbbrev } from "../components/DraftAbbrev.tsx";
 import { downloadFile } from "../util/downloadFile.ts";
 import { SkillsBlock } from "../components/SkillsBlock.tsx";
 import { getCol } from "../../common/getCol.ts";
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const Summary = ({
 	players,

@@ -6,7 +6,7 @@ import { idb } from "../../db/index.ts";
 import { defaultGameAttributes, g, helpers, local } from "../../util/index.ts";
 import { getNegotiationPids } from "../../views/negotiationList.ts";
 import { getNumPlayersTradedAwayNormalized } from "./getNumPlayersTradedAwayNormalized.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 const getMinFractionDiff = async (pid: number, tid: number) => {
 	if (!isSport("basketball")) {

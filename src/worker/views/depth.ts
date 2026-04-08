@@ -3,8 +3,7 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import { posRatings } from "../../common/posRatings.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 import {
 	NUM_LINES,
 	NUM_PLAYERS_PER_LINE,

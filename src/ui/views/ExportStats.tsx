@@ -5,7 +5,7 @@ import type { View } from "../../common/types.ts";
 import { GAME_ACRONYM } from "../../common/index.ts";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { downloadFile } from "../util/downloadFile.ts";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 const genFilename = (
 	leagueName: string,

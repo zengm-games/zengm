@@ -5,7 +5,7 @@ import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 import type { View } from "../../common/types.ts";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 import { formatMaybeInteger } from "./LeagueStats.tsx";
 import { expandFieldingStats } from "../util/expandFieldingStats.baseball.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";

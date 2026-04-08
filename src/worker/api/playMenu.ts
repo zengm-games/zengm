@@ -12,8 +12,7 @@ import {
 	toUI,
 } from "../util/index.ts";
 import { runDraft } from "./actions.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 const getNumDaysThisRound = (playoffSeries: PlayoffSeries) => {
 	let numDaysThisRound = 0;

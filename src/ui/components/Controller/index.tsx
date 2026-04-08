@@ -13,7 +13,7 @@ import { SideBar } from "./SideBar.tsx";
 import { Skyscraper } from "./Skyscraper.tsx";
 import { TitleBar } from "./TitleBar.tsx";
 import { useViewData } from "../../util/viewManager.tsx";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 import api from "../../api/index.ts";
 import { ErrorBoundary } from "../ErrorBoundary.tsx";
 

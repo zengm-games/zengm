@@ -6,7 +6,7 @@ import { DEPTH_CHART_NAME } from "../../../common/index.ts";
 import { Contract } from "../../components/contract.tsx";
 import ResponsiveTableWrapper from "../../components/ResponsiveTableWrapper.tsx";
 import { RatingWithChange } from "../../components/RatingWithChange.tsx";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 const StartingLineup = ({
 	challengeNoRatings,

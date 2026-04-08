@@ -21,8 +21,7 @@ import type {
 import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball.ts";
 import season from "./index.ts";
 import addAward from "../player/addAward.ts";
-import { bySport } from "../../../common/bySport.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 export type AwardsByPlayer = {
 	pid: number;

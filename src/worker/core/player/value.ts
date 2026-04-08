@@ -6,8 +6,7 @@ import type {
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
 import valueCombineOvrPot from "./valueCombineOvrPot.ts";
-import { bySport } from "../../../common/bySport.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 /**
  * Returns a numeric value for a given player, representing is general worth to a typical team

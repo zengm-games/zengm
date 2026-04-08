@@ -14,7 +14,7 @@ import { headToHead, season } from "../index.ts";
 import getWinner from "../../../common/getWinner.ts";
 import formatScoreWithShootout from "../../../common/formatScoreWithShootout.ts";
 import { getBestPlayerBoxScore } from "../../../common/getBestPlayerBoxScore.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 const allStarMVP = async (
 	game: Game,

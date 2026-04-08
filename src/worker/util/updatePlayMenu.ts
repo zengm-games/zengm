@@ -12,7 +12,7 @@ import lock from "./lock.ts";
 import toUI from "./toUI.ts";
 import type { Option } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const updatePlayMenu = async () => {
 	if (process.env.NODE_ENV === "test") {

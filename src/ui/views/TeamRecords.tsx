@@ -5,7 +5,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import TeamLogoAndName from "../components/TeamLogoAndName.tsx";
 
 const teamLink = (t: View<"teamRecords">["teams"][number]) => {

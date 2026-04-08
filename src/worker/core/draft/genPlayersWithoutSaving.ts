@@ -6,8 +6,7 @@ import type {
 	Player,
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
-import { bySport } from "../../../common/bySport.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 // To improve the distribution of DP ages in leagues with modified draftAges, this code will change the % of players who declare for draft each year to work better with modified draftAges settings. Previously, it was just a constant defaultFractionPerYear.
 const defaultFractionPerYear = bySport({

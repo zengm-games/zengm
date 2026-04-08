@@ -52,7 +52,7 @@ import { actualPhase } from "../util/actualPhase.ts";
 import { getNumPlayersTradedAwayNormalized } from "../core/player/getNumPlayersTradedAwayNormalized.ts";
 import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
 import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 export interface LeagueDB extends DBSchema {
 	allStars: {

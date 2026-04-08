@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { ActionButton } from "./ActionButton.tsx";

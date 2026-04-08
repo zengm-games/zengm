@@ -1,5 +1,5 @@
 import { GAME_NAME } from "../../common/index.ts";
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 export const LeagueNotFoundMessage = () => {
 	const pro = bySport({

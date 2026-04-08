@@ -10,7 +10,7 @@ import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 import hasTies from "../core/season/hasTies.ts";
 import { roundContract as roundContractRaw } from "../../common/roundContract.ts";
 import { timeBetweenGames } from "../../common/timeBetweenGames.ts";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 const augmentSeries = async (
 	series: {

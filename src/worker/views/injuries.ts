@@ -6,7 +6,7 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { idb } from "../db/index.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 import { actualPhase } from "../util/actualPhase.ts";
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const updateInjuries = async (
 	inputs: ViewInput<"injuries">,

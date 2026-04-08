@@ -8,8 +8,7 @@ import {
 import { useLocalPartial } from "../util/local.ts";
 import type { LocalStateUI } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 export type ResponsiveOption = {
 	minWidth: number;

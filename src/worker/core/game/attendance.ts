@@ -5,8 +5,7 @@ import { PLAYOFF_ATTENDANCE_FACTOR } from "../../../common/getAdjustedTicketPric
 import type { TeamSeason } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, random } from "../../util/index.ts";
-import { bySport } from "../../../common/bySport.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 export const getBaseAttendance = ({
 	hype,

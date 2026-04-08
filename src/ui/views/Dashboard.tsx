@@ -16,7 +16,7 @@ import type { View } from "../../common/types.ts";
 import { choice } from "../../common/random.ts";
 import { TeamLogoInline } from "../components/TeamLogoInline.tsx";
 import { confirm } from "../util/confirm.tsx";
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 // Re-rendering caused this to run multiple times after "Play" click, even with useRef or useMemo
 const randomOtherSport = bySport({

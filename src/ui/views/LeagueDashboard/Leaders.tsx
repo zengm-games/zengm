@@ -1,6 +1,6 @@
 import { helpers } from "../../util/helpers.ts";
 import type { View } from "../../../common/types.ts";
-import { bySport } from "../../../common/bySport.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 
 const Leader = ({

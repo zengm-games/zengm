@@ -5,8 +5,7 @@ import { g, helpers, random } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { orderBy } from "../../../common/utils.ts";
-import { bySport } from "../../../common/bySport.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const TEMP = 0.35;
 const LEARNING_RATE = 0.5;

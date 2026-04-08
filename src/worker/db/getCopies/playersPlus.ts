@@ -13,8 +13,7 @@ import type {
 } from "../../../common/types.ts";
 import type { StatSumsExtra } from "../../../common/processPlayerStats.basketball.ts";
 import { idb } from "../index.ts";
-import { bySport } from "../../../common/bySport.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 type PlayersPlusOptionsRequired = Required<
 	Omit<

@@ -19,8 +19,7 @@ import { groupByUnique, range } from "../../common/utils.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { season } from "../core/index.ts";
 import { extraStats } from "./hallOfFame.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 export const getCategoriesAndStats = (onlyStat?: string) => {
 	let categories = bySport<

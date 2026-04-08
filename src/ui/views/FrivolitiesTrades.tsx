@@ -7,7 +7,7 @@ import { frivolitiesMenu } from "./Frivolities.tsx";
 import { PHASE_TEXT } from "../../common/index.ts";
 import PickText from "./TradeSummary/PickText.tsx";
 import TeamLogoAndName from "../components/TeamLogoAndName.tsx";
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const PlayerInfo = ({
 	asset,

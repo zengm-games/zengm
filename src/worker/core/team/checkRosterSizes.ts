@@ -5,7 +5,7 @@ import { idb } from "../../db/index.ts";
 import { g, helpers, local } from "../../util/index.ts";
 import type { MinimalPlayerRatings, Player } from "../../../common/types.ts";
 import { KEY_POSITIONS_NEEDED } from "../freeAgents/getBest.ts";
-import { bySport } from "../../../common/bySport.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 export const dropPlayers = async (
 	players: Player<MinimalPlayerRatings>[],

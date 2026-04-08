@@ -8,7 +8,7 @@ import {
 import type { Div, GameAttributesLeague } from "../../../common/types.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "./getInitialNumGamesConfDivSettings.ts";
 import groupScheduleSeries from "./groupScheduleSeries.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 import groupScheduleCompact from "./groupScheduleCompact.ts";
 
 type MyTeam = {

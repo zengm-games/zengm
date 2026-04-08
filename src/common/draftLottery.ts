@@ -1,4 +1,4 @@
-import { isSport } from "./isSport.ts";
+import { isSport } from "./sportFunctions.ts";
 import type { DraftLotteryResultArray, DraftType } from "./types.ts";
 
 class MultiDimensionalRange {

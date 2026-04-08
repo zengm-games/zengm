@@ -6,7 +6,7 @@ import type {
 	ViewInput,
 	PlayerStatType,
 } from "../../common/types.ts";
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerStatDists">,

@@ -3,7 +3,7 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 import { groupByUnique, range } from "../../common/utils.ts";
-import { bySport } from "../../common/bySport.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const addAbbrev = (
 	award: any,

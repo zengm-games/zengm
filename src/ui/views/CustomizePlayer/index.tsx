@@ -30,7 +30,7 @@ import { roundContract } from "../../../common/roundContract.ts";
 import { Face } from "./Face.tsx";
 import { CurrencyInputGroup } from "../../components/CurrencyInputGroup.tsx";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
-import { bySport } from "../../../common/bySport.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 const copyValidValues = (
 	source: PlayerWithoutKey,

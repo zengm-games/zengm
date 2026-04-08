@@ -4,7 +4,7 @@ import { g, helpers, logEvent } from "../../util/index.ts";
 import type { Phase, Player, PlayerContract } from "../../../common/types.ts";
 import genJerseyNumber from "./genJerseyNumber.ts";
 import setJerseyNumber from "./setJerseyNumber.ts";
-import { isSport } from "../../../common/isSport.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 const sign = async (
 	p: Player,

@@ -1,5 +1,5 @@
 import type { SuperCol } from "../ui/components/DataTable/index.tsx";
-import { bySport } from "./bySport.ts";
+import { bySport } from "./sportFunctions.ts";
 import * as constantsBaseball from "./constants.baseball.ts";
 import * as constantsBasketball from "./constants.basketball.ts";
 import * as constantsFootball from "./constants.football.ts";

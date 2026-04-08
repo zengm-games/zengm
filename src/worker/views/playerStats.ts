@@ -8,8 +8,7 @@ import type {
 } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getBestPos } from "../core/player/checkJerseyNumberRetirement.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerStats">,

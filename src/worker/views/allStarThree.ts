@@ -4,7 +4,7 @@ import { idb } from "../db/index.ts";
 import { g, getTeamInfoBySeason, helpers } from "../util/index.ts";
 import { PHASE } from "../../common/index.ts";
 import { orderBy } from "../../common/utils.ts";
-import { isSport } from "../../common/isSport.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 const updateAllStarThree = async (
 	{ season }: ViewInput<"allStarThree">,

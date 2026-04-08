@@ -9,8 +9,7 @@ import { TIEBREAKERS } from "../../common/constants.ts";
 import { MovOrDiff } from "../components/MovOrDiff.tsx";
 import ResponsiveTableWrapper from "../components/ResponsiveTableWrapper.tsx";
 import { getCol } from "../../common/getCol.ts";
-import { bySport } from "../../common/bySport.ts";
-import { isSport } from "../../common/isSport.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 type StandingsTeam =
 	View<"standings">["rankingGroups"]["league"][number][number];

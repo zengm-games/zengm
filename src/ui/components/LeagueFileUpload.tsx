@@ -4,7 +4,7 @@ import {
 	useRef,
 	useState,
 	type ChangeEvent,
-	type MouseEvent,
+	type SyntheticEvent,
 } from "react";
 import { ProgressBarText } from "./ProgressBarText.tsx";
 import {
@@ -206,7 +206,7 @@ export const LeagueFileUpload = ({
 		}
 	};
 
-	const handleFileURL = async (event: MouseEvent) => {
+	const handleFileURL = async (event: SyntheticEvent) => {
 		event.preventDefault();
 
 		beforeFile();
@@ -304,6 +304,12 @@ export const LeagueFileUpload = ({
 						value={url}
 						onChange={(event) => {
 							setURL(event.target.value);
+						}}
+						onKeyDown={(event) => {
+							// This is so "Enter" loads the file, rather than doing nothing or submitting the whole form
+							if (event.key === "Enter") {
+								handleFileURL(event);
+							}
 						}}
 					/>
 					<button

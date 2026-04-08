@@ -1,3 +1,5 @@
+when creating league: Enter league file URL, load it, then switch to upload league file and all stores are unchecked (happens in other situations too)
+
 sticky column better support in recent chrome https://www.bram.us/2026/03/30/css-sticky-per-axis/
 - will it fix scrolling with sticky header? https://x.com/basketball_gm/status/1986435826218074552 https://github.com/w3c/csswg-drafts/issues/8286
 

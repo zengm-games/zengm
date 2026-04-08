@@ -4,7 +4,7 @@ import { team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import genMessage from "./genMessage.ts";
-import { helpers } from "../../common/index.ts";
+import helpers from "./helpers.ts";
 
 beforeEach(async () => {
 	resetG();

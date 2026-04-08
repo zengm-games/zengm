@@ -9,7 +9,7 @@ import {
 	REAL_PLAYERS_INFO,
 	WEBSITE_ROOT,
 	LEAGUE_DATABASE_VERSION,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import { ActionButton } from "../../components/ActionButton.tsx";
 import {
 	LeagueFileUpload,

@@ -6,7 +6,7 @@ import type {
 	AllStars,
 	Game,
 } from "../../common/types.ts";
-import { DEFAULT_TEAM_COLORS, PHASE } from "../../common/index.ts";
+import { DEFAULT_TEAM_COLORS, PHASE } from "../../common/constants.ts";
 
 export type TeamSeasonOverride = {
 	region?: string;

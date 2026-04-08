@@ -21,7 +21,7 @@ import { helpers } from "../../util/helpers.ts";
 import { logEvent } from "../../util/logEvent.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getText, makeAnchorProps } from "../Controller/SideBar.tsx";
-import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
+import { REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import { Modal } from "../Modal.tsx";
 import { normalizeIntl } from "../../../common/normalizeIntl.ts";
 import {

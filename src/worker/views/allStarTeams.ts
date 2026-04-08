@@ -8,7 +8,7 @@ import type {
 	AllStarPlayer,
 	PlayerInjury,
 } from "../../common/types.ts";
-import { PHASE, POSITIONS } from "../../common/index.ts";
+import { PHASE, POSITIONS } from "../../common/constants.ts";
 import { orderBy } from "../../common/utils.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { getPosByGpF } from "../core/season/doAwards.baseball.ts";

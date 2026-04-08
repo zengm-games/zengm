@@ -1,4 +1,4 @@
-import { PLAYER, RATINGS } from "../../common/index.ts";
+import { PLAYER, RATINGS } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import {

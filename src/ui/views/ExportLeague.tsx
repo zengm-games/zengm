@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useState, type ReactNode, useRef } from "react";
-import { GAME_NAME, WEBSITE_ROOT } from "../../common/index.ts";
+import { GAME_NAME, WEBSITE_ROOT } from "../../common/constants.ts";
 import {
 	gameAttributesKeysGameState,
 	gameAttributesKeysTeams,

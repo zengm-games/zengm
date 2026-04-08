@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { league, phase, trade } from "../index.ts";
 import autoSign from "./autoSign.ts";
 import decreaseDemands from "./decreaseDemands.ts";

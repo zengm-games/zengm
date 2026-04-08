@@ -1,4 +1,4 @@
-import { PHASE, NO_LOTTERY_DRAFT_TYPES } from "../../common/index.ts";
+import { PHASE, NO_LOTTERY_DRAFT_TYPES } from "../../common/constants.ts";
 import { draft } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";

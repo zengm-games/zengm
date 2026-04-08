@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import Select from "react-select";
-import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
+import { REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import type { View } from "../../../common/types.ts";
 import type { Settings } from "../../../worker/views/settings.ts";
 import { MoreLinks } from "../../components/MoreLinks.tsx";

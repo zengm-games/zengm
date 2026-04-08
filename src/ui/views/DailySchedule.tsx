@@ -3,7 +3,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { useLocalPartial } from "../util/local.ts";
-import { DAILY_SCHEDULE } from "../../common/index.ts";
+import { DAILY_SCHEDULE } from "../../common/constants.ts";
 import { NoGamesMessage } from "./GameLog.tsx";
 import allowForceTie from "../../common/allowForceTie.ts";
 import { ForceWin } from "../components/ForceWin.tsx";

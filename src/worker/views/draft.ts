@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../common/index.ts";
+import { PHASE, PLAYER } from "../../common/constants.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 import { draft } from "../core/index.ts";
 import { idb } from "../db/index.ts";

@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { type SubmitEvent, useRef, useState } from "react";
-import { ACCOUNT_API_URL } from "../../../common/index.ts";
+import { ACCOUNT_API_URL } from "../../../common/constants.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { localActions } from "../../util/local.ts";

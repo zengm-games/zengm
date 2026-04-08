@@ -6,7 +6,7 @@ import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { useLocalPartial } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,

@@ -3,7 +3,7 @@ import type { View } from "../../common/types.ts";
 import useDropdownOptions from "../hooks/useDropdownOptions.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { OptionDropdown } from "./PlayerGraphs/index.tsx";
-import { PLAYER, PLAYER_STATS_TABLES } from "../../common/index.ts";
+import { PLAYER, PLAYER_STATS_TABLES } from "../../common/constants.ts";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";

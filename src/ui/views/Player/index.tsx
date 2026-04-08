@@ -6,7 +6,7 @@ import { getCols } from "../../../common/getCols.ts";
 import type { View } from "../../../common/types.ts";
 import { SeasonIcons } from "../../components/SeasonIcons.tsx";
 import TopStuff from "./TopStuff.tsx";
-import { PLAYER } from "../../../common/index.ts";
+import { PLAYER } from "../../../common/constants.ts";
 import HideableSection from "../../components/HideableSection.tsx";
 import { StatsTable } from "./StatsTable.tsx";
 import { highlightLeaderText, MaybeBold, SeasonLink } from "./common.tsx";

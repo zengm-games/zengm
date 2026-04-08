@@ -1,6 +1,6 @@
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { orderBy } from "../../../common/utils.ts";
 
 const autoProtect = async (tid: number): Promise<number[]> => {

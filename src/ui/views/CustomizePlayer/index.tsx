@@ -14,7 +14,7 @@ import {
 	MOOD_TRAITS,
 	WEBSITE_ROOT,
 	NOT_REAL_POSITIONS,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";

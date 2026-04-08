@@ -1,6 +1,6 @@
 import { g } from "../../util/index.ts";
 import type { PlayerWithoutKey } from "../../../common/types.ts";
-import { DRAFT_BY_TEAM_OVR } from "../../../common/index.ts";
+import { DRAFT_BY_TEAM_OVR } from "../../../common/constants.ts";
 import { getTeamOvrDiffs } from "../draft/runPicks.ts";
 import { orderBy } from "../../../common/utils.ts";
 import { bySport } from "../../../common/sportFunctions.ts";

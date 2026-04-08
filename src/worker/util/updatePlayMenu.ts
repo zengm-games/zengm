@@ -3,7 +3,7 @@ import {
 	NO_LOTTERY_DRAFT_TYPES,
 	ALL_STAR_GAME_ONLY,
 	TIME_BETWEEN_GAMES,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import { draft, season } from "../core/index.ts";
 import g from "./g.ts";
 import helpers from "./helpers.ts";

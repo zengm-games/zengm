@@ -3,7 +3,7 @@ import {
 	POSITIONS,
 	RATINGS,
 	TEAM_STATS_TABLES,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers, random } from "../util/index.ts";
 import type {

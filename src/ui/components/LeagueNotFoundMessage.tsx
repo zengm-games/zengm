@@ -1,4 +1,4 @@
-import { GAME_NAME } from "../../common/index.ts";
+import { GAME_NAME } from "../../common/constants.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 
 export const LeagueNotFoundMessage = () => {

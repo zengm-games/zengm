@@ -1,4 +1,4 @@
-import { WEBSITE_ROOT } from "../../common/index.ts";
+import { WEBSITE_ROOT } from "../../common/constants.ts";
 import { logEvent } from "./logEvent.ts";
 
 export const requestPersistentStorage = async () => {

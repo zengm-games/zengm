@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { helpers } from "../../util/helpers.ts";
 import { useLocalPartial } from "../../util/local.ts";
 import React, { memo, type ReactNode } from "react";

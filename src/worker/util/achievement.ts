@@ -1,4 +1,4 @@
-import { ACCOUNT_API_URL, DIFFICULTY } from "../../common/index.ts";
+import { ACCOUNT_API_URL, DIFFICULTY } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import achievements from "./achievements.ts";
 import g from "./g.ts";

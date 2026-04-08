@@ -3,7 +3,7 @@ import {
 	GAME_NAME,
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import { logEvent } from "./logEvent.ts";
 import { fetchWrapper } from "../../common/fetchWrapper.ts";
 import { isSport } from "../../common/sportFunctions.ts";

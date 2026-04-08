@@ -1,4 +1,4 @@
-import { DEFAULT_STADIUM_CAPACITY } from "../../common/index.ts";
+import { DEFAULT_STADIUM_CAPACITY } from "../../common/constants.ts";
 import teamInfos from "../../common/teamInfos.ts";
 
 const newLeagueGodModeLimits = () => {

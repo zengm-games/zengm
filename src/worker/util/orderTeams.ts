@@ -1,6 +1,6 @@
 import { orderBy } from "../../common/utils.ts";
 import helpers from "./helpers.ts";
-import type { TIEBREAKERS } from "../../common/index.ts";
+import type { TIEBREAKERS } from "../../common/constants.ts";
 import type { HeadToHead } from "../../common/types.ts";
 import { team } from "../core/index.ts";
 import { idb } from "../db/index.ts";

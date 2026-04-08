@@ -1,4 +1,4 @@
-import { PLAYER } from "../../../common/index.ts";
+import { PLAYER } from "../../../common/constants.ts";
 import { getAll, idb } from "../index.ts";
 import { mergeByPk } from "./helpers.ts";
 import { g, helpers } from "../../util/index.ts";

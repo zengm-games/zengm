@@ -2,7 +2,7 @@ import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { getCols } from "../../../common/getCols.ts";
 import type { View } from "../../../common/types.ts";
-import { DEPTH_CHART_NAME } from "../../../common/index.ts";
+import { DEPTH_CHART_NAME } from "../../../common/constants.ts";
 import { Contract } from "../../components/contract.tsx";
 import ResponsiveTableWrapper from "../../components/ResponsiveTableWrapper.tsx";
 import { RatingWithChange } from "../../components/RatingWithChange.tsx";

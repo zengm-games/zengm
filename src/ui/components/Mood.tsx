@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { Fragment, useState } from "react";
-import { MOOD_TRAITS } from "../../common/index.ts";
+import { MOOD_TRAITS } from "../../common/constants.ts";
 import type {
 	GameAttributesLeague,
 	MoodComponents,

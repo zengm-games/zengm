@@ -1,7 +1,6 @@
 import { league } from "../index.ts";
 import { idb } from "../../db/index.ts";
-import { defaultGameAttributes, g } from "../../util/index.ts";
-import { helpers } from "../../../common/index.ts";
+import { defaultGameAttributes, g, helpers } from "../../util/index.ts";
 import gameAttributesToUI from "./gameAttributesToUI.ts";
 import { gameAttributesKeysOtherSports } from "../../../common/defaultGameAttributes.ts";
 import type { GameAttributesLeague } from "../../../common/types.ts";

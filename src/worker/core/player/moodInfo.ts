@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../../common/index.ts";
+import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { g, helpers, random } from "../../util/index.ts";
 import { idb } from "../../db/index.ts";
 import moodComponents from "./moodComponents.ts";

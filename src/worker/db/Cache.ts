@@ -1,4 +1,5 @@
-import { PLAYER, helpers } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
+import { helpers } from "../../common/helpers.ts";
 import { idb } from "./index.ts";
 import cmp from "./cmp.ts";
 import { g, local, lock } from "../util/index.ts";

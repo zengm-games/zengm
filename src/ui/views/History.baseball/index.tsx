@@ -4,7 +4,7 @@ import useTitleBar from "../../hooks/useTitleBar.tsx";
 import AwardsAndChamp from "./AwardsAndChamp.tsx";
 import Team from "./Team.tsx";
 import type { View } from "../../../common/types.ts";
-import { AWARD_NAMES } from "../../../common/index.ts";
+import { AWARD_NAMES } from "../../../common/constants.ts";
 export type ActualProps = Exclude<
 	View<"history">,
 	{ invalidSeason: true; season: number }

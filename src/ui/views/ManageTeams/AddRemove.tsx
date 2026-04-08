@@ -1,5 +1,5 @@
 import type { Dispatch, FormEvent } from "react";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { helpers } from "../../util/helpers.ts";
 import { logEvent } from "../../util/logEvent.ts";
 import { toWorker } from "../../util/toWorker.ts";

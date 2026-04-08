@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import getWinner from "../../../common/getWinner.ts";
 import type { HeadToHead } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";

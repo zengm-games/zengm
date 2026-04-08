@@ -1,4 +1,4 @@
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";

@@ -3,7 +3,7 @@ import {
 	PHASE,
 	PLAYER,
 	REAL_PLAYERS_INFO,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import { groupByUnique } from "../../../common/utils.ts";
 import type {
 	GetLeagueOptionsReal,

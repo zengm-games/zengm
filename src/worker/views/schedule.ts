@@ -7,7 +7,7 @@ import type {
 	Game,
 	PlayerInjury,
 } from "../../common/types.ts";
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import { groupByUnique, orderBy } from "../../common/utils.ts";
 import {
 	getActualPlayThroughInjuries,

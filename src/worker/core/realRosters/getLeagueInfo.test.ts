@@ -1,5 +1,5 @@
 import { assert, test } from "vitest";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import getLeagueInfo from "./getLeagueInfo.ts";
 
 test("returns correct number of teams", async () => {

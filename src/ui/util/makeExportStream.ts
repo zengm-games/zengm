@@ -1,6 +1,6 @@
 import { openDB } from "@dumbmatter/idb";
 import type { IDBPCursorWithValue } from "@dumbmatter/idb";
-import { LEAGUE_DATABASE_VERSION } from "../../common/index.ts";
+import { LEAGUE_DATABASE_VERSION } from "../../common/constants.ts";
 import {
 	gameAttributesCache,
 	gameAttributesKeysOtherSports,

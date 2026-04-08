@@ -7,7 +7,7 @@ import { logEvent } from "../../util/logEvent.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { godModeRequiredMessage } from "./SettingsFormOptions.tsx";
 import clsx from "clsx";
-import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
+import { REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import { Modal } from "../../components/Modal.tsx";
 import { downloadFile } from "../../util/downloadFile.ts";
 import { resetFileInput } from "../../util/resetFileInput.ts";

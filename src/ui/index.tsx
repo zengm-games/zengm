@@ -6,7 +6,7 @@ import api from "./api/index.ts";
 import { Controller } from "./components/Controller/index.tsx";
 import router from "./router/index.ts";
 import type { Env } from "../common/types.ts";
-import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common/index.ts";
+import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common/constants.ts";
 import Bugsnag from "@bugsnag/browser";
 import { LeagueNotFoundMessage } from "./components/LeagueNotFoundMessage.tsx";
 import { ErrorBoundary } from "./components/ErrorBoundary.tsx";

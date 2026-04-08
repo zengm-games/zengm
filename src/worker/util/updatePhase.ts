@@ -2,7 +2,7 @@ import {
 	NO_LOTTERY_DRAFT_TYPES,
 	PHASE_TEXT,
 	PHASE,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import g from "./g.ts";
 import local from "./local.ts";
 import toUI from "./toUI.ts";

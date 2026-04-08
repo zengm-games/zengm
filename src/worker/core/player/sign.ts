@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import setContract from "./setContract.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type { Phase, Player, PlayerContract } from "../../../common/types.ts";

@@ -1,5 +1,5 @@
 import { type SubmitEvent, useRef, useState } from "react";
-import { ACCOUNT_API_URL, GRACE_PERIOD } from "../../../common/index.ts";
+import { ACCOUNT_API_URL, GRACE_PERIOD } from "../../../common/constants.ts";
 import { ActionButton } from "../../components/ActionButton.tsx";
 import { toWorker } from "../../util/toWorker.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";

@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../../common/index.ts";
+import { PHASE, PLAYER } from "../../../common/constants.ts";
 import develop, { monteCarloPot } from "./develop.ts";
 import generate from "./generate.ts";
 import heightToRating from "./heightToRating.ts";

@@ -1,7 +1,7 @@
 import loadStatsBasketball, {
 	type BasketballStats,
 } from "./loadStats.basketball.ts";
-import { PHASE, PLAYER, REAL_PLAYERS_INFO } from "../../../common/index.ts";
+import { PHASE, PLAYER, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import type {
 	GetLeagueOptions,
 	PlayerContract,

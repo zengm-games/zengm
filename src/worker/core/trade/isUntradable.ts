@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { g } from "../../util/index.ts";
 import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
 import { timeBetweenGames } from "../../../common/timeBetweenGames.ts";

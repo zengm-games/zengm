@@ -1,5 +1,9 @@
 import { draft, player, freeAgents } from "../../index.ts";
-import { PHASE, PLAYER, POSITION_COUNTS } from "../../../../common/index.ts";
+import {
+	PHASE,
+	PLAYER,
+	POSITION_COUNTS,
+} from "../../../../common/constants.ts";
 import { groupByUnique, orderBy } from "../../../../common/utils.ts";
 import type {
 	PlayerWithoutKey,

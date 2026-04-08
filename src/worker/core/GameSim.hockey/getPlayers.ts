@@ -1,7 +1,7 @@
 import { POSITIONS } from "../../../common/constants.hockey.ts";
 import type { Position } from "../../../common/types.hockey.ts";
 import type { PlayerGameSim, PlayersOnIce } from "./types.ts";
-import { helpers } from "../../../common/index.ts";
+import helpers from "../../util/helpers.ts";
 
 const getPlayers = (
 	playersOnIce: PlayersOnIce,

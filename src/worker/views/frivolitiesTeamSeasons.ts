@@ -6,7 +6,7 @@ import type {
 	TeamSeason,
 	ByConf,
 } from "../../common/types.ts";
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import { team } from "../core/index.ts";
 import hasTies from "../core/season/hasTies.ts";
 import { orderBy, type OrderBySortParams } from "../../common/utils.ts";

@@ -1,5 +1,5 @@
 import { idb } from "../../db/index.ts";
-import { PLAYER, PHASE } from "../../../common/index.ts";
+import { PLAYER, PHASE } from "../../../common/constants.ts";
 import { team, player, draft } from "../index.ts";
 import { g, helpers, random } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";

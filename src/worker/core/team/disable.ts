@@ -8,7 +8,7 @@ import {
 	logEvent,
 	helpers,
 } from "../../util/index.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import deleteUnreadMessages from "./deleteUnreadMessages.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../player/getNumPlayersTradedAwayNormalized.ts";

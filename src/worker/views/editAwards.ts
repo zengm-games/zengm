@@ -1,4 +1,4 @@
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
 import { idb } from "../db/index.ts";

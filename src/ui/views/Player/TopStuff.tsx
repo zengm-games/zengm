@@ -9,7 +9,7 @@ import type {
 	Player,
 	View,
 } from "../../../common/types.ts";
-import { PHASE, PLAYER } from "../../../common/index.ts";
+import { PHASE, PLAYER } from "../../../common/constants.ts";
 import clsx from "clsx";
 import AwardsSummary from "./AwardsSummary.tsx";
 import RatingsOverview from "./RatingsOverview.tsx";

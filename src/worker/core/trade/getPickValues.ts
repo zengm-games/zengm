@@ -1,5 +1,5 @@
 import { range } from "../../../common/utils.ts";
-import { PHASE, PLAYER } from "../../../common/index.ts";
+import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
 import type { TradePickValues } from "../../../common/types.ts";

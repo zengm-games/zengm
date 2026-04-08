@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { emitter, type Message } from "../../util/notify.ts";
 import { SafeHtml } from "../SafeHtml.tsx";
 import { useLocalPartial } from "../../util/local.ts";
-import { MOBILE_AD_BOTTOM_MARGIN } from "../../../common/index.ts";
+import { MOBILE_AD_BOTTOM_MARGIN } from "../../../common/constants.ts";
 
 const MAX_NUM_NOTIFICATIONS = 5;
 

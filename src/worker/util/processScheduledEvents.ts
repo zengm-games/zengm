@@ -16,7 +16,7 @@ import type {
 	Conditions,
 	RealTeamInfo,
 } from "../../common/types.ts";
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import local from "./local.ts";
 import { orderBy } from "../../common/utils.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../core/player/getNumPlayersTradedAwayNormalized.ts";

@@ -4,7 +4,7 @@ import { g, random } from "../../util/index.ts";
 import getDraftProspects from "./getDraftProspects.ts";
 import loadDataBasketball from "./loadData.basketball.ts";
 import addRelatives from "./addRelatives.ts";
-import { LEAGUE_DATABASE_VERSION, PHASE } from "../../../common/index.ts";
+import { LEAGUE_DATABASE_VERSION, PHASE } from "../../../common/constants.ts";
 
 const updateRandomDebutsForever = async (
 	draftYear: number,

@@ -1,4 +1,4 @@
-import { ACCOUNT_API_URL, GRACE_PERIOD } from "../../common/index.ts";
+import { ACCOUNT_API_URL, GRACE_PERIOD } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import achievement from "./achievement.ts";
 import local from "./local.ts";

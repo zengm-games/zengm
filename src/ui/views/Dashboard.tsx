@@ -6,7 +6,7 @@ import {
 	DIFFICULTY,
 	REAL_PLAYERS_INFO,
 	WEBSITE_PLAY,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { logEvent } from "../util/logEvent.ts";

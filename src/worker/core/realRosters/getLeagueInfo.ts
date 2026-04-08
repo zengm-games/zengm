@@ -1,6 +1,6 @@
 import loadDataBasketball from "./loadData.basketball.ts";
 import formatScheduledEvents from "./formatScheduledEvents.ts";
-import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
+import { REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import getGameAttributes from "./getGameAttributes.ts";
 import type { GetLeagueOptions } from "../../../common/types.ts";
 import addSeasonInfoToTeams from "./addSeasonInfoToTeams.ts";

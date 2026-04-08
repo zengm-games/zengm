@@ -6,7 +6,7 @@ import type {
 } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
 import { g, getTeamInfoBySeason, helpers } from "../util/index.ts";
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import { orderBy } from "../../common/utils.ts";
 import { isSport } from "../../common/sportFunctions.ts";
 

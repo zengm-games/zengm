@@ -1,5 +1,9 @@
 import { useState, type ChangeEvent } from "react";
-import { PLAYER, PHASE, LEAGUE_DATABASE_VERSION } from "../../common/index.ts";
+import {
+	PLAYER,
+	PHASE,
+	LEAGUE_DATABASE_VERSION,
+} from "../../common/constants.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";

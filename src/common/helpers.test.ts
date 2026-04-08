@@ -1,5 +1,5 @@
 import { assert, describe, test } from "vitest";
-import { helpers } from "./index.ts";
+import { helpers } from "./helpers.ts";
 
 describe("getTeamsDefault", () => {
 	test("return correct length array", () => {

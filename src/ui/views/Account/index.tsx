@@ -4,7 +4,7 @@ import {
 	ACCOUNT_API_URL,
 	STRIPE_PUBLISHABLE_KEY,
 	GAME_NAME,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { toWorker } from "../../util/toWorker.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";

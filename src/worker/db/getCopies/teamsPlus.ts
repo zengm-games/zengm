@@ -12,7 +12,7 @@ import type {
 	TeamStats,
 	GetCopyType,
 } from "../../../common/types.ts";
-import { DEFAULT_POINTS_FORMULA } from "../../../common/index.ts";
+import { DEFAULT_POINTS_FORMULA } from "../../../common/constants.ts";
 import { orderBy } from "../../../common/utils.ts";
 
 const processAttrs = <

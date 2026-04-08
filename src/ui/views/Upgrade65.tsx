@@ -1,5 +1,5 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { GAME_ACRONYM, GAME_NAME } from "../../common/index.ts";
+import { GAME_ACRONYM, GAME_NAME } from "../../common/constants.ts";
 import { useEffect, useState } from "react";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { toWorker } from "../util/toWorker.ts";

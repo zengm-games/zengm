@@ -1,4 +1,4 @@
-import helpers from "./helpers.ts";
+import { helpers } from "./helpers.ts";
 import type { GameAttributesLeague, PlayerStats } from "./types.ts";
 
 export const qbRat = (ps: {

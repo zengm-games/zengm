@@ -3,7 +3,7 @@ import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
-import { POSITIONS, PLAYER } from "../../common/index.ts";
+import { POSITIONS, PLAYER } from "../../common/constants.ts";
 import type { View } from "../../common/types.ts";
 import {
 	wrappedContractAmount,

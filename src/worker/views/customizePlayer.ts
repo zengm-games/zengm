@@ -1,4 +1,4 @@
-import { PLAYER, PHASE } from "../../common/index.ts";
+import { PLAYER, PHASE } from "../../common/constants.ts";
 import { finances, player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { face, g } from "../util/index.ts";

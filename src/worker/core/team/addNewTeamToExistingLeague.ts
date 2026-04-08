@@ -5,7 +5,7 @@ import genSeasonRow from "./genSeasonRow.ts";
 import genStatsRow from "./genStatsRow.ts";
 import { draft, league } from "../index.ts";
 import { idb } from "../../db/index.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 
 const addNewTeamToExistingLeague = async (
 	teamInfo: {

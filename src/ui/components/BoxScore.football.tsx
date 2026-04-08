@@ -8,7 +8,7 @@ import {
 } from "react";
 import { ResponsiveTableWrapper } from "./ResponsiveTableWrapper.tsx";
 import { getCols } from "../../common/getCols.ts";
-import { helpers } from "../../common/index.ts";
+import { helpers } from "../util/helpers.ts";
 import { PLAYER_GAME_STATS } from "../../common/constants.football.ts";
 import type { Col, SortBy } from "./DataTable/index.tsx";
 import updateSortBys from "./DataTable/updateSortBys.ts";

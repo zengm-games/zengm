@@ -4,7 +4,7 @@ import type {
 	Team,
 	TeamSeasonWithoutKey,
 } from "../../../common/types.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { ALWAYS_WRAP } from "../league/loadGameAttributes.ts";
 import { wrap } from "../../util/g.ts";
 import { orderBy } from "../../../common/utils.ts";

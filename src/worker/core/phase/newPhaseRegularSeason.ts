@@ -8,7 +8,7 @@ import {
 	GAME_NAME,
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 
 class GameHasYourTeamCache {

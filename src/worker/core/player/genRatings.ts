@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import type { MinimalPlayerRatings } from "../../../common/types.ts";
 import { g, helpers } from "../../util/index.ts";
 import genRatingsBaseball from "./genRatings.baseball.ts";

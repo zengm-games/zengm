@@ -6,7 +6,7 @@ import {
 	EXHIBITION_GAME_SETTINGS,
 	PHASE,
 	REAL_PLAYERS_INFO,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 import type {
 	GameAttributesLeague,

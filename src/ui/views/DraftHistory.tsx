@@ -7,7 +7,7 @@ import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
 import { useLocal } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
-import { PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { orderBy } from "../../common/utils.ts";

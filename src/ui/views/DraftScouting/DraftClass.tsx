@@ -4,7 +4,7 @@ import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
 import type { View } from "../../../common/types.ts";
-import { WEBSITE_ROOT } from "../../../common/index.ts";
+import { WEBSITE_ROOT } from "../../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../../components/DataTable/index.tsx";
 import { downloadFile } from "../../util/downloadFile.ts";

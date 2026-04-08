@@ -1,5 +1,5 @@
 import { assert, beforeAll, test } from "vitest";
-import { PLAYER } from "../../../common/index.ts";
+import { PLAYER } from "../../../common/constants.ts";
 import { resetCache, resetG } from "../../../test/helpers.ts";
 import { player } from "../../core/index.ts";
 import { idb } from "../index.ts";

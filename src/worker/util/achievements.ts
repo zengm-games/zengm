@@ -1,7 +1,7 @@
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type { Achievement, NonEmptyArray, Player } from "../../common/types.ts";
-import { PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
 import helpers from "./helpers.ts";
 import { range } from "../../common/utils.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";

@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../common/index.ts";
+import { PHASE, PLAYER } from "../../common/constants.ts";
 import { g } from "../util/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { getPlayers } from "./playerRatings.ts";

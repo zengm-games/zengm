@@ -5,7 +5,7 @@ import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import { useLocal } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
-import { PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";

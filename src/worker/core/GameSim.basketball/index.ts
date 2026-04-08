@@ -1,5 +1,5 @@
 import { g, helpers, random } from "../../util/index.ts";
-import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
+import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/constants.ts";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession.ts";
 import getInjuryRate from "./getInjuryRate.ts";
 import type {

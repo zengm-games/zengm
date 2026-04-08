@@ -4,7 +4,7 @@ import {
 	DEPTH_CHART_NAME,
 	REAL_PLAYERS_INFO,
 	WEBSITE_ROOT,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import type { MenuItemLink, MenuItemHeader } from "../../common/types.ts";
 import { frivolities } from "../views/Frivolities.tsx";
 import { takeScreenshot } from "./takeScreenshot.ts";

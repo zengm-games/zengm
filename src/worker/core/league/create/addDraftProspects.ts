@@ -1,5 +1,5 @@
 import { draft } from "../../index.ts";
-import { PHASE, PLAYER } from "../../../../common/index.ts";
+import { PHASE, PLAYER } from "../../../../common/constants.ts";
 import type { PlayerWithoutKey } from "../../../../common/types.ts";
 import { g } from "../../../util/index.ts";
 

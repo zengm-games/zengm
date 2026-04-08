@@ -3,7 +3,7 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { getTopPlayers, getUpcoming } from "./schedule.ts";
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 
 let prevInputsDay: number | undefined;
 const updateDailySchedule = async (

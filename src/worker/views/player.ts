@@ -4,7 +4,7 @@ import {
 	RATINGS,
 	PLAYER_SUMMARY,
 	DEFAULT_JERSEY,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import { player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import {

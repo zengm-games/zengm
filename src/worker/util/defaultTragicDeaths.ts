@@ -1,4 +1,4 @@
-import { GAME_NAME } from "../../common/index.ts";
+import { GAME_NAME } from "../../common/constants.ts";
 import { isSport } from "../../common/sportFunctions.ts";
 
 const reasons = [

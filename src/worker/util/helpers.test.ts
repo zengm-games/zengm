@@ -1,5 +1,5 @@
 import { assert, beforeAll, describe, test } from "vitest";
-import { PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
 import g from "./g.ts";
 import helpers from "./helpers.ts";
 import type { ByConf } from "../../common/types.ts";

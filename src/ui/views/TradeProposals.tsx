@@ -1,4 +1,4 @@
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { SummaryTeam } from "./Trade/Summary.tsx";

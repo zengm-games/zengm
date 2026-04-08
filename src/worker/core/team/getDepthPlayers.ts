@@ -1,4 +1,4 @@
-import { POSITIONS } from "../../../common/index.ts";
+import { POSITIONS } from "../../../common/constants.ts";
 import type { Team } from "../../../common/types.ts";
 import { groupByUnique, range } from "../../../common/utils.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";

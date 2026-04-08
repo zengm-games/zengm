@@ -3,7 +3,7 @@ import cancel from "./cancel.ts";
 import { idb } from "../../db/index.ts";
 import { g, toUI, recomputeLocalUITeamOvrs } from "../../util/index.ts";
 import type { PlayerContract } from "../../../common/types.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 
 /**
  * Accept the player's offer.

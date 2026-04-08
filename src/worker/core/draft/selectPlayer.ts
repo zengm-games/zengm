@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { player, league, team } from "../index.ts";
 import getRookieSalaries from "./getRookieSalaries.ts";
 import { idb } from "../../db/index.ts";

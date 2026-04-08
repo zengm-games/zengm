@@ -15,7 +15,7 @@ import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { useLocalPartial } from "../../util/local.ts";
 import type { View } from "../../../common/types.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../../components/DataTable/index.tsx";
 import {

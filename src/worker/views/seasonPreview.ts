@@ -3,7 +3,7 @@ import { g, helpers } from "../util/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { team } from "../core/index.ts";
 import { orderBy } from "../../common/utils.ts";
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import { loadAbbrevs } from "./gameLog.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 

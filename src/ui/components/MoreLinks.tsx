@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import {
 	NO_LOTTERY_DRAFT_TYPES,
 	REAL_PLAYERS_INFO,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import type { DraftType, PlayerStatType } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
 import { useLocalPartial } from "../util/local.ts";

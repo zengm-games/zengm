@@ -1,4 +1,4 @@
-import { PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
 import { helpers } from "../util/helpers.ts";
 
 type Props = {

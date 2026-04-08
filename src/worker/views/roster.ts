@@ -1,4 +1,4 @@
-import { PHASE, POSITIONS } from "../../common/index.ts";
+import { PHASE, POSITIONS } from "../../common/constants.ts";
 import { finances, season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers, orderTeams } from "../util/index.ts";

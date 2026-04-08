@@ -1,5 +1,5 @@
 import { useState, type SubmitEvent } from "react";
-import { ACCOUNT_API_URL } from "../../common/index.ts";
+import { ACCOUNT_API_URL } from "../../common/constants.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { ajaxErrorMsg } from "./LoginOrRegister/index.tsx";
 import { fetchWrapper } from "../../common/fetchWrapper.ts";

@@ -10,7 +10,7 @@ import {
 	DEFAULT_PHASE_CHANGE_REDIRECTS,
 	PHASE,
 	PHASE_TEXT,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";

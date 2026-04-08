@@ -4,7 +4,7 @@ import type { TradeTeams, UpdateEvents } from "../../common/types.ts";
 import isUntradable from "../core/trade/isUntradable.ts";
 import { augmentOffers } from "../api/index.ts";
 import { fixPlayers } from "./tradeProposals.ts";
-import { PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
 import { orderBy } from "../../common/utils.ts";
 
 const savedTradeHashToTradeTeams = (hash: string): TradeTeams => {

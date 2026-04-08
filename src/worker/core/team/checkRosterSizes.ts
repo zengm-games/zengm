@@ -1,4 +1,4 @@
-import { PLAYER, POSITION_COUNTS } from "../../../common/index.ts";
+import { PLAYER, POSITION_COUNTS } from "../../../common/constants.ts";
 import { player, freeAgents } from "../index.ts";
 import rosterAutoSort from "./rosterAutoSort.ts";
 import { idb } from "../../db/index.ts";

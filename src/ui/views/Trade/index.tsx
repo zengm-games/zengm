@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";

@@ -2,7 +2,7 @@ import {
 	PLAYER,
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	PHASE,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import {
 	finances,
 	freeAgents,

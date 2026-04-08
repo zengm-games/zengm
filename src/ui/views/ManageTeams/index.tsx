@@ -5,7 +5,7 @@ import { logEvent } from "../../util/logEvent.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import AddRemove from "./AddRemove.tsx";
 import type { Phase, View } from "../../../common/types.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import TeamForm from "./TeamForm.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 

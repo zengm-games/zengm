@@ -4,7 +4,7 @@ import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
-import { PHASE_TEXT } from "../../common/index.ts";
+import { PHASE_TEXT } from "../../common/constants.ts";
 import { settings } from "./Settings/settings.tsx";
 import { Dropdown } from "react-bootstrap";
 import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";

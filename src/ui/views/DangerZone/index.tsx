@@ -1,4 +1,4 @@
-import { PHASE, WEBSITE_ROOT } from "../../../common/index.ts";
+import { PHASE, WEBSITE_ROOT } from "../../../common/constants.ts";
 import type { View } from "../../../common/types.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";

@@ -3,7 +3,7 @@ import getTeamInfos from "../../common/getTeamInfos.ts";
 import type { ExpansionDraftSetupTeam } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
 import getUnusedAbbrevs from "../../common/getUnusedAbbrevs.ts";
-import { DEFAULT_JERSEY } from "../../common/index.ts";
+import { DEFAULT_JERSEY } from "../../common/constants.ts";
 import { orderBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 

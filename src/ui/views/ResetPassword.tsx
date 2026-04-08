@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { useEffect, useState, type ReactNode, type SubmitEvent } from "react";
-import { ACCOUNT_API_URL, EMAIL_ADDRESS } from "../../common/index.ts";
+import { ACCOUNT_API_URL, EMAIL_ADDRESS } from "../../common/constants.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { localActions } from "../util/local.ts";

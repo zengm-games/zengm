@@ -1,6 +1,6 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import { season, team } from "../core/index.ts";
 import { orderBy } from "../../common/utils.ts";
 import { getHistoryTeam } from "./teamHistory.ts";

@@ -1,7 +1,7 @@
 import { g, helpers } from "../util/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { averageTeamStats, getStats, ignoreStats } from "./teamStats.ts";
-import { PHASE, TEAM_STATS_TABLES } from "../../common/index.ts";
+import { PHASE, TEAM_STATS_TABLES } from "../../common/constants.ts";
 import { season } from "../core/index.ts";
 import { range } from "../../common/utils.ts";
 

@@ -11,7 +11,7 @@ import {
 	LEAGUE_DATABASE_VERSION,
 	GAME_NAME,
 	WEBSITE_ROOT,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import type { BasicInfo } from "../../worker/api/leagueFileUpload.ts";
 import { toWorker } from "../util/toWorker.ts";
 import simpleGameAttributesUpgrade from "../../common/simpleGameAttributesUpgrade.ts";

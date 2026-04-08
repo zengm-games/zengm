@@ -1,4 +1,4 @@
-import { PLAYER_STATS_TABLES, RATINGS } from "./index.ts";
+import { PLAYER_STATS_TABLES, RATINGS } from "./constants.ts";
 import { isSport } from "./sportFunctions.ts";
 import type { Col } from "../ui/components/DataTable/index.tsx";
 

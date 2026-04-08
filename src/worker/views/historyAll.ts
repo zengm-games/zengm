@@ -1,4 +1,4 @@
-import { PHASE, SIMPLE_AWARDS } from "../../common/index.ts";
+import { PHASE, SIMPLE_AWARDS } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";

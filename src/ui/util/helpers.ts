@@ -1,4 +1,4 @@
-import { helpers as commonHelpers } from "../../common/index.ts";
+import { helpers as commonHelpers } from "../../common/helpers.ts";
 import { local } from "./local.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 

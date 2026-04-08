@@ -1,4 +1,4 @@
-import { PLAYER_GAME_STATS } from "../../common/index.ts";
+import { PLAYER_GAME_STATS } from "../../common/constants.ts";
 import formatScoreWithShootout from "../../common/formatScoreWithShootout.ts";
 import getWinner from "../../common/getWinner.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";

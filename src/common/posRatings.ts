@@ -1,7 +1,7 @@
 import posRatingsBaseball from "./posRatings.baseball.ts";
 import posRatingsFootball from "./posRatings.football.ts";
 import posRatingsHockey from "./posRatings.hockey.ts";
-import { RATINGS } from "./index.ts";
+import { RATINGS } from "./constants.ts";
 import { bySport } from "./sportFunctions.ts";
 
 export const posRatings = (pos: string) => {

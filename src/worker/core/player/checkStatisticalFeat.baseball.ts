@@ -1,6 +1,6 @@
 import { g, helpers } from "../../../worker/util/index.ts";
 import type { GamePlayer } from "../../../common/types.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 
 const checkStatisticalFeat = (p: GamePlayer) => {
 	const minFactor = helpers.quarterLengthFactor();

@@ -1,4 +1,4 @@
-import { PHASE, RATINGS } from "../../../common/index.ts";
+import { PHASE, RATINGS } from "../../../common/constants.ts";
 import type {
 	GameAttributesLeagueWithHistory,
 	PlayerWithoutKey,

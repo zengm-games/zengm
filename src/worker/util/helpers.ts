@@ -1,4 +1,5 @@
-import { PLAYER, helpers as commonHelpers } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
+import { helpers as commonHelpers } from "../../common/helpers.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type {

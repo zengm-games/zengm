@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { g, random } from "../../util/index.ts";
 import type { TeamFiltered } from "../../../common/types.ts";
 import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries.ts";

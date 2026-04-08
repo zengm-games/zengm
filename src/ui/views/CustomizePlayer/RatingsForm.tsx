@@ -1,5 +1,5 @@
 import { Fragment, type ChangeEvent, useState, useEffect } from "react";
-import { RATINGS } from "../../../common/index.ts";
+import { RATINGS } from "../../../common/constants.ts";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCol } from "../../../common/getCol.ts";

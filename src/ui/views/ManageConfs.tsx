@@ -10,7 +10,7 @@ import {
 	DEFAULT_STADIUM_CAPACITY,
 	DEFAULT_TEAM_COLORS,
 	PHASE,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import {
 	Conferences,
 	getAbbrevsUsedMultipleTimes,

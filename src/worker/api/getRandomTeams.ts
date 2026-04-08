@@ -1,4 +1,4 @@
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import getTeamInfos from "../../common/getTeamInfos.ts";
 import teamInfos from "../../common/teamInfos.ts";
 import type { Conf, Div, NonEmptyArray } from "../../common/types.ts";

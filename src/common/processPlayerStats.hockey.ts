@@ -1,4 +1,4 @@
-import helpers from "./helpers.ts";
+import { helpers } from "./helpers.ts";
 import type { PlayerStats, PlayerStatType } from "./types.ts";
 
 const processStats = (

@@ -6,7 +6,7 @@ import type {
 	Team,
 	Conditions,
 } from "../../../common/types.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import validateExpansionDraftSetup from "./validateExpansionDraftSetup.ts";
 
 const advanceToPlayerProtection = async (

@@ -1,5 +1,5 @@
 import { afterAll, assert, beforeAll, describe, test } from "vitest";
-import { PLAYER } from "../../../common/index.ts";
+import { PLAYER } from "../../../common/constants.ts";
 import { mockIDBLeague, resetCache, resetG } from "../../../test/helpers.ts";
 import { player } from "../index.ts";
 import { makeBrother, makeSon } from "./addRelatives.ts";

@@ -5,7 +5,7 @@ import { WatchBlock } from "../WatchBlock.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { ResponsivePopover } from "../ResponsivePopover.tsx";
-import { PLAYER } from "../../../common/index.ts";
+import { PLAYER } from "../../../common/constants.ts";
 import { crossTabEmitter } from "../../util/crossTabEmitter.ts";
 
 const PlayerNote = ({

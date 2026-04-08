@@ -1,4 +1,4 @@
-import { DRAFT_BY_TEAM_OVR, PHASE, PLAYER } from "../../../common/index.ts";
+import { DRAFT_BY_TEAM_OVR, PHASE, PLAYER } from "../../../common/constants.ts";
 import afterPicks from "./afterPicks.ts";
 import getOrder from "./getOrder.ts";
 import selectPlayer from "./selectPlayer.ts";

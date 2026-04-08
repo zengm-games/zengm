@@ -14,7 +14,7 @@ import {
 	DEFAULT_STADIUM_CAPACITY,
 	DEFAULT_TEAM_COLORS,
 	PHASE,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import TeamForm from "./ManageTeams/TeamForm.tsx";
 import { getGodModeWarnings } from "./NewLeague/UpsertTeamModal.tsx";
 import { TeamsSplitNorthAmericaWorld } from "../components/TeamsSplitNorthAmericaWorld.tsx";

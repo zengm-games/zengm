@@ -1,4 +1,4 @@
-import { PHASE, PLAYER, POSITION_COUNTS } from "../../../common/index.ts";
+import { PHASE, PLAYER, POSITION_COUNTS } from "../../../common/constants.ts";
 import {
 	contractNegotiation,
 	draft,

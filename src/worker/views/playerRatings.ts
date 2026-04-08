@@ -3,7 +3,7 @@ import {
 	PLAYER,
 	RATINGS,
 	REMAINING_PLAYOFF_TEAMS_PHASES,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type {

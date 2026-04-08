@@ -6,7 +6,7 @@ import { logEvent } from "../util/logEvent.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import SelectMultiple from "../components/SelectMultiple/index.tsx";
-import { AWARD_NAMES, SIMPLE_AWARDS } from "../../common/index.ts";
+import { AWARD_NAMES, SIMPLE_AWARDS } from "../../common/constants.ts";
 import { range } from "../../common/utils.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 

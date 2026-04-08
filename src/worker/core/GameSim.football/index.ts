@@ -24,7 +24,7 @@ import Play, {
 } from "./Play.ts";
 import LngTracker from "./LngTracker.ts";
 import GameSimBase from "../GameSim/GameSimBase.ts";
-import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
+import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/constants.ts";
 import type { TeamNum } from "../../../common/types.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];

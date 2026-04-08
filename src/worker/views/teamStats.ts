@@ -6,7 +6,7 @@ import type {
 	TeamStatAttr,
 	TeamSeasonAttr,
 } from "../../common/types.ts";
-import { TEAM_STATS_TABLES } from "../../common/index.ts";
+import { TEAM_STATS_TABLES } from "../../common/constants.ts";
 import { season, team } from "../core/index.ts";
 import { lowerIsBetter } from "../../common/lowerIsBetter.ts";
 

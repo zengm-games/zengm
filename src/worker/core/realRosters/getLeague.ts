@@ -15,7 +15,7 @@ import {
 	PHASE,
 	PLAYER,
 	REAL_PLAYERS_INFO,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import { player, team } from "../index.ts";
 import { legendsInfo } from "./getLeagueInfo.ts";
 import getDraftProspects from "./getDraftProspects.ts";

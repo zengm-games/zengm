@@ -13,7 +13,7 @@ import type {
 } from "../../../common/types.ts";
 import genOrderGetPicks from "./genOrderGetPicks.ts";
 import getTeamsByRound from "./getTeamsByRound.ts";
-import { COLA_ALPHA, PHASE } from "../../../common/index.ts";
+import { COLA_ALPHA, PHASE } from "../../../common/constants.ts";
 import { league } from "../index.ts";
 import getNumPlayoffTeams from "../season/getNumPlayoffTeams.ts";
 import {

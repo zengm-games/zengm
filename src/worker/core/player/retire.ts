@@ -1,4 +1,4 @@
-import { PLAYER } from "../../../common/index.ts";
+import { PLAYER } from "../../../common/constants.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import madeHof from "./madeHof.ts";
 import type { Conditions, Player } from "../../../common/types.ts";

@@ -1,4 +1,4 @@
-import { PLAYER } from "../../../common/index.ts";
+import { PLAYER } from "../../../common/constants.ts";
 import { draft, player, season, team, league } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import {

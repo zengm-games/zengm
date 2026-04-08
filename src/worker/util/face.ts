@@ -5,7 +5,7 @@ import type {
 	PlayerWithoutKey,
 	Race,
 } from "../../common/types.ts";
-import { DEFAULT_JERSEY } from "../../common/index.ts";
+import { DEFAULT_JERSEY } from "../../common/constants.ts";
 import g from "./g.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";

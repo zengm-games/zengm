@@ -5,7 +5,7 @@ import type {
 	ScheduleGameWithoutKey,
 } from "../../../common/types.ts";
 import addDaysToSchedule from "./addDaysToSchedule.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { isFinals } from "./isFinals.ts";
 
 const makePlayoffsKey = (game: ScheduleGameWithoutKey) =>

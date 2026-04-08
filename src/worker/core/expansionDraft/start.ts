@@ -2,7 +2,7 @@ import { idb } from "../../db/index.ts";
 import { g, helpers, local, updatePlayMenu } from "../../util/index.ts";
 import autoProtect from "./autoProtect.ts";
 import { league, draft } from "../index.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 
 const start = async () => {
 	const expansionDraft = helpers.deepCopy(g.get("expansionDraft"));

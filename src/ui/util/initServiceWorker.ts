@@ -1,5 +1,5 @@
 import { Workbox } from "workbox-window";
-import { GAME_NAME } from "../../common/index.ts";
+import { GAME_NAME } from "../../common/constants.ts";
 import { logEvent } from "./logEvent.ts";
 
 const ONE_HOUR = 60 * 60 * 1000;

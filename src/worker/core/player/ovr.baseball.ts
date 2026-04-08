@@ -3,7 +3,7 @@ import type {
 	PlayerRatings,
 	Position,
 } from "../../../common/types.baseball.ts";
-import { COMPOSITE_WEIGHTS } from "../../../common/index.ts";
+import { COMPOSITE_WEIGHTS } from "../../../common/constants.ts";
 import compositeRating from "./compositeRating.ts";
 
 type RatingWeights = Record<string, [number, number]>;

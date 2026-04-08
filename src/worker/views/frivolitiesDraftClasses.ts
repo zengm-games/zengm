@@ -5,7 +5,7 @@ import type {
 	Player,
 	MinimalPlayerRatings,
 } from "../../common/types.ts";
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { orderBy } from "../../common/utils.ts";
 import { extraStats } from "./hallOfFame.ts";

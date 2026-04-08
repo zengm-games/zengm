@@ -3,7 +3,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
-import { PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedCheckmarkOrCross } from "../components/CheckmarkOrCross.tsx";

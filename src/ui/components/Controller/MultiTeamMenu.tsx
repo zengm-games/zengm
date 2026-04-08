@@ -1,7 +1,7 @@
 import type { ChangeEvent } from "react";
 import { toWorker } from "../../util/toWorker.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
-import { MOBILE_AD_BOTTOM_MARGIN } from "../../../common/index.ts";
+import { MOBILE_AD_BOTTOM_MARGIN } from "../../../common/constants.ts";
 import { orderBy } from "../../../common/utils.ts";
 import { useLocalPartial } from "../../util/local.ts";
 

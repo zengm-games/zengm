@@ -1494,7 +1494,7 @@ const plural = (text: string, amount: number, textPluralOverride?: string) => {
 	return textPluralOverride ?? `${text}s`;
 };
 
-export default {
+export const helpers = {
 	addPopRank,
 	getPopRanks,
 	gameScore,

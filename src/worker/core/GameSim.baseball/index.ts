@@ -16,7 +16,7 @@ import GameSimBase from "../GameSim/GameSimBase.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { maxBy } from "../../../common/utils.ts";
 import { choice } from "../../../common/random.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import PlayByPlayLogger from "./PlayByPlayLogger.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];

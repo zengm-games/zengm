@@ -6,7 +6,7 @@ import {
 	useRef,
 	type CSSProperties,
 } from "react";
-import { PHASE, STARTING_NUM_TIMEOUTS } from "../../common/index.ts";
+import { PHASE, STARTING_NUM_TIMEOUTS } from "../../common/constants.ts";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";

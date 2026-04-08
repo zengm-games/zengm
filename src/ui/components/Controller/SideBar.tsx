@@ -16,7 +16,7 @@ import type {
 } from "../../../common/types.ts";
 import CollapseArrow from "../CollapseArrow.tsx";
 import { AnimatePresence, m } from "framer-motion";
-import { VIDEO_ADS, VIDEO_AD_PADDING } from "../../../common/index.ts";
+import { VIDEO_ADS, VIDEO_AD_PADDING } from "../../../common/constants.ts";
 import { menuItems } from "../../util/menuItems.tsx";
 import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
 

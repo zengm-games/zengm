@@ -1,5 +1,8 @@
 import { useEffect, useState, type ChangeEvent, type SubmitEvent } from "react";
-import { ACCOUNT_API_URL, STRIPE_PUBLISHABLE_KEY } from "../../common/index.ts";
+import {
+	ACCOUNT_API_URL,
+	STRIPE_PUBLISHABLE_KEY,
+} from "../../common/constants.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import type { View } from "../../common/types.ts";

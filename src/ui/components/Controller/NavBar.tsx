@@ -1,5 +1,5 @@
 import { Nav, Navbar } from "react-bootstrap";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { helpers } from "../../util/helpers.ts";
 import { localActions, useLocalPartial } from "../../util/local.ts";
 import { useViewData } from "../../util/viewManager.tsx";

@@ -1,4 +1,4 @@
-import { PLAYER, PHASE } from "../../../common/index.ts";
+import { PLAYER, PHASE } from "../../../common/constants.ts";
 import { player, trade } from "../../core/index.ts";
 import {
 	g,

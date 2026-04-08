@@ -1,4 +1,4 @@
-import { ACCOUNT_API_URL } from "../../common/index.ts";
+import { ACCOUNT_API_URL } from "../../common/constants.ts";
 import { checkAccount } from "../util/index.ts";
 import type { Conditions, UpdateEvents } from "../../common/types.ts";
 import { fetchWrapper } from "../../common/fetchWrapper.ts";

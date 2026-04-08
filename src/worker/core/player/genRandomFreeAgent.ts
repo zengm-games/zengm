@@ -2,7 +2,7 @@ import type { Player } from "../../../common/types.ts";
 import { random, g } from "../../util/index.ts";
 import develop from "./develop.ts";
 import generate from "./generate.ts";
-import { PHASE, PLAYER } from "../../../common/index.ts";
+import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import name from "./name.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";

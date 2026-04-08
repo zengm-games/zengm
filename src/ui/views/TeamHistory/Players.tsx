@@ -1,4 +1,4 @@
-import { PLAYER } from "../../../common/index.ts";
+import { PLAYER } from "../../../common/constants.ts";
 import { DataTable } from "../../components/DataTable/index.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";

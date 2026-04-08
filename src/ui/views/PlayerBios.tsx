@@ -3,7 +3,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
-import { PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
 import { wrappedMood } from "../components/Mood.tsx";
 import { wrappedHeight } from "../components/Height.tsx";
 import { wrappedWeight } from "../components/Weight.tsx";

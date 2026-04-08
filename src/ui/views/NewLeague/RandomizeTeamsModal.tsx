@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Modal } from "../../components/Modal.tsx";
-import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
+import { REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import { SelectSeasonRange } from "./SelectSeasonRange.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import {

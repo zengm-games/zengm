@@ -1,7 +1,7 @@
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { DraftPick } from "../../../common/types.ts";
-import { PHASE, REAL_PLAYERS_INFO } from "../../../common/index.ts";
+import { PHASE, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 
 // Add a new set of draft picks, or confirm that the existing picks are correct (because this is idempotent!)
 const doSeason = async (

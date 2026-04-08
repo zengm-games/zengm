@@ -1,6 +1,6 @@
 import ovr from "./ovr.hockey.ts";
 import type { PlayerRatings } from "../../../common/types.hockey.ts";
-import { POSITIONS } from "../../../common/index.ts";
+import { POSITIONS } from "../../../common/constants.ts";
 
 const pos = (ratings: PlayerRatings): string => {
 	const ovrs = POSITIONS.map((position) => ovr(ratings, position));

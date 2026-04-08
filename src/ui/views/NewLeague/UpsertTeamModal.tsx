@@ -5,7 +5,7 @@ import {
 	DEFAULT_STADIUM_CAPACITY,
 	DEFAULT_TEAM_COLORS,
 	REAL_PLAYERS_INFO,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import getTeamInfos from "../../../common/getTeamInfos.ts";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs.ts";
 import type {

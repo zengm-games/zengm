@@ -1,4 +1,4 @@
-import { AWARD_NAMES } from "../../common/index.ts";
+import { AWARD_NAMES } from "../../common/constants.ts";
 import type { MinimalPlayerRatings, Player } from "../../common/types.ts";
 import stats from "../core/player/stats.ts";
 import { weightByMinutes } from "../db/getCopies/playersPlus.ts";

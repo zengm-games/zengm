@@ -1,5 +1,5 @@
 import { season } from "../index.ts";
-import { DIFFICULTY, PHASE, WEBSITE_ROOT } from "../../../common/index.ts";
+import { DIFFICULTY, PHASE, WEBSITE_ROOT } from "../../../common/constants.ts";
 import type {
 	Conditions,
 	GameAttributesLeague,

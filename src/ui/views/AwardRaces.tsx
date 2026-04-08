@@ -4,7 +4,7 @@ import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
-import { PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { RatingWithChange } from "../components/RatingWithChange.tsx";

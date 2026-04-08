@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";

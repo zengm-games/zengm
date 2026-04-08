@@ -2,7 +2,7 @@ import addToFreeAgents from "./addToFreeAgents.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "./getNumPlayersTradedAwayNormalized.ts";
 
 /**

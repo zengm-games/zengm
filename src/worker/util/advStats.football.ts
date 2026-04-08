@@ -1,4 +1,4 @@
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type { TeamFiltered } from "../../common/types.ts";

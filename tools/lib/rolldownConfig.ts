@@ -1,3 +1,4 @@
+import path from "node:path";
 import fs from "node:fs/promises";
 import { stripVTControlCharacters } from "node:util";
 import type { BuildOptions } from "rolldown";
@@ -5,7 +6,10 @@ import { getSport } from "./getSport.ts";
 // @ts-expect-error
 import blacklist from "rollup-plugin-blacklist";
 import { visualizer } from "rollup-plugin-visualizer";
+import { modulepreload } from "./rolldownPlugins/modulepreload.ts";
 import { sportFunctions } from "./rolldownPlugins/sportFunctions.ts";
+
+export const FOLDER = "gen";
 
 export const rolldownConfig = (
 	name: "ui" | "worker",
@@ -18,14 +22,19 @@ export const rolldownConfig = (
 		| {
 				nodeEnv: "production";
 				blacklistOptions: RegExp[];
+				onModulepreloadFilenames: (filenames: string[]) => void;
 				versionNumber: string;
 		  }
 		| {
 				nodeEnv: "test";
 		  },
 ): BuildOptions => {
-	const infile = `src/${name}/index.${name === "ui" ? "tsx" : "ts"}`;
-	const watchOutfile = `build/gen/${name}.js`;
+	const infile = path.join(
+		"src",
+		name,
+		`index.${name === "ui" ? "tsx" : "ts"}`,
+	);
+	const watchOutfile = path.join("build", FOLDER, `${name}.js`);
 
 	const sport = getSport();
 
@@ -85,7 +94,10 @@ export const rolldownConfig = (
 			},
 		});
 	} else if (envOptions.nodeEnv === "production") {
-		plugins.push(blacklist(envOptions.blacklistOptions));
+		plugins.push(
+			blacklist(envOptions.blacklistOptions),
+			modulepreload(envOptions.onModulepreloadFilenames),
+		);
 		if (process.env.VISUALIZE) {
 			plugins.push(
 				visualizer({
@@ -106,7 +118,7 @@ export const rolldownConfig = (
 					? `${name}-${envOptions.versionNumber}.js`
 					: `${name}.js`,
 			chunkFileNames: `${name}-chunk-[hash].js`,
-			dir: "build/gen",
+			dir: path.join("build", FOLDER),
 			sourcemap: true,
 			externalLiveBindings: false,
 			format: "es",

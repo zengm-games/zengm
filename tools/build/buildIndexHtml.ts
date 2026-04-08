@@ -4,14 +4,33 @@ import { type ReplaceInfo } from "./replace.ts";
 import { bySport } from "../lib/bySport.ts";
 import { getBannerAdsCode } from "./getBannerAdsCode.ts";
 
+const genModulepreloads = (modulepreloadPaths: string[]) => {
+	return modulepreloadPaths
+		.map((path) => {
+			return `<link rel="modulepreload" href="${path}">`;
+		})
+		.join("");
+};
+
 export const buildIndexHtml = async ({
 	cssReplaces,
+	modulepreloadPaths,
 	signal,
 	versionNumber,
 	watch,
 }: { versionNumber: string } & (
-	| { cssReplaces?: undefined; signal: AbortSignal; watch: true }
-	| { cssReplaces: ReplaceInfo[]; signal?: undefined; watch: false }
+	| {
+			cssReplaces?: undefined;
+			modulepreloadPaths?: undefined;
+			signal: AbortSignal;
+			watch: true;
+	  }
+	| {
+			cssReplaces: ReplaceInfo[];
+			modulepreloadPaths: string[];
+			signal?: undefined;
+			watch: false;
+	  }
 )) => {
 	let contents = await fs.readFile("public/index.html", "utf8");
 
@@ -21,6 +40,12 @@ export const buildIndexHtml = async ({
 
 	const allReplaces = [
 		...(cssReplaces ?? []),
+		{
+			searchValue: "MODULEPRELOADS",
+			replaceValue: modulepreloadPaths
+				? genModulepreloads(modulepreloadPaths)
+				: "",
+		},
 		...(watch
 			? [
 					{

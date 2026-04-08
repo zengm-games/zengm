@@ -1,13 +1,15 @@
 import fs from "node:fs/promises";
+import path from "node:path";
 import { Worker } from "node:worker_threads";
 import { fileHash } from "./fileHash.ts";
 import { replace } from "./replace.ts";
+import { FOLDER } from "../lib/rolldownConfig.ts";
 
 export const buildJs = async (versionNumber: string) => {
-	const promises = [];
+	const promises: Promise<string[]>[] = [];
 	for (const name of ["ui", "worker"]) {
 		promises.push(
-			new Promise<void>((resolve) => {
+			new Promise((resolve) => {
 				const worker = new Worker(
 					new URL("buildJsWorker.ts", import.meta.url),
 					{
@@ -18,18 +20,20 @@ export const buildJs = async (versionNumber: string) => {
 					},
 				);
 
-				worker.on("message", () => {
-					resolve();
+				worker.on("message", (modulepreloadFilenames) => {
+					resolve(modulepreloadFilenames);
 				});
 			}),
 		);
 	}
-	await Promise.all(promises);
+	const modulepreloadPaths = (await Promise.all(promises))
+		.flat()
+		.map((filename) => path.join(`/${FOLDER}`, filename));
 
 	// Hack because otherwise I'm somehow left with no newline before the souce map URL, which confuses Bugsnag
-	const replacePaths = (await fs.readdir("build/gen"))
+	const replacePaths = (await fs.readdir(path.join("build", FOLDER)))
 		.filter((filename) => filename.endsWith(".js"))
-		.map((filename) => `build/gen/${filename}`);
+		.map((filename) => path.join("build", FOLDER, filename));
 	await replace({
 		paths: replacePaths,
 		replaces: [
@@ -49,7 +53,7 @@ export const buildJs = async (versionNumber: string) => {
 	];
 	const replaces = [];
 	for (const filename of jsonFiles) {
-		const filePath = `build/gen/${filename}.json`;
+		const filePath = path.join("build", FOLDER, `${filename}.json`);
 		let string;
 		try {
 			string = await fs.readFile(filePath, "utf8");
@@ -69,12 +73,14 @@ export const buildJs = async (versionNumber: string) => {
 		await fs.writeFile(newFilename, compressed);
 
 		replaces.push({
-			searchValue: `/gen/${filename}.json`,
-			replaceValue: `/gen/${filename}-${hash}.json`,
+			searchValue: path.join(`/${FOLDER}`, `${filename}.json`),
+			replaceValue: path.join(`/${FOLDER}`, `${filename}-${hash}.json`),
 		});
 	}
 	await replace({
-		paths: [`build/gen/worker-${versionNumber}.js`],
+		paths: [path.join("build", FOLDER, `worker-${versionNumber}.js`)],
 		replaces,
 	});
+
+	return modulepreloadPaths;
 };

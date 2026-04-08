@@ -19,11 +19,16 @@ export const build = async () => {
 	await createJsonSchemaFile(sport);
 
 	console.log("Bundling JavaScript files...");
-	await buildJs(versionNumber);
+	const modulepreloadPaths = await buildJs(versionNumber);
 
 	console.log("Processing CSS/HTML files...");
 	const cssReplaces = (await buildCss()) ?? [];
-	await buildIndexHtml({ cssReplaces, versionNumber, watch: false });
+	await buildIndexHtml({
+		cssReplaces,
+		modulepreloadPaths,
+		versionNumber,
+		watch: false,
+	});
 
 	console.log("Generating sw.js...");
 	await buildSw();

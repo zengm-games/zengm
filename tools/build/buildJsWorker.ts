@@ -28,7 +28,7 @@ const buildFile = async (name: "ui" | "worker", versionNumber: string) => {
 	await build(config);
 
 	if (modulepreloadFilenames === undefined) {
-		throw new Error(`modulepreloadPaths is undefined for ${name}`);
+		throw new Error(`modulepreloadFilenames is undefined for ${name}`);
 	}
 
 	parentPort!.postMessage(modulepreloadFilenames);

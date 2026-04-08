@@ -1,13 +1,25 @@
 import fs from "node:fs/promises";
+import path from "node:path";
 import { minify } from "html-minifier-terser";
 import { type ReplaceInfo } from "./replace.ts";
 import { bySport } from "../lib/bySport.ts";
 import { getBannerAdsCode } from "./getBannerAdsCode.ts";
 
-const genModulepreloads = (modulepreloadPaths: string[]) => {
-	return modulepreloadPaths
-		.map((path) => {
-			return `<link rel="modulepreload" href="${path}">`;
+const genModulepreloads = async (modulepreloadPaths: string[]) => {
+	const infos = [];
+	for (const modulepreloadPath of modulepreloadPaths) {
+		infos.push({
+			path: modulepreloadPath,
+			size: (await fs.stat(path.join("build", modulepreloadPath))).size,
+		});
+	}
+
+	// Largest ones first, so they start loading earlier
+	infos.sort((a, b) => b.size - a.size);
+
+	return infos
+		.map((info) => {
+			return `<link rel="modulepreload" href="${info.path}">`;
 		})
 		.join("");
 };
@@ -43,7 +55,7 @@ export const buildIndexHtml = async ({
 		{
 			searchValue: "MODULEPRELOADS",
 			replaceValue: modulepreloadPaths
-				? genModulepreloads(modulepreloadPaths)
+				? await genModulepreloads(modulepreloadPaths)
 				: "",
 		},
 		...(watch

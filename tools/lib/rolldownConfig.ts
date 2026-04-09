@@ -1,6 +1,4 @@
 import path from "node:path";
-import fs from "node:fs/promises";
-import { stripVTControlCharacters } from "node:util";
 import type { BuildOptions } from "rolldown";
 import { getSport } from "./getSport.ts";
 // @ts-expect-error
@@ -8,6 +6,7 @@ import blacklist from "rollup-plugin-blacklist";
 import { visualizer } from "rollup-plugin-visualizer";
 import { modulepreload } from "./rolldownPlugins/modulepreload.ts";
 import { sportFunctions } from "./rolldownPlugins/sportFunctions.ts";
+import { startEnd } from "./rolldownPlugins/startEnd.ts";
 
 export const FOLDER = "gen";
 
@@ -34,7 +33,6 @@ export const rolldownConfig = (
 		name,
 		`index.${name === "ui" ? "tsx" : "ts"}`,
 	);
-	const watchOutfile = path.join("build", FOLDER, `${name}.js`);
 
 	const sport = getSport();
 
@@ -43,56 +41,13 @@ export const rolldownConfig = (
 	];
 
 	if (envOptions.nodeEnv === "development") {
-		const { postMessage, signal } = envOptions;
-
-		plugins.push({
-			name: "start-end",
-
-			buildStart() {
-				if (signal.aborted) {
-					return;
-				}
-
-				postMessage({
-					type: "start",
-				});
-			},
-
-			async buildEnd(error) {
-				if (signal.aborted) {
-					return;
-				}
-
-				if (error) {
-					postMessage({
-						type: "error",
-						error,
-					});
-
-					const js = `throw new Error(${JSON.stringify(stripVTControlCharacters(error.message))})`;
-					await fs.writeFile(watchOutfile, js, { signal });
-				}
-			},
-
-			// This (and all the other signal.aborted stuff in this file) is a hacky fix for https://github.com/rolldown/rolldown/issues/8937
-			generateBundle(outputOptions, bundle) {
-				if (signal.aborted) {
-					for (const key of Object.keys(bundle)) {
-						delete bundle[key];
-					}
-				}
-			},
-
-			writeBundle() {
-				if (signal.aborted) {
-					return;
-				}
-
-				postMessage({
-					type: "end",
-				});
-			},
-		});
+		plugins.push(
+			startEnd({
+				name,
+				postMessage: envOptions.postMessage,
+				signal: envOptions.signal,
+			}),
+		);
 	} else if (envOptions.nodeEnv === "production") {
 		plugins.push(
 			blacklist(envOptions.blacklistOptions),

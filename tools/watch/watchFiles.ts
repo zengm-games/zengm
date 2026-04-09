@@ -1,7 +1,6 @@
 import { watch } from "chokidar";
 import { copyFiles } from "../build/copyFiles.ts";
 import { generateVersionNumber } from "../build/generateVersionNumber.ts";
-import { reset } from "../build/reset.ts";
 import { type Spinners } from "./spinners.ts";
 import { buildIndexHtml } from "../build/buildIndexHtml.ts";
 
@@ -51,6 +50,5 @@ export const watchFiles = async (
 		abortController?.abort();
 	});
 
-	await reset();
 	await buildWatchFiles();
 };

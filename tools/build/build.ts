@@ -18,10 +18,8 @@ export const build = async () => {
 	await copyFiles();
 	await createJsonSchemaFile(sport);
 
-	console.log("Bundling JavaScript files...");
 	const modulepreloadPaths = await buildJs(versionNumber);
 
-	console.log("Processing CSS/HTML files...");
 	const cssReplaces = (await buildCss()) ?? [];
 	await buildIndexHtml({
 		cssReplaces,
@@ -30,6 +28,5 @@ export const build = async () => {
 		watch: false,
 	});
 
-	console.log("Generating sw.js...");
 	await buildSw();
 };

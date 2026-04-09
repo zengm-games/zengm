@@ -5,6 +5,7 @@ import { watchFiles } from "./watchFiles.ts";
 import { watchJs } from "./watchJs.ts";
 import { watchJsonSchema } from "./watchJsonSchema.ts";
 import { startServer } from "../lib/server.ts";
+import { reset } from "../build/reset.ts";
 
 const param = process.argv[2];
 let exposeToNetwork = false;
@@ -47,11 +48,13 @@ const updateError = (filename: string, error: Error) => {
 };
 
 // Needs to run first, to create output folder
-await watchFiles(updateStart, updateEnd, updateError, spinners.eventEmitter);
+await reset();
+
+watchFiles(updateStart, updateEnd, updateError, spinners.eventEmitter);
 
 watchCss(updateStart, updateEnd, updateError);
 
-// Schema is needed for JS bunlde, and watchJsonSchema is async
+// Schema is needed for JS bundle, and watchJsonSchema is async
 await watchJsonSchema(
 	updateStart,
 	updateEnd,

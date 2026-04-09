@@ -28,7 +28,7 @@ export const buildJs = async (versionNumber: string) => {
 	}
 	const modulepreloadPaths = (await Promise.all(promises))
 		.flat()
-		.map((filename) => path.join(`/${FOLDER}`, filename));
+		.map((filename) => `/${FOLDER}/${filename}`);
 
 	// Hack because otherwise I'm somehow left with no newline before the souce map URL, which confuses Bugsnag
 	const replacePaths = (await fs.readdir(path.join("build", FOLDER)))
@@ -73,8 +73,8 @@ export const buildJs = async (versionNumber: string) => {
 		await fs.writeFile(newFilename, compressed);
 
 		replaces.push({
-			searchValue: path.join(`/${FOLDER}`, `${filename}.json`),
-			replaceValue: path.join(`/${FOLDER}`, `${filename}-${hash}.json`),
+			searchValue: `/${FOLDER}/${filename}.json`,
+			replaceValue: `/${FOLDER}/${filename}-${hash}.json`,
 		});
 	}
 	await replace({

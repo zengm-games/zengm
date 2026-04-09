@@ -1909,7 +1909,7 @@ class GameSim extends GameSimBase {
 					// When gameWinningRunScoredWithLiveBall, the batter will stop running when the winning run has scored. For instance if only one run is needed and there is a runner on third, any non-HR will just be a single.
 					let numBasesAdjusted: typeof numBases;
 					if (gameWinningRunScoredWithLiveBall) {
-						const lastScoringRunner = runners.find((runner) => runner.scored);
+						const lastScoringRunner = runners.find((runner) => runner?.scored);
 						if (!lastScoringRunner) {
 							throw new Error("Should never happen");
 						}
@@ -2070,7 +2070,7 @@ class GameSim extends GameSimBase {
 					out: false,
 				};
 			}
-		}) as [Runner, Runner, Runner];
+		}) as [Runner | undefined, Runner | undefined, Runner | undefined];
 	}
 
 	finalizeRunners(

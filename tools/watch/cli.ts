@@ -7,23 +7,19 @@ import { watchJsonSchema } from "./watchJsonSchema.ts";
 import { startServer } from "../lib/server.ts";
 
 const param = process.argv[2];
-if (param !== "--no-server") {
-	let exposeToNetwork = false;
-	if (param === "--host") {
-		exposeToNetwork = true;
-	} else if (param !== undefined) {
-		console.log(
-			"Invalid CLI argument. The only valid options are --no-server and --host",
-		);
-		process.exit(1);
-	}
-
-	await startServer({
-		exposeToNetwork,
-		waitForBuild: () => spinners.waitForBuild(),
-	});
-	console.log("");
+let exposeToNetwork = false;
+if (param === "--host") {
+	exposeToNetwork = true;
+} else if (param !== undefined) {
+	console.log("Invalid CLI argument. The only valid options is --host");
+	process.exit(1);
 }
+
+await startServer({
+	exposeToNetwork,
+	waitForBuild: () => spinners.waitForBuild(),
+});
+console.log("");
 
 const updateStart = (filename: string) => {
 	spinners.setStatus(filename, {

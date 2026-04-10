@@ -3,6 +3,7 @@ import type { MouseEvent, ReactNode } from "react";
 import type processInputs from "../worker/api/processInputs.ts";
 import type * as views from "../worker/views/index.ts";
 
+// Would be nice to make .at(-1) return T but idk how, so there is a lot of .at(-1)! in the codebase!
 export type NonEmptyArray<T> = [T, ...T[]];
 
 export type Env = {
@@ -1160,7 +1161,7 @@ export type PlayerAward = {
 	type: string;
 };
 
-export type PlayerWithoutKey<PlayerRatings = any> = {
+export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {
 	awards: PlayerAward[];
 	born: {
 		year: number;
@@ -1279,7 +1280,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	pFatigue?: number;
 };
 
-export type Player<PlayerRatings = any> = {
+export type Player<PlayerRatings = MinimalPlayerRatings> = {
 	pid: number;
 } & PlayerWithoutKey<PlayerRatings>;
 

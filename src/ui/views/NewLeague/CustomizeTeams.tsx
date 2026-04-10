@@ -498,7 +498,7 @@ const PlayersButton = ({
 					<Popover.Header>Top Players</Popover.Header>
 					<Popover.Body>
 						<ul className="list-unstyled mb-0">
-							{orderBy(players, (p) => p.ratings.at(-1).ovr, "desc")
+							{orderBy(players, (p) => p.ratings.at(-1)!.ovr, "desc")
 								.slice(0, 10)
 								.map((p) => {
 									const ratings = p.ratings.at(-1)!;

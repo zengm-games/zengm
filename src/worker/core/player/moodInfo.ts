@@ -127,7 +127,7 @@ const moodInfo = async (
 			tid +
 			p.pid +
 			p.stats.length +
-			p.ratings.at(-1).ovr +
+			p.ratings.at(-1)!.ovr +
 			(p.stats.at(-1)?.min ?? 0);
 
 		if (isSport("baseball")) {

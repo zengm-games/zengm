@@ -184,7 +184,7 @@ const doInjury = async (
 	if (
 		gamesRemainingNormalized > 25 &&
 		Math.random() < gamesRemainingNormalized / 82 &&
-		!p2.ratings.at(-1).locked
+		!p2.ratings.at(-1)!.locked
 	) {
 		ratingsLoss = true;
 		let biggestRatingsLoss = 20;
@@ -195,7 +195,7 @@ const doInjury = async (
 		}
 
 		player.addRatingsRow(p2, undefined, p2.injuries.length - 1);
-		const r = p2.ratings.length - 1; // New ratings row
+		const newRatings = p2.ratings.at(-1)!;
 
 		const ratingsToNerf = bySport({
 			baseball: ["spd", "endu", "hpw", "thr", "ppw"],
@@ -204,30 +204,30 @@ const doInjury = async (
 			hockey: ["spd", "endu"],
 		});
 		for (const rating of ratingsToNerf) {
-			p2.ratings[r][rating] = player.limitRating(
-				p2.ratings[r][rating] - random.randInt(1, biggestRatingsLoss),
+			(newRatings as any)[rating] = player.limitRating(
+				(newRatings as any)[rating] - random.randInt(1, biggestRatingsLoss),
 			);
 		}
 
 		// Update ovr and pot
 		await player.develop(p2, 0);
 
-		const r2 = p2.ratings.length - 2; // Prev ratings row
+		const prevRatings = p2.ratings.at(-2)!;
 
 		// Bound pot - can't go up after injury!
-		if (p2.ratings[r].pot > p2.ratings[r2].pot) {
-			p2.ratings[r].pot = p2.ratings[r2].pot;
+		if (newRatings.pot > prevRatings.pot) {
+			newRatings.pot = prevRatings.pot;
 		}
-		if (p2.ratings[r].pots) {
-			for (const pos of Object.keys(p2.ratings[r].pots)) {
-				if (p2.ratings[r].pots[pos] > p2.ratings[r2].pots[pos]) {
-					p2.ratings[r].pots[pos] = p2.ratings[r2].pots[pos];
+		if (newRatings.pots) {
+			for (const pos of Object.keys(newRatings.pots)) {
+				if (newRatings.pots[pos] > prevRatings.pots[pos]) {
+					newRatings.pots[pos] = prevRatings.pots[pos];
 				}
 			}
 		}
 
-		p2.injuries.at(-1)!.ovrDrop = p2.ratings[r2].ovr - p2.ratings[r].ovr;
-		p2.injuries.at(-1)!.potDrop = p2.ratings[r2].pot - p2.ratings[r].pot;
+		p2.injuries.at(-1)!.ovrDrop = prevRatings.ovr - newRatings.ovr;
+		p2.injuries.at(-1)!.potDrop = prevRatings.pot - newRatings.pot;
 	}
 
 	return {

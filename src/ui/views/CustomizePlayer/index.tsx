@@ -241,22 +241,23 @@ const copyValidValues = (
 	target.injury.type = source.injury.type;
 
 	{
-		const r = source.ratings.length - 1;
-		for (const rating of Object.keys(source.ratings[r])) {
+		const sourceRatings = source.ratings.at(-1)!;
+		const targetRatings = target.ratings.at(-1)!;
+		for (const rating of Object.keys(sourceRatings)) {
 			if (RATINGS.includes(rating)) {
 				const val = helpers.bound(
-					Number.parseInt(source.ratings[r][rating]),
+					Number.parseInt((sourceRatings as any)[rating]),
 					0,
 					100,
 				);
 				if (!Number.isNaN(val)) {
-					if (target.ratings[r][rating] !== val) {
-						target.ratings[r][rating] = val;
+					if ((targetRatings as any)[rating] !== val) {
+						(targetRatings as any)[rating] = val;
 						recomputePosOvrPot = true;
 					}
 				}
 			} else if (rating === "locked") {
-				target.ratings[r].locked = source.ratings[r].locked;
+				targetRatings.locked = sourceRatings.locked;
 			}
 		}
 	}
@@ -544,7 +545,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		event.preventDefault();
 		setState((prevState) => {
 			const p = prevState.p;
-			const oldRatings = p.ratings[r];
+			const oldRatings = p.ratings[r] as any;
 			const pos = p.pos ?? autoPos;
 
 			const extraKeys = bySport({

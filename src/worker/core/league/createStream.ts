@@ -1591,7 +1591,7 @@ const afterDBStream = async ({
 					pid: p.pid,
 					injury: p.injury,
 					value: p.value,
-					ratings: p.ratings.at(-1),
+					ratings: p.ratings.at(-1)!,
 				}));
 			const ovr = team.ovr(teamPlayers);
 			t.strategy = ovr >= 60 ? "contending" : "rebuilding";

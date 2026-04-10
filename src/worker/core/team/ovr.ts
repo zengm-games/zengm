@@ -14,7 +14,7 @@ const ovr = (
 		pid: number | undefined;
 		ratings: {
 			ovr: number;
-			ovrs: Record<string, number> | undefined;
+			ovrs?: Record<string, number> | undefined;
 			pos: string;
 		};
 		value: number;

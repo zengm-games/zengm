@@ -364,7 +364,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 			"value",
 			"desc",
 		).map((p2) => {
-			const ratings = p2.ratings.at(-1);
+			const ratings = p2.ratings.at(-1)!;
 
 			const age = g.get("season") - p2.born.year;
 

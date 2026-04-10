@@ -438,8 +438,8 @@ const updatePlayers = async (
 
 					const ovr = player.fuzzRating(row.ovr, row.fuzz);
 					const prevOvr = player.fuzzRating(
-						p.ratings[i - 1].ovr,
-						p.ratings[i - 1].fuzz,
+						p.ratings[i - 1]!.ovr,
+						p.ratings[i - 1]!.fuzz,
 					);
 					const prog = ovr - prevOvr;
 
@@ -482,11 +482,11 @@ const updatePlayers = async (
 				let maxSeason = p.ratings[0].season;
 				const ovr0 = player.fuzzRating(p.ratings[0].ovr, p.ratings[0].fuzz);
 				for (let i = 1; i < p.ratings.length; i++) {
-					const ovr = player.fuzzRating(p.ratings[i].ovr, p.ratings[i].fuzz);
+					const ovr = player.fuzzRating(p.ratings[i]!.ovr, p.ratings[i]!.fuzz);
 					const prog = ovr - ovr0;
 					if (prog > maxProg) {
 						maxProg = prog;
-						maxSeason = p.ratings[i].season;
+						maxSeason = p.ratings[i]!.season;
 					}
 				}
 				return {

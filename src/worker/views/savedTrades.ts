@@ -133,7 +133,7 @@ export const addMissingAssets = async <T extends AugmentedOffer>(
 						const p = {
 							pid: pRaw.pid,
 							name: `${pRaw.firstName} ${pRaw.lastName}`,
-							pos: pRaw.ratings.at(-1).pos,
+							pos: pRaw.ratings.at(-1)!.pos,
 						};
 
 						const untradableInfo = isUntradable(pRaw);

@@ -16,7 +16,7 @@ const getExpiration = (
 	randomizeExp: boolean,
 	nextSeason?: boolean,
 ) => {
-	const { ovr, pot } = p.ratings.at(-1);
+	const { ovr, pot } = p.ratings.at(-1)!;
 
 	// pot is predictable via age+ovr with R^2=0.94, so skip it b/c wasn't in data
 	const age = g.get("season") - p.born.year;

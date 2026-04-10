@@ -426,15 +426,10 @@ const processRatings = (
 				row.skills = helpers.deepCopy(pr.skills);
 			} else if (attr === "dovr" || attr === "dpot") {
 				// Handle dovr and dpot - if there are previous ratings, calculate the fuzzed difference
-				const cat = attr.slice(1); // either ovr or pot
+				const cat = attr.slice(1) as "ovr" | "pot";
 
 				// Find previous season's final ratings, knowing that both this year and last year could have multiple entries due to injuries
-				let prevRow;
-				for (let j = 0; j < p.ratings.length; j++) {
-					if (p.ratings[j].season < pr.season) {
-						prevRow = p.ratings[j];
-					}
-				}
+				const prevRow = p.ratings.findLast((row) => row.season < pr.season);
 
 				if (prevRow) {
 					row[attr] =
@@ -518,7 +513,7 @@ const processRatings = (
 				} else if (attr === "age") {
 					row.age = season - p.born.year;
 				} else if (attr === "pos") {
-					row.pos = p.ratings.at(-1).pos;
+					row.pos = p.ratings.at(-1)!.pos;
 				} else if (attr === "abbrev") {
 					row.abbrev = "";
 				} else {

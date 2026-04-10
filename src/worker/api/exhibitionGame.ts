@@ -332,7 +332,7 @@ export const getSeasonInfo = async (
 	}
 
 	for (const t of teams) {
-		t.players = orderBy(t.players, (p) => p.ratings.at(-1).ovr, "desc");
+		t.players = orderBy(t.players, (p) => p.ratings.at(-1)!.ovr, "desc");
 		t.ovr = team.ovr(
 			t.players.map((p) => ({
 				pid: p.pid,

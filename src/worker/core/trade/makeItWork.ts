@@ -225,7 +225,7 @@ const tryAddAsset = async (
 		if (lookingFor.skills.size > 0) {
 			for (const asset of assets) {
 				if (asset.type === "player") {
-					const ratings = asset.p.ratings.at(-1);
+					const ratings = asset.p.ratings.at(-1)!;
 					for (const skill of lookingFor.skills) {
 						asset.score += player.compositeRating(
 							ratings,
@@ -252,7 +252,7 @@ const tryAddAsset = async (
 		} else if (lookingFor.prospects) {
 			for (const asset of assets) {
 				if (asset.type === "player") {
-					const ratings = asset.p.ratings.at(-1);
+					const ratings = asset.p.ratings.at(-1)!;
 					const potDiff = ratings.pot - ratings.ovr;
 					asset.score += potDiff / 20;
 				}

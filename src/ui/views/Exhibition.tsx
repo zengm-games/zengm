@@ -395,7 +395,7 @@ const SelectTeam = ({
 			<ul className="list-unstyled mb-0">
 				{playersToShow.map((p, i) => {
 					const stats = p.stats.at(-1);
-					const ratings = p.ratings.at(-1);
+					const ratings = p.ratings.at(-1)!;
 
 					return (
 						<li key={p.pid} className={playerRowClassName(i)}>
@@ -404,7 +404,7 @@ const SelectTeam = ({
 								firstName={p.firstName}
 								lastName={p.lastName}
 								jerseyNumber={p.stats.at(-1)?.jerseyNumber ?? p.jerseyNumber}
-								skills={p.ratings.at(-1)!.skills}
+								skills={ratings.skills}
 								fullNames
 								disableNameLink
 								season={season}

@@ -19,12 +19,12 @@ import { resetFileInput } from "../util/resetFileInput.ts";
 import { localActions, useLocalPartial } from "../util/local.ts";
 
 const ErrorMessage = ({ error }: { error: Error | null }) => {
-	if (!error || !error.message) {
-		return <>"Unknown error"</>;
+	if (!error) {
+		return "Unknown error";
 	}
 
 	if (!(error as any).version) {
-		return <>{error.message}</>;
+		return error.message;
 	}
 
 	return (

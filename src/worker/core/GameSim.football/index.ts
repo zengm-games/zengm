@@ -1976,7 +1976,7 @@ class GameSim extends GameSimBase {
 				: p.seasonStats["defInt"] + p.stat["defInt"] + 1,
 			totalPssInt: this.allStarGame
 				? undefined
-				: p.seasonStats["pssInt"] + p.stat["pssInt"] + 1,
+				: qb.seasonStats["pssInt"] + qb.stat["pssInt"] + 1,
 			t: this.currentPlay.state.current.d,
 			twoPointConversionTeam: this.twoPointConversionTeam,
 			yds: ydsPass,

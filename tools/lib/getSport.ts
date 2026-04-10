@@ -1,12 +1,14 @@
 export const SPORTS = ["basketball", "football", "baseball", "hockey"] as const;
 export type Sport = (typeof SPORTS)[number];
 
-export const getSport = () => {
-	if (process.env.SPORT === undefined) {
+export const getSport = (): Sport => {
+	const sport = process.env.SPORT;
+	if (sport === undefined) {
 		return "basketball";
 	}
-	if (SPORTS.includes(process.env.SPORT as any)) {
-		return process.env.SPORT as Sport;
+	const matchedSport = SPORTS.find((s) => s === sport);
+	if (matchedSport !== undefined) {
+		return matchedSport;
 	}
-	throw new Error(`Invalid SPORT: ${process.env.SPORT}`);
+	throw new Error(`Invalid SPORT: ${sport}`);
 };

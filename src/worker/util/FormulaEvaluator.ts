@@ -108,7 +108,7 @@ const shuntingYard = (string: string) => {
 		for (const token of tokens) {
 			if (token === ",") {
 				while (stack.length > 0 && stack.at(-1) !== "(") {
-					output.push(stack.pop() as string);
+					output.push(stack.pop()!);
 				}
 				if (stack.length === 0) {
 					throw new Error(
@@ -124,7 +124,7 @@ const shuntingYard = (string: string) => {
 						(operator.associativity === "r" &&
 							operator.precedence < operators[stack.at(-1)!]!.precedence))
 				) {
-					output.push(stack.pop() as string);
+					output.push(stack.pop()!);
 				}
 				stack.push(token);
 			} else if (token === "(") {

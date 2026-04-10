@@ -269,14 +269,16 @@ const preProcess = async (
 		}
 	} else if (key === "playerFeats") {
 		// Version 60 upgrade
+		const score = x.score;
 		if (
 			x.won !== undefined &&
 			x.result === undefined &&
-			typeof x.score === "string"
+			typeof score === "string"
 		) {
-			const pts = (x.score as string)
-				.split("-")
-				.map((y) => Number.parseInt(y)) as [number, number];
+			const pts = score.split("-").map((y) => Number.parseInt(y)) as [
+				number,
+				number,
+			];
 			let diff = -Infinity;
 			if (!Number.isNaN(pts[0]) && !Number.isNaN(pts[1])) {
 				diff = pts[0] - pts[1];

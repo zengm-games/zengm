@@ -29,10 +29,10 @@ const printQuartiles = async (age?: number) => {
 		teams: range(30).map((tid) => ({ tid })),
 	});
 
-	const ovrs = (players as any[])
+	const ovrs = players
 		.filter((p) => p.tid >= PLAYER.FREE_AGENT)
-		.map((p) => p.ratings.at(-1).ovr)
-		.sort((a, b) => a - b) as number[];
+		.map((p) => p.ratings.at(-1)!.ovr)
+		.sort((a, b) => a - b);
 	const quartiles = [0.25, 0.5, 0.75].map(
 		(fraction) => ovrs[Math.round(fraction * ovrs.length)],
 	);

@@ -225,7 +225,7 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 			throw new Error("Too many values in the expression");
 		}
 
-		return stack.pop() as number;
+		return stack.pop()!;
 	}
 }
 

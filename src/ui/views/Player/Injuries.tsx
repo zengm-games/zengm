@@ -24,10 +24,14 @@ const Injuries = ({
 		return <p>None</p>;
 	}
 
-	const totals = {
+	const totals: {
+		games: number;
+		ovrDrop: number | undefined;
+		potDrop: number | undefined;
+	} = {
 		games: 0,
-		ovrDrop: undefined as number | undefined,
-		potDrop: undefined as number | undefined,
+		ovrDrop: undefined,
+		potDrop: undefined,
 	};
 	for (const injury of injuries) {
 		totals.games += injury.games;

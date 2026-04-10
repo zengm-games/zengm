@@ -30,12 +30,12 @@ declare global {
 		withGoodWorker: () => void;
 	}
 
-	namespace NodeJS {
-		interface ProcessEnv {
+	const process: {
+		env: {
 			NODE_ENV: "development" | "production" | "test";
 			SPORT: "basketball" | "football" | "baseball" | "hockey";
-		}
-	}
+		};
+	};
 }
 
 type ViewsKeys = keyof typeof views;

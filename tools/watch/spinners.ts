@@ -5,7 +5,7 @@ import process from "node:process";
 import readline from "node:readline";
 import type { WriteStream } from "node:tty";
 import { stripVTControlCharacters, styleText } from "node:util";
-import { SPORTS, type Sport } from "../lib/getSport.ts";
+import { getSport, SPORTS, type Sport } from "../lib/getSport.ts";
 
 const isUnicodeSupported =
 	process.platform !== "win32" ||
@@ -138,7 +138,7 @@ export class Spinners<Key extends string = string> {
 		process.once("SIGINT", exitHandlerBound);
 		process.once("SIGTERM", exitHandlerBound);
 
-		this.sportIndex = SPORTS.indexOf(process.env.SPORT);
+		this.sportIndex = SPORTS.indexOf(getSport());
 		if (this.sportIndex < 0) {
 			this.sportIndex = 0;
 		}

@@ -2,6 +2,7 @@
 *.pyc
 *.sublime-project
 *.sublime-workspace
+*.tsbuildinfo
 /node_modules
 /npm-debug.log
 /build

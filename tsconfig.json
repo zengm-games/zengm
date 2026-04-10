@@ -1,36 +1,7 @@
 {
-	"compilerOptions": {
-		// Based on https://www.totaltypescript.com/tsconfig-cheat-sheet
-		"esModuleInterop": true,
-		"skipLibCheck": true,
-		"target": "esnext",
-		"allowJs": true,
-		"resolveJsonModule": true,
-		"moduleDetection": "force",
-		"isolatedModules": true,
-		"verbatimModuleSyntax": true,
-		"noImplicitOverride": true,
-		"module": "preserve",
-		"noEmit": true,
-
-		// Extra strictness
-		"noFallthroughCasesInSwitch": true,
-		"noUncheckedIndexedAccess": true,
-		"noUnusedLocals": true,
-
-		// Maybe would be nice, but too much legacy crap
-		"useUnknownInCatchVariables": false,
-
-		"allowImportingTsExtensions": true,
-		"erasableSyntaxOnly": true,
-		"jsx": "react-jsx",
-		"types": [
-			"google-publisher-tag",
-			"gtag.js",
-			"stripe-checkout",
-			"stripe-v2",
-			"wicg-file-system-access"
-		]
-	},
-	"exclude": ["node_modules", "build"]
+	"files": [],
+	"references": [
+		{ "path": "./tsconfig.node.json" },
+		{ "path": "./tsconfig.web.json" }
+	]
 }

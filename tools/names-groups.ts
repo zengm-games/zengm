@@ -1,3 +1,6 @@
+// This is for page.evaluate functions, might be better to put them in their own file.
+/// <reference lib="dom" />
+
 import { existsSync } from "node:fs";
 import * as fs from "node:fs/promises";
 import path from "node:path";

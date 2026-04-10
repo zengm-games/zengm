@@ -18,7 +18,7 @@
 		"preview": "node tools/preview.ts",
 		"lint": "concurrently --raw \"node --run lint-js\" \"node --run lint-ts\"",
 		"lint-js": "node --run pre-test && eslint",
-		"lint-ts": "node --run pre-test && tsc",
+		"lint-ts": "node --run pre-test && tsc --build",
 		"pre-test": "node tools/pre-test.ts",
 		"format": "oxfmt",
 		"test": "node --run pre-test && vitest --run",

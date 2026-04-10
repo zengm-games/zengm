@@ -1,4 +1,5 @@
 import { IDBKeyRange } from "fake-indexeddb";
+// @ts-expect-error
 import fs from "node:fs/promises";
 import { overridePostMessage } from "./overridePostMessage.ts";
 

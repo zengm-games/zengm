@@ -15,7 +15,8 @@ import type { Settings } from "../views/settings.ts";
 import connectIndexedDB from "./connectIndexedDB.ts";
 import type { KeyboardShortcutsLocal } from "../../ui/util/keyboardShortcuts.ts";
 
-interface MetaDB extends DBSchema {
+// export is needed just for https://github.com/microsoft/TypeScript/issues/59951
+export interface MetaDB extends DBSchema {
 	achievements: {
 		key: number;
 		value: {

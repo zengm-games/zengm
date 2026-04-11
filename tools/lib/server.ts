@@ -112,15 +112,17 @@ export const startServer = async ({
 	waitForBuild,
 }: {
 	exposeToNetwork: boolean;
-	waitForBuild: () => Promise<void> | undefined;
+	waitForBuild: (() => Promise<void> | undefined) | undefined;
 }) => {
 	const port = await getPort({ port: 3000 });
 	const localUrl = `http://localhost:${port}`;
 
 	const server = http.createServer(async (req, res) => {
-		const wait = waitForBuild();
-		if (wait) {
-			await wait;
+		if (waitForBuild) {
+			const wait = waitForBuild();
+			if (wait) {
+				await wait;
+			}
 		}
 
 		const { pathname } = new URL(req.url!, localUrl);

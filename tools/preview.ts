@@ -11,5 +11,5 @@ if (param === "--host") {
 
 await startServer({
 	exposeToNetwork,
-	waitForBuild: () => undefined,
+	waitForBuild: undefined,
 });

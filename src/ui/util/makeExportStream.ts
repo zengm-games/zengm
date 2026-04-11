@@ -43,7 +43,7 @@ const stringSizeInBytes = (str: string | undefined) => {
 
 const NUM_SPACES_IN_TAB = 2;
 
-type ProcessStores<ReturnType extends unknown> = Partial<{
+type ProcessStores<ReturnType> = Partial<{
 	[K in LeagueDBStoreNames]?: (a: LeagueDB[K]["value"]) => ReturnType;
 }>;
 

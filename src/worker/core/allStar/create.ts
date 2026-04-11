@@ -1,4 +1,4 @@
-import { saveAwardsByPlayer } from "../season/awards.ts";
+import { awardStats, saveAwardsByPlayer } from "../season/awards.ts";
 import { g, random } from "../../util/index.ts";
 import type {
 	AllStars,
@@ -12,6 +12,7 @@ import type { PlayerRatings } from "../../../common/types.basketball.ts";
 import { orderBy, range } from "../../../common/utils.ts";
 import { getPosByGpF } from "../season/doAwards.baseball.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { mvpScore } from "../season/doAwards.football.ts";
 
 const MIN_PLAYERS_CONTEST = 2;
 
@@ -39,7 +40,7 @@ const create = async (conditions: Conditions) => {
 				"gpF",
 			],
 			basketball: ["ewa", "ws"],
-			football: ["av"],
+			football: awardStats,
 			hockey: ["ps"],
 		}),
 		season: g.get("season"),
@@ -54,10 +55,17 @@ const create = async (conditions: Conditions) => {
 	const score = (p: PlayerFiltered) =>
 		bySport({
 			baseball: p.stats.war,
-			football: p.stats.av,
+			football: mvpScore(p),
 			basketball: 2.5 * p.stats.ewa + p.stats.ws,
 			hockey: p.stats.ps,
 		});
+
+	if (isSport("football")) {
+		// For mvpScore
+		for (const p of players) {
+			p.currentStats = p.stats;
+		}
+	}
 
 	const sortedPlayers = orderBy(
 		players,

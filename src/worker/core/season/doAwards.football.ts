@@ -351,15 +351,6 @@ export const offScore = (p: PlayerFiltered) => {
 	return 1.1 * passing + rushingReceiving;
 };
 
-export const mvpScore = (p: PlayerFiltered) => {
-	const s = p.currentStats;
-	const offense = offScore(p);
-	const defense = 2.25 * dpoyScore(p);
-	const returns = (s.prTD + s.krTD) * 6;
-
-	return offense + defense + returns;
-};
-
 export const poyScore = (p: PlayerFiltered) => {
 	const s = p.currentStats;
 	const attempts = s.pba + s.rba;
@@ -369,6 +360,16 @@ export const poyScore = (p: PlayerFiltered) => {
 
 	// Account for rate and volume
 	return ((s.pbw + s.rbw) / attempts) * Math.sqrt(attempts);
+};
+
+export const mvpScore = (p: PlayerFiltered) => {
+	const s = p.currentStats;
+	const offense = offScore(p);
+	const defense = 2.25 * dpoyScore(p);
+	const returns = (s.prTD + s.krTD) * 6;
+	const blocking = 4 * poyScore(p);
+
+	return offense + defense + returns + blocking;
 };
 
 // This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.

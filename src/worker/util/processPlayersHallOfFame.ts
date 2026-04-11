@@ -35,14 +35,17 @@ const processPlayersHallOfFame = <
 		}
 		const bestSeasonOverride = p.most?.extra?.bestSeasonOverride;
 
-		const hasSeasonWithGamesPlayed = p.stats.some((ps) => ps.gp > 0);
+		// Filter out TOT, DOES_NOT_EXIST, and any other weird seasons
+		const filteredStats = p.stats.filter((row) => row.tid >= 0);
+
+		const hasSeasonWithGamesPlayed = filteredStats.some((ps) => ps.gp > 0);
 
 		const posBySeason: Record<number, string> = {};
 
 		if (isSport("baseball")) {
 			// In baseball, go based on games played on defense by position - this is not ideal for traded players, will just use last entry
-			for (const row of p.stats) {
-				if (!row.playoffs && row.gpF) {
+			for (const row of filteredStats) {
+				if (!row.playoffs && row.gpF && row.tid > 0) {
 					const pos = getPosByGpF(row.gpF);
 					if (pos !== undefined) {
 						posBySeason[row.season] = pos;
@@ -66,7 +69,7 @@ const processPlayersHallOfFame = <
 		let bestPos: string | undefined;
 		const posByEWA: Record<string, number> = {};
 		const teamSums: Record<number, number> = {};
-		for (const ps of p.stats) {
+		for (const ps of filteredStats) {
 			const tid = ps.tid;
 			const ewa = bySport({
 				baseball: ps.war,

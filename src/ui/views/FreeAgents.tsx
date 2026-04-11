@@ -94,10 +94,10 @@ const signedFreeAgentWrapped = (
 				>
 					{freeAgentTransaction.abbrev}
 				</a>
-				, {(PHASE_TEXT as any)[freeAgentTransaction.phase]}
+				, {PHASE_TEXT[freeAgentTransaction.phase]}
 			</>
 		),
-		searchValue: `${freeAgentTransaction.abbrev}, ${(PHASE_TEXT as any)[freeAgentTransaction.phase]}`,
+		searchValue: `${freeAgentTransaction.abbrev}, ${PHASE_TEXT[freeAgentTransaction.phase]}`,
 	};
 };
 

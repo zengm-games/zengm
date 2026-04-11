@@ -6,16 +6,9 @@ import { watchJs } from "./watchJs.ts";
 import { watchJsonSchema } from "./watchJsonSchema.ts";
 import { startServer } from "../lib/server.ts";
 import { reset } from "../build/reset.ts";
+import { parseCliParams } from "../lib/parseCliParams.ts";
 
-const param = process.argv[2];
-let exposeToNetwork = false;
-if (param === "--host") {
-	exposeToNetwork = true;
-} else if (param !== undefined) {
-	console.log("Invalid CLI argument. The only valid options is --host");
-	process.exit(1);
-}
-
+const { exposeToNetwork } = parseCliParams();
 await startServer({
 	exposeToNetwork,
 	waitForBuild: () => spinners.waitForBuild(),

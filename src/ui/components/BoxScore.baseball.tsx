@@ -223,7 +223,7 @@ const processEvents = (events: PlayByPlayEventScore[]) => {
 		score: [number, number];
 		noPoints: boolean;
 	})[] = [];
-	let score = [0, 0] as [number, number];
+	let score: [number, number] = [0, 0];
 	let shootout = false;
 
 	for (const event of events) {

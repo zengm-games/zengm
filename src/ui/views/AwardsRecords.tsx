@@ -8,9 +8,9 @@ import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedCheckmarkOrCross } from "../components/CheckmarkOrCross.tsx";
 
-const formatYear = (year: {
-	[key: string]: { team: string; season: number }[];
-}) => {
+type YearInfo = Record<string, { team: string; season: number }[]>;
+
+const formatYear = (year: YearInfo) => {
 	return Object.entries(year).map(([k, yearInfo], i) => {
 		const years = helpers.yearRanges(yearInfo.map((y) => y.season)).join(", ");
 		return (
@@ -22,9 +22,7 @@ const formatYear = (year: {
 	});
 };
 
-const formatYearString = (year: {
-	[key: string]: { team: string; season: number }[];
-}) => {
+const formatYearString = (year: YearInfo) => {
 	return Object.entries(year)
 		.map(([k, yearInfo], i) => {
 			const years = helpers
@@ -58,10 +56,7 @@ const AwardsRecords = ({
 	);
 
 	const rows: DataTableRow[] = awardsRecords.map((a) => {
-		const yearsGrouped = Object.groupBy(a.years, (row) => row.team) as Record<
-			string,
-			(typeof a)["years"]
-		>;
+		const yearsGrouped = Object.groupBy(a.years, (row) => row.team) as YearInfo;
 
 		return {
 			key: a.pid,

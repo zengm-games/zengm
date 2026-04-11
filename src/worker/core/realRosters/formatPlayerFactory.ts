@@ -4,6 +4,7 @@ import loadStatsBasketball, {
 import { PHASE, PLAYER, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import type {
 	GetLeagueOptions,
+	NonEmptyArray,
 	PlayerContract,
 	PlayerInjury,
 } from "../../../common/types.ts";
@@ -487,7 +488,7 @@ const formatPlayerFactory = async (
 				: "/img/blank-face.png",
 			real: true,
 			draft,
-			ratings: processedRatings as [OnlyRatings, ...OnlyRatings[]],
+			ratings: processedRatings as NonEmptyArray<OnlyRatings>,
 			stats,
 			injury: undefined as PlayerInjury | undefined,
 			contract,

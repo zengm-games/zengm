@@ -30,7 +30,7 @@ const applyToObject = (t: MyTeam, realInfo: IndividualRealTeamInfo) => {
 	}
 
 	if (updatedImgURL && realInfo.imgURLSmall === undefined) {
-		delete (t as any).imgURLSmall;
+		delete t.imgURLSmall;
 	}
 
 	return updated;

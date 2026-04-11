@@ -30,7 +30,7 @@ const downloadFileStream = async (
 								},
 							},
 				],
-			} as any);
+			});
 
 			fileStream = await fileHandle.createWritable();
 		} else {

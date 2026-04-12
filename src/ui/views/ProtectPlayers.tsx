@@ -161,9 +161,14 @@ const ProtectPlayers = ({
 
 	const protectedPids = expansionDraft.protectedPids[userTid] ?? [];
 
-	const maxNumCanProtext = Math.min(
-		expansionDraft.numProtectedPlayers,
-		players.length - (expansionDraft.numPerTeam ?? 0),
+	const maxNumCanProtext = Math.max(
+		Math.min(
+			expansionDraft.numProtectedPlayers,
+			players.length - (expansionDraft.numPerTeam ?? 0),
+		),
+
+		// Make sure maxNumCanProtect is never negative
+		0,
 	);
 
 	const numRemaining = maxNumCanProtext - protectedPids.length;

@@ -3,13 +3,12 @@ import { copyFiles } from "../build/copyFiles.ts";
 import { generateVersionNumber } from "../build/generateVersionNumber.ts";
 import { type Spinners } from "./spinners.ts";
 import { buildIndexHtml } from "../build/buildIndexHtml.ts";
+import type { Update } from "./cli.ts";
 
 // Would be better to only copy individual files on update, but this is fast enough
 
 export const watchFiles = async (
-	updateStart: (filename: string) => void,
-	updateEnd: (filename: string) => void,
-	updateError: (filename: string, error: Error) => void,
+	update: Update,
 	eventEmitter: Spinners["eventEmitter"],
 ) => {
 	const outFilename = "static files";
@@ -22,7 +21,7 @@ export const watchFiles = async (
 			abortController = new AbortController();
 			const { signal } = abortController;
 
-			updateStart(outFilename);
+			update(outFilename, { status: "spin" });
 
 			await copyFiles(true, signal);
 
@@ -37,9 +36,9 @@ export const watchFiles = async (
 				return;
 			}
 
-			updateEnd(outFilename);
+			update(outFilename, { status: "success" });
 		} catch (error) {
-			updateError(outFilename, error);
+			update(outFilename, { status: "error", error });
 		}
 	};
 

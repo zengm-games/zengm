@@ -2,6 +2,7 @@ import { watch } from "chokidar";
 import fs from "node:fs/promises";
 import { getSport } from "../lib/getSport.ts";
 import { type Spinners } from "./spinners.ts";
+import type { Update } from "./cli.ts";
 
 // https://ar.al/2021/02/22/cache-busting-in-node.js-dynamic-esm-imports/
 const importFresh = async (modulePath: string) => {
@@ -10,9 +11,7 @@ const importFresh = async (modulePath: string) => {
 };
 
 export const watchJsonSchema = async (
-	updateStart: (filename: string) => void,
-	updateEnd: (filename: string) => void,
-	updateError: (filename: string, error: Error) => void,
+	update: Update,
 	eventEmitter: Spinners["eventEmitter"],
 ) => {
 	await fs.mkdir("build/files", { recursive: true });
@@ -29,7 +28,7 @@ export const watchJsonSchema = async (
 
 			const sport = getSport();
 
-			updateStart(outFilename);
+			update(outFilename, { status: "spin" });
 
 			// Dynamically reload generateJsonSchema, cause that's what we're watching!
 			const { generateJsonSchema } = await importFresh(
@@ -50,9 +49,9 @@ export const watchJsonSchema = async (
 				return;
 			}
 
-			updateEnd(outFilename);
+			update(outFilename, { status: "success" });
 		} catch (error) {
-			updateError(outFilename, error);
+			update(outFilename, { status: "error", error });
 		}
 	};
 

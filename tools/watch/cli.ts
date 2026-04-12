@@ -15,46 +15,48 @@ await startServer({
 });
 console.log("");
 
-const updateStart = (filename: string) => {
-	spinners.setStatus(filename, {
-		status: "spin",
-	});
-};
+const update = (
+	filename: string,
+	info:
+		| {
+				status: "spin";
+		  }
+		| {
+				status: "success";
+		  }
+		| {
+				status: "error";
+				error: Error;
+		  },
+) => {
+	if (info.status === "success") {
+		(async () => {
+			let size;
+			if (filename !== "static files") {
+				size = (await fs.stat(filename)).size;
+			}
 
-const updateEnd = async (filename: string) => {
-	let size;
-	if (filename !== "static files") {
-		size = (await fs.stat(filename)).size;
+			spinners.setStatus(filename, {
+				status: "success",
+				size,
+			});
+		})();
+	} else {
+		spinners.setStatus(filename, info);
 	}
-
-	spinners.setStatus(filename, {
-		status: "success",
-		size,
-	});
 };
-
-const updateError = (filename: string, error: Error) => {
-	spinners.setStatus(filename, {
-		status: "error",
-		error,
-	});
-};
+export type Update = typeof update;
 
 // Needs to run first, to create output folder
 await reset();
 
-watchFiles(updateStart, updateEnd, updateError, spinners.eventEmitter);
+watchFiles(update, spinners.eventEmitter);
 
-watchCss(updateStart, updateEnd, updateError);
+watchCss(update);
 
 // Schema is needed for JS bundle, and watchJsonSchema is async
-await watchJsonSchema(
-	updateStart,
-	updateEnd,
-	updateError,
-	spinners.eventEmitter,
-);
+await watchJsonSchema(update, spinners.eventEmitter);
 
-watchJs(updateStart, updateEnd, updateError, spinners.eventEmitter);
+watchJs(update, spinners.eventEmitter);
 
 spinners.initialized = true;

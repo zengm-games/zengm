@@ -1002,10 +1002,12 @@ const PlayoffRecord = ({
 	t0: {
 		abbrev: string;
 		playoffs?: { won: number; lost: number };
+		tid: number;
 	};
 	t1: {
 		abbrev: string;
 		playoffs?: { won: number; lost: number };
+		tid: number;
 	};
 }) => {
 	if (
@@ -1039,7 +1041,13 @@ const PlayoffRecord = ({
 	}
 
 	const winningAbbrevLink = (
-		<a href={helpers.leagueUrl(["roster", winning.abbrev, season])}>
+		<a
+			href={helpers.leagueUrl([
+				"roster",
+				`${winning.abbrev}_${winning.tid}`,
+				season,
+			])}
+		>
 			{winning.abbrev}
 		</a>
 	);

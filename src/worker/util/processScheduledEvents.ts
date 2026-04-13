@@ -126,7 +126,7 @@ const processTeamInfo = async (
 		});
 	} else if (info.imgURL && info.imgURL !== old.imgURL) {
 		logEvent({
-			text: `The <a href="${helpers.leagueUrl(["roster", t.abbrev, season])}">${
+			text: `The <a href="${helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`, season])}">${
 				t.region
 			} ${t.name}</a> got a new logo:<br><img src="${
 				t.imgURL

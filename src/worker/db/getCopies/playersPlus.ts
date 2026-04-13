@@ -315,7 +315,11 @@ const processAttrs = (
 					const url =
 						transaction.eid !== undefined
 							? helpers.leagueUrl(["trade_summary", transaction.eid])
-							: helpers.leagueUrl(["roster", abbrev, transaction.season]);
+							: helpers.leagueUrl([
+									"roster",
+									`${abbrev}_${transaction.fromTid}`,
+									transaction.season,
+								]);
 					output.latestTransaction = `Trade with <a href="${url}">${abbrev} in ${transaction.season}</a>`;
 				} else if (transaction.type === "godMode") {
 					output.latestTransaction = `God Mode in ${transaction.season}`;
@@ -324,7 +328,11 @@ const processAttrs = (
 				} else if (transaction.type === "sisyphus") {
 					const abbrev =
 						abbrevsCache?.get(transaction.season, transaction.fromTid) ?? "???";
-					const url = helpers.leagueUrl(["roster", abbrev, transaction.season]);
+					const url = helpers.leagueUrl([
+						"roster",
+						`${abbrev}_${transaction.fromTid}`,
+						transaction.season,
+					]);
 					output.latestTransaction = `Sisyphus Mode with <a href="${url}">${abbrev} in ${transaction.season}</a>`;
 				}
 			} else {

@@ -129,6 +129,10 @@ const evaluate = (
 				if (weightStatByMinutes) {
 					object[playoffs] += row[stat] * row.min;
 					minSumPlayoffs += row.min;
+				} else if (isSport("football") && stat.endsWith("Lng")) {
+					if (row[stat] > object[playoffs]) {
+						object[playoffs] = row[stat] as number;
+					}
 				} else {
 					object[playoffs] += row[stat];
 				}
@@ -147,6 +151,10 @@ const evaluate = (
 				if (weightStatByMinutes) {
 					object[tot] += row[stat] * row.min;
 					minSum += row.min;
+				} else if (isSport("football") && stat.endsWith("Lng")) {
+					if (row[stat] > object[tot]) {
+						object[tot] = row[stat] as number;
+					}
 				} else {
 					object[tot] += row[stat];
 				}

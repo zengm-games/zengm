@@ -1,13 +1,7 @@
 import { g, helpers } from "../../util/index.ts";
-import type {
-	Player,
-	PlayerWithoutKey,
-	MinimalPlayerRatings,
-} from "../../../common/types.ts";
+import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
 
-const madeHof = (
-	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
-): boolean => {
+const madeHof = (p: Player | PlayerWithoutKey): boolean => {
 	let earliestSeason = Infinity;
 
 	// Same as MVP formula

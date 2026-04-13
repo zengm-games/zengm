@@ -1,9 +1,9 @@
 import { idb } from "../db/index.ts";
-import type { MinimalPlayerRatings, Player } from "../../common/types.ts";
+import type { Player } from "../../common/types.ts";
 
 const advStatsSave = async (
 	players: any[],
-	playersRaw: Player<MinimalPlayerRatings>[],
+	playersRaw: Player[],
 	updatedStats: Record<string, number[] | number[][]>,
 ) => {
 	const keys = Object.keys(updatedStats);

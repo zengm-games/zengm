@@ -1,5 +1,5 @@
 import { AWARD_NAMES } from "../../common/constants.ts";
-import type { MinimalPlayerRatings, Player } from "../../common/types.ts";
+import type { Player } from "../../common/types.ts";
 import stats from "../core/player/stats.ts";
 import { weightByMinutes } from "../db/getCopies/playersPlus.ts";
 import FormulaEvaluator from "./FormulaEvaluator.ts";
@@ -59,7 +59,7 @@ AWARD_VARIABLES.numSeasons = "Number of Seasons Played";
 const formulaCache: Record<string, FormulaEvaluator<string[]>> = {};
 
 const evaluate = (
-	p: Player<MinimalPlayerRatings>,
+	p: Player,
 	formula: string | undefined,
 	info:
 		| {

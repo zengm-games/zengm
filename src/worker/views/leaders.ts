@@ -7,7 +7,6 @@ import {
 	processPlayersHallOfFame,
 } from "../util/index.ts";
 import type {
-	MinimalPlayerRatings,
 	Player,
 	PlayerFiltered,
 	PlayerInjury,
@@ -548,16 +547,13 @@ export class GamesPlayedCache {
 
 export const iterateAllPlayers = async (
 	season: number | "all" | "career",
-	cb: (
-		p: Player<MinimalPlayerRatings>,
-		season: number | "career",
-	) => Promise<void>,
+	cb: (p: Player, season: number | "career") => Promise<void>,
 ) => {
 	// Even in past seasons, make sure we have latest info for players
 	const cachePlayers = await idb.cache.players.getAll();
 	const cachePlayersByPid = groupByUnique(cachePlayers, "pid");
 
-	const applyCB = async (p: Player<MinimalPlayerRatings>) => {
+	const applyCB = async (p: Player) => {
 		if (season === "all") {
 			const seasons = new Set(p.stats.map((row) => row.season));
 			for (const season of seasons) {

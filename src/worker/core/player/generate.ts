@@ -34,7 +34,7 @@ const generate = (
 		lastName: "LastName",
 		race: "asian",
 	},
-): PlayerWithoutKey<MinimalPlayerRatings> => {
+): PlayerWithoutKey => {
 	const { heightInInches, ratings } = genRatings(
 		newLeague ? g.get("startingSeason") : draftYear,
 		scoutingLevel,

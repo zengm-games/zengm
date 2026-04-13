@@ -9,7 +9,7 @@ import setContract from "./setContract.ts";
 import skills from "./skills.ts";
 import stats from "./stats.ts";
 import { g, helpers, random } from "../../util/index.ts";
-import type { MinimalPlayerRatings, Player } from "../../../common/types.ts";
+import type { Player } from "../../../common/types.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 /**
@@ -23,7 +23,7 @@ const augmentPartialPlayer = async (
 	p: any,
 	scoutingLevel: number,
 	version: number | undefined,
-): Promise<Player<MinimalPlayerRatings>> => {
+): Promise<Player> => {
 	let age;
 
 	if (p.born === undefined) {

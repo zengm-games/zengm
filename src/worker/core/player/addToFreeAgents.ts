@@ -1,9 +1,5 @@
 import { PLAYER } from "../../../common/constants.ts";
-import type {
-	MinimalPlayerRatings,
-	Player,
-	PlayerWithoutKey,
-} from "../../../common/types.ts";
+import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
 
 /**
  * Adds player to the free agents list.
@@ -15,7 +11,7 @@ import type {
  * @param {Object} p Player object.
  */
 const addToFreeAgents = async (
-	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
+	p: Player | PlayerWithoutKey,
 	numPlayersTradedAwayNormalized: Record<number, number>,
 ) => {
 	p.tid = PLAYER.FREE_AGENT;

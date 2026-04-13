@@ -1,11 +1,6 @@
 import { idb } from "../db/index.ts";
 import { g, helpers, processPlayersHallOfFame } from "../util/index.ts";
-import type {
-	UpdateEvents,
-	Player,
-	ViewInput,
-	MinimalPlayerRatings,
-} from "../../common/types.ts";
+import type { UpdateEvents, Player, ViewInput } from "../../common/types.ts";
 import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
 import { player } from "../core/index.ts";
 import { PLAYER } from "../../common/constants.ts";
@@ -20,7 +15,7 @@ type Most = {
 	extra?: Record<string, unknown>;
 };
 
-type PlayersAll = (Player<MinimalPlayerRatings> & {
+type PlayersAll = (Player & {
 	most: Most;
 })[];
 
@@ -124,7 +119,7 @@ const getMostXPlayers = async ({
 	};
 };
 
-const playerValue = (p: Player<MinimalPlayerRatings>) => {
+const playerValue = (p: Player) => {
 	let sum = 0;
 	for (const ps of p.stats) {
 		sum += getValueStatsRow(ps);
@@ -283,7 +278,7 @@ const updatePlayers = async (
 				stats: goatFormula.STAT_VARIABLES,
 			};
 
-			getValue = (p: Player<MinimalPlayerRatings>) => {
+			getValue = (p: Player) => {
 				let value = 0;
 				try {
 					value = goatFormula.evaluate(p, undefined, {
@@ -320,7 +315,7 @@ const updatePlayers = async (
 				stats: goatFormula.STAT_VARIABLES,
 			};
 
-			getValue = (p: Player<MinimalPlayerRatings>) => {
+			getValue = (p: Player) => {
 				const seasons = Array.from(
 					new Set(
 						p.stats.filter((row) => !row.playoffs).map((row) => row.season),

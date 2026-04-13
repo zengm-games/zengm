@@ -7,7 +7,6 @@ import {
 import { groupByUnique, orderBy } from "../../../../common/utils.ts";
 import type {
 	PlayerWithoutKey,
-	MinimalPlayerRatings,
 	PlayerContract,
 	Team,
 } from "../../../../common/types.ts";
@@ -60,7 +59,7 @@ const createRandomPlayers = async ({
 
 	// Keep synced with Dropdown.js seasonsAndOldDrafts and addRelatives
 	const rookieSalaries = draft.getRookieSalaries();
-	let keptPlayers: PlayerWithoutKey<MinimalPlayerRatings>[] = [];
+	let keptPlayers: PlayerWithoutKey[] = [];
 
 	for (
 		let numYearsAgo = NUM_PAST_SEASONS;
@@ -294,9 +293,7 @@ const createRandomPlayers = async ({
 		numPlayersTradedAwayNormalized[tid] = 0;
 	}
 
-	const addToFreeAgents = (
-		p: PlayerWithoutKey<MinimalPlayerRatings> | undefined,
-	) => {
+	const addToFreeAgents = (p: PlayerWithoutKey | undefined) => {
 		// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (p) {
 			// So half will be eligible to retire after the first season

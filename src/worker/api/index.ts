@@ -1256,7 +1256,7 @@ const evalOnWorker = async (code: string) => {
 // exportPlayerAveragesCsv(2015) - just 2015 stats
 // exportPlayerAveragesCsv("all") - all stats
 const exportPlayerAveragesCsv = async (season: number | "all") => {
-	let players: Player<MinimalPlayerRatings>[];
+	let players: Player[];
 
 	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
 		players = await idb.cache.players.indexGetAll("playersByTid", [

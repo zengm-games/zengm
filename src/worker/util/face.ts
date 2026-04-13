@@ -1,10 +1,6 @@
 import { generate as generateFace, type FaceConfig } from "facesjs";
 import { idb } from "../db/index.ts";
-import type {
-	MinimalPlayerRatings,
-	PlayerWithoutKey,
-	Race,
-} from "../../common/types.ts";
+import type { PlayerWithoutKey, Race } from "../../common/types.ts";
 import { DEFAULT_JERSEY } from "../../common/constants.ts";
 import g from "./g.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
@@ -74,7 +70,7 @@ export const generate = (
 	return face;
 };
 
-export const upgrade = async (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
+export const upgrade = async (p: PlayerWithoutKey) => {
 	// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 	if (!p.face || !p.face.accessories) {
 		// @ts-expect-error

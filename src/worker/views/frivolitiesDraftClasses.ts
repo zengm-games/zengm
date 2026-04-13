@@ -1,17 +1,13 @@
 import { idb } from "../db/index.ts";
 import { g, processPlayersHallOfFame } from "../util/index.ts";
-import type {
-	UpdateEvents,
-	Player,
-	MinimalPlayerRatings,
-} from "../../common/types.ts";
+import type { UpdateEvents, Player } from "../../common/types.ts";
 import { PHASE } from "../../common/constants.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { orderBy } from "../../common/utils.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 
-const playerValue = (p: Player<MinimalPlayerRatings>) => {
+const playerValue = (p: Player) => {
 	let sum = 0;
 	for (const ps of p.stats) {
 		sum += bySport({
@@ -41,7 +37,7 @@ const updateFrivolitiesDraftClasses = async (
 			numAS: number;
 			numActive: number;
 			bestPlayer: {
-				p: Player<MinimalPlayerRatings>;
+				p: Player;
 				value: number;
 			};
 		};

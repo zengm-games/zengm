@@ -14,7 +14,6 @@ import type {
 	HeadToHead,
 	Message,
 	MessageWithoutKey,
-	MinimalPlayerRatings,
 	Negotiation,
 	Player,
 	PlayerWithoutKey,
@@ -272,11 +271,7 @@ class Cache {
 
 	playerFeats: StoreAPI<PlayerFeatWithoutKey, PlayerFeat, number>;
 
-	players: StoreAPI<
-		PlayerWithoutKey<MinimalPlayerRatings>,
-		Player<MinimalPlayerRatings>,
-		number
-	>;
+	players: StoreAPI<PlayerWithoutKey, Player, number>;
 
 	playoffSeries: StoreAPI<PlayoffSeries, PlayoffSeries, number>;
 

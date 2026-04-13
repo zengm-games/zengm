@@ -17,7 +17,6 @@ import {
 import type {
 	Conditions,
 	PhaseReturn,
-	MinimalPlayerRatings,
 	Player,
 	LogEventType,
 	GameAttributesLeague,
@@ -422,8 +421,7 @@ const newPhaseBeforeDraft = async (
 			Infinity,
 		]);
 
-		const retiredPlayersByTeam: Record<number, Player<MinimalPlayerRatings>[]> =
-			{};
+		const retiredPlayersByTeam: Record<number, Player[]> = {};
 
 		for (const p of players) {
 			let update = false;

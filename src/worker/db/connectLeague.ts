@@ -29,7 +29,6 @@ import type {
 	Negotiation,
 	PlayerFeat,
 	Player,
-	MinimalPlayerRatings,
 	PlayoffSeries,
 	ScheduleGame,
 	TeamSeason,
@@ -114,7 +113,7 @@ export interface LeagueDB extends DBSchema {
 	};
 	players: {
 		key: number;
-		value: Player<MinimalPlayerRatings>;
+		value: Player;
 		autoIncrementKeyPath: "pid";
 		indexes: {
 			"draft.year, retiredYear": [number, number];

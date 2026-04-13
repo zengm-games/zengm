@@ -1,11 +1,7 @@
 import { allStar, player, season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
-import type {
-	Player,
-	MinimalPlayerRatings,
-	Conditions,
-} from "../../../common/types.ts";
+import type { Player, Conditions } from "../../../common/types.ts";
 import {
 	COMPOSITE_WEIGHTS,
 	DEFAULT_PLAY_THROUGH_INJURIES,
@@ -111,7 +107,7 @@ export const processTeam = async (
 		cid: number;
 		did: number;
 	},
-	players: Player<MinimalPlayerRatings>[],
+	players: Player[],
 	exhibitionGame?: boolean,
 ) => {
 	if (!playerStats) {

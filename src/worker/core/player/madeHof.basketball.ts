@@ -1,9 +1,5 @@
 import { g, helpers } from "../../util/index.ts";
-import type {
-	Player,
-	PlayerWithoutKey,
-	MinimalPlayerRatings,
-} from "../../../common/types.ts";
+import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
 
 /**
  * Is a player worthy of the Hall of Fame?
@@ -14,9 +10,7 @@ import type {
  * @param {Object} p Player object.
  * @return {boolean} Hall of Fame worthy?
  */
-const madeHof = (
-	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
-): boolean => {
+const madeHof = (p: Player | PlayerWithoutKey): boolean => {
 	let earliestSeason = Infinity;
 
 	// Average together WS and EWA

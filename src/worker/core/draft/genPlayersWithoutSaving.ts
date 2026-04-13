@@ -1,11 +1,7 @@
 import { PLAYER } from "../../../common/constants.ts";
 import { player } from "../index.ts";
 import { defaultGameAttributes, g, random } from "../../util/index.ts";
-import type {
-	MinimalPlayerRatings,
-	Player,
-	PlayerWithoutKey,
-} from "../../../common/types.ts";
+import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 // To improve the distribution of DP ages in leagues with modified draftAges, this code will change the % of players who declare for draft each year to work better with modified draftAges settings. Previously, it was just a constant defaultFractionPerYear.
@@ -51,9 +47,9 @@ const developOneSeason = async (p: Player) => {
 const genPlayersWithoutSaving = async (
 	draftYear: number,
 	scoutingLevel: number,
-	existingPlayers: PlayerWithoutKey<MinimalPlayerRatings>[],
+	existingPlayers: PlayerWithoutKey[],
 	forceScrubs?: boolean,
-): Promise<PlayerWithoutKey<MinimalPlayerRatings>[]> => {
+): Promise<PlayerWithoutKey[]> => {
 	// If user has increased the number of rounds - code below ensures excess players are scrubs.
 	// If user has descreased the number of rounds - keep number of prospects the same, more will go undrafted.
 	const normalNumPlayers = Math.round(

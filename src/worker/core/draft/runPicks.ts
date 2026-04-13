@@ -6,15 +6,14 @@ import { idb } from "../../db/index.ts";
 import { g, local, lock, random } from "../../util/index.ts";
 import type {
 	Conditions,
-	MinimalPlayerRatings,
 	Player,
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
 import { player, team } from "../index.ts";
 
 export const getTeamOvrDiffs = (
-	teamPlayers: PlayerWithoutKey<MinimalPlayerRatings>[],
-	players: PlayerWithoutKey<MinimalPlayerRatings>[],
+	teamPlayers: PlayerWithoutKey[],
+	players: PlayerWithoutKey[],
 ) => {
 	if (!DRAFT_BY_TEAM_OVR) {
 		return [];
@@ -90,7 +89,7 @@ const runPicks = async (
 
 	const expansionDraft = g.get("expansionDraft");
 
-	let playersAll: Player<MinimalPlayerRatings>[];
+	let playersAll: Player[];
 	if (g.get("phase") === PHASE.FANTASY_DRAFT) {
 		playersAll = await idb.cache.players.indexGetAll(
 			"playersByTid",
@@ -177,7 +176,7 @@ const runPicks = async (
 			);
 			const teamOvrDiffs = await getTeamOvrDiffs(teamPlayers, playersAll);
 
-			const score = (p: Player<MinimalPlayerRatings>, i: number) => {
+			const score = (p: Player, i: number) => {
 				if (DRAFT_BY_TEAM_OVR) {
 					return (teamOvrDiffs[i]! + 0.05 * p.value) ** 40;
 				}

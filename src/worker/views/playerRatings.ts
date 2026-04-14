@@ -26,7 +26,7 @@ export const extraRatings = bySport({
 	hockey: ["ovrs", "pots"],
 });
 
-const getActivePlayoffTids = async () => {
+export const getActivePlayoffTids = async () => {
 	const tids = new Set<number>();
 	const phase = actualPhase();
 	if (!REMAINING_PLAYOFF_TEAMS_PHASES.has(phase)) {
@@ -145,15 +145,13 @@ export const getPlayers = async (
 		);
 	}
 
-	// Show all teams
-	if (tid === undefined && abbrev === "watch") {
-		playersAll = playersAll.filter((p) => p.watch);
-	}
-
-	// Show only playoff teamas
-	if (tid === undefined && abbrev === "playoffs") {
-		const playoffTids = await getActivePlayoffTids();
-		playersAll = playersAll.filter((p) => playoffTids.has(p.tid));
+	if (tid === undefined) {
+		if (abbrev === "watch") {
+			playersAll = playersAll.filter((p) => p.watch);
+		} else if (abbrev === "playoffs") {
+			const playoffTids = await getActivePlayoffTids();
+			playersAll = playersAll.filter((p) => playoffTids.has(p.tid));
+		}
 	}
 
 	// showNoStats for current season (so draft picks etc show up on their correct team) or for no team (so free agents show up)

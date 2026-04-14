@@ -9,6 +9,7 @@ import type {
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getBestPos } from "../core/player/checkJerseyNumberRetirement.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { getActivePlayoffTids } from "./playerRatings.ts";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerStats">,
@@ -100,8 +101,13 @@ const updatePlayers = async (
 			statType = "totals";
 		}
 
-		if (tid === undefined && inputs.abbrev === "watch") {
-			playersAll = playersAll.filter((p) => p.watch);
+		if (tid === undefined) {
+			if (inputs.abbrev === "watch") {
+				playersAll = playersAll.filter((p) => p.watch);
+			} else if (inputs.abbrev === "playoffs") {
+				const playoffTids = await getActivePlayoffTids();
+				playersAll = playersAll.filter((p) => playoffTids.has(p.tid));
+			}
 		}
 
 		let players = await idb.getCopies.playersPlus(playersAll, {

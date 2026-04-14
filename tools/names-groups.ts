@@ -147,9 +147,7 @@ for (const [group, countries] of Object.entries(groups)) {
 				}
 
 				const object = counts[type];
-				if (object[actualName] === undefined) {
-					object[actualName] = 0;
-				}
+				object[actualName] ??= 0;
 				object[actualName]! += frequency;
 			}
 		}

@@ -170,12 +170,8 @@ const newPhasePreseason = async (
 
 		const newTeamSeason = team.genSeasonRow(t, prevSeason);
 
-		if (t.pop === undefined) {
-			t.pop = newTeamSeason.pop;
-		}
-		if (t.stadiumCapacity === undefined) {
-			t.stadiumCapacity = newTeamSeason.stadiumCapacity;
-		}
+		t.pop ??= newTeamSeason.pop;
+		t.stadiumCapacity ??= newTeamSeason.stadiumCapacity;
 
 		// Mean population should stay constant, otherwise the economics change too much
 		if (!g.get("equalizeRegions")) {

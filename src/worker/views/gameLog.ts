@@ -175,9 +175,7 @@ const boxScore = async (gid: number) => {
 	const overtimeText = helpers.overtimeText(game.overtimes, game.numPeriods);
 	const overtime = overtimeText === "" ? "" : `(${overtimeText})`;
 
-	if (game.numPeriods === undefined) {
-		game.numPeriods = 4;
-	}
+	game.numPeriods ??= 4;
 
 	const game2 = {
 		...game,

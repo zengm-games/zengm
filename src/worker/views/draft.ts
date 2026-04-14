@@ -18,10 +18,8 @@ const getUserNextPickYear = async () => {
 	// This could be the current season, but that's fine because the UI handles that case
 	let nextPickYear = minBy(draftPicks, "season")?.season as number | undefined;
 
-	if (nextPickYear === undefined) {
-		// No picks at all in future drafts, so find what the next one to be generated is
-		nextPickYear = g.get("season") + g.get("numSeasonsFutureDraftPicks");
-	}
+	// No picks at all in future drafts, so find what the next one to be generated is
+	nextPickYear ??= g.get("season") + g.get("numSeasonsFutureDraftPicks");
 
 	return nextPickYear;
 };

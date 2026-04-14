@@ -2163,9 +2163,7 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		if (this.outsIfNoErrorsByPitcherPid[pitcher.id] === undefined) {
-			this.outsIfNoErrorsByPitcherPid[pitcher.id] = 0;
-		}
+		this.outsIfNoErrorsByPitcherPid[pitcher.id] ??= 0;
 		this.outsIfNoErrorsByPitcherPid[pitcher.id]! += 1;
 		this.outsIfNoErrors += 1;
 	}
@@ -2814,9 +2812,7 @@ class GameSim extends GameSimBase {
 				const pos = this.team[t].playersInGame[p.id]!.pos;
 				const posIndex = POS_NUMBERS[pos] - 1;
 
-				if (p.stat[s][posIndex] === undefined) {
-					p.stat[s][posIndex] = 0;
-				}
+				p.stat[s][posIndex] ??= 0;
 				p.stat[s][posIndex] += amt;
 			} else {
 				p.stat[s] += amt;
@@ -2847,9 +2843,7 @@ class GameSim extends GameSimBase {
 					const pos = this.team[t].playersInGame[p!.id]!.pos;
 					const posIndex = POS_NUMBERS[pos] - 1;
 
-					if (this.team[t].t.stat[s][posIndex] === undefined) {
-						this.team[t].t.stat[s][posIndex] = 0;
-					}
+					this.team[t].t.stat[s][posIndex] ??= 0;
 					this.team[t].t.stat[s][posIndex] += amt;
 				} else {
 					this.team[t].t.stat[s] += amt;

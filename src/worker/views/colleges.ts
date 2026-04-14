@@ -171,11 +171,8 @@ export const genView = (
 				for (const t of teams) {
 					if (t.retiredJerseyNumbers) {
 						for (const row of t.retiredJerseyNumbers) {
-							if (retiredCounts[row.number] === undefined) {
-								retiredCounts[row.number] = 1;
-							} else {
-								retiredCounts[row.number]! += 1;
-							}
+							retiredCounts[row.number] ??= 0;
+							retiredCounts[row.number]! += 1;
 						}
 					}
 				}

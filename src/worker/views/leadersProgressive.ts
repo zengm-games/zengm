@@ -302,9 +302,7 @@ const updateLeadersProgressive = async (
 				continue;
 			}
 
-			if (yearByYearCounts[row.yearByYear.pid] === undefined) {
-				yearByYearCounts[row.yearByYear.pid] = 0;
-			}
+			yearByYearCounts[row.yearByYear.pid] ??= 0;
 			yearByYearCounts[row.yearByYear.pid]! += 1;
 
 			row.yearByYear.count = yearByYearCounts[row.yearByYear.pid]!;

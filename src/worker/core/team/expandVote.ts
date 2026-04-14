@@ -24,11 +24,8 @@ const getBestDid = (
 	// newDids is to handle multiple teams coming in at the same time - don't put them in the same div!
 	const divCounts: Record<string, number> = {};
 	for (const did of [...teams.map((t) => t.did), ...newDids]) {
-		if (divCounts[did] === undefined) {
-			divCounts[did] = 1;
-		} else {
-			divCounts[did] += 1;
-		}
+		divCounts[did] ??= 0;
+		divCounts[did] += 1;
 	}
 	const minDivSize = Math.min(...Object.values(divCounts));
 	const candidateDids = Object.keys(divCounts)

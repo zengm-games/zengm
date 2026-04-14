@@ -307,9 +307,7 @@ const writeTeamStats = async (results: GameResults) => {
 				continue;
 			}
 
-			if (teamStats[key] === undefined) {
-				teamStats[key] = 0;
-			}
+			teamStats[key] ??= 0;
 
 			if (isSport("football") && key.endsWith("Lng")) {
 				if (results.team[t1].stat[key] > teamStats[key]) {
@@ -319,9 +317,7 @@ const writeTeamStats = async (results: GameResults) => {
 				for (let i = 0; i < results.team[t1].stat[key].length; i++) {
 					const value = results.team[t1].stat[key][i];
 					if (value !== undefined) {
-						if (teamStats[key][i] === undefined) {
-							teamStats[key][i] = 0;
-						}
+						teamStats[key][i] ??= 0;
 						teamStats[key][i] += value;
 					}
 				}
@@ -342,9 +338,7 @@ const writeTeamStats = async (results: GameResults) => {
 						for (let i = 0; i < results.team[t2].stat[key].length; i++) {
 							const value = results.team[t2].stat[key][i];
 							if (value !== undefined) {
-								if (teamStats[oppKey][i] === undefined) {
-									teamStats[oppKey][i] = 0;
-								}
+								teamStats[oppKey][i] ??= 0;
 								teamStats[oppKey][i] += value;
 							}
 						}

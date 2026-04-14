@@ -47,13 +47,9 @@ describe("old basketball tests", options, () => {
 		const home: Record<number, number> = {}; // Number of home games for each team
 		const away: Record<number, number> = {}; // Number of away games for each team
 		for (const matchup of tids) {
-			if (home[matchup[0]] === undefined) {
-				home[matchup[0]] = 0;
-			}
-			if (away[matchup[1]] === undefined) {
-				away[matchup[1]] = 0;
-			}
+			home[matchup[0]] ??= 0;
 			home[matchup[0]]! += 1;
+			away[matchup[1]] ??= 0;
 			away[matchup[1]]! += 1;
 		}
 
@@ -78,12 +74,8 @@ describe("old basketball tests", options, () => {
 				throw new Error("Team not found");
 			}
 			if (t0.seasonAttrs.cid !== t1.seasonAttrs.cid) {
-				if (home[matchup[1]] === undefined) {
-					home[matchup[1]] = {};
-				}
-				if (home[matchup[1]]![matchup[0]] === undefined) {
-					home[matchup[1]]![matchup[0]] = 0;
-				}
+				home[matchup[1]] ??= {};
+				home[matchup[1]]![matchup[0]] ??= 0;
 				home[matchup[1]]![matchup[0]]! += 1;
 			}
 		}
@@ -111,12 +103,8 @@ describe("old basketball tests", options, () => {
 				throw new Error("Team not found");
 			}
 			if (t0.seasonAttrs.did === t1.seasonAttrs.did) {
-				if (home[matchup[1]] === undefined) {
-					home[matchup[1]] = {};
-				}
-				if (home[matchup[1]]![matchup[0]] === undefined) {
-					home[matchup[1]]![matchup[0]] = 0;
-				}
+				home[matchup[1]] ??= {};
+				home[matchup[1]]![matchup[0]] ??= 0;
 				home[matchup[1]]![matchup[0]]! += 1;
 			}
 		}
@@ -147,12 +135,8 @@ describe("old basketball tests", options, () => {
 				t0.seasonAttrs.cid === t1.seasonAttrs.cid &&
 				t0.seasonAttrs.did !== t1.seasonAttrs.did
 			) {
-				if (home[matchup[1]] === undefined) {
-					home[matchup[1]] = {};
-				}
-				if (home[matchup[1]]![matchup[0]] === undefined) {
-					home[matchup[1]]![matchup[0]] = 0;
-				}
+				home[matchup[1]] ??= {};
+				home[matchup[1]]![matchup[0]] ??= 0;
 				home[matchup[1]]![matchup[0]]! += 1;
 			}
 		}
@@ -275,14 +259,9 @@ describe("old newScheduleCrappy tests", options, () => {
 				const home: Record<number, number> = {}; // Number of home games for each team
 				const away: Record<number, number> = {}; // Number of away games for each team
 				for (const matchup of matchups) {
-					if (home[matchup[0]] === undefined) {
-						home[matchup[0]] = 0;
-					}
-					if (away[matchup[1]] === undefined) {
-						away[matchup[1]] = 0;
-					}
-
+					home[matchup[0]] ??= 0;
 					home[matchup[0]]! += 1;
+					away[matchup[1]] ??= 0;
 					away[matchup[1]]! += 1;
 				}
 

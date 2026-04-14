@@ -78,9 +78,7 @@ const augmentPartialPlayer = async (
 	] as (keyof typeof pg)[];
 
 	for (const key of simpleDefaults) {
-		if (p[key] === undefined) {
-			p[key] = pg[key];
-		}
+		p[key] ??= pg[key];
 	}
 
 	if (!p.face || !p.face.accessories) {
@@ -164,18 +162,14 @@ const augmentPartialPlayer = async (
 		}
 	} else if (p.tid === PLAYER.RETIRED) {
 		for (const r of p.ratings) {
-			if (r.season === undefined) {
-				r.season =
-					typeof p.retiredYear === "number" ? p.retiredYear : currentSeason;
-			}
+			r.season ??=
+				typeof p.retiredYear === "number" ? p.retiredYear : currentSeason;
 		}
 	} else if (g.get("phase") !== PHASE.FANTASY_DRAFT) {
 		if (!Array.isArray(p.ratings)) {
 			console.log(p);
 		}
-		if (p.ratings[0].season === undefined) {
-			p.ratings[0].season = currentSeason;
-		}
+		p.ratings[0].season ??= currentSeason;
 
 		// Fix improperly-set season in ratings
 		if (
@@ -292,9 +286,7 @@ const augmentPartialPlayer = async (
 	// Handle old format position
 	if (p.pos !== undefined) {
 		for (let i = 0; i < p.ratings.length; i++) {
-			if (p.ratings[i].pos === undefined) {
-				p.ratings[i].pos = p.pos;
-			}
+			p.ratings[i].pos ??= p.pos;
 		}
 	}
 
@@ -356,9 +348,7 @@ const augmentPartialPlayer = async (
 
 	// Don't delete p.pos because it is used as a marker that this is from a league file and we shouldn't automatically change pos over time
 
-	if (p.salaries === undefined) {
-		p.salaries = [];
-	}
+	p.salaries ??= [];
 
 	if (p.contract === undefined) {
 		setContract(

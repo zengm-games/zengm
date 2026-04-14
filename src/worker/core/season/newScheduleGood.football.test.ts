@@ -37,13 +37,9 @@ test("schedule 8 home games and 8 away games for each team", () => {
 	const home: Record<number, number> = {}; // Number of home games for each team
 	const away: Record<number, number> = {}; // Number of away games for each team
 	for (const matchup of tids) {
-		if (home[matchup[0]] === undefined) {
-			home[matchup[0]] = 0;
-		}
-		if (away[matchup[1]] === undefined) {
-			away[matchup[1]] = 0;
-		}
+		home[matchup[0]] ??= 0;
 		home[matchup[0]]! += 1;
+		away[matchup[1]] ??= 0;
 		away[matchup[1]]! += 1;
 	}
 
@@ -71,12 +67,8 @@ test("schedule each team two home games against every team in the same division"
 			throw new Error("Team not found");
 		}
 		if (t0.seasonAttrs.did === t1.seasonAttrs.did) {
-			if (home[matchup[1]] === undefined) {
-				home[matchup[1]] = {};
-			}
-			if (home[matchup[1]]![matchup[0]] === undefined) {
-				home[matchup[1]]![matchup[0]] = 0;
-			}
+			home[matchup[1]] ??= {};
+			home[matchup[1]]![matchup[0]] ??= 0;
 			home[matchup[1]]![matchup[0]]! += 1;
 		}
 	}

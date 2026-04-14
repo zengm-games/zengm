@@ -1081,12 +1081,8 @@ const migrate = async ({
 								? keepRosterSorted
 								: true;
 
-							if (t.adjustForInflation === undefined) {
-								t.adjustForInflation = true;
-							}
-							if (t.disabled === undefined) {
-								t.disabled = false;
-							}
+							t.adjustForInflation ??= true;
+							t.disabled ??= false;
 
 							await cursor.update(t);
 						}
@@ -1360,16 +1356,10 @@ const migrate = async ({
 
 		for await (const cursor of transaction.objectStore("teamSeasons")) {
 			const ts = cursor.value;
-			if (ts.tied === undefined) {
-				ts.tied = 0;
-			}
-			if (ts.otl === undefined) {
-				ts.otl = 0;
-			}
+			ts.tied ??= 0;
+			ts.otl ??= 0;
 			const gp = helpers.getTeamSeasonGp(ts);
-			if (ts.gpHome === undefined) {
-				ts.gpHome = Math.round(gp / 2);
-			}
+			ts.gpHome ??= Math.round(gp / 2);
 
 			// Move the amount to root, no more storing rank
 			for (const key of helpers.keys(ts.revenues)) {

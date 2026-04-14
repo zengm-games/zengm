@@ -130,10 +130,9 @@ const updateSeasonPreview = async (
 			const teamPlayers = playersByTid.get(teamSeason.tid) ?? [];
 
 			let ovrStart = teamSeason.ovrStart;
-			if (ovrStart === undefined) {
-				// Hasn't played first game yet, or old season where ovrStart didn't exist
-				ovrStart = team.ovr(teamPlayers);
-			}
+
+			// Hasn't played first game yet, or old season where ovrStart didn't exist
+			ovrStart ??= team.ovr(teamPlayers);
 
 			const teamSeasonPrev = teamSeasonsPrev.find(
 				(ts) => ts.tid === teamSeason.tid,

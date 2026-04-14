@@ -259,9 +259,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 				const tid = row[category].tid;
 				const categoryCounts = counts[category]!;
-				if (categoryCounts[tid] === undefined) {
-					categoryCounts[tid] = 0;
-				}
+				categoryCounts[tid] ??= 0;
 				categoryCounts[tid] += 1;
 				row[category].count = categoryCounts[tid];
 			}
@@ -273,9 +271,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 				const pid = row[category].pid;
 				const categoryCounts = counts[category]!;
-				if (categoryCounts[pid] === undefined) {
-					categoryCounts[pid] = 0;
-				}
+				categoryCounts[pid] ??= 0;
 				categoryCounts[pid] += 1;
 				row[category].count = categoryCounts[pid];
 			}

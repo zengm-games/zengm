@@ -664,9 +664,7 @@ const sumCareerStats = (careerStats: any[], attr: string) => {
 			for (let i = 0; i < cs[attr].length; i++) {
 				const arrayValue = cs[attr][i];
 				if (arrayValue !== undefined) {
-					if (info.value[i] === undefined) {
-						info.value[i] = 0;
-					}
+					info.value[i] ??= 0;
 					info.value[i] += arrayValue;
 				}
 			}

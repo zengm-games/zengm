@@ -84,11 +84,8 @@ const getBest = <T extends PlayerWithoutKey>(
 				const pos = p.ratings.at(-1)!.pos;
 				const injured = p.injury.gamesRemaining > 0;
 				const object = positionCounts[injured ? "injured" : "healthy"];
-				if (object[pos] === undefined) {
-					object[pos] = 1;
-				} else {
-					object[pos] += 1;
-				}
+				object[pos] ??= 0;
+				object[pos] += 1;
 			}
 
 			keyPositionsNeededCache = allKeyPositionsNeeded.filter((pos) => {

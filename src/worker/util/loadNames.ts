@@ -101,9 +101,7 @@ export const initDefaults = async (
 			possiblyMissingCountries.push(...countries);
 		}
 		for (const country of possiblyMissingCountries) {
-			if (myDefaultCountries[country] === undefined) {
-				myDefaultCountries[country] = 0.2;
-			}
+			myDefaultCountries[country] ??= 0.2;
 		}
 
 		// Handle female names

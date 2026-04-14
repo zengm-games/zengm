@@ -259,9 +259,7 @@ const getRealFinalsMvp = async (
 				}
 
 				for (const [i, gp] of p.gpF.entries()) {
-					if (info.gpF[i] === undefined) {
-						info.gpF[i] = 0;
-					}
+					info.gpF[i] ??= 0;
 					if (gp !== undefined) {
 						info.gpF[i] += gp;
 					}

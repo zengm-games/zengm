@@ -1269,11 +1269,8 @@ const getJerseyNumber = (
 		if (jerseyNumber === undefined) {
 			continue;
 		}
-		if (numSeasonsByJerseyNumber[jerseyNumber] === undefined) {
-			numSeasonsByJerseyNumber[jerseyNumber] = 1;
-		} else {
-			numSeasonsByJerseyNumber[jerseyNumber] += 1;
-		}
+		numSeasonsByJerseyNumber[jerseyNumber] ??= 0;
+		numSeasonsByJerseyNumber[jerseyNumber] += 1;
 
 		if (numSeasonsByJerseyNumber[jerseyNumber] > max) {
 			max = numSeasonsByJerseyNumber[jerseyNumber];

@@ -92,12 +92,8 @@ const processPlayersHallOfFame = <
 
 				const pos = posBySeason[ps.season];
 				if (pos !== undefined) {
-					//console.log(ps.pos, ps)
-					if (posByEWA[pos] === undefined) {
-						posByEWA[pos] = ewa;
-					} else {
-						posByEWA[pos] += ewa;
-					}
+					posByEWA[pos] ??= 0;
+					posByEWA[pos] += ewa;
 				}
 			}
 			if (Object.hasOwn(teamSums, tid)) {
@@ -106,14 +102,11 @@ const processPlayersHallOfFame = <
 				teamSums[tid] = ewa;
 			}
 		}
-		if (bestStats === undefined) {
-			bestStats = p.careerStats;
-		}
-		if (bestPos === undefined) {
-			bestPos =
-				maxBy(Object.entries(posByEWA), ([, ewa]) => ewa)?.[0] ??
-				p.ratings.at(-1)?.pos;
-		}
+
+		bestStats ??= p.careerStats;
+		bestPos ??=
+			maxBy(Object.entries(posByEWA), ([, ewa]) => ewa)?.[0] ??
+			p.ratings.at(-1)?.pos;
 
 		const legacyTid = Number.parseInt(
 			Object.keys(teamSums).reduce(

@@ -59,11 +59,8 @@ const augment = (allAllStars: AllStars[]) => {
 		const pid = object.pid;
 
 		const countKey = key === "captain1" || key === "captain2" ? "captain" : key;
-		if (counts[countKey][pid] === undefined) {
-			counts[countKey][pid] = 1;
-		} else {
-			counts[countKey][pid] += 1;
-		}
+		counts[countKey][pid] ??= 0;
+		counts[countKey][pid] += 1;
 
 		object.count = counts[countKey][pid];
 	};

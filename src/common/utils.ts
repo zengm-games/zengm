@@ -96,12 +96,8 @@ export const countBy = <T>(
 
 	for (const item of items) {
 		const key = getValueByIteratee(iteratee, item);
-
-		if (output[key] === undefined) {
-			output[key] = 1;
-		} else {
-			output[key] += 1;
-		}
+		output[key] ??= 0;
+		output[key] += 1;
 	}
 
 	return output;

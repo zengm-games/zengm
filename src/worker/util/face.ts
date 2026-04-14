@@ -47,24 +47,23 @@ export const generate = (
 		...options,
 	});
 
-	if (!isSport("baseball")) {
-		const allowEyeBlack = bySport({
-			baseball: false,
-			basketball: false,
-			football: true,
-			hockey: false,
-		});
+	const allowEyeBlack = bySport({
+		baseball: true, // Doesn't matter, gets replaced by hat
+		basketball: false,
+		football: true,
+		hockey: false,
+	});
 
-		// No baseball hat
-		while (
-			face.accessories.id.startsWith("hat") ||
-			(!allowEyeBlack && face.accessories.id === "eye-black")
-		) {
-			face = generateFace(overrides, {
-				gender,
-				...options,
-			});
-		}
+	while (
+		// Baseball hat is only for baseball
+		(!isSport("baseball") && face.accessories.id.startsWith("hat")) ||
+		(!allowEyeBlack && face.accessories.id === "eye-black") ||
+		face.accessories.id === "santa-hat"
+	) {
+		face = generateFace(overrides, {
+			gender,
+			...options,
+		});
 	}
 
 	return face;

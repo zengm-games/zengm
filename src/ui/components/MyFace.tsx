@@ -3,6 +3,11 @@ import { Face } from "facesjs/react";
 import { DEFAULT_JERSEY, DEFAULT_TEAM_COLORS } from "../../common/constants.ts";
 import { isSport } from "../../common/sportFunctions.ts";
 
+const isChristmas = () => {
+	const now = new Date();
+	return now.getMonth() === 11 && now.getDate() === 25;
+};
+
 export const MyFace = ({
 	colors = DEFAULT_TEAM_COLORS,
 	face,
@@ -33,6 +38,10 @@ export const MyFace = ({
 				id: jersey,
 			},
 		};
+	}
+
+	if (isChristmas()) {
+		overrides.accessories = { id: "santa-hat" };
 	}
 
 	return (

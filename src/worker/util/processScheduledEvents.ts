@@ -91,7 +91,7 @@ const processTeamInfo = async (
 			old.name
 		} are now the <a href="${helpers.leagueUrl([
 			"roster",
-			t.abbrev,
+			`${t.abbrev}_${t.tid}`,
 			season,
 		])}">${t.region} ${t.name}</a>.`;
 
@@ -110,7 +110,7 @@ const processTeamInfo = async (
 			old.name
 		} are now the <a href="${helpers.leagueUrl([
 			"roster",
-			t.abbrev,
+			`${t.abbrev}_${t.tid}`,
 			season,
 		])}">${t.region} ${t.name}</a>.`;
 

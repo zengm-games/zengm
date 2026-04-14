@@ -78,7 +78,7 @@ const allStarMVP = async (
 			mvp.name
 		}</a> (<a href="${helpers.leagueUrl([
 			"roster",
-			g.get("teamInfoCache")[p.tid]?.abbrev,
+			`${g.get("teamInfoCache")[p.tid]?.abbrev}_${p.tid}`,
 			g.get("season"),
 		])}">${
 			g.get("teamInfoCache")[p.tid]?.abbrev

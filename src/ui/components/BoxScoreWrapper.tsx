@@ -921,7 +921,7 @@ const DetailedScore = ({
 											<a
 												href={helpers.leagueUrl([
 													"roster",
-													t.abbrev,
+													`${t.abbrev}_${t.tid}`,
 													boxScore.season,
 												])}
 											>

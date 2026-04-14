@@ -304,15 +304,17 @@ export const ScoreBox = memo(
 								rosterURL = helpers.leagueUrl(["all_star", "history"]);
 							} else {
 								const branding = t.branding ?? teamInfoCache[t.tid];
-								imgURL = branding?.imgURLSmall ?? branding?.imgURL;
-								teamName = small
-									? branding?.abbrev
-									: `${branding?.region} ${branding?.name}`;
-								rosterURL = helpers.leagueUrl([
-									"roster",
-									`${branding?.abbrev}_${t.tid}`,
-									gameSeason,
-								]);
+								if (branding) {
+									imgURL = branding.imgURLSmall ?? branding.imgURL;
+									teamName = small
+										? branding.abbrev
+										: `${branding.region} ${branding.name}`;
+									rosterURL = helpers.leagueUrl([
+										"roster",
+										`${branding.abbrev}_${t.tid}`,
+										gameSeason,
+									]);
+								}
 							}
 
 							// For @MikeHoudini on Discord

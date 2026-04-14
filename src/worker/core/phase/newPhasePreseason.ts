@@ -96,7 +96,7 @@ const newPhasePreseason = async (
 						old.name
 					} are now the <a href="${helpers.leagueUrl([
 						"roster",
-						t.abbrev,
+						`${t.abbrev}_${t.tid}`,
 						newSeason,
 					])}">${t.region} ${t.name}</a>.`;
 
@@ -112,7 +112,7 @@ const newPhasePreseason = async (
 						old.name
 					} are now the <a href="${helpers.leagueUrl([
 						"roster",
-						t.abbrev,
+						`${t.abbrev}_${t.tid}`,
 						newSeason,
 					])}">${t.region} ${t.name}</a>.`;
 
@@ -127,7 +127,7 @@ const newPhasePreseason = async (
 					logEvent({
 						text: `The <a href="${helpers.leagueUrl([
 							"roster",
-							t.abbrev,
+							`${t.abbrev}_${t.tid}`,
 							newSeason,
 						])}">${t.region} ${t.name}</a> got a new logo:<br><img src="${
 							t.imgURL

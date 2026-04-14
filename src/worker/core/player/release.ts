@@ -40,7 +40,7 @@ const release = async (p: Player, justDrafted: boolean) => {
 		type: "release",
 		text: `The <a href="${helpers.leagueUrl([
 			"roster",
-			g.get("teamInfoCache")[p.tid]?.abbrev,
+			`${g.get("teamInfoCache")[p.tid]?.abbrev}_${p.tid}`,
 			g.get("season"),
 		])}">${
 			g.get("teamInfoCache")[p.tid]?.name

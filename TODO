@@ -1,6 +1,5 @@
-next/prev on roster page should use tid
+next/prev on roster page should use tid https://discord.com/channels/290013534023057409/1492975452514422954
 - fix issue with FA abbrev redirecting to free agents
-- fix any other hardcoded ones too. done all ones with "roster" on same line as next component, check ones with "roster" on its own line
 
 in addition to force W/L/T https://app.fastmail.com/mail/Inbox/A3EoJrVHaN5J.StpcmfcZYd-7?u=433e4054
 - force OT

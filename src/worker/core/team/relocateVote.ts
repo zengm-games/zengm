@@ -81,7 +81,7 @@ const relocateVote = async ({
 			t.name
 		} are now the <a href="${helpers.leagueUrl([
 			"roster",
-			t.abbrev,
+			`${t.abbrev}_${t.tid}`,
 			g.get("season"),
 		])}">${newTeam.region} ${newTeam.name}</a> after a successful ${
 			result.for
@@ -131,7 +131,7 @@ const relocateVote = async ({
 	} else {
 		eventText = `The <a href="${helpers.leagueUrl([
 			"roster",
-			t.abbrev,
+			`${t.abbrev}_${t.tid}`,
 			g.get("season"),
 		])}">${t.region} ${t.name}</a> wanted to move to ${
 			newTeam.region

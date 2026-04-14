@@ -200,6 +200,16 @@ export type PreProcessParams = {
 	version: number | undefined;
 };
 
+// These obejcts have auto incrementing primary keys that aren't referenced by anything else, so it's safe to delete them when importing, and also prevents any issues from people manually editing league files and accidentally repeating a primary key, resulting in the latest one overwriting any earlier ones
+const PRIMARY_KEYS_TO_DELETE: Record<string, string> = {
+	messages: "mid",
+	playerFeats: "fid",
+	releasedPlayers: "rid",
+	scheduledEvents: "id",
+	teamSeasons: "rid",
+	teamStats: "rid",
+};
+
 const preProcess = async (
 	key: string,
 	x: any,
@@ -214,6 +224,11 @@ const preProcess = async (
 		version,
 	}: PreProcessParams,
 ) => {
+	const primaryKeyToDelete = PRIMARY_KEYS_TO_DELETE[key];
+	if (primaryKeyToDelete !== undefined) {
+		delete x[primaryKeyToDelete];
+	}
+
 	if (key === "draftPicks") {
 		if (typeof x.pick !== "number") {
 			x.pick = 0;

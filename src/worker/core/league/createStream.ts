@@ -750,6 +750,9 @@ const processTeamInfos = async ({
 	const teamSeasons: TeamSeasonWithoutKey[] = [];
 	const teamStats: TeamStatsWithoutKey[] = [];
 
+	const teamSeasonUniqueKeys = new Set();
+	const teamSeasonUniqueKeyErrorCounts: Record<string, number> = {};
+
 	let scoutingLevel: number | undefined;
 
 	for (const [i, t] of teams.entries()) {
@@ -959,6 +962,14 @@ const processTeamInfos = async ({
 
 			// teamSeasons = teamSeasons.filter(ts2 => ts2.season !== teamSeason.season);
 			teamSeasons.push(teamSeason);
+
+			// Check for uniqueness of (tid, season) otherwise it's an error when saving to IndexedDB
+			const uniqueKey = `${teamSeason.tid}/${teamSeason.season}`;
+			if (teamSeasonUniqueKeys.has(uniqueKey)) {
+				teamSeasonUniqueKeyErrorCounts[uniqueKey] ??= 1;
+				teamSeasonUniqueKeyErrorCounts[uniqueKey] += 1;
+			}
+			teamSeasonUniqueKeys.add(uniqueKey);
 		}
 
 		const teamStatsLocal: TeamStatsWithoutKey[] = teamInfo.stats ?? [];
@@ -990,6 +1001,15 @@ const processTeamInfos = async ({
 				t,
 				teamSeasons: teamSeasonsLocal,
 			});
+		}
+	}
+
+	{
+		const errors = Object.entries(teamSeasonUniqueKeyErrorCounts);
+		if (errors.length > 0) {
+			throw new Error(
+				`Duplicate team season entries for the following tid/season combinations: ${errors.map(([key, count]) => `${key}${count > 2 ? ` (${count} times)` : ""}`).join(", ")}`,
+			);
 		}
 	}
 

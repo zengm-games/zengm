@@ -315,6 +315,7 @@ jersey numbers by position and frequency
 extra validation that would be nice to do during schema check
 - draft year is valid (not a draft that hasn't happened yet - breaks some indexes)
 - tid is valid for players, draftPicks, etc
+- teamSeasonUniqueKeyErrorCounts stuff - could do on schema check rather than on load?
 
 button to skip schema check
 - not easy because we use some info from the scan (like in fromFile) when processing the "real" stream, but see commit ee3b58dbdda31e8400518796c0509d7f39edb188 for a somewhat working implementaion besides that

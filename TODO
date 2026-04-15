@@ -18,8 +18,6 @@ expansion like SEA->OKC->SEA - allow prior city of a current team to be selected
 - also legends leagues
 - why does charlotte work with CHA abbrev but SEA needs SET? uses CHQ for old ones
 
-when creating league: Enter league file URL, load it, then switch to upload league file and all stores are unchecked (happens in other situations too)
-
 sticky column better support in recent chrome https://www.bram.us/2026/03/30/css-sticky-per-axis/
 - will it fix scrolling with sticky header? https://x.com/basketball_gm/status/1986435826218074552 https://github.com/w3c/csswg-drafts/issues/8286
 
@@ -40,6 +38,7 @@ dev usability stuff
 - send message to any open tabs to pop up notification when a new worker process is built, then send message to worker to mark it as stale, then any new UI tab opened with stale worker show a popup with error message. to prevent accidentally having multiple tabs open
   - shared worker listen to websocket, use ws to send from server to worker, mark as stale and show error
 - make leagueUrl better typed
+- use valibot in various places, including to replace schema/types difference
 
 FBGM overtime - If team A scores in OT, And then Team B scores, They should always go for 2 bc you don’t want to give the ball back and have it be sudden death https://discord.com/channels/@me/778760871911751700/1480652733852811324
 

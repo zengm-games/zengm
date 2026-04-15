@@ -61,7 +61,7 @@ const LeaguePartPicker = ({
 							type="checkbox"
 							checked={keptKeys.includes(key)}
 						/>
-						{leaguePartDescriptions[key] ? leaguePartDescriptions[key] : key}
+						{leaguePartDescriptions[key] ?? key}
 					</label>
 				</div>
 			))}

@@ -420,6 +420,7 @@ const reducer = (state: State, action: Action): State => {
 				file: undefined,
 				url: undefined,
 				loadingLeagueFile: false,
+				allKeys: [],
 				keptKeys: [],
 				settings: {
 					// This is to reset the randomization setting, which is changed for legends and cross-era leagues

@@ -396,16 +396,18 @@ export type ScheduledEventTeamInfo = {
 	phase: Phase;
 	info: {
 		tid: number;
-		region?: string;
-		srID?: string;
-		name?: string;
-		pop?: number;
-		did?: number;
 		abbrev?: string;
+		cid?: number;
+		colors?: [string, string, string];
+		did?: number;
 		imgURL?: string;
 		imgURLSmall?: string;
-		colors?: [string, string, string];
 		jersey?: string;
+		name?: string;
+		pop?: number;
+		region?: string;
+		srID?: string;
+		stadiumCapacity?: number;
 	};
 };
 

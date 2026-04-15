@@ -888,16 +888,26 @@ const deleteFromGameAttributesScheduledEvent = async (
 const deleteFromTeamInfoScheduledEvent = async (
 	keys: (keyof ScheduledEventTeamInfo["info"])[],
 	event: ScheduledEventTeamInfo & { id: number },
+	invert: boolean,
 ) => {
 	let updated = false;
-	for (const key of keys) {
-		if (event.info[key] !== undefined) {
-			delete event.info[key];
-			updated = true;
+	if (invert) {
+		for (const key of helpers.keys(event.info)) {
+			if (key !== "tid" && key !== "srID" && !keys.includes(key)) {
+				delete event.info[key];
+				updated = true;
+			}
+		}
+	} else {
+		for (const key of keys) {
+			if (event.info[key] !== undefined) {
+				delete event.info[key];
+				updated = true;
+			}
 		}
 	}
 
-	const keys2 = Object.keys(event.info);
+	const keys2 = helpers.keys(event.info);
 	if (
 		keys2.length <= 1 ||
 		(keys2.length === 2 && keys2.includes("tid") && keys2.includes("srID"))
@@ -941,24 +951,12 @@ const deleteScheduledEvents = async (type: string) => {
 			}
 		} else if (type === "teamInfo") {
 			if (event.type === "teamInfo") {
-				await deleteFromTeamInfoScheduledEvent(
-					[
-						"region",
-						"name",
-						"pop",
-						"abbrev",
-						"imgURL",
-						"imgURLSmall",
-						"colors",
-						"jersey",
-					],
-					event,
-				);
+				await deleteFromTeamInfoScheduledEvent(["cid", "did"], event, true);
 			}
 		} else if (type === "confs") {
 			if (event.type === "teamInfo") {
 				// cid is legacy
-				await deleteFromTeamInfoScheduledEvent(["cid", "did"] as any, event);
+				await deleteFromTeamInfoScheduledEvent(["cid", "did"], event, false);
 			}
 
 			if (event.type === "gameAttributes") {

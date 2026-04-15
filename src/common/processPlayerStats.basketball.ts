@@ -6,7 +6,7 @@ export type StatSumsExtra = Record<
 	{ gp: number | undefined; min: number | undefined } | undefined
 >;
 
-const straightThrough = [
+const straightThrough = new Set([
 	"gp",
 	"gs",
 	"per",
@@ -32,7 +32,7 @@ const straightThrough = [
 	"fxf",
 	"pm100",
 	"onOff100",
-];
+]);
 
 const processStats = (
 	ps: PlayerStats,
@@ -46,7 +46,7 @@ const processStats = (
 
 	for (const stat of stats) {
 		let scale = true;
-		if (straightThrough.includes(stat)) {
+		if (straightThrough.has(stat)) {
 			row[stat] = ps[stat];
 			scale = false;
 		} else if (stat === "2pp") {

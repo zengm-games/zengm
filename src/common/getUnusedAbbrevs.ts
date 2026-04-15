@@ -11,34 +11,34 @@ const getUnusedAbbrevs = (
 ): string[] => {
 	const abbrevs: string[] = [];
 	for (const [abbrev, t] of Object.entries(teamInfos)) {
-		const blacklist = [
+		const blacklist = new Set([
 			...abbrevs,
 			...currentTeams
 				.filter((t2) => !disabledTeamsCountAsUnused || !t2.disabled)
 				.map((t2) => t2.abbrev),
-		];
+		]);
 
 		// Handle a couple teams with multiple abbrevs
-		if (blacklist.includes("LA") && abbrev === "LAL") {
+		if (blacklist.has("LA") && abbrev === "LAL") {
 			continue;
 		}
-		if (blacklist.includes("LAL") && abbrev === "LA") {
+		if (blacklist.has("LAL") && abbrev === "LA") {
 			continue;
 		}
-		if (blacklist.includes("LAC") && abbrev === "LAE") {
+		if (blacklist.has("LAC") && abbrev === "LAE") {
 			continue;
 		}
-		if (blacklist.includes("LAE") && abbrev === "LAC") {
+		if (blacklist.has("LAE") && abbrev === "LAC") {
 			continue;
 		}
-		if (blacklist.includes("GS") && abbrev === "SF") {
+		if (blacklist.has("GS") && abbrev === "SF") {
 			continue;
 		}
-		if (blacklist.includes("SF") && abbrev === "GS") {
+		if (blacklist.has("SF") && abbrev === "GS") {
 			continue;
 		}
 
-		if (blacklist.includes(abbrev)) {
+		if (blacklist.has(abbrev)) {
 			continue;
 		}
 

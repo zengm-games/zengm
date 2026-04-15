@@ -297,13 +297,15 @@ const writeTeamStats = async (results: GameResults) => {
 		}
 
 		// For historical reasons, "ba" is special in basketball (stored in box score, not in team stats)
-		const skip = bySport({
-			basketball: ["ptsQtrs", "gp", "ba"],
-			default: ["ptsQtrs", "gp"],
-		});
+		const skip = new Set(
+			bySport({
+				basketball: ["ptsQtrs", "gp", "ba"],
+				default: ["ptsQtrs", "gp"],
+			}),
+		);
 
 		for (const key of Object.keys(results.team[t1].stat)) {
-			if (skip.includes(key)) {
+			if (skip.has(key)) {
 				continue;
 			}
 

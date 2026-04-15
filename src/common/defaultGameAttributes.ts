@@ -48,7 +48,7 @@ export const gameAttributesCache: GameAttributeKey[] = [
 ];
 
 const gameAttributesKeysSportSpecific = {
-	baseball: [
+	baseball: new Set<GameAttributeKey>([
 		"dh",
 		"foulFactor",
 		"groundFactor",
@@ -66,8 +66,8 @@ const gameAttributesKeysSportSpecific = {
 		"contactFactor",
 		"hitFactor",
 		"errorFactor",
-	] as GameAttributeKey[],
-	basketball: [
+	]),
+	basketball: new Set<GameAttributeKey>([
 		"threePointers",
 		"threePointTendencyFactor",
 		"threePointAccuracyFactor",
@@ -101,8 +101,8 @@ const gameAttributesKeysSportSpecific = {
 		"allStarThree",
 		"forceRetireRealPlayers",
 		"forceHistoricalRosters",
-	] as GameAttributeKey[],
-	football: [
+	]),
+	football: new Set<GameAttributeKey>([
 		"fantasyPoints",
 		"foulRateFactor",
 		"quarterLength",
@@ -125,8 +125,8 @@ const gameAttributesKeysSportSpecific = {
 		"twoPointConversions",
 		"footballOvertime",
 		"footballOvertimePlayoffs",
-	] as GameAttributeKey[],
-	hockey: [
+	]),
+	hockey: new Set<GameAttributeKey>([
 		"foulRateFactor",
 		"quarterLength",
 		"overtimeLength",
@@ -139,13 +139,13 @@ const gameAttributesKeysSportSpecific = {
 		"saveFactor",
 		"assistFactor",
 		"pace",
-	] as GameAttributeKey[],
+	]),
 };
 export const gameAttributesKeysOtherSports = new Set<GameAttributeKey>();
 for (const [sport, keys] of Object.entries(gameAttributesKeysSportSpecific)) {
 	if (sport !== process.env.SPORT) {
 		for (const key of keys) {
-			if (!gameAttributesKeysSportSpecific[process.env.SPORT].includes(key)) {
+			if (!gameAttributesKeysSportSpecific[process.env.SPORT].has(key)) {
 				gameAttributesKeysOtherSports.add(key);
 			}
 		}

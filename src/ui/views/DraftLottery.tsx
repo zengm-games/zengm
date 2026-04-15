@@ -921,7 +921,7 @@ const ColaTable = ({
 
 const DraftLottery = (props: Props) => {
 	useTitleBar({
-		title: NO_LOTTERY_DRAFT_TYPES.includes(props.draftType as any)
+		title: NO_LOTTERY_DRAFT_TYPES.has(props.draftType as any)
 			? "Draft Order"
 			: "Draft Lottery",
 		jumpTo: true,

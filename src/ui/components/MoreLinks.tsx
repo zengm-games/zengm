@@ -216,7 +216,7 @@ export const MoreLinks = (
 			{
 				url:
 					season !== undefined ? ["draft_lottery", season] : ["draft_lottery"],
-				name: NO_LOTTERY_DRAFT_TYPES.includes(draftType as any)
+				name: NO_LOTTERY_DRAFT_TYPES.has(draftType as any)
 					? "Draft Order"
 					: "Draft Lottery",
 			},

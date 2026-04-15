@@ -1068,7 +1068,7 @@ const keys = <O extends object>(obj: O): Array<keyof O> => {
 	return Object.keys(obj) as Array<keyof O>;
 };
 
-const states = [
+const states = new Set([
 	"AL",
 	"AK",
 	"AZ",
@@ -1171,9 +1171,9 @@ const states = [
 	"Wisconsin",
 	"Wyoming",
 	"District of Columbia",
-];
+]);
 
-const provinces = [
+const provinces = new Set([
 	"Ontario",
 	"Quebec",
 	"Nova Scotia",
@@ -1184,7 +1184,7 @@ const provinces = [
 	"Saskatchewan",
 	"Alberta",
 	"Newfoundland and Labrador",
-];
+]);
 
 const isAmerican = (loc: string) => {
 	if (loc.endsWith("USA")) {
@@ -1198,7 +1198,7 @@ const isAmerican = (loc: string) => {
 		return false;
 	}
 
-	return states.includes(state);
+	return states.has(state);
 };
 
 const isCanadian = (loc: string) => {
@@ -1213,7 +1213,7 @@ const isCanadian = (loc: string) => {
 		return false;
 	}
 
-	return provinces.includes(province);
+	return provinces.has(province);
 };
 
 const getCountry = (bornLoc?: string) => {

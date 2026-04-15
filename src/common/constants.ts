@@ -31,12 +31,12 @@ const DRAFT_BY_TEAM_OVR = bySport({
 
 const LEAGUE_DATABASE_VERSION = 70;
 
-const NO_LOTTERY_DRAFT_TYPES: DraftType[] = [
+const NO_LOTTERY_DRAFT_TYPES = new Set<DraftType>([
 	"freeAgents",
 	"noLottery",
 	"noLotteryReverse",
 	"random",
-];
+]);
 
 const PHASE = {
 	EXPANSION_DRAFT: -2,

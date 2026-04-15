@@ -38,7 +38,7 @@ export const fetchWrapper = async ({
 	}
 
 	// HACK HACK HACK! Some of my APIs (logout) return no content, rather than JSON
-	if (url.includes("logout.php")) {
+	if (url.endsWith("logout.php")) {
 		return undefined;
 	}
 

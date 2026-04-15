@@ -21,6 +21,9 @@ import PlayByPlayLogger from "./PlayByPlayLogger.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
+type PosNumbersDefense = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+const SECOND_BASEMAN_COVERS = new Set<PosNumbersDefense>([1, 2, 5, 6, 7, 8]);
+
 type OccupiedBase = {
 	p: PlayerGameSim;
 
@@ -176,7 +179,7 @@ class GameSim extends GameSimBase {
 					speed: "soft" | "normal" | "hard";
 			  }
 		),
-	): 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 {
+	): PosNumbersDefense {
 		const { type, direction } = info;
 		if (type === "fly") {
 			const { distance } = info;
@@ -1245,7 +1248,7 @@ class GameSim extends GameSimBase {
 	probHit(
 		batter: PlayerGameSim,
 		pitcher: PlayerGameSim,
-		hitTo: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9,
+		hitTo: PosNumbersDefense,
 		battedBallInfo: ReturnType<GameSim["doBattedBall"]>,
 	) {
 		if (
@@ -1448,7 +1451,7 @@ class GameSim extends GameSimBase {
 			| "throwOut"
 			| "fieldersChoice"
 			| "doublePlay";
-		const posDefense: (keyof typeof POS_NUMBERS_INVERSE)[] = [hitTo];
+		const posDefense = [hitTo];
 		let fieldersChoiceOrDoublePlayIndex: undefined | 0 | 1 | 2; // Index of bases/runners for the runner who is out due to a fielder's choie or double play
 
 		const pErrorIfNotHit = hit
@@ -1549,7 +1552,7 @@ class GameSim extends GameSimBase {
 						);
 
 						// Undefind means put out is done by the same person who fielded the ball
-						let posPutOut: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | undefined;
+						let posPutOut: PosNumbersDefense | undefined;
 						if (fieldersChoiceOrDoublePlayIndex === 2) {
 							// Out at home
 							posPutOut = hitTo === 2 ? 1 : 2;
@@ -1561,8 +1564,7 @@ class GameSim extends GameSimBase {
 							if ((hitTo === 4 || hitTo === 6) && Math.random() < 0.2) {
 								posPutOut = undefined;
 							} else {
-								const secondBasemanCovers = [1, 2, 5, 6, 7, 8];
-								posPutOut = secondBasemanCovers.includes(hitTo) ? 4 : 6;
+								posPutOut = SECOND_BASEMAN_COVERS.has(hitTo) ? 4 : 6;
 							}
 						}
 
@@ -1581,7 +1583,7 @@ class GameSim extends GameSimBase {
 
 				if (result === "throwOut") {
 					// Undefind means put out is done by the same person who fielded the ball
-					let posPutOut: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | undefined;
+					let posPutOut: PosNumbersDefense | undefined;
 					if (hitTo === 3) {
 						if (Math.random() < 0.2) {
 							posPutOut = 1;

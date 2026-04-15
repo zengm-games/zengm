@@ -303,7 +303,7 @@ const updatePlayMenu = async () => {
 				keys = ["untilResignPlayers"];
 			} else {
 				// Offseason - pre draft
-				keys = !NO_LOTTERY_DRAFT_TYPES.includes(g.get("draftType"))
+				keys = !NO_LOTTERY_DRAFT_TYPES.has(g.get("draftType"))
 					? ["viewDraftLottery", "untilDraft"]
 					: ["untilDraft"];
 			}

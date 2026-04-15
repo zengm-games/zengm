@@ -305,8 +305,7 @@ const updateDraftLottery = async (
 				g.get("challengeNoDraftPicks") &&
 				g.get("userTids").length > 0,
 			notEnoughTeams:
-				!draftLotteryResult &&
-				!NO_LOTTERY_DRAFT_TYPES.includes(g.get("draftType")),
+				!draftLotteryResult && !NO_LOTTERY_DRAFT_TYPES.has(g.get("draftType")),
 			dpidsAvailableToTrade,
 			draftPicks,
 			draftType,

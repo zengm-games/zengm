@@ -1,6 +1,6 @@
 import teamInfos from "./teamInfos.ts";
 
-export const noSmallLogo = ["LAE", "VAN"];
+const noSmallLogo = new Set(["LAE", "VAN"]);
 
 export const abbrevRewrites: Record<string, string> = {
 	LAC: "LAE",
@@ -36,7 +36,7 @@ const getTeamInfos = (
 			imgURL: `/img/logos-primary/${actualAbbrev}.svg`,
 		};
 
-		if (!noSmallLogo.includes(actualAbbrev)) {
+		if (!noSmallLogo.has(actualAbbrev)) {
 			info.imgURLSmall = `/img/logos-secondary/${actualAbbrev}.svg`;
 		}
 

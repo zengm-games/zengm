@@ -2,5 +2,8 @@
 
 # Chrome 87 is the last on Mac 10.10
 Chrome >= 85
+
+# Firefox 115 is ESR and last supported release on some old Mac/Windows versions
 Firefox >= 115
+
 Safari >= 15.4

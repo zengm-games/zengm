@@ -1,4 +1,4 @@
-import { MOOD_TRAITS } from "../../../common/index.ts";
+import { MOOD_TRAITS } from "../../../common/constants.ts";
 import type { MoodTrait } from "../../../common/types.ts";
 import { helpers, random } from "../../util/index.ts";
 

@@ -1,4 +1,4 @@
-import helpers from "./helpers.ts";
+import { helpers } from "./helpers.ts";
 import type { GameAttributesLeague, PlayerStats } from "./types.ts";
 
 export const qbRat = (ps: {
@@ -139,6 +139,12 @@ const processStats = (
 			} else if (fantasyPoints === "halfPpr") {
 				row[stat] += 0.5 * ps.rec;
 			}
+		} else if (stat === "pbwr") {
+			row[stat] = helpers.percentage(ps.pbw, ps.pba);
+		} else if (stat === "rbwr") {
+			row[stat] = helpers.percentage(ps.rbw, ps.rba);
+		} else if (stat === "skAlwPct") {
+			row[stat] = helpers.percentage(ps.skAlw, ps.pba);
 		} else if (stat === "keyStats") {
 			const defTck = ps.defTckSolo + ps.defTckAst;
 			const fga = ps.fga0 + ps.fga20 + ps.fga30 + ps.fga40 + ps.fga50;
@@ -149,6 +155,7 @@ const processStats = (
 				defender: defTck,
 				kicker: fga + ps.xpa,
 				punter: ps.pnt,
+				ol: ((ps.pba ?? 0) + (ps.pra ?? 0)) / 10,
 			};
 			let role;
 			let max = 0;
@@ -158,6 +165,12 @@ const processStats = (
 					role = key;
 					max = value;
 				}
+			}
+			if (
+				(role === "rusher" && ps.recYds > 0.5 * ps.rusYds) ||
+				(role === "receiver" && ps.rusYds > 0.5 * ps.recYds)
+			) {
+				role = "rusRec";
 			}
 
 			if (role === "passer") {
@@ -178,6 +191,10 @@ const processStats = (
 				)} catches, ${helpers.numberWithCommas(ps.recYds)} yards, ${(
 					ps.recYds / ps.rec
 				).toFixed(1)} avg, ${ps.recTD} TD`;
+			} else if (role === "rusRec") {
+				row[stat] = `${helpers.numberWithCommas(
+					ps.rec + ps.rus,
+				)} touches, ${helpers.numberWithCommas(ps.recYds + ps.rusYds)} total yards, ${ps.recTD + ps.rusTD} TD`;
 			} else if (role === "defender") {
 				row[stat] = `${helpers.numberWithCommas(defTck)} tackles, ${
 					ps.defSk
@@ -189,6 +206,9 @@ const processStats = (
 				row[stat] = `${ps.pnt} punts, ${(ps.pntYds / ps.pnt).toFixed(
 					1,
 				)} yards avg`;
+			} else if (role === "ol") {
+				row[stat] =
+					`${ps.pbw} PBW${ps.pba > 0 ? ` (${helpers.percentage(ps.pbw, ps.pba)?.toFixed(1)}%)` : ""}, ${ps.rbw} RBW${ps.rba > 0 ? ` (${helpers.percentage(ps.rbw, ps.rba)?.toFixed(1)}%)` : ""}`;
 			} else {
 				row[stat] = "";
 			}

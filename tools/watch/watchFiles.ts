@@ -1,16 +1,14 @@
 import { watch } from "chokidar";
 import { copyFiles } from "../build/copyFiles.ts";
 import { generateVersionNumber } from "../build/generateVersionNumber.ts";
-import { reset } from "../build/reset.ts";
-import { setTimestamps } from "../build/setTimestamps.ts";
 import { type Spinners } from "./spinners.ts";
+import { buildIndexHtml } from "../build/buildIndexHtml.ts";
+import type { Update } from "./cli.ts";
 
 // Would be better to only copy individual files on update, but this is fast enough
 
 export const watchFiles = async (
-	updateStart: (filename: string) => void,
-	updateEnd: (filename: string) => void,
-	updateError: (filename: string, error: Error) => void,
+	update: Update,
 	eventEmitter: Spinners["eventEmitter"],
 ) => {
 	const outFilename = "static files";
@@ -23,7 +21,7 @@ export const watchFiles = async (
 			abortController = new AbortController();
 			const { signal } = abortController;
 
-			updateStart(outFilename);
+			update(outFilename, { status: "spin" });
 
 			await copyFiles(true, signal);
 
@@ -32,22 +30,17 @@ export const watchFiles = async (
 			}
 
 			const versionNumber = generateVersionNumber();
-			await setTimestamps(versionNumber, true, signal);
+			await buildIndexHtml({ signal, versionNumber, watch: true });
 
 			if (signal.aborted) {
 				return;
 			}
 
-			abortController = undefined;
-
-			updateEnd(outFilename);
+			update(outFilename, { status: "success" });
 		} catch (error) {
-			updateError(outFilename, error);
+			update(outFilename, { status: "error", error });
 		}
 	};
-
-	await reset();
-	await buildWatchFiles();
 
 	const watcher = watch(["public", "data", "node_modules/flag-icons"], {});
 	watcher.on("change", buildWatchFiles);
@@ -55,4 +48,6 @@ export const watchFiles = async (
 	eventEmitter.on("switchingSport", () => {
 		abortController?.abort();
 	});
+
+	await buildWatchFiles();
 };

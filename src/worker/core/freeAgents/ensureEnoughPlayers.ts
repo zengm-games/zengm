@@ -1,5 +1,5 @@
 import { idb } from "../../db/index.ts";
-import { PLAYER } from "../../../common/index.ts";
+import { PLAYER } from "../../../common/constants.ts";
 import { g } from "../../util/index.ts";
 import { player } from "../index.ts";
 

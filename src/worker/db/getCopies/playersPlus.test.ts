@@ -1,6 +1,6 @@
 import { assert, beforeAll, test } from "vitest";
-import { PLAYER } from "../../../common/index.ts";
-import testHelpers from "../../../test/helpers.ts";
+import { PLAYER } from "../../../common/constants.ts";
+import { resetCache, resetG } from "../../../test/helpers.ts";
 import { player } from "../../core/index.ts";
 import { idb } from "../index.ts";
 import { g, helpers } from "../../util/index.ts";
@@ -8,18 +8,18 @@ import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 let p: any;
 beforeAll(async () => {
-	testHelpers.resetG();
+	resetG();
 	g.setWithoutSavingToDB("season", 2011);
 	p = player.generate(PLAYER.UNDRAFTED, 19, 2011, false, DEFAULT_LEVEL);
 	p.tid = 4;
 	g.setWithoutSavingToDB("season", 2012);
-	await testHelpers.resetCache({
+	await resetCache({
 		players: [p],
 	});
 	p.contract.exp = g.get("season") + 1;
-	player.addStatsRow(p);
-	player.addStatsRow(p, true);
-	player.addStatsRow(p);
+	player.addStatsRow(p, g.get("season"), false);
+	player.addStatsRow(p, g.get("season"), true);
+	player.addStatsRow(p, g.get("season"), false);
 	const stats = p.stats;
 	stats[0].gp = 5;
 	stats[0].fg = 20;

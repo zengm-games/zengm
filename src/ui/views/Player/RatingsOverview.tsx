@@ -1,5 +1,5 @@
-import { bySport } from "../../../common/index.ts";
-import RatingWithChange from "../../components/RatingWithChange.tsx";
+import { bySport } from "../../../common/sportFunctions.ts";
+import { RatingWithChange } from "../../components/RatingWithChange.tsx";
 import type { ReactNode } from "react";
 
 const RatingsOverview = ({

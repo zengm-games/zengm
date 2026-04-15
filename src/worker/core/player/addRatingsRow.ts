@@ -7,7 +7,7 @@ import type {
 } from "../../../common/types.ts";
 
 const addRatingsRow = (
-	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
+	p: Player | PlayerWithoutKey,
 	scoutingLevel?: number,
 	injuryIndex?: number,
 ) => {

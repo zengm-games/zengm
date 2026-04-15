@@ -1,15 +1,12 @@
 import { Nav, Navbar } from "react-bootstrap";
-import { PHASE } from "../../common/index.ts";
-import {
-	helpers,
-	localActions,
-	menuItems,
-	useLocalPartial,
-} from "../util/index.ts";
-import { useViewData } from "../util/viewManager.tsx";
-import DropdownLinks from "./DropdownLinks.tsx";
-import LogoAndText from "./LogoAndText.tsx";
-import PlayMenu from "./PlayMenu.tsx";
+import { PHASE } from "../../../common/constants.ts";
+import { helpers } from "../../util/helpers.ts";
+import { localActions, useLocalPartial } from "../../util/local.ts";
+import { useViewData } from "../../util/viewManager.tsx";
+import DropdownLinks from "../DropdownLinks.tsx";
+import LogoAndText from "../LogoAndText.tsx";
+import PlayMenu from "../PlayMenu.tsx";
+import { menuItems } from "../../util/menuItems.tsx";
 
 const PhaseStatusBlock = () => {
 	const { liveGameInProgress, phase, phaseText, statusText } = useLocalPartial([
@@ -70,7 +67,7 @@ const PhaseStatusBlock = () => {
 	);
 };
 
-const NavBar = ({ updating }: { updating: boolean }) => {
+export const NavBar = ({ updating }: { updating: boolean }) => {
 	const {
 		lid,
 		godMode,
@@ -158,5 +155,3 @@ const NavBar = ({ updating }: { updating: boolean }) => {
 		</Navbar>
 	);
 };
-
-export default NavBar;

@@ -1,16 +1,17 @@
-import { bySport, isSport, PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { GameResults } from "../../../common/types.ts";
 import {
 	getActualAttendance,
-	getAdjustedTicketPrice,
 	getAutoTicketPrice,
 	getBaseAttendance,
 } from "./attendance.ts";
 import { levelToAmount } from "../../../common/budgetLevels.ts";
 import getWinner from "../../../common/getWinner.ts";
+import { getAdjustedTicketPrice } from "../../../common/getAdjustedTicketPrice.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const writeTeamStats = async (results: GameResults) => {
 	const allStarGame = results.team[0].id === -1 && results.team[1].id === -2;
@@ -306,9 +307,7 @@ const writeTeamStats = async (results: GameResults) => {
 				continue;
 			}
 
-			if (teamStats[key] === undefined) {
-				teamStats[key] = 0;
-			}
+			teamStats[key] ??= 0;
 
 			if (isSport("football") && key.endsWith("Lng")) {
 				if (results.team[t1].stat[key] > teamStats[key]) {
@@ -318,9 +317,7 @@ const writeTeamStats = async (results: GameResults) => {
 				for (let i = 0; i < results.team[t1].stat[key].length; i++) {
 					const value = results.team[t1].stat[key][i];
 					if (value !== undefined) {
-						if (teamStats[key][i] === undefined) {
-							teamStats[key][i] = 0;
-						}
+						teamStats[key][i] ??= 0;
 						teamStats[key][i] += value;
 					}
 				}
@@ -341,9 +338,7 @@ const writeTeamStats = async (results: GameResults) => {
 						for (let i = 0; i < results.team[t2].stat[key].length; i++) {
 							const value = results.team[t2].stat[key][i];
 							if (value !== undefined) {
-								if (teamStats[oppKey][i] === undefined) {
-									teamStats[oppKey][i] = 0;
-								}
+								teamStats[oppKey][i] ??= 0;
 								teamStats[oppKey][i] += value;
 							}
 						}

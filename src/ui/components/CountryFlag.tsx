@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import type { CSSProperties } from "react";
-import { helpers, useLocal } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { useLocal } from "../util/local.ts";
 
 // https://github.com/lipis/flag-icons/blob/main/country.json with some duplicate names added
 const countryCodes: Record<string, string> = {
@@ -269,7 +270,7 @@ const countryCodes: Record<string, string> = {
 	Zimbabwe: "zw",
 };
 
-const CountryFlag = ({
+export const CountryFlag = ({
 	className,
 	country,
 	override,
@@ -316,5 +317,3 @@ const CountryFlag = ({
 	// Placeholder with same width
 	return <div className={clsx(className, "fi")} title={country2} />;
 };
-
-export default CountryFlag;

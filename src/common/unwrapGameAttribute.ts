@@ -1,8 +1,8 @@
-import gameAttributeHasHistory from "./gameAttributeHasHistory.ts";
+import { gameAttributeHasHistory } from "./gameAttributeHasHistory.ts";
 import type { GameAttributesLeague } from "./types.ts";
 
 // Get latest value
-const unwrapGameAttribute = <T extends keyof GameAttributesLeague>(
+export const unwrapGameAttribute = <T extends keyof GameAttributesLeague>(
 	gameAttributes: any,
 	key: T,
 ): GameAttributesLeague[T] => {
@@ -12,5 +12,3 @@ const unwrapGameAttribute = <T extends keyof GameAttributesLeague>(
 
 	return gameAttributes[key];
 };
-
-export default unwrapGameAttribute;

@@ -1,7 +1,7 @@
 import { POSITIONS } from "../../../common/constants.football.ts";
 import type { Position } from "../../../common/types.football.ts";
+import helpers from "../../util/helpers.ts";
 import type { PlayerGameSim, PlayersOnField } from "./types.ts";
-import { helpers } from "../../../common/index.ts";
 
 const getPlayers = (
 	playersOnField: PlayersOnField,

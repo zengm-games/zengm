@@ -1,5 +1,5 @@
-import { PLAYER } from "../../common/index.ts";
-import { helpers } from "../util/index.ts";
+import { PLAYER } from "../../common/constants.ts";
+import { helpers } from "../util/helpers.ts";
 
 type Props = {
 	tid: number;

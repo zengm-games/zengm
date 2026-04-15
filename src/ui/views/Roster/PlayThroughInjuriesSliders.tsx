@@ -1,10 +1,12 @@
 import { AnimatePresence, m } from "framer-motion";
 import { useState } from "react";
-import { timeBetweenGames } from "../../../common/index.ts";
+import { timeBetweenGames } from "../../../common/timeBetweenGames.ts";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor.ts";
-import { HelpPopover } from "../../components/index.tsx";
+import { HelpPopover } from "../../components/HelpPopover.tsx";
 import CollapseArrow from "../../components/CollapseArrow.tsx";
-import { helpers, toWorker, useLocalPartial } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
+import { useLocalPartial } from "../../util/local.ts";
 
 const Slider = ({
 	className,

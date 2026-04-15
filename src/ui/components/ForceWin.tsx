@@ -1,7 +1,8 @@
 import clsx from "clsx";
 import { AnimatePresence, m } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { toWorker, useLocalPartial } from "../util/index.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { useLocalPartial } from "../util/local.ts";
 
 type Team = {
 	tid: number;
@@ -37,7 +38,7 @@ const style = {
 	minWidth: 41,
 };
 
-const ForceWin = ({
+export const ForceWin = ({
 	allowTie,
 	className,
 	game,
@@ -151,5 +152,3 @@ const ForceWin = ({
 
 	return <div className={className}>{form}</div>;
 };
-
-export default ForceWin;

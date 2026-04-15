@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { NUM_STARTING_PITCHERS } from "../../../common/constants.baseball.ts";
 import { g, random } from "../../util/index.ts";
 

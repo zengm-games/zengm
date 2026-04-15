@@ -1,14 +1,14 @@
-import { GAME_NAME } from "../../common/index.ts";
-import { ads } from "../util/index.ts";
-import GameLinks from "./GameLinks.tsx";
-import Modal from "./Modal.tsx";
+import { GAME_NAME } from "../../../common/constants.ts";
+import { ads } from "../../util/ads.ts";
+import { GameLinks } from "../GameLinks.tsx";
+import { Modal } from "../Modal.tsx";
 
 type Props = {
 	close: () => void;
 	show: boolean;
 };
 
-const NagModal = ({ close, show }: Props) => {
+export const NagModal = ({ close, show }: Props) => {
 	const adBlock = ads.adBlock();
 	return (
 		<Modal show={show} onHide={close}>
@@ -101,5 +101,3 @@ const NagModal = ({ close, show }: Props) => {
 		</Modal>
 	);
 };
-
-export default NagModal;

@@ -4,30 +4,27 @@ import {
 	useRef,
 	useState,
 	type ChangeEvent,
-	type MouseEvent,
+	type SyntheticEvent,
 } from "react";
-import { ProgressBarText } from "./index.tsx";
+import { ProgressBarText } from "./ProgressBarText.tsx";
 import {
 	LEAGUE_DATABASE_VERSION,
 	GAME_NAME,
 	WEBSITE_ROOT,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import type { BasicInfo } from "../../worker/api/leagueFileUpload.ts";
-import {
-	localActions,
-	resetFileInput,
-	toWorker,
-	useLocalPartial,
-} from "../util/index.ts";
+import { toWorker } from "../util/toWorker.ts";
 import simpleGameAttributesUpgrade from "../../common/simpleGameAttributesUpgrade.ts";
+import { resetFileInput } from "../util/resetFileInput.ts";
+import { localActions, useLocalPartial } from "../util/local.ts";
 
 const ErrorMessage = ({ error }: { error: Error | null }) => {
-	if (!error || !error.message) {
-		return <>"Unknown error"</>;
+	if (!error) {
+		return "Unknown error";
 	}
 
 	if (!(error as any).version) {
-		return <>{error.message}</>;
+		return error.message;
 	}
 
 	return (
@@ -100,7 +97,7 @@ const reducer = (state: State, action: any): State => {
 	}
 };
 
-const LeagueFileUpload = ({
+export const LeagueFileUpload = ({
 	disabled,
 	enterURL,
 	includePlayersInBasicInfo,
@@ -209,7 +206,7 @@ const LeagueFileUpload = ({
 		}
 	};
 
-	const handleFileURL = async (event: MouseEvent) => {
+	const handleFileURL = async (event: SyntheticEvent) => {
 		event.preventDefault();
 
 		beforeFile();
@@ -308,6 +305,12 @@ const LeagueFileUpload = ({
 						onChange={(event) => {
 							setURL(event.target.value);
 						}}
+						onKeyDown={(event) => {
+							// This is so "Enter" loads the file, rather than doing nothing or submitting the whole form
+							if (event.key === "Enter") {
+								handleFileURL(event);
+							}
+						}}
 					/>
 					<button
 						className="btn btn-secondary ml-2"
@@ -366,5 +369,3 @@ const LeagueFileUpload = ({
 		</>
 	);
 };
-
-export default LeagueFileUpload;

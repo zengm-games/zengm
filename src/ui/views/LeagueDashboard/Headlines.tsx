@@ -1,6 +1,6 @@
 import { m, AnimatePresence } from "framer-motion";
-import { NewsBlock } from "../../components/index.tsx";
-import { helpers } from "../../util/index.ts";
+import { NewsBlock } from "../../components/NewsBlock.tsx";
+import { helpers } from "../../util/helpers.ts";
 import type { View } from "../../../common/types.ts";
 import { memo, useEffect, useRef, useState } from "react";
 

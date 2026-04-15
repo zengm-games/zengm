@@ -1,15 +1,12 @@
 import { generate as generateFace, type FaceConfig } from "facesjs";
 import { idb } from "../db/index.ts";
-import type {
-	MinimalPlayerRatings,
-	PlayerWithoutKey,
-	Race,
-} from "../../common/types.ts";
-import { bySport, DEFAULT_JERSEY, isSport } from "../../common/index.ts";
+import type { PlayerWithoutKey, Race } from "../../common/types.ts";
+import { DEFAULT_JERSEY } from "../../common/constants.ts";
 import g from "./g.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
-const generate = (
+export const generate = (
 	options:
 		| { race?: Race; relative?: undefined }
 		| { race?: undefined; relative?: FaceConfig } = {},
@@ -50,30 +47,29 @@ const generate = (
 		...options,
 	});
 
-	if (!isSport("baseball")) {
-		const allowEyeBlack = bySport({
-			baseball: false,
-			basketball: false,
-			football: true,
-			hockey: false,
-		});
+	const allowEyeBlack = bySport({
+		baseball: true, // Doesn't matter, gets replaced by hat
+		basketball: false,
+		football: true,
+		hockey: false,
+	});
 
-		// No baseball hat
-		while (
-			face.accessories.id.startsWith("hat") ||
-			(!allowEyeBlack && face.accessories.id === "eye-black")
-		) {
-			face = generateFace(overrides, {
-				gender,
-				...options,
-			});
-		}
+	while (
+		// Baseball hat is only for baseball
+		(!isSport("baseball") && face.accessories.id.startsWith("hat")) ||
+		(!allowEyeBlack && face.accessories.id === "eye-black") ||
+		face.accessories.id === "santa-hat"
+	) {
+		face = generateFace(overrides, {
+			gender,
+			...options,
+		});
 	}
 
 	return face;
 };
 
-const upgrade = async (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
+export const upgrade = async (p: PlayerWithoutKey) => {
 	// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 	if (!p.face || !p.face.accessories) {
 		// @ts-expect-error
@@ -81,9 +77,4 @@ const upgrade = async (p: PlayerWithoutKey<MinimalPlayerRatings>) => {
 		p.face = generate();
 		await idb.cache.players.put(p);
 	}
-};
-
-export default {
-	generate,
-	upgrade,
 };

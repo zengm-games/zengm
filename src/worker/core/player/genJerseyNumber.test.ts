@@ -1,12 +1,12 @@
 import { assert, beforeAll, test } from "vitest";
-import testHelpers from "../../../test/helpers.ts";
+import { resetCache, resetG } from "../../../test/helpers.ts";
 import { player } from "../index.ts";
 import genJerseyNumber from "./genJerseyNumber.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 beforeAll(async () => {
-	testHelpers.resetG();
-	await testHelpers.resetCache({
+	resetG();
+	await resetCache({
 		players: [],
 	});
 });

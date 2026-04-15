@@ -1,12 +1,16 @@
-import { getCols, helpers, toWorker } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { getCols } from "../../common/getCols.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { ActionButton, DataTable, MoreLinks } from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 import type { View } from "../../common/types.ts";
 import { useState } from "react";
 import Note from "./Player/Note.tsx";
 import { getDraftPicksColsAndRows } from "./DraftPicks.tsx";
 import { getWatchListColsAndRows } from "./WatchList.tsx";
+import { ActionButton } from "../components/ActionButton.tsx";
 
 const Notes = (props: View<"notes">) => {
 	const [clearing, setClearing] = useState(false);

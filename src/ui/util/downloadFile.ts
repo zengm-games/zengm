@@ -1,4 +1,4 @@
-const downloadFile = (
+export const downloadFile = (
 	fileName: string,
 	contents: string | Uint8Array<ArrayBuffer>[],
 	mimeType: string,
@@ -28,5 +28,3 @@ const downloadFile = (
 		URL.revokeObjectURL(a.href);
 	}, 1500);
 };
-
-export default downloadFile;

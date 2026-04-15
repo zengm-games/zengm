@@ -10,10 +10,10 @@ import {
 	NOT_REAL_POSITIONS,
 	POSITIONS,
 	RATINGS,
-	isSport,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import hasTies from "../core/season/hasTies.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 const otherToRanks = (
 	teams: {

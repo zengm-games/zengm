@@ -1,4 +1,4 @@
-import { bySport } from "../../common/index.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 // Would be nice to put this stuff in names.json, but need a way to make it sport specific.
 

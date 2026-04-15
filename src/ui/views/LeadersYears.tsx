@@ -1,15 +1,14 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCol, helpers } from "../util/index.ts";
-import {
-	DataTable,
-	MoreLinks,
-	PlayerNameLabels,
-} from "../components/index.tsx";
+import { helpers } from "../util/helpers.ts";
+import { DataTable } from "../components/DataTable/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
 import { LeadersTopText } from "./Leaders.tsx";
 import type { Col, DataTableRow } from "../components/DataTable/index.tsx";
 import { makeNormalResponsive } from "../hooks/useDropdownOptions.tsx";
 import { range } from "../../common/utils.ts";
+import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import { getCol } from "../../common/getCol.ts";
 
 export const formatStatsDropdown = (stats: string[]) =>
 	stats.map((stat) => {

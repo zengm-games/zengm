@@ -1,11 +1,13 @@
 import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers } from "../util/index.ts";
-import { DataTable } from "../components/index.tsx";
+import { helpers } from "../util/helpers.ts";
+import { getCols } from "../../common/getCols.ts";
+import { DataTable } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
-import { bySport, isSport, POSITIONS, RATINGS } from "../../common/index.ts";
+import { POSITIONS, RATINGS } from "../../common/constants.ts";
 import { wrappedMovOrDiff } from "../components/MovOrDiff.tsx";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 const Other = ({
 	actualShowHealthy,

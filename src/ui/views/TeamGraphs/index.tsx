@@ -4,12 +4,14 @@ import { StatGraph, type TooltipData } from "../PlayerGraphs/ScatterPlot.tsx";
 import useDropdownOptions, {
 	type DropdownOption,
 } from "../../hooks/useDropdownOptions.tsx";
-import realtimeUpdate from "../../util/realtimeUpdate.ts";
-import { getCols, helpers, toWorker } from "../../util/index.ts";
+import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
+import { getCols } from "../../../common/getCols.ts";
 import { groupByUnique } from "../../../common/utils.ts";
 import type { Col } from "../../components/DataTable/index.tsx";
 import clsx from "clsx";
-import { bySport, isSport } from "../../../common/index.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const suffixes = {
 	Home: "Home",

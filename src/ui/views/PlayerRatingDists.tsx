@@ -1,6 +1,7 @@
-import { BoxPlot, MoreLinks } from "../components/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
+import { BoxPlot } from "../components/BoxPlot.tsx";
 
 const width100 = {
 	width: "100%",

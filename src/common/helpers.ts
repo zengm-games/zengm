@@ -9,7 +9,7 @@ import type {
 	RelativeType,
 } from "./types.ts";
 import getTeamInfos from "./getTeamInfos.ts";
-import isSport from "./isSport.ts";
+import { isSport } from "./sportFunctions.ts";
 import { PHASE } from "./constants.ts";
 import { orderBy } from "./utils.ts";
 
@@ -1269,11 +1269,8 @@ const getJerseyNumber = (
 		if (jerseyNumber === undefined) {
 			continue;
 		}
-		if (numSeasonsByJerseyNumber[jerseyNumber] === undefined) {
-			numSeasonsByJerseyNumber[jerseyNumber] = 1;
-		} else {
-			numSeasonsByJerseyNumber[jerseyNumber] += 1;
-		}
+		numSeasonsByJerseyNumber[jerseyNumber] ??= 0;
+		numSeasonsByJerseyNumber[jerseyNumber] += 1;
 
 		if (numSeasonsByJerseyNumber[jerseyNumber] > max) {
 			max = numSeasonsByJerseyNumber[jerseyNumber];
@@ -1494,7 +1491,7 @@ const plural = (text: string, amount: number, textPluralOverride?: string) => {
 	return textPluralOverride ?? `${text}s`;
 };
 
-export default {
+export const helpers = {
 	addPopRank,
 	getPopRanks,
 	gameScore,

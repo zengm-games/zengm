@@ -4,7 +4,7 @@ import type {
 	TeamBasic,
 	TeamSeasonWithoutKey,
 } from "../../../common/types.ts";
-import { DEFAULT_JERSEY } from "../../../common/index.ts";
+import { DEFAULT_JERSEY } from "../../../common/constants.ts";
 
 const genSeasonRow = (
 	t: Team | TeamBasic,

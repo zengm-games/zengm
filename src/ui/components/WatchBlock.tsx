@@ -1,7 +1,8 @@
 import clsx from "clsx";
 import { memo, useEffect, useState, type SyntheticEvent } from "react";
-import { toWorker, useLocalPartial } from "../util/index.ts";
+import { toWorker } from "../util/toWorker.ts";
 import { crossTabEmitter } from "../util/crossTabEmitter.ts";
+import { useLocalPartial } from "../util/local.ts";
 
 type Props = {
 	className?: string;
@@ -44,7 +45,7 @@ export const Flag = ({
 	);
 };
 
-const WatchBlock = memo(
+export const WatchBlock = memo(
 	({ className, defaultWatch, onChange, pid, watch }: Props) => {
 		const { numWatchColors } = useLocalPartial(["numWatchColors"]);
 
@@ -93,5 +94,3 @@ const WatchBlock = memo(
 		);
 	},
 );
-
-export default WatchBlock;

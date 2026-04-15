@@ -1,0 +1,9 @@
+{
+	"extends": "./tsconfig.base.json",
+	"compilerOptions": {
+		"composite": true,
+		"lib": ["es2025"],
+		"types": ["node"]
+	},
+	"exclude": ["node_modules", "analysis/venv", "build", "src"]
+}

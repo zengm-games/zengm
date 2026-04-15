@@ -1,26 +1,20 @@
 import { allStar, player, season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
-import type {
-	Player,
-	MinimalPlayerRatings,
-	Conditions,
-} from "../../../common/types.ts";
+import type { Player, Conditions } from "../../../common/types.ts";
 import {
-	bySport,
 	COMPOSITE_WEIGHTS,
 	DEFAULT_PLAY_THROUGH_INJURIES,
-	isSport,
 	PHASE,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor.ts";
-import statsRowIsCurrent from "../player/statsRowIsCurrent.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const MAX_NUM_PLAYERS_PACE = 7;
 
 const SKIP_PLAYER_STATS = new Set(["minAvailable"]);
 
-// Is this a game 7, or an elimination game 7 (generalized to other playoff series lengths than 7)
+// Is this a game 6/7 (generalized to other playoff series lengths than 7)
 export const isGame6EliminationGameOrGame7 = async (
 	playoffs: boolean,
 	tid: number,
@@ -113,7 +107,7 @@ export const processTeam = async (
 		cid: number;
 		did: number;
 	},
-	players: Player<MinimalPlayerRatings>[],
+	players: Player[],
 	exhibitionGame?: boolean,
 ) => {
 	if (!playerStats) {
@@ -310,18 +304,17 @@ export const processTeam = async (
 			hockey: ["shG", "evG", "ppG", "shA", "evA", "ppA"],
 		});
 		if (seasonStatsKeys !== undefined) {
-			let hasStats;
-			let ps;
-			if (allStarGame) {
-				// Only look at regular season stats, in case All-Star Game is in playoffs
-				ps = p.stats.findLast((ps) => !ps.playoffs);
-				hasStats = !!ps && ps.season === g.get("season");
-			} else {
-				ps = p.stats.at(-1);
-				hasStats = exhibitionGame || statsRowIsCurrent(ps, t.id, playoffs);
-			}
+			// Only look at regular season stats for All-Star Game, in case All-Star Game is in playoffs
+			const regularSeason = allStarGame || g.get("phase") < PHASE.PLAYOFFS;
+			const pSeasonStats = await idb.getCopy.playersPlus(p, {
+				stats: seasonStatsKeys,
+				season: g.get("season"),
+				regularSeason,
+				playoffs: !regularSeason,
+				mergeStats: "totOnly",
+			});
 			for (const key of seasonStatsKeys) {
-				seasonStats[key] = hasStats ? ps[key] : 0;
+				seasonStats[key] = pSeasonStats?.stats[key] ?? 0;
 			}
 			(p2 as any).seasonStats = seasonStats;
 		}

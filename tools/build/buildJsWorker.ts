@@ -16,14 +16,22 @@ const BLACKLIST = {
 };
 
 const buildFile = async (name: "ui" | "worker", versionNumber: string) => {
+	let modulepreloadFilenames: string[] | undefined;
 	const config = rolldownConfig(name, {
 		nodeEnv: "production",
 		blacklistOptions: BLACKLIST[name],
 		versionNumber,
+		onModulepreloadFilenames: (filenames) => {
+			modulepreloadFilenames = filenames;
+		},
 	});
 	await build(config);
 
-	parentPort!.postMessage("done");
+	if (modulepreloadFilenames === undefined) {
+		throw new Error(`modulepreloadFilenames is undefined for ${name}`);
+	}
+
+	parentPort!.postMessage(modulepreloadFilenames);
 };
 
 const { name, versionNumber } = workerData;

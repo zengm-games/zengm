@@ -1,7 +1,7 @@
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 import type { View } from "../../../common/types.ts";
-import { bySport } from "../../../common/index.ts";
-import { PlayerNameLabels } from "../../components/index.tsx";
+import { bySport } from "../../../common/sportFunctions.ts";
+import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 
 const Leader = ({
 	abbrev,
@@ -57,21 +57,21 @@ const Leaders = ({
 }: Pick<View<"leagueDashboard">, "leagueLeaders" | "teamLeaders">) => (
 	<>
 		<h2>Team Leaders</h2>
-		<p>
+		<div className="mb-3">
 			{teamLeaders.map((leader) => (
 				<Leader key={leader.stat} {...leader} />
 			))}
 			<a href={helpers.leagueUrl(["roster"])}>» Full Roster</a>
-		</p>
+		</div>
 		<h2>League Leaders</h2>
-		<p>
+		<div className="mb-3">
 			{leagueLeaders.map((leader) => (
 				<Leader key={leader.stat} {...leader} />
 			))}
 			<a href={helpers.leagueUrl(["leaders"])}>» League Leaders</a>
 			<br />
 			<a href={helpers.leagueUrl(["player_stats"])}>» Player Stats</a>
-		</p>
+		</div>
 	</>
 );
 

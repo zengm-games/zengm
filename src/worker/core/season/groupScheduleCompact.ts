@@ -21,11 +21,8 @@ const groupScheduleCompact = (tids: [number, number][]) => {
 		const numGamesLeftByTid: Record<number, number> = {};
 		for (const matchup of remainingMatchups) {
 			for (const tid of matchup) {
-				if (numGamesLeftByTid[tid] === undefined) {
-					numGamesLeftByTid[tid] = 1;
-				} else {
-					numGamesLeftByTid[tid] += 1;
-				}
+				numGamesLeftByTid[tid] ??= 0;
+				numGamesLeftByTid[tid] += 1;
 			}
 		}
 		const remainingMatchupsArray = orderBy(

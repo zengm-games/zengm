@@ -10,24 +10,29 @@ import {
 	type ReactNode,
 	memo,
 } from "react";
-import {
-	BoxScoreRow,
-	BoxScoreWrapper,
-	Confetti,
-	PlayPauseNext,
-	TeamLogoInline,
-} from "../components/index.tsx";
-import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, processLiveGameEvents, toWorker } from "../util/index.ts";
-import type { View } from "../../common/types.ts";
-import { bySport, getPeriodName, isSport } from "../../common/index.ts";
+import { TeamLogoInline } from "../../components/TeamLogoInline.tsx";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
+import type { View } from "../../../common/types.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import useLocalStorageState from "use-local-storage-state";
-import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_BASEBALL } from "../util/processLiveGameEvents.baseball.tsx";
-import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_FOOTBALL } from "../util/processLiveGameEvents.football.tsx";
-import { HeadlineScoreLive } from "../components/BoxScoreWrapper.tsx";
-import { useIsStuck } from "../hooks/useIsStuck.ts";
-import { useBlocker } from "../hooks/useBlocker.ts";
-import type { FastForward } from "../components/PlayPauseNext.tsx";
+import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_BASEBALL } from "../../util/processLiveGameEvents.baseball.tsx";
+import { DEFAULT_SPORT_STATE as DEFAULT_SPORT_STATE_FOOTBALL } from "../../util/processLiveGameEvents.football.tsx";
+import { processLiveGameEvents } from "../../util/processLiveGameEvents.ts";
+import {
+	BoxScoreWrapper,
+	HeadlineScoreLive,
+} from "../../components/BoxScoreWrapper.tsx";
+import { useIsStuck } from "../../hooks/useIsStuck.ts";
+import { useBlocker } from "../../hooks/useBlocker.ts";
+import {
+	PlayPauseNext,
+	type FastForward,
+} from "../../components/PlayPauseNext.tsx";
+import { Confetti } from "./Confetti.tsx";
+import { BoxScoreRow } from "../../components/BoxScoreRow.tsx";
+import { getPeriodName } from "../../../common/getPeriodName.ts";
 
 type PlayerRowProps = {
 	exhibition?: boolean;

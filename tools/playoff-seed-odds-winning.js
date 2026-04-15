@@ -11,11 +11,8 @@ for (const row of playoffSeries) {
 	for (let i = 0; i < result.length; i++) {
 		const round = result[i];
 		for (const seed of round) {
-			if (seedWinsByRound[i][seed] === undefined) {
-				seedWinsByRound[i][seed] = 1;
-			} else {
-				seedWinsByRound[i][seed] += 1;
-			}
+			seedWinsByRound[i][seed] ??= 0;
+			seedWinsByRound[i][seed] += 1;
 		}
 	}
 }

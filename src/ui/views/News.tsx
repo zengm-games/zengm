@@ -1,9 +1,9 @@
 import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
-import { helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
 import clsx from "clsx";
-import { NewsBlock } from "../components/index.tsx";
+import { NewsBlock } from "../components/NewsBlock.tsx";
 import { categories, types } from "../../common/transactionInfo.ts";
 
 const News = ({

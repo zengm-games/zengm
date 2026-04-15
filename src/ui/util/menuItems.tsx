@@ -1,14 +1,14 @@
-import { takeScreenshot, toWorker } from "./index.ts";
+import { toWorker } from "./toWorker.ts";
 import {
-	bySport,
 	DAILY_SCHEDULE,
 	DEPTH_CHART_NAME,
-	isSport,
 	REAL_PLAYERS_INFO,
 	WEBSITE_ROOT,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import type { MenuItemLink, MenuItemHeader } from "../../common/types.ts";
 import { frivolities } from "../views/Frivolities.tsx";
+import { takeScreenshot } from "./takeScreenshot.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 const depthChart: MenuItemLink[] =
 	DEPTH_CHART_NAME !== undefined
@@ -60,7 +60,7 @@ const scheduledEvents: MenuItemLink = {
 	text: "Scheduled Events",
 };
 
-const menuItems: (MenuItemLink | MenuItemHeader)[] = [
+export const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 	{
 		type: "link",
 		active: (pageID) => pageID === "dashboard",
@@ -949,5 +949,3 @@ const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 		],
 	},
 ];
-
-export default menuItems;

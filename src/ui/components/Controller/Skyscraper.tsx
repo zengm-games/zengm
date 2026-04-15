@@ -1,6 +1,6 @@
 import { memo, useEffect } from "react";
-import { AD_DIVS } from "../../common/index.ts";
-import { ads } from "../util/index.ts";
+import { AD_DIVS } from "../../../common/constants.ts";
+import { ads } from "../../util/ads.ts";
 
 // Ensure there is enough room to display 160px wide ad with 15px margins next to 1200px wide container
 
@@ -18,7 +18,7 @@ const resizeListener = () => {
 	});
 };
 
-const Skyscraper = memo(() => {
+export const Skyscraper = memo(() => {
 	useEffect(() => {
 		if (!window.mobile) {
 			const callback = () => {
@@ -49,5 +49,3 @@ const Skyscraper = memo(() => {
 		</>
 	);
 });
-
-export default Skyscraper;

@@ -1,4 +1,4 @@
-import { safeLocalStorage } from "../../util/index.ts";
+import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
 import type { Props, SortBy, StickyCols } from "./index.tsx";
 import SettingsCache from "./SettingsCache.ts";
 

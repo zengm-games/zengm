@@ -1,7 +1,9 @@
 import type { ChangeEvent } from "react";
-import { realtimeUpdate, toWorker, useLocalPartial } from "../util/index.ts";
-import { MOBILE_AD_BOTTOM_MARGIN } from "../../common/index.ts";
-import { orderBy } from "../../common/utils.ts";
+import { toWorker } from "../../util/toWorker.ts";
+import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
+import { MOBILE_AD_BOTTOM_MARGIN } from "../../../common/constants.ts";
+import { orderBy } from "../../../common/utils.ts";
+import { useLocalPartial } from "../../util/local.ts";
 
 const setUserTid = async (userTid: number) => {
 	await toWorker("main", "updateGameAttributes", {
@@ -15,7 +17,7 @@ const handleChange = async (event: ChangeEvent<HTMLSelectElement>) => {
 	await setUserTid(userTid);
 };
 
-const MultiTeamMenu = () => {
+export const MultiTeamMenu = () => {
 	const state = useLocalPartial([
 		"stickyFooterAd",
 		"stickyFormButtons",
@@ -92,5 +94,3 @@ const MultiTeamMenu = () => {
 		</div>
 	);
 };
-
-export default MultiTeamMenu;

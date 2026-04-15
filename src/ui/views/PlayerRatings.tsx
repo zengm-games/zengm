@@ -1,7 +1,9 @@
-import { DataTable, MoreLinks } from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers } from "../util/index.ts";
-import { POSITIONS, PLAYER, bySport } from "../../common/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { getCols } from "../../common/getCols.ts";
+import { POSITIONS, PLAYER } from "../../common/constants.ts";
 import type { View } from "../../common/types.ts";
 import {
 	wrappedContractAmount,
@@ -9,6 +11,7 @@ import {
 } from "../components/contract.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const PlayerRatings = ({
 	abbrev,

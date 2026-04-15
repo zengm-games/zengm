@@ -97,7 +97,7 @@ const makeSimilarJerseyNumber = async (
 
 	if (JERSEY_NUMBERS_BY_POSITION) {
 		if (
-			existingRelative.ratings.at(-1).pos !== newRelative.ratings.at(-1).pos
+			existingRelative.ratings.at(-1)!.pos !== newRelative.ratings.at(-1)!.pos
 		) {
 			return;
 		}

@@ -1,4 +1,4 @@
-import isSport from "./isSport.ts";
+import { isSport } from "./sportFunctions.ts";
 import type { DraftLotteryResultArray, DraftType } from "./types.ts";
 
 class MultiDimensionalRange {
@@ -109,15 +109,10 @@ const monteCarloLotteryProbs = (
 		const result = simLottery(chances, numToPick);
 		for (let j = 0; j < result.length; j++) {
 			const k = result[j]!;
-			if (!probs[k]) {
-				probs[k] = [];
-			}
-			if (probs[k][j] === undefined) {
-				probs[k][j] = 1 / ITERATIONS;
-			} else {
-				// @ts-expect-error
-				probs[k][j] += 1 / ITERATIONS;
-			}
+			probs[k] ??= [];
+			probs[k][j] ??= 0;
+			// @ts-expect-error
+			probs[k][j] += 1 / ITERATIONS;
 		}
 	}
 

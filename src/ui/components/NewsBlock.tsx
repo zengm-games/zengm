@@ -1,7 +1,7 @@
-import { PlayerPicture } from "./index.tsx";
-import SafeHtml from "./SafeHtml.tsx";
+import { PlayerPicture } from "./PlayerPicture.tsx";
+import { SafeHtml } from "./SafeHtml.tsx";
 import clsx from "clsx";
-import { helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
 import type { View, LogEventType } from "../../common/types.ts";
 import { categories, types } from "../../common/transactionInfo.ts";
 
@@ -24,7 +24,7 @@ const Badge = ({ type }: { type: LogEventType }) => {
 const logoStyle = { maxHeight: 28, maxWidth: 28 };
 const topStyle = { height: 36 };
 
-const NewsBlock = ({
+export const NewsBlock = ({
 	event,
 	season,
 	userTid,
@@ -134,5 +134,3 @@ const NewsBlock = ({
 		</div>
 	);
 };
-
-export default NewsBlock;

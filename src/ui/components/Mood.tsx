@@ -1,13 +1,14 @@
 import clsx from "clsx";
 import { Fragment, useState } from "react";
-import { MOOD_TRAITS } from "../../common/index.ts";
+import { MOOD_TRAITS } from "../../common/constants.ts";
 import type {
 	GameAttributesLeague,
 	MoodComponents,
 	MoodTrait,
 } from "../../common/types.ts";
-import { helpers, useLocalPartial } from "../util/index.ts"; // Link to an abbrev either as "ATL" or "ATL (from BOS)" if a pick was traded.
-import ResponsivePopover from "./ResponsivePopover.tsx";
+import { helpers } from "../util/helpers.ts";
+import { ResponsivePopover } from "./ResponsivePopover.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
 const componentText = (
 	component: keyof MoodComponents,
@@ -139,7 +140,7 @@ const MoodTextRow = ({ amount, text }: { amount: number; text: string }) => {
 	);
 };
 
-const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
+export const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 	const { teamInfoCache, userTid } = useLocalPartial([
 		"teamInfoCache",
 		"userTid",
@@ -337,9 +338,7 @@ const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 	);
 };
 
-export default Mood;
-
-export const dataTableWrappedMood = (props: Props) => {
+export const wrappedMood = (props: Props) => {
 	const { defaultType, p } = props;
 
 	if (!p.mood) {

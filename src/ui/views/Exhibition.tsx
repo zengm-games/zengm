@@ -1,12 +1,12 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Modal } from "react-bootstrap";
+import { Modal } from "../components/Modal.tsx";
 import {
 	COURT,
+	DEFAULT_CONFS,
 	EXHIBITION_GAME_SETTINGS,
-	isSport,
 	PHASE,
 	REAL_PLAYERS_INFO,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 import type {
 	GameAttributesLeague,
@@ -15,18 +15,18 @@ import type {
 	Team,
 	View,
 } from "../../common/types.ts";
-import { ActionButton, PlayerNameLabels } from "../components/index.tsx";
+import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import {
-	helpers,
-	processPlayerStats,
-	safeLocalStorage,
-	toWorker,
-} from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
 import { applyRealTeamInfos } from "./NewLeague/index.tsx";
 import SettingsForm from "./Settings/SettingsForm.tsx";
 import { orderBy, range } from "../../common/utils.ts";
 import { choice, randInt } from "../../common/random.ts";
+import { processPlayerStats } from "../util/processPlayerStats.ts";
+import { ActionButton } from "../components/ActionButton.tsx";
+import { safeLocalStorage } from "../util/safeLocalStorage.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 export type ExhibitionTeam = {
 	season: number;
@@ -395,7 +395,7 @@ const SelectTeam = ({
 			<ul className="list-unstyled mb-0">
 				{playersToShow.map((p, i) => {
 					const stats = p.stats.at(-1);
-					const ratings = p.ratings.at(-1);
+					const ratings = p.ratings.at(-1)!;
 
 					return (
 						<li key={p.pid} className={playerRowClassName(i)}>
@@ -404,7 +404,7 @@ const SelectTeam = ({
 								firstName={p.firstName}
 								lastName={p.lastName}
 								jerseyNumber={p.stats.at(-1)?.jerseyNumber ?? p.jerseyNumber}
-								skills={p.ratings.at(-1)!.skills}
+								skills={ratings.skills}
 								fullNames
 								disableNameLink
 								season={season}
@@ -852,6 +852,7 @@ const Exhibition = ({ defaultSettings, realTeamInfo }: View<"exhibition">) => {
 						initialSettings={{
 							...defaultSettings,
 							...getGameAttributesByType(),
+							confs: DEFAULT_CONFS,
 							godMode: true,
 						}}
 						settingsShown={EXHIBITION_GAME_SETTINGS}

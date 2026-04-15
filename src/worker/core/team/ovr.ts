@@ -1,4 +1,4 @@
-import { bySport } from "../../../common/index.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor.ts";
 import type { PlayerInjury } from "../../../common/types.ts";
 import ovrBaseball from "./ovr.baseball.ts";
@@ -14,7 +14,7 @@ const ovr = (
 		pid: number | undefined;
 		ratings: {
 			ovr: number;
-			ovrs: Record<string, number> | undefined;
+			ovrs?: Record<string, number> | undefined;
 			pos: string;
 		};
 		value: number;

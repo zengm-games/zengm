@@ -1,15 +1,14 @@
 import { type SubmitEvent, useState, useEffect } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
-import { logEvent, toWorker, helpers, realtimeUpdate } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { logEvent } from "../util/logEvent.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import SelectMultiple from "../components/SelectMultiple/index.tsx";
-import {
-	AWARD_NAMES,
-	bySport,
-	isSport,
-	SIMPLE_AWARDS,
-} from "../../common/index.ts";
+import { AWARD_NAMES, SIMPLE_AWARDS } from "../../common/constants.ts";
 import { range } from "../../common/utils.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 const Position = ({ index, p }: { index: number; p: any }) => {
 	if (!isSport("football")) {
@@ -101,16 +100,18 @@ const EditAwards = ({
 
 			const newAwards = { ...aws };
 			if (
-				type == "finalsMvp" ||
-				type == "mvp" ||
-				type == "goy" ||
-				type == "smoy" ||
-				type == "roy" ||
-				type == "mip" ||
-				type == "oroy" ||
-				type == "droy" ||
-				type == "poy" ||
-				type == "rpoy"
+				type === "finalsMvp" ||
+				type === "mvp" ||
+				type === "goy" ||
+				type === "smoy" ||
+				type === "roy" ||
+				type === "mip" ||
+				type === "oroy" ||
+				type === "droy" ||
+				type === "poy" ||
+				type === "rpoy" ||
+				type === "opoy" ||
+				type === "poy"
 			) {
 				// All these == and != undefined checks are because when exporting a league, undefined is changed to null
 				if (p?.pid == undefined) {
@@ -118,7 +119,7 @@ const EditAwards = ({
 				} else {
 					newAwards[type] = makeAwardPlayer(p);
 				}
-			} else if (type == "dpoy" || type === "dfoy") {
+			} else if (type === "dpoy" || type === "dfoy") {
 				if (p?.pid == undefined) {
 					newAwards[type] = undefined;
 				} else {
@@ -126,7 +127,7 @@ const EditAwards = ({
 						type: "defense",
 					});
 				}
-			} else if (type == "allDefensive") {
+			} else if (type === "allDefensive") {
 				if (p?.pid == undefined) {
 					newAwards[type][teamNumber].players[playerNumber] = undefined;
 				} else {
@@ -155,7 +156,7 @@ const EditAwards = ({
 						);
 					}
 				}
-			} else if (type == "allLeague") {
+			} else if (type === "allLeague") {
 				if (p?.pid == undefined) {
 					newAwards[type][teamNumber].players[playerNumber] = undefined;
 				} else {
@@ -184,7 +185,7 @@ const EditAwards = ({
 					}
 				}
 			} else if (
-				type == "allRookie" ||
+				type === "allRookie" ||
 				(isSport("baseball") &&
 					(type === "allOffense" || type === "allDefense")) ||
 				type === "sfmvp"

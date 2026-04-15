@@ -1,5 +1,5 @@
 import { assert, beforeAll, beforeEach, describe, test } from "vitest";
-import testHelpers from "../../../test/helpers.ts";
+import { numInArrayEqualTo, resetG } from "../../../test/helpers.ts";
 import newScheduleGood from "./newScheduleGood.ts";
 import { g, helpers } from "../../util/index.ts";
 import { range } from "../../../common/utils.ts";
@@ -30,7 +30,7 @@ beforeAll(() => {
 
 describe("old basketball tests", options, () => {
 	beforeAll(() => {
-		testHelpers.resetG();
+		resetG();
 		g.setWithoutSavingToDB("allStarGame", null);
 	});
 
@@ -47,13 +47,9 @@ describe("old basketball tests", options, () => {
 		const home: Record<number, number> = {}; // Number of home games for each team
 		const away: Record<number, number> = {}; // Number of away games for each team
 		for (const matchup of tids) {
-			if (home[matchup[0]] === undefined) {
-				home[matchup[0]] = 0;
-			}
-			if (away[matchup[1]] === undefined) {
-				away[matchup[1]] = 0;
-			}
+			home[matchup[0]] ??= 0;
 			home[matchup[0]]! += 1;
+			away[matchup[1]] ??= 0;
 			away[matchup[1]]! += 1;
 		}
 
@@ -78,12 +74,8 @@ describe("old basketball tests", options, () => {
 				throw new Error("Team not found");
 			}
 			if (t0.seasonAttrs.cid !== t1.seasonAttrs.cid) {
-				if (home[matchup[1]] === undefined) {
-					home[matchup[1]] = {};
-				}
-				if (home[matchup[1]]![matchup[0]] === undefined) {
-					home[matchup[1]]![matchup[0]] = 0;
-				}
+				home[matchup[1]] ??= {};
+				home[matchup[1]]![matchup[0]] ??= 0;
 				home[matchup[1]]![matchup[0]]! += 1;
 			}
 		}
@@ -92,10 +84,7 @@ describe("old basketball tests", options, () => {
 
 		for (const { tid } of defaultTeams) {
 			assert.strictEqual(Object.values(home[tid]!).length, 15);
-			assert.strictEqual(
-				testHelpers.numInArrayEqualTo(Object.values(home[tid]!), 1),
-				15,
-			);
+			assert.strictEqual(numInArrayEqualTo(Object.values(home[tid]!), 1), 15);
 		}
 	});
 
@@ -114,12 +103,8 @@ describe("old basketball tests", options, () => {
 				throw new Error("Team not found");
 			}
 			if (t0.seasonAttrs.did === t1.seasonAttrs.did) {
-				if (home[matchup[1]] === undefined) {
-					home[matchup[1]] = {};
-				}
-				if (home[matchup[1]]![matchup[0]] === undefined) {
-					home[matchup[1]]![matchup[0]] = 0;
-				}
+				home[matchup[1]] ??= {};
+				home[matchup[1]]![matchup[0]] ??= 0;
 				home[matchup[1]]![matchup[0]]! += 1;
 			}
 		}
@@ -128,10 +113,7 @@ describe("old basketball tests", options, () => {
 
 		for (const { tid } of defaultTeams) {
 			assert.strictEqual(Object.values(home[tid]!).length, 4);
-			assert.strictEqual(
-				testHelpers.numInArrayEqualTo(Object.values(home[tid]!), 2),
-				4,
-			);
+			assert.strictEqual(numInArrayEqualTo(Object.values(home[tid]!), 2), 4);
 		}
 	});
 
@@ -153,12 +135,8 @@ describe("old basketball tests", options, () => {
 				t0.seasonAttrs.cid === t1.seasonAttrs.cid &&
 				t0.seasonAttrs.did !== t1.seasonAttrs.did
 			) {
-				if (home[matchup[1]] === undefined) {
-					home[matchup[1]] = {};
-				}
-				if (home[matchup[1]]![matchup[0]] === undefined) {
-					home[matchup[1]]![matchup[0]] = 0;
-				}
+				home[matchup[1]] ??= {};
+				home[matchup[1]]![matchup[0]] ??= 0;
 				home[matchup[1]]![matchup[0]]! += 1;
 			}
 		}
@@ -167,14 +145,8 @@ describe("old basketball tests", options, () => {
 
 		for (const { tid } of defaultTeams) {
 			assert.strictEqual(Object.values(home[tid]!).length, 10);
-			assert.strictEqual(
-				testHelpers.numInArrayEqualTo(Object.values(home[tid]!), 1),
-				2,
-			);
-			assert.strictEqual(
-				testHelpers.numInArrayEqualTo(Object.values(home[tid]!), 2),
-				8,
-			);
+			assert.strictEqual(numInArrayEqualTo(Object.values(home[tid]!), 1), 2);
+			assert.strictEqual(numInArrayEqualTo(Object.values(home[tid]!), 2), 8);
 		}
 	});
 });
@@ -192,7 +164,7 @@ describe("old newScheduleCrappy tests", options, () => {
 	};
 
 	beforeEach(() => {
-		testHelpers.resetG();
+		resetG();
 		g.setWithoutSavingToDB("allStarGame", null);
 	});
 
@@ -287,14 +259,9 @@ describe("old newScheduleCrappy tests", options, () => {
 				const home: Record<number, number> = {}; // Number of home games for each team
 				const away: Record<number, number> = {}; // Number of away games for each team
 				for (const matchup of matchups) {
-					if (home[matchup[0]] === undefined) {
-						home[matchup[0]] = 0;
-					}
-					if (away[matchup[1]] === undefined) {
-						away[matchup[1]] = 0;
-					}
-
+					home[matchup[0]] ??= 0;
 					home[matchup[0]]! += 1;
+					away[matchup[1]] ??= 0;
 					away[matchup[1]]! += 1;
 				}
 
@@ -309,7 +276,7 @@ describe("old newScheduleCrappy tests", options, () => {
 
 describe("error handling", options, () => {
 	test("warning if cannot make a full schedule due to there not being enough non-conference games", () => {
-		testHelpers.resetG();
+		resetG();
 
 		g.setWithoutSavingToDB("numGamesDiv", 2);
 		g.setWithoutSavingToDB("numGamesConf", 2);
@@ -341,7 +308,7 @@ describe("error handling", options, () => {
 
 describe("random test cases", options, () => {
 	beforeEach(() => {
-		testHelpers.resetG();
+		resetG();
 	});
 
 	const getNumGamesByTid = (tids: [number, number][]) => {

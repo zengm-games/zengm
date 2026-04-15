@@ -7,7 +7,7 @@ import type {
 	TeamStatType,
 	TeamStats,
 } from "../../../common/types.ts";
-import { bySport } from "../../../common/index.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 const processStats = (
 	ts: TeamStats,

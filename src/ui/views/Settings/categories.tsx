@@ -1,12 +1,14 @@
 import type { ReactNode } from "react";
-import { WEBSITE_ROOT, isSport } from "../../../common/index.ts";
-import { helpers } from "../../util/index.ts";
+import { WEBSITE_ROOT } from "../../../common/constants.ts";
+import { helpers } from "../../util/helpers.ts";
 import type { Category } from "./types.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 // Specified order for UI
 const categories: {
 	name: Category;
 	helpText?: ReactNode;
+	appendNumTeams?: boolean;
 }[] = [
 	{
 		name: "New League",
@@ -46,6 +48,7 @@ const categories: {
 	},
 	{
 		name: "Playoffs",
+		appendNumTeams: true,
 	},
 	{
 		name: "Players",

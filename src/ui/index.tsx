@@ -3,25 +3,24 @@ import "../common/polyfills.ts";
 import type { ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import api from "./api/index.ts";
-import { Controller, ErrorBoundary } from "./components/index.tsx";
+import { Controller } from "./components/Controller/index.tsx";
 import router from "./router/index.ts";
-import * as util from "./util/index.ts";
 import type { Env } from "../common/types.ts";
-import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common/index.ts";
+import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common/constants.ts";
 import Bugsnag from "@bugsnag/browser";
-window.bbgm = { api, ...util };
-const {
-	analyticsEvent,
-	compareVersions,
-	genStaticPage,
-	leagueNotFoundMessage,
-	logEvent,
-	promiseWorker,
-	routes,
-	safeLocalStorage,
-	toWorker,
-	unregisterServiceWorkers,
-} = util;
+import { LeagueNotFoundMessage } from "./components/LeagueNotFoundMessage.tsx";
+import { ErrorBoundary } from "./components/ErrorBoundary.tsx";
+import { ads } from "./util/ads.ts";
+import { genStaticPage } from "./util/genStaticPage.tsx";
+import { analyticsEvent } from "./util/analyticsEvent.ts";
+import { compareVersions } from "./util/compareVersions.ts";
+import { promiseWorker } from "./util/promiseWorker.ts";
+import { routes } from "./util/routes.ts";
+import { unregisterServiceWorkers } from "./util/unregisterServiceWorkers.ts";
+import { safeLocalStorage } from "./util/safeLocalStorage.ts";
+import { logEvent } from "./util/logEvent.ts";
+import { toWorker } from "./util/toWorker.ts";
+window.bbgm = { api, logEvent, toWorker };
 
 const handleVersion = async () => {
 	window.addEventListener("storage", (e) => {
@@ -84,71 +83,7 @@ const handleVersion = async () => {
 			);
 
 			// Don't block
-			(async () => {
-				let registrations: readonly ServiceWorkerRegistration[] = [];
-
-				if (window.navigator.serviceWorker) {
-					registrations =
-						await window.navigator.serviceWorker.getRegistrations();
-				}
-
-				const getSWVersion = () => {
-					return new Promise((resolve) => {
-						setTimeout(() => {
-							resolve("???");
-						}, 2000);
-
-						const messageChannel = new MessageChannel();
-						messageChannel.port1.onmessage = (event) => {
-							resolve(event.data);
-						};
-						if (navigator.serviceWorker.controller) {
-							navigator.serviceWorker.controller.postMessage("getSWVersion", [
-								messageChannel.port2,
-							]);
-						}
-					});
-				};
-
-				const swVersion = await getSWVersion();
-				console.log("swVersion", swVersion);
-
-				Bugsnag.notify(new Error("Game version mismatch"), (event) => {
-					event.addMetadata("custom", {
-						bbgmVersion: window.bbgmVersion,
-						bbgmVersionStored,
-						hasNavigatorServiceWorker:
-							window.navigator.serviceWorker !== undefined,
-						registrationsLength: registrations.length,
-						registrations: registrations.map((r) => {
-							return {
-								scope: r.scope,
-								active: r.active
-									? {
-											scriptURL: r.active.scriptURL,
-											state: r.active.state,
-										}
-									: null,
-								installing: r.installing
-									? {
-											scriptURL: r.installing.scriptURL,
-											state: r.installing.state,
-										}
-									: null,
-								waiting: r.waiting
-									? {
-											scriptURL: r.waiting.scriptURL,
-											state: r.waiting.state,
-										}
-									: null,
-							};
-						}),
-						swVersion,
-					});
-				});
-
-				unregisterServiceWorkers();
-			})();
+			unregisterServiceWorkers();
 		}
 	} else {
 		// Initial load, store version for future comparisons
@@ -203,10 +138,10 @@ const setupRoutes = () => {
 					initialLoad = false;
 				} else {
 					// This will only do something if ads are already initialized, so it's (mostly) safe to call here even though this could be an error page, since at least it won't show on an error page for the initial pageview
-					util.ads.refreshAll();
+					ads.refreshAll();
 
 					// There is no way to fix the URL for initial pageviews, according to the current docs, but I guess that's not a big deal for me, we'll see
-					util.ads.trackPageview(getUrlForAnalytics(context.path));
+					ads.trackPageview(getUrlForAnalytics(context.path));
 				}
 			}
 		},
@@ -217,7 +152,7 @@ const setupRoutes = () => {
 				if (errorMessage === "Matching route not found") {
 					errorMessage = "Page not found.";
 				} else if (errorMessage === "League not found.") {
-					errorMessage = leagueNotFoundMessage;
+					errorMessage = <LeagueNotFoundMessage />;
 				} else if (
 					typeof errorMessage !== "string" ||
 					!errorMessage.includes(
@@ -271,7 +206,7 @@ const setupRoutes = () => {
 				errorPage(context);
 			} else if (!context.state.noTrack) {
 				// If this is not an error page, initialize ads. init() will do nothing if it's already initialized
-				util.ads.init();
+				ads.init();
 			}
 
 			if (!context.state.noTrack && window.enableLogging) {

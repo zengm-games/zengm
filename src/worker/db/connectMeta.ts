@@ -4,7 +4,7 @@ import type {
 	IDBPTransaction,
 	StoreNames,
 } from "@dumbmatter/idb";
-import { isSport } from "../../common/index.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 import type {
 	League,
 	Options,
@@ -15,7 +15,8 @@ import type { Settings } from "../views/settings.ts";
 import connectIndexedDB from "./connectIndexedDB.ts";
 import type { KeyboardShortcutsLocal } from "../../ui/util/keyboardShortcuts.ts";
 
-interface MetaDB extends DBSchema {
+// export is needed just for https://github.com/microsoft/TypeScript/issues/59951
+export interface MetaDB extends DBSchema {
 	achievements: {
 		key: number;
 		value: {
@@ -60,7 +61,7 @@ const create = (db: IDBPDatabase<MetaDB>) => {
 		autoIncrement: true,
 	});
 	attributeStore.put(0, "nagged");
-	attributeStore.put("VERSION_NUMBER", "lastChangesVersion");
+	attributeStore.put(window.bbgmVersion, "lastChangesVersion");
 };
 
 type VersionChangeTransaction = IDBPTransaction<

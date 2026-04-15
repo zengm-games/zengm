@@ -1,13 +1,10 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import {
-	confirm,
-	helpers,
-	logEvent,
-	toWorker,
-	useLocalPartial,
-} from "../../util/index.ts";
-import { DataTable, StickyBottomButtons } from "../../components/index.tsx";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
+import { useLocalPartial } from "../../util/local.ts";
+import { DataTable } from "../../components/DataTable/index.tsx";
 import type { View } from "../../../common/types.ts";
 import { PHASE, TIME_BETWEEN_GAMES } from "../../../common/constants.ts";
 import { groupByUnique, orderBy } from "../../../common/utils.ts";
@@ -17,6 +14,8 @@ import { Dropdown } from "react-bootstrap";
 import { RegenerateScheduleModal } from "./RegenerateScheduleModal.tsx";
 import clsx from "clsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
+import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
+import { confirm } from "../../util/confirm.tsx";
 
 type Schedule = View<"scheduleEditor">["schedule"];
 
@@ -146,6 +145,7 @@ const reducer = (
 		| {
 				type: "resetSchedule";
 				schedule: Schedule;
+				dirty: boolean;
 		  }
 		| {
 				type: "clearSchedule";
@@ -403,7 +403,10 @@ const ScheduleEditor = ({
 
 	const dispatch: typeof dispatchUnwrapped = useCallback(
 		(action) => {
-			setDirty(true);
+			// Don't set dirty true when simming a game
+			if (action.type !== "resetSchedule" || action.dirty) {
+				setDirty(true);
+			}
 			dispatchUnwrapped(action);
 		},
 		[setDirty],
@@ -415,7 +418,7 @@ const ScheduleEditor = ({
 		if (isFirstRender.current) {
 			isFirstRender.current = false;
 		} else {
-			dispatch({ type: "resetSchedule", schedule: scheduleProp });
+			dispatch({ type: "resetSchedule", schedule: scheduleProp, dirty: false });
 		}
 	}, [dispatch, scheduleProp]);
 
@@ -979,6 +982,7 @@ const ScheduleEditor = ({
 					dispatch({
 						type: "resetSchedule",
 						schedule,
+						dirty: true,
 					});
 					setShowRegenerateScheduleModal(false);
 				}}

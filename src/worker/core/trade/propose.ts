@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { team } from "../index.ts";
 import { g } from "../../util/index.ts";
 import clear from "./clear.ts";

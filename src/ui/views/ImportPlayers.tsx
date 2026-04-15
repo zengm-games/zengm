@@ -1,13 +1,16 @@
 import { useState, type ChangeEvent } from "react";
-import { PLAYER, PHASE, LEAGUE_DATABASE_VERSION } from "../../common/index.ts";
-import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers, toWorker, useLocal } from "../util/index.ts";
 import {
-	ActionButton,
-	DataTable,
-	LeagueFileUpload,
-	MoreLinks,
-} from "../components/index.tsx";
+	PLAYER,
+	PHASE,
+	LEAGUE_DATABASE_VERSION,
+} from "../../common/constants.ts";
+import useTitleBar from "../hooks/useTitleBar.tsx";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { getCols } from "../../common/getCols.ts";
+import { useLocal } from "../util/local.ts";
+import { DataTable } from "../components/DataTable/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { orderBy } from "../../common/utils.ts";
@@ -15,6 +18,8 @@ import { useSelectedRows } from "../components/DataTable/useBulkSelectRows.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { CurrencyInputGroup } from "../components/CurrencyInputGroup.tsx";
 import useLocalStorageState from "use-local-storage-state";
+import { LeagueFileUpload } from "../components/LeagueFileUpload.tsx";
+import { ActionButton } from "../components/ActionButton.tsx";
 
 export const ImportPlayersInner = ({
 	challengeNoRatings,

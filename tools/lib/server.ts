@@ -3,8 +3,9 @@ import http from "node:http";
 import path from "node:path";
 import os from "node:os";
 import getPort from "get-port";
+import { styleText } from "node:util";
 
-const mimeTypes = {
+const mimeTypes: Record<string, string> = {
 	".bmp": "image/bmp",
 	".css": "text/css",
 	".gif": "image/gif",
@@ -21,15 +22,32 @@ const mimeTypes = {
 	".woff": "font/woff",
 	".woff2": "font/woff2",
 };
+
+const BUILD_DIR = path.resolve("build");
+
 const sendFile = (res: http.ServerResponse, filename: string) => {
-	const filePath = path.join("build", filename);
+	const filePath = path.resolve(BUILD_DIR, filename);
+
+	res.setHeader("Cache-Control", "no-cache");
+
+	if (!filePath.startsWith(BUILD_DIR)) {
+		res.writeHead(403, {
+			"Content-Type": "text/plain",
+		});
+		res.end("Forbidden");
+		return;
+	}
+
 	if (existsSync(filePath)) {
 		const ext = path.extname(filename);
-		if (Object.hasOwn(mimeTypes, ext)) {
-			res.writeHead(200, { "Content-Type": (mimeTypes as any)[ext] });
-		} else {
-			console.log(`Unknown mime type for extension ${ext}`);
+		const mimeType = mimeTypes[ext];
+		if (mimeType === undefined) {
+			throw new Error(`Unknown mime type for extension ${ext}`);
 		}
+
+		res.writeHead(200, {
+			"Content-Type": mimeType,
+		});
 
 		createReadStream(filePath).pipe(res);
 	} else {
@@ -46,15 +64,6 @@ const showStatic = (url: string, res: http.ServerResponse) => {
 };
 const showIndex = (res: http.ServerResponse) => {
 	sendFile(res, "index.html");
-};
-
-const startsWith = (url: string, prefixes: string[]) => {
-	for (const prefix of prefixes) {
-		if (url.indexOf(prefix) === 0) {
-			return true;
-		}
-	}
-	return false;
 };
 
 // https://stackoverflow.com/a/15075395/786644
@@ -77,48 +86,64 @@ const getIpAddress = () => {
 	return "0.0.0.0";
 };
 
-export const startServer = async (exposeToNetwork: boolean) => {
+const PREFIXES_STATIC = [
+	"/css/",
+	"/files/",
+	"/fonts/",
+	"/gen/",
+	"/ico/",
+	"/img/",
+	"/manifest",
+
+	// Not worth the confusion unless the service worker is being worked on
+	//"/sw.js",
+];
+
+const styleUrl = (url: string) => {
+	const parts = url.split(":");
+	if (parts.length === 3) {
+		return `${styleText("cyan", `${parts[0]!}:${parts[1]!}:`)}${styleText("cyanBright", parts[2]!)}`;
+	}
+	return styleText("cyan", url);
+};
+
+export const startServer = async ({
+	exposeToNetwork,
+	waitForBuild,
+}: {
+	exposeToNetwork: boolean;
+	waitForBuild: (() => Promise<void> | undefined) | undefined;
+}) => {
 	const port = await getPort({ port: 3000 });
+	const localUrl = `http://localhost:${port}`;
 
-	const server = http.createServer((req, res) => {
-		const prefixesStatic = [
-			"/css/",
-			"/files/",
-			"/fonts/",
-			"/gen/",
-			"/ico/",
-			"/img/",
-			"/manifest",
-		];
+	const server = http.createServer(async (req, res) => {
+		if (waitForBuild) {
+			const wait = waitForBuild();
+			if (wait) {
+				await wait;
+			}
+		}
 
-		const url = req.url!;
+		const { pathname } = new URL(req.url!, localUrl);
 
-		if (startsWith(url, prefixesStatic)) {
-			showStatic(url, res);
+		if (PREFIXES_STATIC.some((prefix) => pathname.startsWith(prefix))) {
+			showStatic(pathname, res);
 		} else {
 			showIndex(res);
 		}
 	});
 
-	/*	console.log(`
- █████████ ██████████ ██████   █████   █████████  ██████   ██████
-  ░░░░███░░ ███░░░░░█░ ██████   ███░░ ███░░░░░███  ██████ ██████░░
-     ███░░  ███░ █   ░ ███░███  ███░ ███       ░░░ ███░█████░███░
-    ███░░   ██████░    ███░ ███ ███░ ███           ███░ ███░░███░
-   ███░░    ███░░█░    ███░  ██████░ ███    █████  ███░  ░░░ ███░
-  ███░░     ███░  ░ █  ███░   █████░  ███    ░███░ ███░      ███░
- █████████ ██████████░█████    █████   █████████░░█████     █████
-  ░░░░░░░░░ ░░░░░░░░░░ ░░░░░    ░░░░░   ░░░░░░░░░  ░░░░░     ░░░░░
-`);*/
-
 	return new Promise<void>((resolve) => {
 		server.listen(port, exposeToNetwork ? "0.0.0.0" : "localhost", () => {
-			console.log(`Local: http://localhost:${port}`);
-			console.log("Worker console: chrome://inspect/#workers");
+			console.log("🏀🏈 ZenGM dev server ⚾🏒\n");
+			console.log(`> Local: ${styleUrl(localUrl)}`);
 			if (exposeToNetwork) {
-				console.log(`Network: http://${getIpAddress()}:${port}`);
+				console.log(
+					`> Network: ${styleUrl(`http://${getIpAddress()}:${port}`)}`,
+				);
 			} else {
-				console.log(`Network: use --host to expose`);
+				console.log(`> Network: ${styleText("dim", "use --host to expose")}`);
 			}
 			resolve();
 		});

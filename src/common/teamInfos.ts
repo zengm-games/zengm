@@ -1,4 +1,4 @@
-import bySport from "./bySport.ts";
+import { bySport } from "./sportFunctions.ts";
 
 const teamInfos: {
 	[key: string]: {

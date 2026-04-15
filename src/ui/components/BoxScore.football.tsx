@@ -6,13 +6,9 @@ import {
 	useState,
 	type CSSProperties,
 } from "react";
-import ResponsiveTableWrapper from "./ResponsiveTableWrapper.tsx";
-import { getCols, processPlayerStats } from "../util/index.ts";
-import {
-	filterPlayerStats,
-	getPeriodName,
-	helpers,
-} from "../../common/index.ts";
+import { ResponsiveTableWrapper } from "./ResponsiveTableWrapper.tsx";
+import { getCols } from "../../common/getCols.ts";
+import { helpers } from "../util/helpers.ts";
 import { PLAYER_GAME_STATS } from "../../common/constants.football.ts";
 import type { Col, SortBy } from "./DataTable/index.tsx";
 import updateSortBys from "./DataTable/updateSortBys.ts";
@@ -30,6 +26,9 @@ import { OverlayTrigger, Popover } from "react-bootstrap";
 import type { PlayByPlayEventScore } from "../../worker/core/GameSim.football/PlayByPlayLogger.ts";
 import { range } from "../../common/utils.ts";
 import { formatClock } from "../../common/formatClock.ts";
+import { processPlayerStats } from "../util/processPlayerStats.ts";
+import { getPeriodName } from "../../common/getPeriodName.ts";
+import { filterPlayerStats } from "../../common/filterPlayerStats.ts";
 
 type Team = {
 	abbrev: string;
@@ -297,7 +296,6 @@ const processEvents = (events: PlayByPlayEventScore[], numPeriods: number) => {
 					(scoreInfo.type === "2P" && event.t === prevEvent.t))
 			) {
 				prevEvent.score = [score[0], score[1]];
-				console.log(prevEvent, event, pts);
 				prevEvent.text = (
 					<>
 						{prevEvent.text}
@@ -935,24 +933,15 @@ const BoxScore = ({
 				numPeriods={boxScore.numPeriods ?? 4}
 				teams={boxScore.teams}
 			/>
-			{[
-				"Passing",
-				"Rushing",
-				"Receiving",
-				"Kicking",
-				"Punting",
-				"Returns",
-				"Defense",
-			].map((title) => (
-				<Fragment key={title}>
-					<h2>{title}</h2>
-					<StatsTable
-						Row={Row}
-						boxScore={boxScore}
-						type={title.toLowerCase() as any}
-					/>
-				</Fragment>
-			))}
+			{helpers.keys(PLAYER_GAME_STATS).map((type) => {
+				const info = PLAYER_GAME_STATS[type];
+				return (
+					<Fragment key={type}>
+						<h2>{info.name}</h2>
+						<StatsTable Row={Row} boxScore={boxScore} type={type} />
+					</Fragment>
+				);
+			})}
 		</div>
 	);
 };

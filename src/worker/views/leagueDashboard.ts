@@ -1,4 +1,4 @@
-import { bySport, isSport, PHASE, PLAYER } from "../../common/index.ts";
+import { PHASE, PLAYER } from "../../common/constants.ts";
 import { season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers, orderTeams } from "../util/index.ts";
@@ -6,6 +6,7 @@ import type { UpdateEvents } from "../../common/types.ts";
 import { processEvents } from "./news.ts";
 import { getMaxPlayoffSeed } from "./standings.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 const updateInbox = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("newPhase")) {
@@ -473,7 +474,6 @@ const updatePlayoffs = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		return {
-			numConfs: g.get("confs", "current").length,
 			numGamesToWinSeries,
 			series: foundSeries,
 			seriesTitle,
@@ -510,7 +510,7 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					"imgURL",
 					"imgURLSmall",
 				],
-				stats: ["pts", "oppPts", "gp"] as const,
+				stats: ["pts", "oppPts", "gp"],
 				season: g.get("season"),
 				showNoStats: true,
 			},
@@ -518,20 +518,14 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		);
 
 		// Find user's conference
-		let cid: number | undefined;
-		for (const t of teams) {
-			if (t.tid === g.get("userTid")) {
-				cid = t.seasonAttrs.cid;
-				break;
-			}
-		}
+		const userTid = g.get("userTid");
+		const cid = teams.find((t) => t.tid === userTid)?.seasonAttrs.cid;
 
-		const confTeams: ((typeof teams)[number] & {
-			rank: number;
-			gb: number;
-		})[] = (
+		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
+
+		let confOrAllTeams = (
 			await orderTeams(
-				teams.filter((t) => t.seasonAttrs.cid === cid),
+				teams.filter((t) => !playoffsByConf || t.seasonAttrs.cid === cid),
 				teams,
 			)
 		).map((t) => ({
@@ -544,28 +538,43 @@ const updateStandings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const usePts = pointsFormula !== "";
 
 		let rank = 1;
-		for (const t of confTeams) {
-			if (cid === t.seasonAttrs.cid) {
+		for (const t of confOrAllTeams) {
+			if (!playoffsByConf || t.seasonAttrs.cid === cid) {
 				t.rank = rank;
 				if (!usePts) {
 					t.gb =
 						rank === 1
 							? 0
-							: helpers.gb(confTeams[0]!.seasonAttrs, t.seasonAttrs);
+							: helpers.gb(confOrAllTeams[0]!.seasonAttrs, t.seasonAttrs);
 				}
 
 				rank += 1;
 			}
 		}
 
-		const playoffsByConf = await season.getPlayoffsByConf(g.get("season"));
+		// Keep only up to 16 teams or else it looks ugly, and always keep userTid
+		const NUM_TEAMS_TO_SHOW = 16;
+		let seenUserTid = false;
+		confOrAllTeams = confOrAllTeams.filter((t) => {
+			if (t.tid === userTid) {
+				seenUserTid = true;
+				return true;
+			}
+
+			if (seenUserTid) {
+				return t.rank <= NUM_TEAMS_TO_SHOW;
+			} else {
+				return t.rank < NUM_TEAMS_TO_SHOW;
+			}
+		});
+
 		const { maxPlayoffSeed, maxPlayoffSeedNoPlayIn } = await getMaxPlayoffSeed(
 			g.get("season"),
 			playoffsByConf,
 		);
 
 		return {
-			confTeams,
+			confOrAllTeams,
 			maxPlayoffSeed,
 			maxPlayoffSeedNoPlayIn,
 			playoffsByConf,

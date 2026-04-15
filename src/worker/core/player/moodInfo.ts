@@ -1,15 +1,14 @@
-import { bySport, isSport, PHASE, PLAYER } from "../../../common/index.ts";
+import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { g, helpers, random } from "../../util/index.ts";
 import { idb } from "../../db/index.ts";
 import moodComponents from "./moodComponents.ts";
 import type { Player } from "../../../common/types.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const hasActiveNegotiation = async (tid: number, pid: number) => {
-	const teamNegotiations = (await idb.cache.negotiations.getAll()).filter(
-		(negotiation) => negotiation.tid === tid,
+	return (await idb.cache.negotiations.getAll()).some(
+		(negotiation) => negotiation.tid === tid && negotiation.pid === pid,
 	);
-
-	return teamNegotiations.some((negotiation) => negotiation.pid === pid);
 };
 
 const moodInfo = async (
@@ -128,7 +127,7 @@ const moodInfo = async (
 			tid +
 			p.pid +
 			p.stats.length +
-			p.ratings.at(-1).ovr +
+			p.ratings.at(-1)!.ovr +
 			(p.stats.at(-1)?.min ?? 0);
 
 		if (isSport("baseball")) {

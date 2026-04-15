@@ -1,4 +1,4 @@
-import { PLAYER } from "../../../common/index.ts";
+import { PLAYER } from "../../../common/constants.ts";
 import { draft, player, season, team, league } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import {
@@ -17,7 +17,6 @@ import {
 import type {
 	Conditions,
 	PhaseReturn,
-	MinimalPlayerRatings,
 	Player,
 	LogEventType,
 	GameAttributesLeague,
@@ -422,8 +421,7 @@ const newPhaseBeforeDraft = async (
 			Infinity,
 		]);
 
-		const retiredPlayersByTeam: Record<number, Player<MinimalPlayerRatings>[]> =
-			{};
+		const retiredPlayersByTeam: Record<number, Player[]> = {};
 
 		for (const p of players) {
 			let update = false;

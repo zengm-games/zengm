@@ -190,7 +190,7 @@ type PlayByPlayEventInputNoScore =
 			timeouts: [number, number];
 	  };
 
-export type PlayByPlayEventInput =
+type PlayByPlayEventInput =
 	| PlayByPlayEventInputScore
 	| PlayByPlayEventInputNoScore;
 

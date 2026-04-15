@@ -1,9 +1,9 @@
 import { useId } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { timeBetweenGames } from "../../common/index.ts";
+import { timeBetweenGames } from "../../common/timeBetweenGames.ts";
 import type { PlayerInjury } from "../../common/types.ts";
 
-const InjuryIcon = ({
+export const InjuryIcon = ({
 	className = "",
 	injury,
 }: {
@@ -56,5 +56,3 @@ const InjuryIcon = ({
 
 	return null;
 };
-
-export default InjuryIcon;

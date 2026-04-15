@@ -14,11 +14,11 @@ Development: <https://github.com/zengm-games/zengm>
 
 Discussion:
 
-* [Discord](https://zengm.com/discord/)
-* Reddit: [Basketball GM](https://www.reddit.com/r/BasketballGM/),
-[Football GM](https://www.reddit.com/r/Football_GM/),
-[ZenGM Baseball](https://www.reddit.com/r/ZenGMBaseball/),
-[ZenGM Hockey](https://www.reddit.com/r/ZenGMHockey/)
+- [Discord](https://zengm.com/discord/)
+- Reddit: [Basketball GM](https://www.reddit.com/r/BasketballGM/),
+  [Football GM](https://www.reddit.com/r/Football_GM/),
+  [ZenGM Baseball](https://www.reddit.com/r/ZenGMBaseball/),
+  [ZenGM Hockey](https://www.reddit.com/r/ZenGMHockey/)
 
 ## Who is this for?
 
@@ -35,14 +35,14 @@ If you want to contribute code to this project, you must sign a contributor
 license agreement. There are separate forms for individuals and entities (such
 as corporations):
 
-* [Individual CLA](CLA-individual.md) (this is probably what you want)
-* [Entity CLA](CLA-entity.md)
+- [Individual CLA](CLA-individual.md) (this is probably what you want)
+- [Entity CLA](CLA-entity.md)
 
 Make a copy of the form, fill in your information at the bottom, and send an
 email to jeremy@zengm.com with the subject line, "Contributor License Agreement
 from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
 
-## Setup 
+## Setup
 
 First install [Node.js](https://nodejs.org/) 24 and [pnpm](https://pnpm.io/) 10.
 
@@ -71,7 +71,7 @@ the entire codebase, run:
 
     node --run lint
 
-Integration and unit tests spread out through the codebase in *.test.ts files.
+Integration and unit tests spread out through the codebase in \*.test.ts files.
 Coverage is not great. They can be run from the command line with:
 
     node --run test

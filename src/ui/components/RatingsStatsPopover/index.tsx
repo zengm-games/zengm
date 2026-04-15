@@ -1,10 +1,11 @@
 import clsx from "clsx";
 import { type Ref, useCallback, useEffect, useState } from "react";
-import RatingsStats from "./RatingsStats.tsx";
-import WatchBlock from "../WatchBlock.tsx";
-import { helpers, toWorker } from "../../util/index.ts";
-import ResponsivePopover from "../ResponsivePopover.tsx";
-import { PLAYER } from "../../../common/index.ts";
+import { RatingsStats } from "./RatingsStats.tsx";
+import { WatchBlock } from "../WatchBlock.tsx";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
+import { ResponsivePopover } from "../ResponsivePopover.tsx";
+import { PLAYER } from "../../../common/constants.ts";
 import { crossTabEmitter } from "../../util/crossTabEmitter.ts";
 
 const PlayerNote = ({
@@ -61,7 +62,7 @@ type Props = {
 	season?: number;
 };
 
-const RatingsStatsPopover = ({
+export const RatingsStatsPopover = ({
 	defaultWatch,
 	disableNameLink,
 	pid,
@@ -247,5 +248,3 @@ const RatingsStatsPopover = ({
 		/>
 	);
 };
-
-export default RatingsStatsPopover;

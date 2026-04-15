@@ -7,10 +7,10 @@ const intercept = -86.54640888008547;
 
 // minLength - number of players at this position who typically play in a game, barring injuries. These are the only players used when wholeRoster is false (normal power rankings).
 const weights: Record<PrimaryPosition, number[]> = {
-	QB: [0.13064995],
-	RB: [0.05095315],
-	TE: [0.02508516],
-	WR: [0.03934526, 0.02273937, 0.0225101],
+	QB: [0.12532827],
+	RB: [0.05026595],
+	TE: [0.01575013],
+	WR: [0.03875859, 0.0225721, 0.0255889],
 	OL: [0.0960952, 0.08972395, 0.08229491, 0.08625102, 0.06087159],
 	CB: [0.05999902, 0.06117803],
 	S: [0.04259323, 0.03714586],

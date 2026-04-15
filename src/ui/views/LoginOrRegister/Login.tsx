@@ -1,16 +1,11 @@
 import { type SubmitEvent, useRef, useState } from "react";
-import {
-	ACCOUNT_API_URL,
-	fetchWrapper,
-	GRACE_PERIOD,
-} from "../../../common/index.ts";
-import { ActionButton } from "../../components/index.tsx";
-import {
-	analyticsEvent,
-	localActions,
-	realtimeUpdate,
-	toWorker,
-} from "../../util/index.ts";
+import { ACCOUNT_API_URL, GRACE_PERIOD } from "../../../common/constants.ts";
+import { ActionButton } from "../../components/ActionButton.tsx";
+import { toWorker } from "../../util/toWorker.ts";
+import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
+import { localActions } from "../../util/local.ts";
+import { analyticsEvent } from "../../util/analyticsEvent.ts";
+import { fetchWrapper } from "../../../common/fetchWrapper.ts";
 
 const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 	const [submitting, setSubmitting] = useState(false);
@@ -41,8 +36,8 @@ const Login = ({ ajaxErrorMsg }: { ajaxErrorMsg: string }) => {
 				const gold = currentTimestamp <= data.gold_until;
 				localActions.update({
 					gold,
-					username: data.username === "" ? undefined : data.email,
-					email: data.username === "" ? undefined : data.username,
+					username: data.username === "" ? undefined : data.username,
+					email: data.username === "" ? undefined : data.email,
 				});
 
 				if (gold) {

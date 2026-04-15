@@ -1,9 +1,10 @@
-import { bySport, PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { ViewInput } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { groupByUnique, maxBy } from "../../common/utils.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 export const getDraftTeamsByTid = async (season: number) => {
 	const teamsByTid = groupByUnique(

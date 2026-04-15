@@ -24,7 +24,7 @@ import Play, {
 } from "./Play.ts";
 import LngTracker from "./LngTracker.ts";
 import GameSimBase from "../GameSim/GameSimBase.ts";
-import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
+import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/constants.ts";
 import type { TeamNum } from "../../../common/types.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
@@ -1203,6 +1203,10 @@ class GameSim extends GameSimBase {
 			weightsBonus: [],
 			valFunc: (p) => (p.ovrs.LB / 100 + p.compositeRating.tackling) / 2,
 		});
+		/*globalThis.valuesPass ??= [];
+		globalThis.valuesPass.push(this.team[this.o].compositeRating.passBlocking / this.team[this.d].compositeRating.passRushing)
+		globalThis.valuesRun ??= [];
+		globalThis.valuesRun.push(this.team[this.o].compositeRating.runBlocking / this.team[this.d].compositeRating.runStopping)*/
 	}
 
 	updatePlayersOnField(
@@ -2203,7 +2207,7 @@ class GameSim extends GameSimBase {
 				: p.seasonStats["defInt"] + p.stat["defInt"] + 1,
 			totalPssInt: this.allStarGame
 				? undefined
-				: p.seasonStats["pssInt"] + p.stat["pssInt"] + 1,
+				: qb.seasonStats["pssInt"] + qb.stat["pssInt"] + 1,
 			t: this.currentPlay.state.current.d,
 			twoPointConversionTeam: this.twoPointConversionTeam,
 			yds: ydsPass,
@@ -2282,20 +2286,37 @@ class GameSim extends GameSimBase {
 		});
 	}
 
-	doSack(qb: PlayerGameSim) {
-		const p = this.pickPlayer(
-			this.currentPlay.state.initial.d,
-			"passRushing",
-			undefined,
-			5,
-		);
+	doSack(
+		qb: PlayerGameSim,
+		pbw: Map<PlayerGameSim, { type: "OL" | "Other"; won: boolean }>,
+	) {
+		const { d } = this.currentPlay.state.initial;
+
+		const p = this.pickPlayer(d, "passRushing", undefined, 5);
 		const ydsRaw = random.randInt(-1, -12);
 		const yds = this.currentPlay.boundedYds(ydsRaw);
+
+		// Track skAlw only if this is a DL/LB sack
+		let ol;
+		const dl = this.playersOnField[d].DL;
+		const lb = this.playersOnField[d].LB;
+		if ((dl && dl.includes(p)) || (lb && lb.includes(p))) {
+			// Get rid of Array.from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Iterator/map - Chrome 122, Firefox 131, Safari 18.4
+			const passBlockLossPlayers = Array.from(pbw.entries())
+				.filter(([p, { type, won }]) => !won && type === "OL")
+				.map(([p]) => p);
+			if (passBlockLossPlayers.length > 0) {
+				ol = random.choice(passBlockLossPlayers);
+			}
+
+			// If no OL lost his pass block, then assume this was a coverage sack or QB's fault
+		}
 
 		const { safety } = this.currentPlay.addEvent({
 			type: "sk",
 			qb,
 			p,
+			ol,
 			yds,
 		});
 
@@ -2383,9 +2404,67 @@ class GameSim extends GameSimBase {
 			return 0;
 		}
 
+		const pbw = new Map<
+			PlayerGameSim,
+			{ type: "OL" | "Other"; won: boolean }
+		>();
+		const pbCounts = { aOL: 0, aOther: 0, wOL: 0, wOther: 0 };
+		const addBlockAttempt = (
+			p: PlayerGameSim,
+			type: "OL" | "Other",
+			baselineRatio: number,
+		) => {
+			// This roughly ranges from 1 to 1.25
+			const ratio =
+				p.compositeRating.passBlocking /
+				this.team[d].compositeRating.passRushing;
+
+			// Scale to roughly 50%-95%
+			const probWin = helpers.bound(
+				(ratio - baselineRatio) * (0.45 / 0.25) + 0.5,
+				0,
+				0.96,
+			);
+			const won = Math.random() < probWin;
+			pbw.set(p, {
+				type,
+				won,
+			});
+
+			pbCounts[`a${type}`] += 1;
+			if (won) {
+				pbCounts[`w${type}`] += 1;
+			}
+		};
+
+		// OL always block, TE and RB sometimes do
+		const ol = this.playersOnField[o].OL;
+		if (ol) {
+			for (const p of ol) {
+				addBlockAttempt(p, "OL", 1);
+			}
+		}
+		const te = this.playersOnField[o].TE;
+		if (te) {
+			for (const p of te) {
+				if (Math.random() < 0.1) {
+					addBlockAttempt(p, "Other", 0.75);
+				}
+			}
+		}
+		const rb = this.playersOnField[o].RB;
+		if (rb) {
+			for (const p of rb) {
+				if (Math.random() < 0.5) {
+					addBlockAttempt(p, "Other", 0.5);
+				}
+			}
+		}
+
 		const qb = this.getTopPlayerOnField(o, "QB");
 		this.currentPlay.addEvent({
 			type: "dropback",
+			pbw,
 		});
 		this.playByPlay.logEvent({
 			type: "dropback",
@@ -2393,6 +2472,7 @@ class GameSim extends GameSimBase {
 			names: [qb.name],
 			t: o,
 		});
+
 		let dt = random.randInt(2, 6);
 
 		if (Math.random() < 0.75 && Math.random() < this.probFumble(qb)) {
@@ -2403,7 +2483,7 @@ class GameSim extends GameSimBase {
 		const sack = Math.random() < this.probSack(qb);
 
 		if (sack) {
-			return this.doSack(qb);
+			return this.doSack(qb, pbw);
 		}
 
 		if (this.probScramble(this.playersOnField[o].QB?.[0]) > Math.random()) {
@@ -2563,14 +2643,10 @@ class GameSim extends GameSimBase {
 		const o = this.o;
 		const d = this.d;
 
-		if (!qbScramble) {
-			this.updatePlayersOnField("run");
-			const penInfo = this.checkPenalties("beforeSnap");
-
-			if (penInfo) {
-				return 0;
-			}
-		}
+		let rbw:
+			| Map<PlayerGameSim, { type: "OL" | "Other"; won: boolean }>
+			| undefined;
+		const rbCounts = { aOL: 0, aOther: 0, wOL: 0, wOther: 0 };
 
 		// Usually do normal run, but sometimes do special stuff
 		let positions: Position[];
@@ -2584,8 +2660,15 @@ class GameSim extends GameSimBase {
 
 			if (rand < 0.5 || rbs.length === 0) {
 				positions.push("QB");
-			} else if (rand < 0.59 || rbs.length === 0) {
+			} else if (rand < 0.57 || rbs.length === 0) {
 				positions.push("WR");
+			}
+
+			this.updatePlayersOnField("run");
+			const penInfo = this.checkPenalties("beforeSnap");
+
+			if (penInfo) {
+				return 0;
 			}
 		}
 
@@ -2593,6 +2676,63 @@ class GameSim extends GameSimBase {
 		const scrambleModifier = qbScramble ? 3 : 1;
 
 		const p = this.pickPlayer(o, "rushing", positions);
+
+		if (!qbScramble) {
+			rbw = new Map();
+
+			const addBlockAttempt = (
+				p: PlayerGameSim,
+				type: "OL" | "Other",
+				baselineRatio: number,
+			) => {
+				// This roughly ranges from 1 to 1.25
+				const ratio =
+					p.compositeRating.runBlocking /
+					this.team[d].compositeRating.runStopping;
+
+				// Scale to roughly 50%-95%
+				const probWin = helpers.bound(
+					(ratio - baselineRatio) * (0.65 / 0.25) + 0.3,
+					0,
+					0.96,
+				);
+				const won = Math.random() < probWin;
+				rbw!.set(p, {
+					type,
+					won,
+				});
+
+				rbCounts[`a${type}`] += 1;
+				if (won) {
+					rbCounts[`w${type}`] += 1;
+				}
+			};
+
+			// OL always block, TE and RB sometimes do
+			const ol = this.playersOnField[o].OL;
+			if (ol) {
+				for (const p2 of ol) {
+					addBlockAttempt(p2, "OL", 1);
+				}
+			}
+			const te = this.playersOnField[o].TE;
+			if (te) {
+				for (const p2 of te) {
+					if (p !== p2 && Math.random() < 0.75) {
+						addBlockAttempt(p2, "Other", 0.85);
+					}
+				}
+			}
+			const rb = this.playersOnField[o].RB;
+			if (rb) {
+				for (const p2 of rb) {
+					if (p !== p2 && Math.random() < 0.25) {
+						addBlockAttempt(p2, "Other", 0.6);
+					}
+				}
+			}
+		}
+
 		const qb = this.getTopPlayerOnField(o, "QB");
 		this.playByPlay.logEvent({
 			type: "handoff",
@@ -2637,6 +2777,7 @@ class GameSim extends GameSimBase {
 			type: "rus",
 			p,
 			yds,
+			rbw,
 		});
 
 		if (td) {

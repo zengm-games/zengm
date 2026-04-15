@@ -1,8 +1,6 @@
 import type { PlayerInjury } from "../../../common/types.ts";
 import type { Position } from "../../../common/types.baseball.ts";
 
-export type CompositeRating = "";
-
 export type PlayerGameSim = {
 	id: number;
 	name: string;

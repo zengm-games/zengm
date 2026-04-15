@@ -1,4 +1,5 @@
-import bySport from "./bySport.ts";
+import type { SuperCol } from "../ui/components/DataTable/index.tsx";
+import { bySport } from "./sportFunctions.ts";
 import * as constantsBaseball from "./constants.baseball.ts";
 import * as constantsBasketball from "./constants.basketball.ts";
 import * as constantsFootball from "./constants.football.ts";
@@ -28,7 +29,7 @@ const DRAFT_BY_TEAM_OVR = bySport({
 	hockey: true,
 });
 
-const LEAGUE_DATABASE_VERSION = 69;
+const LEAGUE_DATABASE_VERSION = 70;
 
 const NO_LOTTERY_DRAFT_TYPES: DraftType[] = [
 	"freeAgents",
@@ -142,7 +143,7 @@ const PLAYER_STATS_TABLES = bySport<{
 		name: string;
 		onlyShowIf?: string[];
 		stats: string[];
-		superCols?: any[];
+		superCols?: SuperCol[];
 	};
 }>({
 	baseball: constantsBaseball.PLAYER_STATS_TABLES,
@@ -180,7 +181,7 @@ const TEAM_STATS_TABLES = bySport<
 		{
 			name: string;
 			stats: string[];
-			superCols?: any[];
+			superCols?: SuperCol[];
 		}
 	>
 >({
@@ -286,7 +287,7 @@ const REAL_PLAYERS_INFO = bySport({
 		FIRST_SEASON_WITH_ALEXNOOB_ROSTERS: 2020,
 		MIN_SEASON: 1947,
 		MAX_SEASON: 2026,
-		MAX_PHASE: PHASE.PRESEASON as Phase,
+		MAX_PHASE: PHASE.PLAYOFFS as Phase,
 	},
 	football: undefined,
 	hockey: undefined,

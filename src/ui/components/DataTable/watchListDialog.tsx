@@ -1,9 +1,9 @@
 import { useEffect, useRef } from "react";
 import { confirmable, createConfirmation } from "react-confirm";
-import Modal from "../Modal.tsx";
+import { Modal } from "../Modal.tsx";
 import { range } from "../../../common/utils.ts";
 import { Flag } from "../WatchBlock.tsx";
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 
 const Confirm = confirmable<
 	{

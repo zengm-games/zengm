@@ -1,6 +1,6 @@
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { helpers } from "../../util/index.ts";
-import { PlayoffMatchup } from "../../components/index.tsx";
+import { helpers } from "../../util/helpers.ts";
+import { PlayoffMatchup } from "../../components/PlayoffMatchup.tsx";
 import Leaders from "./Leaders.tsx";
 import Standings from "./Standings.tsx";
 import StartingLineup from "./StartingLineup.tsx";
@@ -12,7 +12,7 @@ const LeagueDashboard = ({
 	att,
 	cash,
 	challengeNoRatings,
-	confTeams,
+	confOrAllTeams,
 	events,
 	leagueLeaders,
 	lost,
@@ -21,7 +21,6 @@ const LeagueDashboard = ({
 	maxPlayoffSeedNoPlayIn,
 	messages,
 	name,
-	numConfs,
 	numGamesToWinSeries,
 	numPlayersOnCourt,
 	otl,
@@ -78,10 +77,9 @@ const LeagueDashboard = ({
 							) : null}
 							<div className="d-none d-sm-block mt-2">
 								<Standings
-									confTeams={confTeams}
+									confOrAllTeams={confOrAllTeams}
 									maxPlayoffSeed={maxPlayoffSeed}
 									maxPlayoffSeedNoPlayIn={maxPlayoffSeedNoPlayIn}
-									numConfs={numConfs}
 									playoffsByConf={playoffsByConf}
 									pointsFormula={pointsFormula}
 									usePts={usePts}
@@ -152,7 +150,7 @@ const LeagueDashboard = ({
 								<div className="col-6">
 									<TeamStats teamStats={teamStats} />
 									<h2>Finances</h2>
-									<p>
+									<div className="mb-3">
 										Avg Attendance: {helpers.numberWithCommas(Math.round(att))}
 										<br />
 										Revenue (YTD): {helpers.formatCurrency(revenue, "M")}
@@ -178,7 +176,7 @@ const LeagueDashboard = ({
 										<a href={helpers.leagueUrl(["league_finances"])}>
 											» League Finances
 										</a>
-									</p>
+									</div>
 								</div>
 							</div>
 						</div>

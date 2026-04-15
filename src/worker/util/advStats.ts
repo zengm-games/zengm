@@ -1,4 +1,4 @@
-import { bySport } from "../../common/index.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import advStatsBaseball from "./advStats.baseball.ts";
 import advStatsBasketball from "./advStats.basketball.ts";
 import advStatsFootball from "./advStats.football.ts";

@@ -1,11 +1,9 @@
 import {
-	bySport,
-	isSport,
 	PHASE,
 	PLAYER,
 	RATINGS,
 	REMAINING_PLAYOFF_TEAMS_PHASES,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type {
@@ -19,6 +17,7 @@ import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { buffOvrDH } from "./depth.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 import { season } from "../core/index.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 export const extraRatings = bySport({
 	baseball: ["ovrs", "pots"],
@@ -27,7 +26,7 @@ export const extraRatings = bySport({
 	hockey: ["ovrs", "pots"],
 });
 
-const getActivePlayoffTids = async () => {
+export const getActivePlayoffTids = async () => {
 	const tids = new Set<number>();
 	const phase = actualPhase();
 	if (!REMAINING_PLAYOFF_TEAMS_PHASES.has(phase)) {
@@ -146,15 +145,13 @@ export const getPlayers = async (
 		);
 	}
 
-	// Show all teams
-	if (tid === undefined && abbrev === "watch") {
-		playersAll = playersAll.filter((p) => p.watch);
-	}
-
-	// Show only playoff teamas
-	if (tid === undefined && abbrev === "playoffs") {
-		const playoffTids = await getActivePlayoffTids();
-		playersAll = playersAll.filter((p) => playoffTids.has(p.tid));
+	if (tid === undefined) {
+		if (abbrev === "watch") {
+			playersAll = playersAll.filter((p) => p.watch);
+		} else if (abbrev === "playoffs") {
+			const playoffTids = await getActivePlayoffTids();
+			playersAll = playersAll.filter((p) => playoffTids.has(p.tid));
+		}
 	}
 
 	// showNoStats for current season (so draft picks etc show up on their correct team) or for no team (so free agents show up)
@@ -254,8 +251,8 @@ const updatePlayers = async (
 				"elu",
 				"rtr",
 				"hnd",
-				"rbk",
 				"pbk",
+				"rbk",
 				"pcv",
 				"tck",
 				"prs",

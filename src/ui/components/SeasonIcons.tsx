@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import type { Player } from "../../../common/types.ts";
+import type { Player } from "../../common/types.ts";
 
 const prefixCount = (text: string, count: number) => {
 	if (count <= 1) {
@@ -10,7 +10,7 @@ const prefixCount = (text: string, count: number) => {
 };
 
 // If no season, then check whole career
-const SeasonIcons = ({
+export const SeasonIcons = ({
 	className,
 	season,
 	awards,
@@ -109,5 +109,3 @@ const SeasonIcons = ({
 
 	return null;
 };
-
-export default SeasonIcons;

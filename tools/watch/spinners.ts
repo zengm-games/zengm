@@ -5,7 +5,7 @@ import process from "node:process";
 import readline from "node:readline";
 import type { WriteStream } from "node:tty";
 import { stripVTControlCharacters, styleText } from "node:util";
-import { SPORTS, type Sport } from "../lib/getSport.ts";
+import { getSport, SPORTS, type Sport } from "../lib/getSport.ts";
 
 const isUnicodeSupported =
 	process.platform !== "win32" ||
@@ -32,7 +32,7 @@ const FRAMES = (
 
 const interval = 80;
 
-const SPORT_EMOJIS: Record<Sport, string> = {
+const SPORT_EMOJIS = {
 	basketball: "🏀",
 	football: "🏈",
 	baseball: "⚾",
@@ -101,7 +101,7 @@ export class Spinners<Key extends string = string> {
 	private extraRenderDelays: ExtraRenderDelays | undefined;
 
 	private keys: Key[] = [];
-	private info: Record<Key, Info> = {} as any;
+	private info: Partial<Record<Key, Info>> = {};
 	private renderKey: RenderKey<Key>;
 
 	private sportIndex;
@@ -115,6 +115,13 @@ export class Spinners<Key extends string = string> {
 		return this.switchSportsTimeoutId;
 	}
 	private switchSportsTimeoutId: NodeJS.Timeout | undefined;
+
+	private waitingForBuildCompletion:
+		| {
+				promise: Promise<void>;
+				resolve: () => void;
+		  }
+		| undefined;
 
 	// Switching sports too fast (before JS has started to build) breaks rolldown somehow, so don't allow switching sports until some time later
 	initialized = false;
@@ -131,7 +138,7 @@ export class Spinners<Key extends string = string> {
 		process.once("SIGINT", exitHandlerBound);
 		process.once("SIGTERM", exitHandlerBound);
 
-		this.sportIndex = SPORTS.indexOf(process.env.SPORT);
+		this.sportIndex = SPORTS.indexOf(getSport());
 		if (this.sportIndex < 0) {
 			this.sportIndex = 0;
 		}
@@ -217,6 +224,11 @@ export class Spinners<Key extends string = string> {
 			})
 		) {
 			this.stopRendering();
+
+			if (this.waitingForBuildCompletion) {
+				this.waitingForBuildCompletion.resolve();
+				this.waitingForBuildCompletion = undefined;
+			}
 		} else {
 			this.startRendering();
 		}
@@ -388,17 +400,21 @@ export class Spinners<Key extends string = string> {
 			process.stdin.setRawMode(true); // Sets the terminal to raw mode
 		}
 
-		const directions = {
+		const directions: Record<string, -1 | 1> = {
 			"\u001b[D": -1, // Left arrow
 			"\u001b[C": 1, // Right arrow
 		};
 
 		process.stdin.on("keypress", (str, key) => {
+			// Always allow Ctrl+C to exit the script
+			if (key.ctrl && key.name === "c") {
+				this.exitHandler("SIGINT");
+			}
+
 			if (!this.initialized) {
 				return;
 			}
 
-			// @ts-expect-error
 			const direction = directions[key.sequence];
 
 			if (direction !== undefined) {
@@ -428,11 +444,19 @@ export class Spinners<Key extends string = string> {
 				if (!this.rendering) {
 					this.render();
 				}
-			} else if (key.ctrl && key.name === "c") {
-				// Allow Ctrl+C to exit the script
-				this.exitHandler("SIGINT");
 			}
 		});
+	}
+
+	waitForBuild() {
+		const infos: Info[] = Object.values(this.info);
+		if (infos.length === 0 || infos.some((info) => info.status === "spin")) {
+			if (!this.waitingForBuildCompletion) {
+				this.waitingForBuildCompletion = Promise.withResolvers<void>();
+			}
+
+			return this.waitingForBuildCompletion.promise;
+		}
 	}
 }
 

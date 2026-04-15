@@ -1,4 +1,4 @@
-import { saveAwardsByPlayer } from "../season/awards.ts";
+import { awardStats, saveAwardsByPlayer } from "../season/awards.ts";
 import { g, random } from "../../util/index.ts";
 import type {
 	AllStars,
@@ -6,11 +6,13 @@ import type {
 	PlayerFiltered,
 	AllStarPlayer,
 } from "../../../common/types.ts";
-import { bySport, isSport, PLAYER } from "../../../common/index.ts";
+import { PLAYER } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import type { PlayerRatings } from "../../../common/types.basketball.ts";
-import { groupBy, orderBy, range } from "../../../common/utils.ts";
+import { orderBy, range } from "../../../common/utils.ts";
 import { getPosByGpF } from "../season/doAwards.baseball.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { mvpScore } from "../season/doAwards.football.ts";
 
 const MIN_PLAYERS_CONTEST = 2;
 
@@ -38,7 +40,7 @@ const create = async (conditions: Conditions) => {
 				"gpF",
 			],
 			basketball: ["ewa", "ws"],
-			football: ["av"],
+			football: awardStats,
 			hockey: ["ps"],
 		}),
 		season: g.get("season"),
@@ -53,10 +55,17 @@ const create = async (conditions: Conditions) => {
 	const score = (p: PlayerFiltered) =>
 		bySport({
 			baseball: p.stats.war,
-			football: p.stats.av,
+			football: mvpScore(p),
 			basketball: 2.5 * p.stats.ewa + p.stats.ws,
 			hockey: p.stats.ps,
 		});
+
+	if (isSport("football")) {
+		// For mvpScore
+		for (const p of players) {
+			p.currentStats = p.stats;
+		}
+	}
 
 	const sortedPlayers = orderBy(
 		players,
@@ -118,7 +127,7 @@ const create = async (conditions: Conditions) => {
 			// If we need more than the default positions, they should be random
 			random.shuffle(positions);
 
-			const playersByPos = groupBy(candidates, (p) => {
+			const playersByPos = Object.groupBy(candidates, (p) => {
 				if (isSport("baseball")) {
 					// Find actual played position based on highest gpF value
 					const pos = getPosByGpF(p.stats.gpF);
@@ -255,17 +264,15 @@ const create = async (conditions: Conditions) => {
 			cidsByTid[t.tid] = t.cid;
 		}
 
-		const grouped = groupBy(
+		const grouped = Map.groupBy(
 			sortedPlayers.filter((p) => p.tid >= 0),
 			(p) => cidsByTid[p.tid]!,
 		);
 
 		// Sorting is to make sure lowest cid is first
-		const groupedPlayers = orderBy(
-			Object.entries(grouped),
-			(row) => row[0],
-			"asc",
-		).map((row) => row[1]);
+		const groupedPlayers = orderBy(grouped, (row) => row[0], "asc").map(
+			(row) => row[1],
+		);
 
 		let numSuccess = 0;
 

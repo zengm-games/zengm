@@ -1,17 +1,19 @@
 import { useState } from "react";
 import type { View } from "../../../common/types.ts";
-import { getCols, helpers } from "../../util/index.ts";
-import { isSport } from "../../../common/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { getCols } from "../../../common/getCols.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 import { highlightLeaderText, MaybeBold, SeasonLink } from "./common.tsx";
 import { expandFieldingStats } from "../../util/expandFieldingStats.baseball.ts";
 import { formatStatGameHigh } from "../PlayerStats.tsx";
-import SeasonIcons from "./SeasonIcons.tsx";
+import { SeasonIcons } from "../../components/SeasonIcons.tsx";
 import HideableSection from "../../components/HideableSection.tsx";
-import { DataTable } from "../../components/index.tsx";
+import { DataTable } from "../../components/DataTable/index.tsx";
 import clsx from "clsx";
 import { useRangeFooter } from "./useRangeFooter.ts";
 import type { FooterRow } from "../../components/DataTable/Footer.tsx";
 import { wrappedTeamAbbrevLink } from "../../components/TeamAbbrevLink.tsx";
+import type { SuperCol } from "../../components/DataTable/index.tsx";
 
 const hasStats = (
 	careerStats: View<"player">["player"]["careerStats"],
@@ -51,7 +53,7 @@ export const StatsTable = ({
 	onlyShowIf?: string[];
 	p: View<"player">["player"];
 	stats: string[];
-	superCols?: any[];
+	superCols?: SuperCol[];
 	leaders: View<"player">["leaders"];
 }) => {
 	const hasRegularSeasonStats = hasStats(p.careerStats, onlyShowIf);
@@ -100,7 +102,9 @@ export const StatsTable = ({
 		superCols = helpers.deepCopy(superCols);
 
 		// No name
-		superCols[0].colspan -= 1;
+		if (superCols[0]) {
+			superCols[0].colspan -= 1;
+		}
 	}
 
 	if (isSport("basketball") && name === "Shot Locations") {

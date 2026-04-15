@@ -1,4 +1,4 @@
-import helpers from "../util/helpers.ts";
+import { helpers } from "../util/helpers.ts";
 
 export const wrappedCurrency = (
 	amount: number,

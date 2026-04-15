@@ -1,8 +1,7 @@
 import { draft } from "../../index.ts";
-import { PHASE, PLAYER } from "../../../../common/index.ts";
+import { PHASE, PLAYER } from "../../../../common/constants.ts";
 import type { PlayerWithoutKey } from "../../../../common/types.ts";
 import { g } from "../../../util/index.ts";
-import { groupByMap } from "../../../../common/utils.ts";
 
 const addDraftProspects = async ({
 	players,
@@ -11,7 +10,7 @@ const addDraftProspects = async ({
 	players: PlayerWithoutKey[];
 	scoutingLevel: number;
 }) => {
-	const draftProspectsByDraftYear = groupByMap(
+	const draftProspectsByDraftYear = Map.groupBy(
 		players.filter((p) => p.tid === PLAYER.UNDRAFTED),
 		(p) => p.draft.year,
 	);

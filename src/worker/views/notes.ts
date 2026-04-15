@@ -12,7 +12,7 @@ import { processDraftPicks } from "./draftPicks.ts";
 import getWinner from "../../common/getWinner.ts";
 import formatScoreWithShootout from "../../common/formatScoreWithShootout.ts";
 import { formatPlayersWatchList } from "./watchList.ts";
-import { bySport } from "../../common/index.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const updateNotes = async (
 	{ type }: ViewInput<"notes">,

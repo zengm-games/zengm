@@ -2,7 +2,7 @@ import { useState } from "react";
 import DraftClass from "./DraftClass.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import type { View } from "../../../common/types.ts";
-import { MoreLinks } from "../../components/index.tsx";
+import { MoreLinks } from "../../components/MoreLinks.tsx";
 
 const PAGE_SIZE = 3;
 

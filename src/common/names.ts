@@ -1,4 +1,4 @@
-import helpers from "./helpers.ts";
+import { helpers } from "./helpers.ts";
 import type { PlayerBioInfo } from "./types.ts";
 
 export type DefaultNames = Record<
@@ -35,11 +35,8 @@ export const mergeCountries = (
 						mergedCountries[country][firstOrLast] = {};
 					}
 					for (const [name, count] of Object.entries(info[firstOrLast])) {
-						if (mergedCountries[country][firstOrLast]![name] === undefined) {
-							mergedCountries[country][firstOrLast]![name] = count;
-						} else {
-							mergedCountries[country][firstOrLast]![name] += count;
-						}
+						mergedCountries[country][firstOrLast]![name] ??= 0;
+						mergedCountries[country][firstOrLast]![name] += count;
 					}
 				}
 			}

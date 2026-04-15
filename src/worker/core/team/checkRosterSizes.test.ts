@@ -1,17 +1,14 @@
 import { assert, beforeAll, test } from "vitest";
-import { PLAYER } from "../../../common/index.ts";
-import testHelpers from "../../../test/helpers.ts";
+import { PLAYER } from "../../../common/constants.ts";
+import { resetCache, resetG } from "../../../test/helpers.ts";
 import { player, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
-import type {
-	PlayerWithoutKey,
-	MinimalPlayerRatings,
-} from "../../../common/types.ts";
+import type { PlayerWithoutKey } from "../../../common/types.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 beforeAll(() => {
-	testHelpers.resetG(); // Two teams: user and AI
+	resetG(); // Two teams: user and AI
 
 	g.setWithoutSavingToDB("numTeams", 2);
 	g.setWithoutSavingToDB("numActiveTeams", 2);
@@ -19,7 +16,7 @@ beforeAll(() => {
 
 // resetCacheWithPlayers({0: 10, 1: 9, [PLAYER.FREE_AGENT]: 1}) will make 10 players on team 0, 9 on team 1, and	// 1 free agent with a minimum contract.
 const resetCacheWithPlayers = async (info: Record<string, number>) => {
-	const players: PlayerWithoutKey<MinimalPlayerRatings>[] = [];
+	const players: PlayerWithoutKey[] = [];
 
 	for (const tidString of Object.keys(info)) {
 		const tid = Number.parseInt(tidString);
@@ -41,7 +38,7 @@ const resetCacheWithPlayers = async (info: Record<string, number>) => {
 	const teamsDefault = helpers.getTeamsDefault();
 	const teams = teamsDefault.slice(0, numTeams).map(team.generate);
 
-	await testHelpers.resetCache({
+	await resetCache({
 		players,
 		teams,
 	});

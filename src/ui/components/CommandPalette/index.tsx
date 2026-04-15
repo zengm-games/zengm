@@ -10,31 +10,28 @@ import {
 	useState,
 	type ReactNode,
 } from "react";
-import { groupBy, orderBy } from "../../../common/utils.ts";
+import { orderBy } from "../../../common/utils.ts";
 import type {
 	LocalStateUI,
 	MenuItemHeader,
 	MenuItemLink,
 	MenuItemText,
 } from "../../../common/types.ts";
-import {
-	helpers,
-	local,
-	logEvent,
-	menuItems,
-	realtimeUpdate,
-	safeLocalStorage,
-	toWorker,
-	useLocalPartial,
-} from "../../util/index.ts";
-import { getText, makeAnchorProps } from "../SideBar.tsx";
-import { REAL_PLAYERS_INFO } from "../../../common/index.ts";
-import Modal from "../Modal.tsx";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
+import { getText, makeAnchorProps } from "../Controller/SideBar.tsx";
+import { REAL_PLAYERS_INFO } from "../../../common/constants.ts";
+import { Modal } from "../Modal.tsx";
 import { normalizeIntl } from "../../../common/normalizeIntl.ts";
 import {
 	formatKeyboardShortcut,
 	useKeyboardShortcuts,
 } from "../../util/keyboardShortcuts.ts";
+import { menuItems } from "../../util/menuItems.tsx";
+import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
+import { local, useLocalPartial } from "../../util/local.ts";
+import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 
 const TWO_MONTHS_IN_MILLISECONDS = 2 * 30 * 24 * 60 * 60 * 1000;
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
@@ -201,7 +198,7 @@ const getResultsGroupedDefault = ({
 	const output = [];
 	if (searchText === "") {
 		// No search - return groups
-		const resultsGrouped = groupBy(results, "category");
+		const resultsGrouped = Object.groupBy(results, (result) => result.category);
 		for (const category of Object.keys(resultsGrouped)) {
 			if (resultsGrouped[category]) {
 				output.push({
@@ -349,7 +346,10 @@ const getResultsGroupedLeagues = async ({
 	const output = [];
 	if (searchText === "") {
 		// No search - return groups
-		const resultsGrouped = groupBy(results, "category");
+		const resultsGrouped = Object.groupBy(
+			results,
+			(result) => result.category ?? "undefined",
+		);
 		for (const category of Object.keys(resultsGrouped)) {
 			if (resultsGrouped[category]) {
 				output.push({
@@ -738,7 +738,7 @@ const ModeText = ({ inLeague }: { inLeague: boolean }) => {
 	);
 };
 
-const CommandPalette = ({
+const CommandPaletteInner = ({
 	show,
 	onHide,
 }: {
@@ -980,8 +980,8 @@ const CommandPalette = ({
 	);
 };
 
-// Wrapper so useEffect stuff in CommandPalette does not run until it shows
-const CommandPaletteWrapper = () => {
+// Wrapper so useEffect stuff in CommandPaletteInner does not run until it shows
+export const CommandPalette = () => {
 	const { show, onHide } = useCommandPalette();
 
 	useEffect(() => {
@@ -1022,10 +1022,8 @@ const CommandPaletteWrapper = () => {
 	}, []);
 
 	if (show) {
-		return <CommandPalette show={show} onHide={onHide} />;
+		return <CommandPaletteInner show={show} onHide={onHide} />;
 	}
 
 	return null;
 };
-
-export default CommandPaletteWrapper;

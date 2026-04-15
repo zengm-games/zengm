@@ -1,4 +1,4 @@
-import { promiseWorker } from "./index.ts";
+import { promiseWorker } from "./promiseWorker.ts";
 import type { WorkerAPICategory } from "../../worker/index.ts";
 import type api from "../../worker/api/index.ts";
 
@@ -12,7 +12,7 @@ type ReturnTypeUnconstrained<T> = T extends (...args: any) => infer P
 	? P
 	: never;
 
-const toWorker = <
+export const toWorker = <
 	Type extends WorkerAPICategory,
 	Name extends keyof API[Type],
 	Func extends API[Type][Name],
@@ -23,5 +23,3 @@ const toWorker = <
 ): Promise<ReturnTypeUnconstrained<Func>> => {
 	return promiseWorker.postMessage([type, name, param]);
 };
-
-export default toWorker;

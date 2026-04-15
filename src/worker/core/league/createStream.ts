@@ -9,15 +9,13 @@ import {
 	team,
 } from "../index.ts";
 import {
-	applyRealTeamInfo,
 	DEFAULT_STADIUM_CAPACITY,
 	DEPTH_CHART_NAME,
-	isSport,
 	LEAGUE_DATABASE_VERSION,
 	PHASE,
 	PLAYER,
 	REAL_PLAYERS_INFO,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import type {
 	Conditions,
 	Conf,
@@ -66,6 +64,10 @@ import remove from "./remove.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { DEFAULT_LEVEL, amountToLevel } from "../../../common/budgetLevels.ts";
 import { upgradeGamesVersion65 } from "../../db/connectLeague.ts";
+import type { NewLeagueSettings } from "../../views/newLeague.ts";
+import { getNumPlayersTradedAwayNormalized } from "../player/getNumPlayersTradedAwayNormalized.ts";
+import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 export type TeamInfo = TeamBasic & {
 	disabled?: boolean;
@@ -198,6 +200,16 @@ export type PreProcessParams = {
 	version: number | undefined;
 };
 
+// These obejcts have auto incrementing primary keys that aren't referenced by anything else, so it's safe to delete them when importing, and also prevents any issues from people manually editing league files and accidentally repeating a primary key, resulting in the latest one overwriting any earlier ones
+const PRIMARY_KEYS_TO_DELETE: Record<string, string> = {
+	messages: "mid",
+	playerFeats: "fid",
+	releasedPlayers: "rid",
+	scheduledEvents: "id",
+	teamSeasons: "rid",
+	teamStats: "rid",
+};
+
 const preProcess = async (
 	key: string,
 	x: any,
@@ -212,6 +224,11 @@ const preProcess = async (
 		version,
 	}: PreProcessParams,
 ) => {
+	const primaryKeyToDelete = PRIMARY_KEYS_TO_DELETE[key];
+	if (primaryKeyToDelete !== undefined) {
+		delete x[primaryKeyToDelete];
+	}
+
 	if (key === "draftPicks") {
 		if (typeof x.pick !== "number") {
 			x.pick = 0;
@@ -225,12 +242,8 @@ const preProcess = async (
 			}
 			for (const t of x.teams) {
 				for (const p of t.players) {
-					if (p.ba === undefined) {
-						p.ba = 0;
-					}
-					if (p.pm === undefined) {
-						p.pm = 0;
-					}
+					p.ba ??= 0;
+					p.pm ??= 0;
 				}
 			}
 		}
@@ -267,14 +280,16 @@ const preProcess = async (
 		}
 	} else if (key === "playerFeats") {
 		// Version 60 upgrade
+		const score = x.score;
 		if (
 			x.won !== undefined &&
 			x.result === undefined &&
-			typeof x.score === "string"
+			typeof score === "string"
 		) {
-			const pts = (x.score as string)
-				.split("-")
-				.map((y) => Number.parseInt(y)) as [number, number];
+			const pts = score.split("-").map((y) => Number.parseInt(y)) as [
+				number,
+				number,
+			];
 			let diff = -Infinity;
 			if (!Number.isNaN(pts[0]) && !Number.isNaN(pts[1])) {
 				diff = pts[0] - pts[1];
@@ -746,6 +761,9 @@ const processTeamInfos = async ({
 	const teamSeasons: TeamSeasonWithoutKey[] = [];
 	const teamStats: TeamStatsWithoutKey[] = [];
 
+	const teamSeasonUniqueKeys = new Set();
+	const teamSeasonUniqueKeyErrorCounts: Record<string, number> = {};
+
 	let scoutingLevel: number | undefined;
 
 	for (const [i, t] of teams.entries()) {
@@ -836,10 +854,8 @@ const processTeamInfos = async ({
 					"stadiumCapacity",
 				] as const;
 				for (const key of copyFromTeamIfUndefined) {
-					if (teamSeason[key] === undefined) {
-						// @ts-expect-error
-						teamSeason[key] = t[key];
-					}
+					// @ts-expect-error
+					teamSeason[key] ??= t[key];
 				}
 
 				const defaultZero = [
@@ -870,66 +886,44 @@ const processTeamInfos = async ({
 					"numPlayersTradedAway",
 				] as const;
 				for (const key of defaultZero) {
-					if (teamSeason[key] === undefined) {
-						teamSeason[key] = 0;
-					}
+					teamSeason[key] ??= 0;
 				}
 
 				// Keep these in sync with genSeasonRow
-				if (teamSeason.cash === undefined) {
-					teamSeason.cash = 10000;
-				}
-				if (teamSeason.hype === undefined) {
-					teamSeason.hype = Math.random();
-				}
-				if (teamSeason.pop === undefined) {
-					teamSeason.pop = 1;
-				}
-				if (teamSeason.stadiumCapacity === undefined) {
-					teamSeason.stadiumCapacity = DEFAULT_STADIUM_CAPACITY;
-				}
-				if (teamSeason.playoffRoundsWon === undefined) {
-					teamSeason.playoffRoundsWon = -1;
-				}
-				if (teamSeason.lastTen === undefined) {
-					teamSeason.lastTen = [];
-				}
-				if (teamSeason.ownerMood === undefined) {
-					teamSeason.ownerMood = {
-						wins: 0,
-						playoffs: 0,
-						money: 0,
-					};
-				}
-				if (teamSeason.revenues === undefined) {
-					teamSeason.revenues = {
-						luxuryTaxShare: 0,
-						merch: 0,
-						sponsor: 0,
-						ticket: 0,
-						nationalTv: 0,
-						localTv: 0,
-					};
-				}
-				if (teamSeason.expenses === undefined) {
-					teamSeason.expenses = {
-						salary: 0,
-						luxuryTax: 0,
-						minTax: 0,
-						scouting: 0,
-						coaching: 0,
-						health: 0,
-						facilities: 0,
-					};
-				}
-				if (teamSeason.expenseLevels === undefined) {
-					teamSeason.expenseLevels = {
-						scouting: 0,
-						coaching: 0,
-						health: 0,
-						facilities: 0,
-					};
-				}
+				teamSeason.cash ??= 10000;
+				teamSeason.hype ??= Math.random();
+				teamSeason.pop ??= 1;
+				teamSeason.stadiumCapacity ??= DEFAULT_STADIUM_CAPACITY;
+				teamSeason.playoffRoundsWon ??= -1;
+				teamSeason.lastTen ??= [];
+				teamSeason.ownerMood ??= {
+					wins: 0,
+					playoffs: 0,
+					money: 0,
+				};
+				teamSeason.revenues ??= {
+					luxuryTaxShare: 0,
+					merch: 0,
+					sponsor: 0,
+					ticket: 0,
+					nationalTv: 0,
+					localTv: 0,
+				};
+				teamSeason.expenses ??= {
+					salary: 0,
+					luxuryTax: 0,
+					minTax: 0,
+					scouting: 0,
+					coaching: 0,
+					health: 0,
+					facilities: 0,
+				};
+				teamSeason.expenseLevels ??= {
+					scouting: 0,
+					coaching: 0,
+					health: 0,
+					facilities: 0,
+				};
 			}
 		} else if (!t.disabled) {
 			const row = team.genSeasonRow(t);
@@ -955,6 +949,14 @@ const processTeamInfos = async ({
 
 			// teamSeasons = teamSeasons.filter(ts2 => ts2.season !== teamSeason.season);
 			teamSeasons.push(teamSeason);
+
+			// Check for uniqueness of (tid, season) otherwise it's an error when saving to IndexedDB
+			const uniqueKey = `${teamSeason.tid}/${teamSeason.season}`;
+			if (teamSeasonUniqueKeys.has(uniqueKey)) {
+				teamSeasonUniqueKeyErrorCounts[uniqueKey] ??= 1;
+				teamSeasonUniqueKeyErrorCounts[uniqueKey] += 1;
+			}
+			teamSeasonUniqueKeys.add(uniqueKey);
 		}
 
 		const teamStatsLocal: TeamStatsWithoutKey[] = teamInfo.stats ?? [];
@@ -986,6 +988,15 @@ const processTeamInfos = async ({
 				t,
 				teamSeasons: teamSeasonsLocal,
 			});
+		}
+	}
+
+	{
+		const errors = Object.entries(teamSeasonUniqueKeyErrorCounts);
+		if (errors.length > 0) {
+			throw new Error(
+				`Duplicate team season entries for the following tid/season combinations: ${errors.map(([key, count]) => `${key}${count > 2 ? ` (${count} times)` : ""}`).join(", ")}`,
+			);
 		}
 	}
 
@@ -1115,7 +1126,7 @@ type CreateStreamProps = {
 	lid: number;
 	name: string;
 	setLeagueCreationStatus: (status: string) => void;
-	settings: Omit<Settings, "numActiveTeams">;
+	settings: NewLeagueSettings;
 	shuffleRosters: boolean;
 	startingSeasonFromInput: string | undefined;
 	teamsFromInput: NewLeagueTeam[];
@@ -1401,13 +1412,45 @@ const afterDBStream = async ({
 		}
 	}
 
+	const fileHasPlayers = extraFromStream.activePlayers.length > 0;
+
+	// Version 70 upgrade
+	if (fileHasPlayers) {
+		let numPlayersTradedAwayNormalized: Record<number, number> | undefined;
+		for (const p of extraFromStream.activePlayers) {
+			if (p.tid !== PLAYER.FREE_AGENT || p.numPlayersTradedAwayNormalized) {
+				continue;
+			}
+
+			if (!numPlayersTradedAwayNormalized) {
+				numPlayersTradedAwayNormalized = {};
+				const teamSeasonsByTid = Object.groupBy(
+					teamSeasons.filter((row) => row.season >= gameAttributes.season - 2),
+					(row) => row.tid,
+				);
+				for (const t of teams) {
+					if (t.disabled) {
+						continue;
+					}
+
+					numPlayersTradedAwayNormalized[t.tid] =
+						getNumPlayersTradedAwayNormalized(
+							teamSeasonsByTid[t.tid] ?? [],
+							gameAttributes.season,
+						);
+				}
+			}
+
+			p.numPlayersTradedAwayNormalized = numPlayersTradedAwayNormalized;
+		}
+	}
+
 	const randomDebuts =
 		randomization === "debuts" ||
 		randomization === "debutsKeepCurrent" ||
 		randomization === "debutsForever" ||
 		randomization === "debutsForeverKeepCurrent";
 
-	const fileHasPlayers = extraFromStream.activePlayers.length > 0;
 	let activePlayers = fileHasPlayers
 		? extraFromStream.activePlayers
 		: await createRandomPlayers({
@@ -1557,7 +1600,7 @@ const afterDBStream = async ({
 					pid: p.pid,
 					injury: p.injury,
 					value: p.value,
-					ratings: p.ratings.at(-1),
+					ratings: p.ratings.at(-1)!,
 				}));
 			const ovr = team.ovr(teamPlayers);
 			t.strategy = ovr >= 60 ? "contending" : "rebuilding";
@@ -1627,6 +1670,10 @@ const afterDBStream = async ({
 
 		// Auto sort rosters
 		for (const t of teams) {
+			if (t.disabled) {
+				continue;
+			}
+
 			// If league file has players with roster order set, don't auto sort even if skipNewPhase is false
 			if (
 				!extraFromStream.teamHasRosterOrder.has(t.tid) ||
@@ -1680,7 +1727,7 @@ const afterDBStream = async ({
 		}
 	}
 
-	// Gregg Brown from DNBA, RIP. Make one player on Denver have his name, assuming it's a random players league, Denver exists, and there are no custom names.
+	// Memorials
 	if (!fileHasPlayers && !g.get("playerBioInfo")) {
 		let memorials;
 		if (isSport("hockey")) {

@@ -19,8 +19,8 @@ import Pagination from "./Pagination.tsx";
 import PerPage from "./PerPage.tsx";
 import getSearchVal from "./getSearchVal.tsx";
 import getSortVal from "./getSortVal.tsx";
-import ResponsiveTableWrapper from "../ResponsiveTableWrapper.tsx";
-import { downloadFile, helpers, safeLocalStorage } from "../../util/index.ts";
+import { ResponsiveTableWrapper } from "../ResponsiveTableWrapper.tsx";
+import { helpers } from "../../util/helpers.ts";
 import type { SortOrder, SortType } from "../../../common/types.ts";
 import { arrayMove } from "@dnd-kit/sortable";
 import updateSortBys from "./updateSortBys.ts";
@@ -39,6 +39,8 @@ import {
 } from "./sortableRows.tsx";
 import { DataTableContext } from "./contexts.ts";
 import { useStickyTableHeader } from "./useStickyTableHeader.ts";
+import { downloadFile } from "../../util/downloadFile.ts";
+import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
 
 export type SortBy = [number, SortOrder];
 
@@ -152,7 +154,7 @@ export type Props = {
 	disableBulkSelectKeys?: Set<DataTableRow["key"]>;
 };
 
-const DataTable = ({
+export const DataTable = ({
 	alwaysShowBulkSelectRows,
 	className,
 	classNameWrapper,
@@ -667,5 +669,3 @@ const DataTable = ({
 		</>
 	);
 };
-
-export default DataTable;

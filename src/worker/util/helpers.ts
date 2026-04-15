@@ -1,9 +1,5 @@
-import {
-	PLAYER,
-	helpers as commonHelpers,
-	timeBetweenGames,
-	isSport,
-} from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
+import { helpers as commonHelpers } from "../../common/helpers.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type {
@@ -14,6 +10,8 @@ import type {
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 import hasTies from "../core/season/hasTies.ts";
 import { roundContract as roundContractRaw } from "../../common/roundContract.ts";
+import { timeBetweenGames } from "../../common/timeBetweenGames.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 const augmentSeries = async (
 	series: {
@@ -85,8 +83,8 @@ const calcWinp = ({
 	won,
 }: {
 	lost: number;
-	otl?: any;
-	tied?: any;
+	otl?: number;
+	tied?: number;
 	won: number;
 }) => {
 	const actualOtl = typeof otl !== "number" || Number.isNaN(otl) ? 0 : otl;

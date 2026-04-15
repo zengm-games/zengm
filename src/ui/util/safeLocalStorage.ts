@@ -1,6 +1,6 @@
 // Handle quota errors and localStorage being undefined/null
 
-const safeLocalStorage = {
+export const safeLocalStorage = {
 	getItem(key: string) {
 		if (!window.localStorage) {
 			return null;
@@ -31,5 +31,3 @@ const safeLocalStorage = {
 		return window.localStorage.removeItem(key);
 	},
 };
-
-export default safeLocalStorage;

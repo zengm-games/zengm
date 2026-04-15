@@ -5,61 +5,58 @@ import { watchFiles } from "./watchFiles.ts";
 import { watchJs } from "./watchJs.ts";
 import { watchJsonSchema } from "./watchJsonSchema.ts";
 import { startServer } from "../lib/server.ts";
+import { reset } from "../build/reset.ts";
+import { parseCliParams } from "../lib/parseCliParams.ts";
 
-const param = process.argv[2];
-if (param !== "--no-server") {
-	let exposeToNetwork = false;
-	if (param === "--host") {
-		exposeToNetwork = true;
-	} else if (param !== undefined) {
-		console.log(
-			"Invalid CLI argument. The only valid options are --no-server and --host",
-		);
-		process.exit(1);
+const { exposeToNetwork } = parseCliParams();
+await startServer({
+	exposeToNetwork,
+	waitForBuild: () => spinners.waitForBuild(),
+});
+console.log("");
+
+const update = (
+	filename: string,
+	info:
+		| {
+				status: "spin";
+		  }
+		| {
+				status: "success";
+		  }
+		| {
+				status: "error";
+				error: Error;
+		  },
+) => {
+	if (info.status === "success") {
+		(async () => {
+			let size;
+			if (filename !== "static files") {
+				size = (await fs.stat(filename)).size;
+			}
+
+			spinners.setStatus(filename, {
+				status: "success",
+				size,
+			});
+		})();
+	} else {
+		spinners.setStatus(filename, info);
 	}
-
-	await startServer(exposeToNetwork);
-	console.log("");
-}
-
-const updateStart = (filename: string) => {
-	spinners.setStatus(filename, {
-		status: "spin",
-	});
 };
-
-const updateEnd = async (filename: string) => {
-	let size;
-	if (filename !== "static files") {
-		size = (await fs.stat(filename)).size;
-	}
-
-	spinners.setStatus(filename, {
-		status: "success",
-		size,
-	});
-};
-
-const updateError = (filename: string, error: Error) => {
-	spinners.setStatus(filename, {
-		status: "error",
-		error,
-	});
-};
+export type Update = typeof update;
 
 // Needs to run first, to create output folder
-await watchFiles(updateStart, updateEnd, updateError, spinners.eventEmitter);
+await reset();
 
-watchCss(updateStart, updateEnd, updateError);
+watchFiles(update, spinners.eventEmitter);
 
-// Schema is needed for JS bunlde, and watchJsonSchema is async
-await watchJsonSchema(
-	updateStart,
-	updateEnd,
-	updateError,
-	spinners.eventEmitter,
-);
+watchCss(update);
 
-watchJs(updateStart, updateEnd, updateError, spinners.eventEmitter);
+// Schema is needed for JS bundle, and watchJsonSchema is async
+await watchJsonSchema(update, spinners.eventEmitter);
+
+watchJs(update, spinners.eventEmitter);
 
 spinners.initialized = true;

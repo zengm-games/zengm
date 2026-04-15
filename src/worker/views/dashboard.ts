@@ -6,13 +6,8 @@ const updateDashboard = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const leagues = await idb.meta.getAll("leagues");
 
 		for (const league of leagues) {
-			if (league.teamRegion === undefined) {
-				league.teamRegion = "???";
-			}
-
-			if (league.teamName === undefined) {
-				league.teamName = "???";
-			}
+			league.teamRegion ??= "???";
+			league.teamName ??= "???";
 		}
 
 		return {

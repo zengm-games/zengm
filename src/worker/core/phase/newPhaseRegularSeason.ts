@@ -6,10 +6,10 @@ import {
 	EMAIL_ADDRESS,
 	FACEBOOK_USERNAME,
 	GAME_NAME,
-	isSport,
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 class GameHasYourTeamCache {
 	cache: Record<number, boolean> = {};

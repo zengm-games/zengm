@@ -68,11 +68,7 @@ const navigationRoute = new NavigationRoute(handler, {
 registerRoute(navigationRoute);
 
 self.addEventListener("message", (event) => {
-	if (event.data === "getSWVersion") {
-		event.ports[0].postMessage("VERSION_NUMBER");
-	}
-
-	if (event.data && event.data.type === "SKIP_WAITING") {
+	if (event.data?.type === "SKIP_WAITING") {
 		self.skipWaiting();
 	}
 });

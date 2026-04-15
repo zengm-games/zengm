@@ -1,9 +1,10 @@
 import { useState } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
-import { helpers, toWorker } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
 import { TeamLogoJerseyInfo } from "../components/TeamLogoJerseyInfo.tsx";
-import { wait } from "../../common/index.ts";
+import { wait } from "../../common/wait.ts";
 import { AutoRelocateExpandSubmit } from "./AutoRelocate.tsx";
 
 const AutoExpand = ({ godMode, newTeams }: View<"autoExpand">) => {

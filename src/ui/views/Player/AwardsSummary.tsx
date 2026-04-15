@@ -1,5 +1,5 @@
 import type { Player } from "../../../common/types.ts";
-import { groupAwards } from "../../util/index.ts";
+import { groupAwards } from "../../util/groupAwards.ts";
 
 const style = {
 	fontSize: "120%",

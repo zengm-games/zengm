@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { bySport } from "../../../common/index.ts";
-import { getCols, toWorker } from "../../util/index.ts";
-import { ActionButton } from "../../components/index.tsx";
+import { bySport } from "../../../common/sportFunctions.ts";
+import { toWorker } from "../../util/toWorker.ts";
+import { getCols } from "../../../common/getCols.ts";
+import { ActionButton } from "../../components/ActionButton.tsx";
 
 const GOATFormula = ({
 	awards,

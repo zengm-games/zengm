@@ -1,4 +1,4 @@
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 import type { View } from "../../../common/types.ts";
 
 const TeamStat = ({
@@ -20,12 +20,12 @@ const TeamStats = ({
 }: Pick<View<"leagueDashboard">, "teamStats">) => (
 	<>
 		<h2>Team Stats</h2>
-		<p>
+		<div className="mb-3">
 			{teamStats.map((teamStat) => (
 				<TeamStat key={teamStat.stat} {...teamStat} />
 			))}
 			<a href={helpers.leagueUrl(["team_stats"])}>» Team Stats</a>
-		</p>
+		</div>
 	</>
 );
 

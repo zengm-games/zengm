@@ -1,12 +1,8 @@
-import { PLAYER } from "../../../common/index.ts";
+import { PLAYER } from "../../../common/constants.ts";
 import { getAll, idb } from "../index.ts";
 import { mergeByPk } from "./helpers.ts";
 import { g, helpers } from "../../util/index.ts";
-import type {
-	GetCopyType,
-	MinimalPlayerRatings,
-	Player,
-} from "../../../common/types.ts";
+import type { GetCopyType, Player } from "../../../common/types.ts";
 import { type IDBPDatabase, unwrap } from "@dumbmatter/idb";
 import type { LeagueDB } from "../connectLeague.ts";
 
@@ -14,10 +10,10 @@ export const getPlayersActiveSeason = (
 	league: IDBPDatabase<LeagueDB>,
 	season: number,
 ) => {
-	return new Promise<Player<MinimalPlayerRatings>[]>((resolve, reject) => {
+	return new Promise<Player[]>((resolve, reject) => {
 		const transaction = league.transaction("players");
 
-		const players: Player<MinimalPlayerRatings>[] = [];
+		const players: Player[] = [];
 
 		const index = unwrap(
 			transaction.objectStore("players").index("draft.year, retiredYear"),
@@ -81,7 +77,7 @@ const getCopies = async (
 		statsTid?: number;
 		tid?: [number, number] | number;
 		watch?: boolean;
-		filter?: (p: Player<MinimalPlayerRatings>) => boolean;
+		filter?: (p: Player) => boolean;
 	} = {},
 	type?: GetCopyType,
 ): Promise<Player[]> => {
@@ -109,48 +105,46 @@ const getCopies = async (
 		}
 
 		const sortedPids = [...pids].sort((a, b) => a - b);
-		const fromDB = await new Promise<Player<MinimalPlayerRatings>[]>(
-			(resolve, reject) => {
-				const transaction = idb.league.transaction("players");
+		const fromDB = await new Promise<Player[]>((resolve, reject) => {
+			const transaction = idb.league.transaction("players");
 
-				const players: Player<MinimalPlayerRatings>[] = [];
+			const players: Player[] = [];
 
-				// Because backboard doesn't support passing an argument to cursor.continue
-				const objectStore = unwrap(transaction.objectStore("players"));
-				const range = IDBKeyRange.bound(sortedPids[0], sortedPids.at(-1));
-				let i = 0;
-				const request = objectStore.openCursor(range);
+			// Because backboard doesn't support passing an argument to cursor.continue
+			const objectStore = unwrap(transaction.objectStore("players"));
+			const range = IDBKeyRange.bound(sortedPids[0], sortedPids.at(-1));
+			let i = 0;
+			const request = objectStore.openCursor(range);
 
-				request.onerror = (e: any) => {
-					reject(e.target.error);
-				};
+			request.onerror = (e: any) => {
+				reject(e.target.error);
+			};
 
-				request.onsuccess = (e: any) => {
-					const cursor = e.target.result;
+			request.onsuccess = (e: any) => {
+				const cursor = e.target.result;
 
-					if (!cursor) {
-						resolve(players);
-						return;
-					}
+				if (!cursor) {
+					resolve(players);
+					return;
+				}
 
-					const p = cursor.value;
+				const p = cursor.value;
 
-					// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
-					if (sortedPids.includes(p.pid)) {
-						players.push(p);
-					}
+				// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+				if (sortedPids.includes(p.pid)) {
+					players.push(p);
+				}
 
-					i += 1;
+				i += 1;
 
-					if (i > sortedPids.length) {
-						resolve(players);
-						return;
-					}
+				if (i > sortedPids.length) {
+					resolve(players);
+					return;
+				}
 
-					cursor.continue(sortedPids[i]);
-				};
-			},
-		);
+				cursor.continue(sortedPids[i]);
+			};
+		});
 
 		const merged = mergeByPk(
 			fromDB,
@@ -171,45 +165,43 @@ const getCopies = async (
 	}
 
 	if (retiredYear !== undefined) {
-		const fromDB = await new Promise<Player<MinimalPlayerRatings>[]>(
-			(resolve, reject) => {
-				const players: Player<MinimalPlayerRatings>[] = [];
+		const fromDB = await new Promise<Player[]>((resolve, reject) => {
+			const players: Player[] = [];
 
-				const index = unwrap(
-					idb.league
-						.transaction("players")
-						.objectStore("players")
-						.index("draft.year, retiredYear"),
-				);
+			const index = unwrap(
+				idb.league
+					.transaction("players")
+					.objectStore("players")
+					.index("draft.year, retiredYear"),
+			);
 
-				const request = index.openCursor();
+			const request = index.openCursor();
 
-				request.onerror = (e: any) => {
-					reject(e.target.error);
-				};
+			request.onerror = (e: any) => {
+				reject(e.target.error);
+			};
 
-				request.onsuccess = (e: any) => {
-					const cursor = e.target.result;
+			request.onsuccess = (e: any) => {
+				const cursor = e.target.result;
 
-					if (!cursor) {
-						resolve(players);
-						return;
-					}
+				if (!cursor) {
+					resolve(players);
+					return;
+				}
 
-					const [draftYear, currentRetiredYear] = cursor.key;
+				const [draftYear, currentRetiredYear] = cursor.key;
 
-					// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
-					if (currentRetiredYear < retiredYear) {
-						cursor.continue([draftYear, retiredYear]);
-					} else if (currentRetiredYear > retiredYear) {
-						cursor.continue([draftYear + 1, retiredYear]);
-					} else {
-						players.push(cursor.value);
-						cursor.continue();
-					}
-				};
-			},
-		);
+				// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+				if (currentRetiredYear < retiredYear) {
+					cursor.continue([draftYear, retiredYear]);
+				} else if (currentRetiredYear > retiredYear) {
+					cursor.continue([draftYear + 1, retiredYear]);
+				} else {
+					players.push(cursor.value);
+					cursor.continue();
+				}
+			};
+		});
 
 		// Get all from cache, and filter later, in case cache differs from database
 		return mergeByPk(
@@ -286,7 +278,7 @@ const getCopies = async (
 
 			return mergeByPk(
 				fromDB,
-				([] as Player<MinimalPlayerRatings>[])
+				([] as Player[])
 					.concat(
 						await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
 						await idb.cache.players.indexGetAll("playersByTid", [
@@ -344,7 +336,7 @@ const getCopies = async (
 				idb.league.transaction("players").store.index("statsTids"),
 				statsTid,
 			),
-			([] as Player<MinimalPlayerRatings>[])
+			([] as Player[])
 				.concat(
 					await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
 					await idb.cache.players.indexGetAll("playersByTid", [

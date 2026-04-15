@@ -4,8 +4,7 @@ import {
 	RATINGS,
 	PLAYER_SUMMARY,
 	DEFAULT_JERSEY,
-	isSport,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import { player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import {
@@ -27,6 +26,7 @@ import type {
 	ViewInput,
 } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 export const getPlayerProfileStats = () => {
 	const stats = [];
@@ -364,7 +364,7 @@ export const getCommon = async (pid?: number, season?: number) => {
 			"value",
 			"desc",
 		).map((p2) => {
-			const ratings = p2.ratings.at(-1);
+			const ratings = p2.ratings.at(-1)!;
 
 			const age = g.get("season") - p2.born.year;
 

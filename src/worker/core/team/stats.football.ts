@@ -77,6 +77,11 @@ const raw = [
 	"pntBlk",
 	"pen",
 	"penYds",
+	"pbw",
+	"pba",
+	"rbw",
+	"rba",
+	"skAlw",
 ] as const;
 
 // raw: recorded directly in game sim

@@ -14,7 +14,9 @@ export function useIsStuck(element: HTMLElement | null): boolean {
 
 		const observer = new IntersectionObserver(
 			([entry]) => {
-				setIsStuck(entry!.boundingClientRect.top < entry!.rootBounds!.top);
+				if (entry?.rootBounds) {
+					setIsStuck(entry.boundingClientRect.top < entry.rootBounds.top);
+				}
 			},
 			{
 				threshold: [1],

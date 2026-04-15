@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { isSport } from "../../common/index.ts";
-import { downloadFile, helpers, toWorker } from "../util/index.ts";
-import ActionButton from "./ActionButton.tsx";
+import { isSport } from "../../common/sportFunctions.ts";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { ActionButton } from "./ActionButton.tsx";
+import { downloadFile } from "../util/downloadFile.ts";
 
-const RetiredPlayers = ({
+export const RetiredPlayers = ({
 	retiredPlayers,
 	season,
 	userTid,
@@ -97,5 +99,3 @@ const RetiredPlayers = ({
 		</>
 	);
 };
-
-export default RetiredPlayers;

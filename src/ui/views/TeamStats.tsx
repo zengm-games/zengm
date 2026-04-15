@@ -1,17 +1,17 @@
-import {
-	getCols,
-	gradientStyleFactory,
-	helpers,
-	prefixStatOpp,
-} from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { getCols } from "../../common/getCols.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { DataTable, PlusMinus, MoreLinks } from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 import type { View } from "../../common/types.ts";
-import { isSport } from "../../common/index.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 import { formatMaybeInteger } from "./LeagueStats.tsx";
 import { expandFieldingStats } from "../util/expandFieldingStats.baseball.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
+import { prefixStatOpp } from "../util/prefixStatOpp.ts";
+import { PlusMinus } from "../components/PlusMinus.tsx";
 
 const TeamStats = ({
 	allStats,
@@ -42,34 +42,34 @@ const TeamStats = ({
 	const basicColNames = ["#", "Team", "stat:gp", "W", "L"];
 	if (otl) {
 		basicColNames.push("OTL");
-		if (superCols) {
+		if (superCols?.[0]) {
 			superCols[0].colspan += 1;
 		}
 	}
 	if (ties) {
 		basicColNames.push("T");
-		if (superCols) {
+		if (superCols?.[0]) {
 			superCols[0].colspan += 1;
 		}
 	}
 	if (usePts) {
 		basicColNames.push("PTS", "PTS%");
-		if (superCols) {
+		if (superCols?.[0]) {
 			superCols[0].colspan += 2;
 		}
 	} else {
 		basicColNames.push("%");
-		if (superCols) {
+		if (superCols?.[0]) {
 			superCols[0].colspan += 1;
 		}
 	}
 	basicColNames.push("AvgAge");
-	if (superCols) {
+	if (superCols?.[0]) {
 		superCols[0].colspan += 1;
 	}
 
 	// Account for # column
-	if (superCols) {
+	if (superCols?.[0]) {
 		superCols[0].colspan += 1;
 	}
 

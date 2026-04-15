@@ -26,6 +26,7 @@ describe("penalty situations", () => {
 
 		play.addEvent({
 			type: "dropback",
+			pbw: new Map(),
 		});
 		play.addEvent({
 			type: "penalty",
@@ -316,6 +317,7 @@ describe("penalty situations", () => {
 
 		play.addEvent({
 			type: "dropback",
+			pbw: new Map(),
 		});
 		play.addEvent({
 			type: "penalty",
@@ -379,6 +381,7 @@ describe("penalty situations", () => {
 
 		play.addEvent({
 			type: "dropback",
+			pbw: new Map(),
 		});
 		play.addEvent({
 			type: "penalty",
@@ -508,6 +511,7 @@ describe("penalty situations", () => {
 
 		play.addEvent({
 			type: "dropback",
+			pbw: new Map(),
 		});
 		play.addEvent({
 			type: "penalty",
@@ -558,6 +562,7 @@ describe("penalty situations", () => {
 
 		play.addEvent({
 			type: "dropback",
+			pbw: new Map(),
 		});
 		play.addEvent({
 			type: "penalty",
@@ -609,6 +614,7 @@ describe("penalty situations", () => {
 
 		play.addEvent({
 			type: "dropback",
+			pbw: new Map(),
 		});
 		play.addEvent({
 			type: "penalty",
@@ -903,6 +909,7 @@ describe("one penalty on each team", () => {
 
 		play.addEvent({
 			type: "dropback",
+			pbw: new Map(),
 		});
 		play.addEvent({
 			type: "penalty",
@@ -1117,6 +1124,7 @@ describe("one penalty on each team", () => {
 
 		play.addEvent({
 			type: "dropback",
+			pbw: new Map(),
 		});
 		play.addEvent({
 			type: "penalty",
@@ -1176,6 +1184,7 @@ describe("one penalty on each team", () => {
 
 		play.addEvent({
 			type: "dropback",
+			pbw: new Map(),
 		});
 		play.addEvent({
 			type: "penalty",
@@ -1238,6 +1247,7 @@ describe("one penalty on each team", () => {
 
 		play.addEvent({
 			type: "dropback",
+			pbw: new Map(),
 		});
 		play.addEvent({
 			type: "penalty",
@@ -1334,6 +1344,7 @@ describe("one penalty on each team", () => {
 
 		play.addEvent({
 			type: "dropback",
+			pbw: new Map(),
 		});
 		play.addEvent({
 			type: "penalty",
@@ -1474,6 +1485,7 @@ describe("game sim issues", () => {
 
 		play.addEvent({
 			type: "dropback",
+			pbw: new Map(),
 		});
 		play.addEvent({
 			type: "fmb",
@@ -1512,6 +1524,7 @@ describe("game sim issues", () => {
 
 		play.addEvent({
 			type: "dropback",
+			pbw: new Map(),
 		});
 		play.addEvent({
 			type: "rus",

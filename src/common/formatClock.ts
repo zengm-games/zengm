@@ -1,4 +1,4 @@
-import isSport from "./isSport.ts";
+import { isSport } from "./sportFunctions.ts";
 
 // For basketball: convert clock in seconds to min:sec, or x.y if under 1 minute
 // For other sports: convert clock in minutes to min:sec, like 1.5 -> 1:30

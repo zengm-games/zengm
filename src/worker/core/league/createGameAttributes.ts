@@ -1,11 +1,5 @@
 import { season } from "../index.ts";
-import {
-	DIFFICULTY,
-	gameAttributeHasHistory,
-	PHASE,
-	unwrapGameAttribute,
-	WEBSITE_ROOT,
-} from "../../../common/index.ts";
+import { DIFFICULTY, PHASE, WEBSITE_ROOT } from "../../../common/constants.ts";
 import type {
 	Conditions,
 	GameAttributesLeague,
@@ -18,6 +12,8 @@ import getInitialNumGamesConfDivSettings from "../season/getInitialNumGamesConfD
 import type { TeamInfo } from "./createStream.ts";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
+import { gameAttributeHasHistory } from "../../../common/gameAttributeHasHistory.ts";
+import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
 
 const createGameAttributes = async (
 	{

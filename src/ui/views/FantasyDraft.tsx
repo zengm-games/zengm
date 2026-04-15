@@ -1,9 +1,11 @@
 import { useCallback, useState } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
-import { PHASE } from "../../common/index.ts";
-import { DataTable } from "../components/index.tsx";
+import { PHASE } from "../../common/constants.ts";
+import { DataTable } from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers, toWorker } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
 import { shuffle } from "../../common/random.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";

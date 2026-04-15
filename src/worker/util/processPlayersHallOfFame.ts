@@ -1,4 +1,4 @@
-import { bySport, isSport } from "../../common/index.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { maxBy } from "../../common/utils.ts";
 import { getPosByGpF } from "../core/season/doAwards.baseball.ts";
 
@@ -35,14 +35,17 @@ const processPlayersHallOfFame = <
 		}
 		const bestSeasonOverride = p.most?.extra?.bestSeasonOverride;
 
-		const hasSeasonWithGamesPlayed = p.stats.some((ps) => ps.gp > 0);
+		// Filter out TOT, DOES_NOT_EXIST, and any other weird seasons
+		const filteredStats = p.stats.filter((row) => row.tid >= 0);
+
+		const hasSeasonWithGamesPlayed = filteredStats.some((ps) => ps.gp > 0);
 
 		const posBySeason: Record<number, string> = {};
 
 		if (isSport("baseball")) {
 			// In baseball, go based on games played on defense by position - this is not ideal for traded players, will just use last entry
-			for (const row of p.stats) {
-				if (!row.playoffs && row.gpF) {
+			for (const row of filteredStats) {
+				if (!row.playoffs && row.gpF && row.tid > 0) {
 					const pos = getPosByGpF(row.gpF);
 					if (pos !== undefined) {
 						posBySeason[row.season] = pos;
@@ -66,7 +69,7 @@ const processPlayersHallOfFame = <
 		let bestPos: string | undefined;
 		const posByEWA: Record<string, number> = {};
 		const teamSums: Record<number, number> = {};
-		for (const ps of p.stats) {
+		for (const ps of filteredStats) {
 			const tid = ps.tid;
 			const ewa = bySport({
 				baseball: ps.war,
@@ -89,12 +92,8 @@ const processPlayersHallOfFame = <
 
 				const pos = posBySeason[ps.season];
 				if (pos !== undefined) {
-					//console.log(ps.pos, ps)
-					if (posByEWA[pos] === undefined) {
-						posByEWA[pos] = ewa;
-					} else {
-						posByEWA[pos] += ewa;
-					}
+					posByEWA[pos] ??= 0;
+					posByEWA[pos] += ewa;
 				}
 			}
 			if (Object.hasOwn(teamSums, tid)) {
@@ -103,14 +102,11 @@ const processPlayersHallOfFame = <
 				teamSums[tid] = ewa;
 			}
 		}
-		if (bestStats === undefined) {
-			bestStats = p.careerStats;
-		}
-		if (bestPos === undefined) {
-			bestPos =
-				maxBy(Object.entries(posByEWA), ([, ewa]) => ewa)?.[0] ??
-				p.ratings.at(-1)?.pos;
-		}
+
+		bestStats ??= p.careerStats;
+		bestPos ??=
+			maxBy(Object.entries(posByEWA), ([, ewa]) => ewa)?.[0] ??
+			p.ratings.at(-1)?.pos;
 
 		const legacyTid = Number.parseInt(
 			Object.keys(teamSums).reduce(

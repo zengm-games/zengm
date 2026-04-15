@@ -2,10 +2,10 @@ import RatingsStatsBaseball from "./RatingsStats.baseball.tsx";
 import RatingsStatsBasketball from "./RatingsStats.basketball.tsx";
 import RatingsStatsFootball from "./RatingsStats.football.tsx";
 import RatingsStatsHockey from "./RatingsStats.hockey.tsx";
-import { useLocal } from "../../util/index.ts";
-import { bySport } from "../../../common/index.ts";
+import { useLocal } from "../../util/local.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
-const RatingsStats = (props: {
+export const RatingsStats = (props: {
 	ratings: any;
 	stats: any;
 	type?: "career" | "current" | "draft" | number;
@@ -31,5 +31,3 @@ const RatingsStats = (props: {
 		}),
 	});
 };
-
-export default RatingsStats;

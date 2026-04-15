@@ -1,8 +1,9 @@
 import { g } from "../../util/index.ts";
 import type { PlayerWithoutKey } from "../../../common/types.ts";
-import { DRAFT_BY_TEAM_OVR, bySport } from "../../../common/index.ts";
+import { DRAFT_BY_TEAM_OVR } from "../../../common/constants.ts";
 import { getTeamOvrDiffs } from "../draft/runPicks.ts";
 import { orderBy } from "../../../common/utils.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 // In some sports, extra check for certain important rare positions in case the only one was traded away. These should only be positions with weird unique skills, where you can't replace them easily with another position. Value is the number of players that should be at each position.
 export const KEY_POSITIONS_NEEDED = bySport<Record<string, number> | undefined>(
@@ -33,7 +34,7 @@ const getBest = <T extends PlayerWithoutKey>(
 		// playersAvailable is sorted by value. So if we hit a player at a minimum contract at a position, no player with lower value needs to be considered
 		const seenMinContractAtPos = new Set();
 		const playersAvailableFiltered = playersAvailable.filter((p) => {
-			const pos = p.ratings.at(-1).pos;
+			const pos = p.ratings.at(-1)!.pos;
 			if (seenMinContractAtPos.has(pos)) {
 				return false;
 			}
@@ -83,11 +84,8 @@ const getBest = <T extends PlayerWithoutKey>(
 				const pos = p.ratings.at(-1)!.pos;
 				const injured = p.injury.gamesRemaining > 0;
 				const object = positionCounts[injured ? "injured" : "healthy"];
-				if (object[pos] === undefined) {
-					object[pos] = 1;
-				} else {
-					object[pos] += 1;
-				}
+				object[pos] ??= 0;
+				object[pos] += 1;
 			}
 
 			keyPositionsNeededCache = allKeyPositionsNeeded.filter((pos) => {

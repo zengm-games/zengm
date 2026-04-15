@@ -1,12 +1,15 @@
-import { DataTable, MoreLinks, PlusMinus } from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
-import { isSport } from "../../common/index.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { expandFieldingStats } from "../util/expandFieldingStats.baseball.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { PlusMinus } from "../components/PlusMinus.tsx";
 
 export const formatStatGameHigh = (
 	ps: any,

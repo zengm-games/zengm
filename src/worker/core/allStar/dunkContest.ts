@@ -19,7 +19,7 @@ const NUM_DUNKS_PER_ROUND = 2;
 const NUM_DUNKS_PER_TIEBREAKER = 1;
 const MAX_SCORE_DIFFICULTY = 8; // Dunk with this difficulty should get a perfect score
 
-export type Dunk = NonNullable<AllStars["dunk"]>;
+type Dunk = NonNullable<AllStars["dunk"]>;
 
 type PreDunkInfo = {
 	jmp: number;

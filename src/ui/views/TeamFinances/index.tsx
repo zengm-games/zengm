@@ -6,25 +6,18 @@ import {
 	useState,
 	type ReactNode,
 } from "react";
-import {
-	BarGraph,
-	DataTable,
-	HelpPopover,
-	MoreLinks,
-} from "../components/index.tsx";
-import useTitleBar from "../hooks/useTitleBar.tsx";
-import {
-	getCols,
-	gradientStyleFactory,
-	helpers,
-	logEvent,
-	toWorker,
-	useLocalPartial,
-} from "../util/index.ts";
-import type { View } from "../../common/types.ts";
-import { getAdjustedTicketPrice, PHASE } from "../../common/index.ts";
-import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
-import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { DataTable } from "../../components/DataTable/index.tsx";
+import { MoreLinks } from "../../components/MoreLinks.tsx";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
+import { getCols } from "../../../common/getCols.ts";
+import { useLocalPartial } from "../../util/local.ts";
+import type { View } from "../../../common/types.ts";
+import { PHASE } from "../../../common/constants.ts";
+import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
+import type { DataTableRow } from "../../components/DataTable/index.tsx";
 import {
 	DEFAULT_LEVEL,
 	MAX_LEVEL,
@@ -36,9 +29,13 @@ import {
 	levelToEffect,
 	scoutingEffectCutoff,
 	scoutingEffectStddev,
-} from "../../common/budgetLevels.ts";
-import { CurrencyInputGroup } from "../components/CurrencyInputGroup.tsx";
-import { useBlocker } from "../hooks/useBlocker.ts";
+} from "../../../common/budgetLevels.ts";
+import { CurrencyInputGroup } from "../../components/CurrencyInputGroup.tsx";
+import { useBlocker } from "../../hooks/useBlocker.ts";
+import { gradientStyleFactory } from "../../util/gradientStyleFactory.ts";
+import { BarGraph } from "./BarGraph.tsx";
+import { HelpPopover } from "../../components/HelpPopover.tsx";
+import { getAdjustedTicketPrice } from "../../../common/getAdjustedTicketPrice.ts";
 
 const paddingLeft85 = { paddingLeft: 85 };
 

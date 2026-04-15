@@ -6,21 +6,20 @@ import {
 	useRef,
 	type CSSProperties,
 } from "react";
-import { isSport, PHASE, STARTING_NUM_TIMEOUTS } from "../../common/index.ts";
-import {
-	gradientStyleFactory,
-	helpers,
-	realtimeUpdate,
-	toWorker,
-	useLocalPartial,
-} from "../util/index.ts";
-import BoxScore from "./BoxScore.tsx";
+import { PHASE, STARTING_NUM_TIMEOUTS } from "../../common/constants.ts";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { realtimeUpdate } from "../util/realtimeUpdate.ts";
+import { BoxScore } from "./BoxScore.tsx";
 import { range } from "../../common/utils.ts";
 import getWinner from "../../common/getWinner.ts";
 import { OverlayTrigger, Popover } from "react-bootstrap";
 import Note from "../views/Player/Note.tsx";
-import TeamLogoInline from "./TeamLogoInline.tsx";
+import { TeamLogoInline } from "./TeamLogoInline.tsx";
 import { useKeyboardShortcuts } from "../util/keyboardShortcuts.ts";
+import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
+import { useLocalPartial } from "../util/local.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 const TeamNameLink = ({
 	children,
@@ -922,7 +921,7 @@ const DetailedScore = ({
 											<a
 												href={helpers.leagueUrl([
 													"roster",
-													t.abbrev,
+													`${t.abbrev}_${t.tid}`,
 													boxScore.season,
 												])}
 											>
@@ -1003,10 +1002,12 @@ const PlayoffRecord = ({
 	t0: {
 		abbrev: string;
 		playoffs?: { won: number; lost: number };
+		tid: number;
 	};
 	t1: {
 		abbrev: string;
 		playoffs?: { won: number; lost: number };
+		tid: number;
 	};
 }) => {
 	if (
@@ -1040,7 +1041,13 @@ const PlayoffRecord = ({
 	}
 
 	const winningAbbrevLink = (
-		<a href={helpers.leagueUrl(["roster", winning.abbrev, season])}>
+		<a
+			href={helpers.leagueUrl([
+				"roster",
+				`${winning.abbrev}_${winning.tid}`,
+				season,
+			])}
+		>
 			{winning.abbrev}
 		</a>
 	);
@@ -1060,7 +1067,7 @@ const PlayoffRecord = ({
 	);
 };
 
-const BoxScoreWrapper = ({
+export const BoxScoreWrapper = ({
 	abbrev,
 	boxScore,
 	currentGidInList,
@@ -1227,5 +1234,3 @@ const BoxScoreWrapper = ({
 		</>
 	);
 };
-
-export default BoxScoreWrapper;

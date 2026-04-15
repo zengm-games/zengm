@@ -1,4 +1,4 @@
-import { bySport, isSport } from "../../../common/index.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import type { Player, PlayerStats, Team } from "../../../common/types.ts";
 import { maxBy, orderBy } from "../../../common/utils.ts";
 import { idb } from "../../db/index.ts";

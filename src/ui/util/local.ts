@@ -2,7 +2,7 @@ import { createWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
 import type { LocalStateUI, GameAttributesLeague } from "../../common/types.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
-import safeLocalStorage from "./safeLocalStorage.ts";
+import { safeLocalStorage } from "./safeLocalStorage.ts";
 import { gameAttributesSyncedToUi } from "../../common/gameAttributesSyncedToUi.ts";
 
 // These are variables that are needed to display parts of the UI not driven explicitly by worker/views/*.js files. Like
@@ -187,11 +187,62 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 					obj.units = defaultUnits;
 				}
 
-				if (obj.email && !obj.gold) {
-					window.freestar.queue.push(() => {
-						window.freestar.identity.setIdentity({
-							email: obj.email,
-						});
+				const email = obj.email;
+				if (email && !obj.gold) {
+					window.freestar.queue.push(async () => {
+						// https://freestarhelp.zendesk.com/hc/en-us/articles/34498258990868-Hashed-Email-Passthrough
+						const freestarNormalizeEmail = (email: string) => {
+							const EMAIL_REGEX = /^[^\s@]+@[^\s@]+$/;
+							if (!EMAIL_REGEX.test(email)) {
+								return;
+							}
+
+							email = email.trim().toLowerCase();
+
+							let [username, domain] = email.split("@");
+
+							if (username !== undefined && domain === "gmail.com") {
+								// Remove + and everything after
+								const plusIndex = username.indexOf("+");
+								if (plusIndex !== -1) {
+									username = username.slice(0, plusIndex);
+								}
+
+								// Remove periods
+								username = username.replace(/\./g, "");
+
+								return `${username}@${domain}`;
+							}
+
+							return email;
+						};
+
+						const normalizedEmail = freestarNormalizeEmail(email);
+						if (normalizedEmail !== undefined) {
+							async function hash(
+								algorithm: AlgorithmIdentifier,
+								data: BufferSource,
+							) {
+								const buffer = await crypto.subtle.digest(algorithm, data);
+								const bytes = new Uint8Array(buffer);
+
+								// Chrome 140, Firefox 133, Safari 18.2 - switch to `bytes.toHex()`
+								return [...bytes]
+									.map((b) => b.toString(16).padStart(2, "0"))
+									.join("");
+							}
+
+							const encoder = new TextEncoder();
+							const data = encoder.encode(normalizedEmail);
+							const sha1 = await hash("SHA-1", data);
+							const sha256 = await hash("SHA-256", data);
+							window.freestar?.identity?.setIdentity?.({
+								hashes: {
+									sha1,
+									sha256,
+								},
+							});
+						}
 					});
 				}
 

@@ -1,9 +1,10 @@
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type { TeamFiltered } from "../../common/types.ts";
 import advStatsSave from "./advStatsSave.ts";
 import { groupByUnique } from "../../common/utils.ts";
+import statsRowIsCurrent from "../core/player/statsRowIsCurrent.ts";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -83,8 +84,7 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 	const dps: number[] = [];
 	const gps: number[] = [];
 
-	for (let i = 0; i < players.length; i++) {
-		const p = players[i];
+	for (const [i, p] of players.entries()) {
 		const t = teamsByTid[p.tid];
 		if (t === undefined) {
 			throw new Error("Should never happen");
@@ -170,14 +170,33 @@ const advStats = async () => {
 		0, // Active players have tid >= 0
 		Infinity,
 	]);
-	const players = await idb.getCopies.playersPlus(playersRaw, {
-		attrs: ["pid", "tid"],
-		stats: ["gp", "min", "g", "a", "sa", "ga", "pm"],
-		ratings: ["pos"],
-		season: g.get("season"),
-		playoffs,
-		regularSeason: !playoffs,
+	const players = (
+		await idb.getCopies.playersPlus(playersRaw, {
+			attrs: ["pid", "tid"],
+			stats: [
+				"gp",
+				"min",
+				"g",
+				"a",
+				"sa",
+				"ga",
+				"pm",
+
+				// For statsRowIsCurrenet
+				"tid",
+				"season",
+				"playoffs",
+			],
+			ratings: ["pos"],
+			season: g.get("season"),
+			playoffs,
+			regularSeason: !playoffs,
+		})
+	).filter((p) => {
+		// Ignore players with no stats row, such as players signed/traded who haven't played a game yet, since we don't call addStatsRow when joining the roster now
+		return statsRowIsCurrent(p.stats, p.tid, playoffs);
 	});
+
 	const teamStats = ["gp", "min", "g", "a", "oppG", "sa"] as const;
 	const teams = await idb.getCopies.teamsPlus(
 		{

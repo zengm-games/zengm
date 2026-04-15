@@ -1,7 +1,6 @@
-import { bySport } from "../../common/index.ts";
-import { groupBy } from "../../common/utils.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import type { Player } from "../../common/types.ts";
-import helpers from "./helpers.ts";
+import { helpers } from "./helpers.ts";
 
 const awardsOrder = [
 	"Inducted into the Hall of Fame",
@@ -9,6 +8,8 @@ const awardsOrder = [
 	"Won Championship",
 	"Finals MVP",
 	"Semifinals MVP",
+	"Offensive Player of the Year",
+	"Protector of the Year",
 	"Defensive Player of the Year",
 	"Goalie of the Year",
 	"Sixth Man of the Year",
@@ -59,7 +60,7 @@ const awardsOrder = [
 	}),
 ];
 
-const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
+export const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 	const getType = (originalType: string) => {
 		if (!shortNames) {
 			return originalType;
@@ -79,6 +80,10 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 			type = "PMVP";
 		} else if (type === "Semifinals MVP") {
 			type = "SFMVP";
+		} else if (type === "Offensive Player of the Year") {
+			type = "OPOY";
+		} else if (type === "Protector of the Year") {
+			type = "POY";
 		} else if (type === "Defensive Player of the Year") {
 			type = "DPOY";
 		} else if (type === "Defensive Forward of the Year") {
@@ -125,7 +130,9 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 
 	const seen = new Set();
 	const awardsGrouped = [];
-	const awardsGroupedTemp = groupBy(awards, (award) => getType(award.type));
+	const awardsGroupedTemp = Object.groupBy(awards, (award) =>
+		getType(award.type),
+	);
 
 	for (const originalType of awardsOrder) {
 		const type = getType(originalType);
@@ -162,5 +169,3 @@ const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 
 	return awardsGrouped;
 };
-
-export default groupAwards;

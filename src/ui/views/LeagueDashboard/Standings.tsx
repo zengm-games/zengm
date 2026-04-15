@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 import { ColPtsOrGB, TeamColumn } from "../Standings.tsx";
 import type { View } from "../../../common/types.ts";
 
@@ -8,33 +8,31 @@ const width100 = {
 };
 
 const Standings = ({
-	confTeams,
+	confOrAllTeams,
 	maxPlayoffSeed,
 	maxPlayoffSeedNoPlayIn,
-	numConfs,
 	playoffsByConf,
 	pointsFormula,
 	usePts,
 	userTid,
 }: Pick<
 	View<"leagueDashboard">,
-	| "confTeams"
+	| "confOrAllTeams"
 	| "maxPlayoffSeed"
 	| "maxPlayoffSeedNoPlayIn"
-	| "numConfs"
 	| "playoffsByConf"
 	| "pointsFormula"
 	| "usePts"
 	| "userTid"
 >) => {
-	const maxRank = Math.max(...confTeams.map((t) => t.rank));
+	const maxRank = Math.max(...confOrAllTeams.map((t) => t.rank));
 
 	return (
 		<>
 			<table className="table table-striped table-borderless table-sm mb-1">
 				<thead>
 					<tr>
-						<th style={width100}>Conference</th>
+						<th style={width100}>{playoffsByConf ? "Conference" : "League"}</th>
 						<ColPtsOrGB
 							alignRight
 							pointsFormula={pointsFormula}
@@ -43,7 +41,7 @@ const Standings = ({
 					</tr>
 				</thead>
 				<tbody>
-					{confTeams.map((t, i) => {
+					{confOrAllTeams.map((t, i) => {
 						return (
 							<tr
 								key={t.tid}
@@ -51,7 +49,7 @@ const Standings = ({
 									separator:
 										(i === maxPlayoffSeed - 1 ||
 											i === maxPlayoffSeedNoPlayIn - 1) &&
-										(playoffsByConf || numConfs === 1),
+										i < confOrAllTeams.length - 1,
 									"table-info": t.tid === userTid,
 								})}
 							>

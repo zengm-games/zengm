@@ -2,10 +2,14 @@ import clsx from "clsx";
 import { useState } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers, toWorker, useLocalPartial } from "../util/index.ts";
-import { DataTable, MoreLinks } from "../components/index.tsx";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { getCols } from "../../common/getCols.ts";
+import { useLocalPartial } from "../util/local.ts";
+import { DataTable } from "../components/DataTable/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
-import { bySport, isSport } from "../../common/index.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { NUM_LINES } from "../../common/constants.hockey.ts";
 import {
 	NUM_ACTIVE_BATTERS,

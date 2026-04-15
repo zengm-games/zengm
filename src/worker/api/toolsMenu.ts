@@ -1,4 +1,4 @@
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import type { Conditions } from "../../common/types.ts";
 import { league, phase } from "../core/index.ts";
 import { reset } from "../db/index.ts";

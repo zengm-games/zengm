@@ -1,11 +1,8 @@
 import {
 	PLAYER,
-	applyRealTeamInfo,
-	bySport,
-	isSport,
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	PHASE,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import {
 	finances,
 	freeAgents,
@@ -30,7 +27,9 @@ import type {
 	RealTeamInfo,
 	TeamSeason,
 } from "../../../common/types.ts";
-import { groupBy, groupByUnique, maxBy } from "../../../common/utils.ts";
+import { groupByUnique, maxBy } from "../../../common/utils.ts";
+import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const newPhasePreseason = async (
 	conditions: Conditions,
@@ -97,7 +96,7 @@ const newPhasePreseason = async (
 						old.name
 					} are now the <a href="${helpers.leagueUrl([
 						"roster",
-						t.abbrev,
+						`${t.abbrev}_${t.tid}`,
 						newSeason,
 					])}">${t.region} ${t.name}</a>.`;
 
@@ -113,7 +112,7 @@ const newPhasePreseason = async (
 						old.name
 					} are now the <a href="${helpers.leagueUrl([
 						"roster",
-						t.abbrev,
+						`${t.abbrev}_${t.tid}`,
 						newSeason,
 					])}">${t.region} ${t.name}</a>.`;
 
@@ -128,7 +127,7 @@ const newPhasePreseason = async (
 					logEvent({
 						text: `The <a href="${helpers.leagueUrl([
 							"roster",
-							t.abbrev,
+							`${t.abbrev}_${t.tid}`,
 							newSeason,
 						])}">${t.region} ${t.name}</a> got a new logo:<br><img src="${
 							t.imgURL
@@ -171,12 +170,8 @@ const newPhasePreseason = async (
 
 		const newTeamSeason = team.genSeasonRow(t, prevSeason);
 
-		if (t.pop === undefined) {
-			t.pop = newTeamSeason.pop;
-		}
-		if (t.stadiumCapacity === undefined) {
-			t.stadiumCapacity = newTeamSeason.stadiumCapacity;
-		}
+		t.pop ??= newTeamSeason.pop;
+		t.stadiumCapacity ??= newTeamSeason.stadiumCapacity;
 
 		// Mean population should stay constant, otherwise the economics change too much
 		if (!g.get("equalizeRegions")) {
@@ -452,11 +447,11 @@ const newPhasePreseason = async (
 	local.minFractionDiffs = undefined;
 
 	// Handle jersey number conflicts
-	const playersByTeam = groupBy(
+	const playersByTeam = Map.groupBy(
 		players.filter((p) => p.tid >= 0),
-		"tid",
+		(p) => p.tid,
 	);
-	for (const roster of Object.values(playersByTeam)) {
+	for (const roster of playersByTeam.values()) {
 		if (!roster[0]) {
 			continue;
 		}

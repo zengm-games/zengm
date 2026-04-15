@@ -1,7 +1,7 @@
 import { idb } from "../db/index.ts";
 import { g, helpers, processPlayersHallOfFame } from "../util/index.ts";
 import type { UpdateEvents, Player } from "../../common/types.ts";
-import { bySport } from "../../common/index.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";
@@ -171,11 +171,8 @@ export const genView = (
 				for (const t of teams) {
 					if (t.retiredJerseyNumbers) {
 						for (const row of t.retiredJerseyNumbers) {
-							if (retiredCounts[row.number] === undefined) {
-								retiredCounts[row.number] = 1;
-							} else {
-								retiredCounts[row.number]! += 1;
-							}
+							retiredCounts[row.number] ??= 0;
+							retiredCounts[row.number]! += 1;
 						}
 					}
 				}

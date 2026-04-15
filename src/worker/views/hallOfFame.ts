@@ -1,8 +1,9 @@
-import { bySport, PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g, processPlayersHallOfFame } from "../util/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 // gpF is used on processPlayersHallOfFame for baseball
 export const extraStats = bySport({

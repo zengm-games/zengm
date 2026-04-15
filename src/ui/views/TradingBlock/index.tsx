@@ -1,19 +1,11 @@
 import { useState, type ReactNode } from "react";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import {
-	getCols,
-	helpers,
-	toWorker,
-	useLocalPartial,
-} from "../../util/index.ts";
-import {
-	ActionButton,
-	DataTable,
-	HelpPopover,
-	SafeHtml,
-	SaveTrade,
-} from "../../components/index.tsx";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
+import { getCols } from "../../../common/getCols.ts";
+import { useLocalPartial } from "../../util/local.ts";
+import { DataTable } from "../../components/DataTable/index.tsx";
 import type { Col } from "../../components/DataTable/index.tsx";
 import type { View } from "../../../common/types.ts";
 import type api from "../../../worker/api/index.ts";
@@ -32,6 +24,10 @@ import { Dropdown, SplitButton } from "react-bootstrap";
 import type { FooterRow } from "../../components/DataTable/Footer.tsx";
 import { wrappedCurrency } from "../../components/wrappedCurrency.ts";
 import { orderBy } from "../../../common/utils.ts";
+import { SafeHtml } from "../../components/SafeHtml.tsx";
+import { SaveTrade } from "../../components/SaveTrade.tsx";
+import { HelpPopover } from "../../components/HelpPopover.tsx";
+import { ActionButton } from "../../components/ActionButton.tsx";
 
 export type OfferType = Awaited<
 	ReturnType<(typeof api)["main"]["getTradingBlockOffers"]>

@@ -1,16 +1,15 @@
 import clsx from "clsx";
-import {
-	bySport,
-	getBestPlayerBoxScore,
-	isSport,
-	PHASE,
-} from "../../../common/index.ts";
-import { getCol, helpers, useLocalPartial } from "../../util/index.ts";
+import { PHASE } from "../../../common/constants.ts";
+import { helpers } from "../../util/helpers.ts";
+import { useLocalPartial } from "../../util/local.ts";
 import React, { memo, type ReactNode } from "react";
-import TeamLogoInline from "../TeamLogoInline.tsx";
+import { TeamLogoInline } from "../TeamLogoInline.tsx";
 import defaultGameAttributes from "../../../common/defaultGameAttributes.ts";
-import PlayerNameLabels from "../PlayerNameLabels.tsx";
+import { PlayerNameLabels } from "../PlayerNameLabels.tsx";
 import getWinner from "../../../common/getWinner.ts";
+import { getCol } from "../../../common/getCol.ts";
+import { getBestPlayerBoxScore } from "../../../common/getBestPlayerBoxScore.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const roundHalf = (x: number) => {
 	return Math.round(x * 2) / 2;
@@ -60,7 +59,7 @@ const smallStyle = {
 };
 
 // memo is to prevent completed games from re-rendering in LeagueTopBar
-const ScoreBox = memo(
+export const ScoreBox = memo(
 	({
 		actions = [],
 		boxScoreTeamOverride,
@@ -305,15 +304,17 @@ const ScoreBox = memo(
 								rosterURL = helpers.leagueUrl(["all_star", "history"]);
 							} else {
 								const branding = t.branding ?? teamInfoCache[t.tid];
-								imgURL = branding?.imgURLSmall ?? branding?.imgURL;
-								teamName = small
-									? branding?.abbrev
-									: `${branding?.region} ${branding?.name}`;
-								rosterURL = helpers.leagueUrl([
-									"roster",
-									`${branding?.abbrev}_${t.tid}`,
-									gameSeason,
-								]);
+								if (branding) {
+									imgURL = branding.imgURLSmall ?? branding.imgURL;
+									teamName = small
+										? branding.abbrev
+										: `${branding.region} ${branding.name}`;
+									rosterURL = helpers.leagueUrl([
+										"roster",
+										`${branding.abbrev}_${t.tid}`,
+										gameSeason,
+									]);
+								}
 							}
 
 							// For @MikeHoudini on Discord
@@ -610,5 +611,3 @@ const ScoreBox = memo(
 		return <div className={className}>{scoreBox}</div>;
 	},
 );
-
-export default ScoreBox;

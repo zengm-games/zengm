@@ -1,10 +1,12 @@
 import { finances } from "../index.ts";
-import { isSport, PHASE, PLAYER } from "../../../common/index.ts";
+import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { facilitiesEffectMood } from "../../../common/budgetLevels.ts";
 import type { MoodComponents, Player } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { defaultGameAttributes, g, helpers, local } from "../../util/index.ts";
 import { getNegotiationPids } from "../../views/negotiationList.ts";
+import { getNumPlayersTradedAwayNormalized } from "./getNumPlayersTradedAwayNormalized.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 const getMinFractionDiff = async (pid: number, tid: number) => {
 	if (!isSport("basketball")) {
@@ -90,7 +92,7 @@ const moodComponents = async (
 			[tid, season],
 		],
 	);
-	const currentTeamSeason = teamSeasons.find((ts) => ts.season === season);
+	const currentTeamSeason = teamSeasons.findLast((ts) => ts.season === season);
 
 	const teams = helpers.addPopRank(await idb.cache.teams.getAll());
 	const t = teams.find((t) => t.tid === tid);
@@ -279,17 +281,15 @@ const moodComponents = async (
 
 	{
 		// TRADES
-		let numPlayersTradedAwayNormalized = 0;
-		for (const teamSeason of teamSeasons) {
-			if (teamSeason.season === season - 2) {
-				numPlayersTradedAwayNormalized +=
-					teamSeason.numPlayersTradedAway * 0.25;
-			} else if (teamSeason.season === season - 1) {
-				numPlayersTradedAwayNormalized += teamSeason.numPlayersTradedAway * 0.5;
-			} else if (teamSeason.season === season) {
-				numPlayersTradedAwayNormalized +=
-					teamSeason.numPlayersTradedAway * 0.75;
-			}
+		let numPlayersTradedAwayNormalized;
+		if (p.tid === PLAYER.FREE_AGENT) {
+			numPlayersTradedAwayNormalized = p.numPlayersTradedAwayNormalized?.[tid];
+		}
+		if (numPlayersTradedAwayNormalized === undefined) {
+			numPlayersTradedAwayNormalized = getNumPlayersTradedAwayNormalized(
+				teamSeasons,
+				season,
+			);
 		}
 
 		components.trades = helpers.bound(

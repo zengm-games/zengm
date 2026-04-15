@@ -6,7 +6,6 @@ import {
 import type { Position } from "../../../common/types.baseball.ts";
 import { orderBy } from "../../../common/utils.ts";
 import { random } from "../../util/index.ts";
-import { lineupSort } from "../team/genDepth.baseball.ts";
 import { fatigueFactor } from "./fatigueFactor.ts";
 import { CLOSER_INDEX, getStartingPitcher } from "./getStartingPitcher.ts";
 import type { PlayerGameSim, TeamGameSim } from "./types.ts";
@@ -215,12 +214,12 @@ class Team<DH extends boolean> {
 				}
 			}
 
-			// Sort only for the substituted player and after
+			// Sort only for the substituted player and after - this formula is not the same as the new sortBattingOrder, would need raw ratings for that
 			const newBattingOrder = [
 				...originalBattingOrder.slice(0, minBattingOrderWithSubstitution),
 				...orderBy(
 					originalBattingOrder.slice(minBattingOrderWithSubstitution),
-					(p) => lineupSort(p.p.ovrs.DH, p.p.compositeRating.speed),
+					(p) => p.p.ovrs.DH + 0.2 * p.p.compositeRating.speed,
 					"desc",
 				),
 			];

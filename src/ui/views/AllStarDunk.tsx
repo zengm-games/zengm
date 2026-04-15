@@ -1,16 +1,11 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, toWorker, useLocal, useLocalPartial } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { useLocal, useLocalPartial } from "../util/local.ts";
 import type { DunkAttempt, Player, View } from "../../common/types.ts";
-import {
-	Height,
-	PlayerNameLabels,
-	PlayerPicture,
-	PlayPauseNext,
-	ResponsiveTableWrapper,
-	Weight,
-} from "../components/index.tsx";
+import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { useEffect, useState } from "react";
-import { isSport } from "../../common/index.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 import SelectMultiple from "../components/SelectMultiple/index.tsx";
 import {
 	dunkInfos,
@@ -19,8 +14,12 @@ import {
 	isDunkContest,
 } from "../../common/dunkContest.ts";
 import clsx from "clsx";
-import { getHeightString } from "../components/Height.tsx";
+import { getHeightString, Height } from "../components/Height.tsx";
 import { range } from "../../common/utils.ts";
+import { PlayerPicture } from "../components/PlayerPicture.tsx";
+import { PlayPauseNext } from "../components/PlayPauseNext.tsx";
+import ResponsiveTableWrapper from "../components/ResponsiveTableWrapper.tsx";
+import { Weight } from "../components/Weight.tsx";
 
 export const EditContestants = ({
 	allPossibleContestants,

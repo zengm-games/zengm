@@ -1,5 +1,5 @@
-import { groupBy, range } from "../../../common/utils.ts";
-import { PHASE, PLAYER } from "../../../common/index.ts";
+import { range } from "../../../common/utils.ts";
+import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
 import type { TradePickValues } from "../../../common/types.ts";
@@ -29,11 +29,11 @@ const getPickValues = async (): Promise<TradePickValues> => {
 		PLAYER.UNDRAFTED,
 	);
 	players.sort((a, b) => b.value - a.value);
-	const playersByDraftYear = groupBy(players, (p) => p.draft.year);
+	const playersByDraftYear = Map.groupBy(players, (p) => p.draft.year);
 
 	const pickValues: TradePickValues = {} as TradePickValues;
 
-	for (const [season, players] of Object.entries(playersByDraftYear)) {
+	for (const [season, players] of playersByDraftYear) {
 		pickValues[season] = players.map((p) => p.value);
 	}
 
@@ -63,8 +63,7 @@ const getPickValues = async (): Promise<TradePickValues> => {
 	}
 
 	// Defaults are the average of future drafts
-	const seasons = Object.keys(playersByDraftYear);
-	const currentSeasonString = String(currentSeason);
+	const seasons = Array.from(playersByDraftYear.keys());
 	pickValues.default = range(numPicksDefault).map((i) => {
 		const vals = seasons
 			.filter((season) => {
@@ -73,7 +72,7 @@ const getPickValues = async (): Promise<TradePickValues> => {
 					!seasonPickValues ||
 					seasonPickValues[i] === undefined ||
 					(g.get("phase") === PHASE.DRAFT &&
-						season === currentSeasonString &&
+						season === currentSeason &&
 						seasonPickValues[i] === PLACEHOLDER_VALUE_ALREADY_PICKED)
 				) {
 					return false;

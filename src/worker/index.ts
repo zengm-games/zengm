@@ -1,6 +1,6 @@
 import "../common/polyfills.ts";
 import api from "./api/index.ts";
-import * as common from "../common/index.ts";
+import * as common from "../common/constants.ts";
 import * as core from "./core/index.ts";
 import * as db from "./db/index.ts";
 import * as util from "./util/index.ts";

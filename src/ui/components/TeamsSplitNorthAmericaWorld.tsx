@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import geographicCoordinates, {
 	continents,
 } from "../../common/geographicCoordinates.ts";
-import { groupBy } from "../../common/utils.ts";
 
 export const TeamsSplitNorthAmericaWorld = <
 	T extends {
@@ -15,7 +14,7 @@ export const TeamsSplitNorthAmericaWorld = <
 	teams: T[];
 	option: (t: T, i: number) => ReactNode;
 }) => {
-	const teamsByContinent = groupBy(teams, (t) => {
+	const teamsByContinent = Object.groupBy(teams, (t) => {
 		const continent = geographicCoordinates[t.region]?.continent;
 		if (continent === undefined) {
 			return "Unknown";

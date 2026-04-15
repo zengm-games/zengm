@@ -1,4 +1,4 @@
-import { bySport, isSport, PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import {
 	defaultGameAttributes,
@@ -7,7 +7,6 @@ import {
 	processPlayersHallOfFame,
 } from "../util/index.ts";
 import type {
-	MinimalPlayerRatings,
 	Player,
 	PlayerFiltered,
 	PlayerInjury,
@@ -19,6 +18,7 @@ import { groupByUnique, range } from "../../common/utils.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { season } from "../core/index.ts";
 import { extraStats } from "./hallOfFame.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 export const getCategoriesAndStats = (onlyStat?: string) => {
 	let categories = bySport<
@@ -280,6 +280,15 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 				titleOverride: "Rushing and Receiving TDs",
 			},
 			{
+				stat: "pbwr",
+			},
+			{
+				stat: "rbwr",
+			},
+			{
+				stat: "skAlw",
+			},
+			{
 				stat: "defTck",
 			},
 			{
@@ -538,16 +547,13 @@ export class GamesPlayedCache {
 
 export const iterateAllPlayers = async (
 	season: number | "all" | "career",
-	cb: (
-		p: Player<MinimalPlayerRatings>,
-		season: number | "career",
-	) => Promise<void>,
+	cb: (p: Player, season: number | "career") => Promise<void>,
 ) => {
 	// Even in past seasons, make sure we have latest info for players
 	const cachePlayers = await idb.cache.players.getAll();
 	const cachePlayersByPid = groupByUnique(cachePlayers, "pid");
 
-	const applyCB = async (p: Player<MinimalPlayerRatings>) => {
+	const applyCB = async (p: Player) => {
 		if (season === "all") {
 			const seasons = new Set(p.stats.map((row) => row.season));
 			for (const season of seasons) {

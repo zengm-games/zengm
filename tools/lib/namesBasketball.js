@@ -412,17 +412,13 @@ const namesBasketball = () => {
 
 		const skipFN = ["Just-in'love", "Sir'Dominic"];
 		if (!skipFN.includes(fn)) {
-			if (fnsByCountry[country][fn] === undefined) {
-				fnsByCountry[country][fn] = 0;
-			}
+			fnsByCountry[country][fn] ??= 0;
 			fnsByCountry[country][fn] += 1;
 		}
 
 		const skipLN = ["Kickingstallionsims"];
 		if (!skipLN.includes(ln)) {
-			if (lnsByCountry[country][ln] === undefined) {
-				lnsByCountry[country][ln] = 0;
-			}
+			lnsByCountry[country][ln] ??= 0;
 			lnsByCountry[country][ln] += 1;
 		}
 

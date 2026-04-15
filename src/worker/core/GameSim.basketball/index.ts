@@ -1,5 +1,5 @@
 import { g, helpers, random } from "../../util/index.ts";
-import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/index.ts";
+import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/constants.ts";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession.ts";
 import getInjuryRate from "./getInjuryRate.ts";
 import type {
@@ -1514,10 +1514,20 @@ class GameSim extends GameSimBase {
 			this.prevPossessionOutcome === "nonShootingFoul" ||
 			(this.prevPossessionOutcome === "timeout" && timeoutAdvancesBall);
 
-		if (!possessionStartsInFrontcourt && timeoutAdvancesBall && this.t < 120) {
+		if (
+			!possessionStartsInFrontcourt &&
+			timeoutAdvancesBall &&
+			this.t < 120 &&
+			this.timeouts[this.o] > 0
+		) {
 			const pointDifferential =
 				this.team[this.o].stat.pts - this.team[this.d].stat.pts;
-			if (pointDifferential < 0 && this.timeouts[this.o] > 0) {
+			let takeTimeout = false;
+			if (pointDifferential === 0) {
+				if (this.t <= 10) {
+					takeTimeout = true;
+				}
+			} else if (pointDifferential < 0) {
 				// If comeback is very unlikely, no point in taking a timeout
 				let comebackAttempt = false;
 				if (this.t > 60 && pointDifferential >= -21) {
@@ -1537,8 +1547,7 @@ class GameSim extends GameSimBase {
 				}
 
 				if (comebackAttempt) {
-					let takeTimeout = false;
-					if (this.t < 5) {
+					if (this.t < 10) {
 						// If time is really low, definitely take a timeout to advance ball
 						takeTimeout = true;
 					} else if (this.t < 25 && this.isClockRunning) {
@@ -1550,21 +1559,21 @@ class GameSim extends GameSimBase {
 							takeTimeout = true;
 						}
 					}
-
-					if (takeTimeout) {
-						this.isClockRunning = false;
-						this.timeouts[this.o] -= 1;
-						this.logTimeouts();
-						this.playByPlay.logEvent({
-							type: "timeout",
-							clock: this.t,
-							t: this.o,
-							numLeft: this.timeouts[this.o],
-							advancesBall: this.timeoutAdvancesBall(),
-						});
-						return "timeout";
-					}
 				}
+			}
+
+			if (takeTimeout) {
+				this.isClockRunning = false;
+				this.timeouts[this.o] -= 1;
+				this.logTimeouts();
+				this.playByPlay.logEvent({
+					type: "timeout",
+					clock: this.t,
+					t: this.o,
+					numLeft: this.timeouts[this.o],
+					advancesBall: this.timeoutAdvancesBall(),
+				});
+				return "timeout";
 			}
 		}
 

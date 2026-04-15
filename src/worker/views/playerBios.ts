@@ -1,10 +1,11 @@
-import { bySport, PHASE, PLAYER } from "../../common/index.ts";
+import { PHASE, PLAYER } from "../../common/constants.ts";
 import { g } from "../util/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { getPlayers } from "./playerRatings.ts";
 import { player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerBios">,

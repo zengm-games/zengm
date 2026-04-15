@@ -4,7 +4,7 @@ import type {
 	GameAttributesLeague,
 	LocalStateUI,
 } from "../../../common/types.ts";
-import { unwrapGameAttribute } from "../../../common/index.ts";
+import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
 import { gameAttributesSyncedToUi } from "../../../common/gameAttributesSyncedToUi.ts";
 
 const gameAttributesToUI = async (

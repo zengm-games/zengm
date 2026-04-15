@@ -1,21 +1,24 @@
 import { useReducer, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, logEvent, toWorker, useLocalPartial } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { logEvent } from "../util/logEvent.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { useLocalPartial } from "../util/local.ts";
 import type { Conf, Div, NonEmptyArray, View } from "../../common/types.ts";
 import {
 	DEFAULT_JERSEY,
 	DEFAULT_STADIUM_CAPACITY,
 	DEFAULT_TEAM_COLORS,
 	PHASE,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import {
 	Conferences,
 	getAbbrevsUsedMultipleTimes,
 	makeReducer,
 } from "./NewLeague/CustomizeTeams.tsx";
-import StickyBottomButtons from "../components/StickyBottomButtons.tsx";
+import { StickyBottomButtons } from "../components/StickyBottomButtons.tsx";
 import type { NewLeagueTeamWithoutRank } from "./NewLeague/types.ts";
-import { Modal } from "react-bootstrap";
+import { Modal } from "../components/Modal.tsx";
 import TeamForm from "./ManageTeams/TeamForm.tsx";
 import {
 	nextSeasonWarning,

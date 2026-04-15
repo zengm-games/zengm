@@ -1,4 +1,4 @@
-import { bySport } from "../../../common/index.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { POSITION_COUNTS } from "../../../common/constants.ts";
 import {
 	NUM_STARTING_PITCHERS,

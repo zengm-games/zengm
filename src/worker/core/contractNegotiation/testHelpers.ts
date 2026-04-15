@@ -1,5 +1,5 @@
-import { PLAYER } from "../../../common/index.ts";
-import testHelpers from "../../../test/helpers.ts";
+import { PLAYER } from "../../../common/constants.ts";
+import { resetCache, resetG } from "../../../test/helpers.ts";
 import { player, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
@@ -16,12 +16,12 @@ const givePlayerMinContract = async (pid: number) => {
 };
 
 const beforeTests = async () => {
-	testHelpers.resetG();
+	resetG();
 
 	const teamsDefault = helpers.getTeamsDefault().slice(0, 3);
 	const teams = teamsDefault.map(team.generate);
 
-	await testHelpers.resetCache({
+	await resetCache({
 		players: [
 			// Free agents
 			player.generate(PLAYER.FREE_AGENT, 30, 2017, true, DEFAULT_LEVEL),

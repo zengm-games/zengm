@@ -1,16 +1,14 @@
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type { TeamFiltered } from "../../common/types.ts";
 import { getPlayers, getTopPlayers } from "../core/season/awards.ts";
-import {
-	dpoyScore,
-	makeTeams,
-	mvpScore,
-} from "../core/season/doAwards.football.ts";
+import { dpoyScore, makeTeams } from "../core/season/doAwards.football.ts";
 import advStatsSave from "./advStatsSave.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
+import helpers from "./helpers.ts";
+import statsRowIsCurrent from "../core/player/statsRowIsCurrent.ts";
 
 type Team = TeamFiltered<
 	["tid"],
@@ -39,6 +37,10 @@ type Team = TeamFiltered<
 		"pnt",
 		"pntYds",
 		"pntBlk",
+		"pbw",
+		"pba",
+		"rbw",
+		"rba",
 	],
 	number
 >;
@@ -49,16 +51,49 @@ const TCK_CONSTANT = {
 	CB: 0,
 	S: 0,
 };
-const DEFENSIVE_POSITIONS = ["DL", "LB", "CB", "S"] as const;
+const DEFENSIVE_POSITIONS = new Set(["DL", "LB", "CB", "S"] as const);
+
+const olScore = (
+	stats: Record<"pbw" | "pba" | "pbwr" | "rbw" | "rba" | "rbwr", number>,
+	league: Record<"pbwr" | "rbwr", number>,
+	pos: string,
+) => {
+	const posMultiplier = pos === "OL" ? 1 : 0.5;
+
+	// Bonus for PBW/RBW above league average rate
+	return (
+		(stats.pbw +
+			stats.rbw +
+			helpers.bound(
+				stats.pbw -
+					stats.pba * league.pbwr +
+					(stats.rbw - stats.rba * league.rbwr),
+				0,
+				Infinity,
+			)) *
+		posMultiplier
+	);
+};
 
 // Approximate Value: https://www.sports-reference.com/blog/approximate-value-methodology/
 const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 	const teams = teamsInput.map((t) => {
+		// Modification - use PBWR and RBWR to determine the credit OL gets for offense, kind of arbitrary
+		const olFraction =
+			helpers.bound(
+				(5 *
+					(helpers.ratio(t.stats.pbw, t.stats.pba) +
+						helpers.ratio(t.stats.rbw, t.stats.rba))) /
+					(league.pbwr + league.rbwr),
+				4,
+				6,
+			) / 11;
+
 		const offPts =
 			league.ptsPerDrive === 0
 				? 0
 				: (100 * t.stats.ptsPerDrive) / league.ptsPerDrive;
-		const ptsOL = (5 / 11) * offPts;
+		const ptsOL = olFraction * offPts;
 		const ptsSkill = offPts - ptsOL;
 		const ptsRus =
 			t.stats.rusYds + t.stats.recYds === 0
@@ -97,10 +132,10 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 				ptsRec,
 				ptsFront7,
 				ptsSecondary,
-				individualPtsOL: 0,
 				individualPtsFront7: 0,
 				individualPtsSecondary: 0,
 				kPlayingTime,
+				olScore: 0,
 			},
 		};
 	});
@@ -115,22 +150,10 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 			throw new Error("Should never happen");
 		}
 
-		if (p.ratings.pos === "OL" || p.ratings.pos === "TE") {
-			const posMultiplier = p.ratings.pos === "OL" ? 1.1 : 0.2;
+		// Need to add this up, otherwise it doesn't get computed right at the team level
+		t.stats.olScore += olScore(p.stats, league, p.ratings.pos);
 
-			let allProMultiplier = 1;
-			if (p.ratings.pos === "OL") {
-				if (p.allLeagueTeam === 0) {
-					allProMultiplier = 1.5;
-				} else if (p.allLeagueTeam === 1) {
-					allProMultiplier = 1;
-				}
-			}
-
-			score = p.stats.gp + 5 * p.stats.gs * posMultiplier * allProMultiplier;
-
-			t.stats.individualPtsOL += score;
-		} else if (DEFENSIVE_POSITIONS.includes(p.ratings.pos)) {
+		if (DEFENSIVE_POSITIONS.has(p.ratings.pos)) {
 			let allProLevel = 0;
 			if (p.allLeagueTeam === 0) {
 				allProLevel = 1.9;
@@ -138,12 +161,15 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 				allProLevel = 1.6;
 			}
 
+			// Tweaked formula a bit to include defFmbFrc and defPssDef
 			score =
 				p.stats.gp +
 				5 * p.stats.gs +
 				p.stats.defSk +
-				4 * p.stats.defFmbRec +
+				2 * p.stats.defFmbRec +
+				2 * p.stats.defFmbFrc +
 				4 * p.stats.defInt +
+				2 * p.stats.defPssDef +
 				5 * (p.stats.defIntTD + p.stats.defFmbTD) +
 				// https://github.com/microsoft/TypeScript/issues/21732
 				// @ts-expect-error
@@ -172,9 +198,10 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 		const pInidivudalPoints = individualPts[i]!;
 
 		// OL
-		if (p.ratings.pos === "OL" || p.ratings.pos === "TE") {
-			score += (pInidivudalPoints / t.stats.individualPtsOL) * t.stats.ptsOL;
-		}
+		// Modification - use PBWR and RBWR to determine the credit OL gets for offense, kind of arbitrary
+		score +=
+			(olScore(p.stats, league, p.ratings.pos) / t.stats.olScore) *
+			t.stats.ptsOL;
 
 		// Rushing
 		score += (p.stats.rusYds / t.stats.rusYds) * t.stats.ptsRus;
@@ -271,52 +298,73 @@ const calculateAV = (players: any[], teamsInput: Team[], league: any) => {
 };
 
 const advStats = async () => {
+	const playoffs = PHASE.PLAYOFFS === g.get("phase");
+
 	const playersRaw = await idb.cache.players.indexGetAll("playersByTid", [
 		0, // Active players have tid >= 0
 		Infinity,
 	]);
-	const players = await idb.getCopies.playersPlus(playersRaw, {
-		attrs: ["pid", "tid"],
-		stats: [
-			"gp",
-			"gs",
-			"pss",
-			"pssYds",
-			"pssAdjYdsPerAtt",
-			"rus",
-			"rusYds",
-			"rusYdsPerAtt",
-			"rec",
-			"recYds",
-			"defSk",
-			"defFmbRec",
-			"defInt",
-			"defIntTD",
-			"defFmbTD",
-			"defTck",
-			"prTD",
-			"krTD",
-			"fg0",
-			"fg20",
-			"fg30",
-			"fg40",
-			"fg50",
-			"fga0",
-			"fga20",
-			"fga30",
-			"fga40",
-			"fga50",
-			"xp",
-			"xpa",
-			"pnt",
-			"pntYds",
-			"pntBlk",
-		],
-		ratings: ["pos"],
-		season: g.get("season"),
-		playoffs: PHASE.PLAYOFFS === g.get("phase"),
-		regularSeason: PHASE.PLAYOFFS !== g.get("phase"),
+	const players = (
+		await idb.getCopies.playersPlus(playersRaw, {
+			attrs: ["pid", "tid"],
+			stats: [
+				"gp",
+				"gs",
+				"pss",
+				"pssYds",
+				"pssAdjYdsPerAtt",
+				"rus",
+				"rusYds",
+				"rusYdsPerAtt",
+				"rec",
+				"recYds",
+				"defSk",
+				"defFmbRec",
+				"defFmbFrc",
+				"defInt",
+				"defPssDef",
+				"defIntTD",
+				"defFmbTD",
+				"defTck",
+				"prTD",
+				"krTD",
+				"fg0",
+				"fg20",
+				"fg30",
+				"fg40",
+				"fg50",
+				"fga0",
+				"fga20",
+				"fga30",
+				"fga40",
+				"fga50",
+				"xp",
+				"xpa",
+				"pnt",
+				"pntYds",
+				"pntBlk",
+				"pbw",
+				"pba",
+				"pbwr",
+				"rbw",
+				"rba",
+				"rbwr",
+
+				// For statsRowIsCurrenet
+				"tid",
+				"season",
+				"playoffs",
+			],
+			ratings: ["pos"],
+			season: g.get("season"),
+			playoffs,
+			regularSeason: !playoffs,
+		})
+	).filter((p) => {
+		// Ignore players with no stats row, such as players signed/traded who haven't played a game yet, since we don't call addStatsRow when joining the roster now
+		return statsRowIsCurrent(p.stats, p.tid, playoffs);
 	});
+
 	const teamStats = [
 		"gp",
 		"ptsPerDrive",
@@ -347,14 +395,18 @@ const advStats = async () => {
 		"pnt",
 		"pntYds",
 		"pntBlk",
+		"pbw",
+		"pba",
+		"rbw",
+		"rba",
 	] as const;
 	const teams = await idb.getCopies.teamsPlus(
 		{
 			attrs: ["tid"],
 			stats: teamStats,
 			season: g.get("season"),
-			playoffs: PHASE.PLAYOFFS === g.get("phase"),
-			regularSeason: PHASE.PLAYOFFS !== g.get("phase"),
+			playoffs,
+			regularSeason: !playoffs,
 			addDummySeason: true,
 			active: true,
 		},
@@ -383,20 +435,15 @@ const advStats = async () => {
 	league.xpp = league.xp / league.xpa;
 	league.adjPntYPA =
 		(league.pntYds - 13 * league.pntBlk) / (league.pnt + league.pntBlk);
+	league.pbwr = league.pbw / league.pba;
+	league.rbwr = league.rbw / league.rba;
 
 	const updatedStats = { ...calculateAV(players, teams, league) };
 	await advStatsSave(players, playersRaw, updatedStats);
 
 	// Hackily account for AV of award winners, for OL and defense. These will not exactly correspond to the "real" AV formulas, they're just intended to be simple and good enough.
-	if (PHASE.PLAYOFFS !== g.get("phase")) {
+	if (!playoffs) {
 		const players2 = await getPlayers(g.get("season"));
-		const mvpPlayers = getTopPlayers(
-			{
-				amount: Infinity,
-				score: mvpScore,
-			},
-			players2,
-		);
 		const dpoyPlayers = getTopPlayers(
 			{
 				amount: Infinity,
@@ -404,11 +451,12 @@ const advStats = async () => {
 			},
 			players2,
 		);
-		const allLeague = makeTeams(mvpPlayers, dpoyPlayers);
+		// Can pass dpoyPLayers for all becuase the offensive/OL players don't matter
+		const allLeague = makeTeams(dpoyPlayers, dpoyPlayers, dpoyPlayers);
 
 		for (let i = 0; i < allLeague.length; i++) {
 			for (const p2 of allLeague[i].players) {
-				if (p2 && (p2.pos === "OL" || DEFENSIVE_POSITIONS.includes(p2.pos))) {
+				if (p2 && DEFENSIVE_POSITIONS.has(p2.pos)) {
 					const p = players.find((p3) => p3.pid === p2.pid);
 					if (p) {
 						p.allLeagueTeam = i;

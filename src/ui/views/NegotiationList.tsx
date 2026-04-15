@@ -1,23 +1,19 @@
-import {
-	DataTable,
-	NegotiateButtons,
-	RosterComposition,
-	RosterSalarySummary,
-	SafeHtml,
-} from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import {
-	confirm,
-	getCols,
-	helpers,
-	logEvent,
-	toWorker,
-} from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { logEvent } from "../util/logEvent.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
-import { dataTableWrappedMood } from "../components/Mood.tsx";
+import { wrappedMood } from "../components/Mood.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedCurrency } from "../components/wrappedCurrency.ts";
+import { SafeHtml } from "../components/SafeHtml.tsx";
+import { NegotiateButtons } from "../components/NegotiateButtons.tsx";
+import { RosterComposition } from "../components/RosterComposition.tsx";
+import { RosterSalarySummary } from "../components/RosterSalarySummary.tsx";
+import { confirm } from "../util/confirm.tsx";
 
 const NegotiationList = ({
 	capSpace,
@@ -102,7 +98,7 @@ const NegotiationList = ({
 					searchValue: p.latestTransaction,
 					sortValue: p.latestTransactionSeason,
 				},
-				dataTableWrappedMood({
+				wrappedMood({
 					defaultType: "user",
 					maxWidth: true,
 					p,

@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { GAME_NAME } from "../../common/index.ts";
+import { GAME_NAME } from "../../common/constants.ts";
 
 type Props = {
 	gold?: boolean;

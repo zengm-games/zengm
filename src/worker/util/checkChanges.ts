@@ -1,11 +1,14 @@
 import { idb } from "../db/index.ts";
 import logEvent from "./logEvent.ts";
 import type { Conditions } from "../../common/types.ts";
-import { fetchWrapper, SUBREDDIT_NAME } from "../../common/index.ts";
+import { SUBREDDIT_NAME } from "../../common/constants.ts";
+import { fetchWrapper } from "../../common/fetchWrapper.ts";
 
 const LAST_VERSION_BEFORE_THIS_EXISTED = "2021.05.25.0919";
 const CURRENT_VERSION = "VERSION_NUMBER";
 const MAX_NUM_TO_SHOW = 3;
+
+// Keep in sync with changelog.php
 const FETCH_LIMIT = 10;
 
 const checkChanges = async (conditions: Conditions) => {
@@ -72,10 +75,10 @@ const checkChanges = async (conditions: Conditions) => {
 			const numMore = changes.length - MAX_NUM_TO_SHOW;
 			if (numMore === 1) {
 				moreText = "...and 1 more change";
-			} else if (numMore === FETCH_LIMIT - MAX_NUM_TO_SHOW) {
+			} else if (numMore >= FETCH_LIMIT - MAX_NUM_TO_SHOW) {
 				moreText = "...and many more changes";
 			} else if (numMore > 1) {
-				moreText = `...and more ${numMore} changes`;
+				moreText = `...and ${numMore} more changes`;
 			} else {
 				moreText = "View all changes";
 			}

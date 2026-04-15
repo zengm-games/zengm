@@ -1,4 +1,4 @@
-import { isSport } from "../../../common/index.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 import type { Div } from "../../../common/types.ts";
 import { random } from "../../util/index.ts";
 
@@ -62,7 +62,10 @@ if (isSport("hockey")) {
 	DEFAULT_COORDS.Pacific = [40.68, -123.38];
 }
 
-export const calcDistance = (a: [number, number], b: [number, number]) => {
+export const calcDistance = (
+	a: Readonly<[number, number]>,
+	b: Readonly<[number, number]>,
+) => {
 	// Factor makes it so 60 degrees (on original scale) is now 0, so that's where the discontinuity is. Not perfect for all situations, but mostly works to put Asian/Australian teams in the western conference
 	const factor = 300;
 	const lat1 = a[0];
@@ -75,7 +78,7 @@ export const calcDistance = (a: [number, number], b: [number, number]) => {
 
 // This is normal k-means clustering, just with some very crudely imposed static cluster sizes. Still seems to work pretty well, assuing `points` is fairly small and `NUM_TRIES` is fairly large.
 export const kmeansFixedSize = (
-	points: [number, number][],
+	points: Readonly<[number, number]>[],
 	clusterSizes: number[],
 ) => {
 	const NUM_TRIES = 100;
@@ -112,9 +115,11 @@ export const kmeansFixedSize = (
 				];
 			}
 
+			const pointIndexes: number[] = [];
+
 			return {
 				center,
-				pointIndexes: [] as number[],
+				pointIndexes,
 				distance: 0,
 			};
 		});

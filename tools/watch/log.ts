@@ -1,11 +1,17 @@
 import fs from "node:fs/promises";
-import { existsSync } from "node:fs";
 
 const LOG_PATH = "spinners.log";
 
 export const log = async (type: string, message: string, init?: boolean) => {
-	if (init && existsSync(LOG_PATH)) {
-		await fs.unlink(LOG_PATH);
+	if (init) {
+		// Delete old file if it exists
+		try {
+			await fs.unlink(LOG_PATH);
+		} catch (error) {
+			if (error.code !== "ENOENT") {
+				throw error;
+			}
+		}
 	}
 
 	await fs.appendFile(

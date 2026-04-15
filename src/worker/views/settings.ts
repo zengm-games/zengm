@@ -215,7 +215,7 @@ export type Settings = Pick<
 	tragicDeaths: TragicDeaths;
 	goatFormula: string;
 	goatSeasonFormula: string;
-	confs?: GameAttributesLeague["confs"];
+	confs: GameAttributesLeague["confs"];
 	giveMeWorstRoster: boolean;
 
 	// undefined in DefaultNewLeagueSettings - then it is not possible to validate some settings that depend on it

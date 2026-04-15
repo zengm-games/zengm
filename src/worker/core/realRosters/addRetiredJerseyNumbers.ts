@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../../common/index.ts";
+import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { groupByUnique } from "../../../common/utils.ts";
 import type { Team } from "../../../common/types.ts";
 import type { Basketball } from "./loadData.basketball.ts";

@@ -1,22 +1,21 @@
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import {
-	helpers,
-	logEvent,
-	safeLocalStorage,
-	toWorker,
-} from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import RealData from "./RealData.tsx";
 import Storage from "./Storage.tsx";
 import type { View } from "../../../common/types.ts";
 import {
 	DEFAULT_PHASE_CHANGE_REDIRECTS,
-	isSport,
 	PHASE,
 	PHASE_TEXT,
-} from "../../../common/index.ts";
-import { HelpPopover, MoreLinks } from "../../components/index.tsx";
+} from "../../../common/constants.ts";
+import { MoreLinks } from "../../components/MoreLinks.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
+import { HelpPopover } from "../../components/HelpPopover.tsx";
+import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 const GlobalSettings = (props: View<"globalSettings">) => {
 	const [state, setState] = useState(() => {

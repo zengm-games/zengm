@@ -1,5 +1,6 @@
 import type { ChangeEvent } from "react";
-import { helpers, toWorker } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import type { View } from "../../../common/types.ts";
 
 type Player = View<"roster">["players"][number];

@@ -4,11 +4,11 @@ import lotterySort from "./lotterySort.ts";
 import divideChancesOverTiedTeams from "./divideChancesOverTiedTeams.ts";
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
-import testHelpers from "../../../test/helpers.ts";
+import { mockIDBLeague, resetG } from "../../../test/helpers.ts";
 
 beforeAll(async () => {
-	testHelpers.resetG();
-	idb.league = testHelpers.mockIDBLeague();
+	resetG();
+	idb.league = mockIDBLeague();
 
 	await loadTeamSeasons();
 });

@@ -1,10 +1,24 @@
 import { Workbox } from "workbox-window";
-import { GAME_NAME } from "../../common/index.ts";
-import logEvent from "./logEvent.ts";
+import { GAME_NAME } from "../../common/constants.ts";
+import { logEvent } from "./logEvent.ts";
 
 const ONE_HOUR = 60 * 60 * 1000;
 
-if ("serviceWorker" in navigator && process.env.NODE_ENV !== "development") {
+if (
+	window.releaseStage === "development" &&
+	// serviceWorker is undefined in an insecure context, like http://play.basketball-gm.test/
+	window.navigator.serviceWorker?.controller
+) {
+	logEvent({
+		type: "error",
+		text: "Build loaded from service worker in dev",
+		saveToDb: false,
+		persistent: true,
+	});
+}
+
+// serviceWorker is undefined in an insecure context, like http://play.basketball-gm.test/
+if (window.navigator.serviceWorker && process.env.NODE_ENV !== "development") {
 	const wb = new Workbox("/sw.js");
 
 	let updateAvailable = false;

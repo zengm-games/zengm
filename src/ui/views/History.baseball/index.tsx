@@ -1,9 +1,10 @@
-import { MoreLinks, RetiredPlayers } from "../../../ui/components/index.tsx";
-import useTitleBar from "../../../ui/hooks/useTitleBar.tsx";
+import { MoreLinks } from "../../components/MoreLinks.tsx";
+import { RetiredPlayers } from "../../components/RetiredPlayers.tsx";
+import useTitleBar from "../../hooks/useTitleBar.tsx";
 import AwardsAndChamp from "./AwardsAndChamp.tsx";
 import Team from "./Team.tsx";
 import type { View } from "../../../common/types.ts";
-import { AWARD_NAMES } from "../../../common/index.ts";
+import { AWARD_NAMES } from "../../../common/constants.ts";
 export type ActualProps = Exclude<
 	View<"history">,
 	{ invalidSeason: true; season: number }

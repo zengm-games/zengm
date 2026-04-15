@@ -1,10 +1,9 @@
 import {
-	isSport,
 	PHASE,
 	PLAYER,
 	PLAYER_STATS_TABLES,
 	RATINGS,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers, random } from "../util/index.ts";
 import type {
@@ -18,6 +17,7 @@ import {
 	getStats,
 	getStatsTableByType,
 } from "../../common/advancedPlayerSearch.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 export const statTypes = [
 	"bio",

@@ -1,10 +1,10 @@
 import posRatingsBaseball from "./posRatings.baseball.ts";
 import posRatingsFootball from "./posRatings.football.ts";
 import posRatingsHockey from "./posRatings.hockey.ts";
-import { RATINGS } from "./index.ts";
-import bySport from "./bySport.ts";
+import { RATINGS } from "./constants.ts";
+import { bySport } from "./sportFunctions.ts";
 
-const posRatings = (pos: string) => {
+export const posRatings = (pos: string) => {
 	return bySport({
 		baseball: posRatingsBaseball(pos),
 		basketball: [...RATINGS],
@@ -12,5 +12,3 @@ const posRatings = (pos: string) => {
 		hockey: posRatingsHockey(pos),
 	});
 };
-
-export default posRatings;

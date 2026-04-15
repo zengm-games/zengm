@@ -1,4 +1,4 @@
-import { bySport } from "../../common/index.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import HistoryBaseball from "./History.baseball/index.tsx";
 import HistoryBasketball from "./History.basketball/index.tsx";
 import HistoryFootball from "./History.football/index.tsx";

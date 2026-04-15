@@ -23,31 +23,37 @@ https://forebears.io/canada/surnames is a good data source. Here is a script you
 
 ```js
 {
-    const MAX_NUM_NAMES = 50;
+	const MAX_NUM_NAMES = 50;
 
-    const rows = document.querySelectorAll(".forename-table tbody tr");
-    const output = [];
-    for (const row of rows) {
-        if (row.children.length > 1) {
-            const name = row.children[2].textContent;
-            const frequency = Number.parseInt(row.children[3].textContent.replaceAll(",", ""));
-            const malePct = Number.parseInt(row.children[1].querySelector(".m")?.textContent ?? "0");
-            
-            if (Number.isNaN(malePct) || malePct < 75) {
-                output.push({
-                    name,
-                    frequency,
-                });
+	const rows = document.querySelectorAll(".forename-table tbody tr");
+	const output = [];
+	for (const row of rows) {
+		if (row.children.length > 1) {
+			const name = row.children[2].textContent;
+			const frequency = Number.parseInt(
+				row.children[3].textContent.replaceAll(",", ""),
+			);
+			const malePct = Number.parseInt(
+				row.children[1].querySelector(".m")?.textContent ?? "0",
+			);
 
-                if (output.length >= MAX_NUM_NAMES) {
-                    break;
-                }
-            }
-        }
-    }
+			if (Number.isNaN(malePct) || malePct < 75) {
+				output.push({
+					name,
+					frequency,
+				});
 
-    const minFrequency = Math.min(...output.map(row => row.frequency));
-    console.log(`Name,Frequency\n${output.map(row => `${row.name},${Math.round(row.frequency / minFrequency)}\n`).join("")}`);
+				if (output.length >= MAX_NUM_NAMES) {
+					break;
+				}
+			}
+		}
+	}
+
+	const minFrequency = Math.min(...output.map((row) => row.frequency));
+	console.log(
+		`Name,Frequency\n${output.map((row) => `${row.name},${Math.round(row.frequency / minFrequency)}\n`).join("")}`,
+	);
 }
 ```
 
@@ -55,26 +61,30 @@ And surnames:
 
 ```js
 {
-    const MAX_NUM_NAMES = 50;
+	const MAX_NUM_NAMES = 50;
 
-    const rows = document.querySelectorAll(".forename-table tbody tr");
-    const output = [];
-    for (const row of rows) {
-        if (row.children.length > 1) {
-            const name = row.children[1].textContent;
-            const frequency = Number.parseInt(row.children[2].textContent.replaceAll(",", ""));
-            output.push({
-                name,
-                frequency,
-            });
+	const rows = document.querySelectorAll(".forename-table tbody tr");
+	const output = [];
+	for (const row of rows) {
+		if (row.children.length > 1) {
+			const name = row.children[1].textContent;
+			const frequency = Number.parseInt(
+				row.children[2].textContent.replaceAll(",", ""),
+			);
+			output.push({
+				name,
+				frequency,
+			});
 
-            if (output.length >= MAX_NUM_NAMES) {
-                break;
-            }
-        }
-    }
+			if (output.length >= MAX_NUM_NAMES) {
+				break;
+			}
+		}
+	}
 
-    const minFrequency = Math.min(...output.map(row => row.frequency));
-    console.log(`Name,Frequency\n${output.map(row => `${row.name},${Math.round(row.frequency / minFrequency)}\n`).join("")}`);
+	const minFrequency = Math.min(...output.map((row) => row.frequency));
+	console.log(
+		`Name,Frequency\n${output.map((row) => `${row.name},${Math.round(row.frequency / minFrequency)}\n`).join("")}`,
+	);
 }
 ```

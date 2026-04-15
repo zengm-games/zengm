@@ -1,21 +1,18 @@
 import clsx from "clsx";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import {
-	helpers,
-	logEvent,
-	realtimeUpdate,
-	toWorker,
-	useLocalPartial,
-} from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { logEvent } from "../util/logEvent.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { realtimeUpdate } from "../util/realtimeUpdate.ts";
+import { useLocalPartial } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
-import {
-	HelpPopover,
-	Mood,
-	PlayerPicture,
-	RatingsStatsPopover,
-} from "../components/index.tsx";
-import { isSport, PHASE } from "../../common/index.ts";
+import { HelpPopover } from "../components/HelpPopover.tsx";
+import { PHASE } from "../../common/constants.ts";
+import { RatingsStatsPopover } from "../components/RatingsStatsPopover/index.tsx";
+import { Mood } from "../components/Mood.tsx";
+import { PlayerPicture } from "../components/PlayerPicture.tsx";
+import { isSport } from "../../common/sportFunctions.ts";
 
 // Show the negotiations list if there are more ongoing negotiations
 const redirectNegotiationOrRoster = async (cancelled: boolean) => {

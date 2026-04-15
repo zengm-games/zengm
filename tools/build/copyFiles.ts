@@ -1,82 +1,31 @@
-import { existsSync } from "node:fs";
 import fs from "node:fs/promises";
-import { bySport } from "../lib/bySport.ts";
-import { replace } from "./replace.ts";
 import { getSport } from "../lib/getSport.ts";
-
-const setSport = async (signal?: AbortSignal) => {
-	await replace({
-		paths: ["build/index.html"],
-		replaces: [
-			{
-				searchValue: "GAME_NAME",
-				replaceValue: bySport({
-					baseball: "ZenGM Baseball",
-					basketball: "Basketball GM",
-					football: "Football GM",
-					hockey: "ZenGM Hockey",
-				}),
-			},
-			{
-				searchValue: "SPORT",
-				replaceValue: bySport({
-					baseball: "baseball",
-					basketball: "basketball",
-					football: "football",
-					hockey: "hockey",
-				}),
-			},
-			{
-				searchValue: "GOOGLE_ANALYTICS_COOKIE_DOMAIN",
-				replaceValue: bySport({
-					basketball: "basketball-gm.com",
-					football: "football-gm.com",
-					default: "zengm.com",
-				}),
-			},
-			{
-				searchValue: "WEBSITE_ROOT",
-				replaceValue: bySport({
-					baseball: "zengm.com/baseball",
-					basketball: "basketball-gm.com",
-					football: "football-gm.com",
-					hockey: "zengm.com/hockey",
-				}),
-			},
-			{
-				searchValue: "PLAY_SUBDOMAIN",
-				replaceValue: bySport({
-					baseball: "baseball.zengm.com",
-					basketball: "play.basketball-gm.com",
-					football: "play.football-gm.com",
-					hockey: "hockey.zengm.com",
-				}),
-			},
-			{
-				searchValue: "BETA_SUBDOMAIN",
-				replaceValue: bySport({
-					baseball: "beta.baseball.zengm.com",
-					basketball: "beta.basketball-gm.com",
-					football: "beta.football-gm.com",
-					hockey: "beta.hockey.zengm.com",
-				}),
-			},
-		],
-		signal,
-	});
-};
 
 export const copyFiles = async (
 	watch: boolean = false,
 	signal?: AbortSignal,
 ) => {
-	const foldersToIgnore = [
+	const filesToIgnore = [
+		// Handled by buildIndexHtml
+		"index.html",
+	];
+	if (watch) {
+		// Remove service worker, so I don't have to deal with it being wonky in dev
+		filesToIgnore.push("sw.js");
+	}
+
+	const prefixesToIgnore = [
 		"baseball",
 		"basketball",
-		"css",
 		"football",
 		"hockey",
+
+		// Handled by buildCss
+		"css",
 	];
+
+	const filesIgnored = new Set();
+	const prefixesIgnored = new Set();
 
 	await fs.cp("public", "build", {
 		filter: (filename) => {
@@ -84,16 +33,17 @@ export const copyFiles = async (
 				return false;
 			}
 
-			// Loop through folders to ignore.
-			for (const folder of foldersToIgnore) {
-				if (filename.startsWith(`public/${folder}`)) {
+			for (const toIgnore of filesToIgnore) {
+				if (filename === `public/${toIgnore}`) {
+					filesIgnored.add(toIgnore);
 					return false;
 				}
 			}
-
-			// Remove service worker, so I don't have to deal with it being wonky in dev
-			if (watch && filename === "public/sw.js") {
-				return false;
+			for (const toIgnore of prefixesToIgnore) {
+				if (filename.startsWith(`public/${toIgnore}`)) {
+					prefixesIgnored.add(toIgnore);
+					return false;
+				}
 			}
 
 			return true;
@@ -103,6 +53,24 @@ export const copyFiles = async (
 
 	if (signal?.aborted) {
 		return;
+	}
+
+	// Make sure all of filesToIgnore/prefixesToIgnore were actually seen - if not, probably a bug!
+	const excessFilenames = filesIgnored.symmetricDifference(
+		new Set(filesToIgnore),
+	);
+	if (excessFilenames.size !== 0) {
+		throw new Error(
+			`filesIgnored and filesToIgnore are not the same: ${Array.from(excessFilenames).join(", ")}`,
+		);
+	}
+	const excessPrefixes = prefixesIgnored.symmetricDifference(
+		new Set(prefixesToIgnore),
+	);
+	if (excessPrefixes.size !== 0) {
+		throw new Error(
+			`prefixesIgnored and prefixesToIgnore are not the same: ${Array.from(excessPrefixes).join(", ")}`,
+		);
 	}
 
 	const sport = getSport();
@@ -123,12 +91,18 @@ export const copyFiles = async (
 	];
 	for (const filename of realPlayerFilenames) {
 		const sourcePath = `data/${filename}.${sport}.json`;
-		if (existsSync(sourcePath)) {
+		try {
 			await fs.copyFile(sourcePath, `build/gen/${filename}.json`);
-
-			if (signal?.aborted) {
-				return;
+		} catch (error) {
+			// File doesn't exist in this sport
+			if (error.code === "ENOENT") {
+				continue;
 			}
+			throw error;
+		}
+
+		if (signal?.aborted) {
+			return;
 		}
 	}
 
@@ -146,17 +120,4 @@ export const copyFiles = async (
 		filter: () => !signal?.aborted,
 		recursive: true,
 	});
-	if (signal?.aborted) {
-		return;
-	}
-
-	const flagHtaccess = `<IfModule mod_headers.c>
-	Header set Cache-Control "public,max-age=31536000"
-</IfModule>`;
-	await fs.writeFile("build/img/flags/.htaccess", flagHtaccess, { signal });
-	if (signal?.aborted) {
-		return;
-	}
-
-	await setSport(signal);
 };

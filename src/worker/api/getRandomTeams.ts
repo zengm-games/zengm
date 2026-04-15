@@ -1,14 +1,14 @@
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import getTeamInfos from "../../common/getTeamInfos.ts";
 import teamInfos from "../../common/teamInfos.ts";
-import type { Conf, Div } from "../../common/types.ts";
+import type { Conf, Div, NonEmptyArray } from "../../common/types.ts";
 import { realRosters } from "../core/index.ts";
 import geographicCoordinates, {
 	type Continent,
 } from "../../common/geographicCoordinates.ts";
 import { random } from "../util/index.ts";
 import type { NewLeagueTeamWithoutRank } from "../../ui/views/NewLeague/types.ts";
-import { groupBy, omit, orderBy, range } from "../../common/utils.ts";
+import { omit, orderBy, range } from "../../common/utils.ts";
 import addSeasonInfoToTeams from "../core/realRosters/addSeasonInfoToTeams.ts";
 import loadDataBasketball from "../core/realRosters/loadData.basketball.ts";
 import { kmeansFixedSize, sortByDivs } from "../core/team/cluster.ts";
@@ -79,10 +79,9 @@ const augmentRealTeams = async (teams: MyTeam[]) => {
 
 	const output: NewLeagueTeamWithoutRank[] = [];
 
-	const teamsBySeason = groupBy(teams, "season");
-	for (const [seasonString, teamsSeason] of Object.entries(teamsBySeason)) {
-		const season = Number.parseInt(seasonString);
-		if (Number.isNaN(season)) {
+	const teamsBySeason = Map.groupBy(teams, (t) => t.season);
+	for (const [season, teamsSeason] of teamsBySeason) {
+		if (season === undefined) {
 			continue;
 		}
 
@@ -124,8 +123,8 @@ const getRandomTeams = async ({
 	divInfo:
 		| {
 				type: "explicit";
-				confs: Conf[];
-				divs: Div[];
+				confs: NonEmptyArray<Conf>;
+				divs: NonEmptyArray<Div>;
 				numTeamsPerDiv: number[];
 		  }
 		| {

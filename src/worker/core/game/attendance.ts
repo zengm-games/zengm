@@ -1,18 +1,11 @@
 import { finances } from "../index.ts";
-import {
-	bySport,
-	DEFAULT_STADIUM_CAPACITY,
-	isSport,
-} from "../../../common/index.ts";
+import { DEFAULT_STADIUM_CAPACITY } from "../../../common/constants.ts";
 import { facilitiesEffectAttendance } from "../../../common/budgetLevels.ts";
-import getAdjustedTicketPrice, {
-	PLAYOFF_ATTENDANCE_FACTOR,
-} from "../../../common/getAdjustedTicketPrice.ts";
+import { PLAYOFF_ATTENDANCE_FACTOR } from "../../../common/getAdjustedTicketPrice.ts";
 import type { TeamSeason } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, random } from "../../util/index.ts";
-
-export { getAdjustedTicketPrice };
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 export const getBaseAttendance = ({
 	hype,

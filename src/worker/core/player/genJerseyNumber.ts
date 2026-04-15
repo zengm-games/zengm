@@ -1,6 +1,6 @@
 import { idb } from "../../db/index.ts";
 import { random, helpers } from "../../util/index.ts";
-import { bySport, isSport } from "../../../common/index.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { range } from "../../../common/utils.ts";
 
 // Football/hockey gets 1-99

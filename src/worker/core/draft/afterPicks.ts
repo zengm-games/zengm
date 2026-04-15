@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../../common/index.ts";
+import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { league, phase, player, freeAgents } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import {
@@ -13,6 +13,7 @@ import {
 } from "../../util/index.ts";
 import type { Conditions } from "../../../common/types.ts";
 import expansionDraft from "../expansionDraft/index.ts";
+import { getNumPlayersTradedAwayNormalizedAll } from "../player/getNumPlayersTradedAwayNormalized.ts";
 
 const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 	if (draftOver) {
@@ -53,8 +54,10 @@ const afterPicks = async (draftOver: boolean, conditions: Conditions = {}) => {
 					PLAYER.UNDRAFTED,
 				);
 
+				const numPlayersTradedAwayNormalized =
+					await getNumPlayersTradedAwayNormalizedAll();
 				for (const p of playersUndrafted) {
-					player.addToFreeAgents(p);
+					player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
 					await idb.cache.players.put(p);
 				}
 				await freeAgents.normalizeContractDemands({

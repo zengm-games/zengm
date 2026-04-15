@@ -6,9 +6,9 @@ import {
 	useEffect,
 	useMemo,
 } from "react";
-import ResponsiveTableWrapper from "./ResponsiveTableWrapper.tsx";
-import { getCols, helpers, processPlayerStats } from "../util/index.ts";
-import { filterPlayerStats } from "../../common/index.ts";
+import { ResponsiveTableWrapper } from "./ResponsiveTableWrapper.tsx";
+import { helpers } from "../util/helpers.ts";
+import { getCols } from "../../common/getCols.ts";
 import { PLAYER_GAME_STATS } from "../../common/constants.baseball.ts";
 import { sortByStats, StatsHeader } from "./BoxScore.football.tsx";
 import updateSortBys from "./DataTable/updateSortBys.ts";
@@ -19,7 +19,7 @@ import {
 	playersByPid,
 	type SportState,
 } from "../util/processLiveGameEvents.baseball.tsx";
-import PlayerNameLabels from "./PlayerNameLabels.tsx";
+import { PlayerNameLabels } from "./PlayerNameLabels.tsx";
 import processStats, {
 	outsToInnings,
 } from "../../common/processPlayerStats.baseball.ts";
@@ -28,6 +28,8 @@ import type {
 	PlayByPlayEventScore,
 } from "../../worker/core/GameSim.baseball/PlayByPlayLogger.ts";
 import { orderBy } from "../../common/utils.ts";
+import { processPlayerStats } from "../util/processPlayerStats.ts";
+import { filterPlayerStats } from "../../common/filterPlayerStats.ts";
 
 type Team = {
 	abbrev: string;
@@ -221,7 +223,7 @@ const processEvents = (events: PlayByPlayEventScore[]) => {
 		score: [number, number];
 		noPoints: boolean;
 	})[] = [];
-	let score = [0, 0] as [number, number];
+	let score: [number, number] = [0, 0];
 	let shootout = false;
 
 	for (const event of events) {

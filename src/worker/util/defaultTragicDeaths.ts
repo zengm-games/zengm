@@ -1,4 +1,5 @@
-import { GAME_NAME, isSport } from "../../common/index.ts";
+import { GAME_NAME } from "../../common/constants.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 const reasons = [
 	"SPECIAL_CLUE",

@@ -61,7 +61,16 @@ const makeTeams = (
 	type: "offense" | "defense" | "rookie",
 ): any => {
 	const usedPids = new Set<number>();
-	const teamPositions = ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF"];
+	const teamPositions: (keyof typeof POS_NUMBERS)[] = [
+		"C",
+		"1B",
+		"2B",
+		"3B",
+		"SS",
+		"LF",
+		"CF",
+		"RF",
+	];
 
 	const dh = g.get("dh");
 	const confs = g.get("confs");
@@ -99,7 +108,7 @@ const makeTeams = (
 		// Rookie and offense come pre-sorted. For defense, need to sort by position each time
 		let sorted = players;
 		if (type === "defense") {
-			const index = (POS_NUMBERS as any)[pos] - 1;
+			const index = POS_NUMBERS[pos] - 1;
 			sorted = orderBy(players, (p) => p.currentStats.rfld[index] ?? 0, "desc");
 		}
 
@@ -250,9 +259,7 @@ const getRealFinalsMvp = async (
 				}
 
 				for (const [i, gp] of p.gpF.entries()) {
-					if (info.gpF[i] === undefined) {
-						info.gpF[i] = 0;
-					}
+					info.gpF[i] ??= 0;
 					if (gp !== undefined) {
 						info.gpF[i] += gp;
 					}

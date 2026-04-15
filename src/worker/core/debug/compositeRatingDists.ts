@@ -1,4 +1,4 @@
-import { COMPOSITE_WEIGHTS, PLAYER } from "../../../common/index.ts";
+import { COMPOSITE_WEIGHTS, PLAYER } from "../../../common/constants.ts";
 import { player } from "../index.ts";
 import { idb } from "../../db/index.ts";
 

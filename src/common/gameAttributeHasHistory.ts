@@ -1,4 +1,4 @@
-const gameAttributeHasHistory = (gameAttribute: any) => {
+export const gameAttributeHasHistory = (gameAttribute: any) => {
 	return (
 		Array.isArray(gameAttribute) &&
 		gameAttribute.length > 0 &&
@@ -8,5 +8,3 @@ const gameAttributeHasHistory = (gameAttribute: any) => {
 			gameAttribute[0].start === null)
 	);
 };
-
-export default gameAttributeHasHistory;

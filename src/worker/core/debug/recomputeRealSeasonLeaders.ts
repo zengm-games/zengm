@@ -4,7 +4,7 @@ import { idb } from "../../db/index.ts";
 import { g, local } from "../../util/index.ts";
 import type { SeasonLeaders } from "../../../common/types.ts";
 import { league, season } from "../index.ts";
-import { PHASE, REAL_PLAYERS_INFO } from "../../../common/index.ts";
+import { PHASE, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import loadData from "../realRosters/loadData.basketball.ts";
 
 const recomputeRealSeasonLeaders = async () => {

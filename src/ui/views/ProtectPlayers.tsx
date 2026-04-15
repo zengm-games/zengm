@@ -1,21 +1,20 @@
 import { useState, type SubmitEvent, type ReactNode } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import {
-	confirm,
-	helpers,
-	toWorker,
-	realtimeUpdate,
-	getCols,
-	useLocalPartial,
-} from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { realtimeUpdate } from "../util/realtimeUpdate.ts";
+import { useLocalPartial } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
-import { SafeHtml, DataTable } from "../components/index.tsx";
-import { PHASE } from "../../common/index.ts";
+import { DataTable } from "../components/DataTable/index.tsx";
+import { PHASE } from "../../common/constants.ts";
 import {
 	wrappedContractAmount,
 	wrappedContractExp,
 } from "../components/contract.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import { SafeHtml } from "../components/SafeHtml.tsx";
+import { confirm } from "../util/confirm.tsx";
+import { getCols } from "../../common/getCols.ts";
 
 const PlayerList = ({
 	challengeNoRatings,
@@ -162,9 +161,14 @@ const ProtectPlayers = ({
 
 	const protectedPids = expansionDraft.protectedPids[userTid] ?? [];
 
-	const maxNumCanProtext = Math.min(
-		expansionDraft.numProtectedPlayers,
-		players.length - (expansionDraft.numPerTeam ?? 0),
+	const maxNumCanProtext = Math.max(
+		Math.min(
+			expansionDraft.numProtectedPlayers,
+			players.length - (expansionDraft.numPerTeam ?? 0),
+		),
+
+		// Make sure maxNumCanProtect is never negative
+		0,
 	);
 
 	const numRemaining = maxNumCanProtext - protectedPids.length;

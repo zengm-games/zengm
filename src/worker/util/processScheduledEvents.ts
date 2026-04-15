@@ -16,9 +16,11 @@ import type {
 	Conditions,
 	RealTeamInfo,
 } from "../../common/types.ts";
-import { PHASE, applyRealTeamInfo } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import local from "./local.ts";
 import { orderBy } from "../../common/utils.ts";
+import { getNumPlayersTradedAwayNormalizedAll } from "../core/player/getNumPlayersTradedAwayNormalized.ts";
+import { applyRealTeamInfo } from "../../common/applyRealTeamInfo.ts";
 
 const processTeamInfo = async (
 	info: Extract<ScheduledEvent, { type: "teamInfo" }>["info"],
@@ -89,7 +91,7 @@ const processTeamInfo = async (
 			old.name
 		} are now the <a href="${helpers.leagueUrl([
 			"roster",
-			t.abbrev,
+			`${t.abbrev}_${t.tid}`,
 			season,
 		])}">${t.region} ${t.name}</a>.`;
 
@@ -108,7 +110,7 @@ const processTeamInfo = async (
 			old.name
 		} are now the <a href="${helpers.leagueUrl([
 			"roster",
-			t.abbrev,
+			`${t.abbrev}_${t.tid}`,
 			season,
 		])}">${t.region} ${t.name}</a>.`;
 
@@ -124,7 +126,7 @@ const processTeamInfo = async (
 		});
 	} else if (info.imgURL && info.imgURL !== old.imgURL) {
 		logEvent({
-			text: `The <a href="${helpers.leagueUrl(["roster", t.abbrev, season])}">${
+			text: `The <a href="${helpers.leagueUrl(["roster", `${t.abbrev}_${t.tid}`, season])}">${
 				t.region
 			} ${t.name}</a> got a new logo:<br><img src="${
 				t.imgURL
@@ -468,7 +470,7 @@ const processUnretirePlayer = async (pid: number) => {
 	}
 
 	p.retiredYear = Infinity;
-	player.addToFreeAgents(p);
+	player.addToFreeAgents(p, await getNumPlayersTradedAwayNormalizedAll());
 	await idb.cache.players.put(p);
 
 	const ratings = p.ratings.at(-1)!;

@@ -3,9 +3,11 @@ import type { CSSProperties } from "react";
 import useDropdownOptions, {
 	type ResponsiveOption,
 } from "../hooks/useDropdownOptions.tsx";
-import { helpers, realtimeUpdate, sanitize } from "../util/index.ts";
-import NextPrevButtons from "./NextPrevButtons.tsx";
+import { helpers } from "../util/helpers.ts";
+import { realtimeUpdate } from "../util/realtimeUpdate.ts";
+import { NextPrevButtons } from "./NextPrevButtons.tsx";
 import type { LocalStateUI } from "../../common/types.ts";
+import { sanitize } from "../util/sanitize.ts";
 
 // This assumes that when val is an array, it is already sorted by minWidth ascending
 export const getResponsiveValue = (

@@ -1,9 +1,10 @@
-import { bySport, PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import { g, orderTeams } from "../../util/index.ts";
 import { getDivisionRanks } from "../../util/orderTeams.ts";
 import type { DraftPickWithoutKey } from "../../../common/types.ts";
 import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 /**
  * Differences across sports:

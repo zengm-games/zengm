@@ -1,5 +1,6 @@
-import { DataTable, SafeHtml } from "../../components/index.tsx";
-import { getCols, helpers } from "../../util/index.ts";
+import { DataTable } from "../../components/DataTable/index.tsx";
+import { helpers } from "../../util/helpers.ts";
+import { getCols } from "../../../common/getCols.ts";
 import type { View } from "../../../common/types.ts";
 import { Dropdown } from "react-bootstrap";
 import {
@@ -9,6 +10,7 @@ import {
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import type { HandleToggle } from "./index.tsx";
 import { range } from "../../../common/utils.ts";
+import { SafeHtml } from "../../components/SafeHtml.tsx";
 
 type HandleBulk = (
 	type: "check" | "clear",

@@ -1,6 +1,6 @@
 import { idb } from "../db/index.ts";
 import { helpers, g } from "../util/index.ts";
-import { DEFAULT_JERSEY } from "../../common/index.ts";
+import { DEFAULT_JERSEY } from "../../common/constants.ts";
 import { orderBy } from "../../common/utils.ts";
 
 const updateTeamInfo = async () => {

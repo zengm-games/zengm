@@ -1,29 +1,21 @@
 import { idb } from "../db/index.ts";
 import { g, helpers, processPlayersHallOfFame } from "../util/index.ts";
-import type {
-	UpdateEvents,
-	Player,
-	ViewInput,
-	MinimalPlayerRatings,
-} from "../../common/types.ts";
-import {
-	groupBy,
-	orderBy,
-	type OrderBySortParams,
-} from "../../common/utils.ts";
+import type { UpdateEvents, Player, ViewInput } from "../../common/types.ts";
+import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
 import { player } from "../core/index.ts";
-import { bySport, PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts";
 import goatFormula from "../util/goatFormula.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 type Most = {
 	value: number;
 	extra?: Record<string, unknown>;
 };
 
-type PlayersAll = (Player<MinimalPlayerRatings> & {
+type PlayersAll = (Player & {
 	most: Most;
 })[];
 
@@ -127,7 +119,7 @@ const getMostXPlayers = async ({
 	};
 };
 
-const playerValue = (p: Player<MinimalPlayerRatings>) => {
+const playerValue = (p: Player) => {
 	let sum = 0;
 	for (const ps of p.stats) {
 		sum += getValueStatsRow(ps);
@@ -286,7 +278,7 @@ const updatePlayers = async (
 				stats: goatFormula.STAT_VARIABLES,
 			};
 
-			getValue = (p: Player<MinimalPlayerRatings>) => {
+			getValue = (p: Player) => {
 				let value = 0;
 				try {
 					value = goatFormula.evaluate(p, undefined, {
@@ -323,7 +315,7 @@ const updatePlayers = async (
 				stats: goatFormula.STAT_VARIABLES,
 			};
 
-			getValue = (p: Player<MinimalPlayerRatings>) => {
+			getValue = (p: Player) => {
 				const seasons = Array.from(
 					new Set(
 						p.stats.filter((row) => !row.playoffs).map((row) => row.season),
@@ -441,8 +433,8 @@ const updatePlayers = async (
 
 					const ovr = player.fuzzRating(row.ovr, row.fuzz);
 					const prevOvr = player.fuzzRating(
-						p.ratings[i - 1].ovr,
-						p.ratings[i - 1].fuzz,
+						p.ratings[i - 1]!.ovr,
+						p.ratings[i - 1]!.fuzz,
 					);
 					const prog = ovr - prevOvr;
 
@@ -485,11 +477,11 @@ const updatePlayers = async (
 				let maxSeason = p.ratings[0].season;
 				const ovr0 = player.fuzzRating(p.ratings[0].ovr, p.ratings[0].fuzz);
 				for (let i = 1; i < p.ratings.length; i++) {
-					const ovr = player.fuzzRating(p.ratings[i].ovr, p.ratings[i].fuzz);
+					const ovr = player.fuzzRating(p.ratings[i]!.ovr, p.ratings[i]!.fuzz);
 					const prog = ovr - ovr0;
 					if (prog > maxProg) {
 						maxProg = prog;
-						maxSeason = p.ratings[i].season;
+						maxSeason = p.ratings[i]!.season;
 					}
 				}
 				return {
@@ -644,12 +636,11 @@ const updatePlayers = async (
 				let maxTid;
 				let maxGP;
 				let maxSeason; // Last season, for historical abbrev computation
-				const statsByTid = groupBy(
+				const statsByTid = Map.groupBy(
 					p.stats.filter((ps) => !ps.playoffs),
 					(ps) => ps.tid,
 				);
-				for (const tid of Object.keys(statsByTid)) {
-					const stats = statsByTid[tid]!;
+				for (const [tid, stats] of statsByTid) {
 					const numSeasons = new Set(stats.map((row) => row.season)).size;
 					if (numSeasons > maxNumSeasons) {
 						maxNumSeasons = numSeasons;

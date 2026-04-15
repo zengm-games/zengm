@@ -1,6 +1,6 @@
 import { draft, player } from "../index.ts";
 import { g, helpers } from "../../util/index.ts";
-import { RATINGS } from "../../../common/index.ts";
+import { RATINGS } from "../../../common/constants.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 
 const maxRatingDists = async (numPlayers: number = 100) => {

@@ -1,17 +1,17 @@
-import {
-	DataTable,
-	SkillsBlock,
-	MoreLinks,
-	PlusMinus,
-} from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers, useLocal } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { getCols } from "../../common/getCols.ts";
+import { useLocal } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
-import { PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 import { wrappedDraftAbbrev } from "../components/DraftAbbrev.tsx";
+import { SkillsBlock } from "../components/SkillsBlock.tsx";
+import { PlusMinus } from "../components/PlusMinus.tsx";
 
 const DraftTeamHistory = ({
 	abbrev,

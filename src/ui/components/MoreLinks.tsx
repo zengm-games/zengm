@@ -1,14 +1,14 @@
 import { Fragment } from "react";
 import {
-	bySport,
-	isSport,
 	NO_LOTTERY_DRAFT_TYPES,
 	REAL_PLAYERS_INFO,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import type { DraftType, PlayerStatType } from "../../common/types.ts";
-import { helpers, useLocalPartial } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { useLocalPartial } from "../util/local.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
-const MoreLinks = (
+export const MoreLinks = (
 	props: (
 		| {
 				type: "team";
@@ -429,5 +429,3 @@ const MoreLinks = (
 		</p>
 	);
 };
-
-export default MoreLinks;

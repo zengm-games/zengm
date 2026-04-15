@@ -1,7 +1,7 @@
 import type { MouseEvent } from "react";
-import PlayerNameLabels from "./PlayerNameLabels.tsx";
-import { helpers } from "../util/index.ts";
-import { isSport } from "../../common/index.ts";
+import { PlayerNameLabels } from "./PlayerNameLabels.tsx";
+import { helpers } from "../util/helpers.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 import { BaseballDecision } from "../views/PlayerGameLog.tsx";
 
 const width100 = {

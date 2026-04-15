@@ -1,4 +1,4 @@
-import { bySport, isSport, PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import type { Conditions, PlayoffSeries } from "../../common/types.ts";
 import { season, game, phase, freeAgents } from "../core/index.ts";
 import { idb } from "../db/index.ts";
@@ -12,6 +12,7 @@ import {
 	toUI,
 } from "../util/index.ts";
 import { runDraft } from "./actions.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 const getNumDaysThisRound = (playoffSeries: PlayoffSeries) => {
 	let numDaysThisRound = 0;

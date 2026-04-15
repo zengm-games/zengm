@@ -5,7 +5,7 @@ import {
 	DEFAULT_STADIUM_CAPACITY,
 	DEFAULT_TEAM_COLORS,
 	REAL_PLAYERS_INFO,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import getTeamInfos from "../../../common/getTeamInfos.ts";
 import getUnusedAbbrevs from "../../../common/getUnusedAbbrevs.ts";
 import type {
@@ -15,8 +15,10 @@ import type {
 	Player,
 	View,
 } from "../../../common/types.ts";
-import Modal from "../../components/Modal.tsx";
-import { helpers, logEvent, toWorker } from "../../util/index.ts";
+import { Modal } from "../../components/Modal.tsx";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import { type ExhibitionLeagueWithSeasons } from "../Exhibition.tsx";
 import TeamForm from "../ManageTeams/TeamForm.tsx";
 import type { AddEditTeamInfo } from "./CustomizeTeams.tsx";

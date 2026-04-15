@@ -1,13 +1,13 @@
 import clsx from "clsx";
 import { type SubmitEvent, useRef, useState } from "react";
-import { ACCOUNT_API_URL, fetchWrapper } from "../../../common/index.ts";
-import {
-	analyticsEvent,
-	localActions,
-	realtimeUpdate,
-	toWorker,
-} from "../../util/index.ts";
-import { ActionButton, GameLinks } from "../../components/index.tsx";
+import { ACCOUNT_API_URL } from "../../../common/constants.ts";
+import { toWorker } from "../../util/toWorker.ts";
+import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
+import { localActions } from "../../util/local.ts";
+import { ActionButton } from "../../components/ActionButton.tsx";
+import { analyticsEvent } from "../../util/analyticsEvent.ts";
+import { GameLinks } from "../../components/GameLinks.tsx";
+import { fetchWrapper } from "../../../common/fetchWrapper.ts";
 
 export const fields = {
 	username: {

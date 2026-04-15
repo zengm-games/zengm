@@ -1,10 +1,9 @@
 import {
-	isSport,
 	NOT_REAL_POSITIONS,
 	POSITIONS,
 	RATINGS,
 	TEAM_STATS_TABLES,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers, random } from "../util/index.ts";
 import type {
@@ -16,6 +15,7 @@ import type {
 import type { TeamStatAttr } from "../../common/types.baseball.ts";
 import { season } from "../core/index.ts";
 import { addPowerRankingsStuffToTeams } from "./powerRankings.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 export const statTypes = [
 	"standings",

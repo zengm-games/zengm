@@ -1,24 +1,24 @@
 import { LazyMotion } from "framer-motion";
 import { memo, useCallback, useEffect } from "react";
-import { localActions, useLocalPartial } from "../util/index.ts";
-import CommandPalette from "./CommandPalette/index.tsx";
-import ErrorBoundary from "./ErrorBoundary.tsx";
-import Footer from "./Footer.tsx";
-import Header from "./Header.tsx";
-import LeagueTopBar from "./LeagueTopBar.tsx";
-import MultiTeamMenu from "./MultiTeamMenu.tsx";
-import NagModal from "./NagModal.tsx";
-import NavBar from "./NavBar.tsx";
-import Notifications from "./Notifications.tsx";
-import SideBar from "./SideBar.tsx";
-import Skyscraper from "./Skyscraper.tsx";
-import TitleBar from "./TitleBar.tsx";
-import { useViewData } from "../util/viewManager.tsx";
-import { isSport } from "../../common/index.ts";
-import api from "../api/index.ts";
+import { localActions, useLocalPartial } from "../../util/local.ts";
+import { CommandPalette } from "../CommandPalette/index.tsx";
+import { Footer } from "./Footer.tsx";
+import { Header } from "./Header.tsx";
+import { LeagueTopBar } from "./LeagueTopBar.tsx";
+import { MultiTeamMenu } from "./MultiTeamMenu.tsx";
+import { NagModal } from "./NagModal.tsx";
+import { NavBar } from "./NavBar.tsx";
+import { Notifications } from "./Notifications.tsx";
+import { SideBar } from "./SideBar.tsx";
+import { Skyscraper } from "./Skyscraper.tsx";
+import { TitleBar } from "./TitleBar.tsx";
+import { useViewData } from "../../util/viewManager.tsx";
+import { isSport } from "../../../common/sportFunctions.ts";
+import api from "../../api/index.ts";
+import { ErrorBoundary } from "../ErrorBoundary.tsx";
 
 const loadFramerMotionFeatures = () =>
-	import("../util/framerMotionFeatures.ts").then((res) => res.default);
+	import("../../util/framerMotionFeatures.ts").then((res) => res.default);
 
 const minHeight100 = {
 	// Just using h-100 class here results in the sticky ad in the skyscraper becoming unstuck after scrolling down 100% of the viewport, for some reason
@@ -47,7 +47,7 @@ const KeepPreviousRenderWhileUpdating = memo(
 	},
 );
 
-const Controller = () => {
+export const Controller = () => {
 	const state = useViewData();
 
 	const { popup, showNagModal } = useLocalPartial(["popup", "showNagModal"]);
@@ -60,7 +60,7 @@ const Controller = () => {
 
 	useEffect(() => {
 		if (popup) {
-			document.body.style.paddingTop = "0";
+			document.body.style.paddingTop = "8px";
 			const css = document.createElement("style");
 			css.innerHTML = ".new_window { display: none }";
 			document.body.append(css);
@@ -106,7 +106,7 @@ const Controller = () => {
 						<div className="d-flex" style={minHeight100}>
 							<div className="w-100 d-flex flex-column" style={minWidth0}>
 								<Header />
-								<div id="actual-actual-content" className="clearfix">
+								<main id="actual-actual-content" className="clearfix">
 									<ErrorBoundary key={idLoaded}>
 										{Component ? (
 											<KeepPreviousRenderWhileUpdating updating={updating}>
@@ -115,7 +115,7 @@ const Controller = () => {
 										) : null}
 										{inLeague ? <MultiTeamMenu /> : null}
 									</ErrorBoundary>
-								</div>
+								</main>
 								<Footer />
 							</div>
 							<Skyscraper />
@@ -129,5 +129,3 @@ const Controller = () => {
 		</LazyMotion>
 	);
 };
-
-export default Controller;

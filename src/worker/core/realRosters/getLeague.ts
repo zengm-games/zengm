@@ -1,7 +1,7 @@
 import loadDataBasketball, { type Basketball } from "./loadData.basketball.ts";
 import loadStatsBasketball from "./loadStats.basketball.ts";
 import formatScheduledEvents from "./formatScheduledEvents.ts";
-import { groupBy, orderBy, range } from "../../../common/utils.ts";
+import { orderBy, range } from "../../../common/utils.ts";
 import type {
 	GetLeagueOptions,
 	DraftPickWithoutKey,
@@ -11,13 +11,11 @@ import type {
 } from "../../../common/types.ts";
 import { defaultGameAttributes, helpers, random } from "../../util/index.ts";
 import {
-	isSport,
 	LEAGUE_DATABASE_VERSION,
 	PHASE,
 	PLAYER,
 	REAL_PLAYERS_INFO,
-	unwrapGameAttribute,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
 import { player, team } from "../index.ts";
 import { legendsInfo } from "./getLeagueInfo.ts";
 import getDraftProspects from "./getDraftProspects.ts";
@@ -33,6 +31,8 @@ import getAwards from "./getAwards.ts";
 import setDraftProspectRatingsBasedOnDraftPosition from "./setDraftProspectRatingsBasedOnDraftPosition.ts";
 import getInjury from "./getInjury.ts";
 import { averageSalary } from "./averageSalary.ts";
+import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 const FREE_AGENTS_SEASON = 2020;
 
@@ -124,22 +124,22 @@ const getLeague = async (options: GetLeagueOptions) => {
 				return row.season === options.season;
 			});
 
-			let groupedRatings = Object.values(groupBy(ratingsRows, "slug")).filter(
-				(allRatings) => {
-					// Ignore players in upcoming draft
-					const bio = basketball.bios[allRatings[0]!.slug];
-					if (
-						bio &&
-						(bio.draftYear > options.season ||
-							(bio.draftYear === options.season &&
-								options.phase < PHASE.AFTER_DRAFT))
-					) {
-						return false;
-					}
+			let groupedRatings = Array.from(
+				Map.groupBy(ratingsRows, (row) => row.slug).values(),
+			).filter((allRatings) => {
+				// Ignore players in upcoming draft
+				const bio = basketball.bios[allRatings[0]!.slug];
+				if (
+					bio &&
+					(bio.draftYear > options.season ||
+						(bio.draftYear === options.season &&
+							options.phase < PHASE.AFTER_DRAFT))
+				) {
+					return false;
+				}
 
-					return true;
-				},
-			);
+				return true;
+			});
 
 			if (options.realStats === "allActive") {
 				// Only keep players who are active this season
@@ -258,7 +258,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 				const tids = toRandomize.filter((p) => p.tid >= 0).map((p) => p.tid);
 				random.shuffle(tids);
 
-				const ratingsBySlug = groupBy(basketball.ratings, "slug");
+				const ratingsBySlug = Object.groupBy(
+					basketball.ratings,
+					(row) => row.slug,
+				);
 
 				for (const [i, p] of toRandomize.entries()) {
 					const draftYear = draftYears[i]!;
@@ -816,7 +819,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 					nerfDraftProspect(currentRatings);
 				};
 
-				const playersBySlug = groupBy(players, "srID");
+				const playersBySlug = Object.groupBy(players, (p) => p.srID);
 				for (const dp of basketball.draftPicks[options.season]!) {
 					if (!dp.slug) {
 						continue;

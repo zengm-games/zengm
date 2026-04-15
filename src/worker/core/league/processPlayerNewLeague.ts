@@ -1,5 +1,5 @@
 import { draft, player } from "../index.ts";
-import { PLAYER } from "../../../common/index.ts";
+import { PLAYER } from "../../../common/constants.ts";
 import type {
 	PlayerWithoutKey,
 	RealPlayerPhotos,

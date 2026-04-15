@@ -6,7 +6,7 @@ import {
 	useSortable,
 	verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import Modal from "../Modal.tsx";
+import { Modal } from "../Modal.tsx";
 
 const DraggableItem = ({
 	col,

@@ -1,12 +1,12 @@
 import html2canvas from "html2canvas";
 import {
-	fetchWrapper,
 	GAME_NAME,
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
-	isSport,
-} from "../../common/index.ts";
-import logEvent from "./logEvent.ts";
+} from "../../common/constants.ts";
+import { logEvent } from "./logEvent.ts";
+import { fetchWrapper } from "../../common/fetchWrapper.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 const takeScreenshotChunk = async () => {
 	const theme = window.getTheme();

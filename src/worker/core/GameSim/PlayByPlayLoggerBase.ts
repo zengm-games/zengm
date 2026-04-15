@@ -5,7 +5,7 @@ import type { PlayByPlayEventOutput as BasketballEvent } from "../GameSim.basket
 import type { PlayByPlayEventOutput as HockeyEvent } from "../GameSim.hockey/PlayByPlayLogger.ts";
 import type { TeamNum } from "../../../common/types.ts";
 
-export type PlayByPlayEventStat = {
+type PlayByPlayEventStat = {
 	type: "stat";
 	t: TeamNum;
 	pid: number | undefined | null;
@@ -13,7 +13,7 @@ export type PlayByPlayEventStat = {
 	amt: number;
 };
 
-export type PlayByPlayEventInit = {
+type PlayByPlayEventInit = {
 	type: "init";
 	boxScore: any;
 };
@@ -34,21 +34,20 @@ export abstract class PlayByPlayLoggerBase<T extends SportEvent> {
 	abstract logEvent(event: unknown): void;
 
 	logStat(t: TeamNum, pid: number | undefined | null, s: string, amt: number) {
-		const statEvent = {
+		if (!this.active) {
+			return;
+		}
+
+		this.playByPlay.push({
 			type: "stat",
 			t,
 			pid,
 			s,
 			amt,
-		} as const;
-		if (!this.active) {
-			return;
-		}
-
-		this.playByPlay.push(statEvent);
+		});
 	}
 
-	getPlayByPlay(boxScore: any) {
+	getPlayByPlay(boxScore: any): PlayByPlayEvent<T>[] | undefined {
 		if (!this.active) {
 			return;
 		}
@@ -57,7 +56,7 @@ export abstract class PlayByPlayLoggerBase<T extends SportEvent> {
 			{
 				type: "init",
 				boxScore,
-			} as PlayByPlayEventInit,
+			},
 			...this.playByPlay,
 		];
 	}

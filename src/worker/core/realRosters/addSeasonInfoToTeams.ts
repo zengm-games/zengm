@@ -1,10 +1,10 @@
-import { PLAYER, unwrapGameAttribute } from "../../../common/index.ts";
-import { groupBy } from "../../../common/utils.ts";
+import { PLAYER } from "../../../common/constants.ts";
 import type {
 	GameAttributesLeague,
 	GetLeagueOptions,
 	Player,
 } from "../../../common/types.ts";
+import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
 import { defaultGameAttributes, g, helpers, local } from "../../util/index.ts";
 import player from "../player/index.ts";
 import formatPlayerFactory from "./formatPlayerFactory.ts";
@@ -112,7 +112,7 @@ const addSeasonInfoToTeams = async <
 		await player.updateValues(p);
 	}
 
-	const playersByTid = groupBy(players, "tid");
+	const playersByTid = Map.groupBy(players, (t) => t.tid);
 
 	const teamsAugmented = teams
 		.map((t) => {
@@ -166,7 +166,7 @@ const addSeasonInfoToTeams = async <
 			return {
 				...t,
 				ovr: 0,
-				players: playersByTid[t.tid],
+				players: playersByTid.get(t.tid),
 				season: options.season,
 			};
 		});

@@ -1,9 +1,10 @@
-import { isSport, PLAYER } from "../../../common/index.ts";
+import { PLAYER } from "../../../common/constants.ts";
 import { player, team } from "../index.ts";
 import getBest from "./getBest.ts";
 import { idb } from "../../db/index.ts";
 import { g, local, random } from "../../util/index.ts";
 import { orderBy } from "../../../common/utils.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 /**
  * AI teams sign free agents.

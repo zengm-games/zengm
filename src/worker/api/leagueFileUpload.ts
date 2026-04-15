@@ -7,7 +7,7 @@ import type { Conditions } from "../../common/types.ts";
 import {
 	DEFAULT_TEAM_COLORS,
 	LEAGUE_DATABASE_VERSION,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import type { LeagueDBStoreNames } from "../db/connectLeague.ts";
 
 // These objects (at the root of a league file) should be emitted as a complete object, rather than individual rows from an array

@@ -1,4 +1,4 @@
-import gradientStyleFactory from "../../util/gradientStyleFactory.ts";
+import { gradientStyleFactory } from "../../util/gradientStyleFactory.ts";
 
 const calculateStatistics = (values: number[]) => {
 	let sum = 0;

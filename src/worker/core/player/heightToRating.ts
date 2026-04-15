@@ -1,4 +1,4 @@
-import { bySport } from "../../../common/index.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import limitRating from "./limitRating.ts";
 
 const heightToRating = (heightInInches: number) => {

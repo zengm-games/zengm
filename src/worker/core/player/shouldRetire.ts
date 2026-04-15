@@ -1,18 +1,13 @@
-import {
-	bySport,
-	isSport,
-	PHASE,
-	PLAYER,
-	REAL_PLAYERS_INFO,
-} from "../../../common/index.ts";
+import { PHASE, PLAYER, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import { g, random } from "../../util/index.ts";
-import type { MinimalPlayerRatings, Player } from "../../../common/types.ts"; // Players meeting one of these cutoffs might retire
+import type { Player } from "../../../common/types.ts"; // Players meeting one of these cutoffs might retire
 import { range } from "../../../common/utils.ts";
 import loadDataBasketball from "../realRosters/loadData.basketball.ts";
 import realRosters from "../realRosters/index.ts";
 import { idb } from "../../db/index.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
-const checkForceRetireSeasons = (p: Player<MinimalPlayerRatings>) => {
+const checkForceRetireSeasons = (p: Player) => {
 	// No redshirt seasons before league was created, since we have no stats then
 	const firstPossibleRedshirtSeason = Math.max(
 		g.get("startingSeason"),
@@ -45,7 +40,7 @@ const checkForceRetireSeasons = (p: Player<MinimalPlayerRatings>) => {
 // noRetire -> Real player does have ratings, so don't retire him
 // passThrough -> This age would put the player past the latest season we have real player data for, so don't decide anything here, let the normal retirement algorithm apply
 const checkForceRetireRealPlayers = async (
-	p: Player<MinimalPlayerRatings>,
+	p: Player,
 ): Promise<"retire" | "noRetire" | "passThrough"> => {
 	const srID = p.srID;
 	if (srID === undefined) {
@@ -95,9 +90,7 @@ const checkForceRetireRealPlayers = async (
 	return active ? "noRetire" : "retire";
 };
 
-const shouldRetire = async (
-	p: Player<MinimalPlayerRatings>,
-): Promise<boolean> => {
+const shouldRetire = async (p: Player): Promise<boolean> => {
 	const season = g.get("season");
 	const forceRetireAge = g.get("forceRetireAge");
 

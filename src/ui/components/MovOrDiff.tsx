@@ -1,4 +1,4 @@
-import PlusMinus from "./PlusMinus.tsx";
+import { PlusMinus } from "./PlusMinus.tsx";
 
 type Stats = {
 	pts: number;
@@ -21,13 +21,11 @@ const getValue = (stats: Stats, type: Type) => {
 	return value;
 };
 
-const MovOrDiff = ({ stats, type }: { stats: Stats; type: Type }) => {
+export const MovOrDiff = ({ stats, type }: { stats: Stats; type: Type }) => {
 	const value = getValue(stats, type);
 	const decimalPlaces = type === "mov" ? 1 : 0;
 	return <PlusMinus decimalPlaces={decimalPlaces}>{value}</PlusMinus>;
 };
-
-export default MovOrDiff;
 
 export const wrappedMovOrDiff = (stats: Stats, type: Type) => {
 	const value = getValue(stats, type);

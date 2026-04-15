@@ -1,7 +1,7 @@
-import helpers from "./helpers.ts";
-import initView from "./initView.ts";
-import views from "../views/index.ts";
-import routeInfos from "./routeInfos.ts";
+import { helpers } from "./helpers.ts";
+import { initView } from "./initView.ts";
+import * as views from "../views/index.ts";
+import { routeInfos } from "./routeInfos.ts";
 
 const genPage = (id: string, inLeague: boolean) => {
 	const componentName = helpers.upperCaseFirstLetter(id);
@@ -26,10 +26,8 @@ const genPage = (id: string, inLeague: boolean) => {
 	};
 };
 
-const routes: Record<string, ReturnType<typeof genPage>> = {};
+export const routes: Record<string, ReturnType<typeof genPage>> = {};
 for (const [path, id] of Object.entries(routeInfos)) {
 	const inLeague = path.startsWith("/l/");
 	routes[path] = genPage(id, inLeague);
 }
-
-export default routes;

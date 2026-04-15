@@ -1,4 +1,4 @@
-import { PHASE, RATINGS } from "../../../common/index.ts";
+import { PHASE, RATINGS } from "../../../common/constants.ts";
 import type { Player } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";

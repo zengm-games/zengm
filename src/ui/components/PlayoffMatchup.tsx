@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import type { ByConf, View } from "../../common/types.ts";
-import { helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
 import type { ReactNode } from "react";
 
 type SeriesTeam = {
@@ -233,7 +233,7 @@ const Team = ({
 	);
 };
 
-const PlayoffMatchup = ({
+export const PlayoffMatchup = ({
 	editing,
 	expandTeamNames = false,
 	extraHighlight,
@@ -305,5 +305,3 @@ const PlayoffMatchup = ({
 		</ul>
 	);
 };
-
-export default PlayoffMatchup;

@@ -1,14 +1,12 @@
-import {
-	bySport,
-	processPlayerStatsBaseball,
-	processPlayerStatsBasketball,
-	processPlayerStatsFootball,
-	processPlayerStatsHockey,
-} from "../../common/index.ts";
+import { bySport } from "../../common/sportFunctions.ts";
+import processPlayerStatsBaseball from "../../common/processPlayerStats.baseball.ts";
+import processPlayerStatsBasketball from "../../common/processPlayerStats.basketball.ts";
+import processPlayerStatsFootball from "../../common/processPlayerStats.football.ts";
+import processPlayerStatsHockey from "../../common/processPlayerStats.hockey.ts";
 import type { PlayerStats, PlayerStatType } from "../../common/types.ts";
 import { local } from "./local.ts";
 
-const processPlayerStats = (
+export const processPlayerStats = (
 	ps: PlayerStats,
 	stats: string[],
 	statType?: PlayerStatType,
@@ -23,5 +21,3 @@ const processPlayerStats = (
 		hockey: processPlayerStatsHockey(ps, stats, statType, bornYear),
 	});
 };
-
-export default processPlayerStats;

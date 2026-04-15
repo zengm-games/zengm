@@ -1,4 +1,4 @@
-import { PHASE, WEBSITE_ROOT } from "../../../common/index.ts";
+import { PHASE, WEBSITE_ROOT } from "../../../common/constants.ts";
 import finalize from "./finalize.ts";
 import newPhasePreseason from "./newPhasePreseason.ts";
 import newPhaseRegularSeason from "./newPhaseRegularSeason.ts";

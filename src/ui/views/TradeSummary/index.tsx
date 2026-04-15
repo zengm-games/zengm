@@ -1,8 +1,8 @@
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import type { View } from "../../../common/types.ts";
-import { helpers } from "../../util/index.ts";
-import { PlayerNameLabels } from "../../components/index.tsx";
-import { PHASE, PHASE_TEXT } from "../../../common/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
+import { PHASE, PHASE_TEXT } from "../../../common/constants.ts";
 import Charts from "./Charts.tsx";
 import PickText from "./PickText.tsx";
 import type { PlayerOutcome } from "../../../worker/views/tradeSummary.ts";

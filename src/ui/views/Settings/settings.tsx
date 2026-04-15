@@ -1,15 +1,13 @@
 import {
-	bySport,
 	COURT,
-	DEFAULT_CONFS,
 	DIFFICULTY,
 	GAME_NAME,
-	isSport,
 	REAL_PLAYERS_INFO,
 	TIEBREAKERS,
 	WEBSITE_ROOT,
-} from "../../../common/index.ts";
-import { toWorker, helpers } from "../../util/index.ts";
+} from "../../../common/constants.ts";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import type { ChangeEvent, CSSProperties, ReactNode } from "react";
 import type { Category, Decoration, FieldType, Key, Values } from "./types.ts";
 import type { Settings } from "../../../worker/views/settings.ts";
@@ -23,6 +21,7 @@ import PlayerBioInfo2 from "./PlayerBioInfo.tsx";
 import type { GameAttributesLeague } from "../../../common/types.ts";
 import { parseCurrencyFormat } from "../../util/parseCurrencyFormat.ts";
 import { getDraftTypeDescription } from "../DraftLottery.tsx";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 export const descriptions = {
 	difficulty:
@@ -417,9 +416,7 @@ export const settings: Setting[] = (
 					numActiveTeams: initialSettings.numActiveTeams,
 					playIn: output.playIn,
 					playoffsByConf: output.playoffsByConf,
-
-					// Fallback is for when creating a new league and editing settings, confs are not available here
-					confs: initialSettings.confs ?? DEFAULT_CONFS,
+					confs: initialSettings.confs,
 				});
 			},
 		},
@@ -1059,7 +1056,7 @@ export const settings: Setting[] = (
 			name: "Sibling Rate",
 			type: "float",
 			description:
-				"The probability that a new player will be the sibling of an existing player.",
+				"The probability that a new player will be the sibling of an existing player, from 0 (0%) to 1 (100%).",
 		},
 		{
 			category: "Events",
@@ -1067,7 +1064,7 @@ export const settings: Setting[] = (
 			name: "Child Rate",
 			type: "float",
 			description:
-				"The probability that a new player will be the child of an existing player.",
+				"The probability that a new player will be the child of an existing player, from 0 (0%) to 1 (100%).",
 		},
 		{
 			category: "Events",
@@ -1123,7 +1120,7 @@ export const settings: Setting[] = (
 			name: "Auto Expansion Probability",
 			type: "float",
 			description:
-				"Probability each offseason that there will be expansion teams.",
+				"Probability each offseason that there will be expansion teams, from 0 (0%) to 1 (100%).",
 			validator: (value) => {
 				if (value < 0 || value > 1) {
 					throw new Error("Value must be between 0 and 1");
@@ -1148,7 +1145,8 @@ export const settings: Setting[] = (
 			key: "autoExpandNumTeams",
 			name: "Auto Expansion # Teams",
 			type: "int",
-			description: "Number of teams to be added in each expansion draft.",
+			description:
+				"Number of teams to be added in each expansion draft, from 0 (0%) to 1 (100%).",
 			validator: (value) => {
 				if (value < 1) {
 					throw new Error("Value must be greater than 0");
@@ -2854,7 +2852,7 @@ export const settings: Setting[] = (
 		{
 			category: "Game Simulation",
 			key: "scrimmageTouchbackKickoff",
-			name: "Kickoff Touchback Yards",
+			name: "Kickoff Touchback Yard Line",
 			godModeRequired: "always",
 			type: "int",
 			validator: (value) => {

@@ -1,4 +1,4 @@
-import { PLAYER, PHASE, bySport, isSport } from "../../../common/index.ts";
+import { PLAYER, PHASE } from "../../../common/constants.ts";
 import { player, trade } from "../../core/index.ts";
 import {
 	g,
@@ -13,6 +13,7 @@ import type {
 } from "../../../common/types.ts";
 import type { StatSumsExtra } from "../../../common/processPlayerStats.basketball.ts";
 import { idb } from "../index.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 type PlayersPlusOptionsRequired = Required<
 	Omit<
@@ -314,7 +315,11 @@ const processAttrs = (
 					const url =
 						transaction.eid !== undefined
 							? helpers.leagueUrl(["trade_summary", transaction.eid])
-							: helpers.leagueUrl(["roster", abbrev, transaction.season]);
+							: helpers.leagueUrl([
+									"roster",
+									`${abbrev}_${transaction.fromTid}`,
+									transaction.season,
+								]);
 					output.latestTransaction = `Trade with <a href="${url}">${abbrev} in ${transaction.season}</a>`;
 				} else if (transaction.type === "godMode") {
 					output.latestTransaction = `God Mode in ${transaction.season}`;
@@ -323,7 +328,11 @@ const processAttrs = (
 				} else if (transaction.type === "sisyphus") {
 					const abbrev =
 						abbrevsCache?.get(transaction.season, transaction.fromTid) ?? "???";
-					const url = helpers.leagueUrl(["roster", abbrev, transaction.season]);
+					const url = helpers.leagueUrl([
+						"roster",
+						`${abbrev}_${transaction.fromTid}`,
+						transaction.season,
+					]);
 					output.latestTransaction = `Sisyphus Mode with <a href="${url}">${abbrev} in ${transaction.season}</a>`;
 				}
 			} else {
@@ -425,15 +434,10 @@ const processRatings = (
 				row.skills = helpers.deepCopy(pr.skills);
 			} else if (attr === "dovr" || attr === "dpot") {
 				// Handle dovr and dpot - if there are previous ratings, calculate the fuzzed difference
-				const cat = attr.slice(1); // either ovr or pot
+				const cat = attr.slice(1) as "ovr" | "pot";
 
 				// Find previous season's final ratings, knowing that both this year and last year could have multiple entries due to injuries
-				let prevRow;
-				for (let j = 0; j < p.ratings.length; j++) {
-					if (p.ratings[j].season < pr.season) {
-						prevRow = p.ratings[j];
-					}
-				}
+				const prevRow = p.ratings.findLast((row) => row.season < pr.season);
 
 				if (prevRow) {
 					row[attr] =
@@ -517,7 +521,7 @@ const processRatings = (
 				} else if (attr === "age") {
 					row.age = season - p.born.year;
 				} else if (attr === "pos") {
-					row.pos = p.ratings.at(-1).pos;
+					row.pos = p.ratings.at(-1)!.pos;
 				} else if (attr === "abbrev") {
 					row.abbrev = "";
 				} else {
@@ -660,9 +664,7 @@ const sumCareerStats = (careerStats: any[], attr: string) => {
 			for (let i = 0; i < cs[attr].length; i++) {
 				const arrayValue = cs[attr][i];
 				if (arrayValue !== undefined) {
-					if (info.value[i] === undefined) {
-						info.value[i] = 0;
-					}
+					info.value[i] ??= 0;
 					info.value[i] += arrayValue;
 				}
 			}

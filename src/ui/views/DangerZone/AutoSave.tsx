@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { toWorker } from "../../util/index.ts";
+import { toWorker } from "../../util/toWorker.ts";
 
 const AutoSave = ({
 	autoSave,

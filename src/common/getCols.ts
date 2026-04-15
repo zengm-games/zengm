@@ -1,6 +1,5 @@
 import type { Col } from "../ui/components/DataTable/index.tsx";
-import bySport from "./bySport.ts";
-import isSport from "./isSport.ts";
+import { bySport, isSport } from "./sportFunctions.ts";
 
 type ColTemp = Omit<Col, "title"> & {
 	title?: string;
@@ -2376,6 +2375,54 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "AV/Player",
 		},
+		"stat:pbw": {
+			desc: "Pass Block Wins",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "PBW",
+		},
+		"stat:pba": {
+			desc: "Pass Block Attempts",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "PBA",
+		},
+		"stat:pbwr": {
+			desc: "Pass Block Win Rate",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "PBWR",
+		},
+		"stat:rbw": {
+			desc: "Run Block Wins",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "RBW",
+		},
+		"stat:rba": {
+			desc: "Run Block Attempts",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "RBA",
+		},
+		"stat:rbwr": {
+			desc: "Run Block Win Rate",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "RBWR",
+		},
+		"stat:skAlw": {
+			desc: "Sacks Allowed",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "SkAlw",
+		},
+		"stat:skAlwPct": {
+			desc: "Sacks Allowed Per 100 Pass Block Attempts",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "SkAlw%",
+		},
 	},
 	hockey: {
 		"pos:C": {
@@ -3605,6 +3652,12 @@ const cols: {
 		sortType: "number",
 		title: "BRC",
 	},
+	"count:opoy": {
+		desc: "Offensive Player of the Year",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "OPOY",
+	},
 	"count:dpoy": {
 		desc: "Defensive Player of the Year",
 		sortSequence: ["desc", "asc"],
@@ -3660,7 +3713,7 @@ const cols: {
 		title: "DROY",
 	},
 	"count:poy": {
-		desc: "Pitcher of the Year",
+		desc: `${isSport("baseball") ? "Pitcher" : "Protector"} of the Year`,
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 		title: "POY",
@@ -3670,6 +3723,10 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 		title: "RPOY",
+	},
+	"award:opoy": {
+		desc: "Offensive Player of the Year",
+		title: "OPOY",
 	},
 	"award:dpoy": {
 		desc: "Defensive Player of the Year",
@@ -3704,7 +3761,7 @@ const cols: {
 		title: "SMOY",
 	},
 	"award:poy": {
-		desc: "Pitcher of the Year",
+		desc: `${isSport("baseball") ? "Pitcher" : "Protector"} of the Year`,
 		title: "POY",
 	},
 	"award:rpoy": {
@@ -3728,7 +3785,7 @@ const cols: {
 	...sportSpecificCols,
 };
 
-const getCols = (
+export const getCols = (
 	titles: string[],
 	overrides: Record<string, Partial<Col>> = {},
 ): Col[] => {
@@ -3744,5 +3801,3 @@ const getCols = (
 		};
 	});
 };
-
-export default getCols;

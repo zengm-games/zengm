@@ -160,6 +160,11 @@ const PLAYER_GAME_STATS = {
 		stats: ["tgt", "rec", "recYds", "recYdsPerRec", "recLng", "recTD", "fp"],
 		sortBy: ["recYds"],
 	},
+	blocking: {
+		name: "Blocking",
+		stats: ["pbw", "pba", "pbwr", "rbw", "rba", "rbwr", "skAlw", "skAlwPct"],
+		sortBy: ["pbw"],
+	},
 	kicking: {
 		name: "Kicking",
 		stats: [
@@ -264,7 +269,7 @@ const PLAYER_SUMMARY = {
 	summaryOL: {
 		name: "SummaryOL",
 		onlyShowIf: ["OL"],
-		stats: ["gp", "av"],
+		stats: ["gp", "av", "pbw", "pbwr", "rbw", "rbwr", "skAlw"],
 	},
 	summaryKic: {
 		name: "SummaryKic",
@@ -342,6 +347,23 @@ const PLAYER_STATS_TABLES = {
 			"fmb",
 			"fmbLost",
 			"fp",
+			"av",
+		],
+	},
+	blocking: {
+		name: "Blocking",
+		onlyShowIf: ["pba", "rba"],
+		stats: [
+			"gp",
+			"gs",
+			"pbw",
+			"pba",
+			"pbwr",
+			"rbw",
+			"rba",
+			"rbwr",
+			"skAlw",
+			"skAlwPct",
 			"av",
 		],
 	},
@@ -528,6 +550,10 @@ const TEAM_STATS_TABLES = {
 			"fmb",
 			"fmbLost",
 		],
+	},
+	blocking: {
+		name: "Blocking",
+		stats: ["pbw", "pba", "pbwr", "rbw", "rba", "rbwr", "skAlw", "skAlwPct"],
 	},
 	defense: {
 		name: "Defense",
@@ -731,6 +757,19 @@ const TEAM_STATS_TABLES = {
 			"oppFmbLost",
 		],
 	},
+	opponentBlocking: {
+		name: "Opponent Blocking",
+		stats: [
+			"oppPbw",
+			"oppPba",
+			"oppPbwr",
+			"oppRbw",
+			"oppRba",
+			"oppRbwr",
+			"oppSkAlw",
+			"oppSkAlwPct",
+		],
+	},
 	opponnetDefense: {
 		name: "Opponent Defense",
 		stats: [
@@ -878,8 +917,8 @@ const RATINGS: RatingKey[] = [
 	"elu",
 	"rtr",
 	"hnd",
-	"rbk",
 	"pbk",
+	"rbk",
 	"pcv",
 	"tck",
 	"prs",
@@ -890,10 +929,20 @@ const RATINGS: RatingKey[] = [
 	"pac",
 ];
 
-const SIMPLE_AWARDS = ["mvp", "dpoy", "oroy", "droy", "finalsMvp"] as const;
+const SIMPLE_AWARDS = [
+	"mvp",
+	"opoy",
+	"poy",
+	"dpoy",
+	"oroy",
+	"droy",
+	"finalsMvp",
+] as const;
 
 const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
+	opoy: "Offensive Player of the Year",
+	poy: "Protector of the Year",
 	dpoy: "Defensive Player of the Year",
 	oroy: "Offensive Rookie of the Year",
 	droy: "Defensive Rookie of the Year",

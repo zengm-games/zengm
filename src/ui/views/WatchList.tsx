@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { Dropdown } from "react-bootstrap";
-import { PHASE, PLAYER } from "../../common/index.ts";
+import { PHASE, PLAYER } from "../../common/constants.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers, toWorker, useLocalPartial } from "../util/index.ts";
-import {
-	ActionButton,
-	DataTable,
-	MoreLinks,
-	WatchBlock,
-} from "../components/index.tsx";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { getCols } from "../../common/getCols.ts";
+import { useLocalPartial } from "../util/local.ts";
+import { DataTable } from "../components/DataTable/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 import {
@@ -16,9 +15,10 @@ import {
 	wrappedContractExp,
 } from "../components/contract.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
-import { Flag } from "../components/WatchBlock.tsx";
+import { Flag, WatchBlock } from "../components/WatchBlock.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import Note from "./Player/Note.tsx";
+import { ActionButton } from "../components/ActionButton.tsx";
 
 const ClearButton = ({
 	onClick,

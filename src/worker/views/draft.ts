@@ -1,4 +1,4 @@
-import { bySport, PHASE, PLAYER } from "../../common/index.ts";
+import { PHASE, PLAYER } from "../../common/constants.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 import { draft } from "../core/index.ts";
 import { idb } from "../db/index.ts";
@@ -6,6 +6,7 @@ import { g, helpers, local } from "../util/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { minBy } from "../../common/utils.ts";
 import { getDraftTeamsByTid } from "./draftHistory.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const getUserNextPickYear = async () => {
 	const userTids = g.get("userTids");
@@ -17,10 +18,8 @@ const getUserNextPickYear = async () => {
 	// This could be the current season, but that's fine because the UI handles that case
 	let nextPickYear = minBy(draftPicks, "season")?.season as number | undefined;
 
-	if (nextPickYear === undefined) {
-		// No picks at all in future drafts, so find what the next one to be generated is
-		nextPickYear = g.get("season") + g.get("numSeasonsFutureDraftPicks");
-	}
+	// No picks at all in future drafts, so find what the next one to be generated is
+	nextPickYear ??= g.get("season") + g.get("numSeasonsFutureDraftPicks");
 
 	return nextPickYear;
 };

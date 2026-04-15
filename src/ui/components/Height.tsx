@@ -1,4 +1,4 @@
-import { local, useLocal } from "../util/index.ts";
+import { local, useLocal } from "../util/local.ts";
 
 export const getHeightString = (inches: number, units: "metric" | "us") => {
 	if (units === "metric") {
@@ -8,13 +8,11 @@ export const getHeightString = (inches: number, units: "metric" | "us") => {
 	return `${Math.floor(inches / 12)}'${inches % 12}"`;
 };
 
-const Height = ({ inches }: { inches: number }) => {
+export const Height = ({ inches }: { inches: number }) => {
 	const units = useLocal((state2) => state2.units);
 
 	return getHeightString(inches, units);
 };
-
-export default Height;
 
 export const wrappedHeight = (inches: number) => {
 	const units = local.getState().units;

@@ -1,6 +1,6 @@
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { orderBy } from "../../../common/utils.ts";
 
 const autoProtect = async (tid: number): Promise<number[]> => {
@@ -13,9 +13,14 @@ const autoProtect = async (tid: number): Promise<number[]> => {
 	}
 
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
-	const maxNumCanProtext = Math.min(
-		expansionDraft.numProtectedPlayers,
-		players.length - expansionDraft.numPerTeam,
+	const maxNumCanProtext = Math.max(
+		Math.min(
+			expansionDraft.numProtectedPlayers,
+			players.length - expansionDraft.numPerTeam,
+		),
+
+		// Make sure maxNumCanProtect is never negative
+		0,
 	);
 	const pids = orderBy(players, "valueFuzz", "desc")
 		.slice(0, maxNumCanProtext)

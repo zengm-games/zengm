@@ -1,4 +1,4 @@
-import { wait } from "../../../common/index.ts";
+import { wait } from "../../../common/wait.ts";
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
 import create from "./create.ts";

@@ -14,7 +14,7 @@ const posRatings = (pos: string): RatingKey[] => {
 	}
 
 	if (pos === "OL") {
-		return ["rbk", "pbk"];
+		return ["pbk", "rbk"];
 	}
 
 	if (pos === "DL" || pos === "LB" || pos === "CB" || pos === "S") {

@@ -1,7 +1,7 @@
-import { WEBSITE_ROOT } from "../../common/index.ts";
-import logEvent from "./logEvent.ts";
+import { WEBSITE_ROOT } from "../../common/constants.ts";
+import { logEvent } from "./logEvent.ts";
 
-const requestPersistentStorage = async () => {
+export const requestPersistentStorage = async () => {
 	if (
 		navigator.storage &&
 		navigator.storage.persist &&
@@ -53,5 +53,3 @@ const requestPersistentStorage = async () => {
 		}
 	}
 };
-
-export default requestPersistentStorage;

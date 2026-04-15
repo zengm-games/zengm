@@ -1,8 +1,7 @@
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { DraftPick } from "../../../common/types.ts";
-import { PHASE, REAL_PLAYERS_INFO } from "../../../common/index.ts";
-import { groupBy } from "../../../common/utils.ts";
+import { PHASE, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 
 // Add a new set of draft picks, or confirm that the existing picks are correct (because this is idempotent!)
 const doSeason = async (
@@ -101,12 +100,12 @@ const genPicks = async ({
 	}
 
 	const dpOffset = g.get("phase") > PHASE.DRAFT || afterDraft ? 1 : 0;
-	const existingPicksBySeason = groupBy(existingPicks, "season");
+	const existingPicksBySeason = Map.groupBy(existingPicks, (dp) => dp.season);
 	for (let i = 0; i < numSeasons; i++) {
 		const draftYear = g.get("season") + dpOffset + i;
 		await doSeason(
 			draftYear,
-			existingPicksBySeason[draftYear] ?? [],
+			existingPicksBySeason.get(draftYear) ?? [],
 			realPlayers,
 		);
 	}

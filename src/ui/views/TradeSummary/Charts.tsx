@@ -9,8 +9,8 @@ import { LinePath } from "@visx/shape";
 import { scaleLinear } from "@visx/scale";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import type { View } from "../../../common/types.ts";
-import { helpers } from "../../util/index.ts";
-import { PHASE } from "../../../common/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { ReferenceLine } from "../Message/OwnerMoodsChart.tsx";
 import clsx from "clsx";
 

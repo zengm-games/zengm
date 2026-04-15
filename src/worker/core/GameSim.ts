@@ -1,4 +1,4 @@
-import { bySport } from "../../common/index.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import GameSimBaseball from "./GameSim.baseball/index.ts";
 import GameSimBasketball from "./GameSim.basketball/index.ts";
 import GameSimFootball from "./GameSim.football/index.ts";

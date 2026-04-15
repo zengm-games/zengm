@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { DataTable, MoreLinks } from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
-import { bySport } from "../../common/index.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import TeamLogoAndName from "../components/TeamLogoAndName.tsx";
 
 const teamLink = (t: View<"teamRecords">["teams"][number]) => {
@@ -52,6 +54,8 @@ const categories = bySport({
 	],
 	football: [
 		"mvp",
+		"opoy",
+		"poy",
 		"dpoy",
 		"oroy",
 		"droy",

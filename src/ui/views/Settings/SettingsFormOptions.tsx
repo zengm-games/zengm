@@ -2,17 +2,18 @@
 import clsx from "clsx";
 import { AnimatePresence, m } from "framer-motion";
 import { type ChangeEvent, Fragment, type ReactNode, useState } from "react";
-import { isSport } from "../../../common/index.ts";
-import { HelpPopover } from "../../components/index.tsx";
+import { isSport } from "../../../common/sportFunctions.ts";
+import { HelpPopover } from "../../components/HelpPopover.tsx";
 import gameSimPresets from "./gameSimPresets.ts";
 import {
 	getVisibleCategories,
 	settingIsEnabled,
 	settingNeedsGodMode,
+	type NumPlayoffTeamsInfo,
 	type State,
 } from "./SettingsForm.tsx";
 import type { Decoration, FieldType, Key, Values } from "./types.ts";
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 import { CurrencyInputGroup } from "../../components/CurrencyInputGroup.tsx";
 
 export const godModeRequiredMessage = (
@@ -339,6 +340,7 @@ const SettingsFormOptions = ({
 	handleChange,
 	handleChangeRaw,
 	newLeague,
+	numPlayoffTeamsInfo,
 	onCancelDefaultSetting,
 	setGameSimPreset,
 	showGodModeSettings,
@@ -351,6 +353,7 @@ const SettingsFormOptions = ({
 	handleChange: HandleChange;
 	handleChangeRaw: HandleChangeRaw;
 	newLeague?: boolean;
+	numPlayoffTeamsInfo: NumPlayoffTeamsInfo;
 	onCancelDefaultSetting?: (key: Key) => void;
 	setGameSimPreset: (gameSimPreset: string) => void;
 	showGodModeSettings: boolean;
@@ -365,6 +368,19 @@ const SettingsFormOptions = ({
 						<a className="anchor" id={category.name} />
 						<h2 className="mb-3">
 							{category.name}
+							{category.appendNumTeams ? (
+								<span
+									className={
+										numPlayoffTeamsInfo.state === "done"
+											? undefined
+											: "text-body-secondary"
+									}
+								>
+									{" "}
+									({numPlayoffTeamsInfo.value ?? "?"}{" "}
+									{helpers.plural("team", numPlayoffTeamsInfo.value ?? 0)})
+								</span>
+							) : null}
 							{category.helpText ? (
 								<HelpPopover title={category.name} className="ms-1">
 									{category.helpText}

@@ -1,4 +1,4 @@
-import { bySport } from "../../../common/index.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { NUM_OUTS_PER_INNING } from "../../../common/constants.baseball.ts";
 import { defaultGameAttributes, g, helpers } from "../../util/index.ts";
 
@@ -485,6 +485,26 @@ const getLeaderRequirements = () => {
 			allPurposeYds: {},
 			qbRec: {
 				sortValue: helpers.getRecordNumericValue,
+			},
+			pbw: {},
+			pba: {},
+			pbwr: {
+				minStats: {
+					pba: 10 * numGames,
+				},
+			},
+			rbw: {},
+			rba: {},
+			rbwr: {
+				minStats: {
+					rba: 10 * numGames,
+				},
+			},
+			skAlw: {},
+			skAlwPct: {
+				minStats: {
+					pba: 10 * numGames,
+				},
 			},
 		},
 		hockey: {

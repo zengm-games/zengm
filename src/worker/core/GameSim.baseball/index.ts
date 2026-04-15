@@ -16,7 +16,7 @@ import GameSimBase from "../GameSim/GameSimBase.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { maxBy } from "../../../common/utils.ts";
 import { choice } from "../../../common/random.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import PlayByPlayLogger from "./PlayByPlayLogger.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
@@ -647,9 +647,15 @@ class GameSim extends GameSimBase {
 	}) {
 		const runners = this.getRunners();
 
+		// Game winning non-HR hit means runners stop advancing when the winning run is scored
+		let gameWinningRunScoredWithLiveBall = false;
+
 		// Batter is out, inning is already over
 		if (this.outs >= NUM_OUTS_PER_INNING) {
-			return runners;
+			return {
+				gameWinningRunScoredWithLiveBall,
+				runners,
+			};
 		}
 
 		// Inning ends before batter reaches first base
@@ -727,6 +733,10 @@ class GameSim extends GameSimBase {
 							}
 						}
 					}
+
+					if (gameWinningRunScoredWithLiveBall && runner.to > 3) {
+						runner.to = 3;
+					}
 				} else {
 					// First base
 
@@ -742,6 +752,20 @@ class GameSim extends GameSimBase {
 							(isStealing && Math.random() < 0.5))
 					) {
 						runner.to += 1;
+					}
+
+					const maxBase = gameWinningRunScoredWithLiveBall ? 3 : 4;
+					if (runner.to > maxBase) {
+						runner.to = maxBase;
+					}
+					if (gameWinningRunScoredWithLiveBall && runner.to > 3) {
+						if (blockedBases.has(2) && !blockedBases.has(1)) {
+							// Advance to 2nd if 3rd is blocked
+							runner.to = 2;
+						} else {
+							// Otherwise advance to 3rd
+							runner.to = 3;
+						}
 					}
 				}
 			} else {
@@ -857,7 +881,12 @@ class GameSim extends GameSimBase {
 				const pRBI = error || result === "doublePlay" ? undefined : p;
 				runner.scored = true;
 
-				this.doScore(this.bases[i]!, pRBI);
+				const gameWinningRunScored = this.doScore(this.bases[i]!, pRBI);
+
+				if (gameWinningRunScored && numBases < 4) {
+					// Game winning non-HR hit -> runners stop when winning run scores
+					gameWinningRunScoredWithLiveBall = gameWinningRunScored;
+				}
 			}
 
 			if (runner.to < 4) {
@@ -897,7 +926,10 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		return runners;
+		return {
+			gameWinningRunScoredWithLiveBall,
+			runners,
+		};
 	}
 
 	doBalkWildPitchPassedBall(type: "balk" | "passedBall" | "wildPitch") {
@@ -1777,37 +1809,6 @@ class GameSim extends GameSimBase {
 					pErrorIfNotHit,
 				} = this.getBattedBallOutcome(battedBallInfo, batter, pitcher);
 
-				if (result === "flyOut") {
-					const posCatch = POS_NUMBERS_INVERSE[hitTo];
-					const p = this.team[this.d].playersInGameByPos[posCatch].p;
-					this.recordStat(this.d, p, "po", 1, "fielding");
-				} else if (result === "throwOut" || result === "fieldersChoice") {
-					const p =
-						this.team[this.d].playersInGameByPos[
-							POS_NUMBERS_INVERSE[posDefense.at(-1)!]
-						].p;
-					this.recordStat(this.d, p, "po", 1, "fielding");
-				} else if (result === "doublePlay") {
-					const posFirstPutOut = POS_NUMBERS_INVERSE[posDefense.at(-2)!];
-					const fielder =
-						this.team[this.d].playersInGameByPos[posFirstPutOut].p;
-					this.recordStat(this.d, fielder, "po", 1, "fielding");
-
-					// Double play always includes batter, currently
-					const firstBaseman = this.team[this.d].playersInGameByPos["1B"].p;
-					this.recordStat(this.d, firstBaseman, "po", 1, "fielding");
-				} else if (result === "hit") {
-					this.recordStat(this.o, batter, "h");
-					this.recordStat(this.d, pitcher, "hPit");
-					if (numBases > 1) {
-						const hitType =
-							numBases === 2 ? "2b" : numBases === 3 ? "3b" : "hr";
-						this.recordStat(this.o, batter, hitType);
-
-						this.recordStat(this.d, pitcher, `${hitType}Pit`);
-					}
-				}
-
 				if (
 					["flyOut", "throwOut", "fieldersChoice", "doublePlay"].includes(
 						result,
@@ -1876,7 +1877,7 @@ class GameSim extends GameSimBase {
 					this.outsIfNoErrorsByPitcherPid[pitcher.id]! += 1;
 					this.outsIfNoErrors += 1;
 
-					const runners = getRunners();
+					const { gameWinningRunScoredWithLiveBall, runners } = getRunners();
 
 					if (numBases < 4) {
 						this.bases[numBases - 1] = this.makeOccupiedBase(batter, true);
@@ -1891,31 +1892,86 @@ class GameSim extends GameSimBase {
 						t: this.o,
 						numBases,
 						outAtNextBase: false,
+						gameWinningRunScoredWithLiveBall,
 						...this.getSportState(),
 					});
 				} else {
-					// Make sure we do runners stuff after hitter out is logged, but before hitter is put on base
-					let runners;
 					if (result === "flyOut" || result === "throwOut") {
 						this.logOut();
-
-						runners = getRunners();
 					} else if (result === "doublePlay") {
 						this.recordStat(this.o, batter, "gdp");
 						this.logOut();
+					}
 
-						runners = getRunners();
+					// Make sure we do runners stuff after hitter out is logged, but before hitter is put on base
+					const { gameWinningRunScoredWithLiveBall, runners } = getRunners();
+
+					// When gameWinningRunScoredWithLiveBall, the batter will stop running when the winning run has scored. For instance if only one run is needed and there is a runner on third, any non-HR will just be a single.
+					let numBasesAdjusted: typeof numBases;
+					if (gameWinningRunScoredWithLiveBall) {
+						const lastScoringRunner = runners.find((runner) => runner?.scored);
+						if (!lastScoringRunner) {
+							throw new Error("Should never happen");
+						}
+						const numBasesAdvancedByWinningRun =
+							lastScoringRunner.to - lastScoringRunner.from;
+						if (numBasesAdvancedByWinningRun <= 2) {
+							// Runner was on 2nd or 3rd -> max is a single
+							numBasesAdjusted = 1;
+						} else {
+							// Runner was on 1st -> max is a double
+							numBasesAdjusted = numBases > 2 ? 2 : numBases;
+						}
 					} else {
-						runners = getRunners();
+						numBasesAdjusted = numBases;
+					}
 
-						if (numBases < 4) {
-							this.bases[numBases - 1] = this.makeOccupiedBase(
-								batter,
-								false,
-								responsiblePitcherPid,
-							);
+					if (
+						(result === "hit" || result === "fieldersChoice") &&
+						numBases < 4
+					) {
+						this.bases[numBasesAdjusted - 1] = this.makeOccupiedBase(
+							batter,
+							false,
+							responsiblePitcherPid,
+						);
+					}
+
+					if (result === "flyOut") {
+						const posCatch = POS_NUMBERS_INVERSE[hitTo];
+						const p = this.team[this.d].playersInGameByPos[posCatch].p;
+						this.recordStat(this.d, p, "po", 1, "fielding");
+					} else if (result === "throwOut" || result === "fieldersChoice") {
+						const p =
+							this.team[this.d].playersInGameByPos[
+								POS_NUMBERS_INVERSE[posDefense.at(-1)!]
+							].p;
+						this.recordStat(this.d, p, "po", 1, "fielding");
+					} else if (result === "doublePlay") {
+						const posFirstPutOut = POS_NUMBERS_INVERSE[posDefense.at(-2)!];
+						const fielder =
+							this.team[this.d].playersInGameByPos[posFirstPutOut].p;
+						this.recordStat(this.d, fielder, "po", 1, "fielding");
+
+						// Double play always includes batter, currently
+						const firstBaseman = this.team[this.d].playersInGameByPos["1B"].p;
+						this.recordStat(this.d, firstBaseman, "po", 1, "fielding");
+					} else if (result === "hit") {
+						this.recordStat(this.o, batter, "h");
+						this.recordStat(this.d, pitcher, "hPit");
+						if (numBasesAdjusted > 1) {
+							const hitType =
+								numBasesAdjusted === 2
+									? "2b"
+									: numBasesAdjusted === 3
+										? "3b"
+										: "hr";
+							this.recordStat(this.o, batter, hitType);
+
+							this.recordStat(this.d, pitcher, `${hitType}Pit`);
 						}
 					}
+
 					const getHitType = (numBases: 1 | 2 | 3 | 4) => {
 						switch (numBases) {
 							case 1:
@@ -1928,7 +1984,7 @@ class GameSim extends GameSimBase {
 								return "hr";
 						}
 					};
-					const hitType = getHitType(numBases);
+					const hitType = getHitType(numBasesAdjusted);
 
 					this.playByPlay.logEvent({
 						type: "hitResult",
@@ -1937,8 +1993,9 @@ class GameSim extends GameSimBase {
 						posDefense,
 						runners: this.finalizeRunners(runners),
 						t: this.o,
-						numBases,
+						numBases: numBasesAdjusted,
 						outAtNextBase: false,
+						gameWinningRunScoredWithLiveBall,
 						...this.getSportState(),
 						totalHits: this.allStarGame
 							? undefined
@@ -1972,6 +2029,8 @@ class GameSim extends GameSimBase {
 			this.recordStat(this.o, rbi, "rbi");
 		}
 
+		let gameWinningRunScored = false;
+
 		if (this.team[0].t.stat.pts === this.team[1].t.stat.pts) {
 			this.winEligiblePid = undefined;
 			this.lossEligiblePid = undefined;
@@ -1992,7 +2051,13 @@ class GameSim extends GameSimBase {
 			// This run just broke the tie, now someone is winning
 			this.winEligiblePid = this.team[this.o].playersInGameByPos.P.p.id;
 			this.lossEligiblePid = responsiblePitcher.id;
+
+			if (this.gameCanBeOverDuringInning()) {
+				gameWinningRunScored = true;
+			}
 		}
+
+		return gameWinningRunScored;
 	}
 
 	getRunners() {
@@ -2005,7 +2070,7 @@ class GameSim extends GameSimBase {
 					out: false,
 				};
 			}
-		}) as [Runner, Runner, Runner];
+		}) as [Runner | undefined, Runner | undefined, Runner | undefined];
 	}
 
 	finalizeRunners(
@@ -2098,9 +2163,7 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		if (this.outsIfNoErrorsByPitcherPid[pitcher.id] === undefined) {
-			this.outsIfNoErrorsByPitcherPid[pitcher.id] = 0;
-		}
+		this.outsIfNoErrorsByPitcherPid[pitcher.id] ??= 0;
 		this.outsIfNoErrorsByPitcherPid[pitcher.id]! += 1;
 		this.outsIfNoErrors += 1;
 	}
@@ -2657,10 +2720,13 @@ class GameSim extends GameSimBase {
 		}
 	}
 
+	gameCanBeOverDuringInning() {
+		return this.o === 0 && this.inning >= this.numInnings;
+	}
+
 	gameIsOverDuringInning() {
 		if (
-			this.o === 0 &&
-			this.inning >= this.numInnings &&
+			this.gameCanBeOverDuringInning() &&
 			getWinner([this.team[0].t.stat, this.team[1].t.stat]) === 0
 		) {
 			// Game over, home team is at bat and up after 9+ innings
@@ -2746,9 +2812,7 @@ class GameSim extends GameSimBase {
 				const pos = this.team[t].playersInGame[p.id]!.pos;
 				const posIndex = POS_NUMBERS[pos] - 1;
 
-				if (p.stat[s][posIndex] === undefined) {
-					p.stat[s][posIndex] = 0;
-				}
+				p.stat[s][posIndex] ??= 0;
 				p.stat[s][posIndex] += amt;
 			} else {
 				p.stat[s] += amt;
@@ -2779,9 +2843,7 @@ class GameSim extends GameSimBase {
 					const pos = this.team[t].playersInGame[p!.id]!.pos;
 					const posIndex = POS_NUMBERS[pos] - 1;
 
-					if (this.team[t].t.stat[s][posIndex] === undefined) {
-						this.team[t].t.stat[s][posIndex] = 0;
-					}
+					this.team[t].t.stat[s][posIndex] ??= 0;
 					this.team[t].t.stat[s][posIndex] += amt;
 				} else {
 					this.team[t].t.stat[s] += amt;

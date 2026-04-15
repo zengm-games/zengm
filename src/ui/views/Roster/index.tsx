@@ -1,27 +1,14 @@
 import { useState } from "react";
 import { arrayMove } from "@dnd-kit/sortable";
-import {
-	bySport,
-	isSport,
-	PLAYER,
-	WEBSITE_ROOT,
-} from "../../../common/index.ts";
-import {
-	CountryFlag,
-	HelpPopover,
-	SafeHtml,
-	MoreLinks,
-	DataTable,
-} from "../../components/index.tsx";
+import { PLAYER, WEBSITE_ROOT } from "../../../common/constants.ts";
+import { DataTable } from "../../components/DataTable/index.tsx";
+import { MoreLinks } from "../../components/MoreLinks.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import {
-	confirm,
-	getCols,
-	helpers,
-	logEvent,
-	toWorker,
-	useLocalPartial,
-} from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
+import { getCols } from "../../../common/getCols.ts";
+import { useLocalPartial } from "../../util/local.ts";
 import PlayingTime, { ptStyles } from "./PlayingTime.tsx";
 import TopStuff from "./TopStuff.tsx";
 import type {
@@ -35,10 +22,15 @@ import type {
 	SortBy,
 } from "../../components/DataTable/index.tsx";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
-import { dataTableWrappedMood } from "../../components/Mood.tsx";
+import { wrappedMood } from "../../components/Mood.tsx";
 import { wrappedRatingWithChange } from "../../components/RatingWithChange.tsx";
 import type { BulkAction } from "../../components/DataTable/BulkActions.tsx";
 import { groupByUnique } from "../../../common/utils.ts";
+import { CountryFlag } from "../../components/CountryFlag.tsx";
+import { SafeHtml } from "../../components/SafeHtml.tsx";
+import { HelpPopover } from "../../components/HelpPopover.tsx";
+import { confirm } from "../../util/confirm.tsx";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const handleRelease = async (
 	p: View<"roster">["players"][number],
@@ -111,6 +103,7 @@ const Roster = ({
 	phase,
 	players,
 	playoffs,
+	playoffsByConf,
 	salaryCap,
 	salaryCapType,
 	season,
@@ -121,6 +114,7 @@ const Roster = ({
 	stats,
 	t,
 	tid,
+	usePts,
 	userTid,
 }: View<"roster">) => {
 	const [sortedPids, setSortedPids] = useState<number[] | undefined>(undefined);
@@ -149,7 +143,9 @@ const Roster = ({
 	let playersSorted: typeof players;
 	if (sortedPids !== undefined) {
 		const playersByPid = groupByUnique(players, "pid");
-		playersSorted = sortedPids.map((pid) => playersByPid[pid]);
+		playersSorted = sortedPids
+			.map((pid) => playersByPid[pid])
+			.filter((p) => p !== undefined);
 	} else {
 		playersSorted = players;
 	}
@@ -331,7 +327,7 @@ const Roster = ({
 				...(editable ? [<PlayingTime p={p} userTid={userTid} />] : []),
 				...(showMood
 					? [
-							dataTableWrappedMood({
+							wrappedMood({
 								defaultType: "current",
 								maxWidth: true,
 								p,
@@ -400,6 +396,7 @@ const Roster = ({
 				minPayrollAmount={minPayrollAmount}
 				openRosterSpots={maxRosterSize - players.length}
 				players={players}
+				playoffsByConf={playoffsByConf}
 				season={season}
 				payroll={payroll}
 				profit={profit}
@@ -410,6 +407,7 @@ const Roster = ({
 				t={t}
 				tid={tid}
 				userTid={userTid}
+				usePts={usePts}
 			/>
 
 			{showSpectatorWarning ? (

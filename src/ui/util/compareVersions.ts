@@ -1,6 +1,6 @@
 // Takes BBGM version strings (like 2017.12.06.1134) and returns 1 if v1 is larger, -1 if v2 is
 // larger, and 0 if they are the same.
-const compareVersions = (v1: string, v2: string): -1 | 0 | 1 => {
+export const compareVersions = (v1: string, v2: string): -1 | 0 | 1 => {
 	if (v1 === v2) {
 		return 0;
 	}
@@ -39,5 +39,3 @@ const compareVersions = (v1: string, v2: string): -1 | 0 | 1 => {
 
 	return 0;
 };
-
-export default compareVersions;

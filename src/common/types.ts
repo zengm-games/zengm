@@ -1,8 +1,9 @@
 import type { FaceConfig } from "facesjs";
 import type { MouseEvent, ReactNode } from "react";
 import type processInputs from "../worker/api/processInputs.ts";
-import type views from "../worker/views/index.ts";
+import type * as views from "../worker/views/index.ts";
 
+// Would be nice to make .at(-1) return T but idk how, so there is a lot of .at(-1)! in the codebase!
 export type NonEmptyArray<T> = [T, ...T[]];
 
 export type Env = {
@@ -30,12 +31,12 @@ declare global {
 		withGoodWorker: () => void;
 	}
 
-	namespace NodeJS {
-		interface ProcessEnv {
+	const process: {
+		env: {
 			NODE_ENV: "development" | "production" | "test";
 			SPORT: "basketball" | "football" | "baseball" | "hockey";
-		}
-	}
+		};
+	};
 }
 
 type ViewsKeys = keyof typeof views;
@@ -779,26 +780,6 @@ export type GameAttribute<T extends GameAttributeKey> = {
 	value: GameAttributesLeagueWithHistory[T];
 };
 
-export type GameProcessed = {
-	gid: number;
-	home: boolean;
-	oppPts: number;
-	oppTid: number;
-	oppAbbrev: string;
-	overtime: string;
-	result: "W" | "L" | "T";
-	tid?: number;
-	pts: number;
-};
-
-export type GameProcessedCompleted = {
-	gid: number;
-	overtime: string;
-	result: "W" | "L" | "T";
-	score: string;
-	teams: [any, any];
-};
-
 export type League = {
 	lid: number;
 	name: string;
@@ -1180,7 +1161,7 @@ export type PlayerAward = {
 	type: string;
 };
 
-export type PlayerWithoutKey<PlayerRatings = any> = {
+export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {
 	awards: PlayerAward[];
 	born: {
 		year: number;
@@ -1224,6 +1205,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	jerseyNumber?: string; // Should be undefined only for a player who has never been on a team, or a player signed to his first team before the preseason
 	lastName: string;
 	moodTraits: MoodTrait[];
+	numPlayersTradedAwayNormalized?: Record<number, number>;
 	note?: string;
 	noteBool?: 1; // Keep in sync with note - for indexing
 	numDaysFreeAgent: number;
@@ -1298,7 +1280,7 @@ export type PlayerWithoutKey<PlayerRatings = any> = {
 	pFatigue?: number;
 };
 
-export type Player<PlayerRatings = any> = {
+export type Player<PlayerRatings = MinimalPlayerRatings> = {
 	pid: number;
 } & PlayerWithoutKey<PlayerRatings>;
 

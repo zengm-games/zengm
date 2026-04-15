@@ -1,6 +1,6 @@
 import type { CSSProperties, SyntheticEvent } from "react";
 
-const NextPrevButtons = <T extends unknown>({
+export const NextPrevButtons = <T extends unknown>({
 	currentItem,
 	items,
 	reverse,
@@ -73,5 +73,3 @@ const NextPrevButtons = <T extends unknown>({
 		</div>
 	);
 };
-
-export default NextPrevButtons;

@@ -1,5 +1,6 @@
-import { getPeriodName } from "../../common/index.ts";
-import { helpers, local } from "./index.ts";
+import { getPeriodName } from "../../common/getPeriodName.ts";
+import { helpers } from "./helpers.ts";
+import { local } from "./local.ts";
 import type {
 	PlayByPlayEventInput,
 	PlayByPlayEventScore,
@@ -92,11 +93,15 @@ const formatRunners = (
 	{
 		ignoreStationary,
 		sideRetired,
+		gameWinningRunScoredWithLiveBall,
 	}: {
 		ignoreStationary?: boolean;
 
 		// When true, only report runners who are out, since the side is retired the other ones don't matter
 		sideRetired?: boolean;
+
+		// When true, only report runners who are out or scored, since anything else is not really relevent and it's meaningless where runners wind up
+		gameWinningRunScoredWithLiveBall?: boolean;
 	} = {},
 ) => {
 	const filtered = runners.filter(
@@ -115,13 +120,13 @@ const formatRunners = (
 			texts.push(`${name} out at ${getBaseName(runner.to)}.`);
 		} else if (!sideRetired) {
 			if (runner.from === runner.to) {
-				if (!ignoreStationary) {
+				if (!ignoreStationary && !gameWinningRunScoredWithLiveBall) {
 					numStationary += 1;
 					texts.push(`${name} stays at ${getBaseName(runner.to)}.`);
 				}
 			} else if (runner.to === 4) {
 				scored.push(name);
-			} else {
+			} else if (!gameWinningRunScoredWithLiveBall) {
 				texts.push(`${name} advances to ${getBaseName(runner.to)}.`);
 			}
 		}
@@ -359,6 +364,8 @@ export const getText = (
 			} else {
 				runnersText = formatRunners(getName, event.runners, {
 					sideRetired,
+					gameWinningRunScoredWithLiveBall:
+						event.gameWinningRunScoredWithLiveBall,
 				});
 			}
 

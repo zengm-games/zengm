@@ -1,10 +1,10 @@
 import clsx from "clsx";
 import { m, AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { emitter, type Message } from "../util/notify.ts";
-import SafeHtml from "./SafeHtml.tsx";
-import { useLocalPartial } from "../util/index.ts";
-import { MOBILE_AD_BOTTOM_MARGIN } from "../../common/index.ts";
+import { emitter, type Message } from "../../util/notify.ts";
+import { SafeHtml } from "../SafeHtml.tsx";
+import { useLocalPartial } from "../../util/local.ts";
+import { MOBILE_AD_BOTTOM_MARGIN } from "../../../common/constants.ts";
 
 const MAX_NUM_NOTIFICATIONS = 5;
 
@@ -78,7 +78,7 @@ const unbind = emitter.on("notification", (notification) => {
 	initialNotifications.push(notification);
 });
 
-const Notifications = () => {
+export const Notifications = () => {
 	const { stickyFooterAd, stickyFormButtons, userTids } = useLocalPartial([
 		"stickyFooterAd",
 		"stickyFormButtons",
@@ -216,5 +216,3 @@ const Notifications = () => {
 		</div>
 	);
 };
-
-export default Notifications;

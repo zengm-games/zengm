@@ -4,7 +4,7 @@ import g from "./g.ts";
 import helpers from "./helpers.ts";
 import local from "./local.ts";
 import type { OwnerMood } from "../../common/types.ts";
-import { COURT } from "../../common/index.ts";
+import { COURT } from "../../common/constants.ts";
 
 const moodTexts = ["Horrible!", "Bad.", "Pretty good.", "Good.", "Excellent!"];
 

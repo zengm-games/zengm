@@ -1,10 +1,11 @@
-import { AWARD_NAMES, bySport, isSport } from "../../common/index.ts";
-import type { MinimalPlayerRatings, Player } from "../../common/types.ts";
+import { AWARD_NAMES } from "../../common/constants.ts";
+import type { Player } from "../../common/types.ts";
 import stats from "../core/player/stats.ts";
 import { weightByMinutes } from "../db/getCopies/playersPlus.ts";
 import FormulaEvaluator from "./FormulaEvaluator.ts";
 import g from "./g.ts";
 import helpers from "./helpers.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 const DEFAULT_FORMULA = bySport({
 	baseball: "20 * mvp + war",
@@ -58,7 +59,7 @@ AWARD_VARIABLES.numSeasons = "Number of Seasons Played";
 const formulaCache: Record<string, FormulaEvaluator<string[]>> = {};
 
 const evaluate = (
-	p: Player<MinimalPlayerRatings>,
+	p: Player,
 	formula: string | undefined,
 	info:
 		| {
@@ -128,6 +129,10 @@ const evaluate = (
 				if (weightStatByMinutes) {
 					object[playoffs] += row[stat] * row.min;
 					minSumPlayoffs += row.min;
+				} else if (isSport("football") && stat.endsWith("Lng")) {
+					if (row[stat] > object[playoffs]) {
+						object[playoffs] = row[stat] as number;
+					}
 				} else {
 					object[playoffs] += row[stat];
 				}
@@ -146,6 +151,10 @@ const evaluate = (
 				if (weightStatByMinutes) {
 					object[tot] += row[stat] * row.min;
 					minSum += row.min;
+				} else if (isSport("football") && stat.endsWith("Lng")) {
+					if (row[stat] > object[tot]) {
+						object[tot] = row[stat] as number;
+					}
 				} else {
 					object[tot] += row[stat];
 				}

@@ -1,8 +1,9 @@
-import { bySport, PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const updateAwards = async (
 	inputs: ViewInput<"editAwards">,

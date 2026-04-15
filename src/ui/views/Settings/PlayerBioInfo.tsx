@@ -3,13 +3,9 @@ import type {
 	GameAttributesLeague,
 	PlayerBioInfo,
 } from "../../../common/types.ts";
-import {
-	confirm,
-	helpers,
-	logEvent,
-	safeLocalStorage,
-	toWorker,
-} from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import { godModeRequiredMessage } from "./SettingsFormOptions.tsx";
 import type { initDefaults } from "../../../worker/util/loadNames.ts";
 import { getFrequencies, mergeCountries } from "../../../common/names.ts";
@@ -21,8 +17,10 @@ import {
 	RacesEditor,
 } from "./PlayerBioInfoEditors.tsx";
 import { CountriesEditor } from "./PlayerBioInfoCountries.tsx";
-import Modal from "../../components/Modal.tsx";
+import { Modal } from "../../components/Modal.tsx";
 import { orderBy } from "../../../common/utils.ts";
+import { confirm } from "../../util/confirm.tsx";
+import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
 
 export type Defaults = Awaited<ReturnType<typeof initDefaults>>;
 

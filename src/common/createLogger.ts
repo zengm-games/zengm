@@ -17,10 +17,10 @@ type LogEventOptions = {
 	showNotification?: boolean;
 } & DistributiveOmit<EventBBGMWithoutKey, "season">;
 
-function createLogger(
+export const createLogger = (
 	saveEvent: (a: LogEventSaveOptions) => Promise<number | undefined>,
 	showEvent: (a: LogEventShowOptions, conditions?: Conditions) => void,
-) {
+) => {
 	const logEvent = async (
 		{
 			extraClass,
@@ -62,6 +62,4 @@ function createLogger(
 	};
 
 	return logEvent;
-}
-
-export default createLogger;
+};

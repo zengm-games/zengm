@@ -4,13 +4,10 @@ import {
 	DEFAULT_STADIUM_CAPACITY,
 	DEFAULT_TEAM_COLORS,
 	DIFFICULTY,
-	gameAttributesArrayToObject,
-	isSport,
 	LEAGUE_DATABASE_VERSION,
 	PHASE,
 	PLAYER,
-	unwrapGameAttribute,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import { player, season } from "../core/index.ts";
 import { idb } from "./index.ts";
 import { defaultGameAttributes, helpers, logEvent } from "../util/index.ts";
@@ -32,7 +29,6 @@ import type {
 	Negotiation,
 	PlayerFeat,
 	Player,
-	MinimalPlayerRatings,
 	PlayoffSeries,
 	ScheduleGame,
 	TeamSeason,
@@ -52,6 +48,10 @@ import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGames
 import { amountToLevel } from "../../common/budgetLevels.ts";
 import { orderBy } from "../../common/utils.ts";
 import { actualPhase } from "../util/actualPhase.ts";
+import { getNumPlayersTradedAwayNormalized } from "../core/player/getNumPlayersTradedAwayNormalized.ts";
+import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
+import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 export interface LeagueDB extends DBSchema {
 	allStars: {
@@ -113,7 +113,7 @@ export interface LeagueDB extends DBSchema {
 	};
 	players: {
 		key: number;
-		value: Player<MinimalPlayerRatings>;
+		value: Player;
 		autoIncrementKeyPath: "pid";
 		indexes: {
 			"draft.year, retiredYear": [number, number];
@@ -1081,12 +1081,8 @@ const migrate = async ({
 								? keepRosterSorted
 								: true;
 
-							if (t.adjustForInflation === undefined) {
-								t.adjustForInflation = true;
-							}
-							if (t.disabled === undefined) {
-								t.disabled = false;
-							}
+							t.adjustForInflation ??= true;
+							t.disabled ??= false;
 
 							await cursor.update(t);
 						}
@@ -1360,16 +1356,10 @@ const migrate = async ({
 
 		for await (const cursor of transaction.objectStore("teamSeasons")) {
 			const ts = cursor.value;
-			if (ts.tied === undefined) {
-				ts.tied = 0;
-			}
-			if (ts.otl === undefined) {
-				ts.otl = 0;
-			}
+			ts.tied ??= 0;
+			ts.otl ??= 0;
 			const gp = helpers.getTeamSeasonGp(ts);
-			if (ts.gpHome === undefined) {
-				ts.gpHome = Math.round(gp / 2);
-			}
+			ts.gpHome ??= Math.round(gp / 2);
 
 			// Move the amount to root, no more storing rank
 			for (const key of helpers.keys(ts.revenues)) {
@@ -1637,6 +1627,45 @@ const migrate = async ({
 				// This setting only worked with 2 conferences in the past, so 2 is what `true` used to mean
 				row.byConf = 2;
 				await cursor.update(row);
+			}
+		}
+	}
+
+	if (oldVersion < 70) {
+		const season = (
+			await transaction.objectStore("gameAttributes").get("season")
+		)?.value;
+		if (season !== undefined) {
+			const numPlayersTradedAwayNormalized: Record<number, number> = {};
+
+			const teamSeasons = await transaction
+				.objectStore("teamSeasons")
+				.index("season, tid")
+				.getAll(IDBKeyRange.bound([season - 2], [season, ""]));
+			const teamSeasonsByTid = Object.groupBy(teamSeasons, (row) => row.tid);
+
+			const teams = await transaction.objectStore("teams").getAll();
+			for (const t of teams) {
+				if (t.disabled) {
+					continue;
+				}
+
+				numPlayersTradedAwayNormalized[t.tid] =
+					getNumPlayersTradedAwayNormalized(
+						teamSeasonsByTid[t.tid] ?? [],
+						season,
+					);
+			}
+
+			for await (const cursor of transaction
+				.objectStore("players")
+				.index("tid")
+				.iterate(PLAYER.FREE_AGENT)) {
+				const p = cursor.value;
+				if (!p.numPlayersTradedAwayNormalized) {
+					p.numPlayersTradedAwayNormalized = numPlayersTradedAwayNormalized;
+					await cursor.update(p);
+				}
 			}
 		}
 	}

@@ -1,9 +1,10 @@
-import { isSport, PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import setContract from "./setContract.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type { Phase, Player, PlayerContract } from "../../../common/types.ts";
 import genJerseyNumber from "./genJerseyNumber.ts";
 import setJerseyNumber from "./setJerseyNumber.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 const sign = async (
 	p: Player,
@@ -19,6 +20,7 @@ const sign = async (
 	p.tid = tid;
 	p.numDaysFreeAgent = 0;
 	p.gamesUntilTradable = isRookie ? 0 : Math.round(0.17 * g.get("numGames")); // 14 for basketball, 3 for football
+	delete p.numPlayersTradedAwayNormalized;
 
 	// Handle stats if the season is in progress. Otherwise, not needed until next season.
 	if (phase <= PHASE.PLAYOFFS) {

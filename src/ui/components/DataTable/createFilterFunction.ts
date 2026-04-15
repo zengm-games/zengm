@@ -1,7 +1,7 @@
 import getSearchVal from "./getSearchVal.tsx";
 import getSortVal from "./getSortVal.tsx";
 import type { SortType } from "../../../common/types.ts";
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 import { normalizeIntl } from "../../../common/normalizeIntl.ts";
 
 type Direction = ">" | "<" | "=" | undefined;

@@ -97,6 +97,7 @@ type PlayEvent =
 			type: "rus";
 			p: PlayerGameSim;
 			yds: number;
+			rbw?: Map<PlayerGameSim, { won: boolean }>;
 	  }
 	| {
 			type: "rusTD";
@@ -111,10 +112,12 @@ type PlayEvent =
 			type: "sk";
 			qb: PlayerGameSim;
 			p: PlayerGameSim;
+			ol: PlayerGameSim | undefined;
 			yds: number;
 	  }
 	| {
 			type: "dropback";
+			pbw: Map<PlayerGameSim, { won: boolean }>;
 	  }
 	| {
 			type: "pss";
@@ -381,7 +384,7 @@ type WrappedPenaltyEvent = {
 	};
 };
 
-export type WrappedPlayEvent =
+type WrappedPlayEvent =
 	| {
 			event: PlayEventNonPenalty;
 			statChanges: StatChange[];
@@ -517,6 +520,15 @@ class Play {
 					[state.o, event.p, "rusYds", event.yds],
 					[state.o, event.p, "rusLng", event.yds],
 				);
+
+				if (event.rbw) {
+					for (const [p, { won }] of event.rbw) {
+						statChanges.push([state.o, p, "rba"]);
+						if (won) {
+							statChanges.push([state.o, p, "rbw"]);
+						}
+					}
+				}
 			} else if (event.type === "rusTD") {
 				statChanges.push([state.o, event.p, "rusTD"]);
 			} else if (event.type === "kneel") {
@@ -533,6 +545,10 @@ class Play {
 					[state.d, event.p, "defTckSolo"],
 					[state.d, event.p, "defTckLoss"],
 				);
+
+				if (event.ol) {
+					statChanges.push([state.o, event.ol, "skAlw"]);
+				}
 			} else if (event.type === "pss") {
 				statChanges.push(
 					[state.o, event.qb, "pss"],
@@ -634,6 +650,13 @@ class Play {
 
 					if (event.loss) {
 						statChanges.push([state.d, tackler, "defTckLoss"]);
+					}
+				}
+			} else if (event.type === "dropback") {
+				for (const [p, { won }] of event.pbw) {
+					statChanges.push([state.o, p, "pba"]);
+					if (won) {
+						statChanges.push([state.o, p, "pbw"]);
 					}
 				}
 			}
@@ -1323,11 +1346,7 @@ class Play {
 						.flatMap((statChanges) => {
 							return statChanges.map((statChange) => {
 								const newStatChange = [...statChange] as StatChange;
-
-								if (newStatChange[3] === undefined) {
-									newStatChange[3] = 1;
-								}
-
+								newStatChange[3] ??= 1;
 								newStatChange[4] = true;
 
 								return newStatChange;

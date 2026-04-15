@@ -7,16 +7,13 @@ import {
 	useState,
 	type ReactNode,
 } from "react";
-import {
-	DataTable,
-	DraftAbbrev,
-	HelpPopover,
-	MoreLinks,
-	PlayPauseNext,
-	ResponsiveTableWrapper,
-} from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers, toWorker, useLocal } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { getCols } from "../../common/getCols.ts";
+import { useLocal } from "../util/local.ts";
 import type {
 	DraftLotteryResultArray,
 	View,
@@ -33,6 +30,10 @@ import {
 	NO_LOTTERY_DRAFT_TYPES,
 } from "../../common/constants.ts";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
+import { PlayPauseNext } from "../components/PlayPauseNext.tsx";
+import ResponsiveTableWrapper from "../components/ResponsiveTableWrapper.tsx";
+import { DraftAbbrev } from "../components/DraftAbbrev.tsx";
+import { HelpPopover } from "../components/HelpPopover.tsx";
 
 type MyDraftType = DraftType | "dummy";
 export const getDraftTypeDescription = (

@@ -7,7 +7,7 @@ import getMinPayrollAmount from "./getMinPayrollAmount.ts";
 const rosterLink = (tid: number) =>
 	`<a href="${helpers.leagueUrl([
 		"roster",
-		g.get("teamInfoCache")[tid]?.abbrev,
+		`${g.get("teamInfoCache")[tid]?.abbrev}_${tid}`,
 		g.get("season"),
 	])}">${g.get("teamInfoCache")[tid]?.name}</a>`;
 

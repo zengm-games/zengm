@@ -6,7 +6,7 @@ import {
 	useKeyboardShortcuts,
 	type KeyboardShortcuts,
 } from "../util/keyboardShortcuts.ts";
-import { useLocal } from "../util/index.ts";
+import { useLocal } from "../util/local.ts";
 
 export type FastForward = {
 	keyboardShortcut?: Exclude<
@@ -17,7 +17,7 @@ export type FastForward = {
 	label: string;
 };
 
-const PlayPauseNext = ({
+export const PlayPauseNext = ({
 	className,
 	disabled,
 	fastForwardAlignRight,
@@ -158,5 +158,3 @@ const PlayPauseNext = ({
 		</div>
 	);
 };
-
-export default PlayPauseNext;

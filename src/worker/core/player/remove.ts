@@ -1,5 +1,5 @@
 import { idb } from "../../db/index.ts";
-import { PLAYER } from "../../../common/index.ts";
+import { PLAYER } from "../../../common/constants.ts";
 import type { Player } from "../../../common/types.ts";
 
 const hasRelativeAndMutate = (p: Player, pids: number[]) => {

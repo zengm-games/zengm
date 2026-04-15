@@ -1,4 +1,4 @@
-import { local, useLocal } from "../util/index.ts";
+import { local, useLocal } from "../util/local.ts";
 
 const getWeightString = (pounds: number, units: "metric" | "us") => {
 	if (typeof pounds !== "number") {
@@ -12,13 +12,11 @@ const getWeightString = (pounds: number, units: "metric" | "us") => {
 	return `${pounds} lbs`;
 };
 
-const Weight = ({ pounds }: { pounds: number }) => {
+export const Weight = ({ pounds }: { pounds: number }) => {
 	const units = useLocal((state2) => state2.units);
 
 	return getWeightString(pounds, units);
 };
-
-export default Weight;
 
 export const wrappedWeight = (pounds: number) => {
 	const units = local.getState().units;

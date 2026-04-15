@@ -1,4 +1,4 @@
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import { player } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import {
@@ -9,7 +9,7 @@ import {
 	updatePlayMenu,
 	recomputeLocalUITeamOvrs,
 } from "../../util/index.ts";
-import type { TradeEventTeams } from "../../../common/types.ts";
+import { type Player, type TradeEventTeams } from "../../../common/types.ts";
 import { getTeammateJerseyNumbers } from "../player/genJerseyNumber.ts";
 
 const processTrade = async (
@@ -17,9 +17,6 @@ const processTrade = async (
 	pids: [number[], number[]],
 	dpids: [number[], number[]],
 ) => {
-	let pidsEvent = [...pids[0], ...pids[1]];
-	const dpidsEvent = [...dpids[0], ...dpids[1]];
-
 	const teams: TradeEventTeams = [
 		{
 			assets: [],
@@ -29,33 +26,7 @@ const processTrade = async (
 		},
 	];
 
-	let maxPlayerValue = -Infinity;
-	let maxPid: number | undefined;
-	for (const j of [0, 1] as const) {
-		for (const pid of pids[j]) {
-			const p = await idb.cache.players.get(pid);
-			if (p && p.valueFuzz > maxPlayerValue) {
-				maxPlayerValue = p.valueFuzz;
-				maxPid = p.pid;
-			}
-		}
-	}
-
-	// Make sure to show best player first, so his picture is shown in news feed
-	if (maxPid !== undefined) {
-		pidsEvent = [maxPid, ...pidsEvent.filter((pid) => pid !== maxPid)];
-	}
-
-	const eid = await logEvent({
-		type: "trade",
-		showNotification: false,
-		pids: pidsEvent,
-		dpids: dpidsEvent,
-		tids,
-		score: Math.round(helpers.bound(maxPlayerValue - 40, 0, Infinity)),
-		teams,
-		phase: g.get("phase"),
-	});
+	const playerTransactionInfo = new Map<Player, { fromTid: number }>();
 
 	for (const j of [0, 1] as const) {
 		const k = j === 0 ? 1 : 0;
@@ -108,17 +79,7 @@ const processTrade = async (
 				);
 			}
 
-			if (!p.transactions) {
-				p.transactions = [];
-			}
-			p.transactions.push({
-				season: g.get("season"),
-				phase: g.get("phase"),
-				tid: p.tid,
-				type: "trade",
-				fromTid: tids[j],
-				eid,
-			});
+			playerTransactionInfo.set(p, { fromTid: tids[j] });
 
 			await idb.cache.players.put(p);
 
@@ -159,6 +120,52 @@ const processTrade = async (
 				originalTid: dp.originalTid,
 			});
 		}
+	}
+
+	let pidsEvent = [...pids[0], ...pids[1]];
+	const dpidsEvent = [...dpids[0], ...dpids[1]];
+
+	let maxPlayerValue = -Infinity;
+	let maxPid: number | undefined;
+	for (const j of [0, 1] as const) {
+		for (const pid of pids[j]) {
+			const p = await idb.cache.players.get(pid);
+			if (p && p.valueFuzz > maxPlayerValue) {
+				maxPlayerValue = p.valueFuzz;
+				maxPid = p.pid;
+			}
+		}
+	}
+
+	// Make sure to show best player first, so his picture is shown in news feed
+	if (maxPid !== undefined) {
+		pidsEvent = [maxPid, ...pidsEvent.filter((pid) => pid !== maxPid)];
+	}
+
+	const eid = await logEvent({
+		type: "trade",
+		showNotification: false,
+		pids: pidsEvent,
+		dpids: dpidsEvent,
+		tids,
+		score: Math.round(helpers.bound(maxPlayerValue - 40, 0, Infinity)),
+		teams,
+		phase: g.get("phase"),
+	});
+
+	// Can only do this now, after we know the eid
+	for (const [p, info] of playerTransactionInfo) {
+		if (!p.transactions) {
+			p.transactions = [];
+		}
+		p.transactions.push({
+			season: g.get("season"),
+			phase: g.get("phase"),
+			tid: p.tid,
+			type: "trade",
+			fromTid: info.fromTid,
+			eid,
+		});
 	}
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);

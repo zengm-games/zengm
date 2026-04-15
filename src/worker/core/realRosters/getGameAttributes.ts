@@ -1,4 +1,4 @@
-import { PHASE, REAL_PLAYERS_INFO } from "../../../common/index.ts";
+import { PHASE, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import type {
 	GameAttributesLeague,
 	GetLeagueOptions,

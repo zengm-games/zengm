@@ -1,0 +1,16 @@
+{
+	"extends": "./tsconfig.base.json",
+	"compilerOptions": {
+		"composite": true,
+		"lib": ["es2025", "dom"],
+		"jsx": "react-jsx",
+		"types": [
+			"google-publisher-tag",
+			"gtag.js",
+			"stripe-checkout",
+			"stripe-v2",
+			"wicg-file-system-access"
+		]
+	},
+	"include": ["src"]
+}

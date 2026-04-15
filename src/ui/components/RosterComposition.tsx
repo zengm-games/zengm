@@ -1,5 +1,6 @@
-import HelpPopover from "./HelpPopover.tsx";
-import { bySport, isSport, POSITION_COUNTS } from "../../common/index.ts";
+import { HelpPopover } from "./HelpPopover.tsx";
+import { POSITION_COUNTS } from "../../common/constants.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 type Players = {
 	ratings: {
@@ -30,7 +31,7 @@ const PositionFraction = ({
 	);
 };
 
-const RosterComposition = ({
+export const RosterComposition = ({
 	className = "",
 	players,
 }: {
@@ -162,5 +163,3 @@ const RosterComposition = ({
 		</div>
 	);
 };
-
-export default RosterComposition;

@@ -1,9 +1,9 @@
 import { player, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import posRatings from "../../common/posRatings.ts";
+import { posRatings } from "../../common/posRatings.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
-import { bySport, isSport } from "../../common/index.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 import {
 	NUM_LINES,
 	NUM_PLAYERS_PER_LINE,
@@ -98,7 +98,7 @@ const stats = bySport<Record<string, string[]>>({
 		],
 		WR: ["tgt", "rec", "recYds", "recYdsPerRec", "recTD", "recLng", "fmbLost"],
 		TE: ["tgt", "rec", "recYds", "recYdsPerRec", "recTD", "recLng", "fmbLost"],
-		OL: [],
+		OL: ["pbw", "pba", "pbwr", "rbw", "rba", "rbwr", "skAlw", "skAlwPct"],
 		DL: defenseStats,
 		LB: defenseStats,
 		CB: defenseStats,
@@ -249,7 +249,7 @@ const updateDepth = async (
 					if (!info) {
 						info = {
 							name: `${firstName} ${lastName}`,
-							positions: [] as string[],
+							positions: [],
 						};
 						playerInfoByPid.set(pid, info);
 					}

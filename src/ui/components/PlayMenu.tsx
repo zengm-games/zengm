@@ -1,18 +1,15 @@
 import { useCallback, type MouseEvent } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
-import {
-	confirm,
-	local,
-	realtimeUpdate,
-	toWorker,
-	useLocal,
-} from "../util/index.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { realtimeUpdate } from "../util/realtimeUpdate.ts";
+import { local, useLocal } from "../util/local.ts";
 import type { Option } from "../../common/types.ts";
 import clsx from "clsx";
 import {
 	formatKeyboardShortcut,
 	useKeyboardShortcuts,
 } from "../util/keyboardShortcuts.ts";
+import { confirm } from "../util/confirm.tsx";
 
 const handleOptionClick = (option: Option, event: MouseEvent) => {
 	if (!option.url) {

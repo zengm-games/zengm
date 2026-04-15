@@ -3,7 +3,7 @@ import { mergeByPk } from "./helpers.ts";
 import type { GetCopyType, PlayoffSeries } from "../../../common/types.ts";
 
 const getCopies = async (
-	options: any = {},
+	options: unknown,
 	type?: GetCopyType,
 ): Promise<PlayoffSeries[]> => {
 	return mergeByPk(

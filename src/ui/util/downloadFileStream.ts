@@ -1,5 +1,5 @@
 import streamSaver from "streamsaver";
-import downloadFile from "./downloadFile.ts";
+import { downloadFile } from "./downloadFile.ts";
 
 const HAS_FILE_SYSTEM_ACCESS_API = !!window.showSaveFilePicker;
 
@@ -30,7 +30,7 @@ const downloadFileStream = async (
 								},
 							},
 				],
-			} as any);
+			});
 
 			fileStream = await fileHandle.createWritable();
 		} else {

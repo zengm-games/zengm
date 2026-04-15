@@ -1,12 +1,19 @@
 import { useEffect, useId, useReducer, useRef, useState } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import type { NewLeagueTeamWithoutRank } from "./types.ts";
-import type { Conf, Div, Player, View } from "../../../common/types.ts";
+import type {
+	Conf,
+	Div,
+	NonEmptyArray,
+	Player,
+	View,
+} from "../../../common/types.ts";
 import clsx from "clsx";
 import { arrayMove } from "@dnd-kit/sortable";
 import UpsertTeamModal from "./UpsertTeamModal.tsx";
-import { StickyBottomButtons } from "../../components/index.tsx";
-import { logEvent, toWorker } from "../../util/index.ts";
+import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import confirmDeleteWithChildren from "./confirmDeleteWithChildren.tsx";
 import { Dropdown, OverlayTrigger, Popover } from "react-bootstrap";
 import { applyRealTeamInfos } from "./index.tsx";
@@ -491,7 +498,7 @@ const PlayersButton = ({
 					<Popover.Header>Top Players</Popover.Header>
 					<Popover.Body>
 						<ul className="list-unstyled mb-0">
-							{orderBy(players, (p) => p.ratings.at(-1).ovr, "desc")
+							{orderBy(players, (p) => p.ratings.at(-1)!.ovr, "desc")
 								.slice(0, 10)
 								.map((p) => {
 									const ratings = p.ratings.at(-1)!;
@@ -1114,8 +1121,8 @@ const CustomizeTeams = ({
 		const response = await toWorker("main", "getRandomTeams", {
 			divInfo: {
 				type: "explicit",
-				confs: myConfs,
-				divs: myDivs,
+				confs: myConfs as NonEmptyArray<Conf>,
+				divs: myDivs as NonEmptyArray<Div>,
 				numTeamsPerDiv,
 			},
 			real,

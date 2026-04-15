@@ -1,4 +1,4 @@
-import { createLogger } from "../../common/index.ts";
+import { createLogger } from "../../common/createLogger.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import toUI from "./toUI.ts";

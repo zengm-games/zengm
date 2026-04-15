@@ -1,8 +1,9 @@
 import clsx from "clsx";
-import { helpers, useLocal } from "../../util/index.ts";
-import { TeamLogoInline } from "../../components/index.tsx";
+import { helpers } from "../../util/helpers.ts";
+import { useLocal } from "../../util/local.ts";
+import { TeamLogoInline } from "../../components/TeamLogoInline.tsx";
 import type { LocalStateUI } from "../../../common/types.ts";
-import PlayerNameLabels from "../../components/PlayerNameLabels.tsx";
+import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import { DraftButtons } from "./DraftButtons.tsx";
 
 const Logo = ({

@@ -1,15 +1,16 @@
-import { groupBy } from "../../common/utils.ts";
-import { DataTable, MoreLinks } from "../components/index.tsx";
+import { DataTable } from "../components/DataTable/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { getCols, helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedCheckmarkOrCross } from "../components/CheckmarkOrCross.tsx";
 
-const formatYear = (year: {
-	[key: string]: { team: string; season: number }[];
-}) => {
+type YearInfo = Record<string, { team: string; season: number }[]>;
+
+const formatYear = (year: YearInfo) => {
 	return Object.entries(year).map(([k, yearInfo], i) => {
 		const years = helpers.yearRanges(yearInfo.map((y) => y.season)).join(", ");
 		return (
@@ -21,9 +22,7 @@ const formatYear = (year: {
 	});
 };
 
-const formatYearString = (year: {
-	[key: string]: { team: string; season: number }[];
-}) => {
+const formatYearString = (year: YearInfo) => {
 	return Object.entries(year)
 		.map(([k, yearInfo], i) => {
 			const years = helpers
@@ -57,7 +56,7 @@ const AwardsRecords = ({
 	);
 
 	const rows: DataTableRow[] = awardsRecords.map((a) => {
-		const yearsGrouped = groupBy(a.years, "team");
+		const yearsGrouped = Object.groupBy(a.years, (row) => row.team) as YearInfo;
 
 		return {
 			key: a.pid,

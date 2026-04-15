@@ -1,35 +1,32 @@
 import { Fragment, useState } from "react";
 import type { ReactNode } from "react";
-import {
-	CountryFlag,
-	Height,
-	PlayerPicture,
-	SkillsBlock,
-	WatchBlock,
-	Weight,
-	JerseyNumber,
-	Mood,
-	InjuryIcon,
-} from "../../components/index.tsx";
-import {
-	confirm,
-	helpers,
-	toWorker,
-	realtimeUpdate,
-	getCols,
-} from "../../util/index.ts";
+import { WatchBlock } from "../../components/WatchBlock.tsx";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import type {
 	GameAttributesLeague,
 	Phase,
 	Player,
 	View,
 } from "../../../common/types.ts";
-import { bySport, isSport, PHASE, PLAYER } from "../../../common/index.ts";
+import { PHASE, PLAYER } from "../../../common/constants.ts";
 import clsx from "clsx";
 import AwardsSummary from "./AwardsSummary.tsx";
 import RatingsOverview from "./RatingsOverview.tsx";
 import Note from "./Note.tsx";
 import { ButtonGroup, Dropdown, DropdownButton } from "react-bootstrap";
+import { CountryFlag } from "../../components/CountryFlag.tsx";
+import { InjuryIcon } from "../../components/InjuryIcon.tsx";
+import { SkillsBlock } from "../../components/SkillsBlock.tsx";
+import { Mood } from "../../components/Mood.tsx";
+import { PlayerPicture } from "../../components/PlayerPicture.tsx";
+import { JerseyNumber } from "../../components/JerseyNumber.tsx";
+import { Height } from "../../components/Height.tsx";
+import { Weight } from "../../components/Weight.tsx";
+import { confirm } from "../../util/confirm.tsx";
+import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
+import { getCols } from "../../../common/getCols.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const Relatives = ({
 	gender,

@@ -1,9 +1,11 @@
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type { Achievement, NonEmptyArray, Player } from "../../common/types.ts";
-import { bySport, isSport, PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
 import helpers from "./helpers.ts";
 import { range } from "../../common/utils.ts";
+import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 const goldenOldiesCutoffs: [number, number, number] = bySport({
 	baseball: [30, 33, 36],
@@ -1095,7 +1097,7 @@ const achievements: Achievement[] = [
 			basketball:
 				"Players on your team win MVP, DPOY, SMOY, MIP, ROY, and Finals MVP in the same season.",
 			football:
-				"Players on your team win MVP, DPOY, OROY, DROY, and Finals MVP in the same season.",
+				"Players on your team win MVP, OPOY, DPOY, OROY, DROY, and Finals MVP in the same season.",
 			hockey:
 				"Players on your team win MVP, DPOY, DFOY, GOY, ROY, and Finals MVP in the same season",
 		}),
@@ -1125,6 +1127,7 @@ const achievements: Achievement[] = [
 				football:
 					awards &&
 					awards.mvp?.tid === userTid &&
+					awards.opoy?.tid === userTid &&
 					awards.dpoy?.tid === userTid &&
 					awards.oroy?.tid === userTid &&
 					awards.droy?.tid === userTid &&
@@ -1457,7 +1460,11 @@ if (isSport("hockey") || isSport("basketball")) {
 					},
 					"noCopyCache",
 				);
-				return !!(t && t.seasonAttrs.won >= 70);
+				return !!(
+					t &&
+					t.seasonAttrs.won / g.get("numGames") >=
+						70 / defaultGameAttributes.numGames[0].value
+				);
 			},
 
 			when: "afterRegularSeason",

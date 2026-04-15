@@ -1,5 +1,5 @@
 import { assert, beforeAll, beforeEach, describe, test } from "vitest";
-import testHelpers from "../../test/helpers.ts";
+import { resetCache, resetG } from "../../test/helpers.ts";
 import { player } from "../core/index.ts";
 import { g } from "../util/index.ts";
 import { idb } from "./index.ts";
@@ -7,9 +7,9 @@ import type { Player } from "../../common/types.ts";
 import { DEFAULT_LEVEL } from "../../common/budgetLevels.ts";
 
 beforeAll(async () => {
-	testHelpers.resetG();
+	resetG();
 
-	await testHelpers.resetCache({
+	await resetCache({
 		players: [player.generate(g.get("userTid"), 30, 2017, true, DEFAULT_LEVEL)],
 	});
 });

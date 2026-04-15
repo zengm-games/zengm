@@ -28,7 +28,7 @@ export const styleGrid11 = {
 	gridRow: 1,
 };
 
-const ActionButton = ({
+export const ActionButton = ({
 	children,
 	className,
 	disabled,
@@ -90,5 +90,3 @@ const ActionButton = ({
 		</button>
 	);
 };
-
-export default ActionButton;

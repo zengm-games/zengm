@@ -11,6 +11,7 @@ import { playwright } from "@vitest/browser-playwright";
 import { sportFunctions } from "./tools/lib/rolldownPlugins/sportFunctions.ts";
 
 const footballTests = ["**/*.football/*.test.ts", "**/*.football.test.ts"];
+const baseballTests = ["**/*.baseball/*.test.ts", "**/*.baseball.test.ts"];
 
 const makeProject = (
 	sport: Sport,
@@ -43,11 +44,19 @@ export default defineConfig({
 			makeProject("basketball", "node", {
 				name: "basketball",
 				include: ["**/*.test.ts"],
-				exclude: [...configDefaults.exclude, ...footballTests],
+				exclude: [
+					...configDefaults.exclude,
+					...footballTests,
+					...baseballTests,
+				],
 			}),
 			makeProject("football", "node", {
 				name: "football",
 				include: footballTests,
+			}),
+			makeProject("baseball", "node", {
+				name: "baseball",
+				include: baseballTests,
 			}),
 			makeProject("basketball", "browser", {
 				name: "browser",

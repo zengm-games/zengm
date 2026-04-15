@@ -1,8 +1,9 @@
-import { logEvent, toWorker } from "../util/index.ts";
+import { logEvent } from "../util/logEvent.ts";
+import { toWorker } from "../util/toWorker.ts";
 
 // season is just needed during re-signing, because it's used to make sure drafted players in hard cap leagues always
 // are willing to sign.
-const NegotiateButtons = ({
+export const NegotiateButtons = ({
 	canGoOverCap,
 	capSpace,
 	disabled,
@@ -67,5 +68,3 @@ const NegotiateButtons = ({
 		</div>
 	);
 };
-
-export default NegotiateButtons;

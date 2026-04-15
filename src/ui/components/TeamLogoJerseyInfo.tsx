@@ -1,6 +1,6 @@
 import { type CSSProperties, useState, useLayoutEffect } from "react";
-import JerseyNumber from "./JerseyNumber.tsx";
-import { toWorker } from "../util/index.ts";
+import { JerseyNumber } from "./JerseyNumber.tsx";
+import { toWorker } from "../util/toWorker.ts";
 import type { FaceConfig } from "facesjs";
 import { MyFace } from "./MyFace.tsx";
 

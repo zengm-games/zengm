@@ -1,3 +1,4 @@
+import { DEFAULT_CONFS } from "../../common/constants.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
 import goatFormula from "../util/goatFormula.ts";
@@ -16,6 +17,7 @@ const updateOptions = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			numActiveTeams: undefined,
 			goatFormula: goatFormula.DEFAULT_FORMULA,
 			goatFormulaSeason: goatFormula.DEFAULT_FORMULA_SEASON,
+			confs: DEFAULT_CONFS,
 		};
 
 		return {

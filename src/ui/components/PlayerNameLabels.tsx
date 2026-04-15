@@ -1,11 +1,13 @@
-import RatingsStatsPopover from "./RatingsStatsPopover/index.tsx";
-import SkillsBlock from "./SkillsBlock.tsx";
-import { helpers, toWorker, useLocalPartial } from "../util/index.ts";
+import { RatingsStatsPopover } from "./RatingsStatsPopover/index.tsx";
+import { SkillsBlock } from "./SkillsBlock.tsx";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
 import type { Player, PlayerInjury } from "../../common/types.ts";
-import InjuryIcon from "./InjuryIcon.tsx";
-import SeasonIcons from "../views/Player/SeasonIcons.tsx";
-import CountryFlag from "./CountryFlag.tsx";
+import { InjuryIcon } from "./InjuryIcon.tsx";
+import { SeasonIcons } from "./SeasonIcons.tsx";
+import { CountryFlag } from "./CountryFlag.tsx";
 import { useEffect, useState } from "react";
+import { useLocalPartial } from "../util/local.ts";
 
 type Props = {
 	awards?: Player["awards"];
@@ -131,7 +133,7 @@ const CountryFlagPid = ({
 	return <CountryFlag className={className} country={country ?? "Unknown"} />;
 };
 
-const PlayerNameLabels = (props: Props) => {
+export const PlayerNameLabels = (props: Props) => {
 	const localState = useLocalPartial(["alwaysShowCountry", "fullNames"]);
 	const alwaysShowCountry = localState.alwaysShowCountry;
 	const fullNames = localState.fullNames || props.fullNames;
@@ -289,5 +291,3 @@ export const wrappedPlayerNameLabels = (props: Props) => {
 		searchValue: `${firstName} ${lastName}`,
 	};
 };
-
-export default PlayerNameLabels;

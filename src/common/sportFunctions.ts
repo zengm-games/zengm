@@ -1,4 +1,4 @@
-const bySport = <T>(
+export const bySport = <T>(
 	object:
 		| {
 				baseball: T;
@@ -30,5 +30,8 @@ const bySport = <T>(
 
 	throw new Error("No value for sport and no default");
 };
-
-export default bySport;
+export const isSport = (
+	sport: "baseball" | "basketball" | "football" | "hockey",
+) => {
+	return sport === process.env.SPORT;
+};

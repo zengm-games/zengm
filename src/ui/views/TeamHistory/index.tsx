@@ -4,7 +4,7 @@ import Overall from "./Overall.tsx";
 import Players from "./Players.tsx";
 import RetiredJerseyNumbers from "./RetiredJerseyNumbers.tsx";
 import Seasons from "./Seasons.tsx";
-import { MoreLinks } from "../../components/index.tsx";
+import { MoreLinks } from "../../components/MoreLinks.tsx";
 import HideableSection from "../../components/HideableSection.tsx";
 
 const TeamHistory = ({

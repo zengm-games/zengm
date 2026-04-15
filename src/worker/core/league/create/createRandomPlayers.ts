@@ -1,9 +1,12 @@
 import { draft, player, freeAgents } from "../../index.ts";
-import { PHASE, PLAYER, POSITION_COUNTS } from "../../../../common/index.ts";
-import { groupBy, groupByUnique, orderBy } from "../../../../common/utils.ts";
+import {
+	PHASE,
+	PLAYER,
+	POSITION_COUNTS,
+} from "../../../../common/constants.ts";
+import { groupByUnique, orderBy } from "../../../../common/utils.ts";
 import type {
 	PlayerWithoutKey,
-	MinimalPlayerRatings,
 	PlayerContract,
 	Team,
 } from "../../../../common/types.ts";
@@ -56,7 +59,7 @@ const createRandomPlayers = async ({
 
 	// Keep synced with Dropdown.js seasonsAndOldDrafts and addRelatives
 	const rookieSalaries = draft.getRookieSalaries();
-	let keptPlayers: PlayerWithoutKey<MinimalPlayerRatings>[] = [];
+	let keptPlayers: PlayerWithoutKey[] = [];
 
 	for (
 		let numYearsAgo = NUM_PAST_SEASONS;
@@ -284,9 +287,13 @@ const createRandomPlayers = async ({
 		}
 	}
 
-	const addToFreeAgents = (
-		p: PlayerWithoutKey<MinimalPlayerRatings> | undefined,
-	) => {
+	// Assume this is all 0 for a new league
+	const numPlayersTradedAwayNormalized: Record<number, number> = {};
+	for (const tid of activeTids) {
+		numPlayersTradedAwayNormalized[tid] = 0;
+	}
+
+	const addToFreeAgents = (p: PlayerWithoutKey | undefined) => {
 		// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 		if (p) {
 			// So half will be eligible to retire after the first season
@@ -301,7 +308,7 @@ const createRandomPlayers = async ({
 				false,
 			);
 			p.contract.temp = true;
-			player.addToFreeAgents(p);
+			player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
 			players.push(p);
 		}
 	};
@@ -318,7 +325,7 @@ const createRandomPlayers = async ({
 			positionCountsSum += positionCount;
 		}
 
-		const groupedPlayers = groupBy(keptPlayers, (p) => p.ratings[0].pos);
+		const groupedPlayers = Object.groupBy(keptPlayers, (p) => p.ratings[0].pos);
 
 		for (const pos of Object.keys(groupedPlayers)) {
 			const limit = Math.round(

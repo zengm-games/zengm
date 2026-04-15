@@ -2,14 +2,13 @@ import {
 	PHASE,
 	TEAM_STATS_TABLES,
 	POSITIONS,
-	bySport,
-	isSport,
 	PLAYER_STATS_TABLES,
 	REMAINING_PLAYOFF_TEAMS_PHASES,
-} from "../../common/index.ts";
-import { useLocalPartial } from "../util/index.ts";
+} from "../../common/constants.ts";
+import { useLocalPartial } from "../util/local.ts";
 import type { LocalStateUI } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 export type ResponsiveOption = {
 	minWidth: number;
@@ -96,13 +95,14 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	mvp: "Most Valuable Player",
 	finals_mvp: isSport("hockey") ? "Playoffs MVP" : "Finals MVP",
 	sfmvp: "Semifinals MVP",
+	opoy: "Offensive Player of the Year",
 	dpoy: "Defensive Player of the Year",
 	dfoy: "Defensive Forward of the Year",
 	goy: "Goalie of the Year",
 	smoy: "Sixth Man of the Year",
 	mip: "Most Improved Player",
 	roy: "Rookie of the Year",
-	poy: "Pitcher of the Year",
+	poy: `${isSport("baseball") ? "Pitcher" : "Protector"} of the Year`,
 	rpoy: "Relief Pitcher of the Year",
 	first_team: "First Team All-League",
 	second_team: "Second Team All-League",
@@ -339,6 +339,7 @@ const useDropdownOptions = (
 			football: [
 				"passing",
 				"rushingReceiving",
+				"blocking",
 				"defense",
 				"kicking",
 				"punting",
@@ -411,6 +412,8 @@ const useDropdownOptions = (
 				"champion",
 				"mvp",
 				"finals_mvp",
+				"opoy",
+				"poy",
 				"dpoy",
 				"oroy",
 				"droy",

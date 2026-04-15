@@ -1,7 +1,7 @@
 import { g, helpers } from "../../util/index.ts";
 import setGameAttributes from "./setGameAttributes.ts";
 import type { GameAttributesLeague } from "../../../common/types.ts";
-import { PLAYER } from "../../../common/index.ts";
+import { PLAYER } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import player from "../player/index.ts";
 import draft from "../draft/index.ts";

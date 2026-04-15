@@ -1,15 +1,5 @@
-import {
-	ads,
-	analyticsEvent,
-	autoPlayDialog,
-	confirm,
-	confirmDeleteAllLeagues,
-	local,
-	localActions,
-	realtimeUpdate,
-	requestPersistentStorage,
-	safeLocalStorage,
-} from "../util/index.ts";
+import { realtimeUpdate } from "../util/realtimeUpdate.ts";
+import { local, localActions } from "../util/local.ts";
 import { showEvent } from "../util/logEvent.ts";
 import type {
 	LocalStateUI,
@@ -18,6 +8,13 @@ import type {
 	GameAttributesLeague,
 } from "../../common/types.ts";
 import { crossTabEmitter } from "../util/crossTabEmitter.ts";
+import { ads } from "../util/ads.ts";
+import { analyticsEvent } from "../util/analyticsEvent.ts";
+import { autoPlayDialog } from "../util/autoPlayDialog.tsx";
+import { confirmDeleteAllLeagues } from "../util/confirmDeleteAllLeagues.tsx";
+import { requestPersistentStorage } from "../util/requestPersistentStorage.ts";
+import { confirm } from "../util/confirm.tsx";
+import { safeLocalStorage } from "../util/safeLocalStorage.ts";
 
 const initAds = (type: "accountChecked" | "uiRendered") => {
 	ads.setLoadingDone(type);

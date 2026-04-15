@@ -5,8 +5,8 @@ import {
 	SUBREDDIT_NAME,
 	VIDEO_ADS,
 	VIDEO_AD_PADDING,
-} from "../../common/index.ts";
-import { useLocalPartial } from "../util/index.ts";
+} from "../../../common/constants.ts";
+import { useLocalPartial } from "../../util/local.ts";
 
 const footerLinks = [
 	{
@@ -39,7 +39,7 @@ const footerLinks = [
 	},
 ];
 
-const Footer = memo(() => {
+export const Footer = memo(() => {
 	const { gold } = useLocalPartial(["gold"]);
 
 	const video_ad_padding = VIDEO_ADS && !gold;
@@ -143,5 +143,3 @@ const Footer = memo(() => {
 		</footer>
 	);
 });
-
-export default Footer;

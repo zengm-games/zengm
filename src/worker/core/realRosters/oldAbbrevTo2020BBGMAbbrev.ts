@@ -97,6 +97,12 @@ const oldAbbrevTo2020BBGMAbbrev = (abbrev: string) => {
 		NYB: "BKN",
 		PHV: "GS",
 		SDA: "HOU",
+
+		// For 2029 expansion team, subject to change
+		LV: "LV",
+		SET: "SET",
+		_LV: "LV",
+		_SET: "SET",
 	};
 
 	if (Object.hasOwn(abbrevs, abbrev)) {

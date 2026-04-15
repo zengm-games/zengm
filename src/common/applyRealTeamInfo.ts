@@ -30,13 +30,13 @@ const applyToObject = (t: MyTeam, realInfo: IndividualRealTeamInfo) => {
 	}
 
 	if (updatedImgURL && realInfo.imgURLSmall === undefined) {
-		delete (t as any).imgURLSmall;
+		delete t.imgURLSmall;
 	}
 
 	return updated;
 };
 
-const applyRealTeamInfo = (
+export const applyRealTeamInfo = (
 	t: MyTeam,
 	realTeamInfo: RealTeamInfo,
 	season: number,
@@ -93,5 +93,3 @@ const applyRealTeamInfo = (
 
 	return applyToObject(t, realInfoMerged);
 };
-
-export default applyRealTeamInfo;

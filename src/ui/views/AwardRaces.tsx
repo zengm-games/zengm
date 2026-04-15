@@ -1,15 +1,14 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, getCols } from "../util/index.ts";
-import {
-	DataTable,
-	RatingWithChange,
-	StatWithChange,
-	MoreLinks,
-} from "../components/index.tsx";
+import { helpers } from "../util/helpers.ts";
+import { getCols } from "../../common/getCols.ts";
+import { DataTable } from "../components/DataTable/index.tsx";
+import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
-import { PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { RatingWithChange } from "../components/RatingWithChange.tsx";
+import { StatWithChange } from "../components/StatWithChange.tsx";
 
 const AwardRaces = ({
 	awardCandidates,
@@ -35,7 +34,7 @@ const AwardRaces = ({
 			<MoreLinks type="awards" page="award_races" season={season} />
 
 			<div className="row" style={{ marginTop: -14 }}>
-				{awardCandidates.map(({ name, players, stats }) => {
+				{awardCandidates.map(({ asterisk, name, players, stats }) => {
 					const mip = name === "Most Improved Player";
 					const roy = name === "Rookie of the Year";
 
@@ -181,14 +180,25 @@ const AwardRaces = ({
 									hideAllControls
 									name={`AwardRaces${name}`}
 									rows={rows}
-									title={<h2>{name}</h2>}
+									title={
+										<h2>
+											{name}
+											{asterisk ? "*" : null}
+										</h2>
+									}
 								/>
 							) : (
 								<>
-									<h2>{name}</h2>
+									<h2>
+										{name}
+										{asterisk ? "*" : null}
+									</h2>
 									<p>No candidates yet...</p>
 								</>
 							)}
+							{asterisk ? (
+								<div className="text-body-secondary">* {asterisk}</div>
+							) : null}
 						</div>
 					);
 				})}

@@ -1,7 +1,7 @@
 import { idb } from "../db/index.ts";
 import toUI from "./toUI.ts";
 import type { Locks } from "../../common/types.ts";
-import { helpers } from "../../common/index.ts";
+import helpers from "./helpers.ts";
 
 // These are transient variables that always reset to "false" on reload. See local.js for more.
 const locks: Locks = {

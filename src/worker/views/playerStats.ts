@@ -1,13 +1,6 @@
-import {
-	bySport,
-	helpers,
-	isSport,
-	PHASE,
-	PLAYER,
-	PLAYER_STATS_TABLES,
-} from "../../common/index.ts";
+import { PHASE, PLAYER, PLAYER_STATS_TABLES } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
-import { g } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
@@ -15,6 +8,8 @@ import type {
 } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getBestPos } from "../core/player/checkJerseyNumberRetirement.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { getActivePlayoffTids } from "./playerRatings.ts";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerStats">,
@@ -106,8 +101,13 @@ const updatePlayers = async (
 			statType = "totals";
 		}
 
-		if (tid === undefined && inputs.abbrev === "watch") {
-			playersAll = playersAll.filter((p) => p.watch);
+		if (tid === undefined) {
+			if (inputs.abbrev === "watch") {
+				playersAll = playersAll.filter((p) => p.watch);
+			} else if (inputs.abbrev === "playoffs") {
+				const playoffTids = await getActivePlayoffTids();
+				playersAll = playersAll.filter((p) => playoffTids.has(p.tid));
+			}
 		}
 
 		let players = await idb.getCopies.playersPlus(playersAll, {
@@ -224,7 +224,9 @@ const updatePlayers = async (
 			if (statsTable.superCols) {
 				// Account for extra "Season" column
 				superCols = helpers.deepCopy(statsTable.superCols);
-				superCols[0].colspan += 1;
+				if (superCols[0]) {
+					superCols[0].colspan += 1;
+				}
 			}
 		} else {
 			superCols = statsTable.superCols;

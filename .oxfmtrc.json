@@ -1,0 +1,11 @@
+{
+	"$schema": "./node_modules/oxfmt/configuration_schema.json",
+	"useTabs": true,
+	"printWidth": 80,
+	"sortPackageJson": false,
+	"ignorePatterns": [
+		"data/real-player-*.json",
+		"data/real-schedules*.json",
+		"CLA-*.md"
+	]
+}

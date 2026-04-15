@@ -1,5 +1,5 @@
 import { afterAll, assert, beforeAll, describe, test } from "vitest";
-import testHelpers from "../../test/helpers.ts";
+import { mockIDBLeague, resetCache, resetG } from "../../test/helpers.ts";
 import { player, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
@@ -26,12 +26,12 @@ const get = (slug: string) => {
 
 describe("checkAchievement", () => {
 	beforeAll(async () => {
-		testHelpers.resetG();
+		resetG();
 		g.setWithoutSavingToDB("season", 2013);
 		g.setWithoutSavingToDB("userTid", 7);
 
 		const teamsDefault = helpers.getTeamsDefault();
-		await testHelpers.resetCache({
+		await resetCache({
 			players: [
 				player.generate(0, 30, 2010, true, DEFAULT_LEVEL),
 				player.generate(0, 30, 2010, true, DEFAULT_LEVEL),
@@ -40,7 +40,7 @@ describe("checkAchievement", () => {
 			teamSeasons: teamsDefault.map((t) => team.genSeasonRow(t)),
 		});
 
-		idb.league = testHelpers.mockIDBLeague();
+		idb.league = mockIDBLeague();
 	});
 	afterAll(() => {
 		// @ts-expect-error

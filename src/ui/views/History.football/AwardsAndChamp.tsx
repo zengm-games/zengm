@@ -1,6 +1,6 @@
-import { helpers } from "../../../ui/util/index.ts";
+import { helpers } from "../../../ui/util/helpers.ts";
 import type { ActualProps } from "./index.tsx";
-import { AWARD_NAMES } from "../../../common/index.ts";
+import { AWARD_NAMES } from "../../../common/constants.ts";
 
 const Winner = ({
 	award,
@@ -114,8 +114,12 @@ const AwardsAndChamp = ({
 					))}
 				<h2>{AWARD_NAMES.mvp}</h2>
 				<Winner award={awards.mvp} season={season} userTid={userTid} />
+				<h2>{AWARD_NAMES.opoy}</h2>
+				<Winner award={awards.opoy} season={season} userTid={userTid} />
 			</div>
 			<div className="col-sm-12 col-6">
+				<h2>{AWARD_NAMES.poy}</h2>
+				<Winner award={awards.poy} season={season} userTid={userTid} />
 				<h2>{AWARD_NAMES.dpoy}</h2>
 				<Winner award={awards.dpoy} season={season} userTid={userTid} />
 				<h2>{AWARD_NAMES.oroy}</h2>

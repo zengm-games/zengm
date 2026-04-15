@@ -1,5 +1,5 @@
 import { ACCOUNT_API_URL } from "./constants.ts";
-import fetchWrapper from "./fetchWrapper.ts";
+import { fetchWrapper } from "./fetchWrapper.ts";
 
 export const analyticsEventLocal = async (
 	type: "new_league" | "completed_season",

@@ -1,16 +1,15 @@
 import { useState, type CSSProperties } from "react";
 import { OverlayTrigger, Popover } from "react-bootstrap";
-import {
-	RecordAndPlayoffs,
-	RosterComposition,
-	PlusMinus,
-} from "../../components/index.tsx";
-import { helpers, toWorker } from "../../util/index.ts";
+import { RecordAndPlayoffs } from "../../components/RecordAndPlayoffs.tsx";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import InstructionsAndSortButtons from "./InstructionsAndSortButtons.tsx";
 import PlayThroughInjurySliders from "./PlayThroughInjuriesSliders.tsx";
 import type { View } from "../../../common/types.ts";
-import { bySport } from "../../../common/index.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import Note from "../Player/Note.tsx";
+import { RosterComposition } from "../../components/RosterComposition.tsx";
+import { PlusMinus } from "../../components/PlusMinus.tsx";
 
 const fontSizeLarger = { fontSize: "larger" };
 
@@ -155,6 +154,7 @@ const TopStuff = ({
 	openRosterSpots,
 	payroll,
 	players,
+	playoffsByConf,
 	profit,
 	salaryCap,
 	salaryCapType,
@@ -163,6 +163,7 @@ const TopStuff = ({
 	showTradingBlock,
 	t,
 	tid,
+	usePts,
 	userTid,
 }: Pick<
 	View<"roster">,
@@ -178,6 +179,7 @@ const TopStuff = ({
 	| "minPayrollAmount"
 	| "payroll"
 	| "players"
+	| "playoffsByConf"
 	| "salaryCap"
 	| "salaryCapType"
 	| "season"
@@ -185,6 +187,7 @@ const TopStuff = ({
 	| "showTradingBlock"
 	| "t"
 	| "tid"
+	| "usePts"
 	| "userTid"
 > & {
 	openRosterSpots: number;
@@ -253,22 +256,41 @@ const TopStuff = ({
 					<div className="team-picture" style={logoStyle} />
 					<div>
 						<div>
-							<span style={fontSizeLarger}>{recordAndPlayoffs}</span>
-							<br />
+							<div style={fontSizeLarger}>{recordAndPlayoffs}</div>
+							{t.rank !== undefined ? (
+								<div>
+									{helpers.ordinal(t.rank)} in{" "}
+									{playoffsByConf ? "conference" : "league"}
+									{t.gb > 0 ? (
+										<>
+											, {t.gb}{" "}
+											{usePts ? (
+												<span title="Points Back">PB</span>
+											) : (
+												<span title="Games Back">GB</span>
+											)}
+										</>
+									) : null}
+								</div>
+							) : null}
 							{!challengeNoRatings ? (
-								<>
+								<div>
 									Team rating:{" "}
 									<TeamRating ovr={t.ovr} ovrCurrent={t.ovrCurrent} />
-									<br />
-								</>
+								</div>
 							) : null}
-							<span title="Average margin of victory">Average MOV</span>:{" "}
-							<PlusMinus>{marginOfVictory}</PlusMinus>
-							<br />
-							<span title="Average age, weighted by minutes played">
-								Average age
-							</span>
-							: {t.seasonAttrs.avgAge?.toFixed(1)}
+							<div className="d-flex gap-3">
+								<div>
+									<span title="Average margin of victory">MOV</span>:{" "}
+									<PlusMinus>{marginOfVictory}</PlusMinus>
+								</div>
+								<div>
+									<span title="Average age, weighted by minutes played">
+										Age
+									</span>
+									: {t.seasonAttrs.avgAge?.toFixed(1)}
+								</div>
+							</div>
 						</div>
 
 						{isCurrentSeason ? (

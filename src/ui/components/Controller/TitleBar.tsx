@@ -1,8 +1,48 @@
-import Dropdown from "./Dropdown.tsx";
-import DropdownLinks from "./DropdownLinks.tsx";
-import NewWindowLink from "./NewWindowLink.tsx";
-import { useLocalPartial } from "../util/index.ts";
-import type { MenuItemHeader } from "../../common/types.ts";
+import Dropdown from "../Dropdown.tsx";
+import DropdownLinks from "../DropdownLinks.tsx";
+import { helpers } from "../../util/helpers.ts";
+import { useLocalPartial } from "../../util/local.ts";
+import type { MenuItemHeader } from "../../../common/types.ts";
+import { useCallback } from "react";
+
+type Props = {
+	parts?: (number | string)[];
+};
+
+const NewWindowLink = ({ parts }: Props) => {
+	const handleClick = useCallback(() => {
+		const url = parts ? helpers.leagueUrl(parts) : document.URL;
+
+		// Window name is set to the current time, so each window has a unique name and thus a new window is always opened
+		window.open(
+			`${url}?w=popup`,
+			String(Date.now()),
+			"height=600,width=800,scrollbars=yes",
+		);
+	}, [parts]);
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			width="13"
+			height="13"
+			viewBox="0 0 272.8 272.9"
+			className="new_window ms-2"
+			onClick={handleClick}
+		>
+			<title>Open in new window</title>
+			<path fill="none" strokeWidth="20" d="M60 10h203v203H60z" />
+			<path
+				d="M107 171L216 55v75-75h-75"
+				fill="none"
+				strokeWidth="30"
+				strokeLinejoin="bevel"
+			/>
+			<path d="M205 40h26v15h-26z" />
+			<path d="M10 50v223" strokeWidth="20" />
+			<path d="M10 263h213M1 60h60M213 220v46" strokeWidth="20" />
+		</svg>
+	);
+};
 
 const genPath = (parts: string[], season: string | undefined) => {
 	if (season !== undefined) {
@@ -12,7 +52,7 @@ const genPath = (parts: string[], season: string | undefined) => {
 	return parts;
 };
 
-const TitleBar = () => {
+export const TitleBar = () => {
 	const {
 		title,
 		customMenu,
@@ -203,5 +243,3 @@ const TitleBar = () => {
 		</aside>
 	);
 };
-
-export default TitleBar;

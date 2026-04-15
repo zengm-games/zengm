@@ -1,25 +1,21 @@
-import { bySport, PLAYER } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type {
-	ViewInput,
-	MinimalPlayerRatings,
-	Player,
-} from "../../common/types.ts";
+import type { ViewInput, Player } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getDraftLotteryProbs } from "../../common/draftLottery.ts";
 import { getNumToPick } from "../core/draft/genOrder.ts";
 import { maxBy } from "../../common/utils.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const updateDraftTeamHistory = async (
 	inputs: ViewInput<"draftTeamHistory">,
 ) => {
 	let filter;
 	if (inputs.tid >= 0) {
-		filter = (p: Player<MinimalPlayerRatings>) => p.draft.tid === inputs.tid;
+		filter = (p: Player) => p.draft.tid === inputs.tid;
 	} else {
-		filter = (p: Player<MinimalPlayerRatings>) =>
-			p.draft.tid === g.get("userTid", p.draft.year + 1);
+		filter = (p: Player) => p.draft.tid === g.get("userTid", p.draft.year + 1);
 	}
 
 	const stats = bySport({

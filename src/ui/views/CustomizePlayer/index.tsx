@@ -13,26 +13,24 @@ import {
 	POSITIONS,
 	MOOD_TRAITS,
 	WEBSITE_ROOT,
-	bySport,
 	NOT_REAL_POSITIONS,
-} from "../../../common/index.ts";
-import { HelpPopover } from "../../components/index.tsx";
+} from "../../../common/constants.ts";
+import { HelpPopover } from "../../components/HelpPopover.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import {
-	helpers,
-	realtimeUpdate,
-	toWorker,
-	logEvent,
-} from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { logEvent } from "../../util/logEvent.ts";
+import { toWorker } from "../../util/toWorker.ts";
 import RatingsForm from "./RatingsForm.tsx";
 import RelativesForm from "./RelativesForm.tsx";
 import type { View, Phase, PlayerWithoutKey } from "../../../common/types.ts";
-import posRatings from "../../../common/posRatings.ts";
+import { posRatings } from "../../../common/posRatings.ts";
 import { orderBy } from "../../../common/utils.ts";
 import CustomMoodItemsForm from "./CustomMoodItemsForm.tsx";
 import { roundContract } from "../../../common/roundContract.ts";
 import { Face } from "./Face.tsx";
 import { CurrencyInputGroup } from "../../components/CurrencyInputGroup.tsx";
+import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 const copyValidValues = (
 	source: PlayerWithoutKey,
@@ -243,22 +241,23 @@ const copyValidValues = (
 	target.injury.type = source.injury.type;
 
 	{
-		const r = source.ratings.length - 1;
-		for (const rating of Object.keys(source.ratings[r])) {
+		const sourceRatings = source.ratings.at(-1)!;
+		const targetRatings = target.ratings.at(-1)!;
+		for (const rating of Object.keys(sourceRatings)) {
 			if (RATINGS.includes(rating)) {
 				const val = helpers.bound(
-					Number.parseInt(source.ratings[r][rating]),
+					Number.parseInt((sourceRatings as any)[rating]),
 					0,
 					100,
 				);
 				if (!Number.isNaN(val)) {
-					if (target.ratings[r][rating] !== val) {
-						target.ratings[r][rating] = val;
+					if ((targetRatings as any)[rating] !== val) {
+						(targetRatings as any)[rating] = val;
 						recomputePosOvrPot = true;
 					}
 				}
 			} else if (rating === "locked") {
-				target.ratings[r].locked = source.ratings[r].locked;
+				targetRatings.locked = sourceRatings.locked;
 			}
 		}
 	}
@@ -546,7 +545,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		event.preventDefault();
 		setState((prevState) => {
 			const p = prevState.p;
-			const oldRatings = p.ratings[r];
+			const oldRatings = p.ratings[r] as any;
 			const pos = p.pos ?? autoPos;
 
 			const extraKeys = bySport({

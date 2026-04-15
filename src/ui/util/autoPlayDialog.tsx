@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { confirmable, createConfirmation } from "react-confirm";
-import Modal from "../components/Modal.tsx";
-import { PHASE, PHASE_TEXT, helpers } from "../../common/index.ts";
+import { Modal } from "../components/Modal.tsx";
+import { PHASE, PHASE_TEXT } from "../../common/constants.ts";
+import { helpers } from "./helpers.ts";
 
 const Confirm = confirmable<
 	{
@@ -121,7 +122,7 @@ const Confirm = confirmable<
 
 const confirmFunction = createConfirmation(Confirm);
 
-const autoPlayDialog = (
+export const autoPlayDialog = (
 	currentSeason: number,
 	forceHistoricalRosters: boolean,
 	repeatSeason: "players" | "playersAndRosters" | undefined,
@@ -132,5 +133,3 @@ const autoPlayDialog = (
 		repeatSeason,
 	});
 };
-
-export default autoPlayDialog;

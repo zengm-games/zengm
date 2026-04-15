@@ -1,7 +1,7 @@
 import { useId } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { useLocal } from "../util/index.ts";
-import { SKILLS } from "../../common/index.ts";
+import { useLocal } from "../util/local.ts";
+import { SKILLS } from "../../common/constants.ts";
 
 const TruncatedSkills = ({
 	numSkillsBeforeTruncate,
@@ -28,7 +28,7 @@ const TruncatedSkills = ({
 	);
 };
 
-const SkillsBlock = ({
+export const SkillsBlock = ({
 	className,
 	numSkillsBeforeTruncate,
 	skills,
@@ -67,5 +67,3 @@ const SkillsBlock = ({
 		</span>
 	);
 };
-
-export default SkillsBlock;

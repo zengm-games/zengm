@@ -1,4 +1,4 @@
-import bySport from "./bySport.ts";
+import { bySport } from "./sportFunctions.ts";
 
 // This might not be comprehensive. It was first made for teamStats, and then later used in comparePlayers.
 export const lowerIsBetter = new Set(
@@ -120,6 +120,8 @@ export const lowerIsBetter = new Set(
 			"penYds",
 			"drivesTurnoverPct",
 			"pntBlk",
+			"skAlw",
+			"skAlwPct",
 			"oppPts",
 			"oppYds",
 			"oppPly",
@@ -219,6 +221,12 @@ export const lowerIsBetter = new Set(
 			"oppTp",
 			"oppTpa",
 			"oppPtsPerGame",
+			"oppPbw",
+			"oppPba",
+			"oppPbwr",
+			"oppRbw",
+			"oppRba",
+			"oppRbwr",
 		],
 		hockey: [
 			"lost",

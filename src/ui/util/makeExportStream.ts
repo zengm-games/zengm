@@ -1,19 +1,17 @@
 import { openDB } from "@dumbmatter/idb";
 import type { IDBPCursorWithValue } from "@dumbmatter/idb";
-import {
-	gameAttributesArrayToObject,
-	LEAGUE_DATABASE_VERSION,
-} from "../../common/index.ts";
+import { LEAGUE_DATABASE_VERSION } from "../../common/constants.ts";
 import {
 	gameAttributesCache,
 	gameAttributesKeysOtherSports,
 } from "../../common/defaultGameAttributes.ts";
 import { local } from "./local.ts";
-import toWorker from "./toWorker.ts";
+import { toWorker } from "./toWorker.ts";
 import type {
 	LeagueDB,
 	LeagueDBStoreNames,
 } from "../../worker/db/connectLeague.ts";
+import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
 
 // Otherwise it often pulls just one record per transaction, as it's hitting up against the high water mark
 const TWENTY_MEGABYTES_IN_BYTES = 20 * 1024 * 1024;
@@ -45,7 +43,7 @@ const stringSizeInBytes = (str: string | undefined) => {
 
 const NUM_SPACES_IN_TAB = 2;
 
-type ProcessStores<ReturnType extends unknown> = Partial<{
+type ProcessStores<ReturnType> = Partial<{
 	[K in LeagueDBStoreNames]?: (a: LeagueDB[K]["value"]) => ReturnType;
 }>;
 

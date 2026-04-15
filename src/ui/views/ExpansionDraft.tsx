@@ -5,14 +5,16 @@ import {
 	type MouseEvent,
 } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, toWorker, logEvent } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { logEvent } from "../util/logEvent.ts";
+import { toWorker } from "../util/toWorker.ts";
 import type { View, ExpansionDraftSetupTeam } from "../../common/types.ts";
 import {
 	DEFAULT_JERSEY,
 	DEFAULT_STADIUM_CAPACITY,
 	DEFAULT_TEAM_COLORS,
 	PHASE,
-} from "../../common/index.ts";
+} from "../../common/constants.ts";
 import TeamForm from "./ManageTeams/TeamForm.tsx";
 import { getGodModeWarnings } from "./NewLeague/UpsertTeamModal.tsx";
 import { TeamsSplitNorthAmericaWorld } from "../components/TeamsSplitNorthAmericaWorld.tsx";

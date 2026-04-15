@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import {
-	bySport,
 	COMPOSITE_WEIGHTS,
 	NOT_REAL_POSITIONS,
 	POSITIONS,
 	SKILLS,
-} from "../../../common/index.ts";
+} from "../../../common/constants.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 type Category = {
 	name: string;

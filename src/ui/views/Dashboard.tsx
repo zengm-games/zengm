@@ -1,19 +1,22 @@
 import clsx from "clsx";
 import { useCallback, useState, type CSSProperties } from "react";
 import { Dropdown } from "react-bootstrap";
-
 import ago from "s-ago";
 import {
-	bySport,
 	DIFFICULTY,
 	REAL_PLAYERS_INFO,
 	WEBSITE_PLAY,
-} from "../../common/index.ts";
-import { DataTable, TeamLogoInline } from "../components/index.tsx";
+} from "../../common/constants.ts";
+import { DataTable } from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { confirm, getCols, logEvent, toWorker } from "../util/index.ts";
+import { logEvent } from "../util/logEvent.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
 import { choice } from "../../common/random.ts";
+import { TeamLogoInline } from "../components/TeamLogoInline.tsx";
+import { confirm } from "../util/confirm.tsx";
+import { bySport } from "../../common/sportFunctions.ts";
 
 // Re-rendering caused this to run multiple times after "Play" click, even with useRef or useMemo
 const randomOtherSport = bySport({

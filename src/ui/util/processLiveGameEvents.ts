@@ -1,11 +1,11 @@
-import { bySport } from "../../common/index.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import processLiveGameEventsBaseball from "./processLiveGameEvents.baseball.tsx";
 import processLiveGameEventsBasketball from "./processLiveGameEvents.basketball.tsx";
 import processLiveGameEventsFootball from "./processLiveGameEvents.football.tsx";
 import processLiveGameEventsHockey from "./processLiveGameEvents.hockey.tsx";
 
 // Mutates boxScore!!!
-const processLiveGameEvents = ({
+export const processLiveGameEvents = ({
 	events,
 	boxScore,
 	overtimes,
@@ -47,5 +47,3 @@ const processLiveGameEvents = ({
 		}) as any,
 	});
 };
-
-export default processLiveGameEvents;

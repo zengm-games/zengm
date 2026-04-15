@@ -2,11 +2,9 @@ import {
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	DEFAULT_STADIUM_CAPACITY,
 	EXHIBITION_GAME_SETTINGS,
-	isSport,
 	PHASE,
-	unwrapGameAttribute,
-} from "../../common/index.ts";
-import { groupBy, orderBy } from "../../common/utils.ts";
+} from "../../common/constants.ts";
+import { orderBy } from "../../common/utils.ts";
 import type {
 	Conditions,
 	GameAttributesLeague,
@@ -32,6 +30,8 @@ import {
 } from "../util/index.ts";
 import { boxScoreToLiveSim } from "../views/liveGame.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
+import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 
 export const getLeagues = async () => {
 	const leagues = await idb.meta.getAll("leagues");
@@ -118,9 +118,14 @@ const getSeasonInfoLeague = async ({
 
 	const players = (await getPlayersActiveSeason(league, season)).filter((p) => {
 		// Keep players who ended the season on this team. Not perfect, will miss released players. Second check is for players added to the team in God Mode during the playoffs.
-		const seasonStats =
+		let seasonStats =
 			p.stats.findLast((row) => row.season === season && !row.playoffs) ??
 			p.stats.findLast((row) => row.season === season);
+		if (isCurrentOngoingSeason && (!seasonStats || seasonStats.tid !== p.tid)) {
+			// For current season, use p.tid as source of truth, to handle players who may not have a stats row yet
+			player.addStatsRow(p, season, false);
+			seasonStats = p.stats.at(-1);
+		}
 		if (!seasonStats) {
 			return false;
 		}
@@ -135,7 +140,7 @@ const getSeasonInfoLeague = async ({
 
 		return true;
 	});
-	const playersByTid = groupBy(players, (p) => p.stats[0].tid);
+	const playersByTid = Map.groupBy(players, (p) => p.stats[0].tid);
 
 	const playoffSeries = await league
 		.transaction("playoffSeries")
@@ -165,7 +170,7 @@ const getSeasonInfoLeague = async ({
 
 			const translatePids: Record<number, number> = {};
 
-			const teamPlayers = playersByTid[tid] ?? [];
+			const teamPlayers = playersByTid.get(tid) ?? [];
 			for (const p of teamPlayers) {
 				translatePids[p.pid] = pid;
 				p.pid = pid;
@@ -327,7 +332,7 @@ export const getSeasonInfo = async (
 	}
 
 	for (const t of teams) {
-		t.players = orderBy(t.players, (p) => p.ratings.at(-1).ovr, "desc");
+		t.players = orderBy(t.players, (p) => p.ratings.at(-1)!.ovr, "desc");
 		t.ovr = team.ovr(
 			t.players.map((p) => ({
 				pid: p.pid,

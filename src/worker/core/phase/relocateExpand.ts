@@ -168,7 +168,7 @@ export const doRelocate = async () => {
 			return [
 				geographicCoordinates[t.region]!.latitude,
 				geographicCoordinates[t.region]!.longitude,
-			] as [number, number];
+			] as const;
 		});
 
 		const { clusters, geoSorted } = sortByDivs(
@@ -187,7 +187,7 @@ export const doRelocate = async () => {
 
 		if (!geoSorted) {
 			// If, for whatever reason, we can't sort clusters geographically (like knowing the location of Atlantic vs Pacific), then try to keep as many teams in the same division as they were previously. Ideally we would test all permutations, but for many divisions that would be slow, so do it a shittier way.
-			const original = divs.map(() => [] as number[]);
+			const original: number[][] = divs.map(() => []);
 			for (const t of activeTeams) {
 				const divIndex = divs.findIndex((div) => t.did === div.did);
 				original[divIndex]!.push(t.tid);
@@ -237,7 +237,7 @@ export const doRelocate = async () => {
 				random.shuffle(divIndexes);
 
 				let score = 0;
-				const attempt = divs.map(() => [] as number[]);
+				const attempt: number[][] = divs.map(() => []);
 				const didsUsed = new Set<number>();
 
 				for (const divIndex of divIndexes) {

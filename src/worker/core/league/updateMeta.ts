@@ -31,9 +31,7 @@ const updateMeta = async (
 			try {
 				if (g.get("lid") !== undefined) {
 					// Upgrade
-					if (l.startingSeason === undefined) {
-						l.startingSeason = g.get("startingSeason");
-					}
+					l.startingSeason ??= g.get("startingSeason");
 
 					// Just do this here, rather than figuring out when it should be updated exactly
 					const teamInfo = g.get("teamInfoCache")[g.get("userTid")];

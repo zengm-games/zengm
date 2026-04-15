@@ -6,7 +6,7 @@ import type {
 	ViewInput,
 	GameAttributesLeague,
 } from "../../common/types.ts";
-import { bySport } from "../../common/index.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";
 

@@ -2,7 +2,8 @@ import addToFreeAgents from "./addToFreeAgents.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
+import { getNumPlayersTradedAwayNormalizedAll } from "./getNumPlayersTradedAwayNormalized.ts";
 
 /**
  * Release player.
@@ -39,7 +40,7 @@ const release = async (p: Player, justDrafted: boolean) => {
 		type: "release",
 		text: `The <a href="${helpers.leagueUrl([
 			"roster",
-			g.get("teamInfoCache")[p.tid]?.abbrev,
+			`${g.get("teamInfoCache")[p.tid]?.abbrev}_${p.tid}`,
 			g.get("season"),
 		])}">${
 			g.get("teamInfoCache")[p.tid]?.name
@@ -50,7 +51,7 @@ const release = async (p: Player, justDrafted: boolean) => {
 		pids: [p.pid],
 		tids: [p.tid],
 	});
-	addToFreeAgents(p);
+	addToFreeAgents(p, await getNumPlayersTradedAwayNormalizedAll());
 	await idb.cache.players.put(p);
 };
 

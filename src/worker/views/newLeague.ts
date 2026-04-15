@@ -9,15 +9,16 @@ import {
 	newLeagueGodModeLimits,
 } from "../util/index.ts";
 import type { Settings } from "./settings.ts";
-import { unwrapGameAttribute } from "../../common/index.ts";
+import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
 import goatFormula from "../util/goatFormula.ts";
 
 const getDefaultRealStats = () => {
 	return env.mobile ? "none" : "allActiveHOF";
 };
 
+export type NewLeagueSettings = Omit<Settings, "confs" | "numActiveTeams">;
 export const getDefaultSettings = () => {
-	const defaultSettings: Omit<Settings, "numActiveTeams"> = {
+	const defaultSettings: NewLeagueSettings = {
 		godMode: unwrapGameAttribute(defaultGameAttributes, "godMode"),
 		godModeInPast: unwrapGameAttribute(defaultGameAttributes, "godModeInPast"),
 		numGames: unwrapGameAttribute(defaultGameAttributes, "numGames"),

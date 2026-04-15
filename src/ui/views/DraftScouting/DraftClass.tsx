@@ -1,10 +1,14 @@
 import { useState } from "react";
-import { DataTable, LeagueFileUpload } from "../../components/index.tsx";
-import { downloadFile, getCols, helpers, toWorker } from "../../util/index.ts";
+import { DataTable } from "../../components/DataTable/index.tsx";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
+import { getCols } from "../../../common/getCols.ts";
 import type { View } from "../../../common/types.ts";
-import { WEBSITE_ROOT } from "../../../common/index.ts";
+import { WEBSITE_ROOT } from "../../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../../components/DataTable/index.tsx";
+import { downloadFile } from "../../util/downloadFile.ts";
+import { LeagueFileUpload } from "../../components/LeagueFileUpload.tsx";
 
 const DraftClass = ({
 	challengeNoRatings,

@@ -1,4 +1,4 @@
-import { DEFAULT_JERSEY, DEFAULT_TEAM_COLORS } from "../../common/index.ts";
+import { DEFAULT_JERSEY, DEFAULT_TEAM_COLORS } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 
 const getTeamInfoBySeason = async (tid: number, season: number) => {

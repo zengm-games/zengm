@@ -1,4 +1,4 @@
-const routeInfos = {
+export const routeInfos = {
 	// Non-league views
 	"/": "dashboard",
 	"/new_league": "newLeague",
@@ -220,5 +220,3 @@ const routeInfos = {
 	"/l/:lid/upgrade65": "upgrade65",
 	"/l/:lid/schedule_editor": "scheduleEditor",
 };
-
-export default routeInfos;

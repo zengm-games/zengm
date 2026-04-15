@@ -1,4 +1,4 @@
-import { bySport } from "../../../common/index.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import rosterAutoSortBaseball from "./rosterAutoSort.baseball.ts";
 import rosterAutoSortBasketball from "./rosterAutoSort.basketball.ts";
 import rosterAutoSortFootball from "./rosterAutoSort.football.ts";

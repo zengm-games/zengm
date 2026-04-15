@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { memo, useCallback, useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
-import { helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
 import type {
 	MenuItemLink,
 	MenuItemHeader,

@@ -2,9 +2,9 @@ import { isValidElement } from "react";
 // @ts-expect-error
 import textContent from "react-addons-text-content";
 import type { SortType } from "../../../common/types.ts";
-import { helpers } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
 import { normalizeIntl } from "../../../common/normalizeIntl.ts";
-import { POSITIONS } from "../../../common/index.ts";
+import { POSITIONS } from "../../../common/constants.ts";
 
 const getSortVal = (
 	value: any = null,

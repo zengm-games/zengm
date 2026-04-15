@@ -1,15 +1,15 @@
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
-import { PHASE } from "../../common/index.ts";
+import { PHASE } from "../../common/constants.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers, realtimeUpdate, toWorker } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
+import { toWorker } from "../util/toWorker.ts";
+import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import type { View } from "../../common/types.ts";
-import {
-	PlayerNameLabels,
-	PopText,
-	RecordAndPlayoffs,
-	SafeHtml,
-} from "../components/index.tsx";
+import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import clsx from "clsx";
+import { PopText } from "../components/PopText.tsx";
+import { SafeHtml } from "../components/SafeHtml.tsx";
+import { RecordAndPlayoffs } from "../components/RecordAndPlayoffs.tsx";
 
 const HistoryBlock = ({
 	won,

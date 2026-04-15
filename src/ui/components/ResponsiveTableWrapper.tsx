@@ -8,7 +8,7 @@ type Props = {
 };
 
 // This used to be needed to handle event propagation for touch events, when SideBar was swipeable
-const ResponsiveTableWrapper = ({
+export const ResponsiveTableWrapper = ({
 	className,
 	children,
 	nonfluid,

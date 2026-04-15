@@ -1,4 +1,4 @@
-import { PHASE, PLAYER } from "../../../common/index.ts";
+import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { contractNegotiation, draft, league } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, local } from "../../util/index.ts";

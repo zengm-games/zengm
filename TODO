@@ -1,4 +1,77 @@
-https://main.vitest.dev/config/detectasyncleaks
+next/prev on roster page should use tid https://discord.com/channels/290013534023057409/1492975452514422954
+- fix issue with FA abbrev redirecting to free agents
+- implement new dropdown part of useTitlebar
+  - do in parallel to old system, so we can gradually port
+  - better types for inputs (not just a string)
+  - explicitly specify all values on view (can import from somewhere, just don't make it a string specifying it)
+
+in addition to force W/L/T https://app.fastmail.com/mail/Inbox/A3EoJrVHaN5J.StpcmfcZYd-7?u=433e4054
+- force OT
+- force close
+
+similar to lock ratings, have a lock uninjured flag https://app.fastmail.com/mail/Inbox/A3EoJrVHaN5J.StpcmfcZYd-7?u=433e4054
+
+expansion like SEA->OKC->SEA - allow prior city of a current team to be selected as an expansion team, and give back team history to original team
+- use in real player rosters too
+  - also consider assignment of old seasons when creating a new league - depends if the expansion has happened yet. oldAbbrevTo2020BBGMAbbrev is not sufficient in that case.
+- what about Charlotte? same thing
+- also legends leagues
+- why does charlotte work with CHA abbrev but SEA needs SET? uses CHQ for old ones
+
+sticky column better support in recent chrome https://www.bram.us/2026/03/30/css-sticky-per-axis/
+- will it fix scrolling with sticky header? https://x.com/basketball_gm/status/1986435826218074552 https://github.com/w3c/csswg-drafts/issues/8286
+
+baseball show how far home runs go in play-by-play https://app.fastmail.com/mail/Archive/AJ3IgcCOLqj3.StplqnLR-njc?u=433e4054
+
+default new league overrides and female names https://discord.com/channels/290013534023057409/290013534023057409
+- delete a country from bio info, save as default, then create a female leage -> error!
+  - problem is that when we save the pruned object, we assume the underlying default (male) but it's different here (female). maybe need to store gender in the underlying object, so we can know which default one to fill it with?
+- same bug happens if you switch from male to female in a league with edited player bio info!
+- also, with override, editor in settings shows default female names, probably should show overrides
+
+show if a foul is intentional or not in play-by-play
+
+move EventBBGM away from using string "text" property
+- use formatEventText for now, eventually move to something in ui to render them
+
+dev usability stuff
+- send message to any open tabs to pop up notification when a new worker process is built, then send message to worker to mark it as stale, then any new UI tab opened with stale worker show a popup with error message. to prevent accidentally having multiple tabs open
+  - shared worker listen to websocket, use ws to send from server to worker, mark as stale and show error
+- make leagueUrl better typed
+- use valibot in various places, including to replace schema/types difference
+
+FBGM overtime - If team A scores in OT, And then Team B scores, They should always go for 2 bc you don’t want to give the ball back and have it be sudden death https://discord.com/channels/@me/778760871911751700/1480652733852811324
+
+redesign season summary
+- include stat leaders
+- ASG MVP
+- retired players list should highlight players who ever played for your team https://old.reddit.com/r/BasketballGM/comments/1joi4m5/monthly_suggestions_thread/mkz8q9k/
+- add more logos and pictures and stuff
+
+in play by play, scoring/made FG/3PT streak like on the real app, and how long a run is https://discord.com/channels/290013534023057409/1476936717733728298/1477098494866096374
+
+accessability of sortable tables with screen readers
+- https://app.fastmail.com/mail/Inbox/AIwCIDm0KjvB.StqUeSQmhsS7?u=433e4054
+- https://app.fastmail.com/mail/Inbox/AE6jH4AIEhFV.StqQgfp1WjLw?u=433e4054
+
+baseball colleges https://app.fastmail.com/mail/Inbox/AJuf0DgaRdwZ.StqPbuY6AxrZ?u=433e4054
+
+when calling getNumPlayoffTeams from SettingsForm, we don't know how many conferences are empty (or don't have enough teams for byConf playoff bracket), which may result in a different number of playoff teams
+- could affect other calls of getNumPlayoffTeams and validatePlayoffSettings
+  - ideally we would replace the contents functions with the one that actually generates playoff series, and then derive the info we need from that (parse, don't validate)
+
+when creating a new league, we don't know numActiveTeams, which gets propagated from initialSettings.numActiveTeams to validatePlayoffSettings, resulting in that validation check not running
+- need to store team disabled state, since it could come from league file or real players league, and then dynamically recompute initialSettings.numActiveTeams (similar to how initialSettings.confs is needed in other places)
+- currently it assumes none are disabled: `numActiveTeams: displayedTeams.length` when passing value to CustomizeSettings
+- make sure it works for all uses of SettingsForm (exhibition game and default new league settings too)
+
+Navigation API
+- can integrate with browser loading indicator
+- Chrome 102, Firefox 147, Safari 26.2
+
+show projected pick number in more places, like anywhere a realized pick number is shown https://old.reddit.com/r/BasketballGM/comments/1qsjzds/monthly_suggestions_thread/o2x0kao/
+- currently only on Draft Picks page
+- use real value that is calculated internally for draft pick projection
 
 button to sign all rookies on re-sign page https://app.fastmail.com/mail/Archive/AOc4VisnZIYZ.StqmYwT3NgFZ?u=433e4054
 
@@ -11,8 +84,6 @@ add option for where the lottery eligibility cutoff is
 - currently cola is hardcoded to be before the last 3 rounds of playoffs, and others are hardcoded to be non-playoff teams
 - for cola, it's hardcoded in getNumLotteryTeams and also in other parts of cola.ts that look at playoffRoundsWon. then in getTeamsByRound it's hardcoded to sort playoff teams by playoff success, which is necessary to take only first round losers and put them in the lottery
 
-somewhere in league settings show total number of playoff teams https://app.fastmail.com/mail/Archive/A8bAfE0dqDdo.StqkZ1WgCv0J?u=433e4054
-
 trade player back to original team with 0 GP in between - now there are duplicate stats rows https://discord.com/channels/290013534023057409/1468414393116004442/1468414393116004442
 - don't call addStatsRow until saving actual player stats? tricky because (at least in BBGM) we track minAvailable in stats, so even with 0 GP we need a stats row
   - minAvailable is not needed once season is over, so in theory could just track that somewhere else, or delete rows with 0 GP when they are not needed. but in theory we might also want to track other things without a GP (like DNP reason) so we should keep these rows with 0 GP. however we don't need to actually create them until saving in writePlayerStats, but we should always create rows there.
@@ -23,12 +94,6 @@ FBGM option to disable FG/XP/punt
 - https://app.fastmail.com/mail/Archive/AOc4VisnZIYZ.StqyBxW1iGns?u=433e4054
 
 positions dropdown filter in table, rather than free text https://old.reddit.com/r/Football_GM/comments/1qocv9w/searching_for_player_position_on_free_agents/
-
-dev usability stuff
-- send message to any open tabs to pop up notification when a new worker process is built, then send message to worker to mark it as stale, then any new UI tab opened with stale worker show a popup with error message. to prevent accidentally having multiple tabs open
-- when loading in dev check if there is an active service worker, and if so warn about it
-  - what would this look like? 404 error when checking for sw.js?
-    - in initServiceWorker could check for sw.js being a 404 error. but then that would have to run in prod too, since this would be the prod build code identifying that dev mode is maybe supposed to be running
 
 calcuate bestPos in playersPlus, rather than in processPlayersHallOfFame
 - simplifies a lot of consuming code
@@ -99,6 +164,7 @@ custom awards
 - store top 10 for each individual award, so it can be displayed easily on player profile pages
 - should still be able to add an arbitrary one-off custom award - have some place for those in the awards object, and use it for unknown awards in upgraded leagues
 - support awards per div/conf
+- support clutch player award
 - upgrade
   - indexeddb
   - import
@@ -248,6 +314,7 @@ jersey numbers by position and frequency
 extra validation that would be nice to do during schema check
 - draft year is valid (not a draft that hasn't happened yet - breaks some indexes)
 - tid is valid for players, draftPicks, etc
+- teamSeasonUniqueKeyErrorCounts stuff - could do on schema check rather than on load?
 
 button to skip schema check
 - not easy because we use some info from the scan (like in fromFile) when processing the "real" stream, but see commit ee3b58dbdda31e8400518796c0509d7f39edb188 for a somewhat working implementaion besides that
@@ -288,6 +355,7 @@ now that we have worker modules, what can we do with it?
   - tricky with blacklist
 - move static files, css into rolldown/vite build?
   - for generateJsonSchema see 89674d46cd149cc6276cc0bbac0edbc0de15b3e8 but reverted it because i'm worried about cache busting (no hash in file name, and dynamically loading file rather than putting it in build is tricky) and it actually makes the watch build slower because it reruns generateJsonSchema every time (could short circuit based on fs stat)
+    - https://chatgpt.com/c/69ba05fb-9058-8332-a6e6-a1b281e58f96
 
 use import with json attribute for loading json files, rather than special effort to copy/fetch them
 - MAYBE NOT A GOOD IDEA https://jakearchibald.com/2025/importing-vs-fetching-json/ https://x.com/jaffathecake/status/1981010343326540157
@@ -321,8 +389,6 @@ add legends mode based on league to UI somehow
   - https://discord.com/channels/290013534023057409/1382240288139116574/1383465548364382308
   - https://discord.com/channels/290013534023057409/1384327592433160233/1384957307657523344
 - what about free agents?
-
-more injuries for tall players
 
 in non-basketball sports, injured players should show up somewhere in the box score even if they have no stats. but where?
 
@@ -380,7 +446,6 @@ HoF should highlight your team like GM History, not your current franchise https
 - or make it configurable
 - would need to process on worker, add a flag to player object
 - other pages too?
-  - retired players list should highlight players who ever played for your team https://old.reddit.com/r/BasketballGM/comments/1joi4m5/monthly_suggestions_thread/mkz8q9k/
 
 make clone player button a dropdown that lets you pick current season or a past season https://old.reddit.com/r/BasketballGM/comments/1joi4m5/monthly_suggestions_thread/moikegn/
 
@@ -579,7 +644,7 @@ make player graphs remember selections https://old.reddit.com/r/BasketballGM/com
 - other pages?
 
 FBGM end of game penalties
--  declines penalty when it would have given untimed down in 4th quarter with a chance to win https://discord.com/channels/290013534023057409/290015591216054273/1313017959035179008
+-  declines penalty when it would have given untimed down in 4th quarter with a chance to win https://discord.com/channels/290013534023057409/290015591216054273/1313017959035179008 https://discord.com/channels/@me/778760871911751700/1481009499744763955
 - accepts penalty on a scoring play (made FG) that would have won the game in overtime https://discord.com/channels/290013534023057409/1448891925837910228/1448891925837910228
 
 condense develop0 and updateValues into a single function, mainly for worker console
@@ -657,8 +722,6 @@ FBGM timeouts
   -in FBGM, teams sometimes take timeout right after the kickoff, before 1st and 10 even shows up https://discord.com/channels/290013534023057409/290015591216054273/1274484873167507488
   - also right before kickoff, such as after missed XP https://discord.com/channels/290013534023057409/1469165154624081951/1469165154624081951
 - timeout in last 2 minutes when injury stops clock
-
-Can processPlayersHallOfFame use gpF for baseball? spread season's WAR around by that, if it's available? https://discord.com/channels/290013534023057409/944392892905037885/1272548695459631210
 
 show how many fouls each team has, and bonus status https://old.reddit.com/r/BasketballGM/comments/1ceu3n4/version_202404271260_during_live_sim_the_number/l1ouaf9/?context=3
 - design ideas
@@ -746,8 +809,6 @@ https://discord.com/channels/290013534023057409/569726303926878219/1253099037872
 - Personally I would like to see a little more scrambling qbs, I see qbs with high (70+) speed all the time but they never have the elusiveness to run at all in sims, that’s like Lamar Jackson or Justin fields just not scrambling lmao. I feel like more scramblers need to be generated, and maybe they just need to more closely match speed and elu, because no qb has ever run a 4.4 and decided to be a pocket passer their whole career
 - Finally I want to see contracts adjusted, irl cap is up to 255m with top guys at 55m, but in game is still 200m/30m. I am able to get 45m max in game with a 255m cap, however I can’t get up to 55m because some positions make way too much. Most look good, but I have rbs making 25-30m which is way off, those dudes make like 16 tops now. If the amount people got paid was tweaked a tiny bit I’m sure a 255/55 setting would be possible to match irl contracts very closely
 
-baseball colleges
-
 green highlight (players from your team) most places should be aware of userTid history
 
 on trading block, if salary cap is disabled, hide the Payroll and Cap columns since they are not relevant
@@ -782,8 +843,9 @@ use ptsPct instead of winp in various places if pointsFormula
 - team history
 - power rankings
 
-indicator of if trade will be accepted
+indicator of if trade will be accepted, trade value
 - https://old.reddit.com/r/BasketballGM/comments/1b3h2f6/monthly_suggestions_thread/kswqcuk/
+- https://app.fastmail.com/mail/Inbox/A3pHKx5f7PzF.StqERXQ8OXi-?u=433e4054
 
 allow undoing actions
 - types
@@ -826,6 +888,10 @@ new achievements
 - balanced breakfast - 5 players averaging 15 ppg https://old.reddit.com/r/BasketballGM/comments/1jpwg4w/version_202504020886_players_get_a_mood_bonus_if/ml433j6/?context=3
 - homegrown one draft class https://discord.com/channels/290013534023057409/1391797038718386246/1391798124095209554
 - 3 ROY in a row https://old.reddit.com/r/BasketballGM/comments/1o4pk7p/i_feel_like_this_should_be_an_actual_ingame/
+- https://old.reddit.com/r/BasketballGM/comments/1s5ttm2/some_dumb_achievement_ideas_i_have/
+  - Defense Wins Championships: win the chip while having a bottom 5 offense
+  - Offense Is The Best Defense: win the chip while having a bottom 5 defense
+  - Height Doesn't Matter: have a player under 6 feet tall win mvp
 
 arrow navigation between players on team https://old.reddit.com/r/BasketballGM/comments/1afy7ba/monthly_suggestions_thread/kr9whzi/
 - make it a select? or listen for keyboard shortcut?
@@ -963,6 +1029,7 @@ scheduled events for roster size changes https://discord.com/channels/2900135340
 - 18 in 2024
 
 FBGM
+- some positions have weird heights, like really short OL/CB/LB
 - scorigami
 - hail mary as clock runs down
 - too many block in the back penalties? https://mail.google.com/mail/u/0/#inbox/FMfcgzQXJGkWRpLHMglFTjVxwkhwRlrP?compose=DmwnWrRnZVhxHCNkTVdJSMmbHbGPgCRltRlKvmhtGwHmGsdBjvVRTGPpCVpwjFrcmmLvVZMKmdrl
@@ -984,7 +1051,6 @@ FBGM
 - blocked fg/xp
   - count as missed field goal
   - chance for either team to return (very slim for offense)
-- OL stats
 - if you have 0 healthy kickers, go for 2 https://discord.com/channels/@me/778760871911751700/1160420973019934750
   - it really should be based on probability of making XP and probability of making TP making TP
   - similar for 4th down situations, like 4th and 1 on the 30 with a bad kicker, don't punt!
@@ -2078,7 +2144,6 @@ fuzz/scouting revamp
 FBGM
 - in FBGM, tags aren't generated for custom roster's draft classes until the end of the season.
 - rosters https://raw.githubusercontent.com/nicidob/bbgm/master/fbgm_roster_2019_sss.json
-- some OL stat
 - increase value of K/P so they won't be traded for nothing
   - user report of K/P being released by AI teams during season! AI teams should take roster construction into account here
   - @geonerd#6946
@@ -2256,9 +2321,12 @@ teams play better/worse when down/up
 
 @nicidob Add an option to float the salary cap. Have it come from something like Sum(hype * population). So if NY/LA/CHI/MXC have bad teams, it's worse! Maybe even have hype depend on team rating (so if the whole league is playing crappy teams then the cap goes down).
 
-add player who tackled to play by play
-- Nate Oor Completed to pass to Jake buttham (Tackle by Shaun boof)
-- https://discordapp.com/channels/@me/625036115497451609
+FBGM play by  play
+- tackler
+  - Nate Oor Completed to pass to Jake buttham (Tackle by Shaun boof)
+  - https://discordapp.com/channels/@me/625036115497451609
+- incomplete pass distance
+- YAC
 
 in watchlist, if you have a player play the prior  year's playoffs and then they get an injury that keeps them out of the playoffs, it displays last year's playoff stats
 - https://cdn.discordapp.com/attachments/290015591216054273/679836680420589690/unknown.png
@@ -2358,8 +2426,6 @@ Also I wonder if there is a way to present a player's value in regards to the po
 
 Finally I saw dumbmatter mention this in the initial post, but there really should be guaranteed rookie contracts. They are basically standard in the NFL and I don't see why a simulation wouldn't mirror this. Just feels weird all my players only want 2 year contracts when they are usually stuck with the team for 4 years at least. Just some initial thoughts, great work overall!
 
-keyStats for OL should not show tiny # of tackles
-
 rookie contracts too high still?
 
 situationally aware play calling
@@ -2417,7 +2483,7 @@ type better
 - PlayerStatType should be sport specific
 - getCopy/getCopies and Cache
   - awards should return Awards
-  - players and playersPlus - Player<> and Player<MinimalPlayerRatings> should be Player<PlayerRatings>
+  - players and playersPlus - Player<> and Player should be Player<PlayerRatings>
 - most MinimalPlayerRatings uses should be generic and take PlayerRatings
 
 split more from deion

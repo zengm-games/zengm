@@ -1,4 +1,4 @@
-import { PLAYER, RATINGS, bySport } from "../../common/index.ts";
+import { PLAYER, RATINGS } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import {
@@ -10,6 +10,7 @@ import { g, getTeamInfoBySeason } from "../util/index.ts";
 import { maxBy } from "../../common/utils.ts";
 import { getPlayerProfileStats } from "./player.ts";
 import type { SeasonType } from "../api/processInputs.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const hasPlayerInfoChanged = (
 	inputPlayers: ViewInput<"comparePlayers">["players"],
@@ -77,9 +78,9 @@ const getRatingsByPositions = (positions: string[]) => {
 				} else if (pos === "RB" || pos === "WR") {
 					ratings.push("bsc", "elu", "rtr", "hnd");
 				} else if (pos === "TE") {
-					ratings.push("bsc", "elu", "rtr", "hnd", "rbk", "pbk");
+					ratings.push("bsc", "elu", "rtr", "hnd", "pbk", "rbk");
 				} else if (pos === "OL") {
-					ratings.push("rbk", "pbk");
+					ratings.push("pbk", "rbk");
 				} else if (pos === "DL") {
 					ratings.push("tck", "prs", "rns");
 				} else if (pos === "LB" || pos === "CB" || pos === "S") {
@@ -425,8 +426,8 @@ const updateComparePlayers = async (
 					players.push({
 						p,
 						season,
-						firstSeason: pRaw.ratings[0].season as number,
-						lastSeason: pRaw.ratings.at(-1)!.season as number,
+						firstSeason: pRaw.ratings[0].season,
+						lastSeason: pRaw.ratings.at(-1)!.season,
 						playoffs,
 					});
 				}

@@ -1,8 +1,9 @@
-import { bySport, PHASE, SIMPLE_AWARDS } from "../../common/index.ts";
+import { PHASE, SIMPLE_AWARDS } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 import { groupByUnique, range } from "../../common/utils.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const addAbbrev = (
 	award: any,
@@ -92,7 +93,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		const awardTypes = bySport({
 			baseball: ["finalsMvp", "mvp", "poy", "rpoy", "roy"],
 			basketball: ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"],
-			football: ["finalsMvp", "mvp", "dpoy", "oroy", "droy"],
+			football: ["finalsMvp", "mvp", "opoy", "poy", "dpoy", "oroy", "droy"],
 			hockey: ["finalsMvp", "mvp", "dpoy", "dfoy", "goy", "roy"],
 		});
 
@@ -258,9 +259,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 				const tid = row[category].tid;
 				const categoryCounts = counts[category]!;
-				if (categoryCounts[tid] === undefined) {
-					categoryCounts[tid] = 0;
-				}
+				categoryCounts[tid] ??= 0;
 				categoryCounts[tid] += 1;
 				row[category].count = categoryCounts[tid];
 			}
@@ -272,9 +271,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 				const pid = row[category].pid;
 				const categoryCounts = counts[category]!;
-				if (categoryCounts[pid] === undefined) {
-					categoryCounts[pid] = 0;
-				}
+				categoryCounts[pid] ??= 0;
 				categoryCounts[pid] += 1;
 				row[category].count = categoryCounts[pid];
 			}

@@ -1,4 +1,4 @@
-import { isSport } from "../../../common/index.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 import type { Race } from "../../../common/types.ts";
 import { loadNames, local, random } from "../../util/index.ts";
 
@@ -170,9 +170,11 @@ const name = async (
 	race: Race;
 }> => {
 	// This makes it wait until g is loaded before calling loadNames, so user-defined playerBioInfo will be used if provided
-	const playerBioInfo = local.playerBioInfo ?? (await loadNames());
-
-	if (local.playerBioInfo === undefined) {
+	let playerBioInfo;
+	if (local.playerBioInfo !== undefined) {
+		playerBioInfo = local.playerBioInfo;
+	} else {
+		playerBioInfo = await loadNames();
 		local.playerBioInfo = playerBioInfo;
 	}
 

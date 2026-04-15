@@ -1,4 +1,4 @@
-const gradientStyleFactory =
+export const gradientStyleFactory =
 	(low: number, mid1: number, mid2: number, high: number) => (x: number) => {
 		let backgroundColor;
 		if (x < low) {
@@ -21,5 +21,3 @@ const gradientStyleFactory =
 			backgroundColor,
 		};
 	};
-
-export default gradientStyleFactory;

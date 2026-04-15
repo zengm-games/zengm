@@ -1,14 +1,16 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { PHASE } from "../../../common/index.ts";
+import { PHASE } from "../../../common/constants.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
-import { helpers, toWorker, useLocal } from "../../util/index.ts";
+import { helpers } from "../../util/helpers.ts";
+import { toWorker } from "../../util/toWorker.ts";
+import { useLocal } from "../../util/local.ts";
 import AssetList from "./AssetList.tsx";
 import Buttons from "./Buttons.tsx";
 import type { TradeClearType } from "./Buttons.tsx";
 import Summary from "./Summary.tsx";
 import type { TradeTeams, View } from "../../../common/types.ts";
 import clsx from "clsx";
-import { SaveTrade } from "../../components/index.tsx";
+import { SaveTrade } from "../../components/SaveTrade.tsx";
 
 export type HandleToggle = (
 	userOrOther: "other" | "user",

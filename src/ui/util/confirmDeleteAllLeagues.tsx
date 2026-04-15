@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { confirmable, createConfirmation } from "react-confirm";
-import Modal from "../components/Modal.tsx";
+import { Modal } from "../components/Modal.tsx";
 
 const Confirm = confirmable<unknown, "all" | "unstarred" | null>(
 	({ show, proceed }) => {
@@ -63,8 +63,6 @@ const Confirm = confirmable<unknown, "all" | "unstarred" | null>(
 
 const confirmFunction = createConfirmation(Confirm);
 
-const confirmDeleteAllLeagues = () => {
+export const confirmDeleteAllLeagues = () => {
 	return confirmFunction({});
 };
-
-export default confirmDeleteAllLeagues;

@@ -7,8 +7,8 @@ import type {
 	Game,
 	PlayerInjury,
 } from "../../common/types.ts";
-import { bySport, isSport, PHASE } from "../../common/index.ts";
-import { groupBy, groupByUnique, orderBy } from "../../common/utils.ts";
+import { PHASE } from "../../common/constants.ts";
+import { groupByUnique, orderBy } from "../../common/utils.ts";
 import {
 	getActualPlayThroughInjuries,
 	getNumConsecutiveGamesGFactor,
@@ -19,6 +19,7 @@ import { P_FATIGUE_DAILY_REDUCTION } from "../core/game/writePlayerStats.ts";
 import playThroughInjuriesFactor from "../../common/playThroughInjuriesFactor.ts";
 import { COMPOSITE_WEIGHTS } from "../../common/constants.hockey.ts";
 import { getStartingAndBackupGoalies } from "../core/GameSim.hockey/getStartingAndBackupGoalies.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 export const getUpcoming = async ({
 	day,
@@ -82,7 +83,7 @@ export const getUpcoming = async ({
 		season: g.get("season"),
 		fuzz: true,
 	});
-	const playersByTid = groupBy(players, "tid");
+	const playersByTid = Map.groupBy(players, (t) => t.tid);
 
 	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 	const roundSeries = playoffSeries
@@ -95,7 +96,7 @@ export const getUpcoming = async ({
 		const t = teamsByTid[tid];
 
 		// For basketball this is fast, but for other sports it's a bit slow. Could cache sometimes, depending on which players are injured (if nobody is in playThroughInjuries window). This would apply by default in the regualr season, which is what matters, since the default is 0
-		const ovr = team.ovr(playersByTid[tid] ?? [], {
+		const ovr = team.ovr(playersByTid.get(tid) ?? [], {
 			accountForInjuredPlayers: {
 				numDaysInFuture: day - todayDay,
 				playThroughInjuries: getActualPlayThroughInjuries(t ?? "default"),
@@ -207,7 +208,7 @@ export const getTopPlayers = async <T extends any[]>(
 		const playersByGid: Record<number, [any, any]> = {};
 
 		const players = await idb.cache.players.getAll();
-		const playersByTid = groupBy(players, "tid");
+		const playersByTid = Map.groupBy(players, (t) => t.tid);
 		const playersByPid = groupByUnique(players, "pid");
 		const teams = await idb.cache.teams.getAll();
 		const processedPlayersByTid: Record<number, any[]> = {};
@@ -245,7 +246,7 @@ export const getTopPlayers = async <T extends any[]>(
 				.map((pid) => playersByPid[pid])
 				.filter((p) => p?.tid === t.tid) // Before season, AI teams may not have updated depth
 				.concat(
-					(playersByTid[t.tid] ?? []).map((p) =>
+					(playersByTid.get(t.tid) ?? []).map((p) =>
 						depthPidsSet.has(p.pid) ? undefined : p,
 					),
 				)

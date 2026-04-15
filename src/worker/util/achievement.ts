@@ -1,14 +1,11 @@
-import {
-	ACCOUNT_API_URL,
-	fetchWrapper,
-	DIFFICULTY,
-} from "../../common/index.ts";
+import { ACCOUNT_API_URL, DIFFICULTY } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import achievements from "./achievements.ts";
 import g from "./g.ts";
 import logEvent from "./logEvent.ts";
 import type { AchievementWhen, Conditions } from "../../common/types.ts";
 import toUI from "./toUI.ts";
+import { fetchWrapper } from "../../common/fetchWrapper.ts";
 
 type Difficulty = "insane" | "hard" | "normal" | "easy";
 const getDifficulty = (): Difficulty => {

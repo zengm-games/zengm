@@ -1,4 +1,5 @@
-import { PLAYER, helpers } from "../../common/index.ts";
+import { PLAYER } from "../../common/constants.ts";
+import { helpers } from "../../common/helpers.ts";
 import { idb } from "./index.ts";
 import cmp from "./cmp.ts";
 import { g, local, lock } from "../util/index.ts";
@@ -13,7 +14,6 @@ import type {
 	HeadToHead,
 	Message,
 	MessageWithoutKey,
-	MinimalPlayerRatings,
 	Negotiation,
 	Player,
 	PlayerWithoutKey,
@@ -271,11 +271,7 @@ class Cache {
 
 	playerFeats: StoreAPI<PlayerFeatWithoutKey, PlayerFeat, number>;
 
-	players: StoreAPI<
-		PlayerWithoutKey<MinimalPlayerRatings>,
-		Player<MinimalPlayerRatings>,
-		number
-	>;
+	players: StoreAPI<PlayerWithoutKey, Player, number>;
 
 	playoffSeries: StoreAPI<PlayoffSeries, PlayoffSeries, number>;
 

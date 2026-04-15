@@ -1,239 +1,272 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" class="h-100">
-  <head>
-    <meta charset="utf-8">
-    <title>GAME_NAME</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#FF7F2A">
-    <meta name="format-detection" content="telephone=no">
-    <meta name="color-scheme" content="light dark">
+	<head>
+		<meta charset="utf-8" />
+		<title>GAME_NAME</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content="#FF7F2A" />
+		<meta name="format-detection" content="telephone=no" />
+		<meta name="color-scheme" content="light dark" />
 
-    <link rel="manifest" href="/manifest.webmanifest">
-    <link rel="icon" href="/ico/icon.svg">
-    <link rel="apple-touch-icon" href="/ico/apple-touch-icon.png">
+		<link rel="manifest" href="/manifest.webmanifest" />
+		<link rel="icon" href="/ico/icon.svg" />
+		<link rel="apple-touch-icon" href="/ico/apple-touch-icon.png" />
 
-    <meta name="description" content="A single-player SPORT simulation game. Make trades, set rosters, draft players, and try to build the next dynasty.">
+		<meta
+			name="description"
+			content="A single-player SPORT simulation game. Make trades, set rosters, draft players, and try to build the next dynasty."
+		/>
 
-    <link rel="modulepreload" href="/gen/ui-VERSION_NUMBER.js">
-    <link rel="modulepreload" href="/gen/worker-VERSION_NUMBER.js">
+		MODULEPRELOADS
 
-    <script>
-window.bbgmVersion = "VERSION_NUMBER";
-window.useSharedWorker = typeof SharedWorker !== 'undefined';
+		<script>
+			window.bbgmVersion = "VERSION_NUMBER";
+			window.useSharedWorker = typeof SharedWorker !== "undefined";
 
-window.mobile = window.screen.width < 768 || window.screen.height < 768;
+			window.mobile = window.screen.width < 768 || window.screen.height < 768;
 
-function loadCSS(filename){
-  var el = document.createElement("link");
-  el.setAttribute("rel", "stylesheet");
-  el.setAttribute("href", filename);
-  document.getElementsByTagName("head")[0].appendChild(el);
-  return el;
-}
-function getTheme() {
-  var dark = "dark-CSS_HASH_DARK";
-  var light = "light-CSS_HASH_LIGHT";
-  try {
-    var local = localStorage.getItem("theme");
-    if (local !== null) {
-      return local === "dark" ? "dark" : "light";
-    }
-    return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-  } catch (error) {
-    return "light";
-  }
-}
-function getThemeFilename(theme) {
-  // Updates the scrollbar in Chrome - from the demo https://color-scheme-demo.glitch.me/ from https://web.dev/articles/color-scheme#demo
-  document.documentElement.style.colorScheme = theme;
+			function loadCSS(filename) {
+				var el = document.createElement("link");
+				el.setAttribute("rel", "stylesheet");
+				el.setAttribute("href", filename);
+				document.getElementsByTagName("head")[0].appendChild(el);
+				return el;
+			}
+			function getTheme() {
+				var dark = "dark-CSS_HASH_DARK";
+				var light = "light-CSS_HASH_LIGHT";
+				try {
+					var local = localStorage.getItem("theme");
+					if (local !== null) {
+						return local === "dark" ? "dark" : "light";
+					}
+					return matchMedia("(prefers-color-scheme: dark)").matches
+						? "dark"
+						: "light";
+				} catch (error) {
+					return "light";
+				}
+			}
+			function getThemeFilename(theme) {
+				// Updates the scrollbar in Chrome - from the demo https://color-scheme-demo.glitch.me/ from https://web.dev/articles/color-scheme#demo
+				document.documentElement.style.colorScheme = theme;
 
-  if (theme === "dark") {
-    return "/gen/dark-CSS_HASH_DARK.css";
-  }
-  return "/gen/light-CSS_HASH_LIGHT.css";
-}
-window.themeCSSLink = loadCSS(getThemeFilename(getTheme()));
+				if (theme === "dark") {
+					return "/gen/dark-CSS_HASH_DARK.css";
+				}
+				return "/gen/light-CSS_HASH_LIGHT.css";
+			}
+			window.themeCSSLink = loadCSS(getThemeFilename(getTheme()));
 
-window.enableLogging = location.host.indexOf("GOOGLE_ANALYTICS_COOKIE_DOMAIN") >= 0;
+			window.enableLogging =
+				location.host.indexOf("GOOGLE_ANALYTICS_COOKIE_DOMAIN") >= 0;
 
-if (window.enableLogging) {
-  var s = document.createElement("script");
-  s.async = true;
-  s.src = "https://www.googletagmanager.com/gtag/js?id=GOOGLE_ANALYTICS_ID";
-  s.type = "text/javascript";
-  document.head.appendChild(s);
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('consent', 'default', {
-    ad_storage: 'granted',
-    ad_user_data: 'granted',
-    ad_personalization: 'granted',
-    analytics_storage: 'granted'
-  });
-  gtag('js', new Date());
-  gtag('config', 'GOOGLE_ANALYTICS_ID', {
-    cookie_domain: 'GOOGLE_ANALYTICS_COOKIE_DOMAIN',
-    send_page_view: false
-  });
-}
+			if (window.enableLogging) {
+				var s = document.createElement("script");
+				s.async = true;
+				s.src =
+					"https://www.googletagmanager.com/gtag/js?id=GOOGLE_ANALYTICS_ID";
+				s.type = "text/javascript";
+				document.head.appendChild(s);
+				window.dataLayer = window.dataLayer || [];
+				function gtag() {
+					dataLayer.push(arguments);
+				}
+				gtag("consent", "default", {
+					ad_storage: "granted",
+					ad_user_data: "granted",
+					ad_personalization: "granted",
+					analytics_storage: "granted",
+				});
+				gtag("js", new Date());
+				gtag("config", "GOOGLE_ANALYTICS_ID", {
+					cookie_domain: "GOOGLE_ANALYTICS_COOKIE_DOMAIN",
+					send_page_view: false,
+				});
+			}
 
-window.releaseStage = "unknown";
-if (location.host.indexOf("localhost") === 0) {
-  window.releaseStage = "development";
-} else if (location.host.indexOf("BETA_SUBDOMAIN") === 0) {
-  window.releaseStage = "beta";
-} else if (location.host.indexOf("PLAY_SUBDOMAIN") === 0) {
-  window.releaseStage = "production";
-}
+			window.releaseStage = "unknown";
+			if (location.host === "PLAY_SUBDOMAIN") {
+				window.releaseStage = "production";
+			} else if (location.host === "BETA_SUBDOMAIN") {
+				window.releaseStage = "beta";
+			} else if (
+				location.host.startsWith("localhost") ||
+				location.host.endsWith(".test")
+			) {
+				window.releaseStage = "development";
+			}
 
-window.bugsnagKey = "BUGSNAG_API_KEY";
-    </script>
-BANNER_ADS_CODE
-  </head>
+			window.bugsnagKey = "BUGSNAG_API_KEY";
+		</script>
+		BANNER_ADS_CODE
+	</head>
 
-  <body class="h-100" style="padding-top: 52px">
+	<body class="h-100" style="padding-top: 52px">
+		<div id="content" class="h-100 d-flex flex-column">
+			<div style="margin: 0 15px">
+				<div style="max-width: 360px; margin: 0 auto">
+					<div style="text-align: center; margin: 48px 0 100px 0">
+						<img
+							id="loading-icon"
+							src="/ico/icon.svg"
+							width="48"
+							height="48"
+							class="spin"
+							style="animation-play-state: runnung"
+							alt=""
+						/>
+					</div>
 
-    <div id="content" class="h-100 d-flex flex-column">
-      <div style="margin: 0 15px">
-        <div style="max-width: 360px; margin: 0 auto">
-          <div style="text-align: center; margin: 48px 0 100px 0">
-            <img id="loading-icon" src="/ico/icon.svg" width="48" height="48" class="spin" style="animation-play-state: runnung" alt="">
-          </div>
+					<p>GAME_NAME vVERSION_NUMBER</p>
+					<div id="startup-browser">Checking browser...</div>
+					<noscript>
+						<p>
+							<b>Error!</b> JavaScript is disabled in your browser. Please
+							enable JavaScript to play GAME_NAME.
+						</p>
+					</noscript>
+					<div id="startup-ui"></div>
+					<div id="startup-worker"></div>
 
-          <p>GAME_NAME vVERSION_NUMBER</p>
-          <div id="startup-browser">Checking browser...</div>
-          <noscript>
-            <p><b>Error!</b> JavaScript is disabled in your browser. Please enable JavaScript to play GAME_NAME.</p>
-          </noscript>
-          <div id="startup-ui"></div>
-          <div id="startup-worker"></div>
+					<div
+						class="alert alert-danger mt-3"
+						id="startup-error"
+						style="display: none"
+					></div>
+				</div>
+			</div>
+		</div>
 
-          <div class="alert alert-danger mt-3" id="startup-error" style="display: none"></div>
-        </div>
-      </div>
-    </div>
+		<script>
+			var startupUI = document.getElementById("startup-ui");
+			var startupWorker = document.getElementById("startup-worker");
+			var doneUI = false;
+			var doneWorker = false;
 
-    <script>
-var startupUI = document.getElementById("startup-ui");
-var startupWorker = document.getElementById("startup-worker");
-var doneUI = false;
-var doneWorker = false;
+			var timeoutID = setTimeout(function () {
+				var errorMsg;
+				if (doneUI && !doneWorker) {
+					// From user reports in Chrome, possibly related to Chrome version updates in the background
+					errorMsg =
+						"<p>This should only take a few seconds on a fast connection.</p><p>If it's stuck loading the backend, <b>try restarting your browser</b>, sometimes that helps.</p>";
+				} else if (!doneUI && !doneWorker) {
+					errorMsg =
+						'<p>This should only take a few seconds on a fast connection.</p><p>If it gets stuck for a while, read <a href="https://WEBSITE_ROOT/manual/debugging/">the debugging instructions</a> and <a href="https://WEBSITE_ROOT/contact/">ask for help</a> if it still isn\'t working.</p>';
+				}
 
-var timeoutID = setTimeout(function () {
-  var errorMsg;
-  if (doneUI && !doneWorker) {
-    // From user reports in Chrome, possibly related to Chrome version updates in the background
-    errorMsg = '<p>This should only take a few seconds on a fast connection.</p><p>If it\'s stuck loading the backend, <b>try restarting your browser</b>, sometimes that helps.</p>';
-  } else if (!doneUI && !doneWorker) {
-    errorMsg = '<p>This should only take a few seconds on a fast connection.</p><p>If it gets stuck for a while, read <a href="https://WEBSITE_ROOT/manual/debugging/">the debugging instructions</a> and <a href="https://WEBSITE_ROOT/contact/">ask for help</a> if it still isn\'t working.</p>';
-  }
+				var startupError = document.getElementById("startup-error");
+				startupError.innerHTML = errorMsg;
+				startupError.style.display = "block";
+			}, 6000);
 
-  var startupError = document.getElementById("startup-error");
-  startupError.innerHTML = errorMsg;
-  startupError.style.display = "block";
-}, 6000);
+			function withGoodBrowser() {
+				document.getElementById("startup-browser").innerHTML += " done!";
+				startupUI.innerHTML = "Loading UI...";
+				startupWorker.innerHTML = "Loading backend...";
 
-function withGoodBrowser() {
-  document.getElementById("startup-browser").innerHTML += " done!";
-  startupUI.innerHTML = "Loading UI...";
-  startupWorker.innerHTML = "Loading backend...";
+				var body = document.getElementsByTagName("body").item(0);
+				var script = document.createElement("script");
+				script.type = "module"; // Needs to be module for modulepreload
+				script.src = "/gen/ui-" + bbgmVersion + ".js";
+				body.appendChild(script);
+			}
 
-  var body = document.getElementsByTagName('body').item(0);
-  var script = document.createElement('script');
-  script.type = "module"; // Needs to be module for modulepreload
-  script.src = "/gen/ui-" + bbgmVersion + ".js";
-  body.appendChild(script);
-}
+			var count = 0;
+			function withGoodUI() {
+				startupUI.innerHTML += " done!";
+				doneUI = true;
+				count += 1;
+				if (count === 2) {
+					clearTimeout(timeoutID);
+				}
+			}
+			function withGoodWorker() {
+				startupWorker.innerHTML += " done!";
+				doneWorker = true;
+				count += 1;
+				if (count === 2) {
+					clearTimeout(timeoutID);
+				}
+			}
 
-var count = 0;
-function withGoodUI() {
-  startupUI.innerHTML += " done!";
-  doneUI = true;
-  count += 1;
-  if (count === 2) {
-    clearTimeout(timeoutID);
-  }
-}
-function withGoodWorker() {
-  startupWorker.innerHTML += " done!";
-  doneWorker = true;
-  count += 1;
-  if (count === 2) {
-    clearTimeout(timeoutID);
-  }
-}
+			function checkBrowser() {
+				// Chrome <71, Firefox <105, Safari <14.1
+				if (typeof TextDecoderStream === "undefined") {
+					return false;
+				}
 
-function checkBrowser() {
-  // Chrome <71, Firefox <105, Safari <14.1
-  if (typeof TextDecoderStream === "undefined") {
-    return false;
-  }
+				// Chrome <85
+				if (!String.prototype.replaceAll) {
+					return false;
+				}
 
-  // Chrome <85
-  if (!String.prototype.replaceAll) {
-    return false;
-  }
+				// Safari <15.4
+				if (typeof BroadcastChannel === "undefined") {
+					// Actually it still works down to Safari 14.1 currently, just no longer "officially" supported so might as well not explicitly check here. Eventually when actually using worker modules, uncomment this
+					//return false;
+				}
 
-  // Safari <15.4
-  if (typeof BroadcastChannel === "undefined") {
-    // Actually it still works down to Safari 14.1 currently, just no longer "officially" supported so might as well not explicitly check here. Eventually when actually using worker modules, uncomment this
-    //return false;
-  }
+				return true;
+			}
 
-  return true;
-};
+			// Browser compatibility checks! Used to be like https://gist.github.com/jensarps/15f270874889e1717b3d but now the buggy old IE/Safari IndexedDB implementations are not supported for other reasons, like checkBrowser.
+			function goodIDB(cb) {
+				if (typeof indexedDB === "undefined" || !checkBrowser()) {
+					cb("bad");
+					return;
+				}
 
-// Browser compatibility checks! Used to be like https://gist.github.com/jensarps/15f270874889e1717b3d but now the buggy old IE/Safari IndexedDB implementations are not supported for other reasons, like checkBrowser.
-function goodIDB(cb) {
-  if (typeof indexedDB === "undefined" || !checkBrowser()) {
-    cb("bad");
-    return;
-  }
+				if (localStorage.getItem("goodIDB")) {
+					cb("good");
+					return;
+				}
 
-  if (localStorage.getItem("goodIDB")) {
-    cb("good");
-    return;
-  }
+				var openRequest = indexedDB.open("__detectIDB_test2", 1);
 
-  var openRequest = indexedDB.open('__detectIDB_test2', 1);
+				openRequest.onerror = function (evt) {
+					console.error(evt.target.error);
+					if (
+						evt.target.error.message.indexOf("aborted") >= 0 ||
+						evt.target.error.message.indexOf("full") >= 0
+					) {
+						// Error like "Version change transaction was aborted in upgradeneeded event handler." is probably quota error - try to continue loading BBGM and hope for the best
+						cb("good");
+					} else {
+						cb("open-failed");
+					}
+				};
 
-  openRequest.onerror = function (evt) {
-    console.error(evt.target.error);
-    if (evt.target.error.message.indexOf("aborted") >= 0 || evt.target.error.message.indexOf("full") >= 0) {
-      // Error like "Version change transaction was aborted in upgradeneeded event handler." is probably quota error - try to continue loading BBGM and hope for the best
-      cb("good");
-    } else {
-      cb("open-failed");
-    }
-  }
+				openRequest.onsuccess = function (evt) {
+					cb("good");
+				};
+			}
 
-  openRequest.onsuccess = function (evt) {
-    cb("good");
-  };
-};
+			goodIDB(function (idbResult) {
+				if (idbResult !== "good") {
+					var errorMsg;
+					if (idbResult === "open-failed") {
+						errorMsg =
+							"<p><b>Error!</b> Cannot store data.</p><p>If you have disabled cookies in your browser, you must enable them to play GAME_NAME.</p>";
+					} else {
+						errorMsg =
+							'<p><b>Error!</b> Your browser is not modern enough to run GAME_NAME. Current supported browsers include:</p><ul class="list-unstyled mb-0"><li>Chrome 85+</li><li>Firefox 115+</li><li>Safari 15.4+</li></ul>';
+					}
 
-goodIDB(function (idbResult) {
-  if (idbResult !== "good") {
-    var errorMsg;
-    if (idbResult === "open-failed") {
-      errorMsg = '<p><b>Error!</b> Cannot store data.</p><p>If you have disabled cookies in your browser, you must enable them to play GAME_NAME.</p>';
-    } else {
-      errorMsg = '<p><b>Error!</b> Your browser is not modern enough to run GAME_NAME. Current supported browsers include:</p><ul class="list-unstyled mb-0"><li>Chrome 85+</li><li>Firefox 115+</li><li>Safari 15.4+</li></ul>';
-    }
+					var startupError = document.getElementById("startup-error");
+					startupError.innerHTML = errorMsg;
+					startupError.style.display = "block";
 
-    var startupError = document.getElementById("startup-error");
-    startupError.innerHTML = errorMsg;
-    startupError.style.display = "block";
+					document.getElementById("loading-icon").style.animationPlayState =
+						"paused";
 
-    document.getElementById("loading-icon").style.animationPlayState = "paused";
+					clearTimeout(timeoutID);
+				} else {
+					localStorage.setItem("goodIDB", "1");
 
-    clearTimeout(timeoutID);
-  } else {
-    localStorage.setItem("goodIDB", "1")
-
-    withGoodBrowser();
-  }
-});
-    </script>
-  </body>
+					withGoodBrowser();
+				}
+			});
+		</script>
+	</body>
 </html>

@@ -1,7 +1,7 @@
 import clsx from "clsx";
-import { helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
 
-const StatWithChange = ({
+export const StatWithChange = ({
 	change,
 	children,
 	stat,
@@ -28,5 +28,3 @@ const StatWithChange = ({
 		</>
 	);
 };
-
-export default StatWithChange;

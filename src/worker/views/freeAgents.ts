@@ -1,4 +1,4 @@
-import { bySport, PHASE, PLAYER } from "../../common/index.ts";
+import { PHASE, PLAYER } from "../../common/constants.ts";
 import type {
 	Phase,
 	Player,
@@ -11,6 +11,7 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { loadAbbrevs } from "./gameLog.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 export const addMood = async (players: Player[]) => {
 	const moods: Awaited<ReturnType<(typeof player)["moodInfos"]>>[] = [];

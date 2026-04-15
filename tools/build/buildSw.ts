@@ -1,5 +1,4 @@
 import fs from "node:fs/promises";
-import terser from "@rollup/plugin-terser";
 import { build } from "rolldown";
 import workboxBuild from "workbox-build";
 import { replace } from "./replace.ts";
@@ -57,13 +56,6 @@ const bundle = async () => {
 			sourcemap: true,
 			comments: false,
 		},
-		plugins: [
-			terser({
-				format: {
-					comments: false,
-				},
-			}),
-		],
 		preserveEntrySignatures: false,
 		transform: {
 			define: {

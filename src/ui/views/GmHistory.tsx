@@ -1,5 +1,5 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { helpers } from "../util/index.ts";
+import { helpers } from "../util/helpers.ts";
 import type { View } from "../../common/types.ts";
 import Overall from "./TeamHistory/Overall.tsx";
 import Players from "./TeamHistory/Players.tsx";

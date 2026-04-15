@@ -1,11 +1,10 @@
 import { g, helpers, random } from "../../util/index.ts";
 import type {
-	MinimalPlayerRatings,
 	Player,
 	PlayerContract,
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
-import { isSport } from "../../../common/index.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 
 /**
  * Generate a contract for a player.
@@ -16,7 +15,7 @@ import { isSport } from "../../../common/index.ts";
  * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
  */
 const genContract = (
-	p: Player<MinimalPlayerRatings> | PlayerWithoutKey<MinimalPlayerRatings>,
+	p: Player | PlayerWithoutKey,
 	randomizeAmount: boolean = true,
 	noLimit: boolean = false,
 ): PlayerContract => {

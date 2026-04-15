@@ -299,7 +299,7 @@ const processGameAttributes = async (
 		info.allStarThree !== undefined &&
 		info.allStarThree !== prevAllStarThree
 	) {
-		if (info.allStarDunk) {
+		if (info.allStarThree) {
 			texts.push(
 				"A three-point contest has been added to the All-Star events.",
 			);

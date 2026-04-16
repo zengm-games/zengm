@@ -529,12 +529,12 @@ const saveAwardsByPlayer = async (
 	for (const pid of pids) {
 		let p = await idb.cache.players.get(pid);
 		if (!p) {
-			p = (await idb.getCopy.players(
+			p = await idb.getCopy.players(
 				{
 					pid,
 				},
 				"noCopyCache",
-			)) as any;
+			);
 		}
 
 		if (p && pid != undefined) {

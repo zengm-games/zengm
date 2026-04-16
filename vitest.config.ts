@@ -3,8 +3,6 @@ import {
 	defineConfig,
 	type TestProjectInlineConfiguration,
 } from "vitest/config";
-//import { playwright } from "@vitest/browser-playwright";
-//import { playwright } from "@vitest/browser-playwright";
 import type { Sport } from "./tools/lib/getSport.ts";
 import type { ProjectConfig } from "vitest/node";
 import { playwright } from "@vitest/browser-playwright";

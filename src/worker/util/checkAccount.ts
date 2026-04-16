@@ -64,7 +64,7 @@ const checkAccount = async (
 				// If any exist, upload
 				if (slugs.length > 0) {
 					// If this fails to save remotely, will be added to IDB again
-					await achievement.add(slugs, conditions, difficulty as any, true);
+					await achievement.add(slugs, conditions, difficulty, true);
 				}
 			}
 

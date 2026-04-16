@@ -246,7 +246,7 @@ const useLocal = createWithEqualityFn<LocalStateWithActions>(
 					});
 				}
 
-				set(obj as any);
+				set(obj);
 			},
 
 			updateGameAttributes(

@@ -15,7 +15,7 @@ export const NextPrevButtons = <T extends unknown>({
 	onChange: (newItem: T) => void;
 	style?: CSSProperties;
 }) => {
-	const index = items.indexOf(currentItem as any);
+	const index = currentItem === undefined ? -1 : items.indexOf(currentItem);
 
 	type ButtonInfo = {
 		disabled: boolean;

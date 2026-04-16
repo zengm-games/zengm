@@ -60,7 +60,7 @@ export const ResponsivePopover = ({
 			rootClose
 			onEnter={toggle}
 		>
-			<span ref={ref}>{renderTarget({ forwardedRef: ref }) as any}</span>
+			<span ref={ref}>{renderTarget({ forwardedRef: ref })}</span>
 		</OverlayTrigger>
 	);
 };

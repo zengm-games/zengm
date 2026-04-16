@@ -51,7 +51,8 @@ const getRecord = (t: Team) => {
 		return "";
 	}
 
-	return helpers.formatRecord(t as any);
+	// @ts-expect-error
+	return helpers.formatRecord(t);
 };
 
 const smallStyle = {

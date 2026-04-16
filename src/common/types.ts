@@ -970,6 +970,25 @@ export type Options = {
 	units?: "metric" | "us";
 };
 
+type LocalStateUIGameTeam = {
+	ovr?: number;
+	tid: number;
+	playoffs?: {
+		seed: number;
+		won: number;
+		lost: number;
+	};
+} & (
+	| {
+			pts: number;
+			sPts?: number;
+	  }
+	| {
+			pts?: undefined;
+			sPts?: undefined;
+	  }
+);
+
 export type LocalStateUI = {
 	alwaysShowCountry: boolean;
 	challengeNoRatings: boolean;
@@ -984,30 +1003,7 @@ export type LocalStateUI = {
 		gid: number;
 		numPeriods?: number;
 		overtimes?: number;
-		teams: [
-			{
-				ovr?: number;
-				pts?: number;
-				sPts?: number;
-				tid: number;
-				playoffs?: {
-					seed: number;
-					won: number;
-					lost: number;
-				};
-			},
-			{
-				ovr?: number;
-				pts?: number;
-				sPts?: number;
-				tid: number;
-				playoffs?: {
-					seed: number;
-					won: number;
-					lost: number;
-				};
-			},
-		];
+		teams: [LocalStateUIGameTeam, LocalStateUIGameTeam];
 	}[];
 	gender: GameAttributesLeague["gender"];
 	fantasyPoints: GameAttributesLeague["fantasyPoints"];

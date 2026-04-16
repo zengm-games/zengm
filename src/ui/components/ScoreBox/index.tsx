@@ -18,8 +18,6 @@ const roundHalf = (x: number) => {
 type Team = {
 	// pts/players are undefined for upcoming games. Others are undefined only for legacy objects
 	ovr?: number;
-	pts?: number;
-	sPts?: number;
 	tid: number;
 	won?: number;
 	lost?: number;
@@ -40,7 +38,16 @@ type Team = {
 		imgURL?: string;
 		imgURLSmall?: string;
 	};
-};
+} & (
+	| {
+			pts: number;
+			sPts?: number;
+	  }
+	| {
+			pts?: undefined;
+			sPts?: undefined;
+	  }
+);
 
 const getRecord = (t: Team) => {
 	if (t.playoffs) {

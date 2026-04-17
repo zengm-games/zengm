@@ -24,6 +24,7 @@ export const build = async () => {
 	await buildIndexHtml({
 		cssReplaces,
 		modulepreloadPaths,
+		sport,
 		versionNumber,
 		watch: false,
 	});

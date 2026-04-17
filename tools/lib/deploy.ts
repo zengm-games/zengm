@@ -66,7 +66,7 @@ export const deploy = async () => {
 
 	const subdomain = getSubdomain();
 	const sport = getSport();
-	const domain = bySport({
+	const domain = bySport(sport, {
 		baseball: `${subdomain === "play" ? "" : "beta."}baseball.zengm.com`,
 		basketball: `${subdomain}.basketball-gm.com`,
 		football: `${subdomain}.football-gm.com`,

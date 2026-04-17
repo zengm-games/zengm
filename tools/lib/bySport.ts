@@ -1,6 +1,7 @@
-import { getSport } from "./getSport.ts";
+import { type Sport } from "./getSport.ts";
 
 export const bySport = <T>(
+	sport: Sport,
 	object:
 		| {
 				baseball: T;
@@ -17,7 +18,6 @@ export const bySport = <T>(
 				default: T;
 		  },
 ): T => {
-	const sport = getSport();
 	if (Object.hasOwn(object, sport)) {
 		return (object as any)[sport];
 	}

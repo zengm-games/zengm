@@ -1,7 +1,7 @@
 import { bySport } from "../lib/bySport.ts";
 import type { Sport } from "../lib/getSport.ts";
 
-const genRatings = (sport: string) => {
+const genRatings = (sport: Sport) => {
 	const properties: any = {
 		fuzz: {
 			type: "number",
@@ -33,7 +33,7 @@ const genRatings = (sport: string) => {
 		},
 	};
 
-	const ratings = bySport({
+	const ratings = bySport(sport, {
 		baseball: [
 			"hgt",
 			"spd",
@@ -167,7 +167,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 		};
 	}
 
-	const depth = bySport({
+	const depth = bySport(sport, {
 		baseball: {
 			depth: {
 				type: "object",
@@ -335,7 +335,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 		},
 	});
 
-	const websitePlay = bySport({
+	const websitePlay = bySport(sport, {
 		baseball: "baseball.zengm.com",
 		basketball: "play.basketball-gm.com",
 		football: "play.football-gm.com",
@@ -345,7 +345,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 	return {
 		$schema: "http://json-schema.org/draft-07/schema#",
 		$id: `https://${websitePlay}/files/league-schema.json`,
-		title: `${bySport({
+		title: `${bySport(sport, {
 			baseball: "ZenGM Baseball",
 			basketball: "Basketball GM",
 			football: "Footbal lGM",
@@ -422,7 +422,7 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 			},
 			playerSkill: {
 				type: "string",
-				enum: bySport({
+				enum: bySport(sport, {
 					baseball: [
 						"Pp",
 						"Pf",

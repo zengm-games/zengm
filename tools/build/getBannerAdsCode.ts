@@ -1,15 +1,17 @@
 import { bySport } from "../lib/bySport.ts";
+import type { Sport } from "../lib/getSport.ts";
 
 // InMobi Choice. Consent Manager Tag v3.0 (for TCF 2.2)
 // Then below that is Freestar and then Ad-Shield https://mail.google.com/mail/u/0/#inbox/FMfcgzQcqlCVRVGZzgGtPJqHMLThhmhV?compose=jrjtXVXCNTFVDcQBLjbZvbhGfdFWSNHMmsMCVfdqRjJCxSpZzvQJSvqbdSPrkfRZTFkfqBCS
 // Needs to be a function so bySport can run
-export const getBannerAdsCode =
-	() => `<script type="text/javascript" async=true>
+export const getBannerAdsCode = (
+	sport: Sport,
+) => `<script type="text/javascript" async=true>
 (function() {
   if (!window.enableLogging) {
 	  return;
   }
-  var host = '${bySport({
+  var host = '${bySport(sport, {
 		basketball: "basketball-gm.com",
 		football: "football-gm.com",
 		default: "zengm.com",
@@ -352,6 +354,7 @@ freestar.debug = window.location.search.indexOf('fsdebug') === -1 ? false : true
 freestar.config.enabled_slots = [];
 if (window.enableLogging) {
   !function(a,b){var c=b.getElementsByTagName("script")[0],d=b.createElement("script"),e="https://a.pub.network/${bySport(
+		sport,
 		{
 			basketball: "basketball-gm-com",
 			football: "football-gm-com",

@@ -4,6 +4,7 @@ import { minify } from "html-minifier-terser";
 import { type ReplaceInfo } from "./replace.ts";
 import { bySport } from "../lib/bySport.ts";
 import { getBannerAdsCode } from "./getBannerAdsCode.ts";
+import type { Sport } from "../lib/getSport.ts";
 
 const genModulepreloads = async (modulepreloadPaths: string[]) => {
 	const infos = [];
@@ -28,9 +29,10 @@ export const buildIndexHtml = async ({
 	cssReplaces,
 	modulepreloadPaths,
 	signal,
+	sport,
 	versionNumber,
 	watch,
-}: { versionNumber: string } & (
+}: { sport: Sport; versionNumber: string } & (
 	| {
 			cssReplaces?: undefined;
 			modulepreloadPaths?: undefined;
@@ -80,11 +82,11 @@ export const buildIndexHtml = async ({
 		},
 		{
 			searchValue: "BANNER_ADS_CODE",
-			replaceValue: getBannerAdsCode(),
+			replaceValue: getBannerAdsCode(sport),
 		},
 		{
 			searchValue: "GOOGLE_ANALYTICS_ID",
-			replaceValue: bySport({
+			replaceValue: bySport(sport, {
 				basketball: "G-8MW4G9YRJK",
 				football: "G-B5MWX6ZDK2",
 				default: "G-27QV0377Q1",
@@ -92,7 +94,7 @@ export const buildIndexHtml = async ({
 		},
 		{
 			searchValue: "BUGSNAG_API_KEY",
-			replaceValue: bySport({
+			replaceValue: bySport(sport, {
 				baseball: "37b1fd32d021f7716dc0e1d4a3e619bc",
 				basketball: "c10b95290070cb8888a7a79cc5408555",
 				football: "fed8957cbfca2d1c80997897b840e6cf",
@@ -101,7 +103,7 @@ export const buildIndexHtml = async ({
 		},
 		{
 			searchValue: "GAME_NAME",
-			replaceValue: bySport({
+			replaceValue: bySport(sport, {
 				baseball: "ZenGM Baseball",
 				basketball: "Basketball GM",
 				football: "Football GM",
@@ -110,7 +112,7 @@ export const buildIndexHtml = async ({
 		},
 		{
 			searchValue: "SPORT",
-			replaceValue: bySport({
+			replaceValue: bySport(sport, {
 				baseball: "baseball",
 				basketball: "basketball",
 				football: "football",
@@ -119,7 +121,7 @@ export const buildIndexHtml = async ({
 		},
 		{
 			searchValue: "GOOGLE_ANALYTICS_COOKIE_DOMAIN",
-			replaceValue: bySport({
+			replaceValue: bySport(sport, {
 				basketball: "basketball-gm.com",
 				football: "football-gm.com",
 				default: "zengm.com",
@@ -127,7 +129,7 @@ export const buildIndexHtml = async ({
 		},
 		{
 			searchValue: "WEBSITE_ROOT",
-			replaceValue: bySport({
+			replaceValue: bySport(sport, {
 				baseball: "zengm.com/baseball",
 				basketball: "basketball-gm.com",
 				football: "football-gm.com",
@@ -136,7 +138,7 @@ export const buildIndexHtml = async ({
 		},
 		{
 			searchValue: "PLAY_SUBDOMAIN",
-			replaceValue: bySport({
+			replaceValue: bySport(sport, {
 				baseball: "baseball.zengm.com",
 				basketball: "play.basketball-gm.com",
 				football: "play.football-gm.com",
@@ -145,7 +147,7 @@ export const buildIndexHtml = async ({
 		},
 		{
 			searchValue: "BETA_SUBDOMAIN",
-			replaceValue: bySport({
+			replaceValue: bySport(sport, {
 				baseball: "beta.baseball.zengm.com",
 				basketball: "beta.basketball-gm.com",
 				football: "beta.football-gm.com",

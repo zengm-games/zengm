@@ -34,7 +34,7 @@ export const watchFiles = async (
 			}
 
 			const versionNumber = generateVersionNumber();
-			await buildIndexHtml({ signal, versionNumber, watch: true });
+			await buildIndexHtml({ signal, sport, versionNumber, watch: true });
 
 			if (signal.aborted) {
 				return;

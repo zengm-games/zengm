@@ -17,8 +17,6 @@ export const watchJsonSchema = async (
 ) => {
 	let currentSport = initialSport;
 
-	await fs.mkdir("build/files", { recursive: true });
-
 	const outFilename = "build/files/league-schema.json";
 
 	let abortController: AbortController | undefined;
@@ -42,6 +40,8 @@ export const watchJsonSchema = async (
 
 			const jsonSchema = generateJsonSchema(sport);
 			const output = JSON.stringify(jsonSchema);
+
+			await fs.mkdir("build/files", { recursive: true });
 			await fs.writeFile(outFilename, output, {
 				signal,
 			});

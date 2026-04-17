@@ -5,7 +5,6 @@ import { SUBREDDIT_NAME } from "../../common/constants.ts";
 import { fetchWrapper } from "../../common/fetchWrapper.ts";
 
 const LAST_VERSION_BEFORE_THIS_EXISTED = "2021.05.25.0919";
-const CURRENT_VERSION = "VERSION_NUMBER";
 const MAX_NUM_TO_SHOW = 3;
 
 // Keep in sync with changelog.php
@@ -19,13 +18,13 @@ const checkChanges = async (conditions: Conditions) => {
 			"lastChangesVersion",
 		)) as unknown as string) ?? LAST_VERSION_BEFORE_THIS_EXISTED;
 
-	if (CURRENT_VERSION > lastChangesVersion) {
+	if (window.bbgmVersion > lastChangesVersion) {
 		const changes = (await fetchWrapper({
 			url: "https://zengm.com/changelog.php",
 			method: "GET",
 			data: {
 				since: lastChangesVersion,
-				current: CURRENT_VERSION,
+				current: window.bbgmVersion,
 				sport: process.env.SPORT,
 				limit: String(FETCH_LIMIT),
 			},
@@ -96,7 +95,7 @@ const checkChanges = async (conditions: Conditions) => {
 			);
 		}
 
-		await idb.meta.put("attributes", CURRENT_VERSION, "lastChangesVersion");
+		await idb.meta.put("attributes", window.bbgmVersion, "lastChangesVersion");
 	}
 };
 

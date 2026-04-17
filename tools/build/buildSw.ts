@@ -1,22 +1,5 @@
-import fs from "node:fs/promises";
 import { build } from "rolldown";
 import workboxBuild from "workbox-build";
-import { replace } from "./replace.ts";
-
-const getVersionNumber = async () => {
-	const files = await fs.readdir("build/gen");
-	for (const file of files) {
-		if (file.startsWith("ui") && file.endsWith(".js")) {
-			const filePart = file.split("-")[1];
-			if (filePart !== undefined) {
-				const versionNumber = filePart.replace(".js", "");
-				return versionNumber;
-			}
-		}
-	}
-
-	throw new Error("versionNumber not found");
-};
 
 // NOTE: This should be run *AFTER* all assets are built
 const injectManifest = async () => {
@@ -71,15 +54,4 @@ const bundle = async () => {
 export const buildSw = async () => {
 	await injectManifest();
 	await bundle();
-
-	const versionNumber = await getVersionNumber();
-	await replace({
-		paths: ["build/sw.js"],
-		replaces: [
-			{
-				searchValue: "VERSION_NUMBER",
-				replaceValue: versionNumber,
-			},
-		],
-	});
 };

@@ -5,7 +5,7 @@ import process from "node:process";
 import readline from "node:readline";
 import type { WriteStream } from "node:tty";
 import { stripVTControlCharacters, styleText } from "node:util";
-import { getSport, SPORTS, type Sport } from "../lib/getSport.ts";
+import { SPORTS, type Sport } from "../lib/getSport.ts";
 
 const isUnicodeSupported =
 	process.platform !== "win32" ||
@@ -127,6 +127,7 @@ export class Spinners<Key extends string = string> {
 	initialized = false;
 
 	constructor(
+		initialSport: Sport,
 		renderKey: RenderKey<Key>,
 		extraRenderDelays?: ExtraRenderDelays,
 	) {
@@ -138,7 +139,7 @@ export class Spinners<Key extends string = string> {
 		process.once("SIGINT", exitHandlerBound);
 		process.once("SIGTERM", exitHandlerBound);
 
-		this.sportIndex = SPORTS.indexOf(getSport());
+		this.sportIndex = SPORTS.indexOf(initialSport);
 		if (this.sportIndex < 0) {
 			this.sportIndex = 0;
 		}
@@ -433,7 +434,6 @@ export class Spinners<Key extends string = string> {
 					if (sport === undefined) {
 						throw new Error("Should never happen");
 					}
-					process.env.SPORT = sport;
 					this.eventEmitter.emit("newSport", sport);
 					if (!this.rendering) {
 						this.render();
@@ -465,54 +465,57 @@ const TIME_CUTOFF_SPIN_2 = 5000;
 const TIME_CUTOFF_SUCCESS_1 = 10_000;
 const TIME_CUTOFF_SUCCESS_2 = 30_000;
 
-export const spinners = new Spinners(
-	({ key, info, symbol }) => {
-		const symbolAndText = `${symbol} ${key}`;
+export const makeSpinners = (initialSport: Sport) => {
+	return new Spinners(
+		initialSport,
+		({ key, info, symbol }) => {
+			const symbolAndText = `${symbol} ${key}`;
 
-		if (info.status === "spin") {
-			const dateStart = info.dateStart;
-			const millisecondsElapsed = Date.now() - dateStart.getTime();
-			const time = dateStart.toLocaleTimeString();
-			let coloredTime;
-			if (millisecondsElapsed > TIME_CUTOFF_SPIN_2) {
-				coloredTime = styleText("red", time);
-			} else if (millisecondsElapsed > TIME_CUTOFF_SPIN_1) {
-				coloredTime = styleText("yellow", time);
-			} else {
-				coloredTime = time;
+			if (info.status === "spin") {
+				const dateStart = info.dateStart;
+				const millisecondsElapsed = Date.now() - dateStart.getTime();
+				const time = dateStart.toLocaleTimeString();
+				let coloredTime;
+				if (millisecondsElapsed > TIME_CUTOFF_SPIN_2) {
+					coloredTime = styleText("red", time);
+				} else if (millisecondsElapsed > TIME_CUTOFF_SPIN_1) {
+					coloredTime = styleText("yellow", time);
+				} else {
+					coloredTime = time;
+				}
+
+				return `${symbolAndText}: build started at ${coloredTime}`;
+			}
+			if (info.status === "error") {
+				return `${symbolAndText} ${info.error.stack ?? "???"}`;
 			}
 
-			return `${symbolAndText}: build started at ${coloredTime}`;
-		}
-		if (info.status === "error") {
-			return `${symbolAndText} ${info.error.stack ?? "???"}`;
-		}
+			if (info.status === "success") {
+				const { dateStart, dateEnd, size } = info;
 
-		if (info.status === "success") {
-			const { dateStart, dateEnd, size } = info;
+				const duration = (dateEnd.getTime() - dateStart.getTime()) / 1000;
+				const megabytes =
+					size !== undefined ? (size / 1024 / 1024).toFixed(2) : undefined;
 
-			const duration = (dateEnd.getTime() - dateStart.getTime()) / 1000;
-			const megabytes =
-				size !== undefined ? (size / 1024 / 1024).toFixed(2) : undefined;
+				const millisecondsElapsed = Date.now() - dateEnd.getTime();
+				const time = dateEnd.toLocaleTimeString();
+				let coloredTime;
+				if (millisecondsElapsed < TIME_CUTOFF_SUCCESS_1) {
+					coloredTime = styleText("green", time);
+				} else if (millisecondsElapsed < TIME_CUTOFF_SUCCESS_2) {
+					coloredTime = styleText("yellow", time);
+				} else {
+					coloredTime = time;
+				}
 
-			const millisecondsElapsed = Date.now() - dateEnd.getTime();
-			const time = dateEnd.toLocaleTimeString();
-			let coloredTime;
-			if (millisecondsElapsed < TIME_CUTOFF_SUCCESS_1) {
-				coloredTime = styleText("green", time);
-			} else if (millisecondsElapsed < TIME_CUTOFF_SUCCESS_2) {
-				coloredTime = styleText("yellow", time);
-			} else {
-				coloredTime = time;
+				return `${symbolAndText}: ${megabytes !== undefined ? `${megabytes} MB in ` : ""}${duration} seconds at ${coloredTime}`;
 			}
 
-			return `${symbolAndText}: ${megabytes !== undefined ? `${megabytes} MB in ` : ""}${duration} seconds at ${coloredTime}`;
-		}
-
-		return symbolAndText;
-	},
-	{
-		// Don't need to pass "spin" ones because it's always rendering while spinning
-		success: [TIME_CUTOFF_SUCCESS_1, TIME_CUTOFF_SUCCESS_2],
-	},
-);
+			return symbolAndText;
+		},
+		{
+			// Don't need to pass "spin" ones because it's always rendering while spinning
+			success: [TIME_CUTOFF_SUCCESS_1, TIME_CUTOFF_SUCCESS_2],
+		},
+	);
+};

@@ -1,5 +1,5 @@
 import fs from "node:fs/promises";
-import { spinners } from "./spinners.ts";
+import { makeSpinners } from "./spinners.ts";
 import { watchCss } from "./watchCss.ts";
 import { watchFiles } from "./watchFiles.ts";
 import { watchJs } from "./watchJs.ts";
@@ -10,6 +10,10 @@ import { parseCliParams } from "../lib/parseCliParams.ts";
 import { getSport } from "../lib/getSport.ts";
 
 const { exposeToNetwork } = parseCliParams();
+
+const initialSport = getSport();
+const spinners = makeSpinners(initialSport);
+
 await startServer({
 	exposeToNetwork,
 	waitForBuild: () => spinners.waitForBuild(),
@@ -47,8 +51,6 @@ const update = (
 	}
 };
 export type Update = typeof update;
-
-const initialSport = getSport();
 
 // Needs to run first, to create output folder
 await reset();

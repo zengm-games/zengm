@@ -1,3 +1,4 @@
+import { getSport } from "../lib/getSport.ts";
 import { build } from "./build.ts";
 
-await build();
+await build(getSport());

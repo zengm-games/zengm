@@ -58,7 +58,6 @@ parentPort?.on("message", async (message) => {
 	if (message.type === "switchingSport") {
 		abortController.abort();
 	} else if (message.type === "newSport") {
-		process.env.SPORT = message.sport;
 		abortController.abort(); // Maybe not necessary
 		abortController = makeWatcher(message.sport);
 	}

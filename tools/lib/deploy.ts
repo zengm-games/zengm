@@ -4,7 +4,7 @@ import Cloudflare from "cloudflare";
 import { readFile } from "node:fs/promises";
 import { build } from "../build/build.ts";
 import { bySport } from "./bySport.ts";
-import { getSport } from "./getSport.ts";
+import { type Sport } from "./getSport.ts";
 
 const getSubdomain = () => {
 	const inputSubdomain = process.argv[2] ?? "play";
@@ -54,7 +54,7 @@ const mySpawn = async (command: string, args: string[]) => {
 	}
 };
 
-export const deploy = async () => {
+export const deploy = async (sport: Sport) => {
 	const cloudflareConfig = JSON.parse(
 		await readFile(
 			new URL("../../../../.config/cloudflare.json", import.meta.url),
@@ -62,10 +62,9 @@ export const deploy = async () => {
 		),
 	);
 
-	await build();
+	await build(sport);
 
 	const subdomain = getSubdomain();
-	const sport = getSport();
 	const domain = bySport(sport, {
 		baseball: `${subdomain === "play" ? "" : "beta."}baseball.zengm.com`,
 		basketball: `${subdomain}.basketball-gm.com`,

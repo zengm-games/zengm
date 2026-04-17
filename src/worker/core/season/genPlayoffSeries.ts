@@ -155,7 +155,13 @@ export const genPlayoffSeriesFromTeams = async (
 	orderTeamsOptions?: {
 		skipTiebreakers?: boolean;
 	},
-) => {
+): Promise<{
+	byConf: ByConf;
+	playIns?: PlayoffSeries["playIns"];
+	series: PlayoffSeries["series"];
+	tidPlayIn: number[];
+	tidPlayoffs: number[];
+}> => {
 	const numRounds = g.get("numGamesPlayoffSeries", "current").length;
 
 	if (numRounds === 0) {
@@ -164,11 +170,6 @@ export const genPlayoffSeriesFromTeams = async (
 			series: [],
 			tidPlayIn: [],
 			tidPlayoffs: [],
-		} satisfies {
-			byConf: ByConf;
-			series: PlayoffSeries["series"];
-			tidPlayIn: number[];
-			tidPlayoffs: number[];
 		};
 	}
 

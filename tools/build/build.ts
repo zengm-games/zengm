@@ -15,10 +15,10 @@ export const build = async () => {
 	console.log(`Building ${sport} ${versionNumber}`);
 
 	await reset();
-	await copyFiles();
+	await copyFiles(sport);
 	await createJsonSchemaFile(sport);
 
-	const modulepreloadPaths = await buildJs(versionNumber);
+	const modulepreloadPaths = await buildJs(sport, versionNumber);
 
 	const cssReplaces = (await buildCss()) ?? [];
 	await buildIndexHtml({

@@ -4,8 +4,9 @@ import { Worker } from "node:worker_threads";
 import { fileHash } from "./fileHash.ts";
 import { replace } from "./replace.ts";
 import { FOLDER } from "../lib/rolldownConfig.ts";
+import type { Sport } from "../lib/getSport.ts";
 
-export const buildJs = async (versionNumber: string) => {
+export const buildJs = async (sport: Sport, versionNumber: string) => {
 	const promises: Promise<string[]>[] = [];
 	for (const name of ["ui", "worker"]) {
 		promises.push(
@@ -15,6 +16,7 @@ export const buildJs = async (versionNumber: string) => {
 					{
 						workerData: {
 							name,
+							sport,
 							versionNumber,
 						},
 					},

@@ -7,6 +7,7 @@ import { watchJsonSchema } from "./watchJsonSchema.ts";
 import { startServer } from "../lib/server.ts";
 import { reset } from "../build/reset.ts";
 import { parseCliParams } from "../lib/parseCliParams.ts";
+import { getSport } from "../lib/getSport.ts";
 
 const { exposeToNetwork } = parseCliParams();
 await startServer({
@@ -47,16 +48,18 @@ const update = (
 };
 export type Update = typeof update;
 
+const initialSport = getSport();
+
 // Needs to run first, to create output folder
 await reset();
 
-watchFiles(update, spinners.eventEmitter);
+watchFiles(initialSport, update, spinners.eventEmitter);
 
 watchCss(update);
 
 // Schema is needed for JS bundle, and watchJsonSchema is async
-await watchJsonSchema(update, spinners.eventEmitter);
+await watchJsonSchema(initialSport, update, spinners.eventEmitter);
 
-watchJs(update, spinners.eventEmitter);
+watchJs(initialSport, update, spinners.eventEmitter);
 
 spinners.initialized = true;

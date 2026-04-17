@@ -1,6 +1,7 @@
 import { build } from "rolldown";
 import { parentPort, workerData } from "node:worker_threads";
 import { rolldownConfig } from "../lib/rolldownConfig.ts";
+import type { Sport } from "../lib/getSport.ts";
 
 const LODASH_BLACKLIST = [
 	/^lodash$/,
@@ -15,9 +16,13 @@ const BLACKLIST = {
 	worker: [...LODASH_BLACKLIST, /\/ui/, /^react/],
 };
 
-const buildFile = async (name: "ui" | "worker", versionNumber: string) => {
+const buildFile = async (
+	sport: Sport,
+	name: "ui" | "worker",
+	versionNumber: string,
+) => {
 	let modulepreloadFilenames: string[] | undefined;
-	const config = rolldownConfig(name, {
+	const config = rolldownConfig(sport, name, {
 		nodeEnv: "production",
 		blacklistOptions: BLACKLIST[name],
 		versionNumber,
@@ -34,6 +39,6 @@ const buildFile = async (name: "ui" | "worker", versionNumber: string) => {
 	parentPort!.postMessage(modulepreloadFilenames);
 };
 
-const { name, versionNumber } = workerData;
+const { name, sport, versionNumber } = workerData;
 
-await buildFile(name, versionNumber);
+await buildFile(sport, name, versionNumber);

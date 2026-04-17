@@ -1,6 +1,6 @@
 import { watch } from "chokidar";
 import fs from "node:fs/promises";
-import { getSport } from "../lib/getSport.ts";
+import { type Sport } from "../lib/getSport.ts";
 import { type Spinners } from "./spinners.ts";
 import type { Update } from "./cli.ts";
 
@@ -11,22 +11,23 @@ const importFresh = async (modulePath: string) => {
 };
 
 export const watchJsonSchema = async (
+	initialSport: Sport,
 	update: Update,
 	eventEmitter: Spinners["eventEmitter"],
 ) => {
+	let currentSport = initialSport;
+
 	await fs.mkdir("build/files", { recursive: true });
 
 	const outFilename = "build/files/league-schema.json";
 
 	let abortController: AbortController | undefined;
 
-	const buildJSONSchema = async () => {
+	const buildJSONSchema = async (sport: Sport) => {
 		try {
 			abortController?.abort();
 			abortController = new AbortController();
 			const { signal } = abortController;
-
-			const sport = getSport();
 
 			update(outFilename, { status: "spin" });
 
@@ -56,13 +57,18 @@ export const watchJsonSchema = async (
 	};
 
 	const watcher = watch("tools/build/generateJsonSchema.ts", {});
-	watcher.on("change", buildJSONSchema);
-	eventEmitter.on("newSport", buildJSONSchema);
+	watcher.on("change", async () => {
+		await buildJSONSchema(currentSport);
+	});
+	eventEmitter.on("newSport", async (sport) => {
+		currentSport = sport;
+		await buildJSONSchema(currentSport);
+	});
 	eventEmitter.on("switchingSport", () => {
 		abortController?.abort();
 	});
 
-	await buildJSONSchema();
+	await buildJSONSchema(currentSport);
 };
 
 // watchJsonSchema((filename) => console.log('updateStart', filename), (filename) => console.log('updateEnd', filename), (filename, error) => console.log('updateError', filename, error));

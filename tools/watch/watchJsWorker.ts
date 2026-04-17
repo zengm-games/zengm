@@ -1,15 +1,17 @@
 import { parentPort, workerData } from "node:worker_threads";
 import { watch } from "rolldown";
 import { rolldownConfig } from "../lib/rolldownConfig.ts";
+import type { Sport } from "../lib/getSport.ts";
 
 // ?? is just so this can be run as a standalone script, for testing
 const name = workerData?.name ?? "worker";
+const initialSport: Sport = workerData?.initialSport ?? "basketball";
 
-const makeWatcher = () => {
+const makeWatcher = (sport: Sport) => {
 	const abortController = new AbortController();
 	const { signal } = abortController;
 
-	const config = rolldownConfig(name, {
+	const config = rolldownConfig(sport, name, {
 		nodeEnv: "development",
 		postMessage(message) {
 			parentPort?.postMessage(message);
@@ -50,7 +52,7 @@ const makeWatcher = () => {
 	return abortController;
 };
 
-let abortController = makeWatcher();
+let abortController = makeWatcher(initialSport);
 
 parentPort?.on("message", async (message) => {
 	if (message.type === "switchingSport") {
@@ -58,6 +60,6 @@ parentPort?.on("message", async (message) => {
 	} else if (message.type === "newSport") {
 		process.env.SPORT = message.sport;
 		abortController.abort(); // Maybe not necessary
-		abortController = makeWatcher();
+		abortController = makeWatcher(message.sport);
 	}
 });

@@ -1,7 +1,8 @@
 import fs from "node:fs/promises";
-import { getSport } from "../lib/getSport.ts";
+import { type Sport } from "../lib/getSport.ts";
 
 export const copyFiles = async (
+	sport: Sport,
 	watch: boolean = false,
 	signal?: AbortSignal,
 ) => {
@@ -72,8 +73,6 @@ export const copyFiles = async (
 			`prefixesIgnored and prefixesToIgnore are not the same: ${Array.from(excessPrefixes).join(", ")}`,
 		);
 	}
-
-	const sport = getSport();
 
 	await fs.cp(`public/${sport}`, "build", {
 		filter: (filename) => !signal?.aborted && !filename.includes(".gitignore"),

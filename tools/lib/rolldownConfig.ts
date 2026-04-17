@@ -1,6 +1,6 @@
 import path from "node:path";
 import type { BuildOptions } from "rolldown";
-import { getSport } from "./getSport.ts";
+import { type Sport } from "./getSport.ts";
 // @ts-expect-error
 import blacklist from "rollup-plugin-blacklist";
 import { visualizer } from "rollup-plugin-visualizer";
@@ -11,6 +11,7 @@ import { startEnd } from "./rolldownPlugins/startEnd.ts";
 export const FOLDER = "gen";
 
 export const rolldownConfig = (
+	sport: Sport,
 	name: "ui" | "worker",
 	envOptions:
 		| {
@@ -33,8 +34,6 @@ export const rolldownConfig = (
 		name,
 		`index.${name === "ui" ? "tsx" : "ts"}`,
 	);
-
-	const sport = getSport();
 
 	const plugins: BuildOptions["plugins"] = [
 		sportFunctions(envOptions.nodeEnv, sport),

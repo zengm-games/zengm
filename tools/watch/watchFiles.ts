@@ -4,18 +4,22 @@ import { generateVersionNumber } from "../build/generateVersionNumber.ts";
 import { type Spinners } from "./spinners.ts";
 import { buildIndexHtml } from "../build/buildIndexHtml.ts";
 import type { Update } from "./cli.ts";
+import type { Sport } from "../lib/getSport.ts";
 
 // Would be better to only copy individual files on update, but this is fast enough
 
 export const watchFiles = async (
+	initialSport: Sport,
 	update: Update,
 	eventEmitter: Spinners["eventEmitter"],
 ) => {
+	let currentSport = initialSport;
+
 	const outFilename = "static files";
 
 	let abortController: AbortController | undefined;
 
-	const buildWatchFiles = async () => {
+	const buildWatchFiles = async (sport: Sport) => {
 		try {
 			abortController?.abort();
 			abortController = new AbortController();
@@ -23,7 +27,7 @@ export const watchFiles = async (
 
 			update(outFilename, { status: "spin" });
 
-			await copyFiles(true, signal);
+			await copyFiles(sport, true, signal);
 
 			if (signal.aborted) {
 				return;
@@ -43,11 +47,16 @@ export const watchFiles = async (
 	};
 
 	const watcher = watch(["public", "data", "node_modules/flag-icons"], {});
-	watcher.on("change", buildWatchFiles);
-	eventEmitter.on("newSport", buildWatchFiles);
+	watcher.on("change", async () => {
+		await buildWatchFiles(currentSport);
+	});
+	eventEmitter.on("newSport", async (sport) => {
+		currentSport = sport;
+		await buildWatchFiles(currentSport);
+	});
 	eventEmitter.on("switchingSport", () => {
 		abortController?.abort();
 	});
 
-	await buildWatchFiles();
+	await buildWatchFiles(currentSport);
 };

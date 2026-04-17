@@ -1,8 +1,5 @@
-import { watch } from "chokidar";
 import fs from "node:fs/promises";
-import { type Sport } from "../lib/getSport.ts";
-import { type Spinners } from "./spinners.ts";
-import type { Update } from "./cli.ts";
+import { makeNormalWatcher } from "./makeNormalWatcher.ts";
 
 // https://ar.al/2021/02/22/cache-busting-in-node.js-dynamic-esm-imports/
 const importFresh = async (modulePath: string) => {
@@ -10,65 +7,32 @@ const importFresh = async (modulePath: string) => {
 	return await import(cacheBustingModulePath);
 };
 
-export const watchJsonSchema = async (
-	initialSport: Sport,
-	update: Update,
-	eventEmitter: Spinners["eventEmitter"],
-) => {
-	let currentSport = initialSport;
+const outFilename = "build/files/league-schema.json";
 
-	const outFilename = "build/files/league-schema.json";
-
-	let abortController: AbortController | undefined;
-
-	const buildJSONSchema = async (sport: Sport) => {
-		try {
-			abortController?.abort();
-			abortController = new AbortController();
-			const { signal } = abortController;
-
-			update(outFilename, { status: "spin" });
-
-			// Dynamically reload generateJsonSchema, cause that's what we're watching!
-			const { generateJsonSchema } = await importFresh(
-				"../build/generateJsonSchema.ts",
-			);
-
-			if (signal.aborted) {
-				return;
-			}
-
-			const jsonSchema = generateJsonSchema(sport);
-			const output = JSON.stringify(jsonSchema);
-
-			await fs.mkdir("build/files", { recursive: true });
-			await fs.writeFile(outFilename, output, {
-				signal,
-			});
-
-			if (signal.aborted) {
-				return;
-			}
-
-			update(outFilename, { status: "success" });
-		} catch (error) {
-			update(outFilename, { status: "error", error });
+export const watchJsonSchema = makeNormalWatcher({
+	build: async (sport, signal) => {
+		// Dynamically reload generateJsonSchema, cause that's what we're watching!
+		const { generateJsonSchema } = await importFresh(
+			"../build/generateJsonSchema.ts",
+		);
+		if (signal.aborted) {
+			return;
 		}
-	};
 
-	const watcher = watch("tools/build/generateJsonSchema.ts", {});
-	watcher.on("change", async () => {
-		await buildJSONSchema(currentSport);
-	});
-	eventEmitter.on("newSport", async (sport) => {
-		currentSport = sport;
-		await buildJSONSchema(currentSport);
-	});
-	eventEmitter.on("switchingSport", () => {
-		abortController?.abort();
-	});
+		const jsonSchema = generateJsonSchema(sport);
+		const output = JSON.stringify(jsonSchema);
 
-	await buildJSONSchema(currentSport);
-};
+		await fs.mkdir("build/files", { recursive: true });
+		if (signal.aborted) {
+			return;
+		}
+
+		await fs.writeFile(outFilename, output, {
+			signal,
+		});
+	},
+	outFilename,
+	watchFiles: "tools/build/generateJsonSchema.ts",
+});
 
 // watchJsonSchema((filename) => console.log('updateStart', filename), (filename) => console.log('updateEnd', filename), (filename, error) => console.log('updateError', filename, error));

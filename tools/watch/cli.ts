@@ -55,7 +55,7 @@ export type Update = typeof update;
 // Needs to run first, to create output folder
 await reset();
 
-watchFiles(initialSport, update, spinners.eventEmitter);
+void watchFiles(initialSport, update, spinners.eventEmitter);
 
 watchCss(update);
 

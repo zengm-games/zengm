@@ -1,62 +1,19 @@
-import { watch } from "chokidar";
 import { copyFiles } from "../build/copyFiles.ts";
 import { generateVersionNumber } from "../build/generateVersionNumber.ts";
-import { type Spinners } from "./spinners.ts";
 import { buildIndexHtml } from "../build/buildIndexHtml.ts";
-import type { Update } from "./cli.ts";
-import type { Sport } from "../lib/getSport.ts";
+import { makeNormalWatcher } from "./makeNormalWatcher.ts";
 
-// Would be better to only copy individual files on update, but this is fast enough
-
-export const watchFiles = async (
-	initialSport: Sport,
-	update: Update,
-	eventEmitter: Spinners["eventEmitter"],
-) => {
-	let currentSport = initialSport;
-
-	const outFilename = "static files";
-
-	let abortController: AbortController | undefined;
-
-	const buildWatchFiles = async (sport: Sport) => {
-		try {
-			abortController?.abort();
-			abortController = new AbortController();
-			const { signal } = abortController;
-
-			update(outFilename, { status: "spin" });
-
-			await copyFiles(sport, true, signal);
-
-			if (signal.aborted) {
-				return;
-			}
-
-			const versionNumber = generateVersionNumber();
-			await buildIndexHtml({ signal, sport, versionNumber, watch: true });
-
-			if (signal.aborted) {
-				return;
-			}
-
-			update(outFilename, { status: "success" });
-		} catch (error) {
-			update(outFilename, { status: "error", error });
+export const watchFiles = makeNormalWatcher({
+	build: async (sport, signal) => {
+		// Would be better to only copy individual files on update, but this is fast enough
+		await copyFiles(sport, true, signal);
+		if (signal.aborted) {
+			return;
 		}
-	};
 
-	const watcher = watch(["public", "data", "node_modules/flag-icons"], {});
-	watcher.on("change", async () => {
-		await buildWatchFiles(currentSport);
-	});
-	eventEmitter.on("newSport", async (sport) => {
-		currentSport = sport;
-		await buildWatchFiles(currentSport);
-	});
-	eventEmitter.on("switchingSport", () => {
-		abortController?.abort();
-	});
-
-	await buildWatchFiles(currentSport);
-};
+		const versionNumber = generateVersionNumber();
+		await buildIndexHtml({ signal, sport, versionNumber, watch: true });
+	},
+	outFilename: "static files",
+	watchFiles: ["public", "data", "node_modules/flag-icons"],
+});

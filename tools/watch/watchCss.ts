@@ -4,7 +4,7 @@ import { Worker } from "node:worker_threads";
 import "lightningcss";
 import type { Update } from "./cli.ts";
 
-export const watchCss = async (update: Update) => {
+export const watchCss = (update: Update) => {
 	const worker = new Worker(new URL("watchCssWorker.ts", import.meta.url));
 
 	worker.on("message", (message) => {

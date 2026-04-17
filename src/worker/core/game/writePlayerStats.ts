@@ -187,12 +187,6 @@ const doInjury = async (
 		!p2.ratings.at(-1)!.locked
 	) {
 		ratingsLoss = true;
-		let biggestRatingsLoss = 20;
-
-		// Small chance of horrible things
-		if (biggestRatingsLoss === 10 && Math.random() < 0.01) {
-			biggestRatingsLoss = 50;
-		}
 
 		player.addRatingsRow(p2, undefined, p2.injuries.length - 1);
 		const newRatings = p2.ratings.at(-1)!;
@@ -205,7 +199,7 @@ const doInjury = async (
 		});
 		for (const rating of ratingsToNerf) {
 			(newRatings as any)[rating] = player.limitRating(
-				(newRatings as any)[rating] - random.randInt(1, biggestRatingsLoss),
+				(newRatings as any)[rating] - random.randInt(1, 20),
 			);
 		}
 

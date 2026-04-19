@@ -27,6 +27,10 @@ import { confirm } from "../../util/confirm.tsx";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import {
+	NegotiationModal,
+	useNegotiaionModal,
+} from "../../components/NegotiationModal.tsx";
 
 const Relatives = ({
 	gender,
@@ -444,6 +448,8 @@ const TopStuff = ({
 	const college =
 		player.college && player.college !== "" ? player.college : "None";
 
+	const negotiationModal = useNegotiaionModal();
+
 	const buttonsAvailableOutsideGodMode = (
 		<>
 			{!spectator && (showTradeFor || showTradingBlock) ? (
@@ -466,7 +472,9 @@ const TopStuff = ({
 				<button
 					className="btn btn-light-bordered"
 					disabled={!willingToSign}
-					onClick={() => toWorker("actions", "negotiate", player.pid)}
+					onClick={async () => {
+						await negotiationModal.negotiate(player.pid);
+					}}
 					title={
 						willingToSign
 							? undefined
@@ -750,6 +758,8 @@ const TopStuff = ({
 					}}
 				/>
 			</div>
+
+			<NegotiationModal {...negotiationModal.props} />
 		</div>
 	);
 };

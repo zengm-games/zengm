@@ -282,7 +282,7 @@ export const useNegotiaionModal = () => {
 
 			const newProps = await toWorker("main", "getNegotiationProps", pid);
 
-			if (loadingPid.current !== p.pid) {
+			if (loadingPid.current !== pid) {
 				// Must have clicked another button
 				return;
 			}

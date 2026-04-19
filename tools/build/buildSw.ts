@@ -40,14 +40,6 @@ const bundle = async () => {
 			comments: false,
 		},
 		preserveEntrySignatures: false,
-		transform: {
-			define: {
-				"process.env.NODE_ENV": JSON.stringify("production"),
-			},
-		},
-		checks: {
-			pluginTimings: false,
-		},
 	});
 };
 

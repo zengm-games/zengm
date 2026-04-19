@@ -10,6 +10,7 @@ import { HelpPopover } from "../components/HelpPopover.tsx";
 import { RatingsStatsPopover } from "../components/RatingsStatsPopover/index.tsx";
 import { Mood } from "../components/Mood.tsx";
 import { PlayerPicture } from "../components/PlayerPicture.tsx";
+import { useRef, useState } from "react";
 
 const SignButton = ({
 	pid,
@@ -205,7 +206,7 @@ const Negotiation = ({
 	);
 };
 
-export const NegotiateModal = ({
+export const NegotiationModal = ({
 	close,
 	negotiationProps,
 	show,
@@ -237,4 +238,71 @@ export const NegotiateModal = ({
 			</Modal.Body>
 		</Modal>
 	);
+};
+
+export const useNegotiaionModal = () => {
+	const [state, setState] = useState<
+		| {
+				status: "loaded";
+				props: View<"negotiation">;
+				show: boolean;
+		  }
+		| {
+				status: "init";
+		  }
+	>({
+		status: "init",
+	});
+
+	const show = state.status === "loaded" && state.show;
+
+	const loadingPid = useRef<number | undefined>(undefined);
+
+	const props = {
+		close: () => {
+			console.log("close");
+			if (show) {
+				setState((state) => {
+					if (state.status === "loaded") {
+						return { ...state, show: false };
+					}
+
+					return state;
+				});
+			}
+		},
+		negotiationProps: state.status === "loaded" ? state.props : undefined,
+		show,
+	};
+
+	return {
+		negotiate: async (pid: number) => {
+			console.log("loading", pid);
+			loadingPid.current = pid;
+
+			const newProps = await toWorker("main", "getNegotiationProps", pid);
+
+			if (loadingPid.current !== p.pid) {
+				// Must have clicked another button
+				return;
+			}
+
+			if (newProps) {
+				if (newProps.errorMessage) {
+					logEvent({
+						type: "error",
+						text: newProps.errorMessage,
+						saveToDb: false,
+					});
+				} else {
+					setState({
+						status: "loaded",
+						props: newProps,
+						show: true,
+					});
+				}
+			}
+		},
+		props,
+	};
 };

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { PHASE, PHASE_TEXT } from "../../common/constants.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
@@ -23,9 +23,10 @@ import {
 import { NegotiateButtons } from "../components/NegotiateButtons.tsx";
 import { RosterComposition } from "../components/RosterComposition.tsx";
 import { RosterSalarySummary } from "../components/RosterSalarySummary.tsx";
-import { NegotiateModal } from "../components/NegotiateModal.tsx";
-import { toWorker } from "../util/toWorker.ts";
-import { logEvent } from "../util/logEvent.ts";
+import {
+	NegotiationModal,
+	useNegotiaionModal,
+} from "../components/NegotiationModal.tsx";
 
 const useSeasonsFreeAgents = () => {
 	const { phase, season, startingSeason } = useLocalPartial([
@@ -139,21 +140,7 @@ const FreeAgents = ({
 	const [dataTableHandle, setDataTableHandle] =
 		useState<DataTableHandle | null>(null);
 
-	const [negotiationState, setNegotiationState] = useState<
-		| {
-				status: "loaded";
-				props: View<"negotiation">;
-				show: boolean;
-		  }
-		| {
-				status: "init";
-		  }
-	>({
-		status: "init",
-	});
-	const showNegotiation =
-		negotiationState.status === "loaded" && negotiationState.show;
-	const negotiationLoadingPid = useRef<number | undefined>(undefined);
+	const negotiationModal = useNegotiaionModal();
 
 	if (
 		((phase > PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) ||
@@ -285,35 +272,7 @@ const FreeAgents = ({
 									disabled={gameSimInProgress}
 									minContract={minContract}
 									onNegotiate={async () => {
-										console.log("loading", p.pid);
-										negotiationLoadingPid.current = p.pid;
-
-										const negotiationProps = await toWorker(
-											"main",
-											"getNegotiationProps",
-											p.pid,
-										);
-
-										if (negotiationLoadingPid.current !== p.pid) {
-											// Must have clicked another button
-											return;
-										}
-
-										if (negotiationProps) {
-											if (negotiationProps.errorMessage) {
-												logEvent({
-													type: "error",
-													text: negotiationProps.errorMessage,
-													saveToDb: false,
-												});
-											} else {
-												setNegotiationState({
-													status: "loaded",
-													props: negotiationProps,
-													show: true,
-												});
-											}
-										}
+										await negotiationModal.negotiate(p.pid);
 									}}
 									spectator={spectator}
 									p={p}
@@ -392,26 +351,7 @@ const FreeAgents = ({
 				rows={rows}
 			/>
 
-			<NegotiateModal
-				close={() => {
-					console.log("close");
-					if (showNegotiation) {
-						setNegotiationState((state) => {
-							if (state.status === "loaded") {
-								return { ...state, show: false };
-							}
-
-							return state;
-						});
-					}
-				}}
-				negotiationProps={
-					negotiationState.status === "loaded"
-						? negotiationState.props
-						: undefined
-				}
-				show={showNegotiation}
-			/>
+			<NegotiationModal {...negotiationModal.props} />
 		</>
 	);
 };

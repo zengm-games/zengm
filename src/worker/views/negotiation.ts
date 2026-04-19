@@ -119,6 +119,21 @@ const updateNegotiation = async (
 			negotiation = negotiations[0];
 		} else {
 			negotiation = negotiations.find((neg) => neg.pid === inputs.pid);
+
+			if (!negotiation) {
+				const errorMessage = await contractNegotiation.create(
+					inputs.pid,
+					false,
+				);
+				if (errorMessage !== undefined) {
+					// https://stackoverflow.com/a/59923262/786644
+					const returnValue = {
+						errorMessage,
+					};
+					return returnValue;
+				}
+				negotiation = await idb.cache.negotiations.get(inputs.pid);
+			}
 		}
 
 		if (!negotiation) {

@@ -8,6 +8,7 @@ export const NegotiateButtons = ({
 	capSpace,
 	disabled,
 	minContract,
+	onNegotiate,
 	spectator,
 	p,
 	willingToNegotiate,
@@ -16,6 +17,7 @@ export const NegotiateButtons = ({
 	capSpace: number;
 	disabled?: boolean;
 	minContract: number;
+	onNegotiate: () => void;
 	spectator: boolean;
 	p: any;
 	willingToNegotiate: boolean;
@@ -40,7 +42,7 @@ export const NegotiateButtons = ({
 			<button
 				className="btn btn-light-bordered btn-xs"
 				disabled={!!disabled}
-				onClick={() => toWorker("actions", "negotiate", p.pid)}
+				onClick={onNegotiate}
 			>
 				Negotiate
 			</button>

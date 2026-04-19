@@ -23,6 +23,9 @@ import {
 import { NegotiateButtons } from "../components/NegotiateButtons.tsx";
 import { RosterComposition } from "../components/RosterComposition.tsx";
 import { RosterSalarySummary } from "../components/RosterSalarySummary.tsx";
+import { NegotiateModal } from "../components/NegotiateModal.tsx";
+import { toWorker } from "../util/toWorker.ts";
+import { logEvent } from "../util/logEvent.ts";
 
 const useSeasonsFreeAgents = () => {
 	const { phase, season, startingSeason } = useLocalPartial([
@@ -135,6 +138,11 @@ const FreeAgents = ({
 
 	const [dataTableHandle, setDataTableHandle] =
 		useState<DataTableHandle | null>(null);
+
+	const [negotiationProps, setNegotiationProps] = useState<
+		View<"negotiation"> | undefined
+	>(undefined);
+	const [showNegotiation, setShowNegotiation] = useState(false);
 
 	if (
 		((phase > PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) ||
@@ -265,6 +273,25 @@ const FreeAgents = ({
 									capSpace={capSpace}
 									disabled={gameSimInProgress}
 									minContract={minContract}
+									onNegotiate={async () => {
+										const negotiationProps = await toWorker(
+											"main",
+											"getNegotiationProps",
+											p.pid,
+										);
+										if (negotiationProps) {
+											if (negotiationProps.errorMessage) {
+												logEvent({
+													type: "error",
+													text: negotiationProps.errorMessage,
+													saveToDb: false,
+												});
+											} else {
+												setNegotiationProps(negotiationProps);
+												setShowNegotiation(true);
+											}
+										}
+									}}
 									spectator={spectator}
 									p={p}
 									willingToNegotiate={p.mood.user.willing}
@@ -340,6 +367,15 @@ const FreeAgents = ({
 				pagination
 				ref={setDataTableHandle}
 				rows={rows}
+			/>
+
+			<NegotiateModal
+				close={() => {
+					console.log("close");
+					setShowNegotiation(false);
+				}}
+				negotiationProps={negotiationProps}
+				show={showNegotiation}
 			/>
 		</>
 	);

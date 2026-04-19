@@ -161,6 +161,7 @@ import { getNumPlayersTradedAwayNormalizedAll } from "../core/player/getNumPlaye
 import { getAdjustedTicketPrice } from "../../common/getAdjustedTicketPrice.ts";
 import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
+import updateNegotiation from "../views/negotiation.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1783,6 +1784,10 @@ const getLeagueName = () => {
 
 const getLeagues = async () => {
 	return idb.meta.getAll("leagues");
+};
+
+const getNegotiationProps = async (pid: number) => {
+	return updateNegotiation({ pid }, ["firstRun"], undefined);
 };
 
 const getNumPlayoffTeams = ({
@@ -5176,6 +5181,7 @@ export default {
 		getLeagueInfo,
 		getLeagueName,
 		getLeagues,
+		getNegotiationProps,
 		getNumPlayoffTeams,
 		getPlayerGraphStat,
 		getPlayersCommandPalette,

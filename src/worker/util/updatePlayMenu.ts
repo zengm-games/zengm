@@ -116,10 +116,6 @@ const updatePlayMenu = async () => {
 		untilRegularSeason: {
 			label: "Until regular season",
 		},
-		contractNegotiation: {
-			url: helpers.leagueUrl(["negotiation"]),
-			label: "Continue contract negotiation",
-		},
 		contractNegotiationList: {
 			url: helpers.leagueUrl(["negotiation"]),
 			label: "Continue re-signing players",
@@ -324,7 +320,6 @@ const updatePlayMenu = async () => {
 	}
 
 	const unreadMessage = await lock.unreadMessage();
-	const negotiationInProgress = await lock.negotiationInProgress();
 
 	if (g.get("autoRelocate")) {
 		keys = ["autoRelocate"];
@@ -348,15 +343,6 @@ const updatePlayMenu = async () => {
 
 	if (lock.get("gameSim")) {
 		keys = ["stop"];
-	}
-
-	// AFTER_DRAFT check is because if there is any negotiation then, it's very likely because a prior advance to RESIGN_PLAYERS failed after starting negotiations with some players, in which case we'd rather not block the UI in the case that advancing again somehow succeeds. (Would rather have phase updates be transactional, but oh well.)
-	if (
-		negotiationInProgress &&
-		g.get("phase") !== PHASE.RESIGN_PLAYERS &&
-		g.get("phase") !== PHASE.AFTER_DRAFT
-	) {
-		keys = ["contractNegotiation"];
 	}
 
 	if (lock.get("newPhase")) {

@@ -1,3 +1,16 @@
+negotiate modal
+- re-signing too
+- when to permanently remove from list for re-signing?
+- handle race condition for opening multiple
+- don't use negotiations objectStore for free agents, just compute dynamically?
+- modal height flicker due to picture size
+  - test with images too
+- delete
+  - toWorker("actions", "negotiate", p.pid)
+  - Negotiation view
+  - negotiate function in actions.ts
+  - negotiationInProgress lock?
+
 next/prev on roster page should use tid https://discord.com/channels/290013534023057409/1492975452514422954
 - fix issue with FA abbrev redirecting to free agents
 - implement new dropdown part of useTitlebar

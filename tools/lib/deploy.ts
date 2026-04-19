@@ -54,7 +54,7 @@ const mySpawn = async (command: string, args: string[]) => {
 	}
 };
 
-export const deploy = async (sport: Sport) => {
+export const deploy = async (sport: Sport, versionNumber: string) => {
 	const cloudflareConfig = JSON.parse(
 		await readFile(
 			new URL("../../../../.config/cloudflare.json", import.meta.url),
@@ -62,7 +62,7 @@ export const deploy = async (sport: Sport) => {
 		),
 	);
 
-	await build(sport);
+	await build(sport, versionNumber);
 
 	const subdomain = getSubdomain();
 	const domain = bySport(sport, {

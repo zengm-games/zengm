@@ -5,12 +5,9 @@ import { copyFiles } from "./copyFiles.ts";
 import { buildIndexHtml } from "./buildIndexHtml.ts";
 import { reset } from "./reset.ts";
 import { createJsonSchemaFile } from "./createJsonSchemaFile.ts";
-import { generateVersionNumber } from "./generateVersionNumber.ts";
 import type { Sport } from "../lib/getSport.ts";
 
-export const build = async (sport: Sport) => {
-	const versionNumber = generateVersionNumber();
-
+export const build = async (sport: Sport, versionNumber: string) => {
 	console.log(`Building ${sport} ${versionNumber}`);
 
 	await reset();

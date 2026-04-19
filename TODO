@@ -1,5 +1,7 @@
 negotiate modal
-- re-signing too
+- abstract code and put on other pages
+  - Player/TopStuff
+  - NegotiationList
 - when to permanently remove from list for re-signing?
 - handle race condition for opening multiple
 - don't use negotiations objectStore for free agents, just compute dynamically?
@@ -7,8 +9,7 @@ negotiate modal
   - test with images too
 - delete
   - toWorker("actions", "negotiate", p.pid)
-  - Negotiation view
-  - negotiate function in actions.ts
+  - Negotiation view worker function
   - negotiationInProgress lock?
 
 next/prev on roster page should use tid https://discord.com/channels/290013534023057409/1492975452514422954

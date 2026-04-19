@@ -26,28 +26,23 @@ const PhaseStatusBlock = () => {
 		</>
 	);
 
-	let urlParts;
-	if (statusText === "Contract negotiation") {
-		urlParts = ["negotiation"];
-	} else {
-		const urls = {
-			[PHASE.EXPANSION_DRAFT]: ["draft"],
-			[PHASE.FANTASY_DRAFT]: ["draft"],
-			[PHASE.PRESEASON]: ["roster"],
-			[PHASE.REGULAR_SEASON]: ["roster"],
-			[PHASE.AFTER_TRADE_DEADLINE]: ["roster"],
-			[PHASE.PLAYOFFS]: ["playoffs"],
-			// Hack because we don't know repeatSeason and draftType, see updatePhase
-			[PHASE.DRAFT_LOTTERY]: phaseText.includes("after playoffs")
-				? ["draft_scouting"]
-				: ["draft_lottery"],
-			[PHASE.DRAFT]: ["draft"],
-			[PHASE.AFTER_DRAFT]: ["draft_history"],
-			[PHASE.RESIGN_PLAYERS]: ["negotiation"],
-			[PHASE.FREE_AGENCY]: ["free_agents"],
-		};
-		urlParts = urls[phase];
-	}
+	const urls = {
+		[PHASE.EXPANSION_DRAFT]: ["draft"],
+		[PHASE.FANTASY_DRAFT]: ["draft"],
+		[PHASE.PRESEASON]: ["roster"],
+		[PHASE.REGULAR_SEASON]: ["roster"],
+		[PHASE.AFTER_TRADE_DEADLINE]: ["roster"],
+		[PHASE.PLAYOFFS]: ["playoffs"],
+		// Hack because we don't know repeatSeason and draftType, see updatePhase
+		[PHASE.DRAFT_LOTTERY]: phaseText.includes("after playoffs")
+			? ["draft_scouting"]
+			: ["draft_lottery"],
+		[PHASE.DRAFT]: ["draft"],
+		[PHASE.AFTER_DRAFT]: ["draft_history"],
+		[PHASE.RESIGN_PLAYERS]: ["negotiation"],
+		[PHASE.FREE_AGENCY]: ["free_agents"],
+	};
+	const urlParts = urls[phase];
 
 	return (
 		<div className="dropdown-links navbar-nav flex-shrink-1 overflow-hidden text-nowrap">

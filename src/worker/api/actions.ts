@@ -1,46 +1,8 @@
 import { PHASE } from "../../common/constants.ts";
-import {
-	contractNegotiation,
-	draft,
-	game,
-	season,
-	trade,
-} from "../core/index.ts";
+import { draft, game, season, trade } from "../core/index.ts";
 import { idb } from "../db/index.ts";
-import { g, helpers, logEvent, toUI, updateStatus } from "../util/index.ts";
+import { g, helpers, toUI, updateStatus } from "../util/index.ts";
 import type { Conditions, TradeTeams } from "../../common/types.ts";
-
-const negotiate = async (pid: number, conditions: Conditions) => {
-	// If there is no active negotiation with this pid, create it
-	const negotiation = await idb.cache.negotiations.get(pid);
-
-	if (!negotiation) {
-		const errorMsg = await contractNegotiation.create(pid, false);
-
-		if (errorMsg !== undefined && errorMsg) {
-			logEvent(
-				{
-					type: "error",
-					text: errorMsg,
-					saveToDb: false,
-				},
-				conditions,
-			);
-		} else {
-			toUI(
-				"realtimeUpdate",
-				[[], helpers.leagueUrl(["negotiation", pid])],
-				conditions,
-			);
-		}
-	} else {
-		toUI(
-			"realtimeUpdate",
-			[[], helpers.leagueUrl(["negotiation", pid])],
-			conditions,
-		);
-	}
-};
 
 type TradeForOptions = {
 	dpid?: number;
@@ -225,7 +187,6 @@ const simToGame = async (gid: number, conditions: Conditions) => {
 export default {
 	addToTradingBlock,
 	liveGame,
-	negotiate,
 	simGame,
 	simToGame,
 	tradeFor,

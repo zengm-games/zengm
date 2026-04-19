@@ -515,14 +515,6 @@ const negotiation = (params: Params) => {
 	};
 };
 
-const negotiationList = () => {
-	if (g.get("phase") !== PHASE.RESIGN_PLAYERS) {
-		return {
-			redirectUrl: helpers.leagueUrl(["negotiation", -1]),
-		};
-	}
-};
-
 const newLeague = (params: Params) => {
 	let type: "custom" | "random" | "real" | "legends" | "crossEra" = "custom";
 	let lid;
@@ -1116,7 +1108,6 @@ export default {
 	message,
 	most,
 	negotiation,
-	negotiationList,
 	newLeague,
 	news,
 	notes,

@@ -66,7 +66,6 @@ export { default as manageTeams } from "./manageTeams.ts";
 export { default as message } from "./message.ts";
 export { default as most } from "./most.ts";
 export { default as multiTeamMode } from "./multiTeamMode.ts";
-export { default as negotiation } from "./negotiation.ts";
 export { default as negotiationList } from "./negotiationList.ts";
 export { default as newLeague } from "./newLeague.ts";
 export { default as newTeam } from "./newTeam.ts";

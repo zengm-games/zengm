@@ -161,7 +161,7 @@ import { getNumPlayersTradedAwayNormalizedAll } from "../core/player/getNumPlaye
 import { getAdjustedTicketPrice } from "../../common/getAdjustedTicketPrice.ts";
 import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
-import updateNegotiation from "../views/negotiation.ts";
+import { generateContractOptions } from "../core/contractNegotiation/generateContractOptions.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1787,7 +1787,97 @@ const getLeagues = async () => {
 };
 
 const getNegotiationProps = async (pid: number) => {
-	return updateNegotiation({ pid }, ["firstRun"], undefined);
+	const userTid = g.get("userTid");
+
+	const negotiations = await idb.cache.negotiations.getAll();
+	let negotiation;
+
+	if (pid === undefined) {
+		negotiation = negotiations[0];
+	} else {
+		negotiation = negotiations.find((neg) => neg.pid === pid);
+
+		if (!negotiation) {
+			const errorMessage = await contractNegotiation.create(pid, false);
+			if (errorMessage !== undefined) {
+				return errorMessage;
+			}
+			negotiation = await idb.cache.negotiations.get(pid);
+		}
+	}
+
+	if (!negotiation) {
+		// https://stackoverflow.com/a/59923262/786644
+		return "No negotiation with player in progress.";
+	}
+
+	const p2 = await idb.cache.players.get(negotiation.pid);
+	let p;
+	if (p2) {
+		p = await idb.getCopy.playersPlus(p2, {
+			attrs: ["pid", "name", "age", "contract", "face", "imgURL", "watch"],
+			ratings: ["ovr", "pot"],
+			season: g.get("season"),
+			showNoStats: true,
+			showRookies: true,
+			fuzz: true,
+		});
+	}
+
+	// This can happen if a negotiation is somehow started with a retired player, or a player was deleted
+	if (!p || !p2) {
+		contractNegotiation.cancel(negotiation.pid);
+		// https://stackoverflow.com/a/59923262/786644
+		return "Invalid negotiation. Please try again.";
+	}
+
+	p.mood = await player.moodInfos(p2);
+
+	const contractOptions = await generateContractOptions(
+		negotiation.pid,
+		{
+			amount: p.mood.user.contractAmount / 1000,
+			exp: p.contract.exp,
+		},
+		p.ratings.ovr,
+	);
+	if (contractOptions.length === 0 && g.get("phase") === PHASE.RESIGN_PLAYERS) {
+		const t = await idb.cache.teams.get(userTid);
+		if (
+			t &&
+			t.firstSeasonAfterExpansion !== undefined &&
+			t.firstSeasonAfterExpansion - 1 === g.get("season")
+		) {
+			contractOptions.push({
+				exp: g.get("season") + 1,
+				years: 1,
+				amount: p.mood.user.contractAmount / 1000,
+				smallestAmount: true,
+			});
+		}
+	}
+
+	const payroll = await team.getPayroll(userTid);
+
+	const t = await idb.getCopy.teamsPlus({
+		tid: g.get("userTid"),
+		attrs: ["colors", "jersey"],
+	});
+	if (!t) {
+		throw new Error("Should never happen");
+	}
+
+	return {
+		capSpace: (g.get("salaryCap") - payroll) / 1000,
+		challengeNoRatings: g.get("challengeNoRatings"),
+		contractOptions,
+		salaryCapType: g.get("salaryCapType"),
+		payroll: payroll / 1000,
+		p,
+		resigning: negotiation.resigning,
+		salaryCap: g.get("salaryCap") / 1000,
+		t,
+	};
 };
 
 const getNumPlayoffTeams = ({

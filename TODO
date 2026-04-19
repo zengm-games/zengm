@@ -6,8 +6,6 @@ negotiate modal
 - modal height flicker due to picture size
   - test with images too
 - delete
-  - toWorker("actions", "negotiate", p.pid)
-  - Negotiation view worker function
   - negotiationInProgress lock?
 
 next/prev on roster page should use tid https://discord.com/channels/290013534023057409/1492975452514422954

@@ -5,12 +5,17 @@ import { helpers } from "../util/helpers.ts";
 import { logEvent } from "../util/logEvent.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { useLocalPartial } from "../util/local.ts";
-import type { View } from "../../common/types.ts";
 import { HelpPopover } from "../components/HelpPopover.tsx";
 import { RatingsStatsPopover } from "../components/RatingsStatsPopover/index.tsx";
 import { Mood } from "../components/Mood.tsx";
 import { PlayerPicture } from "../components/PlayerPicture.tsx";
 import { useRef, useState } from "react";
+import type api from "../../worker/api/index.ts";
+
+type NegotaitionModalProps = Exclude<
+	Awaited<ReturnType<typeof api.main.getNegotiationProps>>,
+	string
+>;
 
 const SignButton = ({
 	pid,
@@ -82,7 +87,17 @@ const NegotiationHeader = ({
 	salaryCap,
 	salaryCapType,
 	t,
-}: View<"negotiation">) => {
+}: Pick<
+	NegotaitionModalProps,
+	| "capSpace"
+	| "challengeNoRatings"
+	| "payroll"
+	| "p"
+	| "resigning"
+	| "salaryCap"
+	| "salaryCapType"
+	| "t"
+>) => {
 	const { gender } = useLocalPartial(["gender"]);
 
 	let message;
@@ -171,7 +186,7 @@ const Negotiation = ({
 	contractOptions,
 	close,
 	p,
-}: View<"negotiation"> & {
+}: Pick<NegotaitionModalProps, "contractOptions" | "p"> & {
 	close: () => void;
 }) => {
 	return (
@@ -212,7 +227,7 @@ export const NegotiationModal = ({
 	show,
 }: {
 	close: () => void;
-	negotiationProps: View<"negotiation"> | undefined;
+	negotiationProps: NegotaitionModalProps | undefined;
 	show: boolean;
 }) => {
 	return (
@@ -244,7 +259,7 @@ export const useNegotiaionModal = () => {
 	const [state, setState] = useState<
 		| {
 				status: "loaded";
-				props: View<"negotiation">;
+				props: NegotaitionModalProps;
 				show: boolean;
 		  }
 		| {
@@ -260,7 +275,6 @@ export const useNegotiaionModal = () => {
 
 	const props = {
 		close: () => {
-			console.log("close");
 			if (show) {
 				setState((state) => {
 					if (state.status === "loaded") {
@@ -277,7 +291,6 @@ export const useNegotiaionModal = () => {
 
 	return {
 		negotiate: async (pid: number) => {
-			console.log("loading", pid);
 			loadingPid.current = pid;
 
 			const newProps = await toWorker("main", "getNegotiationProps", pid);
@@ -287,20 +300,18 @@ export const useNegotiaionModal = () => {
 				return;
 			}
 
-			if (newProps) {
-				if (newProps.errorMessage) {
-					logEvent({
-						type: "error",
-						text: newProps.errorMessage,
-						saveToDb: false,
-					});
-				} else {
-					setState({
-						status: "loaded",
-						props: newProps,
-						show: true,
-					});
-				}
+			if (typeof newProps === "string") {
+				logEvent({
+					type: "error",
+					text: newProps,
+					saveToDb: false,
+				});
+			} else {
+				setState({
+					status: "loaded",
+					props: newProps,
+					show: true,
+				});
 			}
 		},
 		props,

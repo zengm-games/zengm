@@ -177,7 +177,14 @@ const acceptContractNegotiation = async ({
 		return negotiation;
 	}
 
-	return contractNegotiation.accept({ negotiation, amount, exp });
+	const result = await contractNegotiation.accept({ negotiation, amount, exp });
+
+	if (result === undefined) {
+		// Only do this if there was no error, and don't await because it makes the UI slow
+		void contractNegotiation.afterAccept(negotiation.tid);
+	}
+
+	return result;
 };
 
 const addTeam = async () => {
@@ -3676,24 +3683,31 @@ const setNote = async (info: NoteInfo & { editedNote: string }) => {
 
 const reSignAll = async (players: any[]) => {
 	const userTid = g.get("userTid");
-	let negotiations = await idb.cache.negotiations.getAll(); // For Multi Team Mode, might have other team's negotiations going on
+	let negotiations = await idb.cache.negotiations.getAll();
+
+	// For Multi Team Mode, might have other team's negotiations going on
 	negotiations = negotiations.filter(
 		(negotiation) => negotiation.tid === userTid,
 	);
-	for (const negotiation of negotiations) {
-		const p = players.find((p) => p.pid === negotiation.pid);
 
-		if (p && p.mood.user.willing) {
-			const errorMsg = await contractNegotiation.accept({
-				negotiation,
-				amount: p.mood.user.contractAmount,
-				exp: p.contract.exp,
-			});
+	if (negotiations.length > 0) {
+		for (const negotiation of negotiations) {
+			const p = players.find((p) => p.pid === negotiation.pid);
 
-			if (errorMsg !== undefined && errorMsg) {
-				return errorMsg;
+			if (p && p.mood.user.willing) {
+				const errorMsg = await contractNegotiation.accept({
+					negotiation,
+					amount: p.mood.user.contractAmount,
+					exp: p.contract.exp,
+				});
+
+				if (errorMsg !== undefined && errorMsg) {
+					return errorMsg;
+				}
 			}
 		}
+
+		await contractNegotiation.afterAccept(userTid);
 	}
 };
 

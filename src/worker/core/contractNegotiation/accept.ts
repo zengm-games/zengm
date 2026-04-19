@@ -1,7 +1,7 @@
 import { player, team } from "../index.ts";
 import cancel from "./cancel.ts";
 import { idb } from "../../db/index.ts";
-import { g, toUI, recomputeLocalUITeamOvrs } from "../../util/index.ts";
+import { g } from "../../util/index.ts";
 import type { Negotiation, PlayerContract } from "../../../common/types.ts";
 import { PHASE } from "../../../common/constants.ts";
 
@@ -80,15 +80,6 @@ const accept = async ({
 		await player.sign(p, g.get("userTid"), contract, g.get("phase"));
 		await idb.cache.players.put(p);
 		await cancel(negotiation.pid);
-
-		// If a depth chart exists, place this player in the depth chart so they are ahead of every player they are
-		// better than, without otherwise disturbing the depth chart order
-		const t = await idb.cache.teams.get(p.tid);
-		const onlyNewPlayers = t ? !t.keepRosterSorted : false;
-		await team.rosterAutoSort(g.get("userTid"), onlyNewPlayers);
-
-		await toUI("realtimeUpdate", [["playerMovement"]]);
-		await recomputeLocalUITeamOvrs();
 	}
 };
 

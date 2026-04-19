@@ -1,6 +1,4 @@
 negotiate modal
-- ActionButton for sign if it is slow?
-  - are we awaiting update event?
 - modal height flicker due to picture size
   - test with images too
 

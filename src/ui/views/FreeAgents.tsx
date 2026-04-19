@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { PHASE, PHASE_TEXT } from "../../common/constants.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
@@ -139,10 +139,21 @@ const FreeAgents = ({
 	const [dataTableHandle, setDataTableHandle] =
 		useState<DataTableHandle | null>(null);
 
-	const [negotiationProps, setNegotiationProps] = useState<
-		View<"negotiation"> | undefined
-	>(undefined);
-	const [showNegotiation, setShowNegotiation] = useState(false);
+	const [negotiationState, setNegotiationState] = useState<
+		| {
+				status: "loaded";
+				props: View<"negotiation">;
+				show: boolean;
+		  }
+		| {
+				status: "init";
+		  }
+	>({
+		status: "init",
+	});
+	const showNegotiation =
+		negotiationState.status === "loaded" && negotiationState.show;
+	const negotiationLoadingPid = useRef<number | undefined>(undefined);
 
 	if (
 		((phase > PHASE.AFTER_TRADE_DEADLINE && phase <= PHASE.RESIGN_PLAYERS) ||
@@ -274,11 +285,20 @@ const FreeAgents = ({
 									disabled={gameSimInProgress}
 									minContract={minContract}
 									onNegotiate={async () => {
+										console.log("loading", p.pid);
+										negotiationLoadingPid.current = p.pid;
+
 										const negotiationProps = await toWorker(
 											"main",
 											"getNegotiationProps",
 											p.pid,
 										);
+
+										if (negotiationLoadingPid.current !== p.pid) {
+											// Must have clicked another button
+											return;
+										}
+
 										if (negotiationProps) {
 											if (negotiationProps.errorMessage) {
 												logEvent({
@@ -287,8 +307,11 @@ const FreeAgents = ({
 													saveToDb: false,
 												});
 											} else {
-												setNegotiationProps(negotiationProps);
-												setShowNegotiation(true);
+												setNegotiationState({
+													status: "loaded",
+													props: negotiationProps,
+													show: true,
+												});
 											}
 										}
 									}}
@@ -372,9 +395,21 @@ const FreeAgents = ({
 			<NegotiateModal
 				close={() => {
 					console.log("close");
-					setShowNegotiation(false);
+					if (showNegotiation) {
+						setNegotiationState((state) => {
+							if (state.status === "loaded") {
+								return { ...state, show: false };
+							}
+
+							return state;
+						});
+					}
 				}}
-				negotiationProps={negotiationProps}
+				negotiationProps={
+					negotiationState.status === "loaded"
+						? negotiationState.props
+						: undefined
+				}
 				show={showNegotiation}
 			/>
 		</>

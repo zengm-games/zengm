@@ -2,8 +2,8 @@ negotiate modal
 - abstract code and put on other pages
   - Player/TopStuff
   - NegotiationList
+- ActionButton for sign if it is slow?
 - when to permanently remove from list for re-signing?
-- handle race condition for opening multiple
 - don't use negotiations objectStore for free agents, just compute dynamically?
 - modal height flicker due to picture size
   - test with images too

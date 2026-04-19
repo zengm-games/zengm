@@ -1789,25 +1789,17 @@ const getLeagues = async () => {
 const getNegotiationProps = async (pid: number) => {
 	const userTid = g.get("userTid");
 
-	const negotiations = await idb.cache.negotiations.getAll();
-	let negotiation;
+	let negotiation = await idb.cache.negotiations.get(pid);
 
-	if (pid === undefined) {
-		negotiation = negotiations[0];
-	} else {
-		negotiation = negotiations.find((neg) => neg.pid === pid);
-
-		if (!negotiation) {
-			const errorMessage = await contractNegotiation.create(pid, false);
-			if (errorMessage !== undefined) {
-				return errorMessage;
-			}
-			negotiation = await idb.cache.negotiations.get(pid);
+	if (!negotiation) {
+		const errorMessage = await contractNegotiation.create(pid, false);
+		if (errorMessage !== undefined) {
+			return errorMessage;
 		}
+		negotiation = await idb.cache.negotiations.get(pid);
 	}
 
 	if (!negotiation) {
-		// https://stackoverflow.com/a/59923262/786644
 		return "No negotiation with player in progress.";
 	}
 
@@ -1827,7 +1819,6 @@ const getNegotiationProps = async (pid: number) => {
 	// This can happen if a negotiation is somehow started with a retired player, or a player was deleted
 	if (!p || !p2) {
 		contractNegotiation.cancel(negotiation.pid);
-		// https://stackoverflow.com/a/59923262/786644
 		return "Invalid negotiation. Please try again.";
 	}
 

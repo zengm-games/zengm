@@ -68,8 +68,9 @@ const create = async (
 		await idb.cache.negotiations.clear();
 	}
 
-	await idb.cache.negotiations.add(negotiation); // This will be handled by phase change when re-signing
+	await idb.cache.negotiations.add(negotiation);
 
+	// This will be handled by phase change when re-signing
 	if (!resigning) {
 		await updateStatus("Contract negotiation");
 		await updatePlayMenu();

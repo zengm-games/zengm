@@ -76,7 +76,7 @@ async function play(
 	// If this is a request to start a new simulation... are we allowed to do
 	// that? If so, set the lock and update the play menu
 	if (start) {
-		const canStartGames = await lock.canStartGames();
+		const canStartGames = lock.canStartGames();
 
 		if (canStartGames) {
 			await updatePlayMenu();

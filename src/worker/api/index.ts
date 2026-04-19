@@ -172,7 +172,12 @@ const acceptContractNegotiation = async ({
 	amount: number;
 	exp: number;
 }) => {
-	return contractNegotiation.accept({ pid, amount, exp });
+	const negotiation = await contractNegotiation.get(pid);
+	if (typeof negotiation === "string") {
+		return negotiation;
+	}
+
+	return contractNegotiation.accept({ negotiation, amount, exp });
 };
 
 const addTeam = async () => {
@@ -1789,15 +1794,9 @@ const getLeagues = async () => {
 const getNegotiationProps = async (pid: number) => {
 	const userTid = g.get("userTid");
 
-	let negotiation = await idb.cache.negotiations.get(pid);
-
-	if (!negotiation) {
-		const info = await contractNegotiation.create(pid, false);
-		if (typeof info === "string") {
-			return info;
-		}
-
-		negotiation = info;
+	const negotiation = await contractNegotiation.get(pid);
+	if (typeof negotiation === "string") {
+		return negotiation;
 	}
 
 	const p2 = await idb.cache.players.get(negotiation.pid);
@@ -1815,14 +1814,14 @@ const getNegotiationProps = async (pid: number) => {
 
 	// This can happen if a negotiation is somehow started with a retired player, or a player was deleted
 	if (!p || !p2) {
-		contractNegotiation.cancel(negotiation.pid);
+		await contractNegotiation.cancel(negotiation.pid);
 		return "Invalid negotiation. Please try again.";
 	}
 
 	p.mood = await player.moodInfos(p2);
 
 	const contractOptions = await generateContractOptions(
-		negotiation.pid,
+		negotiation,
 		{
 			amount: p.mood.user.contractAmount / 1000,
 			exp: p.contract.exp,
@@ -3675,44 +3674,18 @@ const setNote = async (info: NoteInfo & { editedNote: string }) => {
 	await toUI("realtimeUpdate", [noteUpdateEvents[info.type]]);
 };
 
-const sign = async ({
-	pid,
-	amount,
-	exp,
-}: {
-	pid: number;
-	amount: number;
-	exp: number;
-}) => {
-	// Kind of hacky that a negotiation is needed...
-	const negotiation = await idb.cache.negotiations.get(pid);
-
-	if (!negotiation) {
-		const errorMsg = await contractNegotiation.create(pid, false);
-		if (errorMsg !== undefined && errorMsg) {
-			return errorMsg;
-		}
-	}
-
-	const errorMsg = await contractNegotiation.accept({ pid, amount, exp });
-
-	if (errorMsg !== undefined && errorMsg) {
-		return errorMsg;
-	}
-};
-
 const reSignAll = async (players: any[]) => {
 	const userTid = g.get("userTid");
 	let negotiations = await idb.cache.negotiations.getAll(); // For Multi Team Mode, might have other team's negotiations going on
 	negotiations = negotiations.filter(
 		(negotiation) => negotiation.tid === userTid,
 	);
-	for (const { pid } of negotiations) {
-		const p = players.find((p) => p.pid === pid);
+	for (const negotiation of negotiations) {
+		const p = players.find((p) => p.pid === negotiation.pid);
 
 		if (p && p.mood.user.willing) {
 			const errorMsg = await contractNegotiation.accept({
-				pid,
+				negotiation,
 				amount: p.mood.user.contractAmount,
 				exp: p.contract.exp,
 			});
@@ -5315,7 +5288,6 @@ export default {
 		setNote,
 		setSavedTrade,
 		setScheduleFromEditor,
-		sign,
 		updateExpansionDraftSetup,
 		advanceToPlayerProtection,
 		autoProtect,

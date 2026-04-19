@@ -50,7 +50,7 @@ export const NegotiateButtons = ({
 				className="btn btn-light-bordered btn-xs"
 				disabled={signDisabled}
 				onClick={async () => {
-					const errorMsg = await toWorker("main", "sign", {
+					const errorMsg = await toWorker("main", "acceptContractNegotiation", {
 						pid: p.pid,
 						amount: contractAmount,
 						exp: p.contract.exp,

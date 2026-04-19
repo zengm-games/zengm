@@ -2,7 +2,7 @@ import { player, team } from "../index.ts";
 import cancel from "./cancel.ts";
 import { idb } from "../../db/index.ts";
 import { g, toUI, recomputeLocalUITeamOvrs } from "../../util/index.ts";
-import type { PlayerContract } from "../../../common/types.ts";
+import type { Negotiation, PlayerContract } from "../../../common/types.ts";
 import { PHASE } from "../../../common/constants.ts";
 
 /**
@@ -15,22 +15,16 @@ import { PHASE } from "../../../common/constants.ts";
  * @return {Promise.<string=>} If an error occurs, resolves to a string error message.
  */
 const accept = async ({
-	pid,
+	negotiation,
 	amount,
 	exp,
 	dryRun,
 }: {
-	pid: number;
+	negotiation: Negotiation;
 	amount: number;
 	exp: number;
 	dryRun?: boolean;
 }) => {
-	const negotiation = await idb.cache.negotiations.get(pid);
-
-	if (!negotiation) {
-		return `No negotiation with player ${pid} found.`;
-	}
-
 	const salaryCapType = g.get("salaryCapType");
 
 	if (salaryCapType !== "none") {
@@ -62,9 +56,9 @@ const accept = async ({
 		}. Either switch teams or cancel this negotiation.`;
 	}
 
-	const p = await idb.cache.players.get(pid);
+	const p = await idb.cache.players.get(negotiation.pid);
 	if (!p) {
-		throw new Error("Invalid pid");
+		return "Invalid pid";
 	}
 
 	// Make sure the user didn't do something in another tab to change the willingness to negotiate, such as trading away players
@@ -85,7 +79,7 @@ const accept = async ({
 	if (!dryRun) {
 		await player.sign(p, g.get("userTid"), contract, g.get("phase"));
 		await idb.cache.players.put(p);
-		await cancel(pid);
+		await cancel(negotiation.pid);
 
 		// If a depth chart exists, place this player in the depth chart so they are ahead of every player they are
 		// better than, without otherwise disturbing the depth chart order

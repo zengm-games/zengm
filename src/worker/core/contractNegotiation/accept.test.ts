@@ -10,14 +10,12 @@ afterEach(() => idb.cache.negotiations.clear());
 test("no signing non-minimum contracts that cause team to exceed the salary cap", async () => {
 	const pid = 1;
 	await givePlayerMinContract(pid);
-	const error = await contractNegotiation.create(pid, false);
-	assert.strictEqual(
-		error,
-		undefined,
-		`Unexpected error message from contractNegotiation.create: "${error}"`,
-	);
+	const negotiation = await contractNegotiation.create(pid, false);
+	if (typeof negotiation === "string") {
+		throw new Error("Should never happen");
+	}
 	const error2 = await contractNegotiation.accept({
-		pid,
+		negotiation,
 		amount: g.get("salaryCap"),
 		exp: g.get("season") + 1,
 	});

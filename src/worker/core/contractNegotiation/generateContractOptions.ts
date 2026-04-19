@@ -1,12 +1,12 @@
 import { PHASE } from "../../../common/constants.ts";
-import type { PlayerContract } from "../../../common/types.ts";
+import type { Negotiation, PlayerContract } from "../../../common/types.ts";
 import { range } from "../../../common/utils.ts";
 import g from "../../util/g.ts";
 import helpers from "../../util/helpers.ts";
 import accept from "./accept.ts";
 
 export const generateContractOptions = async (
-	pid: number,
+	negotiation: Negotiation,
 	contract: PlayerContract,
 	ovr: number,
 ) => {
@@ -81,7 +81,7 @@ export const generateContractOptions = async (
 
 	for (const row of possible) {
 		const disabledReason = await accept({
-			pid,
+			negotiation,
 			amount: Math.round(row.amount * 1000),
 			exp: row.exp,
 			dryRun: true,

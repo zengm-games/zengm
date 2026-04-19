@@ -14,6 +14,10 @@ import { NegotiateButtons } from "../components/NegotiateButtons.tsx";
 import { RosterComposition } from "../components/RosterComposition.tsx";
 import { RosterSalarySummary } from "../components/RosterSalarySummary.tsx";
 import { confirm } from "../util/confirm.tsx";
+import {
+	NegotiationModal,
+	useNegotiaionModal,
+} from "../components/NegotiationModal.tsx";
 
 const NegotiationList = ({
 	capSpace,
@@ -39,6 +43,8 @@ const NegotiationList = ({
 
 	useTitleBar({ title });
 
+	const negotiationModal = useNegotiaionModal();
+
 	if (spectator) {
 		return <p>The AI will handle re-signing players in spectator mode.</p>;
 	}
@@ -63,6 +69,9 @@ const NegotiationList = ({
 				canGoOverCap={salaryCapType === "none" || salaryCapType === "soft"}
 				capSpace={capSpace}
 				minContract={minContract}
+				onNegotiate={async () => {
+					await negotiationModal.negotiate(p.pid);
+				}}
 				spectator={spectator}
 				p={p}
 				willingToNegotiate={p.mood.user.willing}
@@ -210,6 +219,8 @@ const NegotiationList = ({
 				name="NegotiationList"
 				rows={rows}
 			/>
+
+			<NegotiationModal {...negotiationModal.props} />
 		</>
 	);
 };

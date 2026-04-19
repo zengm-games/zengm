@@ -1,6 +1,6 @@
 negotiate modal
-- put on NegotiationList
 - ActionButton for sign if it is slow?
+  - are we awaiting update event?
 - when to permanently remove from list for re-signing?
 - don't use negotiations objectStore for free agents, just compute dynamically?
 - modal height flicker due to picture size

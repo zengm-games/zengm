@@ -535,7 +535,7 @@ const doAwards = async (season: number, conditions: Conditions) => {
 		{
 			amount: Infinity,
 			filter: royFilter,
-			score: mvpScore,
+			score: offScore,
 		},
 		players,
 	);

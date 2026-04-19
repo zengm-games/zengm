@@ -1,13 +1,7 @@
 import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { player } from "../index.ts";
 import { idb } from "../../db/index.ts";
-import {
-	g,
-	helpers,
-	lock,
-	updatePlayMenu,
-	updateStatus,
-} from "../../util/index.ts";
+import { g, helpers, lock } from "../../util/index.ts";
 
 /**
  * Start a new contract negotiation with a player.
@@ -22,7 +16,7 @@ const create = async (
 	pid: number,
 	resigning: boolean,
 	tid: number = g.get("userTid"),
-): Promise<string | undefined> => {
+) => {
 	if (
 		g.get("phase") > PHASE.AFTER_TRADE_DEADLINE &&
 		g.get("phase") <= PHASE.RESIGN_PLAYERS &&
@@ -63,18 +57,7 @@ const create = async (
 		resigning,
 	};
 
-	// Except in re-signing phase, only one negotiation at a time
-	if (!resigning) {
-		await idb.cache.negotiations.clear();
-	}
-
-	await idb.cache.negotiations.add(negotiation);
-
-	// This will be handled by phase change when re-signing
-	if (!resigning) {
-		await updateStatus("Contract negotiation");
-		await updatePlayMenu();
-	}
+	return negotiation;
 };
 
 export default create;

@@ -1792,15 +1792,12 @@ const getNegotiationProps = async (pid: number) => {
 	let negotiation = await idb.cache.negotiations.get(pid);
 
 	if (!negotiation) {
-		const errorMessage = await contractNegotiation.create(pid, false);
-		if (errorMessage !== undefined) {
-			return errorMessage;
+		const info = await contractNegotiation.create(pid, false);
+		if (typeof info === "string") {
+			return info;
 		}
-		negotiation = await idb.cache.negotiations.get(pid);
-	}
 
-	if (!negotiation) {
-		return "No negotiation with player in progress.";
+		negotiation = info;
 	}
 
 	const p2 = await idb.cache.players.get(negotiation.pid);

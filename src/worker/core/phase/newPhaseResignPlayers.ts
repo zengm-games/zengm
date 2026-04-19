@@ -143,6 +143,8 @@ const newPhaseResignPlayers = async (
 		type: "includeExpiringContracts",
 	});
 
+	await contractNegotiation.cancelAll();
+
 	for (const pid of expiringPids) {
 		// Re-fetch players, because normalizeContractDemands might have changed some objects
 		const p = await idb.cache.players.get(pid);
@@ -178,18 +180,20 @@ const newPhaseResignPlayers = async (
 			player.addToFreeAgents(p, numPlayersTradedAwayNormalized);
 
 			await idb.cache.players.put(p);
-			const error = await contractNegotiation.create(p.pid, true, tid);
+			const info = await contractNegotiation.create(p.pid, true, tid);
 
-			if (error !== undefined && error) {
+			if (typeof info === "string") {
 				logEvent(
 					{
 						type: "refuseToSign",
-						text: error,
+						text: info,
 						pids: [p.pid],
 						tids: [tid],
 					},
 					conditions,
 				);
+			} else {
+				await idb.cache.negotiations.add(info);
 			}
 		} else {
 			let reSignPlayer = true;

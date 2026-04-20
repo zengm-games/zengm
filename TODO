@@ -1,7 +1,3 @@
-negotiate modal
-- modal height flicker due to picture size
-  - test with images too
-
 next/prev on roster page should use tid https://discord.com/channels/290013534023057409/1492975452514422954
 - fix issue with FA abbrev redirecting to free agents
 - implement new dropdown part of useTitlebar

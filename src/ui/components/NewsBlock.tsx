@@ -112,7 +112,7 @@ export const NewsBlock = ({
 				{event.p && event.p.imgURL !== "/img/blank-face.png" ? (
 					<div
 						style={{
-							maxHeight: 90,
+							height: 90,
 							width: 60,
 							marginTop: event.p.imgURL ? 0 : -10,
 						}}

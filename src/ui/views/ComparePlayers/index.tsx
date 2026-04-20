@@ -357,7 +357,7 @@ const ComparePlayers = ({
 										>
 											<div
 												style={{
-													maxHeight: 180,
+													height: 180,
 													width: 120,
 													marginTop: p.imgURL ? 0 : -10,
 													marginBottom: p.imgURL ? 0 : 10,

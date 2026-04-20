@@ -131,7 +131,7 @@ const NegotiationHeader = ({
 			<div className="d-flex gap-2 mb-3" style={widthStyle}>
 				<div
 					style={{
-						maxHeight: 90,
+						height: 90,
 						width: 60,
 						marginTop: p.imgURL ? 0 : -10,
 					}}

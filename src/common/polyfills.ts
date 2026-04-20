@@ -152,3 +152,34 @@ if (!Map.groupBy) {
 		return map;
 	};
 }
+
+// Chrome 145, Firefox 144, Safari 16.2
+if (!Map.prototype.getOrInsert) {
+	for (const Class of [Map, WeakMap]) {
+		Object.defineProperty(Class.prototype, "getOrInsert", {
+			value<K, V>(this: Map<K, V>, key: K, defaultValue: V): V {
+				if (this.has(key)) {
+					return this.get(key)!;
+				}
+				this.set(key, defaultValue);
+				return defaultValue;
+			},
+			writable: true,
+			enumerable: false,
+			configurable: true,
+		});
+		Object.defineProperty(Class.prototype, "getOrInsertComputed", {
+			value<K, V>(this: Map<K, V>, key: K, callback: (key: K) => V): V {
+				if (this.has(key)) {
+					return this.get(key)!;
+				}
+				const defaultValue = callback(key);
+				this.set(key, defaultValue);
+				return defaultValue;
+			},
+			writable: true,
+			enumerable: false,
+			configurable: true,
+		});
+	}
+}

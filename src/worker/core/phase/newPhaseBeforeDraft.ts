@@ -421,7 +421,7 @@ const newPhaseBeforeDraft = async (
 			Infinity,
 		]);
 
-		const retiredPlayersByTeam: Record<number, Player[]> = {};
+		const retiredPlayersByTeam = new Map<number, Player[]>();
 
 		for (const p of players) {
 			let update = false;
@@ -429,10 +429,8 @@ const newPhaseBeforeDraft = async (
 			if (!repeatSeasonType) {
 				if (await player.shouldRetire(p)) {
 					if (p.tid >= 0) {
-						if (!retiredPlayersByTeam[p.tid]) {
-							retiredPlayersByTeam[p.tid] = [];
-						}
-						retiredPlayersByTeam[p.tid]!.push(p);
+						const retiredPlayers = retiredPlayersByTeam.getOrInsert(p.tid, []);
+						retiredPlayers.push(p);
 					}
 					await player.retire(p, conditions);
 					update = true;
@@ -466,10 +464,7 @@ const newPhaseBeforeDraft = async (
 			}
 		}
 
-		for (const [tidString, retiredPlayers] of Object.entries(
-			retiredPlayersByTeam,
-		)) {
-			const tid = Number.parseInt(tidString);
+		for (const [tid, retiredPlayers] of retiredPlayersByTeam) {
 			const text = retiredPlayers
 				.map(
 					(p) =>

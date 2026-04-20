@@ -456,7 +456,7 @@ const newPhasePreseason = async (
 			continue;
 		}
 		const retiredJerseyNumbers = new Set(
-			teams[roster[0].tid]!.retiredJerseyNumbers?.map((row) => row.number),
+			teamsByTid[roster[0].tid]!.retiredJerseyNumbers?.map((row) => row.number),
 		);
 
 		for (const p of roster) {

@@ -162,7 +162,7 @@ const getSeasonInfoLeague = async ({
 						confs,
 						playoffSeries,
 						playoffsByConf,
-						skipPlayoffSeries: false,
+						skipPlayoffSeries: !playoffSeries,
 					}),
 					showMissedPlayoffs: true,
 				});

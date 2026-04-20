@@ -73,15 +73,17 @@ const TragicDeaths = ({ players, stats, userTid }: View<"tragicDeaths">) => {
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
 				p.peakOvr,
 				lastRatings.ovr,
-				<a
-					href={helpers.leagueUrl([
-						"roster",
-						`${lastStats.abbrev}_${lastStats.tid}`,
-						p.diedYear,
-					])}
-				>
-					{lastStats.abbrev}
-				</a>,
+				lastStats ? (
+					<a
+						href={helpers.leagueUrl([
+							"roster",
+							`${lastStats.abbrev}_${lastStats.tid}`,
+							p.diedYear,
+						])}
+					>
+						{lastStats.abbrev}
+					</a>
+				) : null,
 				p.diedYear,
 				p.ageAtDeath,
 				...stats.map((stat) =>

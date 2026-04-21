@@ -348,7 +348,7 @@ const getSaveToDB = async ({
 			async write(chunk) {
 				const { key, value } = chunk;
 
-				if (CUMULATIVE_OBJECTS.has(key as any) || key === "teams") {
+				if (CUMULATIVE_OBJECTS.has(key) || key === "teams") {
 					// Currently skipped:
 					// - meta because it doesn't get written to DB
 					// - gameAttributes/startingSeason/version/teams because we already have it from basicInfo.

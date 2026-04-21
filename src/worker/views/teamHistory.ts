@@ -294,27 +294,31 @@ const updateTeamHistory = async (
 			}
 		}
 
-		const players = await idb.getCopies.players({
-			statsTid: inputs.tid,
-		});
-		for (const p of players) {
-			p.stats = p.stats.filter((row) => row.tid === inputs.tid);
+		const players = (
+			await idb.getCopies.players({
+				statsTid: inputs.tid,
+			})
+		).map((p) => {
+			const stats = p.stats.filter((row) => row.tid === inputs.tid);
 			const retirableJerseyNumbers: Record<string, string[]> = {};
-			(p as any).retirableJerseyNumbers = retirableJerseyNumbers;
-			for (const { gp, jerseyNumber, playoffs, season } of p.stats) {
+			for (const { gp, jerseyNumber, playoffs, season } of stats) {
 				if (
 					!playoffs &&
 					gp > 0 &&
 					jerseyNumber !== undefined &&
 					!retiredByPid[p.pid]?.has(jerseyNumber)
 				) {
-					if (!retirableJerseyNumbers[jerseyNumber]) {
-						retirableJerseyNumbers[jerseyNumber] = [];
-					}
+					retirableJerseyNumbers[jerseyNumber] ??= [];
 					retirableJerseyNumbers[jerseyNumber].push(season);
 				}
 			}
-		}
+
+			return {
+				...p,
+				stats,
+				retirableJerseyNumbers,
+			};
+		});
 
 		const playoffsByConfBySeason = await getPlayoffsByConfBySeason();
 		const history = await getHistory(

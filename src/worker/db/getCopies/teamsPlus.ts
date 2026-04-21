@@ -72,7 +72,7 @@ const processSeasonAttrs = async <
 	// If a season is requested but not in the database, make a fake season so at least some dummy values are returned
 	if (season !== undefined && seasons.length === 0 && addDummySeason) {
 		const dummySeason = team.genSeasonRow(t);
-		dummySeason.season = season as number;
+		dummySeason.season = season;
 		seasons = [dummySeason];
 	}
 
@@ -312,7 +312,7 @@ const processStats = async <
 		teamStats = await idb.league
 			.transaction("teamStats")
 			.store.index("season, tid")
-			.getAll([season as number, t.tid]);
+			.getAll([season, t.tid]);
 	}
 
 	// Handle playoffs/regularSeason

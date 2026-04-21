@@ -420,7 +420,10 @@ const initialCheck = async (
 			);
 		}
 
-		stream = response.body as unknown as ReadableStream;
+		if (response.body === null) {
+			throw new Error("Response body is null");
+		}
+		stream = response.body;
 		const size = response.headers.get("content-length");
 		if (size) {
 			sizeInBytes = Number(size);

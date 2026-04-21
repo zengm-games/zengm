@@ -7,7 +7,7 @@ test("posOdds sum to 1", () => {
 			continue;
 		}
 
-		const sumOdds = (Object.values(pen.posOdds) as number[]).reduce(
+		const sumOdds = Object.values(pen.posOdds).reduce(
 			(sum, val) => sum + val,
 			0,
 		);

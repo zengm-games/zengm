@@ -1298,10 +1298,13 @@ class Play {
 
 					// Special case for pass interference, so it doesn't say "0 yards from the spot of the foul"
 					let yds = penalty.event.penYds;
-					let spotFoul = penalty.event.spotYds !== undefined;
-					if (yds === 0 && spotFoul) {
-						yds = penalty.event.spotYds as number;
-						spotFoul = false;
+					let spotFoul = false;
+					if (penalty.event.spotYds !== undefined) {
+						if (yds === 0) {
+							yds = penalty.event.spotYds;
+						} else {
+							spotFoul = true;
+						}
 					}
 
 					this.g.playByPlay.logEvent({

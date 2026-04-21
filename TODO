@@ -1,3 +1,9 @@
+allow filtering daily schedule by conference https://discord.com/channels/290013534023057409/1491513962179858453/1491513962179858453
+
+on player profile page, highlight/italicize future years of current contract https://discord.com/channels/290013534023057409/1490820099643408444/1490820099643408444
+
+some type of team popularity factor independent of hype and population, to handle situations like LAC/LAL or NYY/NYM https://discord.com/channels/290013534023057409/1490041722577752237/1490041722577752237
+
 next/prev on roster page should use tid https://discord.com/channels/290013534023057409/1492975452514422954
 - fix issue with FA abbrev redirecting to free agents
 - implement new dropdown part of useTitlebar
@@ -40,6 +46,7 @@ dev usability stuff
 - make leagueUrl better typed
 - use valibot/arktype in various places, including to replace schema/types difference
 - DRY stuff for adding a new setting
+- typescript for playersPlus
 
 FBGM overtime - If team A scores in OT, And then Team B scores, They should always go for 2 bc you don’t want to give the ball back and have it be sudden death https://discord.com/channels/@me/778760871911751700/1480652733852811324
 
@@ -1393,6 +1400,7 @@ baseball bugs
 - when a player in the starting lineup is injured and there is an injury replacement, currently it auto sorts the whole lineup. it would be better to auto sort, see where it puts the replacement player, and then move them to that spot while keeping everyone else the same. https://discord.com/channels/290013534023057409/290015591216054273/994934736243933184
 - thr not important enough or maybe broken https://discord.com/channels/290013534023057409/290015468939640832/997136405895585802
 - should be possible for a pitcher at DH to enter game as relief pitcher https://discord.com/channels/290013534023057409/290015591216054273/1002304562562093086
+- should be possible for a pitcher to be both DH and SP (ohtani rule) https://discord.com/channels/290013534023057409/1489657175042167164/1489657175042167164
 
 stop on injury spoils live sim https://discord.com/channels/290013534023057409/290015591216054273/966465865090465852
 
@@ -1685,8 +1693,6 @@ bundle size
 - use a single rollup command for both ui and worker, so common code can go in a chunk, like https://github.com/rollup/rollup-starter-code-splitting/blob/master/rollup.config.js
   - requires Safari 15
   - remove blacklist plugin entries where appropriate
-- confirm cache header
-- confirm bugnsag working
 
 teams run starting lineups with terrible guards because most GFs became SFs or Fs, even though their passing and dribbling are far better than whichever short guy now gets to start. the logic for who's on the floor when should probably be changed. https://discord.com/channels/290013534023057409/331882115119448065/840121129389391882
 
@@ -2196,6 +2202,10 @@ q- When an interception happens on the passer's side of field, the team that pic
   - another change of possession weirdness https://discord.com/channels/290013534023057409/290015591216054273/854387307754160148
   - ...but a unit test on 4th and 1 and 4th and 50 run 100 times doesn't reproduce
 - some penalties should filter out players, such as no holding on the ball carrier
+- add stats for 3rd down conversions, first downs, etc. https://discord.com/channels/290013534023057409/1487931992371888228/1487931992371888228
+- show more detail in play-by-play for incomplete passes https://discord.com/channels/290013534023057409/1452690958792659146/threads/1478868500427702272
+  - how far was the throw?
+  - was it dropped? deflected? inaccurate?
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?
@@ -2343,12 +2353,6 @@ FBGM football sim bugs
   - https://i.redd.it/r06r5jxc6ei51.png
 - penalty on punt gives first down plus punt yardage https://cdn.discordapp.com/attachments/726675205669388293/733114315397136505/image0.jpg
   - https://media.discordapp.net/attachments/569726303926878219/738325008895705158/EvilQBFromChicagoZachTodd01.JPG?width=1141&height=581
-
-typescript
-- later
-  - playersPlus
-    - finish teamsPlus first, it's easier!
-    - probably not worth attempting until there is a better way to share code. like anything in overrides is a problem cause it's not statically analyzable, including STATS_TABLES
 
 switch Dropdown to DropdownLinks rather than Select?
 - see how react-dropdown or react-select deal with tons of options

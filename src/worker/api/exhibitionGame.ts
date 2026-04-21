@@ -51,16 +51,16 @@ export const getSeasons = async (lid: number) => {
 
 	league.close();
 
-	if (!season) {
+	if (!season || typeof season.value !== "number") {
 		throw new Error("Invalid season");
 	}
-	if (!startingSeason) {
+	if (!startingSeason || typeof startingSeason.value !== "number") {
 		throw new Error("Invalid startingSeason");
 	}
 
 	return {
-		seasonStart: startingSeason.value as number,
-		seasonEnd: season.value as number,
+		seasonStart: startingSeason.value,
+		seasonEnd: season.value,
 	};
 };
 

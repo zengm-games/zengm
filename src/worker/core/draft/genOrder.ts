@@ -488,7 +488,10 @@ const genOrder = async (
 					} else if (TIEBREAKER_AFTER_FIRST_ROUND === "rotate") {
 						for (let i = 0; i < roundIndex; i++) {
 							// Move 1st team to the end of the list
-							newOrder.push((newOrder as unknown as any).shift());
+							const firstTeam = newOrder.shift();
+							if (firstTeam) {
+								newOrder.push(firstTeam);
+							}
 						}
 					}
 					roundTeams.splice(start, length, ...newOrder);

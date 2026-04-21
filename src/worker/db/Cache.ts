@@ -601,7 +601,7 @@ class Cache {
 					);
 
 					this._requestQueue.delete(ind);
-				}, 30000) as unknown as number;
+				}, 30000);
 
 				this._requestQueue.set(ind, {
 					resolve,

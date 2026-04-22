@@ -1,6 +1,6 @@
 import globals from "globals";
 import nkzw from "@nkzw/eslint-config";
-import { defineConfig } from "eslint/config";
+import { defineConfig, globalIgnores } from "eslint/config";
 import pluginJsxA11y from "eslint-plugin-jsx-a11y";
 
 // We want to manually specify our own globals for different folders
@@ -33,14 +33,12 @@ const getCommonGlobals = (a, b) => {
 const commonGlobals = getCommonGlobals(globals.browser, globals.sharedWorker);
 
 export default defineConfig(
-	{
-		ignores: [
-			"analysis/",
-			"build/",
-			"public/upgrade-50/",
-			"tools/playoff-seed-odds-winning.js",
-		],
-	},
+	globalIgnores([
+		"analysis/",
+		"build/",
+		"public/upgrade-50/",
+		"tools/playoff-seed-odds-winning.js",
+	]),
 	{ files: ["**/*.{js,jsx,ts,tsx}"] },
 	...nkzw,
 	pluginJsxA11y.flatConfigs.recommended,
@@ -107,6 +105,7 @@ export default defineConfig(
 		},
 	},
 	{
+		ignores: ["public/sw.js"],
 		files: ["src/ui/**/*.{js,jsx,ts,tsx}", "public/**/*.js"],
 		languageOptions: {
 			globals: {
@@ -120,6 +119,14 @@ export default defineConfig(
 				ReadableStreamController: false,
 				StripeCheckoutHandler: false,
 				stripe: false,
+			},
+		},
+	},
+	{
+		files: ["public/sw.js"],
+		languageOptions: {
+			globals: {
+				...globals.serviceworker,
 			},
 		},
 	},
@@ -140,7 +147,7 @@ export default defineConfig(
 	},
 	{
 		// Common files for use in browser and worker
-		ignores: ["src/ui/**/*", "src/worker/**/*"],
+		ignores: ["src/ui/**/*", "src/worker/**/*", "public/**/*"],
 		files: ["src/**/*.{js,jsx,ts,tsx}"],
 
 		languageOptions: {

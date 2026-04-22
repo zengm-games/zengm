@@ -1,10 +1,5 @@
 window.bbgmVersion error in checkChanges
 
-add game score for baseball pitchers https://www.mlb.com/glossary/advanced-stats/game-score
-- in box score, no sum, and show relievers with null value
-  - can this be done with roundOverrides?
-- test on player game log
-
 allow filtering daily schedule by conference https://discord.com/channels/290013534023057409/1491513962179858453/1491513962179858453
 
 some type of team popularity factor independent of hype and population, to handle situations like LAC/LAL or NYY/NYM https://discord.com/channels/290013534023057409/1490041722577752237/1490041722577752237

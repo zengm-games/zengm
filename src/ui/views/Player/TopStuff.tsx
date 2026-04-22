@@ -370,13 +370,7 @@ const TopStuff = ({
 			amount = player.contract.amount;
 			exp = player.contract.exp;
 		} else {
-			for (let i = player.salaries.length - 1; i >= 0; i--) {
-				const row = player.salaries[i];
-				if (row.season === season) {
-					amount = row.amount;
-					break;
-				}
-			}
+			amount = player.salaries.findLast((row) => row.season === season)?.amount;
 		}
 
 		contractInfo = (

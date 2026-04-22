@@ -165,7 +165,11 @@ export const getPlayer = async (
 	return p;
 };
 
-export const getCommon = async (pid?: number, season?: number) => {
+export const getCommon = async (
+	pid: number | undefined,
+	season: number | undefined,
+	view: "player" | "player_game_log",
+) => {
 	if (pid === undefined) {
 		// https://stackoverflow.com/a/59923262/786644
 		const returnValue = {
@@ -381,10 +385,15 @@ export const getCommon = async (pid?: number, season?: number) => {
 				description += `, ${ovr}/${pot}`;
 			}
 
+			const path = [view, p2.pid];
+			if (season !== undefined) {
+				path.push(season);
+			}
+
 			return {
 				type: "link",
 				league: true,
-				path: ["player", p2.pid],
+				path,
 				text: `${ratings.pos} ${p2.firstName} ${p2.lastName} (${description})`,
 			};
 		});
@@ -525,7 +534,7 @@ const updatePlayer = async (
 		!state.retired ||
 		state.pid !== inputs.pid
 	) {
-		const topStuff = await getCommon(inputs.pid);
+		const topStuff = await getCommon(inputs.pid, undefined, "player");
 
 		if (topStuff.type === "error") {
 			// https://stackoverflow.com/a/59923262/786644

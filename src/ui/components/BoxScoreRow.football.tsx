@@ -29,6 +29,7 @@ const BoxScoreRow = ({
 	season: number;
 	seasonStats?: string[];
 }) => {
+	console.log(p);
 	return (
 		<tr className={className} onClick={onClick}>
 			<td>{isSport("baseball") && !p.gs ? null : p.pos}</td>
@@ -58,7 +59,9 @@ const BoxScoreRow = ({
 						highlightCols?.includes(i) ? "sorting_highlight" : undefined
 					}
 				>
-					{helpers.roundStat(p.processed[stat], stat, true)}
+					{isSport("baseball") && stat === "gmsc" && p.gsPit === 0
+						? null
+						: helpers.roundStat(p.processed[stat], stat, true)}
 				</td>
 			))}
 			{seasonStats

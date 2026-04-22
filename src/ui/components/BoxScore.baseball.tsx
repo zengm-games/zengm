@@ -201,7 +201,7 @@ const StatsTable = ({
 								<th colSpan={2}>Total</th>
 								{stats.map((stat) => (
 									<th key={stat}>
-										{stat === "pm"
+										{stat === "gmsc"
 											? null
 											: helpers.roundStat(sumsByStat[stat]!, stat, true)}
 									</th>

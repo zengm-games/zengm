@@ -24,7 +24,7 @@ export const ColorPicker = ({
 		if (ref.current) {
 			// Search for a div inside the modal, rather than the .modal itself, like suggested https://github.com/react-bootstrap/react-bootstrap/issues/5846#issuecomment-2017368604 - otherwise there is weird behavior with the color picker (drag starting inside color picker but ending outside the color picker and inside the modal would result in closing the modal)
 			modalRef.current = ref.current.closest(".modal-child-overlay-container");
-			// modalRef.current = document.getElementsByClassName("modal-child-overlay-container")[0] ?? null;
+			// modalRef.current = document.querySelector(".modal-child-overlay-container");
 		}
 	}, []);*/
 

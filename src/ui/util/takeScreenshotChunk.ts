@@ -19,11 +19,11 @@ const takeScreenshotChunk = async () => {
 	// Add watermark
 	contentEl.style.display = "inline-block";
 	const watermark = document.createElement("div");
-	const logos = document.getElementsByClassName("spin");
-	const logoHTML =
-		logos.length > 0 && logos[0] instanceof HTMLImageElement
-			? `<img src="${logos[0].src}" width="18" height="18"> `
-			: "";
+	const logo = document.querySelector(".spin");
+	if (!(logo instanceof HTMLImageElement)) {
+		throw new Error("Should never happen");
+	}
+	const logoHTML = `<img src="${logo.src}" width="18" height="18"> `;
 	watermark.innerHTML = `<nav class="navbar navbar-light bg-light rounded-3 px-3"><a class="navbar-brand me-auto" href="#">${logoHTML}${GAME_NAME}</a><div class="flex-grow-1"></div><span class="navbar-text" style="color: ${
 		theme === "dark" ? "#fff" : "#000"
 	}; font-weight: bold">Play your own league free at ${process.env.SPORT}${
@@ -36,20 +36,21 @@ const takeScreenshotChunk = async () => {
 	contentEl.style.padding = "8px";
 
 	// Add notifications
-	const notifications = document
-		.getElementsByClassName("notification-container")[0]!
-		.cloneNode(true);
-	if (notifications instanceof HTMLDivElement) {
-		notifications.classList.remove("notification-container");
-		for (let i = 0; i < notifications.childNodes.length; i++) {
-			// Otherwise screeenshot is taken before fade in is complete
-			const el = notifications.children[0]!;
-			if (el.classList && typeof el.classList.remove === "function") {
-				el.classList.remove("notification-fadein");
-			}
-		}
-		contentEl.append(notifications);
+	const notificationsRaw = document.querySelector(".notification-container");
+	if (!(notificationsRaw instanceof HTMLElement)) {
+		throw new Error("Should never happen");
 	}
+	// Type cast due to https://github.com/microsoft/TypeScript/issues/283
+	const notifications = notificationsRaw.cloneNode(true) as HTMLElement;
+	notifications.classList.remove("notification-container");
+	for (let i = 0; i < notifications.childNodes.length; i++) {
+		// Otherwise screeenshot is taken before fade in is complete
+		const el = notifications.children[0]!;
+		if (el.classList && typeof el.classList.remove === "function") {
+			el.classList.remove("notification-fadein");
+		}
+	}
+	contentEl.append(notifications);
 
 	window.scrollTo(0, 0);
 

@@ -258,6 +258,12 @@ const Player2 = ({
 										},
 										wrappedCurrency(s.amount, "M"),
 									],
+									classNames:
+										s.type === "current"
+											? "fw-bold"
+											: s.type === "future"
+												? "fst-italic"
+												: undefined,
 								};
 							})}
 						/>

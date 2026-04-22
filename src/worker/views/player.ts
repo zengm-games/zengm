@@ -81,7 +81,11 @@ export const getPlayer = async (
 				name: string;
 				abbrev: string;
 				mood: any;
-				salaries: any[];
+				salaries: {
+					amount: number;
+					season: number;
+					type: "past" | "current" | "future";
+				}[];
 				salariesTotal: any;
 				untradable: any;
 				untradableMsg?: string;

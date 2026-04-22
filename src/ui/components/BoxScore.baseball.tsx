@@ -484,18 +484,21 @@ const BoxScore = ({
 							{t.season !== undefined ? `${t.season} ` : null}
 							{t.region} {t.name}
 						</h2>
-						{["Batting", "Pitching"].map((title) => (
-							<StatsTable
-								key={title}
-								Row={Row}
-								exhibition={boxScore.exhibition}
-								forceRowUpdate={forceRowUpdate}
-								season={boxScore.season}
-								title={title}
-								type={title.toLowerCase() as any}
-								t={t}
-							/>
-						))}
+						{helpers.keys(PLAYER_GAME_STATS).map((type) => {
+							const info = PLAYER_GAME_STATS[type];
+							return (
+								<StatsTable
+									key={type}
+									Row={Row}
+									exhibition={boxScore.exhibition}
+									forceRowUpdate={forceRowUpdate}
+									season={boxScore.season}
+									title={info.name}
+									type={type}
+									t={t}
+								/>
+							);
+						})}
 					</div>
 				);
 			})}

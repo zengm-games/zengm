@@ -845,7 +845,7 @@ const TeamFinances = ({
 
 	type Row = (typeof barData)[number];
 	const classNameOverride = (row: Row) =>
-		row.champ ? "bar-graph-3" : undefined;
+		row.champ ? "bar-graph-4" : undefined;
 	const champSuffix = (row: Row) => (row.champ ? ", won championship" : "");
 
 	return (

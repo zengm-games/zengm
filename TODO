@@ -1,3 +1,5 @@
+add game score for baseball pitchers https://www.mlb.com/glossary/advanced-stats/game-score
+
 allow filtering daily schedule by conference https://discord.com/channels/290013534023057409/1491513962179858453/1491513962179858453
 
 on player profile page, highlight/italicize future years of current contract https://discord.com/channels/290013534023057409/1490820099643408444/1490820099643408444
@@ -598,6 +600,8 @@ datatable should support unsorted sort state
  - maybe also allow sorting for user, but don't persist so by default you can always drag/drop
 - check how sort status is passed to row.classNames
 - already happens in box scores
+
+datatable should support custom sorting formula https://discord.com/channels/290013534023057409/1493484682048704552/1493484682048704552
 
 unify export players and export draft class code
 - export players adds exportedSeason to player, and uses that to process player object on import
@@ -2206,6 +2210,7 @@ q- When an interception happens on the passer's side of field, the team that pic
 - show more detail in play-by-play for incomplete passes https://discord.com/channels/290013534023057409/1452690958792659146/threads/1478868500427702272
   - how far was the throw?
   - was it dropped? deflected? inaccurate?
+- add more stats for pass coverage, similar to OL stats
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

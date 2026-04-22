@@ -1,4 +1,11 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import {
+	useLayoutEffect,
+	useMemo,
+	useRef,
+	useState,
+	type Dispatch,
+	type SetStateAction,
+} from "react";
 import type { View } from "../../common/types.ts";
 import useDropdownOptions from "../hooks/useDropdownOptions.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
@@ -238,9 +245,7 @@ const Filters = ({
 	setFilters,
 }: {
 	filters: AdvancedPlayerSearchFilterEditing[];
-	setFilters: React.Dispatch<
-		React.SetStateAction<AdvancedPlayerSearchFilterEditing[]>
-	>;
+	setFilters: Dispatch<SetStateAction<AdvancedPlayerSearchFilterEditing[]>>;
 }) => {
 	const setFilter = (i: number, filter: AdvancedPlayerSearchFilterEditing) => {
 		filter.errorMessage = validateFilter(filter);
@@ -405,7 +410,7 @@ const ShowStatTypes = ({
 	setShowStatTypes,
 }: {
 	showStatTypes: string[];
-	setShowStatTypes: React.Dispatch<React.SetStateAction<string[]>>;
+	setShowStatTypes: Dispatch<SetStateAction<string[]>>;
 }) => {
 	const dropdownOptions = useDropdownOptions("statTypesAdv");
 

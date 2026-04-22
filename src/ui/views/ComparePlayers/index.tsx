@@ -4,7 +4,13 @@ import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import { PLAYER } from "../../../common/constants.ts";
 import { helpers } from "../../util/helpers.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
-import { useEffect, useState, type ReactNode } from "react";
+import {
+	useEffect,
+	useState,
+	type Dispatch,
+	type ReactNode,
+	type SetStateAction,
+} from "react";
 import getSortVal from "../../components/DataTable/getSortVal.tsx";
 import { groupByUnique } from "../../../common/utils.ts";
 import PlayersForm from "./PlayersForm.tsx";
@@ -126,7 +132,7 @@ const HeaderRow = ({
 	children: ReactNode;
 	colSpan: number;
 	open: boolean;
-	setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	setOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
 	return (
 		<tr>

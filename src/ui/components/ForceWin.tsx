@@ -14,12 +14,12 @@ const useSavingState = () => {
 	const timeoutID = useRef<number | undefined>(undefined);
 
 	const wrappedSetState = (state2: State) => {
-		window.clearTimeout(timeoutID.current);
+		clearTimeout(timeoutID.current);
 
 		setState(state2);
 
 		if (state2 === "saved") {
-			timeoutID.current = window.setTimeout(() => {
+			timeoutID.current = setTimeout(() => {
 				setState(undefined);
 			}, 1000);
 		}
@@ -27,7 +27,7 @@ const useSavingState = () => {
 
 	useEffect(() => {
 		return () => {
-			window.clearTimeout(timeoutID.current);
+			clearTimeout(timeoutID.current);
 		};
 	}, []);
 

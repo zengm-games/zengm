@@ -532,7 +532,7 @@ const DraftLotteryTable = (props: Props) => {
 		dispatch({ type: "revealOne" });
 
 		if (numLeftToReveal.current >= 1) {
-			timeoutID.current = window.setTimeout(revealPickAuto, 1000);
+			timeoutID.current = setTimeout(revealPickAuto, 1000);
 		}
 	};
 

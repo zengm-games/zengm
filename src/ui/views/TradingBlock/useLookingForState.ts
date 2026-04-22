@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import {
 	COMPOSITE_WEIGHTS,
 	NOT_REAL_POSITIONS,
@@ -99,9 +99,7 @@ const getInitialState = () => {
 };
 
 export type LookingForState = ReturnType<typeof getInitialState>;
-export type SetLookingForState = React.Dispatch<
-	React.SetStateAction<LookingForState>
->;
+export type SetLookingForState = Dispatch<SetStateAction<LookingForState>>;
 
 const useLookingForState = (savedLookingFor: LookingForState | undefined) => {
 	const [state, setState] = useState(savedLookingFor ?? getInitialState);

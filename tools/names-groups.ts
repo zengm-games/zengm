@@ -84,6 +84,7 @@ for (const [group, countries] of Object.entries(groups)) {
 
 			const rows = await page.evaluate((type) => {
 				const rowsOutput = [];
+				// eslint-disable-next-line no-undef
 				const rows = document.querySelectorAll(".forename-table tbody tr");
 				for (const row of rows) {
 					if (row.children.length > 1) {

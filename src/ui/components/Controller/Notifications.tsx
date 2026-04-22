@@ -28,7 +28,7 @@ const Notification = ({
 		const element = notificationElement.current;
 
 		const notificationTimeout = () => {
-			timeoutID = window.setTimeout(remove, timeoutRemaining);
+			timeoutID = setTimeout(remove, timeoutRemaining);
 			timeoutStart = Date.now();
 		};
 
@@ -38,14 +38,14 @@ const Notification = ({
 
 			// When hovering over, don't count towards timeout
 			element.addEventListener("mouseenter", () => {
-				window.clearTimeout(timeoutID);
+				clearTimeout(timeoutID);
 				timeoutRemaining -= Date.now() - timeoutStart;
 			});
 			element.addEventListener("mouseleave", notificationTimeout);
 		}
 
 		return () => {
-			window.clearTimeout(timeoutID);
+			clearTimeout(timeoutID);
 			if (element) {
 				element.removeEventListener("mouseleave", notificationTimeout);
 			}

@@ -3,6 +3,35 @@ import nkzw from "@nkzw/eslint-config";
 import { defineConfig } from "eslint/config";
 import pluginJsxA11y from "eslint-plugin-jsx-a11y";
 
+// We want to manually specify our own globals for different folders
+let found = false;
+for (const row of nkzw) {
+	if (row.languageOptions?.globals) {
+		delete row.languageOptions.globals;
+		found = true;
+	}
+}
+if (!found) {
+	throw new Error("Did not find any globals to delete");
+}
+
+// Get any globals that are safe to use in both the browser and worker
+const getCommonGlobals = (a, b) => {
+	const merged = {};
+	for (const [key, value] of Object.entries(a)) {
+		if (b[key] !== undefined) {
+			merged[key] = value;
+		}
+	}
+	for (const [key, value] of Object.entries(b)) {
+		if (a[key] !== undefined) {
+			merged[key] = value;
+		}
+	}
+	return merged;
+};
+const commonGlobals = getCommonGlobals(globals.browser, globals.sharedWorker);
+
 export default defineConfig(
 	{
 		ignores: [
@@ -13,14 +42,6 @@ export default defineConfig(
 		],
 	},
 	{ files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
-	{
-		languageOptions: {
-			globals: {
-				...globals.browser,
-				process: false,
-			},
-		},
-	},
 	...nkzw,
 	pluginJsxA11y.flatConfigs.recommended,
 	{
@@ -40,6 +61,7 @@ export default defineConfig(
 			"no-empty": "off",
 			"no-extra-parens": "off",
 			"no-self-compare": "error",
+			"no-undef": "error", // TypeScript catches most of these, except worker/browser differences. Would be nice to somehow get TypeScript to place nicely here, but it doens't like my cross-folder imports, even type imports
 			"perfectionist/sort-interfaces": "off",
 			"perfectionist/sort-jsx-props": "off",
 			"perfectionist/sort-objects": "off",
@@ -85,11 +107,61 @@ export default defineConfig(
 		},
 	},
 	{
-		files: ["**/*.js", "tools/**/*.{cjs,js,ts}"],
+		files: ["src/ui/**/*.{js,mjs,cjs,ts,jsx,tsx}", "public/**/*.js"],
+		languageOptions: {
+			globals: {
+				...globals.browser,
+				process: false,
+
+				// This is needed for no-undef
+				AlgorithmIdentifier: false,
+				BufferSource: false,
+				HTMLCollectionOf: false,
+				ReadableStreamController: false,
+				StripeCheckoutHandler: false,
+				stripe: false,
+			},
+		},
+	},
+	{
+		files: ["src/worker/**/*.{js,mjs,cjs,ts,jsx,tsx}"],
+
+		languageOptions: {
+			globals: {
+				...globals.sharedWorker,
+				process: false,
+
+				// This is needed for no-undef
+				IDBValidKey: false,
+				IDBTransactionMode: false,
+				IDBTransactionOptions: false,
+			},
+		},
+	},
+	{
+		// Common files for use in browser and worker
+		ignores: ["src/ui/**/*", "src/worker/**/*"],
+		files: ["src/**/*.{js,mjs,cjs,ts,jsx,tsx}"],
+
+		languageOptions: {
+			globals: {
+				...commonGlobals,
+				process: false,
+
+				// This is needed for no-undef
+				HTMLLinkElement: false,
+			},
+		},
+	},
+	{
+		files: ["*.js", "tools/**/*.{cjs,js,ts}"],
 
 		languageOptions: {
 			globals: {
 				...globals.node,
+
+				// This is needed for no-undef
+				NodeJS: false,
 			},
 		},
 

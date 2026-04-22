@@ -17,12 +17,12 @@ const useThrottle = <T extends unknown>(value: T, interval: number): T => {
 			lastUpdated.current = now;
 			setThrottledValue(value);
 		} else {
-			const id = window.setTimeout(() => {
+			const id = setTimeout(() => {
 				lastUpdated.current = Date.now();
 				setThrottledValue(value);
 			}, interval - sinceLastUpdate);
 
-			return () => window.clearTimeout(id);
+			return () => clearTimeout(id);
 		}
 	}, [value, interval]);
 

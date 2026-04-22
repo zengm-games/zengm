@@ -41,7 +41,7 @@ export default defineConfig(
 			"tools/playoff-seed-odds-winning.js",
 		],
 	},
-	{ files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"] },
+	{ files: ["**/*.{js,jsx,ts,tsx}"] },
 	...nkzw,
 	pluginJsxA11y.flatConfigs.recommended,
 	{
@@ -107,7 +107,7 @@ export default defineConfig(
 		},
 	},
 	{
-		files: ["src/ui/**/*.{js,mjs,cjs,ts,jsx,tsx}", "public/**/*.js"],
+		files: ["src/ui/**/*.{js,jsx,ts,tsx}", "public/**/*.js"],
 		languageOptions: {
 			globals: {
 				...globals.browser,
@@ -124,7 +124,7 @@ export default defineConfig(
 		},
 	},
 	{
-		files: ["src/worker/**/*.{js,mjs,cjs,ts,jsx,tsx}"],
+		files: ["src/worker/**/*.{js,jsx,ts,tsx}"],
 
 		languageOptions: {
 			globals: {
@@ -141,7 +141,7 @@ export default defineConfig(
 	{
 		// Common files for use in browser and worker
 		ignores: ["src/ui/**/*", "src/worker/**/*"],
-		files: ["src/**/*.{js,mjs,cjs,ts,jsx,tsx}"],
+		files: ["src/**/*.{js,jsx,ts,tsx}"],
 
 		languageOptions: {
 			globals: {
@@ -154,7 +154,7 @@ export default defineConfig(
 		},
 	},
 	{
-		files: ["*.js", "tools/**/*.{cjs,js,ts}"],
+		files: ["*.{js,ts}", "tools/**/*.{js,ts}"],
 
 		languageOptions: {
 			globals: {

@@ -45,7 +45,7 @@ const Notification = ({
 		}
 
 		return () => {
-			clearTimeout(timeoutID);
+			window.clearTimeout(timeoutID);
 			if (element) {
 				element.removeEventListener("mouseleave", notificationTimeout);
 			}

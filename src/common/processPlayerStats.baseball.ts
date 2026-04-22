@@ -188,6 +188,8 @@ const processStats = (
 			row[stat] = helpers.ratio(ps.h - ps.hr, ab - ps.so - ps.hr + ps.sf);
 		} else if (stat === "iso") {
 			row[stat] = helpers.ratio(tb - ps.h, ab);
+		} else if (stat === "gmsc") {
+			row[stat] = helpers.gameScoreBaseball(ps);
 		} else {
 			row[stat] = ps[stat];
 		}

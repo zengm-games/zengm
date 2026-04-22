@@ -59,7 +59,7 @@ function addPopRank<
 }
 
 const gameScore = (
-	arg: Record<
+	p: Record<
 		| "pts"
 		| "fg"
 		| "fga"
@@ -74,19 +74,41 @@ const gameScore = (
 		| "tov",
 		number
 	>,
-): number => {
+) => {
 	return (
-		arg.pts +
-		0.4 * arg.fg -
-		0.7 * arg.fga -
-		0.4 * (arg.fta - arg.ft) +
-		0.7 * arg.orb +
-		0.3 * arg.drb +
-		arg.stl +
-		0.7 * arg.ast +
-		0.7 * arg.blk -
-		0.4 * arg.pf -
-		arg.tov
+		p.pts +
+		0.4 * p.fg -
+		0.7 * p.fga -
+		0.4 * (p.fta - p.ft) +
+		0.7 * p.orb +
+		0.3 * p.drb +
+		p.stl +
+		0.7 * p.ast +
+		0.7 * p.blk -
+		0.4 * p.pf -
+		p.tov
+	);
+};
+
+const gameScoreBaseball = (
+	p: Record<
+		"bbPit" | "hPit" | "hrPit" | "gsPit" | "outs" | "rPit" | "soPit",
+		number
+	>,
+) => {
+	if (p.gsPit === 0) {
+		return 0;
+	}
+
+	// Tom Tango version from https://www.mlb.com/glossary/advanced-stats/game-score
+	return (
+		40 +
+		2 * p.outs +
+		p.soPit -
+		2 * p.bbPit -
+		2 * p.hPit -
+		3 * p.rPit -
+		6 * p.hrPit
 	);
 };
 
@@ -1495,6 +1517,7 @@ export const helpers = {
 	addPopRank,
 	getPopRanks,
 	gameScore,
+	gameScoreBaseball,
 	getCountry,
 	getExpansionDraftMinimumPlayersPerActiveTeam,
 	getJerseyNumber,

@@ -805,6 +805,12 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "ISO",
 		},
+		"stat:gmsc": {
+			desc: "Game Score (for SP only, Tom Tango version)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "GSc",
+		},
 	},
 	basketball: {
 		"rating:fg": {

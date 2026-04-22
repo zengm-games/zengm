@@ -229,6 +229,7 @@ const getLeaderRequirements = () => {
 			bkMax: {},
 			wpMax: {},
 			bfMax: {},
+			gmscMax: {},
 			gpF: {},
 			gsF: {},
 			cgF: {},

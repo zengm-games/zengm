@@ -58,7 +58,7 @@ const updatePlayers = async (
 					feat.stats[stat] = processed[stat];
 				}
 			} else if (isSport("baseball")) {
-				const toAdd = ["ip"];
+				const toAdd = ["ip", "gmsc"];
 				const processed = processPlayerStats(feat.stats, toAdd);
 				for (const stat of toAdd) {
 					feat.stats[stat] = processed[stat];
@@ -109,6 +109,7 @@ const updatePlayers = async (
 				"soPit",
 				"hrPit",
 				"pc",
+				"gmsc",
 			],
 			basketball: [
 				"gs",

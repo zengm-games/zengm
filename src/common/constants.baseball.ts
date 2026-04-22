@@ -133,7 +133,17 @@ export const PLAYER_GAME_STATS = {
 	},
 	pitching: {
 		name: "Pitching",
-		stats: ["ip", "hPit", "rPit", "er", "bbPit", "soPit", "hrPit", "pc"],
+		stats: [
+			"ip",
+			"hPit",
+			"rPit",
+			"er",
+			"bbPit",
+			"soPit",
+			"hrPit",
+			"pc",
+			"gmsc",
+		],
 		seasonStats: ["era"],
 		sortBy: ["min"],
 	},
@@ -335,6 +345,7 @@ export const PLAYER_STATS_TABLES = {
 			"bkMax",
 			"wpMax",
 			"bfMax",
+			"gmscMax",
 		],
 	},
 };

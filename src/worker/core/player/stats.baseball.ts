@@ -117,6 +117,7 @@ const stats = {
 
 		// Pitching derived
 		"ipMax",
+		"gmscMax",
 	] as const,
 	byPos: [
 		// Fielding

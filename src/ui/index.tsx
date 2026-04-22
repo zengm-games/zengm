@@ -104,6 +104,7 @@ const setupEnv = async () => {
 	}
 
 	const env: Env = {
+		bbgmVersion: window.bbgmVersion,
 		enableLogging: window.enableLogging,
 		heartbeatID,
 		mobile: window.mobile,

@@ -7,6 +7,7 @@ import type * as views from "../worker/views/index.ts";
 export type NonEmptyArray<T> = [T, ...T[]];
 
 export type Env = {
+	bbgmVersion: string;
 	enableLogging: boolean;
 	heartbeatID: string;
 	mobile: boolean;

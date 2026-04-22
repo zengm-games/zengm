@@ -14,6 +14,7 @@ import type {
 import type { Settings } from "../views/settings.ts";
 import connectIndexedDB from "./connectIndexedDB.ts";
 import type { KeyboardShortcutsLocal } from "../../ui/util/keyboardShortcuts.ts";
+import env from "../util/env.ts";
 
 // export is needed just for https://github.com/microsoft/TypeScript/issues/59951
 export interface MetaDB extends DBSchema {
@@ -61,7 +62,7 @@ const create = (db: IDBPDatabase<MetaDB>) => {
 		autoIncrement: true,
 	});
 	attributeStore.put(0, "nagged");
-	attributeStore.put(window.bbgmVersion, "lastChangesVersion");
+	attributeStore.put(env.bbgmVersion, "lastChangesVersion");
 };
 
 type VersionChangeTransaction = IDBPTransaction<

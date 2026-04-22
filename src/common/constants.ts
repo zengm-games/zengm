@@ -6,7 +6,7 @@ import * as constantsFootball from "./constants.football.ts";
 import * as constantsHockey from "./constants.hockey.ts";
 import type { CompositeWeights, Phase, DraftType, MoodTrait } from "./types.ts";
 
-const ACCOUNT_API_URL =
+export const ACCOUNT_API_URL =
 	process.env.NODE_ENV === "development"
 		? "http://account.basketball-gm.test"
 		: bySport({
@@ -15,30 +15,30 @@ const ACCOUNT_API_URL =
 				default: "https://account.zengm.com",
 			});
 
-const DIFFICULTY = {
+export const DIFFICULTY = {
 	Easy: -0.25,
 	Normal: 0,
 	Hard: 0.25,
 	Insane: 1,
 };
 
-const DRAFT_BY_TEAM_OVR = bySport({
+export const DRAFT_BY_TEAM_OVR = bySport({
 	baseball: true,
 	basketball: false,
 	football: true,
 	hockey: true,
 });
 
-const LEAGUE_DATABASE_VERSION = 70;
+export const LEAGUE_DATABASE_VERSION = 70;
 
-const NO_LOTTERY_DRAFT_TYPES = new Set<DraftType>([
+export const NO_LOTTERY_DRAFT_TYPES = new Set<DraftType>([
 	"freeAgents",
 	"noLottery",
 	"noLotteryReverse",
 	"random",
 ]);
 
-const PHASE = {
+export const PHASE = {
 	EXPANSION_DRAFT: -2,
 	FANTASY_DRAFT: -1,
 	PRESEASON: 0,
@@ -52,13 +52,13 @@ const PHASE = {
 	FREE_AGENCY: 8,
 } satisfies Record<string, Phase>;
 
-const REMAINING_PLAYOFF_TEAMS_PHASES = new Set<Phase>([
+export const REMAINING_PLAYOFF_TEAMS_PHASES = new Set<Phase>([
 	PHASE.REGULAR_SEASON,
 	PHASE.AFTER_TRADE_DEADLINE,
 	PHASE.PLAYOFFS,
 ]);
 
-const PLAYER = {
+export const PLAYER = {
 	FREE_AGENT: -1,
 	UNDRAFTED: -2,
 	RETIRED: -3,
@@ -77,7 +77,7 @@ const PLAYER = {
 	UNDRAFTED_3: -5, // Next next year's draft class
 };
 
-const PHASE_TEXT = {
+export const PHASE_TEXT = {
 	"-2": "expansion draft",
 	"-1": "fantasy draft",
 	"0": "preseason",
@@ -95,19 +95,19 @@ const PHASE_TEXT = {
 	"8": "free agency",
 };
 
-const STRIPE_PUBLISHABLE_KEY =
+export const STRIPE_PUBLISHABLE_KEY =
 	process.env.NODE_ENV === "development"
 		? "pk_test_Qbz0froGmHLp0dPCwHoYFY08"
 		: "pk_live_Dmo7Vs6uSaoYHrFngr4lM0sa";
 
-const COMPOSITE_WEIGHTS = bySport<CompositeWeights>({
+export const COMPOSITE_WEIGHTS = bySport<CompositeWeights>({
 	baseball: constantsBaseball.COMPOSITE_WEIGHTS,
 	basketball: constantsBasketball.COMPOSITE_WEIGHTS,
 	football: constantsFootball.COMPOSITE_WEIGHTS,
 	hockey: constantsHockey.COMPOSITE_WEIGHTS,
 });
 
-const PLAYER_GAME_STATS = bySport<{
+export const PLAYER_GAME_STATS = bySport<{
 	[key: string]: {
 		name: string;
 		stats: string[];
@@ -120,7 +120,7 @@ const PLAYER_GAME_STATS = bySport<{
 	hockey: constantsHockey.PLAYER_GAME_STATS,
 });
 
-const PLAYER_SUMMARY = bySport<{
+export const PLAYER_SUMMARY = bySport<{
 	[key: string]: {
 		name: string;
 		onlyShowIf?: string[];
@@ -138,7 +138,7 @@ const PLAYER_SUMMARY = bySport<{
 	hockey: constantsHockey.PLAYER_SUMMARY,
 });
 
-const PLAYER_STATS_TABLES = bySport<{
+export const PLAYER_STATS_TABLES = bySport<{
 	[key: string]: {
 		name: string;
 		onlyShowIf?: string[];
@@ -152,14 +152,14 @@ const PLAYER_STATS_TABLES = bySport<{
 	hockey: constantsHockey.PLAYER_STATS_TABLES,
 });
 
-const RATINGS = bySport<any[]>({
+export const RATINGS = bySport<any[]>({
 	baseball: constantsBaseball.RATINGS,
 	basketball: constantsBasketball.RATINGS,
 	football: constantsFootball.RATINGS,
 	hockey: constantsHockey.RATINGS,
 });
 
-const POSITION_COUNTS: {
+export const POSITION_COUNTS: {
 	[key: string]: number;
 } = bySport({
 	baseball: constantsBaseball.POSITION_COUNTS,
@@ -168,14 +168,14 @@ const POSITION_COUNTS: {
 	hockey: constantsHockey.POSITION_COUNTS,
 });
 
-const POSITIONS = bySport<any[]>({
+export const POSITIONS = bySport<any[]>({
 	baseball: constantsBaseball.POSITIONS,
 	basketball: constantsBasketball.POSITIONS,
 	football: constantsFootball.POSITIONS,
 	hockey: constantsHockey.POSITIONS,
 });
 
-const TEAM_STATS_TABLES = bySport<
+export const TEAM_STATS_TABLES = bySport<
 	Record<
 		string,
 		{
@@ -191,96 +191,96 @@ const TEAM_STATS_TABLES = bySport<
 	hockey: constantsHockey.TEAM_STATS_TABLES,
 });
 
-const TIME_BETWEEN_GAMES: string = bySport({
+export const TIME_BETWEEN_GAMES: string = bySport({
 	football: "week",
 	default: "day",
 });
 
-const MOOD_TRAITS: Record<MoodTrait, string> = {
+export const MOOD_TRAITS: Record<MoodTrait, string> = {
 	F: "Fame",
 	L: "Loyalty",
 	$: "Money",
 	W: "Winning",
 };
 
-const SIMPLE_AWARDS = bySport<Readonly<string[]>>({
+export const SIMPLE_AWARDS = bySport<Readonly<string[]>>({
 	baseball: constantsBaseball.SIMPLE_AWARDS,
 	basketball: constantsBasketball.SIMPLE_AWARDS,
 	football: constantsFootball.SIMPLE_AWARDS,
 	hockey: constantsHockey.SIMPLE_AWARDS,
 });
 
-const AWARD_NAMES = bySport<Record<string, string>>({
+export const AWARD_NAMES = bySport<Record<string, string>>({
 	baseball: constantsBaseball.AWARD_NAMES,
 	basketball: constantsBasketball.AWARD_NAMES,
 	football: constantsFootball.AWARD_NAMES,
 	hockey: constantsHockey.AWARD_NAMES,
 });
 
-const DEFAULT_CONFS = bySport({
+export const DEFAULT_CONFS = bySport({
 	baseball: constantsBaseball.DEFAULT_CONFS,
 	basketball: constantsBasketball.DEFAULT_CONFS,
 	football: constantsFootball.DEFAULT_CONFS,
 	hockey: constantsHockey.DEFAULT_CONFS,
 });
 
-const DEFAULT_DIVS = bySport({
+export const DEFAULT_DIVS = bySport({
 	baseball: constantsBaseball.DEFAULT_DIVS,
 	basketball: constantsBasketball.DEFAULT_DIVS,
 	football: constantsFootball.DEFAULT_DIVS,
 	hockey: constantsHockey.DEFAULT_DIVS,
 });
 
-const DEFAULT_STADIUM_CAPACITY = bySport({
-	baseball: constantsBaseball.DEFAULT_STADIUM_CAPACITY,
-	basketball: constantsBasketball.DEFAULT_STADIUM_CAPACITY,
-	football: constantsFootball.DEFAULT_STADIUM_CAPACITY,
-	hockey: constantsHockey.DEFAULT_STADIUM_CAPACITY,
+export const DEFAULT_STADIUM_CAPACITY = bySport({
+	baseball: 50000,
+	basketball: 25000,
+	football: 70000,
+	hockey: 17500,
 });
 
-const COURT = bySport({
+export const COURT = bySport({
 	baseball: "field",
 	basketball: "court",
 	football: "field",
 	hockey: "ice",
 });
 
-const EMAIL_ADDRESS = "jeremy@zengm.com";
+export const EMAIL_ADDRESS = "jeremy@zengm.com";
 
-const GAME_ACRONYM = bySport({
+export const GAME_ACRONYM = bySport({
 	baseball: "ZGMB",
 	basketball: "BBGM",
 	football: "FBGM",
 	hockey: "ZGMH",
 });
 
-const GAME_NAME = bySport({
+export const GAME_NAME = bySport({
 	baseball: "ZenGM Baseball",
 	basketball: "Basketball GM",
 	football: "Football GM",
 	hockey: "ZenGM Hockey",
 });
 
-const SUBREDDIT_NAME = bySport({
+export const SUBREDDIT_NAME = bySport({
 	baseball: "ZenGMBaseball",
 	basketball: "BasketballGM",
 	football: "Football_GM",
 	hockey: "ZenGMHockey",
 });
 
-const TWITTER_HANDLE = bySport({
+export const TWITTER_HANDLE = bySport({
 	basketball: "basketball_gm",
 	football: "FootballGM_Game",
 	default: "ZenGMGames",
 });
 
-const FACEBOOK_USERNAME = bySport({
+export const FACEBOOK_USERNAME = bySport({
 	basketball: "basketball.general.manager",
 	football: "football.general.manager",
 	default: "ZenGMGames",
 });
 
-const REAL_PLAYERS_INFO = bySport({
+export const REAL_PLAYERS_INFO = bySport({
 	baseball: undefined,
 	basketball: {
 		legends: true,
@@ -293,14 +293,14 @@ const REAL_PLAYERS_INFO = bySport({
 	hockey: undefined,
 });
 
-const WEBSITE_PLAY = bySport({
+export const WEBSITE_PLAY = bySport({
 	baseball: "baseball.zengm.com",
 	basketball: "play.basketball-gm.com",
 	football: "play.football-gm.com",
 	hockey: "hockey.zengm.com",
 });
 
-const WEBSITE_ROOT = bySport({
+export const WEBSITE_ROOT = bySport({
 	baseball: "zengm.com/baseball",
 	basketball: "basketball-gm.com",
 	football: "football-gm.com",
@@ -308,9 +308,9 @@ const WEBSITE_ROOT = bySport({
 });
 
 // For subscribers who have not renewed yet, give them a 3 day grace period before showing ads again, because sometimes it takes a little extra tim for the payment to process
-const GRACE_PERIOD = 60 * 60 * 24 * 3;
+export const GRACE_PERIOD = 60 * 60 * 24 * 3;
 
-const TIEBREAKERS = {
+export const TIEBREAKERS = {
 	commonOpponentsRecord: "Common opponents record",
 	confRecordIfSame: "Conference record (same conf)",
 	divRecordIfSame: "Division record (same div)",
@@ -323,9 +323,9 @@ const TIEBREAKERS = {
 };
 
 // This is only applied by default in hockey, but it's still used in all sports if "pts" are explicitly requested and there is no formula set
-const DEFAULT_POINTS_FORMULA = "2*W+OTL+T";
+export const DEFAULT_POINTS_FORMULA = "2*W+OTL+T";
 
-const AD_DIVS = bySport({
+export const AD_DIVS = bySport({
 	basketball: {
 		mobile: "basketball-gm_mobile_leaderboard",
 		leaderboard: "basketball-gm_leaderboard_atf",
@@ -349,14 +349,14 @@ const AD_DIVS = bySport({
 	},
 });
 
-const DEFAULT_JERSEY = bySport({
+export const DEFAULT_JERSEY = bySport({
 	baseball: "baseball2:hat2",
 	basketball: "jersey3",
 	football: "football",
 	hockey: "hockey",
 });
 
-const JERSEYS = bySport({
+export const JERSEYS = bySport({
 	baseball: {
 		"baseball:hat": "Solid jersey, solid hat",
 		"baseball:hat2": "Solid jersey, brim hat",
@@ -394,28 +394,28 @@ const JERSEYS = bySport({
 });
 
 // Target: 90% in playThroughInjuriesFactor
-const DEFAULT_PLAY_THROUGH_INJURIES = bySport<[number, number]>({
+export const DEFAULT_PLAY_THROUGH_INJURIES = bySport<[number, number]>({
 	baseball: [0, 4],
 	basketball: [0, 4],
 	football: [0, 2],
 	hockey: [0, 4],
 });
 
-const DAILY_SCHEDULE = `${
+export const DAILY_SCHEDULE = `${
 	TIME_BETWEEN_GAMES === "week" ? "Weekly" : "Daily"
 } Schedule`;
 
 // Basketball has other events, but other sports are just a game
-const ALL_STAR_GAME_ONLY = bySport({
+export const ALL_STAR_GAME_ONLY = bySport({
 	baseball: true,
 	basketball: false,
 	football: true,
 	hockey: true,
 });
 
-const DEFAULT_PHASE_CHANGE_REDIRECTS = [1, 3, 4, 5, 7, 8] as Phase[];
+export const DEFAULT_PHASE_CHANGE_REDIRECTS = [1, 3, 4, 5, 7, 8] as Phase[];
 
-const EXHIBITION_GAME_SETTINGS = [
+export const EXHIBITION_GAME_SETTINGS = [
 	"maxOvertimes",
 	"shootoutRounds",
 	"maxOvertimesPlayoffs",
@@ -490,7 +490,7 @@ const EXHIBITION_GAME_SETTINGS = [
 	"footballOvertimePlayoffs",
 ] as const;
 
-const MOBILE_AD_BOTTOM_MARGIN = 52;
+export const MOBILE_AD_BOTTOM_MARGIN = 52;
 
 export const DEPTH_CHART_NAME = bySport({
 	baseball: "Batting Order",
@@ -576,53 +576,3 @@ export const NOT_REAL_POSITIONS = bySport({
 
 export const COLA_ALPHA = 1000;
 export const COLA_OPT_OUT_PENALTY = 2000;
-
-export {
-	AD_DIVS,
-	ALL_STAR_GAME_ONLY,
-	AWARD_NAMES,
-	COURT,
-	DAILY_SCHEDULE,
-	DEFAULT_CONFS,
-	DEFAULT_DIVS,
-	DEFAULT_JERSEY,
-	DEFAULT_PHASE_CHANGE_REDIRECTS,
-	DEFAULT_PLAY_THROUGH_INJURIES,
-	DEFAULT_POINTS_FORMULA,
-	DEFAULT_STADIUM_CAPACITY,
-	ACCOUNT_API_URL,
-	DIFFICULTY,
-	DRAFT_BY_TEAM_OVR,
-	EMAIL_ADDRESS,
-	EXHIBITION_GAME_SETTINGS,
-	FACEBOOK_USERNAME,
-	GAME_ACRONYM,
-	GAME_NAME,
-	GRACE_PERIOD,
-	JERSEYS,
-	LEAGUE_DATABASE_VERSION,
-	MOBILE_AD_BOTTOM_MARGIN,
-	MOOD_TRAITS,
-	NO_LOTTERY_DRAFT_TYPES,
-	PHASE,
-	PLAYER,
-	PHASE_TEXT,
-	REAL_PLAYERS_INFO,
-	REMAINING_PLAYOFF_TEAMS_PHASES,
-	STRIPE_PUBLISHABLE_KEY,
-	COMPOSITE_WEIGHTS,
-	PLAYER_GAME_STATS,
-	PLAYER_SUMMARY,
-	PLAYER_STATS_TABLES,
-	RATINGS,
-	SIMPLE_AWARDS,
-	POSITION_COUNTS,
-	POSITIONS,
-	SUBREDDIT_NAME,
-	TEAM_STATS_TABLES,
-	TIEBREAKERS,
-	TIME_BETWEEN_GAMES,
-	TWITTER_HANDLE,
-	WEBSITE_PLAY,
-	WEBSITE_ROOT,
-};

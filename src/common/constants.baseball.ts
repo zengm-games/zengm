@@ -1,7 +1,7 @@
 import type { CompositeWeights, Conf, Div, NonEmptyArray } from "./types.ts";
 import type { Position, RatingKey } from "./types.baseball.ts";
 
-const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
+export const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	powerPitcher: {
 		ratings: ["ppw"],
 		weights: [1],
@@ -124,7 +124,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	},
 };
 
-const PLAYER_GAME_STATS = {
+export const PLAYER_GAME_STATS = {
 	batting: {
 		name: "Batting",
 		stats: ["ab", "r", "h", "rbi", "hr", "sb", "bb", "so", "pa"],
@@ -139,7 +139,7 @@ const PLAYER_GAME_STATS = {
 	},
 };
 
-const PLAYER_SUMMARY = {
+export const PLAYER_SUMMARY = {
 	summaryBatter: {
 		name: "SummaryBatter",
 		onlyShowIf: ["C", "1B", "2B", "3B", "SS", "LF", "CF", "RF", "DH"],
@@ -175,7 +175,7 @@ const PLAYER_SUMMARY = {
 	},
 };
 
-const PLAYER_STATS_TABLES = {
+export const PLAYER_STATS_TABLES = {
 	batting: {
 		name: "Batting",
 		stats: [
@@ -339,7 +339,7 @@ const PLAYER_STATS_TABLES = {
 	},
 };
 
-const TEAM_STATS_TABLES = {
+export const TEAM_STATS_TABLES = {
 	batting: {
 		name: "Batting",
 		stats: [
@@ -506,7 +506,7 @@ const TEAM_STATS_TABLES = {
 	},
 };
 
-const POSITIONS: Position[] = [
+export const POSITIONS: Position[] = [
 	"SP",
 	"RP",
 	"C",
@@ -520,7 +520,7 @@ const POSITIONS: Position[] = [
 	"DH",
 ];
 
-const POS_NUMBERS = {
+export const POS_NUMBERS = {
 	P: 1,
 	C: 2,
 	"1B": 3,
@@ -533,7 +533,7 @@ const POS_NUMBERS = {
 	DH: 10,
 } as const;
 
-const POS_NUMBERS_INVERSE = {
+export const POS_NUMBERS_INVERSE = {
 	1: "P",
 	2: "C",
 	3: "1B",
@@ -546,7 +546,7 @@ const POS_NUMBERS_INVERSE = {
 	10: "DH",
 } as const;
 
-const POSITION_COUNTS: Record<Position, number> = {
+export const POSITION_COUNTS: Record<Position, number> = {
 	SP: 5,
 	RP: 10,
 	C: 2,
@@ -560,7 +560,7 @@ const POSITION_COUNTS: Record<Position, number> = {
 	DH: 0,
 };
 
-const RATINGS: RatingKey[] = [
+export const RATINGS: RatingKey[] = [
 	"hgt",
 	"spd",
 	"hpw",
@@ -576,9 +576,15 @@ const RATINGS: RatingKey[] = [
 	"endu",
 ];
 
-const SIMPLE_AWARDS = ["mvp", "roy", "poy", "rpoy", "finalsMvp"] as const;
+export const SIMPLE_AWARDS = [
+	"mvp",
+	"roy",
+	"poy",
+	"rpoy",
+	"finalsMvp",
+] as const;
 
-const AWARD_NAMES = {
+export const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
 	roy: "Rookie of the Year",
 	poy: "Pitcher of the Year",
@@ -589,7 +595,7 @@ const AWARD_NAMES = {
 	allRookie: "All-Rookie Team",
 } as const;
 
-const DEFAULT_CONFS: NonEmptyArray<Conf> = [
+export const DEFAULT_CONFS: NonEmptyArray<Conf> = [
 	{
 		cid: 0,
 		name: "American Conference",
@@ -600,7 +606,7 @@ const DEFAULT_CONFS: NonEmptyArray<Conf> = [
 	},
 ];
 
-const DEFAULT_DIVS: NonEmptyArray<Div> = [
+export const DEFAULT_DIVS: NonEmptyArray<Div> = [
 	{
 		did: 0,
 		cid: 0,
@@ -633,40 +639,14 @@ const DEFAULT_DIVS: NonEmptyArray<Div> = [
 	},
 ];
 
-const DEFAULT_STADIUM_CAPACITY = 50000;
+export const NUM_STARTING_PITCHERS = 5;
 
-const NUM_STARTING_PITCHERS = 5;
+export const NUM_ACTIVE_PITCHERS = 15;
 
-const NUM_ACTIVE_PITCHERS = 15;
+export const NUM_ACTIVE_BATTERS = 14;
 
-const NUM_ACTIVE_BATTERS = 14;
+export const NUM_OUTS_PER_INNING = 3;
 
-const NUM_OUTS_PER_INNING = 3;
+export const NUM_STRIKES_PER_OUT = 3;
 
-const NUM_STRIKES_PER_OUT = 3;
-
-const NUM_BALLS_PER_WALK = 4;
-
-export {
-	AWARD_NAMES,
-	DEFAULT_CONFS,
-	DEFAULT_DIVS,
-	COMPOSITE_WEIGHTS,
-	NUM_ACTIVE_BATTERS,
-	NUM_ACTIVE_PITCHERS,
-	NUM_OUTS_PER_INNING,
-	NUM_STARTING_PITCHERS,
-	NUM_STRIKES_PER_OUT,
-	NUM_BALLS_PER_WALK,
-	PLAYER_GAME_STATS,
-	PLAYER_STATS_TABLES,
-	PLAYER_SUMMARY,
-	POS_NUMBERS,
-	POS_NUMBERS_INVERSE,
-	POSITION_COUNTS,
-	POSITIONS,
-	RATINGS,
-	SIMPLE_AWARDS,
-	TEAM_STATS_TABLES,
-	DEFAULT_STADIUM_CAPACITY,
-};
+export const NUM_BALLS_PER_WALK = 4;

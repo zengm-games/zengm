@@ -1,7 +1,7 @@
 import type { CompositeWeights, Conf, Div, NonEmptyArray } from "./types.ts";
 import type { Position, PrimaryPosition, RatingKey } from "./types.football.ts";
 
-const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
+export const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	passingAccuracy: {
 		ratings: ["tha", "hgt"],
 		weights: [1, 0.2],
@@ -124,7 +124,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	},
 };
 
-const PLAYER_GAME_STATS = {
+export const PLAYER_GAME_STATS = {
 	passing: {
 		name: "Passing",
 		stats: [
@@ -241,7 +241,7 @@ const PLAYER_GAME_STATS = {
 	},
 };
 
-const PLAYER_SUMMARY = {
+export const PLAYER_SUMMARY = {
 	summaryPss: {
 		name: "SummaryQB",
 		onlyShowIf: ["QB"],
@@ -287,7 +287,7 @@ const PLAYER_SUMMARY = {
 		stats: ["gp", "av", "defTck", "defSk", "defFmbRec", "defInt"],
 	},
 };
-const PLAYER_STATS_TABLES = {
+export const PLAYER_STATS_TABLES = {
 	passing: {
 		name: "Passing",
 		onlyShowIf: ["pss"],
@@ -467,7 +467,7 @@ const PLAYER_STATS_TABLES = {
 		],
 	},
 };
-const TEAM_STATS_TABLES = {
+export const TEAM_STATS_TABLES = {
 	summary: {
 		name: "Summary",
 		stats: [
@@ -877,7 +877,7 @@ const TEAM_STATS_TABLES = {
 	},
 };
 
-const POSITIONS: Position[] = [
+export const POSITIONS: Position[] = [
 	"QB",
 	"RB",
 	"WR",
@@ -892,7 +892,7 @@ const POSITIONS: Position[] = [
 	"KR",
 	"PR",
 ];
-const POSITION_COUNTS: Record<PrimaryPosition, number> = {
+export const POSITION_COUNTS: Record<PrimaryPosition, number> = {
 	QB: 3,
 	RB: 4,
 	WR: 6,
@@ -905,7 +905,7 @@ const POSITION_COUNTS: Record<PrimaryPosition, number> = {
 	K: 1,
 	P: 1,
 };
-const RATINGS: RatingKey[] = [
+export const RATINGS: RatingKey[] = [
 	"hgt",
 	"stre",
 	"spd",
@@ -929,7 +929,7 @@ const RATINGS: RatingKey[] = [
 	"pac",
 ];
 
-const SIMPLE_AWARDS = [
+export const SIMPLE_AWARDS = [
 	"mvp",
 	"opoy",
 	"poy",
@@ -939,7 +939,7 @@ const SIMPLE_AWARDS = [
 	"finalsMvp",
 ] as const;
 
-const AWARD_NAMES = {
+export const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
 	opoy: "Offensive Player of the Year",
 	poy: "Protector of the Year",
@@ -951,7 +951,7 @@ const AWARD_NAMES = {
 	allRookie: "All-Rookie Team",
 } as const;
 
-const DEFAULT_CONFS: NonEmptyArray<Conf> = [
+export const DEFAULT_CONFS: NonEmptyArray<Conf> = [
 	{
 		cid: 0,
 		name: "American Conference",
@@ -962,7 +962,7 @@ const DEFAULT_CONFS: NonEmptyArray<Conf> = [
 	},
 ];
 
-const DEFAULT_DIVS: NonEmptyArray<Div> = [
+export const DEFAULT_DIVS: NonEmptyArray<Div> = [
 	{
 		did: 0,
 		cid: 0,
@@ -1004,21 +1004,3 @@ const DEFAULT_DIVS: NonEmptyArray<Div> = [
 		name: "West",
 	},
 ];
-
-const DEFAULT_STADIUM_CAPACITY = 70000;
-
-export {
-	AWARD_NAMES,
-	DEFAULT_CONFS,
-	DEFAULT_DIVS,
-	COMPOSITE_WEIGHTS,
-	PLAYER_GAME_STATS,
-	PLAYER_STATS_TABLES,
-	PLAYER_SUMMARY,
-	POSITION_COUNTS,
-	POSITIONS,
-	RATINGS,
-	SIMPLE_AWARDS,
-	TEAM_STATS_TABLES,
-	DEFAULT_STADIUM_CAPACITY,
-};

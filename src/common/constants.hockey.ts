@@ -1,7 +1,7 @@
 import type { CompositeWeights, Conf, Div, NonEmptyArray } from "./types.ts";
 import type { Position, RatingKey } from "./types.hockey.ts";
 
-const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
+export const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	playmaker: {
 		ratings: ["stk", "pss", "oiq", "spd", "hgt", "stre"],
 		weights: [1, 1, 1, 1, 0.25, 0.1],
@@ -66,7 +66,7 @@ const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	},
 };
 
-const PLAYER_GAME_STATS = {
+export const PLAYER_GAME_STATS = {
 	skaters: {
 		name: "Skater",
 		stats: [
@@ -98,7 +98,7 @@ const PLAYER_GAME_STATS = {
 	},
 };
 
-const PLAYER_SUMMARY = {
+export const PLAYER_SUMMARY = {
 	summarySkater: {
 		name: "SummarySkater",
 		onlyShowIf: ["C", "W", "D"],
@@ -111,7 +111,7 @@ const PLAYER_SUMMARY = {
 	},
 };
 
-const PLAYER_STATS_TABLES = {
+export const PLAYER_STATS_TABLES = {
 	goalie: {
 		name: "Goalie",
 		stats: [
@@ -222,7 +222,7 @@ const PLAYER_STATS_TABLES = {
 	},
 };
 
-const TEAM_STATS_TABLES = {
+export const TEAM_STATS_TABLES = {
 	team: {
 		name: "Team",
 		stats: [
@@ -287,16 +287,16 @@ const TEAM_STATS_TABLES = {
 	},
 };
 
-const POSITIONS: Position[] = ["C", "W", "D", "G"];
+export const POSITIONS: Position[] = ["C", "W", "D", "G"];
 
-const POSITION_COUNTS: Record<Position, number> = {
+export const POSITION_COUNTS: Record<Position, number> = {
 	C: 5,
 	W: 10,
 	D: 7,
 	G: 3,
 };
 
-const RATINGS: RatingKey[] = [
+export const RATINGS: RatingKey[] = [
 	"hgt",
 	"stre",
 	"spd",
@@ -313,7 +313,7 @@ const RATINGS: RatingKey[] = [
 	"glk",
 ];
 
-const SIMPLE_AWARDS = [
+export const SIMPLE_AWARDS = [
 	"mvp",
 	"dpoy",
 	"dfoy",
@@ -322,7 +322,7 @@ const SIMPLE_AWARDS = [
 	"finalsMvp",
 ] as const;
 
-const AWARD_NAMES = {
+export const AWARD_NAMES = {
 	mvp: "Most Valuable Player",
 	roy: "Rookie of the Year",
 	dpoy: "Defensive Player of the Year",
@@ -333,7 +333,7 @@ const AWARD_NAMES = {
 	allRookie: "All-Rookie Team",
 } as const;
 
-const DEFAULT_CONFS: NonEmptyArray<Conf> = [
+export const DEFAULT_CONFS: NonEmptyArray<Conf> = [
 	{
 		cid: 0,
 		name: "Eastern Conference",
@@ -344,7 +344,7 @@ const DEFAULT_CONFS: NonEmptyArray<Conf> = [
 	},
 ];
 
-const DEFAULT_DIVS: NonEmptyArray<Div> = [
+export const DEFAULT_DIVS: NonEmptyArray<Div> = [
 	{
 		did: 0,
 		cid: 0,
@@ -367,34 +367,14 @@ const DEFAULT_DIVS: NonEmptyArray<Div> = [
 	},
 ];
 
-const DEFAULT_STADIUM_CAPACITY = 17500;
-
-const NUM_LINES = {
+export const NUM_LINES = {
 	F: 4,
 	D: 3,
 	G: 1,
 };
 
-const NUM_PLAYERS_PER_LINE = {
+export const NUM_PLAYERS_PER_LINE = {
 	F: 3,
 	D: 2,
 	G: 1,
-};
-
-export {
-	AWARD_NAMES,
-	DEFAULT_CONFS,
-	DEFAULT_DIVS,
-	COMPOSITE_WEIGHTS,
-	NUM_LINES,
-	NUM_PLAYERS_PER_LINE,
-	PLAYER_GAME_STATS,
-	PLAYER_STATS_TABLES,
-	PLAYER_SUMMARY,
-	POSITION_COUNTS,
-	POSITIONS,
-	RATINGS,
-	SIMPLE_AWARDS,
-	TEAM_STATS_TABLES,
-	DEFAULT_STADIUM_CAPACITY,
 };

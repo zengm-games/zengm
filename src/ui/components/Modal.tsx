@@ -23,10 +23,11 @@ class MyModalManager extends BootstrapModalManager {
 		}
 
 		const element = document.querySelector(".league-top-bar-toggle");
-		if (!(element instanceof HTMLElement)) {
-			throw new Error("Should never happen");
+
+		// Element only exists within league
+		if (element instanceof HTMLElement) {
+			element.style.right = `${containerState.scrollBarWidth}px`;
 		}
-		element.style.right = `${containerState.scrollBarWidth}px`;
 	}
 	override removeContainerStyle(containerState: ContainerState) {
 		super.removeContainerStyle(containerState);
@@ -36,10 +37,11 @@ class MyModalManager extends BootstrapModalManager {
 		}
 
 		const element = document.querySelector(".league-top-bar-toggle");
-		if (!(element instanceof HTMLElement)) {
-			throw new Error("Should never happen");
+
+		// Element only exists within league
+		if (element instanceof HTMLElement) {
+			element.style.right = "";
 		}
-		element.style.right = "";
 
 		emitter.emit("keepScrollToRight");
 	}

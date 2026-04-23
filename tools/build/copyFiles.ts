@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import path from "node:path";
 import { type Sport } from "../lib/getSport.ts";
 
 export const copyFiles = async (
@@ -35,13 +36,13 @@ export const copyFiles = async (
 			}
 
 			for (const toIgnore of filesToIgnore) {
-				if (filename === `public/${toIgnore}`) {
+				if (filename === path.join("public", toIgnore)) {
 					filesIgnored.add(toIgnore);
 					return false;
 				}
 			}
 			for (const toIgnore of prefixesToIgnore) {
-				if (filename.startsWith(`public/${toIgnore}`)) {
+				if (filename.startsWith(path.join("public", toIgnore))) {
 					prefixesIgnored.add(toIgnore);
 					return false;
 				}

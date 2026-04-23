@@ -39,18 +39,26 @@ const decodeURLEncodedURIComponent = (val: string) => {
 	return decodeURIComponent(val.replaceAll("+", " "));
 };
 
-const match = (route: Route, path: string) => {
+const match = (route: Route, pathname: string) => {
 	const params: Params = {};
 	let matches = false;
 
-	const pathname = path.split("?")[0]!.split("#")[0]!;
 	const m = route.regex.exec(pathname);
 
 	if (m) {
 		matches = true;
 		for (let i = 1, len = m.length; i < len; ++i) {
 			const key = route.keys[i - 1]!;
-			const val = decodeURLEncodedURIComponent(m[i]!);
+			let val;
+			try {
+				val = decodeURLEncodedURIComponent(m[i]!);
+			} catch {
+				// This happens on some inputs to decodeURIComponent such as /user/%C2 - returning no match is better than an error
+				return {
+					matches: false,
+					params: {},
+				};
+			}
 			if (val !== undefined) {
 				params[key] = val;
 			}
@@ -182,9 +190,19 @@ class Router {
 		};
 		let error: Error | null = null;
 
+		let pathname = path;
+		const queryIndex = pathname.indexOf("?");
+		if (queryIndex !== -1) {
+			pathname = pathname.slice(0, queryIndex);
+		}
+		const hashIndex = pathname.indexOf("#");
+		if (hashIndex !== -1) {
+			pathname = pathname.slice(0, hashIndex);
+		}
+
 		let handled = false;
 		for (const route of this.routes) {
-			const { matches, params } = match(route, path);
+			const { matches, params } = match(route, pathname);
 			if (matches) {
 				context.params = params;
 

@@ -44,7 +44,7 @@ const match = (route: Route, path: string) => {
 	let matches = false;
 
 	const pathname = path.split("?")[0]!.split("#")[0]!;
-	const m = route.regex.exec(decodeURIComponent(pathname));
+	const m = route.regex.exec(pathname);
 
 	if (m) {
 		matches = true;

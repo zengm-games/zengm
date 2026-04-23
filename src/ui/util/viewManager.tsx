@@ -144,7 +144,7 @@ class ViewManager {
 				let id;
 				const urlToMatch = action.url.split("?")[0]!.split("#")[0]!;
 				for (const route of this.routes) {
-					const m = route.regex.exec(decodeURIComponent(urlToMatch));
+					const m = route.regex.exec(urlToMatch);
 
 					if (m) {
 						id = route.id;

@@ -227,20 +227,20 @@ const RatingsOverview = ({
 					{
 						label: (
 							<>
-								Run <span className="d-md-none">Block</span>
-								<span className="d-none d-md-inline">Blocking</span>
-							</>
-						),
-						rating: "rbk",
-					},
-					{
-						label: (
-							<>
 								Pass <span className="d-md-none">Block</span>
 								<span className="d-none d-md-inline">Blocking</span>
 							</>
 						),
 						rating: "pbk",
+					},
+					{
+						label: (
+							<>
+								Run <span className="d-md-none">Block</span>
+								<span className="d-none d-md-inline">Blocking</span>
+							</>
+						),
+						rating: "rbk",
 					},
 				],
 			},

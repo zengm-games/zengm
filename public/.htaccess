@@ -17,7 +17,7 @@
 
 <FilesMatch "^(index.html|sw.js)$">
   Header set Cache-Control "no-cache"
-  Header set Cloudflare-CDN-Cache-Control "public,max-age=86400"
+  Header set Cloudflare-CDN-Cache-Control "max-age=31536000"
 </FilesMatch>
 
 <If "%{REQUEST_URI} =~ m#^/img/flags/.*$#">

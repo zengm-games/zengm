@@ -9,6 +9,7 @@ import { useLocalPartial } from "../util/local.ts";
 import type { LocalStateUI } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { makeResponsiveDropdownOption } from "../../common/makeResponsiveDropdownOption.tsx";
 
 export type ResponsiveOption = {
 	minWidth: number;
@@ -19,17 +20,6 @@ export type DropdownOption = {
 	key: number | string;
 	value: string | ResponsiveOption[];
 };
-
-export const makeNormalResponsive = (short: string, long: string) => [
-	{
-		minWidth: -Infinity,
-		text: short,
-	},
-	{
-		minWidth: 768,
-		text: long,
-	},
-];
 
 export const getSortedTeams = ({
 	teamInfoCache,
@@ -57,7 +47,7 @@ export const getSortedTeams = ({
 	const object: Record<string, string | ResponsiveOption[]> = {};
 	for (const t of array) {
 		const inactiveText = t.disabled ? " (inactive)" : "";
-		object[t.abbrev] = makeNormalResponsive(
+		object[t.abbrev] = makeResponsiveDropdownOption(
 			`${t.abbrev}${inactiveText}`,
 			`${t.region} ${t.name}${inactiveText}`,
 		);
@@ -68,19 +58,19 @@ export const getSortedTeams = ({
 
 const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	special: "All-Star Game",
-	"all|||teams": makeNormalResponsive("All", "All Teams"),
-	watch: makeNormalResponsive("Watch", "Watch List"),
+	"all|||teams": makeResponsiveDropdownOption("All", "All Teams"),
+	watch: makeResponsiveDropdownOption("Watch", "Watch List"),
 	career: "Career",
-	regularSeason: makeNormalResponsive("Reg Seas", "Regular Season"),
+	regularSeason: makeResponsiveDropdownOption("Reg Seas", "Regular Season"),
 	playoffs: "Playoffs",
-	"playoffs|||teams": makeNormalResponsive(
+	"playoffs|||teams": makeResponsiveDropdownOption(
 		"Playoffs",
 		"Remaining Playoff Teams",
 	),
 	"10": "Past 10 Seasons",
-	"all|||seasons": makeNormalResponsive("All", "All Seasons"),
-	perGame: makeNormalResponsive("Per G", "Per Game"),
-	per36: makeNormalResponsive("Per 36", "Per 36 Minutes"),
+	"all|||seasons": makeResponsiveDropdownOption("All", "All Seasons"),
+	perGame: makeResponsiveDropdownOption("Per G", "Per Game"),
+	per36: makeResponsiveDropdownOption("Per 36", "Per 36 Minutes"),
 	totals: "Totals",
 	shotLocations: "Shot Locations and Feats",
 	advanced: "Advanced",
@@ -139,28 +129,34 @@ const dropdownValues: Record<string, string | ResponsiveOption[]> = {
 	war_leader: "League WAR Leader",
 	oroy: "Offensive Rookie of the Year",
 	droy: "Defensive Rookie of the Year",
-	"all|||types": makeNormalResponsive("All", "All Types"),
+	"all|||types": makeResponsiveDropdownOption("All", "All Types"),
 	draft: "Draft",
 	freeAgent: "FA Signed",
 	reSigned: "Re-signed",
 	release: "Released",
 	trade: "Trades",
 	team: "Team",
-	opponent: makeNormalResponsive("Opp", "Opponent"),
-	oppBatting: makeNormalResponsive("Opp Batting", "Opponent Batting"),
-	oppPitching: makeNormalResponsive("Opp Pitching", "Opponent Pitching"),
-	oppFielding: makeNormalResponsive("Opp Fielding", "Opponent Fielding"),
+	opponent: makeResponsiveDropdownOption("Opp", "Opponent"),
+	oppBatting: makeResponsiveDropdownOption("Opp Batting", "Opponent Batting"),
+	oppPitching: makeResponsiveDropdownOption(
+		"Opp Pitching",
+		"Opponent Pitching",
+	),
+	oppFielding: makeResponsiveDropdownOption(
+		"Opp Fielding",
+		"Opponent Fielding",
+	),
 	by_team: "By Team",
-	by_conf: makeNormalResponsive("By Conf", "By Conference"),
-	by_div: makeNormalResponsive("By Div", "By Division"),
-	"all|||news": makeNormalResponsive("All", "All Stories"),
+	by_conf: makeResponsiveDropdownOption("By Conf", "By Conference"),
+	by_div: makeResponsiveDropdownOption("By Div", "By Division"),
+	"all|||news": makeResponsiveDropdownOption("All", "All Stories"),
 	normal: "Normal",
 	big: "Only Big News",
 	newest: "Newest First",
 	oldest: "Oldest First",
-	league: makeNormalResponsive("Leag", "League"),
-	conf: makeNormalResponsive("Conf", "Conference"),
-	div: makeNormalResponsive("Div", "Division"),
+	league: makeResponsiveDropdownOption("Leag", "League"),
+	conf: makeResponsiveDropdownOption("Conf", "Conference"),
+	div: makeResponsiveDropdownOption("Div", "Division"),
 	your_teams: "Your Teams",
 	skater: "Skaters",
 	goalie: "Goalies",

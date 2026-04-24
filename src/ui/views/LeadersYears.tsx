@@ -5,7 +5,7 @@ import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
 import { LeadersTopText } from "./Leaders.tsx";
 import type { Col, DataTableRow } from "../components/DataTable/index.tsx";
-import { makeNormalResponsive } from "../hooks/useDropdownOptions.tsx";
+import { makeResponsiveDropdownOption } from "../../common/makeResponsiveDropdownOption.tsx";
 import { range } from "../../common/utils.ts";
 import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { getCol } from "../../common/getCol.ts";
@@ -15,7 +15,9 @@ export const formatStatsDropdown = (stats: string[]) =>
 		const col = getCol(`stat:${stat}`);
 		return {
 			key: stat,
-			value: col.desc ? makeNormalResponsive(col.title, col.desc) : col.title,
+			value: col.desc
+				? makeResponsiveDropdownOption(col.title, col.desc)
+				: col.title,
 		};
 	});
 

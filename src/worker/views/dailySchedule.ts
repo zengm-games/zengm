@@ -4,6 +4,7 @@ import { g } from "../util/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { getTopPlayers, getUpcoming } from "./schedule.ts";
 import { PHASE } from "../../common/constants.ts";
+import { makeResponsiveDropdownOption } from "../../common/makeResponsiveDropdownOption.tsx";
 
 let prevInputsDay: number | undefined;
 const updateDailySchedule = async (
@@ -118,7 +119,6 @@ const updateDailySchedule = async (
 			const completed = games.filter(
 				(game) => game.day === day && (!cidFilter || cidFilter(game.teams)),
 			);
-			console.log("completed", completed);
 
 			let upcoming: Awaited<ReturnType<typeof getUpcoming>> = [];
 			if (inputs.season === currentSeason) {
@@ -132,12 +132,20 @@ const updateDailySchedule = async (
 			const cids = [
 				{
 					key: "all",
-					value: "All conferences",
+					value: makeResponsiveDropdownOption("All confs", "All conferences"),
 				},
 				...confs.map((conf) => {
+					// Shorten "Eastern Conference" to "Eastern Conf" on mobile
+					const value = conf.name.endsWith("onference")
+						? makeResponsiveDropdownOption(
+								conf.name.slice(0, -"erence".length),
+								conf.name,
+							)
+						: conf.name;
+
 					return {
 						key: conf.cid,
-						value: conf.name,
+						value,
 					};
 				}),
 			];

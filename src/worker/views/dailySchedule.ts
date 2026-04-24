@@ -1,6 +1,6 @@
 import { season } from "../core/index.ts";
 import { idb } from "../db/index.ts";
-import { g } from "../util/index.ts";
+import { env, g } from "../util/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { getTopPlayers, getUpcoming } from "./schedule.ts";
 import { PHASE } from "../../common/constants.ts";
@@ -89,9 +89,12 @@ const updateDailySchedule = async (
 				}
 			}
 
+			// Allowing the games to be filtered by conference is really only particularly useful in large leagues, and on mobile it makes the title bar take up an extra row. So only show it for large league or non-mobile.
+			const showCids = g.get("numActiveTeams") >= 60 || !env.mobile;
+
 			const confs = g.get("confs", inputs.season);
 			let cid: number | undefined;
-			if (inputs.cid !== undefined) {
+			if (showCids && inputs.cid !== undefined) {
 				cid = confs.find((conf) => conf.cid === inputs.cid)?.cid;
 			}
 
@@ -129,26 +132,31 @@ const updateDailySchedule = async (
 				});
 			}
 
-			const cids = [
-				{
-					key: "all",
-					value: makeResponsiveDropdownOption("All confs", "All conferences"),
-				},
-				...confs.map((conf) => {
-					// Shorten "Eastern Conference" to "Eastern Conf" on mobile
-					const value = conf.name.endsWith("onference")
-						? makeResponsiveDropdownOption(
-								conf.name.slice(0, -"erence".length),
-								conf.name,
-							)
-						: conf.name;
+			const cids = showCids
+				? [
+						{
+							key: "all",
+							value: makeResponsiveDropdownOption(
+								"All confs",
+								"All conferences",
+							),
+						},
+						...confs.map((conf) => {
+							// Shorten "Eastern Conference" to "Eastern Conf" on mobile
+							const value = conf.name.endsWith("onference")
+								? makeResponsiveDropdownOption(
+										conf.name.slice(0, -"erence".length),
+										conf.name,
+									)
+								: conf.name;
 
-					return {
-						key: conf.cid,
-						value,
-					};
-				}),
-			];
+							return {
+								key: conf.cid,
+								value,
+							};
+						}),
+					]
+				: [];
 
 			const days = Array.from(daysAndPlayoffs.entries())
 				.map(([day, playoffs]) => ({ day, playoffs }))
@@ -209,25 +217,17 @@ const updateDailySchedule = async (
 			info = await process(newDay);
 		}
 
-		const { cid, cids, completed, day, days, isToday, upcoming } = info;
-
-		const topPlayers = await getTopPlayers(undefined, 1, day);
+		const topPlayers = await getTopPlayers(undefined, 1, info.day);
 
 		return {
-			cid,
-			cids,
-			completed,
+			...info,
 			currentSeason,
-			day,
-			days,
 			elam: g.get("elam"),
 			elamASG: g.get("elamASG"),
-			isToday,
 			phase: g.get("phase"),
 			season: inputs.season,
 			ties: season.hasTies("current"),
 			topPlayers,
-			upcoming,
 			userTid: g.get("userTid"),
 		};
 	}

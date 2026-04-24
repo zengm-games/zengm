@@ -22,10 +22,12 @@ import { getStartingAndBackupGoalies } from "../core/GameSim.hockey/getStartingA
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 export const getUpcoming = async ({
+	cid,
 	day,
 	onlyOneGame,
 	tid,
 }: {
+	cid?: number;
 	day?: number;
 	onlyOneGame?: boolean;
 	tid?: number;
@@ -40,6 +42,26 @@ export const getUpcoming = async ({
 	// Use this to calculate injury healing from today until the day of a game
 	const todayDay = firstGame.day;
 
+	let cidFilter:
+		| ((game: { awayTid: number; homeTid: number }) => boolean)
+		| undefined;
+	if (cid !== undefined) {
+		const tids = new Set(
+			(await idb.cache.teams.getAll())
+				.filter((t) => t.cid === cid)
+				.map((t) => t.tid),
+		);
+
+		cidFilter = ({ awayTid, homeTid }) => {
+			return (
+				(homeTid === -1 && awayTid === -2) ||
+				(homeTid === -3 && awayTid === -3) ||
+				tids.has(awayTid) ||
+				tids.has(homeTid)
+			);
+		};
+	}
+
 	let keptOneGame = false;
 	const filteredSchedule = schedule.filter((game) => {
 		const keep =
@@ -49,7 +71,8 @@ export const getUpcoming = async ({
 				(game.homeTid === -1 && game.awayTid === -2) ||
 				(game.homeTid === -3 && game.awayTid === -3)) &&
 			(day === undefined || game.day === day) &&
-			(!onlyOneGame || !keptOneGame);
+			(!onlyOneGame || !keptOneGame) &&
+			(!cidFilter || cidFilter(game));
 
 		if (keep) {
 			keptOneGame = true;
@@ -408,8 +431,7 @@ export const getTopPlayers = async <T extends any[]>(
 
 		const teamInfoCache = g.get("teamInfoCache");
 
-		for (let tid = 0; tid < teamInfoCache.length; tid++) {
-			const t = teamInfoCache[tid]!;
+		for (const [tid, t] of teamInfoCache.entries()) {
 			if (t.disabled || tid === skipTid) {
 				continue;
 			}

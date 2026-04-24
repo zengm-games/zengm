@@ -203,6 +203,7 @@ export const routeInfos = {
 	"/l/:lid/daily_schedule": "dailySchedule",
 	"/l/:lid/daily_schedule/:season": "dailySchedule",
 	"/l/:lid/daily_schedule/:season/:day": "dailySchedule",
+	"/l/:lid/daily_schedule/:season/:day/:cid": "dailySchedule",
 	"/l/:lid/season_preview": "seasonPreview",
 	"/l/:lid/season_preview/:season": "seasonPreview",
 	"/l/:lid/auto_expand": "autoExpand",

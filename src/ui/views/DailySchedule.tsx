@@ -10,6 +10,8 @@ import { ForceWin } from "../components/ForceWin.tsx";
 import { ScoreBox } from "../components/ScoreBox/index.tsx";
 
 const DailySchedule = ({
+	cid,
+	cids,
 	completed,
 	currentSeason,
 	day,
@@ -27,8 +29,9 @@ const DailySchedule = ({
 	useTitleBar({
 		title: DAILY_SCHEDULE,
 		dropdownView: "daily_schedule",
-		dropdownFields: { seasons: season, days: day },
+		dropdownFields: { seasons: season, days: day, cids: cid ?? "all" },
 		dropdownCustomOptions: {
+			cids,
 			days,
 		},
 	});

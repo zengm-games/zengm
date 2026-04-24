@@ -81,7 +81,7 @@ if (window.navigator.serviceWorker && process.env.NODE_ENV !== "development") {
 		}
 	});
 
-	wb.register();
+	await wb.register();
 
 	// Check for updates in the background
 	const watchForUpdates = () => {

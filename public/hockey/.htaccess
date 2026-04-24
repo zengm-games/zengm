@@ -1,18 +1,18 @@
 <FilesMatch "\.(ttf|otf|eot|woff|woff2)$">
   Header set Access-Control-Allow-Origin "*"
-  Header set Cache-Control "public,max-age=31536000"
+  Header set Cache-Control "max-age=31536000"
 </FilesMatch>
 
 <FilesMatch "^(chunk|ui|worker)-.*\.js$">
-  Header set Cache-Control "public,max-age=31536000,immutable"
+  Header set Cache-Control "max-age=31536000,immutable"
 </FilesMatch>
 
 <FilesMatch "^(dark|light)-.*\.css$">
-  Header set Cache-Control "public,max-age=31536000,immutable"
+  Header set Cache-Control "max-age=31536000,immutable"
 </FilesMatch>
 
 <FilesMatch "^(names|real-player|real-schedules)-.*\.json$">
-  Header set Cache-Control "public,max-age=31536000,immutable"
+  Header set Cache-Control "max-age=31536000,immutable"
 </FilesMatch>
 
 <FilesMatch "^(index.html|sw.js)$">
@@ -21,7 +21,7 @@
 </FilesMatch>
 
 <If "%{REQUEST_URI} =~ m#^/img/flags/.*$#">
-  Header set Cache-Control "public,max-age=31536000"
+  Header set Cache-Control "max-age=31536000"
 </If>
 
 Options +FollowSymLinks

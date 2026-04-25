@@ -271,13 +271,13 @@ class Router {
 		}
 	}
 
-	public start({
-		routeMatched,
+	public async start({
 		navigationEnd,
+		routeMatched,
 		routes,
 	}: {
-		routeMatched?: RouteMatched;
 		navigationEnd?: NavigationEnd;
+		routeMatched?: RouteMatched;
 		routes: { [key: string]: RouteCallback };
 	}) {
 		this.routeMatched = routeMatched;
@@ -299,7 +299,7 @@ class Router {
 			this._onpopstate(e);
 		});
 
-		this.navigate(location.pathname + location.search + location.hash, {
+		await this.navigate(location.pathname + location.search + location.hash, {
 			replace: true,
 		});
 	}

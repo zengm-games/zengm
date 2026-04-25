@@ -130,9 +130,9 @@ const getUrlForAnalytics = (path: string) => {
 	return `${location.origin}${pagePath}`;
 };
 
-const setupRoutes = () => {
+const setupRoutes = async () => {
 	let initialLoad = true;
-	router.start({
+	await router.start({
 		routeMatched: async ({ context }) => {
 			if (!context.state.noTrack) {
 				if (initialLoad) {

@@ -43,6 +43,7 @@ dev usability stuff
   - shared worker listen to websocket, use ws to send from server to worker, mark as stale and show error
 - make leagueUrl better typed
 - use valibot/arktype in various places, including to replace schema/types difference
+  - start with updateOptions validating JSON input
 - DRY stuff for adding a new setting
 - typescript for playersPlus
 - get rid of home/away tid swapping in box score and live sim

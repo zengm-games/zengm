@@ -172,8 +172,10 @@ const DIVIDE_CHANCES_OVER_TIED_TEAMS = bySport({
 });
 
 export class NotEnoughTeamsError extends Error {
-	constructor(message: string) {
-		super(message);
+	constructor(numFirstRoundTeams: number, draftType: DraftType) {
+		super(
+			`Number of teams with draft picks (${numFirstRoundTeams}) is less than the minimum required for draft type "${draftType}"`,
+		);
 		this.name = "NotEnoughTeamsError";
 	}
 }
@@ -225,9 +227,7 @@ const genOrder = async (
 		const numToPick = info.numToPick;
 
 		if (firstRoundTeams.length < numToPick) {
-			throw new NotEnoughTeamsError(
-				`Number of teams with draft picks (${firstRoundTeams.length}) is less than the minimum required for draft type "${draftType}"`,
-			);
+			throw new NotEnoughTeamsError(firstRoundTeams.length, draftType);
 		}
 
 		if (draftType === "cola") {

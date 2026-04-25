@@ -23,22 +23,24 @@ const ErrorMessage = ({ error }: { error: Error | null }) => {
 		return "Unknown error";
 	}
 
-	if (!(error as any).version) {
-		return error.message;
+	if (error instanceof LeagueFileVersionError) {
+		return (
+			<>
+				This league file is a newer format (version {error.version}) than is
+				supported by your version of {GAME_NAME} (version{" "}
+				{LEAGUE_DATABASE_VERSION}). Please{" "}
+				<a
+					href={`https://${WEBSITE_ROOT}/manual/faq/#latest-version`}
+					target="_blank"
+				>
+					make sure you have the latest version of the game loaded
+				</a>
+				.
+			</>
+		);
 	}
 
-	return (
-		<>
-			{error.message} Please{" "}
-			<a
-				href={`https://${WEBSITE_ROOT}/manual/faq/#latest-version`}
-				target="_blank"
-			>
-				make sure you have the latest version of the game loaded
-			</a>
-			.
-		</>
-	);
+	return error.message;
 };
 
 const styleStatus = {
@@ -96,6 +98,15 @@ const reducer = (state: State, action: any): State => {
 			throw new Error();
 	}
 };
+
+class LeagueFileVersionError extends Error {
+	public version: number;
+	constructor(version: number) {
+		super("");
+		this.version = version;
+		this.name = "LeagueFileVersionError";
+	}
+}
 
 export const LeagueFileUpload = ({
 	disabled,
@@ -162,15 +173,10 @@ export const LeagueFileUpload = ({
 
 		if (
 			basicInfo &&
-			typeof (basicInfo as any).version === "number" &&
-			(basicInfo as any).version > LEAGUE_DATABASE_VERSION
+			basicInfo.version !== undefined &&
+			basicInfo.version > LEAGUE_DATABASE_VERSION
 		) {
-			const error = new Error(
-				`This league file is a newer format (version ${
-					(basicInfo as any).version
-				}) than is supported by your version of ${GAME_NAME} (version ${LEAGUE_DATABASE_VERSION}).`,
-			);
-			(error as any).version = true;
+			const error = new LeagueFileVersionError(basicInfo.version);
 
 			if (isMounted.current) {
 				dispatch({

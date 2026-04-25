@@ -1,4 +1,3 @@
-/* eslint-disable no-async-promise-executor */
 import { assert, test } from "vitest";
 import router from "./index.ts";
 import type { Context } from "./index.ts";
@@ -89,94 +88,102 @@ test("navigates without creating a history entry", async () => {
 	assert.strictEqual(counts["/1"], countBefore + 1);
 });
 
-test("fires routematched event", () => {
-	return new Promise<void>(async (resolve, reject) => {
-		const countBefore = counts["/2"];
-		const callback = (arg: any) => {
-			try {
-				assert.strictEqual(counts["/2"], countBefore); // Hasn't navigated yet
-				assert.deepStrictEqual(arg, {
-					context: {
-						params: {},
-						path: "/2",
-						state: {},
+test("fires routematched event", async () => {
+	const { promise, resolve, reject } = Promise.withResolvers<void>();
+
+	const countBefore = counts["/2"];
+	const callback = (arg: any) => {
+		try {
+			assert.strictEqual(counts["/2"], countBefore); // Hasn't navigated yet
+			assert.deepStrictEqual(arg, {
+				context: {
+					params: {},
+					path: "/2",
+					state: {},
+				},
+			});
+			resolve();
+		} catch (error) {
+			console.error(error);
+			reject(error);
+		}
+
+		(router as any).routeMatched = undefined;
+	};
+	(router as any).routeMatched = callback;
+
+	await router.navigate("/2");
+	await promise;
+});
+
+test("fires navigationend event", async () => {
+	const { promise, resolve, reject } = Promise.withResolvers<void>();
+
+	const countBefore = counts["/3/:foo"]!;
+	const callback = (arg: any) => {
+		try {
+			assert.strictEqual(counts["/3/:foo"], countBefore + 1);
+			assert.deepStrictEqual(arg, {
+				context: {
+					params: {
+						foo: "bar",
 					},
-				});
-				resolve();
-			} catch (error) {
-				console.error(error);
-				reject(error);
-			}
+					path: "/3/bar",
+					state: {},
+				},
+				error: null,
+			});
+			resolve();
+		} catch (error) {
+			reject(error);
+		}
 
-			(router as any).routeMatched = undefined;
-		};
-		(router as any).routeMatched = callback;
-		await router.navigate("/2");
-	});
+		(router as any).navigationEnd = undefined;
+	};
+	(router as any).navigationEnd = callback;
+
+	await router.navigate("/3/bar");
+	await promise;
 });
 
-test("fires navigationend event", () => {
-	return new Promise<void>(async (resolve, reject) => {
-		const countBefore = counts["/3/:foo"]!;
-		const callback = (arg: any) => {
-			try {
-				assert.strictEqual(counts["/3/:foo"], countBefore + 1);
-				assert.deepStrictEqual(arg, {
-					context: {
-						params: {
-							foo: "bar",
-						},
-						path: "/3/bar",
-						state: {},
-					},
-					error: null,
-				});
-				resolve();
-			} catch (error) {
-				reject(error);
-			}
+test("fires navigationend event with 404 error", async () => {
+	const { promise, resolve, reject } = Promise.withResolvers<void>();
 
-			(router as any).navigationEnd = undefined;
-		};
-		(router as any).navigationEnd = callback;
-		await router.navigate("/3/bar");
-	});
+	const callback = (arg: any) => {
+		try {
+			assert.strictEqual(arg.error.message, "Matching route not found");
+			resolve();
+		} catch (error) {
+			reject(error);
+		}
+
+		(router as any).navigationEnd = undefined;
+	};
+	(router as any).navigationEnd = callback;
+
+	await router.navigate("/does-not-exist");
+	await promise;
 });
 
-test("fires navigationend event with 404 error", () => {
-	return new Promise<void>(async (resolve, reject) => {
-		const callback = (arg: any) => {
-			try {
-				assert.strictEqual(arg.error.message, "Matching route not found");
-				resolve();
-			} catch (error) {
-				reject(error);
-			}
+test("fires navigationend event with runtime error", async () => {
+	const { promise, resolve, reject } = Promise.withResolvers<void>();
 
-			(router as any).navigationEnd = undefined;
-		};
-		(router as any).navigationEnd = callback;
-		await router.navigate("/does-not-exist");
-	});
-});
+	const countBefore = counts["/error"]!;
+	const callback = (arg: any) => {
+		try {
+			assert.strictEqual(arg.error.message, "runtime error");
+			assert.strictEqual(counts["/error"], countBefore + 1);
+			resolve();
+		} catch (error) {
+			reject(error);
+		}
 
-test("fires navigationend event with runtime error", () => {
-	return new Promise<void>(async (resolve, reject) => {
-		const countBefore = counts["/error"]!;
-		const callback = (arg: any) => {
-			try {
-				assert.strictEqual(arg.error.message, "runtime error");
-				assert.strictEqual(counts["/error"], countBefore + 1);
-				resolve();
-			} catch (error) {
-				reject(error);
-			}
+		(router as any).navigationEnd = undefined;
+	};
+	(router as any).navigationEnd = callback;
 
-			(router as any).navigationEnd = undefined;
-		};
-		(router as any).navigationEnd = callback;
-		await router.navigate("/error");
-	});
+	await router.navigate("/error");
+	await promise;
 });
 
 test("passes state to callback", async () => {

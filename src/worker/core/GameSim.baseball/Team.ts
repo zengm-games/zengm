@@ -65,7 +65,7 @@ class Team<DH extends boolean> {
 		this.atBat = -1;
 		this.subIndex = -1;
 
-		this.playersByPid = {} as any;
+		this.playersByPid = {};
 		for (const p of this.t.player) {
 			this.playersByPid[p.id] = p;
 		}

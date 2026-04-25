@@ -328,11 +328,11 @@ export const gameSimToBoxScore = async (results: GameResults, att: number) => {
 			gameStats.teams[0].tied += 1;
 			gameStats.teams[1].tied += 1;
 		} else {
-			(gameStats.teams[tw] as any).won += 1;
+			gameStats.teams[tw].won! += 1;
 			if (otl) {
-				(gameStats.teams[tl] as any).otl += 1;
+				gameStats.teams[tl].otl! += 1;
 			} else {
-				(gameStats.teams[tl] as any).lost += 1;
+				gameStats.teams[tl].lost! += 1;
 			}
 		}
 	}

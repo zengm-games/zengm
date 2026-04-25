@@ -240,5 +240,6 @@ const setupRoutes = () => {
 	render();
 	await setupRoutes();
 
-	await import("./util/initServiceWorker.ts");
+	const { initServiceWorker } = await import("./util/initServiceWorker.ts");
+	await initServiceWorker();
 })();

@@ -171,6 +171,13 @@ const DIVIDE_CHANCES_OVER_TIED_TEAMS = bySport({
 	hockey: false,
 });
 
+export class NotEnoughTeamsError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = "NotEnoughTeamsError";
+	}
+}
+
 /**
  * Sets draft order and save it to the draftPicks object store.
  *
@@ -218,11 +225,9 @@ const genOrder = async (
 		const numToPick = info.numToPick;
 
 		if (firstRoundTeams.length < numToPick) {
-			const error = new Error(
+			throw new NotEnoughTeamsError(
 				`Number of teams with draft picks (${firstRoundTeams.length}) is less than the minimum required for draft type "${draftType}"`,
 			);
-			(error as any).notEnoughTeams = true;
-			throw error;
 		}
 
 		if (draftType === "cola") {

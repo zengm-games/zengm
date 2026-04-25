@@ -3,6 +3,7 @@ import { draft, league } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { Conditions, PhaseReturn } from "../../../common/types.ts";
+import { NotEnoughTeamsError } from "../draft/genOrder.ts";
 
 const newPhaseDraft = async (conditions: Conditions): Promise<PhaseReturn> => {
 	// In case some weird situation results in games still in the schedule, clear them
@@ -56,7 +57,7 @@ const newPhaseDraft = async (conditions: Conditions): Promise<PhaseReturn> => {
 			try {
 				await draft.genOrder(false, conditions);
 			} catch (error) {
-				if (!(error as any).notEnoughTeams) {
+				if (!(error instanceof NotEnoughTeamsError)) {
 					throw error;
 				}
 

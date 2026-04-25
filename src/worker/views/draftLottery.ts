@@ -12,7 +12,7 @@ import type {
 	TeamFiltered,
 	DraftPickWithoutKey,
 } from "../../common/types.ts";
-import { getNumToPick } from "../core/draft/genOrder.ts";
+import { getNumToPick, NotEnoughTeamsError } from "../core/draft/genOrder.ts";
 import { groupByUnique, orderBy } from "../../common/utils.ts";
 
 const filterDraftPicks = (
@@ -258,7 +258,7 @@ const updateDraftLottery = async (
 			draftPicks = result.draftPicks;
 		} catch (error) {
 			console.log(error);
-			if (!(error as any).notEnoughTeams) {
+			if (!(error instanceof NotEnoughTeamsError)) {
 				throw error;
 			}
 		}

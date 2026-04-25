@@ -1,5 +1,5 @@
 import { assert, test } from "vitest";
-import router from "./index.ts";
+import router, { MATCHING_ROUTE_NOT_FOUND } from "./index.ts";
 import type { Context } from "./index.ts";
 
 const counts: Record<string, number> = {};
@@ -163,7 +163,7 @@ test("fires navigationend event with 404 error", async () => {
 
 	const callback = (arg: any) => {
 		try {
-			assert.strictEqual(arg.error.message, "Matching route not found");
+			assert.strictEqual(arg.error.message, MATCHING_ROUTE_NOT_FOUND);
 			resolve();
 		} catch (error) {
 			reject(error);

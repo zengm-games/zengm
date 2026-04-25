@@ -12,6 +12,7 @@ import {
 	updateStatus,
 } from "./index.ts";
 import type { Conditions, League } from "../../common/types.ts";
+import { ONE_TAB_ERROR_MESSAGE } from "../../common/constants.ts";
 
 let heartbeatIntervalID: number;
 
@@ -75,9 +76,7 @@ const checkHeartbeat = async (lid: number) => {
 		return;
 	}
 
-	throw new Error(
-		"Your browser only supports opening a league in one tab at a time. If this league is not open in another tab, please wait a few seconds and reload.",
-	);
+	throw new Error(ONE_TAB_ERROR_MESSAGE);
 };
 
 // beforeLeague runs when the user switches leagues (including the initial league selection).

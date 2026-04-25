@@ -4,9 +4,14 @@ import type { ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import api from "./api/index.ts";
 import { Controller } from "./components/Controller/index.tsx";
-import router from "./router/index.ts";
+import router, { MATCHING_ROUTE_NOT_FOUND } from "./router/index.ts";
 import type { Env } from "../common/types.ts";
-import { EMAIL_ADDRESS, GAME_NAME, WEBSITE_ROOT } from "../common/constants.ts";
+import {
+	EMAIL_ADDRESS,
+	GAME_NAME,
+	ONE_TAB_ERROR_MESSAGE,
+	WEBSITE_ROOT,
+} from "../common/constants.ts";
 import Bugsnag from "@bugsnag/browser";
 import { LeagueNotFoundMessage } from "./components/LeagueNotFoundMessage.tsx";
 import { ErrorBoundary } from "./components/ErrorBoundary.tsx";
@@ -150,16 +155,11 @@ const setupRoutes = async () => {
 			if (error) {
 				let errorMessage: ReactNode = error.message;
 
-				if (errorMessage === "Matching route not found") {
+				if (errorMessage === MATCHING_ROUTE_NOT_FOUND) {
 					errorMessage = "Page not found.";
 				} else if (errorMessage === "League not found.") {
 					errorMessage = <LeagueNotFoundMessage />;
-				} else if (
-					typeof errorMessage !== "string" ||
-					!errorMessage.includes(
-						"A league can only be open in one tab at a time",
-					)
-				) {
+				} else if (errorMessage !== ONE_TAB_ERROR_MESSAGE) {
 					Bugsnag.notify(error);
 
 					console.error("Error from view:");

@@ -10,6 +10,8 @@ export interface Context {
 	};
 }
 
+export const MATCHING_ROUTE_NOT_FOUND = "Matching route not found";
+
 type RouteCallback = (context: Context) => Promise<void>;
 
 interface Route {
@@ -255,7 +257,7 @@ class Router {
 		}
 
 		if (!handled) {
-			error = new Error("Matching route not found");
+			error = new Error(MATCHING_ROUTE_NOT_FOUND);
 		}
 
 		// HACK! Some ads were including a request for /ads.txt?upapi=true which somehow triggered this code and led to Controller attempting to render multiple pages at once, one of which was outside of the league, leading to beforeViewNonLeague to be called and stop game sim

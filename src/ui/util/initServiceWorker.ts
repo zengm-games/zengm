@@ -81,7 +81,15 @@ if (window.navigator.serviceWorker && process.env.NODE_ENV !== "development") {
 		}
 	});
 
-	await wb.register();
+	try {
+		await wb.register();
+	} catch (error) {
+		// googlebot throws an error with the message "Rejected" on navigator.serviceWorker.register, IDK why, but this at least hides it from Bugsnag
+		// https://stackoverflow.com/q/63301353/786644
+		if (error.message !== "Rejected") {
+			throw error;
+		}
+	}
 
 	// Check for updates in the background
 	const watchForUpdates = () => {

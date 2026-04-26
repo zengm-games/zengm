@@ -2212,6 +2212,7 @@ q- When an interception happens on the passer's side of field, the team that pic
   - how far was the throw?
   - was it dropped? deflected? inaccurate?
 - add more stats for pass coverage, similar to OL stats
+- multiple QBs should play in ASG https://discord.com/channels/290013534023057409/1494036337643487272/1494036337643487272
 
 eventually
 - what happens to scheduled event if the user changes something relevant to it prior to the event happening? does this matter?

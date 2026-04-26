@@ -577,5 +577,7 @@ export const NOT_REAL_POSITIONS = bySport({
 export const COLA_ALPHA = 1000;
 export const COLA_OPT_OUT_PENALTY = 2000;
 
-export const ONE_TAB_ERROR_MESSAGE =
+export const ERROR_MESSAGE_ONE_TAB =
 	"Your browser only supports opening a league in one tab at a time. If this league is not open in another tab, please wait a few seconds and reload.";
+export const ERROR_MESSAGE_UNDEFINED_SEASON =
+	"Undefined season - an error may have occurred while creating this league";

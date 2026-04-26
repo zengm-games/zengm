@@ -8,8 +8,9 @@ import router, { MATCHING_ROUTE_NOT_FOUND } from "./router/index.ts";
 import type { Env } from "../common/types.ts";
 import {
 	EMAIL_ADDRESS,
+	ERROR_MESSAGE_UNDEFINED_SEASON,
 	GAME_NAME,
-	ONE_TAB_ERROR_MESSAGE,
+	ERROR_MESSAGE_ONE_TAB,
 	WEBSITE_ROOT,
 } from "../common/constants.ts";
 import Bugsnag from "@bugsnag/browser";
@@ -185,7 +186,10 @@ const setupRoutes = async () => {
 					);
 
 					unregisterServiceWorkers();
-				} else if (error.message === ONE_TAB_ERROR_MESSAGE) {
+				} else if (
+					error.message === ERROR_MESSAGE_ONE_TAB ||
+					error.message === ERROR_MESSAGE_UNDEFINED_SEASON
+				) {
 					errorMessage = error.message;
 				} else {
 					// Log any error not explicitly handled above

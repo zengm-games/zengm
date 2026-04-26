@@ -2338,15 +2338,15 @@ class GameSim extends GameSimBase {
 
 				// Don't log here, because we need to log all the stats first, otherwise live box score will update slightly out of order
 				const completeEvent = {
-					type: "passComplete",
+					type: "passComplete" as const,
 					clock: this.clock,
-					names: [qb.name, target.name] as string[],
+					names: [qb.name, target.name],
 					safety,
 					t: o,
 					td,
 					twoPointConversionTeam: this.twoPointConversionTeam,
 					yds,
-				} as const;
+				};
 
 				// Fumble after catch... only if nothing else is going on, too complicated otherwise
 				if (!td && !safety) {

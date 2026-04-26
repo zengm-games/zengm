@@ -1,4 +1,7 @@
-import { PLAYER } from "../../common/constants.ts";
+import {
+	ERROR_MESSAGE_UNDEFINED_SEASON,
+	PLAYER,
+} from "../../common/constants.ts";
 import { helpers } from "../../common/helpers.ts";
 import { idb } from "./index.ts";
 import cmp from "./cmp.ts";
@@ -754,9 +757,7 @@ class Cache {
 
 		if (season2 === undefined) {
 			// Seems that gameAttributes is empty when this happens, possibly due to Chrome inappropriately deleting things?
-			throw new Error(
-				"Undefined season - an error may have occurred while creating this league",
-			);
+			throw new Error(ERROR_MESSAGE_UNDEFINED_SEASON);
 		}
 
 		if (local.autoSave) {

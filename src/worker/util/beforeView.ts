@@ -12,7 +12,7 @@ import {
 	updateStatus,
 } from "./index.ts";
 import type { Conditions, League } from "../../common/types.ts";
-import { ONE_TAB_ERROR_MESSAGE } from "../../common/constants.ts";
+import { ERROR_MESSAGE_ONE_TAB } from "../../common/constants.ts";
 
 let heartbeatIntervalID: number;
 
@@ -76,7 +76,7 @@ const checkHeartbeat = async (lid: number) => {
 		return;
 	}
 
-	throw new Error(ONE_TAB_ERROR_MESSAGE);
+	throw new Error(ERROR_MESSAGE_ONE_TAB);
 };
 
 // beforeLeague runs when the user switches leagues (including the initial league selection).

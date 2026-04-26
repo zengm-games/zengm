@@ -153,45 +153,48 @@ const setupRoutes = async () => {
 		},
 		navigationEnd: ({ context, error }) => {
 			if (error) {
-				let errorMessage: ReactNode = error.message;
+				let errorMessage: ReactNode;
 
-				if (errorMessage === MATCHING_ROUTE_NOT_FOUND) {
+				// Some "errors" are expected and need either some special UI or are not worth logging
+				if (error.message === MATCHING_ROUTE_NOT_FOUND) {
 					errorMessage = "Page not found.";
-				} else if (errorMessage === "League not found.") {
+				} else if (error.message === "League not found.") {
 					errorMessage = <LeagueNotFoundMessage />;
-				} else if (errorMessage !== ONE_TAB_ERROR_MESSAGE) {
+				} else if (
+					// As of 2019-07-20, these cover all IndexedDB version error messages in Chrome, Firefox, and Safari
+					error.message.includes("requested version") ||
+					error.message.includes("existing version") ||
+					error.message.includes("higher version") ||
+					error.message.includes("version requested") ||
+					error.message.includes("lower version")
+				) {
+					errorMessage = (
+						<>
+							<p>{error.message}</p>
+							<p>
+								Please{" "}
+								<a
+									href={`https://${WEBSITE_ROOT}/manual/faq/#latest-version`}
+									target="_blank"
+								>
+									make sure you have the latest version of the game loaded
+								</a>
+								.
+							</p>
+						</>
+					);
+
+					unregisterServiceWorkers();
+				} else if (error.message === ONE_TAB_ERROR_MESSAGE) {
+					errorMessage = error.message;
+				} else {
+					// Log any error not explicitly handled above
 					Bugsnag.notify(error);
 
 					console.error("Error from view:");
 					console.error(error);
 
-					// As of 2019-07-20, these cover all IndexedDB version error messages in Chrome, Firefox, and Safari
-					if (
-						typeof errorMessage === "string" &&
-						(errorMessage.includes("requested version") ||
-							errorMessage.includes("existing version") ||
-							errorMessage.includes("higher version") ||
-							errorMessage.includes("version requested") ||
-							errorMessage.includes("lower version"))
-					) {
-						errorMessage = (
-							<>
-								<p>{errorMessage}</p>
-								<p>
-									Please{" "}
-									<a
-										href={`https://${WEBSITE_ROOT}/manual/faq/#latest-version`}
-										target="_blank"
-									>
-										make sure you have the latest version of the game loaded
-									</a>
-									.
-								</p>
-							</>
-						);
-
-						unregisterServiceWorkers();
-					}
+					errorMessage = error.message;
 				}
 
 				const ErrorPage = (

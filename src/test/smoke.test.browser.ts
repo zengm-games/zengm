@@ -11,6 +11,7 @@ import "../worker/index.ts";
 import { deleteDB } from "@dumbmatter/idb";
 import createStreamFromLeagueObject from "../worker/core/league/create/createStreamFromLeagueObject.ts";
 import { LEAGUE_DATABASE_VERSION } from "../common/constants.ts";
+import { getDefaultSettings } from "../worker/views/newLeague.ts";
 
 describe("Smoke Tests", () => {
 	let intervalID: number;
@@ -39,7 +40,7 @@ describe("Smoke Tests", () => {
 				lid: 0,
 				name: "Test",
 				setLeagueCreationStatus: () => {},
-				settings: {} as any,
+				settings: getDefaultSettings(),
 				shuffleRosters: false,
 				startingSeasonFromInput: "2016",
 				teamsFromInput: helpers.addPopRank(helpers.getTeamsDefault()),

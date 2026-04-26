@@ -13,7 +13,7 @@ type ContractPlayer = {
 const useJustDrafted = (p: ContractPlayer) => {
 	const { phase, season } = useLocalPartial(["phase", "season"]);
 
-	return helpers.justDrafted(p, phase as any, season);
+	return helpers.justDrafted(p, phase, season);
 };
 
 const NON_GUARANTEED_CONTRACT_TEXT =

@@ -332,8 +332,9 @@ const makeExportStream = async (
 
 						prevKey = cursor.key as any;
 
-						const desiredSize = (controller as any).desiredSize;
+						const desiredSize = controller.desiredSize;
 						if (
+							desiredSize !== null &&
 							(desiredSize > 0 || size < minSizePerPull) &&
 							!cancelCallback &&
 							!abortSignal?.aborted

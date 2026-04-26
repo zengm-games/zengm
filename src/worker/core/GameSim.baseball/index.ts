@@ -2666,7 +2666,7 @@ class GameSim extends GameSimBase {
 
 	// This is called at end of plate appearance. Should check for batter and all fielders
 	checkInjuries() {
-		if ((g as any).disableInjuries || this.baseInjuryRate === 0) {
+		if (this.baseInjuryRate === 0) {
 			return;
 		}
 

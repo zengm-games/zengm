@@ -1669,6 +1669,41 @@ const migrate = async ({
 			}
 		}
 	}
+
+	if (oldVersion < 71) {
+		// Just cleaning up some deprecated options that were cluttering up the code still
+
+		const disableInjuries = (
+			await transaction.objectStore("gameAttributes").get("disableInjuries")
+		)?.value;
+		if (disableInjuries !== undefined) {
+			await transaction.objectStore("gameAttributes").delete("disableInjuries");
+
+			if (disableInjuries) {
+				await transaction.objectStore("gameAttributes").put({
+					key: "injuryRate",
+					value: 0,
+				});
+			}
+		}
+
+		const aiTrades = (
+			await transaction.objectStore("gameAttributes").get("aiTrades")
+		)?.value;
+		if (aiTrades !== undefined) {
+			await transaction.objectStore("gameAttributes").delete("aiTrades");
+
+			const aiTradesFactor = (
+				await transaction.objectStore("gameAttributes").get("aiTradesFactor")
+			)?.value;
+			if (aiTrades === false && aiTradesFactor === 1) {
+				await transaction.objectStore("gameAttributes").put({
+					key: "aiTradesFactor",
+					value: 0,
+				});
+			}
+		}
+	}
 };
 
 const connectLeague = (lid: number) =>

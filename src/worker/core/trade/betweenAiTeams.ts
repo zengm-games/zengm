@@ -145,11 +145,6 @@ const attempt = async (valueChangeKey: number) => {
 const DEFAULT_NUM_TEAMS = 30;
 
 const betweenAiTeams = async () => {
-	// aiTrades is a legacy option. Only pay attention to it if the new option is at its default value.
-	if ((g as any).aiTrades === false && g.get("aiTradesFactor") === 1) {
-		return false;
-	}
-
 	if (g.get("forceHistoricalRosters")) {
 		return false;
 	}

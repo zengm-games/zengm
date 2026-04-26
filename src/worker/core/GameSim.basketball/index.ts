@@ -1367,7 +1367,7 @@ class GameSim extends GameSimBase {
 	 * This doesn't actually compute the type of injury, it just determines if a player is injured bad enough to miss the rest of the game.
 	 */
 	injuries() {
-		if ((g as any).disableInjuries) {
+		if (this.baseInjuryRate === 0) {
 			return false;
 		}
 

@@ -73,6 +73,24 @@ const simpleGameAttributesUpgrade = (
 
 		delete (gameAttributes as any).autoDeleteOldBoxScores;
 	}
+
+	const disableInjuries = (gameAttributes as any).disableInjuries;
+	if (disableInjuries !== undefined) {
+		delete (gameAttributes as any).disableInjuries;
+
+		if (disableInjuries) {
+			gameAttributes.injuryRate = 0;
+		}
+	}
+
+	const aiTrades = (gameAttributes as any).aiTrades;
+	if (aiTrades !== undefined) {
+		delete (gameAttributes as any).aiTrades;
+
+		if (aiTrades === false && gameAttributes.aiTradesFactor === 1) {
+			gameAttributes.aiTradesFactor = 0;
+		}
+	}
 };
 
 export default simpleGameAttributesUpgrade;

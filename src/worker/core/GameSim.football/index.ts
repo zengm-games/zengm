@@ -2831,7 +2831,7 @@ class GameSim extends GameSimBase {
 	}
 
 	injuries() {
-		if ((g as any).disableInjuries) {
+		if (this.baseInjuryRate === 0) {
 			return;
 		}
 

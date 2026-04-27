@@ -60,34 +60,35 @@ import {
 	defaultTragicDeaths,
 } from "../util/index.ts";
 import * as views from "../views/index.ts";
-import type {
-	Conditions,
-	Env,
-	GameAttributesLeague,
-	Local,
-	LockName,
-	Player,
-	PlayerWithoutKey,
-	UpdateEvents,
-	TradeTeams,
-	MinimalPlayerRatings,
-	Relative,
-	Options,
-	ExpansionDraftSetupTeam,
-	GetLeagueOptions,
-	TeamSeason,
-	TeamSeasonWithoutKey,
-	ScheduledEventGameAttributes,
-	ScheduledEventTeamInfo,
-	ScheduleGameWithoutKey,
-	Conf,
-	Div,
-	DunkAttempt,
-	AllStarPlayer,
-	League,
-	RealPlayerPhotos,
-	View,
-	NonEmptyArray,
+import {
+	type Conditions,
+	type Env,
+	type GameAttributesLeague,
+	type Local,
+	type LockName,
+	type Player,
+	type PlayerWithoutKey,
+	type UpdateEvents,
+	type TradeTeams,
+	type MinimalPlayerRatings,
+	type Relative,
+	type Options,
+	type ExpansionDraftSetupTeam,
+	type GetLeagueOptions,
+	type TeamSeason,
+	type TeamSeasonWithoutKey,
+	type ScheduledEventGameAttributes,
+	type ScheduledEventTeamInfo,
+	type ScheduleGameWithoutKey,
+	type Conf,
+	type Div,
+	type DunkAttempt,
+	type AllStarPlayer,
+	type League,
+	type View,
+	type NonEmptyArray,
+	RealPlayerPhotosSchema,
+	RealTeamInfoSchema,
 } from "../../common/types.ts";
 import {
 	addSimpleAndTeamAwardsToAwardsByPlayer,
@@ -162,6 +163,8 @@ import { getAdjustedTicketPrice } from "../../common/getAdjustedTicketPrice.ts";
 import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { generateContractOptions } from "../core/contractNegotiation/generateContractOptions.ts";
+import getRealTeamPlayerData from "../core/league/create/getRealTeamPlayerData.ts";
+import z from "zod";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -2731,7 +2734,7 @@ const importPlayers = async ({
 	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
-const importPlayersGetReal = async () => {
+const importPlayersGetReal = async (param: unknown, conditions: Conditions) => {
 	const basketball = await loadData();
 	const groupedRatings = Map.groupBy(basketball.ratings, (row) => row.slug);
 
@@ -2765,9 +2768,10 @@ const importPlayersGetReal = async () => {
 		};
 	});
 
-	const realPlayerPhotos = (await (
-		await idb.meta.transaction("attributes")
-	).store.get("realPlayerPhotos")) as RealPlayerPhotos | undefined;
+	const { realPlayerPhotos } = await getRealTeamPlayerData(
+		{ fileHasPlayers: true, fileHasTeams: false },
+		conditions,
+	);
 
 	const players = [];
 	for (const ratings of groupedRatings.values()) {
@@ -4050,107 +4054,42 @@ const updateOptions = async (
 		realTeamInfo: string;
 	},
 ) => {
-	const validateRealTeamInfo = (abbrev: string, teamInfo: any) => {
-		const strings = [
-			"abbrev",
-			"region",
-			"name",
-			"imgURL",
-			"imgURLSmall",
-			"jersey",
-		];
-		const numbers = ["pop"];
-		for (const [key, value] of Object.entries(teamInfo as any)) {
-			if (strings.includes(key)) {
-				if (typeof value !== "string") {
-					throw new Error(
-						`Invalid data format in real team info - value for "${abbrev}.${key}" is not a string`,
-					);
-				}
-			} else if (numbers.includes(key)) {
-				if (typeof value !== "number") {
-					throw new Error(
-						`Invalid data format in real team info - value for "${abbrev}.${key}" is not a number`,
-					);
-				}
-			} else if (key === "colors") {
-				if (!Array.isArray(value)) {
-					throw new Error(
-						`Invalid data format in real team info - value for "${abbrev}.${key}" is not an array`,
-					);
-				}
-				if (value.length !== 3) {
-					throw new Error(
-						`Invalid data format in real team info - value for "${abbrev}.${key}" should have 3 colors`,
-					);
-				}
-				for (const color of value) {
-					if (typeof color !== "string") {
-						throw new Error(
-							`Invalid data format in real team info - value for "${abbrev}.${key}" is not an array of strings`,
-						);
-					}
-				}
-			} else if (key !== "seasons") {
-				throw new Error(
-					`Invalid data format in real team info - unknown property "${abbrev}.${key}"`,
-				);
-			}
-		}
-	};
-
 	let realPlayerPhotos;
 	let realTeamInfo;
 	if (options.realPlayerPhotos !== "") {
+		let parsedJson;
 		try {
-			realPlayerPhotos = JSON.parse(options.realPlayerPhotos);
+			parsedJson = JSON.parse(options.realPlayerPhotos);
 		} catch (error) {
 			console.log(error);
 			throw new Error("Invalid JSON in real player photos");
 		}
-		if (typeof realPlayerPhotos !== "object") {
+
+		const result = RealPlayerPhotosSchema.safeParse(parsedJson);
+		if (result.success) {
+			realPlayerPhotos = result.data;
+		} else {
 			throw new Error(
-				"Invalid data format in real player photos - input is not an object",
+				`In real player photos:<br><span style="white-space: pre-wrap">${z.prettifyError(result.error)}</span>`,
 			);
-		}
-		for (const [key, value] of Object.entries(realPlayerPhotos)) {
-			if (typeof value !== "string") {
-				throw new Error(
-					`Invalid data format in real player photos - value for "${key}" is not a string`,
-				);
-			}
 		}
 	}
 	if (options.realTeamInfo !== "") {
+		let parsedJson;
 		try {
-			realTeamInfo = JSON.parse(options.realTeamInfo);
+			parsedJson = JSON.parse(options.realTeamInfo);
 		} catch (error) {
 			console.log(error);
 			throw new Error("Invalid JSON in real team info");
 		}
-		if (typeof realTeamInfo !== "object") {
+
+		const result = RealTeamInfoSchema.safeParse(parsedJson);
+		if (result.success) {
+			realTeamInfo = result.data;
+		} else {
 			throw new Error(
-				"Invalid data format in real team info - input is not an object",
+				`In real team info:<br><span style="white-space: pre-wrap">${z.prettifyError(result.error)}</span>`,
 			);
-		}
-		for (const [abbrev, teamInfo] of Object.entries(realTeamInfo)) {
-			validateRealTeamInfo(abbrev, teamInfo);
-			if (typeof teamInfo !== "object" || teamInfo === null) {
-				throw new Error(
-					"Invalid data format in real team info - input is not an object",
-				);
-			}
-			if ((teamInfo as any).seasons) {
-				for (const [key, value] of Object.entries((teamInfo as any).seasons)) {
-					const keyParsed = Number.parseInt(key);
-					if (Number.isNaN(keyParsed)) {
-						throw new Error(
-							`Invalid data format in real player photos - season is not an integer`,
-						);
-					}
-					validateRealTeamInfo(`${abbrev}.${key}`, value);
-				}
-			}
 		}
 	}
 

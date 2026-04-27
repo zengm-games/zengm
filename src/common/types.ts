@@ -1,5 +1,6 @@
 import type { FaceConfig } from "facesjs";
 import type { MouseEvent, ReactNode } from "react";
+import { z } from "zod";
 import type processInputs from "../worker/api/processInputs.ts";
 import type * as views from "../worker/views/index.ts";
 
@@ -1850,24 +1851,30 @@ export type UpdateEvents = (
 	| "watchList"
 )[];
 
-export type RealPlayerPhotos = Record<string, string>;
+export const RealPlayerPhotosSchema = z.record(z.string(), z.string());
+export type RealPlayerPhotos = z.infer<typeof RealPlayerPhotosSchema>;
 
-export type IndividualRealTeamInfo = {
-	abbrev?: string;
-	region?: string;
-	name?: string;
-	pop?: number;
-	colors?: [string, string, string];
-	imgURL?: string;
-	imgURLSmall?: string;
-	jersey?: string;
-};
-export type RealTeamInfo = Record<
-	string,
-	IndividualRealTeamInfo & {
-		seasons?: Record<number, IndividualRealTeamInfo>;
-	}
+export const IndividualRealTeamInfoSchema = z.object({
+	abbrev: z.string().exactOptional(),
+	region: z.string().exactOptional(),
+	name: z.string().exactOptional(),
+	pop: z.number().exactOptional(),
+	colors: z.tuple([z.string(), z.string(), z.string()]).exactOptional(),
+	imgURL: z.string().exactOptional(),
+	imgURLSmall: z.string().exactOptional(),
+	jersey: z.string().exactOptional(),
+});
+export type IndividualRealTeamInfo = z.infer<
+	typeof IndividualRealTeamInfoSchema
 >;
+
+export const RealTeamInfoSchema = z.record(
+	z.string(),
+	IndividualRealTeamInfoSchema.extend({
+		seasons: z.record(z.number(), IndividualRealTeamInfoSchema).exactOptional(),
+	}),
+);
+export type RealTeamInfo = z.infer<typeof RealTeamInfoSchema>;
 
 export type GetLeagueOptionsReal = {
 	type: "real";

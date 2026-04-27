@@ -83,6 +83,7 @@
 		"workbox-routing": "7.4.0",
 		"workbox-strategies": "7.4.0",
 		"workbox-window": "7.4.0",
+		"zod": "^4.3.6",
 		"zustand": "5.0.12"
 	},
 	"devDependencies": {

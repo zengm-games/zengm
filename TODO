@@ -45,11 +45,12 @@ dev usability stuff
 - send message to any open tabs to pop up notification when a new worker process is built, then send message to worker to mark it as stale, then any new UI tab opened with stale worker show a popup with error message. to prevent accidentally having multiple tabs open
   - shared worker listen to websocket, use ws to send from server to worker, mark as stale and show error
 - make leagueUrl better typed
-- use valibot/arktype in various places, including to replace schema/types difference
-  - start with updateOptions validating JSON input
+- use zod in various places, including to replace schema/types difference
 - DRY stuff for adding a new setting
 - typescript for playersPlus
 - get rid of home/away tid swapping in box score and live sim
+- exactOptionalPropertyTypes would be nice
+  - when enabling, then zod exactOptional starts working. otherwise, zod can't represent { a?: number } and instead makes it { a?: number | undefined }
 
 FBGM overtime - If team A scores in OT, And then Team B scores, They should always go for 2 bc you don’t want to give the ball back and have it be sudden death https://discord.com/channels/@me/778760871911751700/1480652733852811324
 

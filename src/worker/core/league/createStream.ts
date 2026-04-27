@@ -1253,16 +1253,19 @@ const beforeDBStream = async ({
 		teamInfos = helpers.addPopRank(teamInfos);
 	}
 
-	const { realPlayerPhotos, realTeamInfo } = await getRealTeamPlayerData({
-		fileHasPlayers:
-			keptKeys.has("players") ||
-			teamInfos.some((t) => t.usePlayers) ||
-			randomization === "debuts" ||
-			randomization === "debutsKeepCurrent" ||
-			randomization === "debutsForever" ||
-			randomization === "debutsForeverKeepCurrent",
-		fileHasTeams: !!filteredFromFile.teams,
-	});
+	const { realPlayerPhotos, realTeamInfo } = await getRealTeamPlayerData(
+		{
+			fileHasPlayers:
+				keptKeys.has("players") ||
+				teamInfos.some((t) => t.usePlayers) ||
+				randomization === "debuts" ||
+				randomization === "debutsKeepCurrent" ||
+				randomization === "debutsForever" ||
+				randomization === "debutsForeverKeepCurrent",
+			fileHasTeams: !!filteredFromFile.teams,
+		},
+		conditions,
+	);
 
 	// Hacky - put gameAttributes in g so they can be seen by functions called from this function
 	helpers.resetG();

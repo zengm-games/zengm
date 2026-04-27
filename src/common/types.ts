@@ -24,7 +24,6 @@ declare global {
 		freestar: any;
 		getTheme: () => "dark" | "light";
 		getThemeFilename: (theme: "dark" | "light") => string;
-		heartbeatID: string;
 		mobile: boolean;
 		releaseStage: "unknown" | "development" | "beta" | "production";
 		themeCSSLink: HTMLLinkElement;

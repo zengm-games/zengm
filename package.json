@@ -113,6 +113,7 @@
 		"concurrently": "9.2.1",
 		"conditional-type-checks": "1.0.6",
 		"eslint": "10.2.1",
+		"eslint-plugin-import-zod": "^1.2.1",
 		"eslint-plugin-jsx-a11y": "6.10.2",
 		"fake-indexeddb": "6.2.5",
 		"get-port": "7.2.0",

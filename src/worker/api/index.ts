@@ -164,7 +164,7 @@ import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToO
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { generateContractOptions } from "../core/contractNegotiation/generateContractOptions.ts";
 import getRealTeamPlayerData from "../core/league/create/getRealTeamPlayerData.ts";
-import z from "zod";
+import * as z from "zod";
 
 const acceptContractNegotiation = async ({
 	pid,

@@ -1,6 +1,6 @@
 import type { FaceConfig } from "facesjs";
 import type { MouseEvent, ReactNode } from "react";
-import { z } from "zod";
+import * as z from "zod";
 import type processInputs from "../worker/api/processInputs.ts";
 import type * as views from "../worker/views/index.ts";
 

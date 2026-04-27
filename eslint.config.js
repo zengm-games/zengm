@@ -2,6 +2,7 @@ import globals from "globals";
 import nkzw from "@nkzw/eslint-config";
 import { defineConfig, globalIgnores } from "eslint/config";
 import pluginJsxA11y from "eslint-plugin-jsx-a11y";
+import importZod from "eslint-plugin-import-zod";
 
 // We want to manually specify our own globals for different folders
 let found = false;
@@ -41,6 +42,7 @@ export default defineConfig(
 	]),
 	{ files: ["**/*.{js,jsx,ts,tsx}"] },
 	...nkzw,
+	...importZod.configs.recommended,
 	pluginJsxA11y.flatConfigs.recommended,
 	{
 		rules: {

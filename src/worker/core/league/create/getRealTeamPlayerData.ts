@@ -21,39 +21,41 @@ const getRealTeamPlayerData = async (
 	if (fileHasPlayers || fileHasTeams) {
 		const attributesStore = (await idb.meta.transaction("attributes")).store;
 		if (fileHasPlayers) {
-			const result = RealPlayerPhotosSchema.safeParse(
-				await attributesStore.get("realPlayerPhotos"),
-			);
-			if (result.success) {
-				realPlayerPhotos = result.data;
-			} else {
-				console.error(result.error);
-				logEvent(
-					{
-						type: "error",
-						text: "Invalid real player photos data ignored.",
-						saveToDb: false,
-					},
-					conditions,
-				);
+			const raw = await attributesStore.get("realPlayerPhotos");
+			if (raw !== undefined) {
+				const result = RealPlayerPhotosSchema.safeParse(raw);
+				if (result.success) {
+					realPlayerPhotos = result.data;
+				} else {
+					console.error(result.error);
+					logEvent(
+						{
+							type: "error",
+							text: "Invalid real player photos data ignored.",
+							saveToDb: false,
+						},
+						conditions,
+					);
+				}
 			}
 		}
 		if (fileHasTeams) {
-			const result = RealTeamInfoSchema.safeParse(
-				await attributesStore.get("realTeamInfo"),
-			);
-			if (result.success) {
-				realTeamInfo = result.data;
-			} else {
-				console.error(result.error);
-				logEvent(
-					{
-						type: "error",
-						text: "Invalid real team info data ignored.",
-						saveToDb: false,
-					},
-					conditions,
-				);
+			const raw = await attributesStore.get("realTeamInfo");
+			if (raw !== undefined) {
+				const result = RealTeamInfoSchema.safeParse(raw);
+				if (result.success) {
+					realTeamInfo = result.data;
+				} else {
+					console.error(result.error);
+					logEvent(
+						{
+							type: "error",
+							text: "Invalid real team info data ignored.",
+							saveToDb: false,
+						},
+						conditions,
+					);
+				}
 			}
 		}
 	}

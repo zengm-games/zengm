@@ -162,6 +162,7 @@ const roundOverrides = bySport<Record<string, RoundType>>({
 		iso: "roundWinp",
 		gmsc: "noDecimalPlace",
 		gmscMax: "noDecimalPlace",
+		pcMax: "noDecimalPlace",
 	},
 	basketball: {
 		gp: "noDecimalPlace",

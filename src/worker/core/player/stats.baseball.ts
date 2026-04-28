@@ -114,6 +114,7 @@ const stats = {
 		"bkMax",
 		"wpMax",
 		"bfMax",
+		"pcMax",
 
 		// Pitching derived
 		"ipMax",

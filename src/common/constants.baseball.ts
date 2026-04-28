@@ -345,6 +345,7 @@ export const PLAYER_STATS_TABLES = {
 			"bkMax",
 			"wpMax",
 			"bfMax",
+			"pcMax",
 			"gmscMax",
 		],
 	},

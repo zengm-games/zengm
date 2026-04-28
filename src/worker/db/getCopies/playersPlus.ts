@@ -785,11 +785,6 @@ const getPlayerStats = (
 	const seasonInfos: SeasonInfo[] = [];
 	const seasonInfosByKey: Record<string, SeasonInfo> = {};
 	for (const row of rows) {
-		if (row.gp === 0) {
-			// Ignore rows with 0 GP, hope that's safe!
-			continue;
-		}
-
 		if (regularSeason || playoffs) {
 			const key = seasonInfoKey(row);
 			if (seasonInfosByKey[key]) {
@@ -1080,7 +1075,7 @@ const processStats = (
 		}
 	}
 
-	const careerStats: any[] = [];
+	const careerStats: typeof playerStats = [];
 	output.stats = playerStats.map((ps) => {
 		if (season === undefined) {
 			careerStats.push(ps);

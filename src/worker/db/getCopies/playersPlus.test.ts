@@ -538,3 +538,24 @@ test("mergeStats totAndTeams results ", async () => {
 		},
 	]);
 });
+
+test("mergeStats totOnly when first row has >0 GP and second has 0 GP", async () => {
+	const p2 = helpers.deepCopy(p);
+	p2.stats[1].playoffs = false;
+	p2.stats[1].tid = 20;
+	p2.stats[1].gp = 0;
+	p2.stats[1].fg = 0;
+
+	const pf = await idb.getCopy.playersPlus(p2, {
+		stats: ["gp"],
+		season: p2.stats[1].season,
+		mergeStats: "totOnly",
+	});
+
+	if (!pf) {
+		throw new Error("Missing player");
+	}
+
+	// There was a bug where this returned 0, even though it should be 5 GP from the first season
+	assert.strictEqual(pf.stats.gp, 5);
+});

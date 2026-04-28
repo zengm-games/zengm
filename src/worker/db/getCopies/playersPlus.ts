@@ -104,15 +104,19 @@ class AbbrevsCache {
 			if (bulkFetch) {
 				const rows = await idb.getCopies.teamSeasons({ season }, "noCopyCache");
 				for (const row of rows) {
-					this.saveAbbrev(abbrevsByTid, row.tid, row.abbrev);
+					if (abbrevsByTid.has(row.tid)) {
+						this.saveAbbrev(abbrevsByTid, row.tid, row.abbrev);
+					}
 				}
 			}
 
 			// This handles when there are few abbrevsByTid, or when teamSeason is missing for one of the requested tids
 			for (const [tid, existingAbbrev] of abbrevsByTid) {
-				if (bulkFetch && existingAbbrev === undefined) {
-					// If teamSeason existed, it would have been found above
-					this.saveAbbrev(abbrevsByTid, tid, undefined);
+				if (bulkFetch) {
+					if (existingAbbrev === undefined) {
+						// If teamSeason existed, it would have been found above
+						this.saveAbbrev(abbrevsByTid, tid, undefined);
+					}
 				} else {
 					const row = await idb.getCopy.teamSeasons(
 						{ season, tid },

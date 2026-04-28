@@ -3,26 +3,21 @@ import { GAME_NAME } from "../../common/constants.ts";
 import { logEvent } from "./logEvent.ts";
 
 export const initServiceWorker = async () => {
-	const ONE_HOUR = 60 * 60 * 1000;
-
-	if (
-		window.releaseStage === "development" &&
-		// serviceWorker is undefined in an insecure context, like http://play.basketball-gm.test/
-		window.navigator.serviceWorker?.controller
-	) {
-		logEvent({
-			type: "error",
-			text: "Build loaded from service worker in dev",
-			saveToDb: false,
-			persistent: true,
-		});
+	// serviceWorker is undefined in an insecure context, like http://play.basketball-gm.test/
+	if (!window.navigator.serviceWorker) {
+		return;
 	}
 
-	// serviceWorker is undefined in an insecure context, like http://play.basketball-gm.test/
-	if (
-		window.navigator.serviceWorker &&
-		process.env.NODE_ENV !== "development"
-	) {
+	if (window.releaseStage === "development") {
+		if (window.navigator.serviceWorker.controller) {
+			logEvent({
+				type: "error",
+				text: "Build loaded from service worker in dev",
+				saveToDb: false,
+				persistent: true,
+			});
+		}
+	} else {
 		const wb = new Workbox("/sw.js");
 
 		let updateAvailable = false;
@@ -99,6 +94,8 @@ export const initServiceWorker = async () => {
 
 		// Check for updates in the background
 		const watchForUpdates = () => {
+			const ONE_HOUR = 60 * 60 * 1000;
+
 			setTimeout(async () => {
 				if (updateAvailable) {
 					showUpdateAvailableNotification();

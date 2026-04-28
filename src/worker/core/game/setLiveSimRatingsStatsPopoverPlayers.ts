@@ -1,4 +1,8 @@
-import type { GameResults, NonEmptyArray } from "../../../common/types.ts";
+import type {
+	GameResults,
+	MinimalPlayerRatings,
+	NonEmptyArray,
+} from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { helpers, local } from "../../util/index.ts";
 
@@ -17,13 +21,19 @@ export const setLiveSimRatingsStatsPopoverPlayers = async (
 
 	const players = (await idb.getCopies.players({ pids }, "noCopyCache")).map(
 		(p) => {
-			// Rather than cloning the entire object, just clone the part that we care about remaining constant (current stats row, and also ratings in case of injury)
-			const currentStats = helpers.deepCopy(p.stats.at(-1));
+			let stats: unknown[] = [];
+			const currentStats = p.stats.at(-1);
+			if (currentStats) {
+				// Rather than cloning the entire object, just clone the part that we care about remaining constant (current stats row, and also ratings in case of injury)
+				stats = [...p.stats.slice(0, -1), helpers.deepCopy(currentStats)];
+			} else {
+				stats = [];
+			}
 
 			return {
 				...p,
-				ratings: [...p.ratings] as NonEmptyArray<any>,
-				stats: [...p.stats.slice(0, -1), currentStats],
+				ratings: [...p.ratings] as NonEmptyArray<MinimalPlayerRatings>,
+				stats,
 			};
 		},
 	);

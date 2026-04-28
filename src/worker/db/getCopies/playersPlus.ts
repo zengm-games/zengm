@@ -73,12 +73,7 @@ class AbbrevsCache {
 			throw new Error("Cannot call add after load");
 		}
 
-		let abbrevsByTid = this.data.get(season);
-		if (!abbrevsByTid) {
-			abbrevsByTid = new Map();
-			this.data.set(season, abbrevsByTid);
-		}
-
+		const abbrevsByTid = this.data.getOrInsert(season, new Map());
 		abbrevsByTid.set(tid, undefined);
 	}
 
@@ -113,7 +108,7 @@ class AbbrevsCache {
 				}
 			}
 
-			// This handles when abbrevsByTid.size < 3, or when teamSeason is missing for one of the requested tids
+			// This handles when there are few abbrevsByTid, or when teamSeason is missing for one of the requested tids
 			for (const [tid, existingAbbrev] of abbrevsByTid) {
 				if (bulkFetch && existingAbbrev === undefined) {
 					// If teamSeason existed, it would have been found above
@@ -140,10 +135,17 @@ class AbbrevsCache {
 			return helpers.getAbbrev(tid);
 		}
 
-		const abbrev = this.data.get(season)?.get(tid);
+		const abbrevsByTid = this.data.get(season);
+		if (!abbrevsByTid) {
+			throw new Error("Invalid season/tid - missing season");
+		}
+		const abbrev = abbrevsByTid.get(tid);
 		if (abbrev === undefined) {
-			console.log(this.data);
-			throw new Error("Invalid season/tid");
+			if (abbrevsByTid.has(tid)) {
+				throw new Error("Invalid season/tid - missing tid");
+			} else {
+				throw new Error("Invalid season/tid - missing abbrev");
+			}
 		}
 		return abbrev;
 	}

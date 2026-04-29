@@ -7,7 +7,7 @@ export const unwrapGameAttribute = <T extends keyof GameAttributesLeague>(
 	key: T,
 ): GameAttributesLeague[T] => {
 	if (gameAttributeHasHistory(gameAttributes[key])) {
-		return gameAttributes[key].at(-1).value;
+		return gameAttributes[key].at(-1)!.value;
 	}
 
 	return gameAttributes[key];

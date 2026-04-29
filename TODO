@@ -1,3 +1,5 @@
+more granular access to draft variables in playersPlus, so we only need to do AbbrevsCache stuff when actually using the abbrev or originalAbbrev properties
+
 nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes-new-anti-tanking-proposal-draft-lottery
 - real player data
 - Teams that do not qualify for the playoffs or play-in tournament but stay out of the relegation zone (spots four through 10) would receive three lottery balls each.

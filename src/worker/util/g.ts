@@ -32,14 +32,12 @@ const g: GameAttributes & {
 			if (gameAttributeHasHistory(gameAttribute)) {
 				// Return value from row with highest starting season that is still <= the current season
 				const season2 = season === "current" ? (g as any).season : season;
-				for (let i = gameAttribute.length - 1; i >= 0; i--) {
-					if (season2 >= gameAttribute[i].start) {
-						return gameAttribute[i].value;
-					}
-				}
 
-				// Should never reach here
-				return gameAttribute[0].value;
+				// Should never need to check gameAttribute[0].value unless there is no matching season, which should never happen
+				return (
+					gameAttribute.findLast((x) => season2 >= x.start)?.value ??
+					gameAttribute[0].value
+				);
 			}
 
 			if (key === "allStarGame" && typeof gameAttribute === "boolean") {
@@ -101,7 +99,7 @@ export const wrap = <T extends keyof GameAttributesLeague>(
 
 	const cloned = helpers.deepCopy(gameAttribute);
 
-	const latestRow = cloned.at(-1);
+	const latestRow = cloned.at(-1)!;
 
 	let currentSeason;
 	let phase;

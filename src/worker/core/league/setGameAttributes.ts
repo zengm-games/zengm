@@ -108,7 +108,9 @@ const setGameAttributes = async (
 			key,
 			value,
 		});
-		g.setWithoutSavingToDB(key, value);
+
+		// value will be wrapped if prior one was wrapped, even if should not be wrapped in GameAttributesLeagueWithHistory
+		g.setWithoutSavingToDB(key, value as any);
 	}
 
 	await gameAttributesToUI(updatedGameAttributes);

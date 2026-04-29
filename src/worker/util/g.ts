@@ -2,6 +2,7 @@ import type {
 	GameAttributes,
 	GameAttributesLeague,
 	GameAttributesLeagueWithHistory,
+	GameAttributeWithHistory,
 } from "../../common/types.ts";
 import { PHASE } from "../../common/constants.ts";
 import { actualPhase } from "./actualPhase.ts";
@@ -99,7 +100,9 @@ export const wrapNewValueIfCurrentlyWrapped = <
 		return value;
 	}
 
-	const cloned = helpers.deepCopy(gameAttribute);
+	const cloned = helpers.deepCopy(gameAttribute) as GameAttributeWithHistory<
+		GameAttributesLeague[T]
+	>;
 
 	const latestRow = cloned.at(-1)!;
 

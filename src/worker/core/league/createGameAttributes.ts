@@ -14,6 +14,7 @@ import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
 import { gameAttributeHasHistory } from "../../../common/gameAttributeHasHistory.ts";
 import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
+import { wrapFromStart } from "../../../common/defaultGameAttributes.ts";
 
 const createGameAttributes = async (
 	{
@@ -237,16 +238,27 @@ const createGameAttributes = async (
 
 	// If we're using some non-default value of numGamesPlayoffSeries, set byes to 0 otherwise it might break for football where the default number of byes is 4
 	if (JSON.stringify(oldNumGames) !== JSON.stringify(newNumGames)) {
-		gameAttributes.numPlayoffByes = wrapNewValueIfCurrentlyWrapped(
+		const maybeWrappedNumPlayoffByes = wrapNewValueIfCurrentlyWrapped(
 			gameAttributes,
 			"numPlayoffByes",
 			0,
 		);
-		gameAttributes.numGamesPlayoffSeries = wrapNewValueIfCurrentlyWrapped(
+		gameAttributes.numPlayoffByes = gameAttributeHasHistory(
+			maybeWrappedNumPlayoffByes,
+		)
+			? maybeWrappedNumPlayoffByes
+			: wrapFromStart(maybeWrappedNumPlayoffByes);
+
+		const maybeWrappedNumGamesPlayoffSeries = wrapNewValueIfCurrentlyWrapped(
 			gameAttributes,
 			"numGamesPlayoffSeries",
 			newNumGames,
 		);
+		gameAttributes.numGamesPlayoffSeries = gameAttributeHasHistory(
+			maybeWrappedNumGamesPlayoffSeries,
+		)
+			? maybeWrappedNumGamesPlayoffSeries
+			: wrapFromStart(maybeWrappedNumGamesPlayoffSeries);
 	}
 
 	// If cannot handle the play-in tournament, disable

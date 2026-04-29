@@ -68,6 +68,7 @@ dev usability stuff
 - get rid of home/away tid swapping in box score and live sim
 - exactOptionalPropertyTypes would be nice
   - when enabling, then zod exactOptional starts working. otherwise, zod can't represent { a?: number } and instead makes it { a?: number | undefined }
+- when updating GameAttributesLeagueWithHistory (for instance in setGameAttributes) we should always wrap or always not wrap based on ALWAYS_WRAP, not prior value
 
 FBGM overtime - If team A scores in OT, And then Team B scores, They should always go for 2 bc you don’t want to give the ball back and have it be sudden death https://discord.com/channels/@me/778760871911751700/1480652733852811324
 

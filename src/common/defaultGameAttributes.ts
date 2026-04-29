@@ -11,7 +11,7 @@ import type {
 	GameAttributeWithHistory,
 } from "./types.ts";
 
-const wrap = <T>(value: T): GameAttributeWithHistory<T> => [
+export const wrapFromStart = <T>(value: T): GameAttributeWithHistory<T> => [
 	{
 		start: -Infinity,
 		value,
@@ -173,7 +173,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	minRosterSize: 10,
 	maxRosterSize: 15,
 	softCapTradeSalaryMatch: 125,
-	numGames: wrap(82), // per season
+	numGames: wrapFromStart(82), // per season
 	numGamesDiv: 16,
 	numGamesConf: 36,
 	otherTeamsWantToHire: false,
@@ -181,10 +181,10 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	quarterLength: 12, // [minutes]
 	overtimeLength: 5,
 	overtimeLengthPlayoffs: null,
-	confs: wrap(DEFAULT_CONFS),
-	divs: wrap(DEFAULT_DIVS),
-	numGamesPlayoffSeries: wrap([7, 7, 7, 7]),
-	numPlayoffByes: wrap(0),
+	confs: wrapFromStart(DEFAULT_CONFS),
+	divs: wrapFromStart(DEFAULT_DIVS),
+	numGamesPlayoffSeries: wrapFromStart([7, 7, 7, 7]),
+	numPlayoffByes: wrapFromStart(0),
 	aiTradesFactor: 1,
 	stopOnInjury: false,
 	stopOnInjuryGames: 20,
@@ -203,12 +203,12 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 
 	salaryCapType: "soft",
 
-	maxOvertimes: wrap(null),
-	shootoutRounds: wrap(0),
+	maxOvertimes: wrapFromStart(null),
+	shootoutRounds: wrapFromStart(0),
 	maxOvertimesPlayoffs: null,
 	shootoutRoundsPlayoffs: 0,
 
-	otl: wrap(false),
+	otl: wrapFromStart(false),
 
 	draftType: "nba2019",
 	draftLotteryCustomChances: [
@@ -266,7 +266,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	playerMoodTraits: true,
 	numPlayersOnCourt: 5,
 	aiJerseyRetirement: true,
-	tiebreakers: wrap([
+	tiebreakers: wrapFromStart([
 		"headToHeadRecord",
 		"divWinner",
 		"divRecordIfSame",
@@ -276,7 +276,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	]),
 	hofFactor: 1,
 	tradeDeadline: 0.6,
-	pointsFormula: wrap(""),
+	pointsFormula: wrapFromStart(""),
 	randomDebutsForever: undefined,
 	realDraftRatings: undefined,
 	hideDisabledTeams: false,
@@ -289,7 +289,7 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	riggedLottery: undefined,
 	numDraftPicksCurrent: undefined,
 	playoffsByConf: true,
-	playoffsNumTeamsDiv: wrap(0),
+	playoffsNumTeamsDiv: wrapFromStart(0),
 	playoffsReseed: false,
 	playIn: true,
 	numPlayersDunk: 4,
@@ -392,17 +392,17 @@ const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 	process.env.NODE_ENV === "test" || isSport("football")
 		? {
-				numGames: wrap(17),
+				numGames: wrapFromStart(17),
 				numGamesDiv: 6,
 				numGamesConf: 6,
 				quarterLength: 15,
 				overtimeLength: 10,
 				overtimeLengthPlayoffs: 15,
-				numGamesPlayoffSeries: wrap([1, 1, 1, 1]),
-				numPlayoffByes: wrap(2),
+				numGamesPlayoffSeries: wrapFromStart([1, 1, 1, 1]),
+				numPlayoffByes: wrapFromStart(2),
 				stopOnInjuryGames: 1,
 				salaryCapType: "hard",
-				maxOvertimes: wrap(1),
+				maxOvertimes: wrapFromStart(1),
 				draftType: "noLottery",
 				numDraftRounds: 7,
 				draftAges: [21, 22],
@@ -423,7 +423,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				allStarNum: 44,
 				allStarType: "byConf",
 				numPlayersOnCourt: 11,
-				tiebreakers: wrap([
+				tiebreakers: wrapFromStart([
 					"headToHeadRecord",
 					"divRecordIfSame",
 					"commonOpponentsRecord",
@@ -435,7 +435,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				]),
 				tradeDeadline: 0.5,
 				playoffsReseed: true,
-				playoffsNumTeamsDiv: wrap(1),
+				playoffsNumTeamsDiv: wrapFromStart(1),
 				playIn: false,
 				fantasyPoints: "standard",
 				draftPickAutoContract: false,
@@ -470,16 +470,16 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				allStarNum: 20,
 				allStarType: "byConf",
 				numPlayersOnCourt: 6,
-				otl: wrap(true),
-				pointsFormula: wrap(DEFAULT_POINTS_FORMULA),
-				playoffsNumTeamsDiv: wrap(3),
+				otl: wrapFromStart(true),
+				pointsFormula: wrapFromStart(DEFAULT_POINTS_FORMULA),
+				playoffsNumTeamsDiv: wrapFromStart(3),
 				playIn: false,
 				draftPickAutoContractPercent: 10,
 				draftPickAutoContractRounds: 2,
 				rookieContractLengths: [3],
 				pace: 1,
-				maxOvertimes: wrap(1),
-				shootoutRounds: wrap(3),
+				maxOvertimes: wrapFromStart(1),
+				shootoutRounds: wrapFromStart(3),
 			}
 		: {};
 
@@ -487,11 +487,11 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
 	process.env.NODE_ENV === "test" || isSport("baseball")
 		? {
-				numGames: wrap(162),
+				numGames: wrapFromStart(162),
 				numGamesDiv: 76,
 				numGamesConf: null,
-				numGamesPlayoffSeries: wrap([3, 5, 7, 7]),
-				numPlayoffByes: wrap(4),
+				numGamesPlayoffSeries: wrapFromStart([3, 5, 7, 7]),
+				numPlayoffByes: wrapFromStart(4),
 				numPeriods: 9,
 				salaryCapType: "none",
 				draftType: "mlb2022",
@@ -511,7 +511,7 @@ export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				allStarNum: 24,
 				allStarType: "byConf",
 				numPlayersOnCourt: 9,
-				playoffsNumTeamsDiv: wrap(1),
+				playoffsNumTeamsDiv: wrapFromStart(1),
 				playIn: false,
 				draftPickAutoContractPercent: 20,
 				draftPickAutoContractRounds: 4,

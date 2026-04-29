@@ -1,10 +1,10 @@
 import { PHASE } from "../../../common/constants.ts";
 import { g } from "../../util/index.ts";
-import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
+import type { PlayerWithoutKey } from "../../../common/types.ts";
 import { timeBetweenGames } from "../../../common/timeBetweenGames.ts";
 
 const isUntradable = (
-	p: Player | PlayerWithoutKey,
+	p: PlayerWithoutKey,
 ):
 	| {
 			untradable: false;

@@ -1,6 +1,6 @@
 import fuzzRating from "./fuzzRating.ts";
 import { g } from "../../util/index.ts";
-import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
+import type { PlayerWithoutKey } from "../../../common/types.ts";
 import valueCombineOvrPot from "./valueCombineOvrPot.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
@@ -26,7 +26,7 @@ import { last } from "../../../common/utils.ts";
  *     ratings.
  */
 const value = (
-	p: Player | PlayerWithoutKey,
+	p: PlayerWithoutKey,
 	options: {
 		fuzz?: boolean;
 		noPot?: boolean;

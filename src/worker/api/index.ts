@@ -75,7 +75,6 @@ import {
 	type Options,
 	type ExpansionDraftSetupTeam,
 	type GetLeagueOptions,
-	type TeamSeason,
 	type TeamSeasonWithoutKey,
 	type ScheduledEventGameAttributes,
 	type ScheduledEventTeamInfo,
@@ -4427,7 +4426,7 @@ const updateTeamInfo = async ({
 
 		// Also apply team info changes to this season
 		if (actualPhase() < PHASE.PLAYOFFS) {
-			let teamSeason: TeamSeason | TeamSeasonWithoutKey | undefined =
+			let teamSeason: TeamSeasonWithoutKey | undefined =
 				await idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
 					t.tid,
 					g.get("season"),
@@ -4600,7 +4599,7 @@ const upsertCustomizedPlayer = async (
 		season,
 		recomputePosOvrPot,
 	}: {
-		p: Player | PlayerWithoutKey;
+		p: PlayerWithoutKey;
 		originalTid: number | undefined;
 		season: number;
 		recomputePosOvrPot: boolean;

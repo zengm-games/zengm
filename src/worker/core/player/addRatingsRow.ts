@@ -2,13 +2,12 @@ import genFuzz from "./genFuzz.ts";
 import { g } from "../../util/index.ts";
 import type {
 	MinimalPlayerRatings,
-	Player,
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
 import { last } from "../../../common/utils.ts";
 
 const addRatingsRow = (
-	p: Player | PlayerWithoutKey,
+	p: PlayerWithoutKey,
 	scoutingLevel?: number,
 	injuryIndex?: number,
 ) => {

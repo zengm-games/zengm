@@ -1,9 +1,9 @@
 import value from "./value.ts";
-import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
+import type { PlayerWithoutKey } from "../../../common/types.ts";
 import { g, local } from "../../util/index.ts";
 import updateOvrMeanStd from "./updateOvrMeanStd.ts";
 
-const updateValues = async (p: Player | PlayerWithoutKey) => {
+const updateValues = async (p: PlayerWithoutKey) => {
 	await updateOvrMeanStd();
 
 	p.valueNoPot = value(p, {

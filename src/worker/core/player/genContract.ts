@@ -1,6 +1,5 @@
 import { g, helpers, random } from "../../util/index.ts";
 import type {
-	Player,
 	PlayerContract,
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
@@ -16,7 +15,7 @@ import { last } from "../../../common/utils.ts";
  * @return {Object.<string, number>} Object containing two properties with integer values, "amount" with the contract amount in thousands of dollars and "exp" with the contract expiration year.
  */
 const genContract = (
-	p: Player | PlayerWithoutKey,
+	p: PlayerWithoutKey,
 	randomizeAmount: boolean = true,
 	noLimit: boolean = false,
 ): PlayerContract => {

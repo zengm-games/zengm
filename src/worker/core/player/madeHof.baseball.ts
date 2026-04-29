@@ -1,5 +1,5 @@
 import { g, helpers } from "../../util/index.ts";
-import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
+import type { PlayerWithoutKey } from "../../../common/types.ts";
 
 /**
  * Is a player worthy of the Hall of Fame?
@@ -10,7 +10,7 @@ import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
  * @param {Object} p Player object.
  * @return {boolean} Hall of Fame worthy?
  */
-const madeHof = (p: Player | PlayerWithoutKey): boolean => {
+const madeHof = (p: PlayerWithoutKey): boolean => {
 	let earliestSeason = Infinity;
 
 	const wars: number[] = p.stats.map((ps) => {

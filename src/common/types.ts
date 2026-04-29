@@ -1,5 +1,5 @@
 import type { FaceConfig } from "facesjs";
-import type { MouseEvent, ReactNode } from "react";
+import type { ReactNode } from "react";
 import * as z from "zod";
 import type processInputs from "../worker/api/processInputs.ts";
 import type * as views from "../worker/views/index.ts";
@@ -904,9 +904,7 @@ export type MenuItemLink = {
 	nonLeague?: true;
 	commandPalette?: true;
 	commandPaletteOnly?: true;
-	onClick?: (
-		a: MouseEvent<any>,
-	) => undefined | void | false | Promise<undefined | void | false>; // Return false to leave sidebar open
+	onClick?: () => undefined | void | false | Promise<undefined | void | false>; // Return false to leave sidebar open
 	path?: string | (number | string)[];
 	prefix?: ReactNode;
 	text:

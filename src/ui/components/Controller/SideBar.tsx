@@ -1,12 +1,5 @@
 import clsx from "clsx";
-import {
-	memo,
-	type ReactNode,
-	useCallback,
-	useEffect,
-	useState,
-	type MouseEvent,
-} from "react";
+import { memo, type ReactNode, useCallback, useEffect, useState } from "react";
 import { helpers } from "../../util/helpers.ts";
 import { localActions, useLocalPartial } from "../../util/local.ts";
 import type {
@@ -83,7 +76,7 @@ export const makeAnchorProps = (
 	onMenuItemClick: () => void,
 	closeBeforeOnClickResolves?: boolean,
 ): {
-	onClick: (event: MouseEvent) => void;
+	onClick: () => void;
 	href?: string;
 	rel?: string;
 	target?: string;
@@ -103,14 +96,14 @@ export const makeAnchorProps = (
 		href = helpers.leagueUrl(menuItem.path);
 	}
 
-	const onClick = async (event: MouseEvent) => {
+	const onClick = async () => {
 		if (menuItem.onClick) {
 			if (closeBeforeOnClickResolves) {
 				onMenuItemClick();
 			}
 
 			// Don't close menu if response is false
-			const response = await menuItem.onClick(event);
+			const response = await menuItem.onClick();
 
 			if (response !== false && !closeBeforeOnClickResolves) {
 				onMenuItemClick();

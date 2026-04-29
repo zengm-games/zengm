@@ -307,14 +307,19 @@ const getResultsGroupedLeagues = async ({
 		});
 	}
 
-	const results = [
+	const results: {
+		category: string | undefined;
+		text: string | string[];
+		search?: string;
+		anchorProps: AnchorProps;
+	}[] = [
 		{
 			category: undefined,
 			text: "Switch League",
 			anchorProps: {
 				href: "/",
 				onClick: onHide,
-			} as AnchorProps,
+			},
 		},
 		...newLeagueResults.map((row) => ({
 			category: undefined,
@@ -322,7 +327,7 @@ const getResultsGroupedLeagues = async ({
 			anchorProps: {
 				href: row.href,
 				onClick: onHide,
-			} as AnchorProps,
+			},
 		})),
 		...orderBy(leagues, "lastPlayed", "desc").map((l) => {
 			const lastPlayed = `last played ${
@@ -338,7 +343,7 @@ const getResultsGroupedLeagues = async ({
 				anchorProps: {
 					href: `/l/${l.lid}`,
 					onClick: onHide,
-				} as AnchorProps,
+				},
 			};
 		}),
 	];
@@ -361,7 +366,7 @@ const getResultsGroupedLeagues = async ({
 	} else {
 		// Search - return sorted by relevance, no grouping
 		const filteredResults = matchSorter(results, searchText, {
-			keys: [(row) => (row as any).search ?? row.text],
+			keys: [(row) => row.search ?? row.text],
 			baseSort,
 		});
 		if (filteredResults.length > 0) {
@@ -893,7 +898,7 @@ const CommandPaletteInner = ({
 								for (const result of group.results) {
 									if (index === activeIndex) {
 										if (result.anchorProps.onClick) {
-											(result.anchorProps.onClick as any)();
+											result.anchorProps.onClick();
 										}
 
 										if (result.anchorProps.href) {

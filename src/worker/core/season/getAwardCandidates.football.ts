@@ -58,7 +58,8 @@ const getAwardCandidates = async (season: number) => {
 				players,
 			),
 			stats: ["keyStats"],
-			asterisk: "Exceptional QBs can win both MVP and OPOY in some seasons",
+			asterisk:
+				"Exceptional QBs can win both MVP and OPOY but are not listed here",
 		},
 		{
 			name: "Protector of the Year",

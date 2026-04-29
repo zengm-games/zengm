@@ -18,6 +18,7 @@ import {
 import TeamForm from "./ManageTeams/TeamForm.tsx";
 import { getGodModeWarnings } from "./NewLeague/UpsertTeamModal.tsx";
 import { TeamsSplitNorthAmericaWorld } from "../components/TeamsSplitNorthAmericaWorld.tsx";
+import { last } from "../../common/utils.ts";
 
 // Hacky, but it's in a <option> so what can you do
 const BLANK_TEAM_ABBREV = "_BLANK_TEAM_ABBREV_";
@@ -46,7 +47,7 @@ const ExpansionDraft = ({
 		jersey: DEFAULT_JERSEY,
 		pop: "1",
 		stadiumCapacity: String(DEFAULT_STADIUM_CAPACITY),
-		did: String(divs.at(-1)!.did),
+		did: String(last(divs).did),
 		takeControl: false,
 	};
 

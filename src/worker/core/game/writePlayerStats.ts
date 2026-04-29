@@ -13,7 +13,7 @@ import {
 import type { Conditions, GameResults, Player } from "../../../common/types.ts";
 import stats from "../player/stats.ts";
 import statsRowIsCurrent from "../player/statsRowIsCurrent.ts";
-import { maxBy } from "../../../common/utils.ts";
+import { last, maxBy } from "../../../common/utils.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
@@ -184,12 +184,12 @@ const doInjury = async (
 	if (
 		gamesRemainingNormalized > 25 &&
 		Math.random() < gamesRemainingNormalized / 82 &&
-		!p2.ratings.at(-1)!.locked
+		!last(p2.ratings).locked
 	) {
 		ratingsLoss = true;
 
 		player.addRatingsRow(p2, undefined, p2.injuries.length - 1);
-		const newRatings = p2.ratings.at(-1)!;
+		const newRatings = last(p2.ratings);
 
 		const ratingsToNerf = bySport({
 			baseball: ["spd", "endu", "hpw", "thr", "ppw"],

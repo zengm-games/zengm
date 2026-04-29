@@ -3,6 +3,7 @@ import { g } from "../../util/index.ts";
 import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
 import valueCombineOvrPot from "./valueCombineOvrPot.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { last } from "../../../common/utils.ts";
 
 /**
  * Returns a numeric value for a given player, representing is general worth to a typical team
@@ -37,7 +38,7 @@ const value = (
 	options.fuzz = !!options.fuzz;
 
 	// Latest season
-	const ratings = p.ratings.at(-1)!;
+	const ratings = last(p.ratings);
 	const pos = ratings.pos;
 
 	// Current values, adjusted for fuzz

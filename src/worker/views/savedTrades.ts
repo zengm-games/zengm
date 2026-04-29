@@ -5,7 +5,7 @@ import isUntradable from "../core/trade/isUntradable.ts";
 import { augmentOffers } from "../api/index.ts";
 import { fixPlayers } from "./tradeProposals.ts";
 import { PLAYER } from "../../common/constants.ts";
-import { orderBy } from "../../common/utils.ts";
+import { last, orderBy } from "../../common/utils.ts";
 
 const savedTradeHashToTradeTeams = (hash: string): TradeTeams => {
 	const values = JSON.parse(hash);
@@ -133,7 +133,7 @@ export const addMissingAssets = async <T extends AugmentedOffer>(
 						const p = {
 							pid: pRaw.pid,
 							name: `${pRaw.firstName} ${pRaw.lastName}`,
-							pos: pRaw.ratings.at(-1)!.pos,
+							pos: last(pRaw.ratings).pos,
 						};
 
 						const untradableInfo = isUntradable(pRaw);

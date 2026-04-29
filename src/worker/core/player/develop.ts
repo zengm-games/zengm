@@ -8,12 +8,16 @@ import ovr from "./ovr.ts";
 import pos from "./pos.ts";
 import skills from "./skills.ts";
 import { g, helpers, random } from "../../util/index.ts";
-import type { MinimalPlayerRatings } from "../../../common/types.ts";
+import type {
+	MinimalPlayerRatings,
+	NonEmptyArray,
+} from "../../../common/types.ts";
 import genWeight from "./genWeight.ts";
 import potEstimator from "./potEstimator.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { last } from "../../../common/utils.ts";
 
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
 
@@ -114,7 +118,7 @@ const develop = async (
 			skills: string[];
 		};
 		pos?: string;
-		ratings: MinimalPlayerRatings[];
+		ratings: NonEmptyArray<MinimalPlayerRatings>;
 		tid: number;
 		weight: number;
 		srID?: string;
@@ -124,7 +128,7 @@ const develop = async (
 	coachingLevel: number = DEFAULT_LEVEL,
 	skipPot: boolean = false, // Only for making testing or core/debug faster
 ) => {
-	const ratings = p.ratings.at(-1)!;
+	const ratings = last(p.ratings);
 	let age = ratings.season - p.born.year;
 
 	for (let i = 0; i < years; i++) {

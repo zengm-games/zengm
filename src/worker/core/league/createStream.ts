@@ -68,6 +68,7 @@ import type { NewLeagueSettings } from "../../views/newLeague.ts";
 import { getNumPlayersTradedAwayNormalized } from "../player/getNumPlayersTradedAwayNormalized.ts";
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
+import { last } from "../../../common/utils.ts";
 
 export type TeamInfo = TeamBasic & {
 	disabled?: boolean;
@@ -1608,7 +1609,7 @@ const afterDBStream = async ({
 					pid: p.pid,
 					injury: p.injury,
 					value: p.value,
-					ratings: p.ratings.at(-1)!,
+					ratings: last(p.ratings),
 				}));
 			const ovr = team.ovr(teamPlayers);
 			t.strategy = ovr >= 60 ? "contending" : "rebuilding";

@@ -20,7 +20,7 @@ import { applyRealTeamInfos } from "./index.tsx";
 import RandomizeTeamsModal, {
 	type PopulationFactor,
 } from "./RandomizeTeamsModal.tsx";
-import { countBy, orderBy } from "../../../common/utils.ts";
+import { countBy, last, orderBy } from "../../../common/utils.ts";
 import type { Continent } from "../../../common/geographicCoordinates.ts";
 import { REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 
@@ -498,10 +498,10 @@ const PlayersButton = ({
 					<Popover.Header>Top Players</Popover.Header>
 					<Popover.Body>
 						<ul className="list-unstyled mb-0">
-							{orderBy(players, (p) => p.ratings.at(-1)!.ovr, "desc")
+							{orderBy(players, (p) => last(p.ratings).ovr, "desc")
 								.slice(0, 10)
 								.map((p) => {
-									const ratings = p.ratings.at(-1)!;
+									const ratings = last(p.ratings);
 									return (
 										<li key={p.pid}>
 											{p.firstName} {p.lastName} - {ratings.ovr} ovr,{" "}

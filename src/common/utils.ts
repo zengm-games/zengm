@@ -1,5 +1,7 @@
 // Why not use lodash? groupByUnique doesn't exist there, and these are smaller
 
+import type { NonEmptyArray } from "./types.ts";
+
 // iteratee can be a function taking item and returning number/string, or a number/string of a property of item
 const getValueByIteratee = (iteratee: any, item: any) => {
 	if (typeof iteratee === "function") {
@@ -169,4 +171,9 @@ export const chunk = <T>(array: T[], chunkSize: number): T[][] => {
 		chunks.push(array.slice(i, i + chunkSize));
 	}
 	return chunks;
+};
+
+// This is because I couldn't figure out how to make NonEmptyArray.at(-1) always return T rather than T | undefined
+export const last = <T>(array: NonEmptyArray<T>) => {
+	return array.at(-1)!;
 };

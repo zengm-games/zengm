@@ -1,5 +1,6 @@
 import { gameAttributeHasHistory } from "./gameAttributeHasHistory.ts";
 import type { GameAttributesLeague } from "./types.ts";
+import { last } from "./utils.ts";
 
 // Get latest value
 export const unwrapGameAttribute = <T extends keyof GameAttributesLeague>(
@@ -7,7 +8,7 @@ export const unwrapGameAttribute = <T extends keyof GameAttributesLeague>(
 	key: T,
 ): GameAttributesLeague[T] => {
 	if (gameAttributeHasHistory(gameAttributes[key])) {
-		return gameAttributes[key].at(-1)!.value;
+		return last(gameAttributes[key]).value;
 	}
 
 	return gameAttributes[key];

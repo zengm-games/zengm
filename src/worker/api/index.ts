@@ -120,6 +120,7 @@ import statsBaseball from "../core/team/stats.baseball.ts";
 import { extraRatings } from "../views/playerRatings.ts";
 import {
 	groupByUnique,
+	last,
 	maxBy,
 	omit,
 	orderBy,
@@ -799,7 +800,7 @@ const deleteOldData = async (options: {
 		let updated = false;
 		if (p.ratings.length > 1) {
 			updated = true;
-			const latestSeason = p.ratings.at(-1)!.season;
+			const latestSeason = last(p.ratings).season;
 			p.ratings = p.ratings.filter((row) => row.season >= latestSeason) as any;
 		}
 		if (p.stats.length > 0) {
@@ -1731,7 +1732,7 @@ const getDiamondInfo = async (pid: number) => {
 	if (p) {
 		return {
 			name: `${p.firstName} ${p.lastName}`,
-			spd: p.ratings.at(-1)!.spd,
+			spd: last(p.ratings).spd,
 		};
 	}
 };
@@ -4652,17 +4653,17 @@ const upsertCustomizedPlayer = async (
 			p.draft.year += 1;
 		}
 
-		p.ratings.at(-1)!.season = p.draft.year;
+		last(p.ratings).season = p.draft.year;
 	} else if (p.tid !== PLAYER.RETIRED) {
 		p.retiredYear = Infinity;
 
 		// If a player was a draft prospect (or some other weird shit happened), ratings season might be wrong
-		p.ratings.at(-1)!.season = g.get("season");
+		last(p.ratings).season = g.get("season");
 	}
 
 	// If player was retired, add ratings (but don't develop, because that would change ratings)
 	if (originalTid === PLAYER.RETIRED && p.tid !== PLAYER.RETIRED) {
-		if (g.get("season") - p.ratings.at(-1)!.season > 0) {
+		if (g.get("season") - last(p.ratings).season > 0) {
 			player.addRatingsRow(p);
 		}
 	}
@@ -4679,12 +4680,12 @@ const upsertCustomizedPlayer = async (
 	}
 
 	// Recalculate player pos, ovr, pot, and values if necessary
-	const originalPot = p.ratings.at(-1)!.pot;
+	const originalPot = last(p.ratings).pot;
 	await player.develop(p, 0);
 	if (!recomputePosOvrPot) {
 		// Make sure not to randomly change pot if it was not necessary (no ratings/age change, and in non-basketball sports no pos change).
 		// Why do this here, rather than just calling develop only if this stuff changed? Because develop handles PlayerRatings.pos being set to the right value too, and that can change in BBGM even if no ratings change.
-		p.ratings.at(-1)!.pot = originalPot;
+		last(p.ratings).pot = originalPot;
 	}
 	await player.updateValues(p);
 

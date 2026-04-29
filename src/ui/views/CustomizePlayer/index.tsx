@@ -24,7 +24,7 @@ import RatingsForm from "./RatingsForm.tsx";
 import RelativesForm from "./RelativesForm.tsx";
 import type { View, Phase, PlayerWithoutKey } from "../../../common/types.ts";
 import { posRatings } from "../../../common/posRatings.ts";
-import { orderBy } from "../../../common/utils.ts";
+import { last, orderBy } from "../../../common/utils.ts";
 import CustomMoodItemsForm from "./CustomMoodItemsForm.tsx";
 import { roundContract } from "../../../common/roundContract.ts";
 import { Face } from "./Face.tsx";
@@ -241,8 +241,8 @@ const copyValidValues = (
 	target.injury.type = source.injury.type;
 
 	{
-		const sourceRatings = source.ratings.at(-1)!;
-		const targetRatings = target.ratings.at(-1)!;
+		const sourceRatings = last(source.ratings);
+		const targetRatings = last(target.ratings);
 		for (const rating of Object.keys(sourceRatings)) {
 			if (RATINGS.includes(rating)) {
 				const val = helpers.bound(

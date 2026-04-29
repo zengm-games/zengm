@@ -8,11 +8,11 @@ import type {
 	PlayerWithoutKey,
 	Player,
 } from "../../common/types.ts";
-import { orderBy } from "../../common/utils.ts";
+import { last, orderBy } from "../../common/utils.ts";
 
 export const formatPlayerRelativesList = (p: Player) => {
 	const firstSeason = p.ratings[0].season;
-	const lastSeason = p.ratings.at(-1)!.season;
+	const lastSeason = last(p.ratings).season;
 
 	return {
 		pid: p.pid,
@@ -144,7 +144,7 @@ const updateCustomizePlayer = async (
 			currentPlayers.map(formatPlayerRelativesList),
 		);
 
-		const initialAutoPos = player.pos(p.ratings.at(-1)!);
+		const initialAutoPos = player.pos(last(p.ratings));
 
 		faceCount += 1;
 

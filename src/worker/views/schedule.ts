@@ -8,7 +8,7 @@ import type {
 	PlayerInjury,
 } from "../../common/types.ts";
 import { PHASE } from "../../common/constants.ts";
-import { groupByUnique, orderBy } from "../../common/utils.ts";
+import { groupByUnique, last, orderBy } from "../../common/utils.ts";
 import {
 	getActualPlayThroughInjuries,
 	getNumConsecutiveGamesGFactor,
@@ -276,7 +276,7 @@ export const getTopPlayers = async <T extends any[]>(
 				.filter((p) => p !== undefined);
 
 			for (const p of depthPlayers) {
-				const ratings = p.ratings.at(-1)!;
+				const ratings = last(p.ratings);
 
 				extraInfo[p.pid] = {
 					injury: { ...p.injury },
@@ -438,8 +438,8 @@ export const getTopPlayers = async <T extends any[]>(
 
 			const playersRaw = orderBy(
 				await idb.cache.players.indexGetAll("playersByTid", tid),
-				(t) => {
-					const ratings = t.ratings.at(-1)!;
+				(p) => {
+					const ratings = last(p.ratings);
 					const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
 					return ovr;
 				},

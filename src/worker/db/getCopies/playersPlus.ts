@@ -15,6 +15,7 @@ import type { StatSumsExtra } from "../../../common/processPlayerStats.basketbal
 import { idb } from "../index.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
+import { last } from "../../../common/utils.ts";
 
 type PlayersPlusOptionsRequired = Required<
 	Omit<
@@ -548,7 +549,7 @@ const processRatings = (
 				} else if (attr === "age") {
 					row.age = season - p.born.year;
 				} else if (attr === "pos") {
-					row.pos = p.ratings.at(-1)!.pos;
+					row.pos = last(p.ratings).pos;
 				} else if (attr === "abbrev") {
 					row.abbrev = "";
 				} else {

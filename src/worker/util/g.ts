@@ -8,6 +8,7 @@ import { PHASE } from "../../common/constants.ts";
 import { actualPhase } from "./actualPhase.ts";
 import { gameAttributeHasHistory } from "../../common/gameAttributeHasHistory.ts";
 import helpers from "./helpers.ts";
+import { last } from "../../common/utils.ts";
 
 // This will get filled by values from IndexedDB
 const g: GameAttributes & {
@@ -104,7 +105,7 @@ export const wrapNewValueIfCurrentlyWrapped = <
 		GameAttributesLeague[T]
 	>;
 
-	const latestRow = cloned.at(-1)!;
+	const latestRow = last(cloned);
 
 	let currentSeason;
 	let phase;

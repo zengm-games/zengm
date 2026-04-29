@@ -4,7 +4,7 @@ import {
 	EXHIBITION_GAME_SETTINGS,
 	PHASE,
 } from "../../common/constants.ts";
-import { orderBy } from "../../common/utils.ts";
+import { last, orderBy } from "../../common/utils.ts";
 import type {
 	Conditions,
 	GameAttributesLeague,
@@ -221,7 +221,7 @@ const getSeasonInfoLeague = async ({
 							valueNoPot: p.valueNoPot,
 							valueNoPotFuzz: p.valueNoPotFuzz,
 							ratings: {
-								pos: p.ratings.at(-1)!.pos,
+								pos: last(p.ratings).pos,
 							},
 						})),
 						tid,
@@ -332,16 +332,16 @@ export const getSeasonInfo = async (
 	}
 
 	for (const t of teams) {
-		t.players = orderBy(t.players, (p) => p.ratings.at(-1)!.ovr, "desc");
+		t.players = orderBy(t.players, (p) => last(p.ratings).ovr, "desc");
 		t.ovr = team.ovr(
 			t.players.map((p) => ({
 				pid: p.pid,
 				injury: p.injury,
 				value: p.value,
 				ratings: {
-					ovr: p.ratings.at(-1)!.ovr,
-					ovrs: p.ratings.at(-1)!.ovrs,
-					pos: p.ratings.at(-1)!.pos,
+					ovr: last(p.ratings).ovr,
+					ovrs: last(p.ratings).ovrs,
+					pos: last(p.ratings).pos,
 				},
 			})),
 			{

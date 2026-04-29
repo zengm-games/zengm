@@ -5,6 +5,7 @@ import type {
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
+import { last } from "../../../common/utils.ts";
 
 /**
  * Generate a contract for a player.
@@ -19,7 +20,7 @@ const genContract = (
 	randomizeAmount: boolean = true,
 	noLimit: boolean = false,
 ): PlayerContract => {
-	const ratings = p.ratings.at(-1)!;
+	const ratings = last(p.ratings);
 	let factor = g.get("salaryCapType") === "hard" ? 1.6 : 2;
 	let factor2 = 1;
 

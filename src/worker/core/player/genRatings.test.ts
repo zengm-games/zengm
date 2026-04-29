@@ -14,7 +14,7 @@ import { resetG } from "../../../test/helpers.ts";
 import { g } from "../../util/index.ts";
 import createRandomPlayers from "../league/create/createRandomPlayers.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
-import { range } from "../../../common/utils.ts";
+import { last, range } from "../../../common/utils.ts";
 
 const printQuartiles = async (age?: number) => {
 	if (age !== undefined) {
@@ -31,7 +31,7 @@ const printQuartiles = async (age?: number) => {
 
 	const ovrs = players
 		.filter((p) => p.tid >= PLAYER.FREE_AGENT)
-		.map((p) => p.ratings.at(-1)!.ovr)
+		.map((p) => last(p.ratings).ovr)
 		.sort((a, b) => a - b);
 	const quartiles = [0.25, 0.5, 0.75].map(
 		(fraction) => ovrs[Math.round(fraction * ovrs.length)],

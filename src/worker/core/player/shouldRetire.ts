@@ -1,7 +1,7 @@
 import { PHASE, PLAYER, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import { g, random } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts"; // Players meeting one of these cutoffs might retire
-import { range } from "../../../common/utils.ts";
+import { last, range } from "../../../common/utils.ts";
 import loadDataBasketball from "../realRosters/loadData.basketball.ts";
 import realRosters from "../realRosters/index.ts";
 import { idb } from "../../db/index.ts";
@@ -120,7 +120,7 @@ const shouldRetire = async (p: Player): Promise<boolean> => {
 		return false;
 	}
 
-	const { ovr, pos } = p.ratings.at(-1)!;
+	const { ovr, pos } = last(p.ratings);
 
 	// Originally this used pot, but pot is about 1.1*value, and value is consistent in leagues with different ratings distributions
 	const pot = 1.1 * p.value;

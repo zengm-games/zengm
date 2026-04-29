@@ -3,7 +3,7 @@ import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import type { TeamFiltered } from "../../common/types.ts";
 import advStatsSave from "./advStatsSave.ts";
-import { groupByUnique } from "../../common/utils.ts";
+import { groupByUnique, last } from "../../common/utils.ts";
 import helpers from "./helpers.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 import statsRowIsCurrent from "../core/player/statsRowIsCurrent.ts";
@@ -481,7 +481,7 @@ const calculateBPM = (
 
 		VORP[i] =
 			((BPM[i]! + 2) * playerMin[i]! * t.stats.gp) /
-			defaultGameAttributes.numGames.at(-1)!.value;
+			last(defaultGameAttributes.numGames).value;
 	}
 
 	return {

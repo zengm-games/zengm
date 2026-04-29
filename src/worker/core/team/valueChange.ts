@@ -10,6 +10,7 @@ import type {
 } from "../../../common/types.ts";
 import { getNumPicksPerRound } from "../trade/getPickValues.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { last } from "../../../common/utils.ts";
 
 type Asset =
 	| {
@@ -606,9 +607,9 @@ const refreshCache = async () => {
 				injury: p.injury,
 				value: p.value,
 				ratings: {
-					ovr: p.ratings.at(-1)!.ovr,
-					ovrs: p.ratings.at(-1)!.ovrs,
-					pos: p.ratings.at(-1)!.pos,
+					ovr: last(p.ratings).ovr,
+					ovrs: last(p.ratings).ovrs,
+					pos: last(p.ratings).pos,
 				},
 			})),
 		);
@@ -717,9 +718,9 @@ const getModifiedPickRank = async (
 		injury: p.injury,
 		value: p.value,
 		ratings: {
-			ovr: p.ratings.at(-1)!.ovr,
-			ovrs: p.ratings.at(-1)!.ovrs,
-			pos: p.ratings.at(-1)!.pos,
+			ovr: last(p.ratings).ovr,
+			ovrs: last(p.ratings).ovrs,
+			pos: last(p.ratings).pos,
 		},
 	}));
 

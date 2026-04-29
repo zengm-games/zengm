@@ -4,6 +4,7 @@ import { idb } from "../../db/index.ts";
 import moodComponents from "./moodComponents.ts";
 import type { Player } from "../../../common/types.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { last } from "../../../common/utils.ts";
 
 const hasActiveNegotiation = async (tid: number, pid: number) => {
 	return (await idb.cache.negotiations.getAll()).some(
@@ -127,7 +128,7 @@ const moodInfo = async (
 			tid +
 			p.pid +
 			p.stats.length +
-			p.ratings.at(-1)!.ovr +
+			last(p.ratings).ovr +
 			(p.stats.at(-1)?.min ?? 0);
 
 		if (isSport("baseball")) {

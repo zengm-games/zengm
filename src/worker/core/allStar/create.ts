@@ -9,7 +9,7 @@ import type {
 import { PLAYER } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import type { PlayerRatings } from "../../../common/types.basketball.ts";
-import { orderBy, range } from "../../../common/utils.ts";
+import { last, orderBy, range } from "../../../common/utils.ts";
 import { getPosByGpF } from "../season/doAwards.baseball.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { mvpScore } from "../season/doAwards.football.ts";
@@ -420,7 +420,7 @@ const create = async (conditions: Conditions) => {
 
 				const orderedByHeight = orderBy(
 					activePlayers,
-					(p) => p.ratings.at(-1)!.hgt,
+					(p) => last(p.ratings).hgt,
 					"desc",
 				);
 

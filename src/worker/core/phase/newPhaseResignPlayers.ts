@@ -10,7 +10,7 @@ import {
 import { idb } from "../../db/index.ts";
 import { g, helpers, local, logEvent } from "../../util/index.ts";
 import type { Conditions, PhaseReturn } from "../../../common/types.ts";
-import { orderBy } from "../../../common/utils.ts";
+import { last, orderBy } from "../../../common/utils.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../player/getNumPlayersTradedAwayNormalized.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 
@@ -93,7 +93,7 @@ const newPhaseResignPlayers = async (
 			}
 
 			const positionInfo = positionInfoByTid.get(p.tid);
-			const pos = p.ratings.at(-1)!.pos;
+			const pos = last(p.ratings).pos;
 
 			if (positionInfo !== undefined && positionInfo[pos] !== undefined) {
 				positionInfo[pos].count -= 1;
@@ -204,7 +204,7 @@ const newPhaseResignPlayers = async (
 			const payroll = payrollsByTid.get(p.tid);
 
 			const positionInfo = positionInfoByTid.get(p.tid);
-			const pos = p.ratings.at(-1)!.pos;
+			const pos = last(p.ratings).pos;
 
 			if (g.get("salaryCapType") === "hard") {
 				if (payroll === undefined) {
@@ -303,7 +303,7 @@ const newPhaseResignPlayers = async (
 		for (const p of draftProspects) {
 			p.draft.year += 1;
 			p.born.year += 1;
-			p.ratings.at(-1)!.season += 1;
+			last(p.ratings).season += 1;
 			await player.updateValues(p);
 			await idb.cache.players.put(p);
 		}

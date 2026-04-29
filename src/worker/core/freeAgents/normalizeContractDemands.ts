@@ -4,7 +4,7 @@ import { team, player, draft } from "../index.ts";
 import { g, helpers, random } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
-import { orderBy } from "../../../common/utils.ts";
+import { last, orderBy } from "../../../common/utils.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 
 const TEMP = 0.35;
@@ -16,7 +16,7 @@ const getExpiration = (
 	randomizeExp: boolean,
 	nextSeason?: boolean,
 ) => {
-	const { ovr, pot } = p.ratings.at(-1)!;
+	const { ovr, pot } = last(p.ratings);
 
 	// pot is predictable via age+ovr with R^2=0.94, so skip it b/c wasn't in data
 	const age = g.get("season") - p.born.year;

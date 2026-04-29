@@ -1,6 +1,7 @@
 import { PLAYER } from "../../../common/constants.ts";
 import { player } from "../index.ts";
 import { idb } from "../../db/index.ts";
+import { last } from "../../../common/utils.ts";
 
 const countSkills = async () => {
 	// All non-retired players
@@ -11,7 +12,7 @@ const countSkills = async () => {
 	const counts: Record<string, number> = {};
 
 	for (const p of players) {
-		const r = p.ratings.at(-1)!;
+		const r = last(p.ratings);
 
 		// Dynamically recompute, to make dev easier when changing skills formula
 		const skills = player.skills(r);

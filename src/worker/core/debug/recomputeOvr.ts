@@ -1,3 +1,4 @@
+import { last } from "../../../common/utils.ts";
 import { idb } from "../../db/index.ts";
 import { toUI } from "../../util/index.ts";
 import { player } from "../index.ts";
@@ -15,7 +16,7 @@ const recomputeOvr = async () => {
 	for await (const cursor of tx.store) {
 		const p = cursor.value;
 
-		const ratings = p.ratings.at(-1)!;
+		const ratings = last(p.ratings);
 		const ovr = player.ovr(ratings);
 		ovrs.push({
 			pid: p.pid,

@@ -15,6 +15,7 @@ import { actualPhase } from "../../util/actualPhase.ts";
 import { gameAttributeHasHistory } from "../../../common/gameAttributeHasHistory.ts";
 import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
 import { wrapFromStart } from "../../../common/defaultGameAttributes.ts";
+import { last } from "../../../common/utils.ts";
 
 const createGameAttributes = async (
 	{
@@ -80,8 +81,8 @@ const createGameAttributes = async (
 
 			// Handle league file with userTid history, but user selected a new team maybe
 			if (gameAttributeHasHistory(value)) {
-				const last = value.at(-1)!;
-				if (last.value === userTid) {
+				const lastValue = last(value);
+				if (lastValue.value === userTid) {
 					// Bring over history
 					gameAttributes.userTid = value;
 				} else {
@@ -106,9 +107,9 @@ const createGameAttributes = async (
 							currentSeason += 1;
 						}
 
-						if (last.start === currentSeason) {
+						if (lastValue.start === currentSeason) {
 							// Overwrite entry for this season
-							last.value = userTid;
+							lastValue.value = userTid;
 						} else {
 							// Add new entry
 							gameAttributes.userTid.push({

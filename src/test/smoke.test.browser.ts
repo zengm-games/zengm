@@ -12,6 +12,7 @@ import { deleteDB } from "@dumbmatter/idb";
 import createStreamFromLeagueObject from "../worker/core/league/create/createStreamFromLeagueObject.ts";
 import { LEAGUE_DATABASE_VERSION } from "../common/constants.ts";
 import { getDefaultSettings } from "../worker/views/newLeague.ts";
+import { last } from "../common/utils.ts";
 
 describe("Smoke Tests", () => {
 	let intervalID: number;
@@ -25,8 +26,8 @@ describe("Smoke Tests", () => {
 			const stream = createStreamFromLeagueObject({});
 
 			await league.createStream(stream, {
-				confs: defaultGameAttributes.confs.at(-1)!.value,
-				divs: defaultGameAttributes.divs.at(-1)!.value,
+				confs: last(defaultGameAttributes.confs).value,
+				divs: last(defaultGameAttributes.divs).value,
 				fromFile: {
 					gameAttributes: undefined,
 					hasRookieContracts: true,

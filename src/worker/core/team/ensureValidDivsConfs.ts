@@ -1,4 +1,5 @@
 import { PHASE } from "../../../common/constants.ts";
+import { last } from "../../../common/utils.ts";
 import { idb } from "../../db/index.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
 import { g } from "../../util/index.ts";
@@ -26,15 +27,15 @@ const ensureValidDivsConfs = async () => {
 			newCid = div.cid;
 		} else if (conf) {
 			// Put in last division of conference, if possible
-			const potentialDivs = divs.filter((d) => d.cid === conf.cid);
-			if (potentialDivs.length > 0) {
-				newDid = potentialDivs.at(-1)!.did;
+			const potentialDiv = divs.filter((d) => d.cid === conf.cid).at(-1);
+			if (potentialDiv) {
+				newDid = potentialDiv.did;
 			}
 		}
 
 		// If this hasn't resulted in a newCid or newDid, we need to pick a new one
 		if (newDid === undefined && newCid === undefined) {
-			const newDiv = divs.at(-1)!;
+			const newDiv = last(divs);
 			newDid = newDiv.did;
 			newCid = newDiv.cid;
 		}

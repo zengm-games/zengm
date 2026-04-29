@@ -2,7 +2,7 @@ import { idb } from "../../db/index.ts";
 import { g, helpers, local, random } from "../../util/index.ts";
 import type { Position } from "../../../common/types.baseball.ts";
 import type { Player, PlayerFiltered } from "../../../common/types.ts";
-import { groupByUnique, maxBy } from "../../../common/utils.ts";
+import { groupByUnique, last, maxBy } from "../../../common/utils.ts";
 
 const score = (p: PlayerFiltered, pos?: Position) => {
 	if (pos === undefined) {
@@ -318,7 +318,7 @@ const genDepth = async (
 	// Can't use getCopies in exhibition game, and also want to ignore fuzz, so just keep these two code paths
 	if (local.exhibitionGamePlayers) {
 		players = playersRaw.map((p) => {
-			const ratings = p.ratings.at(-1)!;
+			const ratings = last(p.ratings);
 			return {
 				pid: p.pid,
 				ratings: {

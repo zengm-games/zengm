@@ -1,4 +1,5 @@
 import type { UpdateEvents } from "../../common/types.ts";
+import { last } from "../../common/utils.ts";
 import { idb } from "../db/index.ts";
 
 const updateScheduledEvents = async (
@@ -29,7 +30,7 @@ const updateScheduledEvents = async (
 								info: {
 									pid: event.info.pid,
 									name: `${p.firstName} ${p.lastName}`,
-									skills: p.ratings.at(-1)!.skills,
+									skills: last(p.ratings).skills,
 								},
 							};
 						} else {

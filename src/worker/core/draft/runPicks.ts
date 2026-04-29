@@ -10,6 +10,7 @@ import type {
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
 import { player, team } from "../index.ts";
+import { last } from "../../../common/utils.ts";
 
 export const getTeamOvrDiffs = (
 	teamPlayers: PlayerWithoutKey[],
@@ -19,23 +20,26 @@ export const getTeamOvrDiffs = (
 		return [];
 	}
 
-	const teamPlayers2 = teamPlayers.map((p) => ({
-		pid: p.pid,
-		injury: p.injury,
-		value: p.value,
-		ratings: {
-			ovr: player.fuzzRating(p.ratings.at(-1)!.ovr, p.ratings.at(-1)!.fuzz),
-			ovrs: player.fuzzOvrs(p.ratings.at(-1)!.ovrs, p.ratings.at(-1)!.fuzz),
-			pos: p.ratings.at(-1)!.pos,
-		},
-	}));
+	const teamPlayers2 = teamPlayers.map((p) => {
+		const ratings = last(p.ratings);
+		return {
+			pid: p.pid,
+			injury: p.injury,
+			value: p.value,
+			ratings: {
+				ovr: player.fuzzRating(ratings.ovr, ratings.fuzz),
+				ovrs: player.fuzzOvrs(ratings.ovrs, ratings.fuzz),
+				pos: ratings.pos,
+			},
+		};
+	});
 
 	const baseline = team.ovr(teamPlayers2, {
 		wholeRoster: true,
 	});
 
 	return players.map((p) => {
-		const ratings = p.ratings.at(-1)!;
+		const ratings = last(p.ratings);
 		const newOvr = team.ovr(
 			[
 				...teamPlayers2,

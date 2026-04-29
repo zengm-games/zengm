@@ -6,6 +6,7 @@ import { g, helpers, local } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
 import { KEY_POSITIONS_NEEDED } from "../freeAgents/getBest.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { last } from "../../../common/utils.ts";
 
 export const dropPlayers = async (players: Player[], numToDrop: number) => {
 	// Automatically drop lowest value players until we reach g.get("maxRosterSize")
@@ -34,7 +35,7 @@ export const dropPlayers = async (players: Player[], numToDrop: number) => {
 		}
 
 		for (const p of players) {
-			const pos = p.ratings.at(-1)!.pos;
+			const pos = last(p.ratings).pos;
 
 			if (counts[pos] !== undefined) {
 				counts[pos] += 1;
@@ -76,7 +77,7 @@ export const dropPlayers = async (players: Player[], numToDrop: number) => {
 				hockey: true,
 			})
 		) {
-			const pos = p.ratings.at(-1)!.pos;
+			const pos = last(p.ratings).pos;
 
 			if (countsHealthyKey) {
 				// If this is a key position and there is only one healthy player, keep the healthy player

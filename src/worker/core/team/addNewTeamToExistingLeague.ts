@@ -6,6 +6,7 @@ import genStatsRow from "./genStatsRow.ts";
 import { draft, league } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { PHASE } from "../../../common/constants.ts";
+import { last } from "../../../common/utils.ts";
 
 const addNewTeamToExistingLeague = async (
 	teamInfo: {
@@ -32,10 +33,7 @@ const addNewTeamToExistingLeague = async (
 		throw new Error("No divisions");
 	}
 
-	let div = divs.find((d) => d.did === teamInfo.did);
-	if (!div) {
-		div = divs.at(-1)!;
-	}
+	const div = divs.find((d) => d.did === teamInfo.did) ?? last(divs);
 	const cid = div.cid;
 
 	const prevT =

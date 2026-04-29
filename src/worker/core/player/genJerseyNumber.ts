@@ -1,7 +1,8 @@
 import { idb } from "../../db/index.ts";
 import { random, helpers } from "../../util/index.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
-import { range } from "../../../common/utils.ts";
+import { last, range } from "../../../common/utils.ts";
+import type { NonEmptyArray } from "../../../common/types.ts";
 
 // Football/hockey gets 1-99
 const VALID_JERSEY_NUMBERS = range(1, 100).map(String);
@@ -421,9 +422,9 @@ const genJerseyNumber = async (
 		pid?: number;
 		tid: number;
 		jerseyNumber?: string;
-		ratings: {
+		ratings: NonEmptyArray<{
 			pos: string;
-		}[];
+		}>;
 		stats: any[];
 	},
 
@@ -486,7 +487,7 @@ const genJerseyNumber = async (
 	}
 
 	if (weightFunctionsByPosition) {
-		const pos = p.ratings.at(-1)!.pos;
+		const pos = last(p.ratings).pos;
 		if ((weightFunctionsByPosition as any)[pos]) {
 			return random.choice(candidates, (weightFunctionsByPosition as any)[pos]);
 		}

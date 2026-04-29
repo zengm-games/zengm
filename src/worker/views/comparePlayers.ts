@@ -7,7 +7,7 @@ import {
 } from "./customizePlayer.ts";
 import { shuffle } from "../../common/random.ts";
 import { g, getTeamInfoBySeason } from "../util/index.ts";
-import { maxBy } from "../../common/utils.ts";
+import { last, maxBy } from "../../common/utils.ts";
 import { getPlayerProfileStats } from "./player.ts";
 import type { SeasonType } from "../api/processInputs.ts";
 import { bySport } from "../../common/sportFunctions.ts";
@@ -343,7 +343,7 @@ const updateComparePlayers = async (
 				// Current season, if possible
 				const season =
 					p.ratings.findLast((row) => row.season === g.get("season"))?.season ??
-					p.ratings.at(-1)!.season;
+					last(p.ratings).season;
 
 				playersToShow.push({
 					pid: p.pid,
@@ -427,7 +427,7 @@ const updateComparePlayers = async (
 						p,
 						season,
 						firstSeason: pRaw.ratings[0].season,
-						lastSeason: pRaw.ratings.at(-1)!.season,
+						lastSeason: last(pRaw.ratings).season,
 						playoffs,
 					});
 				}

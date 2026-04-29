@@ -4,7 +4,7 @@ import type { ExpansionDraftSetupTeam } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
 import getUnusedAbbrevs from "../../common/getUnusedAbbrevs.ts";
 import { DEFAULT_JERSEY } from "../../common/constants.ts";
-import { orderBy } from "../../common/utils.ts";
+import { last, orderBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 
 const updateExpansionDraft = async () => {
@@ -27,7 +27,7 @@ const updateExpansionDraft = async () => {
 	const allAbbrevs = getUnusedAbbrevs(currentTeams);
 
 	const divs = g.get("divs", "current");
-	const div = divs.at(-1)!;
+	const div = last(divs);
 	const param = allAbbrevs.map((abbrev) => ({
 		tid: -1,
 		cid: div.cid,

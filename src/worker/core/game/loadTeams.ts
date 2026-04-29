@@ -9,6 +9,7 @@ import {
 } from "../../../common/constants.ts";
 import playThroughInjuriesFactor from "../../../common/playThroughInjuriesFactor.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { last } from "../../../common/utils.ts";
 
 const MAX_NUM_PLAYERS_PACE = 7;
 
@@ -152,16 +153,19 @@ export const processTeam = async (
 	const actualPlayThroughInjuries = getActualPlayThroughInjuries(teamInput);
 
 	// Injury-adjusted ovr
-	const playersCurrent = players.map((p) => ({
-		pid: p.pid,
-		injury: p.injury,
-		value: p.value,
-		ratings: {
-			ovr: player.fuzzRating(p.ratings.at(-1)!.ovr, p.ratings.at(-1)!.fuzz),
-			ovrs: player.fuzzOvrs(p.ratings.at(-1)!.ovrs, p.ratings.at(-1)!.fuzz),
-			pos: p.ratings.at(-1)!.pos,
-		},
-	}));
+	const playersCurrent = players.map((p) => {
+		const ratings = last(p.ratings);
+		return {
+			pid: p.pid,
+			injury: p.injury,
+			value: p.value,
+			ratings: {
+				ovr: player.fuzzRating(ratings.ovr, ratings.fuzz),
+				ovrs: player.fuzzOvrs(ratings.ovrs, ratings.fuzz),
+				pos: ratings.pos,
+			},
+		};
+	});
 	const ovr = team.ovr(playersCurrent, {
 		accountForInjuredPlayers: {
 			numDaysInFuture: 0,
@@ -202,7 +206,7 @@ export const processTeam = async (
 		const jerseyNumber =
 			p.stats.length > 0 ? p.stats.at(-1).jerseyNumber : p.jerseyNumber;
 
-		const rating = p.ratings.at(-1)!;
+		const rating = last(p.ratings);
 		const playerCompositeRatings: any = {};
 		const p2 = {
 			id: p.pid,

@@ -41,6 +41,7 @@ import getWinner from "../../../common/getWinner.ts";
 import { setLiveSimRatingsStatsPopoverPlayers } from "./setLiveSimRatingsStatsPopoverPlayers.ts";
 import { getOneUpcomingGame } from "../../util/recomputeLocalUITeamOvrs.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
+import { last } from "../../../common/utils.ts";
 
 /**
  * Play one or more days of games.
@@ -209,7 +210,7 @@ const play = async (
 					};
 					changed = true;
 					const healedText = `${
-						p.ratings.at(-1)!.pos
+						last(p.ratings).pos
 					} <a href="${helpers.leagueUrl(["player", p.pid])}">${p.firstName} ${
 						p.lastName
 					}</a>`;

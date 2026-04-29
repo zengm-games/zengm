@@ -19,6 +19,7 @@ import { g, getTeamInfoBySeason, helpers } from "../util/index.ts";
 import { assetIsPlayer, getPlayerFromPick } from "../util/formatEventText.ts";
 import { getRoundsWonText } from "./frivolitiesTeamSeasons.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { last } from "../../common/utils.ts";
 
 const findRatingsRow = (
 	allRatings: NonEmptyArray<MinimalPlayerRatings>,
@@ -39,7 +40,7 @@ const findRatingsRow = (
 			return ratings;
 		}
 
-		return allRatings.at(-1)!;
+		return last(allRatings);
 	} else {
 		for (let i = allRatings.length - 1; i >= 0; i--) {
 			const ratings = allRatings[i]!;

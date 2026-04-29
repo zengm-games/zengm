@@ -26,6 +26,7 @@ import { doExpand, doRelocate } from "./relocateExpand.ts";
 import addAward from "../player/addAward.ts";
 import { analyticsEventLocal } from "../../../common/analyticsEventLocal.ts";
 import { updateLotteryChancesAfterPlayoffs } from "../draft/cola.ts";
+import { last } from "../../../common/utils.ts";
 
 const INFLATION_GAME_ATTRIBUTES = [
 	"salaryCap",
@@ -365,7 +366,7 @@ const newPhaseBeforeDraft = async (
 			let bestOvr = 0;
 			let bestPlayer: Player | undefined;
 			for (const p of players) {
-				const ovr = p.ratings.at(-1)!.ovr;
+				const ovr = last(p.ratings).ovr;
 				if (ovr > bestOvr) {
 					bestOvr = ovr;
 					bestPlayer = p;

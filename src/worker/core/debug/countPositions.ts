@@ -2,6 +2,7 @@ import { PLAYER, POSITION_COUNTS } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import { player } from "../index.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
+import { last } from "../../../common/utils.ts";
 
 const countPositions = async () => {
 	// All non-retired players
@@ -17,7 +18,7 @@ const countPositions = async () => {
 	} = {};
 
 	for (const p of players) {
-		const r = p.ratings.at(-1)!;
+		const r = last(p.ratings);
 
 		// Dynamically recompute, to make dev easier when changing position formula
 		const position = player.pos(r);

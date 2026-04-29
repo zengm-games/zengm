@@ -5,6 +5,7 @@ import { idb } from "../../db/index.ts";
 import { g, helpers, local, logEvent } from "../../util/index.ts";
 import type { DraftPick } from "../../../common/types.ts";
 import getRookieContractLength from "./getRookieContractLength.ts";
+import { last } from "../../../common/utils.ts";
 
 /**
  * Select a player for the current drafting team.
@@ -43,7 +44,7 @@ const selectPlayer = async (dp: DraftPick, pid: number) => {
 			prevAbbrev: g.get("teamInfoCache")[prevTid]?.abbrev,
 		};
 
-		const { ovr, pot, skills } = p.ratings.at(-1)!;
+		const { ovr, pot, skills } = last(p.ratings);
 
 		fakeP.draft = {
 			round: dp.round,

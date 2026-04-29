@@ -4,7 +4,7 @@ import * as z from "zod";
 import type processInputs from "../worker/api/processInputs.ts";
 import type * as views from "../worker/views/index.ts";
 
-// Would be nice to make .at(-1) return T but idk how, so there is a lot of .at(-1)! in the codebase!
+// Would be nice to make .at(-1) return T but idk how, so use the `last` function instead!
 export type NonEmptyArray<T> = [T, ...T[]];
 
 export type Env = {

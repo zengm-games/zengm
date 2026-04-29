@@ -1,5 +1,6 @@
 import { idb } from "../../db/index.ts";
 import type { ContractInfo } from "../../../common/types.ts";
+import { last } from "../../../common/utils.ts";
 
 /**
  * Gets all the contracts a team owes.
@@ -14,7 +15,7 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 	// First, get players currently on the roster
 	const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 	const contracts = players.map((p) => {
-		const { pos, skills } = p.ratings.at(-1)!;
+		const { pos, skills } = last(p.ratings);
 		return {
 			pid: p.pid,
 			firstName: p.firstName,
@@ -46,7 +47,7 @@ const getContracts = async (tid: number): Promise<ContractInfo[]> => {
 		);
 
 		if (p) {
-			const { pos, skills } = p.ratings.at(-1)!;
+			const { pos, skills } = last(p.ratings);
 
 			// If a player is deleted, such as if the user deletes retired players, this will be undefined
 			contracts.push({

@@ -21,7 +21,7 @@ import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { applyRealTeamInfos } from "./NewLeague/index.tsx";
 import SettingsForm from "./Settings/SettingsForm.tsx";
-import { orderBy, range } from "../../common/utils.ts";
+import { last, orderBy, range } from "../../common/utils.ts";
 import { choice, randInt } from "../../common/random.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
 import { ActionButton } from "../components/ActionButton.tsx";
@@ -395,7 +395,7 @@ const SelectTeam = ({
 			<ul className="list-unstyled mb-0">
 				{playersToShow.map((p, i) => {
 					const stats = p.stats.at(-1);
-					const ratings = p.ratings.at(-1)!;
+					const ratings = last(p.ratings);
 
 					return (
 						<li key={p.pid} className={playerRowClassName(i)}>

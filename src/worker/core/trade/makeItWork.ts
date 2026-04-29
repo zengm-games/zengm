@@ -5,6 +5,7 @@ import isUntradable from "./isUntradable.ts";
 import { helpers } from "../../util/index.ts";
 import { COMPOSITE_WEIGHTS, POSITIONS } from "../../../common/constants.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
+import { last } from "../../../common/utils.ts";
 
 export type LookingFor = {
 	positions: Set<string>;
@@ -105,7 +106,7 @@ const tryAddAsset = async (
 
 		if (
 			lookingForSpecificPositions &&
-			!lookingForSpecificPositions.has(p.ratings.at(-1)!.pos)
+			!lookingForSpecificPositions.has(last(p.ratings).pos)
 		) {
 			continue;
 		}
@@ -225,7 +226,7 @@ const tryAddAsset = async (
 		if (lookingFor.skills.size > 0) {
 			for (const asset of assets) {
 				if (asset.type === "player") {
-					const ratings = asset.p.ratings.at(-1)!;
+					const ratings = last(asset.p.ratings);
 					for (const skill of lookingFor.skills) {
 						asset.score += player.compositeRating(
 							ratings,
@@ -252,7 +253,7 @@ const tryAddAsset = async (
 		} else if (lookingFor.prospects) {
 			for (const asset of assets) {
 				if (asset.type === "player") {
-					const ratings = asset.p.ratings.at(-1)!;
+					const ratings = last(asset.p.ratings);
 					const potDiff = ratings.pot - ratings.ovr;
 					asset.score += potDiff / 20;
 				}

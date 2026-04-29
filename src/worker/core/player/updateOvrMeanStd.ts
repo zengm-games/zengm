@@ -1,5 +1,6 @@
 import { local } from "../../util/index.ts";
 import { idb } from "../../db/index.ts";
+import { last } from "../../../common/utils.ts";
 
 const updateOvrMeanStd = async () => {
 	if (local.playerOvrMeanStdStale) {
@@ -11,14 +12,13 @@ const updateOvrMeanStd = async () => {
 		if (players.length > 0) {
 			let sum = 0;
 			for (const p of players) {
-				sum += p.ratings.at(-1)!.ovr;
+				sum += last(p.ratings).ovr;
 			}
 			local.playerOvrMean = sum / players.length;
 
 			let sumSquareDeviations = 0;
 			for (const p of players) {
-				sumSquareDeviations +=
-					(p.ratings.at(-1)!.ovr - local.playerOvrMean) ** 2;
+				sumSquareDeviations += (last(p.ratings).ovr - local.playerOvrMean) ** 2;
 			}
 			local.playerOvrStd = Math.sqrt(sumSquareDeviations / players.length);
 

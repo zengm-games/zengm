@@ -7,7 +7,7 @@ import { defaultGameAttributes, random } from "../../util/index.ts";
 import type { Settings } from "../../views/settings.ts";
 import formatPlayerFactory from "../realRosters/formatPlayerFactory.ts";
 import type { Basketball } from "../realRosters/loadData.basketball.ts";
-import { countBy, omit, orderBy } from "../../../common/utils.ts";
+import { countBy, last, omit, orderBy } from "../../../common/utils.ts";
 import { getNumPlayersPerTeam } from "./create/createRandomPlayers.ts";
 import { choice } from "../../../common/random.ts";
 
@@ -114,7 +114,7 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 
 				p.tid = tid;
 
-				const existingRatings = p.ratings.at(-1)!;
+				const existingRatings = last(p.ratings);
 
 				// Adjust age
 				const diff = season - ratingsToApply.season;

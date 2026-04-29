@@ -18,7 +18,7 @@ import type {
 } from "../../common/types.ts";
 import { PHASE } from "../../common/constants.ts";
 import local from "./local.ts";
-import { orderBy } from "../../common/utils.ts";
+import { last, orderBy } from "../../common/utils.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../core/player/getNumPlayersTradedAwayNormalized.ts";
 import { applyRealTeamInfo } from "../../common/applyRealTeamInfo.ts";
 
@@ -451,7 +451,7 @@ const processUnretirePlayer = async (pid: number) => {
 	}
 
 	// Player might need some new ratings rows added
-	const lastRatingsSeason = p.ratings.at(-1)!.season;
+	const lastRatingsSeason = last(p.ratings).season;
 	const diff = g.get("season") - lastRatingsSeason;
 	if (diff > 0) {
 		const scoutingLevel = await finances.getLevelLastThree("scouting", {
@@ -463,7 +463,7 @@ const processUnretirePlayer = async (pid: number) => {
 			player.addRatingsRow(p, scoutingLevel);
 
 			// Adjust season, since addRatingsRow always adds in current season
-			p.ratings.at(-1)!.season -= diff - i - 1;
+			last(p.ratings).season -= diff - i - 1;
 
 			await player.develop(p, 1);
 		}
@@ -473,7 +473,7 @@ const processUnretirePlayer = async (pid: number) => {
 	player.addToFreeAgents(p, await getNumPlayersTradedAwayNormalizedAll());
 	await idb.cache.players.put(p);
 
-	const ratings = p.ratings.at(-1)!;
+	const ratings = last(p.ratings);
 	const ovr = player.fuzzRating(ratings.ovr, ratings.fuzz);
 
 	// Only show notification if it's an above average player

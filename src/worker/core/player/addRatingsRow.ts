@@ -5,6 +5,7 @@ import type {
 	Player,
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
+import { last } from "../../../common/utils.ts";
 
 const addRatingsRow = (
 	p: Player | PlayerWithoutKey,
@@ -12,7 +13,7 @@ const addRatingsRow = (
 	injuryIndex?: number,
 ) => {
 	const newRatings: MinimalPlayerRatings = {
-		...p.ratings.at(-1)!,
+		...last(p.ratings),
 		season: g.get("season"),
 		injuryIndex: undefined,
 	};

@@ -44,10 +44,9 @@ export const PlayPauseNext = ({
 	titleNext?: string;
 	ignoreKeyboardShortcuts?: boolean;
 }) => {
-	useKeyboardShortcuts(
-		"playPauseNext",
-		undefined,
-		useCallback(
+	useKeyboardShortcuts({
+		category: "playPauseNext",
+		callback: useCallback(
 			(action) => {
 				if (!ignoreKeyboardShortcuts && !disabled) {
 					if (paused) {
@@ -79,7 +78,7 @@ export const PlayPauseNext = ({
 				paused,
 			],
 		),
-	);
+	});
 
 	const keyboardShortcutsLocal = useLocal((state) => state.keyboardShortcuts);
 	const formattedShortcutPlayPause = formatKeyboardShortcut(

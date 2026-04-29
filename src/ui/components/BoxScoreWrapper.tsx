@@ -1107,10 +1107,9 @@ export const BoxScoreWrapper = ({
 		forceRowUpdate = true;
 	}
 
-	useKeyboardShortcuts(
-		"boxScore",
-		undefined,
-		useCallback(
+	useKeyboardShortcuts({
+		category: "boxScore",
+		callback: useCallback(
 			(action) => {
 				if (showNextPrev) {
 					let gid;
@@ -1136,7 +1135,7 @@ export const BoxScoreWrapper = ({
 			},
 			[abbrev, boxScore.season, nextGid, prevGid, showNextPrev, tid],
 		),
-	);
+	});
 
 	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
 	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll

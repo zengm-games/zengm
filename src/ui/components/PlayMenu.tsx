@@ -27,10 +27,9 @@ const PlayMenu = ({
 	spectator: boolean;
 	options: Option[];
 }) => {
-	useKeyboardShortcuts(
-		"playMenu",
-		undefined,
-		useCallback(
+	useKeyboardShortcuts({
+		category: "playMenu",
+		callback: useCallback(
 			async (action) => {
 				const option = options.find(
 					(option2) => option2.keyboardShortcut === action,
@@ -64,7 +63,7 @@ const PlayMenu = ({
 			},
 			[options],
 		),
-	);
+	});
 
 	const keyboardShortcutsLocal = useLocal((state) => state.keyboardShortcuts);
 

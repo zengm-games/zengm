@@ -53,13 +53,13 @@ const KEYBOARD_SHORTCUT_KEYS_OTHER = ["up", "down"] as const;
 const useCommandPalette = () => {
 	const [show, setShow] = useState(false);
 
-	useKeyboardShortcuts(
-		"commandPallete",
-		KEYBOARD_SHORTCUT_KEYS_OPEN,
-		useCallback(() => {
+	useKeyboardShortcuts({
+		category: "commandPallete",
+		actions: KEYBOARD_SHORTCUT_KEYS_OPEN,
+		callback: useCallback(() => {
 			setShow((current) => !current);
 		}, []),
-	);
+	});
 
 	const onHide = useCallback(() => {
 		setShow(false);
@@ -827,10 +827,10 @@ const CommandPaletteInner = ({
 		}
 	}, [show]);
 
-	useKeyboardShortcuts(
-		"commandPallete",
-		KEYBOARD_SHORTCUT_KEYS_OTHER,
-		useCallback(
+	useKeyboardShortcuts({
+		category: "commandPallete",
+		actions: KEYBOARD_SHORTCUT_KEYS_OTHER,
+		callback: useCallback(
 			(action) => {
 				if (!show) {
 					return;
@@ -864,7 +864,10 @@ const CommandPaletteInner = ({
 			},
 			[count, setActiveIndex, show],
 		),
-	);
+
+		// This is so it works while search box is active
+		disableWhileEditing: false,
+	});
 
 	if (!show) {
 		return null;

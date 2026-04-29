@@ -82,7 +82,9 @@ const g: GameAttributes & {
 	},
 };
 
-export const wrap = <T extends keyof GameAttributesLeague>(
+export const wrapNewValueIfCurrentlyWrapped = <
+	T extends keyof GameAttributesLeague,
+>(
 	gameAttributes: any,
 	key: T,
 	value: GameAttributesLeague[T],

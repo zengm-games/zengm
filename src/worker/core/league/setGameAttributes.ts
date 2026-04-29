@@ -7,7 +7,7 @@ import {
 	initUILocalGames,
 	local,
 } from "../../util/index.ts";
-import { wrap } from "../../util/g.ts";
+import { wrapNewValueIfCurrentlyWrapped } from "../../util/g.ts";
 import type { GameAttributesLeague } from "../../../common/types.ts";
 import { draft, team } from "../index.ts";
 import gameAttributesToUI from "./gameAttributesToUI.ts";
@@ -101,7 +101,7 @@ const setGameAttributes = async (
 	};
 
 	for (const key of toUpdate) {
-		const value = wrap(g, key, gameAttributes[key]);
+		const value = wrapNewValueIfCurrentlyWrapped(g, key, gameAttributes[key]);
 		updatedGameAttributes[key] = value;
 
 		await idb.cache.gameAttributes.put({

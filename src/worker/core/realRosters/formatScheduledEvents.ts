@@ -6,7 +6,7 @@ import type {
 } from "../../../common/types.ts";
 import { PHASE } from "../../../common/constants.ts";
 import { ALWAYS_WRAP } from "../league/loadGameAttributes.ts";
-import { wrap } from "../../util/g.ts";
+import { wrapNewValueIfCurrentlyWrapped } from "../../util/g.ts";
 import { orderBy } from "../../../common/utils.ts";
 import { gameAttributeHasHistory } from "../../../common/gameAttributeHasHistory.ts";
 
@@ -55,10 +55,15 @@ const processGameAttributes = (
 					];
 				}
 
-				prevState[key] = wrap(prevState, key as any, value, {
-					season: event.season,
-					phase: event.phase,
-				});
+				prevState[key] = wrapNewValueIfCurrentlyWrapped(
+					prevState,
+					key as any,
+					value,
+					{
+						season: event.season,
+						phase: event.phase,
+					},
+				);
 			}
 		}
 	}

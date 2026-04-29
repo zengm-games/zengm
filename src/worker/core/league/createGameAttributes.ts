@@ -7,7 +7,7 @@ import type {
 	GameAttributeWithHistory,
 } from "../../../common/types.ts";
 import { defaultGameAttributes, logEvent } from "../../util/index.ts";
-import { wrap } from "../../util/g.ts";
+import { wrapNewValueIfCurrentlyWrapped } from "../../util/g.ts";
 import getInitialNumGamesConfDivSettings from "../season/getInitialNumGamesConfDivSettings.ts";
 import type { TeamInfo } from "./createStream.ts";
 import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries.ts";
@@ -237,8 +237,12 @@ const createGameAttributes = async (
 
 	// If we're using some non-default value of numGamesPlayoffSeries, set byes to 0 otherwise it might break for football where the default number of byes is 4
 	if (JSON.stringify(oldNumGames) !== JSON.stringify(newNumGames)) {
-		gameAttributes.numPlayoffByes = wrap(gameAttributes, "numPlayoffByes", 0);
-		gameAttributes.numGamesPlayoffSeries = wrap(
+		gameAttributes.numPlayoffByes = wrapNewValueIfCurrentlyWrapped(
+			gameAttributes,
+			"numPlayoffByes",
+			0,
+		);
+		gameAttributes.numGamesPlayoffSeries = wrapNewValueIfCurrentlyWrapped(
 			gameAttributes,
 			"numGamesPlayoffSeries",
 			newNumGames,

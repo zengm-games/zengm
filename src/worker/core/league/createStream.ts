@@ -48,7 +48,7 @@ import {
 	updatePhase,
 	updateStatus,
 } from "../../util/index.ts";
-import g, { wrap } from "../../util/g.ts";
+import g, { wrapNewValueIfCurrentlyWrapped } from "../../util/g.ts";
 import type { Settings } from "../../views/settings.ts";
 import { getAutoTicketPriceByTid } from "../game/attendance.ts";
 import addRelatives from "../realRosters/addRelatives.ts";
@@ -485,10 +485,15 @@ const finalizeGameAttributes = async ({
 		}
 
 		// If we're overriding a value with history, keep the history
-		finalized[key] = wrap(finalized, key, gameAttributeOverrides[key], {
-			season: finalized.season ?? startingSeason,
-			phase,
-		});
+		finalized[key] = wrapNewValueIfCurrentlyWrapped(
+			finalized,
+			key,
+			gameAttributeOverrides[key],
+			{
+				season: finalized.season ?? startingSeason,
+				phase,
+			},
+		);
 	}
 
 	if (

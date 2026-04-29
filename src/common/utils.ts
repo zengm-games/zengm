@@ -3,12 +3,15 @@
 import type { NonEmptyArray } from "./types.ts";
 
 // iteratee can be a function taking item and returning number/string, or a number/string of a property of item
-const getValueByIteratee = (iteratee: any, item: any) => {
+const getValueByIteratee = <T, K extends keyof T, R>(
+	iteratee: ((item: T) => R) | K,
+	item: T,
+) => {
 	if (typeof iteratee === "function") {
 		return iteratee(item);
 	}
 
-	return item[iteratee];
+	return item[iteratee] as string | number;
 };
 
 // Similar to lodash's keyBy, except it errors on duplicate keys.
@@ -92,7 +95,7 @@ export const omit = <T extends Record<string, unknown>, U extends (keyof T)[]>(
 
 export const countBy = <T>(
 	items: Iterable<T>,
-	iteratee: string | ((item: T) => number | string),
+	iteratee: keyof T | ((item: T) => number | string),
 ) => {
 	const output: Record<string, number> = {};
 
@@ -117,8 +120,7 @@ const createSortFunction = <Item, Key extends OrderByKey<Item>>(
 	const ordersArray = typeof orders === "string" ? [orders] : orders;
 
 	return (a: Item, b: Item) => {
-		for (let i = 0; i < keysArray.length; i++) {
-			const key = keysArray[i];
+		for (const [i, key] of keysArray.entries()) {
 			const order = ordersArray?.[i];
 
 			const valueA = getValueByIteratee(key, a) ?? Infinity;

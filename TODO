@@ -1,3 +1,14 @@
+nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes-new-anti-tanking-proposal-draft-lottery
+- real player data
+- Teams that do not qualify for the playoffs or play-in tournament but stay out of the relegation zone (spots four through 10) would receive three lottery balls each.
+- Teams with a bottom-three record -- the relegation area -- would have only two lottery balls
+- but have a floor of the No. 12 pick, and the rest of the 13 lottery teams could fall as far as the No. 16 pick.
+  - NHL also has a constraint like this (kind of, it's the opposite about how far a team can jump, and is kind of weird) can we generalize?
+- The Nos. 9 and 10 play-in seeds in each conference receive two lottery balls each, and the losers of the 7-8 play-in games receive one lottery ball each.
+- no team would be able to win the top pick in consecutive years or be able to win three consecutive top-five picks
+  - NHL has a constraint like this, can we generalize?
+- wait until finalized to implement
+
 in BBGM sometimes (about once per decade) a player is injured immediately after subbing in, in which case they have 1 GP with 0 min because no time has elapsed
 
 hockey live sim make power play or pulled goalie more prominent in UI https://discord.com/channels/@me/662077709836484618/1498390413315149976

@@ -1704,6 +1704,8 @@ const migrate = async ({
 			}
 		}
 	}
+
+	// Next update - do similar to above for numPlayoffRounds and draftType, from loadGameAttributes
 };
 
 const connectLeague = (lid: number) =>

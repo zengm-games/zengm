@@ -209,10 +209,10 @@ export const allFilters = allFiltersTemp as Record<
 		options: Record<string, AdvancedPlayerSearchField>;
 	}
 >;
-for (const [category, { options }] of Object.entries(allFiltersTemp)) {
+for (const [category, { options }] of Object.entries(allFilters)) {
 	for (const [key, value] of Object.entries(options)) {
-		(value as any).key = key;
-		(value as any).category = category;
+		value.key = key;
+		value.category = category;
 	}
 }
 

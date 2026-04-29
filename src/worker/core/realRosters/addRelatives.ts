@@ -10,6 +10,8 @@ let allRelativesBySlug:
 const addRelatives = (
 	players: (
 		| {
+				firstName?: undefined;
+				lastName?: undefined;
 				name: string;
 				pid: number;
 				srID?: string;
@@ -18,6 +20,7 @@ const addRelatives = (
 		| {
 				firstName: string;
 				lastName: string;
+				name?: undefined;
 				pid: number;
 				srID?: string;
 				relatives?: Relative[];
@@ -47,9 +50,7 @@ const addRelatives = (
 			const playersTemp = playersBySlug[relative.slug2];
 			if (playersTemp) {
 				for (const p2 of playersTemp) {
-					const name =
-						(p2 as any).name ??
-						`${(p2 as any).firstName} ${(p2 as any).lastName}`;
+					const name = p2.name ?? `${p2.firstName} ${p2.lastName}`;
 					relatives2.push({
 						type: relative.type,
 						name,

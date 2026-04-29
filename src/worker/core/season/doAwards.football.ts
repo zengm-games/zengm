@@ -468,7 +468,7 @@ const doAwards = async (season: number, conditions: Conditions) => {
 
 	const opoyPlayers = getTopPlayers(
 		{
-			amount: 1,
+			amount: Infinity,
 			score: opoyScore,
 		},
 		players,
@@ -529,7 +529,7 @@ const doAwards = async (season: number, conditions: Conditions) => {
 	);
 	const dpoy = getTopByPos(dpoyPlayers, DEFENSIVE_POSITIONS);
 
-	const allLeague = makeTeams(mvpPlayers, poyPlayers, dpoyPlayers);
+	const allLeague = makeTeams(opoyPlayers, poyPlayers, dpoyPlayers);
 
 	const oroyPlayers = getTopPlayers(
 		{

@@ -451,7 +451,7 @@ const advStats = async () => {
 			},
 			players2,
 		);
-		// Can pass dpoyPLayers for all becuase the offensive/OL players don't matter
+		// Can pass dpoyPlayers for all because the offensive/OL players don't matter
 		const allLeague = makeTeams(dpoyPlayers, dpoyPlayers, dpoyPlayers);
 
 		for (let i = 0; i < allLeague.length; i++) {

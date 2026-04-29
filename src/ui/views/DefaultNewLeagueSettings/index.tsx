@@ -117,7 +117,7 @@ const DefaultNewLeagueSettings = ({
 			...settings1,
 		};
 
-		const allowedKeys = new Set<string>(
+		const allowedKeys = new Set<keyof typeof settings2>(
 			settings.flatMap((setting) =>
 				setting.partners ? [setting.key, ...setting.partners] : setting.key,
 			),
@@ -126,7 +126,7 @@ const DefaultNewLeagueSettings = ({
 		allowedKeys.add("godModeInPast");
 
 		for (const key of helpers.keys(settings2)) {
-			if (!allowedKeys.has(key as any)) {
+			if (!allowedKeys.has(key)) {
 				delete settings2[key];
 			}
 		}

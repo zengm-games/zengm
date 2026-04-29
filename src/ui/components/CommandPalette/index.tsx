@@ -312,6 +312,7 @@ const getResultsGroupedLeagues = async ({
 		text: string | string[];
 		search?: string;
 		anchorProps: AnchorProps;
+		hideCollapsedCategory?: boolean;
 	}[] = [
 		{
 			category: undefined,
@@ -454,8 +455,9 @@ const getResultsGrouped = async ({
 		results: {
 			anchorProps: AnchorProps;
 			category?: string;
-			text: string | string[];
+			hideCollapsedCategory?: boolean;
 			prefix?: ReactNode;
+			text: string | string[];
 		}[];
 	}[];
 	if (mode?.key === "/") {
@@ -652,9 +654,7 @@ const SearchResults = memo(
 			for (const { results } of resultsGrouped) {
 				for (const result of results) {
 					const categoryPrefix =
-						collapseGroups &&
-						result.category &&
-						!(result as any).hideCollapsedCategory
+						collapseGroups && result.category && !result.hideCollapsedCategory
 							? result.category
 							: undefined;
 

@@ -10,17 +10,16 @@ import {
 } from "./awards.ts";
 import { idb } from "../../db/index.ts";
 import { defaultGameAttributes, g, helpers } from "../../util/index.ts";
-import type {
-	Conditions,
-	Game,
-	PlayerFiltered,
-} from "../../../common/types.ts";
+import type { Conditions, PlayerFiltered } from "../../../common/types.ts";
 import type {
 	AwardPlayer,
 	AwardPlayerDefense,
 	Awards,
 } from "../../../common/types.basketball.ts";
-import { orderBy } from "../../../common/utils.ts";
+import {
+	getPlayoffSeriesMVP,
+	getRealFinalsMvp,
+} from "./finalsMvp.basketball.ts";
 
 const getPlayerInfoOffense = (p: PlayerFiltered): AwardPlayer => {
 	return {
@@ -88,102 +87,6 @@ const makeTeams = <T>(
 			players: players.slice(10, 15),
 		},
 	];
-};
-
-const getPlayoffSeriesMVP = (players: PlayerFiltered[], games: Game[]) => {
-	if (games.length === 0) {
-		return;
-	}
-
-	// Champ is winner of the last game in the series
-	const wonSeriesTid = games.at(-1)!.won.tid;
-
-	// Calculate sum of game scores for each player
-	const playerInfos: Map<
-		number,
-		{
-			pid: number;
-			score: number;
-			tid: number;
-			pts: number;
-			trb: number;
-			ast: number;
-			gp: number;
-		}
-	> = new Map();
-
-	for (const game of games) {
-		for (const t of game.teams) {
-			for (const p of t.players) {
-				const info = playerInfos.get(p.pid) ?? {
-					pid: p.pid,
-					score: 0,
-					tid: t.tid,
-					pts: 0,
-					trb: 0,
-					ast: 0,
-					gp: 0,
-				};
-
-				// 75% bonus for the winning team
-				const factor = t.tid === wonSeriesTid ? 1.75 : 1;
-				info.score += factor * helpers.gameScore(p);
-				info.pts += p.pts;
-				info.trb += p.drb + p.orb;
-				info.ast += p.ast;
-				if (p.min > 0) {
-					info.gp += 1;
-				}
-				playerInfos.set(p.pid, info);
-			}
-		}
-	}
-
-	const playerArray = orderBy(
-		Array.from(playerInfos.values()),
-		"score",
-		"desc",
-	);
-
-	if (!playerArray[0]) {
-		return;
-	}
-
-	const { pid } = playerArray[0];
-	const p = players.find((p2) => p2.pid === pid);
-
-	if (p) {
-		return {
-			pid: p.pid,
-			name: p.name,
-			tid: p.tid,
-			pts: playerArray[0].pts / playerArray[0].gp,
-			trb: playerArray[0].trb / playerArray[0].gp,
-			ast: playerArray[0].ast / playerArray[0].gp,
-		};
-	}
-};
-
-const getRealFinalsMvp = async (
-	players: PlayerFiltered[],
-): Promise<AwardPlayer | undefined> => {
-	const games = await idb.cache.games.getAll();
-
-	// Last game of the season will have the two finals teams
-	const finalsTids = games.at(-1)?.teams.map((t) => t.tid);
-	if (finalsTids === undefined) {
-		return;
-	}
-
-	// Get all playoff games between those two teams - that will be all finals games
-	const finalsGames = games.filter(
-		(game) =>
-			game.playoffs &&
-			finalsTids.includes(game.teams[0].tid) &&
-			finalsTids.includes(game.teams[1].tid),
-	);
-
-	return getPlayoffSeriesMVP(players, finalsGames);
 };
 
 const getSemiFinalsMvp = async (
@@ -484,7 +387,7 @@ const doAwards = async (conditions: Conditions) => {
 
 	if (champTeam) {
 		const champTid = champTeam.tid;
-		finalsMvp = await getRealFinalsMvp(players);
+		finalsMvp = await getRealFinalsMvp(players, g.get("season"));
 
 		// If for some reason there is no Finals MVP (like if the finals box scores were not found), use total playoff stats
 		if (finalsMvp === undefined) {

@@ -594,7 +594,7 @@ in late game critical situations (like tied, 0 outs, bases loaded) there should 
 zgmb should have more doubles and triples https://discord.com/channels/290013534023057409/944392892905037885/1332600467502661717
 
 bulk actions - tables should be aware that rows are players who have pids. add bulk/all/select operations at table-level through ... menu
-- some way in typescript to impose the type of metadata in a table - rows can only have one type of metadata (or no metadata in some rows is fine, like drafted players table) 
+- some way in typescript to impose the type of metadata in a table - rows can only have one type of metadata (or no metadata in some rows is fine, like drafted players table)
   - if this was done, then most metadata type checks like `metadata.type === "player"` in BulkActions and ExportPlayers would not be needed, those are just for typescript
   - something like this works, but is kind of annoying with the generic being needed in various places:
     `type RowOfType<T extends RowMetadata["type"]> = T extends RowMetadata["type"] ? { metadata: Extract<RowMetadata, { type: T }>; other: string } : never;`
@@ -1602,8 +1602,8 @@ football penalty later
 - option to apply penalty on kickoff, for extra points
 - option to redo punt or not
 - double foul after change of possession edge cases to test
-  - If this spot is normally a touchback, the ball is placed on the 20-yard line.  
-  - If normally a safety, place the ball on one-yard line. 
+  - If this spot is normally a touchback, the ball is placed on the 20-yard line.
+  - If normally a safety, place the ball on one-yard line.
 
 football game sim later
 - should separate catch and run after catch
@@ -1863,7 +1863,6 @@ force resign button under lock ratings, keep a man on one team
 - @dooby moogey#2784
 
 award editor
-- Finals MVP displays regular season stats if you change it to someone who also played in that same finals. https://discord.com/channels/290013534023057409/290015591216054273/787237109924495412
 - support editing seasons older than the start of the league
 
 UI for selecting a custom set of teams in a new league
@@ -2560,7 +2559,7 @@ make AI smarter about contracts
 
 cache index updating
 - currenty: check if the indexed property has changed, and only update a specific index then
-- would be better: make _dirtyIndexes per index, not per store  
+- would be better: make _dirtyIndexes per index, not per store
 - even better: incrementally update index
 
 later
@@ -2988,21 +2987,21 @@ update formulas
 
 @TheRealGWood#4891 Team traits
   Have you ever played CK2?
-  I ask because the more comments I see like that reddit post the more simple I think replacing Mood with traits would work. 
+  I ask because the more comments I see like that reddit post the more simple I think replacing Mood with traits would work.
   CK2 uses them. You can created TRID trait ID store as 1-10 or something fir starters-
-  Injury prone - 10% higher injury frequency 
-  Chronic injury- 20% higher injury chance, 10% higher - result from injury 
+  Injury prone - 10% higher injury frequency
+  Chronic injury- 20% higher injury chance, 10% higher - result from injury
   Erratic- -5 Mood, -5 for every other erratic or Ego
   Ego- +5 mood, -10 minutes under 30 or usuage under 28%
-  Demands a Trade- Won’t resign. -10 team mood 
+  Demands a Trade- Won’t resign. -10 team mood
   Team leader- +5 team mood, +1DIQ team, +1 OIQ team
-  Savy Vet- better team progs, +1 team mood , unhappy if losing 
+  Savy Vet- better team progs, +1 team mood , unhappy if losing
   Team player- +1 team mood
   Ball hog- -1 team mood +1 mood if usuage over 25%
   Farewell season- +3 in all traits final game and forced retire at end of season, +1 team mood
-  Franchise player - (only over 70’s) max 1 per team or mood= -10, 
-  Star- team mood + 0.5, savy vets more likley to sign 
-  Bookworm- +3 OIQ/DIQ 
+  Franchise player - (only over 70’s) max 1 per team or mood= -10,
+  Star- team mood + 0.5, savy vets more likley to sign
+  Bookworm- +3 OIQ/DIQ
   Idiot- -3 OIQ/ DIQ , team mood -1
 
   Team traits-
@@ -3017,21 +3016,21 @@ update formulas
   Hardworking
   Workaholic
 
-  Out of Shape 
-  Prime Shape 
+  Out of Shape
+  Prime Shape
 
-  Streaky 
-  Consistent 
+  Streaky
+  Consistent
 
   Clutch
-  Choke artist 
+  Choke artist
 
   And settable traits-
-  Minutes restriction 
-  Load management 
+  Minutes restriction
+  Load management
   Sixth man (won’t start)
-  Primary ball handler 
-  Primary scorer 
+  Primary ball handler
+  Primary scorer
   Go to Shooter
 
 FUTURE

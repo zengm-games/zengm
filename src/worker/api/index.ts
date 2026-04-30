@@ -114,6 +114,7 @@ import type { IDBPIndex, IDBPObjectStore } from "@dumbmatter/idb";
 import { upgradeGamesVersion65, type LeagueDB } from "../db/connectLeague.ts";
 import playMenu from "./playMenu.ts";
 import toolsMenu from "./toolsMenu.ts";
+import { getFinalsStatsForPlayer } from "../core/season/finalsMvp.basketball.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import statsBaseball from "../core/team/stats.baseball.ts";
 import { extraRatings } from "../views/playerRatings.ts";
@@ -4534,6 +4535,19 @@ const updateAwards = async (
 	awards: any,
 	conditions: Conditions,
 ): Promise<any> => {
+	if (isSport("basketball") && awards.finalsMvp?.pid !== undefined) {
+		const finalsStats = await getFinalsStatsForPlayer(
+			awards.season,
+			awards.finalsMvp.pid,
+		);
+		if (finalsStats) {
+			awards.finalsMvp = {
+				...awards.finalsMvp,
+				...finalsStats,
+			};
+		}
+	}
+
 	const awardsInitial = await idb.getCopy.awards(
 		{
 			season: awards.season,

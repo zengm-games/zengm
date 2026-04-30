@@ -28,7 +28,6 @@ import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/constants.ts";
 import type { TeamNum } from "../../../common/types.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
-
 const FIELD_GOAL_DISTANCE_YARDS_ADDED_FROM_SCRIMMAGE = 17;
 
 const ESTIMATED_SECONDS_PER_KNEEL = 42;
@@ -65,6 +64,7 @@ const fatigue = (energy: number, injured: boolean): number => {
 
 	return energy;
 };
+export type TeamPlayType = ReturnType<GameSim["getPlayType"]>;
 
 class GameSim extends GameSimBase {
 	team: [TeamGameSim, TeamGameSim];
@@ -100,7 +100,7 @@ class GameSim extends GameSimBase {
 	awaitingAfterTouchdown = false;
 
 	awaitingAfterSafety = false;
-
+	awaitingFirstPlayOfQuarter = false;
 	awaitingKickoff: TeamNum | undefined;
 	lastHalfAwaitingKickoff: TeamNum;
 
@@ -390,6 +390,7 @@ class GameSim extends GameSimBase {
 				this.playUntimedPossession
 			) {
 				this.simPlay();
+				this.awaitingFirstPlayOfQuarter = false;
 			}
 
 			// Who gets the ball after halftime?
@@ -408,6 +409,9 @@ class GameSim extends GameSimBase {
 			}
 
 			quarter += 1;
+			// Once quarter is locked, set clock running to false until next play ran
+			this.isClockRunning = false;
+			this.awaitingFirstPlayOfQuarter = true;
 
 			this.team[0].stat.ptsQtrs.push(0);
 			this.team[1].stat.ptsQtrs.push(0);
@@ -1042,6 +1046,7 @@ class GameSim extends GameSimBase {
 			dtClockRunning = helpers.bound(clockAtEndOfPlay - 2, 0, Infinity);
 		}
 
+		// TODO: Modify this, to call the decrement clock function
 		// Clock
 		dt += dtClockRunning;
 		this.clock -= dt;
@@ -1309,6 +1314,232 @@ class GameSim extends GameSimBase {
 		this.updateTeamCompositeRatings();
 	}
 
+	/**
+	 * This function determines whether a team should call a timeout, and if so, the reasoning behind it.
+	 *
+	 * If no timeout is called, return undefined.
+	 * If a timeout is called to stop the clock, return "toStopClock".
+	 * If a timeout is called for another reason, return "other".
+	 * Stopping the clock supercedes reasons for calling a timeout.
+	 * @param t
+	 * @param playType
+	 * @returns
+	 */
+	shouldCallTimeout(
+		t: TeamNum,
+		teamHasPossession: boolean,
+		playType: ReturnType<GameSim["getPlayType"]>,
+		twoMinuteWarning: boolean,
+		quarter: number,
+		distance: number,
+		timeRemaining: number,
+		currentDown: number,
+		yardsToGo: number,
+	): undefined | "toStopClock" | "other" {
+		// Timeout cannot be called
+		if (playType === "kickoff" || playType === "onsideKick") {
+			return undefined;
+		}
+		if (playType === "extraPoint" || playType === "twoPointConversion") {
+			return undefined;
+		}
+		if (this.awaitingFirstPlayOfQuarter) {
+			return undefined;
+		}
+		if (this.timeouts[t] <= 0) {
+			return undefined;
+		}
+		let finalDecision = undefined;
+		const randomChanceTimeout = Math.random();
+		const RED_ZONE_DISTANCE = 20;
+		// TODO: FIND THIS OUT. Its ball position - scrimmage, not sure if this is fully correct
+		const distanceToGoalLine = 100 - this.scrimmage;
+		const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
+		const ONE_SCORE_GAME = Math.abs(diff) <= 8;
+		const inFinalPeriod = quarter >= this.numPeriods;
+		const inPeriodBeforeHalftime = quarter === Math.ceil(this.numPeriods / 2);
+		const clockRunning = this.isClockRunning;
+		// Redzone playcall timeout. Different percentages based on down, defense, offense, and score.
+		// If score is close, timeout is more likely, especially for offense.
+		const redZonePlayCallTimeout = () => {
+			if (distance > RED_ZONE_DISTANCE) {
+				return undefined;
+			}
+			const OFFENSE_TIMEOUT_PROBABILITY = 0.08;
+			const DEFENSE_TIMEOUT_PROBABILITY = 0.05;
+			// TODO: Make timeout probability 2x higher if game is close for offense, 1.5x for defense
+			if (currentDown >= 3) {
+				if (yardsToGo <= 5) {
+					if (teamHasPossession) {
+						return randomChanceTimeout < OFFENSE_TIMEOUT_PROBABILITY
+							? "other"
+							: undefined;
+					} else {
+						return randomChanceTimeout < DEFENSE_TIMEOUT_PROBABILITY
+							? "other"
+							: undefined;
+					}
+				} else if (yardsToGo <= 10) {
+					if (teamHasPossession) {
+						return randomChanceTimeout < OFFENSE_TIMEOUT_PROBABILITY * 0.5
+							? "other"
+							: undefined;
+					} else {
+						return randomChanceTimeout < DEFENSE_TIMEOUT_PROBABILITY * 0.5
+							? "other"
+							: undefined;
+					}
+				}
+			}
+			return undefined;
+		};
+
+		// A team on fourth down is more likely to call a timeout, especially the offense.
+		// Or, if they are trying to draw an offsides or something? Maybe dont have to calculate for that
+		const fourthDownDecisionTimeout = () => {
+			if (currentDown !== 4) {
+				return undefined;
+			}
+			const OFFENSE_TIMEOUT_PROBABILITY = 0.15;
+			const DEFENSE_TIMEOUT_PROBABILITY = 0.1;
+			if (teamHasPossession) {
+				if (yardsToGo <= 2) {
+					return randomChanceTimeout < OFFENSE_TIMEOUT_PROBABILITY
+						? "other"
+						: undefined;
+				} else {
+					return randomChanceTimeout < OFFENSE_TIMEOUT_PROBABILITY * 1.5
+						? "other"
+						: undefined;
+				}
+			} else {
+				if (yardsToGo <= 2) {
+					return randomChanceTimeout < DEFENSE_TIMEOUT_PROBABILITY * 1.5
+						? "other"
+						: undefined;
+				} else {
+					return randomChanceTimeout < DEFENSE_TIMEOUT_PROBABILITY * 0.5
+						? "other"
+						: undefined;
+				}
+			}
+		};
+
+		// Icing usually happens if a team has more than 1 timeout. Does not usually happen with only 1 timeout.
+		// Do this only if teams are within 24 points
+		const iceFieldGoalTimeout = () => {
+			const DEFENSE_TIMEOUT_PROBABILITY = 0.9;
+			if (
+				(playType === "fieldGoalLate" || playType === "fieldGoal") &&
+				!teamHasPossession &&
+				timeRemaining < 0.5
+			) {
+				if (this.timeouts[t] <= 1) {
+					return randomChanceTimeout < DEFENSE_TIMEOUT_PROBABILITY * 0.05
+						? "other"
+						: undefined;
+				} else {
+					return randomChanceTimeout < DEFENSE_TIMEOUT_PROBABILITY
+						? "other"
+						: undefined;
+				}
+			}
+			return undefined;
+		};
+
+		// Offenses usually call a timeout when the amount of time is < 10 second, and they have the option to stop the clock, to win off of a field goal.
+		// This scenario we need to check IF teamHasPossession, AND timeRemaining is low, AND the playType is a field goal attempt, let time trickle down to 4 seconds, and then call a timeout.
+		// Or actually, we shouldn't be looking if playType is field goal
+		// Do this in 2nd quarter and 4th quarter, no need to do it otherwise
+		const prepareForFieldGoalTimeout = () => {
+			if (!inPeriodBeforeHalftime && !inFinalPeriod) {
+				return undefined;
+			}
+			if (!teamHasPossession) {
+				return undefined;
+			}
+			const OFFENSE_TIMEOUT_PROBABILITY = 0.9;
+			if (
+				(playType === "fieldGoalLate" || playType === "fieldGoal") &&
+				teamHasPossession &&
+				timeRemaining < 0.5
+			) {
+				return randomChanceTimeout < OFFENSE_TIMEOUT_PROBABILITY
+					? "other"
+					: undefined;
+			}
+			return undefined;
+		};
+
+		const clockManagementTimeout = () => {
+			// If game is a blowout, don't stop clock
+			if (Math.abs(diff) > 24) {
+				return undefined;
+			}
+			// Defense losing stops clock
+			if (!teamHasPossession && diff > 0) {
+				if (timeRemaining < 2.5) {
+					return "toStopClock";
+				}
+			}
+
+			// Offense losing/tied saves time
+			if (teamHasPossession && diff <= 0) {
+				if (timeRemaining < 1.5) {
+					return "toStopClock";
+				}
+			}
+		};
+		// BEFORE TWO MINUTE WARNING
+		// Small random chance of timeout due to:
+		// - playcall confusion
+		// - substitution issues
+		// - avoiding delay of game
+		if (!inFinalPeriod && !inPeriodBeforeHalftime) {
+			const OFFENSE_TIMEOUT_PROBABILITY = 0.01;
+			// - Include ONE_SCORE_GAME variable here? Otherwise we cannot reach the other flows.
+			const DEFENSE_TIMEOUT_PROBABILITY = 0.003;
+
+			const prob = teamHasPossession
+				? OFFENSE_TIMEOUT_PROBABILITY
+				: DEFENSE_TIMEOUT_PROBABILITY;
+			// Include scenarios here
+			redZonePlayCallTimeout();
+			fourthDownDecisionTimeout();
+			return randomChanceTimeout < prob ? "other" : undefined;
+		} else {
+			// IF we are in a close game (within 24 points, which could plausibly be overcome), timeouts are more common
+			if (inFinalPeriod && twoMinuteWarning) {
+				if (Math.abs(diff) <= 24) {
+					if (clockRunning) {
+						clockManagementTimeout();
+					}
+					if (ONE_SCORE_GAME) {
+						// If a close game, we have to check these scenarios for if a team should call a timeout
+						iceFieldGoalTimeout();
+						redZonePlayCallTimeout();
+						prepareForFieldGoalTimeout();
+						fourthDownDecisionTimeout();
+					}
+				}
+			}
+			if (inPeriodBeforeHalftime) {
+				if (clockRunning) {
+					clockManagementTimeout();
+					prepareForFieldGoalTimeout();
+				}
+				if (ONE_SCORE_GAME) {
+					// If a close game, we have to check these scenarios for if a team should call a timeout
+					prepareForFieldGoalTimeout();
+					iceFieldGoalTimeout();
+					redZonePlayCallTimeout();
+					fourthDownDecisionTimeout();
+				}
+			}
+		}
+
+		return finalDecision;
+	}
 	doTimeout(t: TeamNum, toStopClock: boolean) {
 		if (this.timeouts[t] <= 0) {
 			return;
@@ -2001,6 +2232,7 @@ class GameSim extends GameSimBase {
 			qb,
 			defender: p,
 			ydsReturn: yds,
+			// TODO: THIS IS WHAT WE ARE LOOKING FOR, A POSSESSION CHANGE!
 		});
 
 		let fumble = false;
@@ -2893,6 +3125,7 @@ class GameSim extends GameSimBase {
 						power
 				: undefined;
 		return random.choice(players, weightFunc);
+		// If there is an injury, we can call an injury timeout if possible
 	}
 
 	// Pass undefined as p for some team-only stats

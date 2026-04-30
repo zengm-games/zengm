@@ -21,6 +21,7 @@ const ImportButton = ({
 		<input
 			className="cursor-pointer"
 			type="file"
+			accept=".json,.gz,application/json,application/gzip"
 			style={IMPORT_FILE_STYLE}
 			onClick={resetFileInput}
 			onChange={async (event) => {

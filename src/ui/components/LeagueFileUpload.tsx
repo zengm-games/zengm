@@ -329,6 +329,7 @@ export const LeagueFileUpload = ({
 			) : (
 				<input
 					type="file"
+					accept=".json,.gz,application/json,application/gzip"
 					onClick={resetFileInput}
 					onChange={handleFileUpload}
 					disabled={disabled || state.status === "checking"}

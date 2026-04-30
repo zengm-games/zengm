@@ -83,6 +83,7 @@ const ImportButton = <Type extends "injuries" | "tragicDeaths">({
 		<input
 			className="cursor-pointer"
 			type="file"
+			accept=".csv,text/csv"
 			style={IMPORT_FILE_STYLE}
 			onClick={resetFileInput}
 			onChange={(event) => {

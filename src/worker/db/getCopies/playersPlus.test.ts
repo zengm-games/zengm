@@ -547,7 +547,7 @@ test("mergeStats totOnly when first row has >0 GP and second has 0 GP", async ()
 	p2.stats[1].fg = 0;
 
 	const pf = await idb.getCopy.playersPlus(p2, {
-		stats: ["gp"],
+		stats: ["gp", "tid"],
 		season: p2.stats[1].season,
 		mergeStats: "totOnly",
 	});
@@ -558,4 +558,5 @@ test("mergeStats totOnly when first row has >0 GP and second has 0 GP", async ()
 
 	// There was a bug where this returned 0, even though it should be 5 GP from the first season
 	assert.strictEqual(pf.stats.gp, 5);
+	assert.strictEqual(pf.stats.tid, 4);
 });

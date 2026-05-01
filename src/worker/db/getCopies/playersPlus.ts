@@ -786,17 +786,25 @@ const getPlayerStats = (
 	const seasonInfos: SeasonInfo[] = [];
 	const seasonInfosByKey: Record<string, SeasonInfo> = {};
 	for (const row of rows) {
+		// We want to skip rows with 0 GP when merging stats rows, because if there is one row with 0 GP and another with >0 GP we don't want to create a TOT row, just emit the one row with >0 GP. But we can't just do `continue` here because that would result in skipping getMerged (since it thinks there is only one row, ignoring the 0 GP row) and then if the 0 GP row is the latest one, then later code `output.stats.at(-1)` would assume those are all the stats for this season. See the "mergeStats totOnly when first row has >0 GP and second has 0 GP" test.
+		const ignoreNoGamesPlayedRow = row.gp === 0;
+
 		if (regularSeason || playoffs) {
 			const key = seasonInfoKey(row);
 			if (seasonInfosByKey[key]) {
-				seasonInfosByKey[key].rows.push(row);
+				if (!ignoreNoGamesPlayedRow) {
+					seasonInfosByKey[key].rows.push(row);
+				}
 				thereAreRowsToMerge = true;
 			} else {
 				const seasonInfo: SeasonInfo = {
 					season: row.season,
 					seasonType: row.playoffs ? "playoffs" : "regularSeason",
-					rows: [row],
+					rows: [],
 				};
+				if (!ignoreNoGamesPlayedRow) {
+					seasonInfo.rows.push(row);
+				}
 				seasonInfos.push(seasonInfo);
 				seasonInfosByKey[key] = seasonInfo;
 			}
@@ -813,13 +821,18 @@ const getPlayerStats = (
 
 			const keyCombined = seasonInfoCombinedKey(combinedRow);
 			if (seasonInfosByKey[keyCombined]) {
-				seasonInfosByKey[keyCombined].rows.push(combinedRow);
+				if (!ignoreNoGamesPlayedRow) {
+					seasonInfosByKey[keyCombined].rows.push(combinedRow);
+				}
 			} else {
 				const seasonInfo: SeasonInfo = {
 					season: combinedRow.season,
 					seasonType: "combined",
-					rows: [combinedRow],
+					rows: [],
 				};
+				if (!ignoreNoGamesPlayedRow) {
+					seasonInfo.rows.push(combinedRow);
+				}
 				seasonInfos.push(seasonInfo);
 				seasonInfosByKey[keyCombined] = seasonInfo;
 			}
@@ -1099,7 +1112,7 @@ const processStats = (
 			(!playoffs && regularSeason && !combined) ||
 			(!playoffs && !regularSeason && combined))
 	) {
-		// Take last value, in case player was traded/signed to team twice in a season
+		// Take last value, because unless mergeStats is enabled there could be multiple
 		output.stats = output.stats.at(-1);
 	} else if (season === undefined) {
 		// Aggregate annual stats and ignore other things

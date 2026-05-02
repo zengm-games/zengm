@@ -1,5 +1,9 @@
 import { PHASE, PLAYER, RATINGS } from "../../../common/constants.ts";
-import type { SeasonLeaders, PlayerStatType } from "../../../common/types.ts";
+import type {
+	SeasonLeaders,
+	PlayerStatType,
+	Phase,
+} from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { g, local } from "../../util/index.ts";
 import {
@@ -11,6 +15,7 @@ import { player } from "../index.ts";
 import getLeaderRequirements from "../season/getLeaderRequirements.ts";
 import { NUM_SEASON_LEADERS_CACHE } from "../../db/Cache.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { actualPhase } from "../../util/actualPhase.ts";
 
 export const splitRegularSeasonPlayoffsCombined = (p: any) => {
 	for (const row of p.stats) {
@@ -53,30 +58,11 @@ const max = (
 	return current?.value;
 };
 
-const getSeasonLeaders = async (season: number) => {
-	const currentSeason = g.get("season");
-	const currentPhase = g.get("phase");
-	const seasonInProgress =
-		season > currentSeason ||
-		(season === currentSeason && currentPhase <= PHASE.PLAYOFFS);
-	if (seasonInProgress) {
-		if (local.seasonLeaders) {
-			return local.seasonLeaders;
-		}
-	} else {
-		const leadersCache =
-			(await idb.cache.seasonLeaders.get(season)) ??
-			(await idb.league.get("seasonLeaders", season));
-		if (leadersCache) {
-			return leadersCache;
-		}
-
-		if (season < g.get("startingSeason")) {
-			// Ignore any partial data from historical seasons before this league existed, unless it's already cached (like from initializing real players league)
-			return;
-		}
-	}
-
+const calculateSeasonLeaders = async (
+	season: number,
+	seasonInProgress: boolean,
+	currentPhase: Phase,
+) => {
 	// If seasonInProgress, do it the fast way (ignore player deaths or whatever), because this is just transient
 	let playersRaw;
 	if (seasonInProgress) {
@@ -220,6 +206,73 @@ const getSeasonLeaders = async (season: number) => {
 	}
 
 	return leadersCache;
+};
+
+const pastSeasonsInProgress = new Map<
+	number,
+	Promise<Awaited<ReturnType<typeof calculateSeasonLeaders>>>
+>();
+
+const getSeasonLeaders = async (season: number) => {
+	const currentSeason = g.get("season");
+	const currentPhase = actualPhase();
+	const seasonInProgress =
+		season > currentSeason ||
+		(season === currentSeason && currentPhase <= PHASE.PLAYOFFS);
+	if (seasonInProgress) {
+		if (local.seasonLeaders) {
+			return local.seasonLeaders;
+		}
+	} else {
+		const leadersCache =
+			(await idb.cache.seasonLeaders.get(season)) ??
+			(await idb.league.get("seasonLeaders", season));
+		if (leadersCache) {
+			return leadersCache;
+		}
+
+		if (season < g.get("startingSeason")) {
+			// Ignore any partial data from historical seasons before this league existed, unless it's already cached (like from initializing real players league)
+			return;
+		}
+	}
+
+	// Wait for calculation for current season (not just seasonInProgress, because we want any final one after the season too).
+	// Otherwise, don't wait, because it can be slow to calculate for many seasons at once.
+	if (seasonInProgress) {
+		// This is fast, so just await and don't worry about pastSeasonsInProgress
+		const leadersCache = await calculateSeasonLeaders(
+			season,
+			seasonInProgress,
+			currentPhase,
+		);
+		return leadersCache;
+	} else {
+		// waitForResult is for a bit of an edge case - after the season, we calculate the final values, so if this is triggered at the same time in multiple tabs then we only need to run it once
+		const waitForResult = season === currentSeason;
+
+		const existingPromise = pastSeasonsInProgress.get(season);
+
+		if (existingPromise) {
+			// If already calculating, just let that one finish. We only want to wait if waitForResult
+			if (waitForResult) {
+				return existingPromise;
+			}
+		} else {
+			const promise = calculateSeasonLeaders(
+				season,
+				seasonInProgress,
+				currentPhase,
+			).finally(() => {
+				pastSeasonsInProgress.delete(season);
+			});
+			pastSeasonsInProgress.set(season, promise);
+
+			if (waitForResult) {
+				return promise;
+			}
+		}
+	}
 };
 
 export default getSeasonLeaders;

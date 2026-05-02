@@ -1,3 +1,8 @@
+For "this only applies if" settings (like for things related to custom draft type) make the relationship explicit
+- generate the description text automatically
+- somehow fade/disable when not applicable
+  - probably not actual disable, in case there is somehow an invalid value there that the user needs to change
+
 more granular access to draft variables in playersPlus, so we only need to do AbbrevsCache stuff when actually using the abbrev or originalAbbrev properties
 
 nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes-new-anti-tanking-proposal-draft-lottery
@@ -906,6 +911,7 @@ OTW
 - complexity details: https://mail.google.com/mail/u/0/#sent/FMfcgzQZTgTgrtpwdkWnWJRqZFwrTBKr?compose=CllgCJlDSvVLngcRlzWGhJkHXrXZNCLksLHSgtmSCGkvXhpVzNRDxLQnvFxjzRTdLxTNgnQFmBq
 
 new achievements
+- Rich Get Richer achievement. Win the Championship and Draft Lottery in the same season. https://old.reddit.com/r/BasketballGM/comments/1s94io8/monthly_suggestions_thread/odlruuw/
 - moneyball 4 - win 3 championships with hardest constraint https://old.reddit.com/r/BasketballGM/comments/1bgxksp/auto_played_almost_9000_seasons_to_get_longevity/lhgnwm1/?context=3
 - force challenge mode to remain on
 - win title X years after sisyphus mode

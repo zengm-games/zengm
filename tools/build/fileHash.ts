@@ -1,6 +1,6 @@
-import crypto from "node:crypto";
+import { hash } from "node:crypto";
 
 export const fileHash = (contents: string) => {
 	// https://github.com/sindresorhus/rev-hash
-	return crypto.createHash("md5").update(contents).digest("hex").slice(0, 10);
+	return hash("md5", contents).slice(0, 10);
 };

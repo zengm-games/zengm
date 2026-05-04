@@ -20,6 +20,17 @@ Bugsnag.start({
 			}
 		}
 	},
+
+	// Ignore request breadcrumbs because it's almost all just header bidding noise
+	enabledBreadcrumbTypes: [
+		"error",
+		"log",
+		"manual",
+		"navigation",
+		"process",
+		"state",
+		"user",
+	],
 	enabledReleaseStages: ["beta", "production"],
 	plugins: [new BugsnagPluginReact()],
 	releaseStage: window.releaseStage,

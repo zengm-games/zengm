@@ -155,6 +155,7 @@ const ovrByPosFactory =
 
 					weight = lastWeight * base ** exponent;
 				}
+				// console.log(pos, i, weight, weight*value);
 
 				predictedMOV += weight * value;
 			}

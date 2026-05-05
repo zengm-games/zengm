@@ -38,7 +38,6 @@ export const SortableTableContext = createContext<{
 	disableRow: DisableRow | undefined;
 	draggedIndex: number | undefined;
 	highlightHandle: HighlightHandle | undefined;
-	onSwap: (index1: number, index2: number) => void;
 	renderRow: (props: RenderRowProps) => ReactNode;
 	rows: DataTableRow[];
 	tableRef: RefObject<HTMLTableElement | null>;
@@ -64,15 +63,8 @@ export const SortableHandle = ({
 	listeners,
 	setActivatorNodeRef,
 }: SortableHandleProps) => {
-	const {
-		clickedIndex,
-		disableRow,
-		draggedIndex,
-		highlightHandle,
-		onSwap,
-		rows,
-		tableRef,
-	} = use(SortableTableContext);
+	const { clickedIndex, disableRow, draggedIndex, highlightHandle, tableRef } =
+		use(SortableTableContext);
 
 	const sortableHandleRef = useRef<HTMLTableCellElement | null>(null);
 
@@ -109,7 +101,6 @@ export const SortableHandle = ({
 	// If highlightHandle is not defined, highlight them all
 	const highlight = !highlightHandle || highlightHandle({ index, row });
 
-	// The "Move up" and "Move down" visually-hidden buttons (and also the onSwap function being in context) is for accessibility for screen reader users like https://app.fastmail.com/mail/Inbox/A3VHQZRWiULs.StpPdTyV-c7F?u=433e4054
 	return (
 		<td
 			className={clsx("roster-handle p-0", {
@@ -133,24 +124,6 @@ export const SortableHandle = ({
 				{...listeners}
 				{...attributes}
 			/>
-			<button
-				className="visually-hidden"
-				disabled={index === 0}
-				onClick={() => {
-					onSwap(index, index - 1);
-				}}
-			>
-				Move up
-			</button>
-			<button
-				className="visually-hidden"
-				disabled={index === rows.length - 1}
-				onClick={() => {
-					onSwap(index, index + 1);
-				}}
-			>
-				Move down
-			</button>
 		</td>
 	);
 };
@@ -242,7 +215,6 @@ export const SortableContextWrappers = ({
 			disableRow,
 			draggedIndex,
 			highlightHandle,
-			onSwap,
 			renderRow,
 			tableRef,
 			rows,
@@ -252,7 +224,6 @@ export const SortableContextWrappers = ({
 			disableRow,
 			draggedIndex,
 			highlightHandle,
-			onSwap,
 			renderRow,
 			rows,
 			tableRef,

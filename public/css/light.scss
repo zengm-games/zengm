@@ -409,6 +409,13 @@ table {
 	max-width: 36px;
 	min-width: 36px;
 	width: 36px;
+
+	// This is necessary (I think) because the overflow of the scrollable table parent div makes the normal focus ring appear hidden, since the button is 100% width/height of td.
+	button:focus-visible {
+		outline: none;
+		box-shadow: inset 0 0 0 var(--bs-focus-ring-width)
+			var(--bs-focus-ring-color);
+	}
 }
 
 .game-log-list {

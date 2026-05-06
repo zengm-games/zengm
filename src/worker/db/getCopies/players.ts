@@ -16,8 +16,8 @@ export const getPlayersActiveSeason = async (
 
 	const players: Player[] = [];
 
-	// -1 is because players drafted last year won't play until this year
-	const range = IDBKeyRange.bound([-Infinity, season - 1], [season, Infinity]);
+	// -1 is because players drafted the year won't play until next year
+	const range = IDBKeyRange.bound([-Infinity, season], [season - 1, Infinity]);
 	for await (const cursor of index.iterate(range)) {
 		const [draftYear2, retiredYear] = cursor.key;
 

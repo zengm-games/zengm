@@ -580,8 +580,8 @@ export const iterateAllPlayers = async (
 	let range;
 	const useRange = typeof season === "number";
 	if (useRange) {
-		// + 1 in upper range is because you don't accumulate stats until the year after the draft
-		range = IDBKeyRange.bound([-Infinity, season], [season + 1, Infinity]);
+		// -1 is because players drafted the year won't play until next year
+		range = IDBKeyRange.bound([-Infinity, season], [season - 1, Infinity]);
 	}
 
 	// https://gist.github.com/inexorabletash/704e9688f99ac12dd336

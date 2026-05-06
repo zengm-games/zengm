@@ -431,7 +431,7 @@ describe("random test cases", options, () => {
 		// Should be one game for each matchup, no dupes
 		const seen = new Set();
 		for (const matchup of tids) {
-			const key = JSON.stringify([...matchup].sort());
+			const key = JSON.stringify(matchup.toSorted());
 			if (seen.has(key)) {
 				throw new Error(`Dupe matchup: ${key}`);
 			}

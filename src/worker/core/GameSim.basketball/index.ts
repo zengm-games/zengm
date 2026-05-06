@@ -127,7 +127,7 @@ const teamNums: [TeamNum, TeamNum] = [0, 1];
 // The descending sort and reverse is so ties are handled with the later entry in ovrs getting the lower index, like:
 // [0, 0, 0, 0, 0] => [4, 3, 2, 1, 0]
 const getSortedIndexes = (ovrs: number[]) => {
-	const ovrsSortedDesc = [...ovrs].sort((a, b) => b - a);
+	const ovrsSortedDesc = ovrs.toSorted((a, b) => b - a);
 	const usedIndexes = new Set();
 	const sortedIndexes = ovrsSortedDesc
 		.map((ovr) => {

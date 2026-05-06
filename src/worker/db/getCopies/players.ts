@@ -104,7 +104,7 @@ const getCopies = async (
 			return [];
 		}
 
-		const sortedPids = [...pids].sort((a, b) => a - b);
+		const sortedPids = pids.toSorted((a, b) => a - b);
 		const fromDB = await new Promise<Player[]>((resolve, reject) => {
 			const transaction = idb.league.transaction("players");
 

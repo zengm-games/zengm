@@ -183,3 +183,15 @@ if (!Map.prototype.getOrInsert) {
 		});
 	}
 }
+
+// Chrome 110, Safari 16
+if (!Array.prototype.toSorted) {
+	Object.defineProperty(Array.prototype, "toSorted", {
+		value<T>(this: Array<T>, compareFn?: (a: T, b: T) => number): T[] {
+			return [...this].sort(compareFn);
+		},
+		writable: true,
+		enumerable: false,
+		configurable: true,
+	});
+}

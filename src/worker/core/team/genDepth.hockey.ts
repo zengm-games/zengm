@@ -42,22 +42,22 @@ const getPlayersInLines = <
 		C: {
 			selected: [] as T[],
 			minLength: NUM_LINES.F * 1,
-			sorted: [...players].sort(sortFunction("C")),
+			sorted: players.toSorted(sortFunction("C")),
 		},
 		W: {
 			selected: [] as T[],
 			minLength: NUM_LINES.F * 2,
-			sorted: [...players].sort(sortFunction("W")),
+			sorted: players.toSorted(sortFunction("W")),
 		},
 		D: {
 			selected: [] as T[],
 			minLength: NUM_LINES.D * NUM_PLAYERS_PER_LINE.D,
-			sorted: [...players].sort(sortFunction("D")),
+			sorted: players.toSorted(sortFunction("D")),
 		},
 		G: {
 			selected: [] as T[],
 			minLength: NUM_LINES.G * NUM_PLAYERS_PER_LINE.G,
-			sorted: [...players].sort(sortFunction("G")),
+			sorted: players.toSorted(sortFunction("G")),
 		},
 	};
 

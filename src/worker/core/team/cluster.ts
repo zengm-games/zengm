@@ -9,7 +9,7 @@ type Clusters = {
 }[];
 
 const stringifyClusters = (clusters: Clusters) => {
-	const clusters2 = clusters.map((cluster) => [...cluster.pointIndexes].sort());
+	const clusters2 = clusters.map((cluster) => cluster.pointIndexes.toSorted());
 
 	return JSON.stringify(clusters2);
 };

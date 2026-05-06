@@ -23,7 +23,7 @@ export const getPlayersActiveSeason = async (
 
 		// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
 		if (retiredYear < season) {
-			await cursor.continue([draftYear2, season]);
+			cursor.continue([draftYear2, season]);
 		} else {
 			players.push(cursor.value);
 		}
@@ -115,7 +115,7 @@ const getCopies = async (
 				break;
 			}
 
-			await cursor.continue(sortedPids[i]);
+			cursor.continue(sortedPids[i]);
 		}
 
 		const merged = mergeByPk(
@@ -146,9 +146,9 @@ const getCopies = async (
 
 			// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
 			if (currentRetiredYear < retiredYear) {
-				await cursor.continue([draftYear, retiredYear]);
+				cursor.continue([draftYear, retiredYear]);
 			} else if (currentRetiredYear > retiredYear) {
-				await cursor.continue([draftYear + 1, retiredYear]);
+				cursor.continue([draftYear + 1, retiredYear]);
 			} else {
 				fromDB.push(cursor.value);
 			}

@@ -588,7 +588,7 @@ export const iterateAllPlayers = async (
 	for await (const cursor of index.iterate(range)) {
 		const [draftYear, retiredYear] = cursor.key;
 		if (useRange && retiredYear < season) {
-			await cursor.continue([draftYear, season]);
+			cursor.continue([draftYear, season]);
 		} else {
 			const p = cachePlayersByPid[cursor.value.pid] ?? cursor.value;
 			await applyCB(p);

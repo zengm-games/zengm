@@ -105,46 +105,37 @@ const getCopies = async (
 		}
 
 		const sortedPids = pids.toSorted((a, b) => a - b);
-		const fromDB = await new Promise<Player[]>((resolve, reject) => {
-			const transaction = idb.league.transaction("players");
+		const fromDB: Player[] = [];
 
-			const players: Player[] = [];
+		// Kind of like https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+		const store = idb.league.transaction("players").store;
+		const range = IDBKeyRange.bound(sortedPids[0], sortedPids.at(-1));
+		let i = 0;
+		for await (const cursor of store.iterate(range)) {
+			const p = cursor.value;
 
-			// Because backboard doesn't support passing an argument to cursor.continue
-			const objectStore = unwrap(transaction.objectStore("players"));
-			const range = IDBKeyRange.bound(sortedPids[0], sortedPids.at(-1));
-			let i = 0;
-			const request = objectStore.openCursor(range);
-
-			request.onerror = (e: any) => {
-				reject(e.target.error);
-			};
-
-			request.onsuccess = (e: any) => {
-				const cursor = e.target.result;
-
-				if (!cursor) {
-					resolve(players);
-					return;
-				}
-
-				const p = cursor.value;
-
-				// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
-				if (sortedPids.includes(p.pid)) {
-					players.push(p);
-				}
-
+			const targetPid = sortedPids[i];
+			if (p.pid === targetPid) {
+				fromDB.push(p);
 				i += 1;
-
-				if (i > sortedPids.length) {
-					resolve(players);
-					return;
+			} else if (sortedPids.includes(p.pid)) {
+				// This is a weird edge case. If you look for pids [1, 2] and 1 is does not exist in the database but 2 does, then the cursor iteration looking for 1 will skip ahead to the next key and find player 2. But then calling `cursor.continue` below, the parameter needs to be greater than the current primary key, so we need to make sure we advance `i` to the next value beyond 2
+				fromDB.push(p);
+				i = sortedPids.indexOf(p.pid) + 1;
+			} else {
+				// This is similar to the above case, except if the next key is not in sortedPids. For example if we're looking for [1, 3] and 1 is not in the database but 2 is, then `p` is player 2. But this could also require us to skip ahead multiple times, like if sortedPids is [1, 2, 3, 10] and the first 3 are all not in the database, then the first player returned will be 4, and then the next request needs to be for 10 and will error if it is for 2 (cursor.continue cannot go backwards).
+				i = sortedPids.findIndex((pid) => pid > p.pid);
+				if (i === -1) {
+					break;
 				}
+			}
 
-				cursor.continue(sortedPids[i]);
-			};
-		});
+			if (i >= sortedPids.length) {
+				break;
+			}
+
+			cursor.continue(sortedPids[i]);
+		}
 
 		const merged = mergeByPk(
 			fromDB,

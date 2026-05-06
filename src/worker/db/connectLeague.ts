@@ -1603,7 +1603,7 @@ const migrate = async ({
 
 	if (oldVersion < 69) {
 		// By thorough with recent Team change, even though it only affects very old leagues
-		for await (const cursor of transaction.objectStore("teams").iterate()) {
+		for await (const cursor of transaction.objectStore("teams")) {
 			const t = cursor.value;
 			if (t.pop === undefined || t.stadiumCapacity === undefined) {
 				// Get most recent teamSeason
@@ -1619,9 +1619,7 @@ const migrate = async ({
 			}
 		}
 
-		for await (const cursor of transaction
-			.objectStore("playoffSeries")
-			.iterate()) {
+		for await (const cursor of transaction.objectStore("playoffSeries")) {
 			const row = cursor.value;
 			if ((row as any).byConf === true) {
 				// This setting only worked with 2 conferences in the past, so 2 is what `true` used to mean

@@ -27,15 +27,13 @@ const getTeamInfoBySeason = async (tid: number, season: number) => {
 		| undefined = await teamSeasonsIndex.get([tid, season]);
 	if (!ts) {
 		// No team season entry for the requested season... is there an older one, somehow? If so, use the latest one before the requested season. If not, use the first we find (it is the oldest existing one, so assume that applies).
-		let cursor = await teamSeasonsIndex.openCursor(
+		for await (const cursor of teamSeasonsIndex.iterate(
 			IDBKeyRange.bound([tid, -Infinity], [tid, Infinity]),
-		);
-		while (cursor) {
+		)) {
 			if (cursor.value.season > season && ts) {
 				break;
 			}
 			ts = cursor.value;
-			cursor = await cursor.continue();
 		}
 	}
 	if (!ts) {

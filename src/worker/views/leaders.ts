@@ -573,7 +573,9 @@ export const iterateAllPlayers = async (
 	}
 
 	// This is similar to activeSeason from getCopies.players
-	const transaction = idb.league.transaction("players");
+	const index = idb.league
+		.transaction("players")
+		.store.index("draft.year, retiredYear");
 
 	let range;
 	const useRange = typeof season === "number";
@@ -582,19 +584,14 @@ export const iterateAllPlayers = async (
 		range = IDBKeyRange.bound([-Infinity, season], [season + 1, Infinity]);
 	}
 
-	let cursor = await transaction.store
-		.index("draft.year, retiredYear")
-		.openCursor(range);
-
-	while (cursor) {
-		// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+	// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+	for await (const cursor of index.iterate(range)) {
 		const [draftYear, retiredYear] = cursor.key;
 		if (useRange && retiredYear < season) {
-			cursor = await cursor.continue([draftYear, season]);
+			await cursor.continue([draftYear, season]);
 		} else {
 			const p = cachePlayersByPid[cursor.value.pid] ?? cursor.value;
 			await applyCB(p);
-			cursor = await cursor.continue();
 		}
 	}
 };

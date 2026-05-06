@@ -1476,11 +1476,9 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 		keyRange = IDBKeyRange.only(season);
 	}
 
-	let cursor = await storeOrIndex.openCursor(keyRange);
-
 	const rows: any[] = [];
 
-	while (cursor) {
+	for await (const cursor of storeOrIndex.iterate(keyRange)) {
 		const { gid, playoffs, season, teams } = cursor.value;
 
 		for (const i of [0, 1] as const) {
@@ -1527,7 +1525,6 @@ const exportPlayerGamesCsv = async (season: number | "all") => {
 				]);
 			}
 		}
-		cursor = await cursor.continue();
 	}
 
 	return csvFormatRows([columns, ...rows]);

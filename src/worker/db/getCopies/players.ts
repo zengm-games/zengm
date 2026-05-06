@@ -107,7 +107,7 @@ const getCopies = async (
 		const sortedPids = pids.toSorted((a, b) => a - b);
 		const fromDB: Player[] = [];
 
-		// Kind of like https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+		// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
 		const store = idb.league.transaction("players").store;
 		const range = IDBKeyRange.bound(sortedPids[0], sortedPids.at(-1));
 		let i = 0;
@@ -134,7 +134,7 @@ const getCopies = async (
 				break;
 			}
 
-			cursor.continue(sortedPids[i]);
+			await cursor.continue(sortedPids[i]);
 		}
 
 		const merged = mergeByPk(

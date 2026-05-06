@@ -3,52 +3,33 @@ import { getAll, idb } from "../index.ts";
 import { mergeByPk } from "./helpers.ts";
 import { g, helpers } from "../../util/index.ts";
 import type { GetCopyType, Player } from "../../../common/types.ts";
-import { type IDBPDatabase, unwrap } from "@dumbmatter/idb";
+import { type IDBPDatabase } from "@dumbmatter/idb";
 import type { LeagueDB } from "../connectLeague.ts";
 
-export const getPlayersActiveSeason = (
+export const getPlayersActiveSeason = async (
 	league: IDBPDatabase<LeagueDB>,
 	season: number,
 ) => {
-	return new Promise<Player[]>((resolve, reject) => {
-		const transaction = league.transaction("players");
+	const index = league
+		.transaction("players")
+		.store.index("draft.year, retiredYear");
 
-		const players: Player[] = [];
+	const players: Player[] = [];
 
-		const index = unwrap(
-			transaction.objectStore("players").index("draft.year, retiredYear"),
-		);
+	// -1 is because players drafted last year won't play until this year
+	const range = IDBKeyRange.bound([-Infinity, season - 1], [season, Infinity]);
+	for await (const cursor of index.iterate(range)) {
+		const [draftYear2, retiredYear] = cursor.key;
 
-		// -1 is because players drafted last year won't play until this year
-		const range = IDBKeyRange.bound(
-			[-Infinity, season - 1],
-			[season, Infinity],
-		);
-		const request = index.openCursor(range);
+		// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+		if (retiredYear < season) {
+			await cursor.continue([draftYear2, season]);
+		} else {
+			players.push(cursor.value);
+		}
+	}
 
-		request.onerror = (e: any) => {
-			reject(e.target.error);
-		};
-
-		request.onsuccess = (e: any) => {
-			const cursor = e.target.result;
-
-			if (!cursor) {
-				resolve(players);
-				return;
-			}
-
-			const [draftYear2, retiredYear] = cursor.key;
-
-			// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
-			if (retiredYear < season) {
-				cursor.continue([draftYear2, season]);
-			} else {
-				players.push(cursor.value);
-				cursor.continue();
-			}
-		};
-	});
+	return players;
 };
 
 const getCopies = async (
@@ -156,43 +137,22 @@ const getCopies = async (
 	}
 
 	if (retiredYear !== undefined) {
-		const fromDB = await new Promise<Player[]>((resolve, reject) => {
-			const players: Player[] = [];
+		const fromDB: Player[] = [];
+		const index = idb.league
+			.transaction("players")
+			.store.index("draft.year, retiredYear");
+		for await (const cursor of index) {
+			const [draftYear, currentRetiredYear] = cursor.key;
 
-			const index = unwrap(
-				idb.league
-					.transaction("players")
-					.objectStore("players")
-					.index("draft.year, retiredYear"),
-			);
-
-			const request = index.openCursor();
-
-			request.onerror = (e: any) => {
-				reject(e.target.error);
-			};
-
-			request.onsuccess = (e: any) => {
-				const cursor = e.target.result;
-
-				if (!cursor) {
-					resolve(players);
-					return;
-				}
-
-				const [draftYear, currentRetiredYear] = cursor.key;
-
-				// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
-				if (currentRetiredYear < retiredYear) {
-					cursor.continue([draftYear, retiredYear]);
-				} else if (currentRetiredYear > retiredYear) {
-					cursor.continue([draftYear + 1, retiredYear]);
-				} else {
-					players.push(cursor.value);
-					cursor.continue();
-				}
-			};
-		});
+			// https://gist.github.com/inexorabletash/704e9688f99ac12dd336
+			if (currentRetiredYear < retiredYear) {
+				await cursor.continue([draftYear, retiredYear]);
+			} else if (currentRetiredYear > retiredYear) {
+				await cursor.continue([draftYear + 1, retiredYear]);
+			} else {
+				fromDB.push(cursor.value);
+			}
+		}
 
 		// Get all from cache, and filter later, in case cache differs from database
 		return mergeByPk(

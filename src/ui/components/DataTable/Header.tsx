@@ -258,7 +258,10 @@ const BulkSelectHeaderCheckbox = ({
 
 	// Similar to singleCheckbox stuff below
 	const onClickCell = (event: MouseEvent) => {
-		if (event.target && (event.target as any).tagName === "TH") {
+		if (
+			event.target instanceof HTMLTableCellElement &&
+			event.target.tagName === "TH"
+		) {
 			if (dropdownToggleRef.current) {
 				dropdownToggleRef.current.focus();
 				dropdownToggleRef.current.click();

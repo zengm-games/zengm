@@ -28,7 +28,11 @@ const BulkSelectCheckbox = ({
 
 	// Similar to singleCheckbox stuff below
 	const onClickCell = (event: MouseEvent) => {
-		if (event.target && (event.target as any).tagName === "TD" && !disabled) {
+		if (
+			event.target instanceof HTMLTableCellElement &&
+			event.target.tagName === "TD" &&
+			!disabled
+		) {
 			onChange();
 		}
 	};
@@ -157,8 +161,8 @@ const Row = ({
 				if (singleCheckbox || singleButton) {
 					props.onClick = (event: MouseEvent) => {
 						if (
-							event.target &&
-							(event.target as any).tagName === "TD" &&
+							event.target instanceof HTMLTableCellElement &&
+							event.target.tagName === "TD" &&
 							!actualValue.props.disabled
 						) {
 							if (singleCheckbox) {

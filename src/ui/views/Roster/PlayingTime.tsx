@@ -38,16 +38,17 @@ export const ptModifiers = [
 ] as const;
 
 const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
-	const values = ptModifiers.map((x) => helpers.localeParseFloat(x.ptModifier));
 	const [value, setValue] = useState(() => {
-		const index = values.findIndex((ptModifier) => ptModifier > p.ptModifier);
+		const index = ptModifiers.findIndex(
+			({ ptModifier }) => helpers.localeParseFloat(ptModifier) > p.ptModifier,
+		);
 		let value;
 		if (index === 0) {
-			value = values[0];
+			value = ptModifiers[0].ptModifier;
 		} else if (index > 0) {
-			value = values[index - 1];
+			value = ptModifiers[index - 1]!.ptModifier;
 		} else {
-			value = values.at(-1);
+			value = ptModifiers.at(-1)!.ptModifier;
 		}
 		return value!;
 	});
@@ -57,7 +58,7 @@ const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
 			className="form-select pt-modifier-select"
 			value={value}
 			onChange={async (event) => {
-				const ptModifier = helpers.localeParseFloat(event.currentTarget.value);
+				const ptModifier = event.currentTarget.value;
 
 				// NEVER UPDATE AI TEAMS
 				// This shouldn't be necessary, but just in case...
@@ -65,12 +66,12 @@ const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
 					return;
 				}
 
-				setValue(ptModifier);
+				setValue(ptModifier as any);
 
 				try {
 					await toWorker("main", "updatePlayingTime", {
 						pid: p.pid,
-						ptModifier,
+						ptModifier: helpers.localeParseFloat(ptModifier),
 					});
 				} catch (error) {
 					// Reset if error
@@ -83,7 +84,7 @@ const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
 					throw error;
 				}
 			}}
-			style={(ptStyles as any)[String(value)]}
+			style={ptStyles[value]}
 			aria-label="Playing time modifier"
 		>
 			{ptModifiers.map(({ text, ptModifier, title }) => {

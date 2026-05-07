@@ -1,5 +1,5 @@
 import { openDB } from "@dumbmatter/idb";
-import type { IDBPCursorWithValue } from "@dumbmatter/idb";
+import type { IDBPCursorWithValue, StoreNames } from "@dumbmatter/idb";
 import { LEAGUE_DATABASE_VERSION } from "../../common/constants.ts";
 import {
 	gameAttributesCache,
@@ -12,6 +12,7 @@ import type {
 	LeagueDBStoreNames,
 } from "../../worker/db/connectLeague.ts";
 import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
+import getAll from "../../worker/db/getAll.ts";
 
 // Otherwise it often pulls just one record per transaction, as it's hitting up against the high water mark
 const TWENTY_MEGABYTES_IN_BYTES = 20 * 1024 * 1024;
@@ -237,10 +238,8 @@ const makeExportStream = async (
 
 					incrementNumRecordsSeen();
 				} else {
-					const txStores =
-						store === "teams"
-							? (["teams", "teamSeasons", "teamStats"] as const)
-							: [store];
+					const txStores: StoreNames<LeagueDB>[] =
+						store === "teams" ? ["teams", "teamSeasons", "teamStats"] : [store];
 
 					const transaction = leagueDB.transaction(txStores);
 
@@ -281,20 +280,13 @@ const makeExportStream = async (
 
 								const tid = value.tid;
 
-								const infos: (
-									| {
-											key: string;
-											store: "teamSeasons";
-											index: "tid, season";
-											keyRange: IDBKeyRange;
-									  }
-									| {
-											key: string;
-											store: "teamStats";
-											index: "tid";
-											keyRange: IDBKeyRange;
-									  }
-								)[] = [
+								type Info<Store extends "teamSeasons" | "teamStats"> = {
+									key: string;
+									store: Store;
+									index: keyof LeagueDB[Store]["indexes"];
+									keyRange: IDBKeyRange;
+								};
+								const infos: (Info<"teamSeasons"> | Info<"teamStats">)[] = [
 									{
 										key: "seasons",
 										store: "teamSeasons",
@@ -309,19 +301,12 @@ const makeExportStream = async (
 									},
 								];
 
-								const t: any = value;
-
 								for (const info of infos) {
-									t[info.key] = [];
-									let cursor2 = await transaction
+									const index = transaction
 										.objectStore(info.store)
-										.index(info.index as any)
-										.openCursor(info.keyRange);
-									while (cursor2) {
-										t[info.key].push(cursor2.value);
-										cursor2 = await cursor2.continue();
-									}
-									incrementNumRecordsSeen(t[info.key].length);
+										.index(info.index as any);
+									value[info.key] = await getAll(index, info.keyRange);
+									incrementNumRecordsSeen(value[info.key].length);
 								}
 							}
 

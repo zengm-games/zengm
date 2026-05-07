@@ -16,6 +16,6 @@ const idb = {
 };
 
 export { Cache, connectLeague, connectMeta, idb };
-export { default as getAll } from "./getAll.ts";
+export { default as getAll } from "../../common/getAll.ts";
 export { default as iterate } from "./iterate.ts";
 export { default as reset } from "./reset.ts";

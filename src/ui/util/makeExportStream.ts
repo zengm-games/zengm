@@ -12,7 +12,7 @@ import type {
 	LeagueDBStoreNames,
 } from "../../worker/db/connectLeague.ts";
 import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
-import getAll from "../../worker/db/getAll.ts";
+import getAll from "../../common/getAll.ts";
 
 // Otherwise it often pulls just one record per transaction, as it's hitting up against the high water mark
 const TWENTY_MEGABYTES_IN_BYTES = 20 * 1024 * 1024;

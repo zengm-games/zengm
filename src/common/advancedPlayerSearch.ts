@@ -7,16 +7,20 @@ type AdvancedPlayerSearchField = {
 	key: string;
 	colKey: string;
 	colOverrides?: Partial<Col>;
-	valueType: "numeric" | "string";
-	getValue: (
-		p: any,
-		singleSeason: "totals" | "singleSeason",
-	) => string | number;
 
 	// Used in worker to determine what data to fetch from playersPlus, if it's not just the string value in "key".
 	// null means don't fetch anything.
 	workerFieldOverride?: string | null;
-};
+} & (
+	| {
+			valueType: "numeric";
+			getValue: (p: any, singleSeason: "totals" | "singleSeason") => number;
+	  }
+	| {
+			valueType: "string";
+			getValue: (p: any, singleSeason: "totals" | "singleSeason") => string;
+	  }
+);
 
 type MinimalAdvancedPlayerSearchField = Omit<
 	AdvancedPlayerSearchField,

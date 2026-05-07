@@ -146,7 +146,7 @@ const makeExportStream = async (
 					controller.error(new DOMException("Aborted", "AbortError"));
 				});
 
-				const tx = leagueDB.transaction(storesInput as any);
+				const tx = leagueDB.transaction(storesInput);
 				for (const store of storesInput) {
 					if (store === "gameAttributes") {
 						numRecordsTotal += 1;
@@ -238,9 +238,11 @@ const makeExportStream = async (
 					incrementNumRecordsSeen();
 				} else {
 					const txStores =
-						store === "teams" ? ["teams", "teamSeasons", "teamStats"] : [store];
+						store === "teams"
+							? (["teams", "teamSeasons", "teamStats"] as const)
+							: [store];
 
-					const transaction = leagueDB.transaction(txStores as any);
+					const transaction = leagueDB.transaction(txStores);
 
 					const range =
 						prevKey !== undefined

@@ -623,7 +623,7 @@ const finalizeDBExceptPlayers = async ({
 			);
 
 			for (const game of updatedSchedule) {
-				await scheduleStore.put(game as any);
+				await scheduleStore.put(game);
 			}
 		}
 	}
@@ -635,7 +635,7 @@ const finalizeDBExceptPlayers = async ({
 
 	const teamSeasonsStore = tx.objectStore("teamSeasons");
 	for (const ts of teamSeasons) {
-		await teamSeasonsStore.put(ts as any);
+		await teamSeasonsStore.put(ts);
 	}
 
 	const teamStatsStore = tx.objectStore("teamStats");

@@ -51,6 +51,7 @@ type BoxScore = {
 	exhibition?: boolean;
 	shootout?: boolean;
 	neutralSite: boolean;
+	won?: { name: string };
 };
 
 export const StatsHeader = ({
@@ -917,7 +918,10 @@ const BoxScore = ({
 	sportState: SportState;
 	Row: any;
 }) => {
-	const liveGameSim = (boxScore as any).won?.name === undefined;
+	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
+	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
+	// change in the future.
+	const liveGameSim = boxScore.won?.name === undefined;
 
 	return (
 		<div className="mb-3">

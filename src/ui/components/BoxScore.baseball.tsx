@@ -49,6 +49,7 @@ type BoxScore = {
 	teams: [Team, Team];
 	numPeriods?: number;
 	exhibition?: boolean;
+	won?: { name: string };
 };
 
 const StatsTable = ({
@@ -448,7 +449,10 @@ const BoxScore = ({
 	sportState: SportState;
 	Row: any;
 }) => {
-	const liveGameSim = (boxScore as any).won?.name === undefined;
+	// Historical games will have boxScore.won.name and boxScore.lost.name so use that for ordering, but live games
+	// won't. This is hacky, because the existence of this property is just a historical coincidence, and maybe it'll
+	// change in the future.
+	const liveGameSim = boxScore.won?.name === undefined;
 
 	const processedEvents = useMemo(
 		() => processEvents(boxScore.scoringSummary),

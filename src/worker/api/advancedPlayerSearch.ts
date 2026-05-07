@@ -238,31 +238,31 @@ export const advancedPlayerSearch = async ({
 					return true;
 				}
 
-				const pValue = filterInfo.getValue(p, singleSeason);
 				if (filterInfo.valueType === "numeric") {
 					if (filter.value === null) {
 						return true;
 					}
 
-					const pValueNumber = pValue as number;
+					const pValue = filterInfo.getValue(p, singleSeason);
 					if (filter.operator === ">") {
-						return pValueNumber > filter.value;
+						return pValue > filter.value;
 					} else if (filter.operator === "<") {
-						return pValueNumber < filter.value;
+						return pValue < filter.value;
 					} else if (filter.operator === ">=") {
-						return pValueNumber >= filter.value;
+						return pValue >= filter.value;
 					} else if (filter.operator === "<=") {
-						return pValueNumber <= filter.value;
+						return pValue <= filter.value;
 					} else if (filter.operator === "=") {
-						return pValueNumber === filter.value;
+						return pValue === filter.value;
 					} else if (filter.operator === "!=") {
-						return pValueNumber != filter.value;
+						return pValue != filter.value;
 					} else {
 						throw new Error("Should never happen");
 					}
 				} else if (filterInfo.valueType === "string") {
+					const pValue = filterInfo.getValue(p, singleSeason);
 					const searchText = normalizeIntl(filter.value as string);
-					const pValueString = normalizeIntl(pValue as string);
+					const pValueString = normalizeIntl(pValue);
 					if (filter.operator === "is exactly") {
 						return searchText === pValueString;
 					} else if (filter.operator === "is not exactly") {

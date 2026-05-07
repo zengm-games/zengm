@@ -4388,8 +4388,14 @@ const updateTeamInfo = async ({
 		t.colors = newTeam.colors;
 		t.jersey = newTeam.jersey;
 
-		t.pop = helpers.localeParseFloat(newTeam.pop as string);
-		t.stadiumCapacity = Number.parseInt(newTeam.stadiumCapacity as string);
+		t.pop =
+			typeof newTeam.pop === "number"
+				? newTeam.pop
+				: helpers.localeParseFloat(newTeam.pop);
+		t.stadiumCapacity =
+			typeof newTeam.stadiumCapacity === "number"
+				? Math.round(newTeam.stadiumCapacity)
+				: Number.parseInt(newTeam.stadiumCapacity);
 
 		const disableTeam = newTeam.disabled && !t.disabled;
 		const enableTeam = !newTeam.disabled && t.disabled;

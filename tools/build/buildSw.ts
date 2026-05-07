@@ -1,9 +1,9 @@
 import { build } from "rolldown";
-import workboxBuild from "workbox-build";
+import { injectManifest } from "workbox-build";
 
 // NOTE: This should be run *AFTER* all assets are built
-const injectManifest = async () => {
-	const { count, size, warnings } = await workboxBuild.injectManifest({
+export const buildSw = async () => {
+	const { count, size, warnings } = await injectManifest({
 		swSrc: "public/sw.js",
 		swDest: "build/sw.js",
 		globDirectory: "build",
@@ -26,9 +26,7 @@ const injectManifest = async () => {
 
 	warnings.forEach(console.warn);
 	console.log(`${count} files will be precached, totaling ${size} bytes.`);
-};
 
-const bundle = async () => {
 	await build({
 		input: "build/sw.js",
 		output: {
@@ -41,9 +39,4 @@ const bundle = async () => {
 		},
 		preserveEntrySignatures: false,
 	});
-};
-
-export const buildSw = async () => {
-	await injectManifest();
-	await bundle();
 };

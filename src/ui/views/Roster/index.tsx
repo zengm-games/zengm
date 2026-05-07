@@ -9,7 +9,7 @@ import { logEvent } from "../../util/logEvent.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { useLocalPartial } from "../../util/local.ts";
-import PlayingTime, { ptStyles } from "./PlayingTime.tsx";
+import PlayingTime, { ptModifiers, ptStyles } from "./PlayingTime.tsx";
 import TopStuff from "./TopStuff.tsx";
 import type {
 	GameAttributesLeague,
@@ -186,18 +186,19 @@ const Roster = ({
 								stamina. If you want to influence{" "}
 								{helpers.pronoun(gender, "his")} judgement, your options are:
 							</p>
-							<p>
-								<span style={ptStyles["0"]}>0 No Playing Time</span>
-								<br />
-								<span style={ptStyles["0.75"]}>- Less Playing Time</span>
-								<br />
-								<span style={ptStyles["1"]}>
-									&nbsp;&nbsp;&nbsp; Let Coach Decide
-								</span>
-								<br />
-								<span style={ptStyles["1.25"]}>+ More Playing Time</span>
-								<br />
-								<span style={ptStyles["1.5"]}>++ Even More Playing Time</span>
+							<table className="mb-3">
+								{ptModifiers.map((info) => {
+									return (
+										<tr key={info.ptModifier} style={ptStyles[info.ptModifier]}>
+											<td className="px-1">{info.text}</td>
+											<td className="px-1">{info.title}</td>
+										</tr>
+									);
+								})}
+							</table>
+							<p className="text-danger">
+								<b>Warning:</b> be careful increasing playing time! Players play
+								worse when they are tired.
 							</p>
 						</HelpPopover>
 					</>

@@ -48,15 +48,15 @@ const handlePtChange = async (
 	await toWorker("main", "updatePlayingTime", { pid: p.pid, ptModifier });
 };
 
-const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
-	const ptModifiers = [
-		{ text: "0", ptModifier: "0" },
-		{ text: "-", ptModifier: "0.75" },
-		{ text: " ", ptModifier: "1" },
-		{ text: "+", ptModifier: "1.25" },
-		{ text: "++", ptModifier: "1.5" },
-	];
+export const ptModifiers = [
+	{ text: "0", ptModifier: "0", title: "No playing time" },
+	{ text: "-", ptModifier: "0.75", title: "Less playing time" },
+	{ text: " ", ptModifier: "1", title: "Normal playing time" },
+	{ text: "+", ptModifier: "1.25", title: "More playing time" },
+	{ text: "++", ptModifier: "1.5", title: "Even more playing time" },
+] as const;
 
+const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
 	const values = ptModifiers.map((x) => helpers.localeParseFloat(x.ptModifier));
 	const index = values.findIndex((ptModifier) => ptModifier > p.ptModifier);
 	let value;
@@ -74,10 +74,11 @@ const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
 			value={value}
 			onChange={(event) => handlePtChange(p, userTid, event)}
 			style={(ptStyles as any)[String(value)]}
+			aria-label="Playing time modifier"
 		>
-			{ptModifiers.map(({ text, ptModifier }) => {
+			{ptModifiers.map(({ text, ptModifier, title }) => {
 				return (
-					<option key={ptModifier} value={ptModifier}>
+					<option key={ptModifier} value={ptModifier} aria-label={title}>
 						{text}
 					</option>
 				);

@@ -4252,7 +4252,6 @@ const updatePlayingTime = async ({
 	}
 	p.ptModifier = ptModifier;
 	await idb.cache.players.put(p);
-	await toUI("realtimeUpdate", [["playerMovement"]]);
 };
 
 const updatePlayoffTeams = async (

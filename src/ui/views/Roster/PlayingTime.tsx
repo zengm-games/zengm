@@ -1,7 +1,8 @@
-import type { ChangeEvent } from "react";
+import { useState } from "react";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import type { View } from "../../../common/types.ts";
+import { logEvent } from "../../util/logEvent.ts";
 
 type Player = View<"roster">["players"][number];
 
@@ -28,26 +29,6 @@ export const ptStyles = {
 	},
 };
 
-const handlePtChange = async (
-	p: Player,
-	userTid: number,
-	event: ChangeEvent<HTMLSelectElement>,
-) => {
-	const ptModifier = helpers.localeParseFloat(event.currentTarget.value);
-
-	if (Number.isNaN(ptModifier)) {
-		return;
-	}
-
-	// NEVER UPDATE AI TEAMS
-	// This shouldn't be necessary, but just in case...
-	if (p.tid !== userTid) {
-		return;
-	}
-
-	await toWorker("main", "updatePlayingTime", { pid: p.pid, ptModifier });
-};
-
 export const ptModifiers = [
 	{ text: "0", ptModifier: "0", title: "No playing time" },
 	{ text: "-", ptModifier: "0.75", title: "Less playing time" },
@@ -58,21 +39,50 @@ export const ptModifiers = [
 
 const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
 	const values = ptModifiers.map((x) => helpers.localeParseFloat(x.ptModifier));
-	const index = values.findIndex((ptModifier) => ptModifier > p.ptModifier);
-	let value;
-	if (index === 0) {
-		value = values[0];
-	} else if (index > 0) {
-		value = values[index - 1];
-	} else {
-		value = values.at(-1);
-	}
+	const [value, setValue] = useState(() => {
+		const index = values.findIndex((ptModifier) => ptModifier > p.ptModifier);
+		let value;
+		if (index === 0) {
+			value = values[0];
+		} else if (index > 0) {
+			value = values[index - 1];
+		} else {
+			value = values.at(-1);
+		}
+		return value!;
+	});
 
 	return (
 		<select
 			className="form-select pt-modifier-select"
 			value={value}
-			onChange={(event) => handlePtChange(p, userTid, event)}
+			onChange={async (event) => {
+				const ptModifier = helpers.localeParseFloat(event.currentTarget.value);
+
+				// NEVER UPDATE AI TEAMS
+				// This shouldn't be necessary, but just in case...
+				if (p.tid !== userTid) {
+					return;
+				}
+
+				setValue(ptModifier);
+
+				try {
+					await toWorker("main", "updatePlayingTime", {
+						pid: p.pid,
+						ptModifier,
+					});
+				} catch (error) {
+					// Reset if error
+					setValue(value);
+					logEvent({
+						type: "error",
+						text: `Error updating playing time: ${error.message}`,
+						saveToDb: false,
+					});
+					throw error;
+				}
+			}}
 			style={(ptStyles as any)[String(value)]}
 			aria-label="Playing time modifier"
 		>

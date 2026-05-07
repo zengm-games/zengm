@@ -15,13 +15,13 @@ const iterate = async <StoreName extends StoreNames<LeagueDB>>(
 	store:
 		| IDBPObjectStore<
 				LeagueDB,
-				StoreNames<LeagueDB>[],
+				ArrayLike<StoreNames<LeagueDB>>,
 				StoreName,
 				IDBTransactionMode
 		  >
 		| IDBPIndex<
 				LeagueDB,
-				StoreNames<LeagueDB>[],
+				ArrayLike<StoreNames<LeagueDB>>,
 				StoreName,
 				IndexNames<LeagueDB, StoreName>,
 				IDBTransactionMode

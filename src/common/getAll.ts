@@ -16,10 +16,10 @@ import type { LeagueDB } from "../worker/db/connectLeague.ts";
  **/
 const getAll = async <StoreName extends StoreNames<LeagueDB>>(
 	store:
-		| IDBPObjectStore<LeagueDB, StoreNames<LeagueDB>[], StoreName>
+		| IDBPObjectStore<LeagueDB, ArrayLike<StoreNames<LeagueDB>>, StoreName>
 		| IDBPIndex<
 				LeagueDB,
-				StoreNames<LeagueDB>[],
+				ArrayLike<StoreNames<LeagueDB>>,
 				StoreName,
 				IndexNames<LeagueDB, StoreName>
 		  >,

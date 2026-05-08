@@ -87,6 +87,8 @@ const getBaseName = (base: 1 | 2 | 3 | 4) => {
 	return helpers.ordinal(base);
 };
 
+let listFormatter: Intl.ListFormat | undefined;
+
 const formatRunners = (
 	getName: (pid: number) => string,
 	runners: Extract<PlayByPlayEventInput, { type: "walk" }>["runners"],
@@ -104,6 +106,11 @@ const formatRunners = (
 		gameWinningRunScoredWithLiveBall?: boolean;
 	} = {},
 ) => {
+	// Safari 16 - and can remove condition below on listFormatter existence
+	if (!listFormatter && Intl.ListFormat) {
+		listFormatter = new Intl.ListFormat("en");
+	}
+
 	const filtered = runners.filter(
 		(runner) => runner.to !== runner.from || !ignoreStationary,
 	);
@@ -139,9 +146,8 @@ const formatRunners = (
 		texts.unshift(`${scored[0]} scores.`);
 	} else if (scored.length > 1) {
 		let namesCombined;
-		// Safari 16
-		if (Intl.ListFormat) {
-			namesCombined = new Intl.ListFormat("en").format(scored);
+		if (listFormatter) {
+			namesCombined = listFormatter.format(scored);
 		} else {
 			namesCombined = `${scored.length} runners`;
 		}

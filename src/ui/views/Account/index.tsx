@@ -102,8 +102,8 @@ const handleCancel = async (e: MouseEvent) => {
 	const result = await confirm(
 		"Are you sure you want to cancel your ZenGM Gold subscription?",
 		{
-			okText: "Yes",
-			cancelText: "No",
+			okText: "Cancel subscription",
+			cancelText: "Keep subscription",
 		},
 	);
 

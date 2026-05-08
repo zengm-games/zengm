@@ -18,7 +18,7 @@ import { getHeightString, Height } from "../components/Height.tsx";
 import { range } from "../../common/utils.ts";
 import { PlayerPicture } from "../components/PlayerPicture.tsx";
 import { PlayPauseNext } from "../components/PlayPauseNext.tsx";
-import ResponsiveTableWrapper from "../components/ResponsiveTableWrapper.tsx";
+import { ResponsiveTableWrapper } from "../components/ResponsiveTableWrapper.tsx";
 import { Weight } from "../components/Weight.tsx";
 
 export const EditContestants = ({

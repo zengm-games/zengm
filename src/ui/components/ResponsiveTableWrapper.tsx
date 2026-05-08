@@ -29,5 +29,3 @@ export const ResponsiveTableWrapper = ({
 		</div>
 	);
 };
-
-export default ResponsiveTableWrapper;

@@ -7,7 +7,7 @@ import useClickable from "../hooks/useClickable.tsx";
 import type { ByConf, TeamSeason, View } from "../../common/types.ts";
 import { TIEBREAKERS } from "../../common/constants.ts";
 import { MovOrDiff } from "../components/MovOrDiff.tsx";
-import ResponsiveTableWrapper from "../components/ResponsiveTableWrapper.tsx";
+import { ResponsiveTableWrapper } from "../components/ResponsiveTableWrapper.tsx";
 import { getCol } from "../../common/getCol.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 

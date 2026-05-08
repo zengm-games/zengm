@@ -31,7 +31,7 @@ import {
 } from "../../common/constants.ts";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 import { PlayPauseNext } from "../components/PlayPauseNext.tsx";
-import ResponsiveTableWrapper from "../components/ResponsiveTableWrapper.tsx";
+import { ResponsiveTableWrapper } from "../components/ResponsiveTableWrapper.tsx";
 import { DraftAbbrev } from "../components/DraftAbbrev.tsx";
 import { HelpPopover } from "../components/HelpPopover.tsx";
 

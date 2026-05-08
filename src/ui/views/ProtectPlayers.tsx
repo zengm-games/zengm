@@ -190,8 +190,8 @@ const ProtectPlayers = ({
 			const result = await confirm(
 				"Are you sure you want start the expansion draft without using all your protections?",
 				{
-					okText: "Yes",
-					cancelText: "No",
+					okText: "Start draft",
+					cancelText: "Protect more players",
 				},
 			);
 
@@ -215,8 +215,8 @@ const ProtectPlayers = ({
 					const result = await confirm(
 						"Are you sure you want start the expansion draft without using all your protections for all of the teams you control with multi team mode?",
 						{
-							okText: "Yes",
-							cancelText: "No",
+							okText: "Start draft",
+							cancelText: "Protect more players",
 						},
 					);
 

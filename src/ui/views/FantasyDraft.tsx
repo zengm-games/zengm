@@ -11,7 +11,7 @@ import { shuffle } from "../../common/random.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 
 const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
-	const [sortedTids, setSortedTids] = useState(teams.map((t) => t.tid));
+	const [sortedTids, setSortedTids] = useState(() => teams.map((t) => t.tid));
 	const [starting, setStarting] = useState(false);
 	const randomize = useCallback(() => {
 		const newSortedTids = [...sortedTids];

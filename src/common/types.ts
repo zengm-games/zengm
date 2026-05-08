@@ -382,7 +382,7 @@ export type GamePlayer = any;
 
 export type GameResults = any;
 
-export type GameAttributesNonLeague = { lid: undefined };
+type GameAttributesNonLeague = { lid: undefined };
 
 export type ScheduledEventGameAttributes = {
 	type: "gameAttributes";

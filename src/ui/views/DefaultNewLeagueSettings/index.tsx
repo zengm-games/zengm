@@ -65,7 +65,7 @@ const DefaultNewLeagueSettings = ({
 		}) as Key[];
 	};
 
-	const [settingsShown, setSettingsShown] = useState<Key[]>(
+	const [settingsShown, setSettingsShown] = useState<Key[]>(() =>
 		getKeysFromOverrides(overrides),
 	);
 

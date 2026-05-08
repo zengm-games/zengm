@@ -44,7 +44,7 @@ const PlayersForm = ({
 	>();
 	const availablePlayers = allPlayers ?? initialAvailablePlayers;
 
-	const [currentPlayers, setCurrentPlayers] = useState<PlayerInfo[]>(
+	const [currentPlayers, setCurrentPlayers] = useState<PlayerInfo[]>(() =>
 		players.map((info) => {
 			return {
 				season: info.season,

@@ -46,7 +46,7 @@ const maxBy = <Key extends string, T extends Record<Key, number | undefined>>(
 
 const tallyAwards = (
 	tid: number,
-	seasons: number[],
+	seasons: Set<number>,
 	awards: any[],
 	allAllStars: AllStars[],
 ) => {
@@ -78,7 +78,7 @@ const tallyAwards = (
 			continue;
 		}
 
-		if (!seasons.includes(a.season)) {
+		if (!seasons.has(a.season)) {
 			continue;
 		}
 
@@ -203,7 +203,7 @@ const tallyAwards = (
 	}
 
 	for (const allStars of allAllStars) {
-		if (!seasons.includes(allStars.season)) {
+		if (!seasons.has(allStars.season)) {
 			continue;
 		}
 
@@ -290,7 +290,7 @@ const getRowInfo = (
 		lastTitle,
 		...tallyAwards(
 			tid,
-			seasonAttrs.map((x) => x.season),
+			new Set(seasonAttrs.map((x) => x.season)),
 			awards,
 			allStars,
 		),

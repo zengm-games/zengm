@@ -78,7 +78,7 @@ const AwardsRecords = ({
 				{
 					value: formatYear(yearsGrouped),
 					searchValue: formatYearString(yearsGrouped),
-					sortValue: a.years.map((year) => year.season).sort()[0],
+					sortValue: Math.min(...a.years.map((year) => year.season)),
 				},
 				a.lastYear,
 				a.draft.round > 0 ? (

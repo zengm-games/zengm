@@ -108,7 +108,7 @@ export const LeagueTopBar = memo(() => {
 		};
 
 		wrapperElement.addEventListener("wheel", handleWheel, { passive: false });
-		wrapperElement.addEventListener("scroll", handleScroll, { passive: false });
+		wrapperElement.addEventListener("scroll", handleScroll, { passive: true });
 
 		// This works better than the global "resize" event because it also handles when the div size changes due to other reasons, like the window's scrollbar appearing or disappearing
 		const resizeObserver = new ResizeObserver(keepScrolledToRightIfNecessary);

@@ -90,8 +90,8 @@ export const useStickyTableHeader = ({
 		const resizeObserver = new ResizeObserver(syncWidths);
 		resizeObserver.observe(table);
 
-		container.addEventListener("scroll", syncScroll);
-		window.addEventListener("scroll", syncPosition);
+		container.addEventListener("scroll", syncScroll, { passive: true });
+		window.addEventListener("scroll", syncPosition, { passive: true });
 		window.addEventListener("optimizedResize", syncWidths);
 
 		syncWidths(); // Also calls syncPosition

@@ -147,9 +147,9 @@ class AbbrevsCache {
 		const abbrev = abbrevsByTid.get(tid);
 		if (abbrev === undefined) {
 			if (abbrevsByTid.has(tid)) {
-				throw new Error("Invalid season/tid - missing tid");
-			} else {
 				throw new Error("Invalid season/tid - missing abbrev");
+			} else {
+				throw new Error("Invalid season/tid - missing tid");
 			}
 		}
 		return abbrev;

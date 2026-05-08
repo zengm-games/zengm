@@ -58,9 +58,10 @@ const getLatestTransaction = (
 
 class AbbrevsCache {
 	// First key is season, second is tid, value is undefined (not loaded, either because tid/season not found or because load not yet called) or string (loaded abbrev)
-	private data = new Map<number, Map<number, string | undefined>>();
-	private state: "init" | "loading" | "loaded" = "init";
-	private minSafeSeason: number;
+	// Make these all private after done debugging
+	data = new Map<number, Map<number, string | undefined>>();
+	state: "init" | "loading" | "loaded" = "init";
+	minSafeSeason: number;
 
 	// Set disableDatabaseAccess to true if you're calling this during another IndexedDB transaction that you don't want to auto close. Then it will only look up abbrevs that are safe to access in the cache
 	constructor(disableDatabaseAccess: boolean) {
@@ -338,8 +339,21 @@ const processAttrs = (
 				} else if (transaction.type === "freeAgent") {
 					output.latestTransaction = `Free agent signing in ${transaction.season}`;
 				} else if (transaction.type === "trade") {
-					const abbrev =
-						abbrevsCache?.get(transaction.season, transaction.fromTid) ?? "???";
+					let abbrev;
+					try {
+						abbrev =
+							abbrevsCache?.get(transaction.season, transaction.fromTid) ??
+							"???";
+					} catch (error) {
+						const dataJson: any = abbrevsCache
+							? Object.fromEntries(abbrevsCache.data)
+							: {};
+						for (const [key, value] of Object.entries(dataJson)) {
+							dataJson[key] = Object.fromEntries(value as any);
+						}
+						const message = `${error.message} - ${JSON.stringify({ transactions: p.transactions, season, tid, transaction })} - ${JSON.stringify({ data: dataJson, minSafeSeason: abbrevsCache?.minSafeSeason })}`;
+						throw new Error(message);
+					}
 					const url =
 						transaction.eid !== undefined
 							? helpers.leagueUrl(["trade_summary", transaction.eid])

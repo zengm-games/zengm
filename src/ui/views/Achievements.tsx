@@ -330,7 +330,7 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 
 	useEffect(() => {
 		// If we were linked to a specific achievement, scroll to it
-		setTimeout(() => {
+		const timeoutId = setTimeout(() => {
 			const hash = location.hash.slice(1);
 			if (hash !== "") {
 				const achievementId = makeAchievementId(hash);
@@ -341,6 +341,10 @@ const Achievements = ({ achievements }: View<"achievements">) => {
 				}
 			}
 		}, 100);
+
+		return () => {
+			clearTimeout(timeoutId);
+		};
 	}, []);
 
 	return (

@@ -116,11 +116,12 @@ const AllStarThree = ({
 
 	useEffect(() => {
 		let obsolete = false;
+		let timeoutId: number | undefined;
 
 		const run = async () => {
 			if (!paused) {
 				await new Promise<void>((resolve) => {
-					setTimeout(() => {
+					timeoutId = setTimeout(() => {
 						resolve();
 					}, 700);
 				});
@@ -134,6 +135,7 @@ const AllStarThree = ({
 
 		return () => {
 			obsolete = true;
+			clearTimeout(timeoutId);
 		};
 	}, [paused, activityCount]);
 

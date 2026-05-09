@@ -64,7 +64,7 @@ const getBest = <T extends PlayerWithoutKey>(
 	const skipSalaryCapCheck =
 		salaryCapType === "none" && Math.random() < 2 / numActiveTeams;
 
-	let keyPositionsNeededCache: string[] | undefined;
+	let keyPositionsNeededCache: Set<string> | undefined;
 	const getKeyPositionsNeeded = () => {
 		if (KEY_POSITIONS_NEEDED) {
 			if (keyPositionsNeededCache) {
@@ -88,17 +88,21 @@ const getBest = <T extends PlayerWithoutKey>(
 				object[pos] += 1;
 			}
 
-			keyPositionsNeededCache = allKeyPositionsNeeded.filter((pos) => {
-				const injured = positionCounts.injured[pos] ?? 0;
-				const healthy = positionCounts.healthy[pos] ?? 0;
+			keyPositionsNeededCache = new Set(
+				allKeyPositionsNeeded.filter((pos) => {
+					const injured = positionCounts.injured[pos] ?? 0;
+					const healthy = positionCounts.healthy[pos] ?? 0;
 
-				// If we already have 4 injured ones, maybe don't sign another? idk
-				if (injured >= 4) {
-					return false;
-				}
+					// If we already have 4 injured ones, maybe don't sign another? idk
+					if (injured >= 4) {
+						return false;
+					}
 
-				return healthy === 0 || healthy + injured < KEY_POSITIONS_NEEDED[pos]!;
-			});
+					return (
+						healthy === 0 || healthy + injured < KEY_POSITIONS_NEEDED[pos]!
+					);
+				}),
+			);
 
 			return keyPositionsNeededCache;
 		}
@@ -123,7 +127,7 @@ const getBest = <T extends PlayerWithoutKey>(
 			!shouldAddPlayerNormal &&
 			!shouldAddPlayerMinContract &&
 			(salaryCapCheck || p.contract.amount <= minContract) &&
-			getKeyPositionsNeeded()?.includes(last(p.ratings).pos);
+			getKeyPositionsNeeded()?.has(last(p.ratings).pos);
 
 		if (
 			shouldAddPlayerNormal ||

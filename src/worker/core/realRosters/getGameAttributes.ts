@@ -40,15 +40,15 @@ const getGameAttributes = (
 			aiTradesFactor: 0,
 		};
 
-		const ignoreGameAttributes = [
+		const ignoreGameAttributes = new Set([
 			"salaryCap",
 			"luxuryPayroll",
 			"minPayroll",
 			"minContract",
 			"maxContract",
-		];
+		]);
 		for (const [key, value] of Object.entries(initialGameAttributes)) {
-			if (!ignoreGameAttributes.includes(key)) {
+			if (!ignoreGameAttributes.has(key)) {
 				gameAttributes[key] = value;
 			}
 		}

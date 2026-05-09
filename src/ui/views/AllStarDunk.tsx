@@ -787,6 +787,7 @@ const AllStarDunk = ({
 
 	useEffect(() => {
 		let obsolete = false;
+		let timeoutId: number | undefined;
 
 		const run = async () => {
 			if (!paused) {
@@ -794,7 +795,7 @@ const AllStarDunk = ({
 					setPaused(true);
 				} else {
 					await new Promise<void>((resolve) => {
-						setTimeout(() => {
+						timeoutId = setTimeout(() => {
 							resolve();
 						}, 2000);
 					});
@@ -809,6 +810,7 @@ const AllStarDunk = ({
 
 		return () => {
 			obsolete = true;
+			clearTimeout(timeoutId);
 		};
 	}, [awaitingUserDunkIndex, log, paused]);
 

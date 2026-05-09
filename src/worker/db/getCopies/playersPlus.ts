@@ -79,15 +79,16 @@ class AbbrevsCache {
 		abbrevsByTid.set(tid, undefined);
 	}
 
+	private getFallbackAbbrev(tid: number) {
+		return g.get("teamInfoCache")[tid]?.abbrev ?? "???";
+	}
+
 	private saveAbbrev(
 		abbrevsByTid: Map<number, string | undefined>,
 		tid: number,
 		abbrev: string | undefined,
 	) {
-		abbrevsByTid.set(
-			tid,
-			abbrev ?? g.get("teamInfoCache")[tid]?.abbrev ?? "???",
-		);
+		abbrevsByTid.set(tid, abbrev ?? this.getFallbackAbbrev(tid));
 	}
 
 	async load() {
@@ -141,19 +142,8 @@ class AbbrevsCache {
 			return helpers.getAbbrev(tid);
 		}
 
-		const abbrevsByTid = this.data.get(season);
-		if (!abbrevsByTid) {
-			throw new Error("Invalid season/tid - missing season");
-		}
-		const abbrev = abbrevsByTid.get(tid);
-		if (abbrev === undefined) {
-			if (abbrevsByTid.has(tid)) {
-				throw new Error("Invalid season/tid - missing abbrev");
-			} else {
-				throw new Error("Invalid season/tid - missing tid");
-			}
-		}
-		return abbrev;
+		// Ideally `this.getFallbackAbbrev` would never be needed, because `this.load` would load all abbrevs we need. But since `this.load` is async, it's possible the abbrevs we need change while waiting, like if in the background some other event happens like an AI-AI trade (adding a new transaction, adding a new stats row, etc). In that case, using the abbrev from teamInfoCache should be fine, since any added abbrev should be for the current season.
+		return this.data.get(season)?.get(tid) ?? this.getFallbackAbbrev(tid);
 	}
 }
 

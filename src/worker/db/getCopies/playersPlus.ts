@@ -381,11 +381,7 @@ const processAttrs = (
 				output.latestTransaction = "";
 			}
 		} else if (attr === "latestTransactionSeason") {
-			if (p.transactions && p.transactions.length > 0) {
-				output.latestTransactionSeason = p.transactions.at(-1)!.season;
-			} else {
-				output.latestTransactionSeason = undefined;
-			}
+			output.latestTransactionSeason = p.transactions?.at(-1)?.season;
 		} else if (attr === "jerseyNumber") {
 			output.jerseyNumber = helpers.getJerseyNumber(
 				p,

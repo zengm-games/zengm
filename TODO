@@ -7,6 +7,7 @@ race condition with mutable cached variables and async stuff (example, AbbrevsCa
     - get rid of noCopyCache since we never need to copy
   - somehow wait until a day's game is finished before doing other stuff, like rendering a view
     - also a bit cumbersome to make sure we correctly do this every time
+  - be very careful of using a cached object after any await (i try, but it's hard!)
 
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores

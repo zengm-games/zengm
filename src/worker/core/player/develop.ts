@@ -165,7 +165,7 @@ const develop = async (
 			ratings.ovrs = POSITIONS.reduce((ovrs, pos2) => {
 				ovrs[pos2] = ovr(ratings, pos2);
 
-				if (!NOT_REAL_POSITIONS.includes(pos2) && ovrs[pos2] > maxOvr) {
+				if (!NOT_REAL_POSITIONS.has(pos2) && ovrs[pos2] > maxOvr) {
 					pos = pos2;
 					maxOvr = ovrs[pos2];
 				}

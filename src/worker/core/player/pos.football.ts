@@ -3,9 +3,7 @@ import type { PlayerRatings } from "../../../common/types.football.ts";
 import { NOT_REAL_POSITIONS, POSITIONS } from "../../../common/constants.ts";
 
 const pos = (ratings: PlayerRatings): string => {
-	const positions = POSITIONS.filter(
-		(pos2) => !NOT_REAL_POSITIONS.includes(pos2),
-	);
+	const positions = POSITIONS.filter((pos2) => !NOT_REAL_POSITIONS.has(pos2));
 	const ovrs = positions.map((position) => ovr(ratings, position));
 	let ind = 0;
 	let max = 0;

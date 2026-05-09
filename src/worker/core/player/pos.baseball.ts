@@ -8,7 +8,7 @@ const pos = (ratings: PlayerRatings): string => {
 	let max = 0;
 
 	for (const [i, ovr] of ovrs.entries()) {
-		if (!NOT_REAL_POSITIONS.includes(POSITIONS[i]) && ovr > max) {
+		if (!NOT_REAL_POSITIONS.has(POSITIONS[i]) && ovr > max) {
 			max = ovr;
 			ind = i;
 		}

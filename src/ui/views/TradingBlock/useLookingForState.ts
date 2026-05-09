@@ -19,7 +19,7 @@ type Categories = Record<"positions" | "skills" | "assets", Category>;
 
 const positions = bySport({
 	basketball: ["G", "F", "C"],
-	default: POSITIONS.filter((pos) => !NOT_REAL_POSITIONS.includes(pos)),
+	default: POSITIONS.filter((pos) => !NOT_REAL_POSITIONS.has(pos)),
 });
 const positionNames = bySport<Record<string, string> | undefined>({
 	baseball: undefined,

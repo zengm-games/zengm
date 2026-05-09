@@ -13,8 +13,8 @@ type Team = TeamFiltered<
 	number
 >;
 
-const OFFENSIVE_POSITIONS = ["C", "W"] as const;
-const DEFENSIVE_POSITIONS = ["D"] as const;
+const OFFENSIVE_POSITIONS = new Set(["C", "W"] as const);
+const DEFENSIVE_POSITIONS = new Set(["D"] as const);
 
 const initSumByPosition = () => ({
 	C: {
@@ -60,10 +60,10 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 				? (p.stats.g + 0.5 * p.stats.a) * (t.stats.g / gcDenominator)
 				: 0;
 
-		if (OFFENSIVE_POSITIONS.includes(p.ratings.pos)) {
+		if (OFFENSIVE_POSITIONS.has(p.ratings.pos)) {
 			sumsByType.forwards.gc += gcPlayer;
 			sumsByType.forwards.min += p.stats.min;
-		} else if (DEFENSIVE_POSITIONS.includes(p.ratings.pos)) {
+		} else if (DEFENSIVE_POSITIONS.has(p.ratings.pos)) {
 			sumsByType.defense.gc += gcPlayer;
 			sumsByType.defense.min += p.stats.min;
 		}
@@ -112,7 +112,7 @@ const calculatePS = (players: any[], teams: Team[], league: any) => {
 			dps[i] = 0;
 		} else {
 			if (marginalGoalsPerPoint > 0) {
-				const type: keyof typeof sumsByType = OFFENSIVE_POSITIONS.includes(
+				const type: keyof typeof sumsByType = OFFENSIVE_POSITIONS.has(
 					p.ratings.pos,
 				)
 					? "forwards"

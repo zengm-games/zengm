@@ -15,10 +15,10 @@ import { orderBy } from "../../../common/utils.ts";
 type RaceRow = PlayerBioInfoState["countries"][number]["races"][number];
 
 const parseAndValidateRaces = (races: RaceRow[]) => {
-	const VALID_RACES = ["asian", "black", "brown", "white"];
+	const VALID_RACES = new Set(["asian", "black", "brown", "white"]);
 
 	for (const row of races) {
-		if (!VALID_RACES.includes(row.race)) {
+		if (!VALID_RACES.has(row.race)) {
 			throw new Error(`Invalid race "${row.race}"`);
 		}
 

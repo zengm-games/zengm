@@ -756,15 +756,15 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 									<option value="auto">
 										Auto{autoPos !== undefined ? ` (${autoPos})` : null}
 									</option>
-									{POSITIONS.filter(
-										(pos) => !NOT_REAL_POSITIONS.includes(pos),
-									).map((pos) => {
-										return (
-											<option key={pos} value={pos}>
-												{pos}
-											</option>
-										);
-									})}
+									{POSITIONS.filter((pos) => !NOT_REAL_POSITIONS.has(pos)).map(
+										(pos) => {
+											return (
+												<option key={pos} value={pos}>
+													{pos}
+												</option>
+											);
+										},
+									)}
 								</select>
 							</div>
 							<div className="col-6 col-sm-3 mb-3">

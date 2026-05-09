@@ -136,7 +136,7 @@ export const addPowerRankingsStuffToTeams = async <
 				}
 			} else {
 				for (const pos of POSITIONS) {
-					if (NOT_REAL_POSITIONS.includes(pos)) {
+					if (NOT_REAL_POSITIONS.has(pos)) {
 						continue;
 					}
 					other[pos] = team.ovr(teamPlayers, {

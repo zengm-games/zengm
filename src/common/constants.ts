@@ -567,12 +567,14 @@ export const SKILLS = bySport<Record<string, string>>({
 	},
 });
 
-export const NOT_REAL_POSITIONS = bySport({
-	baseball: ["DH"],
-	basketball: [],
-	football: ["KR", "PR"],
-	hockey: [],
-});
+export const NOT_REAL_POSITIONS = new Set(
+	bySport({
+		baseball: ["DH"],
+		basketball: [],
+		football: ["KR", "PR"],
+		hockey: [],
+	}),
+);
 
 export const COLA_ALPHA = 1000;
 export const COLA_OPT_OUT_PENALTY = 2000;

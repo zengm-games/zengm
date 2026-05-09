@@ -109,7 +109,7 @@ export const getStats = (statTypePlus: string, seasons: [number, number]) => {
 			}
 		} else {
 			for (const pos of POSITIONS) {
-				if (NOT_REAL_POSITIONS.includes(pos)) {
+				if (NOT_REAL_POSITIONS.has(pos)) {
 					continue;
 				}
 				stats.push(`rank_${pos}`, `rankCurrent_${pos}`);

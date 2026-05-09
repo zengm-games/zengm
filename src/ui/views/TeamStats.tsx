@@ -19,7 +19,7 @@ const TeamStats = ({
 	playoffs,
 	season,
 	stats,
-	superCols,
+	superCols: superColsRaw,
 	teamOpponent,
 	teams,
 	ties,
@@ -38,6 +38,8 @@ const TeamStats = ({
 			playoffs,
 		},
 	});
+
+	const superCols = helpers.deepCopy(superColsRaw);
 
 	const basicColNames = ["#", "Team", "stat:gp", "W", "L"];
 	if (otl) {

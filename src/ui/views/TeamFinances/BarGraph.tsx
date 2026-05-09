@@ -105,9 +105,7 @@ export const BarGraph = <
 		return [min, max];
 	};
 
-	if (!ylim) {
-		ylim = defaultYlim();
-	}
+	const actualYlim = ylim ?? defaultYlim();
 
 	const gap = 2; // Gap between bars, in pixels
 
@@ -122,14 +120,14 @@ export const BarGraph = <
 	const scaled = data.map((row) =>
 		y.map((key) => {
 			// @ts-expect-error
-			return scale(row[key], ylim);
+			return scale(row[key], actualYlim);
 		}),
 	);
 
 	// Draw bars
 	const bars = [];
 	for (const [j, row] of scaled.entries()) {
-		let offset = scale(0, ylim);
+		let offset = scale(0, actualYlim);
 		for (const [i, value] of row.entries()) {
 			let className = classNameOverride?.(data[j]!) ?? `bar-graph-${i + 1}`;
 
@@ -146,10 +144,10 @@ export const BarGraph = <
 				// Fix for negative values
 				if (negative) {
 					bottom = value;
-					height = scale(0, ylim) - value;
+					height = scale(0, actualYlim) - value;
 					className = "bar-graph-6";
 				} else {
-					height = value - scale(0, ylim);
+					height = value - scale(0, actualYlim);
 				}
 			} else {
 				// Assume no negative values

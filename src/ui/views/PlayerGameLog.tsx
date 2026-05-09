@@ -214,10 +214,6 @@ const PlayerGameLog = ({
 		...stats.map((stat) => `stat:${stat}`),
 	]);
 
-	if (showDecisionColumn && superCols?.[1]) {
-		superCols[1].colspan += 1;
-	}
-
 	const makeRow = (game: (typeof gameLog)[number], i: number): DataTableRow => {
 		const allStarGame = game.tid === -1 || game.tid === -2;
 

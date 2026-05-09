@@ -214,6 +214,10 @@ const updatePlayerGameLog = async (
 			});
 		}
 
+		if (showDecisionColumn && superCols[1]) {
+			superCols[1].colspan += 1;
+		}
+
 		return {
 			...topStuff,
 			showDecisionColumn,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import type { View } from "../../../common/types.ts";
@@ -52,6 +52,11 @@ const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
 		}
 		return value!;
 	});
+
+	// Keep synchronized with external changes, such as from the "Reset playing time" button
+	useEffect(() => {
+		setValue(p.ptModifier);
+	}, [p]);
 
 	return (
 		<select

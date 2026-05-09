@@ -1,3 +1,13 @@
+race condition with mutable cached variables and async stuff (example, AbbrevsCache issue from commit e3f01ef8b)
+- cannot assume an object from our cache is stable after any await, could have any arbitrary changes such as new transactions, new stats rows, etc.
+- possibly fixes
+  - stop mutating objects from database ever, instead do some immutable edit
+    - would this be too slow/cumbersome for updating stats?
+    - can this be enforced? if not, could be difficult to maintain
+    - get rid of noCopyCache since we never need to copy
+  - somehow wait until a day's game is finished before doing other stuff, like rendering a view
+    - also a bit cumbersome to make sure we correctly do this every time
+
 use team colors as foreground/background in UI in some places - already guaranteed contrast bc used for jersey numbers
 - box scores
 - player photo background https://discord.com/channels/290013534023057409/1494819236495757515/1495484681641001181

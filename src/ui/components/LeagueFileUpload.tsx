@@ -278,7 +278,7 @@ export const LeagueFileUpload = ({
 				{
 					file,
 					includePlayersInBasicInfo,
-					leagueCreationID: leagueCreationID,
+					leagueCreationID,
 				},
 			);
 

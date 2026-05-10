@@ -68,7 +68,7 @@ const Dialog = ({
 	return (
 		<Modal animation show={show} onHide={cancel}>
 			<Modal.Header closeButton>
-				<h5 className="modal-title">Delete Account</h5>
+				<Modal.Title>Delete account</Modal.Title>
 			</Modal.Header>
 			<Modal.Body>
 				<p>
@@ -112,7 +112,7 @@ const Dialog = ({
 					Cancel
 				</button>
 				<button className="btn btn-danger" onClick={deleteAccount}>
-					Delete Account
+					Delete account
 				</button>
 			</Modal.Footer>
 		</Modal>
@@ -157,7 +157,7 @@ const DeleteAccountForm = ({
 					setShowDialog(true);
 				}}
 			>
-				Delete Account
+				Delete account
 			</button>
 
 			{errorMessage ? (

@@ -1,4 +1,5 @@
 import { idb } from "../db/index.ts";
+import DOMPurify from "dompurify";
 
 const updateInbox = async () => {
 	const messages = await idb.getCopies.messages();
@@ -6,7 +7,7 @@ const updateInbox = async () => {
 	let anyUnread = false;
 
 	for (const message of messages) {
-		message.text = message.text.replaceAll("<p>", "").replaceAll("</p>", " "); // Needs to be regex otherwise it's cumbersome to do global replace
+		message.text = DOMPurify.sanitize(message.text);
 
 		if (!message.read) {
 			anyUnread = true;

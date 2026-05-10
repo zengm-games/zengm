@@ -1,5 +1,6 @@
 import {
 	useEffect,
+	useId,
 	useReducer,
 	useRef,
 	useState,
@@ -132,7 +133,7 @@ export const LeagueFileUpload = ({
 		};
 	}, []);
 
-	const leagueCreationID = useRef(Math.random());
+	const leagueCreationID = useId();
 	const { leagueCreation, leagueCreationPercent } = useLocalPartial([
 		"leagueCreation",
 		"leagueCreationPercent",
@@ -228,7 +229,7 @@ export const LeagueFileUpload = ({
 				{
 					file: url,
 					includePlayersInBasicInfo,
-					leagueCreationID: leagueCreationID.current,
+					leagueCreationID,
 				},
 			);
 
@@ -277,7 +278,7 @@ export const LeagueFileUpload = ({
 				{
 					file,
 					includePlayersInBasicInfo,
-					leagueCreationID: leagueCreationID.current,
+					leagueCreationID: leagueCreationID,
 				},
 			);
 
@@ -357,8 +358,8 @@ export const LeagueFileUpload = ({
 				{state.status === "checking" ? (
 					<>
 						<div className="alert alert-info mt-3">
-							{leagueCreationPercent?.id === leagueCreationID.current ||
-							leagueCreation?.id === leagueCreationID.current ? (
+							{leagueCreationPercent?.id === leagueCreationID ||
+							leagueCreation?.id === leagueCreationID ? (
 								<ProgressBarText
 									text={`Validating ${
 										leagueCreation?.status ?? "league file"

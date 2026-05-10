@@ -1013,11 +1013,11 @@ export type LocalStateUI = {
 	homeCourtAdvantage: GameAttributesLeague["homeCourtAdvantage"];
 	keyboardShortcuts: KeyboardShortcutsLocal;
 	leagueCreation?: {
-		id: number;
+		id: string;
 		status: string;
 	};
 	leagueCreationPercent?: {
-		id: number;
+		id: string;
 		percent: number;
 	};
 	lid?: number;

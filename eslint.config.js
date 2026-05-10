@@ -80,7 +80,6 @@ export default defineConfig(
 
 			// Would be nice to enable these
 			"react-hooks/immutability": "off",
-			"react-hooks/purity": "off",
 			"react-hooks/refs": "off",
 			"react-hooks/set-state-in-effect": "off",
 

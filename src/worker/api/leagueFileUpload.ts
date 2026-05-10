@@ -137,7 +137,7 @@ const getBasicInfo = async ({
 }: {
 	stream: ReadableStream;
 	includePlayersInBasicInfo: boolean | undefined;
-	leagueCreationID: number | undefined;
+	leagueCreationID: string | undefined;
 	conditions: Conditions;
 }) => {
 	// This is stuff needed for either the league creation screen, or is needed before actually loading the file to the database in createStream
@@ -274,7 +274,7 @@ const getBasicInfo = async ({
 };
 
 export const emitProgressStream = (
-	leagueCreationID: number | undefined,
+	leagueCreationID: string | undefined,
 	sizeInBytes: number | undefined,
 	conditions: Conditions,
 ) => {
@@ -371,7 +371,7 @@ const initialCheck = async (
 	}: {
 		file: File | string;
 		includePlayersInBasicInfo?: boolean;
-		leagueCreationID?: number;
+		leagueCreationID?: string;
 	},
 	conditions: Conditions,
 ) => {

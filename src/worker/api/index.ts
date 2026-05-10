@@ -577,7 +577,7 @@ const createLeague = async (
 			version: number | undefined;
 		};
 		startingSeasonFromInput: string | undefined;
-		leagueCreationID: number;
+		leagueCreationID: string;
 	},
 	conditions: Conditions,
 ): Promise<number> => {

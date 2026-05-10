@@ -1,5 +1,5 @@
 import { m, AnimatePresence } from "framer-motion";
-import { useState, useReducer, useRef, useCallback, useEffect } from "react";
+import { useState, useReducer, useCallback, useEffect, useId } from "react";
 import {
 	DIFFICULTY,
 	PHASE,
@@ -682,7 +682,7 @@ const NewLeague = (props: View<"newLeague">) => {
 		"default" | "teams" | "settings"
 	>("default");
 
-	const leagueCreationID = useRef(Math.random());
+	const leagueCreationID = useId();
 	const { leagueCreation, leagueCreationPercent } = useLocalPartial([
 		"leagueCreation",
 		"leagueCreationPercent",
@@ -887,7 +887,7 @@ const NewLeague = (props: View<"newLeague">) => {
 					teams: state.basicInfo?.teams,
 					version: state.basicInfo?.version,
 				},
-				leagueCreationID: leagueCreationID.current,
+				leagueCreationID,
 			});
 
 			let type: string = state.customize;
@@ -1563,8 +1563,8 @@ const NewLeague = (props: View<"newLeague">) => {
 							</div>
 
 							{(state.file || state.url) &&
-							(leagueCreationPercent?.id === leagueCreationID.current ||
-								leagueCreation?.id === leagueCreationID.current) ? (
+							(leagueCreationPercent?.id === leagueCreationID ||
+								leagueCreation?.id === leagueCreationID) ? (
 								<div className="mt-3">
 									<ProgressBarText
 										text={leagueCreation?.status ?? ""}

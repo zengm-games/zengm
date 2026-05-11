@@ -236,8 +236,6 @@ const Trade = (props: View<"trade">) => {
 	};
 
 	const {
-		challengeNoTrades,
-		gameOver,
 		otherTeamsWantToHire,
 		lost,
 		luxuryPayroll,
@@ -269,8 +267,18 @@ const Trade = (props: View<"trade">) => {
 		title: "Trade",
 	});
 
-	const { challengeNoRatings, spectator, phase, userTid, userTids } = useLocal([
+	const {
+		challengeNoRatings,
+		challengeNoTrades,
+		gameOver,
+		spectator,
+		phase,
+		userTid,
+		userTids,
+	} = useLocal([
 		"challengeNoRatings",
+		"challengeNoTrades",
+		"gameOver",
 		"spectator",
 		"phase",
 		"userTid",

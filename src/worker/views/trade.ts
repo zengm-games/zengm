@@ -226,7 +226,6 @@ const updateTrade = async () => {
 	} ${g.get("teamInfoCache")[g.get("userTid")]?.name}`;
 
 	return {
-		challengeNoTrades: g.get("challengeNoTrades"),
 		luxuryPayroll: g.get("luxuryPayroll") / 1000,
 		luxuryTax: g.get("luxuryTax"),
 		salaryCap: g.get("salaryCap") / 1000,
@@ -253,7 +252,6 @@ const updateTrade = async () => {
 		tied: t.seasonAttrs.tied,
 		otl: t.seasonAttrs.otl,
 		userTeamName,
-		gameOver: g.get("gameOver"),
 		otherTeamsWantToHire: g.get("otherTeamsWantToHire"),
 		forceTrade: false,
 		numDraftRounds: g.get("numDraftRounds"),

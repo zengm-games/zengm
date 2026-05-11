@@ -16,8 +16,6 @@ import { Dropdown } from "react-bootstrap";
 import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch.tsx";
 
 const SavedTrades = ({
-	challengeNoTrades,
-	gameOver,
 	luxuryPayroll,
 	luxuryTax,
 	offers,
@@ -26,8 +24,17 @@ const SavedTrades = ({
 }: View<"savedTrades">) => {
 	useTitleBar({ title: "Saved Trades" });
 
-	const { challengeNoRatings, phase, spectator, teamInfoCache } = useLocal([
+	const {
+		challengeNoRatings,
+		challengeNoTrades,
+		gameOver,
+		phase,
+		spectator,
+		teamInfoCache,
+	} = useLocal([
 		"challengeNoRatings",
+		"challengeNoTrades",
+		"gameOver",
 		"phase",
 		"spectator",
 		"teamInfoCache",

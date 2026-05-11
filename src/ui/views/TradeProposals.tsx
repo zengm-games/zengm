@@ -16,16 +16,23 @@ import { ActionButton } from "../components/ActionButton.tsx";
 import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch.tsx";
 
 const TradeProposals = ({
-	challengeNoTrades,
-	gameOver,
 	luxuryPayroll,
 	luxuryTax,
 	offers,
 	salaryCap,
 	salaryCapType,
 }: View<"tradeProposals">) => {
-	const { challengeNoRatings, phase, spectator, teamInfoCache } = useLocal([
+	const {
+		challengeNoRatings,
+		challengeNoTrades,
+		gameOver,
+		phase,
+		spectator,
+		teamInfoCache,
+	} = useLocal([
 		"challengeNoRatings",
+		"challengeNoTrades",
+		"gameOver",
 		"phase",
 		"spectator",
 		"teamInfoCache",

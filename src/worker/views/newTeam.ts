@@ -219,7 +219,6 @@ const updateTeamSelect = async (
 			confs: g.get("confs", "current"),
 			disabled,
 			expansion,
-			gameOver: g.get("gameOver"),
 			numActiveTeams,
 			otherTeamsWantToHire,
 			teams: finalTeams,

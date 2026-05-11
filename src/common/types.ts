@@ -991,10 +991,12 @@ type LocalStateUIGameTeam = {
 export type LocalStateUI = {
 	alwaysShowCountry: boolean;
 	challengeNoRatings: boolean;
+	challengeNoTrades: boolean;
 	currencyFormat: GameAttributesLeague["currencyFormat"];
 	customMenu?: MenuItemHeader;
 	email?: string;
 	flagOverrides: Record<string, string>;
+	gameOver: boolean;
 	gameSimInProgress: boolean;
 	games: {
 		finals?: boolean;

@@ -204,8 +204,6 @@ const updateSavedTrades = async (
 		const offers2 = await addMissingAssets(offers);
 
 		return {
-			challengeNoTrades: g.get("challengeNoTrades"),
-			gameOver: g.get("gameOver"),
 			luxuryPayroll: g.get("luxuryPayroll"),
 			luxuryTax: g.get("luxuryTax"),
 			offers: offers2,

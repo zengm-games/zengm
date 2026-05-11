@@ -490,8 +490,6 @@ const MissingAndWilling = ({
 };
 
 const TradingBlock = ({
-	challengeNoTrades,
-	gameOver,
 	initialDpids,
 	initialPids,
 	salaryCap,
@@ -501,8 +499,17 @@ const TradingBlock = ({
 	userPicks,
 	userRoster,
 }: View<"tradingBlock">) => {
-	const { challengeNoRatings, phase, spectator, teamInfoCache } = useLocal([
+	const {
+		challengeNoRatings,
+		challengeNoTrades,
+		gameOver,
+		phase,
+		spectator,
+		teamInfoCache,
+	} = useLocal([
 		"challengeNoRatings",
+		"challengeNoTrades",
+		"gameOver",
 		"phase",
 		"spectator",
 		"teamInfoCache",

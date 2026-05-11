@@ -158,8 +158,6 @@ const updateTradeProposals = async (
 		}
 
 		return {
-			challengeNoTrades: g.get("challengeNoTrades"),
-			gameOver: g.get("gameOver"),
 			luxuryPayroll: g.get("luxuryPayroll"),
 			luxuryTax: g.get("luxuryTax"),
 			offers,

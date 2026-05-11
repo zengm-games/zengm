@@ -98,18 +98,19 @@ const NewTeam = ({
 	confs,
 	disabled,
 	expansion,
-	gameOver,
 	numActiveTeams,
 	otherTeamsWantToHire,
 	teams,
 }: View<"newTeam">) => {
-	const { challengeNoRatings, godMode, phase, season, userTid } = useLocal([
-		"challengeNoRatings",
-		"godMode",
-		"phase",
-		"season",
-		"userTid",
-	]);
+	const { challengeNoRatings, gameOver, godMode, phase, season, userTid } =
+		useLocal([
+			"challengeNoRatings",
+			"gameOver",
+			"godMode",
+			"phase",
+			"season",
+			"userTid",
+		]);
 
 	const [tid, setTid] = useState(teams?.[0]?.tid ?? undefined);
 	const [submitting, setSubmitting] = useState(false);

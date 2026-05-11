@@ -1,8 +1,10 @@
 export const gameAttributesSyncedToUi = [
 	"alwaysShowCountry",
 	"challengeNoRatings",
+	"challengeNoTrades",
 	"currencyFormat",
 	"fantasyPoints",
+	"gameOver",
 	"gender",
 	"godMode",
 	"hideDisabledTeams",

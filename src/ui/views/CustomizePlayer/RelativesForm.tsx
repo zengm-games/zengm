@@ -1,12 +1,12 @@
 import { useMemo, useState } from "react";
 import { groupByUnique } from "../../../common/utils.ts";
-import type { GameAttributesLeague } from "../../../common/types.ts";
 import { ActionButton } from "../../components/ActionButton.tsx";
 import SelectMultiple from "../../components/SelectMultiple/index.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { RatingsStatsPopover } from "../../components/RatingsStatsPopover/index.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
+import { useLocal } from "../../util/local.ts";
 
 export type PlayerInfoForName = {
 	pid: number;
@@ -32,14 +32,10 @@ export const formatName = (p: PlayerInfoForName) => {
 };
 
 const RelativesForm = ({
-	gender,
-	godMode,
 	handleChange,
 	initialPlayers,
 	relatives,
 }: {
-	gender: GameAttributesLeague["gender"];
-	godMode: boolean;
 	handleChange: (
 		type: string,
 		field: string,
@@ -56,6 +52,7 @@ const RelativesForm = ({
 		type: string;
 	}[];
 }) => {
+	const { gender, godMode } = useLocal(["gender", "godMode"]);
 	const [allPlayersState, setAllPlayersState] = useState<
 		"init" | "loading" | "done"
 	>("init");

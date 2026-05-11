@@ -345,12 +345,7 @@ const useJerseyNumberConflictInfo = (
 };
 
 const CustomizePlayer = (props: View<"customizePlayer">) => {
-	const { challengeNoRatings, godMode, phase, season } = useLocal([
-		"challengeNoRatings",
-		"godMode",
-		"phase",
-		"season",
-	]);
+	const { godMode, phase, season } = useLocal(["godMode", "phase", "season"]);
 
 	const [state, setState] = useState(() => {
 		const p = helpers.deepCopy(props.p);
@@ -533,7 +528,6 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 	const {
 		faceCount,
-		gender,
 		originalTid,
 		playerMoodTraits,
 		playersRelativesList,
@@ -1271,8 +1265,6 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						<h2>Ratings</h2>
 
 						<RatingsForm
-							challengeNoRatings={challengeNoRatings}
-							godMode={godMode}
 							handleChange={handleChange}
 							pos={p.pos ?? autoPos}
 							ratingsRow={p.ratings[r]}
@@ -1281,8 +1273,6 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 						<h2>Relatives</h2>
 
 						<RelativesForm
-							gender={gender}
-							godMode={godMode}
 							handleChange={handleChange}
 							initialPlayers={playersRelativesList}
 							relatives={p.relatives}

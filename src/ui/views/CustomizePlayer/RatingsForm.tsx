@@ -4,6 +4,7 @@ import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCol } from "../../../common/getCol.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { useLocal } from "../../util/local.ts";
 
 const rows = bySport<
 	{
@@ -46,14 +47,10 @@ const rows = bySport<
 });
 
 const RatingsForm = ({
-	challengeNoRatings,
-	godMode,
 	handleChange,
 	pos,
 	ratingsRow,
 }: {
-	challengeNoRatings: boolean;
-	godMode: boolean;
 	handleChange: (
 		type: string,
 		field: string,
@@ -62,6 +59,11 @@ const RatingsForm = ({
 	pos: string;
 	ratingsRow: any;
 }) => {
+	const { challengeNoRatings, godMode } = useLocal([
+		"challengeNoRatings",
+		"godMode",
+	]);
+
 	const [ovr, setOvr] = useState(ratingsRow.ovr);
 
 	useEffect(() => {

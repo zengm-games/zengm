@@ -151,7 +151,6 @@ const updateCustomizePlayer = async (
 		return {
 			appearanceOption,
 			faceCount,
-			gender: g.get("gender"),
 			initialAutoPos,
 			minContract: g.get("minContract"),
 			originalTid,

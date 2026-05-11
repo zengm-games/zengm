@@ -79,9 +79,6 @@ const updateNegotiationList = async () => {
 	return {
 		capSpace,
 		draftPickAutoContract: g.get("draftPickAutoContract"),
-		luxuryPayroll: g.get("luxuryPayroll") / 1000,
-		maxContract: g.get("maxContract"),
-		minContract: g.get("minContract"),
 		numRosterSpots: g.get("maxRosterSize") - userPlayersAll.length,
 		payroll: payroll / 1000,
 		players,

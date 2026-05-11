@@ -1,10 +1,6 @@
 gameAttributesSyncedToUi should never be returned from worker view functions, except possibly if they are also used internally in those functions and we need to be consistent (in which case we should be listening for changes in those settings)
 - add more variables?
   - .+?: g.get\(".+?"\)
-  - luxuryPayroll
-  - minContract
-  - minPayroll
-  - salaryCap
 
 race condition with mutable cached variables and async stuff (example, AbbrevsCache issue from commit e3f01ef8b)
 - cannot assume an object from our cache is stable after any await, could have any arbitrary changes such as new transactions, new stats rows, etc.

@@ -1,24 +1,23 @@
 import { HelpPopover } from "./HelpPopover.tsx";
-import type { GameAttributesLeague } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
+import { useLocal } from "../util/local.ts";
 
 export const RosterSalarySummary = ({
 	capSpace,
-	luxuryPayroll,
-	maxContract,
-	minContract,
 	numRosterSpots,
 	payroll,
-	salaryCapType,
 }: {
 	capSpace: number;
-	luxuryPayroll: number;
-	maxContract: number;
-	minContract: number;
 	numRosterSpots: number;
 	payroll: number;
-	salaryCapType: GameAttributesLeague["salaryCapType"];
 }) => {
+	const { luxuryPayroll, maxContract, minContract, salaryCapType } = useLocal([
+		"luxuryPayroll",
+		"maxContract",
+		"minContract",
+		"salaryCapType",
+	]);
+
 	const actualCapSpace = capSpace > 0 ? capSpace : 0;
 
 	return (
@@ -28,7 +27,7 @@ export const RosterSalarySummary = ({
 				<>
 					{" "}
 					and a <b>{helpers.formatCurrency(payroll, "M")}</b> payroll (luxury
-					tax limit: {helpers.formatCurrency(luxuryPayroll, "M")}).
+					tax limit: {helpers.formatCurrency(luxuryPayroll / 1000, "M")}).
 				</>
 			) : (
 				<>

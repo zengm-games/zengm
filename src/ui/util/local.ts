@@ -72,6 +72,7 @@ const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 		liveGameInProgress: false,
 		luxuryPayroll: defaultGameAttributes.luxuryPayroll,
 		luxuryTax: defaultGameAttributes.luxuryTax,
+		maxContract: defaultGameAttributes.maxContract,
 		minContract: defaultGameAttributes.minContract,
 		minPayroll: defaultGameAttributes.minPayroll,
 		neutralSite: defaultGameAttributes.neutralSite,

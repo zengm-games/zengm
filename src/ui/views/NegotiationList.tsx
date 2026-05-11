@@ -23,9 +23,6 @@ import { useLocal } from "../util/local.ts";
 const NegotiationList = ({
 	capSpace,
 	draftPickAutoContract,
-	luxuryPayroll,
-	maxContract,
-	minContract,
 	numRosterSpots,
 	payroll,
 	players,
@@ -33,12 +30,14 @@ const NegotiationList = ({
 	sumContracts,
 	userPlayers,
 }: View<"negotiationList">) => {
-	const { challengeNoRatings, salaryCapType, spectator, season } = useLocal([
-		"challengeNoRatings",
-		"salaryCapType",
-		"spectator",
-		"season",
-	]);
+	const { challengeNoRatings, minContract, salaryCapType, spectator, season } =
+		useLocal([
+			"challengeNoRatings",
+			"minContract",
+			"salaryCapType",
+			"spectator",
+			"season",
+		]);
 
 	const title =
 		salaryCapType === "hard" || !draftPickAutoContract
@@ -165,10 +164,6 @@ const NegotiationList = ({
 
 			<RosterSalarySummary
 				capSpace={capSpace}
-				salaryCapType={salaryCapType}
-				luxuryPayroll={luxuryPayroll}
-				maxContract={maxContract}
-				minContract={minContract}
 				numRosterSpots={numRosterSpots}
 				payroll={payroll}
 			/>

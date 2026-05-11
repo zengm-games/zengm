@@ -109,9 +109,6 @@ const FreeAgents = ({
 	capSpace,
 	challengeNoFreeAgents,
 	freeAgencySeason,
-	luxuryPayroll,
-	maxContract,
-	minContract,
 	numRosterSpots,
 	payroll,
 	players,
@@ -134,12 +131,14 @@ const FreeAgents = ({
 	const {
 		challengeNoRatings,
 		gameSimInProgress,
+		minContract,
 		phase,
 		salaryCapType,
 		spectator,
 	} = useLocal([
 		"challengeNoRatings",
 		"gameSimInProgress",
+		"minContract",
 		"phase",
 		"salaryCapType",
 		"spectator",
@@ -309,10 +308,6 @@ const FreeAgents = ({
 				<>
 					<RosterSalarySummary
 						capSpace={capSpace}
-						salaryCapType={salaryCapType}
-						luxuryPayroll={luxuryPayroll}
-						maxContract={maxContract}
-						minContract={minContract}
 						numRosterSpots={numRosterSpots}
 						payroll={payroll}
 					/>

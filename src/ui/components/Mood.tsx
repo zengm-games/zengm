@@ -141,7 +141,11 @@ const MoodTextRow = ({ amount, text }: { amount: number; text: string }) => {
 };
 
 export const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
-	const { teamInfoCache, userTid } = useLocal(["teamInfoCache", "userTid"]);
+	const { gender, teamInfoCache, userTid } = useLocal([
+		"gender",
+		"teamInfoCache",
+		"userTid",
+	]);
 
 	const playerIsOnUsersTeam = userTid === p.tid;
 	const canShowCurrent = p.mood.current && !playerIsOnUsersTeam;
@@ -149,8 +153,6 @@ export const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 		defaultType === "current" && canShowCurrent ? "current" : "user";
 
 	const [type, setType] = useState<"user" | "current">(initialType);
-
-	const { gender } = useLocal(["gender"]);
 
 	const mood = p.mood[type];
 	const initialMood = p.mood[initialType];

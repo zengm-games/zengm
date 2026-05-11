@@ -501,10 +501,11 @@ const TradingBlock = ({
 	userPicks,
 	userRoster,
 }: View<"tradingBlock">) => {
-	const { challengeNoRatings, phase, spectator } = useLocal([
+	const { challengeNoRatings, phase, spectator, teamInfoCache } = useLocal([
 		"challengeNoRatings",
 		"phase",
 		"spectator",
+		"teamInfoCache",
 	]);
 
 	const [state, setState] = useState<{
@@ -623,8 +624,6 @@ const TradingBlock = ({
 	};
 
 	useTitleBar({ title: "Trading Block" });
-
-	const { teamInfoCache } = useLocal(["teamInfoCache"]);
 
 	const tradeOffersSwitch = useTradeOffersSwitch();
 

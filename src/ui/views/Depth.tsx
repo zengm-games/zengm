@@ -115,8 +115,9 @@ const Depth = ({
 		throw new Error("Not implemented");
 	}
 
-	const { challengeNoRatings, season } = useLocal([
+	const { challengeNoRatings, gender, season } = useLocal([
 		"challengeNoRatings",
+		"gender",
 		"season",
 	]);
 
@@ -136,8 +137,6 @@ const Depth = ({
 		moreInfoSeason: season,
 		moreInfoTid: tid,
 	});
-
-	const { gender } = useLocal(["gender"]);
 
 	if (pos !== prevPos) {
 		setSortedPids(undefined);

@@ -24,10 +24,11 @@ const TradeProposals = ({
 	salaryCap,
 	salaryCapType,
 }: View<"tradeProposals">) => {
-	const { challengeNoRatings, phase, spectator } = useLocal([
+	const { challengeNoRatings, phase, spectator, teamInfoCache } = useLocal([
 		"challengeNoRatings",
 		"phase",
 		"spectator",
+		"teamInfoCache",
 	]);
 
 	const [removedTids, setRemovedTids] = useState<number[]>([]);
@@ -47,8 +48,6 @@ const TradeProposals = ({
 	}, [offers, prevOffers]);
 
 	useTitleBar({ title: "Trade Proposals" });
-
-	const { teamInfoCache } = useLocal(["teamInfoCache"]);
 
 	const [refreshing, setRefreshing] = useState(false);
 

@@ -132,13 +132,12 @@ const FreeAgents = ({
 		},
 	});
 
-	const { challengeNoRatings, phase, spectator } = useLocal([
+	const { challengeNoRatings, gameSimInProgress, phase, spectator } = useLocal([
 		"challengeNoRatings",
+		"gameSimInProgress",
 		"phase",
 		"spectator",
 	]);
-
-	const { gameSimInProgress } = useLocal(["gameSimInProgress"]);
 
 	const [dataTableHandle, setDataTableHandle] =
 		useState<DataTableHandle | null>(null);

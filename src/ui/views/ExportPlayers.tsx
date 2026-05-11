@@ -75,9 +75,10 @@ export const exportPlayers = async (
 const ExportPlayers = ({ players, season }: View<"exportPlayers">) => {
 	const {
 		challengeNoRatings,
+		gender,
 		season: currentSeason,
 		startingSeason,
-	} = useLocal(["challengeNoRatings", "season", "startingSeason"]);
+	} = useLocal(["challengeNoRatings", "gender", "season", "startingSeason"]);
 	const multipleSeasons = currentSeason > startingSeason;
 
 	const [exporting, setExporting] = useState(false);
@@ -94,8 +95,6 @@ const ExportPlayers = ({ players, season }: View<"exportPlayers">) => {
 		dropdownView: "export_players",
 		dropdownFields: { seasons: season },
 	});
-
-	const { gender } = useLocal(["gender"]);
 
 	const selectedRows = useSelectedRows();
 	const selectedRows2 = useSelectedRows();

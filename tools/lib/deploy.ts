@@ -1,4 +1,4 @@
-import { spawn } from "node:child_process";
+import { execSync, spawn } from "node:child_process";
 import { setTimeout } from "node:timers/promises";
 import Cloudflare from "cloudflare";
 import { readFile } from "node:fs/promises";
@@ -54,6 +54,10 @@ const mySpawn = async (command: string, args: string[]) => {
 	}
 };
 
+const getCurrentBranch = () => {
+	return execSync("git branch --show-current").toString().trim();
+};
+
 export const deploy = async (sport: Sport, versionNumber: string) => {
 	const cloudflareConfig = JSON.parse(
 		await readFile(
@@ -71,6 +75,17 @@ export const deploy = async (sport: Sport, versionNumber: string) => {
 		football: `${subdomain}.football-gm.com`,
 		hockey: `${subdomain === "play" ? "" : "beta."}hockey.zengm.com`,
 	});
+
+	if (subdomain === "play") {
+		// Confirm we're on the master branch if we're deploying to prod
+		const branch = JSON.stringify(getCurrentBranch());
+		if (branch !== "master") {
+			console.log(
+				`\nDeploying to prod from a non-master branch (${branch}) is not allowed`,
+			);
+			process.exit(1);
+		}
+	}
 
 	console.log(`\nDeploying to ${domain}...`);
 

@@ -19,7 +19,6 @@ const DraftTeamHistory = ({
 	players,
 	stats,
 	tid,
-	userAbbrev,
 }: View<"draftTeamHistory">) => {
 	const noDraft = draftType === "freeAgents";
 
@@ -29,9 +28,10 @@ const DraftTeamHistory = ({
 		dropdownFields: { teamsAndYours: abbrev },
 	});
 
-	const { challengeNoRatings, teamInfoCache } = useLocal([
+	const { challengeNoRatings, teamInfoCache, userTid } = useLocal([
 		"challengeNoRatings",
 		"teamInfoCache",
+		"userTid",
 	]);
 
 	const superCols = [
@@ -156,7 +156,7 @@ const DraftTeamHistory = ({
 			],
 			classNames: {
 				"table-danger": p.hof,
-				"table-info": p.currentAbbrev === userAbbrev,
+				"table-info": p.currentTid === userTid,
 			},
 		};
 	});

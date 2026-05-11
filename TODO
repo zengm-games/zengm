@@ -1,6 +1,4 @@
 gameAttributesSyncedToUi should never be returned from worker view functions, except possibly if they are also used internally in those functions and we need to be consistent (in which case we should be listening for changes in those settings)
-- get rid of useLocal?
-- get rid of userAbbrev?
 - useLocalPartial multiple times in same function
 - add more variables?
   - other challenge modes

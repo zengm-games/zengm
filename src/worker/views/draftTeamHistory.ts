@@ -127,15 +127,12 @@ const updateDraftTeamHistory = async (
 		});
 	}
 
-	const userAbbrev = g.get("teamInfoCache")[g.get("userTid")]?.abbrev;
-
 	return {
 		abbrev: inputs.abbrev,
 		draftType: g.get("draftType"),
 		players: addFirstNameShort(players),
 		stats,
 		tid: inputs.tid,
-		userAbbrev,
 	};
 };
 

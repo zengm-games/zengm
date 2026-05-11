@@ -988,15 +988,11 @@ type LocalStateUIGameTeam = {
 	  }
 );
 
+type GameAttributesSyncedToUi = (typeof gameAttributesSyncedToUi)[number];
 export type LocalStateUI = {
-	alwaysShowCountry: boolean;
-	challengeNoRatings: boolean;
-	challengeNoTrades: boolean;
-	currencyFormat: GameAttributesLeague["currencyFormat"];
 	customMenu?: MenuItemHeader;
 	email?: string;
 	flagOverrides: Record<string, string>;
-	gameOver: boolean;
 	gameSimInProgress: boolean;
 	games: {
 		finals?: boolean;
@@ -1006,13 +1002,8 @@ export type LocalStateUI = {
 		overtimes?: number;
 		teams: [LocalStateUIGameTeam, LocalStateUIGameTeam];
 	}[];
-	gender: GameAttributesLeague["gender"];
-	fantasyPoints: GameAttributesLeague["fantasyPoints"];
 	fullNames: boolean;
 	gold?: boolean;
-	godMode: boolean;
-	hideDisabledTeams: boolean;
-	homeCourtAdvantage: GameAttributesLeague["homeCourtAdvantage"];
 	keyboardShortcuts: KeyboardShortcutsLocal;
 	leagueCreation?: {
 		id: string;
@@ -1024,32 +1015,14 @@ export type LocalStateUI = {
 	};
 	lid?: number;
 	liveGameInProgress: boolean;
-	neutralSite: GameAttributesLeague["neutralSite"];
-	numPeriods: number;
-	numWatchColors: number;
-	phase: Phase;
 	phaseText: string;
 	playMenuOptions: Option[];
 	popup: boolean;
-	quarterLength: number;
-	season: number;
 	showLeagueTopBar: boolean;
 	showNagModal: boolean;
 	sidebarOpen: boolean;
-	spectator: boolean;
-	startingSeason: number;
 	statusText: string;
-	teamInfoCache: {
-		abbrev: string;
-		region: string;
-		name: string;
-		imgURL?: string;
-		imgURLSmall?: string;
-		disabled?: boolean;
-	}[];
 	units: "metric" | "us";
-	userTid: number;
-	userTids: number[];
 	username?: string;
 	title?: string;
 	hideNewWindow: boolean;
@@ -1066,6 +1039,8 @@ export type LocalStateUI = {
 	moreInfoTid?: number;
 	stickyFooterAd: boolean;
 	stickyFormButtons: boolean;
+} & {
+	[Key in Exclude<GameAttributesSyncedToUi, "lid">]: GameAttributesLeague[Key];
 };
 
 export type PartialTopMenu = {
@@ -1626,6 +1601,7 @@ import type {
 	KeyboardShortcuts,
 	KeyboardShortcutsLocal,
 } from "../ui/util/keyboardShortcuts.ts";
+import type { gameAttributesSyncedToUi } from "./gameAttributesSyncedToUi.ts";
 type TeamStatsPlus = Record<TeamStatAttrBaseball, number> &
 	Record<TeamStatAttrByPosBaseball, number[]> &
 	Record<TeamStatAttrBasketball, number> &

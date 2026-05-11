@@ -7,7 +7,6 @@ gameAttributesSyncedToUi should never be returned from worker view functions, ex
   - salaryCap
   - salaryCapType
 - fix views/notes.ts
-- DRY localstateUI with gameAttributesSyncedToUi and gameattributes type
 
 race condition with mutable cached variables and async stuff (example, AbbrevsCache issue from commit e3f01ef8b)
 - cannot assume an object from our cache is stable after any await, could have any arbitrary changes such as new transactions, new stats rows, etc.

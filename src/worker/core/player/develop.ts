@@ -7,7 +7,7 @@ import developSeason from "./developSeason.ts";
 import ovr from "./ovr.ts";
 import pos from "./pos.ts";
 import skills from "./skills.ts";
-import { g, helpers, random } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import type {
 	MinimalPlayerRatings,
 	NonEmptyArray,
@@ -62,8 +62,6 @@ export const monteCarloPot = async ({
 			ovr = ratings.ovr;
 			pot = potEstimator(ovr, age);
 		}
-
-		pot += random.randInt(-2, 2);
 
 		if (ovr > pot) {
 			return ovr;

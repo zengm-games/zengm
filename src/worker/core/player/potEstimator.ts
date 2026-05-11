@@ -1,4 +1,13 @@
+import { randInt } from "../../../common/random.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
+
+// This needs to be manually kept in sync with ovr.SPORT.ts because they use various different mechanisms to enforce this
+const POS_UNDER_100_MAX = bySport<Record<string, number> | undefined>({
+	baseball: undefined,
+	basketball: undefined,
+	football: { K: 75, P: 75 },
+	hockey: { G: 90 },
+});
 
 let potEstimator: (ovr: number, age: number, pos?: string) => number;
 
@@ -203,12 +212,21 @@ if (!isSport("basketball")) {
 			throw new Error(`Invalid position "${pos}" in potEstimator`);
 		}
 
-		return (
+		const pot =
 			coeffs.intercept +
 			coeffs.age * age +
 			coeffs.ovr * ovr +
-			coeffs.interaction * age * ovr
-		);
+			coeffs.interaction * age * ovr +
+			randInt(-2, 2);
+
+		if (pos !== undefined) {
+			const max = POS_UNDER_100_MAX?.[pos];
+			if (max !== undefined) {
+				return Math.min(max, pot);
+			}
+		}
+
+		return pot;
 	};
 } else {
 	// See analysis/pot-estimator-basketball
@@ -217,7 +235,9 @@ if (!isSport("basketball")) {
 			return ovr;
 		}
 
-		return 72.31428908571982 + -2.33062761 * age + 0.83308748 * ovr;
+		return (
+			72.31428908571982 + -2.33062761 * age + 0.83308748 * ovr + randInt(-2, 2)
+		);
 	};
 }
 

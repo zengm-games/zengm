@@ -61,7 +61,7 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			lost: latestSeason?.lost ?? 0,
 			tied: latestSeason?.tied ?? 0,
 			otl: latestSeason?.otl ?? 0,
-			cash: latestSeason ? latestSeason.cash / 1000 : 0,
+			cash: latestSeason ? latestSeason.cash : 0,
 			playoffRoundsWon,
 			roundsWonText,
 		};
@@ -75,7 +75,7 @@ const updatePayroll = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	) {
 		const payroll = await team.getPayroll(g.get("userTid"));
 		return {
-			payroll: payroll / 1000, // [millions of dollars]
+			payroll, // [millions of dollars]
 		};
 	}
 };

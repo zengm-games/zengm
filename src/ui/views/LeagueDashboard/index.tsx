@@ -156,9 +156,9 @@ const LeagueDashboard = ({
 										<br />
 										Profit (YTD): {helpers.formatCurrency(profit, "M")}
 										<br />
-										Cash: {helpers.formatCurrency(cash, "M")}
+										Cash: {helpers.formatCurrency(cash / 1000, "M")}
 										<br />
-										Payroll: {helpers.formatCurrency(payroll, "M")}
+										Payroll: {helpers.formatCurrency(payroll / 1000, "M")}
 										<br />
 										{salaryCapType === "none" ? (
 											<>

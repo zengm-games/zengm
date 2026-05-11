@@ -14,7 +14,7 @@ import { logEvent } from "../../util/logEvent.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { useLocal } from "../../util/local.ts";
-import type { LocalStateUI, View } from "../../../common/types.ts";
+import type { View } from "../../../common/types.ts";
 import { PHASE } from "../../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../../components/DataTable/index.tsx";
@@ -146,22 +146,23 @@ const FinancesForm = ({
 	autoTicketPrice,
 	gameSimInProgress,
 	otherTeamTicketPrices,
-	salaryCap,
 	t,
 	tid,
 }: Pick<
 	View<"teamFinances">,
-	"autoTicketPrice" | "otherTeamTicketPrices" | "salaryCap" | "t" | "tid"
+	"autoTicketPrice" | "otherTeamTicketPrices" | "t" | "tid"
 > & {
 	gameSimInProgress: boolean;
 }) => {
-	const { challengeNoRatings, godMode, spectator, phase, userTid } = useLocal([
-		"challengeNoRatings",
-		"godMode",
-		"spectator",
-		"phase",
-		"userTid",
-	]);
+	const { challengeNoRatings, godMode, salaryCap, spectator, phase, userTid } =
+		useLocal([
+			"challengeNoRatings",
+			"godMode",
+			"salaryCap",
+			"spectator",
+			"phase",
+			"userTid",
+		]);
 
 	const { dirty, setDirty } = useBlocker();
 
@@ -418,7 +419,7 @@ const FinancesForm = ({
 										{Number.isNaN(levelInt)
 											? "???"
 											: helpers.formatCurrency(
-													levelToAmount(levelInt, salaryCap * 1000) / 1000,
+													levelToAmount(levelInt, salaryCap) / 1000,
 													"M",
 												)}
 									</div>
@@ -572,30 +573,33 @@ const FinancesForm = ({
 };
 
 const PayrollInfo = ({
-	luxuryPayroll,
-	luxuryTax,
 	luxuryTaxAmount,
-	minContract,
-	minPayroll,
 	minPayrollAmount,
 	payroll,
-	salaryCap,
-	salaryCapType,
 }: Pick<
 	View<"teamFinances">,
-	| "luxuryPayroll"
-	| "luxuryTaxAmount"
-	| "minContract"
-	| "minPayroll"
-	| "minPayrollAmount"
-	| "payroll"
-	| "salaryCap"
-> &
-	Pick<LocalStateUI, "luxuryTax" | "salaryCapType">) => {
+	"luxuryTaxAmount" | "minPayrollAmount" | "payroll"
+>) => {
+	const {
+		luxuryPayroll,
+		luxuryTax,
+		minContract,
+		minPayroll,
+		salaryCap,
+		salaryCapType,
+	} = useLocal([
+		"luxuryPayroll",
+		"luxuryTax",
+		"minContract",
+		"minPayroll",
+		"salaryCap",
+		"salaryCapType",
+	]);
+
 	const parts = [
 		<>
-			{payroll > minPayroll ? "above" : "below"} the minimum payroll limit (
-			<b>{helpers.formatCurrency(minPayroll, "M")}</b>
+			{payroll > minPayroll / 1000 ? "above" : "below"} the minimum payroll
+			limit (<b>{helpers.formatCurrency(minPayroll / 1000, "M")}</b>
 			{minPayrollAmount > 0 ? (
 				<>
 					,{" "}
@@ -611,8 +615,8 @@ const PayrollInfo = ({
 	if (salaryCapType !== "none") {
 		parts.push(
 			<>
-				{payroll > salaryCap ? "above" : "below"} the salary cap (
-				<b>{helpers.formatCurrency(salaryCap, "M")}</b>)
+				{payroll > salaryCap / 1000 ? "above" : "below"} the salary cap (
+				<b>{helpers.formatCurrency(salaryCap / 1000, "M")}</b>)
 			</>,
 		);
 	}
@@ -620,8 +624,8 @@ const PayrollInfo = ({
 	if (luxuryTax !== 0) {
 		parts.push(
 			<>
-				{payroll > luxuryPayroll ? "above" : "below"} the luxury tax limit (
-				<b>{helpers.formatCurrency(luxuryPayroll, "M")}</b>
+				{payroll > luxuryPayroll / 1000 ? "above" : "below"} the luxury tax
+				limit (<b>{helpers.formatCurrency(luxuryPayroll / 1000, "M")}</b>
 				{luxuryTaxAmount > 0 ? (
 					<>
 						,{" "}
@@ -659,8 +663,8 @@ const PayrollInfo = ({
 						The salary cap is a hard cap, meaning that you cannot exceed it,
 						even when re-signing your own players or making trades. The only
 						exception is that you can always sign players to minimum contracts (
-						{helpers.formatCurrency(minContract, "M")}/year), so you are never
-						stuck with a team too small to play.
+						{helpers.formatCurrency(minContract / 1000, "M")}/year), so you are
+						never stuck with a team too small to play.
 					</p>
 					<p>
 						Teams with payrolls below the minimum payroll limit will be assessed
@@ -672,9 +676,9 @@ const PayrollInfo = ({
 					<p>
 						The salary cap is a soft cap, meaning that you can exceed it to
 						re-sign your own players, to sign free agents to minimum contracts (
-						{helpers.formatCurrency(minContract, "M")}/year), and when making
-						certain trades; however, you cannot exceed the salary cap to sign a
-						free agent for more than the minimum.
+						{helpers.formatCurrency(minContract / 1000, "M")}/year), and when
+						making certain trades; however, you cannot exceed the salary cap to
+						sign a free agent for more than the minimum.
 					</p>
 					<p>
 						Teams with payrolls below the minimum payroll limit will be assessed
@@ -721,17 +725,13 @@ const TeamFinances = ({
 	budget,
 	contractTotals,
 	contracts,
-	luxuryPayroll,
 	luxuryTaxAmount,
 	maxStadiumCapacity,
-	minContract,
-	minPayroll,
 	minPayrollAmount,
 	numGames,
 	otherTeamTicketPrices,
 	payroll,
 	salariesSeasons,
-	salaryCap,
 	show,
 	t,
 	tid,
@@ -742,11 +742,13 @@ const TeamFinances = ({
 		dropdownFields: { teams: abbrev, shows: show },
 	});
 
-	const { gameSimInProgress, luxuryTax, salaryCapType } = useLocal([
-		"gameSimInProgress",
-		"luxuryTax",
-		"salaryCapType",
-	]);
+	const { gameSimInProgress, luxuryPayroll, salaryCap, salaryCapType } =
+		useLocal([
+			"gameSimInProgress",
+			"luxuryPayroll",
+			"salaryCap",
+			"salaryCapType",
+		]);
 
 	const cols = getCols(["Pos", "Name", "Cap%"]).concat(
 		salariesSeasons.map((season) => {
@@ -818,13 +820,13 @@ const TeamFinances = ({
 					? ["", "Under Luxury Tax", ""].concat(
 							// @ts-expect-error
 							contractTotals.map((amount) =>
-								highlightZeroNegative(luxuryPayroll - amount),
+								highlightZeroNegative(luxuryPayroll / 1000 - amount),
 							),
 						)
 					: ["", "Free Cap Space", ""].concat(
 							// @ts-expect-error
 							contractTotals.map((amount) =>
-								highlightZeroNegative(salaryCap - amount),
+								highlightZeroNegative(salaryCap / 1000 - amount),
 							),
 						),
 		},
@@ -843,15 +845,9 @@ const TeamFinances = ({
 			<MoreLinks type="team" page="team_finances" abbrev={abbrev} tid={tid} />
 
 			<PayrollInfo
-				luxuryPayroll={luxuryPayroll}
-				luxuryTax={luxuryTax}
 				luxuryTaxAmount={luxuryTaxAmount}
-				minContract={minContract}
-				minPayroll={minPayroll}
 				minPayrollAmount={minPayrollAmount}
 				payroll={payroll}
-				salaryCap={salaryCap}
-				salaryCapType={salaryCapType}
 			/>
 
 			{budget ? null : (
@@ -1020,7 +1016,6 @@ const TeamFinances = ({
 							autoTicketPrice={autoTicketPrice}
 							gameSimInProgress={gameSimInProgress}
 							otherTeamTicketPrices={otherTeamTicketPrices}
-							salaryCap={salaryCap}
 							t={t}
 							tid={tid}
 						/>

@@ -2,6 +2,7 @@ gameAttributesSyncedToUi should never be returned from worker view functions, ex
 - add more variables?
   - .+?: g.get\(".+?"\)
   - luxuryPayroll
+  - minContract
   - minPayroll
   - salaryCap
 

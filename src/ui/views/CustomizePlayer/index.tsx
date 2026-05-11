@@ -345,7 +345,12 @@ const useJerseyNumberConflictInfo = (
 };
 
 const CustomizePlayer = (props: View<"customizePlayer">) => {
-	const { godMode, phase, season } = useLocal(["godMode", "phase", "season"]);
+	const { godMode, minContract, phase, season } = useLocal([
+		"godMode",
+		"minContract",
+		"phase",
+		"season",
+	]);
 
 	const [state, setState] = useState(() => {
 		const p = helpers.deepCopy(props.p);
@@ -395,7 +400,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 		const recomputePosOvrPot = copyValidValues(
 			state.p,
 			p,
-			props.minContract,
+			minContract,
 			phase,
 			season,
 		);

@@ -152,7 +152,6 @@ const updateCustomizePlayer = async (
 			appearanceOption,
 			faceCount,
 			initialAutoPos,
-			minContract: g.get("minContract"),
 			originalTid,
 			p,
 			playerMoodTraits: g.get("playerMoodTraits"),

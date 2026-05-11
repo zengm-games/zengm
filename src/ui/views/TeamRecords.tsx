@@ -7,7 +7,7 @@ import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import TeamLogoAndName from "../components/TeamLogoAndName.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const teamLink = (t: View<"teamRecords">["teams"][number]) => {
 	return {
@@ -100,7 +100,7 @@ const TeamRecords = ({
 		dropdownView: "team_records",
 		dropdownFields: { teamRecordType: byType, teamRecordsFilter: filter },
 	});
-	const { userTid } = useLocalPartial(["userTid"]);
+	const { userTid } = useLocal(["userTid"]);
 
 	let displayName: string;
 	if (byType === "by_conf") {

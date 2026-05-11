@@ -8,7 +8,7 @@ import { PHASE_TEXT } from "../../common/constants.ts";
 import { settings } from "./Settings/settings.tsx";
 import { Dropdown } from "react-bootstrap";
 import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const godModeOptions: Partial<
 	Record<(typeof settings)[number]["key"], (typeof settings)[number]>
@@ -279,7 +279,7 @@ const ScheduledEvents = ({ scheduledEvents }: View<"scheduledEvents">) => {
 		title: "Scheduled Events",
 	});
 
-	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
+	const { teamInfoCache } = useLocal(["teamInfoCache"]);
 
 	if (scheduledEvents.length === 0) {
 		return (

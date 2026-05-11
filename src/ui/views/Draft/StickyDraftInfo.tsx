@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { helpers } from "../../util/helpers.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 import { TeamLogoInline } from "../../components/TeamLogoInline.tsx";
 import type { LocalStateUI } from "../../../common/types.ts";
 import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
@@ -168,7 +168,7 @@ export const StickyDraftInfo = ({
 	userNextPickYear: number;
 	userTids: number[];
 }) => {
-	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
+	const { teamInfoCache } = useLocal(["teamInfoCache"]);
 
 	const currentPickIndex = drafted.findIndex((p) => p.pid === -1);
 	if (currentPickIndex === -1) {

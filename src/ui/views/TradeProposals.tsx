@@ -3,7 +3,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { SummaryTeam } from "./Trade/Summary.tsx";
 import { toWorker } from "../util/toWorker.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import {
 	Offer,
 	OfferTable,
@@ -24,7 +24,7 @@ const TradeProposals = ({
 	salaryCap,
 	salaryCapType,
 }: View<"tradeProposals">) => {
-	const { challengeNoRatings, phase, spectator } = useLocalPartial([
+	const { challengeNoRatings, phase, spectator } = useLocal([
 		"challengeNoRatings",
 		"phase",
 		"spectator",
@@ -48,7 +48,7 @@ const TradeProposals = ({
 
 	useTitleBar({ title: "Trade Proposals" });
 
-	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
+	const { teamInfoCache } = useLocal(["teamInfoCache"]);
 
 	const [refreshing, setRefreshing] = useState(false);
 

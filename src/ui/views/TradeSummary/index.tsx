@@ -6,7 +6,7 @@ import { PHASE, PHASE_TEXT } from "../../../common/constants.ts";
 import Charts from "./Charts.tsx";
 import PickText from "./PickText.tsx";
 import type { PlayerOutcome } from "../../../worker/views/tradeSummary.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 
 const Outcome = ({ outcome }: { outcome: PlayerOutcome }) => {
 	if (!outcome) {
@@ -101,7 +101,7 @@ const TradeSummary = ({
 	useTitleBar({
 		title: "Trade Summary",
 	});
-	const { challengeNoRatings } = useLocalPartial(["challengeNoRatings"]);
+	const { challengeNoRatings } = useLocal(["challengeNoRatings"]);
 
 	return (
 		<>

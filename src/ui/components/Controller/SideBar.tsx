@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { memo, type ReactNode, useCallback, useEffect, useState } from "react";
 import { helpers } from "../../util/helpers.ts";
-import { localActions, useLocalPartial } from "../../util/local.ts";
+import { localActions, useLocal } from "../../util/local.ts";
 import type {
 	MenuItemLink,
 	MenuItemHeader,
@@ -219,7 +219,7 @@ export const SideBar = memo(({ pageID, pathname }: Props) => {
 	const [node, setNode] = useState<null | HTMLDivElement>(null);
 	const [nodeFade, setNodeFade] = useState<null | HTMLDivElement>(null);
 
-	const { godMode, lid, sidebarOpen } = useLocalPartial([
+	const { godMode, lid, sidebarOpen } = useLocal([
 		"godMode",
 		"lid",
 		"sidebarOpen",

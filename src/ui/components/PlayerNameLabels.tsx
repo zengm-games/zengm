@@ -7,7 +7,7 @@ import { InjuryIcon } from "./InjuryIcon.tsx";
 import { SeasonIcons } from "./SeasonIcons.tsx";
 import { CountryFlag } from "./CountryFlag.tsx";
 import { useEffect, useState } from "react";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 type Props = {
 	awards?: Player["awards"];
@@ -134,7 +134,7 @@ const CountryFlagPid = ({
 };
 
 export const PlayerNameLabels = (props: Props) => {
-	const localState = useLocalPartial(["alwaysShowCountry", "fullNames"]);
+	const localState = useLocal(["alwaysShowCountry", "fullNames"]);
 	const alwaysShowCountry = localState.alwaysShowCountry;
 	const fullNames = localState.fullNames || props.fullNames;
 

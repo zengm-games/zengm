@@ -17,7 +17,7 @@ import type { BasicInfo } from "../../worker/api/leagueFileUpload.ts";
 import { toWorker } from "../util/toWorker.ts";
 import simpleGameAttributesUpgrade from "../../common/simpleGameAttributesUpgrade.ts";
 import { resetFileInput } from "../util/resetFileInput.ts";
-import { localActions, useLocalPartial } from "../util/local.ts";
+import { localActions, useLocal } from "../util/local.ts";
 
 const ErrorMessage = ({ error }: { error: Error | null }) => {
 	if (!error) {
@@ -134,7 +134,7 @@ export const LeagueFileUpload = ({
 	}, []);
 
 	const leagueCreationID = useId();
-	const { leagueCreation, leagueCreationPercent } = useLocalPartial([
+	const { leagueCreation, leagueCreationPercent } = useLocal([
 		"leagueCreation",
 		"leagueCreationPercent",
 	]);

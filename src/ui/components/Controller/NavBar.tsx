@@ -1,7 +1,7 @@
 import { Nav, Navbar } from "react-bootstrap";
 import { PHASE } from "../../../common/constants.ts";
 import { helpers } from "../../util/helpers.ts";
-import { localActions, useLocalPartial } from "../../util/local.ts";
+import { localActions, useLocal } from "../../util/local.ts";
 import { useViewData } from "../../util/viewManager.tsx";
 import DropdownLinks from "../DropdownLinks.tsx";
 import LogoAndText from "../LogoAndText.tsx";
@@ -9,7 +9,7 @@ import PlayMenu from "../PlayMenu.tsx";
 import { menuItems } from "../../util/menuItems.tsx";
 
 const PhaseStatusBlock = () => {
-	const { liveGameInProgress, phase, phaseText, statusText } = useLocalPartial([
+	const { liveGameInProgress, phase, phaseText, statusText } = useLocal([
 		"liveGameInProgress",
 		"phase",
 		"phaseText",
@@ -72,7 +72,7 @@ export const NavBar = ({ updating }: { updating: boolean }) => {
 		playMenuOptions,
 		popup,
 		username,
-	} = useLocalPartial([
+	} = useLocal([
 		"lid",
 		"godMode",
 		"gold",

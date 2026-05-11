@@ -1,5 +1,5 @@
 import { MOBILE_AD_BOTTOM_MARGIN } from "../../common/constants.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 export const StickyBottomButtons = ({
 	children,
@@ -8,7 +8,7 @@ export const StickyBottomButtons = ({
 	children: any;
 	isInsideModal?: boolean;
 }) => {
-	const { stickyFooterAd } = useLocalPartial(["stickyFooterAd"]);
+	const { stickyFooterAd } = useLocal(["stickyFooterAd"]);
 
 	let bottom;
 	if (isInsideModal) {

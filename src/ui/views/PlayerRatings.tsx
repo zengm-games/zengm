@@ -12,7 +12,7 @@ import {
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { bySport } from "../../common/sportFunctions.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const PlayerRatings = ({
 	abbrev,
@@ -32,7 +32,7 @@ const PlayerRatings = ({
 		challengeNoRatings,
 		season: currentSeason,
 		userTid,
-	} = useLocalPartial(["challengeNoRatings", "season", "userTid"]);
+	} = useLocal(["challengeNoRatings", "season", "userTid"]);
 
 	const ovrsPotsColNames: string[] = [];
 	if (

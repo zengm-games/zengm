@@ -5,7 +5,7 @@ import Overall from "./TeamHistory/Overall.tsx";
 import Players from "./TeamHistory/Players.tsx";
 import Seasons from "./TeamHistory/Seasons.tsx";
 import HideableSection from "../components/HideableSection.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const GmHistory = ({
 	bestRecord,
@@ -25,7 +25,7 @@ const GmHistory = ({
 	useTitleBar({
 		title: "GM History",
 	});
-	const { userTid } = useLocalPartial(["userTid"]);
+	const { userTid } = useLocal(["userTid"]);
 
 	const showOverall = teamHistories.length !== 1;
 

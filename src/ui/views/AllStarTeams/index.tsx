@@ -9,7 +9,7 @@ import EditAllStars from "./EditAllStars.tsx";
 import { wait } from "../../../common/wait.ts";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../../components/DataTable/index.tsx";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 
 const PlayersTable = ({
 	challengeNoRatings,
@@ -158,7 +158,7 @@ const AllStars = ({
 		season: currentSeason,
 		spectator,
 		userTids,
-	} = useLocalPartial([
+	} = useLocal([
 		"challengeNoRatings",
 		"gender",
 		"godMode",

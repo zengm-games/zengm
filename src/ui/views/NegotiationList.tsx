@@ -18,7 +18,7 @@ import {
 	NegotiationModal,
 	useNegotiaionModal,
 } from "../components/NegotiationModal.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const NegotiationList = ({
 	capSpace,
@@ -41,7 +41,7 @@ const NegotiationList = ({
 
 	useTitleBar({ title });
 
-	const { challengeNoRatings, spectator, season } = useLocalPartial([
+	const { challengeNoRatings, spectator, season } = useLocal([
 		"challengeNoRatings",
 		"spectator",
 		"season",

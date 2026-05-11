@@ -4,7 +4,7 @@ import useTitleBar from "../../hooks/useTitleBar.tsx";
 import AwardsAndChamp from "./AwardsAndChamp.tsx";
 import Team from "./Team.tsx";
 import type { View } from "../../../common/types.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 export type ActualProps = Exclude<
 	View<"history">,
 	{ invalidSeason: true; season: number }
@@ -22,7 +22,7 @@ const History = (props: View<"history">) => {
 			seasonsHistory: season,
 		},
 	});
-	const { userTid } = useLocalPartial(["userTid"]);
+	const { userTid } = useLocal(["userTid"]);
 
 	if (invalidSeason) {
 		return (

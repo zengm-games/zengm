@@ -5,7 +5,7 @@ import {
 } from "../../common/constants.ts";
 import type { DraftType, PlayerStatType } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 export const MoreLinks = (
@@ -71,10 +71,7 @@ export const MoreLinks = (
 ) => {
 	const { keepSelfLink, page } = props;
 
-	const { godMode, season: currentSeason } = useLocalPartial([
-		"godMode",
-		"season",
-	]);
+	const { godMode, season: currentSeason } = useLocal(["godMode", "season"]);
 
 	let links: {
 		url: (string | number | undefined)[] | string;

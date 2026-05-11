@@ -2,7 +2,7 @@ import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { toWorker } from "../util/toWorker.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import { DAILY_SCHEDULE } from "../../common/constants.ts";
 import { NoGamesMessage } from "./GameLog.tsx";
 import allowForceTie from "../../common/allowForceTie.ts";
@@ -38,7 +38,7 @@ const DailySchedule = ({
 		phase,
 		season: currentSeason,
 		userTid,
-	} = useLocalPartial(["gameSimInProgress", "phase", "season", "userTid"]);
+	} = useLocal(["gameSimInProgress", "phase", "season", "userTid"]);
 
 	let simToDay = null;
 	if (upcoming.length > 0 && !isToday) {

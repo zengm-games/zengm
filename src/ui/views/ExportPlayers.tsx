@@ -4,7 +4,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
@@ -77,7 +77,7 @@ const ExportPlayers = ({ players, season }: View<"exportPlayers">) => {
 		challengeNoRatings,
 		season: currentSeason,
 		startingSeason,
-	} = useLocalPartial(["challengeNoRatings", "season", "startingSeason"]);
+	} = useLocal(["challengeNoRatings", "season", "startingSeason"]);
 	const multipleSeasons = currentSeason > startingSeason;
 
 	const [exporting, setExporting] = useState(false);
@@ -95,7 +95,7 @@ const ExportPlayers = ({ players, season }: View<"exportPlayers">) => {
 		dropdownFields: { seasons: season },
 	});
 
-	const { gender } = useLocalPartial(["gender"]);
+	const { gender } = useLocal(["gender"]);
 
 	const selectedRows = useSelectedRows();
 	const selectedRows2 = useSelectedRows();

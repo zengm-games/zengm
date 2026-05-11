@@ -6,7 +6,7 @@ import type { View } from "../../common/types.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const PlayerFeats = ({
 	abbrev,
@@ -20,7 +20,7 @@ const PlayerFeats = ({
 		dropdownView: "player_feats",
 		dropdownFields: { teamsAndAll: abbrev, seasonsAndAll: season },
 	});
-	const { userTid } = useLocalPartial(["userTid"]);
+	const { userTid } = useLocal(["userTid"]);
 
 	const cols = getCols([
 		"Name",

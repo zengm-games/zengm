@@ -7,7 +7,7 @@ import type { View } from "../../common/types.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { orderBy } from "../../common/utils.ts";
 import Note from "./Player/Note.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const processRows = ({
 	challengeNoRatings,
@@ -184,7 +184,7 @@ const DraftPicks = ({
 		dropdownFields: { teams: abbrev },
 	});
 
-	const { challengeNoRatings } = useLocalPartial(["challengeNoRatings"]);
+	const { challengeNoRatings } = useLocal(["challengeNoRatings"]);
 
 	const { rows, rowsOutgoing, cols } = getDraftPicksColsAndRows({
 		challengeNoRatings,

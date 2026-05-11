@@ -7,7 +7,7 @@ import type { View } from "../../common/types.ts";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedCurrency } from "../components/wrappedCurrency.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const LeagueFinances = ({
 	budget,
@@ -27,10 +27,7 @@ const LeagueFinances = ({
 		dropdownFields: { seasons: season },
 	});
 
-	const { season: currentSeason, userTid } = useLocalPartial([
-		"season",
-		"userTid",
-	]);
+	const { season: currentSeason, userTid } = useLocal(["season", "userTid"]);
 
 	const showCapSpaceForReal = salaryCapType !== "none";
 

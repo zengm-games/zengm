@@ -12,7 +12,7 @@ import {
 } from "./AllStarDunk.tsx";
 import clsx from "clsx";
 import { range } from "../../common/utils.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const NUM_BALLS_PER_RACK = 5;
 
@@ -108,7 +108,7 @@ const AllStarThree = ({
 		throw new Error("Not implemented");
 	}
 
-	const { challengeNoRatings, godMode, userTid } = useLocalPartial([
+	const { challengeNoRatings, godMode, userTid } = useLocal([
 		"challengeNoRatings",
 		"godMode",
 		"userTid",

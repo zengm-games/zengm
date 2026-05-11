@@ -5,7 +5,7 @@ import { helpers } from "../util/helpers.ts";
 import clsx from "clsx";
 import { NewsBlock } from "../components/NewsBlock.tsx";
 import { categories, types } from "../../common/transactionInfo.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const News = ({
 	abbrev,
@@ -39,7 +39,7 @@ const News = ({
 			newestOldestFirst: order,
 		},
 	});
-	const { userTid } = useLocalPartial(["userTid"]);
+	const { userTid } = useLocal(["userTid"]);
 
 	return (
 		<>

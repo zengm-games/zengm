@@ -7,7 +7,7 @@ import { useState } from "react";
 import clsx from "clsx";
 import { range } from "../../common/utils.ts";
 import { PlayoffMatchup } from "../components/PlayoffMatchup.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 type TeamToEdit = View<"playoffs">["teamsToEdit"][number];
 
@@ -33,7 +33,7 @@ const Playoffs = ({
 			seasons: season,
 		},
 	});
-	const { userTid } = useLocalPartial(["userTid"]);
+	const { userTid } = useLocal(["userTid"]);
 
 	const [editing, setEditing] = useState(false);
 	const [teamsEdited, setTeamsEdited] = useState(teamsToEdit);

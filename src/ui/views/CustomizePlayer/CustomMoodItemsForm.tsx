@@ -1,5 +1,5 @@
 import useDropdownOptions from "../../hooks/useDropdownOptions.tsx";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 
 const CustomMoodItemsForm = ({
 	godMode,
@@ -51,7 +51,7 @@ const CustomMoodItemsForm = ({
 	};
 
 	const teamsRaw = useDropdownOptions("teamsAndAll");
-	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
+	const { teamInfoCache } = useLocal(["teamInfoCache"]);
 	const tidsByAbbrev: Record<string, number> = {};
 	for (const [tid, t] of teamInfoCache.entries()) {
 		tidsByAbbrev[t.abbrev] = tid;

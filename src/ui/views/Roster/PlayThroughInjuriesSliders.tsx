@@ -6,7 +6,7 @@ import { HelpPopover } from "../../components/HelpPopover.tsx";
 import CollapseArrow from "../../components/CollapseArrow.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 
 const Slider = ({
 	className,
@@ -82,7 +82,7 @@ const PlayThroughInjuriesSliders = ({
 }) => {
 	const [expanded, setExpanded] = useState(!window.mobile);
 
-	const { gender } = useLocalPartial(["gender"]);
+	const { gender } = useLocal(["gender"]);
 
 	return (
 		<div className="play-through-injuries">

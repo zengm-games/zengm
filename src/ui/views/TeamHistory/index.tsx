@@ -6,7 +6,7 @@ import RetiredJerseyNumbers from "./RetiredJerseyNumbers.tsx";
 import Seasons from "./Seasons.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import HideableSection from "../../components/HideableSection.tsx";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 
 const TeamHistory = ({
 	abbrev,
@@ -31,7 +31,7 @@ const TeamHistory = ({
 		dropdownView: "team_history",
 		dropdownFields: { teams: abbrev },
 	});
-	const { godMode, season, userTid } = useLocalPartial([
+	const { godMode, season, userTid } = useLocal([
 		"godMode",
 		"season",
 		"userTid",

@@ -1,4 +1,4 @@
-import { local, useLocalPartial } from "../util/local.ts";
+import { local, useLocal } from "../util/local.ts";
 
 const getWeightString = (pounds: number, units: "metric" | "us") => {
 	if (typeof pounds !== "number") {
@@ -13,7 +13,7 @@ const getWeightString = (pounds: number, units: "metric" | "us") => {
 };
 
 export const Weight = ({ pounds }: { pounds: number }) => {
-	const { units } = useLocalPartial(["units"]);
+	const { units } = useLocal(["units"]);
 
 	return getWeightString(pounds, units);
 };

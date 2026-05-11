@@ -8,7 +8,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
@@ -27,7 +27,7 @@ export const ImportPlayersInner = ({ real }: { real: boolean }) => {
 		phase,
 		season: currentSeason,
 		teamInfoCache,
-	} = useLocalPartial([
+	} = useLocal([
 		"challengeNoRatings",
 		"godMode",
 		"phase",

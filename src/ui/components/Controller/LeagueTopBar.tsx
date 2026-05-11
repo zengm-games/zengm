@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { useLocalPartial, localActions } from "../../util/local.ts";
+import { useLocal, localActions } from "../../util/local.ts";
 import { ScoreBox } from "../ScoreBox/index.tsx";
 import { emitter } from "../Modal.tsx";
 
@@ -29,7 +29,7 @@ const hiddenStyle = {
 const IS_SAFARI = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
 
 export const LeagueTopBar = memo(() => {
-	const { games, lid, liveGameInProgress, showLeagueTopBar } = useLocalPartial([
+	const { games, lid, liveGameInProgress, showLeagueTopBar } = useLocal([
 		"games",
 		"lid",
 		"liveGameInProgress",

@@ -14,7 +14,7 @@ import {
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { CountryFlag } from "../components/CountryFlag.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const PlayerBios = ({ abbrev, players, season, stats }: View<"playerBios">) => {
 	useTitleBar({
@@ -29,7 +29,7 @@ const PlayerBios = ({ abbrev, players, season, stats }: View<"playerBios">) => {
 		challengeNoRatings,
 		season: currentSeason,
 		userTid,
-	} = useLocalPartial(["challengeNoRatings", "season", "userTid"]);
+	} = useLocal(["challengeNoRatings", "season", "userTid"]);
 
 	const cols = getCols([
 		"Name",

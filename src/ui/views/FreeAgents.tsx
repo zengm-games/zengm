@@ -5,7 +5,7 @@ import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import type { Phase, View } from "../../common/types.ts";
 import { wrappedMood } from "../components/Mood.tsx";
 import {
@@ -29,7 +29,7 @@ import {
 } from "../components/NegotiationModal.tsx";
 
 const useSeasonsFreeAgents = () => {
-	const { phase, season, startingSeason } = useLocalPartial([
+	const { phase, season, startingSeason } = useLocal([
 		"phase",
 		"season",
 		"startingSeason",
@@ -132,13 +132,13 @@ const FreeAgents = ({
 		},
 	});
 
-	const { challengeNoRatings, phase, spectator } = useLocalPartial([
+	const { challengeNoRatings, phase, spectator } = useLocal([
 		"challengeNoRatings",
 		"phase",
 		"spectator",
 	]);
 
-	const { gameSimInProgress } = useLocalPartial(["gameSimInProgress"]);
+	const { gameSimInProgress } = useLocal(["gameSimInProgress"]);
 
 	const [dataTableHandle, setDataTableHandle] =
 		useState<DataTableHandle | null>(null);

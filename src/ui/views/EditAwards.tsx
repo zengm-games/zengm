@@ -9,7 +9,7 @@ import SelectMultiple from "../components/SelectMultiple/index.tsx";
 import { AWARD_NAMES, SIMPLE_AWARDS } from "../../common/constants.ts";
 import { range } from "../../common/utils.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const Position = ({ index, p }: { index: number; p: any }) => {
 	if (!isSport("football")) {
@@ -85,7 +85,7 @@ const EditAwards = ({ players, awards, season }: View<"editAwards">) => {
 		dropdownFields: { seasonsHistory: season },
 	});
 
-	const { godMode } = useLocalPartial(["godMode"]);
+	const { godMode } = useLocal(["godMode"]);
 
 	const [aws, setAws] = useState(() => helpers.deepCopy(awards));
 	useEffect(() => {

@@ -1,7 +1,7 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
 import { frivolitiesMenu } from "./Frivolities.tsx";
@@ -25,7 +25,7 @@ export const genView = (
 			customMenu: frivolitiesMenu,
 		});
 
-		const { challengeNoRatings, teamInfoCache, userTid } = useLocalPartial([
+		const { challengeNoRatings, teamInfoCache, userTid } = useLocal([
 			"challengeNoRatings",
 			"teamInfoCache",
 			"userTid",

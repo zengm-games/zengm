@@ -5,7 +5,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
@@ -115,7 +115,7 @@ const Depth = ({
 		throw new Error("Not implemented");
 	}
 
-	const { challengeNoRatings, season } = useLocalPartial([
+	const { challengeNoRatings, season } = useLocal([
 		"challengeNoRatings",
 		"season",
 	]);
@@ -137,7 +137,7 @@ const Depth = ({
 		moreInfoTid: tid,
 	});
 
-	const { gender } = useLocalPartial(["gender"]);
+	const { gender } = useLocal(["gender"]);
 
 	if (pos !== prevPos) {
 		setSortedPids(undefined);

@@ -8,7 +8,7 @@ import type { Phase, View } from "../../../common/types.ts";
 import { PHASE } from "../../../common/constants.ts";
 import TeamForm from "./TeamForm.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 
 export const nextSeasonWarning =
 	"Because the regular season is already over, changes will not be fully applied until next season.";
@@ -131,7 +131,7 @@ export const PHASES_WHERE_TEAMS_CAN_BE_DISABLED = new Set<Phase>([
 ]);
 
 const ManageTeams = (props: View<"manageTeams">) => {
-	const { godMode, phase } = useLocalPartial(["godMode", "phase"]);
+	const { godMode, phase } = useLocal(["godMode", "phase"]);
 
 	const [state, dispatchUnwrapped] = useReducer(reducer, {
 		saving: false,

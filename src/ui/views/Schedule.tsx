@@ -3,7 +3,7 @@ import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { toWorker } from "../util/toWorker.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import allowForceTie from "../../common/allowForceTie.ts";
 import { Dropdown } from "react-bootstrap";
 import { ForceWin } from "../components/ForceWin.tsx";
@@ -26,7 +26,7 @@ const Schedule = ({
 		dropdownFields: { teams: abbrev },
 	});
 
-	const { gameSimInProgress, godMode, phase } = useLocalPartial([
+	const { gameSimInProgress, godMode, phase } = useLocal([
 		"gameSimInProgress",
 		"godMode",
 		"phase",

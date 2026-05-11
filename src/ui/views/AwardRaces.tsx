@@ -9,7 +9,7 @@ import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { RatingWithChange } from "../components/RatingWithChange.tsx";
 import { StatWithChange } from "../components/StatWithChange.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const AwardRaces = ({ awardCandidates, season, teams }: View<"awardRaces">) => {
 	useTitleBar({
@@ -22,7 +22,7 @@ const AwardRaces = ({ awardCandidates, season, teams }: View<"awardRaces">) => {
 		},
 	});
 
-	const { challengeNoRatings, userTid } = useLocalPartial([
+	const { challengeNoRatings, userTid } = useLocal([
 		"challengeNoRatings",
 		"userTid",
 	]);

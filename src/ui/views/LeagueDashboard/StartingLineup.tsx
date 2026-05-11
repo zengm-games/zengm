@@ -7,7 +7,7 @@ import { Contract } from "../../components/contract.tsx";
 import { ResponsiveTableWrapper } from "../../components/ResponsiveTableWrapper.tsx";
 import { RatingWithChange } from "../../components/RatingWithChange.tsx";
 import { isSport } from "../../../common/sportFunctions.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 
 const StartingLineup = ({
 	numPlayersOnCourt,
@@ -17,7 +17,7 @@ const StartingLineup = ({
 	View<"leagueDashboard">,
 	"numPlayersOnCourt" | "starters" | "startersStats"
 >) => {
-	const { challengeNoRatings } = useLocalPartial(["challengeNoRatings"]);
+	const { challengeNoRatings } = useLocal(["challengeNoRatings"]);
 
 	const statCols = getCols(startersStats.map((stat) => `stat:${stat}`));
 

@@ -3,7 +3,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { logEvent } from "../util/logEvent.ts";
 import { toWorker } from "../util/toWorker.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import type { Conf, Div, NonEmptyArray, View } from "../../common/types.ts";
 import {
 	DEFAULT_JERSEY,
@@ -39,7 +39,7 @@ const EditTeamModal = ({
 	onCancel: () => void;
 	onSave: (t: NewLeagueTeamWithoutRank) => void;
 }) => {
-	const { godMode, phase } = useLocalPartial(["godMode", "phase"]);
+	const { godMode, phase } = useLocal(["godMode", "phase"]);
 
 	const [controlledTeam, setControlledTeam] = useState<
 		| {

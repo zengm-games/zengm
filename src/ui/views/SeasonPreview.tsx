@@ -7,7 +7,7 @@ import { arrow } from "./Trade/Summary.tsx";
 import { RatingWithChange } from "../components/RatingWithChange.tsx";
 import { RecordAndPlayoffs } from "../components/RecordAndPlayoffs.tsx";
 import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const PlayerList = ({
 	challengeNoRatings,
@@ -216,7 +216,7 @@ const SeasonPreview = ({
 			seasons: season,
 		},
 	});
-	const { challengeNoRatings, userTid } = useLocalPartial([
+	const { challengeNoRatings, userTid } = useLocal([
 		"challengeNoRatings",
 		"userTid",
 	]);

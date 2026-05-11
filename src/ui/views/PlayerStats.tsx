@@ -10,7 +10,7 @@ import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { expandFieldingStats } from "../util/expandFieldingStats.baseball.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { PlusMinus } from "../components/PlusMinus.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 export const formatStatGameHigh = (
 	ps: any,
@@ -83,7 +83,7 @@ const PlayerStats = ({
 			playoffsCombined: playoffs,
 		},
 	});
-	const { userTid } = useLocalPartial(["userTid"]);
+	const { userTid } = useLocal(["userTid"]);
 
 	const cols = getCols([
 		"Name",

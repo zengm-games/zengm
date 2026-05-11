@@ -1,7 +1,7 @@
 import { Dropdown, SplitButton } from "react-bootstrap";
 import useLocalStorageState from "use-local-storage-state";
 import { ActionButton } from "../../components/ActionButton.tsx";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 
 export type TradeClearType = "all" | "other" | "user" | "keepUntradeable";
 
@@ -28,7 +28,7 @@ const Buttons = ({
 	numAssets: number;
 	teamNames: [string, string];
 }) => {
-	const { godMode } = useLocalPartial(["godMode"]);
+	const { godMode } = useLocal(["godMode"]);
 
 	const [defaultType, setDefaultType] = useLocalStorageState<TradeClearType>(
 		"trade-clear-type",

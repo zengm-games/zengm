@@ -9,7 +9,7 @@ import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
 import { shuffle } from "../../common/random.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const FantasyDraft = ({ teams }: View<"fantasyDraft">) => {
 	const [sortedTids, setSortedTids] = useState(() => teams.map((t) => t.tid));
@@ -27,7 +27,7 @@ const FantasyDraft = ({ teams }: View<"fantasyDraft">) => {
 		title: "Fantasy Draft",
 	});
 
-	const { phase, userTids } = useLocalPartial(["phase", "userTids"]);
+	const { phase, userTids } = useLocal(["phase", "userTids"]);
 
 	if (phase === PHASE.DRAFT) {
 		return (

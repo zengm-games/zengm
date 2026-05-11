@@ -1,4 +1,4 @@
-import { local, useLocalPartial } from "../util/local.ts";
+import { local, useLocal } from "../util/local.ts";
 
 export const getHeightString = (inches: number, units: "metric" | "us") => {
 	if (units === "metric") {
@@ -9,7 +9,7 @@ export const getHeightString = (inches: number, units: "metric" | "us") => {
 };
 
 export const Height = ({ inches }: { inches: number }) => {
-	const { units } = useLocalPartial(["units"]);
+	const { units } = useLocal(["units"]);
 
 	return getHeightString(inches, units);
 };

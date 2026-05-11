@@ -7,7 +7,7 @@ import StartingLineup from "./StartingLineup.tsx";
 import TeamStats from "./TeamStats.tsx";
 import type { View } from "../../../common/types.ts";
 import Headlines from "./Headlines.tsx";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 
 const LeagueDashboard = ({
 	att,
@@ -49,7 +49,7 @@ const LeagueDashboard = ({
 }: View<"leagueDashboard">) => {
 	useTitleBar({ title: `${region} ${name} Dashboard` });
 
-	const { season, userTid } = useLocalPartial(["season", "userTid"]);
+	const { season, userTid } = useLocal(["season", "userTid"]);
 
 	return (
 		<>

@@ -19,7 +19,7 @@ import TeamForm from "./ManageTeams/TeamForm.tsx";
 import { getGodModeWarnings } from "./NewLeague/UpsertTeamModal.tsx";
 import { TeamsSplitNorthAmericaWorld } from "../components/TeamsSplitNorthAmericaWorld.tsx";
 import { last } from "../../common/utils.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 // Hacky, but it's in a <option> so what can you do
 const BLANK_TEAM_ABBREV = "_BLANK_TEAM_ABBREV_";
@@ -36,7 +36,7 @@ const ExpansionDraft = ({
 	minRosterSize,
 	numActiveTeams,
 }: View<"expansionDraft">) => {
-	const { godMode, phase, userTids } = useLocalPartial([
+	const { godMode, phase, userTids } = useLocal([
 		"godMode",
 		"phase",
 		"userTids",

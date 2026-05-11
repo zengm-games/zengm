@@ -3,10 +3,10 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { DAILY_SCHEDULE } from "../../common/constants.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const GodMode = () => {
-	const { godMode } = useLocalPartial(["godMode"]);
+	const { godMode } = useLocal(["godMode"]);
 
 	useTitleBar({ title: "God Mode" });
 

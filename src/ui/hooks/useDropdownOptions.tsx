@@ -5,7 +5,7 @@ import {
 	PLAYER_STATS_TABLES,
 	REMAINING_PLAYOFF_TEAMS_PHASES,
 } from "../../common/constants.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import type { LocalStateUI } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
@@ -221,7 +221,7 @@ const useDropdownOptions = (
 	field: string,
 	customOptions?: DropdownOption[],
 ) => {
-	const state = useLocalPartial([
+	const state = useLocal([
 		"hideDisabledTeams",
 		"phase",
 		"season",

@@ -9,7 +9,7 @@ import getWinner from "../../common/getWinner.ts";
 import formatScoreWithShootout from "../../common/formatScoreWithShootout.ts";
 import { BoxScoreWrapper } from "../components/BoxScoreWrapper.tsx";
 import { BoxScoreRow } from "../components/BoxScoreRow.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const StatsRow = ({ p, ...props }: { i: number; p: any; season: number }) => {
 	const { clicked, toggleClicked } = useClickable();
@@ -189,7 +189,7 @@ const GameLog = ({
 		},
 	});
 
-	const { season: currentSeason } = useLocalPartial(["season"]);
+	const { season: currentSeason } = useLocal(["season"]);
 
 	const { currentGidInList, nextGid, prevGid } = findPrevNextGids(
 		gamesList.games,

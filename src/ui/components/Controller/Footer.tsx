@@ -6,7 +6,7 @@ import {
 	VIDEO_ADS,
 	VIDEO_AD_PADDING,
 } from "../../../common/constants.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 
 const footerLinks = [
 	{
@@ -40,7 +40,7 @@ const footerLinks = [
 ];
 
 export const Footer = memo(() => {
-	const { gold } = useLocalPartial(["gold"]);
+	const { gold } = useLocal(["gold"]);
 
 	const video_ad_padding = VIDEO_ADS && !gold;
 

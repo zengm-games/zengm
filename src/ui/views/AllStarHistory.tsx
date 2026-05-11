@@ -6,7 +6,7 @@ import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { isSport } from "../../common/sportFunctions.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const playerName = (p?: { pid: number; name: string; count: number }) => {
 	if (!p) {
@@ -127,7 +127,7 @@ const ResultText = ({
 const AllStarHistory = ({ allAllStars }: View<"allStarHistory">) => {
 	useTitleBar({ title: "All-Star History" });
 
-	const { userTid } = useLocalPartial(["userTid"]);
+	const { userTid } = useLocal(["userTid"]);
 
 	const cols = getCols([
 		"Season",

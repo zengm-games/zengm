@@ -4,7 +4,7 @@ import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 import { DataTable } from "../../components/DataTable/index.tsx";
 import type { Col } from "../../components/DataTable/index.tsx";
 import type { View } from "../../../common/types.ts";
@@ -164,7 +164,7 @@ export const Offer = (props: OfferProps) => {
 	const salaryCapOrPayrollText =
 		salaryCapType === "none" ? "payroll" : "cap space";
 
-	const { userTid } = useLocalPartial(["userTid"]);
+	const { userTid } = useLocal(["userTid"]);
 
 	if (!teamInfo) {
 		return null;
@@ -310,10 +310,7 @@ export const OfferTable = ({
 	handleRemove?: (i: number) => void;
 	offers: OfferType[];
 } & Pick<View<"tradingBlock">, "salaryCap" | "salaryCapType">) => {
-	const { teamInfoCache, userTid } = useLocalPartial([
-		"teamInfoCache",
-		"userTid",
-	]);
+	const { teamInfoCache, userTid } = useLocal(["teamInfoCache", "userTid"]);
 
 	const offerCols = getCols(
 		[
@@ -504,7 +501,7 @@ const TradingBlock = ({
 	userPicks,
 	userRoster,
 }: View<"tradingBlock">) => {
-	const { challengeNoRatings, phase, spectator } = useLocalPartial([
+	const { challengeNoRatings, phase, spectator } = useLocal([
 		"challengeNoRatings",
 		"phase",
 		"spectator",
@@ -627,7 +624,7 @@ const TradingBlock = ({
 
 	useTitleBar({ title: "Trading Block" });
 
-	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
+	const { teamInfoCache } = useLocal(["teamInfoCache"]);
 
 	const tradeOffersSwitch = useTradeOffersSwitch();
 

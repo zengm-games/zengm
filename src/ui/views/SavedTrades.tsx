@@ -4,7 +4,7 @@ import type { View } from "../../common/types.ts";
 import { SummaryTeam } from "./Trade/Summary.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import {
 	Offer,
 	OfferTable,
@@ -26,13 +26,12 @@ const SavedTrades = ({
 }: View<"savedTrades">) => {
 	useTitleBar({ title: "Saved Trades" });
 
-	const { challengeNoRatings, phase, spectator, teamInfoCache } =
-		useLocalPartial([
-			"challengeNoRatings",
-			"phase",
-			"spectator",
-			"teamInfoCache",
-		]);
+	const { challengeNoRatings, phase, spectator, teamInfoCache } = useLocal([
+		"challengeNoRatings",
+		"phase",
+		"spectator",
+		"teamInfoCache",
+	]);
 
 	const tradeOffersSwitch = useTradeOffersSwitch();
 

@@ -2,7 +2,7 @@ import { PHASE, WEBSITE_ROOT } from "../../../common/constants.ts";
 import type { View } from "../../../common/types.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 import { logEvent } from "../../util/logEvent.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import AutoSave from "./AutoSave.tsx";
@@ -13,7 +13,7 @@ const DangerZone = ({ autoSave }: View<"dangerZone">) => {
 		title: "Danger Zone",
 	});
 
-	const { godMode, phase } = useLocalPartial(["godMode", "phase"]);
+	const { godMode, phase } = useLocal(["godMode", "phase"]);
 
 	return (
 		<>

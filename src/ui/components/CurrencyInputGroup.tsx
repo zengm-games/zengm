@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 
 export const CurrencyInputGroup = ({
@@ -11,7 +11,7 @@ export const CurrencyInputGroup = ({
 	displayUnit?: string;
 	style?: CSSProperties;
 }) => {
-	const local = useLocalPartial(["currencyFormat", "lid"]);
+	const local = useLocal(["currencyFormat", "lid"]);
 
 	// If no lid, that means we're on the settings page for a new league and we should use the default currencyFormat in the UI
 	const currencyFormat =

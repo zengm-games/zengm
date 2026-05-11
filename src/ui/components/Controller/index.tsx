@@ -1,6 +1,6 @@
 import { LazyMotion } from "framer-motion";
 import { memo, useCallback, useEffect } from "react";
-import { localActions, useLocalPartial } from "../../util/local.ts";
+import { localActions, useLocal } from "../../util/local.ts";
 import { CommandPalette } from "../CommandPalette/index.tsx";
 import { Footer } from "./Footer.tsx";
 import { Header } from "./Header.tsx";
@@ -50,7 +50,7 @@ const KeepPreviousRenderWhileUpdating = memo(
 export const Controller = () => {
 	const state = useViewData();
 
-	const { popup, showNagModal } = useLocalPartial(["popup", "showNagModal"]);
+	const { popup, showNagModal } = useLocal(["popup", "showNagModal"]);
 
 	const closeNagModal = useCallback(() => {
 		localActions.update({

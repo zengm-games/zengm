@@ -8,7 +8,7 @@ import { helpers } from "../../util/helpers.ts";
 import { logEvent } from "../../util/logEvent.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 import PlayingTime, { ptModifiers, ptStyles } from "./PlayingTime.tsx";
 import TopStuff from "./TopStuff.tsx";
 import type {
@@ -120,13 +120,7 @@ const Roster = ({
 		phase,
 		season: currentSeason,
 		userTid,
-	} = useLocalPartial([
-		"challengeNoRatings",
-		"gender",
-		"phase",
-		"season",
-		"userTid",
-	]);
+	} = useLocal(["challengeNoRatings", "gender", "phase", "season", "userTid"]);
 
 	useTitleBar({
 		title: "Roster",

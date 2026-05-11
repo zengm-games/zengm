@@ -7,7 +7,7 @@ import { frivolitiesMenu } from "./Frivolities.tsx";
 import { bySport } from "../../common/sportFunctions.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const FrivolitiesDraftClasses = ({
 	draftClasses,
@@ -15,7 +15,7 @@ const FrivolitiesDraftClasses = ({
 }: View<"frivolitiesDraftClasses">) => {
 	useTitleBar({ title: "Draft Class Rankings", customMenu: frivolitiesMenu });
 
-	const { challengeNoRatings, userTid } = useLocalPartial([
+	const { challengeNoRatings, userTid } = useLocal([
 		"challengeNoRatings",
 		"userTid",
 	]);

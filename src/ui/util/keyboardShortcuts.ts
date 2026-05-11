@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { helpers } from "./helpers.ts";
 import { TIME_BETWEEN_GAMES } from "../../common/constants.ts";
-import { useLocalPartial } from "./local.ts";
+import { useLocal } from "./local.ts";
 
 const IS_APPLE = /Mac|iPhone|iPad|iPod/.test(navigator.platform);
 
@@ -246,7 +246,7 @@ export const useKeyboardShortcuts = <T extends KeyboardShortcutCategories>({
 	callback: (action: keyof KeyboardShortcuts[T]) => void;
 	disableWhileEditing?: boolean;
 }) => {
-	const { keyboardShortcuts: keyboardShortcutsLocal } = useLocalPartial([
+	const { keyboardShortcuts: keyboardShortcutsLocal } = useLocal([
 		"keyboardShortcuts",
 	]);
 

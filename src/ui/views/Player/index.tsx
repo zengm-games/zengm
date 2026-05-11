@@ -16,7 +16,7 @@ import { groupAwards } from "../../util/groupAwards.ts";
 import { InjuryIcon } from "../../components/InjuryIcon.tsx";
 import { SkillsBlock } from "../../components/SkillsBlock.tsx";
 import { SafeHtml } from "../../components/SafeHtml.tsx";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 
 const Player2 = ({
 	bestPos,
@@ -37,7 +37,7 @@ const Player2 = ({
 	teamURL,
 	willingToSign,
 }: View<"player">) => {
-	const { challengeNoRatings, season: currentSeason } = useLocalPartial([
+	const { challengeNoRatings, season: currentSeason } = useLocal([
 		"challengeNoRatings",
 		"season",
 	]);

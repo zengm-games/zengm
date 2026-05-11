@@ -9,7 +9,7 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { isSport } from "../../common/sportFunctions.ts";
 import clsx from "clsx";
 import { InjuryIcon } from "../components/InjuryIcon.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 type DecisionPlayer = {
 	w: number;
@@ -191,7 +191,7 @@ const PlayerGameLog = ({
 		},
 	});
 
-	const { challengeNoRatings, season: currentSeason } = useLocalPartial([
+	const { challengeNoRatings, season: currentSeason } = useLocal([
 		"challengeNoRatings",
 		"season",
 	]);

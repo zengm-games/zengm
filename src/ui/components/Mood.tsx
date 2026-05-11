@@ -8,7 +8,7 @@ import type {
 } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
 import { ResponsivePopover } from "./ResponsivePopover.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const componentText = (
 	component: keyof MoodComponents,
@@ -141,10 +141,7 @@ const MoodTextRow = ({ amount, text }: { amount: number; text: string }) => {
 };
 
 export const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
-	const { teamInfoCache, userTid } = useLocalPartial([
-		"teamInfoCache",
-		"userTid",
-	]);
+	const { teamInfoCache, userTid } = useLocal(["teamInfoCache", "userTid"]);
 
 	const playerIsOnUsersTeam = userTid === p.tid;
 	const canShowCurrent = p.mood.current && !playerIsOnUsersTeam;
@@ -153,7 +150,7 @@ export const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 
 	const [type, setType] = useState<"user" | "current">(initialType);
 
-	const { gender } = useLocalPartial(["gender"]);
+	const { gender } = useLocal(["gender"]);
 
 	const mood = p.mood[type];
 	const initialMood = p.mood[initialType];

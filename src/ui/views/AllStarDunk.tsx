@@ -1,7 +1,7 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import type { DunkAttempt, Player, View } from "../../common/types.ts";
 import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { useEffect, useState } from "react";
@@ -200,7 +200,7 @@ const Log = ({
 }: Pick<View<"allStarDunk">, "dunk" | "log" | "season">) => {
 	const logReverse = [...log].reverse();
 
-	const { gender } = useLocalPartial(["gender"]);
+	const { gender } = useLocal(["gender"]);
 
 	return (
 		<ul className="list-unstyled mb-0">
@@ -357,7 +357,7 @@ const UserDunkForm = ({
 		updateProjeted();
 	}, [dunkAttempt, index]);
 
-	const { units } = useLocalPartial(["units"]);
+	const { units } = useLocal(["units"]);
 
 	const name = dunk.players[index]!.name;
 
@@ -780,7 +780,7 @@ const AllStarDunk = ({
 		throw new Error("Not implemented");
 	}
 
-	const { challengeNoRatings, godMode, userTid } = useLocalPartial([
+	const { challengeNoRatings, godMode, userTid } = useLocal([
 		"challengeNoRatings",
 		"godMode",
 		"userTid",

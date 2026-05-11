@@ -6,7 +6,7 @@ import { toWorker } from "../util/toWorker.ts";
 import { TeamLogoJerseyInfo } from "../components/TeamLogoJerseyInfo.tsx";
 import clsx from "clsx";
 import { wait } from "../../common/wait.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 export const AutoRelocateExpandSubmit = ({
 	override,
@@ -38,7 +38,7 @@ export const AutoRelocateExpandSubmit = ({
 	resultTextYes: string;
 	resultTextNo: string;
 }) => {
-	const { godMode } = useLocalPartial(["godMode"]);
+	const { godMode } = useLocal(["godMode"]);
 
 	return (
 		<>

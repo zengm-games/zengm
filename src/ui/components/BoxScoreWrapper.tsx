@@ -18,7 +18,7 @@ import Note from "../views/Player/Note.tsx";
 import { TeamLogoInline } from "./TeamLogoInline.tsx";
 import { useKeyboardShortcuts } from "../util/keyboardShortcuts.ts";
 import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import { isSport } from "../../common/sportFunctions.ts";
 
 const TeamNameLink = ({
@@ -679,7 +679,7 @@ const NextButton = ({
 		};
 	}, [abbrev, autoGoToNext, boxScore.season, nextGid, tid]);
 
-	const { phase, playMenuOptions, season } = useLocalPartial([
+	const { phase, playMenuOptions, season } = useLocal([
 		"phase",
 		"playMenuOptions",
 		"season",

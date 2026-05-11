@@ -30,7 +30,7 @@ import {
 } from "../../util/keyboardShortcuts.ts";
 import { menuItems } from "../../util/menuItems.tsx";
 import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
-import { local, useLocalPartial } from "../../util/local.ts";
+import { local, useLocal } from "../../util/local.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 
 const TWO_MONTHS_IN_MILLISECONDS = 2 * 30 * 24 * 60 * 60 * 1000;
@@ -759,7 +759,7 @@ const CommandPaletteInner = ({
 		lid,
 		playMenuOptions,
 		teamInfoCache,
-	} = useLocalPartial([
+	} = useLocal([
 		"challengeNoRatings",
 		"godMode",
 		"hideDisabledTeams",

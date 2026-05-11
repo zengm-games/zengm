@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { PHASE } from "../../../common/constants.ts";
 import { helpers } from "../../util/helpers.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 import React, { memo, type ReactNode } from "react";
 import { TeamLogoInline } from "../TeamLogoInline.tsx";
 import defaultGameAttributes from "../../../common/defaultGameAttributes.ts";
@@ -110,7 +110,7 @@ export const ScoreBox = memo(
 			season,
 			teamInfoCache,
 			userTid,
-		} = useLocalPartial([
+		} = useLocal([
 			"challengeNoRatings",
 			"homeCourtAdvantage",
 			"neutralSite",

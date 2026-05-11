@@ -9,7 +9,7 @@ import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../../components/DataTable/index.tsx";
 import { wrappedCurrency } from "../../components/wrappedCurrency.ts";
 import { SafeHtml } from "../../components/SafeHtml.tsx";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 
 export const getValue = (
 	obj: any,
@@ -33,7 +33,7 @@ const Most = ({
 }: View<"most">) => {
 	useTitleBar({ title, customMenu: frivolitiesMenu });
 
-	const { challengeNoRatings, userTid } = useLocalPartial([
+	const { challengeNoRatings, userTid } = useLocal([
 		"challengeNoRatings",
 		"userTid",
 	]);

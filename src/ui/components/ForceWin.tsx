@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { AnimatePresence, m } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { toWorker } from "../util/toWorker.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 type Team = {
 	tid: number;
@@ -54,10 +54,7 @@ export const ForceWin = ({
 	const [state, setState] = useSavingState();
 	const [forceWin, setForceWin] = useState(game.forceWin);
 
-	const { godMode, teamInfoCache } = useLocalPartial([
-		"godMode",
-		"teamInfoCache",
-	]);
+	const { godMode, teamInfoCache } = useLocal(["godMode", "teamInfoCache"]);
 
 	const allStarGame = game.teams[0].tid === -1 && game.teams[1].tid === -2;
 	const tradeDeadline = game.teams[0].tid === -3 && game.teams[1].tid === -3;

@@ -19,7 +19,7 @@ import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { logEvent } from "../../util/logEvent.ts";
 import { toWorker } from "../../util/toWorker.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 import type {
 	View,
 	RealTeamInfo,
@@ -683,7 +683,7 @@ const NewLeague = (props: View<"newLeague">) => {
 	>("default");
 
 	const leagueCreationID = useId();
-	const { leagueCreation, leagueCreationPercent } = useLocalPartial([
+	const { leagueCreation, leagueCreationPercent } = useLocal([
 		"leagueCreation",
 		"leagueCreationPercent",
 	]);

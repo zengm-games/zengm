@@ -9,7 +9,7 @@ import {
 	wrappedPlayerNameLabels,
 } from "../components/PlayerNameLabels.tsx";
 import { TeamLogoInline } from "../components/TeamLogoInline.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const awardName = (
 	award:
@@ -100,7 +100,7 @@ const formatTeam = (
 
 const HistoryAll = ({ awards, seasons }: View<"historyAll">) => {
 	useTitleBar({ title: "League History" });
-	const { userTid } = useLocalPartial(["userTid"]);
+	const { userTid } = useLocal(["userTid"]);
 
 	const cols = getCols([
 		"Season",

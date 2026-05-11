@@ -31,7 +31,7 @@ import { Face } from "./Face.tsx";
 import { CurrencyInputGroup } from "../../components/CurrencyInputGroup.tsx";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 
 const copyValidValues = (
 	source: PlayerWithoutKey,
@@ -345,7 +345,7 @@ const useJerseyNumberConflictInfo = (
 };
 
 const CustomizePlayer = (props: View<"customizePlayer">) => {
-	const { challengeNoRatings, godMode, phase, season } = useLocalPartial([
+	const { challengeNoRatings, godMode, phase, season } = useLocal([
 		"challengeNoRatings",
 		"godMode",
 		"phase",

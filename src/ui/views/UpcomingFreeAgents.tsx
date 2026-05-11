@@ -4,7 +4,7 @@ import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
 import { wrappedMood } from "../components/Mood.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
@@ -29,13 +29,7 @@ const UpcomingFreeAgents = ({
 		phase,
 		season: currentSeason,
 		userTid,
-	} = useLocalPartial([
-		"challengeNoRatings",
-		"gender",
-		"phase",
-		"season",
-		"userTid",
-	]);
+	} = useLocal(["challengeNoRatings", "gender", "phase", "season", "userTid"]);
 
 	const superCols = [
 		{

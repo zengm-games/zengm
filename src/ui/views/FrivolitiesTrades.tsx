@@ -8,7 +8,7 @@ import { PHASE_TEXT } from "../../common/constants.ts";
 import PickText from "./TradeSummary/PickText.tsx";
 import TeamLogoAndName from "../components/TeamLogoAndName.tsx";
 import { bySport } from "../../common/sportFunctions.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const PlayerInfo = ({
 	asset,
@@ -55,7 +55,7 @@ const FrivolitiesTrades = ({
 		},
 	});
 
-	const { challengeNoRatings, userTid } = useLocalPartial([
+	const { challengeNoRatings, userTid } = useLocal([
 		"challengeNoRatings",
 		"userTid",
 	]);

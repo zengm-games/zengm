@@ -3,7 +3,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { PHASE } from "../../common/constants.ts";
@@ -33,7 +33,7 @@ const PlayerList = ({
 	tid: number;
 	upcomingFreeAgentsText: ReactNode;
 }) => {
-	const { challengeNoRatings, gender } = useLocalPartial([
+	const { challengeNoRatings, gender } = useLocal([
 		"challengeNoRatings",
 		"gender",
 	]);
@@ -157,7 +157,7 @@ const ProtectPlayers = ({
 
 	useTitleBar({ title: "Protect Players" });
 
-	const { spectator, userTid, userTids } = useLocalPartial([
+	const { spectator, userTid, userTids } = useLocal([
 		"spectator",
 		"userTid",
 		"userTids",

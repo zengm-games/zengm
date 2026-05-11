@@ -5,7 +5,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { Phase, View } from "../../common/types.ts";
@@ -29,7 +29,7 @@ const ClearButton = ({
 	players: any[];
 	processing: boolean;
 }) => {
-	const { numWatchColors } = useLocalPartial(["numWatchColors"]);
+	const { numWatchColors } = useLocal(["numWatchColors"]);
 
 	const watchNumbers = new Set<number>();
 	for (const p of players) {
@@ -234,7 +234,7 @@ const WatchList = ({
 		gender,
 		phase,
 		season: currentSeason,
-	} = useLocalPartial(["challengeNoRatings", "gender", "phase", "season"]);
+	} = useLocal(["challengeNoRatings", "gender", "phase", "season"]);
 
 	const { cols, rows } = getWatchListColsAndRows({
 		challengeNoRatings,

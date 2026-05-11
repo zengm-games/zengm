@@ -3,7 +3,7 @@ import { Flag } from "../WatchBlock.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { logEvent } from "../../util/logEvent.ts";
 import { toWorker } from "../../util/toWorker.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 import {
 	useCallback,
 	useEffect,
@@ -94,10 +94,7 @@ export const BulkActions = ({
 	selectedRows: SelectedRows;
 	wrapperRef: RefObject<HTMLDivElement | null>;
 }) => {
-	const { godMode, numWatchColors } = useLocalPartial([
-		"godMode",
-		"numWatchColors",
-	]);
+	const { godMode, numWatchColors } = useLocal(["godMode", "numWatchColors"]);
 	const [exportModalStatus, setExportModalStatus] = useState<ExportModalStatus>(
 		{
 			show: false,

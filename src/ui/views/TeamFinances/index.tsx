@@ -13,7 +13,7 @@ import { helpers } from "../../util/helpers.ts";
 import { logEvent } from "../../util/logEvent.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 import type { View } from "../../../common/types.ts";
 import { PHASE } from "../../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
@@ -155,14 +155,13 @@ const FinancesForm = ({
 > & {
 	gameSimInProgress: boolean;
 }) => {
-	const { challengeNoRatings, godMode, spectator, phase, userTid } =
-		useLocalPartial([
-			"challengeNoRatings",
-			"godMode",
-			"spectator",
-			"phase",
-			"userTid",
-		]);
+	const { challengeNoRatings, godMode, spectator, phase, userTid } = useLocal([
+		"challengeNoRatings",
+		"godMode",
+		"spectator",
+		"phase",
+		"userTid",
+	]);
 
 	const { dirty, setDirty } = useBlocker();
 
@@ -746,7 +745,7 @@ const TeamFinances = ({
 		dropdownFields: { teams: abbrev, shows: show },
 	});
 
-	const { gameSimInProgress } = useLocalPartial(["gameSimInProgress"]);
+	const { gameSimInProgress } = useLocal(["gameSimInProgress"]);
 
 	const cols = getCols(["Pos", "Name", "Cap%"]).concat(
 		salariesSeasons.map((season) => {

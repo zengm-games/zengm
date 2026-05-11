@@ -8,7 +8,7 @@ import type { Col } from "../components/DataTable/index.tsx";
 import clsx from "clsx";
 import { useState } from "react";
 import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const gradientStyle = gradientStyleFactory(0.38, 0.49, 0.51, 0.62);
 
@@ -26,7 +26,7 @@ const HeadToHeadAll = ({
 			playoffsCombined: type,
 		},
 	});
-	const { userTid } = useLocalPartial(["userTid"]);
+	const { userTid } = useLocal(["userTid"]);
 
 	const [showInactive, setShowInactive] = useState(true);
 

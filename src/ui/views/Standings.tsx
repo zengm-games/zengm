@@ -10,7 +10,7 @@ import { MovOrDiff } from "../components/MovOrDiff.tsx";
 import { ResponsiveTableWrapper } from "../components/ResponsiveTableWrapper.tsx";
 import { getCol } from "../../common/getCol.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 type StandingsTeam =
 	View<"standings">["rankingGroups"]["league"][number][number];
@@ -431,7 +431,7 @@ const Standings = ({
 			standingsType: type,
 		},
 	});
-	const { userTid } = useLocalPartial(["userTid"]);
+	const { userTid } = useLocal(["userTid"]);
 
 	// Show small playoff standings if we're currently viewing the division standings and if the playoff standings differ from the division standings (like multiple divisions get grouped together to determine playoff ranking)
 	const confHasMultipleDivs = confs.some(

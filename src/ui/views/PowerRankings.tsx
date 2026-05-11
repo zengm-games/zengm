@@ -8,7 +8,7 @@ import { POSITIONS, RATINGS } from "../../common/constants.ts";
 import { wrappedMovOrDiff } from "../components/MovOrDiff.tsx";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const Other = ({
 	actualShowHealthy,
@@ -56,7 +56,7 @@ const PowerRankings = ({
 		challengeNoRatings,
 		season: currentSeason,
 		userTid,
-	} = useLocalPartial(["challengeNoRatings", "season", "userTid"]);
+	} = useLocal(["challengeNoRatings", "season", "userTid"]);
 
 	const [showHealthy, setShowHealthy] = useState(true);
 	const actualShowHealthy = showHealthy || currentSeason !== season;

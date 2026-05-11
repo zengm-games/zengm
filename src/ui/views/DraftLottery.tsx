@@ -13,7 +13,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import type {
 	DraftLotteryResultArray,
 	View,
@@ -413,7 +413,7 @@ const Rigged = ({
 	rigged,
 	type,
 }: Pick<Props, "numToPick" | "result" | "rigged" | "type">) => {
-	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
+	const { teamInfoCache } = useLocal(["teamInfoCache"]);
 
 	if (!rigged || !result || type === "projected") {
 		return null;
@@ -488,7 +488,7 @@ const NonLotteryHeader = ({ children }: { children: ReactNode }) => {
 };
 
 const DraftLotteryTable = (props: Props) => {
-	const { godMode, spectator, userTid } = useLocalPartial([
+	const { godMode, spectator, userTid } = useLocal([
 		"godMode",
 		"spectator",
 		"userTid",

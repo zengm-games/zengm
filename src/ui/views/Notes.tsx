@@ -11,7 +11,7 @@ import Note from "./Player/Note.tsx";
 import { getDraftPicksColsAndRows } from "./DraftPicks.tsx";
 import { getWatchListColsAndRows } from "./WatchList.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 
 const Notes = (props: View<"notes">) => {
 	const [clearing, setClearing] = useState(false);
@@ -23,7 +23,7 @@ const Notes = (props: View<"notes">) => {
 			notesType: props.type,
 		},
 	});
-	const { userTid } = useLocalPartial(["userTid"]);
+	const { userTid } = useLocal(["userTid"]);
 
 	let infoText;
 	let moreLinks;

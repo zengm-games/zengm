@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect } from "react";
 import { getSortedTeams, getDropdownValue } from "./useDropdownOptions.tsx";
-import { localActions, useLocalPartial } from "../util/local.ts";
+import { localActions, useLocal } from "../util/local.ts";
 import type { LocalStateUI, MenuItemHeader } from "../../common/types.ts";
 import { GAME_NAME } from "../../common/constants.ts";
 import { getResponsiveValue } from "../components/Dropdown.tsx";
@@ -34,7 +34,7 @@ const useTitleBar = <DropdownFields extends Record<string, number | string>>({
 	moreInfoSeason?: number;
 	moreInfoTid?: number;
 } = {}) => {
-	const state = useLocalPartial(["hideDisabledTeams", "teamInfoCache"]);
+	const state = useLocal(["hideDisabledTeams", "teamInfoCache"]);
 
 	useEffect(() => {
 		const parts: string[] = [];

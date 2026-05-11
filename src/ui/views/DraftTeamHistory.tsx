@@ -3,7 +3,7 @@ import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
 import { PLAYER } from "../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
@@ -29,7 +29,7 @@ const DraftTeamHistory = ({
 		dropdownFields: { teamsAndYours: abbrev },
 	});
 
-	const { challengeNoRatings, teamInfoCache } = useLocalPartial([
+	const { challengeNoRatings, teamInfoCache } = useLocal([
 		"challengeNoRatings",
 		"teamInfoCache",
 	]);

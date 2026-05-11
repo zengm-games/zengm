@@ -3,7 +3,7 @@ import { PHASE } from "../../../common/constants.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 import AssetList from "./AssetList.tsx";
 import Buttons from "./Buttons.tsx";
 import type { TradeClearType } from "./Buttons.tsx";
@@ -269,14 +269,13 @@ const Trade = (props: View<"trade">) => {
 		title: "Trade",
 	});
 
-	const { challengeNoRatings, spectator, phase, userTid, userTids } =
-		useLocalPartial([
-			"challengeNoRatings",
-			"spectator",
-			"phase",
-			"userTid",
-			"userTids",
-		]);
+	const { challengeNoRatings, spectator, phase, userTid, userTids } = useLocal([
+		"challengeNoRatings",
+		"spectator",
+		"phase",
+		"userTid",
+		"userTids",
+	]);
 
 	const summaryText = useRef<HTMLDivElement>(null);
 	const summaryControls = useRef<HTMLDivElement>(null);

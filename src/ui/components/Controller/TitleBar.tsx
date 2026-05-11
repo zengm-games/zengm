@@ -1,7 +1,7 @@
 import Dropdown from "../Dropdown.tsx";
 import DropdownLinks from "../DropdownLinks.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 import type { MenuItemHeader } from "../../../common/types.ts";
 import { useCallback } from "react";
 
@@ -67,7 +67,7 @@ export const TitleBar = () => {
 		moreInfoSeason,
 		moreInfoTid,
 		lid,
-	} = useLocalPartial([
+	} = useLocal([
 		"title",
 		"customMenu",
 		"hideNewWindow",

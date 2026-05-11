@@ -4,7 +4,7 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { helpers } from "../util/helpers.ts";
 import { logEvent } from "../util/logEvent.ts";
 import { toWorker } from "../util/toWorker.ts";
-import { useLocalPartial } from "../util/local.ts";
+import { useLocal } from "../util/local.ts";
 import { HelpPopover } from "../components/HelpPopover.tsx";
 import { RatingsStatsPopover } from "../components/RatingsStatsPopover/index.tsx";
 import { Mood } from "../components/Mood.tsx";
@@ -98,7 +98,7 @@ const NegotiationHeader = ({
 	| "salaryCapType"
 	| "t"
 >) => {
-	const { gender } = useLocalPartial(["gender"]);
+	const { gender } = useLocal(["gender"]);
 
 	let message;
 	if (salaryCapType === "soft") {

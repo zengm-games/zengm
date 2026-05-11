@@ -281,7 +281,7 @@ const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 	shallow,
 );
 
-const useLocalPartial = <Key extends keyof LocalStateUI>(keys: Key[]) => {
+const useLocal = <Key extends keyof LocalStateUI>(keys: Key[]) => {
 	const selector = (state: LocalStateUI) => {
 		const obj = {} as Pick<LocalStateUI, Key>;
 		for (const key of keys) {
@@ -299,4 +299,4 @@ const useLocalActions = () => useLocalRaw((state) => state.actions);
 const local = useLocalRaw;
 const localActions = local.getState().actions;
 
-export { local, localActions, useLocalActions, useLocalPartial };
+export { local, localActions, useLocalActions, useLocal };

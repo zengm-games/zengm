@@ -31,7 +31,7 @@ import {
 	NegotiationModal,
 	useNegotiaionModal,
 } from "../../components/NegotiationModal.tsx";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 
 const Relatives = ({
 	gender,
@@ -311,7 +311,7 @@ const TopStuff = ({
 	season?: number;
 	showRatings: boolean;
 }) => {
-	const { gender, godMode, phase, spectator, userTid } = useLocalPartial([
+	const { gender, godMode, phase, spectator, userTid } = useLocal([
 		"gender",
 		"godMode",
 		"phase",

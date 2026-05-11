@@ -3,7 +3,7 @@ import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { logEvent } from "../../util/logEvent.ts";
 import { toWorker } from "../../util/toWorker.ts";
-import { useLocalPartial } from "../../util/local.ts";
+import { useLocal } from "../../util/local.ts";
 import { DataTable } from "../../components/DataTable/index.tsx";
 import type { View } from "../../../common/types.ts";
 import { PHASE, TIME_BETWEEN_GAMES } from "../../../common/constants.ts";
@@ -393,7 +393,7 @@ const ScheduleEditor = ({
 	tradeDeadline,
 }: View<"scheduleEditor">) => {
 	useTitleBar({ title: "Schedule Editor" });
-	const { phase, userTid } = useLocalPartial(["phase", "userTid"]);
+	const { phase, userTid } = useLocal(["phase", "userTid"]);
 
 	const [schedule, dispatchUnwrapped] = useReducer(reducer, scheduleProp);
 	const [showSummaryStatistics, setShowSummaryStatistics] = useState(false);
@@ -421,7 +421,7 @@ const ScheduleEditor = ({
 		}
 	}, [dispatch, scheduleProp]);
 
-	const { godMode } = useLocalPartial(["godMode"]);
+	const { godMode } = useLocal(["godMode"]);
 
 	const [saving, setSaving] = useState(false);
 	const [showRegenerateScheduleModal, setShowRegenerateScheduleModal] =

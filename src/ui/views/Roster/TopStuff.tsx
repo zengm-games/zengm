@@ -294,10 +294,18 @@ const TopStuff = ({
 								<PayrollAndPenalties
 									isCurrentSeason={isCurrentSeason}
 									luxuryPayroll={luxuryPayroll / 1000}
-									luxuryTaxAmount={luxuryTaxAmount}
+									luxuryTaxAmount={
+										luxuryTaxAmount !== undefined
+											? luxuryTaxAmount / 1000
+											: undefined
+									}
 									minPayroll={minPayroll / 1000}
-									minPayrollAmount={minPayrollAmount}
-									payroll={payroll}
+									minPayrollAmount={
+										minPayrollAmount !== undefined
+											? minPayrollAmount / 1000
+											: undefined
+									}
+									payroll={payroll / 1000}
 								/>
 							</div>
 						) : null}

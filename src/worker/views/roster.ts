@@ -207,9 +207,8 @@ const updateRoster = async (
 				await idb.cache.players.indexGetAll("playersByTid", inputs.tid),
 			);
 			payroll = await team.getPayroll(inputs.tid);
-			luxuryTaxAmount = finances.getLuxuryTaxAmount(payroll) / 1000;
-			minPayrollAmount = finances.getMinPayrollAmount(payroll) / 1000;
-			payroll /= 1000;
+			luxuryTaxAmount = finances.getLuxuryTaxAmount(payroll);
+			minPayrollAmount = finances.getMinPayrollAmount(payroll);
 
 			// numGamesRemaining doesn't need to be calculated except for userTid, but it is.
 			let numGamesRemaining = 0;
@@ -301,9 +300,9 @@ const updateRoster = async (
 
 			// >0 check handles old leagues that might have it undefined, and real players leagues that have a dummy negative value
 			if (teamSeason && teamSeason.payrollEndOfSeason > 0) {
-				payroll = teamSeason.payrollEndOfSeason / 1000;
-				luxuryTaxAmount = teamSeason.expenses.luxuryTax / 1000;
-				minPayrollAmount = teamSeason.expenses.minTax / 1000;
+				payroll = teamSeason.payrollEndOfSeason;
+				luxuryTaxAmount = teamSeason.expenses.luxuryTax;
+				minPayrollAmount = teamSeason.expenses.minTax;
 			}
 		}
 

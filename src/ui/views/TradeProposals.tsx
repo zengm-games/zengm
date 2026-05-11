@@ -15,26 +15,22 @@ import { useEffect, useState } from "react";
 import { ActionButton } from "../components/ActionButton.tsx";
 import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch.tsx";
 
-const TradeProposals = ({
-	luxuryPayroll,
-	offers,
-	salaryCap,
-}: View<"tradeProposals">) => {
+const TradeProposals = ({ offers }: View<"tradeProposals">) => {
 	const {
 		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
-		luxuryTax,
 		phase,
+		salaryCap,
 		salaryCapType,
 		spectator,
 		teamInfoCache,
 	} = useLocal([
 		"challengeNoRatings",
 		"challengeNoTrades",
-		"luxuryTax",
 		"gameOver",
 		"phase",
+		"salaryCap",
 		"salaryCapType",
 		"spectator",
 		"teamInfoCache",
@@ -165,13 +161,8 @@ const TradeProposals = ({
 							{
 								value: (
 									<SummaryTeam
-										challengeNoRatings={challengeNoRatings}
 										hideFinanceInfo
 										hideTeamOvr
-										luxuryPayroll={luxuryPayroll}
-										luxuryTax={luxuryTax}
-										salaryCap={salaryCap}
-										salaryCapType={salaryCapType}
 										showInlinePlayerInfo
 										summary={offer.summary}
 										t={offer.summary.teams[0]}
@@ -182,13 +173,8 @@ const TradeProposals = ({
 							{
 								value: (
 									<SummaryTeam
-										challengeNoRatings={challengeNoRatings}
 										hideFinanceInfo
 										hideTeamOvr
-										luxuryPayroll={luxuryPayroll}
-										luxuryTax={luxuryTax}
-										salaryCap={salaryCap}
-										salaryCapType={salaryCapType}
 										showInlinePlayerInfo
 										summary={offer.summary}
 										t={offer.summary.teams[1]}
@@ -234,12 +220,7 @@ const TradeProposals = ({
 										return (
 											<div key={j}>
 												<SummaryTeam
-													challengeNoRatings={challengeNoRatings}
 													hideFinanceInfo
-													luxuryPayroll={luxuryPayroll}
-													luxuryTax={luxuryTax}
-													salaryCap={salaryCap}
-													salaryCapType={salaryCapType}
 													showInlinePlayerInfo
 													summary={offer.summary}
 													t={t}

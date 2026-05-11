@@ -15,19 +15,15 @@ import {
 import { Dropdown } from "react-bootstrap";
 import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch.tsx";
 
-const SavedTrades = ({
-	luxuryPayroll,
-	offers,
-	salaryCap,
-}: View<"savedTrades">) => {
+const SavedTrades = ({ offers }: View<"savedTrades">) => {
 	useTitleBar({ title: "Saved Trades" });
 
 	const {
 		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
-		luxuryTax,
 		phase,
+		salaryCap,
 		salaryCapType,
 		spectator,
 		teamInfoCache,
@@ -35,8 +31,8 @@ const SavedTrades = ({
 		"challengeNoRatings",
 		"challengeNoTrades",
 		"gameOver",
-		"luxuryTax",
 		"phase",
+		"salaryCap",
 		"salaryCapType",
 		"spectator",
 		"teamInfoCache",
@@ -165,14 +161,9 @@ const SavedTrades = ({
 							{
 								value: (
 									<SummaryTeam
-										challengeNoRatings={challengeNoRatings}
 										hideFinanceInfo
 										hideTeamOvr
-										luxuryPayroll={luxuryPayroll}
-										luxuryTax={luxuryTax}
 										missingAssets={offer.missing}
-										salaryCap={salaryCap}
-										salaryCapType={salaryCapType}
 										showInlinePlayerInfo
 										summary={offer.summary}
 										t={offer.summary.teams[0]}
@@ -183,14 +174,9 @@ const SavedTrades = ({
 							{
 								value: (
 									<SummaryTeam
-										challengeNoRatings={challengeNoRatings}
 										hideFinanceInfo
 										hideTeamOvr
-										luxuryPayroll={luxuryPayroll}
-										luxuryTax={luxuryTax}
 										missingAssets={offer.missingUser}
-										salaryCap={salaryCap}
-										salaryCapType={salaryCapType}
 										showInlinePlayerInfo
 										summary={offer.summary}
 										t={offer.summary.teams[1]}
@@ -229,13 +215,8 @@ const SavedTrades = ({
 										return (
 											<div key={j}>
 												<SummaryTeam
-													challengeNoRatings={challengeNoRatings}
 													hideFinanceInfo
-													luxuryPayroll={luxuryPayroll}
-													luxuryTax={luxuryTax}
 													missingAssets={offer[missingKey]}
-													salaryCap={salaryCap}
-													salaryCapType={salaryCapType}
 													showInlinePlayerInfo
 													summary={offer.summary}
 													t={t}

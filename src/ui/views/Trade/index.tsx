@@ -238,14 +238,12 @@ const Trade = (props: View<"trade">) => {
 	const {
 		otherTeamsWantToHire,
 		lost,
-		luxuryPayroll,
 		multiTeamMode,
 		numDraftRounds,
 		otherPicks,
 		otherRoster,
 		otherTid,
 		otl,
-		salaryCap,
 		summary,
 		stats,
 		strategy,
@@ -269,9 +267,7 @@ const Trade = (props: View<"trade">) => {
 		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
-		luxuryTax,
 		phase,
-		salaryCapType,
 		spectator,
 		userTid,
 		userTids,
@@ -279,9 +275,7 @@ const Trade = (props: View<"trade">) => {
 		"challengeNoRatings",
 		"challengeNoTrades",
 		"gameOver",
-		"luxuryTax",
 		"phase",
-		"salaryCapType",
 		"spectator",
 		"userTid",
 		"userTids",
@@ -431,13 +425,8 @@ const Trade = (props: View<"trade">) => {
 				<div className="col-md-3">
 					<div className="trade-affix">
 						<Summary
-							challengeNoRatings={challengeNoRatings}
 							handleToggle={handleChangeAsset}
-							luxuryPayroll={luxuryPayroll}
-							luxuryTax={luxuryTax}
 							ref={summaryText}
-							salaryCap={salaryCap}
-							salaryCapType={salaryCapType}
 							summary={summary}
 						/>
 

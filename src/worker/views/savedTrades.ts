@@ -204,9 +204,7 @@ const updateSavedTrades = async (
 		const offers2 = await addMissingAssets(offers);
 
 		return {
-			luxuryPayroll: g.get("luxuryPayroll"),
 			offers: offers2,
-			salaryCap: g.get("salaryCap"),
 		};
 	}
 };

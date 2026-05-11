@@ -50,8 +50,7 @@ type OfferProps = {
 		region: string;
 	};
 } & OfferType &
-	Pick<View<"tradingBlock">, "salaryCap"> &
-	Pick<LocalStateUI, "salaryCapType">;
+	Pick<LocalStateUI, "salaryCap" | "salaryCapType">;
 
 const OfferPlayers = ({
 	className,
@@ -310,8 +309,7 @@ export const OfferTable = ({
 	}) => void;
 	handleRemove?: (i: number) => void;
 	offers: OfferType[];
-} & Pick<View<"tradingBlock">, "salaryCap"> &
-	Pick<LocalStateUI, "salaryCapType">) => {
+} & Pick<LocalStateUI, "salaryCap" | "salaryCapType">) => {
 	const { teamInfoCache, userTid } = useLocal(["teamInfoCache", "userTid"]);
 
 	const offerCols = getCols(
@@ -494,7 +492,6 @@ const MissingAndWilling = ({
 const TradingBlock = ({
 	initialDpids,
 	initialPids,
-	salaryCap,
 	savedTradingBlock,
 	stats,
 	userPicks,
@@ -505,6 +502,7 @@ const TradingBlock = ({
 		challengeNoTrades,
 		gameOver,
 		phase,
+		salaryCap,
 		salaryCapType,
 		spectator,
 		teamInfoCache,
@@ -513,6 +511,7 @@ const TradingBlock = ({
 		"challengeNoTrades",
 		"gameOver",
 		"phase",
+		"salaryCap",
 		"salaryCapType",
 		"spectator",
 		"teamInfoCache",

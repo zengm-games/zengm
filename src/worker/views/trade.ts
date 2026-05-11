@@ -226,8 +226,6 @@ const updateTrade = async () => {
 	} ${g.get("teamInfoCache")[g.get("userTid")]?.name}`;
 
 	return {
-		luxuryPayroll: g.get("luxuryPayroll") / 1000,
-		salaryCap: g.get("salaryCap") / 1000,
 		userDpids: teams[0].dpids,
 		userDpidsExcluded: teams[0].dpidsExcluded,
 		userPicks: userPicks2,

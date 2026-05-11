@@ -1,5 +1,5 @@
 import { helpers } from "../../util/helpers.ts";
-import type { LocalStateUI, View } from "../../../common/types.ts";
+import type { View } from "../../../common/types.ts";
 import clsx from "clsx";
 import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import { ContractAmount, ContractExp } from "../../components/contract.tsx";
@@ -9,6 +9,7 @@ import type { MissingAsset } from "../../../worker/views/savedTrades.ts";
 import type { Ref } from "react";
 import { orderBy } from "../../../common/utils.ts";
 import { SafeHtml } from "../../components/SafeHtml.tsx";
+import { useLocal } from "../../util/local.ts";
 
 // Arrow is https://icons.getbootstrap.com/icons/arrow-right/ v1.8.1
 export const arrow = (
@@ -114,27 +115,35 @@ export const MissingAssets = ({
 };
 
 export const SummaryTeam = ({
-	challengeNoRatings,
 	handleRemove,
 	hideFinanceInfo,
 	hideTeamOvr,
-	luxuryPayroll,
-	luxuryTax,
 	missingAssets,
-	salaryCap,
-	salaryCapType,
 	showInlinePlayerInfo,
 	summary,
 	t,
-}: Pick<View<"trade">, "luxuryPayroll" | "salaryCap" | "summary"> &
-	Pick<LocalStateUI, "challengeNoRatings" | "luxuryTax" | "salaryCapType"> & {
-		handleRemove?: (type: "player" | "pick", id: number) => void;
-		hideFinanceInfo?: boolean;
-		hideTeamOvr?: boolean;
-		missingAssets?: MissingAsset[];
-		showInlinePlayerInfo?: boolean;
-		t: View<"trade">["summary"]["teams"][number];
-	}) => {
+}: Pick<View<"trade">, "summary"> & {
+	handleRemove?: (type: "player" | "pick", id: number) => void;
+	hideFinanceInfo?: boolean;
+	hideTeamOvr?: boolean;
+	missingAssets?: MissingAsset[];
+	showInlinePlayerInfo?: boolean;
+	t: View<"trade">["summary"]["teams"][number];
+}) => {
+	const {
+		challengeNoRatings,
+		luxuryPayroll,
+		luxuryTax,
+		salaryCap,
+		salaryCapType,
+	} = useLocal([
+		"challengeNoRatings",
+		"luxuryPayroll",
+		"luxuryTax",
+		"salaryCap",
+		"salaryCapType",
+	]);
+
 	const payrollColorCutoff =
 		salaryCapType === "none" ? luxuryPayroll : salaryCap;
 
@@ -238,9 +247,11 @@ export const SummaryTeam = ({
 						</li>
 					) : null}
 					{hideFinanceInfo ? null : salaryCapType !== "none" ? (
-						<li>Salary cap: {helpers.formatCurrency(salaryCap, "M")}</li>
+						<li>Salary cap: {helpers.formatCurrency(salaryCap / 1000, "M")}</li>
 					) : luxuryTax !== 0 ? (
-						<li>Luxury tax: {helpers.formatCurrency(luxuryPayroll, "M")}</li>
+						<li>
+							Luxury tax: {helpers.formatCurrency(luxuryPayroll / 1000, "M")}
+						</li>
 					) : null}
 					{!challengeNoRatings && !hideTeamOvr ? (
 						<li>
@@ -258,19 +269,13 @@ export const SummaryTeam = ({
 };
 
 const Summary = ({
-	challengeNoRatings,
 	handleToggle,
-	luxuryPayroll,
-	luxuryTax,
 	ref,
-	salaryCap,
-	salaryCapType,
 	summary,
-}: Pick<View<"trade">, "luxuryPayroll" | "salaryCap" | "summary"> &
-	Pick<LocalStateUI, "challengeNoRatings" | "luxuryTax" | "salaryCapType"> & {
-		handleToggle: HandleToggle;
-		ref?: Ref<HTMLDivElement>;
-	}) => {
+}: Pick<View<"trade">, "summary"> & {
+	handleToggle: HandleToggle;
+	ref?: Ref<HTMLDivElement>;
+}) => {
 	return (
 		<div className="row trade-items mb-3" ref={ref}>
 			{summary.teams.map((t, i) => {
@@ -284,11 +289,6 @@ const Summary = ({
 						})}
 					>
 						<SummaryTeam
-							challengeNoRatings={challengeNoRatings}
-							luxuryPayroll={luxuryPayroll}
-							luxuryTax={luxuryTax}
-							salaryCap={salaryCap}
-							salaryCapType={salaryCapType}
 							handleRemove={(type, id) => {
 								handleToggle(userOrOther, type, "include", id);
 							}}

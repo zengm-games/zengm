@@ -2,9 +2,7 @@ gameAttributesSyncedToUi should never be returned from worker view functions, ex
 - add more variables?
   - .+?: g.get\(".+?"\)
   - luxuryPayroll
-  - luxuryTax
   - salaryCap
-  - salaryCapType
 
 race condition with mutable cached variables and async stuff (example, AbbrevsCache issue from commit e3f01ef8b)
 - cannot assume an object from our cache is stable after any await, could have any arbitrary changes such as new transactions, new stats rows, etc.
@@ -101,6 +99,7 @@ dev usability stuff
 - lint useLocalPartial
   - ensure all requested variables are destructured
   - ensure called only once in a component
+  - sort array
 
 FBGM overtime - If team A scores in OT, And then Team B scores, They should always go for 2 bc you don’t want to give the ball back and have it be sudden death https://discord.com/channels/@me/778760871911751700/1480652733852811324
 

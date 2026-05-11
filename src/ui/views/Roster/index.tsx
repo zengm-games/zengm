@@ -101,7 +101,6 @@ const Roster = ({
 	playoffs,
 	playoffsByConf,
 	salaryCap,
-	salaryCapType,
 	season,
 	showSpectatorWarning,
 	showRelease,
@@ -118,9 +117,17 @@ const Roster = ({
 		challengeNoRatings,
 		gender,
 		phase,
+		salaryCapType,
 		season: currentSeason,
 		userTid,
-	} = useLocal(["challengeNoRatings", "gender", "phase", "season", "userTid"]);
+	} = useLocal([
+		"challengeNoRatings",
+		"gender",
+		"phase",
+		"salaryCapType",
+		"season",
+		"userTid",
+	]);
 
 	useTitleBar({
 		title: "Roster",

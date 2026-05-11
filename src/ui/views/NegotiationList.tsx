@@ -29,23 +29,23 @@ const NegotiationList = ({
 	numRosterSpots,
 	payroll,
 	players,
-	salaryCapType,
 	stats,
 	sumContracts,
 	userPlayers,
 }: View<"negotiationList">) => {
+	const { challengeNoRatings, salaryCapType, spectator, season } = useLocal([
+		"challengeNoRatings",
+		"salaryCapType",
+		"spectator",
+		"season",
+	]);
+
 	const title =
 		salaryCapType === "hard" || !draftPickAutoContract
 			? "Rookies and Expiring Contracts"
 			: "Re-sign Players";
 
 	useTitleBar({ title });
-
-	const { challengeNoRatings, spectator, season } = useLocal([
-		"challengeNoRatings",
-		"spectator",
-		"season",
-	]);
 
 	const negotiationModal = useNegotiaionModal();
 

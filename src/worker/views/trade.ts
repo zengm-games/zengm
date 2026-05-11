@@ -227,9 +227,7 @@ const updateTrade = async () => {
 
 	return {
 		luxuryPayroll: g.get("luxuryPayroll") / 1000,
-		luxuryTax: g.get("luxuryTax"),
 		salaryCap: g.get("salaryCap") / 1000,
-		salaryCapType: g.get("salaryCapType"),
 		userDpids: teams[0].dpids,
 		userDpidsExcluded: teams[0].dpidsExcluded,
 		userPicks: userPicks2,

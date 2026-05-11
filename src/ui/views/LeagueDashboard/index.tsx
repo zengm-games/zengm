@@ -34,7 +34,6 @@ const LeagueDashboard = ({
 	revenue,
 	roundsWonText,
 	salaryCap,
-	salaryCapType,
 	series,
 	seriesTitle,
 	showPlayoffSeries,
@@ -49,7 +48,11 @@ const LeagueDashboard = ({
 }: View<"leagueDashboard">) => {
 	useTitleBar({ title: `${region} ${name} Dashboard` });
 
-	const { season, userTid } = useLocal(["season", "userTid"]);
+	const { salaryCapType, season, userTid } = useLocal([
+		"salaryCapType",
+		"season",
+		"userTid",
+	]);
 
 	return (
 		<>

@@ -1,5 +1,5 @@
 import { helpers } from "../../util/helpers.ts";
-import type { View } from "../../../common/types.ts";
+import type { LocalStateUI, View } from "../../../common/types.ts";
 import clsx from "clsx";
 import { PlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import { ContractAmount, ContractExp } from "../../components/contract.tsx";
@@ -126,18 +126,15 @@ export const SummaryTeam = ({
 	showInlinePlayerInfo,
 	summary,
 	t,
-}: Pick<
-	View<"trade">,
-	"luxuryPayroll" | "luxuryTax" | "salaryCap" | "salaryCapType" | "summary"
-> & {
-	challengeNoRatings: boolean;
-	handleRemove?: (type: "player" | "pick", id: number) => void;
-	hideFinanceInfo?: boolean;
-	hideTeamOvr?: boolean;
-	missingAssets?: MissingAsset[];
-	showInlinePlayerInfo?: boolean;
-	t: View<"trade">["summary"]["teams"][number];
-}) => {
+}: Pick<View<"trade">, "luxuryPayroll" | "salaryCap" | "summary"> &
+	Pick<LocalStateUI, "challengeNoRatings" | "luxuryTax" | "salaryCapType"> & {
+		handleRemove?: (type: "player" | "pick", id: number) => void;
+		hideFinanceInfo?: boolean;
+		hideTeamOvr?: boolean;
+		missingAssets?: MissingAsset[];
+		showInlinePlayerInfo?: boolean;
+		t: View<"trade">["summary"]["teams"][number];
+	}) => {
 	const payrollColorCutoff =
 		salaryCapType === "none" ? luxuryPayroll : salaryCap;
 
@@ -269,14 +266,11 @@ const Summary = ({
 	salaryCap,
 	salaryCapType,
 	summary,
-}: Pick<
-	View<"trade">,
-	"luxuryPayroll" | "luxuryTax" | "salaryCap" | "salaryCapType" | "summary"
-> & {
-	challengeNoRatings: boolean;
-	handleToggle: HandleToggle;
-	ref?: Ref<HTMLDivElement>;
-}) => {
+}: Pick<View<"trade">, "luxuryPayroll" | "salaryCap" | "summary"> &
+	Pick<LocalStateUI, "challengeNoRatings" | "luxuryTax" | "salaryCapType"> & {
+		handleToggle: HandleToggle;
+		ref?: Ref<HTMLDivElement>;
+	}) => {
 	return (
 		<div className="row trade-items mb-3" ref={ref}>
 			{summary.teams.map((t, i) => {

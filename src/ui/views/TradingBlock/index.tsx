@@ -7,7 +7,7 @@ import { getCols } from "../../../common/getCols.ts";
 import { useLocal } from "../../util/local.ts";
 import { DataTable } from "../../components/DataTable/index.tsx";
 import type { Col } from "../../components/DataTable/index.tsx";
-import type { View } from "../../../common/types.ts";
+import type { LocalStateUI, View } from "../../../common/types.ts";
 import type api from "../../../worker/api/index.ts";
 import clsx from "clsx";
 import {
@@ -50,7 +50,8 @@ type OfferProps = {
 		region: string;
 	};
 } & OfferType &
-	Pick<View<"tradingBlock">, "salaryCap" | "salaryCapType">;
+	Pick<View<"tradingBlock">, "salaryCap"> &
+	Pick<LocalStateUI, "salaryCapType">;
 
 const OfferPlayers = ({
 	className,
@@ -309,7 +310,8 @@ export const OfferTable = ({
 	}) => void;
 	handleRemove?: (i: number) => void;
 	offers: OfferType[];
-} & Pick<View<"tradingBlock">, "salaryCap" | "salaryCapType">) => {
+} & Pick<View<"tradingBlock">, "salaryCap"> &
+	Pick<LocalStateUI, "salaryCapType">) => {
 	const { teamInfoCache, userTid } = useLocal(["teamInfoCache", "userTid"]);
 
 	const offerCols = getCols(
@@ -493,7 +495,6 @@ const TradingBlock = ({
 	initialDpids,
 	initialPids,
 	salaryCap,
-	salaryCapType,
 	savedTradingBlock,
 	stats,
 	userPicks,
@@ -504,6 +505,7 @@ const TradingBlock = ({
 		challengeNoTrades,
 		gameOver,
 		phase,
+		salaryCapType,
 		spectator,
 		teamInfoCache,
 	} = useLocal([
@@ -511,6 +513,7 @@ const TradingBlock = ({
 		"challengeNoTrades",
 		"gameOver",
 		"phase",
+		"salaryCapType",
 		"spectator",
 		"teamInfoCache",
 	]);

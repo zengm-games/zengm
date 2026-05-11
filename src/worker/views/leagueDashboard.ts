@@ -63,7 +63,6 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			otl: latestSeason?.otl ?? 0,
 			cash: latestSeason ? latestSeason.cash / 1000 : 0,
 			salaryCap: g.get("salaryCap") / 1000,
-			salaryCapType: g.get("salaryCapType"),
 			luxuryPayroll: g.get("luxuryPayroll") / 1000,
 			playoffRoundsWon,
 			roundsWonText,

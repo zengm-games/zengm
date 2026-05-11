@@ -138,7 +138,6 @@ const updateUserRoster = async (
 			initialPids: inputs.pids,
 			initialDpids: inputs.dpids,
 			salaryCap: g.get("salaryCap"),
-			salaryCapType: g.get("salaryCapType"),
 			savedTradingBlock,
 			stats,
 			userPicks: userPicks2,

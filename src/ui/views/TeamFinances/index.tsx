@@ -14,7 +14,7 @@ import { logEvent } from "../../util/logEvent.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { useLocal } from "../../util/local.ts";
-import type { View } from "../../../common/types.ts";
+import type { LocalStateUI, View } from "../../../common/types.ts";
 import { PHASE } from "../../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../../components/DataTable/index.tsx";
@@ -584,15 +584,14 @@ const PayrollInfo = ({
 }: Pick<
 	View<"teamFinances">,
 	| "luxuryPayroll"
-	| "luxuryTax"
 	| "luxuryTaxAmount"
 	| "minContract"
 	| "minPayroll"
 	| "minPayrollAmount"
 	| "payroll"
 	| "salaryCap"
-	| "salaryCapType"
->) => {
+> &
+	Pick<LocalStateUI, "luxuryTax" | "salaryCapType">) => {
 	const parts = [
 		<>
 			{payroll > minPayroll ? "above" : "below"} the minimum payroll limit (
@@ -723,7 +722,6 @@ const TeamFinances = ({
 	contractTotals,
 	contracts,
 	luxuryPayroll,
-	luxuryTax,
 	luxuryTaxAmount,
 	maxStadiumCapacity,
 	minContract,
@@ -734,7 +732,6 @@ const TeamFinances = ({
 	payroll,
 	salariesSeasons,
 	salaryCap,
-	salaryCapType,
 	show,
 	t,
 	tid,
@@ -745,7 +742,11 @@ const TeamFinances = ({
 		dropdownFields: { teams: abbrev, shows: show },
 	});
 
-	const { gameSimInProgress } = useLocal(["gameSimInProgress"]);
+	const { gameSimInProgress, luxuryTax, salaryCapType } = useLocal([
+		"gameSimInProgress",
+		"luxuryTax",
+		"salaryCapType",
+	]);
 
 	const cols = getCols(["Pos", "Name", "Cap%"]).concat(
 		salariesSeasons.map((season) => {

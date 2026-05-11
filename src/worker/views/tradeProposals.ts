@@ -159,10 +159,8 @@ const updateTradeProposals = async (
 
 		return {
 			luxuryPayroll: g.get("luxuryPayroll"),
-			luxuryTax: g.get("luxuryTax"),
 			offers,
 			salaryCap: g.get("salaryCap"),
-			salaryCapType: g.get("salaryCapType"),
 		};
 	}
 };

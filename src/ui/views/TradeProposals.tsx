@@ -17,23 +17,25 @@ import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch.tsx";
 
 const TradeProposals = ({
 	luxuryPayroll,
-	luxuryTax,
 	offers,
 	salaryCap,
-	salaryCapType,
 }: View<"tradeProposals">) => {
 	const {
 		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
+		luxuryTax,
 		phase,
+		salaryCapType,
 		spectator,
 		teamInfoCache,
 	} = useLocal([
 		"challengeNoRatings",
 		"challengeNoTrades",
+		"luxuryTax",
 		"gameOver",
 		"phase",
+		"salaryCapType",
 		"spectator",
 		"teamInfoCache",
 	]);

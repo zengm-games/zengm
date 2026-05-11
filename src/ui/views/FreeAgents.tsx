@@ -115,7 +115,6 @@ const FreeAgents = ({
 	numRosterSpots,
 	payroll,
 	players,
-	salaryCapType,
 	season,
 	stats,
 	type,
@@ -132,10 +131,17 @@ const FreeAgents = ({
 		},
 	});
 
-	const { challengeNoRatings, gameSimInProgress, phase, spectator } = useLocal([
+	const {
+		challengeNoRatings,
+		gameSimInProgress,
+		phase,
+		salaryCapType,
+		spectator,
+	} = useLocal([
 		"challengeNoRatings",
 		"gameSimInProgress",
 		"phase",
+		"salaryCapType",
 		"spectator",
 	]);
 

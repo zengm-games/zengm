@@ -13,9 +13,7 @@ const LeagueFinances = ({
 	budget,
 	minPayroll,
 	luxuryPayroll,
-	luxuryTax,
 	salaryCap,
-	salaryCapType,
 	season,
 	teams,
 }: View<"leagueFinances">) => {
@@ -27,7 +25,12 @@ const LeagueFinances = ({
 		dropdownFields: { seasons: season },
 	});
 
-	const { season: currentSeason, userTid } = useLocal(["season", "userTid"]);
+	const {
+		luxuryTax,
+		salaryCapType,
+		season: currentSeason,
+		userTid,
+	} = useLocal(["luxuryTax", "salaryCapType", "season", "userTid"]);
 
 	const showCapSpaceForReal = salaryCapType !== "none";
 

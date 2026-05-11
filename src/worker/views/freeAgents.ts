@@ -234,7 +234,6 @@ const updateFreeAgents = async (
 			challengeNoFreeAgents: g.get("challengeNoFreeAgents"),
 			freeAgencySeason,
 			luxuryPayroll: g.get("luxuryPayroll") / 1000,
-			salaryCapType: g.get("salaryCapType"),
 			maxContract: g.get("maxContract"),
 			minContract: g.get("minContract"),
 			numRosterSpots: g.get("maxRosterSize") - userPlayers.length,

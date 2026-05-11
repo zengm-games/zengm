@@ -17,10 +17,8 @@ import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch.tsx";
 
 const SavedTrades = ({
 	luxuryPayroll,
-	luxuryTax,
 	offers,
 	salaryCap,
-	salaryCapType,
 }: View<"savedTrades">) => {
 	useTitleBar({ title: "Saved Trades" });
 
@@ -28,14 +26,18 @@ const SavedTrades = ({
 		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
+		luxuryTax,
 		phase,
+		salaryCapType,
 		spectator,
 		teamInfoCache,
 	} = useLocal([
 		"challengeNoRatings",
 		"challengeNoTrades",
 		"gameOver",
+		"luxuryTax",
 		"phase",
+		"salaryCapType",
 		"spectator",
 		"teamInfoCache",
 	]);

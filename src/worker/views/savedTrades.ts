@@ -205,10 +205,8 @@ const updateSavedTrades = async (
 
 		return {
 			luxuryPayroll: g.get("luxuryPayroll"),
-			luxuryTax: g.get("luxuryTax"),
 			offers: offers2,
 			salaryCap: g.get("salaryCap"),
-			salaryCapType: g.get("salaryCapType"),
 		};
 	}
 };

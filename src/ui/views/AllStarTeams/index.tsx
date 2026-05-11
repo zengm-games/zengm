@@ -141,22 +141,32 @@ const PlayersTable = ({
 
 const AllStars = ({
 	allPossiblePlayers,
-	challengeNoRatings,
 	finalized,
 	gid,
-	godMode,
-	isCurrentSeason,
 	nextGameIsAllStar,
 	remaining,
 	season,
-	spectator,
 	stats,
 	teams,
 	teamNames,
 	type,
-	userTids,
 }: View<"allStarTeams">) => {
-	const { gender } = useLocalPartial(["gender"]);
+	const {
+		challengeNoRatings,
+		gender,
+		godMode,
+		season: currentSeason,
+		spectator,
+		userTids,
+	} = useLocalPartial([
+		"challengeNoRatings",
+		"gender",
+		"godMode",
+		"season",
+		"spectator",
+		"userTids",
+	]);
+	const isCurrentSeason = season === currentSeason;
 
 	const draftType =
 		!spectator &&

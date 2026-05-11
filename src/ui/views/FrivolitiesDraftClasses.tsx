@@ -7,14 +7,18 @@ import { frivolitiesMenu } from "./Frivolities.tsx";
 import { bySport } from "../../common/sportFunctions.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
 const FrivolitiesDraftClasses = ({
-	challengeNoRatings,
 	draftClasses,
 	stats,
-	userTid,
 }: View<"frivolitiesDraftClasses">) => {
 	useTitleBar({ title: "Draft Class Rankings", customMenu: frivolitiesMenu });
+
+	const { challengeNoRatings, userTid } = useLocalPartial([
+		"challengeNoRatings",
+		"userTid",
+	]);
 
 	const superCols = [
 		{

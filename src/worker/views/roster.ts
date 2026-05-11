@@ -345,10 +345,7 @@ const updateRoster = async (
 		return {
 			abbrev: inputs.abbrev,
 			budget: g.get("budget"),
-			challengeNoRatings: g.get("challengeNoRatings"),
-			currentSeason: g.get("season"),
 			editable,
-			godMode: g.get("godMode"),
 			salaryCapType: g.get("salaryCapType"),
 			maxRosterSize: g.get("maxRosterSize"),
 			numPlayersOnCourt: g.get("numPlayersOnCourt"),
@@ -357,7 +354,6 @@ const updateRoster = async (
 			minPayroll: g.get("minPayroll") / 1000,
 			minPayrollAmount,
 			payroll,
-			phase: g.get("phase"),
 			playoffs: inputs.playoffs,
 			playoffsByConf,
 			players: addFirstNameShort(players),
@@ -380,7 +376,6 @@ const updateRoster = async (
 			t: t2,
 			tid: inputs.tid,
 			usePts,
-			userTid: g.get("userTid"),
 		};
 	}
 };

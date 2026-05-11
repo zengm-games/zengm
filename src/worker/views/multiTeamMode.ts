@@ -1,4 +1,3 @@
-import { g } from "../util/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
 
@@ -22,11 +21,7 @@ const updateMultiTeamMode = async (
 			}));
 
 		return {
-			godMode: g.get("godMode"),
-			phase: g.get("phase"),
 			teams,
-			userTid: g.get("userTid"),
-			userTids: g.get("userTids"),
 		};
 	}
 };

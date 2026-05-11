@@ -144,31 +144,26 @@ const BudgetEffect = ({ type, level }: { type: BudgetKey; level: number }) => {
 
 const FinancesForm = ({
 	autoTicketPrice,
-	challengeNoRatings,
 	gameSimInProgress,
-	godMode,
 	otherTeamTicketPrices,
-	phase,
 	salaryCap,
-	spectator,
 	t,
 	tid,
-	userTid,
 }: Pick<
 	View<"teamFinances">,
-	| "autoTicketPrice"
-	| "challengeNoRatings"
-	| "godMode"
-	| "otherTeamTicketPrices"
-	| "phase"
-	| "salaryCap"
-	| "spectator"
-	| "t"
-	| "tid"
-	| "userTid"
+	"autoTicketPrice" | "otherTeamTicketPrices" | "salaryCap" | "t" | "tid"
 > & {
 	gameSimInProgress: boolean;
 }) => {
+	const { challengeNoRatings, godMode, spectator, phase, userTid } =
+		useLocalPartial([
+			"challengeNoRatings",
+			"godMode",
+			"spectator",
+			"phase",
+			"userTid",
+		]);
+
 	const { dirty, setDirty } = useBlocker();
 
 	const [state, setState] = useState({
@@ -726,10 +721,8 @@ const TeamFinances = ({
 	autoTicketPrice,
 	barData,
 	budget,
-	challengeNoRatings,
 	contractTotals,
 	contracts,
-	godMode,
 	luxuryPayroll,
 	luxuryTax,
 	luxuryTaxAmount,
@@ -739,16 +732,13 @@ const TeamFinances = ({
 	minPayrollAmount,
 	numGames,
 	otherTeamTicketPrices,
-	spectator,
 	payroll,
-	phase,
 	salariesSeasons,
 	salaryCap,
 	salaryCapType,
 	show,
 	t,
 	tid,
-	userTid,
 }: View<"teamFinances">) => {
 	useTitleBar({
 		title: "Team Finances",
@@ -1028,16 +1018,11 @@ const TeamFinances = ({
 						<FinancesForm
 							key={tid}
 							autoTicketPrice={autoTicketPrice}
-							challengeNoRatings={challengeNoRatings}
 							gameSimInProgress={gameSimInProgress}
-							godMode={godMode}
 							otherTeamTicketPrices={otherTeamTicketPrices}
-							phase={phase}
 							salaryCap={salaryCap}
-							spectator={spectator}
 							t={t}
 							tid={tid}
-							userTid={userTid}
 						/>
 					</div>
 				) : null}

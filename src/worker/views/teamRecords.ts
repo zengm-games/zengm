@@ -565,7 +565,6 @@ const updateTeamRecords = async (
 			ties: season.hasTies(Infinity) || ties,
 			otl: g.get("otl") || otl,
 			usePts,
-			userTid: g.get("userTid"),
 		};
 	}
 };

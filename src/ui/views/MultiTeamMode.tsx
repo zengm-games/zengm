@@ -7,6 +7,7 @@ import { toWorker } from "../util/toWorker.ts";
 import type { View } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { useLocalPartial } from "../util/local.ts";
 
 const handleAutoSort = async (tids: number[]) => {
 	await toWorker("main", "autoSortRoster", { tids });
@@ -16,13 +17,14 @@ const handleResetPT = async (tids: number[]) => {
 	await toWorker("main", "resetPlayingTime", tids);
 };
 
-const MultiTeamMode = ({
-	godMode,
-	phase,
-	teams,
-	userTid,
-	userTids,
-}: View<"multiTeamMode">) => {
+const MultiTeamMode = ({ teams }: View<"multiTeamMode">) => {
+	const { godMode, phase, userTid, userTids } = useLocalPartial([
+		"godMode",
+		"phase",
+		"userTid",
+		"userTids",
+	]);
+
 	const notificationShown = useRef(false);
 
 	const showNotification = () => {

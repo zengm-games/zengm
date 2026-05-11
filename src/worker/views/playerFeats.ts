@@ -189,7 +189,6 @@ const updatePlayers = async (
 			quarterLengthFactor: helpers.quarterLengthFactor(),
 			season: inputs.season,
 			stats,
-			userTid: g.get("userTid"),
 		};
 	}
 };

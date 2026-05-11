@@ -1,5 +1,4 @@
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
-import { g } from "../util/index.ts";
 
 const updateAdvancedPlayerSearch = async (
 	{
@@ -15,8 +14,6 @@ const updateAdvancedPlayerSearch = async (
 ) => {
 	if (updateEvents.includes("firstRun")) {
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
-			currentSeason: g.get("season"),
 			seasonStart,
 			seasonEnd,
 			singleSeason,

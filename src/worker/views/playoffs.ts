@@ -74,7 +74,6 @@ const updatePlayoffs = async (
 				away?: SeriesTeam;
 			}[][];
 			teamsToEdit: TeamToEdit[];
-			userTid: number;
 	  }
 	| undefined
 > => {
@@ -262,7 +261,6 @@ const updatePlayoffs = async (
 			season: inputs.season,
 			series: series2,
 			teamsToEdit,
-			userTid: g.get("userTid"),
 		};
 	}
 };

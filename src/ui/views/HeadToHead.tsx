@@ -6,6 +6,7 @@ import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
 import { wrappedMovOrDiff } from "../components/MovOrDiff.tsx";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
 const HeadToHead = ({
 	abbrev,
@@ -16,7 +17,6 @@ const HeadToHead = ({
 	type,
 	otl,
 	totals,
-	userTid,
 }: View<"headToHead">) => {
 	useTitleBar({
 		title: "Head-to-Head",
@@ -27,6 +27,7 @@ const HeadToHead = ({
 			playoffsCombined: type,
 		},
 	});
+	const { userTid } = useLocalPartial(["userTid"]);
 
 	const cols = getCols([
 		"Team",

@@ -226,7 +226,6 @@ const updateTeamSeason = async (inputs: ViewInput<"gameLog">) => {
 	return {
 		// Needed for dropdown
 		abbrev: inputs.abbrev,
-		currentSeason: g.get("season"),
 		season: inputs.season,
 		tid: inputs.tid,
 	};

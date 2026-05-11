@@ -123,7 +123,6 @@ const updateHistory = async (
 			invalidSeason: false as const,
 			retiredPlayers,
 			season,
-			userTid: g.get("userTid"),
 		};
 	}
 };

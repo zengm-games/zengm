@@ -10,6 +10,7 @@ import { bySport } from "../../../common/sportFunctions.ts";
 import Note from "../Player/Note.tsx";
 import { RosterComposition } from "../../components/RosterComposition.tsx";
 import { PlusMinus } from "../../components/PlusMinus.tsx";
+import { useLocalPartial } from "../../util/local.ts";
 
 const fontSizeLarger = { fontSize: "larger" };
 
@@ -146,7 +147,6 @@ const TopStuff = ({
 	challengeNoRatings,
 	currentSeason,
 	editable,
-	godMode,
 	luxuryPayroll,
 	luxuryTaxAmount,
 	minPayroll,
@@ -169,10 +169,7 @@ const TopStuff = ({
 	View<"roster">,
 	| "abbrev"
 	| "budget"
-	| "challengeNoRatings"
-	| "currentSeason"
 	| "editable"
-	| "godMode"
 	| "luxuryPayroll"
 	| "luxuryTaxAmount"
 	| "minPayroll"
@@ -188,11 +185,15 @@ const TopStuff = ({
 	| "t"
 	| "tid"
 	| "usePts"
-	| "userTid"
 > & {
+	challengeNoRatings: boolean;
+	currentSeason: number;
 	openRosterSpots: number;
 	profit: number;
+	userTid: number;
 }) => {
+	const { godMode } = useLocalPartial(["godMode"]);
+
 	const logoStyle: CSSProperties = {
 		margin: "0.25rem 1rem 0 0",
 	};

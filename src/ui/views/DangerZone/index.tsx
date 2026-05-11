@@ -2,15 +2,18 @@ import { PHASE, WEBSITE_ROOT } from "../../../common/constants.ts";
 import type { View } from "../../../common/types.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
+import { useLocalPartial } from "../../util/local.ts";
 import { logEvent } from "../../util/logEvent.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import AutoSave from "./AutoSave.tsx";
 import WorkerConsole from "./WorkerConsole.tsx";
 
-const DangerZone = ({ autoSave, godMode, phase }: View<"dangerZone">) => {
+const DangerZone = ({ autoSave }: View<"dangerZone">) => {
 	useTitleBar({
 		title: "Danger Zone",
 	});
+
+	const { godMode, phase } = useLocalPartial(["godMode", "phase"]);
 
 	return (
 		<>

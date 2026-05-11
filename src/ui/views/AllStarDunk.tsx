@@ -769,19 +769,22 @@ export const ScoreTable = ({
 const AllStarDunk = ({
 	allPossibleContestants,
 	awaitingUserDunkIndex,
-	challengeNoRatings,
 	dunk,
 	log,
-	godMode,
 	players,
 	resultsByRound,
 	season,
 	started,
-	userTid,
 }: View<"allStarDunk">) => {
 	if (!isSport("basketball")) {
 		throw new Error("Not implemented");
 	}
+
+	const { challengeNoRatings, godMode, userTid } = useLocalPartial([
+		"challengeNoRatings",
+		"godMode",
+		"userTid",
+	]);
 
 	const [paused, setPaused] = useState(true);
 

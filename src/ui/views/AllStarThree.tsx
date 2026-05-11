@@ -12,6 +12,7 @@ import {
 } from "./AllStarDunk.tsx";
 import clsx from "clsx";
 import { range } from "../../common/utils.ts";
+import { useLocalPartial } from "../util/local.ts";
 
 const NUM_BALLS_PER_RACK = 5;
 
@@ -97,18 +98,21 @@ const getActivityCount = (three: View<"allStarThree">["three"]) => {
 
 const AllStarThree = ({
 	allPossibleContestants,
-	challengeNoRatings,
-	godMode,
 	players,
 	resultsByRound,
 	season,
 	started,
 	three,
-	userTid,
 }: View<"allStarThree">) => {
 	if (!isSport("basketball")) {
 		throw new Error("Not implemented");
 	}
+
+	const { challengeNoRatings, godMode, userTid } = useLocalPartial([
+		"challengeNoRatings",
+		"godMode",
+		"userTid",
+	]);
 
 	const [paused, setPaused] = useState(true);
 

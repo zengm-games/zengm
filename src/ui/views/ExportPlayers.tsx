@@ -72,12 +72,14 @@ export const exportPlayers = async (
 	await readableStream.pipeThrough(new TextEncoderStream()).pipeTo(fileStream);
 };
 
-const ExportPlayers = ({
-	challengeNoRatings,
-	multipleSeasons,
-	players,
-	season,
-}: View<"exportPlayers">) => {
+const ExportPlayers = ({ players, season }: View<"exportPlayers">) => {
+	const {
+		challengeNoRatings,
+		season: currentSeason,
+		startingSeason,
+	} = useLocalPartial(["challengeNoRatings", "season", "startingSeason"]);
+	const multipleSeasons = currentSeason > startingSeason;
+
 	const [exporting, setExporting] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [selected, setSelected] = useState<

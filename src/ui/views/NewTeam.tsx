@@ -10,6 +10,7 @@ import clsx from "clsx";
 import { PopText } from "../components/PopText.tsx";
 import { SafeHtml } from "../components/SafeHtml.tsx";
 import { RecordAndPlayoffs } from "../components/RecordAndPlayoffs.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
 const HistoryBlock = ({
 	won,
@@ -94,19 +95,23 @@ const PlayerList = ({
 };
 
 const NewTeam = ({
-	challengeNoRatings,
 	confs,
 	disabled,
 	expansion,
 	gameOver,
-	godMode,
 	numActiveTeams,
 	otherTeamsWantToHire,
-	phase,
-	season,
 	teams,
-	userTid,
 }: View<"newTeam">) => {
+	const { challengeNoRatings, godMode, phase, season, userTid } =
+		useLocalPartial([
+			"challengeNoRatings",
+			"godMode",
+			"phase",
+			"season",
+			"userTid",
+		]);
+
 	const [tid, setTid] = useState(teams?.[0]?.tid ?? undefined);
 	const [submitting, setSubmitting] = useState(false);
 

@@ -9,6 +9,7 @@ import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../../components/DataTable/index.tsx";
 import { wrappedCurrency } from "../../components/wrappedCurrency.ts";
 import { SafeHtml } from "../../components/SafeHtml.tsx";
+import { useLocalPartial } from "../../util/local.ts";
 
 export const getValue = (
 	obj: any,
@@ -22,7 +23,6 @@ export const getValue = (
 };
 
 const Most = ({
-	challengeNoRatings,
 	description,
 	extraCols,
 	extraProps,
@@ -30,9 +30,13 @@ const Most = ({
 	stats,
 	title,
 	type,
-	userTid,
 }: View<"most">) => {
 	useTitleBar({ title, customMenu: frivolitiesMenu });
+
+	const { challengeNoRatings, userTid } = useLocalPartial([
+		"challengeNoRatings",
+		"userTid",
+	]);
 
 	const hasBestSeasonOverride = players.some(
 		(p) => p.most?.extra?.bestSeasonOverride !== undefined,

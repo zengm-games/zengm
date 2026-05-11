@@ -14,16 +14,9 @@ import {
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { CountryFlag } from "../components/CountryFlag.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
-const PlayerBios = ({
-	abbrev,
-	currentSeason,
-	challengeNoRatings,
-	players,
-	season,
-	stats,
-	userTid,
-}: View<"playerBios">) => {
+const PlayerBios = ({ abbrev, players, season, stats }: View<"playerBios">) => {
 	useTitleBar({
 		title: "Player Bios",
 		jumpTo: true,
@@ -31,6 +24,12 @@ const PlayerBios = ({
 		dropdownView: "player_bios",
 		dropdownFields: { teamsAndAllWatchPlayoffs: abbrev, seasons: season },
 	});
+
+	const {
+		challengeNoRatings,
+		season: currentSeason,
+		userTid,
+	} = useLocalPartial(["challengeNoRatings", "season", "userTid"]);
 
 	const cols = getCols([
 		"Name",

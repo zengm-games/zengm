@@ -7,16 +7,18 @@ import { Contract } from "../../components/contract.tsx";
 import { ResponsiveTableWrapper } from "../../components/ResponsiveTableWrapper.tsx";
 import { RatingWithChange } from "../../components/RatingWithChange.tsx";
 import { isSport } from "../../../common/sportFunctions.ts";
+import { useLocalPartial } from "../../util/local.ts";
 
 const StartingLineup = ({
-	challengeNoRatings,
 	numPlayersOnCourt,
 	starters,
 	startersStats,
 }: Pick<
 	View<"leagueDashboard">,
-	"challengeNoRatings" | "numPlayersOnCourt" | "starters" | "startersStats"
+	"numPlayersOnCourt" | "starters" | "startersStats"
 >) => {
+	const { challengeNoRatings } = useLocalPartial(["challengeNoRatings"]);
+
 	const statCols = getCols(startersStats.map((stat) => `stat:${stat}`));
 
 	return (

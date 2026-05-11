@@ -9,6 +9,7 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { isSport } from "../../common/sportFunctions.ts";
 import clsx from "clsx";
 import { InjuryIcon } from "../components/InjuryIcon.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
 type DecisionPlayer = {
 	w: number;
@@ -147,29 +148,17 @@ const wrappedBaseballDecision = (p: DecisionPlayer, hideRecord: boolean) => {
 
 const PlayerGameLog = ({
 	bestPos,
-	currentSeason,
 	customMenu,
-	freeAgent,
-	gender,
-	godMode,
-	injured,
 	jerseyNumberInfos,
 	numGamesPlayoffSeires,
-	phase,
 	player,
 	randomDebutsForeverPids,
 	retired,
-	showContract,
-	showRatings,
-	showTradeFor,
-	showTradingBlock,
-	spectator,
 	statSummary,
 	teamColors,
 	teamJersey,
 	teamName,
 	teamURL,
-	userTid,
 	willingToSign,
 	gameLog,
 	season,
@@ -201,6 +190,12 @@ const PlayerGameLog = ({
 			return helpers.leagueUrl(parts);
 		},
 	});
+
+	const { challengeNoRatings, season: currentSeason } = useLocalPartial([
+		"challengeNoRatings",
+		"season",
+	]);
+	const showRatings = !challengeNoRatings || retired;
 
 	const cols = getCols([
 		"#",
@@ -336,27 +331,17 @@ const PlayerGameLog = ({
 			<TopStuff
 				bestPos={bestPos}
 				currentSeason={currentSeason}
-				freeAgent={freeAgent}
-				gender={gender}
-				godMode={godMode}
-				injured={injured}
 				jerseyNumberInfos={jerseyNumberInfos}
-				phase={phase}
 				player={player}
 				randomDebutsForeverPids={randomDebutsForeverPids}
 				retired={retired}
 				season={season}
-				showContract={showContract}
 				showRatings={showRatings}
-				showTradeFor={showTradeFor}
-				showTradingBlock={showTradingBlock}
-				spectator={spectator}
 				statSummary={statSummary}
 				teamColors={teamColors}
 				teamJersey={teamJersey}
 				teamName={teamName}
 				teamURL={teamURL}
-				userTid={userTid}
 				willingToSign={willingToSign}
 			/>
 

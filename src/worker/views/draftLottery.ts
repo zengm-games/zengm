@@ -50,13 +50,11 @@ const updateDraftLottery = async (
 			draftPicks: DraftPickWithoutKey[] | undefined;
 			draftType?: DraftType | "dummy";
 			dpidsAvailableToTrade: Set<number | undefined>;
-			godMode: boolean;
 			numToPick: number;
 			result: DraftLotteryResultArray | undefined;
 			rigged: GameAttributesLeague["riggedLottery"];
 			season: number;
 			showExpansionTeamMessage: boolean;
-			spectator: boolean;
 			teams: Record<
 				string,
 				TeamFiltered<
@@ -77,7 +75,6 @@ const updateDraftLottery = async (
 			>;
 			type: "completed" | "projected" | "readyToRun";
 			usePts: boolean;
-			userTid: number;
 	  }
 	| undefined
 > => {
@@ -209,14 +206,11 @@ const updateDraftLottery = async (
 					rigged,
 					season,
 					showExpansionTeamMessage,
-					spectator: g.get("spectator"),
 					teams,
 					type: "completed",
 					usePts,
-					userTid: g.get("userTid"),
 					challengeWarning: false,
 					notEnoughTeams: false,
-					godMode: g.get("godMode"),
 					colaOptOutAvailable: false,
 					colaOptOutStatus: false,
 					colaTable,
@@ -234,14 +228,11 @@ const updateDraftLottery = async (
 					rigged: undefined,
 					season,
 					showExpansionTeamMessage,
-					spectator: g.get("spectator"),
 					teams,
 					type: "completed",
 					usePts,
-					userTid: g.get("userTid"),
 					challengeWarning: false,
 					notEnoughTeams: false,
-					godMode: g.get("godMode"),
 					colaOptOutAvailable: false,
 					colaOptOutStatus: false,
 					colaTable,
@@ -309,7 +300,6 @@ const updateDraftLottery = async (
 			dpidsAvailableToTrade,
 			draftPicks,
 			draftType,
-			godMode: g.get("godMode"),
 			numToPick: getNumToPick(
 				draftType,
 				draftLotteryResult ? draftLotteryResult.result.length : 14,
@@ -317,12 +307,10 @@ const updateDraftLottery = async (
 			result: draftLotteryResult?.result,
 			rigged: g.get("riggedLottery"),
 			season,
-			spectator: g.get("spectator"),
 			showExpansionTeamMessage,
 			teams,
 			type,
 			usePts,
-			userTid,
 			colaOptOutAvailable,
 			colaOptOutStatus,
 			colaTable,

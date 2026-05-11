@@ -204,16 +204,13 @@ const updateSavedTrades = async (
 		const offers2 = await addMissingAssets(offers);
 
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
 			challengeNoTrades: g.get("challengeNoTrades"),
 			gameOver: g.get("gameOver"),
 			luxuryPayroll: g.get("luxuryPayroll"),
 			luxuryTax: g.get("luxuryTax"),
 			offers: offers2,
-			phase: g.get("phase"),
 			salaryCap: g.get("salaryCap"),
 			salaryCapType: g.get("salaryCapType"),
-			spectator: g.get("spectator"),
 		};
 	}
 };

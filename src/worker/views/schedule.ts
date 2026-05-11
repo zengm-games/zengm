@@ -495,7 +495,6 @@ const updateUpcoming = async (
 			canLiveSimFirstGame,
 			elam: g.get("elam"),
 			elamASG: g.get("elamASG"),
-			phase: g.get("phase"),
 			tid: inputs.tid,
 			ties: season.hasTies("current"),
 			topPlayers,

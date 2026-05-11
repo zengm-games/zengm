@@ -12,13 +12,7 @@ import { CountryFlag } from "../components/CountryFlag.tsx";
 export const genView = (
 	type: "college" | "country" | "draftPosition" | "jerseyNumbers",
 ) => {
-	return ({
-		challengeNoRatings,
-		infos,
-		stats,
-		userTid,
-		displayStat,
-	}: View<"colleges">) => {
+	return ({ infos, stats, displayStat }: View<"colleges">) => {
 		useTitleBar({
 			title:
 				type === "college"
@@ -31,7 +25,11 @@ export const genView = (
 			customMenu: frivolitiesMenu,
 		});
 
-		const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
+		const { challengeNoRatings, teamInfoCache, userTid } = useLocalPartial([
+			"challengeNoRatings",
+			"teamInfoCache",
+			"userTid",
+		]);
 
 		const superCols = [
 			{

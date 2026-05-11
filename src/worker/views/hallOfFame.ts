@@ -58,7 +58,6 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		return {
 			players: addFirstNameShort(processPlayersHallOfFame(players)),
 			stats,
-			userTid: g.get("userTid"),
 		};
 	}
 };

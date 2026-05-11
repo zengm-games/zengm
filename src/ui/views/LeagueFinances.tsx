@@ -7,10 +7,10 @@ import type { View } from "../../common/types.ts";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedCurrency } from "../components/wrappedCurrency.ts";
+import { useLocalPartial } from "../util/local.ts";
 
 const LeagueFinances = ({
 	budget,
-	currentSeason,
 	minPayroll,
 	luxuryPayroll,
 	luxuryTax,
@@ -18,7 +18,6 @@ const LeagueFinances = ({
 	salaryCapType,
 	season,
 	teams,
-	userTid,
 }: View<"leagueFinances">) => {
 	useTitleBar({
 		title: "League Finances",
@@ -27,6 +26,11 @@ const LeagueFinances = ({
 		dropdownView: "league_finances",
 		dropdownFields: { seasons: season },
 	});
+
+	const { season: currentSeason, userTid } = useLocalPartial([
+		"season",
+		"userTid",
+	]);
 
 	const showCapSpaceForReal = salaryCapType !== "none";
 

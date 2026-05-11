@@ -9,7 +9,6 @@ import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../../components/DataTable/index.tsx";
 import { styleGrid11 } from "../../components/ActionButton.tsx";
 
-// The Partial<> ones are only required for TeamHistory, not GmHistory
 const Players = ({
 	gmHistory,
 	godMode,
@@ -19,9 +18,20 @@ const Players = ({
 	tid,
 	userTid,
 }: Pick<View<"teamHistory">, "players" | "stats" | "tid"> &
-	Partial<Pick<View<"teamHistory">, "godMode" | "season" | "userTid">> & {
-		gmHistory?: boolean;
-	}) => {
+	(
+		| {
+				gmHistory?: undefined;
+				godMode: boolean;
+				season: number;
+				userTid: number;
+		  }
+		| {
+				gmHistory: true;
+				godMode?: undefined;
+				season?: undefined;
+				userTid?: undefined;
+		  }
+	)) => {
 	const includeRetireJerseyButton = (tid === userTid || godMode) && !gmHistory;
 
 	const retireJerseyNumber = async (p: any) => {

@@ -12,6 +12,7 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
 import { prefixStatOpp } from "../util/prefixStatOpp.ts";
 import { PlusMinus } from "../components/PlusMinus.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
 const TeamStats = ({
 	allStats,
@@ -25,7 +26,6 @@ const TeamStats = ({
 	ties,
 	otl,
 	usePts,
-	userTid,
 }: View<"teamStats">) => {
 	useTitleBar({
 		title: "Team Stats",
@@ -38,6 +38,7 @@ const TeamStats = ({
 			playoffs,
 		},
 	});
+	const { userTid } = useLocalPartial(["userTid"]);
 
 	const superCols = helpers.deepCopy(superColsRaw);
 

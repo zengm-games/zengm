@@ -8,6 +8,7 @@ import { PHASE_TEXT } from "../../common/constants.ts";
 import PickText from "./TradeSummary/PickText.tsx";
 import TeamLogoAndName from "../components/TeamLogoAndName.tsx";
 import { bySport } from "../../common/sportFunctions.ts";
+import { useLocalPartial } from "../util/local.ts";
 
 const PlayerInfo = ({
 	asset,
@@ -40,12 +41,10 @@ const PlayerInfo = ({
 
 const FrivolitiesTrades = ({
 	abbrev,
-	challengeNoRatings,
 	description,
 	title,
 	trades,
 	type,
-	userTid,
 }: View<"frivolitiesTrades">) => {
 	useTitleBar({
 		title,
@@ -55,6 +54,11 @@ const FrivolitiesTrades = ({
 			teamsAndAll: abbrev,
 		},
 	});
+
+	const { challengeNoRatings, userTid } = useLocalPartial([
+		"challengeNoRatings",
+		"userTid",
+	]);
 
 	const cols = getCols([
 		"#",

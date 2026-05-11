@@ -7,16 +7,9 @@ import { PLAYER } from "../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedCheckmarkOrCross } from "../components/CheckmarkOrCross.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
-const Injuries = ({
-	abbrev,
-	challengeNoRatings,
-	currentSeason,
-	injuries,
-	season,
-	stats,
-	userTid,
-}: View<"injuries">) => {
+const Injuries = ({ abbrev, injuries, season, stats }: View<"injuries">) => {
 	useTitleBar({
 		title: "Injuries",
 		dropdownView: "injuries",
@@ -25,6 +18,12 @@ const Injuries = ({
 			seasonsAndCurrent: season,
 		},
 	});
+
+	const {
+		challengeNoRatings,
+		season: currentSeason,
+		userTid,
+	} = useLocalPartial(["challengeNoRatings", "godMode", "season", "userTid"]);
 
 	const cols = getCols([
 		"Name",

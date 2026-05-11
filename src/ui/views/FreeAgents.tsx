@@ -108,15 +108,12 @@ const signedFreeAgentWrapped = (
 const FreeAgents = ({
 	capSpace,
 	challengeNoFreeAgents,
-	challengeNoRatings,
 	freeAgencySeason,
 	luxuryPayroll,
 	maxContract,
 	minContract,
 	numRosterSpots,
-	spectator,
 	payroll,
-	phase,
 	players,
 	salaryCapType,
 	season,
@@ -134,6 +131,12 @@ const FreeAgents = ({
 			seasonsFreeAgents,
 		},
 	});
+
+	const { challengeNoRatings, phase, spectator } = useLocalPartial([
+		"challengeNoRatings",
+		"phase",
+		"spectator",
+	]);
 
 	const { gameSimInProgress } = useLocalPartial(["gameSimInProgress"]);
 

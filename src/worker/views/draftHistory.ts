@@ -153,14 +153,12 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 	const teamsByTid = await getDraftTeamsByTid(inputs.season);
 
 	return {
-		challengeNoRatings: g.get("challengeNoRatings"),
 		draftType: g.get("draftType"),
 		players: addFirstNameShort(players),
 		season: inputs.season,
 		stats,
 		summaryStat,
 		teamsByTid,
-		userTid: g.get("userTid"),
 	};
 };
 

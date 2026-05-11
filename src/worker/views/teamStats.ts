@@ -367,7 +367,6 @@ const updateTeams = async (
 			ties,
 			otl,
 			usePts,
-			userTid: g.get("userTid"),
 		};
 	}
 };

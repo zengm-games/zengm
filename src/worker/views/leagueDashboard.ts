@@ -65,10 +65,8 @@ const updateTeam = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			salaryCap: g.get("salaryCap") / 1000,
 			salaryCapType: g.get("salaryCapType"),
 			luxuryPayroll: g.get("luxuryPayroll") / 1000,
-			season: g.get("season"),
 			playoffRoundsWon,
 			roundsWonText,
-			userTid: g.get("userTid"),
 		};
 	}
 };
@@ -377,7 +375,6 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
 			leagueLeaders: addFirstNameShort(leagueLeaders),
 			numPlayersOnCourt,
 			teamLeaders,

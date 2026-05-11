@@ -76,10 +76,8 @@ const updateDraftScouting = async (
 		}
 
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
 			draftType: g.get("draftType"),
 			fantasyDraft,
-			godMode: g.get("godMode"),
 			seasons,
 		};
 	}

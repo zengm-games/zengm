@@ -6,6 +6,7 @@ import type { View } from "../../common/types.ts";
 import { frivolitiesMenu } from "./Frivolities.tsx";
 import { bySport } from "../../common/sportFunctions.ts";
 import { gradientStyleFactory } from "../util/gradientStyleFactory.ts";
+import { useLocalPartial } from "../util/local.ts";
 
 const gradientStyle = bySport({
 	baseball: gradientStyleFactory(0.6, 0.75, 0.8, 0.95),
@@ -16,7 +17,6 @@ const gradientStyle = bySport({
 
 const RosterContinuity = ({
 	abbrevs,
-	season,
 	seasons,
 	userAbbrev,
 }: View<"rosterContinuity">) => {
@@ -24,6 +24,7 @@ const RosterContinuity = ({
 		title: "Roster Continuity",
 		customMenu: frivolitiesMenu,
 	});
+	const { season } = useLocalPartial(["season"]);
 	const cols = [
 		...getCols(["Season"]),
 		...abbrevs.map((abbrev): Col => {

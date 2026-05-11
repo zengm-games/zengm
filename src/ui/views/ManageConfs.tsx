@@ -79,7 +79,7 @@ const EditTeamModal = ({
 	}
 
 	const disableStatus =
-		!godMode || !PHASES_WHERE_TEAMS_CAN_BE_DISABLED.includes(phase);
+		!godMode || !PHASES_WHERE_TEAMS_CAN_BE_DISABLED.has(phase);
 
 	const save = () => {
 		const did = Number.parseInt(controlledTeam.did);

@@ -163,7 +163,6 @@ const updateRelocate = async (inputs: void, updateEvents: UpdateEvents) => {
 			autoRelocateRealign: g.get("autoRelocateRealign"),
 			autoRelocateRebrand: g.get("autoRelocateRebrand"),
 			currentTeam,
-			godMode: g.get("godMode"),
 			newTeam,
 			realignInfo,
 		};

@@ -279,7 +279,6 @@ const updateDepth = async (
 
 		return {
 			abbrev,
-			challengeNoRatings: g.get("challengeNoRatings"),
 			editable,
 			keepRosterSorted: t.keepRosterSorted,
 			multiplePositionsWarning,
@@ -287,7 +286,6 @@ const updateDepth = async (
 			players: players2,
 			playoffs,
 			ratings,
-			season: g.get("season"),
 			showDH,
 			stats: stats2,
 			tid,

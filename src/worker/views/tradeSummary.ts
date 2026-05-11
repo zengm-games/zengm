@@ -618,7 +618,6 @@ const updateTradeSummary = async (
 		const usePts = pointsFormula !== "";
 
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
 			eid,
 			teams,
 			season: event.season,

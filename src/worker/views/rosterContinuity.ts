@@ -58,7 +58,6 @@ const updateSeasons = async (
 ): Promise<
 	| {
 			abbrevs: string[];
-			season: number;
 			seasons: (number | undefined)[][];
 			userAbbrev: string;
 	  }
@@ -181,7 +180,6 @@ const updateSeasons = async (
 
 		return {
 			abbrevs: abbrevsSorted,
-			season: g.get("season"),
 			seasons: seasonsSorted,
 			userAbbrev: helpers.getAbbrev(g.get("userTid")),
 		};

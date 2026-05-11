@@ -1,5 +1,5 @@
 import { idb } from "../db/index.ts";
-import { g, helpers, processPlayersHallOfFame } from "../util/index.ts";
+import { helpers, processPlayersHallOfFame } from "../util/index.ts";
 import type { UpdateEvents, Player } from "../../common/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts";
@@ -190,10 +190,8 @@ export const genView = (
 			}
 
 			return {
-				challengeNoRatings: g.get("challengeNoRatings"),
 				infos,
 				stats,
-				userTid: g.get("userTid"),
 				displayStat,
 			};
 		}

@@ -216,18 +216,13 @@ const updateTeamSelect = async (
 		const finalTeams = await addHistoryAndPicksAndPlayers(teamsWithOvr);
 
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
 			confs: g.get("confs", "current"),
 			disabled,
 			expansion,
 			gameOver: g.get("gameOver"),
-			godMode: g.get("godMode"),
 			numActiveTeams,
 			otherTeamsWantToHire,
-			phase: g.get("phase"),
-			season: g.get("season"),
 			teams: finalTeams,
-			userTid: g.get("userTid"),
 		};
 	}
 };

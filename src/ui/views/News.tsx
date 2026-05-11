@@ -5,6 +5,7 @@ import { helpers } from "../util/helpers.ts";
 import clsx from "clsx";
 import { NewsBlock } from "../components/NewsBlock.tsx";
 import { categories, types } from "../../common/transactionInfo.ts";
+import { useLocalPartial } from "../util/local.ts";
 
 const News = ({
 	abbrev,
@@ -13,7 +14,6 @@ const News = ({
 	order,
 	season,
 	teams,
-	userTid,
 }: View<"news">) => {
 	const [showCategories, setShowCategories] = useState<
 		Record<keyof typeof categories, boolean>
@@ -39,6 +39,7 @@ const News = ({
 			newestOldestFirst: order,
 		},
 	});
+	const { userTid } = useLocalPartial(["userTid"]);
 
 	return (
 		<>

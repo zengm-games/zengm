@@ -13,18 +13,15 @@ const DailySchedule = ({
 	cid,
 	cids,
 	completed,
-	currentSeason,
 	day,
 	days,
 	elam,
 	elamASG,
 	isToday,
-	phase,
 	season,
 	ties,
 	topPlayers,
 	upcoming,
-	userTid,
 }: View<"dailySchedule">) => {
 	useTitleBar({
 		title: DAILY_SCHEDULE,
@@ -36,7 +33,12 @@ const DailySchedule = ({
 		},
 	});
 
-	const { gameSimInProgress } = useLocalPartial(["gameSimInProgress"]);
+	const {
+		gameSimInProgress,
+		phase,
+		season: currentSeason,
+		userTid,
+	} = useLocalPartial(["gameSimInProgress", "phase", "season", "userTid"]);
 
 	let simToDay = null;
 	if (upcoming.length > 0 && !isToday) {

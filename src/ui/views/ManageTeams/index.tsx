@@ -8,6 +8,7 @@ import type { Phase, View } from "../../../common/types.ts";
 import { PHASE } from "../../../common/constants.ts";
 import TeamForm from "./TeamForm.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
+import { useLocalPartial } from "../../util/local.ts";
 
 export const nextSeasonWarning =
 	"Because the regular season is already over, changes will not be fully applied until next season.";
@@ -121,15 +122,17 @@ const getUniqueAbbrevsErrorMessage = (teams: { abbrev: string }[]) => {
 	);
 };
 
-export const PHASES_WHERE_TEAMS_CAN_BE_DISABLED: Phase[] = [
+export const PHASES_WHERE_TEAMS_CAN_BE_DISABLED = new Set<Phase>([
 	PHASE.PRESEASON,
 	PHASE.DRAFT_LOTTERY,
 	PHASE.AFTER_DRAFT,
 	PHASE.RESIGN_PLAYERS,
 	PHASE.FREE_AGENCY,
-];
+]);
 
 const ManageTeams = (props: View<"manageTeams">) => {
+	const { godMode, phase } = useLocalPartial(["godMode", "phase"]);
+
 	const [state, dispatchUnwrapped] = useReducer(reducer, {
 		saving: false,
 		teams: props.teams,
@@ -164,7 +167,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 
 			let text = "Saved team info.";
 
-			if (props.phase >= PHASE.PLAYOFFS) {
+			if (phase >= PHASE.PLAYOFFS) {
 				text += `<br /><br />${nextSeasonWarning}`;
 			}
 
@@ -198,7 +201,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 	}
 
 	const disableStatus =
-		!props.godMode || !PHASES_WHERE_TEAMS_CAN_BE_DISABLED.includes(props.phase);
+		!godMode || !PHASES_WHERE_TEAMS_CAN_BE_DISABLED.has(phase);
 
 	const { saving, teams } = state;
 
@@ -206,7 +209,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 
 	return (
 		<>
-			{!props.godMode ? (
+			{!godMode ? (
 				<div>
 					<span className="alert alert-warning d-inline-block">
 						Enable <a href={helpers.leagueUrl(["god_mode"])}>God Mode</a> to
@@ -216,14 +219,14 @@ const ManageTeams = (props: View<"manageTeams">) => {
 				</div>
 			) : null}
 
-			{props.godMode ? (
+			{godMode ? (
 				<>
-					<AddRemove dispatch={dispatch} phase={props.phase} saving={saving} />
+					<AddRemove dispatch={dispatch} phase={phase} saving={saving} />
 					<h2 className="mt-sm-3">Edit Teams</h2>
 				</>
 			) : null}
 
-			{props.phase >= PHASE.PLAYOFFS ? (
+			{phase >= PHASE.PLAYOFFS ? (
 				<div>
 					<span className="alert alert-warning d-inline-block">
 						{nextSeasonWarning}
@@ -298,9 +301,9 @@ const ManageTeams = (props: View<"manageTeams">) => {
 								confs={props.confs}
 								divs={props.divs}
 								handleInputChange={handleInputChange(t.tid)}
-								disablePop={!props.godMode}
+								disablePop={!godMode}
 								disableStatus={disableStatus}
-								disableStadiumCapacity={!props.godMode}
+								disableStadiumCapacity={!godMode}
 								moveButton
 								t={t}
 							/>

@@ -13,7 +13,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
-import { useLocal } from "../util/local.ts";
+import { useLocalPartial } from "../util/local.ts";
 import type {
 	DraftLotteryResultArray,
 	View,
@@ -213,7 +213,7 @@ const Row = ({
 	probs,
 	spectator,
 	teams,
-}: Pick<Props, "teams" | "usePts" | "userTid"> & {
+}: Pick<Props, "teams" | "usePts"> & {
 	NUM_PICKS: number;
 	i: number;
 	pickAlreadyMade: boolean;
@@ -223,6 +223,7 @@ const Row = ({
 	toReveal: State["toReveal"];
 	probs: NonNullable<ReturnType<typeof getDraftLotteryProbs>["probs"]>;
 	spectator: boolean;
+	userTid: number;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 
@@ -333,10 +334,11 @@ const RowNonLottery = ({
 	teams,
 	usePts,
 	userTid,
-}: Pick<Props, "teams" | "usePts" | "userTid"> & {
+}: Pick<Props, "teams" | "usePts"> & {
 	dp: DraftPickWithoutKey;
 	pickAlreadyMade: boolean;
 	spectator: boolean;
+	userTid: number;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 
@@ -411,7 +413,7 @@ const Rigged = ({
 	rigged,
 	type,
 }: Pick<Props, "numToPick" | "result" | "rigged" | "type">) => {
-	const teamInfoCache = useLocal((state) => state.teamInfoCache);
+	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
 
 	if (!rigged || !result || type === "projected") {
 		return null;
@@ -486,6 +488,12 @@ const NonLotteryHeader = ({ children }: { children: ReactNode }) => {
 };
 
 const DraftLotteryTable = (props: Props) => {
+	const { godMode, spectator, userTid } = useLocalPartial([
+		"godMode",
+		"spectator",
+		"userTid",
+	]);
+
 	const isMounted = useRef(true);
 	useEffect(() => {
 		return () => {
@@ -589,14 +597,12 @@ const DraftLotteryTable = (props: Props) => {
 		colaOptOutStatus,
 		dpidsAvailableToTrade,
 		draftPicks,
-		godMode,
 		numToPick,
 		rigged,
 		season,
 		teams,
 		type,
 		usePts,
-		userTid,
 	} = props;
 	const { draftType, result } = state;
 	const { tooSlow, probs } = getDraftLotteryProbs(result, draftType, numToPick);
@@ -661,7 +667,7 @@ const DraftLotteryTable = (props: Props) => {
 							<RowNonLottery
 								dp={dp}
 								pickAlreadyMade={!dpidsAvailableToTrade.has(dp.dpid)}
-								spectator={props.spectator}
+								spectator={spectator}
 								teams={teams}
 								usePts={usePts}
 								userTid={userTid}
@@ -687,7 +693,7 @@ const DraftLotteryTable = (props: Props) => {
 						<tr>
 							<th />
 							<th />
-							<th className={props.spectator ? "p-0" : undefined} />
+							<th className={spectator ? "p-0" : undefined} />
 							<th />
 							<th />
 							<th colSpan={NUM_PICKS} className="text-center">
@@ -697,7 +703,7 @@ const DraftLotteryTable = (props: Props) => {
 						<tr>
 							<th title="Pick number">#</th>
 							<th>Team</th>
-							<th className={props.spectator ? "p-0" : undefined} />
+							<th className={spectator ? "p-0" : undefined} />
 							<th>Record</th>
 							<th>Chances</th>
 							{result.map((row, i) => (
@@ -724,7 +730,7 @@ const DraftLotteryTable = (props: Props) => {
 								indRevealed={state.indRevealed}
 								toReveal={state.toReveal}
 								probs={probs}
-								spectator={props.spectator}
+								spectator={spectator}
 								teams={teams}
 								usePts={usePts}
 							/>
@@ -746,7 +752,7 @@ const DraftLotteryTable = (props: Props) => {
 						<tr>
 							<th title="Pick number">#</th>
 							<th>Team</th>
-							<th className={props.spectator ? "p-0" : undefined} />
+							<th className={spectator ? "p-0" : undefined} />
 							<th>Record</th>
 						</tr>
 					</thead>
@@ -858,10 +864,8 @@ const DraftLotteryTable = (props: Props) => {
 
 const ColaTable = ({
 	colaTable,
-	userTid,
 }: {
 	colaTable: NonNullable<Props["colaTable"]>;
-	userTid: Props["userTid"];
 }) => {
 	const cols = getCols(["Team", "Chances"]);
 
@@ -932,7 +936,7 @@ const DraftLottery = (props: Props) => {
 		},
 	});
 
-	const { colaTable, userTid } = props;
+	const { colaTable } = props;
 
 	return (
 		<>
@@ -959,7 +963,7 @@ const DraftLottery = (props: Props) => {
 
 			<DraftLotteryTable {...props} />
 
-			{colaTable ? <ColaTable colaTable={colaTable} userTid={userTid} /> : null}
+			{colaTable ? <ColaTable colaTable={colaTable} /> : null}
 		</>
 	);
 };

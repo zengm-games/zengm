@@ -444,8 +444,6 @@ const updateComparePlayers = async (
 		);
 
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
-			currentSeason: g.get("season"),
 			initialAvailablePlayers,
 			players,
 			ratings,

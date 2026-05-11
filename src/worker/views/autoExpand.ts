@@ -29,7 +29,6 @@ const updateExpand = async (inputs: void, updateEvents: UpdateEvents) => {
 				: [];
 
 		return {
-			godMode: g.get("godMode"),
 			newTeams,
 		};
 	}

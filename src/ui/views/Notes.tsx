@@ -11,6 +11,7 @@ import Note from "./Player/Note.tsx";
 import { getDraftPicksColsAndRows } from "./DraftPicks.tsx";
 import { getWatchListColsAndRows } from "./WatchList.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
 const Notes = (props: View<"notes">) => {
 	const [clearing, setClearing] = useState(false);
@@ -22,6 +23,7 @@ const Notes = (props: View<"notes">) => {
 			notesType: props.type,
 		},
 	});
+	const { userTid } = useLocalPartial(["userTid"]);
 
 	let infoText;
 	let moreLinks;
@@ -224,7 +226,7 @@ const Notes = (props: View<"notes">) => {
 			);
 		}
 	} else if (props.type === "teamSeason") {
-		const { teams, ties, otl, usePts, userTid } = props;
+		const { teams, ties, otl, usePts } = props;
 
 		infoText = (
 			<>

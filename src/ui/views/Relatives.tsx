@@ -6,15 +6,9 @@ import type { View } from "../../common/types.ts";
 import { frivolitiesMenu } from "./Frivolities.tsx";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
-const Relatives = ({
-	challengeNoRatings,
-	gender,
-	pid,
-	players,
-	stats,
-	userTid,
-}: View<"relatives">) => {
+const Relatives = ({ pid, players, stats }: View<"relatives">) => {
 	const target =
 		pid !== undefined ? players.find((p) => p.pid === pid) : undefined;
 
@@ -30,6 +24,12 @@ const Relatives = ({
 	}
 
 	useTitleBar({ title, customMenu: frivolitiesMenu });
+
+	const { challengeNoRatings, gender, userTid } = useLocalPartial([
+		"challengeNoRatings",
+		"gender",
+		"userTid",
+	]);
 
 	const superCols = [
 		{

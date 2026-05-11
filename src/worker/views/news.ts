@@ -188,7 +188,6 @@ const updateNews = async (
 			order,
 			season,
 			teams,
-			userTid: g.get("userTid"),
 		};
 	}
 };

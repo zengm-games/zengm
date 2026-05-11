@@ -10,6 +10,7 @@ import { MovOrDiff } from "../components/MovOrDiff.tsx";
 import { ResponsiveTableWrapper } from "../components/ResponsiveTableWrapper.tsx";
 import { getCol } from "../../common/getCol.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { useLocalPartial } from "../util/local.ts";
 
 type StandingsTeam =
 	View<"standings">["rankingGroups"]["league"][number][number];
@@ -115,11 +116,12 @@ const GroupStandingsRow = ({
 	userTid,
 }: Pick<
 	View<"standings">,
-	"season" | "showTiebreakers" | "ties" | "otl" | "type" | "usePts" | "userTid"
+	"season" | "showTiebreakers" | "ties" | "otl" | "type" | "usePts"
 > & {
 	maxRank: number;
 	separator: boolean;
 	t: StandingsTeam;
+	userTid: number;
 }) => {
 	const { clicked, toggleClicked } = useClickable();
 
@@ -226,11 +228,11 @@ const GroupStandings = ({
 	| "otl"
 	| "usePts"
 	| "type"
-	| "userTid"
 > & {
 	name?: string;
 	separatorIndexes: number[];
 	teams: StandingsTeam[];
+	userTid: number;
 }) => {
 	const maxRank = Math.max(...teams.map((t) => t.rank.playoffs));
 
@@ -361,9 +363,9 @@ const SmallStandings = ({
 	| "pointsFormula"
 	| "season"
 	| "usePts"
-	| "userTid"
 > & {
 	teams: StandingsTeam[];
+	userTid: number;
 }) => {
 	const maxRank = Math.max(
 		...teams.map((t) => (playoffsByConf ? t.rank.conf : t.rank.league)),
@@ -418,7 +420,6 @@ const Standings = ({
 	otl,
 	type,
 	usePts,
-	userTid,
 }: View<"standings">) => {
 	useTitleBar({
 		title: "Standings",
@@ -430,6 +431,7 @@ const Standings = ({
 			standingsType: type,
 		},
 	});
+	const { userTid } = useLocalPartial(["userTid"]);
 
 	// Show small playoff standings if we're currently viewing the division standings and if the playoff standings differ from the division standings (like multiple divisions get grouped together to determine playoff ranking)
 	const confHasMultipleDivs = confs.some(

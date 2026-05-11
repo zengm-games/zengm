@@ -29,10 +29,10 @@ const useThrottle = <T extends unknown>(value: T, interval: number): T => {
 	return throttledValue;
 };
 
-type HeadlinesProps = Pick<
-	View<"leagueDashboard">,
-	"events" | "season" | "userTid" | "teams"
->;
+type HeadlinesProps = Pick<View<"leagueDashboard">, "events" | "teams"> & {
+	season: number;
+	userTid: number;
+};
 
 const Headlines = ({ events, season, teams, userTid }: HeadlinesProps) => {
 	const throttledEvents = useThrottle(events, 2000);

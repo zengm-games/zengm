@@ -3,7 +3,7 @@ import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
-import { useLocal } from "../util/local.ts";
+import { useLocal, useLocalPartial } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
 import { PLAYER } from "../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
@@ -15,7 +15,6 @@ import { PlusMinus } from "../components/PlusMinus.tsx";
 
 const DraftTeamHistory = ({
 	abbrev,
-	challengeNoRatings,
 	draftType,
 	players,
 	stats,
@@ -29,6 +28,8 @@ const DraftTeamHistory = ({
 		dropdownView: "draft_team_history",
 		dropdownFields: { teamsAndYours: abbrev },
 	});
+
+	const { challengeNoRatings } = useLocalPartial(["challengeNoRatings"]);
 
 	const superCols = [
 		{

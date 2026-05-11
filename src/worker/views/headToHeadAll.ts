@@ -91,7 +91,6 @@ const updateHeadToHeadAll = async (
 			season,
 			teams,
 			type,
-			userTid: g.get("userTid"),
 		};
 	}
 };

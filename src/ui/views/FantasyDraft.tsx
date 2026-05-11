@@ -9,8 +9,9 @@ import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
 import { shuffle } from "../../common/random.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
-const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
+const FantasyDraft = ({ teams }: View<"fantasyDraft">) => {
 	const [sortedTids, setSortedTids] = useState(() => teams.map((t) => t.tid));
 	const [starting, setStarting] = useState(false);
 	const randomize = useCallback(() => {
@@ -25,6 +26,8 @@ const FantasyDraft = ({ phase, teams, userTids }: View<"fantasyDraft">) => {
 	useTitleBar({
 		title: "Fantasy Draft",
 	});
+
+	const { phase, userTids } = useLocalPartial(["phase", "userTids"]);
 
 	if (phase === PHASE.DRAFT) {
 		return (

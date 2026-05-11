@@ -208,8 +208,6 @@ export const getCommon = async (
 		return returnValue;
 	}
 
-	const userTid = g.get("userTid");
-
 	if (p.tid !== PLAYER.RETIRED) {
 		p.mood = await player.moodInfos(pRaw);
 
@@ -491,34 +489,19 @@ export const getCommon = async (
 	return {
 		type: "normal" as const,
 		bestPos,
-		currentSeason: g.get("season"),
 		customMenu,
-		freeAgent: p.tid === PLAYER.FREE_AGENT,
-		gender: g.get("gender"),
-		godMode: g.get("godMode"),
-		injured: p.injury.gamesRemaining > 0,
 		jerseyNumberInfos,
 		pRaw,
-		phase: g.get("phase"),
 		pid, // Needed for state.pid check
 		player: p,
 		randomDebutsForeverPids,
 		retired,
-		showContract:
-			p.tid !== PLAYER.UNDRAFTED &&
-			p.tid !== PLAYER.UNDRAFTED_FANTASY_TEMP &&
-			p.tid !== PLAYER.RETIRED,
-		showRatings: !g.get("challengeNoRatings") || retired,
-		showTradeFor: p.tid !== userTid && p.tid >= 0,
-		showTradingBlock: p.tid === userTid,
-		spectator: g.get("spectator"),
 		statSummary,
 		statTables,
 		teamColors,
 		teamJersey,
 		teamName,
 		teamURL,
-		userTid,
 		willingToSign,
 	};
 };

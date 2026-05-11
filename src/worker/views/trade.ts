@@ -226,7 +226,6 @@ const updateTrade = async () => {
 	} ${g.get("teamInfoCache")[g.get("userTid")]?.name}`;
 
 	return {
-		challengeNoRatings: g.get("challengeNoRatings"),
 		challengeNoTrades: g.get("challengeNoTrades"),
 		luxuryPayroll: g.get("luxuryPayroll") / 1000,
 		luxuryTax: g.get("luxuryTax"),
@@ -256,12 +255,8 @@ const updateTrade = async () => {
 		userTeamName,
 		gameOver: g.get("gameOver"),
 		otherTeamsWantToHire: g.get("otherTeamsWantToHire"),
-		godMode: g.get("godMode"),
 		forceTrade: false,
 		numDraftRounds: g.get("numDraftRounds"),
-		phase: g.get("phase"),
-		userTid: g.get("userTid"),
-		spectator: g.get("spectator"),
 		multiTeamMode: g.get("userTids").length > 1,
 	};
 };

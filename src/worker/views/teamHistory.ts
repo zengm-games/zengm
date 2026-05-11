@@ -218,7 +218,6 @@ export const getHistory = async (
 		...teamHistory,
 		players,
 		stats,
-		userTid: g.get("userTid"),
 	};
 };
 
@@ -354,8 +353,6 @@ const updateTeamHistory = async (
 			...history,
 			abbrev: inputs.abbrev,
 			tid: inputs.tid,
-			godMode: g.get("godMode"),
-			season: g.get("season"),
 			retiredJerseyNumbers: retiredJerseyNumbers2,
 		};
 	}

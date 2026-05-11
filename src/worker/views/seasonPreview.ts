@@ -184,7 +184,6 @@ const updateSeasonPreview = async (
 		).slice(0, NUM_TEAMS_TO_SHOW);
 
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
 			playersDeclining,
 			playersImproving,
 			playersNewTeam,
@@ -194,7 +193,6 @@ const updateSeasonPreview = async (
 			teamsDeclining,
 			teamsImproving,
 			teamsTop,
-			userTid: g.get("userTid"),
 		};
 	}
 };

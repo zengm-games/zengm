@@ -87,7 +87,6 @@ const updateAllStarHistory = async (
 		const allAllStars = await idb.getCopies.allStars();
 		return {
 			allAllStars: augment(allAllStars),
-			userTid: g.get("userTid"),
 		};
 	}
 };

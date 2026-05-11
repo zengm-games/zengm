@@ -1,5 +1,5 @@
 import { idb } from "../db/index.ts";
-import { g, random } from "../util/index.ts";
+import { random } from "../util/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 
 const updateFantasyDraft = async (
@@ -16,9 +16,7 @@ const updateFantasyDraft = async (
 		);
 		random.shuffle(teams);
 		return {
-			phase: g.get("phase"),
 			teams,
-			userTids: g.get("userTids"),
 		};
 	}
 };

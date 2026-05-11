@@ -8,10 +8,9 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
-import { useLocal } from "../util/local.ts";
+import { useLocal, useLocalPartial } from "../util/local.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
-import type { View } from "../../common/types.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { orderBy } from "../../common/utils.ts";
 import { useSelectedRows } from "../components/DataTable/useBulkSelectRows.ts";
@@ -21,15 +20,14 @@ import useLocalStorageState from "use-local-storage-state";
 import { LeagueFileUpload } from "../components/LeagueFileUpload.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
 
-export const ImportPlayersInner = ({
-	challengeNoRatings,
-	currentSeason,
-	godMode,
-	phase,
-	real,
-}: View<"importPlayers"> & {
-	real: boolean;
-}) => {
+export const ImportPlayersInner = ({ real }: { real: boolean }) => {
+	const {
+		challengeNoRatings,
+		godMode,
+		phase,
+		season: currentSeason,
+	} = useLocalPartial(["challengeNoRatings", "godMode", "phase", "season"]);
+
 	const [status, setStatus] = useState<
 		undefined | "loading" | "loadingReal" | "importing" | "success"
 	>();
@@ -543,13 +541,13 @@ export const ImportPlayersInner = ({
 	);
 };
 
-const ImportPlayers = (props: View<"importPlayers">) => {
+const ImportPlayers = () => {
 	useTitleBar({
 		title: "Import Players",
 		dropdownView: "import_players",
 	});
 
-	return <ImportPlayersInner {...props} real={false} />;
+	return <ImportPlayersInner real={false} />;
 };
 
 export default ImportPlayers;

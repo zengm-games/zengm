@@ -66,8 +66,6 @@ const updateInjuries = async (
 			}
 		}
 
-		const userTid = g.get("userTid");
-
 		if (inputs.season === "current") {
 			const teams = await idb.cache.teams.getAll();
 			const playingThrough: Record<number, number> = {};
@@ -90,12 +88,9 @@ const updateInjuries = async (
 
 		return {
 			abbrev: inputs.abbrev,
-			challengeNoRatings: g.get("challengeNoRatings"),
-			currentSeason: g.get("season"),
 			injuries: addFirstNameShort(injuries),
 			season: inputs.season,
 			stats,
-			userTid,
 		};
 	}
 };

@@ -21,6 +21,7 @@ import { groupAwards } from "../../util/groupAwards.ts";
 import { PlayerPicture } from "../../components/PlayerPicture.tsx";
 import { getCol } from "../../../common/getCol.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { useLocalPartial } from "../../util/local.ts";
 
 type PlayerInfo = View<"comparePlayers">["players"][number];
 type PlayerInfoAndLegend =
@@ -223,8 +224,6 @@ const useManualSticky = (element: HTMLElement | null, top: number) => {
 };
 
 const ComparePlayers = ({
-	challengeNoRatings,
-	currentSeason,
 	initialAvailablePlayers,
 	players,
 	ratings,
@@ -233,6 +232,11 @@ const ComparePlayers = ({
 	useTitleBar({
 		title: "Compare Players",
 	});
+
+	const { challengeNoRatings, season: currentSeason } = useLocalPartial([
+		"challengeNoRatings",
+		"season",
+	]);
 
 	const [openBio, setOpenBio] = useState(true);
 	const [openRatings, setOpenRatings] = useState(true);

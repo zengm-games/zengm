@@ -274,12 +274,9 @@ const updatePlayers = async (
 		}
 
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
-			gender: g.get("gender"),
 			pid,
 			players: addFirstNameShort(processPlayersHallOfFame(players)),
 			stats,
-			userTid: g.get("userTid"),
 		};
 	}
 };

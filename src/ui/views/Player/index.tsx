@@ -16,38 +16,33 @@ import { groupAwards } from "../../util/groupAwards.ts";
 import { InjuryIcon } from "../../components/InjuryIcon.tsx";
 import { SkillsBlock } from "../../components/SkillsBlock.tsx";
 import { SafeHtml } from "../../components/SafeHtml.tsx";
+import { useLocalPartial } from "../../util/local.ts";
 
 const Player2 = ({
 	bestPos,
-	currentSeason,
 	customMenu,
 	events,
 	feats,
-	freeAgent,
-	gender,
-	godMode,
-	injured,
 	jerseyNumberInfos,
 	leaders,
-	phase,
 	player,
 	randomDebutsForeverPids,
 	ratings,
 	retired,
-	showContract,
-	showRatings,
-	showTradeFor,
-	showTradingBlock,
-	spectator,
 	statTables,
 	statSummary,
 	teamColors,
 	teamJersey,
 	teamName,
 	teamURL,
-	userTid,
 	willingToSign,
 }: View<"player">) => {
+	const { challengeNoRatings, season: currentSeason } = useLocalPartial([
+		"challengeNoRatings",
+		"season",
+	]);
+	const showRatings = !challengeNoRatings || retired;
+
 	useTitleBar({
 		title: player.name,
 		customMenu,
@@ -92,26 +87,16 @@ const Player2 = ({
 			<TopStuff
 				bestPos={bestPos}
 				currentSeason={currentSeason}
-				freeAgent={freeAgent}
-				gender={gender}
-				godMode={godMode}
-				injured={injured}
 				jerseyNumberInfos={jerseyNumberInfos}
-				phase={phase}
 				player={player}
 				randomDebutsForeverPids={randomDebutsForeverPids}
 				retired={retired}
-				showContract={showContract}
 				showRatings={showRatings}
-				showTradeFor={showTradeFor}
-				showTradingBlock={showTradingBlock}
-				spectator={spectator}
 				statSummary={statSummary}
 				teamColors={teamColors}
 				teamJersey={teamJersey}
 				teamName={teamName}
 				teamURL={teamURL}
-				userTid={userTid}
 				willingToSign={willingToSign}
 			/>
 

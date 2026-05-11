@@ -23,8 +23,9 @@ const Standings = ({
 	| "playoffsByConf"
 	| "pointsFormula"
 	| "usePts"
-	| "userTid"
->) => {
+> & {
+	userTid: number;
+}) => {
 	const maxRank = Math.max(...confOrAllTeams.map((t) => t.rank));
 
 	return (

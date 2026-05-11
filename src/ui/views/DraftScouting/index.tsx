@@ -3,19 +3,23 @@ import DraftClass from "./DraftClass.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import type { View } from "../../../common/types.ts";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
+import { useLocalPartial } from "../../util/local.ts";
 
 const PAGE_SIZE = 3;
 
 const DraftScouting = ({
-	challengeNoRatings,
 	draftType,
 	fantasyDraft,
-	godMode,
 	seasons,
 }: View<"draftScouting">) => {
 	const noDraft = draftType === "freeAgents";
 
 	useTitleBar({ title: !noDraft ? "Draft Scouting" : "Upcoming Prospects" });
+
+	const { challengeNoRatings, godMode } = useLocalPartial([
+		"challengeNoRatings",
+		"godMode",
+	]);
 
 	const [page, setPage] = useState(0);
 

@@ -111,14 +111,11 @@ const updateAllStarThree = async (
 
 		return {
 			allPossibleContestants,
-			challengeNoRatings: g.get("challengeNoRatings"),
-			godMode,
 			players,
 			resultsByRound,
 			three,
 			season,
 			started,
-			userTid: g.get("userTid"),
 		};
 	}
 };

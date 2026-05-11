@@ -8,6 +8,7 @@ import { getValue } from "./Most/index.tsx";
 import { isSport } from "../../common/sportFunctions.ts";
 import { wrappedMovOrDiff } from "../components/MovOrDiff.tsx";
 import { TeamLogoInline } from "../components/TeamLogoInline.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
 const FrivolitiesTeamSeasons = ({
 	description,
@@ -18,9 +19,10 @@ const FrivolitiesTeamSeasons = ({
 	title,
 	type,
 	usePts,
-	userTid,
 }: View<"frivolitiesTeamSeasons">) => {
 	useTitleBar({ title, customMenu: frivolitiesMenu });
+
+	const { userTid } = useLocalPartial(["userTid"]);
 
 	const cols = getCols([
 		"#",

@@ -135,11 +135,9 @@ const updateScheduleEditor = async (
 			allStarGameAlreadyHappened,
 			canRegenerateSchedule,
 			maxDayAlreadyPlayed,
-			phase: g.get("phase"),
 			schedule,
 			teams: orderBy(teams, [(t) => t.seasonAttrs.abbrev]),
 			tradeDeadline: g.get("tradeDeadline"),
-			userTid: g.get("userTid"),
 		};
 	}
 };

@@ -7,7 +7,7 @@ import { TeamLogoJerseyInfo } from "../components/TeamLogoJerseyInfo.tsx";
 import { wait } from "../../common/wait.ts";
 import { AutoRelocateExpandSubmit } from "./AutoRelocate.tsx";
 
-const AutoExpand = ({ godMode, newTeams }: View<"autoExpand">) => {
+const AutoExpand = ({ newTeams }: View<"autoExpand">) => {
 	useTitleBar({ title: "League Expansion Vote" });
 
 	const [override, setOverride] = useState(false);
@@ -67,7 +67,6 @@ const AutoExpand = ({ godMode, newTeams }: View<"autoExpand">) => {
 			</div>
 
 			<AutoRelocateExpandSubmit
-				godMode={godMode}
 				override={override}
 				setOverride={setOverride}
 				status={status}

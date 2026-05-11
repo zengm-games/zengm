@@ -100,7 +100,6 @@ const numLinesByPos: Record<string, number> | undefined = isSport("hockey")
 
 const Depth = ({
 	abbrev,
-	challengeNoRatings,
 	editable,
 	keepRosterSorted,
 	multiplePositionsWarning,
@@ -108,7 +107,6 @@ const Depth = ({
 	playoffs,
 	pos,
 	ratings,
-	season,
 	showDH,
 	stats,
 	tid,
@@ -116,6 +114,11 @@ const Depth = ({
 	if (!isSport("baseball") && !isSport("football") && !isSport("hockey")) {
 		throw new Error("Not implemented");
 	}
+
+	const { challengeNoRatings, season } = useLocalPartial([
+		"challengeNoRatings",
+		"season",
+	]);
 
 	const [sortedPids, setSortedPids] = useState<number[] | undefined>();
 	const [prevPos, setPrevPos] = useState(pos);

@@ -15,19 +15,20 @@ import { useEffect, useState } from "react";
 import { ActionButton } from "../components/ActionButton.tsx";
 import useTradeOffersSwitch from "../hooks/useTradeOffersSwitch.tsx";
 
-const TradeProposals = (props: View<"tradeProposals">) => {
-	const {
-		challengeNoRatings,
-		challengeNoTrades,
-		gameOver,
-		luxuryPayroll,
-		luxuryTax,
-		offers,
-		phase,
-		salaryCap,
-		salaryCapType,
-		spectator,
-	} = props;
+const TradeProposals = ({
+	challengeNoTrades,
+	gameOver,
+	luxuryPayroll,
+	luxuryTax,
+	offers,
+	salaryCap,
+	salaryCapType,
+}: View<"tradeProposals">) => {
+	const { challengeNoRatings, phase, spectator } = useLocalPartial([
+		"challengeNoRatings",
+		"phase",
+		"spectator",
+	]);
 
 	const [removedTids, setRemovedTids] = useState<number[]>([]);
 	const [prevOffers, setPrevOffers] = useState(offers);

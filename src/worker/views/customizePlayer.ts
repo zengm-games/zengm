@@ -150,18 +150,14 @@ const updateCustomizePlayer = async (
 
 		return {
 			appearanceOption,
-			challengeNoRatings: g.get("challengeNoRatings"),
 			faceCount,
 			gender: g.get("gender"),
-			godMode: g.get("godMode"),
 			initialAutoPos,
 			minContract: g.get("minContract"),
 			originalTid,
 			p,
 			playerMoodTraits: g.get("playerMoodTraits"),
 			playersRelativesList,
-			phase: g.get("phase"),
-			season: g.get("season"),
 			teams,
 		};
 	}

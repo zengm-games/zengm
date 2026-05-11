@@ -429,7 +429,6 @@ const updateFrivolitiesTeamSeasons = async (
 			title,
 			type,
 			usePts,
-			userTid: g.get("userTid"),
 		};
 	}
 };

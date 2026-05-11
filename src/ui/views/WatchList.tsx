@@ -8,7 +8,7 @@ import { getCols } from "../../common/getCols.ts";
 import { useLocalPartial } from "../util/local.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
-import type { View } from "../../common/types.ts";
+import type { Phase, View } from "../../common/types.ts";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
 import {
 	wrappedContractAmount,
@@ -97,17 +97,11 @@ export const getWatchListColsAndRows = ({
 	playoffs,
 	statType,
 	stats,
-}: Pick<
-	View<"watchList">,
-	| "challengeNoRatings"
-	| "currentSeason"
-	| "phase"
-	| "players"
-	| "playoffs"
-	| "statType"
-	| "stats"
-> & {
+}: Pick<View<"watchList">, "players" | "playoffs" | "statType" | "stats"> & {
+	challengeNoRatings: boolean;
+	currentSeason: number;
 	editableNote: boolean;
+	phase: Phase;
 }) => {
 	const cols = getCols(
 		[
@@ -219,9 +213,6 @@ export const getWatchListColsAndRows = ({
 };
 
 const WatchList = ({
-	challengeNoRatings,
-	currentSeason,
-	phase,
 	players,
 	playoffs,
 	statType,
@@ -238,7 +229,12 @@ const WatchList = ({
 		},
 	});
 
-	const { gender } = useLocalPartial(["gender"]);
+	const {
+		challengeNoRatings,
+		gender,
+		phase,
+		season: currentSeason,
+	} = useLocalPartial(["challengeNoRatings", "gender", "phase", "season"]);
 
 	const { cols, rows } = getWatchListColsAndRows({
 		challengeNoRatings,

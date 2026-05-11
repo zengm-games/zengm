@@ -18,20 +18,18 @@ import {
 	NegotiationModal,
 	useNegotiaionModal,
 } from "../components/NegotiationModal.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
 const NegotiationList = ({
 	capSpace,
-	challengeNoRatings,
 	draftPickAutoContract,
 	luxuryPayroll,
 	maxContract,
 	minContract,
 	numRosterSpots,
-	spectator,
 	payroll,
 	players,
 	salaryCapType,
-	season,
 	stats,
 	sumContracts,
 	userPlayers,
@@ -42,6 +40,12 @@ const NegotiationList = ({
 			: "Re-sign Players";
 
 	useTitleBar({ title });
+
+	const { challengeNoRatings, spectator, season } = useLocalPartial([
+		"challengeNoRatings",
+		"spectator",
+		"season",
+	]);
 
 	const negotiationModal = useNegotiaionModal();
 

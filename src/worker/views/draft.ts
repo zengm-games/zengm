@@ -249,22 +249,15 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		return {
 			challengeNoDraftPicks: g.get("challengeNoDraftPicks"),
-			challengeNoRatings: g.get("challengeNoRatings"),
 			draftType: g.get("draftType"),
 			drafted,
-			expansionDraft: g.get("phase") === PHASE.EXPANSION_DRAFT,
 			expansionDraftFilteredTeamsMessage,
 			fantasyDraft,
-			godMode: g.get("godMode"),
-			season: g.get("season"),
-			spectator: g.get("spectator"),
 			stats,
 			teamsByTid,
 			undrafted,
 			userNextPickYear,
 			userPlayers,
-			userTid: g.get("userTid"),
-			userTids: g.get("userTids"),
 		};
 	}
 };

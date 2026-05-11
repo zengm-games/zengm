@@ -117,7 +117,6 @@ const updateHeadToHead = async (
 			otl: g.get("otl", season === "all" ? "current" : season) || otl,
 			totals,
 			type,
-			userTid: g.get("userTid"),
 		};
 	}
 };

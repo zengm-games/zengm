@@ -50,7 +50,8 @@ export const SummaryTable = ({
 	userTid,
 }: {
 	teamsByTid: Record<number, View<"scheduleEditor">["teams"][number]>;
-} & Pick<View<"scheduleEditor">, "schedule" | "teams" | "userTid">) => {
+	userTid: number;
+} & Pick<View<"scheduleEditor">, "schedule" | "teams">) => {
 	const initialCounts: Record<
 		number,
 		{

@@ -1044,7 +1044,6 @@ const updatePlayers = async (
 		});
 
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
 			description,
 			extraCols,
 			extraProps,
@@ -1052,7 +1051,6 @@ const updatePlayers = async (
 			stats,
 			title,
 			type,
-			userTid: g.get("userTid"),
 		};
 	}
 };

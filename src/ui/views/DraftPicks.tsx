@@ -7,12 +7,14 @@ import type { View } from "../../common/types.ts";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { orderBy } from "../../common/utils.ts";
 import Note from "./Player/Note.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
 const processRows = ({
 	challengeNoRatings,
 	draftPicks,
 	outgoing,
-}: Pick<View<"draftPicks">, "challengeNoRatings" | "draftPicks"> & {
+}: Pick<View<"draftPicks">, "draftPicks"> & {
+	challengeNoRatings: boolean;
 	outgoing: boolean;
 }) => {
 	const rows: DataTableRow[] = orderBy(
@@ -115,10 +117,9 @@ export const getDraftPicksColsAndRows = ({
 	challengeNoRatings,
 	draftPicks,
 	draftPicksOutgoing,
-}: Pick<
-	View<"draftPicks">,
-	"challengeNoRatings" | "draftPicks" | "draftPicksOutgoing"
->) => {
+}: Pick<View<"draftPicks">, "draftPicks" | "draftPicksOutgoing"> & {
+	challengeNoRatings: boolean;
+}) => {
 	const cols = getCols(
 		[
 			"Year",
@@ -172,7 +173,6 @@ export const getDraftPicksColsAndRows = ({
 
 const DraftPicks = ({
 	abbrev,
-	challengeNoRatings,
 	draftPicks,
 	draftPicksOutgoing,
 	draftType,
@@ -183,6 +183,8 @@ const DraftPicks = ({
 		dropdownView: "draft_picks",
 		dropdownFields: { teams: abbrev },
 	});
+
+	const { challengeNoRatings } = useLocalPartial(["challengeNoRatings"]);
 
 	const { rows, rowsOutgoing, cols } = getDraftPicksColsAndRows({
 		challengeNoRatings,

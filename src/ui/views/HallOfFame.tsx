@@ -5,9 +5,11 @@ import { DataTable } from "../components/DataTable/index.tsx";
 import type { View } from "../../common/types.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
-const HallOfFame = ({ players, stats, userTid }: View<"hallOfFame">) => {
+const HallOfFame = ({ players, stats }: View<"hallOfFame">) => {
 	useTitleBar({ title: "Hall of Fame" });
+	const { userTid } = useLocalPartial(["userTid"]);
 
 	const superCols = [
 		{

@@ -89,10 +89,7 @@ const handleRelease = async (
 const Roster = ({
 	abbrev,
 	budget,
-	challengeNoRatings,
-	currentSeason,
 	editable,
-	godMode,
 	luxuryPayroll,
 	luxuryTaxAmount,
 	maxRosterSize,
@@ -100,7 +97,6 @@ const Roster = ({
 	minPayrollAmount,
 	numPlayersOnCourt,
 	payroll,
-	phase,
 	players,
 	playoffs,
 	playoffsByConf,
@@ -115,11 +111,22 @@ const Roster = ({
 	t,
 	tid,
 	usePts,
-	userTid,
 }: View<"roster">) => {
 	const [sortedPids, setSortedPids] = useState<number[] | undefined>(undefined);
 	const [prevPlayers, setPrevPlayers] = useState(players);
-	const { gender } = useLocalPartial(["gender"]);
+	const {
+		challengeNoRatings,
+		gender,
+		phase,
+		season: currentSeason,
+		userTid,
+	} = useLocalPartial([
+		"challengeNoRatings",
+		"gender",
+		"phase",
+		"season",
+		"userTid",
+	]);
 
 	useTitleBar({
 		title: "Roster",
@@ -390,7 +397,6 @@ const Roster = ({
 				challengeNoRatings={challengeNoRatings}
 				currentSeason={currentSeason}
 				editable={editable}
-				godMode={godMode}
 				luxuryPayroll={luxuryPayroll}
 				luxuryTaxAmount={luxuryTaxAmount}
 				minPayroll={minPayroll}

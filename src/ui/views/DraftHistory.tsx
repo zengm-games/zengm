@@ -5,7 +5,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
-import { useLocal } from "../util/local.ts";
+import { useLocal, useLocalPartial } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
 import { PLAYER } from "../../common/constants.ts";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
@@ -216,14 +216,12 @@ const ExportButton = ({ season }: { season: number }) => {
 };
 
 const DraftHistory = ({
-	challengeNoRatings,
 	draftType,
 	players,
 	season,
 	stats,
 	summaryStat,
 	teamsByTid,
-	userTid,
 }: View<"draftHistory">) => {
 	const noDraft = draftType === "freeAgents";
 
@@ -234,6 +232,11 @@ const DraftHistory = ({
 		dropdownView: "draft_history",
 		dropdownFields: { seasonsAndOldDrafts: season },
 	});
+
+	const { challengeNoRatings, userTid } = useLocalPartial([
+		"challengeNoRatings",
+		"userTid",
+	]);
 
 	const superCols = [
 		{

@@ -240,7 +240,6 @@ const updatePlayers = async (
 			playoffs: inputs.playoffs,
 			stats,
 			superCols,
-			userTid: g.get("userTid"),
 		};
 	}
 };

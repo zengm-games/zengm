@@ -5,7 +5,7 @@ import { helpers } from "../../util/helpers.ts";
 import type { View } from "../../../common/types.ts";
 
 const Message = ({ message }: View<"message">) => {
-	const title = message && message.subject ? message.subject : "Message";
+	const title = message?.subject ?? "Message";
 	useTitleBar({
 		title,
 	});

@@ -171,7 +171,6 @@ const updateDraftPicks = async (
 
 		return {
 			abbrev,
-			challengeNoRatings: g.get("challengeNoRatings"),
 			draftPicks,
 			draftPicksOutgoing,
 			draftType: g.get("draftType"),

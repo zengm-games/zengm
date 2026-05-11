@@ -20,10 +20,11 @@ const RetiredJerseyNumbers = ({
 	season,
 	tid,
 	userTid,
-}: Pick<
-	View<"teamHistory">,
-	"godMode" | "players" | "retiredJerseyNumbers" | "season" | "tid" | "userTid"
->) => {
+}: Pick<View<"teamHistory">, "players" | "retiredJerseyNumbers" | "tid"> & {
+	godMode: boolean;
+	season: number;
+	userTid: number;
+}) => {
 	const [page, setPage] = useState(0);
 
 	type JeresySortKey =

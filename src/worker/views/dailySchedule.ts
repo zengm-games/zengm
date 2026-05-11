@@ -221,14 +221,11 @@ const updateDailySchedule = async (
 
 		return {
 			...info,
-			currentSeason,
 			elam: g.get("elam"),
 			elamASG: g.get("elamASG"),
-			phase: g.get("phase"),
 			season: inputs.season,
 			ties: season.hasTies("current"),
 			topPlayers,
-			userTid: g.get("userTid"),
 		};
 	}
 };

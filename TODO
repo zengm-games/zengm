@@ -1,3 +1,12 @@
+gameAttributesSyncedToUi should never be returned from worker view functions, except possibly if they are also used internally in those functions and we need to be consistent (in which case we should be listening for changes in those settings)
+- get rid of useLocal?
+- get rid of userAbbrev?
+- useLocalPartial multiple times in same function
+- add more variables?
+  - other challenge modes
+  - finances
+  - gameOver
+
 race condition with mutable cached variables and async stuff (example, AbbrevsCache issue from commit e3f01ef8b)
 - cannot assume an object from our cache is stable after any await, could have any arbitrary changes such as new transactions, new stats rows, etc.
 - possibly fixes
@@ -90,6 +99,7 @@ dev usability stuff
 - exactOptionalPropertyTypes would be nice
   - when enabling, then zod exactOptional starts working. otherwise, zod can't represent { a?: number } and instead makes it { a?: number | undefined }
 - when updating GameAttributesLeagueWithHistory (for instance in setGameAttributes) we should always wrap or always not wrap based on ALWAYS_WRAP, not prior value
+- lint useLocalPartial to ensure all requested variables are destructured
 
 FBGM overtime - If team A scores in OT, And then Team B scores, They should always go for 2 bc you don’t want to give the ball back and have it be sudden death https://discord.com/channels/@me/778760871911751700/1480652733852811324
 

@@ -171,7 +171,6 @@ const updateNotes = async (
 				type,
 				otl: g.get("otl"),
 				usePts,
-				userTid: g.get("userTid"),
 			};
 		}
 	}

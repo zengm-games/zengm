@@ -102,6 +102,7 @@ const updateAllStarTeams = async (
 		updateEvents.includes("firstRun") ||
 		updateEvents.includes("gameSim") ||
 		updateEvents.includes("playerMovement") ||
+		updateEvents.includes("gameAttributes") ||
 		season !== state.season
 	) {
 		const allStars = await allStar.getOrCreate(season);
@@ -151,20 +152,15 @@ const updateAllStarTeams = async (
 
 		return {
 			allPossiblePlayers,
-			challengeNoRatings: g.get("challengeNoRatings"),
 			finalized,
 			gid,
-			godMode,
-			isCurrentSeason: g.get("season") === season,
 			nextGameIsAllStar,
 			remaining,
 			season,
-			spectator: g.get("spectator"),
 			stats,
 			teams,
 			teamNames,
 			type: allStars.type,
-			userTids: g.get("userTids"),
 		};
 	}
 };

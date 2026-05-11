@@ -98,16 +98,13 @@ const updateExpansionDraft = async () => {
 		confs: g.get("confs"),
 		defaultNumProtectedPlayers,
 		divs: g.get("divs"),
-		godMode: g.get("godMode"),
 		godModeLimits,
 		initialTeams,
 		initialNumPerTeam,
 		initialNumProtectedPlayers:
 			expansionDraft.numProtectedPlayers ?? String(defaultNumProtectedPlayers),
 		minRosterSize: g.get("minRosterSize"),
-		multiTeamMode: g.get("userTids").length > 1,
 		numActiveTeams: g.get("numActiveTeams"),
-		phase: g.get("phase"),
 	};
 };
 

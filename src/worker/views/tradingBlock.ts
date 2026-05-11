@@ -135,16 +135,13 @@ const updateUserRoster = async (
 		}
 
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
 			challengeNoTrades: g.get("challengeNoTrades"),
 			gameOver: g.get("gameOver"),
 			initialPids: inputs.pids,
 			initialDpids: inputs.dpids,
-			phase: g.get("phase"),
 			salaryCap: g.get("salaryCap"),
 			salaryCapType: g.get("salaryCapType"),
 			savedTradingBlock,
-			spectator: g.get("spectator"),
 			stats,
 			userPicks: userPicks2,
 			userRoster,

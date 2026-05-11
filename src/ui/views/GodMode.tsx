@@ -2,11 +2,11 @@ import clsx from "clsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
-import type { View } from "../../common/types.ts";
 import { DAILY_SCHEDULE } from "../../common/constants.ts";
+import { useLocalPartial } from "../util/local.ts";
 
-const GodMode = (props: View<"godMode">) => {
-	const { godMode } = props;
+const GodMode = () => {
+	const { godMode } = useLocalPartial(["godMode"]);
 
 	useTitleBar({ title: "God Mode" });
 

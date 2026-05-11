@@ -39,8 +39,6 @@ const updatePlayers = async (
 			),
 		);
 
-		const userTid = g.get("userTid");
-
 		for (const p of players) {
 			if (p.tid !== PLAYER.RETIRED) {
 				const p2 = await idb.cache.players.get(p.pid);
@@ -52,12 +50,9 @@ const updatePlayers = async (
 
 		return {
 			abbrev: inputs.abbrev,
-			challengeNoRatings: g.get("challengeNoRatings"),
-			currentSeason: g.get("season"),
 			season: inputs.season,
 			players,
 			stats,
-			userTid,
 		};
 	}
 };

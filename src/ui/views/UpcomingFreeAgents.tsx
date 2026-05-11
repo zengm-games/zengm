@@ -12,14 +12,10 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedCurrency } from "../components/wrappedCurrency.ts";
 
 const UpcomingFreeAgents = ({
-	challengeNoRatings,
-	currentSeason,
-	phase,
 	players,
 	projectedCapSpace,
 	season,
 	stats,
-	userTid,
 }: View<"upcomingFreeAgents">) => {
 	useTitleBar({
 		title: "Upcoming Free Agents",
@@ -27,7 +23,19 @@ const UpcomingFreeAgents = ({
 		dropdownFields: { seasonsUpcoming: season },
 	});
 
-	const { gender } = useLocalPartial(["gender"]);
+	const {
+		challengeNoRatings,
+		gender,
+		phase,
+		season: currentSeason,
+		userTid,
+	} = useLocalPartial([
+		"challengeNoRatings",
+		"gender",
+		"phase",
+		"season",
+		"userTid",
+	]);
 
 	const superCols = [
 		{

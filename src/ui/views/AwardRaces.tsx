@@ -9,14 +9,9 @@ import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { RatingWithChange } from "../components/RatingWithChange.tsx";
 import { StatWithChange } from "../components/StatWithChange.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
-const AwardRaces = ({
-	awardCandidates,
-	challengeNoRatings,
-	season,
-	teams,
-	userTid,
-}: View<"awardRaces">) => {
+const AwardRaces = ({ awardCandidates, season, teams }: View<"awardRaces">) => {
 	useTitleBar({
 		title: "Award Races",
 		jumpTo: true,
@@ -26,6 +21,11 @@ const AwardRaces = ({
 			seasons: season,
 		},
 	});
+
+	const { challengeNoRatings, userTid } = useLocalPartial([
+		"challengeNoRatings",
+		"userTid",
+	]);
 
 	const globalCols = getCols(["#", "Name", "Pos", "Age", "Team"]);
 

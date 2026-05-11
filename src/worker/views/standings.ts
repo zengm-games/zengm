@@ -215,7 +215,6 @@ const updateStandings = async (
 			tiebreakers: getTiebreakers(inputs.season),
 			type: inputs.type,
 			usePts,
-			userTid: g.get("userTid"),
 		};
 	}
 };

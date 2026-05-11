@@ -39,6 +39,7 @@ export type OfferType = Awaited<
 
 type OfferProps = {
 	children: ReactNode;
+	challengeNoRatings: boolean;
 	first: boolean;
 	hideTopTeamOvrs?: boolean;
 	onNegotiate: () => void;
@@ -49,10 +50,7 @@ type OfferProps = {
 		region: string;
 	};
 } & OfferType &
-	Pick<
-		View<"tradingBlock">,
-		"challengeNoRatings" | "salaryCap" | "salaryCapType"
-	>;
+	Pick<View<"tradingBlock">, "salaryCap" | "salaryCapType">;
 
 const OfferPlayers = ({
 	className,
@@ -61,7 +59,7 @@ const OfferPlayers = ({
 	stats,
 }: Pick<OfferType, "players"> & {
 	className?: string;
-	challengeNoRatings: View<"tradingBlock">["challengeNoRatings"];
+	challengeNoRatings: boolean;
 	stats: View<"tradingBlock">["stats"];
 }) => {
 	if (players.length > 0) {
@@ -300,6 +298,7 @@ export const OfferTable = ({
 	salaryCapType,
 }: {
 	assetCols: Col[];
+	challengeNoRatings: boolean;
 	getAssetColContents: (offer: OfferType) => any[];
 	handleNegotiate: (tradeInfo: {
 		tid: number;
@@ -310,10 +309,7 @@ export const OfferTable = ({
 	}) => void;
 	handleRemove?: (i: number) => void;
 	offers: OfferType[];
-} & Pick<
-	View<"tradingBlock">,
-	"challengeNoRatings" | "salaryCap" | "salaryCapType"
->) => {
+} & Pick<View<"tradingBlock">, "salaryCap" | "salaryCapType">) => {
 	const { teamInfoCache, userTid } = useLocalPartial([
 		"teamInfoCache",
 		"userTid",
@@ -497,20 +493,23 @@ const MissingAndWilling = ({
 };
 
 const TradingBlock = ({
-	challengeNoRatings,
 	challengeNoTrades,
 	gameOver,
 	initialDpids,
 	initialPids,
-	phase,
 	salaryCap,
 	salaryCapType,
 	savedTradingBlock,
-	spectator,
 	stats,
 	userPicks,
 	userRoster,
 }: View<"tradingBlock">) => {
+	const { challengeNoRatings, phase, spectator } = useLocalPartial([
+		"challengeNoRatings",
+		"phase",
+		"spectator",
+	]);
+
 	const [state, setState] = useState<{
 		asking: boolean;
 		offers: OfferType[];

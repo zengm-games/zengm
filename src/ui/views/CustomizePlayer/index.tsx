@@ -31,6 +31,7 @@ import { Face } from "./Face.tsx";
 import { CurrencyInputGroup } from "../../components/CurrencyInputGroup.tsx";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { useLocalPartial } from "../../util/local.ts";
 
 const copyValidValues = (
 	source: PlayerWithoutKey,
@@ -344,6 +345,13 @@ const useJerseyNumberConflictInfo = (
 };
 
 const CustomizePlayer = (props: View<"customizePlayer">) => {
+	const { challengeNoRatings, godMode, phase, season } = useLocalPartial([
+		"challengeNoRatings",
+		"godMode",
+		"phase",
+		"season",
+	]);
+
 	const [state, setState] = useState(() => {
 		const p = helpers.deepCopy(props.p);
 		if (p) {
@@ -393,8 +401,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			state.p,
 			p,
 			props.minContract,
-			props.phase,
-			props.season,
+			phase,
+			season,
 		);
 
 		// Only save image URL if it's selected
@@ -406,7 +414,7 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 			const pid = await toWorker("main", "upsertCustomizedPlayer", {
 				p,
 				originalTid: props.originalTid,
-				season: props.season,
+				season,
 				recomputePosOvrPot,
 			});
 
@@ -524,10 +532,8 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 	};
 
 	const {
-		challengeNoRatings,
 		faceCount,
 		gender,
-		godMode,
 		originalTid,
 		playerMoodTraits,
 		playersRelativesList,

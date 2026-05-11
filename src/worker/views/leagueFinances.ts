@@ -53,7 +53,6 @@ const updateLeagueFinances = async (
 		});
 		return {
 			budget: g.get("budget"),
-			currentSeason: g.get("season"),
 			salaryCapType: g.get("salaryCapType"),
 			season: inputs.season,
 			salaryCap: g.get("salaryCap") / 1000,
@@ -61,7 +60,6 @@ const updateLeagueFinances = async (
 			luxuryPayroll: g.get("luxuryPayroll") / 1000,
 			luxuryTax: g.get("luxuryTax"),
 			teams,
-			userTid: g.get("userTid"),
 		};
 	}
 };

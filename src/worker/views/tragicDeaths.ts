@@ -83,7 +83,6 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		return {
 			players: players2,
 			stats,
-			userTid: g.get("userTid"),
 		};
 	}
 };

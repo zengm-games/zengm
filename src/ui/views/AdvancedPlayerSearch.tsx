@@ -32,6 +32,7 @@ import { PlusMinus } from "../components/PlusMinus.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
 import { getCol } from "../../common/getCol.ts";
 import { isSport } from "../../common/sportFunctions.ts";
+import { useLocalPartial } from "../util/local.ts";
 
 const numericOperators = [">", "<", ">=", "<=", "=", "!="] as const;
 type NumericOperator = (typeof numericOperators)[number];
@@ -501,7 +502,10 @@ const formatSeasonRange = (seasonStart: number, seasonEnd: number) => {
 };
 
 const AdvancedPlayerSearch = (props: View<"advancedPlayerSearch">) => {
-	const { challengeNoRatings, currentSeason } = props;
+	const { challengeNoRatings, season: currentSeason } = useLocalPartial([
+		"challengeNoRatings",
+		"season",
+	]);
 
 	const [fetchingPlayers, setFetchingPlayers] = useState(false);
 

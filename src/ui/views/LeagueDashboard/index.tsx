@@ -7,11 +7,11 @@ import StartingLineup from "./StartingLineup.tsx";
 import TeamStats from "./TeamStats.tsx";
 import type { View } from "../../../common/types.ts";
 import Headlines from "./Headlines.tsx";
+import { useLocalPartial } from "../../util/local.ts";
 
 const LeagueDashboard = ({
 	att,
 	cash,
-	challengeNoRatings,
 	confOrAllTeams,
 	events,
 	leagueLeaders,
@@ -35,7 +35,6 @@ const LeagueDashboard = ({
 	roundsWonText,
 	salaryCap,
 	salaryCapType,
-	season,
 	series,
 	seriesTitle,
 	showPlayoffSeries,
@@ -46,10 +45,11 @@ const LeagueDashboard = ({
 	teams,
 	tied,
 	usePts,
-	userTid,
 	won,
 }: View<"leagueDashboard">) => {
 	useTitleBar({ title: `${region} ${name} Dashboard` });
+
+	const { season, userTid } = useLocalPartial(["season", "userTid"]);
 
 	return (
 		<>
@@ -182,7 +182,6 @@ const LeagueDashboard = ({
 						</div>
 					</div>
 					<StartingLineup
-						challengeNoRatings={challengeNoRatings}
 						numPlayersOnCourt={numPlayersOnCourt}
 						starters={starters}
 						startersStats={startersStats}

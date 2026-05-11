@@ -17,7 +17,6 @@ import { confirm } from "../util/confirm.tsx";
 import { getCols } from "../../common/getCols.ts";
 
 const PlayerList = ({
-	challengeNoRatings,
 	updateProtectedPids,
 	numPerTeam,
 	numRemaining,
@@ -26,7 +25,7 @@ const PlayerList = ({
 	stats,
 	tid,
 	upcomingFreeAgentsText,
-}: Pick<View<"protectPlayers">, "challengeNoRatings" | "players" | "stats"> & {
+}: Pick<View<"protectPlayers">, "players" | "stats"> & {
 	updateProtectedPids: (newProtectedPids: number[]) => void;
 	numPerTeam: number;
 	numRemaining: number;
@@ -34,7 +33,10 @@ const PlayerList = ({
 	tid: number;
 	upcomingFreeAgentsText: ReactNode;
 }) => {
-	const { gender } = useLocalPartial(["gender"]);
+	const { challengeNoRatings, gender } = useLocalPartial([
+		"challengeNoRatings",
+		"gender",
+	]);
 
 	const cols = getCols([
 		"",
@@ -145,19 +147,21 @@ const PlayerList = ({
 };
 
 const ProtectPlayers = ({
-	challengeNoRatings,
 	expansionDraft,
 	expansionTeam,
 	nextPhase,
-	spectator,
 	players,
 	stats,
-	userTid,
-	userTids,
 }: View<"protectPlayers">) => {
 	const [saving, setSaving] = useState(false);
 
 	useTitleBar({ title: "Protect Players" });
+
+	const { spectator, userTid, userTids } = useLocalPartial([
+		"spectator",
+		"userTid",
+		"userTids",
+	]);
 
 	const protectedPids = expansionDraft.protectedPids[userTid] ?? [];
 
@@ -278,7 +282,6 @@ const ProtectPlayers = ({
 					<p>The AI will handle protecting players in spectator mode.</p>
 				) : (
 					<PlayerList
-						challengeNoRatings={challengeNoRatings}
 						updateProtectedPids={updateProtectedPids}
 						numPerTeam={expansionDraft.numPerTeam}
 						numRemaining={numRemaining}

@@ -4,7 +4,7 @@ import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
-import { useLocal } from "../../util/local.ts";
+import { useLocal, useLocalPartial } from "../../util/local.ts";
 import { DataTable } from "../../components/DataTable/index.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import type { View } from "../../../common/types.ts";
@@ -21,26 +21,39 @@ import { wrappedDraftAbbrev } from "../../components/DraftAbbrev.tsx";
 import { RosterComposition } from "../../components/RosterComposition.tsx";
 import { confirm } from "../../util/confirm.tsx";
 import { getCol } from "../../../common/getCol.ts";
+import { PHASE } from "../../../common/constants.ts";
 
 const Draft = ({
 	challengeNoDraftPicks,
-	challengeNoRatings,
 	draftType,
 	drafted,
-	expansionDraft,
 	expansionDraftFilteredTeamsMessage,
 	fantasyDraft,
-	godMode,
-	season,
-	spectator,
 	stats,
 	teamsByTid,
 	undrafted,
 	userNextPickYear,
 	userPlayers,
-	userTid,
-	userTids,
 }: View<"draft">) => {
+	const {
+		challengeNoRatings,
+		godMode,
+		phase,
+		season,
+		spectator,
+		userTid,
+		userTids,
+	} = useLocalPartial([
+		"challengeNoRatings",
+		"godMode",
+		"phase",
+		"season",
+		"spectator",
+		"userTid",
+		"userTids",
+	]);
+	const expansionDraft = phase === PHASE.EXPANSION_DRAFT;
+
 	const [drafting, setDrafting] = useState(false);
 
 	const [editDraftOrder, setEditDraftOrder] = useState(false);

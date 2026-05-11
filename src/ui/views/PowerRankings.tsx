@@ -8,6 +8,7 @@ import { POSITIONS, RATINGS } from "../../common/constants.ts";
 import { wrappedMovOrDiff } from "../components/MovOrDiff.tsx";
 import { wrappedTeamLogoAndName } from "../components/TeamLogoAndName.tsx";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { useLocalPartial } from "../util/local.ts";
 
 const Other = ({
 	actualShowHealthy,
@@ -32,16 +33,13 @@ const Other = ({
 };
 
 const PowerRankings = ({
-	challengeNoRatings,
 	confs,
-	currentSeason,
 	divs,
 	playoffs,
 	season,
 	teams,
 	ties,
 	otl,
-	userTid,
 }: View<"powerRankings">) => {
 	const dropdownFields = bySport({
 		basketball: { seasons: season, playoffs },
@@ -53,6 +51,12 @@ const PowerRankings = ({
 		dropdownView: "power_rankings",
 		dropdownFields,
 	});
+
+	const {
+		challengeNoRatings,
+		season: currentSeason,
+		userTid,
+	} = useLocalPartial(["challengeNoRatings", "season", "userTid"]);
 
 	const [showHealthy, setShowHealthy] = useState(true);
 	const actualShowHealthy = showHealthy || currentSeason !== season;

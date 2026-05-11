@@ -280,7 +280,6 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		return {
 			awards: awardTypes,
 			seasons,
-			userTid: g.get("userTid"),
 		};
 	}
 };

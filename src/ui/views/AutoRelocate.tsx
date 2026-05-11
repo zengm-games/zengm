@@ -6,9 +6,9 @@ import { toWorker } from "../util/toWorker.ts";
 import { TeamLogoJerseyInfo } from "../components/TeamLogoJerseyInfo.tsx";
 import clsx from "clsx";
 import { wait } from "../../common/wait.ts";
+import { useLocalPartial } from "../util/local.ts";
 
 export const AutoRelocateExpandSubmit = ({
-	godMode,
 	override,
 	setOverride,
 	status,
@@ -18,7 +18,6 @@ export const AutoRelocateExpandSubmit = ({
 	resultTextYes,
 	resultTextNo,
 }: {
-	godMode: boolean;
 	override: boolean;
 	setOverride: (cb: (checked: boolean) => boolean) => void;
 	status:
@@ -39,6 +38,8 @@ export const AutoRelocateExpandSubmit = ({
 	resultTextYes: string;
 	resultTextNo: string;
 }) => {
+	const { godMode } = useLocalPartial(["godMode"]);
+
 	return (
 		<>
 			{status.type === "init" ? (
@@ -107,7 +108,6 @@ const AutoRelocate = ({
 	autoRelocateRealign,
 	autoRelocateRebrand,
 	currentTeam,
-	godMode,
 	newTeam,
 	realignInfo,
 }: View<"autoRelocate">) => {
@@ -266,7 +266,6 @@ const AutoRelocate = ({
 			</div>
 
 			<AutoRelocateExpandSubmit
-				godMode={godMode}
 				override={override}
 				setOverride={setOverride}
 				status={status}

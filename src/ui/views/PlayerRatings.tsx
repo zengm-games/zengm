@@ -12,15 +12,13 @@ import {
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { bySport } from "../../common/sportFunctions.ts";
+import { useLocalPartial } from "../util/local.ts";
 
 const PlayerRatings = ({
 	abbrev,
-	challengeNoRatings,
-	currentSeason,
 	players,
 	ratings,
 	season,
-	userTid,
 }: View<"playerRatings">) => {
 	useTitleBar({
 		title: "Player Ratings",
@@ -29,6 +27,12 @@ const PlayerRatings = ({
 		dropdownView: "player_ratings",
 		dropdownFields: { teamsAndAllWatchPlayoffs: abbrev, seasons: season },
 	});
+
+	const {
+		challengeNoRatings,
+		season: currentSeason,
+		userTid,
+	} = useLocalPartial(["challengeNoRatings", "season", "userTid"]);
 
 	const ovrsPotsColNames: string[] = [];
 	if (

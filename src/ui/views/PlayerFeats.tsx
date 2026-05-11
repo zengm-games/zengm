@@ -6,6 +6,7 @@ import type { View } from "../../common/types.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
 const PlayerFeats = ({
 	abbrev,
@@ -13,13 +14,13 @@ const PlayerFeats = ({
 	quarterLengthFactor,
 	season,
 	stats,
-	userTid,
 }: View<"playerFeats">) => {
 	useTitleBar({
 		title: "Statistical Feats",
 		dropdownView: "player_feats",
 		dropdownFields: { teamsAndAll: abbrev, seasonsAndAll: season },
 	});
+	const { userTid } = useLocalPartial(["userTid"]);
 
 	const cols = getCols([
 		"Name",

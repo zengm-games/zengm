@@ -49,8 +49,6 @@ const updateExportPlayers = async (
 		);
 
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
-			multipleSeasons: g.get("season") > g.get("startingSeason"),
 			players,
 			season,
 		};

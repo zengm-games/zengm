@@ -388,13 +388,12 @@ const ScheduleEditor = ({
 	allStarGameAlreadyHappened,
 	canRegenerateSchedule,
 	maxDayAlreadyPlayed,
-	phase,
 	schedule: scheduleProp,
 	teams,
 	tradeDeadline,
-	userTid,
 }: View<"scheduleEditor">) => {
 	useTitleBar({ title: "Schedule Editor" });
+	const { phase, userTid } = useLocalPartial(["phase", "userTid"]);
 
 	const [schedule, dispatchUnwrapped] = useReducer(reducer, scheduleProp);
 	const [showSummaryStatistics, setShowSummaryStatistics] = useState(false);

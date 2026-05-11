@@ -211,15 +211,12 @@ const updateAllStarDunk = async (
 		return {
 			allPossibleContestants,
 			awaitingUserDunkIndex,
-			challengeNoRatings: g.get("challengeNoRatings"),
 			dunk: dunkAugmented,
-			godMode,
 			log,
 			players,
 			resultsByRound,
 			season,
 			started,
-			userTid: g.get("userTid"),
 		};
 	}
 };

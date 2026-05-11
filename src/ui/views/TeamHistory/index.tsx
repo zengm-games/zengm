@@ -6,18 +6,17 @@ import RetiredJerseyNumbers from "./RetiredJerseyNumbers.tsx";
 import Seasons from "./Seasons.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import HideableSection from "../../components/HideableSection.tsx";
+import { useLocalPartial } from "../../util/local.ts";
 
 const TeamHistory = ({
 	abbrev,
 	bestRecord,
 	championships,
 	finalsAppearances,
-	godMode,
 	history,
 	players,
 	playoffAppearances,
 	retiredJerseyNumbers,
-	season,
 	stats,
 	tid,
 	totalLost,
@@ -25,7 +24,6 @@ const TeamHistory = ({
 	totalTied,
 	totalWinp,
 	totalWon,
-	userTid,
 	worstRecord,
 }: View<"teamHistory">) => {
 	useTitleBar({
@@ -33,6 +31,11 @@ const TeamHistory = ({
 		dropdownView: "team_history",
 		dropdownFields: { teams: abbrev },
 	});
+	const { godMode, season, userTid } = useLocalPartial([
+		"godMode",
+		"season",
+		"userTid",
+	]);
 
 	return (
 		<>

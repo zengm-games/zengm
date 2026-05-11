@@ -147,10 +147,8 @@ const updateFrivolitiesDraftClasses = async (
 		);
 
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
 			draftClasses: draftClasses2,
 			stats,
-			userTid: g.get("userTid"),
 		};
 	}
 };

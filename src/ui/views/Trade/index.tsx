@@ -3,7 +3,7 @@ import { PHASE } from "../../../common/constants.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
-import { useLocal } from "../../util/local.ts";
+import { useLocal, useLocalPartial } from "../../util/local.ts";
 import AssetList from "./AssetList.tsx";
 import Buttons from "./Buttons.tsx";
 import type { TradeClearType } from "./Buttons.tsx";
@@ -62,7 +62,7 @@ const Trade = (props: View<"trade">) => {
 
 		const teams = [
 			{
-				tid: props.userTid,
+				tid: userTid,
 				pids: ids["user-pids"],
 				pidsExcluded: ids["user-pids-excluded"],
 				dpids: ids["user-dpids"],
@@ -115,7 +115,7 @@ const Trade = (props: View<"trade">) => {
 
 		const teams: TradeTeams = [
 			{
-				tid: props.userTid,
+				tid: userTid,
 				pids: ids["user-pids"],
 				pidsExcluded: ids["user-pids-excluded"],
 				dpids: ids["user-dpids"],
@@ -142,7 +142,7 @@ const Trade = (props: View<"trade">) => {
 
 		const teams: TradeTeams = [
 			{
-				tid: props.userTid,
+				tid: userTid,
 				pids: props.userPids,
 				pidsExcluded: props.userPidsExcluded,
 				dpids: props.userDpids,
@@ -163,7 +163,7 @@ const Trade = (props: View<"trade">) => {
 	const handleClickAsk = async () => {
 		let newPrevTeams = [
 			{
-				tid: props.userTid,
+				tid: userTid,
 				pids: props.userPids,
 				pidsExcluded: props.userPidsExcluded,
 				dpids: props.userDpids,
@@ -236,22 +236,18 @@ const Trade = (props: View<"trade">) => {
 	};
 
 	const {
-		challengeNoRatings,
 		challengeNoTrades,
 		gameOver,
 		otherTeamsWantToHire,
-		godMode,
 		lost,
 		luxuryPayroll,
 		luxuryTax,
 		multiTeamMode,
 		numDraftRounds,
-		spectator,
 		otherPicks,
 		otherRoster,
 		otherTid,
 		otl,
-		phase,
 		salaryCap,
 		salaryCapType,
 		summary,
@@ -267,12 +263,18 @@ const Trade = (props: View<"trade">) => {
 		userPids,
 		otherDpids,
 		otherPids,
-		userTid,
 	} = props;
 
 	useTitleBar({
 		title: "Trade",
 	});
+
+	const { challengeNoRatings, spectator, phase, userTid } = useLocalPartial([
+		"challengeNoRatings",
+		"spectator",
+		"phase",
+		"userTid",
+	]);
 
 	const summaryText = useRef<HTMLDivElement>(null);
 	const summaryControls = useRef<HTMLDivElement>(null);
@@ -485,7 +487,6 @@ const Trade = (props: View<"trade">) => {
 											asking={state.asking}
 											enablePropose={summary.enablePropose}
 											forceTrade={state.forceTrade}
-											godMode={godMode}
 											handleClickAsk={handleClickAsk}
 											handleClickClear={handleClickClear}
 											handleClickForceTrade={handleClickForceTrade}

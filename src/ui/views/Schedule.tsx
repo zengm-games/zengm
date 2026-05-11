@@ -15,7 +15,6 @@ const Schedule = ({
 	completed,
 	elam,
 	elamASG,
-	phase,
 	tid,
 	ties,
 	topPlayers,
@@ -27,9 +26,10 @@ const Schedule = ({
 		dropdownFields: { teams: abbrev },
 	});
 
-	const { gameSimInProgress, godMode } = useLocalPartial([
+	const { gameSimInProgress, godMode, phase } = useLocalPartial([
 		"gameSimInProgress",
 		"godMode",
+		"phase",
 	]);
 
 	const [forcingAll, setForcingAll] = useState(false);

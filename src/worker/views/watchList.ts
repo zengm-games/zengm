@@ -102,9 +102,6 @@ const updatePlayers = async (
 		const { players, stats } = await formatPlayersWatchList(playersAll, inputs);
 
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
-			currentSeason: g.get("season"),
-			phase: g.get("phase"),
 			players,
 			playoffs: inputs.playoffs,
 			statType: inputs.statType,

@@ -31,6 +31,7 @@ import {
 	NegotiationModal,
 	useNegotiaionModal,
 } from "../../components/NegotiationModal.tsx";
+import { useLocalPartial } from "../../util/local.ts";
 
 const Relatives = ({
 	gender,
@@ -280,56 +281,53 @@ const ComparePlayerButton = ({
 const TopStuff = ({
 	bestPos,
 	currentSeason,
-	freeAgent,
-	gender,
-	godMode,
-	injured,
 	jerseyNumberInfos,
-	phase,
 	player,
 	randomDebutsForeverPids,
 	retired,
 	season,
-	showContract,
 	showRatings,
-	showTradeFor,
-	showTradingBlock,
-	spectator,
 	statSummary,
 	teamColors,
 	teamJersey,
 	teamName,
 	teamURL,
-	userTid,
 	willingToSign,
 }: Pick<
 	View<"player">,
 	| "bestPos"
-	| "currentSeason"
-	| "freeAgent"
-	| "gender"
-	| "godMode"
-	| "injured"
 	| "jerseyNumberInfos"
-	| "phase"
 	| "player"
 	| "randomDebutsForeverPids"
 	| "retired"
-	| "showContract"
-	| "showRatings"
-	| "showTradeFor"
-	| "showTradingBlock"
-	| "spectator"
 	| "statSummary"
 	| "teamColors"
 	| "teamJersey"
 	| "teamName"
 	| "teamURL"
-	| "userTid"
 	| "willingToSign"
 > & {
+	currentSeason: number;
 	season?: number;
+	showRatings: boolean;
 }) => {
+	const { gender, godMode, phase, spectator, userTid } = useLocalPartial([
+		"gender",
+		"godMode",
+		"phase",
+		"spectator",
+		"userTid",
+	]);
+
+	const freeAgent = player.tid === PLAYER.FREE_AGENT;
+	const injured = player.injury.gamesRemaining > 0;
+	const showContract =
+		player.tid !== PLAYER.UNDRAFTED &&
+		player.tid !== PLAYER.UNDRAFTED_FANTASY_TEMP &&
+		player.tid !== PLAYER.RETIRED;
+	const showTradeFor = player.tid !== userTid && player.tid >= 0;
+	const showTradingBlock = player.tid === userTid;
+
 	let draftInfo: ReactNode = null;
 	if (player.draft.round > 0) {
 		draftInfo = (

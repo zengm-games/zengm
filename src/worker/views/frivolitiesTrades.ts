@@ -1,5 +1,5 @@
 import { idb } from "../db/index.ts";
-import { g, getTeamInfoBySeason } from "../util/index.ts";
+import { getTeamInfoBySeason } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
@@ -195,12 +195,10 @@ const frivolitiesTrades = async (
 
 		return {
 			abbrev,
-			challengeNoRatings: g.get("challengeNoRatings"),
 			description,
 			title,
 			trades,
 			type,
-			userTid: g.get("userTid"),
 		};
 	}
 };

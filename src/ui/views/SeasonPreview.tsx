@@ -7,6 +7,7 @@ import { arrow } from "./Trade/Summary.tsx";
 import { RatingWithChange } from "../components/RatingWithChange.tsx";
 import { RecordAndPlayoffs } from "../components/RecordAndPlayoffs.tsx";
 import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import { useLocalPartial } from "../util/local.ts";
 
 const PlayerList = ({
 	challengeNoRatings,
@@ -198,7 +199,6 @@ const TeamList = ({
 };
 
 const SeasonPreview = ({
-	challengeNoRatings,
 	playersDeclining,
 	playersImproving,
 	playersNewTeam,
@@ -208,7 +208,6 @@ const SeasonPreview = ({
 	teamsDeclining,
 	teamsImproving,
 	teamsTop,
-	userTid,
 }: View<"seasonPreview">) => {
 	useTitleBar({
 		title: "Season Preview",
@@ -217,6 +216,11 @@ const SeasonPreview = ({
 			seasons: season,
 		},
 	});
+	const { challengeNoRatings, userTid } = useLocalPartial([
+		"challengeNoRatings",
+		"userTid",
+	]);
+
 	return (
 		<>
 			<MoreLinks type="league" page="season_preview" />

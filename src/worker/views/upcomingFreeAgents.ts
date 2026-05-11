@@ -76,14 +76,10 @@ const updateUpcomingFreeAgents = async (
 	const projectedCapSpace = g.get("salaryCap") - projectedPayroll;
 
 	return {
-		challengeNoRatings: g.get("challengeNoRatings"),
-		currentSeason: g.get("season"),
-		phase: g.get("phase"),
 		players,
 		projectedCapSpace,
 		season: inputs.season,
 		stats,
-		userTid: g.get("userTid"),
 	};
 };
 

@@ -239,8 +239,6 @@ const updatePowerRankings = async (
 		}
 
 		return {
-			challengeNoRatings: g.get("challengeNoRatings"),
-			currentSeason: g.get("season"),
 			confs: g.get("confs", season),
 			divs: g.get("divs", season),
 			playoffs,
@@ -248,7 +246,6 @@ const updatePowerRankings = async (
 			teams: teamsWithRankings,
 			ties: hasTies(season) || ties,
 			otl: g.get("otl", season) || otl,
-			userTid: g.get("userTid"),
 		};
 	}
 };

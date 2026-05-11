@@ -82,7 +82,6 @@ const updateAwards = async (
 		});
 
 		return {
-			godMode: g.get("godMode"),
 			players,
 			awards,
 			season,

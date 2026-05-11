@@ -230,7 +230,6 @@ const updateTeamFinances = async (
 		return {
 			abbrev: inputs.abbrev,
 			autoTicketPrice,
-			challengeNoRatings: g.get("challengeNoRatings"),
 			salaryCapType: g.get("salaryCapType"),
 			numGames: g.get("numGames"),
 			tid: inputs.tid,
@@ -242,9 +241,7 @@ const updateTeamFinances = async (
 			luxuryPayroll: g.get("luxuryPayroll") / 1000,
 			luxuryTax: g.get("luxuryTax"),
 			luxuryTaxAmount,
-			userTid: g.get("userTid"),
 			budget: g.get("budget"),
-			spectator: g.get("spectator"),
 			maxStadiumCapacity,
 			t,
 			barData,
@@ -252,8 +249,6 @@ const updateTeamFinances = async (
 			contracts,
 			contractTotals,
 			salariesSeasons,
-			phase: g.get("phase"),
-			godMode: g.get("godMode"),
 			otherTeamTicketPrices,
 		};
 	}

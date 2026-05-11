@@ -76,18 +76,20 @@ export const deploy = async (sport: Sport, versionNumber: string) => {
 		hockey: `${subdomain === "play" ? "" : "beta."}hockey.zengm.com`,
 	});
 
+	console.log("");
+
 	if (subdomain === "play") {
 		// Confirm we're on the master branch if we're deploying to prod
 		const branch = JSON.stringify(getCurrentBranch());
 		if (branch !== "master") {
 			console.log(
-				`\nDeploying to prod from a non-master branch (${branch}) is not allowed`,
+				`Deploying to prod from a non-master branch (${branch}) is not allowed`,
 			);
 			process.exit(1);
 		}
 	}
 
-	console.log(`\nDeploying to ${domain}...`);
+	console.log(`Deploying to ${domain}...`);
 
 	// Copy gen first, so index.html never links to partial file
 	// files is here because real-player-data was briefly there in May 2020, so we don't want to delete it

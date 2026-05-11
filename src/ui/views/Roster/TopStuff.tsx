@@ -137,8 +137,6 @@ const PayrollAndPenalties = ({
 
 const TopStuff = ({
 	abbrev,
-	budget,
-	challengeNoRatings,
 	currentSeason,
 	editable,
 	luxuryTaxAmount,
@@ -148,18 +146,15 @@ const TopStuff = ({
 	players,
 	playoffsByConf,
 	profit,
-	salaryCapType,
 	season,
 	showTradeFor,
 	showTradingBlock,
 	t,
 	tid,
 	usePts,
-	userTid,
 }: Pick<
 	View<"roster">,
 	| "abbrev"
-	| "budget"
 	| "editable"
 	| "luxuryTaxAmount"
 	| "minPayrollAmount"
@@ -172,17 +167,29 @@ const TopStuff = ({
 	| "t"
 	| "tid"
 	| "usePts"
-> &
-	Pick<LocalStateUI, "challengeNoRatings" | "salaryCapType" | "userTid"> & {
-		currentSeason: number;
-		openRosterSpots: number;
-		profit: number;
-	}) => {
-	const { godMode, luxuryPayroll, minPayroll, salaryCap } = useLocal([
+> & {
+	currentSeason: number;
+	openRosterSpots: number;
+	profit: number;
+}) => {
+	const {
+		budget,
+		challengeNoRatings,
+		godMode,
+		luxuryPayroll,
+		minPayroll,
+		salaryCap,
+		salaryCapType,
+		userTid,
+	} = useLocal([
+		"budget",
+		"challengeNoRatings",
 		"godMode",
 		"luxuryPayroll",
 		"minPayroll",
 		"salaryCap",
+		"salaryCapType",
+		"userTid",
 	]);
 
 	const logoStyle: CSSProperties = {

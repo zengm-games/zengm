@@ -722,13 +722,11 @@ const TeamFinances = ({
 	abbrev,
 	autoTicketPrice,
 	barData,
-	budget,
 	contractTotals,
 	contracts,
 	luxuryTaxAmount,
 	maxStadiumCapacity,
 	minPayrollAmount,
-	numGames,
 	otherTeamTicketPrices,
 	payroll,
 	salariesSeasons,
@@ -742,13 +740,21 @@ const TeamFinances = ({
 		dropdownFields: { teams: abbrev, shows: show },
 	});
 
-	const { gameSimInProgress, luxuryPayroll, salaryCap, salaryCapType } =
-		useLocal([
-			"gameSimInProgress",
-			"luxuryPayroll",
-			"salaryCap",
-			"salaryCapType",
-		]);
+	const {
+		budget,
+		gameSimInProgress,
+		luxuryPayroll,
+		numGames,
+		salaryCap,
+		salaryCapType,
+	} = useLocal([
+		"budget",
+		"gameSimInProgress",
+		"luxuryPayroll",
+		"numGames",
+		"salaryCap",
+		"salaryCapType",
+	]);
 
 	const cols = getCols(["Pos", "Name", "Cap%"]).concat(
 		salariesSeasons.map((season) => {

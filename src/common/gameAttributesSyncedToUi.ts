@@ -1,5 +1,6 @@
 export const gameAttributesSyncedToUi = [
 	"alwaysShowCountry",
+	"budget",
 	"challengeNoRatings",
 	"challengeNoTrades",
 	"currencyFormat",
@@ -17,6 +18,7 @@ export const gameAttributesSyncedToUi = [
 	"minContract",
 	"minPayroll",
 	"neutralSite",
+	"numGames",
 	"numPeriods",
 	"numWatchColors",
 	"phase",

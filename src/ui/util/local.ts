@@ -50,6 +50,7 @@ if (showTemp === "true") {
 const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 	(set) => ({
 		alwaysShowCountry: false,
+		budget: defaultGameAttributes.budget,
 		challengeNoRatings: false,
 		challengeNoTrades: false,
 		currencyFormat: defaultGameAttributes.currencyFormat,
@@ -76,6 +77,7 @@ const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 		minContract: defaultGameAttributes.minContract,
 		minPayroll: defaultGameAttributes.minPayroll,
 		neutralSite: defaultGameAttributes.neutralSite,
+		numGames: defaultGameAttributes.numGames[0].value,
 		numPeriods: defaultGameAttributes.numPeriods,
 		numWatchColors: defaultGameAttributes.numWatchColors,
 		phase: 0,

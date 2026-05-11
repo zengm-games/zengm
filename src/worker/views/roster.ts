@@ -343,7 +343,6 @@ const updateRoster = async (
 
 		return {
 			abbrev: inputs.abbrev,
-			budget: g.get("budget"),
 			editable,
 			maxRosterSize: g.get("maxRosterSize"),
 			numPlayersOnCourt: g.get("numPlayersOnCourt"),

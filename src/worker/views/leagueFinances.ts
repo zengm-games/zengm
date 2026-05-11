@@ -52,7 +52,6 @@ const updateLeagueFinances = async (
 			};
 		});
 		return {
-			budget: g.get("budget"),
 			season: inputs.season,
 			teams,
 		};

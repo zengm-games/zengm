@@ -88,7 +88,6 @@ const handleRelease = async (
 
 const Roster = ({
 	abbrev,
-	budget,
 	editable,
 	luxuryTaxAmount,
 	maxRosterSize,
@@ -391,8 +390,6 @@ const Roster = ({
 
 			<TopStuff
 				abbrev={abbrev}
-				budget={budget}
-				challengeNoRatings={challengeNoRatings}
 				currentSeason={currentSeason}
 				editable={editable}
 				luxuryTaxAmount={luxuryTaxAmount}
@@ -403,12 +400,10 @@ const Roster = ({
 				season={season}
 				payroll={payroll}
 				profit={profit}
-				salaryCapType={salaryCapType}
 				showTradeFor={showTradeFor}
 				showTradingBlock={showTradingBlock}
 				t={t}
 				tid={tid}
-				userTid={userTid}
 				usePts={usePts}
 			/>
 

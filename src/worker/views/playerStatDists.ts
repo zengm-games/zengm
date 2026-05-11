@@ -108,7 +108,6 @@ const updatePlayers = async (
 		}, {});
 
 		return {
-			numGames: g.get("numGames"),
 			season: inputs.season,
 			statsAll,
 			statType: inputs.statType,

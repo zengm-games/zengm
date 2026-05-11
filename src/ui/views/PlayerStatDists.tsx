@@ -5,6 +5,7 @@ import type { View } from "../../common/types.ts";
 import { isSport } from "../../common/sportFunctions.ts";
 import { BoxPlot } from "../components/BoxPlot.tsx";
 import { getCol } from "../../common/getCol.ts";
+import { useLocal } from "../util/local.ts";
 
 const width100 = {
 	width: "100%",
@@ -38,11 +39,12 @@ const proQuartiles = isSport("basketball")
 	: {};
 
 const PlayerStatDists = ({
-	numGames,
 	season,
 	statType,
 	statsAll,
 }: View<"playerStatDists">) => {
+	const { numGames } = useLocal(["numGames"]);
+
 	useTitleBar({
 		title: "Player Stat Distributions",
 		dropdownView: "player_stat_dists",

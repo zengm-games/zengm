@@ -230,12 +230,10 @@ const updateTeamFinances = async (
 		return {
 			abbrev: inputs.abbrev,
 			autoTicketPrice,
-			numGames: g.get("numGames"),
 			tid: inputs.tid,
 			show: inputs.show,
 			minPayrollAmount,
 			luxuryTaxAmount,
-			budget: g.get("budget"),
 			maxStadiumCapacity,
 			t,
 			barData,

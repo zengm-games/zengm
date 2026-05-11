@@ -1,6 +1,4 @@
-gameAttributesSyncedToUi should never be returned from worker view functions, except possibly if they are also used internally in those functions and we need to be consistent (in which case we should be listening for changes in those settings)
-- add more variables?
-  - .+?: g.get\(".+?"\)
+use overflow-anchor for leaguetopbar scrolling https://x.com/mannupaaji/status/2053829832757407907 - Safari ?
 
 race condition with mutable cached variables and async stuff (example, AbbrevsCache issue from commit e3f01ef8b)
 - cannot assume an object from our cache is stable after any await, could have any arbitrary changes such as new transactions, new stats rows, etc.
@@ -229,8 +227,6 @@ custom awards
   - import
 
 filter GOAT Season by team https://old.reddit.com/r/BasketballGM/comments/1payyv7/monthly_suggestions_thread/nszvtf8/
-
-positions with a hard cap in ovr (G, K, P) should also have a hard cap in pot
 
 "random" draft lottery type Draft Lottery page issues
 - erroneously called Draft Order

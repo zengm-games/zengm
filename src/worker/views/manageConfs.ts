@@ -1,4 +1,5 @@
 import { idb } from "../db/index.ts";
+import { actualPhase } from "../util/actualPhase.ts";
 import { g } from "../util/index.ts";
 
 const updateConfs = async () => {
@@ -37,7 +38,7 @@ const updateConfs = async () => {
 	}*/
 
 	return {
-		actualPhase: g.get("nextPhase") ?? g.get("phase"),
+		actualPhase: actualPhase(),
 		autoRelocate: !!g.get("autoRelocate"),
 		initialConfs,
 		initialDivs,

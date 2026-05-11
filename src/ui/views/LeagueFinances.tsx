@@ -9,7 +9,7 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedCurrency } from "../components/wrappedCurrency.ts";
 import { useLocal } from "../util/local.ts";
 
-const LeagueFinances = ({ budget, season, teams }: View<"leagueFinances">) => {
+const LeagueFinances = ({ season, teams }: View<"leagueFinances">) => {
 	useTitleBar({
 		title: "League Finances",
 		jumpTo: true,
@@ -19,6 +19,7 @@ const LeagueFinances = ({ budget, season, teams }: View<"leagueFinances">) => {
 	});
 
 	const {
+		budget,
 		luxuryPayroll,
 		luxuryTax,
 		minPayroll,
@@ -27,6 +28,7 @@ const LeagueFinances = ({ budget, season, teams }: View<"leagueFinances">) => {
 		season: currentSeason,
 		userTid,
 	} = useLocal([
+		"budget",
 		"luxuryPayroll",
 		"luxuryTax",
 		"minPayroll",

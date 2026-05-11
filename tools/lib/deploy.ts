@@ -84,7 +84,7 @@ export const deploy = async (sport: Sport, versionNumber: string) => {
 
 	if (subdomain === "play") {
 		// Confirm we're on the master branch if we're deploying to prod
-		const branch = JSON.stringify(getCurrentBranch());
+		const branch = getCurrentBranch();
 		if (branch !== "master") {
 			console.log(
 				`Deploying to prod from a non-master branch (${branch}) is not allowed`,

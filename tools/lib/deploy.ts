@@ -10,9 +10,13 @@ const getSubdomain = () => {
 	const inputSubdomain = process.argv[2] ?? "play";
 
 	// test is basketball-gm.com only
-	const validSubdomains = ["beta", "play", "test"];
+	const validSubdomains = ["beta", "play", "test"] as const;
+	type Subdomain = (typeof validSubdomains)[number];
+	const isSubdomain = (x: string): x is Subdomain => {
+		return validSubdomains.includes(x as any);
+	};
 
-	if (validSubdomains.includes(inputSubdomain)) {
+	if (isSubdomain(inputSubdomain)) {
 		return inputSubdomain;
 	}
 	throw new Error(

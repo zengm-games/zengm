@@ -55,14 +55,8 @@ const PayrollAndPenalties = ({
 	payroll,
 }: {
 	isCurrentSeason: boolean;
-} & Pick<
-	View<"roster">,
-	| "luxuryPayroll"
-	| "luxuryTaxAmount"
-	| "minPayroll"
-	| "minPayrollAmount"
-	| "payroll"
->) => {
+} & Pick<View<"roster">, "luxuryTaxAmount" | "minPayrollAmount" | "payroll"> &
+	Pick<LocalStateUI, "luxuryPayroll" | "minPayroll">) => {
 	const payrollString = helpers.formatCurrency(payroll ?? 0, "M");
 
 	if (luxuryTaxAmount === undefined || minPayrollAmount === undefined) {
@@ -147,16 +141,13 @@ const TopStuff = ({
 	challengeNoRatings,
 	currentSeason,
 	editable,
-	luxuryPayroll,
 	luxuryTaxAmount,
-	minPayroll,
 	minPayrollAmount,
 	openRosterSpots,
 	payroll,
 	players,
 	playoffsByConf,
 	profit,
-	salaryCap,
 	salaryCapType,
 	season,
 	showTradeFor,
@@ -170,14 +161,11 @@ const TopStuff = ({
 	| "abbrev"
 	| "budget"
 	| "editable"
-	| "luxuryPayroll"
 	| "luxuryTaxAmount"
-	| "minPayroll"
 	| "minPayrollAmount"
 	| "payroll"
 	| "players"
 	| "playoffsByConf"
-	| "salaryCap"
 	| "season"
 	| "showTradeFor"
 	| "showTradingBlock"
@@ -190,7 +178,12 @@ const TopStuff = ({
 		openRosterSpots: number;
 		profit: number;
 	}) => {
-	const { godMode } = useLocal(["godMode"]);
+	const { godMode, luxuryPayroll, minPayroll, salaryCap } = useLocal([
+		"godMode",
+		"luxuryPayroll",
+		"minPayroll",
+		"salaryCap",
+	]);
 
 	const logoStyle: CSSProperties = {
 		margin: "0.25rem 1rem 0 0",
@@ -300,16 +293,18 @@ const TopStuff = ({
 								{isCurrentSeason ? "Payroll" : "End of season payroll"}:{" "}
 								<PayrollAndPenalties
 									isCurrentSeason={isCurrentSeason}
-									luxuryPayroll={luxuryPayroll}
+									luxuryPayroll={luxuryPayroll / 1000}
 									luxuryTaxAmount={luxuryTaxAmount}
-									minPayroll={minPayroll}
+									minPayroll={minPayroll / 1000}
 									minPayrollAmount={minPayrollAmount}
 									payroll={payroll}
 								/>
 							</div>
 						) : null}
 						{isCurrentSeason && salaryCapType !== "none" ? (
-							<div>Salary cap: {helpers.formatCurrency(salaryCap, "M")}</div>
+							<div>
+								Salary cap: {helpers.formatCurrency(salaryCap / 1000, "M")}
+							</div>
 						) : null}
 						{isCurrentSeason && budget ? (
 							<div>Profit: {helpers.formatCurrency(profit, "M")}</div>

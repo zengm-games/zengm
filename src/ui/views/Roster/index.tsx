@@ -90,17 +90,14 @@ const Roster = ({
 	abbrev,
 	budget,
 	editable,
-	luxuryPayroll,
 	luxuryTaxAmount,
 	maxRosterSize,
-	minPayroll,
 	minPayrollAmount,
 	numPlayersOnCourt,
 	payroll,
 	players,
 	playoffs,
 	playoffsByConf,
-	salaryCap,
 	season,
 	showSpectatorWarning,
 	showRelease,
@@ -398,9 +395,7 @@ const Roster = ({
 				challengeNoRatings={challengeNoRatings}
 				currentSeason={currentSeason}
 				editable={editable}
-				luxuryPayroll={luxuryPayroll}
 				luxuryTaxAmount={luxuryTaxAmount}
-				minPayroll={minPayroll}
 				minPayrollAmount={minPayrollAmount}
 				openRosterSpots={maxRosterSize - players.length}
 				players={players}
@@ -408,7 +403,6 @@ const Roster = ({
 				season={season}
 				payroll={payroll}
 				profit={profit}
-				salaryCap={salaryCap}
 				salaryCapType={salaryCapType}
 				showTradeFor={showTradeFor}
 				showTradingBlock={showTradingBlock}

@@ -13,6 +13,7 @@ export const gameAttributesSyncedToUi = [
 	"lid",
 	"luxuryPayroll",
 	"luxuryTax",
+	"minPayroll",
 	"neutralSite",
 	"numPeriods",
 	"numWatchColors",

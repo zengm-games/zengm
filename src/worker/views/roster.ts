@@ -348,15 +348,12 @@ const updateRoster = async (
 			editable,
 			maxRosterSize: g.get("maxRosterSize"),
 			numPlayersOnCourt: g.get("numPlayersOnCourt"),
-			luxuryPayroll: g.get("luxuryPayroll") / 1000,
 			luxuryTaxAmount,
-			minPayroll: g.get("minPayroll") / 1000,
 			minPayrollAmount,
 			payroll,
 			playoffs: inputs.playoffs,
 			playoffsByConf,
 			players: addFirstNameShort(players),
-			salaryCap: g.get("salaryCap") / 1000,
 			season: inputs.season,
 			showSpectatorWarning:
 				inputs.season === g.get("season") &&

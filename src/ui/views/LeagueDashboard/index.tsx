@@ -16,7 +16,6 @@ const LeagueDashboard = ({
 	events,
 	leagueLeaders,
 	lost,
-	luxuryPayroll,
 	maxPlayoffSeed,
 	maxPlayoffSeedNoPlayIn,
 	messages,
@@ -33,7 +32,6 @@ const LeagueDashboard = ({
 	region,
 	revenue,
 	roundsWonText,
-	salaryCap,
 	series,
 	seriesTitle,
 	showPlayoffSeries,
@@ -48,11 +46,9 @@ const LeagueDashboard = ({
 }: View<"leagueDashboard">) => {
 	useTitleBar({ title: `${region} ${name} Dashboard` });
 
-	const { salaryCapType, season, userTid } = useLocal([
-		"salaryCapType",
-		"season",
-		"userTid",
-	]);
+	const { luxuryPayroll, salaryCap, salaryCapType, season, userTid } = useLocal(
+		["luxuryPayroll", "salaryCap", "salaryCapType", "season", "userTid"],
+	);
 
 	return (
 		<>
@@ -166,10 +162,14 @@ const LeagueDashboard = ({
 										<br />
 										{salaryCapType === "none" ? (
 											<>
-												Luxury Tax: {helpers.formatCurrency(luxuryPayroll, "M")}
+												Luxury Tax:{" "}
+												{helpers.formatCurrency(luxuryPayroll / 1000, "M")}
 											</>
 										) : (
-											<>Salary Cap: {helpers.formatCurrency(salaryCap, "M")}</>
+											<>
+												Salary Cap:{" "}
+												{helpers.formatCurrency(salaryCap / 1000, "M")}
+											</>
 										)}
 										<br />
 										<a href={helpers.leagueUrl(["team_finances"])}>

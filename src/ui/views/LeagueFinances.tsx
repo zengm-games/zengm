@@ -9,14 +9,7 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { wrappedCurrency } from "../components/wrappedCurrency.ts";
 import { useLocal } from "../util/local.ts";
 
-const LeagueFinances = ({
-	budget,
-	minPayroll,
-	luxuryPayroll,
-	salaryCap,
-	season,
-	teams,
-}: View<"leagueFinances">) => {
+const LeagueFinances = ({ budget, season, teams }: View<"leagueFinances">) => {
 	useTitleBar({
 		title: "League Finances",
 		jumpTo: true,
@@ -26,11 +19,22 @@ const LeagueFinances = ({
 	});
 
 	const {
+		luxuryPayroll,
 		luxuryTax,
+		minPayroll,
+		salaryCap,
 		salaryCapType,
 		season: currentSeason,
 		userTid,
-	} = useLocal(["luxuryTax", "salaryCapType", "season", "userTid"]);
+	} = useLocal([
+		"luxuryPayroll",
+		"luxuryTax",
+		"minPayroll",
+		"salaryCap",
+		"salaryCapType",
+		"season",
+		"userTid",
+	]);
 
 	const showCapSpaceForReal = salaryCapType !== "none";
 
@@ -102,7 +106,7 @@ const LeagueFinances = ({
 		// Since we don't store historical salary cap data, only show cap space for current season
 		if (season === currentSeason) {
 			if (showCapSpaceForReal) {
-				data.push(wrappedCurrency(salaryCap - payroll, "M"));
+				data.push(wrappedCurrency(salaryCap / 1000 - payroll, "M"));
 			}
 			data.push(t.rosterSpots, helpers.upperCaseFirstLetter(t.strategy));
 		} else {
@@ -141,18 +145,17 @@ const LeagueFinances = ({
 			<p>
 				{salaryCapType !== "none" ? (
 					<>
-						Salary cap: <b>{helpers.formatCurrency(salaryCap, "M")}</b> (teams
-						over this amount cannot sign{" "}
+						Salary cap: <b>{helpers.formatCurrency(salaryCap / 1000, "M")}</b>{" "}
+						(teams over this amount cannot sign{" "}
 						{salaryCapType === "hard" ? "players" : "free agents"} for more than
 						the minimum contract)
 						<br />
 					</>
 				) : null}
-				Minimum payroll limit: <b>
-					{helpers.formatCurrency(minPayroll, "M")}
-				</b>{" "}
-				(teams with payrolls below this limit will be assessed a fine equal to
-				the difference at the end of the season)
+				Minimum payroll limit:{" "}
+				<b>{helpers.formatCurrency(minPayroll / 1000, "M")}</b> (teams with
+				payrolls below this limit will be assessed a fine equal to the
+				difference at the end of the season)
 				{salaryCapType !== "hard" ? (
 					<>
 						<br />
@@ -161,9 +164,10 @@ const LeagueFinances = ({
 						) : (
 							<>
 								Luxury tax limit:{" "}
-								<b>{helpers.formatCurrency(luxuryPayroll, "M")}</b> (teams with
-								payrolls above this limit will be assessed a fine equal to{" "}
-								{luxuryTax} times the difference at the end of the season)
+								<b>{helpers.formatCurrency(luxuryPayroll / 1000, "M")}</b>{" "}
+								(teams with payrolls above this limit will be assessed a fine
+								equal to {luxuryTax} times the difference at the end of the
+								season)
 							</>
 						)}
 					</>

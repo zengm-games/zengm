@@ -76,7 +76,6 @@ const updateDraftScouting = async (
 		}
 
 		return {
-			draftType: g.get("draftType"),
 			fantasyDraft,
 			seasons,
 		};

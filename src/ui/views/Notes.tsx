@@ -23,7 +23,19 @@ const Notes = (props: View<"notes">) => {
 			notesType: props.type,
 		},
 	});
-	const { userTid } = useLocal(["userTid"]);
+	const {
+		challengeNoRatings,
+		draftType,
+		phase,
+		season: currentSeason,
+		userTid,
+	} = useLocal([
+		"challengeNoRatings",
+		"draftType",
+		"phase",
+		"season",
+		"userTid",
+	]);
 
 	let infoText;
 	let moreLinks;
@@ -31,7 +43,7 @@ const Notes = (props: View<"notes">) => {
 	let rows;
 
 	if (props.type === "draftPick") {
-		const { challengeNoRatings, draftPicks, draftType } = props;
+		const { draftPicks } = props;
 
 		infoText = (
 			<>
@@ -177,15 +189,7 @@ const Notes = (props: View<"notes">) => {
 
 		moreLinks = <MoreLinks type="playerNotes" page="notes" />;
 
-		const {
-			challengeNoRatings,
-			currentSeason,
-			phase,
-			players,
-			playoffs,
-			statType,
-			stats,
-		} = props;
+		const { players, playoffs, statType, stats } = props;
 
 		const output = getWatchListColsAndRows({
 			challengeNoRatings,

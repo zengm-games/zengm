@@ -175,7 +175,6 @@ const DraftPicks = ({
 	abbrev,
 	draftPicks,
 	draftPicksOutgoing,
-	draftType,
 	tid,
 }: View<"draftPicks">) => {
 	useTitleBar({
@@ -184,7 +183,10 @@ const DraftPicks = ({
 		dropdownFields: { teams: abbrev },
 	});
 
-	const { challengeNoRatings } = useLocal(["challengeNoRatings"]);
+	const { challengeNoRatings, draftType } = useLocal([
+		"challengeNoRatings",
+		"draftType",
+	]);
 
 	const { rows, rowsOutgoing, cols } = getDraftPicksColsAndRows({
 		challengeNoRatings,

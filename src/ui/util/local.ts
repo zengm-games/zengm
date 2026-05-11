@@ -54,6 +54,7 @@ const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 		challengeNoTrades: false,
 		currencyFormat: defaultGameAttributes.currencyFormat,
 		customMenu: undefined,
+		draftType: defaultGameAttributes.draftType,
 		email: undefined,
 		fantasyPoints: undefined,
 		flagOverrides: {},

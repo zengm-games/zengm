@@ -15,11 +15,17 @@ import { PlusMinus } from "../components/PlusMinus.tsx";
 
 const DraftTeamHistory = ({
 	abbrev,
-	draftType,
 	players,
 	stats,
 	tid,
 }: View<"draftTeamHistory">) => {
+	const { challengeNoRatings, draftType, teamInfoCache, userTid } = useLocal([
+		"challengeNoRatings",
+		"draftType",
+		"teamInfoCache",
+		"userTid",
+	]);
+
 	const noDraft = draftType === "freeAgents";
 
 	useTitleBar({
@@ -27,12 +33,6 @@ const DraftTeamHistory = ({
 		dropdownView: "draft_team_history",
 		dropdownFields: { teamsAndYours: abbrev },
 	});
-
-	const { challengeNoRatings, teamInfoCache, userTid } = useLocal([
-		"challengeNoRatings",
-		"teamInfoCache",
-		"userTid",
-	]);
 
 	const superCols = [
 		{

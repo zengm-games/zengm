@@ -34,9 +34,7 @@ const updateNotes = async (
 
 			return {
 				type,
-				challengeNoRatings: g.get("challengeNoRatings"),
 				draftPicks,
-				draftType: g.get("draftType"),
 			};
 		} else if (type === "game") {
 			const gamesRaw = await idb.getCopies.games({ note: true }, "noCopyCache");
@@ -103,9 +101,6 @@ const updateNotes = async (
 
 			return {
 				type,
-				challengeNoRatings: g.get("challengeNoRatings"),
-				currentSeason: g.get("season"),
-				phase: g.get("phase"),
 				players,
 				playoffs,
 				statType,

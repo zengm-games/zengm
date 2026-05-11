@@ -216,13 +216,19 @@ const ExportButton = ({ season }: { season: number }) => {
 };
 
 const DraftHistory = ({
-	draftType,
 	players,
 	season,
 	stats,
 	summaryStat,
 	teamsByTid,
 }: View<"draftHistory">) => {
+	const { challengeNoRatings, draftType, userTid, teamInfoCache } = useLocal([
+		"challengeNoRatings",
+		"draftType",
+		"userTid",
+		"teamInfoCache",
+	]);
+
 	const noDraft = draftType === "freeAgents";
 
 	useTitleBar({
@@ -232,12 +238,6 @@ const DraftHistory = ({
 		dropdownView: "draft_history",
 		dropdownFields: { seasonsAndOldDrafts: season },
 	});
-
-	const { challengeNoRatings, userTid, teamInfoCache } = useLocal([
-		"challengeNoRatings",
-		"userTid",
-		"teamInfoCache",
-	]);
 
 	const superCols = [
 		{

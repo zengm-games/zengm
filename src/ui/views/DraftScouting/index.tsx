@@ -7,19 +7,16 @@ import { useLocal } from "../../util/local.ts";
 
 const PAGE_SIZE = 3;
 
-const DraftScouting = ({
-	draftType,
-	fantasyDraft,
-	seasons,
-}: View<"draftScouting">) => {
+const DraftScouting = ({ fantasyDraft, seasons }: View<"draftScouting">) => {
+	const { challengeNoRatings, draftType, godMode } = useLocal([
+		"challengeNoRatings",
+		"draftType",
+		"godMode",
+	]);
+
 	const noDraft = draftType === "freeAgents";
 
 	useTitleBar({ title: !noDraft ? "Draft Scouting" : "Upcoming Prospects" });
-
-	const { challengeNoRatings, godMode } = useLocal([
-		"challengeNoRatings",
-		"godMode",
-	]);
 
 	const [page, setPage] = useState(0);
 

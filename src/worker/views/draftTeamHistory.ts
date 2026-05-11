@@ -129,7 +129,6 @@ const updateDraftTeamHistory = async (
 
 	return {
 		abbrev: inputs.abbrev,
-		draftType: g.get("draftType"),
 		players: addFirstNameShort(players),
 		stats,
 		tid: inputs.tid,

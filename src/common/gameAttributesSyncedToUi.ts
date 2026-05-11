@@ -3,6 +3,7 @@ export const gameAttributesSyncedToUi = [
 	"challengeNoRatings",
 	"challengeNoTrades",
 	"currencyFormat",
+	"draftType",
 	"fantasyPoints",
 	"gameOver",
 	"gender",

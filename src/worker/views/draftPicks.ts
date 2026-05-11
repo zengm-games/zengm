@@ -173,7 +173,6 @@ const updateDraftPicks = async (
 			abbrev,
 			draftPicks,
 			draftPicksOutgoing,
-			draftType: g.get("draftType"),
 			tid,
 		};
 	}

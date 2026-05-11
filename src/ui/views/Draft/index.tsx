@@ -25,7 +25,6 @@ import { PHASE } from "../../../common/constants.ts";
 
 const Draft = ({
 	challengeNoDraftPicks,
-	draftType,
 	drafted,
 	expansionDraftFilteredTeamsMessage,
 	fantasyDraft,
@@ -37,6 +36,7 @@ const Draft = ({
 }: View<"draft">) => {
 	const {
 		challengeNoRatings,
+		draftType,
 		godMode,
 		phase,
 		season,
@@ -46,6 +46,7 @@ const Draft = ({
 		userTids,
 	} = useLocal([
 		"challengeNoRatings",
+		"draftType",
 		"godMode",
 		"phase",
 		"season",

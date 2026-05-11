@@ -6,7 +6,7 @@ import {
 	useKeyboardShortcuts,
 	type KeyboardShortcuts,
 } from "../util/keyboardShortcuts.ts";
-import { useLocal } from "../util/local.ts";
+import { useLocalPartial } from "../util/local.ts";
 
 export type FastForward = {
 	keyboardShortcut?: Exclude<
@@ -80,7 +80,9 @@ export const PlayPauseNext = ({
 		),
 	});
 
-	const keyboardShortcutsLocal = useLocal((state) => state.keyboardShortcuts);
+	const { keyboardShortcuts: keyboardShortcutsLocal } = useLocalPartial([
+		"keyboardShortcuts",
+	]);
 	const formattedShortcutPlayPause = formatKeyboardShortcut(
 		"playPauseNext",
 		"playPause",

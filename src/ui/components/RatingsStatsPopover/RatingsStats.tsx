@@ -2,7 +2,7 @@ import RatingsStatsBaseball from "./RatingsStats.baseball.tsx";
 import RatingsStatsBasketball from "./RatingsStats.basketball.tsx";
 import RatingsStatsFootball from "./RatingsStats.football.tsx";
 import RatingsStatsHockey from "./RatingsStats.hockey.tsx";
-import { useLocal } from "../../util/local.ts";
+import { useLocalPartial } from "../../util/local.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 
 export const RatingsStats = (props: {
@@ -10,7 +10,7 @@ export const RatingsStats = (props: {
 	stats: any;
 	type?: "career" | "current" | "draft" | number;
 }) => {
-	const challengeNoRatings = useLocal((state) => state.challengeNoRatings);
+	const { challengeNoRatings } = useLocalPartial(["challengeNoRatings"]);
 
 	return bySport({
 		baseball: RatingsStatsBaseball({

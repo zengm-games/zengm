@@ -1,6 +1,6 @@
 import type { LocalStateUI } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
-import { useLocal } from "../util/local.ts";
+import { useLocalPartial } from "../util/local.ts";
 import { TeamLogoInline } from "./TeamLogoInline.tsx";
 
 type TeamOverride = {
@@ -28,7 +28,7 @@ export const DraftAbbrev = ({
 	season,
 	showLogos,
 }: Props) => {
-	const teamInfoCache = useLocal((state) => state.teamInfoCache);
+	const { teamInfoCache } = useLocalPartial(["teamInfoCache"]);
 
 	const t = tInput ?? teamInfoCache[tid];
 	const originalT = originalTInput ?? teamInfoCache[originalTid];

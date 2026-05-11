@@ -5,7 +5,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
-import { useLocal, useLocalPartial } from "../util/local.ts";
+import { useLocalPartial } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
 import { PLAYER } from "../../common/constants.ts";
 import { wrappedAgeAtDeath } from "../components/AgeAtDeath.tsx";
@@ -233,9 +233,10 @@ const DraftHistory = ({
 		dropdownFields: { seasonsAndOldDrafts: season },
 	});
 
-	const { challengeNoRatings, userTid } = useLocalPartial([
+	const { challengeNoRatings, userTid, teamInfoCache } = useLocalPartial([
 		"challengeNoRatings",
 		"userTid",
+		"teamInfoCache",
 	]);
 
 	const superCols = [
@@ -281,8 +282,6 @@ const DraftHistory = ({
 		"Skills",
 		...stats.map((stat) => `stat:${stat}`),
 	]);
-
-	const teamInfoCache = useLocal((state) => state.teamInfoCache);
 
 	const rows: DataTableRow[] = players.map((p) => {
 		const showRatings = !challengeNoRatings || p.currentTid === PLAYER.RETIRED;

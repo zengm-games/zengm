@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import type { PlayerContract } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
-import { useLocal, useLocalPartial } from "../util/local.ts";
+import { useLocalPartial } from "../util/local.ts";
 
 type ContractPlayer = {
 	draft: {
@@ -57,7 +57,7 @@ export const ContractExp = ({
 }) => {
 	const justDrafted = useJustDrafted(p);
 
-	const season = useLocal((state) => state.season);
+	const { season } = useLocalPartial(["season"]);
 	const expiring = season === p.contract.exp;
 
 	return (

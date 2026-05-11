@@ -47,7 +47,7 @@ if (showTemp === "true") {
 	initialShowLeagueTopBar = true;
 }
 
-const useLocal = createWithEqualityFn<LocalStateWithActions>(
+const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 	(set) => ({
 		alwaysShowCountry: false,
 		challengeNoRatings: false,
@@ -290,13 +290,13 @@ const useLocalPartial = <Key extends keyof LocalStateUI>(keys: Key[]) => {
 		return obj;
 	};
 
-	return useLocal(selector);
+	return useLocalRaw(selector);
 };
 
 // This assumes the actions object never changes!
-const useLocalActions = () => useLocal((state) => state.actions);
+const useLocalActions = () => useLocalRaw((state) => state.actions);
 
-const local = useLocal;
+const local = useLocalRaw;
 const localActions = local.getState().actions;
 
-export { local, localActions, useLocal, useLocalActions, useLocalPartial };
+export { local, localActions, useLocalActions, useLocalPartial };

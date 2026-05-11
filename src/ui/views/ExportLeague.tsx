@@ -12,7 +12,7 @@ import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
-import { useLocal } from "../util/local.ts";
+import { useLocalPartial } from "../util/local.ts";
 import type makeExportStream from "../util/makeExportStream.ts";
 import { ProgressBarText } from "../components/ProgressBarText.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
@@ -501,7 +501,7 @@ const ExportLeague = ({ stats }: View<"exportLeague">) => {
 	);
 	const abortController = useRef<AbortController | undefined>(undefined);
 
-	const lid = useLocal((state) => state.lid);
+	const { lid } = useLocalPartial(["lid"]);
 
 	const cleanupAfterStream = (status?: ReactNode) => {
 		abortController.current = undefined;

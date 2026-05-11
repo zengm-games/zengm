@@ -4,7 +4,7 @@ import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
-import { useLocal, useLocalPartial } from "../../util/local.ts";
+import { useLocalPartial } from "../../util/local.ts";
 import { DataTable } from "../../components/DataTable/index.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import type { View } from "../../../common/types.ts";
@@ -41,6 +41,7 @@ const Draft = ({
 		phase,
 		season,
 		spectator,
+		teamInfoCache,
 		userTid,
 		userTids,
 	} = useLocalPartial([
@@ -49,6 +50,7 @@ const Draft = ({
 		"phase",
 		"season",
 		"spectator",
+		"teamInfoCache",
 		"userTid",
 		"userTids",
 	]);
@@ -231,8 +233,6 @@ const Draft = ({
 		colsDrafted.splice(4, 1);
 		colsDrafted.splice(2, 0, getCol("From"));
 	}
-
-	const teamInfoCache = useLocal((state) => state.teamInfoCache);
 
 	const rowsDrafted: DataTableRow[] = draftedSorted.map((p, i) => {
 		const data = [

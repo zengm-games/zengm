@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import type { CSSProperties } from "react";
 import { helpers } from "../util/helpers.ts";
-import { useLocal } from "../util/local.ts";
+import { useLocalPartial } from "../util/local.ts";
 
 // https://github.com/lipis/flag-icons/blob/main/country.json with some duplicate names added
 const countryCodes: Record<string, string> = {
@@ -281,7 +281,7 @@ export const CountryFlag = ({
 	override?: string;
 	style?: CSSProperties;
 }) => {
-	const flagOverrides = useLocal((state) => state.flagOverrides);
+	const { flagOverrides } = useLocalPartial(["flagOverrides"]);
 
 	const country2 = helpers.getCountry(country);
 

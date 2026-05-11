@@ -2,7 +2,7 @@ import { useCallback, type MouseEvent } from "react";
 import { Dropdown, Nav } from "react-bootstrap";
 import { toWorker } from "../util/toWorker.ts";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
-import { local, useLocal } from "../util/local.ts";
+import { local, useLocalPartial } from "../util/local.ts";
 import type { Option } from "../../common/types.ts";
 import clsx from "clsx";
 import {
@@ -65,7 +65,9 @@ const PlayMenu = ({
 		),
 	});
 
-	const keyboardShortcutsLocal = useLocal((state) => state.keyboardShortcuts);
+	const { keyboardShortcuts: keyboardShortcutsLocal } = useLocalPartial([
+		"keyboardShortcuts",
+	]);
 
 	if (lid === undefined) {
 		return null;

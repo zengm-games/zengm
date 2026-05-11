@@ -3,7 +3,7 @@ import { MoreLinks } from "../components/MoreLinks.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
-import { useLocal, useLocalPartial } from "../util/local.ts";
+import { useLocalPartial } from "../util/local.ts";
 import type { View } from "../../common/types.ts";
 import { PLAYER } from "../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
@@ -29,7 +29,10 @@ const DraftTeamHistory = ({
 		dropdownFields: { teamsAndYours: abbrev },
 	});
 
-	const { challengeNoRatings } = useLocalPartial(["challengeNoRatings"]);
+	const { challengeNoRatings, teamInfoCache } = useLocalPartial([
+		"challengeNoRatings",
+		"teamInfoCache",
+	]);
 
 	const superCols = [
 		{
@@ -78,8 +81,6 @@ const DraftTeamHistory = ({
 		"Skills",
 		...stats.map((stat) => `stat:${stat}`),
 	]);
-
-	const teamInfoCache = useLocal((state) => state.teamInfoCache);
 
 	const rows: DataTableRow[] = players.map((p) => {
 		const showRatings = !challengeNoRatings || p.currentTid === PLAYER.RETIRED;

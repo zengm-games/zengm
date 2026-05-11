@@ -1,6 +1,6 @@
 import { useId } from "react";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { useLocal } from "../util/local.ts";
+import { useLocalPartial } from "../util/local.ts";
 import { SKILLS } from "../../common/constants.ts";
 
 const TruncatedSkills = ({
@@ -37,7 +37,7 @@ export const SkillsBlock = ({
 	numSkillsBeforeTruncate?: number;
 	skills?: string[];
 }) => {
-	const fullNames = useLocal((state) => state.fullNames);
+	const { fullNames } = useLocalPartial(["fullNames"]);
 
 	if (skills === undefined) {
 		return null;

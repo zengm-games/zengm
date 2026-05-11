@@ -1,7 +1,7 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
-import { useLocal, useLocalPartial } from "../util/local.ts";
+import { useLocalPartial } from "../util/local.ts";
 import type { DunkAttempt, Player, View } from "../../common/types.ts";
 import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import { useEffect, useState } from "react";
@@ -357,7 +357,7 @@ const UserDunkForm = ({
 		updateProjeted();
 	}, [dunkAttempt, index]);
 
-	const units = useLocal((state) => state.units);
+	const { units } = useLocalPartial(["units"]);
 
 	const name = dunk.players[index]!.name;
 

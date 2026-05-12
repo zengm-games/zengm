@@ -1053,8 +1053,6 @@ storing playByPlay
   - none (default)
 - don't include init
 
-unify PlayByPlayLogger
-
 unify processLiveGameEvents
 - make it a class, to more easily handle stuff like playersByPid
   - after doing this, get rid of gid random.randInt hack in exhibitionGame.ts

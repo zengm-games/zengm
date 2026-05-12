@@ -1,8 +1,9 @@
 import { PHASE } from "../../../common/constants.ts";
-import { g, random } from "../../util/index.ts";
+import { g } from "../../util/index.ts";
 import type { TeamFiltered } from "../../../common/types.ts";
 import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries.ts";
 import { range } from "../../../common/utils.ts";
+import { shuffle } from "../../../common/random.ts";
 
 /**
  * Sort teams in place in correct order for lottery.
@@ -41,7 +42,7 @@ const lotterySort = async (
 	 * The tiebreaker used after the lottery is random. Which is then reversed for the 2nd round.
 	 */
 	const randValues = range(teams.length);
-	random.shuffle(randValues);
+	shuffle(randValues);
 
 	// If the playoffs haven't started yet, need to project who would be in the playoffs
 	if (g.get("phase") < PHASE.PLAYOFFS) {

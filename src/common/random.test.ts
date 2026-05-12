@@ -1,5 +1,5 @@
 import { assert, describe, test } from "vitest";
-import * as random from "./random.ts";
+import { choice } from "./random.ts";
 import { helpers } from "./helpers.ts";
 
 describe("choice", () => {
@@ -15,8 +15,8 @@ describe("choice", () => {
 		const N = 10000;
 
 		for (let i = 0; i < N; i++) {
-			const choice = random.choice(x);
-			counts[choice] += 1;
+			const selected = choice(x);
+			counts[selected] += 1;
 		}
 
 		for (const letter of x) {
@@ -40,8 +40,8 @@ describe("choice", () => {
 			letter === "e" ? 10 : 1;
 
 		for (let i = 0; i < N; i++) {
-			const choice = random.choice(x, weightFunc);
-			counts[choice] += 1;
+			const selected = choice(x, weightFunc);
+			counts[selected] += 1;
 		}
 
 		for (const letter of x) {
@@ -65,8 +65,8 @@ describe("choice", () => {
 		};
 
 		for (let i = 0; i < 10; i++) {
-			const choice = random.choice(helpers.keys(values), (key) => values[key]);
-			assert(helpers.keys(values).includes(choice));
+			const selected = choice(helpers.keys(values), (key) => values[key]);
+			assert(helpers.keys(values).includes(selected));
 		}
 	});
 });

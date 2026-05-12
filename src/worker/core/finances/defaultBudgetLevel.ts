@@ -1,5 +1,6 @@
 import { BUDGET_LEVEL_SCALE, MAX_LEVEL } from "../../../common/budgetLevels.ts";
-import { g, helpers, random } from "../../util/index.ts";
+import { gauss } from "../../../common/random.ts";
+import { g, helpers } from "../../util/index.ts";
 
 // Inverse of levelToEffect
 export const effectToLevel = (effect: number) => {
@@ -22,7 +23,7 @@ const defaultBudgetLevel = (popRank: number) => {
 			1);
 
 	// Add some randomness, 0.95 mean is so it doesn't overshoot the limits and get bounded too much
-	const scaledRank2 = scaledRank * random.gauss(0.95, 0.2);
+	const scaledRank2 = scaledRank * gauss(0.95, 0.2);
 
 	// 0.98 factor is so the level doesn't blow up to infinity by hitting the limit exactly
 	const scaledRank3 = helpers.bound(

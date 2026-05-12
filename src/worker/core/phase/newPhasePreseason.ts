@@ -12,15 +12,7 @@ import {
 	team,
 } from "../index.ts";
 import { idb } from "../../db/index.ts";
-import {
-	env,
-	g,
-	helpers,
-	local,
-	logEvent,
-	random,
-	toUI,
-} from "../../util/index.ts";
+import { env, g, helpers, local, logEvent, toUI } from "../../util/index.ts";
 import type {
 	Conditions,
 	PhaseReturn,
@@ -30,6 +22,7 @@ import type {
 import { groupByUnique, maxBy } from "../../../common/utils.ts";
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { choice, randInt, uniform } from "../../../common/random.ts";
 
 const newPhasePreseason = async (
 	conditions: Conditions,
@@ -184,7 +177,7 @@ const newPhasePreseason = async (
 			) {
 				t.pop = popInfo[actualRegion].newPop;
 			} else {
-				const newPop = t.pop * random.uniform(0.98, 1.02);
+				const newPop = t.pop * uniform(0.98, 1.02);
 				popInfo[actualRegion] = {
 					oldPop: t.pop,
 					newPop,
@@ -287,14 +280,14 @@ const newPhasePreseason = async (
 
 		if (p) {
 			const gender = g.get("gender");
-			const years = random.randInt(1, 4);
+			const years = randInt(1, 4);
 			const age0 = newSeason - p.born.year;
 			p.born.year -= years;
 			const age1 = newSeason - p.born.year;
 			const name = `<a href="${helpers.leagueUrl(["player", p.pid])}">${
 				p.firstName
 			} ${p.lastName}</a>`;
-			const reason = random.choice([
+			const reason = choice([
 				`A newly discovered Kenyan birth certificate suggests that ${name}`,
 				`In a televised press conference, the parents of ${name} explained how they faked ${helpers.pronoun(
 					gender,
@@ -416,10 +409,7 @@ const newPhasePreseason = async (
 						exp:
 							newSeason -
 							1 +
-							random.randInt(
-								g.get("minContractLength"),
-								g.get("maxContractLength"),
-							),
+							randInt(g.get("minContractLength"), g.get("maxContractLength")),
 					};
 				}
 			}

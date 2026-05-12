@@ -1,9 +1,9 @@
 import getTeamInfos from "../../../common/getTeamInfos.ts";
+import { randInt } from "../../../common/random.ts";
 import { idb } from "../../db/index.ts";
 import {
 	g,
 	updatePlayMenu,
-	random,
 	toUI,
 	logEvent,
 	helpers,
@@ -19,7 +19,7 @@ export const getVoteResult = (userVote: boolean, override: boolean) => {
 	};
 
 	const runVote = () => {
-		result.for = random.randInt(0, numActiveTeams - 1);
+		result.for = randInt(0, numActiveTeams - 1);
 		if (userVote) {
 			result.for += 1;
 		}

@@ -25,13 +25,13 @@ import {
 	g,
 	helpers,
 	local,
-	random,
 	toUI,
 } from "../util/index.ts";
 import { boxScoreToLiveSim } from "../views/liveGame.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
 import { isSport } from "../../common/sportFunctions.ts";
+import { randInt } from "../../common/random.ts";
 
 export const getLeagues = async () => {
 	const leagues = await idb.meta.getAll("leagues");
@@ -437,7 +437,7 @@ export const simExhibitionGame = async (
 	}
 
 	// Hacky, but if you send the same gid once, processLiveGameEvents won't reset playersByPid
-	const gid = random.randInt(0, 1000000000);
+	const gid = randInt(0, 1000000000);
 
 	const result = new GameSim({
 		gid,

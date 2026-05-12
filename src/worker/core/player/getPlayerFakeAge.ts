@@ -1,4 +1,5 @@
-import { g, random } from "../../util/index.ts";
+import { randInt } from "../../../common/random.ts";
+import { g } from "../../util/index.ts";
 
 const getPlayerFakeAge = <
 	T extends {
@@ -52,7 +53,7 @@ const getPlayerFakeAge = <
 		return highRiskCountries.includes(p.born.loc) ? 40 : 1;
 	});
 	const sum = weights.reduce((total, current) => current + total, 0);
-	const randVal = random.randInt(0, sum - 1);
+	const randVal = randInt(0, sum - 1);
 	let runningSum = 0;
 
 	for (const [i, weight] of weights.entries()) {

@@ -1,6 +1,6 @@
 import { idb } from "../db/index.ts";
-import { random } from "../util/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
+import { shuffle } from "../../common/random.ts";
 
 const updateFantasyDraft = async (
 	inputs: unknown,
@@ -14,7 +14,7 @@ const updateFantasyDraft = async (
 			},
 			"noCopyCache",
 		);
-		random.shuffle(teams);
+		shuffle(teams);
 		return {
 			teams,
 		};

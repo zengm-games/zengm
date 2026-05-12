@@ -1,8 +1,9 @@
 import genFuzz from "./genFuzz.ts";
 import limitRating from "./limitRating.ts";
-import { helpers, random } from "../../util/index.ts";
+import { helpers } from "../../util/index.ts";
 import { POSITION_COUNTS } from "../../../common/constants.hockey.ts";
 import type { PlayerRatings } from "../../../common/types.hockey.ts";
+import { truncGauss } from "../../../common/random.ts";
 
 const getPos = () => {
 	const numPlayers = Object.values(POSITION_COUNTS).reduce((sum, val) => {
@@ -129,7 +130,7 @@ const infoIn = {};
 const infoOut = {};
 let timeoutID;*/
 
-const initialRating = () => limitRating(random.truncGauss(7, 5, 0, 15));
+const initialRating = () => limitRating(truncGauss(7, 5, 0, 15));
 
 const defaultOvrsOrPots = {
 	C: 0,
@@ -170,7 +171,7 @@ const genRatings = (
 		const factor = ratingsToBoost[rating];
 		if (factor !== undefined) {
 			rawRatings[rating] = limitRating(
-				(rawRatings[rating] += factor * random.truncGauss(10, 15, 8, 30)),
+				(rawRatings[rating] += factor * truncGauss(10, 15, 8, 30)),
 			);
 		}
 	}

@@ -8,9 +8,10 @@ import {
 	expansionDraft,
 	team,
 } from "../index.ts";
-import { g, random } from "../../util/index.ts";
+import { g } from "../../util/index.ts";
 import type { Conditions } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
+import { choice } from "../../../common/random.ts";
 
 // Depending on phase, initiate action that will lead to the next phase
 const autoPlay = async (conditions: Conditions = {}) => {
@@ -37,7 +38,7 @@ const autoPlay = async (conditions: Conditions = {}) => {
 			if (teams.length === 0) {
 				throw new Error("No active teams");
 			}
-			await team.switchTo(random.choice(teams).tid);
+			await team.switchTo(choice(teams).tid);
 		}
 	}
 

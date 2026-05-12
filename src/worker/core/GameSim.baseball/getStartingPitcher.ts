@@ -1,6 +1,7 @@
 import { PHASE } from "../../../common/constants.ts";
 import { NUM_STARTING_PITCHERS } from "../../../common/constants.baseball.ts";
-import { g, random } from "../../util/index.ts";
+import { g } from "../../util/index.ts";
+import { choice } from "../../../common/random.ts";
 
 export const CLOSER_INDEX = NUM_STARTING_PITCHERS;
 
@@ -62,9 +63,9 @@ export const getStartingPitcher = <
 	}
 
 	// Fifth pass - anybody
-	let p = random.choice(pitchers.filter((p) => !p.injured));
+	let p = choice(pitchers.filter((p) => !p.injured));
 	if (!p) {
-		p = random.choice(pitchers);
+		p = choice(pitchers);
 	}
 
 	if (!p) {

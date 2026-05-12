@@ -42,7 +42,6 @@ import {
 	local,
 	lock,
 	logEvent,
-	random,
 	toUI,
 	updatePhase,
 	updateStatus,
@@ -69,6 +68,7 @@ import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
 import { newLeagueGodModeLimits } from "../../util/newLeagueGodModeLimits.ts";
+import { choice, shuffle } from "../../../common/random.ts";
 
 export type TeamInfo = TeamBasic & {
 	disabled?: boolean;
@@ -1398,7 +1398,7 @@ const afterDBStream = async ({
 		while (playerTids.length < numPlayersToShuffle) {
 			// Shuffle each set of tids individually, because if we did all at once, rosters might wind up unbalanced
 			const shuffled = [...activeTids];
-			random.shuffle(shuffled);
+			shuffle(shuffled);
 			playerTids.push(...shuffled);
 		}
 
@@ -1758,7 +1758,7 @@ const afterDBStream = async ({
 					const players = (
 						await idb.cache.players.indexGetAll("playersByTid", tid)
 					).filter((p) => p.relatives.length === 0);
-					const p = random.choice(players);
+					const p = choice(players);
 					if (p) {
 						p.firstName = memorial.firstName;
 						p.lastName = memorial.lastName;

@@ -13,7 +13,6 @@ import {
 	getTeamInfoBySeason,
 	helpers,
 	processPlayersHallOfFame,
-	random,
 } from "../util/index.ts";
 import type {
 	MenuItemHeader,
@@ -27,6 +26,7 @@ import { orderBy } from "../../common/utils.ts";
 import { isSport } from "../../common/sportFunctions.ts";
 import { formatEventText } from "../util/formatEventText.ts";
 import { upgradeFace } from "../util/face.ts";
+import { choice } from "../../common/random.ts";
 
 export const getPlayerProfileStats = () => {
 	const stats = [];
@@ -315,7 +315,7 @@ export const getCommon = async (
 			(info) => info.t && info.t.tid === legacyTid,
 		);
 		if (teamJerseyNumberInfos.length > 0) {
-			const info = random.choice(teamJerseyNumberInfos);
+			const info = choice(teamJerseyNumberInfos);
 			if (info.t) {
 				teamColors = info.t.colors;
 				teamJersey = info.t.jersey;

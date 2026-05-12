@@ -1,12 +1,13 @@
 import { team } from "../index.ts";
 import { idb } from "../../db/index.ts";
-import { g, random, local } from "../../util/index.ts";
+import { g, local } from "../../util/index.ts";
 import isUntradable from "./isUntradable.ts";
 import makeItWork from "./makeItWork.ts";
 import processTrade from "./processTrade.ts";
 import summary from "./summary.ts";
 import type { TradeTeams } from "../../../common/types.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
+import { choice } from "../../../common/random.ts";
 
 const getAITids = async () => {
 	const teams = await idb.cache.teams.getAll();
@@ -34,14 +35,14 @@ const attempt = async (valueChangeKey: number) => {
 		return false;
 	}
 
-	const tid = random.choice(aiTids);
+	const tid = choice(aiTids);
 	const otherTids = aiTids.filter((tid2) => tid !== tid2);
 
 	if (otherTids.length === 0) {
 		return false;
 	}
 
-	const otherTid = random.choice(otherTids);
+	const otherTid = choice(otherTids);
 	const players = (
 		await idb.cache.players.indexGetAll("playersByTid", tid)
 	).filter((p) => !isUntradable(p).untradable);
@@ -60,17 +61,17 @@ const attempt = async (valueChangeKey: number) => {
 
 	if ((r < 0.7 || draftPicks.length === 0) && players.length > 0) {
 		// Weight by player value - good player more likely to be in trade
-		const p = random.choice(players, (p) => p.value);
+		const p = choice(players, (p) => p.value);
 		if (!p) {
 			return false;
 		}
 		pids.push(p.pid);
 	} else if ((r < 0.85 || players.length === 0) && draftPicks.length > 0) {
-		dpids.push(random.choice(draftPicks).dpid);
+		dpids.push(choice(draftPicks).dpid);
 	} else {
 		// Weight by player value - good player more likely to be in trade
-		const p = random.choice(players, (p) => p.value);
-		const dp = random.choice(draftPicks);
+		const p = choice(players, (p) => p.value);
+		const dp = choice(draftPicks);
 		if (!p || !dp) {
 			return false;
 		}

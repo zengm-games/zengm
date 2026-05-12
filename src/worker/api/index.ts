@@ -42,7 +42,6 @@ import {
 	helpers,
 	local,
 	lock,
-	random,
 	updatePlayMenu,
 	updateStatus,
 	toUI,
@@ -165,6 +164,7 @@ import { checkNaNs } from "../util/checkNaNs.ts";
 import { checkChanges } from "../util/checkChanges.ts";
 import { checkAccount } from "../util/checkAccount.ts";
 import { generateFace } from "../util/face.ts";
+import { choice } from "../../common/random.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1909,12 +1909,12 @@ const getPlayerGraphStat = ({
 }: {
 	prev?: { statType?: string; stat?: string };
 }) => {
-	const statType = prev?.statType ?? random.choice(statTypes);
+	const statType = prev?.statType ?? choice(statTypes);
 	const stats = getStats(statType);
 	const stat =
 		prev?.stat !== undefined && stats.includes(prev.stat)
 			? prev.stat
-			: random.choice(stats);
+			: choice(stats);
 	return {
 		statType,
 		stat,
@@ -1928,7 +1928,7 @@ const getTeamGraphStat = ({
 	prev?: { statType?: string; stat?: string };
 	seasons: [number, number];
 }) => {
-	const statType = prev?.statType ?? random.choice(teamStatTypes);
+	const statType = prev?.statType ?? choice(teamStatTypes);
 	const stats = teamGetStats(statType, seasons);
 
 	const prevStat = prev?.stat;
@@ -1954,7 +1954,7 @@ const getTeamGraphStat = ({
 		}
 	}
 	if (stat === undefined) {
-		stat = random.choice(stats);
+		stat = choice(stats);
 	}
 
 	return {
@@ -2091,7 +2091,7 @@ const getRandomCountry = async () => {
 	const playerBioInfo = local.playerBioInfo ?? (await loadNames());
 
 	// Equal odds of every country, otherwise it's too commonly USA - no fun!
-	return withState(random.choice(playerBioInfo.frequencies)[0]);
+	return withState(choice(playerBioInfo.frequencies)[0]);
 };
 
 const getRandomInjury = () => {

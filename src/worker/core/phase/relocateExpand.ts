@@ -3,9 +3,10 @@ import geographicCoordinates from "../../../common/geographicCoordinates.ts";
 import getTeamInfos from "../../../common/getTeamInfos.ts";
 import { kmeansFixedSize, sortByDivs } from "../team/cluster.ts";
 import { idb } from "../../db/index.ts";
-import { g, random } from "../../util/index.ts";
+import { g } from "../../util/index.ts";
 import league from "../league/index.ts";
 import type { GameAttributesLeague } from "../../../common/types.ts";
+import { choice, shuffle } from "../../../common/random.ts";
 
 const upcomingScheduledEventBlocksRelocateExpand = async () => {
 	const scheduledEvents = await idb.getCopies.scheduledEvents(
@@ -133,9 +134,9 @@ export const doRelocate = async () => {
 		return;
 	}
 
-	const currentTeam = random.choice(activeTeams, (t) => 1 / (t.pop ?? 1));
+	const currentTeam = choice(activeTeams, (t) => 1 / (t.pop ?? 1));
 
-	const newTeam = random.choice(
+	const newTeam = choice(
 		candidateTeams.filter((t) => t.region !== currentTeam.region),
 		(t) => t.pop,
 	);
@@ -234,7 +235,7 @@ export const doRelocate = async () => {
 
 			// Try a few times with random ordered dids, that's probably good enough
 			for (let iteration = 0; iteration < 20; iteration++) {
-				random.shuffle(divIndexes);
+				shuffle(divIndexes);
 
 				let score = 0;
 				const attempt: number[][] = divs.map(() => []);
@@ -332,7 +333,7 @@ export const doExpand = async () => {
 
 	const newTeams = [];
 	while (newTeams.length < autoExpandNumTeams) {
-		const newTeam = random.choice(candidateTeams, (t) => t.pop);
+		const newTeam = choice(candidateTeams, (t) => t.pop);
 		candidateTeams = candidateTeams.filter((t) => t !== newTeam);
 		newTeams.push(newTeam);
 	}

@@ -5,7 +5,7 @@ import {
 	RATINGS,
 } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
-import { g, helpers, random } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
@@ -18,6 +18,7 @@ import {
 	getStatsTableByType,
 } from "../../common/advancedPlayerSearch.ts";
 import { isSport } from "../../common/sportFunctions.ts";
+import { choice } from "../../common/random.ts";
 
 export const statTypes = [
 	"bio",
@@ -36,7 +37,7 @@ const getPlayerStats = async (
 	const statTypePlus =
 		statTypeInput !== undefined && statTypes.includes(statTypeInput)
 			? statTypeInput
-			: random.choice(statTypes);
+			: choice(statTypes);
 
 	const statsTable = getStatsTableByType(statTypePlus);
 
@@ -211,7 +212,7 @@ const updatePlayers = async (
 		const stat =
 			inputStat !== undefined && statForAxis.stats.includes(inputStat)
 				? inputStat
-				: random.choice(statForAxis.stats);
+				: choice(statForAxis.stats);
 
 		return {
 			[season]: inputs[season],

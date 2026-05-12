@@ -1,9 +1,10 @@
 import { PLAYER } from "../../../common/constants.ts";
 import { player } from "../index.ts";
-import { defaultGameAttributes, g, random } from "../../util/index.ts";
+import { defaultGameAttributes, g } from "../../util/index.ts";
 import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { minBy } from "../../../common/utils.ts";
+import { randInt, shuffle } from "../../../common/random.ts";
 
 // To improve the distribution of DP ages in leagues with modified draftAges, this code will change the % of players who declare for draft each year to work better with modified draftAges settings. Previously, it was just a constant defaultFractionPerYear.
 const defaultFractionPerYear = bySport({
@@ -121,7 +122,7 @@ const genPlayersWithoutSaving = async (
 
 		// Add a fudge factor, used when sorting below to add a little randomness to players entering draft. This may
 		// seem quite large, but empirically it seems to work well.
-		p.fudgeFactor = random.randInt(-50, 50);
+		p.fudgeFactor = randInt(-50, 50);
 
 		remaining.push(p);
 	}
@@ -196,7 +197,7 @@ const genPlayersWithoutSaving = async (
 			}
 		}
 
-		random.shuffle(enteringDraft);
+		shuffle(enteringDraft);
 		for (let i = 0; i < numPlayersToNerf; i++) {
 			const p = enteringDraft[i];
 			const ovrDiff = p.ratings[0].ovr - worstPlayer.ratings[0].ovr;

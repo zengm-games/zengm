@@ -10,7 +10,8 @@ import type {
 	PlayerContract,
 	Team,
 } from "../../../../common/types.ts";
-import { g, random } from "../../../util/index.ts";
+import { g } from "../../../util/index.ts";
+import { shuffle } from "../../../../common/random.ts";
 
 export const getNumPlayersPerTeam = () => {
 	// 13 for basketball
@@ -83,7 +84,7 @@ const createRandomPlayers = async ({
 		// Very rough simulation of a draft
 		draftClass = orderBy(draftClass, "value", "desc");
 		const tids = [...activeTids];
-		random.shuffle(tids);
+		shuffle(tids);
 
 		for (const [i, p] of draftClass.entries()) {
 			let round = 0;
@@ -259,7 +260,7 @@ const createRandomPlayers = async ({
 	while (true) {
 		// Random order tids, so no team is a superpower
 		const tids = [...activeTids];
-		random.shuffle(tids);
+		shuffle(tids);
 		let numTeamsDone = 0;
 
 		for (const currentTid of tids) {

@@ -28,5 +28,3 @@ export { default as updateStatus } from "./updateStatus.ts";
 
 // Ideally, get rid of this
 export { default as defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
-import * as random from "../../common/random.ts";
-export { random };

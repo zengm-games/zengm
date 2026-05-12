@@ -1,5 +1,6 @@
+import { shuffle } from "../../../common/random.ts";
 import { orderBy } from "../../../common/utils.ts";
-import { helpers, random } from "../../util/index.ts";
+import { helpers } from "../../util/index.ts";
 
 const groupScheduleSeries = (tids: [number, number][]) => {
 	const matchupToKey = (matchup: [number, number]) =>
@@ -48,7 +49,7 @@ const groupScheduleSeries = (tids: [number, number][]) => {
 	}
 	for (const series of Object.values(seriesGroupedByTeams)) {
 		// Randomize, or all the short series will be at the end
-		random.shuffle(series);
+		shuffle(series);
 	}
 
 	let ongoingSeries: {
@@ -82,7 +83,7 @@ const groupScheduleSeries = (tids: [number, number][]) => {
 		}
 
 		// Shuffle each day so it doesn't keep picking the same team first
-		random.shuffle(seriesKeys);
+		shuffle(seriesKeys);
 
 		// Order by number of series reamining, otherwise it tends to have some bunched series against the same team at the end of the season
 		seriesKeys = orderBy(

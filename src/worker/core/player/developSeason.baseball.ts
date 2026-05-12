@@ -1,10 +1,11 @@
 import limitRating from "./limitRating.ts";
-import { helpers, random } from "../../util/index.ts";
+import { helpers } from "../../util/index.ts";
 import type {
 	PlayerRatings,
 	RatingKey,
 } from "../../../common/types.baseball.ts";
 import { coachingEffect } from "../../../common/budgetLevels.ts";
+import { truncGauss, uniform } from "../../../common/random.ts";
 
 type RatingFormula = {
 	ageModifier: (age: number) => number;
@@ -226,11 +227,11 @@ const calcBaseChange = (age: number, coachingLevel: number): number => {
 
 	// Noise
 	if (age <= 23) {
-		val += random.truncGauss(0, 5, -4, 15);
+		val += truncGauss(0, 5, -4, 15);
 	} else if (age <= 25) {
-		val += random.truncGauss(0, 5, -4, 7);
+		val += truncGauss(0, 5, -4, 7);
 	} else {
-		val += random.truncGauss(0, 3, -2, 3);
+		val += truncGauss(0, 3, -2, 3);
 	}
 
 	val *= 1 + (val > 0 ? 1 : -1) * coachingEffect(coachingLevel);
@@ -274,7 +275,7 @@ const developSeason = (
 		ratings[key] = limitRating(
 			ratings[key] +
 				helpers.bound(
-					(baseChange + ageModifier) * random.uniform(0.6, 1.3),
+					(baseChange + ageModifier) * uniform(0.6, 1.3),
 					changeLimits[0],
 					changeLimits[1],
 				),

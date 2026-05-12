@@ -1,23 +1,24 @@
 import retire from "./retire.ts";
 import { idb } from "../../db/index.ts";
-import { g, helpers, logEvent, random } from "../../util/index.ts";
+import { g, helpers, logEvent } from "../../util/index.ts";
 import type { Conditions, Player } from "../../../common/types.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { defaultTragicDeaths } from "../../util/defaultTragicDeaths.ts";
+import { choice } from "../../../common/random.ts";
 
 const getReason = () => {
 	const tragicDeaths = g.get("tragicDeaths") ?? defaultTragicDeaths;
 
-	let reason = random.choice(tragicDeaths, (row) => row.frequency).reason;
+	let reason = choice(tragicDeaths, (row) => row.frequency).reason;
 	if (reason === "SPECIAL_CLUE") {
-		reason = `PLAYER_NAME was killed by ${random.choice([
+		reason = `PLAYER_NAME was killed by ${choice([
 			"Miss Scarlet",
 			"Professor Plum",
 			"Mrs. Peacock",
 			"Reverend Green",
 			"Colonel Mustard",
 			"Mrs. White",
-		])}, in the ${random.choice([
+		])}, in the ${choice([
 			"kitchen",
 			"ballroom",
 			"conservatory",
@@ -28,7 +29,7 @@ const getReason = () => {
 			"lounge",
 			"hall",
 			"study",
-		])}, with the ${random.choice([
+		])}, with the ${choice([
 			"candlestick",
 			"dagger",
 			"lead pipe",
@@ -60,8 +61,8 @@ const getReason = () => {
 				hockey: ["skates", "helmets", "shoulder pads", "gloves"],
 			}),
 		];
-		const gift1 = random.choice(gifts);
-		const gift2 = random.choice(gifts.filter((gift) => gift !== gift1));
+		const gift1 = choice(gifts);
+		const gift2 = choice(gifts.filter((gift) => gift !== gift1));
 
 		// Draco, an Athenian lawmaker, was reportedly smothered to death by gifts of cloaks and hats showered upon him by appreciative citizens
 		reason = `PLAYER_NAME was smothered to death by gifts of ${gift1} and ${gift2} showered upon ${helpers.pronoun(
@@ -79,11 +80,11 @@ const killOne = async (conditions: Conditions, player?: Player) => {
 	if (!player) {
 		// Pick random team
 		const teams = (await idb.cache.teams.getAll()).filter((t) => !t.disabled);
-		tid = random.choice(teams).tid;
+		tid = choice(teams).tid;
 		const players = await idb.cache.players.indexGetAll("playersByTid", tid);
 
 		// Pick a random player on that team
-		p = random.choice(players.filter((p) => !p.real));
+		p = choice(players.filter((p) => !p.real));
 		if (!p) {
 			// Could happen, with real rosters
 			return;

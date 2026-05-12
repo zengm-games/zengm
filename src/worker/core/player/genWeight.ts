@@ -1,5 +1,6 @@
+import { randInt } from "../../../common/random.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
-import { g, random } from "../../util/index.ts";
+import { g } from "../../util/index.ts";
 
 const genWeight = (hgt: number, stre?: number, pos?: string) => {
 	let MIN_WEIGHT = 155;
@@ -19,18 +20,18 @@ const genWeight = (hgt: number, stre?: number, pos?: string) => {
 				MAX_WEIGHT = 350;
 			}
 			weight =
-				random.randInt(-20, 20) +
+				randInt(-20, 20) +
 				((hgt + 0.5 * stre) * (MAX_WEIGHT - MIN_WEIGHT)) / 150 +
 				MIN_WEIGHT;
 		} else {
 			weight =
-				random.randInt(-20, 20) +
+				randInt(-20, 20) +
 				((hgt + 0.5 * stre) * (MAX_WEIGHT - MIN_WEIGHT)) / 150 +
 				MIN_WEIGHT;
 		}
 	} else {
 		weight =
-			random.randInt(-20, 20) +
+			randInt(-20, 20) +
 			((hgt + 0.5 * stre) * (MAX_WEIGHT - MIN_WEIGHT)) / 150 +
 			MIN_WEIGHT;
 	}

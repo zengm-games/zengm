@@ -1,11 +1,12 @@
 import genFuzz from "./genFuzz.ts";
 import heightToRating from "./heightToRating.ts";
 import limitRating from "./limitRating.ts";
-import { helpers, random } from "../../util/index.ts";
+import { helpers } from "../../util/index.ts";
 import type {
 	PlayerRatings,
 	RatingKey,
 } from "../../../common/types.basketball.ts";
+import { heightDist, randInt, realGauss } from "../../../common/random.ts";
 
 const typeFactors: Record<
 	"point" | "wing" | "big",
@@ -55,9 +56,9 @@ const genRatings = (
 	ratings: PlayerRatings;
 } => {
 	// realHeight is drawn from a custom probability distribution and then offset by a fraction of an inch either way
-	let heightInInches = random.heightDist() + Math.random() - 0.5; // Fraction of an inch
+	let heightInInches = heightDist() + Math.random() - 0.5; // Fraction of an inch
 
-	const wingspanAdjust = heightInInches + random.randInt(-1, 1); // hgt 0-100 corresponds to height 5'6" to 7'9" (Anything taller or shorter than the extremes will just get 100/0)
+	const wingspanAdjust = heightInInches + randInt(-1, 1); // hgt 0-100 corresponds to height 5'6" to 7'9" (Anything taller or shorter than the extremes will just get 100/0)
 
 	const hgt = heightToRating(wingspanAdjust);
 	heightInInches = Math.round(heightInInches); // Pick type of player (point, wing, or big) based on height
@@ -112,10 +113,10 @@ const genRatings = (
 
 	// For correlation across ratings, to ensure some awesome players, but athleticism and skill are independent to
 	// ensure there are some who are elite in one but not the other
-	const factorAthleticism = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const factorShooting = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const factorSkill = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
-	const factorIns = helpers.bound(random.realGauss(1, 0.2), 0.2, 1.2);
+	const factorAthleticism = helpers.bound(realGauss(1, 0.2), 0.2, 1.2);
+	const factorShooting = helpers.bound(realGauss(1, 0.2), 0.2, 1.2);
+	const factorSkill = helpers.bound(realGauss(1, 0.2), 0.2, 1.2);
+	const factorIns = helpers.bound(realGauss(1, 0.2), 0.2, 1.2);
 
 	for (const key of helpers.keys(rawRatings)) {
 		const typeFactor = typeFactors[type][key] ?? 1;
@@ -136,7 +137,7 @@ const genRatings = (
 		}
 
 		rawRatings[key] = limitRating(
-			factor * typeFactor * random.realGauss(rawRatings[key], 3),
+			factor * typeFactor * realGauss(rawRatings[key], 3),
 		);
 	}
 

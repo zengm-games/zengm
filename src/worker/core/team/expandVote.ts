@@ -2,7 +2,7 @@ import { PHASE } from "../../../common/constants.ts";
 import getTeamInfos from "../../../common/getTeamInfos.ts";
 import type { Conditions } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
-import { g, updatePlayMenu, toUI, logEvent, random } from "../../util/index.ts";
+import { g, updatePlayMenu, toUI, logEvent } from "../../util/index.ts";
 import expansionDraft from "../expansionDraft/index.ts";
 import league from "../league/index.ts";
 import phase from "../phase/index.ts";
@@ -10,6 +10,7 @@ import { getVoteResult } from "./relocateVote.ts";
 import geographicCoordinates from "../../../common/geographicCoordinates.ts";
 import { DEFAULT_COORDS, calcDistance } from "./cluster.ts";
 import { minBy } from "../../../common/utils.ts";
+import { choice } from "../../../common/random.ts";
 
 const getBestDid = (
 	teams: {
@@ -96,7 +97,7 @@ const getBestDid = (
 	}
 
 	// We don't know the coords of all the divisions, so just pick one randomly
-	return random.choice(candidateDids);
+	return choice(candidateDids);
 };
 
 const expandVote = async (

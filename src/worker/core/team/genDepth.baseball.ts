@@ -1,8 +1,9 @@
 import { idb } from "../../db/index.ts";
-import { g, helpers, local, random } from "../../util/index.ts";
+import { g, helpers, local } from "../../util/index.ts";
 import type { Position } from "../../../common/types.baseball.ts";
 import type { Player, PlayerFiltered } from "../../../common/types.ts";
 import { groupByUnique, last, maxBy } from "../../../common/utils.ts";
+import { shuffle } from "../../../common/random.ts";
 
 const score = (p: PlayerFiltered, pos?: Position) => {
 	if (pos === undefined) {
@@ -205,7 +206,7 @@ export const getDepthDefense = (
 			pos,
 			i,
 		}));
-		random.shuffle(defPositionsShuffled, g.get("season") + numSwapTries);
+		shuffle(defPositionsShuffled, g.get("season") + numSwapTries);
 
 		for (const { i, pos } of defPositionsShuffled) {
 			for (let j = 0; j < numPlayersToTest; j++) {

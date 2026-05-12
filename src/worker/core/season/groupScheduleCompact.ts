@@ -1,11 +1,11 @@
+import { shuffle } from "../../../common/random.ts";
 import { orderBy } from "../../../common/utils.ts";
-import { random } from "../../util/index.ts";
 
 const groupScheduleCompact = (tids: [number, number][]) => {
 	const dailyMatchups: [number, number][][] = [];
 
 	const matchups = [...tids];
-	random.shuffle(matchups);
+	shuffle(matchups);
 
 	const remainingMatchups = new Set(matchups);
 
@@ -76,7 +76,7 @@ const groupScheduleCompact = (tids: [number, number][]) => {
 	}
 
 	// Some jaggedness remains, so just randomize it
-	random.shuffle(dailyMatchups);
+	shuffle(dailyMatchups);
 
 	return dailyMatchups.flat();
 };

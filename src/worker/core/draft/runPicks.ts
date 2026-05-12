@@ -3,7 +3,7 @@ import afterPicks from "./afterPicks.ts";
 import getOrder from "./getOrder.ts";
 import selectPlayer from "./selectPlayer.ts";
 import { idb } from "../../db/index.ts";
-import { g, local, lock, random } from "../../util/index.ts";
+import { g, local, lock } from "../../util/index.ts";
 import type {
 	Conditions,
 	Player,
@@ -11,6 +11,7 @@ import type {
 } from "../../../common/types.ts";
 import { player, team } from "../index.ts";
 import { last } from "../../../common/utils.ts";
+import { choice } from "../../../common/random.ts";
 
 export const getTeamOvrDiffs = (
 	teamPlayers: PlayerWithoutKey[],
@@ -197,7 +198,7 @@ const runPicks = async (
 			}
 			console.log(sum);*/
 
-			const selection = random.choice(playersAll, score);
+			const selection = choice(playersAll, score);
 
 			const pid = selection.pid;
 			await selectPlayer(dp, pid);

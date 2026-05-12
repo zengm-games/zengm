@@ -1,8 +1,9 @@
 import { idb } from "../../db/index.ts";
-import { random, helpers } from "../../util/index.ts";
+import { helpers } from "../../util/index.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { last, range } from "../../../common/utils.ts";
 import type { NonEmptyArray } from "../../../common/types.ts";
+import { choice } from "../../../common/random.ts";
 
 // Football/hockey gets 1-99
 const VALID_JERSEY_NUMBERS = range(1, 100).map(String);
@@ -489,12 +490,12 @@ const genJerseyNumber = async (
 	if (weightFunctionsByPosition) {
 		const pos = last(p.ratings).pos;
 		if ((weightFunctionsByPosition as any)[pos]) {
-			return random.choice(candidates, (weightFunctionsByPosition as any)[pos]);
+			return choice(candidates, (weightFunctionsByPosition as any)[pos]);
 		}
-		return random.choice(candidates);
+		return choice(candidates);
 	}
 
-	return random.choice(candidates, weightFunction);
+	return choice(candidates, weightFunction);
 };
 
 export default genJerseyNumber;

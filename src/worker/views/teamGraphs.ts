@@ -5,7 +5,7 @@ import {
 	TEAM_STATS_TABLES,
 } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
-import { g, helpers, random } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type {
 	TeamFiltered,
 	TeamSeasonAttr,
@@ -16,6 +16,7 @@ import type { TeamStatAttr } from "../../common/types.baseball.ts";
 import { season } from "../core/index.ts";
 import { addPowerRankingsStuffToTeams } from "./powerRankings.ts";
 import { isSport } from "../../common/sportFunctions.ts";
+import { choice } from "../../common/random.ts";
 
 export const statTypes = [
 	"standings",
@@ -155,7 +156,7 @@ const getTeamStats = async (
 	const statTypePlus =
 		statTypeInput !== undefined && statTypes.includes(statTypeInput)
 			? statTypeInput
-			: random.choice(statTypes);
+			: choice(statTypes);
 
 	const statsTable = getStatsTableByType(statTypePlus);
 
@@ -272,7 +273,7 @@ const updateTeams = async (
 		const stat =
 			inputStat !== undefined && statForAxis.stats.includes(inputStat)
 				? inputStat
-				: random.choice(statForAxis.stats);
+				: choice(statForAxis.stats);
 
 		return {
 			[season]: inputs[season],

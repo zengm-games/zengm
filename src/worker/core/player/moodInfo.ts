@@ -1,10 +1,11 @@
 import { PHASE, PLAYER } from "../../../common/constants.ts";
-import { g, helpers, random } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import { idb } from "../../db/index.ts";
 import moodComponents from "./moodComponents.ts";
 import type { Player } from "../../../common/types.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
+import { uniformSeed } from "../../../common/random.ts";
 
 const hasActiveNegotiation = async (tid: number, pid: number) => {
 	return (await idb.cache.negotiations.getAll()).some(
@@ -136,7 +137,7 @@ const moodInfo = async (
 			seed += (p.stats.at(-1)?.pa ?? 0) + (p.stats.at(-1)?.outs ?? 0);
 		}
 
-		const rand = random.uniformSeed(seed);
+		const rand = uniformSeed(seed);
 		willing = rand < probWilling;
 	}
 

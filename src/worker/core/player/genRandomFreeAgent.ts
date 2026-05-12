@@ -1,11 +1,12 @@
 import type { Player } from "../../../common/types.ts";
-import { random, g } from "../../util/index.ts";
+import { g } from "../../util/index.ts";
 import develop from "./develop.ts";
 import generate from "./generate.ts";
 import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import name from "./name.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
+import { randInt } from "../../../common/random.ts";
 
 const genRandomFreeAgent = async (): Promise<Player> => {
 	let minAge = 25;
@@ -35,7 +36,7 @@ const genRandomFreeAgent = async (): Promise<Player> => {
 	}
 
 	for (let i = 0; i < 1000; i++) {
-		const age = random.randInt(minAge, maxAge);
+		const age = randInt(minAge, maxAge);
 		const draftYear = g.get("season") - (age - 22);
 		const p = generate(
 			PLAYER.FREE_AGENT,

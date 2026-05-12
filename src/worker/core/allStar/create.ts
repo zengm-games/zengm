@@ -1,5 +1,5 @@
 import { awardStats, saveAwardsByPlayer } from "../season/awards.ts";
-import { g, random } from "../../util/index.ts";
+import { g } from "../../util/index.ts";
 import type {
 	AllStars,
 	Conditions,
@@ -13,6 +13,7 @@ import { last, orderBy, range } from "../../../common/utils.ts";
 import { getPosByGpF } from "../season/doAwards.baseball.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { mvpScore } from "../season/doAwards.football.ts";
+import { shuffle } from "../../../common/random.ts";
 
 const MIN_PLAYERS_CONTEST = 2;
 
@@ -125,7 +126,7 @@ const create = async (conditions: Conditions) => {
 			}
 
 			// If we need more than the default positions, they should be random
-			random.shuffle(positions);
+			shuffle(positions);
 
 			const playersByPos = Object.groupBy(candidates, (p) => {
 				if (isSport("baseball")) {
@@ -409,7 +410,7 @@ const create = async (conditions: Conditions) => {
 				}));
 
 			if (dunkers.length >= MIN_PLAYERS_CONTEST) {
-				random.shuffle(dunkers);
+				shuffle(dunkers);
 
 				const controlling = [];
 				for (const [i, dunker] of dunkers.entries()) {
@@ -427,12 +428,12 @@ const create = async (conditions: Conditions) => {
 				// Don't always take the tallest/shortest, add some randomness
 				const numToPickFrom = Math.min(20, orderedByHeight.length);
 				const indexes = range(numToPickFrom);
-				random.shuffle(indexes);
+				shuffle(indexes);
 
 				// -1 is because we want to turn .at(0) into .at(-1)
 				const shortIndexes = [-indexes[0]! - 1, -indexes[1]! - 1] as const;
 
-				random.shuffle(indexes);
+				shuffle(indexes);
 				const longIndexes = [indexes[0]!, indexes[1]!] as const;
 
 				allStars.dunk = {
@@ -499,7 +500,7 @@ const create = async (conditions: Conditions) => {
 			}));
 
 			if (shooters.length >= MIN_PLAYERS_CONTEST) {
-				random.shuffle(shooters);
+				shuffle(shooters);
 
 				allStars.three = {
 					players: shooters,

@@ -1,4 +1,4 @@
-import { g, helpers, random } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import {
 	NUM_BALLS_PER_WALK,
 	NUM_OUTS_PER_INNING,
@@ -15,9 +15,9 @@ import { infoDefense } from "../player/ovr.baseball.ts";
 import GameSimBase from "../GameSim/GameSimBase.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { maxBy } from "../../../common/utils.ts";
-import { choice } from "../../../common/random.ts";
 import { PHASE } from "../../../common/constants.ts";
 import PlayByPlayLogger from "./PlayByPlayLogger.ts";
+import { choice, gauss } from "../../../common/random.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -186,27 +186,27 @@ class GameSim extends GameSimBase {
 			if (distance === "infield") {
 				switch (direction) {
 					case "farLeft":
-						return random.choice(
+						return choice(
 							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS["3B"]],
 							[0.05, 0.05, 0.9],
 						);
 					case "farRight":
-						return random.choice(
+						return choice(
 							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS["1B"]],
 							[0.05, 0.05, 0.9],
 						);
 					case "middle":
-						return random.choice(
+						return choice(
 							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS["2B"], POS_NUMBERS.SS],
 							[0.05, 0.05, 0.45, 0.45],
 						);
 					case "left":
-						return random.choice(
+						return choice(
 							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS.LF, POS_NUMBERS.SS],
 							[0.05, 0.05, 0.5, 0.4],
 						);
 					case "right":
-						return random.choice(
+						return choice(
 							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS.RF, POS_NUMBERS["2B"]],
 							[0.05, 0.05, 0.5, 0.4],
 						);
@@ -220,9 +220,9 @@ class GameSim extends GameSimBase {
 					case "middle":
 						return POS_NUMBERS.CF;
 					case "left":
-						return random.choice([POS_NUMBERS.LF, POS_NUMBERS.CF]);
+						return choice([POS_NUMBERS.LF, POS_NUMBERS.CF]);
 					case "right":
-						return random.choice([POS_NUMBERS.RF, POS_NUMBERS.CF]);
+						return choice([POS_NUMBERS.RF, POS_NUMBERS.CF]);
 				}
 			}
 		} else if (type === "line") {
@@ -248,9 +248,9 @@ class GameSim extends GameSimBase {
 					case "middle":
 						return POS_NUMBERS.CF;
 					case "left":
-						return random.choice([POS_NUMBERS.LF, POS_NUMBERS.CF]);
+						return choice([POS_NUMBERS.LF, POS_NUMBERS.CF]);
 					case "right":
-						return random.choice([POS_NUMBERS.RF, POS_NUMBERS.CF]);
+						return choice([POS_NUMBERS.RF, POS_NUMBERS.CF]);
 				}
 			} else {
 				switch (direction) {
@@ -259,14 +259,14 @@ class GameSim extends GameSimBase {
 					case "farRight":
 						return POS_NUMBERS["1B"];
 					case "middle":
-						return random.choice(
+						return choice(
 							[POS_NUMBERS.P, POS_NUMBERS["2B"], POS_NUMBERS.SS],
 							[0.02, 0.49, 0.49],
 						);
 					case "left":
-						return random.choice([POS_NUMBERS["3B"], POS_NUMBERS.SS]);
+						return choice([POS_NUMBERS["3B"], POS_NUMBERS.SS]);
 					case "right":
-						return random.choice([POS_NUMBERS["2B"], POS_NUMBERS["1B"]]);
+						return choice([POS_NUMBERS["2B"], POS_NUMBERS["1B"]]);
 				}
 			}
 		} else if (type === "ground") {
@@ -292,34 +292,34 @@ class GameSim extends GameSimBase {
 					case "middle":
 						return POS_NUMBERS.CF;
 					case "left":
-						return random.choice([POS_NUMBERS.LF, POS_NUMBERS.CF]);
+						return choice([POS_NUMBERS.LF, POS_NUMBERS.CF]);
 					case "right":
-						return random.choice([POS_NUMBERS.RF, POS_NUMBERS.CF]);
+						return choice([POS_NUMBERS.RF, POS_NUMBERS.CF]);
 				}
 			} else {
 				switch (direction) {
 					case "farLeft":
-						return random.choice(
+						return choice(
 							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS["3B"]],
 							[0.05, 0.05, 0.9],
 						);
 					case "farRight":
-						return random.choice(
+						return choice(
 							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS["1B"]],
 							[0.05, 0.05, 0.9],
 						);
 					case "middle":
-						return random.choice(
+						return choice(
 							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS["2B"], POS_NUMBERS.SS],
 							[0.05, 0.05, 0.45, 0.45],
 						);
 					case "left":
-						return random.choice(
+						return choice(
 							[POS_NUMBERS.C, POS_NUMBERS.P, POS_NUMBERS["3B"], POS_NUMBERS.SS],
 							[0.05, 0.05, 0.2, 0.7],
 						);
 					case "right":
-						return random.choice(
+						return choice(
 							[
 								POS_NUMBERS.C,
 								POS_NUMBERS.P,
@@ -351,17 +351,17 @@ class GameSim extends GameSimBase {
 	doBattedBall(p: PlayerGameSim, pitchQuality: number) {
 		const foul = Math.random() < Math.min(0.9, 0.25 * g.get("foulFactor"));
 
-		const type = random.choice(["ground", "line", "fly"] as const, [
+		const type = choice(["ground", "line", "fly"] as const, [
 			0.5 * g.get("groundFactor"),
 			0.5 * g.get("lineFactor"),
 			p.compositeRating.powerHitter * g.get("flyFactor"),
 		]);
 		const direction = foul
-			? random.choice(
+			? choice(
 					["farLeftFoul", "farRightFoul", "outOfPlay"] as const,
 					[1.5, 0.5, 1],
 				)
-			: random.choice(
+			: choice(
 					["farLeft", "left", "middle", "right", "farRight"] as const,
 					[1.5, 2, 1.5, 1, 0.5],
 				);
@@ -377,7 +377,7 @@ class GameSim extends GameSimBase {
 		} else {
 			// Announce the type of hit before the result
 			if (type === "ground") {
-				speed = random.choice(["soft", "normal", "hard"] as const);
+				speed = choice(["soft", "normal", "hard"] as const);
 				this.playByPlay.logEvent({
 					type,
 					pid: p.id,
@@ -391,7 +391,7 @@ class GameSim extends GameSimBase {
 					speed,
 				};
 			} else if (type === "line") {
-				speed = random.choice(["soft", "normal", "hard"] as const, [
+				speed = choice(["soft", "normal", "hard"] as const, [
 					0.5,
 					0.5,
 					(g.get("powerFactor") *
@@ -412,7 +412,7 @@ class GameSim extends GameSimBase {
 					speed,
 				};
 			} else {
-				distance = random.choice(
+				distance = choice(
 					["infield", "shallow", "normal", "deep", "noDoubter"] as const,
 					[
 						0.1,
@@ -1011,7 +1011,7 @@ class GameSim extends GameSimBase {
 			}
 		}
 
-		let throwAt = Math.random() < 0.1 ? undefined : random.choice(indexes);
+		let throwAt = Math.random() < 0.1 ? undefined : choice(indexes);
 		if (throwAt === 0 && this.bases[2]) {
 			// Stealing 2nd with runners on 1st and 3rd, maybe don't throw
 			if (Math.random() < 0.5) {
@@ -1186,7 +1186,7 @@ class GameSim extends GameSimBase {
 			Math.random() < strikeProb ? "strike" : ("ball" as const);
 
 		let pitchQuality = helpers.bound(
-			random.gauss(
+			gauss(
 				fatigueFactor(
 					pitcher.pFatigue + pitcher.stat.pc,
 					pitcher.compositeRating.workhorsePitcher,
@@ -1418,7 +1418,7 @@ class GameSim extends GameSimBase {
 			numBasesWeights[2] *= speedFactor;
 		}
 
-		const numBases = random.choice([1, 2, 3, 4] as const, numBasesWeights);
+		const numBases = choice([1, 2, 3, 4] as const, numBasesWeights);
 
 		/*if (numBases === 4) {
 			const type = `${battedBallInfo.type}-${battedBallInfo.speed ?? battedBallInfo.distance}`;
@@ -1520,7 +1520,7 @@ class GameSim extends GameSimBase {
 								forceOutPossible = false;
 							}
 						}
-						fieldersChoiceOrDoublePlayIndex = random.choice(
+						fieldersChoiceOrDoublePlayIndex = choice(
 							[0, 1, 2],
 							putOutBaseIndexWeights,
 						);
@@ -1546,7 +1546,7 @@ class GameSim extends GameSimBase {
 								forceOutPossible = false;
 							}
 						}
-						fieldersChoiceOrDoublePlayIndex = random.choice(
+						fieldersChoiceOrDoublePlayIndex = choice(
 							[0, 1, 2],
 							putOutBaseIndexWeights,
 						);
@@ -2395,7 +2395,7 @@ class GameSim extends GameSimBase {
 			}
 
 			// Probably will never happen, but just in case
-			return random.choice(this.team[t].depth.pitchers)!;
+			return choice(this.team[t].depth.pitchers)!;
 		}) as [PlayerGameSim, PlayerGameSim];
 
 		const reversedTeamNums = [1, 0] as const;

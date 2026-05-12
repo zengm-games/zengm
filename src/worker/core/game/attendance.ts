@@ -4,8 +4,9 @@ import { facilitiesEffectAttendance } from "../../../common/budgetLevels.ts";
 import { PLAYOFF_ATTENDANCE_FACTOR } from "../../../common/getAdjustedTicketPrice.ts";
 import type { TeamSeason } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
-import { g, helpers, random } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { gauss } from "../../../common/random.ts";
 
 export const getBaseAttendance = ({
 	hype,
@@ -82,7 +83,7 @@ export const getActualAttendance = async ({
 	attendance *= SPORT_FACTOR;
 
 	if (randomize) {
-		attendance = random.gauss(attendance, 1000);
+		attendance = gauss(attendance, 1000);
 	}
 
 	// Attendance depends on ticket price

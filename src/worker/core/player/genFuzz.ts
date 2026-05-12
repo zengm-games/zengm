@@ -2,7 +2,7 @@ import {
 	scoutingEffectCutoff,
 	scoutingEffectStddev,
 } from "../../../common/budgetLevels.ts";
-import { random } from "../../util/index.ts";
+import { gauss } from "../../../common/random.ts";
 
 const genFuzz = (souctingLevel: number): number => {
 	// 1 to 8
@@ -11,7 +11,7 @@ const genFuzz = (souctingLevel: number): number => {
 	// 1 to 3
 	const stddev = scoutingEffectStddev(souctingLevel);
 
-	let fuzz = random.gauss(0, stddev);
+	let fuzz = gauss(0, stddev);
 
 	if (fuzz > cutoff) {
 		fuzz = cutoff;

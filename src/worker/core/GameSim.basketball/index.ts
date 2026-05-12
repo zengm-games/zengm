@@ -1,4 +1,4 @@
-import { g, helpers, random } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/constants.ts";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession.ts";
 import getInjuryRate from "./getInjuryRate.ts";
@@ -18,6 +18,7 @@ import {
 import getWinner from "../../../common/getWinner.ts";
 import { formatClock } from "../../../common/formatClock.ts";
 import PlayByPlayLogger from "./PlayByPlayLogger.ts";
+import { choice, truncGauss, uniform } from "../../../common/random.ts";
 
 const SHOT_CLOCK = 24;
 // const NUM_TIMEOUTS_MAX_FINAL_PERIOD = 4;
@@ -751,7 +752,7 @@ class GameSim extends GameSimBase {
 			this.isClockRunning
 		) {
 			// Time to gather ball after shot was made, and then to inbound it too
-			dt += random.uniform(1, 5);
+			dt += uniform(1, 5);
 		}
 
 		return dt;
@@ -970,7 +971,7 @@ class GameSim extends GameSimBase {
 						ovrs[p.id] =
 							p.valueNoPot *
 							this.fatigue(p.stat.energy) *
-							(!lateGame ? random.uniform(0.9, 1.1) : 1);
+							(!lateGame ? uniform(0.9, 1.1) : 1);
 
 						if (!this.allStarGame) {
 							ovrs[p.id]! *= p.ptModifier;
@@ -1094,10 +1095,10 @@ class GameSim extends GameSimBase {
 
 						// Substitute player
 						this.playersOnCourt[t][pp] = b;
-						b.stat.courtTime = random.uniform(-2, 2);
-						b.stat.benchTime = random.uniform(-2, 2);
-						p.stat.courtTime = random.uniform(-2, 2);
-						p.stat.benchTime = random.uniform(-2, 2);
+						b.stat.courtTime = uniform(-2, 2);
+						b.stat.benchTime = uniform(-2, 2);
+						p.stat.courtTime = uniform(-2, 2);
+						p.stat.benchTime = uniform(-2, 2);
 
 						/*// Keep track of deviations from the normal starting lineup for the play-by-play
 						if (this.playByPlay !== undefined) {
@@ -1583,9 +1584,9 @@ class GameSim extends GameSimBase {
 			if (this.t > 0.2 && Math.random() < this.probTov()) {
 				let dt;
 				if (this.t < 8 || clockFactor === "intentionalFoul") {
-					dt = random.uniform(0.1, Math.min(this.t, 5));
+					dt = uniform(0.1, Math.min(this.t, 5));
 				} else {
-					dt = random.uniform(1, 8);
+					dt = uniform(1, 8);
 				}
 				this.advanceClockSeconds(dt);
 				return this.doTov();
@@ -1618,18 +1619,15 @@ class GameSim extends GameSimBase {
 						});
 						return "endOfPeriod";
 					}
-					dt = random.uniform(0.1, Math.min(this.t - 0.2, 4));
+					dt = uniform(0.1, Math.min(this.t - 0.2, 4));
 				} else {
-					dt = random.uniform(1, 5);
+					dt = uniform(1, 5);
 				}
 			} else {
 				if (this.t < 2) {
-					dt = random.uniform(0, this.t);
+					dt = uniform(0, this.t);
 				} else {
-					dt = random.uniform(
-						1,
-						Math.min(this.t, SHOT_CLOCK - this.possessionLength),
-					);
+					dt = uniform(1, Math.min(this.t, SHOT_CLOCK - this.possessionLength));
 				}
 			}
 			this.advanceClockSeconds(dt);
@@ -1664,7 +1662,7 @@ class GameSim extends GameSimBase {
 			const upperLimitMax =
 				clockFactor === "catchUp" ? 4 : clockFactor === "maintainLead" ? 8 : 6;
 			const max = Math.max(Math.min(this.t - 0.3, upperLimitMax), 0);
-			const dt = random.uniform(min, max);
+			const dt = uniform(min, max);
 			this.advanceClockSeconds(dt);
 		}
 
@@ -1998,18 +1996,18 @@ class GameSim extends GameSimBase {
 		if (tipInFromOutOfBounds) {
 			dt = 0;
 		} else if (putBack) {
-			dt = random.uniform(Math.min(this.t, 0.1), Math.min(this.t, 1));
+			dt = uniform(Math.min(this.t, 0.1), Math.min(this.t, 1));
 		} else if (this.t <= 0.3) {
-			dt = random.uniform(0, upperLimit);
+			dt = uniform(0, upperLimit);
 		} else if (this.t < 1) {
 			// Less than 1 second left
-			dt = random.uniform(0.2, upperLimit);
+			dt = uniform(0.2, upperLimit);
 		} else if (lowerLimit > upperLimit) {
 			// Less than 2 seconds left
-			dt = random.uniform(0.5, upperLimit);
+			dt = uniform(0.5, upperLimit);
 		} else if (upperLimit - lowerLimit < 4) {
 			// Due to being near the end of the quarter, upperLimit and lowerLimit are close
-			dt = random.uniform(lowerLimit, upperLimit);
+			dt = uniform(lowerLimit, upperLimit);
 		} else {
 			const mean =
 				clockFactor === "catchUp"
@@ -2018,7 +2016,7 @@ class GameSim extends GameSimBase {
 						? 12
 						: 6.25;
 
-			dt = random.truncGauss(mean, 5, lowerLimit, upperLimit);
+			dt = truncGauss(mean, 5, lowerLimit, upperLimit);
 		}
 		this.advanceClockSeconds(dt);
 
@@ -2092,14 +2090,14 @@ class GameSim extends GameSimBase {
 			if (!this.isClockRunning) {
 				// Time between shot and foul being called, rarely
 				if (Math.random() < 0.1) {
-					this.advanceClockSeconds(random.uniform(0, 0.2));
+					this.advanceClockSeconds(uniform(0, 0.2));
 				}
 				return;
 			}
 
 			// Time between the shot being released and the shot being decided (either make or miss, not including time to rebound)
 			this.advanceClockSeconds(
-				random.uniform(
+				uniform(
 					...((type === "atRim" || type === "tipIn" || type === "putBack"
 						? [0.2, 0.5]
 						: type === "lowPost"
@@ -2716,7 +2714,7 @@ class GameSim extends GameSimBase {
 			return "endOfPeriod";
 		}
 
-		this.advanceClockSeconds(random.uniform(0.1, 0.7));
+		this.advanceClockSeconds(uniform(0.1, 0.7));
 
 		if (this.t === 0) {
 			return "endOfPeriod";
@@ -2825,7 +2823,7 @@ class GameSim extends GameSimBase {
 		// Special case for all 0 rated players - randomly pick one
 		if (sum === 0) {
 			const candidates = playersOnCourt.filter((p) => p !== exempt);
-			return random.choice(candidates);
+			return choice(candidates);
 		}
 
 		const rand = Math.random() * sum;

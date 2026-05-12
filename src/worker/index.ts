@@ -4,9 +4,10 @@ import * as common from "../common/constants.ts";
 import * as core from "./core/index.ts";
 import * as db from "./db/index.ts";
 import * as util from "./util/index.ts";
+import * as random from "../common/random.ts";
 import { promiseWorker } from "./util/promiseWorker.ts";
 
-self.bbgm = { api, ...common, ...core, ...db, ...util };
+self.bbgm = { api, ...common, ...core, ...db, ...util, random };
 
 if (process.env.NODE_ENV === "development") {
 	import("./core/debug/index.ts").then(({ default: debug }) => {

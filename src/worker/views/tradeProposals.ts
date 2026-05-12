@@ -1,10 +1,11 @@
 import { idb } from "../db/index.ts";
-import { g, helpers, random } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type { TradeTeams, UpdateEvents } from "../../common/types.ts";
 import isUntradable from "../core/trade/isUntradable.ts";
 import makeItWork from "../core/trade/makeItWork.ts";
 import summary from "../core/trade/summary.ts";
 import { augmentOffers } from "../api/index.ts";
+import { shuffle, uniformSeed, choice } from "../../common/random.ts";
 
 const getOffers = async (seed: number) => {
 	const NUM_OFFERS = 5;
@@ -15,7 +16,7 @@ const getOffers = async (seed: number) => {
 	const teams = (await idb.cache.teams.getAll()).filter(
 		(t) => !t.disabled && t.tid !== userTid,
 	);
-	random.shuffle(teams, seed);
+	shuffle(teams, seed);
 
 	const players = (
 		await idb.cache.players.indexGetAll("playersByTid", userTid)
@@ -36,18 +37,18 @@ const getOffers = async (seed: number) => {
 	for (const t of teams) {
 		for (let i = 0; i < NUM_TRIES_PER_TEAM; i++) {
 			const seedBase = seed + NUM_TRIES_PER_TEAM * t.tid + i;
-			const r = random.uniformSeed(seedBase);
+			const r = uniformSeed(seedBase);
 			const pids: number[] = [];
 			const dpids: number[] = [];
 
 			if ((r < 0.7 || draftPicks.length === 0) && players.length > 0) {
 				// Weight by player value - good player more likely to be in trade
-				pids.push(random.choice(players, (p) => p.value, seedBase + 1).pid);
+				pids.push(choice(players, (p) => p.value, seedBase + 1).pid);
 			} else if ((r < 0.85 || players.length === 0) && draftPicks.length > 0) {
-				dpids.push(random.choice(draftPicks, undefined, seedBase + 2).dpid);
+				dpids.push(choice(draftPicks, undefined, seedBase + 2).dpid);
 			} else {
-				pids.push(random.choice(players, (p) => p.value, seedBase + 3).pid);
-				dpids.push(random.choice(draftPicks, undefined, seedBase + 4).dpid);
+				pids.push(choice(players, (p) => p.value, seedBase + 3).pid);
+				dpids.push(choice(draftPicks, undefined, seedBase + 4).dpid);
 			}
 
 			const teams0: TradeTeams = [

@@ -1,10 +1,11 @@
 import { finances, league, player } from "../index.ts";
 import { idb } from "../../db/index.ts";
-import { g, random } from "../../util/index.ts";
+import { g } from "../../util/index.ts";
 import getDraftProspects from "./getDraftProspects.ts";
 import loadDataBasketball from "./loadData.basketball.ts";
 import addRelatives from "./addRelatives.ts";
 import { LEAGUE_DATABASE_VERSION, PHASE } from "../../../common/constants.ts";
+import { shuffle } from "../../../common/random.ts";
 
 const updateRandomDebutsForever = async (
 	draftYear: number,
@@ -49,7 +50,7 @@ const updateRandomDebutsForever = async (
 
 	// Randomize draft classes
 	const draftYears = draftProspects.map((p) => p.draft.year);
-	random.shuffle(draftYears);
+	shuffle(draftYears);
 	for (const [i, p] of draftProspects.entries()) {
 		const draftYear = draftYears[i]!;
 		const diff = draftYear - p.draft.year;

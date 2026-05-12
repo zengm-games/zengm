@@ -1,11 +1,12 @@
 import { PHASE, PLAYER, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
-import { g, random } from "../../util/index.ts";
+import { g } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts"; // Players meeting one of these cutoffs might retire
 import { last, range } from "../../../common/utils.ts";
 import loadDataBasketball from "../realRosters/loadData.basketball.ts";
 import realRosters from "../realRosters/index.ts";
 import { idb } from "../../db/index.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { gauss } from "../../../common/random.ts";
 
 const checkForceRetireSeasons = (p: Player) => {
 	// No redshirt seasons before league was created, since we have no stats then
@@ -183,7 +184,7 @@ const shouldRetire = async (p: Player): Promise<boolean> => {
 
 			const excessPot = (minPot - pot) / 50; // 0.02 for each potential rating below minPot (this can be negative)
 
-			if (excessAge + excessPot + random.gauss(0, 1) > 0) {
+			if (excessAge + excessPot + gauss(0, 1) > 0) {
 				return true;
 			}
 		}

@@ -6,13 +6,13 @@ import { realRosters } from "../core/index.ts";
 import geographicCoordinates, {
 	type Continent,
 } from "../../common/geographicCoordinates.ts";
-import { random } from "../util/index.ts";
 import type { NewLeagueTeamWithoutRank } from "../../ui/views/NewLeague/types.ts";
 import { omit, orderBy, range } from "../../common/utils.ts";
 import addSeasonInfoToTeams from "../core/realRosters/addSeasonInfoToTeams.ts";
 import loadDataBasketball from "../core/realRosters/loadData.basketball.ts";
 import { kmeansFixedSize, sortByDivs } from "../core/team/cluster.ts";
 import type { PopulationFactor } from "../../ui/views/NewLeague/RandomizeTeamsModal.tsx";
+import { choice, shuffle } from "../../common/random.ts";
 
 type MyTeam = NewLeagueTeamWithoutRank & {
 	weight?: number;
@@ -47,7 +47,7 @@ const getAllRealTeamInfos = async (seasonRange: [number, number]) => {
 	}
 
 	// Shuffle because we only keep one team for each abbrev, so we want them in random order so it's not always the same
-	random.shuffle(teamInfos);
+	shuffle(teamInfos);
 
 	// Unique abbrevs - don't have to worry about rewriting due to collision, and how that impacts real team data. Unique regions - just feels right.
 	const abbrevsSeen = new Set();
@@ -209,10 +209,7 @@ const getRandomTeams = async ({
 		selectedTeamInfos = [];
 		const teamsRemaining = new Set(allTeamInfos);
 		for (let i = 0; i < numTeamsTotal; i++) {
-			const teamInfo = random.choice(
-				Array.from(teamsRemaining),
-				weightFunction,
-			);
+			const teamInfo = choice(Array.from(teamsRemaining), weightFunction);
 			selectedTeamInfos.push(teamInfo);
 			teamsRemaining.delete(teamInfo);
 		}

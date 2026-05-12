@@ -5,10 +5,11 @@ import type {
 } from "../../../common/types.ts";
 import { dunkInfos, getValidMoves } from "../../../common/dunkContest.ts";
 import { idb } from "../../db/index.ts";
-import { g, helpers, random } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import { saveAwardsByPlayer } from "../season/awards.ts";
 import { getNextRoundType } from "./contest.ts";
 import { orderBy } from "../../../common/utils.ts";
+import { choice, randInt, shuffle } from "../../../common/random.ts";
 
 export const HIGHEST_POSSIBLE_SCORE = 50;
 export const LOWEST_POSSIBLE_SCORE = 5;
@@ -79,7 +80,7 @@ const getDunkScore = (dunkAttempt: DunkAttempt, numAttempts: number) => {
 
 	return Math.round(
 		helpers.bound(
-			getDunkScoreRaw(dunkAttempt) + numAttemptsBonus + random.randInt(-5, 5),
+			getDunkScoreRaw(dunkAttempt) + numAttemptsBonus + randInt(-5, 5),
 			LOWEST_POSSIBLE_SCORE,
 			HIGHEST_POSSIBLE_SCORE,
 		),
@@ -113,7 +114,7 @@ const makeDunkEasier = (
 	minScoreNeeded: number | undefined,
 ) => {
 	const parts: DunkPart[] = ["toss", "distance", "move1", "move2"];
-	random.shuffle(parts);
+	shuffle(parts);
 
 	const newDunk = {
 		...dunk,
@@ -147,7 +148,7 @@ const makeDunkEasier = (
 			continue;
 		}
 
-		const candidate = random.choice(candidates);
+		const candidate = choice(candidates);
 		newDunk[part] = candidate[0];
 
 		// Making one component easier is good enough
@@ -160,7 +161,7 @@ const makeDunkEasier = (
 // Increase difficulty so it's at least minScoreNeeded
 const makeDunkHarder = (dunk: DunkAttempt, minScoreNeeded: number) => {
 	const parts: DunkPart[] = ["toss", "distance", "move1", "move2"];
-	random.shuffle(parts);
+	shuffle(parts);
 
 	const newDunk = {
 		...dunk,
@@ -229,7 +230,7 @@ const genDunk = (preDunkInfo: PreDunkInfo) => {
 		}
 
 		const parts: DunkPart[] = ["toss", "distance", "move1", "move2"];
-		random.shuffle(parts);
+		shuffle(parts);
 
 		dunk = {
 			toss: "none",
@@ -258,7 +259,7 @@ const genDunk = (preDunkInfo: PreDunkInfo) => {
 					continue;
 				}
 
-				const candidate = random.choice(candidates);
+				const candidate = choice(candidates);
 
 				dunk[part] = candidate[0];
 			}

@@ -1,10 +1,11 @@
-import { g, helpers, random } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import type {
 	PlayerContract,
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
+import { realGauss } from "../../../common/random.ts";
 
 /**
  * Generate a contract for a player.
@@ -54,7 +55,7 @@ const genContract = (
 		g.get("minContract");
 
 	if (randomizeAmount) {
-		amount *= helpers.bound(random.realGauss(1, 0.1), 0, 2); // Randomize
+		amount *= helpers.bound(realGauss(1, 0.1), 0, 2); // Randomize
 	}
 
 	if (!noLimit) {

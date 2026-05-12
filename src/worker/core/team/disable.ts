@@ -4,7 +4,6 @@ import {
 	g,
 	updateStatus,
 	updatePlayMenu,
-	random,
 	logEvent,
 	helpers,
 } from "../../util/index.ts";
@@ -12,6 +11,7 @@ import { PHASE } from "../../../common/constants.ts";
 import deleteUnreadMessages from "./deleteUnreadMessages.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../player/getNumPlayersTradedAwayNormalized.ts";
+import { choice } from "../../../common/random.ts";
 
 const disable = async (tid: number) => {
 	const t = await idb.cache.teams.get(tid);
@@ -34,7 +34,7 @@ const disable = async (tid: number) => {
 		if (prevUserTids.length > 1) {
 			// If it's multi team mode, just move to another team
 			const newUserTids = prevUserTids.filter((userTid) => userTid !== tid);
-			const newUserTid = random.choice(newUserTids);
+			const newUserTid = choice(newUserTids);
 			await league.setGameAttributes({
 				userTid: newUserTid,
 				userTids: newUserTids,

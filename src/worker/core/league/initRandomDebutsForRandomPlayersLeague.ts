@@ -3,13 +3,13 @@ import type {
 	GameAttributesLeagueWithHistory,
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
-import { defaultGameAttributes, random } from "../../util/index.ts";
+import { defaultGameAttributes } from "../../util/index.ts";
 import type { Settings } from "../../views/settings.ts";
 import formatPlayerFactory from "../realRosters/formatPlayerFactory.ts";
 import type { Basketball } from "../realRosters/loadData.basketball.ts";
 import { countBy, last, omit, orderBy } from "../../../common/utils.ts";
 import { getNumPlayersPerTeam } from "./create/createRandomPlayers.ts";
-import { choice } from "../../../common/random.ts";
+import { choice, shuffle } from "../../../common/random.ts";
 
 const getTidsWithNoPlayers = (
 	activeTids: number[],
@@ -73,7 +73,7 @@ const initRandomDebutsForRandomPlayersLeague = async ({
 			}),
 		);
 
-	random.shuffle(realPlayers);
+	shuffle(realPlayers);
 
 	// If necessary, put some players on empty teams - this works a bit different than in real players leagues, which matches players by age, whereas this one just picks random players at random seasons
 	const tidsWithNoPlayers = getTidsWithNoPlayers(activeTids, players);

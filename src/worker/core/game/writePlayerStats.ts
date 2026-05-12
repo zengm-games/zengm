@@ -8,7 +8,6 @@ import {
 	lock,
 	logEvent,
 	processPlayerStats,
-	random,
 } from "../../util/index.ts";
 import type { Conditions, GameResults, Player } from "../../../common/types.ts";
 import stats from "../player/stats.ts";
@@ -16,6 +15,7 @@ import statsRowIsCurrent from "../player/statsRowIsCurrent.ts";
 import { last, maxBy } from "../../../common/utils.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { randInt } from "../../../common/random.ts";
 
 export const P_FATIGUE_DAILY_REDUCTION = 20;
 
@@ -42,7 +42,7 @@ const doInjury = async (
 			Math.random() < 0.33
 		) {
 			// Reaggravate previous injury
-			reaggravateExtraDays = random.randInt(1, 10);
+			reaggravateExtraDays = randInt(1, 10);
 			p2.injury.gamesRemaining = p.injury.gamesRemaining + reaggravateExtraDays;
 			p2.injury.type = p.injury.type;
 		}
@@ -199,7 +199,7 @@ const doInjury = async (
 		});
 		for (const rating of ratingsToNerf) {
 			(newRatings as any)[rating] = player.limitRating(
-				(newRatings as any)[rating] - random.randInt(1, 20),
+				(newRatings as any)[rating] - randInt(1, 20),
 			);
 		}
 

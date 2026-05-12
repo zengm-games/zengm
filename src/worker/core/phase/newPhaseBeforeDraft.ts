@@ -10,7 +10,6 @@ import {
 	local,
 	toUI,
 	logEvent,
-	random,
 	orderTeams,
 	env,
 } from "../../util/index.ts";
@@ -27,6 +26,7 @@ import addAward from "../player/addAward.ts";
 import { analyticsEventLocal } from "../../../common/analyticsEventLocal.ts";
 import { updateLotteryChancesAfterPlayoffs } from "../draft/cola.ts";
 import { last } from "../../../common/utils.ts";
+import { randInt, shuffle, truncGauss } from "../../../common/random.ts";
 
 const INFLATION_GAME_ATTRIBUTES = [
 	"salaryCap",
@@ -70,14 +70,14 @@ const doInflation = async (conditions: Conditions) => {
 		inflation = helpers.bound(inflationAvg, inflationMin, inflationMax);
 	} else {
 		try {
-			inflation = random.truncGauss(
+			inflation = truncGauss(
 				inflationAvg,
 				inflationStd,
 				inflationMin,
 				inflationMax,
 			);
 		} catch {
-			inflation = random.randInt(inflationMin, inflationMax);
+			inflation = randInt(inflationMin, inflationMax);
 		}
 	}
 
@@ -200,13 +200,13 @@ const doThanosMode = async (conditions: Conditions) => {
 			0,
 			Infinity,
 		]);
-		random.shuffle(activePlayers);
+		shuffle(activePlayers);
 		const snappedPlayers = activePlayers.slice(0, activePlayers.length / 2);
 
 		const userSnappedPlayers = [];
 
 		for (const p of snappedPlayers) {
-			// Real players are retired, random players are  killed
+			// Real players are retired players are  killed
 			if (p.tid === g.get("userTid")) {
 				userSnappedPlayers.push(p);
 			}

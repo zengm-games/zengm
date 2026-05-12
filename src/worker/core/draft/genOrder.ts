@@ -3,7 +3,7 @@ import logLotteryChances from "./logLotteryChances.ts";
 import logLotteryWinners from "./logLotteryWinners.ts";
 import divideChancesOverTiedTeams from "./divideChancesOverTiedTeams.ts";
 import { idb } from "../../db/index.ts";
-import { g, helpers, random } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import type {
 	Conditions,
 	DraftLotteryResult,
@@ -21,6 +21,7 @@ import {
 	updateLotteryChancesAfterLottery,
 } from "./cola.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { randInt, shuffle } from "../../../common/random.ts";
 
 type ReturnVal = {
 	draftLotteryResult:
@@ -323,7 +324,7 @@ const genOrder = async (
 				}
 			}
 
-			const draw = random.randInt(0, totalChances - 1);
+			const draw = randInt(0, totalChances - 1);
 			const i = chancesCumsum.findIndex((chance) => chance > draw);
 
 			// This happens if all the chances are 0, such which can happen in cola if everyone opts out. In that case, just pick teams from uniform random. In that case, don't make any lottery selection and just proceed in order. UI is still messed up in that case, showing NaNs, but whatever.
@@ -356,7 +357,7 @@ const genOrder = async (
 	} else {
 		for (const roundTeams of teamsByRound) {
 			if (draftType === "random") {
-				random.shuffle(roundTeams);
+				shuffle(roundTeams);
 			} else if (draftType === "noLotteryReverse") {
 				roundTeams.reverse();
 			}

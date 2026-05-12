@@ -1,11 +1,12 @@
 import { idb } from "../../db/index.ts";
 import { PLAYER, PHASE } from "../../../common/constants.ts";
 import { team, player, draft } from "../index.ts";
-import { g, helpers, random } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import type { Player } from "../../../common/types.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { last, orderBy } from "../../../common/utils.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { choice, randInt, shuffle, uniform } from "../../../common/random.ts";
 
 const TEMP = 0.35;
 const LEARNING_RATE = 0.5;
@@ -30,7 +31,7 @@ const getExpiration = (
 
 	// Randomize expiration for contracts generated at beginning of new game
 	if (randomizeExp) {
-		years = random.randInt(1, years);
+		years = randInt(1, years);
 		years = helpers.bound(years, 1, g.get("maxContractLength"));
 	} else {
 		years = helpers.bound(
@@ -205,7 +206,7 @@ const normalizeContractDemands = async ({
 		const SCALE_DOWN = 1.0 - OFFSET;
 
 		const bids = new Map<number, number>();
-		random.shuffle(randTeams);
+		shuffle(randTeams);
 		for (const t of randTeams) {
 			let capSpace = salaryCap - t.payroll;
 			if (type === "newLeague") {
@@ -231,7 +232,7 @@ const normalizeContractDemands = async ({
 					availablePlayersArray.map((p) => p.value * TEMP),
 					PARAM,
 				);
-				const p = random.choice(availablePlayersArray, probs);
+				const p = choice(availablePlayersArray, probs);
 				availablePlayers.delete(p);
 
 				bids.set(p.pid, (bids.get(p.pid) ?? 0) + 1);
@@ -300,7 +301,7 @@ const normalizeContractDemands = async ({
 		} else if (numRounds === 0) {
 			info.contractAmount = player.genContract(p, type === "newLeague").amount;
 		} else if (type === "newLeague") {
-			info.contractAmount *= random.uniform(0.4, 1.1);
+			info.contractAmount *= uniform(0.4, 1.1);
 		}
 	}
 	if (
@@ -361,9 +362,7 @@ const normalizeContractDemands = async ({
 			for (const info of playerInfosToUpdateSorted.slice(0, topPlayersCount)) {
 				info.contractAmount =
 					minContract +
-					(info.contractAmount - minContract) *
-						fraction *
-						random.uniform(0.75, 1);
+					(info.contractAmount - minContract) * fraction * uniform(0.75, 1);
 				// console.log(`${info.p.firstName} ${info.p.lastName} ${prev} -> ${info.contractAmount}`)
 			}
 		}

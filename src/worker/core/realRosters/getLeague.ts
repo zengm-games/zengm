@@ -9,7 +9,7 @@ import type {
 	GameAttributesLeague,
 	PlayerContract,
 } from "../../../common/types.ts";
-import { defaultGameAttributes, helpers, random } from "../../util/index.ts";
+import { defaultGameAttributes, helpers } from "../../util/index.ts";
 import {
 	LEAGUE_DATABASE_VERSION,
 	PHASE,
@@ -33,6 +33,7 @@ import getInjury from "./getInjury.ts";
 import { averageSalary } from "./averageSalary.ts";
 import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
+import { shuffle } from "../../../common/random.ts";
 
 const FREE_AGENTS_SEASON = 2020;
 
@@ -253,10 +254,10 @@ const getLeague = async (options: GetLeagueOptions) => {
 				});
 
 				const draftYears = toRandomize.map((p) => p.draft.year);
-				random.shuffle(draftYears);
+				shuffle(draftYears);
 
 				const tids = toRandomize.filter((p) => p.tid >= 0).map((p) => p.tid);
-				random.shuffle(tids);
+				shuffle(tids);
 
 				const ratingsBySlug = Object.groupBy(
 					basketball.ratings,

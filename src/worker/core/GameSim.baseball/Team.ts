@@ -3,9 +3,9 @@ import {
 	NUM_ACTIVE_PITCHERS,
 	NUM_STARTING_PITCHERS,
 } from "../../../common/constants.baseball.ts";
+import { choice } from "../../../common/random.ts";
 import type { Position } from "../../../common/types.baseball.ts";
 import { orderBy } from "../../../common/utils.ts";
-import { random } from "../../util/index.ts";
 import { fatigueFactor } from "./fatigueFactor.ts";
 import { CLOSER_INDEX, getStartingPitcher } from "./getStartingPitcher.ts";
 import type { PlayerGameSim, TeamGameSim } from "./types.ts";
@@ -313,8 +313,8 @@ class Team<DH extends boolean> {
 		const closer =
 			healthyPitchers.find((p) => p.index === CLOSER_INDEX) ??
 			healthyPitchers.find((p) => !p.starter) ??
-			random.choice(healthyPitchers, choiceWeight) ??
-			random.choice(availablePitchers);
+			choice(healthyPitchers, choiceWeight) ??
+			choice(availablePitchers);
 
 		if (closerSituation) {
 			return closer;
@@ -322,7 +322,7 @@ class Team<DH extends boolean> {
 
 		const skipCloser = Math.random() < 0.9;
 
-		const reliever = random.choice(
+		const reliever = choice(
 			healthyPitchers.filter(
 				(p) => !p.starter && (!skipCloser || p !== closer),
 			),
@@ -333,7 +333,7 @@ class Team<DH extends boolean> {
 			return reliever;
 		}
 
-		const pitcher = random.choice(availablePitchers, choiceWeight);
+		const pitcher = choice(availablePitchers, choiceWeight);
 
 		if (pitcher) {
 			return pitcher;
@@ -353,7 +353,7 @@ class Team<DH extends boolean> {
 			}))
 			.filter((p) => p.p.subIndex === undefined);
 
-		return random.choice(availablePitchers2, choiceWeight);
+		return choice(availablePitchers2, choiceWeight);
 	}
 
 	getInjuryReplacement(

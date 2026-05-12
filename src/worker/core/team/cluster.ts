@@ -1,6 +1,6 @@
+import { uniform, shuffle } from "../../../common/random.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 import type { Div } from "../../../common/types.ts";
-import { random } from "../../util/index.ts";
 
 type Clusters = {
 	center: [number, number];
@@ -109,10 +109,7 @@ export const kmeansFixedSize = (
 				center[1] /= pointIndexes.length;
 			} else {
 				// Initialize with random center
-				center = [
-					random.uniform(minima[0], maxima[0]),
-					random.uniform(minima[1], maxima[1]),
-				];
+				center = [uniform(minima[0], maxima[0]), uniform(minima[1], maxima[1])];
 			}
 
 			const pointIndexes: number[] = [];
@@ -134,7 +131,7 @@ export const kmeansFixedSize = (
 		let iteration = 0;
 		while (true) {
 			// Randomize order of points, to help find different solutions given the cluster size constraint
-			random.shuffle(pointIndexes);
+			shuffle(pointIndexes);
 
 			// Assign each point to a cluster
 			for (const pointIndex of pointIndexes) {
@@ -240,11 +237,11 @@ export const sortByDivs = (
 	const divIndexes = divs.map((div, i) => i);
 
 	for (let tryNum = 0; tryNum < NUM_TRIES; tryNum++) {
-		random.shuffle(divIndexes);
+		shuffle(divIndexes);
 
 		const newClusters: Clusters = [];
 		let remainingClusters = [...clusters];
-		random.shuffle(remainingClusters);
+		shuffle(remainingClusters);
 
 		let score = 0;
 

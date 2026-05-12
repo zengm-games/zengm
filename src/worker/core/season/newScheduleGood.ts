@@ -1,4 +1,4 @@
-import { g, helpers, random } from "../../../worker/util/index.ts";
+import { g, helpers } from "../../../worker/util/index.ts";
 import {
 	countBy,
 	groupByUnique,
@@ -10,6 +10,7 @@ import { TOO_MANY_TEAMS_TOO_SLOW } from "./getInitialNumGamesConfDivSettings.ts"
 import groupScheduleSeries from "./groupScheduleSeries.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 import groupScheduleCompact from "./groupScheduleCompact.ts";
+import { shuffle } from "../../../common/random.ts";
 
 type MyTeam = {
 	seasonAttrs: {
@@ -451,7 +452,7 @@ const finalize = ({
 
 			// Shuffle teams, cause particularly with confs you have the same teams available in multiple different groups, since in-division teams are already subtracted, so we don't want to fall into a rut based on team order
 			const teamIndexes = range(teams.length);
-			random.shuffle(teamIndexes);
+			shuffle(teamIndexes);
 
 			for (const teamIndex of teamIndexes) {
 				const t = teams[teamIndex]!;
@@ -471,7 +472,7 @@ const finalize = ({
 					// Randomly find numGames games in group. Max one game per team, because if it was more than one game per team it wouldn't be an "excess" matchup
 
 					let groupIndexes = range(group.length);
-					random.shuffle(groupIndexes);
+					shuffle(groupIndexes);
 
 					// Order by team with most games remaining
 					groupIndexes = orderBy(
@@ -608,7 +609,7 @@ const finalize = ({
 			const tidsDone: [number, number][] = []; // tid_home, tid_away
 
 			const shuffledTidsEither = [...tidsEither.values()];
-			random.shuffle(shuffledTidsEither);
+			shuffle(shuffledTidsEither);
 
 			const tidsDoneIndexesByLevel: Record<
 				(typeof LEVELS)[number],
@@ -900,7 +901,7 @@ const newSchedule = (
 		tids = groupScheduleCompact(tids);
 	} else {
 		// Order the schedule so that it takes fewer days to play
-		random.shuffle(tids);
+		shuffle(tids);
 		const days: [number, number][][] = [[]];
 		const tidsInDays: number[][] = [[]];
 		let jMax = 0;
@@ -928,7 +929,7 @@ const newSchedule = (
 		}
 
 		// Otherwise the most dense days will be at the beginning and the least dense days will be at the end
-		random.shuffle(days);
+		shuffle(days);
 
 		tids = days.flat();
 	}

@@ -1,9 +1,10 @@
 import genFuzz from "./genFuzz.ts";
 import limitRating from "./limitRating.ts";
-import { helpers, random } from "../../util/index.ts";
+import { helpers } from "../../util/index.ts";
 //import posFootball from "./pos.football";
 import { POSITION_COUNTS } from "../../../common/constants.football.ts";
 import type { PlayerRatings } from "../../../common/types.football.ts";
+import { truncGauss, randInt } from "../../../common/random.ts";
 
 const getPos = () => {
 	const numPlayers = Object.values(POSITION_COUNTS).reduce((sum, val) => {
@@ -237,7 +238,7 @@ const infoIn: any = {};
 const infoOut: any = {};
 let timeoutID: any;*/
 
-const initialRating = () => limitRating(random.truncGauss(10, 10, 0, 40));
+const initialRating = () => limitRating(truncGauss(10, 10, 0, 40));
 
 const defaultOvrsOrPots = {
 	QB: 0,
@@ -294,16 +295,16 @@ const genRatings = (
 		const factor = ratingsToBoost[rating];
 		if (factor !== undefined) {
 			rawRatings[rating] = limitRating(
-				(rawRatings[rating] += factor * random.truncGauss(10, 20, 10, 30)),
+				(rawRatings[rating] += factor * truncGauss(10, 20, 10, 30)),
 			);
 		}
 	}
 
 	if (pos !== "K" && pos !== "P" && Math.random() < 0.95) {
-		rawRatings.kpw = random.randInt(0, 10);
-		rawRatings.kac = random.randInt(0, 10);
-		rawRatings.ppw = random.randInt(0, 10);
-		rawRatings.pac = random.randInt(0, 10);
+		rawRatings.kpw = randInt(0, 10);
+		rawRatings.kac = randInt(0, 10);
+		rawRatings.ppw = randInt(0, 10);
+		rawRatings.pac = randInt(0, 10);
 	}
 
 	if (pos === "RB") {
@@ -346,16 +347,12 @@ const genRatings = (
 
 	for (const rating of ["hgt", "spd"] as const) {
 		rawRatings[rating] = limitRating(
-			rawRatings[rating] + random.truncGauss(20, 10, 0, 40),
+			rawRatings[rating] + truncGauss(20, 10, 0, 40),
 		);
 	}
 
-	rawRatings.endu = limitRating(
-		rawRatings.endu + random.truncGauss(12.5, 10, 0, 25),
-	);
-	rawRatings.bsc = limitRating(
-		rawRatings.bsc + random.truncGauss(10, 10, 0, 20),
-	);
+	rawRatings.endu = limitRating(rawRatings.endu + truncGauss(12.5, 10, 0, 25));
+	rawRatings.bsc = limitRating(rawRatings.bsc + truncGauss(10, 10, 0, 20));
 	const ratings = {
 		hgt: rawRatings.hgt,
 		stre: rawRatings.stre,

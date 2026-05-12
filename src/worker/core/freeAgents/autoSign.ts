@@ -2,9 +2,10 @@ import { PLAYER } from "../../../common/constants.ts";
 import { player, team } from "../index.ts";
 import getBest from "./getBest.ts";
 import { idb } from "../../db/index.ts";
-import { g, local, random } from "../../util/index.ts";
+import { g, local } from "../../util/index.ts";
 import { orderBy } from "../../../common/utils.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
+import { shuffle } from "../../../common/random.ts";
 
 /**
  * AI teams sign free agents.
@@ -29,7 +30,7 @@ const autoSign = async () => {
 
 	// Randomly order teams
 	const teams = await idb.cache.teams.getAll();
-	random.shuffle(teams);
+	shuffle(teams);
 
 	for (const t of teams) {
 		// Skip the user's team

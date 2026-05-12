@@ -1,4 +1,4 @@
-import { g, helpers, random } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import { POSITIONS } from "../../../common/constants.football.ts";
 import PlayByPlayLogger, {
 	type PlayByPlayEventScore,
@@ -26,6 +26,12 @@ import LngTracker from "./LngTracker.ts";
 import GameSimBase from "../GameSim/GameSimBase.ts";
 import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/constants.ts";
 import type { TeamNum } from "../../../common/types.ts";
+import {
+	choice,
+	randInt,
+	shuffle,
+	truncGauss,
+} from "../../../common/random.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -1012,14 +1018,14 @@ class GameSim extends GameSimBase {
 
 		if (this.isClockRunning) {
 			if (this.hurryUp()) {
-				dtClockRunning = random.randInt(5, 13) / 60;
+				dtClockRunning = randInt(5, 13) / 60;
 
 				// Leave some time for a FG attempt!
 				if (this.clock - dt - dtClockRunning < 0) {
-					dtClockRunning = random.randInt(0, 4) / 60;
+					dtClockRunning = randInt(0, 4) / 60;
 				}
 			} else {
-				dtClockRunning = random.randInt(37, 62) / 60;
+				dtClockRunning = randInt(37, 62) / 60;
 			}
 
 			dtClockRunning /= g.get("pace");
@@ -1220,13 +1226,13 @@ class GameSim extends GameSimBase {
 		if (playType === "starters" || playType === "startersFake") {
 			formation = formations.normal[0]!;
 		} else if (playType === "run" || playType === "pass") {
-			formation = random.choice(formations.normal);
+			formation = choice(formations.normal);
 		} else if (playType === "extraPoint" || playType === "fieldGoal") {
-			formation = random.choice(formations.fieldGoal);
+			formation = choice(formations.fieldGoal);
 		} else if (playType === "punt") {
-			formation = random.choice(formations.punt);
+			formation = choice(formations.punt);
 		} else if (playType === "kickoff") {
-			formation = random.choice(formations.kickoff);
+			formation = choice(formations.kickoff);
 		} else {
 			throw new Error(`Unknown playType "${playType}"`);
 		}
@@ -1333,8 +1339,8 @@ class GameSim extends GameSimBase {
 		let dt = 0;
 
 		if (onside) {
-			dt = random.randInt(2, 5);
-			const kickTo = random.randInt(40, 55);
+			dt = randInt(2, 5);
+			const kickTo = randInt(40, 55);
 			this.currentPlay.addEvent({
 				type: "onsideKick",
 				p: kicker,
@@ -1358,7 +1364,7 @@ class GameSim extends GameSimBase {
 					kickoff: true,
 				});
 
-				const rawLength = Math.random() < 0.003 ? 100 : random.randInt(0, 5);
+				const rawLength = Math.random() < 0.003 ? 100 : randInt(0, 5);
 				yds = this.currentPlay.boundedYds(rawLength);
 				dt += Math.abs(yds) / 8;
 			}
@@ -1433,7 +1439,7 @@ class GameSim extends GameSimBase {
 			}
 
 			const kickReturner = this.getTopPlayerOnField(this.d, "KR");
-			const kickTo = random.randInt(...kickToRange);
+			const kickTo = randInt(...kickToRange);
 			const touchback = kickTo <= -10 || (kickTo < 0 && Math.random() < 0.8);
 			this.currentPlay.addEvent({
 				type: "k",
@@ -1461,10 +1467,10 @@ class GameSim extends GameSimBase {
 				});
 			} else {
 				const meanYds = 15 + 10 * kickReturner.compositeRating.rushing;
-				let ydsRaw = Math.round(random.truncGauss(meanYds, 5, -10, 109));
+				let ydsRaw = Math.round(truncGauss(meanYds, 5, -10, 109));
 
 				if (Math.random() < kickReturner.compositeRating.speed ** 3 * 0.025) {
-					ydsRaw += random.randInt(0, 109);
+					ydsRaw += randInt(0, 109);
 				}
 
 				const returnLength = this.currentPlay.boundedYds(ydsRaw);
@@ -1537,10 +1543,10 @@ class GameSim extends GameSimBase {
 
 		const maxDistance = 109 - this.scrimmage;
 		const distance = Math.min(
-			Math.round(random.truncGauss(44 + adjustment, 8, 25, 90)),
+			Math.round(truncGauss(44 + adjustment, 8, 25, 90)),
 			maxDistance,
 		);
-		let dt = random.randInt(5, 9);
+		let dt = randInt(5, 9);
 
 		this.checkPenalties("punt");
 
@@ -1572,10 +1578,10 @@ class GameSim extends GameSimBase {
 		} else {
 			const maxReturnLength = 100 - this.currentPlay.state.current.scrimmage;
 			const meanYds = 4 + 10 * puntReturner.compositeRating.rushing;
-			let ydsRaw = Math.round(random.truncGauss(meanYds, 10, -10, 109));
+			let ydsRaw = Math.round(truncGauss(meanYds, 10, -10, 109));
 
 			if (Math.random() < puntReturner.compositeRating.speed ** 3 * 0.06) {
-				ydsRaw += random.randInt(0, 109);
+				ydsRaw += randInt(0, 109);
 			}
 
 			const returnLength = helpers.bound(ydsRaw, 0, maxReturnLength);
@@ -1754,7 +1760,7 @@ class GameSim extends GameSimBase {
 		}
 
 		const made = Math.random() < this.probMadeFieldGoal(kicker);
-		const dt = extraPoint ? 0 : random.randInt(4, 6);
+		const dt = extraPoint ? 0 : randInt(4, 6);
 		if (!extraPoint) {
 			this.checkPenalties("fieldGoal");
 		}
@@ -1902,10 +1908,10 @@ class GameSim extends GameSimBase {
 		const tRecovered = lost ? d : o;
 		const pRecovered = this.pickPlayer(tRecovered);
 
-		let ydsRaw = Math.round(random.truncGauss(2, 6, -5, 15));
+		let ydsRaw = Math.round(truncGauss(2, 6, -5, 15));
 
 		if (Math.random() < (lost ? 0.01 : 0.0001)) {
-			ydsRaw += random.randInt(0, 109);
+			ydsRaw += randInt(0, 109);
 		}
 
 		if (lost) {
@@ -1987,10 +1993,10 @@ class GameSim extends GameSimBase {
 			yds: ydsPass,
 		});
 
-		let ydsRaw = Math.round(random.truncGauss(4, 6, -5, 15));
+		let ydsRaw = Math.round(truncGauss(4, 6, -5, 15));
 
 		if (Math.random() < 0.075) {
-			ydsRaw += random.randInt(0, 109);
+			ydsRaw += randInt(0, 109);
 		}
 
 		const yds = this.currentPlay.boundedYds(ydsRaw);
@@ -2061,7 +2067,7 @@ class GameSim extends GameSimBase {
 		const { d } = this.currentPlay.state.initial;
 
 		const p = this.pickPlayer(d, "passRushing", undefined, 5);
-		const ydsRaw = random.randInt(-1, -12);
+		const ydsRaw = randInt(-1, -12);
 		const yds = this.currentPlay.boundedYds(ydsRaw);
 
 		// Track skAlw only if this is a DL/LB sack
@@ -2074,7 +2080,7 @@ class GameSim extends GameSimBase {
 				.filter(([p, { type, won }]) => !won && type === "OL")
 				.map(([p]) => p);
 			if (passBlockLossPlayers.length > 0) {
-				ol = random.choice(passBlockLossPlayers);
+				ol = choice(passBlockLossPlayers);
 			}
 
 			// If no OL lost his pass block, then assume this was a coverage sack or QB's fault
@@ -2104,7 +2110,7 @@ class GameSim extends GameSimBase {
 			yds,
 		});
 
-		return random.randInt(3, 8);
+		return randInt(3, 8);
 	}
 
 	probSack(qb: PlayerGameSim) {
@@ -2241,10 +2247,10 @@ class GameSim extends GameSimBase {
 			t: o,
 		});
 
-		let dt = random.randInt(2, 6);
+		let dt = randInt(2, 6);
 
 		if (Math.random() < 0.75 && Math.random() < this.probFumble(qb)) {
-			const yds = this.currentPlay.boundedYds(random.randInt(-1, -10));
+			const yds = this.currentPlay.boundedYds(randInt(-1, -10));
 			return dt + this.doFumble(qb, yds);
 		}
 
@@ -2272,7 +2278,7 @@ class GameSim extends GameSimBase {
 				: 1;
 
 		let ydsRaw = Math.round(
-			random.truncGauss(
+			truncGauss(
 				// Bound is so (in extreme contrived cases like 0 ovr teams) meanYds can't go too far above/below the truncGauss limits
 				helpers.bound(
 					rbFactor *
@@ -2289,18 +2295,18 @@ class GameSim extends GameSimBase {
 		);
 
 		if (Math.random() < qb.compositeRating.passingDeep * 0.05) {
-			ydsRaw += random.randInt(0, 109);
+			ydsRaw += randInt(0, 109);
 		}
 
 		// Adjust for receiver speed
 		ydsRaw += Math.round((target.compositeRating.speed - 0.5) * 6);
 		if (Math.random() < target.compositeRating.speed * 0.025) {
-			ydsRaw += random.randInt(0, 109);
+			ydsRaw += randInt(0, 109);
 		}
 
 		// Fewer TFL
 		if (ydsRaw < 0) {
-			ydsRaw += random.randInt(0, 5);
+			ydsRaw += randInt(0, 5);
 		}
 
 		ydsRaw = Math.round(ydsRaw * g.get("passYdsFactor"));
@@ -2520,21 +2526,21 @@ class GameSim extends GameSimBase {
 			-5,
 			15,
 		);
-		let ydsRaw = Math.round(random.truncGauss(meanYds, 6, -5, 15));
+		let ydsRaw = Math.round(truncGauss(meanYds, 6, -5, 15));
 
 		if (Math.random() < 0.01) {
-			ydsRaw += random.randInt(0, 109);
+			ydsRaw += randInt(0, 109);
 		}
 
 		// Fewer TFL
 		if (ydsRaw < 0) {
-			ydsRaw += random.randInt(0, 5);
+			ydsRaw += randInt(0, 5);
 		}
 
 		ydsRaw = Math.round(ydsRaw * g.get("rushYdsFactor"));
 
 		const yds = this.currentPlay.boundedYds(ydsRaw);
-		const dt = random.randInt(2, 4) + Math.abs(yds) / 10;
+		const dt = randInt(2, 4) + Math.abs(yds) / 10;
 
 		this.checkPenalties("run", {
 			ballCarrier: p,
@@ -2594,7 +2600,7 @@ class GameSim extends GameSimBase {
 
 		const qb = this.getTopPlayerOnField(o, "QB");
 
-		const yds = random.randInt(0, -YARDS_NEEDED_TO_KNEEL);
+		const yds = randInt(0, -YARDS_NEEDED_TO_KNEEL);
 
 		this.currentPlay.addEvent({
 			type: "kneel",
@@ -2610,7 +2616,7 @@ class GameSim extends GameSimBase {
 			yds,
 		});
 
-		const dt = random.randInt(
+		const dt = randInt(
 			ESTIMATED_SECONDS_PER_KNEEL - 1,
 			ESTIMATED_SECONDS_PER_KNEEL,
 		);
@@ -2671,7 +2677,7 @@ class GameSim extends GameSimBase {
 		});*/
 
 		if (called.length > maxNumPenaltiesAllowed) {
-			random.shuffle(called);
+			shuffle(called);
 			called = called.slice(0, maxNumPenaltiesAllowed);
 		}
 
@@ -2695,7 +2701,7 @@ class GameSim extends GameSimBase {
 			if ((pen.spotFoul || (isReturn && pen.side === "offense")) && !tackOn) {
 				if (pen.side === "offense" && playYds > 0) {
 					// Offensive spot foul - only when past the line of scrimmage
-					spotYds = random.randInt(1, playYds);
+					spotYds = randInt(1, playYds);
 
 					// Don't let it be in the endzone, otherwise shit gets weird with safeties
 					if (spotYds + scrimmage < 1) {
@@ -2703,13 +2709,13 @@ class GameSim extends GameSimBase {
 					}
 				} else if (pen.side === "defense" && !isReturn) {
 					// Defensive spot foul - could be in secondary too
-					spotYds = random.randInt(0, playYds);
+					spotYds = randInt(0, playYds);
 				}
 
 				if (spotYds !== undefined) {
 					// On kickoff returns, penalties are very unlikely to occur extremely deep
 					if (playType === "kickoffReturn" && spotYds + scrimmage <= 10) {
-						spotYds += random.randInt(10, playYds);
+						spotYds += randInt(10, playYds);
 					}
 				}
 			} else if (tackOn) {
@@ -2748,12 +2754,12 @@ class GameSim extends GameSimBase {
 				if (positions.length > 0) {
 					// https://github.com/microsoft/TypeScript/issues/21732
 					// @ts-expect-error
-					const pos = random.choice(positions, (pos2) => posOdds[pos2]);
+					const pos = choice(positions, (pos2) => posOdds[pos2]);
 
 					const players = this.playersOnField[penInfo.t][pos];
 
 					if (players !== undefined && players.length > 0) {
-						p = random.choice(players);
+						p = choice(players);
 					}
 				}
 
@@ -2892,7 +2898,7 @@ class GameSim extends GameSimBase {
 						(p.compositeRating[rating] * fatigue(p.stat.energy, p.injured)) **
 						power
 				: undefined;
-		return random.choice(players, weightFunc);
+		return choice(players, weightFunc);
 	}
 
 	// Pass undefined as p for some team-only stats

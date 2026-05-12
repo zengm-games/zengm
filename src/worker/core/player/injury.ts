@@ -1,7 +1,8 @@
-import { g, helpers, random } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import type { InjuriesSetting, PlayerInjury } from "../../../common/types.ts";
 import { healthEffect } from "../../../common/budgetLevels.ts";
 import { defaultInjuries } from "../../util/defaultInjuries.ts";
+import { uniform } from "../../../common/random.ts";
 
 let prevInjuries: InjuriesSetting | undefined;
 
@@ -23,12 +24,10 @@ const injury = (healthLevel: number): PlayerInjury => {
 		prevInjuries = injuries;
 	}
 
-	const rand = random.uniform(0, cumSums.at(-1)!);
+	const rand = uniform(0, cumSums.at(-1)!);
 	const i = cumSums.findIndex((cs) => cs >= rand);
 	const gamesRemaining = Math.round(
-		(1 + healthEffect(healthLevel)) *
-			random.uniform(0.25, 1.75) *
-			injuries[i]!.games,
+		(1 + healthEffect(healthLevel)) * uniform(0.25, 1.75) * injuries[i]!.games,
 	);
 
 	return {

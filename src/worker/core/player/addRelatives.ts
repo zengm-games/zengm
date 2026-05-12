@@ -1,5 +1,5 @@
 import { idb } from "../../db/index.ts";
-import { g, helpers, random } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import type { Player, Relative, RelativeType } from "../../../common/types.ts";
 import player from "./index.ts";
 import setJerseyNumber from "./setJerseyNumber.ts";
@@ -13,6 +13,7 @@ import {
 	toRoman,
 } from "../../util/romanNumerals.ts";
 import { generateFace } from "../../util/face.ts";
+import { randInt, choice } from "../../../common/random.ts";
 
 const parseLastName = (lastName: string): [string, number | undefined] => {
 	const parts = lastName.split(" ");
@@ -180,7 +181,7 @@ export const makeSon = async (p: Player) => {
 		21,
 		40,
 	);
-	const draftYear = p.draft.year - random.randInt(21, maxYearsAgo);
+	const draftYear = p.draft.year - randInt(21, maxYearsAgo);
 	const possibleFathers = (
 		await idb.getCopies.players(
 			{
@@ -198,7 +199,7 @@ export const makeSon = async (p: Player) => {
 		return;
 	}
 
-	const father = random.choice(possibleFathers, ({ lastName }) => {
+	const father = choice(possibleFathers, ({ lastName }) => {
 		const out = parseLastName(lastName);
 
 		if (typeof out[1] === "number") {
@@ -301,7 +302,7 @@ export const makeBrother = async (p: Player) => {
 	}
 
 	// Find a player from a draft 0-5 years ago to make the brother
-	const draftYear = p.draft.year - random.randInt(0, 5);
+	const draftYear = p.draft.year - randInt(0, 5);
 	const existingRelativePids = p.relatives.map((rel) => rel.pid);
 	const possibleBrothers = (
 		await idb.getCopies.players(
@@ -327,7 +328,7 @@ export const makeBrother = async (p: Player) => {
 		return;
 	}
 
-	const brother = random.choice(possibleBrothers);
+	const brother = choice(possibleBrothers);
 
 	// In case the brother is a Jr...
 	const [keptLastName] = parseLastName(brother.lastName);

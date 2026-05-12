@@ -1,7 +1,7 @@
 import type { State } from "./Play.ts";
-import { random } from "../../util/index.ts";
 import { orderBy, range } from "../../../common/utils.ts";
 import type { TeamNum } from "../../../common/types.ts";
+import { choice } from "../../../common/random.ts";
 
 // Sort by looking at a bunch of different factors in order of importance
 const getBestPenaltyResult = <
@@ -174,7 +174,7 @@ const getBestPenaltyResult = <
 	);
 
 	// Randomly pick a winner if there are ties
-	const bestScore = random.choice(bestScores);
+	const bestScore = choice(bestScores);
 
 	// Referential equality ftw
 	const bestIndex = scores.indexOf(bestScore);

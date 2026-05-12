@@ -1,4 +1,4 @@
-import { g, helpers, random } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import {
 	NUM_LINES,
 	NUM_PLAYERS_PER_LINE,
@@ -21,6 +21,7 @@ import { orderBy, range } from "../../../common/utils.ts";
 import { getStartingAndBackupGoalies } from "./getStartingAndBackupGoalies.ts";
 import type { TeamNum } from "../../../common/types.ts";
 import PlayByPlayLogger from "./PlayByPlayLogger.ts";
+import { choice } from "../../../common/random.ts";
 
 const teamNums: [TeamNum, TeamNum] = [0, 1];
 
@@ -675,10 +676,7 @@ class GameSim extends GameSimBase {
 	}
 
 	doHit() {
-		const t = random.choice(
-			teamNums,
-			(t) => this.team[t].compositeRating.hitting,
-		);
+		const t = choice(teamNums, (t) => this.team[t].compositeRating.hitting);
 		const t2 = t === 0 ? 1 : 0;
 		const hitter = this.pickPlayer(t, "enforcer", ["C", "W", "D"]);
 		const target = this.pickPlayer(t2, undefined, ["C", "W", "D"]);
@@ -808,7 +806,7 @@ class GameSim extends GameSimBase {
 		const type: "slapshot" | "wristshot" | "shot" | "reboundShot" =
 			special === "rebound"
 				? "reboundShot"
-				: random.choice(["slapshot", "wristshot", "shot"], [0.25, 0.5, 0.25]);
+				: choice(["slapshot", "wristshot", "shot"], [0.25, 0.5, 0.25]);
 
 		this.recordStat(this.o, shooter, "tsa");
 		this.playByPlay.logEvent({
@@ -1084,10 +1082,7 @@ class GameSim extends GameSimBase {
 		const p0 = this.getTopPlayerOnIce(0, "faceoffs", ["C", "W", "D"]);
 		const p1 = this.getTopPlayerOnIce(1, "faceoffs", ["C", "W", "D"]);
 
-		const winner = random.choice(
-			[p0, p1],
-			(p) => p.compositeRating.faceoffs ** 0.5,
-		);
+		const winner = choice([p0, p1], (p) => p.compositeRating.faceoffs ** 0.5);
 
 		let names: [string, string];
 		if (winner === p0) {
@@ -1128,16 +1123,13 @@ class GameSim extends GameSimBase {
 			return;
 		}
 
-		const penalty = random.choice(penalties, (penalty) => penalty.numPerSeason);
+		const penalty = choice(penalties, (penalty) => penalty.numPerSeason);
 
 		if (!penalty) {
 			return false;
 		}
 
-		const t = random.choice(
-			teamNums,
-			(t) => this.team[t].compositeRating.penalties,
-		);
+		const t = choice(teamNums, (t) => this.team[t].compositeRating.penalties);
 
 		// Hack - don't want to deal with >2 penalties at the same time
 		if (this.penaltyBox.count(t) >= 2) {
@@ -1423,10 +1415,10 @@ class GameSim extends GameSimBase {
 					(p) => !playersRemainingOn.includes(p),
 				);
 			}
-			return random.choice(emergencyPlayers);
+			return choice(emergencyPlayers);
 		}
 
-		return random.choice(nextLine);
+		return choice(nextLine);
 	}
 
 	doLineChange(
@@ -1898,7 +1890,7 @@ class GameSim extends GameSimBase {
 						);
 					}
 				: undefined;
-		return random.choice(players, weightFunc);
+		return choice(players, weightFunc);
 	}
 
 	getTopPlayerOnIce(

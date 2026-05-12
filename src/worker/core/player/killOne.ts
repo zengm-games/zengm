@@ -1,14 +1,9 @@
 import retire from "./retire.ts";
 import { idb } from "../../db/index.ts";
-import {
-	defaultTragicDeaths,
-	g,
-	helpers,
-	logEvent,
-	random,
-} from "../../util/index.ts";
+import { g, helpers, logEvent, random } from "../../util/index.ts";
 import type { Conditions, Player } from "../../../common/types.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { defaultTragicDeaths } from "../../util/defaultTragicDeaths.ts";
 
 const getReason = () => {
 	const tragicDeaths = g.get("tragicDeaths") ?? defaultTragicDeaths;

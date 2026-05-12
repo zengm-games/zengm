@@ -1,16 +1,8 @@
-import { PWBWorker } from "promise-worker-bi";
-export const promiseWorker = new PWBWorker();
+// Keep stuff in here that might be needed on worker console
 
 export { default as achievement } from "./achievement.ts";
 export { default as advStats } from "./advStats.ts";
-export { default as checkAccount } from "./checkAccount.ts";
-export { default as checkChanges } from "./checkChanges.ts";
-export { default as checkNaNs } from "./checkNaNs.ts";
-export { default as defaultInjuries } from "./defaultInjuries.ts";
-export { default as defaultTragicDeaths } from "./defaultTragicDeaths.ts";
 export { default as env } from "./env.ts";
-export * as face from "./face.ts";
-export { default as formatEventText } from "./formatEventText.ts";
 export { default as g } from "./g.ts";
 export { default as genMessage } from "./genMessage.ts";
 export { default as getGlobalSettings } from "./getGlobalSettings.ts";
@@ -24,7 +16,6 @@ export { default as loadNames } from "./loadNames.ts";
 export { default as local } from "./local.ts";
 export { default as lock } from "./lock.ts";
 export { default as logEvent } from "./logEvent.ts";
-export { default as newLeagueGodModeLimits } from "./newLeagueGodModeLimits.ts";
 export { default as processPlayerStats } from "./processPlayerStats.ts";
 export { default as processPlayersHallOfFame } from "./processPlayersHallOfFame.ts";
 export { default as processScheduledEvents } from "./processScheduledEvents.ts";

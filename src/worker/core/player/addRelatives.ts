@@ -1,5 +1,5 @@
 import { idb } from "../../db/index.ts";
-import { face, g, helpers, random } from "../../util/index.ts";
+import { g, helpers, random } from "../../util/index.ts";
 import type { Player, Relative, RelativeType } from "../../../common/types.ts";
 import player from "./index.ts";
 import setJerseyNumber from "./setJerseyNumber.ts";
@@ -12,6 +12,7 @@ import {
 	isValidRomanNumeral,
 	toRoman,
 } from "../../util/romanNumerals.ts";
+import { generateFace } from "../../util/face.ts";
 
 const parseLastName = (lastName: string): [string, number | undefined] => {
 	const parts = lastName.split(" ");
@@ -141,7 +142,7 @@ const makeSimilar = async (existingRelative: Player, newRelative: Player) => {
 	}
 
 	if (!existingRelative.imgURL) {
-		newRelative.face = face.generate({
+		newRelative.face = generateFace({
 			relative: existingRelative.face,
 		});
 	}
@@ -158,7 +159,7 @@ const applyNewCountry = async (p: Player, relative: Player) => {
 		p.firstName = firstName;
 
 		// Generate new name and face
-		p.face = face.generate({ race });
+		p.face = generateFace({ race });
 	}
 
 	// Make them the same state/province, if USA/Canada

@@ -59,10 +59,8 @@ const wrapperNaNChecker = (_super: any) => {
 	};
 };
 
-const checkNaNs = () => {
+export const checkNaNs = () => {
 	wrap(IDBObjectStore.prototype, "add", wrapperNaNChecker);
 	wrap(IDBObjectStore.prototype, "put", wrapperNaNChecker);
 	wrap(IDBCursor.prototype, "update", wrapperNaNChecker);
 };
-
-export default checkNaNs;

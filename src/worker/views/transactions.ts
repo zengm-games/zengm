@@ -1,5 +1,5 @@
 import { idb } from "../db/index.ts";
-import { formatEventText } from "../util/index.ts";
+import { formatEventText } from "../util/formatEventText.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 
 const updateEventLog = async (

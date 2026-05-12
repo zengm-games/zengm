@@ -1,4 +1,4 @@
-import { generate as generateFace, type FaceConfig } from "facesjs";
+import { generate, type FaceConfig } from "facesjs";
 import { idb } from "../db/index.ts";
 import type { PlayerWithoutKey, Race } from "../../common/types.ts";
 import { DEFAULT_JERSEY } from "../../common/constants.ts";
@@ -6,7 +6,7 @@ import g from "./g.ts";
 import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 
-export const generate = (
+export const generateFace = (
 	options:
 		| { race?: Race; relative?: undefined }
 		| { race?: undefined; relative?: FaceConfig } = {},
@@ -42,7 +42,7 @@ export const generate = (
 		? g.get("gender")
 		: defaultGameAttributes.gender;
 
-	let face = generateFace(overrides, {
+	let face = generate(overrides, {
 		gender,
 		...options,
 	});
@@ -60,7 +60,7 @@ export const generate = (
 		(!allowEyeBlack && face.accessories.id === "eye-black") ||
 		face.accessories.id === "santa-hat"
 	) {
-		face = generateFace(overrides, {
+		face = generate(overrides, {
 			gender,
 			...options,
 		});
@@ -69,12 +69,12 @@ export const generate = (
 	return face;
 };
 
-export const upgrade = async (p: PlayerWithoutKey) => {
+export const upgradeFace = async (p: PlayerWithoutKey) => {
 	// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 	if (!p.face || !p.face.accessories) {
 		// @ts-expect-error
 		p.face2 = p.face;
-		p.face = generate();
+		p.face = generateFace();
 		await idb.cache.players.put(p);
 	}
 };

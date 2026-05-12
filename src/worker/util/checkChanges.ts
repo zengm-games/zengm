@@ -11,7 +11,7 @@ const MAX_NUM_TO_SHOW = 3;
 // Keep in sync with changelog.php
 const FETCH_LIMIT = 10;
 
-const checkChanges = async (conditions: Conditions) => {
+export const checkChanges = async (conditions: Conditions) => {
 	// Fall back to LAST_VERSION_BEFORE_THIS_EXISTED if data doesn't exist - must be a user from before then
 	const lastChangesVersion =
 		((await idb.meta.get(
@@ -99,5 +99,3 @@ const checkChanges = async (conditions: Conditions) => {
 		await idb.meta.put("attributes", env.bbgmVersion, "lastChangesVersion");
 	}
 };
-
-export default checkChanges;

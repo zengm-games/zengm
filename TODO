@@ -96,6 +96,7 @@ dev usability stuff
   - ensure all requested variables are destructured
   - ensure called only once in a component
   - sort array
+- checkNaNs still needed?
 
 FBGM overtime - If team A scores in OT, And then Team B scores, They should always go for 2 bc you don’t want to give the ball back and have it be sudden death https://discord.com/channels/@me/778760871911751700/1480652733852811324
 

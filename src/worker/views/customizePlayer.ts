@@ -1,7 +1,7 @@
 import { PLAYER, PHASE } from "../../common/constants.ts";
 import { finances, player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
-import { face, g } from "../util/index.ts";
+import { g } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
@@ -9,6 +9,7 @@ import type {
 	Player,
 } from "../../common/types.ts";
 import { last, orderBy } from "../../common/utils.ts";
+import { upgradeFace } from "../util/face.ts";
 
 export const formatPlayerRelativesList = (p: Player) => {
 	const firstSeason = p.ratings[0].season;
@@ -96,7 +97,7 @@ const updateCustomizePlayer = async (
 
 			p = p2;
 
-			await face.upgrade(p);
+			await upgradeFace(p);
 
 			if (p.imgURL.length > 0) {
 				appearanceOption = "Image URL";

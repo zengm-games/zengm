@@ -1,4 +1,4 @@
-import { promiseWorker } from "./index.ts";
+import { promiseWorker } from "./promiseWorker.ts";
 import type api from "../../ui/api/index.ts";
 import type { Conditions } from "../../common/types.ts";
 

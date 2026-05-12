@@ -63,4 +63,7 @@ if (isSport("basketball")) {
 	);
 }
 
-export default reasons.map((reason) => ({ reason, frequency: 1 }));
+export const defaultTragicDeaths = reasons.map((reason) => ({
+	reason,
+	frequency: 1,
+}));

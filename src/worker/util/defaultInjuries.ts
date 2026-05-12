@@ -3,7 +3,7 @@
 import { isSport } from "../../common/sportFunctions.ts";
 import helpers from "./helpers.ts";
 
-let defaultInjuries: {
+export let defaultInjuries: {
 	name: string;
 	frequency: number;
 	games: number;
@@ -648,5 +648,3 @@ if (isSport("football")) {
 		row.games *= 1.5;
 	}
 }
-
-export default defaultInjuries;

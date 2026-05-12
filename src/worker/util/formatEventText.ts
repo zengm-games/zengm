@@ -119,7 +119,7 @@ const formatAssets = async (
 	return strings;
 };
 
-const formatEventText = async (event: EventBBGM) => {
+export const formatEventText = async (event: EventBBGM) => {
 	if (event.type === "trade" && event.teams) {
 		let text = "";
 
@@ -234,5 +234,3 @@ const formatEventText = async (event: EventBBGM) => {
 
 	return "";
 };
-
-export default formatEventText;

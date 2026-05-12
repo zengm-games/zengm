@@ -1,5 +1,5 @@
 import genRatings from "./genRatings.ts";
-import { face, g } from "../../util/index.ts";
+import { g } from "../../util/index.ts";
 import type {
 	MinimalPlayerRatings,
 	NonEmptyArray,
@@ -8,6 +8,7 @@ import type {
 } from "../../../common/types.ts";
 import genWeight from "./genWeight.ts";
 import genMoodTraits from "./genMoodTraits.ts";
+import { generateFace } from "../../util/face.ts";
 
 const generate = (
 	tid: number,
@@ -73,7 +74,7 @@ const generate = (
 			ovr: 0,
 			skills: [],
 		},
-		face: face.generate({ race }),
+		face: generateFace({ race }),
 		firstName,
 		gamesUntilTradable: 0,
 		hgt: actualHeightInInches,

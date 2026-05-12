@@ -1,4 +1,4 @@
-import { checkAccount } from "../util/index.ts";
+import { checkAccount } from "../util/checkAccount.ts";
 import type {
 	Conditions,
 	UpdateEvents,

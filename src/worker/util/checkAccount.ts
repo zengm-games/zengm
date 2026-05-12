@@ -9,7 +9,7 @@ import { fetchWrapper } from "../../common/fetchWrapper.ts";
 // If it tries to add achievements from IDB to API twice at the same time, weird stuff could happen
 let adding = false;
 
-const checkAccount = async (
+export const checkAccount = async (
 	conditions: Conditions,
 ): Promise<PartialTopMenu> => {
 	try {
@@ -91,5 +91,3 @@ const checkAccount = async (
 		};
 	}
 };
-
-export default checkAccount;

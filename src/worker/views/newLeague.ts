@@ -1,16 +1,12 @@
 import { idb } from "../db/index.ts";
 import type { ViewInput, RealTeamInfo } from "../../common/types.ts";
-import {
-	defaultGameAttributes,
-	defaultInjuries,
-	defaultTragicDeaths,
-	env,
-	getNewLeagueLid,
-	newLeagueGodModeLimits,
-} from "../util/index.ts";
+import { defaultGameAttributes, env, getNewLeagueLid } from "../util/index.ts";
 import type { Settings } from "./settings.ts";
 import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
 import goatFormula from "../util/goatFormula.ts";
+import { defaultTragicDeaths } from "../util/defaultTragicDeaths.ts";
+import { defaultInjuries } from "../util/defaultInjuries.ts";
+import { newLeagueGodModeLimits } from "../util/newLeagueGodModeLimits.ts";
 
 const getDefaultRealStats = () => {
 	return env.mobile ? "none" : "allActiveHOF";

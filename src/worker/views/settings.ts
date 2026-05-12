@@ -1,4 +1,4 @@
-import { defaultInjuries, defaultTragicDeaths, g } from "../util/index.ts";
+import { g } from "../util/index.ts";
 import type {
 	GameAttributesLeague,
 	GetLeagueOptionsReal,
@@ -7,6 +7,8 @@ import type {
 	UpdateEvents,
 } from "../../common/types.ts";
 import goatFormula from "../util/goatFormula.ts";
+import { defaultTragicDeaths } from "../util/defaultTragicDeaths.ts";
+import { defaultInjuries } from "../util/defaultInjuries.ts";
 
 type Key =
 	| "godMode"

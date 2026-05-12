@@ -42,7 +42,6 @@ import {
 	local,
 	lock,
 	logEvent,
-	newLeagueGodModeLimits,
 	random,
 	toUI,
 	updatePhase,
@@ -69,6 +68,7 @@ import { getNumPlayersTradedAwayNormalized } from "../player/getNumPlayersTraded
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
+import { newLeagueGodModeLimits } from "../../util/newLeagueGodModeLimits.ts";
 
 export type TeamInfo = TeamBasic & {
 	disabled?: boolean;

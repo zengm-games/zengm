@@ -8,8 +8,6 @@ import {
 import { player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import {
-	face,
-	formatEventText,
 	g,
 	getTeamColors,
 	getTeamInfoBySeason,
@@ -27,6 +25,8 @@ import type {
 } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
 import { isSport } from "../../common/sportFunctions.ts";
+import { formatEventText } from "../util/formatEventText.ts";
+import { upgradeFace } from "../util/face.ts";
 
 export const getPlayerProfileStats = () => {
 	const stats = [];
@@ -195,7 +195,7 @@ export const getCommon = async (
 		return returnValue;
 	}
 
-	await face.upgrade(pRaw);
+	await upgradeFace(pRaw);
 
 	const p = await getPlayer(pRaw);
 

@@ -4,6 +4,7 @@ import * as common from "../common/constants.ts";
 import * as core from "./core/index.ts";
 import * as db from "./db/index.ts";
 import * as util from "./util/index.ts";
+import { promiseWorker } from "./util/promiseWorker.ts";
 
 self.bbgm = { api, ...common, ...core, ...db, ...util };
 
@@ -24,7 +25,7 @@ export type WorkerAPICategory =
 // API functions should have at most 2 arguments. First argument is passed here from toWorker. If you need to pass multiple variables, use an object/array. Second argument is Conditions.
 
 (async () => {
-	util.promiseWorker.register(([type, name, param], hostID) => {
+	promiseWorker.register(([type, name, param], hostID) => {
 		const conditions = {
 			hostID,
 		};

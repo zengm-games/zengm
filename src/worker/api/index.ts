@@ -37,11 +37,7 @@ import {
 import { idb } from "../db/index.ts";
 import {
 	achievement,
-	checkAccount,
-	checkChanges,
-	checkNaNs,
 	env,
-	face,
 	g,
 	helpers,
 	local,
@@ -56,8 +52,6 @@ import {
 	getNewLeagueLid,
 	initUILocalGames,
 	loadNames,
-	defaultInjuries,
-	defaultTragicDeaths,
 } from "../util/index.ts";
 import * as views from "../views/index.ts";
 import {
@@ -165,6 +159,12 @@ import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { generateContractOptions } from "../core/contractNegotiation/generateContractOptions.ts";
 import getRealTeamPlayerData from "../core/league/create/getRealTeamPlayerData.ts";
 import * as z from "zod";
+import { defaultTragicDeaths } from "../util/defaultTragicDeaths.ts";
+import { defaultInjuries } from "../util/defaultInjuries.ts";
+import { checkNaNs } from "../util/checkNaNs.ts";
+import { checkChanges } from "../util/checkChanges.ts";
+import { checkAccount } from "../util/checkAccount.ts";
+import { generateFace } from "../util/face.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1676,11 +1676,11 @@ const exportDraftClass = async ({
 	};
 };
 
-const generateFace = async (country: string | undefined) => {
+const generateFace2 = async (country: string | undefined) => {
 	const { race } = await player.name(
 		country ? helpers.getCountry(country) : undefined,
 	);
-	return face.generate({ race });
+	return generateFace({ race });
 };
 
 const getAutoPos = (ratings: any) => {
@@ -5176,7 +5176,7 @@ export default {
 		getExportFilename,
 		exportPlayerAveragesCsv,
 		exportPlayerGamesCsv,
-		generateFace,
+		generateFace: generateFace2,
 		getAutoPos,
 		getBornLoc,
 		getDefaultInjuries,

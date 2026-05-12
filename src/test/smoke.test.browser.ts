@@ -1,18 +1,14 @@
 import { afterAll, describe, test } from "vitest";
 import { league } from "../worker/core/index.ts";
 import { idb } from "../worker/db/index.ts";
-import {
-	defaultGameAttributes,
-	g,
-	helpers,
-	local,
-} from "../worker/util/index.ts";
+import { g, helpers, local } from "../worker/util/index.ts";
 import "../worker/index.ts";
 import { deleteDB } from "@dumbmatter/idb";
 import createStreamFromLeagueObject from "../worker/core/league/create/createStreamFromLeagueObject.ts";
 import { LEAGUE_DATABASE_VERSION } from "../common/constants.ts";
 import { getDefaultSettings } from "../worker/views/newLeague.ts";
 import { last } from "../common/utils.ts";
+import { defaultGameAttributes } from "../common/defaultGameAttributes.ts";
 
 describe("Smoke Tests", () => {
 	let intervalID: number;

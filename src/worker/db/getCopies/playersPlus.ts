@@ -1,10 +1,7 @@
 import { PLAYER, PHASE } from "../../../common/constants.ts";
 import { player, trade } from "../../core/index.ts";
-import {
-	g,
-	helpers,
-	processPlayerStats as processPlayerStats2,
-} from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
+import { processPlayerStats as processPlayerStats2 } from "../../util/processPlayerStats.ts";
 import type {
 	Player,
 	PlayerFiltered,

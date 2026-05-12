@@ -1,6 +1,6 @@
 import { PHASE } from "../../../common/constants.ts";
+import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 import type { PlayerInjury } from "../../../common/types.ts";
-import { defaultGameAttributes } from "../../util/index.ts";
 import { FREE_AGENCY_DAYS } from "../phase/newPhaseResignPlayers.ts";
 import type { Basketball } from "./loadData.basketball.ts";
 

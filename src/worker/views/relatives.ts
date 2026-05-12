@@ -1,5 +1,5 @@
 import { idb } from "../db/index.ts";
-import { g, helpers, processPlayersHallOfFame } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	Player,
@@ -9,6 +9,7 @@ import type {
 import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";
+import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 
 const getRelationText = (
 	gender: GameAttributesLeague["gender"],

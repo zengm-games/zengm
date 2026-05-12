@@ -3,13 +3,13 @@ import type {
 	GameAttributesLeagueWithHistory,
 	PlayerWithoutKey,
 } from "../../../common/types.ts";
-import { defaultGameAttributes } from "../../util/index.ts";
 import type { Settings } from "../../views/settings.ts";
 import formatPlayerFactory from "../realRosters/formatPlayerFactory.ts";
 import type { Basketball } from "../realRosters/loadData.basketball.ts";
 import { countBy, last, omit, orderBy } from "../../../common/utils.ts";
 import { getNumPlayersPerTeam } from "./create/createRandomPlayers.ts";
 import { choice, shuffle } from "../../../common/random.ts";
+import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 
 const getTidsWithNoPlayers = (
 	activeTids: number[],

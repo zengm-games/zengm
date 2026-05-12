@@ -3,10 +3,11 @@ import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { facilitiesEffectMood } from "../../../common/budgetLevels.ts";
 import type { MoodComponents, Player } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
-import { defaultGameAttributes, g, helpers, local } from "../../util/index.ts";
+import { g, helpers, local } from "../../util/index.ts";
 import { getNegotiationPids } from "../../views/negotiationList.ts";
 import { getNumPlayersTradedAwayNormalized } from "./getNumPlayersTradedAwayNormalized.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
+import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 
 const getMinFractionDiff = async (pid: number, tid: number) => {
 	if (!isSport("basketball")) {

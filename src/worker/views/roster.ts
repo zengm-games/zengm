@@ -1,7 +1,7 @@
 import { PHASE, POSITIONS } from "../../common/constants.ts";
 import { finances, season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
-import { g, helpers, orderTeams } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type {
 	Player,
 	UpdateEvents,
@@ -12,6 +12,7 @@ import { addMood } from "./freeAgents.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { getActualPlayThroughInjuries } from "../core/game/loadTeams.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { orderTeams } from "../util/orderTeams.ts";
 
 const sortByPos = (p: {
 	ratings: {

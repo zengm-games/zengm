@@ -1,5 +1,5 @@
 import { idb } from "../../db/index.ts";
-import { g, recomputeLocalUITeamOvrs } from "../../util/index.ts";
+import { g } from "../../util/index.ts";
 import type {
 	ScheduleGame,
 	ScheduleGameWithoutKey,
@@ -7,6 +7,7 @@ import type {
 import addDaysToSchedule from "./addDaysToSchedule.ts";
 import { PHASE } from "../../../common/constants.ts";
 import { isFinals } from "./isFinals.ts";
+import { recomputeLocalUITeamOvrs } from "../../util/recomputeLocalUITeamOvrs.ts";
 
 const makePlayoffsKey = (game: ScheduleGameWithoutKey) =>
 	JSON.stringify([game.homeTid, game.awayTid]);

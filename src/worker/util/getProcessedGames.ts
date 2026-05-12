@@ -12,7 +12,7 @@ import type { Game } from "../../common/types.ts";
  * @param {Array.<Object>} gid Array of already-loaded games. If this is not empty, then only new games that are not already in this array will be passed to the callback.
  * @return {Promise.<Array.<Object>>} Resolves to a list of game objects.
  */
-const getProcessedGames = async ({
+export const getProcessedGames = async ({
 	tid,
 	season,
 	loadedGames = [],
@@ -65,5 +65,3 @@ const getProcessedGames = async ({
 
 	return gameInfos;
 };
-
-export default getProcessedGames;

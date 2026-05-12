@@ -1,5 +1,5 @@
 import { idb } from "../db/index.ts";
-import { g, getProcessedGames, helpers } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
@@ -7,6 +7,7 @@ import type {
 	Game,
 } from "../../common/types.ts";
 import { DEFAULT_TEAM_COLORS, PHASE } from "../../common/constants.ts";
+import { getProcessedGames } from "../util/getProcessedGames.ts";
 
 export type TeamSeasonOverride = {
 	region?: string;

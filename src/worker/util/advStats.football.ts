@@ -6,7 +6,7 @@ import { getPlayers, getTopPlayers } from "../core/season/awards.ts";
 import { dpoyScore, makeTeams } from "../core/season/doAwards.football.ts";
 import advStatsSave from "./advStatsSave.ts";
 import { groupByUnique, last } from "../../common/utils.ts";
-import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
+import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 import helpers from "./helpers.ts";
 import statsRowIsCurrent from "../core/player/statsRowIsCurrent.ts";
 

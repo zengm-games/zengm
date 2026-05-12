@@ -1,7 +1,7 @@
 import { DEFAULT_JERSEY, DEFAULT_TEAM_COLORS } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 
-const getTeamInfoBySeason = async (tid: number, season: number) => {
+export const getTeamInfoBySeason = async (tid: number, season: number) => {
 	if (tid === -1 || tid === -2) {
 		return {
 			abbrev: "ASG",
@@ -52,5 +52,3 @@ const getTeamInfoBySeason = async (tid: number, season: number) => {
 
 	// Could be an invalid tid, like PLAYER.TOT or PLAYER.DOES_NOT_EXIST
 };
-
-export default getTeamInfoBySeason;

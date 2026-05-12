@@ -1,7 +1,7 @@
 import { createWithEqualityFn } from "zustand/traditional";
 import { shallow } from "zustand/shallow";
 import type { LocalStateUI, GameAttributesLeague } from "../../common/types.ts";
-import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
+import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 import { safeLocalStorage } from "./safeLocalStorage.ts";
 import { gameAttributesSyncedToUi } from "../../common/gameAttributesSyncedToUi.ts";
 

@@ -1,4 +1,4 @@
-import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
+import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 import {
 	type DefaultNames,
 	getFrequencies,
@@ -175,7 +175,7 @@ export const initDefaults = async (
 	return cache;
 };
 
-const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
+export const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 	cache = await initDefaults();
 
 	let gPlayerBioInfo = Object.hasOwn(g, "playerBioInfo")
@@ -284,5 +284,3 @@ const loadNames = async (): Promise<PlayerBioInfoProcessed> => {
 		frequencies,
 	};
 };
-
-export default loadNames;

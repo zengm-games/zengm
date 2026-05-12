@@ -9,7 +9,7 @@ import type {
 	GameAttributesLeague,
 	PlayerContract,
 } from "../../../common/types.ts";
-import { defaultGameAttributes, helpers } from "../../util/index.ts";
+import { helpers } from "../../util/index.ts";
 import {
 	LEAGUE_DATABASE_VERSION,
 	PHASE,
@@ -34,6 +34,7 @@ import { averageSalary } from "./averageSalary.ts";
 import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 import { shuffle } from "../../../common/random.ts";
+import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 
 const FREE_AGENTS_SEASON = 2020;
 

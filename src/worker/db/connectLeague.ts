@@ -10,7 +10,7 @@ import {
 } from "../../common/constants.ts";
 import { player, season } from "../core/index.ts";
 import { idb } from "./index.ts";
-import { defaultGameAttributes, helpers, logEvent } from "../util/index.ts";
+import { helpers, logEvent } from "../util/index.ts";
 import connectIndexedDB from "./connectIndexedDB.ts";
 import type {
 	DBSchema,
@@ -52,6 +52,7 @@ import { getNumPlayersTradedAwayNormalized } from "../core/player/getNumPlayersT
 import { gameAttributesArrayToObject } from "../../common/gameAttributesArrayToObject.ts";
 import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
 import { isSport } from "../../common/sportFunctions.ts";
+import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 
 export interface LeagueDB extends DBSchema {
 	allStars: {

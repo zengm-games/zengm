@@ -1,7 +1,8 @@
 import { uniform, choice } from "../../../common/random.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 import type { Race } from "../../../common/types.ts";
-import { loadNames, local } from "../../util/index.ts";
+import { local } from "../../util/index.ts";
+import { loadNames } from "../../util/loadNames.ts";
 
 const getFromCumSumArray = <T extends string>(array: [T, number][]) => {
 	const rand = uniform(0, array.at(-1)![1]);

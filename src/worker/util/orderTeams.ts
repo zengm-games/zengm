@@ -597,7 +597,7 @@ export const getDivisionRanks = async <T extends BaseTeam>(
 };
 
 // This should be called only with whatever group of teams you are sorting. So if you are displying division standings, call this once for each division, passing in all the teams. Because tiebreakers could mean two tied teams swap order depending on the teams in the group.
-const orderTeams = async <T extends BaseTeam>(
+export const orderTeams = async <T extends BaseTeam>(
 	teams: T[],
 	allTeams: T[],
 	{
@@ -737,5 +737,3 @@ const orderTeams = async <T extends BaseTeam>(
 
 	return teamsSorted;
 };
-
-export default orderTeams;

@@ -37,7 +37,6 @@ import {
 import { idb } from "../db/index.ts";
 import {
 	achievement,
-	env,
 	g,
 	helpers,
 	local,
@@ -45,12 +44,8 @@ import {
 	updatePlayMenu,
 	updateStatus,
 	toUI,
-	recomputeLocalUITeamOvrs,
 	updatePhase,
 	logEvent,
-	getNewLeagueLid,
-	initUILocalGames,
-	loadNames,
 } from "../util/index.ts";
 import * as views from "../views/index.ts";
 import {
@@ -100,7 +95,7 @@ import {
 import goatFormula from "../util/goatFormula.ts";
 import getRandomTeams from "./getRandomTeams.ts";
 import { withState } from "../core/player/name.ts";
-import { initDefaults } from "../util/loadNames.ts";
+import { initDefaults, loadNames } from "../util/loadNames.ts";
 import type { PlayerRatings } from "../../common/types.basketball.ts";
 import createStreamFromLeagueObject from "../core/league/create/createStreamFromLeagueObject.ts";
 import type { IDBPIndex, IDBPObjectStore } from "@dumbmatter/idb";
@@ -165,6 +160,10 @@ import { checkChanges } from "../util/checkChanges.ts";
 import { checkAccount } from "../util/checkAccount.ts";
 import { generateFace } from "../util/face.ts";
 import { choice } from "../../common/random.ts";
+import { getNewLeagueLid } from "../util/getNewLeagueLid.ts";
+import { env } from "../util/env.ts";
+import { recomputeLocalUITeamOvrs } from "../util/recomputeLocalUITeamOvrs.ts";
+import { initUILocalGames } from "../util/initUILocalGames.ts";
 
 const acceptContractNegotiation = async ({
 	pid,

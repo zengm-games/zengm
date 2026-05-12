@@ -7,13 +7,7 @@ import {
 } from "../../common/constants.ts";
 import { player } from "../core/index.ts";
 import { idb } from "../db/index.ts";
-import {
-	g,
-	getTeamColors,
-	getTeamInfoBySeason,
-	helpers,
-	processPlayersHallOfFame,
-} from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type {
 	MenuItemHeader,
 	MenuItemLink,
@@ -27,6 +21,9 @@ import { isSport } from "../../common/sportFunctions.ts";
 import { formatEventText } from "../util/formatEventText.ts";
 import { upgradeFace } from "../util/face.ts";
 import { choice } from "../../common/random.ts";
+import { getTeamColors } from "../util/getTeamColors.ts";
+import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
+import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 
 export const getPlayerProfileStats = () => {
 	const stats = [];

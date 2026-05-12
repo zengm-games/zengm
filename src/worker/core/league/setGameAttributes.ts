@@ -1,5 +1,5 @@
 import { idb } from "../../db/index.ts";
-import { g, helpers, initUILocalGames, local } from "../../util/index.ts";
+import { g, helpers, local } from "../../util/index.ts";
 import { wrapNewValueIfCurrentlyWrapped } from "../../util/g.ts";
 import type { GameAttributesLeague } from "../../../common/types.ts";
 import { draft, team } from "../index.ts";
@@ -13,6 +13,7 @@ import { gameAttributesKeysOtherSports } from "../../../common/defaultGameAttrib
 import { disableCola, initializeCola } from "../draft/cola.ts";
 import { defaultTragicDeaths } from "../../util/defaultTragicDeaths.ts";
 import { defaultInjuries } from "../../util/defaultInjuries.ts";
+import { initUILocalGames } from "../../util/initUILocalGames.ts";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	await updateMeta({

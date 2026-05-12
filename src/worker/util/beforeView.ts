@@ -1,10 +1,8 @@
 import { Cache, connectLeague, idb } from "../db/index.ts";
 import { league } from "../core/index.ts";
 import {
-	env,
 	g,
 	helpers,
-	initUILocalGames,
 	local,
 	toUI,
 	updatePhase,
@@ -13,6 +11,8 @@ import {
 } from "./index.ts";
 import type { Conditions, League } from "../../common/types.ts";
 import { ERROR_MESSAGE_ONE_TAB } from "../../common/constants.ts";
+import { env } from "./env.ts";
+import { initUILocalGames } from "./initUILocalGames.ts";
 
 let heartbeatIntervalID: number;
 

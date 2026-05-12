@@ -2,7 +2,8 @@ import { isSport } from "../common/sportFunctions.ts";
 import { Cache, idb } from "../worker/db/index.ts";
 import { STORES, type Store } from "../worker/db/Cache.ts";
 import { g, helpers } from "../worker/util/index.ts";
-import defaultGameAttributes, {
+import {
+	defaultGameAttributes,
 	footballOverrides,
 } from "../common/defaultGameAttributes.ts";
 

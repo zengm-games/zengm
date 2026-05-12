@@ -3,15 +3,12 @@ import formatScoreWithShootout from "../../common/formatScoreWithShootout.ts";
 import getWinner from "../../common/getWinner.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
-import {
-	g,
-	getTeamInfoBySeason,
-	helpers,
-	processPlayerStats,
-} from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import { getCommon } from "./player.ts";
 import { filterPlayerStats } from "../../common/filterPlayerStats.ts";
 import { isSport } from "../../common/sportFunctions.ts";
+import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
+import { processPlayerStats } from "../util/processPlayerStats.ts";
 
 const updatePlayerGameLog = async (
 	{ pid, season }: ViewInput<"playerGameLog">,

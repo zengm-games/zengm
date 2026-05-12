@@ -1,10 +1,10 @@
 import { assert, beforeEach, test } from "vitest";
-import { mockIDBLeague, resetCache, resetG } from "../../test/helpers.ts";
-import { team } from "../core/index.ts";
-import { idb } from "../db/index.ts";
-import g from "./g.ts";
-import genMessage from "./genMessage.ts";
-import helpers from "./helpers.ts";
+import { mockIDBLeague, resetCache, resetG } from "../../../test/helpers.ts";
+import { team } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import g from "../../util/g.ts";
+import { genMessage } from "./genMessage.ts";
+import helpers from "../../util/helpers.ts";
 
 beforeEach(async () => {
 	resetG();

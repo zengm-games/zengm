@@ -1,6 +1,6 @@
 import { season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
-import { g, getTeamInfoBySeason, helpers } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import {
 	type ByConf,
 	type PlayerStatType,
@@ -13,6 +13,7 @@ import getWinner from "../../common/getWinner.ts";
 import formatScoreWithShootout from "../../common/formatScoreWithShootout.ts";
 import { formatPlayersWatchList } from "./watchList.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
 
 const updateNotes = async (
 	{ type }: ViewInput<"notes">,

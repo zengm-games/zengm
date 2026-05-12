@@ -20,18 +20,13 @@ import { gameSimToBoxScore } from "../core/game/writeGameStats.ts";
 import { getRosterOrderByPid } from "../core/team/rosterAutoSort.basketball.ts";
 import { connectLeague, idb } from "../db/index.ts";
 import { getPlayersActiveSeason } from "../db/getCopies/players.ts";
-import {
-	defaultGameAttributes,
-	g,
-	helpers,
-	local,
-	toUI,
-} from "../util/index.ts";
+import { g, helpers, local, toUI } from "../util/index.ts";
 import { boxScoreToLiveSim } from "../views/liveGame.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 import { unwrapGameAttribute } from "../../common/unwrapGameAttribute.ts";
 import { isSport } from "../../common/sportFunctions.ts";
 import { randInt } from "../../common/random.ts";
+import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 
 export const getLeagues = async () => {
 	const leagues = await idb.meta.getAll("leagues");

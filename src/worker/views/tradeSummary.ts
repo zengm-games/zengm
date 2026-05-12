@@ -15,11 +15,12 @@ import type {
 import { player, team } from "../core/index.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
 import { idb } from "../db/index.ts";
-import { g, getTeamInfoBySeason, helpers } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import { assetIsPlayer, getPlayerFromPick } from "../util/formatEventText.ts";
 import { getRoundsWonText } from "./frivolitiesTeamSeasons.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { last } from "../../common/utils.ts";
+import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
 
 const findRatingsRow = (
 	allRatings: NonEmptyArray<MinimalPlayerRatings>,

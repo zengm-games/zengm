@@ -1,5 +1,5 @@
 import { idb } from "../db/index.ts";
-import { g, helpers, processPlayersHallOfFame } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type { UpdateEvents, Player, ViewInput } from "../../common/types.ts";
 import { orderBy, type OrderBySortParams } from "../../common/utils.ts";
 import { player } from "../core/index.ts";
@@ -9,6 +9,7 @@ import goatFormula from "../util/goatFormula.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 
 type Most = {
 	value: number;

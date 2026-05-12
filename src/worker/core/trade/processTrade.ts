@@ -7,10 +7,10 @@ import {
 	logEvent,
 	toUI,
 	updatePlayMenu,
-	recomputeLocalUITeamOvrs,
 } from "../../util/index.ts";
 import { type Player, type TradeEventTeams } from "../../../common/types.ts";
 import { getTeammateJerseyNumbers } from "../player/genJerseyNumber.ts";
+import { recomputeLocalUITeamOvrs } from "../../util/recomputeLocalUITeamOvrs.ts";
 
 const processTrade = async (
 	tids: [number, number],

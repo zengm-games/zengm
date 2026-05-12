@@ -1,18 +1,13 @@
 import { DEFAULT_TEAM_COLORS } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 
-const getTeamColors = async (tid: number) => {
-	let teamColors: [string, string, string] = DEFAULT_TEAM_COLORS;
-
+export const getTeamColors = async (tid: number) => {
 	if (tid >= 0) {
 		const t = await idb.cache.teams.get(tid);
-
 		if (t) {
-			teamColors = t.colors;
+			return t.colors;
 		}
 	}
 
-	return teamColors;
+	return DEFAULT_TEAM_COLORS;
 };
-
-export default getTeamColors;

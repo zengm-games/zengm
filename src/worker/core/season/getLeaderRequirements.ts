@@ -1,6 +1,7 @@
 import { bySport } from "../../../common/sportFunctions.ts";
 import { NUM_OUTS_PER_INNING } from "../../../common/constants.baseball.ts";
-import { defaultGameAttributes, g, helpers } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
+import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 
 // This is for league leaders pages and player profile page stat tables
 // https://www.basketball-reference.com/about/rate_stat_req.html has some info for basketball, can use as rough guide

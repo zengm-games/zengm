@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import { useLocal } from "../util/local.ts";
-import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
+import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 
 export const CurrencyInputGroup = ({
 	children,

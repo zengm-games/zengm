@@ -7,7 +7,7 @@ import type { StatSumsExtra } from "../../common/processPlayerStats.basketball.t
 import type { PlayerStats, PlayerStatType } from "../../common/types.ts";
 import g from "./g.ts";
 
-const processPlayerStats = (
+export const processPlayerStats = (
 	ps: PlayerStats,
 	stats: string[],
 	statType?: PlayerStatType,
@@ -31,5 +31,3 @@ const processPlayerStats = (
 		hockey: processPlayerStatsHockey(ps, stats, statType, bornYear),
 	});
 };
-
-export default processPlayerStats;

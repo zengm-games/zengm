@@ -12,7 +12,7 @@ import {
 	team,
 } from "../index.ts";
 import { idb } from "../../db/index.ts";
-import { env, g, helpers, local, logEvent, toUI } from "../../util/index.ts";
+import { g, helpers, local, logEvent, toUI } from "../../util/index.ts";
 import type {
 	Conditions,
 	PhaseReturn,
@@ -23,6 +23,7 @@ import { groupByUnique, maxBy } from "../../../common/utils.ts";
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { choice, randInt, uniform } from "../../../common/random.ts";
+import { env } from "../../util/env.ts";
 
 const newPhasePreseason = async (
 	conditions: Conditions,

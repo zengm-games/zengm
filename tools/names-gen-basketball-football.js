@@ -1,5 +1,5 @@
-import namesBasketball from "./lib/namesBasketball.js";
-import namesFootball from "./lib/namesFootball.js";
+import { namesBasketball } from "./lib/namesBasketball.js";
+import { namesFootball } from "./lib/namesFootball.js";
 import fs from "node:fs";
 import path from "node:path";
 

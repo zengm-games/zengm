@@ -1,10 +1,10 @@
-import { league } from "../core/index.ts";
-import { idb } from "../db/index.ts";
-import g from "./g.ts";
-import helpers from "./helpers.ts";
-import local from "./local.ts";
-import type { OwnerMood } from "../../common/types.ts";
-import { COURT } from "../../common/constants.ts";
+import { league } from "../index.ts";
+import { idb } from "../../db/index.ts";
+import g from "../../util/g.ts";
+import helpers from "../../util/helpers.ts";
+import local from "../../util/local.ts";
+import type { OwnerMood } from "../../../common/types.ts";
+import { COURT } from "../../../common/constants.ts";
 
 const moodTexts = ["Horrible!", "Bad.", "Pretty good.", "Good.", "Excellent!"];
 
@@ -28,7 +28,10 @@ const getMoodScore = (total: number, deltas: boolean = false) => {
 	return 0;
 };
 
-const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
+export const genMessage = async (
+	deltas: OwnerMood,
+	cappedDeltas: OwnerMood,
+) => {
 	// If auto play seasons or multi team mode, no messages - keep in sync with updateOwnerMood
 	if (
 		local.autoPlayUntil ||
@@ -216,5 +219,3 @@ const genMessage = async (deltas: OwnerMood, cappedDeltas: OwnerMood) => {
 		ownerMoods: moods,
 	});
 };
-
-export default genMessage;

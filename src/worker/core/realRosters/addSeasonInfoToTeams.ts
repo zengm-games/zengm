@@ -1,11 +1,12 @@
 import { PLAYER } from "../../../common/constants.ts";
+import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 import type {
 	GameAttributesLeague,
 	GetLeagueOptions,
 	Player,
 } from "../../../common/types.ts";
 import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
-import { defaultGameAttributes, g, helpers, local } from "../../util/index.ts";
+import { g, helpers, local } from "../../util/index.ts";
 import player from "../player/index.ts";
 import formatPlayerFactory from "./formatPlayerFactory.ts";
 import getInjury from "./getInjury.ts";

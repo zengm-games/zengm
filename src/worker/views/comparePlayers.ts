@@ -6,11 +6,12 @@ import {
 	formatPlayerRelativesList,
 } from "./customizePlayer.ts";
 import { shuffle } from "../../common/random.ts";
-import { g, getTeamInfoBySeason } from "../util/index.ts";
+import { g } from "../util/index.ts";
 import { last, maxBy } from "../../common/utils.ts";
 import { getPlayerProfileStats } from "./player.ts";
 import type { SeasonType } from "../api/processInputs.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
 
 const hasPlayerInfoChanged = (
 	inputPlayers: ViewInput<"comparePlayers">["players"],

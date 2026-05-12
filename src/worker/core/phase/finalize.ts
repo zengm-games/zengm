@@ -8,12 +8,12 @@ import {
 	updatePhase,
 	updatePlayMenu,
 	updateStatus,
-	processScheduledEvents,
 	g,
-	getGlobalSettings,
 	logEvent,
 } from "../../util/index.ts";
 import type { Conditions, Phase, PhaseReturn } from "../../../common/types.ts";
+import { getGlobalSettings } from "../../util/getGlobalSettings.ts";
+import { processScheduledEvents } from "./processScheduledEvents.ts";
 
 /**
  * Common tasks run after a new phrase is set.

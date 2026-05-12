@@ -1,10 +1,11 @@
 import setSchedule from "./setSchedule.ts";
 import { idb } from "../../db/index.ts";
-import { g, helpers, local, lock, orderTeams } from "../../util/index.ts";
+import { g, helpers, local, lock } from "../../util/index.ts";
 import type { PlayoffSeriesTeam } from "../../../common/types.ts";
 import { season } from "../index.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 import { chunk, groupByUnique } from "../../../common/utils.ts";
+import { orderTeams } from "../../util/orderTeams.ts";
 
 // Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.
 const betterSeedHome = (numGamesPlayoffSeries: number, gameNum: number) => {

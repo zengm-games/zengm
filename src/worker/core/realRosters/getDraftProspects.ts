@@ -1,10 +1,10 @@
 import { PHASE } from "../../../common/constants.ts";
+import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 import type {
 	GetLeagueOptionsReal,
 	ScheduledEventWithoutKey,
 } from "../../../common/types.ts";
 import { orderBy } from "../../../common/utils.ts";
-import { defaultGameAttributes } from "../../util/index.ts";
 import formatPlayerFactory from "./formatPlayerFactory.ts";
 import type { Basketball } from "./loadData.basketball.ts";
 

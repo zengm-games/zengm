@@ -5,13 +5,7 @@ import {
 	AWARD_NAMES,
 } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
-import {
-	g,
-	defaultGameAttributes,
-	helpers,
-	logEvent,
-	orderTeams,
-} from "../../util/index.ts";
+import { g, helpers, logEvent } from "../../util/index.ts";
 import type {
 	Conditions,
 	Player,
@@ -22,6 +16,8 @@ import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball.ts";
 import season from "./index.ts";
 import addAward from "../player/addAward.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
+import { orderTeams } from "../../util/orderTeams.ts";
 
 export type AwardsByPlayer = {
 	pid: number;

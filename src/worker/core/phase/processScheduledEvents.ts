@@ -1,7 +1,7 @@
-import { idb } from "../db/index.ts";
-import g from "./g.ts";
-import helpers from "./helpers.ts";
-import logEvent from "./logEvent.ts";
+import { idb } from "../../db/index.ts";
+import g from "../../util/g.ts";
+import helpers from "../../util/helpers.ts";
+import logEvent from "../../util/logEvent.ts";
 import {
 	league,
 	expansionDraft,
@@ -10,17 +10,17 @@ import {
 	player,
 	finances,
 	freeAgents,
-} from "../core/index.ts";
+} from "../../core/index.ts";
 import type {
 	ScheduledEvent,
 	Conditions,
 	RealTeamInfo,
-} from "../../common/types.ts";
-import { PHASE } from "../../common/constants.ts";
-import local from "./local.ts";
-import { last, orderBy } from "../../common/utils.ts";
-import { getNumPlayersTradedAwayNormalizedAll } from "../core/player/getNumPlayersTradedAwayNormalized.ts";
-import { applyRealTeamInfo } from "../../common/applyRealTeamInfo.ts";
+} from "../../../common/types.ts";
+import { PHASE } from "../../../common/constants.ts";
+import local from "../../util/local.ts";
+import { last, orderBy } from "../../../common/utils.ts";
+import { getNumPlayersTradedAwayNormalizedAll } from "../../core/player/getNumPlayersTradedAwayNormalized.ts";
+import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
 
 const processTeamInfo = async (
 	info: Extract<ScheduledEvent, { type: "teamInfo" }>["info"],
@@ -488,7 +488,7 @@ const processUnretirePlayer = async (pid: number) => {
 	return [];
 };
 
-const processScheduledEvents = async (
+export const processScheduledEvents = async (
 	season: number,
 	phase: number,
 	conditions: Conditions,
@@ -577,5 +577,3 @@ const processScheduledEvents = async (
 		});
 	}
 };
-
-export default processScheduledEvents;

@@ -3,7 +3,7 @@ import { maxBy } from "../../common/utils.ts";
 import { getPosByGpF } from "../core/season/doAwards.baseball.ts";
 
 // Would be better as part of idb.getCopies.playersPlus
-const processPlayersHallOfFame = <
+export const processPlayersHallOfFame = <
 	T extends {
 		careerStats: any;
 		ratings: any;
@@ -125,5 +125,3 @@ const processPlayersHallOfFame = <
 		};
 	});
 };
-
-export default processPlayersHallOfFame;

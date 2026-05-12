@@ -1,10 +1,11 @@
 import { idb } from "../db/index.ts";
-import { helpers, processPlayersHallOfFame } from "../util/index.ts";
+import { helpers } from "../util/index.ts";
 import type { UpdateEvents, Player } from "../../common/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { getValueStatsRow } from "../core/player/checkJerseyNumberRetirement.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { extraStats } from "./hallOfFame.ts";
+import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 
 type InfoTemp = {
 	numPlayers: number;

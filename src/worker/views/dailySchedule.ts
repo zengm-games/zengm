@@ -1,10 +1,11 @@
 import { season } from "../core/index.ts";
 import { idb } from "../db/index.ts";
-import { env, g } from "../util/index.ts";
+import { g } from "../util/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { getTopPlayers, getUpcoming } from "./schedule.ts";
 import { PHASE } from "../../common/constants.ts";
 import { makeResponsiveDropdownOption } from "../../common/makeResponsiveDropdownOption.tsx";
+import { env } from "../util/env.ts";
 
 let prevInputsDay: number | undefined;
 const updateDailySchedule = async (

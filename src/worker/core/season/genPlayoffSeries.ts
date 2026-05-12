@@ -1,4 +1,4 @@
-import { g, logEvent, orderTeams } from "../../util/index.ts";
+import { g, logEvent } from "../../util/index.ts";
 import type {
 	TeamFiltered,
 	PlayoffSeries,
@@ -12,6 +12,7 @@ import getPlayoffsByConf from "./getPlayoffsByConf.ts";
 import validatePlayoffSettings from "./validatePlayoffSettings.ts";
 import { range } from "../../../common/utils.ts";
 import { getNumPlayoffByes } from "./getNumPlayoffByes.ts";
+import { orderTeams } from "../../util/orderTeams.ts";
 
 type MyTeam = TeamFiltered<
 	["tid"],

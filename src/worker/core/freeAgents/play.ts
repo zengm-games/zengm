@@ -8,10 +8,10 @@ import {
 	updatePlayMenu,
 	updateStatus,
 	toUI,
-	recomputeLocalUITeamOvrs,
 	helpers,
 } from "../../util/index.ts";
 import type { Conditions } from "../../../common/types.ts";
+import { recomputeLocalUITeamOvrs } from "../../util/recomputeLocalUITeamOvrs.ts";
 
 /**
  * Simulates one or more days of free agency.

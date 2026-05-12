@@ -1,6 +1,6 @@
 import { player, season, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
-import { g, getProcessedGames, helpers } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	ViewInput,
@@ -20,6 +20,7 @@ import playThroughInjuriesFactor from "../../common/playThroughInjuriesFactor.ts
 import { COMPOSITE_WEIGHTS } from "../../common/constants.hockey.ts";
 import { getStartingAndBackupGoalies } from "../core/GameSim.hockey/getStartingAndBackupGoalies.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { getProcessedGames } from "../util/getProcessedGames.ts";
 
 export const getUpcoming = async ({
 	cid,

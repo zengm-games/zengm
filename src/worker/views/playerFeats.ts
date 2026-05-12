@@ -1,7 +1,8 @@
 import { idb } from "../db/index.ts";
-import { g, helpers, processPlayerStats } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { processPlayerStats } from "../util/processPlayerStats.ts";
 
 const updatePlayers = async (
 	inputs: ViewInput<"playerFeats">,

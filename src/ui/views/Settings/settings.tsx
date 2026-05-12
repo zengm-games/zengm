@@ -11,7 +11,8 @@ import { toWorker } from "../../util/toWorker.ts";
 import type { ChangeEvent, CSSProperties, ReactNode } from "react";
 import type { Category, Decoration, FieldType, Key, Values } from "./types.ts";
 import type { Settings } from "../../../worker/views/settings.ts";
-import defaultGameAttributes, {
+import {
+	defaultGameAttributes,
 	gameAttributesKeysOtherSports,
 } from "../../../common/defaultGameAttributes.ts";
 import type { HandleChange, HandleChangeRaw } from "./SettingsFormOptions.tsx";

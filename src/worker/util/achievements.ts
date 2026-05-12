@@ -4,7 +4,7 @@ import type { Achievement, NonEmptyArray, Player } from "../../common/types.ts";
 import { PLAYER } from "../../common/constants.ts";
 import helpers from "./helpers.ts";
 import { range } from "../../common/utils.ts";
-import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
+import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 
 const goldenOldiesCutoffs: [number, number, number] = bySport({

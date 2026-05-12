@@ -7,7 +7,7 @@ import {
 	PHASE,
 	REAL_PLAYERS_INFO,
 } from "../../common/constants.ts";
-import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
+import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 import type {
 	GameAttributesLeague,
 	Player,

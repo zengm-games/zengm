@@ -7,7 +7,7 @@ import type {
 } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
-import getTeamInfoBySeason from "./getTeamInfoBySeason.ts";
+import { getTeamInfoBySeason } from "./getTeamInfoBySeason.ts";
 import helpers from "./helpers.ts";
 
 type PlayerAsset = {

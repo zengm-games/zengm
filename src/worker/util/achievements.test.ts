@@ -6,7 +6,7 @@ import g from "./g.ts";
 import helpers from "./helpers.ts";
 import achievements from "./achievements.ts";
 import type { TeamSeason, Achievement } from "../../common/types.ts";
-import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
+import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 import { DEFAULT_LEVEL } from "../../common/budgetLevels.ts";
 
 const get = (slug: string) => {

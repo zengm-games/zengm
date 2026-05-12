@@ -1,14 +1,7 @@
 import { PHASE } from "../../../common/constants.ts";
 import { finances, player } from "../index.ts";
 import { idb } from "../../db/index.ts";
-import {
-	g,
-	helpers,
-	local,
-	lock,
-	logEvent,
-	processPlayerStats,
-} from "../../util/index.ts";
+import { g, helpers, local, lock, logEvent } from "../../util/index.ts";
 import type { Conditions, GameResults, Player } from "../../../common/types.ts";
 import stats from "../player/stats.ts";
 import statsRowIsCurrent from "../player/statsRowIsCurrent.ts";
@@ -16,6 +9,7 @@ import { last, maxBy } from "../../../common/utils.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { randInt } from "../../../common/random.ts";
+import { processPlayerStats } from "../../util/processPlayerStats.ts";
 
 export const P_FATIGUE_DAILY_REDUCTION = 20;
 

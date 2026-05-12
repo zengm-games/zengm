@@ -1,10 +1,10 @@
 import g from "./g.ts";
-import getProcessedGames from "./getProcessedGames.ts";
+import { getProcessedGames } from "./getProcessedGames.ts";
 import toUI from "./toUI.ts";
 import type { LocalStateUI } from "../../common/types.ts";
 import { getOneUpcomingGame } from "./recomputeLocalUITeamOvrs.ts";
 
-const initUILocalGames = async () => {
+export const initUILocalGames = async () => {
 	const userTid = g.get("userTid");
 
 	// Start with completed games
@@ -50,5 +50,3 @@ const initUILocalGames = async () => {
 		},
 	]);
 };
-
-export default initUILocalGames;

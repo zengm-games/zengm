@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { juniors, provinces, states } from "./namesHelpers.ts";
 
-const namesBasketball = () => {
+export const namesBasketball = () => {
 	// Run this on the output of something like:
 	// $ wget --mirror --convert-links --adjust-extension --no-parent http://www.draftexpress.com
 	const folder = "/media/external/BBGM/www.draftexpress.com/profile";
@@ -429,5 +429,3 @@ const namesBasketball = () => {
 
 	return { fnsByCountry, lnsByCountry };
 };
-
-export default namesBasketball;

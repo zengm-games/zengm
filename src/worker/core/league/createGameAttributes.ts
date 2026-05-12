@@ -6,7 +6,7 @@ import type {
 	GameAttributesLeagueWithHistory,
 	GameAttributeWithHistory,
 } from "../../../common/types.ts";
-import { defaultGameAttributes, logEvent } from "../../util/index.ts";
+import { logEvent } from "../../util/index.ts";
 import { wrapNewValueIfCurrentlyWrapped } from "../../util/g.ts";
 import getInitialNumGamesConfDivSettings from "../season/getInitialNumGamesConfDivSettings.ts";
 import type { TeamInfo } from "./createStream.ts";
@@ -14,7 +14,10 @@ import getValidNumGamesPlayoffSeries from "./getValidNumGamesPlayoffSeries.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
 import { gameAttributeHasHistory } from "../../../common/gameAttributeHasHistory.ts";
 import { unwrapGameAttribute } from "../../../common/unwrapGameAttribute.ts";
-import { wrapFromStart } from "../../../common/defaultGameAttributes.ts";
+import {
+	defaultGameAttributes,
+	wrapFromStart,
+} from "../../../common/defaultGameAttributes.ts";
 import { last } from "../../../common/utils.ts";
 
 const createGameAttributes = async (

@@ -1,6 +1,7 @@
 import { team } from "../index.ts";
 import { idb } from "../../db/index.ts";
-import { g, toUI, recomputeLocalUITeamOvrs } from "../../util/index.ts";
+import { g, toUI } from "../../util/index.ts";
+import { recomputeLocalUITeamOvrs } from "../../util/recomputeLocalUITeamOvrs.ts";
 
 // This used to be at the end of `accept` but when resigning players in a loop it's redundant to run this every time, and it also gives more control about when exactly to update the UI to do this later
 const afterAccept = async (tid: number) => {

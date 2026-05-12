@@ -1,6 +1,6 @@
 import { allStar } from "../core/index.ts";
 import { idb } from "../db/index.ts";
-import { g, getTeamInfoBySeason, helpers } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type {
 	UpdateEvents,
 	AllStars,
@@ -13,6 +13,7 @@ import { orderBy } from "../../common/utils.ts";
 import { extraStats } from "./hallOfFame.ts";
 import { getPosByGpF } from "../core/season/doAwards.baseball.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
 
 const sortByPos = (p: {
 	bestPos: string;

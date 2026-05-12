@@ -5,7 +5,7 @@ import type { TeamFiltered } from "../../common/types.ts";
 import advStatsSave from "./advStatsSave.ts";
 import { groupByUnique, last } from "../../common/utils.ts";
 import helpers from "./helpers.ts";
-import defaultGameAttributes from "../../common/defaultGameAttributes.ts";
+import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 import statsRowIsCurrent from "../core/player/statsRowIsCurrent.ts";
 
 type Team = TeamFiltered<

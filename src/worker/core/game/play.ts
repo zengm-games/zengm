@@ -26,7 +26,6 @@ import {
 	toUI,
 	updatePlayMenu,
 	updateStatus,
-	recomputeLocalUITeamOvrs,
 	local,
 } from "../../util/index.ts";
 import type {
@@ -39,7 +38,10 @@ import type {
 import allowForceTie from "../../../common/allowForceTie.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { setLiveSimRatingsStatsPopoverPlayers } from "./setLiveSimRatingsStatsPopoverPlayers.ts";
-import { getOneUpcomingGame } from "../../util/recomputeLocalUITeamOvrs.ts";
+import {
+	getOneUpcomingGame,
+	recomputeLocalUITeamOvrs,
+} from "../../util/recomputeLocalUITeamOvrs.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
 

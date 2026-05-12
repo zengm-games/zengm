@@ -2,29 +2,12 @@
 
 export { default as achievement } from "./achievement.ts";
 export { default as advStats } from "./advStats.ts";
-export { default as env } from "./env.ts";
 export { default as g } from "./g.ts";
-export { default as genMessage } from "./genMessage.ts";
-export { default as getGlobalSettings } from "./getGlobalSettings.ts";
-export { default as getNewLeagueLid } from "./getNewLeagueLid.ts";
-export { default as getProcessedGames } from "./getProcessedGames.ts";
-export { default as getTeamColors } from "./getTeamColors.ts";
-export { default as getTeamInfoBySeason } from "./getTeamInfoBySeason.ts";
 export { default as helpers } from "./helpers.ts";
-export { default as initUILocalGames } from "./initUILocalGames.ts";
-export { default as loadNames } from "./loadNames.ts";
 export { default as local } from "./local.ts";
 export { default as lock } from "./lock.ts";
 export { default as logEvent } from "./logEvent.ts";
-export { default as processPlayerStats } from "./processPlayerStats.ts";
-export { default as processPlayersHallOfFame } from "./processPlayersHallOfFame.ts";
-export { default as processScheduledEvents } from "./processScheduledEvents.ts";
-export { default as recomputeLocalUITeamOvrs } from "./recomputeLocalUITeamOvrs.ts";
-export { default as orderTeams } from "./orderTeams.ts";
 export { default as toUI } from "./toUI.ts";
 export { default as updatePhase } from "./updatePhase.ts";
 export { default as updatePlayMenu } from "./updatePlayMenu.ts";
 export { default as updateStatus } from "./updateStatus.ts";
-
-// Ideally, get rid of this
-export { default as defaultGameAttributes } from "../../common/defaultGameAttributes.ts";

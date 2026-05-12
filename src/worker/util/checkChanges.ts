@@ -3,7 +3,7 @@ import logEvent from "./logEvent.ts";
 import type { Conditions } from "../../common/types.ts";
 import { SUBREDDIT_NAME } from "../../common/constants.ts";
 import { fetchWrapper } from "../../common/fetchWrapper.ts";
-import env from "./env.ts";
+import { env } from "./env.ts";
 
 const LAST_VERSION_BEFORE_THIS_EXISTED = "2021.05.25.0919";
 const MAX_NUM_TO_SHOW = 3;

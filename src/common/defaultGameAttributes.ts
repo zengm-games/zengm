@@ -152,7 +152,7 @@ for (const [sport, keys] of Object.entries(gameAttributesKeysSportSpecific)) {
 	}
 }
 
-const defaultGameAttributes: GameAttributesLeagueWithHistory = {
+export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	phase: 0,
 	nextPhase: undefined, // Used only for fantasy draft
 	playerBioInfo: undefined,
@@ -527,5 +527,3 @@ if (isSport("football")) {
 } else if (isSport("baseball")) {
 	Object.assign(defaultGameAttributes, baseballOverrides);
 }
-
-export default defaultGameAttributes;

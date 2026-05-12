@@ -1,5 +1,5 @@
 import { idb } from "../db/index.ts";
-import { getTeamInfoBySeason } from "../util/index.ts";
+import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
 import type {
 	UpdateEvents,
 	ViewInput,

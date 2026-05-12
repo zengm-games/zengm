@@ -1,7 +1,8 @@
 import { assert, describe, test } from "vitest";
-import { defaultGameAttributes, helpers } from "../../util/index.ts";
+import { helpers } from "../../util/index.ts";
 import createGameAttributes from "./createGameAttributes.ts";
 import { PHASE } from "../../../common/constants.ts";
+import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 
 test("save integer in wrapped format", async () => {
 	const gameAttributes = await createGameAttributes({

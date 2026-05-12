@@ -6,8 +6,17 @@ import * as db from "./db/index.ts";
 import * as util from "./util/index.ts";
 import * as random from "../common/random.ts";
 import { promiseWorker } from "./util/promiseWorker.ts";
+import { defaultGameAttributes } from "../common/defaultGameAttributes.ts";
 
-self.bbgm = { api, ...common, ...core, ...db, ...util, random };
+self.bbgm = {
+	...common,
+	...core,
+	...db,
+	...util,
+	api,
+	defaultGameAttributes,
+	random,
+};
 
 if (process.env.NODE_ENV === "development") {
 	import("./core/debug/index.ts").then(({ default: debug }) => {

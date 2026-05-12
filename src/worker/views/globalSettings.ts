@@ -1,6 +1,6 @@
 import { idb } from "../db/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
-import { getGlobalSettings } from "../util/index.ts";
+import { getGlobalSettings } from "../util/getGlobalSettings.ts";
 
 const updateOptions = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	if (updateEvents.includes("firstRun") || updateEvents.includes("options")) {

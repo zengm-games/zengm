@@ -3,15 +3,11 @@ import { draft, player, season, team, league } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import {
 	achievement,
-	defaultGameAttributes,
 	g,
-	genMessage,
 	helpers,
 	local,
 	toUI,
 	logEvent,
-	orderTeams,
-	env,
 } from "../../util/index.ts";
 import type {
 	Conditions,
@@ -27,6 +23,10 @@ import { analyticsEventLocal } from "../../../common/analyticsEventLocal.ts";
 import { updateLotteryChancesAfterPlayoffs } from "../draft/cola.ts";
 import { last } from "../../../common/utils.ts";
 import { randInt, shuffle, truncGauss } from "../../../common/random.ts";
+import { genMessage } from "./genMessage.ts";
+import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
+import { env } from "../../util/env.ts";
+import { orderTeams } from "../../util/orderTeams.ts";
 
 const INFLATION_GAME_ATTRIBUTES = [
 	"salaryCap",

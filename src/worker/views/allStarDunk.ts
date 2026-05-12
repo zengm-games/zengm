@@ -5,10 +5,11 @@ import type {
 	ViewInput,
 } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
-import { g, getTeamInfoBySeason, helpers } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import { PHASE } from "../../common/constants.ts";
 import { orderBy } from "../../common/utils.ts";
 import { isSport } from "../../common/sportFunctions.ts";
+import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
 
 const getShortTall = async (pids: [number, number]) => {
 	if (!pids) {

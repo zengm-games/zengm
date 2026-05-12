@@ -1,6 +1,6 @@
 import { idb } from "../db/index.ts";
 
-const getNewLeagueLid = async () => {
+export const getNewLeagueLid = async () => {
 	const cursor = await (
 		await idb.meta.transaction("leagues")
 	).store.openCursor(undefined, "prev");
@@ -10,5 +10,3 @@ const getNewLeagueLid = async () => {
 
 	return 1;
 };
-
-export default getNewLeagueLid;

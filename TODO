@@ -57,6 +57,7 @@ in addition to force W/L/T https://app.fastmail.com/mail/Inbox/A3EoJrVHaN5J.Stpc
 - force close
 
 similar to lock ratings, have a lock uninjured flag https://app.fastmail.com/mail/Inbox/A3EoJrVHaN5J.StpcmfcZYd-7?u=433e4054
+- lock unretired, lock alive
 
 expansion like SEA->OKC->SEA - allow prior city of a current team to be selected as an expansion team, and give back team history to original team
 - use in real player rosters too
@@ -1348,12 +1349,6 @@ fbgm scoring summary still shows entry for penalty overturned score until anothe
 relatives in imported draft class https://discord.com/channels/290013534023057409/290015591216054273/1019432648629829663
 - delete any outside of draft class
 - within draft class, rewrite pids on import
-
-FBGM performance after many pages in Edge https://old.reddit.com/r/Football_GM/comments/x7sjy5/lag_and_optimization/ini2jbe/?context=3
-
-on player profile page, simming while scrolled to the right in a table resets the scroll
-- https://discord.com/channels/@me/673750689649917958/1004939436062146631
-- https://old.reddit.com/r/BasketballGM/comments/x7i40j/glitch_when_scrolling_right_on_player_stats/
 
 Customize Teams
 - ui is kind of confusing. i can select teams with real players by clicking random players and clicking customize, but i can't do the same thing by clicking real players

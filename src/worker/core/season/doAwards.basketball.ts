@@ -9,7 +9,7 @@ import {
 	saveAwardsByPlayer,
 } from "./awards.ts";
 import { idb } from "../../db/index.ts";
-import { defaultGameAttributes, g, helpers } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import type {
 	Conditions,
 	Game,
@@ -21,6 +21,7 @@ import type {
 	Awards,
 } from "../../../common/types.basketball.ts";
 import { orderBy } from "../../../common/utils.ts";
+import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 
 const getPlayerInfoOffense = (p: PlayerFiltered): AwardPlayer => {
 	return {

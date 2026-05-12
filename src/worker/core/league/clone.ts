@@ -1,6 +1,6 @@
 import type { IDBPDatabase } from "@dumbmatter/idb";
 import { connectLeague, idb } from "../../db/index.ts";
-import { getNewLeagueLid } from "../../util/index.ts";
+import { getNewLeagueLid } from "../../util/getNewLeagueLid.ts";
 import remove from "./remove.ts";
 
 const BATCH_SIZE = 1000;

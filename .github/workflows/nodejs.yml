@@ -7,21 +7,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v3
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v6
         with:
           version: 11
-      - uses: actions/setup-node@v3
+          cache: true
+      - uses: actions/setup-node@v6
         with:
           node-version: "24.x"
           cache: "pnpm"
-      - name: Install dependencies
-        run: pnpm install
-      - name: Install playwright dependencies
-        run: pnpx playwright install --with-deps
-      - name: ESLint
-        run: pnpm run lint-js
-      - name: TypeScript
-        run: pnpm run lint-ts
-      - name: Tests
-        run: pnpm test
+      - run: pnpm install
+      - run: pnpx playwright install --with-deps
+      - run: pnpm run lint-js
+      - run: pnpm run lint-ts
+      - run: pnpm test

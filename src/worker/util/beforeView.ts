@@ -10,7 +10,10 @@ import {
 	updateStatus,
 } from "./index.ts";
 import type { Conditions, League } from "../../common/types.ts";
-import { ERROR_MESSAGE_ONE_TAB } from "../../common/constants.ts";
+import {
+	ERROR_MESSAGE_ONE_TAB,
+	ERROR_MESSSAGE_LEAGUE_NOT_FOUND,
+} from "../../common/constants.ts";
 import { env } from "./env.ts";
 import { initUILocalGames } from "./initUILocalGames.ts";
 
@@ -23,7 +26,7 @@ const getLeague = async (lid: number) => {
 	const l = await idb.meta.get("leagues", lid);
 
 	if (l === undefined) {
-		throw new Error("League not found.");
+		throw new Error(ERROR_MESSSAGE_LEAGUE_NOT_FOUND);
 	}
 
 	return l;

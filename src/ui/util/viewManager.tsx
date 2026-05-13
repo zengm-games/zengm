@@ -1,6 +1,6 @@
 import type { UpdateEvents } from "../../common/types.ts";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import router, { type Context, makeRegex } from "../router/index.ts";
+import { type Context, makeRegex, router } from "../router/index.ts";
 import { local, localActions } from "./local.ts";
 import { realtimeUpdate } from "./realtimeUpdate.ts";
 import { toWorker } from "./toWorker.ts";

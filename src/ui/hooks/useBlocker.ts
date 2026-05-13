@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import router from "../router/index.ts";
+import { router } from "../router/index.ts";
 import { confirm } from "../util/confirm.tsx";
 
 export const useBlocker = ({

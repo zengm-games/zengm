@@ -10,7 +10,12 @@ export interface Context {
 	};
 }
 
-export const MATCHING_ROUTE_NOT_FOUND = "Matching route not found";
+export class RouteNotFoundError extends Error {
+	constructor() {
+		super("Matching route not found");
+		this.name = "RouteNotFoundError";
+	}
+}
 
 type RouteCallback = (context: Context) => Promise<void>;
 
@@ -257,7 +262,7 @@ class Router {
 		}
 
 		if (!handled) {
-			error = new Error(MATCHING_ROUTE_NOT_FOUND);
+			error = new RouteNotFoundError();
 		}
 
 		// HACK! Some ads were including a request for /ads.txt?upapi=true which somehow triggered this code and led to Controller attempting to render multiple pages at once, one of which was outside of the league, leading to beforeViewNonLeague to be called and stop game sim
@@ -390,6 +395,4 @@ class Router {
 	}
 }
 
-const router = new Router();
-
-export default router;
+export const router = new Router();

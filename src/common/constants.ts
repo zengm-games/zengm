@@ -579,7 +579,9 @@ export const NOT_REAL_POSITIONS = new Set(
 export const COLA_ALPHA = 1000;
 export const COLA_OPT_OUT_PENALTY = 2000;
 
+// We need to identify errors with a consistent message rather than instanceof or a custom property if they cross between ui and worker
 export const ERROR_MESSAGE_ONE_TAB =
 	"Your browser only supports opening a league in one tab at a time. If this league is not open in another tab, please wait a few seconds and reload.";
 export const ERROR_MESSAGE_UNDEFINED_SEASON =
 	"Undefined season - an error may have occurred while creating this league";
+export const ERROR_MESSSAGE_LEAGUE_NOT_FOUND = "League not found.";

@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { createRoot } from "react-dom/client";
 import api from "./api/index.ts";
 import { Controller } from "./components/Controller/index.tsx";
-import router, { MATCHING_ROUTE_NOT_FOUND } from "./router/index.ts";
+import { router, RouteNotFoundError } from "./router/index.ts";
 import type { Env } from "../common/types.ts";
 import {
 	EMAIL_ADDRESS,
@@ -12,6 +12,7 @@ import {
 	GAME_NAME,
 	ERROR_MESSAGE_ONE_TAB,
 	WEBSITE_ROOT,
+	ERROR_MESSSAGE_LEAGUE_NOT_FOUND,
 } from "../common/constants.ts";
 import Bugsnag from "@bugsnag/browser";
 import { LeagueNotFoundMessage } from "./components/LeagueNotFoundMessage.tsx";
@@ -56,7 +57,7 @@ const handleVersion = async () => {
 
 	window.withGoodUI?.();
 
-	toWorker("main", "ping", undefined).then(() => {
+	void toWorker("main", "ping", undefined).then(() => {
 		window.withGoodWorker?.();
 	});
 
@@ -157,18 +158,11 @@ const setupRoutes = async () => {
 				let errorMessage: ReactNode;
 
 				// Some "errors" are expected and need either some special UI or are not worth logging
-				if (error.message === MATCHING_ROUTE_NOT_FOUND) {
+				if (error instanceof RouteNotFoundError) {
 					errorMessage = "Page not found.";
-				} else if (error.message === "League not found.") {
+				} else if (error.message === ERROR_MESSSAGE_LEAGUE_NOT_FOUND) {
 					errorMessage = <LeagueNotFoundMessage />;
-				} else if (
-					// As of 2019-07-20, these cover all IndexedDB version error messages in Chrome, Firefox, and Safari
-					error.message.includes("requested version") ||
-					error.message.includes("existing version") ||
-					error.message.includes("higher version") ||
-					error.message.includes("version requested") ||
-					error.message.includes("lower version")
-				) {
+				} else if (error.name === "VersionError") {
 					errorMessage = (
 						<>
 							<p>{error.message}</p>

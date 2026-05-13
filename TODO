@@ -480,8 +480,6 @@ perf issues in large league with 8500 seasons
 
 Option to resim a exhibition game between the same 2 teams rather than going back into the menu https://discord.com/channels/290013534023057409/331882115119448065/1377067383004594287
 
-ios app store with pwabuilder?
-
 bug with trade value of draft pick for expansion team - valued as 1st rather than 15th? https://old.reddit.com/r/BasketballGM/comments/13x2hhe/monthly_suggestions_thread/jmgzqei/
 - more generally, draft order code should be aligned with pick value estimation code. this would also solve issue with weird draftTypes and unbalanced conferences (team makes playoff and no longer is in lottery)
 

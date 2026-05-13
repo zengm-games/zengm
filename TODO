@@ -56,8 +56,11 @@ in addition to force W/L/T https://app.fastmail.com/mail/Inbox/A3EoJrVHaN5J.Stpc
 - force OT
 - force close
 
-similar to lock ratings, have a lock uninjured flag https://app.fastmail.com/mail/Inbox/A3EoJrVHaN5J.StpcmfcZYd-7?u=433e4054
-- lock unretired, lock alive
+similar to lock ratings, more flags
+- lock uninjured https://app.fastmail.com/mail/Inbox/A3EoJrVHaN5J.StpcmfcZYd-7?u=433e4054
+- lock unretired https://old.reddit.com/r/BasketballGM/comments/1n59zzw/monthly_suggestions_thread/nggas7k/
+- lock alive
+- lock team (can't be traded, must be re-signed (what about cap rules?))
 
 expansion like SEA->OKC->SEA - allow prior city of a current team to be selected as an expansion team, and give back team history to original team
 - use in real player rosters too
@@ -354,8 +357,6 @@ schedule editor
 on roster continuity page (and maybe others) the "table-info" class in the user team's <th> should override the background color of th
 
 A button requesting "expiring contracts" next to the "prospects" and "best current players" in trading block https://old.reddit.com/r/BasketballGM/comments/1n59zzw/monthly_suggestions_thread/nc0wt13/
-
-option to disable retiring for players signed to teams https://old.reddit.com/r/BasketballGM/comments/1n59zzw/monthly_suggestions_thread/nggas7k/
 
 jersey numbers by position and frequency
 - football
@@ -1781,17 +1782,9 @@ for shot type distributions, base it on real player ratings (model ratings -> sh
 - make some flag to enable this for certain sports only, and do one at a time
 - get rid of hacky position balance code for signing free agents, hopefully no longer needed
 
-draft class quality setting
-- by default, it's random
-- override in "regen draft class"
-- influence the new mode for real draft rankings
-- check 0 age players in all
-
 settings re-design
 - some settings should only be editable in offseason
   - playoff structure
-- to add
-  - RPD does not affect pot https://old.reddit.com/r/BasketballGM/comments/kuiwap/i_think_the_new_update_with_the_real_players/gisc5mz/?context=3
 
 If you have “lose best player at the end of the season” turned on, there’s a pretty bad spoiler. If you live sim the final game of the season the tragic death will pop up as the game is starting. Issue is, it might be like a 3-2 series so you’ll know who won https://discord.com/channels/290013534023057409/290015591216054273/821886733058441247
 
@@ -1871,11 +1864,6 @@ add some more built-in teams
   - Maybe redo the LA Earthquakes and Philly Cheesesteaks. Maybe with new team names too?
 
 Noticed that if I auto play through resignings and FA teams always end up above the roster limit. Imo they should be able to cut players before progs. https://discord.com/channels/290013534023057409/290015591216054273/787667855775891476
-
-force resign button under lock ratings, keep a man on one team
-- hard cap
-- maybe it should be "Force stay on team" which makes him unable to be traded and guaranteed to be re-signed
-- @dooby moogey#2784
 
 award editor
 - Finals MVP displays regular season stats if you change it to someone who also played in that same finals. https://discord.com/channels/290013534023057409/290015591216054273/787237109924495412
@@ -2559,8 +2547,6 @@ after preseason, after player development, recalculate player value
 
 ---
 
-React.StrictMode
-
 to send notification to correct screen, need `conditions` in views/allStars (and other getOrCreate calls). should be possible right? yeah, could request hostID from shared worker, and then sent it to runBefore functions, but... is it worth it? maybe not
 
 BoxScoreRow
@@ -2569,10 +2555,6 @@ BoxScoreRow
 
 Difficulty fudge factor should only be for user team (finances, trades)
 - for trades this is hard because valueChange does not know if it's the user's team or not, need to accept another parameter
-
-make AI smarter about contracts
-- then do cool shit, like a tunable "randomness" factor or something that lets you tune player development, and also overall talent level, and also distribution of different ratings (to sim different eras)
-  - https://www.google.com/search?q=OOTP+player+generator+modifiers&client=ubuntu&hs=nzO&channel=fs&sxsrf=ALeKk03DAwxNZl2Io6A0PwDmnR3InA95_w:1612847896152&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjc07TPhtzuAhXlUd8KHdfaB9kQ_AUoAnoECA8QBA&biw=1920&bih=869#imgrc=qKcVVE7ByPY6xM
 
 cache index updating
 - currenty: check if the indexed property has changed, and only update a specific index then
@@ -2622,8 +2604,6 @@ advanced team stats
 
 advanced stat table too confusing? needs vertical dividers/spacing?
 
-use something besides PER in player value formula
-
 per 100 possessions and totals toggle on team stats page
 
 add franchise leaders (stats) to team history page
@@ -2660,12 +2640,6 @@ shared worker
 when dirty on close, show warning window, and initiate flush (if not already in progress)
 - hard to coordinate across UI and worker...
 
-get tests working
-- db.getCopy.teams
-  - operate on individual functions? can export them just for tests
-  - confirm operations that don't require IDB
-  - confirm getAll updates from cache
-
 ----
 
 situational awareness
@@ -2684,8 +2658,6 @@ Trade/Signing Negotiation Difficulty - Have from a scale of 1-100. 1 = Signing p
 
 ---
 
-REACT later
-
 Draft button on player pages https://www.reddit.com/r/BasketballGM/comments/53op85/feature_request/
 Trade Away button on your own players
 
@@ -2695,8 +2667,6 @@ Draft
     https://www.reddit.com/message/messages/6ip35c
 
 ---
-
-Tools > Export Stats only has latest team, for in-season trades
 
 filters on event log
   tragic deaths https://www.reddit.com/r/BasketballGM/comments/52ljuy/would_it_be_possible_to_add_a_memorial_page/d7ou7ov?context=3

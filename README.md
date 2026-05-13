@@ -44,7 +44,7 @@ from YOUR_NAME_HERE (GITHUB_USERNAME_HERE)".
 
 ## Setup
 
-First install [Node.js](https://nodejs.org/) 24 and [pnpm](https://pnpm.io/) 10.
+First install [Node.js](https://nodejs.org/) 24 and [pnpm](https://pnpm.io/) 11.
 
 Then install the dependencies:
 

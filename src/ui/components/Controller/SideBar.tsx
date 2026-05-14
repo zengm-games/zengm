@@ -78,18 +78,15 @@ export const makeAnchorProps = (
 ): {
 	onClick: () => void;
 	href?: string;
-	rel?: string;
 	target?: string;
 } => {
 	let href;
-	let rel;
 	let target;
 
 	if (typeof menuItem.path === "string") {
 		href = menuItem.path;
 
 		if (menuItem.path.startsWith("http")) {
-			rel = "noopener";
 			target = "_blank";
 		}
 	} else if (Array.isArray(menuItem.path)) {
@@ -116,7 +113,6 @@ export const makeAnchorProps = (
 	return {
 		onClick,
 		href,
-		rel,
 		target,
 	};
 };
@@ -203,8 +199,6 @@ const MenuItem = ({
 
 		return <MenuGroup title={menuItem.long}>{children}</MenuGroup>;
 	}
-
-	throw new Error(`Unknown menuItem.type "${(menuItem as any).type}"`);
 };
 
 type Props = {

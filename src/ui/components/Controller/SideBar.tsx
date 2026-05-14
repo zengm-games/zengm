@@ -37,15 +37,15 @@ const MenuGroup = ({
 	return (
 		<>
 			{title ? (
-				<a
-					className="sidebar-heading"
+				<button
+					className="btn sidebar-heading"
 					onClick={(event) => {
 						event.preventDefault();
 						setOpen((prev) => !prev);
 					}}
 				>
 					<CollapseArrow open={open} /> {title}
-				</a>
+				</button>
 			) : null}
 			<AnimatePresence initial={false}>
 				{open ? (

@@ -1,3 +1,12 @@
+exhibition game
+- option to select starting pitcher https://discord.com/channels/290013534023057409/1498138817121488956/1500369197060853954
+- option to disable injuries (or add new ones?) https://app.fastmail.com/mail/Inbox/A1asHb3nWvXc.StpQnND--4LB?u=433e4054
+
+more baseball stats
+- quality starts https://discord.com/channels/290013534023057409/1499363700316831744/1499363700316831744
+- more advanced stats https://discord.com/channels/290013534023057409/1500911214895566909/1500911214895566909
+- for ones with + versions, generalize and add to basketball/football too? maybe store just league averages somewhere
+
 use overflow-anchor for leaguetopbar scrolling https://x.com/mannupaaji/status/2053829832757407907 - Safari ?
 
 race condition with mutable cached variables and async stuff (example, AbbrevsCache issue from commit e3f01ef8b)

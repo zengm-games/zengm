@@ -8,6 +8,7 @@ import { NUM_OUTS_PER_GAME } from "../../common/processPlayerStats.baseball.ts";
 import { POS_NUMBERS_INVERSE } from "../../common/constants.baseball.ts";
 import { groupByUnique, range } from "../../common/utils.ts";
 import statsRowIsCurrent from "../core/player/statsRowIsCurrent.ts";
+import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
 
 const teamStats = [
 	"h",
@@ -233,11 +234,8 @@ const calculateWAR = (players: any[], teams: Team[], league: any) => {
 	}
 	const teamsByTid = groupByUnique(teams, "tid");
 
-	// For playoffs would be better to be team specific, but this is better than just using numGames directly, which is what it used to do!
-	const numGames =
-		g.get("phase") === PHASE.PLAYOFFS
-			? helpers.sum(g.get("numGamesPlayoffSeries"))
-			: g.get("numGames");
+	// This is for scaling POSITIONAL_ADJUSTMENT_COEFFICIENTS, which are defined relative to a normal 162 game schedule
+	const numGames = defaultGameAttributes.numGames[0].value;
 
 	for (const [i, p] of players.entries()) {
 		const t = teamsByTid[p.tid]!;

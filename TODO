@@ -49,6 +49,7 @@ hockey live sim make power play or pulled goalie more prominent in UI https://di
 
 options for expansion team draft position
 - currently set in lotterySort.ts
+- FBGM should default to #1
 
 hockey pulled goalie scoring probability too high? https://app.fastmail.com/mail/Inbox/AXbF3uID79q3.StpQ3TODbYnk?u=433e4054
 
@@ -1476,8 +1477,6 @@ store pids of top 10 leaders in some key stats
 "award" column on player page, like baseball reference
 - requires storing top 10 of award votes
 
-trade away pick button https://discord.com/channels/290013534023057409/331882115119448065/946350730686636062
-
 player feats and box scores will need to be upgraded to use firstNameShort
 
 make ratings table editable https://old.reddit.com/r/BasketballGM/comments/sv89fj/version_202202171376_progressive_leaders_page/hxo0y96/?context=3
@@ -1489,10 +1488,6 @@ sticky columns sometimes fail on mobile
 
 build statues for players https://old.reddit.com/r/BasketballGM/comments/rt7szv/monthly_suggestions_thread/hqsowkj/
 - https://old.reddit.com/message/messages/1akmgqt
-
-more sim stopping options, in addition to injury one https://old.reddit.com/r/BasketballGM/comments/rt7szv/monthly_suggestions_thread/hr4xytv/
-- stop at trade deadline
-- stop at all star game
 
 also a way to temporarily or indefinitely set a default for how you change a page like News Feed, Player Stats. that way if you're consistently checking the news about your team you can jump right back to it instead of defaulting to all teams https://discord.com/channels/290013534023057409/331882115119448065/938016635401420840
 - maybe a checkbox or button next to the dropdowns?
@@ -1509,9 +1504,6 @@ load real player info from url/file https://discord.com/channels/290013534023057
 
 use nicidob's model but fit to random players instead of real players, to get linear prog formula that behaves like the current one
 - running average progs https://discord.com/channels/290013534023057409/290015468939640832/936461665862549505
-
-add options to control expansion team draft pick position
-- FBGM should default to #1
 
 runBefore sends viewData to worker... wouldn't it be better to keep it on worker? do we ever need anything but "latest state displayed on this tab"? maybe?
 

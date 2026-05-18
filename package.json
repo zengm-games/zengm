@@ -84,7 +84,8 @@
 		"workbox-strategies": "7.4.1",
 		"workbox-window": "7.4.1",
 		"zod": "^4.4.3",
-		"zustand": "5.0.13"
+		"zustand": "5.0.13",
+		"html-to-image": "1.11.11"
 	},
 	"devDependencies": {
 		"@babel/core": "8.0.0-rc.5",

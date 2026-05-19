@@ -288,7 +288,7 @@ const newPhaseResignPlayers = async (
 						// Need to recompute team value stuff now that a player was signed
 						await valueChangeCalculator.invalidateCache({
 							draft: false,
-							teams: true,
+							teams: [p.tid],
 						});
 					} else {
 						reSignPlayer = false;

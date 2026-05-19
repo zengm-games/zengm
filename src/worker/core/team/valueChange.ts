@@ -10,7 +10,7 @@ import type {
 } from "../../../common/types.ts";
 import { getNumPicksPerRound } from "../trade/getPickValues.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
-import { last } from "../../../common/utils.ts";
+import { groupByUnique, last } from "../../../common/utils.ts";
 
 type Asset =
 	| {
@@ -597,12 +597,19 @@ type ValueChangeCache = {
 	}[];
 };
 
+type ToUpdate = {
+	draft: boolean;
+
+	// false - no update. "all" - update all teams. number[] = update only these specific teams
+	teams: false | "all" | number[];
+};
+
 // tradingPartnerTid is currently just used to determine if this is a trade with the user, so additional fuzz can be applied
 export class ValueChangeCalculator {
 	private cache: ValueChangeCache | undefined;
-	private toUpdate: { draft: boolean; teams: boolean } = {
+	private toUpdate: ToUpdate = {
 		draft: true,
-		teams: true,
+		teams: "all",
 	};
 
 	private async init() {
@@ -628,21 +635,38 @@ export class ValueChangeCalculator {
 				tid: number;
 				ovr: number;
 			}[] = [];
+			let prevTeamOvrsByTid;
 			for (const [tid, players] of playersByTid) {
-				const ovr = team.ovr(
-					players.map((p) => ({
-						pid: p.pid,
-						injury: p.injury,
-						value: p.value,
-						ratings: {
-							ovr: last(p.ratings).ovr,
-							ovrs: last(p.ratings).ovrs,
-							pos: last(p.ratings).pos,
-						},
-					})),
-				);
+				let row;
+				if (
+					this.cache &&
+					Array.isArray(toUpdate.teams) &&
+					!toUpdate.teams.includes(tid)
+				) {
+					if (!prevTeamOvrsByTid) {
+						prevTeamOvrsByTid = groupByUnique(this.cache.teamOvrs, "tid");
+					}
+					row = prevTeamOvrsByTid[tid];
+				}
 
-				teamOvrs.push({ tid, ovr });
+				if (row === undefined) {
+					const ovr = team.ovr(
+						players.map((p) => ({
+							pid: p.pid,
+							injury: p.injury,
+							value: p.value,
+							ratings: {
+								ovr: last(p.ratings).ovr,
+								ovrs: last(p.ratings).ovrs,
+								pos: last(p.ratings).pos,
+							},
+						})),
+					);
+
+					row = { tid, ovr };
+				}
+
+				teamOvrs.push(row);
 			}
 			teamOvrs.sort((a, b) => b.ovr - a.ovr);
 
@@ -662,11 +686,22 @@ export class ValueChangeCalculator {
 		}
 	}
 
-	invalidateCache(toUpdate: { draft?: boolean; teams?: boolean }) {
-		this.toUpdate = {
-			draft: this.toUpdate.draft || !!toUpdate.draft,
-			teams: this.toUpdate.teams || !!toUpdate.teams,
-		};
+	invalidateCache(toUpdate: Partial<ToUpdate>) {
+		// Merge with existing this.toUpdate - probably never matters vs overwriting, but just to be sure
+		if (toUpdate.draft !== undefined) {
+			this.toUpdate.draft = this.toUpdate.draft || toUpdate.draft;
+		}
+		if (toUpdate.teams === "all") {
+			this.toUpdate.teams = "all";
+		} else if (Array.isArray(toUpdate.teams)) {
+			if (Array.isArray(this.toUpdate.teams)) {
+				this.toUpdate.teams = Array.from(
+					new Set([...this.toUpdate.teams, ...toUpdate.teams]),
+				);
+			} else if (this.toUpdate.teams === false) {
+				this.toUpdate.teams = toUpdate.teams;
+			}
+		}
 	}
 
 	async process({

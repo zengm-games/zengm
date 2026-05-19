@@ -41,40 +41,18 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 		);
 	}
 
-	const phaseChangeInfo = {
-		[PHASE.PRESEASON]: {
-			func: newPhasePreseason,
-		},
-		[PHASE.REGULAR_SEASON]: {
-			func: newPhaseRegularSeason,
-		},
-		[PHASE.AFTER_TRADE_DEADLINE]: {
-			func: newPhaseAfterTradeDeadline,
-		},
-		[PHASE.PLAYOFFS]: {
-			func: newPhasePlayoffs,
-		},
-		[PHASE.DRAFT_LOTTERY]: {
-			func: newPhaseBeforeDraft,
-		},
-		[PHASE.DRAFT]: {
-			func: newPhaseDraft,
-		},
-		[PHASE.AFTER_DRAFT]: {
-			func: newPhaseAfterDraft,
-		},
-		[PHASE.RESIGN_PLAYERS]: {
-			func: newPhaseResignPlayers,
-		},
-		[PHASE.FREE_AGENCY]: {
-			func: newPhaseFreeAgency,
-		},
-		[PHASE.FANTASY_DRAFT]: {
-			func: newPhaseFantasyDraft,
-		},
-		[PHASE.EXPANSION_DRAFT]: {
-			func: newPhaseExpansionDraft,
-		},
+	const doPhaseChange = {
+		[PHASE.PRESEASON]: newPhasePreseason,
+		[PHASE.REGULAR_SEASON]: newPhaseRegularSeason,
+		[PHASE.AFTER_TRADE_DEADLINE]: newPhaseAfterTradeDeadline,
+		[PHASE.PLAYOFFS]: newPhasePlayoffs,
+		[PHASE.DRAFT_LOTTERY]: newPhaseBeforeDraft,
+		[PHASE.DRAFT]: newPhaseDraft,
+		[PHASE.AFTER_DRAFT]: newPhaseAfterDraft,
+		[PHASE.RESIGN_PLAYERS]: newPhaseResignPlayers,
+		[PHASE.FREE_AGENCY]: newPhaseFreeAgency,
+		[PHASE.FANTASY_DRAFT]: newPhaseFantasyDraft,
+		[PHASE.EXPANSION_DRAFT]: newPhaseExpansionDraft,
 	};
 
 	if (lock.get("newPhase")) {
@@ -110,8 +88,8 @@ const newPhase = async (phase: Phase, conditions: Conditions, extra?: any) => {
 			await updateStatus("Processing...");
 			await updatePlayMenu();
 
-			if (phaseChangeInfo[phase]) {
-				const result = await phaseChangeInfo[phase].func(conditions, extra);
+			if (doPhaseChange[phase]) {
+				const result = await doPhaseChange[phase](conditions, extra);
 
 				await finalize(phase, conditions, result);
 			} else {

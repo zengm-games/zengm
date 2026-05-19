@@ -145,9 +145,10 @@ const newPhaseResignPlayers = async (
 
 	await contractNegotiation.cancelAll();
 
-	// No need to recompute pick values every time, but we do possibly need to recompute team ovrs (in theory that could be made more granular too, only need to recompute the one that changed and only if it actually changed)
+	// No need to recompute pick values every time, but we do possibly need to recompute team ovrs (in theory that could be made more granular too, only need to recompute the one that changed, not all teams)
 	const valueChangeKey = {
 		draft: Math.random(),
+		teams: Math.random(),
 	};
 	for (const pid of expiringPids) {
 		// Re-fetch players, because normalizeContractDemands might have changed some objects
@@ -286,6 +287,9 @@ const newPhaseResignPlayers = async (
 						if (payroll !== undefined) {
 							payrollsByTid.set(p.tid, contract.amount + payroll);
 						}
+
+						// Need to recompute team value stuff now that a player was signed
+						valueChangeKey.teams = Math.random();
 					} else {
 						reSignPlayer = false;
 					}

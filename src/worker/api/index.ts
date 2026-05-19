@@ -164,6 +164,7 @@ import { getNewLeagueLid } from "../util/getNewLeagueLid.ts";
 import { env } from "../util/env.ts";
 import { recomputeLocalUITeamOvrs } from "../util/recomputeLocalUITeamOvrs.ts";
 import { initUILocalGames } from "../util/initUILocalGames.ts";
+import { ValueChangeCalculator } from "../core/team/valueChange.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -4911,13 +4912,12 @@ const createTrade = async (teams: TradeTeams) => {
 
 const proposeTrade = async (forceTrade: boolean, conditions: Conditions) => {
 	const { teams } = await trade.get();
-	const dv = await team.valueChange({
+	const dv = await new ValueChangeCalculator().process({
 		tid: teams[1].tid,
 		pidsAdd: teams[0].pids,
 		pidsRemove: teams[1].pids,
 		dpidsAdd: teams[0].dpids,
 		dpidsRemove: teams[1].dpids,
-		valueChangeKey: undefined,
 		tradingPartnerTid: g.get("userTid"),
 	});
 	const aiWillAcceptTrade = dv > 0;

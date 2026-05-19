@@ -7,6 +7,7 @@ import summary from "./summary.ts";
 import get from "./get.ts";
 import { idb } from "../../db/index.ts";
 import { hashSavedTrade } from "../../../common/hashSavedTrade.ts";
+import { ValueChangeCalculator } from "../team/valueChange.ts";
 
 /**
  * Proposes the current trade in the database.
@@ -50,13 +51,12 @@ const propose = async (
 
 	let outcome = "rejected"; // Default
 
-	const dv = await team.valueChange({
+	const dv = await new ValueChangeCalculator().process({
 		tid: teams[1].tid,
 		pidsAdd: teams[0].pids,
 		pidsRemove: teams[1].pids,
 		dpidsAdd: teams[0].dpids,
 		dpidsRemove: teams[1].dpids,
-		valueChangeKey: undefined,
 		tradingPartnerTid: g.get("userTid"),
 	});
 

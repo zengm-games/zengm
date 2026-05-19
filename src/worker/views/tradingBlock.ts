@@ -4,8 +4,8 @@ import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { augmentOffers } from "../api/index.ts";
-import { team } from "../core/index.ts";
 import { addMissingAssets } from "./savedTrades.ts";
+import { ValueChangeCalculator } from "../core/team/valueChange.ts";
 
 const updateUserRoster = async (
 	inputs: ViewInput<"tradingBlock">,
@@ -79,6 +79,7 @@ const updateUserRoster = async (
 					new Set(userPicks2.map((dp) => dp.dpid)),
 				);
 				if (userValidPids && userValidDpids) {
+					const valueChangeCalculator = new ValueChangeCalculator();
 					const offers = await Promise.all(
 						(
 							await addMissingAssets(
@@ -104,13 +105,12 @@ const updateUserRoster = async (
 								),
 							)
 						).map(async (offer) => {
-							const dv = await team.valueChange({
+							const dv = await valueChangeCalculator.process({
 								tid: offer.tid,
 								pidsAdd: offer.pidsUser,
 								pidsRemove: offer.pids,
 								dpidsAdd: offer.dpidsUser,
 								dpidsRemove: offer.dpids,
-								valueChangeKey: undefined,
 								tradingPartnerTid: g.get("userTid"),
 							});
 							const willing = dv > 0;

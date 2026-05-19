@@ -25,7 +25,6 @@ import switchTo from "./switchTo.ts";
 import stats from "./stats.ts";
 import updateClinchedPlayoffs from "./updateClinchedPlayoffs.ts";
 import updateStrategies from "./updateStrategies.ts";
-import valueChange from "./valueChange.ts";
 
 export default {
 	addNewTeamToExistingLeague,
@@ -55,5 +54,4 @@ export default {
 	stats,
 	updateClinchedPlayoffs,
 	updateStrategies,
-	valueChange,
 };

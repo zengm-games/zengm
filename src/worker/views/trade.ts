@@ -1,10 +1,11 @@
 import { bySport } from "../../common/sportFunctions.ts";
-import { team, trade } from "../core/index.ts";
+import { trade } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
 import type { TradeSummary, TradeTeams } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { orderBy } from "../../common/utils.ts";
+import { ValueChangeCalculator } from "../core/team/valueChange.ts";
 
 const getSummaryTeam = (summary: TradeSummary, i: 0 | 1) => {
 	return {
@@ -69,14 +70,13 @@ const validateTeams = async () => {
 	}
 
 	// This is just for debugging
-	void team
-		.valueChange({
+	void new ValueChangeCalculator()
+		.process({
 			tid: teams[1].tid,
 			pidsAdd: teams[0].pids,
 			pidsRemove: teams[1].pids,
 			dpidsAdd: teams[0].dpids,
 			dpidsRemove: teams[1].dpids,
-			valueChangeKey: undefined,
 			tradingPartnerTid: g.get("userTid"),
 		})
 		.then((dv) => {

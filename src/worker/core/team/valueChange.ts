@@ -32,25 +32,6 @@ type Asset =
 			draftYear: number;
 	  };
 
-// Support caching draft and team info separately. For instance during newPhaseResigning we can cache draft info (estPicks) but not team info (the rest), because team ovrs change
-export type ValueChangeKey = {
-	draft: number;
-	teams: number;
-};
-let prevValueChangeKey: ValueChangeKey | undefined;
-let cache: {
-	estPicks: Record<number, number>;
-	estValues: TradePickValues;
-	teamOvrs: {
-		tid: number;
-		ovr: number;
-	}[];
-	wps: {
-		tid: number;
-		wp: number;
-	}[];
-};
-
 const zscore = (value: number) =>
 	(value - local.playerOvrMean) / local.playerOvrStd;
 
@@ -185,6 +166,7 @@ const getPlayers = async ({
 };
 
 const getPickNumber = async (
+	cache: ValueChangeCache,
 	dp: DraftPick,
 	season: number,
 	pidsAdd: number[],
@@ -212,7 +194,7 @@ const getPickNumber = async (
 			tradeWithUser &&
 			pidsAdd.length + pidsRemove.length > 0
 		) {
-			temp = await getModifiedPickRank(tid, pidsAdd, pidsRemove);
+			temp = await getModifiedPickRank(cache, tid, pidsAdd, pidsRemove);
 		}
 		estPick = temp !== undefined ? temp : numPicksPerRound / 2;
 
@@ -265,6 +247,7 @@ const getPickNumber = async (
 };
 
 const getPickInfo = async (
+	cache: ValueChangeCache,
 	dp: DraftPick,
 	rookieSalaries: any,
 	pidsAdd: number[],
@@ -278,6 +261,7 @@ const getPickInfo = async (
 			: dp.season;
 
 	const estPick = await getPickNumber(
+		cache,
 		dp,
 		season,
 		pidsAdd,
@@ -336,6 +320,7 @@ const getPickInfo = async (
 };
 
 const getPicks = async ({
+	cache,
 	add,
 	remove,
 	pidsAdd,
@@ -345,6 +330,7 @@ const getPicks = async ({
 	tid,
 	tradingPartnerTid,
 }: {
+	cache: ValueChangeCache;
 	add: Asset[];
 	remove: Asset[];
 	pidsAdd: number[];
@@ -365,6 +351,7 @@ const getPicks = async ({
 			}
 
 			const pickInfo = await getPickInfo(
+				cache,
 				dp,
 				rookieSalaries,
 				pidsAdd,
@@ -382,6 +369,7 @@ const getPicks = async ({
 			}
 
 			const pickInfo = await getPickInfo(
+				cache,
 				dp,
 				rookieSalaries,
 				pidsAdd,
@@ -596,135 +584,159 @@ export const getEstPicks = async (
 	};
 };
 
-const refreshCache = async (toUpdate: { draft: boolean; teams: boolean }) => {
-	const estValues = toUpdate.draft
-		? await trade.getPickValues()
-		: cache.estValues;
-
-	if (toUpdate.teams) {
-		const playersByTid = Map.groupBy(
-			await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
-			(p) => p.tid,
-		);
-		const teamOvrs: {
-			tid: number;
-			ovr: number;
-		}[] = [];
-		for (const [tid, players] of playersByTid) {
-			const ovr = team.ovr(
-				players.map((p) => ({
-					pid: p.pid,
-					injury: p.injury,
-					value: p.value,
-					ratings: {
-						ovr: last(p.ratings).ovr,
-						ovrs: last(p.ratings).ovrs,
-						pos: last(p.ratings).pos,
-					},
-				})),
-			);
-
-			teamOvrs.push({ tid, ovr });
-		}
-		teamOvrs.sort((a, b) => b.ovr - a.ovr);
-
-		const { estPicks, wps } = await getEstPicks(teamOvrs);
-
-		return {
-			estPicks,
-			estValues,
-			teamOvrs,
-			wps,
-		};
-	} else {
-		return {
-			...cache,
-			estValues,
-		};
-	}
+type ValueChangeCache = {
+	estPicks: Record<number, number>;
+	estValues: TradePickValues;
+	teamOvrs: {
+		tid: number;
+		ovr: number;
+	}[];
+	wps: {
+		tid: number;
+		wp: number;
+	}[];
 };
 
 // tradingPartnerTid is currently just used to determine if this is a trade with the user, so additional fuzz can be applied
-const valueChange = async ({
-	tid,
-	pidsAdd,
-	pidsRemove,
-	dpidsAdd,
-	dpidsRemove,
-	valueChangeKey,
-	tradingPartnerTid,
-}: {
-	tid: number;
-	pidsAdd: number[];
-	pidsRemove: number[];
-	dpidsAdd: number[];
-	dpidsRemove: number[];
-	valueChangeKey: Partial<ValueChangeKey> | undefined;
-	tradingPartnerTid: number | undefined;
-}): Promise<number> => {
-	await player.updateOvrMeanStd();
+export class ValueChangeCalculator {
+	private cache: ValueChangeCache | undefined;
+	private toUpdate: { draft: boolean; teams: boolean } = {
+		draft: true,
+		teams: true,
+	};
 
-	// Get value and skills for each player on team or involved in the proposed transaction
-	const roster: Asset[] = [];
-	const add: Asset[] = [];
-	const remove: Asset[] = [];
-	const t = await idb.cache.teams.get(tid);
-
-	if (!t) {
-		throw new Error("Invalid team");
+	private async init() {
+		await player.updateOvrMeanStd();
+		return this.getUpdatedCache();
 	}
 
-	const strategy = t.strategy;
+	private async getUpdatedCache() {
+		const toUpdate = { ...this.toUpdate };
+		this.toUpdate = { draft: false, teams: false };
 
-	const actualValueChangeKey = {
-		draft: valueChangeKey?.draft ?? Math.random(),
-		teams: valueChangeKey?.teams ?? Math.random(),
-	};
-	const toUpdate = {
-		draft:
-			cache === undefined ||
-			prevValueChangeKey?.draft !== actualValueChangeKey.draft,
-		teams:
-			cache === undefined ||
-			prevValueChangeKey?.teams !== actualValueChangeKey.teams,
-	};
-	if (toUpdate.draft || toUpdate.teams) {
-		cache = await refreshCache(toUpdate);
-		prevValueChangeKey = actualValueChangeKey;
+		const estValues =
+			toUpdate.draft || !this.cache
+				? await trade.getPickValues()
+				: this.cache.estValues;
+
+		if (toUpdate.teams || !this.cache) {
+			const playersByTid = Map.groupBy(
+				await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
+				(p) => p.tid,
+			);
+			const teamOvrs: {
+				tid: number;
+				ovr: number;
+			}[] = [];
+			for (const [tid, players] of playersByTid) {
+				const ovr = team.ovr(
+					players.map((p) => ({
+						pid: p.pid,
+						injury: p.injury,
+						value: p.value,
+						ratings: {
+							ovr: last(p.ratings).ovr,
+							ovrs: last(p.ratings).ovrs,
+							pos: last(p.ratings).pos,
+						},
+					})),
+				);
+
+				teamOvrs.push({ tid, ovr });
+			}
+			teamOvrs.sort((a, b) => b.ovr - a.ovr);
+
+			const { estPicks, wps } = await getEstPicks(teamOvrs);
+
+			return {
+				estPicks,
+				estValues,
+				teamOvrs,
+				wps,
+			};
+		} else {
+			return {
+				...this.cache,
+				estValues,
+			};
+		}
 	}
 
-	await getPlayers({
-		add,
-		remove,
-		roster,
-		pidsAdd,
-		pidsRemove,
+	invalidateCache(toUpdate: { draft?: boolean; teams?: boolean }) {
+		this.toUpdate = {
+			draft: this.toUpdate.draft || !!toUpdate.draft,
+			teams: this.toUpdate.teams || !!toUpdate.teams,
+		};
+	}
+
+	async process({
 		tid,
-		tradingPartnerTid,
-	});
-	await getPicks({
-		add,
-		remove,
 		pidsAdd,
 		pidsRemove,
 		dpidsAdd,
 		dpidsRemove,
-		tid,
 		tradingPartnerTid,
-	});
+	}: {
+		tid: number;
+		pidsAdd: number[];
+		pidsRemove: number[];
+		dpidsAdd: number[];
+		dpidsRemove: number[];
+		tradingPartnerTid: number | undefined;
+	}): Promise<number> {
+		if (!this.cache) {
+			this.cache = await this.init();
+		} else if (this.toUpdate.draft || this.toUpdate.teams) {
+			this.cache = await this.getUpdatedCache();
+		}
 
-	// console.log("ADD");
-	const valuesAdd = sumValues(add, strategy, tid, true);
-	// console.log("Total", valuesAdd);
+		// Get value and skills for each player on team or involved in the proposed transaction
+		const roster: Asset[] = [];
+		const add: Asset[] = [];
+		const remove: Asset[] = [];
+		const t = await idb.cache.teams.get(tid);
 
-	// console.log("REMOVE");
-	const valuesRemove = sumValues(remove, strategy, tid);
-	// console.log("Total", valuesRemove);
+		if (!t) {
+			throw new Error("Invalid team");
+		}
 
-	return valuesAdd - valuesRemove;
-};
+		const strategy = t.strategy;
+
+		await getPlayers({
+			add,
+			remove,
+			roster,
+			pidsAdd,
+			pidsRemove,
+			tid,
+			tradingPartnerTid,
+		});
+		await getPicks({
+			cache: this.cache,
+			add,
+			remove,
+			pidsAdd,
+			pidsRemove,
+			dpidsAdd,
+			dpidsRemove,
+			tid,
+			tradingPartnerTid,
+		});
+
+		// console.log("ADD");
+		const valuesAdd = sumValues(add, strategy, tid, true);
+		// console.log("Total", valuesAdd);
+
+		// console.log("REMOVE");
+		const valuesRemove = sumValues(remove, strategy, tid);
+		// console.log("Total", valuesRemove);
+
+		return valuesAdd - valuesRemove;
+	}
+}
 
 const getModifiedPickRank = async (
+	cache: ValueChangeCache,
 	tid: number,
 	pidsAdd: number[],
 	pidsRemove: number[],
@@ -783,5 +795,3 @@ const getModifiedPickRank = async (
 
 	return newRank;
 };
-
-export default valueChange;

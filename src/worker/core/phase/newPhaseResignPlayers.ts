@@ -13,6 +13,7 @@ import type { Conditions, PhaseReturn } from "../../../common/types.ts";
 import { last, orderBy } from "../../../common/utils.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../player/getNumPlayersTradedAwayNormalized.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { ValueChangeCalculator } from "../team/valueChange.ts";
 
 export const FREE_AGENCY_DAYS = 30;
 
@@ -145,11 +146,8 @@ const newPhaseResignPlayers = async (
 
 	await contractNegotiation.cancelAll();
 
-	// No need to recompute pick values every time, but we do possibly need to recompute team ovrs (in theory that could be made more granular too, only need to recompute the one that changed, not all teams)
-	const valueChangeKey = {
-		draft: Math.random(),
-		teams: Math.random(),
-	};
+	console.time("BAR");
+	const valueChangeCalculator = new ValueChangeCalculator();
 	for (const pid of expiringPids) {
 		// Re-fetch players, because normalizeContractDemands might have changed some objects
 		const p = await idb.cache.players.get(pid);
@@ -253,13 +251,12 @@ const newPhaseResignPlayers = async (
 					reSignPlayer = false;
 				} else {
 					// Is team better off without him?
-					const dv = await team.valueChange({
+					const dv = await valueChangeCalculator.process({
 						tid: p.tid,
 						pidsAdd: [],
 						pidsRemove: [p.pid],
 						dpidsAdd: [],
 						dpidsRemove: [],
-						valueChangeKey,
 						tradingPartnerTid: undefined,
 					});
 
@@ -289,7 +286,10 @@ const newPhaseResignPlayers = async (
 						}
 
 						// Need to recompute team value stuff now that a player was signed
-						valueChangeKey.teams = Math.random();
+						await valueChangeCalculator.invalidateCache({
+							draft: false,
+							teams: true,
+						});
 					} else {
 						reSignPlayer = false;
 					}
@@ -308,6 +308,7 @@ const newPhaseResignPlayers = async (
 			await idb.cache.players.put(p);
 		}
 	}
+	console.timeEnd("BAR");
 
 	const draftProspects = await idb.cache.players.indexGetAll(
 		"playersByTid",

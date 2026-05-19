@@ -50,15 +50,15 @@ const propose = async (
 
 	let outcome = "rejected"; // Default
 
-	const dv = await team.valueChange(
-		teams[1].tid,
-		teams[0].pids,
-		teams[1].pids,
-		teams[0].dpids,
-		teams[1].dpids,
-		undefined,
-		g.get("userTid"),
-	);
+	const dv = await team.valueChange({
+		tid: teams[1].tid,
+		pidsAdd: teams[0].pids,
+		pidsRemove: teams[1].pids,
+		dpidsAdd: teams[0].dpids,
+		dpidsRemove: teams[1].dpids,
+		valueChangeKey: undefined,
+		tradingPartnerTid: g.get("userTid"),
+	});
 
 	if (dv > 0 || forceTrade) {
 		// Compute hash now, since teams is mutated in processTrade somehow

@@ -6,6 +6,7 @@ import { helpers } from "../../util/index.ts";
 import { COMPOSITE_WEIGHTS, POSITIONS } from "../../../common/constants.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
+import type { ValueChangeKey } from "../team/valueChange.ts";
 
 export type LookingFor = {
 	positions: Set<string>;
@@ -36,7 +37,7 @@ type Asset = AssetPlayer | AssetPick;
 const tryAddAsset = async (
 	teams: TradeTeams,
 	holdUserConstant: boolean,
-	valueChangeKey: number,
+	valueChangeKey: ValueChangeKey,
 	prevDv: number,
 	firstTry: boolean,
 	lookingFor?: LookingFor,
@@ -196,15 +197,15 @@ const tryAddAsset = async (
 			}
 		}
 
-		asset.dv = await team.valueChange(
-			teams[1].tid,
-			userPids,
-			otherPids,
-			userDpids,
-			otherDpids,
+		asset.dv = await team.valueChange({
+			tid: teams[1].tid,
+			pidsAdd: userPids,
+			pidsRemove: otherPids,
+			dpidsAdd: userDpids,
+			dpidsRemove: otherDpids,
 			valueChangeKey,
-			teams[0].tid,
-		);
+			tradingPartnerTid: teams[0].tid,
+		});
 	}
 
 	if (prevDv > 0) {
@@ -348,26 +349,29 @@ const makeItWork = async (
 		holdUserConstant,
 		lookingFor,
 		maxAssetsToAdd = Infinity,
-		valueChangeKey = Math.random(),
+		valueChangeKey = {
+			draft: Math.random(),
+			teams: Math.random(),
+		},
 	}: {
 		holdUserConstant: boolean;
 		lookingFor?: LookingFor;
 		maxAssetsToAdd?: number;
-		valueChangeKey?: number;
+		valueChangeKey?: ValueChangeKey;
 	},
 ): Promise<TradeTeams | undefined> => {
 	let initialSign: -1 | 1;
 	let added = 0;
 
-	let prevDv = await team.valueChange(
-		teams[1].tid,
-		teams[0].pids,
-		teams[1].pids,
-		teams[0].dpids,
-		teams[1].dpids,
+	let prevDv = await team.valueChange({
+		tid: teams[1].tid,
+		pidsAdd: teams[0].pids,
+		pidsRemove: teams[1].pids,
+		dpidsAdd: teams[0].dpids,
+		dpidsRemove: teams[1].dpids,
 		valueChangeKey,
-		teams[0].tid,
-	);
+		tradingPartnerTid: teams[0].tid,
+	});
 
 	if (prevDv > 0) {
 		// Try to make trade better for user's team
@@ -392,15 +396,15 @@ const makeItWork = async (
 		if (!newTeams) {
 			// No improvement to offer found
 
-			const dv = await team.valueChange(
-				prevTeams[1].tid,
-				prevTeams[0].pids,
-				prevTeams[1].pids,
-				prevTeams[0].dpids,
-				prevTeams[1].dpids,
+			const dv = await team.valueChange({
+				tid: prevTeams[1].tid,
+				pidsAdd: prevTeams[0].pids,
+				pidsRemove: prevTeams[1].pids,
+				dpidsAdd: prevTeams[0].dpids,
+				dpidsRemove: prevTeams[1].dpids,
 				valueChangeKey,
-				prevTeams[0].tid,
-			);
+				tradingPartnerTid: prevTeams[0].tid,
+			});
 
 			if (dv > 0) {
 				return prevTeams;
@@ -411,15 +415,15 @@ const makeItWork = async (
 
 		added += 1;
 
-		const dv = await team.valueChange(
-			newTeams[1].tid,
-			newTeams[0].pids,
-			newTeams[1].pids,
-			newTeams[0].dpids,
-			newTeams[1].dpids,
+		const dv = await team.valueChange({
+			tid: newTeams[1].tid,
+			pidsAdd: newTeams[0].pids,
+			pidsRemove: newTeams[1].pids,
+			dpidsAdd: newTeams[0].dpids,
+			dpidsRemove: newTeams[1].dpids,
 			valueChangeKey,
-			newTeams[0].tid,
-		);
+			tradingPartnerTid: newTeams[0].tid,
+		});
 
 		// If adding assets moves the trade in the wrong direction, stop
 		const dvDiffSign = Math.sign(prevDv - dv);

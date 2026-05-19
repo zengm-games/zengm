@@ -145,6 +145,10 @@ const newPhaseResignPlayers = async (
 
 	await contractNegotiation.cancelAll();
 
+	// No need to recompute pick values every time, but we do possibly need to recompute team ovrs (in theory that could be made more granular too, only need to recompute the one that changed and only if it actually changed)
+	const valueChangeKey = {
+		draft: Math.random(),
+	};
 	for (const pid of expiringPids) {
 		// Re-fetch players, because normalizeContractDemands might have changed some objects
 		const p = await idb.cache.players.get(pid);
@@ -248,7 +252,15 @@ const newPhaseResignPlayers = async (
 					reSignPlayer = false;
 				} else {
 					// Is team better off without him?
-					const dv = await team.valueChange(p.tid, [], [p.pid], [], []);
+					const dv = await team.valueChange({
+						tid: p.tid,
+						pidsAdd: [],
+						pidsRemove: [p.pid],
+						dpidsAdd: [],
+						dpidsRemove: [],
+						valueChangeKey,
+						tradingPartnerTid: undefined,
+					});
 
 					// Skip re-signing some low value players, otherwise teams fill up their rosters too readily
 					const skipBadPlayer =

@@ -8,6 +8,7 @@ import summary from "./summary.ts";
 import type { TradeTeams } from "../../../common/types.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 import { choice } from "../../../common/random.ts";
+import type { ValueChangeKey } from "../team/valueChange.ts";
 
 const getAITids = async () => {
 	const teams = await idb.cache.teams.getAll();
@@ -28,7 +29,7 @@ const getAITids = async () => {
 		.map((t) => t.tid);
 };
 
-const attempt = async (valueChangeKey: number) => {
+const attempt = async (valueChangeKey: ValueChangeKey) => {
 	const aiTids = await getAITids();
 
 	if (aiTids.length === 0) {
@@ -123,14 +124,15 @@ const attempt = async (valueChangeKey: number) => {
 	}
 
 	// Make sure this isn't a really shitty trade
-	const dv2 = await team.valueChange(
-		teams[0].tid,
-		teams[1].pids,
-		teams[0].pids,
-		teams[1].dpids,
-		teams[0].dpids,
+	const dv2 = await team.valueChange({
+		tid: teams[0].tid,
+		pidsAdd: teams[1].pids,
+		pidsRemove: teams[0].pids,
+		dpidsAdd: teams[1].dpids,
+		dpidsRemove: teams[0].dpids,
 		valueChangeKey,
-	);
+		tradingPartnerTid: undefined,
+	});
 	if (Math.abs(dv2) > 15) {
 		return false;
 	}
@@ -166,12 +168,16 @@ const betweenAiTeams = async () => {
 	}
 
 	if (numAttempts > 0) {
-		let valueChangeKey = Math.random();
+		const valueChangeKey = {
+			draft: Math.random(),
+			teams: Math.random(),
+		};
 
 		for (let i = 0; i < numAttempts; i++) {
 			const tradeHappened = await attempt(valueChangeKey);
 			if (tradeHappened) {
-				valueChangeKey = Math.random();
+				// Don't need to recompute draft pick value
+				valueChangeKey.teams = Math.random();
 			}
 		}
 	}

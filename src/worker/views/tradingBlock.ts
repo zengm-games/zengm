@@ -104,15 +104,15 @@ const updateUserRoster = async (
 								),
 							)
 						).map(async (offer) => {
-							const dv = await team.valueChange(
-								offer.tid,
-								offer.pidsUser,
-								offer.pids,
-								offer.dpidsUser,
-								offer.dpids,
-								undefined,
-								g.get("userTid"),
-							);
+							const dv = await team.valueChange({
+								tid: offer.tid,
+								pidsAdd: offer.pidsUser,
+								pidsRemove: offer.pids,
+								dpidsAdd: offer.dpidsUser,
+								dpidsRemove: offer.dpids,
+								valueChangeKey: undefined,
+								tradingPartnerTid: g.get("userTid"),
+							});
 							const willing = dv > 0;
 
 							return {

@@ -32,7 +32,12 @@ type Asset =
 			draftYear: number;
 	  };
 
-let prevValueChangeKey: number | undefined;
+// Support caching draft and team info separately. For instance during newPhaseResigning we can cache draft info (estPicks) but not team info (the rest), because team ovrs change
+export type ValueChangeKey = {
+	draft: number;
+	teams: number;
+};
+let prevValueChangeKey: ValueChangeKey | undefined;
 let cache: {
 	estPicks: Record<number, number>;
 	estValues: TradePickValues;
@@ -591,53 +596,72 @@ export const getEstPicks = async (
 	};
 };
 
-const refreshCache = async () => {
-	const playersByTid = Map.groupBy(
-		await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
-		(p) => p.tid,
-	);
-	const teamOvrs: {
-		tid: number;
-		ovr: number;
-	}[] = [];
-	for (const [tid, players] of playersByTid) {
-		const ovr = team.ovr(
-			players.map((p) => ({
-				pid: p.pid,
-				injury: p.injury,
-				value: p.value,
-				ratings: {
-					ovr: last(p.ratings).ovr,
-					ovrs: last(p.ratings).ovrs,
-					pos: last(p.ratings).pos,
-				},
-			})),
+const refreshCache = async (toUpdate: { draft: boolean; teams: boolean }) => {
+	const estValues = toUpdate.draft
+		? await trade.getPickValues()
+		: cache.estValues;
+
+	if (toUpdate.teams) {
+		const playersByTid = Map.groupBy(
+			await idb.cache.players.indexGetAll("playersByTid", [0, Infinity]),
+			(p) => p.tid,
 		);
+		const teamOvrs: {
+			tid: number;
+			ovr: number;
+		}[] = [];
+		for (const [tid, players] of playersByTid) {
+			const ovr = team.ovr(
+				players.map((p) => ({
+					pid: p.pid,
+					injury: p.injury,
+					value: p.value,
+					ratings: {
+						ovr: last(p.ratings).ovr,
+						ovrs: last(p.ratings).ovrs,
+						pos: last(p.ratings).pos,
+					},
+				})),
+			);
 
-		teamOvrs.push({ tid, ovr });
+			teamOvrs.push({ tid, ovr });
+		}
+		teamOvrs.sort((a, b) => b.ovr - a.ovr);
+
+		const { estPicks, wps } = await getEstPicks(teamOvrs);
+
+		return {
+			estPicks,
+			estValues,
+			teamOvrs,
+			wps,
+		};
+	} else {
+		return {
+			...cache,
+			estValues,
+		};
 	}
-	teamOvrs.sort((a, b) => b.ovr - a.ovr);
-
-	const { estPicks, wps } = await getEstPicks(teamOvrs);
-
-	return {
-		estPicks,
-		estValues: await trade.getPickValues(),
-		teamOvrs,
-		wps,
-	};
 };
 
 // tradingPartnerTid is currently just used to determine if this is a trade with the user, so additional fuzz can be applied
-const valueChange = async (
-	tid: number,
-	pidsAdd: number[],
-	pidsRemove: number[],
-	dpidsAdd: number[],
-	dpidsRemove: number[],
-	valueChangeKey: number = Math.random(),
-	tradingPartnerTid?: number,
-): Promise<number> => {
+const valueChange = async ({
+	tid,
+	pidsAdd,
+	pidsRemove,
+	dpidsAdd,
+	dpidsRemove,
+	valueChangeKey,
+	tradingPartnerTid,
+}: {
+	tid: number;
+	pidsAdd: number[];
+	pidsRemove: number[];
+	dpidsAdd: number[];
+	dpidsRemove: number[];
+	valueChangeKey: Partial<ValueChangeKey> | undefined;
+	tradingPartnerTid: number | undefined;
+}): Promise<number> => {
 	await player.updateOvrMeanStd();
 
 	// Get value and skills for each player on team or involved in the proposed transaction
@@ -652,9 +676,21 @@ const valueChange = async (
 
 	const strategy = t.strategy;
 
-	if (prevValueChangeKey !== valueChangeKey || cache === undefined) {
-		cache = await refreshCache();
-		prevValueChangeKey = valueChangeKey;
+	const actualValueChangeKey = {
+		draft: valueChangeKey?.draft ?? Math.random(),
+		teams: valueChangeKey?.teams ?? Math.random(),
+	};
+	const toUpdate = {
+		draft:
+			cache === undefined ||
+			prevValueChangeKey?.draft !== actualValueChangeKey.draft,
+		teams:
+			cache === undefined ||
+			prevValueChangeKey?.teams !== actualValueChangeKey.teams,
+	};
+	if (toUpdate.draft || toUpdate.teams) {
+		cache = await refreshCache(toUpdate);
+		prevValueChangeKey = actualValueChangeKey;
 	}
 
 	await getPlayers({

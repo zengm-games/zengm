@@ -32,7 +32,10 @@ const getOffers = async (seed: number) => {
 
 	const offers: TradeTeams[] = [];
 
-	const valueChangeKey = Math.random();
+	const valueChangeKey = {
+		draft: Math.random(),
+		teams: Math.random(),
+	};
 
 	for (const t of teams) {
 		for (let i = 0; i < NUM_TRIES_PER_TEAM; i++) {

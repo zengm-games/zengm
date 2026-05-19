@@ -2183,6 +2183,8 @@ const getOffers = async (
 	).map((t) => t.tid);
 	const offers = [];
 
+	const valueChangeCalculator = new ValueChangeCalculator();
+
 	for (const tid of tids) {
 		const teams: TradeTeams = [
 			{
@@ -2206,6 +2208,7 @@ const getOffers = async (
 				holdUserConstant: true,
 				maxAssetsToAdd: 4 + userPids.length + userDpids.length,
 				lookingFor,
+				valueChangeCalculator,
 			});
 
 			if (teams2) {
@@ -4912,7 +4915,7 @@ const createTrade = async (teams: TradeTeams) => {
 
 const proposeTrade = async (forceTrade: boolean, conditions: Conditions) => {
 	const { teams } = await trade.get();
-	const dv = await new ValueChangeCalculator().process({
+	const dv = await new ValueChangeCalculator().evaluate({
 		tid: teams[1].tid,
 		pidsAdd: teams[0].pids,
 		pidsRemove: teams[1].pids,

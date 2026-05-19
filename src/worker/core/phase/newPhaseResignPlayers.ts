@@ -146,7 +146,6 @@ const newPhaseResignPlayers = async (
 
 	await contractNegotiation.cancelAll();
 
-	console.time("BAR");
 	const valueChangeCalculator = new ValueChangeCalculator();
 	for (const pid of expiringPids) {
 		// Re-fetch players, because normalizeContractDemands might have changed some objects
@@ -251,7 +250,7 @@ const newPhaseResignPlayers = async (
 					reSignPlayer = false;
 				} else {
 					// Is team better off without him?
-					const dv = await valueChangeCalculator.process({
+					const dv = await valueChangeCalculator.evaluate({
 						tid: p.tid,
 						pidsAdd: [],
 						pidsRemove: [p.pid],
@@ -287,7 +286,6 @@ const newPhaseResignPlayers = async (
 
 						// Need to recompute team value stuff now that a player was signed
 						await valueChangeCalculator.invalidateCache({
-							draft: false,
 							teams: [p.tid],
 						});
 					} else {
@@ -308,7 +306,6 @@ const newPhaseResignPlayers = async (
 			await idb.cache.players.put(p);
 		}
 	}
-	console.timeEnd("BAR");
 
 	const draftProspects = await idb.cache.players.indexGetAll(
 		"playersByTid",

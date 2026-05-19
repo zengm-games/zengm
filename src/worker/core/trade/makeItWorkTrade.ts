@@ -3,6 +3,7 @@ import { g, helpers } from "../../util/index.ts";
 import makeItWork from "./makeItWork.ts";
 import summary from "./summary.ts";
 import get from "./get.ts";
+import { ValueChangeCalculator } from "../team/valueChange.ts";
 
 /**
  * Make a trade work
@@ -15,8 +16,10 @@ import get from "./get.ts";
 const makeItWorkTrade = async () => {
 	const tr = await get();
 	const teams0 = tr.teams;
+	const valueChangeCalculator = new ValueChangeCalculator();
 	const teams = await makeItWork(helpers.deepCopy(teams0), {
 		holdUserConstant: false,
+		valueChangeCalculator,
 	});
 
 	if (!teams) {

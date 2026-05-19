@@ -6,6 +6,7 @@ import makeItWork from "../core/trade/makeItWork.ts";
 import summary from "../core/trade/summary.ts";
 import { augmentOffers } from "../api/index.ts";
 import { shuffle, uniformSeed, choice } from "../../common/random.ts";
+import { ValueChangeCalculator } from "../core/team/valueChange.ts";
 
 const getOffers = async (seed: number) => {
 	const NUM_OFFERS = 5;
@@ -32,10 +33,7 @@ const getOffers = async (seed: number) => {
 
 	const offers: TradeTeams[] = [];
 
-	const valueChangeKey = {
-		draft: Math.random(),
-		teams: Math.random(),
-	};
+	const valueChangeCalculator = new ValueChangeCalculator();
 
 	for (const t of teams) {
 		for (let i = 0; i < NUM_TRIES_PER_TEAM; i++) {
@@ -74,7 +72,7 @@ const getOffers = async (seed: number) => {
 			const teams = await makeItWork(teams0, {
 				holdUserConstant: false,
 				maxAssetsToAdd: 5,
-				valueChangeKey,
+				valueChangeCalculator,
 			});
 
 			if (!teams) {

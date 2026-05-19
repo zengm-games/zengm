@@ -1,4 +1,3 @@
-import { team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, local } from "../../util/index.ts";
 import isUntradable from "./isUntradable.ts";
@@ -8,7 +7,7 @@ import summary from "./summary.ts";
 import type { TradeTeams } from "../../../common/types.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 import { choice } from "../../../common/random.ts";
-import type { ValueChangeKey } from "../team/valueChange.ts";
+import { ValueChangeCalculator } from "../team/valueChange.ts";
 
 const getAITids = async () => {
 	const teams = await idb.cache.teams.getAll();
@@ -29,7 +28,7 @@ const getAITids = async () => {
 		.map((t) => t.tid);
 };
 
-const attempt = async (valueChangeKey: ValueChangeKey) => {
+const attempt = async (valueChangeCalculator: ValueChangeCalculator) => {
 	const aiTids = await getAITids();
 
 	if (aiTids.length === 0) {
@@ -100,7 +99,7 @@ const attempt = async (valueChangeKey: ValueChangeKey) => {
 	const teams = await makeItWork(teams0, {
 		holdUserConstant: false,
 		maxAssetsToAdd: 5,
-		valueChangeKey,
+		valueChangeCalculator,
 	});
 
 	if (!teams) {
@@ -124,13 +123,12 @@ const attempt = async (valueChangeKey: ValueChangeKey) => {
 	}
 
 	// Make sure this isn't a really shitty trade
-	const dv2 = await team.valueChange({
+	const dv2 = await valueChangeCalculator.evaluate({
 		tid: teams[0].tid,
 		pidsAdd: teams[1].pids,
 		pidsRemove: teams[0].pids,
 		dpidsAdd: teams[1].dpids,
 		dpidsRemove: teams[0].dpids,
-		valueChangeKey,
 		tradingPartnerTid: undefined,
 	});
 	if (Math.abs(dv2) > 15) {
@@ -142,7 +140,7 @@ const attempt = async (valueChangeKey: ValueChangeKey) => {
 	const finalDpids: [number[], number[]] = [teams[0].dpids, teams[1].dpids];
 	await processTrade(finalTids, finalPids, finalDpids);
 
-	return true;
+	return finalTids;
 };
 
 const DEFAULT_NUM_TEAMS = 30;
@@ -168,16 +166,13 @@ const betweenAiTeams = async () => {
 	}
 
 	if (numAttempts > 0) {
-		const valueChangeKey = {
-			draft: Math.random(),
-			teams: Math.random(),
-		};
+		const valueChangeCalculator = new ValueChangeCalculator();
 
 		for (let i = 0; i < numAttempts; i++) {
-			const tradeHappened = await attempt(valueChangeKey);
-			if (tradeHappened) {
+			const tradeTids = await attempt(valueChangeCalculator);
+			if (tradeTids) {
 				// Don't need to recompute draft pick value
-				valueChangeKey.teams = Math.random();
+				valueChangeCalculator.invalidateCache({ teams: tradeTids });
 			}
 		}
 	}

@@ -704,7 +704,7 @@ export class ValueChangeCalculator {
 		}
 	}
 
-	async process({
+	async evaluate({
 		tid,
 		pidsAdd,
 		pidsRemove,

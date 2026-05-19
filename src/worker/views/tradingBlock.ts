@@ -105,7 +105,7 @@ const updateUserRoster = async (
 								),
 							)
 						).map(async (offer) => {
-							const dv = await valueChangeCalculator.process({
+							const dv = await valueChangeCalculator.evaluate({
 								tid: offer.tid,
 								pidsAdd: offer.pidsUser,
 								pidsRemove: offer.pids,

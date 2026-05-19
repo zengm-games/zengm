@@ -71,7 +71,7 @@ const validateTeams = async () => {
 
 	// This is just for debugging
 	void new ValueChangeCalculator()
-		.process({
+		.evaluate({
 			tid: teams[1].tid,
 			pidsAdd: teams[0].pids,
 			pidsRemove: teams[1].pids,

@@ -51,7 +51,7 @@ const propose = async (
 
 	let outcome = "rejected"; // Default
 
-	const dv = await new ValueChangeCalculator().process({
+	const dv = await new ValueChangeCalculator().evaluate({
 		tid: teams[1].tid,
 		pidsAdd: teams[0].pids,
 		pidsRemove: teams[1].pids,

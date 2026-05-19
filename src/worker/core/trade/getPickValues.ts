@@ -24,11 +24,18 @@ export const getNumPicksPerRound = () => {
  * @return {Promise.Object} Resolves to estimated draft pick values.
  */
 const getPickValues = async (): Promise<TradePickValues> => {
-	const players = await idb.cache.players.indexGetAll(
-		"playersByTid",
-		PLAYER.UNDRAFTED,
+	// Use this to ignore draft prospects from any season where there are no draft picks
+	const draftPickSeasons = new Set(
+		(await idb.cache.draftPicks.getAll())
+			.map((dp) => dp.season)
+			.filter((season) => typeof season === "number"),
 	);
+
+	const players = (
+		await idb.cache.players.indexGetAll("playersByTid", PLAYER.UNDRAFTED)
+	).filter((p) => draftPickSeasons.has(p.draft.year));
 	players.sort((a, b) => b.value - a.value);
+
 	const playersByDraftYear = Map.groupBy(players, (p) => p.draft.year);
 
 	const pickValues: TradePickValues = {} as TradePickValues;

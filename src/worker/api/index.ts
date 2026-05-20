@@ -164,7 +164,7 @@ import { getNewLeagueLid } from "../util/getNewLeagueLid.ts";
 import { env } from "../util/env.ts";
 import { recomputeLocalUITeamOvrs } from "../util/recomputeLocalUITeamOvrs.ts";
 import { initUILocalGames } from "../util/initUILocalGames.ts";
-import { ValueChangeCalculator } from "../core/team/valueChange.ts";
+import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 
 const acceptContractNegotiation = async ({
 	pid,

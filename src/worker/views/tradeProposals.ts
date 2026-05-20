@@ -6,7 +6,7 @@ import makeItWork from "../core/trade/makeItWork.ts";
 import summary from "../core/trade/summary.ts";
 import { augmentOffers } from "../api/index.ts";
 import { shuffle, uniformSeed, choice } from "../../common/random.ts";
-import { ValueChangeCalculator } from "../core/team/valueChange.ts";
+import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 
 const getOffers = async (seed: number) => {
 	const NUM_OFFERS = 5;

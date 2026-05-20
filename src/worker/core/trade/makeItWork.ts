@@ -6,7 +6,7 @@ import { helpers } from "../../util/index.ts";
 import { COMPOSITE_WEIGHTS, POSITIONS } from "../../../common/constants.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
-import type { ValueChangeCalculator } from "../team/valueChange.ts";
+import type { ValueChangeCalculator } from "../team/ValueChangeCalculator.ts";
 
 export type LookingFor = {
 	positions: Set<string>;

@@ -13,7 +13,7 @@ import type { Conditions, PhaseReturn } from "../../../common/types.ts";
 import { last, orderBy } from "../../../common/utils.ts";
 import { getNumPlayersTradedAwayNormalizedAll } from "../player/getNumPlayersTradedAwayNormalized.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
-import { ValueChangeCalculator } from "../team/valueChange.ts";
+import { ValueChangeCalculator } from "../team/ValueChangeCalculator.ts";
 
 export const FREE_AGENCY_DAYS = 30;
 

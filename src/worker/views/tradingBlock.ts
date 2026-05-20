@@ -5,7 +5,7 @@ import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { augmentOffers } from "../api/index.ts";
 import { addMissingAssets } from "./savedTrades.ts";
-import { ValueChangeCalculator } from "../core/team/valueChange.ts";
+import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 
 const updateUserRoster = async (
 	inputs: ViewInput<"tradingBlock">,

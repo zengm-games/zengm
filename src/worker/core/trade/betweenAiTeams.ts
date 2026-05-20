@@ -7,7 +7,7 @@ import summary from "./summary.ts";
 import type { TradeTeams } from "../../../common/types.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 import { choice } from "../../../common/random.ts";
-import { ValueChangeCalculator } from "../team/valueChange.ts";
+import { ValueChangeCalculator } from "../team/ValueChangeCalculator.ts";
 
 const getAITids = async () => {
 	const teams = await idb.cache.teams.getAll();

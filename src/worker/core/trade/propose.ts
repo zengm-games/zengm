@@ -7,7 +7,7 @@ import summary from "./summary.ts";
 import get from "./get.ts";
 import { idb } from "../../db/index.ts";
 import { hashSavedTrade } from "../../../common/hashSavedTrade.ts";
-import { ValueChangeCalculator } from "../team/valueChange.ts";
+import { ValueChangeCalculator } from "../team/ValueChangeCalculator.ts";
 
 /**
  * Proposes the current trade in the database.

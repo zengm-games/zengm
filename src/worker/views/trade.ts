@@ -5,7 +5,7 @@ import { g, helpers } from "../util/index.ts";
 import type { TradeSummary, TradeTeams } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { orderBy } from "../../common/utils.ts";
-import { ValueChangeCalculator } from "../core/team/valueChange.ts";
+import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 
 const getSummaryTeam = (summary: TradeSummary, i: 0 | 1) => {
 	return {

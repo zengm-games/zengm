@@ -3,7 +3,7 @@ import { g, helpers } from "../../util/index.ts";
 import makeItWork from "./makeItWork.ts";
 import summary from "./summary.ts";
 import get from "./get.ts";
-import { ValueChangeCalculator } from "../team/valueChange.ts";
+import { ValueChangeCalculator } from "../team/ValueChangeCalculator.ts";
 
 /**
  * Make a trade work

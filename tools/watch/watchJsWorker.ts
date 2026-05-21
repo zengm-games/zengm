@@ -16,7 +16,6 @@ const makeWatcher = (sport: Sport) => {
 		postMessage(message) {
 			parentPort?.postMessage(message);
 		},
-		signal,
 	});
 
 	const watcher = watch(config);

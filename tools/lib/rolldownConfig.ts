@@ -17,7 +17,6 @@ export const rolldownConfig = (
 		| {
 				nodeEnv: "development";
 				postMessage: (message: unknown) => void;
-				signal: AbortSignal;
 		  }
 		| {
 				nodeEnv: "production";
@@ -44,7 +43,6 @@ export const rolldownConfig = (
 			startEnd({
 				name,
 				postMessage: envOptions.postMessage,
-				signal: envOptions.signal,
 			}),
 		);
 	} else if (envOptions.nodeEnv === "production") {

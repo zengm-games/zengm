@@ -130,8 +130,8 @@ const addSeasonInfoToTeams = async <
 				if (playoffSeries) {
 					let playoffRoundsWon = -1;
 					for (const round of playoffSeries) {
-						const index = round.abbrevs.indexOf(abbrev) as 0 | 1;
-						if (index >= 0) {
+						const index = round.abbrevs.indexOf(abbrev);
+						if (index === 0 || index === 1) {
 							playoffRoundsWon = round.round;
 							const otherIndex = index === 0 ? 1 : 0;
 							if (round.wons[index] > round.wons[otherIndex]) {

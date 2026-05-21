@@ -402,6 +402,7 @@ describe("makeSon", () => {
 		const otherSons = await idb.cache.players.indexGetAll("playersByTid", 0);
 		assert.strictEqual(fathers.length, otherSons.length);
 
+		// Iterator.zip
 		for (const [i, father] of fathers.entries()) {
 			const otherSon = otherSons[i]!;
 			father.relatives.push({

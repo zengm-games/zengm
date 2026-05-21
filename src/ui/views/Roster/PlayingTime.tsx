@@ -50,7 +50,7 @@ const PlayingTime = ({ p, userTid }: { p: Player; userTid: number }) => {
 		} else {
 			value = ptModifiers.at(-1)!.ptModifier;
 		}
-		return value!;
+		return value;
 	});
 
 	// Keep synchronized with external changes, such as from the "Reset playing time" button

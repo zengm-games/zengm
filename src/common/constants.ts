@@ -159,9 +159,7 @@ export const RATINGS = bySport<any[]>({
 	hockey: constantsHockey.RATINGS,
 });
 
-export const POSITION_COUNTS: {
-	[key: string]: number;
-} = bySport({
+export const POSITION_COUNTS: Record<string, number> = bySport({
 	baseball: constantsBaseball.POSITION_COUNTS,
 	basketball: constantsBasketball.POSITION_COUNTS,
 	football: constantsFootball.POSITION_COUNTS,

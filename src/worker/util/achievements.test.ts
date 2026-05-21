@@ -124,17 +124,19 @@ describe("checkAchievement", () => {
 
 		test("award dynasty and dynasty_2 for 8 titles in 8 seasons, but not dynasty_3", async () => {
 			// Update non-winning years from last test
-			let teamSeason = (await idb.cache.teamSeasons.indexGet(
+			let teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			)) as TeamSeason;
+			);
+			assert(teamSeason);
 			teamSeason.playoffRoundsWon = 4;
 			await idb.cache.teamSeasons.put(teamSeason);
 
-			teamSeason = (await idb.cache.teamSeasons.indexGet(
+			teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season") + 7],
-			)) as TeamSeason;
+			);
+			assert(teamSeason);
 			teamSeason.playoffRoundsWon = 4;
 			await idb.cache.teamSeasons.put(teamSeason);
 
@@ -164,17 +166,19 @@ describe("checkAchievement", () => {
 				extraSeasons,
 			);
 
-			let teamSeason = (await idb.cache.teamSeasons.indexGet(
+			let teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			)) as TeamSeason;
+			);
+			assert(teamSeason);
 			teamSeason.playoffRoundsWon = 0;
 			await idb.cache.teamSeasons.put(teamSeason);
 
-			teamSeason = (await idb.cache.teamSeasons.indexGet(
+			teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season") + 1],
-			)) as TeamSeason;
+			);
+			assert(teamSeason);
 			teamSeason.playoffRoundsWon = 0;
 			await idb.cache.teamSeasons.put(teamSeason);
 
@@ -190,17 +194,19 @@ describe("checkAchievement", () => {
 
 		test("award dynasty and dynasty_3 for 11 titles in 13 seasons, but not dynasty_2 if there are not 8 contiguous", async () => {
 			// Swap a couple titles to make no 8 in a row
-			let teamSeason = (await idb.cache.teamSeasons.indexGet(
+			let teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			)) as TeamSeason;
+			);
+			assert(teamSeason);
 			teamSeason.playoffRoundsWon = 4;
 			await idb.cache.teamSeasons.put(teamSeason);
 
-			teamSeason = (await idb.cache.teamSeasons.indexGet(
+			teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season") + 9],
-			)) as TeamSeason;
+			);
+			assert(teamSeason);
 			teamSeason.playoffRoundsWon = 0;
 			await idb.cache.teamSeasons.put(teamSeason);
 
@@ -217,10 +223,11 @@ describe("checkAchievement", () => {
 
 	describe("moneyball*", () => {
 		test("award moneyball and moneyball_2 for title with payroll <= half salary cap", async () => {
-			const teamSeason = (await idb.cache.teamSeasons.indexGet(
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			)) as TeamSeason;
+			);
+			assert(teamSeason);
 			teamSeason.playoffRoundsWon = 4;
 			teamSeason.expenses.salary = defaultGameAttributes.salaryCap / 2;
 			await idb.cache.teamSeasons.put(teamSeason);
@@ -233,10 +240,11 @@ describe("checkAchievement", () => {
 		});
 
 		test("don't award either if didn't win title", async () => {
-			const teamSeason = (await idb.cache.teamSeasons.indexGet(
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			)) as TeamSeason;
+			);
+			assert(teamSeason);
 			teamSeason.playoffRoundsWon = 3;
 			await idb.cache.teamSeasons.put(teamSeason);
 
@@ -248,10 +256,11 @@ describe("checkAchievement", () => {
 		});
 
 		test("award moneyball but not moneyball_2 for title with payroll > half and <= two thirds of the salary cap", async () => {
-			const teamSeason = (await idb.cache.teamSeasons.indexGet(
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			)) as TeamSeason;
+			);
+			assert(teamSeason);
 			teamSeason.playoffRoundsWon = 4;
 			teamSeason.expenses.salary = 0.66 * defaultGameAttributes.salaryCap;
 			await idb.cache.teamSeasons.put(teamSeason);
@@ -264,10 +273,11 @@ describe("checkAchievement", () => {
 		});
 
 		test("don't award either if payroll > two thirds of the salary cap", async () => {
-			const teamSeason = (await idb.cache.teamSeasons.indexGet(
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			)) as TeamSeason;
+			);
+			assert(teamSeason);
 			teamSeason.playoffRoundsWon = 4;
 			teamSeason.expenses.salary = 0.67 * defaultGameAttributes.salaryCap;
 			await idb.cache.teamSeasons.put(teamSeason);
@@ -282,10 +292,11 @@ describe("checkAchievement", () => {
 
 	describe("small_market", () => {
 		test("award achievement if user's team wins title in a small market", async () => {
-			const teamSeason = (await idb.cache.teamSeasons.indexGet(
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			)) as TeamSeason;
+			);
+			assert(teamSeason);
 			teamSeason.playoffRoundsWon = 4;
 			teamSeason.pop = 1.5;
 			await idb.cache.teamSeasons.put(teamSeason);
@@ -295,10 +306,11 @@ describe("checkAchievement", () => {
 		});
 
 		test("don't award achievement if user's team is not in a small market", async () => {
-			const teamSeason = (await idb.cache.teamSeasons.indexGet(
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			)) as TeamSeason;
+			);
+			assert(teamSeason);
 			teamSeason.playoffRoundsWon = 4;
 			teamSeason.pop = 3;
 			await idb.cache.teamSeasons.put(teamSeason);
@@ -308,10 +320,11 @@ describe("checkAchievement", () => {
 		});
 
 		test("don't award achievement if user's team does not win the title", async () => {
-			const teamSeason = (await idb.cache.teamSeasons.indexGet(
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			)) as TeamSeason;
+			);
+			assert(teamSeason);
 			teamSeason.playoffRoundsWon = 3;
 			teamSeason.pop = 1.5;
 			await idb.cache.teamSeasons.put(teamSeason);
@@ -323,10 +336,11 @@ describe("checkAchievement", () => {
 
 	describe("homegrown", () => {
 		test("award achievement if user's team wins title with players it drafted", async () => {
-			const teamSeason = (await idb.cache.teamSeasons.indexGet(
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			)) as TeamSeason;
+			);
+			assert(teamSeason);
 			teamSeason.playoffRoundsWon = 4;
 			await idb.cache.teamSeasons.put(teamSeason);
 
@@ -341,15 +355,17 @@ describe("checkAchievement", () => {
 		});
 
 		test("don't award achievement if user's team it has another team's drafted player", async () => {
-			const teamSeason = (await idb.cache.teamSeasons.indexGet(
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			)) as TeamSeason;
+			);
+			assert(teamSeason);
 			teamSeason.playoffRoundsWon = 4;
 			await idb.cache.teamSeasons.put(teamSeason);
 
 			const otherTid = 0;
-			const p = (await idb.cache.players.getAll())[0]!;
+			const p = (await idb.cache.players.getAll())[0];
+			assert(p);
 			p.draft.tid = otherTid;
 			await idb.cache.players.put(p);
 
@@ -360,10 +376,11 @@ describe("checkAchievement", () => {
 
 	describe("golden_oldies", () => {
 		test("award achievement if all players are old", async () => {
-			const teamSeason = (await idb.cache.teamSeasons.indexGet(
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			)) as TeamSeason;
+			);
+			assert(teamSeason);
 			teamSeason.playoffRoundsWon = 4;
 			await idb.cache.teamSeasons.put(teamSeason);
 
@@ -384,10 +401,11 @@ describe("checkAchievement", () => {
 		});
 
 		test("don't award achievement if user's team didn't win title", async () => {
-			const teamSeason = (await idb.cache.teamSeasons.indexGet(
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
 				"teamSeasonsByTidSeason",
 				[g.get("userTid"), g.get("season")],
-			)) as TeamSeason;
+			);
+			assert(teamSeason);
 			teamSeason.playoffRoundsWon = 3;
 			await idb.cache.teamSeasons.put(teamSeason);
 

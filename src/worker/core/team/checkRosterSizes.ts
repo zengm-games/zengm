@@ -12,8 +12,8 @@ export const dropPlayers = async (players: Player[], numToDrop: number) => {
 	// Automatically drop lowest value players until we reach g.get("maxRosterSize")
 
 	// Only drop player from a position there is an excess of (no dropping your only kicker)
-	let counts;
-	let countsHealthyKey;
+	let counts: typeof POSITION_COUNTS | undefined;
+	let countsHealthyKey: Record<string, number> | undefined;
 	if (
 		bySport({
 			baseball: true,
@@ -28,7 +28,7 @@ export const dropPlayers = async (players: Player[], numToDrop: number) => {
 		}
 
 		if (KEY_POSITIONS_NEEDED) {
-			countsHealthyKey = {} as Record<string, number>;
+			countsHealthyKey = {};
 			for (const pos of Object.keys(KEY_POSITIONS_NEEDED)) {
 				countsHealthyKey[pos] = 0;
 			}

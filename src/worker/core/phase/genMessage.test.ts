@@ -42,8 +42,8 @@ test("even when already at the max, recognizes excellent performance", async () 
 
 	const messages = await idb.cache.messages.getAll();
 	assert.strictEqual(messages.length, 1);
-	const message = messages[0]!;
-
+	const message = messages[0];
+	assert(message);
 	assert(message.text.includes("This year: Excellent!"));
 	assert(message.text.includes("Overall: Excellent!"));
 });
@@ -72,8 +72,8 @@ test("when at max for one component, message falls in between what you'd expect 
 
 	const messages = await idb.cache.messages.getAll();
 	assert.strictEqual(messages.length, 1);
-	const message = messages[0]!;
-
+	const message = messages[0];
+	assert(message);
 	assert(message.text.includes("This year: Good."));
 	assert(message.text.includes("Overall: Bad."));
 });

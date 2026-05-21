@@ -7,7 +7,7 @@ import { choice } from "../../../common/random.ts";
 
 const quickValuesStyle = { height: 19 };
 
-const LeagueMenu = <Value extends string>({
+const LeagueMenu = <Value extends string, Value2 extends number>({
 	getLeagueInfo,
 	onDone,
 	onLoading,
@@ -18,24 +18,24 @@ const LeagueMenu = <Value extends string>({
 	values2,
 	onNewValue2,
 }: {
-	getLeagueInfo: (value: Value, value2: number) => Promise<LeagueInfo>;
+	getLeagueInfo: (value: Value, value2: Value2) => Promise<LeagueInfo>;
 	onDone: (leagueInfo: any) => void;
 	onLoading: (value: Value) => void;
 	quickValues?: Value[];
 	value: Value;
 	values: { key: Value; value: string }[];
-	value2?: number;
-	values2?: { key: number; value: string }[];
-	onNewValue2?: (key: number) => void;
+	value2?: Value2;
+	values2?: { key: Value2; value: string }[];
+	onNewValue2?: (key: Value2) => void;
 }) => {
 	const waitingForInfo = useRef<string | undefined>(value);
 
-	const handleNewValue = async (newValue: Value, value2?: number) => {
+	const handleNewValue = async (newValue: Value, value2?: Value2) => {
 		waitingForInfo.current = newValue;
 		onLoading(newValue);
 
 		try {
-			const leagueInfo = await getLeagueInfo(newValue, value2 ?? 0);
+			const leagueInfo = await getLeagueInfo(newValue, value2 as any);
 			if (waitingForInfo.current === newValue) {
 				onDone(leagueInfo);
 			}
@@ -115,8 +115,8 @@ const LeagueMenu = <Value extends string>({
 						className="form-select"
 						onChange={(event) => {
 							const value2 = Number.parseInt(event.target.value);
-							onNewValue2(value2);
-							handleNewValue(value, value2);
+							onNewValue2(value2 as Value2);
+							handleNewValue(value, value2 as Value2);
 						}}
 						value={value2}
 					>

@@ -1854,7 +1854,7 @@ export type RealTeamInfo = z.infer<typeof RealTeamInfoSchema>;
 export type GetLeagueOptionsReal = {
 	type: "real";
 	season: number;
-	phase: number;
+	phase: Phase;
 	randomDebuts: boolean;
 	randomDebutsKeepCurrent: boolean;
 	realDraftRatings: "draft" | "rookie";

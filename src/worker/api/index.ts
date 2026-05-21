@@ -99,7 +99,11 @@ import { initDefaults, loadNames } from "../util/loadNames.ts";
 import type { PlayerRatings } from "../../common/types.basketball.ts";
 import createStreamFromLeagueObject from "../core/league/create/createStreamFromLeagueObject.ts";
 import type { IDBPIndex, IDBPObjectStore } from "@dumbmatter/idb";
-import { upgradeGamesVersion65, type LeagueDB } from "../db/connectLeague.ts";
+import {
+	upgradeGamesVersion65,
+	type LeagueDB,
+	type LeagueDBStoreNames,
+} from "../db/connectLeague.ts";
 import playMenu from "./playMenu.ts";
 import toolsMenu from "./toolsMenu.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
@@ -581,7 +585,11 @@ const createLeague = async (
 	},
 	conditions: Conditions,
 ): Promise<number> => {
-	const keys = new Set([...keptKeys, "startingSeason", "version"]);
+	const keys = new Set([
+		...keptKeys,
+		"startingSeason",
+		"version",
+	]) as Set<LeagueDBStoreNames>;
 
 	const setLeagueCreationStatus = (status: string) => {
 		toUI(

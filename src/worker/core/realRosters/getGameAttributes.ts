@@ -15,7 +15,7 @@ const getGameAttributes = (
 	options: GetLeagueOptions,
 ) => {
 	if (options.type === "real") {
-		const gameAttributes: Record<string, unknown> = {
+		const gameAttributes: MyGameAttributes = {
 			maxRosterSize: 18,
 			...initialGameAttributes,
 		};
@@ -31,7 +31,7 @@ const getGameAttributes = (
 			gameAttributes.phase = options.phase;
 		}
 
-		return gameAttributes as MyGameAttributes;
+		return gameAttributes;
 	}
 
 	if (options.type === "legends") {

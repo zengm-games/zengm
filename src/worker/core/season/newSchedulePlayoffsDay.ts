@@ -308,11 +308,11 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 
 			const interleaved: PlayoffSeriesTeam[] = [];
 			while (orderedGroup.length > 0) {
-				if (interleaved.length % 2 === 0) {
-					interleaved.push(orderedGroup.shift() as PlayoffSeriesTeam);
-				} else {
-					interleaved.push(orderedGroup.pop() as PlayoffSeriesTeam);
-				}
+				const t =
+					interleaved.length % 2 === 0
+						? orderedGroup.shift()!
+						: orderedGroup.pop()!;
+				interleaved.push(t);
 			}
 			groups[i] = interleaved;
 		}

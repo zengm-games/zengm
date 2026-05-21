@@ -229,20 +229,21 @@ const getCopies = async (
 
 			return mergeByPk(
 				fromDB,
-				([] as Player[])
-					.concat(
-						await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
-						await idb.cache.players.indexGetAll("playersByTid", [
-							PLAYER.FREE_AGENT,
-							Infinity,
-						]),
-					)
-					.filter(
-						(p) =>
-							p.draft.year < activeSeason &&
-							p.retiredYear >= activeSeason &&
-							(statsTid === undefined || p.statsTids.includes(statsTid)),
-					),
+				[
+					...(await idb.cache.players.indexGetAll(
+						"playersByTid",
+						PLAYER.RETIRED,
+					)),
+					...(await idb.cache.players.indexGetAll("playersByTid", [
+						PLAYER.FREE_AGENT,
+						Infinity,
+					])),
+				].filter(
+					(p) =>
+						p.draft.year < activeSeason &&
+						p.retiredYear >= activeSeason &&
+						(statsTid === undefined || p.statsTids.includes(statsTid)),
+				),
 				"players",
 				type,
 			);
@@ -287,15 +288,16 @@ const getCopies = async (
 				idb.league.transaction("players").store.index("statsTids"),
 				statsTid,
 			),
-			([] as Player[])
-				.concat(
-					await idb.cache.players.indexGetAll("playersByTid", PLAYER.RETIRED),
-					await idb.cache.players.indexGetAll("playersByTid", [
-						PLAYER.FREE_AGENT,
-						Infinity,
-					]),
-				)
-				.filter((p) => p.statsTids.includes(statsTid)),
+			[
+				...(await idb.cache.players.indexGetAll(
+					"playersByTid",
+					PLAYER.RETIRED,
+				)),
+				...(await idb.cache.players.indexGetAll("playersByTid", [
+					PLAYER.FREE_AGENT,
+					Infinity,
+				])),
+			].filter((p) => p.statsTids.includes(statsTid)),
 			"players",
 			type,
 		);

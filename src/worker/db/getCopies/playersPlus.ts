@@ -459,7 +459,7 @@ const processRatings = (
 				row.skills = helpers.deepCopy(pr.skills);
 			} else if (attr === "dovr" || attr === "dpot") {
 				// Handle dovr and dpot - if there are previous ratings, calculate the fuzzed difference
-				const cat = attr.slice(1) as "ovr" | "pot";
+				const cat = attr === "dovr" ? "ovr" : "pot";
 
 				// Find previous season's final ratings, knowing that both this year and last year could have multiple entries due to injuries
 				const prevRow = p.ratings.findLast((row) => row.season < pr.season);

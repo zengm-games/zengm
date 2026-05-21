@@ -21,9 +21,7 @@ const updateMeta = async (
 		}
 
 		if (updates) {
-			for (const [key, value] of Object.entries(updates)) {
-				(l as any)[key] = value;
-			}
+			Object.assign(l, updates);
 		}
 
 		if (!noExtraStuff) {

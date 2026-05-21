@@ -84,12 +84,10 @@ export const kmeansFixedSize = (
 	const NUM_TRIES = 100;
 	const ITERATION_LIMIT = 1000;
 
-	const minima = ([0, 1] as const).map((i) =>
-		Math.min(...points.map((row) => row[i])),
-	) as [number, number];
-	const maxima = ([0, 1] as const).map((i) =>
-		Math.max(...points.map((row) => row[i])),
-	) as [number, number];
+	const x = points.map((row) => row[0]);
+	const y = points.map((row) => row[1]);
+	const minima = [Math.min(...x), Math.min(...y)] as const;
+	const maxima = [Math.max(...x), Math.max(...y)] as const;
 
 	const pointIndexes = points.map((point, i) => i);
 

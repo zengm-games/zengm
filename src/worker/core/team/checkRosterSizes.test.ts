@@ -15,13 +15,11 @@ beforeAll(() => {
 });
 
 // resetCacheWithPlayers({0: 10, 1: 9, [PLAYER.FREE_AGENT]: 1}) will make 10 players on team 0, 9 on team 1, and	// 1 free agent with a minimum contract.
-const resetCacheWithPlayers = async (info: Record<string, number>) => {
+const resetCacheWithPlayers = async (info: Map<number, number>) => {
 	const players: PlayerWithoutKey[] = [];
 
-	for (const tidString of Object.keys(info)) {
-		const tid = Number.parseInt(tidString);
-
-		for (let i = 0; i < info[tidString]!; i++) {
+	for (const [tid, numPlayers] of info) {
+		for (let i = 0; i < numPlayers; i++) {
 			const p = player.generate(tid, 30, 2017, true, DEFAULT_LEVEL);
 
 			if (tid === PLAYER.FREE_AGENT) {
@@ -32,9 +30,7 @@ const resetCacheWithPlayers = async (info: Record<string, number>) => {
 		}
 	}
 
-	const numTeams = Object.keys(Object.keys(info))
-		.map((tid) => Number.parseInt(tid))
-		.filter((tid) => tid >= 0).length;
+	const numTeams = Array.from(info.keys()).filter((tid) => tid >= 0).length;
 	const teamsDefault = helpers.getTeamsDefault();
 	const teams = teamsDefault.slice(0, numTeams).map(team.generate);
 
@@ -45,11 +41,13 @@ const resetCacheWithPlayers = async (info: Record<string, number>) => {
 };
 
 test("add players to AI team under roster limit without returning error message", async () => {
-	await resetCacheWithPlayers({
-		"0": 10,
-		"1": 9,
-		[PLAYER.FREE_AGENT]: 1,
-	});
+	await resetCacheWithPlayers(
+		new Map([
+			[0, 10],
+			[1, 9],
+			[PLAYER.FREE_AGENT, 1],
+		]),
+	);
 
 	// Confirm roster size under limit
 	let players = await idb.cache.players.indexGetAll("playersByTid", 1);
@@ -64,10 +62,12 @@ test("add players to AI team under roster limit without returning error message"
 });
 
 test("automatically create a scrub when AI team needs to add a player but there is none", async () => {
-	await resetCacheWithPlayers({
-		"0": 10,
-		"1": 9,
-	});
+	await resetCacheWithPlayers(
+		new Map([
+			[0, 10],
+			[1, 9],
+		]),
+	);
 
 	// Confirm roster size under limit
 	const userTeamSizeError = await team.checkRosterSizes("user");
@@ -79,10 +79,12 @@ test("automatically create a scrub when AI team needs to add a player but there 
 });
 
 test("remove players to AI team over roster limit without returning error message", async () => {
-	await resetCacheWithPlayers({
-		"0": 10,
-		"1": 24,
-	});
+	await resetCacheWithPlayers(
+		new Map([
+			[0, 10],
+			[1, 24],
+		]),
+	);
 
 	// Confirm roster size over limit
 	let players = await idb.cache.players.indexGetAll("playersByTid", 1);
@@ -96,11 +98,13 @@ test("remove players to AI team over roster limit without returning error messag
 });
 
 test("return error message when user team is under roster limit", async () => {
-	await resetCacheWithPlayers({
-		"0": 9,
-		"1": 10,
-		[PLAYER.FREE_AGENT]: 1,
-	});
+	await resetCacheWithPlayers(
+		new Map([
+			[0, 9],
+			[1, 10],
+			[PLAYER.FREE_AGENT, 1],
+		]),
+	);
 
 	// Confirm roster size under limit
 	let players = await idb.cache.players.indexGetAll(
@@ -123,10 +127,12 @@ test("return error message when user team is under roster limit", async () => {
 });
 
 test("return error message when user team is over roster limit", async () => {
-	await resetCacheWithPlayers({
-		"0": 24,
-		"1": 10,
-	});
+	await resetCacheWithPlayers(
+		new Map([
+			[0, 24],
+			[1, 10],
+		]),
+	);
 
 	// Confirm roster size over limit
 	let players = await idb.cache.players.indexGetAll(

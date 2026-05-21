@@ -61,7 +61,10 @@ import processPlayerNewLeague from "./processPlayerNewLeague.ts";
 import remove from "./remove.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { DEFAULT_LEVEL, amountToLevel } from "../../../common/budgetLevels.ts";
-import { upgradeGamesVersion65 } from "../../db/connectLeague.ts";
+import {
+	upgradeGamesVersion65,
+	type LeagueDBStoreNames,
+} from "../../db/connectLeague.ts";
 import type { NewLeagueSettings } from "../../views/newLeague.ts";
 import { getNumPlayersTradedAwayNormalized } from "../player/getNumPlayersTradedAwayNormalized.ts";
 import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
@@ -126,8 +129,8 @@ const addLeagueMeta = async ({
 class Buffer {
 	MAX_BUFFER_SIZE: number;
 	keptKeys: Set<string>;
-	keys: Set<string>;
-	rows: [string, any][];
+	keys: Set<LeagueDBStoreNames>;
+	rows: [LeagueDBStoreNames, any][];
 	previousTransaction: IDBPTransaction<any, any, any> | undefined;
 
 	constructor(keptKeys: Set<string>) {
@@ -138,7 +141,7 @@ class Buffer {
 		this.rows = [];
 	}
 
-	addRow(row: [string, any]) {
+	addRow(row: [LeagueDBStoreNames, any]) {
 		const key = row[0];
 
 		if (!this.keptKeys.has(key)) {
@@ -170,7 +173,7 @@ class Buffer {
 
 		if (this.keys.size > 0) {
 			const transaction = idb.league.transaction(
-				Array.from(this.keys) as any,
+				Array.from(this.keys),
 				"readwrite",
 			);
 
@@ -287,12 +290,14 @@ const preProcess = async (
 			x.result === undefined &&
 			typeof score === "string"
 		) {
-			const pts = score.split("-").map((y) => Number.parseInt(y)) as [
-				number,
-				number,
-			];
+			const pts = score.split("-").map((y) => Number.parseInt(y));
 			let diff = -Infinity;
-			if (!Number.isNaN(pts[0]) && !Number.isNaN(pts[1])) {
+			if (
+				pts[0] !== undefined &&
+				!Number.isNaN(pts[0]) &&
+				pts[1] !== undefined &&
+				!Number.isNaN(pts[1])
+			) {
 				diff = pts[0] - pts[1];
 			}
 
@@ -322,7 +327,7 @@ const getSaveToDB = async ({
 	preProcessParams,
 	setLeagueCreationStatus,
 }: {
-	keptKeys: Set<string>;
+	keptKeys: Set<LeagueDBStoreNames>;
 	maxGid: number | undefined;
 	preProcessParams: PreProcessParams;
 	setLeagueCreationStatus: CreateStreamProps["setLeagueCreationStatus"];
@@ -337,12 +342,12 @@ const getSaveToDB = async ({
 
 	let currentScheduleGid = maxGid ?? -1;
 
-	let prevKey: string | undefined;
+	let prevKey: LeagueDBStoreNames | undefined;
 
 	let currentPid = -1;
 
 	const writableStream = new WritableStream<{
-		key: string;
+		key: LeagueDBStoreNames;
 		value: any;
 	}>(
 		{
@@ -1128,7 +1133,7 @@ type CreateStreamProps = {
 		version: number | undefined;
 	};
 	getLeagueOptions: GetLeagueOptions | undefined;
-	keptKeys: Set<string>;
+	keptKeys: Set<LeagueDBStoreNames>;
 	lid: number;
 	name: string;
 	setLeagueCreationStatus: (status: string) => void;

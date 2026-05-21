@@ -5,7 +5,6 @@ import { idb } from "../db/index.ts";
 import g from "./g.ts";
 import helpers from "./helpers.ts";
 import achievements from "./achievements.ts";
-import type { TeamSeason } from "../../common/types.ts";
 import { DEFAULT_LEVEL } from "../../common/budgetLevels.ts";
 
 const get = (slug: string): any => {
@@ -833,10 +832,11 @@ describe("septuawinarian", () => {
 		let awarded = await get("septuawinarian").check();
 		assert.strictEqual(awarded, false);
 
-		const teamSeason = (await idb.cache.teamSeasons.indexGet(
+		const teamSeason = await idb.cache.teamSeasons.indexGet(
 			"teamSeasonsByTidSeason",
 			[g.get("userTid"), g.get("season")],
-		)) as TeamSeason;
+		);
+		assert(teamSeason);
 		teamSeason.won = 70;
 		await idb.cache.teamSeasons.put(teamSeason);
 
@@ -1104,10 +1104,11 @@ describe("98_degrees", () => {
 		};
 
 		await idb.cache.playoffSeries.put(ps);
-		const teamSeason = (await idb.cache.teamSeasons.indexGet(
+		const teamSeason = await idb.cache.teamSeasons.indexGet(
 			"teamSeasonsByTidSeason",
 			[g.get("userTid"), g.get("season")],
-		)) as TeamSeason;
+		);
+		assert(teamSeason);
 		teamSeason.won = 82;
 		teamSeason.lost = 0;
 		await idb.cache.teamSeasons.put(teamSeason);
@@ -1117,10 +1118,11 @@ describe("98_degrees", () => {
 	});
 
 	test("don't award achievement without 82-0 regular season", async () => {
-		const teamSeason = (await idb.cache.teamSeasons.indexGet(
+		const teamSeason = await idb.cache.teamSeasons.indexGet(
 			"teamSeasonsByTidSeason",
 			[g.get("userTid"), g.get("season")],
-		)) as TeamSeason;
+		);
+		assert(teamSeason);
 		teamSeason.won = 82;
 		teamSeason.lost = 1;
 		await idb.cache.teamSeasons.put(teamSeason);
@@ -1394,10 +1396,11 @@ describe("98_degrees", () => {
 		};
 
 		await idb.cache.playoffSeries.put(ps);
-		const teamSeason = (await idb.cache.teamSeasons.indexGet(
+		const teamSeason = await idb.cache.teamSeasons.indexGet(
 			"teamSeasonsByTidSeason",
 			[g.get("userTid"), g.get("season")],
-		)) as TeamSeason;
+		);
+		assert(teamSeason);
 		teamSeason.won = 82;
 		teamSeason.lost = 0;
 		await idb.cache.teamSeasons.put(teamSeason);
@@ -1609,7 +1612,8 @@ describe("sleeper_pick", () => {
 		let awarded = await get("sleeper_pick").check();
 		assert.strictEqual(awarded, false);
 
-		const p = (await idb.cache.players.getAll())[0]!;
+		const p = (await idb.cache.players.getAll())[0];
+		assert(p);
 		p.tid = g.get("userTid");
 		p.draft.tid = g.get("userTid");
 		p.draft.round = 1;
@@ -1638,7 +1642,8 @@ describe("sleeper_pick", () => {
 	});
 
 	test("don't award achievement if not currently on user's team", async () => {
-		const p = (await idb.cache.players.getAll())[0]!;
+		const p = (await idb.cache.players.getAll())[0];
+		assert(p);
 		p.tid = 15;
 		await idb.cache.players.put(p);
 
@@ -1647,7 +1652,8 @@ describe("sleeper_pick", () => {
 	});
 
 	test("don't award achievement if not drafted by user", async () => {
-		const p = (await idb.cache.players.getAll())[0]!;
+		const p = (await idb.cache.players.getAll())[0];
+		assert(p);
 		p.tid = g.get("userTid");
 		p.draft.tid = 15;
 		await idb.cache.players.put(p);
@@ -1657,7 +1663,8 @@ describe("sleeper_pick", () => {
 	});
 
 	test("don't award achievement if lottery pick", async () => {
-		const p = (await idb.cache.players.getAll())[0]!;
+		const p = (await idb.cache.players.getAll())[0];
+		assert(p);
 		p.draft.tid = g.get("userTid");
 		p.draft.pick = 7;
 		await idb.cache.players.put(p);
@@ -1667,7 +1674,8 @@ describe("sleeper_pick", () => {
 	});
 
 	test("don't award achievement if old pick", async () => {
-		const p = (await idb.cache.players.getAll())[0]!;
+		const p = (await idb.cache.players.getAll())[0];
+		assert(p);
 		p.draft.pick = 15;
 		p.draft.year = g.get("season") - 2;
 		await idb.cache.players.put(p);
@@ -1678,7 +1686,8 @@ describe("sleeper_pick", () => {
 
 	test("don't award achievement if not ROY", async () => {
 		// Switch to another player
-		const p = (await idb.cache.players.getAll())[1]!;
+		const p = (await idb.cache.players.getAll())[1];
+		assert(p);
 
 		const awards = {
 			season: 2013,

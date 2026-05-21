@@ -68,16 +68,16 @@ export const genMessage = async (
 
 	// Check for some challenge modes that can result in being fired
 	if (g.get("challengeFiredLuxuryTax")) {
-		const latestSeason = teamSeasons.at(-1)!;
-		if (latestSeason.expenses.luxuryTax > 0) {
+		const latestSeason = teamSeasons.at(-1);
+		if (latestSeason && latestSeason.expenses.luxuryTax > 0) {
 			m +=
 				'<p>You paid the luxury tax with the "You\'re fired if you pay the luxury tax" challenge mode enabled!</p>';
 			fired = true;
 		}
 	}
 	if (g.get("challengeFiredMissPlayoffs")) {
-		const latestSeason = teamSeasons.at(-1)!;
-		if (latestSeason.playoffRoundsWon < 0) {
+		const latestSeason = teamSeasons.at(-1);
+		if (latestSeason && latestSeason.playoffRoundsWon < 0) {
 			m +=
 				'<p>You missed the playoffs with the "You\'re fired if you miss the playoffs" challenge mode enabled!</p>';
 			fired = true;

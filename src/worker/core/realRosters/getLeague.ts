@@ -265,6 +265,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 					(row) => row.slug,
 				);
 
+				// Iterator.zip
 				for (const [i, p] of toRandomize.entries()) {
 					const draftYear = draftYears[i]!;
 					const diff = draftYear - p.draft.year;

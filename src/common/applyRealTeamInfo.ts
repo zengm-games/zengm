@@ -24,7 +24,7 @@ const applyToObject = (t: MyTeam, realInfo: IndividualRealTeamInfo) => {
 	let updated = false;
 	let updatedImgURL = false;
 	for (const key of POTENTIAL_OVERRIDES) {
-		if (realInfo[key] && realInfo[key] !== (t as any)[key]) {
+		if (realInfo[key] && realInfo[key] !== t[key]) {
 			(t as any)[key] = realInfo[key];
 			updated = true;
 

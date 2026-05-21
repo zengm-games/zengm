@@ -242,7 +242,7 @@ type State = {
 	basicInfo: Omit<BasicInfo, "keys"> | undefined;
 	file: File | undefined;
 	url: string | undefined;
-	legend: string;
+	legend: LegendKey;
 	loadingLeagueFile: boolean;
 	teams: NewLeagueTeam[];
 	confs: NonEmptyArray<Conf>;
@@ -284,7 +284,7 @@ type Action =
 	  }
 	| {
 			type: "setLegend";
-			legend: string;
+			legend: LegendKey;
 	  }
 	| {
 			type: "setName";
@@ -1370,7 +1370,7 @@ const NewLeague = (props: View<"newLeague">) => {
 												"getLeagueInfo",
 												{
 													type: "legends",
-													decade: value as LegendKey,
+													decade: value,
 												},
 											);
 

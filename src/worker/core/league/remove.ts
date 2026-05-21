@@ -5,7 +5,7 @@ import { g, logEvent } from "../../util/index.ts";
 
 const remove = async (lid: number) => {
 	if (g.get("lid") === lid) {
-		close(true);
+		await close(true);
 	}
 
 	await idb.meta.delete("leagues", lid);

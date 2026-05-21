@@ -1,3 +1,5 @@
+import toUI from "./toUI.ts";
+
 // Check all properties of an object for NaN
 const checkObject = (
 	obj: any,
@@ -14,9 +16,7 @@ const checkObject = (
 	for (const prop of Object.keys(obj)) {
 		if (typeof obj[prop] === "object" && obj[prop] !== null) {
 			foundNaN = checkObject(obj[prop], foundNaN, replace);
-			// eslint-disable-next-line no-self-compare
-		} else if (obj[prop] !== obj[prop]) {
-			// NaN check from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN
+		} else if (Number.isNaN(obj[prop])) {
 			foundNaN = true;
 
 			if (replace) {
@@ -35,24 +35,21 @@ const wrap = (parent: any, name: any, wrapper: (x: any) => any) => {
 
 const wrapperNaNChecker = (_super: any) => {
 	return function (obj: any, ...args: any[]) {
-		/* Commented out becuse I'm not sure how to make this send just once from worker
-          if (checkObject(obj)) {
-              const err = new Error('NaN found before writing to IndexedDB');
-               notifiException in toUI does not currently exist, but it could
-              toUI('notifyException', [err, 'NaNFound', {
-                  details: {
-                      objectWithNaN: JSON.stringify(obj, (key, value) => {
-                          if (Number.isNaN) {
-                              return 'FUCKING NaN RIGHT HERE';
-                          }
-                           return value;
-                      }),
-                  },
-              }], conditions);
-               // Try to recover gracefully
-              checkObject(obj, false, true); // This will update obj
-          }*/
-		checkObject(obj, false, true); // This will update obj
+		if (checkObject(obj)) {
+			const error = new Error("NaN found before writing to IndexedDB");
+			void toUI("bugsnagNotify", [
+				error,
+				JSON.stringify(obj, (key, value) => {
+					if (Number.isNaN(value)) {
+						return "FUCKING NaN RIGHT HERE";
+					}
+					return value;
+				}),
+			]);
+
+			// Try to recover gracefully
+			checkObject(obj, false, true); // This will update obj
+		}
 
 		// @ts-expect-error because annotating this seems to cause runtime errors
 		return _super.call(this, obj, ...args);

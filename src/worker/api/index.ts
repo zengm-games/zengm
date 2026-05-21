@@ -3880,8 +3880,7 @@ const updateBudget = async ({
 
 	for (const key of helpers.keys(budgetLevels)) {
 		// Check for NaN before updating
-		// eslint-disable-next-line no-self-compare
-		if (budgetLevels[key] === budgetLevels[key]) {
+		if (!Number.isNaN(budgetLevels[key])) {
 			t.budget[key] = budgetLevels[key];
 		}
 	}

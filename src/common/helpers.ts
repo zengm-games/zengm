@@ -919,8 +919,8 @@ const getTeamsDefault = (): TeamBasic[] => {
  */
 const deepCopy = <T>(obj: T): T => {
 	// Can't use old deepCopy function because Chrome 128 had a weird bug where sometimes [{}] would get cloned to {0: {}} - this appeared when creating a league in ZGMB
-	// Can't use structuredClone because Jest handles it annoyingly enough (deepStrictEqual doesn't work) that it's not worth it
 	// rfdc does weird stuff to arrays with properties on them, which happens accidentally sometimes, like [{RATINGS}] with a .season on it winds up adding an empty ratings row to the end
+	// Switch to structuredClone - Chrome 98
 	// @ts-expect-error https://github.com/angus-c/just/pull/582
 	return clone(obj);
 };

@@ -1140,6 +1140,7 @@ FBGM
   - broken tackles leading to bigger chunks https://discord.com/channels/290013534023057409/569726303926878219/1467871533929070612
 - nerf yardage of RB catches https://discord.com/channels/290013534023057409/569726303926878219/1467870075309785219
 - XP/2P decision should depend on probability of making XP, in the case where the kicker is really bad or the league settings make XP hard https://discord.com/channels/@me/778760871911751700/1469061366810804448
+- FG/punt decision - example of a bad punt from 30 yard line with 2 minutes left https://discord.com/channels/290013534023057409/1371864894579937322/threads/1506654099385487370 mostly because it's not factoring in that a punt from the 30 yard line is not worth much
 
 wrong team abbrev various places
 - functions for helping

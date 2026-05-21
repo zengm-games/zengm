@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import { useCallback, useState, type CSSProperties } from "react";
 import { Dropdown } from "react-bootstrap";
-import ago from "s-ago";
 import {
 	DIFFICULTY,
 	REAL_PLAYERS_INFO,
@@ -17,6 +16,7 @@ import { choice } from "../../common/random.ts";
 import { TeamLogoInline } from "../components/TeamLogoInline.tsx";
 import { confirm } from "../util/confirm.tsx";
 import { bySport } from "../../common/sportFunctions.ts";
+import { relativeTime } from "../util/relativeTime.ts";
 
 // Re-rendering caused this to run multiple times after "Play" click, even with useRef or useMemo
 const randomOtherSport = bySport({
@@ -190,7 +190,7 @@ const LeagueName = ({
 
 const Ago = ({ date }: { date?: Date }) => {
 	if (date) {
-		return <span title={date.toLocaleString()}>{ago(date)}</span>;
+		return <span title={date.toLocaleString()}>{relativeTime(date)}</span>;
 	}
 
 	return null;
@@ -275,7 +275,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 					value: <DifficultyText>{league.difficulty}</DifficultyText>,
 				},
 				{
-					searchValue: league.created ? ago(league.created) : "",
+					searchValue: league.created ? relativeTime(league.created) : "",
 					sortValue:
 						league.created && league.created.getTime
 							? league.created.getTime()
@@ -283,7 +283,7 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 					value: <Ago date={league.created} />,
 				},
 				{
-					searchValue: league.lastPlayed ? ago(league.lastPlayed) : "",
+					searchValue: league.lastPlayed ? relativeTime(league.lastPlayed) : "",
 					sortValue:
 						league.lastPlayed && league.lastPlayed.getTime
 							? league.lastPlayed.getTime()

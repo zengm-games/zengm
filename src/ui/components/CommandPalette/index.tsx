@@ -1,4 +1,3 @@
-import ago from "s-ago";
 import { matchSorter } from "match-sorter";
 import {
 	Fragment,
@@ -32,6 +31,7 @@ import { menuItems } from "../../util/menuItems.tsx";
 import { safeLocalStorage } from "../../util/safeLocalStorage.ts";
 import { local, useLocal } from "../../util/local.ts";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
+import { relativeTime } from "../../util/relativeTime.ts";
 
 const TWO_MONTHS_IN_MILLISECONDS = 2 * 30 * 24 * 60 * 60 * 1000;
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
@@ -332,7 +332,7 @@ const getResultsGroupedLeagues = async ({
 		})),
 		...orderBy(leagues, "lastPlayed", "desc").map((l) => {
 			const lastPlayed = `last played ${
-				l.lastPlayed ? ago(l.lastPlayed) : "???"
+				l.lastPlayed ? relativeTime(l.lastPlayed) : "???"
 			}`;
 			return {
 				category: "Leagues",

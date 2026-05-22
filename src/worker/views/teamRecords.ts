@@ -182,8 +182,8 @@ const tallyAwards = (
 				}
 			}
 		} else {
-			for (let i = 0; i < a.allLeague.length; i++) {
-				for (const p of a.allLeague[i].players) {
+			for (const t of a.allLeague) {
+				for (const p of t.players) {
 					if (p && p.tid === tid) {
 						teamAwards.allLeague++;
 					}
@@ -191,8 +191,8 @@ const tallyAwards = (
 			}
 
 			if (a.allDefensive) {
-				for (let i = 0; i < a.allDefensive.length; i++) {
-					for (const p of a.allDefensive[i].players) {
+				for (const t of a.allDefensive) {
+					for (const p of t.players) {
 						if (p && p.tid === tid) {
 							teamAwards.allDefense++;
 						}

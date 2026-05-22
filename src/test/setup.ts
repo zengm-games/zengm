@@ -8,22 +8,18 @@ globalThis.IDBKeyRange = IDBKeyRange;
 
 overridePostMessage();
 
-const fetchCache: Record<string, any> = {};
-(globalThis as any).fetch = async (url: string) => {
-	if (!Object.hasOwn(fetchCache, url)) {
-		let filePath = url.replace("/gen/", "data/");
-
-		if (filePath.endsWith("real-player-data.json")) {
-			filePath = filePath.replace(".json", `.${process.env.SPORT}.json`);
-		}
-
-		fetchCache[url] = JSON.parse(await fs.readFile(filePath, "utf8"));
+globalThis.fetch = async (url: Parameters<typeof fetch>[0]) => {
+	if (typeof url !== "string") {
+		throw new Error("Not supported");
 	}
 
-	return {
-		ok: true,
-		json: async () => fetchCache[url],
-	};
+	let filePath = url.replace("/gen/", "data/");
+	if (filePath.endsWith("real-player-data.json")) {
+		filePath = filePath.replace(".json", `.${process.env.SPORT}.json`);
+	}
+
+	const data = await fs.readFile(filePath, "utf8");
+	return new Response(data);
 };
 
 // Removes the need for jsdom in most test files

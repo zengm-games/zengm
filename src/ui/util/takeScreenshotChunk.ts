@@ -46,7 +46,7 @@ const takeScreenshotChunk = async () => {
 	for (let i = 0; i < notifications.childNodes.length; i++) {
 		// Otherwise screeenshot is taken before fade in is complete
 		const el = notifications.children[0];
-		if (el?.classList && typeof el.classList.remove === "function") {
+		if (el) {
 			el.classList.remove("notification-fadein");
 		}
 	}

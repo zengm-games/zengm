@@ -46,7 +46,7 @@ export const formatStatGameHigh = (
 				href={helpers.leagueUrl([
 					"game_log",
 					`${abbrev}_${tid}`,
-					season as any,
+					season,
 					row[1],
 				])}
 			>

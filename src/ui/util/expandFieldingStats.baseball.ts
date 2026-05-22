@@ -67,5 +67,5 @@ export const expandFieldingStats = ({
 
 			return newRow;
 		});
-	}) as any;
+	});
 };

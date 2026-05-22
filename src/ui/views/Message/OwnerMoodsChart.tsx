@@ -142,8 +142,11 @@ const OwnerMoodsChart = ({
 		hideTooltip,
 	} = useTooltip<TooltipData>();
 
-	const handleMouseOver = (event: MouseEvent, datum: TooltipData) => {
-		const coords = localPoint((event.target as any).ownerSVGElement, event);
+	const handleMouseOver = (
+		event: MouseEvent<SVGElement>,
+		datum: TooltipData,
+	) => {
+		const coords = localPoint(event.currentTarget.ownerSVGElement!, event);
 		if (coords) {
 			showTooltip({
 				tooltipLeft: coords.x,
@@ -218,7 +221,7 @@ const OwnerMoodsChart = ({
 								{lineInfos.map(({ key, color, width = 1 }) => {
 									const onMouseOver = (d: (typeof data)[number]) =>
 										key === "total"
-											? (event: MouseEvent) => {
+											? (event: MouseEvent<SVGElement>) => {
 													handleMouseOver(event, d);
 												}
 											: undefined;
@@ -245,7 +248,7 @@ const OwnerMoodsChart = ({
 														fontSize={STAR_SIZE}
 														textAnchor="middle"
 														alignmentBaseline="middle"
-														onMouseOver={onMouseOver(d)}
+														onMouseOver={(x) => x.currentTarget}
 														onMouseOut={onMouseOut}
 													>
 														★

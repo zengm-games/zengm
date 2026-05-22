@@ -85,8 +85,7 @@ const StatsTable = ({
 	// This is used for two purposes - keeping injured/DNP at the bottom while sorting, and also sorting in general for live sim (was too hard to account for this stuff in default sort from backend)
 	const playersActiveOrPlayed = [];
 	const playersInjuredOrDNP = [];
-	for (let i = 0; i < t.players.length; i++) {
-		const p = t.players[i];
+	for (const p of t.players) {
 		let addToHealthy;
 		if (liveGameInProgress) {
 			addToHealthy =

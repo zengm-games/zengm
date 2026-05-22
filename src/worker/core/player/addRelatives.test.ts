@@ -402,9 +402,9 @@ describe("makeSon", () => {
 		const otherSons = await idb.cache.players.indexGetAll("playersByTid", 0);
 		assert.strictEqual(fathers.length, otherSons.length);
 
-		// Iterator.zip
-		for (const [i, father] of fathers.entries()) {
-			const otherSon = otherSons[i]!;
+		for (const [father, otherSon] of Iterator.zip([fathers, otherSons], {
+			mode: "strict",
+		})) {
 			father.relatives.push({
 				type: "son",
 				pid: otherSon.pid,

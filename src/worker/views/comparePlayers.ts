@@ -39,11 +39,9 @@ const hasPlayerInfoChanged = (
 		return true;
 	}
 
-	// Iterator.zip
-	for (let i = 0; i < inputPlayers.length; i++) {
-		const inputP = inputPlayers[i]!;
-		const stateP = statePlayers[i]!;
-
+	for (const [inputP, stateP] of Iterator.zip([inputPlayers, statePlayers], {
+		mode: "strict",
+	})) {
 		if (
 			inputP.pid !== stateP.p.pid ||
 			inputP.season !== stateP.season ||

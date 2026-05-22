@@ -265,9 +265,9 @@ const getLeague = async (options: GetLeagueOptions) => {
 					(row) => row.slug,
 				);
 
-				// Iterator.zip
-				for (const [i, p] of toRandomize.entries()) {
-					const draftYear = draftYears[i]!;
+				for (const [p, draftYear] of Iterator.zip([toRandomize, draftYears], {
+					mode: "strict",
+				})) {
 					const diff = draftYear - p.draft.year;
 					p.draft.year = draftYear;
 					p.born.year += diff;

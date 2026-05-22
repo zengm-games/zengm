@@ -104,9 +104,9 @@ const relocateVote = async ({
 		const realigned = autoRelocate.realigned;
 		if (realign && realigned) {
 			const divs = g.get("divs");
-			// Iterator.zip
-			for (const [i, div] of divs.entries()) {
-				const tids = realigned[i]!;
+			for (const [div, tids] of Iterator.zip([divs, realigned], {
+				mode: "strict",
+			})) {
 				for (const tid of tids) {
 					const t = await idb.cache.teams.get(tid);
 					if (t) {

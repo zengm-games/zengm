@@ -814,11 +814,10 @@ const updateLeaders = async (
 				playerStats = p.stats;
 			}
 
-			// Iterator.zip
-			for (let i = 0; i < categories.length; i++) {
-				const cat = categories[i]!;
-				const outputCat = outputCategories[i]!;
-
+			for (const [cat, outputCat] of Iterator.zip(
+				[categories, outputCategories],
+				{ mode: "strict" },
+			)) {
 				const value = playerStats[cat.stat];
 				if (value === undefined) {
 					// value should only be undefined in historical data before certain stats were tracked

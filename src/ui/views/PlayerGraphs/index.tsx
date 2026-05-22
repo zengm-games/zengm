@@ -160,9 +160,10 @@ const PickStat = ({
 	const statsXEnriched = getStatsWithLabels(stats, state.statType) as (Col & {
 		stat: string;
 	})[];
-	// Iterator.zip
-	for (const [i, row] of statsXEnriched.entries()) {
-		row.stat = stats[i]!;
+	for (const [row, stat] of Iterator.zip([statsXEnriched, stats], {
+		mode: "strict",
+	})) {
+		row.stat = stat;
 	}
 
 	const seasons = useDropdownOptions("seasons");

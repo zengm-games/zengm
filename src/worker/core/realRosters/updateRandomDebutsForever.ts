@@ -51,9 +51,9 @@ const updateRandomDebutsForever = async (
 	// Randomize draft classes
 	const draftYears = draftProspects.map((p) => p.draft.year);
 	shuffle(draftYears);
-	// Iterator.zip
-	for (const [i, p] of draftProspects.entries()) {
-		const draftYear = draftYears[i]!;
+	for (const [p, draftYear] of Iterator.zip([draftProspects, draftYears], {
+		mode: "strict",
+	})) {
 		const diff = draftYear - p.draft.year;
 		p.draft.year = draftYear;
 		p.born.year += diff;

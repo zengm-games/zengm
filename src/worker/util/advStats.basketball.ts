@@ -378,14 +378,22 @@ const calculateBPM = (
 	const BPM: number[] = [];
 	const OBPM: number[] = [];
 
-	// Iterator.zip
-	for (const [i, p] of players.entries()) {
+	const indexes = (function* () {
+		let n = 0;
+		while (true) {
+			yield n++;
+		}
+	})();
+	for (const [i, p, role, pos, poss, adj] of Iterator.zip([
+		indexes,
+		players,
+		playerRole,
+		playerPos,
+		playerPoss,
+		adjPts,
+	])) {
 		const ps = p.stats;
-		const role = playerRole[i]!;
-		const pos = playerPos[i]!;
-
-		const poss = playerPoss[i]!;
-		const pts100 = (adjPts[i]! / poss) * 100;
+		const pts100 = (adj / poss) * 100;
 		const fga100 = (ps.fga / poss) * 100;
 		const fta100 = (ps.fta / poss) * 100;
 		const tp100 = (ps.tp / poss) * 100;

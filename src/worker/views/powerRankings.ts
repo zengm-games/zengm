@@ -32,9 +32,10 @@ const otherToRanks = (
 			const values = teams.map((t) => t.powerRankings[field][key]!);
 			const sorted = values.slice().sort((a, b) => b - a);
 			const ranks = values.map((value) => sorted.indexOf(value) + 1);
-			// Iterator.zip
-			for (const [i, t] of teams.entries()) {
-				t.powerRankings[field][key] = ranks[i]!;
+			for (const [t, rank] of Iterator.zip([teams, ranks], {
+				mode: "strict",
+			})) {
+				t.powerRankings[field][key] = rank;
 			}
 		}
 	}

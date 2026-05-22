@@ -814,6 +814,7 @@ const updateLeaders = async (
 				playerStats = p.stats;
 			}
 
+			// Iterator.zip
 			for (let i = 0; i < categories.length; i++) {
 				const cat = categories[i]!;
 				const outputCat = outputCategories[i]!;

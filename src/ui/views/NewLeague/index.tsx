@@ -921,11 +921,9 @@ const NewLeague = (props: View<"newLeague">) => {
 		}
 	};
 
-	const handleNewLeagueFile = (
-		error: Error | null,
-		output?: LeagueFileUploadOutput,
-	) => {
-		if (error) {
+	const handleNewLeagueFile = (output: Error | LeagueFileUploadOutput) => {
+		// Rather than instanceof Error, use Error.isError when possible - Chrome 134, Firefox 138, Safari ?
+		if (output instanceof Error) {
 			dispatch({
 				type: "clearLeagueFile",
 				defaultSettings: props.defaultSettings,
@@ -933,7 +931,7 @@ const NewLeague = (props: View<"newLeague">) => {
 			return;
 		}
 
-		const { basicInfo, file, url } = output!;
+		const { basicInfo, file, url } = output;
 
 		let newTeams = helpers.deepCopy(basicInfo.teams);
 		if (newTeams) {

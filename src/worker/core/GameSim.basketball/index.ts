@@ -1279,8 +1279,7 @@ class GameSim extends GameSimBase {
 
 			const perfFactor = 1 - 0.2 * Math.tanh(diff / 60);
 
-			for (let j = 0; j < toUpdate.length; j++) {
-				const rating = toUpdate[j]!;
+			for (const rating of toUpdate) {
 				this.team[t].compositeRating[rating] = 0;
 
 				for (let i = 0; i < this.numPlayersOnCourt; i++) {

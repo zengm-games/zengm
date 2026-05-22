@@ -58,7 +58,8 @@ test("distribute combinations to teams with the same record", async () => {
 		let value = 0;
 
 		for (const tid of tids) {
-			const chance = chances[tid]!;
+			const chance = chances[tid];
+			assert(chance);
 			if (value === 0) {
 				value = chance;
 			} else {
@@ -75,8 +76,10 @@ test("distribute combinations to teams with the same record", async () => {
 		let maxIdx = -1;
 
 		for (let j = tids.length - 1; j >= 0; j--) {
-			const tid = tids[j]!;
-			const chance = chances[tid]!;
+			const tid = tids[j];
+			assert(tid);
+			const chance = chances[tid];
+			assert(chance);
 			if (value <= chance) {
 				value = chance;
 				maxIdx = j;

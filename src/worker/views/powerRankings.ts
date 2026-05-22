@@ -23,15 +23,16 @@ const otherToRanks = (
 		};
 	}[],
 ) => {
-	if (teams.length === 0) {
+	if (!teams[0]) {
 		return;
 	}
 
 	for (const field of ["other", "otherCurrent"] as const) {
-		for (const key of Object.keys(teams[0]!.powerRankings[field])) {
+		for (const key of Object.keys(teams[0].powerRankings[field])) {
 			const values = teams.map((t) => t.powerRankings[field][key]!);
 			const sorted = values.slice().sort((a, b) => b - a);
 			const ranks = values.map((value) => sorted.indexOf(value) + 1);
+			// Iterator.zip
 			for (const [i, t] of teams.entries()) {
 				t.powerRankings[field][key] = ranks[i]!;
 			}

@@ -331,10 +331,10 @@ export const ImportPlayersInner = ({ real }: { real: boolean }) => {
 						onLoading={() => {
 							setStatus("loading");
 						}}
-						onDone={async (error, output) => {
+						onDone={async (output) => {
 							setStatus(undefined);
 
-							if (error || !output) {
+							if (output instanceof Error) {
 								return;
 							}
 

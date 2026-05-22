@@ -104,6 +104,7 @@ const relocateVote = async ({
 		const realigned = autoRelocate.realigned;
 		if (realign && realigned) {
 			const divs = g.get("divs");
+			// Iterator.zip
 			for (const [i, div] of divs.entries()) {
 				const tids = realigned[i]!;
 				for (const tid of tids) {

@@ -39,6 +39,7 @@ const hasPlayerInfoChanged = (
 		return true;
 	}
 
+	// Iterator.zip
 	for (let i = 0; i < inputPlayers.length; i++) {
 		const inputP = inputPlayers[i]!;
 		const stateP = statePlayers[i]!;

@@ -62,9 +62,7 @@ export const buildCss = async (
 
 	const replaces: ReplaceInfo[] | undefined = watch ? undefined : [];
 
-	for (let i = 0; i < filenames.length; i++) {
-		const filename = filenames[i]!;
-
+	for (const [i, filename] of filenames.entries()) {
 		let output;
 		if (!watch) {
 			// https://zengm.com/blog/2022/07/investigating-a-tricky-performance-bug/

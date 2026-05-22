@@ -200,7 +200,10 @@ const useManualSticky = (element: HTMLElement | null, top: number) => {
 			return;
 		}
 
-		const parentElement = element.parentElement!;
+		const parentElement = element.parentElement;
+		if (!parentElement) {
+			return;
+		}
 
 		const onScroll = () => {
 			const coordinates = parentElement.getBoundingClientRect();

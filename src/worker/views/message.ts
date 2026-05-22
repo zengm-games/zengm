@@ -75,9 +75,7 @@ const updateMessage = async (
 			if (message.ownerMoods) {
 				augmentedOwnerMoods = [];
 
-				for (let i = 0; i < message.ownerMoods.length; i++) {
-					const mood = message.ownerMoods[i]!;
-
+				for (const [i, mood] of message.ownerMoods.entries()) {
 					const season = message.year - message.ownerMoods.length + 1 + i;
 
 					const teamSeason = await idb.getCopy.teamSeasons({

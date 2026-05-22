@@ -271,8 +271,8 @@ export const ScoreBox = memo(
 							</div>
 						))
 					) : (
-						[1, 0].map((i) => {
-							const t = game.teams[i]!;
+						([1, 0] as const).map((i) => {
+							const t = game.teams[i];
 							let scoreClass;
 							let scoreClassForceWin;
 							if (winner !== undefined) {

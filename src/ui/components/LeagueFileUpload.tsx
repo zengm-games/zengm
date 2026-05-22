@@ -116,8 +116,7 @@ export const LeagueFileUpload = ({
 	onDone,
 	onLoading,
 }: {
-	// onDone is called in errback style when parsing is done or when an error occurs
-	onDone: (b: Error | null, a?: LeagueFileUploadOutput) => void;
+	onDone: (b: Error | LeagueFileUploadOutput) => void;
 	disabled?: boolean;
 	enterURL?: boolean;
 	includePlayersInBasicInfo?: boolean;
@@ -190,7 +189,7 @@ export const LeagueFileUpload = ({
 		}
 
 		try {
-			await onDone(null, {
+			await onDone({
 				basicInfo,
 				file,
 				url,

@@ -121,8 +121,8 @@ const TeamNameBlock = ({
 	}
 
 	const tid = current.info.tid;
-	if (tid < teamInfoCache.length) {
-		const t = teamInfoCache[tid]!;
+	if (teamInfoCache[tid]) {
+		const t = teamInfoCache[tid];
 		return (
 			<div>
 				{t.region} {t.name}

@@ -171,7 +171,8 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			};
 
 			if (series) {
-				if (series.series.length === 0) {
+				const finalRound = series.series.at(-1);
+				if (!finalRound) {
 					// 0 length numGamesPlayoffSeries, no playoffs
 					const t = teams.find((t) =>
 						t.seasonAttrs.find(
@@ -183,7 +184,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						row.champ = formatTeam(t, 1);
 					}
 				} else {
-					const finals = series.series.at(-1)![0];
+					const finals = finalRound[0];
 
 					// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
 					if (!finals || !finals.away) {

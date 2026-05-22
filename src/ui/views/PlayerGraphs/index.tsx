@@ -160,6 +160,7 @@ const PickStat = ({
 	const statsXEnriched = getStatsWithLabels(stats, state.statType) as (Col & {
 		stat: string;
 	})[];
+	// Iterator.zip
 	for (const [i, row] of statsXEnriched.entries()) {
 		row.stat = stats[i]!;
 	}

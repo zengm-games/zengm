@@ -378,6 +378,7 @@ const calculateBPM = (
 	const BPM: number[] = [];
 	const OBPM: number[] = [];
 
+	// Iterator.zip
 	for (const [i, p] of players.entries()) {
 		const ps = p.stats;
 		const role = playerRole[i]!;

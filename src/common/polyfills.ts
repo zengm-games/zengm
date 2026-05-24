@@ -212,6 +212,9 @@ declare global {
 		): IterableIterator<ZipValues<T>>;
 	}
 }
+if (typeof Iterator === "undefined" || Iterator == null) {
+	(globalThis as any).Iterator = {};
+}
 if (!Iterator.zip) {
 	Iterator.zip = (iterables, options) => {
 		const mode = options?.mode ?? "shortest";

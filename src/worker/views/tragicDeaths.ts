@@ -40,14 +40,12 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			football: ["keyStats", "av"],
 			hockey: ["keyStats", "ops", "dps", "ps"],
 		});
-		const playersAll = (
-			await idb.getCopies.players(
-				{
-					pids,
-				},
-				"noCopyCache",
-			)
-		).filter((p) => p !== undefined);
+		const playersAll = await idb.getCopies.players(
+			{
+				pids,
+			},
+			"noCopyCache",
+		);
 
 		const players = await idb.getCopies.playersPlus(playersAll, {
 			attrs: [

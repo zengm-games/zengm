@@ -1938,7 +1938,8 @@ class GameSim extends GameSimBase {
 				s !== "shMin" &&
 				s !== "gpSkater" &&
 				s !== "gpGoalie" &&
-				s !== "ga"
+				s !== "ga" &&
+				s !== "gMin"
 			) {
 				this.team[t].stat[s] += amt;
 

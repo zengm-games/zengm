@@ -2826,6 +2826,7 @@ class GameSim extends GameSimBase {
 			// Filter out stats that are only for player, not team
 			if (
 				s !== "gp" &&
+				s !== "gs" &&
 				s !== "gsF" &&
 				s !== "gpF" &&
 				s !== "poSo" &&

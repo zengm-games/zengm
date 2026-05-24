@@ -19,6 +19,7 @@ const raw = [
 	"gv",
 	"sv",
 	"ppo",
+	"shft",
 ] as const;
 
 // raw: recorded directly in game sim

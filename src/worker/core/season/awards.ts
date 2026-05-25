@@ -18,7 +18,9 @@ import season from "./index.ts";
 import addAward from "../player/addAward.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
-import getLeaderRequirements from "./getLeaderRequirements.ts";
+import getLeaderRequirements, {
+	getLeaderRequirementsStats,
+} from "./getLeaderRequirements.ts";
 import {
 	GamesPlayedCache,
 	playerMeetsCategoryRequirements,
@@ -72,8 +74,6 @@ export const awardStats = bySport({
 		"soPit",
 		"ba",
 		"ops",
-		"pa",
-		"outs",
 	],
 	basketball: [
 		"gp",
@@ -163,6 +163,13 @@ const getProcessedPlayers = async (
 	season: number,
 	playoffs?: boolean,
 ) => {
+	const stats = Array.from(
+		new Set([
+			...awardStats,
+			...getLeaderRequirementsStats(getLeaderRequirements(), awardStats),
+		]),
+	);
+
 	let players = await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
@@ -177,7 +184,7 @@ const getProcessedPlayers = async (
 			"watch",
 		],
 		ratings: ["pos", "season", "ovr", "dovr", "pot", "skills"],
-		stats: awardStats,
+		stats,
 		playoffs,
 		regularSeason: !playoffs,
 		fuzz: true,

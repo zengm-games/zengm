@@ -16,6 +16,7 @@ import { extraStats } from "./hallOfFame.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
+import { getLeaderRequirementsStats } from "../core/season/getLeaderRequirements.ts";
 
 export const getCategoriesAndStats = (onlyStat?: string) => {
 	let categories = bySport<
@@ -382,18 +383,13 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 		return category;
 	});
 
-	// Always include GP, since it's used to scale minStats based on season length
-	const statsSet = new Set<string>(["gp"]);
-	for (const { minStats, stat } of augmentedCategories) {
-		statsSet.add(stat);
-
-		if (minStats) {
-			for (const stat of Object.keys(minStats)) {
-				statsSet.add(stat);
-			}
-		}
-	}
-	const stats = Array.from(statsSet);
+	const actualStats = augmentedCategories.map((row) => row.stat);
+	const stats = Array.from(
+		new Set([
+			...actualStats,
+			...getLeaderRequirementsStats(leaderRequirements, actualStats),
+		]),
+	);
 
 	return {
 		categories: augmentedCategories,

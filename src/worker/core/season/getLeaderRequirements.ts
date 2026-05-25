@@ -7,14 +7,14 @@ export const getLeaderRequirementsStats = (
 	requirements: ReturnType<typeof getLeaderRequirements>,
 	stats: string[],
 ) => {
-	const neededStats = new Set<string>();
+	// Always include GP, since it's used to scale minStats based on season length
+	const neededStats = new Set<string>(["gp"]);
 	for (const stat of stats) {
 		const requirement = requirements[stat];
-		if (!requirement) {
-			throw new Error(`Missing leader requirements for ${stat}`);
-		}
 
-		if (requirement.minStats) {
+		// It's not an error if requirement is undefined, because it is totally valid that some of the stats passed here are not the ones we are checking leaders of
+
+		if (requirement?.minStats) {
 			for (const neededStat of Object.keys(requirement.minStats)) {
 				neededStats.add(neededStat);
 			}
@@ -530,6 +530,7 @@ const getLeaderRequirements = () => {
 					pba: 10 * numGames,
 				},
 			},
+			totTD: {},
 		},
 		hockey: {
 			pm: {

@@ -1,5 +1,4 @@
-add derived stat leader awards for baseball like BA
-- use getLeaderRequirementsStats anywhere getLeaderRequirements is used
+combine leagueLeaders award calculation and getSeasonLeaders, since they are really doing the same thing. just do it all at once. then we will also have less situations where we need to worry about async loading of seasonLeaders, since it will happen at the end of every season
 
 save multiple GOAT formulas somehow https://app.fastmail.com/mail/Inbox/AM4NH_t4SdKw.Stp1kcfDMlQk?u=433e4054
 

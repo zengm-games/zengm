@@ -171,20 +171,17 @@ const doAwards = async (conditions: Conditions) => {
 		{
 			name: "League Points Leader",
 			stat: "pts",
-			minValue: 0,
 		},
 		{
 			name: "League Goals Leader",
 			stat: "g",
-			minValue: 0,
 		},
 		{
 			name: "League Assists Leader",
 			stat: "a",
-			minValue: 0,
 		},
 	];
-	leagueLeaders(players, categories, awardsByPlayer);
+	await leagueLeaders(players, categories, awardsByPlayer);
 
 	const dpoyPlayers = getTopPlayers(
 		{

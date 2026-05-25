@@ -10,14 +10,19 @@ import type {
 	Conditions,
 	Player,
 	PlayerFiltered,
+	PlayerStatType,
 	TeamFiltered,
 } from "../../../common/types.ts";
 import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball.ts";
 import season from "./index.ts";
 import addAward from "../player/addAward.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
-import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
+import getLeaderRequirements from "./getLeaderRequirements.ts";
+import {
+	GamesPlayedCache,
+	playerMeetsCategoryRequirements,
+} from "../../views/leaders.ts";
 
 export type AwardsByPlayer = {
 	pid: number;
@@ -368,41 +373,57 @@ const teamAwards = async (
 	};
 };
 
-const leagueLeaders = (
+const leagueLeaders = async (
 	players: PlayerFiltered[],
 	categories: {
 		name: string;
 		stat: string;
-		minValue: number;
 	}[],
 	awardsByPlayer: AwardsByPlayer,
 ) => {
-	const numGames = g.get("numGames");
-	const factor =
-		(numGames / defaultGameAttributes.numGames[0].value) *
-		helpers.quarterLengthFactor(); // To handle changes in number of games and playing time
+	const requirements = getLeaderRequirements();
+	const statType: PlayerStatType = bySport({
+		baseball: "totals",
+		basketball: "perGame",
+		football: "totals",
+		hockey: "totals",
+	});
+	const season = g.get("season");
 
-	for (const cat of categories) {
+	const gamesPlayedCache = new GamesPlayedCache();
+	await gamesPlayedCache.loadSeasons([season], false);
+
+	for (const { stat, name } of categories) {
+		if (!requirements[stat]) {
+			throw new Error(`Missing leader requirements for ${stat}`);
+		}
+
+		const statInfo = {
+			stat,
+			...requirements[stat],
+		};
+
 		let leaders = [];
 		let leaderValue = -Infinity;
 		for (const p of players) {
-			const actualValue = p.currentStats[cat.stat];
+			const playerValue = p.currentStats[stat];
 
-			// In basketball, everything except gp is a per-game average, so we need to scale them by games played to check against minValue. In other sports, this whole check is unneccessary currently, because the stats are season totals not per game averages.
-			let playerValue;
-			if (!isSport("basketball")) {
-				playerValue = actualValue;
-			} else {
-				playerValue = actualValue * p.currentStats.gp;
-			}
-			if (
-				playerValue >= cat.minValue * factor ||
-				p.currentStats.gp >= 0.85 * numGames
-			) {
-				if (actualValue > leaderValue) {
+			const pass = playerMeetsCategoryRequirements({
+				career: false,
+				cat: statInfo,
+				gamesPlayedCache,
+				p,
+				playerStats: p.currentStats,
+				seasonType: "regularSeason",
+				season,
+				statType,
+			});
+
+			if (pass) {
+				if (playerValue > leaderValue) {
 					leaders = [p];
-					leaderValue = actualValue;
-				} else if (actualValue === leaderValue) {
+					leaderValue = playerValue;
+				} else if (playerValue === leaderValue) {
 					leaders.push(p);
 				}
 			}
@@ -413,7 +434,7 @@ const leagueLeaders = (
 				pid: p.pid,
 				tid: p.tid,
 				name: p.name,
-				type: cat.name,
+				type: name,
 			});
 		}
 	}

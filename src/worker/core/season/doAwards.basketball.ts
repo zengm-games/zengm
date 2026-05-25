@@ -401,30 +401,25 @@ const doAwards = async (conditions: Conditions) => {
 		{
 			name: "League Scoring Leader",
 			stat: "pts",
-			minValue: 1400,
 		},
 		{
 			name: "League Rebounding Leader",
 			stat: "trb",
-			minValue: 800,
 		},
 		{
 			name: "League Assists Leader",
 			stat: "ast",
-			minValue: 400,
 		},
 		{
 			name: "League Steals Leader",
 			stat: "stl",
-			minValue: 125,
 		},
 		{
 			name: "League Blocks Leader",
 			stat: "blk",
-			minValue: 100,
 		},
 	];
-	leagueLeaders(players, categories, awardsByPlayer);
+	await leagueLeaders(players, categories, awardsByPlayer);
 
 	const mvpPlayers = getTopPlayersOffense(
 		{

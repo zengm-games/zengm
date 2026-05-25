@@ -648,6 +648,10 @@ export const playerMeetsCategoryRequirements = ({
 				playerValue = playerStats[minStat] * playerStats.gp;
 			}
 
+			if (playerValue === undefined) {
+				throw new Error(`Missing value for stat ${minStat}`);
+			}
+
 			const gpTeam = gamesPlayedCache.get(
 				season,
 				seasonType,

@@ -63,13 +63,17 @@ export const awardStats = bySport({
 		// For position determination
 		"gpF",
 
-		// For season leaders
+		// For season leaders (and requirements)
 		"hr",
 		"rbi",
 		"r",
 		"sb",
 		"bb",
 		"soPit",
+		"ba",
+		"ops",
+		"pa",
+		"outs",
 	],
 	basketball: [
 		"gp",
@@ -404,7 +408,7 @@ const leagueLeaders = async (
 		};
 
 		let leaders = [];
-		let leaderValue = -Infinity;
+		let leaderValue = statInfo.sortAscending ? Infinity : -Infinity;
 		for (const p of players) {
 			const playerValue = p.currentStats[stat];
 
@@ -420,7 +424,11 @@ const leagueLeaders = async (
 			});
 
 			if (pass) {
-				if (playerValue > leaderValue) {
+				if (
+					statInfo.sortAscending
+						? playerValue < leaderValue
+						: playerValue > leaderValue
+				) {
 					leaders = [p];
 					leaderValue = playerValue;
 				} else if (playerValue === leaderValue) {

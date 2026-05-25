@@ -12,7 +12,9 @@ import {
 } from "../../views/leaders.ts";
 import { getPlayerProfileStats } from "../../views/player.ts";
 import { player } from "../index.ts";
-import getLeaderRequirements from "../season/getLeaderRequirements.ts";
+import getLeaderRequirements, {
+	getLeaderRequirementsStats,
+} from "../season/getLeaderRequirements.ts";
 import { NUM_SEASON_LEADERS_CACHE } from "../../db/Cache.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
@@ -79,7 +81,16 @@ const calculateSeasonLeaders = async (
 		);
 	}
 
-	const stats = getPlayerProfileStats();
+	const requirements = getLeaderRequirements();
+
+	const playerProfileStats = getPlayerProfileStats();
+	const requirementsStats = getLeaderRequirementsStats(
+		requirements,
+		playerProfileStats,
+	);
+	const stats = Array.from(
+		new Set([...getPlayerProfileStats(), ...requirementsStats]),
+	);
 	const ratings = ["ovr", "pot", ...RATINGS];
 
 	// Can skip playoffs if it hasn't happened yet, and combined would be redundant with regularSeason too
@@ -120,7 +131,6 @@ const calculateSeasonLeaders = async (
 		);
 	}
 
-	const requirements = getLeaderRequirements();
 	const statType: PlayerStatType = bySport({
 		baseball: "totals",
 		basketball: "perGame",
@@ -140,7 +150,7 @@ const calculateSeasonLeaders = async (
 			continue;
 		}
 
-		for (const stat of stats) {
+		for (const stat of playerProfileStats) {
 			if (type === "regularSeason" && !requirements[stat]) {
 				throw new Error(`Missing leader requirements for ${stat}`);
 			}

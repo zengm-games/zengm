@@ -3,6 +3,27 @@ import { NUM_OUTS_PER_INNING } from "../../../common/constants.baseball.ts";
 import { g, helpers } from "../../util/index.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 
+export const getLeaderRequirementsStats = (
+	requirements: ReturnType<typeof getLeaderRequirements>,
+	stats: string[],
+) => {
+	const neededStats = new Set<string>();
+	for (const stat of stats) {
+		const requirement = requirements[stat];
+		if (!requirement) {
+			throw new Error(`Missing leader requirements for ${stat}`);
+		}
+
+		if (requirement.minStats) {
+			for (const neededStat of Object.keys(requirement.minStats)) {
+				neededStats.add(neededStat);
+			}
+		}
+	}
+
+	return Array.from(neededStats);
+};
+
 // This is for league leaders pages and player profile page stat tables
 // https://www.basketball-reference.com/about/rate_stat_req.html has some info for basketball, can use as rough guide
 // sortAscending can't use lowerIsBetter because some of these (like "tov") are considered "bad" if you lead it

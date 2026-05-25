@@ -372,6 +372,14 @@ const doAwards = async (conditions: Conditions) => {
 			stat: "hr",
 		},
 		{
+			name: "League BA Leader",
+			stat: "ba",
+		},
+		{
+			name: "League OPS Leader",
+			stat: "ops",
+		},
+		{
 			name: "League RBI Leader",
 			stat: "rbi",
 		},
@@ -394,6 +402,14 @@ const doAwards = async (conditions: Conditions) => {
 		{
 			name: "League Strikeouts Leader",
 			stat: "soPit",
+		},
+		{
+			name: "League ERA Leader",
+			stat: "era",
+		},
+		{
+			name: "League Saves Leader",
+			stat: "sv",
 		},
 		{
 			name: "League WAR Leader",

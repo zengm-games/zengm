@@ -1,5 +1,3 @@
-top bar flicker on stats page load
-
 combine leagueLeaders award calculation and getSeasonLeaders, since they are really doing the same thing. just do it all at once. then we will also have less situations where we need to worry about async loading of seasonLeaders, since it will happen at the end of every season
 
 save multiple GOAT formulas somehow https://app.fastmail.com/mail/Inbox/AM4NH_t4SdKw.Stp1kcfDMlQk?u=433e4054
@@ -1012,9 +1010,6 @@ box score overflow with long team name https://discord.com/channels/290013534023
 auto export to folder every N seasons
 - chrome only?
 - include box scores?
-
-"field-sizing: content" to replace hacky sizing of top bar selects, when it has browser support https://caniuse.com/?search=field-sizing
-- Chrome 123, Firefox ?, Safari 26.2
 
 BBGM injury rate too low? https://discord.com/channels/290013534023057409/290015591216054273/1190784110763970600
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useState } from "react";
 import type { CSSProperties } from "react";
 import useDropdownOptions, {
 	type ResponsiveOption,
@@ -39,31 +39,34 @@ const Select = ({
 	const options = useDropdownOptions(field, customOptions);
 	const [width, setWidth] = useState<number | undefined>();
 
-	useEffect(() => {
-		const updateWidth = () => {
-			let currentValue: string | ResponsiveOption[] = "";
-			for (const option of options) {
-				if (option.key === value) {
-					currentValue = option.value;
-					break;
-				}
+	// Eventually replace with "field-sizing: content" - Chrome 123, Firefox ?, Safari 26.2
+	const updateWidth = useCallback(() => {
+		let currentValue: string | ResponsiveOption[] = "";
+		for (const option of options) {
+			if (option.key === value) {
+				currentValue = option.value;
+				break;
 			}
+		}
 
-			const el = document.createElement("select");
-			el.style.display = "inline";
-			el.className = "dropdown-select";
-			const el2 = document.createElement("option");
-			el2.innerHTML = sanitize(getResponsiveValue2(currentValue));
-			el.append(el2);
+		const el = document.createElement("select");
+		el.style.display = "inline";
+		el.className = "dropdown-select";
+		const el2 = document.createElement("option");
+		el2.innerHTML = sanitize(getResponsiveValue2(currentValue));
+		el.append(el2);
 
-			document.body.append(el);
-			setWidth(el.offsetWidth);
+		document.body.append(el);
+		setWidth(el.offsetWidth);
 
-			document.body.removeChild(el);
-		};
+		document.body.removeChild(el);
+	}, [options, value]);
 
+	useLayoutEffect(() => {
 		updateWidth();
+	}, [updateWidth]);
 
+	useEffect(() => {
 		// Currently there is a different font size defined for .dropdown-select based on this media query, so recompute the width when appropriate. Coincidentally, 768 is also
 		const widthsToCheck = new Set([768]);
 
@@ -92,7 +95,7 @@ const Select = ({
 				mediaQueryList.removeEventListener("change", updateWidth);
 			}
 		};
-	}, [field, options, value]);
+	}, [options, updateWidth]);
 
 	const style: CSSProperties = {
 		width,

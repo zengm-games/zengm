@@ -47,6 +47,7 @@ const raw = [
 	"wp",
 	"bf",
 	"pc",
+	"qs",
 
 	// Fielding, but only one position is possible (catcher)
 	"pb",

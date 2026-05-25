@@ -271,6 +271,7 @@ const getLeaderRequirements = () => {
 					w: 10,
 				},
 			},
+			qs: {},
 		},
 		basketball: {
 			pts: basketballPerGameStats,

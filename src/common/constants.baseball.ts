@@ -227,6 +227,7 @@ export const PLAYER_STATS_TABLES = {
 			"era",
 			"gpPit",
 			"gsPit",
+			"qs",
 			"gf",
 			"cg",
 			"sho",
@@ -384,6 +385,7 @@ export const TEAM_STATS_TABLES = {
 		name: "Pitching",
 		stats: [
 			"era",
+			"qs",
 			"cg",
 			"sho",
 			"sv",

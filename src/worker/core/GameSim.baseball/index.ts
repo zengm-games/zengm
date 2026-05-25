@@ -2654,6 +2654,15 @@ class GameSim extends GameSimBase {
 				this.recordStat(this.d, pitcher, "hld");
 			}
 
+			// Check for quality start
+			if (
+				starterIsIn &&
+				pitcher.stat.outs / NUM_OUTS_PER_INNING >= 6 &&
+				pitcher.stat.er <= 3
+			) {
+				this.recordStat(this.d, pitcher, "qs");
+			}
+
 			// Actually apply the substitution
 			this.substitution(this.d, t.playersInGame[pitcher.id]!, candidate.p);
 			this.playByPlay.logEvent({

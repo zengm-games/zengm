@@ -78,6 +78,9 @@ export const getCategoriesAndStats = (onlyStat?: string) => {
 				stat: "era",
 			},
 			{
+				stat: "qs",
+			},
+			{
 				stat: "sho",
 			},
 			{

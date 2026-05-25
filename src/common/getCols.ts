@@ -811,6 +811,12 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "GSc",
 		},
+		"stat:qs": {
+			desc: "Quality Starts",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "QS",
+		},
 	},
 	basketball: {
 		"rating:fg": {

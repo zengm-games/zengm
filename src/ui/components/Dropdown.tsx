@@ -25,6 +25,9 @@ const getResponsiveValue2 = (val: string | ResponsiveOption[]) => {
 	return getResponsiveValue(val, window.innerWidth);
 };
 
+// Chrome 123, Firefox ?, Safari 26.2 - use this always, get rid of manual width calculation
+const SUPPORTS_FIELD_SIZING_CONTENT = CSS.supports("field-sizing", "content");
+
 const Select = ({
 	customOptions,
 	field,
@@ -39,8 +42,11 @@ const Select = ({
 	const options = useDropdownOptions(field, customOptions);
 	const [width, setWidth] = useState<number | undefined>();
 
-	// Eventually replace with "field-sizing: content" - Chrome 123, Firefox ?, Safari 26.2
 	const updateWidth = useCallback(() => {
+		if (SUPPORTS_FIELD_SIZING_CONTENT) {
+			return;
+		}
+
 		let currentValue: string | ResponsiveOption[] = "";
 		for (const option of options) {
 			if (option.key === value) {
@@ -67,6 +73,10 @@ const Select = ({
 	}, [updateWidth]);
 
 	useEffect(() => {
+		if (SUPPORTS_FIELD_SIZING_CONTENT) {
+			return;
+		}
+
 		// Currently there is a different font size defined for .dropdown-select based on this media query, so recompute the width when appropriate. Coincidentally, 768 is also
 		const widthsToCheck = new Set([768]);
 
@@ -97,9 +107,13 @@ const Select = ({
 		};
 	}, [options, updateWidth]);
 
-	const style: CSSProperties = {
-		width,
-	};
+	const style: CSSProperties = SUPPORTS_FIELD_SIZING_CONTENT
+		? {
+				fieldSizing: "content",
+			}
+		: {
+				width,
+			};
 
 	if (options.length <= 1) {
 		return null;

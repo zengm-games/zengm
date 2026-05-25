@@ -1,5 +1,3 @@
-import toUI from "./toUI.ts";
-
 // Check all properties of an object for NaN
 const checkObject = (
 	obj: any,
@@ -35,7 +33,7 @@ const wrap = (parent: any, name: any, wrapper: (x: any) => any) => {
 
 const wrapperNaNChecker = (_super: any) => {
 	return function (obj: any, ...args: any[]) {
-		if (checkObject(obj)) {
+		/*if (checkObject(obj)) {
 			const error = new Error("NaN found before writing to IndexedDB");
 			void toUI("bugsnagNotify", [
 				error,
@@ -49,7 +47,8 @@ const wrapperNaNChecker = (_super: any) => {
 
 			// Try to recover gracefully
 			checkObject(obj, false, true); // This will update obj
-		}
+		}*/
+		checkObject(obj, false, true); // This will update obj
 
 		// @ts-expect-error because annotating this seems to cause runtime errors
 		return _super.call(this, obj, ...args);

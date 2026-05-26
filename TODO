@@ -1,3 +1,7 @@
+// Without this, some stats values may be undefined for career totals, leading to errors when requirements are checked
+- better fix would be to standardize what is 0ed out for a player with a blank stats row and a player with no stats row in careerStats
+- or check p.stats.length?
+
 combine leagueLeaders award calculation and getSeasonLeaders, since they are really doing the same thing. just do it all at once. then we will also have less situations where we need to worry about async loading of seasonLeaders, since it will happen at the end of every season
 
 save multiple GOAT formulas somehow https://app.fastmail.com/mail/Inbox/AM4NH_t4SdKw.Stp1kcfDMlQk?u=433e4054

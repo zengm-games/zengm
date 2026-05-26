@@ -355,11 +355,9 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 	const [state, setState] = useState(() => {
 		const p = helpers.deepCopy(props.p);
 		if (p) {
-			// @ts-expect-error
-			p.age = props.season - p.born.year;
+			(p as any).age = season - p.born.year;
 			p.contract.amount /= 1000;
-			// @ts-expect-error
-			p.face = JSON.stringify(p.face, null, 2);
+			(p as any).face = JSON.stringify(p.face, null, 2);
 		}
 
 		return {

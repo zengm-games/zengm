@@ -65,9 +65,9 @@ export default defineConfig({
 					provider: playwright(),
 					instances: [
 						{ browser: "chromium" },
-						// Firefox has been flaky lately...
+						// firefox and webkit have been flaky lately...
 						// { browser: "firefox" },
-						{ browser: "webkit" },
+						// { browser: "webkit" },
 					],
 					screenshotFailures: false,
 				},

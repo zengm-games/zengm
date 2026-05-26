@@ -465,6 +465,9 @@ export class GamesPlayedCache {
 				season,
 				playoffs,
 				regularSeason: !playoffs,
+
+				// This is needed if teamStats row is deleted but teamSeason is still there, such as historical real players seasons
+				showNoStats: true,
 			});
 
 			const cache: Record<number, number> = {};

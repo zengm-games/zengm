@@ -560,3 +560,17 @@ test("mergeStats totOnly when first row has >0 GP and second has 0 GP", async ()
 	assert.strictEqual(pf.stats.gp, 5);
 	assert.strictEqual(pf.stats.tid, 4);
 });
+
+test("careerStats works when player has no stats rows", async () => {
+	const p = {
+		pid: 0,
+		...player.generate(PLAYER.UNDRAFTED, 19, 2011, false, DEFAULT_LEVEL),
+	};
+	const pf = await idb.getCopy.playersPlus(p, {
+		stats: ["gp", "playoffs", "bpm"],
+	});
+	assert.deepStrictEqual(pf, {
+		stats: [],
+		careerStats: { gp: 0, playoffs: false, bpm: 0 },
+	});
+});

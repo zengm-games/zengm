@@ -1276,11 +1276,13 @@ const processPlayer = (
 		}
 	}
 
+	// Need this to be true for season === undefined (careerStats) so processPlayerStats will fill in 0 if there is no data
 	const keepWithNoStats =
+		season === undefined ||
 		(showRookies &&
 			p.draft.year >= g.get("season") &&
-			(season === g.get("season") || season === undefined)) ||
-		(showNoStats && (season === undefined || season > p.draft.year));
+			season === g.get("season")) ||
+		(showNoStats && season > p.draft.year);
 
 	if (options.stats.length > 0 || keepWithNoStats) {
 		processStats(

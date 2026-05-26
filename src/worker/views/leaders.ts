@@ -541,7 +541,7 @@ export class GamesPlayedCache {
 	}
 }
 
-export const iterateAllPlayers = async (
+export const iterateAllPlayersWithStats = async (
 	season: number | "all" | "career",
 	cb: (p: Player, season: number | "career") => Promise<void>,
 ) => {
@@ -550,12 +550,17 @@ export const iterateAllPlayers = async (
 	const cachePlayersByPid = groupByUnique(cachePlayers, "pid");
 
 	const applyCB = async (p: Player) => {
+		const seasons = new Set(p.stats.map((row) => row.season));
 		if (season === "all") {
-			const seasons = new Set(p.stats.map((row) => row.season));
 			for (const season of seasons) {
 				await cb(p, season);
 			}
-		} else {
+		} else if (season === "career") {
+			// No need to look at career stats of player with no stats
+			if (p.stats.length > 0) {
+				await cb(p, season);
+			}
+		} else if (seasons.has(season)) {
 			await cb(p, season);
 		}
 	};
@@ -771,7 +776,7 @@ const updateLeaders = async (
 			);
 		}
 
-		await iterateAllPlayers(inputs.season, async (pRaw, season) => {
+		await iterateAllPlayersWithStats(inputs.season, async (pRaw, season) => {
 			const p = await idb.getCopy.playersPlus(pRaw, {
 				attrs: [
 					"pid",
@@ -814,11 +819,6 @@ const updateLeaders = async (
 				}
 			} else {
 				playerStats = p.stats;
-			}
-
-			// Without this, some stats values may be undefined for career totals, leading to errors when requirements are checked
-			if (playerStats.min === 0) {
-				return;
 			}
 
 			for (const [cat, outputCat] of Iterator.zip(

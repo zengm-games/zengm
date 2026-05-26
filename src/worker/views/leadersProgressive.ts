@@ -5,7 +5,7 @@ import { groupByUnique, range } from "../../common/utils.ts";
 import {
 	GamesPlayedCache,
 	getCategoriesAndStats,
-	iterateAllPlayers,
+	iterateAllPlayersWithStats,
 	type Leader,
 	playerMeetsCategoryRequirements,
 } from "./leaders.ts";
@@ -98,7 +98,7 @@ const updateLeadersProgressive = async (
 			);
 		}
 
-		await iterateAllPlayers("all", async (pRaw, season) => {
+		await iterateAllPlayersWithStats("all", async (pRaw, season) => {
 			if (typeof season !== "number") {
 				throw new Error("Invalid season");
 			}

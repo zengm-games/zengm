@@ -816,6 +816,11 @@ const updateLeaders = async (
 				playerStats = p.stats;
 			}
 
+			// Without this, some stats values may be undefined for career totals, leading to errors when requirements are checked
+			if (playerStats.min === 0) {
+				return;
+			}
+
 			for (const [cat, outputCat] of Iterator.zip(
 				[categories, outputCategories],
 				{ mode: "strict" },

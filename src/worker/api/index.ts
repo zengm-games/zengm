@@ -2150,7 +2150,7 @@ const getRandomRatings = async ({
 	pos: string | undefined;
 }) => {
 	// 100 tries to find a matching position
-	let p: any;
+	let p;
 	for (let i = 0; i < 100; i++) {
 		p = player.generate(
 			PLAYER.UNDRAFTED,
@@ -2162,6 +2162,9 @@ const getRandomRatings = async ({
 		if (p.ratings[0].pos === pos || pos === undefined) {
 			break;
 		}
+	}
+	if (!p) {
+		throw new Error("Should never happen");
 	}
 
 	await player.develop(p, age - 19);

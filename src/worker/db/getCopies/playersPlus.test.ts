@@ -5,12 +5,16 @@ import { player } from "../../core/index.ts";
 import { idb } from "../index.ts";
 import { g, helpers } from "../../util/index.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
+import type { Player } from "../../../common/types.ts";
 
-let p: any;
+let p: Player;
 beforeAll(async () => {
 	resetG();
 	g.setWithoutSavingToDB("season", 2011);
-	p = player.generate(PLAYER.UNDRAFTED, 19, 2011, false, DEFAULT_LEVEL);
+	p = {
+		pid: 0,
+		...player.generate(PLAYER.UNDRAFTED, 19, 2011, false, DEFAULT_LEVEL),
+	};
 	p.tid = 4;
 	g.setWithoutSavingToDB("season", 2012);
 	await resetCache({
@@ -30,12 +34,17 @@ beforeAll(async () => {
 	stats[2].gp = 8;
 	stats[2].fg = 56;
 	await player.develop(p, 0);
+
 	player.addRatingsRow(p);
 	await player.develop(p, 0);
+
 	player.addRatingsRow(p);
+	assert(p.ratings[2]);
 	p.ratings[2].season = 2013;
 	await player.develop(p, 0);
+
 	player.addRatingsRow(p);
+	assert(p.ratings[3]);
 	p.ratings[3].season = 2014;
 	await player.develop(p, 0);
 });
@@ -285,6 +294,8 @@ test("fuzz ratings if options.fuzz is true", async () => {
 	if (!pf) {
 		throw new Error("Missing player");
 	}
+
+	assert(p.ratings[1]);
 
 	assert.strictEqual(pf.ratings.ovr, p.ratings[1].ovr);
 	pf = await idb.getCopy.playersPlus(p, {

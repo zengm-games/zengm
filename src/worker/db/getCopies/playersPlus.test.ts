@@ -581,7 +581,7 @@ test("careerStats works when player has no stats rows", async () => {
 		stats: ["gp", "playoffs", "bpm"],
 	});
 
-	// Why is playoffs undefined? Ultimately comes from `row.playoffs = ps.playoffs;` in processPlayerStats. In theory `!!ps.playoffs` would work, but that somehow breaks playoff and combined stats on player profile pages, not sure why. Would be better if playoffs was false.
+	// Why is playoffs undefined? Ultimately comes from `row.playoffs = ps.playoffs;` - we don't know what to set the default value (true/false/"combined") if it does not exist. Might be better to just not have playoffs in career stats since it is implied from the property name (like careerStatsPlayoffs)
 	assert.deepStrictEqual(pf, {
 		stats: [],
 		careerStats: { gp: 0, playoffs: undefined, bpm: 0 },

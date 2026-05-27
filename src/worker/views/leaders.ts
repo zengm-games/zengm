@@ -1,6 +1,6 @@
 import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
-import { g, helpers, toUI } from "../util/index.ts";
+import { g, helpers } from "../util/index.ts";
 import type {
 	Player,
 	PlayerFiltered,
@@ -655,20 +655,8 @@ export const playerMeetsCategoryRequirements = ({
 				playerValue = playerStats[minStat] * playerStats.gp;
 			}
 
-			if (playerValue === undefined) {
-				const error = new Error(`Missing value for stat ${minStat}`);
-				toUI("bugsnagNotify", [
-					error,
-					{
-						metadata: {
-							minStat,
-							minValue: String(minValue),
-							statType,
-							playerStats: JSON.stringify(playerStats),
-							p: JSON.stringify(p),
-						},
-					},
-				]);
+			if (playerValue === undefined || Number.isNaN(playerValue)) {
+				// Value is missing, could be custom stats row in a file missing something or historical data with null values
 				continue;
 			}
 

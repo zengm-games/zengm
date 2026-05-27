@@ -44,6 +44,9 @@ const processStats = (
 ) => {
 	const row: any = {};
 
+	// This is how we identify if we should fill in a missing value with 0 - don't want to do it for "null" historical data where there is a partial record!
+	const hasSomeData = Object.keys(ps).length > 0;
+
 	for (const stat of stats) {
 		let scale = true;
 		if (straightThrough.has(stat)) {
@@ -139,23 +142,27 @@ const processStats = (
 		if (scale) {
 			// Either the raw stat from database, or something added up above (trb, 2p, 2pa)
 			const val = row[stat] ?? ps[stat];
-			if (statType === "totals") {
-				row[stat] = val;
-			} else if (statType === "per36" && stat !== "min") {
-				const min = statSumsExtra?.[stat]?.min ?? ps.min;
-				row[stat] = min > 0 ? (val * 36) / min : undefined;
-			} else {
-				let gp;
-				if (stat === "trb" && statSumsExtra?.trb?.gp !== undefined) {
-					gp = statSumsExtra.trb.gp + (statSumsExtra.drb?.gp ?? 0);
+			if (val !== undefined) {
+				if (statType === "totals") {
+					row[stat] = val;
+				} else if (statType === "per36" && stat !== "min") {
+					const min = statSumsExtra?.[stat]?.min ?? ps.min;
+					row[stat] =
+						min > 0 && min !== undefined ? (val * 36) / min : undefined;
 				} else {
-					gp = statSumsExtra?.[stat]?.gp ?? ps.gp;
+					let gp;
+					if (stat === "trb" && statSumsExtra?.trb?.gp !== undefined) {
+						gp = statSumsExtra.trb.gp + (statSumsExtra.drb?.gp ?? 0);
+					} else {
+						gp = statSumsExtra?.[stat]?.gp ?? ps.gp;
+					}
+					row[stat] = gp > 0 && gp !== undefined ? val / gp : 0;
 				}
-				row[stat] = gp > 0 ? val / gp : 0;
 			}
 		}
 
 		if (
+			!hasSomeData &&
 			keepWithNoStats &&
 			(row[stat] === undefined || Number.isNaN(row[stat])) &&
 			stat !== "jerseyNumber"
@@ -163,7 +170,7 @@ const processStats = (
 			row[stat] = 0;
 		}
 
-		if (!keepWithNoStats && Number.isNaN(row[stat])) {
+		if (Number.isNaN(row[stat])) {
 			row[stat] = undefined;
 		}
 	}

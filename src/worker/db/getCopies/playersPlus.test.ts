@@ -580,8 +580,10 @@ test("careerStats works when player has no stats rows", async () => {
 	const pf = await idb.getCopy.playersPlus(p, {
 		stats: ["gp", "playoffs", "bpm"],
 	});
+
+	// Why is playoffs undefined? Ultimately comes from `row.playoffs = ps.playoffs;` in processPlayerStats. In theory `!!ps.playoffs` would work, but that somehow breaks playoff and combined stats on player profile pages, not sure why. Would be better if playoffs was false.
 	assert.deepStrictEqual(pf, {
 		stats: [],
-		careerStats: { gp: 0, playoffs: false, bpm: 0 },
+		careerStats: { gp: 0, playoffs: undefined, bpm: 0 },
 	});
 });

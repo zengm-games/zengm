@@ -1,6 +1,6 @@
 import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
-import { g, helpers } from "../util/index.ts";
+import { g, helpers, toUI } from "../util/index.ts";
 import type {
 	Player,
 	PlayerFiltered,
@@ -656,7 +656,20 @@ export const playerMeetsCategoryRequirements = ({
 			}
 
 			if (playerValue === undefined) {
-				throw new Error(`Missing value for stat ${minStat}`);
+				const error = new Error(`Missing value for stat ${minStat}`);
+				toUI("bugsnagNotify", [
+					error,
+					{
+						metadata: {
+							minStat,
+							minValue: String(minValue),
+							statType,
+							playerStats: JSON.stringify(playerStats),
+							p: JSON.stringify(p),
+						},
+					},
+				]);
+				continue;
 			}
 
 			const gpTeam = gamesPlayedCache.get(

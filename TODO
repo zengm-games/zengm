@@ -1,3 +1,70 @@
+custom awards
+- fields
+  - formula
+  - short name
+    - MUST BE UNIQUE
+  - long name
+  - some way to filter for SMOY
+  - MIP filter
+  - rookie filter
+    - support some kind of games played limit, like for players who miss a whole season, or baseball
+  - stats range (regular season, playoffs, semifinals, finals, combined)
+  - team or individual
+  - if team
+    - way to specify if it's position based or not
+      - maybe just automatically handle this per sport
+    - number of players per team
+      - maybe just automatically handle this per sport
+    - how many teams
+  - order
+    - use on...
+      - player profile page
+      - league history table
+      - season summary
+  - show in league history table?
+  - SeasonIcon
+    - icon (give a few options)
+    - color
+  - some way to label as an "important" award like MVP equivalent, ROY equivalent
+    - football has two ROY equivalents, so that shouldn't be unique
+- extra things that get stored in player awards, but not in awards object
+  - should these even be stored in Player.awards, or elsewhere? probably Player.awards makes sense for normalization, might need additional prop to distinguish built-in vs custom awards
+  - see awardsOrder in groupAwards for list
+    - All-Star
+    - Won Championship
+    - Dunk Contest
+    - Three Point Contest
+    - Hall of Fame
+- UI to update
+  - award races
+  - groupAwards
+  - awards editor
+  - player profile
+  - league history table
+  - season summary
+  - awards records
+  - team records
+  - GOAT formula
+- add triple crown for baseball, like league leader awards
+- store top 10 for each individual award, so it can be displayed easily on player profile pages
+  - store this in player object, don't need it anywhere else i think?
+    - for teams, only store rank if there are more than 1 team
+  - bold winner of individual award, link to award races
+- should still be able to add an arbitrary one-off custom award - have some place for those in the awards object, and use it for unknown awards in upgraded leagues
+- support awards per div/conf
+- support clutch player award
+- how to show award as column when awards might change over time?
+- how to store Player.awards
+  - try storing normalized, how slow is it?
+    - could store more awards history in cache
+  - real players with partial data? depends on if we store normalized or not
+  - make sure it's deleted when importing
+- upgrade
+  - upgrade old awards objects
+  - from awards objects, look up pids and rewrite Player.awards entries for ones that can now be looked up from awards object (add rank)
+  - indexeddb
+  - import
+
 combine leagueLeaders award calculation and getSeasonLeaders, since they are really doing the same thing. just do it all at once. then we will also have less situations where we need to worry about async loading of seasonLeaders, since it will happen at the end of every season
 
 save multiple GOAT formulas somehow https://app.fastmail.com/mail/Inbox/AM4NH_t4SdKw.Stp1kcfDMlQk?u=433e4054
@@ -185,64 +252,6 @@ calcuate bestPos in playersPlus, rather than in processPlayersHallOfFame
 players constantly being signed and released https://discord.com/channels/@me/662077709836484618/1461143613776986163
 - happens up until team hits the salary cap
 - getBest is working by teamOvrDiffs, checkRosterSizes is working by player value
-
-custom awards
-- fields
-  - formula
-  - short name
-    - MUST BE UNIQUE
-  - long name
-  - some way to filter for SMOY
-  - MIP filter
-  - rookie filter
-    - support some kind of games played limit, like for players who miss a whole season, or baseball
-  - stats range (regular season, playoffs, semifinals, finals, combined)
-  - team or individual
-  - if team
-    - way to specify if it's position based or not
-      - maybe just automatically handle this per sport
-    - number of players per team
-      - maybe just automatically handle this per sport
-    - how many teams
-  - order
-    - use on...
-      - player profile page
-      - league history table
-      - season summary
-  - show in league history table?
-  - SeasonIcon
-    - icon (give a few options)
-    - color
-  - some way to label as an "important" award like MVP equivalent, ROY equivalent
-    - football has two ROY equivalents, so that shouldn't be unique
-- should be able to add/edit/delete awards over time, and still have awards races page show the old awards
-  - only allow delete if an award has not been assigned yet. otherwise, only allow disabling
-- extra things that get stored in player awards, but not in awards object
-  - should these even be stored in Player.awards, or elsewhere? probably Player.awards makes sense for normalization, might need additional prop to distinguish built-in vs custom awards
-  - see awardsOrder in groupAwards for list
-    - All-Star
-    - Won Championship
-    - Dunk Contest
-    - Three Point Contest
-    - Hall of Fame
-- UI to update
-  - award races
-  - groupAwards
-  - awards editor
-  - player profile
-  - league history table
-  - season summary
-  - awards records
-  - team records
-  - GOAT formula
-- add triple crown for baseball, like league leader awards
-- store top 10 for each individual award, so it can be displayed easily on player profile pages
-- should still be able to add an arbitrary one-off custom award - have some place for those in the awards object, and use it for unknown awards in upgraded leagues
-- support awards per div/conf
-- support clutch player award
-- upgrade
-  - indexeddb
-  - import
 
 filter GOAT Season by team https://old.reddit.com/r/BasketballGM/comments/1payyv7/monthly_suggestions_thread/nszvtf8/
 

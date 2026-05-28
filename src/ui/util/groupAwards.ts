@@ -130,8 +130,9 @@ export const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
 
 	const seen = new Set();
 	const awardsGrouped = [];
-	const awardsGroupedTemp = Object.groupBy(awards, (award) =>
-		getType(award.type),
+	const awardsGroupedTemp = Object.groupBy(
+		awards,
+		(award) => award.shortName ?? getType(award.type),
 	);
 
 	for (const originalType of awardsOrder) {

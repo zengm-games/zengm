@@ -248,7 +248,7 @@ const OwnerMoodsChart = ({
 														fontSize={STAR_SIZE}
 														textAnchor="middle"
 														alignmentBaseline="middle"
-														onMouseOver={(x) => x.currentTarget}
+														onMouseOver={onMouseOver(d)}
 														onMouseOut={onMouseOut}
 													>
 														★

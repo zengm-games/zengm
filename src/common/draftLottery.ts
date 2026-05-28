@@ -63,7 +63,11 @@ const draftLotteryProbsTooSlow = (numTeams: number, numToPick: number) => {
 	return count >= 1e7;
 };
 
-const simLottery = (chances: number[], numToPick: number) => {
+export const simLottery = (
+	draftType: DraftType,
+	chances: number[],
+	numToPick: number,
+) => {
 	let teams = chances.map((chance, index) => ({
 		chances: chance,
 		index,
@@ -71,18 +75,43 @@ const simLottery = (chances: number[], numToPick: number) => {
 
 	const pickIndexes: number[] = [];
 
+	const top12GuaranteedLimit = 12;
+	const top12Guaranteed =
+		draftType === "nba2027" ? new Set(teams.slice(0, 3)) : undefined;
+
 	for (let i = 0; i < numToPick; i++) {
+		// For example, if there are still 3 teams left to put in the top 12, then forceTop12 needs to become true when i=9 (10th pick)
+		const numTop12GuaranteedLeft = top12Guaranteed?.size;
+		const forceTop12 =
+			numTop12GuaranteedLeft !== undefined && numTop12GuaranteedLeft > 0
+				? i + numTop12GuaranteedLeft >= top12GuaranteedLimit
+				: false;
+		if (forceTop12) {
+			console.log(i + 1, numTop12GuaranteedLeft);
+		}
+
 		let sum = 0;
 		for (const t of teams) {
-			sum += t.chances;
+			if (forceTop12 && !top12Guaranteed!.has(t)) {
+				// No chances for this team, we need to pick one of the worst 3
+			} else {
+				sum += t.chances;
+			}
 		}
 		const rand = Math.random() * sum;
 		let sum2 = 0;
 		for (const t of teams) {
-			sum2 += t.chances;
+			if (forceTop12 && !top12Guaranteed!.has(t)) {
+				// No chances for this team, we need to pick one of the worst 3
+			} else {
+				sum2 += t.chances;
+			}
 			if (rand < sum2) {
 				pickIndexes.push(t.index);
 				teams = teams.filter((t2) => t2 !== t);
+				if (top12Guaranteed) {
+					top12Guaranteed.delete(t);
+				}
 
 				break;
 			}
@@ -96,6 +125,7 @@ const simLottery = (chances: number[], numToPick: number) => {
 
 // If it's too slow to calculate the precise probability, just estimate
 const monteCarloLotteryProbs = (
+	draftType: DraftType,
 	result: DraftLotteryResultArray,
 	numToPick: number,
 ) => {
@@ -106,7 +136,7 @@ const monteCarloLotteryProbs = (
 	const chances = result.map((row) => row.chances);
 
 	for (let i = 0; i < ITERATIONS; i++) {
-		const result = simLottery(chances, numToPick);
+		const result = simLottery(draftType, chances, numToPick);
 		for (let j = 0; j < result.length; j++) {
 			const k = result[j]!;
 			probs[k] ??= [];
@@ -448,7 +478,7 @@ export const getDraftLotteryProbs = (
 			// Estimate probs
 			return {
 				tooSlow,
-				probs: monteCarloLotteryProbs(result, numToPick),
+				probs: monteCarloLotteryProbs(draftType, result, numToPick),
 			};
 		}
 	}
@@ -496,8 +526,7 @@ export const getDraftLotteryProbs = (
 
 			// We're looking at every combination of lottery results. getProb will fill in the probability of this result in probs
 			const prob = getProb(indexes);
-			// @ts-expect-error
-			probs[currentTeamIndex][pickIndex] += prob;
+			probs[currentTeamIndex]![pickIndex]! += prob;
 
 			// For the later picks, account for how many times each team was "skipped" (lower lottery team won lottery and moved ahead) and keep track of those probabilities
 			if (pickIndex === numToPick - 1) {
@@ -513,8 +542,7 @@ export const getDraftLotteryProbs = (
 						}
 					}
 
-					// @ts-expect-error
-					skipped[i][skipCount] += prob;
+					skipped[i]![skipCount]! += prob;
 				}
 			}
 		}

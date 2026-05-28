@@ -321,7 +321,7 @@ const genOrder = async (
 
 		const totalChances = chancesCumsum.at(-1)!;
 
-		// Pick first 3 or 4 picks based on chancesCumsum
+		// Pick first N picks based on chancesCumsum
 		let iterations = 0;
 		while (firstN.length < numToPick) {
 			if (riggedLotteryChances) {

@@ -21,7 +21,8 @@ import {
 	updateLotteryChancesAfterLottery,
 } from "./cola.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
-import { randInt, shuffle } from "../../../common/random.ts";
+import { shuffle } from "../../../common/random.ts";
+import { simLottery } from "../../../common/draftLottery.ts";
 
 type ReturnVal = {
 	draftLotteryResult:
@@ -222,7 +223,7 @@ const genOrder = async (
 	const riggedLottery = g.get("godMode") ? g.get("riggedLottery") : undefined;
 
 	// Draft lottery
-	const firstN: number[] = [];
+	let firstN: number[];
 	let numLotteryTeams = 0;
 	let chances: number[] = [];
 	if (draftHasLottery(draftType)) {
@@ -286,7 +287,7 @@ const genOrder = async (
 		const chanceTotal = chances.reduce((a, b) => a + b, 0);
 		const chancePct = chances.map((c) => (c / chanceTotal) * 100);
 
-		// Idenfity chances indexes protected by riggedLottery, and set to 0 in chancesCumsum
+		// Idenfity chances indexes protected by riggedLottery
 		const riggedLotteryChances = riggedLottery
 			? riggedLottery.map((dpid) => {
 					if (typeof dpid === "number") {
@@ -307,52 +308,14 @@ const genOrder = async (
 				})
 			: undefined;
 
-		const chancesCumsum = chances.slice();
-		if (riggedLotteryChances?.includes(0)) {
-			chancesCumsum[0] = 0;
-		}
-		for (let i = 1; i < chancesCumsum.length; i++) {
-			if (riggedLotteryChances?.includes(i)) {
-				chancesCumsum[i] = chancesCumsum[i - 1]!;
-			} else {
-				chancesCumsum[i]! += chancesCumsum[i - 1]!;
-			}
-		}
-
-		const totalChances = chancesCumsum.at(-1)!;
-
 		// Pick first N picks based on chancesCumsum
-		let iterations = 0;
-		while (firstN.length < numToPick) {
-			if (riggedLotteryChances) {
-				const index = riggedLotteryChances[firstN.length];
-				if (typeof index === "number") {
-					firstN.push(index);
-					continue;
-				}
-			}
-
-			const draw = randInt(0, totalChances - 1);
-			const i = chancesCumsum.findIndex((chance) => chance > draw);
-
-			// This happens if all the chances are 0, such which can happen in cola if everyone opts out. In that case, just pick teams from uniform random. In that case, don't make any lottery selection and just proceed in order. UI is still messed up in that case, showing NaNs, but whatever.
-			if (i < 0) {
-				break;
-			}
-
-			if (
-				!firstN.includes(i) &&
-				i < firstRoundTeams.length &&
-				draftPicksIndexed[firstRoundTeams[i]!.tid]
-			) {
-				firstN.push(i);
-			}
-
-			iterations += 1;
-			if (iterations > 100000) {
-				break;
-			}
-		}
+		firstN = simLottery(
+			draftType,
+			chances.map((chance, i) =>
+				riggedLotteryChances?.includes(i) ? 0 : chance,
+			),
+			numToPick,
+		);
 
 		if (!mock) {
 			logLotteryChances(
@@ -363,6 +326,7 @@ const genOrder = async (
 			);
 		}
 	} else {
+		firstN = [];
 		for (const roundTeams of teamsByRound) {
 			if (draftType === "random") {
 				shuffle(roundTeams);

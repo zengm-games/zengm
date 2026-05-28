@@ -86,9 +86,6 @@ export const simLottery = (
 			numTop12GuaranteedLeft !== undefined && numTop12GuaranteedLeft > 0
 				? i + numTop12GuaranteedLeft >= top12GuaranteedLimit
 				: false;
-		if (forceTop12) {
-			console.log(i + 1, numTop12GuaranteedLeft);
-		}
 
 		let sum = 0;
 		for (const t of teams) {

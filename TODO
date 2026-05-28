@@ -104,12 +104,14 @@ more granular access to draft variables in playersPlus, so we only need to do Ab
 
 nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes-new-anti-tanking-proposal-draft-lottery
 - test real player data
+- test rigged lottery that interferes with top 12 constraint
+  - another team forced to be 12
+  - one of the 3 worst forced to be 13+
+- test cola with everyone opted out (should pick uniform random, no firstN) due to simLottery refactor
 - sort
   - first round: special case for 9th and 10th play-in teams 2 losers of the 7-8 play-in games
   - second round: first 16 picks are opposite of lottery
 - better probability calculation for the first pick at least
-- top 12 constraint
-  - make firstN use simLottery, but also make sure it handles any edge cases
 - cross-year constraints
   - no back-to-back 1st round pick
   - no top-5 pick in three consecutive years
@@ -120,6 +122,7 @@ nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes
       - dynamic, or similar to starting cola have some init code run and store state?
     - what about a tie between 3 and 4 seed, something like that?
 - getDraftLotteryProbs should strictly be in worker because it can be slow
+  - get rid of flicker as lottery runs
 - blog
   - is this more or less fun?
 

@@ -47,6 +47,7 @@ const LOTTERY_DRAFT_TYPES = [
 	"mlb2022",
 	"custom",
 	"cola",
+	"nba2027",
 ] as const;
 
 // chances does not have to be the perfect length. If chances is too long for numLotteryTeams, it will be truncated. If it's too short, the last entry will be repeated until it's long enough.
@@ -135,6 +136,13 @@ const getLotteryInfo = (draftType: DraftType, numLotteryTeams: number) => {
 		return {
 			numToPick: 4,
 			chances: [1], // Placeholder, will be filled with real values later
+		};
+	}
+
+	if (draftType === "nba2027") {
+		return {
+			numToPick: 16,
+			chances: [2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1],
 		};
 	}
 

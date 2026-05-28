@@ -210,7 +210,7 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 
 	otl: wrapFromStart(false),
 
-	draftType: "nba2019",
+	draftType: "nba2027",
 	draftLotteryCustomChances: [
 		140, 140, 140, 125, 105, 90, 75, 60, 45, 30, 20, 15, 10, 5,
 	],

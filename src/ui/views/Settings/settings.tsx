@@ -513,6 +513,9 @@ export const settings: Setting[] = (
 			descriptionLong: (
 				<>
 					<p>
+						<b>NBA 2027:</b> {getDraftTypeDescription("nba2027")}
+					</p>
+					<p>
 						<b>NBA 2019:</b> {getDraftTypeDescription("nba2019")}
 					</p>
 					<p>
@@ -572,6 +575,7 @@ export const settings: Setting[] = (
 			),
 			type: "string",
 			values: [
+				{ key: "nba2027", value: "NBA 2027" },
 				{ key: "nba2019", value: "NBA 2019" },
 				{ key: "nba1994", value: "NBA 1994" },
 				{ key: "nba1990", value: "NBA 1990" },

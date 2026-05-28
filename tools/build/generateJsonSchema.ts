@@ -815,7 +815,6 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						minimum: 0,
 					},
 					draftType: {
-						// nba is legacy
 						enum: [
 							"nba1994",
 							"nba2019",
@@ -826,13 +825,13 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 							"randomLotteryFirst3",
 							"randomLottery",
 							"coinFlip",
-							"nba",
 							"freeAgents",
 							"nhl2017",
 							"nhl2021",
 							"mlb2022",
 							"custom",
 							"cola",
+							"nba2027",
 						],
 					},
 					draftLotteryCustomChances: {

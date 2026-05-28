@@ -1130,10 +1130,18 @@ export type MinimalPlayerRatings = {
 	locked?: boolean;
 };
 
-export type PlayerAward = {
-	season: number;
-	type: string;
-};
+export type PlayerAward =
+	| {
+			season: number;
+			shortName?: undefined;
+			type: string;
+	  }
+	| {
+			season: number;
+			shortName: string;
+			rank?: number; // rank in individual award, team number in team award, undefined means there is only one team
+			type?: undefined;
+	  };
 
 export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {
 	awards: PlayerAward[];
@@ -1955,3 +1963,41 @@ export type SavedTradingBlock = {
 };
 
 export type TeamNum = 0 | 1;
+
+type AwardPlayer2 = {
+	pid: number;
+
+	// Used for playoff series stats which are generally not stored long-term
+	statOverrides?: Record<string, number>;
+};
+
+type AwardInfo = {
+	shortName: string;
+	name: string;
+	formula: string;
+	bench?: boolean;
+	grouping?: "conf" | "div"; // undefined means league
+	mip?: boolean;
+	rookie?: boolean;
+	statRange?: "playoffs" | "combined" | "finals" | "semifinals"; // undefined means regularSeason
+	numTeams?: number; // undefined means individual award
+};
+
+type Award2 = AwardInfo & {
+	group?: number | undefined; // based on grouping - cid or did, or undefined if league
+} & (
+		| {
+				numTeams?: undefined;
+				winner: AwardPlayer2;
+		  }
+		| {
+				numTeams: number;
+				winner: AwardPlayer2[][];
+		  }
+	);
+export type Awards2 = {
+	season: number;
+	bestRecord: number; // tid
+	bestRecordConfs: Record<number, number>; // <cid, tid>
+	awards: Award2[];
+};

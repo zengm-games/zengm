@@ -230,6 +230,7 @@ const genOrder = async (
 	let firstN: number[];
 	let numLotteryTeams = 0;
 	let chances: number[] = [];
+	let nba2027Restrictions: DraftLotteryResult["nba2027"];
 	if (draftHasLottery(draftType)) {
 		const numPlayoffTeams = (await getNumPlayoffTeams(g.get("season")))
 			.numPlayoffTeams;
@@ -254,11 +255,12 @@ const genOrder = async (
 			);
 		}
 
+		const lotteryTeams = firstRoundTeams.slice(0, numLotteryTeams);
+
 		if (draftType === "cola") {
 			// If the playoffs aren't over yet, then we haven't yet added COLA_ALPHA to all the lottery teams
 			const addAlpha = g.get("phase") <= PHASE.PLAYOFFS ? COLA_ALPHA : 0;
 
-			const lotteryTeams = firstRoundTeams.slice(0, numLotteryTeams);
 			chances = lotteryTeams.map((t) => {
 				// Traded picks are not eligible for the lottery
 				const currentTid = draftPicksIndexed[t.tid]?.[1]?.tid;
@@ -277,6 +279,26 @@ const genOrder = async (
 			});
 		} else {
 			chances = info.chances;
+
+			if (draftType === "nba2027") {
+				const restricted1 = [];
+				const restricted5 = [];
+				for (const [i, t] of lotteryTeams.entries()) {
+					if (t.draftLottery?.type === "nba2027") {
+						if (t.draftLottery.restricted1) {
+							restricted1.push(i);
+						}
+						if (t.draftLottery.restricted5 === 2) {
+							restricted5.push(i);
+						}
+					}
+				}
+
+				nba2027Restrictions = {
+					restricted1,
+					restricted5,
+				};
+			}
 		}
 
 		if (numLotteryTeams < chances.length) {
@@ -322,6 +344,7 @@ const genOrder = async (
 				riggedLotteryChances?.includes(i) ? 0 : chance,
 			),
 			numToPick,
+			nba2027Restrictions,
 		);
 
 		if (!mock) {
@@ -394,10 +417,8 @@ const genOrder = async (
 
 	let draftLotteryResult: MyDraftLotteryResult<true> | undefined;
 	if (draftHasLottery(draftType)) {
-		// Save draft lottery results separately
-		draftLotteryResult = {
+		const common = {
 			season: g.get("season"),
-			draftType,
 			rigged: riggedLottery,
 			result: firstRoundTeams // Start with teams in lottery order
 				.map(({ tid }) => {
@@ -431,6 +452,22 @@ const genOrder = async (
 					};
 				}),
 		};
+
+		if (draftType === "nba2027") {
+			if (!nba2027Restrictions) {
+				throw new Error("Should never happen");
+			}
+			draftLotteryResult = {
+				...common,
+				draftType,
+				nba2027: nba2027Restrictions,
+			};
+		} else {
+			draftLotteryResult = {
+				...common,
+				draftType,
+			};
+		}
 
 		if (!mock) {
 			await idb.cache.draftLotteryResults.put(draftLotteryResult);

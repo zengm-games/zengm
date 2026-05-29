@@ -194,7 +194,29 @@ export type DraftLotteryResult<Completed = true> = {
 		| "dummy";
 	rigged?: GameAttributesLeague["riggedLottery"];
 	result: DraftLotteryResultArray<Completed>;
-};
+} & (
+	| {
+			draftType: "nba2027";
+			// This is so draftTeamHistory can show accurate historical progs for the nba2027 draftType. Values are indexes of the result array, not tids!
+			nba2027: {
+				restricted1: number[];
+				restricted5: number[];
+			};
+	  }
+	| {
+			draftType?:
+				| Exclude<
+						DraftType,
+						| "random"
+						| "noLottery"
+						| "freeAgents"
+						| "noLotteryReverse"
+						| "nba2027"
+				  >
+				| "dummy";
+			nba2027?: undefined;
+	  }
+);
 
 export type DraftPickSeason = number | "fantasy" | "expansion";
 

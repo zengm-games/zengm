@@ -80,7 +80,7 @@ const updateDraftTeamHistory = async (
 						draftLottery.result.length,
 					);
 					const { probs } = getDraftLotteryProbs(
-						draftLottery.result,
+						draftLottery,
 						draftLottery.draftType,
 						numToPick,
 					);

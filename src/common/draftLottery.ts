@@ -1,5 +1,9 @@
 import { isSport } from "./sportFunctions.ts";
-import type { DraftLotteryResultArray, DraftType } from "./types.ts";
+import type {
+	DraftLotteryResult,
+	DraftLotteryResultArray,
+	DraftType,
+} from "./types.ts";
 
 class MultiDimensionalRange {
 	initial: boolean;
@@ -67,6 +71,7 @@ export const simLottery = (
 	draftType: DraftType,
 	chances: number[],
 	numToPick: number,
+	nba2027Restrictions: DraftLotteryResult["nba2027"],
 ) => {
 	let teams = chances.map((chance, index) => ({
 		chances: chance,
@@ -78,6 +83,8 @@ export const simLottery = (
 	const top12GuaranteedLimit = 12;
 	const top12Guaranteed =
 		draftType === "nba2027" ? new Set(teams.slice(0, 3)) : undefined;
+	const restricted1 = nba2027Restrictions?.restricted1;
+	const restricted5 = nba2027Restrictions?.restricted5;
 
 	for (let i = 0; i < numToPick; i++) {
 		// For example, if there are still 3 teams left to put in the top 12, then forceTop12 needs to become true when i=9 (10th pick)
@@ -125,6 +132,7 @@ const monteCarloLotteryProbs = (
 	draftType: DraftType,
 	result: DraftLotteryResultArray,
 	numToPick: number,
+	nba2027Restrictions: DraftLotteryResult["nba2027"],
 ) => {
 	const ITERATIONS = 100000;
 
@@ -133,7 +141,12 @@ const monteCarloLotteryProbs = (
 	const chances = result.map((row) => row.chances);
 
 	for (let i = 0; i < ITERATIONS; i++) {
-		const result = simLottery(draftType, chances, numToPick);
+		const result = simLottery(
+			draftType,
+			chances,
+			numToPick,
+			nba2027Restrictions,
+		);
 		for (let j = 0; j < result.length; j++) {
 			const k = result[j]!;
 			probs[k] ??= [];
@@ -147,7 +160,7 @@ const monteCarloLotteryProbs = (
 };
 
 export const getDraftLotteryProbs = (
-	result: DraftLotteryResultArray | undefined,
+	draftLotteryResult: DraftLotteryResult | undefined,
 	draftType: DraftType | "dummy" | undefined,
 	numToPick: number,
 ): {
@@ -155,7 +168,7 @@ export const getDraftLotteryProbs = (
 	probs?: (number | undefined)[][];
 } => {
 	if (
-		result === undefined ||
+		draftLotteryResult?.result === undefined ||
 		draftType === undefined ||
 		draftType === "random" ||
 		draftType === "noLottery" ||
@@ -167,6 +180,8 @@ export const getDraftLotteryProbs = (
 			tooSlow: false,
 		};
 	}
+
+	const result = draftLotteryResult.result;
 
 	const probs: number[][] = [];
 	const totalChances = result.reduce(
@@ -475,7 +490,12 @@ export const getDraftLotteryProbs = (
 			// Estimate probs
 			return {
 				tooSlow,
-				probs: monteCarloLotteryProbs(draftType, result, numToPick),
+				probs: monteCarloLotteryProbs(
+					draftType,
+					result,
+					numToPick,
+					draftLotteryResult.nba2027,
+				),
 			};
 		}
 	}

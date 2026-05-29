@@ -18,6 +18,7 @@ import {
 } from "../core/draft/genOrder.ts";
 import { groupByUnique, orderBy } from "../../common/utils.ts";
 import { getDraftLotteryProbs } from "../core/draft/draftLottery.ts";
+import getNumPlayoffTeams from "../core/season/getNumPlayoffTeams.ts";
 
 const filterDraftPicks = (
 	draftPicks: DraftPickWithoutKey[],
@@ -209,9 +210,11 @@ const updateDraftLottery = async (
 					rigged = draftLotteryResult.rigged;
 				}
 
+				const { numPlayInTeams } = await getNumPlayoffTeams(season);
 				const numToPick = getNumToPick(
 					draftType,
 					draftLotteryResult ? draftLotteryResult.result.length : 14,
+					numPlayInTeams,
 				);
 
 				const { tooSlow, probs } = getDraftLotteryProbs(
@@ -319,9 +322,11 @@ const updateDraftLottery = async (
 			);
 		}
 
+		const { numPlayInTeams } = await getNumPlayoffTeams(season);
 		const numToPick = getNumToPick(
 			draftType,
 			draftLotteryResult ? draftLotteryResult.result.length : 14,
+			numPlayInTeams,
 		);
 
 		const { tooSlow, probs } = getDraftLotteryProbs(

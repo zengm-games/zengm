@@ -7,6 +7,7 @@ import { getDraftLotteryProbs } from "../core/draft/draftLottery.ts";
 import { getNumToPick } from "../core/draft/genOrder.ts";
 import { maxBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import getNumPlayoffTeams from "../core/season/getNumPlayoffTeams.ts";
 
 const updateDraftTeamHistory = async (
 	inputs: ViewInput<"draftTeamHistory">,
@@ -75,9 +76,11 @@ const updateDraftTeamHistory = async (
 					preLotteryRank = lotteryRowIndex + 1;
 					lotteryChange = preLotteryRank - p.draft.pick;
 
-					const numToPick = getNumToPick(
+					const { numPlayInTeams } = await getNumPlayoffTeams(p.draft.year);
+					const numToPick = await getNumToPick(
 						draftLottery.draftType ?? "nba1994",
 						draftLottery.result.length,
+						numPlayInTeams,
 					);
 					const { probs } = getDraftLotteryProbs(
 						draftLottery,

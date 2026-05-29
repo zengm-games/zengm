@@ -21,7 +21,7 @@ import { bySport } from "../../../common/sportFunctions.ts";
 import { shuffle } from "../../../common/random.ts";
 import { simLottery } from "./draftLottery.ts";
 import { RESTRICTED_5_PICK, updateNba2027AfterLottery } from "./nba2027.ts";
-import { orderBy } from "../../../common/utils.ts";
+import { orderBy, range } from "../../../common/utils.ts";
 
 type MyDraftLotteryResult<Completed extends boolean> =
 	DraftLotteryResult<Completed> & {
@@ -52,8 +52,12 @@ const LOTTERY_DRAFT_TYPES = [
 	"nba2027",
 ] as const;
 
-// chances does not have to be the perfect length. If chances is too long for numLotteryTeams, it will be truncated. If it's too short, the last entry will be repeated until it's long enough.
-const getLotteryInfo = (draftType: DraftType, numLotteryTeams: number) => {
+// chances does not have to be the perfect length. If chances is too long for numNonPlayoffTeams, it will be truncated. If it's too short, the last entry will be repeated until it's long enough.
+const getLotteryInfo = (
+	draftType: DraftType,
+	numNonPlayoffTeams: number,
+	numPlayInTeams: number,
+) => {
 	if (draftType === "coinFlip") {
 		return {
 			numToPick: 2,
@@ -63,7 +67,7 @@ const getLotteryInfo = (draftType: DraftType, numLotteryTeams: number) => {
 
 	if (draftType === "randomLottery") {
 		return {
-			numToPick: numLotteryTeams,
+			numToPick: numNonPlayoffTeams,
 			chances: [1],
 		};
 	}
@@ -77,7 +81,7 @@ const getLotteryInfo = (draftType: DraftType, numLotteryTeams: number) => {
 
 	if (draftType === "nba1990") {
 		const chances = [];
-		for (let i = numLotteryTeams; i > 0; i--) {
+		for (let i = numNonPlayoffTeams; i > 0; i--) {
 			chances.push(i);
 		}
 
@@ -142,9 +146,38 @@ const getLotteryInfo = (draftType: DraftType, numLotteryTeams: number) => {
 	}
 
 	if (draftType === "nba2027") {
+		// Arbitrary value, but should be something I guess
+		const MIN_NUM_TEAMS_IN_LOTTERY = 6;
+
+		let numToPick = Math.max(numNonPlayoffTeams, MIN_NUM_TEAMS_IN_LOTTERY);
+		const chances: number[] = range(numToPick).map((i) => {
+			if (i < 3) {
+				// 2 chances for the worst 3 teams
+				return 2;
+			}
+
+			// 2 chances for the best 2-4 teams, if we have room
+			if (numNonPlayoffTeams >= 11) {
+				if (i >= numNonPlayoffTeams - 4) {
+					return 2;
+				}
+			} else if (numNonPlayoffTeams >= 9) {
+				if (i >= numNonPlayoffTeams - 2) {
+					return 2;
+				}
+			}
+
+			return 3;
+		});
+		if (numPlayInTeams === 4) {
+			// If exactly 4 play-in teams, then 1 ball to each of the 7/8 losers
+			numToPick += 2;
+			chances.push(1, 1);
+		}
+
 		return {
-			numToPick: 16,
-			chances: [2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 1, 1],
+			numToPick,
+			chances,
 		};
 	}
 
@@ -160,9 +193,10 @@ const draftHasLottery = (
 export const getNumToPick = (
 	draftType: DraftType | "dummy" | undefined,
 	numLotteryTeams: number,
+	numPlayInTeams: number,
 ) => {
 	if (draftHasLottery(draftType)) {
-		return getLotteryInfo(draftType, numLotteryTeams).numToPick;
+		return getLotteryInfo(draftType, numLotteryTeams, numPlayInTeams).numToPick;
 	}
 
 	return 0;
@@ -232,12 +266,13 @@ const genOrder = async (
 	let chances: number[] = [];
 	let nba2027Restrictions: DraftLotteryResult["nba2027"];
 	if (draftHasLottery(draftType)) {
-		const numPlayoffTeams = (await getNumPlayoffTeams(g.get("season")))
-			.numPlayoffTeams;
+		const numPlayoffTeamsInfo = await getNumPlayoffTeams(g.get("season"));
+		const numPlayoffTeams = numPlayoffTeamsInfo.numPlayoffTeams;
 
 		const info = getLotteryInfo(
 			draftType,
 			firstRoundTeams.length - numPlayoffTeams,
+			numPlayoffTeamsInfo.numPlayInTeams,
 		);
 		const numToPick = info.numToPick;
 

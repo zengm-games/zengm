@@ -117,6 +117,7 @@ nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes
 - test enabling at different times, do restrictions get set correctly?
 - test tie between 3 and 4 seed
 - better probability calculation - can hardcode the odds and then handle restrictions by just moving the probs down to the first valid one
+  - also do for 2 expansion teams
 - chances and number of teams should depend on how many non-playoff teams there are, maybe? what about after expansion? think about it
 - make default or not?
 - blog

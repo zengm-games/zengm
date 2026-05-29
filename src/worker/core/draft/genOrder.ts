@@ -216,11 +216,14 @@ const genOrder = async (
 		draftPicksIndexed[tid][dp.round] = dp;
 	}
 
-	const { teamsByRound, ties } = await getTeamsByRound(draftPicksIndexed);
-	const firstRoundTeams = teamsByRound[0] ?? [];
-
 	const draftType = draftTypeOverride ?? g.get("draftType");
 	const riggedLottery = g.get("godMode") ? g.get("riggedLottery") : undefined;
+
+	const { teamsByRound, ties } = await getTeamsByRound(
+		draftType,
+		draftPicksIndexed,
+	);
+	const firstRoundTeams = teamsByRound[0] ?? [];
 
 	// Draft lottery
 	let firstN: number[];

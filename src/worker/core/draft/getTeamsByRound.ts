@@ -2,9 +2,10 @@ import { PHASE } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
 import { getDivisionRanks, orderTeams } from "../../util/orderTeams.ts";
-import type { DraftPickWithoutKey } from "../../../common/types.ts";
+import type { DraftPickWithoutKey, DraftType } from "../../../common/types.ts";
 import { genPlayoffSeriesFromTeams } from "../season/genPlayoffSeries.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { groupByUnique } from "../../../common/utils.ts";
 
 /**
  * Differences across sports:
@@ -58,7 +59,10 @@ const ORDER_AFTER_FIRST_ROUND = bySport<"record" | "firstRound">({
 	hockey: "firstRound",
 });
 
-const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
+const getTeamsByRound = async (
+	draftType: DraftType,
+	draftPicksIndexed: DraftPickWithoutKey[][],
+) => {
 	const allTeams = await idb.getCopies.teamsPlus({
 		attrs: ["tid", "cola", "colaOptOut"],
 		seasonAttrs: [
@@ -88,8 +92,35 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 
 	// If the playoffs haven't started yet, need to project who would be in the playoffs
 	let tidPlayoffs: number[] = [];
+	let nba2027Stuff:
+		| {
+				tidPlayIn910: [number, number, number, number];
+				tidPlayIn78Loser: [number, number];
+				tidPlayIn78Winner: [number, number];
+		  }
+		| undefined;
 	if (g.get("phase") < PHASE.PLAYOFFS) {
-		tidPlayoffs = (await genPlayoffSeriesFromTeams(allTeams)).tidPlayoffs;
+		const info = await genPlayoffSeriesFromTeams(allTeams);
+		tidPlayoffs = info.tidPlayoffs;
+		if (draftType === "nba2027") {
+			const playIns = info.playIns;
+
+			// Only do this stuff if play-in is exactly 2 conferences, otherwise who knows what it should be
+			if (playIns?.length === 2) {
+				const playIn0 = playIns[0]!;
+				const playIn1 = playIns[1]!;
+				nba2027Stuff = {
+					tidPlayIn910: [
+						playIn0[1].away.tid,
+						playIn1[1].away.tid,
+						playIn0[1].home.tid,
+						playIn1[1].home.tid,
+					],
+					tidPlayIn78Loser: [playIn0[0].away.tid, playIn1[0].away.tid],
+					tidPlayIn78Winner: [playIn0[0].home.tid, playIn1[0].home.tid],
+				};
+			}
+		}
 	}
 
 	// Handle teams without draft picks (for challengeNoDraftPicks)
@@ -170,7 +201,15 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 	const firstRound: MyTeam[] = [];
 
 	const nonPlayoffTeams = teams.filter(
-		(t) => t.seasonAttrs.playoffRoundsWon < 0 && !tidPlayoffs.includes(t.tid),
+		(t) =>
+			t.seasonAttrs.playoffRoundsWon < 0 &&
+			!tidPlayoffs.includes(t.tid) &&
+			!(
+				nba2027Stuff &&
+				(nba2027Stuff.tidPlayIn78Loser.includes(t.tid) ||
+					nba2027Stuff.tidPlayIn910.includes(t.tid) ||
+					nba2027Stuff.tidPlayIn78Winner.includes(t.tid))
+			),
 	);
 	const nonPlayoffTeamsOrdered = (
 		await orderTeams(nonPlayoffTeams, allTeams, {
@@ -183,8 +222,24 @@ const getTeamsByRound = async (draftPicksIndexed: DraftPickWithoutKey[][]) => {
 	checkForTies(nonPlayoffTeamsOrdered, 1);
 	firstRound.push(...nonPlayoffTeamsOrdered);
 
+	if (nba2027Stuff) {
+		const teamsByTid = groupByUnique(teams, "tid");
+		for (const tid of [
+			...nba2027Stuff.tidPlayIn910,
+			...nba2027Stuff.tidPlayIn78Loser,
+		]) {
+			const t = teamsByTid[tid];
+			if (t) {
+				firstRound.push(t);
+			}
+		}
+	}
+
 	const playoffTeams = teams.filter(
-		(t) => t.seasonAttrs.playoffRoundsWon >= 0 || tidPlayoffs.includes(t.tid),
+		(t) =>
+			t.seasonAttrs.playoffRoundsWon >= 0 ||
+			tidPlayoffs.includes(t.tid) ||
+			nba2027Stuff?.tidPlayIn78Winner.includes(t.tid),
 	);
 	if (playoffTeams.length > 0) {
 		// For COLA, since first round losers get to be in the draft lottery, we need to sort by playoff performance regardless of the sport's default behavior

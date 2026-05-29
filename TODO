@@ -108,8 +108,13 @@ nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes
   - another team forced to be 12
   - one of the 3 worst forced to be 13+
 - test cola with everyone opted out (should pick uniform random, no firstN) due to simLottery refactor
+- test challengeNoDraftPicks
+- test with different number of teams, playoff rounds, etc
+- test with no play-in
 - sort
   - first round: special case for 9th and 10th play-in teams 2 losers of the 7-8 play-in games
+    - implemented in getTeamsByRound for during season (g.get("phase") < PHASE.PLAYOFFS) do something similar for after playoffs have started
+      - find real 7/8 loser, if possible. otherwise return 8
   - second round: first 16 picks are opposite of lottery
 - better probability calculation for the first pick at least
 - cross-year constraints

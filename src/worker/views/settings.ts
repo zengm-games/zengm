@@ -38,6 +38,7 @@ type Key =
 	| "sonRate"
 	| "forceRetireAge"
 	| "forceRetireSeasons"
+	| "freeAgencySigningsPerDay"
 	| "salaryCapType"
 	| "numGamesPlayoffSeries"
 	| "numPlayoffByes"
@@ -257,6 +258,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			sonRate: g.get("sonRate"),
 			forceRetireAge: g.get("forceRetireAge"),
 			forceRetireSeasons: g.get("forceRetireSeasons"),
+			freeAgencySigningsPerDay: g.get("freeAgencySigningsPerDay"),
 			salaryCapType: g.get("salaryCapType"),
 			numGamesPlayoffSeries: g.get("numGamesPlayoffSeries"),
 			numPlayoffByes: g.get("numPlayoffByes"),

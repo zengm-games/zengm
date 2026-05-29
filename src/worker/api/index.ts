@@ -4980,7 +4980,11 @@ const toggleColaOptOut = async () => {
 	}
 
 	if (t.draftLottery?.type === "cola") {
-		t.draftLottery.optOut = !t.draftLottery.optOut;
+		if (t.draftLottery.optOut) {
+			delete t.draftLottery.optOut;
+		} else {
+			t.draftLottery.optOut = true;
+		}
 	} else {
 		// Should never happen
 		t.draftLottery = {

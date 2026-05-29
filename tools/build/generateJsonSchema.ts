@@ -2738,9 +2738,8 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 							type: "boolean",
 						},
 						draftLottery: {
-							type: "object",
-							properties: {
-								draftLottery: {
+							oneOf: [
+								{
 									type: "object",
 									properties: {
 										type: {
@@ -2753,9 +2752,24 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 											type: "boolean",
 										},
 									},
-									required: ["type", "chances", "optOut"],
+									required: ["type", "chances"],
 								},
-							},
+								{
+									type: "object",
+									properties: {
+										type: {
+											const: "nba2027",
+										},
+										restricted1: {
+											type: "boolean",
+										},
+										restricted5: {
+											enum: [1, 2],
+										},
+									},
+									required: ["type"],
+								},
+							],
 						},
 						colaOptOut: {
 							type: "boolean",

@@ -1589,11 +1589,11 @@ export type Team = {
 		| {
 				type: "cola";
 				chances: number;
-				optOut: boolean;
+				optOut?: true;
 		  }
 		| {
 				type: "nba2027";
-				restricted1?: boolean; // True if team got the top pick last year
+				restricted1?: true; // True if team got the top pick last year
 				restricted5?: 1 | 2; // Number of prior seasons in a row that team got a top 5 pick (2 is max to track, undefined is 0)
 		  };
 };

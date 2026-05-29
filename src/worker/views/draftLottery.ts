@@ -311,7 +311,7 @@ const updateDraftLottery = async (
 				throw new Error("Should never happen");
 			}
 			colaOptOutStatus =
-				t.draftLottery?.type === "cola" ? t.draftLottery.optOut : false;
+				t.draftLottery?.type === "cola" ? !!t.draftLottery.optOut : false;
 
 			// Opt out is available if user has their own lottery pick
 			colaOptOutAvailable = draftLotteryResult.result.some(

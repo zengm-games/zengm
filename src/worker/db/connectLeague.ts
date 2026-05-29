@@ -433,8 +433,10 @@ export const colaUpdate = (t: Team) => {
 		t.draftLottery = {
 			type: "cola",
 			chances: cola,
-			optOut: !!colaOptOut,
 		};
+		if (colaOptOut) {
+			t.draftLottery.optOut = true;
+		}
 		delete (t as any).cola;
 		delete (t as any).colaOptOut;
 		return true;

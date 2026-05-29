@@ -77,7 +77,6 @@ export const updateColaAfterPlayoffs = async () => {
 			t.draftLottery = {
 				type: "cola",
 				chances: 0,
-				optOut: false,
 			};
 		}
 		const before = t.draftLottery.chances;
@@ -119,7 +118,6 @@ export const updateColaAfterLottery = async (tids: number[]) => {
 			t.draftLottery = {
 				type: "cola",
 				chances: 0,
-				optOut: false,
 			};
 		}
 		const before = t.draftLottery.chances;
@@ -153,7 +151,7 @@ export const updateColaAfterLottery = async (tids: number[]) => {
 				" due to opting out of the lottery",
 			);
 
-			t.draftLottery.optOut = false;
+			delete t.draftLottery.optOut;
 
 			await idb.cache.teams.put(t);
 		}
@@ -237,7 +235,6 @@ export const initializeCola = async () => {
 		t.draftLottery = {
 			type: "cola",
 			chances: colaByTid[t.tid] ?? 0,
-			optOut: false,
 		};
 		await idb.cache.teams.put(t);
 	}

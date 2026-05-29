@@ -19,7 +19,7 @@ import getNumPlayoffTeams from "../season/getNumPlayoffTeams.ts";
 import { getNumColaLotteryTeams, updateColaAfterLottery } from "./cola.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { shuffle } from "../../../common/random.ts";
-import { simLottery } from "../../../common/draftLottery.ts";
+import { simLottery } from "./draftLottery.ts";
 import { RESTRICTED_5_PICK, updateNba2027AfterLottery } from "./nba2027.ts";
 import { orderBy } from "../../../common/utils.ts";
 

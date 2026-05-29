@@ -3,7 +3,7 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { ViewInput, Player } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { getDraftLotteryProbs } from "../../common/draftLottery.ts";
+import { getDraftLotteryProbs } from "../core/draft/draftLottery.ts";
 import { getNumToPick } from "../core/draft/genOrder.ts";
 import { maxBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";

@@ -22,7 +22,7 @@ import type {
 	DraftLotteryResult,
 } from "../../common/types.ts";
 import useClickable from "../hooks/useClickable.tsx";
-import { getDraftLotteryProbs } from "../../common/draftLottery.ts";
+import { getDraftLotteryProbs } from "../../worker/core/draft/draftLottery.ts";
 import useStickyXX from "../components/DataTable/useStickyXX.ts";
 import { range } from "../../common/utils.ts";
 import {
@@ -616,18 +616,16 @@ const DraftLotteryTable = (props: Props) => {
 		dpidsAvailableToTrade,
 		draftPicks,
 		numToPick,
+		probs,
 		rigged,
 		season,
 		teams,
+		tooSlow,
 		type,
 		usePts,
 	} = props;
 	const { draftType, draftLotteryResult } = state;
-	const { tooSlow, probs } = getDraftLotteryProbs(
-		draftLotteryResult,
-		draftType,
-		numToPick,
-	);
+
 	const result = draftLotteryResult?.result;
 	const NUM_PICKS = result !== undefined ? result.length : 14;
 

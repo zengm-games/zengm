@@ -17,6 +17,7 @@ import {
 	type GenOrderResult,
 } from "../core/draft/genOrder.ts";
 import { groupByUnique, orderBy } from "../../common/utils.ts";
+import { getDraftLotteryProbs } from "../core/draft/draftLottery.ts";
 
 const filterDraftPicks = (
 	draftPicks: DraftPickWithoutKey[],
@@ -40,7 +41,7 @@ const updateDraftLottery = async (
 	updateEvents: UpdateEvents,
 	state: any,
 ): Promise<
-	| {
+	| ({
 			challengeWarning: boolean;
 			notEnoughTeams: boolean;
 			colaOptOutAvailable: boolean;
@@ -89,7 +90,7 @@ const updateDraftLottery = async (
 			>;
 			type: "completed" | "projected" | "readyToRun";
 			usePts: boolean;
-	  }
+	  } & ReturnType<typeof getDraftLotteryProbs>)
 	| undefined
 > => {
 	if (
@@ -208,19 +209,29 @@ const updateDraftLottery = async (
 					rigged = draftLotteryResult.rigged;
 				}
 
+				const numToPick = getNumToPick(
+					draftType,
+					draftLotteryResult ? draftLotteryResult.result.length : 14,
+				);
+
+				const { tooSlow, probs } = getDraftLotteryProbs(
+					draftLotteryResult,
+					draftType,
+					numToPick,
+				);
+
 				return {
 					dpidsAvailableToTrade,
 					draftPicks,
 					draftType,
-					numToPick: getNumToPick(
-						draftType,
-						draftLotteryResult ? draftLotteryResult.result.length : 14,
-					),
+					numToPick,
 					draftLotteryResult,
+					probs,
 					rigged,
 					season,
 					showExpansionTeamMessage,
 					teams,
+					tooSlow,
 					type: "completed",
 					usePts,
 					challengeWarning: false,
@@ -243,6 +254,7 @@ const updateDraftLottery = async (
 					season,
 					showExpansionTeamMessage,
 					teams,
+					tooSlow: false,
 					type: "completed",
 					usePts,
 					challengeWarning: false,
@@ -307,6 +319,17 @@ const updateDraftLottery = async (
 			);
 		}
 
+		const numToPick = getNumToPick(
+			draftType,
+			draftLotteryResult ? draftLotteryResult.result.length : 14,
+		);
+
+		const { tooSlow, probs } = getDraftLotteryProbs(
+			draftLotteryResult,
+			draftType,
+			numToPick,
+		);
+
 		return {
 			challengeWarning:
 				!draftLotteryResult &&
@@ -317,15 +340,14 @@ const updateDraftLottery = async (
 			dpidsAvailableToTrade,
 			draftPicks,
 			draftType,
-			numToPick: getNumToPick(
-				draftType,
-				draftLotteryResult ? draftLotteryResult.result.length : 14,
-			),
+			numToPick,
 			draftLotteryResult,
 			rigged: g.get("riggedLottery"),
+			probs,
 			season,
 			showExpansionTeamMessage,
 			teams,
+			tooSlow,
 			type,
 			usePts,
 			colaOptOutAvailable,

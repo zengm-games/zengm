@@ -118,11 +118,9 @@ nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes
 - test tie between 3 and 4 seed
 - for draftTeamHistory, need to save nba2027 draftLottery team info in draftLotteryResults somehow, so we can compute probs
 - schema test for draftLottery property (cola and nba2027)
-- better probability calculation for the first pick at least
+- better probability calculation - can hardcode the odds and then handle restrictions by just moving the probs down to the first valid one
 - chances and number of teams should depend on how many non-playoff teams there are, maybe? what about after expansion? think about it
 - make default or not?
-- getDraftLotteryProbs should strictly be in worker because it can be slow
-  - get rid of flicker as lottery runs or games are simmed
 - blog
   - is this more or less fun?
 

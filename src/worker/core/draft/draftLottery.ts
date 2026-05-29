@@ -1,13 +1,10 @@
-import {
-	RESTRICTED_1_PICK,
-	RESTRICTED_5_PICK,
-} from "../worker/core/draft/nba2027.ts";
-import { isSport } from "./sportFunctions.ts";
+import { RESTRICTED_1_PICK, RESTRICTED_5_PICK } from "./nba2027.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 import type {
 	DraftLotteryResult,
 	DraftLotteryResultArray,
 	DraftType,
-} from "./types.ts";
+} from "../../../common/types.ts";
 
 class MultiDimensionalRange {
 	initial: boolean;

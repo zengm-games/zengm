@@ -1,3 +1,7 @@
+import {
+	RESTRICTED_1_PICK,
+	RESTRICTED_5_PICK,
+} from "../worker/core/draft/nba2027.ts";
 import { isSport } from "./sportFunctions.ts";
 import type {
 	DraftLotteryResult,
@@ -67,6 +71,76 @@ const draftLotteryProbsTooSlow = (numTeams: number, numToPick: number) => {
 	return count >= 1e7;
 };
 
+// This is needed to handle restricted1/restricted5 for nba2027 easily, otherwise could just be an array
+class PickIndexes {
+	indexes: number[] = [];
+	private nba2027:
+		| {
+				restrictions: NonNullable<DraftLotteryResult["nba2027"]>;
+				pending1: number[];
+				pending5: number[];
+		  }
+		| undefined;
+
+	constructor(nba2027Restrictions: DraftLotteryResult["nba2027"]) {
+		if (nba2027Restrictions) {
+			this.nba2027 = {
+				pending1: [],
+				pending5: [],
+				restrictions: nba2027Restrictions,
+			};
+		}
+	}
+
+	add(index: number) {
+		if (this.nba2027) {
+			// If we are already past pick 5, then we don't need to worry about giving this pick special treatment
+			if (this.indexes.length < RESTRICTED_5_PICK) {
+				// restricted5 takes precedence over restricted1
+				if (this.nba2027.restrictions.restricted5.includes(index)) {
+					this.nba2027.pending5.push(index);
+					return;
+				} else if (
+					this.indexes.length < RESTRICTED_1_PICK &&
+					this.nba2027.restrictions.restricted1.includes(index)
+				) {
+					this.nba2027.pending1.push(index);
+					return;
+				}
+			}
+		}
+
+		this.indexes.push(index);
+
+		if (this.nba2027) {
+			// If we just added pick 1 or pick 5, then handle pending picks
+			if (
+				this.indexes.length === RESTRICTED_1_PICK &&
+				this.nba2027.pending1.length > 0
+			) {
+				this.indexes.push(...this.nba2027.pending1);
+				this.nba2027.pending1 = [];
+			}
+
+			// Not elseif in case somehow the above push triggered this limit too (would need to have customizable limits or somehow 4+ #1 picks)
+			if (
+				this.indexes.length === RESTRICTED_5_PICK &&
+				this.nba2027.pending5.length > 0
+			) {
+				this.indexes.push(...this.nba2027.pending5);
+				this.nba2027.pending5 = [];
+			}
+		}
+	}
+
+	doneNba2027() {
+		return (
+			!this.nba2027 ||
+			(this.nba2027.pending1.length === 0 && this.nba2027.pending5.length === 0)
+		);
+	}
+}
+
 export const simLottery = (
 	draftType: DraftType,
 	chances: number[],
@@ -78,13 +152,11 @@ export const simLottery = (
 		index,
 	}));
 
-	const pickIndexes: number[] = [];
+	const pickIndexes = new PickIndexes(nba2027Restrictions);
 
 	const top12GuaranteedLimit = 12;
 	const top12Guaranteed =
 		draftType === "nba2027" ? new Set(teams.slice(0, 3)) : undefined;
-	const restricted1 = nba2027Restrictions?.restricted1;
-	const restricted5 = nba2027Restrictions?.restricted5;
 
 	for (let i = 0; i < numToPick; i++) {
 		// For example, if there are still 3 teams left to put in the top 12, then forceTop12 needs to become true when i=9 (10th pick)
@@ -111,7 +183,7 @@ export const simLottery = (
 				sum2 += t.chances;
 			}
 			if (rand < sum2) {
-				pickIndexes.push(t.index);
+				pickIndexes.add(t.index);
 				teams = teams.filter((t2) => t2 !== t);
 				if (top12Guaranteed) {
 					top12Guaranteed.delete(t);
@@ -122,9 +194,15 @@ export const simLottery = (
 		}
 	}
 
-	pickIndexes.push(...teams.map((team) => team.index));
+	for (const t of teams) {
+		pickIndexes.add(t.index);
+	}
 
-	return pickIndexes;
+	if (!pickIndexes.doneNba2027()) {
+		throw new Error("Should never happen");
+	}
+
+	return pickIndexes.indexes;
 };
 
 // If it's too slow to calculate the precise probability, just estimate

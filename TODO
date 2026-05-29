@@ -103,6 +103,7 @@ For "this only applies if" settings (like for things related to custom draft typ
 more granular access to draft variables in playersPlus, so we only need to do AbbrevsCache stuff when actually using the abbrev or originalAbbrev properties
 
 nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes-new-anti-tanking-proposal-draft-lottery
+- test in new league with 0-0 records - weird!!
 - test real player data
 - test rigged lottery that interferes with top 12 constraint
   - another team forced to be 12
@@ -119,11 +120,6 @@ nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes
 - schema test for draftLottery property (cola and nba2027)
 - better probability calculation for the first pick at least
 - chances and number of teams should depend on how many non-playoff teams there are, maybe? what about after expansion? think about it
-- cross-year constraints
-  - no back-to-back 1st round pick
-  - no top-5 pick in three consecutive years
-  - how is this implemented exactly?
-    - if an ineligible team is drawn, they get the first pick they are eligible for (#2 or #6, or even #7+ if another team was already bumped to #6)
 - make default or not?
 - getDraftLotteryProbs should strictly be in worker because it can be slow
   - get rid of flicker as lottery runs or games are simmed

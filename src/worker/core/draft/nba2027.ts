@@ -3,7 +3,7 @@ import { idb } from "../../db/index.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
 import g from "../../util/g.ts";
 
-const RESTRICTED_1_PICK = 1;
+export const RESTRICTED_1_PICK = 1;
 export const RESTRICTED_5_PICK = 5;
 
 // number[] rather than tuple in case there are fewer than 5 teams

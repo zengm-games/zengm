@@ -216,7 +216,7 @@ const getTeamsByRound = async (
 			if (newTiedValue === tiedValue) {
 				tiedTeams.push(t);
 			} else {
-				if (tiedTeams.length > 0) {
+				if (tiedTeams.length > 1) {
 					addTie(tiedTeams, round);
 				}
 
@@ -225,7 +225,7 @@ const getTeamsByRound = async (
 			}
 		}
 
-		if (tiedTeams.length > 0) {
+		if (tiedTeams.length > 1) {
 			addTie(tiedTeams, round);
 		}
 	};
@@ -366,9 +366,13 @@ const getTeamsByRound = async (
 		}
 	}
 
-	// Still needs to be adjusted for tiebreakers each round
+	const nba2027NumLotteryTeams = nba2027Stuff
+		? teams.length - playoffTeams.length
+		: undefined;
+
+	// Still needs to be adjusted for tiebreakers each round. Force nba2027 to be "firstRound" so in genOrder we can manually override the order of the non-playoff teams
 	const nthRound =
-		ORDER_AFTER_FIRST_ROUND === "firstRound"
+		ORDER_AFTER_FIRST_ROUND === "firstRound" || nba2027Stuff
 			? firstRound
 			: (await orderTeams(teams, allTeams, orderTeamsSettings)).reverse();
 
@@ -378,12 +382,26 @@ const getTeamsByRound = async (
 		if (i === 0) {
 			teamsByRound.push([...firstRound]);
 		} else {
-			checkForTies(nthRound, i + 1);
+			const round = i + 1;
+
+			if (nba2027NumLotteryTeams !== undefined) {
+				// Check lottery and non-lottery teams separately, because if the last lottery team and first playoff team are tied, we don't want to swap them, because in genOrder we are swapping the order of lottery teams from the 1st round to the 2nd round
+				const groups = [
+					nthRound.slice(0, nba2027NumLotteryTeams),
+					nthRound.slice(nba2027NumLotteryTeams),
+				];
+				for (const group of groups) {
+					checkForTies(group, round);
+				}
+			} else {
+				checkForTies(nthRound, round);
+			}
 			teamsByRound.push([...nthRound]);
 		}
 	}
 
 	return {
+		nba2027NumLotteryTeams,
 		teamsByRound,
 		ties,
 	};

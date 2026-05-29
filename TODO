@@ -111,8 +111,6 @@ nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes
 - test challengeNoDraftPicks
 - test with different number of teams, playoff rounds, etc
 - test with no play-in
-- sort
-  - second round: first 16 picks are opposite of lottery
 - better probability calculation for the first pick at least
 - cross-year constraints
   - no back-to-back 1st round pick

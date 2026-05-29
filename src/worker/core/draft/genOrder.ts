@@ -219,7 +219,7 @@ const genOrder = async (
 	const draftType = draftTypeOverride ?? g.get("draftType");
 	const riggedLottery = g.get("godMode") ? g.get("riggedLottery") : undefined;
 
-	const { teamsByRound, ties } = await getTeamsByRound(
+	const { nba2027NumLotteryTeams, teamsByRound, ties } = await getTeamsByRound(
 		draftType,
 		draftPicksIndexed,
 	);
@@ -437,7 +437,7 @@ const genOrder = async (
 	}
 
 	for (let roundIndex = 1; roundIndex < teamsByRound.length; roundIndex++) {
-		const roundTeams = teamsByRound[roundIndex]!;
+		let roundTeams = teamsByRound[roundIndex]!;
 		const round = roundIndex + 1;
 
 		// Handle tiebreakers for the 2nd+ round (1st is already done by getTeamsByRound, but 2nd can't be done until now because it depends on lottery results for basketball/football)
@@ -478,6 +478,15 @@ const genOrder = async (
 					roundTeams.splice(start, length, ...newOrder);
 				}
 			}
+		}
+
+		if (draftType === "nba2027") {
+			// 2nd+ round, non-playoff teams are reverse of the first round
+			const firstRound = teamsByRound[0]!;
+			roundTeams = [
+				...firstRound.slice(0, nba2027NumLotteryTeams).reverse(),
+				...roundTeams.slice(nba2027NumLotteryTeams),
+			];
 		}
 
 		let pick = 1;

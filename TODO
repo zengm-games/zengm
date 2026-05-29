@@ -115,7 +115,7 @@ nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes
   - cola has its own getNumLotteryTeams function
 - test with no play-in
 - test enabling at different times, do restrictions get set correctly?
-- test tie between 3 and 4 seed
+- test tie between 3 and 4 seed, what is tiebreaker exactly? or in a new league with 0-0 records
 - better probability calculation - can hardcode the odds and then handle restrictions by just moving the probs down to the first valid one
   - also do for 2 expansion teams
 - chances and number of teams should depend on how many non-playoff teams there are, maybe? what about after expansion? think about it

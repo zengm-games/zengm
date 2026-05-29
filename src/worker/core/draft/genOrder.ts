@@ -309,7 +309,11 @@ const genOrder = async (
 			}
 		}
 
-		if (DIVIDE_CHANCES_OVER_TIED_TEAMS && draftType !== "cola") {
+		if (
+			DIVIDE_CHANCES_OVER_TIED_TEAMS &&
+			draftType !== "cola" &&
+			draftType !== "nba2027"
+		) {
 			divideChancesOverTiedTeams(chances, firstRoundTeams, true);
 		}
 

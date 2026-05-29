@@ -184,6 +184,14 @@ export type DraftLotteryResultArray = {
 	dpid: number;
 }[];
 
+type DraftLotteryResultArrayRealized = {
+	tid: number;
+	originalTid: number;
+	chances: number;
+	pick: number;
+	dpid: number;
+}[];
+
 export type DraftLotteryResult = {
 	season: number;
 	draftType?:
@@ -193,7 +201,7 @@ export type DraftLotteryResult = {
 		  >
 		| "dummy";
 	rigged?: GameAttributesLeague["riggedLottery"];
-	result: DraftLotteryResultArray;
+	result: DraftLotteryResultArrayRealized;
 };
 
 export type DraftPickSeason = number | "fantasy" | "expansion";
@@ -1563,11 +1571,17 @@ export type Team = {
 		text: string;
 	}[];
 
-	draftLottery?: {
-		type: "cola";
-		chances: number;
-		optOut: boolean;
-	};
+	draftLottery?:
+		| {
+				type: "cola";
+				chances: number;
+				optOut: boolean;
+		  }
+		| {
+				type: "nba2027";
+				restricted1?: boolean; // True if team got the top pick last year
+				restricted5?: 1 | 2; // Number of prior seasons in a row that team got a top 5 pick (2 is max to track, undefined is 0)
+		  };
 };
 
 export type TeamAttr = keyof Team;

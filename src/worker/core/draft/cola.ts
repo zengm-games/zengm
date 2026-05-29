@@ -229,6 +229,7 @@ export const initializeCola = async () => {
 	}
 
 	for (const t of teams) {
+		// type check is for importing leagues, cause this gets run but might already have a value
 		if (t.disabled || t.draftLottery?.type === "cola") {
 			continue;
 		}

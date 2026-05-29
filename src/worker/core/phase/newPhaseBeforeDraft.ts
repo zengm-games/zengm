@@ -20,7 +20,7 @@ import setGameAttributes from "../league/setGameAttributes.ts";
 import { doExpand, doRelocate } from "./relocateExpand.ts";
 import addAward from "../player/addAward.ts";
 import { analyticsEventLocal } from "../../../common/analyticsEventLocal.ts";
-import { updateLotteryChancesAfterPlayoffs } from "../draft/cola.ts";
+import { updateColaAfterPlayoffs } from "../draft/cola.ts";
 import { last } from "../../../common/utils.ts";
 import { randInt, shuffle, truncGauss } from "../../../common/random.ts";
 import { genMessage } from "./genMessage.ts";
@@ -519,7 +519,7 @@ const newPhaseBeforeDraft = async (
 
 	await doInflation(conditions);
 
-	await updateLotteryChancesAfterPlayoffs();
+	await updateColaAfterPlayoffs();
 
 	// Randomize order of doRelocate and doExpand, because we want one to block the other but not always the same one
 	if (Math.random() > 0.5) {

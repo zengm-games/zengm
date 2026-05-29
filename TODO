@@ -111,6 +111,7 @@ nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes
 - test cola thoroughly
 - test challengeNoDraftPicks
 - test with different number of teams, playoff rounds, etc
+  - cola has its own getNumLotteryTeams function
 - test with no play-in
 - test enabling at different times, do restrictions get set correctly?
 - test tie between 3 and 4 seed
@@ -120,12 +121,10 @@ nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes
 - cross-year constraints
   - no back-to-back 1st round pick
   - no top-5 pick in three consecutive years
-  - update restrictions after every saved draft lottery in nba2027 mode
   - how is this implemented exactly?
-    - based on originalTid
     - if an ineligible team is drawn, they get the first pick they are eligible for (#2 or #6, or even #7+ if another team was already bumped to #6)
 - getDraftLotteryProbs should strictly be in worker because it can be slow
-  - get rid of flicker as lottery runs
+  - get rid of flicker as lottery runs or games are simmed
 - blog
   - is this more or less fun?
 

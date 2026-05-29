@@ -3,10 +3,54 @@ import { idb } from "../../db/index.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
 import g from "../../util/g.ts";
 
-export const initializeNba2027 = async () => {
-	const RESTRICTED_1_PICK = 1;
-	const RESTRICTED_5_PICK = 5;
+const RESTRICTED_1_PICK = 1;
+export const RESTRICTED_5_PICK = 5;
 
+// number[] rather than tuple in case there are fewer than 5 teams
+export const updateNba2027AfterLottery = async (tidsTop5: number[]) => {
+	const firstTid = tidsTop5[0];
+
+	const teams = await idb.cache.teams.getAll();
+	for (const t of teams) {
+		if (t.disabled) {
+			continue;
+		}
+
+		let restricted1: boolean | undefined;
+		let restricted5: boolean | undefined;
+		if (t.tid === firstTid) {
+			restricted1 = true;
+		}
+		if (tidsTop5.includes(t.tid)) {
+			restricted5 = true;
+		}
+
+		if (restricted1 || restricted5) {
+			const prevRestricted5 =
+				t.draftLottery?.type === "nba2027"
+					? t.draftLottery.restricted5
+					: undefined;
+			t.draftLottery = {
+				type: "nba2027",
+			};
+			if (restricted1) {
+				t.draftLottery.restricted1 = restricted1;
+			}
+			if (restricted5) {
+				if (prevRestricted5 === 1 || prevRestricted5 === 2) {
+					t.draftLottery.restricted5 = 2;
+				} else {
+					t.draftLottery.restricted5 = 1;
+				}
+			}
+		} else {
+			delete t.draftLottery;
+		}
+		await idb.cache.teams.put(t);
+	}
+};
+
+export const initializeNba2027 = async () => {
 	const teams = await idb.cache.teams.getAll();
 
 	// Look back to the past 2 completed draft lotteries
@@ -35,9 +79,9 @@ export const initializeNba2027 = async () => {
 		// We can check last season from draftLotteryResults!
 		for (const row of lastDraftLotteryResults.result) {
 			if (row.pick === RESTRICTED_1_PICK) {
-				console.log("FIRST PICK", row);
 				restricted1ByTid[row.originalTid] = true;
-			} else if (row.pick <= RESTRICTED_5_PICK) {
+			}
+			if (row.pick <= RESTRICTED_5_PICK) {
 				restricted5ByTid[row.originalTid] = 1;
 			}
 		}
@@ -55,7 +99,8 @@ export const initializeNba2027 = async () => {
 			}
 			if (p.draft.pick === RESTRICTED_1_PICK) {
 				restricted1ByTid[p.draft.originalTid] = true;
-			} else if (p.draft.pick <= RESTRICTED_5_PICK) {
+			}
+			if (p.draft.pick <= RESTRICTED_5_PICK) {
 				restricted5ByTid[p.draft.originalTid] = 1;
 			}
 		}
@@ -115,6 +160,8 @@ export const initializeNba2027 = async () => {
 			if (restricted5) {
 				t.draftLottery.restricted5 = restricted5;
 			}
+		} else {
+			delete t.draftLottery;
 		}
 		await idb.cache.teams.put(t);
 	}

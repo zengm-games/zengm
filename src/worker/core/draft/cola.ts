@@ -12,7 +12,7 @@ import logEvent from "../../util/logEvent.ts";
 import getNumPlayoffTeams from "../season/getNumPlayoffTeams.ts";
 
 // All teams up to the final 3 rounds of playoffs
-export const getNumLotteryTeams = async () => {
+export const getNumColaLotteryTeams = async () => {
 	const numPlayoffRounds = g.get("numGamesPlayoffSeries", "current").length;
 	let numPlayoffTeams;
 	if (numPlayoffRounds <= 3) {
@@ -54,7 +54,7 @@ const logChange = (
 const PLAYOFF_FACTORS = [0.75, 0.5, 0.25, 0];
 
 // Call this at the end of the playoffs
-export const updateLotteryChancesAfterPlayoffs = async () => {
+export const updateColaAfterPlayoffs = async () => {
 	if (g.get("draftType") !== "cola") {
 		return;
 	}
@@ -104,7 +104,7 @@ export const updateLotteryChancesAfterPlayoffs = async () => {
 // Top 4 picks have their draft index multiplied by this amount
 const DRAFT_LOTTERY_FACTORS = [0, 0.25, 0.5, 0.75];
 
-export const updateLotteryChancesAfterLottery = async (tids: number[]) => {
+export const updateColaAfterLottery = async (tids: number[]) => {
 	for (const [i, tid] of tids.entries()) {
 		const factor = DRAFT_LOTTERY_FACTORS[i];
 		if (factor === undefined) {

@@ -16,13 +16,12 @@ import getTeamsByRound from "./getTeamsByRound.ts";
 import { COLA_ALPHA, PHASE } from "../../../common/constants.ts";
 import { league } from "../index.ts";
 import getNumPlayoffTeams from "../season/getNumPlayoffTeams.ts";
-import {
-	getNumLotteryTeams,
-	updateLotteryChancesAfterLottery,
-} from "./cola.ts";
+import { getNumColaLotteryTeams, updateColaAfterLottery } from "./cola.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { shuffle } from "../../../common/random.ts";
 import { simLottery } from "../../../common/draftLottery.ts";
+import { RESTRICTED_5_PICK, updateNba2027AfterLottery } from "./nba2027.ts";
+import { orderBy } from "../../../common/utils.ts";
 
 type ReturnVal = {
 	draftLotteryResult:
@@ -244,7 +243,7 @@ const genOrder = async (
 		}
 
 		if (draftType === "cola") {
-			numLotteryTeams = await getNumLotteryTeams();
+			numLotteryTeams = await getNumColaLotteryTeams();
 		} else {
 			numLotteryTeams = helpers.bound(
 				firstRoundTeams.length - numPlayoffTeams,
@@ -370,7 +369,7 @@ const genOrder = async (
 
 	if (!mock && draftType === "cola") {
 		const tids = firstRoundOrderAfterLottery.map((t) => t.tid);
-		await updateLotteryChancesAfterLottery(tids);
+		await updateColaAfterLottery(tids);
 	}
 
 	// First round - everyone else
@@ -436,6 +435,17 @@ const genOrder = async (
 			await league.setGameAttributes({
 				riggedLottery: undefined,
 			});
+
+			if (draftType === "nba2027") {
+				const tids = orderBy(
+					draftLotteryResult.result.filter(
+						(row) => row.pick <= RESTRICTED_5_PICK,
+					),
+					"pick",
+					"asc",
+				).map((row) => row.originalTid);
+				await updateNba2027AfterLottery(tids);
+			}
 		}
 	}
 

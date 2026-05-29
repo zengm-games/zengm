@@ -23,15 +23,17 @@ import { simLottery } from "../../../common/draftLottery.ts";
 import { RESTRICTED_5_PICK, updateNba2027AfterLottery } from "./nba2027.ts";
 import { orderBy } from "../../../common/utils.ts";
 
-type ReturnVal = {
-	draftLotteryResult:
-		| (DraftLotteryResult & {
-				draftType: Exclude<
-					DraftType,
-					"random" | "noLottery" | "noLotteryReverse" | "freeAgents"
-				>;
-		  })
-		| undefined;
+type MyDraftLotteryResult<Completed extends boolean> =
+	DraftLotteryResult<Completed> & {
+		draftType: Exclude<
+			DraftType,
+			"random" | "noLottery" | "noLotteryReverse" | "freeAgents"
+		>;
+	};
+
+// The generic and export are because sometimes we want the result of this function to support unrealized picks, like showing an incomplete draft lottery in the UI, and it's just easier to define that type here
+export type GenOrderResult<Completed extends boolean> = {
+	draftLotteryResult: MyDraftLotteryResult<Completed> | undefined;
 	draftPicks: DraftPick[];
 };
 
@@ -195,10 +197,10 @@ export class NotEnoughTeamsError extends Error {
  * If mock is true, then nothing is actually saved to the database and no notifications are sent
  */
 const genOrder = async (
-	mock: boolean = false,
+	mock: boolean,
 	conditions?: Conditions,
 	draftTypeOverride?: DraftType,
-): Promise<ReturnVal> => {
+): Promise<GenOrderResult<true>> => {
 	// Sometimes picks just fail to generate or get lost. For example, if numSeasonsFutureDraftPicks is 0.
 	await genPicks();
 
@@ -390,7 +392,7 @@ const genOrder = async (
 		}
 	}
 
-	let draftLotteryResult: ReturnVal["draftLotteryResult"];
+	let draftLotteryResult: MyDraftLotteryResult<true> | undefined;
 	if (draftHasLottery(draftType)) {
 		// Save draft lottery results separately
 		draftLotteryResult = {

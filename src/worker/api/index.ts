@@ -169,6 +169,7 @@ import { env } from "../util/env.ts";
 import { recomputeLocalUITeamOvrs } from "../util/recomputeLocalUITeamOvrs.ts";
 import { initUILocalGames } from "../util/initUILocalGames.ts";
 import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
+import type { GenOrderResult } from "../core/draft/genOrder.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1052,7 +1053,9 @@ const discardUnsavedProgress = async () => {
 };
 
 const draftLottery = async () => {
-	const { draftLotteryResult } = await draft.genOrder();
+	const { draftLotteryResult } = (await draft.genOrder(
+		false,
+	)) as unknown as GenOrderResult<false>;
 	return draftLotteryResult;
 };
 

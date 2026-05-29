@@ -61,7 +61,7 @@ const updateDraft = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			draftPicks.some((dp) => dp.pick === 0) &&
 			g.get("draftType") !== "freeAgents"
 		) {
-			await draft.genOrder();
+			await draft.genOrder(false);
 			draftPicks = await draft.getOrder();
 		}
 

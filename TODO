@@ -123,6 +123,7 @@ nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes
   - no top-5 pick in three consecutive years
   - how is this implemented exactly?
     - if an ineligible team is drawn, they get the first pick they are eligible for (#2 or #6, or even #7+ if another team was already bumped to #6)
+- make default or not?
 - getDraftLotteryProbs should strictly be in worker because it can be slow
   - get rid of flicker as lottery runs or games are simmed
 - blog

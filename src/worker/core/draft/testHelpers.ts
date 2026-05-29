@@ -8,7 +8,7 @@ import type { Team, TeamSeasonWithoutKey } from "../../../common/types.ts";
 import { DEFAULT_STADIUM_CAPACITY } from "../../../common/constants.ts";
 
 const getDraftTids = async () => {
-	await draft.genOrder();
+	await draft.genOrder(false);
 	const draftPicks = await draft.getOrder();
 	assert.strictEqual(draftPicks.length, 60);
 	return draftPicks.map((d) => d.originalTid);

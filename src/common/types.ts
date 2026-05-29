@@ -176,23 +176,15 @@ export type Conditions = {
 	hostID?: number;
 };
 
-export type DraftLotteryResultArray = {
+export type DraftLotteryResultArray<Completed = boolean> = {
 	tid: number;
 	originalTid: number;
 	chances: number;
-	pick?: number;
+	pick: Completed extends true ? number : number | undefined;
 	dpid: number;
 }[];
 
-type DraftLotteryResultArrayRealized = {
-	tid: number;
-	originalTid: number;
-	chances: number;
-	pick: number;
-	dpid: number;
-}[];
-
-export type DraftLotteryResult = {
+export type DraftLotteryResult<Completed = true> = {
 	season: number;
 	draftType?:
 		| Exclude<
@@ -201,7 +193,7 @@ export type DraftLotteryResult = {
 		  >
 		| "dummy";
 	rigged?: GameAttributesLeague["riggedLottery"];
-	result: DraftLotteryResultArrayRealized;
+	result: DraftLotteryResultArray<Completed>;
 };
 
 export type DraftPickSeason = number | "fantasy" | "expansion";

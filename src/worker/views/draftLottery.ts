@@ -12,12 +12,16 @@ import type {
 	TeamFiltered,
 	DraftPickWithoutKey,
 } from "../../common/types.ts";
-import { getNumToPick, NotEnoughTeamsError } from "../core/draft/genOrder.ts";
+import {
+	getNumToPick,
+	NotEnoughTeamsError,
+	type GenOrderResult,
+} from "../core/draft/genOrder.ts";
 import { groupByUnique, orderBy } from "../../common/utils.ts";
 
 const filterDraftPicks = (
 	draftPicks: DraftPickWithoutKey[],
-	draftLotteryResult: DraftLotteryResult | undefined,
+	draftLotteryResult: DraftLotteryResult<boolean> | undefined,
 ) => {
 	const numLotteryPicks = draftLotteryResult?.result.length ?? 0;
 	return orderBy(
@@ -59,7 +63,10 @@ const updateDraftLottery = async (
 			draftType?: DraftType | "dummy";
 			dpidsAvailableToTrade: Set<number | undefined>;
 			numToPick: number;
-			result: DraftLotteryResultArray | undefined;
+			result:
+				| DraftLotteryResultArray<true>
+				| DraftLotteryResultArray<false>
+				| undefined;
 			rigged: GameAttributesLeague["riggedLottery"];
 			season: number;
 			showExpansionTeamMessage: boolean;
@@ -252,7 +259,9 @@ const updateDraftLottery = async (
 		let draftLotteryResult;
 		let draftPicks;
 		try {
-			const result = await draft.genOrder(true);
+			const result = (await draft.genOrder(
+				true,
+			)) as unknown as GenOrderResult<false>;
 			draftLotteryResult = result.draftLotteryResult;
 			draftPicks = result.draftPicks;
 		} catch (error) {

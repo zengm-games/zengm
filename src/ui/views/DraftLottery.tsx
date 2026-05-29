@@ -139,7 +139,7 @@ type Action =
 	| {
 			type: "start";
 			draftType: DraftType;
-			result: DraftLotteryResultArray;
+			result: DraftLotteryResultArray<false>;
 			toReveal: number[];
 			indRevealed: number;
 	  }
@@ -219,7 +219,7 @@ const Row = ({
 	i: number;
 	pickAlreadyMade: boolean;
 	season: number;
-	t: DraftLotteryResultArray[number];
+	t: DraftLotteryResultArray<false>[number];
 	indRevealed: State["indRevealed"];
 	toReveal: State["toReveal"];
 	probs: NonNullable<ReturnType<typeof getDraftLotteryProbs>["probs"]>;

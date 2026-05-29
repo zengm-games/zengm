@@ -75,7 +75,10 @@ export const initializeNba2027 = async () => {
 	const restricted1ByTid: Record<number, boolean> = {};
 	const restricted5ByTid: Record<number, 1 | 2> = {};
 
-	if (lastDraftLotteryResults) {
+	if (
+		lastDraftLotteryResults &&
+		lastDraftLotteryResults.result.length > RESTRICTED_5_PICK
+	) {
 		// We can check last season from draftLotteryResults!
 		for (const row of lastDraftLotteryResults.result) {
 			if (row.pick === RESTRICTED_1_PICK) {
@@ -111,7 +114,10 @@ export const initializeNba2027 = async () => {
 	const olderDraftLotteryResults = await idb.getCopy.draftLotteryResults({
 		season: olderDraftLotterySeason,
 	});
-	if (olderDraftLotteryResults) {
+	if (
+		olderDraftLotteryResults &&
+		olderDraftLotteryResults.result.length > RESTRICTED_5_PICK
+	) {
 		// We can check last season from draftLotteryResults!
 		for (const row of olderDraftLotteryResults.result) {
 			if (

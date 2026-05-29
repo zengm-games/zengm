@@ -103,11 +103,12 @@ For "this only applies if" settings (like for things related to custom draft typ
 more granular access to draft variables in playersPlus, so we only need to do AbbrevsCache stuff when actually using the abbrev or originalAbbrev properties
 
 nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes-new-anti-tanking-proposal-draft-lottery
-- test real player data
-- test rigged lottery that interferes with top 12 constraint
-  - another team forced to be 12
-  - one of the 3 worst forced to be 13+
-- test with 2028 expansion teams, and after that
+- test rigged lottery that interferes with
+  - top 12 constraint
+    - another team forced to be 12
+    - one of the 3 worst forced to be 13+
+  - top 1 constraint
+  - top 5 constraint
 - test cola with everyone opted out (should pick uniform random, no firstN) due to simLottery refactor
 - test cola thoroughly
 - test challengeNoDraftPicks - currently it bumps up another playoff team to the lottery
@@ -119,6 +120,7 @@ nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes
 - blog
   - is this more or less fun?
   - weird number of teams or playoff settings
+  - trade value of picks doesn't account for lottery
 
 in BBGM sometimes (about once per decade) a player is injured immediately after subbing in, in which case they have 1 GP with 0 min because no time has elapsed
 

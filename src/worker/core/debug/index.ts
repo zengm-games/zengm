@@ -4,6 +4,7 @@ import avgRatingDists from "./avgRatingDists.ts";
 import compositeRatingDists from "./compositeRatingDists.ts";
 import countPositions from "./countPositions.ts";
 import countSkills from "./countSkills.ts";
+import { disableAutoSave } from "./disableAutoSave.ts";
 import maxRatingDists from "./maxRatingDists.ts";
 import percentageDraftPicksSigned from "./percentageDraftPicksSigned.ts";
 import recomputeAwards from "./recomputeAwards.ts";
@@ -17,6 +18,7 @@ export default {
 	compositeRatingDists,
 	countPositions,
 	countSkills,
+	disableAutoSave,
 	maxRatingDists,
 	percentageDraftPicksSigned,
 	recomputeAwards,

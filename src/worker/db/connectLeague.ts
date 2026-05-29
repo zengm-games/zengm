@@ -1734,6 +1734,7 @@ const migrate = async ({
 	}
 
 	// Next update - do similar to `oldVersion < 71` above for numPlayoffRounds and draftType, from loadGameAttributes
+	// Also draftLotteryResult.draftType should be nba1994 if undefined, see views/draftLottery.ts, maybe add comment about hardcoded 14 there if that is also a similar issue
 };
 
 const connectLeague = (lid: number) =>

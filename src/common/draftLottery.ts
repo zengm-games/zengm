@@ -160,7 +160,7 @@ const monteCarloLotteryProbs = (
 };
 
 export const getDraftLotteryProbs = (
-	draftLotteryResult: DraftLotteryResult | undefined,
+	draftLotteryResult: DraftLotteryResult<boolean> | undefined,
 	draftType: DraftType | "dummy" | undefined,
 	numToPick: number,
 ): {

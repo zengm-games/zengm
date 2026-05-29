@@ -4,7 +4,6 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type {
 	UpdateEvents,
-	DraftLotteryResultArray,
 	ViewInput,
 	DraftType,
 	DraftLotteryResult,
@@ -63,9 +62,9 @@ const updateDraftLottery = async (
 			draftType?: DraftType | "dummy";
 			dpidsAvailableToTrade: Set<number | undefined>;
 			numToPick: number;
-			result:
-				| DraftLotteryResultArray<true>
-				| DraftLotteryResultArray<false>
+			draftLotteryResult:
+				| DraftLotteryResult<true>
+				| DraftLotteryResult<false>
 				| undefined;
 			rigged: GameAttributesLeague["riggedLottery"];
 			season: number;
@@ -200,14 +199,11 @@ const updateDraftLottery = async (
 
 			// If season === g.get("season") && g.get("phase") === PHASE.DRAFT_LOTTERY, this will be undefined if the lottery is not done yet
 			if (draftLotteryResult || g.get("phase") > PHASE.DRAFT_LOTTERY) {
-				const result = draftLotteryResult
-					? draftLotteryResult.result
-					: undefined; // Past lotteries before draftLotteryResult.draftType were all 1994
-
 				let draftType: DraftLotteryResult["draftType"] | undefined;
 				let rigged: GameAttributesLeague["riggedLottery"];
 
 				if (draftLotteryResult) {
+					// Past lotteries before draftLotteryResult.draftType were all 1994
 					draftType = draftLotteryResult.draftType ?? "nba1994";
 					rigged = draftLotteryResult.rigged;
 				}
@@ -216,8 +212,11 @@ const updateDraftLottery = async (
 					dpidsAvailableToTrade,
 					draftPicks,
 					draftType,
-					numToPick: getNumToPick(draftType, result ? result.length : 14),
-					result,
+					numToPick: getNumToPick(
+						draftType,
+						draftLotteryResult ? draftLotteryResult.result.length : 14,
+					),
+					draftLotteryResult,
 					rigged,
 					season,
 					showExpansionTeamMessage,
@@ -239,7 +238,7 @@ const updateDraftLottery = async (
 					draftPicks: undefined,
 					draftType: "noLottery",
 					numToPick: 0,
-					result: undefined,
+					draftLotteryResult: undefined,
 					rigged: undefined,
 					season,
 					showExpansionTeamMessage,
@@ -322,7 +321,7 @@ const updateDraftLottery = async (
 				draftType,
 				draftLotteryResult ? draftLotteryResult.result.length : 14,
 			),
-			result: draftLotteryResult?.result,
+			draftLotteryResult,
 			rigged: g.get("riggedLottery"),
 			season,
 			showExpansionTeamMessage,

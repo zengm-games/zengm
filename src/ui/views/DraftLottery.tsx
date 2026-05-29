@@ -19,6 +19,7 @@ import type {
 	View,
 	DraftType,
 	DraftPickWithoutKey,
+	DraftLotteryResult,
 } from "../../common/types.ts";
 import useClickable from "../hooks/useClickable.tsx";
 import { getDraftLotteryProbs } from "../../common/draftLottery.ts";
@@ -120,7 +121,7 @@ export const getDraftTypeDescription = (
 type Props = View<"draftLottery">;
 type State = {
 	draftType: Props["draftType"];
-	result: Props["result"];
+	draftLotteryResult: Props["draftLotteryResult"];
 	season: Props["season"];
 	toReveal: number[];
 	// Values are indexes of props.result, starting with the 14th pick and ending with the 1st pick
@@ -131,7 +132,7 @@ type State = {
 type Action =
 	| {
 			type: "init";
-			props: Pick<Props, "result" | "season" | "draftType">;
+			props: Pick<State, "draftLotteryResult" | "season" | "draftType">;
 	  }
 	| {
 			type: "startClicked";
@@ -139,7 +140,7 @@ type Action =
 	| {
 			type: "start";
 			draftType: DraftType;
-			result: DraftLotteryResultArray<false>;
+			draftLotteryResult: DraftLotteryResult<false>;
 			toReveal: number[];
 			indRevealed: number;
 	  }
@@ -158,7 +159,7 @@ const reducer = (state: State, action: Action): State => {
 		case "init":
 			return {
 				draftType: action.props.draftType,
-				result: action.props.result,
+				draftLotteryResult: action.props.draftLotteryResult,
 				toReveal: [],
 				indRevealed: -1,
 				revealState: "init",
@@ -173,7 +174,7 @@ const reducer = (state: State, action: Action): State => {
 			return {
 				...state,
 				draftType: action.draftType,
-				result: action.result,
+				draftLotteryResult: action.draftLotteryResult,
 				toReveal: action.toReveal,
 				indRevealed: action.indRevealed,
 				revealState: "running",
@@ -413,7 +414,9 @@ const Rigged = ({
 	result,
 	rigged,
 	type,
-}: Pick<Props, "numToPick" | "result" | "rigged" | "type">) => {
+}: Pick<Props, "numToPick" | "rigged" | "type"> & {
+	result: DraftLotteryResultArray<boolean> | undefined;
+}) => {
 	const { teamInfoCache } = useLocal(["teamInfoCache"]);
 
 	if (!rigged || !result || type === "projected") {
@@ -509,8 +512,8 @@ const DraftLotteryTable = (props: Props) => {
 	const timeoutID = useRef<number | undefined>(undefined);
 
 	const [state, dispatch] = useReducer(reducer, {
+		draftLotteryResult: props.draftLotteryResult,
 		draftType: props.draftType,
-		result: props.result,
 		toReveal: [],
 		indRevealed: -1,
 		revealState: "init",
@@ -521,11 +524,19 @@ const DraftLotteryTable = (props: Props) => {
 	if (
 		props.season !== state.season ||
 		props.draftType !== state.draftType ||
-		(revealState.current === "init" && props.result !== state.result)
+		(revealState.current === "init" &&
+			props.draftLotteryResult !== state.draftLotteryResult)
 	) {
 		numLeftToReveal.current = 0;
 		revealState.current = "init";
-		dispatch({ type: "init", props });
+		dispatch({
+			type: "init",
+			props: {
+				draftLotteryResult: props.draftLotteryResult,
+				draftType: props.draftType,
+				season: props.season,
+			},
+		});
 	}
 
 	const revealPickAuto = () => {
@@ -568,7 +579,13 @@ const DraftLotteryTable = (props: Props) => {
 
 			revealState.current = "running";
 			numLeftToReveal.current = toReveal.length;
-			dispatch({ type: "start", draftType, result, toReveal, indRevealed: -1 });
+			dispatch({
+				type: "start",
+				draftType,
+				draftLotteryResult,
+				toReveal,
+				indRevealed: -1,
+			});
 
 			revealPickAuto();
 		}
@@ -605,8 +622,13 @@ const DraftLotteryTable = (props: Props) => {
 		type,
 		usePts,
 	} = props;
-	const { draftType, result } = state;
-	const { tooSlow, probs } = getDraftLotteryProbs(result, draftType, numToPick);
+	const { draftType, draftLotteryResult } = state;
+	const { tooSlow, probs } = getDraftLotteryProbs(
+		draftLotteryResult,
+		draftType,
+		numToPick,
+	);
+	const result = draftLotteryResult?.result;
 	const NUM_PICKS = result !== undefined ? result.length : 14;
 
 	const [showAll, setShowAll] = useState(false);
@@ -714,7 +736,7 @@ const DraftLotteryTable = (props: Props) => {
 						<Rigged
 							numToPick={numToPick}
 							rigged={rigged}
-							result={props.result}
+							result={props.draftLotteryResult?.result}
 							type={props.type}
 						/>
 					</thead>

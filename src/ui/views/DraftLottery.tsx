@@ -884,7 +884,7 @@ const ColaTable = ({
 						noAbbrev: true,
 					},
 				),
-				t.cola ?? 0,
+				t.draftLottery?.type === "cola" ? t.draftLottery.chances : 0,
 			],
 		};
 	});

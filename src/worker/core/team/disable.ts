@@ -20,8 +20,7 @@ const disable = async (tid: number) => {
 	}
 
 	t.disabled = true;
-	delete t.cola;
-	delete t.colaOptOut;
+	delete t.draftLottery;
 	await idb.cache.teams.put(t);
 
 	const prevUserTid = g.get("userTid");

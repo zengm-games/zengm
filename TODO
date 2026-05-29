@@ -108,10 +108,13 @@ nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes
   - another team forced to be 12
   - one of the 3 worst forced to be 13+
 - test cola with everyone opted out (should pick uniform random, no firstN) due to simLottery refactor
+- test cola thoroughly
 - test challengeNoDraftPicks
 - test with different number of teams, playoff rounds, etc
 - test with no play-in
+- schema test for draftLottery property (cola and nba2027)
 - better probability calculation for the first pick at least
+- chances and number of teams should depend on how many non-playoff teams there are, maybe? what about after expansion? think about it
 - cross-year constraints
   - no back-to-back 1st round pick
   - no top-5 pick in three consecutive years

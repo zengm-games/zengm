@@ -69,7 +69,7 @@ const getTeamsByRound = async (
 	draftPicksIndexed: DraftPickWithoutKey[][],
 ) => {
 	const allTeams = await idb.getCopies.teamsPlus({
-		attrs: ["tid", "cola", "colaOptOut"],
+		attrs: ["tid", "draftLottery"],
 		seasonAttrs: [
 			"playoffRoundsWon",
 			"cid",

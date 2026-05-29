@@ -1563,8 +1563,11 @@ export type Team = {
 		text: string;
 	}[];
 
-	cola?: number;
-	colaOptOut?: boolean;
+	draftLottery?: {
+		type: "cola";
+		chances: number;
+		optOut: boolean;
+	};
 };
 
 export type TeamAttr = keyof Team;

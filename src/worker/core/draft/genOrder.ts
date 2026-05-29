@@ -265,11 +265,14 @@ const genOrder = async (
 					return 0;
 				}
 
-				if (t.colaOptOut) {
+				const teamInfo =
+					t.draftLottery?.type === "cola" ? t.draftLottery : undefined;
+
+				if (teamInfo?.optOut) {
 					return 0;
 				}
 
-				return (t.cola ?? 0) + addAlpha;
+				return (teamInfo?.chances ?? 0) + addAlpha;
 			});
 		} else {
 			chances = info.chances;

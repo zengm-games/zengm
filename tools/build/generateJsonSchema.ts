@@ -2737,9 +2737,25 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 						keepRosterSorted: {
 							type: "boolean",
 						},
-						cola: {
-							type: "integer",
-							minimum: 0,
+						draftLottery: {
+							type: "object",
+							properties: {
+								draftLottery: {
+									type: "object",
+									properties: {
+										type: {
+											const: "cola",
+										},
+										chances: {
+											type: "number",
+										},
+										optOut: {
+											type: "boolean",
+										},
+									},
+									required: ["type", "chances", "optOut"],
+								},
+							},
 						},
 						colaOptOut: {
 							type: "boolean",

@@ -29,6 +29,7 @@ export const getNumLotteryTeams = async () => {
 
 const logChange = (
 	before: number,
+	after: number,
 	t: Team,
 	direction: "increased" | "decreased",
 	reason: string,
@@ -37,7 +38,7 @@ const logChange = (
 		"roster",
 		`${t.abbrev}_${t.tid}`,
 		g.get("season"),
-	])}">${t.name}</a> ${direction} from ${before} to ${t.cola}${reason}.`;
+	])}">${t.name}</a> ${direction} from ${before} to ${after}${reason}.`;
 
 	logEvent({
 		type: "draftLottery",
@@ -72,16 +73,28 @@ export const updateLotteryChancesAfterPlayoffs = async () => {
 		if (!t) {
 			throw new Error("Should never happen");
 		}
-		t.cola ??= 0;
-		const before = t.cola;
+		if (t.draftLottery?.type !== "cola") {
+			t.draftLottery = {
+				type: "cola",
+				chances: 0,
+				optOut: false,
+			};
+		}
+		const before = t.draftLottery.chances;
 
 		const factor = PLAYOFF_FACTORS[row.playoffRoundsWon - offset];
 		if (row.playoffRoundsWon >= 0 && factor !== undefined) {
-			t.cola = Math.round(t.cola * factor);
-			logChange(before, t, "decreased", " due to their playoff success");
+			t.draftLottery.chances = Math.round(t.draftLottery.chances * factor);
+			logChange(
+				before,
+				t.draftLottery.chances,
+				t,
+				"decreased",
+				" due to their playoff success",
+			);
 		} else {
-			t.cola += COLA_ALPHA;
-			logChange(before, t, "increased", "");
+			t.draftLottery.chances += COLA_ALPHA;
+			logChange(before, t.draftLottery.chances, t, "increased", "");
 		}
 
 		await idb.cache.teams.put(t);
@@ -102,13 +115,20 @@ export const updateLotteryChancesAfterLottery = async (tids: number[]) => {
 		if (!t) {
 			throw new Error("Should never happen");
 		}
-		t.cola ??= 0;
-		const before = t.cola;
-		t.cola = Math.round(t.cola * factor);
+		if (t.draftLottery?.type !== "cola") {
+			t.draftLottery = {
+				type: "cola",
+				chances: 0,
+				optOut: false,
+			};
+		}
+		const before = t.draftLottery.chances;
+		t.draftLottery.chances = Math.round(t.draftLottery.chances * factor);
 		await idb.cache.teams.put(t);
 
 		logChange(
 			before,
+			t.draftLottery.chances,
 			t,
 			"decreased",
 			` due to winning the ${helpers.ordinal(i + 1)} pick`,
@@ -118,16 +138,22 @@ export const updateLotteryChancesAfterLottery = async (tids: number[]) => {
 	// Reset colaOptOut
 	const teams = await idb.cache.teams.getAll();
 	for (const t of teams) {
-		if (t.colaOptOut !== undefined) {
-			if (t.colaOptOut) {
-				t.cola ??= 0;
-				const before = t.cola;
-				t.cola = Math.max(0, t.cola - COLA_OPT_OUT_PENALTY);
+		if (t.draftLottery?.type === "cola" && t.draftLottery.optOut) {
+			const before = t.draftLottery.chances;
+			t.draftLottery.chances = Math.max(
+				0,
+				t.draftLottery.chances - COLA_OPT_OUT_PENALTY,
+			);
 
-				logChange(before, t, "decreased", " due to opting out of the lottery");
-			}
+			logChange(
+				before,
+				t.draftLottery.chances,
+				t,
+				"decreased",
+				" due to opting out of the lottery",
+			);
 
-			delete t.colaOptOut;
+			t.draftLottery.optOut = false;
 
 			await idb.cache.teams.put(t);
 		}
@@ -203,11 +229,15 @@ export const initializeCola = async () => {
 	}
 
 	for (const t of teams) {
-		if (t.disabled) {
+		if (t.disabled || t.draftLottery?.type === "cola") {
 			continue;
 		}
 
-		t.cola = colaByTid[t.tid] ?? 0;
+		t.draftLottery = {
+			type: "cola",
+			chances: colaByTid[t.tid] ?? 0,
+			optOut: false,
+		};
 		await idb.cache.teams.put(t);
 	}
 };
@@ -216,9 +246,8 @@ export const disableCola = async () => {
 	const teams = await idb.cache.teams.getAll();
 
 	for (const t of teams) {
-		if (t.cola !== undefined || t.colaOptOut !== undefined) {
-			delete t.cola;
-			delete t.colaOptOut;
+		if (t.draftLottery?.type === "cola") {
+			delete t.draftLottery;
 			await idb.cache.teams.put(t);
 		}
 	}

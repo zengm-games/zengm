@@ -104,6 +104,10 @@ const generate = (tm: any): Team => {
 		};
 	}
 
+	if (tm.draftLottery) {
+		t.draftLottery = tm.draftLottery;
+	}
+
 	return t;
 };
 

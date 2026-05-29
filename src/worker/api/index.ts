@@ -4976,7 +4976,16 @@ const toggleColaOptOut = async () => {
 		throw new Error("Should never happen");
 	}
 
-	t.colaOptOut = !t.colaOptOut;
+	if (t.draftLottery?.type === "cola") {
+		t.draftLottery.optOut = !t.draftLottery.optOut;
+	} else {
+		// Should never happen
+		t.draftLottery = {
+			type: "cola",
+			chances: 0,
+			optOut: true,
+		};
+	}
 	await idb.cache.teams.put(t);
 
 	await toUI("realtimeUpdate", [["draftLottery"]]);

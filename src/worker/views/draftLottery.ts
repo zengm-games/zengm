@@ -44,7 +44,15 @@ const updateDraftLottery = async (
 			colaOptOutStatus: boolean;
 			colaTable:
 				| TeamFiltered<
-						["tid", "abbrev", "name", "region", "cola", "imgURL", "imgURLSmall"]
+						[
+							"tid",
+							"abbrev",
+							"name",
+							"region",
+							"draftLottery",
+							"imgURL",
+							"imgURLSmall",
+						]
 				  >[]
 				| undefined;
 			draftPicks: DraftPickWithoutKey[] | undefined;
@@ -142,7 +150,7 @@ const updateDraftLottery = async (
 					"region",
 					"imgURL",
 					"imgURLSmall",
-					"cola",
+					"draftLottery",
 				],
 				active: true,
 			});
@@ -282,7 +290,8 @@ const updateDraftLottery = async (
 			if (!t) {
 				throw new Error("Should never happen");
 			}
-			colaOptOutStatus = !!t.colaOptOut;
+			colaOptOutStatus =
+				t.draftLottery?.type === "cola" ? t.draftLottery.optOut : false;
 
 			// Opt out is available if user has their own lottery pick
 			colaOptOutAvailable = draftLotteryResult.result.some(

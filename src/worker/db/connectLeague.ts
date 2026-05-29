@@ -423,6 +423,25 @@ const upgrade45 = (transaction: VersionChangeTransaction) => {
 	};
 };
 
+export const colaUpdate = (t: Team) => {
+	const cola = (t as any).cola as number | undefined;
+	if (cola !== undefined) {
+		const colaOptOut = (t as any).colaOptOut as boolean | undefined;
+		if (t.tid === 27) {
+			console.log();
+		}
+		t.draftLottery = {
+			type: "cola",
+			chances: cola,
+			optOut: !!colaOptOut,
+		};
+		delete (t as any).cola;
+		delete (t as any).colaOptOut;
+		return true;
+	}
+	return false;
+};
+
 export const upgradeGamesVersion65 = async ({
 	transaction,
 	stopIfTooMany,
@@ -1704,7 +1723,17 @@ const migrate = async ({
 		}
 	}
 
-	// Next update - do similar to above for numPlayoffRounds and draftType, from loadGameAttributes
+	if (oldVersion < 72) {
+		for await (const cursor of transaction.objectStore("teams")) {
+			const t = cursor.value;
+			const updated = colaUpdate(t);
+			if (updated) {
+				await cursor.update(t);
+			}
+		}
+	}
+
+	// Next update - do similar to `oldVersion < 71` above for numPlayoffRounds and draftType, from loadGameAttributes
 };
 
 const connectLeague = (lid: number) =>

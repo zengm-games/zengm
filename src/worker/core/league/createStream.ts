@@ -62,6 +62,7 @@ import remove from "./remove.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { DEFAULT_LEVEL, amountToLevel } from "../../../common/budgetLevels.ts";
 import {
+	colaUpdate,
 	upgradeGamesVersion65,
 	type LeagueDBStoreNames,
 } from "../../db/connectLeague.ts";
@@ -734,6 +735,9 @@ const processTeamInfos = async ({
 
 			// initialBudget will be created in team.generate below
 		}
+
+		// Version 72 upgrade
+		colaUpdate(t);
 	}
 
 	// Version 68 upgrade

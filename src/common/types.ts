@@ -582,6 +582,8 @@ export type GameAttributesLeague = {
 	fantasyPoints?: "standard" | "ppr" | "halfPpr";
 	forceRetireAge: number;
 	forceRetireSeasons: number;
+	freeAgencySigningsPerDay: number;
+	freeAgencySigningsThisDay: number;
 	foulsNeededToFoulOut: number;
 	foulsUntilBonus: [number, number, number];
 	foulRateFactor: number;
@@ -1393,6 +1395,7 @@ export type Local = {
 	playerOvrStd: number;
 	playerOvrMeanStdStale: boolean;
 	playingUntilEndOfRound: boolean;
+	simulatingFreeAgencyDay: boolean;
 	realPlayerActiveSeasons:
 		| Record<
 				string,

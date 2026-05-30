@@ -20,6 +20,7 @@ const defaultLocal: Local = {
 	realPlayerActiveSeasons: undefined,
 	seasonLeaders: undefined,
 	playingUntilEndOfRound: false,
+	simulatingFreeAgencyDay: false,
 	statusText: "Idle",
 	unviewedSeasonSummary: false, // Set to true when a live game sim of the final game prevents an automatic redirect to the season summary page
 	username: undefined,
@@ -44,6 +45,7 @@ const local: Local & {
 	playerOvrStd: defaultLocal.playerOvrStd,
 	playerOvrMeanStdStale: defaultLocal.playerOvrMeanStdStale,
 	playingUntilEndOfRound: defaultLocal.playingUntilEndOfRound,
+	simulatingFreeAgencyDay: defaultLocal.simulatingFreeAgencyDay,
 	realPlayerActiveSeasons: defaultLocal.realPlayerActiveSeasons,
 	seasonLeaders: defaultLocal.seasonLeaders,
 	statusText: defaultLocal.statusText,
@@ -65,6 +67,7 @@ const local: Local & {
 		local.playerOvrStd = defaultLocal.playerOvrStd;
 		local.playerOvrMeanStdStale = defaultLocal.playerOvrMeanStdStale;
 		local.playingUntilEndOfRound = defaultLocal.playingUntilEndOfRound;
+		local.simulatingFreeAgencyDay = defaultLocal.simulatingFreeAgencyDay;
 		local.realPlayerActiveSeasons = defaultLocal.realPlayerActiveSeasons; // Since there may be different tids in different leagues
 		local.seasonLeaders = defaultLocal.seasonLeaders;
 		local.statusText = defaultLocal.statusText;

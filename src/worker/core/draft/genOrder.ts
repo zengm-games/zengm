@@ -196,7 +196,19 @@ export const getNumToPick = (
 	numPlayInTeams: number,
 ) => {
 	if (draftHasLottery(draftType)) {
-		return getLotteryInfo(draftType, numLotteryTeams, numPlayInTeams).numToPick;
+		let numNonPlayoffTeams;
+		if (draftType === "nba2027") {
+			// Not super confident in this, but should match up with similar logic in getLotteryInfo
+			numNonPlayoffTeams = numLotteryTeams;
+			if (numPlayInTeams === 4) {
+				numNonPlayoffTeams -= 2;
+			}
+		} else {
+			numNonPlayoffTeams = numLotteryTeams;
+		}
+
+		return getLotteryInfo(draftType, numNonPlayoffTeams, numPlayInTeams)
+			.numToPick;
 	}
 
 	return 0;

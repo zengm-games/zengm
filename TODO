@@ -103,8 +103,6 @@ For "this only applies if" settings (like for things related to custom draft typ
 more granular access to draft variables in playersPlus, so we only need to do AbbrevsCache stuff when actually using the abbrev or originalAbbrev properties
 
 nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes-new-anti-tanking-proposal-draft-lottery
-- test rigged lottery that interferes with
-  - why 2 extra columns of dropdowns?
 - test cola with everyone opted out (should pick uniform random, no firstN) due to simLottery refactor
 - test cola thoroughly
 - test challengeNoDraftPicks - currently it bumps up another playoff team to the lottery

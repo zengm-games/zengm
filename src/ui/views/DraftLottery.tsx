@@ -796,36 +796,6 @@ const DraftLotteryTable = (props: Props) => {
 					</>
 				) : null}
 			</p>
-			{showStartButton && colaOptOutAvailable ? (
-				<div className="mb-3 d-flex align-items-center gap-2">
-					<button
-						className="btn btn-danger"
-						onClick={async () => {
-							await toWorker("main", "toggleColaOptOut", undefined);
-						}}
-					>
-						Opt {colaOptOutStatus ? "in to" : "out of"} lottery
-					</button>
-					<HelpPopover title="Opt out of COLA lottery">
-						<p>
-							With the COLA draft type, your lottery chances accumulate over
-							multiple seasons until you win the lottery and get reset to 0 (or
-							-75% for 2nd pick, -50% for 3rd pick, -25% for 4th pick).
-						</p>
-						<p>
-							If the current draft class is weak, you might prefer to keep your
-							lottery chances rather than risk winning the lottery. In that
-							case, you can click this button to opt out of the lottery. You
-							will still get your pick at the normal order in the draft, you
-							will just not have any chance of winning the top picks.
-						</p>
-						<p>
-							There is a penalty of {COLA_OPT_OUT_PENALTY} lottery chances for
-							opting out of the lottery.
-						</p>
-					</HelpPopover>
-				</div>
-			) : null}
 			<div className="mb-3">
 				{showStartButton ? (
 					<button
@@ -846,6 +816,36 @@ const DraftLotteryTable = (props: Props) => {
 					>
 						Rig lottery
 					</button>
+				) : null}
+				{showStartButton && colaOptOutAvailable ? (
+					<div className="ms-2 d-inline-flex align-items-center gap-2">
+						<button
+							className="btn btn-danger"
+							onClick={async () => {
+								await toWorker("main", "toggleColaOptOut", undefined);
+							}}
+						>
+							Opt {colaOptOutStatus ? "in to" : "out of"} lottery
+						</button>
+						<HelpPopover title="Opt out of COLA lottery">
+							<p>
+								With the COLA draft type, your lottery chances accumulate over
+								multiple seasons until you win the lottery and get reset to 0
+								(or -75% for 2nd pick, -50% for 3rd pick, -25% for 4th pick).
+							</p>
+							<p>
+								If the current draft class is weak, you might prefer to keep
+								your lottery chances rather than risk winning the lottery. In
+								that case, you can click this button to opt out of the lottery.
+								You will still get your pick at the normal order in the draft,
+								you will just not have any chance of winning the top picks.
+							</p>
+							<p>
+								There is a penalty of {COLA_OPT_OUT_PENALTY} lottery chances for
+								opting out of the lottery.
+							</p>
+						</HelpPopover>
+					</div>
 				) : null}
 				{type === "readyToRun" &&
 				(state.revealState === "running" || state.revealState === "paused") ? (

@@ -112,13 +112,10 @@ nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes
 - test cola with everyone opted out (should pick uniform random, no firstN) due to simLottery refactor
 - test cola thoroughly
 - test challengeNoDraftPicks - currently it bumps up another playoff team to the lottery
-- better probability calculation - can hardcode the odds and then handle restrictions by just moving the probs down to the first valid one
-  - also do for 2 expansion teams
-  - also do for 2 realized expansion teams
-  - 200000000 iterations
 - make default or not?
 - blog
   - is this more or less fun?
+  - why not perfect odds?
   - weird number of teams or playoff settings
   - trade value of picks doesn't account for lottery
 

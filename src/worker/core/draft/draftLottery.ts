@@ -6,6 +6,7 @@ import type {
 	DraftType,
 } from "../../../common/types.ts";
 import { precomputedMlb2022 } from "./precomputedDraftLotteryProbs.ts";
+import helpers from "../../util/helpers.ts";
 
 class MultiDimensionalRange {
 	initial: boolean;
@@ -229,6 +230,21 @@ const monteCarloLotteryProbs = (
 			probs[k][j] ??= 0;
 			// @ts-expect-error
 			probs[k][j] += 1 / ITERATIONS;
+		}
+	}
+
+	// First column we can trivially calculate
+	const firstPickChances = result.map((row, i) =>
+		nba2027Restrictions &&
+		(nba2027Restrictions.restricted1.includes(i) ||
+			nba2027Restrictions.restricted5.includes(i))
+			? 0
+			: row.chances,
+	);
+	const firstPickChancesSum = helpers.sum(firstPickChances);
+	for (const [i, chances] of firstPickChances.entries()) {
+		if (chances > 0) {
+			probs[i]![0] = chances / firstPickChancesSum;
 		}
 	}
 

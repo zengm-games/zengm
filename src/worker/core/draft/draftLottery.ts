@@ -149,7 +149,7 @@ export const simLottery = (
 
 	// Each entry in this array corresponds to a lottery pick (length is numToPick), each value is either undefined (this pick is not rigged) or has a number (index of chances array)
 	riggedLotteryIndexesByPick: (number | undefined)[] | undefined,
-) => {
+): number[] => {
 	let teams = chances.map((chance, index) => ({
 		chances: chance,
 		index,
@@ -181,9 +181,6 @@ export const simLottery = (
 		if (top12Guaranteed) {
 			top12Guaranteed.delete(t);
 		}
-		if (riggedLotteryIndexesByPick) {
-			console.log(structuredClone(pickIndexes.indexes));
-		}
 	};
 
 	for (let i = 0; i < numToPick; i++) {
@@ -192,11 +189,8 @@ export const simLottery = (
 			// Use `pickIndexes.indexes.length` rather than `i` to account for nba2027 restrictions leading to them not being exactly the same thing (could have some selections already processed but not in indexes yet)
 			const riggedIndex =
 				riggedLotteryIndexesByPick[pickIndexes.indexes.length];
-			console.log(i, pickIndexes.indexes.length);
 			if (riggedIndex !== undefined) {
-				console.log(`Pick ${i + 1} rigging`);
 				const t = teams.find((t2) => t2.index === riggedIndex);
-				console.log("t", t);
 				if (t) {
 					selectLotteryWinner(t, true);
 					continue;
@@ -222,13 +216,6 @@ export const simLottery = (
 			}
 		}
 
-		if (sum === 0 && teams.some((t) => t.chances)) {
-			// This happens if you rig the lottery in nba2027 such that a team
-			if (riggedLotteryIndexesByPick) {
-				console.log("BOO BOO", teams);
-			}
-		}
-
 		const rand = Math.random() * sum;
 		let sum2 = 0;
 		for (const t of teams) {
@@ -239,17 +226,22 @@ export const simLottery = (
 			} else {
 				sum2 += t.chances;
 			}
-			if (riggedLotteryIndexesByPick) {
-				console.log(t, rand, sum2);
-			}
 			if (rand < sum2) {
 				selectLotteryWinner(t, false);
 				break;
 			}
 		}
 	}
-	if (riggedLotteryIndexesByPick) {
-		console.log("end", teams, riggedLotteryIndexes);
+
+	// Normally follow restrictions. But in some cases, such as rigging the loggery in nba2027 such that a restricted1/restricted5 team can only go in the top 5, you can get in a situation where there are no available teams to be picked. In that situation, we need to ignore nba2027Restrictions.
+	if (riggedLotteryIndexes && nba2027Restrictions) {
+		return simLottery(
+			draftType,
+			chances,
+			numToPick,
+			undefined,
+			riggedLotteryIndexesByPick,
+		);
 	}
 
 	for (const t of teams) {

@@ -375,7 +375,6 @@ const genOrder = async (
 					return undefined;
 				})
 			: undefined;
-		console.log(riggedLottery, riggedLotteryIndexes);
 
 		// Pick first N picks based on chancesCumsum
 		firstN = simLottery(

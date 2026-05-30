@@ -356,7 +356,7 @@ const genOrder = async (
 		const chancePct = chances.map((c) => (c / chanceTotal) * 100);
 
 		// Idenfity chances indexes protected by riggedLottery
-		const riggedLotteryChances = riggedLottery
+		const riggedLotteryIndexes = riggedLottery
 			? riggedLottery.map((dpid) => {
 					if (typeof dpid === "number") {
 						const originalTid = draftPicks.find((dp) => {
@@ -372,18 +372,18 @@ const genOrder = async (
 						}
 					}
 
-					return null;
+					return undefined;
 				})
 			: undefined;
+		console.log(riggedLottery, riggedLotteryIndexes);
 
 		// Pick first N picks based on chancesCumsum
 		firstN = simLottery(
 			draftType,
-			chances.map((chance, i) =>
-				riggedLotteryChances?.includes(i) ? 0 : chance,
-			),
+			chances,
 			numToPick,
 			nba2027Restrictions,
+			riggedLotteryIndexes,
 		);
 
 		if (!mock) {

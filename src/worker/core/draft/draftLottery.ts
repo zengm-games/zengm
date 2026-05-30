@@ -91,8 +91,9 @@ class PickIndexes {
 		}
 	}
 
-	add(index: number) {
-		if (this.nba2027) {
+	// Use ignoreRestrictions for riggedLottery stuff
+	add(index: number, ignoreRestrictions: boolean) {
+		if (this.nba2027 && !ignoreRestrictions) {
 			// If we are already past pick 5, then we don't need to worry about giving this pick special treatment
 			if (this.indexes.length < RESTRICTED_5_PICK) {
 				// restricted5 takes precedence over restricted1
@@ -145,6 +146,9 @@ export const simLottery = (
 	chances: number[],
 	numToPick: number,
 	nba2027Restrictions: DraftLotteryResult["nba2027"],
+
+	// Each entry in this array corresponds to a lottery pick (length is numToPick), each value is either undefined (this pick is not rigged) or has a number (index of chances array)
+	riggedLotteryIndexesByPick: (number | undefined)[] | undefined,
 ) => {
 	let teams = chances.map((chance, index) => ({
 		chances: chance,
@@ -153,11 +157,53 @@ export const simLottery = (
 
 	const pickIndexes = new PickIndexes(nba2027Restrictions);
 
+	const riggedLotteryIndexes = riggedLotteryIndexesByPick
+		? new Set(riggedLotteryIndexesByPick.filter((index) => index !== undefined))
+		: undefined;
+
 	const top12GuaranteedLimit = 12;
 	const top12Guaranteed =
-		draftType === "nba2027" ? new Set(teams.slice(0, 3)) : undefined;
+		draftType === "nba2027"
+			? new Set(
+					teams.slice(0, 3).filter((t) => {
+						// If a team is in riggedLotteryIndexes, then it shouldn't have any guarantee applied to it, in case the user picks something that breaks the guarantee
+						return !riggedLotteryIndexes?.has(t.index);
+					}),
+				)
+			: undefined;
+
+	const selectLotteryWinner = (
+		t: (typeof teams)[number],
+		ignoreRestrictions: boolean,
+	) => {
+		pickIndexes.add(t.index, ignoreRestrictions);
+		teams = teams.filter((t2) => t2 !== t);
+		if (top12Guaranteed) {
+			top12Guaranteed.delete(t);
+		}
+		if (riggedLotteryIndexesByPick) {
+			console.log(structuredClone(pickIndexes.indexes));
+		}
+	};
 
 	for (let i = 0; i < numToPick; i++) {
+		// Short circuit if this is rigged
+		if (riggedLotteryIndexesByPick) {
+			// Use `pickIndexes.indexes.length` rather than `i` to account for nba2027 restrictions leading to them not being exactly the same thing (could have some selections already processed but not in indexes yet)
+			const riggedIndex =
+				riggedLotteryIndexesByPick[pickIndexes.indexes.length];
+			console.log(i, pickIndexes.indexes.length);
+			if (riggedIndex !== undefined) {
+				console.log(`Pick ${i + 1} rigging`);
+				const t = teams.find((t2) => t2.index === riggedIndex);
+				console.log("t", t);
+				if (t) {
+					selectLotteryWinner(t, true);
+					continue;
+				}
+			}
+		}
+
 		// For example, if there are still 3 teams left to put in the top 12, then forceTop12 needs to become true when i=9 (10th pick)
 		const numTop12GuaranteedLeft = top12Guaranteed?.size;
 		const forceTop12 =
@@ -169,32 +215,45 @@ export const simLottery = (
 		for (const t of teams) {
 			if (forceTop12 && !top12Guaranteed!.has(t)) {
 				// No chances for this team, we need to pick one of the worst 3
+			} else if (riggedLotteryIndexes?.has(t.index)) {
+				// No chances, this team is rigged in another slot
 			} else {
 				sum += t.chances;
 			}
 		}
+
+		if (sum === 0 && teams.some((t) => t.chances)) {
+			// This happens if you rig the lottery in nba2027 such that a team
+			if (riggedLotteryIndexesByPick) {
+				console.log("BOO BOO", teams);
+			}
+		}
+
 		const rand = Math.random() * sum;
 		let sum2 = 0;
 		for (const t of teams) {
 			if (forceTop12 && !top12Guaranteed!.has(t)) {
 				// No chances for this team, we need to pick one of the worst 3
+			} else if (riggedLotteryIndexes?.has(t.index)) {
+				// No chances, this team is rigged in another slot
 			} else {
 				sum2 += t.chances;
 			}
+			if (riggedLotteryIndexesByPick) {
+				console.log(t, rand, sum2);
+			}
 			if (rand < sum2) {
-				pickIndexes.add(t.index);
-				teams = teams.filter((t2) => t2 !== t);
-				if (top12Guaranteed) {
-					top12Guaranteed.delete(t);
-				}
-
+				selectLotteryWinner(t, false);
 				break;
 			}
 		}
 	}
+	if (riggedLotteryIndexesByPick) {
+		console.log("end", teams, riggedLotteryIndexes);
+	}
 
 	for (const t of teams) {
-		pickIndexes.add(t.index);
+		pickIndexes.add(t.index, false);
 	}
 
 	if (!pickIndexes.doneNba2027()) {
@@ -223,6 +282,7 @@ const monteCarloLotteryProbs = (
 			chances,
 			numToPick,
 			nba2027Restrictions,
+			undefined,
 		);
 		for (let j = 0; j < result.length; j++) {
 			const k = result[j]!;

@@ -104,11 +104,9 @@ more granular access to draft variables in playersPlus, so we only need to do Ab
 
 nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes-new-anti-tanking-proposal-draft-lottery
 - test rigged lottery that interferes with
-  - top 12 constraint
-    - another team forced to be 12
-    - one of the 3 worst forced to be 13+
-  - top 1 constraint
-  - top 5 constraint
+  - when a team with a top 1/5 restriction is forced to be one of the top 1/5 by rigging all the other picks, it breaks. doing ths same to force a top 12 restriction out of the top 12 works though.
+    - for the top 1/5 situation, it gets to the end because all chances wind up being 0. instead, need to recognize this and pick one of the non-rigged teams, even if something else would block it
+  - why 2 extra columns of dropdowns?
 - test cola with everyone opted out (should pick uniform random, no firstN) due to simLottery refactor
 - test cola thoroughly
 - test challengeNoDraftPicks - currently it bumps up another playoff team to the lottery

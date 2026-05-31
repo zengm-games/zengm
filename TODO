@@ -65,6 +65,9 @@ custom awards
   - indexeddb
   - import
 
+bug with trade value of draft pick for expansion team - valued as 1st rather than 15th? https://old.reddit.com/r/BasketballGM/comments/13x2hhe/monthly_suggestions_thread/jmgzqei/
+- more generally, draft order code should be aligned with pick value estimation code. this would also solve issue with weird draftTypes and unbalanced conferences (team makes playoff and no longer is in lottery)
+
 combine leagueLeaders award calculation and getSeasonLeaders, since they are really doing the same thing. just do it all at once. then we will also have less situations where we need to worry about async loading of seasonLeaders, since it will happen at the end of every season
 
 save multiple GOAT formulas somehow https://app.fastmail.com/mail/Inbox/AM4NH_t4SdKw.Stp1kcfDMlQk?u=433e4054
@@ -101,13 +104,6 @@ For "this only applies if" settings (like for things related to custom draft typ
   - probably not actual disable, in case there is somehow an invalid value there that the user needs to change
 
 more granular access to draft variables in playersPlus, so we only need to do AbbrevsCache stuff when actually using the abbrev or originalAbbrev properties
-
-nba2027 draft type https://www.espn.com/nba/story/_/id/48619907/sources-nba-eyes-new-anti-tanking-proposal-draft-lottery
-- blog
-  - is this more or less fun?
-  - why not perfect odds?
-  - weird number of teams or playoff settings
-  - trade value of picks doesn't account for lottery
 
 in BBGM sometimes (about once per decade) a player is injured immediately after subbing in, in which case they have 1 GP with 0 min because no time has elapsed
 
@@ -497,9 +493,6 @@ perf issues in large league with 8500 seasons
   - probably also are index issues
 
 Option to resim a exhibition game between the same 2 teams rather than going back into the menu https://discord.com/channels/290013534023057409/331882115119448065/1377067383004594287
-
-bug with trade value of draft pick for expansion team - valued as 1st rather than 15th? https://old.reddit.com/r/BasketballGM/comments/13x2hhe/monthly_suggestions_thread/jmgzqei/
-- more generally, draft order code should be aligned with pick value estimation code. this would also solve issue with weird draftTypes and unbalanced conferences (team makes playoff and no longer is in lottery)
 
 reconnect to meta before use
 - same for league?

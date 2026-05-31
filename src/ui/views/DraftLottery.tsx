@@ -22,7 +22,7 @@ import type {
 	DraftLotteryResult,
 } from "../../common/types.ts";
 import useClickable from "../hooks/useClickable.tsx";
-import { getDraftLotteryProbs } from "../../worker/core/draft/draftLottery.ts";
+import type { getDraftLotteryProbs } from "../../worker/core/draft/draftLottery.ts";
 import useStickyXX from "../components/DataTable/useStickyXX.ts";
 import { range } from "../../common/utils.ts";
 import {

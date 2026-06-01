@@ -167,6 +167,7 @@ export const orderBy = <Item, Key extends OrderByKey<Item>>(
 type OrderByParams = Parameters<typeof orderBy>;
 export type OrderBySortParams = [OrderByParams[1], OrderByParams[2]];
 
+// Maybe eventually replace with https://github.com/tc39/proposal-iterator-chunking
 export const chunk = <T>(array: T[], chunkSize: number): T[][] => {
 	const chunks: T[][] = [];
 	for (let i = 0; i < array.length; i += chunkSize) {

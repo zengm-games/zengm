@@ -1,7 +1,7 @@
 import { PLAYER } from "../../../common/constants.ts";
 import { player } from "../index.ts";
 import { g } from "../../util/index.ts";
-import type { Player, PlayerWithoutKey } from "../../../common/types.ts";
+import type { PlayerWithoutKey } from "../../../common/types.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { minBy } from "../../../common/utils.ts";
 import { randInt, shuffle } from "../../../common/random.ts";
@@ -43,7 +43,7 @@ const getFractionPerYear = (ageGap: number) => {
 	return 1 / ageGap;
 };
 
-const developOneSeason = async (p: Player) => {
+const developOneSeason = async (p: PlayerWithoutKey) => {
 	await player.develop(p, 1, true);
 };
 
@@ -109,7 +109,7 @@ const genPlayersWithoutSaving = async (
 	let remaining = [];
 	for (let i = 0; i < numPlayers; i++) {
 		const name = await player.name();
-		const p: any = await player.generate(
+		const p = await player.generate(
 			PLAYER.UNDRAFTED,
 			baseAge,
 			draftYear,
@@ -120,10 +120,6 @@ const genPlayersWithoutSaving = async (
 
 		// Just for ovr/pot
 		await player.develop(p, 0);
-
-		// Add a fudge factor, used when sorting below to add a little randomness to players entering draft. This may
-		// seem quite large, but empirically it seems to work well.
-		p.fudgeFactor = randInt(-50, 50);
 
 		remaining.push(p);
 	}
@@ -144,6 +140,13 @@ const genPlayersWithoutSaving = async (
 		}
 	}
 
+	const fudgeFactors = new WeakMap<PlayerWithoutKey, number>();
+	const getFudgeFactor = (p: PlayerWithoutKey) => {
+		// Add a fudge factor, used when sorting below to add a little randomness to players entering draft. This may
+		// seem quite large, but empirically it seems to work well.
+		return fudgeFactors.getOrInsertComputed(p, () => randInt(-50, 50));
+	};
+
 	for (let i = 0; i < minMaxAgeDiff + 1; i++) {
 		// The % of players declaring each year is determined by fractionPerYear, except in last year when all players declare.
 		const cutoff =
@@ -153,7 +156,9 @@ const genPlayersWithoutSaving = async (
 
 		remaining.sort(
 			(a, b) =>
-				b.ratings[0].pot + b.fudgeFactor - (a.ratings[0].pot + a.fudgeFactor),
+				b.ratings[0].pot +
+				getFudgeFactor(b) -
+				(a.ratings[0].pot + getFudgeFactor(a)),
 		);
 		enteringDraft = enteringDraft.concat(remaining.slice(0, cutoff));
 		remaining = remaining.slice(cutoff); // Each player staying in college, develop 1 year more
@@ -170,6 +175,9 @@ const genPlayersWithoutSaving = async (
 		for (let i = 0; i < numSpecialPlayerChances; i++) {
 			if (Math.random() < 1 / numSpecialPlayerChances) {
 				const p = enteringDraft[i];
+				if (!p) {
+					throw new Error("Should never happen");
+				}
 				player.bonus(p);
 				await player.develop(p, 0); // Recalculate ovr/pot
 			}
@@ -182,6 +190,9 @@ const genPlayersWithoutSaving = async (
 			[...existingPlayers, ...enteringDraft],
 			(p) => p.ratings[0].ovr,
 		);
+		if (!worstPlayer) {
+			throw new Error("Should never happen");
+		}
 
 		let numPlayersToNerf;
 		if (forceScrubs) {
@@ -201,16 +212,15 @@ const genPlayersWithoutSaving = async (
 		shuffle(enteringDraft);
 		for (let i = 0; i < numPlayersToNerf; i++) {
 			const p = enteringDraft[i];
+			if (!p) {
+				throw new Error("Should never happen");
+			}
 			const ovrDiff = p.ratings[0].ovr - worstPlayer.ratings[0].ovr;
 			if (ovrDiff > 0) {
 				player.bonus(p, -ovrDiff / 2);
 				await player.develop(p, 0);
 			}
 		}
-	}
-
-	for (const p of enteringDraft) {
-		delete p.fudgeFactor; // Update player values after ratings changes
 	}
 
 	// No college for players 18 or younger

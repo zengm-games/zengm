@@ -31,6 +31,7 @@ export const wrappedRatingWithChange = (rating: number, change: number) => {
 
 	return {
 		value: <RatingWithChange change={change}>{rating}</RatingWithChange>,
+		exportValue: rating,
 		sortValue: rating + (change + 500) / 1000,
 		searchValue: formatted,
 	};

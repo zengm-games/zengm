@@ -89,6 +89,7 @@ export type DataTableRow = {
 		| {
 				classNames?: ClassValue;
 				value: ReactNode;
+				exportValue?: string | number;
 				searchValue?: string | number;
 				sortValue?: string | number;
 				header?: boolean;
@@ -258,12 +259,15 @@ export const DataTable = ({
 			rows,
 			state,
 		}).map((row) =>
-			row.data.map((val, i) => {
+			row.data.map((value, i) => {
+				if (value != null && Object.hasOwn(value as any, "exportValue")) {
+					return (value as any).exportValue;
+				}
 				const sortType = columns[i]!.sortType;
 				if (sortType === "number") {
-					return getSortVal(val, sortType, true);
+					return getSortVal(value, sortType);
 				}
-				return getSearchVal(val, false);
+				return getSearchVal(value, false);
 			}),
 		);
 		const output = csvFormatRows([colNames, ...processedRows]);

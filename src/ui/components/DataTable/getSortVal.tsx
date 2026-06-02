@@ -6,11 +6,7 @@ import { helpers } from "../../util/helpers.ts";
 import { normalizeIntl } from "../../../common/normalizeIntl.ts";
 import { POSITIONS } from "../../../common/constants.ts";
 
-const getSortVal = (
-	value: any = null,
-	sortType: SortType | undefined,
-	exportCSV?: boolean,
-) => {
+const getSortVal = (value: any = null, sortType: SortType | undefined) => {
 	try {
 		let val;
 		let sortVal: string;

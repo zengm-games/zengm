@@ -366,13 +366,12 @@ const getTeamsByRound = async (
 		}
 	}
 
-	const nba2027NumLotteryTeams = nba2027Stuff
-		? teams.length - playoffTeams.length
-		: undefined;
+	const nba2027NumLotteryTeams =
+		draftType === "nba2027" ? teams.length - playoffTeams.length : undefined;
 
 	// Still needs to be adjusted for tiebreakers each round. Force nba2027 to be "firstRound" so in genOrder we can manually override the order of the non-playoff teams
 	const nthRound =
-		ORDER_AFTER_FIRST_ROUND === "firstRound" || nba2027Stuff
+		ORDER_AFTER_FIRST_ROUND === "firstRound" || draftType === "nba2027"
 			? firstRound
 			: (await orderTeams(teams, allTeams, orderTeamsSettings)).reverse();
 

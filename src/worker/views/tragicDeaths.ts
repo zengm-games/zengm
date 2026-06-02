@@ -64,7 +64,7 @@ const tragicDeaths = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		});
 
 		const players2 = addFirstNameShort(processPlayersHallOfFame(players)).map(
-			(p: any) => {
+			(p) => {
 				const event = events.find(
 					(event2) => event2.pids && event2.pids.includes(p.pid),
 				);

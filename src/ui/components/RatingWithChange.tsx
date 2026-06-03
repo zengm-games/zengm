@@ -5,7 +5,7 @@ export const RatingWithChange = ({
 	children,
 }: {
 	change: number;
-	children: number;
+	children?: number;
 }) => {
 	return (
 		<>
@@ -17,8 +17,7 @@ export const RatingWithChange = ({
 						"text-danger": change < 0,
 					})}
 				>
-					{" "}
-					({change > 0 ? "+" : null}
+					{children !== undefined ? " " : null}({change > 0 ? "+" : null}
 					{change})
 				</span>
 			) : null}

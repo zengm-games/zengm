@@ -11,8 +11,8 @@ import type {
 } from "../../../common/types.ts";
 import { PHASE, PLAYER } from "../../../common/constants.ts";
 import clsx from "clsx";
-import AwardsSummary from "./AwardsSummary.tsx";
-import RatingsOverview from "./RatingsOverview.tsx";
+import { AwardsSummary } from "./AwardsSummary.tsx";
+import { RatingsOverview } from "./RatingsOverview.tsx";
 import Note from "./Note.tsx";
 import { ButtonGroup, Dropdown, DropdownButton } from "react-bootstrap";
 import { CountryFlag } from "../../components/CountryFlag.tsx";

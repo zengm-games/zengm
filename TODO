@@ -1,5 +1,3 @@
-color ratings on ratings page (and tables), just like ratings popup
-
 custom awards
 - fields
   - formula
@@ -67,6 +65,8 @@ custom awards
   - from awards objects, look up pids and rewrite Player.awards entries for ones that can now be looked up from awards object (add rank)
   - indexeddb
   - import
+
+for non-basketball sports, colored ratings (from ratingsGradientStyle) should be position relative?
 
 some way to collapse non-TOT rows on player profile https://old.reddit.com/r/BasketballGM/comments/1t0d9ep/monthly_suggestions_thread/ojc8rru/
 

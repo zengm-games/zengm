@@ -1,8 +1,11 @@
+import { posRatings } from "../../../common/posRatings.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
+import { FATIGUE_POS } from "../../../worker/core/GameSim.football/index.ts";
+import { ratingsGradientStyle } from "../../components/RatingsStatsPopover/ratingsGradientStyle.ts";
 import { RatingWithChange } from "../../components/RatingWithChange.tsx";
 import type { ReactNode } from "react";
 
-const RatingsOverview = ({
+export const RatingsOverview = ({
 	ratings,
 	season,
 }: {
@@ -464,6 +467,25 @@ const RatingsOverview = ({
 		],
 	});
 
+	// Generic physical ratings not included in posRatings
+	const toHighlightPhysical = bySport({
+		baseball:
+			currentSeason.pos === "SP" || currentSeason.pos === "RP"
+				? []
+				: ["hgt", "spd"],
+		basketball: [],
+		football: FATIGUE_POS.has(currentSeason.pos)
+			? ["hgt", "stre", "spd", "endu"]
+			: ["hgt", "stre", "spd"],
+		hockey: currentSeason.pos === "G" ? [] : ["hgt", "stre", "spd", "endu"],
+	});
+
+	// For non-basketball sports, only highlight ratings that are relevant to position
+	const toHighlight = new Set([
+		...toHighlightPhysical,
+		...posRatings(currentSeason.pos),
+	]);
+
 	return (
 		<div className="ratings-overview">
 			<div className="d-flex justify-content-between">
@@ -494,18 +516,28 @@ const RatingsOverview = ({
 										</tr>
 									</thead>
 									<tbody>
-										{categories.map(({ label, rating }, j) => (
-											<tr key={j}>
-												<td className="p-0">{label}:</td>
-												<td className="p-0 ps-1">
-													<RatingWithChange
-														change={currentSeason[rating] - lastSeason[rating]}
-													>
+										{categories.map(({ label, rating }, j) => {
+											const highlightStyle = toHighlight.has(rating)
+												? ratingsGradientStyle(currentSeason[rating])
+												: undefined;
+											return (
+												<tr key={j}>
+													<td className="p-0 ps-1" style={highlightStyle}>
+														{label}:
+													</td>
+													<td className="p-0 px-1" style={highlightStyle}>
 														{currentSeason[rating]}
-													</RatingWithChange>
-												</td>
-											</tr>
-										))}
+													</td>
+													<td className="p-0 ps-1">
+														<RatingWithChange
+															change={
+																currentSeason[rating] - lastSeason[rating]
+															}
+														/>
+													</td>
+												</tr>
+											);
+										})}
 									</tbody>
 								</table>
 							</div>
@@ -516,5 +548,3 @@ const RatingsOverview = ({
 		</div>
 	);
 };
-
-export default RatingsOverview;

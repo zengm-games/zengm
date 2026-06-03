@@ -2,9 +2,7 @@ import { Fragment } from "react";
 import posRatings from "../../../common/posRatings.football.ts";
 import { getCols } from "../../../common/getCols.ts";
 import type { RatingKey } from "../../../common/types.football.ts";
-import { gradientStyleFactory } from "../../util/gradientStyleFactory.ts";
-
-const gradientStyle = gradientStyleFactory(25, 45, 55, 75);
+import { ratingsGradientStyle } from "./ratingsGradientStyle.ts";
 
 type Props = {
 	ratings?: {
@@ -34,29 +32,29 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 			<div className="row">
 				<div className="col-4">
 					<div className="fw-bold mb-1">{seasonPrefix}Ratings</div>
-					<span style={gradientStyle(ratings.ovr)}>
+					<span style={ratingsGradientStyle(ratings.ovr)}>
 						<span title="Overall">Ovr</span>: {ratings.ovr}
 					</span>
 					<br />
-					<span style={gradientStyle(ratings.pot)}>
+					<span style={ratingsGradientStyle(ratings.pot)}>
 						<span title="Potential">Pot</span>: {Math.round(ratings.pot)}
 					</span>
 				</div>
 				<div className="col-4 mt-1">
 					<br />
-					<span style={gradientStyle(ratings.hgt)}>
+					<span style={ratingsGradientStyle(ratings.hgt)}>
 						<span title="Height">Hgt</span>: {ratings.hgt}
 					</span>
 					<br />
-					<span style={gradientStyle(ratings.stre)}>
+					<span style={ratingsGradientStyle(ratings.stre)}>
 						<span title="Strength">Str</span>: {ratings.stre}
 					</span>
 					<br />
-					<span style={gradientStyle(ratings.spd)}>
+					<span style={ratingsGradientStyle(ratings.spd)}>
 						<span title="Speed">Spd</span>: {ratings.spd}
 					</span>
 					<br />
-					<span style={gradientStyle(ratings.endu)}>
+					<span style={ratingsGradientStyle(ratings.endu)}>
 						<span title="Endurance">End</span>: {ratings.endu}
 					</span>
 				</div>
@@ -64,7 +62,7 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 					{extraRatings.map((rating, i) => (
 						<Fragment key={rating}>
 							<br />
-							<span style={gradientStyle(ratings[rating])}>
+							<span style={ratingsGradientStyle(ratings[rating])}>
 								<span title={cols[i]!.desc}>{cols[i]!.title}</span>:{" "}
 								{ratings[rating]}
 							</span>

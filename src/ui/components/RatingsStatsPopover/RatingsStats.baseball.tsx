@@ -1,7 +1,5 @@
-import { gradientStyleFactory } from "../../util/gradientStyleFactory.ts";
 import type { RatingKey } from "../../../common/types.baseball.ts";
-
-const gradientStyle = gradientStyleFactory(25, 45, 55, 75);
+import { ratingsGradientStyle } from "./ratingsGradientStyle.ts";
 
 type Props = {
 	ratings?: {
@@ -30,65 +28,65 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 				<div className="col-4">
 					<b>{seasonPrefix}Ratings</b>
 					<br />
-					<span style={gradientStyle(ratings.hgt)}>
+					<span style={ratingsGradientStyle(ratings.hgt)}>
 						<span title="Height">Hgt:</span> {ratings.hgt}
 					</span>
 					<br />
-					<span style={gradientStyle(ratings.spd)}>
+					<span style={ratingsGradientStyle(ratings.spd)}>
 						<span title="Speed">Spd:</span> {ratings.spd}
 					</span>
 					<br />
-					<span style={gradientStyle(ratings.hpw)}>
+					<span style={ratingsGradientStyle(ratings.hpw)}>
 						<span title="Power">HPw:</span> {ratings.hpw}
 					</span>
 					<br />
-					<span style={gradientStyle(ratings.con)}>
+					<span style={ratingsGradientStyle(ratings.con)}>
 						<span title="Contact">Con:</span> {ratings.con}
 					</span>
 					<br />
-					<span style={gradientStyle(ratings.eye)}>
+					<span style={ratingsGradientStyle(ratings.eye)}>
 						<span title="Eye">Eye:</span> {ratings.eye}
 					</span>
 				</div>
 				<div className="col-4">
-					<span style={gradientStyle(ratings.ovr)}>
+					<span style={ratingsGradientStyle(ratings.ovr)}>
 						<span title="Overall">Ovr:</span> {ratings.ovr}
 					</span>
 					<br />
-					<span style={gradientStyle(ratings.gnd)}>
+					<span style={ratingsGradientStyle(ratings.gnd)}>
 						<span title="Ground Ball Fielding">Gnd:</span> {ratings.gnd}
 					</span>
 					<br />
-					<span style={gradientStyle(ratings.fly)}>
+					<span style={ratingsGradientStyle(ratings.fly)}>
 						<span title="Fly Ball Fielding">Fly:</span> {ratings.fly}
 					</span>
 					<br />
-					<span style={gradientStyle(ratings.thr)}>
+					<span style={ratingsGradientStyle(ratings.thr)}>
 						<span title="Throwing">Thr:</span> {ratings.thr}
 					</span>
 					<br />
-					<span style={gradientStyle(ratings.cat)}>
+					<span style={ratingsGradientStyle(ratings.cat)}>
 						<span title="Catcher Defense">Cat:</span> {ratings.cat}
 					</span>
 				</div>
 				<div className="col-4">
-					<span style={gradientStyle(ratings.pot)}>
+					<span style={ratingsGradientStyle(ratings.pot)}>
 						<span title="Potential">Pot:</span> {Math.round(ratings.pot)}
 					</span>
 					<br />
-					<span style={gradientStyle(ratings.ppw)}>
+					<span style={ratingsGradientStyle(ratings.ppw)}>
 						<span title="Pitching Power">PPw:</span> {ratings.ppw}
 					</span>
 					<br />
-					<span style={gradientStyle(ratings.ctl)}>
+					<span style={ratingsGradientStyle(ratings.ctl)}>
 						<span title="Control">Ctl:</span> {ratings.ctl}
 					</span>
 					<br />
-					<span style={gradientStyle(ratings.mov)}>
+					<span style={ratingsGradientStyle(ratings.mov)}>
 						<span title="Movement">Mov:</span> {ratings.mov}
 					</span>
 					<br />
-					<span style={gradientStyle(ratings.endu)}>
+					<span style={ratingsGradientStyle(ratings.endu)}>
 						<span title="Endurance">Endu:</span> {ratings.endu}
 					</span>
 				</div>

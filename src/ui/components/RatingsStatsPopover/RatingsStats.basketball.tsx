@@ -1,8 +1,6 @@
 import { helpers } from "../../util/helpers.ts";
 import type { RatingKey } from "../../../common/types.basketball.ts";
-import { gradientStyleFactory } from "../../util/gradientStyleFactory.ts";
-
-const gradientStyle = gradientStyleFactory(25, 45, 55, 75);
+import { ratingsGradientStyle } from "./ratingsGradientStyle.ts";
 
 type Props = {
 	ratings?: {
@@ -31,43 +29,73 @@ const RatingsStats = ({ challengeNoRatings, ratings, stats, type }: Props) => {
 				<div className="col-4">
 					<b>{seasonPrefix}Ratings</b>
 					<br />
-					<span style={gradientStyle(ratings.hgt)}>Hgt: {ratings.hgt}</span>
+					<span style={ratingsGradientStyle(ratings.hgt)}>
+						Hgt: {ratings.hgt}
+					</span>
 					<br />
-					<span style={gradientStyle(ratings.stre)}>Str: {ratings.stre}</span>
+					<span style={ratingsGradientStyle(ratings.stre)}>
+						Str: {ratings.stre}
+					</span>
 					<br />
-					<span style={gradientStyle(ratings.spd)}>Spd: {ratings.spd}</span>
+					<span style={ratingsGradientStyle(ratings.spd)}>
+						Spd: {ratings.spd}
+					</span>
 					<br />
-					<span style={gradientStyle(ratings.jmp)}>Jmp: {ratings.jmp}</span>
+					<span style={ratingsGradientStyle(ratings.jmp)}>
+						Jmp: {ratings.jmp}
+					</span>
 					<br />
-					<span style={gradientStyle(ratings.endu)}>End: {ratings.endu}</span>
+					<span style={ratingsGradientStyle(ratings.endu)}>
+						End: {ratings.endu}
+					</span>
 				</div>
 				<div className="col-4">
-					<span style={gradientStyle(ratings.ovr)}>Ovr: {ratings.ovr}</span>
+					<span style={ratingsGradientStyle(ratings.ovr)}>
+						Ovr: {ratings.ovr}
+					</span>
 					<br />
-					<span style={gradientStyle(ratings.ins)}>Ins: {ratings.ins}</span>
+					<span style={ratingsGradientStyle(ratings.ins)}>
+						Ins: {ratings.ins}
+					</span>
 					<br />
-					<span style={gradientStyle(ratings.dnk)}>Dnk: {ratings.dnk}</span>
+					<span style={ratingsGradientStyle(ratings.dnk)}>
+						Dnk: {ratings.dnk}
+					</span>
 					<br />
-					<span style={gradientStyle(ratings.ft)}>Ft: {ratings.ft}</span>
+					<span style={ratingsGradientStyle(ratings.ft)}>Ft: {ratings.ft}</span>
 					<br />
-					<span style={gradientStyle(ratings.fg)}>2Pt: {ratings.fg}</span>
+					<span style={ratingsGradientStyle(ratings.fg)}>
+						2Pt: {ratings.fg}
+					</span>
 					<br />
-					<span style={gradientStyle(ratings.tp)}>3Pt: {ratings.tp}</span>
+					<span style={ratingsGradientStyle(ratings.tp)}>
+						3Pt: {ratings.tp}
+					</span>
 				</div>
 				<div className="col-4">
-					<span style={gradientStyle(ratings.pot)}>
+					<span style={ratingsGradientStyle(ratings.pot)}>
 						Pot: {Math.round(ratings.pot)}
 					</span>
 					<br />
-					<span style={gradientStyle(ratings.oiq)}>oIQ: {ratings.oiq}</span>
+					<span style={ratingsGradientStyle(ratings.oiq)}>
+						oIQ: {ratings.oiq}
+					</span>
 					<br />
-					<span style={gradientStyle(ratings.diq)}>dIQ: {ratings.diq}</span>
+					<span style={ratingsGradientStyle(ratings.diq)}>
+						dIQ: {ratings.diq}
+					</span>
 					<br />
-					<span style={gradientStyle(ratings.drb)}>Drb: {ratings.drb}</span>
+					<span style={ratingsGradientStyle(ratings.drb)}>
+						Drb: {ratings.drb}
+					</span>
 					<br />
-					<span style={gradientStyle(ratings.pss)}>Pss: {ratings.pss}</span>
+					<span style={ratingsGradientStyle(ratings.pss)}>
+						Pss: {ratings.pss}
+					</span>
 					<br />
-					<span style={gradientStyle(ratings.reb)}>Reb: {ratings.reb}</span>
+					<span style={ratingsGradientStyle(ratings.reb)}>
+						Reb: {ratings.reb}
+					</span>
 				</div>
 			</div>
 		);

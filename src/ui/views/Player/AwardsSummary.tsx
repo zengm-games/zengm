@@ -1,3 +1,4 @@
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import type { Player } from "../../../common/types.ts";
 import { groupAwards } from "../../util/groupAwards.ts";
 
@@ -22,16 +23,20 @@ const AwardsSummary = ({ awards }: { awards: Player["awards"] }) => {
 				}
 
 				return (
-					<span
+					<OverlayTrigger
 						key={i}
-						className={`badge rounded-pill px-2 me-1 mt-2 ${
-							a.type === "Hall of Fame" ? "bg-warning" : "bg-secondary"
-						}`}
-						title={title}
+						overlay={<Tooltip>{title}</Tooltip>}
+						placement="bottom"
 					>
-						{a.count > 1 ? `${a.count}x ` : null}
-						{a.type}
-					</span>
+						<span
+							className={`badge rounded-pill px-2 me-1 mt-2 ${
+								a.type === "Hall of Fame" ? "bg-warning" : "bg-secondary"
+							}`}
+						>
+							{a.count > 1 ? `${a.count}x ` : null}
+							{a.type}
+						</span>
+					</OverlayTrigger>
 				);
 			})}
 		</div>

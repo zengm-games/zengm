@@ -1,7 +1,3 @@
-award tags on player pages should show years won on hover
-- https://old.reddit.com/r/BasketballGM/comments/1t0d9ep/monthly_suggestions_thread/okkg78p/
-- https://old.reddit.com/r/BasketballGM/comments/1t0d9ep/monthly_suggestions_thread/ojitnbn/
-
 color ratings on ratings page (and tables), just like ratings popup
 
 custom awards
@@ -60,6 +56,7 @@ custom awards
 - support awards per div/conf
 - support clutch player award
 - how to show award as column when awards might change over time?
+- in AwardsSummary, break down by team number for tooltip
 - how to store Player.awards
   - try storing normalized, how slow is it?
     - could store more awards history in cache

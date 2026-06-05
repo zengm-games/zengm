@@ -486,6 +486,9 @@ const TopStuff = ({
 
 	const showRatingsOverview = (!retired || season !== undefined) && showRatings;
 
+	// Without this, vertical scrollbar shows if there are no jerseys, due to some weirdness with the negative marginTop values in RatingsOverview
+	const PLACEHOLDER = <div style={{ height: 2 }}></div>;
+
 	return (
 		<div className="mb-3">
 			<div className="d-sm-flex align-items-start">
@@ -734,7 +737,9 @@ const TopStuff = ({
 								);
 							})}
 						</div>
-					) : null}
+					) : (
+						PLACEHOLDER
+					)}
 				</div>
 			</div>
 

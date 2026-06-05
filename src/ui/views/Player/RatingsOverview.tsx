@@ -3,7 +3,7 @@ import { posRatings } from "../../../common/posRatings.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { ratingsGradientStyle } from "../../components/RatingsStatsPopover/ratingsGradientStyle.ts";
 import { RatingWithChange } from "../../components/RatingWithChange.tsx";
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 
 export const RatingsOverview = ({
 	ratings,
@@ -520,22 +520,30 @@ export const RatingsOverview = ({
 											const highlightStyle = toHighlight.has(rating)
 												? ratingsGradientStyle(currentSeason[rating])
 												: undefined;
+											const current = currentSeason[rating];
 											return (
-												<tr key={j}>
-													<td className="p-0 ps-1" style={highlightStyle}>
-														{label}:
-													</td>
-													<td className="p-0 px-1" style={highlightStyle}>
-														{currentSeason[rating]}
-													</td>
-													<td className="p-0 ps-1">
-														<RatingWithChange
-															change={
-																currentSeason[rating] - lastSeason[rating]
-															}
-														/>
-													</td>
-												</tr>
+												<Fragment key={j}>
+													<tr>
+														<td className="p-0">{label}:</td>
+														<td className="p-0 px-1">{current}</td>
+														<td className="p-0 ps-1">
+															<RatingWithChange
+																change={current - lastSeason[rating]}
+															/>
+														</td>
+													</tr>
+													<tr>
+														<td className="p-0 pb-1" colSpan={2}>
+															<div
+																style={{
+																	...highlightStyle,
+																	height: 2,
+																	width: `${current < 50 ? 100 - current : current}%`,
+																}}
+															/>
+														</td>
+													</tr>
+												</Fragment>
 											);
 										})}
 									</tbody>

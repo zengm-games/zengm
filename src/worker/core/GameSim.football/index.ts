@@ -1,5 +1,5 @@
 import { g, helpers } from "../../util/index.ts";
-import { POSITIONS } from "../../../common/constants.football.ts";
+import { FATIGUE_POS, POSITIONS } from "../../../common/constants.football.ts";
 import PlayByPlayLogger, {
 	type PlayByPlayEventScore,
 } from "./PlayByPlayLogger.ts";
@@ -45,9 +45,6 @@ const NUM_DOWNS = 4; // Not used everywhere!
 const TWO_MINUTE_WARNING_TIME = 2; // Not used everywhere!
 
 const FEWER_INJURIES_POS = new Set(["QB", "P", "K"]);
-
-// For some positions, filter out some players based on fatigue
-export const FATIGUE_POS = new Set(["RB", "WR", "TE", "DL", "LB", "CB", "S"]);
 
 // Only apples to default ratings leagues
 const AVERAGE_TACKLING_COMPOSITE = 0.56;

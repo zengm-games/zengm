@@ -1,6 +1,6 @@
+import { FATIGUE_POS } from "../../../common/constants.football.ts";
 import { posRatings } from "../../../common/posRatings.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
-import { FATIGUE_POS } from "../../../worker/core/GameSim.football/index.ts";
 import { ratingsGradientStyle } from "../../components/RatingsStatsPopover/ratingsGradientStyle.ts";
 import { RatingWithChange } from "../../components/RatingWithChange.tsx";
 import type { ReactNode } from "react";

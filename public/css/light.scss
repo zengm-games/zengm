@@ -1279,6 +1279,9 @@ button.fast-forward {
 		width: inherit;
 	}
 }
+.ratings-overview-title-underline {
+	background-color: var(--bs-border-color);
+}
 
 .settings-description > p:last-child {
 	margin-bottom: 0 !important;

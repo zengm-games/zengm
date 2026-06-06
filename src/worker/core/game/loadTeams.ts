@@ -1,4 +1,4 @@
-import { allStar, player, season, team } from "../index.ts";
+import { allStar, coach, player, season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
 import type {
@@ -200,10 +200,9 @@ export const processTeam = async (
 		compositeRating,
 		depth: teamInput.depth,
 
-		// Only the user's team applies its coaching style; AI teams stay neutral.
-		coaching: g.get("userTids").includes(teamInput.tid)
-			? (teamInput.coaching ?? DEFAULT_COACHING)
-			: DEFAULT_COACHING,
+		// The team's effective season style (set by its coach each preseason). Per-
+		// matchup adjustments are layered on later, once both teams are loaded.
+		coaching: teamInput.coaching ?? DEFAULT_COACHING,
 	};
 
 	const playThroughInjuries = actualPlayThroughInjuries[playoffs ? 1 : 0];
@@ -495,9 +494,54 @@ const loadTeams = async (tids: number[], conditions: Conditions) => {
 				teams[tid] = await processTeam(team, teamSeason, players);
 			}),
 		);
+
+		// Per-matchup adjustment: a coach with high tactics tweaks the style to
+		// exploit the specific opponent. Only for standard 2-team basketball games.
+		if (isSport("basketball") && tids.length === 2) {
+			await applyMatchupAdjustments(tids as [number, number], teams);
+		}
 	}
 
 	return teams;
+};
+
+// Adjust each team's loaded coaching dials based on the opponent's roster, scaled
+// by the team's coach's tactics rating.
+const applyMatchupAdjustments = async (
+	tids: [number, number],
+	teams: Record<number, any>,
+) => {
+	const [coaches, rosters] = await Promise.all([
+		Promise.all(
+			tids.map((tid) => idb.cache.coaches.indexGetAll("coachesByTid", tid)),
+		),
+		Promise.all(
+			tids.map((tid) => idb.cache.players.indexGetAll("playersByTid", tid)),
+		),
+	]);
+
+	// Only players available tonight (healthy).
+	const available = rosters.map((roster) =>
+		roster.filter((p) => p.injury.gamesRemaining === 0),
+	);
+
+	for (let i = 0; i < 2; i++) {
+		const t = teams[tids[i]!];
+		const coachI = coaches[i]![0];
+		if (!t || !coachI) {
+			continue;
+		}
+		const tactics = coachI.ratings.tactics;
+
+		// First adapt to who's actually available (injuries/rotation), then scheme
+		// against the opponent. Both scaled by the coach's tactics.
+		t.coaching = coach.availabilityAdjust(t.coaching, tactics, available[i]!);
+		t.coaching = coach.matchupAdjust(
+			t.coaching,
+			tactics,
+			coach.opponentProfile(available[1 - i]!),
+		);
+	}
 };
 
 export default loadTeams;

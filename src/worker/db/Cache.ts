@@ -8,6 +8,8 @@ import cmp from "./cmp.ts";
 import { g, local, lock } from "../util/index.ts";
 import type {
 	AllStars,
+	Coach,
+	CoachWithoutKey,
 	DraftLotteryResult,
 	DraftPick,
 	DraftPickWithoutKey,
@@ -54,6 +56,7 @@ type Status = "empty" | "error" | "filling" | "full";
 export type Store =
 	| "allStars"
 	| "awards"
+	| "coaches"
 	| "draftLotteryResults"
 	| "draftPicks"
 	| "events"
@@ -76,6 +79,7 @@ export type Store =
 	| "teams"
 	| "trade";
 type Index =
+	| "coachesByTid"
 	| "draftPicksBySeason"
 	| "draftPicksByTid"
 	| "playersByDraftYearRetiredYear"
@@ -89,6 +93,7 @@ type Index =
 export const STORES: Store[] = [
 	"allStars",
 	"awards",
+	"coaches",
 	"draftLotteryResults",
 	"draftPicks",
 	"events",
@@ -256,6 +261,8 @@ class Cache {
 
 	awards: StoreAPI<any, any, number>;
 
+	coaches: StoreAPI<CoachWithoutKey, Coach, number>;
+
 	draftLotteryResults: StoreAPI<DraftLotteryResult, DraftLotteryResult, number>;
 
 	draftPicks: StoreAPI<DraftPickWithoutKey, DraftPick, number>;
@@ -328,6 +335,23 @@ class Cache {
 				pk: "season",
 				pkType: "number",
 				autoIncrement: false,
+			},
+			coaches: {
+				pk: "cid",
+				pkType: "number",
+				autoIncrement: true,
+				// Active coaches and free-agent coaches (not retired-from-coaching)
+				getData: (tx) =>
+					tx
+						.objectStore("coaches")
+						.index("tid")
+						.getAll(IDBKeyRange.lowerBound(PLAYER.FREE_AGENT)),
+				indexes: [
+					{
+						name: "coachesByTid",
+						key: ["tid"],
+					},
+				],
 			},
 			draftLotteryResults: {
 				pk: "season",
@@ -559,6 +583,7 @@ class Cache {
 
 		this.allStars = new StoreAPI(this, "allStars");
 		this.awards = new StoreAPI(this, "awards");
+		this.coaches = new StoreAPI(this, "coaches");
 		this.draftLotteryResults = new StoreAPI(this, "draftLotteryResults");
 		this.draftPicks = new StoreAPI(this, "draftPicks");
 		this.events = new StoreAPI(this, "events");

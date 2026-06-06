@@ -57,6 +57,17 @@ type AwardTeam = {
 	otl: number | undefined;
 };
 
+export type AwardCoach = {
+	cid: number;
+	tid: number;
+	abbrev: string;
+	region: string;
+	name: string; // coach's full name
+	won: number;
+	lost: number;
+	expectedWins?: number;
+};
+
 export type AwardPlayer = {
 	pid: number;
 	name: string;
@@ -125,6 +136,7 @@ export type Awards<
 	];
 	finalsMvp: PlayerOverride | undefined;
 	sfmvp: PlayerOverride[] | undefined;
+	coachOfTheYear?: AwardCoach;
 };
 
 export type PlayerRatings = {

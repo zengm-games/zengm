@@ -35,7 +35,7 @@ export const DRAFT_BY_TEAM_OVR = bySport({
 	hockey: true,
 });
 
-export const LEAGUE_DATABASE_VERSION = 73;
+export const LEAGUE_DATABASE_VERSION = 74;
 
 export const NO_LOTTERY_DRAFT_TYPES = new Set<DraftType>([
 	"freeAgents",

@@ -10,6 +10,7 @@ import { DataTable } from "../../components/DataTable/index.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 import { logEvent } from "../../util/logEvent.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
@@ -285,10 +286,16 @@ const FinancesForm = ({
 			key: "scouting",
 			title: "Scouting",
 		},
-		{
-			key: "coaching",
-			title: "Coaching",
-		},
+		// In basketball, coaching spending is the head coach's salary (set by hiring
+		// a coach on the Coaches page), not an editable budget level.
+		...(isSport("basketball")
+			? []
+			: [
+					{
+						key: "coaching" as const,
+						title: "Coaching",
+					},
+				]),
 		{
 			key: "health",
 			title: "Health",

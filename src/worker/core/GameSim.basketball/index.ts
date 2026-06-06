@@ -2990,12 +2990,15 @@ class GameSim extends GameSimBase {
 					this.team[t].stat.ptsQtrs[this.team[t].stat.ptsQtrs.length - 1] +=
 						amt;
 
-					// Bucket the points into fast-break / second-chance team stats.
+					// Bucket the points into fast-break / second-chance team stats. Also
+					// log them as team-level stat events so the live box score updates.
 					if (this.secondChance) {
 						this.team[t].stat.scp += amt;
+						this.playByPlay.logStat(t, undefined, "scp", amt);
 					}
 					if (this.fastBreak && this.possessionLength <= FAST_BREAK_SECONDS) {
 						this.team[t].stat.fbp += amt;
+						this.playByPlay.logStat(t, undefined, "fbp", amt);
 					}
 
 					for (const i of [0, 1] as const) {

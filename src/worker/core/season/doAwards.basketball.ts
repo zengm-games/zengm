@@ -9,7 +9,7 @@ import {
 	saveAwardsByPlayer,
 } from "./awards.ts";
 import { idb } from "../../db/index.ts";
-import { g, helpers } from "../../util/index.ts";
+import { g, helpers, logEvent } from "../../util/index.ts";
 import type {
 	Conditions,
 	Game,
@@ -22,6 +22,7 @@ import type {
 } from "../../../common/types.basketball.ts";
 import { orderBy } from "../../../common/utils.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
+import { getTidPlayIns } from "./genPlayoffSeries.ts";
 
 const getPlayerInfoOffense = (p: PlayerFiltered): AwardPlayer => {
 	return {
@@ -353,6 +354,164 @@ export const mipFilter = (p: PlayerFiltered) => {
 	return true;
 };
 
+type AwardTeamSeason = {
+	tid: number;
+	seasonAttrs: {
+		won: number;
+		lost: number;
+		expectedWins?: number;
+		playoffRoundsWon: number;
+	};
+};
+
+// Teams that made at least the play-in tournament (or, if play-in is disabled,
+// the playoffs). Coach of the Year is restricted to these.
+const getPostseasonTids = async (teams: AwardTeamSeason[], season: number) => {
+	const tids = new Set<number>();
+	for (const t of teams) {
+		if (t.seasonAttrs.playoffRoundsWon >= 0) {
+			tids.add(t.tid);
+		}
+	}
+	const playoffSeries = await idb.cache.playoffSeries.get(season);
+	if (playoffSeries?.playIns) {
+		for (const tid of getTidPlayIns(playoffSeries.playIns)) {
+			tids.add(tid);
+		}
+	}
+	return tids;
+};
+
+// Expected wins for a team this season: the accumulated talent-based projection
+// (injury/trade aware) if present, else fall back to prior-season wins.
+const getExpectedWins = async (t: AwardTeamSeason, season: number) => {
+	if (t.seasonAttrs.expectedWins !== undefined) {
+		return t.seasonAttrs.expectedWins;
+	}
+	const prior = await idb.cache.teamSeasons.indexGet("teamSeasonsByTidSeason", [
+		t.tid,
+		season - 1,
+	]);
+	return prior ? prior.won : t.seasonAttrs.won;
+};
+
+// Append each coached team's record for this season onto the coach, so coach
+// profiles can show a career history (wins vs expected wins).
+const recordCoachSeasons = async (teams: AwardTeamSeason[]) => {
+	const season = g.get("season");
+	const coaches = await idb.cache.coaches.getAll();
+	const coachByTid = new Map(
+		coaches.filter((c) => c.tid >= 0).map((c) => [c.tid, c]),
+	);
+
+	for (const t of teams) {
+		const coach = coachByTid.get(t.tid);
+		if (!coach) {
+			continue;
+		}
+
+		if (!coach.seasons) {
+			coach.seasons = [];
+		}
+		// Idempotent: don't double-record if doAwards runs twice for a season.
+		if (coach.seasons.some((s) => s.season === season)) {
+			continue;
+		}
+
+		coach.seasons.push({
+			season,
+			tid: t.tid,
+			won: t.seasonAttrs.won,
+			lost: t.seasonAttrs.lost,
+			expectedWins: await getExpectedWins(t, season),
+		});
+		await idb.cache.coaches.put(coach);
+	}
+};
+
+// Coach of the Year: the coach whose team most exceeded its expected wins.
+const getCoachOfTheYear = async (
+	teams: AwardTeamSeason[],
+	conditions: Conditions,
+) => {
+	const season = g.get("season");
+	const coaches = await idb.cache.coaches.getAll();
+	const coachByTid = new Map(
+		coaches.filter((c) => c.tid >= 0).map((c) => [c.tid, c]),
+	);
+
+	// Coach of the Year requires at least making the play-in. If nobody qualifies
+	// (e.g. no playoffs configured), fall back to all teams.
+	const postseasonTids = await getPostseasonTids(teams, season);
+	const eligible = (tid: number) =>
+		postseasonTids.size === 0 || postseasonTids.has(tid);
+
+	let best:
+		| {
+				tid: number;
+				won: number;
+				lost: number;
+				expectedWins: number;
+				delta: number;
+		  }
+		| undefined;
+
+	for (const t of teams) {
+		if (!coachByTid.has(t.tid) || !eligible(t.tid)) {
+			continue;
+		}
+		const won = t.seasonAttrs.won;
+		const lost = t.seasonAttrs.lost;
+		const expectedWins = await getExpectedWins(t, season);
+		const delta = won - expectedWins;
+
+		// Max delta; tiebreak on more wins.
+		if (
+			!best ||
+			delta > best.delta ||
+			(delta === best.delta && won > best.won)
+		) {
+			best = { tid: t.tid, won, lost, expectedWins, delta };
+		}
+	}
+
+	if (!best) {
+		return undefined;
+	}
+
+	const coach = coachByTid.get(best.tid)!;
+	const t = await idb.cache.teams.get(best.tid);
+
+	coach.awards.push({ season, type: "Coach of the Year" });
+	await idb.cache.coaches.put(coach);
+
+	const name = `${coach.firstName} ${coach.lastName}`;
+	await logEvent(
+		{
+			type: "coachAward",
+			text: `<a href="${helpers.leagueUrl([
+				"coach",
+				String(coach.cid),
+			])}">${name}</a> (${t ? `${t.region} ${t.name}` : ""}) won the Coach of the Year award, with ${best.won} wins vs ${best.expectedWins.toFixed(1)} expected.`,
+			tids: [best.tid],
+			showNotification: g.get("userTids").includes(best.tid),
+			score: 20,
+		},
+		conditions,
+	);
+
+	return {
+		cid: coach.cid,
+		tid: best.tid,
+		abbrev: t?.abbrev ?? "",
+		region: t?.region ?? "",
+		name,
+		won: best.won,
+		lost: best.lost,
+		expectedWins: best.expectedWins,
+	};
+};
+
 /**
  * Compute the awards (MVP, etc) after a season finishes.
  *
@@ -372,6 +531,7 @@ const doAwards = async (conditions: Conditions) => {
 				"lost",
 				"tied",
 				"otl",
+				"expectedWins",
 				"wonDiv",
 				"lostDiv",
 				"tiedDiv",
@@ -522,6 +682,9 @@ const doAwards = async (conditions: Conditions) => {
 		sfmvp = await getSemiFinalsMvp(players);
 	}
 
+	await recordCoachSeasons(teams);
+	const coachOfTheYear = await getCoachOfTheYear(teams, conditions);
+
 	const awards: Awards = {
 		bestRecord,
 		bestRecordConfs,
@@ -535,6 +698,7 @@ const doAwards = async (conditions: Conditions) => {
 		allLeague,
 		allDefensive,
 		allRookie,
+		coachOfTheYear,
 		season: g.get("season"),
 	};
 	addSimpleAndTeamAwardsToAwardsByPlayer(awards, awardsByPlayer);

@@ -9,6 +9,7 @@ import {
 	getBaseAttendance,
 } from "./attendance.ts";
 import { levelToAmount } from "../../../common/budgetLevels.ts";
+import winProbFromOvr from "../team/winProbFromOvr.ts";
 import getWinner from "../../../common/getWinner.ts";
 import { getAdjustedTicketPrice } from "../../../common/getAdjustedTicketPrice.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
@@ -100,8 +101,18 @@ const writeTeamStats = async (results: GameResults) => {
 			salaryPaid = payroll / g.get("numGames");
 			scoutingPaid =
 				levelToAmount(t.budget.scouting, salaryCap) / g.get("numGames");
-			coachingPaid =
-				levelToAmount(t.budget.coaching, salaryCap) / g.get("numGames");
+			if (isSport("basketball")) {
+				// Coaching expense is the head coach's salary.
+				const teamCoaches = await idb.cache.coaches.indexGetAll(
+					"coachesByTid",
+					t.tid,
+				);
+				coachingPaid =
+					(teamCoaches[0]?.contract.amount ?? 0) / g.get("numGames");
+			} else {
+				coachingPaid =
+					levelToAmount(t.budget.coaching, salaryCap) / g.get("numGames");
+			}
 			healthPaid =
 				levelToAmount(t.budget.health, salaryCap) / g.get("numGames");
 			facilitiesPaid =
@@ -362,6 +373,16 @@ const writeTeamStats = async (results: GameResults) => {
 		}
 
 		teamStats.gp += 1;
+
+		// Accumulate expected wins from injury-adjusted team ovr vs the opponent.
+		// This captures injuries (ovr accounts for them), trades/roster changes
+		// (re-evaluated each game), and schedule strength.
+		if (g.get("phase") !== PHASE.PLAYOFFS) {
+			const ovrDiff = (results.team[t1].ovr ?? 0) - (results.team[t2].ovr ?? 0);
+			teamSeason.expectedWins =
+				(teamSeason.expectedWins ?? 0) + winProbFromOvr(ovrDiff);
+			teamSeason.expectedWinsGp = (teamSeason.expectedWinsGp ?? 0) + 1;
+		}
 
 		if (teamSeason.lastTen.length === 10 && g.get("phase") !== PHASE.PLAYOFFS) {
 			teamSeason.lastTen.pop();

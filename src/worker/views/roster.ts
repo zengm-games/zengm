@@ -343,8 +343,28 @@ const updateRoster = async (
 			);
 		}
 
+		let coach;
+		if (isSport("basketball") && inputs.season === g.get("season")) {
+			const coaches = await idb.cache.coaches.indexGetAll(
+				"coachesByTid",
+				inputs.tid,
+			);
+			const c = coaches[0];
+			if (c) {
+				coach = {
+					cid: c.cid,
+					firstName: c.firstName,
+					lastName: c.lastName,
+					age: g.get("season") - c.born.year,
+					ratings: c.ratings,
+					contract: c.contract,
+				};
+			}
+		}
+
 		return {
 			abbrev: inputs.abbrev,
+			coach,
 			editable,
 			maxRosterSize: g.get("maxRosterSize"),
 			numPlayersOnCourt: g.get("numPlayersOnCourt"),

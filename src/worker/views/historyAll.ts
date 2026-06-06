@@ -92,7 +92,15 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 		const awardTypes = bySport({
 			baseball: ["finalsMvp", "mvp", "poy", "rpoy", "roy"],
-			basketball: ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"],
+			basketball: [
+				"finalsMvp",
+				"mvp",
+				"dpoy",
+				"smoy",
+				"mip",
+				"roy",
+				"coachOfTheYear",
+			],
 			football: ["finalsMvp", "mvp", "opoy", "poy", "dpoy", "oroy", "droy"],
 			hockey: ["finalsMvp", "mvp", "dpoy", "dfoy", "goy", "roy"],
 		});

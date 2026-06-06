@@ -296,6 +296,23 @@ export const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				text: "Roster",
 			},
 			...(bySport({
+				baseball: false,
+				basketball: true,
+				football: false,
+				hockey: false,
+			})
+				? ([
+						{
+							type: "link",
+							active: (pageID?: string) => pageID === "coaches",
+							league: true,
+							commandPalette: true,
+							path: ["coaches"],
+							text: "Coaches",
+						},
+					] as MenuItemLink[])
+				: []),
+			...(bySport({
 				baseball: true,
 				basketball: false,
 				football: true,

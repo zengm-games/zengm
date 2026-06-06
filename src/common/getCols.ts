@@ -3770,6 +3770,10 @@ const cols: {
 		desc: "Goalie of the Year",
 		title: "GOY",
 	},
+	"award:coachOfTheYear": {
+		desc: "Coach of the Year",
+		title: "COY",
+	},
 	"award:finalsMvp": {
 		desc: `${isSport("hockey") ? "Playoffs" : "Finals"} Most Valuable Player`,
 		title: `${isSport("hockey") ? "Playoffs" : "Finals"} MVP`,

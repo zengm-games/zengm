@@ -138,6 +138,7 @@ const PayrollAndPenalties = ({
 
 const TopStuff = ({
 	abbrev,
+	coach,
 	currentSeason,
 	editable,
 	luxuryTaxAmount,
@@ -156,6 +157,7 @@ const TopStuff = ({
 }: Pick<
 	View<"roster">,
 	| "abbrev"
+	| "coach"
 	| "editable"
 	| "luxuryTaxAmount"
 	| "minPayrollAmount"
@@ -351,11 +353,17 @@ const TopStuff = ({
 									</button>
 								) : null}
 							</div>
-							{showTradingBlock ? (
+							{showTradingBlock || (isSport("basketball") && coach) ? (
 								<div className="d-flex flex-column gap-3">
-									<PlayThroughInjurySliders key={tid} t={t} />
-									{isSport("basketball") ? (
-										<CoachingSettings key={`coaching-${tid}`} t={t} />
+									{showTradingBlock ? (
+										<PlayThroughInjurySliders key={tid} t={t} />
+									) : null}
+									{isSport("basketball") && coach ? (
+										<CoachingSettings
+											key={`coaching-${tid}`}
+											t={t}
+											coach={coach}
+										/>
 									) : null}
 								</div>
 							) : null}

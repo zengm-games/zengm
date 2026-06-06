@@ -4,6 +4,7 @@ import {
 	PHASE,
 } from "../../../common/constants.ts";
 import {
+	coach,
 	finances,
 	freeAgents,
 	league,
@@ -11,6 +12,7 @@ import {
 	realRosters,
 	team,
 } from "../index.ts";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, local, logEvent, toUI } from "../../util/index.ts";
 import type {
@@ -245,19 +247,34 @@ const newPhasePreseason = async (
 		throw new Error("scoutingLevel should be defined");
 	}
 
+	// Update every team's effective coaching style from its coach + roster, and
+	// drive player development from the coach's development rating (basketball).
+	// Other sports keep using the team's coaching budget level.
 	const coachingLevels: Record<number, number> = {};
-	for (const t of teams) {
-		const teamSeasons = await idb.getCopies.teamSeasons(
-			{
-				tid: t.tid,
-				seasons: [newSeason - 3, newSeason - 1],
-			},
-			"noCopyCache",
+	if (isSport("basketball")) {
+		await coach.autoHireFire(conditions);
+		await coach.updateTeamCoaching();
+		const coaches = await idb.cache.coaches.getAll();
+		const developmentByTid = new Map(
+			coaches.map((c) => [c.tid, c.ratings.development]),
 		);
-		coachingLevels[t.tid] = await finances.getLevelLastThree("coaching", {
-			t,
-			teamSeasons,
-		});
+		for (const t of teams) {
+			coachingLevels[t.tid] = developmentByTid.get(t.tid) ?? DEFAULT_LEVEL;
+		}
+	} else {
+		for (const t of teams) {
+			const teamSeasons = await idb.getCopies.teamSeasons(
+				{
+					tid: t.tid,
+					seasons: [newSeason - 3, newSeason - 1],
+				},
+				"noCopyCache",
+			);
+			coachingLevels[t.tid] = await finances.getLevelLastThree("coaching", {
+				t,
+				teamSeasons,
+			});
+		}
 	}
 
 	const players = await idb.cache.players.indexGetAll("playersByTid", [

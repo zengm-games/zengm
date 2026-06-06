@@ -838,6 +838,9 @@ export type LogEventType =
 	| "ageFraud"
 	| "award"
 	| "changes"
+	| "coachHired"
+	| "coachFired"
+	| "coachAward"
 	| "draft"
 	| "draftLottery"
 	| "error"
@@ -1519,6 +1522,46 @@ export type TeamCoaching = {
 	defensiveAggression: number; // defense: + = force turnovers (more steals/blocks, more fouls)
 };
 
+// Head coaches are people. Each rating is 0-100.
+export type CoachRatings = {
+	development: number; // player progression (replaces budget.coaching effect)
+	tactics: number; // per-matchup adjustment quality
+	adaptability: number; // how far season style blends toward roster-optimal
+	motivation: number; // modest team morale effect
+	ovr: number; // weighted overall, derived
+};
+
+export type CoachWithoutKey = {
+	cid?: number;
+	tid: number; // a team, PLAYER.FREE_AGENT, or PLAYER.RETIRED
+	firstName: string;
+	lastName: string;
+	face: FaceConfig;
+	born: {
+		year: number;
+		loc: string;
+	};
+	contract: PlayerContract;
+	ratings: CoachRatings;
+	philosophy: TeamCoaching; // the coach's preferred style dials, [-1, 1]
+	hiredYear?: number;
+	fromPid?: number; // pid of the player this coach used to be, if any
+	awards: PlayerAward[];
+	// Per-season coaching record, appended at the end of each season.
+	seasons?: {
+		season: number;
+		tid: number;
+		won: number;
+		lost: number;
+		expectedWins: number;
+	}[];
+	srID?: string;
+};
+
+export type Coach = CoachWithoutKey & {
+	cid: number;
+};
+
 export type Team = {
 	tid: number;
 	cid: number;
@@ -1708,6 +1751,12 @@ export type TeamSeasonWithoutKey = {
 	lost: number;
 	tied: number;
 	otl: number;
+
+	// Sum of per-regular-season-game win probabilities (from injury-adjusted team
+	// ovr vs opponent). Used to measure how much a coach over/underperformed. New,
+	// so optional for old leagues.
+	expectedWins?: number;
+	expectedWinsGp?: number;
 	wonHome: number;
 	lostHome: number;
 	tiedHome: number;

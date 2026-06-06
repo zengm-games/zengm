@@ -22,6 +22,7 @@ import leagueFileUpload, {
 import processInputs from "./processInputs.ts";
 import {
 	allStar,
+	coach,
 	contractNegotiation,
 	draft,
 	finances,
@@ -76,6 +77,7 @@ import {
 	type View,
 	type NonEmptyArray,
 	type TeamCoaching,
+	type Coach,
 	RealPlayerPhotosSchema,
 	RealTeamInfoSchema,
 } from "../../common/types.ts";
@@ -4180,6 +4182,66 @@ const updateCoaching = async ({
 	}
 };
 
+const hireCoach = async (
+	{ cid, tid }: { cid: number; tid: number },
+	conditions: Conditions,
+) => {
+	await coach.hire(cid, tid, { conditions });
+	await toUI("realtimeUpdate", [["playerMovement", "team"]]);
+};
+
+const fireCoach = async ({ tid }: { tid: number }, conditions: Conditions) => {
+	await coach.fire(tid, conditions);
+	await toUI("realtimeUpdate", [["playerMovement", "team"]]);
+};
+
+const updateCoach = async (updates: {
+	cid: number;
+	firstName?: string;
+	lastName?: string;
+	age?: number;
+	ratings?: Partial<Coach["ratings"]>;
+	philosophy?: Partial<Coach["philosophy"]>;
+	contract?: Partial<Coach["contract"]>;
+}) => {
+	if (!g.get("godMode")) {
+		throw new Error("Can only edit coaches in God Mode");
+	}
+
+	const c = await idb.cache.coaches.get(updates.cid);
+	if (!c) {
+		throw new Error("Invalid cid");
+	}
+
+	if (updates.firstName !== undefined) {
+		c.firstName = updates.firstName;
+	}
+	if (updates.lastName !== undefined) {
+		c.lastName = updates.lastName;
+	}
+	if (updates.age !== undefined && Number.isFinite(updates.age)) {
+		c.born.year = g.get("season") - updates.age;
+	}
+	if (updates.ratings) {
+		c.ratings = { ...c.ratings, ...updates.ratings };
+		c.ratings.ovr = coach.ovr(c.ratings);
+	}
+	if (updates.philosophy) {
+		c.philosophy = { ...c.philosophy, ...updates.philosophy };
+	}
+	if (updates.contract) {
+		c.contract = { ...c.contract, ...updates.contract };
+	}
+
+	await idb.cache.coaches.put(c);
+
+	if (c.tid >= 0) {
+		await coach.updateTeamCoaching([c.tid]);
+	}
+
+	await toUI("realtimeUpdate", [["playerMovement", "team"]]);
+};
+
 const updatePlayerWatch = async ({
 	pid,
 	watch,
@@ -5321,6 +5383,9 @@ export default {
 		updateMultiTeamMode,
 		updateOptions,
 		updateCoaching,
+		updateCoach,
+		hireCoach,
+		fireCoach,
 		updatePlayThroughInjuries,
 		updatePlayerWatch,
 		updatePlayersWatch,

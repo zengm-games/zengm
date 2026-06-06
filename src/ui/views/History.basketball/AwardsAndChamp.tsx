@@ -148,6 +148,55 @@ const AwardsAndChamp = ({
 				<Winner award={awards.mip} season={season} userTid={userTid} />
 				<h2>{AWARD_NAMES.roy}</h2>
 				<Winner award={awards.roy} season={season} userTid={userTid} />
+				{awards.coachOfTheYear ? (
+					<>
+						<h2>Coach of the Year</h2>
+						<p>
+							<span
+								className={
+									awards.coachOfTheYear.tid === userTid
+										? "table-info"
+										: undefined
+								}
+							>
+								<b>
+									<a
+										href={helpers.leagueUrl([
+											"coach",
+											String(awards.coachOfTheYear.cid),
+										])}
+									>
+										{awards.coachOfTheYear.name}
+									</a>
+								</b>{" "}
+								(
+								<a
+									href={helpers.leagueUrl([
+										"roster",
+										`${awards.coachOfTheYear.abbrev}_${awards.coachOfTheYear.tid}`,
+										season,
+									])}
+								>
+									{awards.coachOfTheYear.abbrev}
+								</a>
+								)
+							</span>
+							<br />
+							{helpers.formatRecord(awards.coachOfTheYear)}
+							{awards.coachOfTheYear.expectedWins !== undefined ? (
+								<>
+									,{" "}
+									{(
+										awards.coachOfTheYear.won -
+										awards.coachOfTheYear.expectedWins
+									).toFixed(1)}{" "}
+									wins above expected ({awards.coachOfTheYear.won} vs{" "}
+									{awards.coachOfTheYear.expectedWins.toFixed(1)} expected)
+								</>
+							) : null}
+						</p>
+					</>
+				) : null}
 			</div>
 		</div>
 	);

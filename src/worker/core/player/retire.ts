@@ -5,6 +5,9 @@ import type { Conditions, Player } from "../../../common/types.ts";
 import { idb } from "../../db/index.ts";
 import { player } from "../index.ts";
 import addAward from "./addAward.ts";
+import coachFromPlayer from "../coach/fromPlayer.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
+import { last } from "../../../common/utils.ts";
 
 /**
  * Have a player retire, including all event and HOF bookkeeping.
@@ -90,6 +93,21 @@ const retire = async (
 	delete p.numPlayersTradedAwayNormalized;
 
 	await player.checkJerseyNumberRetirement(p);
+
+	// Some retiring players move into coaching. Smart players (high oiq/diq) and
+	// stars/HOFers are more likely to join the free-agent coaching pool.
+	if (isSport("basketball")) {
+		const r = last(p.ratings) as any;
+		const iq = ((r.oiq ?? 50) + (r.diq ?? 50)) / 2;
+		const prob = helpers.bound(
+			(iq - 55) / 100 + (p.hof ? 0.4 : 0) + 0.05,
+			0,
+			0.6,
+		);
+		if (Math.random() < prob) {
+			await idb.cache.coaches.add(coachFromPlayer(p));
+		}
+	}
 };
 
 export default retire;

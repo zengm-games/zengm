@@ -4,7 +4,7 @@ import type { TeamCoaching } from "../../../common/types.ts";
 import { DEFAULT_COACHING } from "../../../common/constants.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import CollapseArrow from "../../components/CollapseArrow.tsx";
-import { toWorker } from "../../util/toWorker.ts";
+import { helpers } from "../../util/helpers.ts";
 
 const titleText = "Coaching Style";
 
@@ -21,12 +21,7 @@ const DIALS: {
 		low: "Fewer 3s",
 		high: "More 3s",
 	},
-	{
-		key: "pace",
-		label: "Tempo",
-		low: "Slow it down",
-		high: "Push the pace",
-	},
+	{ key: "pace", label: "Tempo", low: "Slow it down", high: "Push the pace" },
 	{
 		key: "crashOffensiveGlass",
 		label: "Offensive rebounding",
@@ -47,72 +42,12 @@ const DIALS: {
 	},
 ];
 
-const PRESETS: {
-	name: string;
-	values: TeamCoaching;
-}[] = [
-	{ name: "Balanced", values: DEFAULT_COACHING },
-	{
-		name: "Pace & Space",
-		values: {
-			threePointTendency: 0.8,
-			pace: 0.6,
-			crashOffensiveGlass: -0.4,
-			paintDefense: -0.3,
-			defensiveAggression: 0,
-		},
-	},
-	{
-		name: "Seven Seconds or Less",
-		values: {
-			threePointTendency: 0.5,
-			pace: 1,
-			crashOffensiveGlass: -0.5,
-			paintDefense: -0.2,
-			defensiveAggression: 0.2,
-		},
-	},
-	{
-		name: "Grit & Grind",
-		values: {
-			threePointTendency: -0.6,
-			pace: -0.6,
-			crashOffensiveGlass: 0.7,
-			paintDefense: 0.7,
-			defensiveAggression: 0.4,
-		},
-	},
-	{
-		name: "Lockdown Defense",
-		values: {
-			threePointTendency: 0,
-			pace: -0.2,
-			crashOffensiveGlass: 0,
-			paintDefense: 0.6,
-			defensiveAggression: 0.7,
-		},
-	},
-];
-
-const CUSTOM = "Custom";
-
-const matchingPreset = (coaching: TeamCoaching) => {
-	const preset = PRESETS.find((preset) =>
-		DIALS.every(({ key }) => preset.values[key] === coaching[key]),
-	);
-	return preset ? preset.name : CUSTOM;
-};
-
-// Format a signed percentage from a level in [-1, 1] and a max magnitude (%).
-// e.g. signedPct(0.5, 40) => "+20%". These magnitudes mirror the COACHING_*
-// tuning constants in worker/core/GameSim.basketball/index.ts.
 const signedPct = (level: number, magnitude: number) => {
 	const pct = Math.round(level * magnitude);
 	return `${pct > 0 ? "+" : ""}${pct}%`;
 };
 
-// A plain-language summary of how the current dials will change games, computed
-// live so it stays in sync as the user drags sliders or picks a preset.
+// Plain-language summary of how the current (coach-set) dials change games.
 const projectedEffects = (coaching: TeamCoaching): string[] => {
 	const effects: string[] = [];
 
@@ -121,7 +56,6 @@ const projectedEffects = (coaching: TeamCoaching): string[] => {
 			`${signedPct(coaching.threePointTendency, 40)} three-point attempt rate`,
 		);
 	}
-
 	if (coaching.pace !== 0) {
 		const faster = coaching.pace > 0;
 		effects.push(
@@ -131,7 +65,6 @@ const projectedEffects = (coaching: TeamCoaching): string[] => {
 			)} fatigue rate · injury risk ${faster ? "up" : "down"}`,
 		);
 	}
-
 	if (coaching.crashOffensiveGlass !== 0) {
 		const crashing = coaching.crashOffensiveGlass > 0;
 		effects.push(
@@ -143,7 +76,6 @@ const projectedEffects = (coaching: TeamCoaching): string[] => {
 			}`,
 		);
 	}
-
 	if (coaching.paintDefense !== 0) {
 		const mag = Math.abs(coaching.paintDefense);
 		if (coaching.paintDefense > 0) {
@@ -162,7 +94,6 @@ const projectedEffects = (coaching: TeamCoaching): string[] => {
 			);
 		}
 	}
-
 	if (coaching.defensiveAggression !== 0) {
 		effects.push(
 			`${signedPct(
@@ -178,79 +109,40 @@ const projectedEffects = (coaching: TeamCoaching): string[] => {
 	if (effects.length === 0) {
 		return ["Neutral — no adjustments to how your team plays."];
 	}
-
 	return effects;
 };
 
-const Slider = ({
-	dial,
-	value,
-	onChange,
-}: {
-	dial: (typeof DIALS)[number];
-	value: number;
-	onChange: (value: number) => void;
-}) => {
-	const id = `coaching-${dial.key}`;
+const dialValue = (value: number) =>
+	value > 0 ? `+${value.toFixed(1)}` : value.toFixed(1);
 
-	return (
-		<div className="mb-3">
-			<label className="form-label mb-0" htmlFor={id}>
-				{dial.label}
-			</label>
-			<input
-				type="range"
-				className="form-range"
-				id={id}
-				value={value}
-				min="-1"
-				max="1"
-				step="0.1"
-				onChange={(event) => {
-					const parsed = Number.parseFloat(event.target.value);
-					if (!Number.isNaN(parsed)) {
-						onChange(parsed);
-					}
-				}}
-			/>
-			<div
-				className="d-flex justify-content-between text-body-secondary small"
-				style={{ marginTop: -5 }}
-			>
-				<span>{dial.low}</span>
-				<span>{dial.high}</span>
-			</div>
-		</div>
-	);
+type CoachCard = {
+	cid: number;
+	firstName: string;
+	lastName: string;
+	age: number;
+	ratings: {
+		ovr: number;
+		development: number;
+		tactics: number;
+		adaptability: number;
+		motivation: number;
+	};
 };
 
+// Read-only: the team's style is set by its head coach (see the Coaches page).
 const CoachingSettings = ({
 	t,
+	coach,
 }: {
 	t: {
 		tid: number;
 		coaching?: TeamCoaching;
 	};
+	coach?: CoachCard;
 }) => {
 	const [expanded, setExpanded] = useState(!window.mobile);
-	const [coaching, setCoaching] = useState<TeamCoaching>({
-		...DEFAULT_COACHING,
-		...t.coaching,
-	});
 
-	const update = async (
-		newCoaching: TeamCoaching,
-		changedKeys: (keyof TeamCoaching)[],
-	) => {
-		setCoaching(newCoaching);
-		for (const key of changedKeys) {
-			await toWorker("main", "updateCoaching", {
-				tid: t.tid,
-				key,
-				value: newCoaching[key],
-			});
-		}
-	};
+	const coaching: TeamCoaching = { ...DEFAULT_COACHING, ...t.coaching };
 
 	return (
 		<div className="coaching-style">
@@ -268,24 +160,16 @@ const CoachingSettings = ({
 				)}
 				<HelpPopover className="ms-1" title={titleText}>
 					<p>
-						These dials let you tell your coaching staff how you want to play.
-						They only apply to your team — AI teams play their natural style.
-					</p>
-					<p>
-						Each setting is a tradeoff. For example, packing the paint makes
-						interior shots harder but concedes more open threes, and crashing
-						the offensive glass wins more offensive rebounds but leaves you more
-						exposed.
-					</p>
-					<p>
-						Pick a preset to set everything at once, then fine-tune any
-						individual slider.
+						This team's playing style is set by its head coach — their
+						philosophy, how much they adapt it to the roster, and how they
+						adjust for each opponent. Manage coaches on the{" "}
+						<a href={helpers.leagueUrl(["coaches"])}>Coaches</a> page.
 					</p>
 				</HelpPopover>
 			</div>
 			<AnimatePresence initial={false}>
 				{expanded ? (
-					<m.form
+					<m.div
 						className="mt-2"
 						initial="collapsed"
 						animate="open"
@@ -294,60 +178,45 @@ const CoachingSettings = ({
 							open: { opacity: 1, height: "auto" },
 							collapsed: { opacity: 0, height: 0 },
 						}}
-						transition={{
-							duration: 0.3,
-							type: "tween",
-						}}
+						transition={{ duration: 0.3, type: "tween" }}
 					>
-						<div className="mb-3">
-							<label className="form-label mb-0" htmlFor="coaching-preset">
-								Preset
-							</label>
-							<select
-								id="coaching-preset"
-								className="form-select"
-								value={matchingPreset(coaching)}
-								onChange={(event) => {
-									const preset = PRESETS.find(
-										(preset) => preset.name === event.target.value,
-									);
-									if (preset) {
-										update(
-											{ ...preset.values },
-											DIALS.map((dial) => dial.key),
-										);
-									}
-								}}
-							>
-								{matchingPreset(coaching) === CUSTOM ? (
-									<option value={CUSTOM}>{CUSTOM}</option>
-								) : null}
-								{PRESETS.map((preset) => (
-									<option key={preset.name} value={preset.name}>
-										{preset.name}
-									</option>
+						{coach ? (
+							<div className="mb-2">
+								<a href={helpers.leagueUrl(["coach", String(coach.cid)])}>
+									{coach.firstName} {coach.lastName}
+								</a>{" "}
+								<span className="text-body-secondary">
+									(age {coach.age}, {coach.ratings.ovr} ovr)
+								</span>
+								<div className="small text-body-secondary">
+									Dev {coach.ratings.development} · Tac {coach.ratings.tactics}{" "}
+									· Adp {coach.ratings.adaptability} · Mot{" "}
+									{coach.ratings.motivation}
+								</div>
+							</div>
+						) : null}
+						<table className="table table-sm mb-2">
+							<tbody>
+								{DIALS.map((dial) => (
+									<tr key={dial.key}>
+										<td className="p-1">{dial.label}</td>
+										<td className="p-1 text-end" style={{ width: 50 }}>
+											{dialValue(coaching[dial.key])}
+										</td>
+										<td className="p-1 text-body-secondary">
+											{coaching[dial.key] >= 0 ? dial.high : dial.low}
+										</td>
+									</tr>
 								))}
-							</select>
-						</div>
-						{DIALS.map((dial) => (
-							<Slider
-								key={dial.key}
-								dial={dial}
-								value={coaching[dial.key]}
-								onChange={(value) => {
-									update({ ...coaching, [dial.key]: value }, [dial.key]);
-								}}
-							/>
-						))}
-						<div className="mt-1">
-							<div className="fw-bold mb-1">Projected impact</div>
-							<ul className="list-unstyled mb-0 small text-body-secondary">
-								{projectedEffects(coaching).map((effect, i) => (
-									<li key={i}>{effect}</li>
-								))}
-							</ul>
-						</div>
-					</m.form>
+							</tbody>
+						</table>
+						<div className="fw-bold mb-1">Projected impact</div>
+						<ul className="list-unstyled mb-0 small text-body-secondary">
+							{projectedEffects(coaching).map((effect, i) => (
+								<li key={i}>{effect}</li>
+							))}
+						</ul>
+					</m.div>
 				) : null}
 			</AnimatePresence>
 		</div>

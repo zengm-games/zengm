@@ -479,6 +479,8 @@ const processLiveGameEvents = ({
 				e.s === "min" ||
 				e.s === "fg" ||
 				e.s === "fga" ||
+				e.s === "fgAtRim" ||
+				e.s === "fgLowPost" ||
 				e.s === "tp" ||
 				e.s === "tpa" ||
 				e.s === "ft" ||
@@ -512,6 +514,9 @@ const processLiveGameEvents = ({
 				p.inGame = true;
 			} else if (e.s === "sPts" || e.s === "sAtt") {
 				// Shootout
+				boxScore.teams[actualT!][e.s] += e.amt;
+			} else if (e.s === "fbp" || e.s === "scp") {
+				// Team-only stats (fast-break / second-chance points)
 				boxScore.teams[actualT!][e.s] += e.amt;
 			}
 		} else if (e.type === "timeouts") {

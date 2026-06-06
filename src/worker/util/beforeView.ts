@@ -1,5 +1,6 @@
 import { Cache, connectLeague, idb } from "../db/index.ts";
-import { league } from "../core/index.ts";
+import { coach, league } from "../core/index.ts";
+import { isSport } from "../../common/sportFunctions.ts";
 import {
 	g,
 	helpers,
@@ -161,6 +162,14 @@ export const beforeLeague = async (newLid: number, conditions?: Conditions) => {
 	}
 
 	await league.loadGameAttributes();
+
+	// Make sure every team has a head coach (and a pool of free agents exists).
+	// Idempotent, so this also backfills coaches for leagues upgraded to the
+	// coaches feature.
+	if (isSport("basketball")) {
+		await coach.ensureCoaches();
+	}
+
 	await initUILocalGames();
 
 	if (loadingNewLid !== newLid) {

@@ -88,6 +88,7 @@ const handleRelease = async (
 
 const Roster = ({
 	abbrev,
+	coach,
 	editable,
 	luxuryTaxAmount,
 	maxRosterSize,
@@ -390,6 +391,7 @@ const Roster = ({
 
 			<TopStuff
 				abbrev={abbrev}
+				coach={coach}
 				currentSeason={currentSeason}
 				editable={editable}
 				luxuryTaxAmount={luxuryTaxAmount}

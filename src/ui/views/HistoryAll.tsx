@@ -21,6 +21,12 @@ const awardName = (
 				abbrev: string;
 				count: number;
 		  }
+		| {
+				cid: number;
+				name: string;
+				tid: number;
+				abbrev: string;
+		  }
 		| undefined,
 	season: number,
 	userTid: number,
@@ -30,6 +36,23 @@ const awardName = (
 		return {
 			value: "N/A",
 			sortValue: undefined,
+		};
+	}
+
+	// Coach of the Year is a coach, not a player.
+	if ("cid" in award) {
+		const value = (
+			<span className={award.tid === userTid ? "table-info" : undefined}>
+				<a href={helpers.leagueUrl(["coach", String(award.cid)])}>
+					{award.name}
+				</a>{" "}
+				({award.abbrev})
+			</span>
+		);
+		return {
+			value,
+			sortValue: award.name,
+			classNames: award.tid === userTid ? "table-info" : undefined,
 		};
 	}
 

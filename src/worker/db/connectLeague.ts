@@ -44,6 +44,7 @@ import type {
 	GameAttributesLeagueWithHistory,
 	SavedTrade,
 	SavedTradingBlock,
+	Coach,
 } from "../../common/types.ts";
 import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings.ts";
 import { amountToLevel } from "../../common/budgetLevels.ts";
@@ -63,6 +64,14 @@ export interface LeagueDB extends DBSchema {
 	awards: {
 		key: number;
 		value: any;
+	};
+	coaches: {
+		key: number;
+		value: Coach;
+		autoIncrementKeyPath: "cid";
+		indexes: {
+			tid: number;
+		};
 	};
 	draftLotteryResults: {
 		key: number;
@@ -548,6 +557,11 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 	db.createObjectStore("awards", {
 		keyPath: "season",
 	});
+	const coachStore = db.createObjectStore("coaches", {
+		keyPath: "cid",
+		autoIncrement: true,
+	});
+	coachStore.createIndex("tid", "tid");
 	db.createObjectStore("draftPicks", {
 		keyPath: "dpid",
 		autoIncrement: true,
@@ -1744,6 +1758,17 @@ const migrate = async ({
 				await cursor.update(t);
 			}
 		}
+	}
+
+	if (oldVersion < 74) {
+		// New store for head coaches. It's populated lazily by ensureCoaches() on
+		// league load, since coach generation needs name pools etc. that aren't
+		// available inside this upgrade transaction.
+		const coachStore = db.createObjectStore("coaches", {
+			keyPath: "cid",
+			autoIncrement: true,
+		});
+		coachStore.createIndex("tid", "tid");
 	}
 
 	// Next update - do similar to `oldVersion < 71` above for numPlayoffRounds and draftType, from loadGameAttributes

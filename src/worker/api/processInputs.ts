@@ -606,6 +606,12 @@ const player = (params: Params) => {
 	};
 };
 
+const coach = (params: Params) => {
+	return {
+		cid: params.cid !== undefined ? Number.parseInt(params.cid) : undefined,
+	};
+};
+
 const playerFeats = (params: Params) => {
 	let abbrev;
 
@@ -1088,6 +1094,9 @@ export default {
 	allStarThree: validateSeasonOnly,
 	awardRaces: validateSeasonOnly,
 	awardsRecords,
+	coach,
+	coaches: () => ({}),
+	customizeCoach: coach,
 	customizePlayer,
 	comparePlayers,
 	dailySchedule,

@@ -133,11 +133,17 @@ class PickIndexes {
 		}
 	}
 
-	doneNba2027() {
-		return (
-			!this.nba2027 ||
-			(this.nba2027.pending1.length === 0 && this.nba2027.pending5.length === 0)
-		);
+	// In some cases, like with very few teams, we can't fully apply the constraints and we just should do it at the end as best possible
+	finalizeNba2027() {
+		if (this.nba2027) {
+			const { pending1, pending5 } = this.nba2027;
+			if (pending1.length > 0) {
+				this.indexes.push(...pending1);
+			}
+			if (pending5.length > 0) {
+				this.indexes.push(...pending5);
+			}
+		}
 	}
 }
 
@@ -248,9 +254,7 @@ export const simLottery = (
 		pickIndexes.add(t.index, false);
 	}
 
-	if (!pickIndexes.doneNba2027()) {
-		throw new Error("Should never happen");
-	}
+	pickIndexes.finalizeNba2027();
 
 	return pickIndexes.indexes;
 };

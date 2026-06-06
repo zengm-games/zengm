@@ -21,6 +21,8 @@ const raw = [
 	"blk",
 	"pf",
 	"pts",
+	"fbp", // fast break points
+	"scp", // second chance points
 	"dd",
 	"td",
 	"qd",

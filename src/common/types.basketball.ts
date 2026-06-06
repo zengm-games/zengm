@@ -42,7 +42,9 @@ export type TeamStatAttr =
 	| "oppEfg"
 	| "oppTovp"
 	| "drbp"
-	| "oppFtpFga";
+	| "oppFtpFga"
+	| "pip"
+	| "oppPip";
 
 type AwardTeam = {
 	tid: number;

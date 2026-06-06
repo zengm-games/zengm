@@ -186,6 +186,10 @@ const processStats = (
 			) {
 				row[stat] = ts[stat];
 				scale = false;
+			} else if (stat === "pip") {
+				row.pip = 2 * (ts.fgAtRim + ts.fgLowPost);
+			} else if (stat === "oppPip") {
+				row.oppPip = 2 * (ts.oppFgAtRim + ts.oppFgLowPost);
 			} else if (stat === "trb") {
 				row.trb = ts.drb + ts.orb;
 			} else if (stat === "oppTrb") {

@@ -103,6 +103,85 @@ const matchingPreset = (coaching: TeamCoaching) => {
 	return preset ? preset.name : CUSTOM;
 };
 
+// Format a signed percentage from a level in [-1, 1] and a max magnitude (%).
+// e.g. signedPct(0.5, 40) => "+20%". These magnitudes mirror the COACHING_*
+// tuning constants in worker/core/GameSim.basketball/index.ts.
+const signedPct = (level: number, magnitude: number) => {
+	const pct = Math.round(level * magnitude);
+	return `${pct > 0 ? "+" : ""}${pct}%`;
+};
+
+// A plain-language summary of how the current dials will change games, computed
+// live so it stays in sync as the user drags sliders or picks a preset.
+const projectedEffects = (coaching: TeamCoaching): string[] => {
+	const effects: string[] = [];
+
+	if (coaching.threePointTendency !== 0) {
+		effects.push(
+			`${signedPct(coaching.threePointTendency, 40)} three-point attempt rate`,
+		);
+	}
+
+	if (coaching.pace !== 0) {
+		const faster = coaching.pace > 0;
+		effects.push(
+			`${signedPct(coaching.pace, 12)} possessions · ${signedPct(
+				coaching.pace,
+				15,
+			)} fatigue rate · injury risk ${faster ? "up" : "down"}`,
+		);
+	}
+
+	if (coaching.crashOffensiveGlass !== 0) {
+		const crashing = coaching.crashOffensiveGlass > 0;
+		effects.push(
+			`${signedPct(
+				coaching.crashOffensiveGlass,
+				40,
+			)} offensive-rebound rate · transition defense ${
+				crashing ? "more exposed" : "more protected"
+			}`,
+		);
+	}
+
+	if (coaching.paintDefense !== 0) {
+		const mag = Math.abs(coaching.paintDefense);
+		if (coaching.paintDefense > 0) {
+			effects.push(
+				`Pack the paint: ${signedPct(mag, 25)} opponent 3PA, −${Math.round(
+					mag * 5,
+				)} pp interior FG, +${Math.round(mag * 4)} pp opponent 3PT`,
+			);
+		} else {
+			effects.push(
+				`Guard the perimeter: −${Math.round(
+					mag * 25,
+				)}% opponent 3PA, +${Math.round(
+					mag * 5,
+				)} pp interior FG, −${Math.round(mag * 4)} pp opponent 3PT`,
+			);
+		}
+	}
+
+	if (coaching.defensiveAggression !== 0) {
+		effects.push(
+			`${signedPct(
+				coaching.defensiveAggression,
+				40,
+			)} steals / blocks / forced turnovers · ${signedPct(
+				coaching.defensiveAggression,
+				30,
+			)} fouls`,
+		);
+	}
+
+	if (effects.length === 0) {
+		return ["Neutral — no adjustments to how your team plays."];
+	}
+
+	return effects;
+};
+
 const Slider = ({
 	dial,
 	value,
@@ -260,6 +339,14 @@ const CoachingSettings = ({
 								}}
 							/>
 						))}
+						<div className="mt-1">
+							<div className="fw-bold mb-1">Projected impact</div>
+							<ul className="list-unstyled mb-0 small text-body-secondary">
+								{projectedEffects(coaching).map((effect, i) => (
+									<li key={i}>{effect}</li>
+								))}
+							</ul>
+						</div>
 					</m.form>
 				) : null}
 			</AnimatePresence>

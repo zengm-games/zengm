@@ -30,6 +30,10 @@ const COACHING_PACE = 0.12; // max +/-12% to pace
 const COACHING_PACE_FATIGUE = 0.15; // faster tempo is more tiring per minute
 const COACHING_CRASH_GLASS = 0.4; // max +/-40% to orbFactor
 const COACHING_TRANSITION_BONUS = 0.06; // crashing concedes easier transition shots
+
+// A shot counts as a fast break if it goes up this quickly after a live-ball
+// change of possession (steal or defensive rebound).
+const FAST_BREAK_SECONDS = 8;
 const COACHING_PAINT_PUSH_3S = 0.25; // packing the paint nudges opponents toward 3s
 const COACHING_PAINT_INTERIOR_DELTA = 0.05; // probMake delta on interior shots vs paint D
 const COACHING_PAINT_THREE_DELTA = 0.04; // probMake delta on 3s vs paint D
@@ -228,6 +232,11 @@ class GameSim extends GameSimBase {
 	transitionTeam: TeamNum | undefined;
 	transitionAmount = 0;
 	currentTransitionBonus = 0;
+
+	// Whether the current possession is a fast break (off a steal/defensive board)
+	// or a second-chance possession (off an offensive rebound), for box-score stats.
+	fastBreak = false;
+	secondChance = false;
 
 	/**
 	 * Initialize the two teams that are playing this game.
@@ -829,6 +838,13 @@ class GameSim extends GameSimBase {
 				? COACHING_TRANSITION_BONUS * this.transitionAmount
 				: 0;
 		this.transitionTeam = undefined;
+
+		// Classify this possession for box-score stats based on how the offense got
+		// the ball last possession.
+		this.secondChance = this.prevPossessionOutcome === "orb";
+		this.fastBreak =
+			this.prevPossessionOutcome === "stl" ||
+			this.prevPossessionOutcome === "drb";
 
 		const dtInbound = this.dtInbound();
 		this.t -= dtInbound;
@@ -2973,6 +2989,14 @@ class GameSim extends GameSimBase {
 				if (s === "pts") {
 					this.team[t].stat.ptsQtrs[this.team[t].stat.ptsQtrs.length - 1] +=
 						amt;
+
+					// Bucket the points into fast-break / second-chance team stats.
+					if (this.secondChance) {
+						this.team[t].stat.scp += amt;
+					}
+					if (this.fastBreak && this.possessionLength <= FAST_BREAK_SECONDS) {
+						this.team[t].stat.fbp += amt;
+					}
 
 					for (const i of [0, 1] as const) {
 						for (let j = 0; j < this.numPlayersOnCourt; j++) {

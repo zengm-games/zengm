@@ -1221,6 +1221,24 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "VORP",
 		},
+		"stat:pip": {
+			desc: "Points in the Paint",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "PITP",
+		},
+		"stat:fbp": {
+			desc: "Fast Break Points",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "FBP",
+		},
+		"stat:scp": {
+			desc: "Second Chance Points",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "SCP",
+		},
 		"stat:fgAtRim": {
 			desc: "At Rim Made",
 			sortSequence: ["desc", "asc"],

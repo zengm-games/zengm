@@ -4,7 +4,13 @@ import * as constantsBaseball from "./constants.baseball.ts";
 import * as constantsBasketball from "./constants.basketball.ts";
 import * as constantsFootball from "./constants.football.ts";
 import * as constantsHockey from "./constants.hockey.ts";
-import type { CompositeWeights, Phase, DraftType, MoodTrait } from "./types.ts";
+import type {
+	CompositeWeights,
+	Phase,
+	DraftType,
+	MoodTrait,
+	TeamCoaching,
+} from "./types.ts";
 
 export const ACCOUNT_API_URL =
 	process.env.NODE_ENV === "development"
@@ -29,7 +35,7 @@ export const DRAFT_BY_TEAM_OVR = bySport({
 	hockey: true,
 });
 
-export const LEAGUE_DATABASE_VERSION = 72;
+export const LEAGUE_DATABASE_VERSION = 73;
 
 export const NO_LOTTERY_DRAFT_TYPES = new Set<DraftType>([
 	"freeAgents",
@@ -398,6 +404,16 @@ export const DEFAULT_PLAY_THROUGH_INJURIES = bySport<[number, number]>({
 	football: [0, 2],
 	hockey: [0, 4],
 });
+
+// Neutral coaching style (all dials at 0). Used as the default for every team
+// and for any team whose coaching values shouldn't apply (i.e. AI teams).
+export const DEFAULT_COACHING: TeamCoaching = {
+	threePointTendency: 0,
+	pace: 0,
+	crashOffensiveGlass: 0,
+	paintDefense: 0,
+	defensiveAggression: 0,
+};
 
 export const DAILY_SCHEDULE = `${
 	TIME_BETWEEN_GAMES === "week" ? "Weekly" : "Daily"

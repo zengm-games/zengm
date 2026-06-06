@@ -1,9 +1,14 @@
 import { allStar, player, season, team } from "../index.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers } from "../../util/index.ts";
-import type { Player, Conditions } from "../../../common/types.ts";
+import type {
+	Player,
+	Conditions,
+	TeamCoaching,
+} from "../../../common/types.ts";
 import {
 	COMPOSITE_WEIGHTS,
+	DEFAULT_COACHING,
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	PHASE,
 } from "../../../common/constants.ts";
@@ -98,6 +103,7 @@ export const processTeam = async (
 	teamInput: {
 		tid: number;
 		playThroughInjuries: [number, number];
+		coaching?: TeamCoaching;
 		depth?: any;
 	},
 	teamSeason: {
@@ -193,6 +199,11 @@ export const processTeam = async (
 		},
 		compositeRating,
 		depth: teamInput.depth,
+
+		// Only the user's team applies its coaching style; AI teams stay neutral.
+		coaching: g.get("userTids").includes(teamInput.tid)
+			? (teamInput.coaching ?? DEFAULT_COACHING)
+			: DEFAULT_COACHING,
 	};
 
 	const playThroughInjuries = actualPlayThroughInjuries[playoffs ? 1 : 0];

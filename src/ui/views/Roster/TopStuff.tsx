@@ -5,8 +5,9 @@ import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import InstructionsAndSortButtons from "./InstructionsAndSortButtons.tsx";
 import PlayThroughInjurySliders from "./PlayThroughInjuriesSliders.tsx";
+import CoachingSettings from "./CoachingSettings.tsx";
 import { type LocalStateUI, type View } from "../../../common/types.ts";
-import { bySport } from "../../../common/sportFunctions.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import Note from "../Player/Note.tsx";
 import { RosterComposition } from "../../components/RosterComposition.tsx";
 import { PlusMinus } from "../../components/PlusMinus.tsx";
@@ -351,8 +352,11 @@ const TopStuff = ({
 								) : null}
 							</div>
 							{showTradingBlock ? (
-								<div>
+								<div className="d-flex flex-column gap-3">
 									<PlayThroughInjurySliders key={tid} t={t} />
+									{isSport("basketball") ? (
+										<CoachingSettings key={`coaching-${tid}`} t={t} />
+									) : null}
 								</div>
 							) : null}
 						</>

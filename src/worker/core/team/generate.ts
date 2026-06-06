@@ -1,6 +1,7 @@
 import { helpers, g } from "../../util/index.ts";
 import type { Team } from "../../../common/types.ts";
 import {
+	DEFAULT_COACHING,
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	DEFAULT_TEAM_COLORS,
 } from "../../../common/constants.ts";
@@ -62,6 +63,7 @@ const generate = (tm: any): Team => {
 		autoTicketPrice: tm.autoTicketPrice ?? true,
 		playThroughInjuries:
 			tm.playThroughInjuries ?? DEFAULT_PLAY_THROUGH_INJURIES,
+		coaching: tm.coaching ?? { ...DEFAULT_COACHING },
 	};
 
 	if (tm.firstSeasonAfterExpansion !== undefined) {

@@ -1,5 +1,6 @@
 import { unwrap } from "@dumbmatter/idb";
 import {
+	DEFAULT_COACHING,
 	DEFAULT_PLAY_THROUGH_INJURIES,
 	DEFAULT_STADIUM_CAPACITY,
 	DEFAULT_TEAM_COLORS,
@@ -1730,6 +1731,16 @@ const migrate = async ({
 			const t = cursor.value;
 			const updated = colaUpdate(t);
 			if (updated) {
+				await cursor.update(t);
+			}
+		}
+	}
+
+	if (oldVersion < 73) {
+		for await (const cursor of transaction.objectStore("teams")) {
+			const t = cursor.value;
+			if (!t.coaching) {
+				t.coaching = { ...DEFAULT_COACHING };
 				await cursor.update(t);
 			}
 		}

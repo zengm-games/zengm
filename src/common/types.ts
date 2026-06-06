@@ -1509,6 +1509,16 @@ export type SortType =
 	| "string"
 	| "pos";
 
+// Coaching style dials for a team (basketball). Each value is a signed level in
+// [-1, 1] where 0 is neutral.
+export type TeamCoaching = {
+	threePointTendency: number; // offense: + = shoot more 3s
+	pace: number; // offense: + = faster tempo
+	crashOffensiveGlass: number; // offense: + = chase offensive rebounds
+	paintDefense: number; // defense: + = pack the paint, - = guard the perimeter
+	defensiveAggression: number; // defense: + = force turnovers (more steals/blocks, more fouls)
+};
+
 export type Team = {
 	tid: number;
 	cid: number;
@@ -1571,6 +1581,10 @@ export type Team = {
 
 	// [regular season, playoffs]
 	playThroughInjuries: [number, number];
+
+	// User-set coaching style dials (basketball only). Each is a signed level in
+	// [-1, 1], 0 = neutral. Only honored for the user's team; AI stays neutral.
+	coaching?: TeamCoaching;
 
 	// Optional because no upgrade
 	autoTicketPrice?: boolean;

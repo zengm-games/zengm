@@ -5,6 +5,7 @@ import getInjuryRate from "./getInjuryRate.ts";
 import type {
 	GameAttributesLeague,
 	PlayerInjury,
+	TeamCoaching,
 	TeamNum,
 } from "../../../common/types.ts";
 import GameSimBase from "../GameSim/GameSimBase.ts";
@@ -21,6 +22,19 @@ import PlayByPlayLogger from "./PlayByPlayLogger.ts";
 import { choice, truncGauss, uniform } from "../../../common/random.ts";
 
 const SHOT_CLOCK = 24;
+
+// Coaching style dials are signed levels in [-1, 1] (0 = neutral). These constants
+// translate a level into a multiplier/delta applied in the sim. Tuned first-pass.
+const COACHING_3PT_TENDENCY = 0.4; // max +/-40% to 3PT tendency
+const COACHING_PACE = 0.12; // max +/-12% to pace
+const COACHING_PACE_FATIGUE = 0.15; // faster tempo is more tiring per minute
+const COACHING_CRASH_GLASS = 0.4; // max +/-40% to orbFactor
+const COACHING_TRANSITION_BONUS = 0.06; // crashing concedes easier transition shots
+const COACHING_PAINT_PUSH_3S = 0.25; // packing the paint nudges opponents toward 3s
+const COACHING_PAINT_INTERIOR_DELTA = 0.05; // probMake delta on interior shots vs paint D
+const COACHING_PAINT_THREE_DELTA = 0.04; // probMake delta on 3s vs paint D
+const COACHING_AGGRESSION_TOV = 0.4; // steals/blocks/turnovers forced
+const COACHING_AGGRESSION_FOUL = 0.3; // tradeoff: more fouls when gambling
 // const NUM_TIMEOUTS_MAX_FINAL_PERIOD = 4;
 // const NUM_TIMEOUTS_MAX_FINAL_PERIOD_LAST_3_MIN = 2;
 const NUM_TIMEOUTS_OVERTIME = 2;
@@ -97,6 +111,7 @@ type TeamGameSim = {
 	pace: number; // mean number of possessions the team likes to have in a game
 	stat: any;
 	compositeRating: any;
+	coaching: TeamCoaching;
 	player: PlayerGameSim[];
 	synergy: {
 		def: number;
@@ -206,6 +221,13 @@ class GameSim extends GameSimBase {
 	prevPossessionOutcome: PossessionOutcome | undefined;
 	possessionLength = 0;
 	lastOrbPlayer: PlayerGameSim | undefined;
+
+	// Transition off the offense's crash-the-glass dial: when a defensive rebound
+	// is grabbed, the rebounding team may get an easier (or harder) first shot next
+	// possession depending on how hard the other team crashed.
+	transitionTeam: TeamNum | undefined;
+	transitionAmount = 0;
+	currentTransitionBonus = 0;
 
 	/**
 	 * Initialize the two teams that are playing this game.
@@ -385,6 +407,9 @@ class GameSim extends GameSimBase {
 
 			// @ts-expect-error
 			delete this.team[t].pace;
+
+			// @ts-expect-error
+			delete this.team[t].coaching;
 
 			for (const p of this.team[t].player) {
 				// @ts-expect-error
@@ -792,6 +817,19 @@ class GameSim extends GameSimBase {
 		this.d = this.o === 1 ? 0 : 1;
 		this.updateTeamCompositeRatings();
 
+		// The team with the ball dictates this possession's tempo. Capture it now
+		// because this.o may get swapped back below on keep-possession outcomes.
+		const offenseT = this.o;
+
+		// If this team grabbed a defensive board off an opponent crash last
+		// possession, they get a transition bonus (or penalty) on their first shot.
+		// Lasts a single possession.
+		this.currentTransitionBonus =
+			this.transitionTeam === this.o
+				? COACHING_TRANSITION_BONUS * this.transitionAmount
+				: 0;
+		this.transitionTeam = undefined;
+
 		const dtInbound = this.dtInbound();
 		this.t -= dtInbound;
 		this.possessionLength = 0;
@@ -811,7 +849,7 @@ class GameSim extends GameSimBase {
 			this.d = this.o === 1 ? 0 : 1;
 		}
 
-		this.updatePlayingTime(dtInbound + this.possessionLength);
+		this.updatePlayingTime(dtInbound + this.possessionLength, offenseT);
 		const injuries = this.injuries();
 
 		this.prevPossessionOutcome = outcome;
@@ -1329,8 +1367,15 @@ class GameSim extends GameSimBase {
 	 *
 	 * This should be called once every possession, at the end, to record playing time and bench time for players.
 	 */
-	updatePlayingTime(possessionLength: number) {
+	updatePlayingTime(possessionLength: number, offenseT: TeamNum) {
 		const min = possessionLength / 60;
+
+		// A faster tempo (dictated by whoever has the ball) is more physically
+		// taxing per minute, so the offense's pace dial scales how quickly players
+		// on both teams tire this possession. Minutes played are unchanged.
+		const paceFatigue =
+			1 + COACHING_PACE_FATIGUE * (this.team[offenseT]?.coaching?.pace ?? 0);
+
 		for (const t of teamNums) {
 			// Update minutes (overall, court, and bench)
 			for (const p of this.team[t].player) {
@@ -1343,7 +1388,10 @@ class GameSim extends GameSimBase {
 						t,
 						p,
 						"energy",
-						-min * this.fatigueFactor * (1 - p.compositeRating.endurance),
+						-min *
+							this.fatigueFactor *
+							(1 - p.compositeRating.endurance) *
+							paceFatigue,
 					);
 
 					if (p.stat.energy < 0) {
@@ -1430,10 +1478,14 @@ class GameSim extends GameSimBase {
 			throw new Error("advanceClockSeconds called with 0 already on the clock");
 		}
 
-		// Adjust for pace up until near the end of the period, so we don't make end of game stuff too weird
+		// Adjust for pace up until near the end of the period, so we don't make end of game stuff too weird.
+		// The offense's coaching pace dial speeds up (faster -> shorter possessions) or slows down play.
+		const effectivePaceFactor =
+			this.paceFactor *
+			(1 + COACHING_PACE * (this.team[this.o]?.coaching?.pace ?? 0));
 		const secondsAdjusted =
-			this.t - seconds / this.paceFactor > 40
-				? seconds / this.paceFactor
+			this.t - seconds / effectivePaceFactor > 40
+				? seconds / effectivePaceFactor
 				: seconds;
 
 		if (secondsAdjusted > this.t) {
@@ -1601,7 +1653,10 @@ class GameSim extends GameSimBase {
 
 		// Non-shooting foul?
 		if (
-			Math.random() < 0.08 * g.get("foulRateFactor") ||
+			Math.random() <
+				0.08 *
+					g.get("foulRateFactor") *
+					this.defensiveAggressionFactor(COACHING_AGGRESSION_FOUL) ||
 			clockFactor === "intentionalFoul"
 		) {
 			let dt;
@@ -1683,11 +1738,19 @@ class GameSim extends GameSimBase {
 	probTov() {
 		return boundProb(
 			(g.get("turnoverFactor") *
+				this.defensiveAggressionFactor(COACHING_AGGRESSION_TOV) *
 				(0.14 * this.team[this.d].compositeRating.defense)) /
 				(0.5 *
 					(this.team[this.o].compositeRating.dribbling +
 						this.team[this.o].compositeRating.passing)),
 		);
+	}
+
+	// Defensive coaching aggression multiplier for the defending team. A positive
+	// defensiveAggression dial gambles for more turnovers/steals/blocks at the
+	// cost of more fouls; negative plays it safe.
+	defensiveAggressionFactor(scale: number) {
+		return 1 + scale * this.team[this.d].coaching.defensiveAggression;
 	}
 
 	/**
@@ -1727,6 +1790,7 @@ class GameSim extends GameSimBase {
 	probStl() {
 		return boundProb(
 			g.get("stealFactor") *
+				this.defensiveAggressionFactor(COACHING_AGGRESSION_TOV) *
 				((0.45 * this.team[this.d].compositeRating.defensePerimeter) /
 					(0.5 *
 						(this.team[this.o].compositeRating.dribbling +
@@ -1822,6 +1886,11 @@ class GameSim extends GameSimBase {
 			throw new Error("Clock at 0 when a shot is taken");
 		}
 
+		// Transition bonus/penalty applies only to the first shot of the possession,
+		// so consume it now regardless of whether this shot is made, missed, or blocked.
+		const transitionBonus = this.currentTransitionBonus;
+		this.currentTransitionBonus = 0;
+
 		// Pick the type of shot and store the success rate (with no defense) in probMake and the probability of an and one in probAndOne
 		let probAndOne;
 		let probMake;
@@ -1849,7 +1918,13 @@ class GameSim extends GameSimBase {
 		} else if (
 			forceThreePointer ||
 			Math.random() <
-				0.67 * shootingThreePointerScaled2 * g.get("threePointTendencyFactor")
+				0.67 *
+					shootingThreePointerScaled2 *
+					g.get("threePointTendencyFactor") *
+					(1 +
+						COACHING_3PT_TENDENCY *
+							this.team[this.o].coaching.threePointTendency) *
+					(1 + COACHING_PAINT_PUSH_3S * this.team[this.d].coaching.paintDefense)
 		) {
 			// Three pointer
 			type = "threePointer";
@@ -1916,7 +1991,8 @@ class GameSim extends GameSimBase {
 			let foulFactor =
 				0.65 *
 				(p.compositeRating.drawingFouls / 0.5) ** 2 *
-				g.get("foulRateFactor");
+				g.get("foulRateFactor") *
+				this.defensiveAggressionFactor(COACHING_AGGRESSION_FOUL);
 
 			if (this.allStarGame) {
 				foulFactor *= 0.4;
@@ -1930,6 +2006,22 @@ class GameSim extends GameSimBase {
 					this.synergyFactor *
 						(this.team[this.o].synergy.off - this.team[this.d].synergy.def)) *
 				currentFatigue;
+
+			// Defensive coaching: packing the paint (paintDefense > 0) contests
+			// interior shots harder while conceding cleaner looks from three;
+			// guarding the perimeter (paintDefense < 0) does the opposite.
+			const paintDefense = this.team[this.d].coaching.paintDefense;
+			if (paintDefense !== 0) {
+				if (type === "threePointer") {
+					probMake += COACHING_PAINT_THREE_DELTA * paintDefense;
+				} else {
+					probMake -= COACHING_PAINT_INTERIOR_DELTA * paintDefense;
+				}
+			}
+
+			// Easier (or, when getting back on D, harder) transition look off the
+			// opponent's crash-the-glass decision last possession.
+			probMake += transitionBonus;
 
 			if (!tipInFromOutOfBounds) {
 				// Adjust probMake for end of quarter situations, where shot quality will be lower without much time
@@ -2181,6 +2273,7 @@ class GameSim extends GameSimBase {
 	probBlk() {
 		return (
 			g.get("blockFactor") *
+			this.defensiveAggressionFactor(COACHING_AGGRESSION_TOV) *
 			0.2 *
 			this.team[this.d].compositeRating.blocking ** 2
 		);
@@ -2723,10 +2816,15 @@ class GameSim extends GameSimBase {
 			return this.doOutOfBounds(0.1);
 		}
 
+		// The offense's coaching dial controls how hard they crash the glass: a
+		// higher orbFactor makes a defensive rebound (this branch) less likely.
+		const orbFactor =
+			g.get("orbFactor") *
+			(1 +
+				COACHING_CRASH_GLASS * this.team[this.o].coaching.crashOffensiveGlass);
 		if (
 			(0.75 * (2 + this.team[this.d].compositeRating.rebounding)) /
-				(g.get("orbFactor") *
-					(2 + this.team[this.o].compositeRating.rebounding)) >
+				(orbFactor * (2 + this.team[this.o].compositeRating.rebounding)) >
 			Math.random()
 		) {
 			p = this.pickPlayer("rebounding", this.d, 3);
@@ -2737,6 +2835,13 @@ class GameSim extends GameSimBase {
 				pid: p.id,
 				clock: this.t,
 			});
+
+			// The rebounding team gets a transition advantage next possession sized
+			// by how hard the offense crashed: crashing (+) concedes an easier shot,
+			// getting back on D (-) makes the opponent's transition harder.
+			this.transitionTeam = this.d;
+			this.transitionAmount = this.team[this.o].coaching.crashOffensiveGlass;
+
 			return "drb" as const;
 		}
 

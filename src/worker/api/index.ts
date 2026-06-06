@@ -1,5 +1,6 @@
 import { csvFormat, csvFormatRows } from "d3-dsv";
 import {
+	DEFAULT_COACHING,
 	GAME_ACRONYM,
 	PHASE,
 	PHASE_TEXT,
@@ -74,6 +75,7 @@ import {
 	type League,
 	type View,
 	type NonEmptyArray,
+	type TeamCoaching,
 	RealPlayerPhotosSchema,
 	RealTeamInfoSchema,
 } from "../../common/types.ts";
@@ -4157,6 +4159,27 @@ const updatePlayThroughInjuries = async ({
 	}
 };
 
+const updateCoaching = async ({
+	tid,
+	key,
+	value,
+}: {
+	tid: number;
+	key: keyof TeamCoaching;
+	value: number;
+}) => {
+	const t = await idb.cache.teams.get(tid);
+	if (t) {
+		const coaching = { ...DEFAULT_COACHING, ...t.coaching };
+		coaching[key] = helpers.bound(value, -1, 1);
+		t.coaching = coaching;
+		await idb.cache.teams.put(t);
+
+		// So roster re-renders, which is needed to maintain state on mobile when the panel is closed
+		await toUI("realtimeUpdate", [["playerMovement"]]);
+	}
+};
+
 const updatePlayerWatch = async ({
 	pid,
 	watch,
@@ -5297,6 +5320,7 @@ export default {
 		updateLeague,
 		updateMultiTeamMode,
 		updateOptions,
+		updateCoaching,
 		updatePlayThroughInjuries,
 		updatePlayerWatch,
 		updatePlayersWatch,

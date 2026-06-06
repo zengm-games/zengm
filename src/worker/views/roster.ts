@@ -155,6 +155,7 @@ const updateRoster = async (
 					"name",
 					"keepRosterSorted",
 					"playThroughInjuries",
+					"coaching",
 				],
 				seasonAttrs,
 				stats: ["pts", "oppPts", "gp"],

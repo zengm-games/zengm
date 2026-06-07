@@ -115,7 +115,7 @@ class PickIndexes {
 		if (this.nba2027) {
 			// If we just added pick 1 or pick 5, then handle pending picks
 			if (
-				this.indexes.length === RESTRICTED_1_PICK &&
+				this.indexes.length >= RESTRICTED_1_PICK &&
 				this.nba2027.pending1.length > 0
 			) {
 				this.indexes.push(...this.nba2027.pending1);
@@ -124,7 +124,7 @@ class PickIndexes {
 
 			// Not elseif in case somehow the above push triggered this limit too (would need to have customizable limits or somehow 4+ #1 picks)
 			if (
-				this.indexes.length === RESTRICTED_5_PICK &&
+				this.indexes.length >= RESTRICTED_5_PICK &&
 				this.nba2027.pending5.length > 0
 			) {
 				this.indexes.push(...this.nba2027.pending5);

@@ -124,6 +124,10 @@ const ImportButton = <Type extends "injuries" | "tragicDeaths">({
 						return;
 					}
 				};
+
+				reader.onerror = () => {
+					setErrorMessage("Failed to read file");
+				};
 			}}
 		/>
 	</button>

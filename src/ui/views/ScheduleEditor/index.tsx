@@ -23,7 +23,8 @@ import clsx from "clsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
 import { confirm } from "../../util/confirm.tsx";
-import { csvParse } from "d3-dsv";
+import { csvFormatRows, csvParse } from "d3-dsv";
+import { downloadFile } from "../../util/downloadFile.ts";
 import { resetFileInput } from "../../util/resetFileInput.ts";
 import { IMPORT_FILE_STYLE } from "../Settings/RowsEditor.tsx";
 
@@ -40,6 +41,9 @@ type ScheduleDay = {
 };
 
 type Team = View<"scheduleEditor">["teams"][number];
+
+const ALL_STAR_GAME_LABEL = "All-Star Game";
+const TRADE_DEADLINE_LABEL = "Trade Deadline";
 
 const deleteSpecial = (
 	schedule: Schedule,
@@ -109,7 +113,7 @@ const notifyPlaceSpecial = (
 	setTimeout(() => {
 		logEvent({
 			type: "info",
-			text: `Placed the ${type === "allStarGame" ? "All-Star Game" : "trade deadline"} on day ${day}`,
+			text: `Placed the ${type === "allStarGame" ? ALL_STAR_GAME_LABEL : TRADE_DEADLINE_LABEL} on day ${day}`,
 			saveToDb: false,
 		});
 	});
@@ -121,10 +125,6 @@ const validateAndParseScheduleCSV = (
 	maxDayAlreadyPlayed: number,
 ): Schedule => {
 	const parsed = csvParse(csvText);
-
-	if (parsed.columns[0] !== "D") {
-		throw new Error('First column must be "D" for day number');
-	}
 
 	const teamsByAbbrev = groupByUnique(teams, (t) => t.seasonAttrs.abbrev);
 
@@ -142,9 +142,10 @@ const validateAndParseScheduleCSV = (
 		Map<string, { home: string; away: string }>
 	>();
 	const teamsByDay = new Map<number, Set<number>>();
+	const specials: Schedule[number][] = [];
 
 	for (const row of parsed) {
-		const dayStr = row.D;
+		const dayStr = row[parsed.columns[0]!];
 		if (!dayStr) {
 			continue;
 		}
@@ -159,15 +160,26 @@ const validateAndParseScheduleCSV = (
 			);
 		}
 
-		if (!gamesByDay.has(day)) {
-			gamesByDay.set(day, new Map());
-		}
-		if (!teamsByDay.has(day)) {
-			teamsByDay.set(day, new Set());
+		const firstCell = row[teamColumns[0]!]?.trim();
+		if (
+			firstCell === ALL_STAR_GAME_LABEL ||
+			firstCell === TRADE_DEADLINE_LABEL
+		) {
+			for (const abbrev of teamColumns.slice(1)) {
+				if (row[abbrev]?.trim()) {
+					throw new Error(`${firstCell} must be the only entry on day ${day}`);
+				}
+			}
+			specials.push(
+				firstCell === ALL_STAR_GAME_LABEL
+					? { type: "allStarGame", day, homeTid: -1, awayTid: -2 }
+					: { type: "tradeDeadline", day, homeTid: -3, awayTid: -3 },
+			);
+			continue;
 		}
 
-		const dayGames = gamesByDay.get(day)!;
-		const teamsOnDay = teamsByDay.get(day)!;
+		const dayGames = gamesByDay.getOrInsertComputed(day, () => new Map());
+		const teamsOnDay = teamsByDay.getOrInsertComputed(day, () => new Set());
 
 		for (const homeAbbrev of teamColumns) {
 			const cell = row[homeAbbrev]?.trim();
@@ -200,21 +212,7 @@ const validateAndParseScheduleCSV = (
 					: [opponentTeam.tid, homeTeam.tid];
 			const gameKey = `${tid1}-${tid2}`;
 
-			const existingGame = dayGames.get(gameKey);
-			if (existingGame) {
-				if (
-					(isAway &&
-						(existingGame.away !== homeAbbrev ||
-							existingGame.home !== opponentAbbrev)) ||
-					(!isAway &&
-						(existingGame.home !== homeAbbrev ||
-							existingGame.away !== opponentAbbrev))
-				) {
-					throw new Error(
-						`Inconsistent game on day ${day}: ${homeAbbrev} shows ${isAway ? "@" : ""}${opponentAbbrev} but the matchup is recorded as ${existingGame.home} vs ${existingGame.away}`,
-					);
-				}
-			} else {
+			if (!dayGames.has(gameKey)) {
 				dayGames.set(gameKey, {
 					home: isAway ? opponentAbbrev : homeAbbrev,
 					away: isAway ? homeAbbrev : opponentAbbrev,
@@ -223,7 +221,7 @@ const validateAndParseScheduleCSV = (
 		}
 	}
 
-	const newSchedule: Schedule = [];
+	const newSchedule: Schedule = [...specials];
 	for (const [day, dayGames] of gamesByDay) {
 		for (const game of dayGames.values()) {
 			newSchedule.push({
@@ -238,6 +236,45 @@ const validateAndParseScheduleCSV = (
 	}
 
 	return orderBy(newSchedule, ["day"]);
+};
+
+const exportScheduleCSV = (schedule: Schedule, teams: Team[]) => {
+	const sortedTeams = orderBy(teams, (t) => t.seasonAttrs.abbrev);
+	const abbrevs = sortedTeams.map((t) => t.seasonAttrs.abbrev);
+	const abbrevToIdx = new Map(abbrevs.map((a, i) => [a, i]));
+
+	const dayMap = new Map<number, Schedule[number][]>();
+	for (const game of schedule) {
+		if (game.type === "completed" || game.type === "placeholder") {
+			continue;
+		}
+		dayMap.getOrInsertComputed(game.day, () => []).push(game);
+	}
+
+	const rows: string[][] = [["D", ...abbrevs]];
+	for (const day of orderBy([...dayMap.keys()], (d) => d)) {
+		const row = Array<string>(abbrevs.length + 1).fill("");
+		row[0] = String(day);
+		for (const game of dayMap.get(day)!) {
+			if (game.type === "allStarGame") {
+				row[1] = ALL_STAR_GAME_LABEL;
+			} else if (game.type === "tradeDeadline") {
+				row[1] = TRADE_DEADLINE_LABEL;
+			} else if (game.type === "game") {
+				const homeIdx = abbrevToIdx.get(game.homeAbbrev);
+				const awayIdx = abbrevToIdx.get(game.awayAbbrev);
+				if (homeIdx !== undefined) {
+					row[homeIdx + 1] = game.awayAbbrev;
+				}
+				if (awayIdx !== undefined) {
+					row[awayIdx + 1] = `@${game.homeAbbrev}`;
+				}
+			}
+		}
+		rows.push(row);
+	}
+
+	downloadFile("schedule.csv", csvFormatRows(rows), "text/csv");
 };
 
 const reducer = (
@@ -562,7 +599,6 @@ const ScheduleEditor = ({
 	const [showRegenerateScheduleModal, setShowRegenerateScheduleModal] =
 		useState(false);
 	const [regenerated, setRegenerated] = useState(false);
-	const [uploadError, setUploadError] = useState<string | undefined>();
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	const handleFileUpload = useCallback(
@@ -571,8 +607,6 @@ const ScheduleEditor = ({
 			if (!file) {
 				return;
 			}
-
-			setUploadError(undefined);
 
 			const reader = new FileReader();
 			reader.readAsText(file);
@@ -597,7 +631,6 @@ const ScheduleEditor = ({
 						saveToDb: false,
 					});
 				} catch (error) {
-					setUploadError(error.message);
 					logEvent({
 						type: "error",
 						text: `Error importing schedule: ${error.message}`,
@@ -607,7 +640,11 @@ const ScheduleEditor = ({
 			};
 
 			reader.onerror = () => {
-				setUploadError("Failed to read file");
+				logEvent({
+					type: "error",
+					text: "Failed to read CSV file",
+					saveToDb: false,
+				});
 			};
 		},
 		[dispatch, maxDayAlreadyPlayed, schedule, teams],
@@ -773,8 +810,8 @@ const ScheduleEditor = ({
 							{
 								value:
 									row.special === "allStarGame"
-										? "All-Star Game"
-										: "Trade Deadline",
+										? ALL_STAR_GAME_LABEL
+										: TRADE_DEADLINE_LABEL,
 								classNames: "text-start",
 								colSpanToEnd: true,
 							},
@@ -932,11 +969,6 @@ const ScheduleEditor = ({
 				Home games are shown in normal text and away games are shown in{" "}
 				<span className="text-body-secondary">faded text</span>.
 			</p>
-			{uploadError ? (
-				<div className="alert alert-danger">
-					<strong>Error importing schedule:</strong> {uploadError}
-				</div>
-			) : null}
 			{!godMode ? (
 				<div>
 					<span className="alert alert-warning d-inline-block mb-0">
@@ -1106,6 +1138,13 @@ const ScheduleEditor = ({
 								}}
 							>
 								Regenerate schedule
+							</Dropdown.Item>
+							<Dropdown.Item
+								onClick={() => {
+									exportScheduleCSV(schedule, teams);
+								}}
+							>
+								Export schedule to CSV
 							</Dropdown.Item>
 							<Dropdown.Item
 								as="div"

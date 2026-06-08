@@ -23,9 +23,7 @@ const hasSkill = (
 const skills = (playerRatings: MinimalPlayerRatings) => {
 	const sk: string[] = [];
 
-	for (const key of Object.keys(COMPOSITE_WEIGHTS)) {
-		const { ratings, skill, weights } = COMPOSITE_WEIGHTS[key]!;
-
+	for (const { ratings, skill, weights } of Object.values(COMPOSITE_WEIGHTS)) {
 		if (skill) {
 			if (hasSkill(playerRatings, ratings, weights, skill.cutoff)) {
 				sk.push(skill.label);

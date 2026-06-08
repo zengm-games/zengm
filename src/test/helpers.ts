@@ -55,7 +55,9 @@ export function numInArrayEqualTo<T>(array: T[], x: T): number {
 	return n;
 }
 
-export const resetCache = async (data?: Partial<Record<Store, any[]>>) => {
+export const resetCache = async (
+	data?: Partial<Record<Store, Readonly<any[]>>>,
+) => {
 	idb.cache = new Cache(); // We want these to do nothing while testing, usually
 
 	idb.cache.fill = async () => {};

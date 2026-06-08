@@ -91,11 +91,11 @@ const ovr = (ratings: PlayerRatings, pos?: Position): number => {
 		constant0: 0,
 	};
 
-	for (const k of Object.keys(COMPOSITE_WEIGHTS)) {
-		compositeRatings[k] = compositeRating(
+	for (const [key, value] of Object.entries(COMPOSITE_WEIGHTS)) {
+		compositeRatings[key] = compositeRating(
 			ratings,
-			COMPOSITE_WEIGHTS[k]!.ratings,
-			COMPOSITE_WEIGHTS[k]!.weights,
+			value.ratings,
+			value.weights,
 			false,
 		);
 	}

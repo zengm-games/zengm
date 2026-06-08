@@ -199,13 +199,15 @@ const newPhasePreseason = async (
 
 	const activeTeams = teams.filter((t) => !t.disabled);
 	const popRanks = helpers.getPopRanks(activeTeams);
-	for (const [i, t] of activeTeams.entries()) {
+	for (const [t, popRank] of Iterator.zip([activeTeams, popRanks], {
+		mode: "strict",
+	})) {
 		if (
 			!g.get("userTids").includes(t.tid) ||
 			local.autoPlayUntil ||
 			g.get("spectator")
 		) {
-			await team.resetTicketPrice(t, popRanks[i]!);
+			await team.resetTicketPrice(t, popRank);
 
 			// Sometimes update budget items for AI teams
 			for (const key of [
@@ -215,7 +217,7 @@ const newPhasePreseason = async (
 				"facilities",
 			] as const) {
 				if (Math.random() < 0.5) {
-					t.budget[key] = finances.defaultBudgetLevel(popRanks[i]!);
+					t.budget[key] = finances.defaultBudgetLevel(popRank);
 				}
 			}
 

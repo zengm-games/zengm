@@ -169,9 +169,8 @@ const updateDailySchedule = async (
 
 			if (inputs.season !== currentSeason) {
 				// Add team branding info, in case that was different in past season. Otherwise, ScoreBox uses teamInfoCache for latest values
-				for (let i = 0; i < completed.length; i++) {
-					const game = { ...completed[i]! };
-					completed[i] = game;
+				for (const [i, game] of completed.entries()) {
+					completed[i] = { ...game };
 
 					for (const t of game.teams) {
 						const teamSeason = await idb.getCopy.teamSeasons({

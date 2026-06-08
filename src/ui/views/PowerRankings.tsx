@@ -131,9 +131,11 @@ const PowerRankings = ({
 	const cols = getCols(colNames);
 
 	if (isSport("basketball")) {
-		for (const [i, colName] of colNames.entries()) {
+		for (const [colName, col] of Iterator.zip([colNames, cols], {
+			mode: "strict",
+		})) {
 			if (colName.startsWith("rating:")) {
-				cols[i]!.sortSequence = ["asc", "desc"];
+				col.sortSequence = ["asc", "desc"];
 			}
 		}
 	}

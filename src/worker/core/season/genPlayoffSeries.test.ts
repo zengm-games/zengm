@@ -202,15 +202,16 @@ test.skip("split teams by conference if there are two conferences, including bye
 		[5, undefined],
 		[1, 4],
 	];
-	assert.strictEqual(series.length, tids.length);
 
-	for (const [i, { away, home }] of series.entries()) {
-		assert.strictEqual(tids[i]![0], home.tid);
+	for (const [matchup, { away, home }] of Iterator.zip([tids, series], {
+		mode: "strict",
+	})) {
+		assert.strictEqual(matchup[0], home.tid);
 
 		if (away === undefined) {
-			assert.strictEqual(tids[i]![1], undefined);
+			assert.strictEqual(matchup[1], undefined);
 		} else {
-			assert.strictEqual(tids[i]![1], away.tid);
+			assert.strictEqual(matchup[1], away.tid);
 		}
 	}
 });
@@ -272,15 +273,16 @@ test("pick teams regardless of conference if there are not two conferences, incl
 		[3, 1],
 		[2, undefined],
 	];
-	assert.strictEqual(series.length, tids.length);
 
-	for (const [i, { away, home }] of series.entries()) {
-		assert.strictEqual(tids[i]![0], home.tid);
+	for (const [matchup, { away, home }] of Iterator.zip([tids, series], {
+		mode: "strict",
+	})) {
+		assert.strictEqual(matchup[0], home.tid);
 
 		if (away === undefined) {
-			assert.strictEqual(tids[i]![1], undefined);
+			assert.strictEqual(matchup[1], undefined);
 		} else {
-			assert.strictEqual(tids[i]![1], away.tid);
+			assert.strictEqual(matchup[1], away.tid);
 		}
 	}
 });
@@ -371,15 +373,16 @@ test("handle 16 teams", () => {
 		[6, 9],
 		[1, 14],
 	];
-	assert.strictEqual(series.length, tids.length);
 
-	for (const [i, { away, home }] of series.entries()) {
-		assert.strictEqual(tids[i]![0], home.tid);
+	for (const [matchup, { away, home }] of Iterator.zip([tids, series], {
+		mode: "strict",
+	})) {
+		assert.strictEqual(matchup[0], home.tid);
 
 		if (away === undefined) {
-			assert.strictEqual(tids[i]![1], undefined);
+			assert.strictEqual(matchup[1], undefined);
 		} else {
-			assert.strictEqual(tids[i]![1], away.tid);
+			assert.strictEqual(matchup[1], away.tid);
 		}
 	}
 });

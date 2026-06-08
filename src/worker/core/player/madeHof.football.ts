@@ -40,23 +40,23 @@ export const getThreshold = (pos?: string) => {
 	let threshold = 100;
 
 	if (pos === "QB") {
-		threshold = 160;
+		threshold = 130;
 	} else if (pos === "RB") {
-		threshold = 80;
+		threshold = 95;
 	} else if (pos === "WR") {
-		threshold = 110;
+		threshold = 115;
 	} else if (pos === "TE") {
-		threshold = 110;
+		threshold = 60;
 	} else if (pos === "OL") {
-		threshold = 70;
+		threshold = 150;
 	} else if (pos === "DL") {
-		threshold = 90;
+		threshold = 140;
 	} else if (pos === "LB") {
-		threshold = 70;
+		threshold = 130;
 	} else if (pos === "S") {
-		threshold = 44;
+		threshold = 80;
 	} else if (pos === "CB") {
-		threshold = 40;
+		threshold = 95;
 	}
 
 	return threshold;

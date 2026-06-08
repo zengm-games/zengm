@@ -629,6 +629,20 @@ const doAwards = async (conditions: Conditions) => {
 		},
 		players,
 	);
+
+	// Clutch Player of the Year: most points scored late in close games. Require
+	// a meaningful sample of games so it isn't a small-sample fluke.
+	const clutchMinGames = Math.round(0.5 * g.get("numGames"));
+	const [clutchPoy] = getTopPlayersOffense(
+		{
+			filter: (p) =>
+				(p.currentStats.clutchPts ?? 0) > 0 &&
+				p.currentStats.gp >= clutchMinGames,
+			score: (p) => p.currentStats.clutchPts ?? 0,
+		},
+		players,
+	);
+
 	let finalsMvp;
 	const champTeam = teams.find(
 		(t) =>
@@ -699,6 +713,7 @@ const doAwards = async (conditions: Conditions) => {
 		allDefensive,
 		allRookie,
 		coachOfTheYear,
+		clutchPoy,
 		season: g.get("season"),
 	};
 	addSimpleAndTeamAwardsToAwardsByPlayer(awards, awardsByPlayer);

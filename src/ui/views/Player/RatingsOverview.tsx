@@ -1,5 +1,6 @@
-import { bySport } from "../../../common/sportFunctions.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { RatingWithChange } from "../../components/RatingWithChange.tsx";
+import getRoleBasketball from "../../../common/getRole.basketball.ts";
 import type { ReactNode } from "react";
 
 const RatingsOverview = ({
@@ -200,6 +201,16 @@ const RatingsOverview = ({
 						),
 						rating: "reb",
 					},
+				],
+			},
+			{
+				Tendencies: [
+					{ label: "Usage", rating: "tendencyUsage" },
+					{ label: "Three", rating: "tendencyThree" },
+					{ label: "At Rim", rating: "tendencyAtRim" },
+					{ label: "Post Up", rating: "tendencyPost" },
+					{ label: "Pass First", rating: "tendencyPass" },
+					{ label: "Clutch", rating: "tendencyClutch" },
 				],
 			},
 		],
@@ -480,6 +491,11 @@ const RatingsOverview = ({
 					</RatingWithChange>
 				</h2>
 			</div>
+			{isSport("basketball") ? (
+				<p className="mb-2">
+					Role: <b>{getRoleBasketball(currentSeason)}</b>
+				</p>
+			) : null}
 			<div className="d-flex justify-content-between">
 				{columns.map((column, i) => (
 					<div key={i} className={i === 0 ? undefined : "ms-2 ms-sm-5"}>

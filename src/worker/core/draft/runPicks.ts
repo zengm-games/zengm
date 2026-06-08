@@ -12,6 +12,8 @@ import type {
 import { player, team } from "../index.ts";
 import { last } from "../../../common/utils.ts";
 import { choice } from "../../../common/random.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
+import rosterFitFactor from "../team/rosterFit.basketball.ts";
 
 export const getTeamOvrDiffs = (
 	teamPlayers: PlayerWithoutKey[],
@@ -184,6 +186,11 @@ const runPicks = async (
 			const score = (p: Player, i: number) => {
 				if (DRAFT_BY_TEAM_OVR) {
 					return (teamOvrDiffs[i]! + 0.05 * p.value) ** 40;
+				}
+
+				// Talent × roster fit (tie-breaker) so AI drafts toward needs.
+				if (isSport("basketball")) {
+					return (p.value * rosterFitFactor(teamPlayers, p)) ** 69;
 				}
 
 				return p.value ** 69;

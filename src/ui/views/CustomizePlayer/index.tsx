@@ -10,6 +10,7 @@ import {
 	PHASE,
 	PLAYER,
 	RATINGS,
+	TENDENCIES,
 	POSITIONS,
 	MOOD_TRAITS,
 	WEBSITE_ROOT,
@@ -259,6 +260,16 @@ const copyValidValues = (
 				}
 			} else if (rating === "locked") {
 				targetRatings.locked = sourceRatings.locked;
+			} else if ((TENDENCIES as readonly string[]).includes(rating)) {
+				// Tendencies are 0-100 but don't affect ovr/pot.
+				const val = helpers.bound(
+					Number.parseInt((sourceRatings as any)[rating]),
+					0,
+					100,
+				);
+				if (!Number.isNaN(val)) {
+					(targetRatings as any)[rating] = val;
+				}
 			}
 		}
 	}

@@ -1,5 +1,5 @@
 import type { CompositeWeights, Conf, Div, NonEmptyArray } from "./types.ts";
-import type { RatingKey } from "./types.basketball.ts";
+import type { RatingKey, TendencyKey } from "./types.basketball.ts";
 
 export const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 	pace: {
@@ -539,12 +539,24 @@ export const RATINGS: RatingKey[] = [
 	"reb",
 ];
 
+// Behavioral tendencies (0-100, 50 = neutral). Separate from RATINGS: they bias
+// behavior, not skill, and are excluded from ovr/pot.
+export const TENDENCIES: TendencyKey[] = [
+	"tendencyUsage",
+	"tendencyThree",
+	"tendencyAtRim",
+	"tendencyPost",
+	"tendencyPass",
+	"tendencyClutch",
+];
+
 export const SIMPLE_AWARDS = [
 	"mvp",
 	"roy",
 	"smoy",
 	"dpoy",
 	"mip",
+	"clutchPoy",
 	"finalsMvp",
 ] as const;
 
@@ -554,6 +566,7 @@ export const AWARD_NAMES = {
 	smoy: "Sixth Man of the Year",
 	dpoy: "Defensive Player of the Year",
 	mip: "Most Improved Player",
+	clutchPoy: "Clutch Player of the Year",
 	finalsMvp: "Finals MVP",
 	sfmvp: "Semifinals MVP",
 	allLeague: "All-League",

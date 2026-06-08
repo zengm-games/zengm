@@ -146,6 +146,16 @@ const AwardsAndChamp = ({
 				<Winner award={awards.smoy} season={season} userTid={userTid} />
 				<h2>{AWARD_NAMES.mip}</h2>
 				<Winner award={awards.mip} season={season} userTid={userTid} />
+				{awards.clutchPoy ? (
+					<>
+						<h2>{AWARD_NAMES.clutchPoy}</h2>
+						<Winner
+							award={awards.clutchPoy}
+							season={season}
+							userTid={userTid}
+						/>
+					</>
+				) : null}
 				<h2>{AWARD_NAMES.roy}</h2>
 				<Winner award={awards.roy} season={season} userTid={userTid} />
 				{awards.coachOfTheYear ? (

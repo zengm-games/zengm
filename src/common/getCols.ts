@@ -879,6 +879,42 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "Reb",
 		},
+		"rating:tendencyUsage": {
+			desc: "Tendency: Usage",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "tUsg",
+		},
+		"rating:tendencyThree": {
+			desc: "Tendency: Three-pointers",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "t3",
+		},
+		"rating:tendencyAtRim": {
+			desc: "Tendency: At rim",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "tRim",
+		},
+		"rating:tendencyPost": {
+			desc: "Tendency: Post up",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "tPost",
+		},
+		"rating:tendencyPass": {
+			desc: "Tendency: Pass first",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "tPass",
+		},
+		"rating:tendencyClutch": {
+			desc: "Clutch",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "Cltch",
+		},
 		"rating:diq": {
 			desc: "Defensive IQ",
 			sortSequence: ["desc", "asc"],
@@ -1238,6 +1274,12 @@ const sportSpecificCols = bySport<{
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 			title: "SCP",
+		},
+		"stat:clutchPts": {
+			desc: "Clutch Points (scored late in a close game)",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "ClPt",
 		},
 		"stat:fgAtRim": {
 			desc: "At Rim Made",
@@ -3773,6 +3815,10 @@ const cols: {
 	"award:coachOfTheYear": {
 		desc: "Coach of the Year",
 		title: "COY",
+	},
+	"award:clutchPoy": {
+		desc: "Clutch Player of the Year",
+		title: "CPOY",
 	},
 	"award:finalsMvp": {
 		desc: `${isSport("hockey") ? "Playoffs" : "Finals"} Most Valuable Player`,

@@ -56,6 +56,9 @@ export const findStarters = (positions: string[]): number[] => {
 	return starters;
 };
 
+// Coaches who value floor-spacing nudge spacers up the rotation (tie-breaker).
+const SPACER_BONUS = 0.05;
+
 export const getRosterOrderByPid = (
 	players: {
 		pid: number;
@@ -63,17 +66,26 @@ export const getRosterOrderByPid = (
 		valueNoPotFuzz: number;
 		ratings: {
 			pos: string;
+			tp?: number;
+			tendencyThree?: number;
 		};
 	}[],
 	tid: number,
 	fuzzUser: boolean,
+	tacticsScale = 0,
 ) => {
-	// Fuzz only for user's team
-	if (fuzzUser && tid === g.get("userTid")) {
-		players.sort((a, b) => b.valueNoPotFuzz - a.valueNoPotFuzz);
-	} else {
-		players.sort((a, b) => b.valueNoPot - a.valueNoPot);
-	}
+	const useFuzz = fuzzUser && tid === g.get("userTid");
+
+	// Fit-adjusted ordering value: spacers (shooters who shoot) get a small,
+	// tactics-scaled bump so borderline rotation/start decisions favor spacing.
+	const sortVal = (p: (typeof players)[number]) => {
+		const base = useFuzz ? p.valueNoPotFuzz : p.valueNoPot;
+		const spacer =
+			(p.ratings.tp ?? 50) >= 50 && (p.ratings.tendencyThree ?? 50) >= 45;
+		return spacer ? base * (1 + tacticsScale * SPACER_BONUS) : base;
+	};
+
+	players.sort((a, b) => sortVal(b) - sortVal(a));
 
 	// Shuffle array so that position conditions are met - 2 G and 2 F/C in starting lineup, at most one pure C
 	const positions = players.map((p) => p.ratings.pos);
@@ -115,13 +127,17 @@ const rosterAutoSort = async (tid: number, onlyNewPlayers?: boolean) => {
 	);
 	const players = await idb.getCopies.playersPlus(playersFromCache, {
 		attrs: ["pid", "valueNoPot", "valueNoPotFuzz"],
-		ratings: ["pos"],
+		ratings: ["pos", "tp", "tendencyThree"],
 		season: g.get("season"),
 		showNoStats: true,
 		showRookies: true,
 	});
 
-	const rosterOrders = getRosterOrderByPid(players, tid, true);
+	// Coaches with strong tactics shape the rotation for fit.
+	const coaches = await idb.cache.coaches.indexGetAll("coachesByTid", tid);
+	const tacticsScale = (coaches[0]?.ratings.tactics ?? 50) / 100;
+
+	const rosterOrders = getRosterOrderByPid(players, tid, true, tacticsScale);
 
 	// Update rosterOrder
 	for (const p of playersFromCache) {

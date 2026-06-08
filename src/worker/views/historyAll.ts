@@ -98,6 +98,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				"dpoy",
 				"smoy",
 				"mip",
+				"clutchPoy",
 				"roy",
 				"coachOfTheYear",
 			],

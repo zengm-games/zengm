@@ -10,6 +10,7 @@ import {
 	PLAYER,
 } from "../../common/constants.ts";
 import { player, season } from "../core/index.ts";
+import genTendencies from "../core/player/genTendencies.basketball.ts";
 import { idb } from "./index.ts";
 import { helpers, logEvent } from "../util/index.ts";
 import connectIndexedDB from "./connectIndexedDB.ts";
@@ -1769,6 +1770,23 @@ const migrate = async ({
 			autoIncrement: true,
 		});
 		coachStore.createIndex("tid", "tid");
+	}
+
+	if (oldVersion < 75 && isSport("basketball")) {
+		// Backfill behavioral tendencies (correlated to each ratings row's skills).
+		for await (const cursor of transaction.objectStore("players")) {
+			const p = cursor.value;
+			let changed = false;
+			for (const r of p.ratings as any[]) {
+				if (r.tendencyUsage === undefined) {
+					Object.assign(r, genTendencies(r));
+					changed = true;
+				}
+			}
+			if (changed) {
+				await cursor.update(p);
+			}
+		}
 	}
 
 	// Next update - do similar to `oldVersion < 71` above for numPlayoffRounds and draftType, from loadGameAttributes

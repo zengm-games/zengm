@@ -49,6 +49,7 @@ const stats = {
 		"ba",
 		"pf",
 		"pts",
+		"clutchPts", // Points scored in late-game, close-margin situations
 		"dd",
 		"td",
 		"qd",

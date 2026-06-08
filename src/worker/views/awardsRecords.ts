@@ -110,6 +110,14 @@ const optionsTmp = bySport({
 			key: "mip",
 		},
 		{
+			val: "Clutch Player of the Year",
+			key: "clutch_poy",
+		},
+		{
+			val: "Coach of the Year",
+			key: "coach_of_the_year",
+		},
+		{
 			val: "Rookie of the Year",
 			key: "roy",
 		},
@@ -428,6 +436,54 @@ const updateAwardsRecords = async (
 		updateEvents.includes("firstRun") ||
 		inputs.awardType !== state.awardType
 	) {
+		const awardTypeEarly = inputs.awardType;
+
+		// Coach of the Year is coach-keyed, not player-keyed, so aggregate from
+		// the coaches store instead of players.
+		if (awardTypeEarly === "coach_of_the_year") {
+			const teams = await idb.cache.teams.getAll();
+			const abbrevByTid = new Map(teams.map((t) => [t.tid, t.abbrev]));
+			const coaches = await idb.cache.coaches.getAll();
+
+			const awardsRecords = coaches
+				.map((c) => {
+					const awards = c.awards.filter((a) => a.type === "Coach of the Year");
+					if (awards.length === 0) {
+						return undefined;
+					}
+
+					const tidBySeason = new Map(
+						(c.seasons ?? []).map((s) => [s.season, s.tid]),
+					);
+					const years = awards.map((a) => {
+						const tid = tidBySeason.get(a.season) ?? c.tid;
+						return {
+							team: abbrevByTid.get(tid) ?? "???",
+							season: a.season,
+						};
+					});
+
+					return {
+						isCoach: true as const,
+						cid: c.cid,
+						firstName: c.firstName,
+						lastName: c.lastName,
+						count: awards.length,
+						countText: awards.length.toString(),
+						years,
+						lastYear: Math.max(...years.map((y) => y.season)),
+					};
+				})
+				.filter((c) => c !== undefined);
+
+			return {
+				awardsRecords: addFirstNameShort(awardsRecords),
+				playerCount: awardsRecords.length,
+				awardTypeVal: awardOptions[awardTypeEarly],
+				awardType: awardTypeEarly,
+			};
+		}
+
 		const playersAll = await idb.getCopies.players(
 			{
 				activeAndRetired: true,

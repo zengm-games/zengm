@@ -80,6 +80,7 @@ export const awardStats = bySport({
 		"gs",
 		"min",
 		"pts",
+		"clutchPts",
 		"trb",
 		"ast",
 		"blk",

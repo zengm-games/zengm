@@ -24,6 +24,18 @@ const rows = bySport<
 			{ Shooting: ["ins", "dnk", "ft", "fg", "tp"] },
 			{ Skill: ["oiq", "diq", "drb", "pss", "reb"] },
 		],
+		[
+			{
+				Tendencies: [
+					"tendencyUsage",
+					"tendencyThree",
+					"tendencyAtRim",
+					"tendencyPost",
+					"tendencyPass",
+					"tendencyClutch",
+				],
+			},
+		],
 	],
 	football: [
 		[

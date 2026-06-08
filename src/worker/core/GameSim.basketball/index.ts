@@ -39,6 +39,52 @@ const COACHING_PAINT_INTERIOR_DELTA = 0.05; // probMake delta on interior shots 
 const COACHING_PAINT_THREE_DELTA = 0.04; // probMake delta on 3s vs paint D
 const COACHING_AGGRESSION_TOV = 0.4; // steals/blocks/turnovers forced
 const COACHING_AGGRESSION_FOUL = 0.3; // tradeoff: more fouls when gambling
+
+// Per-player tendencies (0-100, 50 = neutral). Converted to a multiplier with
+// these max strengths (at 0 or 100). Behavioral bias on top of skill.
+const TENDENCY_USAGE = 0.5; // who looks for their own shot
+const TENDENCY_THREE = 0.5; // 3 vs 2 shot selection
+const TENDENCY_ATRIM = 0.5; // attack the rim
+const TENDENCY_POST = 0.5; // post up
+const TENDENCY_PASS = 0.4; // pass-first (raises assists, lowers own usage)
+const PASS_AST_W = 0.25; // pass-first lineups produce more assisted makes
+
+// Convert a 0-100 tendency into a multiplier centered on 1.
+const tendencyFactor = (tendency: number, strength: number) =>
+	1 + (strength * (tendency - 50)) / 50;
+
+// Lineup fit predicates: a "spacer" is a real outside threat who's willing to
+// shoot; a "ball-dominant" player has a high usage tendency.
+const isSpacer = (p: PlayerGameSim) =>
+	p.compositeRating.shootingThreePointer >= 0.5 && p.tendencies.three >= 45;
+const isBallDominant = (p: PlayerGameSim) => p.tendencies.usage > 65;
+const lineupCounts = (players: PlayerGameSim[]) => {
+	let numSpacers = 0;
+	let numBallDominant = 0;
+	for (const p of players) {
+		if (isSpacer(p)) {
+			numSpacers += 1;
+		}
+		if (isBallDominant(p)) {
+			numBallDominant += 1;
+		}
+	}
+	return { numSpacers, numBallDominant };
+};
+
+// Lineup fit (coach-managed): per-player sub-value nudge for spacing / avoiding
+// redundant ball-dominant players, scaled by coach tactics. Clamped tie-breaker.
+const LINEUP_SPACE_W = 0.04;
+const LINEUP_BALLDOM_W = 0.04;
+const LINEUP_FIT_MIN = 0.9;
+const LINEUP_FIT_MAX = 1.1;
+
+// Clutch: probMake swing (in late-game close situations) at clutch 0 vs 100.
+const CLUTCH_MAX = 0.06;
+const CLUTCH_MARGIN = 5; // points: a late-game possession this close counts as clutch
+// Hot hand: probMake bonus per net make in the current game (capped via streak).
+const HOT_HAND_PER = 0.01;
+const HOT_HAND_CAP = 3;
 // const NUM_TIMEOUTS_MAX_FINAL_PERIOD = 4;
 // const NUM_TIMEOUTS_MAX_FINAL_PERIOD_LAST_3_MIN = 2;
 const NUM_TIMEOUTS_OVERTIME = 2;
@@ -109,6 +155,15 @@ type PlayerGameSim = {
 		playingThrough: boolean;
 	};
 	ptModifier: number;
+	tendencies: {
+		usage: number;
+		three: number;
+		atRim: number;
+		post: number;
+		pass: number;
+		clutch: number;
+	};
+	hotHand: number; // in-game make/miss streak (-3..3), transient
 };
 type TeamGameSim = {
 	id: number;
@@ -116,6 +171,7 @@ type TeamGameSim = {
 	stat: any;
 	compositeRating: any;
 	coaching: TeamCoaching;
+	coachTactics: number; // head coach's tactics rating (0-100), for lineup fit
 	player: PlayerGameSim[];
 	synergy: {
 		def: number;
@@ -419,6 +475,9 @@ class GameSim extends GameSimBase {
 
 			// @ts-expect-error
 			delete this.team[t].coaching;
+
+			// @ts-expect-error
+			delete this.team[t].coachTactics;
 
 			for (const p of this.team[t].player) {
 				// @ts-expect-error
@@ -1012,6 +1071,16 @@ class GameSim extends GameSimBase {
 				// Overall values scaled by fatigue, etc
 				const ovrs: Record<number, number> = {};
 
+				// Coach-managed lineup fit: based on the current on-court group, a
+				// tactically strong coach nudges toward spacing and away from redundant
+				// ball-dominant players. Tie-breaker strength (clamped).
+				const fit = lineupCounts(
+					this.playersOnCourt[t].slice(0, this.numPlayersOnCourt),
+				);
+				const spacingNeed = Math.max(0, 2 - fit.numSpacers);
+				const ballDomExcess = Math.max(0, fit.numBallDominant - 2);
+				const tacticsScale = this.team[t].coachTactics / 100;
+
 				for (const [i, p] of this.team[t].player.entries()) {
 					// Injured or fouled out players can't play
 					if (
@@ -1038,6 +1107,23 @@ class GameSim extends GameSimBase {
 							// If it's not a blowout, worry about foul trouble
 							const foulTroubleFactor = this.getFoulTroubleFactor(p, foulLimit);
 							ovrs[p.id]! *= foulTroubleFactor;
+						}
+
+						// Lineup fit (tie-breaker): favor spacers when spacing-starved,
+						// fade redundant ball-dominant players. Scaled by coach tactics.
+						if (!this.allStarGame && (spacingNeed > 0 || ballDomExcess > 0)) {
+							let fitMult = 1;
+							if (spacingNeed > 0 && isSpacer(p)) {
+								fitMult += tacticsScale * LINEUP_SPACE_W * spacingNeed;
+							}
+							if (ballDomExcess > 0 && isBallDominant(p)) {
+								fitMult -= tacticsScale * LINEUP_BALLDOM_W * ballDomExcess;
+							}
+							ovrs[p.id]! *= helpers.bound(
+								fitMult,
+								LINEUP_FIT_MIN,
+								LINEUP_FIT_MAX,
+							);
 						}
 					}
 				}
@@ -1218,6 +1304,11 @@ class GameSim extends GameSimBase {
 				R: 0,
 			};
 
+			// Lineup chemistry: floor spacers and ball-dominant players on the court.
+			const { numSpacers, numBallDominant } = lineupCounts(
+				this.playersOnCourt[t].slice(0, this.numPlayersOnCourt),
+			);
+
 			for (let i = 0; i < this.numPlayersOnCourt; i++) {
 				const p = this.playersOnCourt[t][i]!;
 
@@ -1286,7 +1377,20 @@ class GameSim extends GameSimBase {
 					2,
 				) / 2; // Between 0 and 1, representing the perimeter skills
 
-			this.team[t].synergy.off *= 0.5 + 0.5 * perimFactor; // Defensive synergy
+			this.team[t].synergy.off *= 0.5 + 0.5 * perimFactor;
+
+			// Lineup chemistry/fit: poor spacing (too few shooters) clogs the floor,
+			// and too many ball-dominant players step on each other.
+			if (numSpacers < 2) {
+				this.team[t].synergy.off *= 0.9 + 0.05 * numSpacers;
+			}
+			if (numBallDominant > 2) {
+				this.team[t].synergy.off *= helpers.bound(
+					1 - 0.05 * (numBallDominant - 2),
+					0.7,
+					1,
+				);
+			}
 
 			this.team[t].synergy.def = 0;
 			this.team[t].synergy.def += helpers.sigmoid(skillsCount.Dp, 15, 0.75); // 1 / (1 + e^-(15 * (x - 0.75))) from 0 to 5
@@ -1940,7 +2044,9 @@ class GameSim extends GameSimBase {
 					(1 +
 						COACHING_3PT_TENDENCY *
 							this.team[this.o].coaching.threePointTendency) *
-					(1 + COACHING_PAINT_PUSH_3S * this.team[this.d].coaching.paintDefense)
+					(1 +
+						COACHING_PAINT_PUSH_3S * this.team[this.d].coaching.paintDefense) *
+					tendencyFactor(p.tendencies.three, TENDENCY_THREE)
 		) {
 			// Three pointer
 			type = "threePointer";
@@ -1960,13 +2066,15 @@ class GameSim extends GameSimBase {
 				Math.random() *
 				(p.compositeRating.shootingAtRim +
 					this.synergyFactor *
-						(this.team[this.o].synergy.off - this.team[this.d].synergy.def)); // Synergy makes easy shots either more likely or less likely
+						(this.team[this.o].synergy.off - this.team[this.d].synergy.def)) *
+				tendencyFactor(p.tendencies.atRim, TENDENCY_ATRIM); // Synergy makes easy shots either more likely or less likely
 
 			const r3 =
 				Math.random() *
 				(p.compositeRating.shootingLowPost +
 					this.synergyFactor *
-						(this.team[this.o].synergy.off - this.team[this.d].synergy.def)); // Synergy makes easy shots either more likely or less likely
+						(this.team[this.o].synergy.off - this.team[this.d].synergy.def)) *
+				tendencyFactor(p.tendencies.post, TENDENCY_POST); // Synergy makes easy shots either more likely or less likely
 
 			if (r1 > r2 && r1 > r3) {
 				// Two point jumper
@@ -2038,6 +2146,15 @@ class GameSim extends GameSimBase {
 			// Easier (or, when getting back on D, harder) transition look off the
 			// opponent's crash-the-glass decision last possession.
 			probMake += transitionBonus;
+
+			// Clutch: in close late-game situations, clutch players shoot better.
+			if (this.isLateGame() && Math.abs(diff) <= CLUTCH_MARGIN) {
+				probMake += CLUTCH_MAX * ((p.tendencies.clutch - 50) / 50);
+			}
+
+			// Hot hand: a small temporary boost (or slump) from the player's
+			// make/miss streak this game.
+			probMake += HOT_HAND_PER * p.hotHand;
 
 			if (!tipInFromOutOfBounds) {
 				// Adjust probMake for end of quarter situations, where shot quality will be lower without much time
@@ -2218,6 +2335,7 @@ class GameSim extends GameSimBase {
 
 		// Make
 		if (probMake > Math.random()) {
+			p.hotHand = helpers.bound(p.hotHand + 1, -HOT_HAND_CAP, HOT_HAND_CAP);
 			const andOne = probAndOne > Math.random();
 			if (andOne) {
 				this.isClockRunning = false;
@@ -2246,6 +2364,7 @@ class GameSim extends GameSimBase {
 		}
 
 		// Miss
+		p.hotHand = helpers.bound(p.hotHand - 1, -HOT_HAND_CAP, HOT_HAND_CAP);
 		advanceClock();
 		this.recordStat(this.o, p, "fga");
 		let fgMissLogType: FgMissType | undefined;
@@ -2458,10 +2577,19 @@ class GameSim extends GameSimBase {
 	 * @return {number} Probability from 0 to 1.
 	 */
 	probAst() {
+		// Pass-first lineups generate more assisted makes (on top of passing skill).
+		const onCourt = this.playersOnCourt[this.o].slice(
+			0,
+			this.numPlayersOnCourt,
+		);
+		const avgPass =
+			onCourt.reduce((sum, p) => sum + p.tendencies.pass, 0) / onCourt.length;
+
 		return (
 			((0.6 * (2 + this.team[this.o].compositeRating.passing)) /
 				(2 + this.team[this.d].compositeRating.defense)) *
-			g.get("assistFactor")
+			g.get("assistFactor") *
+			(1 + (PASS_AST_W * (avgPass - 50)) / 50)
 		);
 	}
 
@@ -2900,6 +3028,16 @@ class GameSim extends GameSimBase {
 				}
 			}
 
+			// Per-player tendencies bias who shoots and who passes. A pass-first
+			// player looks for their own shot less and sets up teammates more.
+			if (rating === "usage") {
+				compositeRating *=
+					tendencyFactor(p.tendencies.usage, TENDENCY_USAGE) *
+					tendencyFactor(100 - p.tendencies.pass, TENDENCY_PASS);
+			} else if (rating === "passing") {
+				compositeRating *= tendencyFactor(p.tendencies.pass, TENDENCY_PASS);
+			}
+
 			const value = (compositeRating * this.fatigue(p.stat.energy)) ** power;
 
 			total += value;
@@ -2999,6 +3137,22 @@ class GameSim extends GameSimBase {
 					if (this.fastBreak && this.possessionLength <= FAST_BREAK_SECONDS) {
 						this.team[t].stat.fbp += amt;
 						this.playByPlay.logStat(t, undefined, "fbp", amt);
+					}
+
+					// Clutch points: scored late in a close game. Tracked per
+					// player (drives Clutch Player of the Year) and per team.
+					if (this.isLateGame()) {
+						const margin = Math.abs(
+							this.team[0].stat.pts - this.team[1].stat.pts,
+						);
+						if (margin <= CLUTCH_MARGIN) {
+							this.team[t].stat.clutchPts += amt;
+							this.playByPlay.logStat(t, undefined, "clutchPts", amt);
+							if (p !== undefined) {
+								p.stat.clutchPts += amt;
+								this.playByPlay.logStat(t, p.id, "clutchPts", amt);
+							}
+						}
 					}
 
 					for (const i of [0, 1] as const) {

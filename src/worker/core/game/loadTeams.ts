@@ -180,6 +180,16 @@ export const processTeam = async (
 		playoffs,
 	});
 
+	// Head coach's tactics rating drives lineup-fit decisions in the sim.
+	let coachTactics = 50;
+	if (isSport("basketball") && teamInput.tid >= 0) {
+		const coachesForTeam = await idb.cache.coaches.indexGetAll(
+			"coachesByTid",
+			teamInput.tid,
+		);
+		coachTactics = coachesForTeam[0]?.ratings.tactics ?? 50;
+	}
+
 	const t: any = {
 		id: teamInput.tid,
 		pace: 0,
@@ -203,6 +213,7 @@ export const processTeam = async (
 		// The team's effective season style (set by its coach each preseason). Per-
 		// matchup adjustments are layered on later, once both teams are loaded.
 		coaching: teamInput.coaching ?? DEFAULT_COACHING,
+		coachTactics,
 	};
 
 	const playThroughInjuries = actualPlayThroughInjuries[playoffs ? 1 : 0];
@@ -238,6 +249,17 @@ export const processTeam = async (
 			jerseyNumber,
 			ptModifier: p.ptModifier,
 			ovrs: rating.ovrs,
+
+			// Behavioral tendencies (0-100, 50 = neutral), used by the basketball sim.
+			tendencies: {
+				usage: (rating as any).tendencyUsage ?? 50,
+				three: (rating as any).tendencyThree ?? 50,
+				atRim: (rating as any).tendencyAtRim ?? 50,
+				post: (rating as any).tendencyPost ?? 50,
+				pass: (rating as any).tendencyPass ?? 50,
+				clutch: (rating as any).tendencyClutch ?? 50,
+			},
+			hotHand: 0,
 		};
 
 		// Reset ptModifier for AI teams. This should not be necessary since it should always be 1, but let's be safe.

@@ -6,6 +6,7 @@ import type {
 } from "../../../common/types.basketball.ts";
 import { coachingEffect } from "../../../common/budgetLevels.ts";
 import { uniform, realGauss } from "../../../common/random.ts";
+import { TENDENCIES } from "../../../common/constants.basketball.ts";
 
 type RatingFormula = {
 	ageModifier: (age: number) => number;
@@ -237,6 +238,12 @@ const developSeason = (
 					changeLimits[1],
 				),
 		);
+	}
+
+	// Behavioral tendencies drift gently year to year — a career identity that
+	// still evolves, without following the athletic age curve.
+	for (const key of TENDENCIES) {
+		ratings[key] = limitRating((ratings[key] ?? 50) + realGauss(0, 2));
 	}
 };
 

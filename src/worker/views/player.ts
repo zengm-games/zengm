@@ -2,6 +2,7 @@ import {
 	PLAYER,
 	PLAYER_STATS_TABLES,
 	RATINGS,
+	TENDENCIES,
 	PLAYER_SUMMARY,
 	DEFAULT_JERSEY,
 } from "../../common/constants.ts";
@@ -139,6 +140,7 @@ export const getPlayer = async (
 			"ovr",
 			"pot",
 			...RATINGS,
+			...TENDENCIES,
 			"skills",
 			"pos",
 			"injuryIndex",

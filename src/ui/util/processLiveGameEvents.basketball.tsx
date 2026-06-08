@@ -518,6 +518,16 @@ const processLiveGameEvents = ({
 			} else if (e.s === "fbp" || e.s === "scp") {
 				// Team-only stats (fast-break / second-chance points)
 				boxScore.teams[actualT!][e.s] += e.amt;
+			} else if (e.s === "clutchPts") {
+				// Recorded both per-team and per-player (clutch = late + close)
+				if (e.pid == null) {
+					boxScore.teams[actualT!][e.s] += e.amt;
+				} else {
+					const p = playersByPid[e.pid];
+					if (p) {
+						(p as any)[e.s] = ((p as any)[e.s] ?? 0) + e.amt;
+					}
+				}
 			}
 		} else if (e.type === "timeouts") {
 			// Reversed for actualT

@@ -23,6 +23,7 @@ const raw = [
 	"pts",
 	"fbp", // fast break points
 	"scp", // second chance points
+	"clutchPts", // points scored late in a close game
 	"dd",
 	"td",
 	"qd",

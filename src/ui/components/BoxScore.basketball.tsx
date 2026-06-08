@@ -270,7 +270,7 @@ const BoxScore = ({
 						<div className="text-body-secondary small mb-1">
 							Points in paint: {2 * ((t.fgAtRim || 0) + (t.fgLowPost || 0))} ·
 							Fast break points: {t.fbp || 0} · Second chance points:{" "}
-							{t.scp || 0}
+							{t.scp || 0} · Clutch points: {t.clutchPts || 0}
 						</div>
 					</div>
 				);

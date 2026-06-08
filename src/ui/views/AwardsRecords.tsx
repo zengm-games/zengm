@@ -58,6 +58,29 @@ const AwardsRecords = ({
 	const rows: DataTableRow[] = awardsRecords.map((a) => {
 		const yearsGrouped = Object.groupBy(a.years, (row) => row.team) as YearInfo;
 
+		const yearCell = {
+			value: formatYear(yearsGrouped),
+			searchValue: formatYearString(yearsGrouped),
+			sortValue: Math.min(...a.years.map((year) => year.season)),
+		};
+
+		if ("isCoach" in a) {
+			return {
+				key: `coach-${a.cid}`,
+				data: [
+					<a href={helpers.leagueUrl(["coach", String(a.cid)])}>
+						{a.firstName} {a.lastName}
+					</a>,
+					a.count,
+					yearCell,
+					a.lastYear,
+					null,
+					null,
+					null,
+				],
+			};
+		}
+
 		return {
 			key: a.pid,
 			metadata: {
@@ -75,11 +98,7 @@ const AwardsRecords = ({
 					pos: a.pos,
 				}),
 				a.count,
-				{
-					value: formatYear(yearsGrouped),
-					searchValue: formatYearString(yearsGrouped),
-					sortValue: Math.min(...a.years.map((year) => year.season)),
-				},
+				yearCell,
 				a.lastYear,
 				a.draft.round > 0 ? (
 					<a

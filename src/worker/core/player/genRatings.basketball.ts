@@ -1,4 +1,5 @@
 import genFuzz from "./genFuzz.ts";
+import genTendencies from "./genTendencies.basketball.ts";
 import heightToRating from "./heightToRating.ts";
 import limitRating from "./limitRating.ts";
 import { helpers } from "../../util/index.ts";
@@ -163,6 +164,17 @@ const genRatings = (
 		pot: 0,
 		season,
 		skills: [],
+		...genTendencies({
+			tp: rawRatings.tp,
+			dnk: rawRatings.dnk,
+			spd: rawRatings.spd,
+			ins: rawRatings.ins,
+			hgt,
+			stre: rawRatings.stre,
+			fg: rawRatings.fg,
+			oiq: rawRatings.oiq,
+			pss: rawRatings.pss,
+		}),
 	};
 
 	return {

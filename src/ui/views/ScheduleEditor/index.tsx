@@ -1,11 +1,4 @@
-import {
-	useCallback,
-	useEffect,
-	useReducer,
-	useRef,
-	useState,
-	type ChangeEvent,
-} from "react";
+import { useCallback, useEffect, useReducer, useRef, useState, type ChangeEvent,} from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { logEvent } from "../../util/logEvent.ts";

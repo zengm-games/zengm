@@ -1,4 +1,4 @@
-import { afterAll, assert, beforeAll, describe, test } from "vitest";
+import { afterAll, assert, beforeAll, beforeEach, describe, test } from "vitest";
 import { mockIDBLeague, resetCache, resetG } from "../../test/helpers.ts";
 import { player, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
@@ -739,5 +739,90 @@ describe("checkAchievement", () => {
 			const awarded = await get("triple_crown").check();
 			assert.strictEqual(awarded, false);
 		});
+	});
+});
+
+describe("revenge_2", () => {
+	const previousTid = 5;
+	const currentTid = 7;
+
+	beforeEach(async () => {
+		resetG();
+		g.setWithoutSavingToDB("season", 2013);
+		g.setWithoutSavingToDB("startingSeason", 2010);
+		g.setWithoutSavingToDB("userTid", [
+			{
+				start: -Infinity,
+				value: previousTid,
+			},
+			{
+				start: g.get("season"),
+				value: currentTid,
+			},
+		]);
+		g.setWithoutSavingToDB("userTids", [currentTid]);
+
+		const teamsDefault = helpers.getTeamsDefault();
+		const userTeamSeason = team.genSeasonRow(teamsDefault[currentTid]!);
+		userTeamSeason.playoffRoundsWon = g.get("numGamesPlayoffSeries").length;
+
+		await resetCache({
+			teams: teamsDefault.map(team.generate),
+			teamSeasons: [userTeamSeason],
+		});
+
+		await idb.cache.playoffSeries.put({
+			season: g.get("season"),
+			currentRound: 0,
+			series: [
+				[
+					{
+						home: {
+							tid: currentTid,
+							cid: 0,
+							winp: 0.75,
+							won: 4,
+							seed: 1,
+						},
+						away: {
+							tid: previousTid,
+							cid: 1,
+							winp: 0.7,
+							won: 2,
+							seed: 1,
+						},
+					},
+				],
+			],
+		});
+
+		idb.league = mockIDBLeague();
+	});
+
+	afterAll(() => {
+		// @ts-expect-error
+		idb.league = undefined;
+	});
+
+	test("awards achievement for winning finals against a team that fired the user", async () => {
+		g.setWithoutSavingToDB("firedTids", [
+			{
+				tid: previousTid,
+				season: g.get("season") - 1,
+			},
+		]);
+
+		const awarded = await get("revenge_2").check();
+		assert.strictEqual(awarded, true);
+	});
+
+	test("does not award achievement for a previously controlled team that did not fire the user", async () => {
+		g.setWithoutSavingToDB("firedTids", []);
+
+		const revengeAwarded = await get("revenge").check();
+		assert.strictEqual(revengeAwarded, true);
+
+		const revenge2Awarded = await get("revenge_2").check();
+		assert.strictEqual(revenge2Awarded, false);
 	});
 });

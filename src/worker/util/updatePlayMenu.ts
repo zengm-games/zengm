@@ -137,8 +137,8 @@ const updatePlayMenu = async () => {
 			label: "Other teams want to hire you!",
 		},
 		seasonSummary: {
-			url: helpers.leagueUrl(["history"]),
-			label: "View season summary",
+			url: helpers.leagueUrl(["season_recap"]),
+			label: "View season recap",
 		},
 		stopAuto: {
 			label: `Stop auto play (${autoPlaySeasonsLeft} season${

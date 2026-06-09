@@ -206,6 +206,8 @@ export const routeInfos = {
 	"/l/:lid/daily_schedule/:season/:day/:cid": "dailySchedule",
 	"/l/:lid/season_preview": "seasonPreview",
 	"/l/:lid/season_preview/:season": "seasonPreview",
+	"/l/:lid/season_recap": "seasonRecap",
+	"/l/:lid/season_recap/:season": "seasonRecap",
 	"/l/:lid/auto_expand": "autoExpand",
 	"/l/:lid/auto_relocate": "autoRelocate",
 	"/l/:lid/compare_players": "comparePlayers",

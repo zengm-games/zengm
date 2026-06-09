@@ -538,8 +538,8 @@ const newPhaseBeforeDraft = async (
 	let redirect;
 	if (!liveGameInProgress) {
 		redirect = {
-			url: helpers.leagueUrl(["history"]),
-			text: "View season summary",
+			url: helpers.leagueUrl(["season_recap"]),
+			text: "View season recap",
 		};
 	} else {
 		local.unviewedSeasonSummary = true;

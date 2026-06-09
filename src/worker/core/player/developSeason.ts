@@ -67,12 +67,16 @@ const developSeason = async (
 				const realRatings = groupedRatings[`${srID}_${targetSeason}`];
 
 				if (realRatings) {
+					const simulatedShare = 1 - realPlayerDeterminism;
 					for (const key of RATINGS) {
 						(ratings as any)[key] = limitRating(
 							realPlayerDeterminism * (realRatings as any)[key] +
-								(1 - realPlayerDeterminism) * (ratings as any)[key],
+								simulatedShare * (ratings as any)[key],
 						);
 					}
+					progBreakdown[0] *= simulatedShare;
+					progBreakdown[1] *= simulatedShare;
+					progBreakdown[2] *= simulatedShare;
 				}
 			}
 		}

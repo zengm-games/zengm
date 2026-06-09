@@ -474,7 +474,7 @@ const processRatings = (
 			} else if (attr === "age") {
 				row.age = pr.season - p.born.year;
 			} else if (attr === "progBreakdown") {
-				if (pr.progBreakdown !== undefined) {
+				if (!fuzz && pr.progBreakdown !== undefined) {
 					row.progBreakdown = [...pr.progBreakdown];
 				}
 			} else if (attr === "abbrev" || attr === "tid") {
@@ -553,7 +553,7 @@ const processRatings = (
 					row.pos = last(p.ratings).pos;
 				} else if (attr === "abbrev") {
 					row.abbrev = "";
-				} else {
+				} else if (!fuzz || attr !== "progBreakdown") {
 					row[attr] = 0;
 				}
 			}

@@ -81,6 +81,10 @@ export const getDefaultSettings = () => {
 		),
 		draftType: unwrapGameAttribute(defaultGameAttributes, "draftType"),
 		draftAges: unwrapGameAttribute(defaultGameAttributes, "draftAges"),
+		draftProspectQualityFactor: unwrapGameAttribute(
+			defaultGameAttributes,
+			"draftProspectQualityFactor",
+		),
 		playersRefuseToNegotiate: unwrapGameAttribute(
 			defaultGameAttributes,
 			"playersRefuseToNegotiate",

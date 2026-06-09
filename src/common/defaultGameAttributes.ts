@@ -231,6 +231,7 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	foulsUntilBonus: [5, 4, 2],
 	rookieContractLengths: [3, 2],
 	rookiesCanRefuse: true,
+	draftProspectQualityFactor: 1,
 
 	pace: 100,
 	threePointers: true,

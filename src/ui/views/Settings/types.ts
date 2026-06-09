@@ -11,6 +11,7 @@ export type Key =
 	| "draftType"
 	| "numSeasonsFutureDraftPicks"
 	| "draftAges"
+	| "draftProspectQualityFactor"
 	| "salaryCap"
 	| "minPayroll"
 	| "luxuryPayroll"

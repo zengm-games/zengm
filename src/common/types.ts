@@ -567,6 +567,7 @@ export type GameAttributesLeague = {
 	difficulty: number;
 	divs: NonEmptyArray<Div>;
 	draftAges: [number, number];
+	draftProspectQualityFactor: number;
 	draftPickAutoContract: boolean;
 	draftPickAutoContractPercent: number;
 	draftPickAutoContractRounds: number;

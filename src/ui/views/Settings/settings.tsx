@@ -686,6 +686,20 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Draft",
+			key: "draftProspectQualityFactor",
+			name: "Draft Prospect Quality Factor",
+			godModeRequired: "existingLeagueOnly",
+			type: "float",
+			description:
+				"A factor applied to the ratings of generated draft prospects. The default value is 1. Values above 1 create stronger prospects, and values below 1 create weaker prospects. This affects future generated draft prospects, including the initial rosters of new random-players leagues. In real-player leagues, this only applies to generated filler players.",
+			validator: (value) => {
+				if (value < 0) {
+					throw new Error("Value cannot be less than 0");
+				}
+			},
+		},
+		{
+			category: "Draft",
 			key: "draftAges",
 			name: "Age of Draft Prospects",
 			godModeRequired: "always",

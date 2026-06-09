@@ -49,6 +49,7 @@ type Key =
 	| "allStarType"
 	| "budget"
 	| "numSeasonsFutureDraftPicks"
+	| "draftProspectQualityFactor"
 	| "foulRateFactor"
 	| "foulsNeededToFoulOut"
 	| "foulsUntilBonus"
@@ -268,6 +269,7 @@ const updateSettings = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			allStarType: g.get("allStarType"),
 			budget: g.get("budget"),
 			numSeasonsFutureDraftPicks: g.get("numSeasonsFutureDraftPicks"),
+			draftProspectQualityFactor: g.get("draftProspectQualityFactor"),
 			foulRateFactor: g.get("foulRateFactor"),
 			foulsNeededToFoulOut: g.get("foulsNeededToFoulOut"),
 			foulsUntilBonus: g.get("foulsUntilBonus"),

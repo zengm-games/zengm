@@ -1,11 +1,12 @@
-import { PLAYER } from "../../../common/constants.ts";
+import { PLAYER, RATINGS } from "../../../common/constants.ts";
 import { player } from "../index.ts";
 import { g } from "../../util/index.ts";
 import type { PlayerWithoutKey } from "../../../common/types.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
-import { minBy } from "../../../common/utils.ts";
+import { last, minBy } from "../../../common/utils.ts";
 import { randInt, shuffle } from "../../../common/random.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
+import limitRating from "../player/limitRating.ts";
 
 // To improve the distribution of DP ages in leagues with modified draftAges, this code will change the % of players who declare for draft each year to work better with modified draftAges settings. Previously, it was just a constant defaultFractionPerYear.
 const defaultFractionPerYear = bySport({
@@ -45,6 +46,25 @@ const getFractionPerYear = (ageGap: number) => {
 
 const developOneSeason = async (p: PlayerWithoutKey) => {
 	await player.develop(p, 1, true);
+};
+
+export const scaleProspectRatings = async (
+	players: PlayerWithoutKey[],
+	factor: number,
+) => {
+	if (factor === 1) {
+		return;
+	}
+
+	for (const p of players) {
+		const ratings = last(p.ratings) as any;
+
+		for (const key of RATINGS) {
+			ratings[key] = limitRating(ratings[key] * factor);
+		}
+
+		await player.develop(p, 0);
+	}
 };
 
 const genPlayersWithoutSaving = async (
@@ -183,6 +203,11 @@ const genPlayersWithoutSaving = async (
 			}
 		}
 	}
+
+	await scaleProspectRatings(
+		enteringDraft,
+		g.get("draftProspectQualityFactor"),
+	);
 
 	// If user has increased the number of rounds, ensure excess players are scrubs
 	if (normalNumPlayers < baseNumPlayers || forceScrubs) {

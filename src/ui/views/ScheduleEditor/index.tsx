@@ -1152,6 +1152,25 @@ const ScheduleEditor = ({
 								Regenerate schedule
 							</Dropdown.Item>
 							<Dropdown.Item
+								onClick={async () => {
+									const proceed = await confirm(
+										"Are you sure you want to delete the entire schedule?",
+										{
+											okText: "Clear schedule",
+										},
+									);
+									if (proceed) {
+										dispatch({
+											type: "clearSchedule",
+											maxDayAlreadyPlayed,
+										});
+									}
+								}}
+							>
+								Clear schedule
+							</Dropdown.Item>
+							<Dropdown.Divider />
+							<Dropdown.Item
 								onClick={() => {
 									exportScheduleCSV(schedule, teams);
 								}}
@@ -1172,24 +1191,6 @@ const ScheduleEditor = ({
 									onClick={resetFileInput}
 									onChange={handleFileUpload}
 								/>
-							</Dropdown.Item>
-							<Dropdown.Item
-								onClick={async () => {
-									const proceed = await confirm(
-										"Are you sure you want to delete the entire schedule?",
-										{
-											okText: "Clear schedule",
-										},
-									);
-									if (proceed) {
-										dispatch({
-											type: "clearSchedule",
-											maxDayAlreadyPlayed,
-										});
-									}
-								}}
-							>
-								Clear schedule
 							</Dropdown.Item>
 						</Dropdown.Menu>
 					</Dropdown>

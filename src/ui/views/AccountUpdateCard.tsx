@@ -128,7 +128,7 @@ const AccountUpdateCard = (props: View<"accountUpdateCard">) => {
 				Expiration: {expMonth}/{expYear}
 			</p>
 
-			<hr />
+			<hr className="my-hr" />
 
 			<p>To replace your saved card with a new one, fill out this form:</p>
 

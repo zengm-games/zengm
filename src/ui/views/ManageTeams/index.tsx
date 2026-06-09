@@ -308,7 +308,7 @@ const ManageTeams = (props: View<"manageTeams">) => {
 								t={t}
 							/>
 							<div className="col-12 d-lg-none" style={{ marginTop: -12 }}>
-								<hr />
+								<hr className="my-hr" />
 							</div>
 						</Fragment>
 					))}

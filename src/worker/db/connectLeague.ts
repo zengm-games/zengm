@@ -43,6 +43,7 @@ import type {
 	GameAttributesLeagueWithHistory,
 	SavedTrade,
 	SavedTradingBlock,
+	Coach,
 } from "../../common/types.ts";
 import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings.ts";
 import { amountToLevel } from "../../common/budgetLevels.ts";
@@ -159,6 +160,11 @@ export interface LeagueDB extends DBSchema {
 	seasonLeaders: {
 		key: number;
 		value: SeasonLeaders;
+	};
+	staff: {
+		key: number;
+		value: Coach;
+		autoIncrementKeyPath: "coachId";
 	};
 	teamSeasons: {
 		key: number;
@@ -592,6 +598,10 @@ const create = (db: IDBPDatabase<LeagueDB>) => {
 	});
 	db.createObjectStore("seasonLeaders", {
 		keyPath: "season",
+	});
+	db.createObjectStore("staff", {
+		keyPath: "coachId",
+		autoIncrement: true,
 	});
 	const teamSeasonsStore = db.createObjectStore("teamSeasons", {
 		keyPath: "rid",
@@ -1733,6 +1743,13 @@ const migrate = async ({
 				await cursor.update(t);
 			}
 		}
+	}
+
+	if (oldVersion < 73) {
+		db.createObjectStore("staff", {
+			keyPath: "coachId",
+			autoIncrement: true,
+		});
 	}
 
 	// Next update - do similar to `oldVersion < 71` above for numPlayoffRounds and draftType, from loadGameAttributes

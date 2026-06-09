@@ -30,6 +30,8 @@ import type {
 	ScheduleGameWithoutKey,
 	ScheduledEvent,
 	ScheduledEventWithoutKey,
+	Coach,
+	CoachWithoutKey,
 	TeamSeason,
 	TeamSeasonWithoutKey,
 	TeamStats,
@@ -71,6 +73,7 @@ export type Store =
 	| "schedule"
 	| "scheduledEvents"
 	| "seasonLeaders"
+	| "staff"
 	| "teamSeasons"
 	| "teamStats"
 	| "teams"
@@ -106,6 +109,7 @@ export const STORES: Store[] = [
 	"schedule",
 	"scheduledEvents",
 	"seasonLeaders",
+	"staff",
 	"teamSeasons",
 	"teamStats",
 	"teams",
@@ -289,6 +293,8 @@ class Cache {
 	scheduledEvents: StoreAPI<ScheduledEventWithoutKey, ScheduledEvent, number>;
 
 	seasonLeaders: StoreAPI<SeasonLeaders, SeasonLeaders, number>;
+
+	staff: StoreAPI<CoachWithoutKey, Coach, number>;
 
 	teamSeasons: StoreAPI<TeamSeasonWithoutKey, TeamSeason, number>;
 
@@ -481,6 +487,12 @@ class Cache {
 						);
 				},
 			},
+			staff: {
+				pk: "coachId",
+				pkType: "number",
+				autoIncrement: true,
+				getData: (tx) => tx.objectStore("staff").getAll(),
+			},
 			teamSeasons: {
 				pk: "rid",
 				pkType: "number",
@@ -576,6 +588,7 @@ class Cache {
 		this.schedule = new StoreAPI(this, "schedule");
 		this.scheduledEvents = new StoreAPI(this, "scheduledEvents");
 		this.seasonLeaders = new StoreAPI(this, "seasonLeaders");
+		this.staff = new StoreAPI(this, "staff");
 		this.teamSeasons = new StoreAPI(this, "teamSeasons");
 		this.teamStats = new StoreAPI(this, "teamStats");
 		this.teams = new StoreAPI(this, "teams");

@@ -9,6 +9,7 @@ import loadDataBasketball from "../realRosters/loadData.basketball.ts";
 import type { Ratings } from "../realRosters/loadData.basketball.ts";
 import limitRating from "./limitRating.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import type { CoachingEffectInput } from "../../../common/staff.ts";
 
 // Cache for performance
 let groupedRatings: Record<string, Ratings> | undefined;
@@ -17,7 +18,7 @@ const developSeason = async (
 	ratings: MinimalPlayerRatings,
 	age: number,
 	srID: string | undefined,
-	coachingLevel: number,
+	coachingLevel: CoachingEffectInput,
 	forPot: boolean,
 ) => {
 	bySport({

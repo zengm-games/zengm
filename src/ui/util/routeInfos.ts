@@ -40,6 +40,8 @@ export const routeInfos = {
 	"/l/:lid/roster/:abbrev/:season/:playoffs": "roster",
 	"/l/:lid/schedule": "schedule",
 	"/l/:lid/schedule/:abbrev": "schedule",
+	"/l/:lid/staff": "staff",
+	"/l/:lid/staff/:abbrev": "staff",
 	"/l/:lid/team_finances": "teamFinances",
 	"/l/:lid/team_finances/:abbrev": "teamFinances",
 	"/l/:lid/team_finances/:abbrev/:show": "teamFinances",

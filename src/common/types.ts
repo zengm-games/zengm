@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import * as z from "zod";
 import type processInputs from "../worker/api/processInputs.ts";
 import type * as views from "../worker/views/index.ts";
+import type { CoachSlot, CoachSpecialty } from "./staff.ts";
 
 // Would be nice to make .at(-1) return T but idk how, so use the `last` function instead!
 export type NonEmptyArray<T> = [T, ...T[]];
@@ -1497,6 +1498,21 @@ export type ScheduleGame = ScheduleGameWithoutKey & {
 	gid: number;
 };
 
+export type CoachWithoutKey = {
+	coachId?: number;
+	firstName: string;
+	lastName: string;
+	age: number;
+	specialty: CoachSpecialty;
+	quality: number;
+	tid: number;
+	slot?: CoachSlot;
+};
+
+export type Coach = CoachWithoutKey & {
+	coachId: number;
+};
+
 export type SortOrder = "asc" | "desc";
 
 export type SortType =
@@ -1850,6 +1866,7 @@ export type UpdateEvents = (
 	| "savedTrades"
 	| "scheduledEvents"
 	| "retiredJerseys"
+	| "staff"
 	| "team"
 	| "teamFinances"
 	| "draftLottery"

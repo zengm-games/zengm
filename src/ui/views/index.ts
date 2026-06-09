@@ -99,6 +99,7 @@ export { default as ScheduledEvents } from "./ScheduledEvents.tsx";
 export { default as SeasonPreview } from "./SeasonPreview.tsx";
 export { default as Settings } from "./Settings/index.tsx";
 export { default as Standings } from "./Standings.tsx";
+export { default as Staff } from "./Staff.tsx";
 export { default as TeamFinances } from "./TeamFinances/index.tsx";
 export { default as TeamGraphs } from "./TeamGraphs/index.tsx";
 export { default as TeamHistory } from "./TeamHistory/index.tsx";

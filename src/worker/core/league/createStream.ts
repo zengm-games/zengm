@@ -6,6 +6,7 @@ import {
 	league,
 	player,
 	season,
+	staff,
 	team,
 } from "../index.ts";
 import {
@@ -1779,6 +1780,8 @@ const afterDBStream = async ({
 			}
 		}
 	}
+
+	await staff.bootstrapLeagueStaff();
 
 	await idb.cache.flush();
 	idb.cache.startAutoFlush();

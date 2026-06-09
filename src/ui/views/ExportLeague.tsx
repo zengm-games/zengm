@@ -309,6 +309,7 @@ const getExportInfo = (
 			"seasonLeaders",
 			"savedTrades",
 			"savedTradingBlock",
+			"staff",
 		],
 		newsFeedTransactions: ["events"],
 		newsFeedOther: ["events"],

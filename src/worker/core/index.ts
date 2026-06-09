@@ -12,5 +12,6 @@ export { default as phase } from "./phase/index.ts";
 export { default as player } from "./player/index.ts";
 export { default as realRosters } from "./realRosters/index.ts";
 export { default as season } from "./season/index.ts";
+export { default as staff } from "./staff/index.ts";
 export { default as team } from "./team/index.ts";
 export { default as trade } from "./trade/index.ts";

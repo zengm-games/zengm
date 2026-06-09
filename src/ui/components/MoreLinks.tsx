@@ -94,6 +94,10 @@ export const MoreLinks = (
 				name: "Finances",
 			},
 			{
+				url: ["staff", `${abbrev}_${tid}`],
+				name: "Staff",
+			},
+			{
 				url:
 					season !== undefined
 						? ["game_log", `${abbrev}_${tid}`, season]

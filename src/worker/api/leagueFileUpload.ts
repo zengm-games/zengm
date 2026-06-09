@@ -46,6 +46,7 @@ export const parseJSON = () => {
 		schedule: undefined,
 		scheduledEvents: undefined,
 		seasonLeaders: undefined,
+		staff: undefined,
 		teamSeasons: undefined,
 		teamStats: undefined,
 		teams: undefined,

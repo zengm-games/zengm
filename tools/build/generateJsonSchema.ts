@@ -2794,6 +2794,48 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					required: ["hash", "tid"],
 				},
 			},
+			staff: {
+				type: "array",
+				items: {
+					type: "object",
+					properties: {
+						coachId: {
+							type: "integer",
+						},
+						firstName: {
+							type: "string",
+						},
+						lastName: {
+							type: "string",
+						},
+						age: {
+							type: "integer",
+						},
+						specialty: {
+							type: "string",
+						},
+						quality: {
+							type: "integer",
+							minimum: 1,
+							maximum: 100,
+						},
+						tid: {
+							type: "integer",
+						},
+						slot: {
+							enum: ["headCoach", "assistant1", "assistant2"],
+						},
+					},
+					required: [
+						"firstName",
+						"lastName",
+						"age",
+						"specialty",
+						"quality",
+						"tid",
+					],
+				},
+			},
 			trade: {
 				type: "array",
 				items: {

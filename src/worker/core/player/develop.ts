@@ -17,6 +17,7 @@ import potEstimator from "./potEstimator.ts";
 import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSettings.ts";
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import type { CoachingEffectInput } from "../../../common/staff.ts";
 import { last } from "../../../common/utils.ts";
 
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
@@ -123,7 +124,7 @@ const develop = async (
 	},
 	years: number = 1,
 	newPlayer: boolean = false,
-	coachingLevel: number = DEFAULT_LEVEL,
+	coachingLevel: CoachingEffectInput = DEFAULT_LEVEL,
 	skipPot: boolean = false, // Only for making testing or core/debug faster
 ) => {
 	const ratings = last(p.ratings);

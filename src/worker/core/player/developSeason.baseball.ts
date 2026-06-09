@@ -5,6 +5,11 @@ import type {
 	RatingKey,
 } from "../../../common/types.baseball.ts";
 import { coachingEffect } from "../../../common/budgetLevels.ts";
+import {
+	applyCoachSpecialtyChange,
+	getCoachingLevel,
+	type CoachingEffectInput,
+} from "../../../common/staff.ts";
 import { truncGauss, uniform } from "../../../common/random.ts";
 
 type RatingFormula = {
@@ -202,7 +207,10 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 	endu: powerFormula,
 };
 
-const calcBaseChange = (age: number, coachingLevel: number): number => {
+const calcBaseChange = (
+	age: number,
+	coachingLevel: CoachingEffectInput,
+): number => {
 	let val: number;
 
 	if (age <= 21) {
@@ -234,7 +242,8 @@ const calcBaseChange = (age: number, coachingLevel: number): number => {
 		val += truncGauss(0, 3, -2, 3);
 	}
 
-	val *= 1 + (val > 0 ? 1 : -1) * coachingEffect(coachingLevel);
+	val *=
+		1 + (val > 0 ? 1 : -1) * coachingEffect(getCoachingLevel(coachingLevel));
 
 	return val;
 };
@@ -242,7 +251,7 @@ const calcBaseChange = (age: number, coachingLevel: number): number => {
 const developSeason = (
 	ratings: PlayerRatings,
 	age: number,
-	coachingLevel: number,
+	coachingLevel: CoachingEffectInput,
 ) => {
 	// In young players, height can sometimes increase
 	if (age <= 21) {
@@ -272,13 +281,14 @@ const developSeason = (
 			}
 		}
 
+		const change = helpers.bound(
+			(baseChange + ageModifier) * uniform(0.6, 1.3),
+			changeLimits[0],
+			changeLimits[1],
+		);
+
 		ratings[key] = limitRating(
-			ratings[key] +
-				helpers.bound(
-					(baseChange + ageModifier) * uniform(0.6, 1.3),
-					changeLimits[0],
-					changeLimits[1],
-				),
+			ratings[key] + applyCoachSpecialtyChange(change, coachingLevel, key),
 		);
 	}
 };

@@ -830,6 +830,11 @@ const teamFinances = (params: Params) => {
 	return { abbrev, show, tid };
 };
 
+const staff = (params: Params) => {
+	const [tid, abbrev] = validateAbbrev(params.abbrev);
+	return { abbrev, tid };
+};
+
 const teamHistory = (params: Params) => {
 	const show = params.show ?? "10";
 	const [tid, abbrev] = validateAbbrev(params.abbrev);
@@ -1138,6 +1143,7 @@ export default {
 	schedule,
 	seasonPreview: validateSeasonOnly,
 	standings,
+	staff,
 	teamFinances,
 	teamGraphs,
 	teamHistory,

@@ -1,5 +1,5 @@
 import { Cache, connectLeague, idb } from "../db/index.ts";
-import { league } from "../core/index.ts";
+import { league, staff } from "../core/index.ts";
 import {
 	g,
 	helpers,
@@ -161,6 +161,7 @@ export const beforeLeague = async (newLid: number, conditions?: Conditions) => {
 	}
 
 	await league.loadGameAttributes();
+	await staff.bootstrapLeagueStaff();
 	await initUILocalGames();
 
 	if (loadingNewLid !== newLid) {

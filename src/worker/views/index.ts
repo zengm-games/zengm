@@ -91,6 +91,7 @@ export { default as scheduledEvents } from "./scheduledEvents.ts";
 export { default as seasonPreview } from "./seasonPreview.ts";
 export { default as settings } from "./settings.ts";
 export { default as standings } from "./standings.ts";
+export { default as staff } from "./staff.ts";
 export { default as teamFinances } from "./teamFinances.ts";
 export { default as teamGraphs } from "./teamGraphs.ts";
 export { default as teamHistory } from "./teamHistory.ts";

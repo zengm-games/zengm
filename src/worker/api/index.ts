@@ -33,6 +33,7 @@ import {
 	realRosters,
 	freeAgents,
 	season,
+	staff,
 } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import {
@@ -170,6 +171,7 @@ import { recomputeLocalUITeamOvrs } from "../util/recomputeLocalUITeamOvrs.ts";
 import { initUILocalGames } from "../util/initUILocalGames.ts";
 import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 import type { GenOrderResult } from "../core/draft/genOrder.ts";
+import type { CoachSlot } from "../../common/staff.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -3910,6 +3912,45 @@ const updateBudget = async ({
 	await toUI("realtimeUpdate", [["teamFinances"]]);
 };
 
+const hireCoach = async ({
+	coachId,
+	slot,
+	tid,
+}: {
+	coachId: number;
+	slot: CoachSlot;
+	tid: number;
+}) => {
+	if (!g.get("userTids").includes(tid)) {
+		throw new Error("You do not control that team.");
+	}
+
+	await staff.hire({
+		coachId,
+		slot,
+		tid,
+	});
+	await toUI("realtimeUpdate", [["staff"]]);
+};
+
+const fireCoach = async ({
+	coachId,
+	tid,
+}: {
+	coachId: number;
+	tid: number;
+}) => {
+	if (!g.get("userTids").includes(tid)) {
+		throw new Error("You do not control that team.");
+	}
+
+	await staff.fire({
+		coachId,
+		tid,
+	});
+	await toUI("realtimeUpdate", [["staff"]]);
+};
+
 const updateDefaultSettingsOverrides = async (
 	defaultSettingsOverrides: Partial<Settings>,
 ) => {
@@ -5235,6 +5276,7 @@ export default {
 		getSavedTrade,
 		getTeamGraphStat,
 		getTradingBlockOffers,
+		hireCoach,
 		ping,
 		handleUploadedDraftClass,
 		idbCacheFlush,
@@ -5256,6 +5298,7 @@ export default {
 		expandVote,
 		relocateVote,
 		cloneLeague,
+		fireCoach,
 		removeLeague,
 		removePlayers,
 		reorderDepthDrag,

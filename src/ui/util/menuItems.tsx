@@ -321,6 +321,14 @@ export const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: (pageID) => pageID === "staff",
+				league: true,
+				commandPalette: true,
+				path: ["staff"],
+				text: "Staff",
+			},
+			{
+				type: "link",
 				active: (pageID) => pageID === "teamHistory",
 				league: true,
 				commandPalette: true,

@@ -9,6 +9,7 @@ import {
 	league,
 	player,
 	realRosters,
+	staff,
 	team,
 } from "../index.ts";
 import { idb } from "../../db/index.ts";
@@ -24,6 +25,7 @@ import { applyRealTeamInfo } from "../../../common/applyRealTeamInfo.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { choice, randInt, uniform } from "../../../common/random.ts";
 import { env } from "../../util/env.ts";
+import type { CoachingEffectInput } from "../../../common/staff.ts";
 
 const newPhasePreseason = async (
 	conditions: Conditions,
@@ -202,11 +204,12 @@ const newPhasePreseason = async (
 	for (const [t, popRank] of Iterator.zip([activeTeams, popRanks], {
 		mode: "strict",
 	})) {
-		if (
+		const isAITeam =
 			!g.get("userTids").includes(t.tid) ||
 			local.autoPlayUntil ||
-			g.get("spectator")
-		) {
+			g.get("spectator");
+
+		if (isAITeam) {
 			await team.resetTicketPrice(t, popRank);
 
 			// Sometimes update budget items for AI teams
@@ -247,8 +250,12 @@ const newPhasePreseason = async (
 		throw new Error("scoutingLevel should be defined");
 	}
 
-	const coachingLevels: Record<number, number> = {};
+	const coachingByTid: Record<number, CoachingEffectInput> = {};
 	for (const t of teams) {
+		if (t.disabled) {
+			continue;
+		}
+
 		const teamSeasons = await idb.getCopies.teamSeasons(
 			{
 				tid: t.tid,
@@ -256,10 +263,20 @@ const newPhasePreseason = async (
 			},
 			"noCopyCache",
 		);
-		coachingLevels[t.tid] = await finances.getLevelLastThree("coaching", {
+		const coachingLevel = await finances.getLevelLastThree("coaching", {
 			t,
 			teamSeasons,
 		});
+
+		if (
+			!g.get("userTids").includes(t.tid) ||
+			local.autoPlayUntil ||
+			g.get("spectator")
+		) {
+			await staff.autoHireByBudget(t.tid, coachingLevel);
+		}
+
+		coachingByTid[t.tid] = await staff.getDevelopmentInfo(t.tid);
 	}
 
 	const players = await idb.cache.players.indexGetAll("playersByTid", [
@@ -383,7 +400,7 @@ const newPhasePreseason = async (
 		} else {
 			// Update ratings
 			player.addRatingsRow(p, scoutingLevel);
-			await player.develop(p, 1, false, coachingLevels[p.tid]);
+			await player.develop(p, 1, false, coachingByTid[p.tid]);
 		}
 
 		if (

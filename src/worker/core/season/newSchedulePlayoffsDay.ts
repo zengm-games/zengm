@@ -49,7 +49,11 @@ const getTeamsForOrderTeams = async () => {
  * @memberOf core.season
  * @return {Promise.boolean} Resolves to true if the playoffs are over. Otherwise, false.
  */
-const newSchedulePlayoffsDay = async (): Promise<boolean> => {
+const newSchedulePlayoffsDay = async ({
+	forceRegenerateSchedule = false,
+}: {
+	forceRegenerateSchedule?: boolean;
+} = {}): Promise<boolean> => {
 	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
 	if (!playoffSeries) {
 		throw new Error("No playoff series");
@@ -132,14 +136,22 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 	}
 
 	if (activeSeries.length > 0) {
-		for (const { away, home } of activeSeries) {
-			if (getScheduledGamesForSeries(schedule, home.tid, away.tid).length > 0) {
-				return false;
+		if (!forceRegenerateSchedule) {
+			for (const { away, home } of activeSeries) {
+				if (
+					getScheduledGamesForSeries(schedule, home.tid, away.tid).length > 0
+				) {
+					return false;
+				}
 			}
 		}
 
 		for (let gameNum = 0; gameNum < numGamesPlayoffSeries; gameNum++) {
 			for (const { away, home } of activeSeries) {
+				if (gameNum < home.won + away.won) {
+					continue;
+				}
+
 				// Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
 				if (betterSeedHome(numGamesPlayoffSeries, gameNum)) {
 					tids.push([home.tid, away.tid]);
@@ -164,6 +176,10 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 			if (!allStar?.score) {
 				tids.unshift([-1, -2]);
 			}
+		}
+
+		if (forceRegenerateSchedule) {
+			await idb.cache.schedule.clear();
 		}
 
 		await setSchedule(tids);

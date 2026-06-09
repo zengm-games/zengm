@@ -4371,7 +4371,7 @@ const updatePlayoffTeams = async (
 		await idb.cache.playoffSeries.put(playoffSeries);
 
 		// Update schedule, since games might have changed
-		await season.newSchedulePlayoffsDay();
+		await season.newSchedulePlayoffsDay({ forceRegenerateSchedule: true });
 
 		// Update teamSeasons, since playoffRoundsWon might need to be updated
 		const teamSeasons = await idb.cache.teamSeasons.indexGetAll(

@@ -250,6 +250,8 @@ const newPhasePreseason = async (
 		throw new Error("scoutingLevel should be defined");
 	}
 
+	await staff.advanceAges();
+
 	const coachingByTid: Record<number, CoachingEffectInput> = {};
 	for (const t of teams) {
 		if (t.disabled) {
@@ -268,13 +270,7 @@ const newPhasePreseason = async (
 			teamSeasons,
 		});
 
-		if (
-			!g.get("userTids").includes(t.tid) ||
-			local.autoPlayUntil ||
-			g.get("spectator")
-		) {
-			await staff.autoHireByBudget(t.tid, coachingLevel);
-		}
+		await staff.autoHireByBudget(t.tid, coachingLevel);
 
 		coachingByTid[t.tid] = g.get("budget")
 			? await staff.getDevelopmentInfo(t.tid)

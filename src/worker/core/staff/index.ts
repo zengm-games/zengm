@@ -176,6 +176,15 @@ const makeCoachFreeAgent = async (coach: Coach) => {
 	await idb.cache.staff.put(coach);
 };
 
+export const advanceAges = async () => {
+	const coaches = await idb.cache.staff.getAll();
+
+	for (const coach of coaches) {
+		coach.age += 1;
+		await idb.cache.staff.put(coach);
+	}
+};
+
 const hireBestAffordableCoach = async (
 	slot: CoachSlot,
 	tid: number,
@@ -187,7 +196,7 @@ const hireBestAffordableCoach = async (
 			(coach2) =>
 				coach2.tid === PLAYER.FREE_AGENT && coach2.quality <= budgetLevel,
 		)
-		.sort((a, b) => b.quality - a.quality)[0];
+		.sort((a, b) => b.quality - a.quality || a.coachId - b.coachId)[0];
 
 	if (coach) {
 		coach.tid = tid;
@@ -276,6 +285,7 @@ export const fire = async ({
 };
 
 export default {
+	advanceAges,
 	autoHireByBudget,
 	bootstrapLeagueStaff,
 	fire,

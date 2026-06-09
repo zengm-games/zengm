@@ -5,7 +5,7 @@ import { resetCache, resetG } from "../../../test/helpers.ts";
 import { idb } from "../../db/index.ts";
 import { helpers } from "../../util/index.ts";
 import team from "../team/index.ts";
-import { autoHireByBudget, hire } from "./index.ts";
+import { advanceAges, autoHireByBudget, hire } from "./index.ts";
 
 const specialty = COACH_SPECIALTIES[0]!;
 
@@ -83,6 +83,39 @@ test("AI auto-hiring respects the coaching budget level", async () => {
 
 	const unaffordableCoach = coaches.find((coach) => coach.coachId === 5);
 	assert.strictEqual(unaffordableCoach?.tid, PLAYER.FREE_AGENT);
+});
+
+test("user budget downgrade replaces over-grade coaches with affordable coaches", async () => {
+	await autoHireByBudget(0, 50);
+
+	const coaches = await idb.cache.staff.getAll();
+
+	const firedCoach = coaches.find((coach) => coach.coachId === 1);
+	assert.strictEqual(firedCoach?.tid, PLAYER.FREE_AGENT);
+	assert.strictEqual(firedCoach?.slot, undefined);
+
+	const replacementCoach = coaches.find((coach) => coach.coachId === 3);
+	assert.strictEqual(replacementCoach?.tid, 0);
+	assert.strictEqual(replacementCoach?.slot, "headCoach");
+	assert.strictEqual(replacementCoach?.quality, 50);
+});
+
+test("preseason rollover advances every coach age", async () => {
+	await advanceAges();
+
+	const coaches = await idb.cache.staff.getAll();
+	assert.deepStrictEqual(
+		coaches
+			.map((coach) => [coach.coachId, coach.age])
+			.sort((a, b) => a[0]! - b[0]!),
+		[
+			[1, 56],
+			[2, 45],
+			[3, 46],
+			[4, 47],
+			[5, 48],
+		],
+	);
 });
 
 test("manual hiring serializes the slot check and assignment", async () => {

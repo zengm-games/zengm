@@ -3,18 +3,93 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import clsx from "clsx";
 import { range } from "../../common/utils.ts";
 import { PlayoffMatchup } from "../components/PlayoffMatchup.tsx";
 import { useLocal } from "../util/local.ts";
 
 type TeamToEdit = View<"playoffs">["teamsToEdit"][number];
+type ForceSeriesInfo = NonNullable<
+	View<"playoffs">["forceSeries"][number][number]
+>;
+type PlayoffSeriesMatchup = View<"playoffs">["series"][number][number];
+
+const ForceSeriesWinner = ({
+	forceSeriesInfo,
+	matchupIndex,
+	round,
+	series,
+}: {
+	forceSeriesInfo?: ForceSeriesInfo;
+	matchupIndex: number;
+	round: number;
+	series?: PlayoffSeriesMatchup;
+}) => {
+	const [state, setState] = useState<"saving" | "saved" | "error">();
+	const [forceWin, setForceWin] = useState(forceSeriesInfo?.forceWin);
+
+	useEffect(() => {
+		setForceWin(forceSeriesInfo?.forceWin);
+	}, [forceSeriesInfo?.forceWin]);
+
+	if (!forceSeriesInfo || !series?.away) {
+		return null;
+	}
+
+	const id = `force-series-${round}-${matchupIndex}`;
+
+	return (
+		<div className="mt-1 d-flex align-items-center">
+			<label className="me-1 small text-body-secondary" htmlFor={id}>
+				Force
+			</label>
+			<select
+				className="form-select form-select-sm god-mode"
+				disabled={state === "saving"}
+				id={id}
+				onChange={async (event) => {
+					const newForceWin =
+						event.target.value === ""
+							? undefined
+							: Number.parseInt(event.target.value);
+					setForceWin(newForceWin);
+					setState("saving");
+
+					try {
+						await toWorker("main", "setForceWinSeries", {
+							matchupIndex,
+							round,
+							tid: newForceWin,
+						});
+						setState("saved");
+					} catch (error) {
+						setState("error");
+						console.error(error);
+					}
+				}}
+				title={`Force series winner (${forceSeriesInfo.numGames} remaining)`}
+				value={forceWin ?? ""}
+			>
+				<option value="">None</option>
+				<option value={series.home.tid}>{series.home.abbrev}</option>
+				<option value={series.away.tid}>{series.away.abbrev}</option>
+			</select>
+			{state === "saved" ? (
+				<span className="ms-2 glyphicon glyphicon-ok text-success" />
+			) : null}
+			{state === "error" ? (
+				<span className="ms-2 text-danger">Error</span>
+			) : null}
+		</div>
+	);
+};
 
 const Playoffs = ({
 	canEdit,
 	confNames,
 	finalMatchups,
+	forceSeries,
 	matchups,
 	numGamesPlayoffSeries,
 	numGamesToWinSeries,
@@ -164,14 +239,23 @@ const Playoffs = ({
 										maxNumCols = j + 1;
 									}
 
+									const [round, matchupIndex] = m.matchup;
+									const playoffSeriesMatchup = series[round]![matchupIndex];
+
 									return (
 										<td key={j} rowSpan={m.rowspan} style={tdStyle}>
 											<PlayoffMatchup
-												numGamesToWinSeries={numGamesToWinSeries[m.matchup[0]]}
+												numGamesToWinSeries={numGamesToWinSeries[round]}
 												season={season}
-												series={series[m.matchup[0]]![m.matchup[1]]}
+												series={playoffSeriesMatchup}
 												userTid={userTid}
 												editing={editingInfo}
+											/>
+											<ForceSeriesWinner
+												forceSeriesInfo={forceSeries[round]?.[matchupIndex]}
+												matchupIndex={matchupIndex}
+												round={round}
+												series={playoffSeriesMatchup}
 											/>
 										</td>
 									);

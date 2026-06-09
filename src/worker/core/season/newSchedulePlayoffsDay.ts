@@ -6,32 +6,12 @@ import { season } from "../index.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 import { chunk, groupByUnique } from "../../../common/utils.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
-
-// Play 2 home (true) then 2 away (false) and repeat, but ensure that the better team always gets the last game.
-const betterSeedHome = (numGamesPlayoffSeries: number, gameNum: number) => {
-	// For series lengths like 3, 7, 11, 15, etc., special case last 3 games to ensure the home team always gets the last game
-	const needsSpecialEnding = (numGamesPlayoffSeries + 1) % 4 === 0;
-
-	if (needsSpecialEnding) {
-		// Special case for last 3 games
-		if (gameNum >= numGamesPlayoffSeries - 3) {
-			return (
-				gameNum === numGamesPlayoffSeries - 3 ||
-				gameNum === numGamesPlayoffSeries - 1
-			);
-		}
-	}
-
-	const num = Math.floor(gameNum / 2);
-	return num % 2 === 0;
-};
-
-const seriesIsNotOver = (
-	home: PlayoffSeriesTeam,
-	away: PlayoffSeriesTeam | undefined,
-	numGamesToWin: number,
-): away is PlayoffSeriesTeam =>
-	!!(away && home.won < numGamesToWin && away.won < numGamesToWin);
+import {
+	betterSeedHome,
+	deleteScheduledGamesForCompletedSeries,
+	getScheduledGamesForSeries,
+	seriesIsNotOver,
+} from "./playoffSchedule.ts";
 
 const getTeamsForOrderTeams = async () => {
 	return idb.getCopies.teamsPlus(
@@ -123,6 +103,7 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 		} else {
 			// playIn is over, so proceed to next round
 			playoffSeries.currentRound = 0;
+			await idb.cache.playoffSeries.put(playoffSeries);
 		}
 	}
 
@@ -134,40 +115,37 @@ const newSchedulePlayoffsDay = async (): Promise<boolean> => {
 
 	const rnd = playoffSeries.currentRound;
 	const tids: [number, number][] = [];
-	const numGamesToWin = helpers.numGamesToWinSeries(
-		g.get("numGamesPlayoffSeries", "current")[rnd],
-	);
+	const numGamesPlayoffSeries = g.get("numGamesPlayoffSeries", "current")[rnd]!;
+	const numGamesToWin = helpers.numGamesToWinSeries(numGamesPlayoffSeries);
 
-	let minGamesPlayedThisRound = Infinity;
+	await deleteScheduledGamesForCompletedSeries(playoffSeries);
+
+	const schedule = await idb.cache.schedule.getAll();
+	const activeSeries: {
+		home: PlayoffSeriesTeam;
+		away: PlayoffSeriesTeam;
+	}[] = [];
 	for (const { away, home } of series[rnd]!) {
 		if (seriesIsNotOver(home, away, numGamesToWin)) {
-			const numGames = home.won + away.won;
-			if (numGames < minGamesPlayedThisRound) {
-				minGamesPlayedThisRound = numGames;
-			}
+			activeSeries.push({ away, home });
 		}
 	}
 
-	// Try to schedule games if there are active series
-	for (const { away, home } of series[rnd]!) {
-		if (seriesIsNotOver(home, away, numGamesToWin)) {
-			const numGames = home.won + away.won;
-
-			// Because live game sim is an individual game now, not a whole day, need to check if some series are ahead of others and therefore should not get a game today.
-			if (numGames > minGamesPlayedThisRound) {
-				continue;
+	if (activeSeries.length > 0) {
+		for (const { away, home } of activeSeries) {
+			if (getScheduledGamesForSeries(schedule, home.tid, away.tid).length > 0) {
+				return false;
 			}
+		}
 
-			// Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
-			if (
-				betterSeedHome(
-					g.get("numGamesPlayoffSeries", "current")[rnd]!,
-					numGames,
-				)
-			) {
-				tids.push([home.tid, away.tid]);
-			} else {
-				tids.push([away.tid, home.tid]);
+		for (let gameNum = 0; gameNum < numGamesPlayoffSeries; gameNum++) {
+			for (const { away, home } of activeSeries) {
+				// Make sure to set home/away teams correctly! Home for the lower seed is 1st, 2nd, 5th, and 7th games.
+				if (betterSeedHome(numGamesPlayoffSeries, gameNum)) {
+					tids.push([home.tid, away.tid]);
+				} else {
+					tids.push([away.tid, home.tid]);
+				}
 			}
 		}
 	}

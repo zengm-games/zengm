@@ -117,6 +117,7 @@ import {
 	orderBy,
 	range,
 } from "../../common/utils.ts";
+import { getScheduledGamesForSeries } from "../core/season/playoffSchedule.ts";
 import {
 	finalizePlayersRelativesList,
 	formatPlayerRelativesList,
@@ -3591,6 +3592,54 @@ const setForceWinAll = async ({
 	await toUI("realtimeUpdate", [["gameSim"]]);
 };
 
+const setForceWinSeries = async ({
+	matchupIndex,
+	round,
+	tid,
+}: {
+	matchupIndex: number;
+	round: number;
+	tid?: number;
+}) => {
+	const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
+	if (!playoffSeries) {
+		throw new Error("Playoff series not found");
+	}
+	if (playoffSeries.currentRound !== round || round < 0) {
+		throw new Error("Can only force current-round playoff series");
+	}
+
+	const matchup = playoffSeries.series[round]?.[matchupIndex];
+	if (!matchup?.away) {
+		throw new Error("Playoff series matchup not found");
+	}
+	if (
+		tid !== undefined &&
+		tid !== matchup.home.tid &&
+		tid !== matchup.away.tid
+	) {
+		throw new Error("Invalid team");
+	}
+
+	const schedule = await idb.cache.schedule.getAll();
+	const games = getScheduledGamesForSeries(
+		schedule,
+		matchup.home.tid,
+		matchup.away.tid,
+	);
+
+	for (const game of games) {
+		if (tid === undefined) {
+			delete game.forceWin;
+		} else {
+			game.forceWin = tid;
+		}
+		await idb.cache.schedule.put(game);
+	}
+
+	await toUI("realtimeUpdate", [["gameSim"]]);
+};
+
 const setGOATFormula = async ({
 	formula,
 	type,
@@ -5267,6 +5316,7 @@ export default {
 		runBefore,
 		setForceWin,
 		setForceWinAll,
+		setForceWinSeries,
 		setGOATFormula,
 		setLocal,
 		setNote,

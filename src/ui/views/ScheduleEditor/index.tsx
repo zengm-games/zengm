@@ -211,14 +211,12 @@ const validateAndParseScheduleCSV = (
 		const teamsOnDay = teamsByDay.getOrInsertComputed(day, () => new Set());
 
 		for (const colAbbrev of teamColumns) {
-			const cellText = row[colAbbrev]?.trim();
-			if (!cellText) {
+			const cellAbbrev = row[colAbbrev]?.trim();
+			if (!cellAbbrev) {
 				continue;
 			}
 
 			const colTeam = teamsByAbbrev[colAbbrev]!;
-			const cellIsAway = cellText.startsWith("@");
-			const cellAbbrev = cellIsAway ? cellText.slice(1) : cellText;
 
 			const cellTeam = teamsByAbbrev[cellAbbrev];
 			if (!cellTeam) {
@@ -243,8 +241,8 @@ const validateAndParseScheduleCSV = (
 
 			if (!dayGames.has(gameKey)) {
 				dayGames.set(gameKey, {
-					home: cellIsAway ? cellAbbrev : colAbbrev,
-					away: cellIsAway ? colAbbrev : cellAbbrev,
+					home: colAbbrev,
+					away: cellAbbrev,
 				});
 			}
 		}
@@ -291,12 +289,8 @@ const exportScheduleCSV = (schedule: Schedule, teams: Team[]) => {
 				row[1] = TRADE_DEADLINE_LABEL;
 			} else if (game.type === "game") {
 				const homeIdx = abbrevToIdx.get(game.homeAbbrev);
-				const awayIdx = abbrevToIdx.get(game.awayAbbrev);
 				if (homeIdx !== undefined) {
 					row[homeIdx + 1] = game.awayAbbrev;
-				}
-				if (awayIdx !== undefined) {
-					row[awayIdx + 1] = `@${game.homeAbbrev}`;
 				}
 			}
 		}

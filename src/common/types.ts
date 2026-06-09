@@ -1146,6 +1146,7 @@ export type MinimalPlayerRatings = {
 	season: number;
 	ovrs?: any;
 	pots?: any;
+	progBreakdown?: [number, number, number];
 	injuryIndex?: number;
 	hgt: number;
 	spd: number;

@@ -375,6 +375,7 @@ const newPhasePreseason = async (
 			);
 			if (newRatings) {
 				newRatings.season += 1;
+				newRatings.progBreakdown = undefined;
 				p.ratings.push(newRatings);
 			}
 

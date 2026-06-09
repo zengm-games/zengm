@@ -208,6 +208,7 @@ export type PlayerRatings = {
 	ovrs: Record<Position, number>;
 	pots: Record<Position, number>;
 	pos: string;
+	progBreakdown?: [number, number, number];
 	season: number;
 	skills: string[];
 	injuryIndex?: number;

@@ -15,6 +15,7 @@ const addRatingsRow = (
 		...last(p.ratings),
 		season: g.get("season"),
 		injuryIndex: undefined,
+		progBreakdown: undefined,
 	};
 
 	if (scoutingLevel !== undefined) {

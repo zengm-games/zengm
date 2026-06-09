@@ -1,11 +1,15 @@
-import limitRating from "./limitRating.ts";
 import { helpers } from "../../util/index.ts";
 import type {
 	PlayerRatings,
 	RatingKey,
 } from "../../../common/types.baseball.ts";
-import { coachingEffect } from "../../../common/budgetLevels.ts";
 import { truncGauss, uniform } from "../../../common/random.ts";
+import {
+	addToProgBreakdown,
+	getBaseChange,
+	getRatingChangeBreakdown,
+	type ProgBreakdown,
+} from "./developmentBreakdown.ts";
 
 type RatingFormula = {
 	ageModifier: (age: number) => number;
@@ -202,41 +206,41 @@ const ratingsFormulas: Record<Exclude<RatingKey, "hgt">, RatingFormula> = {
 	endu: powerFormula,
 };
 
-const calcBaseChange = (age: number, coachingLevel: number): number => {
-	let val: number;
+const calcBaseChange = (age: number, coachingLevel: number) => {
+	let ageChange: number;
 
 	if (age <= 21) {
-		val = 2;
+		ageChange = 2;
 	} else if (age <= 25) {
-		val = 1;
+		ageChange = 1;
 	} else if (age <= 27) {
-		val = 0;
+		ageChange = 0;
 	} else if (age <= 29) {
-		val = -1;
+		ageChange = -1;
 	} else if (age <= 31) {
-		val = -2;
+		ageChange = -2;
 	} else if (age <= 33) {
-		val = -3;
+		ageChange = -3;
 	} else if (age <= 35) {
-		val = -4;
+		ageChange = -4;
 	} else if (age <= 37) {
-		val = -5;
+		ageChange = -5;
 	} else {
-		val = -6;
+		ageChange = -6;
 	}
+
+	let randomChange;
 
 	// Noise
 	if (age <= 23) {
-		val += truncGauss(0, 5, -4, 15);
+		randomChange = truncGauss(0, 5, -4, 15);
 	} else if (age <= 25) {
-		val += truncGauss(0, 5, -4, 7);
+		randomChange = truncGauss(0, 5, -4, 7);
 	} else {
-		val += truncGauss(0, 3, -2, 3);
+		randomChange = truncGauss(0, 3, -2, 3);
 	}
 
-	val *= 1 + (val > 0 ? 1 : -1) * coachingEffect(coachingLevel);
-
-	return val;
+	return getBaseChange(ageChange, randomChange, coachingLevel);
 };
 
 const developSeason = (
@@ -244,6 +248,8 @@ const developSeason = (
 	age: number,
 	coachingLevel: number,
 ) => {
+	const progBreakdown: ProgBreakdown = [0, 0, 0];
+
 	// In young players, height can sometimes increase
 	if (age <= 21) {
 		const heightRand = Math.random();
@@ -272,15 +278,20 @@ const developSeason = (
 			}
 		}
 
-		ratings[key] = limitRating(
-			ratings[key] +
-				helpers.bound(
-					(baseChange + ageModifier) * uniform(0.6, 1.3),
-					changeLimits[0],
-					changeLimits[1],
-				),
-		);
+		const { newRating, progBreakdown: ratingProgBreakdown } =
+			getRatingChangeBreakdown({
+				ageModifier,
+				baseChange,
+				changeLimits,
+				factor: uniform(0.6, 1.3),
+				oldRating: ratings[key],
+			});
+
+		ratings[key] = newRating;
+		addToProgBreakdown(progBreakdown, ratingProgBreakdown);
 	}
+
+	return progBreakdown;
 };
 
 export default developSeason;

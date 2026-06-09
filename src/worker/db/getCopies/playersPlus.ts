@@ -473,6 +473,10 @@ const processRatings = (
 				}
 			} else if (attr === "age") {
 				row.age = pr.season - p.born.year;
+			} else if (attr === "progBreakdown") {
+				if (pr.progBreakdown !== undefined) {
+					row.progBreakdown = [...pr.progBreakdown];
+				}
 			} else if (attr === "abbrev" || attr === "tid") {
 				// Find the last stats entry for that season, and use that to determine the team. Requires tid to be requested from stats (otherwise, need to refactor stats fetching to happen outside of processStats)
 				if (!stats.includes("tid")) {

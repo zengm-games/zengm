@@ -141,6 +141,7 @@ export const getPlayer = async (
 			...RATINGS,
 			"skills",
 			"pos",
+			"progBreakdown",
 			"injuryIndex",
 		],
 		stats: ["season", "tid", "abbrev", "age", "jerseyNumber", ...stats],

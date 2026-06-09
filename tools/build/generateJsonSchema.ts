@@ -22,6 +22,14 @@ const genRatings = (sport: Sport) => {
 			minimum: 0,
 			maximum: 100,
 		},
+		progBreakdown: {
+			type: "array",
+			items: {
+				type: "number",
+			},
+			minItems: 3,
+			maxItems: 3,
+		},
 		season: {
 			type: "integer",
 		},

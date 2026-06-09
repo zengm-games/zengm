@@ -18,6 +18,10 @@ import { TOO_MANY_TEAMS_TOO_SLOW } from "../season/getInitialNumGamesConfDivSett
 import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
+import {
+	addToProgBreakdown,
+	type ProgBreakdown,
+} from "./developmentBreakdown.ts";
 
 const NUM_SIMULATIONS = 20; // Higher is more accurate, but slower. Low accuracy is fine, though!
 
@@ -128,6 +132,9 @@ const develop = async (
 ) => {
 	const ratings = last(p.ratings);
 	let age = ratings.season - p.born.year;
+	const shouldSaveProgBreakdown =
+		!newPlayer && years === 1 && p.ratings.length > 1;
+	const progBreakdown: ProgBreakdown = [0, 0, 0];
 
 	for (let i = 0; i < years; i++) {
 		// (CONFUSING!) Don't increment age for existing players developing one season (i.e. newPhasePreseason) because the season is already incremented before this function is called. But in other scenarios (new league and draft picks), the season is not changing, so age should be incremented every iteration of this loop.
@@ -136,7 +143,17 @@ const develop = async (
 		}
 
 		if (!ratings.locked) {
-			await developSeason(ratings, age, p.srID, coachingLevel, false);
+			const seasonProgBreakdown = await developSeason(
+				ratings,
+				age,
+				p.srID,
+				coachingLevel,
+				false,
+			);
+
+			if (shouldSaveProgBreakdown) {
+				addToProgBreakdown(progBreakdown, seasonProgBreakdown);
+			}
 		}
 	}
 
@@ -195,6 +212,10 @@ const develop = async (
 			ratings.pot = ratings.pots[pos];
 			ratings.pos = pos;
 		}
+	}
+
+	if (shouldSaveProgBreakdown && !ratings.locked) {
+		ratings.progBreakdown = progBreakdown;
 	}
 
 	if (!ratings.locked && years > 0) {

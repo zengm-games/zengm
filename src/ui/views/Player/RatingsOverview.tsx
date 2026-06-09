@@ -3,7 +3,23 @@ import { posRatings } from "../../../common/posRatings.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { ratingsGradientStyle } from "../../components/RatingsStatsPopover/ratingsGradientStyle.ts";
 import { RatingWithChange } from "../../components/RatingWithChange.tsx";
-import { type ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
+
+const developmentLabels = ["Age", "Coaching", "Variance"] as const;
+
+const formatDevelopmentChange = (change: number) => {
+	return `${change > 0 ? "+" : ""}${change.toFixed(1)}`;
+};
+
+const getDevelopmentChangeClassName = (change: number) => {
+	if (change > 0) {
+		return "text-success";
+	}
+
+	if (change < 0) {
+		return "text-danger";
+	}
+};
 
 export const RatingsOverview = ({
 	ratings,
@@ -24,6 +40,11 @@ export const RatingsOverview = ({
 	const lastSeason =
 		ratings.findLast((row) => row.season === currentSeason.season - 1) ??
 		currentSeason;
+	const progBreakdown: [number, number, number] | undefined =
+		Array.isArray(currentSeason.progBreakdown) &&
+		currentSeason.progBreakdown.length === 3
+			? currentSeason.progBreakdown
+			: undefined;
 
 	const columns = bySport<
 		Record<
@@ -502,6 +523,27 @@ export const RatingsOverview = ({
 					</RatingWithChange>
 				</h2>
 			</div>
+			{progBreakdown ? (
+				<div
+					className="small text-body-secondary mb-2"
+					title="Average per-rating change from this season's development"
+				>
+					Development:{" "}
+					{developmentLabels.map((label, i) => {
+						const change = progBreakdown[i]!;
+
+						return (
+							<Fragment key={label}>
+								{i > 0 ? " / " : null}
+								{label}{" "}
+								<span className={getDevelopmentChangeClassName(change)}>
+									{formatDevelopmentChange(change)}
+								</span>
+							</Fragment>
+						);
+					})}
+				</div>
+			) : null}
 			<div className="d-flex justify-content-between">
 				{columns.map((column, i) => (
 					<div key={i} className={i === 0 ? undefined : "ms-2 ms-sm-5"}>

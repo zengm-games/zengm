@@ -142,6 +142,7 @@ export type PlayerRatings = {
 	ovr: number;
 	pos: string;
 	pot: number;
+	progBreakdown?: [number, number, number];
 	pss: number;
 	reb: number;
 	season: number;

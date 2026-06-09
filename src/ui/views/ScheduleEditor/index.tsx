@@ -42,6 +42,7 @@ type ScheduleDay = {
 
 type Team = View<"scheduleEditor">["teams"][number];
 
+// If these are ever changed it will break any previous CSV schedules on import, so be careful!
 const ALL_STAR_GAME_LABEL = "All-Star Game";
 const TRADE_DEADLINE_LABEL = "Trade Deadline";
 

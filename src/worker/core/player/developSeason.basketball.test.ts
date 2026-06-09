@@ -1,4 +1,5 @@
 import { assert, test, vi } from "vitest";
+import { DEFAULT_LEVEL } from "../../../common/budgetLevels.ts";
 import type { PlayerRatings } from "../../../common/types.basketball.ts";
 import developSeason from "./developSeason.basketball.ts";
 
@@ -50,13 +51,13 @@ const developWithCoaching = (
 };
 
 test("staff quality level has identical development results to the old budget level", () => {
-	const budgetLevel = 62;
-
-	assert.deepStrictEqual(
-		developWithCoaching({
-			level: budgetLevel,
-			specialties: [],
-		}),
-		developWithCoaching(budgetLevel),
-	);
+	for (const budgetLevel of [62, DEFAULT_LEVEL]) {
+		assert.deepStrictEqual(
+			developWithCoaching({
+				level: budgetLevel,
+				specialties: [],
+			}),
+			developWithCoaching(budgetLevel),
+		);
+	}
 });

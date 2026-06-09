@@ -276,7 +276,9 @@ const newPhasePreseason = async (
 			await staff.autoHireByBudget(t.tid, coachingLevel);
 		}
 
-		coachingByTid[t.tid] = await staff.getDevelopmentInfo(t.tid);
+		coachingByTid[t.tid] = g.get("budget")
+			? await staff.getDevelopmentInfo(t.tid)
+			: coachingLevel;
 	}
 
 	const players = await idb.cache.players.indexGetAll("playersByTid", [

@@ -18,6 +18,27 @@ import playerName from "../player/name.ts";
 const assignedCoach = (coaches: Coach[], tid: number, slot: CoachSlot) =>
 	coaches.find((coach) => coach.tid === tid && coach.slot === slot);
 
+const hireQueues = new Map<string, Promise<unknown>>();
+
+const queueHire = async <T>(
+	tid: number,
+	slot: CoachSlot,
+	callback: () => Promise<T>,
+) => {
+	const key = `${tid}:${slot}`;
+	const previous = hireQueues.get(key) ?? Promise.resolve();
+	const next = previous.catch(() => undefined).then(callback);
+	hireQueues.set(key, next);
+
+	try {
+		return await next;
+	} finally {
+		if (hireQueues.get(key) === next) {
+			hireQueues.delete(key);
+		}
+	}
+};
+
 export const genCoach = async ({
 	quality,
 	slot,
@@ -213,28 +234,30 @@ export const hire = async ({
 	slot: CoachSlot;
 	tid: number;
 }) => {
-	const t = await idb.cache.teams.get(tid);
-	if (!t || t.disabled) {
-		throw new Error("Invalid team");
-	}
+	await queueHire(tid, slot, async () => {
+		const t = await idb.cache.teams.get(tid);
+		if (!t || t.disabled) {
+			throw new Error("Invalid team");
+		}
 
-	const coaches = await idb.cache.staff.getAll();
-	if (assignedCoach(coaches, tid, slot)) {
-		throw new Error("That staff slot is already filled.");
-	}
+		const coaches = await idb.cache.staff.getAll();
+		if (assignedCoach(coaches, tid, slot)) {
+			throw new Error("That staff slot is already filled.");
+		}
 
-	const coach = await idb.cache.staff.get(coachId);
-	if (!coach || coach.tid !== PLAYER.FREE_AGENT) {
-		throw new Error("That coach is not available.");
-	}
+		const coach = await idb.cache.staff.get(coachId);
+		if (!coach || coach.tid !== PLAYER.FREE_AGENT) {
+			throw new Error("That coach is not available.");
+		}
 
-	if (coach.quality > t.budget.coaching) {
-		throw new Error("Your coaching budget level is too low for that coach.");
-	}
+		if (coach.quality > t.budget.coaching) {
+			throw new Error("Your coaching budget level is too low for that coach.");
+		}
 
-	coach.tid = tid;
-	coach.slot = slot;
-	await idb.cache.staff.put(coach);
+		coach.tid = tid;
+		coach.slot = slot;
+		await idb.cache.staff.put(coach);
+	});
 };
 
 export const fire = async ({

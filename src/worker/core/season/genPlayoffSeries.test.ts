@@ -9,6 +9,7 @@ import {
 import { g, helpers } from "../../util/index.ts";
 import { resetCache, resetG } from "../../../test/helpers.ts";
 import { makeMatchups } from "./genPlayoffSeries.ts";
+import getSchedule from "./getSchedule.ts";
 import { idb } from "../../db/index.ts";
 import { PHASE } from "../../../common/constants.ts";
 import type { PlayoffSeries } from "../../../common/types.ts";
@@ -17,6 +18,7 @@ import {
 	betterSeedHome,
 	deleteScheduledGamesForCompletedSeries,
 } from "./playoffSchedule.ts";
+import { getUpcoming } from "../../views/schedule.ts";
 import api from "../../api/index.ts";
 import team from "../team/index.ts";
 
@@ -478,6 +480,30 @@ describe("newSchedulePlayoffsDay", () => {
 			}
 		});
 	}
+
+	test("marks only current-day playoff games as live-simmable", async () => {
+		await setupPlayoffScheduleTest(7);
+		await newSchedulePlayoffsDay();
+
+		const scheduleToday = await getSchedule(true);
+		const currentDayGids = new Set(scheduleToday.map((game) => game.gid));
+
+		const upcoming = await getUpcoming({});
+
+		assert.strictEqual(upcoming.length, 14);
+		assert.deepStrictEqual(
+			upcoming
+				.filter((game) => game.canLiveSim)
+				.map((game) => game.gid),
+			[...currentDayGids],
+		);
+		assert.strictEqual(
+			upcoming
+				.filter((game) => !currentDayGids.has(game.gid))
+				.every((game) => !game.canLiveSim),
+			true,
+		);
+	});
 
 	test("regenerates current-round schedule after playoff team edits", async () => {
 		await setupPlayoffScheduleTest(7);

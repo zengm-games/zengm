@@ -474,7 +474,11 @@ const processRatings = (
 			} else if (attr === "age") {
 				row.age = pr.season - p.born.year;
 			} else if (attr === "progBreakdown") {
-				if (!fuzz && pr.progBreakdown !== undefined) {
+				// Mirror fuzzRating: fuzz is effectively disabled in god mode and
+				// multi team mode, so the exact breakdown leaks nothing there.
+				const fuzzApplies =
+					fuzz && !g.get("godMode") && g.get("userTids").length <= 1;
+				if (!fuzzApplies && pr.progBreakdown !== undefined) {
 					row.progBreakdown = [...pr.progBreakdown];
 				}
 			} else if (attr === "abbrev" || attr === "tid") {
@@ -553,7 +557,7 @@ const processRatings = (
 					row.pos = last(p.ratings).pos;
 				} else if (attr === "abbrev") {
 					row.abbrev = "";
-				} else if (!fuzz || attr !== "progBreakdown") {
+				} else if (attr !== "progBreakdown") {
 					row[attr] = 0;
 				}
 			}

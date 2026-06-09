@@ -109,7 +109,7 @@ export const Footer = memo(() => {
 			</div>
 
 			<div className="clearfix" />
-			<hr />
+			<hr className="my-hr" />
 
 			<div
 				className="d-flex flex-wrap justify-content-between text-body-secondary"

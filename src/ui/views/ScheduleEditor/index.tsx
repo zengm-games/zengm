@@ -160,10 +160,7 @@ const validateAndParseScheduleCSV = (
 		throw new Error(`Duplicate abbrevs in header: ${array.join(", ")}`);
 	}
 
-	const gamesByDay = new Map<
-		number,
-		Map<string, { home: string; away: string }>
-	>();
+	const gamesByDay = new Map<number, { away: Team; home: Team }[]>();
 	const teamsByDay = new Map<number, Set<number>>();
 	const specials: Extract<
 		Schedule[number],
@@ -207,7 +204,7 @@ const validateAndParseScheduleCSV = (
 			continue;
 		}
 
-		const dayGames = gamesByDay.getOrInsertComputed(day, () => new Map());
+		const dayGames = gamesByDay.getOrInsertComputed(day, () => []);
 		const teamsOnDay = teamsByDay.getOrInsertComputed(day, () => new Set());
 
 		for (const colAbbrev of teamColumns) {
@@ -233,31 +230,23 @@ const validateAndParseScheduleCSV = (
 
 			teamsOnDay.add(cellTeam.tid);
 
-			const [tid1, tid2] =
-				colTeam.tid < cellTeam.tid
-					? [colTeam.tid, cellTeam.tid]
-					: [cellTeam.tid, colTeam.tid];
-			const gameKey = `${tid1}-${tid2}`;
-
-			if (!dayGames.has(gameKey)) {
-				dayGames.set(gameKey, {
-					home: colAbbrev,
-					away: cellAbbrev,
-				});
-			}
+			dayGames.push({
+				away: cellTeam,
+				home: colTeam,
+			});
 		}
 	}
 
 	const newSchedule: Schedule = [...specials];
 	for (const [day, dayGames] of gamesByDay) {
-		for (const game of dayGames.values()) {
+		for (const { away, home } of dayGames.values()) {
 			newSchedule.push({
 				type: "game",
 				day,
-				awayTid: teamsByAbbrev[game.away]!.tid,
-				awayAbbrev: teamsByAbbrev[game.away]!.seasonAttrs.abbrev,
-				homeTid: teamsByAbbrev[game.home]!.tid,
-				homeAbbrev: teamsByAbbrev[game.home]!.seasonAttrs.abbrev,
+				awayTid: away.tid,
+				awayAbbrev: away.seasonAttrs.abbrev,
+				homeTid: home.tid,
+				homeAbbrev: home.seasonAttrs.abbrev,
 			});
 		}
 	}
@@ -278,7 +267,7 @@ const exportScheduleCSV = (schedule: Schedule, teams: Team[]) => {
 		dayMap.getOrInsertComputed(game.day, () => []).push(game);
 	}
 
-	const rows: string[][] = [["D", ...abbrevs]];
+	const rows: string[][] = [["Day", ...abbrevs]];
 	for (const day of orderBy([...dayMap.keys()], (d) => d)) {
 		const row = Array<string>(abbrevs.length + 1).fill("");
 		row[0] = String(day);
@@ -656,7 +645,7 @@ const ScheduleEditor = ({
 				} catch (error) {
 					logEvent({
 						type: "error",
-						text: `Error importing schedule: ${error.message}`,
+						text: error.message,
 						saveToDb: false,
 					});
 				}

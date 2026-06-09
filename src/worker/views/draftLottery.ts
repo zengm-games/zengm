@@ -298,7 +298,7 @@ const updateDraftLottery = async (
 
 		const draftType = draftLotteryResult
 			? draftLotteryResult.draftType
-			: "noLottery";
+			: g.get("draftType");
 
 		if (draftPicks) {
 			draftPicks = filterDraftPicks(draftPicks, draftLotteryResult);

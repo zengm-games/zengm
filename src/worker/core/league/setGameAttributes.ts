@@ -15,6 +15,7 @@ import { defaultTragicDeaths } from "../../util/defaultTragicDeaths.ts";
 import { defaultInjuries } from "../../util/defaultInjuries.ts";
 import { initUILocalGames } from "../../util/initUILocalGames.ts";
 import { disableNba2027, initializeNba2027 } from "../draft/nba2027.ts";
+import { NO_LOTTERY_DRAFT_TYPES, PHASE } from "../../../common/constants.ts";
 
 const updateMetaDifficulty = async (difficulty: number) => {
 	await updateMeta({
@@ -177,6 +178,14 @@ const setGameAttributes = async (
 		} else {
 			await disableCola();
 			await disableNba2027();
+		}
+
+		if (g.get("phase") === PHASE.DRAFT_LOTTERY) {
+			await draft.deleteLotteryResultIfNoDraftYet();
+
+			if (NO_LOTTERY_DRAFT_TYPES.has(updatedGameAttributes.draftType)) {
+				await draft.genOrder(false);
+			}
 		}
 	}
 

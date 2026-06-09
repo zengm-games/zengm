@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useReducer, useRef, useState, type ChangeEvent,} from "react";
+import {
+	useCallback,
+	useEffect,
+	useReducer,
+	useRef,
+	useState,
+	type ChangeEvent,
+} from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { logEvent } from "../../util/logEvent.ts";
@@ -112,6 +119,21 @@ const notifyPlaceSpecial = (
 	});
 };
 
+const findDuplicates = (strings: string[]) => {
+	const seen = new Set<string>();
+	const duplicates = new Set<string>();
+
+	for (const string of strings) {
+		if (seen.has(string)) {
+			duplicates.add(string);
+		} else {
+			seen.add(string);
+		}
+	}
+
+	return duplicates;
+};
+
 const validateAndParseScheduleCSV = (
 	csvText: string,
 	teams: Team[],
@@ -121,7 +143,10 @@ const validateAndParseScheduleCSV = (
 
 	const teamsByAbbrev = groupByUnique(teams, (t) => t.seasonAttrs.abbrev);
 
-	const teamColumns = parsed.columns.slice(1);
+	const teamColumns = parsed.columns.slice(1).map((abbrev) => abbrev.trim());
+	if (!teamColumns[0]) {
+		throw new Error("No team columns found");
+	}
 	for (const abbrev of teamColumns) {
 		if (!teamsByAbbrev[abbrev]) {
 			throw new Error(
@@ -129,16 +154,27 @@ const validateAndParseScheduleCSV = (
 			);
 		}
 	}
+	const duplicateAbbrevs = findDuplicates(teamColumns);
+	if (duplicateAbbrevs.size > 0) {
+		const array = Array.from(duplicateAbbrevs);
+		throw new Error(`Duplicate abbrevs in header: ${array.join(", ")}`);
+	}
 
 	const gamesByDay = new Map<
 		number,
 		Map<string, { home: string; away: string }>
 	>();
 	const teamsByDay = new Map<number, Set<number>>();
-	const specials: Schedule[number][] = [];
+	const specials: Extract<
+		Schedule[number],
+		{ type: "allStarGame" | "tradeDeadline" }
+	>[] = [];
 
 	for (const row of parsed) {
-		const dayStr = row[parsed.columns[0]!];
+		if (!parsed.columns[0]) {
+			continue;
+		}
+		const dayStr = row[parsed.columns[0]];
 		if (!dayStr) {
 			continue;
 		}
@@ -153,7 +189,7 @@ const validateAndParseScheduleCSV = (
 			);
 		}
 
-		const firstCell = row[teamColumns[0]!]?.trim();
+		const firstCell = row[teamColumns[0]]?.trim();
 		if (
 			firstCell === ALL_STAR_GAME_LABEL ||
 			firstCell === TRADE_DEADLINE_LABEL
@@ -174,41 +210,41 @@ const validateAndParseScheduleCSV = (
 		const dayGames = gamesByDay.getOrInsertComputed(day, () => new Map());
 		const teamsOnDay = teamsByDay.getOrInsertComputed(day, () => new Set());
 
-		for (const homeAbbrev of teamColumns) {
-			const cell = row[homeAbbrev]?.trim();
-			if (!cell) {
+		for (const colAbbrev of teamColumns) {
+			const cellText = row[colAbbrev]?.trim();
+			if (!cellText) {
 				continue;
 			}
 
-			const homeTeam = teamsByAbbrev[homeAbbrev]!;
-			const isAway = cell.startsWith("@");
-			const opponentAbbrev = isAway ? cell.slice(1) : cell;
+			const colTeam = teamsByAbbrev[colAbbrev]!;
+			const cellIsAway = cellText.startsWith("@");
+			const cellAbbrev = cellIsAway ? cellText.slice(1) : cellText;
 
-			const opponentTeam = teamsByAbbrev[opponentAbbrev];
-			if (!opponentTeam) {
+			const cellTeam = teamsByAbbrev[cellAbbrev];
+			if (!cellTeam) {
 				throw new Error(
-					`Unknown opponent "${opponentAbbrev}" for ${homeAbbrev} on day ${day}`,
+					`Unknown opponent "${cellAbbrev}" for ${colAbbrev} on day ${day}`,
 				);
 			}
-			if (homeTeam.tid === opponentTeam.tid) {
-				throw new Error(`Team ${homeAbbrev} cannot play itself on day ${day}`);
+			if (colTeam.tid === cellTeam.tid) {
+				throw new Error(`${colAbbrev} cannot play itself on day ${day}`);
 			}
-			if (teamsOnDay.has(homeTeam.tid)) {
-				throw new Error(`Team ${homeAbbrev} has multiple games on day ${day}`);
+			if (teamsOnDay.has(cellTeam.tid)) {
+				throw new Error(`${cellAbbrev} has multiple games on day ${day}`);
 			}
 
-			teamsOnDay.add(homeTeam.tid);
+			teamsOnDay.add(cellTeam.tid);
 
 			const [tid1, tid2] =
-				homeTeam.tid < opponentTeam.tid
-					? [homeTeam.tid, opponentTeam.tid]
-					: [opponentTeam.tid, homeTeam.tid];
+				colTeam.tid < cellTeam.tid
+					? [colTeam.tid, cellTeam.tid]
+					: [cellTeam.tid, colTeam.tid];
 			const gameKey = `${tid1}-${tid2}`;
 
 			if (!dayGames.has(gameKey)) {
 				dayGames.set(gameKey, {
-					home: isAway ? opponentAbbrev : homeAbbrev,
-					away: isAway ? homeAbbrev : opponentAbbrev,
+					home: cellIsAway ? cellAbbrev : colAbbrev,
+					away: cellIsAway ? colAbbrev : cellAbbrev,
 				});
 			}
 		}

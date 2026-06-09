@@ -1,9 +1,21 @@
 import { AWARD_NAMES, PHASE, SIMPLE_AWARDS } from "../../common/constants.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { orderBy } from "../../common/utils.ts";
-import type { EventBBGM, UpdateEvents, ViewInput } from "../../common/types.ts";
+import type {
+	EventBBGM,
+	PlayerStatType,
+	UpdateEvents,
+	ViewInput,
+} from "../../common/types.ts";
 import { idb } from "../db/index.ts";
 import { g, local, updatePlayMenu } from "../util/index.ts";
+import getLeaderRequirements, {
+	getLeaderRequirementsStats,
+} from "../core/season/getLeaderRequirements.ts";
+import {
+	GamesPlayedCache,
+	playerMeetsCategoryRequirements,
+} from "./leaders.ts";
 import { processEvents } from "./news.ts";
 
 const viewedSeasonSummary = async () => {
@@ -182,6 +194,11 @@ const updateSeasonRecap = async (
 			football: ["pssYds", "rusYds", "recYds"],
 			hockey: ["g", "a", "pts"],
 		});
+		const leaderRequirements = getLeaderRequirements();
+		const leaderRequirementStats = getLeaderRequirementsStats(
+			leaderRequirements,
+			leaderStats,
+		);
 
 		const playersRaw = await idb.getCopies.players(
 			{
@@ -190,18 +207,43 @@ const updateSeasonRecap = async (
 			"noCopyCache",
 		);
 		const leaderPlayers = await idb.getCopies.playersPlus(playersRaw, {
-			attrs: ["pid", "firstName", "lastName", "abbrev", "tid"],
-			stats: leaderStats,
+			attrs: ["pid", "firstName", "lastName"],
+			stats: ["abbrev", "tid", ...leaderStats, ...leaderRequirementStats],
 			season,
 			showRookies: true,
 			mergeStats: "totOnly",
 		});
+		const statType: PlayerStatType = bySport({
+			baseball: "totals",
+			basketball: "perGame",
+			football: "totals",
+			hockey: "totals",
+		});
+		const gamesPlayedCache = new GamesPlayedCache();
+		await gamesPlayedCache.loadSeasons([season], false);
 
 		const leagueLeaders = [];
 		for (const stat of leaderStats) {
-			const playersWithStat = leaderPlayers.filter(
-				(p) => typeof p.stats[stat] === "number",
-			);
+			const statInfo = {
+				stat,
+				...leaderRequirements[stat],
+			};
+			const playersWithStat = leaderPlayers.filter((p) => {
+				if (typeof p.stats[stat] !== "number") {
+					return false;
+				}
+
+				return playerMeetsCategoryRequirements({
+					career: false,
+					cat: statInfo,
+					gamesPlayedCache,
+					p,
+					playerStats: p.stats,
+					seasonType: "regularSeason",
+					season,
+					statType,
+				});
+			});
 			if (playersWithStat.length > 0) {
 				const leader = orderBy(
 					playersWithStat,
@@ -209,32 +251,25 @@ const updateSeasonRecap = async (
 					"desc",
 				)[0]!;
 				leagueLeaders.push({
-					abbrev: leader.abbrev,
+					abbrev: leader.stats.abbrev,
 					firstName: leader.firstName,
 					lastName: leader.lastName,
 					pid: leader.pid,
 					stat,
-					tid: leader.tid,
+					tid: leader.stats.tid,
 					value: leader.stats[stat],
 				});
 			}
 		}
 
 		const players = await idb.getCopies.playersPlus(playersRaw, {
-			attrs: [
-				"pid",
-				"tid",
-				"abbrev",
-				"firstName",
-				"lastName",
-				"age",
-				"watch",
-				"injury",
-			],
+			attrs: ["pid", "firstName", "lastName", "age", "watch", "injury"],
 			ratings: ["ovr", "pot", "dovr", "dpot", "pos", "skills"],
+			stats: ["abbrev", "tid"],
 			season,
 			fuzz: true,
 			showNoStats: true,
+			mergeStats: "totOnly",
 		});
 
 		const playersRising = orderBy(
@@ -247,6 +282,10 @@ const updateSeasonRecap = async (
 			(p) => p.ratings.dovr,
 			"asc",
 		).slice(0, 5);
+		for (const p of [...playersRising, ...playersFalling]) {
+			p.abbrev = p.stats.abbrev;
+			p.tid = p.stats.tid;
+		}
 
 		const eventsAll = await idb.getCopies.events({
 			season,

@@ -780,14 +780,12 @@ describe("revenge_2", () => {
 						home: {
 							tid: currentTid,
 							cid: 0,
-							winp: 0.75,
 							won: 4,
 							seed: 1,
 						},
 						away: {
 							tid: previousTid,
 							cid: 1,
-							winp: 0.7,
 							won: 2,
 							seed: 1,
 						},

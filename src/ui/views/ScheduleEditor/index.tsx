@@ -151,7 +151,7 @@ const validateAndParseScheduleCSV = (
 	for (const abbrev of teamColumns) {
 		if (!teamsByAbbrev[abbrev]) {
 			throw new Error(
-				`Unknown team abbreviation in header: "${abbrev}". Available teams: ${teams.map((t) => t.seasonAttrs.abbrev).join(", ")}`,
+				`Unknown abbrev in header: "${abbrev}". Available teams: ${teams.map((t) => t.seasonAttrs.abbrev).join(", ")}`,
 			);
 		}
 	}
@@ -1187,7 +1187,7 @@ const ScheduleEditor = ({
 									ref={fileInputRef}
 									className="cursor-pointer"
 									type="file"
-									accept=".csv"
+									accept=".csv,text/csv"
 									style={IMPORT_FILE_STYLE}
 									onClick={resetFileInput}
 									onChange={handleFileUpload}

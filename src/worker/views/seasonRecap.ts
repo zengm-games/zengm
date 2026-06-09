@@ -60,10 +60,11 @@ const addAbbrev = (
 				abbrev?: string;
 				tid: number;
 		  }
+		| null
 		| undefined,
 	teamsByTid: Parameters<typeof getTeamInfo>[0],
 ) => {
-	if (obj === undefined) {
+	if (obj == undefined) {
 		return;
 	}
 

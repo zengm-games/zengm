@@ -195,7 +195,14 @@ export const start = async () => {
 		picks: [],
 		currentTeam: undefined,
 	};
-	await loadRandomTeam();
+	try {
+		await loadRandomTeam();
+	} catch (error) {
+		// Otherwise a failed initial load leaves started=true with no
+		// currentTeam, and the view is stuck on Loading with no recovery.
+		local.eightyTwoZeroDraft = undefined;
+		throw error;
+	}
 
 	return getState();
 };

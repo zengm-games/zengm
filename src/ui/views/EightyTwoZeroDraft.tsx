@@ -305,7 +305,18 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 	);
 
 	const cols = getCols(
-		["", "#", "Name", "Pos", "Age", "Ovr", "GP", "PTS", "TRB", "AST"],
+		[
+			"",
+			"#",
+			"Name",
+			"Pos",
+			"Age",
+			"Ovr",
+			"stat:gp",
+			"stat:pts",
+			"stat:trb",
+			"stat:ast",
+		],
 		{
 			Name: {
 				width: "100%",

@@ -8,11 +8,13 @@ import {
 	DataTable,
 	type DataTableRow,
 } from "../components/DataTable/index.tsx";
-import { PlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
+import { RecordAndPlayoffs } from "../components/RecordAndPlayoffs.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { confirm } from "../util/confirm.tsx";
 import { helpers } from "../util/helpers.ts";
 import { useLocal } from "../util/local.ts";
+import { processPlayerStats } from "../util/processPlayerStats.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { applyRealTeamInfos } from "./NewLeague/index.tsx";
 
@@ -40,59 +42,127 @@ type EightyTwoZeroDraftPlayer = NonNullable<
 	View<"eightyTwoZeroDraft">["currentTeam"]
 >["players"][number];
 
-const formatPerGameStat = (
-	stats: EightyTwoZeroDraftPlayer["stats"][number] | undefined,
-	stat: "pts" | "trb" | "ast",
+type EightyTwoZeroDraftStats = View<"eightyTwoZeroDraft">["stats"];
+
+const getProcessedStats = (
+	p: EightyTwoZeroDraftPlayer,
+	stats: EightyTwoZeroDraftStats,
 ) => {
-	if (!stats || stats.gp === undefined || stats.gp === 0) {
-		return null;
-	}
-
-	let value;
-	if (stat === "trb") {
-		value = (stats.trb ?? 0) + (stats.drb ?? 0) + (stats.orb ?? 0);
-	} else {
-		value = stats[stat];
-	}
-
-	if (typeof value !== "number") {
-		return null;
-	}
-
-	return helpers.roundStat(value / stats.gp, stat);
+	const row = p.stats.at(-1);
+	return row
+		? processPlayerStats(row, stats, "perGame", p.born.year)
+		: undefined;
 };
 
-const PicksList = ({
+const formatStat = (
+	processedStats: ReturnType<typeof getProcessedStats>,
+	stat: string,
+) => {
+	const value = processedStats?.[stat];
+	return typeof value === "number" ? helpers.roundStat(value, stat) : value;
+};
+
+const getPlayerNameLabels = (p: EightyTwoZeroDraftPlayer, season: number) => {
+	const ratings = last(p.ratings);
+	const stats = p.stats.at(-1);
+
+	return wrappedPlayerNameLabels({
+		pid: p.pid,
+		firstName: p.firstName,
+		lastName: p.lastName,
+		jerseyNumber: stats?.jerseyNumber ?? p.jerseyNumber,
+		skills: ratings.skills,
+		fullNames: true,
+		disableNameLink: true,
+		season,
+		defaultWatch: p.watch ?? 0,
+	});
+};
+
+const getPlayerTableData = (
+	p: EightyTwoZeroDraftPlayer,
+	season: number,
+	stats: EightyTwoZeroDraftStats,
+) => {
+	const ratings = last(p.ratings);
+	const processedStats = getProcessedStats(p, stats);
+
+	return [
+		getPlayerNameLabels(p, season),
+		ratings.pos,
+		season - p.born.year,
+		ratings.ovr,
+		ratings.pot,
+		...stats.map((stat) => formatStat(processedStats, stat)),
+	];
+};
+
+const DraftedPlayersTable = ({
 	picks,
+	stats,
 }: {
 	picks: View<"eightyTwoZeroDraft">["picks"];
+	stats: EightyTwoZeroDraftStats;
 }) => {
 	if (picks.length === 0) {
 		return null;
 	}
 
+	const cols = getCols(
+		[
+			"Pick",
+			"Name",
+			"Pos",
+			"Age",
+			"Ovr",
+			"Pot",
+			...stats.map((stat) => `stat:${stat}`),
+			"Team",
+		],
+		{
+			Name: {
+				width: "100%",
+			},
+		},
+	);
+
+	const rows: DataTableRow[] = picks.map((pick, i) => {
+		return {
+			key: `${pick.p.pid ?? pick.p.srID ?? i}-${i}`,
+			metadata:
+				pick.p.pid !== undefined
+					? {
+							type: "player",
+							pid: pick.p.pid,
+							season: pick.season,
+							playoffs: "regularSeason",
+						}
+					: undefined,
+			data: [
+				i + 1,
+				...getPlayerTableData(pick.p, pick.season, stats),
+				`${pick.season} ${pick.teamAbbrev}`,
+			],
+		};
+	});
+
 	return (
-		<ol className="list-unstyled mb-3">
-			{picks.map((pick, i) => {
-				const ratings = last(pick.p.ratings);
-				return (
-					<li key={i} className="d-flex gap-2 align-items-baseline">
-						<span className="text-body-secondary text-nowrap">{i + 1}.</span>
-						<span>
-							{pick.p.firstName} {pick.p.lastName}
-						</span>
-						<span className="text-body-secondary">
-							{ratings.pos}, {ratings.ovr} ovr, {pick.season} {pick.teamAbbrev}
-						</span>
-					</li>
-				);
-			})}
-		</ol>
+		<div className="mt-4">
+			<h2>Drafted Players</h2>
+			<DataTable
+				cols={cols}
+				defaultSort="disableSort"
+				name="EightyTwoZeroDraft:Drafted"
+				rows={rows}
+				hideAllControls
+				hideMenuToo
+			/>
+		</div>
 	);
 };
 
 const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
-	const { realTeamInfo, ...initialDraftState } = props;
+	const { realTeamInfo, stats, ...initialDraftState } = props;
 	const [draftState, setDraftState] = useState(initialDraftState);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [finalized, setFinalized] = useState(false);
@@ -241,9 +311,9 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 
 				<p>
 					In an "82-0 Draft", each round shows one random real historical{" "}
-					{process.env.SPORT} team. Draft one player from that roster. Every
-					round locks one more of the team's top players, so later rounds force
-					you deeper into the roster.
+					{process.env.SPORT} team. Draft one player from that roster. Every two
+					rounds, one more of the team's top players is locked, so later rounds
+					force you deeper into the roster.
 				</p>
 
 				<p>
@@ -270,7 +340,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 		return (
 			<>
 				<h2>Finalize Draft</h2>
-				<PicksList picks={draftState.picks} />
+				<DraftedPlayersTable picks={draftState.picks} stats={stats} />
 
 				{errorMessage ? <p className="text-danger">{errorMessage}</p> : null}
 
@@ -287,7 +357,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 						onClick={cancelDraft}
 						processing={processing === "cancel"}
 						processingText="Canceling"
-						variant="light-bordered"
+						variant="danger"
 					>
 						Cancel
 					</ActionButton>
@@ -306,16 +376,14 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 
 	const cols = getCols(
 		[
-			"",
 			"#",
 			"Name",
 			"Pos",
 			"Age",
 			"Ovr",
-			"stat:gp",
-			"stat:pts",
-			"stat:trb",
-			"stat:ast",
+			"Pot",
+			...stats.map((stat) => `stat:${stat}`),
+			"Draft",
 		],
 		{
 			Name: {
@@ -325,8 +393,6 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 	);
 
 	const rows: DataTableRow[] = currentTeam.players.map((p, i) => {
-		const ratings = last(p.ratings);
-		const stats = p.stats.at(-1);
 		const locked = i < currentTeam.disabledCount;
 		const alreadyDrafted = p.srID !== undefined && draftedSrIDs.has(p.srID);
 		const disabled =
@@ -337,8 +403,19 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 
 		return {
 			key: p.pid ?? i,
+			metadata:
+				p.pid !== undefined
+					? {
+							type: "player",
+							pid: p.pid,
+							season: currentTeam.season,
+							playoffs: "regularSeason",
+						}
+					: undefined,
 			classNames: locked || alreadyDrafted ? "text-body-secondary" : undefined,
 			data: [
+				i + 1,
+				...getPlayerTableData(p, currentTeam.season, stats),
 				locked ? (
 					<span className="badge bg-secondary">Locked</span>
 				) : alreadyDrafted ? (
@@ -353,26 +430,11 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 						Draft
 					</button>
 				),
-				i + 1,
-				<PlayerNameLabels
-					firstName={p.firstName}
-					lastName={p.lastName}
-					jerseyNumber={stats?.jerseyNumber ?? p.jerseyNumber}
-					skills={ratings.skills}
-					fullNames
-					disableNameLink
-					season={currentTeam.season}
-				/>,
-				ratings.pos,
-				currentTeam.season - p.born.year,
-				ratings.ovr,
-				stats?.gp ?? null,
-				formatPerGameStat(stats, "pts"),
-				formatPerGameStat(stats, "trb"),
-				formatPerGameStat(stats, "ast"),
 			],
 		};
 	});
+
+	const logoURL = currentTeam.imgURLSmall ?? currentTeam.imgURL;
 
 	return (
 		<>
@@ -381,8 +443,36 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 					<h2 className="mb-0">
 						Round {draftState.round} of {NUM_ROUNDS}
 					</h2>
-					<div className="text-body-secondary">
-						{currentTeam.season} {currentTeam.region} {currentTeam.name}
+					<div className="d-flex align-items-center gap-2 text-body-secondary">
+						{logoURL ? (
+							<img
+								src={logoURL}
+								alt="Team logo"
+								style={{
+									width: 40,
+									height: 40,
+									objectFit: "contain",
+								}}
+							/>
+						) : null}
+						<div>
+							<div>
+								{currentTeam.season} {currentTeam.region} {currentTeam.name}
+							</div>
+							{currentTeam.seasonInfo ? (
+								<RecordAndPlayoffs
+									abbrev={currentTeam.abbrev}
+									lost={currentTeam.seasonInfo.lost}
+									otl={currentTeam.seasonInfo.otl}
+									option="noSeason"
+									roundsWonText={currentTeam.seasonInfo.roundsWonText}
+									season={currentTeam.season}
+									tid={currentTeam.tid}
+									tied={currentTeam.seasonInfo.tied}
+									won={currentTeam.seasonInfo.won}
+								/>
+							) : null}
+						</div>
 					</div>
 				</div>
 				<ActionButton
@@ -390,13 +480,11 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 					onClick={cancelDraft}
 					processing={processing === "cancel"}
 					processingText="Canceling"
-					variant="light-bordered"
+					variant="danger"
 				>
 					Cancel
 				</ActionButton>
 			</div>
-
-			<PicksList picks={draftState.picks} />
 
 			{errorMessage ? <p className="text-danger">{errorMessage}</p> : null}
 
@@ -408,6 +496,8 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 				hideAllControls
 				hideMenuToo
 			/>
+
+			<DraftedPlayersTable picks={draftState.picks} stats={stats} />
 		</>
 	);
 };

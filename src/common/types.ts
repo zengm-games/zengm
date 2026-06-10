@@ -1381,9 +1381,22 @@ export type Local = {
 					disabledCount: number;
 					players: PlayerWithoutKey[];
 					season: number;
+					seasonInfo?: {
+						won: number;
+						lost: number;
+						tied: number;
+						otl: number;
+						roundsWonText?: string;
+					};
 			  } & Pick<
 					Team,
-					"abbrev" | "imgURL" | "name" | "region" | "srID" | "tid"
+					| "abbrev"
+					| "imgURL"
+					| "imgURLSmall"
+					| "name"
+					| "region"
+					| "srID"
+					| "tid"
 			  >)
 			| undefined;
 	};
@@ -1911,8 +1924,9 @@ export type GetLeagueOptionsReal = {
 	realStats: "none" | "lastSeason" | "allActive" | "allActiveHOF" | "all";
 	includePlayers: boolean;
 
-	// For exhibition game only
+	// For callers that need historical team records/players attached to teams
 	includeSeasonInfo?: boolean;
+	preservePlayerOvrContext?: boolean;
 	pidOffset?: number;
 };
 

@@ -6,7 +6,7 @@ import {
 } from "../../common/constants.ts";
 import { choice, randInt } from "../../common/random.ts";
 import type { Phase, PlayerWithoutKey, Team } from "../../common/types.ts";
-import { last, orderBy } from "../../common/utils.ts";
+import { last } from "../../common/utils.ts";
 import { player, realRosters, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers, local, toUI, updatePlayMenu } from "../util/index.ts";
@@ -16,14 +16,22 @@ import {
 	countPickablePlayers,
 	getDisabledCount,
 	getPickValidationError,
+	orderPlayersForDraft,
 } from "./eightyTwoZeroDraftHelpers.ts";
 
 type EightyTwoZeroDraftTeam = Pick<
 	Team,
-	"abbrev" | "imgURL" | "name" | "region" | "srID" | "tid"
+	"abbrev" | "imgURL" | "imgURLSmall" | "name" | "region" | "srID" | "tid"
 > & {
 	players: PlayerWithoutKey[];
 	season: number;
+	seasonInfo?: {
+		won: number;
+		lost: number;
+		tied: number;
+		otl: number;
+		roundsWonText?: string;
+	};
 };
 
 let finalizing = false;
@@ -84,52 +92,38 @@ const fetchRandomTeam = async () => {
 		throw new Error("82-0 Draft is only available for basketball.");
 	}
 
-	const oldSeason = g.get("season");
-	const oldNumActiveTeams = g.get("numActiveTeams");
-	const oldPlayerOvrMean = local.playerOvrMean;
-	const oldPlayerOvrStd = local.playerOvrStd;
-	const oldPlayerOvrMeanStdStale = local.playerOvrMeanStdStale;
+	const season = randInt(
+		REAL_PLAYERS_INFO.MIN_SEASON,
+		REAL_PLAYERS_INFO.MAX_SEASON,
+	);
+	const info = await realRosters.getLeagueInfo({
+		type: "real",
+		season,
+		phase: PHASE.PLAYOFFS,
+		randomDebuts: false,
+		randomDebutsKeepCurrent: false,
+		realDraftRatings: "rookie",
+		realStats: "lastSeason",
+		includeSeasonInfo: true,
+		includePlayers: false,
+		pidOffset: local.eightyTwoZeroDraft!.round * 10000,
+		preservePlayerOvrContext: true,
+	});
 
-	try {
-		const season = randInt(
-			REAL_PLAYERS_INFO.MIN_SEASON,
-			REAL_PLAYERS_INFO.MAX_SEASON,
-		);
-		const info = await realRosters.getLeagueInfo({
-			type: "real",
-			season,
-			phase: PHASE.PLAYOFFS,
-			randomDebuts: false,
-			randomDebutsKeepCurrent: false,
-			realDraftRatings: "rookie",
-			realStats: "lastSeason",
-			includeSeasonInfo: true,
-			includePlayers: false,
-		});
-
-		const teams = info.teams as unknown as EightyTwoZeroDraftTeam[];
-		if (teams.length === 0) {
-			throw new Error(`No real teams found for ${season}`);
-		}
-
-		const t = choice(teams);
-		return {
-			...t,
-			disabledCount: getDisabledCount(local.eightyTwoZeroDraft!.round),
-			players: orderBy(
-				t.players.filter((p) => p.ratings.length > 0),
-				(p) => last(p.ratings).ovr,
-				"desc",
-			),
-			season,
-		};
-	} finally {
-		g.setWithoutSavingToDB("season", oldSeason);
-		g.setWithoutSavingToDB("numActiveTeams", oldNumActiveTeams);
-		local.playerOvrMean = oldPlayerOvrMean;
-		local.playerOvrStd = oldPlayerOvrStd;
-		local.playerOvrMeanStdStale = oldPlayerOvrMeanStdStale;
+	const teams = info.teams as unknown as EightyTwoZeroDraftTeam[];
+	if (teams.length === 0) {
+		throw new Error(`No real teams found for ${season}`);
 	}
+
+	const t = choice(teams);
+	return {
+		...t,
+		disabledCount: getDisabledCount(local.eightyTwoZeroDraft!.round),
+		players: orderPlayersForDraft(
+			t.players.filter((p) => p.ratings.length > 0),
+		),
+		season,
+	};
 };
 
 const getCappedDisabledCount = (round: number, players: PlayerWithoutKey[]) => {

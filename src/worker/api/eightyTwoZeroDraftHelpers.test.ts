@@ -3,6 +3,7 @@ import {
 	countPickablePlayers,
 	getDisabledCount,
 	getPickValidationError,
+	orderPlayersForDraft,
 } from "./eightyTwoZeroDraftHelpers.ts";
 
 const players = [
@@ -21,10 +22,24 @@ const players = [
 ];
 
 describe("getDisabledCount", () => {
-	test("locks one more top player each round", () => {
+	test("locks one more top player every two rounds", () => {
 		expect(getDisabledCount(1)).toBe(0);
-		expect(getDisabledCount(4)).toBe(3);
-		expect(getDisabledCount(12)).toBe(11);
+		expect(getDisabledCount(2)).toBe(0);
+		expect(getDisabledCount(3)).toBe(1);
+		expect(getDisabledCount(4)).toBe(1);
+		expect(getDisabledCount(12)).toBe(5);
+	});
+});
+
+describe("orderPlayersForDraft", () => {
+	test("sorts by valueFuzz descending", () => {
+		expect(
+			orderPlayersForDraft([
+				{ srID: "a", valueFuzz: 45, ovr: 90 },
+				{ srID: "b", valueFuzz: 60, ovr: 70 },
+				{ srID: "c", valueFuzz: 50, ovr: 80 },
+			]).map((p) => p.srID),
+		).toEqual(["b", "c", "a"]);
 	});
 });
 
@@ -54,8 +69,8 @@ describe("getPickValidationError", () => {
 	test("rejects locked picks", () => {
 		expect(
 			getPickValidationError({
-				disabledCount: getDisabledCount(4),
-				pickIndex: 2,
+				disabledCount: getDisabledCount(5),
+				pickIndex: 1,
 				picks: [],
 				players,
 			}),

@@ -103,14 +103,30 @@ const addSeasonInfoToTeams = async <
 			return p2;
 		});
 
-	g.setWithoutSavingToDB("season", options.season);
-	g.setWithoutSavingToDB("numActiveTeams", 2);
-	local.playerOvrMean = 48;
-	local.playerOvrStd = 10;
-	local.playerOvrMeanStdStale = false;
-	for (const p of players) {
-		await player.develop(p, 0);
-		await player.updateValues(p);
+	const oldSeason = g.get("season");
+	const oldNumActiveTeams = g.get("numActiveTeams");
+	const oldPlayerOvrMean = local.playerOvrMean;
+	const oldPlayerOvrStd = local.playerOvrStd;
+	const oldPlayerOvrMeanStdStale = local.playerOvrMeanStdStale;
+
+	try {
+		g.setWithoutSavingToDB("season", options.season);
+		g.setWithoutSavingToDB("numActiveTeams", 2);
+		local.playerOvrMean = 48;
+		local.playerOvrStd = 10;
+		local.playerOvrMeanStdStale = false;
+		for (const p of players) {
+			await player.develop(p, 0);
+			await player.updateValues(p);
+		}
+	} finally {
+		if (options.preservePlayerOvrContext) {
+			g.setWithoutSavingToDB("season", oldSeason);
+			g.setWithoutSavingToDB("numActiveTeams", oldNumActiveTeams);
+			local.playerOvrMean = oldPlayerOvrMean;
+			local.playerOvrStd = oldPlayerOvrStd;
+			local.playerOvrMeanStdStale = oldPlayerOvrMeanStdStale;
+		}
 	}
 
 	const playersByTid = Map.groupBy(players, (t) => t.tid);

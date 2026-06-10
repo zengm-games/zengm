@@ -2,6 +2,10 @@ type PlayerLike = {
 	srID?: string;
 };
 
+type PlayerWithValue = PlayerLike & {
+	valueFuzz: number;
+};
+
 type PickLike = {
 	p: PlayerLike;
 };
@@ -11,7 +15,13 @@ export const NUM_EIGHTY_TWO_ZERO_DRAFT_ROUNDS = 12;
 export const MAX_RANDOM_TEAM_RETRIES = 20;
 
 export const getDisabledCount = (round: number) => {
-	return round - 1;
+	return Math.floor((round - 1) / 2);
+};
+
+export const orderPlayersForDraft = <T extends PlayerWithValue>(
+	players: readonly T[],
+) => {
+	return [...players].sort((a, b) => b.valueFuzz - a.valueFuzz);
 };
 
 export const isDuplicateSrID = (p: PlayerLike, picks: readonly PickLike[]) => {

@@ -1369,6 +1369,24 @@ export type Local = {
 	};
 	autoSave: boolean;
 	email: string | undefined;
+	eightyTwoZeroDraft?: {
+		round: number;
+		picks: {
+			p: PlayerWithoutKey;
+			teamAbbrev: string;
+			season: number;
+		}[];
+		currentTeam:
+			| ({
+					disabledCount: number;
+					players: PlayerWithoutKey[];
+					season: number;
+			  } & Pick<
+					Team,
+					"abbrev" | "imgURL" | "name" | "region" | "srID" | "tid"
+			  >)
+			| undefined;
+	};
 	exhibitionGamePlayers?: Record<number, Player>;
 	fantasyDraftResults: (Player<any> & {
 		prevAbbrev: string | undefined;

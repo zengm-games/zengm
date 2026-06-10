@@ -106,6 +106,7 @@ import {
 } from "../db/connectLeague.ts";
 import playMenu from "./playMenu.ts";
 import toolsMenu from "./toolsMenu.ts";
+import * as eightyTwoZeroDraft from "./eightyTwoZeroDraft.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import statsBaseball from "../core/team/stats.baseball.ts";
 import { extraRatings } from "../views/playerRatings.ts";
@@ -5163,6 +5164,7 @@ const setScheduleFromEditor = async ({
 
 export default {
 	actions,
+	eightyTwoZeroDraft,
 	exhibitionGame,
 	leagueFileUpload,
 	playMenu,

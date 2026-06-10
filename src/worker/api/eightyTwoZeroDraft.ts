@@ -5,7 +5,7 @@ import {
 	REAL_PLAYERS_INFO,
 } from "../../common/constants.ts";
 import { choice, randInt } from "../../common/random.ts";
-import type { PlayerWithoutKey, Team } from "../../common/types.ts";
+import type { Phase, PlayerWithoutKey, Team } from "../../common/types.ts";
 import { last, orderBy } from "../../common/utils.ts";
 import { player, realRosters, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
@@ -28,9 +28,24 @@ type EightyTwoZeroDraftTeam = Pick<
 
 let finalizing = false;
 
+const getActiveDraftErrorMessage = (phase: Phase) => {
+	if (phase === PHASE.DRAFT) {
+		return "You can't start an 82-0 Draft while a regular draft is already in progress.";
+	}
+
+	if (phase === PHASE.FANTASY_DRAFT) {
+		return "You can't start an 82-0 Draft while a fantasy draft is already in progress.";
+	}
+
+	if (phase === PHASE.EXPANSION_DRAFT) {
+		return "You can't start an 82-0 Draft while an expansion draft is already in progress.";
+	}
+};
+
 const getState = () => {
 	const draft = local.eightyTwoZeroDraft;
 	return {
+		activeDraftErrorMessage: getActiveDraftErrorMessage(g.get("phase")),
 		godMode: g.get("godMode"),
 		loading: false,
 		realPlayers: REAL_PLAYERS_INFO !== undefined,
@@ -52,11 +67,16 @@ const checkCanUse = () => {
 		throw new Error("82-0 Draft is only available for basketball.");
 	}
 
-	if (g.get("phase") === PHASE.DRAFT) {
-		throw new Error(
-			"You can't start an 82-0 Draft while a regular draft is already in progress.",
-		);
+	const activeDraftErrorMessage = getActiveDraftErrorMessage(g.get("phase"));
+	if (activeDraftErrorMessage) {
+		throw new Error(activeDraftErrorMessage);
 	}
+};
+
+const getContractExp = () => {
+	return (
+		g.get("season") + (g.get("phase") > PHASE.AFTER_TRADE_DEADLINE ? 1 : 0)
+	);
 };
 
 const fetchRandomTeam = async () => {
@@ -213,6 +233,7 @@ export const pick = async ({
 		throw new Error(validationError);
 	}
 
+	const previousRound = draft.round;
 	const p = helpers.deepCopy(currentTeam.players[pickIndex]!);
 	draft.picks.push({
 		p,
@@ -227,7 +248,14 @@ export const pick = async ({
 
 	draft.round += 1;
 	draft.currentTeam = undefined;
-	await loadRandomTeam();
+	try {
+		await loadRandomTeam();
+	} catch (error) {
+		draft.picks.pop();
+		draft.round = previousRound;
+		draft.currentTeam = currentTeam;
+		throw error;
+	}
 
 	return getState();
 };
@@ -269,7 +297,7 @@ const normalizePick = async (
 		p,
 		{
 			amount: g.get("minContract"),
-			exp: g.get("season"),
+			exp: getContractExp(),
 		},
 		true,
 	);

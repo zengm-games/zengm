@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { PHASE } from "../../common/constants.ts";
 import { getCols } from "../../common/getCols.ts";
-import type { View } from "../../common/types.ts";
+import type { Phase, View } from "../../common/types.ts";
 import { last } from "../../common/utils.ts";
 import { ActionButton } from "../components/ActionButton.tsx";
 import {
@@ -20,6 +20,20 @@ const NUM_ROUNDS = 12;
 
 const getErrorMessage = (error: unknown) => {
 	return error instanceof Error ? error.message : String(error);
+};
+
+const getActiveDraftErrorMessage = (phase: Phase) => {
+	if (phase === PHASE.DRAFT) {
+		return "You can't start an 82-0 Draft while a regular draft is already in progress.";
+	}
+
+	if (phase === PHASE.FANTASY_DRAFT) {
+		return "You can't start an 82-0 Draft while a fantasy draft is already in progress.";
+	}
+
+	if (phase === PHASE.EXPANSION_DRAFT) {
+		return "You can't start an 82-0 Draft while an expansion draft is already in progress.";
+	}
 };
 
 type EightyTwoZeroDraftPlayer = NonNullable<
@@ -122,14 +136,12 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 		);
 	}
 
-	if (phase === PHASE.DRAFT) {
+	const activeDraftErrorMessage = getActiveDraftErrorMessage(phase);
+	if (activeDraftErrorMessage) {
 		return (
 			<>
 				<h2>Error</h2>
-				<p>
-					You can't start an 82-0 Draft while a regular draft is already in
-					progress.
-				</p>
+				<p>{activeDraftErrorMessage}</p>
 			</>
 		);
 	}

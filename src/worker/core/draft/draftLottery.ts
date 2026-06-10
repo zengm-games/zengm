@@ -401,8 +401,7 @@ export const getDraftLotteryProbs = (
 	const numTeams = result.length;
 
 	for (let i = 0; i < result.length; i++) {
-		// Initialize values that we'll definitely fill in soon
-		probs[i] = new Array(numToPick).fill(0);
+		probs[i] = new Array(numTeams).fill(undefined);
 	}
 
 	const bottom3IDs = new Set(result.slice(0, 3).map((t) => t.tid));
@@ -417,13 +416,14 @@ export const getDraftLotteryProbs = (
 		{ length: numTeams + 1 },
 		() => new Map(),
 	);
+
 	// Start at the first pick with 0 teams drawn, 0 slots filled with 100% chance
 	pickLayers[0]!.set(0n, 1.0);
 
+	// Find the lowest available pick slot that hasn't been filled yet
 	for (let currentLayer = 0; currentLayer < numTeams; currentLayer++) {
 		for (const [stateKey, prob] of pickLayers[currentLayer]!) {
 			if (prob <= 0) {
-				// Skip unreachable or empty states
 				continue;
 			}
 
@@ -432,7 +432,6 @@ export const getDraftLotteryProbs = (
 			const drawnTeamsMask = Number(stateKey & 0xffffffffn);
 			const filledSlotsMask = Number(stateKey >> 32n);
 
-			// Find the lowest available pick slot that hasn't been filled yet
 			let currentPick = 0;
 			while (currentPick < numTeams && filledSlotsMask & (1 << currentPick)) {
 				currentPick++;
@@ -442,58 +441,84 @@ export const getDraftLotteryProbs = (
 				continue;
 			}
 
-			let emptySlotsToNo12 = 0;
-			for (let j = currentPick; j <= 11; j++) {
-				if (!(filledSlotsMask & (1 << j))) {
-					emptySlotsToNo12++;
-				}
-			}
-
-			const remainingBottom3Mask = bottom3Mask & ~drawnTeamsMask;
-			let remCount = 0;
-			let tempMask = remainingBottom3Mask;
-			while (tempMask > 0) {
-				tempMask &= tempMask - 1;
-				remCount++;
-			}
-
-			if (emptySlotsToNo12 > 0 && remCount === emptySlotsToNo12) {
-				const remBottom3Indices: number[] = [];
+			if (draftType !== "nba2027" && currentLayer >= numToPick) {
+				let targetSlot = currentPick;
+				// Place all remaining undrawn teams into the remaining slots in strict standings order
 				for (let i = 0; i < numTeams; i++) {
-					// Force the bottom 3 teams to be picked if necessary to be picked in the top 12
-					if (remainingBottom3Mask & (1 << i)) {
-						remBottom3Indices.push(i);
+					if (!(drawnTeamsMask & (1 << i))) {
+						while (
+							targetSlot < numTeams &&
+							filledSlotsMask & (1 << targetSlot)
+						) {
+							targetSlot++;
+						}
+						if (targetSlot < numTeams) {
+							probs[i]![targetSlot] = (probs[i]![targetSlot] ?? 0) + prob;
+						}
+						targetSlot++;
 					}
 				}
+				continue;
+			}
 
-				const emptySlots: number[] = [];
+			if (draftType === "nba2027") {
+				let emptySlotsToNo12 = 0;
 				for (let j = currentPick; j <= 11; j++) {
 					if (!(filledSlotsMask & (1 << j))) {
-						emptySlots.push(j);
+						emptySlotsToNo12++;
 					}
 				}
 
-				const pEach = prob / remCount;
-				for (const teamIdx of remBottom3Indices) {
+				const remainingBottom3Mask = bottom3Mask & ~drawnTeamsMask;
+				let remCount = 0;
+				let tempMask = remainingBottom3Mask;
+				while (tempMask > 0) {
+					tempMask &= tempMask - 1;
+					remCount++;
+				}
+
+				if (emptySlotsToNo12 > 0 && remCount === emptySlotsToNo12) {
+					const remBottom3Indices: number[] = [];
+					for (let i = 0; i < numTeams; i++) {
+						// Force the bottom 3 teams to be picked if necessary to be picked in the top 12
+						if (remainingBottom3Mask & (1 << i)) {
+							remBottom3Indices.push(i);
+						}
+					}
+
+					const emptySlots: number[] = [];
+					for (let j = currentPick; j <= 11; j++) {
+						if (!(filledSlotsMask & (1 << j))) {
+							emptySlots.push(j);
+						}
+					}
+
+					const pEach = prob / remCount;
+					for (const teamIdx of remBottom3Indices) {
+						for (const slotIdx of emptySlots) {
+							if (slotIdx < numTeams) {
+								probs[teamIdx]![slotIdx] =
+									(probs[teamIdx]![slotIdx] ?? 0) + pEach;
+							}
+						}
+					}
+
+					const nextDrawnMask = drawnTeamsMask | remainingBottom3Mask;
+					let nextFilledMask = filledSlotsMask;
 					for (const slotIdx of emptySlots) {
-						probs[teamIdx]![slotIdx]! += pEach;
+						nextFilledMask |= 1 << slotIdx;
 					}
-				}
 
-				const nextDrawnMask = drawnTeamsMask | remainingBottom3Mask;
-				let nextFilledMask = filledSlotsMask;
-				for (const slotIdx of emptySlots) {
-					nextFilledMask |= 1 << slotIdx;
+					// Skip however spots many the bottom 3 teams occupied to force them into the top 12
+					const nextLayerID = currentLayer + remCount;
+					const nextKey =
+						(BigInt(nextFilledMask) << 32n) | BigInt(nextDrawnMask);
+					pickLayers[nextLayerID]!.set(
+						nextKey,
+						(pickLayers[nextLayerID]!.get(nextKey) || 0) + prob,
+					);
+					continue;
 				}
-
-				// Skip however spots many the bottom 3 teams occupied to force them into the top 12
-				const nextLayerID = currentLayer + remCount;
-				const nextKey = (BigInt(nextFilledMask) << 32n) | BigInt(nextDrawnMask);
-				pickLayers[nextLayerID]!.set(
-					nextKey,
-					(pickLayers[nextLayerID]!.get(nextKey) || 0) + prob,
-				);
-				continue;
 			}
 
 			let totalAvailableChances = 0;
@@ -517,12 +542,13 @@ export const getDraftLotteryProbs = (
 				let targetPick = currentPick;
 				while (true) {
 					const isBanned =
-						(targetPick === 0 &&
+						draftType === "nba2027" &&
+						((targetPick === 0 &&
 							draftLotteryResult.nba2027 &&
 							draftLotteryResult.nba2027.restricted1.includes(i)) ||
-						(targetPick <= 4 &&
-							draftLotteryResult.nba2027 &&
-							draftLotteryResult.nba2027.restricted5.includes(i));
+							(targetPick <= 4 &&
+								draftLotteryResult.nba2027 &&
+								draftLotteryResult.nba2027.restricted5.includes(i)));
 
 					if (!isBanned && !(filledSlotsMask & (1 << targetPick))) {
 						break;
@@ -530,7 +556,9 @@ export const getDraftLotteryProbs = (
 					targetPick++;
 				}
 
-				probs[i]![targetPick]! += branchProb;
+				if (targetPick < numTeams) {
+					probs[i]![targetPick] = (probs[i]![targetPick] ?? 0) + branchProb;
+				}
 
 				// Next state key
 				const nextDrawnMask = drawnTeamsMask | (1 << i);

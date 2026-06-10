@@ -371,7 +371,8 @@ export const getDraftLotteryProbs = (
 		};
 	}
 
-	const tooSlow = draftLotteryProbsTooSlow(result.length, numToPick);
+	// const tooSlow = draftLotteryProbsTooSlow(result.length, numToPick);
+	const tooSlow = false;
 
 	if (tooSlow) {
 		if (
@@ -397,80 +398,153 @@ export const getDraftLotteryProbs = (
 		}
 	}
 
-	const skipped: number[][] = [];
+	const numTeams = result.length;
 
-	// Get probabilities of top N picks for all teams
 	for (let i = 0; i < result.length; i++) {
 		// Initialize values that we'll definitely fill in soon
 		probs[i] = new Array(numToPick).fill(0);
-
-		// +1 is to handle the case of 0 skips to N skips
-		skipped[i] = Array(numToPick + 1).fill(0);
 	}
 
-	const getProb = (indexes: number[]): number => {
-		const currentTeamIndex = indexes[0]!;
-		const prevLotteryWinnerIndexes = indexes.slice(1);
-
-		let chancesLeft = totalChances;
-		for (const prevTeamIndex of prevLotteryWinnerIndexes) {
-			chancesLeft -= result[prevTeamIndex]!.chances;
+	const bottom3IDs = new Set(result.slice(0, 3).map((t) => t.tid));
+	let bottom3Mask = 0;
+	for (let i = 0; i < numTeams; i++) {
+		if (bottom3IDs.has(result[i]!.tid)) {
+			bottom3Mask |= 1 << i;
 		}
+	}
 
-		const priorProb =
-			prevLotteryWinnerIndexes.length === 0
-				? 1
-				: getProb(prevLotteryWinnerIndexes);
+	const pickLayers: Map<bigint, number>[] = Array.from(
+		{ length: numTeams + 1 },
+		() => new Map(),
+	);
+	// Start at the first pick with 0 teams drawn, 0 slots filled with 100% chance
+	pickLayers[0]!.set(0n, 1.0);
 
-		const prob = (priorProb * result[currentTeamIndex]!.chances) / chancesLeft;
-
-		return prob;
-	};
-
-	for (let pickIndex = 0; pickIndex < numToPick; pickIndex += 1) {
-		const range = new MultiDimensionalRange(result.length, pickIndex + 1);
-		for (const indexes of range) {
-			const indexesSet = new Set(indexes);
-			if (indexes.length !== indexesSet.size) {
-				// Skip case where this team already got an earlier pick
+	for (let currentLayer = 0; currentLayer < numTeams; currentLayer++) {
+		for (const [stateKey, prob] of pickLayers[currentLayer]!) {
+			if (prob <= 0) {
+				// Skip unreachable or empty states
 				continue;
 			}
 
-			const currentTeamIndex = indexes[0];
+			// Extract masks from the 64-bit BigInt, the first half for drawn teams and the second half for filled teams
+			// Maybe this isn't worth doing at all?
+			const drawnTeamsMask = Number(stateKey & 0xffffffffn);
+			const filledSlotsMask = Number(stateKey >> 32n);
 
-			// We're looking at every combination of lottery results. getProb will fill in the probability of this result in probs
-			const prob = getProb(indexes);
-			probs[currentTeamIndex]![pickIndex]! += prob;
+			// Find the lowest available pick slot that hasn't been filled yet
+			let currentPick = 0;
+			while (currentPick < numTeams && filledSlotsMask & (1 << currentPick)) {
+				currentPick++;
+			}
 
-			// For the later picks, account for how many times each team was "skipped" (lower lottery team won lottery and moved ahead) and keep track of those probabilities
-			if (pickIndex === numToPick - 1) {
-				for (let i = 0; i < skipped.length; i++) {
-					if (indexesSet.has(i)) {
-						continue;
-					}
+			if (currentPick >= numTeams) {
+				continue;
+			}
 
-					let skipCount = 0;
-					for (const ind of indexes) {
-						if (ind > i) {
-							skipCount += 1;
-						}
-					}
-
-					skipped[i]![skipCount]! += prob;
+			let emptySlotsToNo12 = 0;
+			for (let j = currentPick; j <= 11; j++) {
+				if (!(filledSlotsMask & (1 << j))) {
+					emptySlotsToNo12++;
 				}
 			}
-		}
-	}
 
-	// Fill in picks (N+1)+
-	for (let i = 0; i < result.length; i++) {
-		// Fill in table after first N picks
-		for (let j = 0; j < numToPick + 1; j++) {
-			if (i + j > numToPick - 1 && i + j < result.length) {
-				// @ts-expect-error
-				probs[i][i + j] = skipped[i][j];
+			const remainingBottom3Mask = bottom3Mask & ~drawnTeamsMask;
+			let remCount = 0;
+			let tempMask = remainingBottom3Mask;
+			while (tempMask > 0) {
+				tempMask &= tempMask - 1;
+				remCount++;
+			}
+
+			if (emptySlotsToNo12 > 0 && remCount === emptySlotsToNo12) {
+				const remBottom3Indices: number[] = [];
+				for (let i = 0; i < numTeams; i++) {
+					// Force the bottom 3 teams to be picked if necessary to be picked in the top 12
+					if (remainingBottom3Mask & (1 << i)) {
+						remBottom3Indices.push(i);
+					}
+				}
+
+				const emptySlots: number[] = [];
+				for (let j = currentPick; j <= 11; j++) {
+					if (!(filledSlotsMask & (1 << j))) {
+						emptySlots.push(j);
+					}
+				}
+
+				const pEach = prob / remCount;
+				for (const teamIdx of remBottom3Indices) {
+					for (const slotIdx of emptySlots) {
+						probs[teamIdx]![slotIdx]! += pEach;
+					}
+				}
+
+				const nextDrawnMask = drawnTeamsMask | remainingBottom3Mask;
+				let nextFilledMask = filledSlotsMask;
+				for (const slotIdx of emptySlots) {
+					nextFilledMask |= 1 << slotIdx;
+				}
+
+				// Skip however spots many the bottom 3 teams occupied to force them into the top 12
+				const nextLayerID = currentLayer + remCount;
+				const nextKey = (BigInt(nextFilledMask) << 32n) | BigInt(nextDrawnMask);
+				pickLayers[nextLayerID]!.set(
+					nextKey,
+					(pickLayers[nextLayerID]!.get(nextKey) || 0) + prob,
+				);
+				continue;
+			}
+
+			let totalAvailableChances = 0;
+			for (let i = 0; i < numTeams; i++) {
+				if (!(drawnTeamsMask & (1 << i))) {
+					totalAvailableChances += result[i]!.chances;
+				}
+			}
+			if (totalAvailableChances === 0) {
+				continue;
+			}
+
+			for (let i = 0; i < numTeams; i++) {
+				if (drawnTeamsMask & (1 << i)) {
+					continue;
+				}
+
+				// The probability is the chances a team has divided by total chances of all undrawn teams
+				const branchProb = prob * (result[i]!.chances / totalAvailableChances);
+
+				let targetPick = currentPick;
+				while (true) {
+					const isBanned =
+						(targetPick === 0 &&
+							draftLotteryResult.nba2027 &&
+							draftLotteryResult.nba2027.restricted1.includes(i)) ||
+						(targetPick <= 4 &&
+							draftLotteryResult.nba2027 &&
+							draftLotteryResult.nba2027.restricted5.includes(i));
+
+					if (!isBanned && !(filledSlotsMask & (1 << targetPick))) {
+						break;
+					}
+					targetPick++;
+				}
+
+				probs[i]![targetPick]! += branchProb;
+
+				// Next state key
+				const nextDrawnMask = drawnTeamsMask | (1 << i);
+				const nextFilledMask = filledSlotsMask | (1 << targetPick);
+				const nextKey = (BigInt(nextFilledMask) << 32n) | BigInt(nextDrawnMask);
+				const nextLayerID = currentLayer + 1;
+
+				pickLayers[nextLayerID]!.set(
+					nextKey,
+					(pickLayers[nextLayerID]!.get(nextKey) || 0) + branchProb,
+				);
 			}
 		}
+		pickLayers[currentLayer] = null as any;
 	}
 
 	return {

@@ -404,11 +404,13 @@ export const getDraftLotteryProbs = (
 		probs[i] = new Array(numTeams).fill(undefined);
 	}
 
-	const bottom3IDs = new Set(result.slice(0, 3).map((t) => t.tid));
 	let bottom3Mask = 0;
-	for (let i = 0; i < numTeams; i++) {
-		if (bottom3IDs.has(result[i]!.tid)) {
-			bottom3Mask |= 1 << i;
+	if (draftType === "nba2027") {
+		const bottom3IDs = new Set(result.slice(0, 3).map((t) => t.tid));
+		for (let i = 0; i < numTeams; i++) {
+			if (bottom3IDs.has(result[i]!.tid)) {
+				bottom3Mask |= 1 << i;
+			}
 		}
 	}
 

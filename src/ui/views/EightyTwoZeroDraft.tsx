@@ -108,6 +108,9 @@ const DraftedPlayersTable = ({
 			Name: {
 				width: "100%",
 			},
+			Pick: {
+				sortType: "number",
+			},
 		},
 	);
 
@@ -137,7 +140,7 @@ const DraftedPlayersTable = ({
 			<h2>Drafted Players</h2>
 			<DataTable
 				cols={cols}
-				defaultSort="disableSort"
+				defaultSort={[0, "asc"]}
 				name="EightyTwoZeroDraft:Drafted"
 				rows={rows}
 				hideAllControls
@@ -544,7 +547,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 			<DataTable
 				cols={cols}
 				defaultSort={[4, "desc"]}
-				name="EightyTwoZeroDraft"
+				name="EightyTwoZeroDraft:Undrafted"
 				rows={rows}
 				hideAllControls
 				hideMenuToo

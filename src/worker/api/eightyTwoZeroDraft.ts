@@ -7,7 +7,7 @@ import {
 } from "../../common/constants.ts";
 import { choice, randInt } from "../../common/random.ts";
 import type { Phase, PlayerWithoutKey, Team } from "../../common/types.ts";
-import { last } from "../../common/utils.ts";
+import { last, orderBy } from "../../common/utils.ts";
 import { player, realRosters, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers, local, toUI, updatePlayMenu } from "../util/index.ts";
@@ -121,7 +121,9 @@ const fetchRandomTeam = async (
 	}
 
 	const t = choice(teams);
-	const players = [...t.players];
+
+	// This sort is used for disabling/locking players, not for anything else in the UI
+	const players = orderBy(t.players, (p) => last(p.ratings).ovr, "desc");
 
 	return {
 		...t,

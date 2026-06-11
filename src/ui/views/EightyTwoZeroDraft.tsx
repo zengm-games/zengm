@@ -371,7 +371,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 
 	const cols = getCols(
 		[
-			"Draft",
+			"",
 			"#",
 			"Name",
 			"Pos",

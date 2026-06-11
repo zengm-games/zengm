@@ -341,14 +341,12 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 					<a href="https://www.82-0.com/" target="_blank">
 						82-0
 					</a>
-					. In each round of the draft, you are shown one random real historical
-					team to select a player from.
+					.
 				</p>
 
 				<p>
-					Every two rounds, one more of the team's top players is locked, so
-					later rounds force you deeper into the rosters (you can disable this
-					below).
+					In each round of the draft, you are shown one random real historical
+					team to select a player from.
 				</p>
 
 				<p>
@@ -358,7 +356,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 
 				{errorMessage ? <p className="text-danger">{errorMessage}</p> : null}
 
-				<div className="mb-1">
+				<div className="mb-1 d-flex align-items-center">
 					<div className="form-check mb-0">
 						<label className="form-check-label">
 							<input
@@ -372,8 +370,19 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 							Lock top players as draft progresses
 						</label>
 					</div>
+					<HelpPopover className="ms-1">
+						<p>
+							After two rounds, the next team's top players is locked. Every two
+							rounds an additional top player is locked.
+						</p>
+						<p>
+							The purpose of this is to force you into the rosters to select a
+							more realistic team. But if you really want to go for 82-0 you
+							probably will need to disable this!
+						</p>
+					</HelpPopover>
 				</div>
-				<div className="d-flex mb-3 align-items-center">
+				<div className="mb-3 d-flex align-items-center">
 					<div className="form-check mb-0">
 						<label className="form-check-label">
 							<input

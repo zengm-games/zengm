@@ -225,8 +225,15 @@ export const useLifeline = async (
 		throw new Error("Lifeline already used");
 	}
 
-	draft.lifelinesUsed[lifeline] = true;
-	await loadRandomTeam();
+	if (lifeline === "newTeam" || lifeline === "newSeason") {
+		await loadRandomTeam();
+		draft.lifelinesUsed[lifeline] = true;
+	} else {
+		if (draft.currentTeam) {
+			draft.currentTeam.disabledCount = 0;
+			draft.lifelinesUsed.unlock = true;
+		}
+	}
 
 	return getState();
 };

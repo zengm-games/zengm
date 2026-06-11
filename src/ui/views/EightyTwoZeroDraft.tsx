@@ -165,10 +165,7 @@ const Lifelines = ({
 	setErrorMessage,
 	used,
 }: {
-	currentTeam: {
-		abbrev: string;
-		season: number;
-	};
+	currentTeam: NonNullable<DraftState["currentTeam"]>;
 	setDraftState: Dispatch<SetStateAction<DraftState>>;
 	setErrorMessage: Dispatch<SetStateAction<string | undefined>>;
 	used: {
@@ -177,21 +174,27 @@ const Lifelines = ({
 		unlock: boolean;
 	};
 }) => {
+	const somePlayersAreLocked = currentTeam.disabledCount > 0;
+
 	const lifelines: {
 		key: keyof typeof used;
 		text: string;
+		forceDisabled: boolean;
 	}[] = [
 		{
 			key: "newTeam",
 			text: `New team fom ${currentTeam.season}`,
+			forceDisabled: false,
 		},
 		{
 			key: "newSeason",
 			text: `New season fom ${currentTeam.abbrev}`,
+			forceDisabled: false,
 		},
 		{
 			key: "unlock",
 			text: `Unlock all players`,
+			forceDisabled: !somePlayersAreLocked,
 		},
 	];
 
@@ -204,12 +207,12 @@ const Lifelines = ({
 				</HelpPopover>
 			</h3>
 			<div className="d-flex gap-2">
-				{lifelines.map(({ key, text }) => {
+				{lifelines.map(({ forceDisabled, key, text }) => {
 					return (
 						<button
 							key={key}
 							className="btn btn-secondary"
-							disabled={used[key]}
+							disabled={forceDisabled || used[key]}
 							onClick={async () => {
 								setErrorMessage(undefined);
 								try {

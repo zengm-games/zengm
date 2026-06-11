@@ -466,6 +466,9 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 			...stats.map((stat) => `stat:${stat}`),
 		],
 		{
+			"": {
+				sortSequence: [],
+			},
 			Name: {
 				width: "100%",
 			},

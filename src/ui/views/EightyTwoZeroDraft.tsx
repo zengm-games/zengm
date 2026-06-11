@@ -83,9 +83,11 @@ const getPlayerTableData = (
 };
 
 const DraftedPlayersTable = ({
+	className,
 	picks,
 	stats,
 }: {
+	className?: string;
 	picks: DraftState["picks"];
 	stats: EightyTwoZeroDraftStats;
 }) => {
@@ -136,7 +138,7 @@ const DraftedPlayersTable = ({
 	});
 
 	return (
-		<div className="mt-4">
+		<div className={className}>
 			<h2>Drafted Players</h2>
 			<DataTable
 				cols={cols}
@@ -152,11 +154,13 @@ const DraftedPlayersTable = ({
 
 const Lifelines = ({
 	currentTeam,
+	disabled,
 	setDraftState,
 	setErrorMessage,
 	used,
 }: {
 	currentTeam: NonNullable<DraftState["currentTeam"]>;
+	disabled: boolean;
 	setDraftState: Dispatch<SetStateAction<DraftState>>;
 	setErrorMessage: Dispatch<SetStateAction<string | undefined>>;
 	used: {
@@ -203,7 +207,7 @@ const Lifelines = ({
 						<button
 							key={key}
 							className="btn btn-secondary"
-							disabled={forceDisabled || used[key]}
+							disabled={disabled || forceDisabled || used[key]}
 							onClick={async () => {
 								setErrorMessage(undefined);
 								try {
@@ -302,16 +306,6 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 	};
 
 	const finalizeDraft = async () => {
-		const proceed = await confirm(
-			"This deletes your current roster. This cannot be undone.",
-			{
-				okText: "Finalize Draft",
-			},
-		);
-		if (!proceed) {
-			return;
-		}
-
 		setErrorMessage(undefined);
 		setProcessing("finalize");
 		try {
@@ -538,6 +532,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 			<div className="alert alert-info">
 				<Lifelines
 					currentTeam={currentTeam}
+					disabled={processing !== undefined}
 					setDraftState={setDraftState}
 					setErrorMessage={setErrorMessage}
 					used={draftState.lifelinesUsed}
@@ -553,7 +548,11 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 				hideMenuToo
 			/>
 
-			<DraftedPlayersTable picks={draftState.picks} stats={stats} />
+			<DraftedPlayersTable
+				className="mt-4"
+				picks={draftState.picks}
+				stats={stats}
+			/>
 		</div>
 	);
 };

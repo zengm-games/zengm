@@ -740,6 +740,19 @@ export const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 				path: ["fantasy_draft"],
 				text: "Fantasy Draft",
 			},
+			...(REAL_PLAYERS_INFO
+				? ([
+						{
+							type: "link",
+							active: (pageID) => pageID === "eightyTwoZeroDraft",
+							godMode: true,
+							league: true,
+							commandPalette: true,
+							path: ["82-0_draft"],
+							text: "82-0 Draft",
+						},
+					] as MenuItemLink[])
+				: []),
 			{
 				type: "link",
 				active: (pageID) => pageID === "frivolities",

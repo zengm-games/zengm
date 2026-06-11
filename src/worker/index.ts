@@ -26,6 +26,7 @@ if (process.env.NODE_ENV === "development") {
 
 export type WorkerAPICategory =
 	| "actions"
+	| "eightyTwoZeroDraft"
 	| "exhibitionGame"
 	| "leagueFileUpload"
 	| "main"

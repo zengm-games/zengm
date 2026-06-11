@@ -108,6 +108,7 @@ export const routeInfos = {
 	"/l/:lid/team_stat_dists": "teamStatDists",
 	"/l/:lid/team_stat_dists/:season": "teamStatDists",
 	"/l/:lid/export_league": "exportLeague",
+	"/l/:lid/82-0_draft": "eightyTwoZeroDraft",
 	"/l/:lid/fantasy_draft": "fantasyDraft",
 	"/l/:lid/live_game": "liveGame",
 	"/l/:lid/event_log": "eventLog",

@@ -106,6 +106,7 @@ import {
 } from "../db/connectLeague.ts";
 import playMenu from "./playMenu.ts";
 import toolsMenu from "./toolsMenu.ts";
+import eightyTwoZeroDraft from "./eightyTwoZeroDraft.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import statsBaseball from "../core/team/stats.baseball.ts";
 import { extraRatings } from "../views/playerRatings.ts";
@@ -1729,6 +1730,21 @@ const getDefaultTragicDeaths = () => {
 	return defaultTragicDeaths;
 };
 
+const getEightyTwoZeroDraftPlayer = (pid: number) => {
+	const draft = local.eightyTwoZeroDraft;
+	if (!draft) {
+		return;
+	}
+
+	const hasPid = ({ p }: { p: PlayerWithoutKey }) => {
+		return p.pid === pid;
+	};
+
+	return (
+		draft.currentTeam?.players.find(hasPid)?.p ?? draft.picks.find(hasPid)?.p
+	);
+};
+
 const getDiamondInfo = async (pid: number) => {
 	let p;
 	if (local.exhibitionGamePlayers) {
@@ -2038,7 +2054,10 @@ const getPlayerWatch = async (pid: number) => {
 			return 0;
 		}
 	} else {
-		p = await idb.cache.players.get(pid);
+		p = getEightyTwoZeroDraftPlayer(pid);
+		if (!p) {
+			p = await idb.cache.players.get(pid);
+		}
 	}
 
 	if (p) {
@@ -2920,10 +2939,14 @@ const ratingsStatsPopoverInfo = async ({
 	}
 
 	let p;
+	let eightyTwoZeroDraftPlayer = false;
 	if (local.exhibitionGamePlayers) {
 		p = local.exhibitionGamePlayers[pid];
 	} else if (local.liveSimRatingsStatsPopoverPlayers) {
 		p = local.liveSimRatingsStatsPopoverPlayers[pid];
+	} else {
+		p = getEightyTwoZeroDraftPlayer(pid);
+		eightyTwoZeroDraftPlayer = p !== undefined;
 	}
 
 	if (!p) {
@@ -2943,7 +2966,10 @@ const ratingsStatsPopoverInfo = async ({
 
 	let actualSeason: number | undefined;
 	let draftProspect = false;
-	if (local.exhibitionGamePlayers && p.stats.length > 0) {
+	if (
+		(local.exhibitionGamePlayers || eightyTwoZeroDraftPlayer) &&
+		p.stats.length > 0
+	) {
 		actualSeason = p.stats.at(-1)!.season;
 	} else {
 		if (season !== undefined) {
@@ -2993,7 +3019,7 @@ const ratingsStatsPopoverInfo = async ({
 
 	const attrs = ["name", "jerseyNumber", "tid", "age", "note"];
 	const ratings = ["pos", "ovr", "pot", "season", "tid", ...RATINGS];
-	if (!local.exhibitionGamePlayers) {
+	if (!local.exhibitionGamePlayers && !eightyTwoZeroDraftPlayer) {
 		attrs.push("abbrev");
 		ratings.push("abbrev");
 	}
@@ -3020,7 +3046,10 @@ const ratingsStatsPopoverInfo = async ({
 		p2.stats = p2.careerStats;
 		delete p2.careerStats;
 	}
-	if (actualSeason === undefined || actualSeason < currentSeason) {
+	if (
+		!eightyTwoZeroDraftPlayer &&
+		(actualSeason === undefined || actualSeason < currentSeason)
+	) {
 		p2.abbrev = p2.ratings.abbrev;
 		p2.tid = p2.ratings.tid;
 	}
@@ -4165,25 +4194,32 @@ const updatePlayerWatch = async ({
 	watch: number;
 }) => {
 	let p;
+	let eightyTwoZeroDraftPlayer = false;
 	if (local.exhibitionGamePlayers) {
 		p = local.exhibitionGamePlayers[pid];
 		if (!p) {
 			return;
 		}
 	} else {
-		p = await idb.getCopy.players({ pid }, "noCopyCache");
+		p = getEightyTwoZeroDraftPlayer(pid);
+		eightyTwoZeroDraftPlayer = p !== undefined;
+		if (!p) {
+			p = await idb.getCopy.players({ pid }, "noCopyCache");
+		}
 	}
 
 	if (p) {
 		if (
 			watch < 1 ||
-			(!local.exhibitionGamePlayers && watch > g.get("numWatchColors"))
+			(!local.exhibitionGamePlayers &&
+				!eightyTwoZeroDraftPlayer &&
+				watch > g.get("numWatchColors"))
 		) {
 			delete p.watch;
 		} else {
 			p.watch = watch;
 		}
-		if (!local.exhibitionGamePlayers) {
+		if (!local.exhibitionGamePlayers && !eightyTwoZeroDraftPlayer) {
 			await idb.cache.players.put(p);
 			await Promise.all([
 				toUI("crossTabEmit", [["updateWatch", getUpdateWatch([p])]]),
@@ -5163,6 +5199,7 @@ const setScheduleFromEditor = async ({
 
 export default {
 	actions,
+	eightyTwoZeroDraft,
 	exhibitionGame,
 	leagueFileUpload,
 	playMenu,

@@ -1369,6 +1369,41 @@ export type Local = {
 	};
 	autoSave: boolean;
 	email: string | undefined;
+	eightyTwoZeroDraft?: {
+		round: number;
+		picks: {
+			p: Player;
+			teamAbbrev: string;
+			season: number;
+		}[];
+		eliteBallKnowerMode: boolean;
+		lockTopPlayers: boolean;
+		lifelinesUsed: {
+			newTeam: boolean;
+			newSeason: boolean;
+			unlock: boolean;
+		};
+		currentTeam:
+			| ({
+					players: {
+						p: Player;
+						locked: boolean;
+					}[];
+					season: number;
+					seasonInfo?: {
+						won: number;
+						lost: number;
+						tied: number;
+						otl: number;
+						roundsWonText?: string;
+					};
+					srID: string;
+			  } & Pick<
+					Team,
+					"abbrev" | "imgURL" | "imgURLSmall" | "name" | "region" | "tid"
+			  >)
+			| undefined;
+	};
 	exhibitionGamePlayers?: Record<number, Player>;
 	fantasyDraftResults: (Player<any> & {
 		prevAbbrev: string | undefined;
@@ -1893,8 +1928,9 @@ export type GetLeagueOptionsReal = {
 	realStats: "none" | "lastSeason" | "allActive" | "allActiveHOF" | "all";
 	includePlayers: boolean;
 
-	// For exhibition game only
+	// For callers that need historical team records/players attached to teams
 	includeSeasonInfo?: boolean;
+	preservePlayerOvrContext?: boolean;
 	pidOffset?: number;
 };
 

@@ -28,6 +28,7 @@ export { default as DraftPicks } from "./DraftPicks.tsx";
 export { default as DraftScouting } from "./DraftScouting/index.tsx";
 export { default as DraftTeamHistory } from "./DraftTeamHistory.tsx";
 export { default as Dropbox } from "./Dropbox.tsx";
+export { default as EightyTwoZeroDraft } from "./EightyTwoZeroDraft.tsx";
 export { default as EditAwards } from "./EditAwards.tsx";
 export { default as Exhibition } from "./Exhibition.tsx";
 export { default as ExhibitionGame } from "./ExhibitionGame.tsx";

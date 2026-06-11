@@ -236,6 +236,8 @@ const Lifelines = ({
 	);
 };
 
+const MAX_WIDTH = 750;
+
 const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 	const { stats, initialDraftState } = props;
 	const [draftState, setDraftState] = useState(initialDraftState);
@@ -326,7 +328,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 
 	if (!draftState.started) {
 		return (
-			<>
+			<div style={{ maxWidth: MAX_WIDTH }}>
 				<p>
 					In an "82-0 Draft", each round shows one random real historical{" "}
 					{process.env.SPORT} team. Draft one player from that roster. Every two
@@ -370,7 +372,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 				>
 					Start 82-0 Draft
 				</ActionButton>
-			</>
+			</div>
 		);
 	}
 
@@ -470,7 +472,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 	const logoURL = currentTeam.imgURLSmall ?? currentTeam.imgURL;
 
 	return (
-		<div style={{ maxWidth: 800 }}>
+		<div style={{ maxWidth: MAX_WIDTH }}>
 			<div className="d-flex justify-content-between align-items-start gap-3 mb-3">
 				<div>
 					<h2>

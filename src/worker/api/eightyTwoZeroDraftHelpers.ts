@@ -1,6 +1,3 @@
-import type { PlayerWithoutKey } from "../../common/types.ts";
-import { last } from "../../common/utils.ts";
-
 type PlayerLike = {
 	srID?: string;
 };
@@ -15,10 +12,6 @@ export const MAX_RANDOM_TEAM_RETRIES = 20;
 
 export const getDisabledCount = (round: number) => {
 	return Math.floor((round - 1) / 2);
-};
-
-export const orderPlayersForDraft = (players: readonly PlayerWithoutKey[]) => {
-	return [...players].sort((a, b) => last(b.ratings).ovr - last(a.ratings).ovr);
 };
 
 export const isDuplicateSrID = (p: PlayerLike, picks: readonly PickLike[]) => {

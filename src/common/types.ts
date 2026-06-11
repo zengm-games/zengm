@@ -1376,6 +1376,7 @@ export type Local = {
 			teamAbbrev: string;
 			season: number;
 		}[];
+		eliteBallKnowerMode: boolean;
 		lifelinesUsed: {
 			newTeam: boolean;
 			newSeason: boolean;

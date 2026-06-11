@@ -18,7 +18,6 @@ import {
 	countPickablePlayers,
 	getDisabledCount,
 	getPickValidationError,
-	orderPlayersForDraft,
 } from "./eightyTwoZeroDraftHelpers.ts";
 
 type EightyTwoZeroDraftTeam = Pick<
@@ -111,12 +110,12 @@ const fetchRandomTeam = async () => {
 	}
 
 	const t = choice(teams);
+	const players = [...t.players];
+
 	return {
 		...t,
 		disabledCount: getDisabledCount(local.eightyTwoZeroDraft!.round),
-		players: orderPlayersForDraft(
-			t.players.filter((p) => p.ratings.length > 0),
-		),
+		players,
 		season,
 	};
 };
@@ -188,6 +187,7 @@ export const DEFAULT_EIGHTY_TWO_ZERO_DRAFT = {
 	round: 1,
 	picks: [],
 	currentTeam: undefined,
+	eliteBallKnowerMode: false,
 	lifelinesUsed: {
 		newTeam: false,
 		newSeason: false,
@@ -195,10 +195,11 @@ export const DEFAULT_EIGHTY_TWO_ZERO_DRAFT = {
 	},
 };
 
-const start = async () => {
+const start = async (eliteBallKnowerMode: boolean) => {
 	checkCanUse();
 
 	local.eightyTwoZeroDraft = helpers.deepCopy(DEFAULT_EIGHTY_TWO_ZERO_DRAFT);
+	local.eightyTwoZeroDraft.eliteBallKnowerMode = eliteBallKnowerMode;
 	try {
 		await loadRandomTeam();
 	} catch (error) {

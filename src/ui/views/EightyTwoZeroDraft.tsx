@@ -15,6 +15,7 @@ import { helpers } from "../util/helpers.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { HelpPopover } from "../components/HelpPopover.tsx";
+import useLocalStorageState from "use-local-storage-state";
 
 const NUM_ROUNDS = 12;
 
@@ -65,6 +66,7 @@ const getPlayerTableData = (
 	p: EightyTwoZeroDraftPlayer,
 	season: number,
 	stats: EightyTwoZeroDraftStats,
+	hideRatingsAndStats: boolean,
 ) => {
 	const ratings = last(p.ratings);
 	const processedStats = getProcessedStats(p, stats);
@@ -72,9 +74,11 @@ const getPlayerTableData = (
 	return [
 		ratings.pos,
 		season - p.born.year,
-		ratings.ovr,
-		ratings.pot,
-		...stats.map((stat) => formatStat(processedStats, stat)),
+		hideRatingsAndStats ? null : ratings.ovr,
+		hideRatingsAndStats ? null : ratings.pot,
+		...stats.map((stat) =>
+			hideRatingsAndStats ? null : formatStat(processedStats, stat),
+		),
 	];
 };
 
@@ -123,7 +127,7 @@ const DraftedPlayersTable = ({
 				i + 1,
 				getPlayerNameLabels(pick.p, pick.season),
 				`${pick.season} ${pick.teamAbbrev}`,
-				...getPlayerTableData(pick.p, pick.season, stats),
+				...getPlayerTableData(pick.p, pick.season, stats, false),
 			],
 		};
 	});
@@ -187,7 +191,7 @@ const Lifelines = ({
 			<h3>
 				Lifelines{" "}
 				<HelpPopover>
-					<p>You can use each lifeline once per draft</p>
+					<p>You can use each lifeline once per draft.</p>
 				</HelpPopover>
 			</h3>
 			<div className="d-flex gap-2">
@@ -225,9 +229,14 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 	const [processing, setProcessing] = useState<
 		"cancel" | "finalize" | "pick" | "start" | undefined
 	>();
+	const [eliteBallKnowerMode, setEliteBallKnowerMode] = useLocalStorageState(
+		"eliteBallKnowerMode",
+		{ defaultValue: false },
+	);
 
 	useTitleBar({
 		title: "82-0 Draft",
+		hideNewWindow: true,
 	});
 
 	const startDraft = async () => {
@@ -235,7 +244,9 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 		setFinalized(false);
 		setProcessing("start");
 		try {
-			setDraftState(await toWorker("eightyTwoZeroDraft", "start", undefined));
+			setDraftState(
+				await toWorker("eightyTwoZeroDraft", "start", eliteBallKnowerMode),
+			);
 		} catch (error) {
 			setErrorMessage(error.message);
 		} finally {
@@ -337,6 +348,28 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 
 				{errorMessage ? <p className="text-danger">{errorMessage}</p> : null}
 
+				<div className="d-flex mb-3 align-items-center">
+					<div className="form-check mb-0">
+						<label className="form-check-label">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								checked={eliteBallKnowerMode}
+								onChange={() => {
+									setEliteBallKnowerMode((enabled) => !enabled);
+								}}
+							/>
+							Elite Ball Knower Mode
+						</label>
+					</div>
+					<HelpPopover className="ms-1">
+						<p>
+							When Elite Ball Knower Mode is enabled, player ratings and stats
+							are hidden during the draft.
+						</p>
+					</HelpPopover>
+				</div>
+
 				<ActionButton
 					processing={processing === "start"}
 					processingText="Starting"
@@ -392,7 +425,6 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 	const cols = getCols(
 		[
 			"",
-			"#",
 			"Name",
 			"Pos",
 			"Age",
@@ -434,9 +466,13 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 						Draft
 					</button>
 				),
-				i + 1,
 				getPlayerNameLabels(p, currentTeam.season),
-				...getPlayerTableData(p, currentTeam.season, stats),
+				...getPlayerTableData(
+					p,
+					currentTeam.season,
+					stats,
+					draftState.eliteBallKnowerMode,
+				),
 			],
 		};
 	});
@@ -507,7 +543,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 
 			<DataTable
 				cols={cols}
-				defaultSort="disableSort"
+				defaultSort={[4, "desc"]}
 				name="EightyTwoZeroDraft"
 				rows={rows}
 				hideAllControls

@@ -28,6 +28,8 @@ type EightyTwoZeroDraftPlayer = NonNullable<
 
 type EightyTwoZeroDraftStats = View<"eightyTwoZeroDraft">["stats"];
 
+type Processing = "cancel" | "finalize" | "pick" | "start" | "lifeline";
+
 const getProcessedStats = (
 	p: EightyTwoZeroDraftPlayer,
 	stats: EightyTwoZeroDraftStats,
@@ -158,12 +160,14 @@ const Lifelines = ({
 	disabled,
 	setDraftState,
 	setErrorMessage,
+	setProcessing,
 	used,
 }: {
 	currentTeam: NonNullable<DraftState["currentTeam"]>;
 	disabled: boolean;
 	setDraftState: Dispatch<SetStateAction<DraftState>>;
 	setErrorMessage: Dispatch<SetStateAction<string | undefined>>;
+	setProcessing: Dispatch<SetStateAction<Processing | undefined>>;
 	used: {
 		newTeam: boolean;
 		newSeason: boolean;
@@ -210,6 +214,7 @@ const Lifelines = ({
 							className="btn btn-secondary"
 							disabled={disabled || forceDisabled || used[key]}
 							onClick={async () => {
+								setProcessing("lifeline");
 								setErrorMessage(undefined);
 								try {
 									setDraftState(
@@ -217,6 +222,8 @@ const Lifelines = ({
 									);
 								} catch (error) {
 									setErrorMessage(error.message);
+								} finally {
+									setProcessing(undefined);
 								}
 							}}
 						>
@@ -233,9 +240,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 	const { stats, initialDraftState } = props;
 	const [draftState, setDraftState] = useState(initialDraftState);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
-	const [processing, setProcessing] = useState<
-		"cancel" | "finalize" | "pick" | "start" | undefined
-	>();
+	const [processing, setProcessing] = useState<Processing | undefined>();
 	const [eliteBallKnowerMode, setEliteBallKnowerMode] = useLocalStorageState(
 		"eliteBallKnowerMode",
 		{ defaultValue: false },
@@ -380,6 +385,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 
 				<div className="d-flex gap-2 mb-3">
 					<ActionButton
+						disabled={processing !== undefined}
 						processing={processing === "finalize"}
 						processingText="Finalizing"
 						onClick={finalizeDraft}
@@ -430,11 +436,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 	const rows: DataTableRow[] = currentTeam.players.map((p, i) => {
 		const locked = i < currentTeam.disabledCount;
 		const alreadyDrafted = p.srID !== undefined && draftedSrIDs.has(p.srID);
-		const disabled =
-			locked ||
-			alreadyDrafted ||
-			processing === "pick" ||
-			processing === "cancel";
+		const disabled = locked || alreadyDrafted || processing !== undefined;
 
 		return {
 			key: p.pid ?? i,
@@ -526,6 +528,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 					disabled={processing !== undefined}
 					setDraftState={setDraftState}
 					setErrorMessage={setErrorMessage}
+					setProcessing={setProcessing}
 					used={draftState.lifelinesUsed}
 				/>
 			</div>

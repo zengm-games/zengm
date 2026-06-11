@@ -55,15 +55,13 @@ const getActiveDraftErrorMessage = (phase: Phase) => {
 const getState = () => {
 	const draft = local.eightyTwoZeroDraft;
 	return {
-		activeDraftErrorMessage: getActiveDraftErrorMessage(g.get("phase")),
 		loading: false,
-		realPlayers: REAL_PLAYERS_INFO !== undefined,
 		started: draft !== undefined,
 		...(draft ?? helpers.deepCopy(DEFAULT_EIGHTY_TWO_ZERO_DRAFT)),
 	};
 };
 
-const checkCanUse = () => {
+export const checkCanUse = () => {
 	if (!g.get("godMode")) {
 		throw new Error("God Mode is required for 82-0 Draft");
 	}

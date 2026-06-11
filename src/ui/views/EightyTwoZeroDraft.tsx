@@ -1,7 +1,6 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
-import { PHASE } from "../../common/constants.ts";
 import { getCols } from "../../common/getCols.ts";
-import type { Phase, View } from "../../common/types.ts";
+import type { View } from "../../common/types.ts";
 import { last } from "../../common/utils.ts";
 import { ActionButton } from "../components/ActionButton.tsx";
 import {
@@ -13,26 +12,11 @@ import { RecordAndPlayoffs } from "../components/RecordAndPlayoffs.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { confirm } from "../util/confirm.tsx";
 import { helpers } from "../util/helpers.ts";
-import { useLocal } from "../util/local.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { HelpPopover } from "../components/HelpPopover.tsx";
 
 const NUM_ROUNDS = 12;
-
-const getActiveDraftErrorMessage = (phase: Phase) => {
-	if (phase === PHASE.DRAFT) {
-		return "You can't start an 82-0 Draft while a regular draft is already in progress.";
-	}
-
-	if (phase === PHASE.FANTASY_DRAFT) {
-		return "You can't start an 82-0 Draft while a fantasy draft is already in progress.";
-	}
-
-	if (phase === PHASE.EXPANSION_DRAFT) {
-		return "You can't start an 82-0 Draft while an expansion draft is already in progress.";
-	}
-};
 
 type DraftState = View<"eightyTwoZeroDraft">["initialDraftState"];
 
@@ -245,36 +229,6 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 	useTitleBar({
 		title: "82-0 Draft",
 	});
-
-	const { godMode, phase } = useLocal(["godMode", "phase"]);
-
-	if (!godMode) {
-		return (
-			<>
-				<h2>Error</h2>
-				<p>God Mode is required for 82-0 Draft.</p>
-			</>
-		);
-	}
-
-	if (!draftState.realPlayers) {
-		return (
-			<>
-				<h2>Error</h2>
-				<p>82-0 Draft is only available for basketball.</p>
-			</>
-		);
-	}
-
-	const activeDraftErrorMessage = getActiveDraftErrorMessage(phase);
-	if (activeDraftErrorMessage) {
-		return (
-			<>
-				<h2>Error</h2>
-				<p>{activeDraftErrorMessage}</p>
-			</>
-		);
-	}
 
 	const startDraft = async () => {
 		setErrorMessage(undefined);

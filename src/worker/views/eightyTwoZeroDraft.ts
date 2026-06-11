@@ -1,24 +1,21 @@
-import { PHASE, REAL_PLAYERS_INFO } from "../../common/constants.ts";
-import type { Phase } from "../../common/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
-import { g, helpers, local } from "../util/index.ts";
-import { DEFAULT_EIGHTY_TWO_ZERO_DRAFT } from "../api/eightyTwoZeroDraft.ts";
-
-const getActiveDraftErrorMessage = (phase: Phase) => {
-	if (phase === PHASE.DRAFT) {
-		return "You can't start an 82-0 Draft while a regular draft is already in progress.";
-	}
-
-	if (phase === PHASE.FANTASY_DRAFT) {
-		return "You can't start an 82-0 Draft while a fantasy draft is already in progress.";
-	}
-
-	if (phase === PHASE.EXPANSION_DRAFT) {
-		return "You can't start an 82-0 Draft while an expansion draft is already in progress.";
-	}
-};
+import { helpers, local } from "../util/index.ts";
+import {
+	checkCanUse,
+	DEFAULT_EIGHTY_TWO_ZERO_DRAFT,
+} from "../api/eightyTwoZeroDraft.ts";
 
 const updateEightyTwoZeroDraft = async () => {
+	try {
+		checkCanUse();
+	} catch (error) {
+		// https://stackoverflow.com/a/59923262/786644
+		const returnValue = {
+			errorMessage: error.message,
+		};
+		return returnValue;
+	}
+
 	const draft = local.eightyTwoZeroDraft;
 	const stats = bySport({
 		baseball: ["gp", "keyStats", "war"],
@@ -29,9 +26,7 @@ const updateEightyTwoZeroDraft = async () => {
 
 	return {
 		initialDraftState: {
-			activeDraftErrorMessage: getActiveDraftErrorMessage(g.get("phase")),
 			loading: false,
-			realPlayers: REAL_PLAYERS_INFO !== undefined,
 			started: draft !== undefined,
 			...(draft ?? helpers.deepCopy(DEFAULT_EIGHTY_TWO_ZERO_DRAFT)),
 		},

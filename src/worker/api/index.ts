@@ -1730,7 +1730,7 @@ const getDefaultTragicDeaths = () => {
 	return defaultTragicDeaths;
 };
 
-const getEightyTwoZeroDraftPlayer = (pid: number): Player | undefined => {
+const getEightyTwoZeroDraftPlayer = (pid: number) => {
 	const draft = local.eightyTwoZeroDraft;
 	if (!draft) {
 		return;
@@ -1740,12 +1740,15 @@ const getEightyTwoZeroDraftPlayer = (pid: number): Player | undefined => {
 		return p.pid === pid;
 	};
 
-	const currentTeamPlayer = draft.currentTeam?.players.find(hasPid);
-	if (currentTeamPlayer) {
-		return currentTeamPlayer;
+	if (draft.currentTeam) {
+		for (const { p } of draft.currentTeam.players) {
+			if (p.pid === pid) {
+				return p;
+			}
+		}
 	}
 
-	return draft.picks.find((pick) => hasPid(pick.p))?.p as Player | undefined;
+	return draft.picks.find((pick) => hasPid(pick.p))?.p;
 };
 
 const getDiamondInfo = async (pid: number) => {

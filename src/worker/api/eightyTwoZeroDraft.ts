@@ -212,16 +212,16 @@ export const pick = async ({
 
 	const draft = local.eightyTwoZeroDraft;
 	if (!draft) {
-		throw new Error("No 82-0 Draft in progress.");
+		throw new Error("No 82-0 Draft in progress");
 	}
 
 	if (draft.round !== expectedRound) {
-		throw new Error("This draft has already advanced to another round.");
+		throw new Error("This draft has already advanced to another round");
 	}
 
 	const currentTeam = draft.currentTeam;
 	if (!currentTeam) {
-		throw new Error("No team is available for this round.");
+		throw new Error("No team is available for this round");
 	}
 
 	const validationError = getPickValidationError({

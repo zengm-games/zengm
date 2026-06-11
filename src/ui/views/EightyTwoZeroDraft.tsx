@@ -20,10 +20,6 @@ import { applyRealTeamInfos } from "./NewLeague/index.tsx";
 
 const NUM_ROUNDS = 12;
 
-const getErrorMessage = (error: unknown) => {
-	return error instanceof Error ? error.message : String(error);
-};
-
 const getActiveDraftErrorMessage = (phase: Phase) => {
 	if (phase === PHASE.DRAFT) {
 		return "You can't start an 82-0 Draft while a regular draft is already in progress.";
@@ -88,7 +84,6 @@ const getPlayerTableData = (
 	const processedStats = getProcessedStats(p, stats);
 
 	return [
-		getPlayerNameLabels(p, season),
 		ratings.pos,
 		season - p.born.year,
 		ratings.ovr,
@@ -112,12 +107,12 @@ const DraftedPlayersTable = ({
 		[
 			"Pick",
 			"Name",
+			"Team",
 			"Pos",
 			"Age",
 			"Ovr",
 			"Pot",
 			...stats.map((stat) => `stat:${stat}`),
-			"Team",
 		],
 		{
 			Name: {
@@ -140,8 +135,9 @@ const DraftedPlayersTable = ({
 					: undefined,
 			data: [
 				i + 1,
-				...getPlayerTableData(pick.p, pick.season, stats),
+				getPlayerNameLabels(pick.p, pick.season),
 				`${pick.season} ${pick.teamAbbrev}`,
+				...getPlayerTableData(pick.p, pick.season, stats),
 			],
 		};
 	});
@@ -223,7 +219,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 		try {
 			setDraftState(await toWorker("eightyTwoZeroDraft", "start", undefined));
 		} catch (error) {
-			setErrorMessage(getErrorMessage(error));
+			setErrorMessage(error.message);
 		} finally {
 			setProcessing(undefined);
 		}
@@ -237,7 +233,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 					draftState.picks.length,
 				)} will be lost.`,
 				{
-					okText: "Cancel Draft",
+					okText: "Cancel draft",
 				},
 			);
 			if (!proceed) {
@@ -250,7 +246,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 		try {
 			setDraftState(await toWorker("eightyTwoZeroDraft", "cancel", undefined));
 		} catch (error) {
-			setErrorMessage(getErrorMessage(error));
+			setErrorMessage(error.message);
 		} finally {
 			setProcessing(undefined);
 		}
@@ -267,7 +263,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 				}),
 			);
 		} catch (error) {
-			setErrorMessage(getErrorMessage(error));
+			setErrorMessage(error.message);
 		} finally {
 			setProcessing(undefined);
 		}
@@ -293,7 +289,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 			setFinalized(true);
 		} catch (error) {
 			setErrorMessage(
-				`${getErrorMessage(error)} Check your roster before trying again.`,
+				`${error.message} Check your roster before trying again.`,
 			);
 		} finally {
 			setProcessing(undefined);
@@ -339,7 +335,6 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 	if (readyToFinalize) {
 		return (
 			<>
-				<h2>Finalize Draft</h2>
 				<DraftedPlayersTable picks={draftState.picks} stats={stats} />
 
 				{errorMessage ? <p className="text-danger">{errorMessage}</p> : null}
@@ -376,6 +371,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 
 	const cols = getCols(
 		[
+			"Draft",
 			"#",
 			"Name",
 			"Pos",
@@ -383,7 +379,6 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 			"Ovr",
 			"Pot",
 			...stats.map((stat) => `stat:${stat}`),
-			"Draft",
 		],
 		{
 			Name: {
@@ -403,19 +398,8 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 
 		return {
 			key: p.pid ?? i,
-			metadata:
-				p.pid !== undefined
-					? {
-							type: "player",
-							pid: p.pid,
-							season: currentTeam.season,
-							playoffs: "regularSeason",
-						}
-					: undefined,
 			classNames: locked || alreadyDrafted ? "text-body-secondary" : undefined,
 			data: [
-				i + 1,
-				...getPlayerTableData(p, currentTeam.season, stats),
 				locked ? (
 					<span className="badge bg-secondary">Locked</span>
 				) : alreadyDrafted ? (
@@ -430,6 +414,9 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 						Draft
 					</button>
 				),
+				i + 1,
+				getPlayerNameLabels(p, currentTeam.season),
+				...getPlayerTableData(p, currentTeam.season, stats),
 			],
 		};
 	});
@@ -437,13 +424,13 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 	const logoURL = currentTeam.imgURLSmall ?? currentTeam.imgURL;
 
 	return (
-		<>
+		<div style={{ maxWidth: 800 }}>
 			<div className="d-flex justify-content-between align-items-start gap-3 mb-3">
 				<div>
-					<h2 className="mb-0">
+					<h2>
 						Round {draftState.round} of {NUM_ROUNDS}
 					</h2>
-					<div className="d-flex align-items-center gap-2 text-body-secondary">
+					<div className="d-flex align-items-center gap-2">
 						{logoURL ? (
 							<img
 								src={logoURL}
@@ -464,6 +451,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 									abbrev={currentTeam.abbrev}
 									lost={currentTeam.seasonInfo.lost}
 									otl={currentTeam.seasonInfo.otl}
+									noLinks
 									option="noSeason"
 									roundsWonText={currentTeam.seasonInfo.roundsWonText}
 									season={currentTeam.season}
@@ -498,7 +486,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 			/>
 
 			<DraftedPlayersTable picks={draftState.picks} stats={stats} />
-		</>
+		</div>
 	);
 };
 

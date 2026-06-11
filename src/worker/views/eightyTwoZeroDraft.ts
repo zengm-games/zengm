@@ -1,7 +1,8 @@
 import { PHASE, REAL_PLAYERS_INFO } from "../../common/constants.ts";
 import type { Phase } from "../../common/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
-import { g, local } from "../util/index.ts";
+import { g, helpers, local } from "../util/index.ts";
+import { DEFAULT_EIGHTY_TWO_ZERO_DRAFT } from "../api/eightyTwoZeroDraft.ts";
 
 const getActiveDraftErrorMessage = (phase: Phase) => {
 	if (phase === PHASE.DRAFT) {
@@ -28,21 +29,11 @@ const updateEightyTwoZeroDraft = async () => {
 
 	return {
 		activeDraftErrorMessage: getActiveDraftErrorMessage(g.get("phase")),
-		godMode: g.get("godMode"),
 		loading: false,
 		realPlayers: REAL_PLAYERS_INFO !== undefined,
 		stats,
 		started: draft !== undefined,
-		...(draft ?? {
-			currentTeam: undefined,
-			lifelinesUsed: {
-				newSeason: false,
-				newTeam: false,
-				unlock: false,
-			},
-			picks: [],
-			round: 1,
-		}),
+		...(draft ?? helpers.deepCopy(DEFAULT_EIGHTY_TWO_ZERO_DRAFT)),
 	};
 };
 

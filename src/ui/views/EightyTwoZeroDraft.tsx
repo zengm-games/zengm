@@ -241,9 +241,9 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 		title: "82-0 Draft",
 	});
 
-	const { phase } = useLocal(["phase"]);
+	const { godMode, phase } = useLocal(["godMode", "phase"]);
 
-	if (!draftState.godMode) {
+	if (!godMode) {
 		return (
 			<>
 				<h2>Error</h2>

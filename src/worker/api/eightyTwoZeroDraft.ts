@@ -56,20 +56,10 @@ const getState = () => {
 	const draft = local.eightyTwoZeroDraft;
 	return {
 		activeDraftErrorMessage: getActiveDraftErrorMessage(g.get("phase")),
-		godMode: g.get("godMode"),
 		loading: false,
 		realPlayers: REAL_PLAYERS_INFO !== undefined,
 		started: draft !== undefined,
-		...(draft ?? {
-			currentTeam: undefined,
-			lifelinesUsed: {
-				newSeason: false,
-				newTeam: false,
-				unlock: false,
-			},
-			picks: [],
-			round: 1,
-		}),
+		...(draft ?? helpers.deepCopy(DEFAULT_EIGHTY_TWO_ZERO_DRAFT)),
 	};
 };
 
@@ -196,19 +186,21 @@ const loadRandomTeam = async () => {
 	throw new Error("Could not find a real team with an available player.");
 };
 
+export const DEFAULT_EIGHTY_TWO_ZERO_DRAFT = {
+	round: 1,
+	picks: [],
+	currentTeam: undefined,
+	lifelinesUsed: {
+		newTeam: false,
+		newSeason: false,
+		unlock: false,
+	},
+};
+
 export const start = async () => {
 	checkCanUse();
 
-	local.eightyTwoZeroDraft = {
-		round: 1,
-		picks: [],
-		currentTeam: undefined,
-		lifelinesUsed: {
-			newTeam: false,
-			newSeason: false,
-			unlock: false,
-		},
-	};
+	local.eightyTwoZeroDraft = helpers.deepCopy(DEFAULT_EIGHTY_TWO_ZERO_DRAFT);
 	try {
 		await loadRandomTeam();
 	} catch (error) {

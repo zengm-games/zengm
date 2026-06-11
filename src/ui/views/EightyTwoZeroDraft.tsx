@@ -16,6 +16,7 @@ import { processPlayerStats } from "../util/processPlayerStats.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { HelpPopover } from "../components/HelpPopover.tsx";
 import useLocalStorageState from "use-local-storage-state";
+import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 
 const NUM_ROUNDS = 12;
 
@@ -178,12 +179,12 @@ const Lifelines = ({
 	}[] = [
 		{
 			key: "newTeam",
-			text: `New team fom ${currentTeam.season}`,
+			text: `New team from ${currentTeam.season}`,
 			forceDisabled: false,
 		},
 		{
 			key: "newSeason",
-			text: `New season fom ${currentTeam.abbrev}`,
+			text: `New season from ${currentTeam.abbrev}`,
 			forceDisabled: false,
 		},
 		{
@@ -232,7 +233,6 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 	const { stats, initialDraftState } = props;
 	const [draftState, setDraftState] = useState(initialDraftState);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
-	const [finalized, setFinalized] = useState(false);
 	const [processing, setProcessing] = useState<
 		"cancel" | "finalize" | "pick" | "start" | undefined
 	>();
@@ -248,7 +248,6 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 
 	const startDraft = async () => {
 		setErrorMessage(undefined);
-		setFinalized(false);
 		setProcessing("start");
 		try {
 			setDraftState(
@@ -270,6 +269,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 				)} will be lost.`,
 				{
 					okText: "Cancel draft",
+					cancelText: "Continue draft",
 				},
 			);
 			if (!proceed) {
@@ -309,15 +309,12 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 		setErrorMessage(undefined);
 		setProcessing("finalize");
 		try {
-			setDraftState(
-				await toWorker("eightyTwoZeroDraft", "finalize", undefined),
-			);
-			setFinalized(true);
+			await toWorker("eightyTwoZeroDraft", "finalize", undefined);
+			realtimeUpdate([], helpers.leagueUrl(["roster"]));
 		} catch (error) {
 			setErrorMessage(
 				`${error.message} Check your roster before trying again.`,
 			);
-		} finally {
 			setProcessing(undefined);
 		}
 	};
@@ -325,12 +322,6 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 	if (!draftState.started) {
 		return (
 			<>
-				{finalized ? (
-					<div className="alert alert-success">
-						Your roster was replaced with your 82-0 Draft picks.
-					</div>
-				) : null}
-
 				<p>
 					In an "82-0 Draft", each round shows one random real historical{" "}
 					{process.env.SPORT} team. Draft one player from that roster. Every two

@@ -6,7 +6,12 @@ import {
 	REAL_PLAYERS_INFO,
 } from "../../common/constants.ts";
 import { choice, randInt, shuffle } from "../../common/random.ts";
-import type { Phase, PlayerWithoutKey, Team } from "../../common/types.ts";
+import type {
+	Phase,
+	Player,
+	PlayerWithoutKey,
+	Team,
+} from "../../common/types.ts";
 import { last, orderBy } from "../../common/utils.ts";
 import { player, realRosters, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
@@ -24,7 +29,7 @@ type EightyTwoZeroDraftTeam = Pick<
 	Team,
 	"abbrev" | "imgURL" | "imgURLSmall" | "name" | "region" | "tid"
 > & {
-	players: PlayerWithoutKey[];
+	players: Player[];
 	season: number;
 	seasonInfo?: {
 		won: number;
@@ -318,7 +323,7 @@ const normalizePick = async (
 	pick: NonNullable<typeof local.eightyTwoZeroDraft>["picks"][number],
 	teamJerseyNumbers: string[],
 ) => {
-	const p = helpers.deepCopy(pick.p);
+	const p: PlayerWithoutKey = helpers.deepCopy(pick.p);
 	delete p.pid;
 
 	const seasonOffset = g.get("season") - pick.season;
@@ -386,7 +391,7 @@ const finalize = async () => {
 	finalizing = true;
 	try {
 		const teamJerseyNumbers: string[] = [];
-		const playersToAdd: PlayerWithoutKey[] = [];
+		const playersToAdd: Player[] = [];
 		for (const pick of draft.picks) {
 			playersToAdd.push(await normalizePick(pick, teamJerseyNumbers));
 		}

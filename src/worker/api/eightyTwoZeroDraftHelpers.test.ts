@@ -2,24 +2,15 @@ import { describe, expect, test } from "vitest";
 import { countPickablePlayers } from "./eightyTwoZeroDraftHelpers.ts";
 
 const players = [
-	{ srID: "a" },
-	{ srID: "b" },
-	{ srID: "c" },
-	{ srID: "d" },
-	{ srID: "e" },
-	{ srID: "f" },
-	{ srID: "g" },
-	{ srID: "h" },
-	{ srID: "i" },
-	{ srID: "j" },
-	{ srID: "k" },
-	{ srID: "l" },
+	{ p: { srID: "a" }, locked: true },
+	{ p: { srID: "b" }, locked: true },
+	{ p: { srID: "c" }, locked: true },
+	{ p: { srID: "d" }, locked: false },
+	{ p: { srID: "e" }, locked: false },
 ];
 
 describe("countPickablePlayers", () => {
 	test("counts only unlocked non-duplicate players", () => {
-		expect(
-			countPickablePlayers(players.slice(0, 5), 3, [{ p: { srID: "d" } }]),
-		).toBe(1);
+		expect(countPickablePlayers(players, [{ p: { srID: "d" } }])).toBe(1);
 	});
 });

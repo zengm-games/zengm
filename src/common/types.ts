@@ -1372,7 +1372,7 @@ export type Local = {
 	eightyTwoZeroDraft?: {
 		round: number;
 		picks: {
-			p: PlayerWithoutKey;
+			p: Player;
 			teamAbbrev: string;
 			season: number;
 		}[];
@@ -1386,7 +1386,7 @@ export type Local = {
 		currentTeam:
 			| ({
 					players: {
-						p: PlayerWithoutKey;
+						p: Player;
 						locked: boolean;
 					}[];
 					season: number;

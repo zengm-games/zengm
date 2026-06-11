@@ -21,7 +21,7 @@ export const isDuplicateSrID = (p: PlayerLike, picks: readonly PickLike[]) => {
 
 export const countPickablePlayers = (
 	players: {
-		p: PlayerWithoutKey;
+		p: PlayerLike;
 		locked: boolean;
 	}[],
 	picks: readonly PickLike[],

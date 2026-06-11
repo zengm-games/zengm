@@ -1,4 +1,4 @@
-import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { PHASE } from "../../common/constants.ts";
 import { getCols } from "../../common/getCols.ts";
 import type { Phase, View } from "../../common/types.ts";
@@ -16,7 +16,6 @@ import { helpers } from "../util/helpers.ts";
 import { useLocal } from "../util/local.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
 import { toWorker } from "../util/toWorker.ts";
-import { applyRealTeamInfos } from "./NewLeague/index.tsx";
 import { HelpPopover } from "../components/HelpPopover.tsx";
 
 const NUM_ROUNDS = 12;
@@ -230,7 +229,7 @@ const Lifelines = ({
 };
 
 const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
-	const { realTeamInfo, stats, ...initialDraftState } = props;
+	const { stats, ...initialDraftState } = props;
 	const [draftState, setDraftState] = useState(initialDraftState);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [finalized, setFinalized] = useState(false);
@@ -243,18 +242,6 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 	});
 
 	const { phase } = useLocal(["phase"]);
-
-	const currentTeam = useMemo(() => {
-		if (!draftState.currentTeam) {
-			return;
-		}
-
-		return applyRealTeamInfos(
-			[draftState.currentTeam],
-			realTeamInfo,
-			"inTeamObject",
-		)[0]!;
-	}, [draftState.currentTeam, realTeamInfo]);
 
 	if (!draftState.godMode) {
 		return (
@@ -432,6 +419,8 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 			</>
 		);
 	}
+
+	const currentTeam = draftState.currentTeam;
 
 	if (!currentTeam) {
 		return <p>Loading...</p>;

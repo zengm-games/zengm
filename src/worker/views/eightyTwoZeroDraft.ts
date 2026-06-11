@@ -2,7 +2,6 @@ import { PHASE, REAL_PLAYERS_INFO } from "../../common/constants.ts";
 import type { Phase } from "../../common/types.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { g, local } from "../util/index.ts";
-import { getRealTeamInfo } from "./newLeague.ts";
 
 const getActiveDraftErrorMessage = (phase: Phase) => {
 	if (phase === PHASE.DRAFT) {
@@ -31,7 +30,6 @@ const updateEightyTwoZeroDraft = async () => {
 		activeDraftErrorMessage: getActiveDraftErrorMessage(g.get("phase")),
 		godMode: g.get("godMode"),
 		loading: false,
-		realTeamInfo: await getRealTeamInfo(),
 		realPlayers: REAL_PLAYERS_INFO !== undefined,
 		stats,
 		started: draft !== undefined,

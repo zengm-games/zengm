@@ -1,3 +1,4 @@
+import { applyRealTeamInfo } from "../../common/applyRealTeamInfo.ts";
 import { DEFAULT_LEVEL } from "../../common/budgetLevels.ts";
 import {
 	LEAGUE_DATABASE_VERSION,
@@ -10,6 +11,7 @@ import { last } from "../../common/utils.ts";
 import { player, realRosters, team } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers, local, toUI, updatePlayMenu } from "../util/index.ts";
+import { getRealTeamInfo } from "../views/newLeague.ts";
 import {
 	MAX_RANDOM_TEAM_RETRIES,
 	NUM_EIGHTY_TWO_ZERO_DRAFT_ROUNDS,
@@ -141,6 +143,8 @@ const loadRandomTeam = async () => {
 		throw new Error("No 82-0 Draft in progress.");
 	}
 
+	const realTeamInfo = await getRealTeamInfo();
+
 	let fallback:
 		| (EightyTwoZeroDraftTeam & {
 				disabledCount: number;
@@ -155,6 +159,9 @@ const loadRandomTeam = async () => {
 			draft.picks,
 		);
 		if (pickableCount > 0) {
+			if (realTeamInfo) {
+				applyRealTeamInfo(currentTeam, realTeamInfo, currentTeam.season);
+			}
 			draft.currentTeam = currentTeam;
 			return;
 		}
@@ -171,6 +178,9 @@ const loadRandomTeam = async () => {
 				draft.picks,
 			) > 0
 		) {
+			if (realTeamInfo) {
+				applyRealTeamInfo(currentTeam, realTeamInfo, currentTeam.season);
+			}
 			fallback = {
 				...currentTeam,
 				disabledCount: cappedDisabledCount,

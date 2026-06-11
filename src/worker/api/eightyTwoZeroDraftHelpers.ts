@@ -1,9 +1,8 @@
+import type { PlayerWithoutKey } from "../../common/types.ts";
+import { last } from "../../common/utils.ts";
+
 type PlayerLike = {
 	srID?: string;
-};
-
-type PlayerWithValue = PlayerLike & {
-	valueFuzz: number;
 };
 
 type PickLike = {
@@ -18,10 +17,8 @@ export const getDisabledCount = (round: number) => {
 	return Math.floor((round - 1) / 2);
 };
 
-export const orderPlayersForDraft = <T extends PlayerWithValue>(
-	players: readonly T[],
-) => {
-	return [...players].sort((a, b) => b.valueFuzz - a.valueFuzz);
+export const orderPlayersForDraft = (players: readonly PlayerWithoutKey[]) => {
+	return [...players].sort((a, b) => last(b.ratings).ovr - last(a.ratings).ovr);
 };
 
 export const isDuplicateSrID = (p: PlayerLike, picks: readonly PickLike[]) => {

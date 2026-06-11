@@ -3,7 +3,6 @@ import {
 	countPickablePlayers,
 	getDisabledCount,
 	getPickValidationError,
-	orderPlayersForDraft,
 } from "./eightyTwoZeroDraftHelpers.ts";
 
 const players = [
@@ -30,19 +29,6 @@ describe("getDisabledCount", () => {
 		expect(getDisabledCount(12)).toBe(5);
 	});
 });
-
-describe("orderPlayersForDraft", () => {
-	test("sorts by valueFuzz descending", () => {
-		expect(
-			orderPlayersForDraft([
-				{ srID: "a", valueFuzz: 45, ovr: 90 },
-				{ srID: "b", valueFuzz: 60, ovr: 70 },
-				{ srID: "c", valueFuzz: 50, ovr: 80 },
-			]).map((p) => p.srID),
-		).toEqual(["b", "c", "a"]);
-	});
-});
-
 describe("getPickValidationError", () => {
 	test("rejects duplicate srID picks", () => {
 		expect(

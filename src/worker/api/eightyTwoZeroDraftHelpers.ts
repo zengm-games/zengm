@@ -6,10 +6,6 @@ type PickLike = {
 	p: PlayerLike;
 };
 
-export const NUM_EIGHTY_TWO_ZERO_DRAFT_ROUNDS = 12;
-
-export const MAX_RANDOM_TEAM_RETRIES = 20;
-
 export const getDisabledCount = (round: number) => {
 	return Math.floor((round - 1) / 2);
 };

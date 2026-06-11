@@ -13,12 +13,12 @@ import { idb } from "../db/index.ts";
 import { g, helpers, local, toUI, updatePlayMenu } from "../util/index.ts";
 import { getRealTeamInfo } from "../views/newLeague.ts";
 import {
-	MAX_RANDOM_TEAM_RETRIES,
-	NUM_EIGHTY_TWO_ZERO_DRAFT_ROUNDS,
 	countPickablePlayers,
 	getDisabledCount,
 	getPickValidationError,
 } from "./eightyTwoZeroDraftHelpers.ts";
+
+const NUM_EIGHTY_TWO_ZERO_DRAFT_ROUNDS = 12;
 
 type EightyTwoZeroDraftTeam = Pick<
 	Team,
@@ -138,8 +138,10 @@ const loadRandomTeam = async () => {
 		  })
 		| undefined;
 
+	const MAX_RANDOM_TEAM_RETRIES = 100;
 	for (let i = 0; i < MAX_RANDOM_TEAM_RETRIES; i++) {
 		const currentTeam = await fetchRandomTeam();
+
 		const pickableCount = countPickablePlayers(
 			currentTeam.players,
 			getDisabledCount(draft.round),

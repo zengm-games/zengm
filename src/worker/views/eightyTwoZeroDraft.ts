@@ -28,12 +28,14 @@ const updateEightyTwoZeroDraft = async () => {
 	});
 
 	return {
-		activeDraftErrorMessage: getActiveDraftErrorMessage(g.get("phase")),
-		loading: false,
-		realPlayers: REAL_PLAYERS_INFO !== undefined,
+		initialDraftState: {
+			activeDraftErrorMessage: getActiveDraftErrorMessage(g.get("phase")),
+			loading: false,
+			realPlayers: REAL_PLAYERS_INFO !== undefined,
+			started: draft !== undefined,
+			...(draft ?? helpers.deepCopy(DEFAULT_EIGHTY_TWO_ZERO_DRAFT)),
+		},
 		stats,
-		started: draft !== undefined,
-		...(draft ?? helpers.deepCopy(DEFAULT_EIGHTY_TWO_ZERO_DRAFT)),
 	};
 };
 

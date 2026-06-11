@@ -34,8 +34,10 @@ const getActiveDraftErrorMessage = (phase: Phase) => {
 	}
 };
 
+type DraftState = View<"eightyTwoZeroDraft">["initialDraftState"];
+
 type EightyTwoZeroDraftPlayer = NonNullable<
-	View<"eightyTwoZeroDraft">["currentTeam"]
+	DraftState["currentTeam"]
 >["players"][number];
 
 type EightyTwoZeroDraftStats = View<"eightyTwoZeroDraft">["stats"];
@@ -96,7 +98,7 @@ const DraftedPlayersTable = ({
 	picks,
 	stats,
 }: {
-	picks: View<"eightyTwoZeroDraft">["picks"];
+	picks: DraftState["picks"];
 	stats: EightyTwoZeroDraftStats;
 }) => {
 	if (picks.length === 0) {
@@ -167,7 +169,7 @@ const Lifelines = ({
 		abbrev: string;
 		season: number;
 	};
-	setDraftState: any;
+	setDraftState: Dispatch<SetStateAction<DraftState>>;
 	setErrorMessage: Dispatch<SetStateAction<string | undefined>>;
 	used: {
 		newTeam: boolean;
@@ -229,7 +231,7 @@ const Lifelines = ({
 };
 
 const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
-	const { stats, ...initialDraftState } = props;
+	const { stats, initialDraftState } = props;
 	const [draftState, setDraftState] = useState(initialDraftState);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [finalized, setFinalized] = useState(false);

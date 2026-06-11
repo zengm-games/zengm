@@ -1,3 +1,5 @@
+import type { PlayerWithoutKey } from "../../common/types.ts";
+
 type PlayerLike = {
 	srID?: string;
 };
@@ -18,39 +20,38 @@ export const isDuplicateSrID = (p: PlayerLike, picks: readonly PickLike[]) => {
 };
 
 export const countPickablePlayers = (
-	players: readonly PlayerLike[],
-	lockedCount: number,
+	players: {
+		p: PlayerWithoutKey;
+		locked: boolean;
+	}[],
 	picks: readonly PickLike[],
 ) => {
-	return players.filter((p, i) => {
-		return i >= lockedCount && !isDuplicateSrID(p, picks);
+	return players.filter(({ p, locked }) => {
+		return !locked && !isDuplicateSrID(p, picks);
 	}).length;
 };
 
 export const getPickValidationError = ({
-	lockedCount,
-	pickIndex,
+	playerInfo,
 	picks,
-	players,
 }: {
-	lockedCount: number;
-	pickIndex: number;
+	playerInfo:
+		| {
+				p: PlayerWithoutKey;
+				locked: boolean;
+		  }
+		| undefined;
 	picks: readonly PickLike[];
-	players: readonly PlayerLike[];
 }) => {
-	if (
-		!Number.isInteger(pickIndex) ||
-		pickIndex < 0 ||
-		pickIndex >= players.length
-	) {
+	if (!playerInfo) {
 		return "Invalid player";
 	}
 
-	if (pickIndex < lockedCount) {
+	if (playerInfo.locked) {
 		return "This player is locked";
 	}
 
-	if (isDuplicateSrID(players[pickIndex]!, picks)) {
+	if (isDuplicateSrID(playerInfo.p, picks)) {
 		return "You already drafted this player";
 	}
 };

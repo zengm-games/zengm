@@ -1385,8 +1385,10 @@ export type Local = {
 		};
 		currentTeam:
 			| ({
-					lockedCount: number;
-					players: PlayerWithoutKey[];
+					players: {
+						p: PlayerWithoutKey;
+						locked: boolean;
+					}[];
 					season: number;
 					seasonInfo?: {
 						won: number;

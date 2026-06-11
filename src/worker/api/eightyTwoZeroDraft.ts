@@ -5,7 +5,7 @@ import {
 	PHASE,
 	REAL_PLAYERS_INFO,
 } from "../../common/constants.ts";
-import { choice, randInt } from "../../common/random.ts";
+import { choice, randInt, shuffle } from "../../common/random.ts";
 import type { Phase, PlayerWithoutKey, Team } from "../../common/types.ts";
 import { last, orderBy } from "../../common/utils.ts";
 import { player, realRosters, team } from "../core/index.ts";
@@ -82,6 +82,10 @@ const getContractExp = () => {
 	);
 };
 
+const getCappedLockedCount = (round: number, numPlayers: number) => {
+	return Math.min(getLockedCount(round), Math.max(numPlayers - 1, 0));
+};
+
 const fetchRandomTeam = async (
 	option:
 		| {
@@ -98,6 +102,8 @@ const fetchRandomTeam = async (
 		throw new Error("82-0 Draft is only available for basketball.");
 	}
 
+	const draft = local.eightyTwoZeroDraft!;
+
 	const season =
 		option?.season ??
 		randInt(REAL_PLAYERS_INFO.MIN_SEASON, REAL_PLAYERS_INFO.MAX_SEASON);
@@ -111,7 +117,7 @@ const fetchRandomTeam = async (
 		realStats: "lastSeason",
 		includeSeasonInfo: true,
 		includePlayers: false,
-		pidOffset: local.eightyTwoZeroDraft!.round * 10000,
+		pidOffset: draft.round * 10000,
 		preservePlayerOvrContext: true,
 	});
 
@@ -122,19 +128,27 @@ const fetchRandomTeam = async (
 
 	const t = choice(teams);
 
+	const lockedCount = getCappedLockedCount(draft.round, t.players.length);
+
 	// This sort is used for disabling/locking players, not for anything else in the UI
-	const players = orderBy(t.players, (p) => last(p.ratings).ovr, "desc");
+	const players = orderBy(t.players, (p) => last(p.ratings).ovr, "desc").map(
+		(p, i) => {
+			return {
+				locked: draft.lockTopPlayers && i < lockedCount,
+				p,
+			};
+		},
+	);
+
+	if (draft.eliteBallKnowerMode) {
+		shuffle(players);
+	}
 
 	return {
 		...t,
-		lockedCount: getLockedCount(local.eightyTwoZeroDraft!.round),
 		players,
 		season,
 	};
-};
-
-const getCappedLockedCount = (round: number, players: PlayerWithoutKey[]) => {
-	return Math.min(getLockedCount(round), Math.max(players.length - 1, 0));
 };
 
 const loadRandomTeam = async (lifeline?: "newSeason" | "newTeam") => {
@@ -144,12 +158,6 @@ const loadRandomTeam = async (lifeline?: "newSeason" | "newTeam") => {
 	}
 
 	const realTeamInfo = await getRealTeamInfo();
-
-	let fallback:
-		| (EightyTwoZeroDraftTeam & {
-				lockedCount: number;
-		  })
-		| undefined;
 
 	const MAX_RANDOM_TEAM_RETRIES = 100;
 	const option: Parameters<typeof fetchRandomTeam>[0] =
@@ -167,7 +175,6 @@ const loadRandomTeam = async (lifeline?: "newSeason" | "newTeam") => {
 
 		const pickableCount = countPickablePlayers(
 			currentTeam.players,
-			getLockedCount(draft.round),
 			draft.picks,
 		);
 		if (pickableCount > 0) {
@@ -177,32 +184,6 @@ const loadRandomTeam = async (lifeline?: "newSeason" | "newTeam") => {
 			draft.currentTeam = currentTeam;
 			return;
 		}
-
-		const cappedLockedCount = getCappedLockedCount(
-			draft.round,
-			currentTeam.players,
-		);
-		if (
-			!fallback &&
-			countPickablePlayers(
-				currentTeam.players,
-				cappedLockedCount,
-				draft.picks,
-			) > 0
-		) {
-			if (realTeamInfo) {
-				applyRealTeamInfo(currentTeam, realTeamInfo, currentTeam.season);
-			}
-			fallback = {
-				...currentTeam,
-				lockedCount: cappedLockedCount,
-			};
-		}
-	}
-
-	if (fallback) {
-		draft.currentTeam = fallback;
-		return;
 	}
 
 	throw new Error("Could not find a real team with an available player.");
@@ -260,7 +241,12 @@ const useLifeline = async (lifeline: "newTeam" | "newSeason" | "unlock") => {
 		draft.lifelinesUsed[lifeline] = true;
 	} else {
 		if (draft.currentTeam) {
-			draft.currentTeam.lockedCount = 0;
+			draft.currentTeam.players = draft.currentTeam.players.map((row) => {
+				return {
+					locked: false,
+					p: row.p,
+				};
+			});
 			draft.lifelinesUsed.unlock = true;
 		}
 	}
@@ -291,18 +277,18 @@ const pick = async ({
 		throw new Error("No team is available for this round");
 	}
 
+	const playerInfo = helpers.deepCopy(currentTeam.players[pickIndex]);
+
 	const validationError = getPickValidationError({
-		lockedCount: draft.lockTopPlayers ? currentTeam.lockedCount : 0,
-		pickIndex,
 		picks: draft.picks,
-		players: currentTeam.players,
+		playerInfo,
 	});
 	if (validationError) {
 		throw new Error(validationError);
 	}
+	const p = playerInfo!.p;
 
 	const previousRound = draft.round;
-	const p = helpers.deepCopy(currentTeam.players[pickIndex]!);
 	draft.picks.push({
 		p,
 		teamAbbrev: currentTeam.abbrev,

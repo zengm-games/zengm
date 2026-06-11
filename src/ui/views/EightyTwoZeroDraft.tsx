@@ -24,7 +24,7 @@ type DraftState = View<"eightyTwoZeroDraft">["initialDraftState"];
 
 type EightyTwoZeroDraftPlayer = NonNullable<
 	DraftState["currentTeam"]
->["players"][number];
+>["players"][number]["p"];
 
 type EightyTwoZeroDraftStats = View<"eightyTwoZeroDraft">["stats"];
 
@@ -174,7 +174,7 @@ const Lifelines = ({
 		unlock: boolean;
 	};
 }) => {
-	const somePlayersAreLocked = currentTeam.lockedCount > 0;
+	const somePlayersAreLocked = currentTeam.players.some((row) => row.locked);
 
 	const lifelines: {
 		key: keyof typeof used;
@@ -475,8 +475,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 		},
 	);
 
-	const rows: DataTableRow[] = currentTeam.players.map((p, i) => {
-		const locked = draftState.lockTopPlayers && i < currentTeam.lockedCount;
+	const rows: DataTableRow[] = currentTeam.players.map(({ p, locked }, i) => {
 		const alreadyDrafted = p.srID !== undefined && draftedSrIDs.has(p.srID);
 		const disabled = locked || alreadyDrafted || processing !== undefined;
 

@@ -12,8 +12,9 @@ import type {
 	PlayerWithoutKey,
 	Team,
 } from "../../common/types.ts";
-import { last, orderBy } from "../../common/utils.ts";
+import { last, orderBy, range } from "../../common/utils.ts";
 import { player, realRosters, team } from "../core/index.ts";
+import oldAbbrevTo2020BBGMAbbrev from "../core/realRosters/oldAbbrevTo2020BBGMAbbrev.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers, local, toUI, updatePlayMenu } from "../util/index.ts";
 import { getRealTeamInfo } from "../views/newLeague.ts";
@@ -95,10 +96,12 @@ const fetchRandomTeam = async (
 	option:
 		| {
 				season: number;
+				prevSeason?: undefined;
 				srID?: undefined;
 		  }
 		| {
 				season?: undefined;
+				prevSeason: number;
 				srID: string;
 		  }
 		| undefined,
@@ -109,29 +112,68 @@ const fetchRandomTeam = async (
 
 	const draft = local.eightyTwoZeroDraft!;
 
-	const season =
-		option?.season ??
-		randInt(REAL_PLAYERS_INFO.MIN_SEASON, REAL_PLAYERS_INFO.MAX_SEASON);
-	const info = await realRosters.getLeagueInfo({
-		type: "real",
-		season,
-		phase: PHASE.PLAYOFFS,
-		randomDebuts: false,
-		randomDebutsKeepCurrent: false,
-		realDraftRatings: "rookie",
-		realStats: "lastSeason",
-		includeSeasonInfo: true,
-		includePlayers: false,
-		pidOffset: draft.round * 10000,
-		preservePlayerOvrContext: true,
-	});
+	const getTeam = async (season: number) => {
+		const info = await realRosters.getLeagueInfo({
+			type: "real",
+			season,
+			phase: PHASE.PLAYOFFS,
+			randomDebuts: false,
+			randomDebutsKeepCurrent: false,
+			realDraftRatings: "rookie",
+			realStats: "lastSeason",
+			includeSeasonInfo: true,
+			includePlayers: false,
+			pidOffset: draft.round * 10000,
+			preservePlayerOvrContext: true,
+		});
 
-	const teams = info.teams as unknown as EightyTwoZeroDraftTeam[];
-	if (teams.length === 0) {
-		throw new Error(`No real teams found for ${season}`);
+		let teams = info.teams as unknown as EightyTwoZeroDraftTeam[];
+		if (option?.srID) {
+			const abbrev = oldAbbrevTo2020BBGMAbbrev(option.srID);
+			teams = teams.filter((t) => oldAbbrevTo2020BBGMAbbrev(t.srID) === abbrev);
+		}
+
+		if (teams.length > 0) {
+			return choice(teams);
+		}
+	};
+
+	const NUM_TRIES_TO_FIND_TEAM = 10;
+	let season;
+	let t;
+	for (let i = 0; i < NUM_TRIES_TO_FIND_TEAM; i++) {
+		season =
+			option?.season ??
+			randInt(REAL_PLAYERS_INFO.MIN_SEASON, REAL_PLAYERS_INFO.MAX_SEASON);
+		t = await getTeam(season);
+		if (t) {
+			break;
+		}
 	}
 
-	const t = choice(teams);
+	if (!t || season === undefined) {
+		// Couldn't find a team in a random year in NUM_TRIES_TO_FIND_TEAM tries... search within +/- 5 years of previous season, in case this was a brief existence
+		if (option?.srID !== undefined) {
+			const seasons = [
+				Math.max(REAL_PLAYERS_INFO.MIN_SEASON, option.prevSeason - 5),
+				Math.min(REAL_PLAYERS_INFO.MAX_SEASON, option.prevSeason + 5),
+			] as const;
+			const allSeasons = range(seasons[0], seasons[1] + 1);
+			shuffle(allSeasons);
+			for (const mySeason of allSeasons) {
+				t = await getTeam(mySeason);
+				console.log("fallback got", mySeason, t);
+				if (t) {
+					season = mySeason;
+					break;
+				}
+			}
+		}
+
+		if (!t || season === undefined) {
+			throw new Error("Failed to find team");
+		}
+	}
 
 	const lockedCount = getCappedLockedCount(draft.round, t.players.length);
 
@@ -170,6 +212,7 @@ const loadRandomTeam = async (lifeline?: "newSeason" | "newTeam") => {
 			? undefined
 			: lifeline === "newSeason"
 				? {
+						prevSeason: draft.currentTeam.season,
 						srID: draft.currentTeam.srID,
 					}
 				: {

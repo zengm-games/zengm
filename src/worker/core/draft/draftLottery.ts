@@ -1,14 +1,5 @@
 import { RESTRICTED_1_PICK, RESTRICTED_5_PICK } from "./nba2027.ts";
-import type {
-	DraftLotteryResult,
-	DraftLotteryResultArray,
-	DraftType,
-} from "../../../common/types.ts";
-import helpers from "../../util/helpers.ts";
-
-const draftLotteryProbsTooSlow = (numToPick: number) => {
-	return numToPick > 20;
-};
+import type { DraftLotteryResult, DraftType } from "../../../common/types.ts";
 
 // This is needed to handle restricted1/restricted5 for nba2027 easily, otherwise could just be an array
 class PickIndexes {
@@ -199,62 +190,11 @@ export const simLottery = (
 	return pickIndexes.indexes;
 };
 
-// If it's too slow to calculate the precise probability, just estimate
-const monteCarloLotteryProbs = (
-	draftType: DraftType,
-	result: DraftLotteryResultArray,
-	numToPick: number,
-	nba2027Restrictions: DraftLotteryResult["nba2027"],
-) => {
-	const ITERATIONS = 100000;
-
-	const probs: number[][] = [];
-
-	const chances = result.map((row) => row.chances);
-
-	for (let i = 0; i < ITERATIONS; i++) {
-		const result = simLottery(
-			draftType,
-			chances,
-			numToPick,
-			nba2027Restrictions,
-			undefined,
-		);
-		for (let j = 0; j < result.length; j++) {
-			const k = result[j]!;
-			probs[k] ??= [];
-			probs[k][j] ??= 0;
-			// @ts-expect-error
-			probs[k][j] += 1 / ITERATIONS;
-		}
-	}
-
-	// First column we can trivially calculate
-	const firstPickChances = result.map((row, i) =>
-		nba2027Restrictions &&
-		(nba2027Restrictions.restricted1.includes(i) ||
-			nba2027Restrictions.restricted5.includes(i))
-			? 0
-			: row.chances,
-	);
-	const firstPickChancesSum = helpers.sum(firstPickChances);
-	for (const [i, chances] of firstPickChances.entries()) {
-		if (chances > 0) {
-			probs[i]![0] = chances / firstPickChancesSum;
-		}
-	}
-
-	return probs;
-};
-
 export const getDraftLotteryProbs = (
 	draftLotteryResult: DraftLotteryResult<boolean> | undefined,
 	draftType: DraftType | "dummy" | undefined,
 	numToPick: number,
-): {
-	tooSlow: boolean;
-	probs?: (number | undefined)[][];
-} => {
+): { tooSlow: boolean; probs?: (number | undefined)[][] } => {
 	if (
 		draftLotteryResult?.result === undefined ||
 		draftType === undefined ||
@@ -264,9 +204,7 @@ export const getDraftLotteryProbs = (
 		draftType === "freeAgents" ||
 		draftType === "dummy"
 	) {
-		return {
-			tooSlow: false,
-		};
+		return { tooSlow: false };
 	}
 
 	const result = draftLotteryResult.result;
@@ -278,10 +216,7 @@ export const getDraftLotteryProbs = (
 			probs[i] = new Array(result.length).fill(1 / result.length);
 		}
 
-		return {
-			tooSlow: false,
-			probs,
-		};
+		return { tooSlow: false, probs };
 	}
 
 	if (draftType === "coinFlip") {
@@ -301,42 +236,68 @@ export const getDraftLotteryProbs = (
 			probs[i] = row;
 		}
 
-		return {
-			tooSlow: false,
-			probs,
-		};
-	}
-
-	const tooSlow = draftLotteryProbsTooSlow(numToPick);
-
-	if (tooSlow) {
-		// Estimate probs
-		return {
-			tooSlow,
-			probs: monteCarloLotteryProbs(
-				draftType,
-				result,
-				numToPick,
-				draftLotteryResult.nba2027,
-			),
-		};
-	}
-
-	const numTeams = result.length;
-
-	for (let i = 0; i < result.length; i++) {
-		probs[i] = new Array(numTeams).fill(undefined);
+		return { tooSlow: false, probs };
 	}
 
 	// Clever dynamic programming and bitmask stuff below comes from wiigeneral https://discord.com/channels/@me/1511922269084188723/1514152028039811153
 
-	let bottom3Mask = 0;
-	if (draftType === "nba2027") {
-		const bottom3IDs = new Set(result.slice(0, 3).map((t) => t.tid));
-		for (let i = 0; i < numTeams; i++) {
-			if (bottom3IDs.has(result[i]!.tid)) {
-				bottom3Mask |= 1 << i;
-			}
+	const numTeams = result.length;
+	const numTeamsBigInt = BigInt(numTeams); // I severely doubt precomputing changes anything, but it's more readable
+
+	for (let i = 0; i < numTeams; i++) {
+		// Initialize values that we'll definitely fill in soon
+		probs[i] = new Array(numTeams).fill(undefined);
+	}
+
+	// This can be a type
+	const equivalenceMap = new Map<
+		number,
+		{
+			chances: number;
+			isBottom3: boolean;
+			isRestricted1: boolean | undefined;
+			isRestricted5: boolean | undefined;
+			teamIndices: number[];
+		}
+	>();
+
+	const bottom3IDs = new Set(result.slice(0, 3).map((t) => t.tid));
+	let bottom3Mask = 0n;
+
+	for (let i = 0; i < numTeams; i++) {
+		const isBottom3 = bottom3IDs.has(result[i]!.tid);
+		if (isBottom3) {
+			bottom3Mask |= 1n << BigInt(i);
+		}
+
+		const isRestricted1 = draftLotteryResult.nba2027?.restricted1.includes(i);
+		const isRestricted5 = draftLotteryResult.nba2027?.restricted5.includes(i);
+		const chances = result[i]!.chances;
+
+		// Equivalences only exist in nba2027
+		const key =
+			draftType === "nba2027"
+				? (chances << 3) |
+					((isBottom3 ? 1 : 0) << 2) |
+					((isRestricted1 ? 1 : 0) << 1) |
+					(isRestricted5 ? 1 : 0)
+				: i;
+		if (!equivalenceMap.has(key)) {
+			equivalenceMap.set(key, {
+				chances,
+				isBottom3,
+				isRestricted1,
+				isRestricted5,
+				teamIndices: [],
+			});
+		}
+		equivalenceMap.get(key)!.teamIndices.push(i);
+	}
+	const equivalenceClasses = Array.from(equivalenceMap.values());
+
+	for (const equivalenceClass of equivalenceClasses) {
+		for (const idx of equivalenceClass.teamIndices) {
+			equivalenceMap.set(idx, equivalenceClass);
 		}
 	}
 
@@ -348,6 +309,11 @@ export const getDraftLotteryProbs = (
 	// Start at the first pick with 0 teams drawn, 0 slots filled with 100% chance
 	pickLayers[0]!.set(0n, 1.0);
 
+	const lowerHalfMask = (1n << numTeamsBigInt) - 1n;
+	const classProbs: (number[] | undefined)[] = equivalenceClasses.map(() =>
+		new Array(numTeams).fill(0),
+	);
+
 	// Find the lowest available pick slot that hasn't been filled yet
 	for (let currentLayer = 0; currentLayer < numTeams; currentLayer++) {
 		for (const [stateKey, prob] of pickLayers[currentLayer]!) {
@@ -355,13 +321,16 @@ export const getDraftLotteryProbs = (
 				continue;
 			}
 
-			// Extract masks from the 64-bit BigInt, the first half for drawn teams and the second half for filled teams
-			// Maybe this isn't worth doing at all?
-			const drawnTeamsMask = Number(stateKey & 0xffffffffn);
-			const filledSlotsMask = Number(stateKey >> 32n);
+			// Extract masks from the bitmask, the first half for drawn teams, and the second half for filled teams
+			// Since it's a BigInt, the amount of picks shouldn't be restricted
+			const drawnTeamsMask = stateKey & lowerHalfMask;
+			const filledSlotsMask = stateKey >> numTeamsBigInt;
 
 			let currentPick = 0;
-			while (currentPick < numTeams && filledSlotsMask & (1 << currentPick)) {
+			while (
+				currentPick < numTeams &&
+				filledSlotsMask & (1n << BigInt(currentPick))
+			) {
 				currentPick++;
 			}
 
@@ -373,15 +342,16 @@ export const getDraftLotteryProbs = (
 				let targetSlot = currentPick;
 				// Place all remaining undrawn teams into the remaining slots in strict standings order
 				for (let i = 0; i < numTeams; i++) {
-					if (!(drawnTeamsMask & (1 << i))) {
+					if (!(drawnTeamsMask & (1n << BigInt(i)))) {
 						while (
 							targetSlot < numTeams &&
-							filledSlotsMask & (1 << targetSlot)
+							filledSlotsMask & (1n << BigInt(targetSlot))
 						) {
 							targetSlot++;
 						}
+
 						if (targetSlot < numTeams) {
-							probs[i]![targetSlot] = (probs[i]![targetSlot] ?? 0) + prob;
+							classProbs[i]![targetSlot]! += prob;
 						}
 						targetSlot++;
 					}
@@ -390,43 +360,32 @@ export const getDraftLotteryProbs = (
 			}
 
 			if (draftType === "nba2027") {
-				let emptySlotsToNo12 = 0;
+				const emptySlots: number[] = [];
 				for (let j = currentPick; j <= 11; j++) {
-					if (!(filledSlotsMask & (1 << j))) {
-						emptySlotsToNo12++;
+					if (!(filledSlotsMask & (1n << BigInt(j)))) {
+						emptySlots.push(j);
 					}
 				}
 
 				const remainingBottom3Mask = bottom3Mask & ~drawnTeamsMask;
-				let remCount = 0;
-				let tempMask = remainingBottom3Mask;
-				while (tempMask > 0) {
-					tempMask &= tempMask - 1;
-					remCount++;
+				let skipCount = 0;
+				for (let temp = remainingBottom3Mask; temp > 0n; temp &= temp - 1n) {
+					skipCount++;
 				}
 
-				if (emptySlotsToNo12 > 0 && remCount === emptySlotsToNo12) {
-					const remBottom3Indices: number[] = [];
+				if (emptySlots.length > 0 && skipCount === emptySlots.length) {
+					// Determine the individual team share for landing in a slot for the bottom 3 teams
+					const probsPerTeam = prob / skipCount;
+
 					for (let i = 0; i < numTeams; i++) {
-						// Force the bottom 3 teams to be picked if necessary to be picked in the top 12
-						if (remainingBottom3Mask & (1 << i)) {
-							remBottom3Indices.push(i);
-						}
-					}
+						if (remainingBottom3Mask & (1n << BigInt(i))) {
+							const equivalenceClass = equivalenceMap.get(i)!;
+							const classIdx = equivalenceClasses.indexOf(equivalenceClass);
 
-					const emptySlots: number[] = [];
-					for (let j = currentPick; j <= 11; j++) {
-						if (!(filledSlotsMask & (1 << j))) {
-							emptySlots.push(j);
-						}
-					}
-
-					const pEach = prob / remCount;
-					for (const teamIdx of remBottom3Indices) {
-						for (const slotIdx of emptySlots) {
-							if (slotIdx < numTeams) {
-								probs[teamIdx]![slotIdx] =
-									(probs[teamIdx]![slotIdx] ?? 0) + pEach;
+							for (const slotIdx of emptySlots) {
+								if (slotIdx < numTeams) {
+									classProbs[classIdx]![slotIdx]! += probsPerTeam;
+								}
 							}
 						}
 					}
@@ -434,13 +393,12 @@ export const getDraftLotteryProbs = (
 					const nextDrawnMask = drawnTeamsMask | remainingBottom3Mask;
 					let nextFilledMask = filledSlotsMask;
 					for (const slotIdx of emptySlots) {
-						nextFilledMask |= 1 << slotIdx;
+						nextFilledMask |= 1n << BigInt(slotIdx);
 					}
 
-					// Skip however spots many the bottom 3 teams occupied to force them into the top 12
-					const nextLayerID = currentLayer + remCount;
-					const nextKey =
-						(BigInt(nextFilledMask) << 32n) | BigInt(nextDrawnMask);
+					// Skip however spots many the bottom 3 teams forcefully occupied in the top 12
+					const nextLayerID = currentLayer + skipCount;
+					const nextKey = (nextFilledMask << numTeamsBigInt) | nextDrawnMask;
 					pickLayers[nextLayerID]!.set(
 						nextKey,
 						(pickLayers[nextLayerID]!.get(nextKey) || 0) + prob,
@@ -449,60 +407,99 @@ export const getDraftLotteryProbs = (
 				}
 			}
 
+			// Compute probability for each individual equivalence class
 			let totalAvailableChances = 0;
-			for (let i = 0; i < numTeams; i++) {
-				if (!(drawnTeamsMask & (1 << i))) {
-					totalAvailableChances += result[i]!.chances;
+			const activeTeamsPerClass: number[][] = [];
+
+			for (const equivalenceClass of equivalenceClasses) {
+				const activeTeams: number[] = [];
+				for (const i of equivalenceClass.teamIndices) {
+					if (!(drawnTeamsMask & (1n << BigInt(i)))) {
+						activeTeams.push(i);
+					}
 				}
+				activeTeamsPerClass.push(activeTeams);
+				totalAvailableChances += activeTeams.length * equivalenceClass.chances;
 			}
+
 			if (totalAvailableChances === 0) {
 				continue;
 			}
 
-			for (let i = 0; i < numTeams; i++) {
-				if (drawnTeamsMask & (1 << i)) {
+			// Use the first active team per class
+			for (
+				let equivalenceClassIdx = 0;
+				equivalenceClassIdx < equivalenceClasses.length;
+				equivalenceClassIdx++
+			) {
+				const activeTeams = activeTeamsPerClass[equivalenceClassIdx]!;
+				if (activeTeams.length === 0) {
 					continue;
 				}
 
-				// The probability is the chances a team has divided by total chances of all undrawn teams
-				const branchProb = prob * (result[i]!.chances / totalAvailableChances);
+				const equivalenceClass = equivalenceClasses[equivalenceClassIdx]!;
+
+				const repTeamIdx = activeTeams[0]!;
+
+				// The probability is the chances a class has multiplied by the teams in the class divided by total chances of all undrawn teams
+				const branchProb =
+					prob * (equivalenceClass.chances / totalAvailableChances);
 
 				let targetPick = currentPick;
 				while (true) {
 					const isBanned =
 						draftType === "nba2027" &&
-						((targetPick === 0 &&
-							draftLotteryResult.nba2027?.restricted1.includes(i)) ||
-							(targetPick <= 4 &&
-								draftLotteryResult.nba2027?.restricted5.includes(i)));
+						((targetPick === 0 && equivalenceClass.isRestricted1) ||
+							(targetPick <= 4 && equivalenceClass.isRestricted5));
 
-					if (!isBanned && !(filledSlotsMask & (1 << targetPick))) {
+					if (!isBanned && !(filledSlotsMask & (1n << BigInt(targetPick)))) {
 						break;
 					}
 					targetPick++;
 				}
 
 				if (targetPick < numTeams) {
-					probs[i]![targetPick] = (probs[i]![targetPick] ?? 0) + branchProb;
+					classProbs[equivalenceClassIdx]![targetPick]! +=
+						branchProb * activeTeams.length;
 				}
 
-				// Next state key
-				const nextDrawnMask = drawnTeamsMask | (1 << i);
-				const nextFilledMask = filledSlotsMask | (1 << targetPick);
-				const nextKey = (BigInt(nextFilledMask) << 32n) | BigInt(nextDrawnMask);
+				const nextDrawnMask = drawnTeamsMask | (1n << BigInt(repTeamIdx));
+				const nextFilledMask = filledSlotsMask | (1n << BigInt(targetPick));
+				const nextKey = (nextFilledMask << numTeamsBigInt) | nextDrawnMask;
 				const nextLayerID = currentLayer + 1;
 
+				// Multiply the probability by the amount of teams in the class
 				pickLayers[nextLayerID]!.set(
 					nextKey,
-					(pickLayers[nextLayerID]!.get(nextKey) || 0) + branchProb,
+					(pickLayers[nextLayerID]!.get(nextKey) || 0) +
+						branchProb * activeTeams.length,
 				);
 			}
 		}
 		pickLayers[currentLayer] = null;
 	}
 
+	// Divide the probabilities among each class equally
+	for (
+		let equivalenceClassIdx = 0;
+		equivalenceClassIdx < equivalenceClasses.length;
+		equivalenceClassIdx++
+	) {
+		const equivalenceClass = equivalenceClasses[equivalenceClassIdx]!;
+		const classSize = equivalenceClass.teamIndices.length;
+		for (let slot = 0; slot < numTeams; slot++) {
+			const totalSlotProb = classProbs[equivalenceClassIdx]![slot]!;
+			if (totalSlotProb > 0) {
+				const probPerTeam = totalSlotProb / classSize;
+				for (const teamIdx of equivalenceClass.teamIndices) {
+					probs[teamIdx]![slot] = probPerTeam;
+				}
+			}
+		}
+	}
+
 	return {
-		tooSlow,
+		tooSlow: false,
 		probs,
 	};
 };

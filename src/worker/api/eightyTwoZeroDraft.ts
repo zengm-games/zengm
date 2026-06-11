@@ -22,7 +22,7 @@ const NUM_EIGHTY_TWO_ZERO_DRAFT_ROUNDS = 12;
 
 type EightyTwoZeroDraftTeam = Pick<
 	Team,
-	"abbrev" | "imgURL" | "imgURLSmall" | "name" | "region" | "srID" | "tid"
+	"abbrev" | "imgURL" | "imgURLSmall" | "name" | "region" | "tid"
 > & {
 	players: PlayerWithoutKey[];
 	season: number;
@@ -33,6 +33,7 @@ type EightyTwoZeroDraftTeam = Pick<
 		otl: number;
 		roundsWonText?: string;
 	};
+	srID: string;
 };
 
 let finalizing = false;
@@ -81,15 +82,25 @@ const getContractExp = () => {
 	);
 };
 
-const fetchRandomTeam = async () => {
+const fetchRandomTeam = async (
+	option:
+		| {
+				season: number;
+				srID?: undefined;
+		  }
+		| {
+				season?: undefined;
+				srID: string;
+		  }
+		| undefined,
+) => {
 	if (!REAL_PLAYERS_INFO) {
 		throw new Error("82-0 Draft is only available for basketball.");
 	}
 
-	const season = randInt(
-		REAL_PLAYERS_INFO.MIN_SEASON,
-		REAL_PLAYERS_INFO.MAX_SEASON,
-	);
+	const season =
+		option?.season ??
+		randInt(REAL_PLAYERS_INFO.MIN_SEASON, REAL_PLAYERS_INFO.MAX_SEASON);
 	const info = await realRosters.getLeagueInfo({
 		type: "real",
 		season,
@@ -124,7 +135,7 @@ const getCappedDisabledCount = (round: number, players: PlayerWithoutKey[]) => {
 	return Math.min(getDisabledCount(round), Math.max(players.length - 1, 0));
 };
 
-const loadRandomTeam = async () => {
+const loadRandomTeam = async (lifeline?: "newSeason" | "newTeam") => {
 	const draft = local.eightyTwoZeroDraft;
 	if (!draft) {
 		throw new Error("No 82-0 Draft in progress.");
@@ -139,8 +150,18 @@ const loadRandomTeam = async () => {
 		| undefined;
 
 	const MAX_RANDOM_TEAM_RETRIES = 100;
+	const option: Parameters<typeof fetchRandomTeam>[0] =
+		!draft.currentTeam || !lifeline
+			? undefined
+			: lifeline === "newSeason"
+				? {
+						srID: draft.currentTeam.srID,
+					}
+				: {
+						season: draft.currentTeam.season,
+					};
 	for (let i = 0; i < MAX_RANDOM_TEAM_RETRIES; i++) {
-		const currentTeam = await fetchRandomTeam();
+		const currentTeam = await fetchRandomTeam(option);
 
 		const pickableCount = countPickablePlayers(
 			currentTeam.players,
@@ -225,7 +246,7 @@ const useLifeline = async (lifeline: "newTeam" | "newSeason" | "unlock") => {
 	}
 
 	if (lifeline === "newTeam" || lifeline === "newSeason") {
-		await loadRandomTeam();
+		await loadRandomTeam(lifeline);
 		draft.lifelinesUsed[lifeline] = true;
 	} else {
 		if (draft.currentTeam) {

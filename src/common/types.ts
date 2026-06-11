@@ -1394,15 +1394,10 @@ export type Local = {
 						otl: number;
 						roundsWonText?: string;
 					};
+					srID: string;
 			  } & Pick<
 					Team,
-					| "abbrev"
-					| "imgURL"
-					| "imgURLSmall"
-					| "name"
-					| "region"
-					| "srID"
-					| "tid"
+					"abbrev" | "imgURL" | "imgURLSmall" | "name" | "region" | "tid"
 			  >)
 			| undefined;
 	};

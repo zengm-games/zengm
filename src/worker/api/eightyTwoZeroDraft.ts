@@ -65,11 +65,11 @@ const getState = () => {
 
 const checkCanUse = () => {
 	if (!g.get("godMode")) {
-		throw new Error("God Mode is required for 82-0 Draft.");
+		throw new Error("God Mode is required for 82-0 Draft");
 	}
 
 	if (!REAL_PLAYERS_INFO) {
-		throw new Error("82-0 Draft is only available for basketball.");
+		throw new Error("82-0 Draft is only available for basketball");
 	}
 
 	const activeDraftErrorMessage = getActiveDraftErrorMessage(g.get("phase"));
@@ -197,7 +197,7 @@ export const DEFAULT_EIGHTY_TWO_ZERO_DRAFT = {
 	},
 };
 
-export const start = async () => {
+const start = async () => {
 	checkCanUse();
 
 	local.eightyTwoZeroDraft = helpers.deepCopy(DEFAULT_EIGHTY_TWO_ZERO_DRAFT);
@@ -213,9 +213,7 @@ export const start = async () => {
 	return getState();
 };
 
-export const useLifeline = async (
-	lifeline: "newTeam" | "newSeason" | "unlock",
-) => {
+const useLifeline = async (lifeline: "newTeam" | "newSeason" | "unlock") => {
 	const draft = local.eightyTwoZeroDraft;
 	if (!draft) {
 		throw new Error("No 82-0 Draft in progress");
@@ -238,7 +236,7 @@ export const useLifeline = async (
 	return getState();
 };
 
-export const pick = async ({
+const pick = async ({
 	expectedRound,
 	pickIndex,
 }: {
@@ -355,7 +353,7 @@ const normalizePick = async (
 	return p2;
 };
 
-export const finalize = async () => {
+const finalize = async () => {
 	checkCanUse();
 
 	if (finalizing) {
@@ -396,7 +394,15 @@ export const finalize = async () => {
 	}
 };
 
-export const cancel = async () => {
+const cancel = async () => {
 	local.eightyTwoZeroDraft = undefined;
 	return getState();
+};
+
+export default {
+	cancel,
+	finalize,
+	pick,
+	start,
+	useLifeline,
 };

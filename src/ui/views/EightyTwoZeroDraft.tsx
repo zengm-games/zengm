@@ -433,15 +433,13 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 					>
 						Finalize draft
 					</ActionButton>
-					<ActionButton
+					<button
+						className="btn btn-danger"
 						disabled={processing !== undefined}
 						onClick={cancelDraft}
-						processing={processing === "cancel"}
-						processingText="Canceling"
-						variant="danger"
 					>
 						Cancel
-					</ActionButton>
+					</button>
 				</div>
 			</>
 		);
@@ -550,15 +548,13 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 						</div>
 					</div>
 				</div>
-				<ActionButton
+				<button
+					className="btn btn-danger"
 					disabled={processing !== undefined}
 					onClick={cancelDraft}
-					processing={processing === "cancel"}
-					processingText="Canceling"
-					variant="danger"
 				>
 					Cancel
-				</ActionButton>
+				</button>
 			</div>
 
 			{errorMessage ? <p className="text-danger">{errorMessage}</p> : null}

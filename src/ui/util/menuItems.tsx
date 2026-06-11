@@ -748,7 +748,7 @@ export const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 							godMode: true,
 							league: true,
 							commandPalette: true,
-							path: ["eighty_two_zero_draft"],
+							path: ["82-0_draft"],
 							text: "82-0 Draft",
 						},
 					] as MenuItemLink[])

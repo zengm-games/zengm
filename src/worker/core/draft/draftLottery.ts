@@ -340,7 +340,7 @@ export const getDraftLotteryProbs = (
 		}
 	}
 
-	const pickLayers: Map<bigint, number>[] = Array.from(
+	const pickLayers: (Map<bigint, number> | null)[] = Array.from(
 		{ length: numTeams + 1 },
 		() => new Map(),
 	);
@@ -472,11 +472,9 @@ export const getDraftLotteryProbs = (
 					const isBanned =
 						draftType === "nba2027" &&
 						((targetPick === 0 &&
-							draftLotteryResult.nba2027 &&
-							draftLotteryResult.nba2027.restricted1.includes(i)) ||
+							draftLotteryResult.nba2027?.restricted1.includes(i)) ||
 							(targetPick <= 4 &&
-								draftLotteryResult.nba2027 &&
-								draftLotteryResult.nba2027.restricted5.includes(i)));
+								draftLotteryResult.nba2027?.restricted5.includes(i)));
 
 					if (!isBanned && !(filledSlotsMask & (1 << targetPick))) {
 						break;
@@ -500,7 +498,7 @@ export const getDraftLotteryProbs = (
 				);
 			}
 		}
-		pickLayers[currentLayer] = null as any;
+		pickLayers[currentLayer] = null;
 	}
 
 	return {

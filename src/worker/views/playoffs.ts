@@ -7,6 +7,10 @@ import type {
 	PlayoffSeries,
 } from "../../common/types.ts";
 import { orderTeams } from "../util/orderTeams.ts";
+import {
+	getScheduledGamesForSeries,
+	seriesIsNotOver,
+} from "../core/season/playoffSchedule.ts";
 
 type SeriesTeam = {
 	abbrev: string;
@@ -52,6 +56,11 @@ type TeamToEdit = {
 	record: string;
 };
 
+type ForceSeriesInfo = {
+	forceWin?: number;
+	numGames: number;
+};
+
 const updatePlayoffs = async (
 	inputs: ViewInput<"playoffs">,
 	updateEvents: UpdateEvents,
@@ -65,6 +74,7 @@ const updatePlayoffs = async (
 				matchup: [number, number];
 				rowspan: number;
 			}[][];
+			forceSeries: (ForceSeriesInfo | undefined)[][];
 			numGamesPlayoffSeries: number[];
 			numGamesToWinSeries: number[];
 			playIns: PlayIns;
@@ -155,6 +165,48 @@ const updatePlayoffs = async (
 		const numGamesPlayoffSeries = g.get("numGamesPlayoffSeries", inputs.season);
 
 		const playoffsByConf = await season.getPlayoffsByConf(inputs.season);
+
+		const forceSeries: (ForceSeriesInfo | undefined)[][] = series.map((row) =>
+			row.map(() => undefined),
+		);
+		if (
+			finalMatchups &&
+			g.get("godMode") &&
+			inputs.season === g.get("season") &&
+			playoffSeries &&
+			playoffSeries.currentRound >= 0
+		) {
+			const round = playoffSeries.currentRound;
+			const numGamesToWin = helpers.numGamesToWinSeries(
+				numGamesPlayoffSeries[round],
+			);
+			const schedule = await idb.cache.schedule.getAll();
+			for (const [i, matchup] of series[round]!.entries()) {
+				if (
+					matchup.away &&
+					seriesIsNotOver(matchup.home, matchup.away, numGamesToWin)
+				) {
+					const games = getScheduledGamesForSeries(
+						schedule,
+						matchup.home.tid,
+						matchup.away.tid,
+					);
+
+					if (games.length > 0) {
+						const forceWins = new Set(games.map((game) => game.forceWin));
+						const forceWin =
+							forceWins.size === 1
+								? forceWins.values().next().value
+								: undefined;
+
+						forceSeries[round]![i] = {
+							forceWin: typeof forceWin === "number" ? forceWin : undefined,
+							numGames: games.length,
+						};
+					}
+				}
+			}
+		}
 
 		let canEdit =
 			finalMatchups && g.get("godMode") && inputs.season === g.get("season");
@@ -252,6 +304,7 @@ const updatePlayoffs = async (
 			canEdit,
 			confNames,
 			finalMatchups,
+			forceSeries,
 			matchups,
 			numGamesPlayoffSeries,
 			numGamesToWinSeries: numGamesPlayoffSeries.map(

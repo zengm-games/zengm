@@ -1,5 +1,30 @@
 import { RESTRICTED_1_PICK, RESTRICTED_5_PICK } from "./nba2027.ts";
-import type { DraftLotteryResult, DraftType } from "../../../common/types.ts";
+import type {
+	DraftLotteryResult,
+	DraftLotteryResultArray,
+	DraftType,
+} from "../../../common/types.ts";
+import helpers from "../../util/helpers.ts";
+
+// This just came from testing on my machine to see where it gets slower than 1 second to generate the probabilities. nba2027 basically never triggers this because numEquivalenceClasses is low
+const draftLotteryProbsTooSlow = (
+	numEquivalenceClasses: number,
+	numToPick: number,
+) => {
+	if (numToPick === 1) {
+		return false;
+	} else if (numToPick === 2) {
+		return numEquivalenceClasses > 150;
+	} else if (numToPick === 3) {
+		return numEquivalenceClasses > 80;
+	} else if (numToPick === 4) {
+		return numEquivalenceClasses > 45;
+	} else if (numToPick === 5) {
+		return numEquivalenceClasses > 30;
+	}
+
+	return numEquivalenceClasses * Math.sqrt(numToPick) > 55;
+};
 
 // This is needed to handle restricted1/restricted5 for nba2027 easily, otherwise could just be an array
 class PickIndexes {
@@ -190,6 +215,54 @@ export const simLottery = (
 	return pickIndexes.indexes;
 };
 
+// If it's too slow to calculate the precise probability, just estimate
+const monteCarloLotteryProbs = (
+	draftType: DraftType,
+	result: DraftLotteryResultArray,
+	numToPick: number,
+	nba2027Restrictions: DraftLotteryResult["nba2027"],
+) => {
+	const ITERATIONS = 100000;
+
+	const probs: number[][] = [];
+
+	const chances = result.map((row) => row.chances);
+
+	for (let i = 0; i < ITERATIONS; i++) {
+		const result = simLottery(
+			draftType,
+			chances,
+			numToPick,
+			nba2027Restrictions,
+			undefined,
+		);
+		for (let j = 0; j < result.length; j++) {
+			const k = result[j]!;
+			probs[k] ??= [];
+			probs[k][j] ??= 0;
+			// @ts-expect-error
+			probs[k][j] += 1 / ITERATIONS;
+		}
+	}
+
+	// First column we can trivially calculate
+	const firstPickChances = result.map((row, i) =>
+		nba2027Restrictions &&
+		(nba2027Restrictions.restricted1.includes(i) ||
+			nba2027Restrictions.restricted5.includes(i))
+			? 0
+			: row.chances,
+	);
+	const firstPickChancesSum = helpers.sum(firstPickChances);
+	for (const [i, chances] of firstPickChances.entries()) {
+		if (chances > 0) {
+			probs[i]![0] = chances / firstPickChancesSum;
+		}
+	}
+
+	return probs;
+};
+
 export const getDraftLotteryProbs = (
 	draftLotteryResult: DraftLotteryResult<boolean> | undefined,
 	draftType: DraftType | "dummy" | undefined,
@@ -294,6 +367,24 @@ export const getDraftLotteryProbs = (
 		equivalenceMap.get(key)!.teamIndices.push(i);
 	}
 	const equivalenceClasses = Array.from(equivalenceMap.values());
+
+	const tooSlow = draftLotteryProbsTooSlow(
+		equivalenceClasses.length,
+		numToPick,
+	);
+
+	if (tooSlow) {
+		// Estimate probs
+		return {
+			tooSlow,
+			probs: monteCarloLotteryProbs(
+				draftType,
+				result,
+				numToPick,
+				draftLotteryResult.nba2027,
+			),
+		};
+	}
 
 	for (const equivalenceClass of equivalenceClasses) {
 		for (const idx of equivalenceClass.teamIndices) {
@@ -499,7 +590,7 @@ export const getDraftLotteryProbs = (
 	}
 
 	return {
-		tooSlow: false,
+		tooSlow,
 		probs,
 	};
 };

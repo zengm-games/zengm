@@ -60,6 +60,11 @@ const getState = () => {
 		started: draft !== undefined,
 		...(draft ?? {
 			currentTeam: undefined,
+			lifelinesUsed: {
+				newSeason: false,
+				newTeam: false,
+				unlock: false,
+			},
 			picks: [],
 			round: 1,
 		}),
@@ -188,6 +193,11 @@ export const start = async () => {
 		round: 1,
 		picks: [],
 		currentTeam: undefined,
+		lifelinesUsed: {
+			newTeam: false,
+			newSeason: false,
+			unlock: false,
+		},
 	};
 	try {
 		await loadRandomTeam();
@@ -197,6 +207,24 @@ export const start = async () => {
 		local.eightyTwoZeroDraft = undefined;
 		throw error;
 	}
+
+	return getState();
+};
+
+export const useLifeline = async (
+	lifeline: "newTeam" | "newSeason" | "unlock",
+) => {
+	const draft = local.eightyTwoZeroDraft;
+	if (!draft) {
+		throw new Error("No 82-0 Draft in progress");
+	}
+
+	if (draft.lifelinesUsed[lifeline]) {
+		throw new Error("Lifeline already used");
+	}
+
+	draft.lifelinesUsed[lifeline] = true;
+	await loadRandomTeam();
 
 	return getState();
 };

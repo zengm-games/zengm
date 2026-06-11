@@ -37,6 +37,11 @@ const updateEightyTwoZeroDraft = async () => {
 		started: draft !== undefined,
 		...(draft ?? {
 			currentTeam: undefined,
+			lifelinesUsed: {
+				newSeason: false,
+				newTeam: false,
+				unlock: false,
+			},
 			picks: [],
 			round: 1,
 		}),

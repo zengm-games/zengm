@@ -1376,6 +1376,11 @@ export type Local = {
 			teamAbbrev: string;
 			season: number;
 		}[];
+		lifelinesUsed: {
+			newTeam: boolean;
+			newSeason: boolean;
+			unlock: boolean;
+		};
 		currentTeam:
 			| ({
 					disabledCount: number;

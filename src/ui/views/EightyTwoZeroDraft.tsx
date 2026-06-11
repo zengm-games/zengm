@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
 import { PHASE } from "../../common/constants.ts";
 import { getCols } from "../../common/getCols.ts";
 import type { Phase, View } from "../../common/types.ts";
@@ -17,6 +17,7 @@ import { useLocal } from "../util/local.ts";
 import { processPlayerStats } from "../util/processPlayerStats.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { applyRealTeamInfos } from "./NewLeague/index.tsx";
+import { HelpPopover } from "../components/HelpPopover.tsx";
 
 const NUM_ROUNDS = 12;
 
@@ -154,6 +155,77 @@ const DraftedPlayersTable = ({
 				hideMenuToo
 			/>
 		</div>
+	);
+};
+
+const Lifelines = ({
+	currentTeam,
+	setDraftState,
+	setErrorMessage,
+	used,
+}: {
+	currentTeam: {
+		abbrev: string;
+		season: number;
+	};
+	setDraftState: any;
+	setErrorMessage: Dispatch<SetStateAction<string | undefined>>;
+	used: {
+		newTeam: boolean;
+		newSeason: boolean;
+		unlock: boolean;
+	};
+}) => {
+	const lifelines: {
+		key: keyof typeof used;
+		text: string;
+	}[] = [
+		{
+			key: "newTeam",
+			text: `New team fom ${currentTeam.season}`,
+		},
+		{
+			key: "newSeason",
+			text: `New season fom ${currentTeam.abbrev}`,
+		},
+		{
+			key: "unlock",
+			text: `Unlock all players`,
+		},
+	];
+
+	return (
+		<>
+			<h3>
+				Lifelines{" "}
+				<HelpPopover>
+					<p>You can use each lifeline once per draft</p>
+				</HelpPopover>
+			</h3>
+			<div className="d-flex gap-2">
+				{lifelines.map(({ key, text }) => {
+					return (
+						<button
+							key={key}
+							className="btn btn-secondary"
+							disabled={used[key]}
+							onClick={async () => {
+								setErrorMessage(undefined);
+								try {
+									setDraftState(
+										await toWorker("eightyTwoZeroDraft", "useLifeline", key),
+									);
+								} catch (error) {
+									setErrorMessage(error.message);
+								}
+							}}
+						>
+							{text}
+						</button>
+					);
+				})}
+			</div>
+		</>
 	);
 };
 
@@ -475,6 +547,15 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 			</div>
 
 			{errorMessage ? <p className="text-danger">{errorMessage}</p> : null}
+
+			<div className="alert alert-info">
+				<Lifelines
+					currentTeam={currentTeam}
+					setDraftState={setDraftState}
+					setErrorMessage={setErrorMessage}
+					used={draftState.lifelinesUsed}
+				/>
+			</div>
 
 			<DataTable
 				cols={cols}

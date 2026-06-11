@@ -174,7 +174,7 @@ const Lifelines = ({
 		unlock: boolean;
 	};
 }) => {
-	const somePlayersAreLocked = currentTeam.disabledCount > 0;
+	const somePlayersAreLocked = currentTeam.lockedCount > 0;
 
 	const lifelines: {
 		key: keyof typeof used;
@@ -243,6 +243,10 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 	const [draftState, setDraftState] = useState(initialDraftState);
 	const [errorMessage, setErrorMessage] = useState<string | undefined>();
 	const [processing, setProcessing] = useState<Processing | undefined>();
+	const [lockTopPlayers, setLockTopPlayers] = useLocalStorageState(
+		"lockTopPlayers",
+		{ defaultValue: true },
+	);
 	const [eliteBallKnowerMode, setEliteBallKnowerMode] = useLocalStorageState(
 		"eliteBallKnowerMode",
 		{ defaultValue: false },
@@ -258,7 +262,10 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 		setProcessing("start");
 		try {
 			setDraftState(
-				await toWorker("eightyTwoZeroDraft", "start", eliteBallKnowerMode),
+				await toWorker("eightyTwoZeroDraft", "start", {
+					eliteBallKnowerMode,
+					lockTopPlayers,
+				}),
 			);
 		} catch (error) {
 			setErrorMessage(error.message);
@@ -330,10 +337,18 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 		return (
 			<div style={{ maxWidth: MAX_WIDTH }}>
 				<p>
-					In an "82-0 Draft", each round shows one random real historical{" "}
-					{process.env.SPORT} team. Draft one player from that roster. Every two
-					rounds, one more of the team's top players is locked, so later rounds
-					force you deeper into the roster.
+					This feature is loosely based on the popular game{" "}
+					<a href="https://www.82-0.com/" target="_blank">
+						82-0
+					</a>
+					. In each round of the draft, you are shown one random real historical
+					team to select a player from.
+				</p>
+
+				<p>
+					Every two rounds, one more of the team's top players is locked, so
+					later rounds force you deeper into the rosters (you can disable this
+					below).
 				</p>
 
 				<p>
@@ -343,6 +358,21 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 
 				{errorMessage ? <p className="text-danger">{errorMessage}</p> : null}
 
+				<div className="mb-1">
+					<div className="form-check mb-0">
+						<label className="form-check-label">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								checked={lockTopPlayers}
+								onChange={() => {
+									setLockTopPlayers((enabled) => !enabled);
+								}}
+							/>
+							Lock top players as draft progresses
+						</label>
+					</div>
+				</div>
 				<div className="d-flex mb-3 align-items-center">
 					<div className="form-check mb-0">
 						<label className="form-check-label">
@@ -436,7 +466,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 	);
 
 	const rows: DataTableRow[] = currentTeam.players.map((p, i) => {
-		const locked = i < currentTeam.disabledCount;
+		const locked = draftState.lockTopPlayers && i < currentTeam.lockedCount;
 		const alreadyDrafted = p.srID !== undefined && draftedSrIDs.has(p.srID);
 		const disabled = locked || alreadyDrafted || processing !== undefined;
 

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
 	countPickablePlayers,
-	getDisabledCount,
+	getLockedCount,
 	getPickValidationError,
 } from "./eightyTwoZeroDraftHelpers.ts";
 
@@ -20,20 +20,20 @@ const players = [
 	{ srID: "l" },
 ];
 
-describe("getDisabledCount", () => {
+describe("getLockedCount", () => {
 	test("locks one more top player every two rounds", () => {
-		expect(getDisabledCount(1)).toBe(0);
-		expect(getDisabledCount(2)).toBe(0);
-		expect(getDisabledCount(3)).toBe(1);
-		expect(getDisabledCount(4)).toBe(1);
-		expect(getDisabledCount(12)).toBe(5);
+		expect(getLockedCount(1)).toBe(0);
+		expect(getLockedCount(2)).toBe(0);
+		expect(getLockedCount(3)).toBe(1);
+		expect(getLockedCount(4)).toBe(1);
+		expect(getLockedCount(12)).toBe(5);
 	});
 });
 describe("getPickValidationError", () => {
 	test("rejects duplicate srID picks", () => {
 		expect(
 			getPickValidationError({
-				disabledCount: 0,
+				lockedCount: 0,
 				pickIndex: 1,
 				picks: [{ p: { srID: "b" } }],
 				players,
@@ -44,7 +44,7 @@ describe("getPickValidationError", () => {
 	test("rejects out-of-range picks", () => {
 		expect(
 			getPickValidationError({
-				disabledCount: 0,
+				lockedCount: 0,
 				pickIndex: 12,
 				picks: [],
 				players,
@@ -55,7 +55,7 @@ describe("getPickValidationError", () => {
 	test("rejects locked picks", () => {
 		expect(
 			getPickValidationError({
-				disabledCount: getDisabledCount(5),
+				lockedCount: getLockedCount(5),
 				pickIndex: 1,
 				picks: [],
 				players,

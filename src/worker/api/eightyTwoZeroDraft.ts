@@ -14,7 +14,7 @@ import { g, helpers, local, toUI, updatePlayMenu } from "../util/index.ts";
 import { getRealTeamInfo } from "../views/newLeague.ts";
 import {
 	countPickablePlayers,
-	getDisabledCount,
+	getLockedCount,
 	getPickValidationError,
 } from "./eightyTwoZeroDraftHelpers.ts";
 
@@ -127,14 +127,14 @@ const fetchRandomTeam = async (
 
 	return {
 		...t,
-		disabledCount: getDisabledCount(local.eightyTwoZeroDraft!.round),
+		lockedCount: getLockedCount(local.eightyTwoZeroDraft!.round),
 		players,
 		season,
 	};
 };
 
-const getCappedDisabledCount = (round: number, players: PlayerWithoutKey[]) => {
-	return Math.min(getDisabledCount(round), Math.max(players.length - 1, 0));
+const getCappedLockedCount = (round: number, players: PlayerWithoutKey[]) => {
+	return Math.min(getLockedCount(round), Math.max(players.length - 1, 0));
 };
 
 const loadRandomTeam = async (lifeline?: "newSeason" | "newTeam") => {
@@ -147,7 +147,7 @@ const loadRandomTeam = async (lifeline?: "newSeason" | "newTeam") => {
 
 	let fallback:
 		| (EightyTwoZeroDraftTeam & {
-				disabledCount: number;
+				lockedCount: number;
 		  })
 		| undefined;
 
@@ -167,7 +167,7 @@ const loadRandomTeam = async (lifeline?: "newSeason" | "newTeam") => {
 
 		const pickableCount = countPickablePlayers(
 			currentTeam.players,
-			getDisabledCount(draft.round),
+			getLockedCount(draft.round),
 			draft.picks,
 		);
 		if (pickableCount > 0) {
@@ -178,7 +178,7 @@ const loadRandomTeam = async (lifeline?: "newSeason" | "newTeam") => {
 			return;
 		}
 
-		const cappedDisabledCount = getCappedDisabledCount(
+		const cappedLockedCount = getCappedLockedCount(
 			draft.round,
 			currentTeam.players,
 		);
@@ -186,7 +186,7 @@ const loadRandomTeam = async (lifeline?: "newSeason" | "newTeam") => {
 			!fallback &&
 			countPickablePlayers(
 				currentTeam.players,
-				cappedDisabledCount,
+				cappedLockedCount,
 				draft.picks,
 			) > 0
 		) {
@@ -195,7 +195,7 @@ const loadRandomTeam = async (lifeline?: "newSeason" | "newTeam") => {
 			}
 			fallback = {
 				...currentTeam,
-				disabledCount: cappedDisabledCount,
+				lockedCount: cappedLockedCount,
 			};
 		}
 	}
@@ -218,13 +218,21 @@ export const DEFAULT_EIGHTY_TWO_ZERO_DRAFT = {
 		newSeason: false,
 		unlock: false,
 	},
+	lockTopPlayers: true,
 };
 
-const start = async (eliteBallKnowerMode: boolean) => {
+const start = async ({
+	eliteBallKnowerMode,
+	lockTopPlayers,
+}: {
+	eliteBallKnowerMode: boolean;
+	lockTopPlayers: boolean;
+}) => {
 	checkCanUse();
 
 	local.eightyTwoZeroDraft = helpers.deepCopy(DEFAULT_EIGHTY_TWO_ZERO_DRAFT);
 	local.eightyTwoZeroDraft.eliteBallKnowerMode = eliteBallKnowerMode;
+	local.eightyTwoZeroDraft.lockTopPlayers = lockTopPlayers;
 	try {
 		await loadRandomTeam();
 	} catch (error) {
@@ -252,7 +260,7 @@ const useLifeline = async (lifeline: "newTeam" | "newSeason" | "unlock") => {
 		draft.lifelinesUsed[lifeline] = true;
 	} else {
 		if (draft.currentTeam) {
-			draft.currentTeam.disabledCount = 0;
+			draft.currentTeam.lockedCount = 0;
 			draft.lifelinesUsed.unlock = true;
 		}
 	}
@@ -284,7 +292,7 @@ const pick = async ({
 	}
 
 	const validationError = getPickValidationError({
-		disabledCount: currentTeam.disabledCount,
+		lockedCount: draft.lockTopPlayers ? currentTeam.lockedCount : 0,
 		pickIndex,
 		picks: draft.picks,
 		players: currentTeam.players,

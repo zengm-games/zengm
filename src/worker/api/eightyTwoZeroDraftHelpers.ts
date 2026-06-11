@@ -6,7 +6,7 @@ type PickLike = {
 	p: PlayerLike;
 };
 
-export const getDisabledCount = (round: number) => {
+export const getLockedCount = (round: number) => {
 	return Math.floor((round - 1) / 2);
 };
 
@@ -19,21 +19,21 @@ export const isDuplicateSrID = (p: PlayerLike, picks: readonly PickLike[]) => {
 
 export const countPickablePlayers = (
 	players: readonly PlayerLike[],
-	disabledCount: number,
+	lockedCount: number,
 	picks: readonly PickLike[],
 ) => {
 	return players.filter((p, i) => {
-		return i >= disabledCount && !isDuplicateSrID(p, picks);
+		return i >= lockedCount && !isDuplicateSrID(p, picks);
 	}).length;
 };
 
 export const getPickValidationError = ({
-	disabledCount,
+	lockedCount,
 	pickIndex,
 	picks,
 	players,
 }: {
-	disabledCount: number;
+	lockedCount: number;
 	pickIndex: number;
 	picks: readonly PickLike[];
 	players: readonly PlayerLike[];
@@ -46,7 +46,7 @@ export const getPickValidationError = ({
 		return "Invalid player";
 	}
 
-	if (pickIndex < disabledCount) {
+	if (pickIndex < lockedCount) {
 		return "This player is locked";
 	}
 

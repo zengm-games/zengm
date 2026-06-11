@@ -1377,6 +1377,7 @@ export type Local = {
 			season: number;
 		}[];
 		eliteBallKnowerMode: boolean;
+		lockTopPlayers: boolean;
 		lifelinesUsed: {
 			newTeam: boolean;
 			newSeason: boolean;
@@ -1384,7 +1385,7 @@ export type Local = {
 		};
 		currentTeam:
 			| ({
-					disabledCount: number;
+					lockedCount: number;
 					players: PlayerWithoutKey[];
 					season: number;
 					seasonInfo?: {

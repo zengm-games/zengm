@@ -1,73 +1,13 @@
 import { RESTRICTED_1_PICK, RESTRICTED_5_PICK } from "./nba2027.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
 import type {
 	DraftLotteryResult,
 	DraftLotteryResultArray,
 	DraftType,
 } from "../../../common/types.ts";
-import { precomputedMlb2022 } from "./precomputedDraftLotteryProbs.ts";
 import helpers from "../../util/helpers.ts";
 
-class MultiDimensionalRange {
-	initial: boolean;
-	start: number;
-	end: number;
-	dimensions: number;
-
-	constructor(end: number, dimensions: number) {
-		this.initial = true;
-		this.start = 0;
-		this.end = end;
-		this.dimensions = dimensions;
-	}
-
-	[Symbol.iterator]() {
-		const value = Array(this.dimensions).fill(this.start);
-
-		const getNextValue = (dimension: number): boolean => {
-			if (value[dimension] < this.end - 1) {
-				if (this.initial) {
-					this.initial = false;
-				} else {
-					value[dimension] += 1;
-				}
-				return false;
-			}
-
-			if (dimension === 0) {
-				return true;
-			}
-
-			for (let i = dimension; i < this.dimensions; i++) {
-				value[i] = this.start;
-			}
-			return getNextValue(dimension - 1);
-		};
-
-		return {
-			next: () => {
-				const dimension = this.dimensions - 1;
-				const done = getNextValue(dimension);
-				if (done) {
-					return {
-						done,
-					};
-				}
-
-				return {
-					value,
-					done,
-				};
-			},
-		};
-	}
-}
-
-const draftLotteryProbsTooSlow = (numTeams: number, numToPick: number) => {
-	const count = numTeams ** numToPick;
-
-	// This will happen for baseball (18 teams, 6 picks) except for the hardcoded default
-	return count >= 1e7;
+const draftLotteryProbsTooSlow = (numToPick: number) => {
+	return numToPick > 20;
 };
 
 // This is needed to handle restricted1/restricted5 for nba2027 easily, otherwise could just be an array
@@ -332,10 +272,6 @@ export const getDraftLotteryProbs = (
 	const result = draftLotteryResult.result;
 
 	const probs: number[][] = [];
-	const totalChances = result.reduce(
-		(total, { chances }) => total + chances,
-		0,
-	);
 
 	if (draftType === "randomLottery") {
 		for (let i = 0; i < result.length; i++) {
@@ -371,31 +307,19 @@ export const getDraftLotteryProbs = (
 		};
 	}
 
-	// const tooSlow = draftLotteryProbsTooSlow(result.length, numToPick);
-	const tooSlow = false;
+	const tooSlow = draftLotteryProbsTooSlow(numToPick);
 
 	if (tooSlow) {
-		if (
-			isSport("baseball") &&
-			result.length === 18 &&
-			draftType === "mlb2022"
-		) {
-			return {
-				tooSlow: false,
-				probs: precomputedMlb2022,
-			};
-		} else {
-			// Estimate probs
-			return {
-				tooSlow,
-				probs: monteCarloLotteryProbs(
-					draftType,
-					result,
-					numToPick,
-					draftLotteryResult.nba2027,
-				),
-			};
-		}
+		// Estimate probs
+		return {
+			tooSlow,
+			probs: monteCarloLotteryProbs(
+				draftType,
+				result,
+				numToPick,
+				draftLotteryResult.nba2027,
+			),
+		};
 	}
 
 	const numTeams = result.length;
@@ -403,6 +327,8 @@ export const getDraftLotteryProbs = (
 	for (let i = 0; i < result.length; i++) {
 		probs[i] = new Array(numTeams).fill(undefined);
 	}
+
+	// Clever dynamic programming and bitmask stuff below comes from wiigeneral https://discord.com/channels/@me/1511922269084188723/1514152028039811153
 
 	let bottom3Mask = 0;
 	if (draftType === "nba2027") {

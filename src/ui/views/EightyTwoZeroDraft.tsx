@@ -48,7 +48,11 @@ const formatStat = (
 	return typeof value === "number" ? helpers.roundStat(value, stat) : value;
 };
 
-const getPlayerNameLabels = (p: EightyTwoZeroDraftPlayer, season: number) => {
+const getPlayerNameLabels = (
+	p: EightyTwoZeroDraftPlayer,
+	season: number,
+	hideRatingsAndStats: boolean,
+) => {
 	const ratings = last(p.ratings);
 	const stats = p.stats.at(-1);
 
@@ -57,7 +61,7 @@ const getPlayerNameLabels = (p: EightyTwoZeroDraftPlayer, season: number) => {
 		firstName: p.firstName,
 		lastName: p.lastName,
 		jerseyNumber: stats?.jerseyNumber ?? p.jerseyNumber,
-		skills: ratings.skills,
+		skills: hideRatingsAndStats ? undefined : ratings.skills,
 		fullNames: true,
 		disableNameLink: true,
 		season,
@@ -133,7 +137,7 @@ const DraftedPlayersTable = ({
 					: undefined,
 			data: [
 				i + 1,
-				getPlayerNameLabels(pick.p, pick.season),
+				getPlayerNameLabels(pick.p, pick.season, false),
 				`${pick.season} ${pick.teamAbbrev}`,
 				...getPlayerTableData(pick.p, pick.season, stats, false),
 			],
@@ -497,7 +501,11 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 						Draft
 					</button>
 				),
-				getPlayerNameLabels(p, currentTeam.season),
+				getPlayerNameLabels(
+					p,
+					currentTeam.season,
+					draftState.eliteBallKnowerMode,
+				),
 				...getPlayerTableData(
 					p,
 					currentTeam.season,

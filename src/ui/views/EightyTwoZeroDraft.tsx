@@ -57,7 +57,7 @@ const getPlayerNameLabels = (
 	const stats = p.stats.at(-1);
 
 	return wrappedPlayerNameLabels({
-		pid: p.pid,
+		pid: hideRatingsAndStats ? undefined : p.pid,
 		firstName: p.firstName,
 		lastName: p.lastName,
 		jerseyNumber: stats?.jerseyNumber ?? p.jerseyNumber,

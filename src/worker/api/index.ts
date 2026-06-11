@@ -1736,19 +1736,13 @@ const getEightyTwoZeroDraftPlayer = (pid: number) => {
 		return;
 	}
 
-	const hasPid = (p: PlayerWithoutKey): p is Player => {
+	const hasPid = ({ p }: { p: PlayerWithoutKey }) => {
 		return p.pid === pid;
 	};
 
-	if (draft.currentTeam) {
-		for (const { p } of draft.currentTeam.players) {
-			if (p.pid === pid) {
-				return p;
-			}
-		}
-	}
-
-	return draft.picks.find((pick) => hasPid(pick.p))?.p;
+	return (
+		draft.currentTeam?.players.find(hasPid)?.p ?? draft.picks.find(hasPid)?.p
+	);
 };
 
 const getDiamondInfo = async (pid: number) => {

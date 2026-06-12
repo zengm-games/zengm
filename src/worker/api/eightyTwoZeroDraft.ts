@@ -451,7 +451,6 @@ const finalize = async () => {
 		await team.rosterAutoSort(g.get("userTid"), false);
 
 		local.eightyTwoZeroDraft = undefined;
-		await updatePlayMenu();
 		await toUI("realtimeUpdate", [["playerMovement"]]);
 
 		return getState();

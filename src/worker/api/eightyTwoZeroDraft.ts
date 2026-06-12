@@ -16,7 +16,7 @@ import { last, orderBy, range } from "../../common/utils.ts";
 import { player, realRosters, team } from "../core/index.ts";
 import oldAbbrevTo2020BBGMAbbrev from "../core/realRosters/oldAbbrevTo2020BBGMAbbrev.ts";
 import { idb } from "../db/index.ts";
-import { g, helpers, local, toUI, updatePlayMenu } from "../util/index.ts";
+import { g, helpers, local, toUI } from "../util/index.ts";
 import { getRealTeamInfo } from "../views/newLeague.ts";
 import {
 	countPickablePlayers,

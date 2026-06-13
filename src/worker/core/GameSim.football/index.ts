@@ -975,38 +975,34 @@ class GameSim extends GameSimBase {
 		}
 
 		if (clockAtEndOfPlay > 0 && !twoMinuteWarningHappening) {
-			// Timeouts - small chance at any time
-			if (Math.random() < 0.01) {
-				this.doTimeout(this.o, false);
-			} else if (Math.random() < 0.003) {
-				this.doTimeout(this.d, false);
-			}
-
-			// Timeouts - late in game when clock is running
-			if (this.kickoffAfterEndOfPeriod(quarter) && this.isClockRunning) {
-				const diff = this.team[this.o].stat.pts - this.team[this.d].stat.pts;
-
-				const finalPeriod = quarter >= this.numPeriods;
-				if (finalPeriod) {
-					// No point in the 4th quarter of a blowout
-					if (diff < 24) {
-						if (diff > 0) {
-							// If offense is winning, defense uses timeouts when near the end
-							if (this.clock < 2.5) {
-								this.doTimeout(this.d, true);
-							}
-						} else {
-							if (this.clock < 1.5) {
-								// If offense is losing or tied, offense uses timeouts when even nearer the end
-								this.doTimeout(this.o, true);
-							}
-						}
-					}
-				} else {
-					// Before halftime, less aggressive and don't care about score
-					if (this.clock < 1.5) {
-						this.doTimeout(this.o, true);
-					}
+			const distance = 100 - this.scrimmage;
+			const oDecision = this.shouldCallTimeout(
+				this.o,
+				true,
+				playType,
+				this.twoMinuteWarningHappened,
+				quarter,
+				distance,
+				clockAtEndOfPlay,
+				this.down,
+				this.toGo,
+			);
+			if (oDecision !== undefined) {
+				this.doTimeout(this.o, oDecision === "toStopClock");
+			} else {
+				const dDecision = this.shouldCallTimeout(
+					this.d,
+					false,
+					playType,
+					this.twoMinuteWarningHappened,
+					quarter,
+					distance,
+					clockAtEndOfPlay,
+					this.down,
+					this.toGo,
+				);
+				if (dDecision !== undefined) {
+					this.doTimeout(this.d, dDecision === "toStopClock");
 				}
 			}
 		}
@@ -1400,7 +1396,7 @@ class GameSim extends GameSimBase {
 			if (currentDown !== 4) {
 				return undefined;
 			}
-			const OFFENSE_TIMEOUT_PROBABILITY = 0.030;
+			const OFFENSE_TIMEOUT_PROBABILITY = 0.03;
 			const DEFENSE_TIMEOUT_PROBABILITY = 0.045;
 			if (teamHasPossession) {
 				if (yardsToGo <= 2) {

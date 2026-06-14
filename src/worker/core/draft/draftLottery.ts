@@ -11,7 +11,10 @@ const draftLotteryProbsTooSlow = (
 	numEquivalenceClasses: number,
 	numToPick: number,
 ) => {
-	if (numToPick === 1) {
+	if (numEquivalenceClasses <= 11) {
+		// This handles all nba2027 cases
+		return false;
+	} else if (numToPick === 1) {
 		return false;
 	} else if (numToPick === 2) {
 		return numEquivalenceClasses > 150;
@@ -279,7 +282,7 @@ const nChooseK = (n: number, k: number) => {
 
 	let res = 1;
 	for (let i = 1; i <= k; i++) {
-		res = (res * (n - k + i)) / i;
+		res *= (n - k + i) / i;
 	}
 	return res;
 };
@@ -436,7 +439,7 @@ export const getDraftLotteryProbs = (
 	pickLayers[0]!.set(0n, 1.0);
 
 	const lowerHalfMask = (1n << numTeamsBigInt) - 1n;
-	const classProbs: (number[] | undefined)[] = equivalenceClasses.map(() =>
+	const classProbs: number[][] = equivalenceClasses.map(() =>
 		new Array(numTeams).fill(0),
 	);
 
@@ -466,30 +469,24 @@ export const getDraftLotteryProbs = (
 
 			if (draftType !== "nba2027" && currentLayer === numToPick) {
 				// For the later picks, account for how many times each team was "skipped" (lower lottery team won lottery and moved ahead) and keep track of those probabilities
-				const skipped = new Array(equivalenceClasses.length).fill(0);
+				const skipped: number[] = new Array(equivalenceClasses.length).fill(0);
 
-				for (
-					let equivalenceClassIdx = 0;
-					equivalenceClassIdx < equivalenceClasses.length;
-					equivalenceClassIdx++
-				) {
-					const equivalenceClass = equivalenceClasses[equivalenceClassIdx]!;
+				for (const [i, equivalenceClass] of equivalenceClasses.entries()) {
 					for (const teamIdx of equivalenceClass.teamIndices) {
 						if (drawnTeamsMask & (1n << BigInt(teamIdx))) {
-							skipped[equivalenceClassIdx]++;
+							skipped[i]!++;
 						}
 					}
 				}
 
 				// Place all remaining undrawn teams into the remaining slots in strict standings order
 				let skippedPicksByPriorClasses = 0;
-				for (
-					let equivalenceClassIdx = 0;
-					equivalenceClassIdx < equivalenceClasses.length;
-					equivalenceClassIdx++
-				) {
-					const equivalenceClass = equivalenceClasses[equivalenceClassIdx]!;
-					const skipSize = skipped[equivalenceClassIdx]!;
+				for (const [equivalenceClass, skipSize] of Iterator.zip(
+					[equivalenceClasses, skipped],
+					{
+						mode: "strict",
+					},
+				)) {
 					const classSize = equivalenceClass.teamIndices.length;
 					const probNotPicked = (classSize - skipSize) / classSize;
 
@@ -570,10 +567,8 @@ export const getDraftLotteryProbs = (
 					// Skip however spots many the bottom 3 teams forcefully occupied in the top 12
 					const nextLayerID = currentLayer + skipCount;
 					const nextKey = (nextFilledMask << numTeamsBigInt) | nextDrawnMask;
-					pickLayers[nextLayerID]!.set(
-						nextKey,
-						(pickLayers[nextLayerID]!.get(nextKey) ?? 0) + prob,
-					);
+					const nextPickLayer = pickLayers[nextLayerID]!;
+					nextPickLayer.set(nextKey, (nextPickLayer.get(nextKey) ?? 0) + prob);
 					continue;
 				}
 			}
@@ -598,19 +593,16 @@ export const getDraftLotteryProbs = (
 			}
 
 			// Use the first active team per class
-			for (
-				let equivalenceClassIdx = 0;
-				equivalenceClassIdx < equivalenceClasses.length;
-				equivalenceClassIdx++
-			) {
-				const activeTeams = activeTeamsPerClass[equivalenceClassIdx]!;
-				if (activeTeams.length === 0) {
+			for (const [equivalenceClass, activeTeams, classProb] of Iterator.zip(
+				[equivalenceClasses, activeTeamsPerClass, classProbs],
+				{
+					mode: "strict",
+				},
+			)) {
+				const repTeamIdx = activeTeams[0];
+				if (repTeamIdx === undefined) {
 					continue;
 				}
-
-				const equivalenceClass = equivalenceClasses[equivalenceClassIdx]!;
-
-				const repTeamIdx = activeTeams[0]!;
 
 				// The probability is the chances a class has multiplied by the teams in the class divided by total chances of all undrawn teams
 				const branchProb =
@@ -630,8 +622,7 @@ export const getDraftLotteryProbs = (
 				}
 
 				if (targetPick < numTeams) {
-					classProbs[equivalenceClassIdx]![targetPick]! +=
-						branchProb * activeTeams.length;
+					classProb[targetPick]! += branchProb * activeTeams.length;
 				}
 
 				const nextDrawnMask = drawnTeamsMask | (1n << BigInt(repTeamIdx));
@@ -640,10 +631,10 @@ export const getDraftLotteryProbs = (
 				const nextLayerID = currentLayer + 1;
 
 				// Multiply the probability by the amount of teams in the class
-				pickLayers[nextLayerID]!.set(
+				const nextPickLayer = pickLayers[nextLayerID]!;
+				nextPickLayer.set(
 					nextKey,
-					(pickLayers[nextLayerID]!.get(nextKey) ?? 0) +
-						branchProb * activeTeams.length,
+					(nextPickLayer.get(nextKey) ?? 0) + branchProb * activeTeams.length,
 				);
 			}
 		}
@@ -651,15 +642,15 @@ export const getDraftLotteryProbs = (
 	}
 
 	// Divide the probabilities among each class equally
-	for (
-		let equivalenceClassIdx = 0;
-		equivalenceClassIdx < equivalenceClasses.length;
-		equivalenceClassIdx++
-	) {
-		const equivalenceClass = equivalenceClasses[equivalenceClassIdx]!;
+	for (const [equivalenceClass, classProb] of Iterator.zip(
+		[equivalenceClasses, classProbs],
+		{
+			mode: "strict",
+		},
+	)) {
 		const classSize = equivalenceClass.teamIndices.length;
 		for (let slot = 0; slot < numToPick; slot++) {
-			const totalSlotProb = classProbs[equivalenceClassIdx]![slot]!;
+			const totalSlotProb = classProb[slot]!;
 			if (totalSlotProb > 0) {
 				const probPerTeam = totalSlotProb / classSize;
 				for (const teamIdx of equivalenceClass.teamIndices) {

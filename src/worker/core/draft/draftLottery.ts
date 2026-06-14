@@ -263,6 +263,43 @@ const monteCarloLotteryProbs = (
 	return probs;
 };
 
+// Calculating the binomial coefficient might be slower than log-gamma transformations?
+const nChooseK = (n: number, k: number) => {
+	// The number of ways you can pick k items is the same as how many ways you can leave n - k items behind
+	if (k > n / 2) {
+		k = n - k;
+	}
+
+	if (k < 0 || k > n) {
+		return 0;
+	}
+	if (k === 0 || n === k) {
+		return 1;
+	}
+
+	let res = 1;
+	for (let i = 1; i <= k; i++) {
+		res = (res * (n - k + i)) / i;
+	}
+	return res;
+};
+
+/**
+ * Returns probability of drawing 'k' successes from a sample 'N',
+ * where the population 'K' contains 'n' total successes.
+ * Much faster than enumerating over every state to determine who jumped up because it's combinatorial
+ */
+const hypergeometricPMF = (
+	k: number, // Successes within sample
+	N: number, // Total size
+	K: number, // Total successes
+	n: number, // Sample size
+) => {
+	const numerator = nChooseK(K, k) * nChooseK(N - K, n - k);
+	const denominator = nChooseK(N, n);
+	return denominator === 0 ? 0 : numerator / denominator;
+};
+
 export const getDraftLotteryProbs = (
 	draftLotteryResult: DraftLotteryResult<boolean> | undefined,
 	draftType: DraftType | "dummy" | undefined,
@@ -347,14 +384,12 @@ export const getDraftLotteryProbs = (
 		const isRestricted5 = draftLotteryResult.nba2027?.restricted5.includes(i);
 		const chances = result[i]!.chances;
 
-		// Equivalences only exist in nba2027
 		const key =
-			draftType === "nba2027"
-				? (chances << 3) |
-					((isBottom3 ? 1 : 0) << 2) |
-					((isRestricted1 ? 1 : 0) << 1) |
-					(isRestricted5 ? 1 : 0)
-				: i;
+			(chances << 3) |
+			((isBottom3 ? 1 : 0) << 2) |
+			((isRestricted1 ? 1 : 0) << 1) |
+			(isRestricted5 ? 1 : 0);
+
 		if (!equivalenceMap.has(key)) {
 			equivalenceMap.set(key, {
 				chances,
@@ -429,23 +464,67 @@ export const getDraftLotteryProbs = (
 				continue;
 			}
 
-			if (draftType !== "nba2027" && currentLayer >= numToPick) {
-				let targetSlot = currentPick;
-				// Place all remaining undrawn teams into the remaining slots in strict standings order
-				for (let i = 0; i < numTeams; i++) {
-					if (!(drawnTeamsMask & (1n << BigInt(i)))) {
-						while (
-							targetSlot < numTeams &&
-							filledSlotsMask & (1n << BigInt(targetSlot))
-						) {
-							targetSlot++;
-						}
+			if (draftType !== "nba2027" && currentLayer === numToPick) {
+				// For the later picks, account for how many times each team was "skipped" (lower lottery team won lottery and moved ahead) and keep track of those probabilities
+				const skipped = new Array(equivalenceClasses.length).fill(0);
 
-						if (targetSlot < numTeams) {
-							classProbs[i]![targetSlot]! += prob;
+				for (
+					let equivalenceClassIdx = 0;
+					equivalenceClassIdx < equivalenceClasses.length;
+					equivalenceClassIdx++
+				) {
+					const equivalenceClass = equivalenceClasses[equivalenceClassIdx]!;
+					for (const teamIdx of equivalenceClass.teamIndices) {
+						if (drawnTeamsMask & (1n << BigInt(teamIdx))) {
+							skipped[equivalenceClassIdx]++;
 						}
-						targetSlot++;
 					}
+				}
+
+				// Place all remaining undrawn teams into the remaining slots in strict standings order
+				let skippedPicksByPriorClasses = 0;
+				for (
+					let equivalenceClassIdx = 0;
+					equivalenceClassIdx < equivalenceClasses.length;
+					equivalenceClassIdx++
+				) {
+					const equivalenceClass = equivalenceClasses[equivalenceClassIdx]!;
+					const skipSize = skipped[equivalenceClassIdx]!;
+					const classSize = equivalenceClass.teamIndices.length;
+					const probNotPicked = (classSize - skipSize) / classSize;
+
+					if (probNotPicked > 0) {
+						for (let t = 0; t < classSize; t++) {
+							const teamIdx = equivalenceClass.teamIndices[t]!;
+
+							const teamsWithBetterRank = t;
+							const maxJumps = Math.min(skipSize, teamsWithBetterRank);
+
+							for (let jumps = 0; jumps <= maxJumps; jumps++) {
+								// Given that a team didn't jump up into the lottery, (the numToPick picks) calculate the probability that X teams ahead in the standings did jump
+								// For example: To find the probability of the team with the 5th best odds getting the 7th pick, calculate the probability of 2 worse teams than them jumping
+								const probXTeamsJumped = hypergeometricPMF(
+									jumps,
+									classSize - 1,
+									teamsWithBetterRank,
+									skipSize,
+								);
+
+								// Multiply the probability of this team not getting picked by the probability of how many teams needed to jump for the team to get this pick
+								const branchProb = prob * probNotPicked * probXTeamsJumped;
+								const betterRankedTeamsLeft = teamsWithBetterRank - jumps;
+
+								const skippedPickIdx =
+									numToPick +
+									skippedPicksByPriorClasses +
+									betterRankedTeamsLeft;
+
+								probs[teamIdx]![skippedPickIdx] =
+									(probs[teamIdx]![skippedPickIdx] ?? 0) + branchProb;
+							}
+						}
+					}
+					skippedPicksByPriorClasses += classSize - skipSize;
 				}
 				continue;
 			}
@@ -471,11 +550,12 @@ export const getDraftLotteryProbs = (
 					for (let i = 0; i < numTeams; i++) {
 						if (remainingBottom3Mask & (1n << BigInt(i))) {
 							const equivalenceClass = equivalenceMap.get(i)!;
-							const classIdx = equivalenceClasses.indexOf(equivalenceClass);
+							const equivalenceClassIdx =
+								equivalenceClasses.indexOf(equivalenceClass);
 
 							for (const slotIdx of emptySlots) {
 								if (slotIdx < numTeams) {
-									classProbs[classIdx]![slotIdx]! += probsPerTeam;
+									classProbs[equivalenceClassIdx]![slotIdx]! += probsPerTeam;
 								}
 							}
 						}
@@ -492,7 +572,7 @@ export const getDraftLotteryProbs = (
 					const nextKey = (nextFilledMask << numTeamsBigInt) | nextDrawnMask;
 					pickLayers[nextLayerID]!.set(
 						nextKey,
-						(pickLayers[nextLayerID]!.get(nextKey) || 0) + prob,
+						(pickLayers[nextLayerID]!.get(nextKey) ?? 0) + prob,
 					);
 					continue;
 				}
@@ -562,7 +642,7 @@ export const getDraftLotteryProbs = (
 				// Multiply the probability by the amount of teams in the class
 				pickLayers[nextLayerID]!.set(
 					nextKey,
-					(pickLayers[nextLayerID]!.get(nextKey) || 0) +
+					(pickLayers[nextLayerID]!.get(nextKey) ?? 0) +
 						branchProb * activeTeams.length,
 				);
 			}
@@ -578,7 +658,7 @@ export const getDraftLotteryProbs = (
 	) {
 		const equivalenceClass = equivalenceClasses[equivalenceClassIdx]!;
 		const classSize = equivalenceClass.teamIndices.length;
-		for (let slot = 0; slot < numTeams; slot++) {
+		for (let slot = 0; slot < numToPick; slot++) {
 			const totalSlotProb = classProbs[equivalenceClassIdx]![slot]!;
 			if (totalSlotProb > 0) {
 				const probPerTeam = totalSlotProb / classSize;

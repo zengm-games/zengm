@@ -103,11 +103,15 @@ const addSeasonInfoToTeams = async <
 			return p2;
 		});
 
-	const oldSeason = g.get("season");
-	const oldNumActiveTeams = g.get("numActiveTeams");
-	const oldPlayerOvrMean = local.playerOvrMean;
-	const oldPlayerOvrStd = local.playerOvrStd;
-	const oldPlayerOvrMeanStdStale = local.playerOvrMeanStdStale;
+	const oldInfo = options.preservePlayerOvrContext
+		? {
+				season: g.get("season"),
+				numActiveTeams: g.get("numActiveTeams"),
+				playerOvrMean: local.playerOvrMean,
+				playerOvrStd: local.playerOvrStd,
+				playerOvrMeanStdStale: local.playerOvrMeanStdStale,
+			}
+		: undefined;
 
 	try {
 		g.setWithoutSavingToDB("season", options.season);
@@ -120,12 +124,12 @@ const addSeasonInfoToTeams = async <
 			await player.updateValues(p);
 		}
 	} finally {
-		if (options.preservePlayerOvrContext) {
-			g.setWithoutSavingToDB("season", oldSeason);
-			g.setWithoutSavingToDB("numActiveTeams", oldNumActiveTeams);
-			local.playerOvrMean = oldPlayerOvrMean;
-			local.playerOvrStd = oldPlayerOvrStd;
-			local.playerOvrMeanStdStale = oldPlayerOvrMeanStdStale;
+		if (oldInfo) {
+			g.setWithoutSavingToDB("season", oldInfo.season);
+			g.setWithoutSavingToDB("numActiveTeams", oldInfo.numActiveTeams);
+			local.playerOvrMean = oldInfo.playerOvrMean;
+			local.playerOvrStd = oldInfo.playerOvrStd;
+			local.playerOvrMeanStdStale = oldInfo.playerOvrMeanStdStale;
 		}
 	}
 

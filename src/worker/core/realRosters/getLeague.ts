@@ -39,7 +39,7 @@ import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts"
 const FREE_AGENTS_SEASON = 2020;
 
 // Set true after the lottery happens, then false again after the playoffs end
-const INCLUDE_LATEST_SEASON_DRAFT_LOTTERY_RESULTS = true;
+const INCLUDE_LATEST_SEASON_DRAFT_LOTTERY_RESULTS = false;
 
 const getLeague = async (options: GetLeagueOptions) => {
 	if (!isSport("basketball")) {

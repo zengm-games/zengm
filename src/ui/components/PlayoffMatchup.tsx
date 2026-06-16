@@ -242,7 +242,13 @@ const ChampionshipBanner = ({
 	t: SeriesTeam;
 }) => {
 	return (
-		<div>
+		<div
+			style={{
+				position: "absolute",
+				top: "100%",
+				left: 0,
+			}}
+		>
 			<svg
 				fill="none"
 				preserveAspectRatio="xMidYMid meet"
@@ -361,10 +367,9 @@ export const PlayoffMatchup = ({
 				? series.away
 				: undefined
 		: undefined;
-	console.log(bannerTeam);
 
 	return (
-		<>
+		<div className="position-relative">
 			<ul className="playoff-matchup border-bottom">
 				<Team
 					expandTeamName={expandTeamNames}
@@ -396,6 +401,6 @@ export const PlayoffMatchup = ({
 			{bannerTeam ? (
 				<ChampionshipBanner season={season} t={bannerTeam} />
 			) : null}
-		</>
+		</div>
 	);
 };

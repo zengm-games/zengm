@@ -374,11 +374,10 @@ export const getDraftLotteryProbs = (
 		}
 	>();
 
-	const bottom3IDs = new Set(result.slice(0, 3).map((t) => t.originalTid));
 	let bottom3Mask = 0n;
 
 	for (let i = 0; i < numTeams; i++) {
-		const isBottom3 = bottom3IDs.has(result[i]!.originalTid);
+		const isBottom3 = i < 3;
 		if (isBottom3) {
 			bottom3Mask |= 1n << BigInt(i);
 		}

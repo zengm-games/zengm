@@ -302,9 +302,10 @@ const ChampionshipBanner = ({
 					>
 						{t.imgURL || t.imgURLSmall ? (
 							<img
-								className="mw-100 mh-100"
+								className="mh-100"
 								src={t.imgURL ?? t.imgURLSmall}
 								alt=""
+								style={{ maxWidth: "75%" }}
 							/>
 						) : null}
 					</div>

@@ -166,7 +166,7 @@ const getMostXTeamSeasons = async ({
 					if (matchup.home.tid === ts.tid) {
 						ts.seed = matchup.home.seed;
 						break;
-					} else if (matchup.away && matchup.away.tid === ts.tid) {
+					} else if (matchup.away?.tid === ts.tid) {
 						ts.seed = matchup.away.seed;
 						break;
 					}

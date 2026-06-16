@@ -567,10 +567,7 @@ const getLeague = async (options: GetLeagueOptions) => {
 
 					for (const [i, round] of seasonPlayoffSeries.series.entries()) {
 						for (const matchup of round) {
-							if (
-								(matchup.away && matchup.away.tid === t.tid) ||
-								matchup.home.tid === t.tid
-							) {
+							if (matchup.away?.tid === t.tid || matchup.home.tid === t.tid) {
 								if (i === 0) {
 									teamSeason.clinchedPlayoffs = "x";
 								}

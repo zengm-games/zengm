@@ -1,11 +1,5 @@
 import clsx from "clsx";
-import type { Ref } from "react";
-type Props = {
-	className?: string | null;
-	children: any;
-	nonfluid?: boolean;
-	ref?: Ref<HTMLDivElement>;
-};
+import type { CSSProperties, Ref } from "react";
 
 // This used to be needed to handle event propagation for touch events, when SideBar was swipeable
 export const ResponsiveTableWrapper = ({
@@ -13,7 +7,14 @@ export const ResponsiveTableWrapper = ({
 	children,
 	nonfluid,
 	ref,
-}: Props) => {
+	style,
+}: {
+	className?: string | null;
+	children: any;
+	nonfluid?: boolean;
+	ref?: Ref<HTMLDivElement>;
+	style?: CSSProperties;
+}) => {
 	return (
 		<div
 			className={clsx(
@@ -24,6 +25,7 @@ export const ResponsiveTableWrapper = ({
 				className,
 			)}
 			ref={ref}
+			style={style}
 		>
 			{children}
 		</div>

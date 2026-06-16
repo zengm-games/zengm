@@ -349,7 +349,7 @@ export const PlayoffMatchup = ({
 	}
 
 	const homeWon = !series.away || series.home.won === numGamesToWinSeries;
-	const awayWon = !!series.away && series.away.won === numGamesToWinSeries;
+	const awayWon = series.away?.won === numGamesToWinSeries;
 	const showPts =
 		!!series.away &&
 		series.away.pts !== undefined &&

@@ -153,7 +153,7 @@ export const getUpcoming = async ({
 						won: series.home.won,
 						lost: series.away ? series.away.won : 0,
 					};
-				} else if (series.away && series.away.tid === tid) {
+				} else if (series.away?.tid === tid) {
 					playoffs = {
 						seed: series.away.seed,
 						won: series.away.won,

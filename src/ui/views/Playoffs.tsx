@@ -3,7 +3,7 @@ import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import { range } from "../../common/utils.ts";
 import { PlayoffMatchup } from "../components/PlayoffMatchup.tsx";
@@ -52,6 +52,32 @@ const Playoffs = ({
 				numGamesPlayoffSeriesReflected.length - 1 - i
 			] = undefined;
 		}
+	}
+
+	// Championship banner is placed with position relative, which overflows the ResponsiveTableWrapper in some cases unless this height is manually specified
+	const tableRef = useRef<HTMLTableElement>(null);
+	const [minTableHeight, setMinTableHeight] = useState(0);
+	{
+		let showingBanner = false;
+		if (numRounds === numGamesPlayoffSeries.length) {
+			const finals = series.at(-1)?.[0];
+			if (finals) {
+				const toWin = numGamesToWinSeries.at(-1);
+				const homeWon = !finals.away || finals.home.won === toWin;
+				const awayWon = finals.away?.won === toWin;
+				if (homeWon || awayWon) {
+					showingBanner = true;
+				}
+			}
+		}
+		useLayoutEffect(() => {
+			if (tableRef.current) {
+				const tableHeight = tableRef.current.scrollHeight;
+				setMinTableHeight(tableHeight);
+			} else {
+				setMinTableHeight(0);
+			}
+		}, [season, showingBanner]);
 	}
 
 	if (numRounds === 0) {
@@ -154,8 +180,11 @@ const Playoffs = ({
 				</h2>
 			) : null}
 
-			<ResponsiveTableWrapper className={showFooter ? "mb-1" : "mb-3"}>
-				<table className="table-sm w-100">
+			<ResponsiveTableWrapper
+				className={showFooter ? "mb-1" : "mb-3"}
+				style={{ minHeight: minTableHeight, overflowY: "clip" }}
+			>
+				<table className="table-sm w-100" ref={tableRef}>
 					<tbody>
 						{matchups.map((row, i) => (
 							<tr key={i}>

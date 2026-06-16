@@ -1587,7 +1587,7 @@ const getExportFilename = async (type: "league" | "players") => {
 								} else {
 									filename += "_bye";
 								}
-							} else if (series.away && series.away.tid === userTid) {
+							} else if (series.away?.tid === userTid) {
 								filename += `_${series.away.won}-${series.home.won}`;
 							}
 						}

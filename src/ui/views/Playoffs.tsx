@@ -71,12 +71,20 @@ const Playoffs = ({
 			}
 		}
 		useLayoutEffect(() => {
-			if (tableRef.current) {
-				const tableHeight = tableRef.current.scrollHeight;
-				setMinTableHeight(tableHeight);
-			} else {
-				setMinTableHeight(0);
-			}
+			const updateHeight = () => {
+				if (tableRef.current) {
+					const tableHeight = tableRef.current.scrollHeight;
+					setMinTableHeight(tableHeight);
+				} else {
+					setMinTableHeight(0);
+				}
+			};
+			updateHeight();
+
+			window.addEventListener("optimizedResize", updateHeight);
+			return () => {
+				window.removeEventListener("optimizedResize", updateHeight);
+			};
 		}, [season, showingBanner]);
 	}
 

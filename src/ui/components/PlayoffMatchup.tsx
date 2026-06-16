@@ -256,7 +256,7 @@ const ChampionshipBanner = ({
 				width="100%"
 				xmlns="http://www.w3.org/2000/svg"
 			>
-				{[14, 89.75, 165.5].map((x, i) => {
+				{[14, 165.5].map((x, i) => {
 					return (
 						<rect
 							key={i}

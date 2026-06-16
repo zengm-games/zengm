@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 type SeriesTeam = {
 	abbrev: string;
 	cid: number;
+	colors: [string, string, string];
 	imgURL?: string;
 	imgURLSmall?: string;
 	pendingPlayIn?: true;
@@ -233,7 +234,85 @@ const Team = ({
 	);
 };
 
+const ChampionshipBanner = ({
+	season,
+	t,
+}: {
+	season: number;
+	t: SeriesTeam;
+}) => {
+	return (
+		<div>
+			<svg
+				fill="none"
+				preserveAspectRatio="xMidYMid meet"
+				viewBox="0 0 182 247"
+				width="100%"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				{[14, 89.75, 165.5].map((x, i) => {
+					return (
+						<rect
+							key={i}
+							style={{ fill: "var(--bs-border-color)" }}
+							height="16.3951"
+							width="2.5"
+							x={x}
+						></rect>
+					);
+				})}
+				<path
+					d="M12 24.5C12 23.6716 12.6716 23 13.5 23H168.5C169.328 23 170 23.6716 170 24.5V222.874L91 247L12 222.874V24.5Z"
+					fill={t.colors[0]}
+				></path>
+				<path
+					d="M14 221.394V25H168V221.394L91 244.909L14 221.394Z"
+					stroke={t.colors[2]}
+					strokeWidth="4"
+				></path>
+				<rect
+					fill={t.colors[0]}
+					height="16"
+					rx="6"
+					stroke={t.colors[2]}
+					strokeWidth="3"
+					width="164"
+					x="9"
+					y="16"
+				></rect>
+				<foreignObject
+					height="100%"
+					width="100%"
+					x="0"
+					y="50"
+					style={{ color: t.colors[1] }}
+				>
+					<div className="text-center" style={{ fontSize: 36, lineHeight: 1 }}>
+						{season}
+					</div>
+					<div
+						className="d-flex align-items-center justify-content-center my-3"
+						style={{ height: 74 }}
+					>
+						{t.imgURL || t.imgURLSmall ? (
+							<img
+								className="mw-100 mh-100"
+								src={t.imgURL ?? t.imgURLSmall}
+								alt=""
+							/>
+						) : null}
+					</div>
+					<div className="text-center" style={{ fontSize: 16, lineHeight: 1 }}>
+						League Champions
+					</div>
+				</foreignObject>
+			</svg>
+		</div>
+	);
+};
+
 export const PlayoffMatchup = ({
+	bannerForWinner,
 	editing,
 	expandTeamNames = false,
 	extraHighlight,
@@ -242,6 +321,7 @@ export const PlayoffMatchup = ({
 	series,
 	userTid,
 }: {
+	bannerForWinner?: boolean;
 	editing?: Editing;
 	expandTeamNames?: boolean;
 	extraHighlight?: boolean;
@@ -274,34 +354,48 @@ export const PlayoffMatchup = ({
 	const gid =
 		series.gids && series.gids.length > 0 ? series.gids.at(-1) : undefined;
 
+	const bannerTeam = bannerForWinner
+		? homeWon
+			? series.home
+			: awayWon
+				? series.away
+				: undefined
+		: undefined;
+	console.log(bannerTeam);
+
 	return (
-		<ul className="playoff-matchup border-bottom">
-			<Team
-				expandTeamName={expandTeamNames}
-				extraHighlight={extraHighlight}
-				team={series.home}
-				season={season}
-				showPts={showPts}
-				showWon={showWon}
-				userTid={userTid}
-				won={homeWon}
-				lost={awayWon}
-				gid={gid}
-				editing={editing}
-			/>
-			<Team
-				expandTeamName={expandTeamNames}
-				extraHighlight={extraHighlight}
-				team={series.away}
-				season={season}
-				showPts={showPts}
-				showWon={showWon}
-				userTid={userTid}
-				won={awayWon}
-				lost={homeWon}
-				gid={gid}
-				editing={editing}
-			/>
-		</ul>
+		<>
+			<ul className="playoff-matchup border-bottom">
+				<Team
+					expandTeamName={expandTeamNames}
+					extraHighlight={extraHighlight}
+					team={series.home}
+					season={season}
+					showPts={showPts}
+					showWon={showWon}
+					userTid={userTid}
+					won={homeWon}
+					lost={awayWon}
+					gid={gid}
+					editing={editing}
+				/>
+				<Team
+					expandTeamName={expandTeamNames}
+					extraHighlight={extraHighlight}
+					team={series.away}
+					season={season}
+					showPts={showPts}
+					showWon={showWon}
+					userTid={userTid}
+					won={awayWon}
+					lost={homeWon}
+					gid={gid}
+					editing={editing}
+				/>
+			</ul>
+			{bannerTeam ? (
+				<ChampionshipBanner season={season} t={bannerTeam} />
+			) : null}
+		</>
 	);
 };

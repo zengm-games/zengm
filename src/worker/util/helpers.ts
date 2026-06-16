@@ -1,4 +1,4 @@
-import { PLAYER } from "../../common/constants.ts";
+import { DEFAULT_TEAM_COLORS, PLAYER } from "../../common/constants.ts";
 import { helpers as commonHelpers } from "../../common/helpers.ts";
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
@@ -30,9 +30,10 @@ const augmentSeries = async (
 	const ties = hasTies(season);
 
 	const setAll = (obj: PlayoffSeriesTeam) => {
-		obj.abbrev = g.get("teamInfoCache")[obj.tid]?.abbrev;
-		obj.region = g.get("teamInfoCache")[obj.tid]?.region;
-		obj.imgURL = g.get("teamInfoCache")[obj.tid]?.imgURL;
+		const t = g.get("teamInfoCache")[obj.tid];
+		obj.abbrev = t?.abbrev;
+		obj.region = t?.region;
+		obj.imgURL = t?.imgURL;
 		obj.regularSeason = {
 			won: 0,
 			lost: 0,
@@ -40,7 +41,7 @@ const augmentSeries = async (
 			otl: g.get("otl", season) ? 0 : undefined,
 		};
 
-		const imgURLSmall = g.get("teamInfoCache")[obj.tid]?.imgURLSmall;
+		const imgURLSmall = t?.imgURLSmall;
 		if (imgURLSmall) {
 			obj.imgURLSmall = imgURLSmall;
 		}
@@ -62,6 +63,12 @@ const augmentSeries = async (
 			if (g.get("otl", season)) {
 				obj.regularSeason.otl = teamSeason.otl;
 			}
+
+			obj.colors = teamSeason.colors;
+		}
+
+		if (!obj.colors) {
+			obj.colors = DEFAULT_TEAM_COLORS;
 		}
 	};
 

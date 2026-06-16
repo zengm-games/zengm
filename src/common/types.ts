@@ -1445,6 +1445,7 @@ export type Local = {
 export type PlayoffSeriesTeam = {
 	abbrev?: string;
 	cid: number;
+	colors?: [string, string, string];
 	imgURL?: string;
 	imgURLSmall?: string;
 	pendingPlayIn?: true;

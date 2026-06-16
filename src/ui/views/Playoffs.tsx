@@ -163,10 +163,13 @@ const Playoffs = ({
 									if (j + 1 > maxNumCols) {
 										maxNumCols = j + 1;
 									}
+									const finals =
+										m.matchup[0] === numGamesPlayoffSeries.length - 1;
 
 									return (
 										<td key={j} rowSpan={m.rowspan} style={tdStyle}>
 											<PlayoffMatchup
+												bannerForWinner={finals}
 												numGamesToWinSeries={numGamesToWinSeries[m.matchup[0]]}
 												season={season}
 												series={series[m.matchup[0]]![m.matchup[1]]}

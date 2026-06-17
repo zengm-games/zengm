@@ -2,7 +2,7 @@ import { scaleLinear } from "@visx/scale";
 import { AxisBottom, AxisLeft } from "@visx/axis";
 import { Circle, LinePath } from "@visx/shape";
 import { Group } from "@visx/group";
-import { ParentSize } from "@visx/responsive";
+import { useParentSize } from "@visx/responsive";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
 import { useRef, type ReactNode } from "react";
 
@@ -161,6 +161,7 @@ const ScatterPlot = <Row extends unknown>({
 
 	return (
 		<div>
+			hi
 			<svg
 				width={totalWidth}
 				height={HEIGHT + margin.top + margin.bottom}
@@ -297,11 +298,11 @@ const ScatterPlot = <Row extends unknown>({
 export const StatGraph = <Row extends unknown>(
 	props: ScatterPlotProps<Row>,
 ) => {
+	const { parentRef, width } = useParentSize();
+
 	return (
-		<div className="position-relative">
-			<ParentSize>
-				{(parent) => <ScatterPlot<Row> width={parent.width} {...props} />}
-			</ParentSize>
+		<div className="position-relative" ref={parentRef}>
+			<ScatterPlot<Row> width={width} {...props} />
 		</div>
 	);
 };

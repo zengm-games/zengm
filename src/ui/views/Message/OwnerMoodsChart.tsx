@@ -1,7 +1,7 @@
 import { AxisBottom } from "@visx/axis";
 import { curveMonotoneX } from "@visx/curve";
 import { Group } from "@visx/group";
-import { ParentSize } from "@visx/responsive";
+import { useParentSize } from "@visx/responsive";
 import { LinePath } from "@visx/shape";
 import { scaleLinear, scalePoint } from "@visx/scale";
 import { Text } from "@visx/text";
@@ -156,8 +156,20 @@ const OwnerMoodsChart = ({
 		}
 	};
 
+	const { parentRef, ...parent } = useParentSize();
+
+	const width = parent.width - margin.left - margin.right;
+	const xScale = scalePoint({
+		domain: seasons,
+		range: [0, width],
+	});
+
 	return (
-		<div className="position-relative mt-n1">
+		<div
+			className="position-relative mt-n1"
+			ref={parentRef}
+			style={{ maxWidth: MAX_WIDTH }}
+		>
 			<HelpPopover
 				title="Owner Mood History"
 				style={{
@@ -182,105 +194,90 @@ const OwnerMoodsChart = ({
 				</p>
 				<p>The owner only starts judging you two years after you're hired.</p>
 			</HelpPopover>
-			<ParentSize
-				parentSizeStyles={{
-					maxWidth: MAX_WIDTH,
-				}}
+			<svg
+				width={width + margin.left + margin.right}
+				height={HEIGHT + margin.top + margin.bottom}
 			>
-				{(parent) => {
-					const width = parent.width - margin.left - margin.right;
-					const xScale = scalePoint({
-						domain: seasons,
-						range: [0, width],
-					});
-					return (
-						<svg
-							width={width + margin.left + margin.right}
-							height={HEIGHT + margin.top + margin.bottom}
-						>
-							<Group transform={`translate(${margin.left},${margin.top})`}>
-								<ReferenceLine
-									x={xScale.range()}
-									y={[yScale(3), yScale(3)]}
-									color="var(--bs-success)"
-									text="Perfect"
-									textPosition="above"
-								/>
-								<ReferenceLine
-									x={xScale.range()}
-									y={[yScale(-1), yScale(-1)]}
-									color="var(--bs-danger)"
-									text="You're fired!"
-									textPosition="below"
-								/>
-								<ReferenceLine
-									x={xScale.range()}
-									y={[yScale(0), yScale(0)]}
-									color="var(--bs-secondary)"
-								/>
-								{lineInfos.map(({ key, color, width = 1 }) => {
-									const onMouseOver = (d: (typeof data)[number]) =>
-										key === "total"
-											? (event: MouseEvent<SVGElement>) => {
-													handleMouseOver(event, d);
-												}
-											: undefined;
-									const onMouseOut = key === "total" ? hideTooltip : undefined;
+				<Group transform={`translate(${margin.left},${margin.top})`}>
+					<ReferenceLine
+						x={xScale.range()}
+						y={[yScale(3), yScale(3)]}
+						color="var(--bs-success)"
+						text="Perfect"
+						textPosition="above"
+					/>
+					<ReferenceLine
+						x={xScale.range()}
+						y={[yScale(-1), yScale(-1)]}
+						color="var(--bs-danger)"
+						text="You're fired!"
+						textPosition="below"
+					/>
+					<ReferenceLine
+						x={xScale.range()}
+						y={[yScale(0), yScale(0)]}
+						color="var(--bs-secondary)"
+					/>
+					{lineInfos.map(({ key, color, width = 1 }) => {
+						const onMouseOver = (d: (typeof data)[number]) =>
+							key === "total"
+								? (event: MouseEvent<SVGElement>) => {
+										handleMouseOver(event, d);
+									}
+								: undefined;
+						const onMouseOut = key === "total" ? hideTooltip : undefined;
 
-									return (
-										<Fragment key={key}>
-											<LinePath
-												className="chart-line"
-												curve={curveMonotoneX}
-												data={data}
-												x={(d) => xScale(d.season) ?? 0}
-												y={(d) => yScale(d[key]) ?? 0}
-												stroke={color}
-												strokeWidth={width}
-											/>
-											{data.map((d, j) => {
-												return d.seasonInfo?.champ && key === "total" ? (
-													<text
-														key={j}
-														className="user-select-none fill-yellow"
-														x={xScale(d.season)}
-														y={yScale(d[key])}
-														fontSize={STAR_SIZE}
-														textAnchor="middle"
-														alignmentBaseline="middle"
-														onMouseOver={onMouseOver(d)}
-														onMouseOut={onMouseOut}
-													>
-														★
-													</text>
-												) : (
-													<circle
-														key={j}
-														className="fill-white"
-														r={3 * Math.sqrt(width)}
-														cx={xScale(d.season)}
-														cy={yScale(d[key])}
-														stroke={color}
-														strokeWidth={width}
-														onMouseOver={onMouseOver(d)}
-														onMouseOut={onMouseOut}
-													/>
-												);
-											})}
-										</Fragment>
+						return (
+							<Fragment key={key}>
+								<LinePath
+									className="chart-line"
+									curve={curveMonotoneX}
+									data={data}
+									x={(d) => xScale(d.season) ?? 0}
+									y={(d) => yScale(d[key]) ?? 0}
+									stroke={color}
+									strokeWidth={width}
+								/>
+								{data.map((d, j) => {
+									return d.seasonInfo?.champ && key === "total" ? (
+										<text
+											key={j}
+											className="user-select-none fill-yellow"
+											x={xScale(d.season)}
+											y={yScale(d[key])}
+											fontSize={STAR_SIZE}
+											textAnchor="middle"
+											alignmentBaseline="middle"
+											onMouseOver={onMouseOver(d)}
+											onMouseOut={onMouseOut}
+										>
+											★
+										</text>
+									) : (
+										<circle
+											key={j}
+											className="fill-white"
+											r={3 * Math.sqrt(width)}
+											cx={xScale(d.season)}
+											cy={yScale(d[key])}
+											stroke={color}
+											strokeWidth={width}
+											onMouseOver={onMouseOver(d)}
+											onMouseOut={onMouseOut}
+										/>
 									);
 								})}
-								<AxisBottom
-									axisClassName="chart-axis"
-									scale={xScale}
-									tickLength={5}
-									top={HEIGHT}
-								/>
-							</Group>
-						</svg>
-					);
-				}}
-			</ParentSize>
+							</Fragment>
+						);
+					})}
+					<AxisBottom
+						axisClassName="chart-axis"
+						scale={xScale}
+						tickLength={5}
+						top={HEIGHT}
+					/>
+				</Group>
+			</svg>
 			{tooltipOpen && tooltipData ? (
 				<TooltipWithBounds
 					key={tooltipData.season}

@@ -4,7 +4,7 @@ import { AxisBottom, AxisLeft } from "@visx/axis";
 import { curveMonotoneX } from "@visx/curve";
 import { localPoint } from "@visx/event";
 import { Group } from "@visx/group";
-import { ParentSize } from "@visx/responsive";
+import { useParentSize } from "@visx/responsive";
 import { LinePath } from "@visx/shape";
 import { scaleLinear } from "@visx/scale";
 import { useTooltip, TooltipWithBounds } from "@visx/tooltip";
@@ -75,125 +75,119 @@ const Chart = ({
 		}
 	};
 
+	const { parentRef, ...parent } = useParentSize();
+
+	const width = parent.width - margin.left - margin.right;
+	const xScale = scaleLinear({
+		domain: xDomain,
+		range: [0, width],
+	});
+
+	let xMarker: number;
+	if (phase < PHASE.REGULAR_SEASON) {
+		xMarker = xScale(season - 0.5);
+	} else if (phase === PHASE.REGULAR_SEASON) {
+		xMarker = xScale(season);
+	} else {
+		xMarker = xScale(season + 0.5);
+	}
+
 	return (
 		<div
 			className={clsx("position-relative", className)}
 			style={{
 				maxWidth: MAX_WIDTH,
 			}}
+			ref={parentRef}
 		>
 			<div className="text-center">{title}</div>
-			<ParentSize>
-				{(parent) => {
-					const width = parent.width - margin.left - margin.right;
-					const xScale = scaleLinear({
-						domain: xDomain,
-						range: [0, width],
-					});
+			<svg width={parent.width} height={HEIGHT + margin.top + margin.bottom}>
+				<Group transform={`translate(${margin.left},${margin.top})`}>
+					<ReferenceLine
+						x={xScale.range() as [number, number]}
+						y={
+							valueKey === "stat"
+								? [yScale(0), yScale(0)]
+								: [yScale(0.5), yScale(0.5)]
+						}
+						color="var(--bs-secondary)"
+					/>
+					<ReferenceLine
+						x={[xMarker, xMarker]}
+						y={yScale.range() as [number, number]}
+						color="var(--bs-danger)"
+						text="Trade"
+						textPosition="right"
+					/>
+					<AxisBottom
+						axisClassName="chart-axis"
+						numTicks={8}
+						scale={xScale}
+						tickFormat={String}
+						tickLength={5}
+						top={HEIGHT}
+					/>
+					<AxisLeft
+						axisClassName="chart-axis"
+						numTicks={5}
+						scale={yScale}
+						tickFormat={yTickFormat as any}
+						tickLength={5}
+					/>
+					{([0, 1] as const).map((i) => {
+						const filtered = seasonsToPlot.filter(
+							(row) => row.teams[i][valueKey] !== undefined,
+						);
 
-					let xMarker: number;
-					if (phase < PHASE.REGULAR_SEASON) {
-						xMarker = xScale(season - 0.5);
-					} else if (phase === PHASE.REGULAR_SEASON) {
-						xMarker = xScale(season);
-					} else {
-						xMarker = xScale(season + 0.5);
-					}
-
-					return (
-						<svg
-							width={parent.width}
-							height={HEIGHT + margin.top + margin.bottom}
-						>
-							<Group transform={`translate(${margin.left},${margin.top})`}>
-								<ReferenceLine
-									x={xScale.range() as [number, number]}
-									y={
-										valueKey === "stat"
-											? [yScale(0), yScale(0)]
-											: [yScale(0.5), yScale(0.5)]
-									}
-									color="var(--bs-secondary)"
+						return (
+							<Fragment key={i}>
+								<LinePath
+									className="chart-line"
+									curve={curveMonotoneX}
+									data={filtered}
+									x={(d) => xScale(d.season)}
+									y={(d) => yScale(d.teams[i][valueKey] ?? 0)}
+									stroke={colors[i]}
+									strokeWidth={STROKE_WIDTH}
 								/>
-								<ReferenceLine
-									x={[xMarker, xMarker]}
-									y={yScale.range() as [number, number]}
-									color="var(--bs-danger)"
-									text="Trade"
-									textPosition="right"
-								/>
-								<AxisBottom
-									axisClassName="chart-axis"
-									numTicks={8}
-									scale={xScale}
-									tickFormat={String}
-									tickLength={5}
-									top={HEIGHT}
-								/>
-								<AxisLeft
-									axisClassName="chart-axis"
-									numTicks={5}
-									scale={yScale}
-									tickFormat={yTickFormat as any}
-									tickLength={5}
-								/>
-								{([0, 1] as const).map((i) => {
-									const filtered = seasonsToPlot.filter(
-										(row) => row.teams[i][valueKey] !== undefined,
-									);
-
-									return (
-										<Fragment key={i}>
-											<LinePath
-												className="chart-line"
-												curve={curveMonotoneX}
-												data={filtered}
-												x={(d) => xScale(d.season)}
-												y={(d) => yScale(d.teams[i][valueKey] ?? 0)}
-												stroke={colors[i]}
-												strokeWidth={STROKE_WIDTH}
-											/>
-											{filtered.map((d, j) =>
-												d.teams[i].champ ? (
-													<text
-														key={j}
-														className="user-select-none fill-yellow"
-														x={xScale(d.season)}
-														y={yScale(d.teams[i][valueKey] ?? 0)}
-														fontSize={STAR_SIZE}
-														textAnchor="middle"
-														alignmentBaseline="middle"
-														onMouseOver={(event) =>
-															handleMouseOver(event, d.teams[i])
-														}
-														onMouseOut={hideTooltip}
-													>
-														★
-													</text>
-												) : (
-													<circle
-														key={j}
-														className="fill-white"
-														r={5 * Math.sqrt(STROKE_WIDTH)}
-														cx={xScale(d.season)}
-														cy={yScale(d.teams[i][valueKey] ?? 0)}
-														stroke={d.teams[i].champ ? colorChamp : colors[i]}
-														strokeWidth={STROKE_WIDTH}
-														onMouseOver={(event) =>
-															handleMouseOver(event, d.teams[i])
-														}
-														onMouseOut={hideTooltip}
-													/>
-												),
-											)}
-										</Fragment>
-									);
-								})}
-							</Group>
-						</svg>
-					);
-				}}
-			</ParentSize>
+								{filtered.map((d, j) =>
+									d.teams[i].champ ? (
+										<text
+											key={j}
+											className="user-select-none fill-yellow"
+											x={xScale(d.season)}
+											y={yScale(d.teams[i][valueKey] ?? 0)}
+											fontSize={STAR_SIZE}
+											textAnchor="middle"
+											alignmentBaseline="middle"
+											onMouseOver={(event) =>
+												handleMouseOver(event, d.teams[i])
+											}
+											onMouseOut={hideTooltip}
+										>
+											★
+										</text>
+									) : (
+										<circle
+											key={j}
+											className="fill-white"
+											r={5 * Math.sqrt(STROKE_WIDTH)}
+											cx={xScale(d.season)}
+											cy={yScale(d.teams[i][valueKey] ?? 0)}
+											stroke={d.teams[i].champ ? colorChamp : colors[i]}
+											strokeWidth={STROKE_WIDTH}
+											onMouseOver={(event) =>
+												handleMouseOver(event, d.teams[i])
+											}
+											onMouseOut={hideTooltip}
+										/>
+									),
+								)}
+							</Fragment>
+						);
+					})}
+				</Group>
+			</svg>
 			{tooltipOpen && tooltipData ? (
 				<TooltipWithBounds
 					key={`${tooltipData?.season}-${tooltipData?.abbrev}`}

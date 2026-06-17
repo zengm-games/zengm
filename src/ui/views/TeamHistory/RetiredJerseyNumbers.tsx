@@ -523,7 +523,7 @@ const RetiredJerseyNumbers = ({
 				)}
 				<div
 					className={clsx("d-flex", {
-						"mb-3": godMode || tid === userTid || pagination,
+						"mb-3": godMode || tid === userTid,
 					})}
 				>
 					{godMode || tid === userTid ? (

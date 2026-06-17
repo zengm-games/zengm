@@ -1,12 +1,14 @@
 import type { CSSProperties } from "react";
 
 export const ChampionshipBanner = ({
+	className,
 	hideRope,
 	hideText,
 	season,
 	style,
 	t,
 }: {
+	className?: string;
 	hideRope?: boolean;
 	hideText?: boolean;
 	season: number;
@@ -20,7 +22,7 @@ export const ChampionshipBanner = ({
 	const viewBox = hideRope ? "0 15 182 232" : "0 0 182 247";
 
 	return (
-		<div style={style}>
+		<div className={className} style={style}>
 			<svg
 				fill="none"
 				preserveAspectRatio="xMidYMid meet"

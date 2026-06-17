@@ -72,9 +72,7 @@ const TeamHistory = ({
 						tid={tid}
 						userTid={userTid}
 					/>
-					<HideableSection title="Championships">
-						<Championships history={history} />
-					</HideableSection>
+					<Championships history={history} />
 					<HideableSection title="Players">
 						<Players
 							godMode={godMode}

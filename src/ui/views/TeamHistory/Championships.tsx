@@ -1,5 +1,7 @@
 import type { View } from "../../../common/types.ts";
 import { ChampionshipBanner } from "../../components/ChampionshipBanner.tsx";
+import HideableSection from "../../components/HideableSection.tsx";
+import { helpers } from "../../util/helpers.ts";
 
 export const Championships = ({
 	history,
@@ -8,27 +10,32 @@ export const Championships = ({
 		(row) => row.playoffRoundsWon === row.numPlayoffRounds,
 	);
 
-	if (championshipRows.length === 0) {
-		return <p>None</p>;
-	}
+	const count = championshipRows.length;
 
 	return (
-		<div className="d-flex gap-2 mb-3">
-			{championshipRows.map((row) => {
-				return (
-					<ChampionshipBanner
-						key={row.season}
-						hideRope
-						hideText
-						season={row.season}
-						style={{ width: 90 }}
-						t={{
-							colors: row.colors,
-							imgURLSmall: row.imgURLSmall,
-						}}
-					/>
-				);
-			})}
-		</div>
+		<HideableSection title={helpers.plural(`${count} Championship`, count)}>
+			{count === 0 ? (
+				<p>None</p>
+			) : (
+				<div className="d-flex gap-2 overflow-auto mb-3">
+					{championshipRows.map((row) => {
+						return (
+							<ChampionshipBanner
+								key={row.season}
+								className="flex-shrink-0"
+								hideRope
+								hideText
+								season={row.season}
+								style={{ width: 90 }}
+								t={{
+									colors: row.colors,
+									imgURLSmall: row.imgURLSmall,
+								}}
+							/>
+						);
+					})}
+				</div>
+			)}
+		</HideableSection>
 	);
 };

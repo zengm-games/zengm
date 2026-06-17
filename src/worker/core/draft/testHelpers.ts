@@ -3,12 +3,12 @@ import sampleTiebreakers from "../../../test/fixtures/sampleTiebreakers.ts";
 import { resetCache, resetG } from "../../../test/helpers.ts";
 import { draft } from "../index.ts";
 import { idb } from "../../db/index.ts";
-import { g, helpers } from "../../util/index.ts";
+import { helpers } from "../../util/index.ts";
 import type { Team, TeamSeasonWithoutKey } from "../../../common/types.ts";
 import { DEFAULT_STADIUM_CAPACITY } from "../../../common/constants.ts";
 
 const getDraftTids = async () => {
-	await draft.genOrder(false);
+	await draft.genOrder(false, undefined, "nba1994");
 	const draftPicks = await draft.getOrder();
 	assert.strictEqual(draftPicks.length, 60);
 	return draftPicks.map((d) => d.originalTid);
@@ -17,7 +17,6 @@ const getDraftTids = async () => {
 const loadTeamSeasons = async () => {
 	resetG();
 	await resetCache();
-	g.setWithoutSavingToDB("draftType", "nba1994");
 
 	for (const st of sampleTiebreakers) {
 		const copied = helpers.deepCopy(st);

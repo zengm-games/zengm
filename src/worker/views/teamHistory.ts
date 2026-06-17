@@ -11,6 +11,7 @@ import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import { getPlayoffsByConfBySeason } from "./frivolitiesTeamSeasons.ts";
+import { DEFAULT_TEAM_COLORS } from "../../common/constants.ts";
 
 type PlayoffsByConfBySeason = Awaited<
 	ReturnType<typeof getPlayoffsByConfBySeason>
@@ -38,6 +39,9 @@ export const getHistoryTeam = (
 		tid: number;
 		abbrev: string;
 		note?: string;
+		colors: [string, string, string];
+		imgURL?: string;
+		imgURLSmall?: string;
 	}[] = [];
 
 	let totalWon = 0;
@@ -74,8 +78,14 @@ export const getHistoryTeam = (
 					: undefined,
 			tid: teamSeason.tid,
 			abbrev:
-				teamSeason.abbrev || g.get("teamInfoCache")[teamSeason.tid]!.abbrev,
+				teamSeason.abbrev ?? g.get("teamInfoCache")[teamSeason.tid]!.abbrev,
 			note: teamSeason.note,
+			colors: teamSeason.colors ?? DEFAULT_TEAM_COLORS,
+			imgURLSmall:
+				teamSeason.imgURLSmall ??
+				teamSeason.imgURL ??
+				g.get("teamInfoCache")[teamSeason.tid]?.imgURLSmall ??
+				g.get("teamInfoCache")[teamSeason.tid]?.imgURL,
 		});
 		totalWon += teamSeason.won;
 		totalLost += teamSeason.lost;

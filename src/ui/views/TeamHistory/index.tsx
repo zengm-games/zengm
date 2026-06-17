@@ -7,6 +7,7 @@ import Seasons from "./Seasons.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import HideableSection from "../../components/HideableSection.tsx";
 import { useLocal } from "../../util/local.ts";
+import { Championships } from "./Championships.tsx";
 
 const TeamHistory = ({
 	abbrev,
@@ -71,6 +72,9 @@ const TeamHistory = ({
 						tid={tid}
 						userTid={userTid}
 					/>
+					<HideableSection title="Championships">
+						<Championships history={history} />
+					</HideableSection>
 					<HideableSection title="Players">
 						<Players
 							godMode={godMode}

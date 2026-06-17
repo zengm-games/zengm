@@ -19,17 +19,9 @@ const HideableSectionButton = ({
 	</button>
 );
 
-const useShowSection = (
-	pageName: string | undefined,
-	title: string,
-	titleExtraKey?: string | number,
-) => {
-	let key =
+const useShowSection = (pageName: string | undefined, title: string) => {
+	const key =
 		pageName === undefined ? `show-${title}` : `show-${pageName}-${title}`;
-	if (titleExtraKey !== undefined) {
-		key += `-${titleExtraKey}`;
-	}
-
 	const [show, setShow] = useLocalStorageState(key, {
 		defaultValue: true,
 	});
@@ -48,7 +40,7 @@ const HideableSection = ({
 	pageName,
 	renderTitle,
 	title,
-	titleExtraKey,
+	titleKeyOverride,
 }: {
 	children: ReactNode;
 	className?: string;
@@ -57,15 +49,14 @@ const HideableSection = ({
 	// Undefind pagename is for backwards compatibility with original usage on player page
 	pageName?: string | undefined;
 	title: string;
-	titleExtraKey?: string | number;
+	titleKeyOverride?: string;
 
 	// Use this to override title for display, including the button. title is still needed for the localStorage key
 	renderTitle?: (show: boolean, hideableSectionButton: ReactNode) => ReactNode;
 }) => {
 	const [show, hideableSectionButton] = useShowSection(
 		pageName,
-		title,
-		titleExtraKey,
+		titleKeyOverride ?? title,
 	);
 
 	// z-index of 1 ensures that it is still clickable when used with datatable-negative-margin-top

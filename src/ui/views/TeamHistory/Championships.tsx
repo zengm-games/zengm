@@ -13,7 +13,10 @@ export const Championships = ({
 	const count = championshipRows.length;
 
 	return (
-		<HideableSection title={helpers.plural(`${count} Championship`, count)}>
+		<HideableSection
+			title={helpers.plural(`${count} Championship`, count)}
+			titleKeyOverride="Championships"
+		>
 			{count === 0 ? (
 				<p>None</p>
 			) : (

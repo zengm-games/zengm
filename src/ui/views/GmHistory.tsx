@@ -61,28 +61,32 @@ const GmHistory = ({
 						</HideableSection>
 					) : null}
 
-					{teamHistories.map((teamHistory, i) => (
-						<HideableSection
-							key={i}
-							title={teamHistory.history[0]!.name ?? ""}
-							titleExtraKey={i}
-							className={showOverall ? "mt-3" : undefined}
-						>
-							<Overall
-								bestRecord={teamHistory.bestRecord}
-								championships={teamHistory.championships}
-								finalsAppearances={teamHistory.finalsAppearances}
-								playoffAppearances={teamHistory.playoffAppearances}
-								totalLost={teamHistory.totalLost}
-								totalTied={teamHistory.totalTied}
-								totalOtl={teamHistory.totalOtl}
-								totalWinp={teamHistory.totalWinp}
-								totalWon={teamHistory.totalWon}
-								worstRecord={teamHistory.worstRecord}
-							/>
-							<Seasons history={teamHistory.history} />
-						</HideableSection>
-					))}
+					{teamHistories.map((teamHistory, i) => {
+						const title = teamHistory.history[0]!.name ?? "";
+						const titleKeyOverride = `${title}-${i}`;
+						return (
+							<HideableSection
+								key={i}
+								title={title}
+								titleKeyOverride={titleKeyOverride}
+								className={showOverall ? "mt-3" : undefined}
+							>
+								<Overall
+									bestRecord={teamHistory.bestRecord}
+									championships={teamHistory.championships}
+									finalsAppearances={teamHistory.finalsAppearances}
+									playoffAppearances={teamHistory.playoffAppearances}
+									totalLost={teamHistory.totalLost}
+									totalTied={teamHistory.totalTied}
+									totalOtl={teamHistory.totalOtl}
+									totalWinp={teamHistory.totalWinp}
+									totalWon={teamHistory.totalWon}
+									worstRecord={teamHistory.worstRecord}
+								/>
+								<Seasons history={teamHistory.history} />
+							</HideableSection>
+						);
+					})}
 				</div>
 				<div className="col-sm-7 col-md-9 mt-3 mt-sm-0">
 					<p>

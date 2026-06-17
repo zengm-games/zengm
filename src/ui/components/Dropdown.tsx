@@ -25,7 +25,7 @@ const getResponsiveValue2 = (val: string | ResponsiveOption[]) => {
 	return getResponsiveValue(val, window.innerWidth);
 };
 
-// Chrome 123, Firefox ?, Safari 26.2 - use this always, get rid of manual width calculation
+// Chrome 123, Firefox 152, Safari 26.2 - use this always, get rid of manual width calculation
 const SUPPORTS_FIELD_SIZING_CONTENT = CSS.supports("field-sizing", "content");
 
 const Select = ({

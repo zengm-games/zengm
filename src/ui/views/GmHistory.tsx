@@ -6,6 +6,7 @@ import Players from "./TeamHistory/Players.tsx";
 import Seasons from "./TeamHistory/Seasons.tsx";
 import HideableSection from "../components/HideableSection.tsx";
 import { useLocal } from "../util/local.ts";
+import { Championships } from "./TeamHistory/Championships.tsx";
 
 const GmHistory = ({
 	bestRecord,
@@ -106,6 +107,9 @@ const GmHistory = ({
 						If you do change teams in God Mode, the one listed here for a given
 						season will be the team you controlled when the playoffs ended.
 					</p>
+					<Championships
+						history={teamHistories.flatMap((row) => row.history)}
+					/>
 					<HideableSection title="Players">
 						<Players gmHistory players={players} stats={stats} tid={userTid} />
 					</HideableSection>

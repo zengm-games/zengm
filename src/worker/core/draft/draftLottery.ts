@@ -376,8 +376,11 @@ export const getDraftLotteryProbs = (
 
 	let bottom3Mask = 0n;
 
+	let lastKey = null;
+	let equivalenceClassIdx = 0;
+
 	for (let i = 0; i < numTeams; i++) {
-		const isBottom3 = i < 3;
+		const isBottom3 = draftType === "nba2027" && i < 3;
 		if (isBottom3) {
 			bottom3Mask |= 1n << BigInt(i);
 		}
@@ -392,16 +395,26 @@ export const getDraftLotteryProbs = (
 			((isRestricted1 ? 1 : 0) << 1) |
 			(isRestricted5 ? 1 : 0);
 
-		if (!equivalenceMap.has(key)) {
-			equivalenceMap.set(key, {
+		if ((draftType === "cola" || draftType === "custom") && key !== lastKey) {
+			// This is needed for when teams are not sorted by chances
+			equivalenceClassIdx++;
+		}
+
+		lastKey = key;
+		const mapKey = key + equivalenceClassIdx;
+
+		const existinEquivalence = equivalenceMap.get(mapKey);
+		if (existinEquivalence) {
+			existinEquivalence.teamIndices.push(i);
+		} else {
+			equivalenceMap.set(mapKey, {
 				chances,
 				isBottom3,
 				isRestricted1,
 				isRestricted5,
-				teamIndices: [],
+				teamIndices: [i],
 			});
 		}
-		equivalenceMap.get(key)!.teamIndices.push(i);
 	}
 	const equivalenceClasses = Array.from(equivalenceMap.values());
 

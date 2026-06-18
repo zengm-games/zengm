@@ -23,18 +23,26 @@ export const Championships = ({
 				<div className="d-flex gap-2 overflow-auto mb-3">
 					{championshipRows.map((row) => {
 						return (
-							<ChampionshipBanner
+							<a
+								href={helpers.leagueUrl([
+									"roster",
+									`${row.abbrev}_${row.tid}`,
+									row.season,
+								])}
 								key={row.season}
-								className="flex-shrink-0"
-								hideRope
-								hideText
-								season={row.season}
-								style={{ width: 90 }}
-								t={{
-									colors: row.colors,
-									imgURLSmall: row.imgURLSmall,
-								}}
-							/>
+							>
+								<ChampionshipBanner
+									className="flex-shrink-0"
+									hideRope
+									hideText
+									season={row.season}
+									style={{ width: 90 }}
+									t={{
+										colors: row.colors,
+										imgURLSmall: row.imgURLSmall,
+									}}
+								/>
+							</a>
 						);
 					})}
 				</div>

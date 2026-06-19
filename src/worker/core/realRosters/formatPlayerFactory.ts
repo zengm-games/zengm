@@ -180,7 +180,8 @@ const formatPlayerFactory = async (
 				});
 				tid = team ? team.tid : PLAYER.FREE_AGENT;
 			} else {
-				const newTid = getTidNormal(abbrev);
+				const newTid =
+					typeof abbrev === "number" ? abbrev : getTidNormal(abbrev);
 				if (newTid !== undefined) {
 					tid = newTid;
 				}

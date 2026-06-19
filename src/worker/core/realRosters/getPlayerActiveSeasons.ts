@@ -51,7 +51,10 @@ export const getPlayerActiveSeasons = async () => {
 		}
 
 		for (const row of basketball.teams) {
-			if (row.phase === undefined || row.phase <= PHASE.PLAYOFFS) {
+			if (
+				(row.phase === undefined || row.phase <= PHASE.PLAYOFFS) &&
+				typeof row.abbrev === "string"
+			) {
 				addRecord(row.slug, row.abbrev, row.season);
 			}
 		}

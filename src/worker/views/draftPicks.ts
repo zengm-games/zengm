@@ -96,7 +96,7 @@ export const processDraftPicks = async (draftPicksRaw: DraftPick[]) => {
 		let trades;
 		if (events.length > 0) {
 			trades = events.map((event) => {
-				let tid = PLAYER.DOES_NOT_EXIST;
+				let tid: number = PLAYER.DOES_NOT_EXIST;
 
 				// Which team traded the pick?
 				if (event.teams) {

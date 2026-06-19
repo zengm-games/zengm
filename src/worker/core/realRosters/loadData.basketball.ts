@@ -1,3 +1,4 @@
+import type { PLAYER } from "../../../common/constants.ts";
 import type { Phase, ScheduledEventWithoutKey } from "../../../common/types.ts";
 
 export type Ratings = {
@@ -33,7 +34,7 @@ export type Basketball = {
 	teams: {
 		slug: string;
 		season: number;
-		abbrev: string;
+		abbrev: string | (typeof PLAYER)["RETIRED"]; // RETIRED is for players who retired/died while active
 		jerseyNumber?: string;
 
 		// Currently, phase is only set for players in the alexnoob rosters who move between phases in the same year. So currently I have those for PRESEASON and DRAFT_LOTTERY, meaning it can't identify players who joined a team during the season but before the playoffs. Well, handles the 2021 Horford trade at least.

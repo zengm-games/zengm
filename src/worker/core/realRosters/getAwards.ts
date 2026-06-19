@@ -87,7 +87,7 @@ const fillInPlayers = (awards: Awards<string, string>): Awards => {
 			return;
 		}
 
-		let tid = PLAYER.DOES_NOT_EXIST;
+		let tid: number = PLAYER.DOES_NOT_EXIST;
 		let stats;
 		if (p.stats) {
 			for (const row of p.stats) {

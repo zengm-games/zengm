@@ -7,6 +7,7 @@ import {
 } from "../../common/constants.ts";
 import { choice, randInt, shuffle } from "../../common/random.ts";
 import type {
+	Conditions,
 	Phase,
 	Player,
 	PlayerWithoutKey,
@@ -14,6 +15,8 @@ import type {
 } from "../../common/types.ts";
 import { last, orderBy, range } from "../../common/utils.ts";
 import { player, realRosters, team } from "../core/index.ts";
+import getRealTeamPlayerData from "../core/league/create/getRealTeamPlayerData.ts";
+import { applyRealPlayerPhotos } from "../core/league/processPlayerNewLeague.ts";
 import oldAbbrevTo2020BBGMAbbrev from "../core/realRosters/oldAbbrevTo2020BBGMAbbrev.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers, local, toUI } from "../util/index.ts";
@@ -419,7 +422,7 @@ const normalizePick = async (
 	return p2;
 };
 
-const finalize = async () => {
+const finalize = async (param: unknown, conditions: Conditions) => {
 	checkCanUse();
 
 	if (finalizing) {
@@ -445,7 +448,13 @@ const finalize = async () => {
 		);
 		await player.remove(oldRoster.map((p) => p.pid));
 
+		const { realPlayerPhotos } = await getRealTeamPlayerData(
+			{ fileHasPlayers: true, fileHasTeams: false },
+			conditions,
+		);
+
 		for (const p of playersToAdd) {
+			applyRealPlayerPhotos(realPlayerPhotos, p);
 			await idb.cache.players.put(p);
 		}
 		await team.rosterAutoSort(g.get("userTid"), false);

@@ -1,8 +1,9 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
+import { AWARD_NAMES } from "../../common/constants.ts";
 import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
-import type { View } from "../../common/types.ts";
+import type { Player, View } from "../../common/types.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { useLocal } from "../util/local.ts";
@@ -14,7 +15,7 @@ const HallOfFame = ({ players, stats }: View<"hallOfFame">) => {
 	const superCols = [
 		{
 			title: "",
-			colspan: 6,
+			colspan: 8,
 		},
 		{
 			title: "Best Season",
@@ -33,6 +34,8 @@ const HallOfFame = ({ players, stats }: View<"hallOfFame">) => {
 		"Retired",
 		"Pick",
 		"Peak Ovr",
+		"count:mvp",
+		"Titles",
 		"Year",
 		"Team",
 		...stats.map((stat) => `stat:${stat}`),
@@ -60,6 +63,13 @@ const HallOfFame = ({ players, stats }: View<"hallOfFame">) => {
 				p.retiredYear,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
 				p.peakOvr,
+				p.awards.filter(
+					(award: Player["awards"][number]) => award.type === AWARD_NAMES.mvp,
+				).length,
+				p.awards.filter(
+					(award: Player["awards"][number]) =>
+						award.type === "Won Championship",
+				).length,
 				p.bestStats.season,
 				<a
 					href={helpers.leagueUrl([

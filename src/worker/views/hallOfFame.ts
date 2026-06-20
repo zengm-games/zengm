@@ -42,19 +42,33 @@ const updatePlayers = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			},
 			"noCopyCache",
 		);
-		const players = await idb.getCopies.playersPlus(playersAll, {
-			attrs: [
-				"pid",
-				"firstName",
-				"lastName",
-				"draft",
-				"retiredYear",
-				"statsTids",
-				"awards",
-			],
-			ratings: ["season", "ovr", "pos"],
-			stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
-			fuzz: true,
+		const players = (
+			await idb.getCopies.playersPlus(playersAll, {
+				attrs: [
+					"pid",
+					"firstName",
+					"lastName",
+					"draft",
+					"retiredYear",
+					"statsTids",
+					"awards",
+				],
+				ratings: ["season", "ovr", "pos"],
+				stats: ["season", "abbrev", "tid", ...stats, ...extraStats],
+				fuzz: true,
+			})
+		).map((p) => {
+			p.countMvp = 0;
+			p.countTitles = 0;
+			for (const award of p.awards) {
+				if (award.type === "Most Valuable Player") {
+					p.countMvp += 1;
+				} else if (award.type === "Won Championship") {
+					p.countTitles += 1;
+				}
+			}
+			delete p.awards;
+			return p;
 		});
 
 		return {

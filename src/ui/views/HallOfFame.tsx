@@ -1,6 +1,5 @@
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
-import { AWARD_NAMES } from "../../common/constants.ts";
 import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import type { Player, View } from "../../common/types.ts";
@@ -63,13 +62,8 @@ const HallOfFame = ({ players, stats }: View<"hallOfFame">) => {
 				p.retiredYear,
 				p.draft.round > 0 ? `${p.draft.round}-${p.draft.pick}` : "",
 				p.peakOvr,
-				p.awards.filter(
-					(award: Player["awards"][number]) => award.type === AWARD_NAMES.mvp,
-				).length,
-				p.awards.filter(
-					(award: Player["awards"][number]) =>
-						award.type === "Won Championship",
-				).length,
+				p.countMvp,
+				p.countTitles,
 				p.bestStats.season,
 				<a
 					href={helpers.leagueUrl([

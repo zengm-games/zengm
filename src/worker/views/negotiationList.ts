@@ -48,7 +48,7 @@ const updateNegotiationList = async () => {
 				"latestTransaction",
 				"latestTransactionSeason",
 				"mood",
-				"salary",
+				"lastSalary",
 			],
 			ratings: ["ovr", "pot", "skills", "pos"],
 			stats,

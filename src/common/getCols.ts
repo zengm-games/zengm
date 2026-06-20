@@ -3291,6 +3291,10 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
+	"Old Salary": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Opp: {
 		desc: "Opponent",
 	},

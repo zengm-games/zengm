@@ -107,9 +107,8 @@ const NegotiationHeader = ({
 				<>
 					You are allowed to go over the salary cap when re-signing players.{" "}
 					<b>
-						If you do not come to an agreement here,{" "}
-						<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> will
-						become a free agent.
+						If you do not come to an agreement here, {p.name} will become a free
+						agent.
 					</b>{" "}
 					{helpers.pronoun(gender, "He")} will then be able to sign with any
 					team, and you won't be able to go over the salary cap to sign{" "}
@@ -169,13 +168,15 @@ const NegotiationHeader = ({
 					</div>
 				</div>
 				<div className="ms-auto d-none d-sm-flex flex-column justify-content-end align-items-end text-nowrap">
-					<div>Payroll: {helpers.formatCurrency(payroll, "M")}</div>
 					{salaryCapType !== "none" ? (
 						<>
 							<div>Salary Cap: {helpers.formatCurrency(salaryCap, "M")}</div>
+							<div>Payroll: {helpers.formatCurrency(payroll, "M")}</div>
 							<div>Cap Space: {helpers.formatCurrency(capSpace, "M")}</div>
 						</>
-					) : null}
+					) : (
+						<div>Payroll: {helpers.formatCurrency(payroll, "M")}</div>
+					)}
 				</div>
 			</div>
 		</>

@@ -253,6 +253,9 @@ const processAttrs = (
 			};
 		} else if (attr === "salary") {
 			output.salary = getSalary();
+		} else if (attr === "lastSalary") {
+			const amount = p.salaries.at(-1)?.amount;
+			output.lastSalary = amount === undefined ? undefined : amount / 1000;
 		} else if (attr === "salaries") {
 			const season = g.get("season");
 			const phase = actualPhase();

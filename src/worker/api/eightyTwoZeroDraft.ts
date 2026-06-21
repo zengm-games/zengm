@@ -446,7 +446,9 @@ const finalize = async (param: unknown, conditions: Conditions) => {
 			"playersByTid",
 			g.get("userTid"),
 		);
-		await player.remove(oldRoster.map((p) => p.pid));
+		for (const p of oldRoster) {
+			await player.retire(p, conditions);
+		}
 
 		const { realPlayerPhotos } = await getRealTeamPlayerData(
 			{ fileHasPlayers: true, fileHasTeams: false },

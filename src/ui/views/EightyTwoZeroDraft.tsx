@@ -330,9 +330,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 			await toWorker("eightyTwoZeroDraft", "finalize", undefined);
 			realtimeUpdate([], helpers.leagueUrl(["roster"]));
 		} catch (error) {
-			setErrorMessage(
-				`${error.message} Check your roster before trying again.`,
-			);
+			setErrorMessage(error.message);
 			setProcessing(undefined);
 		}
 	};
@@ -354,7 +352,7 @@ const EightyTwoZeroDraft = (props: View<"eightyTwoZeroDraft">) => {
 				</p>
 
 				<p>
-					After 12 picks, finalizing the draft deletes your current roster and
+					After 12 picks, finalizing the draft retires your current roster and
 					replaces it with your selected players.
 				</p>
 

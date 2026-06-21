@@ -17,6 +17,7 @@ import type {
 	View,
 } from "../../../common/types.ts";
 import { wrappedContract } from "../../components/contract.tsx";
+import { wrappedCurrency } from "../../components/wrappedCurrency.ts";
 import type {
 	DataTableRow,
 	SortBy,
@@ -165,7 +166,7 @@ const Roster = ({
 			"Age",
 			"Ovr",
 			"Pot",
-			...(season === currentSeason ? ["Contract"] : []),
+			season === currentSeason ? "Contract" : "Salary",
 			"stat:yearsWithTeam",
 			"Country",
 			...stats.map((stat) => `stat:${stat}`),
@@ -308,7 +309,9 @@ const Roster = ({
 				showRatings
 					? wrappedRatingWithChange(p.ratings.pot, p.ratings.dpot)
 					: null,
-				...(season === currentSeason ? [wrappedContract(p)] : []),
+				season === currentSeason
+					? wrappedContract(p)
+					: wrappedCurrency(p.contract.amount, "M"),
 				playoffs === "playoffs" ? null : p.stats.yearsWithTeam,
 				{
 					value: (

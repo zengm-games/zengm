@@ -538,7 +538,7 @@ const RetiredJerseyNumbers = ({
 								className="btn btn-light-bordered"
 								disabled={!enablePrevious}
 								onClick={() => {
-									setPage(page - 1);
+									setPage((page) => page - 1);
 								}}
 							>
 								Previous
@@ -547,7 +547,7 @@ const RetiredJerseyNumbers = ({
 								className="btn btn-light-bordered"
 								disabled={!enableNext}
 								onClick={() => {
-									setPage(page + 1);
+									setPage((page) => page + 1);
 								}}
 							>
 								Next

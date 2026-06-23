@@ -448,6 +448,7 @@ const finalize = async (param: unknown, conditions: Conditions) => {
 		);
 		for (const p of oldRoster) {
 			await player.retire(p, conditions);
+			await idb.cache.players.put(p);
 		}
 
 		const { realPlayerPhotos } = await getRealTeamPlayerData(

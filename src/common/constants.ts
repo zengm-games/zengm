@@ -285,7 +285,7 @@ export const REAL_PLAYERS_INFO = bySport({
 		FIRST_SEASON_WITH_ALEXNOOB_ROSTERS: 2020,
 		MIN_SEASON: 1947,
 		MAX_SEASON: 2026,
-		MAX_PHASE: PHASE.DRAFT as Phase,
+		MAX_PHASE: PHASE.AFTER_DRAFT as Phase,
 	},
 	football: undefined,
 	hockey: undefined,

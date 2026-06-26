@@ -107,6 +107,28 @@ const updateHistory = async (
 			stats: ["tid", "abbrev"],
 			showNoStats: true,
 		});
+
+		const careerWsByPid: Record<number, number> = {};
+		const wsStats = bySport({
+			basketball: ["ws"],
+			baseball: [],
+			football: [],
+			hockey: [],
+		});
+		if (wsStats.length > 0) {
+			const retiredPlayersCareer = await idb.getCopies.playersPlus(
+				retiredPlayersAll,
+				{
+					attrs: ["pid"],
+					stats: wsStats,
+					showNoStats: true,
+				},
+			);
+			for (const p of retiredPlayersCareer) {
+				careerWsByPid[p.pid] = p.careerStats.ws ?? 0;
+			}
+		}
+
 		retiredPlayers.sort((a, b) => b.age - a.age);
 
 		// Get champs
@@ -121,7 +143,10 @@ const updateHistory = async (
 			champ,
 			confs: g.get("confs", season),
 			invalidSeason: false as const,
-			retiredPlayers,
+			retiredPlayers: retiredPlayers.map((p) => ({
+				...p,
+				careerWs: careerWsByPid[p.pid],
+			})),
 			season,
 		};
 	}

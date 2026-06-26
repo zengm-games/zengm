@@ -12,6 +12,7 @@ export const RetiredPlayers = ({
 }: {
 	retiredPlayers: {
 		age: number;
+		careerWs?: number;
 		hof: boolean;
 		name: string;
 		pid: number;
@@ -61,6 +62,9 @@ export const RetiredPlayers = ({
 							</>
 						) : null}
 						age: {p.age}
+						{p.careerWs != null
+							? `, ${helpers.roundStat(p.careerWs, "ws")} WS`
+							: null}
 						{p.hof ? (
 							<>
 								;{" "}

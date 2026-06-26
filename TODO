@@ -45,7 +45,7 @@ custom awards
   - awards records
   - team records
   - GOAT formula
-- add triple crown for baseball, like league leader awards
+- would be nice to support conditional stat-based awards that are not awarded every season, like triple crown or 40/40
 - store top 10 for each individual award, so it can be displayed easily on player profile pages
   - store this in player object, don't need it anywhere else i think?
     - for teams, only store rank if there are more than 1 team

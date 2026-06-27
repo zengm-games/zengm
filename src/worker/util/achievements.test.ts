@@ -221,6 +221,70 @@ describe("checkAchievement", () => {
 		});
 	});
 
+	describe("dynasty_6", () => {
+		// Self-contained: builds its own 45-season window and cleans up after,
+		// rather than coupling to the cumulative state in the "dynasty*" block.
+		afterAll(async () => {
+			const teamSeasons = await idb.cache.teamSeasons.indexGetAll(
+				"teamSeasonsByTidSeason",
+				[[g.get("userTid")], [g.get("userTid"), "Z"]],
+			);
+			for (const teamSeason of teamSeasons) {
+				if (teamSeason.season > g.get("season")) {
+					await idb.cache.teamSeasons.delete(teamSeason.rid);
+				}
+			}
+		});
+
+		// Set the base season (g.season) to a known non-championship state so the
+		// 45-season trailing window is deterministic.
+		const resetBaseSeason = async () => {
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
+				"teamSeasonsByTidSeason",
+				[g.get("userTid"), g.get("season")],
+			);
+			assert(teamSeason);
+			teamSeason.playoffRoundsWon = 0;
+			await idb.cache.teamSeasons.put(teamSeason);
+		};
+
+		test("award dynasty_6 (and dynasty_5) for 36 titles in 45 seasons", async () => {
+			await resetBaseSeason();
+
+			// 44 added seasons + the base season = 45 total in the trailing window.
+			// Oldest 9 (incl. base) are non-championships, most recent 36 are titles.
+			const extraSeasons: Partial<TeamSeason>[] = [];
+			for (let i = 0; i < 44; i++) {
+				// First 8 added seasons non-championships, remaining 36 championships.
+				extraSeasons.push({ playoffRoundsWon: i < 8 ? 0 : 4 });
+			}
+			await addExtraSeasons(g.get("userTid"), g.get("season"), extraSeasons);
+
+			let awarded = await get("dynasty_6").check();
+			assert.strictEqual(awarded, true);
+
+			// The 36 titles are the most recent seasons, so the trailing 30-season
+			// window is all championships -> dynasty_5 still awards (no regression).
+			awarded = await get("dynasty_5").check();
+			assert.strictEqual(awarded, true);
+		});
+
+		test("do not award dynasty_6 for only 35 titles in 45 seasons", async () => {
+			// Flip the oldest championship season (g.season + 9) to a non-title,
+			// dropping the count in the window from 36 to 35.
+			const teamSeason = await idb.cache.teamSeasons.indexGet(
+				"teamSeasonsByTidSeason",
+				[g.get("userTid"), g.get("season") + 9],
+			);
+			assert(teamSeason);
+			teamSeason.playoffRoundsWon = 0;
+			await idb.cache.teamSeasons.put(teamSeason);
+
+			const awarded = await get("dynasty_6").check();
+			assert.strictEqual(awarded, false);
+		});
+	});
+
 	describe("moneyball*", () => {
 		test("award moneyball and moneyball_2 for title with payroll <= half salary cap", async () => {
 			const teamSeason = await idb.cache.teamSeasons.indexGet(

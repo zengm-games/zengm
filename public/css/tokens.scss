@@ -79,6 +79,9 @@
 	// ─── Typography ──────────────────────────────────────────────────────────
 	--zengm-font-size: 0.8125rem;
 	--zengm-line-height: 1.4;
+	--zengm-line-height-heading: 1.15;
+	--zengm-font-size-stat: 0.9375rem; // 15px — key numbers slightly larger than body
+	--zengm-font-weight-stat: 600;
 
 	// ─── Link ────────────────────────────────────────────────────────────────
 	// Separate from --zengm-accent: orange CTAs ≠ body links. Dark overrides in dark.scss.

@@ -34,12 +34,43 @@ h4 {
 h5 {
 	font-size: 12px;
 }
+
+h1,
+h2,
+h3 {
+	line-height: var(--zengm-line-height-heading, 1.15);
+	font-weight: 600;
+}
+
 .modal-title {
 	font-size: 20px;
 }
 
 code {
 	font-size: 1em;
+}
+
+// ─── Stat emphasis ────────────────────────────────────────────────────────────
+// Use on key numbers outside tables: OVR, salary, record, win total.
+// Inside .table, tabular-nums is already applied globally.
+
+.stat-primary {
+	font-size: var(--zengm-font-size-stat);
+	font-weight: var(--zengm-font-weight-stat);
+	font-variant-numeric: tabular-nums;
+	color: var(--zengm-text-strong);
+	line-height: 1;
+}
+
+// ─── Semantic text colors ─────────────────────────────────────────────────────
+// Token-backed alternatives to Bootstrap's compiled text-success / text-danger.
+// These respond correctly in both themes via --zengm-good / --zengm-bad.
+
+.text-good {
+	color: var(--zengm-good) !important;
+}
+.text-bad {
+	color: var(--zengm-bad) !important;
 }
 
 // ─── Animations ──────────────────────────────────────────────────────────────

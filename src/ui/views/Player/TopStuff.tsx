@@ -1,5 +1,5 @@
 import { Fragment, useState } from "react";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { WatchBlock } from "../../components/WatchBlock.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { toWorker } from "../../util/toWorker.ts";
@@ -489,8 +489,12 @@ const TopStuff = ({
 	// Without this, vertical scrollbar shows if there are no jerseys, due to some weirdness with the negative marginTop values in RatingsOverview
 	const PLACEHOLDER = <div style={{ height: 2 }}></div>;
 
+	const cardStyle: CSSProperties | undefined = teamColors?.[0]
+		? { borderLeftColor: teamColors[0] }
+		: undefined;
+
 	return (
-		<div className="mb-3">
+		<div className="mb-3 player-card" style={cardStyle}>
 			<div className="d-sm-flex align-items-start">
 				<div className="player-bio">
 					<div className="d-flex">

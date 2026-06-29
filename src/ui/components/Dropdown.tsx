@@ -136,13 +136,12 @@ const Select = ({
 					handleChange(newItem.key);
 				}}
 				reverse={field.startsWith("seasons")}
-				style={{ marginLeft: 2 }}
 			/>
 		);
 	}
 
 	return (
-		<div className="d-flex dropdown-select-wrapper">
+		<div className="dropdown-select-wrapper zengm-segment">
 			{buttons}
 			<select
 				value={value}

@@ -2,11 +2,19 @@
 	label {
 		font-weight: normal;
 		text-align: left;
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		color: var(--zengm-text-muted);
+		font-size: 0.75rem;
 	}
 
 	select {
 		display: inline-block;
-		width: 50px;
+		width: 60px;
+		padding: 0.15rem 1.4rem 0.15rem 0.4rem;
+		font-size: 0.75rem;
+		height: auto;
 	}
 }
 
@@ -28,20 +36,54 @@
 	width: 100%;
 }
 
-// Without this, these buttons appear on top of notification bubbles. Bootstrap docs say the z-index here is just for handling border overlaps, meh whatever.
+// ─── Pagination ───────────────────────────────────────────────────────────────
+
+// Without this, these buttons appear on top of notification bubbles.
 .page-item.active .page-link,
 .page-item .page-link {
 	z-index: inherit;
 }
 
-// Not sure why this is needed, it should do this by default!
-.page-item.active .page-link:hover {
-	color: $white;
+.pagination {
+	gap: 2px;
+
+	.page-link {
+		border: none;
+		border-radius: var(--zengm-radius-sm) !important;
+		padding: 0.2rem 0.55rem;
+		font-size: 0.75rem;
+		color: var(--zengm-text-muted);
+		background-color: transparent;
+		line-height: 1.4;
+
+		&:hover {
+			background-color: var(--zengm-surface-2);
+			color: var(--zengm-text-strong);
+		}
+	}
+
+	.page-item.active .page-link {
+		background-color: var(--zengm-brand);
+		color: #fff;
+		font-weight: 600;
+
+		&:hover {
+			background-color: var(--zengm-brand-strong);
+			color: #fff;
+		}
+	}
+
+	.page-item.disabled .page-link {
+		opacity: 0.35;
+		pointer-events: none;
+	}
 }
 
 .fix-margin-pagination {
 	margin-bottom: 8px !important;
 }
+
+// ─── Table ────────────────────────────────────────────────────────────────────
 
 table.table {
 	thead {
@@ -55,6 +97,7 @@ table.table {
 			cursor: pointer;
 			user-select: none;
 			position: relative;
+			padding-right: 1.35rem; // room for sort indicator
 		}
 	}
 
@@ -72,40 +115,56 @@ table.table {
 	}
 }
 
-// Implemented weirdly like https://css-tricks.com/snippets/css/transparent-background-images/ so opacity can be overriden in dark.scss
-table.table thead .sorting {
-	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAu0lEQVR4nMXUMQqDQBCF4U2jEMgp0nkGmxzD0trae8QDeI9UXsS/s7dIE0wzQRhhWYQw64YU02zxscy8GSciLlW5n2OAX2fgDmT+u0RiLfAGmqNYAUyAACNwjcVOQK/QVp2+m7EbMAfYEyit2AUYAmirB5BbsBpYgNdOLUD1t5xVX35WW7Bce7PXs2HtqXWapU7Ph2adclTOugDrY3PmNPGjQpNuhDuym43uZpti0TO9Guv1sGNJcxaLfQBK2D1y8JFl2wAAAABJRU5ErkJggg==)
-		no-repeat center right;
+// ─── Sort indicators (CSS, replaces base64 PNG sprites) ───────────────────────
+
+table.table thead .sorting::after,
+table.table thead .sorting_asc::after,
+table.table thead .sorting_desc::after {
+	position: absolute;
+	right: 0.3rem;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 0.6rem;
+	line-height: 1;
+	pointer-events: none;
 }
 
-table.table thead .sorting_asc {
-	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowMTgwMTE3NDA3MjA2ODExQjM4MkY2QzVGRUYwRTJDNCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo4MkFEQzYxNjIyQzExMUUxQTFGMUFEQUQ1QjJBNTM4QyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo4MkFEQzYxNTIyQzExMUUxQTFGMUFEQUQ1QjJBNTM4QyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjAyODAxMTc0MDcyMDY4MTFCMzgyRjZDNUZFRjBFMkM0IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjAxODAxMTc0MDcyMDY4MTFCMzgyRjZDNUZFRjBFMkM0Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+z5ABTAAAAI5JREFUeNpi/P//PwO1ABMDFQELIQXVjfe4gFQbEJe11iv9otRl2UCcBcSphBQy4gszoKu0gNROIJYB4jtA7AF03V2SXQY0iBFIFUMNAgEVIM6DipPsTQcgDkQTSwRia5IMA9rOC6RqgVgQTQokXgOUZyfFZSFQF/zAgh2BOIjkCBjQRDtq2Khh9DAMIMAAT9AmNBDSXegAAAAASUVORK5CYII=)
-		no-repeat center right;
+table.table thead .sorting::after {
+	content: "▲▼";
+	opacity: 0.25;
+	letter-spacing: -0.05em;
 }
 
-table.table thead .sorting_desc {
-	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDowMTgwMTE3NDA3MjA2ODExQjM4MkY2QzVGRUYwRTJDNCIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo4MkFEQzYxQTIyQzExMUUxQTFGMUFEQUQ1QjJBNTM4QyIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo4MkFEQzYxOTIyQzExMUUxQTFGMUFEQUQ1QjJBNTM4QyIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ1M1IE1hY2ludG9zaCI+IDx4bXBNTTpEZXJpdmVkRnJvbSBzdFJlZjppbnN0YW5jZUlEPSJ4bXAuaWlkOjAyODAxMTc0MDcyMDY4MTFCMzgyRjZDNUZFRjBFMkM0IiBzdFJlZjpkb2N1bWVudElEPSJ4bXAuZGlkOjAxODAxMTc0MDcyMDY4MTFCMzgyRjZDNUZFRjBFMkM0Ii8+IDwvcmRmOkRlc2NyaXB0aW9uPiA8L3JkZjpSREY+IDwveDp4bXBtZXRhPiA8P3hwYWNrZXQgZW5kPSJyIj8+1fsfwAAAAJdJREFUeNpi/P//PwO1ABMDFcGoYaOG0cMwFmyC1Y33IoHUAiD+h8MBGa31SvOJddk6IN4PxBxY8FEgXkO0N4G2/gRSLUD8GU3qPRA3A+U/kxpmIBege2U9EB/ApYERX6kBDDtlILUDiFWA+AkQuwNddY2s2ARqvAukJgDxbyCehM8gnLGJBmYDsSoQTyWkkHHQFo4AAQYAAA0piq4hbqwAAAAASUVORK5CYII=)
-		no-repeat center right;
+table.table thead .sorting_asc::after {
+	content: "▲";
+	color: var(--zengm-brand);
+	opacity: 0.8;
 }
 
-/*table.table thead .sorting_asc_disabled {
-    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6ODJBREM2MTEyMkMxMTFFMUExRjFBREFENUIyQTUzOEMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6ODJBREM2MTIyMkMxMTFFMUExRjFBREFENUIyQTUzOEMiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo0M0ZDRUZGRTIyQzExMUUxQTFGMUFEQUQ1QjJBNTM4QyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4MkFEQzYxMDIyQzExMUUxQTFGMUFEQUQ1QjJBNTM4QyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pr4T1OwAAACOSURBVHjaYvz//z8DtQATAxUBCyEF1Y33uIBUGxCXtdYr/aLUZdlAnAXEqYQUMuILM6CrtIDUTiCWAeI7QOwBdN1dkl0GNIgRSBVDDQIBFSDOg4qT7E0HIA5EE0sEYmuSDAPazgukaoFYEE0KJF4DlGcnxWUhUBf8wIIdgTiI5AgY0EQ7atioYfQwDCDAAE/QJjQQ0l3oAAAAAElFTkSuQmCC)
-        no-repeat center right;
+table.table thead .sorting_desc::after {
+	content: "▼";
+	color: var(--zengm-brand);
+	opacity: 0.8;
 }
 
-table.table thead .sorting_desc_disabled {
-    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NDNGQ0VGRjQyMkMxMTFFMUExRjFBREFENUIyQTUzOEMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NDNGQ0VGRjUyMkMxMTFFMUExRjFBREFENUIyQTUzOEMiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDoxNEMwMzk2QjIyQzExMUUxQTFGMUFEQUQ1QjJBNTM4QyIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDoxNEMwMzk2QzIyQzExMUUxQTFGMUFEQUQ1QjJBNTM4QyIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/Pnt2WfgAAACJSURBVHjaYvz//z8DtQATAxXBqGGjhtHDMBZsgnfv3o0EUguA+B8OB2QoKyvPJ9Zl64B4PxBzYMFHgXgNKd78CcQtQPwZTfw9EDdjEScYZiAXoHtlPRAfICcCQMXJJCC+A+U/AeJeqDhZsXkXiCcA8W+owddIjk00MBuIVYF4KiGFjIO2cAQIMAAzGSDTlIC38gAAAABJRU5ErkJggg==)
-        no-repeat center right;
-}*/
+// ─── Row hover accent bar ─────────────────────────────────────────────────────
+// Inset left bar on the first visible cell gives a "selected row" feel
+// without disturbing sticky column z-index or background color logic.
 
-// Use this on a DataTable if you want to ignore the ... menu on the right because if there's nothing else on the left part (no other controls, no title) then it looks like an extra gap. Sometimes you can achieve the same result just by not having a bottom margin on the element above the table, but sometimes you want things to come down even further.
+table.table tbody tr:hover td:first-child,
+table.table tbody tr:hover th:first-child {
+	box-shadow: inset 3px 0 0 var(--zengm-brand);
+}
+
+// ─── Misc ─────────────────────────────────────────────────────────────────────
+
+// Use on a DataTable to pull the controls row up when nothing precedes it.
 .datatable-negative-margin-top {
 	// Keep in sync with minHeight in DataTable/index.tsx
 	margin-top: -35px;
 }
 
 .datatable-header-text {
-	// Usually we're putting some header in here, and this makes it nicely truncate, which is almost always desired
 	h1,
 	h2,
 	h3,

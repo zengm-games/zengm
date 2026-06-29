@@ -62,6 +62,51 @@ code {
 	line-height: 1;
 }
 
+// ─── OVR / POT stat display ───────────────────────────────────────────────────
+// Stacked label + large number — used in player and team card headers.
+
+.ovr-stat {
+	text-align: center;
+	min-width: 3.5rem;
+
+	&-label {
+		font-size: 0.6rem;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		color: var(--zengm-text-muted);
+		font-weight: 600;
+	}
+
+	&-value {
+		font-size: 2rem;
+		font-weight: 700;
+		color: var(--zengm-text-strong);
+		line-height: 1;
+		font-variant-numeric: tabular-nums;
+	}
+}
+
+// ─── Entity cards ─────────────────────────────────────────────────────────────
+// Player profile card and Roster team card. Provides elevation + surface layer.
+// Left border color is set via inline style (team accent) or falls back to border.
+
+.player-card {
+	background-color: var(--zengm-surface-1);
+	border: 1px solid var(--zengm-border);
+	border-left: 4px solid var(--zengm-border); // team color overrides via inline borderLeftColor
+	border-radius: var(--zengm-radius);
+	box-shadow: var(--zengm-shadow);
+	padding: 1rem;
+}
+
+.team-card {
+	background-color: var(--zengm-surface-1);
+	border: 1px solid var(--zengm-border);
+	border-radius: var(--zengm-radius);
+	box-shadow: var(--zengm-shadow);
+	padding: 1rem;
+}
+
 // ─── Semantic text colors ─────────────────────────────────────────────────────
 // Token-backed alternatives to Bootstrap's compiled text-success / text-danger.
 // These respond correctly in both themes via --zengm-good / --zengm-bad.

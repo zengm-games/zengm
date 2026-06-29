@@ -488,19 +488,23 @@ export const RatingsOverview = ({
 
 	return (
 		<div className="ratings-overview">
-			<div className="d-flex justify-content-between">
-				<h2 className="me-3">
-					Overall:{" "}
-					<RatingWithChange change={currentSeason.ovr - lastSeason.ovr}>
-						{currentSeason.ovr}
-					</RatingWithChange>
-				</h2>
-				<h2>
-					Potential:{" "}
-					<RatingWithChange change={currentSeason.pot - lastSeason.pot}>
-						{currentSeason.pot}
-					</RatingWithChange>
-				</h2>
+			<div className="d-flex gap-3 mb-2">
+				<div className="ovr-stat">
+					<div className="ovr-stat-label">OVR</div>
+					<div className="ovr-stat-value">
+						<RatingWithChange change={currentSeason.ovr - lastSeason.ovr}>
+							{currentSeason.ovr}
+						</RatingWithChange>
+					</div>
+				</div>
+				<div className="ovr-stat">
+					<div className="ovr-stat-label">POT</div>
+					<div className="ovr-stat-value">
+						<RatingWithChange change={currentSeason.pot - lastSeason.pot}>
+							{currentSeason.pot}
+						</RatingWithChange>
+					</div>
+				</div>
 			</div>
 			<div className="d-flex justify-content-between">
 				{columns.map((column, i) => (

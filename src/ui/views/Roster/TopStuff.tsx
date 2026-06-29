@@ -246,7 +246,7 @@ const TopStuff = ({
 				</h3>
 			) : null}
 			<div
-				className="d-flex flex-wrap mb-3"
+				className="d-flex flex-wrap mb-3 team-card"
 				style={{
 					gap: "1rem 6rem",
 				}}

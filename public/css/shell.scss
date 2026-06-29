@@ -354,6 +354,67 @@ button.fast-forward {
 		color: #000;
 	}
 }
+
+// ─── Segmented controls ───────────────────────────────────────────────────────
+// Wraps .dropdown-select (and optional .btn-group prev/next) in a bordered pill.
+
+.zengm-segment {
+	display: inline-flex;
+	align-items: stretch;
+	border: 1px solid var(--zengm-segment-border);
+	border-radius: var(--zengm-radius-sm);
+	background-color: var(--zengm-segment-bg);
+	overflow: hidden;
+	margin-right: 4px;
+
+	// Flush the prev/next btn-group — remove Bootstrap button chrome
+	.btn-group {
+		display: flex;
+		align-items: stretch;
+
+		.btn {
+			border: none !important;
+			border-radius: 0 !important;
+			background-color: transparent !important;
+			color: var(--zengm-text-muted) !important;
+			padding: 0.1rem 0.45rem;
+			line-height: 1.4;
+
+			&:hover:not(:disabled) {
+				background-color: var(--zengm-surface-2) !important;
+				color: var(--zengm-text-strong) !important;
+			}
+
+			&:disabled {
+				opacity: 0.35 !important;
+				box-shadow: none !important;
+			}
+
+			// Divider lines between prev | (select) | next
+			&:first-child {
+				border-right: 1px solid var(--zengm-segment-divider) !important;
+			}
+			&:last-child {
+				border-left: 1px solid var(--zengm-segment-divider) !important;
+			}
+		}
+	}
+
+	// Select field inside the segment: no border, transparent bg
+	.dropdown-select {
+		border: none;
+		background-color: transparent;
+		margin: 0;
+		padding: 0.1rem 1.25rem 0.1rem 0.5rem;
+		align-self: center;
+
+		&:focus {
+			outline: 2px solid var(--zengm-focus);
+			outline-offset: -2px;
+		}
+	}
+}
+
 @include media-breakpoint-up(md) {
 	.dropdown-select {
 		font-size: 14px;

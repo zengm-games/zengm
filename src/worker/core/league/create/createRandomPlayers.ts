@@ -340,7 +340,7 @@ const createRandomPlayers = async ({
 	}
 
 	if (onlyFreeAgents) {
-		// Okay, then why did we create the other players in the first place? Because this ensures the distribution of talnet in the free agent pool is the same as in normal leagues.
+		// Okay, then why did we create the other players in the first place? Because this ensures the distribution of talent in the free agent pool is the same as in normal leagues.
 		return players.filter((p) => p.tid === PLAYER.FREE_AGENT);
 	}
 

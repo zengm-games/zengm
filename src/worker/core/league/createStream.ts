@@ -1557,7 +1557,7 @@ const afterDBStream = async ({
 
 		const basketball = await loadDataBasketball();
 
-		const draftProspects = await initRandomDebutsForRandomPlayersLeague({
+		const realPlayers = await initRandomDebutsForRandomPlayersLeague({
 			activeTids,
 			players: activePlayers,
 			basketball,
@@ -1566,7 +1566,7 @@ const afterDBStream = async ({
 			phase: gameAttributes.phase,
 			season: gameAttributes.season,
 		});
-		for (const p of draftProspects) {
+		for (const p of realPlayers) {
 			const p2 = await processPlayerNewLeague({
 				p,
 				activeTids,
@@ -1576,6 +1576,7 @@ const afterDBStream = async ({
 				scoutingLevel,
 				version: LEAGUE_DATABASE_VERSION,
 			});
+			last(p2.ratings).season = gameAttributes.season;
 			activePlayers.push(p2);
 		}
 	}

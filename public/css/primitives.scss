@@ -1,0 +1,823 @@
+// Shared UI primitives: buttons, tables, badges, animations, utilities.
+// No shell chrome, no view-specific rules.
+// Requires Bootstrap variables/mixins in scope (imported after Bootstrap in light.scss).
+
+// ─── Form control tweaks ─────────────────────────────────────────────────────
+
+.form-check-inline {
+	margin-right: 0.75rem !important;
+}
+.form-switch .form-check-input {
+	width: 1.75rem !important;
+	height: 1rem !important;
+}
+
+.form-check-input {
+	// Default does not do well with altered font-size-base
+	margin-top: 3px;
+}
+
+// ─── Typography ──────────────────────────────────────────────────────────────
+
+h1 {
+	font-size: 24px;
+}
+h2 {
+	font-size: 20px;
+}
+h3 {
+	font-size: 16px;
+}
+h4 {
+	font-size: 14px;
+}
+h5 {
+	font-size: 12px;
+}
+.modal-title {
+	font-size: 20px;
+}
+
+code {
+	font-size: 1em;
+}
+
+// ─── Animations ──────────────────────────────────────────────────────────────
+
+.spin {
+	animation: spin 4s linear infinite;
+}
+
+@keyframes spin {
+	100% {
+		transform: rotate(360deg);
+	}
+}
+
+// ─── God mode ────────────────────────────────────────────────────────────────
+
+.god-mode,
+.sidebar a.god-mode,
+select.god-mode:focus {
+	background-color: $purple;
+	color: $white;
+}
+a.god-mode,
+.sidebar a.god-mode {
+	&:hover {
+		background-color: darken($purple, 10);
+		color: $white;
+		text-decoration: none;
+	}
+}
+a.god-mode.active {
+	background-color: darken($purple, 10);
+	color: $white;
+}
+.sidebar a.god-mode.active {
+	background-color: darken($purple, 10);
+	color: lighten($primary, 30);
+}
+
+.god-mode-text {
+	padding: 0 3px;
+}
+
+.btn-god-mode {
+	@include button-variant($purple, $purple);
+}
+
+.btn-outline-god-mode {
+	@include button-variant($purple, $gray-400);
+}
+
+.alert-god-mode {
+	background-color: lighten($purple, 40) !important;
+}
+
+// ─── Buttons ─────────────────────────────────────────────────────────────────
+
+.dropdown-item {
+	cursor: pointer;
+}
+
+.dropdown-toggle {
+	cursor: pointer;
+}
+
+.btn-xs {
+	padding: 3px 0.4rem;
+	font-size: $btn-font-size-sm;
+	line-height: 0.9;
+	border-radius: 0.2rem;
+}
+
+// Not sure why these need more than 2 args to button-variant, but otherwise hover seems broken
+.btn-light-bordered {
+	@include button-variant($light, $gray-400, $black, darken($light, 7));
+}
+.btn-light-bordered-primary {
+	@include button-variant($light, $blue, $black, darken($light, 7));
+}
+.btn-light-bordered-2 {
+	@include button-variant($light, $gray-300, $black, darken($light, 7));
+}
+.btn-light-bordered-group-left {
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.btn-light-bordered-group-right {
+	border-left-width: 0 !important;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+// ─── Tables ──────────────────────────────────────────────────────────────────
+
+@each $color, $value in $table-variants {
+	.table-#{$color} {
+		// Make it more like Bootstrap 4 - allow using these classes on non-table elements
+		background-color: $value;
+
+		// Make it more like Bootstrap 4 - no striping of table rows when highlighted
+		--bs-table-striped-bg: $value;
+		--bs-table-striped-color: color-contrast(opaque($body-bg, $value));
+	}
+}
+
+table {
+	white-space: nowrap;
+}
+
+.table {
+	font-variant: tabular-nums;
+	vertical-align: middle;
+}
+
+.align-top-all td {
+	vertical-align: top;
+}
+
+.table:not(.table-bordered) {
+	border-top: $table-border-width solid $table-border-color;
+}
+
+// .table is so this doesn't apply to a floating row while dragging
+.table tr.separator td {
+	border-bottom: 1px solid $gray-700;
+}
+
+.roster-handle {
+	max-width: 36px;
+	min-width: 36px;
+	width: 36px;
+
+	// This is necessary (I think) because the overflow of the scrollable table parent div makes the normal focus ring appear hidden, since the button is 100% width/height of td.
+	button:focus-visible {
+		outline: none;
+		box-shadow: inset 0 0 0 var(--bs-focus-ring-width)
+			var(--bs-focus-ring-color);
+	}
+}
+
+.game-log-list {
+	tbody td.game-log-cell {
+		padding: 0;
+	}
+
+	td.game-log-cell a {
+		display: block;
+		// Expand to encompass normal td padding, which was set to 0 here above.
+		padding: 4px 5px;
+		text-decoration: none;
+	}
+}
+
+.game-log-list tbody tr:hover td.game-log-cell,
+.messages-table tbody tr:hover td {
+	@extend .table-active;
+	text-decoration: none;
+}
+
+@include media-breakpoint-down(sm) {
+	.mx-xs-auto {
+		margin-left: auto !important;
+		margin-right: auto !important;
+	}
+}
+
+// Make table not stretch to 100% width automatically
+.table-nonfluid {
+	max-width: 100%;
+	width: unset;
+	.table {
+		width: 1px;
+	}
+}
+
+// https://github.com/twbs/bootstrap/issues/27493
+.table tfoot {
+	tr:first-child {
+		th {
+			border-top-color: $table-border-color;
+			border-top-width: 2px;
+		}
+	}
+}
+.table thead {
+	// Override default Bootstrap, looks ugly to have 2px borders when there are two rows in thead
+	tr {
+		th {
+			border-bottom-width: 1px;
+		}
+	}
+	tr:last-child {
+		th {
+			border-bottom-width: 2px;
+		}
+	}
+}
+
+.table tr {
+	min-height: 30px;
+}
+
+.table-responsive {
+	margin-bottom: 1rem;
+
+	// https://github.com/twbs/bootstrap/issues/29313#issuecomment-589969379
+	-webkit-overflow-scrolling: auto;
+
+	width: 100%;
+
+	.table {
+		margin-bottom: 0;
+	}
+}
+
+.table-accent {
+	background-color: var(--bs-table-hover-bg) !important;
+}
+
+// HACK so that other table classes can be overriden in teamHistory (and possibly elsewhere).
+tr.table-warning > td {
+	@extend .table-warning;
+}
+tr.table-warning:hover > td {
+	@extend .table-warning, :hover;
+}
+
+// Without these, then applying this to a table row (like for TOT stat rows) does not override the color from the striped table class. th is so it works in header/footer too
+tr.text-body-secondary {
+	td,
+	th {
+		color: var(--bs-secondary-color) !important;
+	}
+}
+
+// Without this, text-body-secondary doesn't apply to striped rows. That's used for hasTot
+.table-striped > tbody > tr:nth-of-type(odd) > * {
+	color: inherit;
+}
+
+.table-bg-striped {
+	background-color: $table-striped-bg;
+}
+
+.border-top-light {
+	border-top: 1px solid $table-border-color !important;
+}
+
+@include media-breakpoint-up(sm) {
+	.table-separator-right {
+		border-right: 2px solid $table-border-color;
+		padding-right: 1em !important;
+	}
+	.table-separator-left {
+		padding-left: 1em !important;
+	}
+}
+
+// Sticky column support
+$sticky-cols: (
+	"sticky-x": 1,
+	"sticky-xx": 2,
+	"sticky-xxx": 3,
+	"sticky-iv": 4,
+);
+
+@each $class, $col-num in $sticky-cols {
+	table.#{$class} {
+		// Add space for box-shadow - $table-cell-padding-x + 2px
+		tr {
+			td:nth-child(#{$col-num}),
+			th:nth-child(#{$col-num}) {
+				padding-right: 10px;
+			}
+		}
+
+		// :before because :after conflicts with sort arrows from datatable.scss
+		tr {
+			td:nth-child(#{$col-num}),
+			th:nth-child(#{$col-num}) {
+				&:before {
+					box-shadow: 0px 0px 0px 1px $border-color;
+					content: " ";
+					height: 100%;
+					position: absolute;
+					top: 0;
+					right: 1px;
+				}
+			}
+		}
+	}
+
+	table.#{$class}.table-sm {
+		// Add space for box-shadow - $table-cell-padding-x + 2px
+		tr {
+			td:nth-child(#{$col-num}),
+			th:nth-child(#{$col-num}) {
+				padding-right: 6px;
+			}
+		}
+	}
+
+	@if $col-num > 1 {
+		@for $i from 2 through $col-num {
+			table.#{$class} {
+				tr {
+					td:nth-child(#{$i}),
+					th:nth-child(#{$i}) {
+						position: sticky;
+						// left: 157px; will be set by JS
+						z-index: 10;
+
+						// Not sure why this was needed, but it broke sortable handle background colors
+						//background-color: $white;
+					}
+				}
+			}
+		}
+	}
+}
+
+table.sticky-x,
+table.sticky-xx,
+table.sticky-xxx,
+table.sticky-iv {
+	tr {
+		td:nth-child(1),
+		th:nth-child(1) {
+			position: sticky;
+			left: 0;
+			z-index: 10;
+
+			// Not sure why this was needed, but it broke sortable handle background colors
+			//background-color: $white;
+		}
+	}
+
+	thead tr th:nth-child(1) {
+		position: sticky;
+		left: 0;
+		top: 0;
+		z-index: 12;
+	}
+
+	tr.table-warning,
+	tr.table-primary,
+	tr.table-secondary,
+	tr.table-success,
+	tr.table-danger,
+	tr.table-warning,
+	tr.table-info,
+	tr.table-light,
+	tr.table-dark {
+		td,
+		td.sorting_highlight {
+			background-color: inherit !important;
+		}
+	}
+}
+
+.highlight-leader {
+	font-weight: bold;
+}
+
+// ─── Badges and status indicators ────────────────────────────────────────────
+
+.badge-injury {
+	cursor: default;
+	margin-left: 4px;
+	vertical-align: 20%;
+}
+
+.badge-news {
+	font-size: inherit;
+	font-weight: inherit;
+}
+
+// ─── Player/entity icons ─────────────────────────────────────────────────────
+
+.help-icon {
+	cursor: pointer;
+	font-size: 13px;
+}
+
+.icon-question-sign {
+	cursor: pointer;
+}
+
+// Stupid fix for popover in h4
+.popover-body {
+	font-size: 13px;
+	font-weight: normal;
+
+	p:last-child {
+		margin-bottom: 0;
+	}
+}
+
+$jersey-number-width: 15px;
+.jersey-number-name {
+	font-size: 10px;
+	line-height: 18px;
+	vertical-align: 2%;
+	display: inline-block;
+	min-width: $jersey-number-width;
+}
+
+.exhibition-stats {
+	margin-left: $jersey-number-width;
+}
+
+.jersey-number-popover {
+	font-size: 10px;
+	line-height: 16px;
+}
+
+.skill {
+	cursor: default;
+	font-size: 10px;
+	line-height: 18px;
+	margin-left: 4px;
+	vertical-align: 2%;
+}
+
+.skills-alone {
+	margin-left: -4px;
+	vertical-align: 2%;
+}
+
+// ─── Watch list colors ────────────────────────────────────────────────────────
+
+.watch,
+.watch:hover {
+	color: $gray-500;
+	cursor: pointer;
+	margin-left: 4px;
+	text-decoration: none;
+}
+
+// Same as bar-graph
+.watch-active-1,
+.watch-active-1:hover {
+	color: $red;
+}
+.watch-active-2,
+.watch-active-2:hover {
+	color: $green;
+}
+.watch-active-3,
+.watch-active-3:hover {
+	color: $blue;
+}
+.watch-active-4,
+.watch-active-4:hover {
+	color: $yellow;
+}
+.watch-active-5,
+.watch-active-5:hover {
+	color: $indigo;
+}
+.watch-active-6,
+.watch-active-6:hover {
+	color: $pink;
+}
+.watch-active-7,
+.watch-active-7:hover {
+	color: $cyan;
+}
+.watch-active-8,
+.watch-active-8:hover {
+	color: $orange;
+}
+
+// ─── Colors and backgrounds ───────────────────────────────────────────────────
+
+.bg-darkblue {
+	background-color: #007bff;
+}
+.bg-orange {
+	background-color: lighten(#fd7e14, 10);
+}
+
+.bg-warning,
+.bg-orange,
+.bg-info,
+.bg-light {
+	color: $black !important;
+}
+
+.bg-success {
+	color: $white !important;
+}
+
+.bg-tertiary {
+	background-color: $gray-300 !important;
+}
+
+$bg-secondary-very-subtle: $gray-100;
+.bg-secondary-very-subtle {
+	background-color: $bg-secondary-very-subtle !important;
+}
+
+.bg-secondary {
+	color: $white !important;
+}
+
+.text-warning {
+	color: darken($yellow, 10%) !important;
+}
+
+.text-yellow {
+	color: $yellow;
+}
+
+.ring::after {
+	color: $yellow;
+	content: "\274d";
+	font-weight: bold;
+}
+
+.highlight-leader {
+	font-weight: bold;
+}
+
+// ─── Legend ──────────────────────────────────────────────────────────────────
+
+.legend-square {
+	bottom: -2.5px;
+	display: inline-block;
+	height: 15px;
+	position: relative;
+	width: 15px;
+}
+
+// ─── Alerts ──────────────────────────────────────────────────────────────────
+
+.alert p:last-child {
+	margin-bottom: 0;
+}
+
+.alert-bg-color {
+	background-color: var(--bs-alert-bg);
+}
+
+// Add !important to bg color so they can be used in table on achievements page
+@each $state, $value in $theme-colors {
+	$list-group-variant-bg: shift-color($value, $list-group-item-bg-scale);
+	.list-group-item-#{$state} {
+		background-color: $list-group-variant-bg !important;
+	}
+}
+
+// ─── Scrollbars ──────────────────────────────────────────────────────────────
+
+$small-scrollbar-track-color: $gray-300 !default;
+$small-scrollbar-thumb-color: $gray-500 !default;
+$small-scrollbar-thumb-hover-color: darken($gray-500, 10%) !default;
+@include media-breakpoint-up(sm) {
+	.small-scrollbar {
+		// Firefox
+		scrollbar-color: $small-scrollbar-thumb-color $small-scrollbar-track-color;
+		scrollbar-width: thin;
+
+		// Other browsers
+		&::-webkit-scrollbar {
+			// Careful about changing these! Check where they are used
+			height: 6px;
+			width: 3px;
+		}
+		&::-webkit-scrollbar-track {
+			background: $small-scrollbar-track-color;
+			border-radius: 50px;
+		}
+		&::-webkit-scrollbar-thumb {
+			background: $small-scrollbar-thumb-color;
+			border-radius: 50px;
+			&:hover {
+				background: $small-scrollbar-thumb-hover-color;
+			}
+		}
+		&:hover {
+			&::-webkit-scrollbar {
+				// Careful about changing these! Check where they are used
+				height: 6px !important;
+				width: 10px;
+			}
+		}
+	}
+}
+
+// ─── Misc interactive ─────────────────────────────────────────────────────────
+
+.new_window {
+	cursor: pointer;
+	stroke: #000;
+	vertical-align: 0;
+}
+
+@media (max-width: 768px) {
+	.new_window {
+		display: none;
+	}
+}
+
+.border-light {
+	border: 1px solid;
+	border-color: $gray-300 !important;
+}
+
+.user-select-none {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.touch-action-none {
+	// This is needed for draggable handles on mobile https://docs.dndkit.com/api-documentation/sensors/pointer#touch-action
+	touch-action: none;
+}
+
+// No animation when resetting progress bar https://github.com/react-bootstrap/react-bootstrap/issues/4981
+.progress-bar[aria-valuenow="0"] {
+	transition: none !important;
+}
+
+hr.my-hr {
+	background-color: $black;
+	opacity: 0.1;
+}
+
+.link-secondary {
+	color: $body-secondary-color !important;
+	text-decoration-color: inherit !important;
+
+	&:hover,
+	&:focus {
+		color: $body-secondary-color !important;
+		text-decoration-color: inherit !important;
+	}
+}
+
+// ─── Modal z-index helpers ───────────────────────────────────────────────────
+
+// https://www.codeply.com/go/NiFzSCukVl/bootstrap-4-open-modal-from-another-modal
+// Increased z-index for Bootstrap 5 https://getbootstrap.com/docs/5.1/layout/z-index/
+.highest-modal {
+	z-index: 1057 !important;
+}
+.highest-modal-backdrop.show {
+	z-index: 1056 !important;
+}
+
+// ─── Utility classes ──────────────────────────────────────────────────────────
+
+.cursor-default {
+	cursor: default;
+}
+.cursor-pointer {
+	cursor: pointer;
+}
+.cursor-grab {
+	cursor: grab;
+}
+.cursor-grabbing {
+	cursor: grabbing;
+}
+
+.row-gap-0 {
+	row-gap: 0 !important;
+}
+
+.row-gap-3 {
+	row-gap: 1rem !important;
+}
+
+@include media-breakpoint-up(sm) {
+	.border-radius-top-sm-0 {
+		border-top-left-radius: 0 !important;
+		border-top-right-radius: 0 !important;
+	}
+
+	.border-radius-bottom-sm-0 {
+		border-bottom-left-radius: 0 !important;
+		border-bottom-right-radius: 0 !important;
+	}
+
+	.border-top-sm-0 {
+		border-top: 0 !important;
+	}
+}
+
+@media (min-width: 1600px) {
+	.d-xxl-none {
+		display: none !important;
+	}
+	.d-xxl-inline {
+		display: inline !important;
+	}
+	.col-xxl-4 {
+		flex: 0 0 33.33333%;
+		max-width: 33.33333%;
+	}
+}
+
+// ─── Third-party component overrides ─────────────────────────────────────────
+
+// Hack to get rid of annoying "Privacy Settings" tab from Quantcast CMP
+.qc-cmp2-persistent-link {
+	display: none !important;
+}
+
+// react-select (dark-select) overrides
+.default-settings-select {
+	max-width: 400px;
+
+	.dark-select__placeholder {
+		color: $black;
+	}
+
+	.dark-select__group-heading {
+		font-size: 90%;
+	}
+
+	.dark-select__menu {
+		z-index: 3; // Above .settings-buttons
+	}
+}
+
+// Make same height as other form controls
+.dark-select__control {
+	min-height: 33px !important;
+}
+.dark-select__indicator {
+	padding: 0 8px !important;
+}
+.dark-select__option {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	padding: 6px 12px !important;
+}
+.dark-select__option:hover,
+.dark-select__option--is-focused {
+	background-color: $gray-200 !important;
+	color: $black !important;
+}
+.dark-select__option--is-selected {
+	// Keep in sync with btn-primary
+	background-color: $primary !important;
+	color: $white !important;
+}
+.dark-select__option--is-selected:hover {
+	// Keep in sync with btn-primary
+	background-color: darken($primary, 10) !important;
+	color: $white !important;
+}
+.dark-select__menu {
+	margin-top: 0 !important;
+	margin-bottom: 0 !important;
+}
+
+// SortableHelper (dnd-kit drag overlay)
+.SortableHelper {
+	display: flex;
+}
+.SortableHelper button {
+	white-space: nowrap;
+}
+
+// Confetti overlay
+#confetti {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 1050;
+}

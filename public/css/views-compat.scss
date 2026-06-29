@@ -1,0 +1,577 @@
+// View-specific rules: styles that apply to individual pages/views.
+// Do not add shell chrome or generic primitives here.
+// Bootstrap token bridges for .view-root will live here in Phase 5.
+
+// ─── Ad rails ────────────────────────────────────────────────────────────────
+
+@media screen and (min-width: (map-get($grid-breakpoints, xl) + 190px)) {
+	#basketball-gm_right_rail,
+	#football-gm_right_rail,
+	#zen-gm_right_rail {
+		display: block;
+		position: sticky;
+		top: 60px;
+		right: 0;
+		width: 160px;
+		height: 600px;
+	}
+}
+
+#basketball-gm_mobile_leaderboard,
+#football-gm_mobile_leaderboard,
+#zen-gm_mobile_leaderboard {
+	z-index: 1000; // Behind sidebar
+	bottom: 0;
+	padding-top: 2px;
+	position: fixed;
+	left: 0;
+	right: 0;
+	text-align: center;
+	background-color: rgba(247, 247, 247, 0.8);
+	vertical-align: bottom !important;
+	width: 100vw;
+
+	// override inline styles in JS file
+	margin-bottom: 0 !important;
+	height: 52px;
+}
+
+// ─── Dashboard ───────────────────────────────────────────────────────────────
+
+.dashboard-top-link {
+	line-height: 1.35;
+	padding: 5px 8px 6px;
+	text-align: left;
+	width: 155px;
+	height: 77px;
+}
+
+.dashboard-top-link-new {
+	font-size: 20px;
+	padding-top: 11px;
+}
+
+.dashboard-top-link-small {
+	font-size: 16px;
+}
+
+.dashboard-top-link-other {
+	color: $gray-800;
+	font-size: 15px;
+	background-repeat: no-repeat;
+	padding-right: 20px;
+	padding-top: 7px;
+
+	&:hover {
+		color: $black;
+	}
+}
+
+.dashboard-top-link-other-basketball {
+	background-image: url("https://play.basketball-gm.com/ico/icon70.png");
+	background-position: 90px 34px;
+}
+.dashboard-top-link-other-football {
+	background-image: url("https://play.football-gm.com/ico/icon70.png");
+	background-position: 81px 34px;
+}
+.dashboard-top-link-other-baseball {
+	background-image: url("https://baseball.zengm.com/ico/icon70.png");
+	background-position: 85px 34px;
+}
+.dashboard-top-link-other-hockey {
+	background-image: url("https://hockey.zengm.com/ico/icon70.png");
+	background-position: 81px 34px;
+}
+
+@include media-breakpoint-down(sm) {
+	.dashboard-top-wrapper {
+		text-align: center;
+	}
+
+	a.dashboard-top-link-flatten {
+		width: 326px;
+		height: inherit;
+
+		br {
+			display: none;
+		}
+	}
+	.dashboard-top-link-flatten.dashboard-top-link-other-basketball,
+	.dashboard-top-link-flatten.dashboard-top-link-other-football,
+	.dashboard-top-link-flatten.dashboard-top-link-other-baseball {
+		background-position: 239px 0px;
+	}
+	.dashboard-top-link-flatten.dashboard-top-link-other-hockey {
+		background-position: 239px -7px;
+	}
+}
+
+.dashboard-controls {
+	padding-top: 0 !important;
+	padding-bottom: 0 !important;
+}
+
+.dashboard-play-loading {
+	animation: oscillate-bg 1.5s infinite;
+}
+
+@keyframes oscillate-bg {
+	0% {
+		background-color: lighten($success, 8);
+	}
+
+	50% {
+		background-color: darken($success, 8);
+	}
+
+	100% {
+		background-color: lighten($success, 8);
+	}
+}
+
+// ─── Negotiation view ────────────────────────────────────────────────────────
+
+.negotiation-team-years {
+	width: 110px;
+}
+
+.negotiation-team-amount {
+	width: 180px;
+}
+
+// ─── Player / entity views ───────────────────────────────────────────────────
+
+.select-team {
+	max-width: 203px;
+}
+
+.player-picture {
+	height: 180px;
+	float: left;
+	margin-right: 10px;
+	width: 120px;
+}
+
+.player-awards {
+	white-space: normal;
+}
+
+.team-picture {
+	display: none; // Hide by default, shown in views/roster.js
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: contain;
+	width: 128px;
+	height: 128px;
+}
+
+.pt-modifier-select {
+	margin: 0;
+	padding: 0 0.25rem;
+	height: 20px;
+	padding-right: 0.1rem;
+	background-position: right 0.1em center;
+}
+
+// These colors are duplicated from Roster.js
+.pt-modifier-select {
+	option[value="1"] {
+		background-color: $gray-400;
+		color: $black;
+	}
+
+	option[value="1.5"] {
+		background-color: $blue;
+		color: $white;
+	}
+
+	option[value="1.25"] {
+		background-color: $cyan;
+		color: $white;
+	}
+
+	option[value="0.75"] {
+		background-color: $warning;
+		color: $black;
+	}
+
+	option[value="0"] {
+		background-color: $danger;
+		color: $white;
+	}
+}
+
+@include media-breakpoint-up(sm) {
+	.player-bio {
+		min-width: 370px;
+		margin-right: 1em;
+	}
+}
+
+.ratings-overview {
+	width: 100%;
+}
+@include media-breakpoint-up(sm) {
+	.ratings-overview {
+		display: inline-block;
+		width: inherit;
+	}
+}
+.ratings-overview-title-underline {
+	background-color: var(--bs-border-color);
+}
+
+@include media-breakpoint-down(sm) {
+	// Same as .table-responsive
+	.player-stats-summary {
+		display: block;
+		width: 100%;
+		overflow-x: auto;
+		// https://github.com/twbs/bootstrap/issues/29313#issuecomment-589969379
+		-webkit-overflow-scrolling: auto;
+
+		.table {
+			margin-bottom: 0;
+		}
+	}
+}
+
+// ─── Bar graphs ──────────────────────────────────────────────────────────────
+
+.bar-graph-small {
+	height: 40px;
+}
+
+.bar-graph-medium {
+	height: 60px;
+}
+
+.bar-graph-large {
+	height: 100px;
+}
+
+.bar-graph-1 {
+	background-color: $blue;
+}
+.bar-graph-2 {
+	background-color: $red;
+}
+.bar-graph-3 {
+	background-color: $green;
+}
+.bar-graph-4 {
+	background-color: $yellow;
+}
+.bar-graph-5 {
+	background-color: $indigo;
+}
+.bar-graph-6 {
+	background-color: $pink;
+}
+.bar-graph-7 {
+	background-color: $cyan;
+}
+.bar-graph-8 {
+	background-color: $orange;
+}
+
+// ─── Messages ────────────────────────────────────────────────────────────────
+
+#messages-table {
+	table-layout: fixed;
+	width: 100%;
+
+	td {
+		padding: 0;
+
+		a {
+			color: $black;
+			display: block;
+			padding: 4px 5px;
+			text-decoration: none;
+		}
+	}
+
+	.year {
+		width: 40px;
+	}
+
+	.from {
+		width: 130px;
+	}
+
+	.text {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		width: auto;
+	}
+}
+
+// ─── Live game ───────────────────────────────────────────────────────────────
+
+// Keep in sync with setPlayByPlayDivHeight
+.live-game-affix {
+	margin-top: 1em;
+}
+@include media-breakpoint-up(md) {
+	.live-game-affix {
+		position: sticky;
+		margin-top: 0;
+		top: 52px;
+	}
+	.live-game-playbyplay {
+		overflow: auto;
+	}
+}
+.live-game-sticky {
+	position: sticky;
+	top: 52px;
+
+	// Puts it over sticky column headers
+	z-index: 1;
+}
+
+@include media-breakpoint-down(md) {
+	.live-game-score-wrapper {
+		background-color: $white !important;
+	}
+	.live-game-score-actual {
+		width: 100%;
+	}
+
+	.live-game-score-actual-stuck {
+		background-color: $white;
+	}
+}
+
+@include media-breakpoint-up(md) {
+	.live-game-score-actual-stuck {
+		background-color: $bg-secondary-very-subtle;
+		border: $border-width $border-style $border-color;
+		border-top: 0;
+	}
+}
+
+// ─── Trade view ──────────────────────────────────────────────────────────────
+
+// Keep in sync with trade/index.tsx
+@include media-breakpoint-up(md) {
+	.trade-affix {
+		position: sticky;
+		top: 60px;
+	}
+	.trade-items {
+		overflow: auto;
+	}
+}
+
+.trading-block-buttons {
+	text-align: center;
+}
+@include media-breakpoint-up(md) {
+	.trading-block-draft-picks-wrapper {
+		padding-top: 35px;
+	}
+
+	.trading-block-buttons {
+		text-align: unset;
+	}
+}
+
+// ─── Playoff bracket ─────────────────────────────────────────────────────────
+
+.playoff-matchup {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	text-indent: 0;
+	max-width: 200px;
+
+	li {
+		height: 40px;
+		display: flex;
+		align-items: center;
+	}
+
+	li:last-child {
+		border: none;
+	}
+}
+.playoff-matchup-logo {
+	width: 40px;
+	height: 40px;
+}
+
+// ─── Standings ───────────────────────────────────────────────────────────────
+
+.standings-name {
+	min-width: 100px;
+}
+
+@include media-breakpoint-up(sm) {
+	.standings-name {
+		// Wide enough that Philadelphia Cheesesteaks still fits after clinching playoffs
+		min-width: 228px;
+	}
+}
+
+// ─── Settings view ────────────────────────────────────────────────────────────
+
+.settings-description > p:last-child {
+	margin-bottom: 0 !important;
+}
+
+.fake-list-group-item {
+	background-color: $table-striped-bg;
+	padding: 0.5rem 1rem;
+	width: 100%;
+}
+.settings-striped-bg-alt {
+	background-color: inherit;
+}
+@include media-breakpoint-up(md) {
+	.settings-striped-bg-alt {
+		background-color: $table-striped-bg;
+	}
+	.fake-list-group-item {
+		margin-bottom: 30px;
+	}
+}
+@include media-breakpoint-down(sm) {
+	.fake-list-group-item {
+		padding-right: 0;
+		padding-left: 0;
+		border-right: 0 !important;
+		border-left: 0 !important;
+		border-radius: 0 !important;
+	}
+}
+
+@include media-breakpoint-down(md) {
+	// Make it so the striped-bg color goes all the way to the edge of the screen
+	.settings-col {
+		padding-left: 0;
+		padding-right: 0;
+	}
+	.fake-list-group-item {
+		padding-left: 15px;
+		padding-right: 15px;
+	}
+}
+
+.settings-buttons {
+	position: sticky;
+
+	// To make it go over the Bootstrap custom form controls, like switch
+	z-index: 2;
+}
+@include media-breakpoint-down(lg) {
+	.settings-buttons {
+		margin: 0 -0.5rem;
+		border-top-left-radius: 0 !important;
+		border-top-right-radius: 0 !important;
+	}
+}
+
+a.anchor {
+	display: block;
+	position: relative;
+	top: -60px;
+	visibility: hidden;
+}
+
+.settings-wrapper {
+	display: flex;
+	flex-direction: column-reverse;
+}
+.settings-shortcuts li {
+	display: inline;
+	&:not(:last-child):not(:first-child):after {
+		content: " | ";
+	}
+}
+@include media-breakpoint-up(lg) {
+	.settings-wrapper {
+		flex-direction: row;
+	}
+	.settings-shortcuts {
+		align-self: flex-start;
+		position: sticky;
+		top: 60px;
+		margin-left: 1rem;
+
+		li {
+			margin-bottom: 0.25rem;
+			display: block;
+			&:not(:last-child):not(:first-child):after {
+				content: none;
+			}
+		}
+	}
+}
+
+.play-through-injuries {
+	@include media-breakpoint-up(sm) {
+		width: 200px;
+	}
+}
+
+// ─── Charts ──────────────────────────────────────────────────────────────────
+
+.chart-legend {
+	background-color: rgba($white, 0.75);
+	position: absolute;
+	top: 42px;
+	left: 20px;
+}
+.chart-line {
+	fill: none;
+}
+.fill-white {
+	fill: $white;
+}
+.fill-yellow {
+	fill: $yellow;
+}
+
+// ─── Baseball ────────────────────────────────────────────────────────────────
+
+.baseball-base {
+	width: 20px;
+	height: 20px;
+	transform: rotate(45deg);
+}
+
+// ─── Compare players ─────────────────────────────────────────────────────────
+
+.compare-players-heading {
+	font-size: 0.75rem;
+	text-transform: uppercase;
+	padding: 4px;
+	cursor: pointer;
+
+	display: block;
+	font-weight: 500;
+	color: $black;
+
+	&:hover {
+		text-decoration: none;
+	}
+}
+
+// ─── Color picker ────────────────────────────────────────────────────────────
+
+// https://github.com/uiwjs/react-color?tab=readme-ov-file#support-darknight-theme
+.w-color-editable-input {
+	--editable-input-color: #000 !important;
+	--editable-input-label-color: #555 !important;
+}
+
+// ─── Filter layout ───────────────────────────────────────────────────────────
+
+@include media-breakpoint-down(md) {
+	.filter-wrapper {
+		flex-direction: column !important;
+	}
+}

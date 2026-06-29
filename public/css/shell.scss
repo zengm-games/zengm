@@ -1,0 +1,421 @@
+// Shell chrome: top nav, sidebar, title bar, league score strip.
+// Zero react-bootstrap imports. No view-specific rules here.
+// Merged: sidebar.scss (was a separate file).
+
+// ─── Sidebar ─────────────────────────────────────────────────────────────────
+
+// This used to line up with the Play button, but no more since there is now a toggle on large screens
+$sidebar-width: 150px;
+
+// .sidebar-inner is needed because you can't put a fixed div in flexbox
+.sidebar-inner {
+	padding: 0.5rem 0;
+	overflow-x: hidden;
+	overflow-y: auto;
+	z-index: 1040;
+	border-right: 1px solid $gray-200;
+	position: fixed;
+	transition: left 0.3s ease-in-out;
+	bottom: 0;
+}
+
+.sidebar-inner .nav-link {
+	font-weight: 500;
+	color: $gray-900;
+	padding: 4px $container-padding-x;
+	white-space: nowrap;
+}
+
+.sidebar-inner .nav-link.active {
+	background-color: $gray-200;
+	color: $primary;
+}
+
+.sidebar-inner .nav-link:hover {
+	background-color: $gray-200;
+}
+
+.sidebar-heading {
+	font-size: 0.75rem;
+	text-transform: uppercase;
+	padding: 0 $container-padding-x;
+	cursor: pointer;
+	@extend .mt-3;
+	@extend .mb-1;
+	@extend .text-body-secondary;
+
+	// Make like h2
+	display: block;
+	font-weight: 500;
+	line-height: 1.2;
+	text-align: left;
+	width: 100%;
+	border: 0;
+
+	&:hover {
+		text-decoration: none;
+	}
+}
+
+@include media-breakpoint-up(xl) {
+	.sidebar {
+		transition: width 0.3s ease-in-out;
+		width: 0;
+	}
+	.sidebar-open {
+		width: $sidebar-width;
+	}
+
+	.sidebar-inner {
+		left: -$sidebar-width;
+		top: 52px;
+		width: $sidebar-width;
+	}
+	.sidebar-open .sidebar-inner {
+		left: 0;
+	}
+}
+
+// Set this here or it flashes when switching between xl and below xl
+.sidebar-fade {
+	opacity: 0;
+}
+
+@include media-breakpoint-down(xl) {
+	.sidebar-inner {
+		left: -190px;
+		top: 0;
+		width: 190px;
+		font-size: 1rem;
+	}
+	.sidebar-heading {
+		font-size: 0.875rem;
+		padding-left: 0.75rem;
+	}
+	.sidebar-inner .nav-link {
+		padding-left: 0.75rem;
+	}
+	.sidebar-open .sidebar-inner {
+		left: 0;
+	}
+
+	// Fade animation only works in one direction!
+	.sidebar-fade {
+		position: fixed;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		width: 0;
+		z-index: -1040;
+		background-color: $black;
+		opacity: 0;
+		transition: opacity 0.3s ease-in-out; // Keep time in sync with SideBar setTimeout
+	}
+
+	.sidebar-fade-open {
+		opacity: 0.2;
+		width: 100%;
+		z-index: 1040;
+	}
+
+	.sidebar-fade-closing {
+		opacity: 0;
+		width: 100%;
+		z-index: 1040;
+	}
+}
+
+// ─── Top nav ─────────────────────────────────────────────────────────────────
+
+.navbar-brand {
+	// Not sure why, but without this it's 35.5px which screws up alignment of the dropdowns and the border
+	height: 35px;
+
+	img {
+		vertical-align: -3px;
+	}
+
+	span {
+		padding-left: 5px;
+	}
+}
+
+.navbar-border {
+	border-bottom: 1px solid $gray-200;
+}
+
+.dropdown-links .nav-item,
+#top-user-block .nav-item,
+.play-button-wrapper {
+	margin: -8px 0;
+	height: 51px;
+}
+.dropdown-mobile {
+	.dropdown-item {
+		padding-top: 0.75rem !important;
+		padding-bottom: 0.75rem !important;
+	}
+	.kbd {
+		display: none;
+	}
+}
+.dropdown-links .dropdown.show.nav-item {
+	background-color: $gray-200;
+}
+.dropdown-links .nav-link {
+	padding: 16px 8px;
+}
+@include media-breakpoint-up(xl) {
+	.dropdown-links .nav-link {
+		padding: 16px;
+	}
+}
+
+#top-user-block .nav-link {
+	padding: 16px 0 16px 8px;
+}
+@include media-breakpoint-up(xl) {
+	#top-user-block .nav-link {
+		padding: 16px 0 16px 16px;
+	}
+}
+
+.nav-link {
+	cursor: pointer;
+}
+
+.navbar .dropdown-menu {
+	border-top-color: $gray-200;
+	border-radius: 0;
+	margin-top: 0;
+	padding-bottom: 0;
+	padding-top: 0;
+}
+
+// Needed to fix navbar nesting on xs - not sure why, maybe bug in Bootstrap or Reactstrap?
+.navbar-nav {
+	.dropdown-menu {
+		position: absolute;
+	}
+}
+
+// ─── Keyboard shortcut hints (shown in nav dropdowns) ────────────────────────
+
+.kbd {
+	display: none;
+}
+@include media-breakpoint-up(sm) {
+	.kbd-parent {
+		position: relative;
+		padding-right: 70px;
+	}
+	.kbd {
+		display: block;
+		position: absolute;
+		right: $dropdown-item-padding-x;
+		top: $dropdown-item-padding-y;
+	}
+}
+
+// ─── Play button ─────────────────────────────────────────────────────────────
+
+.play-button {
+	font-size: 1.01562rem;
+	padding: 14px !important;
+	color: #fff !important; // white in light and dark
+	height: 51px;
+}
+.play-button-success {
+	background-color: $green;
+
+	&:hover,
+	&:active,
+	&:focus {
+		background-color: shade-color($green, $btn-hover-bg-shade-amount);
+	}
+}
+.play-button-danger {
+	background-color: $red;
+
+	&:hover,
+	&:active,
+	&:focus {
+		background-color: shade-color($red, $btn-hover-bg-shade-amount);
+	}
+}
+
+button.fast-forward {
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+	border-left-width: 0 !important;
+}
+
+// ─── Multi-team menu ─────────────────────────────────────────────────────────
+
+.multi-team-menu {
+	background-color: $white;
+	opacity: 0.9;
+	position: fixed;
+	right: 6px;
+	padding-bottom: 6px;
+	border-radius: 0.25em 0.25em 0 0;
+	z-index: 1000;
+}
+
+// ─── Title bar / page toolbar ────────────────────────────────────────────────
+
+.title-bar {
+	gap: 0 10px;
+	min-height: 32px;
+
+	// Like .container-fluid
+	padding-left: var(--bs-gutter-x, 0.5rem);
+	padding-right: var(--bs-gutter-x, 0.5rem);
+
+	h1 {
+		font-size: 20px;
+		margin-bottom: 7px; // Needed in addition to .title-bar min-height when it wraps onto multiple lines
+	}
+	option {
+		font-size: 12px;
+	}
+	.dropdown-links .dropdown.show.nav-item {
+		background-color: $gray-100;
+	}
+}
+.title-bar-right-links {
+	.nav-item {
+		height: 39px !important;
+	}
+	.nav-link {
+		padding-bottom: 10px !important;
+		padding-top: 6px !important;
+	}
+	.dropdown-menu {
+		margin-top: -5px !important;
+	}
+}
+
+@include media-breakpoint-down(sm) {
+	.title-bar {
+		padding-right: 0;
+	}
+}
+.dropdown-select-wrapper {
+	margin-bottom: 7px; // Needed in addition to .title-bar min-height when it wraps onto multiple lines
+}
+.dropdown-select {
+	display: block;
+	margin: 0 1px;
+	-moz-appearance: none;
+	-webkit-appearance: none;
+	appearance: none;
+	padding: 1px 13px 0 2px;
+	background-color: inherit;
+	border: 0;
+	color: inherit;
+	cursor: pointer;
+	text-decoration-style: dashed;
+	background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22200%22%20height%3D%22100%22%3E%3Cpath%20fill%3D%22%23000%22%20d%3D%22M%200%2C0%20L%20100%2C100%20L%20200%2C0%20z%22%2F%3E%3C%2Fsvg%3E");
+	background-repeat: no-repeat, repeat;
+	background-position:
+		right 0 top 45%,
+		0 0;
+	background-size:
+		0.62em auto,
+		100%;
+	font-size: 13px;
+
+	option {
+		color: #000;
+	}
+}
+@include media-breakpoint-up(md) {
+	.dropdown-select {
+		font-size: 14px;
+	}
+	.title-bar {
+		min-height: 38px;
+		h1 {
+			font-size: 24px;
+		}
+	}
+	.title-bar-right-links {
+		.nav-item {
+			height: 38px !important;
+		}
+		.nav-link {
+			padding-bottom: 13px !important;
+			padding-top: 6px !important;
+		}
+		.dropdown-menu {
+			margin-top: -5px !important;
+		}
+	}
+}
+
+// ─── League top bar (score strip) ────────────────────────────────────────────
+
+$league-top-bar-toggle-width: 15px;
+.league-top-bar {
+	padding-right: $league-top-bar-toggle-width;
+
+	// For scrollbar that grows on hover
+	height: 63px;
+	@include media-breakpoint-up(sm) {
+		&::-webkit-scrollbar {
+			height: 0 !important;
+		}
+	}
+}
+.league-top-bar-safari {
+	margin-right: $league-top-bar-toggle-width + 8px;
+}
+.league-top-bar-toggle {
+	border-top-right-radius: 0 !important;
+	border-bottom-right-radius: 0 !important;
+	width: $league-top-bar-toggle-width;
+	height: 56px;
+	z-index: 1000;
+	position: absolute;
+	right: 0px;
+}
+
+.score-box-deadline {
+	height: 94px;
+}
+.score-box-deadline-small {
+	height: 54px;
+}
+
+.score-box-all-star {
+	height: 47px;
+}
+
+.score-box-score {
+	min-width: 44px;
+}
+
+.score-box-action {
+	height: 96px;
+
+	.btn {
+		border-bottom-left-radius: 0px !important;
+		border-top-left-radius: 0px !important;
+		padding-top: 0 !important;
+		padding-bottom: 0 !important;
+	}
+
+	.btn:not(:first-child) {
+		border-top: 1px solid $gray-300;
+	}
+}
+
+.score-box-left-wrapper {
+	flex-grow: 1;
+}
+@include media-breakpoint-up(sm) {
+	.score-box-left-wrapper {
+		flex-grow: 0;
+	}
+}

@@ -1,0 +1,15 @@
+// CSS custom properties — structural home for :root tokens.
+// Phase 1: only the two gradient vars that exist in master.
+// Phase 2 will expand this file with the full design token set.
+//
+// Requires Bootstrap variables ($danger, $success) to be in scope —
+// must be imported after Bootstrap in light.scss.
+
+@function derive-rgb-values-from-hex($hex) {
+	@return red($hex), green($hex), blue($hex);
+}
+
+:root {
+	--gradient-base-danger: #{derive-rgb-values-from-hex(lighten($danger, 20%))};
+	--gradient-base-success: #{derive-rgb-values-from-hex(lighten($success, 20%))};
+}

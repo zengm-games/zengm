@@ -4,7 +4,6 @@
 
 // ─── Sidebar ─────────────────────────────────────────────────────────────────
 
-// This used to line up with the Play button, but no more since there is now a toggle on large screens
 $sidebar-width: 150px;
 
 // .sidebar-inner is needed because you can't put a fixed div in flexbox
@@ -13,26 +12,27 @@ $sidebar-width: 150px;
 	overflow-x: hidden;
 	overflow-y: auto;
 	z-index: 1040;
-	border-right: 1px solid $gray-200;
+	border-right: 1px solid var(--zengm-border);
 	position: fixed;
 	transition: left 0.3s ease-in-out;
 	bottom: 0;
+	background-color: var(--zengm-surface-1);
 }
 
 .sidebar-inner .nav-link {
 	font-weight: 500;
-	color: $gray-900;
+	color: var(--zengm-text-strong);
 	padding: 4px $container-padding-x;
 	white-space: nowrap;
 }
 
 .sidebar-inner .nav-link.active {
-	background-color: $gray-200;
-	color: $primary;
+	background-color: var(--zengm-surface-2);
+	color: var(--zengm-brand);
 }
 
 .sidebar-inner .nav-link:hover {
-	background-color: $gray-200;
+	background-color: var(--zengm-surface-2);
 }
 
 .sidebar-heading {
@@ -68,7 +68,7 @@ $sidebar-width: 150px;
 
 	.sidebar-inner {
 		left: -$sidebar-width;
-		top: 52px;
+		top: var(--zengm-nav-height, 52px);
 		width: $sidebar-width;
 	}
 	.sidebar-open .sidebar-inner {
@@ -127,6 +127,23 @@ $sidebar-width: 150px;
 
 // ─── Top nav ─────────────────────────────────────────────────────────────────
 
+.navbar {
+	background-color: var(--zengm-nav-bg);
+
+	// Wire Bootstrap's own component CSS vars so dropdowns, links, toggler
+	// all inherit the correct contrast color without needing separate rules.
+	--bs-navbar-color: var(--zengm-nav-text);
+	--bs-navbar-hover-color: var(--zengm-nav-text);
+	--bs-navbar-active-color: var(--zengm-nav-text);
+	--bs-navbar-brand-color: var(--zengm-nav-text);
+	--bs-navbar-brand-hover-color: var(--zengm-nav-text);
+	--bs-navbar-disabled-color: var(--zengm-nav-text-muted);
+
+	// White hamburger SVG — explicit, no filter:invert() hack
+	--bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255%2C255%2C255%2C0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c%2fsvg%3e");
+	--bs-navbar-toggler-border-color: rgba(255, 255, 255, 0.15);
+}
+
 .navbar-brand {
 	// Not sure why, but without this it's 35.5px which screws up alignment of the dropdowns and the border
 	height: 35px;
@@ -141,7 +158,7 @@ $sidebar-width: 150px;
 }
 
 .navbar-border {
-	border-bottom: 1px solid $gray-200;
+	border-bottom: 1px solid var(--zengm-border);
 }
 
 .dropdown-links .nav-item,
@@ -160,7 +177,7 @@ $sidebar-width: 150px;
 	}
 }
 .dropdown-links .dropdown.show.nav-item {
-	background-color: $gray-200;
+	background-color: rgba(255, 255, 255, 0.1);
 }
 .dropdown-links .nav-link {
 	padding: 16px 8px;
@@ -185,7 +202,7 @@ $sidebar-width: 150px;
 }
 
 .navbar .dropdown-menu {
-	border-top-color: $gray-200;
+	border-top-color: var(--zengm-border);
 	border-radius: 0;
 	margin-top: 0;
 	padding-bottom: 0;
@@ -226,12 +243,14 @@ $sidebar-width: 150px;
 	height: 51px;
 }
 .play-button-success {
-	background-color: $green;
+	background-color: var(--zengm-cta-from);
+	border-color: var(--zengm-cta-to);
 
 	&:hover,
 	&:active,
 	&:focus {
-		background-color: shade-color($green, $btn-hover-bg-shade-amount);
+		background-color: var(--zengm-cta-to);
+		border-color: var(--zengm-cta-to);
 	}
 }
 .play-button-danger {
@@ -253,8 +272,9 @@ button.fast-forward {
 // ─── Multi-team menu ─────────────────────────────────────────────────────────
 
 .multi-team-menu {
-	background-color: $white;
-	opacity: 0.9;
+	background-color: var(--zengm-surface-1);
+	border: 1px solid var(--zengm-border);
+	opacity: 0.95;
 	position: fixed;
 	right: 6px;
 	padding-bottom: 6px;
@@ -267,6 +287,10 @@ button.fast-forward {
 .title-bar {
 	gap: 0 10px;
 	min-height: 32px;
+	background-color: var(--zengm-toolbar-bg);
+	border-bottom: 1px solid var(--zengm-toolbar-border);
+	padding-top: 0.35rem;
+	padding-bottom: 0.35rem;
 
 	// Like .container-fluid
 	padding-left: var(--bs-gutter-x, 0.5rem);
@@ -280,7 +304,7 @@ button.fast-forward {
 		font-size: 12px;
 	}
 	.dropdown-links .dropdown.show.nav-item {
-		background-color: $gray-100;
+		background-color: var(--zengm-surface-3);
 	}
 }
 .title-bar-right-links {
@@ -359,6 +383,8 @@ button.fast-forward {
 $league-top-bar-toggle-width: 15px;
 .league-top-bar {
 	padding-right: $league-top-bar-toggle-width;
+	background-color: var(--zengm-surface-1);
+	border-bottom: 1px solid var(--zengm-toolbar-border);
 
 	// For scrollbar that grows on hover
 	height: 63px;
@@ -407,7 +433,7 @@ $league-top-bar-toggle-width: 15px;
 	}
 
 	.btn:not(:first-child) {
-		border-top: 1px solid $gray-300;
+		border-top: 1px solid var(--zengm-border);
 	}
 }
 

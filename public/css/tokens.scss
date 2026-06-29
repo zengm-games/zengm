@@ -1,15 +1,93 @@
-// CSS custom properties — structural home for :root tokens.
-// Phase 1: only the two gradient vars that exist in master.
-// Phase 2 will expand this file with the full design token set.
-//
-// Requires Bootstrap variables ($danger, $success) to be in scope —
-// must be imported after Bootstrap in light.scss.
+// CSS custom properties — single source of truth for the design system.
+// Light (default) values live here. Dark overrides live in dark.scss :root block.
+// Requires Bootstrap variables ($danger, $success) in scope — imported after Bootstrap.
 
 @function derive-rgb-values-from-hex($hex) {
 	@return red($hex), green($hex), blue($hex);
 }
 
 :root {
+	// ─── Core surfaces ────────────────────────────────────────────────────────
+	// surface-0: page body   surface-1: cards/sidebar   surface-2: table headers
+	// surface-3: subtle highlight (e.g. sorted column)
+	--zengm-surface-0: #eef1f6;
+	--zengm-surface-1: #ffffff;
+	--zengm-surface-2: #e4e9f2;
+	--zengm-surface-3: #d8dfe9;
+
+	// ─── Brand ───────────────────────────────────────────────────────────────
+	--zengm-brand: #1a2f6b;
+	--zengm-brand-rgb: 26, 47, 107;
+	--zengm-brand-strong: #142355;
+	--zengm-accent: #ff6b1a;
+	--zengm-accent-rgb: 255, 107, 26;
+
+	// ─── Text ────────────────────────────────────────────────────────────────
+	--zengm-text-strong: #212529;
+	--zengm-text-muted: #6c757d;
+
+	// ─── Border ──────────────────────────────────────────────────────────────
+	--zengm-border: #d0d7e3;
+
+	// ─── Navigation ──────────────────────────────────────────────────────────
+	--zengm-nav-bg: #1a2f6b;
+	--zengm-nav-text: #ffffff;
+	--zengm-nav-text-muted: rgba(255, 255, 255, 0.65);
+	--zengm-nav-height: 52px;
+
+	// ─── Toolbar ─────────────────────────────────────────────────────────────
+	--zengm-toolbar-bg: #e4e9f2;
+	--zengm-toolbar-border: #d0d7e3;
+
+	// ─── Segmented controls ───────────────────────────────────────────────────
+	--zengm-segment-bg: #ffffff;
+	--zengm-segment-border: #c0c8d8;
+	--zengm-segment-divider: #d0d7e3;
+
+	// ─── Play button / CTA gradient ──────────────────────────────────────────
+	--zengm-cta-from: #ff6b1a;
+	--zengm-cta-to: #e55200;
+
+	// ─── Semantic states ─────────────────────────────────────────────────────
+	--zengm-good: #198754;
+	--zengm-bad: #dc3545;
+	--zengm-warning: #856404;
+
+	// ─── Focus ring ──────────────────────────────────────────────────────────
+	--zengm-focus: rgba(26, 47, 107, 0.25);
+
+	// ─── Spacing scale ────────────────────────────────────────────────────────
+	--zengm-space-1: 0.25rem;
+	--zengm-space-2: 0.5rem;
+	--zengm-space-3: 1rem;
+	--zengm-space-4: 1.5rem;
+
+	// ─── Table cell spacing ───────────────────────────────────────────────────
+	--zengm-table-py: 0.35rem;
+	--zengm-table-px: 0.5rem;
+
+	// ─── Border radius ────────────────────────────────────────────────────────
+	--zengm-radius-sm: 0.2rem;
+	--zengm-radius: 0.375rem;
+	--zengm-radius-lg: 0.5rem;
+
+	// ─── Shadows ─────────────────────────────────────────────────────────────
+	--zengm-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.07);
+	--zengm-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+	// ─── Typography ──────────────────────────────────────────────────────────
+	--zengm-font-size: 0.8125rem;
+	--zengm-line-height: 1.4;
+
+	// ─── Bootstrap CSS var bridges ───────────────────────────────────────────
+	// Set here so Bootstrap components (and portal-rendered Modals/Tooltips)
+	// pick up our surface tokens automatically at the :root level.
+	--bs-body-bg: var(--zengm-surface-0);
+	--bs-body-color: var(--zengm-text-strong);
+	--bs-border-color: var(--zengm-border);
+	--bs-focus-ring-color: var(--zengm-focus);
+
+	// ─── Legacy gradient vars (kept for backward compat) ─────────────────────
 	--gradient-base-danger: #{derive-rgb-values-from-hex(lighten($danger, 20%))};
 	--gradient-base-success: #{derive-rgb-values-from-hex(lighten($success, 20%))};
 }

@@ -410,6 +410,57 @@ table.table thead .sorting::after {
 }
 
 :root {
+	// ─── Core surfaces ────────────────────────────────────────────────────────
+	--zengm-surface-0: #14181e;
+	--zengm-surface-1: #1e2430;
+	--zengm-surface-2: #232b3a;
+	--zengm-surface-3: #2a3347;
+
+	// ─── Brand ───────────────────────────────────────────────────────────────
+	--zengm-brand: #ff9f43;
+	--zengm-brand-rgb: 255, 159, 67;
+	--zengm-brand-strong: #ffb566;
+	--zengm-accent: #5b9dff;
+	--zengm-accent-rgb: 91, 157, 255;
+
+	// ─── Text ────────────────────────────────────────────────────────────────
+	--zengm-text-strong: #e8edf5;
+	--zengm-text-muted: #8d96a8;
+
+	// ─── Border ──────────────────────────────────────────────────────────────
+	--zengm-border: #2e3a4e;
+
+	// ─── Navigation ──────────────────────────────────────────────────────────
+	--zengm-nav-bg: #14181e;
+	--zengm-nav-text: #e8edf5;
+	--zengm-nav-text-muted: rgba(232, 237, 245, 0.6);
+
+	// ─── Toolbar ─────────────────────────────────────────────────────────────
+	--zengm-toolbar-bg: #1a1f28;
+	--zengm-toolbar-border: #2e3a4e;
+
+	// ─── Segmented controls ───────────────────────────────────────────────────
+	--zengm-segment-bg: #1e2430;
+	--zengm-segment-border: #2e3a4e;
+	--zengm-segment-divider: #2a3347;
+
+	// ─── Play button / CTA gradient ──────────────────────────────────────────
+	--zengm-cta-from: #5b9dff;
+	--zengm-cta-to: #3d7fe0;
+
+	// ─── Semantic states ─────────────────────────────────────────────────────
+	--zengm-good: #40c057;
+	--zengm-bad: #fa5252;
+	--zengm-warning: #ffd43b;
+
+	// ─── Focus ring ──────────────────────────────────────────────────────────
+	--zengm-focus: rgba(91, 157, 255, 0.3);
+
+	// ─── Shadows ─────────────────────────────────────────────────────────────
+	--zengm-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+	--zengm-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+
+	// ─── Legacy gradient vars ─────────────────────────────────────────────────
 	--gradient-base-danger: #{derive-rgb-values-from-hex(darken($danger, 25%))};
 	--gradient-base-success: #{derive-rgb-values-from-hex(darken($success, 25%))};
 }

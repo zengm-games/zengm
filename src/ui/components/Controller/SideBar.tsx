@@ -331,13 +331,13 @@ export const SideBar = memo(({ pageID, pathname }: Props) => {
 		<>
 			<div ref={getNodeFade} className="sidebar-fade" />
 			<nav
-				className="bg-light sidebar flex-shrink-0"
+				className="sidebar flex-shrink-0"
 				id="sidebar"
 				ref={getNode}
 				aria-label="side navigation"
 			>
 				<div
-					className="bg-light sidebar-inner small-scrollbar"
+					className="sidebar-inner small-scrollbar"
 					style={
 						VIDEO_ADS
 							? {

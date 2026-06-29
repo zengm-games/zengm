@@ -20,9 +20,9 @@
 }
 
 .datatable-filter-input {
-	background-color: $white;
-	color: $black;
-	border: 1px solid $gray-400;
+	background-color: var(--zengm-surface-1);
+	color: var(--zengm-text-strong);
+	border: 1px solid var(--zengm-border);
 	font-weight: normal;
 	font-size: 12px;
 	width: 100%;
@@ -45,6 +45,10 @@
 
 table.table {
 	thead {
+		th {
+			background-color: var(--zengm-surface-2);
+		}
+
 		.sorting,
 		.sorting_asc,
 		.sorting_desc {
@@ -54,12 +58,17 @@ table.table {
 		}
 	}
 
+	// Unsorted columns: match surface-1 so sticky-x columns don't bleed
 	.sorting {
-		background-color: $white !important;
+		background-color: var(--zengm-surface-1) !important;
 	}
 
-	.sorting_highlight {
-		background-color: $sorting-highlight-bg !important;
+	// Sorted column: neutral surface-3 in header, subtle brand tint in body
+	thead .sorting_highlight {
+		background-color: var(--zengm-surface-3) !important;
+	}
+	tbody .sorting_highlight {
+		background-color: rgba(var(--zengm-brand-rgb), 0.06) !important;
 	}
 }
 

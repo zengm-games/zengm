@@ -230,19 +230,6 @@ a.god-mode.active {
 	color: $primary;
 }
 
-.play-button-success {
-	background-color: darken($green, 20);
-
-	&:hover,
-	&:active,
-	&:focus {
-		background-color: shade-color(
-			darken($green, 20),
-			$btn-hover-bg-shade-amount
-		);
-	}
-}
-
 .btn-success {
 	border-color: darken($green, 20);
 	background-color: darken($green, 20);
@@ -430,10 +417,15 @@ table.table thead .sorting::after {
 	// ─── Border ──────────────────────────────────────────────────────────────
 	--zengm-border: #2e3a4e;
 
+	// ─── Link ────────────────────────────────────────────────────────────────
+	--zengm-link: #5b9dff;
+	--zengm-link-rgb: 91, 157, 255;
+
 	// ─── Navigation ──────────────────────────────────────────────────────────
 	--zengm-nav-bg: #14181e;
 	--zengm-nav-text: #e8edf5;
 	--zengm-nav-text-muted: rgba(232, 237, 245, 0.6);
+	--zengm-nav-hover-bg: rgba(232, 237, 245, 0.08);
 
 	// ─── Toolbar ─────────────────────────────────────────────────────────────
 	--zengm-toolbar-bg: #1a1f28;

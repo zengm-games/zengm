@@ -106,7 +106,7 @@ export const Controller = () => {
 						<div className="d-flex" style={minHeight100}>
 							<div className="w-100 d-flex flex-column" style={minWidth0}>
 								<Header />
-								<main id="actual-actual-content" className="clearfix">
+								<main id="actual-actual-content" className="clearfix view-root">
 									<ErrorBoundary key={idLoaded}>
 										{Component ? (
 											<KeepPreviousRenderWhileUpdating updating={updating}>

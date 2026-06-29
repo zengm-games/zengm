@@ -3,13 +3,13 @@ import {
 	type SyntheticEvent,
 	type MouseEvent,
 	Fragment,
-	forwardRef,
 	useRef,
 	useLayoutEffect,
+	useEffect,
+	useState,
 } from "react";
 import type { Col, DataTableRow, Props, SortBy, SuperCol } from "./index.tsx";
 import { range } from "../../../common/utils.ts";
-import { Dropdown } from "react-bootstrap";
 import type { SelectedRows } from "./useBulkSelectRows.ts";
 
 const FilterHeader = ({
@@ -168,56 +168,6 @@ export const getSortClassName = (sortBys: SortBy[], i: number) => {
 
 type CheckboxState = "checked" | "unchecked" | "indeterminate";
 
-// forwardRef needed for react-bootstrap types
-const CustomToggle = forwardRef(
-	(
-		{
-			children,
-			onClick,
-		}: {
-			children: CheckboxState;
-			onClick: (event: MouseEvent) => void;
-		},
-		ref,
-	) => {
-		const inputRef = useRef<HTMLInputElement>(null);
-
-		useLayoutEffect(() => {
-			if (inputRef.current) {
-				if (children === "indeterminate") {
-					inputRef.current.indeterminate = true;
-				} else if (children === "checked") {
-					inputRef.current.checked = true;
-					inputRef.current.indeterminate = false;
-				} else {
-					inputRef.current.checked = false;
-					inputRef.current.indeterminate = false;
-				}
-			}
-		}, [children]);
-
-		return (
-			<input
-				className="form-check-input"
-				type="checkbox"
-				onClick={(event) => {
-					event.preventDefault();
-					onClick(event);
-				}}
-				ref={(element) => {
-					inputRef.current = element;
-
-					if (typeof ref === "function") {
-						ref(element);
-					} else if (ref) {
-						ref.current = element;
-					}
-				}}
-			/>
-		);
-	},
-);
-
 type BulkSelectProps = {
 	disableBulkSelectKeys: Props["disableBulkSelectKeys"];
 	filteredRows: DataTableRow[];
@@ -246,26 +196,50 @@ const BulkSelectHeaderCheckbox = ({
 				selectedKeys.union(disableBulkSelectKeys ?? new Set()),
 			)
 		) {
-			// filteredKeys and selectedRows are the same, or any additional filteredKeys are disabled
 			state = "checked";
 		} else {
-			// Could have rows selected but not viewable with current filters, or could simply have some of the viewable rows not selected
 			state = "indeterminate";
 		}
 	}
 
-	const dropdownToggleRef = useRef<HTMLElement>(null);
+	const [menuOpen, setMenuOpen] = useState(false);
+	const menuRef = useRef<HTMLDivElement>(null);
+	const checkboxRef = useRef<HTMLInputElement>(null);
 
-	// Similar to singleCheckbox stuff below
+	useLayoutEffect(() => {
+		if (checkboxRef.current) {
+			if (state === "indeterminate") {
+				checkboxRef.current.indeterminate = true;
+			} else if (state === "checked") {
+				checkboxRef.current.checked = true;
+				checkboxRef.current.indeterminate = false;
+			} else {
+				checkboxRef.current.checked = false;
+				checkboxRef.current.indeterminate = false;
+			}
+		}
+	}, [state]);
+
+	useEffect(() => {
+		if (!menuOpen) {
+			return;
+		}
+		const handler = (e: globalThis.MouseEvent) => {
+			if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+				setMenuOpen(false);
+			}
+		};
+		document.addEventListener("mousedown", handler);
+		return () => document.removeEventListener("mousedown", handler);
+	}, [menuOpen]);
+
 	const onClickCell = (event: MouseEvent) => {
 		if (
 			event.target instanceof HTMLTableCellElement &&
 			event.target.tagName === "TH"
 		) {
-			if (dropdownToggleRef.current) {
-				dropdownToggleRef.current.focus();
-				dropdownToggleRef.current.click();
-			}
+			checkboxRef.current?.focus();
+			setMenuOpen((o) => !o);
 		}
 	};
 
@@ -274,49 +248,66 @@ const BulkSelectHeaderCheckbox = ({
 		(!disableBulkSelectKeys || !disableBulkSelectKeys.has(row.key));
 
 	return (
-		<th
-			data-no-row-highlight
-			onClick={onClickCell}
-			style={{
-				width: 1,
-			}}
-		>
-			<Dropdown>
-				<Dropdown.Toggle as={CustomToggle} ref={dropdownToggleRef}>
-					{state}
-				</Dropdown.Toggle>
-				<Dropdown.Menu>
-					<Dropdown.Item
-						onClick={() => {
-							selectedRows.setAll(
-								// @ts-expect-error
-								filteredRows.filter(rowCanBeSelected),
-							);
-						}}
-					>
-						Select all
-					</Dropdown.Item>
-					{filteredRows.length !== filteredRowsPage.length ? (
-						<Dropdown.Item
-							onClick={() => {
-								selectedRows.setAll(
-									// @ts-expect-error
-									filteredRowsPage.filter(rowCanBeSelected),
-								);
-							}}
-						>
-							Select all (this page only)
-						</Dropdown.Item>
-					) : null}
-					<Dropdown.Item
-						onClick={() => {
-							selectedRows.clear();
-						}}
-					>
-						Clear all
-					</Dropdown.Item>
-				</Dropdown.Menu>
-			</Dropdown>
+		<th data-no-row-highlight onClick={onClickCell} style={{ width: 1 }}>
+			<div ref={menuRef} className="dropdown">
+				<input
+					ref={checkboxRef}
+					className="form-check-input"
+					type="checkbox"
+					onClick={(event) => {
+						event.preventDefault();
+						setMenuOpen((o) => !o);
+					}}
+				/>
+				{menuOpen ? (
+					<ul className="dropdown-menu show">
+						<li>
+							<button
+								className="dropdown-item"
+								type="button"
+								onClick={() => {
+									selectedRows.setAll(
+										// @ts-expect-error
+										filteredRows.filter(rowCanBeSelected),
+									);
+									setMenuOpen(false);
+								}}
+							>
+								Select all
+							</button>
+						</li>
+						{filteredRows.length !== filteredRowsPage.length ? (
+							<li>
+								<button
+									className="dropdown-item"
+									type="button"
+									onClick={() => {
+										selectedRows.setAll(
+											// @ts-expect-error
+											filteredRowsPage.filter(rowCanBeSelected),
+										);
+										setMenuOpen(false);
+									}}
+								>
+									Select all (this page only)
+								</button>
+							</li>
+						) : null}
+						<li>
+							<button
+								className="dropdown-item"
+								type="button"
+								onClick={() => {
+									selectedRows.clear();
+									setMenuOpen(false);
+								}}
+							>
+								Clear all
+							</button>
+						</li>
+					</ul>
+				) : null}
+			</div>
 		</th>
 	);
 };

@@ -1,4 +1,3 @@
-import { Dropdown } from "react-bootstrap";
 import { Flag } from "../WatchBlock.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { logEvent } from "../../util/logEvent.ts";
@@ -7,6 +6,7 @@ import { useLocal } from "../../util/local.ts";
 import {
 	useCallback,
 	useEffect,
+	useRef,
 	useState,
 	type ReactNode,
 	type RefObject,
@@ -146,6 +146,25 @@ export const BulkActions = ({
 	}, [getUpdatedShowInlineButtons, wrapperRef]);
 
 	const hasSomeSelected = selectedRows.map.size > 0;
+
+	const [bulkMenuOpen, setBulkMenuOpen] = useState(false);
+	const bulkMenuRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (!bulkMenuOpen) {
+			return;
+		}
+		const handler = (e: globalThis.MouseEvent) => {
+			if (
+				bulkMenuRef.current &&
+				!bulkMenuRef.current.contains(e.target as Node)
+			) {
+				setBulkMenuOpen(false);
+			}
+		};
+		document.addEventListener("mousedown", handler);
+		return () => document.removeEventListener("mousedown", handler);
+	}, [bulkMenuOpen]);
 
 	const onComparePlayers = async () => {
 		const seasonTypes = {
@@ -354,39 +373,50 @@ export const BulkActions = ({
 
 	return (
 		<>
-			<Dropdown className="mb-2">
-				<Dropdown.Toggle
+			<div ref={bulkMenuRef} className="dropdown mb-2">
+				<button
 					id={`datatable-bulk-actions-${name}`}
-					size="sm"
-					variant="primary"
+					className="btn btn-sm btn-primary dropdown-toggle"
+					onClick={() => setBulkMenuOpen((o) => !o)}
+					type="button"
 				>
 					Bulk actions
-				</Dropdown.Toggle>
-				<Dropdown.Menu>
-					{actions.map((action, i) => {
-						if (action.godMode && !godMode) {
-							return null;
-						}
+				</button>
+				{bulkMenuOpen ? (
+					<ul className="dropdown-menu show">
+						{actions.map((action, i) => {
+							if (action.godMode && !godMode) {
+								return null;
+							}
 
-						return (
-							<Dropdown.Item
-								key={i}
-								className={action.godMode ? "god-mode" : undefined}
-								onClick={() => {
-									action.onClick(selectedRows);
-								}}
-								disabled={!hasSomeSelected}
-							>
-								{action.textLong ?? action.text}
-							</Dropdown.Item>
-						);
-					})}
-					<Dropdown.Header>
-						{selectedRows.map.size}{" "}
-						{helpers.plural("player", selectedRows.map.size)} selected
-					</Dropdown.Header>
-				</Dropdown.Menu>
-			</Dropdown>
+							return (
+								<li key={i}>
+									<button
+										className={clsx(
+											"dropdown-item",
+											action.godMode && "god-mode",
+										)}
+										disabled={!hasSomeSelected}
+										onClick={() => {
+											action.onClick(selectedRows);
+											setBulkMenuOpen(false);
+										}}
+										type="button"
+									>
+										{action.textLong ?? action.text}
+									</button>
+								</li>
+							);
+						})}
+						<li>
+							<h6 className="dropdown-header">
+								{selectedRows.map.size}{" "}
+								{helpers.plural("player", selectedRows.map.size)} selected
+							</h6>
+						</li>
+					</ul>
+				) : null}
+			</div>
 			<ExportModal {...exportModalStatus} />
 		</>
 	);

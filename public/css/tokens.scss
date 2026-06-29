@@ -33,6 +33,7 @@
 	--zengm-nav-bg: #1a2f6b;
 	--zengm-nav-text: #ffffff;
 	--zengm-nav-text-muted: rgba(255, 255, 255, 0.65);
+	--zengm-nav-hover-bg: rgba(255, 255, 255, 0.1);
 	--zengm-nav-height: 52px;
 
 	// ─── Toolbar ─────────────────────────────────────────────────────────────
@@ -78,6 +79,11 @@
 	// ─── Typography ──────────────────────────────────────────────────────────
 	--zengm-font-size: 0.8125rem;
 	--zengm-line-height: 1.4;
+
+	// ─── Link ────────────────────────────────────────────────────────────────
+	// Separate from --zengm-accent: orange CTAs ≠ body links. Dark overrides in dark.scss.
+	--zengm-link: #0b6efd;
+	--zengm-link-rgb: 11, 110, 253;
 
 	// ─── Bootstrap CSS var bridges ───────────────────────────────────────────
 	// Set here so Bootstrap components (and portal-rendered Modals/Tooltips)

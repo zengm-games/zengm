@@ -4,6 +4,7 @@ import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { MOBILE_AD_BOTTOM_MARGIN } from "../../../common/constants.ts";
 import { orderBy } from "../../../common/utils.ts";
 import { useLocal } from "../../util/local.ts";
+import { Icon } from "../Icon.tsx";
 
 const setUserTid = async (userTid: number) => {
 	await toWorker("main", "updateGameAttributes", {
@@ -65,11 +66,11 @@ export const MultiTeamMenu = () => {
 	return (
 		<div className="multi-team-menu d-flex align-items-end" style={{ bottom }}>
 			<button
-				className="btn btn-link text-black p-0 mb-1"
+				className="btn btn-link p-0 mb-1"
 				onClick={prev}
 				title="Previous team"
 			>
-				<span className="glyphicon glyphicon-menu-left" />
+				<Icon name="menuLeft" />
 			</button>
 			<div className="flex-fill px-1">
 				<select
@@ -85,11 +86,11 @@ export const MultiTeamMenu = () => {
 				</select>
 			</div>
 			<button
-				className="btn btn-link text-black p-0 mb-1"
+				className="btn btn-link p-0 mb-1"
 				onClick={next}
 				title="Next team"
 			>
-				<span className="glyphicon glyphicon-menu-right" />
+				<Icon name="menuRight" />
 			</button>
 		</div>
 	);

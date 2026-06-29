@@ -1,9 +1,9 @@
-import { Nav, Navbar } from "react-bootstrap";
 import { PHASE } from "../../../common/constants.ts";
 import { helpers } from "../../util/helpers.ts";
 import { localActions, useLocal } from "../../util/local.ts";
 import { useViewData } from "../../util/viewManager.tsx";
 import DropdownLinks from "../DropdownLinks.tsx";
+import { Icon } from "../Icon.tsx";
 import LogoAndText from "../LogoAndText.tsx";
 import PlayMenu from "../PlayMenu.tsx";
 import { menuItems } from "../../util/menuItems.tsx";
@@ -92,24 +92,23 @@ export const NavBar = ({ updating }: { updating: boolean }) => {
 	}
 
 	const userBlock = username ? (
-		<Nav.Link href="/account" aria-label="Account">
-			<span className="glyphicon glyphicon-user" />{" "}
+		<a className="nav-link" href="/account" aria-label="Account">
+			<Icon name="user" />{" "}
 			<span className="d-none d-lg-inline">{username}</span>
-		</Nav.Link>
+		</a>
 	) : (
-		<Nav.Link href="/account/login_or_register" aria-label="Login/Register">
-			<span className="glyphicon glyphicon-user" />{" "}
+		<a
+			className="nav-link"
+			href="/account/login_or_register"
+			aria-label="Login/Register"
+		>
+			<Icon name="user" />{" "}
 			<span className="d-none d-lg-inline">Login/Register</span>
-		</Nav.Link>
+		</a>
 	);
 
 	return (
-		<Navbar
-			bg="light"
-			expand="sm"
-			fixed="top"
-			className="navbar-border flex-nowrap"
-		>
+		<nav className="navbar navbar-expand-sm navbar-border fixed-top flex-nowrap">
 			<div className="container-fluid">
 				<button
 					className="navbar-toggler me-2 d-block"
@@ -123,13 +122,13 @@ export const NavBar = ({ updating }: { updating: boolean }) => {
 				</button>
 				<LogoAndText gold={gold} inLeague={inLeague} updating={updating} />
 				{inLeague ? (
-					<Nav navbar>
+					<ul className="navbar-nav">
 						<PlayMenu
 							lid={lid}
 							spectator={spectator}
 							options={playMenuOptions}
 						/>
-					</Nav>
+					</ul>
 				) : null}
 				{inLeague ? <PhaseStatusBlock /> : null}
 				<div className="flex-grow-1" />
@@ -143,10 +142,10 @@ export const NavBar = ({ updating }: { updating: boolean }) => {
 						)}
 					/>
 				</div>
-				<Nav id="top-user-block" navbar>
-					<Nav.Item>{userBlock}</Nav.Item>
-				</Nav>
+				<ul className="navbar-nav" id="top-user-block">
+					<li className="nav-item">{userBlock}</li>
+				</ul>
 			</div>
-		</Navbar>
+		</nav>
 	);
 };

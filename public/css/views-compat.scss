@@ -1,6 +1,29 @@
 // View-specific rules: styles that apply to individual pages/views.
 // Do not add shell chrome or generic primitives here.
-// Bootstrap token bridges for .view-root will live here in Phase 5.
+
+// ─── Bootstrap token bridges ──────────────────────────────────────────────────
+// Link colors and modal backgrounds MUST be at :root — Bootstrap portal
+// components (Modals, Tooltips, Popovers) render via ReactDOM.createPortal
+// directly onto <body>, outside .view-root.
+:root {
+	--bs-link-color: var(--zengm-link);
+	--bs-link-color-rgb: var(--zengm-link-rgb);
+	--bs-link-hover-color: var(--zengm-link);
+	--bs-link-hover-color-rgb: var(--zengm-link-rgb);
+
+	// Modal — portals render on <body>, not inside .view-root
+	--bs-modal-bg: var(--zengm-surface-1);
+	--bs-modal-header-border-color: var(--zengm-border);
+	--bs-modal-footer-border-color: var(--zengm-border);
+	--bs-modal-color: var(--zengm-text-strong);
+}
+
+// Card/panel overrides — safe to scope to .view-root (not portal-rendered)
+.view-root {
+	--bs-card-bg: var(--zengm-surface-1);
+	--bs-card-border-color: var(--zengm-border);
+	--bs-card-cap-bg: var(--zengm-surface-2);
+}
 
 // ─── Ad rails ────────────────────────────────────────────────────────────────
 
@@ -27,7 +50,7 @@
 	left: 0;
 	right: 0;
 	text-align: center;
-	background-color: rgba(247, 247, 247, 0.8);
+	background-color: var(--zengm-surface-0);
 	vertical-align: bottom !important;
 	width: 100vw;
 

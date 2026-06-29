@@ -1,23 +1,17 @@
-import clsx from "clsx";
 import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useLocal, localActions } from "../../util/local.ts";
 import { ScoreBox } from "../ScoreBox/index.tsx";
 import { emitter } from "../Modal.tsx";
+import { Icon } from "../Icon.tsx";
 
 const Toggle = ({ show, toggle }: { show: boolean; toggle: () => void }) => {
-	// container-fluid is needed to make this account for scrollbar width when modal is open
 	return (
 		<button
 			className="btn btn-secondary p-0 league-top-bar-toggle"
 			title={show ? "Hide scores" : "Show scores"}
 			onClick={toggle}
 		>
-			<span
-				className={clsx(
-					"glyphicon",
-					show ? "glyphicon-menu-right" : "glyphicon-menu-left",
-				)}
-			/>
+			<Icon name={show ? "menuRight" : "menuLeft"} />
 		</button>
 	);
 };

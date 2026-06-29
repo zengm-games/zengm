@@ -1,12 +1,12 @@
 import clsx from "clsx";
-import { useCallback } from "react";
-import { Dropdown } from "react-bootstrap";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	formatKeyboardShortcut,
 	useKeyboardShortcuts,
 	type KeyboardShortcuts,
 } from "../util/keyboardShortcuts.ts";
 import { useLocal } from "../util/local.ts";
+import { Icon } from "./Icon.tsx";
 
 export type FastForward = {
 	keyboardShortcut?: Exclude<
@@ -94,6 +94,22 @@ export const PlayPauseNext = ({
 		keyboardShortcutsLocal,
 	);
 
+	const [ffOpen, setFfOpen] = useState(false);
+	const ffRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (!ffOpen) {
+			return;
+		}
+		const handler = (e: MouseEvent) => {
+			if (ffRef.current && !ffRef.current.contains(e.target as Node)) {
+				setFfOpen(false);
+			}
+		};
+		document.addEventListener("mousedown", handler);
+		return () => document.removeEventListener("mousedown", handler);
+	}, [ffOpen]);
+
 	return (
 		<div className={clsx("btn-group", className)}>
 			{paused ? (
@@ -103,7 +119,7 @@ export const PlayPauseNext = ({
 					onClick={onPlay}
 					title={`${titlePlay}${formattedShortcutPlayPause !== undefined ? ` (${formattedShortcutPlayPause})` : ""}`}
 				>
-					<span className="glyphicon glyphicon-play" />
+					<Icon name="play" />
 				</button>
 			) : (
 				<button
@@ -112,7 +128,7 @@ export const PlayPauseNext = ({
 					onClick={onPause}
 					title={`${titlePause}${formattedShortcutPlayPause !== undefined ? ` (${formattedShortcutPlayPause})` : ""}`}
 				>
-					<span className="glyphicon glyphicon-pause" />
+					<Icon name="pause" />
 				</button>
 			)}
 			<button
@@ -121,40 +137,54 @@ export const PlayPauseNext = ({
 				onClick={onNext}
 				title={`${titleNext}${formattedShortcutNext !== undefined ? ` (${formattedShortcutNext})` : ""}`}
 			>
-				<span className="glyphicon glyphicon-step-forward" />
+				<Icon name="stepForward" />
 			</button>
 			{fastForwards ? (
-				<Dropdown align={fastForwardAlignRight ? "end" : undefined}>
-					<Dropdown.Toggle
+				<div ref={ffRef} className="dropdown">
+					<button
 						id="fast-forward"
-						className="btn-light-bordered fast-forward"
+						className="btn btn-light-bordered fast-forward"
 						disabled={disabled || !paused || fastForwards.length === 0}
-						variant={"no-class" as any}
+						onClick={() => setFfOpen((o) => !o)}
 						title="Fast Forward"
+						type="button"
 					>
-						<span className="glyphicon glyphicon-fast-forward" />
-					</Dropdown.Toggle>
-					<Dropdown.Menu>
-						{fastForwards.map((item, i) => (
-							<Dropdown.Item
-								key={i}
-								onClick={item.onClick}
-								className="kbd-parent"
-							>
-								{item.label}
-								{item.keyboardShortcut ? (
-									<span className="text-body-secondary kbd">
-										{formatKeyboardShortcut(
-											"playPauseNext",
-											item.keyboardShortcut,
-											keyboardShortcutsLocal,
-										)}
-									</span>
-								) : null}
-							</Dropdown.Item>
-						))}
-					</Dropdown.Menu>
-				</Dropdown>
+						<Icon name="fastForward" />
+					</button>
+					{ffOpen ? (
+						<ul
+							className={clsx(
+								"dropdown-menu",
+								"show",
+								fastForwardAlignRight && "dropdown-menu-end",
+							)}
+						>
+							{fastForwards.map((item, i) => (
+								<li key={i}>
+									<button
+										className="dropdown-item kbd-parent"
+										onClick={() => {
+											item.onClick();
+											setFfOpen(false);
+										}}
+										type="button"
+									>
+										{item.label}
+										{item.keyboardShortcut ? (
+											<span className="text-body-secondary kbd">
+												{formatKeyboardShortcut(
+													"playPauseNext",
+													item.keyboardShortcut,
+													keyboardShortcutsLocal,
+												)}
+											</span>
+										) : null}
+									</button>
+								</li>
+							))}
+						</ul>
+					) : null}
+				</div>
 			) : null}
 		</div>
 	);

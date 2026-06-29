@@ -1,8 +1,8 @@
 import clsx from "clsx";
-import type { SyntheticEvent } from "react";
-import { Dropdown } from "react-bootstrap";
+import { useEffect, useRef, useState, type SyntheticEvent } from "react";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { HelpPopover } from "../HelpPopover.tsx";
+import { Icon } from "../Icon.tsx";
 import type { DataTableRowMetadata } from "./index.tsx";
 
 const style = {
@@ -39,6 +39,22 @@ const Controls = ({
 	onToggleFilters: () => void;
 	searchText: string;
 }) => {
+	const [menuOpen, setMenuOpen] = useState(false);
+	const menuRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (!menuOpen) {
+			return;
+		}
+		const handler = (e: MouseEvent) => {
+			if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+				setMenuOpen(false);
+			}
+		};
+		document.addEventListener("mousedown", handler);
+		return () => document.removeEventListener("mousedown", handler);
+	}, [menuOpen]);
+
 	const positionFilterText = bySport({
 		baseball: (
 			<>
@@ -76,8 +92,8 @@ const Controls = ({
 							<p>
 								The main search box looks in all columns, but you can filter on
 								the values in specific columns by clicking the "Filter" button{" "}
-								<span className="glyphicon glyphicon-filter" /> and entering
-								text below the column headers.
+								<Icon name="filter" /> and entering text below the column
+								headers.
 							</p>
 							<p>
 								For numeric columns, you can enter <code>&gt;50</code> to show
@@ -110,7 +126,7 @@ const Controls = ({
 						style={style}
 						title="Filter"
 					>
-						<span className="glyphicon glyphicon-filter" />
+						<Icon name="filter" />
 					</a>
 					<input
 						className="form-control form-control-sm datatable-search mb-2"
@@ -121,37 +137,78 @@ const Controls = ({
 					/>
 				</>
 			) : null}
-			<Dropdown>
-				<Dropdown.Toggle
-					bsPrefix="no-caret"
+			<div ref={menuRef} className="dropdown">
+				<button
 					id={`datatable-controls-${name}`}
+					className="btn btn-link border-0"
 					style={{
 						cursor: "pointer",
 						fontSize: 16,
 						lineHeight: "30px",
 						padding: "0 0 0 5px",
 					}}
+					onClick={() => setMenuOpen((o) => !o)}
 					title="Actions"
-					variant="btn-link border-0"
+					type="button"
 				>
-					<span className="glyphicon glyphicon-option-vertical text-body-secondary" />
-				</Dropdown.Toggle>
-				<Dropdown.Menu>
-					{metadataType === "player" ? (
-						<Dropdown.Item onClick={onBulkSelectRows}>
-							{bulkSelectRows ? "Hide bulk select" : "Bulk select"}
-							{alwaysShowBulkSelectRows ? " actions" : null}
-						</Dropdown.Item>
-					) : null}
-					<Dropdown.Item onClick={onSelectColumns}>
-						Customize columns
-					</Dropdown.Item>
-					<Dropdown.Item onClick={onExportCSV}>
-						Download spreadsheet
-					</Dropdown.Item>
-					<Dropdown.Item onClick={onResetTable}>Reset table</Dropdown.Item>
-				</Dropdown.Menu>
-			</Dropdown>
+					<Icon name="ellipsisVertical" className="text-body-secondary" />
+				</button>
+				{menuOpen ? (
+					<ul className="dropdown-menu dropdown-menu-end show">
+						{metadataType === "player" ? (
+							<li>
+								<button
+									className="dropdown-item"
+									onClick={() => {
+										onBulkSelectRows();
+										setMenuOpen(false);
+									}}
+									type="button"
+								>
+									{bulkSelectRows ? "Hide bulk select" : "Bulk select"}
+									{alwaysShowBulkSelectRows ? " actions" : null}
+								</button>
+							</li>
+						) : null}
+						<li>
+							<button
+								className="dropdown-item"
+								onClick={() => {
+									onSelectColumns();
+									setMenuOpen(false);
+								}}
+								type="button"
+							>
+								Customize columns
+							</button>
+						</li>
+						<li>
+							<button
+								className="dropdown-item"
+								onClick={() => {
+									onExportCSV();
+									setMenuOpen(false);
+								}}
+								type="button"
+							>
+								Download spreadsheet
+							</button>
+						</li>
+						<li>
+							<button
+								className="dropdown-item"
+								onClick={() => {
+									onResetTable();
+									setMenuOpen(false);
+								}}
+								type="button"
+							>
+								Reset table
+							</button>
+						</li>
+					</ul>
+				) : null}
+			</div>
 		</div>
 	);
 };

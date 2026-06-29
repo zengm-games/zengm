@@ -1,4 +1,5 @@
 import type { CSSProperties, SyntheticEvent } from "react";
+import { Icon } from "./Icon.tsx";
 
 export const NextPrevButtons = <T extends unknown>({
 	currentItem,
@@ -59,7 +60,7 @@ export const NextPrevButtons = <T extends unknown>({
 				title="Previous"
 				type="button"
 			>
-				<span className="glyphicon glyphicon-menu-left" />
+				<Icon name="menuLeft" />
 			</button>
 			<button
 				className="btn btn-light-bordered btn-xs"
@@ -68,7 +69,7 @@ export const NextPrevButtons = <T extends unknown>({
 				title="Next"
 				type="button"
 			>
-				<span className="glyphicon glyphicon-menu-right" />
+				<Icon name="menuRight" />
 			</button>
 		</div>
 	);

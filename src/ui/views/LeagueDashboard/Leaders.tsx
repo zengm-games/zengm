@@ -30,24 +30,27 @@ const Leader = ({
 	});
 
 	return (
-		<>
-			<PlayerNameLabels
-				pid={pid}
-				firstName={firstName}
-				firstNameShort={firstNameShort}
-				lastName={lastName}
-			/>
-			{abbrev && tid !== undefined ? (
-				<>
-					{" "}
-					<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>
-						{abbrev}
-					</a>
-				</>
-			) : null}{" "}
-			{numberToDisplay} {stat}
-			<br />
-		</>
+		<div className="dashboard-leader">
+			<div className="dashboard-leader-name">
+				<PlayerNameLabels
+					pid={pid}
+					firstName={firstName}
+					firstNameShort={firstNameShort}
+					lastName={lastName}
+				/>
+				{abbrev && tid !== undefined ? (
+					<span className="text-body-secondary ms-1">
+						<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`])}>
+							{abbrev}
+						</a>
+					</span>
+				) : null}
+			</div>
+			<div className="dashboard-leader-stat">
+				<span className="dashboard-leader-value">{numberToDisplay}</span>
+				<span className="dashboard-leader-label">{stat}</span>
+			</div>
+		</div>
 	);
 };
 
@@ -57,20 +60,24 @@ const Leaders = ({
 }: Pick<View<"leagueDashboard">, "leagueLeaders" | "teamLeaders">) => (
 	<>
 		<h2>Team Leaders</h2>
-		<div className="mb-3">
+		<div className="team-card mb-3">
 			{teamLeaders.map((leader) => (
 				<Leader key={leader.stat} {...leader} />
 			))}
-			<a href={helpers.leagueUrl(["roster"])}>» Full Roster</a>
+			<div className="mt-2">
+				<a href={helpers.leagueUrl(["roster"])}>» Full Roster</a>
+			</div>
 		</div>
 		<h2>League Leaders</h2>
-		<div className="mb-3">
+		<div className="team-card mb-3">
 			{leagueLeaders.map((leader) => (
 				<Leader key={leader.stat} {...leader} />
 			))}
-			<a href={helpers.leagueUrl(["leaders"])}>» League Leaders</a>
-			<br />
-			<a href={helpers.leagueUrl(["player_stats"])}>» Player Stats</a>
+			<div className="mt-2">
+				<a href={helpers.leagueUrl(["leaders"])}>» League Leaders</a>
+				<span className="mx-2">·</span>
+				<a href={helpers.leagueUrl(["player_stats"])}>» Player Stats</a>
+			</div>
 		</div>
 	</>
 );

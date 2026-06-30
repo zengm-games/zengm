@@ -94,9 +94,11 @@ export const TeamColumn = ({
 						</span>
 						<span className="d-sm-none">{t.seasonAttrs.abbrev}</span>
 					</a>
-					{t.seasonAttrs.clinchedPlayoffs
-						? ` ${t.seasonAttrs.clinchedPlayoffs}`
-						: null}
+					{t.seasonAttrs.clinchedPlayoffs ? (
+						<span className="clinch-badge ms-1">
+							{t.seasonAttrs.clinchedPlayoffs}
+						</span>
+					) : null}
 				</div>
 			</div>
 		</td>
@@ -548,7 +550,7 @@ const Standings = ({
 
 	const groupStandings = groups.map(({ name, subgroups }, i) => (
 		<Fragment key={i}>
-			{name ? <h2>{name}</h2> : null}
+			{name ? <h2 className="standings-conf-header">{name}</h2> : null}
 			{subgroups.map((subgroup, j) => (
 				<GroupStandings
 					key={j}

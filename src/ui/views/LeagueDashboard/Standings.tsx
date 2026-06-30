@@ -29,8 +29,8 @@ const Standings = ({
 	const maxRank = Math.max(...confOrAllTeams.map((t) => t.rank));
 
 	return (
-		<>
-			<table className="table table-striped table-borderless table-sm mb-1">
+		<div className="team-card mb-3">
+			<table className="table table-borderless table-sm mb-1">
 				<thead>
 					<tr>
 						<th style={width100}>{playoffsByConf ? "Conference" : "League"}</th>
@@ -51,7 +51,7 @@ const Standings = ({
 										(i === maxPlayoffSeed - 1 ||
 											i === maxPlayoffSeedNoPlayIn - 1) &&
 										i < confOrAllTeams.length - 1,
-									"table-info": t.tid === userTid,
+									"dashboard-standings-user": t.tid === userTid,
 								})}
 							>
 								<TeamColumn rank={t.rank} maxRank={maxRank} t={t} />
@@ -64,7 +64,7 @@ const Standings = ({
 				</tbody>
 			</table>
 			<a href={helpers.leagueUrl(["standings"])}>» League Standings</a>
-		</>
+		</div>
 	);
 };
 

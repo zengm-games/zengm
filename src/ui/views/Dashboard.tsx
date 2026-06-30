@@ -6,11 +6,9 @@ import {
 	REAL_PLAYERS_INFO,
 	WEBSITE_PLAY,
 } from "../../common/constants.ts";
-import { DataTable } from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { logEvent } from "../util/logEvent.ts";
 import { toWorker } from "../util/toWorker.ts";
-import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
 import { choice } from "../../common/random.ts";
 import { TeamLogoInline } from "../components/TeamLogoInline.tsx";
@@ -95,11 +93,7 @@ const PlayButton = ({
 }) => {
 	if (!disabled && !throbbing) {
 		return (
-			<a
-				className="btn btn-lg btn-success"
-				href={`/l/${lid}`}
-				onClick={onClick}
-			>
+			<a className="btn btn-success w-100" href={`/l/${lid}`} onClick={onClick}>
 				Play
 			</a>
 		);
@@ -107,14 +101,14 @@ const PlayButton = ({
 
 	if (throbbing) {
 		return (
-			<button className="btn btn-lg btn-success dashboard-play-loading">
+			<button className="btn btn-success dashboard-play-loading w-100">
 				Play
 			</button>
 		);
 	}
 
 	return (
-		<button className="btn btn-lg btn-success" disabled>
+		<button className="btn btn-success w-100" disabled>
 			Play
 		</button>
 	);
@@ -159,35 +153,6 @@ const Star = ({ lid, starred }: { lid: number; starred?: boolean }) => {
 	);
 };
 
-const LeagueName = ({
-	lid,
-	children: name,
-	starred,
-	disabled,
-	onClick,
-}: {
-	lid: number;
-	children: string;
-	starred?: boolean;
-	disabled: boolean;
-	onClick: () => void;
-}) => {
-	return (
-		<div className="d-flex align-items-center">
-			<div className="me-1">
-				{!disabled ? (
-					<a href={`/l/${lid}`} onClick={onClick}>
-						{name}
-					</a>
-				) : (
-					name
-				)}
-			</div>
-			<Star lid={lid} starred={starred} />
-		</div>
-	);
-};
-
 const Ago = ({ date }: { date?: Date }) => {
 	if (date) {
 		return <span title={date.toLocaleString()}>{relativeTime(date)}</span>;
@@ -206,197 +171,6 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 	const [deletingLID, setDeletingLID] = useState<number | undefined>();
 	const [cloningLID, setCloningLID] = useState<number | undefined>();
 	useTitleBar();
-
-	const cols = getCols(
-		[
-			"",
-			"League",
-			"Team",
-			"Phase",
-			"# Seasons",
-			"Difficulty",
-			"Created",
-			"Last Played",
-			"",
-		],
-		{
-			"": {
-				width: "1%",
-			},
-		},
-	);
-
-	const rows = leagues.map((league) => {
-		const disabled =
-			deletingLID !== undefined ||
-			loadingLID !== undefined ||
-			cloningLID !== undefined;
-		const throbbing = loadingLID === league.lid;
-		return {
-			key: league.lid,
-			data: [
-				<PlayButton
-					lid={league.lid}
-					disabled={disabled}
-					throbbing={throbbing}
-					onClick={() => setLoadingLID(league.lid)}
-				/>,
-				<LeagueName
-					lid={league.lid}
-					starred={league.starred}
-					disabled={disabled}
-					onClick={() => setLoadingLID(league.lid)}
-				>
-					{league.name}
-				</LeagueName>,
-				{
-					value: (
-						<div className="d-flex align-items-center">
-							<TeamLogoInline
-								imgURL={league.imgURL}
-								size={48}
-								className="me-2"
-							/>
-							<div>
-								{league.teamRegion} {league.teamName}
-							</div>
-						</div>
-					),
-					sortValue: `${league.teamRegion} ${league.teamName}`,
-					classNames: "py-0",
-				},
-				league.phaseText,
-				league.startingSeason !== undefined && league.season !== undefined
-					? 1 + league.season - league.startingSeason
-					: undefined,
-				{
-					searchValue: difficultyText(league.difficulty),
-					sortValue: league.difficulty,
-					value: <DifficultyText>{league.difficulty}</DifficultyText>,
-				},
-				{
-					searchValue: league.created ? relativeTime(league.created) : "",
-					sortValue:
-						league.created && league.created.getTime
-							? league.created.getTime()
-							: 0,
-					value: <Ago date={league.created} />,
-				},
-				{
-					searchValue: league.lastPlayed ? relativeTime(league.lastPlayed) : "",
-					sortValue:
-						league.lastPlayed && league.lastPlayed.getTime
-							? league.lastPlayed.getTime()
-							: 0,
-					value: <Ago date={league.lastPlayed} />,
-				},
-				<Dropdown
-					style={dropdownStyle}
-					className={window.mobile ? "dropdown-mobile" : undefined}
-				>
-					<Dropdown.Toggle
-						as="span"
-						bsPrefix="no-caret"
-						id={`dashboard-actions-${league.lid}`}
-						style={glyphiconStyle}
-						title="Actions"
-					>
-						<span
-							className="glyphicon glyphicon-option-vertical text-body-secondary p-2"
-							data-no-row-highlight="true"
-						/>
-					</Dropdown.Toggle>
-					{!disabled ? (
-						<Dropdown.Menu>
-							<Dropdown.Item href={`/new_league/${league.lid}`}>
-								Import
-							</Dropdown.Item>
-							<Dropdown.Item
-								href={`/l/${league.lid}/export_league`}
-								onClick={() => setLoadingLID(league.lid)}
-							>
-								Export
-							</Dropdown.Item>
-							<Dropdown.Item
-								onClick={async () => {
-									const newName = await confirm("League name:", {
-										defaultValue: league.name,
-										okText: "Rename league",
-									});
-
-									if (typeof newName === "string") {
-										await toWorker("main", "updateLeague", {
-											lid: league.lid,
-											obj: {
-												name: newName,
-											},
-										});
-									}
-								}}
-							>
-								Rename
-							</Dropdown.Item>
-							<Dropdown.Item
-								onClick={async () => {
-									try {
-										logEvent({
-											type: "info",
-											text: `Cloning league "${league.name}". This may take a little while if it's a large league.`,
-											saveToDb: false,
-											showNotification: true,
-										});
-
-										setCloningLID(league.lid);
-										const name = await toWorker(
-											"main",
-											"cloneLeague",
-											league.lid,
-										);
-										setCloningLID(undefined);
-
-										logEvent({
-											type: "info",
-											text: `Clone complete! Your new league is named "${name}".`,
-											saveToDb: false,
-											showNotification: true,
-										});
-									} catch (error) {
-										logEvent({
-											type: "error",
-											text: error.message,
-											saveToDb: false,
-										});
-									}
-								}}
-							>
-								Clone
-							</Dropdown.Item>
-							<Dropdown.Item
-								onClick={async () => {
-									const proceed = await confirm(
-										`Are you absolutely sure you want to delete "${league.name}"? You will permanently lose any record of all seasons, players, and games from this league.`,
-										{
-											okText: "Delete League",
-										},
-									);
-
-									if (proceed) {
-										setDeletingLID(league.lid);
-										await toWorker("main", "removeLeague", league.lid);
-										setDeletingLID(undefined);
-									}
-								}}
-							>
-								Delete
-							</Dropdown.Item>
-						</Dropdown.Menu>
-					) : null}
-				</Dropdown>,
-			],
-		};
-	});
-
-	const pagination = rows.length > 100;
 
 	return (
 		<>
@@ -497,17 +271,182 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 				</a>
 			</div>
 
-			{rows.length > 0 ? (
-				<DataTable
-					cols={cols}
-					disableSettingsCache
-					defaultSort={[7, "desc"]}
-					defaultStickyCols={1}
-					name="Dashboard"
-					pagination={pagination}
-					small={false}
-					rows={rows}
-				/>
+			{leagues.length > 0 ? (
+				<div className="league-cards">
+					{leagues.map((league) => {
+						const disabled =
+							deletingLID !== undefined ||
+							loadingLID !== undefined ||
+							cloningLID !== undefined;
+						const throbbing = loadingLID === league.lid;
+						const numSeasons =
+							league.startingSeason !== undefined && league.season !== undefined
+								? 1 + league.season - league.startingSeason
+								: undefined;
+
+						return (
+							<div key={league.lid} className="league-card">
+								<div className="league-card-header">
+									<div className="d-flex align-items-center gap-1 overflow-hidden">
+										<Star lid={league.lid} starred={league.starred} />
+										{!disabled ? (
+											<a
+												href={`/l/${league.lid}`}
+												className="league-card-name text-truncate"
+												onClick={() => setLoadingLID(league.lid)}
+											>
+												{league.name}
+											</a>
+										) : (
+											<span className="league-card-name text-truncate">
+												{league.name}
+											</span>
+										)}
+									</div>
+									<Dropdown
+										style={dropdownStyle}
+										className={window.mobile ? "dropdown-mobile" : undefined}
+									>
+										<Dropdown.Toggle
+											as="span"
+											bsPrefix="no-caret"
+											id={`dashboard-actions-${league.lid}`}
+											style={glyphiconStyle}
+											title="Actions"
+										>
+											<span
+												className="glyphicon glyphicon-option-vertical text-body-secondary p-2"
+												data-no-row-highlight="true"
+											/>
+										</Dropdown.Toggle>
+										{!disabled ? (
+											<Dropdown.Menu>
+												<Dropdown.Item href={`/new_league/${league.lid}`}>
+													Import
+												</Dropdown.Item>
+												<Dropdown.Item
+													href={`/l/${league.lid}/export_league`}
+													onClick={() => setLoadingLID(league.lid)}
+												>
+													Export
+												</Dropdown.Item>
+												<Dropdown.Item
+													onClick={async () => {
+														const newName = await confirm("League name:", {
+															defaultValue: league.name,
+															okText: "Rename league",
+														});
+
+														if (typeof newName === "string") {
+															await toWorker("main", "updateLeague", {
+																lid: league.lid,
+																obj: {
+																	name: newName,
+																},
+															});
+														}
+													}}
+												>
+													Rename
+												</Dropdown.Item>
+												<Dropdown.Item
+													onClick={async () => {
+														try {
+															logEvent({
+																type: "info",
+																text: `Cloning league "${league.name}". This may take a little while if it's a large league.`,
+																saveToDb: false,
+																showNotification: true,
+															});
+
+															setCloningLID(league.lid);
+															const name = await toWorker(
+																"main",
+																"cloneLeague",
+																league.lid,
+															);
+															setCloningLID(undefined);
+
+															logEvent({
+																type: "info",
+																text: `Clone complete! Your new league is named "${name}".`,
+																saveToDb: false,
+																showNotification: true,
+															});
+														} catch (error) {
+															logEvent({
+																type: "error",
+																text: error.message,
+																saveToDb: false,
+															});
+														}
+													}}
+												>
+													Clone
+												</Dropdown.Item>
+												<Dropdown.Item
+													onClick={async () => {
+														const proceed = await confirm(
+															`Are you absolutely sure you want to delete "${league.name}"? You will permanently lose any record of all seasons, players, and games from this league.`,
+															{
+																okText: "Delete League",
+															},
+														);
+
+														if (proceed) {
+															setDeletingLID(league.lid);
+															await toWorker(
+																"main",
+																"removeLeague",
+																league.lid,
+															);
+															setDeletingLID(undefined);
+														}
+													}}
+												>
+													Delete
+												</Dropdown.Item>
+											</Dropdown.Menu>
+										) : null}
+									</Dropdown>
+								</div>
+
+								<div className="league-card-team">
+									<TeamLogoInline
+										imgURL={league.imgURL}
+										size={44}
+										className="me-2 flex-shrink-0"
+									/>
+									<div className="overflow-hidden">
+										<div className="fw-semibold text-truncate">
+											{league.teamRegion} {league.teamName}
+										</div>
+										<div className="league-card-meta">
+											{league.phaseText}
+											{numSeasons !== undefined
+												? ` · Season ${league.season}`
+												: null}
+										</div>
+									</div>
+								</div>
+
+								<div className="league-card-info">
+									<DifficultyText>{league.difficulty}</DifficultyText>
+									{league.lastPlayed ? <Ago date={league.lastPlayed} /> : null}
+								</div>
+
+								<div className="mt-auto pt-1">
+									<PlayButton
+										lid={league.lid}
+										disabled={disabled}
+										throbbing={throbbing}
+										onClick={() => setLoadingLID(league.lid)}
+									/>
+								</div>
+							</div>
+						);
+					})}
+				</div>
 			) : null}
 		</>
 	);

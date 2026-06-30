@@ -87,7 +87,7 @@ const LeagueDashboard = ({
 							</div>
 						</div>
 						<div className="col-sm-8">
-							<div className="text-center mb-3">
+							<div className="team-card text-center mb-3">
 								<span style={{ fontSize: "3rem" }}>
 									{won}-{lost}
 									{otl > 0 ? <>-{otl}</> : null}

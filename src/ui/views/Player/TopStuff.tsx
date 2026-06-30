@@ -402,7 +402,7 @@ const TopStuff = ({
 		}
 
 		statusInfo = (
-			<div className="d-flex align-items-center">
+			<div className="d-flex align-items-center gap-2 flex-wrap mt-1">
 				{injured ? (
 					<InjuryIcon className="ms-0" injury={player.injury} />
 				) : null}
@@ -410,16 +410,11 @@ const TopStuff = ({
 					className={injured ? undefined : "skills-alone"}
 					skills={skills}
 				/>
-				<WatchBlock
-					className="ms-2"
-					pid={player.pid}
-					defaultWatch={player.watch}
-				/>
+				<WatchBlock pid={player.pid} defaultWatch={player.watch} />
 				{player.tid === PLAYER.FREE_AGENT ||
 				player.tid === PLAYER.UNDRAFTED ||
 				player.tid >= PLAYER.FREE_AGENT ? (
 					<Mood
-						className="ms-2"
 						defaultType={
 							player.tid === PLAYER.FREE_AGENT ||
 							player.tid === PLAYER.UNDRAFTED

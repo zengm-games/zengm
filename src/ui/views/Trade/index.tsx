@@ -410,7 +410,8 @@ const Trade = (props: View<"trade">) => {
 						userOrOther="other"
 					/>
 
-					<h2 className="mt-3">{userTeamName}</h2>
+					<hr className="trade-panel-divider" />
+					<h2 className="mt-2">{userTeamName}</h2>
 					<AssetList
 						challengeNoRatings={challengeNoRatings}
 						handleBulk={handleBulk}

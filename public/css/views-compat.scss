@@ -139,6 +139,126 @@
 	animation: oscillate-bg 1.5s infinite;
 }
 
+// ─── League card grid (Dashboard) ────────────────────────────────────────────
+
+.league-cards {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 1rem;
+	margin-bottom: 1.5rem;
+}
+
+.league-card {
+	background-color: var(--zengm-surface-1);
+	border: 1px solid var(--zengm-border);
+	border-radius: var(--zengm-radius);
+	box-shadow: var(--zengm-shadow-sm);
+	padding: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.65rem;
+	transition:
+		box-shadow 0.15s,
+		border-color 0.15s;
+
+	&:hover {
+		box-shadow: var(--zengm-shadow);
+		border-color: rgba(var(--zengm-brand-rgb), 0.35);
+	}
+}
+
+.league-card-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem;
+}
+
+.league-card-name {
+	font-weight: 600;
+	font-size: 0.9375rem;
+	color: var(--zengm-link) !important;
+	text-decoration: none !important;
+
+	&:hover {
+		text-decoration: underline !important;
+	}
+}
+
+.league-card-team {
+	display: flex;
+	align-items: center;
+}
+
+.league-card-meta {
+	font-size: 0.75rem;
+	color: var(--zengm-text-muted);
+}
+
+.league-card-info {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-size: 0.75rem;
+	color: var(--zengm-text-muted);
+	gap: 0.5rem;
+}
+
+// ─── Dashboard standings ──────────────────────────────────────────────────────
+
+.dashboard-standings-user {
+	font-weight: 600;
+
+	td:first-child {
+		box-shadow: inset 3px 0 0 var(--zengm-brand);
+	}
+}
+
+// ─── Dashboard leaders ────────────────────────────────────────────────────────
+
+.dashboard-leader {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 0.75rem;
+	padding: 0.25rem 0;
+
+	& + & {
+		border-top: 1px solid var(--zengm-border);
+	}
+}
+
+.dashboard-leader-name {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 0.8rem;
+	min-width: 0;
+}
+
+.dashboard-leader-stat {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	flex-shrink: 0;
+}
+
+.dashboard-leader-value {
+	font-size: 0.875rem;
+	font-weight: 600;
+	color: var(--zengm-text-strong);
+	font-variant-numeric: tabular-nums;
+	line-height: 1.2;
+}
+
+.dashboard-leader-label {
+	font-size: 0.6rem;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--zengm-text-muted);
+	line-height: 1;
+}
+
 @keyframes oscillate-bg {
 	0% {
 		background-color: lighten($success, 8);
@@ -389,6 +509,12 @@
 	}
 }
 
+.trade-panel-divider {
+	border: none;
+	border-top: 2px solid var(--zengm-border);
+	margin: 1rem 0 0;
+}
+
 .trading-block-buttons {
 	text-align: center;
 }
@@ -410,15 +536,25 @@
 	padding: 0;
 	text-indent: 0;
 	max-width: 200px;
+	background: var(--zengm-surface-1);
+	border-radius: var(--zengm-radius);
+	box-shadow: var(--zengm-shadow);
+	overflow: hidden;
+
+	&.border-bottom {
+		border: 1px solid var(--zengm-border) !important;
+	}
 
 	li {
 		height: 40px;
 		display: flex;
 		align-items: center;
+		border: none !important;
+		border-bottom: 1px solid var(--zengm-border) !important;
 	}
 
 	li:last-child {
-		border: none;
+		border: none !important;
 	}
 }
 .playoff-matchup-logo {
@@ -430,6 +566,11 @@
 
 .standings-name {
 	min-width: 100px;
+	font-size: 0.7rem;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--zengm-text-muted) !important;
+	font-weight: 600 !important;
 }
 
 @include media-breakpoint-up(sm) {
@@ -437,6 +578,37 @@
 		// Wide enough that Philadelphia Cheesesteaks still fits after clinching playoffs
 		min-width: 228px;
 	}
+}
+
+.standings-conf-header {
+	font-size: 0.9rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	border-bottom: 2px solid var(--zengm-brand);
+	padding-bottom: 0.2rem;
+	margin-bottom: 0.5rem;
+}
+
+.clinch-badge {
+	display: inline-block;
+	font-size: 0.6rem;
+	font-weight: 700;
+	padding: 0.1em 0.35em;
+	border-radius: var(--zengm-radius-sm);
+	background-color: rgba(var(--zengm-brand-rgb), 0.15);
+	color: var(--zengm-brand);
+	vertical-align: middle;
+	line-height: 1.5;
+}
+
+// ─── PT modifier select ───────────────────────────────────────────────────────
+
+.pt-modifier-select {
+	border: none;
+	border-radius: var(--zengm-radius-sm);
+	font-weight: 600;
+	font-size: 0.75rem;
 }
 
 // ─── Settings view ────────────────────────────────────────────────────────────

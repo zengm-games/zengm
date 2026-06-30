@@ -86,6 +86,10 @@
 // ─── Table ────────────────────────────────────────────────────────────────────
 
 table.table {
+	// Wire design tokens to Bootstrap's cell padding vars — cascades to all 77 DataTable views.
+	--bs-table-cell-padding-y: var(--zengm-table-py);
+	--bs-table-cell-padding-x: var(--zengm-table-px);
+
 	thead {
 		th {
 			background-color: var(--zengm-surface-2);

@@ -284,17 +284,19 @@ const Summary = ({
 				return (
 					<div
 						key={i}
-						className={clsx("col-md-12 col-6 d-flex flex-column", {
+						className={clsx("col-md-12 col-6", {
 							"mb-md-3": i === 0,
 						})}
 					>
-						<SummaryTeam
-							handleRemove={(type, id) => {
-								handleToggle(userOrOther, type, "include", id);
-							}}
-							summary={summary}
-							t={t}
-						/>
+						<div className="team-card h-100">
+							<SummaryTeam
+								handleRemove={(type, id) => {
+									handleToggle(userOrOther, type, "include", id);
+								}}
+								summary={summary}
+								t={t}
+							/>
+						</div>
 					</div>
 				);
 			})}

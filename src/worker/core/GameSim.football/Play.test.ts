@@ -87,7 +87,7 @@ describe("penalty situations", () => {
 		play.addEvent({
 			type: "possessionChange",
 			yds: 0,
-			kickoff: true,
+			subtype: "kickoff",
 		});
 
 		assert.strictEqual(play.state.current.scrimmage, 40, "before return");
@@ -150,7 +150,7 @@ describe("penalty situations", () => {
 		play.addEvent({
 			type: "possessionChange",
 			yds: 0,
-			kickoff: true,
+			subtype: "kickoff",
 		});
 
 		assert.strictEqual(play.state.current.scrimmage, 40, "before return");
@@ -681,6 +681,50 @@ describe("penalty situations", () => {
 
 		assert.strictEqual(game.o, 0);
 	});
+
+	test("penalty on punt resulting in first down for punting team should not reset currentDrive", async () => {
+		const game = await initGameSim();
+		game.o = 0;
+		game.d = 1;
+		game.down = 1;
+		game.toGo = 10;
+		game.scrimmage = 20;
+		game.currentDrive = game.o;
+		game.currentPlay = new Play(game);
+
+		game.updatePlayersOnField("punt");
+		const pd = game.pickPlayer(game.d);
+
+		const play = game.currentPlay;
+
+		assert.strictEqual(play.state.initial.currentDrive, 0);
+		assert.strictEqual(play.state.current.currentDrive, 0);
+
+		play.addEvent({
+			type: "possessionChange",
+			subtype: "punt",
+			yds: 0,
+		});
+
+		assert.strictEqual(play.state.current.currentDrive, undefined);
+
+		play.addEvent({
+			type: "penalty",
+			p: pd,
+			automaticFirstDown: true,
+			name: "Unnecessary roughness",
+			penYds: 15,
+			spotYds: 10,
+			t: game.d,
+			tackOn: true,
+		});
+
+		assert.strictEqual(play.state.current.currentDrive, undefined);
+
+		play.adjudicatePenalties(false);
+
+		assert.strictEqual(play.state.current.currentDrive, 0);
+	});
 });
 
 describe("overtime", () => {
@@ -978,7 +1022,7 @@ describe("one penalty on each team", () => {
 		play.addEvent({
 			type: "possessionChange",
 			yds: 0,
-			kickoff: true,
+			subtype: "kickoff",
 		});
 
 		assert.strictEqual(play.state.current.scrimmage, 40, "before return");
@@ -1062,7 +1106,7 @@ describe("one penalty on each team", () => {
 		play.addEvent({
 			type: "possessionChange",
 			yds: 0,
-			kickoff: true,
+			subtype: "kickoff",
 		});
 
 		assert.strictEqual(play.state.current.scrimmage, 40, "before return");
@@ -1416,6 +1460,7 @@ describe("game sim issues", () => {
 		});
 		play.addEvent({
 			type: "possessionChange",
+			subtype: "missedFg",
 			yds: -7,
 		});
 

@@ -1,7 +1,6 @@
 import { g, helpers } from "../../util/index.ts";
 import { PHASE, STARTING_NUM_TIMEOUTS } from "../../../common/constants.ts";
 import jumpBallWinnerStartsThisPeriodWithPossession from "./jumpBallWinnerStartsThisPeriodWithPossession.ts";
-import isFirstPeriodOfSecondHalf from "./isFirstPeriodOfSecondHalf.ts";
 import getInjuryRate from "./getInjuryRate.ts";
 import type {
 	GameAttributesLeague,
@@ -597,10 +596,6 @@ class GameSim extends GameSimBase {
 
 		while (!this.elamDone) {
 			if (period !== 1) {
-				if (isFirstPeriodOfSecondHalf(period, this.numPeriods)) {
-					this.startSecondHalfWithStarters();
-				}
-
 				this.doSubstitutionsIfDeadBall({
 					type: "newPeriod",
 				});
@@ -761,42 +756,6 @@ class GameSim extends GameSimBase {
 		}
 
 		return dt;
-	}
-
-	startSecondHalfWithStarters() {
-		const foulsNeededToFoulOut = g.get("foulsNeededToFoulOut");
-		const isEligible = (p: PlayerGameSim) =>
-			!p.injured &&
-			!(foulsNeededToFoulOut > 0 && p.stat.pf >= foulsNeededToFoulOut);
-
-		for (const t of teamNums) {
-			const eligibleStarters = this.team[t].player
-				.slice(0, this.numPlayersOnCourt)
-				.filter(isEligible);
-
-			const playersOnCourt = [...this.playersOnCourt[t]];
-
-			for (const p of eligibleStarters) {
-				if (playersOnCourt.includes(p)) {
-					continue;
-				}
-
-				const replacedIndex = playersOnCourt.findIndex(
-					(onCourtPlayer) => !eligibleStarters.includes(onCourtPlayer),
-				);
-				if (replacedIndex === -1) {
-					break;
-				}
-
-				const replaced = playersOnCourt[replacedIndex]!;
-				playersOnCourt[replacedIndex] = p;
-
-				replaced.stat.benchTime = uniform(-2, 2);
-				p.stat.courtTime = uniform(-2, 2);
-			}
-
-			this.playersOnCourt[t] = playersOnCourt;
-		}
 	}
 
 	doSubstitutionsIfDeadBall(

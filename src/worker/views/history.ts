@@ -3,6 +3,7 @@ import { g, local, updatePlayMenu } from "../util/index.ts";
 import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { SIMPLE_AWARDS } from "../../common/constants.ts";
 import { bySport } from "../../common/sportFunctions.ts";
+import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 
 const viewedSeasonSummary = async () => {
 	local.unviewedSeasonSummary = false;
@@ -100,14 +101,40 @@ const updateHistory = async (
 			},
 			"noCopyCache",
 		);
-		const retiredPlayers = await idb.getCopies.playersPlus(retiredPlayersAll, {
-			attrs: ["pid", "name", "age", "hof"],
-			season,
-			ratings: ["pos"],
-			stats: ["tid", "abbrev"],
-			showNoStats: true,
+		const retiredStat = bySport({
+			baseball: "war",
+			basketball: "ws",
+			football: "av",
+			hockey: "ps",
 		});
-		retiredPlayers.sort((a, b) => b.age - a.age);
+		const retiredPlayers = processPlayersHallOfFame(
+			await idb.getCopies.playersPlus(retiredPlayersAll, {
+				attrs: ["pid", "name", "age", "hof"],
+				ratings: ["pos", "season"],
+				stats: ["season", "tid", "abbrev", retiredStat],
+				showNoStats: true,
+			}),
+		).map((p) => {
+			const lastStats = p.stats.at(-1);
+
+			return {
+				pid: p.pid,
+				name: p.name,
+				age: p.age,
+				hof: p.hof,
+				pos: p.bestPos,
+				t:
+					lastStats?.season === season
+						? {
+								tid: lastStats.tid,
+								abbrev: lastStats.abbrev,
+							}
+						: undefined,
+				stat: p.careerStats[retiredStat],
+			};
+		});
+		console.log(retiredPlayers);
+		retiredPlayers.sort((a, b) => b.stat - a.stat);
 
 		// Get champs
 		const champ = teams.find(
@@ -122,6 +149,7 @@ const updateHistory = async (
 			confs: g.get("confs", season),
 			invalidSeason: false as const,
 			retiredPlayers,
+			retiredStat,
 			season,
 		};
 	}

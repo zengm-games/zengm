@@ -4,9 +4,11 @@ import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { ActionButton } from "./ActionButton.tsx";
 import { downloadFile } from "../util/downloadFile.ts";
+import { getCol } from "../../common/getCol.ts";
 
 export const RetiredPlayers = ({
 	retiredPlayers,
+	retiredStat,
 	season,
 	userTid,
 }: {
@@ -15,55 +17,56 @@ export const RetiredPlayers = ({
 		hof: boolean;
 		name: string;
 		pid: number;
-		ratings: {
-			pos: string;
-		};
-		stats: {
+		pos: string;
+		t?: {
 			abbrev: string;
 			tid: number;
 		};
+		stat: number;
 	}[];
+	retiredStat: string;
 	season: number;
 	userTid: number;
 }) => {
 	const [exporting, setExporting] = useState(false);
+
+	const statCol = getCol(`stat:${retiredStat}`);
+
 	return (
 		<>
 			<h2>Retired Players</h2>
 			<p
 				style={{
-					MozColumnWidth: "12em",
-					MozColumns: "12em",
-					WebkitColumns: "12em",
-					columns: "12em",
+					columns: "240px",
 				}}
 			>
 				{retiredPlayers.length === 0 ? "None" : null}
 				{retiredPlayers.map((p) => (
 					<span
 						key={p.pid}
-						className={p.stats.tid === userTid ? "table-info" : undefined}
+						className={p.t?.tid === userTid ? "table-info" : undefined}
 					>
-						{isSport("football") ? `${p.ratings.pos} ` : null}
+						{isSport("football") ? `${p.pos} ` : null}
 						<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> (
-						{p.stats.tid >= 0 ? (
+						{p.t && p.t.tid >= 0 ? (
 							<>
 								<a
 									href={helpers.leagueUrl([
 										"roster",
-										`${p.stats.abbrev}_${p.stats.tid}`,
+										`${p.t.abbrev}_${p.t.tid}`,
 										season,
 									])}
 								>
-									{p.stats.abbrev}
+									{p.t.abbrev}
 								</a>
 								,{" "}
 							</>
 						) : null}
-						age: {p.age}
+						{p.age} yo, {helpers.roundStat(p.stat, retiredStat, true)}{" "}
+						{statCol.title}
 						{p.hof ? (
 							<>
-								;{" "}
+								,{" "}
 								<a href={helpers.leagueUrl(["hall_of_fame"])}>
 									<b>HoF</b>
 								</a>

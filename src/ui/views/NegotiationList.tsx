@@ -19,6 +19,7 @@ import {
 	useNegotiaionModal,
 } from "../components/NegotiationModal.tsx";
 import { useLocal } from "../util/local.ts";
+import clsx from "clsx";
 
 const NegotiationList = ({
 	capSpace,
@@ -52,20 +53,27 @@ const NegotiationList = ({
 		return <p>The AI will handle re-signing players in spectator mode.</p>;
 	}
 
-	const cols = getCols([
-		"Name",
-		"Pos",
-		"Age",
-		"Ovr",
-		"Pot",
-		...stats.map((stat) => `stat:${stat}`),
-		"Acquired",
-		"Mood",
-		"Old Salary",
-		"Asking For",
-		"Exp",
-		"Negotiate",
-	]);
+	const cols = getCols(
+		[
+			"Name",
+			"Pos",
+			"Age",
+			"Ovr",
+			"Pot",
+			...stats.map((stat) => `stat:${stat}`),
+			"Acquired",
+			"Mood",
+			"Old Salary",
+			"Asking For",
+			"Exp",
+			"Actions",
+		],
+		{
+			Actions: {
+				width: "1px",
+			},
+		},
+	);
 
 	const rows: DataTableRow[] = players.map((p) => {
 		const negotiateButtons = (
@@ -124,19 +132,26 @@ const NegotiationList = ({
 				p.contract.exp,
 				{
 					value: (
-						<div className="d-flex align-items-center">
+						<>
 							{negotiateButtons}
 							<button
 								type="button"
-								className="btn-close ms-2 p-0"
-								title="End negotiation"
+								className={clsx(
+									"btn btn-light-bordered btn-xs",
+									p.mood.user.willing ? undefined : "ms-auto",
+								)}
 								onClick={async () => {
 									await toWorker("main", "cancelContractNegotiation", p.pid);
 								}}
-							/>
-						</div>
+							>
+								Release
+							</button>
+						</>
 					),
-					searchValue: p.mood.user.willing ? "Negotiate Sign" : "Refuses!",
+					classNames: "d-flex align-items-center gap-2",
+					searchValue: p.mood.user.willing
+						? "Negotiate Sign Release"
+						: "Refuses! Release",
 				},
 			],
 			classNames: {

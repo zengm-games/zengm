@@ -3281,10 +3281,6 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
-	Negotiate: {
-		sortSequence: [],
-		width: "1px",
-	},
 	Note: {},
 	Odds: {
 		desc: "Pre-lottery odds of getting this pick",

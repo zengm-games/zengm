@@ -178,9 +178,13 @@ const FreeAgents = ({
 		"Mood",
 		askingForText,
 		"Exp",
-		"Negotiate",
+		"Actions",
 	];
-	const cols = getCols(colKeys);
+	const cols = getCols(colKeys, {
+		Actions: {
+			width: "1px",
+		},
+	});
 
 	const showShowPlayersAffordButton = salaryCapType !== "none";
 
@@ -286,6 +290,7 @@ const FreeAgents = ({
 									willingToNegotiate={p.mood.user.willing}
 								/>
 							),
+							classNames: "d-flex align-items-center gap-2",
 							searchValue: p.mood.user.willing ? "Negotiate Sign" : "Refuses!",
 						}
 					: signedFreeAgentWrapped(

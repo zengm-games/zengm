@@ -38,7 +38,7 @@ export const NegotiateButtons = ({
 			(contractAmount / 1000 > capSpace + 1 / 1000 &&
 				contractAmount / 1000 > (minContract + 1) / 1000));
 	return (
-		<div className="btn-group">
+		<>
 			<button
 				className="btn btn-light-bordered btn-xs"
 				disabled={!!disabled}
@@ -67,6 +67,6 @@ export const NegotiateButtons = ({
 			>
 				Sign
 			</button>
-		</div>
+		</>
 	);
 };

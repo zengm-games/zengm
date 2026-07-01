@@ -1948,6 +1948,7 @@ class GameSim extends GameSimBase {
 			blocked,
 			desperation: forceThreePointer || rushed,
 			fgaLogType,
+			isHeave: this.t <= 1,
 			probAndOne,
 			probMake,
 			probMissAndFoul,
@@ -2041,6 +2042,7 @@ class GameSim extends GameSimBase {
 			blocked,
 			desperation,
 			fgaLogType,
+			isHeave,
 			probAndOne,
 			probMake,
 			probMissAndFoul,
@@ -2082,7 +2084,7 @@ class GameSim extends GameSimBase {
 			});
 		}
 		if (blocked) {
-			return this.doBlk(p, type); // orb or drb
+			return this.doBlk(p, type, isHeave);
 		}
 
 		const advanceClock = () => {
@@ -2139,25 +2141,42 @@ class GameSim extends GameSimBase {
 
 		// Miss
 		advanceClock();
-		this.recordStat(this.o, p, "fga");
 		let fgMissLogType: FgMissType | undefined;
 		if (type === "tipIn") {
-			this.recordStat(this.o, p, "fgaAtRim");
+			if (!isHeave) {
+				this.recordStat(this.o, p, "fga");
+				this.recordStat(this.o, p, "fgaAtRim");
+			}
 			fgMissLogType = "missTipIn";
 		} else if (type === "putBack") {
-			this.recordStat(this.o, p, "fgaAtRim");
+			if (!isHeave) {
+				this.recordStat(this.o, p, "fga");
+				this.recordStat(this.o, p, "fgaAtRim");
+			}
 			fgMissLogType = "missPutBack";
 		} else if (type === "atRim") {
-			this.recordStat(this.o, p, "fgaAtRim");
+			if (!isHeave) {
+				this.recordStat(this.o, p, "fga");
+				this.recordStat(this.o, p, "fgaAtRim");
+			}
 			fgMissLogType = "missAtRim";
 		} else if (type === "lowPost") {
-			this.recordStat(this.o, p, "fgaLowPost");
+			if (!isHeave) {
+				this.recordStat(this.o, p, "fga");
+				this.recordStat(this.o, p, "fgaLowPost");
+			}
 			fgMissLogType = "missLowPost";
 		} else if (type === "midRange") {
-			this.recordStat(this.o, p, "fgaMidRange");
+			if (!isHeave) {
+				this.recordStat(this.o, p, "fga");
+				this.recordStat(this.o, p, "fgaMidRange");
+			}
 			fgMissLogType = "missMidRange";
 		} else if (type === "threePointer") {
-			this.recordStat(this.o, p, "tpa");
+			if (!isHeave) {
+				this.recordStat(this.o, p, "fga");
+				this.recordStat(this.o, p, "tpa");
+			}
 			fgMissLogType = "missTp";
 		} else {
 			throw new Error(`Should never happen ${fgMissLogType}`);
@@ -2192,18 +2211,20 @@ class GameSim extends GameSimBase {
 	 * @param {number} shooter Integer from 0 to 4 representing the index of this.playersOnCourt[this.o] for the shooting player.
 	 * @return {string} Output of this.doReb.
 	 */
-	doBlk(p: PlayerGameSim, type: ShotType) {
-		this.recordStat(this.o, p, "ba");
-		this.recordStat(this.o, p, "fga");
+	doBlk(p: PlayerGameSim, type: ShotType, isHeave = false) {
+		if (!isHeave) {
+			this.recordStat(this.o, p, "ba");
+			this.recordStat(this.o, p, "fga");
 
-		if (type === "atRim" || type === "tipIn" || type === "putBack") {
-			this.recordStat(this.o, p, "fgaAtRim");
-		} else if (type === "lowPost") {
-			this.recordStat(this.o, p, "fgaLowPost");
-		} else if (type === "midRange") {
-			this.recordStat(this.o, p, "fgaMidRange");
-		} else if (type === "threePointer") {
-			this.recordStat(this.o, p, "tpa");
+			if (type === "atRim" || type === "tipIn" || type === "putBack") {
+				this.recordStat(this.o, p, "fgaAtRim");
+			} else if (type === "lowPost") {
+				this.recordStat(this.o, p, "fgaLowPost");
+			} else if (type === "midRange") {
+				this.recordStat(this.o, p, "fgaMidRange");
+			} else if (type === "threePointer") {
+				this.recordStat(this.o, p, "tpa");
+			}
 		}
 
 		const p2 = this.pickPlayer("blocking", this.d, 10);

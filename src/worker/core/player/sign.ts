@@ -58,6 +58,10 @@ const sign = async (
 			type: "freeAgent",
 			eid,
 		});
+
+		const { default: recordSigning } =
+			await import("../freeAgents/recordSigning.ts");
+		await recordSigning();
 	}
 };
 

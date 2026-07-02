@@ -4,6 +4,7 @@ import autoSign from "./autoSign.ts";
 import decreaseDemands from "./decreaseDemands.ts";
 import {
 	g,
+	local,
 	lock,
 	updatePlayMenu,
 	updateStatus,
@@ -40,11 +41,19 @@ async function play(
 	const cbRunDay = async () => {
 		// This is called if there are remaining days to simulate
 		const cbYetAnother = async () => {
-			await decreaseDemands();
-			await autoSign();
-			await league.setGameAttributes({
-				daysLeft: g.get("daysLeft") - 1,
-			});
+			local.simulatingFreeAgencyDay = true;
+			try {
+				await league.setGameAttributes({
+					freeAgencySigningsThisDay: 0,
+				});
+				await decreaseDemands();
+				await autoSign();
+				await league.setGameAttributes({
+					daysLeft: g.get("daysLeft") - 1,
+				});
+			} finally {
+				local.simulatingFreeAgencyDay = false;
+			}
 
 			if (g.get("daysLeft") > 0 && numDays > 0) {
 				await toUI("realtimeUpdate", [["playerMovement"]]);

@@ -2045,6 +2045,11 @@ if (isSport("basketball")) {
 			srIDs: ["CHO"],
 			name: "Charlotte",
 		},
+		{
+			season: 2026,
+			srIDs: ["SAC"],
+			name: "Sacramento",
+		},
 	];
 
 	const checkValidRebuild = async (

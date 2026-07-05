@@ -40,11 +40,15 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 
 		const fullNames = props.fullNames ? "always" : ("abbrev-small" as const);
 
+		const suppressNotifications =
+			safeLocalStorage.getItem("bbgmSuppressNotifications") === "true";
+
 		return {
 			fullNames,
 			phaseChangeRedirects: props.phaseChangeRedirects,
 			realPlayerPhotos: props.realPlayerPhotos,
 			realTeamInfo: props.realTeamInfo,
+			suppressNotifications,
 			theme,
 			units,
 		};
@@ -71,6 +75,10 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 		} else {
 			safeLocalStorage.setItem("theme", state.theme);
 		}
+		safeLocalStorage.setItem(
+			"bbgmSuppressNotifications",
+			String(state.suppressNotifications),
+		);
 		if (window.themeCSSLink) {
 			window.themeCSSLink.href = window.getThemeFilename(window.getTheme());
 		}
@@ -248,6 +256,30 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 					<div className="col-sm-3 col-6 mb-3">
 						<label className="form-label">Persistent Storage</label>
 						<Storage />
+					</div>
+					<div className="col-sm-3 col-6 mb-3">
+						<label className="form-label">Notifications</label>
+						<div className="form-check">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								id="options-suppressNotifications"
+								checked={state.suppressNotifications}
+								onChange={() => {
+									setState({
+										...state,
+										suppressNotifications: !state.suppressNotifications,
+									});
+									setDirty(true);
+								}}
+							/>
+							<label
+								className="form-check-label"
+								htmlFor="options-suppressNotifications"
+							>
+								Disable notification popups
+							</label>
+						</div>
 					</div>
 				</div>
 

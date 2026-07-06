@@ -23,6 +23,7 @@ const updateOptions = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			units: options.units,
 			fullNames: !!options.fullNames,
 			phaseChangeRedirects: options.phaseChangeRedirects,
+			suppressNotifications: !!options.suppressNotifications,
 		};
 	}
 };

@@ -2,7 +2,6 @@ import { createLogger } from "../../common/createLogger.ts";
 import { local } from "./local.ts";
 import type { LogEventShowOptions } from "../../common/types.ts";
 import { notify } from "./notify.ts";
-import { safeLocalStorage } from "./safeLocalStorage.ts";
 import { toWorker } from "./toWorker.ts";
 
 const saveEvent = () => {
@@ -45,7 +44,7 @@ export const showEvent = ({
 		type !== "error" &&
 		type !== "success" &&
 		type !== "changes" &&
-		safeLocalStorage.getItem("bbgmSuppressNotifications") === "true"
+		local.getState().suppressNotifications
 	) {
 		return;
 	}

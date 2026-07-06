@@ -40,15 +40,12 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 
 		const fullNames = props.fullNames ? "always" : ("abbrev-small" as const);
 
-		const suppressNotifications =
-			safeLocalStorage.getItem("bbgmSuppressNotifications") === "true";
-
 		return {
 			fullNames,
 			phaseChangeRedirects: props.phaseChangeRedirects,
 			realPlayerPhotos: props.realPlayerPhotos,
 			realTeamInfo: props.realTeamInfo,
-			suppressNotifications,
+			suppressNotifications: props.suppressNotifications,
 			theme,
 			units,
 		};
@@ -75,10 +72,6 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 		} else {
 			safeLocalStorage.setItem("theme", state.theme);
 		}
-		safeLocalStorage.setItem(
-			"bbgmSuppressNotifications",
-			String(state.suppressNotifications),
-		);
 		if (window.themeCSSLink) {
 			window.themeCSSLink.href = window.getThemeFilename(window.getTheme());
 		}
@@ -90,6 +83,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 				phaseChangeRedirects: state.phaseChangeRedirects,
 				realPlayerPhotos: state.realPlayerPhotos,
 				realTeamInfo: state.realTeamInfo,
+				suppressNotifications: state.suppressNotifications,
 				units,
 			});
 			logEvent({

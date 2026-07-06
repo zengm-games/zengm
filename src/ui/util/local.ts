@@ -90,6 +90,7 @@ const useLocalRaw = createWithEqualityFn<LocalStateWithActions>(
 		season: 0,
 		showLeagueTopBar: initialShowLeagueTopBar,
 		showNagModal: false,
+		suppressNotifications: false,
 		sidebarOpen: initialSidebarOpen,
 		spectator: false,
 		startingSeason: 0,

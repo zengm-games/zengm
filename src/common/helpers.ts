@@ -1390,6 +1390,7 @@ const overtimeText = (
 	return overtimes;
 };
 
+// Replace with Math.sumPrecise - Chrome 147, Firefox 137, Safari 26.2
 const sum = (values: (number | undefined)[]) => {
 	let total = 0;
 	for (const value of values) {

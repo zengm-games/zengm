@@ -427,6 +427,7 @@ const Trade = (props: View<"trade">) => {
 						<Summary
 							handleToggle={handleChangeAsset}
 							ref={summaryText}
+							prevTeams={state.prevTeams}
 							summary={summary}
 						/>
 

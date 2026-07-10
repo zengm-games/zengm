@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import type { CSSProperties } from "react";
 
 export const ChampionshipBanner = ({
@@ -22,13 +23,16 @@ export const ChampionshipBanner = ({
 	const viewBox = hideRope ? "0 15 182 232" : "0 0 182 247";
 
 	return (
-		<div className={className} style={style}>
+		<div
+			className={clsx("d-flex justify-content-center", className)}
+			style={style}
+		>
 			<svg
 				fill="none"
 				preserveAspectRatio="xMidYMid meet"
 				viewBox={viewBox}
-				width="100%"
 				xmlns="http://www.w3.org/2000/svg"
+				style={{ maxWidth: 125 }}
 			>
 				{hideRope
 					? null

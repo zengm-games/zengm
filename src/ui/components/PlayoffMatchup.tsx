@@ -318,6 +318,7 @@ export const PlayoffMatchup = ({
 			</ul>
 			{bannerTeam ? (
 				<ChampionshipBanner
+					className="w-100"
 					season={season}
 					style={{
 						position: "absolute",

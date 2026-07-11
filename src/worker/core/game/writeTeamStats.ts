@@ -267,16 +267,6 @@ const writeTeamStats = async (results: GameResults) => {
 		const expenses =
 			salaryPaid + scoutingPaid + coachingPaid + healthPaid + facilitiesPaid;
 		teamSeason.cash += revenue - expenses;
-		console.log({
-			attendance,
-			fudgeFactor,
-			seasonLengthFactor,
-			merchRevenue,
-			sponsorRevenue,
-			nationalTvRevenue,
-			localTvRevenue,
-			ticketRevenue,
-		});
 
 		if (t1 === 0) {
 			// Only home team gets attendance...

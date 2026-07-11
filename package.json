@@ -30,7 +30,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@bugsnag/browser": "8.9.0",
+		"@bugsnag/browser": "8.10.0",
 		"@bugsnag/plugin-react": "8.9.0",
 		"@dnd-kit/core": "6.3.1",
 		"@dnd-kit/sortable": "10.0.0",
@@ -108,7 +108,7 @@
 		"browserslist": "4.28.5",
 		"cheerio": "1.2.0",
 		"chokidar": "5.0.0",
-		"cloudflare": "6.5.0",
+		"cloudflare": "7.0.0",
 		"concurrently": "10.0.3",
 		"conditional-type-checks": "1.0.6",
 		"eslint": "10.6.0",

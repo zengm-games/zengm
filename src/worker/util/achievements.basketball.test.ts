@@ -6,15 +6,23 @@ import g from "./g.ts";
 import helpers from "./helpers.ts";
 import achievements from "./achievements.ts";
 import { DEFAULT_LEVEL } from "../../common/budgetLevels.ts";
+import type { Achievement } from "../../common/types.ts";
 
-const get = (slug: string): any => {
+type AchievementWithCheck = Achievement & {
+	check: NonNullable<Achievement["check"]>;
+};
+
+const get = (slug: string) => {
 	const achievement = achievements.find(
 		(achievement2) => slug === achievement2.slug,
 	);
 	if (!achievement) {
 		throw new Error(`No achievement found for slug "${slug}"`);
 	}
-	return achievement;
+	if (!achievement.check) {
+		throw new Error(`No check function for slug "${slug}"`);
+	}
+	return achievement as AchievementWithCheck;
 };
 
 beforeAll(async () => {

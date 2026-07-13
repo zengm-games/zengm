@@ -1,4 +1,4 @@
-// See data/injuries.ods for basketball data
+// See data/injuries.csv for basketball data
 
 import { isSport } from "../../common/sportFunctions.ts";
 import helpers from "./helpers.ts";
@@ -388,7 +388,301 @@ if (isSport("hockey")) {
 			games: 0.2,
 		},
 	];
+} else if (isSport("basketball")) {
+	defaultInjuries = [
+		{
+			name: "Sprained Ankle",
+			frequency: 1520,
+			games: 6.41,
+		},
+		{
+			name: "Sore Knee",
+			frequency: 809,
+			games: 6.52,
+		},
+		{
+			name: "Sore Back",
+			frequency: 566,
+			games: 4.51,
+		},
+		{
+			name: "Strained Hamstring",
+			frequency: 529,
+			games: 8.3,
+		},
+		{
+			name: "Strained Calf",
+			frequency: 454,
+			games: 8.48,
+		},
+		{
+			name: "Sore Ankle",
+			frequency: 375,
+			games: 4.44,
+		},
+		{
+			name: "Strained Groin",
+			frequency: 354,
+			games: 5.44,
+		},
+		{
+			name: "Sore Foot",
+			frequency: 305,
+			games: 6.31,
+		},
+		{
+			name: "Sore Hip",
+			frequency: 302,
+			games: 5.57,
+		},
+		{
+			name: "Bruised Knee",
+			frequency: 261,
+			games: 6.16,
+		},
+		{
+			name: "Sprained Knee",
+			frequency: 248,
+			games: 11.73,
+		},
+		{
+			name: "Concussion",
+			frequency: 198,
+			games: 4.19,
+		},
+		{
+			name: "Sore Achilles",
+			frequency: 182,
+			games: 4.44,
+		},
+		{
+			name: "Back Spasms",
+			frequency: 168,
+			games: 3.9,
+		},
+		{
+			name: "Bruised Hip",
+			frequency: 160,
+			games: 3.42,
+		},
+		{
+			name: "Sore Shoulder",
+			frequency: 150,
+			games: 6.89,
+		},
+		{
+			name: "Bruised Quadriceps",
+			frequency: 145,
+			games: 3.97,
+		},
+		{
+			name: "Patellar Tendinitis",
+			frequency: 145,
+			games: 5.61,
+		},
+		{
+			name: "Sprained Toe",
+			frequency: 130,
+			games: 7,
+		},
+		{
+			name: "Sprained Foot",
+			frequency: 120,
+			games: 6.9,
+		},
+		{
+			name: "Bruised Leg",
+			frequency: 116,
+			games: 3.78,
+		},
+		{
+			name: "Sprained Wrist",
+			frequency: 114,
+			games: 7.78,
+		},
+		{
+			name: "Bruised Back",
+			frequency: 111,
+			games: 5.18,
+		},
+		{
+			name: "Sprained Thumb",
+			frequency: 103,
+			games: 5.65,
+		},
+		{
+			name: "Sprained Shoulder",
+			frequency: 89,
+			games: 7.89,
+		},
+		{
+			name: "Plantar Fasciitis",
+			frequency: 86,
+			games: 6.28,
+		},
+		{
+			name: "Fractured Hand",
+			frequency: 83,
+			games: 14.75,
+		},
+		{
+			name: "Bruised Foot",
+			frequency: 79,
+			games: 6.7,
+		},
+		{
+			name: "Fractured Finger",
+			frequency: 68,
+			games: 10.94,
+		},
+		{
+			name: "Sore Quadriceps",
+			frequency: 62,
+			games: 4.38,
+		},
+		{
+			name: "Bruised Hand",
+			frequency: 50,
+			games: 3.95,
+		},
+		{
+			name: "Fractured Nose",
+			frequency: 50,
+			games: 6.25,
+		},
+		{
+			name: "Strained Quadriceps",
+			frequency: 50,
+			games: 7.66,
+		},
+		{
+			name: "Bruised Shoulder",
+			frequency: 48,
+			games: 6.92,
+		},
+		{
+			name: "Sore Elbow",
+			frequency: 43,
+			games: 6.8,
+		},
+		{
+			name: "Strained Abdomen",
+			frequency: 43,
+			games: 9.51,
+		},
+		{
+			name: "Torn ACL",
+			frequency: 43,
+			games: 111,
+		},
+		{
+			name: "Sprained Elbow",
+			frequency: 41,
+			games: 7.67,
+		},
+		{
+			name: "Sore Wrist",
+			frequency: 41,
+			games: 6.76,
+		},
+		{
+			name: "Fractured Ankle",
+			frequency: 39,
+			games: 27.06,
+		},
+		{
+			name: "Fractured Foot",
+			frequency: 39,
+			games: 33.9,
+		},
+		{
+			name: "Strained Neck",
+			frequency: 39,
+			games: 6.63,
+		},
+		{
+			name: "Sore Toe",
+			frequency: 39,
+			games: 2.49,
+		},
+		{
+			name: "Torn Meniscus",
+			frequency: 39,
+			games: 29.03,
+		},
+		{
+			name: "Sore Hand",
+			frequency: 37,
+			games: 3.6,
+		},
+		{
+			name: "Sprained Hand",
+			frequency: 36,
+			games: 7.08,
+		},
+		{
+			name: "Strained Oblique",
+			frequency: 36,
+			games: 7.92,
+		},
+		{
+			name: "Rib Contusion",
+			frequency: 32,
+			games: 3.67,
+		},
+		{
+			name: "Sprained Finger",
+			frequency: 32,
+			games: 7.92,
+		},
+		{
+			name: "Torn Achilles Tendon",
+			frequency: 23,
+			games: 111,
+		},
+		{
+			name: "Sore Neck",
+			frequency: 22,
+			games: 5.31,
+		},
+		{
+			name: "Bruised Eye",
+			frequency: 18,
+			games: 1.35,
+		},
+		{
+			name: "Fractured Rib",
+			frequency: 18,
+			games: 9.53,
+		},
+		{
+			name: "Herniated Disc",
+			frequency: 18,
+			games: 18.82,
+		},
+		{
+			name: "Sore Thumb",
+			frequency: 18,
+			games: 5.4,
+		},
+		{
+			name: "Bruised Elbow",
+			frequency: 16,
+			games: 1.99,
+		},
+		{
+			name: "Ankle Contusion",
+			frequency: 14,
+			games: 5.59,
+		},
+		{
+			name: "Fractured Toe",
+			frequency: 9,
+			games: 12.28,
+		},
+	];
 } else {
+	// For football and baseball, keep using the old basketball injuries, cause I'm not sure if the new ones would actually be better or worse
 	defaultInjuries = [
 		{
 			name: "Sprained Ankle",

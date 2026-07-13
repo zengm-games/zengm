@@ -139,23 +139,25 @@ const Star = ({ lid, starred }: { lid: number; starred?: boolean }) => {
 
 	if (actuallyStarred) {
 		return (
-			<span
-				className="glyphicon glyphicon-star p-1 text-primary"
-				data-no-row-highlight="true"
+			<button
+				className="btn btn-link p-0 border-0"
 				onClick={toggle}
 				style={glyphiconStyle}
-			/>
+			>
+				<span className="glyphicon glyphicon-star p-1 text-primary" />
+			</button>
 		);
 	}
 
 	return (
-		<span
-			className="glyphicon glyphicon-star-empty p-1 text-body-secondary"
-			data-no-row-highlight="true"
+		<button
+			className="btn btn-link p-0 border-0"
 			onClick={toggle}
 			style={glyphiconStyle}
 			title="Star"
-		/>
+		>
+			<span className="glyphicon glyphicon-star-empty p-1 text-body-secondary" />
+		</button>
 	);
 };
 
@@ -295,16 +297,14 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 					className={window.mobile ? "dropdown-mobile" : undefined}
 				>
 					<Dropdown.Toggle
-						as="span"
 						bsPrefix="no-caret"
 						id={`dashboard-actions-${league.lid}`}
 						style={glyphiconStyle}
 						title="Actions"
+						variant="link"
+						className="p-0 border-0"
 					>
-						<span
-							className="glyphicon glyphicon-option-vertical text-body-secondary p-2"
-							data-no-row-highlight="true"
-						/>
+						<span className="glyphicon glyphicon-option-vertical text-body-secondary p-2" />
 					</Dropdown.Toggle>
 					{!disabled ? (
 						<Dropdown.Menu>

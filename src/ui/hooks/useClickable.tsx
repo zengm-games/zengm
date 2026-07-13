@@ -19,6 +19,7 @@ const useClickable = () => {
 			return;
 		}
 
+		// data-no-row-highlight is a hack and ideally would be removed
 		if (event.target.dataset?.noRowHighlight) {
 			return;
 		}

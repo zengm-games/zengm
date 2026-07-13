@@ -306,19 +306,13 @@ export const Mood = ({ className, defaultType, maxWidth, p }: Props) => {
 			>
 				<span
 					className={`text-end ${highlightColor(sum)}`}
-					data-no-row-highlight="true"
 					style={plusMinusStyle}
 				>
 					{plusMinus(sum)}
 				</span>
-				<div className="ms-1 me-auto" data-no-row-highlight="true">
-					{initialMood.traits.join(" ")}
-				</div>
+				<div className="ms-1 me-auto">{initialMood.traits.join(" ")}</div>
 				{showProbWilling ? (
-					<span
-						className="text-body-secondary ms-1"
-						data-no-row-highlight="true"
-					>
+					<span className="text-body-secondary ms-1">
 						{roundedProbWilling}%
 					</span>
 				) : null}

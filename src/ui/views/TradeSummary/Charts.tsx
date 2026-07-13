@@ -64,8 +64,11 @@ const Chart = ({
 		hideTooltip,
 	} = useTooltip<TooltipData>();
 
-	const handleMouseOver = (event: MouseEvent, datum: TooltipData) => {
-		const coords = localPoint((event.target as any).ownerSVGElement, event);
+	const handleMouseOver = (
+		event: MouseEvent<SVGElement>,
+		datum: TooltipData,
+	) => {
+		const coords = localPoint(event.currentTarget, event);
 		if (coords) {
 			showTooltip({
 				tooltipLeft: coords.x,

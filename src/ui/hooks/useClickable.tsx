@@ -1,6 +1,12 @@
 import { useCallback, useState } from "react";
 
-const IGNORED_ELEMENTS = new Set(["A", "BUTTON", "INPUT", "SELECT"]);
+const IGNORED_ELEMENTS = new Set([
+	"A",
+	"BUTTON",
+	"INPUT",
+	"SELECT",
+	"TEXTAREA",
+]);
 
 const useClickable = () => {
 	const [clicked, setClicked] = useState(false);

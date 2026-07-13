@@ -396,12 +396,12 @@ if (isSport("hockey")) {
 			games: 6.41,
 		},
 		{
-			name: "Knee Soreness",
+			name: "Sore Knee",
 			frequency: 809,
 			games: 6.52,
 		},
 		{
-			name: "Back Soreness",
+			name: "Sore Back",
 			frequency: 566,
 			games: 4.51,
 		},
@@ -416,7 +416,7 @@ if (isSport("hockey")) {
 			games: 8.48,
 		},
 		{
-			name: "Ankle Soreness",
+			name: "Sore Ankle",
 			frequency: 375,
 			games: 4.44,
 		},
@@ -426,12 +426,12 @@ if (isSport("hockey")) {
 			games: 5.44,
 		},
 		{
-			name: "Foot Soreness",
+			name: "Sore Foot",
 			frequency: 305,
 			games: 6.31,
 		},
 		{
-			name: "Hip Soreness",
+			name: "Sore Hip",
 			frequency: 302,
 			games: 5.57,
 		},
@@ -451,7 +451,7 @@ if (isSport("hockey")) {
 			games: 4.19,
 		},
 		{
-			name: "Achilles Soreness",
+			name: "Sore Achilles",
 			frequency: 182,
 			games: 4.44,
 		},
@@ -466,7 +466,7 @@ if (isSport("hockey")) {
 			games: 3.42,
 		},
 		{
-			name: "Shoulder Soreness",
+			name: "Sore Shoulder",
 			frequency: 150,
 			games: 6.89,
 		},
@@ -536,7 +536,7 @@ if (isSport("hockey")) {
 			games: 10.94,
 		},
 		{
-			name: "Quadriceps Soreness",
+			name: "Sore Quadriceps",
 			frequency: 62,
 			games: 4.38,
 		},
@@ -561,7 +561,7 @@ if (isSport("hockey")) {
 			games: 6.92,
 		},
 		{
-			name: "Elbow Soreness",
+			name: "Sore Elbow",
 			frequency: 43,
 			games: 6.8,
 		},
@@ -581,7 +581,7 @@ if (isSport("hockey")) {
 			games: 7.67,
 		},
 		{
-			name: "Wrist Soreness",
+			name: "Sore Wrist",
 			frequency: 41,
 			games: 6.76,
 		},
@@ -601,7 +601,7 @@ if (isSport("hockey")) {
 			games: 6.63,
 		},
 		{
-			name: "Toe Soreness",
+			name: "Sore Toe",
 			frequency: 39,
 			games: 2.49,
 		},
@@ -611,7 +611,7 @@ if (isSport("hockey")) {
 			games: 29.03,
 		},
 		{
-			name: "Hand Soreness",
+			name: "Sore Hand",
 			frequency: 37,
 			games: 3.6,
 		},
@@ -641,7 +641,7 @@ if (isSport("hockey")) {
 			games: 111,
 		},
 		{
-			name: "Neck Soreness",
+			name: "Sore Neck",
 			frequency: 22,
 			games: 5.31,
 		},
@@ -661,7 +661,7 @@ if (isSport("hockey")) {
 			games: 18.82,
 		},
 		{
-			name: "Thumb Soreness",
+			name: "Sore Thumb",
 			frequency: 18,
 			games: 5.4,
 		},

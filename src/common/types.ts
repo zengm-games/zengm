@@ -989,6 +989,7 @@ export type Option = {
 export type Options = {
 	fullNames?: boolean;
 	phaseChangeRedirects: Phase[];
+	suppressNotifications?: boolean;
 	units?: "metric" | "us";
 };
 
@@ -1043,6 +1044,7 @@ export type LocalStateUI = {
 	popup: boolean;
 	showLeagueTopBar: boolean;
 	showNagModal: boolean;
+	suppressNotifications: boolean;
 	sidebarOpen: boolean;
 	statusText: string;
 	units: "metric" | "us";

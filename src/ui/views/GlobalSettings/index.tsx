@@ -45,6 +45,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 			phaseChangeRedirects: props.phaseChangeRedirects,
 			realPlayerPhotos: props.realPlayerPhotos,
 			realTeamInfo: props.realTeamInfo,
+			suppressNotifications: props.suppressNotifications,
 			theme,
 			units,
 		};
@@ -82,6 +83,7 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 				phaseChangeRedirects: state.phaseChangeRedirects,
 				realPlayerPhotos: state.realPlayerPhotos,
 				realTeamInfo: state.realTeamInfo,
+				suppressNotifications: state.suppressNotifications,
 				units,
 			});
 			logEvent({
@@ -248,6 +250,30 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 					<div className="col-sm-3 col-6 mb-3">
 						<label className="form-label">Persistent Storage</label>
 						<Storage />
+					</div>
+					<div className="col-sm-3 col-6 mb-3">
+						<label className="form-label">Notifications</label>
+						<div className="form-check">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								id="options-suppressNotifications"
+								checked={state.suppressNotifications}
+								onChange={() => {
+									setState({
+										...state,
+										suppressNotifications: !state.suppressNotifications,
+									});
+									setDirty(true);
+								}}
+							/>
+							<label
+								className="form-check-label"
+								htmlFor="options-suppressNotifications"
+							>
+								Disable notification popups
+							</label>
+						</div>
 					</div>
 				</div>
 

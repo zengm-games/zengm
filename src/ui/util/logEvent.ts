@@ -39,6 +39,16 @@ export const showEvent = ({
 		extraClass = "notification-danger";
 	}
 
+	if (
+		!persistent &&
+		type !== "error" &&
+		type !== "success" &&
+		type !== "changes" &&
+		local.getState().suppressNotifications
+	) {
+		return;
+	}
+
 	let showNotification = true;
 
 	// Don't show non-critical notification if we're viewing a live game now. The additional liveGameInProgress check handles the case when an error occurs before the live game starts (such as roster size) and that should still be displayed

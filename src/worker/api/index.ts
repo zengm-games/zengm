@@ -2875,7 +2875,14 @@ const init = async (inputEnv: Env, conditions: Conditions) => {
 	)) as KeyboardShortcutsLocal;
 	await toUI(
 		"updateLocal",
-		[{ fullNames: options.fullNames, keyboardShortcuts, units: options.units }],
+		[
+			{
+				fullNames: options.fullNames,
+				keyboardShortcuts,
+				suppressNotifications: !!options.suppressNotifications,
+				units: options.units,
+			},
+		],
 		conditions,
 	);
 };
@@ -4144,13 +4151,18 @@ const updateOptions = async (
 			units: options.units,
 			fullNames: options.fullNames,
 			phaseChangeRedirects: options.phaseChangeRedirects,
+			suppressNotifications: options.suppressNotifications,
 		},
 		"options",
 	);
 	await attributesStore.put(realPlayerPhotos, "realPlayerPhotos");
 	await attributesStore.put(realTeamInfo, "realTeamInfo");
 	await toUI("updateLocal", [
-		{ units: options.units, fullNames: options.fullNames },
+		{
+			units: options.units,
+			fullNames: options.fullNames,
+			suppressNotifications: !!options.suppressNotifications,
+		},
 	]);
 	await toUI("realtimeUpdate", [["options"]]);
 };

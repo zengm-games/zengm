@@ -8,7 +8,7 @@ export const BoxScoreRow = (props: {
 	exhibition?: boolean;
 	lastStarter?: boolean;
 	liveGameInProgress?: boolean;
-	onClick?: (event: MouseEvent) => void;
+	onClick?: (event: MouseEvent<HTMLTableRowElement>) => void;
 	p: any;
 	season: number;
 	stats?: string[];

@@ -23,7 +23,7 @@ const BoxScoreRow = ({
 	className?: string;
 	exhibition?: boolean;
 	highlightCols?: number[];
-	onClick?: (event: MouseEvent) => void;
+	onClick?: (event: MouseEvent<HTMLTableRowElement>) => void;
 	p: any;
 	stats: string[];
 	season: number;

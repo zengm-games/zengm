@@ -16,7 +16,7 @@ const BoxScoreRow = ({
 	exhibition?: boolean;
 	lastStarter?: boolean;
 	liveGameInProgress?: boolean;
-	onClick?: (event: MouseEvent) => void;
+	onClick?: (event: MouseEvent<HTMLTableRowElement>) => void;
 	p: any;
 	season: number;
 }) => {

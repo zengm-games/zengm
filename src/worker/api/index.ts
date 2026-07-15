@@ -438,9 +438,14 @@ const beforeView = async (
 };
 
 const cancelContractNegotiation = async (pid: number) => {
-	const result = await contractNegotiation.cancel(pid);
+	await contractNegotiation.cancel(pid);
+
+	local.undoableActions[pid] = {
+		type: "release",
+		tid: g.get("userTid"),
+	};
+
 	await toUI("realtimeUpdate", [["playerMovement"]]);
-	return result;
 };
 
 const checkAccount2 = (param: unknown, conditions: Conditions) =>
@@ -4592,12 +4597,14 @@ const updateConfsDivs = async ({
 	await updateTeamInfo({ teams, from: "manageConfs" });
 };
 
-const undoAction = async (info: { type: "sign"; pid: number }) => {
+const undoAction = async (
+	info: { type: "sign"; pid: number } | { type: "release"; pid: number },
+) => {
 	if (info.type === "sign") {
 		const pid = info.pid;
 
 		const undoInfo = local.undoableActions[pid];
-		if (!undoInfo) {
+		if (!undoInfo || undoInfo.type !== "sign") {
 			return false;
 		}
 
@@ -4634,6 +4641,25 @@ const undoAction = async (info: { type: "sign"; pid: number }) => {
 			await idb.cache.events.delete(undoInfo.eid);
 		}
 
+		delete local.undoableActions[pid];
+		void toUI("realtimeUpdate", [["playerMovement"]]);
+
+		return true;
+	} else if (info.type === "release") {
+		const pid = info.pid;
+
+		const undoInfo = local.undoableActions[pid];
+		if (!undoInfo || undoInfo.type !== "release") {
+			return false;
+		}
+
+		await idb.cache.negotiations.add({
+			pid,
+			tid: undoInfo.tid,
+			resigning: true,
+		});
+
+		delete local.undoableActions[pid];
 		void toUI("realtimeUpdate", [["playerMovement"]]);
 
 		return true;

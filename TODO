@@ -1,10 +1,3 @@
-undo button
-- situations
-  - "release" from re-signing page
-- edge cases
-  - what if another transaction happened? check p.tid
-  - re-signing needs to add back negotiation correctly
-
 custom awards
 - fields
   - formula
@@ -945,7 +938,6 @@ indicator of if trade will be accepted, trade value
 allow undoing actions
 - types
   - trade
-  - signing player from table
   - drafting player (tricky bc AI goes right after)
   - X to hide a trade offer
   - releasing player

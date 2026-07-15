@@ -20,6 +20,52 @@ import {
 } from "../components/NegotiationModal.tsx";
 import { useLocal } from "../util/local.ts";
 import clsx from "clsx";
+import { useState } from "react";
+
+const ReleaseNotification = ({ name, pid }: { name: string; pid: number }) => {
+	const [status, setStatus] = useState<"init" | "waiting" | "success" | "fail">(
+		"init",
+	);
+
+	if (status === "success") {
+		return "Release undone";
+	} else if (status === "fail") {
+		return "Failed to undo release";
+	} else {
+		return (
+			<>
+				<b>You released {name}</b>
+				<div className="mt-2">
+					<button
+						className="btn btn-sm btn-secondary"
+						disabled={status === "waiting"}
+						onClick={async () => {
+							setStatus("waiting");
+							const result = await toWorker("main", "undoAction", {
+								type: "release",
+								pid,
+							});
+							if (result) {
+								setStatus("success");
+							} else {
+								setStatus("fail");
+							}
+						}}
+					>
+						Undo
+					</button>
+				</div>
+			</>
+		);
+	}
+};
+
+const showReleaseUndo = (p: { name: string; pid: number }) => {
+	showNotification({
+		type: "info",
+		text: <ReleaseNotification name={p.name} pid={p.pid} />,
+	});
+};
 
 const NegotiationList = ({
 	capSpace,
@@ -142,6 +188,10 @@ const NegotiationList = ({
 								)}
 								onClick={async () => {
 									await toWorker("main", "cancelContractNegotiation", p.pid);
+									showReleaseUndo({
+										name: `${p.firstName} ${p.lastName}`,
+										pid: p.pid,
+									});
 								}}
 							>
 								Release

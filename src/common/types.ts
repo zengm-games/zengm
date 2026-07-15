@@ -1349,20 +1349,25 @@ export type PlayerBioInfoProcessed = {
 	frequencies: [string, number][];
 };
 
-export type UndoableAction = {
-	type: "sign";
-	phase: Phase;
-	tid: number;
-	eid: number | undefined;
-} & Pick<
-	Player,
-	| "numDaysFreeAgent"
-	| "numPlayersTradedAwayNormalized"
-	| "jerseyNumber"
-	| "contract"
-	| "salaries"
-	| "transactions"
->;
+export type UndoableAction =
+	| ({
+			type: "sign";
+			phase: Phase;
+			tid: number;
+			eid: number | undefined;
+	  } & Pick<
+			Player,
+			| "numDaysFreeAgent"
+			| "numPlayersTradedAwayNormalized"
+			| "jerseyNumber"
+			| "contract"
+			| "salaries"
+			| "transactions"
+	  >)
+	| {
+			type: "release";
+			tid: number;
+	  };
 
 export type Local = {
 	autoPlayUntil?: {

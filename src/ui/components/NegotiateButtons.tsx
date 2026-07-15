@@ -41,7 +41,6 @@ const SignNotification = ({ name, pid }: { name: string; pid: number }) => {
 };
 
 export const showSignUndo = (p: { name: string; pid: number }) => {
-	console.log(p);
 	showNotification({
 		type: "info",
 		text: <SignNotification name={p.name} pid={p.pid} />,

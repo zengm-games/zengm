@@ -4618,11 +4618,14 @@ const undoAction = async (info: { type: "sign"; pid: number }) => {
 		p.contract = undoInfo.contract;
 		p.salaries = undoInfo.salaries;
 		p.transactions = undoInfo.transactions;
+		p.tid = PLAYER.FREE_AGENT;
 
 		if (phase === PHASE.RESIGN_PLAYERS) {
-			await contractNegotiation.create(pid, true, undoInfo.tid);
-		} else {
-			p.tid = PLAYER.FREE_AGENT;
+			await idb.cache.negotiations.add({
+				pid,
+				tid: undoInfo.tid,
+				resigning: true,
+			});
 		}
 
 		await idb.cache.players.put(p);
@@ -4630,6 +4633,8 @@ const undoAction = async (info: { type: "sign"; pid: number }) => {
 		if (undoInfo.eid !== undefined) {
 			await idb.cache.events.delete(undoInfo.eid);
 		}
+
+		void toUI("realtimeUpdate", [["playerMovement"]]);
 
 		return true;
 	}

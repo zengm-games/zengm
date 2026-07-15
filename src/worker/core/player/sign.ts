@@ -59,6 +59,8 @@ const sign = async (
 			eid,
 		});
 	}
+
+	return eid;
 };
 
 export default sign;

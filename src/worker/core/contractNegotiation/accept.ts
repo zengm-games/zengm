@@ -1,9 +1,14 @@
 import { player, team } from "../index.ts";
 import cancel from "./cancel.ts";
 import { idb } from "../../db/index.ts";
-import { g } from "../../util/index.ts";
-import type { Negotiation, PlayerContract } from "../../../common/types.ts";
+import { g, helpers } from "../../util/index.ts";
+import type {
+	Negotiation,
+	PlayerContract,
+	UndoableTransaction,
+} from "../../../common/types.ts";
 import { PHASE } from "../../../common/constants.ts";
+import { actualPhase } from "../../util/actualPhase.ts";
 
 /**
  * Accept the player's offer.
@@ -67,20 +72,37 @@ const accept = async ({
 		return "Player is no longer willing to negotiate.";
 	}
 
+	const phase = actualPhase();
+
+	const undo: UndoableTransaction = {
+		type: "sign",
+		phase,
+		tid: g.get("userTid"),
+		eid: undefined,
+		numDaysFreeAgent: p.numDaysFreeAgent,
+		numPlayersTradedAwayNormalized: helpers.deepCopy(
+			p.numPlayersTradedAwayNormalized,
+		),
+		jerseyNumber: p.jerseyNumber,
+		contract: helpers.deepCopy(p.contract),
+	};
+
 	const contract: PlayerContract = {
 		amount,
 		exp,
 	};
-	if (p.contract.rookie && g.get("phase") === PHASE.RESIGN_PLAYERS) {
+	if (p.contract.rookie && phase === PHASE.RESIGN_PLAYERS) {
 		// Not sure if the phase condition is necessary. The purpose of this is for hard cap rookies with rookie contract scale.
 		contract.rookie = true;
 	}
 
 	if (!dryRun) {
-		await player.sign(p, g.get("userTid"), contract, g.get("phase"));
+		undo.eid = await player.sign(p, g.get("userTid"), contract, phase);
 		await idb.cache.players.put(p);
 		await cancel(negotiation.pid);
 	}
+
+	return undo;
 };
 
 export default accept;

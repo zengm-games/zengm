@@ -1,9 +1,29 @@
 undo button
 - situations
   - acceptContractNegotiation
-    - "sign contract" from negotiation popup
-    - "sign" from NegotiateButtons
+    - places
+      - "sign contract" from negotiation popup
+      - "sign" from NegotiateButtons
+    - to revert
+      - add back negotiation
+      - undo player.sign
+        - p.numDaysFreeAgent
+        - p.numPlayersTradedAwayNormalized
+        - p.jerseyNumber
+        - p.contract
+        - event (we know eid in sign)
+        - p.transactions
   - "release" from re-signing page
+- state needed
+  - actualPhase (can't undo if advanced past regular season or re-signing, also used for resigning in negotiations.create)
+  - tid (need to confirm player is still on team, and needed for negotiations.create)
+  - pid
+  - player.sign stuff
+- reset p.tid correctly
+- edge cases
+  - what if advanced past re-signing phase?
+    - clear undoableTransactions on game sim, FA day sim, and on phase change
+  - what if another transaction happened? check p.tid
 
 custom awards
 - fields

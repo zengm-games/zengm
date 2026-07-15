@@ -186,14 +186,21 @@ const acceptContractNegotiation = async ({
 		return negotiation;
 	}
 
-	const result = await contractNegotiation.accept({ negotiation, amount, exp });
+	const response = await contractNegotiation.accept({
+		negotiation,
+		amount,
+		exp,
+	});
 
-	if (result === undefined) {
-		// Only do this if there was no error, and don't await because it makes the UI slow
-		void contractNegotiation.afterAccept(negotiation.tid);
+	// string response is an error message
+	if (typeof response === "string") {
+		return response;
 	}
 
-	return result;
+	// Only do this if there was no error, and don't await because it makes the UI slow
+	void contractNegotiation.afterAccept(negotiation.tid);
+
+	local.undoableTransactions[pid] = response;
 };
 
 const addTeam = async () => {

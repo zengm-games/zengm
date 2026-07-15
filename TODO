@@ -24,6 +24,7 @@ undo button
   - what if advanced past re-signing phase?
     - clear undoableActions on game sim, FA day sim, and on phase change
   - what if another transaction happened? check p.tid
+- refresh UI after undoing
 
 custom awards
 - fields

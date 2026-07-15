@@ -1360,6 +1360,8 @@ export type UndoableAction = {
 	| "numPlayersTradedAwayNormalized"
 	| "jerseyNumber"
 	| "contract"
+	| "salaries"
+	| "transactions"
 >;
 
 export type Local = {

@@ -21,7 +21,10 @@ const SignNotification = ({ name, pid }: { name: string; pid: number }) => {
 						disabled={status === "waiting"}
 						onClick={async () => {
 							setStatus("waiting");
-							const result = true;
+							const result = await toWorker("main", "undoAction", {
+								type: "sign",
+								pid,
+							});
 							if (result) {
 								setStatus("success");
 							} else {

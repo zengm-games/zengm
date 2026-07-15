@@ -85,6 +85,8 @@ const accept = async ({
 		),
 		jerseyNumber: p.jerseyNumber,
 		contract: helpers.deepCopy(p.contract),
+		salaries: helpers.deepCopy(p.salaries),
+		transactions: helpers.deepCopy(p.transactions),
 	};
 
 	const contract: PlayerContract = {

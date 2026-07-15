@@ -4592,6 +4592,51 @@ const updateConfsDivs = async ({
 	await updateTeamInfo({ teams, from: "manageConfs" });
 };
 
+const undoAction = async (info: { type: "sign"; pid: number }) => {
+	if (info.type === "sign") {
+		const pid = info.pid;
+
+		const undoInfo = local.undoableActions[pid];
+		if (!undoInfo) {
+			return false;
+		}
+
+		const p = await idb.cache.players.get(pid);
+		if (!p) {
+			return false;
+		}
+
+		const phase = actualPhase();
+
+		if (phase !== undoInfo.phase || p.tid !== undoInfo.tid) {
+			return false;
+		}
+
+		p.numDaysFreeAgent = undoInfo.numDaysFreeAgent;
+		p.numPlayersTradedAwayNormalized = undoInfo.numPlayersTradedAwayNormalized;
+		p.jerseyNumber = undoInfo.jerseyNumber;
+		p.contract = undoInfo.contract;
+		p.salaries = undoInfo.salaries;
+		p.transactions = undoInfo.transactions;
+
+		if (phase === PHASE.RESIGN_PLAYERS) {
+			await contractNegotiation.create(pid, true, undoInfo.tid);
+		} else {
+			p.tid = PLAYER.FREE_AGENT;
+		}
+
+		await idb.cache.players.put(p);
+
+		if (undoInfo.eid !== undefined) {
+			await idb.cache.events.delete(undoInfo.eid);
+		}
+
+		return true;
+	}
+
+	return false;
+};
+
 const updateAwards = async (
 	awards: any,
 	conditions: Conditions,
@@ -5330,6 +5375,7 @@ export default {
 		toggleTradeDeadline,
 		tradeCounterOffer,
 		onLiveSimOver,
+		undoAction,
 		updateAwards,
 		updateBudget,
 		updateConfsDivs,

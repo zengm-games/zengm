@@ -1,4 +1,4 @@
-import { logEvent } from "../util/logEvent.ts";
+import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 
 // season is just needed during re-signing, because it's used to make sure drafted players in hard cap leagues always
@@ -57,10 +57,9 @@ export const NegotiateButtons = ({
 					});
 
 					if (errorMsg) {
-						logEvent({
+						showNotification({
 							type: "error",
 							text: errorMsg,
-							saveToDb: false,
 						});
 					}
 				}}

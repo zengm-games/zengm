@@ -18,7 +18,7 @@ import {
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import RatingsForm from "./RatingsForm.tsx";
 import RelativesForm from "./RelativesForm.tsx";
@@ -418,10 +418,9 @@ const CustomizePlayer = (props: View<"customizePlayer">) => {
 
 			realtimeUpdate([], helpers.leagueUrl(["player", pid]));
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 			setState((prevState) => ({

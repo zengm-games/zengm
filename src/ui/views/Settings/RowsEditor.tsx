@@ -3,7 +3,7 @@ import { type ChangeEvent, type CSSProperties, useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import type { InjuriesSetting, TragicDeaths } from "../../../common/types.ts";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { godModeRequiredMessage } from "./SettingsFormOptions.tsx";
 import clsx from "clsx";
@@ -372,10 +372,9 @@ const RowsEditor = <Type extends "injuries" | "tragicDeaths">({
 		try {
 			parsed = parseAndValidate(type, rows);
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 			return;

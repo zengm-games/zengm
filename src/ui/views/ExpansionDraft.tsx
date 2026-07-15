@@ -6,7 +6,7 @@ import {
 } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
-import { logEvent } from "../util/logEvent.ts";
+import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 import type { View, ExpansionDraftSetupTeam } from "../../common/types.ts";
 import {
@@ -176,10 +176,9 @@ const ExpansionDraft = ({
 		);
 
 		if (errors) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: `- ${errors.join("<br>- ")}`,
-				saveToDb: false,
 			});
 			setSaving(false);
 		}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Modal } from "../../components/Modal.tsx";
 import { ActionButton } from "../../components/ActionButton.tsx";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import type { View } from "../../../common/types.ts";
 import { toWorker } from "../../util/toWorker.ts";
 
@@ -32,10 +32,9 @@ export const RegenerateScheduleModal = ({
 			const schedule = await toWorker("main", "regenerateSchedule", undefined);
 			onRegenerated(schedule);
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 			});
 		} finally {
 			setRegeneratingSchedule(false);

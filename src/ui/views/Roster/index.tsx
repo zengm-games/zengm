@@ -5,7 +5,7 @@ import { DataTable } from "../../components/DataTable/index.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { useLocal } from "../../util/local.ts";
@@ -77,10 +77,9 @@ const handleRelease = async (
 			pids: [p.pid],
 		});
 		if (errorMsg) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: errorMsg,
-				saveToDb: false,
 			});
 		}
 	}
@@ -444,10 +443,9 @@ const Roster = ({
 												pids,
 											});
 											if (errorMsg) {
-												logEvent({
+												showNotification({
 													type: "error",
 													text: errorMsg,
-													saveToDb: false,
 												});
 											} else {
 												// Clear because the selected players are no longer on this team!
@@ -482,10 +480,9 @@ const Roster = ({
 											});
 
 										if (numUntradeable > 0) {
-											logEvent({
+											showNotification({
 												type: "error",
 												text: `${numUntradeable} selected ${helpers.plural("player", numUntradeable)} ${helpers.plural("is", numUntradeable, "are")} currently untradeable!`,
-												saveToDb: false,
 											});
 										}
 

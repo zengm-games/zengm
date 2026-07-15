@@ -17,7 +17,7 @@ import {
 } from "../../components/LeagueFileUpload.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { useLocal } from "../../util/local.ts";
 import type {
@@ -912,11 +912,10 @@ const NewLeague = (props: View<"newLeague">) => {
 				type: "error",
 			});
 			console.log(error);
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
 				persistent: true,
-				saveToDb: false,
 			});
 		}
 	};

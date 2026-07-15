@@ -1,7 +1,7 @@
 import { Fragment, useCallback, useReducer, type SubmitEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import AddRemove from "./AddRemove.tsx";
 import type { Phase, View } from "../../../common/types.ts";
@@ -171,16 +171,14 @@ const ManageTeams = (props: View<"manageTeams">) => {
 				text += `<br /><br />${nextSeasonWarning}`;
 			}
 
-			logEvent({
+			showNotification({
 				type: "success",
 				text,
-				saveToDb: false,
 			});
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 		}

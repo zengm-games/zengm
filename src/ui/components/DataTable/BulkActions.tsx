@@ -1,7 +1,7 @@
 import { Dropdown } from "react-bootstrap";
 import { Flag } from "../WatchBlock.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { useLocal } from "../../util/local.ts";
 import {
@@ -189,10 +189,9 @@ export const BulkActions = ({
 		}
 
 		if (duplicatePids) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: "Exporting the same player from multiple seasons is not supported, only the latest season will be exported.",
-				saveToDb: false,
 			});
 		}
 
@@ -215,10 +214,9 @@ export const BulkActions = ({
 		try {
 			await exportPlayers(seasonsByPids, abortController.signal);
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 			});
 		}
 

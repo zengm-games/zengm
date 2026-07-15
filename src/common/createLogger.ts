@@ -1,8 +1,8 @@
+import type { ShowNotificationOptions } from "../ui/util/showNotification.ts";
 import type {
 	Conditions,
 	EventBBGMWithoutKey,
 	LogEventSaveOptions,
-	LogEventShowOptions,
 	DistributiveOmit,
 } from "./types.ts";
 
@@ -19,7 +19,7 @@ type LogEventOptions = {
 
 export const createLogger = (
 	saveEvent: (a: LogEventSaveOptions) => Promise<number | undefined>,
-	showEvent: (a: LogEventShowOptions, conditions?: Conditions) => void,
+	showEvent: (a: ShowNotificationOptions, conditions?: Conditions) => void,
 ) => {
 	const logEvent = async (
 		{

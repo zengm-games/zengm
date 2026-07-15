@@ -2,7 +2,7 @@ import fastDeepEqual from "fast-deep-equal";
 import { useEffect, useRef, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
-import { logEvent } from "../util/logEvent.ts";
+import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 import type { View } from "../../common/types.ts";
 import { MoreLinks } from "../components/MoreLinks.tsx";
@@ -182,10 +182,9 @@ const KeyboardShortcuts = ({
 		try {
 			await toWorker("main", "updateKeyboardShortcuts", pruned);
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 		}

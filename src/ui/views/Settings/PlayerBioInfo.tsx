@@ -4,7 +4,7 @@ import type {
 	PlayerBioInfo,
 } from "../../../common/types.ts";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { godModeRequiredMessage } from "./SettingsFormOptions.tsx";
 import type { initDefaults } from "../../../worker/util/loadNames.ts";
@@ -547,10 +547,9 @@ const PlayerBioInfo2 = ({
 			parsed = parseAndValidate(infoState);
 			parsed = prune(parsed, defaults, false);
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 			return;

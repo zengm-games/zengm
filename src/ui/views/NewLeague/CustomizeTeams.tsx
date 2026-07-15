@@ -12,7 +12,7 @@ import clsx from "clsx";
 import { arrayMove } from "@dnd-kit/sortable";
 import UpsertTeamModal from "./UpsertTeamModal.tsx";
 import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import confirmDeleteWithChildren from "./confirmDeleteWithChildren.tsx";
 import { Dropdown, OverlayTrigger, Popover } from "react-bootstrap";
@@ -1189,21 +1189,19 @@ const CustomizeTeams = ({
 						event.preventDefault();
 
 						if (abbrevsUsedMultipleTimes.length > 0) {
-							logEvent({
+							showNotification({
 								type: "error",
 								text: `You cannot use the same abbrev for multiple teams: ${abbrevsUsedMultipleTimes.join(
 									", ",
 								)}`,
-								saveToDb: false,
 							});
 							return;
 						}
 
 						if (teams.length < 2) {
-							logEvent({
+							showNotification({
 								type: "error",
 								text: "Your league must have at least 2 teams in it.",
-								saveToDb: false,
 							});
 							return;
 						}

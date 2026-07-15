@@ -1,7 +1,7 @@
 import { DataTable } from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
-import { logEvent } from "../util/logEvent.ts";
+import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
@@ -220,10 +220,9 @@ const NegotiationList = ({
 						const errorMsg = await toWorker("main", "reSignAll", players);
 
 						if (errorMsg) {
-							logEvent({
+							showNotification({
 								type: "error",
 								text: errorMsg,
-								saveToDb: false,
 							});
 						}
 					}}

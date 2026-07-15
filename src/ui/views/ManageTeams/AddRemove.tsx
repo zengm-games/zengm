@@ -1,7 +1,7 @@
 import type { Dispatch, FormEvent } from "react";
 import { PHASE } from "../../../common/constants.ts";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import type { Phase } from "../../../common/types.ts";
 import type { Action } from "./index.tsx";
@@ -31,10 +31,9 @@ const AddRemove = ({ dispatch, phase, saving }: Props) => {
 			type: "addTeam",
 			team: t,
 		});
-		logEvent({
+		showNotification({
 			type: "success",
 			text: "Added new team.",
-			saveToDb: false,
 		});
 		dispatch({
 			type: "doneSaving",

@@ -17,7 +17,7 @@ import type {
 	MenuItemText,
 } from "../../../common/types.ts";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { getText, makeAnchorProps } from "../Controller/SideBar.tsx";
 import { REAL_PLAYERS_INFO } from "../../../common/constants.ts";
@@ -1017,11 +1017,10 @@ export const CommandPalette = () => {
 				local.getState().keyboardShortcuts,
 			);
 			if (formatted !== undefined) {
-				logEvent({
+				showNotification({
 					extraClass: "",
 					type: "info",
 					text: `Pro tip: press ${formatted} to open the command palette, which allows easy keyboard navigation of your league.`,
-					saveToDb: false,
 					persistent: true,
 				});
 			}

@@ -2,7 +2,7 @@ import { Modal } from "./Modal.tsx";
 import clsx from "clsx";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { helpers } from "../util/helpers.ts";
-import { logEvent } from "../util/logEvent.ts";
+import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { useLocal } from "../util/local.ts";
 import { HelpPopover } from "../components/HelpPopover.tsx";
@@ -45,10 +45,9 @@ const SignButton = ({
 					},
 				);
 				if (errorMessage !== undefined) {
-					logEvent({
+					showNotification({
 						type: "error",
 						text: errorMessage,
-						saveToDb: false,
 					});
 				} else {
 					onSuccess();
@@ -302,10 +301,9 @@ export const useNegotiaionModal = () => {
 			}
 
 			if (typeof newProps === "string") {
-				logEvent({
+				showNotification({
 					type: "error",
 					text: newProps,
-					saveToDb: false,
 				});
 			} else {
 				setState({

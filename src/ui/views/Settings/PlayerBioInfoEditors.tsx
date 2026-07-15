@@ -1,7 +1,7 @@
 import { type ChangeEvent, useRef, useState } from "react";
 import { Dropdown } from "react-bootstrap";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import clsx from "clsx";
 import { isInvalidNumber, type PlayerBioInfoState } from "./PlayerBioInfo.tsx";
 import {
@@ -64,10 +64,9 @@ export const RacesEditor = ({
 		try {
 			parseAndValidateRaces(rowsEdited);
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 			return;
@@ -331,10 +330,9 @@ export const CollegesEditor = ({
 		try {
 			parseAndValidateColleges(rowsEdited, fractionSkipCollegeEdited, defaults);
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 			return;
@@ -630,10 +628,9 @@ export const NamesEditor = ({
 		try {
 			parseAndValidateNames(rowsEdited);
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 			return;

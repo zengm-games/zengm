@@ -1,9 +1,11 @@
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import { local, localActions } from "../util/local.ts";
-import { showEvent } from "../util/logEvent.ts";
+import {
+	showNotification,
+	type ShowNotificationOptions,
+} from "../util/showNotification.ts";
 import type {
 	LocalStateUI,
-	LogEventShowOptions,
 	UpdateEvents,
 	GameAttributesLeague,
 } from "../../common/types.ts";
@@ -65,8 +67,8 @@ const setGameAttributes = (
 	localActions.updateGameAttributes(gameAttributes, flagOverrides);
 };
 
-const showEvent2 = (options: LogEventShowOptions) => {
-	showEvent(options);
+const showNotification2 = (options: ShowNotificationOptions) => {
+	showNotification(options);
 };
 
 const showModal = () => {
@@ -157,7 +159,7 @@ export default {
 	requestPersistentStorage,
 	resetLeague,
 	setGameAttributes,
-	showEvent: showEvent2,
+	showNotification: showNotification2,
 	showModal,
 	updateLocal,
 	updateTeamOvrs,

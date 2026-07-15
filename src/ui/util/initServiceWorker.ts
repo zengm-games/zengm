@@ -1,6 +1,6 @@
 import { Workbox } from "workbox-window";
 import { GAME_NAME } from "../../common/constants.ts";
-import { logEvent } from "./logEvent.ts";
+import { showNotification } from "./showNotification.ts";
 
 export const initServiceWorker = async () => {
 	// serviceWorker is undefined in an insecure context, like http://play.basketball-gm.test/
@@ -10,10 +10,9 @@ export const initServiceWorker = async () => {
 
 	if (window.releaseStage === "development") {
 		if (window.navigator.serviceWorker.controller) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: "Build loaded from service worker in dev",
-				saveToDb: false,
 				persistent: true,
 			});
 		}
@@ -34,12 +33,11 @@ export const initServiceWorker = async () => {
 
 				updateAvailableNotificationShowing = true;
 
-				logEvent({
+				showNotification({
 					extraClass: "",
 					type: "info",
 					htmlIsSafe: true,
 					text: `<b>Update Available</b><div class="my-2">A new version of ${GAME_NAME} has been downloaded and is ready to play.</div><button class="btn btn-primary" onclick="window._wb_updateAndRefresh(this)">Update and refresh</button>`,
-					saveToDb: false,
 					persistent: true,
 					onClose: () => {
 						updateAvailableNotificationShowing = false;
@@ -53,11 +51,10 @@ export const initServiceWorker = async () => {
 				// Maybe another tab? Or (for reasons I don't understand) the first tab opened, if it was only opened once, even though clientsClaim is used in the sw and controlling event fires, and then an update happens
 				window.location.reload();
 			} else if (!event.isUpdate) {
-				logEvent({
+				showNotification({
 					extraClass: "",
 					type: "info",
 					text: `${GAME_NAME} is now fully loaded and will continue to work even if you are offline.`,
-					saveToDb: false,
 					persistent: true,
 				});
 			}

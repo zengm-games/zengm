@@ -1,7 +1,7 @@
 import Bugsnag from "@bugsnag/browser";
 import { useEffect, useRef } from "react";
 import { NextPrevButtons } from "../../components/NextPrevButtons.tsx";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import type { LeagueInfo } from "./types.ts";
 import { choice } from "../../../common/random.ts";
 
@@ -42,10 +42,9 @@ const LeagueMenu = <Value extends string, Value2 extends number>({
 		} catch (error) {
 			console.error(error);
 			Bugsnag.notify(error);
-			logEvent({
+			showNotification({
 				type: "error",
 				text: `Error loading real team data: ${error.message}`,
-				saveToDb: false,
 				persistent: true,
 			});
 		}

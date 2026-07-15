@@ -1,5 +1,5 @@
 import { WEBSITE_ROOT } from "../../common/constants.ts";
-import { logEvent } from "./logEvent.ts";
+import { showNotification } from "./showNotification.ts";
 
 export const requestPersistentStorage = async () => {
 	if (
@@ -36,12 +36,11 @@ export const requestPersistentStorage = async () => {
 							}
 						};
 
-						await logEvent({
+						await showNotification({
 							extraClass: "",
 							type: "info",
 							htmlIsSafe: true,
 							text: `<b>Persistent Storage</b><div class="mt-2"><div>Game data is stored in your browser profile, so <a href="https://${WEBSITE_ROOT}/manual/faq/#missing-leagues" target="_blank">your browser may delete it if disk space is low</a>. Enabling persistent storage helps protect against this.</div><button class="btn btn-primary mt-2" onclick="window._ps_apply(this)">Enable persistent storage</button></div>`,
-							saveToDb: false,
 							persistent: true,
 						});
 					}

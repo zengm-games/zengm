@@ -25,9 +25,9 @@ import { promiseWorker } from "./util/promiseWorker.ts";
 import { routes } from "./util/routes.ts";
 import { unregisterServiceWorkers } from "./util/unregisterServiceWorkers.ts";
 import { safeLocalStorage } from "./util/safeLocalStorage.ts";
-import { logEvent } from "./util/logEvent.ts";
+import { showNotification } from "./util/showNotification.ts";
 import { toWorker } from "./util/toWorker.ts";
-window.bbgm = { api, logEvent, toWorker };
+window.bbgm = { api, showNotification, toWorker };
 
 const handleVersion = async () => {
 	window.addEventListener("storage", (e) => {
@@ -38,10 +38,9 @@ const handleVersion = async () => {
 				bbgmVersionStored &&
 				compareVersions(bbgmVersionStored, window.bbgmVersion) === 1
 			) {
-				logEvent({
+				showNotification({
 					type: "error",
 					text: `A newer version of ${GAME_NAME} was just opened in another tab. Please reload this tab to load the same version here.`,
-					saveToDb: false,
 					persistent: true,
 				});
 			}

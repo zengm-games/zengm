@@ -1,7 +1,7 @@
 import { useReducer, useState } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import { helpers } from "../util/helpers.ts";
-import { logEvent } from "../util/logEvent.ts";
+import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { useLocal } from "../util/local.ts";
 import type { Conf, Div, NonEmptyArray, View } from "../../common/types.ts";
@@ -248,12 +248,11 @@ const ManageConfs = ({
 						event.preventDefault();
 
 						if (abbrevsUsedMultipleTimes.length > 0) {
-							logEvent({
+							showNotification({
 								type: "error",
 								text: `You cannot use the same abbrev for multiple teams: ${abbrevsUsedMultipleTimes.join(
 									", ",
 								)}`,
-								saveToDb: false,
 							});
 							return;
 						}
@@ -282,10 +281,9 @@ const ManageConfs = ({
 							text += `<br /><br />${nextSeasonWarning}`;
 						}
 
-						logEvent({
+						showNotification({
 							type: "success",
 							text,
-							saveToDb: false,
 						});
 
 						setDirty(false);

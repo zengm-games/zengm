@@ -2,7 +2,7 @@ import clsx from "clsx";
 import { useState, type SubmitEvent, useEffect } from "react";
 import { ActionButton } from "../../components/ActionButton.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { localActions } from "../../util/local.ts";
 import { settings } from "./settings.tsx";
@@ -423,10 +423,9 @@ const SettingsForm = ({
 					output[key] = parse ? parse(value) : value;
 				} catch (error) {
 					setSubmitting(false);
-					logEvent({
+					showNotification({
 						type: "error",
 						text: `${name}: ${error.message}`,
-						saveToDb: false,
 						persistent: true,
 					});
 					return;
@@ -457,10 +456,9 @@ const SettingsForm = ({
 				}
 			} catch (error) {
 				setSubmitting(false);
-				logEvent({
+				showNotification({
 					type: "error",
 					text: `${name}: ${error.message}`,
-					saveToDb: false,
 					persistent: true,
 				});
 				return;
@@ -472,10 +470,9 @@ const SettingsForm = ({
 		} catch (error) {
 			console.error(error);
 			setSubmitting(false);
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 			return;

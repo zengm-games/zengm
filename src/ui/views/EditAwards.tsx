@@ -2,7 +2,7 @@ import { type SubmitEvent, useState, useEffect } from "react";
 import useTitleBar from "../hooks/useTitleBar.tsx";
 import type { View } from "../../common/types.ts";
 import { helpers } from "../util/helpers.ts";
-import { logEvent } from "../util/logEvent.ts";
+import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { realtimeUpdate } from "../util/realtimeUpdate.ts";
 import SelectMultiple from "../components/SelectMultiple/index.tsx";
@@ -139,10 +139,9 @@ const EditAwards = ({ players, awards, season }: View<"editAwards">) => {
 						}
 					}
 					if (arrayPids.includes(p.pid)) {
-						logEvent({
+						showNotification({
 							type: "error",
 							text: "Cannot add player to team twice",
-							saveToDb: false,
 						});
 						error = true;
 					} else {
@@ -168,10 +167,9 @@ const EditAwards = ({ players, awards, season }: View<"editAwards">) => {
 						}
 					}
 					if (arrayPids.includes(p.pid)) {
-						logEvent({
+						showNotification({
 							type: "error",
 							text: "Cannot add player to team twice",
-							saveToDb: false,
 						});
 						error = true;
 					} else {
@@ -199,10 +197,9 @@ const EditAwards = ({ players, awards, season }: View<"editAwards">) => {
 						}
 					}
 					if (arrayPids.includes(p.pid)) {
-						logEvent({
+						showNotification({
 							type: "error",
 							text: "Cannot add player to team twice",
-							saveToDb: false,
 						});
 						error = true;
 					} else {
@@ -226,10 +223,9 @@ const EditAwards = ({ players, awards, season }: View<"editAwards">) => {
 			await toWorker("main", "updateAwards", aws);
 			realtimeUpdate([], helpers.leagueUrl(["history", season]));
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 		}

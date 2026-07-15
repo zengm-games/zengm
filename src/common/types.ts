@@ -888,16 +888,6 @@ export type LogEventSaveOptions = DistributiveOmit<
 	"season"
 >;
 
-export type LogEventShowOptions = {
-	extraClass?: string;
-	hideInLiveGame?: boolean;
-	htmlIsSafe?: boolean;
-	onClose?: () => void;
-	persistent: boolean;
-	text: string;
-	type: string;
-};
-
 export type OwnerMood = {
 	money: number;
 	playoffs: number;

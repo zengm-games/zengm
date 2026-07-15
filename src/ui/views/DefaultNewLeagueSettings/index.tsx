@@ -7,7 +7,7 @@ import type { Settings } from "../../../worker/views/settings.ts";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { settings } from "../Settings/settings.tsx";
 import SettingsForm from "../Settings/SettingsForm.tsx";
@@ -277,12 +277,11 @@ const DefaultNewLeagueSettings = ({
 						}
 
 						if (godModeKeys.length > 0) {
-							logEvent({
+							showNotification({
 								type: "error",
 								text: `The following settings require God Mode to be enabled to be changed:<br>- ${godModeKeys.join(
 									"<br>- ",
 								)}`,
-								saveToDb: false,
 								persistent: true,
 							});
 						}
@@ -296,10 +295,9 @@ const DefaultNewLeagueSettings = ({
 
 					setDirty(false);
 
-					logEvent({
+					showNotification({
 						type: "success",
 						text: "New league default settings successfully updated.",
-						saveToDb: false,
 					});
 				}}
 				onCancel={() => {

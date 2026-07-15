@@ -17,7 +17,7 @@ import type {
 } from "../../../common/types.ts";
 import { Modal } from "../../components/Modal.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { type ExhibitionLeagueWithSeasons } from "../Exhibition.tsx";
 import TeamForm from "../ManageTeams/TeamForm.tsx";
@@ -609,10 +609,9 @@ const UpsertTeamModal = ({
 			errorMessage = `${errors[0]} and ${errors[1]} must be numbers.`;
 		}
 		if (errorMessage) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: errorMessage,
-				saveToDb: false,
 			});
 			return;
 		}

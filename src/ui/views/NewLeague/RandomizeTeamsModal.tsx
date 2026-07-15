@@ -9,7 +9,7 @@ import {
 } from "../../../common/geographicCoordinates.ts";
 import Select from "react-select";
 import { ActionButton } from "../../components/ActionButton.tsx";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 
 export type PopulationFactor =
 	| "random"
@@ -104,10 +104,9 @@ const RandomizeTeamsModal = ({
 				seasonRange,
 			});
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 			});
 		}
 

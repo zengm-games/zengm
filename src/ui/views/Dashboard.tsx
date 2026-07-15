@@ -8,7 +8,7 @@ import {
 } from "../../common/constants.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import useTitleBar from "../hooks/useTitleBar.tsx";
-import { logEvent } from "../util/logEvent.ts";
+import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { getCols } from "../../common/getCols.ts";
 import type { View } from "../../common/types.ts";
@@ -339,11 +339,9 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 							<Dropdown.Item
 								onClick={async () => {
 									try {
-										logEvent({
+										showNotification({
 											type: "info",
 											text: `Cloning league "${league.name}". This may take a little while if it's a large league.`,
-											saveToDb: false,
-											showNotification: true,
 										});
 
 										setCloningLID(league.lid);
@@ -354,17 +352,14 @@ const Dashboard = ({ leagues }: View<"dashboard">) => {
 										);
 										setCloningLID(undefined);
 
-										logEvent({
+										showNotification({
 											type: "info",
 											text: `Clone complete! Your new league is named "${name}".`,
-											saveToDb: false,
-											showNotification: true,
 										});
 									} catch (error) {
-										logEvent({
+										showNotification({
 											type: "error",
 											text: error.message,
-											saveToDb: false,
 										});
 									}
 								}}

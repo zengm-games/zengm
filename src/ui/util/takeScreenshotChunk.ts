@@ -4,7 +4,7 @@ import {
 	SUBREDDIT_NAME,
 	TWITTER_HANDLE,
 } from "../../common/constants.ts";
-import { logEvent } from "./logEvent.ts";
+import { showNotification } from "./showNotification.ts";
 import { fetchWrapper } from "../../common/fetchWrapper.ts";
 import { isSport } from "../../common/sportFunctions.ts";
 
@@ -72,10 +72,9 @@ const takeScreenshotChunk = async () => {
 	} catch (error) {
 		cleanup();
 
-		logEvent({
+		showNotification({
 			type: "error",
 			text: `Error taking screenshot: ${error.message}`,
-			saveToDb: false,
 		});
 
 		return;
@@ -83,11 +82,9 @@ const takeScreenshotChunk = async () => {
 
 	cleanup();
 
-	logEvent({
+	showNotification({
 		type: "screenshot",
 		text: `Uploading your screenshot to Imgur...`,
-		saveToDb: false,
-		showNotification: true,
 		persistent: false,
 		extraClass: "notification-primary",
 	});
@@ -114,13 +111,11 @@ const takeScreenshotChunk = async () => {
 		const url = `https://imgur.com/${data.data.id}`;
 		const encodedURL = window.encodeURIComponent(url);
 
-		logEvent({
+		showNotification({
 			type: "screenshot",
 			text: `<p><a href="${url}" target="_blank">Click here to view your screenshot.</a></p>
 <a href="https://www.reddit.com/r/${SUBREDDIT_NAME}/submit?url=${encodedURL}">Share on Reddit</a><br>
 <a href="https://twitter.com/intent/tweet?url=${encodedURL}&via=${TWITTER_HANDLE}">Share on Twitter</a>`,
-			saveToDb: false,
-			showNotification: true,
 			persistent: true,
 			extraClass: "notification-primary",
 		});
@@ -134,10 +129,9 @@ const takeScreenshotChunk = async () => {
 		} else {
 			errorMsg = "Error saving screenshot.";
 		}
-		logEvent({
+		showNotification({
 			type: "error",
 			text: errorMsg,
-			saveToDb: false,
 		});
 	}
 };

@@ -3,7 +3,7 @@ import type { View } from "../../../common/types.ts";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
 import { useLocal } from "../../util/local.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import AutoSave from "./AutoSave.tsx";
 import WorkerConsole from "./WorkerConsole.tsx";
@@ -151,8 +151,7 @@ const DangerZone = ({ autoSave }: View<"dangerZone">) => {
 							onClick={async () => {
 								await toWorker("main", "allStarGameNow", undefined);
 
-								logEvent({
-									saveToDb: false,
+								showNotification({
 									text: "The All-Star Game has been scheduled.",
 									type: "info",
 								});

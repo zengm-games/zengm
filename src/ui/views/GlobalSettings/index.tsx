@@ -1,7 +1,7 @@
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { logEvent } from "../../util/logEvent.ts";
+import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import RealData from "./RealData.tsx";
 import Storage from "./Storage.tsx";
@@ -84,17 +84,15 @@ const GlobalSettings = (props: View<"globalSettings">) => {
 				realTeamInfo: state.realTeamInfo,
 				units,
 			});
-			logEvent({
+			showNotification({
 				type: "success",
 				text: "Settings successfully updated.",
-				saveToDb: false,
 			});
 			setDirty(false);
 		} catch (error) {
-			logEvent({
+			showNotification({
 				type: "error",
 				text: error.message,
-				saveToDb: false,
 				persistent: true,
 			});
 		}

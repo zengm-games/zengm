@@ -1261,6 +1261,14 @@ export const settings: Setting[] = (
 		},
 		{
 			category: "Contracts",
+			key: "freeAgencySigningsPerDay",
+			name: "Free Agency Signings Per Day",
+			type: "int",
+			description:
+				"During free agency, automatically advance to the next day after this many players are signed league-wide. Set to 0 or -1 to disable.",
+		},
+		{
+			category: "Contracts",
 			key: "playersRefuseToNegotiate",
 			name: "Players Can Refuse To Negotiate",
 			godModeRequired: "always",

@@ -159,6 +159,8 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	injuries: undefined,
 	tragicDeaths: undefined,
 	daysLeft: 0, // Used only for free agency
+	freeAgencySigningsPerDay: 0,
+	freeAgencySigningsThisDay: 0,
 	gameOver: false,
 	godMode: false,
 	godModeInPast: false,

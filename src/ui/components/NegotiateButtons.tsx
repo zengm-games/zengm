@@ -1,5 +1,49 @@
+import { useState } from "react";
 import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
+
+const SignNotification = ({ name, pid }: { name: string; pid: number }) => {
+	const [status, setStatus] = useState<"init" | "waiting" | "success" | "fail">(
+		"init",
+	);
+
+	if (status === "success") {
+		return "Signing undone";
+	} else if (status === "fail") {
+		return "Failed to undo signing";
+	} else {
+		return (
+			<>
+				<b>You signed {name}</b>
+				<div className="mt-2">
+					<button
+						className="btn btn-sm btn-secondary"
+						disabled={status === "waiting"}
+						onClick={async () => {
+							setStatus("waiting");
+							const result = true;
+							if (result) {
+								setStatus("success");
+							} else {
+								setStatus("fail");
+							}
+						}}
+					>
+						Undo
+					</button>
+				</div>
+			</>
+		);
+	}
+};
+
+export const showSignUndo = (p: { name: string; pid: number }) => {
+	console.log(p);
+	showNotification({
+		type: "info",
+		text: <SignNotification name={p.name} pid={p.pid} />,
+	});
+};
 
 // season is just needed during re-signing, because it's used to make sure drafted players in hard cap leagues always
 // are willing to sign.
@@ -60,6 +104,11 @@ export const NegotiateButtons = ({
 						showNotification({
 							type: "error",
 							text: errorMsg,
+						});
+					} else {
+						showSignUndo({
+							name: `${p.firstName} ${p.lastName}`,
+							pid: p.pid,
 						});
 					}
 				}}

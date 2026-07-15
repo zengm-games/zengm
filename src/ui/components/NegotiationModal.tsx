@@ -11,6 +11,7 @@ import { Mood } from "../components/Mood.tsx";
 import { PlayerPicture } from "../components/PlayerPicture.tsx";
 import { useRef, useState } from "react";
 import type api from "../../worker/api/index.ts";
+import { showSignUndo } from "./NegotiateButtons.tsx";
 
 type NegotaitionModalProps = Exclude<
 	Awaited<ReturnType<typeof api.main.getNegotiationProps>>,
@@ -18,13 +19,13 @@ type NegotaitionModalProps = Exclude<
 >;
 
 const SignButton = ({
-	pid,
+	p,
 	amount,
 	exp,
 	disabledReason,
 	onSuccess,
 }: {
-	pid: number;
+	p: { name: string; pid: number };
 	amount: number;
 	exp: number;
 	disabledReason: string | undefined;
@@ -39,7 +40,7 @@ const SignButton = ({
 					"main",
 					"acceptContractNegotiation",
 					{
-						pid,
+						pid: p.pid,
 						amount: Math.round(amount * 1000),
 						exp,
 					},
@@ -51,6 +52,7 @@ const SignButton = ({
 					});
 				} else {
 					onSuccess();
+					showSignUndo(p);
 				}
 			}}
 		>
@@ -207,7 +209,7 @@ const Negotiation = ({
 							</div>
 
 							<SignButton
-								pid={p.pid}
+								p={p}
 								amount={contract.amount}
 								exp={contract.exp}
 								disabledReason={contract.disabledReason}

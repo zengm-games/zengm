@@ -1349,7 +1349,7 @@ export type PlayerBioInfoProcessed = {
 	frequencies: [string, number][];
 };
 
-export type UndoableTransaction = {
+export type UndoableAction = {
 	type: "sign";
 	phase: Phase;
 	tid: number;
@@ -1441,7 +1441,7 @@ export type Local = {
 		| undefined;
 	seasonLeaders: SeasonLeaders | undefined;
 	statusText: string;
-	undoableTransactions: Record<number, UndoableTransaction>;
+	undoableActions: Record<number, UndoableAction>;
 	unviewedSeasonSummary: boolean;
 	username: string | undefined;
 };

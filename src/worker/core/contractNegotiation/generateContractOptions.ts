@@ -86,7 +86,7 @@ export const generateContractOptions = async (
 			exp: row.exp,
 			dryRun: true,
 		});
-		if (disabledReason !== undefined) {
+		if (typeof disabledReason === "string") {
 			row.disabledReason = disabledReason;
 		}
 	}

@@ -22,7 +22,7 @@ const defaultLocal: Local = {
 	seasonLeaders: undefined,
 	playingUntilEndOfRound: false,
 	statusText: "Idle",
-	undoableTransactions: {},
+	undoableActions: {},
 	unviewedSeasonSummary: false, // Set to true when a live game sim of the final game prevents an automatic redirect to the season summary page
 	username: undefined,
 };
@@ -50,7 +50,7 @@ const local: Local & {
 	realPlayerActiveSeasons: defaultLocal.realPlayerActiveSeasons,
 	seasonLeaders: defaultLocal.seasonLeaders,
 	statusText: defaultLocal.statusText,
-	undoableTransactions: defaultLocal.undoableTransactions,
+	undoableActions: defaultLocal.undoableActions,
 	unviewedSeasonSummary: defaultLocal.unviewedSeasonSummary,
 	username: defaultLocal.username,
 	reset: () => {

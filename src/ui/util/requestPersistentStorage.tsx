@@ -3,7 +3,9 @@ import { WEBSITE_ROOT } from "../../common/constants.ts";
 import { showNotification } from "./showNotification.ts";
 
 const PersistentStorageNotification = () => {
-	const [status, setStatus] = useState<"init" | "success" | "fail">("init");
+	const [status, setStatus] = useState<"init" | "waiting" | "success" | "fail">(
+		"init",
+	);
 
 	let contents;
 	if (status === "success") {
@@ -36,7 +38,9 @@ const PersistentStorageNotification = () => {
 				</div>
 				<button
 					className="btn btn-primary mt-2"
+					disabled={status === "waiting"}
 					onClick={async () => {
+						setStatus("waiting");
 						const result = await navigator.storage.persist();
 						if (result) {
 							setStatus("success");

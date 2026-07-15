@@ -200,7 +200,7 @@ const acceptContractNegotiation = async ({
 	// Only do this if there was no error, and don't await because it makes the UI slow
 	void contractNegotiation.afterAccept(negotiation.tid);
 
-	local.undoableTransactions[pid] = response;
+	local.undoableActions[pid] = response;
 };
 
 const addTeam = async () => {
@@ -3750,14 +3750,14 @@ const reSignAll = async (players: any[]) => {
 			const p = players.find((p) => p.pid === negotiation.pid);
 
 			if (p && p.mood.user.willing) {
-				const errorMsg = await contractNegotiation.accept({
+				const response = await contractNegotiation.accept({
 					negotiation,
 					amount: p.mood.user.contractAmount,
 					exp: p.contract.exp,
 				});
 
-				if (errorMsg !== undefined && errorMsg) {
-					return errorMsg;
+				if (typeof response === "string") {
+					return response;
 				}
 			}
 		}

@@ -22,7 +22,7 @@ undo button
 - reset p.tid correctly
 - edge cases
   - what if advanced past re-signing phase?
-    - clear undoableTransactions on game sim, FA day sim, and on phase change
+    - clear undoableActions on game sim, FA day sim, and on phase change
   - what if another transaction happened? check p.tid
 
 custom awards

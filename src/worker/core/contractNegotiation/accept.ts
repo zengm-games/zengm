@@ -5,7 +5,7 @@ import { g, helpers } from "../../util/index.ts";
 import type {
 	Negotiation,
 	PlayerContract,
-	UndoableTransaction,
+	UndoableAction,
 } from "../../../common/types.ts";
 import { PHASE } from "../../../common/constants.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
@@ -74,7 +74,7 @@ const accept = async ({
 
 	const phase = actualPhase();
 
-	const undo: UndoableTransaction = {
+	const undo: UndoableAction = {
 		type: "sign",
 		phase,
 		tid: g.get("userTid"),

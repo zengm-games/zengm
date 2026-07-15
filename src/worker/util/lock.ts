@@ -2,6 +2,7 @@ import { idb } from "../db/index.ts";
 import toUI from "./toUI.ts";
 import type { Locks } from "../../common/types.ts";
 import helpers from "./helpers.ts";
+import local from "./local.ts";
 
 // These are transient variables that always reset to "false" on reload. See local.js for more.
 const locks: Locks = {
@@ -57,6 +58,7 @@ const canStartGames = () => {
 
 	// Otherwise, doing it outside of this function would be a race condition if anything else async happened
 	set("gameSim", true);
+	local.undoableActions = {};
 	return true;
 };
 

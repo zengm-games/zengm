@@ -34,7 +34,7 @@ const ReleaseNotification = ({ name, pid }: { name: string; pid: number }) => {
 	} else {
 		return (
 			<>
-				<b>You released {name}</b>
+				<div>You released {name}</div>
 				<div className="mt-2">
 					<button
 						className="btn btn-sm btn-secondary"

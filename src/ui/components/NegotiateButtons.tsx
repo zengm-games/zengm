@@ -14,7 +14,7 @@ const SignNotification = ({ name, pid }: { name: string; pid: number }) => {
 	} else {
 		return (
 			<>
-				<b>You signed {name}</b>
+				<div>You signed {name}</div>
 				<div className="mt-2">
 					<button
 						className="btn btn-sm btn-secondary"

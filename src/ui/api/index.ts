@@ -14,7 +14,7 @@ import { ads } from "../util/ads.ts";
 import { analyticsEvent } from "../util/analyticsEvent.ts";
 import { autoPlayDialog } from "../util/autoPlayDialog.tsx";
 import { confirmDeleteAllLeagues } from "../util/confirmDeleteAllLeagues.tsx";
-import { requestPersistentStorage } from "../util/requestPersistentStorage.ts";
+import { requestPersistentStorage } from "../util/requestPersistentStorage.tsx";
 import { confirm } from "../util/confirm.tsx";
 import { safeLocalStorage } from "../util/safeLocalStorage.ts";
 

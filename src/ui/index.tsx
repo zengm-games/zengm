@@ -240,6 +240,6 @@ const setupRoutes = async () => {
 	render();
 	await setupRoutes();
 
-	const { initServiceWorker } = await import("./util/initServiceWorker.ts");
+	const { initServiceWorker } = await import("./util/initServiceWorker.tsx");
 	await initServiceWorker();
 })();

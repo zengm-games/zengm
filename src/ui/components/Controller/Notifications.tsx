@@ -67,7 +67,12 @@ const Notification = ({
 					<br />
 				</>
 			) : null}
-			<SafeHtml dirty={message} htmlIsSafe={htmlIsSafe} />
+
+			{typeof message === "string" ? (
+				<SafeHtml dirty={message} htmlIsSafe={htmlIsSafe} />
+			) : (
+				message
+			)}
 		</div>
 	);
 };

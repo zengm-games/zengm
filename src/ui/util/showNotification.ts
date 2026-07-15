@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { local } from "./local.ts";
 import { notify } from "./notify.ts";
 import { toWorker } from "./toWorker.ts";
@@ -5,11 +6,13 @@ import { toWorker } from "./toWorker.ts";
 export type ShowNotificationOptions = {
 	extraClass?: string;
 	hideInLiveGame?: boolean;
-	htmlIsSafe?: boolean;
 	onClose?: () => void;
 	persistent?: boolean;
-	text: string;
+	text: ReactNode;
 	type: string;
+
+	// This is a legacy option, would be good to get rid of. Also would be nice to get rid of any HTML in text
+	htmlIsSafe?: boolean;
 };
 
 export const showNotification = ({

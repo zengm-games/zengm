@@ -1,8 +1,9 @@
 import { createNanoEvents } from "nanoevents";
+import type { ReactNode } from "react";
 
 export type Message = {
 	id: number;
-	message: string;
+	message: ReactNode;
 	title?: string;
 	extraClass?: string;
 	htmlIsSafe?: boolean;
@@ -17,7 +18,7 @@ export const emitter = createNanoEvents<{
 let id = 0;
 
 export const notify = (
-	message: string,
+	message: ReactNode,
 	title?: string,
 	{
 		extraClass,

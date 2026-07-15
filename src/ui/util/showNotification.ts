@@ -10,15 +10,11 @@ export type ShowNotificationOptions = {
 	persistent?: boolean;
 	text: ReactNode;
 	type: string;
-
-	// This is a legacy option, would be good to get rid of. Also would be nice to get rid of any HTML in text
-	htmlIsSafe?: boolean;
 };
 
 export const showNotification = ({
 	extraClass,
 	hideInLiveGame,
-	htmlIsSafe,
 	onClose,
 	persistent,
 	text,
@@ -62,7 +58,6 @@ export const showNotification = ({
 	if (showNotification) {
 		notify(text, title, {
 			extraClass,
-			htmlIsSafe,
 			onClose,
 			persistent,
 		});

@@ -6,7 +6,6 @@ export type Message = {
 	message: ReactNode;
 	title?: string;
 	extraClass?: string;
-	htmlIsSafe?: boolean;
 	onClose?: () => void;
 	persistent: boolean;
 };
@@ -22,12 +21,10 @@ export const notify = (
 	title?: string,
 	{
 		extraClass,
-		htmlIsSafe,
 		onClose,
 		persistent = false,
 	}: {
 		extraClass?: string;
-		htmlIsSafe?: boolean;
 		onClose?: () => void;
 		persistent?: boolean;
 	} = {},
@@ -37,7 +34,6 @@ export const notify = (
 		message,
 		title,
 		extraClass,
-		htmlIsSafe,
 		onClose,
 		persistent,
 	});

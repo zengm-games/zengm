@@ -10,7 +10,6 @@ import type {
 type LogEventOptions = {
 	extraClass?: string;
 	hideInLiveGame?: boolean;
-	htmlIsSafe?: boolean;
 	onClose?: () => void;
 	persistent?: boolean;
 	saveToDb?: boolean;
@@ -25,7 +24,6 @@ export const createLogger = (
 		{
 			extraClass,
 			hideInLiveGame,
-			htmlIsSafe,
 			onClose,
 			persistent = false,
 			saveToDb = true,
@@ -48,7 +46,6 @@ export const createLogger = (
 				{
 					extraClass,
 					hideInLiveGame,
-					htmlIsSafe,
 					onClose,
 					persistent,
 					text: event.text,

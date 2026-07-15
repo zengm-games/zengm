@@ -1,7 +1,8 @@
 undo button
 - situations
-  - "sign contract" from negotiation popup
-  - "sign" from NegotiateButtons
+  - acceptContractNegotiation
+    - "sign contract" from negotiation popup
+    - "sign" from NegotiateButtons
   - "release" from re-signing page
 
 custom awards

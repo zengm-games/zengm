@@ -55,7 +55,7 @@ const SignButton = ({
 			}}
 		>
 			Sign
-			<span className="d-none d-sm-inline"> Contract</span>
+			<span className="d-none d-sm-inline"> contract</span>
 		</button>
 	);
 

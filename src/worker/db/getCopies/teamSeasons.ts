@@ -1,16 +1,18 @@
 import { idb } from "../index.ts";
 import { maybeDeepCopy, mergeByPk } from "./helpers.ts";
-import { g } from "../../util/index.ts";
+import { g, helpers } from "../../util/index.ts";
 import type { GetCopyType, TeamSeason } from "../../../common/types.ts";
 import { NUM_PRIOR_SEASONS_TEAM_SEASONS } from "../Cache.ts";
 
 const getCopies = async (
 	{
+		rid,
 		tid,
 		season,
 		seasons,
 		note,
 	}: {
+		rid?: number;
 		tid?: number;
 		season?: number;
 		seasons?: Readonly<[number, number]>;
@@ -18,6 +20,20 @@ const getCopies = async (
 	} = {},
 	type?: GetCopyType,
 ): Promise<TeamSeason[]> => {
+	if (rid !== undefined) {
+		const row = await idb.cache.teamSeasons.get(rid);
+		if (row) {
+			return [type === "noCopyCache" ? row : helpers.deepCopy(row)];
+		}
+
+		const row2 = await idb.league.get("teamSeasons", rid);
+		if (row2) {
+			return [row2];
+		}
+
+		return [];
+	}
+
 	if (note) {
 		return mergeByPk(
 			await idb.league

@@ -529,13 +529,50 @@ const clearNotes = async (type: NoteInfo["type"]) => {
 		},
 		"noCopyCache",
 	);
+
+	const primaryKeyField = (
+		{
+			draftPicks: "dpid",
+			games: "gid",
+			players: "pid",
+			teamSeasons: "rid",
+		} as const
+	)[storeName];
+	const toUndo = new Map<number, string>();
+
 	for (const row of rows) {
+		toUndo.set((row as any)[primaryKeyField], row.note!);
+
 		delete row.note;
 		delete row.noteBool;
 		await idb.cache[storeName].put(row as any);
 	}
 
 	await toUI("realtimeUpdate", [noteUpdateEvents[type]]);
+
+	return local.undoLog.add(async () => {
+		for (const [key, note] of toUndo) {
+			let row;
+			if (storeName === "draftPicks") {
+				row = await idb.cache[storeName].get(key);
+			} else if (storeName === "games") {
+				row = await idb.getCopy.games({ gid: key });
+			} else if (storeName === "players") {
+				row = await idb.getCopy.players({ pid: key });
+			} else {
+				row = await idb.getCopy.teamSeasons({ rid: key });
+			}
+			if (row) {
+				row.note = note;
+				row.noteBool = 1;
+				await idb.cache[storeName].put(row as any);
+			}
+		}
+
+		void toUI("realtimeUpdate", [noteUpdateEvents[type]]);
+
+		return true;
+	}, ["leagueChange"]);
 };
 
 const getUpdateWatch = (players: Player[]) => {

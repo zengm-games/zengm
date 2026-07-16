@@ -1,53 +1,22 @@
-import { useState } from "react";
 import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
+import { UndoNotification } from "./UndoNotification.tsx";
 
-const SignNotification = ({
+export const showSignUndo = ({
 	name,
 	rollbackKey,
 }: {
 	name: string;
 	rollbackKey: number;
 }) => {
-	const [status, setStatus] = useState<"init" | "waiting" | "success" | "fail">(
-		"init",
-	);
-
-	if (status === "success") {
-		return "Signing undone";
-	} else if (status === "fail") {
-		return "Failed to undo signing";
-	} else {
-		return (
-			<>
-				<div>You signed {name}</div>
-				<div className="mt-2">
-					<button
-						className="btn btn-sm btn-secondary"
-						disabled={status === "waiting"}
-						onClick={async () => {
-							setStatus("waiting");
-							const result = await toWorker("main", "undoAction", rollbackKey);
-							if (result) {
-								setStatus("success");
-							} else {
-								setStatus("fail");
-							}
-						}}
-					>
-						Undo
-					</button>
-				</div>
-			</>
-		);
-	}
-};
-
-export const showSignUndo = (props: { name: string; rollbackKey: number }) => {
 	showNotification({
 		type: "info",
 		text: (
-			<SignNotification name={props.name} rollbackKey={props.rollbackKey} />
+			<UndoNotification
+				actionName="signing"
+				rollbackKey={rollbackKey}
+				title={`You signed ${name}`}
+			/>
 		),
 	});
 };

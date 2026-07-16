@@ -20,54 +20,23 @@ import {
 } from "../components/NegotiationModal.tsx";
 import { useLocal } from "../util/local.ts";
 import clsx from "clsx";
-import { useState } from "react";
+import { UndoNotification } from "../components/UndoNotification.tsx";
 
-const ReleaseNotification = ({
+const showReleaseUndo = ({
 	name,
 	rollbackKey,
 }: {
 	name: string;
 	rollbackKey: number;
 }) => {
-	const [status, setStatus] = useState<"init" | "waiting" | "success" | "fail">(
-		"init",
-	);
-
-	if (status === "success") {
-		return "Release undone";
-	} else if (status === "fail") {
-		return "Failed to undo release";
-	} else {
-		return (
-			<>
-				<div>You released {name}</div>
-				<div className="mt-2">
-					<button
-						className="btn btn-sm btn-secondary"
-						disabled={status === "waiting"}
-						onClick={async () => {
-							setStatus("waiting");
-							const result = await toWorker("main", "undoAction", rollbackKey);
-							if (result) {
-								setStatus("success");
-							} else {
-								setStatus("fail");
-							}
-						}}
-					>
-						Undo
-					</button>
-				</div>
-			</>
-		);
-	}
-};
-
-const showReleaseUndo = (props: { name: string; rollbackKey: number }) => {
 	showNotification({
 		type: "info",
 		text: (
-			<ReleaseNotification name={props.name} rollbackKey={props.rollbackKey} />
+			<UndoNotification
+				actionName="release"
+				rollbackKey={rollbackKey}
+				title={`You released ${name}`}
+			/>
 		),
 	});
 };

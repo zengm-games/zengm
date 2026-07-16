@@ -13,7 +13,6 @@ import { SafeHtml } from "../components/SafeHtml.tsx";
 import { NegotiateButtons } from "../components/NegotiateButtons.tsx";
 import { RosterComposition } from "../components/RosterComposition.tsx";
 import { RosterSalarySummary } from "../components/RosterSalarySummary.tsx";
-import { confirm } from "../util/confirm.tsx";
 import {
 	NegotiationModal,
 	useNegotiaionModal,
@@ -228,24 +227,20 @@ const NegotiationList = ({
 				<button
 					className="btn btn-secondary mb-3"
 					onClick={async () => {
-						const proceed = await confirm(
-							`Are you sure you want to re-sign all ${
-								players.length
-							} ${helpers.plural("player", players.length)}?`,
-							{
-								okText: "Re-sign all",
-							},
-						);
-						if (!proceed) {
-							return;
-						}
+						const response = await toWorker("main", "reSignAll", players);
 
-						const errorMsg = await toWorker("main", "reSignAll", players);
-
-						if (errorMsg) {
+						if (typeof response === "string") {
 							showNotification({
 								type: "error",
-								text: errorMsg,
+								text: response,
+							});
+						} else {
+							showUndoNotification({
+								actionName: "signings",
+								undoKey: response,
+								title: `Re-signed all ${
+									players.length
+								} ${helpers.plural("player", players.length)}`,
 							});
 						}
 					}}

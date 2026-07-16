@@ -3830,6 +3830,8 @@ const reSignAll = async (players: any[]) => {
 		(negotiation) => negotiation.tid === userTid,
 	);
 
+	const undoFunctions: (() => Promise<boolean>)[] = [];
+
 	if (negotiations.length > 0) {
 		for (const negotiation of negotiations) {
 			const p = players.find((p) => p.pid === negotiation.pid);
@@ -3844,12 +3846,19 @@ const reSignAll = async (players: any[]) => {
 
 				if (typeof response === "string") {
 					return response;
+				} else {
+					undoFunctions.push(response);
 				}
 			}
 		}
 
 		await contractNegotiation.afterAccept(userTid);
 	}
+
+	return local.undoLog.add(async () => {
+		const values = await Promise.all(undoFunctions.map((undo) => undo()));
+		return values.every((value) => value === true);
+	}, ["advanceDay", "leagueChange", "newPhase"]);
 };
 
 const updateExpansionDraftSetup = async (changes: {

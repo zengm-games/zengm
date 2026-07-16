@@ -590,8 +590,12 @@ const clearWatchList = async (type: "all" | number) => {
 		},
 		"noCopyCache",
 	);
+
+	const toUndo = new Map<number, number>();
+
 	for (const p of players) {
 		if (type === "all" || p.watch === type) {
+			toUndo.set(p.pid, p.watch!);
 			delete p.watch;
 			await idb.cache.players.put(p);
 		}
@@ -601,6 +605,30 @@ const clearWatchList = async (type: "all" | number) => {
 		toUI("crossTabEmit", [["updateWatch", getUpdateWatch(players)]]),
 		toUI("realtimeUpdate", [["playerMovement", "watchList"]]),
 	]);
+
+	return local.undoLog.add(async () => {
+		const players = await idb.getCopies.players(
+			{
+				pids: Array.from(toUndo.keys()),
+			},
+			"noCopyCache",
+		);
+
+		for (const p of players) {
+			const watch = toUndo.get(p.pid);
+			if (watch !== undefined) {
+				p.watch = watch;
+				await idb.cache.players.put(p);
+			}
+		}
+
+		void Promise.all([
+			toUI("crossTabEmit", [["updateWatch", getUpdateWatch(players)]]),
+			toUI("realtimeUpdate", [["playerMovement", "watchList"]]),
+		]);
+
+		return true;
+	}, ["leagueChange"]);
 };
 
 const countNegotiations = async () => {

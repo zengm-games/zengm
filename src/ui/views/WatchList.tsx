@@ -19,6 +19,7 @@ import { Flag, WatchBlock } from "../components/WatchBlock.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import Note from "./Player/Note.tsx";
 import { ActionButton } from "../components/ActionButton.tsx";
+import { showUndoNotification } from "../components/UndoNotification.tsx";
 
 const ClearButton = ({
 	onClick,
@@ -44,7 +45,7 @@ const ClearButton = ({
 		return (
 			<Dropdown>
 				<Dropdown.Toggle variant="danger" disabled={processing}>
-					Clear Watch List
+					Clear watch list
 				</Dropdown.Toggle>
 				<Dropdown.Menu>
 					<Dropdown.Item
@@ -284,8 +285,13 @@ const WatchList = ({
 				players={players}
 				onClick={async (type) => {
 					setClearing(true);
-					await toWorker("main", "clearWatchList", type);
+					const undoKey = await toWorker("main", "clearWatchList", type);
 					setClearing(false);
+
+					showUndoNotification({
+						undoKey,
+						title: `Cleared watch list${type === "all" ? "" : ` ${type}`}`,
+					});
 				}}
 				processing={clearing}
 			/>

@@ -15,7 +15,10 @@ import { actualPhase } from "../../util/actualPhase.ts";
  * @param {number} pid An integer that must correspond with the player ID of a player in an ongoing negotiation.
  * @return {Promise.<string=>} If an error occurs, resolves to a string error message.
  */
-const accept = async ({
+const accept = async <
+	DryRun extends boolean,
+	SuccessReturn extends DryRun extends true ? void : () => Promise<boolean>,
+>({
 	negotiation,
 	amount,
 	exp,
@@ -24,7 +27,7 @@ const accept = async ({
 	negotiation: Negotiation;
 	amount: number;
 	exp: number;
-	dryRun?: boolean;
+	dryRun: DryRun;
 }) => {
 	const salaryCapType = g.get("salaryCapType");
 	const tid = g.get("userTid");
@@ -97,7 +100,7 @@ const accept = async ({
 		await cancel(negotiation.pid);
 
 		// Rollback
-		return async () => {
+		return (async () => {
 			const p = await idb.cache.players.get(negotiation.pid);
 			if (!p) {
 				return false;
@@ -127,8 +130,10 @@ const accept = async ({
 			void toUI("realtimeUpdate", [["playerMovement"]]);
 
 			return true;
-		};
+		}) as SuccessReturn;
 	}
+
+	return undefined as SuccessReturn;
 };
 
 export default accept;

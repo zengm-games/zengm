@@ -190,6 +190,7 @@ const acceptContractNegotiation = async ({
 		negotiation,
 		amount,
 		exp,
+		dryRun: false,
 	});
 
 	// string response is an error message
@@ -3772,6 +3773,7 @@ const reSignAll = async (players: any[]) => {
 					negotiation,
 					amount: p.mood.user.contractAmount,
 					exp: p.contract.exp,
+					dryRun: false,
 				});
 
 				if (typeof response === "string") {

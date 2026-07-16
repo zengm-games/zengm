@@ -1,4 +1,5 @@
 import type { Local } from "../../common/types.ts";
+import { UndoLog } from "./UndoLog.ts";
 
 // These variables are transient and will be reset every refresh. See lock.js for more.
 const defaultLocal: Local = {
@@ -22,7 +23,7 @@ const defaultLocal: Local = {
 	seasonLeaders: undefined,
 	playingUntilEndOfRound: false,
 	statusText: "Idle",
-	undoableActions: {},
+	undoLog: new UndoLog(),
 	unviewedSeasonSummary: false, // Set to true when a live game sim of the final game prevents an automatic redirect to the season summary page
 	username: undefined,
 };
@@ -50,7 +51,7 @@ const local: Local & {
 	realPlayerActiveSeasons: defaultLocal.realPlayerActiveSeasons,
 	seasonLeaders: defaultLocal.seasonLeaders,
 	statusText: defaultLocal.statusText,
-	undoableActions: defaultLocal.undoableActions,
+	undoLog: defaultLocal.undoLog,
 	unviewedSeasonSummary: defaultLocal.unviewedSeasonSummary,
 	username: defaultLocal.username,
 	reset: () => {
@@ -74,6 +75,8 @@ const local: Local & {
 		local.seasonLeaders = defaultLocal.seasonLeaders;
 		local.statusText = defaultLocal.statusText;
 		local.unviewedSeasonSummary = defaultLocal.unviewedSeasonSummary;
+
+		local.undoLog.invalidate("leagueChange");
 
 		// Don't reset email/goldUntil/username because that persists across leagues. Probably it shouldn't be in this file, but should
 		// be somewhere else (like how g used to have some variables not persisted to database).

@@ -50,7 +50,7 @@ const SignButton = ({
 					onSuccess();
 					showSignUndo({
 						name: p.name,
-						rollbackKey: response,
+						undoKey: response,
 					});
 				}
 			}}

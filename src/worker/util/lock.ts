@@ -30,7 +30,15 @@ const set = async (name: keyof Locks, value: boolean) => {
 
 	locks[name] = value;
 
+	if (name === "newPhase" && value) {
+		local.undoLog.invalidate("newPhase");
+	}
+
 	if (name === "gameSim") {
+		if (value) {
+			local.undoLog.invalidate("advanceDay");
+		}
+
 		await toUI("updateLocal", [
 			{
 				gameSimInProgress: value,
@@ -58,7 +66,7 @@ const canStartGames = () => {
 
 	// Otherwise, doing it outside of this function would be a race condition if anything else async happened
 	set("gameSim", true);
-	local.undoableActions = {};
+
 	return true;
 };
 

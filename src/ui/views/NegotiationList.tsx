@@ -24,17 +24,17 @@ import { UndoNotification } from "../components/UndoNotification.tsx";
 
 const showReleaseUndo = ({
 	name,
-	rollbackKey,
+	undoKey,
 }: {
 	name: string;
-	rollbackKey: number;
+	undoKey: number;
 }) => {
 	showNotification({
 		type: "info",
 		text: (
 			<UndoNotification
 				actionName="release"
-				rollbackKey={rollbackKey}
+				undoKey={undoKey}
 				title={`You released ${name}`}
 			/>
 		),
@@ -161,14 +161,14 @@ const NegotiationList = ({
 									p.mood.user.willing ? undefined : "ms-auto",
 								)}
 								onClick={async () => {
-									const rollbackKey = await toWorker(
+									const undoKey = await toWorker(
 										"main",
 										"cancelContractNegotiation",
 										p.pid,
 									);
 									showReleaseUndo({
 										name: `${p.firstName} ${p.lastName}`,
-										rollbackKey,
+										undoKey,
 									});
 								}}
 							>

@@ -200,12 +200,11 @@ const acceptContractNegotiation = async ({
 	// Only do this if there was no error, and don't await because it makes the UI slow
 	void contractNegotiation.afterAccept(negotiation.tid);
 
-	const rollbackKey = Math.random();
-	if (response) {
-		local.undoableActions[rollbackKey] = response;
-	}
-
-	return rollbackKey;
+	return local.undoLog.add(response, [
+		"advanceDay",
+		"leagueChange",
+		"newPhase",
+	]);
 };
 
 const addTeam = async () => {
@@ -447,8 +446,9 @@ const cancelContractNegotiation = async (pid: number) => {
 
 	const tid = g.get("userTid");
 
-	const rollbackKey = Math.random();
-	local.undoableActions[rollbackKey] = async () => {
+	await toUI("realtimeUpdate", [["playerMovement"]]);
+
+	return local.undoLog.add(async () => {
 		await idb.cache.negotiations.add({
 			pid,
 			tid,
@@ -458,11 +458,7 @@ const cancelContractNegotiation = async (pid: number) => {
 		void toUI("realtimeUpdate", [["playerMovement"]]);
 
 		return true;
-	};
-
-	await toUI("realtimeUpdate", [["playerMovement"]]);
-
-	return rollbackKey;
+	}, ["advanceDay", "leagueChange", "newPhase"]);
 };
 
 const checkAccount2 = (param: unknown, conditions: Conditions) =>
@@ -4614,15 +4610,8 @@ const updateConfsDivs = async ({
 	await updateTeamInfo({ teams, from: "manageConfs" });
 };
 
-const undoAction = async (rollbackKey: number) => {
-	const rollback = local.undoableActions[rollbackKey];
-	if (rollback) {
-		const response = await rollback();
-		delete local.undoableActions[rollbackKey];
-		return response;
-	}
-
-	return false;
+const undoAction = (undoKey: number) => {
+	return local.undoLog.undo(undoKey);
 };
 
 const updateAwards = async (

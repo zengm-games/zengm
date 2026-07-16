@@ -936,8 +936,7 @@ indicator of if trade will be accepted, trade value
 - https://app.fastmail.com/mail/Inbox/A3pHKx5f7PzF.StqERXQ8OXi-?u=433e4054
 
 allow undoing actions
-- when to invalidate rollback
-  - for player transaction ones, current logic makes sense. for others like clearing notes, doesn't make sense to so eagerly invalidate, like if you hit that button while simming games then the rollback will immediately invalidate
+- showNotification should be one function, and use onClose to delete from log
 - types
   - trade
   - drafting player (tricky bc AI goes right after)

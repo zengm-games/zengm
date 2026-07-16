@@ -4,17 +4,17 @@ import { UndoNotification } from "./UndoNotification.tsx";
 
 export const showSignUndo = ({
 	name,
-	rollbackKey,
+	undoKey,
 }: {
 	name: string;
-	rollbackKey: number;
+	undoKey: number;
 }) => {
 	showNotification({
 		type: "info",
 		text: (
 			<UndoNotification
 				actionName="signing"
-				rollbackKey={rollbackKey}
+				undoKey={undoKey}
 				title={`You signed ${name}`}
 			/>
 		),
@@ -84,7 +84,7 @@ export const NegotiateButtons = ({
 					} else {
 						showSignUndo({
 							name: `${p.firstName} ${p.lastName}`,
-							rollbackKey: response,
+							undoKey: response,
 						});
 					}
 				}}

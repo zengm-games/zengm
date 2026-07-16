@@ -1428,7 +1428,7 @@ export type Local = {
 		| undefined;
 	seasonLeaders: SeasonLeaders | undefined;
 	statusText: string;
-	undoableActions: Record<number, () => Promise<boolean>>;
+	undoLog: UndoLog;
 	unviewedSeasonSummary: boolean;
 	username: string | undefined;
 };
@@ -1661,6 +1661,7 @@ import type {
 	KeyboardShortcutsLocal,
 } from "../ui/util/keyboardShortcuts.ts";
 import type { gameAttributesSyncedToUi } from "./gameAttributesSyncedToUi.ts";
+import type { UndoLog } from "../worker/util/UndoLog.ts";
 type TeamStatsPlus = Record<TeamStatAttrBaseball, number> &
 	Record<TeamStatAttrByPosBaseball, number[]> &
 	Record<TeamStatAttrBasketball, number> &

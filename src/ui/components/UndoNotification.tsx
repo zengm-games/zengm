@@ -4,11 +4,11 @@ import { helpers } from "../util/helpers.ts";
 
 export const UndoNotification = ({
 	actionName = "action",
-	rollbackKey,
+	undoKey,
 	title,
 }: {
 	actionName?: string;
-	rollbackKey: number;
+	undoKey: number;
 	title: ReactNode;
 }) => {
 	const [status, setStatus] = useState<"init" | "waiting" | "success" | "fail">(
@@ -31,7 +31,7 @@ export const UndoNotification = ({
 							setStatus("waiting");
 							let result;
 							try {
-								result = await toWorker("main", "undoAction", rollbackKey);
+								result = await toWorker("main", "undoAction", undoKey);
 							} finally {
 								if (result) {
 									setStatus("success");

@@ -87,8 +87,6 @@ const finalize = async (
 		}
 	}
 
-	local.undoableActions = {};
-
 	if (local.autoPlayUntil) {
 		await league.autoPlay(conditions);
 	}

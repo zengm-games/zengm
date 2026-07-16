@@ -30,7 +30,7 @@ const UndoNotification = ({ actionName = "action", undoKey, title }: Props) => {
 							setStatus("waiting");
 							let result;
 							try {
-								result = await toWorker("main", "undoAction", undoKey);
+								result = await toWorker("undoLog", "undo", undoKey);
 							} finally {
 								if (result) {
 									setStatus("success");
@@ -52,5 +52,8 @@ export const showUndoNotification = (props: Props) => {
 	showNotification({
 		type: "info",
 		text: <UndoNotification {...props} />,
+		onClose: async () => {
+			await toWorker("undoLog", "remove", props.undoKey);
+		},
 	});
 };

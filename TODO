@@ -936,7 +936,6 @@ indicator of if trade will be accepted, trade value
 - https://app.fastmail.com/mail/Inbox/A3pHKx5f7PzF.StqERXQ8OXi-?u=433e4054
 
 allow undoing actions
-- showNotification should be one function, and use onClose to delete from log
 - types
   - trade
   - drafting player (tricky bc AI goes right after)

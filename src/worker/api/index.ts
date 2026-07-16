@@ -171,6 +171,7 @@ import { recomputeLocalUITeamOvrs } from "../util/recomputeLocalUITeamOvrs.ts";
 import { initUILocalGames } from "../util/initUILocalGames.ts";
 import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 import type { GenOrderResult } from "../core/draft/genOrder.ts";
+import undoLog from "./undoLog.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -4612,10 +4613,6 @@ const updateConfsDivs = async ({
 	await updateTeamInfo({ teams, from: "manageConfs" });
 };
 
-const undoAction = (undoKey: number) => {
-	return local.undoLog.undo(undoKey);
-};
-
 const updateAwards = async (
 	awards: any,
 	conditions: Conditions,
@@ -5235,6 +5232,7 @@ export default {
 	leagueFileUpload,
 	playMenu,
 	toolsMenu,
+	undoLog,
 	main: {
 		acceptContractNegotiation,
 		addTeam,
@@ -5354,7 +5352,6 @@ export default {
 		toggleTradeDeadline,
 		tradeCounterOffer,
 		onLiveSimOver,
-		undoAction,
 		updateAwards,
 		updateBudget,
 		updateConfsDivs,

@@ -24,14 +24,7 @@ if (process.env.NODE_ENV === "development") {
 	});
 }
 
-export type WorkerAPICategory =
-	| "actions"
-	| "eightyTwoZeroDraft"
-	| "exhibitionGame"
-	| "leagueFileUpload"
-	| "main"
-	| "playMenu"
-	| "toolsMenu";
+export type WorkerAPICategory = keyof typeof api;
 
 // API functions should have at most 2 arguments. First argument is passed here from toWorker. If you need to pass multiple variables, use an object/array. Second argument is Conditions.
 promiseWorker.register(([type, name, param], hostID) => {

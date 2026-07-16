@@ -3,8 +3,8 @@ type Undo = () => Promise<boolean>;
 
 type InvalidateOn = "advanceDay" | "leagueChange" | "newPhase";
 
-// NOTIFICATION_TIMEOUT is 8 seconds, but we need this to be longer in case the user hovers a while
-const MAX_UNDO_TIME = 30_000;
+// NOTIFICATION_TIMEOUT is 8 seconds, but we need this to be longer in case the user hovers a while. This is really intended for weird edge cases, since onClose in from the notification itself should trigger remove.
+const MAX_UNDO_TIME = 60_000;
 
 export class UndoLog {
 	private nextKey = 0;
@@ -30,7 +30,7 @@ export class UndoLog {
 		return key;
 	}
 
-	private remove(key: number) {
+	remove(key: number) {
 		const entry = this.log.get(key);
 		if (entry) {
 			this.log.delete(key);

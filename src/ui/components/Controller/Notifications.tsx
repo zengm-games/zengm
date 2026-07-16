@@ -8,7 +8,7 @@ import { MOBILE_AD_BOTTOM_MARGIN } from "../../../common/constants.ts";
 
 const MAX_NUM_NOTIFICATIONS = 5;
 
-const NOTIFICATION_TIMEOUT = 8000;
+const NOTIFICATION_TIMEOUT = 8_000;
 
 const Notification = ({
 	extraClass,

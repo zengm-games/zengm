@@ -1,16 +1,15 @@
 import { useState, type ReactNode } from "react";
 import { toWorker } from "../util/toWorker.ts";
 import { helpers } from "../util/helpers.ts";
+import { showNotification } from "../util/showNotification.ts";
 
-export const UndoNotification = ({
-	actionName = "action",
-	undoKey,
-	title,
-}: {
+type Props = {
 	actionName?: string;
 	undoKey: number;
 	title: ReactNode;
-}) => {
+};
+
+const UndoNotification = ({ actionName = "action", undoKey, title }: Props) => {
 	const [status, setStatus] = useState<"init" | "waiting" | "success" | "fail">(
 		"init",
 	);
@@ -47,4 +46,11 @@ export const UndoNotification = ({
 			</>
 		);
 	}
+};
+
+export const showUndoNotification = (props: Props) => {
+	showNotification({
+		type: "info",
+		text: <UndoNotification {...props} />,
+	});
 };

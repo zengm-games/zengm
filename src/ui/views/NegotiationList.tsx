@@ -20,7 +20,7 @@ import {
 } from "../components/NegotiationModal.tsx";
 import { useLocal } from "../util/local.ts";
 import clsx from "clsx";
-import { UndoNotification } from "../components/UndoNotification.tsx";
+import { showUndoNotification } from "../components/UndoNotification.tsx";
 
 const showReleaseUndo = ({
 	name,
@@ -29,15 +29,10 @@ const showReleaseUndo = ({
 	name: string;
 	undoKey: number;
 }) => {
-	showNotification({
-		type: "info",
-		text: (
-			<UndoNotification
-				actionName="release"
-				undoKey={undoKey}
-				title={`You released ${name}`}
-			/>
-		),
+	showUndoNotification({
+		actionName: "release",
+		undoKey,
+		title: `You released ${name}`,
 	});
 };
 

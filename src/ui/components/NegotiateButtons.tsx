@@ -1,6 +1,6 @@
 import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
-import { UndoNotification } from "./UndoNotification.tsx";
+import { showUndoNotification } from "./UndoNotification.tsx";
 
 export const showSignUndo = ({
 	name,
@@ -9,15 +9,10 @@ export const showSignUndo = ({
 	name: string;
 	undoKey: number;
 }) => {
-	showNotification({
-		type: "info",
-		text: (
-			<UndoNotification
-				actionName="signing"
-				undoKey={undoKey}
-				title={`You signed ${name}`}
-			/>
-		),
+	showUndoNotification({
+		actionName: "signing",
+		undoKey,
+		title: `You signed ${name}`,
 	});
 };
 

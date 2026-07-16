@@ -1349,26 +1349,6 @@ export type PlayerBioInfoProcessed = {
 	frequencies: [string, number][];
 };
 
-export type UndoableAction =
-	| ({
-			type: "sign";
-			phase: Phase;
-			tid: number;
-			eid: number | undefined;
-	  } & Pick<
-			Player,
-			| "numDaysFreeAgent"
-			| "numPlayersTradedAwayNormalized"
-			| "jerseyNumber"
-			| "contract"
-			| "salaries"
-			| "transactions"
-	  >)
-	| {
-			type: "release";
-			tid: number;
-	  };
-
 export type Local = {
 	autoPlayUntil?: {
 		season: number;
@@ -1448,7 +1428,7 @@ export type Local = {
 		| undefined;
 	seasonLeaders: SeasonLeaders | undefined;
 	statusText: string;
-	undoableActions: Record<number, UndoableAction>;
+	undoableActions: Record<number, () => Promise<boolean>>;
 	unviewedSeasonSummary: boolean;
 	username: string | undefined;
 };

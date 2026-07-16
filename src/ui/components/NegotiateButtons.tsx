@@ -2,7 +2,13 @@ import { useState } from "react";
 import { showNotification } from "../util/showNotification.ts";
 import { toWorker } from "../util/toWorker.ts";
 
-const SignNotification = ({ name, pid }: { name: string; pid: number }) => {
+const SignNotification = ({
+	name,
+	rollbackKey,
+}: {
+	name: string;
+	rollbackKey: number;
+}) => {
 	const [status, setStatus] = useState<"init" | "waiting" | "success" | "fail">(
 		"init",
 	);
@@ -21,10 +27,7 @@ const SignNotification = ({ name, pid }: { name: string; pid: number }) => {
 						disabled={status === "waiting"}
 						onClick={async () => {
 							setStatus("waiting");
-							const result = await toWorker("main", "undoAction", {
-								type: "sign",
-								pid,
-							});
+							const result = await toWorker("main", "undoAction", rollbackKey);
 							if (result) {
 								setStatus("success");
 							} else {
@@ -40,10 +43,12 @@ const SignNotification = ({ name, pid }: { name: string; pid: number }) => {
 	}
 };
 
-export const showSignUndo = (p: { name: string; pid: number }) => {
+export const showSignUndo = (props: { name: string; rollbackKey: number }) => {
 	showNotification({
 		type: "info",
-		text: <SignNotification name={p.name} pid={p.pid} />,
+		text: (
+			<SignNotification name={props.name} rollbackKey={props.rollbackKey} />
+		),
 	});
 };
 
@@ -96,21 +101,21 @@ export const NegotiateButtons = ({
 				className="btn btn-light-bordered btn-xs"
 				disabled={signDisabled}
 				onClick={async () => {
-					const errorMsg = await toWorker("main", "acceptContractNegotiation", {
+					const response = await toWorker("main", "acceptContractNegotiation", {
 						pid: p.pid,
 						amount: contractAmount,
 						exp: p.contract.exp,
 					});
 
-					if (errorMsg) {
+					if (typeof response === "string") {
 						showNotification({
 							type: "error",
-							text: errorMsg,
+							text: response,
 						});
 					} else {
 						showSignUndo({
 							name: `${p.firstName} ${p.lastName}`,
-							pid: p.pid,
+							rollbackKey: response,
 						});
 					}
 				}}

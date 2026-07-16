@@ -22,7 +22,13 @@ import { useLocal } from "../util/local.ts";
 import clsx from "clsx";
 import { useState } from "react";
 
-const ReleaseNotification = ({ name, pid }: { name: string; pid: number }) => {
+const ReleaseNotification = ({
+	name,
+	rollbackKey,
+}: {
+	name: string;
+	rollbackKey: number;
+}) => {
 	const [status, setStatus] = useState<"init" | "waiting" | "success" | "fail">(
 		"init",
 	);
@@ -41,10 +47,7 @@ const ReleaseNotification = ({ name, pid }: { name: string; pid: number }) => {
 						disabled={status === "waiting"}
 						onClick={async () => {
 							setStatus("waiting");
-							const result = await toWorker("main", "undoAction", {
-								type: "release",
-								pid,
-							});
+							const result = await toWorker("main", "undoAction", rollbackKey);
 							if (result) {
 								setStatus("success");
 							} else {
@@ -60,10 +63,12 @@ const ReleaseNotification = ({ name, pid }: { name: string; pid: number }) => {
 	}
 };
 
-const showReleaseUndo = (p: { name: string; pid: number }) => {
+const showReleaseUndo = (props: { name: string; rollbackKey: number }) => {
 	showNotification({
 		type: "info",
-		text: <ReleaseNotification name={p.name} pid={p.pid} />,
+		text: (
+			<ReleaseNotification name={props.name} rollbackKey={props.rollbackKey} />
+		),
 	});
 };
 
@@ -187,10 +192,14 @@ const NegotiationList = ({
 									p.mood.user.willing ? undefined : "ms-auto",
 								)}
 								onClick={async () => {
-									await toWorker("main", "cancelContractNegotiation", p.pid);
+									const rollbackKey = await toWorker(
+										"main",
+										"cancelContractNegotiation",
+										p.pid,
+									);
 									showReleaseUndo({
 										name: `${p.firstName} ${p.lastName}`,
-										pid: p.pid,
+										rollbackKey,
 									});
 								}}
 							>

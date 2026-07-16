@@ -200,7 +200,12 @@ const acceptContractNegotiation = async ({
 	// Only do this if there was no error, and don't await because it makes the UI slow
 	void contractNegotiation.afterAccept(negotiation.tid);
 
-	local.undoableActions[pid] = response;
+	const rollbackKey = Math.random();
+	if (response) {
+		local.undoableActions[rollbackKey] = response;
+	}
+
+	return rollbackKey;
 };
 
 const addTeam = async () => {
@@ -440,12 +445,24 @@ const beforeView = async (
 const cancelContractNegotiation = async (pid: number) => {
 	await contractNegotiation.cancel(pid);
 
-	local.undoableActions[pid] = {
-		type: "release",
-		tid: g.get("userTid"),
+	const tid = g.get("userTid");
+
+	const rollbackKey = Math.random();
+	local.undoableActions[rollbackKey] = async () => {
+		await idb.cache.negotiations.add({
+			pid,
+			tid,
+			resigning: true,
+		});
+
+		void toUI("realtimeUpdate", [["playerMovement"]]);
+
+		return true;
 	};
 
 	await toUI("realtimeUpdate", [["playerMovement"]]);
+
+	return rollbackKey;
 };
 
 const checkAccount2 = (param: unknown, conditions: Conditions) =>
@@ -4597,72 +4614,12 @@ const updateConfsDivs = async ({
 	await updateTeamInfo({ teams, from: "manageConfs" });
 };
 
-const undoAction = async (
-	info: { type: "sign"; pid: number } | { type: "release"; pid: number },
-) => {
-	if (info.type === "sign") {
-		const pid = info.pid;
-
-		const undoInfo = local.undoableActions[pid];
-		if (!undoInfo || undoInfo.type !== "sign") {
-			return false;
-		}
-
-		const p = await idb.cache.players.get(pid);
-		if (!p) {
-			return false;
-		}
-
-		const phase = actualPhase();
-
-		if (phase !== undoInfo.phase || p.tid !== undoInfo.tid) {
-			return false;
-		}
-
-		p.numDaysFreeAgent = undoInfo.numDaysFreeAgent;
-		p.numPlayersTradedAwayNormalized = undoInfo.numPlayersTradedAwayNormalized;
-		p.jerseyNumber = undoInfo.jerseyNumber;
-		p.contract = undoInfo.contract;
-		p.salaries = undoInfo.salaries;
-		p.transactions = undoInfo.transactions;
-		p.tid = PLAYER.FREE_AGENT;
-
-		if (phase === PHASE.RESIGN_PLAYERS) {
-			await idb.cache.negotiations.add({
-				pid,
-				tid: undoInfo.tid,
-				resigning: true,
-			});
-		}
-
-		await idb.cache.players.put(p);
-
-		if (undoInfo.eid !== undefined) {
-			await idb.cache.events.delete(undoInfo.eid);
-		}
-
-		delete local.undoableActions[pid];
-		void toUI("realtimeUpdate", [["playerMovement"]]);
-
-		return true;
-	} else if (info.type === "release") {
-		const pid = info.pid;
-
-		const undoInfo = local.undoableActions[pid];
-		if (!undoInfo || undoInfo.type !== "release") {
-			return false;
-		}
-
-		await idb.cache.negotiations.add({
-			pid,
-			tid: undoInfo.tid,
-			resigning: true,
-		});
-
-		delete local.undoableActions[pid];
-		void toUI("realtimeUpdate", [["playerMovement"]]);
-
-		return true;
+const undoAction = async (rollbackKey: number) => {
+	const rollback = local.undoableActions[rollbackKey];
+	if (rollback) {
+		const response = await rollback();
+		delete local.undoableActions[rollbackKey];
+		return response;
 	}
 
 	return false;

@@ -36,23 +36,22 @@ const SignButton = ({
 			className={`btn ${disabledReason !== undefined ? "btn-secondary" : "btn-success"}`}
 			disabled={disabledReason !== undefined}
 			onClick={async () => {
-				const errorMessage = await toWorker(
-					"main",
-					"acceptContractNegotiation",
-					{
-						pid: p.pid,
-						amount: Math.round(amount * 1000),
-						exp,
-					},
-				);
-				if (errorMessage !== undefined) {
+				const response = await toWorker("main", "acceptContractNegotiation", {
+					pid: p.pid,
+					amount: Math.round(amount * 1000),
+					exp,
+				});
+				if (typeof response === "string") {
 					showNotification({
 						type: "error",
-						text: errorMessage,
+						text: response,
 					});
 				} else {
 					onSuccess();
-					showSignUndo(p);
+					showSignUndo({
+						name: p.name,
+						rollbackKey: response,
+					});
 				}
 			}}
 		>

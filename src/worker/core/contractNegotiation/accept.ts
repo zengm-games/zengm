@@ -1,13 +1,9 @@
 import { player, team } from "../index.ts";
 import cancel from "./cancel.ts";
 import { idb } from "../../db/index.ts";
-import { g, helpers } from "../../util/index.ts";
-import type {
-	Negotiation,
-	PlayerContract,
-	UndoableAction,
-} from "../../../common/types.ts";
-import { PHASE } from "../../../common/constants.ts";
+import { g, helpers, toUI } from "../../util/index.ts";
+import type { Negotiation, PlayerContract } from "../../../common/types.ts";
+import { PHASE, PLAYER } from "../../../common/constants.ts";
 import { actualPhase } from "../../util/actualPhase.ts";
 
 /**
@@ -31,9 +27,10 @@ const accept = async ({
 	dryRun?: boolean;
 }) => {
 	const salaryCapType = g.get("salaryCapType");
+	const tid = g.get("userTid");
 
 	if (salaryCapType !== "none") {
-		const payroll = await team.getPayroll(g.get("userTid"));
+		const payroll = await team.getPayroll(tid);
 		const birdException = negotiation.resigning && salaryCapType === "soft";
 
 		// If this contract brings team over the salary cap, it's not a minimum contract, and it's not re-signing a current
@@ -51,13 +48,13 @@ const accept = async ({
 
 	// This error is for sanity checking in multi team mode. Need to check for existence of negotiation.tid because it
 	// wasn't there originally and I didn't write upgrade code. Can safely get rid of it later.
-	if (negotiation.tid !== undefined && negotiation.tid !== g.get("userTid")) {
+	if (negotiation.tid !== undefined && negotiation.tid !== tid) {
 		return `This negotiation was started by the ${
 			g.get("teamInfoCache")[negotiation.tid]?.region
 		} ${g.get("teamInfoCache")[negotiation.tid]?.name} but you are the ${
-			g.get("teamInfoCache")[g.get("userTid")]?.region
+			g.get("teamInfoCache")[tid]?.region
 		} ${
-			g.get("teamInfoCache")[g.get("userTid")]?.name
+			g.get("teamInfoCache")[tid]?.name
 		}. Either switch teams or cancel this negotiation.`;
 	}
 
@@ -67,27 +64,12 @@ const accept = async ({
 	}
 
 	// Make sure the user didn't do something in another tab to change the willingness to negotiate, such as trading away players
-	const mood = await player.moodInfo(p, g.get("userTid"));
+	const mood = await player.moodInfo(p, tid);
 	if (!mood.willing) {
 		return "Player is no longer willing to negotiate.";
 	}
 
 	const phase = actualPhase();
-
-	const undo: UndoableAction = {
-		type: "sign",
-		phase,
-		tid: g.get("userTid"),
-		eid: undefined,
-		numDaysFreeAgent: p.numDaysFreeAgent,
-		numPlayersTradedAwayNormalized: helpers.deepCopy(
-			p.numPlayersTradedAwayNormalized,
-		),
-		jerseyNumber: p.jerseyNumber,
-		contract: helpers.deepCopy(p.contract),
-		salaries: helpers.deepCopy(p.salaries),
-		transactions: helpers.deepCopy(p.transactions),
-	};
 
 	const contract: PlayerContract = {
 		amount,
@@ -99,12 +81,54 @@ const accept = async ({
 	}
 
 	if (!dryRun) {
-		undo.eid = await player.sign(p, g.get("userTid"), contract, phase);
+		const rollbackInfo = {
+			numDaysFreeAgent: p.numDaysFreeAgent,
+			numPlayersTradedAwayNormalized: helpers.deepCopy(
+				p.numPlayersTradedAwayNormalized,
+			),
+			jerseyNumber: p.jerseyNumber,
+			contract: helpers.deepCopy(p.contract),
+			salaries: helpers.deepCopy(p.salaries),
+			transactions: helpers.deepCopy(p.transactions),
+		};
+
+		const eid = await player.sign(p, tid, contract, phase);
 		await idb.cache.players.put(p);
 		await cancel(negotiation.pid);
-	}
 
-	return undo;
+		// Rollback
+		return async () => {
+			const p = await idb.cache.players.get(negotiation.pid);
+			if (!p) {
+				return false;
+			}
+
+			if (p.tid !== tid) {
+				return false;
+			}
+
+			Object.assign(p, rollbackInfo);
+			p.tid = PLAYER.FREE_AGENT;
+
+			if (phase === PHASE.RESIGN_PLAYERS) {
+				await idb.cache.negotiations.add({
+					pid: p.pid,
+					tid,
+					resigning: true,
+				});
+			}
+
+			await idb.cache.players.put(p);
+
+			if (eid !== undefined) {
+				await idb.cache.events.delete(eid);
+			}
+
+			void toUI("realtimeUpdate", [["playerMovement"]]);
+
+			return true;
+		};
+	}
 };
 
 export default accept;

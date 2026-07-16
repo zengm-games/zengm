@@ -936,11 +936,13 @@ indicator of if trade will be accepted, trade value
 - https://app.fastmail.com/mail/Inbox/A3pHKx5f7PzF.StqERXQ8OXi-?u=433e4054
 
 allow undoing actions
+- DRY UI components for notifications, only text messages are different
 - types
   - trade
   - drafting player (tricky bc AI goes right after)
   - X to hide a trade offer
   - releasing player
+  - clearing all notes
 
 euro-style team names
 - implementation

@@ -940,8 +940,6 @@ allow undoing actions
   - trade
     - test
       - get rid of confirm dialog for trade for nothing? or still keep?
-      - player transactions entry (search based on eid)
-      - numPlayersTradedAway
       - restore saved trade - initialHash, only if was saved before
       - roster sort
         - t.depth in other sports

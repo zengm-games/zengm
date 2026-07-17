@@ -63,6 +63,11 @@ const processTrade = async (
 			);
 		}
 
+		undoInfoTeams[j].depth = (await idb.cache.teams.get(tids[j]))?.depth;
+		if (teamSeason) {
+			undoInfoTeams[j].numPlayersTradedAway = teamSeason.numPlayersTradedAway;
+		}
+
 		const players = await idb.getCopies.players(
 			{ pids: pids[j] },
 			"noCopyCache",
@@ -122,8 +127,6 @@ const processTrade = async (
 			});
 
 			if (teamSeason) {
-				undoInfoTeams[j].numPlayersTradedAway = teamSeason.numPlayersTradedAway;
-
 				// Bad players do not actually count as a "player traded away"
 				teamSeason.numPlayersTradedAway += helpers.sigmoid(
 					p.valueNoPot / 100,
@@ -131,8 +134,6 @@ const processTrade = async (
 					0.47,
 				);
 			}
-
-			undoInfoTeams[j].depth = (await idb.cache.teams.get(tids[j]))?.depth;
 		}
 
 		if (teamSeason) {

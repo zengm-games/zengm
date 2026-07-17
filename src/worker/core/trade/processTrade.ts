@@ -40,7 +40,11 @@ const processTrade = async (
 
 	const undoInfoPlayers = new Map<
 		number,
-		{ jerseyNumber: string | undefined; ptModifier: number }
+		{
+			jerseyNumber: string | undefined;
+			ptModifier: number;
+			rosterOrder: number;
+		}
 	>();
 	type UndoInfoTeams = {
 		depth?: Team["depth"];
@@ -78,6 +82,7 @@ const processTrade = async (
 			undoInfoPlayers.set(p.pid, {
 				jerseyNumber: p.jerseyNumber,
 				ptModifier: p.ptModifier,
+				rosterOrder: p.rosterOrder,
 			});
 
 			if (duringSeason) {
@@ -148,6 +153,17 @@ const processTrade = async (
 				round: dp.round,
 				originalTid: dp.originalTid,
 			});
+		}
+	}
+
+	// Need to reset roserOrder for other players on roster on undo
+	const undoInfoOtherPlayers = new Map<number, { rosterOrder: number }>();
+	for (const j of [0, 1] as const) {
+		const otherPlayers = (
+			await idb.cache.players.indexGetAll("playersByTid", tids[j])
+		).filter((p) => !undoInfoPlayers.has(p.pid));
+		for (const p of otherPlayers) {
+			undoInfoOtherPlayers.set(p.pid, { rosterOrder: p.rosterOrder });
 		}
 	}
 
@@ -267,6 +283,14 @@ const processTrade = async (
 		}
 
 		// Restore other various state
+
+		for (const [pid, info] of undoInfoOtherPlayers) {
+			const p = await idb.cache.players.get(pid);
+			if (p) {
+				Object.assign(p, info);
+				await idb.cache.players.put(p);
+			}
+		}
 
 		await idb.cache.trade.put({
 			rid: 0,

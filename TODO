@@ -939,17 +939,12 @@ allow undoing actions
 - types
   - trade
     - test
-      - get rid of confirm dialog for trade for nothing
-      - confirm all assets on correct team
-      - move assets back to original teams
-      - event
+      - get rid of confirm dialog for trade for nothing? or still keep?
       - player transactions entry (search based on eid)
       - numPlayersTradedAway
-      - reset trade state
       - restore saved trade - initialHash, only if was saved before
-    - roster sort
-      - t.depth
-      - rosterOrder OF WHOLE TEAM
+      - roster sort
+        - t.depth in other sports
     - show nice summary in notification
     - clear "Trade accepted!" message
   - drafting player (tricky bc AI goes right after)

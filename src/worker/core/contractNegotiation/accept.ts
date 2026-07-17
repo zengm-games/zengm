@@ -122,10 +122,7 @@ const accept = async <
 			}
 
 			await idb.cache.players.put(p);
-
-			if (eid !== undefined) {
-				await idb.cache.events.delete(eid);
-			}
+			await idb.cache.events.delete(eid);
 
 			void toUI("realtimeUpdate", [["playerMovement"]]);
 

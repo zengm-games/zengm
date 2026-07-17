@@ -8,28 +8,28 @@ import type {
 } from "../../common/types.ts";
 
 // Really, pids, tids, and type should not be optional if saveToDb is true
-type LogEventOptions = {
+type LogEventOptions<SaveToDb> = {
 	extraClass?: string;
 	hideInLiveGame?: boolean;
 	onClose?: () => void;
 	persistent?: boolean;
-	saveToDb?: boolean;
+	saveToDb?: SaveToDb;
 	showNotification?: boolean;
 } & DistributiveOmit<EventBBGMWithoutKey, "season">;
 
 // conditions only needed when showNotification is true, otherwise this is never called
-const logEvent = async (
+const logEvent = async <SaveToDb extends boolean = true>(
 	{
 		extraClass,
 		hideInLiveGame,
 		onClose,
 		persistent = false,
-		saveToDb = true,
+		saveToDb = true as SaveToDb,
 		showNotification = true,
 		...event
-	}: LogEventOptions,
+	}: LogEventOptions<SaveToDb>,
 	conditions?: Conditions,
-) => {
+): Promise<SaveToDb extends true ? number : undefined> => {
 	let result;
 	if (saveToDb) {
 		if (event.pids === undefined && event.tids === undefined) {
@@ -56,7 +56,7 @@ const logEvent = async (
 		);
 	}
 
-	return result;
+	return result as SaveToDb extends true ? number : undefined;
 };
 
 export default logEvent;

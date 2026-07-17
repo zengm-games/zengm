@@ -8,15 +8,25 @@ import {
 	toUI,
 	updatePlayMenu,
 } from "../../util/index.ts";
-import { type Player, type TradeEventTeams } from "../../../common/types.ts";
+import {
+	type DraftPick,
+	type Player,
+	type Team,
+	type TeamSeason,
+	type TradeEventTeams,
+	type TradeTeams,
+} from "../../../common/types.ts";
 import { getTeammateJerseyNumbers } from "../player/genJerseyNumber.ts";
 import { recomputeLocalUITeamOvrs } from "../../util/recomputeLocalUITeamOvrs.ts";
 
 const processTrade = async (
-	tids: [number, number],
-	pids: [number[], number[]],
-	dpids: [number[], number[]],
+	rawTeams: TradeTeams,
+	initialHash: string | undefined,
 ) => {
+	const tids: [number, number] = [rawTeams[0].tid, rawTeams[1].tid];
+	const pids: [number[], number[]] = [rawTeams[0].pids, rawTeams[1].pids];
+	const dpids: [number[], number[]] = [rawTeams[0].dpids, rawTeams[1].dpids];
+
 	const teams: TradeEventTeams = [
 		{
 			assets: [],
@@ -27,6 +37,16 @@ const processTrade = async (
 	];
 
 	const playerTransactionInfo = new Map<Player, { fromTid: number }>();
+
+	const undoInfoPlayers = new Map<
+		number,
+		{ jerseyNumber: string | undefined; ptModifier: number }
+	>();
+	type UndoInfoTeams = {
+		depth?: Team["depth"];
+		numPlayersTradedAway?: TeamSeason["numPlayersTradedAway"];
+	};
+	const undoInfoTeams: [UndoInfoTeams, UndoInfoTeams] = [{}, {}];
 
 	for (const j of [0, 1] as const) {
 		const k = j === 0 ? 1 : 0;
@@ -54,6 +74,11 @@ const processTrade = async (
 
 			// p.gamesUntilTradable = 14; // Don't make traded players untradable
 			p.ptModifier = 1; // Reset
+
+			undoInfoPlayers.set(p.pid, {
+				jerseyNumber: p.jerseyNumber,
+				ptModifier: p.ptModifier,
+			});
 
 			if (duringSeason) {
 				// If two players being traded for each other have the same jersey number, that shouldn't be treated as conflict and they should be able to keep their jersey numbers - that's what the pids[k] part does.
@@ -92,6 +117,8 @@ const processTrade = async (
 			});
 
 			if (teamSeason) {
+				undoInfoTeams[j].numPlayersTradedAway = teamSeason.numPlayersTradedAway;
+
 				// Bad players do not actually count as a "player traded away"
 				teamSeason.numPlayersTradedAway += helpers.sigmoid(
 					p.valueNoPot / 100,
@@ -99,6 +126,8 @@ const processTrade = async (
 					0.47,
 				);
 			}
+
+			undoInfoTeams[j].depth = (await idb.cache.teams.get(tids[j]))?.depth;
 		}
 
 		if (teamSeason) {
@@ -175,6 +204,106 @@ const processTrade = async (
 	if (g.get("phase") === PHASE.DRAFT) {
 		await updatePlayMenu();
 	}
+
+	const savedTrade =
+		initialHash !== undefined
+			? await idb.cache.savedTrades.get(initialHash)
+			: undefined;
+
+	const undo = async () => {
+		// Collect assets
+		const players: [Player[], Player[]] = [[], []];
+		const draftPicks: [DraftPick[], DraftPick[]] = [[], []];
+		for (const i of [0, 1] as const) {
+			const j = i === 0 ? 1 : 0;
+			players[i] = await idb.getCopies.players(
+				{ pids: pids[i] },
+				"noCopyCache",
+			);
+			if (players[i].length !== pids[i].length) {
+				return false;
+			}
+			for (const p of players[i]) {
+				if (p.tid !== tids[j]) {
+					return false;
+				}
+			}
+
+			for (const dpid of dpids[i]) {
+				const dp = await idb.cache.draftPicks.get(dpid);
+				if (!dp) {
+					return false;
+				}
+				draftPicks[i].push(dp);
+			}
+			for (const dp of draftPicks[i]) {
+				if (dp.tid !== tids[j]) {
+					return false;
+				}
+			}
+		}
+
+		// Revert trade
+		for (const i of [0, 1] as const) {
+			for (const p of players[i]) {
+				p.tid = tids[i];
+
+				p.transactions = p.transactions?.filter(
+					(row) => row.type !== "trade" || row.eid !== eid,
+				);
+
+				const info = undoInfoPlayers.get(p.pid);
+				if (info) {
+					Object.assign(p, info);
+				}
+
+				await idb.cache.players.put(p);
+			}
+
+			for (const dp of draftPicks[i]) {
+				dp.tid = tids[i];
+				await idb.cache.draftPicks.put(dp);
+			}
+		}
+
+		// Restore other various state
+
+		await idb.cache.trade.put({
+			rid: 0,
+			teams: rawTeams,
+		});
+
+		if (savedTrade !== undefined) {
+			await idb.cache.savedTrades.put(savedTrade);
+		}
+
+		for (const i of [0, 1] as const) {
+			const undoInfoTeam = undoInfoTeams[i];
+			if (undoInfoTeam.depth) {
+				const t = await idb.cache.teams.get(tids[i]);
+				if (t) {
+					t.depth = undoInfoTeam.depth;
+					await idb.cache.teams.put(t);
+				}
+			}
+			if (undoInfoTeam.numPlayersTradedAway !== undefined) {
+				const teamSeason = await idb.cache.teamSeasons.indexGet(
+					"teamSeasonsBySeasonTid",
+					[g.get("season"), tids[i]],
+				);
+				if (teamSeason) {
+					teamSeason.numPlayersTradedAway = undoInfoTeam.numPlayersTradedAway;
+					await idb.cache.teamSeasons.put(teamSeason);
+				}
+			}
+		}
+
+		await idb.cache.events.delete(eid);
+
+		return true;
+	};
+
+	return undo;
 };
 
 export default processTrade;

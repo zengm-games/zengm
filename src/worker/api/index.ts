@@ -5065,50 +5065,23 @@ const createTrade = async (teams: TradeTeams) => {
 };
 
 const proposeTrade = async (forceTrade: boolean, conditions: Conditions) => {
-	const { teams } = await trade.get();
-	const dv = await new ValueChangeCalculator().evaluate({
-		tid: teams[1].tid,
-		pidsAdd: teams[0].pids,
-		pidsRemove: teams[1].pids,
-		dpidsAdd: teams[0].dpids,
-		dpidsRemove: teams[1].dpids,
-		tradingPartnerTid: g.get("userTid"),
-	});
-	const aiWillAcceptTrade = dv > 0;
-	if (
-		aiWillAcceptTrade &&
-		teams[1].pids.length === 0 &&
-		teams[1].dpids.length === 0
-	) {
-		let assetsText;
-		const numAssets = teams[0].pids.length + teams[0].dpids.length;
-		if (teams[0].pids.length === 0) {
-			assetsText = helpers.plural("Pick", numAssets);
-		} else if (teams[0].dpids.length === 0) {
-			assetsText = helpers.plural("Player", numAssets);
-		} else {
-			assetsText = helpers.plural("Asset", numAssets);
-		}
+	const { accepted, message, undo } = await trade.propose(forceTrade);
+	await toUI("realtimeUpdate", []);
 
-		const proceed = await toUI(
-			"confirm",
-			[
-				"Are you sure you want to propose a trade where you receive nothing?",
-				{
-					okText: `Give Away ${assetsText}`,
-				},
-			],
-			conditions,
-		);
-
-		if (!proceed) {
-			return;
-		}
+	let undoKey;
+	if (undo) {
+		undoKey = local.undoLog.add(undo, [
+			"advanceDay",
+			"leagueChange",
+			"newPhase",
+		]);
 	}
 
-	const output = await trade.propose(forceTrade);
-	await toUI("realtimeUpdate", []);
-	return output;
+	return {
+		accepted,
+		message,
+		undoKey,
+	};
 };
 
 const toggleColaOptOut = async () => {

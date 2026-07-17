@@ -18,27 +18,23 @@ import { ValueChangeCalculator } from "../team/ValueChangeCalculator.ts";
  * @param {boolean} forceTrade When true (like in God Mode), this trade is accepted regardless of the AI
  * @return {Promise.<boolean, string>} Resolves to an array. The first argument is a boolean for whether the trade was accepted or not. The second argument is a string containing a message to be dispalyed to the user.
  */
-const propose = async (
-	forceTrade: boolean = false,
-): Promise<[boolean, string | null]> => {
+const propose = async (forceTrade: boolean = false) => {
 	if (
 		g.get("phase") >= PHASE.AFTER_TRADE_DEADLINE &&
 		g.get("phase") <= PHASE.PLAYOFFS
 	) {
-		return [
-			false,
-			`Error! You're not allowed to make trades ${
+		return {
+			accepted: false as const,
+			message: `Error! You're not allowed to make trades ${
 				g.get("phase") === PHASE.AFTER_TRADE_DEADLINE
 					? "after the trade deadline"
 					: "now"
 			}.`,
-		];
+		};
 	}
 
 	const { teams } = await get();
 	const tids: [number, number] = [teams[0].tid, teams[1].tid];
-	const pids: [number[], number[]] = [teams[0].pids, teams[1].pids];
-	const dpids: [number[], number[]] = [teams[0].dpids, teams[1].dpids];
 
 	// The summary will return a warning if (there is a problem. In that case,
 	// that warning will already be pushed to the user so there is no need to
@@ -46,10 +42,8 @@ const propose = async (
 	const s = await summary(teams);
 
 	if (s.warning && !forceTrade) {
-		return [false, null];
+		return { accepted: false as const, message: null };
 	}
-
-	let outcome = "rejected"; // Default
 
 	const dv = await new ValueChangeCalculator().evaluate({
 		tid: teams[1].tid,
@@ -65,14 +59,11 @@ const propose = async (
 		const hash = hashSavedTrade(teams);
 
 		// Trade players
-		outcome = "accepted";
-		await processTrade(tids, pids, dpids);
+		const undo = await processTrade(teams, hash);
 
 		// Delete from saved trades, if applicable
 		await idb.cache.savedTrades.delete(hash);
-	}
 
-	if (outcome === "accepted") {
 		await clear();
 
 		// Auto-sort team rosters
@@ -87,7 +78,11 @@ const propose = async (
 			await team.rosterAutoSort(tid, onlyNewPlayers);
 		}
 
-		return [true, 'Trade accepted! "Nice doing business with you!"'];
+		return {
+			accepted: true as const,
+			message: 'Trade accepted! "Nice doing business with you!"',
+			undo,
+		};
 	}
 
 	// Return a different rejection message based on how close we are to a deal. When dv < 0, the closer to 0, the better the trade for the AI.
@@ -101,7 +96,7 @@ const propose = async (
 		message = "What, are you crazy?!";
 	}
 
-	return [false, `Trade rejected! "${message}"`];
+	return { accepted: false as const, message: `Trade rejected! "${message}"` };
 };
 
 export default propose;

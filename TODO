@@ -938,6 +938,23 @@ indicator of if trade will be accepted, trade value
 allow undoing actions
 - types
   - trade
+    - test
+      - get rid of confirm dialog for trade for nothing
+      - confirm all assets on correct team
+      - move assets back to original teams
+      - event
+      - player transactions entry (search based on eid)
+      - numPlayersTradedAway
+    - roster sort
+      - t.depth
+      - rosterOrder OF WHOLE TEAM
+      - maybe also add this for signing/releasing a player
+      - maybe just call auto sort if appropriate
+      - reset trade state
+      - restore saved trade - initialHash, only if was saved before
+    - show nice summary in notification
+    - why does rawTeams get mutated in processTrade?
+      - Compute hash now, since teams is mutated in processTrade somehow
   - drafting player (tricky bc AI goes right after)
   - X to hide a trade offer
   - releasing player

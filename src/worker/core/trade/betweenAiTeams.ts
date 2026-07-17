@@ -136,9 +136,7 @@ const attempt = async (valueChangeCalculator: ValueChangeCalculator) => {
 	}
 
 	const finalTids: [number, number] = [teams[0].tid, teams[1].tid];
-	const finalPids: [number[], number[]] = [teams[0].pids, teams[1].pids];
-	const finalDpids: [number[], number[]] = [teams[0].dpids, teams[1].dpids];
-	await processTrade(finalTids, finalPids, finalDpids);
+	await processTrade(teams, undefined);
 
 	return finalTids;
 };

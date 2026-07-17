@@ -55,13 +55,9 @@ const propose = async (forceTrade: boolean = false) => {
 	});
 
 	if (dv > 0 || forceTrade) {
-		// Compute hash now, since teams is mutated in processTrade somehow
 		const hash = hashSavedTrade(teams);
-
-		// Trade players
 		const undo = await processTrade(teams, hash);
 
-		// Delete from saved trades, if applicable
 		await idb.cache.savedTrades.delete(hash);
 
 		await clear();

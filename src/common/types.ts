@@ -883,10 +883,6 @@ export type LogEventType =
 export type DistributiveOmit<T, K extends keyof T> = T extends any
 	? Omit<T, K>
 	: never;
-export type LogEventSaveOptions = DistributiveOmit<
-	EventBBGMWithoutKey,
-	"season"
->;
 
 export type OwnerMood = {
 	money: number;

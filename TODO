@@ -951,6 +951,7 @@ allow undoing actions
       - t.depth
       - rosterOrder OF WHOLE TEAM
     - show nice summary in notification
+    - clear "Trade accepted!" message
   - drafting player (tricky bc AI goes right after)
   - X to hide a trade offer
   - releasing player

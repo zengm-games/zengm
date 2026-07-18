@@ -938,11 +938,6 @@ indicator of if trade will be accepted, trade value
 allow undoing actions
 - types
   - trade
-    - test
-      - get rid of confirm dialog for trade for nothing? or still keep?
-      - restore saved trade - initialHash, only if was saved before
-      - roster sort
-        - t.depth in other sports
     - show nice summary in notification
     - clear "Trade accepted!" message
   - drafting player (tricky bc AI goes right after)

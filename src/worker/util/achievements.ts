@@ -380,11 +380,11 @@ const checkMvp = async (limit: number, overallLimit: number) => {
 
 		const userTid = g.get("userTid", awards.season);
 		if (awards.mvp?.tid === userTid) {
-			checkMvpCache!.count += 1;
+			checkMvpCache.count += 1;
 		}
 
 		// > rather than >=, because we need to know if we just hit the limit (==) or if it was already beyond it (>)
-		if (checkMvpCache!.count > overallLimit) {
+		if (checkMvpCache.count > overallLimit) {
 			break;
 		}
 	}

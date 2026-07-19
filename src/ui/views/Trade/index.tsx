@@ -20,6 +20,33 @@ export type HandleToggle = (
 	id: number,
 ) => Promise<void>;
 
+const TradeSideText = ({
+	boldNothing,
+	numPicks,
+	numPlayers,
+}: {
+	boldNothing?: boolean;
+	numPicks: number;
+	numPlayers: number;
+}) => {
+	if (numPlayers === 0 && numPicks === 0) {
+		if (boldNothing) {
+			return <b className="text-danger">nothing</b>;
+		}
+		return "nothing";
+	}
+
+	if (numPlayers === 0) {
+		return `${numPicks} ${helpers.plural("pick", numPicks)}`;
+	}
+
+	if (numPicks === 0) {
+		return `${numPlayers} ${helpers.plural("player", numPlayers)}`;
+	}
+
+	return `${numPlayers} ${helpers.plural("player", numPlayers)} and ${numPicks} ${helpers.plural("pick", numPicks)}`;
+};
+
 const Trade = (props: View<"trade">) => {
 	const [state, setState] = useState({
 		accepted: false,
@@ -222,29 +249,6 @@ const Trade = (props: View<"trade">) => {
 		}));
 	};
 
-	const handleClickPropose = async () => {
-		const { accepted, message, undoKey } = await toWorker(
-			"main",
-			"proposeTrade",
-			state.forceTrade,
-		);
-
-		setState((prevState) => ({
-			...prevState,
-			accepted,
-			message,
-			prevTeams: undefined,
-		}));
-
-		if (undoKey !== undefined) {
-			showUndoNotification({
-				actionName: "trade",
-				undoKey,
-				title: `Trade happened`,
-			});
-		}
-	};
-
 	const {
 		otherTeamsWantToHire,
 		lost,
@@ -269,6 +273,44 @@ const Trade = (props: View<"trade">) => {
 		otherPids,
 		resetMessage,
 	} = props;
+
+	const handleClickPropose = async () => {
+		const { accepted, message, undoKey } = await toWorker(
+			"main",
+			"proposeTrade",
+			state.forceTrade,
+		);
+
+		setState((prevState) => ({
+			...prevState,
+			accepted,
+			message,
+			prevTeams: undefined,
+		}));
+
+		if (undoKey !== undefined) {
+			showUndoNotification({
+				actionName: "trade",
+				undoKey,
+				title: (
+					<>
+						You traded{" "}
+						<TradeSideText
+							numPicks={userDpids.length}
+							numPlayers={userPids.length}
+						/>{" "}
+						for{" "}
+						<TradeSideText
+							boldNothing
+							numPicks={otherDpids.length}
+							numPlayers={otherPids.length}
+						/>
+						.
+					</>
+				),
+			});
+		}
+	};
 
 	useTitleBar({
 		title: "Trade",

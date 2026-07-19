@@ -325,7 +325,7 @@ const processTrade = async (
 
 		await idb.cache.events.delete(eid);
 
-		void toUI("realtimeUpdate", [["playerMovement"]]);
+		void toUI("realtimeUpdate", [["playerMovement", "undoTrade"]]);
 		void recomputeLocalUITeamOvrs();
 
 		return true;

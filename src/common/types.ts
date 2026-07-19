@@ -1877,6 +1877,7 @@ export type UpdateEvents = (
 	| "team"
 	| "teamFinances"
 	| "draftLottery"
+	| "undoTrade"
 
 	// This should be used for things that do stuff like "select all players on watch list", not updating the watch property for individual players. crossTabEmit handles that automatically.
 	| "watchList"

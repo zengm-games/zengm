@@ -267,11 +267,19 @@ const Trade = (props: View<"trade">) => {
 		userPids,
 		otherDpids,
 		otherPids,
+		resetMessage,
 	} = props;
 
 	useTitleBar({
 		title: "Trade",
 	});
+
+	if (resetMessage && state.message !== null) {
+		setState((state) => ({
+			...state,
+			message: null,
+		}));
+	}
 
 	const {
 		challengeNoRatings,

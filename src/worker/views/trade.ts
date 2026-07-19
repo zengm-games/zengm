@@ -2,7 +2,11 @@ import { bySport } from "../../common/sportFunctions.ts";
 import { trade } from "../core/index.ts";
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { TradeSummary, TradeTeams } from "../../common/types.ts";
+import type {
+	TradeSummary,
+	TradeTeams,
+	UpdateEvents,
+} from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { orderBy } from "../../common/utils.ts";
 import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
@@ -86,7 +90,7 @@ const validateTeams = async () => {
 	return trade.updatePlayers(teams);
 };
 
-const updateTrade = async () => {
+const updateTrade = async (inputs: unknown, updateEvents: UpdateEvents) => {
 	const teams = await validateTeams();
 	const userRosterAll = await idb.cache.players.indexGetAll(
 		"playersByTid",
@@ -252,6 +256,7 @@ const updateTrade = async () => {
 		forceTrade: false,
 		numDraftRounds: g.get("numDraftRounds"),
 		multiTeamMode: g.get("userTids").length > 1,
+		resetMessage: updateEvents.includes("undoTrade"),
 	};
 };
 

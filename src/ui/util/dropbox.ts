@@ -16,11 +16,7 @@ export const getAuthenticationUrl = async (lid: number) => {
 	const redirectUri = `${window.location.origin}/dropbox`;
 	const state = `${lid}`;
 
-	// Type cast because https://github.com/dropbox/dropbox-sdk-js/issues/1125
-	const authUrl = (await dropboxAuth.getAuthenticationUrl(
-		redirectUri,
-		state,
-	)) as string;
+	const authUrl = await dropboxAuth.getAuthenticationUrl(redirectUri, state);
 
 	return authUrl;
 };

@@ -66,9 +66,19 @@ custom awards
   - indexeddb
   - import
 
+update hockey salary cap and schedule https://discord.com/channels/290013534023057409/1522038837948186744/1522038837948186744
+
+arrow navigation between players on team https://old.reddit.com/r/BasketballGM/comments/1afy7ba/monthly_suggestions_thread/kr9whzi/ https://discord.com/channels/290013534023057409/1521272839469142256/1521272839469142256
+- make it a select? or listen for keyboard shortcut?
+- could show arrows like dropdowns
+
+leaguewide jersey retirement https://discord.com/channels/290013534023057409/1522027863308501132/1522027863308501132
+
 if getLeaderRequirements only has gp and it's a per game stat, then use prorated value of stat for players under gp requirement to test for eligibility
 - for league leader bolding, need to keep track of both values - 1 for sort (prorated) and 1 for storing leader (actual)
 - for leaders page, use prorated values only and show an asterisk explaining
+
+when position matters for a transaction (currently DRAFT_BY_TEAM_OVR, not trades) UI should show some indication of positions a team wants
 
 82-0
 - if you click new team you can get the same team https://discord.com/channels/290013534023057409/1514722878938153070/1515650476132274176
@@ -296,6 +306,7 @@ sentry
 - one project per sport?
 
 catchers with strong arms never have people try stealing, maybe https://discord.com/channels/290013534023057409/944392892905037885/1441779272048971828 can fix it
+- better https://discord.com/channels/290013534023057409/1519340010489512026/1519340010489512026
 
 rfld is kind of weird, with how it looks at team stats rather than player stats to divide credit https://discord.com/channels/290013534023057409/944392892905037885/1441000354740441128
 
@@ -984,9 +995,6 @@ new achievements
   - Offense Is The Best Defense: win the chip while having a bottom 5 defense
   - Height Doesn't Matter: have a player under 6 feet tall win mvp
 - rebuild achievements before 1980 https://discord.com/channels/290013534023057409/290013534023057409/1513623237064528073
-
-arrow navigation between players on team https://old.reddit.com/r/BasketballGM/comments/1afy7ba/monthly_suggestions_thread/kr9whzi/
-- make it a select? or listen for keyboard shortcut?
 
 offsetting penalties at end of half should lead to untimed down, same as defensive penalty https://discord.com/channels/290013534023057409/290015591216054273/1215714915550232646
 

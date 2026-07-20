@@ -66,6 +66,10 @@ custom awards
   - indexeddb
   - import
 
+if getLeaderRequirements only has gp and it's a per game stat, then use prorated value of stat for players under gp requirement to test for eligibility
+- for league leader bolding, need to keep track of both values - 1 for sort (prorated) and 1 for storing leader (actual)
+- for leaders page, use prorated values only and show an asterisk explaining
+
 82-0
 - if you click new team you can get the same team https://discord.com/channels/290013534023057409/1514722878938153070/1515650476132274176
 - add support for using existing league, rather than real players

@@ -90,9 +90,6 @@ baseball - no IBB if this will end the game https://discord.com/channels/2900135
 baseball - pitcher enters the game after 3rd out has been recorded https://app.fastmail.com/mail/Inbox/AE1AMCuNk4zo.StojfBl-A73g?u=433e4054
 - should wait until beginning of next inning or AB, especially if the game is over
 
-precompute nba2027 odds - there are only (ha) 491 possible combinations of probabilities https://discord.com/channels/@me/1511922269084188723/1512093156211032174
-- only need enough decimal places to show in the UI
-
 for non-basketball sports, colored ratings (from ratingsGradientStyle) should be position relative?
 
 some way to collapse non-TOT rows on player profile https://old.reddit.com/r/BasketballGM/comments/1t0d9ep/monthly_suggestions_thread/ojc8rru/

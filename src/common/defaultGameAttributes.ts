@@ -457,10 +457,10 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				numPeriods: 3,
 				salaryCapType: "hard",
 				salaryCap: 105000,
-				minPayroll: 75000,
+				minPayroll: 60000,
 				luxuryPayroll: 120000,
-				minContract: 650,
-				maxContract: 17000,
+				minContract: 700,
+				maxContract: 20000,
 				minRosterSize: 24,
 				maxRosterSize: 26,
 				// Injury rate per player per possession, basically. But it's a little more complicated than that.

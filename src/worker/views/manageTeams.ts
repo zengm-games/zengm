@@ -51,7 +51,12 @@ const updateTeamInfo = async () => {
 		defaultStadiumCapacity: g.get("defaultStadiumCapacity"),
 		confs: g.get("confs"),
 		divs: g.get("divs"),
-		teams: orderBy(teams, ["region", "name", "tid"]),
+		teams: orderBy(teams, [
+			(t) => (t.disabled ? 1 : 0),
+			"region",
+			"name",
+			"tid",
+		]),
 	};
 };
 

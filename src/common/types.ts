@@ -877,7 +877,8 @@ export type LogEventType =
 	| "upgrade"
 	| "luxuryTax"
 	| "luxuryTaxDist"
-	| "minPayroll";
+	| "minPayroll"
+	| "undo";
 
 // https://stackoverflow.com/a/57103940/786644
 export type DistributiveOmit<T, K extends keyof T> = T extends any

@@ -63,7 +63,7 @@ const UndoNotification = ({ actionName = "action", undoKey, title }: Props) => {
 
 export const showUndoNotification = (props: Props) => {
 	showNotification({
-		type: "info",
+		type: "undo",
 		text: <UndoNotification {...props} />,
 		onClose: async () => {
 			await toWorker("undoLog", "remove", props.undoKey);

@@ -9,6 +9,8 @@ type Props = {
 	title: ReactNode;
 };
 
+const NEGATIVE_MARGIN = 4;
+
 const UndoNotification = ({ actionName = "action", undoKey, title }: Props) => {
 	const [status, setStatus] = useState<"init" | "waiting" | "success" | "fail">(
 		"init",
@@ -20,9 +22,20 @@ const UndoNotification = ({ actionName = "action", undoKey, title }: Props) => {
 		return `Failed to undo ${actionName}`;
 	} else {
 		return (
-			<>
-				<div>{title}</div>
-				<div className="mt-2">
+			<div
+				className="d-flex"
+				style={{
+					margin: `-${NEGATIVE_MARGIN}px 0`,
+				}}
+			>
+				<div
+					style={{
+						padding: `${NEGATIVE_MARGIN}px 0`,
+					}}
+				>
+					{title}
+				</div>
+				<div className="ms-auto">
 					<button
 						className="btn btn-sm btn-secondary"
 						disabled={status === "waiting"}
@@ -43,7 +56,7 @@ const UndoNotification = ({ actionName = "action", undoKey, title }: Props) => {
 						Undo
 					</button>
 				</div>
-			</>
+			</div>
 		);
 	}
 };

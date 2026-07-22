@@ -305,7 +305,6 @@ const Trade = (props: View<"trade">) => {
 							numPicks={otherDpids.length}
 							numPlayers={otherPids.length}
 						/>
-						.
 					</>
 				),
 			});

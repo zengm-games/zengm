@@ -275,24 +275,28 @@ const FreeAgents = ({
 				wrappedContractAmount(p, p.contract.amount),
 				wrappedContractExp(p),
 				p.freeAgentType === "available"
-					? {
-							value: (
-								<NegotiateButtons
-									canGoOverCap={salaryCapType === "none"}
-									capSpace={capSpace}
-									disabled={gameSimInProgress}
-									minContract={minContract}
-									onNegotiate={async () => {
-										await negotiationModal.negotiate(p.pid);
-									}}
-									spectator={spectator}
-									p={p}
-									willingToNegotiate={p.mood.user.willing}
-								/>
-							),
-							classNames: "d-flex align-items-center gap-2",
-							searchValue: p.mood.user.willing ? "Negotiate Sign" : "Refuses!",
-						}
+					? spectator
+						? null
+						: {
+								value: (
+									<NegotiateButtons
+										canGoOverCap={salaryCapType === "none"}
+										capSpace={capSpace}
+										disabled={gameSimInProgress}
+										minContract={minContract}
+										onNegotiate={async () => {
+											await negotiationModal.negotiate(p.pid);
+										}}
+										spectator={spectator}
+										p={p}
+										willingToNegotiate={p.mood.user.willing}
+									/>
+								),
+								classNames: "d-flex align-items-center gap-2",
+								searchValue: p.mood.user.willing
+									? "Negotiate Sign"
+									: "Refuses!",
+							}
 					: signedFreeAgentWrapped(
 							p.freeAgentTransaction,
 							freeAgencySeason,

@@ -2035,21 +2035,30 @@ type AwardInfo = {
 	name: string;
 	formula: string;
 	bench?: boolean;
-	grouping?: "conf" | "div"; // undefined means league
 	mip?: boolean;
 	rookie?: boolean;
-	statRange?: "playoffs" | "combined" | "finals" | "semifinals"; // undefined means regularSeason
-	numTeams?: number; // undefined means individual award
+	statRange?: "playoffs" | "combined" | number; // undefined means regularSeason, number is index of finals where -1 is finals, -2 is semifinals, etc
+	group?:
+		| {
+				// undefined means league
+				type: "conf";
+				cid: number;
+		  }
+		| {
+				type: "div";
+				did: number;
+		  };
 };
 
-type Award2 = AwardInfo & {
-	group?: number | undefined; // based on grouping - cid or did, or undefined if league
-} & (
+type Award2 = AwardInfo &
+	(
 		| {
+				// Individual award
 				numTeams?: undefined;
 				winner: AwardPlayer2;
 		  }
 		| {
+				// Tema award
 				numTeams: number;
 				winner: AwardPlayer2[][];
 		  }

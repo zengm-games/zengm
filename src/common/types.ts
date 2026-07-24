@@ -548,6 +548,10 @@ export type GameAttributesLeague = {
 	autoRelocateGeo: "naFirst" | "naOnly" | "any";
 	autoRelocateRealign: boolean;
 	autoRelocateRebrand: boolean;
+	awards: (Omit<AwardInfo, "group"> & {
+		group?: "conf" | "div";
+		numTeams?: number;
+	})[];
 	brotherRate: number;
 	budget: boolean;
 	challengeNoDraftPicks: boolean;

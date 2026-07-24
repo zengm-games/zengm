@@ -386,6 +386,67 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	currencyFormat: ["$", ".", ""],
 	forceRetireRealPlayers: false,
 	forceHistoricalRosters: false,
+	awards: [
+		{
+			shortName: "MVP",
+			name: "Most Valuable Player",
+			formula: "ws",
+		},
+		{
+			shortName: "ROY",
+			name: "Rookie of the Year",
+			formula: "ws",
+			rookie: true,
+		},
+		{
+			shortName: "SMOY",
+			name: "Sixth Man of the Year",
+			formula: "ws",
+			bench: true,
+		},
+		{
+			shortName: "DPOY",
+			name: "Defensive Player of the Year",
+			formula: "dws",
+		},
+		{
+			shortName: "MIP",
+			name: "Most Improved Player",
+			formula: "ws",
+			mip: true,
+		},
+		{
+			shortName: "FMVP",
+			name: "Finals MVP",
+			formula: "ws",
+			statRange: -1,
+		},
+		{
+			shortName: "SFMVP",
+			name: "Semifinals MVP",
+			formula: "ws",
+			statRange: -2,
+		},
+		{
+			shortName: "AL",
+			name: "All-League",
+			formula: "ws",
+			numTeams: 3,
+		},
+		{
+			shortName: "AL",
+			name: "All-Defensive",
+			formula: "dws",
+			numTeams: 2,
+		},
+		{
+			shortName: "AL",
+			name: "All-Rookie",
+			formula: "ws",
+			rookie: true,
+			numTeams: 2,
+		},
+	],
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!

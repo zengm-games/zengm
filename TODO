@@ -36,6 +36,11 @@ custom awards
     - Dunk Contest
     - Three Point Contest
     - Hall of Fame
+    - stat leader
+- formula implementation
+  - similar to GOAT season
+  - playoff series ones are special
+  - how to implement MIP score?
 - denormalization
   - if we go with denormalized, then maybe store more awards objects in cache so we can view active player page with no DB hit
     - could even do this dynamically, load all award seasons that any player references

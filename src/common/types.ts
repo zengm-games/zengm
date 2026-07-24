@@ -1143,14 +1143,13 @@ export type MinimalPlayerRatings = {
 export type PlayerAward =
 	| {
 			season: number;
-			shortName?: undefined;
 			type: string;
 	  }
 	| {
 			season: number;
-			shortName: string;
-			rank?: number; // rank in individual award, team number in team award, undefined means there is only one team
 			type?: undefined;
+			index: number; // Index in the list of awards for this season
+			rank?: number; // rank in individual award, team number in team award, undefined means there is only one team
 	  };
 
 export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {
@@ -2038,9 +2037,8 @@ type AwardInfo = {
 	mip?: boolean;
 	rookie?: boolean;
 	statRange?: "playoffs" | "combined" | number; // undefined means regularSeason, number is index of finals where -1 is finals, -2 is semifinals, etc
-	group?:
+	group?: // undefined means league
 		| {
-				// undefined means league
 				type: "conf";
 				cid: number;
 		  }
@@ -2053,14 +2051,15 @@ type AwardInfo = {
 type Award2 = AwardInfo &
 	(
 		| {
-				// Individual award
+				// Individual award - top 10 are saved
 				numTeams?: undefined;
-				winner: AwardPlayer2;
+				winner: AwardPlayer2[];
 		  }
 		| {
-				// Tema award
+				// Team award
 				numTeams: number;
 				winner: AwardPlayer2[][];
+				formulaByPos: Record<string, string>;
 		  }
 	);
 export type Awards2 = {

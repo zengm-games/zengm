@@ -13,6 +13,7 @@ custom awards
   - if team
     - way to specify if it's position based or not
       - maybe just automatically handle this per sport
+      - if by position, support different formula per position
     - number of players per team
       - maybe just automatically handle this per sport
     - how many teams
@@ -35,6 +36,9 @@ custom awards
     - Dunk Contest
     - Three Point Contest
     - Hall of Fame
+- denormalization
+  - if we go with denormalized, then maybe store more awards objects in cache so we can view active player page with no DB hit
+    - could even do this dynamically, load all award seasons that any player references
 - UI to update
   - award races
   - groupAwards
@@ -62,9 +66,12 @@ custom awards
   - make sure it's deleted when importing
 - upgrade
   - upgrade old awards objects
+    - specify old default awards, even if we're changing the defaults now
   - from awards objects, look up pids and rewrite Player.awards entries for ones that can now be looked up from awards object (add rank)
   - indexeddb
   - import
+- later
+  - support editing metadata of past awards, like name and shortName. maybe even formula too...
 
 arrow navigation between players on team https://old.reddit.com/r/BasketballGM/comments/1afy7ba/monthly_suggestions_thread/kr9whzi/ https://discord.com/channels/290013534023057409/1521272839469142256/1521272839469142256
 - make it a select? or listen for keyboard shortcut?

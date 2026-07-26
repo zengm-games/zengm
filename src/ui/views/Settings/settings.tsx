@@ -1120,7 +1120,7 @@ export const settings: Setting[] = (
 			),
 		},
 		{
-			category: "Events",
+			category: "Team Movement",
 			key: "autoExpandProb",
 			name: "Auto Expansion Probability",
 			type: "float",
@@ -1133,7 +1133,7 @@ export const settings: Setting[] = (
 			},
 		},
 		{
-			category: "Events",
+			category: "Team Movement",
 			key: "autoExpandGeo",
 			name: "Auto Expansion Regions",
 			type: "string",
@@ -1146,7 +1146,7 @@ export const settings: Setting[] = (
 			],
 		},
 		{
-			category: "Events",
+			category: "Team Movement",
 			key: "autoExpandNumTeams",
 			name: "Auto Expansion # Teams",
 			type: "int",
@@ -1159,7 +1159,7 @@ export const settings: Setting[] = (
 			},
 		},
 		{
-			category: "Events",
+			category: "Team Movement",
 			key: "autoExpandMaxNumTeams",
 			name: "Auto Expansion Max Total # Teams",
 			type: "int",
@@ -1172,7 +1172,7 @@ export const settings: Setting[] = (
 			},
 		},
 		{
-			category: "Events",
+			category: "Team Movement",
 			key: "autoRelocateProb",
 			name: "Auto Relocation Probability",
 			type: "float",
@@ -1185,7 +1185,7 @@ export const settings: Setting[] = (
 			},
 		},
 		{
-			category: "Events",
+			category: "Team Movement",
 			key: "autoRelocateGeo",
 			name: "Auto Relocation Regions",
 			type: "string",
@@ -1198,13 +1198,13 @@ export const settings: Setting[] = (
 				'"North America first" means teams won\'t relocate outside of North America unless another team is already outside of North America or all of the North American teams are already taken.',
 		},
 		{
-			category: "Events",
+			category: "Team Movement",
 			key: "autoRelocateRebrand",
 			name: "Rebrand Teams After Auto Relocation",
 			type: "bool",
 		},
 		{
-			category: "Events",
+			category: "Team Movement",
 			key: "autoRelocateRealign",
 			name: "Realign Divs After Auto Relocation",
 			type: "bool",

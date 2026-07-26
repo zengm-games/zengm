@@ -187,6 +187,7 @@ export type Category =
 	| "Contracts"
 	| "Rookie Contracts"
 	| "Events"
+	| "Team Movement"
 	| "Injuries"
 	| "Game Simulation"
 	| "Tendencies"

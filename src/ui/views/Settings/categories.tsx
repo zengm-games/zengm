@@ -127,6 +127,9 @@ const categories: {
 		name: "Events",
 	},
 	{
+		name: "Team Movement",
+	},
+	{
 		name: "Injuries",
 	},
 	{

@@ -118,9 +118,13 @@ export const COMPOSITE_WEIGHTS: CompositeWeights<RatingKey> = {
 		ratings: ["kac"],
 		weights: [1],
 	},
-	punting: {
-		ratings: ["ppw", "pac"],
-		weights: [1, 1],
+	puntingPower: {
+		ratings: ["ppw"],
+		weights: [1],
+	},
+	puntingAccuracy: {
+		ratings: ["pac"],
+		weights: [1],
 	},
 };
 

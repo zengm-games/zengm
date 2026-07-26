@@ -1548,13 +1548,32 @@ class GameSim extends GameSimBase {
 
 		const punter = this.getTopPlayerOnField(this.o, "P");
 		const puntReturner = this.getTopPlayerOnField(this.d, "PR");
-		const adjustment = (punter.compositeRating.punting - 0.6) * 20; // 100 ratings - 8 yd bonus. 0 ratings - 12 yard penalty
+		const adjustment = (punter.compositeRating.puntingPower - 0.7) * 20; // 100 ratings - 6 yd bonus. 0 ratings - 14 yard penalty
 
 		const maxDistance = 109 - this.scrimmage;
-		const distance = Math.min(
-			Math.round(truncGauss(44 + adjustment, 8, 25, 90)),
-			maxDistance,
-		);
+		const averageDistance = 44 + adjustment;
+		const sigma = 8;
+
+		// If close to endzone, try to avoid it. Otherwise, kick as far as possible
+		let distance;
+		if (this.scrimmage + averageDistance >= 90) {
+			const targetDistance = 90 - this.scrimmage;
+			const adjustedSigma =
+				sigma / 2 + sigma * (1 - punter.compositeRating.puntingAccuracy);
+			distance = Math.round(
+				truncGauss(
+					targetDistance,
+					adjustedSigma,
+					Math.max(10, targetDistance - 20),
+					targetDistance + 20,
+				),
+			);
+		} else {
+			distance = Math.round(truncGauss(averageDistance, sigma, 25, 90));
+		}
+
+		const distanceAccountingForFieldSize = Math.min(distance, maxDistance);
+
 		let dt = randInt(5, 9);
 
 		this.checkPenalties("punt");
@@ -1562,7 +1581,7 @@ class GameSim extends GameSimBase {
 		const { touchback } = this.currentPlay.addEvent({
 			type: "p",
 			p: punter,
-			yds: distance,
+			yds: distanceAccountingForFieldSize,
 		});
 
 		this.playByPlay.logEvent({

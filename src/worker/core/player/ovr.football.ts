@@ -72,7 +72,8 @@ const info = {
 		kickingAccuracy: [1, 1],
 	},
 	P: {
-		punting: [1, 1],
+		puntingPower: [1, 1],
+		puntingAccuracy: [1, 1],
 	},
 	KR: {
 		speed: [4, 1],

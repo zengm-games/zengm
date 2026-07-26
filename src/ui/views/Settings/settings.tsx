@@ -1055,6 +1055,31 @@ export const settings: Setting[] = (
 				);
 			},
 		},
+		...(isSport("basketball")
+			? [
+					{
+						category: "Events",
+						key: "easterEggPlayers",
+						name: "Easter Egg Players",
+						type: "bool",
+						description:
+							'When enabled there is a very rare chance for an "Easter egg" player to appear, one of a few select notable historical figures.',
+					},
+				]
+			: []),
+		{
+			category: "Events",
+			key: "fakeAgeProb",
+			name: "Fake Age Probability",
+			type: "float",
+			description:
+				"Probability each offseason there will be one player who is revealed to have faked his age to appear like a better prospect.",
+			validator: (value) => {
+				if (value < 0 || value > 1) {
+					throw new Error("Value must be between 0 and 1");
+				}
+			},
+		},
 		{
 			category: "Events",
 			key: "brotherRate",

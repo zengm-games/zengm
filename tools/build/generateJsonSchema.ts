@@ -1536,6 +1536,14 @@ export const generateJsonSchema = (sport: Sport | "test") => {
 					footballOvertimePlayoffs: {
 						enum: ["suddenDeath", "exceptFg", "bothPossess"],
 					},
+					easterEggPlayers: {
+						type: "boolean",
+					},
+					fakeAgeProb: {
+						type: "number",
+						minimum: 0,
+						maximum: 1,
+					},
 				},
 			},
 			games: {

@@ -784,6 +784,8 @@ export type GameAttributesLeague = {
 	twoPointConversions: boolean;
 	footballOvertime: FootballOvertime;
 	footballOvertimePlayoffs: FootballOvertime;
+	easterEggPlayers: boolean;
+	fakeAgeProb: number;
 };
 
 type AlwaysWrap = (typeof ALWAYS_WRAP)[number];

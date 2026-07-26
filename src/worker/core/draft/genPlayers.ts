@@ -60,7 +60,7 @@ const genPlayers = async (
 	}
 
 	// Easter eggs!
-	if (isSport("basketball") && !forceScrubs) {
+	if (isSport("basketball") && !forceScrubs && g.get("easterEggPlayers")) {
 		if (Math.random() < 1 / 100000) {
 			const p = player.generate(
 				PLAYER.UNDRAFTED,

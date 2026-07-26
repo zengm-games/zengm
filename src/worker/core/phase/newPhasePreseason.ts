@@ -278,7 +278,11 @@ const newPhasePreseason = async (
 	}
 
 	// Small chance that a player was lying about his age!
-	if (!repeatSeason && !forceHistoricalRosters && Math.random() < 0.01) {
+	if (
+		!repeatSeason &&
+		!forceHistoricalRosters &&
+		Math.random() < g.get("fakeAgeProb")
+	) {
 		const p = player.getPlayerFakeAge(players);
 
 		if (p) {

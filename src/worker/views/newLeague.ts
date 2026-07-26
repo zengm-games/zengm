@@ -445,6 +445,11 @@ export const getDefaultSettings = () => {
 			defaultGameAttributes,
 			"footballOvertimePlayoffs",
 		),
+		easterEggPlayers: unwrapGameAttribute(
+			defaultGameAttributes,
+			"easterEggPlayers",
+		),
+		fakeAgeProb: unwrapGameAttribute(defaultGameAttributes, "fakeAgeProb"),
 
 		// This can be undefined, but if the setting is ever displayed to the user, it should default to "rookie"
 		realDraftRatings:

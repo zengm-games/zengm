@@ -101,6 +101,7 @@ const gameAttributesKeysSportSpecific = {
 		"allStarThree",
 		"forceRetireRealPlayers",
 		"forceHistoricalRosters",
+		"easterEggPlayers",
 	]),
 	football: new Set<GameAttributeKey>([
 		"fantasyPoints",
@@ -386,6 +387,8 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	currencyFormat: ["$", ".", ""],
 	forceRetireRealPlayers: false,
 	forceHistoricalRosters: false,
+	easterEggPlayers: true,
+	fakeAgeProb: 0.01,
 };
 
 // Extra condition for NODE_ENV is because we use this export only in tests, so we don't want it in the basketball bundle!

@@ -145,6 +145,10 @@ const processStats = (
 			row[stat] = helpers.percentage(ps.rbw, ps.rba);
 		} else if (stat === "skAlwPct") {
 			row[stat] = helpers.percentage(ps.skAlw, ps.pba);
+		} else if (stat === "pntTBPct") {
+			row[stat] = helpers.percentage(ps.pntTB, ps.pnt);
+		} else if (stat === "pntIn20Pct") {
+			row[stat] = helpers.percentage(ps.pntIn20, ps.pnt);
 		} else if (stat === "keyStats") {
 			const defTck = ps.defTckSolo + ps.defTckAst;
 			const fga = ps.fga0 + ps.fga20 + ps.fga30 + ps.fga40 + ps.fga50;

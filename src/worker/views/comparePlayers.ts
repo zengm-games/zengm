@@ -258,9 +258,11 @@ const getStatsByPositions = (positions: string[]) => {
 					stats.push(
 						"pnt",
 						"pntYdsPerAtt",
-						"pntIn20",
-						"pntTB",
 						"pntLng",
+						"pntTB",
+						"pntTBPct",
+						"pntIn20",
+						"pntIn20Pct",
 						"pntBlk",
 					);
 				}

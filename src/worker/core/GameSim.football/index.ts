@@ -1551,25 +1551,17 @@ class GameSim extends GameSimBase {
 		const adjustment = (punter.compositeRating.puntingPower - 0.7) * 20; // 100 ratings - 6 yd bonus. 0 ratings - 14 yard penalty
 
 		const maxDistance = 109 - this.scrimmage;
-		const averageDistance = 44 + adjustment;
+		const averageDistance = 50 + adjustment;
 		const sigma = 8;
 
 		// If close to endzone, try to avoid it. Otherwise, kick as far as possible
-		let distance;
-		if (this.scrimmage + averageDistance >= 90) {
-			const targetDistance = 90 - this.scrimmage;
-			const adjustedSigma =
-				sigma / 2 + sigma * (1 - punter.compositeRating.puntingAccuracy);
-			distance = Math.round(
-				truncGauss(
-					targetDistance,
-					adjustedSigma,
-					Math.max(10, targetDistance - 20),
-					targetDistance + 20,
-				),
-			);
-		} else {
-			distance = Math.round(truncGauss(averageDistance, sigma, 25, 90));
+		let distance = Math.round(truncGauss(averageDistance, sigma, 25, 90));
+		if (
+			this.scrimmage + distance >= 100 &&
+			Math.random() < punter.compositeRating.puntingAccuracy ** 1.5 * 0.95
+		) {
+			const target = randInt(99, Math.max(81, this.scrimmage));
+			distance = target - this.scrimmage;
 		}
 
 		const distanceAccountingForFieldSize = Math.min(distance, maxDistance);

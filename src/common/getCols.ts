@@ -2004,11 +2004,23 @@ const sportSpecificCols = bySport<{
 			sortType: "number",
 			title: "TB",
 		},
+		"stat:pntTBPct": {
+			desc: "Punt Touchbacks per Punt",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "TB%",
+		},
 		"stat:pntIn20": {
 			desc: "Punts Inside 20",
 			sortSequence: ["desc", "asc"],
 			sortType: "number",
 			title: "In20",
+		},
+		"stat:pntIn20Pct": {
+			desc: "Punts Inside 20 per Punt",
+			sortSequence: ["desc", "asc"],
+			sortType: "number",
+			title: "In20%",
 		},
 		"stat:ko": {
 			desc: "Kickoffs",

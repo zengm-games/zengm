@@ -55,6 +55,8 @@ export type TeamStatAttr =
 	| "pbwr"
 	| "rbwr"
 	| "skAlwPct"
+	| "pntTBPct"
+	| "pntIn20Pct"
 	| "oppYds"
 	| "oppYdsPerPlay"
 	| "oppTov"
@@ -105,7 +107,9 @@ export type TeamStatAttr =
 	| "oppRusRecTD"
 	| "oppPbwr"
 	| "oppRbwr"
-	| "oppSkAlwPct";
+	| "oppSkAlwPct"
+	| "oppPntTBPct"
+	| "oppPntIn20Pct";
 
 type AwardTeam = {
 	tid: number;

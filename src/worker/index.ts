@@ -7,6 +7,7 @@ import * as util from "./util/index.ts";
 import * as random from "../common/random.ts";
 import { promiseWorker } from "./util/promiseWorker.ts";
 import { defaultGameAttributes } from "../common/defaultGameAttributes.ts";
+import { generateFace } from "./util/face.ts";
 
 self.bbgm = {
 	...common,
@@ -15,6 +16,9 @@ self.bbgm = {
 	...util,
 	api,
 	defaultGameAttributes,
+	face: {
+		generate: generateFace,
+	},
 	random,
 };
 

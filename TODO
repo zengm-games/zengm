@@ -69,6 +69,9 @@ custom awards
 more prominent warning when editing player and the draft year is in the future while they are on a team
 - also ideally show them on the roster page too
 
+draft history page goes too far back in real players leagues - 20 years back should be only for random players, or should be dynamic based on actual draft year values in database https://discord.com/channels/290013534023057409/1530673084346929322/1530673084346929322
+- "draft.year, retiredYear" index should handle it
+
 arrow navigation between players on team https://old.reddit.com/r/BasketballGM/comments/1afy7ba/monthly_suggestions_thread/kr9whzi/ https://discord.com/channels/290013534023057409/1521272839469142256/1521272839469142256
 - make it a select? or listen for keyboard shortcut?
 - could show arrows like dropdowns

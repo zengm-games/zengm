@@ -66,6 +66,9 @@ custom awards
   - indexeddb
   - import
 
+more prominent warning when editing player and the draft year is in the future while they are on a team
+- also ideally show them on the roster page too
+
 arrow navigation between players on team https://old.reddit.com/r/BasketballGM/comments/1afy7ba/monthly_suggestions_thread/kr9whzi/ https://discord.com/channels/290013534023057409/1521272839469142256/1521272839469142256
 - make it a select? or listen for keyboard shortcut?
 - could show arrows like dropdowns

@@ -988,13 +988,24 @@ const processPlayerStats = (
 const getAttrsToSum = (statsRows: any[]) => {
 	const attrs = statsRows.length > 0 ? Object.keys(statsRows.at(-1)) : [];
 
-	// If these are historical stats with TRB rather than ORB and DRB separate, that will be apparent in the first (oldest) row
-	if (
-		isSport("basketball") &&
-		statsRows.length > 0 &&
-		statsRows[0].trb !== undefined
-	) {
-		attrs.push("trb");
+	// If these are historical stats with TRB rather than ORB and DRB separate
+	if (isSport("basketball")) {
+		// Potentially need to check all rows, because before 1951 there were no rebounds at all
+		let hasTrb = false;
+		for (const row of statsRows) {
+			if (row.trb !== undefined) {
+				// We have TRB -> sum it up
+				hasTrb = true;
+				break;
+			} else if (row.orb !== undefined) {
+				// If there are ORB, then there are no TRB in this or any later row
+				break;
+			}
+		}
+
+		if (hasTrb) {
+			attrs.push("trb");
+		}
 	}
 
 	// If these are historical stats with TOV missing in the first row, then it's possible we need a special calculation of TOV% because we need to use FGA and FTA only from rows with TOV

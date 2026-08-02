@@ -1,9 +1,5 @@
 custom awards
 - fields
-  - formula
-  - short name
-    - MUST BE UNIQUE
-  - long name
   - some way to filter for SMOY
   - MIP filter
   - rookie filter

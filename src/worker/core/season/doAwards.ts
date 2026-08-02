@@ -4,134 +4,27 @@ import type {
 	Player,
 	PlayerFiltered,
 } from "../../../common/types.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { isSport } from "../../../common/sportFunctions.ts";
 import { g, helpers } from "../../util/index.ts";
 import getLeaderRequirements, {
 	getLeaderRequirementsStats,
 } from "./getLeaderRequirements.ts";
 import { idb } from "../../db/index.ts";
 import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball.ts";
-import { PHASE, PLAYER } from "../../../common/constants.ts";
+import {
+	PHASE,
+	PLAYER,
+	PLAYER_STATS_TABLES,
+} from "../../../common/constants.ts";
 import FormulaEvaluator from "../../util/FormulaEvaluator.ts";
 import { orderBy } from "../../../common/utils.ts";
 
-const awardStats = bySport({
-	baseball: [
-		"keyStats",
-		"gpPit",
-		"gsPit",
-		"w",
-		"l",
-		"sv",
-		"era",
-		"ip",
-		"war",
-		"rpit",
-		"season",
-		"abbrev",
-		"tid",
-		"jerseyNumber",
+const AWARD_STATS = [
+	...(isSport("basketball") ? [] : ["keyStats"]),
 
-		// For all-offense/defense teams
-		"rbat",
-		"rbr",
-		"rfld",
-
-		// For position determination
-		"gpF",
-
-		// For season leaders (and requirements)
-		"hr",
-		"rbi",
-		"r",
-		"sb",
-		"bb",
-		"soPit",
-		"ba",
-		"ops",
-	],
-	basketball: [
-		"gp",
-		"gs",
-		"min",
-		"pts",
-		"trb",
-		"ast",
-		"blk",
-		"stl",
-		"per",
-		"ewa",
-		"ws",
-		"dws",
-		"vorp",
-		"ws48",
-		"season",
-		"abbrev",
-		"tid",
-		"jerseyNumber",
-	],
-	football: [
-		"keyStats",
-		"pntYds",
-		"fg",
-		"krTD",
-		"krYds",
-		"prTD",
-		"prYds",
-		"pssYds",
-		"pssTD",
-		"pssInt",
-		"rusYds",
-		"rusTD",
-		"recYds",
-		"recTD",
-		"fmbLost",
-		"prTD",
-		"krTD",
-		"ydsFromScrimmage",
-		"season",
-		"abbrev",
-		"tid",
-		"jerseyNumber",
-		"defIntTD",
-		"defFmbTD",
-		"defSft",
-		"defSk",
-		"defInt",
-		"defPssDef",
-		"defFmbFrc",
-		"defFmbRec",
-		"defTckSolo",
-		"defTckAst",
-		"defTckLoss",
-		"totTD",
-		"pbw",
-		"pba",
-		"pbwr",
-		"rbw",
-		"rba",
-		"rbwr",
-	],
-	hockey: [
-		"keyStats",
-		"gpGoalie",
-		"g",
-		"a",
-		"pts",
-		"hit",
-		"tk",
-		"gaa",
-		"svPct",
-		"ops",
-		"dps",
-		"gps",
-		"ps",
-		"season",
-		"abbrev",
-		"tid",
-		"jerseyNumber",
-	],
-});
+	// Anything that appears in a player stats table
+	...Object.values(PLAYER_STATS_TABLES).flatMap((x) => x.stats),
+];
 
 const getProcessedPlayers = async (
 	playersAll: Player[],
@@ -140,8 +33,8 @@ const getProcessedPlayers = async (
 ) => {
 	const stats = Array.from(
 		new Set([
-			...awardStats,
-			...getLeaderRequirementsStats(getLeaderRequirements(), awardStats),
+			...AWARD_STATS,
+			...getLeaderRequirementsStats(getLeaderRequirements(), AWARD_STATS),
 		]),
 	);
 
@@ -159,7 +52,7 @@ const getProcessedPlayers = async (
 			"watch",
 		],
 		ratings: ["pos", "season", "ovr", "dovr", "pot", "skills"],
-		stats,
+		stats: ["abbrev", "tid", "jerseyNumber", "season", ...stats],
 		playoffs,
 		regularSeason: !playoffs,
 		fuzz: true,
@@ -290,10 +183,7 @@ const doAwards = async (conditions: Conditions) => {
 	const awards = g.get("awards");
 
 	const formulaEvaluators = awards.map((award) => {
-		const formulaEvaluator = new FormulaEvaluator(
-			award.formula,
-			Object.keys(players[0].currentStats),
-		);
+		const formulaEvaluator = new FormulaEvaluator(award.formula, AWARD_STATS);
 		return formulaEvaluator;
 	});
 

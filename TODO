@@ -42,6 +42,9 @@ custom awards
     - could even do this dynamically, load all award seasons that any player references
 - UI to update
   - award races
+    - put editor here
+    - dynamic stat columns?
+      - if too many, fall back to keyStats
   - groupAwards
   - awards editor
   - player profile
@@ -78,6 +81,7 @@ custom awards
   - import
 - later
   - support editing metadata of past awards, like name and shortName. maybe even formula too...
+  - only fetch needed variables from playersPlus
 
 more prominent warning when editing player and the draft year is in the future while they are on a team
 - also ideally show them on the roster page too

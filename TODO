@@ -82,6 +82,7 @@ custom awards
   - from awards objects, look up pids and rewrite Player.awards entries for ones that can now be looked up from awards object (add rank)
   - indexeddb
   - import
+- some parts of awards.ts were copied to doAwards.ts, make sure to remove dupes
 - blog
   - roy changes
     - edge cases

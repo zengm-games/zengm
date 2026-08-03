@@ -178,6 +178,68 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	return players;
 };
 
+const filterPlayersForAward = (
+	players: Awaited<ReturnType<typeof getPlayers>>,
+	award: GameAttributesLeague["awards"][number],
+	season: number,
+) => {
+	let filteredPlayers = players;
+	if (award.bench) {
+		// Handle case where GS is not available, which happens when loading historical stats
+		if (players.some((p) => p.currentStats.gs > 0)) {
+			filteredPlayers = players.filter(
+				(p) =>
+					p.currentStats.gs === 0 || p.currentStats.gp / p.currentStats.gs > 2,
+			);
+		}
+	}
+
+	if (award.rookie) {
+		// Handle case where nobody has GP from a past season, like in a new league - then use draft year
+		if (
+			players.some((p) =>
+				(p.stats as any[]).some(
+					(row) => row.season === season - 1 && row.gp > 0,
+				),
+			)
+		) {
+			if (isSport("baseball")) {
+				const defaultNumGames = defaultGameAttributes.numGames[0].value;
+
+				filteredPlayers = players.filter((p) => {
+					const cutoffFactor = p.teamInfo.gp / defaultNumGames;
+
+					let abSum = 0;
+					let outsSum = 0;
+					for (const row of p.stats) {
+						if (row.season < season && !row.playoffs) {
+							abSum += processPlayerStats(row, ["ab"]).ab;
+							outsSum += row.outs;
+						}
+
+						if (abSum >= 130 * cutoffFactor || outsSum >= 150 * cutoffFactor) {
+							return false;
+						}
+					}
+
+					return true;
+				});
+			} else {
+				// This means a player who sits out all regular season but then plays in the playoffs will be ineligible for ROY next year
+				filteredPlayers = players.filter((p) =>
+					(p.stats as any[]).every(
+						(row) => row.season === season || row.gp === 0,
+					),
+				);
+			}
+		} else {
+			filteredPlayers = players.filter((p) => p.draft.year === season - 1);
+		}
+	}
+
+	return filteredPlayers;
+};
+
 export const processAwards = async ({
 	awards,
 	numPlayersPerIndividualAward,
@@ -205,62 +267,7 @@ export const processAwards = async ({
 		index: number;
 	}[] = [];
 	for (const [i, award] of awards.entries()) {
-		let filteredPlayers = players;
-		if (award.bench) {
-			// Handle case where GS is not available, which happens when loading historical stats
-			if (players.some((p) => p.currentStats.gs > 0)) {
-				filteredPlayers = players.filter(
-					(p) =>
-						p.currentStats.gs === 0 ||
-						p.currentStats.gp / p.currentStats.gs > 2,
-				);
-			}
-		}
-		if (award.rookie) {
-			// Handle case where nobody has GP from a past season, like in a new league - then use draft year
-			if (
-				players.some((p) =>
-					(p.stats as any[]).some(
-						(row) => row.season === season - 1 && row.gp > 0,
-					),
-				)
-			) {
-				if (isSport("baseball")) {
-					const defaultNumGames = defaultGameAttributes.numGames[0].value;
-
-					filteredPlayers = players.filter((p) => {
-						const cutoffFactor = p.teamInfo.gp / defaultNumGames;
-
-						let abSum = 0;
-						let outsSum = 0;
-						for (const row of p.stats) {
-							if (row.season < season && !row.playoffs) {
-								abSum += processPlayerStats(row, ["ab"]).ab;
-								outsSum += row.outs;
-							}
-
-							if (
-								abSum >= 130 * cutoffFactor ||
-								outsSum >= 150 * cutoffFactor
-							) {
-								return false;
-							}
-						}
-
-						return true;
-					});
-				} else {
-					// This means a player who sits out all regular season but then plays in the playoffs will be ineligible for ROY next year
-					filteredPlayers = players.filter((p) =>
-						(p.stats as any[]).every(
-							(row) => row.season === season || row.gp === 0,
-						),
-					);
-				}
-			} else {
-				filteredPlayers = players.filter((p) => p.draft.year === season - 1);
-			}
-		}
+		const filteredPlayers = filterPlayersForAward(players, award, season);
 
 		if (award.numTeams === undefined) {
 			// Individual award

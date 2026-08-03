@@ -178,6 +178,8 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	return players;
 };
 
+const getMipFactor = () => g.get("numGames") * helpers.quarterLengthFactor();
+
 const filterPlayersForAward = (
 	players: Awaited<ReturnType<typeof getPlayers>>,
 	award: GameAttributesLeague["awards"][number],
@@ -235,6 +237,36 @@ const filterPlayersForAward = (
 		} else {
 			filteredPlayers = players.filter((p) => p.draft.year === season - 1);
 		}
+	}
+
+	if (award.mip) {
+		filteredPlayers = players.filter((p) => {
+			// Too many second year players get picked, when it's expected for them to improve (undrafted and second round picks can still win)
+			if (p.draft.year + 2 >= p.currentStats.season && p.draft.round === 1) {
+				return false;
+			}
+
+			// Must have stats last year!
+			const oldStatsAll = p.stats.filter(
+				(ps: { season: number }) => ps.season === p.currentStats.season - 1,
+			);
+
+			const oldStats = oldStatsAll.at(-1);
+			if (!oldStats) {
+				return false;
+			}
+
+			// Sanity check for minutes played
+			const mipFactor = getMipFactor();
+			if (
+				p.currentStats.min * p.currentStats.gp < 20 * mipFactor ||
+				oldStats.min * oldStats.gp < 10 * mipFactor
+			) {
+				return false;
+			}
+
+			return true;
+		});
 	}
 
 	return filteredPlayers;

@@ -178,7 +178,8 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	return players;
 };
 
-const getMipFactor = () => g.get("numGames") * helpers.quarterLengthFactor();
+const getMipFactor = (season: number) =>
+	g.get("numGames", season) * helpers.quarterLengthFactor();
 
 const filterPlayersForAward = (
 	players: Awaited<ReturnType<typeof getPlayers>>,
@@ -257,9 +258,10 @@ const filterPlayersForAward = (
 			}
 
 			// Sanity check for minutes played
-			const mipFactor = getMipFactor();
+			const mipFactor = getMipFactor(season);
 			if (
-				p.currentStats.min * p.currentStats.gp < 20 * mipFactor ||
+				p.currentStats.min * p.currentStats.gp <
+					20 * p.teamInfo.gp * helpers.quarterLengthFactor() ||
 				oldStats.min * oldStats.gp < 10 * mipFactor
 			) {
 				return false;

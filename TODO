@@ -45,6 +45,9 @@ custom awards
     - put editor here
     - dynamic stat columns?
       - if too many, fall back to keyStats
+    - getAwardCandidates
+      - should use season to look up awards, not g.get("awards") for past seasons
+      - how to know what columns to show?
   - groupAwards
   - awards editor
   - player profile

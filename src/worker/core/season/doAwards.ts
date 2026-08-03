@@ -1,6 +1,7 @@
 import type {
 	Awards2,
 	Conditions,
+	GameAttributesLeague,
 	Player,
 	PlayerFiltered,
 } from "../../../common/types.ts";
@@ -175,12 +176,16 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	return players;
 };
 
-const NUM_PLAYERS_TO_STORE_PER_INDIVIDUAL_AWARD = 5;
-
-const doAwards = async (conditions: Conditions) => {
-	const players = await getPlayers(g.get("season"));
-
-	const awards = g.get("awards");
+export const processAwards = async ({
+	awards,
+	numPlayersPerIndividualAward,
+	season,
+}: {
+	awards: GameAttributesLeague["awards"];
+	numPlayersPerIndividualAward: number;
+	season: number;
+}) => {
+	const players = await getPlayers(season);
 
 	const formulaEvaluators = awards.map((award) => {
 		const formulaEvaluator = new FormulaEvaluator(award.formula, AWARD_STATS);
@@ -198,7 +203,7 @@ const doAwards = async (conditions: Conditions) => {
 		if (award.numTeams === undefined) {
 			// Individual award
 			const winner = orderBy(players, (p) => p.scores[i], "desc")
-				.slice(0, NUM_PLAYERS_TO_STORE_PER_INDIVIDUAL_AWARD)
+				.slice(0, numPlayersPerIndividualAward)
 				.map((p) => {
 					console.log(award.shortName, p.firstName, p.lastName);
 					return {
@@ -216,6 +221,17 @@ const doAwards = async (conditions: Conditions) => {
 		}
 	}
 
+	return { players, realizedAwards };
+};
+
+const NUM_PLAYERS_TO_STORE_PER_INDIVIDUAL_AWARD = 5;
+
+const doAwards = async (conditions: Conditions) => {
+	const realizedAwards = await processAwards({
+		awards: g.get("awards"),
+		numPlayersPerIndividualAward: NUM_PLAYERS_TO_STORE_PER_INDIVIDUAL_AWARD,
+		season: g.get("season"),
+	});
 	console.log(realizedAwards);
 };
 

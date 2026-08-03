@@ -19,6 +19,8 @@ import {
 } from "../../../common/constants.ts";
 import FormulaEvaluator from "../../util/FormulaEvaluator.ts";
 import { orderBy } from "../../../common/utils.ts";
+import processPlayerStats from "../../../common/processPlayerStats.baseball.ts";
+import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 
 const AWARD_STATS = [
 	...(isSport("basketball") ? [] : ["keyStats"]),
@@ -224,6 +226,29 @@ export const processAwards = async ({
 				)
 			) {
 				if (isSport("baseball")) {
+					const defaultNumGames = defaultGameAttributes.numGames[0].value;
+
+					filteredPlayers = players.filter((p) => {
+						const cutoffFactor = p.teamInfo.gp / defaultNumGames;
+
+						let abSum = 0;
+						let outsSum = 0;
+						for (const row of p.stats) {
+							if (row.season < season && !row.playoffs) {
+								abSum += processPlayerStats(row, ["ab"]).ab;
+								outsSum += row.outs;
+							}
+
+							if (
+								abSum >= 130 * cutoffFactor ||
+								outsSum >= 150 * cutoffFactor
+							) {
+								return false;
+							}
+						}
+
+						return true;
+					});
 				} else {
 					// This means a player who sits out all regular season but then plays in the playoffs will be ineligible for ROY next year
 					filteredPlayers = players.filter((p) =>

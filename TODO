@@ -1,15 +1,7 @@
 custom awards
+- test baseball rookie filter
 - fields
   - MIP filter
-  - rookie filter
-    - baseball: 130 AB or 50 IP, scaled by team gp frac and schedule length
-    - non-baseball: first season with GP
-      - make sure there are some GP stats for last year, if not use draft year
-      - edge cases
-        - new league with no stats
-        - delete old data
-        - imported player with no stats
-        - created player with no stats
   - stats range (regular season, playoffs, semifinals, finals, combined)
   - team or individual
   - if team
@@ -90,6 +82,13 @@ custom awards
   - from awards objects, look up pids and rewrite Player.awards entries for ones that can now be looked up from awards object (add rank)
   - indexeddb
   - import
+- blog
+  - roy changes
+    - edge cases
+      - new league with no stats
+      - delete old data
+      - imported player with no stats
+      - created player with no stats
 - later
   - support editing metadata of past awards, like name and shortName. maybe even formula too...
   - only fetch needed variables from playersPlus

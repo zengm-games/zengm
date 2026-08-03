@@ -198,7 +198,10 @@ export const processAwards = async ({
 		});
 	}
 
-	const realizedAwards: Awards2["awards"] = [];
+	const realizedAwards: {
+		award: Awards2["awards"][number];
+		index: number;
+	}[] = [];
 	for (const [i, award] of awards.entries()) {
 		if (award.numTeams === undefined) {
 			// Individual award
@@ -211,10 +214,13 @@ export const processAwards = async ({
 					};
 				});
 			realizedAwards.push({
-				...award,
-				numTeams: undefined,
-				group: undefined,
-				winner,
+				award: {
+					...award,
+					numTeams: undefined,
+					group: undefined,
+					winner,
+				},
+				index: i,
 			});
 		} else {
 			// Team award

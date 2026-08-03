@@ -4,6 +4,7 @@ custom awards
   - MIP filter
   - rookie filter
     - support some kind of games played limit, like for players who miss a whole season, or baseball
+    - baseball is not GP...
   - stats range (regular season, playoffs, semifinals, finals, combined)
   - team or individual
   - if team
@@ -37,6 +38,7 @@ custom awards
   - similar to GOAT season
   - playoff series ones are special
   - how to implement MIP score?
+- search for any hardcoded strings like "Rookie of the Year", "Most Improved Player", etc
 - denormalization
   - if we go with denormalized, then maybe store more awards objects in cache so we can view active player page with no DB hit
     - could even do this dynamically, load all award seasons that any player references

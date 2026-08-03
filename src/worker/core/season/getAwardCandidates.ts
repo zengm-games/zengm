@@ -16,11 +16,24 @@ const getAwardCandidates = async (season: number) => {
 
 	const playersByPid = groupByUnique(players, "pid");
 
-	const awardCandidates = realizedAwards.map((award) => {
+	const awardCandidates = realizedAwards.map(({ award, index }) => {
 		return {
 			name: award.name,
-			players: award.winner.map((p) => playersByPid[p.pid]),
-			stats: ["pts", "trb", "ast", "per"],
+			players: award.winner.map((p2) => {
+				if (Array.isArray(p2)) {
+					throw new Error("Should never happen");
+				}
+
+				const p = playersByPid[p2.pid];
+				return {
+					...p,
+					currentStats: {
+						...p.currentStats,
+						score: p.scores[index],
+					},
+				};
+			}),
+			stats: ["pts", "trb", "ast", "score"],
 		};
 	});
 

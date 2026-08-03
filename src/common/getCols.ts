@@ -3628,6 +3628,11 @@ const cols: {
 		sortType: "number",
 		title: "YWT",
 	},
+	"stat:score": {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "Score",
+	},
 	"count:allDefense": {
 		desc: "All-Defensive Team",
 		sortSequence: ["desc", "asc"],

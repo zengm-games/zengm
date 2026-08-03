@@ -122,7 +122,7 @@ const AwardRaces = ({ awardCandidates, season, teams }: View<"awardRaces">) => {
 										return undefined;
 									}
 
-									if (!ps2) {
+									if (!ps2 || stat === "score") {
 										return helpers.roundStat(ps[stat], stat);
 									}
 

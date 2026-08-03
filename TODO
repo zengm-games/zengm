@@ -1,5 +1,6 @@
 custom awards
 - test baseball rookie filter
+- test MIP in other sports
 - fields
   - stats range (regular season, playoffs, semifinals, finals, combined)
   - team or individual
@@ -21,9 +22,6 @@ custom awards
     - color
   - some way to label as an "important" award like MVP equivalent, ROY equivalent
     - football has two ROY equivalents, so that shouldn't be unique
-- MIP
-  - implement mipScore similar to old one
-  - UI for showing result?
 - extra things that get stored in player awards, but not in awards object
   - should these even be stored in Player.awards, or elsewhere? probably Player.awards makes sense for normalization, might need additional prop to distinguish built-in vs custom awards
   - see awardsOrder in groupAwards for list

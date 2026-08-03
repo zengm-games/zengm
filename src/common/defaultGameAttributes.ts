@@ -415,7 +415,7 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 		{
 			shortName: "MIP",
 			name: "Most Improved Player",
-			formula: "ws",
+			formula: "pts + trb + ast + per",
 			mip: true,
 		},
 		{

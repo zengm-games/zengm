@@ -178,6 +178,8 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	return players;
 };
 
+const ROUGH_MPG_NEEDED_FOR_MIP = 20;
+
 const getMipFactor = (season: number) =>
 	g.get("numGames", season) * helpers.quarterLengthFactor();
 
@@ -261,7 +263,9 @@ const filterPlayersForAward = (
 			const mipFactor = getMipFactor(season);
 			if (
 				p.currentStats.min * p.currentStats.gp <
-					20 * p.teamInfo.gp * helpers.quarterLengthFactor() ||
+					ROUGH_MPG_NEEDED_FOR_MIP *
+						p.teamInfo.gp *
+						helpers.quarterLengthFactor() ||
 				oldStats.min * oldStats.gp < 10 * mipFactor
 			) {
 				return false;
@@ -287,12 +291,35 @@ export const processAwards = async ({
 
 	const formulaEvaluators = awards.map((award) => {
 		const formulaEvaluator = new FormulaEvaluator(award.formula, AWARD_STATS);
-		return formulaEvaluator;
+		return {
+			award,
+			formulaEvaluator,
+		};
 	});
 
 	for (const p of players) {
-		p.scores = formulaEvaluators.map((formulaEvaluator) => {
-			return formulaEvaluator.evaluate(p.currentStats);
+		p.scores = formulaEvaluators.map(({ award, formulaEvaluator }) => {
+			const currentScore = formulaEvaluator.evaluate(p.currentStats);
+
+			// For MIP, compare score to last season and max of all previous seasons
+			if (award.mip) {
+				const minCutoff = ROUGH_MPG_NEEDED_FOR_MIP * getMipFactor(season);
+				const oldSeasonScores = p.stats
+					.filter((ps: { season: number }) => ps.season < p.currentStats.season)
+					.filter(
+						(ps: { gp: number; min: number }) =>
+							ps.min * ps.gp >= minCutoff / 2,
+					)
+					.map((ps: any) => formulaEvaluator.evaluate(ps));
+				const prevScore = oldSeasonScores.at(-1);
+
+				// Include prevSeasonScore because minCutoff could result in that not being included in oldSeasonScores
+				const maxScore = Math.max(...oldSeasonScores);
+
+				return 2 * currentScore - prevScore - maxScore;
+			}
+
+			return currentScore;
 		});
 	}
 

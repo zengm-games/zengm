@@ -203,9 +203,43 @@ export const processAwards = async ({
 		index: number;
 	}[] = [];
 	for (const [i, award] of awards.entries()) {
+		let filteredPlayers = players;
+		if (award.bench) {
+			// Handle case where GS is not available, which happens when loading historical stats
+			if (players.some((p) => p.currentStats.gs > 0)) {
+				filteredPlayers = players.filter(
+					(p) =>
+						p.currentStats.gs === 0 ||
+						p.currentStats.gp / p.currentStats.gs > 2,
+				);
+			}
+		}
+		if (award.rookie) {
+			// Handle case where nobody has GP from a past season, like in a new league - then use draft year
+			if (
+				players.some((p) =>
+					(p.stats as any[]).some(
+						(row) => row.season === season - 1 && row.gp > 0,
+					),
+				)
+			) {
+				if (isSport("baseball")) {
+				} else {
+					// This means a player who sits out all regular season but then plays in the playoffs will be ineligible for ROY next year
+					filteredPlayers = players.filter((p) =>
+						(p.stats as any[]).every(
+							(row) => row.season === season || row.gp === 0,
+						),
+					);
+				}
+			} else {
+				filteredPlayers = players.filter((p) => p.draft.year === season - 1);
+			}
+		}
+
 		if (award.numTeams === undefined) {
 			// Individual award
-			const winner = orderBy(players, (p) => p.scores[i], "desc")
+			const winner = orderBy(filteredPlayers, (p) => p.scores[i], "desc")
 				.slice(0, numPlayersPerIndividualAward)
 				.map((p) => {
 					console.log(award.shortName, p.firstName, p.lastName);

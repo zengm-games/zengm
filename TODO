@@ -1,10 +1,15 @@
 custom awards
 - fields
-  - some way to filter for SMOY
   - MIP filter
   - rookie filter
-    - support some kind of games played limit, like for players who miss a whole season, or baseball
-    - baseball is not GP...
+    - baseball: 130 AB or 50 IP, scaled by team gp frac and schedule length
+    - non-baseball: first season with GP
+      - make sure there are some GP stats for last year, if not use draft year
+      - edge cases
+        - new league with no stats
+        - delete old data
+        - imported player with no stats
+        - created player with no stats
   - stats range (regular season, playoffs, semifinals, finals, combined)
   - team or individual
   - if team
@@ -50,6 +55,7 @@ custom awards
     - getAwardCandidates
       - should use season to look up awards, not g.get("awards") for past seasons
       - how to know what columns to show?
+    - for pick column for ROY add year if it's different than last year
   - groupAwards
   - awards editor
   - player profile

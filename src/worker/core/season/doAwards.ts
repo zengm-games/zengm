@@ -103,12 +103,16 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	const teamInfos: Record<
 		number,
 		{
+			cid: number;
+			did: number;
 			gp: number;
 			winp: number;
 		}
 	> = {};
 	for (const teamSeason of teamSeasons) {
 		teamInfos[teamSeason.tid] = {
+			cid: teamSeason.cid,
+			did: teamSeason.did,
 			gp: helpers.getTeamSeasonGp(teamSeason),
 			winp: helpers.calcWinp(teamSeason),
 		};
@@ -149,6 +153,8 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 
 		// Player somehow on an inactive team needs this fallback, should only happen in a weird custom roster
 		p.teamInfo = teamInfos[p.currentStats.tid] ?? {
+			cid: undefined,
+			did: undefined,
 			gp: 0,
 			winp: 0,
 		};
@@ -367,12 +373,15 @@ export const processAwards = async ({
 			const group = award.group;
 			if (group) {
 				if (group.type === "div") {
-					filteredPlayers = filteredPlayers.filter((p) => p.did === group.did);
+					filteredPlayers = filteredPlayers.filter(
+						(p) => p.teamInfo.did === group.did,
+					);
 				} else {
-					filteredPlayers = filteredPlayers.filter((p) => p.cid === group.cid);
+					filteredPlayers = filteredPlayers.filter(
+						(p) => p.teamInfo.cid === group.cid,
+					);
 				}
 			}
-			console.log(award.group, filteredPlayers);
 
 			if (award.numTeams === undefined) {
 				// Individual award

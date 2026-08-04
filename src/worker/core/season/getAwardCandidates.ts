@@ -16,7 +16,7 @@ const getAwardCandidates = async (season: number) => {
 
 	const playersByPid = groupByUnique(players, "pid");
 
-	const awardCandidates = realizedAwards.map(({ award, index }) => {
+	const awardCandidates = realizedAwards.map((award) => {
 		return {
 			...award,
 			players: award.winner.map((p2) => {
@@ -29,7 +29,7 @@ const getAwardCandidates = async (season: number) => {
 					...p,
 					currentStats: {
 						...p.currentStats,
-						score: p.scores[index],
+						score: p.scores[award.formula],
 					},
 				};
 			}),

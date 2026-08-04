@@ -295,17 +295,32 @@ export const processAwards = async ({
 }) => {
 	const players = await getPlayers(season);
 
-	const formulaEvaluators = awards.map((award) => {
-		const formulaEvaluator = new FormulaEvaluator(award.formula, AWARD_STATS);
-		return {
-			award,
-			formulaEvaluator,
-		};
-	});
+	const formulaEvaluators: Record<
+		string,
+		FormulaEvaluator<typeof AWARD_STATS>["evaluate"]
+	> = {};
 
 	for (const p of players) {
-		p.scores = formulaEvaluators.map(({ award, formulaEvaluator }) => {
-			const currentScore = formulaEvaluator.evaluate(p.currentStats);
+		p.scores = {};
+		for (const award of awards) {
+			const formula = award.formula;
+
+			if (p.scores[formula] !== undefined) {
+				// If same formula is used for two awards, only calculate once
+				continue;
+			}
+
+			if (!formulaEvaluators[formula]) {
+				const formulaEvaluator = new FormulaEvaluator(
+					award.formula,
+					AWARD_STATS,
+				);
+				formulaEvaluators[formula] =
+					formulaEvaluator.evaluate.bind(formulaEvaluator);
+			}
+			const evaluate = formulaEvaluators[formula];
+
+			const currentScore = evaluate(p.currentStats);
 
 			// For MIP, compare score to last season and max of all previous seasons
 			if (award.mip) {
@@ -316,24 +331,21 @@ export const processAwards = async ({
 						(ps: { gp: number; min: number }) =>
 							ps.min * ps.gp >= minCutoff / 2,
 					)
-					.map((ps: any) => formulaEvaluator.evaluate(ps));
+					.map((ps: any) => evaluate(ps));
 				const prevScore = oldSeasonScores.at(-1);
 
 				// Include prevSeasonScore because minCutoff could result in that not being included in oldSeasonScores
 				const maxScore = Math.max(...oldSeasonScores);
 
-				return 2 * currentScore - prevScore - maxScore;
+				p.scores[formula] = 2 * currentScore - prevScore - maxScore;
+			} else {
+				p.scores[formula] = currentScore;
 			}
-
-			return currentScore;
-		});
+		}
 	}
 
-	const realizedAwards: {
-		award: Awards2["awards"][number];
-		index: number;
-	}[] = [];
-	for (const [i, baseAward] of awards.entries()) {
+	const realizedAwards: Awards2["awards"] = [];
+	for (const baseAward of awards) {
 		const baseFilteredPlayers = filterPlayersForAward(
 			players,
 			baseAward,
@@ -385,7 +397,11 @@ export const processAwards = async ({
 
 			if (award.numTeams === undefined) {
 				// Individual award
-				const winner = orderBy(filteredPlayers, (p) => p.scores[i], "desc")
+				const winner = orderBy(
+					filteredPlayers,
+					(p) => p.scores[award.formula],
+					"desc",
+				)
 					.slice(0, numPlayersPerIndividualAward)
 					.map((p) => {
 						console.log(award.shortName, p.firstName, p.lastName);
@@ -394,13 +410,10 @@ export const processAwards = async ({
 						};
 					});
 				realizedAwards.push({
-					award: {
-						...award,
-						numTeams: undefined,
-						group,
-						winner,
-					},
-					index: i,
+					...award,
+					numTeams: undefined,
+					group,
+					winner,
 				});
 			} else {
 				// Team award

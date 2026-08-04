@@ -2067,7 +2067,7 @@ type Award2 = AwardInfo &
 				// Team award
 				numTeams: number;
 				winner: AwardPlayer2[][];
-				formulaByPos: Record<string, string>;
+				formulaByPos?: Record<string, string>;
 		  }
 	);
 export type Awards2 = {

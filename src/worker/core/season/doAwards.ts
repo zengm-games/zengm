@@ -18,7 +18,7 @@ import {
 	PLAYER_STATS_TABLES,
 } from "../../../common/constants.ts";
 import FormulaEvaluator from "../../util/FormulaEvaluator.ts";
-import { omit, orderBy } from "../../../common/utils.ts";
+import { chunk, omit, orderBy } from "../../../common/utils.ts";
 import processPlayerStats from "../../../common/processPlayerStats.baseball.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 
@@ -395,31 +395,54 @@ export const processAwards = async ({
 				}
 			}
 
-			if (award.numTeams === undefined) {
+			const sortedPlayers = orderBy(
+				filteredPlayers,
+				(p) => p.scores[award.formula],
+				"desc",
+			);
+
+			const numTeams = award.numTeams;
+			if (numTeams === undefined) {
 				// Individual award
-				const winner = orderBy(
-					filteredPlayers,
-					(p) => p.scores[award.formula],
-					"desc",
-				)
+				const winner = sortedPlayers
 					.slice(0, numPlayersPerIndividualAward)
 					.map((p) => {
-						console.log(award.shortName, p.firstName, p.lastName);
 						return {
 							pid: p.pid as number,
 						};
 					});
+				realizedAwards.push(
+					omit(
+						{
+							...award,
+							group,
+							winner,
+						},
+						["numTeams"],
+					),
+				);
+			} else {
+				const NUM_PLAYERS_PER_TEAM = 5;
+
+				// Team award
+				const winner = chunk(
+					sortedPlayers.slice(0, numTeams * NUM_PLAYERS_PER_TEAM).map((p) => {
+						return {
+							pid: p.pid as number,
+						};
+					}),
+					NUM_PLAYERS_PER_TEAM,
+				);
 				realizedAwards.push({
 					...award,
-					numTeams: undefined,
+					numTeams,
 					group,
 					winner,
 				});
-			} else {
-				// Team award
 			}
 		}
 	}
+	console.log("realizedAwards", realizedAwards);
 
 	return { players, realizedAwards };
 };

@@ -439,13 +439,13 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 			numTeams: 3,
 		},
 		{
-			shortName: "AL",
+			shortName: "AD",
 			name: "All-Defensive",
 			formula: "dws",
 			numTeams: 2,
 		},
 		{
-			shortName: "AL",
+			shortName: "AR",
 			name: "All-Rookie",
 			formula: "ws",
 			rookie: true,

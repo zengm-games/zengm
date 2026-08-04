@@ -394,6 +394,7 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 			shortName: "MVP",
 			name: "Most Valuable Player",
 			formula: "ws",
+			group: "conf",
 		},
 		{
 			shortName: "ROY",
@@ -411,6 +412,7 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 			shortName: "DPOY",
 			name: "Defensive Player of the Year",
 			formula: "dws",
+			group: "div",
 		},
 		{
 			shortName: "MIP",

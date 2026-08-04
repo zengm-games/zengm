@@ -18,7 +18,7 @@ import {
 	PLAYER_STATS_TABLES,
 } from "../../../common/constants.ts";
 import FormulaEvaluator from "../../util/FormulaEvaluator.ts";
-import { orderBy } from "../../../common/utils.ts";
+import { omit, orderBy } from "../../../common/utils.ts";
 import processPlayerStats from "../../../common/processPlayerStats.baseball.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 
@@ -327,30 +327,75 @@ export const processAwards = async ({
 		award: Awards2["awards"][number];
 		index: number;
 	}[] = [];
-	for (const [i, award] of awards.entries()) {
-		const filteredPlayers = filterPlayersForAward(players, award, season);
+	for (const [i, baseAward] of awards.entries()) {
+		const baseFilteredPlayers = filterPlayersForAward(
+			players,
+			baseAward,
+			season,
+		);
 
-		if (award.numTeams === undefined) {
-			// Individual award
-			const winner = orderBy(filteredPlayers, (p) => p.scores[i], "desc")
-				.slice(0, numPlayersPerIndividualAward)
-				.map((p) => {
-					console.log(award.shortName, p.firstName, p.lastName);
-					return {
-						pid: p.pid as number,
-					};
-				});
-			realizedAwards.push({
-				award: {
-					...award,
-					numTeams: undefined,
-					group: undefined,
-					winner,
-				},
-				index: i,
+		// Handle conf/div awards - make copies for each one
+		let expandedAwards: Omit<Awards2["awards"][number], "winner">[];
+		if (baseAward.group === "conf") {
+			const confs = g.get("confs", season);
+			expandedAwards = confs.map((conf) => {
+				return {
+					...baseAward,
+					group: {
+						type: "conf",
+						cid: conf.cid,
+					},
+				};
+			});
+		} else if (baseAward.group === "div") {
+			const divs = g.get("divs", season);
+			expandedAwards = divs.map((div) => {
+				return {
+					...baseAward,
+					group: {
+						type: "div",
+						did: div.did,
+					},
+				};
 			});
 		} else {
-			// Team award
+			expandedAwards = [omit(baseAward, ["group"])];
+		}
+
+		for (const award of expandedAwards) {
+			let filteredPlayers = baseFilteredPlayers;
+			const group = award.group;
+			if (group) {
+				if (group.type === "div") {
+					filteredPlayers = filteredPlayers.filter((p) => p.did === group.did);
+				} else {
+					filteredPlayers = filteredPlayers.filter((p) => p.cid === group.cid);
+				}
+			}
+			console.log(award.group, filteredPlayers);
+
+			if (award.numTeams === undefined) {
+				// Individual award
+				const winner = orderBy(filteredPlayers, (p) => p.scores[i], "desc")
+					.slice(0, numPlayersPerIndividualAward)
+					.map((p) => {
+						console.log(award.shortName, p.firstName, p.lastName);
+						return {
+							pid: p.pid as number,
+						};
+					});
+				realizedAwards.push({
+					award: {
+						...award,
+						numTeams: undefined,
+						group: undefined,
+						winner,
+					},
+					index: i,
+				});
+			} else {
+				// Team award
+			}
 		}
 	}
 

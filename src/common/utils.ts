@@ -82,13 +82,11 @@ export const minBy = maxMinByFactory("min");
 
 export const omit = <T extends Record<string, unknown>, U extends (keyof T)[]>(
 	object: T,
-	remove: U,
+	keys: U,
 ) => {
-	const output: any = {};
-	for (const key of Object.keys(object)) {
-		if (!remove.includes(key)) {
-			output[key] = object[key];
-		}
+	const output = { ...object };
+	for (const key of keys) {
+		delete output[key];
 	}
 	return output as Omit<T, U[number]>;
 };

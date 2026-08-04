@@ -1,7 +1,13 @@
 custom awards
 - test baseball rookie filter
 - test MIP in other sports
+- basketball formulas - include winp/fracWS stuff?
 - fields
+  - div/conf grouping
+    - how to handle cid/did for traded player?
+    - show name of div/conf in...
+      - p.awards?
+      - award races
   - stats range (regular season, playoffs, semifinals, finals, combined)
   - team or individual
   - if team
@@ -51,6 +57,7 @@ custom awards
   - groupAwards
   - awards editor
   - player profile
+    - awards column in stat tables
   - league history table
   - season summary
   - awards records
@@ -1523,9 +1530,6 @@ add option to show ratings rounded to every 10/20/whatever for less precision ht
 store pids of top 10 leaders in some key stats
 - update after each day
 - show dynamic "award" for being in top 10 all time of some statistic
-
-"award" column on player page, like baseball reference
-- requires storing top 10 of award votes
 
 player feats and box scores will need to be upgraded to use firstNameShort
 

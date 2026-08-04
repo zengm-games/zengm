@@ -34,6 +34,8 @@ const updateAwardRaces = async (
 
 		return {
 			awardCandidates,
+			confs: g.get("confs", inputs.season),
+			divs: g.get("divs", inputs.season),
 			season: inputs.season,
 			teams,
 		};

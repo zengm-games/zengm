@@ -11,7 +11,13 @@ import { RatingWithChange } from "../components/RatingWithChange.tsx";
 import { StatWithChange } from "../components/StatWithChange.tsx";
 import { useLocal } from "../util/local.ts";
 
-const AwardRaces = ({ awardCandidates, season, teams }: View<"awardRaces">) => {
+const AwardRaces = ({
+	awardCandidates,
+	confs,
+	divs,
+	season,
+	teams,
+}: View<"awardRaces">) => {
 	useTitleBar({
 		title: "Award Races",
 		jumpTo: true,
@@ -34,174 +40,187 @@ const AwardRaces = ({ awardCandidates, season, teams }: View<"awardRaces">) => {
 			<MoreLinks type="awards" page="award_races" season={season} />
 
 			<div className="row" style={{ marginTop: -14 }}>
-				{awardCandidates.map(({ asterisk, name, players, stats }) => {
-					const mip = name === "Most Improved Player";
-					const roy = name === "Rookie of the Year";
-
-					const cols = [
-						...globalCols,
-						...getCols([roy ? "Pick" : "Record", "Ovr"]),
-						...getCols(stats.map((stat) => `stat:${stat}`)),
-					];
-
-					if (mip) {
-						cols.push(...getCols(["Compare"]));
-					}
-
-					const rows: DataTableRow[] = players.map((p, j) => {
-						const ps = p.currentStats;
-						const pr = (p.ratings as any[]).findLast(
-							(row) => row.season === season,
-						);
-
-						const pos = pr ? pr.pos : "?";
-						const abbrev = ps ? ps.abbrev : undefined;
-						const tid = ps ? ps.tid : undefined;
-
-						const t = teams.find((t) => t.tid === tid);
-
-						let recordOrPick = null;
-						if (roy) {
-							if (p.draft.round > 0) {
-								recordOrPick = `${p.draft.round}-${p.draft.pick}`;
-							}
-						} else {
-							if (t) {
-								recordOrPick = helpers.formatRecord(t.seasonAttrs);
-							}
-						}
-
-						const data = [
-							j + 1,
-							wrappedPlayerNameLabels({
-								injury: p.injury,
-								jerseyNumber: ps ? ps.jerseyNumber : undefined,
-								pid: p.pid,
-								season,
-								skills: pr ? pr.skills : [],
-								defaultWatch: p.watch,
-								firstName: p.firstName,
-								firstNameShort: p.firstNameShort,
-								lastName: p.lastName,
-							}),
-							pos,
-							p.age,
-							<>
-								<a
-									href={helpers.leagueUrl([
-										"roster",
-										`${abbrev}_${tid}`,
-										season,
-									])}
-								>
-									{abbrev}
-								</a>
-							</>,
-							recordOrPick,
+				{awardCandidates.map(
+					({ asterisk, group, mip, rookie, name, players, stats }) => {
+						const cols = [
+							...globalCols,
+							...getCols([rookie ? "Pick" : "Record", "Ovr"]),
+							...getCols(stats.map((stat) => `stat:${stat}`)),
 						];
 
-						const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
-
 						if (mip) {
-							data.push(
-								pr && showRatings ? (
-									<RatingWithChange change={pr.dovr}>{pr.ovr}</RatingWithChange>
-								) : undefined,
-							);
-
-							let ps2: any;
-							for (let i = p.stats.length - 1; i >= 0; i--) {
-								if (p.stats[i].season === season - 1 && !p.stats[i].playoffs) {
-									ps2 = p.stats[i];
-									break;
-								}
-							}
-							data.push(
-								...stats.map((stat) => {
-									if (!ps && !ps2) {
-										return undefined;
-									}
-
-									if (!ps2 || stat === "score") {
-										return helpers.roundStat(ps[stat], stat);
-									}
-
-									return (
-										<StatWithChange change={ps[stat] - ps2[stat]} stat={stat}>
-											{ps[stat]}
-										</StatWithChange>
-									);
-								}),
-								<a
-									href={helpers.leagueUrl([
-										"compare_players",
-										`${p.pid}-${season - 1}-r,${p.pid}-${season}-r`,
-									])}
-								>
-									Compare
-								</a>,
-							);
-						} else {
-							data.push(pr && showRatings ? pr.ovr : undefined);
-							const statsRow = stats.map((stat) =>
-								ps ? helpers.roundStat(ps[stat], stat) : undefined,
-							);
-							data.push(...statsRow);
+							cols.push(...getCols(["Compare"]));
 						}
 
-						return {
-							key: p.pid,
-							metadata: {
-								type: "player",
-								pid: p.pid,
-								season,
-								playoffs: "regularSeason",
-							},
-							data,
-							classNames: {
-								"table-danger": p.hof,
-								"table-info": tid === userTid,
-							},
-						};
-					});
+						const rows: DataTableRow[] = players.map((p, j) => {
+							const ps = p.currentStats;
+							const pr = (p.ratings as any[]).findLast(
+								(row) => row.season === season,
+							);
 
-					return (
-						<div
-							key={name}
-							className={mip ? "col-12 col-lg-9" : "col-12 col-lg-6"}
-							style={{ marginTop: 14 }}
-						>
-							{rows.length > 0 ? (
-								<DataTable
-									classNameWrapper="mb-1"
-									cols={cols}
-									defaultSort={[0, "asc"]}
-									defaultStickyCols={window.mobile ? 0 : 2}
-									hideAllControls
-									name={`AwardRaces${name}`}
-									rows={rows}
-									title={
-										<h2>
-											{name}
-											{asterisk ? "*" : null}
-										</h2>
-									}
-								/>
-							) : (
+							const pos = pr ? pr.pos : "?";
+							const abbrev = ps ? ps.abbrev : undefined;
+							const tid = ps ? ps.tid : undefined;
+
+							const t = teams.find((t) => t.tid === tid);
+
+							let recordOrPick = null;
+							if (rookie) {
+								if (p.draft.round > 0) {
+									recordOrPick = `${p.draft.round}-${p.draft.pick}`;
+								}
+							} else {
+								if (t) {
+									recordOrPick = helpers.formatRecord(t.seasonAttrs);
+								}
+							}
+
+							const data = [
+								j + 1,
+								wrappedPlayerNameLabels({
+									injury: p.injury,
+									jerseyNumber: ps ? ps.jerseyNumber : undefined,
+									pid: p.pid,
+									season,
+									skills: pr ? pr.skills : [],
+									defaultWatch: p.watch,
+									firstName: p.firstName,
+									firstNameShort: p.firstNameShort,
+									lastName: p.lastName,
+								}),
+								pos,
+								p.age,
 								<>
-									<h2>
-										{name}
-										{asterisk ? "*" : null}
-									</h2>
-									<p>No candidates yet...</p>
-								</>
-							)}
-							{asterisk ? (
-								<div className="text-body-secondary">* {asterisk}</div>
-							) : null}
-						</div>
-					);
-				})}
+									<a
+										href={helpers.leagueUrl([
+											"roster",
+											`${abbrev}_${tid}`,
+											season,
+										])}
+									>
+										{abbrev}
+									</a>
+								</>,
+								recordOrPick,
+							];
+
+							const showRatings =
+								!challengeNoRatings || p.tid === PLAYER.RETIRED;
+
+							if (mip) {
+								data.push(
+									pr && showRatings ? (
+										<RatingWithChange change={pr.dovr}>
+											{pr.ovr}
+										</RatingWithChange>
+									) : undefined,
+								);
+
+								let ps2: any;
+								for (let i = p.stats.length - 1; i >= 0; i--) {
+									if (
+										p.stats[i].season === season - 1 &&
+										!p.stats[i].playoffs
+									) {
+										ps2 = p.stats[i];
+										break;
+									}
+								}
+								data.push(
+									...stats.map((stat) => {
+										if (!ps && !ps2) {
+											return undefined;
+										}
+
+										if (!ps2 || stat === "score") {
+											return helpers.roundStat(ps[stat], stat);
+										}
+
+										return (
+											<StatWithChange change={ps[stat] - ps2[stat]} stat={stat}>
+												{ps[stat]}
+											</StatWithChange>
+										);
+									}),
+									<a
+										href={helpers.leagueUrl([
+											"compare_players",
+											`${p.pid}-${season - 1}-r,${p.pid}-${season}-r`,
+										])}
+									>
+										Compare
+									</a>,
+								);
+							} else {
+								data.push(pr && showRatings ? pr.ovr : undefined);
+								const statsRow = stats.map((stat) =>
+									ps ? helpers.roundStat(ps[stat], stat) : undefined,
+								);
+								data.push(...statsRow);
+							}
+
+							return {
+								key: p.pid,
+								metadata: {
+									type: "player",
+									pid: p.pid,
+									season,
+									playoffs: "regularSeason",
+								},
+								data,
+								classNames: {
+									"table-danger": p.hof,
+									"table-info": tid === userTid,
+								},
+							};
+						});
+
+						const title = (
+							<div>
+								<h2>
+									{name}
+									{asterisk ? "*" : null}
+								</h2>
+								{group ? (
+									<h3>
+										{group.type === "conf"
+											? confs[group.cid]?.name
+											: divs[group.did]?.name}
+									</h3>
+								) : null}
+							</div>
+						);
+
+						return (
+							<div
+								key={`${name}-${group === undefined ? "" : group.type === "conf" ? group.cid : group.did}`}
+								className={mip ? "col-12 col-lg-9" : "col-12 col-lg-6"}
+								style={{ marginTop: 14 }}
+							>
+								{rows.length > 0 ? (
+									<DataTable
+										classNameWrapper="mb-1"
+										cols={cols}
+										defaultSort={[0, "asc"]}
+										defaultStickyCols={window.mobile ? 0 : 2}
+										hideAllControls
+										name={`AwardRaces${name}`}
+										rows={rows}
+										title={title}
+									/>
+								) : (
+									<>
+										{title}
+										<p>No candidates yet...</p>
+									</>
+								)}
+								{asterisk ? (
+									<div className="text-body-secondary">* {asterisk}</div>
+								) : null}
+							</div>
+						);
+					},
+				)}
 			</div>
 		</>
 	);

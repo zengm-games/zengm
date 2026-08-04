@@ -18,7 +18,7 @@ const getAwardCandidates = async (season: number) => {
 
 	const awardCandidates = realizedAwards.map(({ award, index }) => {
 		return {
-			name: award.name,
+			...award,
 			players: award.winner.map((p2) => {
 				if (Array.isArray(p2)) {
 					throw new Error("Should never happen");

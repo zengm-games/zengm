@@ -3,10 +3,6 @@ custom awards
 - test MIP in other sports
 - basketball formulas - include winp/fracWS stuff?
 - fields
-  - div/conf grouping
-    - show name of div/conf in...
-      - p.awards?
-      - award races
   - stats range (regular season, playoffs, semifinals, finals, combined)
   - team or individual
   - if team
@@ -82,6 +78,7 @@ custom awards
     - could store more awards history in cache
   - real players with partial data? depends on if we store normalized or not
   - make sure it's deleted when importing
+  - include conf/div in award name for grouped award?
 - upgrade
   - upgrade old awards objects
     - specify old default awards, even if we're changing the defaults now

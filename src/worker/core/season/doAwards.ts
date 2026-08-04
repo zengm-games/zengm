@@ -397,7 +397,7 @@ export const processAwards = async ({
 					award: {
 						...award,
 						numTeams: undefined,
-						group: undefined,
+						group,
 						winner,
 					},
 					index: i,

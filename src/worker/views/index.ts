@@ -90,6 +90,7 @@ export { default as schedule } from "./schedule.ts";
 export { default as scheduleEditor } from "./scheduleEditor.ts";
 export { default as scheduledEvents } from "./scheduledEvents.ts";
 export { default as seasonPreview } from "./seasonPreview.ts";
+export { default as seasonRecap } from "./seasonRecap.ts";
 export { default as settings } from "./settings.ts";
 export { default as standings } from "./standings.ts";
 export { default as teamFinances } from "./teamFinances.ts";

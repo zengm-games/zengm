@@ -326,6 +326,7 @@ export const MoreLinks = (
 				name: "All-Star History",
 			},
 			{ url: ["season_preview"], name: "Season Previews" },
+			{ url: ["season_recap"], name: "Season Recaps" },
 			{ url: ["notes", "teamSeason"], name: "Team Notes" },
 		];
 	} else if (props.type === "importExport") {

@@ -4,14 +4,10 @@ custom awards
 - basketball formulas - fix mvp/dpoy/roy/team formulas - include winp/fracWS stuff?
 - fields
   - stats range (regular season, playoffs, semifinals, finals, combined)
-  - team or individual
   - if team
     - way to specify if it's position based or not
       - maybe just automatically handle this per sport
       - if by position, support different formula per position
-    - number of players per team
-      - maybe just automatically handle this per sport
-    - how many teams
   - order
     - use on...
       - player profile page
@@ -32,14 +28,8 @@ custom awards
     - Three Point Contest
     - Hall of Fame
     - stat leader
-- formula implementation
-  - similar to GOAT season
-  - playoff series ones are special
-  - how to implement MIP score?
+- implement playoff series awards - must use a smaller set of stats
 - search for any hardcoded strings like "Rookie of the Year", "Most Improved Player", etc
-- denormalization
-  - if we go with denormalized, then maybe store more awards objects in cache so we can view active player page with no DB hit
-    - could even do this dynamically, load all award seasons that any player references
 - UI to update
   - award races
     - put editor here?
@@ -70,10 +60,14 @@ custom awards
     - for teams, only store rank if there are more than 1 team
   - bold winner of individual award, link to award races
 - should still be able to add an arbitrary one-off custom award - have some place for those in the awards object, and use it for unknown awards in upgraded leagues
+- make sure hashAward accounts for everything
 - support awards per div/conf
 - support clutch player award
 - how to show award as column when awards might change over time?
 - in AwardsSummary, break down by team number for tooltip
+- formatAwardName should prefix with conf/div abbrev somehow
+  - how to abbreviate? is it necessary?
+  - store in name, or in separate field?
 - how to store Player.awards
   - try storing normalized, how slow is it?
     - could store more awards history in cache
@@ -89,6 +83,7 @@ custom awards
   - import
   - similar for real player data, reformat Awards and Player.awards
 - some parts of awards.ts were copied to doAwards.ts, make sure to remove dupes
+- use formatAwardName in UI everywhere
 - blog
   - roy changes
     - edge cases

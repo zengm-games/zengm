@@ -90,7 +90,7 @@ const allStarMVP = async (
 				pid: mvp.pid,
 				tid: p.tid,
 				name: mvp.name,
-				type: "All-Star MVP",
+				award: { type: "All-Star MVP" },
 			},
 		],
 		conditions,

@@ -18,9 +18,10 @@ import {
 	PLAYER_STATS_TABLES,
 } from "../../../common/constants.ts";
 import FormulaEvaluator from "../../util/FormulaEvaluator.ts";
-import { chunk, omit, orderBy } from "../../../common/utils.ts";
+import { chunk, groupByUnique, omit, orderBy } from "../../../common/utils.ts";
 import processPlayerStats from "../../../common/processPlayerStats.baseball.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
+import { saveAwardsByPlayer, type AwardsByPlayer } from "./awards.ts";
 
 const AWARD_STATS = [
 	...(isSport("basketball") ? [] : ["keyStats"]),
@@ -344,8 +345,11 @@ export const processAwards = async ({
 		}
 	}
 
-	const realizedAwards: Awards2["awards"] = [];
-	for (const baseAward of awards) {
+	const realizedAwards: {
+		award: Awards2["awards"][number];
+		index: number;
+	}[] = [];
+	for (const [i, baseAward] of awards.entries()) {
 		const baseFilteredPlayers = filterPlayersForAward(
 			players,
 			baseAward,
@@ -411,8 +415,8 @@ export const processAwards = async ({
 							pid: p.pid as number,
 						};
 					});
-				realizedAwards.push(
-					omit(
+				realizedAwards.push({
+					award: omit(
 						{
 							...award,
 							group,
@@ -420,7 +424,8 @@ export const processAwards = async ({
 						},
 						["numTeams"],
 					),
-				);
+					index: i,
+				});
 			} else {
 				const NUM_PLAYERS_PER_TEAM = 5;
 
@@ -434,10 +439,13 @@ export const processAwards = async ({
 					NUM_PLAYERS_PER_TEAM,
 				);
 				realizedAwards.push({
-					...award,
-					numTeams,
-					group,
-					winner,
+					award: {
+						...award,
+						numTeams,
+						group,
+						winner,
+					},
+					index: i,
 				});
 			}
 		}
@@ -447,15 +455,72 @@ export const processAwards = async ({
 	return { players, realizedAwards };
 };
 
+type ProcessAwardsReturn = Awaited<ReturnType<typeof processAwards>>;
+
+const getAwardsByPlayer = (
+	realizedAwards: ProcessAwardsReturn["realizedAwards"],
+	players: ProcessAwardsReturn["players"],
+	season: number,
+) => {
+	const playersByPid = groupByUnique(players, "pid");
+	const awardsByPlayer: AwardsByPlayer = [];
+	for (const { award, index } of realizedAwards) {
+		const common = {
+			name: award.name,
+			shortName: award.shortName,
+			index,
+		};
+
+		if (award.numTeams === undefined) {
+			for (const [i, { pid }] of award.winner.entries()) {
+				const p = playersByPid[pid]!;
+				awardsByPlayer.push({
+					pid,
+					tid: p.tid,
+					name: p.name,
+					award: {
+						...common,
+						rank: i + 1, // Rank in "voting"
+					},
+				});
+			}
+		} else {
+			for (const [i, team] of award.winner.entries()) {
+				for (const { pid } of team) {
+					const p = playersByPid[pid]!;
+					awardsByPlayer.push({
+						pid,
+						tid: p.tid,
+						name: p.name,
+						award: {
+							...common,
+							rank: i + 1, // Team number
+							numTeams: award.numTeams,
+						},
+					});
+				}
+			}
+		}
+	}
+
+	return awardsByPlayer;
+};
+
 const NUM_PLAYERS_TO_STORE_PER_INDIVIDUAL_AWARD = 5;
 
 const doAwards = async (conditions: Conditions) => {
-	const realizedAwards = await processAwards({
+	const season = g.get("season");
+	const { players, realizedAwards } = await processAwards({
 		awards: g.get("awards"),
 		numPlayersPerIndividualAward: NUM_PLAYERS_TO_STORE_PER_INDIVIDUAL_AWARD,
-		season: g.get("season"),
+		season,
 	});
 	console.log(realizedAwards);
+
+	const awardsByPlayer = getAwardsByPlayer(realizedAwards, players, season);
+	console.log("awardsByPlayer", awardsByPlayer);
+
+	await saveAwardsByPlayer(awardsByPlayer, conditions, season);
 };
 
 export default doAwards;

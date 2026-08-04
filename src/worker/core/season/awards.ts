@@ -8,7 +8,9 @@ import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type {
 	Conditions,
+	DistributiveOmit,
 	Player,
+	PlayerAward,
 	PlayerFiltered,
 	PlayerStatType,
 	TeamFiltered,
@@ -25,12 +27,13 @@ import {
 	GamesPlayedCache,
 	playerMeetsCategoryRequirements,
 } from "../../views/leaders.ts";
+import { formatAwardName } from "../../../common/awards.ts";
 
 export type AwardsByPlayer = {
 	pid: number;
 	tid: number;
 	name: string;
-	type: string;
+	award: DistributiveOmit<PlayerAward, "season">;
 }[];
 
 export type GetTopPlayersOptions = {
@@ -449,7 +452,7 @@ const leagueLeaders = async (
 				pid: p.pid,
 				tid: p.tid,
 				name: p.name,
-				type: name,
+				award: { type: name },
 			});
 		}
 	}
@@ -510,19 +513,16 @@ const saveAwardsByPlayer = async (
 		])}">${g.get("teamInfoCache")[p.tid]?.abbrev}</a>) `;
 		let score;
 
-		if (p.type.includes("Team")) {
-			text += `made the ${p.type}.`;
-			score = 10;
-		} else if (p.type.includes("Leader")) {
-			text += `led the league in ${p.type
+		if (p.award.type?.includes("Leader")) {
+			text += `led the league in ${p.award.type
 				.replace("League ", "")
 				.replace(" Leader", "")
 				.toLowerCase()}.`;
 			score = 10;
-		} else if (p.type === "All-Star") {
+		} else if (p.award.type === "All-Star") {
 			text += "made the All-Star team.";
 			score = 10;
-		} else if (p.type === "All-Star MVP") {
+		} else if (p.award.type === "All-Star MVP") {
 			text += `won the <a href="${helpers.leagueUrl([
 				"game_log",
 				"special",
@@ -530,18 +530,24 @@ const saveAwardsByPlayer = async (
 				allStarGID,
 			])}">All-Star MVP</a> award.`;
 			score = 10;
-		} else if (p.type === "Slam Dunk Contest Winner") {
+		} else if (p.award.type === "Slam Dunk Contest Winner") {
 			text += "won the slam dunk contest.";
 			score = 10;
-		} else if (p.type === "Three-Point Contest Winner") {
+		} else if (p.award.type === "Three-Point Contest Winner") {
 			text += "won the three-point contest.";
 			score = 10;
+		} else if (p.award.type === undefined && p.award.numTeams !== undefined) {
+			// Team awards
+			text += `made the ${formatAwardName(p.award)}.`;
+			score = 10;
 		} else {
-			text += `won the ${p.type} award.`;
-			score = 20;
+			if (p.award.type !== undefined || p.award.rank === 1) {
+				text += `won the ${formatAwardName(p.award)} award.`;
+				score = 20;
+			}
 		}
 
-		if (logEvents) {
+		if (logEvents && score !== undefined) {
 			logEvent(
 				{
 					type: "award",
@@ -573,8 +579,8 @@ const saveAwardsByPlayer = async (
 			for (const awardByPlayer of awardsByPlayer) {
 				if (awardByPlayer.pid === pid) {
 					addAward(p, {
+						...awardByPlayer.award,
 						season,
-						type: awardByPlayer.type,
 					});
 				}
 			}
@@ -612,69 +618,7 @@ const deleteAwardsByPlayer = async (
 	}
 };
 
-const addSimpleAndTeamAwardsToAwardsByPlayer = (
-	awards: any,
-	awardsByPlayer: AwardsByPlayer,
-) => {
-	for (const key of SIMPLE_AWARDS) {
-		const type = AWARD_NAMES[key]!;
-		const award = awards[key];
-
-		if (!award) {
-			// e.g. MIP in first season
-			continue;
-		}
-
-		const { pid, tid, name } = award;
-		awardsByPlayer.push({
-			pid,
-			tid,
-			name,
-			type,
-		});
-	}
-	const awardsTeams = bySport({
-		baseball: ["allRookie", "allOffense", "allDefense"] as const,
-		basketball: ["allRookie", "allLeague", "allDefensive", "sfmvp"] as const,
-		football: ["allRookie", "allLeague"] as const,
-		hockey: ["allRookie", "allLeague"] as const,
-	});
-	for (const key of awardsTeams) {
-		if (!awards[key]) {
-			continue;
-		}
-
-		const type = AWARD_NAMES[key]!;
-
-		if (key === "allRookie" || key === "sfmvp" || isSport("baseball")) {
-			for (const p of awards[key]) {
-				if (p) {
-					const { pid, tid, name } = p;
-					awardsByPlayer.push({
-						pid,
-						tid,
-						name,
-						type,
-					});
-				}
-			}
-		} else {
-			for (const level of awards[key]) {
-				for (const p of level.players) {
-					if (p) {
-						const { pid, tid, name } = p;
-						awardsByPlayer.push({
-							pid,
-							tid,
-							name,
-							type: `${level.title} ${type}`,
-						});
-					}
-				}
-			}
-		}
-	}
-};
+const addSimpleAndTeamAwardsToAwardsByPlayer = () => {};
 
 export {
 	getPlayers,

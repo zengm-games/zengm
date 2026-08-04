@@ -183,7 +183,7 @@ export const simNextThreeEvent = async (
 						pid: p.pid,
 						tid: p.tid,
 						name: p.name,
-						type: "Three-Point Contest Winner",
+						award: { type: "Three-Point Contest Winner" },
 					},
 				],
 				conditions,

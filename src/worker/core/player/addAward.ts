@@ -1,7 +1,17 @@
 import type { PlayerAward } from "../../../common/types.ts";
 
 const hashAward = (award: PlayerAward) => {
-	return JSON.stringify([award.season, award.type]);
+	if (award.type !== undefined) {
+		return JSON.stringify([award.season, award.type]);
+	}
+
+	return JSON.stringify([
+		award.season,
+		award.index,
+		award.name,
+		award.rank,
+		award.shortName,
+	]);
 };
 
 const addAward = (

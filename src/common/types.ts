@@ -1157,7 +1157,8 @@ export type PlayerAward =
 			name: string;
 			shortName: string;
 			index: number; // Index in the list of awards for this season
-			rank?: number; // rank in individual award, team number in team award, undefined means there is only one team
+			rank: number; // rank in individual award, team number in team award
+			numTeams?: number; // For team awards
 	  };
 
 export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {

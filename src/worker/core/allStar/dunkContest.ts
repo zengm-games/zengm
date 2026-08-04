@@ -613,7 +613,7 @@ export const simNextDunkEvent = async (
 							pid: p.pid,
 							tid: p.tid,
 							name: p.name,
-							type: "Slam Dunk Contest Winner",
+							award: { type: "Slam Dunk Contest Winner" },
 						},
 					],
 					conditions,

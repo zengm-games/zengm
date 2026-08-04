@@ -330,7 +330,7 @@ const allStarDraftSetPlayers = async (
 				pid: p.pid,
 				tid: p.tid,
 				name: p.name,
-				type: "All-Star",
+				award: { type: "All-Star" },
 			}));
 		await saveAwardsByPlayer(awardsByPlayer, conditions);
 

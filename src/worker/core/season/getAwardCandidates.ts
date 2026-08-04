@@ -16,7 +16,7 @@ const getAwardCandidates = async (season: number) => {
 
 	const playersByPid = groupByUnique(players, "pid");
 
-	const awardCandidates = realizedAwards.map((award) => {
+	const awardCandidates = realizedAwards.map(({ award }) => {
 		return {
 			...award,
 			players: award.winner.map((p2) => {

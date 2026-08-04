@@ -42,7 +42,8 @@ custom awards
     - could even do this dynamically, load all award seasons that any player references
 - UI to update
   - award races
-    - put editor here
+    - put editor here?
+      - what about teams
     - dynamic stat columns?
       - if too many, fall back to keyStats
     - getAwardCandidates
@@ -63,7 +64,6 @@ custom awards
     - show in editor UI if still eligible for achievements
     - triple crown
       - fix baseball DPOY bug https://discord.com/channels/290013534023057409/1532565456920117279/1532565456920117279
-- make sure i'm adding 2nd team all rookie from real players
 - would be nice to support conditional stat-based awards that are not awarded every season, like triple crown or 40/40
 - store top 10 for each individual award, so it can be displayed easily on player profile pages
   - store this in player object, don't need it anywhere else i think?
@@ -83,9 +83,11 @@ custom awards
 - upgrade
   - upgrade old awards objects
     - specify old default awards, even if we're changing the defaults now
+      - number of all-rookie teams
   - from awards objects, look up pids and rewrite Player.awards entries for ones that can now be looked up from awards object (add rank)
   - indexeddb
   - import
+  - similar for real player data, reformat Awards and Player.awards
 - some parts of awards.ts were copied to doAwards.ts, make sure to remove dupes
 - blog
   - roy changes

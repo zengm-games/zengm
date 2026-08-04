@@ -318,22 +318,22 @@ const getAwards = (
 			const short = invertedAwardNames[type];
 			if (short && Object.hasOwn(simple, short)) {
 				simple[short] = slug;
-			} else if (type === "First Team All-League") {
+			} else if (type === "1st Team All-League") {
 				allLeague1.push(slug);
-			} else if (type === "Second Team All-League") {
+			} else if (type === "2nd Team All-League") {
 				allLeague2.push(slug);
-			} else if (type === "Third Team All-League") {
+			} else if (type === "3rd Team All-League") {
 				allLeague3.push(slug);
-			} else if (type === "First Team All-Defensive") {
+			} else if (type === "1st Team All-Defensive") {
 				allDefensive1.push(slug);
-			} else if (type === "Second Team All-Defensive") {
+			} else if (type === "2nd Team All-Defensive") {
 				allDefensive2.push(slug);
-			} else if (type === "Third Team All-Defensive") {
+			} else if (type === "3rd Team All-Defensive") {
 				allDefensive3.push(slug);
+			} else if (type === "1st Team All-Rookie") {
+				allRookie.push(slug);
 			} else if (type === AWARD_NAMES.sfmvp) {
 				sfmvp.push(slug);
-			} else if (type === AWARD_NAMES.allRookie) {
-				allRookie.push(slug);
 			}
 		}
 

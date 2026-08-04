@@ -1352,6 +1352,40 @@ const achievements: Achievement[] = [
 
 		when: "afterPlayoffs",
 	},
+	{
+		slug: "revenge_2",
+		name: "Revenge 2",
+		desc: "Win in the finals against a team that fired you.",
+		category: "Playoffs",
+
+		async check() {
+			const wonTitle = await userWonTitle();
+
+			if (!wonTitle) {
+				return false;
+			}
+
+			const playoffSeries = await idb.cache.playoffSeries.get(g.get("season"));
+
+			const matchup = playoffSeries?.series.at(-1)?.[0];
+
+			if (matchup === undefined || matchup.away === undefined) {
+				return false;
+			}
+
+			const loserTid =
+				matchup.home.won > matchup.away.won
+					? matchup.away.tid
+					: matchup.home.tid;
+
+			const currentSeason = g.get("season");
+			return g
+				.get("firedTids")
+				.some(({ tid, season }) => tid === loserTid && season < currentSeason);
+		},
+
+		when: "afterPlayoffs",
+	},
 ];
 
 if (isSport("hockey") || isSport("basketball")) {

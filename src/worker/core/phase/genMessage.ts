@@ -205,6 +205,13 @@ export const genMessage = async (
 			["new_team"],
 		)}">Take a look.</a> Please, go run one of those teams into the ground.</p>`;
 		await league.setGameAttributes({
+			firedTids: [
+				...g.get("firedTids"),
+				{
+					tid: g.get("userTid"),
+					season: g.get("season"),
+				},
+			],
 			gameOver: true,
 		});
 	}

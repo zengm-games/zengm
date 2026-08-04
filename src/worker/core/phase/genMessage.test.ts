@@ -77,3 +77,48 @@ test("when at max for one component, message falls in between what you'd expect 
 	assert(message.text.includes("This year: Good."));
 	assert(message.text.includes("Overall: Bad."));
 });
+
+test("being fired records the user's team and season", async () => {
+	const previousFiredTids = [
+		{
+			tid: g.get("userTid") + 1,
+			season: g.get("season") - 1,
+		},
+	];
+	g.setWithoutSavingToDB("firedTids", previousFiredTids);
+
+	const teamSeasons = await idb.cache.teamSeasons.getAll();
+	assert.strictEqual(teamSeasons.length, 1);
+	teamSeasons[0]!.ownerMood = {
+		money: -1,
+		playoffs: 0,
+		wins: 0,
+	};
+
+	await genMessage(
+		{
+			money: 0,
+			playoffs: 0,
+			wins: 0,
+		},
+		{
+			money: 0,
+			playoffs: 0,
+			wins: 0,
+		},
+	);
+
+	const expectedFiredTids = [
+		...previousFiredTids,
+		{
+			tid: g.get("userTid"),
+			season: g.get("season"),
+		},
+	];
+
+	assert.deepStrictEqual(g.get("firedTids"), expectedFiredTids);
+
+	const gameAttributes = await idb.cache.gameAttributes.getAll();
+	const firedTids = gameAttributes.find((row) => row.key === "firedTids");
+	assert.deepStrictEqual(firedTids?.value, expectedFiredTids);
+});

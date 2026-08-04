@@ -33,7 +33,7 @@ custom awards
 - UI to update
   - award races
     - put editor here?
-      - what about teams
+      - what about teams and playoffs?
     - dynamic stat columns?
       - if too many, fall back to keyStats
     - getAwardCandidates
@@ -75,6 +75,8 @@ custom awards
   - make sure it's deleted when importing
   - include conf/div in award name for grouped award?
 - upgrade
+  - First vs 1st?
+    - could dynamically fix in formatAwardName
   - upgrade old awards objects
     - specify old default awards, even if we're changing the defaults now
       - number of all-rookie teams

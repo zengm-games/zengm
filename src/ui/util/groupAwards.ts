@@ -1,11 +1,12 @@
+import { formatAwardName } from "../../common/awards.ts";
 import { bySport } from "../../common/sportFunctions.ts";
-import type { Player } from "../../common/types.ts";
+import type { DistributiveOmit, PlayerAward } from "../../common/types.ts";
+import { orderBy } from "../../common/utils.ts";
 import { helpers } from "./helpers.ts";
 
-const awardsOrder = [
-	"Inducted into the Hall of Fame",
+// These are old award names from before customizable awards
+const awardsOld = [
 	"Most Valuable Player",
-	"Won Championship",
 	"Finals MVP",
 	"Semifinals MVP",
 	"Offensive Player of the Year",
@@ -24,6 +25,11 @@ const awardsOrder = [
 	"Second Team All-Defensive",
 	"Third Team All-Defensive",
 	"All-Rookie Team",
+];
+
+// These are "awards" not stored in awards table to show before/after normal awards
+const awardsStart = ["Inducted into the Hall of Fame", "Won Championship"];
+const awardsEnd = [
 	"All-Star MVP",
 	"All-Star",
 	"Slam Dunk Contest Winner",
@@ -31,12 +37,16 @@ const awardsOrder = [
 	...bySport({
 		baseball: [
 			"League HR Leader",
+			"League BA Leader",
+			"League OPS Leader",
 			"League RBI Leader",
 			"League Runs Leader",
 			"League Stolen Bases Leader",
 			"League Walks Leader",
 			"League Wins Leader",
 			"League Strikeouts Leader",
+			"League ERA Leader",
+			"League Saves Leader",
 			"League WAR Leader",
 		],
 		basketball: [
@@ -51,6 +61,9 @@ const awardsOrder = [
 			"League Rushing Leader",
 			"League Receiving Leader",
 			"League Scrimmage Yards Leader",
+			"League Interceptions Leader",
+			"League Sacks Leader",
+			"League TD Leader",
 		],
 		hockey: [
 			"League Points Leader",
@@ -60,109 +73,153 @@ const awardsOrder = [
 	}),
 ];
 
-export const groupAwards = (awards: Player["awards"], shortNames?: boolean) => {
-	const getType = (originalType: string) => {
-		if (!shortNames) {
-			return originalType;
-		}
+const getName = (
+	award: DistributiveOmit<PlayerAward, "season">,
+	short: boolean | undefined,
+) => {
+	if (!short) {
+		return formatAwardName(award);
+	}
 
-		let type = originalType;
+	if (award.type === undefined) {
+		return award.shortName;
+	}
 
-		if (type === "Inducted into the Hall of Fame") {
-			type = "Hall of Fame";
-		} else if (type === "Most Valuable Player") {
-			type = "MVP";
-		} else if (type === "Won Championship") {
-			type = "Champion";
-		} else if (type === "Finals MVP") {
-			type = "FMVP";
-		} else if (type === "Playoffs MVP") {
-			type = "PMVP";
-		} else if (type === "Semifinals MVP") {
-			type = "SFMVP";
-		} else if (type === "Offensive Player of the Year") {
-			type = "OPOY";
-		} else if (type === "Protector of the Year") {
-			type = "POY";
-		} else if (type === "Defensive Player of the Year") {
-			type = "DPOY";
-		} else if (type === "Defensive Forward of the Year") {
-			type = "DFOY";
-		} else if (type === "Goalie of the Year") {
-			type = "GOY";
-		} else if (type === "Sixth Man of the Year") {
-			type = "SMOY";
-		} else if (type === "Most Improved Player") {
-			type = "MIP";
-		} else if (type === "Rookie of the Year") {
-			type = "ROY";
-		} else if (type === "Offensive Rookie of the Year") {
-			type = "OROY";
-		} else if (type === "Defensive Rookie of the Year") {
-			type = "DROY";
-		} else if (type === "Slam Dunk Contest Winner") {
-			type = "Slam Dunk Contest";
-		} else if (type === "Three-Point Contest Winner") {
-			type = "Three-Point Contest";
-		} else if (type.includes("All-League")) {
-			type = "All-League";
-		} else if (type.includes("All-Offensive")) {
-			type = "All-Offensive";
-		} else if (type.includes("All-Defensive")) {
-			type = "All-Defensive";
-		} else if (type.includes("All-Rookie")) {
-			type = "All-Rookie";
-		} else if (type.endsWith("Leader")) {
-			type = type.replace("League ", "");
-		}
+	let type = award.type;
 
+	if (type === "Inducted into the Hall of Fame") {
+		type = "Hall of Fame";
+	} else if (type === "Most Valuable Player") {
+		type = "MVP";
+	} else if (type === "Won Championship") {
+		type = "Champion";
+	} else if (type === "Finals MVP") {
+		type = "FMVP";
+	} else if (type === "Playoffs MVP") {
+		type = "PMVP";
+	} else if (type === "Semifinals MVP") {
+		type = "SFMVP";
+	} else if (type === "Offensive Player of the Year") {
+		type = "OPOY";
+	} else if (type === "Protector of the Year") {
+		type = "POY";
+	} else if (type === "Defensive Player of the Year") {
+		type = "DPOY";
+	} else if (type === "Defensive Forward of the Year") {
+		type = "DFOY";
+	} else if (type === "Goalie of the Year") {
+		type = "GOY";
+	} else if (type === "Sixth Man of the Year") {
+		type = "SMOY";
+	} else if (type === "Most Improved Player") {
+		type = "MIP";
+	} else if (type === "Rookie of the Year") {
+		type = "ROY";
+	} else if (type === "Offensive Rookie of the Year") {
+		type = "OROY";
+	} else if (type === "Defensive Rookie of the Year") {
+		type = "DROY";
+	} else if (type === "Slam Dunk Contest Winner") {
+		type = "Slam Dunk Contest";
+	} else if (type === "Three-Point Contest Winner") {
+		type = "Three-Point Contest";
+	} else if (type.includes("All-League")) {
+		type = "All-League";
+	} else if (type.includes("All-Offensive")) {
+		type = "All-Offensive";
+	} else if (type.includes("All-Defensive")) {
+		type = "All-Defensive";
+	} else if (type.includes("All-Rookie")) {
+		type = "All-Rookie";
+	} else if (type.endsWith("Leader")) {
+		type = type.replace("League ", "");
+	}
+
+	return type;
+};
+
+// Don't return First Team All-League when the group represents all All-League awards
+const getLongWithoutTeamNumber = (type: string, originalType: string) => {
+	if (type.startsWith("All-")) {
 		return type;
-	};
+	}
 
-	// Don't return First Team All-League when the group represents all All-League awards
-	const getLong = (type: string, originalType: string) => {
-		if (type.startsWith("All-")) {
-			return type;
-		}
+	return originalType;
+};
 
-		return originalType;
-	};
-
+export const groupAwards = (awards: PlayerAward[], shortNames?: boolean) => {
 	const seen = new Set();
 	const awardsGrouped = [];
 	const awardsGroupedTemp = Object.groupBy(
-		awards,
-		(award) => award.shortName ?? getType(award.type),
+		awards.filter((award) => {
+			if (
+				award.type === undefined &&
+				award.numTeams === undefined &&
+				award.rank > 1
+			) {
+				// Non-1st finish for individual award
+				return false;
+			}
+			return true;
+		}),
+		(award) => getName(award, shortNames),
 	);
 
-	for (const originalType of awardsOrder) {
-		const type = getType(originalType);
-		const long = getLong(type, originalType);
+	const processFakeAwards = (names: string[]) => {
+		for (const originalType of names) {
+			const type = getName({ type: originalType }, shortNames);
+			const long = getLongWithoutTeamNumber(type, originalType);
 
-		if (awardsGroupedTemp[type] && !seen.has(type)) {
-			awardsGrouped.push({
+			if (awardsGroupedTemp[type] && !seen.has(type)) {
+				awardsGrouped.push({
+					type,
+					long,
+					count: awardsGroupedTemp[type].length,
+					seasons: helpers.yearRanges(
+						awardsGroupedTemp[type].map((a) => a.season),
+					),
+				});
+				seen.add(type);
+			}
+		}
+	};
+
+	processFakeAwards(awardsStart);
+
+	// Any entry with a "real" award handle here
+	const realAwardsGrouped = [];
+	for (const [type, awardsTemp] of Object.entries(awardsGroupedTemp)) {
+		const awards = awardsTemp!;
+		const awardsReal = awards.filter((award) => award.type === undefined);
+		if (!seen.has(type) && awardsReal[0]) {
+			const averageIndex =
+				helpers.sum(awardsReal.map((award) => award.index)) / awardsReal.length;
+			realAwardsGrouped.push({
 				type,
-				long,
-				count: awardsGroupedTemp[type].length,
-				seasons: helpers.yearRanges(
-					awardsGroupedTemp[type].map((a) => a.season),
-				),
+				long: awardsReal[0].name,
+				count: awards.length,
+				seasons: helpers.yearRanges(awards.map((a) => a.season)),
+				averageIndex,
 			});
 			seen.add(type);
 		}
 	}
 
+	// Sort real awards based on average index
+	awardsGrouped.push(...orderBy(realAwardsGrouped, "averageIndex", "asc"));
+
+	processFakeAwards(awardsOld);
+	processFakeAwards(awardsEnd);
+
 	// Handle non-default awards, just for fun if someone wants to add more
-	for (const originalType of Object.keys(awardsGroupedTemp).sort()) {
-		const type = getType(originalType);
+	for (const [type, awardsTemp] of Object.entries(awardsGroupedTemp)) {
+		const awards = awardsTemp!;
 		if (!seen.has(type)) {
 			awardsGrouped.push({
 				type,
-				long: originalType,
-				count: awardsGroupedTemp[type]!.length,
-				seasons: helpers.yearRanges(
-					awardsGroupedTemp[type]!.map((a) => a.season),
-				),
+				long: type,
+				count: awards.length,
+				seasons: helpers.yearRanges(awards.map((a) => a.season)),
 			});
 			seen.add(type);
 		}

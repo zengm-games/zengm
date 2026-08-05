@@ -221,11 +221,13 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 				if (stack.length < operator.operands) {
 					throw new Error("Insufficient values in the expression");
 				}
+
+				// ?? 0 is needed for historical seasons where some stats don't exist and are undefined
 				if (operator.operands === 1) {
-					stack.push(operator.func(stack.pop()!));
+					stack.push(operator.func(stack.pop()! ?? 0));
 				} else {
-					const b = stack.pop()!;
-					const a = stack.pop()!;
+					const b = stack.pop()! ?? 0;
+					const a = stack.pop()! ?? 0;
 					stack.push(operator.func(a, b));
 				}
 			} else if (typeof token === "number") {

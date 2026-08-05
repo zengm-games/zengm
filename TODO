@@ -1,6 +1,5 @@
 custom awards
 - add other stuff from doAwards, like best record, league leaders, awards object
-- how to handle null values in historical seasons, like for VORP?
 - in editor UI, explain seasonFraction scaling
   - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
 - test baseball rookie filter

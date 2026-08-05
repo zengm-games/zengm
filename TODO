@@ -1,5 +1,8 @@
 custom awards
-- add other stuff from doAwards, like best record, league leaders, awards object
+- add other stuff from doAwards
+  - playoff awards
+  - best record
+  - awards object
 - in editor UI, explain seasonFraction scaling
   - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
 - test baseball rookie filter
@@ -22,15 +25,6 @@ custom awards
     - color
   - some way to label as an "important" award like MVP equivalent, ROY equivalent
     - football has two ROY equivalents, so that shouldn't be unique
-- extra things that get stored in player awards, but not in awards object
-  - should these even be stored in Player.awards, or elsewhere? probably Player.awards makes sense for normalization, might need additional prop to distinguish built-in vs custom awards
-  - see awardsOrder in groupAwards for list
-    - All-Star
-    - Won Championship
-    - Dunk Contest
-    - Three Point Contest
-    - Hall of Fame
-    - stat leader
 - implement playoff series awards - must use a smaller set of stats
 - search for any hardcoded strings like "Rookie of the Year", "Most Improved Player", etc
 - UI to update

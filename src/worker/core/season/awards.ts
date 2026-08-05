@@ -1,9 +1,4 @@
-import {
-	PLAYER,
-	PHASE,
-	SIMPLE_AWARDS,
-	AWARD_NAMES,
-} from "../../../common/constants.ts";
+import { PLAYER, PHASE } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type {
@@ -16,7 +11,6 @@ import type {
 	TeamFiltered,
 } from "../../../common/types.ts";
 import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball.ts";
-import season from "./index.ts";
 import addAward from "../player/addAward.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
@@ -330,56 +324,29 @@ const teamAwards = async (
 			"otlConf",
 			"cid",
 			"did",
-			"abbrev",
-			"region",
-			"name",
 		],
 		["pts", "oppPts", "gp"],
 		number
 	>[],
 ) => {
 	const teams = await orderTeams(teamsUnsorted, teamsUnsorted);
-
 	if (!teams[0]) {
 		throw new Error("No teams found");
 	}
 
-	const ties = season.hasTies("current");
+	const bestRecord = teams[0].tid;
+	const bestRecordConfs: Record<number, number> = {};
+	for (const conf of g.get("confs", "current")) {
+		const teamsConf = await orderTeams(
+			teams.filter((t2) => t2.seasonAttrs.cid === conf.cid),
+			teams,
+		);
+		const t = teamsConf[0];
 
-	const bestRecord = {
-		tid: teams[0].tid,
-		abbrev: teams[0].seasonAttrs.abbrev,
-		region: teams[0].seasonAttrs.region,
-		name: teams[0].seasonAttrs.name,
-		won: teams[0].seasonAttrs.won,
-		lost: teams[0].seasonAttrs.lost,
-		tied: ties ? teams[0].seasonAttrs.tied : undefined,
-		otl: g.get("otl", "current") ? teams[0].seasonAttrs.otl : undefined,
-	};
-	const bestRecordConfs = await Promise.all(
-		g.get("confs", "current").map(async (c) => {
-			const teamsConf = await orderTeams(
-				teams.filter((t2) => t2.seasonAttrs.cid === c.cid),
-				teams,
-			);
-			const t = teamsConf[0];
-
-			if (!t) {
-				return;
-			}
-
-			return {
-				tid: t.tid,
-				abbrev: t.seasonAttrs.abbrev,
-				region: t.seasonAttrs.region,
-				name: t.seasonAttrs.name,
-				won: t.seasonAttrs.won,
-				lost: t.seasonAttrs.lost,
-				tied: ties ? t.seasonAttrs.tied : undefined,
-				otl: g.get("otl", "current") ? t.seasonAttrs.otl : undefined,
-			};
-		}),
-	);
+		if (t) {
+			bestRecordConfs[conf.cid] = t.tid;
+		}
+	}
 
 	return {
 		bestRecord,

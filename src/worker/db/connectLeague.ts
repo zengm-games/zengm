@@ -43,6 +43,7 @@ import type {
 	GameAttributesLeagueWithHistory,
 	SavedTrade,
 	SavedTradingBlock,
+	Awards2,
 } from "../../common/types.ts";
 import getInitialNumGamesConfDivSettings from "../core/season/getInitialNumGamesConfDivSettings.ts";
 import { amountToLevel } from "../../common/budgetLevels.ts";
@@ -61,7 +62,7 @@ export interface LeagueDB extends DBSchema {
 	};
 	awards: {
 		key: number;
-		value: any;
+		value: Awards2;
 	};
 	draftLotteryResults: {
 		key: number;
@@ -757,7 +758,7 @@ const migrate = async ({
 		if (oldVersion < 20) {
 			// New best records format in awards
 			for await (const cursor of transaction.objectStore("awards")) {
-				const a = cursor.value;
+				const a = cursor.value as any;
 				if (a.bre && a.brw) {
 					a.bestRecordConfs = [a.bre, a.brw];
 					a.bestRecord = a.bre.won >= a.brw.won ? a.bre : a.brw;

@@ -40,6 +40,7 @@ import type {
 	SeasonLeaders,
 	SavedTradingBlock,
 	NonEmptyArray,
+	Awards2,
 } from "../../common/types.ts";
 import type { IDBPTransaction } from "@dumbmatter/idb";
 import type { LeagueDB } from "./connectLeague.ts";
@@ -254,7 +255,7 @@ class Cache {
 
 	allStars: StoreAPI<AllStars, AllStars, number>;
 
-	awards: StoreAPI<any, any, number>;
+	awards: StoreAPI<Awards2, Awards2, number>;
 
 	draftLotteryResults: StoreAPI<DraftLotteryResult, DraftLotteryResult, number>;
 

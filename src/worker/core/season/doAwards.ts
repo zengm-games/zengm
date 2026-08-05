@@ -24,6 +24,7 @@ import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts"
 import {
 	leagueLeaders,
 	saveAwardsByPlayer,
+	teamAwards,
 	type AwardsByPlayer,
 } from "./awards.ts";
 
@@ -533,6 +534,40 @@ const NUM_PLAYERS_TO_STORE_PER_INDIVIDUAL_AWARD = 5;
 
 const doAwards = async (conditions: Conditions) => {
 	const season = g.get("season");
+
+	const teams = await idb.getCopies.teamsPlus(
+		{
+			attrs: ["tid"],
+			seasonAttrs: [
+				"won",
+				"lost",
+				"tied",
+				"otl",
+				"wonDiv",
+				"lostDiv",
+				"tiedDiv",
+				"otlDiv",
+				"wonConf",
+				"lostConf",
+				"tiedConf",
+				"otlConf",
+				"winp",
+				"pts",
+				"playoffRoundsWon",
+				"abbrev",
+				"region",
+				"name",
+				"cid",
+				"did",
+			],
+			stats: ["pts", "oppPts", "gp"],
+			season,
+			showNoStats: true,
+		},
+		"noCopyCache",
+	);
+	const { bestRecord, bestRecordConfs } = await teamAwards(teams);
+
 	const { players, realizedAwards } = await processAwards({
 		awards: g.get("awards"),
 		numPlayersPerIndividualAward: NUM_PLAYERS_TO_STORE_PER_INDIVIDUAL_AWARD,
@@ -664,6 +699,14 @@ const doAwards = async (conditions: Conditions) => {
 	await leagueLeaders(players, leaderCategories, awardsByPlayer);
 
 	await saveAwardsByPlayer(awardsByPlayer, conditions, season);
+
+	const awards: Awards2 = {
+		season,
+		bestRecord,
+		bestRecordConfs,
+		awards: realizedAwards.map((x) => x.award),
+	};
+	await idb.cache.awards.put(awards);
 };
 
 export default doAwards;

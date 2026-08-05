@@ -561,6 +561,24 @@ const achievements: Achievement[] = [
 		when: "afterPlayoffs",
 	},
 	{
+		slug: "dynasty_6",
+		name: "Dynasty 6",
+		desc: bySport({
+			basketball: "Win 36 championships in 45 years.",
+			default: "Win 30 championships in 45 years.",
+		}),
+		category: "Multiple Seasons",
+
+		check() {
+			return bySport({
+				basketball: checkDynasty(36, 45),
+				default: checkDynasty(30, 45),
+			});
+		},
+
+		when: "afterPlayoffs",
+	},
+	{
 		slug: "break_the_curse",
 		name: "Break The Curse",
 		desc: "Win a championship after going 108+ seasons without winning one.",

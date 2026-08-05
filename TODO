@@ -1,4 +1,6 @@
 custom awards
+- perGameScale stuff
+  - might work better on cumulative stats, scale them up for projected end of season value?
 - test baseball rookie filter
 - test MIP in other sports
 - basketball formulas - fix mvp/dpoy/roy/team formulas - include winp/fracWS stuff?

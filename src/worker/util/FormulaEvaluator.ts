@@ -25,15 +25,23 @@ const regexSort = (a: string, b: string) => {
 	return a.length - b.length;
 };
 
-const operators: Record<
-	string,
-	{
-		operands: number;
-		precedence: number;
-		associativity: "l" | "r";
-		func: (a: number, b: number) => number;
-	}
-> = {
+type UnaryOperator = {
+	operands: 1;
+	precedence: number;
+	associativity: "l" | "r";
+	func: (a: number) => number;
+};
+
+type BinaryOperator = {
+	operands: 2;
+	precedence: number;
+	associativity: "l" | "r";
+	func: (a: number, b: number) => number;
+};
+
+type Operator = UnaryOperator | BinaryOperator;
+
+const operators: Record<string, Operator> = {
 	"+": {
 		operands: 2,
 		precedence: 1,
@@ -170,11 +178,11 @@ const shuntingYard = (string: string) => {
 };
 
 class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
-	private symbols: Symbols;
+	private symbols: Set<Symbols[number]>;
 	private tokens: (string | number)[];
 
 	constructor(equation: string, symbols: Symbols) {
-		this.symbols = symbols;
+		this.symbols = new Set(symbols);
 		this.tokens = this.partiallyEvaluate(
 			shuntingYard(parseUnaryMinus(equation)),
 		);
@@ -188,7 +196,7 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 		const processed: (string | number)[] = [];
 
 		for (const token of tokens) {
-			if (this.symbols.includes(token as any)) {
+			if (this.symbols.has(token)) {
 				processed.push(token);
 			} else if (operators[token] !== undefined) {
 				processed.push(token);
@@ -213,8 +221,13 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 				if (stack.length < operator.operands) {
 					throw new Error("Insufficient values in the expression");
 				}
-				const args = stack.splice(-operator.operands, operator.operands);
-				stack.push((operator.func as any)(...args));
+				if (operator.operands === 1) {
+					stack.push(operator.func(stack.pop()!));
+				} else {
+					const b = stack.pop()!;
+					const a = stack.pop()!;
+					stack.push(operator.func(a, b));
+				}
 			} else if (typeof token === "number") {
 				stack.push(token);
 			} else {

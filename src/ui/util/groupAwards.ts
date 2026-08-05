@@ -206,7 +206,9 @@ export const groupAwards = (awards: PlayerAward[], shortNames?: boolean) => {
 	}
 
 	// Sort real awards based on average index
-	awardsGrouped.push(...orderBy(realAwardsGrouped, "averageIndex", "asc"));
+	awardsGrouped.push(
+		...orderBy(realAwardsGrouped, ["averageIndex", "type"], ["asc", "asc"]),
+	);
 
 	processFakeAwards(awardsOld);
 	processFakeAwards(awardsEnd);

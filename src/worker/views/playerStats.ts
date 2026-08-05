@@ -71,6 +71,10 @@ const updatePlayers = async (
 				Infinity,
 			]);
 		} else {
+			console.log(
+				"season",
+				typeof inputs.season === "number" ? inputs.season : undefined,
+			);
 			playersAll = await idb.getCopies.players(
 				{
 					activeSeason:
@@ -78,6 +82,7 @@ const updatePlayers = async (
 				},
 				"noCopyCache",
 			);
+			console.log(playersAll.find((p) => p.pid === 41297));
 		}
 
 		let tid: number | undefined = g

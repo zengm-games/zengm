@@ -23,6 +23,7 @@ export type Key =
 	| "budget"
 	| "aiTradesFactor"
 	| "playersRefuseToNegotiate"
+	| "freeAgencySigningsPerDay"
 	| "injuryRate"
 	| "tragicDeathRate"
 	| "brotherRate"

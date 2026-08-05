@@ -5,7 +5,7 @@ import type {
 	Player,
 	PlayerFiltered,
 } from "../../../common/types.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { g, helpers } from "../../util/index.ts";
 import getLeaderRequirements, {
 	getLeaderRequirementsStats,
@@ -107,20 +107,32 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 			cid: number;
 			did: number;
 			gp: number;
+			seasonFraction: number;
 			winp: number;
 		}
 	> = {};
 	for (const teamSeason of teamSeasons) {
+		const gp = helpers.getTeamSeasonGp(teamSeason);
+		let seasonFraction;
+		if (
+			season < g.get("season") ||
+			(season === g.get("season") && g.get("phase") >= PHASE.PLAYOFFS)
+		) {
+			seasonFraction = 1;
+		} else {
+			seasonFraction = Math.min(1, gp / g.get("numGames"));
+		}
 		teamInfos[teamSeason.tid] = {
 			cid: teamSeason.cid,
 			did: teamSeason.did,
 			gp: helpers.getTeamSeasonGp(teamSeason),
+			seasonFraction,
 			winp: helpers.calcWinp(teamSeason),
 		};
 	}
 
-	// For convenience later
 	for (const p of players) {
+		// For convenience later
 		p.currentStats = p.stats.at(-1);
 		for (let i = p.stats.length - 1; i >= 0; i--) {
 			if (p.stats[i].season === season) {
@@ -152,13 +164,16 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 		// Otherwise it's always the current season
 		p.age = season - p.born.year;
 
-		// Player somehow on an inactive team needs this fallback, should only happen in a weird custom roster
-		p.teamInfo = teamInfos[p.currentStats.tid] ?? {
-			cid: undefined,
-			did: undefined,
-			gp: 0,
-			winp: 0,
+		const teamInfo = teamInfos[p.currentStats.tid];
+		p.teamInfo = {
+			cid: teamInfo?.cid ?? undefined,
+			did: teamInfo?.did ?? undefined,
+			gp: teamInfo?.gp ?? 0,
 		};
+
+		// Make seasonFraction and winp available in formulas
+		p.currentStats.seasonFraction = teamInfo?.seasonFraction ?? 1;
+		p.currentStats.winp = teamInfo?.winp ?? 0;
 	}
 
 	// Add fracWS for basketball current season
@@ -172,7 +187,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 		}
 
 		for (const p of players) {
-			p.currentStats.fracWS = Math.min(
+			p.currentStats.wsFraction = Math.min(
 				// Inner max is to handle negative totalWS
 				p.currentStats.ws / Math.max(totalWS[p.currentStats.tid]!, 1),
 
@@ -312,9 +327,13 @@ export const processAwards = async ({
 			}
 
 			if (!formulaEvaluators[formula]) {
+				const formulaStats = [...AWARD_STATS, "seasonFraction", "winp"];
+				if (isSport("basketball")) {
+					formulaStats.push("wsFraction");
+				}
 				const formulaEvaluator = new FormulaEvaluator(
 					award.formula,
-					AWARD_STATS,
+					formulaStats,
 				);
 				formulaEvaluators[formula] =
 					formulaEvaluator.evaluate.bind(formulaEvaluator);

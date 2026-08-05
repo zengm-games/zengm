@@ -255,7 +255,7 @@ const filterPlayersForAward = (
 				// This means a player who sits out all regular season but then plays in the playoffs will be ineligible for ROY next year
 				filteredPlayers = players.filter((p) =>
 					(p.stats as any[]).every(
-						(row) => row.season === season || row.gp === 0,
+						(row) => row.season >= season || row.gp === 0,
 					),
 				);
 			}

@@ -398,19 +398,20 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 		{
 			shortName: "DPOY",
 			name: "Defensive Player of the Year",
-			formula: "dws/3.1 + seasonFraction * (winp + blk / 4.1 + stl / 1.8)",
+			formula:
+				"dws/3.1 + seasonFraction * winp + gp / 82 * (blk / 4.1 + stl / 1.8)",
 		},
 		{
 			shortName: "ROY",
 			name: "Rookie of the Year",
-			formula: "ewa / 2.1 + vorp + seasonFraction * pts / 2",
+			formula: "ewa / 2.1 + vorp + gp / 82 * pts / 2",
 			rookie: true,
 		},
 		{
 			shortName: "SMOY",
 			name: "Sixth Man of the Year",
 			formula:
-				"ewa / 5.5 + vorp / 2.3 + ws / 4.9 + seasonFraction * (winp + pts / 9.9)",
+				"ewa / 5.5 + vorp / 2.3 + ws / 4.9 + seasonFraction * winp + gp / 82 * pts / 9.9",
 			bench: true,
 		},
 		{

@@ -1,6 +1,4 @@
 custom awards
-- perGameScale vs seasonFraction
-  - 2026 ROY
 - add other stuff from doAwards, like best record, league leaders, awards object
 - how to handle null values in historical seasons, like for VORP?
 - in editor UI, explain seasonFraction scaling

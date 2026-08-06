@@ -1,9 +1,10 @@
-import { PHASE, SIMPLE_AWARDS } from "../../common/constants.ts";
+import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 import { groupByUnique, range } from "../../common/utils.ts";
 import { formatAwardName } from "../core/season/awards.ts";
+import { bySport } from "../../common/sportFunctions.ts";
 
 const getAbbrev = (
 	tid: number,
@@ -143,6 +144,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					count: number;
 					name: string;
 					pid: number;
+					pos: string | undefined;
 					tid: number;
 				}[];
 				if (a) {
@@ -162,12 +164,18 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 									if (!p) {
 										return;
 									}
-									const tid = p.stats.findLast(
-										(row) => row.season === season,
-									)?.tid;
-									if (tid === undefined) {
+
+									const p2 = await idb.getCopy.playersPlus(p, {
+										attrs: ["name"],
+										ratings: ["pos"],
+										stats: ["tid"],
+										season,
+									});
+									if (!p2) {
 										return;
 									}
+
+									const tid = p2.stats.tid;
 
 									const abbrev = getAbbrev(tid, teamsByTid, season);
 
@@ -187,8 +195,14 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 										awardName,
 										awardShortName,
 										count: 0,
-										name: `${p.firstName} ${p.lastName}`,
+										name: p2.name,
 										pid,
+										pos: bySport({
+											baseball: p2.ratings.pos,
+											basketball: undefined,
+											football: p2.ratings.pos,
+											hockey: p2.ratings.pos,
+										}),
 										tid,
 									};
 								}),

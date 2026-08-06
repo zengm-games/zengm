@@ -15,7 +15,7 @@ const awardName = (
 	award:
 		| {
 				pid: number;
-				pos: string;
+				pos: string | undefined;
 				name: string;
 				tid: number;
 				abbrev: string;

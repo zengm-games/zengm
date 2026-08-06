@@ -4,8 +4,12 @@ custom awards
   - awards object
 - in editor UI, explain seasonFraction scaling
   - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
-- test baseball rookie filter
-- test MIP in other sports
+- test
+  - baseball rookie filter
+  - MIP in other sports
+  - historyAll table
+    - test with changing awards
+    - test with div/conf awards (should show in separate columns
 - basketball formulas - fix mvp/dpoy/roy/team formulas - include winp/fracWS stuff?
 - fields
   - stats range (regular season, playoffs, semifinals, finals, combined)
@@ -39,10 +43,7 @@ custom awards
   - groupAwards
   - awards editor
   - player profile
-    - awards column in stat tables
-  - historyAll table
-    - test with changing awards
-    - test with div/conf awards (should show in separate columns)
+    - awards column in stat tables)
   - season summary
     - need to know which stats to show for offensive/defensive awards, like award races
   - awards records

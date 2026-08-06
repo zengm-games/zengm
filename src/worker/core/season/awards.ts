@@ -368,12 +368,127 @@ const teamAwards = async (
 	};
 };
 
+export const leaderAwardCategories = bySport({
+	baseball: [
+		{
+			name: "League HR Leader",
+			stat: "hr",
+		},
+		{
+			name: "League BA Leader",
+			stat: "ba",
+		},
+		{
+			name: "League OPS Leader",
+			stat: "ops",
+		},
+		{
+			name: "League RBI Leader",
+			stat: "rbi",
+		},
+		{
+			name: "League Runs Leader",
+			stat: "r",
+		},
+		{
+			name: "League Stolen Bases Leader",
+			stat: "sb",
+		},
+		{
+			name: "League Walks Leader",
+			stat: "bb",
+		},
+		{
+			name: "League Wins Leader",
+			stat: "w",
+		},
+		{
+			name: "League Strikeouts Leader",
+			stat: "soPit",
+		},
+		{
+			name: "League ERA Leader",
+			stat: "era",
+		},
+		{
+			name: "League Saves Leader",
+			stat: "sv",
+		},
+		{
+			name: "League WAR Leader",
+			stat: "war",
+		},
+	],
+	basketball: [
+		{
+			name: "League Scoring Leader",
+			stat: "pts",
+		},
+		{
+			name: "League Rebounding Leader",
+			stat: "trb",
+		},
+		{
+			name: "League Assists Leader",
+			stat: "ast",
+		},
+		{
+			name: "League Steals Leader",
+			stat: "stl",
+		},
+		{
+			name: "League Blocks Leader",
+			stat: "blk",
+		},
+	],
+	football: [
+		{
+			name: "League Passing Leader",
+			stat: "pssYds",
+		},
+		{
+			name: "League Rushing Leader",
+			stat: "rusYds",
+		},
+		{
+			name: "League Receiving Leader",
+			stat: "recYds",
+		},
+		{
+			name: "League Scrimmage Yards Leader",
+			stat: "ydsFromScrimmage",
+		},
+		{
+			name: "League Interceptions Leader",
+			stat: "defInt",
+		},
+		{
+			name: "League Sacks Leader",
+			stat: "defSk",
+		},
+		{
+			name: "League TD Leader",
+			stat: "totTD",
+		},
+	],
+	hockey: [
+		{
+			name: "League Points Leader",
+			stat: "pts",
+		},
+		{
+			name: "League Goals Leader",
+			stat: "g",
+		},
+		{
+			name: "League Assists Leader",
+			stat: "a",
+		},
+	],
+});
+
 const leagueLeaders = async (
 	players: PlayerFiltered[],
-	categories: {
-		name: string;
-		stat: string;
-	}[],
 	awardsByPlayer: AwardsByPlayer,
 ) => {
 	const requirements = getLeaderRequirements();
@@ -388,7 +503,7 @@ const leagueLeaders = async (
 	const gamesPlayedCache = new GamesPlayedCache();
 	await gamesPlayedCache.loadSeasons([season], false);
 
-	for (const { stat, name } of categories) {
+	for (const { stat, name } of leaderAwardCategories) {
 		if (!requirements[stat]) {
 			throw new Error(`Missing leader requirements for ${stat}`);
 		}

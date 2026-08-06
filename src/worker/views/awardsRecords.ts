@@ -3,6 +3,7 @@ import type { UpdateEvents, ViewInput } from "../../common/types.ts"; // Keep in
 import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { countBy, maxBy } from "../../common/utils.ts";
+import { leaderAwardCategories } from "../core/season/awards.ts";
 
 // Sync with useDropdownOptions
 const optionsTmp = bySport({
@@ -46,38 +47,6 @@ const optionsTmp = bySport({
 		{
 			val: "All-Star MVP",
 			key: "all_star_mvp",
-		},
-		{
-			val: "League HR Leader",
-			key: "hr_leader",
-		},
-		{
-			val: "League RBI Leader",
-			key: "rbi_leader",
-		},
-		{
-			val: "League Runs Leader",
-			key: "r_leader",
-		},
-		{
-			val: "League Stolen Bases Leader",
-			key: "sb_leader",
-		},
-		{
-			val: "League Walks Leader",
-			key: "bb_leader",
-		},
-		{
-			val: "League Wins Leader",
-			key: "w_leader",
-		},
-		{
-			val: "League Strikeouts Leader",
-			key: "soPit_leader",
-		},
-		{
-			val: "League WAR Leader",
-			key: "war_leader",
 		},
 	],
 	basketball: [
@@ -161,26 +130,6 @@ const optionsTmp = bySport({
 			val: "Three-Point Contest Winner",
 			key: "three",
 		},
-		{
-			val: "League Scoring Leader",
-			key: "ppg_leader",
-		},
-		{
-			val: "League Rebounding Leader",
-			key: "rpg_leader",
-		},
-		{
-			val: "League Assists Leader",
-			key: "apg_leader",
-		},
-		{
-			val: "League Steals Leader",
-			key: "spg_leader",
-		},
-		{
-			val: "League Blocks Leader",
-			key: "bpg_leader",
-		},
 	],
 	football: [
 		{
@@ -235,22 +184,6 @@ const optionsTmp = bySport({
 			val: "All-Star MVP",
 			key: "all_star_mvp",
 		},
-		{
-			val: "League Passing Leader",
-			key: "pss_leader",
-		},
-		{
-			val: "League Rushing Leader",
-			key: "rush_leader",
-		},
-		{
-			val: "League Receiving Leader",
-			key: "rcv_leader",
-		},
-		{
-			val: "League Scrimmage Yards Leader",
-			key: "scr_leader",
-		},
 	],
 	hockey: [
 		{
@@ -301,20 +234,17 @@ const optionsTmp = bySport({
 			val: "All-Star MVP",
 			key: "all_star_mvp",
 		},
-		{
-			val: "League Points Leader",
-			key: "pts_leader",
-		},
-		{
-			val: "League Goals Leader",
-			key: "g_leader",
-		},
-		{
-			val: "League Assists Leader",
-			key: "ast_leader",
-		},
 	],
 });
+
+optionsTmp.push(
+	...leaderAwardCategories.map((x) => {
+		return {
+			val: x.name,
+			key: `${x.stat}_leader`,
+		};
+	}),
+);
 
 const awardOptions: any = {};
 optionsTmp.forEach((o) => {

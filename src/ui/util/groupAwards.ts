@@ -2,6 +2,7 @@ import { formatPlayerAwardName } from "../../common/awards.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import type { DistributiveOmit, PlayerAward } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
+import { leaderAwardCategories } from "../../worker/core/season/awards.ts";
 import { helpers } from "./helpers.ts";
 
 // These are old award names from before customizable awards
@@ -34,43 +35,7 @@ const awardsEnd = [
 	"All-Star",
 	"Slam Dunk Contest Winner",
 	"Three-Point Contest Winner",
-	...bySport({
-		baseball: [
-			"League HR Leader",
-			"League BA Leader",
-			"League OPS Leader",
-			"League RBI Leader",
-			"League Runs Leader",
-			"League Stolen Bases Leader",
-			"League Walks Leader",
-			"League Wins Leader",
-			"League Strikeouts Leader",
-			"League ERA Leader",
-			"League Saves Leader",
-			"League WAR Leader",
-		],
-		basketball: [
-			"League Scoring Leader",
-			"League Rebounding Leader",
-			"League Assists Leader",
-			"League Steals Leader",
-			"League Blocks Leader",
-		],
-		football: [
-			"League Passing Leader",
-			"League Rushing Leader",
-			"League Receiving Leader",
-			"League Scrimmage Yards Leader",
-			"League Interceptions Leader",
-			"League Sacks Leader",
-			"League TD Leader",
-		],
-		hockey: [
-			"League Points Leader",
-			"League Goals Leader",
-			"League Assists Leader",
-		],
-	}),
+	...leaderAwardCategories.map((x) => x.name),
 ];
 
 const getName = (

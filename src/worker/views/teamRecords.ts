@@ -7,7 +7,7 @@ import type {
 	Awards2,
 } from "../../common/types.ts";
 import { season } from "../core/index.ts";
-import { orderBy } from "../../common/utils.ts";
+import { omit, orderBy } from "../../common/utils.ts";
 
 const sumBy = <Key extends string, T extends Record<Key, number>>(
 	records: T[],
@@ -15,7 +15,10 @@ const sumBy = <Key extends string, T extends Record<Key, number>>(
 ): number => {
 	let sum = 0;
 	for (const record of records) {
-		sum += record[key];
+		// undefined check needed for custom awards
+		if (record[key] !== undefined) {
+			sum += record[key];
+		}
 	}
 	return sum;
 };
@@ -237,7 +240,11 @@ type Team = {
 	sortValue: number;
 } & Awaited<ReturnType<typeof tallyAwards>>;
 
-const sumRecordsFor = (name: string, teams: Team[]) => {
+const sumRecordsFor = (
+	name: string,
+	teams: Team[],
+	awardTypes: Set<string>,
+) => {
 	const colsSum = [
 		"won",
 		"lost",
@@ -248,29 +255,18 @@ const sumRecordsFor = (name: string, teams: Team[]) => {
 		"playoffs",
 		"finals",
 		"titles",
-		"mvp",
-		"opoy",
-		"dpoy",
-		"dfoy",
-		"goy",
-		"smoy",
-		"mip",
-		"roy",
-		"oroy",
-		"droy",
-		"allLeague",
-		"allDefense",
-		"allRookie",
 		"allStar",
 		"allStarMVP",
 		"bestRecord",
 		"bestRecordConf",
+		"bestRecordDiv",
 	] as const;
 	const colsMin = ["start"] as const;
 	const colsMax = ["end", "lastPlayoffs", "lastFinals", "lastTitle"] as const;
 
-	const output = { ...teams[0]! };
-	delete output.disabled;
+	const output = teams[0]
+		? omit(teams[0], ["disabled"])
+		: ({ custom: {} } as Team);
 	for (const col of colsSum) {
 		output[col] = sumBy(teams, col);
 	}
@@ -280,6 +276,12 @@ const sumRecordsFor = (name: string, teams: Team[]) => {
 	for (const col of colsMax) {
 		output[col] = maxBy(teams, col);
 	}
+
+	const customs = teams.map((t) => t.custom);
+	for (const col of awardTypes) {
+		output.custom[col] = sumBy(customs, col);
+	}
+
 	output.name = name;
 	output.numSeasons =
 		output.start !== undefined && output.end !== undefined
@@ -311,7 +313,7 @@ const updateTeamRecords = async (
 			name: string;
 			shortName: string;
 		}[] = [];
-		const seenAwardTypes = new Set();
+		const seenAwardTypes = new Set<string>();
 		for (const row of awards) {
 			for (const award of row.awards) {
 				if (award.numTeams !== undefined) {
@@ -453,6 +455,7 @@ const updateTeamRecords = async (
 						}
 						return t2.cid === conf.cid;
 					}),
+					seenAwardTypes,
 				),
 			);
 		} else if (byType === "by_div") {
@@ -475,6 +478,7 @@ const updateTeamRecords = async (
 							}
 							return t2.did === div.did;
 						}),
+						seenAwardTypes,
 					),
 					confName,
 				};

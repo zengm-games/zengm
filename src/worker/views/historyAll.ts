@@ -155,6 +155,13 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 									// Only want individual awards
 									return award.numTeams === undefined;
 								})
+								.filter((award) => {
+									// Also skip any non-finals series MVP since there will be multiple of them
+									return (
+										typeof award.statRange !== "number" ||
+										award.statRange === -1
+									);
+								})
 								.map(async (award) => {
 									const pid = award.winner[0]?.pid;
 									if (pid === undefined) {

@@ -3757,59 +3757,9 @@ const cols: {
 		sortType: "number",
 		title: "RPOY",
 	},
-	"award:opoy": {
-		desc: "Offensive Player of the Year",
-		title: "OPOY",
-	},
-	"award:dpoy": {
-		desc: "Defensive Player of the Year",
-		title: "DPOY",
-	},
-	"award:dfoy": {
-		desc: "Defensive Forward of the Year",
-		title: "DFOY",
-	},
-	"award:goy": {
-		desc: "Goalie of the Year",
-		title: "GOY",
-	},
-	"award:finalsMvp": {
-		desc: `${isSport("hockey") ? "Playoffs" : "Finals"} Most Valuable Player`,
-		title: `${isSport("hockey") ? "Playoffs" : "Finals"} MVP`,
-	},
-	"award:mip": {
-		desc: "Most Improved Player",
-		title: "MIP",
-	},
 	"award:mvp": {
 		desc: "Most Valuable Player",
 		title: "MVP",
-	},
-	"award:roy": {
-		desc: "Rookie of the Year",
-		title: "ROY",
-	},
-	"award:smoy": {
-		desc: "Sixth Man of the Year",
-		title: "SMOY",
-	},
-	"award:poy": {
-		desc: `${isSport("baseball") ? "Pitcher" : "Protector"} of the Year`,
-		title: "POY",
-	},
-	"award:rpoy": {
-		desc: "Relief Pitcher of the Year",
-		title: "RPOY",
-	},
-	"award:oroy": {
-		desc: "Offensive Rookie of the Year",
-		sortSequence: ["desc", "asc"],
-		title: "OROY",
-	},
-	"award:droy": {
-		desc: "Defensive Rookie of the Year",
-		sortSequence: ["desc", "asc"],
-		title: "DROY",
 	},
 	Chances: {
 		desc: "Lottery Chances",

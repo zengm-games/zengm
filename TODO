@@ -4,6 +4,7 @@ custom awards
   - awards object
 - in editor UI, explain seasonFraction scaling
   - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
+- add bestRecordDivs like bestRecordConfs and show on teamRecords
 - test
   - baseball rookie filter
   - MIP in other sports
@@ -59,7 +60,7 @@ custom awards
   - bold winner of individual award, link to award races
 - should still be able to add an arbitrary one-off custom award - have some place for those in the awards object, and use it for unknown awards in upgraded leagues
 - make sure hashAward accounts for everything
-- make sure getCols hardcoded awards ones are removed
+- make sure getCols hardcoded awards ones are removed - award: and count:
 - support awards per div/conf
 - support clutch player award
 - how to show award as column when awards might change over time?

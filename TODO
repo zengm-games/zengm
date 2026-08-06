@@ -4,7 +4,6 @@ custom awards
   - awards object
 - in editor UI, explain seasonFraction scaling
   - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
-- add bestRecordDivs like bestRecordConfs and show on teamRecords
 - test
   - baseball rookie filter
   - MIP in other sports
@@ -95,6 +94,7 @@ custom awards
       - imported player with no stats
       - created player with no stats
   - awards column for player profiles
+  - bestRecordDiv on Team Records
 - later
   - support editing metadata of past awards, like name and shortName. maybe even formula too...
   - only fetch needed variables from playersPlus

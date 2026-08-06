@@ -2077,5 +2077,6 @@ export type Awards2 = {
 	season: number;
 	bestRecord: number; // tid
 	bestRecordConfs: Record<number, number>; // <cid, tid>
+	bestRecordDivs: Record<number, number>; // <did, tid>
 	awards: Award2[];
 };

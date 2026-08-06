@@ -566,7 +566,7 @@ const doAwards = async (conditions: Conditions) => {
 		},
 		"noCopyCache",
 	);
-	const { bestRecord, bestRecordConfs } = await teamAwards(teams);
+	const bestRecords = await teamAwards(teams);
 
 	const { players, realizedAwards } = await processAwards({
 		awards: g.get("awards"),
@@ -702,8 +702,7 @@ const doAwards = async (conditions: Conditions) => {
 
 	const awards: Awards2 = {
 		season,
-		bestRecord,
-		bestRecordConfs,
+		...bestRecords,
 		awards: realizedAwards.map((x) => x.award),
 	};
 	console.log("awards", awards);

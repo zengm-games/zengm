@@ -3685,6 +3685,12 @@ const cols: {
 		sortType: "number",
 		title: "BRC",
 	},
+	"count:bestRecordDiv": {
+		desc: "Best Division Record",
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+		title: "BRD",
+	},
 	"count:opoy": {
 		desc: "Offensive Player of the Year",
 		sortSequence: ["desc", "asc"],

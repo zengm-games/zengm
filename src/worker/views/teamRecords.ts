@@ -1,6 +1,11 @@
 import { idb } from "../db/index.ts";
 import { g, helpers } from "../util/index.ts";
-import type { UpdateEvents, AllStars, ViewInput } from "../../common/types.ts";
+import type {
+	UpdateEvents,
+	AllStars,
+	ViewInput,
+	Awards2,
+} from "../../common/types.ts";
 import { isSport } from "../../common/sportFunctions.ts";
 import { season } from "../core/index.ts";
 import { orderBy } from "../../common/utils.ts";
@@ -47,7 +52,7 @@ const maxBy = <Key extends string, T extends Record<Key, number | undefined>>(
 const tallyAwards = (
 	tid: number,
 	seasons: Set<number>,
-	awards: any[],
+	awards: Awards2[],
 	allAllStars: AllStars[],
 ) => {
 	const teamAwards = {
@@ -71,6 +76,7 @@ const tallyAwards = (
 		allStarMVP: 0,
 		bestRecord: 0,
 		bestRecordConf: 0,
+		bestRecordDiv: 0,
 	};
 
 	for (const a of awards) {
@@ -82,122 +88,17 @@ const tallyAwards = (
 			continue;
 		}
 
-		if (a.mvp?.tid === tid) {
-			teamAwards.mvp++;
+		if (a.bestRecord === tid) {
+			teamAwards.bestRecord++;
 		}
-
-		if (a.opoy?.tid === tid) {
-			teamAwards.opoy++;
-		}
-
-		if (a.dpoy?.tid === tid) {
-			teamAwards.dpoy++;
-		}
-
-		if (a.dfoy?.tid === tid) {
-			teamAwards.dfoy++;
-		}
-
-		if (a.goy?.tid === tid) {
-			teamAwards.goy++;
-		}
-
-		if (a.smoy?.tid === tid) {
-			teamAwards.smoy++;
-		}
-
-		if (a.mip?.tid === tid) {
-			teamAwards.mip++;
-		}
-
-		if (a.roy?.tid === tid) {
-			teamAwards.roy++;
-		}
-
-		if (a.oroy?.tid === tid) {
-			teamAwards.oroy++;
-		}
-
-		if (a.droy?.tid === tid) {
-			teamAwards.droy++;
-		}
-
-		if (a.poy?.tid === tid) {
-			teamAwards.poy++;
-		}
-
-		if (isSport("baseball")) {
-			if (a.rpoy?.tid === tid) {
-				teamAwards.rpoy++;
-			}
-		}
-
-		if (a.bre && a.brw) {
-			// For old league files, this format is obsolete now
-			if (a.bre.tid === tid) {
+		for (const bestTid of Object.values(a.bestRecordConfs)) {
+			if (bestTid === tid) {
 				teamAwards.bestRecordConf++;
 			}
-
-			if (a.brw.tid === tid) {
-				teamAwards.bestRecordConf++;
-			}
-
-			if (a.bre.won >= a.brw.won) {
-				if (a.bre.tid === tid) {
-					teamAwards.bestRecord++;
-				}
-			} else {
-				// TEMP DISABLE WITH ESLINT 9 UPGRADE eslint-disable-next-line no-lonely-if
-				if (a.brw.tid === tid) {
-					teamAwards.bestRecord++;
-				}
-			}
-		} else {
-			for (const t of a.bestRecordConfs) {
-				if (t && t.tid === tid) {
-					teamAwards.bestRecordConf++;
-				}
-			}
-
-			if (a.bestRecord.tid === tid) {
-				teamAwards.bestRecord++;
-			}
-
-			for (const t of a.allRookie) {
-				if (t && t.tid === tid) {
-					teamAwards.allRookie++;
-				}
-			}
 		}
-
-		if (isSport("baseball")) {
-			for (const p of a.allDefense) {
-				if (p && p.tid === tid) {
-					teamAwards.allDefense++;
-				}
-			}
-			for (const p of a.allOffense) {
-				if (p && p.tid === tid) {
-					teamAwards.allOffense++;
-				}
-			}
-		} else {
-			for (const t of a.allLeague) {
-				for (const p of t.players) {
-					if (p && p.tid === tid) {
-						teamAwards.allLeague++;
-					}
-				}
-			}
-
-			if (a.allDefensive) {
-				for (const t of a.allDefensive) {
-					for (const p of t.players) {
-						if (p && p.tid === tid) {
-							teamAwards.allDefense++;
-						}
-					}
-				}
+		for (const bestTid of Object.values(a.bestRecordDivs)) {
+			if (bestTid === tid) {
+				teamAwards.bestRecordDiv++;
 			}
 		}
 	}

@@ -336,6 +336,7 @@ const teamAwards = async (
 	}
 
 	const bestRecord = teams[0].tid;
+
 	const bestRecordConfs: Record<number, number> = {};
 	for (const conf of g.get("confs", "current")) {
 		const teamsConf = await orderTeams(
@@ -343,15 +344,27 @@ const teamAwards = async (
 			teams,
 		);
 		const t = teamsConf[0];
-
 		if (t) {
 			bestRecordConfs[conf.cid] = t.tid;
+		}
+	}
+
+	const bestRecordDivs: Record<number, number> = {};
+	for (const div of g.get("divs", "current")) {
+		const teamsDiv = await orderTeams(
+			teams.filter((t2) => t2.seasonAttrs.did === div.did),
+			teams,
+		);
+		const t = teamsDiv[0];
+		if (t) {
+			bestRecordDivs[div.did] = t.tid;
 		}
 	}
 
 	return {
 		bestRecord,
 		bestRecordConfs,
+		bestRecordDivs,
 	};
 };
 

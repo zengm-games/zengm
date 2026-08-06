@@ -1146,20 +1146,22 @@ export type MinimalPlayerRatings = {
 	locked?: boolean;
 };
 
+export type PlayerAwardBuiltIn = {
+	season: number;
+	type?: undefined;
+	name: string;
+	shortName: string;
+	index: number; // Index in the list of awards for this season
+	rank: number; // rank in individual award, team number in team award
+	numTeams?: number; // For team awards
+};
+
 export type PlayerAward =
 	| {
 			season: number;
 			type: string;
 	  }
-	| {
-			season: number;
-			type?: undefined;
-			name: string;
-			shortName: string;
-			index: number; // Index in the list of awards for this season
-			rank: number; // rank in individual award, team number in team award
-			numTeams?: number; // For team awards
-	  };
+	| PlayerAwardBuiltIn;
 
 export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {
 	awards: PlayerAward[];

@@ -42,8 +42,6 @@ custom awards
     - for pick column for ROY add year if it's different than last year
   - groupAwards
   - awards editor
-  - player profile
-    - awards column in stat tables)
   - season summary
     - need to know which stats to show for offensive/defensive awards, like award races
   - awards records
@@ -95,6 +93,7 @@ custom awards
       - delete old data
       - imported player with no stats
       - created player with no stats
+  - awards column for player profiles
 - later
   - support editing metadata of past awards, like name and shortName. maybe even formula too...
   - only fetch needed variables from playersPlus

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { View } from "../../../common/types.ts";
+import type { PlayerAwardBuiltIn, View } from "../../../common/types.ts";
 import { helpers } from "../../util/helpers.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
@@ -14,6 +14,7 @@ import { useRangeFooter } from "./useRangeFooter.ts";
 import type { FooterRow } from "../../components/DataTable/Footer.tsx";
 import { wrappedTeamAbbrevLink } from "../../components/TeamAbbrevLink.tsx";
 import type { SuperCol } from "../../components/DataTable/index.tsx";
+import { wrappedSeasonAwards } from "./SeasonAwards.tsx";
 
 const hasStats = (
 	careerStats: View<"player">["player"]["careerStats"],
@@ -42,6 +43,7 @@ const hasStats = (
 };
 
 export const StatsTable = ({
+	awardsBySeason,
 	name,
 	onlyShowIf,
 	p,
@@ -49,6 +51,7 @@ export const StatsTable = ({
 	superCols,
 	leaders,
 }: {
+	awardsBySeason: Map<number, PlayerAwardBuiltIn[]>;
 	name: string;
 	onlyShowIf?: string[];
 	p: View<"player">["player"];
@@ -96,6 +99,7 @@ export const StatsTable = ({
 				? "Pos"
 				: `stat:${stat.endsWith("Max") ? stat.replace("Max", "") : stat}`,
 		),
+		"Awards",
 	]);
 
 	if (superCols) {
@@ -132,6 +136,7 @@ export const StatsTable = ({
 				null,
 				null,
 				...stats.map((stat) => formatStatGameHigh(object, stat)),
+				null,
 			],
 		}));
 	} else {
@@ -142,6 +147,7 @@ export const StatsTable = ({
 					null,
 					null,
 					...stats.map((stat) => formatStatGameHigh(careerStats, stat)),
+					null,
 				],
 			},
 		];
@@ -313,6 +319,10 @@ export const StatsTable = ({
 						{formatStatGameHigh(ps, stat)}
 					</MaybeBold>
 				)),
+				wrappedSeasonAwards({
+					awards: awardsBySeason.get(ps.season),
+					season: ps.season,
+				}),
 			],
 			classNames: className,
 		});

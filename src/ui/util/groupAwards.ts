@@ -82,7 +82,7 @@ const getName = (
 	}
 
 	if (award.type === undefined) {
-		return award.shortName;
+		return award.name.length <= 15 ? award.name : award.shortName;
 	}
 
 	let type = award.type;

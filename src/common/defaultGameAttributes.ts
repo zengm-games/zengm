@@ -433,20 +433,20 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 			statRange: -2,
 		},
 		{
-			shortName: "All-League",
+			shortName: "AL",
 			name: "All-League",
 			formula: "ewa / 22 + vorp / 32 + wsFraction / 10 + seasonFraction * winp",
 			numTeams: 3,
 		},
 		{
-			shortName: "All-Defensive",
+			shortName: "AD",
 			name: "All-Defensive",
 			formula:
 				"dws/3.1 + seasonFraction * winp + gp / 82 * (blk / 4.1 + stl / 1.8)",
 			numTeams: 2,
 		},
 		{
-			shortName: "All-Rookie",
+			shortName: "AR",
 			name: "All-Rookie",
 			formula: "ewa / 2.1 + vorp + gp / 82 * pts / 2",
 			rookie: true,

@@ -3051,6 +3051,10 @@ const cols: {
 		sortType: "number",
 		title: "Age",
 	},
+	Awards: {
+		sortSequence: ["desc", "asc"],
+		sortType: "number",
+	},
 	Away: {
 		desc: "Away Team",
 	},

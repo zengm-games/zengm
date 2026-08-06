@@ -17,6 +17,7 @@ import { InjuryIcon } from "../../components/InjuryIcon.tsx";
 import { SkillsBlock } from "../../components/SkillsBlock.tsx";
 import { SafeHtml } from "../../components/SafeHtml.tsx";
 import { useLocal } from "../../util/local.ts";
+import { wrappedSeasonAwards } from "./SeasonAwards.tsx";
 
 const Player2 = ({
 	bestPos,
@@ -82,6 +83,11 @@ const Player2 = ({
 		}
 	}
 
+	const awardsBySeason = Map.groupBy(
+		player.awards.filter((award) => award.type === undefined),
+		(award) => award.season,
+	);
+
 	return (
 		<>
 			<TopStuff
@@ -102,6 +108,7 @@ const Player2 = ({
 
 			{statTables.map(({ name, onlyShowIf, stats, superCols }) => (
 				<StatsTable
+					awardsBySeason={awardsBySeason}
 					key={name}
 					name={name}
 					onlyShowIf={onlyShowIf}
@@ -127,6 +134,7 @@ const Player2 = ({
 						"Pot",
 						...ratings.map((rating) => `rating:${rating}`),
 						"Skills",
+						"Awards",
 					])}
 					defaultSort={[0, "asc"]}
 					defaultStickyCols={2}
@@ -182,6 +190,10 @@ const Player2 = ({
 									) : null,
 								),
 								<SkillsBlock className="skills-alone" skills={r.skills} />,
+								wrappedSeasonAwards({
+									awards: awardsBySeason.get(r.season),
+									season: r.season,
+								}),
 							],
 						};
 					})}

@@ -6,7 +6,6 @@ import type {
 	ViewInput,
 	Awards2,
 } from "../../common/types.ts";
-import { isSport } from "../../common/sportFunctions.ts";
 import { season } from "../core/index.ts";
 import { orderBy } from "../../common/utils.ts";
 

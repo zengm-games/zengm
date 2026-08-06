@@ -3637,35 +3637,11 @@ const cols: {
 		sortType: "number",
 		title: "Score",
 	},
-	"count:allDefense": {
-		desc: "All-Defensive Team",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "ADT",
-	},
-	"count:allLeague": {
-		desc: "All-League Team",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "ALT",
-	},
-	"count:allRookie": {
-		desc: "All-Rookie Team",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "ART",
-	},
 	"count:allStar": {
 		desc: "All-Star",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 		title: "AS",
-	},
-	"count:allOffense": {
-		desc: "All-Offensive Team",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "AOT",
 	},
 	"count:allStarMVP": {
 		desc: "All-Star MVP",
@@ -3673,95 +3649,26 @@ const cols: {
 		sortType: "number",
 		title: "ASMVP",
 	},
-	"count:bestRecord": {
+	BR: {
 		desc: "Best Record",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "BR",
 	},
-	"count:bestRecordConf": {
+	BRC: {
 		desc: "Best Conference Record",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "BRC",
 	},
-	"count:bestRecordDiv": {
+	BRD: {
 		desc: "Best Division Record",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "BRD",
-	},
-	"count:opoy": {
-		desc: "Offensive Player of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "OPOY",
-	},
-	"count:dpoy": {
-		desc: "Defensive Player of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "DPOY",
-	},
-	"count:dfoy": {
-		desc: "Defensive Forward of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "DFOY",
-	},
-	"count:goy": {
-		desc: "Goalie of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "GOY",
-	},
-	"count:mip": {
-		desc: "Most Improved Player",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "MIP",
 	},
 	"count:mvp": {
 		desc: "Most Valuable Player",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 		title: "MVP",
-	},
-	"count:roy": {
-		desc: "Rookie of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "ROY",
-	},
-	"count:smoy": {
-		desc: "Sixth Man of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "SMOY",
-	},
-	"count:oroy": {
-		desc: "Offensive Rookie of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "OROY",
-	},
-	"count:droy": {
-		desc: "Defensive Rookie of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "DROY",
-	},
-	"count:poy": {
-		desc: `${isSport("baseball") ? "Pitcher" : "Protector"} of the Year`,
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "POY",
-	},
-	"count:rpoy": {
-		desc: "Relief Pitcher of the Year",
-		sortSequence: ["desc", "asc"],
-		sortType: "number",
-		title: "RPOY",
 	},
 	"award:mvp": {
 		desc: "Most Valuable Player",

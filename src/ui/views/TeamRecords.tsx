@@ -25,66 +25,7 @@ const teamLink = (t: View<"teamRecords">["teams"][number]) => {
 	};
 };
 
-const categories = bySport({
-	baseball: [
-		"mvp",
-		"poy",
-		"rpoy",
-		"roy",
-		"bestRecord",
-		"bestRecordConf",
-		"bestRecordDiv",
-		"allRookie",
-		"allOffense",
-		"allDefense",
-		"allStar",
-		"allStarMVP",
-	],
-	basketball: [
-		"mvp",
-		"dpoy",
-		"smoy",
-		"mip",
-		"roy",
-		"bestRecord",
-		"bestRecordConf",
-		"bestRecordDiv",
-		"allRookie",
-		"allLeague",
-		"allDefense",
-		"allStar",
-		"allStarMVP",
-	],
-	football: [
-		"mvp",
-		"opoy",
-		"poy",
-		"dpoy",
-		"oroy",
-		"droy",
-		"bestRecord",
-		"bestRecordConf",
-		"bestRecordDiv",
-		"allRookie",
-		"allLeague",
-		"allStar",
-		"allStarMVP",
-	],
-	hockey: [
-		"mvp",
-		"dpoy",
-		"dfoy",
-		"roy",
-		"goy",
-		"bestRecord",
-		"bestRecordConf",
-		"bestRecordDiv",
-		"allRookie",
-		"allLeague",
-		"allStar",
-		"allStarMVP",
-	],
-});
+const categories = [];
 
 const isHistorical = (t: { root: boolean; disabled?: boolean }) =>
 	!t.root || t.disabled;
@@ -132,7 +73,12 @@ const TeamRecords = ({
 		"Last",
 		"Titles",
 		"Last",
+		"BR",
+		"BRC",
+		"BRD",
 		...categories.map((category) => `count:${category}`),
+		"count:allStar",
+		"count:allStarMVP",
 	]);
 
 	const lasts = cols.filter((col) => col.title === "Last");
@@ -164,7 +110,12 @@ const TeamRecords = ({
 					t.lastFinals,
 					t.titles,
 					t.lastTitle,
+					t.bestRecord,
+					t.bestRecordConf,
+					t.bestRecordDiv,
 					...categories.map((category) => (t as any)[category]),
+					t.allStar,
+					t.allStarMVP,
 				],
 				classNames: {
 					"text-body-secondary": !t.root,

@@ -306,3 +306,17 @@ if (!Iterator.zip) {
 		} as any;
 	};
 }
+
+// Chrome 110, Safari 16
+if (!Array.prototype.toReversed) {
+	Object.defineProperty(Array.prototype, "toReversed", {
+		value() {
+			const arr = Array.from(this);
+			arr.reverse();
+			return arr;
+		},
+		writable: true,
+		enumerable: false,
+		configurable: true,
+	});
+}

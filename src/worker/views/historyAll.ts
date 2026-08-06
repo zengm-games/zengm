@@ -140,6 +140,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					abbrev: string;
 					awardName: string;
 					awardShortName: string;
+					count: number;
 					name: string;
 					pid: number;
 					tid: number;
@@ -174,6 +175,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 									const awardShortName = formatAwardName(award, season, true);
 
 									if (!seenAwardTypes.has(awardShortName)) {
+										seenAwardTypes.add(awardShortName);
 										awardTypes.push({
 											name: awardName,
 											shortName: awardShortName,
@@ -184,6 +186,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 										abbrev,
 										awardName,
 										awardShortName,
+										count: 0,
 										name: `${p.firstName} ${p.lastName}`,
 										pid,
 										tid,
@@ -291,38 +294,37 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}
 
 		// Count up number of championships/awards per tid/pid
-		const counts: Record<string, Record<number, number>> = {
-			runnerUp: {},
+		const counts: {
+			awards: Record<string, Record<number, number>>;
+			champ: Record<number, number>;
+			runnerUp: Record<number, number>;
+		} = {
+			awards: {},
 			champ: {},
+			runnerUp: {},
 		};
-		for (const award of SIMPLE_AWARDS) {
-			counts[award] = {};
-		}
 
-		const teamCategories = ["champ", "runnerUp"];
-		for (const row of seasons) {
+		const teamCategories = ["champ", "runnerUp"] as const;
+		for (const row of seasons.toReversed()) {
 			for (const category of teamCategories) {
 				if (!row[category]) {
 					continue;
 				}
 
 				const tid = row[category].tid;
-				const categoryCounts = counts[category]!;
+				const categoryCounts = counts[category];
 				categoryCounts[tid] ??= 0;
 				categoryCounts[tid] += 1;
 				row[category].count = categoryCounts[tid];
 			}
 
-			for (const category of SIMPLE_AWARDS) {
-				if (!row[category]) {
-					continue;
-				}
-
-				const pid = row[category].pid;
-				const categoryCounts = counts[category]!;
-				categoryCounts[pid] ??= 0;
-				categoryCounts[pid] += 1;
-				row[category].count = categoryCounts[pid];
+			for (const award of row.awards) {
+				const shortName = award.awardShortName;
+				const pid = award.pid;
+				counts.awards[shortName] ??= {};
+				counts.awards[shortName][pid] ??= 0;
+				counts.awards[shortName][pid] += 1;
+				award.count = counts.awards[shortName][pid];
 			}
 		}
 

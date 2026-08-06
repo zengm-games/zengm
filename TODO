@@ -7,9 +7,12 @@ custom awards
 - test
   - baseball rookie filter
   - MIP in other sports
-  - historyAll table
+  - historyAll
     - test with changing awards
-    - test with div/conf awards (should show in separate columns
+    - test with div/conf awards (should show in separate columns)
+  - teamRecords
+    - test with changing awards
+    - test with div/conf awards (should show in separate columns)
 - basketball formulas - fix mvp/dpoy/roy/team formulas - include winp/fracWS stuff?
 - fields
   - stats range (regular season, playoffs, semifinals, finals, combined)
@@ -45,7 +48,6 @@ custom awards
   - season summary
     - need to know which stats to show for offensive/defensive awards, like award races
   - awards records
-  - team records
   - GOAT formula
   - achievements
     - check if the award we're looking for is unedited. if so, use it. if not, no achievement.

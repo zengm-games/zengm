@@ -48,56 +48,65 @@ const maxBy = <Key extends string, T extends Record<Key, number | undefined>>(
 	return max;
 };
 
-const tallyAwards = (
+const tallyAwards = async (
 	tid: number,
 	seasons: Set<number>,
 	awards: Awards2[],
 	allAllStars: AllStars[],
 ) => {
 	const teamAwards = {
-		mvp: 0,
-		opoy: 0,
-		dpoy: 0,
-		dfoy: 0,
-		goy: 0,
-		smoy: 0,
-		mip: 0,
-		roy: 0,
-		oroy: 0,
-		droy: 0,
-		poy: 0,
-		rpoy: 0,
-		allLeague: 0,
-		allDefense: 0,
-		allOffense: 0,
-		allRookie: 0,
 		allStar: 0,
 		allStarMVP: 0,
 		bestRecord: 0,
 		bestRecordConf: 0,
 		bestRecordDiv: 0,
+		custom: {} as Record<string, number>,
 	};
 
-	for (const a of awards) {
-		if (!a) {
+	for (const row of awards) {
+		if (!seasons.has(row.season)) {
 			continue;
 		}
 
-		if (!seasons.has(a.season)) {
-			continue;
-		}
-
-		if (a.bestRecord === tid) {
+		if (row.bestRecord === tid) {
 			teamAwards.bestRecord++;
 		}
-		for (const bestTid of Object.values(a.bestRecordConfs)) {
+		for (const bestTid of Object.values(row.bestRecordConfs)) {
 			if (bestTid === tid) {
 				teamAwards.bestRecordConf++;
 			}
 		}
-		for (const bestTid of Object.values(a.bestRecordDivs)) {
+		for (const bestTid of Object.values(row.bestRecordDivs)) {
 			if (bestTid === tid) {
 				teamAwards.bestRecordDiv++;
+			}
+		}
+
+		for (const award of row.awards) {
+			// This logic needs to be duplicated from below rather than just checking seenAwardTypes because shortName could be used for both a valid and invalid award
+			if (award.numTeams !== undefined) {
+				// Skip team awards
+				continue;
+			}
+			if (award.statRange !== undefined) {
+				// Skip playoff awards
+				continue;
+			}
+
+			const pid = award.winner[0]?.pid;
+			if (pid !== undefined) {
+				const p = await idb.getCopy.players({ pid }, "noCopyCache");
+				if (p) {
+					const p2 = await idb.getCopy.playersPlus(p, {
+						stats: ["tid"],
+						season: row.season,
+					});
+					if (p2?.stats.tid === tid) {
+						const shortName = award.shortName;
+						teamAwards.custom[shortName] ??= 0;
+						teamAwards.custom[shortName] += 1;
+					}
+				}
 			}
 		}
 	}
@@ -125,7 +134,7 @@ const tallyAwards = (
 	return teamAwards;
 };
 
-const getRowInfo = (
+const getRowInfo = async (
 	tid: number,
 	seasonAttrs: {
 		season: number;
@@ -137,7 +146,7 @@ const getRowInfo = (
 		ptsMax: number;
 		playoffRoundsWon: number;
 	}[],
-	awards: any[],
+	awards: Awards2[],
 	allStars: AllStars[],
 ) => {
 	let playoffs = 0;
@@ -188,12 +197,12 @@ const getRowInfo = (
 		lastPlayoffs,
 		lastFinals,
 		lastTitle,
-		...tallyAwards(
+		...(await tallyAwards(
 			tid,
 			new Set(seasonAttrs.map((x) => x.season)),
 			awards,
 			allStars,
-		),
+		)),
 	};
 	rowInfo.winp = helpers.calcWinp(rowInfo);
 	rowInfo.ptsPct = rowInfo.ptsMax !== 0 ? rowInfo.pts / rowInfo.ptsMax : 0;
@@ -226,7 +235,7 @@ type Team = {
 	lastFinals: number | undefined;
 	lastTitle: number | undefined;
 	sortValue: number;
-} & ReturnType<typeof tallyAwards>;
+} & Awaited<ReturnType<typeof tallyAwards>>;
 
 const sumRecordsFor = (name: string, teams: Team[]) => {
 	const colsSum = [
@@ -296,6 +305,34 @@ const updateTeamRecords = async (
 		const awards = await idb.getCopies.awards(undefined, "noCopyCache");
 		const allStars = await idb.getCopies.allStars(undefined, "noCopyCache");
 
+		// Show newest awards in leftmost columns if we scan in order from most recent
+		awards.reverse();
+		const awardTypes: {
+			name: string;
+			shortName: string;
+		}[] = [];
+		const seenAwardTypes = new Set();
+		for (const row of awards) {
+			for (const award of row.awards) {
+				if (award.numTeams !== undefined) {
+					// Skip team awards
+					continue;
+				}
+				if (award.statRange !== undefined) {
+					// Skip playoff awards
+					continue;
+				}
+
+				if (!seenAwardTypes.has(award.shortName)) {
+					seenAwardTypes.add(award.shortName);
+					awardTypes.push({
+						name: award.name,
+						shortName: award.shortName,
+					});
+				}
+			}
+		}
+
 		const teamsAll = orderBy(
 			await idb.getCopies.teamsPlus(
 				{
@@ -347,7 +384,7 @@ const updateTeamRecords = async (
 				name: t.name,
 				imgURL: t.imgURL,
 				imgURLSmall: t.imgURLSmall,
-				...getRowInfo(t.tid, seasonAttrsFiltered, awards, allStars),
+				...(await getRowInfo(t.tid, seasonAttrsFiltered, awards, allStars)),
 				sortValue: teams.length,
 			};
 
@@ -360,14 +397,17 @@ const updateTeamRecords = async (
 			if (byType === "by_team") {
 				// by_team only - Any name changes or season gaps? If so, separate
 				const partials: typeof teams = [];
-				const addPartial = (tid: number, seasonAttrs: typeof t.seasonAttrs) => {
+				const addPartial = async (
+					tid: number,
+					seasonAttrs: typeof t.seasonAttrs,
+				) => {
 					partials.push({
 						root: false,
 						tid,
 						abbrev: seasonAttrs[0]!.abbrev,
 						region: seasonAttrs[0]!.region,
 						name: seasonAttrs[0]!.name,
-						...getRowInfo(tid, seasonAttrs, awards, allStars),
+						...(await getRowInfo(tid, seasonAttrs, awards, allStars)),
 						sortValue: teams.length + partials.length,
 					});
 				};
@@ -382,7 +422,7 @@ const updateTeamRecords = async (
 					if (prevName !== name || prevSeason !== ts.season + 1) {
 						// Either this is the first iteration of the loop, or the team name/region changed, or there is a gap in seasons
 						if (seasonAttrs.length > 0) {
-							addPartial(t.tid, seasonAttrs);
+							await addPartial(t.tid, seasonAttrs);
 						}
 
 						seasonAttrs = [];
@@ -394,7 +434,7 @@ const updateTeamRecords = async (
 
 				if (partials.length > 0) {
 					if (seasonAttrs.length > 0) {
-						addPartial(t.tid, seasonAttrs);
+						await addPartial(t.tid, seasonAttrs);
 					}
 
 					teams.push(...partials);
@@ -459,6 +499,7 @@ const updateTeamRecords = async (
 		const usePts = pointsFormula !== "";
 
 		return {
+			awardTypes,
 			byType,
 			filter,
 			teams,

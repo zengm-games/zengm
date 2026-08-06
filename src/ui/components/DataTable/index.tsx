@@ -48,7 +48,7 @@ export type Col = {
 	classNames?: any; // Just header
 	desc?: string;
 	noSearch?: boolean;
-	sortSequence?: SortOrder[];
+	sortSequence?: ReadonlyArray<SortOrder>;
 	sortType?: SortType;
 	searchType?: SortType;
 	title: string;

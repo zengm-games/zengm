@@ -106,10 +106,11 @@ const HistoryAll = ({ awards, seasons }: View<"historyAll">) => {
 		"Season",
 		"League Champion",
 		"Runner Up",
-		...awards.map((award, i) => {
+		...awards.map((award) => {
 			return {
 				desc: award.name,
 				title: award.shortName,
+				sortType: "name" as const,
 			};
 		}),
 	]);

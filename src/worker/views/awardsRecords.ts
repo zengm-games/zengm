@@ -6,236 +6,35 @@ import { countBy, maxBy } from "../../common/utils.ts";
 import { leaderAwardCategories } from "../core/season/awards.ts";
 
 // Sync with useDropdownOptions
-const optionsTmp = bySport({
-	baseball: [
-		{
-			val: "Won Championship",
-			key: "champion",
-		},
-		{
-			val: "Most Valuable Player",
-			key: "mvp",
-		},
-		{
-			val: "Finals MVP",
-			key: "finals_mvp",
-		},
-		{
-			val: "Pitcher of the Year",
-			key: "poy",
-		},
-		{
-			val: "Relief Pitcher of the Year",
-			key: "rpoy",
-		},
-		{
-			val: "Rookie of the Year",
-			key: "roy",
-		},
-		{
-			val: "All-Offensive",
-			key: "all_off",
-		},
-		{
-			val: "All-Defensive",
-			key: "all_def",
-		},
-		{
-			val: "All-Star",
-			key: "all_star",
-		},
-		{
-			val: "All-Star MVP",
-			key: "all_star_mvp",
-		},
-	],
-	basketball: [
-		{
-			val: "Won Championship",
-			key: "champion",
-		},
-		{
-			val: "Most Valuable Player",
-			key: "mvp",
-		},
-		{
-			val: "Finals MVP",
-			key: "finals_mvp",
-		},
-		{
-			val: "Semifinals MVP",
-			key: "sfmvp",
-		},
-		{
-			val: "Defensive Player of the Year",
-			key: "dpoy",
-		},
-		{
-			val: "Sixth Man of the Year",
-			key: "smoy",
-		},
-		{
-			val: "Most Improved Player",
-			key: "mip",
-		},
-		{
-			val: "Rookie of the Year",
-			key: "roy",
-		},
-		{
-			val: "First Team All-League",
-			key: "first_team",
-		},
-		{
-			val: "Second Team All-League",
-			key: "second_team",
-		},
-		{
-			val: "Third Team All-League",
-			key: "third_team",
-		},
-		{
-			val: "All-League",
-			key: "all_league",
-		},
-		{
-			val: "First Team All-Defensive",
-			key: "first_def",
-		},
-		{
-			val: "Second Team All-Defensive",
-			key: "second_def",
-		},
-		{
-			val: "Third Team All-Defensive",
-			key: "third_def",
-		},
-		{
-			val: "All-Defensive",
-			key: "all_def",
-		},
-		{
-			val: "All-Star",
-			key: "all_star",
-		},
-		{
-			val: "All-Star MVP",
-			key: "all_star_mvp",
-		},
-		{
-			val: "Slam Dunk Contest Winner",
-			key: "dunk",
-		},
-		{
-			val: "Three-Point Contest Winner",
-			key: "three",
-		},
-	],
-	football: [
-		{
-			val: "Won Championship",
-			key: "champion",
-		},
-		{
-			val: "Most Valuable Player",
-			key: "mvp",
-		},
-		{
-			val: "Finals MVP",
-			key: "finals_mvp",
-		},
-		{
-			val: "Offensive Player of the Year",
-			key: "opoy",
-		},
-		{
-			val: "Protector of the Year",
-			key: "poy",
-		},
-		{
-			val: "Defensive Player of the Year",
-			key: "dpoy",
-		},
-		{
-			val: "Offensive Rookie of the Year",
-			key: "oroy",
-		},
-		{
-			val: "Defensive Rookie of the Year",
-			key: "droy",
-		},
-		{
-			val: "First Team All-League",
-			key: "first_team",
-		},
-		{
-			val: "Second Team All-League",
-			key: "second_team",
-		},
-		{
-			val: "All-League",
-			key: "all_league",
-		},
-		{
-			val: "All-Star",
-			key: "all_star",
-		},
-		{
-			val: "All-Star MVP",
-			key: "all_star_mvp",
-		},
-	],
-	hockey: [
-		{
-			val: "Won Championship",
-			key: "champion",
-		},
-		{
-			val: "Most Valuable Player",
-			key: "mvp",
-		},
-		{
-			val: "Playoffs MVP",
-			key: "finals_mvp",
-		},
-		{
-			val: "Defensive Player of the Year",
-			key: "dpoy",
-		},
-		{
-			val: "Defensive Forward of the Year",
-			key: "dfoy",
-		},
-		{
-			val: "Goalie of the Year",
-			key: "goy",
-		},
-		{
-			val: "Rookie of the Year",
-			key: "roy",
-		},
-		{
-			val: "First Team All-League",
-			key: "first_team",
-		},
-		{
-			val: "Second Team All-League",
-			key: "second_team",
-		},
-		{
-			val: "All-League",
-			key: "all_league",
-		},
-		{
-			val: "All-Star",
-			key: "all_star",
-		},
-		{
-			val: "All-Star MVP",
-			key: "all_star_mvp",
-		},
-	],
-});
+const optionsTmp = [
+	{
+		val: "All-Star",
+		key: "all_star",
+	},
+	{
+		val: "All-Star MVP",
+		key: "all_star_mvp",
+	},
+	{
+		val: "Won Championship",
+		key: "champion",
+	},
+	...bySport({
+		baseball: [],
+		basketball: [
+			{
+				val: "Slam Dunk Contest Winner",
+				key: "dunk",
+			},
+			{
+				val: "Three-Point Contest Winner",
+				key: "three",
+			},
+		],
+		football: [],
+		hockey: [],
+	}),
+];
 
 optionsTmp.push(
 	...leaderAwardCategories.map((x) => {

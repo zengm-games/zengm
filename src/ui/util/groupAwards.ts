@@ -1,5 +1,4 @@
 import { formatPlayerAwardName } from "../../common/awards.ts";
-import { bySport } from "../../common/sportFunctions.ts";
 import type { DistributiveOmit, PlayerAward } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
 import { leaderAwardCategories } from "../../worker/core/season/awards.ts";

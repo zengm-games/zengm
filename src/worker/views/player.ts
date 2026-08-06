@@ -578,7 +578,6 @@ const updatePlayer = async (
 		}
 
 		const leaders = await player.getLeaders(topStuff.pRaw);
-		console.log("p", p);
 
 		return {
 			...topStuff,

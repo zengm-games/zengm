@@ -33,6 +33,7 @@ custom awards
     - football has two ROY equivalents, so that shouldn't be unique
 - implement playoff series awards - must use a smaller set of stats
 - search for any hardcoded strings like "Rookie of the Year", "Most Improved Player", etc
+  - after upgrade, can remove awardsOld?
 - UI to update
   - award races
     - put editor here?

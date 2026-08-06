@@ -61,6 +61,55 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		);
 		const teamsByTid = groupByUnique(teams, "tid");
 
+		type MyTeam = (typeof teams)[number];
+		const formatTeam = (
+			t: MyTeam,
+			season: number,
+			seed: number | undefined,
+		) => {
+			const tid = t.tid;
+
+			const teamSeason = t.seasonAttrs.find((ts) => ts.season === season);
+
+			return {
+				tid,
+				seed,
+				abbrev: teamSeason
+					? teamSeason.abbrev
+					: g.get("teamInfoCache")[tid]?.abbrev,
+				region: teamSeason
+					? teamSeason.region
+					: g.get("teamInfoCache")[tid]?.region,
+				name: teamSeason ? teamSeason.name : g.get("teamInfoCache")[tid]?.name,
+				won: teamSeason ? teamSeason.won : 0,
+				lost: teamSeason ? teamSeason.lost : 0,
+				tied: teamSeason ? teamSeason.tied : 0,
+				otl: teamSeason ? teamSeason.otl : 0,
+				imgURL: teamSeason?.imgURL ?? t.imgURL,
+				imgURLSmall:
+					teamSeason?.imgURLSmall ?? teamSeason?.imgURL ?? t.imgURLSmall,
+				count: 0,
+			};
+		};
+		const formatTeamWrapper = (
+			{
+				seed,
+				tid,
+			}: {
+				seed: number | undefined;
+				tid: number;
+			},
+			season: number,
+		) => {
+			const t = teamsByTid[tid];
+			if (!t) {
+				throw new Error(`Team not found for tid ${tid}`);
+			}
+
+			return formatTeam(t, season, seed);
+		};
+		type FormattedTeam = ReturnType<typeof formatTeam>;
+
 		const awards = await idb.getCopies.awards(undefined, "noCopyCache");
 		const awardsBySeason = groupByUnique(awards, "season");
 
@@ -148,8 +197,8 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 				const row = {
 					season,
-					runnerUp: undefined,
-					champ: undefined,
+					runnerUp: undefined as FormattedTeam | undefined,
+					champ: undefined as FormattedTeam | undefined,
 					awards,
 				};
 
@@ -169,49 +218,6 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 			// Only check for finals result for seasons that are over
 			const series = playoffSeriesBySeason[season];
 
-			type MyTeam = (typeof teams)[number];
-			const formatTeam = (t: MyTeam, seed: number | undefined) => {
-				const tid = t.tid;
-
-				const teamSeason = t.seasonAttrs.find((ts) => ts.season === season);
-
-				return {
-					tid,
-					seed,
-					abbrev: teamSeason
-						? teamSeason.abbrev
-						: g.get("teamInfoCache")[tid]?.abbrev,
-					region: teamSeason
-						? teamSeason.region
-						: g.get("teamInfoCache")[tid]?.region,
-					name: teamSeason
-						? teamSeason.name
-						: g.get("teamInfoCache")[tid]?.name,
-					won: teamSeason ? teamSeason.won : 0,
-					lost: teamSeason ? teamSeason.lost : 0,
-					tied: teamSeason ? teamSeason.tied : 0,
-					otl: teamSeason ? teamSeason.otl : 0,
-					imgURL: teamSeason?.imgURL ?? t.imgURL,
-					imgURLSmall:
-						teamSeason?.imgURLSmall ?? teamSeason?.imgURL ?? t.imgURLSmall,
-					count: 0,
-				};
-			};
-			const formatTeamWrapper = ({
-				seed,
-				tid,
-			}: {
-				seed: number | undefined;
-				tid: number;
-			}) => {
-				const t = teamsByTid[tid];
-				if (!t) {
-					throw new Error(`Team not found for tid ${tid}`);
-				}
-
-				return formatTeam(t, seed);
-			};
-
 			if (series) {
 				const finalRound = series.series.at(-1);
 				if (!finalRound) {
@@ -223,7 +229,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 					);
 
 					if (t) {
-						row.champ = formatTeam(t, 1);
+						row.champ = formatTeam(t, season, 1);
 					}
 				} else {
 					const finals = finalRound[0];
@@ -243,8 +249,8 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 						runnerUp = finals.home;
 					}
 
-					row.champ = formatTeamWrapper(champ);
-					row.runnerUp = formatTeamWrapper(runnerUp);
+					row.champ = formatTeamWrapper(champ, season);
+					row.runnerUp = formatTeamWrapper(runnerUp, season);
 				}
 			} else {
 				// This is for people with some missing playoffSeries data, either because it was deleted or because it never existed (like adding teamSeasons manually for past years)
@@ -276,10 +282,10 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				}
 
 				if (champ) {
-					row.champ = formatTeamWrapper(champ);
+					row.champ = formatTeamWrapper(champ, season);
 				}
 				if (runnerUp) {
-					row.runnerUp = formatTeamWrapper(runnerUp);
+					row.runnerUp = formatTeamWrapper(runnerUp, season);
 				}
 			}
 		}

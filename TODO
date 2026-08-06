@@ -1,7 +1,6 @@
 custom awards
 - add other stuff from doAwards
   - playoff awards
-  - best record
   - awards object
 - in editor UI, explain seasonFraction scaling
   - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
@@ -41,8 +40,11 @@ custom awards
   - awards editor
   - player profile
     - awards column in stat tables
-  - league history table
+  - historyAll table
+    - test with changing awards
+    - test with div/conf awards (should show in separate columns)
   - season summary
+    - need to know which stats to show for offensive/defensive awards, like award races
   - awards records
   - team records
   - GOAT formula
@@ -58,6 +60,7 @@ custom awards
   - bold winner of individual award, link to award races
 - should still be able to add an arbitrary one-off custom award - have some place for those in the awards object, and use it for unknown awards in upgraded leagues
 - make sure hashAward accounts for everything
+- make sure getCols hardcoded awards ones are removed
 - support awards per div/conf
 - support clutch player award
 - how to show award as column when awards might change over time?
@@ -71,6 +74,7 @@ custom awards
   - real players with partial data? depends on if we store normalized or not
   - make sure it's deleted when importing
   - include conf/div in award name for grouped award?
+    - see formatAwardName for generating that in the worker
 - upgrade
   - First vs 1st?
     - could dynamically fix in formatAwardName

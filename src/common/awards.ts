@@ -1,7 +1,7 @@
 import { helpers } from "./helpers.ts";
 import type { DistributiveOmit, PlayerAward } from "./types.ts";
 
-export const formatAwardName = (
+export const formatPlayerAwardName = (
 	award: DistributiveOmit<PlayerAward, "season">,
 ) => {
 	if (award.type === undefined) {

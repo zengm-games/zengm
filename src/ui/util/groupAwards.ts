@@ -1,4 +1,4 @@
-import { formatAwardName } from "../../common/awards.ts";
+import { formatPlayerAwardName } from "../../common/awards.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import type { DistributiveOmit, PlayerAward } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
@@ -78,7 +78,7 @@ const getName = (
 	short: boolean | undefined,
 ) => {
 	if (!short) {
-		return formatAwardName(award);
+		return formatPlayerAwardName(award);
 	}
 
 	if (award.type === undefined) {

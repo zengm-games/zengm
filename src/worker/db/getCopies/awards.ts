@@ -1,5 +1,5 @@
 import { idb } from "../index.ts";
-import type { GetCopyType } from "../../../common/types.ts";
+import type { Awards2, GetCopyType } from "../../../common/types.ts";
 import { mergeByPk } from "./helpers.ts";
 
 const getCopies = async (
@@ -9,7 +9,7 @@ const getCopies = async (
 		season?: number;
 	} = {},
 	type?: GetCopyType,
-): Promise<any[]> => {
+): Promise<Awards2[]> => {
 	if (season !== undefined) {
 		const awards = mergeByPk(
 			await idb.league.getAll("awards", season),

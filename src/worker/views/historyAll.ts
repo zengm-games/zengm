@@ -3,10 +3,10 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 import { groupByUnique, range } from "../../common/utils.ts";
-import { bySport } from "../../common/sportFunctions.ts";
+import { formatAwardName } from "../core/season/awards.ts";
 
-const addAbbrev = (
-	award: any,
+const getAbbrev = (
+	tid: number,
 	teams: Record<
 		number,
 		{
@@ -20,30 +20,17 @@ const addAbbrev = (
 	>,
 	season: number,
 ) => {
-	if (!award) {
-		return;
-	}
-
-	const t = teams[award.tid];
+	const t = teams[tid];
 	if (!t) {
-		return {
-			...award,
-			abbrev: "???",
-		};
+		return "???";
 	}
 
 	const seasonAttrs = t.seasonAttrs.find((ts) => ts.season === season);
 	if (!seasonAttrs) {
-		return {
-			...award,
-			abbrev: t.abbrev,
-		};
+		return t.abbrev;
 	}
 
-	return {
-		...award,
-		abbrev: seasonAttrs.abbrev,
-	};
+	return seasonAttrs.abbrev;
 };
 
 const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
@@ -86,34 +73,89 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 				minSeason = t.seasonAttrs[0]!.season;
 			}
 		}
-		if (awards.length > 0 && awards[0].season < minSeason) {
+		if (awards[0] && awards[0].season < minSeason) {
 			minSeason = awards[0].season;
 		}
 
-		const awardTypes = bySport({
-			baseball: ["finalsMvp", "mvp", "poy", "rpoy", "roy"],
-			basketball: ["finalsMvp", "mvp", "dpoy", "smoy", "mip", "roy"],
-			football: ["finalsMvp", "mvp", "opoy", "poy", "dpoy", "oroy", "droy"],
-			hockey: ["finalsMvp", "mvp", "dpoy", "dfoy", "goy", "roy"],
-		});
+		const awardTypes: {
+			name: string;
+			shortName: string;
+		}[] = [];
+		const seenAwardTypes = new Set();
 
-		const seasons: any[] = range(minSeason, maxSeason + 1).map((season) => {
-			const a = awardsBySeason[season];
+		const seasons = await Promise.all(
+			range(maxSeason, minSeason - 1).map(async (season) => {
+				const a = awardsBySeason[season];
 
-			const row: any = {
-				season,
-				runnerUp: undefined,
-				champ: undefined,
-			};
+				let awards: {
+					abbrev: string;
+					awardName: string;
+					awardShortName: string;
+					name: string;
+					pid: number;
+					tid: number;
+				}[];
+				if (a) {
+					awards = (
+						await Promise.all(
+							a.awards
+								.filter((award) => {
+									// Only want individual awards
+									return award.numTeams === undefined;
+								})
+								.map(async (award) => {
+									const pid = award.winner[0]?.pid;
+									if (pid === undefined) {
+										return;
+									}
+									const p = await idb.getCopy.players({ pid }, "noCopyCache");
+									if (!p) {
+										return;
+									}
+									const tid = p.stats.findLast(
+										(row) => row.season === season,
+									)?.tid;
+									if (tid === undefined) {
+										return;
+									}
 
-			for (const awardType of awardTypes) {
-				row[awardType] = a
-					? addAbbrev(a[awardType], teamsByTid, a.season)
-					: undefined;
-			}
+									const abbrev = getAbbrev(tid, teamsByTid, season);
 
-			return row;
-		});
+									const awardName = formatAwardName(award, season);
+									const awardShortName = formatAwardName(award, season, true);
+
+									if (!seenAwardTypes.has(awardShortName)) {
+										awardTypes.push({
+											name: awardName,
+											shortName: awardShortName,
+										});
+									}
+
+									return {
+										abbrev,
+										awardName,
+										awardShortName,
+										name: `${p.firstName} ${p.lastName}`,
+										pid,
+										tid,
+									};
+								}),
+						)
+					).filter((award) => award !== undefined);
+				} else {
+					awards = [];
+				}
+
+				const row = {
+					season,
+					runnerUp: undefined,
+					champ: undefined,
+					awards,
+				};
+
+				return row;
+			}),
+		);
 
 		const playoffSeries = await idb.getCopies.playoffSeries(
 			undefined,

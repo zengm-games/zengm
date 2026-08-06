@@ -2,6 +2,7 @@ import { PLAYER, PHASE } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type {
+	Award2,
 	Conditions,
 	DistributiveOmit,
 	Player,
@@ -21,7 +22,7 @@ import {
 	GamesPlayedCache,
 	playerMeetsCategoryRequirements,
 } from "../../views/leaders.ts";
-import { formatAwardName } from "../../../common/awards.ts";
+import { formatPlayerAwardName } from "../../../common/awards.ts";
 
 export type AwardsByPlayer = {
 	pid: number;
@@ -505,11 +506,11 @@ const saveAwardsByPlayer = async (
 			score = 10;
 		} else if (p.award.type === undefined && p.award.numTeams !== undefined) {
 			// Team awards
-			text += `made the ${formatAwardName(p.award)}.`;
+			text += `made the ${formatPlayerAwardName(p.award)}.`;
 			score = 10;
 		} else {
 			if (p.award.type !== undefined || p.award.rank === 1) {
-				text += `won the ${formatAwardName(p.award)} award.`;
+				text += `won the ${formatPlayerAwardName(p.award)} award.`;
 				score = 20;
 			}
 		}
@@ -586,6 +587,45 @@ const deleteAwardsByPlayer = async (
 };
 
 const addSimpleAndTeamAwardsToAwardsByPlayer = () => {};
+
+const getInitials = (string: string) => {
+	return (
+		string
+			.match(/\b\p{L}/gu)
+			?.join("")
+			.toUpperCase() ?? ""
+	);
+};
+
+export const formatAwardName = (
+	award: Award2,
+	season: number,
+	short?: boolean,
+) => {
+	let prefix = "";
+	const group = award.group;
+	if (group) {
+		if (group.type === "conf") {
+			const confs = g.get("confs", season);
+			const conf = confs.find((conf) => conf.cid === group.cid);
+			if (conf) {
+				prefix = getInitials(conf.name);
+			}
+		} else {
+			const divs = g.get("divs", season);
+			const div = divs.find((div) => div.did === group.did);
+			if (div) {
+				prefix = getInitials(div.name);
+			}
+		}
+	}
+
+	if (short) {
+		return `${prefix}${award.shortName}`;
+	}
+
+	return `${prefix} ${award.name}`;
+};
 
 export {
 	getPlayers,

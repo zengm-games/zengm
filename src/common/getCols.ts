@@ -3815,10 +3815,14 @@ const cols: {
 };
 
 export const getCols = (
-	titles: string[],
+	titles: (string | Col)[],
 	overrides: Record<string, Partial<Col>> = {},
 ): Col[] => {
 	return titles.map((title) => {
+		if (typeof title !== "string") {
+			return title;
+		}
+
 		if (!Object.hasOwn(cols, title)) {
 			throw new Error(`Unknown column: "${title}"`);
 		}

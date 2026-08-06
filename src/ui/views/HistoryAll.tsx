@@ -106,7 +106,12 @@ const HistoryAll = ({ awards, seasons }: View<"historyAll">) => {
 		"Season",
 		"League Champion",
 		"Runner Up",
-		...awards.map((award) => `award:${award}`),
+		...awards.map((award, i) => {
+			return {
+				desc: award.name,
+				title: award.shortName,
+			};
+		}),
 	]);
 
 	const rows = seasons.map((s) => {
@@ -124,13 +129,25 @@ const HistoryAll = ({ awards, seasons }: View<"historyAll">) => {
 
 		const runnerUpEl = formatTeam(s.runnerUp, s.season, userTid);
 
+		const awardsByShortName = Object.groupBy(
+			s.awards,
+			(award) => award.awardShortName,
+		);
+
 		return {
 			key: s.season,
 			data: [
 				seasonLink,
 				champEl,
 				runnerUpEl,
-				...awards.map((award) => awardName(s[award], s.season, userTid)),
+				...awards.map(({ shortName }) => {
+					const award = awardsByShortName[shortName];
+					if (!award || !award[0]) {
+						return;
+					}
+
+					return awardName(award[0], s.season, userTid);
+				}),
 			],
 		};
 	});

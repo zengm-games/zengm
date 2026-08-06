@@ -2057,7 +2057,7 @@ type AwardInfo = {
 		  };
 };
 
-type Award2 = AwardInfo &
+export type Award2 = AwardInfo &
 	(
 		| {
 				// Individual award - top 10 are saved

@@ -706,6 +706,7 @@ const doAwards = async (conditions: Conditions) => {
 		bestRecordConfs,
 		awards: realizedAwards.map((x) => x.award),
 	};
+	console.log("awards", awards);
 	await idb.cache.awards.put(awards);
 };
 

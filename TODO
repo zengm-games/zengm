@@ -10,16 +10,9 @@ custom awards
 - fields
   - stats range (regular season, playoffs, semifinals, finals, combined)
   - if by position (non-basketball sports) support different formula per position
-  - some way to label as an "important" award like MVP equivalent, ROY equivalent
-    - football has two ROY equivalents, so that shouldn't be unique
-    - MVP - use in HallOfFame, FrivolitiesDraftClasses
-      - maybe get rid of MVP column in getCols, replace with dynamic column
 - editor constraints
   - shortName is unique
-- get rid of SIMPLE_AWARDS and AWARD_NAMES
 - ability to add/edit/delete manual awards for player, maybe in player editor
-- search for any hardcoded strings like "Rookie of the Year", "Most Improved Player", etc
-  - after upgrade, can remove awardsOld?
 - UI to update
   - award races
     - put editor here?
@@ -43,13 +36,14 @@ custom awards
 - real players league - update generated awards objects and player.awards
 - make sure hashAward accounts for everything
 - in AwardsSummary, break down by team number for tooltip
-- schema for setting
 - formatAwardName should prefix with conf/div abbrev somehow
   - how to abbreviate? is it necessary?
   - store in name, or in separate field?
 - how to store Player.awards
   - include conf/div in award name for grouped award?
     - see formatAwardName for generating that in the worker
+- use formatAwardName in UI everywhere
+- get rid of SIMPLE_AWARDS and AWARD_NAMES
 - upgrade
   - First vs 1st?
     - could dynamically fix in formatAwardName
@@ -60,8 +54,10 @@ custom awards
   - indexeddb
   - import
   - similar for real player data, reformat Awards and Player.awards
+- search for any hardcoded strings like "Rookie of the Year", "Most Improved Player", etc
+  - after upgrade, can remove awardsOld?
 - some parts of awards.ts were copied to doAwards.ts, make sure to remove dupes
-- use formatAwardName in UI everywhere
+- schema for setting
 - blog
   - roy changes
     - edge cases

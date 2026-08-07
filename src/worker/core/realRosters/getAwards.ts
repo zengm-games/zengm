@@ -7,6 +7,7 @@ import { groupByUnique, omit, orderBy } from "../../../common/utils.ts";
 import type {
 	AwardInfoTeam,
 	Awards2,
+	GameAttributesLeague,
 	GetLeagueOptionsReal,
 	PlayerAward,
 	TeamSeasonWithoutKey,
@@ -14,7 +15,10 @@ import type {
 import type formatPlayerFactory from "./formatPlayerFactory.ts";
 import type formatScheduledEvents from "./formatScheduledEvents.ts";
 import type { Basketball } from "./loadData.basketball.ts";
-import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
+import {
+	formatPlayerAward,
+	getDefaultAwardsByShortName,
+} from "./formatPlayerAward.ts";
 
 type Teams = ReturnType<typeof formatScheduledEvents>["initialTeams"];
 
@@ -30,15 +34,31 @@ type AwardsBySeason = Record<
 
 let awardsBySeason: AwardsBySeason | undefined;
 
-const initAwardsBySeason = (awards: Basketball["awards"]) => {
+const initAwardsBySeason = (
+	awards: Basketball["awards"],
+	defaultAwardsByShortName: Record<
+		string,
+		{
+			award: GameAttributesLeague["awards"][number];
+			index: number;
+		}
+	>,
+) => {
 	const bySeason: AwardsBySeason = {};
 
 	for (const [slug, awardsPlayer] of Object.entries(awards)) {
 		if (awardsPlayer) {
-			for (const award of awardsPlayer) {
-				const season = award.season;
+			for (const awardTemp of awardsPlayer) {
+				const season = awardTemp.season;
 				if (!bySeason[season]) {
 					bySeason[season] = [];
+				}
+
+				let award: PlayerAward;
+				if (awardTemp.type !== undefined) {
+					award = awardTemp;
+				} else {
+					award = formatPlayerAward(awardTemp, defaultAwardsByShortName);
 				}
 
 				bySeason[season].push({
@@ -72,8 +92,10 @@ const getAwards = (
 		invertedAwardNames[long] = short;
 	}
 
+	const defaultAwardsByShortName = getDefaultAwardsByShortName();
+
 	if (!awardsBySeason) {
-		awardsBySeason = initAwardsBySeason(awards);
+		awardsBySeason = initAwardsBySeason(awards, defaultAwardsByShortName);
 	}
 	if (!playersBySlug) {
 		playersBySlug = groupByUnique(players, "srID");
@@ -137,16 +159,6 @@ const getAwards = (
 
 	for (let season = seasonsRange[0]; season <= seasonsRange[1]; season++) {
 		const seasonAwards = awardsBySeason[season] ?? [];
-
-		const defaultAwardsByShortName = groupByUnique(
-			defaultGameAttributes.awards.map((award, index) => {
-				return {
-					award,
-					index,
-				};
-			}),
-			(row) => row.award.shortName,
-		);
 
 		if (!playersBySlug) {
 			throw new Error("Should never happen");

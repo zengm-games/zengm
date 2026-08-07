@@ -37,7 +37,6 @@ custom awards
     - show in editor UI if still eligible for achievements
     - triple crown
       - fix baseball DPOY bug https://discord.com/channels/290013534023057409/1532565456920117279/1532565456920117279
-- real players league - instead of whole PlayerAwards object, could just store shortName+rank and get everything from that! already done that way when assembling awards object
 - make sure hashAward accounts for everything
 - in AwardsSummary, break down by team number for tooltip
 - formatAwardName should prefix with conf/div abbrev somehow
@@ -77,6 +76,7 @@ custom awards
   - only fetch needed variables from playersPlus
   - conditional stat-based awards that are not awarded every season, like triple crown or 40/40
   - clutch player award
+  - real player data for award top 5 finish
 
 more prominent warning when editing player and the draft year is in the future while they are on a team
 - also ideally show them on the roster page too

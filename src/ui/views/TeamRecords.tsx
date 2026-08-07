@@ -84,8 +84,8 @@ const TeamRecords = ({
 				sortType: "number" as const,
 			};
 		}),
-		"count:allStar",
-		"count:allStarMVP",
+		"AS",
+		"ASMVP",
 	]);
 
 	const lasts = cols.filter((col) => col.title === "Last");

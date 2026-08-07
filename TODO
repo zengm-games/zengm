@@ -7,20 +7,15 @@ custom awards
 - test
   - baseball rookie filter
   - MIP in other sports
-  - historyAll
-    - test with changing awards
-    - test with div/conf awards (should show in separate columns)
-  - teamRecords
+  - historyAll, teamRecords, awardRecords
     - test with changing awards
     - test with div/conf awards (should show in separate columns)
 - fields
   - stats range (regular season, playoffs, semifinals, finals, combined)
   - if by position (non-basketball sports) support different formula per position
-  - SeasonIcon
-    - icon (give a few options)
-    - color
   - some way to label as an "important" award like MVP equivalent, ROY equivalent
     - football has two ROY equivalents, so that shouldn't be unique
+    - MVP - use in SeasonIcons
 - implement playoff series awards - must use a smaller set of stats
 - in editor, enforce that shortName is unique
 - search for any hardcoded strings like "Rookie of the Year", "Most Improved Player", etc
@@ -45,12 +40,6 @@ custom awards
     - show in editor UI if still eligible for achievements
     - triple crown
       - fix baseball DPOY bug https://discord.com/channels/290013534023057409/1532565456920117279/1532565456920117279
-- would be nice to support conditional stat-based awards that are not awarded every season, like triple crown or 40/40
-- store top 10 for each individual award, so it can be displayed easily on player profile pages
-  - store this in player object, don't need it anywhere else i think?
-    - for teams, only store rank if there are more than 1 team
-  - bold winner of individual award, link to award races
-- should still be able to add an arbitrary one-off custom award - have some place for those in the awards object, and use it for unknown awards in upgraded leagues
 - make sure hashAward accounts for everything
 - make sure getCols hardcoded awards ones are removed - award: and count:
 - support clutch player award
@@ -59,10 +48,6 @@ custom awards
   - how to abbreviate? is it necessary?
   - store in name, or in separate field?
 - how to store Player.awards
-  - try storing normalized, how slow is it?
-    - could store more awards history in cache
-  - real players with partial data? depends on if we store normalized or not
-  - make sure it's deleted when importing
   - include conf/div in award name for grouped award?
     - see formatAwardName for generating that in the worker
 - upgrade
@@ -89,6 +74,7 @@ custom awards
 - later
   - support editing metadata of past awards, like name and shortName. maybe even formula too...
   - only fetch needed variables from playersPlus
+  - conditional stat-based awards that are not awarded every season, like triple crown or 40/40
 
 more prominent warning when editing player and the draft year is in the future while they are on a team
 - also ideally show them on the roster page too

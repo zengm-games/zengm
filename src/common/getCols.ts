@@ -3637,17 +3637,15 @@ const cols: {
 		sortType: "number",
 		title: "Score",
 	},
-	"count:allStar": {
+	AS: {
 		desc: "All-Star",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "AS",
 	},
-	"count:allStarMVP": {
+	ASMVP: {
 		desc: "All-Star MVP",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "ASMVP",
 	},
 	BR: {
 		desc: "Best Record",

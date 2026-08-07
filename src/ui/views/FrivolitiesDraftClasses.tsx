@@ -41,7 +41,7 @@ const FrivolitiesDraftClasses = ({
 			hockey: "stat:ps",
 		}),
 		"Active",
-		"count:allStar",
+		"AS",
 		"count:mvp",
 		"HoF",
 		"Name",

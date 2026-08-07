@@ -1,24 +1,16 @@
 import {
 	AWARD_NAMES,
 	PHASE,
-	PLAYER,
 	REAL_PLAYERS_INFO,
 } from "../../../common/constants.ts";
-import { groupByUnique, omit } from "../../../common/utils.ts";
+import { groupByUnique, omit, orderBy } from "../../../common/utils.ts";
 import type {
-	AwardInfo,
-	AwardInfoIndividual,
 	AwardInfoTeam,
 	Awards2,
 	GetLeagueOptionsReal,
 	PlayerAward,
 	TeamSeasonWithoutKey,
 } from "../../../common/types.ts";
-import type {
-	AwardPlayer,
-	AwardPlayerDefense,
-	Awards,
-} from "../../../common/types.basketball.ts";
 import type formatPlayerFactory from "./formatPlayerFactory.ts";
 import type formatScheduledEvents from "./formatScheduledEvents.ts";
 import type { Basketball } from "./loadData.basketball.ts";
@@ -61,156 +53,6 @@ const initAwardsBySeason = (awards: Basketball["awards"]) => {
 };
 
 let playersBySlug: Record<string, Player> | undefined;
-
-type AwardPlayerOutput<Defensive> = Defensive extends true
-	? AwardPlayerDefense
-	: AwardPlayer;
-
-const fillInPlayers = (awards: Awards<string, string>): Awards => {
-	const awardPlayer = <Defensive extends true | false>(
-		slug: string | undefined,
-		defensive: Defensive,
-		playoffs: boolean = false,
-	): AwardPlayerOutput<Defensive> | undefined => {
-		if (!slug || !playersBySlug) {
-			return;
-		}
-
-		const p = playersBySlug[slug];
-		if (!p) {
-			return;
-		}
-
-		let tid: number = PLAYER.DOES_NOT_EXIST;
-		let stats;
-		if (p.stats) {
-			for (const row of p.stats) {
-				if (row.season === awards.season && row.playoffs === playoffs) {
-					stats = row;
-				} else if (row.season > awards.season) {
-					break;
-				}
-			}
-		}
-
-		if (stats) {
-			tid = stats.tid;
-		} else {
-			console.log("tid not found", awards.season, slug, defensive, playoffs, p);
-		}
-
-		const base = {
-			pid: p.pid,
-			name: p.name,
-			tid,
-		};
-
-		let trb = 0;
-		if (stats && stats.gp !== undefined && stats.gp > 0) {
-			trb = ((stats.trb ?? 0) + (stats.drb ?? 0) + (stats.orb ?? 0)) / stats.gp;
-		}
-
-		if (defensive) {
-			let blk = 0;
-			let stl = 0;
-			if (stats && stats.gp !== undefined && stats.gp > 0) {
-				if (stats.blk !== undefined) {
-					blk = stats.blk / stats.gp;
-				}
-				if (stats.stl !== undefined) {
-					stl = stats.stl / stats.gp;
-				}
-			}
-
-			return {
-				...base,
-				trb,
-				blk,
-				stl,
-			} as AwardPlayerOutput<Defensive>;
-		}
-
-		let pts = 0;
-		let ast = 0;
-		if (stats && stats.gp !== undefined && stats.gp > 0) {
-			if (stats.pts !== undefined) {
-				pts = stats.pts / stats.gp;
-			}
-			if (stats.ast !== undefined) {
-				ast = stats.ast / stats.gp;
-			}
-		}
-
-		return {
-			...base,
-			pts,
-			trb,
-			ast,
-		} as AwardPlayerOutput<Defensive>;
-	};
-
-	return {
-		season: awards.season,
-		bestRecord: awards.bestRecord,
-		bestRecordConfs: awards.bestRecordConfs,
-
-		roy: awardPlayer(awards.roy, false),
-		allRookie: awards.allRookie.map((slug) =>
-			awardPlayer(slug, false),
-		) as AwardPlayer[],
-		mip: awardPlayer(awards.mip, false),
-		mvp: awardPlayer(awards.mvp, false),
-		smoy: awardPlayer(awards.smoy, false),
-		allLeague: [
-			{
-				title: "First Team",
-				players: awards.allLeague[0].players.map((slug) =>
-					awardPlayer(slug, false),
-				) as AwardPlayer[],
-			},
-			{
-				title: "Second Team",
-				players: awards.allLeague[1].players.map((slug) =>
-					awardPlayer(slug, false),
-				) as AwardPlayer[],
-			},
-			{
-				title: "Third Team",
-				players: awards.allLeague[2].players.map((slug) =>
-					awardPlayer(slug, false),
-				) as AwardPlayer[],
-			},
-		],
-		dpoy: awardPlayer(awards.dpoy, true),
-		allDefensive: [
-			{
-				title: "First Team",
-				players: awards.allDefensive[0].players.map((slug) =>
-					awardPlayer(slug, true),
-				) as AwardPlayerDefense[],
-			},
-			{
-				title: "Second Team",
-				players: awards.allDefensive[1].players.map((slug) =>
-					awardPlayer(slug, true),
-				) as AwardPlayerDefense[],
-			},
-			{
-				title: "Third Team",
-				players: awards.allDefensive[2].players.map((slug) =>
-					awardPlayer(slug, true),
-				) as AwardPlayerDefense[],
-			},
-		],
-		finalsMvp: awardPlayer(awards.finalsMvp, false, true),
-		sfmvp:
-			awards.sfmvp && awards.sfmvp.length > 0
-				? (awards.sfmvp.map((slug) =>
-						awardPlayer(slug, false),
-					) as AwardPlayer[])
-				: undefined,
-	};
-};
 
 const getAwards = (
 	awards: Basketball["awards"],
@@ -297,25 +139,28 @@ const getAwards = (
 		const seasonAwards = awardsBySeason[season] ?? [];
 
 		const defaultAwardsByShortName = groupByUnique(
-			defaultGameAttributes.awards,
-			"shortName",
+			defaultGameAttributes.awards.map((award, index) => {
+				return {
+					award,
+					index,
+				};
+			}),
+			(row) => row.award.shortName,
 		);
 
-		type MyTeamAward = Omit<AwardInfoTeam, "winner"> & { winner: string[][] };
-		const teamAwardsByShortName: Record<string, MyTeamAward> = {};
+		if (!playersBySlug) {
+			throw new Error("Should never happen");
+		}
 
-		const builtInAwards: (
-			| (Omit<AwardInfoIndividual, "winner"> & {
-					winner: string[];
-			  })
-			| MyTeamAward
-		)[] = [];
+		const teamAwardsByShortName: Record<string, AwardInfoTeam> = {};
+
+		const builtInAwards: Awards2["awards"] = [];
 		for (const { slug, award } of seasonAwards) {
 			if (award.type !== undefined) {
 				continue;
 			}
 
-			const info = defaultAwardsByShortName[award.shortName];
+			const info = defaultAwardsByShortName[award.shortName]?.award;
 			if (!info) {
 				throw new Error("Should never happen");
 			}
@@ -328,7 +173,7 @@ const getAwards = (
 				builtInAwards.push({
 					...common,
 					numTeams: undefined,
-					winner: [slug],
+					winner: [{ pid: playersBySlug[slug]!.pid }],
 				});
 			} else {
 				// Team award
@@ -340,10 +185,11 @@ const getAwards = (
 						numTeams,
 						winner: [],
 					};
+					builtInAwards.push(teamAward);
 					teamAwardsByShortName[info.shortName] = teamAward;
 				}
 				teamAward.winner[teamIndex] ??= [];
-				teamAward.winner[teamIndex].push(slug);
+				teamAward.winner[teamIndex].push({ pid: playersBySlug[slug]!.pid });
 			}
 		}
 
@@ -358,20 +204,23 @@ const getAwards = (
 
 		const bestRecordInfo = bestRecordInfoBySeason[season]!;
 
-		const awards = {
+		const awards: Awards2 = {
 			season,
 			bestRecord: bestRecordInfo.bestRecord.tid,
 			bestRecordConfs: getBestTids(bestRecordInfo.bestRecordConfs),
 			bestRecordDivs: getBestTids(bestRecordInfo.bestRecordDivs),
 
-			awards: builtInAwards,
+			awards: orderBy(
+				builtInAwards,
+				(award) => defaultAwardsByShortName[award.shortName]?.index ?? Infinity,
+				"asc",
+			),
 		};
-		console.log(awards);
 
 		allAwards.push(awards);
 	}
 
-	return allAwards.map(fillInPlayers);
+	return allAwards;
 };
 
 export default getAwards;

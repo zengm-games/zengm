@@ -12,27 +12,17 @@ import { TeamLogoInline } from "../components/TeamLogoInline.tsx";
 import { useLocal } from "../util/local.ts";
 
 const awardName = (
-	award:
-		| {
-				pid: number;
-				pos: string | undefined;
-				name: string;
-				tid: number;
-				abbrev: string;
-				count: number;
-		  }
-		| undefined,
+	award: {
+		pid: number;
+		pos: string | undefined;
+		name: string;
+		tid: number;
+		abbrev: string;
+		count: number;
+	},
 	season: number,
 	userTid: number,
 ) => {
-	if (!award) {
-		// For old seasons with no Finals MVP
-		return {
-			value: "N/A",
-			sortValue: undefined,
-		};
-	}
-
 	const wrappedValue = wrappedPlayerNameLabels({
 		pid: award.pid,
 		pos: award.pos,

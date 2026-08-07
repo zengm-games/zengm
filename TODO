@@ -10,6 +10,8 @@ custom awards
     - rfld in all-defense
   - football
   - hockey
+    - dfoy position filter
+    - goyScore needs Math.min
 - in editor UI, explain seasonFraction scaling
   - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
 - test
@@ -53,6 +55,7 @@ custom awards
     - see formatAwardName for generating that in the worker
 - use formatAwardName in UI everywhere
 - upgrade
+  - test all sports
   - First vs 1st?
     - could dynamically fix in formatAwardName
   - upgrade old awards objects

@@ -86,7 +86,14 @@ const updateFrivolitiesDraftClasses = async (
 			if (p.hof) {
 				draftClass.numHOF += 1;
 			}
-			if (p.awards.some((award) => award.type === undefined && award.mvp)) {
+			if (
+				p.awards.some(
+					(award) =>
+						award.type === undefined &&
+						award.numTeams === undefined &&
+						award.mvp,
+				)
+			) {
 				draftClass.numMVP += 1;
 			}
 			if (p.awards.some((award) => award.type === "All-Star")) {

@@ -550,6 +550,56 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 				pace: 1,
 				maxOvertimes: wrapFromStart(1),
 				shootoutRounds: wrapFromStart(3),
+				awards: [
+					{
+						shortName: "MVP",
+						name: "Most Valuable Player",
+						formula: "pts / 25 + ps - 0.225 * gps + 20 * seasonFraction * winp",
+						mvp: true,
+					},
+					{
+						shortName: "DPOY",
+						name: "Defensive Player of the Year",
+						formula: "tk / 25 + hit / 25 + dps",
+					},
+					{
+						shortName: "DFOY",
+						name: "Defensive Forward of the Year",
+						formula: "tk / 25 + hit / 25 + dps",
+					},
+					{
+						shortName: "GOY",
+						name: "Goalie of the Year",
+						formula: "gps",
+						bench: true,
+					},
+					{
+						shortName: "ROY",
+						name: "Rookie of the Year",
+						formula: "pts / 25 + ps - 0.225 * gps",
+						rookie: true,
+						roy: true,
+					},
+					{
+						shortName: "PMVP",
+						name: "Playoff MVP",
+						formula: "pts / 25 + ps - 0.225 * gps + 20 * seasonFraction * winp",
+						statRange: "playoffs",
+					},
+					{
+						shortName: "ALL",
+						name: "All-League",
+						formula: "ps",
+						numTeams: 2,
+					},
+					{
+						shortName: "ALR",
+						name: "All-Rookie",
+						formula: "ps",
+						rookie: true,
+						numTeams: 1,
+					},
+				],
 			}
 		: {};
 

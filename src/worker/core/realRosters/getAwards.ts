@@ -4,9 +4,14 @@ import {
 	PLAYER,
 	REAL_PLAYERS_INFO,
 } from "../../../common/constants.ts";
-import { groupByUnique } from "../../../common/utils.ts";
+import { groupByUnique, omit } from "../../../common/utils.ts";
 import type {
+	AwardInfo,
+	AwardInfoIndividual,
+	AwardInfoTeam,
+	Awards2,
 	GetLeagueOptionsReal,
+	PlayerAward,
 	TeamSeasonWithoutKey,
 } from "../../../common/types.ts";
 import type {
@@ -17,6 +22,7 @@ import type {
 import type formatPlayerFactory from "./formatPlayerFactory.ts";
 import type formatScheduledEvents from "./formatScheduledEvents.ts";
 import type { Basketball } from "./loadData.basketball.ts";
+import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 
 type Teams = ReturnType<typeof formatScheduledEvents>["initialTeams"];
 
@@ -26,7 +32,7 @@ type AwardsBySeason = Record<
 	number,
 	{
 		slug: string;
-		type: string;
+		award: PlayerAward;
 	}[]
 >;
 
@@ -37,14 +43,15 @@ const initAwardsBySeason = (awards: Basketball["awards"]) => {
 
 	for (const [slug, awardsPlayer] of Object.entries(awards)) {
 		if (awardsPlayer) {
-			for (const { season, type } of awardsPlayer) {
+			for (const award of awardsPlayer) {
+				const season = award.season;
 				if (!bySeason[season]) {
 					bySeason[season] = [];
 				}
 
 				bySeason[season].push({
 					slug,
-					type,
+					award,
 				});
 			}
 		}
@@ -54,19 +61,6 @@ const initAwardsBySeason = (awards: Basketball["awards"]) => {
 };
 
 let playersBySlug: Record<string, Player> | undefined;
-
-const awardTeam = (teamSeason: TeamSeasonWithoutKey) => {
-	return {
-		tid: teamSeason.tid,
-		abbrev: teamSeason.abbrev,
-		region: teamSeason.region,
-		name: teamSeason.name,
-		won: teamSeason.won,
-		lost: teamSeason.lost,
-		tied: teamSeason.tied,
-		otl: teamSeason.otl,
-	};
-};
 
 type AwardPlayerOutput<Defensive> = Defensive extends true
 	? AwardPlayerDefense
@@ -258,8 +252,9 @@ const getAwards = (
 	const bestRecordInfoBySeason: Record<
 		number,
 		{
-			best: TeamSeasonWithoutKey;
-			bestConfs: TeamSeasonWithoutKey[];
+			bestRecord: TeamSeasonWithoutKey;
+			bestRecordConfs: Map<number, TeamSeasonWithoutKey>;
+			bestRecordDivs: Map<number, TeamSeasonWithoutKey>;
 		}
 	> = {};
 
@@ -268,28 +263,31 @@ const getAwards = (
 			continue;
 		}
 		for (const teamSeason of t.seasons) {
-			const { cid, season } = teamSeason;
+			const { cid, did, season } = teamSeason;
 
 			if (options.realStats === "all" || options.season === season) {
 				if (!bestRecordInfoBySeason[season]) {
 					bestRecordInfoBySeason[season] = {
-						best: teamSeason,
-						bestConfs: [],
+						bestRecord: teamSeason,
+						bestRecordConfs: new Map(),
+						bestRecordDivs: new Map(),
 					};
 				} else {
-					if (teamSeason.won > bestRecordInfoBySeason[season].best.won) {
-						bestRecordInfoBySeason[season].best = teamSeason;
+					if (teamSeason.won > bestRecordInfoBySeason[season].bestRecord.won) {
+						bestRecordInfoBySeason[season].bestRecord = teamSeason;
 					}
 				}
 
-				if (!bestRecordInfoBySeason[season].bestConfs[cid]) {
-					bestRecordInfoBySeason[season].bestConfs[cid] = teamSeason;
-				} else {
-					if (
-						teamSeason.won > bestRecordInfoBySeason[season].bestConfs[cid].won
-					) {
-						bestRecordInfoBySeason[season].bestConfs[cid] = teamSeason;
-					}
+				const bestRecordConf =
+					bestRecordInfoBySeason[season].bestRecordConfs.get(cid);
+				if (!bestRecordConf || teamSeason.won > bestRecordConf.won) {
+					bestRecordInfoBySeason[season].bestRecordConfs.set(cid, teamSeason);
+				}
+
+				const bestRecordDiv =
+					bestRecordInfoBySeason[season].bestRecordDivs.get(did);
+				if (!bestRecordDiv || teamSeason.won > bestRecordDiv.won) {
+					bestRecordInfoBySeason[season].bestRecordDivs.set(did, teamSeason);
 				}
 			}
 		}
@@ -297,88 +295,78 @@ const getAwards = (
 
 	for (let season = seasonsRange[0]; season <= seasonsRange[1]; season++) {
 		const seasonAwards = awardsBySeason[season] ?? [];
-		const simple: Record<string, string | undefined> = {
-			roy: undefined,
-			mip: undefined,
-			mvp: undefined,
-			smoy: undefined,
-			dpoy: undefined,
-			finalsMvp: undefined,
-		};
-		const allLeague1: string[] = [];
-		const allLeague2: string[] = [];
-		const allLeague3: string[] = [];
-		const allDefensive1: string[] = [];
-		const allDefensive2: string[] = [];
-		const allDefensive3: string[] = [];
-		const allRookie: string[] = [];
-		const sfmvp: string[] = [];
 
-		for (const { slug, type } of seasonAwards) {
-			const short = invertedAwardNames[type];
-			if (short && Object.hasOwn(simple, short)) {
-				simple[short] = slug;
-			} else if (type === "1st Team All-League") {
-				allLeague1.push(slug);
-			} else if (type === "2nd Team All-League") {
-				allLeague2.push(slug);
-			} else if (type === "3rd Team All-League") {
-				allLeague3.push(slug);
-			} else if (type === "1st Team All-Defensive") {
-				allDefensive1.push(slug);
-			} else if (type === "2nd Team All-Defensive") {
-				allDefensive2.push(slug);
-			} else if (type === "3rd Team All-Defensive") {
-				allDefensive3.push(slug);
-			} else if (type === "1st Team All-Rookie") {
-				allRookie.push(slug);
-			} else if (type === AWARD_NAMES.sfmvp) {
-				sfmvp.push(slug);
+		const defaultAwardsByShortName = groupByUnique(
+			defaultGameAttributes.awards,
+			"shortName",
+		);
+
+		type MyTeamAward = Omit<AwardInfoTeam, "winner"> & { winner: string[][] };
+		const teamAwardsByShortName: Record<string, MyTeamAward> = {};
+
+		const builtInAwards: (
+			| (Omit<AwardInfoIndividual, "winner"> & {
+					winner: string[];
+			  })
+			| MyTeamAward
+		)[] = [];
+		for (const { slug, award } of seasonAwards) {
+			if (award.type !== undefined) {
+				continue;
+			}
+
+			const info = defaultAwardsByShortName[award.shortName];
+			if (!info) {
+				throw new Error("Should never happen");
+			}
+
+			const common = omit(info, ["group"]);
+
+			const numTeams = award.numTeams;
+			if (numTeams === undefined) {
+				// Individual award
+				builtInAwards.push({
+					...common,
+					numTeams: undefined,
+					winner: [slug],
+				});
+			} else {
+				// Team award
+				const teamIndex = award.rank - 1;
+				let teamAward = teamAwardsByShortName[info.shortName];
+				if (!teamAward) {
+					teamAward = {
+						...common,
+						numTeams,
+						winner: [],
+					};
+					teamAwardsByShortName[info.shortName] = teamAward;
+				}
+				teamAward.winner[teamIndex] ??= [];
+				teamAward.winner[teamIndex].push(slug);
 			}
 		}
 
-		const awards: Awards<string, string> = {
-			season,
-			bestRecord: awardTeam(bestRecordInfoBySeason[season]!.best),
-			bestRecordConfs: bestRecordInfoBySeason[season]!.bestConfs.map(awardTeam),
+		const getBestTids = (record: Map<number, TeamSeasonWithoutKey>) => {
+			const output: Record<number, number> = {};
+			for (const [key, t] of record) {
+				output[key] = t.tid;
+			}
 
-			roy: simple.roy,
-			allRookie,
-			mip: simple.mip,
-			mvp: simple.mvp,
-			smoy: simple.smoy,
-			allLeague: [
-				{
-					title: "First Team",
-					players: allLeague1,
-				},
-				{
-					title: "Second Team",
-					players: allLeague2,
-				},
-				{
-					title: "Third Team",
-					players: allLeague3,
-				},
-			],
-			dpoy: simple.dpoy,
-			allDefensive: [
-				{
-					title: "First Team",
-					players: allDefensive1,
-				},
-				{
-					title: "Second Team",
-					players: allDefensive2,
-				},
-				{
-					title: "Third Team",
-					players: allDefensive3,
-				},
-			],
-			finalsMvp: simple.finalsMvp,
-			sfmvp,
+			return output;
 		};
+
+		const bestRecordInfo = bestRecordInfoBySeason[season]!;
+
+		const awards = {
+			season,
+			bestRecord: bestRecordInfo.bestRecord.tid,
+			bestRecordConfs: getBestTids(bestRecordInfo.bestRecordConfs),
+			bestRecordDivs: getBestTids(bestRecordInfo.bestRecordDivs),
+
+			awards: builtInAwards,
+		};
+		console.log(awards);
 
 		allAwards.push(awards);
 	}

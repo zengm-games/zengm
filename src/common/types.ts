@@ -2065,7 +2065,7 @@ type AwardInfo = {
 	rookie?: boolean;
 };
 
-type AwardInfoIndividual = AwardInfo & {
+export type AwardInfoIndividual = AwardInfo & {
 	// Individual award - top 10 are saved
 	numTeams?: undefined;
 	winner: AwardPlayer2[];
@@ -2074,7 +2074,7 @@ type AwardInfoIndividual = AwardInfo & {
 	mvp?: true;
 	roy?: true;
 };
-type AwardInfoTeam = AwardInfo & {
+export type AwardInfoTeam = AwardInfo & {
 	// Team award
 	numTeams: number;
 	winner: AwardPlayer2[][];

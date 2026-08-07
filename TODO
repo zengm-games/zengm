@@ -1,4 +1,8 @@
 custom awards
+- rethink index
+  - corresponds to Awards2 or g.get("awards")?
+  - why is it needed?
+  - only in PlayerAward?
 - in editor UI, explain seasonFraction scaling
   - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
 - test
@@ -34,6 +38,8 @@ custom awards
     - triple crown
       - fix baseball DPOY bug https://discord.com/channels/290013534023057409/1532565456920117279/1532565456920117279
 - real players league - update generated awards objects and player.awards
+  - test bestRecordDivs
+  - instead of whole PlayerAwards object, could just store shortName+rank and get everything from that! already done that way when assembling awards object
 - make sure hashAward accounts for everything
 - in AwardsSummary, break down by team number for tooltip
 - formatAwardName should prefix with conf/div abbrev somehow
@@ -58,6 +64,7 @@ custom awards
   - after upgrade, can remove awardsOld?
 - some parts of awards.ts were copied to doAwards.ts, make sure to remove dupes
 - schema for setting
+- delete old awards types
 - blog
   - roy changes
     - edge cases

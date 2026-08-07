@@ -42,7 +42,7 @@ const FrivolitiesDraftClasses = ({
 		}),
 		"Active",
 		"AS",
-		"count:mvp",
+		"MVP",
 		"HoF",
 		"Name",
 		"Pos",

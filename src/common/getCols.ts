@@ -3662,14 +3662,10 @@ const cols: {
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
 	},
-	"count:mvp": {
+	MVP: {
 		desc: "Most Valuable Player",
 		sortSequence: ["desc", "asc"],
 		sortType: "number",
-		title: "MVP",
-	},
-	"award:mvp": {
-		desc: "Most Valuable Player",
 		title: "MVP",
 	},
 	Chances: {

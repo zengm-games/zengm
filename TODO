@@ -1,7 +1,4 @@
 custom awards
-- add other stuff from doAwards
-  - playoff awards
-  - awards object
 - in editor UI, explain seasonFraction scaling
   - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
 - test
@@ -15,7 +12,8 @@ custom awards
   - if by position (non-basketball sports) support different formula per position
   - some way to label as an "important" award like MVP equivalent, ROY equivalent
     - football has two ROY equivalents, so that shouldn't be unique
-    - MVP - use in SeasonIcons
+    - MVP - use in SeasonIcons, HallOfFame, FrivolitiesDraftClasses, DraftHistory
+    - ROY - use in DraftHistory
 - implement playoff series awards - must use a smaller set of stats
 - in editor, enforce that shortName is unique
 - search for any hardcoded strings like "Rookie of the Year", "Most Improved Player", etc
@@ -40,9 +38,8 @@ custom awards
     - show in editor UI if still eligible for achievements
     - triple crown
       - fix baseball DPOY bug https://discord.com/channels/290013534023057409/1532565456920117279/1532565456920117279
+- real players league - update generated awards objects and player.awards
 - make sure hashAward accounts for everything
-- make sure getCols hardcoded awards ones are removed - award: and count:
-- support clutch player award
 - in AwardsSummary, break down by team number for tooltip
 - formatAwardName should prefix with conf/div abbrev somehow
   - how to abbreviate? is it necessary?
@@ -75,6 +72,7 @@ custom awards
   - support editing metadata of past awards, like name and shortName. maybe even formula too...
   - only fetch needed variables from playersPlus
   - conditional stat-based awards that are not awarded every season, like triple crown or 40/40
+  - clutch player award
 
 more prominent warning when editing player and the draft year is in the future while they are on a team
 - also ideally show them on the roster page too

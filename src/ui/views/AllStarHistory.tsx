@@ -136,7 +136,11 @@ const AllStarHistory = ({ allAllStars }: View<"allStarHistory">) => {
 		"Team",
 		"Captain 2",
 		"Team",
-		"award:mvp",
+		{
+			title: "MVP",
+			desc: "All-Star MVP",
+			sortType: "name",
+		},
 		"Team",
 		...(isSport("basketball")
 			? ["Dunk Winner", "Team", "Three-Point Winner", "Team"]

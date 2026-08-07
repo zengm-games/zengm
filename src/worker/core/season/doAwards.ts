@@ -497,6 +497,17 @@ const getAwardsByPlayer = (
 
 		if (award.numTeams === undefined) {
 			for (const [i, { pid }] of award.winner.entries()) {
+				const extra: {
+					mvp?: true;
+					roy?: true;
+				} = {};
+				if (award.mvp) {
+					extra.mvp = true;
+				}
+				if (award.roy) {
+					extra.roy = true;
+				}
+
 				const p = playersByPid[pid]!;
 				awardsByPlayer.push({
 					pid,
@@ -504,6 +515,7 @@ const getAwardsByPlayer = (
 					name: p.name,
 					award: {
 						...common,
+						...extra,
 						rank: i + 1, // Rank in "voting"
 					},
 				});

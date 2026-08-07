@@ -394,6 +394,7 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 			shortName: "MVP",
 			name: "Most Valuable Player",
 			formula: "ewa / 22 + vorp / 32 + wsFraction / 10 + seasonFraction * winp",
+			mvp: true,
 		},
 		{
 			shortName: "DPOY",
@@ -406,6 +407,7 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 			name: "Rookie of the Year",
 			formula: "ewa / 2.1 + vorp + gp / 82 * pts / 2",
 			rookie: true,
+			roy: true,
 		},
 		{
 			shortName: "SMOY",
@@ -433,20 +435,20 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 			statRange: -2,
 		},
 		{
-			shortName: "AL",
+			shortName: "ALL",
 			name: "All-League",
 			formula: "ewa / 22 + vorp / 32 + wsFraction / 10 + seasonFraction * winp",
 			numTeams: 3,
 		},
 		{
-			shortName: "AD",
+			shortName: "DEF",
 			name: "All-Defensive",
 			formula:
 				"dws/3.1 + seasonFraction * winp + gp / 82 * (blk / 4.1 + stl / 1.8)",
 			numTeams: 2,
 		},
 		{
-			shortName: "AR",
+			shortName: "ALR",
 			name: "All-Rookie",
 			formula: "ewa / 2.1 + vorp + gp / 82 * pts / 2",
 			rookie: true,

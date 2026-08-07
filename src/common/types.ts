@@ -548,10 +548,10 @@ export type GameAttributesLeague = {
 	autoRelocateGeo: "naFirst" | "naOnly" | "any";
 	autoRelocateRealign: boolean;
 	autoRelocateRebrand: boolean;
-	awards: (Omit<AwardInfo, "group"> & {
-		group?: "conf" | "div";
-		numTeams?: number;
-	})[];
+	awards: ((
+		| Omit<AwardInfoIndividual, "group" | "winner">
+		| Omit<AwardInfoTeam, "group" | "winner" | "formulaByPos">
+	) & { group?: "conf" | "div" })[];
 	brotherRate: number;
 	budget: boolean;
 	challengeNoDraftPicks: boolean;
@@ -1154,6 +1154,10 @@ export type PlayerAwardCustom = {
 	index: number; // Index in the list of awards for this season
 	rank: number; // rank in individual award, team number in team award
 	numTeams?: number; // For team awards
+
+	// Treat as "MVP" or "ROY" in UI
+	mvp?: true;
+	roy?: true;
 };
 
 export type PlayerAward =
@@ -2044,9 +2048,6 @@ type AwardInfo = {
 	shortName: string;
 	name: string;
 	formula: string;
-	bench?: boolean;
-	mip?: boolean;
-	rookie?: boolean;
 	statRange?: "playoffs" | "combined" | number; // undefined means regularSeason, number is index of finals where -1 is finals, -2 is semifinals, etc
 	group?: // undefined means league
 		| {
@@ -2057,22 +2058,31 @@ type AwardInfo = {
 				type: "div";
 				did: number;
 		  };
+
+	// Filters
+	bench?: boolean;
+	mip?: boolean;
+	rookie?: boolean;
 };
 
-export type Award2 = AwardInfo &
-	(
-		| {
-				// Individual award - top 10 are saved
-				numTeams?: undefined;
-				winner: AwardPlayer2[];
-		  }
-		| {
-				// Team award
-				numTeams: number;
-				winner: AwardPlayer2[][];
-				formulaByPos?: Record<string, string>;
-		  }
-	);
+type AwardInfoIndividual = AwardInfo & {
+	// Individual award - top 10 are saved
+	numTeams?: undefined;
+	winner: AwardPlayer2[];
+
+	// Treat as "MVP" or "ROY" in UI
+	mvp?: true;
+	roy?: true;
+};
+type AwardInfoTeam = AwardInfo & {
+	// Team award
+	numTeams: number;
+	winner: AwardPlayer2[][];
+	formulaByPos?: Record<string, string>;
+};
+
+export type Award2 = AwardInfoIndividual | AwardInfoTeam;
+
 export type Awards2 = {
 	season: number;
 	bestRecord: number; // tid

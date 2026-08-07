@@ -38,7 +38,7 @@ export const SeasonIcons = ({
 				}
 			}
 		} else {
-			if (award.type === "Most Valuable Player") {
+			if (award.type === undefined && award.mvp) {
 				countMVP += 1;
 				if (season !== undefined) {
 					break;

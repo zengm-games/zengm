@@ -12,10 +12,13 @@ custom awards
   - if by position (non-basketball sports) support different formula per position
   - some way to label as an "important" award like MVP equivalent, ROY equivalent
     - football has two ROY equivalents, so that shouldn't be unique
-    - MVP - use in SeasonIcons, HallOfFame, FrivolitiesDraftClasses, DraftHistory
+    - MVP - use in HallOfFame, FrivolitiesDraftClasses, DraftHistory
+      - maybe get rid of MVP column in getCols, replace with dynamic column
     - ROY - use in DraftHistory
-- implement playoff series awards - must use a smaller set of stats
-- in editor, enforce that shortName is unique
+- editor constraints
+  - shortName is unique
+- get rid of SIMPLE_AWARDS and AWARD_NAMES
+- ability to add/edit/delete manual awards for player, maybe in player editor
 - search for any hardcoded strings like "Rookie of the Year", "Most Improved Player", etc
   - after upgrade, can remove awardsOld?
 - UI to update
@@ -41,6 +44,7 @@ custom awards
 - real players league - update generated awards objects and player.awards
 - make sure hashAward accounts for everything
 - in AwardsSummary, break down by team number for tooltip
+- schema for setting
 - formatAwardName should prefix with conf/div abbrev somehow
   - how to abbreviate? is it necessary?
   - store in name, or in separate field?

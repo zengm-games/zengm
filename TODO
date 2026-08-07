@@ -5,6 +5,11 @@ custom awards
   - only in PlayerAward?
 - other sports
   - teams by position
+  - baseball
+    - getPosByGpF
+    - rfld in all-defense
+  - football
+  - hockey
 - in editor UI, explain seasonFraction scaling
   - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
 - test
@@ -47,7 +52,6 @@ custom awards
   - include conf/div in award name for grouped award?
     - see formatAwardName for generating that in the worker
 - use formatAwardName in UI everywhere
-- get rid of SIMPLE_AWARDS and AWARD_NAMES
 - upgrade
   - First vs 1st?
     - could dynamically fix in formatAwardName
@@ -58,6 +62,7 @@ custom awards
   - indexeddb
   - import
   - similar for real player data, reformat Awards and Player.awards
+- get rid of SIMPLE_AWARDS and AWARD_NAMES (might need in upgrade though)
 - search for any hardcoded strings like "Rookie of the Year", "Most Improved Player", etc
   - after upgrade, can remove awardsOld?
 - some parts of awards.ts were copied to doAwards.ts, make sure to remove dupes

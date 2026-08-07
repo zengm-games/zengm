@@ -1,3 +1,4 @@
+import { bySport } from "../../../common/sportFunctions.ts";
 import { groupByUnique } from "../../../common/utils.ts";
 import g from "../../util/g.ts";
 import { processAwards } from "./doAwards.ts";
@@ -33,7 +34,12 @@ const getAwardCandidates = async (season: number) => {
 					},
 				};
 			}),
-			stats: ["pts", "trb", "ast", "score"],
+			stats: bySport({
+				baseball: ["keyStats"],
+				basketball: ["pts", "trb", "ast", "score"],
+				football: [],
+				hockey: [],
+			}),
 		};
 	});
 

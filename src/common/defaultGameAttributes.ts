@@ -587,6 +587,64 @@ export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				draftPickAutoContractRounds: 4,
 				draftPickAutoContract: false,
 				groupScheduleSeries: true,
+				awards: [
+					{
+						shortName: "MVP",
+						name: "Most Valuable Player",
+						formula: "war",
+						group: "conf",
+						mvp: true,
+					},
+					{
+						shortName: "POY",
+						name: "Pitcher of the Year",
+						formula: "rpit",
+						group: "conf",
+					},
+					{
+						shortName: "RPOY",
+						name: "Relief Pitcher of the Year",
+						formula: "rpit",
+						group: "conf",
+						bench: true,
+					},
+					{
+						shortName: "ROY",
+						name: "Rookie of the Year",
+						formula: "war",
+						group: "conf",
+						rookie: true,
+						roy: true,
+					},
+					{
+						shortName: "FMVP",
+						name: "Finals MVP",
+						formula: "war",
+						statRange: -1,
+					},
+					{
+						shortName: "OFF",
+						name: "All-Offensive",
+						formula: "rbr + rbat",
+						group: "conf",
+						numTeams: 1,
+					},
+					{
+						shortName: "DEF",
+						name: "All-Defensive",
+						formula: "rfld",
+						group: "conf",
+						numTeams: 1,
+					},
+					{
+						shortName: "ALR",
+						name: "All-Rookie",
+						formula: "war",
+						group: "conf",
+						rookie: true,
+						numTeams: 1,
+					},
+				],
 			}
 		: {};
 

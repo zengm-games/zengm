@@ -121,13 +121,29 @@ export const goyScore = (p: PlayerFiltered) => {
 	return gpsPerGame * Math.min(numGamesMax, p.currentStats.gpGoalie);
 };
 
-// This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
 export const royFilter = (p: PlayerFiltered) => {
 	const repeatSeason = g.get("repeatSeason");
+	//Based on NHL Calder rules implemented in 1991
+	const redShirtYear = p.draft.year >= g.get("startingSeason");
+	const hasPrevSeasonWithMinGamesPlayed = p.stats.some(
+		(ps: { season: number; gp: number }) =>
+			ps.season < p.currentStats.season && ps.gp > 25,
+	);
+	const hasTwoSeasonsWithMinGames =
+		p.stats.filter(
+			(ps: { season: number; gp: number }) =>
+				ps.season < p.currentStats.season && ps.gp > 5,
+		).length >= 2;
+	const age = g.get("season") - p.born.year;
+
 	return (
 		p.draft.year === p.currentStats.season - 1 ||
 		(repeatSeason !== undefined &&
-			p.draft.year === repeatSeason.startingSeason - 1)
+			p.draft.year === repeatSeason.startingSeason - 1) ||
+		(!hasPrevSeasonWithMinGamesPlayed &&
+			!hasTwoSeasonsWithMinGames &&
+			redShirtYear &&
+			age <= 26)
 	);
 };
 

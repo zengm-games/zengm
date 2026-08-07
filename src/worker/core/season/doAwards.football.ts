@@ -372,13 +372,19 @@ export const mvpScore = (p: PlayerFiltered) => {
 	return offense + defense + returns + blocking;
 };
 
-// This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
 const royFilter = (p: PlayerFiltered) => {
 	const repeatSeason = g.get("repeatSeason");
+	const hasPrevSeasonWithGamesPlayed = p.stats.some(
+		(ps: { season: number; gp: number }) =>
+			ps.season < p.currentStats.season && ps.gp > 0,
+	);
+	const redShirtYear = p.draft.year >= g.get("startingSeason");
+
 	return (
 		p.draft.year === p.currentStats.season - 1 ||
 		(repeatSeason !== undefined &&
-			p.draft.year === repeatSeason.startingSeason - 1)
+			p.draft.year === repeatSeason.startingSeason - 1) ||
+		(!hasPrevSeasonWithGamesPlayed && redShirtYear)
 	);
 };
 

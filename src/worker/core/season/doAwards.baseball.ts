@@ -126,13 +126,19 @@ export const rpoyFilter = (p: PlayerFiltered) =>
 
 export const poyScore = (p: PlayerFiltered) => p.currentStats.rpit;
 
-// This doesn't factor in players who didn't start playing right after being drafted, because currently that doesn't really happen in the game.
 export const royFilter = (p: PlayerFiltered) => {
 	const repeatSeason = g.get("repeatSeason");
+	const hasPrevSeasonWithGamesPlayed = p.stats.some(
+		(ps: { season: number; gp: number }) =>
+			ps.season < p.currentStats.season && ps.gp > 0,
+	);
+	const redShirtYear = p.draft.year >= g.get("startingSeason");
+
 	return (
 		p.draft.year === p.currentStats.season - 1 ||
 		(repeatSeason !== undefined &&
-			p.draft.year === repeatSeason.startingSeason - 1)
+			p.draft.year === repeatSeason.startingSeason - 1) ||
+		(!hasPrevSeasonWithGamesPlayed && redShirtYear)
 	);
 };
 

@@ -12,9 +12,8 @@ custom awards
   - if by position (non-basketball sports) support different formula per position
   - some way to label as an "important" award like MVP equivalent, ROY equivalent
     - football has two ROY equivalents, so that shouldn't be unique
-    - MVP - use in HallOfFame, FrivolitiesDraftClasses, DraftHistory
+    - MVP - use in HallOfFame, FrivolitiesDraftClasses
       - maybe get rid of MVP column in getCols, replace with dynamic column
-    - ROY - use in DraftHistory
 - editor constraints
   - shortName is unique
 - get rid of SIMPLE_AWARDS and AWARD_NAMES

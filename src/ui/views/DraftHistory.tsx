@@ -61,7 +61,7 @@ const Summary = ({
 	if (roys.length > 0) {
 		summaryRows.push(
 			<>
-				<b>Rookie of the Year:</b>{" "}
+				<b>{helpers.plural("Rookie", roys.length)} of the Year:</b>{" "}
 				{roys.map((p, i) => (
 					<Fragment key={p.pid}>
 						<a href={helpers.leagueUrl(["player", p.pid])}>

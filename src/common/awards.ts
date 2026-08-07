@@ -1,8 +1,13 @@
 import { helpers } from "./helpers.ts";
-import type { DistributiveOmit, PlayerAward } from "./types.ts";
+import type { PlayerAwardCustom } from "./types.ts";
 
 export const formatPlayerAwardName = (
-	award: DistributiveOmit<PlayerAward, "season">,
+	// This is like PlayerAward but with only the required field specified so it can be used elsewhere easily
+	award:
+		| {
+				type: string;
+		  }
+		| Pick<PlayerAwardCustom, "name" | "numTeams" | "rank" | "type">,
 ) => {
 	if (award.type === undefined) {
 		if (award.numTeams === undefined) {

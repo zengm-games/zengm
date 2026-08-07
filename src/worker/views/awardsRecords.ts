@@ -6,32 +6,34 @@ import type {
 } from "../../common/types.ts"; // Keep in sync with Dropdown.js
 import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
-import { countBy, maxBy } from "../../common/utils.ts";
+import { countBy, maxBy, range } from "../../common/utils.ts";
 import { leaderAwardCategories } from "../core/season/awards.ts";
+import type { DropdownOption } from "../../ui/hooks/useDropdownOptions.tsx";
+import { formatPlayerAwardName } from "../../common/awards.ts";
 
 // Sync with useDropdownOptions
 const nonCustomAwardsList = [
 	{
-		val: "All-Star",
+		value: "All-Star",
 		key: "all_star",
 	},
 	{
-		val: "All-Star MVP",
+		value: "All-Star MVP",
 		key: "all_star_mvp",
 	},
 	{
-		val: "Won Championship",
+		value: "Won Championship",
 		key: "champion",
 	},
 	...bySport({
 		baseball: [],
 		basketball: [
 			{
-				val: "Slam Dunk Contest Winner",
+				value: "Slam Dunk Contest Winner",
 				key: "dunk",
 			},
 			{
-				val: "Three-Point Contest Winner",
+				value: "Three-Point Contest Winner",
 				key: "three",
 			},
 		],
@@ -43,7 +45,7 @@ const nonCustomAwardsList = [
 nonCustomAwardsList.push(
 	...leaderAwardCategories.map((x) => {
 		return {
-			val: x.name,
+			value: x.name,
 			key: `${x.stat}_leader`,
 		};
 	}),
@@ -51,8 +53,10 @@ nonCustomAwardsList.push(
 
 const nonCustomAwards: Record<string, string> = {};
 for (const row of nonCustomAwardsList) {
-	nonCustomAwards[row.key] = row.val;
+	nonCustomAwards[row.key] = row.value;
 }
+
+const DELIMITER = "~";
 
 type LocalPlayer = {
 	awards: PlayerAward[];
@@ -80,7 +84,7 @@ const getPlayerAwards = (p: LocalPlayer, key: string) => {
 		// Must be a real custom award
 
 		// Look for a team number
-		const parts = key.split("~");
+		const parts = key.split(DELIMITER);
 		if (parts.length > 0) {
 			const suffix = Number.parseInt(parts.at(-1)!);
 			if (!Number.isNaN(suffix)) {
@@ -161,7 +165,6 @@ const updateAwardsRecords = async (
 ) => {
 	let awardTypes: AwardType[];
 	if (!state.awardTypes) {
-		console.log("COMPUTE AWARD TYPES");
 		const awards = await idb.getCopies.awards(undefined, "noCopyCache");
 		awards.reverse();
 		awardTypes = [];
@@ -222,26 +225,49 @@ const updateAwardsRecords = async (
 		});
 		const awardType = inputs.awardType;
 
-		if (typeof awardType !== "string") {
-			// https://stackoverflow.com/a/59923262/786644
-			const returnValue = {
-				errorMessage: "Invalid input for awardType.",
-			};
-			return returnValue;
-		}
-
 		const awardsRecords = addFirstNameShort(
 			players
 				.map((p) => getPlayerAwards(p, awardType))
 				.filter((p) => p !== undefined),
 		);
 
+		const awardTypeOptions: DropdownOption[] = [
+			...awardTypes.flatMap((row) => {
+				if (row.maxNumTeams !== undefined && row.maxNumTeams > 1) {
+					return [
+						...range(1, row.maxNumTeams + 1).map((rank) => {
+							return {
+								key: `${row.shortName}${DELIMITER}${rank}`,
+								value: formatPlayerAwardName({
+									name: row.name,
+									numTeams: row.maxNumTeams,
+									rank,
+								}),
+							};
+						}),
+						{
+							key: row.shortName,
+							value: row.name,
+						},
+					];
+				}
+
+				return {
+					key: row.shortName,
+					value: row.name,
+				};
+			}),
+			...nonCustomAwardsList,
+		];
+
 		return {
 			awardsRecords,
-			awardTypes,
-			playerCount: awardsRecords.length,
-			awardTypeVal: nonCustomAwards[awardType],
 			awardType,
+			awardTypeOptions,
+			playerCount: awardsRecords.length,
+
+			// This is just for state.awardTypes so it doesn't need to be recomputed every time
+			awardTypes,
 		};
 	}
 };

@@ -35,7 +35,7 @@ const formatYearString = (year: YearInfo) => {
 
 const AwardsRecords = ({
 	awardType,
-	awardTypeVal,
+	awardTypeOptions,
 	awardsRecords,
 	playerCount,
 }: View<"awardsRecords">) => {
@@ -44,6 +44,9 @@ const AwardsRecords = ({
 		dropdownView: "awards_records",
 		dropdownFields: {
 			awardType,
+		},
+		dropdownCustomOptions: {
+			awardType: awardTypeOptions,
 		},
 	});
 	const cols = getCols(
@@ -95,10 +98,6 @@ const AwardsRecords = ({
 	return (
 		<>
 			<MoreLinks type="league" page="awards_records" />
-
-			<h4 className="mb-3">
-				{playerCount} players - {awardTypeVal}
-			</h4>
 
 			<DataTable
 				cols={cols}

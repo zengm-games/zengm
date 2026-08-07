@@ -13,19 +13,9 @@ custom awards
   - teamRecords
     - test with changing awards
     - test with div/conf awards (should show in separate columns)
-- basketball formulas - fix mvp/dpoy/roy/team formulas - include winp/fracWS stuff?
 - fields
   - stats range (regular season, playoffs, semifinals, finals, combined)
-  - if team
-    - way to specify if it's position based or not
-      - maybe just automatically handle this per sport
-      - if by position, support different formula per position
-  - order
-    - use on...
-      - player profile page
-      - league history table
-      - season summary
-  - show in league history table?
+  - if by position (non-basketball sports) support different formula per position
   - SeasonIcon
     - icon (give a few options)
     - color
@@ -49,8 +39,6 @@ custom awards
   - awards editor
   - season summary
     - need to know which stats to show for offensive/defensive awards, like award races
-  - awards records
-    - for team awards with multiple teams, support specifying team number or just showing all of them grouped
   - GOAT formula
   - achievements
     - check if the award we're looking for is unedited. if so, use it. if not, no achievement.
@@ -65,9 +53,7 @@ custom awards
 - should still be able to add an arbitrary one-off custom award - have some place for those in the awards object, and use it for unknown awards in upgraded leagues
 - make sure hashAward accounts for everything
 - make sure getCols hardcoded awards ones are removed - award: and count:
-- support awards per div/conf
 - support clutch player award
-- how to show award as column when awards might change over time?
 - in AwardsSummary, break down by team number for tooltip
 - formatAwardName should prefix with conf/div abbrev somehow
   - how to abbreviate? is it necessary?

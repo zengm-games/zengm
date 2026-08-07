@@ -101,7 +101,7 @@ const account = (params: Params, ctxBBGM: any) => {
 
 const awardsRecords = (params: Params) => {
 	return {
-		awardType: params.awardType || "champion",
+		awardType: params.awardType ?? "champion",
 	};
 };
 
@@ -840,7 +840,7 @@ const teamRecords = (params: Params) => {
 	const filter: "all" | "your_teams" =
 		params.filter === "your_teams" ? "your_teams" : "all";
 	return {
-		byType: params.byType || "by_team",
+		byType: params.byType ?? "by_team",
 		filter,
 	};
 };
@@ -957,7 +957,7 @@ const transactions = (params: Params) => {
 		tid,
 		abbrev,
 		season,
-		eventType: params.eventType || "all",
+		eventType: params.eventType ?? "all",
 	};
 };
 

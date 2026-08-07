@@ -32,6 +32,7 @@ custom awards
   - some way to label as an "important" award like MVP equivalent, ROY equivalent
     - football has two ROY equivalents, so that shouldn't be unique
 - implement playoff series awards - must use a smaller set of stats
+- in editor, enforce that shortName is unique
 - search for any hardcoded strings like "Rookie of the Year", "Most Improved Player", etc
   - after upgrade, can remove awardsOld?
 - UI to update
@@ -49,6 +50,7 @@ custom awards
   - season summary
     - need to know which stats to show for offensive/defensive awards, like award races
   - awards records
+    - for team awards with multiple teams, support specifying team number or just showing all of them grouped
   - GOAT formula
   - achievements
     - check if the award we're looking for is unedited. if so, use it. if not, no achievement.

@@ -1,8 +1,8 @@
 import { Fragment } from "react/jsx-runtime";
-import type { PlayerAwardBuiltIn } from "../../../common/types.ts";
+import type { PlayerAwardCustom } from "../../../common/types.ts";
 import { helpers } from "../../util/helpers.ts";
 
-const getAwardText = (award: PlayerAwardBuiltIn) => {
+const getAwardText = (award: PlayerAwardCustom) => {
 	return `${award.shortName}${award.numTeams === 1 ? "" : award.numTeams !== undefined ? award.rank : `-${award.rank}`}`;
 };
 
@@ -10,7 +10,7 @@ const SeasonAwards = ({
 	awards,
 	season,
 }: {
-	awards: PlayerAwardBuiltIn[];
+	awards: PlayerAwardCustom[];
 	season: number;
 }) => {
 	if (awards.length === 0) {
@@ -44,7 +44,7 @@ export const wrappedSeasonAwards = ({
 	awards = [],
 	season,
 }: {
-	awards: PlayerAwardBuiltIn[] | undefined;
+	awards: PlayerAwardCustom[] | undefined;
 	season: number;
 }) => {
 	const searchValue = awards.map(getAwardText).join(" ");

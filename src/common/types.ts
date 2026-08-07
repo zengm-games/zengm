@@ -1146,7 +1146,7 @@ export type MinimalPlayerRatings = {
 	locked?: boolean;
 };
 
-export type PlayerAwardBuiltIn = {
+export type PlayerAwardCustom = {
 	season: number;
 	type?: undefined;
 	name: string;
@@ -1161,7 +1161,7 @@ export type PlayerAward =
 			season: number;
 			type: string;
 	  }
-	| PlayerAwardBuiltIn;
+	| PlayerAwardCustom;
 
 export type PlayerWithoutKey<PlayerRatings = MinimalPlayerRatings> = {
 	awards: PlayerAward[];

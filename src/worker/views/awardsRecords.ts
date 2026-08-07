@@ -1,12 +1,16 @@
 import { idb } from "../db/index.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts"; // Keep in sync with Dropdown.js
+import type {
+	PlayerAward,
+	UpdateEvents,
+	ViewInput,
+} from "../../common/types.ts"; // Keep in sync with Dropdown.js
 import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { countBy, maxBy } from "../../common/utils.ts";
 import { leaderAwardCategories } from "../core/season/awards.ts";
 
 // Sync with useDropdownOptions
-const optionsTmp = [
+const nonCustomAwardsList = [
 	{
 		val: "All-Star",
 		key: "all_star",
@@ -36,7 +40,7 @@ const optionsTmp = [
 	}),
 ];
 
-optionsTmp.push(
+nonCustomAwardsList.push(
 	...leaderAwardCategories.map((x) => {
 		return {
 			val: x.name,
@@ -45,18 +49,13 @@ optionsTmp.push(
 	}),
 );
 
-const awardOptions: any = {};
-optionsTmp.forEach((o) => {
-	awardOptions[o.key] = o.val;
-});
-
-type LocalPlayerAward = {
-	season: number;
-	type: string;
-};
+const nonCustomAwards: Record<string, string> = {};
+for (const row of nonCustomAwardsList) {
+	nonCustomAwards[row.key] = row.val;
+}
 
 type LocalPlayer = {
-	awards: LocalPlayerAward[];
+	awards: PlayerAward[];
 	draft: { round: number; pick: number; year: number };
 	firstName: string;
 	hof: boolean;
@@ -73,41 +72,42 @@ type LocalPlayer = {
 	}[];
 };
 
-const getPlayerAwards = (p: LocalPlayer, awardType: string) => {
-	const aType = awardOptions[awardType];
-
-	let filter;
-	if (awardType === "all_league") {
-		filter = (a: LocalPlayerAward) => {
-			const o = awardOptions;
-			return (
-				a.type === o.first_team ||
-				a.type === o.second_team ||
-				a.type === o.third_team
-			);
-		};
-	} else if (awardType === "all_def") {
-		filter = (a: LocalPlayerAward) => {
-			const o = awardOptions;
-			return (
-				a.type === o.first_def ||
-				a.type === o.second_def ||
-				a.type === o.third_def ||
-				a.type === "All-Defensive Team"
-			);
-		};
-	} else if (awardType === "all_off") {
-		filter = (a: LocalPlayerAward) => {
-			return a.type === "All-Offensive Team";
-		};
+const getPlayerAwards = (p: LocalPlayer, key: string) => {
+	let filter: ((award: PlayerAward) => boolean) | undefined;
+	if (nonCustomAwards[key] !== undefined) {
+		filter = (award) => award.type === nonCustomAwards[key];
 	} else {
-		filter = (a: LocalPlayerAward) => a.type === aType;
+		// Must be a real custom award
+
+		// Look for a team number
+		const parts = key.split("~");
+		if (parts.length > 0) {
+			const suffix = Number.parseInt(parts.at(-1)!);
+			if (!Number.isNaN(suffix)) {
+				const targetShortName = parts.slice(0, -1).join("");
+				const targetRank = suffix;
+
+				// Return all players on the Nth team only
+				filter = (award) =>
+					award.type === undefined &&
+					award.shortName === targetShortName &&
+					award.numTeams !== undefined &&
+					award.rank === targetRank;
+			}
+		}
+
+		if (!filter) {
+			// Return all players on all teams if numTeams, otherwise return only award winner
+			filter = (award) =>
+				award.type === undefined &&
+				award.shortName === key &&
+				(award.numTeams !== undefined ||
+					(award.numTeams === undefined && award.rank === 1));
+		}
 	}
 
 	const getTeam = (season: number) => {
-		const stats = p.stats.filter((s) => s.season === season);
-
-		return stats.at(-1)?.abbrev ?? "???";
+		return p.stats.findLast((row) => row.season === season)?.abbrev ?? "???";
 	};
 
 	const awards = p.awards.filter(filter);
@@ -148,11 +148,54 @@ const getPlayerAwards = (p: LocalPlayer, awardType: string) => {
 	};
 };
 
+type AwardType = {
+	maxNumTeams?: number;
+	name: string;
+	shortName: string;
+};
+
 const updateAwardsRecords = async (
 	inputs: ViewInput<"awardsRecords">,
 	updateEvents: UpdateEvents,
 	state: any,
 ) => {
+	let awardTypes: AwardType[];
+	if (!state.awardTypes) {
+		console.log("COMPUTE AWARD TYPES");
+		const awards = await idb.getCopies.awards(undefined, "noCopyCache");
+		awards.reverse();
+		awardTypes = [];
+
+		// Number contains the number of teams
+		const seenAwardTypes = new Map<string, AwardType>();
+
+		for (const row of awards) {
+			for (const award of row.awards) {
+				const info = seenAwardTypes.get(award.shortName);
+				if (!info) {
+					const newInfo: AwardType = {
+						name: award.name,
+						shortName: award.shortName,
+					};
+					if (award.numTeams !== undefined) {
+						newInfo.maxNumTeams = award.numTeams;
+					}
+					seenAwardTypes.set(award.shortName, newInfo);
+					awardTypes.push(newInfo);
+				} else if (
+					award.numTeams !== undefined &&
+					(info.maxNumTeams === undefined || award.numTeams > info.maxNumTeams)
+				) {
+					info.maxNumTeams = award.numTeams;
+				}
+			}
+		}
+
+		console.log(awardTypes);
+	} else {
+		awardTypes = state.awardTypes;
+	}
+
 	if (
 		updateEvents.includes("firstRun") ||
 		inputs.awardType !== state.awardType
@@ -195,8 +238,9 @@ const updateAwardsRecords = async (
 
 		return {
 			awardsRecords,
+			awardTypes,
 			playerCount: awardsRecords.length,
-			awardTypeVal: awardOptions[awardType],
+			awardTypeVal: nonCustomAwards[awardType],
 			awardType,
 		};
 	}

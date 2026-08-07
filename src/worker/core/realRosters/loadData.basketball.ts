@@ -1,5 +1,9 @@
 import type { PLAYER } from "../../../common/constants.ts";
-import type { Phase, ScheduledEventWithoutKey } from "../../../common/types.ts";
+import type {
+	Phase,
+	PlayerAward,
+	ScheduledEventWithoutKey,
+} from "../../../common/types.ts";
 
 export type Ratings = {
 	slug: string;
@@ -24,13 +28,7 @@ export type Ratings = {
 };
 
 export type Basketball = {
-	awards: Record<
-		string,
-		{
-			type: string;
-			season: number;
-		}[]
-	>;
+	awards: Record<string, PlayerAward[]>;
 	teams: {
 		slug: string;
 		season: number;

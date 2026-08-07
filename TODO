@@ -3,6 +3,8 @@ custom awards
   - corresponds to Awards2 or g.get("awards")?
   - why is it needed?
   - only in PlayerAward?
+- other sports
+  - teams by position
 - in editor UI, explain seasonFraction scaling
   - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
 - test
@@ -38,7 +40,6 @@ custom awards
     - triple crown
       - fix baseball DPOY bug https://discord.com/channels/290013534023057409/1532565456920117279/1532565456920117279
 - make sure hashAward accounts for everything
-- in AwardsSummary, break down by team number for tooltip
 - formatAwardName should prefix with conf/div abbrev somehow
   - how to abbreviate? is it necessary?
   - store in name, or in separate field?
@@ -71,12 +72,14 @@ custom awards
       - created player with no stats
   - awards column for player profiles
   - bestRecordDiv on Team Records
-- later
+- maybe
   - support editing metadata of past awards, like name and shortName. maybe even formula too...
-  - only fetch needed variables from playersPlus
+  - real player data for award top 5 finish
+  - in AwardsSummary on player profile, break down by team number for tooltip
+- later
+  - only fetch needed variables from playersPlus when evaluating award formula
   - conditional stat-based awards that are not awarded every season, like triple crown or 40/40
   - clutch player award
-  - real player data for award top 5 finish
 
 more prominent warning when editing player and the draft year is in the future while they are on a team
 - also ideally show them on the roster page too

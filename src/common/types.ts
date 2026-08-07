@@ -1153,12 +1153,20 @@ export type PlayerAwardCustom = {
 	shortName: string;
 	index: number; // Index in the list of awards for this season
 	rank: number; // rank in individual award, team number in team award
-	numTeams?: number; // For team awards
+} & (
+	| {
+			// Individual award
+			numTeams?: undefined;
 
-	// Treat as "MVP" or "ROY" in UI
-	mvp?: true;
-	roy?: true;
-};
+			// Treat as "MVP" or "ROY" in UI
+			mvp?: true;
+			roy?: true;
+	  }
+	| {
+			// Team award
+			numTeams: number;
+	  }
+);
 
 export type PlayerAward =
 	| {

@@ -558,6 +558,14 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 						mvp: true,
 					},
 					{
+						shortName: "GOY",
+						name: "Goalie of the Year",
+
+						// Originally wrote this as "(gps / gpGoalie) * min(0.75 * teamGp, gpGoalie)" but that behaves poorly when gpGoalie is 0
+						formula: "gps * min(0.75 * teamGp / gpGoalie, 1)",
+						bench: true,
+					},
+					{
 						shortName: "DPOY",
 						name: "Defensive Player of the Year",
 						formula: "tk / 25 + hit / 25 + dps",
@@ -566,14 +574,7 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 						shortName: "DFOY",
 						name: "Defensive Forward of the Year",
 						formula: "tk / 25 + hit / 25 + dps",
-					},
-					{
-						shortName: "GOY",
-						name: "Goalie of the Year",
-
-						// Originally wrote this as "(gps / gpGoalie) * min(0.75 * teamGp, gpGoalie)" but that behaves poorly when gpGoalie is 0
-						formula: "gps * min(0.75 * teamGp / gpGoalie, 1)",
-						bench: true,
+						pos: ["C", "W"],
 					},
 					{
 						shortName: "ROY",

@@ -5,12 +5,11 @@ custom awards
   - only in PlayerAward?
 - other sports
   - teams by position
+    - baseball dh
   - baseball
     - getPosByGpF
     - rfld in all-defense
   - football
-  - hockey
-    - dfoy position filter
 - editor UI docs
   - explain seasonFraction scaling
     - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
@@ -32,8 +31,7 @@ custom awards
   - award races
     - put editor here?
       - what about teams and playoffs?
-    - dynamic stat columns?
-      - if too many, fall back to keyStats
+    - how to specify stat columns?
     - getAwardCandidates
       - should use season to look up awards, not g.get("awards") for past seasons
       - how to know what columns to show?

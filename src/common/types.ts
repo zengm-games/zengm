@@ -2071,6 +2071,7 @@ type AwardInfo = {
 	bench?: boolean;
 	mip?: boolean;
 	rookie?: boolean;
+	pos?: string[];
 };
 
 export type AwardInfoIndividual = AwardInfo & {

@@ -219,8 +219,8 @@ const filterPlayersForAward = (
 	let filteredPlayers = players;
 	if (award.bench) {
 		// Handle case where GS is not available, which happens when loading historical stats
-		if (players.some((p) => p.currentStats.gs > 0)) {
-			filteredPlayers = players.filter(
+		if (filteredPlayers.some((p) => p.currentStats.gs > 0)) {
+			filteredPlayers = filteredPlayers.filter(
 				(p) =>
 					p.currentStats.gs === 0 || p.currentStats.gp / p.currentStats.gs > 2,
 			);
@@ -230,7 +230,7 @@ const filterPlayersForAward = (
 	if (award.rookie) {
 		// Handle case where nobody has GP from a past season, like in a new league - then use draft year
 		if (
-			players.some((p) =>
+			filteredPlayers.some((p) =>
 				(p.stats as any[]).some(
 					(row) => row.season === season - 1 && row.gp > 0,
 				),
@@ -239,7 +239,7 @@ const filterPlayersForAward = (
 			if (isSport("baseball")) {
 				const defaultNumGames = defaultGameAttributes.numGames[0].value;
 
-				filteredPlayers = players.filter((p) => {
+				filteredPlayers = filteredPlayers.filter((p) => {
 					const cutoffFactor = p.teamInfo.gp / defaultNumGames;
 
 					let abSum = 0;
@@ -259,19 +259,21 @@ const filterPlayersForAward = (
 				});
 			} else {
 				// This means a player who sits out all regular season but then plays in the playoffs will be ineligible for ROY next year
-				filteredPlayers = players.filter((p) =>
+				filteredPlayers = filteredPlayers.filter((p) =>
 					(p.stats as any[]).every(
 						(row) => row.season >= season || row.gp === 0,
 					),
 				);
 			}
 		} else {
-			filteredPlayers = players.filter((p) => p.draft.year === season - 1);
+			filteredPlayers = filteredPlayers.filter(
+				(p) => p.draft.year === season - 1,
+			);
 		}
 	}
 
 	if (award.mip) {
-		filteredPlayers = players.filter((p) => {
+		filteredPlayers = filteredPlayers.filter((p) => {
 			// Too many second year players get picked, when it's expected for them to improve (undrafted and second round picks can still win)
 			if (p.draft.year + 2 >= p.currentStats.season && p.draft.round === 1) {
 				return false;
@@ -301,6 +303,14 @@ const filterPlayersForAward = (
 
 			return true;
 		});
+	}
+
+	if (award.pos) {
+		filteredPlayers = filteredPlayers.filter((p) =>
+			award.pos?.includes(
+				(p.ratings as any[]).findLast((row) => row.season === season)?.pos,
+			),
+		);
 	}
 
 	return filteredPlayers;

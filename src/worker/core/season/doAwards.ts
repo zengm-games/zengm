@@ -130,7 +130,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 		teamInfos[teamSeason.tid] = {
 			cid: teamSeason.cid,
 			did: teamSeason.did,
-			gp: helpers.getTeamSeasonGp(teamSeason),
+			gp,
 			seasonFraction,
 			winp: helpers.calcWinp(teamSeason),
 		};
@@ -176,8 +176,9 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 			gp: teamInfo?.gp ?? 0,
 		};
 
-		// Make seasonFraction and winp available in formulas
+		// Make some teamInfo available in formulas
 		p.currentStats.seasonFraction = teamInfo?.seasonFraction ?? 1;
+		p.currentStats.teamGp = teamInfo?.gp ?? 0;
 		p.currentStats.winp = teamInfo?.winp ?? 0;
 	}
 
@@ -332,7 +333,12 @@ export const processAwards = async ({
 			}
 
 			if (!formulaEvaluators[formula]) {
-				const formulaStats = [...AWARD_STATS, "seasonFraction", "winp"];
+				const formulaStats = [
+					...AWARD_STATS,
+					"seasonFraction",
+					"teamGp",
+					"winp",
+				];
 				if (isSport("basketball")) {
 					formulaStats.push("wsFraction");
 				}

@@ -570,7 +570,9 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 					{
 						shortName: "GOY",
 						name: "Goalie of the Year",
-						formula: "gps",
+
+						// Originally wrote this as "(gps / gpGoalie) * min(0.75 * teamGp, gpGoalie)" but that behaves poorly when gpGoalie is 0
+						formula: "gps * min(0.75 * teamGp / gpGoalie, 1)",
 						bench: true,
 					},
 					{

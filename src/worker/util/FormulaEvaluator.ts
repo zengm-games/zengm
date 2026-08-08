@@ -15,6 +15,7 @@ import helpers from "./helpers.ts";
 
 const BINARY_MINUS = "-";
 const UNARY_MINUS = "#";
+const FUNCTION_PREFIX = "@";
 
 const regexEncode = (string: string) => {
 	// eslint-disable-next-line no-useless-escape
@@ -80,6 +81,22 @@ const operators: Record<string, Operator> = {
 	},
 };
 
+type Function = {
+	operands: 2;
+	func: (a: number, b: number) => number;
+};
+
+const functions: Record<string, Function> = {
+	min: {
+		operands: 2,
+		func: (a, b) => Math.min(a, b),
+	},
+	max: {
+		operands: 2,
+		func: (a, b) => Math.max(a, b),
+	},
+};
+
 const operatorsString = Object.keys(operators)
 	.map(regexEncode)
 	.sort(regexSort)
@@ -102,7 +119,7 @@ const parseUnaryMinus = (string: string) => {
 const shuntingYard = (string: string) => {
 	const tokens = string.match(
 		new RegExp(
-			String.raw`\d+(?:[\.]\d+)?(?:[eE]\d+)?|[()]` +
+			String.raw`\d+(?:[\.]\d+)?(?:[eE]\d+)?|[(),]` +
 				String.raw`|${operatorsString}|[a-zA-Z\d]+`,
 			"g",
 		),
@@ -113,7 +130,10 @@ const shuntingYard = (string: string) => {
 	const output: string[] = [];
 
 	if (tokens) {
-		for (const token of tokens) {
+		for (let i = 0; i < tokens.length; i++) {
+			const token = tokens[i]!;
+			const nextToken = tokens[i + 1];
+
 			if (token === ",") {
 				while (stack.length > 0 && stack.at(-1) !== "(") {
 					output.push(stack.pop()!);
@@ -123,6 +143,9 @@ const shuntingYard = (string: string) => {
 						"A separator (,) was misplaced or parentheses were mismatched",
 					);
 				}
+			} else if (functions[token] !== undefined && nextToken === "(") {
+				// Keep the function on the stack until its closing parenthesis.
+				stack.push(`${FUNCTION_PREFIX}${token}`);
 			} else if (operators[token]) {
 				const operator = operators[token];
 				while (
@@ -143,6 +166,12 @@ const shuntingYard = (string: string) => {
 				}
 				if (aux !== "(") {
 					throw new Error("Mismatched parentheses");
+				}
+
+				// If this parenthesized expression was a function call,
+				// emit the function after its arguments.
+				if (stack.at(-1)?.startsWith(FUNCTION_PREFIX)) {
+					output.push(stack.pop()!);
 				}
 			} else {
 				output.push(token);
@@ -198,7 +227,11 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 		for (const token of tokens) {
 			if (this.symbols.has(token)) {
 				processed.push(token);
-			} else if (operators[token] !== undefined) {
+			} else if (
+				operators[token] !== undefined ||
+				(token.startsWith(FUNCTION_PREFIX) &&
+					functions[token.slice(FUNCTION_PREFIX.length)] !== undefined)
+			) {
 				processed.push(token);
 			} else {
 				const float = helpers.localeParseFloat(token);
@@ -217,6 +250,7 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 
 		for (const token of this.tokens) {
 			const operator = operators[token];
+
 			if (operator !== undefined) {
 				if (stack.length < operator.operands) {
 					throw new Error("Insufficient values in the expression");
@@ -232,12 +266,23 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 				}
 			} else if (typeof token === "number") {
 				stack.push(token);
+			} else if (token.startsWith(FUNCTION_PREFIX)) {
+				const func = functions[token.slice(FUNCTION_PREFIX.length)]!;
+
+				if (stack.length < func.operands) {
+					throw new Error("min/max requires exactly two parameters");
+				}
+
+				const b = stack.pop()! ?? 0;
+				const a = stack.pop()! ?? 0;
+				stack.push(func.func(a, b));
 			} else {
 				stack.push((symbols as any)[token]);
 			}
 		}
+
 		if (stack.length !== 1) {
-			throw new Error("Too many values in the expression");
+			throw new Error("min/max requires exactly two parameters");
 		}
 
 		return stack.pop()!;

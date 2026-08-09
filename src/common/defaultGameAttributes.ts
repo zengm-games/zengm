@@ -511,6 +511,88 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 				pace: 1,
 				hofFactor: 1.2,
 				neutralSite: "finals",
+				awards: [
+					{
+						shortName: "MVP",
+						name: "Most Valuable Player",
+						formula:
+							"0.125*rusYds+6*rusTD-2*fmbLost + 0.0975*recYds+6*recTD + 1.1*(0.04*pssYds+4*pssTD-2.5*pssInt) + 2.25*(4*defSk+0.4*defTckLoss+0.2*defTckAst+0.4*defTckSolo+3*defFmbFrc+3*defFmbRec+6*defInt+2*defPssDef) + 6*(prTD+krTD) + 4*(pbw+rbw)/(0.1+pba+rba)*sqrt(pba+rba)",
+						formulaByPos: {
+							QB: "0.5*(0.125*rusYds+6*rusTD-2*fmbLost) + 0.0975*recYds+6*recTD + 1.1*(0.04*pssYds+4*pssTD-2.5*pssInt) + 2.25*(4*defSk+0.4*defTckLoss+0.2*defTckAst+0.4*defTckSolo+3*defFmbFrc+3*defFmbRec+6*defInt+2*defPssDef) + 6*(prTD+krTD) + 4*(pbw+rbw)/(0.1+pba+rba)*sqrt(pba+rba)",
+						},
+						mvp: true,
+					},
+					{
+						shortName: "OPOY",
+						name: "Offensive Player of the Year",
+						formula: "0.125*rusYds+6*rusTD-2*fmbLost + 0.0975*recYds+6*recTD",
+					},
+					{
+						shortName: "POY",
+						name: "Protector of the Year",
+						formula: "(pbw+rbw)/(0.1+pba+rba)*sqrt(pba+rba)",
+					},
+					{
+						shortName: "DPOY",
+						name: "Defensive Player of the Year",
+						formula:
+							"4*defSk+0.4*defTckLoss+0.2*defTckAst+0.4*defTckSolo+3*defFmbFrc+3*defFmbRec+6*defInt+2*defPssDef",
+					},
+					{
+						shortName: "OROY",
+						name: "Offensive Rookie of the Year",
+						formula:
+							"0.125*rusYds+6*rusTD-2*fmbLost + 0.0975*recYds+6*recTD + 1.1*(0.04*pssYds+4*pssTD-2.5*pssInt)",
+						formulaByPos: {
+							QB: "0.5*(0.125*rusYds+6*rusTD-2*fmbLost) + 0.0975*recYds+6*recTD + 1.1*(0.04*pssYds+4*pssTD-2.5*pssInt)",
+						},
+						rookie: true,
+						roy: true,
+					},
+					{
+						shortName: "DROY",
+						name: "Defensive Rookie of the Year",
+						formula:
+							"4*defSk+0.4*defTckLoss+0.2*defTckAst+0.4*defTckSolo+3*defFmbFrc+3*defFmbRec+6*defInt+2*defPssDef",
+						rookie: true,
+						roy: true,
+					},
+					{
+						shortName: "FMVP",
+						name: "Finals MVP",
+						formula: "av",
+						statRange: -1,
+					},
+					{
+						shortName: "ALL",
+						name: "All-League",
+						formula:
+							"4*defSk+0.4*defTckLoss+0.2*defTckAst+0.4*defTckSolo+3*defFmbFrc+3*defFmbRec+6*defInt+2*defPssDef",
+						formulaByPos: {
+							QB: "0.5*(0.125*rusYds+6*rusTD-2*fmbLost) + 1.1*(0.04*pssYds+4*pssTD-2.5*pssInt)",
+							RB: "0.125*rusYds+6*rusTD-2*fmbLost + 0.5*(0.0975*recYds+6*recTD)",
+							WR: "0.0975*recYds+6*recTD",
+							TE: "0.0975*recYds+6*recTD",
+							OL: "(pbw+rbw)/(0.1+pba+rba)*sqrt(pba+rba)",
+						},
+						numTeams: 2,
+					},
+					{
+						shortName: "ALR",
+						name: "All-Rookie",
+						formula:
+							"4*defSk+0.4*defTckLoss+0.2*defTckAst+0.4*defTckSolo+3*defFmbFrc+3*defFmbRec+6*defInt+2*defPssDef",
+						formulaByPos: {
+							QB: "0.5*(0.125*rusYds+6*rusTD-2*fmbLost) + 1.1*(0.04*pssYds+4*pssTD-2.5*pssInt)",
+							RB: "0.125*rusYds+6*rusTD-2*fmbLost + 0.5*(0.0975*recYds+6*recTD)",
+							WR: "0.0975*recYds+6*recTD",
+							TE: "0.0975*recYds+6*recTD",
+							OL: "(pbw+rbw)/(0.1+pba+rba)*sqrt(pba+rba)",
+						},
+						rookie: true,
+						numTeams: 1,
+					},
+				],
 			}
 		: {};
 
@@ -574,7 +656,10 @@ export const hockeyOverrides: Partial<GameAttributesLeagueWithHistory> =
 						shortName: "DFOY",
 						name: "Defensive Forward of the Year",
 						formula: "tk / 25 + hit / 25 + dps",
-						pos: ["C", "W"],
+						formulaByPos: {
+							D: "0",
+							G: "0",
+						},
 					},
 					{
 						shortName: "ROY",

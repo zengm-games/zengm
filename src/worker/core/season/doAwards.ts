@@ -305,14 +305,6 @@ const filterPlayersForAward = (
 		});
 	}
 
-	if (award.pos) {
-		filteredPlayers = filteredPlayers.filter((p) =>
-			award.pos?.includes(
-				(p.ratings as any[]).findLast((row) => row.season === season)?.pos,
-			),
-		);
-	}
-
 	return filteredPlayers;
 };
 

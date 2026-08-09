@@ -550,7 +550,7 @@ export type GameAttributesLeague = {
 	autoRelocateRebrand: boolean;
 	awards: ((
 		| Omit<AwardInfoIndividual, "group" | "winner">
-		| Omit<AwardInfoTeam, "group" | "winner" | "formulaByPos">
+		| Omit<AwardInfoTeam, "group" | "winner">
 	) & { group?: "conf" | "div" })[];
 	brotherRate: number;
 	budget: boolean;
@@ -2056,6 +2056,7 @@ type AwardInfo = {
 	shortName: string;
 	name: string;
 	formula: string;
+	formulaByPos?: Record<string, string>;
 	statRange?: "playoffs" | "combined" | number; // undefined means regularSeason, number is index of finals where -1 is finals, -2 is semifinals, etc
 	group?: // undefined means league
 		| {
@@ -2071,7 +2072,6 @@ type AwardInfo = {
 	bench?: boolean;
 	mip?: boolean;
 	rookie?: boolean;
-	pos?: string[];
 };
 
 export type AwardInfoIndividual = AwardInfo & {
@@ -2087,7 +2087,6 @@ export type AwardInfoTeam = AwardInfo & {
 	// Team award
 	numTeams: number;
 	winner: AwardPlayer2[][];
-	formulaByPos?: Record<string, string>;
 };
 
 export type Award2 = AwardInfoIndividual | AwardInfoTeam;

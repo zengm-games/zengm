@@ -9,18 +9,25 @@ custom awards
   - hockey
     - test formulaByPos in dfoy
   - baseball
-    - getPosByGpF
+    - test getPosByGpF
     - rfld in all-defense
   - football
     - posFactor in dpoyScore - really needed? could add formulaByPos for individual awards
-    - poy
-      - sqrt
+    - opoy qb stuff
 - royFilter needs repeatSeason check?
-- editor UI docs
-  - explain seasonFraction scaling
-    - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
-  - min/max functions
-    - also add to GOAT formula/season
+- edit awards
+  - where?
+    - dedicated page
+    - league settings modal
+    - award races (but what about teams and playoffs?)
+  - docs
+    - explain seasonFraction scaling
+      - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
+    - min/max functions
+      - also add to GOAT formula/season
+  - import/export
+  - enforce shortName is unique
+  - validate formulas
 - test
   - baseball rookie filter
   - MIP in other sports
@@ -29,14 +36,9 @@ custom awards
     - test with div/conf awards (should show in separate columns)
 - fields
   - stats range (regular season, playoffs, semifinals, finals, combined)
-  - if by position (non-basketball sports) support different formula per position
-- editor constraints
-  - shortName is unique
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - award races
-    - put editor here?
-      - what about teams and playoffs?
     - how to specify stat columns?
     - getAwardCandidates
       - should use season to look up awards, not g.get("awards") for past seasons

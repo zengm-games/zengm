@@ -516,9 +516,9 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 						shortName: "MVP",
 						name: "Most Valuable Player",
 						formula:
-							"0.125*rusYds+6*rusTD-2*fmbLost + 0.0975*recYds+6*recTD + 1.1*(0.04*pssYds+4*pssTD-2.5*pssInt) + 2.25*(4*defSk+0.4*defTckLoss+0.2*defTckAst+0.4*defTckSolo+3*defFmbFrc+3*defFmbRec+6*defInt+2*defPssDef) + 6*(prTD+krTD) + 4*(pbw+rbw)/(0.1+pba+rba)*sqrt(pba+rba)",
+							"0.125*rusYds+6*rusTD-2*fmbLost + 0.0975*recYds+6*recTD + 1.1*(0.04*pssYds+4*pssTD-2.5*pssInt) + 2.25*(4*defSk+0.4*defTckLoss+0.2*defTckAst+0.4*defTckSolo+3*defFmbFrc+3*defFmbRec+6*defInt+2*defPssDef) + 6*(prTD+krTD) + 4*(pbw+rbw)/(0.1+pba+rba)*(pba+rba)^(1/2)",
 						formulaByPos: {
-							QB: "0.5*(0.125*rusYds+6*rusTD-2*fmbLost) + 0.0975*recYds+6*recTD + 1.1*(0.04*pssYds+4*pssTD-2.5*pssInt) + 2.25*(4*defSk+0.4*defTckLoss+0.2*defTckAst+0.4*defTckSolo+3*defFmbFrc+3*defFmbRec+6*defInt+2*defPssDef) + 6*(prTD+krTD) + 4*(pbw+rbw)/(0.1+pba+rba)*sqrt(pba+rba)",
+							QB: "0.5*(0.125*rusYds+6*rusTD-2*fmbLost) + 0.0975*recYds+6*recTD + 1.1*(0.04*pssYds+4*pssTD-2.5*pssInt) + 2.25*(4*defSk+0.4*defTckLoss+0.2*defTckAst+0.4*defTckSolo+3*defFmbFrc+3*defFmbRec+6*defInt+2*defPssDef) + 6*(prTD+krTD) + 4*(pbw+rbw)/(0.1+pba+rba)*(pba+rba)^(1/2)",
 						},
 						mvp: true,
 					},
@@ -530,7 +530,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 					{
 						shortName: "POY",
 						name: "Protector of the Year",
-						formula: "(pbw+rbw)/(0.1+pba+rba)*sqrt(pba+rba)",
+						formula: "(pbw+rbw)/(0.1+pba+rba)*(pba+rba)^(1/2)",
 					},
 					{
 						shortName: "DPOY",
@@ -573,7 +573,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 							RB: "0.125*rusYds+6*rusTD-2*fmbLost + 0.5*(0.0975*recYds+6*recTD)",
 							WR: "0.0975*recYds+6*recTD",
 							TE: "0.0975*recYds+6*recTD",
-							OL: "(pbw+rbw)/(0.1+pba+rba)*sqrt(pba+rba)",
+							OL: "(pbw+rbw)/(0.1+pba+rba)*(pba+rba)^(1/2)",
 						},
 						numTeams: 2,
 					},
@@ -587,7 +587,7 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 							RB: "0.125*rusYds+6*rusTD-2*fmbLost + 0.5*(0.0975*recYds+6*recTD)",
 							WR: "0.0975*recYds+6*recTD",
 							TE: "0.0975*recYds+6*recTD",
-							OL: "(pbw+rbw)/(0.1+pba+rba)*sqrt(pba+rba)",
+							OL: "(pbw+rbw)/(0.1+pba+rba)*(pba+rba)^(1/2)",
 						},
 						rookie: true,
 						numTeams: 1,

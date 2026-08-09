@@ -138,15 +138,14 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 
 	for (const p of players) {
 		// For convenience later
-		p.currentStats = p.stats.at(-1);
-		for (let i = p.stats.length - 1; i >= 0; i--) {
-			if (p.stats[i].season === season) {
-				p.currentStats = p.stats[i];
-				break;
-			}
-		}
+		p.currentStats =
+			(p.stats as any[]).findLast((row) => row.season === season) ??
+			p.stats.at(-1);
+		p.pos = (
+			(p.ratings as any[]).findLast((row) => row.season === season) ??
+			p.ratings.at(-1)
+		).pos;
 
-		p.pos = p.ratings.at(-1).pos;
 		if (isSport("baseball")) {
 			// Overwrite position with actual position played
 			const gpF = (p.currentStats.gpF as (number | undefined)[]).map((gp) =>
@@ -327,7 +326,7 @@ export const processAwards = async ({
 	for (const p of players) {
 		p.scores = {};
 		for (const award of awards) {
-			const formula = award.formula;
+			const formula = award.formulaByPos?.[p.pos] ?? award.formula;
 
 			if (p.scores[formula] !== undefined) {
 				// If same formula is used for two awards, only calculate once
@@ -344,10 +343,7 @@ export const processAwards = async ({
 				if (isSport("basketball")) {
 					formulaStats.push("wsFraction");
 				}
-				const formulaEvaluator = new FormulaEvaluator(
-					award.formula,
-					formulaStats,
-				);
+				const formulaEvaluator = new FormulaEvaluator(formula, formulaStats);
 				formulaEvaluators[formula] =
 					formulaEvaluator.evaluate.bind(formulaEvaluator);
 			}
@@ -433,7 +429,10 @@ export const processAwards = async ({
 
 			const sortedPlayers = orderBy(
 				filteredPlayers,
-				(p) => p.scores[award.formula],
+				(p) => {
+					const formula = award.formulaByPos?.[p.pos] ?? award.formula;
+					return p.scores[formula];
+				},
 				"desc",
 			);
 

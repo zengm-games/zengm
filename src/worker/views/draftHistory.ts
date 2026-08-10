@@ -1,7 +1,7 @@
 import { PLAYER } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type { ViewInput } from "../../common/types.ts";
+import type { PlayerAward, ViewInput } from "../../common/types.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { groupByUnique, maxBy } from "../../common/utils.ts";
 import { bySport } from "../../common/sportFunctions.ts";
@@ -117,21 +117,29 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 				watch: p.watch,
 				awards: p.awards,
 				awardCounts: {
-					allStar: p.awards.filter((award: any) => award.type === "All-Star")
-						.length,
+					allStar: p.awards.filter(
+						(award: PlayerAward) => award.type === "All-Star",
+					).length,
 					mvp: p.awards.filter(
-						(award: any) =>
-							award.type === undefined && award.mvp && award.rank === 1,
+						(award: PlayerAward) =>
+							award.type === undefined &&
+							award.numTeams === undefined &&
+							award.mvp &&
+							award.rank === 1,
 					).length,
 					roy: p.awards.filter(
-						(award: any) =>
-							award.type === undefined && award.roy && award.rank === 1,
+						(award: PlayerAward) =>
+							award.type === undefined &&
+							award.numTeams === undefined &&
+							award.roy &&
+							award.rank === 1,
 					).length,
 					champ: p.awards.filter(
-						(award: any) => award.type === "Won Championship",
+						(award: PlayerAward) => award.type === "Won Championship",
 					).length,
 					hof: p.awards.filter(
-						(award: any) => award.type === "Inducted into the Hall of Fame",
+						(award: PlayerAward) =>
+							award.type === "Inducted into the Hall of Fame",
 					).length,
 				},
 

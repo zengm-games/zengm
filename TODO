@@ -10,7 +10,9 @@ custom awards
     - test formulaByPos in dfoy
   - baseball
     - test getPosByGpF
-    - rfld in all-defense
+    - rfld
+      - if individual award, sum
+      - if team award, find position index
   - football
     - posFactor in dpoyScore - really needed? could add formulaByPos for individual awards
     - opoy qb stuff
@@ -36,6 +38,8 @@ custom awards
     - test with div/conf awards (should show in separate columns)
 - fields
   - stats range (regular season, playoffs, semifinals, finals, combined)
+  - showStats in season summary
+    - what about for playoff round ones?
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - award races
@@ -88,6 +92,7 @@ custom awards
       - created player with no stats
   - awards column for player profiles
   - bestRecordDiv on Team Records
+  - complexity of football formulas
 - maybe
   - support editing metadata of past awards, like name and shortName. maybe even formula too...
   - real player data for award top 5 finish

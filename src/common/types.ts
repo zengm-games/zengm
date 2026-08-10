@@ -2068,6 +2068,26 @@ type AwardInfo = {
 				did: number;
 		  };
 
+	// What stats to show on Award Races and Season Summary?
+	// Would be tricky to explicitly specify stats because (1) those 2 pages show different stuff; (2) it'd be very verbose; and (3) it'd be tricky to support playoff series awards where different stats are available
+	showStats:
+		// baseball - defense would be nice, but don't want to deal with the arrays, and not actually needed in default awards
+		| "overall"
+		| "sp"
+		| "rp"
+		| "offense"
+		// basketball
+		| "offense"
+		| "defense"
+		// football
+		| "overall"
+		| "defense"
+		| "blocking"
+		// hockey
+		| "overall"
+		| "defense"
+		| "goalkeeping";
+
 	// Filters
 	bench?: boolean;
 	mip?: boolean;

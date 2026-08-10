@@ -70,7 +70,6 @@ type PlayByPlayEventInputNoScore =
 				| BlockType
 				| FgaType
 				| FgMissType
-				| "pfNonShooting"
 				| "drb"
 				| "orb"
 				| "foulOut"
@@ -79,6 +78,13 @@ type PlayByPlayEventInputNoScore =
 			t: TeamNum;
 			pid: number;
 			clock: number;
+	  }
+	| {
+			type: "pfNonShooting";
+			t: TeamNum;
+			pid: number;
+			clock: number;
+			intentional: boolean;
 	  }
 	| {
 			type: "jumpBall";

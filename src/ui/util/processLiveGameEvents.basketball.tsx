@@ -234,7 +234,7 @@ export const getText = (
 		texts = [`${getName(event.pid)} missed a free throw`];
 	} else if (event.type === "pfNonShooting") {
 		texts = [
-			`Non-shooting foul on ${getName(event.pid)}${formatLiveGameStat(playersByPid[event.pid], "pf")}`,
+			`${event.intentional ? "Intentional" : "Non-shooting"} foul on ${getName(event.pid)}${formatLiveGameStat(playersByPid[event.pid], "pf")}`,
 		];
 	} else if (event.type === "pfBonus") {
 		texts = [

@@ -28,19 +28,20 @@ export const formatPlayerAwardName = (
 export const showStatsByType: Partial<Record<Award2["showStats"], string[]>> =
 	bySport({
 		baseball: {
-			overall: ["keyStats", "war"],
-			sp: ["w", "l", "era", "ip", "rpit"],
-			rp: ["sv", "era", "ip", "rpit"],
-			offense: ["pa", "hr", "ba", "ops", "war"],
+			// keyStats formats W-L and slash line nicely
+			overall: ["keyStats"],
+			sp: ["keyStats"],
+			rp: ["sv", "era", "ip"],
+			offense: ["keyStats"],
 		},
 		basketball: {
 			offense: ["pts", "trb", "ast"],
 			defense: ["trb", "blk", "stl"],
 		},
 		football: {
-			overall: ["keyStats", "av"],
-			defense: ["defTck", "defSk", "defPssDef", "defInt", "av"],
-			blocking: ["pbw", "pbwr", "rbw", "rbwr", "av"],
+			overall: ["keyStats"],
+			defense: ["keyStats"],
+			blocking: ["keyStats"],
 		},
 		hockey: {
 			overall: ["keyStats", "ps"],

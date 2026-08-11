@@ -6,6 +6,7 @@ import { useLocal } from "../util/local.ts";
 import { helpers } from "../util/helpers.ts";
 import React from "react";
 import { showStatsByType } from "../../common/awards.ts";
+import { getCol } from "../../common/getCol.ts";
 
 type ActualProps = Exclude<
 	View<"history">,
@@ -52,7 +53,10 @@ const Winner = ({
 			</span>
 			<br />
 			{stats
-				.map((stat) => `${helpers.roundStat(p.stats[stat], stat)} ${stat}`)
+				.map(
+					(stat) =>
+						`${helpers.roundStat(p.stats[stat], stat)}${stat === "keyStats" ? "" : ` ${getCol(`stat:${stat}`).title}`}`,
+				)
 				.join(", ")}
 		</>
 	);
@@ -117,7 +121,20 @@ const History = (props: View<"history">) => {
 											Playoff bracket
 										</a>
 									</p>
-									<p>PLAYOFF AWARDS HERE</p>
+									{awards.individualAwardsPlayoffs.map((award, i) => {
+										return (
+											<React.Fragment key={i}>
+												<p>
+													{award.name}:{" "}
+													<Winner
+														award={award}
+														season={awards.season}
+														userTid={userTid}
+													/>
+												</p>
+											</React.Fragment>
+										);
+									})}
 								</div>
 							) : (
 								<p>???</p>

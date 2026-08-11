@@ -157,10 +157,18 @@ const updateHistory = async (
 				if (!winner) {
 					continue;
 				}
-				individualAwards.push({
-					...award,
-					winner,
-				});
+
+				if (award.statRange === "playoffs") {
+					individualAwardsPlayoffs.push({
+						...award,
+						winner,
+					});
+				} else {
+					individualAwards.push({
+						...award,
+						winner,
+					});
+				}
 			}
 		}
 

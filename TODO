@@ -6,8 +6,6 @@ custom awards
 - other sports
   - teams by position
     - baseball dh
-  - hockey
-    - test formulaByPos in dfoy
   - baseball
     - test getPosByGpF
     - rfld
@@ -53,7 +51,6 @@ custom awards
   - season summary
     - for individual awards, prefix with pos except in basketball
     - go back and add support for playoff series awards
-    - test playoff statRange
     - need to know which stats to show for offensive/defensive awards, like award races
   - GOAT formula
   - achievements

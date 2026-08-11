@@ -22,8 +22,8 @@ const getAwardCandidates = async (season: number) => {
 		bySport({
 			baseball: {
 				overall: ["keyStats", "war"],
-				sp: ["w", "l", "era", "ip", "rpit"],
-				rp: ["sv", "era", "ip", "rpit"],
+				sp: ["w", "l", "era", "ip", "war"],
+				rp: ["sv", "era", "ip", "war"],
 				offense: ["pa", "hr", "ba", "ops", "war"],
 			},
 			basketball: {

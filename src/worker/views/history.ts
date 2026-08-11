@@ -10,6 +10,7 @@ import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { groupByUnique } from "../../common/utils.ts";
 import { showStatsByType } from "../../common/awards.ts";
 import { getPosByGpF } from "../core/season/doAwards.baseball.ts";
+import { formatAwardName } from "../core/season/awards.ts";
 
 const viewedSeasonSummary = async () => {
 	local.unviewedSeasonSummary = false;
@@ -158,16 +159,16 @@ const updateHistory = async (
 					continue;
 				}
 
+				const augmented = {
+					...award,
+					name: formatAwardName(award, awards.season),
+					winner,
+				};
+
 				if (award.statRange === "playoffs") {
-					individualAwardsPlayoffs.push({
-						...award,
-						winner,
-					});
+					individualAwardsPlayoffs.push(augmented);
 				} else {
-					individualAwards.push({
-						...award,
-						winner,
-					});
+					individualAwards.push(augmented);
 				}
 			}
 		}

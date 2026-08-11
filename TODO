@@ -59,9 +59,6 @@ custom awards
     - triple crown
       - fix baseball DPOY bug https://discord.com/channels/290013534023057409/1532565456920117279/1532565456920117279
 - make sure hashAward accounts for everything
-- formatAwardName should prefix with conf/div abbrev somehow
-  - how to abbreviate? is it necessary?
-  - store in name, or in separate field?
 - how to store Player.awards
   - include conf/div in award name for grouped award?
     - see formatAwardName for generating that in the worker

@@ -2107,7 +2107,13 @@ export type AwardInfoIndividual = AwardInfo & {
 export type AwardInfoTeam = AwardInfo & {
 	// Team award
 	numTeams: number;
-	winner: (AwardPlayer2 | undefined)[][]; // undefined would be if it can't find enough players at one position
+	winner: (
+		| (AwardPlayer2 & {
+				// pos is defined if TEAM_AWARD_INFO.byPos
+				pos?: string;
+		  })
+		| undefined
+	)[][]; // undefined would be if it can't find enough players at one position
 };
 
 export type Award2 = AwardInfoIndividual | AwardInfoTeam;

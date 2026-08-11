@@ -5,9 +5,8 @@ custom awards
   - only in PlayerAward?
 - other sports
   - teams by position
-    - baseball dh
-      - DH_OR_P and DH_IF_EXISTS
-    - kr/pr for football - maybe just ignore
+    - baseball
+      - dh: DH_OR_P and DH_IF_EXISTS
   - baseball
     - test getPosByGpF
     - rfld
@@ -53,7 +52,8 @@ custom awards
   - awards editor
   - season summary
     - for individual awards, prefix with pos except in basketball
-    - for team awards by position, auto prefix
+    - for baseball, show stats for team awards
+      - all sports?
     - go back and add support for playoff series awards
   - GOAT formula
   - achievements

@@ -499,7 +499,7 @@ export const processAwards = async ({
 							if (pid === undefined) {
 								return;
 							}
-							return { pid };
+							return { pid, pos };
 						});
 					});
 

@@ -77,11 +77,13 @@ const updateHistory = async (
 
 		const augmentPlayer = async ({
 			pid,
+			pos,
 			season,
 			showStats,
 			statRange,
 		}: {
 			pid: number;
+			pos?: string;
 			season: number;
 			showStats: AwardInfoIndividual["showStats"];
 			statRange: "combined" | "playoffs" | "regularSeason";
@@ -125,7 +127,7 @@ const updateHistory = async (
 			return {
 				pid: p.pid,
 				name: p2.name as string,
-				pos: getPosByGpF(p2.stats.gpF, p2.ratings.pos),
+				pos: getPosByGpF(p2.stats.gpF, p.pos ?? p2.ratings.pos),
 				stats: {
 					...p2.stats,
 					abbrev: t.seasonAttrs.abbrev,
@@ -179,9 +181,10 @@ const updateHistory = async (
 						if (!pTemp) {
 							continue;
 						}
-						const { pid } = pTemp;
+						const { pid, pos } = pTemp;
 						const p = await augmentPlayer({
 							pid,
+							pos,
 							season: awards.season,
 							showStats: award.showStats,
 							statRange: award.statRange ?? "regularSeason",

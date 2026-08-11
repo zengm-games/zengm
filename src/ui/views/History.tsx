@@ -90,43 +90,33 @@ const Teams = ({
 							<h2>{award.name} team</h2>
 						)}
 						{t.map((p, i) => {
-							let pos;
-							if (TEAM_AWARD_INFO.byPos) {
-								const positions =
-									TEAM_AWARD_INFO.positions[award.showStats] ??
-									TEAM_AWARD_INFO.positions.default;
-								if (positions[i] !== undefined) {
-									pos = `${positions[i]} `;
-								}
-							}
-
 							return (
 								<div key={i}>
-									{pos}
 									{p ? (
-										<span
-											className={
-												p.stats.tid === userTid ? "table-info" : undefined
-											}
-										>
-											<a href={helpers.leagueUrl(["player", p.pid])}>
-												{p.name}
-											</a>{" "}
-											(
-											<a
-												href={helpers.leagueUrl([
-													"roster",
-													`${p.stats.abbrev}_${p.stats.tid}`,
-													season,
-												])}
+										<>
+											{TEAM_AWARD_INFO.byPos ? `${p.pos} ` : null}
+											<span
+												className={
+													p.stats.tid === userTid ? "table-info" : undefined
+												}
 											>
-												{p.stats.abbrev}
-											</a>
-											)
-										</span>
-									) : (
-										"???"
-									)}
+												<a href={helpers.leagueUrl(["player", p.pid])}>
+													{p.name}
+												</a>{" "}
+												(
+												<a
+													href={helpers.leagueUrl([
+														"roster",
+														`${p.stats.abbrev}_${p.stats.tid}`,
+														season,
+													])}
+												>
+													{p.stats.abbrev}
+												</a>
+												)
+											</span>
+										</>
+									) : null}
 								</div>
 							);
 						})}

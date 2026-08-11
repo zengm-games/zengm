@@ -62,7 +62,8 @@ const copyValidValues = (
 	if (target.hof !== source.hof) {
 		// Always remove old entries, so there are never duplicates
 		target.awards = target.awards.filter(
-			(award) => !award.type.includes("Hall of Fame"),
+			(award) =>
+				award.type === undefined || !award.type.includes("Hall of Fame"),
 		);
 		if (!target.hof && source.hof) {
 			// Add to HoF

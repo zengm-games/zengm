@@ -1,9 +1,15 @@
 import { idb } from "../db/index.ts";
 import { g, local, updatePlayMenu } from "../util/index.ts";
-import type { UpdateEvents, ViewInput } from "../../common/types.ts";
-import { SIMPLE_AWARDS } from "../../common/constants.ts";
-import { bySport } from "../../common/sportFunctions.ts";
+import type {
+	AwardInfoIndividual,
+	UpdateEvents,
+	ViewInput,
+} from "../../common/types.ts";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
+import { groupByUnique } from "../../common/utils.ts";
+import { showStatsByType } from "../../common/awards.ts";
+import { getPosByGpF } from "../core/season/doAwards.baseball.ts";
 
 const viewedSeasonSummary = async () => {
 	local.unviewedSeasonSummary = false;
@@ -38,62 +44,134 @@ const updateHistory = async (
 		const teams = await idb.getCopies.teamsPlus(
 			{
 				attrs: ["tid"],
-				seasonAttrs: ["playoffRoundsWon", "abbrev", "region", "name"],
+				seasonAttrs: [
+					"playoffRoundsWon",
+					"abbrev",
+					"region",
+					"name",
+					"won",
+					"lost",
+					"tied",
+					"otl",
+				],
 				season,
 			},
 			"noCopyCache",
 		);
+		const teamsByTid = groupByUnique(teams, "tid");
 
-		const addAbbrev = (obj: any) => {
-			// Not sure why this would ever be null, but somebody said it was
-			if (obj == undefined) {
+		const augmentTeams = (bestRecords: Record<number, number>) => {
+			const map = new Map<number, (typeof teamsByTid)[number]>();
+			for (const [cidDidString, tid] of Object.entries(bestRecords)) {
+				const t = teamsByTid[tid];
+				if (t) {
+					const cidDid = Number.parseInt(cidDidString);
+					map.set(cidDid, t);
+				}
+			}
+
+			return map;
+		};
+
+		const augmentPlayer = async ({
+			pid,
+			season,
+			showStats,
+			statRange,
+		}: {
+			pid: number;
+			season: number;
+			showStats: AwardInfoIndividual["showStats"];
+			statRange: "combined" | "playoffs" | "regularSeason";
+		}) => {
+			const stats = showStatsByType[showStats];
+			if (!stats) {
+				throw new Error("Invalid showStats");
+			}
+
+			const allStats = [...stats, "tid"];
+			if (isSport("baseball")) {
+				allStats.push("gpF");
+			}
+
+			const p = await idb.getCopy.players({ pid }, "noCopyCache");
+			if (!p) {
+				return;
+			}
+			const p2 = await idb.getCopy.playersPlus(p, {
+				attrs: ["name"],
+				ratings: ["pos"],
+				stats: allStats,
+				season,
+				playoffs: statRange === "playoffs",
+				regularSeason: statRange === "regularSeason",
+				combined: statRange === "combined",
+				mergeStats: "totOnly",
+				showNoStats: true,
+				fuzz: true,
+			});
+			if (!p2) {
 				return;
 			}
 
-			const t = teams.find((t) => t.tid === obj.tid);
-			if (t) {
-				obj.abbrev = t.seasonAttrs.abbrev;
-			} else {
-				obj.abbrev = "???";
+			// Could have asked for "abbrev" in playersPlus, but we already have the teams in memory...
+			const t = teamsByTid[p2.stats.tid];
+			if (!t) {
+				return;
 			}
+
+			return {
+				pid: p.pid,
+				name: p2.name as string,
+				pos: getPosByGpF(p2.stats.gpF, p.pos),
+				stats: {
+					...p2.stats,
+					abbrev: t.seasonAttrs.abbrev,
+				},
+				tid: p.tid,
+			};
 		};
 
-		for (const key of SIMPLE_AWARDS) {
-			addAbbrev(awards[key]);
-		}
-		const possibleTeamAwards = ["allLeague", "allDefensive"];
-		for (const key of possibleTeamAwards) {
-			if (awards[key]) {
-				for (const team of awards[key]) {
-					for (const p of team.players) {
-						addAbbrev(p);
-					}
-				}
+		const individualAwards: (Omit<AwardInfoIndividual, "winner"> & {
+			winner: NonNullable<Awaited<ReturnType<typeof augmentPlayer>>>;
+		})[] = [];
+		const individualAwardsPlayoffs: typeof individualAwards = [];
+		const teamAwards = [];
+
+		for (const award of awards.awards) {
+			if (typeof award.statRange === "number") {
+				continue;
 			}
-		}
-		const flatTeams = bySport({
-			baseball: ["allRookie", "allOffense", "allDefense"],
-			basketball: ["allRookie", "sfmvp"],
-			football: ["allRookie"],
-			hockey: ["allRookie"],
-		});
-		for (const key of flatTeams) {
-			if (awards[key]) {
-				for (const p of awards[key]) {
-					addAbbrev(p);
+
+			if (award.numTeams === undefined) {
+				const pid = award.winner[0]?.pid;
+				if (pid === undefined) {
+					continue;
 				}
+				const winner = await augmentPlayer({
+					pid,
+					season: awards.season,
+					showStats: award.showStats,
+					statRange: award.statRange ?? "regularSeason",
+				});
+				if (!winner) {
+					continue;
+				}
+				individualAwards.push({
+					...award,
+					winner,
+				});
 			}
 		}
 
-		// Hack placeholder for old seasons
-		if (!awards.allRookie) {
-			awards.allRookie = [];
-		}
-
-		// For old league files, this format is obsolete now
-		if (awards && awards.bre && awards.brw) {
-			awards.bestRecordConfs = [awards.bre, awards.brw];
-		}
+		const awardsAugmented = {
+			season: awards.season,
+			bestRecord: teamsByTid[awards.bestRecord],
+			bestRecordConfs: augmentTeams(awards.bestRecordConfs),
+			individualAwards,
+			individualAwardsPlayoffs,
+			teamAwards,
+		};
 
 		const retiredPlayersAll = await idb.getCopies.players(
 			{
@@ -143,7 +221,7 @@ const updateHistory = async (
 		);
 
 		return {
-			awards,
+			awards: awardsAugmented,
 			champ,
 			confs: g.get("confs", season),
 			invalidSeason: false as const,

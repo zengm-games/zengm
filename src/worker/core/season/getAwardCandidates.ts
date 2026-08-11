@@ -18,31 +18,32 @@ const getAwardCandidates = async (season: number) => {
 
 	const playersByPid = groupByUnique(players, "pid");
 
-	const statsByType: Partial<Record<Award2["showStats"], string[]>> = bySport({
-		baseball: {
-			overall: ["keyStats", "war"],
-			sp: ["w", "l", "era", "ip", "rpit"],
-			rp: ["sv", "era", "ip", "rpit"],
-			offense: ["pa", "hr", "ba", "ops", "war"],
-		},
-		basketball: {
-			offense: ["pts", "trb", "ast", "per"],
-			defense: ["trb", "blk", "stl", "dws"],
-		},
-		football: {
-			overall: ["keyStats", "av"],
-			defense: ["defTck", "defSk", "defPssDef", "defInt", "av"],
-			blocking: ["pbw", "pbwr", "rbw", "rbwr", "av"],
-		},
-		hockey: {
-			overall: ["keyStats", "ps"],
-			defense: ["tk", "hit", "dps"],
-			goalkeeping: ["gpGoalie", "gaa", "svPct", "gps"],
-		},
-	});
+	const awardCandidateStats: Partial<Record<Award2["showStats"], string[]>> =
+		bySport({
+			baseball: {
+				overall: ["keyStats", "war"],
+				sp: ["w", "l", "era", "ip", "rpit"],
+				rp: ["sv", "era", "ip", "rpit"],
+				offense: ["pa", "hr", "ba", "ops", "war"],
+			},
+			basketball: {
+				offense: ["pts", "trb", "ast", "per"],
+				defense: ["trb", "blk", "stl", "dws"],
+			},
+			football: {
+				overall: ["keyStats", "av"],
+				defense: ["defTck", "defSk", "defPssDef", "defInt", "av"],
+				blocking: ["pbw", "pbwr", "rbw", "rbwr", "av"],
+			},
+			hockey: {
+				overall: ["keyStats", "ps"],
+				defense: ["tk", "hit", "dps"],
+				goalkeeping: ["gpGoalie", "gaa", "svPct", "gps"],
+			},
+		});
 
 	const awardCandidates = realizedAwards.map(({ award }) => {
-		const stats = statsByType[award.showStats];
+		const stats = awardCandidateStats[award.showStats];
 		if (!stats) {
 			throw new Error("Invalid showStats");
 		}

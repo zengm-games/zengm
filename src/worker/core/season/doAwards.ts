@@ -27,6 +27,7 @@ import {
 	teamAwards,
 	type AwardsByPlayer,
 } from "./awards.ts";
+import { getPosByGpF } from "./doAwards.baseball.ts";
 
 const AWARD_STATS = [
 	...(isSport("basketball") ? [] : ["keyStats"]),
@@ -147,22 +148,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 		).pos;
 
 		if (isSport("baseball")) {
-			// Overwrite position with actual position played
-			const gpF = (p.currentStats.gpF as (number | undefined)[]).map((gp) =>
-				gp === undefined ? 0 : gp,
-			);
-			let maxGP = 0; // Start at 0 rather than -Infinity because we're not interested in positions with 0 games played
-			let maxIndex;
-			for (const [i, gp] of gpF.entries()) {
-				if (gp > maxGP) {
-					maxGP = gp;
-					maxIndex = i;
-				}
-			}
-
-			if (maxIndex !== undefined) {
-				p.pos = (POS_NUMBERS_INVERSE as any)[maxIndex + 1];
-			}
+			p.pos = getPosByGpF(p.currentStats.gpF, p.pos);
 		}
 
 		// Otherwise it's always the current season

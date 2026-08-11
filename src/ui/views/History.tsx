@@ -7,11 +7,14 @@ import { helpers } from "../util/helpers.ts";
 import React from "react";
 import { showStatsByType } from "../../common/awards.ts";
 import { getCol } from "../../common/getCol.ts";
+import { TEAM_AWARD_INFO } from "../../common/constants.ts";
 
 type ActualProps = Exclude<
 	View<"history">,
 	{ invalidSeason: true; season: number }
 >;
+
+const SHOW_POS = TEAM_AWARD_INFO.byPos;
 
 const Winner = ({
 	award,
@@ -35,6 +38,7 @@ const Winner = ({
 	return (
 		<>
 			<span className={p.stats.tid === userTid ? "table-info" : undefined}>
+				{SHOW_POS ? `${p.pos} ` : null}
 				<b>
 					<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>
 				</b>{" "}

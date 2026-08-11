@@ -125,7 +125,7 @@ const updateHistory = async (
 			return {
 				pid: p.pid,
 				name: p2.name as string,
-				pos: getPosByGpF(p2.stats.gpF, p.pos),
+				pos: getPosByGpF(p2.stats.gpF, p2.ratings.pos),
 				stats: {
 					...p2.stats,
 					abbrev: t.seasonAttrs.abbrev,
@@ -175,7 +175,11 @@ const updateHistory = async (
 				const winner: (typeof teamAwards)[number]["winner"] = [];
 				for (const team of award.winner) {
 					const augmentedTeam: (typeof winner)[number] = [];
-					for (const { pid } of team) {
+					for (const pTemp of team) {
+						if (!pTemp) {
+							continue;
+						}
+						const { pid } = pTemp;
 						const p = await augmentPlayer({
 							pid,
 							season: awards.season,

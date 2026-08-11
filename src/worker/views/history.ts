@@ -2,6 +2,7 @@ import { idb } from "../db/index.ts";
 import { g, local, updatePlayMenu } from "../util/index.ts";
 import type {
 	AwardInfoIndividual,
+	AwardInfoTeam,
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types.ts";
@@ -129,22 +130,24 @@ const updateHistory = async (
 					...p2.stats,
 					abbrev: t.seasonAttrs.abbrev,
 				},
-				tid: p.tid,
 			};
 		};
 
 		const individualAwards: (Omit<AwardInfoIndividual, "winner"> & {
-			winner: NonNullable<Awaited<ReturnType<typeof augmentPlayer>>>;
+			winner: Awaited<ReturnType<typeof augmentPlayer>>;
 		})[] = [];
 		const individualAwardsPlayoffs: typeof individualAwards = [];
-		const teamAwards = [];
+		const teamAwards: (Omit<AwardInfoTeam, "winner"> & {
+			winner: Awaited<ReturnType<typeof augmentPlayer>>[][];
+		})[] = [];
 
 		for (const award of awards.awards) {
 			if (typeof award.statRange === "number") {
 				continue;
 			}
 
-			if (award.numTeams === undefined) {
+			const numTeams = award.numTeams;
+			if (numTeams === undefined) {
 				const pid = award.winner[0]?.pid;
 				if (pid === undefined) {
 					continue;
@@ -155,12 +158,10 @@ const updateHistory = async (
 					showStats: award.showStats,
 					statRange: award.statRange ?? "regularSeason",
 				});
-				if (!winner) {
-					continue;
-				}
 
 				const augmented = {
 					...award,
+					numTeams,
 					name: formatAwardName(award, awards.season),
 					winner,
 				};
@@ -170,6 +171,30 @@ const updateHistory = async (
 				} else {
 					individualAwards.push(augmented);
 				}
+			} else {
+				const winner: (typeof teamAwards)[number]["winner"] = [];
+				for (const team of award.winner) {
+					const augmentedTeam: (typeof winner)[number] = [];
+					for (const { pid } of team) {
+						const p = await augmentPlayer({
+							pid,
+							season: awards.season,
+							showStats: award.showStats,
+							statRange: award.statRange ?? "regularSeason",
+						});
+						augmentedTeam.push(p);
+					}
+					winner.push(augmentedTeam);
+				}
+
+				const augmented = {
+					...award,
+					numTeams,
+					name: formatAwardName(award, awards.season),
+					winner,
+				};
+
+				teamAwards.push(augmented);
 			}
 		}
 

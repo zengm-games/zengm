@@ -22,20 +22,19 @@ const Winner = ({
 	season: number;
 	userTid: number;
 }) => {
-	if (!award) {
-		return "???";
-	}
-
 	const stats = showStatsByType[award.showStats];
 	if (!stats) {
 		throw new Error("Invalid showStats");
 	}
 
 	const p = award.winner;
+	if (!p) {
+		return "???";
+	}
 
 	return (
 		<>
-			<span className={p.tid === userTid ? "table-info" : undefined}>
+			<span className={p.stats.tid === userTid ? "table-info" : undefined}>
 				<b>
 					<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>
 				</b>{" "}
@@ -62,6 +61,91 @@ const Winner = ({
 	);
 };
 
+const Teams = ({
+	award,
+	season,
+	userTid,
+}: {
+	award: ActualProps["awards"]["teamAwards"][number];
+	season: number;
+	userTid: number;
+}) => {
+	const multipleTeams = award.winner.length > 1;
+
+	return (
+		<>
+			{multipleTeams ? <h2>{award.name}</h2> : null}
+			{award.winner.map((t, i) => {
+				if (t.length === 0) {
+					return null;
+				}
+
+				return (
+					<div key={i} className="mb-3">
+						{multipleTeams ? (
+							<h3>{helpers.ordinal(i + 1)} team</h3>
+						) : (
+							<h2>{award.name} team</h2>
+						)}
+						{t.map((p, i) => {
+							return (
+								<div key={i}>
+									{p ? (
+										<span
+											className={
+												p.stats.tid === userTid ? "table-info" : undefined
+											}
+										>
+											<a href={helpers.leagueUrl(["player", p.pid])}>
+												{p.name}
+											</a>{" "}
+											(
+											<a
+												href={helpers.leagueUrl([
+													"roster",
+													`${p.stats.abbrev}_${p.stats.tid}`,
+													season,
+												])}
+											>
+												{p.stats.abbrev}
+											</a>
+											)
+										</span>
+									) : (
+										"???"
+									)}
+								</div>
+							);
+						})}
+					</div>
+				);
+			})}
+		</>
+	);
+};
+
+const splitTeamAwards = <T extends { numTeams: number }>(teamAwards: T[]) => {
+	let sum = 0;
+	for (const row of teamAwards) {
+		sum += row.numTeams;
+	}
+	const target = Math.ceil(sum);
+	const teamAwards1: T[] = [];
+	const teamAwards2: T[] = [];
+
+	let sum2 = 0;
+	for (const row of teamAwards) {
+		sum2 += row.numTeams;
+		if (teamAwards1.length === 0 || sum2 > target) {
+			teamAwards1.push(row);
+		} else {
+			teamAwards2.push(row);
+		}
+	}
+
+	return { teamAwards1, teamAwards2 };
+};
+
 const History = (props: View<"history">) => {
 	const { invalidSeason, season } = props;
 
@@ -86,6 +170,8 @@ const History = (props: View<"history">) => {
 	}
 
 	const { awards, champ, confs, retiredPlayers, retiredStat } = props;
+
+	const { teamAwards1, teamAwards2 } = splitTeamAwards(awards.teamAwards);
 
 	return (
 		<>
@@ -140,7 +226,7 @@ const History = (props: View<"history">) => {
 								<p>???</p>
 							)}
 							<h2>Best Record</h2>
-							{awards.bestRecordConfs.entries().map(([cid, t]) =>
+							{Array.from(awards.bestRecordConfs.entries()).map(([cid, t]) =>
 								t ? (
 									<p key={cid}>
 										{confs[cid]?.name}:<br />
@@ -182,10 +268,28 @@ const History = (props: View<"history">) => {
 					</div>
 				</div>
 				<div className="col-xl-2 col-md-3 col-sm-4 col-6">
-					<p>TEAM AWARDS HERE</p>
+					{teamAwards1.map((award, i) => {
+						return (
+							<Teams
+								key={i}
+								award={award}
+								season={awards.season}
+								userTid={userTid}
+							/>
+						);
+					})}
 				</div>
 				<div className="col-xl-2 col-md-3 col-sm-4 col-6">
-					<p>TEAM AWARDS HERE</p>
+					{teamAwards2.map((award, i) => {
+						return (
+							<Teams
+								key={i}
+								award={award}
+								season={awards.season}
+								userTid={userTid}
+							/>
+						);
+					})}
 				</div>
 				<div className="col-xl-5 col-md-3 col-sm-12">
 					<RetiredPlayers

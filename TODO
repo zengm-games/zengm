@@ -28,6 +28,7 @@ custom awards
   - import/export
   - enforce shortName is unique
   - validate formulas
+- baseball disable conf group by default?
 - test
   - baseball rookie filter
   - MIP in other sports
@@ -51,7 +52,6 @@ custom awards
   - season summary
     - for individual awards, prefix with pos except in basketball
     - go back and add support for playoff series awards
-    - need to know which stats to show for offensive/defensive awards, like award races
   - GOAT formula
   - achievements
     - check if the award we're looking for is unedited. if so, use it. if not, no achievement.
@@ -98,6 +98,8 @@ custom awards
   - only fetch needed variables from playersPlus when evaluating award formula
   - conditional stat-based awards that are not awarded every season, like triple crown or 40/40
   - clutch player award
+
+https://github.com/ata-core/ata-validator
 
 more prominent warning when editing player and the draft year is in the future while they are on a team
 - also ideally show them on the roster page too

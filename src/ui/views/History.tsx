@@ -14,8 +14,6 @@ type ActualProps = Exclude<
 	{ invalidSeason: true; season: number }
 >;
 
-const SHOW_POS = TEAM_AWARD_INFO.byPos;
-
 const Winner = ({
 	award,
 	season,
@@ -38,7 +36,7 @@ const Winner = ({
 	return (
 		<>
 			<span className={p.stats.tid === userTid ? "table-info" : undefined}>
-				{SHOW_POS ? `${p.pos} ` : null}
+				{TEAM_AWARD_INFO.byPos ? `${p.pos} ` : null}
 				<b>
 					<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>
 				</b>{" "}
@@ -92,8 +90,19 @@ const Teams = ({
 							<h2>{award.name} team</h2>
 						)}
 						{t.map((p, i) => {
+							let pos;
+							if (TEAM_AWARD_INFO.byPos) {
+								const positions =
+									TEAM_AWARD_INFO.positions[award.showStats] ??
+									TEAM_AWARD_INFO.positions.default;
+								if (positions[i] !== undefined) {
+									pos = `${positions[i]} `;
+								}
+							}
+
 							return (
 								<div key={i}>
+									{pos}
 									{p ? (
 										<span
 											className={

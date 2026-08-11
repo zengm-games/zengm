@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { isSport } from "../../common/sportFunctions.ts";
 import { helpers } from "../util/helpers.ts";
 import { toWorker } from "../util/toWorker.ts";
 import { ActionButton } from "./ActionButton.tsx";
 import { downloadFile } from "../util/downloadFile.ts";
 import { getCol } from "../../common/getCol.ts";
+import { TEAM_AWARD_INFO } from "../../common/constants.ts";
 
 export const RetiredPlayers = ({
 	retiredPlayers,
@@ -46,7 +46,7 @@ export const RetiredPlayers = ({
 						key={p.pid}
 						className={p.t?.tid === userTid ? "table-info" : undefined}
 					>
-						{isSport("football") ? `${p.pos} ` : null}
+						{TEAM_AWARD_INFO.byPos ? `${p.pos} ` : null}
 						<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a> (
 						{p.t && p.t.tid >= 0 ? (
 							<>

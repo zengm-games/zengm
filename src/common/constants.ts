@@ -649,6 +649,8 @@ export const TEAM_AWARD_INFO:
 				"S",
 				"CB",
 				"CB",
+				"K",
+				"P",
 			],
 		},
 	},

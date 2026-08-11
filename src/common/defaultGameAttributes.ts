@@ -591,6 +591,8 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 							WR: "0.0975*recYds+6*recTD",
 							TE: "0.0975*recYds+6*recTD",
 							OL: "(pbw+rbw)/(0.1+pba+rba)*(pba+rba)^(1/2)",
+							K: "fg",
+							P: "pntYds",
 						},
 						showStats: "overall",
 						numTeams: 2,

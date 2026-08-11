@@ -33,6 +33,7 @@ export const showStatsByType: Partial<Record<Award2["showStats"], string[]>> =
 			sp: ["keyStats"],
 			rp: ["sv", "era", "ip"],
 			offense: ["keyStats"],
+			defense: ["keyStats"], // Showing actualy defensive stats would be annoying because arrays
 		},
 		basketball: {
 			offense: ["pts", "trb", "ast"],

@@ -25,6 +25,7 @@ const getAwardCandidates = async (season: number) => {
 				sp: ["w", "l", "era", "ip", "war"],
 				rp: ["sv", "era", "ip", "war"],
 				offense: ["pa", "hr", "ba", "ops", "war"],
+				defense: ["pa", "hr", "ba", "ops", "war"], // Showing actualy defensive stats would be annoying because arrays
 			},
 			basketball: {
 				offense: ["pts", "trb", "ast", "per"],

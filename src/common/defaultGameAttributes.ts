@@ -804,7 +804,7 @@ export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
 						shortName: "DEF",
 						name: "All-Defensive",
 						formula: "rfld",
-						showStats: "offense",
+						showStats: "defense",
 						group: "conf",
 						numTeams: 1,
 					},

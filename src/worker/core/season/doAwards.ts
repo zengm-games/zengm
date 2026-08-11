@@ -5,20 +5,26 @@ import type {
 	Player,
 	PlayerFiltered,
 } from "../../../common/types.ts";
-import { isSport } from "../../../common/sportFunctions.ts";
+import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { g, helpers } from "../../util/index.ts";
 import getLeaderRequirements, {
 	getLeaderRequirementsStats,
 } from "./getLeaderRequirements.ts";
 import { idb } from "../../db/index.ts";
-import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball.ts";
 import {
 	PHASE,
 	PLAYER,
 	PLAYER_STATS_TABLES,
+	TEAM_AWARD_INFO,
 } from "../../../common/constants.ts";
 import FormulaEvaluator from "../../util/FormulaEvaluator.ts";
-import { chunk, groupByUnique, omit, orderBy } from "../../../common/utils.ts";
+import {
+	chunk,
+	groupByUnique,
+	omit,
+	orderBy,
+	range,
+} from "../../../common/utils.ts";
 import processPlayerStats from "../../../common/processPlayerStats.baseball.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 import {
@@ -444,26 +450,90 @@ export const processAwards = async ({
 					index: i,
 				});
 			} else {
-				const NUM_PLAYERS_PER_TEAM = 5;
-
 				// Team award
-				const winner = chunk(
-					sortedPlayers.slice(0, numTeams * NUM_PLAYERS_PER_TEAM).map((p) => {
-						return {
-							pid: p.pid as number,
-						};
-					}),
-					NUM_PLAYERS_PER_TEAM,
-				);
-				realizedAwards.push({
-					award: {
-						...award,
-						numTeams,
-						group,
-						winner,
-					},
-					index: i,
-				});
+				if (TEAM_AWARD_INFO.byPos) {
+					const positions =
+						TEAM_AWARD_INFO.positions[award.showStats] ??
+						TEAM_AWARD_INFO.positions.default;
+					const pidsByPos: Record<string, number[]> = {};
+
+					// Add up how many players we need at each position, factoring in that a position could be listed multiple times per team
+					const positionsNeeded = new Map<string, number>();
+					for (const pos of positions) {
+						const count = positionsNeeded.get(pos) ?? 0;
+						positionsNeeded.set(pos, count + numTeams);
+					}
+
+					for (const p of sortedPlayers) {
+						const pos = bySport({
+							baseball: () => {
+								if (p.pos === "SP" || p.pos === "RP") {
+									return "P";
+								}
+							},
+							basketball: () => p.pos,
+							football: () => p.pos,
+							hockey: () => p.pos,
+						})();
+
+						const needed = positionsNeeded.get(pos);
+						if (needed !== undefined && needed > 0) {
+							pidsByPos[pos] ??= [];
+							pidsByPos[pos].push(p.pid);
+
+							if (needed === 1) {
+								positionsNeeded.delete(pos);
+							} else {
+								positionsNeeded.set(pos, needed - 1);
+							}
+						}
+
+						if (positionsNeeded.size === 0) {
+							break;
+						}
+					}
+
+					const winner = range(numTeams).map((i) => {
+						return positions.map((pos) => {
+							const pid = pidsByPos[pos]?.shift();
+							if (pid === undefined) {
+								return;
+							}
+							return { pid };
+						});
+					});
+
+					realizedAwards.push({
+						award: {
+							...award,
+							numTeams,
+							group,
+							winner,
+						},
+						index: i,
+					});
+				} else {
+					const winner = chunk(
+						sortedPlayers
+							.slice(0, numTeams * TEAM_AWARD_INFO.numPlayersPerTeam)
+							.map((p) => {
+								return {
+									pid: p.pid as number,
+								};
+							}),
+						TEAM_AWARD_INFO.numPlayersPerTeam,
+					);
+
+					realizedAwards.push({
+						award: {
+							...award,
+							numTeams,
+							group,
+							winner,
+						},
+						index: i,
+					});
+				}
 			}
 		}
 	}
@@ -489,7 +559,11 @@ const getAwardsByPlayer = (
 		};
 
 		if (award.numTeams === undefined) {
-			for (const [i, { pid }] of award.winner.entries()) {
+			for (const [i, pTemp] of award.winner.entries()) {
+				if (!pTemp) {
+					continue;
+				}
+				const { pid } = pTemp;
 				const extra: {
 					mvp?: true;
 					roy?: true;
@@ -515,7 +589,11 @@ const getAwardsByPlayer = (
 			}
 		} else {
 			for (const [i, team] of award.winner.entries()) {
-				for (const { pid } of team) {
+				for (const pTemp of team) {
+					if (!pTemp) {
+						continue;
+					}
+					const { pid } = pTemp;
 					const p = playersByPid[pid]!;
 					awardsByPlayer.push({
 						pid,

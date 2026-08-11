@@ -2076,6 +2076,7 @@ type AwardInfo = {
 		| "sp"
 		| "rp"
 		| "offense"
+		| "defense"
 		// basketball
 		| "offense"
 		| "defense"
@@ -2106,7 +2107,7 @@ export type AwardInfoIndividual = AwardInfo & {
 export type AwardInfoTeam = AwardInfo & {
 	// Team award
 	numTeams: number;
-	winner: AwardPlayer2[][];
+	winner: (AwardPlayer2 | undefined)[][]; // undefined would be if it can't find enough players at one position
 };
 
 export type Award2 = AwardInfoIndividual | AwardInfoTeam;

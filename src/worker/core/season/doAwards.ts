@@ -388,7 +388,7 @@ export const processAwards = async ({
 		}
 	}
 
-	const opoyIndexes: number[] = [];
+	let hasOpoy: boolean = false;
 
 	const realizedAwards: {
 		award: Awards2["awards"][number];
@@ -431,7 +431,7 @@ export const processAwards = async ({
 
 		for (const award of expandedAwards) {
 			if (award.numTeams === undefined && award.opoyFormula !== undefined) {
-				opoyIndexes.push(i);
+				hasOpoy = true;
 			}
 
 			let filteredPlayers = baseFilteredPlayers;
@@ -616,9 +616,14 @@ export const processAwards = async ({
 		}
 	}
 
-	if (opoyIndexes.length > 0) {
-		for (const index of opoyIndexes) {
-			const opoyAward = realizedAwards[index]!.award as AwardInfoIndividual;
+	if (hasOpoy && isSport("football")) {
+		for (const { award: opoyAward } of realizedAwards) {
+			if (
+				opoyAward.numTeams !== undefined ||
+				opoyAward.opoyFormula === undefined
+			) {
+				continue;
+			}
 
 			// Need to see if there is an MVP award (not multiple ones, then it's ambiguous what formula to use) that lines up with this award
 			const mvpAwards = realizedAwards.filter(
@@ -638,7 +643,7 @@ export const processAwards = async ({
 					if (mvp?.pos === "QB" && opoy) {
 						// MVP is a QB - if that QB is a significantly better offensive player (by opoyFormula) than the initial OPOY, then bump them to the top of the list
 						const formulaEvaluator = new FormulaEvaluator(
-							opoyAward.opoyFormula!,
+							opoyAward.opoyFormula,
 							formulaStats,
 						);
 						const mvpScore = formulaEvaluator.evaluate(mvp.currentStats);

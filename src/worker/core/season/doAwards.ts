@@ -219,47 +219,53 @@ const filterPlayersForAward = (
 	}
 
 	if (award.rookie) {
-		// Handle case where nobody has GP from a past season, like in a new league - then use draft year
-		if (
-			filteredPlayers.some((p) =>
-				(p.stats as any[]).some(
-					(row) => row.season === season - 1 && row.gp > 0,
-				),
-			)
-		) {
-			if (isSport("baseball")) {
-				const defaultNumGames = defaultGameAttributes.numGames[0].value;
+		// Handle case where nobody has GP from a past season, like in a new league or with deleted data - then use draft year
+		let firstSeasonWithStats = Infinity;
+		for (const p of players) {
+			const row = p.stats[0];
+			if (row && row.gp > 0 && row.season < firstSeasonWithStats) {
+				firstSeasonWithStats = row.season;
+			}
+		}
 
-				filteredPlayers = filteredPlayers.filter((p) => {
-					const cutoffFactor = p.teamInfo.gp / defaultNumGames;
+		if (isSport("baseball")) {
+			const defaultNumGames = defaultGameAttributes.numGames[0].value;
 
-					let abSum = 0;
-					let outsSum = 0;
-					for (const row of p.stats) {
-						if (row.season < season && !row.playoffs) {
-							abSum += processPlayerStats(row, ["ab"]).ab;
-							outsSum += row.outs;
-						}
+			filteredPlayers = filteredPlayers.filter((p) => {
+				if (p.draft.year < firstSeasonWithStats) {
+					return p.draft.year === season - 1;
+				}
 
-						if (abSum >= 130 * cutoffFactor || outsSum >= 150 * cutoffFactor) {
-							return false;
-						}
+				const cutoffFactor = p.teamInfo.gp / defaultNumGames;
+
+				let abSum = 0;
+				let outsSum = 0;
+				for (const row of p.stats) {
+					if (!row.playoffs) {
+						abSum += processPlayerStats(row, ["ab"]).ab;
+						outsSum += row.outs;
 					}
 
-					return true;
-				});
-			} else {
-				// This means a player who sits out all regular season but then plays in the playoffs will be ineligible for ROY next year
-				filteredPlayers = filteredPlayers.filter((p) =>
-					(p.stats as any[]).every(
-						(row) => row.season >= season || row.gp === 0,
-					),
-				);
-			}
+					if (abSum >= 130 * cutoffFactor || outsSum >= 150 * cutoffFactor) {
+						// Rookie if this is the season they crossed the threshold
+						return row.season === season;
+					}
+				}
+
+				// Haven't crossed threshold yet
+				return false;
+			});
 		} else {
-			filteredPlayers = filteredPlayers.filter(
-				(p) => p.draft.year === season - 1,
-			);
+			filteredPlayers = filteredPlayers.filter((p) => {
+				if (p.draft.year < firstSeasonWithStats) {
+					return p.draft.year === season - 1;
+				}
+
+				// This means a player who sits out all regular season but then plays in the playoffs will be ineligible for ROY next year
+				return (p.stats as any[]).every(
+					(row) => row.season >= season || row.gp === 0,
+				);
+			});
 		}
 	}
 

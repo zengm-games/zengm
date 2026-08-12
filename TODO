@@ -5,7 +5,6 @@ custom awards
   - only in PlayerAward?
 - other sports
   - baseball
-    - test getPosByGpF
     - rfld
       - if individual award, sum
       - if team award, find position index
@@ -26,9 +25,7 @@ custom awards
   - import/export
   - enforce shortName is unique
   - validate formulas
-- baseball disable conf group by default?
 - test
-  - baseball rookie filter
   - MIP in other sports
   - historyAll, teamRecords, awardRecords
     - test with changing awards

@@ -97,9 +97,7 @@ const processStats = (
 				if (stat === "keyStats") {
 					row[stat] += `, ${ab} AB, ${helpers.roundWinp(
 						ba,
-					)} / ${helpers.roundWinp(obp)} / ${helpers.roundWinp(
-						slg,
-					)} / ${helpers.roundWinp(obp + slg)}`;
+					)} / ${helpers.roundWinp(obp)} / ${helpers.roundWinp(slg)}`;
 				}
 			} else if (role === "pitcher") {
 				const recordOrSaves =

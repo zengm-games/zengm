@@ -246,7 +246,8 @@ const filterPlayersForAward = (
 			const defaultNumGames = defaultGameAttributes.numGames[0].value;
 
 			filteredPlayers = filteredPlayers.filter((p) => {
-				if (p.draft.year < firstSeasonWithStats) {
+				// `firstSeasonWithStats - 1` because then a player who is a rookie during the first year with stats (p.draft.year === firstSeasonWithStats - 1) will not get caught by this filter
+				if (p.draft.year < firstSeasonWithStats - 1) {
 					return p.draft.year === season - 1;
 				}
 

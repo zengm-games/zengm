@@ -7,7 +7,6 @@ import { helpers } from "../util/helpers.ts";
 import React from "react";
 import { showStatsByType } from "../../common/awards.ts";
 import { getCol } from "../../common/getCol.ts";
-import { TEAM_AWARD_INFO } from "../../common/constants.ts";
 
 type ActualProps = Exclude<
 	View<"history">,
@@ -16,10 +15,16 @@ type ActualProps = Exclude<
 
 const Winner = ({
 	award,
+	indentStats,
+	p,
 	season,
 	userTid,
 }: {
-	award: ActualProps["awards"]["individualAwards"][number];
+	award:
+		| ActualProps["awards"]["individualAwards"][number]
+		| ActualProps["awards"]["teamAwards"][number];
+	indentStats?: boolean;
+	p: ActualProps["awards"]["individualAwards"][number]["winner"];
 	season: number;
 	userTid: number;
 }) => {
@@ -28,37 +33,39 @@ const Winner = ({
 		throw new Error("Invalid showStats");
 	}
 
-	const p = award.winner;
 	if (!p) {
-		return "???";
+		return null;
 	}
 
 	return (
 		<>
-			<span className={p.stats.tid === userTid ? "table-info" : undefined}>
-				{TEAM_AWARD_INFO.byPos ? `${p.pos} ` : null}
-				<b>
-					<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>
-				</b>{" "}
-				(
-				<a
-					href={helpers.leagueUrl([
-						"roster",
-						`${p.stats.abbrev}_${p.stats.tid}`,
-						season,
-					])}
-				>
-					{p.stats.abbrev}
-				</a>
-				)
-			</span>
-			<br />
-			{stats
-				.map(
-					(stat) =>
-						`${helpers.roundStat(p.stats[stat], stat)}${stat === "keyStats" ? "" : ` ${getCol(`stat:${stat}`).title}`}`,
-				)
-				.join(", ")}
+			<div>
+				<span className={p.stats.tid === userTid ? "table-info" : undefined}>
+					{p.pos}{" "}
+					<b>
+						<a href={helpers.leagueUrl(["player", p.pid])}>{p.name}</a>
+					</b>{" "}
+					(
+					<a
+						href={helpers.leagueUrl([
+							"roster",
+							`${p.stats.abbrev}_${p.stats.tid}`,
+							season,
+						])}
+					>
+						{p.stats.abbrev}
+					</a>
+					)
+				</span>
+			</div>
+			<div className={indentStats ? "ms-3" : undefined}>
+				{stats
+					.map(
+						(stat) =>
+							`${helpers.roundStat(p.stats[stat], stat)}${stat === "keyStats" ? "" : ` ${getCol(`stat:${stat}`).title}`}`,
+					)
+					.join(", ")}
+			</div>
 		</>
 	);
 };
@@ -93,29 +100,13 @@ const Teams = ({
 							return (
 								<div key={i}>
 									{p ? (
-										<>
-											{TEAM_AWARD_INFO.byPos ? `${p.pos} ` : null}
-											<span
-												className={
-													p.stats.tid === userTid ? "table-info" : undefined
-												}
-											>
-												<a href={helpers.leagueUrl(["player", p.pid])}>
-													{p.name}
-												</a>{" "}
-												(
-												<a
-													href={helpers.leagueUrl([
-														"roster",
-														`${p.stats.abbrev}_${p.stats.tid}`,
-														season,
-													])}
-												>
-													{p.stats.abbrev}
-												</a>
-												)
-											</span>
-										</>
+										<Winner
+											award={award}
+											indentStats
+											p={p}
+											season={season}
+											userTid={userTid}
+										/>
 									) : null}
 								</div>
 							);
@@ -215,11 +206,16 @@ const History = (props: View<"history">) => {
 											<React.Fragment key={i}>
 												<p>
 													{award.name}:{" "}
-													<Winner
-														award={award}
-														season={awards.season}
-														userTid={userTid}
-													/>
+													{award.winner ? (
+														<Winner
+															award={award}
+															p={award.winner}
+															season={awards.season}
+															userTid={userTid}
+														/>
+													) : (
+														"???"
+													)}
 												</p>
 											</React.Fragment>
 										);
@@ -258,11 +254,16 @@ const History = (props: View<"history">) => {
 									<React.Fragment key={i}>
 										<h2>{award.name}</h2>
 										<p>
-											<Winner
-												award={award}
-												season={awards.season}
-												userTid={userTid}
-											/>
+											{award.winner ? (
+												<Winner
+													award={award}
+													p={award.winner}
+													season={awards.season}
+													userTid={userTid}
+												/>
+											) : (
+												"???"
+											)}
 										</p>
 									</React.Fragment>
 								);

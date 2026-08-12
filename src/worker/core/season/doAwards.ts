@@ -242,13 +242,16 @@ const filterPlayersForAward = (
 			}
 		}
 
+		const seasonForRookieCheck =
+			g.get("repeatSeason")?.startingSeason ?? season;
+
 		if (isSport("baseball")) {
 			const defaultNumGames = defaultGameAttributes.numGames[0].value;
 
 			filteredPlayers = filteredPlayers.filter((p) => {
 				// `firstSeasonWithStats - 1` because then a player who is a rookie during the first year with stats (p.draft.year === firstSeasonWithStats - 1) will not get caught by this filter
 				if (p.draft.year < firstSeasonWithStats - 1) {
-					return p.draft.year === season - 1;
+					return p.draft.year === seasonForRookieCheck - 1;
 				}
 
 				const cutoffFactor = p.teamInfo.gp / defaultNumGames;
@@ -263,7 +266,7 @@ const filterPlayersForAward = (
 
 					if (abSum >= 130 * cutoffFactor || outsSum >= 150 * cutoffFactor) {
 						// Rookie if this is the season they crossed the threshold
-						return row.season === season;
+						return row.season === seasonForRookieCheck;
 					}
 				}
 
@@ -273,12 +276,12 @@ const filterPlayersForAward = (
 		} else {
 			filteredPlayers = filteredPlayers.filter((p) => {
 				if (p.draft.year < firstSeasonWithStats) {
-					return p.draft.year === season - 1;
+					return p.draft.year === seasonForRookieCheck - 1;
 				}
 
 				// This means a player who sits out all regular season but then plays in the playoffs will be ineligible for ROY next year
 				return (p.stats as any[]).every(
-					(row) => row.season >= season || row.gp === 0,
+					(row) => row.season >= seasonForRookieCheck || row.gp === 0,
 				);
 			});
 		}

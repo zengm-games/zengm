@@ -7,7 +7,6 @@ custom awards
   - football
     - posFactor in dpoyScore - really needed? could add formulaByPos for individual awards
     - opoy qb stuff
-- royFilter needs repeatSeason check?
 - edit awards
   - where?
     - dedicated page
@@ -45,6 +44,7 @@ custom awards
   - GOAT formula
   - achievements
     - check if the award we're looking for is unedited. if so, use it. if not, no achievement.
+      - hashAward
     - show in editor UI if still eligible for achievements
     - triple crown
       - fix baseball DPOY bug https://discord.com/channels/290013534023057409/1532565456920117279/1532565456920117279

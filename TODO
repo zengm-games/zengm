@@ -7,7 +7,6 @@ custom awards
   - football
     - posFactor in dpoyScore - really needed? could add formulaByPos for individual awards
     - opoy qb stuff
-      - add opoyOverride flag to Winner and use to hide score (and sort as infinity)
       - test with by conf award
 - edit awards
   - where?
@@ -22,6 +21,8 @@ custom awards
   - import/export
   - enforce shortName is unique
   - validate formulas
+  - opoyFormula in FBGM only
+    - and don't allow if MIP, MVP and maybe other stuff
 - test
   - MIP in other sports
   - historyAll, teamRecords, awardRecords

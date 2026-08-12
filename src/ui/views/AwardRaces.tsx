@@ -153,9 +153,17 @@ const AwardRaces = ({
 								);
 							} else {
 								data.push(pr && showRatings ? pr.ovr : undefined);
-								const statsRow = stats.map((stat) =>
-									ps ? helpers.roundStat(ps[stat], stat) : undefined,
-								);
+								const statsRow = stats.map((stat) => {
+									if (p.opoyOverride && stat === "score") {
+										// Hide score from UI if opoyOverride because this player was put at #1 due to a different formula (opoyFormula)
+										return {
+											value: undefined,
+											sortValue: Infinity,
+										};
+									}
+
+									return ps ? helpers.roundStat(ps[stat], stat) : undefined;
+								});
 								data.push(...statsRow);
 							}
 

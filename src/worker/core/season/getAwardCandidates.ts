@@ -59,6 +59,7 @@ const getAwardCandidates = async (season: number) => {
 				const p = playersByPid[p2.pid];
 				return {
 					...p,
+					opoyOverride: p2.opoyOverride,
 					currentStats: {
 						...p.currentStats,
 						score: p.scores[award.formula],

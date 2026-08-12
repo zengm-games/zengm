@@ -2097,7 +2097,9 @@ type AwardInfoTeamCommon = {
 export type AwardInfoIndividual = AwardInfo &
 	AwardInfoIndividualCommon & {
 		// Individual award - top 5 are saved
-		winner: AwardPlayer2[];
+		winner: (AwardPlayer2 & {
+			opoyOverride?: true;
+		})[];
 
 		// Special QB stuff for OPOY award - not in Common because we don't need to persist this in PlayerAwardCustom, we only need it here for state (GameAttributesLeague) and history (Awards)
 		opoyFormula?: string;

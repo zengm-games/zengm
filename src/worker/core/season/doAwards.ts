@@ -644,10 +644,10 @@ export const processAwards = async ({
 						const mvpScore = formulaEvaluator.evaluate(mvp.currentStats);
 						const opoyScore = formulaEvaluator.evaluate(opoy.currentStats);
 						if (mvpScore / opoyScore > 1.2) {
-							opoyAward.winner = [mvpWinner, ...opoyAward.winner].slice(
-								0,
-								numPlayersPerIndividualAward,
-							);
+							opoyAward.winner = [
+								{ ...mvpWinner, opoyOverride: true as const },
+								...opoyAward.winner,
+							].slice(0, numPlayersPerIndividualAward);
 						}
 					}
 				}

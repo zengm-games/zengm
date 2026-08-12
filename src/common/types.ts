@@ -1153,20 +1153,7 @@ export type PlayerAwardCustom = {
 	shortName: string;
 	index: number; // Index in the list of awards for this season
 	rank: number; // rank in individual award, team number in team award
-} & (
-	| {
-			// Individual award
-			numTeams?: undefined;
-
-			// Treat as "MVP" or "ROY" in UI
-			mvp?: true;
-			roy?: true;
-	  }
-	| {
-			// Team award
-			numTeams: number;
-	  }
-);
+} & (AwardInfoIndividualExtra | AwardInfoTeamExtra);
 
 export type PlayerAward =
 	| {
@@ -2095,26 +2082,34 @@ type AwardInfo = {
 	rookie?: boolean;
 };
 
-export type AwardInfoIndividual = AwardInfo & {
-	// Individual award - top 10 are saved
+type AwardInfoIndividualExtra = {
 	numTeams?: undefined;
-	winner: AwardPlayer2[];
 
 	// Treat as "MVP" or "ROY" in UI
 	mvp?: true;
 	roy?: true;
 };
-export type AwardInfoTeam = AwardInfo & {
-	// Team award
+
+type AwardInfoTeamExtra = {
 	numTeams: number;
-	winner: (
-		| (AwardPlayer2 & {
-				// pos is defined if TEAM_AWARD_INFO.byPos
-				pos?: string;
-		  })
-		| undefined
-	)[][]; // undefined would be if it can't find enough players at one position
 };
+
+export type AwardInfoIndividual = AwardInfo &
+	AwardInfoIndividualExtra & {
+		// Individual award - top 5 are saved
+		winner: AwardPlayer2[];
+	};
+export type AwardInfoTeam = AwardInfo &
+	AwardInfoTeamExtra & {
+		// Team award
+		winner: (
+			| (AwardPlayer2 & {
+					// pos is defined if TEAM_AWARD_INFO.byPos
+					pos?: string;
+			  })
+			| undefined
+		)[][]; // undefined would be if it can't find enough players at one position
+	};
 
 export type Award2 = AwardInfoIndividual | AwardInfoTeam;
 

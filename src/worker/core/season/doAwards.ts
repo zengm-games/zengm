@@ -452,10 +452,58 @@ export const processAwards = async ({
 			} else {
 				// Team award
 				if (TEAM_AWARD_INFO.byPos) {
-					const positions =
+					let positions =
 						TEAM_AWARD_INFO.positions[award.showStats] ??
 						TEAM_AWARD_INFO.positions.default;
 					const pidsByPos: Record<string, number[]> = {};
+
+					// In baseball, have to do special stuff to handle if the DH setting is enabled or not
+					if (isSport("baseball")) {
+						const dhOrPIndex = positions.indexOf("DH_OR_P");
+						const dhIfExistsIndex = positions.indexOf("DH_IF_EXISTS");
+
+						if (dhOrPIndex >= 0 || dhIfExistsIndex >= 0) {
+							positions = [...positions];
+
+							// See if DH setting is enabled - this works for current season but not any past ones, so I guess it is okay for team awards since those are never recomputed
+							const dh = g.get("dh");
+
+							// Question is, do we have DH applying to at least some teams covered by this team award?
+							let dhApplies: boolean;
+							if (dh === "all") {
+								dhApplies = true;
+							} else if (dh === "none") {
+								dhApplies = false;
+							} else {
+								// DH applies to some conferences
+								if (!group) {
+									dhApplies = true;
+								} else if (group.type === "conf") {
+									dhApplies = dh.includes(group.cid);
+								} else {
+									const divs = g.get("divs", season);
+									const div = divs.find((div) => div.did === group.did);
+									dhApplies = !div || dh.includes(div.cid);
+								}
+							}
+
+							if (dhApplies) {
+								if (dhOrPIndex >= 0) {
+									positions[dhOrPIndex] = "DH";
+								}
+								if (dhIfExistsIndex >= 0) {
+									positions[dhIfExistsIndex] = "DH";
+								}
+							} else {
+								if (dhOrPIndex >= 0) {
+									positions[dhOrPIndex] = "P";
+								}
+								if (dhIfExistsIndex >= 0) {
+									positions.splice(dhIfExistsIndex, 1);
+								}
+							}
+						}
+					}
 
 					// Add up how many players we need at each position, factoring in that a position could be listed multiple times per team
 					const positionsNeeded = new Map<string, number>();
@@ -470,6 +518,7 @@ export const processAwards = async ({
 								if (p.pos === "SP" || p.pos === "RP") {
 									return "P";
 								}
+								return p.pos;
 							},
 							basketball: () => p.pos,
 							football: () => p.pos,

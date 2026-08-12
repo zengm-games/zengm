@@ -4,9 +4,6 @@ custom awards
   - why is it needed?
   - only in PlayerAward?
 - other sports
-  - teams by position
-    - baseball
-      - dh: DH_OR_P and DH_IF_EXISTS
   - baseball
     - test getPosByGpF
     - rfld
@@ -51,7 +48,6 @@ custom awards
   - groupAwards
   - awards editor
   - season summary
-    - for individual awards, prefix with pos except in basketball
     - for baseball, show stats for team awards
       - all sports?
     - go back and add support for playoff series awards

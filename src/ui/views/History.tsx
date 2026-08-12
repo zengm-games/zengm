@@ -139,7 +139,7 @@ const splitTeamAwards = <T extends { numTeams: number }>(teamAwards: T[]) => {
 	let sum2 = 0;
 	for (const row of teamAwards) {
 		sum2 += row.numTeams;
-		if (teamAwards1.length === 0 || sum2 > target) {
+		if (teamAwards1.length === 0 || sum2 <= target / 2) {
 			teamAwards1.push(row);
 		} else {
 			teamAwards2.push(row);

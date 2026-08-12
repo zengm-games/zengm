@@ -533,6 +533,8 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 						name: "Offensive Player of the Year",
 						formula: "0.125*rusYds+6*rusTD-2*fmbLost + 0.0975*recYds+6*recTD",
 						showStats: "overall",
+						opoyFormula:
+							"0.125*rusYds+6*rusTD-2*fmbLost + 0.0975*recYds+6*recTD + 1.1*(0.04*pssYds+4*pssTD-2.5*pssInt)",
 					},
 					{
 						shortName: "POY",

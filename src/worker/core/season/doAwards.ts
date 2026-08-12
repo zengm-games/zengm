@@ -1,6 +1,8 @@
 import type {
+	AwardInfoIndividual,
 	Awards2,
 	Conditions,
+	DistributiveOmit,
 	GameAttributesLeague,
 	Player,
 	PlayerFiltered,
@@ -35,6 +37,7 @@ import {
 } from "./awards.ts";
 import { getPosByGpF } from "./doAwards.baseball.ts";
 import stats from "../player/stats.ts";
+import fastDeepEqual from "fast-deep-equal";
 
 const AWARD_STATS = [
 	...(isSport("basketball") ? [] : ["keyStats"]),
@@ -339,6 +342,11 @@ export const processAwards = async ({
 		FormulaEvaluator<typeof AWARD_STATS>["evaluate"]
 	> = {};
 
+	const formulaStats = [...AWARD_STATS, "seasonFraction", "teamGp", "winp"];
+	if (isSport("basketball")) {
+		formulaStats.push("wsFraction");
+	}
+
 	for (const p of players) {
 		p.scores = {};
 		for (const award of awards) {
@@ -350,15 +358,6 @@ export const processAwards = async ({
 			}
 
 			if (!formulaEvaluators[formula]) {
-				const formulaStats = [
-					...AWARD_STATS,
-					"seasonFraction",
-					"teamGp",
-					"winp",
-				];
-				if (isSport("basketball")) {
-					formulaStats.push("wsFraction");
-				}
 				const formulaEvaluator = new FormulaEvaluator(formula, formulaStats);
 				formulaEvaluators[formula] =
 					formulaEvaluator.evaluate.bind(formulaEvaluator);
@@ -389,6 +388,8 @@ export const processAwards = async ({
 		}
 	}
 
+	const opoyIndexes: number[] = [];
+
 	const realizedAwards: {
 		award: Awards2["awards"][number];
 		index: number;
@@ -401,7 +402,7 @@ export const processAwards = async ({
 		);
 
 		// Handle conf/div awards - make copies for each one
-		let expandedAwards: Omit<Awards2["awards"][number], "winner">[];
+		let expandedAwards: DistributiveOmit<Awards2["awards"][number], "winner">[];
 		if (baseAward.group === "conf") {
 			const confs = g.get("confs", season);
 			expandedAwards = confs.map((conf) => {
@@ -429,6 +430,10 @@ export const processAwards = async ({
 		}
 
 		for (const award of expandedAwards) {
+			if (award.numTeams === undefined && award.opoyFormula !== undefined) {
+				opoyIndexes.push(i);
+			}
+
 			let filteredPlayers = baseFilteredPlayers;
 			const group = award.group;
 			if (group) {
@@ -610,6 +615,46 @@ export const processAwards = async ({
 			}
 		}
 	}
+
+	if (opoyIndexes.length > 0) {
+		for (const index of opoyIndexes) {
+			const opoyAward = realizedAwards[index]!.award as AwardInfoIndividual;
+
+			// Need to see if there is an MVP award (not multiple ones, then it's ambiguous what formula to use) that lines up with this award
+			const mvpAwards = realizedAwards.filter(
+				({ award }) =>
+					award.numTeams === undefined &&
+					award.mvp &&
+					fastDeepEqual(opoyAward.group, award.group),
+			);
+			if (mvpAwards.length === 1) {
+				const mvpAward = mvpAwards[0]!.award as AwardInfoIndividual;
+				const mvpWinner = mvpAward.winner[0];
+				const opoyWinner = opoyAward.winner[0];
+				if (mvpWinner && opoyWinner) {
+					const playersByPid = groupByUnique(players, "pid");
+					const mvp = playersByPid[mvpWinner.pid];
+					const opoy = playersByPid[opoyWinner.pid];
+					if (mvp?.pos === "QB" && opoy) {
+						// MVP is a QB - if that QB is a significantly better offensive player (by opoyFormula) than the initial OPOY, then bump them to the top of the list
+						const formulaEvaluator = new FormulaEvaluator(
+							opoyAward.opoyFormula!,
+							formulaStats,
+						);
+						const mvpScore = formulaEvaluator.evaluate(mvp.currentStats);
+						const opoyScore = formulaEvaluator.evaluate(opoy.currentStats);
+						if (mvpScore / opoyScore > 1.2) {
+							opoyAward.winner = [mvpWinner, ...opoyAward.winner].slice(
+								0,
+								numPlayersPerIndividualAward,
+							);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	console.log("realizedAwards", realizedAwards);
 
 	return { players, realizedAwards };

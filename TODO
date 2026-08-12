@@ -7,6 +7,8 @@ custom awards
   - football
     - posFactor in dpoyScore - really needed? could add formulaByPos for individual awards
     - opoy qb stuff
+      - add opoyOverride flag to Winner and use to hide score (and sort as infinity)
+      - test with by conf award
 - edit awards
   - where?
     - dedicated page
@@ -32,6 +34,7 @@ custom awards
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - award races
+    - score blank for formulaByPos, like in football
     - how to specify stat columns?
     - getAwardCandidates
       - should use season to look up awards, not g.get("awards") for past seasons
@@ -40,6 +43,7 @@ custom awards
   - groupAwards
   - awards editor
   - season summary
+    - OPOY asterisk?
     - go back and add support for playoff series awards
   - GOAT formula
   - achievements
@@ -79,7 +83,7 @@ custom awards
       - created player with no stats
   - awards column for player profiles
   - bestRecordDiv on Team Records
-  - complexity of football formulas
+  - complexity of football formulas, OPOY, DH
 - maybe
   - support editing metadata of past awards, like name and shortName. maybe even formula too...
   - real player data for award top 5 finish

@@ -1153,7 +1153,7 @@ export type PlayerAwardCustom = {
 	shortName: string;
 	index: number; // Index in the list of awards for this season
 	rank: number; // rank in individual award, team number in team award
-} & (AwardInfoIndividualExtra | AwardInfoTeamExtra);
+} & (AwardInfoIndividualCommon | AwardInfoTeamCommon);
 
 export type PlayerAward =
 	| {
@@ -2082,7 +2082,7 @@ type AwardInfo = {
 	rookie?: boolean;
 };
 
-type AwardInfoIndividualExtra = {
+type AwardInfoIndividualCommon = {
 	numTeams?: undefined;
 
 	// Treat as "MVP" or "ROY" in UI
@@ -2090,17 +2090,20 @@ type AwardInfoIndividualExtra = {
 	roy?: true;
 };
 
-type AwardInfoTeamExtra = {
+type AwardInfoTeamCommon = {
 	numTeams: number;
 };
 
 export type AwardInfoIndividual = AwardInfo &
-	AwardInfoIndividualExtra & {
+	AwardInfoIndividualCommon & {
 		// Individual award - top 5 are saved
 		winner: AwardPlayer2[];
+
+		// Special QB stuff for OPOY award - not in Common because we don't need to persist this in PlayerAwardCustom, we only need it here for state (GameAttributesLeague) and history (Awards)
+		opoyFormula?: string;
 	};
 export type AwardInfoTeam = AwardInfo &
-	AwardInfoTeamExtra & {
+	AwardInfoTeamCommon & {
 		// Team award
 		winner: (
 			| (AwardPlayer2 & {

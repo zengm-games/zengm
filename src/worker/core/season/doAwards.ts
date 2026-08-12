@@ -34,6 +34,7 @@ import {
 	type AwardsByPlayer,
 } from "./awards.ts";
 import { getPosByGpF } from "./doAwards.baseball.ts";
+import stats from "../player/stats.ts";
 
 const AWARD_STATS = [
 	...(isSport("basketball") ? [] : ["keyStats"]),
@@ -155,6 +156,19 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 
 		if (isSport("baseball")) {
 			p.pos = getPosByGpF(p.currentStats.gpF, p.pos);
+		}
+
+		// Sum up any byPos stats - not ideal for team awards of awards with formulas by position, but probably good enough since we're using gpF to assign position so most of their games at least will be at the correct position
+		if (stats.byPos) {
+			const byPosStats = [...stats.byPos];
+			if (isSport("baseball")) {
+				byPosStats.push("rfld");
+			}
+			for (const stat of byPosStats) {
+				if (Array.isArray(p.currentStats[stat])) {
+					p.currentStats[stat] = helpers.sum(p.currentStats[stat]);
+				}
+			}
 		}
 
 		// Otherwise it's always the current season

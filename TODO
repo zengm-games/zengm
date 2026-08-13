@@ -3,9 +3,6 @@ custom awards
   - corresponds to Awards2 or g.get("awards")?
   - why is it needed?
   - only in PlayerAward?
-- other sports
-  - football
-    - posFactor in dpoyScore - really needed? could add formulaByPos for individual awards
 - edit awards
   - where?
     - dedicated page
@@ -22,21 +19,17 @@ custom awards
   - opoyFormula in FBGM only
     - and don't allow if MIP, MVP and maybe other stuff
 - test
+  - football posFactor in dpoyScore - really needed? could add formulaByPos but it gets messy. could also add references to other awards
   - historyAll, teamRecords, awardRecords
     - test with changing awards
     - test with div/conf awards (should show in separate columns)
 - fields
   - stats range (regular season, playoffs, semifinals, finals, combined)
-  - showStats in season summary
-    - what about for playoff round ones?
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - award races
-    - score blank for formulaByPos, like in football
-    - how to specify stat columns?
     - getAwardCandidates
       - should use season to look up awards, not g.get("awards") for past seasons
-      - how to know what columns to show?
     - for pick column for ROY add year if it's different than last year
   - groupAwards
   - awards editor
@@ -87,6 +80,7 @@ custom awards
   - in AwardsSummary on player profile, break down by team number for tooltip
 - later
   - only fetch needed variables from playersPlus when evaluating award formula
+    - also consider showStats for Award Races
   - conditional stat-based awards that are not awarded every season, like triple crown or 40/40
   - clutch player award
 

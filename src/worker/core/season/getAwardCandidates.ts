@@ -56,13 +56,14 @@ const getAwardCandidates = async (season: number) => {
 					throw new Error("Should never happen");
 				}
 
-				const p = playersByPid[p2.pid];
+				const p = playersByPid[p2.pid]!;
+				const formula = award.formulaByPos?.[p.pos] ?? award.formula;
 				return {
 					...p,
 					opoyOverride: p2.opoyOverride,
 					currentStats: {
 						...p.currentStats,
-						score: p.scores[award.formula],
+						score: p.scores[formula],
 					},
 				};
 			}),

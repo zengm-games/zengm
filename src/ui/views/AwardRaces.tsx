@@ -202,7 +202,7 @@ const AwardRaces = ({
 
 					return (
 						<div
-							key={`${name}-${group === undefined ? "" : group.type === "conf" ? group.cid : group.did}`}
+							key={`${award.shortName}-${group === undefined ? "" : group.type === "conf" ? group.cid : group.did}`}
 							className={mip ? "col-12 col-lg-9" : "col-12 col-lg-6"}
 							style={{ marginTop: 14 }}
 						>

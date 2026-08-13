@@ -3,6 +3,7 @@ custom awards
   - corresponds to Awards2 or g.get("awards")?
   - why is it needed?
   - only in PlayerAward?
+  - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
 - edit awards
   - where?
     - dedicated page
@@ -27,9 +28,6 @@ custom awards
   - stats range (regular season, playoffs, semifinals, finals, combined)
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
-  - award races
-    - getAwardCandidates
-      - should use season to look up awards, not g.get("awards") for past seasons
   - groupAwards
   - awards editor
   - season summary

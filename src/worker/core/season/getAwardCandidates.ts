@@ -1,17 +1,65 @@
 import { bySport } from "../../../common/sportFunctions.ts";
-import type { Award2 } from "../../../common/types.ts";
+import type {
+	Award2,
+	Awards2,
+	GameAttributesLeague,
+} from "../../../common/types.ts";
 import { groupByUnique } from "../../../common/utils.ts";
+import { idb } from "../../db/index.ts";
 import g from "../../util/g.ts";
 import { processAwards } from "./doAwards.ts";
 
+const persistedAwardsToAwardSetting = (
+	persistedAwards: Awards2,
+): GameAttributesLeague["awards"] => {
+	const awards: GameAttributesLeague["awards"] = [];
+
+	const seenShortNames = new Set();
+
+	for (const persistedAward of persistedAwards.awards) {
+		// Skip multiple repeated conf/div awards - this assumes shortName is unique
+		if (seenShortNames.has(persistedAward.shortName)) {
+			continue;
+		}
+		seenShortNames.add(persistedAward.shortName);
+
+		const award: GameAttributesLeague["awards"][number] & {
+			winner?: Awards2["awards"][number]["winner"];
+		} = {
+			...persistedAward,
+			group:
+				persistedAward.group === undefined
+					? undefined
+					: persistedAward.group.type,
+		};
+		delete award.winner;
+		awards.push(award);
+	}
+
+	return awards;
+};
+
+const getAwards = async (season: number) => {
+	const persistedAwards = await idb.getCopy.awards({ season });
+
+	let awards;
+	if (persistedAwards) {
+		awards = persistedAwardsToAwardSetting(persistedAwards);
+	} else {
+		// Either the current season, or some past season where no awards are in database so might as well show current awards
+		awards = g.get("awards");
+	}
+
+	return awards.filter(
+		(award) => award.numTeams === undefined && award.statRange === undefined,
+	);
+};
+
 const getAwardCandidates = async (season: number) => {
+	const awards = await getAwards(season);
+
 	const { realizedAwards, players } = await processAwards({
-		awards: g
-			.get("awards")
-			.filter(
-				(award) =>
-					award.numTeams === undefined && award.statRange === undefined,
-			),
+		awards,
 		numPlayersPerIndividualAward: 10,
 		season,
 	});

@@ -22,7 +22,6 @@ custom awards
   - opoyFormula in FBGM only
     - and don't allow if MIP, MVP and maybe other stuff
 - test
-  - MIP in other sports
   - historyAll, teamRecords, awardRecords
     - test with changing awards
     - test with div/conf awards (should show in separate columns)

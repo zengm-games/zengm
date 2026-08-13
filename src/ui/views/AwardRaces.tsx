@@ -130,7 +130,7 @@ const AwardRaces = ({
 										return undefined;
 									}
 
-									if (!ps2 || stat === "score") {
+									if (!ps2 || stat === "score" || stat === "keyStats") {
 										return helpers.roundStat(ps[stat], stat);
 									}
 

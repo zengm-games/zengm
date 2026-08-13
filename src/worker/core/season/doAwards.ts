@@ -214,7 +214,13 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	return players;
 };
 
-const ROUGH_MPG_NEEDED_FOR_MIP = 20;
+const ROUGH_MPG_NEEDED_FOR_MIP = bySport({
+	baseball: undefined,
+	basketball: 20,
+	football: undefined,
+	hockey: 10,
+});
+const GP_FRACTION_NEEDED_FOR_MIP = 0.5; // Only used if ROUGH_MPG_NEEDED_FOR_MIP is undefined
 
 const getMipFactor = (season: number) =>
 	g.get("numGames", season) * helpers.quarterLengthFactor();
@@ -308,15 +314,22 @@ const filterPlayersForAward = (
 			}
 
 			// Sanity check for minutes played
-			const mipFactor = getMipFactor(season);
-			if (
-				p.currentStats.min * p.currentStats.gp <
-					ROUGH_MPG_NEEDED_FOR_MIP *
-						p.teamInfo.gp *
-						helpers.quarterLengthFactor() ||
-				oldStats.min * oldStats.gp < 10 * mipFactor
-			) {
-				return false;
+			if (ROUGH_MPG_NEEDED_FOR_MIP !== undefined) {
+				const mipFactor = getMipFactor(season);
+				if (
+					p.currentStats.min * p.currentStats.gp <
+						ROUGH_MPG_NEEDED_FOR_MIP *
+							p.teamInfo.gp *
+							helpers.quarterLengthFactor() ||
+					oldStats.min * oldStats.gp <
+						0.5 * ROUGH_MPG_NEEDED_FOR_MIP * mipFactor
+				) {
+					return false;
+				}
+			} else {
+				if (oldStats.gp / p.teamInfo.gp < GP_FRACTION_NEEDED_FOR_MIP) {
+					return false;
+				}
 			}
 
 			return true;
@@ -368,13 +381,20 @@ export const processAwards = async ({
 
 			// For MIP, compare score to last season and max of all previous seasons
 			if (award.mip) {
-				const minCutoff = ROUGH_MPG_NEEDED_FOR_MIP * getMipFactor(season);
+				const minCutoff =
+					ROUGH_MPG_NEEDED_FOR_MIP !== undefined
+						? ROUGH_MPG_NEEDED_FOR_MIP * getMipFactor(season)
+						: ROUGH_MPG_NEEDED_FOR_MIP;
 				const oldSeasonScores = p.stats
 					.filter((ps: { season: number }) => ps.season < p.currentStats.season)
-					.filter(
-						(ps: { gp: number; min: number }) =>
-							ps.min * ps.gp >= minCutoff / 2,
-					)
+					.filter((ps: { gp: number; min: number }) => {
+						if (minCutoff === undefined) {
+							// Must have palyed in half of team's games last year
+							return ps.gp / p.teamInfo.gp >= GP_FRACTION_NEEDED_FOR_MIP;
+						}
+
+						return ps.min * ps.gp >= minCutoff / 2;
+					})
 					.map((ps: any) => evaluate(ps));
 				const prevScore = oldSeasonScores.at(-1);
 
@@ -779,7 +799,6 @@ const doAwards = async (conditions: Conditions) => {
 		numPlayersPerIndividualAward: NUM_PLAYERS_TO_STORE_PER_INDIVIDUAL_AWARD,
 		season,
 	});
-	console.log(realizedAwards);
 
 	const awardsByPlayer = getAwardsByPlayer(realizedAwards, players, season);
 	console.log("awardsByPlayer", awardsByPlayer);

@@ -72,6 +72,9 @@ const AwardRaces = ({
 						if (rookie) {
 							if (p.draft.round > 0) {
 								recordOrPick = `${p.draft.round}-${p.draft.pick}`;
+								if (p.draft.year !== season - 1) {
+									recordOrPick += ` (${p.draft.year})`;
+								}
 							}
 						} else {
 							if (t) {

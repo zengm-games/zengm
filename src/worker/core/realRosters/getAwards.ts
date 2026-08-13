@@ -1,8 +1,4 @@
-import {
-	AWARD_NAMES,
-	PHASE,
-	REAL_PLAYERS_INFO,
-} from "../../../common/constants.ts";
+import { PHASE, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import { groupByUnique, omit, orderBy } from "../../../common/utils.ts";
 import type {
 	AwardInfoTeam,
@@ -85,11 +81,6 @@ const getAwards = (
 		options.randomDebuts
 	) {
 		return;
-	}
-
-	const invertedAwardNames: Record<string, string> = {};
-	for (const [short, long] of Object.entries(AWARD_NAMES)) {
-		invertedAwardNames[long] = short;
 	}
 
 	const defaultAwardsByShortName = getDefaultAwardsByShortName();

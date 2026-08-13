@@ -30,7 +30,6 @@ custom awards
   - award races
     - getAwardCandidates
       - should use season to look up awards, not g.get("awards") for past seasons
-    - for pick column for ROY add year if it's different than last year
   - groupAwards
   - awards editor
   - season summary

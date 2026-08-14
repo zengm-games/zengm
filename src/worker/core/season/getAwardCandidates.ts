@@ -1,24 +1,20 @@
 import { bySport } from "../../../common/sportFunctions.ts";
 import type {
 	Award2,
-	AwardPlayer2,
 	Awards2,
 	GameAttributesLeague,
 } from "../../../common/types.ts";
 import { groupByUnique } from "../../../common/utils.ts";
 import { idb } from "../../db/index.ts";
 import g from "../../util/g.ts";
-import { processAwards } from "./doAwards.ts";
-
-const hashPlayoffSeries = (group: { tids: Readonly<[number, number]> }) => {
-	return JSON.stringify(group.tids);
-};
+import {
+	hashPlayoffSeries,
+	processAwards,
+	type StatOverridesByMatchup,
+} from "./doAwards.ts";
 
 const persistedAwardsToAwardSetting = (persistedAwards: Awards2) => {
-	const statOverridesByMatchup: Record<
-		string,
-		Record<number, AwardPlayer2["statOverrides"]>
-	> = {};
+	let statOverridesByMatchup: StatOverridesByMatchup | undefined;
 
 	const awards: GameAttributesLeague["awards"] = [];
 
@@ -38,6 +34,7 @@ const persistedAwardsToAwardSetting = (persistedAwards: Awards2) => {
 			persistedAward.numTeams === undefined
 		) {
 			const matchupKey = hashPlayoffSeries(group);
+			statOverridesByMatchup ??= {};
 			statOverridesByMatchup[matchupKey] = {};
 			for (const p of persistedAward.winner) {
 				if (p.statOverrides) {
@@ -93,6 +90,7 @@ const getAwardCandidates = async (season: number) => {
 		awards,
 		numPlayersPerIndividualAward: 10,
 		season,
+		statOverridesByMatchup,
 	});
 
 	const playersByPid = groupByUnique(players, "pid");
@@ -137,13 +135,6 @@ const getAwardCandidates = async (season: number) => {
 
 				const statRange = award.statRange ?? "regularSeason";
 
-				let statOverrides;
-				if (statOverridesByMatchup && award.group?.type === "playoffSeries") {
-					// Find statOverrides values from original awards, if possible. Otherwise we won't have any stats to display for playoff series awards if box scores are deleted
-					const matchupKey = hashPlayoffSeries(award.group);
-					statOverrides = statOverridesByMatchup[matchupKey]?.[p2.pid];
-				}
-
 				const p = playersByPid[p2.pid]!;
 				const formula = award.formulaByPos?.[p.pos] ?? award.formula;
 				return {
@@ -154,8 +145,8 @@ const getAwardCandidates = async (season: number) => {
 					} as {
 						score: number | undefined;
 					} & (typeof p)["currentStats"]["regularSeason"],
-					statOverrides,
 					opoyOverride: p2.opoyOverride,
+					statOverrides: p2.statOverrides,
 				};
 			}),
 			stats: [...stats, "score"],

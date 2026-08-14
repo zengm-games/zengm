@@ -37,7 +37,6 @@ custom awards
     - similarly, filter out candidates with no playoff series stats rather than -Infinity
   - playoff series
     - statOverrides on award races
-      - also save score so we can show that too
       - what about pos/tid/abbrev? not showing for some reason, should be able to pull that from regular playoff stats - i think that's being done on season summary
         - also look in general, it's using wrong tid/abbrev and maybe pos too
           - http://localhost:3000/l/444/award_races/2027 MVP 3

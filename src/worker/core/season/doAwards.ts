@@ -142,7 +142,7 @@ const getProcessedPlayers = async (
 			did: number | undefined;
 			gp: number;
 		};
-		scores: Record<string, number>;
+		scores: Partial<Record<StatRange, Record<string, number>>>;
 	})[];
 
 	// Only keep players who actually have a stats entry for the latest season
@@ -502,7 +502,11 @@ export const processAwards = async ({
 		for (const award of awards) {
 			const formula = award.formulaByPos?.[p.pos] ?? award.formula;
 
-			if (p.scores[formula] !== undefined) {
+			const statRange = award.statRange ?? "regularSeason";
+			p.scores[statRange] ??= {};
+			const scores = p.scores[statRange];
+
+			if (scores[formula] !== undefined) {
 				// If same formula is used for two awards, only calculate once
 				continue;
 			}
@@ -539,9 +543,9 @@ export const processAwards = async ({
 				// Include prevSeasonScore because minCutoff could result in that not being included in oldSeasonScores
 				const maxScore = Math.max(...oldSeasonScores);
 
-				p.scores[formula] = 2 * currentScore - prevScore - maxScore;
+				scores[formula] = 2 * currentScore - prevScore - maxScore;
 			} else {
-				p.scores[formula] = currentScore;
+				scores[formula] = currentScore;
 			}
 		}
 	}
@@ -610,7 +614,8 @@ export const processAwards = async ({
 				filteredPlayers,
 				(p) => {
 					const formula = award.formulaByPos?.[p.pos] ?? award.formula;
-					return p.scores[formula] ?? -Infinity;
+					const statRange = award.statRange ?? "regularSeason";
+					return p.scores[statRange]?.[formula] ?? -Infinity;
 				},
 				"desc",
 			);

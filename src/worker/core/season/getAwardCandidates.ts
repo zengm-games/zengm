@@ -51,7 +51,8 @@ const getAwards = async (season: number) => {
 	}
 
 	return awards.filter(
-		(award) => award.numTeams === undefined && award.statRange === undefined,
+		(award) =>
+			award.numTeams === undefined && typeof award.statRange !== "number",
 	);
 };
 
@@ -104,15 +105,19 @@ const getAwardCandidates = async (season: number) => {
 					throw new Error("Should never happen");
 				}
 
+				const statRange = award.statRange ?? "regularSeason";
+
 				const p = playersByPid[p2.pid]!;
 				const formula = award.formulaByPos?.[p.pos] ?? award.formula;
 				return {
 					...p,
 					opoyOverride: p2.opoyOverride,
 					currentStats: {
-						...p.currentStats,
-						score: p.scores[formula],
-					} as Record<string, any>,
+						...p.currentStats[statRange],
+						score: p.scores[statRange]?.[formula],
+					} as {
+						score: number | undefined;
+					} & (typeof p)["currentStats"]["regularSeason"],
 				};
 			}),
 			stats: [...stats, "score"],

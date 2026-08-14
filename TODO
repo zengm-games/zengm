@@ -27,10 +27,10 @@ custom awards
   - 0 regular season games, use playoff stats for regular season awards
 - fields
   - stats range (regular season, playoffs, semifinals, finals, combined)
-    - p.scores needs to be aware of statRange
-    - make sure to populate regularSeason with playoffs based on usePlayoffStatsAsRegularSeason
-    - combined statRange - test, might work already
+    - test populate regularSeason with playoffs based on usePlayoffStatsAsRegularSeason
+    - test combined statRange - might work already
     - playoff award in award races should show no candidates yet during regular season
+    - playoff series show on award races
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - groupAwards
@@ -76,6 +76,8 @@ custom awards
   - awards column for player profiles
   - bestRecordDiv on Team Records
   - complexity of football formulas, OPOY, DH
+  - statRange
+    - combined is actually a good idea!
 - maybe
   - support editing metadata of past awards, like name and shortName. maybe even formula too...
   - real player data for award top 5 finish

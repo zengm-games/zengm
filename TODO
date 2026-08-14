@@ -36,14 +36,12 @@ custom awards
       - how to know which ones we need? showStats I guess
       - use on season summary
       - use on award races
-    - how to handle non-finals rounds having >1 award
-      - saving awards
-      - AwardRaces
     - show on award races
       - what about advanced stats?
     - show on season summary
     - test in all sports
 - 2p/2pa/2pa in formula
+- in doAwards is tid/abbrev from root of player ever used? and other root things
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - groupAwards

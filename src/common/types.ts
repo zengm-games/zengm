@@ -2053,6 +2053,10 @@ type AwardInfo = {
 		| {
 				type: "div";
 				did: number;
+		  }
+		| {
+				type: "playoffSeries";
+				tids: Readonly<[number, number]>;
 		  };
 
 	// What stats to show on Award Races and Season Summary?

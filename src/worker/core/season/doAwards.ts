@@ -193,7 +193,6 @@ const getPlayoffSeriesStats = async (
 	seriesIndex: number,
 	abbrevsByTid: Map<number, string>,
 ) => {
-	console.log("getPlayoffSeriesStats", season, seriesIndex);
 	const playoffSeries = await idb.getCopy.playoffSeries(
 		{ season },
 		"noCopyCache",
@@ -227,7 +226,6 @@ const getPlayoffSeriesStats = async (
 	if (games.length !== gids.length) {
 		return;
 	}
-	console.log("games", games);
 
 	const tempRowsByPid: Map<
 		number,
@@ -268,7 +266,6 @@ const getPlayoffSeriesStats = async (
 		};
 	}
 
-	console.log(rowsByPid);
 	return rowsByPid;
 };
 
@@ -622,7 +619,7 @@ export const processAwards = async ({
 
 	const formulaEvaluators: Record<
 		string,
-		FormulaEvaluator<typeof AWARD_STATS_ALL>["evaluate"]
+		FormulaEvaluator<string[]>["evaluate"]
 	> = {};
 
 	for (const p of players) {
@@ -695,7 +692,7 @@ export const processAwards = async ({
 			season,
 		);
 
-		// Handle conf/div awards - make copies for each one
+		// Handle conf/div/series awards - make copies for each one
 		let expandedAwards: DistributiveOmit<Awards2["awards"][number], "winner">[];
 		if (baseAward.group === "conf") {
 			const confs = g.get("confs", season);
@@ -719,6 +716,36 @@ export const processAwards = async ({
 					},
 				};
 			});
+		} else if (typeof baseAward.statRange === "number") {
+			const playoffSeries = await idb.getCopy.playoffSeries(
+				{ season },
+				"noCopyCache",
+			);
+			if (!playoffSeries) {
+				expandedAwards = [];
+			} else {
+				const roundSeries = playoffSeries.series.at(baseAward.statRange);
+
+				if (!roundSeries) {
+					expandedAwards = [];
+				} else {
+					expandedAwards = roundSeries
+						.map((series, i) => {
+							if (!series.away) {
+								return;
+							}
+
+							return {
+								...baseAward,
+								group: {
+									type: "playoffSeries" as const,
+									tids: [series.home.tid, series.away.tid] as const,
+								},
+							};
+						})
+						.filter((award) => award !== undefined);
+				}
+			}
 		} else {
 			expandedAwards = [omit(baseAward, ["group"])];
 		}
@@ -735,9 +762,13 @@ export const processAwards = async ({
 					filteredPlayers = filteredPlayers.filter(
 						(p) => p.teamInfo.did === group.did,
 					);
-				} else {
+				} else if (group.type === "conf") {
 					filteredPlayers = filteredPlayers.filter(
 						(p) => p.teamInfo.cid === group.cid,
+					);
+				} else {
+					filteredPlayers = filteredPlayers.filter((p) =>
+						group.tids.includes(p.currentStats.regularSeason.tid),
 					);
 				}
 			}
@@ -804,10 +835,13 @@ export const processAwards = async ({
 									dhApplies = true;
 								} else if (group.type === "conf") {
 									dhApplies = dh.includes(group.cid);
-								} else {
+								} else if (group.type === "div") {
 									const divs = g.get("divs", season);
 									const div = divs.find((div) => div.did === group.did);
 									dhApplies = !div || dh.includes(div.cid);
+								} else {
+									// Not strictly correct for a playoff series, but too lazy to look up values for individual teams, since realistically who is making an all-league team from a playoff series? Come on.
+									dhApplies = true;
 								}
 							}
 
@@ -1018,7 +1052,7 @@ const getAwardsByPlayer = (
 				const p = playersByPid[pid]!;
 				awardsByPlayer.push({
 					pid,
-					tid: p.tid,
+					tid: p.currentStats.regularSeason.tid,
 					name: p.name,
 					award: {
 						...common,
@@ -1037,7 +1071,7 @@ const getAwardsByPlayer = (
 					const p = playersByPid[pid]!;
 					awardsByPlayer.push({
 						pid,
-						tid: p.tid,
+						tid: p.currentStats.regularSeason.tid,
 						name: p.name,
 						award: {
 							...common,

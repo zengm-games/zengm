@@ -191,7 +191,7 @@ const AwardRaces = ({
 								{name}
 								{asterisk ? "*" : null}
 							</h2>
-							{group ? (
+							{group && group.type !== "playoffSeries" ? (
 								<h3>
 									{group.type === "conf"
 										? confs[group.cid]?.name
@@ -203,7 +203,7 @@ const AwardRaces = ({
 
 					return (
 						<div
-							key={`${award.shortName}-${group === undefined ? "" : group.type === "conf" ? group.cid : group.did}`}
+							key={`${award.shortName}-${group === undefined ? "" : group.type === "conf" ? group.cid : group.type === "div" ? group.did : `${group.tids[0]}-${group.tids[1]}`}`}
 							className={mip ? "col-12 col-lg-9" : "col-12 col-lg-6"}
 							style={{ marginTop: 14 }}
 						>

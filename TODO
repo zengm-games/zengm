@@ -33,8 +33,11 @@ custom awards
   - playoff award in award races should show no candidates yet during regular season
   - playoff series show on award races
     - abbrev
-    - teamGp
+    - add any derived stats? convert to per game?
+      - maybe can know from statFunctions, then just pass through all stats (no extra props, keep separate) and then assemble
+      - what about ones based on adv stats that don't exist? will they just be 0?
     - show on season summary? if so need to handle all showStats values.
+- 2p/2pa/2pa in formula
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - groupAwards

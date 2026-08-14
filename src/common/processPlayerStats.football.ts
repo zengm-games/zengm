@@ -15,6 +15,176 @@ export const qbRat = (ps: {
 	return ((a + b + c + d) / 6) * 100;
 };
 
+type StatFunction = (
+	ps: PlayerStats,
+	extra: {
+		bornYear: number | undefined;
+		getFantasyPoints: () => GameAttributesLeague["fantasyPoints"];
+	},
+) => number | string | undefined;
+
+const statFunctions = {
+	cmpPct: (ps) => helpers.percentage(ps.pssCmp, ps.pss),
+	qbRat: (ps) => qbRat(ps),
+	rusYdsPerAtt: (ps) => ps.rusYds / ps.rus,
+	fg: (ps) => ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50,
+	fga: (ps) => ps.fga0 + ps.fga20 + ps.fga30 + ps.fga40 + ps.fga50,
+	fgPct: (ps) =>
+		helpers.percentage(
+			ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50,
+			ps.fga0 + ps.fga20 + ps.fga30 + ps.fga40 + ps.fga50,
+		),
+	xpPct: (ps) => helpers.percentage(ps.xp, ps.xpa),
+	kickingPts: (ps) =>
+		3 * (ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50) + ps.xp,
+	pntYdsPerAtt: (ps) => ps.pntYds / ps.pnt,
+	defTck: (ps) => ps.defTckSolo + ps.defTckAst,
+	qbRec: (ps) => {
+		if (ps.qbW !== undefined && ps.qbL !== undefined) {
+			return helpers.formatRecord({
+				won: ps.qbW,
+				lost: ps.qbL,
+				tied: ps.qbT,
+				otl: ps.qbOTL,
+			});
+		}
+		return "0-0";
+	},
+	pssTDPct: (ps) => helpers.percentage(ps.pssTD, ps.pss),
+	pssIntPct: (ps) => helpers.percentage(ps.pssInt, ps.pss),
+	pssYdsPerAtt: (ps) => ps.pssYds / ps.pss,
+	pssAdjYdsPerAtt: (ps) =>
+		(ps.pssYds + 20 * ps.pssTD - 45 * ps.pssInt) / ps.pss,
+	pssYdsPerCmp: (ps) => ps.pssYds / ps.pssCmp,
+	pssYdsPerGame: (ps) => ps.pssYds / ps.gp,
+	pssNetYdsPerAtt: (ps) => (ps.pssYds - ps.pssSkYds) / (ps.pss + ps.pssSk),
+	pssAdjNetYdsPerAtt: (ps) =>
+		(ps.pssYds + 20 * ps.pssTD - 45 * ps.pssInt - ps.pssSkYds) /
+		(ps.pss + ps.pssSk),
+	pssSkPct: (ps) => helpers.percentage(ps.pssSk, ps.pssSk + ps.pss),
+	rusYdsPerGame: (ps) => ps.rusYds / ps.gp,
+	rusPerGame: (ps) => ps.rus / ps.gp,
+	recYdsPerRec: (ps) => ps.recYds / ps.rec,
+	recPerGame: (ps) => ps.rec / ps.gp,
+	recYdsPerGame: (ps) => ps.recYds / ps.gp,
+	recCatchPct: (ps) => helpers.percentage(ps.rec, ps.tgt),
+	touches: (ps) => ps.rus + ps.rec,
+	ydsPerTouch: (ps) => (ps.rusYds + ps.recYds) / (ps.rus + ps.rec),
+	ydsFromScrimmage: (ps) => ps.rusYds + ps.recYds,
+	rusRecTD: (ps) => ps.rusTD + ps.recTD,
+	prYdsPerAtt: (ps) => ps.prYds / ps.pr,
+	krYdsPerAtt: (ps) => ps.krYds / ps.kr,
+	allPurposeYds: (ps) =>
+		ps.rusYds + ps.recYds + ps.prYds + ps.krYds + ps.defIntYds + ps.defFmbYds,
+	koTBPct: (ps) => helpers.percentage(ps.koTB, ps.ko),
+	koYdsPerAtt: (ps) => helpers.ratio(ps.koYds, ps.ko),
+	okRecPct: (ps) => helpers.percentage(ps.okRec, ps.ok),
+	totTD: (ps) =>
+		ps.rusTD + ps.recTD + ps.prTD + ps.krTD + ps.defIntTD + ps.defFmbTD,
+	fp: (ps, { getFantasyPoints }) => {
+		let value =
+			ps.pssYds / 25 +
+			4 * ps.pssTD +
+			(ps.rusYds + ps.recYds) / 10 +
+			6 * (ps.rusTD + ps.recTD + ps.prTD + ps.krTD) -
+			2 * (ps.pssInt + ps.fmbLost) +
+			ps.xp +
+			3 * ps.fg0 +
+			3 * ps.fg20 +
+			3 * ps.fg30 +
+			4 * ps.fg40 +
+			5 * ps.fg50;
+
+		const fantasyPoints = getFantasyPoints();
+		if (fantasyPoints === "ppr") {
+			value += ps.rec;
+		} else if (fantasyPoints === "halfPpr") {
+			value += 0.5 * ps.rec;
+		}
+
+		return value;
+	},
+	pbwr: (ps) => helpers.percentage(ps.pbw, ps.pba),
+	rbwr: (ps) => helpers.percentage(ps.rbw, ps.rba),
+	skAlwPct: (ps) => helpers.percentage(ps.skAlw, ps.pba),
+	pntTBPct: (ps) => helpers.percentage(ps.pntTB, ps.pnt),
+	pntIn20Pct: (ps) => helpers.percentage(ps.pntIn20, ps.pnt),
+	keyStats: (ps) => {
+		const defTck = ps.defTckSolo + ps.defTckAst;
+		const fga = ps.fga0 + ps.fga20 + ps.fga30 + ps.fga40 + ps.fga50;
+		const counts = {
+			passer: ps.pss,
+			rusher: ps.rus,
+			receiver: ps.rec,
+			defender: defTck,
+			kicker: fga + ps.xpa,
+			punter: ps.pnt,
+			ol: ((ps.pba ?? 0) + (ps.pra ?? 0)) / 10,
+		};
+		let role;
+		let max = 0;
+
+		for (const [key, value] of Object.entries(counts)) {
+			if (value > max) {
+				role = key;
+				max = value;
+			}
+		}
+		if (
+			(role === "rusher" && ps.recYds > 0.5 * ps.rusYds) ||
+			(role === "receiver" && ps.rusYds > 0.5 * ps.recYds)
+		) {
+			role = "rusRec";
+		}
+
+		if (role === "passer") {
+			return `${helpers
+				.percentage(ps.pssCmp, ps.pss)
+				?.toFixed(1)}%, ${helpers.numberWithCommas(ps.pssYds)} yards, ${
+				ps.pssTD
+			} TD, ${ps.pssInt} int, ${qbRat(ps).toFixed(1)} QBRat`;
+		} else if (role === "rusher") {
+			return `${helpers.numberWithCommas(
+				ps.rus,
+			)} rushes, ${helpers.numberWithCommas(ps.rusYds)} yards, ${(
+				ps.rusYds / ps.rus
+			).toFixed(1)} avg, ${ps.rusTD} TD`;
+		} else if (role === "receiver") {
+			return `${helpers.numberWithCommas(
+				ps.rec,
+			)} catches, ${helpers.numberWithCommas(ps.recYds)} yards, ${(
+				ps.recYds / ps.rec
+			).toFixed(1)} avg, ${ps.recTD} TD`;
+		} else if (role === "rusRec") {
+			return `${helpers.numberWithCommas(
+				ps.rec + ps.rus,
+			)} touches, ${helpers.numberWithCommas(ps.recYds + ps.rusYds)} total yards, ${ps.recTD + ps.rusTD} TD`;
+		} else if (role === "defender") {
+			return `${helpers.numberWithCommas(defTck)} tackles, ${
+				ps.defSk
+			} sacks, ${ps.defPssDef} PD, ${ps.defInt} int`;
+		} else if (role === "kicker") {
+			const fgm = ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50;
+			return `${fgm} FGs, ${helpers.percentage(fgm, fga)?.toFixed(1)}%`;
+		} else if (role === "punter") {
+			return `${ps.pnt} punts, ${(ps.pntYds / ps.pnt).toFixed(1)} yards avg`;
+		} else if (role === "ol") {
+			return `${ps.pbw} PBW${ps.pba > 0 ? ` (${helpers.percentage(ps.pbw, ps.pba)?.toFixed(1)}%)` : ""}, ${ps.rbw} RBW${ps.rba > 0 ? ` (${helpers.percentage(ps.rbw, ps.rba)?.toFixed(1)}%)` : ""}`;
+		} else {
+			return "";
+		}
+	},
+	age: (ps, { bornYear }) => {
+		if (bornYear === undefined) {
+			throw new Error(
+				"You must supply bornYear to processStats if you want age",
+			);
+		}
+
+		return ps.season - bornYear;
+	},
+} satisfies Record<string, StatFunction>;
+
 const processStats = (
 	ps: PlayerStats,
 	stats: string[],
@@ -23,207 +193,15 @@ const processStats = (
 ) => {
 	const row: any = {};
 
+	const statFunctions2 = statFunctions as Record<string, StatFunction>;
+	const extra = {
+		bornYear,
+		getFantasyPoints,
+	};
+
 	for (const stat of stats) {
-		if (stat === "cmpPct") {
-			row[stat] = helpers.percentage(ps.pssCmp, ps.pss);
-		} else if (stat === "qbRat") {
-			row[stat] = qbRat(ps);
-		} else if (stat === "rusYdsPerAtt") {
-			row[stat] = ps.rusYds / ps.rus;
-		} else if (stat === "fg") {
-			row[stat] = ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50;
-		} else if (stat === "fga") {
-			row[stat] = ps.fga0 + ps.fga20 + ps.fga30 + ps.fga40 + ps.fga50;
-		} else if (stat === "fgPct") {
-			row[stat] = helpers.percentage(
-				ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50,
-				ps.fga0 + ps.fga20 + ps.fga30 + ps.fga40 + ps.fga50,
-			);
-		} else if (stat === "xpPct") {
-			row[stat] = helpers.percentage(ps.xp, ps.xpa);
-		} else if (stat === "kickingPts") {
-			row[stat] = 3 * (ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50) + ps.xp;
-		} else if (stat === "pntYdsPerAtt") {
-			row[stat] = ps.pntYds / ps.pnt;
-		} else if (stat === "defTck") {
-			row[stat] = ps.defTckSolo + ps.defTckAst;
-		} else if (stat === "qbRec") {
-			if (ps.qbW !== undefined && ps.qbL !== undefined) {
-				row[stat] = helpers.formatRecord({
-					won: ps.qbW,
-					lost: ps.qbL,
-					tied: ps.qbT,
-					otl: ps.qbOTL,
-				});
-			} else {
-				row[stat] = "0-0";
-			}
-		} else if (stat === "pssTDPct") {
-			row[stat] = helpers.percentage(ps.pssTD, ps.pss);
-		} else if (stat === "pssIntPct") {
-			row[stat] = helpers.percentage(ps.pssInt, ps.pss);
-		} else if (stat === "pssYdsPerAtt") {
-			row[stat] = ps.pssYds / ps.pss;
-		} else if (stat === "pssAdjYdsPerAtt") {
-			row[stat] = (ps.pssYds + 20 * ps.pssTD - 45 * ps.pssInt) / ps.pss;
-		} else if (stat === "pssYdsPerCmp") {
-			row[stat] = ps.pssYds / ps.pssCmp;
-		} else if (stat === "pssYdsPerGame") {
-			row[stat] = ps.pssYds / ps.gp;
-		} else if (stat === "pssNetYdsPerAtt") {
-			row[stat] = (ps.pssYds - ps.pssSkYds) / (ps.pss + ps.pssSk);
-		} else if (stat === "pssAdjNetYdsPerAtt") {
-			row[stat] =
-				(ps.pssYds + 20 * ps.pssTD - 45 * ps.pssInt - ps.pssSkYds) /
-				(ps.pss + ps.pssSk);
-		} else if (stat === "pssSkPct") {
-			row[stat] = helpers.percentage(ps.pssSk, ps.pssSk + ps.pss);
-		} else if (stat === "rusYdsPerGame") {
-			row[stat] = ps.rusYds / ps.gp;
-		} else if (stat === "rusPerGame") {
-			row[stat] = ps.rus / ps.gp;
-		} else if (stat === "recYdsPerRec") {
-			row[stat] = ps.recYds / ps.rec;
-		} else if (stat === "recPerGame") {
-			row[stat] = ps.rec / ps.gp;
-		} else if (stat === "recYdsPerGame") {
-			row[stat] = ps.recYds / ps.gp;
-		} else if (stat === "recCatchPct") {
-			row[stat] = helpers.percentage(ps.rec, ps.tgt);
-		} else if (stat === "touches") {
-			row[stat] = ps.rus + ps.rec;
-		} else if (stat === "ydsPerTouch") {
-			row[stat] = (ps.rusYds + ps.recYds) / (ps.rus + ps.rec);
-		} else if (stat === "ydsFromScrimmage") {
-			row[stat] = ps.rusYds + ps.recYds;
-		} else if (stat === "rusRecTD") {
-			row[stat] = ps.rusTD + ps.recTD;
-		} else if (stat === "prYdsPerAtt") {
-			row[stat] = ps.prYds / ps.pr;
-		} else if (stat === "krYdsPerAtt") {
-			row[stat] = ps.krYds / ps.kr;
-		} else if (stat === "allPurposeYds") {
-			row[stat] =
-				ps.rusYds +
-				ps.recYds +
-				ps.prYds +
-				ps.krYds +
-				ps.defIntYds +
-				ps.defFmbYds;
-		} else if (stat === "koTBPct") {
-			row[stat] = helpers.percentage(ps.koTB, ps.ko);
-		} else if (stat === "koYdsPerAtt") {
-			row[stat] = helpers.ratio(ps.koYds, ps.ko);
-		} else if (stat === "okRecPct") {
-			row[stat] = helpers.percentage(ps.okRec, ps.ok);
-		} else if (stat === "totTD") {
-			row[stat] =
-				ps.rusTD + ps.recTD + ps.prTD + ps.krTD + ps.defIntTD + ps.defFmbTD;
-		} else if (stat === "fp") {
-			row[stat] =
-				ps.pssYds / 25 +
-				4 * ps.pssTD +
-				(ps.rusYds + ps.recYds) / 10 +
-				6 * (ps.rusTD + ps.recTD + ps.prTD + ps.krTD) -
-				2 * (ps.pssInt + ps.fmbLost) +
-				ps.xp +
-				3 * ps.fg0 +
-				3 * ps.fg20 +
-				3 * ps.fg30 +
-				4 * ps.fg40 +
-				5 * ps.fg50;
-
-			const fantasyPoints = getFantasyPoints();
-			if (fantasyPoints === "ppr") {
-				row[stat] += ps.rec;
-			} else if (fantasyPoints === "halfPpr") {
-				row[stat] += 0.5 * ps.rec;
-			}
-		} else if (stat === "pbwr") {
-			row[stat] = helpers.percentage(ps.pbw, ps.pba);
-		} else if (stat === "rbwr") {
-			row[stat] = helpers.percentage(ps.rbw, ps.rba);
-		} else if (stat === "skAlwPct") {
-			row[stat] = helpers.percentage(ps.skAlw, ps.pba);
-		} else if (stat === "pntTBPct") {
-			row[stat] = helpers.percentage(ps.pntTB, ps.pnt);
-		} else if (stat === "pntIn20Pct") {
-			row[stat] = helpers.percentage(ps.pntIn20, ps.pnt);
-		} else if (stat === "keyStats") {
-			const defTck = ps.defTckSolo + ps.defTckAst;
-			const fga = ps.fga0 + ps.fga20 + ps.fga30 + ps.fga40 + ps.fga50;
-			const counts = {
-				passer: ps.pss,
-				rusher: ps.rus,
-				receiver: ps.rec,
-				defender: defTck,
-				kicker: fga + ps.xpa,
-				punter: ps.pnt,
-				ol: ((ps.pba ?? 0) + (ps.pra ?? 0)) / 10,
-			};
-			let role;
-			let max = 0;
-
-			for (const [key, value] of Object.entries(counts)) {
-				if (value > max) {
-					role = key;
-					max = value;
-				}
-			}
-			if (
-				(role === "rusher" && ps.recYds > 0.5 * ps.rusYds) ||
-				(role === "receiver" && ps.rusYds > 0.5 * ps.recYds)
-			) {
-				role = "rusRec";
-			}
-
-			if (role === "passer") {
-				row[stat] = `${helpers
-					.percentage(ps.pssCmp, ps.pss)
-					?.toFixed(1)}%, ${helpers.numberWithCommas(ps.pssYds)} yards, ${
-					ps.pssTD
-				} TD, ${ps.pssInt} int, ${qbRat(ps).toFixed(1)} QBRat`;
-			} else if (role === "rusher") {
-				row[stat] = `${helpers.numberWithCommas(
-					ps.rus,
-				)} rushes, ${helpers.numberWithCommas(ps.rusYds)} yards, ${(
-					ps.rusYds / ps.rus
-				).toFixed(1)} avg, ${ps.rusTD} TD`;
-			} else if (role === "receiver") {
-				row[stat] = `${helpers.numberWithCommas(
-					ps.rec,
-				)} catches, ${helpers.numberWithCommas(ps.recYds)} yards, ${(
-					ps.recYds / ps.rec
-				).toFixed(1)} avg, ${ps.recTD} TD`;
-			} else if (role === "rusRec") {
-				row[stat] = `${helpers.numberWithCommas(
-					ps.rec + ps.rus,
-				)} touches, ${helpers.numberWithCommas(ps.recYds + ps.rusYds)} total yards, ${ps.recTD + ps.rusTD} TD`;
-			} else if (role === "defender") {
-				row[stat] = `${helpers.numberWithCommas(defTck)} tackles, ${
-					ps.defSk
-				} sacks, ${ps.defPssDef} PD, ${ps.defInt} int`;
-			} else if (role === "kicker") {
-				const fgm = ps.fg0 + ps.fg20 + ps.fg30 + ps.fg40 + ps.fg50;
-				row[stat] = `${fgm} FGs, ${helpers.percentage(fgm, fga)?.toFixed(1)}%`;
-			} else if (role === "punter") {
-				row[stat] = `${ps.pnt} punts, ${(ps.pntYds / ps.pnt).toFixed(
-					1,
-				)} yards avg`;
-			} else if (role === "ol") {
-				row[stat] =
-					`${ps.pbw} PBW${ps.pba > 0 ? ` (${helpers.percentage(ps.pbw, ps.pba)?.toFixed(1)}%)` : ""}, ${ps.rbw} RBW${ps.rba > 0 ? ` (${helpers.percentage(ps.rbw, ps.rba)?.toFixed(1)}%)` : ""}`;
-			} else {
-				row[stat] = "";
-			}
-		} else if (stat === "age") {
-			if (bornYear === undefined) {
-				throw new Error(
-					"You must supply bornYear to processStats if you want age",
-				);
-			}
-
-			row.age = ps.season - bornYear;
+		if (statFunctions2[stat]) {
+			row[stat] = statFunctions2[stat](ps, extra);
 		} else {
 			row[stat] = ps[stat];
 		}

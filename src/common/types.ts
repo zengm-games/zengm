@@ -2032,11 +2032,11 @@ export type SavedTradingBlock = {
 
 export type TeamNum = 0 | 1;
 
-type AwardPlayer2 = {
+export type AwardPlayer2 = {
 	pid: number;
 
 	// Used for playoff series stats which are generally not stored long-term
-	statOverrides?: Record<string, number>;
+	statOverrides?: Record<string, number | string>;
 };
 
 type AwardInfo = {

@@ -45,6 +45,7 @@ import {
 	derivedPlayerStatKeys,
 	processPlayerStats,
 } from "../../util/processPlayerStats.ts";
+import { showStatsByType } from "../../../common/awards.ts";
 
 const AWARD_STATS = [
 	...(isSport("basketball") ? [] : ["keyStats"]),
@@ -789,6 +790,29 @@ export const processAwards = async ({
 				const winner = sortedPlayers
 					.slice(0, numPlayersPerIndividualAward)
 					.map((p) => {
+						if (group?.type === "playoffSeries") {
+							// Save playoff series stats if possible
+							const currentStats =
+								p.currentStats[award.statRange ?? "regularSeason"];
+							if (currentStats) {
+								const stats = showStatsByType[award.showStats];
+								if (!stats) {
+									throw new Error("Invalid showStats");
+								}
+
+								const statOverrides: Record<string, number | string> = {};
+								for (const stat of stats) {
+									if (currentStats[stat] !== undefined) {
+										statOverrides[stat] = currentStats[stat];
+									}
+								}
+								return {
+									pid: p.pid,
+									statOverrides,
+								};
+							}
+						}
+
 						return {
 							pid: p.pid,
 						};

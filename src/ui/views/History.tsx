@@ -62,7 +62,7 @@ const Winner = ({
 				{stats
 					.map(
 						(stat) =>
-							`${helpers.roundStat(p.stats[stat], stat)}${stat === "keyStats" ? "" : ` ${getCol(`stat:${stat}`).title}`}`,
+							`${helpers.roundStat(p.statOverrides?.[stat] ?? p.stats[stat], stat)}${stat === "keyStats" ? "" : ` ${getCol(`stat:${stat}`).title}`}`,
 					)
 					.join(", ")}
 			</div>

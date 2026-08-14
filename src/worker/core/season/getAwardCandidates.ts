@@ -23,14 +23,16 @@ const persistedAwardsToAwardSetting = (
 		}
 		seenShortNames.add(persistedAward.shortName);
 
+		const group = persistedAward.group;
+
 		const award: GameAttributesLeague["awards"][number] & {
 			winner?: Awards2["awards"][number]["winner"];
 		} = {
 			...persistedAward,
 			group:
-				persistedAward.group === undefined
+				group === undefined || group.type === "playoffSeries"
 					? undefined
-					: persistedAward.group.type,
+					: group.type,
 		};
 		delete award.winner;
 		awards.push(award);
@@ -112,13 +114,13 @@ const getAwardCandidates = async (season: number) => {
 				const formula = award.formulaByPos?.[p.pos] ?? award.formula;
 				return {
 					...p,
-					opoyOverride: p2.opoyOverride,
 					currentStats: {
 						...p.currentStats[statRange],
 						score: p.scores[statRange]?.[formula],
 					} as {
 						score: number | undefined;
 					} & (typeof p)["currentStats"]["regularSeason"],
+					opoyOverride: p2.opoyOverride,
 				};
 			}),
 			stats: [...stats, "score"],

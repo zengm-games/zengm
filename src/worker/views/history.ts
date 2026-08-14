@@ -1,8 +1,10 @@
 import { idb } from "../db/index.ts";
 import { g, local, updatePlayMenu } from "../util/index.ts";
 import type {
+	Award2,
 	AwardInfoIndividual,
 	AwardInfoTeam,
+	AwardPlayer2,
 	UpdateEvents,
 	ViewInput,
 } from "../../common/types.ts";
@@ -80,13 +82,15 @@ const updateHistory = async (
 			pos,
 			season,
 			showStats,
+			statOverrides,
 			statRange,
 		}: {
 			pid: number;
 			pos?: string;
 			season: number;
 			showStats: AwardInfoIndividual["showStats"];
-			statRange: "combined" | "playoffs" | "regularSeason";
+			statOverrides: AwardPlayer2["statOverrides"];
+			statRange: Award2["statRange"];
 		}) => {
 			const stats = showStatsByType[showStats];
 			if (!stats) {
@@ -107,8 +111,8 @@ const updateHistory = async (
 				ratings: ["pos"],
 				stats: allStats,
 				season,
-				playoffs: statRange === "playoffs",
-				regularSeason: statRange === "regularSeason",
+				playoffs: statRange === "playoffs" || typeof statRange === "number",
+				regularSeason: statRange === undefined,
 				combined: statRange === "combined",
 				mergeStats: "totOnly",
 				showNoStats: true,
@@ -125,9 +129,10 @@ const updateHistory = async (
 			}
 
 			return {
-				pid: p.pid,
+				pid,
 				name: p2.name as string,
-				pos: getPosByGpF(p2.stats.gpF, p.pos ?? p2.ratings.pos),
+				pos: pos ?? getPosByGpF(p2.stats.gpF, p.pos ?? p2.ratings.pos),
+				statOverrides,
 				stats: {
 					...p2.stats,
 					abbrev: t.seasonAttrs.abbrev,
@@ -144,21 +149,18 @@ const updateHistory = async (
 		})[] = [];
 
 		for (const award of awards.awards) {
-			if (typeof award.statRange === "number") {
-				continue;
-			}
-
 			const numTeams = award.numTeams;
 			if (numTeams === undefined) {
-				const pid = award.winner[0]?.pid;
-				if (pid === undefined) {
+				if (!award.winner[0]) {
 					continue;
 				}
+				const { pid, statOverrides } = award.winner[0];
 				const winner = await augmentPlayer({
 					pid,
 					season: awards.season,
 					showStats: award.showStats,
-					statRange: award.statRange ?? "regularSeason",
+					statOverrides,
+					statRange: award.statRange,
 				});
 
 				const augmented = {
@@ -168,7 +170,10 @@ const updateHistory = async (
 					winner,
 				};
 
-				if (award.statRange === "playoffs") {
+				if (
+					award.statRange === "playoffs" ||
+					typeof award.statRange === "number"
+				) {
 					individualAwardsPlayoffs.push(augmented);
 				} else {
 					individualAwards.push(augmented);
@@ -181,13 +186,14 @@ const updateHistory = async (
 						if (!pTemp) {
 							continue;
 						}
-						const { pid, pos } = pTemp;
+						const { pid, pos, statOverrides } = pTemp;
 						const p = await augmentPlayer({
 							pid,
 							pos,
 							season: awards.season,
 							showStats: award.showStats,
-							statRange: award.statRange ?? "regularSeason",
+							statOverrides,
+							statRange: award.statRange,
 						});
 						augmentedTeam.push(p);
 					}

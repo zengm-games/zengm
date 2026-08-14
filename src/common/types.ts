@@ -2036,7 +2036,9 @@ export type AwardPlayer2 = {
 	pid: number;
 
 	// Used for playoff series stats which are generally not stored long-term
-	statOverrides?: Record<string, number | string>;
+	statOverrides?: {
+		score: number;
+	} & Record<string, number | string>;
 };
 
 type AwardInfo = {

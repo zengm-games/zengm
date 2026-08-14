@@ -1,5 +1,6 @@
 import type {
 	AwardInfoIndividual,
+	AwardPlayer2,
 	Awards2,
 	Conditions,
 	DistributiveOmit,
@@ -774,15 +775,13 @@ export const processAwards = async ({
 				}
 			}
 
-			const sortedPlayers = orderBy(
-				filteredPlayers,
-				(p) => {
-					const formula = award.formulaByPos?.[p.pos] ?? award.formula;
-					const statRange = award.statRange ?? "regularSeason";
-					return p.scores[statRange]?.[formula] ?? -Infinity;
-				},
-				"desc",
-			);
+			const statRange = award.statRange ?? "regularSeason";
+			const getScore = (p: (typeof players)[number]) => {
+				const formula = award.formulaByPos?.[p.pos] ?? award.formula;
+				return p.scores[statRange]?.[formula] ?? -Infinity;
+			};
+
+			const sortedPlayers = orderBy(filteredPlayers, getScore, "desc");
 
 			const numTeams = award.numTeams;
 			if (numTeams === undefined) {
@@ -800,7 +799,9 @@ export const processAwards = async ({
 									throw new Error("Invalid showStats");
 								}
 
-								const statOverrides: Record<string, number | string> = {};
+								const statOverrides: AwardPlayer2["statOverrides"] = {
+									score: getScore(p),
+								};
 								for (const stat of stats) {
 									if (currentStats[stat] !== undefined) {
 										statOverrides[stat] = currentStats[stat];

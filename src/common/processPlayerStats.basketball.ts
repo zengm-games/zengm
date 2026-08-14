@@ -45,7 +45,7 @@ type StatFunction = {
 };
 
 // `tp ?? 0` ones are because in historical stats, tp may be undefined, but fg never is
-const statFunctions = {
+export const statFunctions = {
 	"2pp": {
 		process: (ps) =>
 			helpers.percentage(ps.fg - (ps.tp ?? 0), ps.fga - (ps.tpa ?? 0)),
@@ -143,7 +143,7 @@ const statFunctions = {
 	},
 } satisfies Record<string, StatFunction>;
 
-const processStats = (
+export const processStats = (
 	ps: PlayerStats,
 	stats: string[],
 	statType: PlayerStatType = "totals",
@@ -216,5 +216,3 @@ const processStats = (
 
 	return row;
 };
-
-export default processStats;

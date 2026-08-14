@@ -28,7 +28,7 @@ import {
 	orderBy,
 	range,
 } from "../../../common/utils.ts";
-import processPlayerStats from "../../../common/processPlayerStats.baseball.ts";
+import { processStats as processStatsBaseball } from "../../../common/processPlayerStats.baseball.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 import {
 	leagueLeaders,
@@ -41,6 +41,10 @@ import stats from "../player/stats.ts";
 import fastDeepEqual from "fast-deep-equal";
 import player from "../player/index.ts";
 import { SKIP_PLAYER_STATS } from "../game/loadTeams.ts";
+import {
+	derivedPlayerStatKeys,
+	processPlayerStats,
+} from "../../util/processPlayerStats.ts";
 
 const AWARD_STATS = [
 	...(isSport("basketball") ? [] : ["keyStats"]),
@@ -49,16 +53,30 @@ const AWARD_STATS = [
 	...Object.values(PLAYER_STATS_TABLES).flatMap((x) => x.stats),
 ];
 
+const PLAYOFF_SERIES_AWARD_STATS_RAW = player.stats.raw.filter(
+	(key) => !SKIP_PLAYER_STATS.has(key) && !key.startsWith("opp"),
+);
+const PLAYOFF_SERIES_AWARD_STATS_DERIVED = derivedPlayerStatKeys.filter(
+	(key) => key !== "age",
+);
+const PLAYOFF_SERIES_AWARD_STATS = [
+	...PLAYOFF_SERIES_AWARD_STATS_RAW,
+	...PLAYOFF_SERIES_AWARD_STATS_DERIVED,
+];
+
 type StatRange =
 	| NonNullable<AwardInfoIndividual["statRange"]>
 	| "regularSeason";
 
-type StatsRow = {
+type StatsRowDefined = {
 	abbrev: string;
 	tid: number;
 	jerseyNumber: string;
 	season: number;
 	playoffs: boolean | "combined" | "playoffSeries";
+};
+
+type StatsRow = StatsRowDefined & {
 	[key: string]: any;
 };
 
@@ -196,31 +214,42 @@ const getPlayoffSeriesStats = async (season: number, seriesIndex: number) => {
 	}
 	console.log("games", games);
 
-	const rowsByPid: Record<number, StatsRow> = {};
+	const tempRowsByPid: Map<
+		number,
+		{
+			info: StatsRowDefined;
+			rawStats: Record<string, any>;
+		}
+	> = new Map();
 
 	for (const game of games) {
 		for (const t of game.teams) {
 			for (const p of t.players) {
-				let row: StatsRow | undefined = rowsByPid[p.pid];
-				if (!row) {
-					row = {
+				const row = tempRowsByPid.getOrInsert(p.pid, {
+					info: {
 						abbrev: "?????",
 						jerseyNumber: p.jerseyNumber,
 						playoffs: "playoffSeries",
 						season,
 						tid: t.tid,
-					};
-					rowsByPid[p.pid] = row;
-				}
+					},
+					rawStats: {},
+				});
 
-				for (const key of player.stats.raw) {
-					if (!SKIP_PLAYER_STATS.has(key) && !key.startsWith("opp")) {
-						row[key] ??= 0;
-						row[key] += p[key];
-					}
+				for (const key of PLAYOFF_SERIES_AWARD_STATS_RAW) {
+					row.rawStats[key] ??= 0;
+					row.rawStats[key] += p[key];
 				}
 			}
 		}
+	}
+
+	const rowsByPid: Record<number, StatsRow> = {};
+	for (const [pid, { info, rawStats }] of tempRowsByPid) {
+		rowsByPid[pid] = {
+			...info,
+			...processPlayerStats(rawStats, PLAYOFF_SERIES_AWARD_STATS),
+		};
 	}
 
 	console.log(rowsByPid);
@@ -483,7 +512,7 @@ const filterPlayersForAward = (
 				let outsSum = 0;
 				for (const row of p.stats) {
 					if (!row.playoffs) {
-						abSum += processPlayerStats(row, ["ab"]).ab;
+						abSum += processStatsBaseball(row, ["ab"]).ab;
 						outsSum += row.outs;
 					}
 

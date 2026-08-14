@@ -15,7 +15,8 @@ import {
 	POS_NUMBERS,
 	POS_NUMBERS_INVERSE,
 } from "../../../common/constants.baseball.ts";
-import processPlayerStats, {
+import {
+	processStats as processPlayerStats,
 	NUM_OUTS_PER_GAME,
 } from "../../../common/processPlayerStats.baseball.ts";
 import { orderBy } from "../../../common/utils.ts";

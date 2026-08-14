@@ -90,7 +90,7 @@ const getKeyStatsFactory =
 		return "";
 	};
 
-const statFunctions = {
+export const statFunctions = {
 	age: (ps, { bornYear }) => {
 		if (bornYear === undefined) {
 			throw new Error(
@@ -161,7 +161,7 @@ const statFunctions = {
 	gmsc: (ps) => helpers.gameScoreBaseball(ps),
 } satisfies Record<string, StatFunction>;
 
-const processStats = (
+export const processStats = (
 	ps: PlayerStats,
 	stats: string[],
 	statType?: PlayerStatType,
@@ -231,5 +231,3 @@ const processStats = (
 
 	return row;
 };
-
-export default processStats;

@@ -23,7 +23,7 @@ type StatFunction = (
 	},
 ) => number | string | undefined;
 
-const statFunctions = {
+export const statFunctions = {
 	cmpPct: (ps) => helpers.percentage(ps.pssCmp, ps.pss),
 	qbRat: (ps) => qbRat(ps),
 	rusYdsPerAtt: (ps) => ps.rusYds / ps.rus,
@@ -185,7 +185,7 @@ const statFunctions = {
 	},
 } satisfies Record<string, StatFunction>;
 
-const processStats = (
+export const processStats = (
 	ps: PlayerStats,
 	stats: string[],
 	bornYear: number | undefined,
@@ -225,5 +225,3 @@ const processStats = (
 
 	return row;
 };
-
-export default processStats;

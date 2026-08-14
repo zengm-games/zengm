@@ -20,8 +20,9 @@ import {
 	type SportState,
 } from "../util/processLiveGameEvents.baseball.tsx";
 import { PlayerNameLabels } from "./PlayerNameLabels.tsx";
-import processStats, {
+import {
 	outsToInnings,
+	processStats,
 } from "../../common/processPlayerStats.baseball.ts";
 import type {
 	PlayByPlayEventInput,

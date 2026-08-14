@@ -95,6 +95,8 @@ custom awards
   - conditional stat-based awards that are not awarded every season, like triple crown or 40/40
   - clutch player award
 
+make GOAT lab use stats with derived variables, similar to awards
+
 https://github.com/ata-core/ata-validator
 
 more prominent warning when editing player and the draft year is in the future while they are on a team

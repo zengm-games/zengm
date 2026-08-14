@@ -37,7 +37,7 @@ const getKeyStatsFactory =
 		return "";
 	};
 
-const statFunctions = {
+export const statFunctions = {
 	pts: (ps, { a, g }) => g + a,
 	ps: (ps) => ps.ops + ps.dps + ps.gps,
 	g: (ps, { g }) => g,
@@ -85,7 +85,7 @@ const statFunctions = {
 	shPts60: (ps) => helpers.ratio(ps.shPts, ps.min / 60),
 } satisfies Record<string, StatFunction>;
 
-const processStats = (
+export const processStats = (
 	ps: PlayerStats,
 	stats: string[],
 	statType?: PlayerStatType,
@@ -125,5 +125,3 @@ const processStats = (
 
 	return row;
 };
-
-export default processStats;

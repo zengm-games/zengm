@@ -28,6 +28,8 @@ custom awards
 - fields
   - stats range (regular season, playoffs, semifinals, finals, combined)
     - statRanges in doAwards
+    - make sure to populate regularSeason with playoffs based on usePlayoffStatsAsRegularSeason
+    - combined statRange
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - groupAwards

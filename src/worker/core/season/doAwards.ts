@@ -51,11 +51,26 @@ type StatRange =
 	| NonNullable<AwardInfoIndividual["statRange"]>
 	| "regularSeason";
 
+type StatsRow = {
+	abbrev: string;
+	tid: number;
+	jerseyNumber: string;
+	season: number;
+	playoffs: boolean | "combined";
+	[key: string]: any;
+};
+
+type CurrentStats = {
+	seasonFraction: number;
+	teamGp: number;
+	winp: number;
+} & StatsRow;
+
 const getProcessedPlayers = async (
 	playersAll: Player[],
 	season: number,
 	statRanges: Set<StatRange>,
-	usePlayoffStatsAsRegularSeason?: boolean,
+	usePlayoffStatsAsRegularSeason: boolean = false,
 ) => {
 	const stats = Array.from(
 		new Set([
@@ -67,6 +82,7 @@ const getProcessedPlayers = async (
 	const regularSeason =
 		statRanges.has("regularSeason") && !usePlayoffStatsAsRegularSeason;
 	const playoffs = statRanges.has("playoffs") || usePlayoffStatsAsRegularSeason;
+	const combined = statRanges.has("combined");
 
 	let players = (await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
@@ -86,6 +102,7 @@ const getProcessedPlayers = async (
 		stats: ["abbrev", "tid", "jerseyNumber", "season", ...stats],
 		playoffs,
 		regularSeason,
+		combined,
 		fuzz: true,
 		mergeStats: "totOnly",
 	})) as unknown as (Pick<
@@ -110,11 +127,15 @@ const getProcessedPlayers = async (
 			pot: number;
 			skills: string[];
 		}>;
-		stats: Record<string, any>[];
+		stats: StatsRow[];
 
 		// Added later in getPlayers
 		pos: string;
-		currentStats: Record<string, any>;
+		currentStats: Partial<
+			Record<Exclude<StatRange, "regularSeason">, CurrentStats>
+		> & {
+			regularSeason: CurrentStats;
+		};
 		age: number;
 		teamInfo: {
 			cid: number | undefined;
@@ -129,16 +150,17 @@ const getProcessedPlayers = async (
 
 	// This can happen if there are 0 games in the regular season - in that case, might as well look for playoff stats too
 	if (
-		statRanges.has("regularSeason") &&
-		!usePlayoffStatsAsRegularSeason &&
+		regularSeason &&
+		!playoffs &&
 		players.every(
-			(p) => !p.stats.some((ps) => ps.season === season && !ps.playoffs),
+			(p) =>
+				!p.stats.some((ps) => ps.season === season && ps.playoffs === false),
 		)
 	) {
 		return getProcessedPlayers(playersAll, season, statRanges, true);
 	}
 
-	return players;
+	return { players, usePlayoffStatsAsRegularSeason };
 };
 
 const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
@@ -157,7 +179,11 @@ const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 		);
 	}
 
-	const players = await getProcessedPlayers(playersAll, season, statRanges);
+	const { players, usePlayoffStatsAsRegularSeason } = await getProcessedPlayers(
+		playersAll,
+		season,
+		statRanges,
+	);
 
 	// Add winp, for later
 	const teamSeasons = await idb.getCopies.teamSeasons(
@@ -197,15 +223,47 @@ const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 	}
 
 	for (const p of players) {
-		// For convenience later
-		p.currentStats =
-			p.stats.findLast((row) => row.season === season) ?? p.stats.at(-1)!;
+		p.currentStats = {} as any;
+		for (const statRange of statRanges) {
+			if (typeof statRange === "number") {
+			} else if (statRange === "playoffs") {
+				const row = p.stats.findLast(
+					(row) => row.season === season && row.playoffs === true,
+				);
+				if (row) {
+					p.currentStats.playoffs = row as any;
+				}
+			} else if (statRange === "regularSeason") {
+				const row = p.stats.findLast(
+					(row) =>
+						row.season === season &&
+						(row.playoffs === false ||
+							(usePlayoffStatsAsRegularSeason && row.playoffs === true)),
+				);
+				if (row) {
+					p.currentStats.regularSeason = row as any;
+				}
+			} else if (statRange === "combined") {
+				const row = p.stats.findLast(
+					(row) => row.season === season && row.playoffs === "combined",
+				);
+				if (row) {
+					p.currentStats.combined = row as any;
+				}
+			} else {
+				throw new Error("Should never happen");
+			}
+		}
+		if (!p.currentStats.regularSeason) {
+			throw new Error("Should never happen");
+		}
+
 		p.pos = (
 			p.ratings.findLast((row) => row.season === season) ?? last(p.ratings)
 		).pos;
 
-		if (isSport("baseball")) {
-			p.pos = getPosByGpF(p.currentStats.gpF, p.pos);
+		if (isSport("baseball") && p.currentStats.regularSeason) {
+			p.pos = getPosByGpF(p.currentStats.regularSeason.gpF, p.pos);
 		}
 
 		// Sum up any byPos stats - not ideal for team awards of awards with formulas by position, but probably good enough since we're using gpF to assign position so most of their games at least will be at the correct position
@@ -215,8 +273,10 @@ const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 				byPosStats.push("rfld");
 			}
 			for (const stat of byPosStats) {
-				if (Array.isArray(p.currentStats[stat])) {
-					p.currentStats[stat] = helpers.sum(p.currentStats[stat]);
+				for (const currentStats of Object.values(p.currentStats)) {
+					if (currentStats && Array.isArray(currentStats[stat])) {
+						currentStats[stat] = helpers.sum(currentStats[stat]);
+					}
 				}
 			}
 		}
@@ -224,7 +284,7 @@ const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 		// Otherwise it's always the current season
 		p.age = season - p.born.year;
 
-		const teamInfo = teamInfos[p.currentStats.tid];
+		const teamInfo = teamInfos[p.currentStats.regularSeason.tid];
 		p.teamInfo = {
 			cid: teamInfo?.cid ?? undefined,
 			did: teamInfo?.did ?? undefined,
@@ -232,31 +292,49 @@ const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 		};
 
 		// Make some teamInfo available in formulas
-		p.currentStats.seasonFraction = teamInfo?.seasonFraction ?? 1;
-		p.currentStats.teamGp = teamInfo?.gp ?? 0;
-		p.currentStats.winp = teamInfo?.winp ?? 0;
+		for (const currentStats of Object.values(p.currentStats)) {
+			if (currentStats) {
+				currentStats.seasonFraction = teamInfo?.seasonFraction ?? 1;
+				currentStats.teamGp = teamInfo?.gp ?? 0;
+				currentStats.winp = teamInfo?.winp ?? 0;
+			}
+		}
 
 		p.scores = {};
 	}
 
 	// Add fracWS for basketball current season
 	if (isSport("basketball")) {
-		const totalWS: Record<number, number> = {};
-		for (const p of players) {
-			if (totalWS[p.currentStats.tid] === undefined) {
-				totalWS[p.currentStats.tid] = 0;
+		for (const statRange of statRanges) {
+			if (typeof statRange !== "number") {
+				const totalWS: Record<number, number> = {};
+				for (const p of players) {
+					const currentStats = p.currentStats[statRange];
+					if (!currentStats) {
+						continue;
+					}
+
+					if (totalWS[currentStats.tid] === undefined) {
+						totalWS[currentStats.tid] = 0;
+					}
+					totalWS[currentStats.tid] += currentStats.ws;
+				}
+
+				for (const p of players) {
+					const currentStats = p.currentStats[statRange];
+					if (!currentStats) {
+						continue;
+					}
+
+					currentStats.wsFraction = Math.min(
+						// Inner max is to handle negative totalWS
+						currentStats.ws / Math.max(totalWS[currentStats.tid]!, 1),
+
+						// In the rare case that a team has very low or even negative WS, don't let anybody have a crazy high fracWS
+						0.8,
+					);
+				}
 			}
-			totalWS[p.currentStats.tid] += p.currentStats.ws;
-		}
-
-		for (const p of players) {
-			p.currentStats.wsFraction = Math.min(
-				// Inner max is to handle negative totalWS
-				p.currentStats.ws / Math.max(totalWS[p.currentStats.tid]!, 1),
-
-				// In the rare case that a team has very low or even negative WS, don't let anybody have a crazy high fracWS
-				0.8,
-			);
 		}
 	}
 
@@ -282,11 +360,19 @@ const filterPlayersForAward = (
 	let filteredPlayers = players;
 	if (award.bench) {
 		// Handle case where GS is not available, which happens when loading historical stats
-		if (filteredPlayers.some((p) => p.currentStats.gs > 0)) {
-			filteredPlayers = filteredPlayers.filter(
-				(p) =>
-					p.currentStats.gs === 0 || p.currentStats.gp / p.currentStats.gs > 2,
-			);
+		if (
+			filteredPlayers.some((p) => {
+				const currentStats = p.currentStats[award.statRange ?? "regularSeason"];
+				return currentStats && currentStats.gs > 0;
+			})
+		) {
+			filteredPlayers = filteredPlayers.filter((p) => {
+				const currentStats = p.currentStats[award.statRange ?? "regularSeason"];
+				return (
+					currentStats &&
+					(currentStats.gs === 0 || currentStats.gp / currentStats.gs > 2)
+				);
+			});
 		}
 	}
 
@@ -348,14 +434,12 @@ const filterPlayersForAward = (
 	if (award.mip) {
 		filteredPlayers = filteredPlayers.filter((p) => {
 			// Too many second year players get picked, when it's expected for them to improve (undrafted and second round picks can still win)
-			if (p.draft.year + 2 >= p.currentStats.season && p.draft.round === 1) {
+			if (p.draft.year + 2 >= season && p.draft.round === 1) {
 				return false;
 			}
 
 			// Must have stats last year!
-			const oldStatsAll = p.stats.filter(
-				(ps) => ps.season === p.currentStats.season - 1,
-			);
+			const oldStatsAll = p.stats.filter((ps) => ps.season === season - 1);
 
 			const oldStats = oldStatsAll.at(-1);
 			if (!oldStats) {
@@ -366,7 +450,7 @@ const filterPlayersForAward = (
 			if (ROUGH_MPG_NEEDED_FOR_MIP !== undefined) {
 				const mipFactor = getMipFactor(season);
 				if (
-					p.currentStats.min * p.currentStats.gp <
+					p.currentStats.regularSeason.min * p.currentStats.regularSeason.gp <
 						ROUGH_MPG_NEEDED_FOR_MIP *
 							p.teamInfo.gp *
 							helpers.quarterLengthFactor() ||
@@ -400,6 +484,7 @@ export const processAwards = async ({
 	const statRanges = new Set(
 		awards.map((award) => award.statRange ?? "regularSeason"),
 	);
+	statRanges.add("regularSeason");
 
 	const players = await getPlayers(season, statRanges);
 
@@ -429,7 +514,8 @@ export const processAwards = async ({
 			}
 			const evaluate = formulaEvaluators[formula];
 
-			const currentScore = evaluate(p.currentStats);
+			const currentStats = p.currentStats[award.statRange ?? "regularSeason"];
+			const currentScore = currentStats ? evaluate(currentStats) : -Infinity;
 
 			// For MIP, compare score to last season and max of all previous seasons
 			if (award.mip) {
@@ -438,7 +524,7 @@ export const processAwards = async ({
 						? ROUGH_MPG_NEEDED_FOR_MIP * getMipFactor(season)
 						: ROUGH_MPG_NEEDED_FOR_MIP;
 				const oldSeasonScores = p.stats
-					.filter((ps) => ps.season < p.currentStats.season)
+					.filter((ps) => ps.season < season)
 					.filter((ps) => {
 						if (minCutoff === undefined) {
 							// Must have palyed in half of team's games last year
@@ -718,9 +804,24 @@ export const processAwards = async ({
 							opoyAward.opoyFormula,
 							formulaStats,
 						);
-						const mvpScore = formulaEvaluator.evaluate(mvp.currentStats);
-						const opoyScore = formulaEvaluator.evaluate(opoy.currentStats);
-						if (mvpScore / opoyScore > 1.2) {
+
+						const mvpCurrentStats =
+							mvp.currentStats[mvpAward.statRange ?? "regularSeason"];
+						const mvpScore = mvpCurrentStats
+							? formulaEvaluator.evaluate(mvpCurrentStats)
+							: undefined;
+
+						const opoyCurrentStats =
+							opoy.currentStats[opoyAward.statRange ?? "regularSeason"];
+						const opoyScore = opoyCurrentStats
+							? formulaEvaluator.evaluate(opoyCurrentStats)
+							: undefined;
+
+						if (
+							mvpScore !== undefined &&
+							opoyScore !== undefined &&
+							mvpScore / opoyScore > 1.2
+						) {
 							opoyAward.winner = [
 								{ ...mvpWinner, opoyOverride: true as const },
 								...opoyAward.winner,

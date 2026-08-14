@@ -24,8 +24,10 @@ custom awards
   - historyAll, teamRecords, awardRecords
     - test with changing awards
     - test with div/conf awards (should show in separate columns)
+  - 0 regular season games, use playoff stats for regular season awards
 - fields
   - stats range (regular season, playoffs, semifinals, finals, combined)
+    - statRanges in doAwards
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - groupAwards

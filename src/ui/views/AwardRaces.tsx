@@ -58,9 +58,7 @@ const AwardRaces = ({
 
 					const rows: DataTableRow[] = players.map((p, j) => {
 						const ps = p.currentStats;
-						const pr = (p.ratings as any[]).findLast(
-							(row) => row.season === season,
-						);
+						const pr = p.ratings.findLast((row) => row.season === season);
 
 						const pos = pr ? pr.pos : "?";
 						const abbrev = ps ? ps.abbrev : undefined;
@@ -82,7 +80,7 @@ const AwardRaces = ({
 							}
 						}
 
-						const data = [
+						const data: DataTableRow["data"] = [
 							j + 1,
 							wrappedPlayerNameLabels({
 								injury: p.injury,
@@ -117,12 +115,15 @@ const AwardRaces = ({
 							data.push(
 								pr && showRatings ? (
 									<RatingWithChange change={pr.dovr}>{pr.ovr}</RatingWithChange>
-								) : undefined,
+								) : null,
 							);
 
 							let ps2: any;
 							for (let i = p.stats.length - 1; i >= 0; i--) {
-								if (p.stats[i].season === season - 1 && !p.stats[i].playoffs) {
+								if (
+									p.stats[i]!.season === season - 1 &&
+									!p.stats[i]!.playoffs
+								) {
 									ps2 = p.stats[i];
 									break;
 								}
@@ -130,7 +131,7 @@ const AwardRaces = ({
 							data.push(
 								...stats.map((stat) => {
 									if (!ps && !ps2) {
-										return undefined;
+										return null;
 									}
 
 									if (!ps2 || stat === "score" || stat === "keyStats") {
@@ -153,17 +154,17 @@ const AwardRaces = ({
 								</a>,
 							);
 						} else {
-							data.push(pr && showRatings ? pr.ovr : undefined);
+							data.push(pr && showRatings ? pr.ovr : null);
 							const statsRow = stats.map((stat) => {
 								if (p.opoyOverride && stat === "score") {
 									// Hide score from UI if opoyOverride because this player was put at #1 due to a different formula (opoyFormula)
 									return {
-										value: undefined,
+										value: null,
 										sortValue: Infinity,
 									};
 								}
 
-								return ps ? helpers.roundStat(ps[stat], stat) : undefined;
+								return ps ? helpers.roundStat(ps[stat], stat) : null;
 							});
 							data.push(...statsRow);
 						}

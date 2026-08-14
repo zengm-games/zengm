@@ -4,8 +4,8 @@ import type {
 	Conditions,
 	DistributiveOmit,
 	GameAttributesLeague,
+	NonEmptyArray,
 	Player,
-	PlayerFiltered,
 } from "../../../common/types.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { g, helpers } from "../../util/index.ts";
@@ -23,6 +23,7 @@ import FormulaEvaluator from "../../util/FormulaEvaluator.ts";
 import {
 	chunk,
 	groupByUnique,
+	last,
 	omit,
 	orderBy,
 	range,
@@ -46,10 +47,15 @@ const AWARD_STATS = [
 	...Object.values(PLAYER_STATS_TABLES).flatMap((x) => x.stats),
 ];
 
+type StatRange =
+	| NonNullable<AwardInfoIndividual["statRange"]>
+	| "regularSeason";
+
 const getProcessedPlayers = async (
 	playersAll: Player[],
 	season: number,
-	playoffs?: boolean,
+	statRanges: Set<StatRange>,
+	usePlayoffStatsAsRegularSeason?: boolean,
 ) => {
 	const stats = Array.from(
 		new Set([
@@ -58,7 +64,11 @@ const getProcessedPlayers = async (
 		]),
 	);
 
-	let players = await idb.getCopies.playersPlus(playersAll, {
+	const regularSeason =
+		statRanges.has("regularSeason") && !usePlayoffStatsAsRegularSeason;
+	const playoffs = statRanges.has("playoffs") || usePlayoffStatsAsRegularSeason;
+
+	let players = (await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
 			"name",
@@ -70,29 +80,68 @@ const getProcessedPlayers = async (
 			"injury",
 			"born",
 			"watch",
+			"hof",
 		],
 		ratings: ["pos", "season", "ovr", "dovr", "pot", "skills"],
 		stats: ["abbrev", "tid", "jerseyNumber", "season", ...stats],
 		playoffs,
-		regularSeason: !playoffs,
+		regularSeason,
 		fuzz: true,
 		mergeStats: "totOnly",
-	});
+	})) as unknown as (Pick<
+		Player,
+		| "pid"
+		| "firstName"
+		| "lastName"
+		| "tid"
+		| "draft"
+		| "injury"
+		| "born"
+		| "watch"
+		| "hof"
+	> & {
+		name: string;
+		abbrev: string;
+		ratings: NonEmptyArray<{
+			pos: string;
+			season: number;
+			ovr: number;
+			dovr: number;
+			pot: number;
+			skills: string[];
+		}>;
+		stats: Record<string, any>[];
+
+		// Added later in getPlayers
+		pos: string;
+		currentStats: Record<string, any>;
+		age: number;
+		teamInfo: {
+			cid: number | undefined;
+			did: number | undefined;
+			gp: number;
+		};
+		scores: Record<string, number>;
+	})[];
 
 	// Only keep players who actually have a stats entry for the latest season
-	players = players.filter((p) =>
-		p.stats.some((ps: any) => ps.season === season),
-	);
+	players = players.filter((p) => p.stats.some((ps) => ps.season === season));
 
 	// This can happen if there are 0 games in the regular season - in that case, might as well look for playoff stats too
-	if (players.length === 0 && !playoffs) {
-		return getProcessedPlayers(playersAll, season, true);
+	if (
+		statRanges.has("regularSeason") &&
+		!usePlayoffStatsAsRegularSeason &&
+		players.every(
+			(p) => !p.stats.some((ps) => ps.season === season && !ps.playoffs),
+		)
+	) {
+		return getProcessedPlayers(playersAll, season, statRanges, true);
 	}
 
 	return players;
 };
 
-const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
+const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 	let playersAll;
 	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
 		playersAll = await idb.cache.players.indexGetAll("playersByTid", [
@@ -108,7 +157,7 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 		);
 	}
 
-	const players = await getProcessedPlayers(playersAll, season);
+	const players = await getProcessedPlayers(playersAll, season, statRanges);
 
 	// Add winp, for later
 	const teamSeasons = await idb.getCopies.teamSeasons(
@@ -150,11 +199,9 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 	for (const p of players) {
 		// For convenience later
 		p.currentStats =
-			(p.stats as any[]).findLast((row) => row.season === season) ??
-			p.stats.at(-1);
+			p.stats.findLast((row) => row.season === season) ?? p.stats.at(-1)!;
 		p.pos = (
-			(p.ratings as any[]).findLast((row) => row.season === season) ??
-			p.ratings.at(-1)
+			p.ratings.findLast((row) => row.season === season) ?? last(p.ratings)
 		).pos;
 
 		if (isSport("baseball")) {
@@ -188,6 +235,8 @@ const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
 		p.currentStats.seasonFraction = teamInfo?.seasonFraction ?? 1;
 		p.currentStats.teamGp = teamInfo?.gp ?? 0;
 		p.currentStats.winp = teamInfo?.winp ?? 0;
+
+		p.scores = {};
 	}
 
 	// Add fracWS for basketball current season
@@ -305,7 +354,7 @@ const filterPlayersForAward = (
 
 			// Must have stats last year!
 			const oldStatsAll = p.stats.filter(
-				(ps: { season: number }) => ps.season === p.currentStats.season - 1,
+				(ps) => ps.season === p.currentStats.season - 1,
 			);
 
 			const oldStats = oldStatsAll.at(-1);
@@ -348,7 +397,11 @@ export const processAwards = async ({
 	numPlayersPerIndividualAward: number;
 	season: number;
 }) => {
-	const players = await getPlayers(season);
+	const statRanges = new Set(
+		awards.map((award) => award.statRange ?? "regularSeason"),
+	);
+
+	const players = await getPlayers(season, statRanges);
 
 	const formulaEvaluators: Record<
 		string,
@@ -361,7 +414,6 @@ export const processAwards = async ({
 	}
 
 	for (const p of players) {
-		p.scores = {};
 		for (const award of awards) {
 			const formula = award.formulaByPos?.[p.pos] ?? award.formula;
 
@@ -386,8 +438,8 @@ export const processAwards = async ({
 						? ROUGH_MPG_NEEDED_FOR_MIP * getMipFactor(season)
 						: ROUGH_MPG_NEEDED_FOR_MIP;
 				const oldSeasonScores = p.stats
-					.filter((ps: { season: number }) => ps.season < p.currentStats.season)
-					.filter((ps: { gp: number; min: number }) => {
+					.filter((ps) => ps.season < p.currentStats.season)
+					.filter((ps) => {
 						if (minCutoff === undefined) {
 							// Must have palyed in half of team's games last year
 							return ps.gp / p.teamInfo.gp >= GP_FRACTION_NEEDED_FOR_MIP;
@@ -396,7 +448,7 @@ export const processAwards = async ({
 						return ps.min * ps.gp >= minCutoff / 2;
 					})
 					.map((ps: any) => evaluate(ps));
-				const prevScore = oldSeasonScores.at(-1);
+				const prevScore = oldSeasonScores.at(-1)!;
 
 				// Include prevSeasonScore because minCutoff could result in that not being included in oldSeasonScores
 				const maxScore = Math.max(...oldSeasonScores);
@@ -472,7 +524,7 @@ export const processAwards = async ({
 				filteredPlayers,
 				(p) => {
 					const formula = award.formulaByPos?.[p.pos] ?? award.formula;
-					return p.scores[formula];
+					return p.scores[formula] ?? -Infinity;
 				},
 				"desc",
 			);
@@ -484,7 +536,7 @@ export const processAwards = async ({
 					.slice(0, numPlayersPerIndividualAward)
 					.map((p) => {
 						return {
-							pid: p.pid as number,
+							pid: p.pid,
 						};
 					});
 				realizedAwards.push({
@@ -616,7 +668,7 @@ export const processAwards = async ({
 							.slice(0, numTeams * TEAM_AWARD_INFO.numPlayersPerTeam)
 							.map((p) => {
 								return {
-									pid: p.pid as number,
+									pid: p.pid,
 								};
 							}),
 						TEAM_AWARD_INFO.numPlayersPerTeam,

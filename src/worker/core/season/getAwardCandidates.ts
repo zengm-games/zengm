@@ -112,7 +112,7 @@ const getAwardCandidates = async (season: number) => {
 					currentStats: {
 						...p.currentStats,
 						score: p.scores[formula],
-					},
+					} as Record<string, any>,
 				};
 			}),
 			stats: [...stats, "score"],

@@ -1,6 +1,7 @@
 import { bySport } from "../../../common/sportFunctions.ts";
 import type {
 	Award2,
+	AwardPlayer2,
 	Awards2,
 	GameAttributesLeague,
 } from "../../../common/types.ts";
@@ -9,9 +10,16 @@ import { idb } from "../../db/index.ts";
 import g from "../../util/g.ts";
 import { processAwards } from "./doAwards.ts";
 
-const persistedAwardsToAwardSetting = (
-	persistedAwards: Awards2,
-): GameAttributesLeague["awards"] => {
+const hashPlayoffSeries = (group: { tids: Readonly<[number, number]> }) => {
+	return JSON.stringify(group.tids);
+};
+
+const persistedAwardsToAwardSetting = (persistedAwards: Awards2) => {
+	const statOverridesByMatchup: Record<
+		string,
+		Record<number, AwardPlayer2["statOverrides"]>
+	> = {};
+
 	const awards: GameAttributesLeague["awards"] = [];
 
 	const seenShortNames = new Set();
@@ -24,6 +32,19 @@ const persistedAwardsToAwardSetting = (
 		seenShortNames.add(persistedAward.shortName);
 
 		const group = persistedAward.group;
+
+		if (
+			group?.type === "playoffSeries" &&
+			persistedAward.numTeams === undefined
+		) {
+			const matchupKey = hashPlayoffSeries(group);
+			statOverridesByMatchup[matchupKey] = {};
+			for (const p of persistedAward.winner) {
+				if (p.statOverrides) {
+					statOverridesByMatchup[matchupKey][p.pid] = p.statOverrides;
+				}
+			}
+		}
 
 		const award: GameAttributesLeague["awards"][number] & {
 			winner?: Awards2["awards"][number]["winner"];
@@ -38,29 +59,35 @@ const persistedAwardsToAwardSetting = (
 		awards.push(award);
 	}
 
-	return awards;
+	return { awards, statOverridesByMatchup };
 };
 
 const getAwards = async (season: number) => {
 	const persistedAwards = await idb.getCopy.awards({ season });
 
 	let awards;
+	let statOverridesByMatchup;
 	if (persistedAwards) {
-		awards = persistedAwardsToAwardSetting(persistedAwards);
+		const output = persistedAwardsToAwardSetting(persistedAwards);
+		awards = output.awards;
+		statOverridesByMatchup = output.statOverridesByMatchup;
 	} else {
 		// Either the current season, or some past season where no awards are in database so might as well show current awards
 		awards = g.get("awards");
 	}
 
-	return awards.filter(
-		(award) =>
-			// award.numTeams === undefined && typeof award.statRange !== "number",
-			award.numTeams === undefined,
-	);
+	return {
+		awards: awards.filter(
+			(award) =>
+				// award.numTeams === undefined && typeof award.statRange !== "number",
+				award.numTeams === undefined,
+		),
+		statOverridesByMatchup,
+	};
 };
 
 const getAwardCandidates = async (season: number) => {
-	const awards = await getAwards(season);
+	const { awards, statOverridesByMatchup } = await getAwards(season);
 
 	const { realizedAwards, players } = await processAwards({
 		awards,
@@ -110,6 +137,13 @@ const getAwardCandidates = async (season: number) => {
 
 				const statRange = award.statRange ?? "regularSeason";
 
+				let statOverrides;
+				if (statOverridesByMatchup && award.group?.type === "playoffSeries") {
+					// Find statOverrides values from original awards, if possible. Otherwise we won't have any stats to display for playoff series awards if box scores are deleted
+					const matchupKey = hashPlayoffSeries(award.group);
+					statOverrides = statOverridesByMatchup[matchupKey]?.[p2.pid];
+				}
+
 				const p = playersByPid[p2.pid]!;
 				const formula = award.formulaByPos?.[p.pos] ?? award.formula;
 				return {
@@ -120,6 +154,7 @@ const getAwardCandidates = async (season: number) => {
 					} as {
 						score: number | undefined;
 					} & (typeof p)["currentStats"]["regularSeason"],
+					statOverrides,
 					opoyOverride: p2.opoyOverride,
 				};
 			}),

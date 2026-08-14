@@ -165,7 +165,10 @@ const AwardRaces = ({
 								}
 
 								return ps
-									? helpers.roundStat(p.statOverrides?.[stat] ?? ps[stat], stat)
+									? helpers.roundStat(
+											p.statOverrides ? p.statOverrides[stat] : ps[stat],
+											stat,
+										)
 									: null;
 							});
 							data.push(...statsRow);

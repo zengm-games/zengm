@@ -140,7 +140,7 @@ const getAwardCandidates = async (season: number) => {
 				return {
 					...p,
 					currentStats: {
-						...p.currentStats[statRange],
+						...(p.currentStats[statRange] ?? p.currentStats.regularSeason),
 						score: p.scores[statRange]?.[formula],
 					} as {
 						score: number | undefined;

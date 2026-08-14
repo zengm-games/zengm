@@ -178,7 +178,7 @@ const History = (props: View<"history">) => {
 							<h2>League Champs</h2>
 							{champ ? (
 								<div>
-									<p>
+									<div className="mb-3">
 										<span
 											className={
 												champ.tid === userTid ? "table-info" : undefined
@@ -200,11 +200,11 @@ const History = (props: View<"history">) => {
 										<a href={helpers.leagueUrl(["playoffs", season])}>
 											Playoff bracket
 										</a>
-									</p>
+									</div>
 									{awards.individualAwardsPlayoffs.map((award, i) => {
 										return (
 											<React.Fragment key={i}>
-												<p>
+												<div className="mb-3">
 													{award.name}:{" "}
 													{award.winner ? (
 														<Winner
@@ -216,18 +216,18 @@ const History = (props: View<"history">) => {
 													) : (
 														"???"
 													)}
-												</p>
+												</div>
 											</React.Fragment>
 										);
 									})}
 								</div>
 							) : (
-								<p>???</p>
+								<div className="mb-3">???</div>
 							)}
 							<h2>Best Record</h2>
 							{Array.from(awards.bestRecordConfs.entries()).map(([cid, t]) =>
 								t ? (
-									<p key={cid}>
+									<div key={cid} className="mb-3">
 										{confs[cid]?.name}:<br />
 										<span
 											className={t.tid === userTid ? "table-info" : undefined}
@@ -244,7 +244,7 @@ const History = (props: View<"history">) => {
 											({helpers.formatRecord(t.seasonAttrs)})
 										</span>
 										<br />
-									</p>
+									</div>
 								) : null,
 							)}
 						</div>
@@ -253,7 +253,7 @@ const History = (props: View<"history">) => {
 								return (
 									<React.Fragment key={i}>
 										<h2>{award.name}</h2>
-										<p>
+										<div className="mb-3">
 											{award.winner ? (
 												<Winner
 													award={award}
@@ -264,7 +264,7 @@ const History = (props: View<"history">) => {
 											) : (
 												"???"
 											)}
-										</p>
+										</div>
 									</React.Fragment>
 								);
 							})}

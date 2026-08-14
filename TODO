@@ -30,9 +30,10 @@ custom awards
 - stats range (regular season, playoffs, semifinals, finals, combined)
   - test populate regularSeason with playoffs based on usePlayoffStatsAsRegularSeason
   - test combined statRange - might work already
-  - playoff award in award races should show no candidates yet during regular season
+  - playoff or series award in award races should show no candidates yet during regular season
   - playoff series
     - save stats in object
+      - how to know which ones we need? showStats I guess
       - use on season summary
       - use on award races
     - how to handle non-finals rounds having >1 award

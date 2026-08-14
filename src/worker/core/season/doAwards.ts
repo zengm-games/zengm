@@ -39,6 +39,8 @@ import {
 import { getPosByGpF } from "./doAwards.baseball.ts";
 import stats from "../player/stats.ts";
 import fastDeepEqual from "fast-deep-equal";
+import player from "../player/index.ts";
+import { SKIP_PLAYER_STATS } from "../game/loadTeams.ts";
 
 const AWARD_STATS = [
 	...(isSport("basketball") ? [] : ["keyStats"]),
@@ -163,10 +165,7 @@ const getProcessedPlayers = async (
 	return { players, usePlayoffStatsAsRegularSeason };
 };
 
-const getPlayoffSeriesStats = async (
-	season: number,
-	seriesIndex: number,
-): Promise<Record<number, StatsRow> | undefined> => {
+const getPlayoffSeriesStats = async (season: number, seriesIndex: number) => {
 	console.log("getPlayoffSeriesStats", season, seriesIndex);
 	const playoffSeries = await idb.getCopy.playoffSeries(
 		{ season },
@@ -197,13 +196,35 @@ const getPlayoffSeriesStats = async (
 	}
 	console.log("games", games);
 
-	/*const row = {
-		abbrev: ,
-		tid: ,
-		jerseyNumber: ,
-		season,
-		playoffs: "playoffSeries",
-	};*/
+	const rowsByPid: Record<number, StatsRow> = {};
+
+	for (const game of games) {
+		for (const t of game.teams) {
+			for (const p of t.players) {
+				let row: StatsRow | undefined = rowsByPid[p.pid];
+				if (!row) {
+					row = {
+						abbrev: "?????",
+						jerseyNumber: p.jerseyNumber,
+						playoffs: "playoffSeries",
+						season,
+						tid: t.tid,
+					};
+					rowsByPid[p.pid] = row;
+				}
+
+				for (const key of player.stats.raw) {
+					if (!SKIP_PLAYER_STATS.has(key) && !key.startsWith("opp")) {
+						row[key] ??= 0;
+						row[key] += p[key];
+					}
+				}
+			}
+		}
+	}
+
+	console.log(rowsByPid);
+	return rowsByPid;
 };
 
 const getPlayers = async (season: number, statRanges: Set<StatRange>) => {

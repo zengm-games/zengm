@@ -32,7 +32,8 @@ custom awards
   - test combined statRange - might work already
   - playoff award in award races should show no candidates yet during regular season
   - playoff series show on award races
-    - how to sum up stats? share code with writePlayerStats?
+    - abbrev
+    - teamGp
     - show on season summary? if so need to handle all showStats values.
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update

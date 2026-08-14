@@ -52,6 +52,10 @@ const AWARD_STATS = [
 	// Anything that appears in a player stats table
 	...Object.values(PLAYER_STATS_TABLES).flatMap((x) => x.stats),
 ];
+const AWARD_STATS_ALL = [...AWARD_STATS, "seasonFraction", "teamGp", "winp"];
+if (isSport("basketball")) {
+	AWARD_STATS_ALL.push("wsFraction");
+}
 
 const PLAYOFF_SERIES_AWARD_STATS_RAW = player.stats.raw.filter(
 	(key) => !SKIP_PLAYER_STATS.has(key) && !key.startsWith("opp"),
@@ -63,6 +67,7 @@ const PLAYOFF_SERIES_AWARD_STATS = [
 	...PLAYOFF_SERIES_AWARD_STATS_RAW,
 	...PLAYOFF_SERIES_AWARD_STATS_DERIVED,
 ];
+const PLAYOFF_SERIES_AWARD_STATS_ALL = [...PLAYOFF_SERIES_AWARD_STATS, "won"];
 
 type StatRange =
 	| NonNullable<AwardInfoIndividual["statRange"]>
@@ -200,7 +205,13 @@ const getPlayoffSeriesStats = async (season: number, seriesIndex: number) => {
 
 	const gids = [];
 
+	const winningTids = new Set();
 	for (const series of roundSeries) {
+		if (!series.away || series.home.won > series.away.won) {
+			winningTids.add(series.home.tid);
+		} else if (series.away.won > series.home.won) {
+			winningTids.add(series.away.tid);
+		}
 		if (series.gids) {
 			gids.push(...series.gids);
 		}
@@ -248,7 +259,8 @@ const getPlayoffSeriesStats = async (season: number, seriesIndex: number) => {
 	for (const [pid, { info, rawStats }] of tempRowsByPid) {
 		rowsByPid[pid] = {
 			...info,
-			...processPlayerStats(rawStats, PLAYOFF_SERIES_AWARD_STATS),
+			...processPlayerStats(rawStats, PLAYOFF_SERIES_AWARD_STATS, "perGame"),
+			won: 1,
 		};
 	}
 
@@ -598,13 +610,8 @@ export const processAwards = async ({
 
 	const formulaEvaluators: Record<
 		string,
-		FormulaEvaluator<typeof AWARD_STATS>["evaluate"]
+		FormulaEvaluator<typeof AWARD_STATS_ALL>["evaluate"]
 	> = {};
-
-	const formulaStats = [...AWARD_STATS, "seasonFraction", "teamGp", "winp"];
-	if (isSport("basketball")) {
-		formulaStats.push("wsFraction");
-	}
 
 	for (const p of players) {
 		for (const award of awards) {
@@ -620,7 +627,12 @@ export const processAwards = async ({
 			}
 
 			if (!formulaEvaluators[formula]) {
-				const formulaEvaluator = new FormulaEvaluator(formula, formulaStats);
+				const formulaEvaluator = new FormulaEvaluator(
+					formula,
+					typeof statRange === "number"
+						? PLAYOFF_SERIES_AWARD_STATS_ALL
+						: AWARD_STATS_ALL,
+				);
 				formulaEvaluators[formula] =
 					formulaEvaluator.evaluate.bind(formulaEvaluator);
 			}
@@ -907,7 +919,12 @@ export const processAwards = async ({
 				const mvpAward = mvpAwards[0]!.award as AwardInfoIndividual;
 				const mvpWinner = mvpAward.winner[0];
 				const opoyWinner = opoyAward.winner[0];
-				if (mvpWinner && opoyWinner) {
+
+				const mvpPlayoffSeries = typeof mvpAward.statRange === "number";
+				const opoyPlayoffSeries = typeof opoyAward.statRange === "number";
+
+				// Both must have winner and either both or neither must be a playoff series (for common stats in formula)
+				if (mvpWinner && opoyWinner && mvpPlayoffSeries === opoyPlayoffSeries) {
 					const playersByPid = groupByUnique(players, "pid");
 					const mvp = playersByPid[mvpWinner.pid];
 					const opoy = playersByPid[opoyWinner.pid];
@@ -915,7 +932,9 @@ export const processAwards = async ({
 						// MVP is a QB - if that QB is a significantly better offensive player (by opoyFormula) than the initial OPOY, then bump them to the top of the list
 						const formulaEvaluator = new FormulaEvaluator(
 							opoyAward.opoyFormula,
-							formulaStats,
+							opoyPlayoffSeries
+								? PLAYOFF_SERIES_AWARD_STATS_ALL
+								: AWARD_STATS_ALL,
 						);
 
 						const mvpCurrentStats =

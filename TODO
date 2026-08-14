@@ -31,12 +31,14 @@ custom awards
   - test populate regularSeason with playoffs based on usePlayoffStatsAsRegularSeason
   - test combined statRange - might work already
   - playoff award in award races should show no candidates yet during regular season
-  - playoff series show on award races
-    - abbrev
-    - add any derived stats? convert to per game?
-      - maybe can know from statFunctions, then just pass through all stats (no extra props, keep separate) and then assemble
-      - what about ones based on adv stats that don't exist? will they just be 0?
-    - show on season summary? if so need to handle all showStats values.
+  - playoff series
+    - how to handle non-finals rounds having >1 award
+      - key in AwardRaces can't assume conf/div specifies uniqueness
+    - show on award races
+      - abbrev
+      - what about advanced stats?
+    - show on season summary
+    - test in all sports
 - 2p/2pa/2pa in formula
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update

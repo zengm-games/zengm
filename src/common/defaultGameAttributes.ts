@@ -425,14 +425,14 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 		{
 			shortName: "FMVP",
 			name: "Finals MVP",
-			formula: "ws",
+			formula: "gmsc * (1 + 0.75*won)",
 			showStats: "offense",
 			statRange: -1,
 		},
 		{
 			shortName: "SFMVP",
 			name: "Semifinals MVP",
-			formula: "ws",
+			formula: "gmsc * (1 + 0.75*won)",
 			showStats: "offense",
 			statRange: -2,
 		},

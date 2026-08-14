@@ -8,7 +8,9 @@ custom awards
   - where?
     - dedicated page
     - league settings modal
-    - award races (but what about teams and playoffs?)
+    - award races
+      - but what about teams and playoffs?
+      - what about editing after the current season has ended?
   - docs
     - explain seasonFraction scaling
       - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
@@ -25,12 +27,13 @@ custom awards
     - test with changing awards
     - test with div/conf awards (should show in separate columns)
   - 0 regular season games, use playoff stats for regular season awards
-- fields
-  - stats range (regular season, playoffs, semifinals, finals, combined)
-    - test populate regularSeason with playoffs based on usePlayoffStatsAsRegularSeason
-    - test combined statRange - might work already
-    - playoff award in award races should show no candidates yet during regular season
-    - playoff series show on award races
+- stats range (regular season, playoffs, semifinals, finals, combined)
+  - test populate regularSeason with playoffs based on usePlayoffStatsAsRegularSeason
+  - test combined statRange - might work already
+  - playoff award in award races should show no candidates yet during regular season
+  - playoff series show on award races
+    - how to sum up stats? share code with writePlayerStats?
+    - show on season summary? if so need to handle all showStats values.
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - groupAwards

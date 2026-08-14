@@ -52,7 +52,8 @@ const getAwards = async (season: number) => {
 
 	return awards.filter(
 		(award) =>
-			award.numTeams === undefined && typeof award.statRange !== "number",
+			// award.numTeams === undefined && typeof award.statRange !== "number",
+			award.numTeams === undefined,
 	);
 };
 

@@ -2,19 +2,26 @@ import { getAll, idb } from "../index.ts";
 import { mergeByPk } from "./helpers.ts";
 import type { Game, GetCopyType } from "../../../common/types.ts";
 import { helpers } from "../../util/index.ts";
+import { getAllByNumericPrimaryKeys } from "./players.ts";
 
 const getCopies = async (
 	{
 		gid,
+		gids,
 		note,
 		season,
 	}: {
 		gid?: number;
+		gids?: number[];
 		note?: boolean;
 		season?: number;
 	} = {},
 	type?: GetCopyType,
 ): Promise<Game[]> => {
+	if (gids?.length === 1) {
+		gid = gids[0];
+	}
+
 	if (season !== undefined) {
 		return mergeByPk(
 			await getAll(
@@ -54,6 +61,15 @@ const getCopies = async (
 			"games",
 			type,
 		).filter((row) => row.noteBool === 1);
+	}
+
+	if (gids !== undefined) {
+		return getAllByNumericPrimaryKeys({
+			keys: gids,
+			primaryKey: "gid",
+			storeName: "games",
+			type,
+		});
 	}
 
 	return mergeByPk(

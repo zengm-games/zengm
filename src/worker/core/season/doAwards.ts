@@ -56,7 +56,7 @@ type StatsRow = {
 	tid: number;
 	jerseyNumber: string;
 	season: number;
-	playoffs: boolean | "combined";
+	playoffs: boolean | "combined" | "playoffSeries";
 	[key: string]: any;
 };
 
@@ -163,6 +163,49 @@ const getProcessedPlayers = async (
 	return { players, usePlayoffStatsAsRegularSeason };
 };
 
+const getPlayoffSeriesStats = async (
+	season: number,
+	seriesIndex: number,
+): Promise<Record<number, StatsRow> | undefined> => {
+	console.log("getPlayoffSeriesStats", season, seriesIndex);
+	const playoffSeries = await idb.getCopy.playoffSeries(
+		{ season },
+		"noCopyCache",
+	);
+	if (!playoffSeries) {
+		return;
+	}
+
+	const roundSeries = playoffSeries.series.at(seriesIndex);
+	if (!roundSeries) {
+		return;
+	}
+
+	const gids = [];
+
+	for (const series of roundSeries) {
+		if (series.gids) {
+			gids.push(...series.gids);
+		}
+	}
+
+	const games = await idb.getCopies.games({ gids }, "noCopyCache");
+
+	// Some games couldn't be found, not worth running awards
+	if (games.length !== gids.length) {
+		return;
+	}
+	console.log("games", games);
+
+	/*const row = {
+		abbrev: ,
+		tid: ,
+		jerseyNumber: ,
+		season,
+		playoffs: "playoffSeries",
+	};*/
+};
+
 const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 	let playersAll;
 	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
@@ -222,10 +265,25 @@ const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 		};
 	}
 
+	// First index is statRange, second is pid
+	const playoffSeriesStats: Record<number, Record<number, StatsRow>> = {};
+	for (const statRange of statRanges) {
+		if (typeof statRange === "number") {
+			const stats = await getPlayoffSeriesStats(season, statRange);
+			if (stats) {
+				playoffSeriesStats[statRange] = stats;
+			}
+		}
+	}
+
 	for (const p of players) {
 		p.currentStats = {} as any;
 		for (const statRange of statRanges) {
 			if (typeof statRange === "number") {
+				const row = playoffSeriesStats[statRange]?.[p.pid];
+				if (row) {
+					p.currentStats[statRange] = row as any;
+				}
 			} else if (statRange === "playoffs") {
 				const row = p.stats.findLast(
 					(row) => row.season === season && row.playoffs === true,

@@ -32,10 +32,13 @@ custom awards
   - test combined statRange - might work already
   - playoff award in award races should show no candidates yet during regular season
   - playoff series
+    - save stats in object
+      - use on season summary
+      - use on award races
     - how to handle non-finals rounds having >1 award
-      - key in AwardRaces can't assume conf/div specifies uniqueness
+      - saving awards
+      - AwardRaces
     - show on award races
-      - abbrev
       - what about advanced stats?
     - show on season summary
     - test in all sports

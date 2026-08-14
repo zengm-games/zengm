@@ -188,7 +188,11 @@ const getProcessedPlayers = async (
 	return { players, usePlayoffStatsAsRegularSeason };
 };
 
-const getPlayoffSeriesStats = async (season: number, seriesIndex: number) => {
+const getPlayoffSeriesStats = async (
+	season: number,
+	seriesIndex: number,
+	abbrevsByTid: Map<number, string>,
+) => {
 	console.log("getPlayoffSeriesStats", season, seriesIndex);
 	const playoffSeries = await idb.getCopy.playoffSeries(
 		{ season },
@@ -238,7 +242,7 @@ const getPlayoffSeriesStats = async (season: number, seriesIndex: number) => {
 			for (const p of t.players) {
 				const row = tempRowsByPid.getOrInsert(p.pid, {
 					info: {
-						abbrev: "?????",
+						abbrev: abbrevsByTid.get(t.tid) ?? "???",
 						jerseyNumber: p.jerseyNumber,
 						playoffs: "playoffSeries",
 						season,
@@ -260,7 +264,7 @@ const getPlayoffSeriesStats = async (season: number, seriesIndex: number) => {
 		rowsByPid[pid] = {
 			...info,
 			...processPlayerStats(rawStats, PLAYOFF_SERIES_AWARD_STATS, "perGame"),
-			won: 1,
+			won: winningTids.has(info.tid),
 		};
 	}
 
@@ -331,7 +335,15 @@ const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 	const playoffSeriesStats: Record<number, Record<number, StatsRow>> = {};
 	for (const statRange of statRanges) {
 		if (typeof statRange === "number") {
-			const stats = await getPlayoffSeriesStats(season, statRange);
+			const abbrevsByTid = new Map<number, string>();
+			for (const row of teamSeasons) {
+				abbrevsByTid.set(row.tid, row.abbrev);
+			}
+			const stats = await getPlayoffSeriesStats(
+				season,
+				statRange,
+				abbrevsByTid,
+			);
 			if (stats) {
 				playoffSeriesStats[statRange] = stats;
 			}

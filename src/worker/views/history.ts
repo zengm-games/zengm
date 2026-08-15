@@ -130,9 +130,6 @@ const updateHistory = async (
 
 			// Could have asked for "abbrev" in playersPlus, but we already have the teams in memory...
 			const t = teamsByTid[p2.stats.tid];
-			if (!t) {
-				return;
-			}
 
 			return {
 				pid,
@@ -141,7 +138,7 @@ const updateHistory = async (
 				statOverrides,
 				stats: {
 					...p2.stats,
-					abbrev: t.seasonAttrs.abbrev,
+					abbrev: t?.seasonAttrs.abbrev ?? "???",
 				},
 			};
 		};

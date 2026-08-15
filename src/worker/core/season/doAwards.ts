@@ -807,6 +807,8 @@ export const processAwards = async ({
 				hasOpoy = true;
 			}
 
+			const statRange = award.statRange ?? "regularSeason";
+
 			let filteredPlayers = baseFilteredPlayers;
 			const group = award.group;
 			if (group) {
@@ -819,17 +821,14 @@ export const processAwards = async ({
 						(p) => p.teamInfo.cid === group.cid,
 					);
 				} else {
-					filteredPlayers = filteredPlayers.filter((p) =>
-						group.tids.includes(
-							p.currentStats.playoffs?.tid ??
-								p.currentStats.regularSeason?.tid ??
-								-1,
-						),
-					);
+					filteredPlayers = filteredPlayers.filter((p) => {
+						// This is a playoff series, so look for playoff series tid, in case player was somehow traded/moved to the playoff team and didn't record a regular season stat with them
+						const currentStats = p.currentStats[statRange];
+						return currentStats && group.tids.includes(currentStats.tid);
+					});
 				}
 			}
 
-			const statRange = award.statRange ?? "regularSeason";
 			const getScore = (p: (typeof players)[number]) => {
 				// Use statOverridesByMatchup score if it exists, for old Award Races
 				if (statOverridesByMatchup && group?.type == "playoffSeries") {

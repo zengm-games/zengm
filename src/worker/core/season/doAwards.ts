@@ -172,7 +172,7 @@ const getProcessedPlayers = async (
 		scores: Partial<Record<StatRange, Record<string, number>>>;
 	})[];
 
-	// Only keep players who actually have a stats entry for the latest season
+	// Only keep players who actually have a stats entry for the latest season. This is just a rough filter, there will still be some players who are ineligible for some award based on statRange - for those, see score of -Infinity and how that is handled.
 	players = players.filter((p) => p.stats.some((ps) => ps.season === season));
 
 	// This can happen if there are 0 games in the regular season - in that case, might as well look for playoff stats too
@@ -565,7 +565,7 @@ const filterPlayersForAward = (
 	if (award.mip) {
 		const statRange = award.statRange ?? "regularSeason";
 		const statRangeFactor =
-			statRange === "playoffs" ? 0.1 : statRange === "combined" ? 1.1 : 1;
+			statRange === "playoffs" ? 0.01 : statRange === "combined" ? 1.1 : 1;
 
 		filteredPlayers = filteredPlayers.filter((p) => {
 			// Too many second year players get picked, when it's expected for them to improve (undrafted and second round picks can still win)
@@ -859,6 +859,11 @@ export const processAwards = async ({
 				const winner = sortedPlayers
 					.slice(0, numPlayersPerIndividualAward)
 					.map((p) => {
+						const score = getScore(p);
+						if (score === -Infinity) {
+							return;
+						}
+
 						if (group?.type === "playoffSeries") {
 							// Save playoff series stats if possible
 							const currentStats =
@@ -872,7 +877,7 @@ export const processAwards = async ({
 								let statOverrides: AwardPlayer2["statOverrides"];
 								if (currentStats !== undefined) {
 									statOverrides = {
-										score: getScore(p),
+										score,
 									};
 									for (const stat of stats) {
 										if (currentStats[stat] !== undefined) {
@@ -895,7 +900,8 @@ export const processAwards = async ({
 						return {
 							pid: p.pid,
 						};
-					});
+					})
+					.filter((row) => row !== undefined);
 				realizedAwards.push({
 					award: omit(
 						{
@@ -974,6 +980,11 @@ export const processAwards = async ({
 					}
 
 					for (const p of sortedPlayers) {
+						const score = getScore(p);
+						if (score === -Infinity) {
+							continue;
+						}
+
 						const pos = bySport({
 							baseball: () => {
 								if (p.pos === "SP" || p.pos === "RP") {

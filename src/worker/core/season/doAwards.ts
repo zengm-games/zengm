@@ -109,7 +109,7 @@ const getProcessedPlayers = async (
 	const playoffs = statRanges.has("playoffs");
 	const combined = statRanges.has("combined");
 
-	let players = (await idb.getCopies.playersPlus(playersAll, {
+	const players = (await idb.getCopies.playersPlus(playersAll, {
 		attrs: [
 			"pid",
 			"name",
@@ -159,8 +159,7 @@ const getProcessedPlayers = async (
 		scores: Partial<Record<StatRange, Record<string, number>>>;
 	})[];
 
-	// Only keep players who actually have a stats entry for the latest season. This is just a rough filter, there will still be some players who are ineligible for some award based on statRange - for those, see score of -Infinity and how that is handled.
-	players = players.filter((p) => p.stats.some((ps) => ps.season === season));
+	// Used to filter out some players here with no stats, but even a player with no stats could have some relevant awards (like if there are no awards for regularSeason or playoffs but there are for playoff series, series stats are loaded elsewhere)
 
 	return players;
 };
@@ -620,7 +619,6 @@ export const processAwards = async ({
 	const statRanges = new Set(
 		awards.map((award) => award.statRange ?? "regularSeason"),
 	);
-	statRanges.add("regularSeason");
 
 	const { players, teamInfos } = await getPlayers(season, statRanges);
 

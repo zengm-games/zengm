@@ -49,4 +49,9 @@ describe("min/max", () => {
 			formulaEvaluator.evaluate({ x: 5, y: 6, z: 7 });
 		}, "min/max requires exactly two parameters");
 	});
+
+	test("variable starting with a number", () => {
+		const formulaEvaluator = new FormulaEvaluator("2pp+5", ["2pp"]);
+		assert.equal(formulaEvaluator.evaluate({ "2pp": 4 }), 9);
+	});
 });

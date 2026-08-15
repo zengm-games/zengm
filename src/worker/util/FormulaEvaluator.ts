@@ -10,7 +10,6 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { isSport } from "../../common/sportFunctions.ts";
 import helpers from "./helpers.ts";
 
 const BINARY_MINUS = "-";
@@ -119,8 +118,13 @@ const parseUnaryMinus = (string: string) => {
 const shuntingYard = (string: string) => {
 	const tokens = string.match(
 		new RegExp(
-			String.raw`\d+(?:[\.]\d+)?(?:[eE]\d+)?|[(),]` +
-				String.raw`|${operatorsString}|[a-zA-Z\d]+`,
+			// A number must start with a digit and contain only characters
+			// that can actually be part of a number. Variables can also
+			// contain digits, including at the beginning.
+			String.raw`\d+(?:\.\d+)?(?:[eE][+-]?\d+)?(?![a-zA-Z\d])` +
+				String.raw`|[(),]` +
+				String.raw`|${operatorsString}` +
+				String.raw`|[a-zA-Z\d]+`,
 			"g",
 		),
 	);
@@ -182,25 +186,9 @@ const shuntingYard = (string: string) => {
 			if ("(" === aux || ")" === aux) {
 				throw new Error("Mismatched parentheses");
 			}
+
 			output.push(aux);
 		}
-	}
-
-	// Hack for 2b and 3b in baseball
-	if (isSport("baseball")) {
-		const output2 = [];
-		for (let i = 0; i < output.length; i++) {
-			if (
-				(output[i] === "2" || output[i] === "3") &&
-				output[i + 1]?.startsWith("b")
-			) {
-				output2.push(`${output[i]}${output[i + 1]}`);
-				i += 1;
-			} else {
-				output2.push(output[i]!);
-			}
-		}
-		return output2;
 	}
 
 	return output;

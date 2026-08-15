@@ -36,8 +36,8 @@ custom awards
 - stats range (regular season, playoffs, semifinals, finals, combined)
   - test populate regularSeason with playoffs based on usePlayoffStatsAsRegularSeason
   - playoff series
-    - p.teamInfo references regularSeason, does that matter?
-      - teamInfo.did and teamInfo.cid will be wrong in some cases (switching teams right at start of playoffs), need to do it more carefully (use statRange tid and look up)
+    - move p.teamInfo a separate object completely, like cidsByTid and didsByTid, maybe combine all into one?
+      - anything else in teamInfo to do that for?
     - test in all sports
       - baseball needs fakeWAR
       - football

@@ -159,8 +159,7 @@ const getProcessedPlayers = async (
 		currentStats: Partial<Record<StatRange, CurrentStats>>; // Would be nice to assume currentStats.regularSeason is always defined, but it's possible for a player to play in the playoffs but not the regular season...
 		age: number;
 		teamInfo: {
-			cid: number | undefined;
-			did: number | undefined;
+			// This is regular season GP - be careful about putting anything else here, cause it might need to change depending on statRange!
 			gp: number;
 		};
 		scores: Partial<Record<StatRange, Record<string, number>>>;
@@ -294,11 +293,11 @@ const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 		},
 		"noCopyCache",
 	);
+	const cidsByTid: Record<number, number> = {};
+	const didsByTid: Record<number, number> = {};
 	const teamInfos: Record<
 		number,
 		{
-			cid: number;
-			did: number;
 			gp: number;
 			seasonFraction: number;
 			winp: number;
@@ -316,12 +315,13 @@ const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 			seasonFraction = Math.min(1, gp / g.get("numGames"));
 		}
 		teamInfos[teamSeason.tid] = {
-			cid: teamSeason.cid,
-			did: teamSeason.did,
 			gp,
 			seasonFraction,
 			winp: helpers.calcWinp(teamSeason),
 		};
+
+		cidsByTid[teamSeason.tid] = teamSeason.cid;
+		didsByTid[teamSeason.tid] = teamSeason.did;
 	}
 
 	// First index is statRange, second is pid
@@ -410,8 +410,6 @@ const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 			? teamInfos[p.currentStats.regularSeason.tid]
 			: undefined;
 		p.teamInfo = {
-			cid: teamInfo?.cid ?? undefined,
-			did: teamInfo?.did ?? undefined,
 			gp: teamInfo?.gp ?? 0,
 		};
 
@@ -462,7 +460,7 @@ const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 		}
 	}
 
-	return players;
+	return { cidsByTid, didsByTid, players };
 };
 
 const ROUGH_MPG_NEEDED_FOR_MIP = bySport({
@@ -477,7 +475,7 @@ const getMipFactor = (season: number) =>
 	g.get("numGames", season) * helpers.quarterLengthFactor();
 
 const filterPlayersForAward = (
-	players: Awaited<ReturnType<typeof getPlayers>>,
+	players: Awaited<ReturnType<typeof getPlayers>>["players"],
 	award: GameAttributesLeague["awards"][number],
 	season: number,
 ) => {
@@ -645,7 +643,10 @@ export const processAwards = async ({
 	);
 	statRanges.add("regularSeason");
 
-	const players = await getPlayers(season, statRanges);
+	const { cidsByTid, didsByTid, players } = await getPlayers(
+		season,
+		statRanges,
+	);
 
 	const formulaEvaluators: Record<
 		string,
@@ -816,13 +817,23 @@ export const processAwards = async ({
 			const group = award.group;
 			if (group) {
 				if (group.type === "div") {
-					filteredPlayers = filteredPlayers.filter(
-						(p) => p.teamInfo.did === group.did,
-					);
+					filteredPlayers = filteredPlayers.filter((p) => {
+						const currentStats = p.currentStats[statRange];
+						if (!currentStats) {
+							return false;
+						}
+						const tid = currentStats.tid;
+						return didsByTid[tid] === group.did;
+					});
 				} else if (group.type === "conf") {
-					filteredPlayers = filteredPlayers.filter(
-						(p) => p.teamInfo.cid === group.cid,
-					);
+					filteredPlayers = filteredPlayers.filter((p) => {
+						const currentStats = p.currentStats[statRange];
+						if (!currentStats) {
+							return false;
+						}
+						const tid = currentStats.tid;
+						return cidsByTid[tid] === group.cid;
+					});
 				} else {
 					filteredPlayers = filteredPlayers.filter((p) => {
 						// This is a playoff series, so look for playoff series tid, in case player was somehow traded/moved to the playoff team and didn't record a regular season stat with them

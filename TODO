@@ -41,6 +41,9 @@ custom awards
       - season summary
       - see also group.tids.includes(p.currentStats.playoffs?.tid ?? p.currentStats.regularSeason?.tid ?? -1)
     - test in all sports
+      - baseball needs fakeWAR
+      - football
+      - hockey
 - 2p/2pa/2pa in formula
 - in doAwards is tid/abbrev from root of player ever used? and other root things
 - ability to add/edit/delete manual awards for player, maybe in player editor

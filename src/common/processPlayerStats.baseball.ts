@@ -181,7 +181,7 @@ export const processStats = (
 	let posIndexesChecked = false;
 	const posIndexes: number[] = [];
 	const initPosIndexes = () => {
-		if (!posIndexesChecked) {
+		if (!posIndexesChecked && row.gpF !== undefined) {
 			for (let i = 0; i < row.gpF.length; i++) {
 				if (row.gpF[i] !== undefined) {
 					posIndexes.push(i);

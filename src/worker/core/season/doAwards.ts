@@ -158,11 +158,7 @@ const getProcessedPlayers = async (
 
 		// Added later in getPlayers
 		pos: string;
-		currentStats: Partial<
-			Record<Exclude<StatRange, "regularSeason">, CurrentStats>
-		> & {
-			regularSeason: CurrentStats;
-		};
+		currentStats: Partial<Record<StatRange, CurrentStats>>; // Would be nice to assume currentStats.regularSeason is always defined, but it's possible for a player to play in the playoffs but not the regular season...
 		age: number;
 		teamInfo: {
 			cid: number | undefined;
@@ -385,9 +381,6 @@ const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 				throw new Error("Should never happen");
 			}
 		}
-		if (!p.currentStats.regularSeason) {
-			throw new Error("Should never happen");
-		}
 
 		p.pos = (
 			p.ratings.findLast((row) => row.season === season) ?? last(p.ratings)
@@ -415,7 +408,9 @@ const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 		// Otherwise it's always the current season
 		p.age = season - p.born.year;
 
-		const teamInfo = teamInfos[p.currentStats.regularSeason.tid];
+		const teamInfo = p.currentStats.regularSeason
+			? teamInfos[p.currentStats.regularSeason.tid]
+			: undefined;
 		p.teamInfo = {
 			cid: teamInfo?.cid ?? undefined,
 			did: teamInfo?.did ?? undefined,
@@ -827,7 +822,11 @@ export const processAwards = async ({
 					);
 				} else {
 					filteredPlayers = filteredPlayers.filter((p) =>
-						group.tids.includes(p.currentStats.regularSeason.tid),
+						group.tids.includes(
+							p.currentStats.playoffs?.tid ??
+								p.currentStats.regularSeason?.tid ??
+								-1,
+						),
 					);
 				}
 			}
@@ -1135,7 +1134,6 @@ type ProcessAwardsReturn = Awaited<ReturnType<typeof processAwards>>;
 const getAwardsByPlayer = (
 	realizedAwards: ProcessAwardsReturn["realizedAwards"],
 	players: ProcessAwardsReturn["players"],
-	season: number,
 ) => {
 	const playersByPid = groupByUnique(players, "pid");
 	const awardsByPlayer: AwardsByPlayer = [];
@@ -1145,6 +1143,8 @@ const getAwardsByPlayer = (
 			shortName: award.shortName,
 			index,
 		};
+
+		const statRange = award.statRange ?? "regularSeason";
 
 		if (award.numTeams === undefined) {
 			for (const [i, pTemp] of award.winner.entries()) {
@@ -1164,9 +1164,15 @@ const getAwardsByPlayer = (
 				}
 
 				const p = playersByPid[pid]!;
+
+				const tid = p.currentStats[statRange]?.tid;
+				if (tid === undefined) {
+					continue;
+				}
+
 				awardsByPlayer.push({
 					pid,
-					tid: p.currentStats.regularSeason.tid,
+					tid,
 					name: p.name,
 					award: {
 						...common,
@@ -1183,9 +1189,15 @@ const getAwardsByPlayer = (
 					}
 					const { pid } = pTemp;
 					const p = playersByPid[pid]!;
+
+					const tid = p.currentStats[statRange]?.tid;
+					if (tid === undefined) {
+						continue;
+					}
+
 					awardsByPlayer.push({
 						pid,
-						tid: p.currentStats.regularSeason.tid,
+						tid,
 						name: p.name,
 						award: {
 							...common,
@@ -1246,7 +1258,7 @@ const doAwards = async (conditions: Conditions) => {
 		statOverridesByMatchup: undefined,
 	});
 
-	const awardsByPlayer = getAwardsByPlayer(realizedAwards, players, season);
+	const awardsByPlayer = getAwardsByPlayer(realizedAwards, players);
 	console.log("awardsByPlayer", awardsByPlayer);
 
 	await leagueLeaders(players, awardsByPlayer);

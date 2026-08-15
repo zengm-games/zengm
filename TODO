@@ -34,6 +34,10 @@ custom awards
   - test populate regularSeason with playoffs based on usePlayoffStatsAsRegularSeason
   - playoff series
     - Need to use playoff tid for playoff series? what if player is traded right before playoffs and never plays in regular season with team. or god mode during playoffs
+      - award notification
+      - award races
+      - season summary
+      - see also group.tids.includes(p.currentStats.playoffs?.tid ?? p.currentStats.regularSeason?.tid ?? -1)
     - test in all sports
 - 2p/2pa/2pa in formula
 - in doAwards is tid/abbrev from root of player ever used? and other root things

@@ -28,10 +28,11 @@ const AwardRaces = ({
 		},
 	});
 
-	const { challengeNoRatings, userTid } = useLocal([
-		"challengeNoRatings",
-		"userTid",
-	]);
+	const {
+		challengeNoRatings,
+		season: currentSeason,
+		userTid,
+	} = useLocal(["challengeNoRatings", "season", "userTid"]);
 
 	const globalCols = getCols(["#", "Name", "Pos", "Age", "Team"]);
 
@@ -83,7 +84,7 @@ const AwardRaces = ({
 						const data: DataTableRow["data"] = [
 							j + 1,
 							wrappedPlayerNameLabels({
-								injury: p.injury,
+								injury: season === currentSeason ? p.injury : undefined,
 								jerseyNumber: ps ? ps.jerseyNumber : undefined,
 								pid: p.pid,
 								season,

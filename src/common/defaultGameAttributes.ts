@@ -388,7 +388,7 @@ export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 		{
 			shortName: "MVP",
 			name: "Most Valuable Player",
-			formula: "2pa",
+			formula: "ewa / 22 + vorp / 32 + wsFraction / 10 + seasonFraction * winp",
 			showStats: "offense",
 			mvp: true,
 		},

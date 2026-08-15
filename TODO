@@ -44,7 +44,6 @@ custom awards
       - baseball needs fakeWAR
       - football
       - hockey
-- in doAwards is tid/abbrev from root of player ever used? and other root things
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - groupAwards

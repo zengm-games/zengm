@@ -117,13 +117,12 @@ const getProcessedPlayers = async (
 			"name",
 			"firstName",
 			"lastName",
-			"tid",
-			"abbrev",
 			"draft",
 			"injury",
 			"born",
 			"watch",
 			"hof",
+			"tid",
 		],
 		ratings: ["pos", "season", "ovr", "dovr", "pot", "skills"],
 		stats: ["abbrev", "tid", "jerseyNumber", "season", ...stats],
@@ -137,15 +136,14 @@ const getProcessedPlayers = async (
 		| "pid"
 		| "firstName"
 		| "lastName"
-		| "tid"
 		| "draft"
 		| "injury"
 		| "born"
 		| "watch"
 		| "hof"
+		| "tid"
 	> & {
 		name: string;
-		abbrev: string;
 		ratings: NonEmptyArray<{
 			pos: string;
 			season: number;

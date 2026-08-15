@@ -97,7 +97,6 @@ const getProcessedPlayers = async (
 	playersAll: Player[],
 	season: number,
 	statRanges: Set<StatRange>,
-	usePlayoffStatsAsRegularSeason: boolean = false,
 ) => {
 	const stats = Array.from(
 		new Set([
@@ -106,9 +105,8 @@ const getProcessedPlayers = async (
 		]),
 	);
 
-	const regularSeason =
-		statRanges.has("regularSeason") && !usePlayoffStatsAsRegularSeason;
-	const playoffs = statRanges.has("playoffs") || usePlayoffStatsAsRegularSeason;
+	const regularSeason = statRanges.has("regularSeason");
+	const playoffs = statRanges.has("playoffs");
 	const combined = statRanges.has("combined");
 
 	let players = (await idb.getCopies.playersPlus(playersAll, {
@@ -164,19 +162,7 @@ const getProcessedPlayers = async (
 	// Only keep players who actually have a stats entry for the latest season. This is just a rough filter, there will still be some players who are ineligible for some award based on statRange - for those, see score of -Infinity and how that is handled.
 	players = players.filter((p) => p.stats.some((ps) => ps.season === season));
 
-	// This can happen if there are 0 games in the regular season - in that case, might as well look for playoff stats too
-	if (
-		regularSeason &&
-		!playoffs &&
-		players.every(
-			(p) =>
-				!p.stats.some((ps) => ps.season === season && ps.playoffs === false),
-		)
-	) {
-		return getProcessedPlayers(playersAll, season, statRanges, true);
-	}
-
-	return { players, usePlayoffStatsAsRegularSeason };
+	return players;
 };
 
 const getPlayoffSeriesStats = async (
@@ -276,11 +262,7 @@ const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 		);
 	}
 
-	const { players, usePlayoffStatsAsRegularSeason } = await getProcessedPlayers(
-		playersAll,
-		season,
-		statRanges,
-	);
+	const players = await getProcessedPlayers(playersAll, season, statRanges);
 
 	// Cache some stuff for later
 	const teamSeasons = await idb.getCopies.teamSeasons(
@@ -355,10 +337,7 @@ const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 				}
 			} else if (statRange === "regularSeason") {
 				const row = p.stats.findLast(
-					(row) =>
-						row.season === season &&
-						(row.playoffs === false ||
-							(usePlayoffStatsAsRegularSeason && row.playoffs === true)),
+					(row) => row.season === season && row.playoffs === false,
 				);
 				if (row) {
 					p.currentStats.regularSeason = row as any;

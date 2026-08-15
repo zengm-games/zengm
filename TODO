@@ -40,6 +40,7 @@ custom awards
   - populate regularSeason with playoffs based on usePlayoffStatsAsRegularSeason for leagues with no regular season games
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
+  - on season summary and various other pages, should still show award winner even if stats are deleted
   - groupAwards
   - awards editor
   - GOAT formula

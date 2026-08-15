@@ -167,6 +167,10 @@ const History = (props: View<"history">) => {
 
 	const { teamAwards1, teamAwards2 } = splitTeamAwards(awards.teamAwards);
 
+	const groupedIndividualAwardsPlayoffs = Object.values(
+		Object.groupBy(awards.individualAwardsPlayoffs, (award) => award.shortName),
+	);
+
 	return (
 		<>
 			<MoreLinks type="awards" page="history" season={season} />
@@ -201,21 +205,31 @@ const History = (props: View<"history">) => {
 											Playoff bracket
 										</a>
 									</div>
-									{awards.individualAwardsPlayoffs.map((award, i) => {
+									{groupedIndividualAwardsPlayoffs.map((groupedAwards, i) => {
+										const firstAward = groupedAwards?.[0];
+										if (!firstAward) {
+											return;
+										}
 										return (
 											<React.Fragment key={i}>
 												<div className="mb-3">
-													{award.name}:{" "}
-													{award.winner ? (
-														<Winner
-															award={award}
-															p={award.winner}
-															season={awards.season}
-															userTid={userTid}
-														/>
-													) : (
-														"???"
+													{helpers.plural(
+														firstAward.name,
+														groupedAwards.length,
 													)}
+													:{" "}
+													{groupedAwards.map((award) => {
+														return award.winner ? (
+															<Winner
+																award={award}
+																p={award.winner}
+																season={awards.season}
+																userTid={userTid}
+															/>
+														) : (
+															"???"
+														);
+													})}
 												</div>
 											</React.Fragment>
 										);

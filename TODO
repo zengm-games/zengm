@@ -45,8 +45,6 @@ custom awards
 - UI to update
   - groupAwards
   - awards editor
-  - season summary
-    - group common series award winners (like SFMVP)
   - GOAT formula
   - achievements
     - check if the award we're looking for is unedited. if so, use it. if not, no achievement.

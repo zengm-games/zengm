@@ -731,6 +731,10 @@ export const processAwards = async ({
 			} else {
 				scores[formula] = currentScore;
 			}
+
+			if (Number.isNaN(scores[formula])) {
+				scores[formula] = -Infinity;
+			}
 		}
 	}
 
@@ -840,7 +844,11 @@ export const processAwards = async ({
 				}
 
 				const formula = award.formulaByPos?.[p.pos] ?? award.formula;
-				return p.scores[statRange]?.[formula] ?? -Infinity;
+				const score = p.scores[statRange]?.[formula] ?? -Infinity;
+				if (Number.isNaN(score)) {
+					return -Infinity;
+				}
+				return score;
 			};
 
 			const sortedPlayers = orderBy(filteredPlayers, getScore, "desc");

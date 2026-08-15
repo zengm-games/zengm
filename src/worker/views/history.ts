@@ -10,7 +10,7 @@ import type {
 } from "../../common/types.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
-import { groupByUnique } from "../../common/utils.ts";
+import { groupByUnique, last } from "../../common/utils.ts";
 import { showStatsByType } from "../../common/awards.ts";
 import { getPosByGpF } from "../core/season/doAwards.baseball.ts";
 import { formatAwardName } from "../core/season/awards.ts";
@@ -108,7 +108,6 @@ const updateHistory = async (
 			}
 			const p2 = await idb.getCopy.playersPlus(p, {
 				attrs: ["name"],
-				ratings: ["pos"],
 				stats: allStats,
 				season,
 				playoffs: statRange === "playoffs" || typeof statRange === "number",
@@ -122,6 +121,13 @@ const updateHistory = async (
 				return;
 			}
 
+			// Manually add pos, since ratings could have been deleted or something
+			const ratingsPos =
+				pos ??
+				p.ratings.findLast((row) => row.season === season)?.pos ??
+				last(p.ratings).pos;
+			p2.ratings = { pos: ratingsPos };
+
 			// Could have asked for "abbrev" in playersPlus, but we already have the teams in memory...
 			const t = teamsByTid[p2.stats.tid];
 			if (!t) {
@@ -131,7 +137,7 @@ const updateHistory = async (
 			return {
 				pid,
 				name: p2.name as string,
-				pos: pos ?? getPosByGpF(p2.stats.gpF, p.pos ?? p2.ratings.pos),
+				pos: pos ?? getPosByGpF(p2.stats.gpF, p2.ratings.pos),
 				statOverrides,
 				stats: {
 					...p2.stats,

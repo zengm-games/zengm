@@ -2,7 +2,7 @@ import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
-import { groupByUnique, range } from "../../common/utils.ts";
+import { groupByUnique, last, range } from "../../common/utils.ts";
 import { formatAwardName } from "../core/season/awards.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 
@@ -172,15 +172,28 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 										return;
 									}
 
+									const statRange = award.statRange;
+
 									const p2 = await idb.getCopy.playersPlus(p, {
 										attrs: ["name"],
-										ratings: ["pos"],
 										stats: ["tid"],
+										playoffs:
+											statRange === "playoffs" || typeof statRange === "number",
+										regularSeason: statRange === undefined,
+										combined: statRange === "combined",
+										mergeStats: "totOnly",
 										season,
+										showNoStats: true,
 									});
 									if (!p2) {
 										return;
 									}
+
+									// Manually add pos, since ratings could have been deleted or something
+									const pos =
+										p.ratings.findLast((row) => row.season === season)?.pos ??
+										last(p.ratings).pos;
+									p2.ratings = { pos };
 
 									const tid = p2.stats.tid;
 

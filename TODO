@@ -32,10 +32,11 @@ custom awards
   - 0 regular season games, use playoff stats for regular season awards
 - stats range (regular season, playoffs, semifinals, finals, combined)
   - test populate regularSeason with playoffs based on usePlayoffStatsAsRegularSeason
-  - test combined statRange - might work already
   - playoff or series award in award races should show no candidates yet during regular season
     - similarly, filter out candidates with no playoff series stats rather than -Infinity
+      - p.stats.some filter is not good enough
   - playoff series
+    - Need to use playoff tid for playoff series? what if player is traded right before playoffs and never plays in regular season with team. or god mode during playoffs
     - test in all sports
 - 2p/2pa/2pa in formula
 - in doAwards is tid/abbrev from root of player ever used? and other root things

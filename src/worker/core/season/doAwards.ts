@@ -534,7 +534,7 @@ const filterPlayersForAward = (
 				let abSum = 0;
 				let outsSum = 0;
 				for (const row of p.stats) {
-					if (!row.playoffs) {
+					if (row.playoffs === false) {
 						abSum += processStatsBaseball(row, ["ab"]).ab;
 						outsSum += row.outs;
 					}
@@ -555,7 +555,7 @@ const filterPlayersForAward = (
 				}
 
 				// This means a player who sits out all regular season but then plays in the playoffs will be ineligible for ROY next year
-				return (p.stats as any[]).every(
+				return p.stats.every(
 					(row) => row.season >= seasonForRookieCheck || row.gp === 0,
 				);
 			});
@@ -563,6 +563,10 @@ const filterPlayersForAward = (
 	}
 
 	if (award.mip) {
+		const statRange = award.statRange ?? "regularSeason";
+		const statRangeFactor =
+			statRange === "playoffs" ? 0.1 : statRange === "combined" ? 1.1 : 1;
+
 		filteredPlayers = filteredPlayers.filter((p) => {
 			// Too many second year players get picked, when it's expected for them to improve (undrafted and second round picks can still win)
 			if (p.draft.year + 2 >= season && p.draft.round === 1) {
@@ -570,7 +574,23 @@ const filterPlayersForAward = (
 			}
 
 			// Must have stats last year!
-			const oldStatsAll = p.stats.filter((ps) => ps.season === season - 1);
+			const oldStatsAll = p.stats.filter((ps) => {
+				if (ps.season !== season - 1) {
+					return false;
+				}
+
+				if (statRange === "regularSeason" && ps.playoffs !== false) {
+					return false;
+				}
+				if (statRange === "playoffs" && ps.playoffs !== true) {
+					return false;
+				}
+				if (statRange === "combined" && ps.playoffs !== "combined") {
+					return false;
+				}
+
+				return true;
+			});
 
 			const oldStats = oldStatsAll.at(-1);
 			if (!oldStats) {
@@ -581,12 +601,14 @@ const filterPlayersForAward = (
 			if (ROUGH_MPG_NEEDED_FOR_MIP !== undefined) {
 				const mipFactor = getMipFactor(season);
 				if (
-					p.currentStats.regularSeason.min * p.currentStats.regularSeason.gp <
-						ROUGH_MPG_NEEDED_FOR_MIP *
-							p.teamInfo.gp *
-							helpers.quarterLengthFactor() ||
+					(p.currentStats[statRange] &&
+						p.currentStats[statRange].min * p.currentStats[statRange].gp <
+							ROUGH_MPG_NEEDED_FOR_MIP *
+								statRangeFactor *
+								p.teamInfo.gp *
+								helpers.quarterLengthFactor()) ||
 					oldStats.min * oldStats.gp <
-						0.5 * ROUGH_MPG_NEEDED_FOR_MIP * mipFactor
+						0.5 * ROUGH_MPG_NEEDED_FOR_MIP * statRangeFactor * mipFactor
 				) {
 					return false;
 				}
@@ -668,13 +690,30 @@ export const processAwards = async ({
 
 			// For MIP, compare score to last season and max of all previous seasons
 			if (award.mip) {
+				const statRange = award.statRange ?? "regularSeason";
+				if (typeof statRange === "number") {
+					throw new Error("mip not supported for playoff series award");
+				}
 				const minCutoff =
 					ROUGH_MPG_NEEDED_FOR_MIP !== undefined
 						? ROUGH_MPG_NEEDED_FOR_MIP * getMipFactor(season)
 						: ROUGH_MPG_NEEDED_FOR_MIP;
 				const oldSeasonScores = p.stats
-					.filter((ps) => ps.season < season)
 					.filter((ps) => {
+						if (ps.season >= season) {
+							return false;
+						}
+
+						if (statRange === "regularSeason" && ps.playoffs !== false) {
+							return false;
+						}
+						if (statRange === "playoffs" && ps.playoffs !== true) {
+							return false;
+						}
+						if (statRange === "combined" && ps.playoffs !== "combined") {
+							return false;
+						}
+
 						if (minCutoff === undefined) {
 							// Must have palyed in half of team's games last year
 							return ps.gp / p.teamInfo.gp >= GP_FRACTION_NEEDED_FOR_MIP;

@@ -33,15 +33,11 @@ custom awards
     - test with div/conf awards (should show in separate columns)
   - 0 regular season games, use playoff stats for regular season awards
   - mip in playoffs or series again, after tweaking cutoffs
-- stats range (regular season, playoffs, semifinals, finals, combined)
-  - test populate regularSeason with playoffs based on usePlayoffStatsAsRegularSeason
-  - playoff series
-    - move p.teamInfo a separate object completely, like cidsByTid and didsByTid, maybe combine all into one?
-      - anything else in teamInfo to do that for?
-    - test in all sports
-      - baseball needs fakeWAR
-      - football
-      - hockey
+  - playoff series awards in all sports
+    - baseball needs fakeWAR
+    - football
+    - hockey
+  - populate regularSeason with playoffs based on usePlayoffStatsAsRegularSeason for leagues with no regular season games
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - groupAwards

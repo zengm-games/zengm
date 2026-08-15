@@ -557,8 +557,6 @@ const filterPlayersForAward = (
 
 	if (award.mip) {
 		const statRange = award.statRange ?? "regularSeason";
-		const statRangeFactor =
-			statRange === "playoffs" ? 0.01 : statRange === "combined" ? 1.1 : 1;
 
 		filteredPlayers = filteredPlayers.filter((p) => {
 			// Too many second year players get picked, when it's expected for them to improve (undrafted and second round picks can still win)
@@ -590,24 +588,25 @@ const filterPlayersForAward = (
 				return false;
 			}
 
-			// Sanity check for minutes played
-			if (ROUGH_MPG_NEEDED_FOR_MIP !== undefined) {
-				const mipFactor = getMipFactor(season);
-				if (
-					(p.currentStats[statRange] &&
-						p.currentStats[statRange].min * p.currentStats[statRange].gp <
-							ROUGH_MPG_NEEDED_FOR_MIP *
-								statRangeFactor *
-								p.teamInfo.gp *
-								helpers.quarterLengthFactor()) ||
-					oldStats.min * oldStats.gp <
-						0.5 * ROUGH_MPG_NEEDED_FOR_MIP * statRangeFactor * mipFactor
-				) {
-					return false;
-				}
-			} else {
-				if (oldStats.gp / p.teamInfo.gp < GP_FRACTION_NEEDED_FOR_MIP) {
-					return false;
+			// Sanity check for minutes played - skip for playoffs or playoff series because it's always small
+			if (statRange === "regularSeason" || statRange === "combined") {
+				if (ROUGH_MPG_NEEDED_FOR_MIP !== undefined) {
+					const mipFactor = getMipFactor(season);
+					if (
+						(p.currentStats[statRange] &&
+							p.currentStats[statRange].min * p.currentStats[statRange].gp <
+								ROUGH_MPG_NEEDED_FOR_MIP *
+									p.teamInfo.gp *
+									helpers.quarterLengthFactor()) ||
+						oldStats.min * oldStats.gp <
+							0.5 * ROUGH_MPG_NEEDED_FOR_MIP * mipFactor
+					) {
+						return false;
+					}
+				} else {
+					if (oldStats.gp / p.teamInfo.gp < GP_FRACTION_NEEDED_FOR_MIP) {
+						return false;
+					}
 				}
 			}
 
@@ -690,7 +689,7 @@ export const processAwards = async ({
 				const minCutoff =
 					ROUGH_MPG_NEEDED_FOR_MIP !== undefined
 						? ROUGH_MPG_NEEDED_FOR_MIP * getMipFactor(season)
-						: ROUGH_MPG_NEEDED_FOR_MIP;
+						: undefined;
 				const oldSeasonScores = p.stats
 					.filter((ps) => {
 						if (ps.season >= season) {
@@ -708,8 +707,12 @@ export const processAwards = async ({
 						}
 
 						if (minCutoff === undefined) {
-							// Must have palyed in half of team's games last year
-							return ps.gp / p.teamInfo.gp >= GP_FRACTION_NEEDED_FOR_MIP;
+							if (statRange === "regularSeason" || statRange === "combined") {
+								// Must have played in half of team's games last year
+								return ps.gp / p.teamInfo.gp >= GP_FRACTION_NEEDED_FOR_MIP;
+							} else {
+								return true;
+							}
 						}
 
 						return ps.min * ps.gp >= minCutoff / 2;

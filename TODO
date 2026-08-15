@@ -32,10 +32,12 @@ custom awards
     - test with changing awards
     - test with div/conf awards (should show in separate columns)
   - 0 regular season games, use playoff stats for regular season awards
+  - mip in playoffs or series again, after tweaking cutoffs
 - stats range (regular season, playoffs, semifinals, finals, combined)
   - test populate regularSeason with playoffs based on usePlayoffStatsAsRegularSeason
   - playoff series
     - p.teamInfo references regularSeason, does that matter?
+      - teamInfo.did and teamInfo.cid will be wrong in some cases (switching teams right at start of playoffs), need to do it more carefully (use statRange tid and look up)
     - test in all sports
       - baseball needs fakeWAR
       - football

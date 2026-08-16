@@ -1,4 +1,5 @@
 custom awards
+- for MIP playoffs like http://localhost:3000/l/471/award_races/2026 compare link needs to know statRange
 - rethink index
   - corresponds to Awards2 or g.get("awards")?
   - why is it needed?
@@ -32,7 +33,6 @@ custom awards
     - test with changing awards
     - test with div/conf awards (should show in separate columns)
   - 0 regular season games, use playoff stats for regular season awards
-  - mip in playoffs or series again, after tweaking cutoffs
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - edit conf/div abbrevs, and test usage
 - UI to update

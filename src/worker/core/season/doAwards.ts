@@ -694,8 +694,12 @@ export const processAwards = async ({
 				if (typeof statRange === "number") {
 					throw new Error("mip not supported for playoff series award");
 				}
+
+				// Use minCutoff only for regularSeason or combined, otherwise there's just going to be very few stats regardless
+				const careAboutMinCutoff =
+					statRange === "regularSeason" || statRange === "combined";
 				const minCutoff =
-					ROUGH_MPG_NEEDED_FOR_MIP !== undefined
+					ROUGH_MPG_NEEDED_FOR_MIP !== undefined && careAboutMinCutoff
 						? ROUGH_MPG_NEEDED_FOR_MIP * getMipFactor(season)
 						: undefined;
 				const oldSeasonScores = p.stats
@@ -715,7 +719,7 @@ export const processAwards = async ({
 						}
 
 						if (minCutoff === undefined) {
-							if (statRange === "regularSeason" || statRange === "combined") {
+							if (careAboutMinCutoff) {
 								const tid = p.currentStats[statRange]?.tid ?? -1;
 								const gp = teamInfos[tid]?.gp ?? 0;
 

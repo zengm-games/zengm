@@ -96,15 +96,22 @@ const tallyAwards = async (
 				continue;
 			}
 
-			const pid = award.winner[0]?.pid;
-			if (pid !== undefined) {
+			const winner = award.winner[0];
+			if (winner) {
+				const { pid, statOverrides } = winner;
 				const p = await idb.getCopy.players({ pid }, "noCopyCache");
 				if (p) {
-					const p2 = await idb.getCopy.playersPlus(p, {
-						stats: ["tid"],
-						season: row.season,
-					});
-					if (p2?.stats.tid === tid) {
+					let match = statOverrides?.tid === tid;
+
+					if (!match) {
+						const p2 = await idb.getCopy.playersPlus(p, {
+							stats: ["tid"],
+							season: row.season,
+						});
+						match = p2?.stats.tid === tid;
+					}
+
+					if (match) {
 						const shortName = award.shortName;
 						teamAwards.custom[shortName] ??= 0;
 						teamAwards.custom[shortName] += 1;

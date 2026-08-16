@@ -27,6 +27,7 @@ custom awards
   - opoyFormula in FBGM only
     - and don't allow if MIP, MVP and maybe other stuff
 - test
+  - award races table for playoff award after games are deleted - check tid still working
   - football posFactor in dpoyScore - really needed? could add formulaByPos but it gets messy. could also add references to other awards
   - historyAll, teamRecords, awardRecords
     - test with changing awards

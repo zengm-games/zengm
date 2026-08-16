@@ -814,6 +814,14 @@ export const processAwards = async ({
 					});
 				} else {
 					filteredPlayers = filteredPlayers.filter((p) => {
+						if (statOverridesByMatchup) {
+							const matchupKey = hashPlayoffSeries(group);
+							const statOverrides = statOverridesByMatchup[matchupKey]?.[p.pid];
+							if (statOverrides) {
+								return group.tids.includes(statOverrides.tid);
+							}
+						}
+
 						// This is a playoff series, so look for playoff series tid, in case player was somehow traded/moved to the playoff team and didn't record a regular season stat with them
 						const currentStats = p.currentStats[statRange];
 						return currentStats && group.tids.includes(currentStats.tid);
@@ -866,6 +874,7 @@ export const processAwards = async ({
 								if (currentStats !== undefined) {
 									statOverrides = {
 										score,
+										tid: currentStats.tid,
 									};
 									for (const stat of stats) {
 										if (currentStats[stat] !== undefined) {

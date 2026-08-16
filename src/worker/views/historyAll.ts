@@ -163,10 +163,12 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 									);
 								})
 								.map(async (award) => {
-									const pid = award.winner[0]?.pid;
-									if (pid === undefined) {
+									const winner = award.winner[0];
+									if (!winner) {
 										return;
 									}
+									const { pid, statOverrides } = winner;
+
 									const p = await idb.getCopy.players({ pid }, "noCopyCache");
 									if (!p) {
 										return;
@@ -195,7 +197,7 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 										last(p.ratings).pos;
 									p2.ratings = { pos };
 
-									const tid = p2.stats.tid;
+									const tid = statOverrides?.tid ?? p2.stats.tid;
 
 									const abbrev = getAbbrev(tid, teamsByTid, season);
 

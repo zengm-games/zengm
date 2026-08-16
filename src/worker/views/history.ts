@@ -128,6 +128,10 @@ const updateHistory = async (
 				last(p.ratings).pos;
 			p2.ratings = { pos: ratingsPos };
 
+			if (statOverrides) {
+				p2.stats.tid = statOverrides.tid;
+			}
+
 			// Could have asked for "abbrev" in playersPlus, but we already have the teams in memory...
 			const t = teamsByTid[p2.stats.tid];
 

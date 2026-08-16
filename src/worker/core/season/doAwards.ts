@@ -37,7 +37,7 @@ import {
 	teamAwards,
 	type AwardsByPlayer,
 } from "./awards.ts";
-import { getPosByGpF } from "./doAwards.baseball.ts";
+import { getPosByGpF } from "../player/getPosByGpF.ts";
 import stats from "../player/stats.ts";
 import fastDeepEqual from "fast-deep-equal";
 import player from "../player/index.ts";

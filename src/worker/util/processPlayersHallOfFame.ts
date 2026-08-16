@@ -1,6 +1,6 @@
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { maxBy } from "../../common/utils.ts";
-import { getPosByGpF } from "../core/season/doAwards.baseball.ts";
+import { getPosByGpF } from "../core/player/getPosByGpF.ts";
 
 // Would be better as part of idb.getCopies.playersPlus
 export const processPlayersHallOfFame = <

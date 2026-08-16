@@ -10,7 +10,7 @@ import { PLAYER } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import type { PlayerRatings } from "../../../common/types.basketball.ts";
 import { last, orderBy, range } from "../../../common/utils.ts";
-import { getPosByGpF } from "../season/doAwards.baseball.ts";
+import { getPosByGpF } from "../player/getPosByGpF.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { mvpScore } from "../season/doAwards.football.ts";
 import { shuffle } from "../../../common/random.ts";

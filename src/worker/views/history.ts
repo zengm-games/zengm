@@ -12,7 +12,7 @@ import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { groupByUnique, last } from "../../common/utils.ts";
 import { showStatsByType } from "../../common/awards.ts";
-import { getPosByGpF } from "../core/season/doAwards.baseball.ts";
+import { getPosByGpF } from "../core/player/getPosByGpF.ts";
 import { formatAwardName } from "../core/season/awards.ts";
 
 const viewedSeasonSummary = async () => {

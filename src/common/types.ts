@@ -501,8 +501,8 @@ export type NamesLegacy = {
 	};
 };
 
-export type Conf = { cid: number; name: string };
-export type Div = { cid: number; did: number; name: string };
+export type Conf = { cid: number; name: string; abbrev?: string };
+export type Div = { cid: number; did: number; name: string; abbrev?: string };
 
 export type InjuriesSetting = {
 	name: string;
@@ -1153,7 +1153,15 @@ export type PlayerAwardCustom = {
 	shortName: string;
 	index: number; // Index in the list of awards for this season
 	rank: number; // rank in individual award, team number in team award
-	groupPrefix?: string;
+	group?:
+		| {
+				type: "conf";
+				cid: number;
+		  }
+		| {
+				type: "div";
+				did: number;
+		  };
 } & (AwardInfoIndividualCommon | AwardInfoTeamCommon);
 
 export type PlayerAward =

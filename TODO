@@ -1,9 +1,13 @@
 custom awards
+- rather than groupPrefix, should I store the raw cid/did there?
+  - player profile needs to use prefix when rendering awards table
+    - maybe take this time to rethink groupAwards
 - rethink index
   - corresponds to Awards2 or g.get("awards")?
   - why is it needed?
   - only in PlayerAward?
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
+- how to handle awards when importing/exporting players? index will be invalid. could render to string
 - edit awards
   - where?
     - dedicated page
@@ -34,6 +38,7 @@ custom awards
   - 0 regular season games, use playoff stats for regular season awards
   - mip in playoffs or series again, after tweaking cutoffs
 - ability to add/edit/delete manual awards for player, maybe in player editor
+- edit conf/div abbrevs, and test usage
 - UI to update
   - groupAwards
   - awards editor
@@ -62,7 +67,11 @@ custom awards
 - search for any hardcoded strings like "Rookie of the Year", "Most Improved Player", etc
   - after upgrade, can remove awardsOld?
 - some parts of awards.ts were copied to doAwards.ts, make sure to remove dupes
-- schema for setting
+- schema
+  - setting
+  - awards object
+  - player awards
+  - conf/div abbrev
 - delete old awards types
 - blog
   - roy changes

@@ -634,14 +634,20 @@ const saveAwardsByPlayer = async (
 			score = 10;
 		} else if (p.award.type === undefined && p.award.numTeams !== undefined) {
 			// Team awards - arguably should have formatAwardNamePrefix here too, idk
-			text += `made the ${formatPlayerAwardName(p.award)}.`;
+			const groupPrefix = getGroupPrefix(p.award, season);
+			text += `made the ${formatPlayerAwardName(p.award, groupPrefix)}.`;
 			score = 10;
 		} else {
 			if (p.award.type !== undefined || p.award.rank === 1) {
-				text += `won the ${formatPlayerAwardName(p.award)} award.`;
+				const groupPrefix =
+					p.award.type === undefined
+						? getGroupPrefix(p.award, season)
+						: undefined;
+				text += `won the ${formatPlayerAwardName(p.award, groupPrefix)} award.`;
 				score = 20;
 			}
 		}
+		console.log(text);
 
 		if (logEvents && score !== undefined) {
 			logEvent(
@@ -726,7 +732,7 @@ const getInitials = (string: string) => {
 };
 
 export const getGroupPrefix = (
-	award: Pick<Award2, "group" | "name" | "shortName">,
+	award: Pick<Award2, "group">,
 	season: number,
 ) => {
 	const group = award.group;
@@ -735,13 +741,13 @@ export const getGroupPrefix = (
 			const confs = g.get("confs", season);
 			const conf = confs.find((conf) => conf.cid === group.cid);
 			if (conf) {
-				return getInitials(conf.name);
+				return conf.abbrev ?? getInitials(conf.name);
 			}
 		} else if (group.type === "div") {
 			const divs = g.get("divs", season);
 			const div = divs.find((div) => div.did === group.did);
 			if (div) {
-				return getInitials(div.name);
+				return div.abbrev ?? getInitials(div.name);
 			}
 		}
 	}
@@ -752,7 +758,7 @@ export const formatAwardNamePrefix = (
 	season: number,
 	short?: boolean,
 ) => {
-	const prefix = getGroupPrefix(award, season);
+	const prefix = getGroupPrefix(award, season) ?? "";
 
 	if (short) {
 		return `${prefix}${award.shortName}`;

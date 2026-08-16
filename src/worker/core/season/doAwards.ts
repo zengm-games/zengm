@@ -33,7 +33,6 @@ import {
 import { processStats as processStatsBaseball } from "../../../common/processPlayerStats.baseball.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 import {
-	getGroupPrefix,
 	leagueLeaders,
 	saveAwardsByPlayer,
 	teamAwards,
@@ -1170,23 +1169,21 @@ type ProcessAwardsReturn = Awaited<ReturnType<typeof processAwards>>;
 const getAwardsByPlayer = (
 	realizedAwards: ProcessAwardsReturn["realizedAwards"],
 	players: ProcessAwardsReturn["players"],
-	season: number,
 ) => {
 	const playersByPid = groupByUnique(players, "pid");
 	const awardsByPlayer: AwardsByPlayer = [];
 	for (const { award, index } of realizedAwards) {
 		const common: Pick<
 			PlayerAwardCustom,
-			"groupPrefix" | "index" | "name" | "shortName"
+			"group" | "index" | "name" | "shortName"
 		> = {
 			name: award.name,
 			shortName: award.shortName,
 			index,
 		};
 
-		const groupPrefix = getGroupPrefix(award, season);
-		if (groupPrefix) {
-			common.groupPrefix = groupPrefix;
+		if (award.group && award.group.type !== "playoffSeries") {
+			common.group = award.group;
 		}
 
 		const statRange = award.statRange ?? "regularSeason";
@@ -1304,7 +1301,7 @@ const doAwards = async (conditions: Conditions) => {
 	});
 
 	const awardsByPlayer = [
-		...getAwardsByPlayer(realizedAwards, players, season),
+		...getAwardsByPlayer(realizedAwards, players),
 		...(await leagueLeaders(players, season)),
 	];
 

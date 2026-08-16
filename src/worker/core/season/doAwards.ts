@@ -168,6 +168,7 @@ const getPlayoffSeriesStats = async (
 	season: number,
 	seriesIndex: number,
 	abbrevsByTid: Map<number, string>,
+	statOverridesByMatchup: StatOverridesByMatchup | undefined,
 ) => {
 	const playoffSeries = await idb.getCopy.playoffSeries(
 		{ season },
@@ -196,11 +197,34 @@ const getPlayoffSeriesStats = async (
 		}
 	}
 
+	const rowsByPid: Record<number, StatsRow> = {};
+
 	const games = await idb.getCopies.games({ gids }, "noCopyCache");
 
-	// Some games couldn't be found, not worth running awards
+	// Some games couldn't be found, so instead see if statOverridesByMatchup has the info we need (from saved awards, like on Award Races)
 	if (games.length !== gids.length) {
-		return;
+		if (statOverridesByMatchup) {
+			for (const [matchupKey, statOverrides] of Object.entries(
+				statOverridesByMatchup,
+			)) {
+				const [homeTid, awayTid] = JSON.parse(matchupKey) as [number, number];
+				for (const series of roundSeries) {
+					if (series.away?.tid === awayTid && series.home.tid === homeTid) {
+						for (const [pidString, info] of Object.entries(statOverrides)) {
+							const pid = Number.parseInt(pidString);
+							rowsByPid[pid] = {
+								...info!,
+								abbrev: abbrevsByTid.get(info!.tid) ?? "???",
+								jerseyNumber: "", // Would be nice to get this from player stats, but whatever
+								season,
+								playoffs: "playoffSeries",
+							};
+						}
+					}
+				}
+			}
+		}
+		return rowsByPid;
 	}
 
 	const tempRowsByPid: Map<
@@ -233,7 +257,6 @@ const getPlayoffSeriesStats = async (
 		}
 	}
 
-	const rowsByPid: Record<number, StatsRow> = {};
 	for (const [pid, { info, rawStats }] of tempRowsByPid) {
 		rowsByPid[pid] = {
 			...info,
@@ -245,7 +268,11 @@ const getPlayoffSeriesStats = async (
 	return rowsByPid;
 };
 
-const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
+const getPlayers = async (
+	season: number,
+	statRanges: Set<StatRange>,
+	statOverridesByMatchup: StatOverridesByMatchup | undefined,
+) => {
 	let playersAll;
 	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
 		playersAll = await idb.cache.players.indexGetAll("playersByTid", [
@@ -312,6 +339,7 @@ const getPlayers = async (season: number, statRanges: Set<StatRange>) => {
 				season,
 				statRange,
 				abbrevsByTid,
+				statOverridesByMatchup,
 			);
 			if (stats) {
 				playoffSeriesStats[statRange] = stats;
@@ -620,7 +648,11 @@ export const processAwards = async ({
 		awards.map((award) => award.statRange ?? "regularSeason"),
 	);
 
-	const { players, teamInfos } = await getPlayers(season, statRanges);
+	const { players, teamInfos } = await getPlayers(
+		season,
+		statRanges,
+		statOverridesByMatchup,
+	);
 
 	const formulaEvaluators: Record<
 		string,

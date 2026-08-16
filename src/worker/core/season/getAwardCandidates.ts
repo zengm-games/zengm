@@ -21,14 +21,8 @@ const persistedAwardsToAwardSetting = (persistedAwards: Awards2) => {
 	const seenShortNames = new Set();
 
 	for (const persistedAward of persistedAwards.awards) {
-		// Skip multiple repeated conf/div awards - this assumes shortName is unique
-		if (seenShortNames.has(persistedAward.shortName)) {
-			continue;
-		}
-		seenShortNames.add(persistedAward.shortName);
-
+		// Store statOverrides first before ignoring repeated ones, so semifinals MVP statOverrides get saved for both awards
 		const group = persistedAward.group;
-
 		if (
 			group?.type === "playoffSeries" &&
 			persistedAward.numTeams === undefined
@@ -42,6 +36,12 @@ const persistedAwardsToAwardSetting = (persistedAwards: Awards2) => {
 				}
 			}
 		}
+
+		// Skip multiple repeated conf/div awards - this assumes shortName is unique
+		if (seenShortNames.has(persistedAward.shortName)) {
+			continue;
+		}
+		seenShortNames.add(persistedAward.shortName);
 
 		const award: GameAttributesLeague["awards"][number] & {
 			winner?: Awards2["awards"][number]["winner"];
@@ -92,6 +92,7 @@ const getAwardCandidates = async (season: number) => {
 		season,
 		statOverridesByMatchup,
 	});
+	console.log(awards, realizedAwards);
 
 	const playersByPid = groupByUnique(players, "pid");
 

@@ -99,23 +99,22 @@ const tallyAwards = async (
 			const winner = award.winner[0];
 			if (winner) {
 				const { pid, statOverrides } = winner;
-				const p = await idb.getCopy.players({ pid }, "noCopyCache");
-				if (p) {
-					let match = statOverrides?.tid === tid;
-
-					if (!match) {
+				let match = statOverrides?.tid === tid;
+				if (!match) {
+					// With the 2026 awards refactor, tid is no longer stored in awards object (except playoffSeries) because it can be found in player stats. So now this page is less accurate (if there is deleted data) and slower.
+					const p = await idb.getCopy.players({ pid }, "noCopyCache");
+					if (p) {
 						const p2 = await idb.getCopy.playersPlus(p, {
 							stats: ["tid"],
 							season: row.season,
 						});
 						match = p2?.stats.tid === tid;
 					}
-
-					if (match) {
-						const shortName = award.shortName;
-						teamAwards.custom[shortName] ??= 0;
-						teamAwards.custom[shortName] += 1;
-					}
+				}
+				if (match) {
+					const shortName = award.shortName;
+					teamAwards.custom[shortName] ??= 0;
+					teamAwards.custom[shortName] += 1;
 				}
 			}
 		}

@@ -573,7 +573,8 @@ export const footballOverrides: Partial<GameAttributesLeagueWithHistory> =
 					{
 						shortName: "FMVP",
 						name: "Finals MVP",
-						formula: "av",
+						formula:
+							"(pssYds/25 + 4*pssTD + (recYds+rusYds)/10 + 6*(recTD+rusTD+prTD+krTD+defIntTD+defFmbTD) + 1.75*(1.75*defSk + (defTckSolo + defTckAst)/10 + 2*defInt + defPssDef + 2*defFmbFrc + 2*defFmbRec + 5*defSft)) * (1+0.5*won)",
 						showStats: "overall",
 						statRange: -1,
 					},

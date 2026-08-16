@@ -218,9 +218,10 @@ const History = (props: View<"history">) => {
 														groupedAwards.length,
 													)}
 													:{" "}
-													{groupedAwards.map((award) => {
+													{groupedAwards.map((award, i) => {
 														return award.winner ? (
 															<Winner
+																key={i}
 																award={award}
 																p={award.winner}
 																season={awards.season}

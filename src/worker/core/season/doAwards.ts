@@ -7,6 +7,7 @@ import type {
 	GameAttributesLeague,
 	NonEmptyArray,
 	Player,
+	PlayerAwardCustom,
 } from "../../../common/types.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { g, helpers } from "../../util/index.ts";
@@ -32,6 +33,7 @@ import {
 import { processStats as processStatsBaseball } from "../../../common/processPlayerStats.baseball.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 import {
+	getGroupPrefix,
 	leagueLeaders,
 	saveAwardsByPlayer,
 	teamAwards,
@@ -1168,15 +1170,24 @@ type ProcessAwardsReturn = Awaited<ReturnType<typeof processAwards>>;
 const getAwardsByPlayer = (
 	realizedAwards: ProcessAwardsReturn["realizedAwards"],
 	players: ProcessAwardsReturn["players"],
+	season: number,
 ) => {
 	const playersByPid = groupByUnique(players, "pid");
 	const awardsByPlayer: AwardsByPlayer = [];
 	for (const { award, index } of realizedAwards) {
-		const common = {
+		const common: Pick<
+			PlayerAwardCustom,
+			"groupPrefix" | "index" | "name" | "shortName"
+		> = {
 			name: award.name,
 			shortName: award.shortName,
 			index,
 		};
+
+		const groupPrefix = getGroupPrefix(award, season);
+		if (groupPrefix) {
+			common.groupPrefix = groupPrefix;
+		}
 
 		const statRange = award.statRange ?? "regularSeason";
 
@@ -1292,10 +1303,10 @@ const doAwards = async (conditions: Conditions) => {
 		statOverridesByMatchup: undefined,
 	});
 
-	const awardsByPlayer = getAwardsByPlayer(realizedAwards, players);
-	console.log("awardsByPlayer", awardsByPlayer);
-
-	await leagueLeaders(players, awardsByPlayer);
+	const awardsByPlayer = [
+		...getAwardsByPlayer(realizedAwards, players, season),
+		...(await leagueLeaders(players, season)),
+	];
 
 	await saveAwardsByPlayer(awardsByPlayer, conditions, season);
 

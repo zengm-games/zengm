@@ -3,7 +3,7 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 import { groupByUnique, last, range } from "../../common/utils.ts";
-import { formatAwardName } from "../core/season/awards.ts";
+import { formatAwardNamePrefix } from "../core/season/awards.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 
 const getAbbrev = (
@@ -201,8 +201,12 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 
 									const abbrev = getAbbrev(tid, teamsByTid, season);
 
-									const awardName = formatAwardName(award, season);
-									const awardShortName = formatAwardName(award, season, true);
+									const awardName = formatAwardNamePrefix(award, season);
+									const awardShortName = formatAwardNamePrefix(
+										award,
+										season,
+										true,
+									);
 
 									if (!seenAwardTypes.has(awardShortName)) {
 										seenAwardTypes.add(awardShortName);

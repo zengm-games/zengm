@@ -8,18 +8,23 @@ export const formatPlayerAwardName = (
 		| {
 				type: string;
 		  }
-		| Pick<PlayerAwardCustom, "name" | "numTeams" | "rank" | "type">,
+		| Pick<
+				PlayerAwardCustom,
+				"groupPrefix" | "name" | "numTeams" | "rank" | "type"
+		  >,
 ) => {
 	if (award.type === undefined) {
+		const prefix =
+			award.groupPrefix !== undefined ? `${award.groupPrefix} ` : "";
 		if (award.numTeams === undefined) {
-			return award.name;
+			return `${prefix}${award.name}`;
 		}
 
 		if (award.numTeams === 1) {
-			return `${award.name} Team`;
+			return `${prefix}${award.name} Team`;
 		}
 
-		return `${helpers.ordinal(award.rank)} Team ${award.name}`;
+		return `${prefix}${helpers.ordinal(award.rank)} Team ${award.name}`;
 	}
 
 	return award.type;

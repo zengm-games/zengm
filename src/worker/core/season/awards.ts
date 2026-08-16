@@ -487,10 +487,7 @@ export const leaderAwardCategories = bySport({
 	],
 });
 
-const leagueLeaders = async (
-	players: PlayerFiltered[],
-	awardsByPlayer: AwardsByPlayer,
-) => {
+const leagueLeaders = async (players: PlayerFiltered[], season: number) => {
 	const requirements = getLeaderRequirements();
 	const statType: PlayerStatType = bySport({
 		baseball: "totals",
@@ -498,10 +495,11 @@ const leagueLeaders = async (
 		football: "totals",
 		hockey: "totals",
 	});
-	const season = g.get("season");
 
 	const gamesPlayedCache = new GamesPlayedCache();
 	await gamesPlayedCache.loadSeasons([season], false);
+
+	const awardsByPlayer: AwardsByPlayer = [];
 
 	for (const { stat, name } of leaderAwardCategories) {
 		if (!requirements[stat]) {
@@ -552,6 +550,8 @@ const leagueLeaders = async (
 			});
 		}
 	}
+
+	return awardsByPlayer;
 };
 
 const getTopPlayers = (
@@ -633,7 +633,7 @@ const saveAwardsByPlayer = async (
 			text += "won the three-point contest.";
 			score = 10;
 		} else if (p.award.type === undefined && p.award.numTeams !== undefined) {
-			// Team awards
+			// Team awards - arguably should have formatAwardNamePrefix here too, idk
 			text += `made the ${formatPlayerAwardName(p.award)}.`;
 			score = 10;
 		} else {
@@ -725,28 +725,34 @@ const getInitials = (string: string) => {
 	);
 };
 
-export const formatAwardName = (
-	award: Award2,
+export const getGroupPrefix = (
+	award: Pick<Award2, "group" | "name" | "shortName">,
 	season: number,
-	short?: boolean,
 ) => {
-	let prefix = "";
 	const group = award.group;
 	if (group) {
 		if (group.type === "conf") {
 			const confs = g.get("confs", season);
 			const conf = confs.find((conf) => conf.cid === group.cid);
 			if (conf) {
-				prefix = getInitials(conf.name);
+				return getInitials(conf.name);
 			}
-		} else {
+		} else if (group.type === "div") {
 			const divs = g.get("divs", season);
 			const div = divs.find((div) => div.did === group.did);
 			if (div) {
-				prefix = getInitials(div.name);
+				return getInitials(div.name);
 			}
 		}
 	}
+};
+
+export const formatAwardNamePrefix = (
+	award: Pick<Award2, "group" | "name" | "shortName">,
+	season: number,
+	short?: boolean,
+) => {
+	const prefix = getGroupPrefix(award, season);
 
 	if (short) {
 		return `${prefix}${award.shortName}`;

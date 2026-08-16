@@ -13,7 +13,7 @@ import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { groupByUnique, last } from "../../common/utils.ts";
 import { showStatsByType } from "../../common/awards.ts";
 import { getPosByGpF } from "../core/player/getPosByGpF.ts";
-import { formatAwardName } from "../core/season/awards.ts";
+import { formatAwardNamePrefix } from "../core/season/awards.ts";
 
 const viewedSeasonSummary = async () => {
 	local.unviewedSeasonSummary = false;
@@ -173,7 +173,7 @@ const updateHistory = async (
 				const augmented = {
 					...award,
 					numTeams,
-					name: formatAwardName(award, awards.season),
+					name: formatAwardNamePrefix(award, awards.season),
 					winner,
 				};
 
@@ -210,7 +210,7 @@ const updateHistory = async (
 				const augmented = {
 					...award,
 					numTeams,
-					name: formatAwardName(award, awards.season),
+					name: formatAwardNamePrefix(award, awards.season),
 					winner,
 				};
 

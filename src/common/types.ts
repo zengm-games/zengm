@@ -1153,6 +1153,7 @@ export type PlayerAwardCustom = {
 	shortName: string;
 	index: number; // Index in the list of awards for this season
 	rank: number; // rank in individual award, team number in team award
+	groupPrefix?: string;
 } & (AwardInfoIndividualCommon | AwardInfoTeamCommon);
 
 export type PlayerAward =

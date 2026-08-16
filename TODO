@@ -4,7 +4,6 @@ custom awards
   - why is it needed?
   - only in PlayerAward?
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
-- how to handle awards when importing/exporting players? index will be invalid. could render to string
 - edit awards
   - where?
     - dedicated page
@@ -50,6 +49,7 @@ custom awards
     - triple crown
       - fix baseball DPOY bug https://discord.com/channels/290013534023057409/1532565456920117279/1532565456920117279
 - make sure hashAward accounts for everything
+- how to handle awards when importing/exporting players? index will be invalid. could render to string
 - upgrade
   - test all sports
   - First vs 1st?
@@ -86,7 +86,7 @@ custom awards
   - award races
     - score
     - postseason awards
-  - in AwardsSummary on player profile, break down by team number for tooltip
+  - in AwardsSummary on player profile, break down by team number (and conf/div prefix) for tooltip
 - maybe
   - support editing metadata of past awards, like name and shortName. maybe even formula too...
   - real player data for award top 5 finish
@@ -95,6 +95,7 @@ custom awards
     - also consider showStats for Award Races
   - conditional stat-based awards that are not awarded every season, like triple crown or 40/40
   - clutch player award
+  - rethink awards column on player profile - something like FMVP-5 is a bit silly, and SFMVP maybe is always silly
 
 make GOAT lab use stats with derived variables, similar to awards
 

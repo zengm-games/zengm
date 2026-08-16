@@ -636,7 +636,7 @@ const saveAwardsByPlayer = async (
 		} else if (p.award.type === undefined && p.award.numTeams !== undefined) {
 			// Team awards - arguably should have formatAwardNamePrefix here too, idk
 			const groupPrefix = getGroupPrefix(p.award, season);
-			text += `made the ${formatPlayerAwardName(p.award, groupPrefix)}.`;
+			text += `made the ${formatPlayerAwardName(p.award, { groupPrefix })}.`;
 			score = 10;
 		} else {
 			if (p.award.type !== undefined || p.award.rank === 1) {
@@ -644,7 +644,7 @@ const saveAwardsByPlayer = async (
 					p.award.type === undefined
 						? getGroupPrefix(p.award, season)
 						: undefined;
-				text += `won the ${formatPlayerAwardName(p.award, groupPrefix)} award.`;
+				text += `won the ${formatPlayerAwardName(p.award, { groupPrefix })} award.`;
 				score = 20;
 			}
 		}

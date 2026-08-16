@@ -9,19 +9,33 @@ export const formatPlayerAwardName = (
 				type: string;
 		  }
 		| Pick<PlayerAwardBuiltIn, "name" | "numTeams" | "rank" | "type">,
-	groupPrefix?: string, // Like for conf awards, prefix with conf abbrev
+	{
+		groupPrefix,
+		hideTeamName,
+	}: {
+		groupPrefix?: string; // Like for conf awards, prefix with conf abbrev
+		hideTeamName?: boolean;
+	} = {},
 ) => {
 	if (award.type === undefined) {
-		const prefix = groupPrefix !== undefined ? `${groupPrefix} ` : "";
+		const prefixWithSpace = groupPrefix !== undefined ? `${groupPrefix} ` : "";
 		if (award.numTeams === undefined) {
-			return `${prefix}${award.name}`;
+			return `${prefixWithSpace}${award.name}`;
 		}
 
 		if (award.numTeams === 1) {
-			return `${prefix}${award.name} Team`;
+			if (hideTeamName && groupPrefix !== undefined) {
+				return groupPrefix;
+			}
+			return `${prefixWithSpace}${award.name} Team`;
 		}
 
-		return `${prefix}${helpers.ordinal(award.rank)} Team ${award.name}`;
+		const prefixAndRank = `${prefixWithSpace}${helpers.ordinal(award.rank)} Team`;
+		if (hideTeamName) {
+			return prefixAndRank;
+		}
+
+		return `${prefixAndRank} ${award.name}`;
 	}
 
 	return award.type;

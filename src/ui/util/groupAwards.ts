@@ -40,11 +40,12 @@ const awardsEnd = [
 
 const formatNameLong = (
 	award: Omit<PlayerAwardSimple, "season"> | PlayerAwardBuiltInWithPrefix,
+	hideTeamName: boolean,
 ) => {
-	return formatPlayerAwardName(
-		award,
-		award.type === undefined ? award.groupPrefix : undefined,
-	);
+	return formatPlayerAwardName(award, {
+		groupPrefix: award.type === undefined ? award.groupPrefix : undefined,
+		hideTeamName,
+	});
 };
 
 const getName = (
@@ -52,7 +53,7 @@ const getName = (
 	short: boolean | undefined,
 ) => {
 	if (!short) {
-		return formatNameLong(award);
+		return formatNameLong(award, false);
 	}
 
 	if (award.type === undefined) {
@@ -177,7 +178,7 @@ export const groupAwards = (
 			const seasonsRaw: Record<string, number[]> = {};
 			for (const award of awardsReal) {
 				// type is already formatNameLong output if !shortNames
-				const name = shortNames ? formatNameLong(award) : type;
+				const name = formatNameLong(award, true);
 
 				seasonsRaw[name] ??= [];
 				seasonsRaw[name].push(award.season);

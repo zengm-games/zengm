@@ -787,7 +787,10 @@ export const baseballOverrides: Partial<GameAttributesLeagueWithHistory> =
 					{
 						shortName: "FMVP",
 						name: "Finals MVP",
-						formula: "war",
+
+						// This formula was called fakeWAR in the old award system https://github.com/zengm-games/zengm/blob/4ee432c5b9097ed978749a049fff5823711690dc/src/worker/core/season/doAwards.baseball.ts#L285-L302 only difference now is that some values (abf and totalERA) are estimates from a typical ZGMB league rather than computed from the series total stats. Which arguably is better since there is a lot of noise in an individual series.
+						formula:
+							"((0.47*h + 0.38*2b + 0.55*3b + 0.93*hr + 0.33*(bb+hbp) - 0.276*(pa-bb-hbp-sf-h)) + (0.3*sb - 0.6*cs) + ((outs/27)*4.04 - er)) * (1+0.75*won)",
 						showStats: "overall",
 						statRange: -1,
 					},

@@ -86,10 +86,10 @@ custom awards
   - award races
     - score
     - postseason awards
+  - in AwardsSummary on player profile, break down by team number for tooltip
 - maybe
   - support editing metadata of past awards, like name and shortName. maybe even formula too...
   - real player data for award top 5 finish
-  - in AwardsSummary on player profile, break down by team number for tooltip
 - later
   - only fetch needed variables from playersPlus when evaluating award formula
     - also consider showStats for Award Races

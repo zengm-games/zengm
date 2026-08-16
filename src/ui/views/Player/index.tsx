@@ -211,7 +211,8 @@ const Player2 = ({
 											<tr key={i}>
 												<td>
 													{a.count > 1 ? `${a.count}x ` : null}
-													{a.type} ({a.seasons.join(", ")})
+													{a.type} ({Object.values(a.seasons).flat().join(", ")}
+													)
 												</td>
 											</tr>
 										);

@@ -38,15 +38,21 @@ const awardsEnd = [
 	...leaderAwardCategories.map((x) => x.name),
 ];
 
+const formatNameLong = (
+	award: Omit<PlayerAwardSimple, "season"> | PlayerAwardBuiltInWithPrefix,
+) => {
+	return formatPlayerAwardName(
+		award,
+		award.type === undefined ? award.groupPrefix : undefined,
+	);
+};
+
 const getName = (
 	award: Omit<PlayerAwardSimple, "season"> | PlayerAwardBuiltInWithPrefix,
 	short: boolean | undefined,
 ) => {
 	if (!short) {
-		return formatPlayerAwardName(
-			award,
-			award.type === undefined ? award.groupPrefix : undefined,
-		);
+		return formatNameLong(award);
 	}
 
 	if (award.type === undefined) {
@@ -146,9 +152,11 @@ export const groupAwards = (
 					type,
 					long,
 					count: awardsGroupedTemp[type].length,
-					seasons: helpers.yearRanges(
-						awardsGroupedTemp[type].map((a) => a.season),
-					),
+					seasons: {
+						[long]: helpers.yearRanges(
+							awardsGroupedTemp[type].map((a) => a.season),
+						),
+					},
 				});
 				seen.add(type);
 			}
@@ -165,11 +173,25 @@ export const groupAwards = (
 		if (!seen.has(type) && awardsReal[0]) {
 			const averageIndex =
 				helpers.sum(awardsReal.map((award) => award.index)) / awardsReal.length;
+
+			const seasonsRaw: Record<string, number[]> = {};
+			for (const award of awardsReal) {
+				// type is already formatNameLong output if !shortNames
+				const name = shortNames ? formatNameLong(award) : type;
+
+				seasonsRaw[name] ??= [];
+				seasonsRaw[name].push(award.season);
+			}
+			const seasons: Record<string, string[]> = {};
+			for (const [name, awardSeasons] of Object.entries(seasonsRaw)) {
+				seasons[name] = helpers.yearRanges(awardSeasons);
+			}
+
 			realAwardsGrouped.push({
 				type,
 				long: awardsReal[0].name,
-				count: awards.length,
-				seasons: helpers.yearRanges(awards.map((a) => a.season)),
+				count: awardsReal.length,
+				seasons,
 				averageIndex,
 			});
 			seen.add(type);
@@ -192,7 +214,9 @@ export const groupAwards = (
 				type,
 				long: type,
 				count: awards.length,
-				seasons: helpers.yearRanges(awards.map((a) => a.season)),
+				seasons: {
+					[type]: helpers.yearRanges(awards.map((a) => a.season)),
+				},
 			});
 			seen.add(type);
 		}

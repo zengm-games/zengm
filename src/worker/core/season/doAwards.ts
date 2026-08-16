@@ -7,7 +7,7 @@ import type {
 	GameAttributesLeague,
 	NonEmptyArray,
 	Player,
-	PlayerAwardCustom,
+	PlayerAwardBuiltIn,
 } from "../../../common/types.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { g, helpers } from "../../util/index.ts";
@@ -1174,7 +1174,7 @@ const getAwardsByPlayer = (
 	const awardsByPlayer: AwardsByPlayer = [];
 	for (const { award, index } of realizedAwards) {
 		const common: Pick<
-			PlayerAwardCustom,
+			PlayerAwardBuiltIn,
 			"group" | "index" | "name" | "shortName"
 		> = {
 			name: award.name,

@@ -1,7 +1,4 @@
 custom awards
-- rather than groupPrefix, should I store the raw cid/did there?
-  - player profile needs to use prefix when rendering awards table
-    - maybe take this time to rethink groupAwards
 - rethink index
   - corresponds to Awards2 or g.get("awards")?
   - why is it needed?
@@ -41,6 +38,7 @@ custom awards
 - edit conf/div abbrevs, and test usage
 - UI to update
   - groupAwards
+    - on hover break down by unqiue long name, like including team number, group prefix, and name change (so, use formatPlayerAwardName)
   - awards editor
   - GOAT formula
   - achievements

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { PlayerAwardCustom, View } from "../../../common/types.ts";
+import type { PlayerAwardBuiltIn, View } from "../../../common/types.ts";
 import { helpers } from "../../util/helpers.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
@@ -51,7 +51,7 @@ export const StatsTable = ({
 	superCols,
 	leaders,
 }: {
-	awardsBySeason: Map<number, PlayerAwardCustom[]>;
+	awardsBySeason: Map<number, PlayerAwardBuiltIn[]>;
 	name: string;
 	onlyShowIf?: string[];
 	p: View<"player">["player"];

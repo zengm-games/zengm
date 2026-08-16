@@ -1,6 +1,6 @@
 import { helpers } from "./helpers.ts";
 import { bySport } from "./sportFunctions.ts";
-import type { Award2, PlayerAwardCustom } from "./types.ts";
+import type { Award2, PlayerAwardBuiltIn } from "./types.ts";
 
 export const formatPlayerAwardName = (
 	// This is like PlayerAward but with only the required field specified so it can be used elsewhere easily
@@ -8,7 +8,7 @@ export const formatPlayerAwardName = (
 		| {
 				type: string;
 		  }
-		| Pick<PlayerAwardCustom, "name" | "numTeams" | "rank" | "type">,
+		| Pick<PlayerAwardBuiltIn, "name" | "numTeams" | "rank" | "type">,
 	groupPrefix?: string, // Like for conf awards, prefix with conf abbrev
 ) => {
 	if (award.type === undefined) {

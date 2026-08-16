@@ -7,6 +7,7 @@ import type {
 	DistributiveOmit,
 	Player,
 	PlayerAward,
+	PlayerAwardBuiltIn,
 	PlayerFiltered,
 	PlayerStatType,
 	TeamFiltered,
@@ -732,7 +733,7 @@ const getInitials = (string: string) => {
 };
 
 export const getGroupPrefix = (
-	award: Pick<Award2, "group">,
+	award: Pick<Award2, "group"> | Pick<PlayerAwardBuiltIn, "group">,
 	season: number,
 ) => {
 	const group = award.group;

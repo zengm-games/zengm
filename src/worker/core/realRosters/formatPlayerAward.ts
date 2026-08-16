@@ -1,7 +1,7 @@
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 import type {
 	GameAttributesLeague,
-	PlayerAwardCustom,
+	PlayerAwardBuiltIn,
 } from "../../../common/types.ts";
 import { groupByUnique } from "../../../common/utils.ts";
 
@@ -30,7 +30,7 @@ export const formatPlayerAward = (
 			index: number;
 		}
 	>,
-): PlayerAwardCustom => {
+): PlayerAwardBuiltIn => {
 	const infoTemp = defaultAwardsByShortName[rawAward.shortName];
 	if (!infoTemp) {
 		throw new Error("Should never happen");

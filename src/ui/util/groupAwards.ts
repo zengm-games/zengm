@@ -1,7 +1,8 @@
 import { formatPlayerAwardName } from "../../common/awards.ts";
-import type { DistributiveOmit, PlayerAward } from "../../common/types.ts";
+import type { PlayerAwardSimple } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
 import { leaderAwardCategories } from "../../worker/core/season/awards.ts";
+import type { PlayerAwardBuiltInWithPrefix } from "../../worker/views/player.ts";
 import { helpers } from "./helpers.ts";
 
 // These are old award names from before customizable awards
@@ -38,11 +39,14 @@ const awardsEnd = [
 ];
 
 const getName = (
-	award: DistributiveOmit<PlayerAward, "season">,
+	award: Omit<PlayerAwardSimple, "season"> | PlayerAwardBuiltInWithPrefix,
 	short: boolean | undefined,
 ) => {
 	if (!short) {
-		return formatPlayerAwardName(award);
+		return formatPlayerAwardName(
+			award,
+			award.type === undefined ? award.groupPrefix : undefined,
+		);
 	}
 
 	if (award.type === undefined) {
@@ -111,7 +115,10 @@ const getLongWithoutTeamNumber = (type: string, originalType: string) => {
 	return originalType;
 };
 
-export const groupAwards = (awards: PlayerAward[], shortNames?: boolean) => {
+export const groupAwards = (
+	awards: (PlayerAwardSimple | PlayerAwardBuiltInWithPrefix)[],
+	shortNames?: boolean,
+) => {
 	const seen = new Set();
 	const awardsGrouped = [];
 	const awardsGroupedTemp = Object.groupBy(

@@ -33,8 +33,6 @@ custom awards
     - test with div/conf awards (should show in separate columns)
   - 0 regular season games, use playoff stats for regular season awards
   - mip in playoffs or series again, after tweaking cutoffs
-  - playoff series awards in all sports
-    - hockey
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - groupAwards
@@ -42,6 +40,8 @@ custom awards
   - GOAT formula
   - achievements
     - check if the award we're looking for is unedited. if so, use it. if not, no achievement.
+      - this means we need to export the "default" awards for some specific categories, like mvp/dpoy/etc
+        - also use this to replace doAwards.football use in some places
       - hashAward
     - show in editor UI if still eligible for achievements
     - triple crown

@@ -787,30 +787,34 @@ export const processAwards = async ({
 				{ season },
 				"noCopyCache",
 			);
-			if (!playoffSeries) {
-				expandedAwards = [];
+			const roundSeries = playoffSeries?.series.at(baseAward.statRange);
+			if (!roundSeries) {
+				// Show placeholder award if no series
+				expandedAwards = [
+					{
+						...baseAward,
+						group: {
+							type: "playoffSeries",
+							tids: [-1, -1],
+						},
+					},
+				];
 			} else {
-				const roundSeries = playoffSeries.series.at(baseAward.statRange);
+				expandedAwards = roundSeries
+					.map((series, i) => {
+						if (!series.away) {
+							return;
+						}
 
-				if (!roundSeries) {
-					expandedAwards = [];
-				} else {
-					expandedAwards = roundSeries
-						.map((series, i) => {
-							if (!series.away) {
-								return;
-							}
-
-							return {
-								...baseAward,
-								group: {
-									type: "playoffSeries" as const,
-									tids: [series.home.tid, series.away.tid] as const,
-								},
-							};
-						})
-						.filter((award) => award !== undefined);
-				}
+						return {
+							...baseAward,
+							group: {
+								type: "playoffSeries",
+								tids: [series.home.tid, series.away.tid],
+							} as const,
+						};
+					})
+					.filter((award) => award !== undefined);
 			}
 		} else {
 			expandedAwards = [omit(baseAward, ["group"])];

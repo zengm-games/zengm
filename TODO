@@ -58,7 +58,6 @@ custom awards
 - get rid of SIMPLE_AWARDS and AWARD_NAMES (might need in upgrade though)
 - search for any hardcoded strings like "Rookie of the Year", "Most Improved Player", etc
   - after upgrade, can remove awardsOld?
-- some parts of awards.ts were copied to doAwards.ts, make sure to remove dupes
 - schema
   - setting
   - awards object

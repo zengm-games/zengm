@@ -1,24 +1,19 @@
-import { PLAYER, PHASE } from "../../../common/constants.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type {
 	Award2,
 	Conditions,
 	DistributiveOmit,
-	Player,
 	PlayerAward,
 	PlayerAwardBuiltIn,
 	PlayerFiltered,
 	PlayerStatType,
 	TeamFiltered,
 } from "../../../common/types.ts";
-import { POS_NUMBERS_INVERSE } from "../../../common/constants.baseball.ts";
 import addAward from "../player/addAward.ts";
-import { bySport, isSport } from "../../../common/sportFunctions.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
-import getLeaderRequirements, {
-	getLeaderRequirementsStats,
-} from "./getLeaderRequirements.ts";
+import getLeaderRequirements from "./getLeaderRequirements.ts";
 import {
 	GamesPlayedCache,
 	playerMeetsCategoryRequirements,
@@ -32,281 +27,7 @@ export type AwardsByPlayer = {
 	award: DistributiveOmit<PlayerAward, "season">;
 }[];
 
-export type GetTopPlayersOptions = {
-	allowNone?: boolean;
-	amount?: number;
-	filter?: (a: PlayerFiltered) => boolean;
-	score: (a: PlayerFiltered) => number;
-};
-
-export const awardStats = bySport({
-	baseball: [
-		"keyStats",
-		"gpPit",
-		"gsPit",
-		"w",
-		"l",
-		"sv",
-		"era",
-		"ip",
-		"war",
-		"rpit",
-		"season",
-		"abbrev",
-		"tid",
-		"jerseyNumber",
-
-		// For all-offense/defense teams
-		"rbat",
-		"rbr",
-		"rfld",
-
-		// For position determination
-		"gpF",
-
-		// For season leaders (and requirements)
-		"hr",
-		"rbi",
-		"r",
-		"sb",
-		"bb",
-		"soPit",
-		"ba",
-		"ops",
-	],
-	basketball: [
-		"gp",
-		"gs",
-		"min",
-		"pts",
-		"trb",
-		"ast",
-		"blk",
-		"stl",
-		"per",
-		"ewa",
-		"ws",
-		"dws",
-		"vorp",
-		"ws48",
-		"season",
-		"abbrev",
-		"tid",
-		"jerseyNumber",
-	],
-	football: [
-		"keyStats",
-		"pntYds",
-		"fg",
-		"krTD",
-		"krYds",
-		"prTD",
-		"prYds",
-		"pssYds",
-		"pssTD",
-		"pssInt",
-		"rusYds",
-		"rusTD",
-		"recYds",
-		"recTD",
-		"fmbLost",
-		"prTD",
-		"krTD",
-		"ydsFromScrimmage",
-		"season",
-		"abbrev",
-		"tid",
-		"jerseyNumber",
-		"defIntTD",
-		"defFmbTD",
-		"defSft",
-		"defSk",
-		"defInt",
-		"defPssDef",
-		"defFmbFrc",
-		"defFmbRec",
-		"defTckSolo",
-		"defTckAst",
-		"defTckLoss",
-		"totTD",
-		"pbw",
-		"pba",
-		"pbwr",
-		"rbw",
-		"rba",
-		"rbwr",
-	],
-	hockey: [
-		"keyStats",
-		"gpGoalie",
-		"g",
-		"a",
-		"pts",
-		"hit",
-		"tk",
-		"gaa",
-		"svPct",
-		"ops",
-		"dps",
-		"gps",
-		"ps",
-		"season",
-		"abbrev",
-		"tid",
-		"jerseyNumber",
-	],
-});
-
-const getProcessedPlayers = async (
-	playersAll: Player[],
-	season: number,
-	playoffs?: boolean,
-) => {
-	const stats = Array.from(
-		new Set([
-			...awardStats,
-			...getLeaderRequirementsStats(getLeaderRequirements(), awardStats),
-		]),
-	);
-
-	let players = await idb.getCopies.playersPlus(playersAll, {
-		attrs: [
-			"pid",
-			"name",
-			"firstName",
-			"lastName",
-			"tid",
-			"abbrev",
-			"draft",
-			"injury",
-			"born",
-			"watch",
-		],
-		ratings: ["pos", "season", "ovr", "dovr", "pot", "skills"],
-		stats,
-		playoffs,
-		regularSeason: !playoffs,
-		fuzz: true,
-		mergeStats: "totOnly",
-	});
-
-	// Only keep players who actually have a stats entry for the latest season
-	players = players.filter((p) =>
-		p.stats.some((ps: any) => ps.season === season),
-	);
-
-	// This can happen if there are 0 games in the regular season - in that case, might as well look for playoff stats too
-	if (players.length === 0 && !playoffs) {
-		return getProcessedPlayers(playersAll, season, true);
-	}
-
-	return players;
-};
-
-const getPlayers = async (season: number): Promise<PlayerFiltered[]> => {
-	let playersAll;
-	if (g.get("season") === season && g.get("phase") <= PHASE.PLAYOFFS) {
-		playersAll = await idb.cache.players.indexGetAll("playersByTid", [
-			PLAYER.FREE_AGENT,
-			Infinity,
-		]);
-	} else {
-		playersAll = await idb.getCopies.players(
-			{
-				activeSeason: season,
-			},
-			"noCopyCache",
-		);
-	}
-
-	const players = await getProcessedPlayers(playersAll, season);
-
-	// Add winp, for later
-	const teamSeasons = await idb.getCopies.teamSeasons(
-		{
-			season,
-		},
-		"noCopyCache",
-	);
-	const teamInfos: Record<
-		number,
-		{
-			gp: number;
-			winp: number;
-		}
-	> = {};
-	for (const teamSeason of teamSeasons) {
-		teamInfos[teamSeason.tid] = {
-			gp: helpers.getTeamSeasonGp(teamSeason),
-			winp: helpers.calcWinp(teamSeason),
-		};
-	}
-
-	// For convenience later
-	for (const p of players) {
-		p.currentStats = p.stats.at(-1);
-		for (let i = p.stats.length - 1; i >= 0; i--) {
-			if (p.stats[i].season === season) {
-				p.currentStats = p.stats[i];
-				break;
-			}
-		}
-
-		p.pos = p.ratings.at(-1).pos;
-		if (isSport("baseball")) {
-			// Overwrite position with actual position played
-			const gpF = (p.currentStats.gpF as (number | undefined)[]).map((gp) =>
-				gp === undefined ? 0 : gp,
-			);
-			let maxGP = 0; // Start at 0 rather than -Infinity because we're not interested in positions with 0 games played
-			let maxIndex;
-			for (const [i, gp] of gpF.entries()) {
-				if (gp > maxGP) {
-					maxGP = gp;
-					maxIndex = i;
-				}
-			}
-
-			if (maxIndex !== undefined) {
-				p.pos = (POS_NUMBERS_INVERSE as any)[maxIndex + 1];
-			}
-		}
-
-		// Otherwise it's always the current season
-		p.age = season - p.born.year;
-
-		// Player somehow on an inactive team needs this fallback, should only happen in a weird custom roster
-		p.teamInfo = teamInfos[p.currentStats.tid] ?? {
-			gp: 0,
-			winp: 0,
-		};
-	}
-
-	// Add fracWS for basketball current season
-	if (isSport("basketball")) {
-		const totalWS: Record<number, number> = {};
-		for (const p of players) {
-			if (totalWS[p.currentStats.tid] === undefined) {
-				totalWS[p.currentStats.tid] = 0;
-			}
-			totalWS[p.currentStats.tid] += p.currentStats.ws;
-		}
-
-		for (const p of players) {
-			p.currentStats.fracWS = Math.min(
-				// Inner max is to handle negative totalWS
-				p.currentStats.ws / Math.max(totalWS[p.currentStats.tid]!, 1),
-
-				// In the rare case that a team has very low or even negative WS, don't let anybody have a crazy high fracWS
-				0.8,
-			);
-		}
-	}
-
-	return players;
-};
-
-const teamAwards = async (
+export const teamAwards = async (
 	teamsUnsorted: TeamFiltered<
 		["tid"],
 		[
@@ -488,7 +209,10 @@ export const leaderAwardCategories = bySport({
 	],
 });
 
-const leagueLeaders = async (players: PlayerFiltered[], season: number) => {
+export const leagueLeaders = async (
+	players: PlayerFiltered[],
+	season: number,
+) => {
 	const requirements = getLeaderRequirements();
 	const statType: PlayerStatType = bySport({
 		baseball: "totals",
@@ -555,40 +279,7 @@ const leagueLeaders = async (players: PlayerFiltered[], season: number) => {
 	return awardsByPlayer;
 };
 
-const getTopPlayers = (
-	{ amount, filter, score }: GetTopPlayersOptions,
-	playersUnsorted: PlayerFiltered[],
-): PlayerFiltered[] => {
-	if (playersUnsorted.length === 0) {
-		return [];
-	}
-
-	const actualFilter = filter ?? (() => true);
-	const actualAmount = amount ?? 1;
-	const cache: Map<number, number> = new Map();
-	const players = playersUnsorted.filter(actualFilter).sort((a, b) => {
-		let aScore = cache.get(a.pid);
-
-		if (aScore === undefined) {
-			aScore = score(a);
-			cache.set(a.pid, aScore);
-		}
-
-		let bScore = cache.get(b.pid);
-
-		if (bScore === undefined) {
-			bScore = score(b);
-			cache.set(b.pid, bScore);
-		}
-
-		return bScore - aScore;
-	});
-
-	// If all players are filtered out above (like MIP initial year), then this will return an empty array
-	return players.slice(0, actualAmount);
-};
-
-const saveAwardsByPlayer = async (
+export const saveAwardsByPlayer = async (
 	awardsByPlayer: AwardsByPlayer,
 	conditions: Conditions,
 	season: number = g.get("season"),
@@ -648,7 +339,6 @@ const saveAwardsByPlayer = async (
 				score = 20;
 			}
 		}
-		console.log(text);
 
 		if (logEvents && score !== undefined) {
 			logEvent(
@@ -692,7 +382,7 @@ const saveAwardsByPlayer = async (
 	}
 };
 
-const deleteAwardsByPlayer = async (
+export const deleteAwardsByPlayer = async (
 	awardsByPlayer: {
 		pid: number;
 		type: string;
@@ -721,7 +411,7 @@ const deleteAwardsByPlayer = async (
 	}
 };
 
-const addSimpleAndTeamAwardsToAwardsByPlayer = () => {};
+export const addSimpleAndTeamAwardsToAwardsByPlayer = () => {};
 
 const getInitials = (string: string) => {
 	return (
@@ -766,14 +456,4 @@ export const formatAwardNamePrefix = (
 	}
 
 	return `${prefix} ${award.name}`;
-};
-
-export {
-	getPlayers,
-	getTopPlayers,
-	leagueLeaders,
-	deleteAwardsByPlayer,
-	saveAwardsByPlayer,
-	addSimpleAndTeamAwardsToAwardsByPlayer,
-	teamAwards,
 };

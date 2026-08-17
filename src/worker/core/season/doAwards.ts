@@ -96,7 +96,6 @@ type CurrentStats = {
 
 const getProcessedPlayers = async (
 	playersAll: Player[],
-	season: number,
 	statRanges: Set<StatRange>,
 ) => {
 	const stats = Array.from(
@@ -289,7 +288,7 @@ const getPlayers = async (
 		);
 	}
 
-	const players = await getProcessedPlayers(playersAll, season, statRanges);
+	const players = await getProcessedPlayers(playersAll, statRanges);
 
 	// Cache some stuff for later
 	const teamSeasons = await idb.getCopies.teamSeasons(

@@ -5,7 +5,7 @@ import type { TeamFiltered } from "../../common/types.ts";
 import advStatsSave from "./advStatsSave.ts";
 import { groupByUnique, last } from "../../common/utils.ts";
 import {
-	defaultAwardsFootball,
+	defaultAwards,
 	defaultGameAttributes,
 } from "../../common/defaultGameAttributes.ts";
 import helpers from "./helpers.ts";
@@ -443,7 +443,7 @@ const advStats = async () => {
 	// Hackily account for AV of award winners, for defense only - we can do this without saving first because the formula does not use AV
 	if (!playoffs) {
 		const { realizedAwards } = await processAwards({
-			awards: [defaultAwardsFootball.all],
+			awards: [defaultAwards.all],
 			numPlayersPerIndividualAward: 1,
 			season: g.get("season"),
 			statOverridesByMatchup: undefined,

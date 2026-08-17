@@ -517,6 +517,13 @@ export type TragicDeaths = {
 
 type FootballOvertime = "suddenDeath" | "exceptFg" | "bothPossess";
 
+type AwardInfoToSetting<T extends AwardInfoIndividual | AwardInfoTeam> = Omit<
+	T,
+	"group" | "winner"
+> & { group?: "conf" | "div" };
+export type AwardSettingIndividual = AwardInfoToSetting<AwardInfoIndividual>;
+export type AwardSettingTeam = AwardInfoToSetting<AwardInfoTeam>;
+
 export type GameAttributesLeague = {
 	aiJerseyRetirement: boolean;
 	aiTradesFactor: number;
@@ -548,10 +555,7 @@ export type GameAttributesLeague = {
 	autoRelocateGeo: "naFirst" | "naOnly" | "any";
 	autoRelocateRealign: boolean;
 	autoRelocateRebrand: boolean;
-	awards: ((
-		| Omit<AwardInfoIndividual, "group" | "winner">
-		| Omit<AwardInfoTeam, "group" | "winner">
-	) & { group?: "conf" | "div" })[];
+	awards: (AwardSettingIndividual | AwardSettingTeam)[];
 	brotherRate: number;
 	budget: boolean;
 	challengeNoDraftPicks: boolean;

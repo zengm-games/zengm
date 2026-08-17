@@ -26,6 +26,7 @@ custom awards
   - validate formulas
   - opoyFormula in FBGM only
     - and don't allow if MIP, MVP and maybe other stuff
+  - show which achievements still eligible for
 - test
   - football posFactor in dpoyScore - really needed? could add formulaByPos but it gets messy. could also add references to other awards
   - historyAll, teamRecords, awardRecords
@@ -40,7 +41,23 @@ custom awards
       - this means we need to export the "default" awards for some specific categories, like mvp/dpoy/etc
         - also use this to replace doAwards.football use in some places
       - hashAward
-    - show in editor UI if still eligible for achievements
+      - brick_wall
+        - basketball: allDefensive
+      - mvp(checkMvp)/out_of_nowhere
+        - all sports: mvp
+      - sleeper_pick
+        - football: droy+oroy
+      	- other: roy
+      - team_effort/super_team/quit_on_top/golden_boy
+        - baseball: allOffense (and update text to reflect this)
+        - other: allLeague
+      - trust_the_process
+        - all sports: allRookie
+      - triple_crown
+        - baseball: mvp+finalsMvp+allDefensive
+        - hockey: mvp+playoffMvp+dpoy
+        - other: mvp+finalsMvp+dpoy
+      - hardware_store: basically everything, and re-evaluate
     - triple crown
       - fix baseball DPOY bug https://discord.com/channels/290013534023057409/1532565456920117279/1532565456920117279
 - make sure hashAward accounts for everything

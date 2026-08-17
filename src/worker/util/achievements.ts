@@ -1841,7 +1841,7 @@ if (isSport("basketball")) {
 
 				const mvp = findAward(awards, defaultAwards.mvp)?.winner[0];
 				const mip = findAward(awards, defaultAwardsBasketball.mip)?.winner[0];
-				return (
+				return !!(
 					mvp &&
 					mip &&
 					mvp.tid === g.get("userTid") &&

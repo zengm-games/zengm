@@ -2047,11 +2047,12 @@ export type TeamNum = 0 | 1;
 
 export type AwardPlayer2 = {
 	pid: number;
+	tid: number;
 
 	// Used for playoff series stats which are generally not stored long-term
 	statOverrides?: {
 		score: number;
-		tid: number; // In case team is changed during playoffs with God Mode
+		tid: number;
 	} & Record<string, number | string>;
 };
 

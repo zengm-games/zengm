@@ -175,14 +175,12 @@ const getAwardsByPlayer = (
 			common.group = award.group;
 		}
 
-		const statRange = award.statRange ?? "regularSeason";
-
 		if (award.numTeams === undefined) {
 			for (const [i, pTemp] of award.winner.entries()) {
 				if (!pTemp) {
 					continue;
 				}
-				const { pid } = pTemp;
+				const { pid, tid } = pTemp;
 				const extra: {
 					mvp?: true;
 					roy?: true;
@@ -195,11 +193,6 @@ const getAwardsByPlayer = (
 				}
 
 				const p = playersByPid[pid]!;
-
-				const tid = p.currentStats[statRange]?.tid;
-				if (tid === undefined) {
-					continue;
-				}
 
 				awardsByPlayer.push({
 					pid,
@@ -218,13 +211,8 @@ const getAwardsByPlayer = (
 					if (!pTemp) {
 						continue;
 					}
-					const { pid } = pTemp;
+					const { pid, tid } = pTemp;
 					const p = playersByPid[pid]!;
-
-					const tid = p.currentStats[statRange]?.tid;
-					if (tid === undefined) {
-						continue;
-					}
 
 					awardsByPlayer.push({
 						pid,

@@ -1,4 +1,4 @@
-import { PHASE, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
+import { PHASE, PLAYER, REAL_PLAYERS_INFO } from "../../../common/constants.ts";
 import { groupByUnique, omit, orderBy } from "../../../common/utils.ts";
 import type {
 	AwardInfoTeam,
@@ -170,13 +170,28 @@ const getAwards = (
 
 			const common = omit(info, ["group"]);
 
+			const p = playersBySlug[slug]!;
+			const pidAndTid: {
+				pid: number;
+				tid: number;
+			} = {
+				pid: p.pid,
+				tid: PLAYER.DOES_NOT_EXIST,
+			};
+			const stats = p.stats?.findLast((row) => row.season !== season);
+			if (stats) {
+				pidAndTid.tid = stats.tid;
+			} else {
+				console.log("tid not found", season, slug, award, p);
+			}
+
 			const numTeams = award.numTeams;
 			if (numTeams === undefined) {
 				// Individual award
 				builtInAwards.push({
 					...common,
 					numTeams: undefined,
-					winner: [{ pid: playersBySlug[slug]!.pid }],
+					winner: [pidAndTid],
 				});
 			} else {
 				// Team award
@@ -192,7 +207,7 @@ const getAwards = (
 					teamAwardsByShortName[info.shortName] = teamAward;
 				}
 				teamAward.winner[teamIndex] ??= [];
-				teamAward.winner[teamIndex].push({ pid: playersBySlug[slug]!.pid });
+				teamAward.winner[teamIndex].push(pidAndTid);
 			}
 		}
 

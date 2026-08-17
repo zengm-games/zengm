@@ -8,7 +8,6 @@ import type {
 } from "../../common/types.ts";
 import { season } from "../core/index.ts";
 import { omit, orderBy } from "../../common/utils.ts";
-import { PlayersCache } from "../db/PlayersCache.ts";
 
 const sumBy = <Key extends string, T extends Record<Key, number>>(
 	records: T[],
@@ -57,7 +56,6 @@ const tallyAwards = async (
 	seasons: Set<number>,
 	awards: Awards2[],
 	allAllStars: AllStars[],
-	playersCache: PlayersCache,
 ) => {
 	const teamAwards = {
 		allStar: 0,
@@ -98,36 +96,10 @@ const tallyAwards = async (
 				continue;
 			}
 
-			const winner = award.winner[0];
-			if (winner) {
-				const { pid, statOverrides } = winner;
-				let match = statOverrides?.tid === tid;
-				if (!match) {
-					// With the 2026 awards refactor, tid is no longer stored in awards object (except playoffSeries) because it can be found in player stats. So now this page is less accurate (if there is deleted data) and slower. playersCache helps speed it up a bit though.
-					const p = await playersCache.get(pid);
-
-					if (p) {
-						// Only look for regular season stats, since above we are already skipping playoff awards
-						match =
-							p.stats.findLast((row2) => {
-								if (row.season !== row2.season) {
-									return false;
-								}
-
-								// For regular season awards, skip playoff stats in case tid changed for the playoffs. For playoff and combined awards, just look at whatever is most recent.
-								if (award.statRange === undefined && row2.playoffs !== false) {
-									return;
-								}
-
-								return true;
-							})?.tid === tid;
-					}
-				}
-				if (match) {
-					const shortName = award.shortName;
-					teamAwards.custom[shortName] ??= 0;
-					teamAwards.custom[shortName] += 1;
-				}
+			if (award.winner[0]?.tid === tid) {
+				const shortName = award.shortName;
+				teamAwards.custom[shortName] ??= 0;
+				teamAwards.custom[shortName] += 1;
 			}
 		}
 	}
@@ -169,7 +141,6 @@ const getRowInfo = async (
 	}[],
 	awards: Awards2[],
 	allStars: AllStars[],
-	playersCache: PlayersCache,
 ) => {
 	let playoffs = 0;
 	let finals = 0;
@@ -224,7 +195,6 @@ const getRowInfo = async (
 			new Set(seasonAttrs.map((x) => x.season)),
 			awards,
 			allStars,
-			playersCache,
 		)),
 	};
 	rowInfo.winp = helpers.calcWinp(rowInfo);
@@ -355,9 +325,6 @@ const updateTeamRecords = async (
 			}
 		}
 
-		// Many players win multiple awards, so cache them rather than always reading from disk
-		const playersCache = new PlayersCache();
-
 		const teamsAll = orderBy(
 			await idb.getCopies.teamsPlus(
 				{
@@ -409,13 +376,7 @@ const updateTeamRecords = async (
 				name: t.name,
 				imgURL: t.imgURL,
 				imgURLSmall: t.imgURLSmall,
-				...(await getRowInfo(
-					t.tid,
-					seasonAttrsFiltered,
-					awards,
-					allStars,
-					playersCache,
-				)),
+				...(await getRowInfo(t.tid, seasonAttrsFiltered, awards, allStars)),
 				sortValue: teams.length,
 			};
 
@@ -438,13 +399,7 @@ const updateTeamRecords = async (
 						abbrev: seasonAttrs[0]!.abbrev,
 						region: seasonAttrs[0]!.region,
 						name: seasonAttrs[0]!.name,
-						...(await getRowInfo(
-							tid,
-							seasonAttrs,
-							awards,
-							allStars,
-							playersCache,
-						)),
+						...(await getRowInfo(tid, seasonAttrs, awards, allStars)),
 						sortValue: teams.length + partials.length,
 					});
 				};

@@ -457,10 +457,11 @@ export const processAwards = async ({
 							return;
 						}
 
+						let tid = p.currentStats[statRange]?.tid;
+
 						if (group?.type === "playoffSeries") {
 							// Save playoff series stats if possible
-							const currentStats =
-								p.currentStats[award.statRange ?? "regularSeason"];
+							const currentStats = p.currentStats[statRange];
 							if (currentStats || statOverridesByMatchup) {
 								const stats = showStatsByType[award.showStats];
 								if (!stats) {
@@ -482,17 +483,29 @@ export const processAwards = async ({
 									// Find statOverrides values from original awards, if possible. Otherwise we won't have any stats to display on Award Races for playoff series awards if box scores are deleted
 									const matchupKey = hashPlayoffSeries(group);
 									statOverrides = statOverridesByMatchup[matchupKey]?.[p.pid];
+									tid = statOverrides?.tid;
+								}
+
+								// No stats, no statOverrides, no tid!
+								if (tid === undefined) {
+									return;
 								}
 
 								return {
 									pid: p.pid,
+									tid,
 									statOverrides,
 								};
 							}
 						}
 
+						if (tid === undefined) {
+							throw new Error("Should never happen");
+						}
+
 						return {
 							pid: p.pid,
+							tid,
 						};
 					})
 					.filter((row) => row !== undefined);
@@ -513,7 +526,7 @@ export const processAwards = async ({
 					let positions =
 						TEAM_AWARD_INFO.positions[award.showStats] ??
 						TEAM_AWARD_INFO.positions.default;
-					const pidsByPos: Record<string, number[]> = {};
+					const playersByPos: Record<string, typeof players> = {};
 
 					// In baseball, have to do special stuff to handle if the DH setting is enabled or not
 					if (isSport("baseball")) {
@@ -593,8 +606,8 @@ export const processAwards = async ({
 
 						const needed = positionsNeeded.get(pos);
 						if (needed !== undefined && needed > 0) {
-							pidsByPos[pos] ??= [];
-							pidsByPos[pos].push(p.pid);
+							playersByPos[pos] ??= [];
+							playersByPos[pos].push(p);
 
 							if (needed === 1) {
 								positionsNeeded.delete(pos);
@@ -610,11 +623,15 @@ export const processAwards = async ({
 
 					const winner = range(numTeams).map((i) => {
 						return positions.map((pos) => {
-							const pid = pidsByPos[pos]?.shift();
-							if (pid === undefined) {
+							const p = playersByPos[pos]?.shift();
+							if (p === undefined) {
 								return;
 							}
-							return { pid, pos };
+							const tid = p.currentStats[statRange]?.tid;
+							if (tid === undefined) {
+								throw new Error("Should never happen");
+							}
+							return { pid: p.pid, pos, tid };
 						});
 					});
 
@@ -632,8 +649,14 @@ export const processAwards = async ({
 						sortedPlayers
 							.slice(0, numTeams * TEAM_AWARD_INFO.numPlayersPerTeam)
 							.map((p) => {
+								const tid = p.currentStats[statRange]?.tid;
+								if (tid === undefined) {
+									throw new Error("Should never happen");
+								}
+
 								return {
 									pid: p.pid,
+									tid,
 								};
 							}),
 						TEAM_AWARD_INFO.numPlayersPerTeam,

@@ -387,7 +387,7 @@ describe("checkAchievement", () => {
 	});
 
 	describe("triple_crown", () => {
-		test("award achievement if same player wins mvp, finalsMvp, and dpoy, on users team", async () => {
+		test("award achievement if same player wins mvp, fmvp, and dpoy, on users team", async () => {
 			const tid = g.get("userTid");
 			const awards = makeAwards({
 				season: 2013,

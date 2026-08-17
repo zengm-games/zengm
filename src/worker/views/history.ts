@@ -14,6 +14,7 @@ import { groupByUnique, last } from "../../common/utils.ts";
 import { showStatsByType } from "../../common/awards.ts";
 import { getPosByGpF } from "../core/player/getPosByGpF.ts";
 import { formatAwardNamePrefix } from "../core/season/awards.ts";
+import { PlayersCache } from "../db/PlayersCache.ts";
 
 const viewedSeasonSummary = async () => {
 	local.unviewedSeasonSummary = false;
@@ -77,6 +78,8 @@ const updateHistory = async (
 			return map;
 		};
 
+		const playersCache = new PlayersCache();
+
 		const augmentPlayer = async ({
 			pid,
 			pos,
@@ -102,7 +105,7 @@ const updateHistory = async (
 				allStats.push("gpF");
 			}
 
-			const p = await idb.getCopy.players({ pid }, "noCopyCache");
+			const p = await playersCache.get(pid);
 			if (!p) {
 				return;
 			}

@@ -2097,9 +2097,9 @@ type AwardInfo = {
 		| "goalkeeping";
 
 	// Filters
-	bench?: boolean;
-	mip?: boolean;
-	rookie?: boolean;
+	bench?: true;
+	mip?: true;
+	rookie?: true;
 };
 
 type AwardInfoIndividualCommon = {

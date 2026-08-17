@@ -1,11 +1,76 @@
 import { idb } from "../db/index.ts";
 import g from "./g.ts";
-import type { Achievement, NonEmptyArray, Player } from "../../common/types.ts";
+import type {
+	Achievement,
+	AwardInfoIndividual,
+	AwardInfoTeam,
+	Awards2,
+	AwardSettingIndividual,
+	AwardSettingTeam,
+	NonEmptyArray,
+	Player,
+} from "../../common/types.ts";
 import { PLAYER } from "../../common/constants.ts";
 import helpers from "./helpers.ts";
 import { range } from "../../common/utils.ts";
-import { defaultGameAttributes } from "../../common/defaultGameAttributes.ts";
+import {
+	defaultAwards,
+	defaultAwardsBasketball,
+	defaultGameAttributes,
+} from "../../common/defaultGameAttributes.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
+
+const findAward = <
+	Input extends AwardSettingIndividual | AwardSettingTeam,
+	Output extends (Input extends AwardSettingIndividual
+		? AwardInfoIndividual
+		: AwardInfoTeam),
+>(
+	awards: Awards2,
+	searchFor: Input,
+): Output | undefined => {
+	const simpleEqualityKeys = [
+		"formula",
+		"statRange",
+		"bench",
+		"mip",
+		"rookie",
+		"numTeams",
+	] as const;
+
+	for (const award of awards.awards) {
+		if (simpleEqualityKeys.some((key) => award[key] !== searchFor[key])) {
+			continue;
+		}
+
+		// Allow award to have no group even if we're searching for an award with a group, because that's more restrictive. Similarly could allow a conf award to count for div, but not worth the complexity because there are no built-in div awards
+		if (award.group !== undefined && award.group.type !== searchFor.group) {
+			continue;
+		}
+
+		const awardByPos = award.formulaByPos;
+		const searchByPos = searchFor.formulaByPos;
+		if (awardByPos && searchByPos) {
+			const awardKeys = Object.keys(awardByPos);
+			const searchKeys = Object.keys(searchByPos);
+			if (awardKeys.length !== searchKeys.length) {
+				continue;
+			}
+
+			if (
+				awardKeys.some((key) => {
+					return awardByPos[key] !== searchByPos[key];
+				})
+			) {
+				continue;
+			}
+		} else if (awardByPos || searchByPos) {
+			continue;
+		}
+
+		return award as Output;
+	}
+};
 
 const goldenOldiesCutoffs: [number, number, number] = bySport({
 	baseball: [30, 33, 36],
@@ -1770,13 +1835,18 @@ if (isSport("basketball")) {
 
 			async check() {
 				const awards = await idb.cache.awards.get(g.get("season"));
+				if (!awards) {
+					return false;
+				}
+
+				const mvp = findAward(awards, defaultAwards.mvp)?.winner[0];
+				const mip = findAward(awards, defaultAwardsBasketball.mip)?.winner[0];
 				return (
-					awards &&
-					awards.mvp &&
-					awards.mip &&
-					awards.mvp.tid === g.get("userTid") &&
-					awards.mip.tid === g.get("userTid") &&
-					awards.mvp.pid === awards.mip.pid
+					mvp &&
+					mip &&
+					mvp.tid === g.get("userTid") &&
+					mip.tid === g.get("userTid") &&
+					mvp.pid === mip.pid
 				);
 			},
 

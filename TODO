@@ -1,4 +1,11 @@
 custom awards
+- put tid in winners
+  - use in team records, award records, etc
+  - PlayersCache
+  - remove from statOverrides
+    - how to support old playoff series awards? add tidOverrides?
+      - search for "tid override"
+- move leagueLeaders and getAwardsByPlayer to awardsByPlayer
 - rethink index
   - corresponds to Awards2 or g.get("awards")?
   - why is it needed?
@@ -27,6 +34,7 @@ custom awards
   - opoyFormula in FBGM only
     - and don't allow if MIP, MVP and maybe other stuff
   - show which achievements still eligible for
+  - make sure to delete formulaByPos if empty
 - test
   - football posFactor in dpoyScore - really needed? could add formulaByPos but it gets messy. could also add references to other awards
   - historyAll, teamRecords, awardRecords

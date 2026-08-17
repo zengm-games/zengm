@@ -508,7 +508,7 @@ const checkSleeperPick = async (checkPlayer: (p: Player) => boolean) => {
 			const p = await idb.cache.players.get(winner.pid);
 
 			if (
-				p?.tid === g.get("userTid") &&
+				p &&
 				p.draft.tid === g.get("userTid") &&
 				p.draft.year === g.get("season") - 1 &&
 				checkPlayer(p)

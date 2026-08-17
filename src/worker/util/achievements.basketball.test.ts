@@ -6,7 +6,20 @@ import g from "./g.ts";
 import helpers from "./helpers.ts";
 import achievements from "./achievements.ts";
 import { DEFAULT_LEVEL } from "../../common/budgetLevels.ts";
-import type { Achievement } from "../../common/types.ts";
+import type { Achievement, Awards2 } from "../../common/types.ts";
+import { defaultAwardsBasketball } from "../../common/defaultGameAttributes.ts";
+
+const makeAwards = (
+	awards: Partial<Awards2> & Pick<Awards2, "awards">,
+): Awards2 => {
+	return {
+		season: g.get("season"),
+		bestRecord: 0,
+		bestRecordConfs: {},
+		bestRecordDivs: {},
+		...awards,
+	};
+};
 
 type AchievementWithCheck = Achievement & {
 	check: NonNullable<Achievement["check"]>;
@@ -1630,33 +1643,21 @@ describe("sleeper_pick", () => {
 		await idb.cache.players.put(p);
 
 		// ROY is pid 1 on tid 7
-		const awards = {
+		const awards = makeAwards({
 			season: 2013,
-			roy: {
-				pid: p.pid,
-				name: `${p.firstName} ${p.lastName}`,
-				tid: p.tid,
-				abbrev: "ATL",
-				pts: 30,
-				trb: 9,
-				ast: 9,
-			},
-		};
+			awards: [
+				{
+					...defaultAwardsBasketball.roy,
+					group: undefined,
+					winner: [{ pid: p.pid, tid: p.tid }],
+				},
+			],
+		});
 
 		await idb.cache.awards.put(awards);
 
 		awarded = await get("sleeper_pick").check();
 		assert.strictEqual(awarded, true);
-	});
-
-	test("don't award achievement if not currently on user's team", async () => {
-		const p = (await idb.cache.players.getAll())[0];
-		assert(p);
-		p.tid = 15;
-		await idb.cache.players.put(p);
-
-		const awarded = await get("sleeper_pick").check();
-		assert.strictEqual(awarded, false);
 	});
 
 	test("don't award achievement if not drafted by user", async () => {
@@ -1697,22 +1698,48 @@ describe("sleeper_pick", () => {
 		const p = (await idb.cache.players.getAll())[1];
 		assert(p);
 
-		const awards = {
+		const awards = makeAwards({
 			season: 2013,
-			roy: {
-				pid: p.pid,
-				name: "Timothy Gonzalez",
-				tid: 15,
-				abbrev: "ATL",
-				pts: 30.135135135135137,
-				trb: 9.18918918918919,
-				ast: 0.7972972972972973,
-			},
-		};
+			awards: [
+				{
+					...defaultAwardsBasketball.roy,
+					group: undefined,
+					winner: [{ pid: p.pid, tid: 15 }],
+				},
+			],
+		});
 		await idb.cache.awards.put(awards);
 
 		p.draft.year = g.get("season") - 1;
 		await idb.cache.players.put(p);
+
+		const awarded = await get("sleeper_pick").check();
+		assert.strictEqual(awarded, false);
+	});
+
+	test("don't award achievement if not on user's team", async () => {
+		const p = (await idb.cache.players.getAll())[0];
+		assert(p);
+		p.tid = 15;
+		p.draft.tid = g.get("userTid");
+		p.draft.round = 1;
+		p.draft.pick = 20;
+		p.draft.year = g.get("season") - 1;
+		await idb.cache.players.put(p);
+
+		// ROY is pid 1 on tid 7
+		const awards = makeAwards({
+			season: 2013,
+			awards: [
+				{
+					...defaultAwardsBasketball.roy,
+					group: undefined,
+					winner: [{ pid: p.pid, tid: p.tid }],
+				},
+			],
+		});
+
+		await idb.cache.awards.put(awards);
 
 		const awarded = await get("sleeper_pick").check();
 		assert.strictEqual(awarded, false);

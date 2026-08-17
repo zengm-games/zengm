@@ -1,5 +1,4 @@
 custom awards
-- NonEmptyArray for winner?
 - rethink index
   - corresponds to Awards2 or g.get("awards")?
   - why is it needed?
@@ -27,34 +26,22 @@ custom awards
   - validate formulas
   - opoyFormula in FBGM only
     - and don't allow if MIP, MVP and maybe other stuff
-  - show which achievements still eligible for
+  - show which achievements still eligible for, or at least explain
   - make sure to delete formulaByPos if empty
 - test
   - football posFactor in dpoyScore - really needed? could add formulaByPos but it gets messy. could also add references to other awards
   - historyAll, teamRecords, awardRecords
     - test with changing awards
     - test with div/conf awards (should show in separate columns)
+  - achievements
+    - awarded
+    - not awarded if edited
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - awards editor
   - GOAT formula
   - achievements
     - check if the award we're looking for is unedited. if so, use it. if not, no achievement.
-      - this means we need to export the "default" awards for some specific categories, like mvp/dpoy/etc
-        - also use this to replace doAwards.football use in some places
-      - hashAward
-      - brick_wall
-        - basketball: allDefensive
-      - mvp(checkMvp)/out_of_nowhere
-        - all sports: mvp
-      - sleeper_pick
-        - football: droy+oroy
-      	- other: roy
-      - team_effort/super_team/quit_on_top/golden_boy
-        - baseball: allOffense (and update text to reflect this)
-        - other: allLeague
-      - trust_the_process
-        - all sports: allRookie
       - triple_crown
         - baseball: mvp+finalsMvp+allDefensive
         - hockey: mvp+playoffMvp+dpoy
@@ -258,6 +245,10 @@ dev usability stuff
   - sort array
 - checkNaNs still needed?
 - use registerGlobal more
+- NonEmptyArray stuff
+  - use for individual award winner
+  - assertion function to make sure array is winner (useful in processAwards)
+    - move last() to same utils file as this
 
 FBGM overtime - If team A scores in OT, And then Team B scores, They should always go for 2 bc you don’t want to give the ball back and have it be sudden death https://discord.com/channels/@me/778760871911751700/1480652733852811324
 

@@ -1,8 +1,4 @@
 custom awards
-- put tid in winners
-  - use in team records, award records, etc
-  - PlayersCache
-- move leagueLeaders and getAwardsByPlayer to awardsByPlayer
 - NonEmptyArray for winner?
 - rethink index
   - corresponds to Awards2 or g.get("awards")?

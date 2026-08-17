@@ -4,10 +4,22 @@ import type {
 	Conditions,
 	DistributiveOmit,
 	PlayerAward,
+	PlayerAwardBuiltIn,
+	PlayerFiltered,
+	PlayerStatType,
 } from "../../../common/types.ts";
 import addAward from "../player/addAward.ts";
 import { formatPlayerAwardName } from "../../../common/awards.ts";
 import { getGroupPrefix } from "./prefixes.ts";
+import getLeaderRequirements from "../season/getLeaderRequirements.ts";
+import {
+	GamesPlayedCache,
+	playerMeetsCategoryRequirements,
+} from "../../views/leaders.ts";
+import { leaderAwardCategories } from "../../../common/awards.ts";
+import { groupByUnique } from "../../../common/utils.ts";
+import type { processAwards } from "./processAwards.ts";
+import { bySport } from "../../../common/sportFunctions.ts";
 
 export type AwardsByPlayer = {
 	pid: number;
@@ -149,3 +161,152 @@ export const deleteAwardsByPlayer = async (
 };
 
 export const addSimpleAndTeamAwardsToAwardsByPlayer = () => {};
+
+export const getLeagueLeaderAwards = async (
+	players: PlayerFiltered[],
+	season: number,
+) => {
+	const requirements = getLeaderRequirements();
+	const statType: PlayerStatType = bySport({
+		baseball: "totals",
+		basketball: "perGame",
+		football: "totals",
+		hockey: "totals",
+	});
+
+	const gamesPlayedCache = new GamesPlayedCache();
+	await gamesPlayedCache.loadSeasons([season], false);
+
+	const awardsByPlayer: AwardsByPlayer = [];
+
+	for (const { stat, name } of leaderAwardCategories) {
+		if (!requirements[stat]) {
+			throw new Error(`Missing leader requirements for ${stat}`);
+		}
+
+		const statInfo = {
+			stat,
+			...requirements[stat],
+		};
+
+		let leaders = [];
+		let leaderValue = statInfo.sortAscending ? Infinity : -Infinity;
+		for (const p of players) {
+			const playerValue = p.currentStats[stat];
+
+			const pass = playerMeetsCategoryRequirements({
+				career: false,
+				cat: statInfo,
+				gamesPlayedCache,
+				p,
+				playerStats: p.currentStats,
+				seasonType: "regularSeason",
+				season,
+				statType,
+			});
+
+			if (pass) {
+				if (
+					statInfo.sortAscending
+						? playerValue < leaderValue
+						: playerValue > leaderValue
+				) {
+					leaders = [p];
+					leaderValue = playerValue;
+				} else if (playerValue === leaderValue) {
+					leaders.push(p);
+				}
+			}
+		}
+
+		for (const p of leaders) {
+			awardsByPlayer.push({
+				pid: p.pid,
+				tid: p.tid,
+				name: p.name,
+				award: { type: name },
+			});
+		}
+	}
+
+	return awardsByPlayer;
+};
+
+type ProcessAwardsReturn = Awaited<ReturnType<typeof processAwards>>;
+
+export const getAwardsByPlayer = (
+	realizedAwards: ProcessAwardsReturn["realizedAwards"],
+	players: ProcessAwardsReturn["players"],
+) => {
+	const playersByPid = groupByUnique(players, "pid");
+	const awardsByPlayer: AwardsByPlayer = [];
+	for (const { award, index } of realizedAwards) {
+		const common: Pick<
+			PlayerAwardBuiltIn,
+			"group" | "index" | "name" | "shortName"
+		> = {
+			name: award.name,
+			shortName: award.shortName,
+			index,
+		};
+
+		if (award.group && award.group.type !== "playoffSeries") {
+			common.group = award.group;
+		}
+
+		if (award.numTeams === undefined) {
+			for (const [i, pTemp] of award.winner.entries()) {
+				if (!pTemp) {
+					continue;
+				}
+				const { pid, tid } = pTemp;
+				const extra: {
+					mvp?: true;
+					roy?: true;
+				} = {};
+				if (award.mvp) {
+					extra.mvp = true;
+				}
+				if (award.roy) {
+					extra.roy = true;
+				}
+
+				const p = playersByPid[pid]!;
+
+				awardsByPlayer.push({
+					pid,
+					tid,
+					name: p.name,
+					award: {
+						...common,
+						...extra,
+						rank: i + 1, // Rank in "voting"
+					},
+				});
+			}
+		} else {
+			for (const [i, team] of award.winner.entries()) {
+				for (const pTemp of team) {
+					if (!pTemp) {
+						continue;
+					}
+					const { pid, tid } = pTemp;
+					const p = playersByPid[pid]!;
+
+					awardsByPlayer.push({
+						pid,
+						tid,
+						name: p.name,
+						award: {
+							...common,
+							rank: i + 1, // Team number
+							numTeams: award.numTeams,
+						},
+					});
+				}
+			}
+		}
+	}
+
+	return awardsByPlayer;
+};

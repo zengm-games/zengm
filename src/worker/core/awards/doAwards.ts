@@ -1,26 +1,19 @@
 import type {
 	Awards2,
 	Conditions,
-	PlayerAwardBuiltIn,
-	PlayerFiltered,
-	PlayerStatType,
 	TeamFiltered,
 } from "../../../common/types.ts";
 import { g } from "../../util/index.ts";
 import { idb } from "../../db/index.ts";
-import { groupByUnique } from "../../../common/utils.ts";
 import { processAwards } from "./processAwards.ts";
-import { saveAwardsByPlayer, type AwardsByPlayer } from "./awardsByPlayer.ts";
-import { bySport } from "../../../common/sportFunctions.ts";
-import { orderTeams } from "../../util/orderTeams.ts";
-import getLeaderRequirements from "../season/getLeaderRequirements.ts";
 import {
-	GamesPlayedCache,
-	playerMeetsCategoryRequirements,
-} from "../../views/leaders.ts";
-import { leaderAwardCategories } from "../../../common/awards.ts";
+	getAwardsByPlayer,
+	getLeagueLeaderAwards,
+	saveAwardsByPlayer,
+} from "./awardsByPlayer.ts";
+import { orderTeams } from "../../util/orderTeams.ts";
 
-export const teamAwards = async (
+const teamAwards = async (
 	teamsUnsorted: TeamFiltered<
 		["tid"],
 		[
@@ -83,155 +76,6 @@ export const teamAwards = async (
 	};
 };
 
-export const leagueLeaders = async (
-	players: PlayerFiltered[],
-	season: number,
-) => {
-	const requirements = getLeaderRequirements();
-	const statType: PlayerStatType = bySport({
-		baseball: "totals",
-		basketball: "perGame",
-		football: "totals",
-		hockey: "totals",
-	});
-
-	const gamesPlayedCache = new GamesPlayedCache();
-	await gamesPlayedCache.loadSeasons([season], false);
-
-	const awardsByPlayer: AwardsByPlayer = [];
-
-	for (const { stat, name } of leaderAwardCategories) {
-		if (!requirements[stat]) {
-			throw new Error(`Missing leader requirements for ${stat}`);
-		}
-
-		const statInfo = {
-			stat,
-			...requirements[stat],
-		};
-
-		let leaders = [];
-		let leaderValue = statInfo.sortAscending ? Infinity : -Infinity;
-		for (const p of players) {
-			const playerValue = p.currentStats[stat];
-
-			const pass = playerMeetsCategoryRequirements({
-				career: false,
-				cat: statInfo,
-				gamesPlayedCache,
-				p,
-				playerStats: p.currentStats,
-				seasonType: "regularSeason",
-				season,
-				statType,
-			});
-
-			if (pass) {
-				if (
-					statInfo.sortAscending
-						? playerValue < leaderValue
-						: playerValue > leaderValue
-				) {
-					leaders = [p];
-					leaderValue = playerValue;
-				} else if (playerValue === leaderValue) {
-					leaders.push(p);
-				}
-			}
-		}
-
-		for (const p of leaders) {
-			awardsByPlayer.push({
-				pid: p.pid,
-				tid: p.tid,
-				name: p.name,
-				award: { type: name },
-			});
-		}
-	}
-
-	return awardsByPlayer;
-};
-
-type ProcessAwardsReturn = Awaited<ReturnType<typeof processAwards>>;
-
-const getAwardsByPlayer = (
-	realizedAwards: ProcessAwardsReturn["realizedAwards"],
-	players: ProcessAwardsReturn["players"],
-) => {
-	const playersByPid = groupByUnique(players, "pid");
-	const awardsByPlayer: AwardsByPlayer = [];
-	for (const { award, index } of realizedAwards) {
-		const common: Pick<
-			PlayerAwardBuiltIn,
-			"group" | "index" | "name" | "shortName"
-		> = {
-			name: award.name,
-			shortName: award.shortName,
-			index,
-		};
-
-		if (award.group && award.group.type !== "playoffSeries") {
-			common.group = award.group;
-		}
-
-		if (award.numTeams === undefined) {
-			for (const [i, pTemp] of award.winner.entries()) {
-				if (!pTemp) {
-					continue;
-				}
-				const { pid, tid } = pTemp;
-				const extra: {
-					mvp?: true;
-					roy?: true;
-				} = {};
-				if (award.mvp) {
-					extra.mvp = true;
-				}
-				if (award.roy) {
-					extra.roy = true;
-				}
-
-				const p = playersByPid[pid]!;
-
-				awardsByPlayer.push({
-					pid,
-					tid,
-					name: p.name,
-					award: {
-						...common,
-						...extra,
-						rank: i + 1, // Rank in "voting"
-					},
-				});
-			}
-		} else {
-			for (const [i, team] of award.winner.entries()) {
-				for (const pTemp of team) {
-					if (!pTemp) {
-						continue;
-					}
-					const { pid, tid } = pTemp;
-					const p = playersByPid[pid]!;
-
-					awardsByPlayer.push({
-						pid,
-						tid,
-						name: p.name,
-						award: {
-							...common,
-							rank: i + 1, // Team number
-							numTeams: award.numTeams,
-						},
-					});
-				}
-			}
-		}
-	}
-
-	return awardsByPlayer;
-};
-
 const NUM_PLAYERS_TO_STORE_PER_INDIVIDUAL_AWARD = 5;
 
 export const doAwards = async (conditions: Conditions) => {
@@ -279,7 +123,7 @@ export const doAwards = async (conditions: Conditions) => {
 
 	const awardsByPlayer = [
 		...getAwardsByPlayer(realizedAwards, players),
-		...(await leagueLeaders(players, season)),
+		...(await getLeagueLeaderAwards(players, season)),
 	];
 
 	await saveAwardsByPlayer(awardsByPlayer, conditions, season);

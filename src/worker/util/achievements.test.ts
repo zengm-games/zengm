@@ -14,11 +14,12 @@ import {
 	makeAwards,
 } from "./achievementTestHelpers.ts";
 import { randInt } from "../../common/random.ts";
+import { range } from "../../common/utils.ts";
+
+beforeAll(cbBeforeAll);
+afterAll(cbAfterAll);
 
 describe("checkAchievement", () => {
-	beforeAll(cbBeforeAll);
-	afterAll(cbAfterAll);
-
 	const addExtraSeasons = async (
 		tid: number,
 		lastSeason: number,
@@ -2102,4 +2103,55 @@ describe("sleeper_pick", () => {
 		const awarded = await get("sleeper_pick").check();
 		assert.strictEqual(awarded, false);
 	});
+});
+
+test("brick_wall", async () => {
+	const scenarios = [
+		{
+			text: "2 All-Defensive players -> no award",
+			numPlayers: 2,
+			awarded: false,
+			awarded2: false,
+		},
+		{
+			text: "3 All-Defensive players -> no award",
+			numPlayers: 3,
+			awarded: true,
+			awarded2: false,
+		},
+		{
+			text: "5 All-Defensive players -> no award",
+			numPlayers: 5,
+			awarded: true,
+			awarded2: true,
+		},
+	];
+
+	for (const scenario of scenarios) {
+		const awards = makeAwards({
+			season: 2013,
+			awards: [
+				{
+					...defaultAwardsBasketball.def,
+					group: undefined,
+					winner: [
+						range(scenario.numPlayers).map(() => ({
+							pid: 0,
+							tid: g.get("userTid"),
+						})),
+					],
+				},
+			],
+		});
+
+		await idb.cache.awards.put(awards);
+
+		const awarded = await get("brick_wall").check();
+		const awarded2 = await get("brick_wall_2").check();
+		assert.deepStrictEqual(
+			{ awarded, awarded2 },
+			{ awarded: scenario.awarded, awarded2: scenario.awarded2 },
+			scenario.text,
+		);
+	}
 });

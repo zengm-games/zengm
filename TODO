@@ -38,8 +38,6 @@ custom awards
     - not awarded if edited
     - changing number of teams may be a safe edit
     - unit tests?
-      - brick_wall
-      - mvp(checkMvp)
       - out_of_nowhere
       - team_effort
       - super_team

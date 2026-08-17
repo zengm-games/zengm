@@ -10,7 +10,7 @@ import type { LocalStateUI } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { makeResponsiveDropdownOption } from "../../common/makeResponsiveDropdownOption.tsx";
-import { leaderAwardCategories } from "../../worker/core/awards/awards.ts";
+import { leaderAwardCategories } from "../../common/awards.ts";
 
 export type ResponsiveOption = {
 	minWidth: number;

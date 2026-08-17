@@ -7,9 +7,11 @@ import type {
 import { bySport } from "../../common/sportFunctions.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import { countBy, maxBy, range } from "../../common/utils.ts";
-import { leaderAwardCategories } from "../core/awards/awards.ts";
 import type { DropdownOption } from "../../ui/hooks/useDropdownOptions.tsx";
-import { formatPlayerAwardName } from "../../common/awards.ts";
+import {
+	formatPlayerAwardName,
+	leaderAwardCategories,
+} from "../../common/awards.ts";
 
 // Sync with useDropdownOptions
 const nonCustomAwardsList = [

@@ -3,6 +3,7 @@ custom awards
   - things that fix it:
     - getting rid of processAwards in advStats.football
     - removing advStats from util/index.ts
+  - try breaking up awards.ts
 - rethink index
   - corresponds to Awards2 or g.get("awards")?
   - why is it needed?

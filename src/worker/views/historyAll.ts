@@ -3,7 +3,7 @@ import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
 import type { UpdateEvents } from "../../common/types.ts";
 import { groupByUnique, last, range } from "../../common/utils.ts";
-import { formatAwardNamePrefix } from "../core/season/awards.ts";
+import { formatAwardNamePrefix } from "../core/awards/awards.ts";
 import { bySport } from "../../common/sportFunctions.ts";
 import { PlayersCache } from "../db/PlayersCache.ts";
 

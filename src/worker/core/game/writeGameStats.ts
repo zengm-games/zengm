@@ -1,5 +1,5 @@
 import { PHASE } from "../../../common/constants.ts";
-import { saveAwardsByPlayer } from "../season/awards.ts";
+import { saveAwardsByPlayer } from "../awards/awards.ts";
 import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type {

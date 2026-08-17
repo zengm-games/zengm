@@ -6,7 +6,7 @@ import type {
 import type { PlayerRatings } from "../../../common/types.basketball.ts";
 import { idb } from "../../db/index.ts";
 import { g } from "../../util/index.ts";
-import { saveAwardsByPlayer } from "../season/awards.ts";
+import { saveAwardsByPlayer } from "../awards/awards.ts";
 import { getNextRoundType } from "./contest.ts";
 
 type Three = NonNullable<AllStars["three"]>;

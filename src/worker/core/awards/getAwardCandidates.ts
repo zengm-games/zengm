@@ -7,11 +7,9 @@ import type {
 import { groupByUnique } from "../../../common/utils.ts";
 import { idb } from "../../db/index.ts";
 import g from "../../util/g.ts";
-import {
-	hashPlayoffSeries,
-	processAwards,
-	type StatOverridesByMatchup,
-} from "./doAwards.ts";
+import type { StatOverridesByMatchup } from "./getPlayers.ts";
+import { hashPlayoffSeries } from "./hashPlayoffSeries.ts";
+import { processAwards } from "./processAwards.ts";
 
 const persistedAwardsToAwardSetting = (persistedAwards: Awards2) => {
 	let statOverridesByMatchup: StatOverridesByMatchup | undefined;

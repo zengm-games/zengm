@@ -26,7 +26,7 @@ import { choice } from "../../common/random.ts";
 import { getTeamColors } from "../util/getTeamColors.ts";
 import { getTeamInfoBySeason } from "../util/getTeamInfoBySeason.ts";
 import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
-import { getGroupPrefix } from "../core/season/awards.ts";
+import { getGroupPrefix } from "../core/awards/awards.ts";
 
 export const getPlayerProfileStats = () => {
 	const stats = [];

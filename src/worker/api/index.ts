@@ -82,7 +82,7 @@ import {
 	type AwardsByPlayer,
 	deleteAwardsByPlayer,
 	saveAwardsByPlayer,
-} from "../core/season/awards.ts";
+} from "../core/awards/awards.ts";
 import { getScore } from "../core/player/checkJerseyNumberRetirement.ts";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types.ts";
 import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula.ts";

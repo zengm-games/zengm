@@ -1,7 +1,7 @@
 import { formatPlayerAwardName } from "../../common/awards.ts";
 import type { PlayerAwardSimple } from "../../common/types.ts";
 import { orderBy } from "../../common/utils.ts";
-import { leaderAwardCategories } from "../../worker/core/season/awards.ts";
+import { leaderAwardCategories } from "../../worker/core/awards/awards.ts";
 import type { PlayerAwardBuiltInWithPrefix } from "../../worker/views/player.ts";
 import { helpers } from "./helpers.ts";
 

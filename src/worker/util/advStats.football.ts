@@ -10,7 +10,7 @@ import {
 } from "../../common/defaultGameAttributes.ts";
 import helpers from "./helpers.ts";
 import statsRowIsCurrent from "../core/player/statsRowIsCurrent.ts";
-import { processAwards } from "../core/season/doAwards.ts";
+import { processAwards } from "../core/awards/processAwards.ts";
 
 type Team = TeamFiltered<
 	["tid"],

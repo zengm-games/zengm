@@ -13,7 +13,7 @@ import type {
 import addAward from "../player/addAward.ts";
 import { bySport } from "../../../common/sportFunctions.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
-import getLeaderRequirements from "./getLeaderRequirements.ts";
+import getLeaderRequirements from "../season/getLeaderRequirements.ts";
 import {
 	GamesPlayedCache,
 	playerMeetsCategoryRequirements,

@@ -27,6 +27,7 @@ import { genMessage } from "./genMessage.ts";
 import { defaultGameAttributes } from "../../../common/defaultGameAttributes.ts";
 import { env } from "../../util/env.ts";
 import { orderTeams } from "../../util/orderTeams.ts";
+import { doAwards } from "../awards/doAwards.ts";
 
 const INFLATION_GAME_ATTRIBUTES = [
 	"salaryCap",
@@ -325,7 +326,7 @@ const newPhaseBeforeDraft = async (
 		await setChampNoPlayoffs(conditions);
 	}
 
-	await season.doAwards(conditions);
+	await doAwards(conditions);
 	const teams = await idb.getCopies.teamsPlus(
 		{
 			attrs: ["tid"],

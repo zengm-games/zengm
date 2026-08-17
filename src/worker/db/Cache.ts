@@ -621,7 +621,7 @@ class Cache {
 
 		for (const [ind, entry] of this._requestQueue.entries()) {
 			if (entry.validStatuses.includes(status)) {
-				self.clearTimeout(entry.timeoutID);
+				clearTimeout(entry.timeoutID);
 				entry.resolve();
 
 				this._requestQueue.delete(ind);

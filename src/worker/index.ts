@@ -10,6 +10,7 @@ import { defaultGameAttributes } from "../common/defaultGameAttributes.ts";
 import { generateFace } from "./util/face.ts";
 
 self.bbgm = {
+	...self.bbgm,
 	...common,
 	...core,
 	...db,

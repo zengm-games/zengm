@@ -93,8 +93,8 @@ const tallyAwards = async (
 				// Skip team awards
 				continue;
 			}
-			if (award.statRange !== undefined) {
-				// Skip playoff awards
+			if (typeof award.statRange === "number") {
+				// Skip playoff series awards - usually not that much info there, like if you won FMVP you also probably won a championship
 				continue;
 			}
 
@@ -109,9 +109,18 @@ const tallyAwards = async (
 					if (p) {
 						// Only look for regular season stats, since above we are already skipping playoff awards
 						match =
-							p.stats.findLast(
-								(row2) => row.season === row2.season && row2.playoffs === false,
-							)?.tid === tid;
+							p.stats.findLast((row2) => {
+								if (row.season !== row2.season) {
+									return false;
+								}
+
+								// For regular season awards, skip playoff stats in case tid changed for the playoffs. For playoff and combined awards, just look at whatever is most recent.
+								if (award.statRange === undefined && row2.playoffs !== false) {
+									return;
+								}
+
+								return true;
+							})?.tid === tid;
 					}
 				}
 				if (match) {
@@ -331,8 +340,8 @@ const updateTeamRecords = async (
 					// Skip team awards
 					continue;
 				}
-				if (award.statRange !== undefined) {
-					// Skip playoff awards
+				if (typeof award.statRange === "number") {
+					// Skip playoff series awards - usually not that much info there, like if you won FMVP you also probably won a championship
 					continue;
 				}
 

@@ -1,7 +1,6 @@
-// Keep stuff in here that might be needed on worker console
+// Keep stuff in here that might be needed on worker console, or use registerGlobal
 
 export { default as achievement } from "./achievement.ts";
-export { default as advStats } from "./advStats.ts";
 export { default as g } from "./g.ts";
 export { default as helpers } from "./helpers.ts";
 export { default as local } from "./local.ts";

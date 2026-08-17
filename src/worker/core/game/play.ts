@@ -18,7 +18,6 @@ import writePlayerStats, {
 import writeTeamStats from "./writeTeamStats.ts";
 import { idb } from "../../db/index.ts";
 import {
-	advStats,
 	g,
 	helpers,
 	lock,
@@ -44,6 +43,7 @@ import {
 } from "../../util/recomputeLocalUITeamOvrs.ts";
 import { isSport } from "../../../common/sportFunctions.ts";
 import { last } from "../../../common/utils.ts";
+import { advStats } from "../../util/advStats.ts";
 
 /**
  * Play one or more days of games.

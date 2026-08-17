@@ -1,9 +1,4 @@
 custom awards
-- try to get rid of strictExecutionOrder, was needed when processAwards was added to advStats.football
-  - things that fix it:
-    - getting rid of processAwards in advStats.football
-    - removing advStats from util/index.ts
-  - try breaking up awards.ts
 - rethink index
   - corresponds to Awards2 or g.get("awards")?
   - why is it needed?
@@ -243,6 +238,7 @@ dev usability stuff
   - ensure called only once in a component
   - sort array
 - checkNaNs still needed?
+- use registerGlobal more
 
 FBGM overtime - If team A scores in OT, And then Team B scores, They should always go for 2 bc you don’t want to give the ball back and have it be sudden death https://discord.com/channels/@me/778760871911751700/1480652733852811324
 

@@ -16,8 +16,8 @@ export type Env = {
 };
 
 declare global {
+	var bbgm: any; // Just for debugging, in worker and UI
 	interface Window {
-		bbgm: any; // Just for debugging
 		bbgmVersion: string;
 		bugsnagKey: string;
 		enableLogging: boolean;

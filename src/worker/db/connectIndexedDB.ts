@@ -12,7 +12,7 @@ const debounceMessagesStore = new Map<string, number>();
 const stopBecauseDebounce = (text: string) => {
 	const timeoutID = debounceMessagesStore.get(text);
 	if (timeoutID === undefined) {
-		const newTimeoutID = self.setTimeout(() => {
+		const newTimeoutID = setTimeout(() => {
 			debounceMessagesStore.delete(text);
 		}, 1000);
 		debounceMessagesStore.set(text, newTimeoutID);

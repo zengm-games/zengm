@@ -153,6 +153,11 @@ for (const [sport, keys] of Object.entries(gameAttributesKeysSportSpecific)) {
 	}
 }
 
+const defaultAwardsFootball = {} satisfies Record<
+	string,
+	GameAttributesLeagueWithHistory["awards"]
+>;
+
 export const defaultGameAttributes: GameAttributesLeagueWithHistory = {
 	phase: 0,
 	nextPhase: undefined, // Used only for fantasy draft

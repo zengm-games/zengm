@@ -12,8 +12,68 @@ import type { PlayerRatings } from "../../../common/types.basketball.ts";
 import { last, orderBy, range } from "../../../common/utils.ts";
 import { getPosByGpF } from "../player/getPosByGpF.ts";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
-import { mvpScore } from "../season/doAwards.football.ts";
 import { shuffle } from "../../../common/random.ts";
+
+// This is from the old football awards sytem. Eventually should make All-Star teams use the same formulas as the default All-League awards...
+const POS_FACTOR: Record<string, number> = {
+	CB: 1.05,
+	S: 0.95,
+};
+const dpoyScore = (p: PlayerFiltered) => {
+	const s = p.currentStats;
+
+	const posFactor = POS_FACTOR[p.pos] ?? 1;
+
+	return (
+		posFactor *
+		(s.defSk * 4 +
+			s.defTckLoss * 0.4 +
+			s.defTckAst * 0.2 +
+			s.defTckSolo * 0.4 +
+			s.defFmbFrc * 3 +
+			s.defFmbRec * 3 +
+			s.defInt * 6 +
+			s.defPssDef * 2)
+	);
+};
+const opoyScore = (p: PlayerFiltered) => {
+	const s = p.currentStats;
+	let rushing = s.rusYds * 0.125 + s.rusTD * 6 - s.fmbLost * 2;
+	const receiving = s.recYds * 0.0975 + s.recTD * 6;
+
+	// Penalty for rushing QBs
+	if (s.pssYds > s.rusYds) {
+		rushing *= 0.5;
+	}
+
+	return rushing + receiving;
+};
+const offScore = (p: PlayerFiltered) => {
+	const s = p.currentStats;
+	const passing = s.pssYds * 0.04 + s.pssTD * 4 - s.pssInt * 2.5;
+	const rushingReceiving = opoyScore(p);
+
+	return 1.1 * passing + rushingReceiving;
+};
+const poyScore = (p: PlayerFiltered) => {
+	const s = p.currentStats;
+	const attempts = s.pba + s.rba;
+	if (attempts === 0) {
+		return 0;
+	}
+
+	// Account for rate and volume
+	return ((s.pbw + s.rbw) / attempts) * Math.sqrt(attempts);
+};
+const mvpScore = (p: PlayerFiltered) => {
+	const s = p.currentStats;
+	const offense = offScore(p);
+	const defense = 2.25 * dpoyScore(p);
+	const returns = (s.prTD + s.krTD) * 6;
+	const blocking = 4 * poyScore(p);
+
+	return offense + defense + returns + blocking;
+};
 
 const MIN_PLAYERS_CONTEST = 2;
 

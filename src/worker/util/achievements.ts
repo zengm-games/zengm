@@ -22,6 +22,7 @@ import {
 	defaultGameAttributes,
 } from "../../common/defaultGameAttributes.ts";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { formatList } from "../../common/formatList.ts";
 
 const findAward = <
 	Input extends AwardSettingIndividual | AwardSettingTeam,
@@ -556,6 +557,17 @@ const internationalCountries = bySport({
 	basketball: "American",
 	football: "American",
 	hockey: "American/Canadian",
+});
+
+const tripleCrownAwardsToCheck = bySport({
+	baseball: [defaultAwards.mvp, defaultAwards.fmvp, defaultAwardsBaseball.def],
+	basketball: [
+		defaultAwards.mvp,
+		defaultAwards.fmvp,
+		defaultAwardsBasketball.dpoy,
+	],
+	football: [defaultAwards.mvp, defaultAwards.fmvp, defaultAwardsFootball.dpoy],
+	hockey: [defaultAwards.mvp, defaultAwards.fmvp, defaultAwardsHockey.dpoy],
 });
 
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
@@ -1175,24 +1187,56 @@ const achievements: Achievement[] = [
 	{
 		slug: "triple_crown",
 		name: "Triple Crown",
-		desc: "Have a player win MVP, Finals MVP, and DPOY in the same year.",
+		desc: `Have a single player win ${formatList(
+			tripleCrownAwardsToCheck.map((award) => {
+				if (award.numTeams === undefined) {
+					return award.shortName;
+				}
+
+				return `1st Team ${award.name}`;
+			}),
+		)} in the same year.`,
 		category: "Awards",
 		async check() {
 			const awards = await idb.cache.awards.get(g.get("season"));
 
-			return (
-				awards &&
-				awards.mvp &&
-				awards.finalsMvp &&
-				awards.dpoy &&
-				awards.mvp.tid === g.get("userTid") &&
-				awards.finalsMvp.tid === g.get("userTid") &&
-				awards.dpoy.tid === g.get("userTid") &&
-				awards.mvp.pid === awards.finalsMvp.pid &&
-				awards.mvp.pid === awards.dpoy.pid &&
-				// technically not needed due to transitive property
-				awards.finalsMvp.pid === awards.dpoy.pid
-			);
+			const userTid = g.get("userTid");
+
+			const countsByPid: Record<number, number> = {};
+			const count = (pid: number) => {
+				countsByPid[pid] ??= 0;
+				countsByPid[pid] += 1;
+
+				if (countsByPid[pid] === tripleCrownAwardsToCheck.length) {
+					return true;
+				}
+			};
+
+			for (const award of tripleCrownAwardsToCheck) {
+				if (award.numTeams === undefined) {
+					const info = findAwardWinner(awards, award);
+					if (info?.tid === userTid) {
+						const hitTarget = count(info.pid);
+						if (hitTarget) {
+							return true;
+						}
+					}
+				} else {
+					const team = findAward(awards, award)?.winner[0];
+					if (team) {
+						for (const info of team) {
+							if (info?.tid === userTid) {
+								const hitTarget = count(info.pid);
+								if (hitTarget) {
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			return false;
 		},
 		when: "afterAwards",
 	},

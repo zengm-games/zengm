@@ -1,4 +1,8 @@
 custom awards
+- try to get rid of strictExecutionOrder, was needed when processAwards was added to advStats.football
+  - things that fix it:
+    - getting rid of processAwards in advStats.football
+    - removing advStats from util/index.ts
 - rethink index
   - corresponds to Awards2 or g.get("awards")?
   - why is it needed?
@@ -64,7 +68,6 @@ custom awards
   - player awards
   - conf/div abbrev
 - delete old awards types
-- try to get rid of strictExecutionOrder, was needed when processAwards was added to advStats.football
 - blog
   - roy changes
     - edge cases

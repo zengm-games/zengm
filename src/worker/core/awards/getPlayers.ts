@@ -17,7 +17,6 @@ import {
 } from "../../../common/constants.ts";
 import { last } from "../../../common/utils.ts";
 import { getPosByGpF } from "../player/getPosByGpF.ts";
-import stats from "../player/stats.ts";
 import player from "../player/index.ts";
 import { SKIP_PLAYER_STATS } from "../game/loadTeams.ts";
 import {
@@ -379,8 +378,8 @@ export const getPlayers = async (
 		}
 
 		// Sum up any byPos stats - not ideal for team awards of awards with formulas by position, but probably good enough since we're using gpF to assign position so most of their games at least will be at the correct position
-		if (stats.byPos) {
-			const byPosStats = [...stats.byPos];
+		if (player.stats.byPos) {
+			const byPosStats = [...player.stats.byPos];
 			if (isSport("baseball")) {
 				byPosStats.push("rfld");
 			}

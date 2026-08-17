@@ -440,10 +440,7 @@ const advStats = async () => {
 	league.pbwr = league.pbw / league.pba;
 	league.rbwr = league.rbw / league.rba;
 
-	const updatedStats = { ...calculateAV(players, teams, league) };
-	await advStatsSave(players, playersRaw, updatedStats);
-
-	// Hackily account for AV of award winners, for defense only
+	// Hackily account for AV of award winners, for defense only - we can do this without saving first because the formula does not use AV
 	if (!playoffs) {
 		const { realizedAwards } = await processAwards({
 			awards: [defaultAwardsFootball.all],
@@ -469,10 +466,10 @@ const advStats = async () => {
 				}
 			}
 		}
-
-		const updatedStats = { ...calculateAV(players, teams, league) };
-		await advStatsSave(players, playersRaw, updatedStats);
 	}
+
+	const updatedStats = calculateAV(players, teams, league);
+	await advStatsSave(players, playersRaw, updatedStats);
 };
 
 export default advStats;

@@ -7,7 +7,11 @@ import helpers from "./helpers.ts";
 import achievements from "./achievements.ts";
 import { DEFAULT_LEVEL } from "../../common/budgetLevels.ts";
 import type { Achievement, Awards2 } from "../../common/types.ts";
-import { defaultAwardsBasketball } from "../../common/defaultGameAttributes.ts";
+import {
+	defaultAwards,
+	defaultAwardsBasketball,
+} from "../../common/defaultGameAttributes.ts";
+import { randInt } from "../../common/random.ts";
 
 const makeAwards = (
 	awards: Partial<Awards2> & Pick<Awards2, "awards">,
@@ -1433,64 +1437,25 @@ describe("98_degrees", () => {
 
 describe("hardware_store", () => {
 	test("award achievement if user's team sweeps awards", async () => {
-		// tid 7 wins all awards
-		const awards = {
+		const tid = g.get("userTid");
+
+		const awards = makeAwards({
 			season: 2013,
-			roy: {
-				pid: 501,
-				name: "Timothy Gonzalez",
-				tid: 7,
-				abbrev: "ATL",
-				pts: 30.135135135135137,
-				trb: 9.18918918918919,
-				ast: 0.7972972972972973,
-			},
-			mvp: {
-				pid: 280,
-				name: "William Jarosz",
-				tid: 7,
-				abbrev: "PHI",
-				pts: 28.951219512195124,
-				trb: 11.329268292682928,
-				ast: 0.6585365853658537,
-			},
-			mip: {
-				pid: 280,
-				name: "William Jarosz",
-				tid: 7,
-				abbrev: "PHI",
-				pts: 28.951219512195124,
-				trb: 11.329268292682928,
-				ast: 0.6585365853658537,
-			},
-			smoy: {
-				pid: 505,
-				name: "Donald Gallager",
-				tid: 7,
-				abbrev: "MON",
-				pts: 22.195121951219512,
-				trb: 7.878048780487805,
-				ast: 0.7682926829268293,
-			},
-			dpoy: {
-				pid: 280,
-				name: "William Jarosz",
-				tid: 7,
-				abbrev: "PHI",
-				trb: 11.329268292682928,
-				blk: 3.2560975609756095,
-				stl: 2.2804878048780486,
-			},
-			finalsMvp: {
-				pid: 335,
-				name: "Erwin Ritchey",
-				tid: 7,
-				abbrev: "POR",
-				pts: 24.4,
-				trb: 8.85,
-				ast: 2.65,
-			},
-		};
+			awards: [
+				defaultAwards.mvp,
+				defaultAwardsBasketball.dpoy,
+				defaultAwardsBasketball.roy,
+				defaultAwardsBasketball.smoy,
+				defaultAwardsBasketball.mip,
+				defaultAwards.fmvp,
+			].map((award) => {
+				return {
+					...award,
+					group: undefined,
+					winner: [{ pid: randInt(0, 100), tid }],
+				};
+			}),
+		});
 
 		await idb.cache.awards.put(awards);
 		const awarded = await get("hardware_store").check();
@@ -1498,64 +1463,31 @@ describe("hardware_store", () => {
 	});
 
 	test("don't award achievement if user's team loses an award", async () => {
-		// tid 7 wins loses an award!
-		const awards = {
+		const tid = g.get("userTid");
+		const otherTid = tid + 1;
+
+		const awards = makeAwards({
 			season: 2013,
-			roy: {
-				pid: 501,
-				name: "Timothy Gonzalez",
-				tid: 7,
-				abbrev: "ATL",
-				pts: 30.135135135135137,
-				trb: 9.18918918918919,
-				ast: 0.7972972972972973,
-			},
-			mvp: {
-				pid: 280,
-				name: "William Jarosz",
-				tid: 7,
-				abbrev: "PHI",
-				pts: 28.951219512195124,
-				trb: 11.329268292682928,
-				ast: 0.6585365853658537,
-			},
-			mip: {
-				pid: 280,
-				name: "William Jarosz",
-				tid: 7,
-				abbrev: "PHI",
-				pts: 28.951219512195124,
-				trb: 11.329268292682928,
-				ast: 0.6585365853658537,
-			},
-			smoy: {
-				pid: 505,
-				name: "Donald Gallager",
-				tid: 8,
-				abbrev: "MON",
-				pts: 22.195121951219512,
-				trb: 7.878048780487805,
-				ast: 0.7682926829268293,
-			},
-			dpoy: {
-				pid: 280,
-				name: "William Jarosz",
-				tid: 7,
-				abbrev: "PHI",
-				trb: 11.329268292682928,
-				blk: 3.2560975609756095,
-				stl: 2.2804878048780486,
-			},
-			finalsMvp: {
-				pid: 335,
-				name: "Erwin Ritchey",
-				tid: 7,
-				abbrev: "POR",
-				pts: 24.4,
-				trb: 8.85,
-				ast: 2.65,
-			},
-		};
+			awards: [
+				defaultAwards.mvp,
+				defaultAwardsBasketball.dpoy,
+				defaultAwardsBasketball.roy,
+				defaultAwardsBasketball.smoy,
+				defaultAwardsBasketball.mip,
+				defaultAwards.fmvp,
+			].map((award) => {
+				return {
+					...award,
+					group: undefined,
+					winner: [
+						{
+							pid: randInt(0, 100),
+							tid: award.shortName === "ROY" ? otherTid : tid,
+						},
+					],
+				};
+			}),
+		});
 
 		await idb.cache.awards.put(awards);
 		const awarded = await get("hardware_store").check();
@@ -1563,64 +1495,25 @@ describe("hardware_store", () => {
 	});
 
 	test("don't award achievement if another team sweeps the awards", async () => {
-		// tid 7 is changed to 8
-		const awards = {
+		const tid = g.get("userTid") + 1;
+
+		const awards = makeAwards({
 			season: 2013,
-			roy: {
-				pid: 501,
-				name: "Timothy Gonzalez",
-				tid: 8,
-				abbrev: "ATL",
-				pts: 30.135135135135137,
-				trb: 9.18918918918919,
-				ast: 0.7972972972972973,
-			},
-			mvp: {
-				pid: 280,
-				name: "William Jarosz",
-				tid: 8,
-				abbrev: "PHI",
-				pts: 28.951219512195124,
-				trb: 11.329268292682928,
-				ast: 0.6585365853658537,
-			},
-			mip: {
-				pid: 280,
-				name: "William Jarosz",
-				tid: 8,
-				abbrev: "PHI",
-				pts: 28.951219512195124,
-				trb: 11.329268292682928,
-				ast: 0.6585365853658537,
-			},
-			smoy: {
-				pid: 505,
-				name: "Donald Gallager",
-				tid: 8,
-				abbrev: "MON",
-				pts: 22.195121951219512,
-				trb: 7.878048780487805,
-				ast: 0.7682926829268293,
-			},
-			dpoy: {
-				pid: 280,
-				name: "William Jarosz",
-				tid: 8,
-				abbrev: "PHI",
-				trb: 11.329268292682928,
-				blk: 3.2560975609756095,
-				stl: 2.2804878048780486,
-			},
-			finalsMvp: {
-				pid: 335,
-				name: "Erwin Ritchey",
-				tid: 8,
-				abbrev: "POR",
-				pts: 24.4,
-				trb: 8.85,
-				ast: 2.65,
-			},
-		};
+			awards: [
+				defaultAwards.mvp,
+				defaultAwardsBasketball.dpoy,
+				defaultAwardsBasketball.roy,
+				defaultAwardsBasketball.smoy,
+				defaultAwardsBasketball.mip,
+				defaultAwards.fmvp,
+			].map((award) => {
+				return {
+					...award,
+					group: undefined,
+					winner: [{ pid: randInt(0, 100), tid }],
+				};
+			}),
+		});
 
 		await idb.cache.awards.put(awards);
 		const awarded = await get("hardware_store").check();

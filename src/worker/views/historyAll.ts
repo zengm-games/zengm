@@ -1,7 +1,7 @@
 import { PHASE } from "../../common/constants.ts";
 import { idb } from "../db/index.ts";
 import { g } from "../util/index.ts";
-import type { UpdateEvents } from "../../common/types.ts";
+import type { Player, UpdateEvents } from "../../common/types.ts";
 import { groupByUnique, last, range } from "../../common/utils.ts";
 import { formatAwardNamePrefix } from "../core/season/awards.ts";
 import { bySport } from "../../common/sportFunctions.ts";
@@ -133,6 +133,9 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 		}[] = [];
 		const seenAwardTypes = new Set();
 
+		// Many players win multiple awards, so cache them rather than always reading from disk
+		const playersCache = new Map<number, Player>();
+
 		const seasons = await Promise.all(
 			range(maxSeason, minSeason - 1).map(async (season) => {
 				const a = awardsBySeason[season];
@@ -169,7 +172,13 @@ const updateHistory = async (inputs: unknown, updateEvents: UpdateEvents) => {
 									}
 									const { pid, statOverrides } = winner;
 
-									const p = await idb.getCopy.players({ pid }, "noCopyCache");
+									let p = playersCache.get(pid);
+									if (!p) {
+										p = await idb.getCopy.players({ pid }, "noCopyCache");
+										if (p) {
+											playersCache.set(pid, p);
+										}
+									}
 									if (!p) {
 										return;
 									}

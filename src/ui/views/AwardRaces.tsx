@@ -129,6 +129,14 @@ const AwardRaces = ({
 									break;
 								}
 							}
+
+							const comparePlayersRange =
+								award.statRange === "playoffs"
+									? "p"
+									: award.statRange === "combined"
+										? "c"
+										: "r";
+
 							data.push(
 								...stats.map((stat) => {
 									if (!ps && !ps2) {
@@ -148,7 +156,7 @@ const AwardRaces = ({
 								<a
 									href={helpers.leagueUrl([
 										"compare_players",
-										`${p.pid}-${season - 1}-r,${p.pid}-${season}-r`,
+										`${p.pid}-${season - 1}-${comparePlayersRange},${p.pid}-${season}-${comparePlayersRange}`,
 									])}
 								>
 									Compare

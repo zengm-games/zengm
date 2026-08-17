@@ -1,5 +1,4 @@
 custom awards
-- for MIP playoffs like http://localhost:3000/l/471/award_races/2026 compare link needs to know statRange
 - rethink index
   - corresponds to Awards2 or g.get("awards")?
   - why is it needed?
@@ -32,9 +31,7 @@ custom awards
   - historyAll, teamRecords, awardRecords
     - test with changing awards
     - test with div/conf awards (should show in separate columns)
-  - 0 regular season games, use playoff stats for regular season awards
 - ability to add/edit/delete manual awards for player, maybe in player editor
-- edit conf/div abbrevs, and test usage
 - UI to update
   - groupAwards
     - on hover break down by unqiue long name, like including team number, group prefix, and name change (so, use formatPlayerAwardName)
@@ -49,7 +46,6 @@ custom awards
     - triple crown
       - fix baseball DPOY bug https://discord.com/channels/290013534023057409/1532565456920117279/1532565456920117279
 - make sure hashAward accounts for everything
-- how to handle awards when importing/exporting players? index will be invalid. could render to string
 - upgrade
   - test all sports
   - First vs 1st?
@@ -96,6 +92,7 @@ custom awards
   - conditional stat-based awards that are not awarded every season, like triple crown or 40/40
   - clutch player award
   - rethink awards column on player profile - something like FMVP-5 is a bit silly, and SFMVP maybe is always silly
+  - edit conf/div abbrevs, and test usage in award name prefixes
 
 make GOAT lab use stats with derived variables, similar to awards
 
@@ -1581,8 +1578,6 @@ fbgm kickoff return to own 0 https://discord.com/channels/290013534023057409/290
 
 when starting a new league, contracts should be set not based on current state of player, but on state when contract was signed. especially noticable for rookies who progged a lot
 
-no awards if 0 games in regular season? https://discord.com/channels/290013534023057409/331882115119448065/930867153878544454
-
 redesign season summary
 - dramatic reveal of awards and award voting results, similar to draft lottery
   - https://discord.com/channels/290013534023057409/331882115119448065/935293110710317087
@@ -2489,7 +2484,6 @@ https://react-hook-form.com/ for forms
 
 more customize player options
 - fixed position
-- awards
 
 football roster balance issues https://imgur.com/HmK00EF @Eddy
 
@@ -2577,7 +2571,6 @@ type better
 - skills/compositeRatings - should be RatingsKey, not string for components. And PlayerRatings
 - PlayerStatType should be sport specific
 - getCopy/getCopies and Cache
-  - awards should return Awards
   - players and playersPlus - Player<> and Player should be Player<PlayerRatings>
 - most MinimalPlayerRatings uses should be generic and take PlayerRatings
 

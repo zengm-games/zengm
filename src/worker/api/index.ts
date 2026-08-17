@@ -77,12 +77,6 @@ import {
 	RealPlayerPhotosSchema,
 	RealTeamInfoSchema,
 } from "../../common/types.ts";
-import {
-	addSimpleAndTeamAwardsToAwardsByPlayer,
-	type AwardsByPlayer,
-	deleteAwardsByPlayer,
-	saveAwardsByPlayer,
-} from "../core/awards/awards.ts";
 import { getScore } from "../core/player/checkJerseyNumberRetirement.ts";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types.ts";
 import { PointsFormulaEvaluator } from "../core/team/evaluatePointsFormula.ts";
@@ -172,6 +166,12 @@ import { initUILocalGames } from "../util/initUILocalGames.ts";
 import { ValueChangeCalculator } from "../core/team/ValueChangeCalculator.ts";
 import type { GenOrderResult } from "../core/draft/genOrder.ts";
 import undoLog from "./undoLog.ts";
+import {
+	addSimpleAndTeamAwardsToAwardsByPlayer,
+	deleteAwardsByPlayer,
+	saveAwardsByPlayer,
+	type AwardsByPlayer,
+} from "../core/awards/awardsByPlayer.ts";
 
 const acceptContractNegotiation = async ({
 	pid,

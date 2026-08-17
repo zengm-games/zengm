@@ -13,7 +13,7 @@ import { processPlayersHallOfFame } from "../util/processPlayersHallOfFame.ts";
 import { groupByUnique, last } from "../../common/utils.ts";
 import { showStatsByType } from "../../common/awards.ts";
 import { getPosByGpF } from "../core/player/getPosByGpF.ts";
-import { formatAwardNamePrefix } from "../core/awards/awards.ts";
+import { formatAwardNamePrefix } from "../core/awards/prefixes.ts";
 import { PlayersCache } from "../db/PlayersCache.ts";
 
 const viewedSeasonSummary = async () => {

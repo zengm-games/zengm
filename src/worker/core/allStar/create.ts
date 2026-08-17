@@ -1,4 +1,4 @@
-import { saveAwardsByPlayer } from "../awards/awards.ts";
+import { saveAwardsByPlayer } from "../awards/awardsByPlayer.ts";
 import { g } from "../../util/index.ts";
 import type {
 	AllStars,

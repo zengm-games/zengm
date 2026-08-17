@@ -33,8 +33,6 @@ custom awards
     - test with div/conf awards (should show in separate columns)
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
-  - groupAwards
-    - on hover break down by unqiue long name, like including team number, group prefix, and name change (so, use formatPlayerAwardName)
   - awards editor
   - GOAT formula
   - achievements

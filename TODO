@@ -33,17 +33,15 @@ custom awards
   - historyAll, teamRecords, awardRecords
     - test with changing awards
     - test with div/conf awards (should show in separate columns)
-  - achievements
-    - awarded
-    - not awarded if edited
-    - changing number of teams may be a safe edit
-    - unit tests?
-      - out_of_nowhere
-      - team_effort
-      - super_team
-      - quit_on_top
-      - golden_boy
-      - trust_the_process
+  - achievements unit tests
+    - quit_on_top
+    - golden_boy
+    - trust_the_process
+    - edited award still valid?
+      - formula
+      - formulaByPos
+      - numTeams, valid and not
+      - group, valid and not
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - awards editor

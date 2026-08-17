@@ -2114,13 +2114,13 @@ test("brick_wall", async () => {
 			awarded2: false,
 		},
 		{
-			text: "3 All-Defensive players -> no award",
+			text: "3 All-Defensive players -> brick_wall",
 			numPlayers: 3,
 			awarded: true,
 			awarded2: false,
 		},
 		{
-			text: "5 All-Defensive players -> no award",
+			text: "5 All-Defensive players -> brick_wall and brick_wall_2",
 			numPlayers: 5,
 			awarded: true,
 			awarded2: true,
@@ -2153,5 +2153,43 @@ test("brick_wall", async () => {
 			{ awarded: scenario.awarded, awarded2: scenario.awarded2 },
 			scenario.text,
 		);
+	}
+});
+
+test("super_team", async () => {
+	const scenarios = [
+		{
+			text: "2 All-League players -> no award",
+			numPlayers: 2,
+			awarded: false,
+		},
+		{
+			text: "3 All-League players -> super_team",
+			numPlayers: 3,
+			awarded: true,
+		},
+	];
+
+	for (const scenario of scenarios) {
+		const awards = makeAwards({
+			season: 2013,
+			awards: [
+				{
+					...defaultAwards.all,
+					group: undefined,
+					winner: [
+						range(scenario.numPlayers).map(() => ({
+							pid: 0,
+							tid: g.get("userTid"),
+						})),
+					],
+				},
+			],
+		});
+
+		await idb.cache.awards.put(awards);
+
+		const awarded = await get("super_team").check();
+		assert.deepStrictEqual(awarded, scenario.awarded, scenario.text);
 	}
 });

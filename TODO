@@ -2,8 +2,6 @@ custom awards
 - put tid in winners
   - use in team records, award records, etc
   - PlayersCache
-  - remove from statOverrides
-    - how to support old playoff series awards? add tidOverrides?
 - move leagueLeaders and getAwardsByPlayer to awardsByPlayer
 - NonEmptyArray for winner?
 - rethink index

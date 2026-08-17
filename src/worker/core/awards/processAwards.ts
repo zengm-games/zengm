@@ -470,9 +470,9 @@ export const processAwards = async ({
 
 								let statOverrides: AwardPlayer2["statOverrides"];
 								if (currentStats !== undefined) {
+									tid = currentStats.tid;
 									statOverrides = {
 										score,
-										tid: currentStats.tid,
 									};
 									for (const stat of stats) {
 										if (currentStats[stat] !== undefined) {
@@ -482,12 +482,18 @@ export const processAwards = async ({
 								} else if (statOverridesByMatchup) {
 									// Find statOverrides values from original awards, if possible. Otherwise we won't have any stats to display on Award Races for playoff series awards if box scores are deleted
 									const matchupKey = hashPlayoffSeries(group);
-									statOverrides = statOverridesByMatchup[matchupKey]?.[p.pid];
-									tid = statOverrides?.tid;
-								}
-
-								// No stats, no statOverrides, no tid!
-								if (tid === undefined) {
+									const statOverridesAndTid =
+										statOverridesByMatchup[matchupKey]?.[p.pid];
+									if (!statOverridesAndTid) {
+										// No stats, no statOverrides, no thing to do here!
+										return;
+									}
+									tid = statOverridesAndTid.tid;
+									statOverrides = omit(statOverridesAndTid, [
+										"tid",
+									]) as AwardPlayer2["statOverrides"];
+								} else {
+									// No stats, no statOverrides, no thing to do here!
 									return;
 								}
 

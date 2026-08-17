@@ -2052,7 +2052,6 @@ export type AwardPlayer2 = {
 	// Used for playoff series stats which are generally not stored long-term
 	statOverrides?: {
 		score: number;
-		tid: number;
 	} & Record<string, number | string>;
 };
 

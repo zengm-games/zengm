@@ -24,9 +24,15 @@ import {
 	processPlayerStats,
 } from "../../util/processPlayerStats.ts";
 
+// tid gets added from root of AwardPlayer2 - that is the only tid we need to pass in to processPlayers, because otherwise we assume we have the actual stats available
 export type StatOverridesByMatchup = Record<
 	string,
-	Record<number, AwardPlayer2["statOverrides"]>
+	Record<
+		number,
+		AwardPlayer2["statOverrides"] & {
+			tid: number;
+		}
+	>
 >;
 
 const AWARD_STATS = [

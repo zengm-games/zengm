@@ -570,6 +570,13 @@ const tripleCrownAwardsToCheck = bySport({
 	hockey: [defaultAwards.mvp, defaultAwards.fmvp, defaultAwardsHockey.dpoy],
 });
 
+// All individual awards, except early round playoff ones because they're basically redundant with FMVP
+const hardwareStoreAwardsToCheck = defaultGameAttributes.awards
+	.filter((award) => award.numTeams === undefined)
+	.filter(
+		(award) => typeof award.statRange !== "number" || award.statRange === -1,
+	);
+
 // IF YOU ADD TO THIS you also need to add to the whitelist in add_achievements.php
 const achievements: Achievement[] = [
 	{
@@ -1243,55 +1250,16 @@ const achievements: Achievement[] = [
 	{
 		slug: "hardware_store",
 		name: "Hardware Store",
-		desc: bySport({
-			baseball:
-				"Players on your team win MVP, POY, ROY, RPOY, and Finals MVP in the same season.",
-			basketball:
-				"Players on your team win MVP, DPOY, SMOY, MIP, ROY, and Finals MVP in the same season.",
-			football:
-				"Players on your team win MVP, OPOY, DPOY, OROY, DROY, and Finals MVP in the same season.",
-			hockey:
-				"Players on your team win MVP, DPOY, DFOY, GOY, ROY, and Finals MVP in the same season",
-		}),
+		desc: `Players on your team win ${formatList(
+			hardwareStoreAwardsToCheck.map((award) => award.shortName),
+		)} in the same season`,
 		category: "Awards",
 
 		async check() {
 			const awards = await idb.cache.awards.get(g.get("season"));
-
-			const userTid = g.get("userTid");
-
-			return bySport({
-				baseball:
-					awards &&
-					awards.mvp?.tid === userTid &&
-					awards.poy?.tid === userTid &&
-					awards.roy?.tid === userTid &&
-					awards.rpoy?.tid === userTid &&
-					awards.finalsMvp?.tid === userTid,
-				basketball:
-					awards &&
-					awards.mvp?.tid === userTid &&
-					awards.dpoy?.tid === userTid &&
-					awards.smoy?.tid === userTid &&
-					awards.mip?.tid === userTid &&
-					awards.roy?.tid === userTid &&
-					awards.finalsMvp?.tid === userTid,
-				football:
-					awards &&
-					awards.mvp?.tid === userTid &&
-					awards.opoy?.tid === userTid &&
-					awards.dpoy?.tid === userTid &&
-					awards.oroy?.tid === userTid &&
-					awards.droy?.tid === userTid &&
-					awards.finalsMvp?.tid === userTid,
-				hockey:
-					awards &&
-					awards.mvp?.tid === userTid &&
-					awards.dpoy?.tid === userTid &&
-					awards.dfoy?.tid === userTid &&
-					awards.goy?.tid === userTid &&
-					awards.roy?.tid === userTid &&
-					awards.finalsMvp?.tid === userTid,
+			return hardwareStoreAwardsToCheck.every((award) => {
+				const info = findAwardWinner(awards, award);
+				return info?.tid === g.get("userTid");
 			});
 		},
 		when: "afterAwards",

@@ -36,15 +36,23 @@ custom awards
   - achievements
     - awarded
     - not awarded if edited
+    - changing number of teams may be a safe edit
+    - unit tests?
+      - brick_wall
+      - mvp(checkMvp)
+      - out_of_nowhere
+      - sleeper_pick - fix
+      - team_effort
+      - super_team
+      - quit_on_top
+      - golden_boy
+      - trust_the_process
+      - triple_crown - fix
+      - hardware_store - fix
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - awards editor
   - GOAT formula
-  - achievements
-    - check if the award we're looking for is unedited. if so, use it. if not, no achievement.
-      - hardware_store: basically everything, and re-evaluate
-    - triple crown
-      - fix baseball DPOY bug https://discord.com/channels/290013534023057409/1532565456920117279/1532565456920117279
 - make sure hashAward accounts for everything
 - upgrade
   - test all sports

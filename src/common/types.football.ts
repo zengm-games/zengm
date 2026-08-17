@@ -122,7 +122,7 @@ type AwardTeam = {
 	otl: number | undefined;
 };
 
-export type AwardPlayer = {
+type AwardPlayer = {
 	pid: number;
 	name: string;
 	tid: number;

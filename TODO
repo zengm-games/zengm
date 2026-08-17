@@ -55,6 +55,7 @@ custom awards
   - indexeddb
   - import
   - similar for real player data, reformat Awards and Player.awards
+  - use old award types? maybe move to own types file to be clear, like one for obsolete types
 - get rid of SIMPLE_AWARDS and AWARD_NAMES (might need in upgrade though)
 - search for any hardcoded strings like "Rookie of the Year", "Most Improved Player", etc
   - after upgrade, can remove awardsOld?
@@ -63,7 +64,6 @@ custom awards
   - awards object
   - player awards
   - conf/div abbrev
-- delete old awards types
 - blog
   - roy changes
     - edge cases

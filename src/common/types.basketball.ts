@@ -55,7 +55,7 @@ type AwardTeam = {
 	otl: number | undefined;
 };
 
-export type AwardPlayer = {
+type AwardPlayer = {
 	pid: number;
 	name: string;
 	tid: number;
@@ -64,7 +64,7 @@ export type AwardPlayer = {
 	ast: number;
 };
 
-export type AwardPlayerDefense = {
+type AwardPlayerDefense = {
 	pid: number;
 	name: string;
 	tid: number;

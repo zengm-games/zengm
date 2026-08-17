@@ -76,6 +76,7 @@ export const rolldownConfig = (
 			format: "es",
 			minify: true,
 			comments: false,
+			strictExecutionOrder: true,
 		},
 		transform: {
 			define: {

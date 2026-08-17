@@ -65,6 +65,7 @@ custom awards
   - player awards
   - conf/div abbrev
 - delete old awards types
+- try to get rid of strictExecutionOrder, was needed when processAwards was added to advStats.football
 - blog
   - roy changes
     - edge cases
@@ -91,7 +92,7 @@ custom awards
   - clutch player award
   - rethink awards column on player profile - something like FMVP-5 is a bit silly, and SFMVP maybe is always silly
   - edit conf/div abbrevs, and test usage in award name prefixes
-  - make All-Star teams use the same formula as the default All-League teams
+  - make All-Star teams use the same formula as the default All-League teams - not that hard, look ad advStats.football using all-leauge team
 
 make GOAT lab use stats with derived variables, similar to awards
 

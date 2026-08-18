@@ -2193,3 +2193,124 @@ test("super_team", async () => {
 		assert.deepStrictEqual(awarded, scenario.awarded, scenario.text);
 	}
 });
+
+describe("Edited awards", () => {
+	test("name changed -> still valid", async () => {
+		const tid = g.get("userTid");
+
+		const awards = makeAwards({
+			season: 2013,
+			awards: [
+				{
+					...defaultAwards.mvp,
+					name: "Whatever",
+				},
+				defaultAwardsBasketball.dpoy,
+				defaultAwardsBasketball.roy,
+				defaultAwardsBasketball.smoy,
+				defaultAwardsBasketball.mip,
+				defaultAwards.fmvp,
+			].map((award) => {
+				return {
+					...award,
+					group: undefined,
+					winner: [{ pid: 0, tid }],
+				};
+			}),
+		});
+
+		await idb.cache.awards.put(awards);
+		const awarded = await get("hardware_store").check();
+		assert.strictEqual(awarded, true);
+	});
+
+	test("formula changed -> invalid", async () => {
+		const tid = g.get("userTid");
+
+		const awards = makeAwards({
+			season: 2013,
+			awards: [
+				{
+					...defaultAwards.mvp,
+					formula: "ewa",
+				},
+				defaultAwardsBasketball.dpoy,
+				defaultAwardsBasketball.roy,
+				defaultAwardsBasketball.smoy,
+				defaultAwardsBasketball.mip,
+				defaultAwards.fmvp,
+			].map((award) => {
+				return {
+					...award,
+					group: undefined,
+					winner: [{ pid: 0, tid }],
+				};
+			}),
+		});
+
+		await idb.cache.awards.put(awards);
+		const awarded = await get("hardware_store").check();
+		assert.strictEqual(awarded, false);
+	});
+
+	test("formulaByPos changed -> invalid", async () => {
+		const tid = g.get("userTid");
+
+		const awards = makeAwards({
+			season: 2013,
+			awards: [
+				{
+					...defaultAwards.mvp,
+					formulaByPos: {
+						PG: "ewa",
+					},
+				},
+				defaultAwardsBasketball.dpoy,
+				defaultAwardsBasketball.roy,
+				defaultAwardsBasketball.smoy,
+				defaultAwardsBasketball.mip,
+				defaultAwards.fmvp,
+			].map((award) => {
+				return {
+					...award,
+					group: undefined,
+					winner: [{ pid: 0, tid }],
+				};
+			}),
+		});
+
+		await idb.cache.awards.put(awards);
+		const awarded = await get("hardware_store").check();
+		assert.strictEqual(awarded, false);
+	});
+
+	test("numTeams changed -> invalid", async () => {
+		const tid = g.get("userTid");
+
+		const awards = makeAwards({
+			season: 2013,
+			awards: [
+				defaultAwards.mvp,
+				defaultAwardsBasketball.dpoy,
+				defaultAwardsBasketball.roy,
+				defaultAwardsBasketball.smoy,
+				defaultAwardsBasketball.mip,
+				defaultAwards.fmvp,
+			].map((award) => {
+				return {
+					...award,
+					group: undefined,
+					winner: [{ pid: 0, tid }],
+				};
+			}),
+		});
+		const mvp = awards.awards[0];
+		assert(mvp);
+		mvp.numTeams = 1;
+		mvp.winner = [mvp.winner as any];
+
+		await idb.cache.awards.put(awards);
+		const awarded = await get("hardware_store").check();
+		assert.strictEqual(awarded, false);
+	});
+});

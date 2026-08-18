@@ -42,6 +42,7 @@ custom awards
       - formulaByPos
       - numTeams, valid and not
       - group, valid and not
+        - what if it sees undefined group (no award) before defined group (award)?
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - awards editor

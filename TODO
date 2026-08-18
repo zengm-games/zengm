@@ -34,7 +34,6 @@ custom awards
     - test with changing awards
     - test with div/conf awards (should show in separate columns)
   - achievements unit tests
-    - out_of_nowhere
     - quit_on_top
     - golden_boy
     - trust_the_process

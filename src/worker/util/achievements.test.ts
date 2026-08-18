@@ -2194,6 +2194,44 @@ test("super_team", async () => {
 	}
 });
 
+test("out_of_nowhere", async () => {
+	const scenarios = [
+		{
+			text: "Just MVP -> no award",
+			awards: [defaultAwards.mvp],
+			awarded: false,
+		},
+		{
+			text: "Just MIP -> no award",
+			awards: [defaultAwardsBasketball.mip],
+			awarded: false,
+		},
+		{
+			text: "MVP+MIP -> award",
+			awards: [defaultAwards.mvp, defaultAwardsBasketball.mip],
+			awarded: true,
+		},
+	];
+
+	for (const scenario of scenarios) {
+		const awards = makeAwards({
+			season: 2013,
+			awards: scenario.awards.map((award) => {
+				return {
+					...award,
+					group: undefined,
+					winner: [{ pid: 0, tid: g.get("userTid") }],
+				};
+			}),
+		});
+
+		await idb.cache.awards.put(awards);
+
+		const awarded = await get("out_of_nowhere").check();
+		assert.deepStrictEqual(awarded, scenario.awarded, scenario.text);
+	}
+});
+
 describe("Edited awards", () => {
 	test("name changed -> still valid", async () => {
 		const tid = g.get("userTid");

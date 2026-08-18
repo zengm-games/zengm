@@ -34,7 +34,6 @@ custom awards
     - test with changing awards
     - test with div/conf awards (should show in separate columns)
   - achievements unit tests
-    - quit_on_top
     - golden_boy
     - trust_the_process
 - ability to add/edit/delete manual awards for player, maybe in player editor

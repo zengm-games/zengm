@@ -15,6 +15,7 @@ import {
 } from "./achievementTestHelpers.ts";
 import { randInt } from "../../common/random.ts";
 import { range } from "../../common/utils.ts";
+import { PLAYER } from "../../common/constants.ts";
 
 beforeAll(cbBeforeAll);
 afterAll(cbAfterAll);
@@ -2228,6 +2229,58 @@ test("out_of_nowhere", async () => {
 		await idb.cache.awards.put(awards);
 
 		const awarded = await get("out_of_nowhere").check();
+		assert.deepStrictEqual(awarded, scenario.awarded, scenario.text);
+	}
+});
+
+test("quit_on_top", async () => {
+	const scenarios = [
+		{
+			text: "Just 1st Team -> no award",
+			awards: [defaultAwards.all],
+			retired: false,
+			awarded: false,
+		},
+		{
+			text: "Just retired -> no award",
+			awards: [],
+			retired: true,
+			awarded: false,
+		},
+		{
+			text: "1st team + retired -> award",
+			awards: [defaultAwards.all],
+			retired: true,
+			awarded: true,
+		},
+	];
+
+	for (const scenario of scenarios) {
+		const p = (await idb.cache.players.getAll())[0];
+		assert(p);
+		if (scenario.retired) {
+			p.tid = PLAYER.RETIRED;
+			p.retiredYear = g.get("season");
+		} else {
+			p.tid = g.get("userTid");
+			p.retiredYear = Infinity;
+		}
+		await idb.cache.players.put(p);
+
+		const awards = makeAwards({
+			season: 2013,
+			awards: scenario.awards.map((award) => {
+				return {
+					...award,
+					group: undefined,
+					winner: [[{ pid: 0, tid: g.get("userTid") }]],
+				};
+			}),
+		});
+
+		await idb.cache.awards.put(awards);
+
+		const awarded = await get("quit_on_top").check();
 		assert.deepStrictEqual(awarded, scenario.awarded, scenario.text);
 	}
 });

@@ -34,15 +34,10 @@ custom awards
     - test with changing awards
     - test with div/conf awards (should show in separate columns)
   - achievements unit tests
+    - out_of_nowhere
     - quit_on_top
     - golden_boy
     - trust_the_process
-    - edited award still valid?
-      - formula
-      - formulaByPos
-      - numTeams, valid and not
-      - group, valid and not
-        - what if it sees undefined group (no award) before defined group (award)?
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - awards editor

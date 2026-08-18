@@ -24,7 +24,7 @@ import {
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { formatList } from "../../common/formatList.ts";
 
-const findAward = <
+const findAwards = <
 	Input extends AwardSettingIndividual | AwardSettingTeam,
 	Output extends (Input extends AwardSettingIndividual
 		? AwardInfoIndividual
@@ -32,9 +32,9 @@ const findAward = <
 >(
 	awards: Awards2 | undefined,
 	searchFor: Input,
-): Output | undefined => {
+): Output[] => {
 	if (!awards) {
-		return;
+		return [];
 	}
 
 	const simpleEqualityKeys = [
@@ -44,6 +44,9 @@ const findAward = <
 		"mip",
 		"rookie",
 	] as const;
+
+	// Multiple outputs needed in the case of conf/div group - could need to check multiple matching awards, and also any edited one that removes the conference constraint (see comment below)
+	const outputs: Output[] = [];
 
 	for (const award of awards.awards) {
 		if (simpleEqualityKeys.some((key) => award[key] !== searchFor[key])) {
@@ -89,15 +92,19 @@ const findAward = <
 			continue;
 		}
 
-		return award as Output;
+		outputs.push(award as Output);
 	}
+
+	return outputs;
 };
 
-const findAwardWinner = (
+const findAwardWinners = (
 	awards: Awards2 | undefined,
 	searchFor: AwardSettingIndividual,
 ) => {
-	return findAward(awards, searchFor)?.winner[0];
+	return findAwards(awards, searchFor)
+		.map((award) => award.winner[0])
+		.filter((p) => p !== undefined);
 };
 
 const goldenOldiesCutoffs: [number, number, number] = bySport({
@@ -322,19 +329,25 @@ const checkFoFoFo = async () => {
 };
 
 const checkBrickWall = async (cutoff: number) => {
-	let count = 0;
 	const awards = await idb.cache.awards.get(g.get("season"));
-	const award = findAward(awards, defaultAwardsBasketball.def);
+	const found = findAwards(awards, defaultAwardsBasketball.def);
 
-	if (award && award.winner[0]) {
-		for (const p of award.winner[0]) {
-			if (p?.tid === g.get("userTid")) {
-				count += 1;
+	for (const award of found) {
+		let count = 0;
+		if (award && award.winner[0]) {
+			for (const p of award.winner[0]) {
+				if (p?.tid === g.get("userTid")) {
+					count += 1;
+				}
 			}
+		}
+
+		if (count >= cutoff) {
+			return true;
 		}
 	}
 
-	return count >= cutoff;
+	return false;
 };
 
 const checkAroundTheWorld = async (target: number) => {
@@ -439,17 +452,18 @@ const checkMvp = async (limit: number, overallLimit: number) => {
 	const userTid = g.get("userTid");
 
 	const currentAwards = await idb.cache.awards.get(season);
-	const mvp = findAwardWinner(currentAwards, defaultAwards.mvp);
+	const mvps = findAwardWinners(currentAwards, defaultAwards.mvp);
+	const mvpMatches = mvps.some((mvp) => mvp.tid === userTid);
 
 	// If we have current season in cache, use it
 	if (checkMvpCache?.season === season) {
-		return mvp?.tid === userTid && checkMvpCache.count === limit;
+		return mvpMatches && checkMvpCache.count === limit;
 	}
 
 	// If we have last season in cache, use it
 	if (checkMvpCache?.season === season - 1) {
 		checkMvpCache.season = season;
-		if (mvp?.tid === userTid) {
+		if (mvpMatches) {
 			checkMvpCache.count += 1;
 
 			return checkMvpCache.count === limit;
@@ -463,7 +477,7 @@ const checkMvp = async (limit: number, overallLimit: number) => {
 		season,
 		count: 0,
 	};
-	if (mvp?.tid === userTid) {
+	if (mvpMatches) {
 		checkMvpCache.count += 1;
 	}
 	for await (const { value: awards } of idb.league.transaction("awards")
@@ -473,10 +487,10 @@ const checkMvp = async (limit: number, overallLimit: number) => {
 			continue;
 		}
 
-		const oldMvp = findAwardWinner(awards, defaultAwards.mvp);
+		const oldMvps = findAwardWinners(awards, defaultAwards.mvp);
 
 		const userTid = g.get("userTid", awards.season);
-		if (oldMvp?.tid === userTid) {
+		if (oldMvps.some((mvp) => mvp.tid === userTid)) {
 			checkMvpCache.count += 1;
 		}
 
@@ -486,7 +500,7 @@ const checkMvp = async (limit: number, overallLimit: number) => {
 		}
 	}
 
-	return mvp?.tid === userTid && checkMvpCache.count === limit;
+	return mvpMatches && checkMvpCache.count === limit;
 };
 
 const checkSleeperPick = async (checkPlayer: (p: Player) => boolean) => {
@@ -503,17 +517,19 @@ const checkSleeperPick = async (checkPlayer: (p: Player) => boolean) => {
 	});
 
 	for (const searchFor of awardKeysToCheck) {
-		const winner = findAwardWinner(awards, searchFor);
-		if (winner?.tid === g.get("userTid")) {
-			const p = await idb.cache.players.get(winner.pid);
+		const winners = findAwardWinners(awards, searchFor);
+		for (const winner of winners) {
+			if (winner.tid === g.get("userTid")) {
+				const p = await idb.cache.players.get(winner.pid);
 
-			if (
-				p &&
-				p.draft.tid === g.get("userTid") &&
-				p.draft.year === g.get("season") - 1 &&
-				checkPlayer(p)
-			) {
-				return true;
+				if (
+					p &&
+					p.draft.tid === g.get("userTid") &&
+					p.draft.year === g.get("season") - 1 &&
+					checkPlayer(p)
+				) {
+					return true;
+				}
 			}
 		}
 	}
@@ -1025,21 +1041,17 @@ const achievements: Achievement[] = [
 			}
 
 			const awards = await idb.cache.awards.get(g.get("season"));
-			const award = findAward(awards, defaultAwards.all);
-			if (!award) {
-				return false;
-			}
+			const found = findAwards(awards, defaultAwards.all);
 
-			for (let i = 0; i < defaultAwards.all.numTeams; i++) {
-				const team = award.winner[i];
-				if (!team) {
-					return false;
-				}
-				for (const p of team) {
-					if (p?.tid === g.get("userTid")) {
-						return false;
+			OUTER_LOOP: for (const award of found) {
+				for (let i = 0; i < defaultAwards.all.numTeams; i++) {
+					const team = award.winner[i];
+					if (!team || !team.every((p) => p?.tid !== g.get("userTid"))) {
+						continue OUTER_LOOP;
 					}
 				}
+
+				return true;
 			}
 
 			return true;
@@ -1056,13 +1068,15 @@ const achievements: Achievement[] = [
 		async check() {
 			let count = 0;
 			const awards = await idb.cache.awards.get(g.get("season"));
-			const award = findAward(awards, defaultAwards.all);
-			if (award && award.winner[0]) {
-				for (const p of award.winner[0]) {
-					if (p?.tid === g.get("userTid")) {
-						count += 1;
-						if (count >= superTeamCutoff) {
-							return true;
+			const found = findAwards(awards, defaultAwards.all);
+			for (const award of found) {
+				if (award.winner[0]) {
+					for (const p of award.winner[0]) {
+						if (p?.tid === g.get("userTid")) {
+							count += 1;
+							if (count >= superTeamCutoff) {
+								return true;
+							}
 						}
 					}
 				}
@@ -1081,18 +1095,20 @@ const achievements: Achievement[] = [
 
 		async check() {
 			const awards = await idb.cache.awards.get(g.get("season"));
-			const award = findAward(awards, defaultAwards.all);
-			if (award && award.winner[0]) {
-				for (const info of award.winner[0]) {
-					if (!info) {
-						continue;
-					}
-					const { pid, tid } = info;
-					if (tid === g.get("userTid")) {
-						const p = await idb.cache.players.get(pid);
+			const found = findAwards(awards, defaultAwards.all);
+			for (const award of found) {
+				if (award.winner[0]) {
+					for (const info of award.winner[0]) {
+						if (!info) {
+							continue;
+						}
+						const { pid, tid } = info;
+						if (tid === g.get("userTid")) {
+							const p = await idb.cache.players.get(pid);
 
-						if (p && p.retiredYear === g.get("season")) {
-							return true;
+							if (p && p.retiredYear === g.get("season")) {
+								return true;
+							}
 						}
 					}
 				}
@@ -1111,8 +1127,8 @@ const achievements: Achievement[] = [
 
 		async check() {
 			const awards = await idb.cache.awards.get(g.get("season"));
-			const award = findAward(awards, defaultAwards.all);
-			if (award) {
+			const found = findAwards(awards, defaultAwards.all);
+			for (const award of found) {
 				for (let i = 0; i < defaultAwards.all.numTeams; i++) {
 					const team = award.winner[i];
 					if (!team) {
@@ -1147,18 +1163,20 @@ const achievements: Achievement[] = [
 
 		async check() {
 			const awards = await idb.cache.awards.get(g.get("season"));
-			const award = findAward(awards, defaultAwards.all);
-			if (award && award.winner[0]) {
-				for (const info of award.winner[0]) {
-					if (!info) {
-						continue;
-					}
-					const { pid, tid } = info;
-					if (tid === g.get("userTid")) {
-						const p = await idb.cache.players.get(pid);
+			const found = findAwards(awards, defaultAwards.all);
+			for (const award of found) {
+				if (award && award.winner[0]) {
+					for (const info of award.winner[0]) {
+						if (!info) {
+							continue;
+						}
+						const { pid, tid } = info;
+						if (tid === g.get("userTid")) {
+							const p = await idb.cache.players.get(pid);
 
-						if (p && p.draft.year === g.get("season") - 1) {
-							return true;
+							if (p && p.draft.year === g.get("season") - 1) {
+								return true;
+							}
 						}
 					}
 				}
@@ -1176,17 +1194,23 @@ const achievements: Achievement[] = [
 		category: "Awards",
 
 		async check() {
-			let count = 0;
 			const awards = await idb.cache.awards.get(g.get("season"));
-			const award = findAward(awards, defaultAwards.alr);
-			if (award && award.winner[0]) {
-				for (const p of award.winner[0]) {
-					if (p?.tid === g.get("userTid")) {
-						count += 1;
+			const found = findAwards(awards, defaultAwards.alr);
+			for (const award of found) {
+				let count = 0;
+				if (award.winner[0]) {
+					for (const p of award.winner[0]) {
+						if (p?.tid === g.get("userTid")) {
+							count += 1;
+						}
 					}
 				}
+				if (count >= trustTheProcessCutoff) {
+					return true;
+				}
 			}
-			return count >= trustTheProcessCutoff;
+
+			return false;
 		},
 
 		when: "afterAwards",
@@ -1221,21 +1245,26 @@ const achievements: Achievement[] = [
 
 			for (const award of tripleCrownAwardsToCheck) {
 				if (award.numTeams === undefined) {
-					const info = findAwardWinner(awards, award);
-					if (info?.tid === userTid) {
-						const hitTarget = count(info.pid);
-						if (hitTarget) {
-							return true;
+					const winners = findAwardWinners(awards, award);
+					for (const winner of winners) {
+						if (winner.tid === userTid) {
+							const hitTarget = count(winner.pid);
+							if (hitTarget) {
+								return true;
+							}
 						}
 					}
 				} else {
-					const team = findAward(awards, award)?.winner[0];
-					if (team) {
-						for (const info of team) {
-							if (info?.tid === userTid) {
-								const hitTarget = count(info.pid);
-								if (hitTarget) {
-									return true;
+					const found = findAwards(awards, award);
+					for (const foundAward of found) {
+						const team = foundAward?.winner[0];
+						if (team) {
+							for (const winner of team) {
+								if (winner?.tid === userTid) {
+									const hitTarget = count(winner.pid);
+									if (hitTarget) {
+										return true;
+									}
 								}
 							}
 						}
@@ -1258,8 +1287,8 @@ const achievements: Achievement[] = [
 		async check() {
 			const awards = await idb.cache.awards.get(g.get("season"));
 			return hardwareStoreAwardsToCheck.every((award) => {
-				const info = findAwardWinner(awards, award);
-				return info?.tid === g.get("userTid");
+				const winners = findAwardWinners(awards, award);
+				return winners.some((p) => p.tid === g.get("userTid"));
 			});
 		},
 		when: "afterAwards",
@@ -1894,12 +1923,20 @@ if (isSport("basketball")) {
 					return false;
 				}
 
-				const mvp = findAwardWinner(awards, defaultAwards.mvp);
-				const mip = findAwardWinner(awards, defaultAwardsBasketball.mip);
+				const mvps = findAwardWinners(awards, defaultAwards.mvp);
+				const mips = findAwardWinners(awards, defaultAwardsBasketball.mip);
+
+				const mvpPids = mvps
+					.filter((mvp) => mvp.tid === g.get("userTid"))
+					.map((p) => p.pid);
+				const mipPids = mips
+					.filter((mip) => mip.tid === g.get("userTid"))
+					.map((p) => p.pid);
+
 				return (
-					mvp?.tid === g.get("userTid") &&
-					mip?.tid === g.get("userTid") &&
-					mvp.pid === mip.pid
+					mvpPids.length > 0 &&
+					mipPids.length > 0 &&
+					mvpPids.some((pid) => mipPids.includes(pid))
 				);
 			},
 

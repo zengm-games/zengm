@@ -10,6 +10,36 @@ import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { RatingWithChange } from "../components/RatingWithChange.tsx";
 import { StatWithChange } from "../components/StatWithChange.tsx";
 import { useLocal } from "../util/local.ts";
+import { getCol } from "../../common/getCol.ts";
+
+const MARGIN = 14;
+
+const Title = ({
+	asterisk,
+	award,
+	confs,
+	divs,
+}: {
+	asterisk: boolean;
+	award: View<"awardRaces">["awardCandidates"][number];
+} & Pick<View<"awardRaces">, "confs" | "divs">) => {
+	const { group, name } = award;
+	return (
+		<div>
+			<h2>
+				{name}
+				{asterisk ? "*" : null}
+			</h2>
+			{group && group.type !== "playoffSeries" ? (
+				<h3>
+					{group.type === "conf"
+						? confs[group.cid]?.name
+						: divs[group.did]?.name}
+				</h3>
+			) : null}
+		</div>
+	);
+};
 
 const AwardRaces = ({
 	awardCandidates,
@@ -40,9 +70,9 @@ const AwardRaces = ({
 		<>
 			<MoreLinks type="awards" page="award_races" season={season} />
 
-			<div className="row" style={{ marginTop: -14 }}>
+			<div className="row" style={{ marginTop: -MARGIN }}>
 				{awardCandidates.map((award) => {
-					const { group, mip, rookie, name, players, stats } = award;
+					const { group, mip, rookie, players, stats } = award;
 
 					const asterisk =
 						award.numTeams === undefined && award.opoyFormula !== undefined;
@@ -52,20 +82,18 @@ const AwardRaces = ({
 						...getCols([rookie ? "Pick" : "Record", "Ovr"]),
 						...getCols(stats.map((stat) => `stat:${stat}`)),
 					];
-
 					if (mip) {
-						cols.push(...getCols(["Compare"]));
+						cols.push(getCol("Compare"));
 					}
 
 					const rows: DataTableRow[] = players.map((p, j) => {
 						const ps = p.currentStats;
 						const pr = p.ratings.findLast((row) => row.season === season);
 
-						const pos = pr ? pr.pos : "?";
-						const abbrev = ps ? ps.abbrev : undefined;
-						const tid = ps ? ps.tid : undefined;
-
-						const t = teams.find((t) => t.tid === tid);
+						const pos = pr?.pos ?? "?";
+						const abbrev = ps?.abbrev;
+						const tid = ps?.tid;
+						const t = teams[tid];
 
 						let recordOrPick = null;
 						if (rookie) {
@@ -119,16 +147,26 @@ const AwardRaces = ({
 								) : null,
 							);
 
-							let ps2: any;
-							for (let i = p.stats.length - 1; i >= 0; i--) {
-								if (
-									p.stats[i]!.season === season - 1 &&
-									!p.stats[i]!.playoffs
-								) {
-									ps2 = p.stats[i];
-									break;
+							const ps2 = p.stats.findLast((row) => {
+								if (row.season !== season - 1) {
+									return false;
 								}
-							}
+
+								if (award.statRange === undefined && ps.playoffs !== false) {
+									return false;
+								}
+								if (award.statRange === "playoffs" && ps.playoffs !== true) {
+									return false;
+								}
+								if (
+									award.statRange === "combined" &&
+									ps.playoffs !== "combined"
+								) {
+									return false;
+								}
+
+								return true;
+							});
 
 							const comparePlayersRange =
 								award.statRange === "playoffs"
@@ -200,26 +238,20 @@ const AwardRaces = ({
 					});
 
 					const title = (
-						<div>
-							<h2>
-								{name}
-								{asterisk ? "*" : null}
-							</h2>
-							{group && group.type !== "playoffSeries" ? (
-								<h3>
-									{group.type === "conf"
-										? confs[group.cid]?.name
-										: divs[group.did]?.name}
-								</h3>
-							) : null}
-						</div>
+						<Title
+							asterisk={asterisk}
+							award={award}
+							confs={confs}
+							divs={divs}
+						/>
 					);
+					const key = `${award.shortName}-${group === undefined ? "" : group.type === "conf" ? group.cid : group.type === "div" ? group.did : `${group.tids[0]}-${group.tids[1]}`}`;
 
 					return (
 						<div
-							key={`${award.shortName}-${group === undefined ? "" : group.type === "conf" ? group.cid : group.type === "div" ? group.did : `${group.tids[0]}-${group.tids[1]}`}`}
+							key={key}
 							className={mip ? "col-12 col-lg-9" : "col-12 col-lg-6"}
-							style={{ marginTop: 14 }}
+							style={{ marginTop: MARGIN }}
 						>
 							{rows.length > 0 ? (
 								<DataTable
@@ -228,7 +260,7 @@ const AwardRaces = ({
 									defaultSort={[0, "asc"]}
 									defaultStickyCols={window.mobile ? 0 : 2}
 									hideAllControls
-									name={`AwardRaces${name}`}
+									name={`AwardRaces${key}`}
 									rows={rows}
 									title={title}
 								/>

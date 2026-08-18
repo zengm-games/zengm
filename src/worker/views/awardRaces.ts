@@ -3,6 +3,7 @@ import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import getAwardCandidates from "../core/awards/getAwardCandidates.ts";
+import { groupByUnique } from "../../common/utils.ts";
 
 const updateAwardRaces = async (
 	inputs: ViewInput<"awardRaces">,
@@ -37,7 +38,7 @@ const updateAwardRaces = async (
 			confs: g.get("confs", inputs.season),
 			divs: g.get("divs", inputs.season),
 			season: inputs.season,
-			teams,
+			teams: groupByUnique(teams, "tid"),
 		};
 	}
 };

@@ -2191,7 +2191,7 @@ test("super_team", async () => {
 		await idb.cache.awards.put(awards);
 
 		const awarded = await get("super_team").check();
-		assert.deepStrictEqual(awarded, scenario.awarded, scenario.text);
+		assert.strictEqual(awarded, scenario.awarded, scenario.text);
 	}
 });
 
@@ -2229,7 +2229,7 @@ test("out_of_nowhere", async () => {
 		await idb.cache.awards.put(awards);
 
 		const awarded = await get("out_of_nowhere").check();
-		assert.deepStrictEqual(awarded, scenario.awarded, scenario.text);
+		assert.strictEqual(awarded, scenario.awarded, scenario.text);
 	}
 });
 
@@ -2281,7 +2281,75 @@ test("quit_on_top", async () => {
 		await idb.cache.awards.put(awards);
 
 		const awarded = await get("quit_on_top").check();
-		assert.deepStrictEqual(awarded, scenario.awarded, scenario.text);
+		assert.strictEqual(awarded, scenario.awarded, scenario.text);
+	}
+});
+
+test("golden_boy", async () => {
+	const scenarios = [
+		{
+			text: "Just 2nd Team -> no award",
+			awards: [defaultAwards.all],
+			team: 2,
+			rookie: false,
+			awarded: false,
+			awarded2: false,
+		},
+		{
+			text: "Just rookie -> no award",
+			awards: [],
+			team: 2,
+			rookie: true,
+			awarded: false,
+			awarded2: false,
+		},
+		{
+			text: "2nd team + rookie -> golden_boy",
+			awards: [defaultAwards.all],
+			team: 2,
+			rookie: true,
+			awarded: true,
+			awarded2: false,
+		},
+		{
+			text: "1nd team + rookie -> golden_boy + golden_boy_2",
+			awards: [defaultAwards.all],
+			team: 1,
+			rookie: true,
+			awarded: true,
+			awarded2: true,
+		},
+	];
+
+	for (const scenario of scenarios) {
+		const p = (await idb.cache.players.getAll())[0];
+		assert(p);
+		if (scenario.rookie) {
+			p.draft.year = g.get("season") - 1;
+		} else {
+			p.draft.year = g.get("season") - 2;
+		}
+		await idb.cache.players.put(p);
+
+		const awards = makeAwards({
+			season: 2013,
+			awards: scenario.awards.map((award) => {
+				const team = [{ pid: 0, tid: g.get("userTid") }];
+				return {
+					...award,
+					group: undefined,
+					winner: scenario.team === 1 ? [team] : [[], team],
+				};
+			}),
+		});
+
+		await idb.cache.awards.put(awards);
+
+		const awarded = await get("golden_boy").check();
+		assert.strictEqual(awarded, scenario.awarded, scenario.text);
+
+		const awarded2 = await get("golden_boy_2").check();
+		assert.strictEqual(awarded2, scenario.awarded2, scenario.text);
 	}
 });
 

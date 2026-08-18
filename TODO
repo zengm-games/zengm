@@ -4,7 +4,7 @@ custom awards
   - why is it needed?
   - only in PlayerAward?
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
-- edit awards
+- edit awards setting
   - where?
     - dedicated page
     - league settings modal
@@ -33,16 +33,15 @@ custom awards
   - historyAll, teamRecords, awardRecords
     - test with changing awards
     - test with div/conf awards (should show in separate columns)
-  - achievements unit tests
-    - golden_boy
-    - trust_the_process
 - ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
-  - awards editor
+  - awards editor (winners)
   - GOAT formula
 - make sure hashAward accounts for everything
 - upgrade
-  - test all sports
+  - test
+    - all sports
+    - grouped awards look fine
   - First vs 1st?
     - could dynamically fix in formatAwardName
   - upgrade old awards objects
@@ -68,6 +67,7 @@ custom awards
       - delete old data
       - imported player with no stats
       - created player with no stats
+  - formula improvements since goat lab (derived, max/min)
   - awards column for player profiles
   - bestRecordDiv on Team Records
   - complexity of football formulas, OPOY, DH

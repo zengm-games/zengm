@@ -1122,7 +1122,7 @@ const achievements: Achievement[] = [
 	{
 		slug: "golden_boy",
 		name: "Golden Boy",
-		desc: "Have a rookie make an All-League team.",
+		desc: "Have player drafted last year make an All-League team.",
 		category: "Awards",
 
 		async check() {
@@ -1158,7 +1158,7 @@ const achievements: Achievement[] = [
 	{
 		slug: "golden_boy_2",
 		name: "Golden Boy 2",
-		desc: `Have a rookie make 1st Team ${defaultAwards.all.name}.`,
+		desc: `Have a player drafted last year make 1st Team ${defaultAwards.all.name}.`,
 		category: "Awards",
 
 		async check() {
@@ -1190,7 +1190,7 @@ const achievements: Achievement[] = [
 	{
 		slug: "trust_the_process",
 		name: "Trust The Process",
-		desc: `Have ${trustTheProcessCutoff}+ players on the ${defaultAwards.alr.name} Team.`,
+		desc: `Have ${trustTheProcessCutoff}+ players make 1st Team ${defaultAwards.alr.name}.`,
 		category: "Awards",
 
 		async check() {

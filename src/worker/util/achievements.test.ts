@@ -2472,4 +2472,31 @@ describe("Edited awards", () => {
 		const awarded = await get("hardware_store").check();
 		assert.strictEqual(awarded, false);
 	});
+
+	test("numTeams changed -> still valid, doesn't affect 1st team", async () => {
+		const NUM_PLAYERS = 3;
+
+		for (let numTeams = 1; numTeams <= 3; numTeams++) {
+			const awards = makeAwards({
+				season: 2013,
+				awards: [
+					{
+						...defaultAwardsBasketball.def,
+						numTeams,
+						group: undefined,
+						winner: [
+							range(NUM_PLAYERS).map(() => ({
+								pid: 0,
+								tid: g.get("userTid"),
+							})),
+						],
+					},
+				],
+			});
+
+			await idb.cache.awards.put(awards);
+
+			assert.strictEqual(await get("brick_wall").check(), true);
+		}
+	});
 });

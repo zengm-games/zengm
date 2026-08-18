@@ -69,7 +69,7 @@ const findAwards = <
 				continue;
 			}
 
-			// Let individual award functions validate the specific value of numTeams, because some only need one
+			// Let team award check functions validate the specific value of numTeams, like if we're only looking at 1st team anyway then it doesn't matter how many more teams there are beyond that
 		}
 
 		const awardByPos = award.formulaByPos;

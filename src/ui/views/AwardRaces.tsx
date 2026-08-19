@@ -11,7 +11,7 @@ import { RatingWithChange } from "../components/RatingWithChange.tsx";
 import { StatWithChange } from "../components/StatWithChange.tsx";
 import { useLocal } from "../util/local.ts";
 import { getCol } from "../../common/getCol.ts";
-import { useId, useState, type ReactNode } from "react";
+import { useId, useState, type ChangeEvent, type ReactNode } from "react";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { HelpPopover } from "../components/HelpPopover.tsx";
 
@@ -251,10 +251,12 @@ type EditingState = ReturnType<typeof getInitialEditingState>;
 const EditSettings = ({
 	numGamesPlayoffSeries,
 	playoffsByConf,
+	setState,
 	state,
 }: {
 	numGamesPlayoffSeries: number[];
 	playoffsByConf: number | false;
+	setState: (state: EditingState) => void;
 	state: EditingState;
 }) => {
 	const groups: {
@@ -410,21 +412,56 @@ const EditSettings = ({
 
 	const actAsId = useId();
 
+	const changeHandler =
+		<Key extends keyof EditingState>(
+			key: Key,
+			processValue?: (value: string) => EditingState[Key],
+		) =>
+		(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+			const value =
+				event.target instanceof HTMLInputElement &&
+				event.target.type === "checkbox"
+					? event.target.checked
+					: processValue
+						? processValue(event.target.value)
+						: processValue;
+
+			setState({
+				...state,
+				[key]: value,
+			});
+		};
+
 	return (
 		<div>
 			<div className="d-flex gap-3">
 				<label className="flex-grow-1">
 					<div className="mb-1">Name</div>
-					<input className="form-control" type="text" value={state.name} />
+					<input
+						className="form-control"
+						type="text"
+						value={state.name}
+						onChange={changeHandler("name")}
+					/>
 				</label>
 				<label style={{ width: 100 }}>
 					<div className="mb-1">Abbrev</div>
-					<input className="form-control" type="text" value={state.shortName} />
+					<input
+						className="form-control"
+						type="text"
+						value={state.shortName}
+						onChange={changeHandler("shortName")}
+					/>
 				</label>
 			</div>
 			<label className="mt-2 d-flex align-items-center gap-3">
 				<span>Formula</span>
-				<input className="form-control" type="text" value={state.formula} />
+				<input
+					className="form-control"
+					type="text"
+					value={state.formula}
+					onChange={changeHandler("formula")}
+				/>
 				{TEAM_AWARD_INFO.byPos ? (
 					<button className="btn-secondary" title="By position">
 						By pos
@@ -436,9 +473,7 @@ const EditSettings = ({
 					<div className="mb-1">Grouping</div>
 					<select
 						className="form-select"
-						onChange={(event) => {
-							console.log(event.target.value);
-						}}
+						onChange={changeHandler("group")}
 						value={state.group}
 					>
 						{groups.map(({ key, text }) => (
@@ -452,14 +487,12 @@ const EditSettings = ({
 					<div className="mb-1">Range</div>
 					<select
 						className="form-select"
-						onChange={(event) => {
+						onChange={changeHandler("statRange", (value) => {
 							const newStatRange = (
-								event.target.value.startsWith("-")
-									? Number.parseInt(event.target.value)
-									: event.target.value
+								value.startsWith("-") ? Number.parseInt(value) : value
 							) as EditingState["statRange"];
-							console.log(newStatRange);
-						}}
+							return newStatRange;
+						})}
 						value={state.statRange}
 					>
 						{statRanges.map(({ key, text }) => (
@@ -473,9 +506,7 @@ const EditSettings = ({
 					<div className="mb-1">UI stats</div>
 					<select
 						className="form-select"
-						onChange={(event) => {
-							console.log(event.target.value);
-						}}
+						onChange={changeHandler("showStats")}
 						value={state.showStats}
 					>
 						{showStatss.map(({ key, text }) => (
@@ -494,9 +525,7 @@ const EditSettings = ({
 									id={id}
 									type="checkbox"
 									checked={state[key]}
-									onChange={() => {
-										console.log("TOGGLe");
-									}}
+									onChange={changeHandler(key)}
 								/>
 								<label className="form-check-label" htmlFor={id}>
 									{text}
@@ -513,9 +542,7 @@ const EditSettings = ({
 				<div>
 					<select
 						className="form-select"
-						onChange={(event) => {
-							console.log(event.target.value);
-						}}
+						onChange={changeHandler("type")}
 						value={state.type}
 					>
 						<option value="individual">Individual award</option>
@@ -546,9 +573,7 @@ const EditSettings = ({
 						<select
 							id={actAsId}
 							className="form-select"
-							onChange={(event) => {
-								console.log(event.target.value);
-							}}
+							onChange={changeHandler("actAs")}
 							value={state.actAs}
 						>
 							{actAss.map(({ key, text }) => (
@@ -564,9 +589,7 @@ const EditSettings = ({
 							<div className="mb-1"># teams</div>
 							<input
 								className="form-control"
-								onChange={(event) => {
-									console.log(event.target.value);
-								}}
+								onChange={changeHandler("numTeams")}
 								value={state.numTeams}
 							/>
 						</label>
@@ -690,6 +713,20 @@ const AwardRaces = ({
 										<EditSettings
 											numGamesPlayoffSeries={numGamesPlayoffSeries}
 											playoffsByConf={playoffsByConf}
+											setState={(state) => {
+												setEditSettings((oldState) => {
+													return oldState.awards
+														? {
+																...oldState,
+																awards: oldState.awards.map((award, j) => {
+																	return i === j ? state : award;
+																}),
+															}
+														: {
+																editing: false,
+															};
+												});
+											}}
 											state={editSettings.awards[i]}
 										/>
 									) : (

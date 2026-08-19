@@ -5,31 +5,30 @@ custom awards
   - only in PlayerAward?
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
 - edit awards setting
-  - where?
-    - dedicated page
-    - league settings modal
-    - award races
-      - but what about teams and playoffs?
-        - could just show any ones with no valid candidates
-      - what about editing after the current season has ended?
-        - could just say it applies to next year
+  - tricky parts
+    - show in UI before saving
+      - add/delete award
+      - move up/down
+    - how to handle editing after current season has ended? need to do it based on setting, but also still have some way to view the actual award races
   - docs
     - explain seasonFraction scaling
       - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
     - min/max functions
       - also add to GOAT formula/season
-  - import/export
-  - enforce shortName is unique
-  - playoff series statRange cannot be:
-    - a team award
-    - MIP
-  - validate formulas
-  - formulaByPos non-basketball only
+  - import/export awards
+    - ideally pick and choose on import
+  - validation
+    - shortName is unique
+    - playoff series statRange cannot be:
+      - a team award
+      - MIP
+    - validate formula, formulaByPos, and opoyFormula should be valid formulas
+    - opoyFormula: don't allow if MIP, MVP and maybe other stuff
   - opoyFormula in FBGM only
-    - and don't allow if MIP, MVP and maybe other stuff
   - show which achievements still eligible for, or at least explain
   - make sure to delete formulaByPos if empty
-  - test invalid statRange value, like if playoff size changed and a round is no longer valid
+  - test
+    - invalid statRange value, like if playoff size changed and a round is no longer valid
 - test
   - football posFactor in dpoyScore - really needed? could add formulaByPos but it gets messy. could also add references to other awards
   - historyAll, teamRecords, awardRecords

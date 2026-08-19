@@ -14,6 +14,7 @@ import { getCol } from "../../common/getCol.ts";
 import { useId, useState, type ChangeEvent, type ReactNode } from "react";
 import { bySport, isSport } from "../../common/sportFunctions.ts";
 import { HelpPopover } from "../components/HelpPopover.tsx";
+import { StickyBottomButtons } from "../components/StickyBottomButtons.tsx";
 
 const MARGIN = 14;
 
@@ -640,6 +641,7 @@ const AwardRaces = ({
 	>({
 		editing: false,
 	});
+	const [saving, setSaving] = useState(false);
 
 	const globalCols = getCols(["#", "Name", "Pos", "Age", "Team"]);
 
@@ -760,6 +762,23 @@ const AwardRaces = ({
 					);
 				})}
 			</div>
+
+			{editSettings.editing ? (
+				<StickyBottomButtons>
+					<button
+						className="btn btn-primary me-2"
+						type="submit"
+						disabled={saving}
+						onClick={() => {
+							setSaving(true);
+
+							setSaving(false);
+						}}
+					>
+						Save award settings
+					</button>
+				</StickyBottomButtons>
+			) : null}
 		</>
 	);
 };

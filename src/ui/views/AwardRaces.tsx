@@ -205,6 +205,70 @@ const getRows = ({
 	return rows;
 };
 
+const getInitialEditingState = (award: InputAward) => {
+	const group =
+		!award.group || award.group?.type === "playoffSeries"
+			? "league"
+			: award.group?.type;
+
+	const common = {
+		shortName: award.shortName,
+		name: award.name,
+		formula: award.formula,
+		formulaByPos: award.formulaByPos ? { ...award.formulaByPos } : undefined,
+		statRange: award.statRange ?? "regularSeason",
+		showStats: award.showStats,
+		group,
+		bench: !!award.bench,
+		mip: !!award.mip,
+		rookie: !!award.rookie,
+	};
+
+	if (award.numTeams === undefined) {
+		return {
+			...common,
+			type: "individual" as const,
+			mvp: !!award.mvp,
+			roy: !!award.roy,
+			opoyFormula: award.opoyFormula ?? "",
+			numTeams: "1",
+		};
+	}
+
+	return {
+		...common,
+		type: "team" as const,
+		mvp: false,
+		roy: false,
+		opoyFormula: "",
+		numTeams: String(award.numTeams),
+	};
+};
+
+type EditingState = ReturnType<typeof getInitialEditingState>;
+
+const EditSettings = ({ state }: { state: EditingState }) => {
+	return (
+		<div>
+			<div className="d-flex gap-2">
+				<input
+					className="form-control"
+					type="text"
+					value={state.name}
+					placeholder="Name"
+				/>
+				<input
+					className="form-control"
+					type="text"
+					value={state.shortName}
+					placeholder="Abbrev"
+					style={{ width: 100 }}
+				/>
+			</div>
+		</div>
+	);
+};
+
 const AwardRaces = ({
 	awardCandidates,
 	confs,
@@ -224,12 +288,22 @@ const AwardRaces = ({
 
 	const {
 		challengeNoRatings,
-		godMode,
 		season: currentSeason,
 		userTid,
-	} = useLocal(["challengeNoRatings", "godMode", "season", "userTid"]);
+	} = useLocal(["challengeNoRatings", "season", "userTid"]);
 
-	const [editSettings, setEditSettings] = useState(false);
+	const [editSettings, setEditSettings] = useState<
+		| {
+				editing: false;
+				awards?: EditingState[];
+		  }
+		| {
+				editing: true;
+				awards: EditingState[];
+		  }
+	>({
+		editing: false,
+	});
 
 	const globalCols = getCols(["#", "Name", "Pos", "Age", "Team"]);
 
@@ -237,12 +311,16 @@ const AwardRaces = ({
 		<>
 			<MoreLinks type="awards" page="award_races" season={season} />
 
-			{godMode && !editSettings ? (
+			{!editSettings.editing ? (
 				<div className="mb-3">
 					<button
-						className="btn btn-god-mode"
+						className="btn btn-secondary"
 						onClick={() => {
-							setEditSettings(true);
+							setEditSettings((state) => ({
+								editing: true,
+								awards:
+									state.awards ?? awardCandidates.map(getInitialEditingState),
+							}));
 						}}
 					>
 						Edit award settings
@@ -251,7 +329,7 @@ const AwardRaces = ({
 			) : null}
 
 			<div className="row" style={{ marginTop: -MARGIN }}>
-				{awardCandidates.map((award) => {
+				{awardCandidates.map((award, i) => {
 					const { group, mip, rookie, stats } = award;
 
 					const asterisk =
@@ -293,7 +371,15 @@ const AwardRaces = ({
 							className={mip ? "col-12 col-lg-9" : "col-12 col-lg-6"}
 							style={{ marginTop: MARGIN }}
 						>
-							{editSettings ? <div>{title}</div> : null}
+							{editSettings.editing ? (
+								<div>
+									{editSettings.awards[i] ? (
+										<EditSettings state={editSettings.awards[i]} />
+									) : (
+										title
+									)}
+								</div>
+							) : null}
 							{rows.length > 0 ? (
 								<DataTable
 									classNameWrapper="mb-1"

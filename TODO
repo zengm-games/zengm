@@ -24,11 +24,12 @@ custom awards
     - a team award
     - MIP
   - validate formulas
-  - formulaByPos basketball only
+  - formulaByPos non-basketball only
   - opoyFormula in FBGM only
     - and don't allow if MIP, MVP and maybe other stuff
   - show which achievements still eligible for, or at least explain
   - make sure to delete formulaByPos if empty
+  - test invalid statRange value, like if playoff size changed and a round is no longer valid
 - test
   - football posFactor in dpoyScore - really needed? could add formulaByPos but it gets messy. could also add references to other awards
   - historyAll, teamRecords, awardRecords

@@ -4,6 +4,7 @@ import { idb } from "../db/index.ts";
 import addFirstNameShort from "../util/addFirstNameShort.ts";
 import getAwardCandidates from "../core/awards/getAwardCandidates.ts";
 import { groupByUnique } from "../../common/utils.ts";
+import { season } from "../core/index.ts";
 
 const updateAwardRaces = async (
 	inputs: ViewInput<"awardRaces">,
@@ -37,6 +38,8 @@ const updateAwardRaces = async (
 			awardCandidates,
 			confs: g.get("confs", inputs.season),
 			divs: g.get("divs", inputs.season),
+			numGamesPlayoffSeries: g.get("numGamesPlayoffSeries", inputs.season),
+			playoffsByConf: await season.getPlayoffsByConf(inputs.season),
 			season: inputs.season,
 			teams: groupByUnique(teams, "tid"),
 		};

@@ -4,15 +4,16 @@ import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
 import type { View } from "../../common/types.ts";
-import { PLAYER } from "../../common/constants.ts";
+import { PLAYER, TEAM_AWARD_INFO } from "../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
 import { RatingWithChange } from "../components/RatingWithChange.tsx";
 import { StatWithChange } from "../components/StatWithChange.tsx";
 import { useLocal } from "../util/local.ts";
 import { getCol } from "../../common/getCol.ts";
-import { useState } from "react";
-import { isSport } from "../../common/sportFunctions.ts";
+import { useId, useState, type ReactNode } from "react";
+import { bySport, isSport } from "../../common/sportFunctions.ts";
+import { HelpPopover } from "../components/HelpPopover.tsx";
 
 const MARGIN = 14;
 
@@ -222,13 +223,15 @@ const getInitialEditingState = (award: InputAward) => {
 		bench: !!award.bench,
 		mip: !!award.mip,
 		rookie: !!award.rookie,
-	};
+	} as const;
+
+	type ActAs = "mvp" | "roy" | "none";
 
 	if (award.numTeams === undefined) {
 		return {
 			...common,
 			type: "individual" as const,
-			actAs: award.actAs ?? "none",
+			actAs: award.actAs ?? ("none" as ActAs),
 			opoyFormula: award.opoyFormula ?? "",
 			numTeams: "1",
 		};
@@ -237,8 +240,7 @@ const getInitialEditingState = (award: InputAward) => {
 	return {
 		...common,
 		type: "team" as const,
-		mvp: false,
-		roy: false,
+		actAs: "none" as ActAs,
 		opoyFormula: "",
 		numTeams: String(award.numTeams),
 	};
@@ -246,24 +248,334 @@ const getInitialEditingState = (award: InputAward) => {
 
 type EditingState = ReturnType<typeof getInitialEditingState>;
 
-const EditSettings = ({ state }: { state: EditingState }) => {
+const EditSettings = ({
+	numGamesPlayoffSeries,
+	playoffsByConf,
+	state,
+}: {
+	numGamesPlayoffSeries: number[];
+	playoffsByConf: number | false;
+	state: EditingState;
+}) => {
+	const groups: {
+		key: EditingState["group"];
+		text: string;
+	}[] = [
+		{
+			key: "league",
+			text: "Leaguewide",
+		},
+		{
+			key: "conf",
+			text: "Conference",
+		},
+		{
+			key: "div",
+			text: "Division",
+		},
+	];
+
+	const numPlayoffRounds = numGamesPlayoffSeries.length;
+
+	const statRanges: {
+		key: EditingState["statRange"];
+		text: string;
+	}[] = [
+		{
+			key: "regularSeason",
+			text: "Regular season",
+		},
+		{
+			key: "playoffs",
+			text: "Playoffs",
+		},
+		{
+			key: "combined",
+			text: "Combined",
+		},
+		...numGamesPlayoffSeries.map((numGames, i) => {
+			return {
+				key: -(i + 1),
+				text: helpers.upperCaseFirstLetter(
+					helpers.playoffRoundName(
+						numPlayoffRounds - i - 1,
+						numPlayoffRounds,
+						playoffsByConf,
+					),
+				),
+			};
+		}),
+	];
+
+	// Handle invalid statRange value, like if playoff size changed and a round is no longer valid
+	if (!statRanges.some((row) => row.key === state.statRange)) {
+		statRanges.push({
+			key: state.statRange,
+			text: "Invalid round",
+		});
+	}
+
+	const showStatss: {
+		key: EditingState["showStats"];
+		text: string;
+	}[] = bySport({
+		baseball: [
+			{ key: "overall", text: "Overall" },
+			{ key: "sp", text: "Starting Pitching" },
+			{ key: "rp", text: "Relief Pitching" },
+			{ key: "offense", text: "Overall" },
+			{ key: "defense", text: "Defense" },
+		],
+		basketball: [
+			{ key: "offense", text: "Overall" },
+			{ key: "defense", text: "Defense" },
+		],
+		football: [
+			{ key: "overall", text: "Overall" },
+			{ key: "defense", text: "Defense" },
+			{ key: "blocking", text: "Blocking" },
+		],
+		hockey: [
+			{ key: "overall", text: "Overall" },
+			{ key: "defense", text: "Defense" },
+			{ key: "goalkeeping", text: "Goalkeeping" },
+		],
+	});
+
+	const actAss: {
+		key: EditingState["actAs"];
+		text: string;
+	}[] = [
+		{
+			key: "mvp",
+			text: "MVP",
+		},
+		{
+			key: "roy",
+			text: "ROY",
+		},
+		{
+			key: "none",
+			text: "None",
+		},
+	];
+
+	const flags: {
+		key: "bench" | "mip" | "rookie";
+		text: string;
+		help: ReactNode;
+		id: string;
+	}[] = [
+		{
+			key: "rookie",
+			text: "Rookie only",
+			help: bySport({
+				baseball:
+					"Rookies are defined similar to MLB (130 AB or 50 IP, scaled for season length) except in the first season of a league with no historical data (such as a new league) where rookies are defined based on draft year.",
+				default:
+					"Rookies are defined based on the season they first played, except in the first season of a league with no historical data (such as a new league) where rookies are defined based on draft year.",
+			}),
+			id: useId(),
+		},
+		{
+			key: "bench",
+			text: "Bench only",
+			help: 'Only players who came off the bench more than they started are eligible, similar to a "Sixth Man of the Year" award in basketball.',
+			id: useId(),
+		},
+		{
+			key: "mip",
+			text: "Most Improved Player",
+			help: (
+				<>
+					<p>
+						If we call this award's formula <code>f(season)</code> and the score
+						is normally calculated as <code>f(this season)</code>, then enabling
+						this option makes the score{" "}
+						<code>
+							2*f(this season) - f(last season) - f(best previous season)
+						</code>
+						.
+					</p>
+					<p>
+						This option also requires 1st round picks to be in their 3rd+ season
+						after being drafted, since it's expected that top prospects will
+						improve after their first year.
+					</p>
+				</>
+			),
+			id: useId(),
+		},
+	];
+
+	const actAsId = useId();
+
 	return (
 		<div>
-			<div className="d-flex gap-2">
-				<input
-					className="form-control"
-					type="text"
-					value={state.name}
-					placeholder="Name"
-				/>
-				<input
-					className="form-control"
-					type="text"
-					value={state.shortName}
-					placeholder="Abbrev"
-					style={{ width: 100 }}
-				/>
+			<div className="d-flex gap-3">
+				<label className="flex-grow-1">
+					<div className="mb-1">Name</div>
+					<input className="form-control" type="text" value={state.name} />
+				</label>
+				<label style={{ width: 100 }}>
+					<div className="mb-1">Abbrev</div>
+					<input className="form-control" type="text" value={state.shortName} />
+				</label>
 			</div>
+			<label className="mt-2 d-flex align-items-center gap-3">
+				<span>Formula</span>
+				<input className="form-control" type="text" value={state.formula} />
+				{TEAM_AWARD_INFO.byPos ? (
+					<button className="btn-secondary" title="By position">
+						By pos
+					</button>
+				) : null}
+			</label>
+			<div className="mt-2 d-flex gap-3">
+				<label>
+					<div className="mb-1">Grouping</div>
+					<select
+						className="form-select"
+						onChange={(event) => {
+							console.log(event.target.value);
+						}}
+						value={state.group}
+					>
+						{groups.map(({ key, text }) => (
+							<option key={key} value={key}>
+								{text}
+							</option>
+						))}
+					</select>
+				</label>
+				<label>
+					<div className="mb-1">Range</div>
+					<select
+						className="form-select"
+						onChange={(event) => {
+							const newStatRange = (
+								event.target.value.startsWith("-")
+									? Number.parseInt(event.target.value)
+									: event.target.value
+							) as EditingState["statRange"];
+							console.log(newStatRange);
+						}}
+						value={state.statRange}
+					>
+						{statRanges.map(({ key, text }) => (
+							<option key={key} value={key}>
+								{text}
+							</option>
+						))}
+					</select>
+				</label>
+				<label>
+					<div className="mb-1">UI stats</div>
+					<select
+						className="form-select"
+						onChange={(event) => {
+							console.log(event.target.value);
+						}}
+						value={state.showStats}
+					>
+						{showStatss.map(({ key, text }) => (
+							<option key={key} value={key}>
+								{text}
+							</option>
+						))}
+					</select>
+				</label>
+				<div className="text-nowrap">
+					{flags.map(({ help, id, key, text }) => {
+						return (
+							<div key={key} className="form-check">
+								<input
+									className="form-check-input"
+									id={id}
+									type="checkbox"
+									checked={state[key]}
+									onChange={() => {
+										console.log("TOGGLe");
+									}}
+								/>
+								<label className="form-check-label" htmlFor={id}>
+									{text}
+								</label>
+								<HelpPopover className="ms-2" title={text}>
+									{help}
+								</HelpPopover>
+							</div>
+						);
+					})}
+				</div>
+			</div>
+			<div className="mt-1 d-flex gap-3 align-items-center">
+				<div>
+					<select
+						className="form-select"
+						onChange={(event) => {
+							console.log(event.target.value);
+						}}
+						value={state.type}
+					>
+						<option value="individual">Individual award</option>
+						<option value="team">Team award</option>
+					</select>
+				</div>
+				{state.type === "individual" ? (
+					<div>
+						<label className="mb-1" htmlFor={actAsId}>
+							Act as
+						</label>
+						<HelpPopover title="Act as" className="ms-1">
+							<p>
+								A few places in the UI rely on one award to be known as the
+								"MVP" or "ROY" award. That can be any award, you just need to
+								label it that way here.
+							</p>
+							<p>Specifically these places are:</p>
+							<p>
+								MVP: shows up on Draft History, draft class frivolities, and the
+								Hall of Fame page.
+								{isSport("football")
+									? " In FBGM it also is used if you enable the OPOY formula for an award (see below)."
+									: null}
+							</p>
+							<p>ROY: shows up on the Draft History page.</p>
+						</HelpPopover>
+						<select
+							id={actAsId}
+							className="form-select"
+							onChange={(event) => {
+								console.log(event.target.value);
+							}}
+							value={state.actAs}
+						>
+							{actAss.map(({ key, text }) => (
+								<option key={key} value={key}>
+									{text}
+								</option>
+							))}
+						</select>
+					</div>
+				) : (
+					<div>
+						<label>
+							<div className="mb-1"># teams</div>
+							<input
+								className="form-control"
+								onChange={(event) => {
+									console.log(event.target.value);
+								}}
+								value={state.numTeams}
+							/>
+						</label>
+					</div>
+				)}
+			</div>
+			{state.type === "individual" && isSport("football") ? (
+				<div className="mt-2">OPOY formula stuff</div>
+			) : null}
 		</div>
 	);
 };
@@ -272,6 +584,8 @@ const AwardRaces = ({
 	awardCandidates,
 	confs,
 	divs,
+	numGamesPlayoffSeries,
+	playoffsByConf,
 	season,
 	teams,
 }: View<"awardRaces">) => {
@@ -373,7 +687,11 @@ const AwardRaces = ({
 							{editSettings.editing ? (
 								<div>
 									{editSettings.awards[i] ? (
-										<EditSettings state={editSettings.awards[i]} />
+										<EditSettings
+											numGamesPlayoffSeries={numGamesPlayoffSeries}
+											playoffsByConf={playoffsByConf}
+											state={editSettings.awards[i]}
+										/>
 									) : (
 										title
 									)}

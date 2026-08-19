@@ -91,7 +91,7 @@ const updateFrivolitiesDraftClasses = async (
 					(award) =>
 						award.type === undefined &&
 						award.numTeams === undefined &&
-						award.mvp,
+						award.actAs === "mvp",
 				)
 			) {
 				draftClass.numMVP += 1;

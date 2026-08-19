@@ -124,14 +124,14 @@ const updateDraftHistory = async (inputs: ViewInput<"draftHistory">) => {
 						(award: PlayerAward) =>
 							award.type === undefined &&
 							award.numTeams === undefined &&
-							award.mvp &&
+							award.actAs === "mvp" &&
 							award.rank === 1,
 					).length,
 					roy: p.awards.filter(
 						(award: PlayerAward) =>
 							award.type === undefined &&
 							award.numTeams === undefined &&
-							award.roy &&
+							award.actAs === "roy" &&
 							award.rank === 1,
 					).length,
 					champ: p.awards.filter(

@@ -41,7 +41,7 @@ export const SeasonIcons = ({
 			if (
 				award.type === undefined &&
 				award.numTeams === undefined &&
-				award.mvp
+				award.actAs === "mvp"
 			) {
 				countMVP += 1;
 				if (season !== undefined) {

@@ -695,7 +695,7 @@ export const processAwards = async ({
 			const mvpAwards = realizedAwards.filter(
 				({ award }) =>
 					award.numTeams === undefined &&
-					award.mvp &&
+					award.actAs === "mvp" &&
 					fastDeepEqual(opoyAward.group, award.group),
 			);
 			if (mvpAwards.length === 1) {

@@ -2105,9 +2105,8 @@ type AwardInfo = {
 type AwardInfoIndividualCommon = {
 	numTeams?: undefined;
 
-	// Treat as "MVP" or "ROY" in UI
-	mvp?: true;
-	roy?: true;
+	// Treat as "MVP" or "ROY" in UI and for FBGM OPOY
+	actAs?: "mvp" | "roy";
 };
 
 type AwardInfoTeamCommon = {

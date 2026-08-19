@@ -228,8 +228,7 @@ const getInitialEditingState = (award: InputAward) => {
 		return {
 			...common,
 			type: "individual" as const,
-			mvp: !!award.mvp,
-			roy: !!award.roy,
+			actAs: award.actAs ?? "none",
 			opoyFormula: award.opoyFormula ?? "",
 			numTeams: "1",
 		};

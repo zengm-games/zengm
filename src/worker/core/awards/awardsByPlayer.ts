@@ -1,6 +1,7 @@
 import { idb } from "../../db/index.ts";
 import { g, helpers, logEvent } from "../../util/index.ts";
 import type {
+	AwardInfoIndividual,
 	Conditions,
 	DistributiveOmit,
 	PlayerAward,
@@ -261,14 +262,10 @@ export const getAwardsByPlayer = (
 				}
 				const { pid, tid } = pTemp;
 				const extra: {
-					mvp?: true;
-					roy?: true;
+					actAs?: AwardInfoIndividual["actAs"];
 				} = {};
-				if (award.mvp) {
-					extra.mvp = true;
-				}
-				if (award.roy) {
-					extra.roy = true;
+				if (award.actAs !== undefined) {
+					extra.actAs = award.actAs;
 				}
 
 				const p = playersByPid[pid]!;

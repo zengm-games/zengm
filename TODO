@@ -13,6 +13,7 @@ custom awards
     - how to handle editing after current season has ended? need to do it based on setting, but also still have some way to view the actual award races
       - have edit mode put "/edit" rather than season in the URL, so it always pulls those in
        - use current season data, or last season data if doesn't exist
+  - handle group expansion (don't show edit window multiple times for same award)
   - docs
     - explain seasonFraction scaling
       - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.

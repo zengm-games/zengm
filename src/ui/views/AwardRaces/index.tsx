@@ -269,6 +269,71 @@ const AwardRaces = ({
 
 	const globalCols = getCols(["#", "Name", "Pos", "Age", "Team"]);
 
+	const saveSettings = (redirect: boolean) => async () => {
+		if (!editSettings.editing) {
+			setSaving(false);
+			return;
+		}
+
+		setSaving(true);
+		const awards = [];
+		const errorMessages: string[] = [];
+
+		const seenShortNames = new Set();
+		for (const award of editSettings.awards) {
+			if (award === undefined) {
+				continue;
+			}
+
+			if (seenShortNames.has(award.shortName)) {
+				errorMessages.push(
+					`Duplicate abbrev ${award.shortName} - award abbrevs must be unique`,
+				);
+			}
+			seenShortNames.add(award.shortName);
+
+			try {
+				awards.push(editingStateToAward(award));
+			} catch (error) {
+				errorMessages.push(`${award.shortName}: ${error.message}`);
+			}
+		}
+		console.log(awards);
+
+		if (errorMessages.length > 0) {
+			showNotification({
+				type: "error",
+				text: (
+					<>
+						{errorMessages.map((errorMessage, i) => {
+							return <p key={i}>{errorMessage}</p>;
+						})}
+					</>
+				),
+			});
+		} else {
+			await toWorker("main", "updateGameAttributes", {
+				awards,
+			});
+		}
+
+		setSaving(false);
+
+		if (errorMessages.length === 0) {
+			if (redirect) {
+				await realtimeUpdate([], helpers.leagueUrl(["award_races"]));
+				setEditSettings({
+					editing: false,
+				});
+			} else {
+				await realtimeUpdate(
+					["firstRun"],
+					helpers.leagueUrl(["award_races", "edit"]),
+				);
+			}
+		}
+	};
+
 	return (
 		<>
 			<MoreLinks type="awards" page="award_races" season={season} />
@@ -403,62 +468,18 @@ const AwardRaces = ({
 						Cancel
 					</button>
 					<button
-						className="btn btn-primary ms-2 me-2"
+						className="btn btn-primary me-2"
 						disabled={saving}
-						onClick={async () => {
-							setSaving(true);
-							const awards = [];
-							const errorMessages: string[] = [];
-
-							const seenShortNames = new Set();
-							for (const award of editSettings.awards) {
-								if (award === undefined) {
-									continue;
-								}
-
-								if (seenShortNames.has(award.shortName)) {
-									errorMessages.push(
-										`Duplicate abbrev ${award.shortName} - award abbrevs must be unique`,
-									);
-								}
-								seenShortNames.add(award.shortName);
-
-								try {
-									awards.push(editingStateToAward(award));
-								} catch (error) {
-									errorMessages.push(`${award.shortName}: ${error.message}`);
-								}
-							}
-							console.log(awards);
-
-							if (errorMessages.length > 0) {
-								showNotification({
-									type: "error",
-									text: (
-										<>
-											{errorMessages.map((errorMessage, i) => {
-												return <p key={i}>{errorMessage}</p>;
-											})}
-										</>
-									),
-								});
-							} else {
-								await toWorker("main", "updateGameAttributes", {
-									awards,
-								});
-							}
-
-							setSaving(false);
-
-							if (errorMessages.length === 0) {
-								await realtimeUpdate([], helpers.leagueUrl(["award_races"]));
-								setEditSettings({
-									editing: false,
-								});
-							}
-						}}
+						onClick={saveSettings(false)}
 					>
-						Save award settings
+						Save and continue editing
+					</button>
+					<button
+						className="btn btn-primary me-2"
+						disabled={saving}
+						onClick={saveSettings(true)}
+					>
+						Save and finish editing
 					</button>
 				</StickyBottomButtons>
 			) : null}

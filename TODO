@@ -6,6 +6,7 @@ custom awards
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
     - similar for editing award settings and any other seenShortNames
 - edit awards settings
+  - switch from a conf to leaguewide award and click "save and continue editing" and the 2nd award still has no editing UI
   - show team awards in award races
   - add/delete award
   - move up/down
@@ -28,7 +29,7 @@ custom awards
     - help icon for byPos, UI stats
     - explain how achievements work
     - pressing enter in field should submit form
-      - generic solution for StickyBottomButtons?
+      - "continue editing" one
     - StickyBottomButtons showing up under sticky column
   - test
     - invalid statRange value, like if playoff size changed and a round is no longer valid

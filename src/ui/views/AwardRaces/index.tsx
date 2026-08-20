@@ -22,6 +22,7 @@ import {
 } from "./EditSettings.tsx";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { showNotification } from "../../util/showNotification.ts";
+import { toWorker } from "../../util/toWorker.ts";
 
 const MARGIN = 14;
 
@@ -420,7 +421,6 @@ const AwardRaces = ({
 										`Duplicate abbrev ${award.shortName} - award abbrevs must be unique`,
 									);
 								}
-								console.log(award, seenShortNames);
 								seenShortNames.add(award.shortName);
 
 								try {
@@ -441,6 +441,10 @@ const AwardRaces = ({
 											})}
 										</>
 									),
+								});
+							} else {
+								await toWorker("main", "updateGameAttributes", {
+									awards,
 								});
 							}
 

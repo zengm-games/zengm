@@ -282,14 +282,14 @@ export const defaultAwards = {
 			formula: "war",
 			showStats: "overall",
 			group: "conf",
-			mvp: true,
+			actAs: "mvp",
 		},
 		basketball: {
 			shortName: "MVP",
 			name: "Most Valuable Player",
 			formula: "ewa / 22 + vorp / 32 + wsFraction / 10 + seasonFraction * winp",
 			showStats: "offense",
-			mvp: true,
+			actAs: "mvp",
 		},
 		football: {
 			shortName: "MVP",
@@ -300,14 +300,14 @@ export const defaultAwards = {
 				QB: "0.5*(0.125*rusYds+6*rusTD-2*fmbLost) + 0.0975*recYds+6*recTD + 1.1*(0.04*pssYds+4*pssTD-2.5*pssInt) + 2.25*(4*defSk+0.4*defTckLoss+0.2*defTckAst+0.4*defTckSolo+3*defFmbFrc+3*defFmbRec+6*defInt+2*defPssDef) + 6*(prTD+krTD) + 4*(pbw+rbw)/(0.1+pba+rba)*(pba+rba)^(1/2)",
 			},
 			showStats: "overall",
-			mvp: true,
+			actAs: "mvp",
 		},
 		hockey: {
 			shortName: "MVP",
 			name: "Most Valuable Player",
 			formula: "pts / 25 + ps - 0.225 * gps + 20 * seasonFraction * winp",
 			showStats: "overall",
-			mvp: true,
+			actAs: "mvp",
 		},
 	}),
 };
@@ -335,7 +335,7 @@ export const defaultAwardsBaseball = {
 		showStats: "overall",
 		group: "conf",
 		rookie: true,
-		roy: true,
+		actAs: "roy",
 	} as AwardSettingIndividual,
 	rpoy: {
 		shortName: "RPOY",
@@ -376,7 +376,7 @@ export const defaultAwardsBasketball = {
 		formula: "ewa / 2.1 + vorp + gp / 82 * pts / 2",
 		showStats: "offense",
 		rookie: true,
-		roy: true,
+		actAs: "roy",
 	} as AwardSettingIndividual,
 	smoy: {
 		shortName: "SMOY",
@@ -411,7 +411,7 @@ export const defaultAwardsFootball = {
 			"4*defSk+0.4*defTckLoss+0.2*defTckAst+0.4*defTckSolo+3*defFmbFrc+3*defFmbRec+6*defInt+2*defPssDef",
 		showStats: "defense",
 		rookie: true,
-		roy: true,
+		actAs: "roy",
 	} as AwardSettingIndividual,
 	opoy: {
 		shortName: "OPOY",
@@ -431,7 +431,7 @@ export const defaultAwardsFootball = {
 		},
 		showStats: "overall",
 		rookie: true,
-		roy: true,
+		actAs: "roy",
 	} as AwardSettingIndividual,
 	poy: {
 		shortName: "POY",
@@ -473,7 +473,7 @@ export const defaultAwardsHockey = {
 		formula: "pts / 25 + ps - 0.225 * gps",
 		showStats: "overall",
 		rookie: true,
-		roy: true,
+		actAs: "roy",
 	} as AwardSettingIndividual,
 };
 

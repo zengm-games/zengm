@@ -350,9 +350,7 @@ const AwardRaces = ({
 											}}
 											state={editSettings.awards[i]}
 										/>
-									) : (
-										title
-									)}
+									) : null}
 								</div>
 							) : null}
 							{rows.length > 0 ? (
@@ -364,7 +362,11 @@ const AwardRaces = ({
 									hideAllControls
 									name={`AwardRaces${key}`}
 									rows={rows}
-									title={editSettings ? undefined : title}
+									title={
+										editSettings.editing && editSettings.awards[i]
+											? undefined
+											: title
+									}
 								/>
 							) : (
 								<>

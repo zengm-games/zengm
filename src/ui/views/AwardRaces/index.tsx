@@ -20,7 +20,7 @@ import { useEffect, useState } from "react";
 import { isSport } from "../../../common/sportFunctions.ts";
 import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
 import {
-	awardToEditingState,
+	awardsToEditingState,
 	EditSettings,
 	type EditingState,
 } from "./EditSettings.tsx";
@@ -301,11 +301,11 @@ const AwardRaces = ({
 	const [editSettings, setEditSettings] = useState<
 		| {
 				editing: false;
-				awards?: EditingState[];
+				awards?: (EditingState | undefined)[];
 		  }
 		| {
 				editing: true;
-				awards: EditingState[];
+				awards: (EditingState | undefined)[];
 		  }
 	>({
 		editing: false,
@@ -315,7 +315,7 @@ const AwardRaces = ({
 		if (edit && !editSettings.editing) {
 			setEditSettings((state) => ({
 				editing: true,
-				awards: state.awards ?? awardCandidates.map(awardToEditingState),
+				awards: state.awards ?? awardsToEditingState(awardCandidates),
 			}));
 		}
 	}, [awardCandidates, edit, editSettings.editing]);
@@ -460,7 +460,9 @@ const AwardRaces = ({
 						disabled={saving}
 						onClick={async () => {
 							setSaving(true);
-							const awards = editSettings.awards.map(editingStateToAward);
+							const awards = editSettings.awards
+								.filter((award) => award !== undefined)
+								.map(editingStateToAward);
 							console.log(awards);
 							setSaving(false);
 

@@ -5,7 +5,7 @@ import { TEAM_AWARD_INFO } from "../../../common/constants.ts";
 import { helpers } from "../../util/helpers.ts";
 import type { InputAward } from "./index.tsx";
 
-export const awardToEditingState = (award: InputAward) => {
+const awardToEditingState = (award: InputAward) => {
 	const group =
 		!award.group || award.group?.type === "playoffSeries"
 			? "league"
@@ -43,6 +43,22 @@ export const awardToEditingState = (award: InputAward) => {
 		opoyFormula: "",
 		numTeams: String(award.numTeams),
 	};
+};
+
+export const awardsToEditingState = (awards: InputAward[]) => {
+	const output = [];
+	const seenShortNames = new Set();
+	for (const award of awards) {
+		if (seenShortNames.has(award.shortName)) {
+			output.push(undefined);
+			continue;
+		}
+		seenShortNames.add(award.shortName);
+
+		output.push(awardToEditingState(award));
+	}
+
+	return output;
 };
 
 export type EditingState = ReturnType<typeof awardToEditingState>;
@@ -255,17 +271,22 @@ export const EditSettings = ({
 			</div>
 			<label className="mt-2 d-flex align-items-center gap-3">
 				<span>Formula</span>
-				<input
-					className="form-control"
-					type="text"
-					value={state.formula}
-					onChange={changeHandler("formula")}
-				/>
-				{TEAM_AWARD_INFO.byPos ? (
-					<button className="btn-secondary" title="By position">
-						By pos
-					</button>
-				) : null}
+				<div className="input-group">
+					<input
+						className="form-control"
+						type="text"
+						value={state.formula}
+						onChange={changeHandler("formula")}
+					/>
+					{TEAM_AWARD_INFO.byPos ? (
+						<button
+							className="btn btn-secondary text-nowrap"
+							title="By position"
+						>
+							By pos
+						</button>
+					) : null}
+				</div>
 			</label>
 			<div className="mt-2 d-flex gap-3">
 				<label>

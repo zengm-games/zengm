@@ -4,7 +4,7 @@ custom awards
   - why is it needed?
   - only in PlayerAward?
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
-    - similar for editing award settings
+    - similar for editing award settings and any other seenShortNames
 - edit awards settings
   - StickyBottomButtons showing up under sticky column
   - tricky parts

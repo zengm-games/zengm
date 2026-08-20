@@ -1012,6 +1012,18 @@ const validateSeasonOnly = (params: Params) => {
 	};
 };
 
+const awardRaces = (params: Params) => {
+	const edit = params.season === "edit";
+	return {
+		edit,
+		season: edit
+			? actualPhase() === PHASE.PRESEASON
+				? g.get("season") - 1
+				: g.get("season")
+			: validateSeason(params.season),
+	};
+};
+
 const comparePlayers = (params: Params) => {
 	const players: {
 		pid: number;
@@ -1086,7 +1098,7 @@ export default {
 	allStarDunk: validateSeasonOnly,
 	allStarTeams: validateSeasonOnly,
 	allStarThree: validateSeasonOnly,
-	awardRaces: validateSeasonOnly,
+	awardRaces,
 	awardsRecords,
 	customizePlayer,
 	comparePlayers,

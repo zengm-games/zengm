@@ -16,6 +16,7 @@ const updateAwardRaces = async (
 		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
+		inputs.edit !== state.edit ||
 		inputs.season !== state.season
 	) {
 		const awardCandidates = (await getAwardCandidates(inputs.season)).map(
@@ -38,6 +39,7 @@ const updateAwardRaces = async (
 			awardCandidates,
 			confs: g.get("confs", inputs.season),
 			divs: g.get("divs", inputs.season),
+			edit: inputs.edit,
 			numGamesPlayoffSeries: g.get("numGamesPlayoffSeries", inputs.season),
 			playoffsByConf: await season.getPlayoffsByConf(inputs.season),
 			season: inputs.season,

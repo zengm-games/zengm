@@ -16,7 +16,7 @@ import { RatingWithChange } from "../../components/RatingWithChange.tsx";
 import { StatWithChange } from "../../components/StatWithChange.tsx";
 import { useLocal } from "../../util/local.ts";
 import { getCol } from "../../../common/getCol.ts";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { isSport } from "../../../common/sportFunctions.ts";
 import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
 import {
@@ -24,6 +24,7 @@ import {
 	EditSettings,
 	type EditingState,
 } from "./EditSettings.tsx";
+import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 
 const MARGIN = 14;
 
@@ -273,6 +274,7 @@ const AwardRaces = ({
 	awardCandidates,
 	confs,
 	divs,
+	edit,
 	numGamesPlayoffSeries,
 	playoffsByConf,
 	season,
@@ -283,9 +285,11 @@ const AwardRaces = ({
 		jumpTo: true,
 		jumpToSeason: season,
 		dropdownView: "award_races",
-		dropdownFields: {
-			seasons: season,
-		},
+		dropdownFields: edit
+			? {}
+			: {
+					seasons: season,
+				},
 	});
 
 	const {
@@ -306,6 +310,16 @@ const AwardRaces = ({
 	>({
 		editing: false,
 	});
+
+	useEffect(() => {
+		if (edit && !editSettings.editing) {
+			setEditSettings((state) => ({
+				editing: true,
+				awards: state.awards ?? awardCandidates.map(awardToEditingState),
+			}));
+		}
+	}, [awardCandidates, edit, editSettings.editing]);
+
 	const [saving, setSaving] = useState(false);
 
 	const globalCols = getCols(["#", "Name", "Pos", "Age", "Team"]);
@@ -319,11 +333,7 @@ const AwardRaces = ({
 					<button
 						className="btn btn-secondary"
 						onClick={() => {
-							setEditSettings((state) => ({
-								editing: true,
-								awards:
-									state.awards ?? awardCandidates.map(awardToEditingState),
-							}));
+							realtimeUpdate([], helpers.leagueUrl(["award_races", "edit"]));
 						}}
 					>
 						Edit award settings
@@ -431,14 +441,33 @@ const AwardRaces = ({
 			{editSettings.editing ? (
 				<StickyBottomButtons>
 					<button
-						className="btn btn-primary ms-auto me-2"
-						type="submit"
+						className="btn btn-secondary ms-auto me-2"
 						disabled={saving}
-						onClick={() => {
+						onClick={async () => {
+							await realtimeUpdate([], helpers.leagueUrl(["award_races"]));
+							setEditSettings((oldState) => {
+								return {
+									...oldState,
+									editing: false,
+								};
+							});
+						}}
+					>
+						Cancel
+					</button>
+					<button
+						className="btn btn-primary ms-2 me-2"
+						disabled={saving}
+						onClick={async () => {
 							setSaving(true);
 							const awards = editSettings.awards.map(editingStateToAward);
 							console.log(awards);
 							setSaving(false);
+
+							await realtimeUpdate([], helpers.leagueUrl(["award_races"]));
+							setEditSettings({
+								editing: false,
+							});
 						}}
 					>
 						Save award settings

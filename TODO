@@ -20,7 +20,6 @@ custom awards
   - import/export awards
     - ideally pick and choose on import
   - validation
-    - shortName is unique
     - playoff series statRange cannot be:
       - a team award
       - MIP

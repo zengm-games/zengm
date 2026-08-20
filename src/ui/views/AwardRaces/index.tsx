@@ -21,6 +21,7 @@ import {
 	type EditingState,
 } from "./EditSettings.tsx";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
+import { showNotification } from "../../util/showNotification.ts";
 
 const MARGIN = 14;
 
@@ -403,16 +404,52 @@ const AwardRaces = ({
 						disabled={saving}
 						onClick={async () => {
 							setSaving(true);
-							const awards = editSettings.awards
-								.filter((award) => award !== undefined)
-								.map(editingStateToAward);
+							const awards = [];
+							const errorMessages: string[] = [];
+
+							const seenShortNames = new Set();
+							for (const award of editSettings.awards) {
+								if (award === undefined) {
+									continue;
+								}
+
+								if (seenShortNames.has(award.shortName)) {
+									errorMessages.push(
+										`Duplicate abbrev ${award.shortName} - award abbrevs must be unique`,
+									);
+								}
+								console.log(award, seenShortNames);
+								seenShortNames.add(award.shortName);
+
+								try {
+									awards.push(editingStateToAward(award));
+								} catch (error) {
+									errorMessages.push(`${award.shortName}: ${error.message}`);
+								}
+							}
 							console.log(awards);
+
+							if (errorMessages.length > 0) {
+								showNotification({
+									type: "error",
+									text: (
+										<>
+											{errorMessages.map((errorMessage, i) => {
+												return <p key={i}>{errorMessage}</p>;
+											})}
+										</>
+									),
+								});
+							}
+
 							setSaving(false);
 
-							await realtimeUpdate([], helpers.leagueUrl(["award_races"]));
-							setEditSettings({
-								editing: false,
-							});
+							if (errorMessages.length === 0) {
+								await realtimeUpdate([], helpers.leagueUrl(["award_races"]));
+								setEditSettings({
+									editing: false,
+								});
+							}
 						}}
 					>
 						Save award settings

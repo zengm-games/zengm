@@ -297,7 +297,7 @@ export const EditSettings = ({
 					? event.target.checked
 					: processValue
 						? processValue(event.target.value)
-						: processValue;
+						: event.target.value;
 
 			setState({
 				...state,

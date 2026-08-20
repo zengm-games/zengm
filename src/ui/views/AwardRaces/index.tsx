@@ -3,12 +3,7 @@ import { helpers } from "../../util/helpers.ts";
 import { getCols } from "../../../common/getCols.ts";
 import { DataTable } from "../../components/DataTable/index.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
-import type {
-	AwardInfoCommon,
-	AwardSettingIndividual,
-	AwardSettingTeam,
-	View,
-} from "../../../common/types.ts";
+import type { View } from "../../../common/types.ts";
 import { PLAYER } from "../../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../../components/DataTable/index.tsx";
@@ -21,6 +16,7 @@ import { isSport } from "../../../common/sportFunctions.ts";
 import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
 import {
 	awardsToEditingState,
+	editingStateToAward,
 	EditSettings,
 	type EditingState,
 } from "./EditSettings.tsx";
@@ -215,59 +211,6 @@ const getRows = ({
 	});
 
 	return rows;
-};
-
-const editingStateToAward = (
-	state: EditingState,
-): AwardSettingIndividual | AwardSettingTeam => {
-	const common: Omit<AwardInfoCommon, "group"> = {
-		shortName: state.shortName,
-		name: state.name,
-		formula: state.formula,
-		showStats: state.showStats,
-	};
-
-	const flags = ["bench", "mip", "rookie"] as const;
-	for (const flag of flags) {
-		if (state[flag]) {
-			common[flag] = true;
-		}
-	}
-
-	if (state.statRange !== "regularSeason") {
-		common.statRange = state.statRange;
-	}
-
-	let award: AwardSettingIndividual | AwardSettingTeam;
-	if (state.type === "individual") {
-		award = {
-			...common,
-		};
-
-		if (state.actAs !== "none") {
-			award.actAs = state.actAs;
-		}
-
-		if (state.opoyFormula !== "") {
-			award.opoyFormula = state.opoyFormula;
-		}
-	} else {
-		const numTeams = Number.parseInt(state.numTeams);
-		if (Number.isNaN(numTeams) || numTeams < 1) {
-			throw new Error("numTeams must be an integer >= 1");
-		}
-
-		award = {
-			...common,
-			numTeams,
-		};
-	}
-
-	if (state.group === "conf" || state.group === "div") {
-		award.group = state.group;
-	}
-
-	return award;
 };
 
 const AwardRaces = ({

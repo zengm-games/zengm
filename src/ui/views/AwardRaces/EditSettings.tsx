@@ -4,6 +4,11 @@ import { HelpPopover } from "../../components/HelpPopover.tsx";
 import { TEAM_AWARD_INFO } from "../../../common/constants.ts";
 import { helpers } from "../../util/helpers.ts";
 import type { InputAward } from "./index.tsx";
+import type {
+	AwardInfoCommon,
+	AwardSettingIndividual,
+	AwardSettingTeam,
+} from "../../../common/types.ts";
 
 const awardToEditingState = (award: InputAward) => {
 	const group =
@@ -62,6 +67,59 @@ export const awardsToEditingState = (awards: InputAward[]) => {
 };
 
 export type EditingState = ReturnType<typeof awardToEditingState>;
+
+export const editingStateToAward = (
+	state: EditingState,
+): AwardSettingIndividual | AwardSettingTeam => {
+	const common: Omit<AwardInfoCommon, "group"> = {
+		shortName: state.shortName,
+		name: state.name,
+		formula: state.formula,
+		showStats: state.showStats,
+	};
+
+	const flags = ["bench", "mip", "rookie"] as const;
+	for (const flag of flags) {
+		if (state[flag]) {
+			common[flag] = true;
+		}
+	}
+
+	if (state.statRange !== "regularSeason") {
+		common.statRange = state.statRange;
+	}
+
+	let award: AwardSettingIndividual | AwardSettingTeam;
+	if (state.type === "individual") {
+		award = {
+			...common,
+		};
+
+		if (state.actAs !== "none") {
+			award.actAs = state.actAs;
+		}
+
+		if (state.opoyFormula !== "") {
+			award.opoyFormula = state.opoyFormula;
+		}
+	} else {
+		const numTeams = Number.parseInt(state.numTeams);
+		if (Number.isNaN(numTeams) || numTeams < 1) {
+			throw new Error("numTeams must be an integer >= 1");
+		}
+
+		award = {
+			...common,
+			numTeams,
+		};
+	}
+
+	if (state.group === "conf" || state.group === "div") {
+		award.group = state.group;
+	}
+
+	return award;
+};
 
 export const EditSettings = ({
 	numGamesPlayoffSeries,

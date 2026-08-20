@@ -3,7 +3,12 @@ import { helpers } from "../util/helpers.ts";
 import { getCols } from "../../common/getCols.ts";
 import { DataTable } from "../components/DataTable/index.tsx";
 import { MoreLinks } from "../components/MoreLinks.tsx";
-import type { View } from "../../common/types.ts";
+import type {
+	AwardInfoCommon,
+	AwardSettingIndividual,
+	AwardSettingTeam,
+	View,
+} from "../../common/types.ts";
 import { PLAYER, TEAM_AWARD_INFO } from "../../common/constants.ts";
 import { wrappedPlayerNameLabels } from "../components/PlayerNameLabels.tsx";
 import type { DataTableRow } from "../components/DataTable/index.tsx";
@@ -207,7 +212,7 @@ const getRows = ({
 	return rows;
 };
 
-const getInitialEditingState = (award: InputAward) => {
+const awardToEditingState = (award: InputAward) => {
 	const group =
 		!award.group || award.group?.type === "playoffSeries"
 			? "league"
@@ -247,7 +252,60 @@ const getInitialEditingState = (award: InputAward) => {
 	};
 };
 
-type EditingState = ReturnType<typeof getInitialEditingState>;
+type EditingState = ReturnType<typeof awardToEditingState>;
+
+const editingStateToAward = (
+	state: EditingState,
+): AwardSettingIndividual | AwardSettingTeam => {
+	const common: Omit<AwardInfoCommon, "group"> = {
+		shortName: state.shortName,
+		name: state.name,
+		formula: state.formula,
+		showStats: state.showStats,
+	};
+
+	const flags = ["bench", "mip", "rookie"] as const;
+	for (const flag of flags) {
+		if (state[flag]) {
+			common[flag] = true;
+		}
+	}
+
+	if (state.statRange !== "regularSeason") {
+		common.statRange = state.statRange;
+	}
+
+	let award: AwardSettingIndividual | AwardSettingTeam;
+	if (state.type === "individual") {
+		award = {
+			...common,
+		};
+
+		if (state.actAs !== "none") {
+			award.actAs = state.actAs;
+		}
+
+		if (state.opoyFormula !== "") {
+			award.opoyFormula = state.opoyFormula;
+		}
+	} else {
+		const numTeams = Number.parseInt(state.numTeams);
+		if (Number.isNaN(numTeams) || numTeams < 1) {
+			throw new Error("numTeams must be an integer >= 1");
+		}
+
+		award = {
+			...common,
+			numTeams,
+		};
+	}
+
+	if (state.group === "conf" || state.group === "div") {
+		award.group = state.group;
+	}
+
+	return award;
+};
 
 const EditSettings = ({
 	numGamesPlayoffSeries,
@@ -657,7 +715,7 @@ const AwardRaces = ({
 							setEditSettings((state) => ({
 								editing: true,
 								awards:
-									state.awards ?? awardCandidates.map(getInitialEditingState),
+									state.awards ?? awardCandidates.map(awardToEditingState),
 							}));
 						}}
 					>
@@ -766,12 +824,13 @@ const AwardRaces = ({
 			{editSettings.editing ? (
 				<StickyBottomButtons>
 					<button
-						className="btn btn-primary me-2"
+						className="btn btn-primary ms-auto me-2"
 						type="submit"
 						disabled={saving}
 						onClick={() => {
 							setSaving(true);
-
+							const awards = editSettings.awards.map(editingStateToAward);
+							console.log(awards);
 							setSaving(false);
 						}}
 					>

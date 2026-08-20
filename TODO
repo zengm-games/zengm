@@ -6,10 +6,13 @@ custom awards
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
 - edit awards setting
   - tricky parts
+    - show team awards in award races
     - show in UI before saving
       - add/delete award
       - move up/down
     - how to handle editing after current season has ended? need to do it based on setting, but also still have some way to view the actual award races
+      - have edit mode put "/edit" rather than season in the URL, so it always pulls those in
+       - use current season data, or last season data if doesn't exist
   - docs
     - explain seasonFraction scaling
       - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
@@ -81,6 +84,8 @@ custom awards
 - maybe
   - support editing metadata of past awards, like name and shortName. maybe even formula too...
   - real player data for award top 5 finish
+  - showStats have some default value we can assume to save space
+    - make sure to apply in editingStateToAward
 - later
   - only fetch needed variables from playersPlus when evaluating award formula
     - also consider showStats for Award Races
@@ -89,6 +94,7 @@ custom awards
   - rethink awards column on player profile - something like FMVP-5 is a bit silly, and SFMVP maybe is always silly
   - edit conf/div abbrevs, and test usage in award name prefixes
   - make All-Star teams use the same formula as the default All-League teams - not that hard, look ad advStats.football using all-leauge team
+  - edit award settings for past seasons, from award races page
 
 make GOAT lab use stats with derived variables, similar to awards
 

@@ -2055,7 +2055,7 @@ export type AwardPlayer2 = {
 	} & Record<string, number | string>;
 };
 
-type AwardInfo = {
+export type AwardInfoCommon = {
 	shortName: string;
 	name: string;
 	formula: string;
@@ -2113,17 +2113,17 @@ type AwardInfoTeamCommon = {
 	numTeams: number;
 };
 
-export type AwardInfoIndividual = AwardInfo &
+export type AwardInfoIndividual = AwardInfoCommon &
 	AwardInfoIndividualCommon & {
 		// Individual award - top 5 are saved
 		winner: (AwardPlayer2 & {
 			opoyOverride?: true;
 		})[];
 
-		// Special QB stuff for OPOY award - not in Common because we don't need to persist this in PlayerAwardCustom, we only need it here for state (GameAttributesLeague) and history (Awards)
+		// Special QB stuff for OPOY award - not in Common because we don't need to persist this in Player objects, we only need it here for state (GameAttributesLeague) and history (Awards)
 		opoyFormula?: string;
 	};
-export type AwardInfoTeam = AwardInfo &
+export type AwardInfoTeam = AwardInfoCommon &
 	AwardInfoTeamCommon & {
 		// Team award
 		winner: (

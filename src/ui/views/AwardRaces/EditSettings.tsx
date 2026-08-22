@@ -128,13 +128,21 @@ export const editingStateToAward = (
 };
 
 export const EditSettings = ({
+	canMoveDown,
+	canMoveUp,
+	move,
 	numGamesPlayoffSeries,
 	playoffsByConf,
+	remove,
 	setState,
 	state,
 }: {
+	canMoveDown: boolean;
+	canMoveUp: boolean;
+	move: (direction: -1 | 1) => void;
 	numGamesPlayoffSeries: number[];
 	playoffsByConf: number | false;
+	remove: () => void;
 	setState: (state: EditingState) => void;
 	state: EditingState;
 }) => {
@@ -479,6 +487,27 @@ export const EditSettings = ({
 						</label>
 					</div>
 				)}
+				<button
+					className="ms-auto btn btn-secondary"
+					disabled={!canMoveUp}
+					onClick={() => {
+						move(-1);
+					}}
+				>
+					Up
+				</button>
+				<button
+					className="btn btn-secondary"
+					disabled={!canMoveDown}
+					onClick={() => {
+						move(1);
+					}}
+				>
+					Down
+				</button>
+				<button className="btn btn-danger" onClick={remove}>
+					Delete
+				</button>
 			</div>
 			{state.type === "individual" && isSport("football") ? (
 				<div className="mt-2">OPOY formula stuff</div>

@@ -394,6 +394,9 @@ const AwardRaces = ({
 					);
 					const key = `${award.shortName}-${group === undefined ? "" : group.type === "conf" ? group.cid : group.type === "div" ? group.did : `${group.tids[0]}-${group.tids[1]}`}`;
 
+					const editing =
+						editSettings.editing && editSettings.awards[i]?.editing;
+
 					return (
 						<div
 							key={key}
@@ -404,8 +407,61 @@ const AwardRaces = ({
 								<div>
 									{editSettings.awards[i]?.editing ? (
 										<EditSettings
+											canMoveDown={editSettings.awards.some((award, j) => {
+												// editing undefined check is for group conf/div where there may be other entries of the same editing award
+												return j > i && award.editing !== undefined;
+											})}
+											canMoveUp={i > 0}
+											move={(direction) => {
+												setEditSettings((oldState) => {
+													if (!oldState.awards) {
+														return oldState;
+													}
+
+													const newAwards = [...oldState.awards];
+
+													const toMove = newAwards[i]!;
+													const otherIndex = i + direction;
+													newAwards[i] = newAwards[otherIndex]!;
+													newAwards[otherIndex] = toMove;
+
+													return {
+														...oldState,
+														awards: newAwards,
+													};
+												});
+											}}
 											numGamesPlayoffSeries={numGamesPlayoffSeries}
 											playoffsByConf={playoffsByConf}
+											remove={() => {
+												setEditSettings((oldState) => {
+													if (!oldState.awards) {
+														return oldState;
+													}
+
+													let deletingUntilNextEditing = false;
+
+													return {
+														...oldState,
+														awards: oldState.awards.filter((row, j) => {
+															if (i === j) {
+																deletingUntilNextEditing = true;
+																return false;
+															}
+
+															if (deletingUntilNextEditing) {
+																if (row.editing) {
+																	deletingUntilNextEditing = false;
+																	return true;
+																}
+																return false;
+															}
+
+															return true;
+														}),
+													};
+												});
+											}}
 											setState={(state) => {
 												setEditSettings((oldState) => {
 													return oldState.awards
@@ -439,15 +495,11 @@ const AwardRaces = ({
 									hideAllControls
 									name={`AwardRaces${key}`}
 									rows={rows}
-									title={
-										editSettings.editing && editSettings.awards[i]?.editing
-											? undefined
-											: title
-									}
+									title={editing ? undefined : title}
 								/>
 							) : (
 								<>
-									{editSettings ? undefined : title}
+									{editing ? undefined : title}
 									<p>No candidates yet...</p>
 								</>
 							)}

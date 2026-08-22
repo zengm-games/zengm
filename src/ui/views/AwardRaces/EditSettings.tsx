@@ -494,7 +494,10 @@ export const EditSettings = ({
 						move(-1);
 					}}
 				>
-					Up
+					<span
+						style={{ paddingRight: 2 }}
+						className="glyphicon glyphicon-arrow-up"
+					/>
 				</button>
 				<button
 					className="btn btn-secondary"
@@ -503,7 +506,10 @@ export const EditSettings = ({
 						move(1);
 					}}
 				>
-					Down
+					<span
+						style={{ paddingRight: 2 }}
+						className="glyphicon glyphicon-arrow-down"
+					/>
 				</button>
 				<button className="btn btn-danger" onClick={remove}>
 					Delete

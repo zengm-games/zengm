@@ -1,6 +1,8 @@
 import { bySport } from "../../../common/sportFunctions.ts";
 import type {
 	Award2,
+	AwardInfoIndividual,
+	AwardInfoTeam,
 	Awards2,
 	GameAttributesLeague,
 } from "../../../common/types.ts";
@@ -76,11 +78,7 @@ const getAwards = async (season: number) => {
 	}
 
 	return {
-		awards: awards.filter(
-			(award) =>
-				// award.numTeams === undefined && typeof award.statRange !== "number",
-				award.numTeams === undefined,
-		),
+		awards,
 		statOverridesByMatchup,
 	};
 };
@@ -123,18 +121,15 @@ export const getAwardCandidates = async (season: number) => {
 			},
 		});
 
-	const awardCandidates = realizedAwards.map(({ award }) => {
-		const stats = awardCandidateStats[award.showStats];
-		if (!stats) {
-			throw new Error("Invalid showStats");
-		}
-
-		return {
-			...award,
-			players: addFirstNameShort(
-				award.winner.map((p2) => {
-					if (Array.isArray(p2)) {
-						throw new Error("Should never happen");
+	const augmentPlayers = (
+		award: Award2,
+		winner: AwardInfoIndividual["winner"] | AwardInfoTeam["winner"][number],
+	) => {
+		return addFirstNameShort(
+			winner
+				.map((p2) => {
+					if (p2 === undefined) {
+						return;
 					}
 
 					const statRange = award.statRange ?? "regularSeason";
@@ -149,14 +144,55 @@ export const getAwardCandidates = async (season: number) => {
 						} as {
 							score: number | undefined;
 						} & (typeof p)["currentStats"]["regularSeason"],
-						opoyOverride: p2.opoyOverride,
+						opoyOverride: (p2 as AwardInfoIndividual["winner"][number])
+							.opoyOverride,
 						statOverrides: p2.statOverrides,
 					};
-				}),
-			),
-			stats: [...stats, "score"],
-		};
-	});
+				})
+				.filter((p) => p !== undefined),
+		);
+	};
+
+	type Output = (
+		| (AwardInfoIndividual & { rank?: undefined })
+		| (AwardInfoTeam & { rank: number })
+	) & {
+		players: ReturnType<typeof augmentPlayers>;
+		stats: string[];
+	};
+
+	const awardCandidates: Output[] = realizedAwards.flatMap(
+		// @ts-expect-error
+		({ award }) => {
+			const showStats = awardCandidateStats[award.showStats];
+			if (!showStats) {
+				throw new Error("Invalid showStats");
+			}
+
+			const stats = [...showStats, "score"];
+
+			const numTeams = award.numTeams;
+			if (numTeams !== undefined) {
+				return award.winner.map((winner, i) => {
+					return {
+						...award,
+						numTeams,
+						rank: i + 1,
+						players: augmentPlayers(award, winner),
+						stats,
+					};
+				});
+			}
+
+			return {
+				...award,
+				numTeams: undefined,
+				rank: undefined,
+				players: augmentPlayers(award, award.winner),
+				stats,
+			};
+		},
+	);
 
 	return awardCandidates;
 };

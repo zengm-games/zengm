@@ -23,6 +23,7 @@ import {
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
+import { formatPlayerAwardName } from "../../../common/awards.ts";
 
 const MARGIN = 14;
 
@@ -37,11 +38,15 @@ const Title = ({
 	asterisk: boolean;
 	award: InputAward;
 } & Pick<View<"awardRaces">, "confs" | "divs">) => {
-	const { group, name } = award;
+	const group = award.group;
 	return (
 		<div>
 			<h2>
-				{name}
+				{formatPlayerAwardName({
+					name: award.name,
+					numTeams: award.numTeams,
+					rank: award.rank ?? 1,
+				})}
 				{asterisk ? "*" : null}
 			</h2>
 			{group && group.type !== "playoffSeries" ? (

@@ -172,6 +172,7 @@ import {
 	saveAwardsByPlayer,
 	type AwardsByPlayer,
 } from "../core/awards/awardsByPlayer.ts";
+import { getAwardCandidates } from "../core/awards/getAwardCandidates.ts";
 
 const acceptContractNegotiation = async ({
 	pid,
@@ -1796,6 +1797,10 @@ const getAutoPos = (ratings: any) => {
 		boundedRatings[key] = player.limitRating(boundedRatings[key]);
 	}
 	return player.pos(boundedRatings);
+};
+
+const getAwardCandidates2 = (season: number) => {
+	return getAwardCandidates(season);
 };
 
 const getBornLoc = async (pid: number) => {
@@ -5320,6 +5325,7 @@ export default {
 		exportPlayerGamesCsv,
 		generateFace: generateFace2,
 		getAutoPos,
+		getAwardCandidates: getAwardCandidates2,
 		getBornLoc,
 		getDefaultInjuries,
 		getDefaultNewLeagueSettings,

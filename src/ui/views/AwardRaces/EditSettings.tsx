@@ -55,12 +55,18 @@ export const awardsToEditingState = (awards: InputAward[]) => {
 	const seenShortNames = new Set();
 	for (const award of awards) {
 		if (seenShortNames.has(award.shortName)) {
-			output.push(undefined);
+			output.push({
+				raw: award,
+				editing: undefined,
+			});
 			continue;
 		}
 		seenShortNames.add(award.shortName);
 
-		output.push(awardToEditingState(award));
+		output.push({
+			raw: award,
+			editing: awardToEditingState(award),
+		});
 	}
 
 	return output;

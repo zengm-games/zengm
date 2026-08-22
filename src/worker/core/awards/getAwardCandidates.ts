@@ -6,6 +6,7 @@ import type {
 } from "../../../common/types.ts";
 import { groupByUnique } from "../../../common/utils.ts";
 import { idb } from "../../db/index.ts";
+import addFirstNameShort from "../../util/addFirstNameShort.ts";
 import g from "../../util/g.ts";
 import type { StatOverridesByMatchup } from "./getPlayers.ts";
 import { hashPlayoffSeries } from "./hashPlayoffSeries.ts";
@@ -84,7 +85,7 @@ const getAwards = async (season: number) => {
 	};
 };
 
-const getAwardCandidates = async (season: number) => {
+export const getAwardCandidates = async (season: number) => {
 	const { awards, statOverridesByMatchup } = await getAwards(season);
 
 	const { realizedAwards, players } = await processAwards({
@@ -130,32 +131,32 @@ const getAwardCandidates = async (season: number) => {
 
 		return {
 			...award,
-			players: award.winner.map((p2) => {
-				if (Array.isArray(p2)) {
-					throw new Error("Should never happen");
-				}
+			players: addFirstNameShort(
+				award.winner.map((p2) => {
+					if (Array.isArray(p2)) {
+						throw new Error("Should never happen");
+					}
 
-				const statRange = award.statRange ?? "regularSeason";
+					const statRange = award.statRange ?? "regularSeason";
 
-				const p = playersByPid[p2.pid]!;
-				const formula = award.formulaByPos?.[p.pos] ?? award.formula;
-				return {
-					...p,
-					currentStats: {
-						...p.currentStats[statRange],
-						score: p.scores[statRange]?.[formula],
-					} as {
-						score: number | undefined;
-					} & (typeof p)["currentStats"]["regularSeason"],
-					opoyOverride: p2.opoyOverride,
-					statOverrides: p2.statOverrides,
-				};
-			}),
+					const p = playersByPid[p2.pid]!;
+					const formula = award.formulaByPos?.[p.pos] ?? award.formula;
+					return {
+						...p,
+						currentStats: {
+							...p.currentStats[statRange],
+							score: p.scores[statRange]?.[formula],
+						} as {
+							score: number | undefined;
+						} & (typeof p)["currentStats"]["regularSeason"],
+						opoyOverride: p2.opoyOverride,
+						statOverrides: p2.statOverrides,
+					};
+				}),
+			),
 			stats: [...stats, "score"],
 		};
 	});
 
 	return awardCandidates;
 };
-
-export default getAwardCandidates;

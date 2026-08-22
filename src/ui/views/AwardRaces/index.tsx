@@ -246,11 +246,11 @@ const AwardRaces = ({
 	const [editSettings, setEditSettings] = useState<
 		| {
 				editing: false;
-				awards?: (EditingState | undefined)[];
+				awards?: { raw: InputAward; editing: EditingState | undefined }[];
 		  }
 		| {
 				editing: true;
-				awards: (EditingState | undefined)[];
+				awards: { raw: InputAward; editing: EditingState | undefined }[];
 		  }
 	>({
 		editing: false,
@@ -280,22 +280,22 @@ const AwardRaces = ({
 		const errorMessages: string[] = [];
 
 		const seenShortNames = new Set();
-		for (const award of editSettings.awards) {
-			if (award === undefined) {
+		for (const { editing } of editSettings.awards) {
+			if (editing === undefined) {
 				continue;
 			}
 
-			if (seenShortNames.has(award.shortName)) {
+			if (seenShortNames.has(editing.shortName)) {
 				errorMessages.push(
-					`Duplicate abbrev ${award.shortName} - award abbrevs must be unique`,
+					`Duplicate abbrev ${editing.shortName} - award abbrevs must be unique`,
 				);
 			}
-			seenShortNames.add(award.shortName);
+			seenShortNames.add(editing.shortName);
 
 			try {
-				awards.push(editingStateToAward(award));
+				awards.push(editingStateToAward(editing));
 			} catch (error) {
-				errorMessages.push(`${award.shortName}: ${error.message}`);
+				errorMessages.push(`${editing.shortName}: ${error.message}`);
 			}
 		}
 		console.log(awards);
@@ -326,13 +326,19 @@ const AwardRaces = ({
 					editing: false,
 				});
 			} else {
-				await realtimeUpdate(
-					["firstRun"],
-					helpers.leagueUrl(["award_races", "edit"]),
-				);
+				// Do this rather than realtimeUpdate in case the number of awards has changed, like from changing the group setting
+				const newAwards = await toWorker("main", "getAwardCandidates", season);
+				setEditSettings({
+					editing: true,
+					awards: awardsToEditingState(newAwards),
+				});
 			}
 		}
 	};
+
+	const actualAwardCandidates = editSettings.editing
+		? editSettings.awards.map((row) => row.raw)
+		: awardCandidates;
 
 	return (
 		<>
@@ -352,7 +358,7 @@ const AwardRaces = ({
 			) : null}
 
 			<div className="row" style={{ marginTop: -MARGIN }}>
-				{awardCandidates.map((award, i) => {
+				{actualAwardCandidates.map((award, i) => {
 					const { group, mip, rookie, stats } = award;
 
 					const asterisk =
@@ -396,7 +402,7 @@ const AwardRaces = ({
 						>
 							{editSettings.editing ? (
 								<div>
-									{editSettings.awards[i] ? (
+									{editSettings.awards[i]?.editing ? (
 										<EditSettings
 											numGamesPlayoffSeries={numGamesPlayoffSeries}
 											playoffsByConf={playoffsByConf}
@@ -406,7 +412,12 @@ const AwardRaces = ({
 														? {
 																...oldState,
 																awards: oldState.awards.map((award, j) => {
-																	return i === j ? state : award;
+																	return i === j
+																		? {
+																				raw: award.raw,
+																				editing: state,
+																			}
+																		: award;
 																}),
 															}
 														: {
@@ -414,7 +425,7 @@ const AwardRaces = ({
 															};
 												});
 											}}
-											state={editSettings.awards[i]}
+											state={editSettings.awards[i].editing}
 										/>
 									) : null}
 								</div>
@@ -429,7 +440,7 @@ const AwardRaces = ({
 									name={`AwardRaces${key}`}
 									rows={rows}
 									title={
-										editSettings.editing && editSettings.awards[i]
+										editSettings.editing && editSettings.awards[i]?.editing
 											? undefined
 											: title
 									}

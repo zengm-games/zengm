@@ -6,7 +6,6 @@ custom awards
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
     - similar for editing award settings and any other seenShortNames
 - edit awards settings
-  - switch from a conf to leaguewide award and click "save and continue editing" and the 2nd award still has no editing UI
   - show team awards in award races
   - add/delete award
   - move up/down

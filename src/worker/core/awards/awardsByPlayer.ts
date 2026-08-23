@@ -236,12 +236,12 @@ export const getLeagueLeaderAwards = async (
 type ProcessAwardsReturn = Awaited<ReturnType<typeof processAwards>>;
 
 export const getAwardsByPlayer = (
-	realizedAwards: ProcessAwardsReturn["realizedAwards"],
+	realizedAwards: ProcessAwardsReturn["realizedAwards"][number],
 	players: ProcessAwardsReturn["players"],
 ) => {
 	const playersByPid = groupByUnique(players, "pid");
 	const awardsByPlayer: AwardsByPlayer = [];
-	for (const { award, index } of realizedAwards) {
+	for (const [index, award] of realizedAwards.entries()) {
 		const common: Pick<
 			PlayerAwardBuiltIn,
 			"group" | "index" | "name" | "shortName"

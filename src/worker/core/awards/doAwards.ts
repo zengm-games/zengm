@@ -120,9 +120,10 @@ export const doAwards = async (conditions: Conditions) => {
 		season,
 		statOverridesByMatchup: undefined,
 	});
+	const flatRealizedAwards = realizedAwards.flat();
 
 	const awardsByPlayer = [
-		...getAwardsByPlayer(realizedAwards, players),
+		...getAwardsByPlayer(flatRealizedAwards, players),
 		...(await getLeagueLeaderAwards(players, season)),
 	];
 
@@ -131,7 +132,7 @@ export const doAwards = async (conditions: Conditions) => {
 	const awards: Awards2 = {
 		season,
 		...bestRecords,
-		awards: realizedAwards.map((x) => x.award),
+		awards: flatRealizedAwards,
 	};
 	console.log("awards", awards);
 	await idb.cache.awards.put(awards);

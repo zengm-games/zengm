@@ -161,9 +161,9 @@ export const getAwardCandidates = async (season: number) => {
 		stats: string[];
 	};
 
-	const awardCandidates: Output[] = realizedAwards.flat().flatMap(
+	const awardCandidates: Output[] = realizedAwards.flatMap(
 		// @ts-expect-error
-		(award) => {
+		({ award }) => {
 			const showStats = awardCandidateStats[award.showStats];
 			if (!showStats) {
 				throw new Error("Invalid showStats");

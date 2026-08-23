@@ -6,7 +6,6 @@ custom awards
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
     - similar for editing award settings and any other seenShortNames
 - edit awards settings
-  - up/down broken for group/team awards
   - add award
   - docs
     - explain seasonFraction scaling

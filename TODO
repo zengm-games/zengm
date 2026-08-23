@@ -29,8 +29,6 @@ custom awards
     - pressing enter in field should submit form
       - "continue editing" one
     - StickyBottomButtons showing up under sticky column
-    - multiple teams or multiple div/conf awards is ugly
-      - maybe align bottom for ones on the same row somehow?
     - when moving up/down, scroll should follow the one you clicked
   - test
     - invalid statRange value, like if playoff size changed and a round is no longer valid

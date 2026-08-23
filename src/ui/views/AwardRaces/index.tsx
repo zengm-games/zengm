@@ -25,6 +25,7 @@ import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { formatPlayerAwardName } from "../../../common/awards.ts";
+import clsx from "clsx";
 
 const MARGIN = 14;
 
@@ -417,7 +418,14 @@ const AwardRaces = ({
 						<Fragment key={key}>
 							{newRow ? <div className="w-100" /> : null}
 							<div
-								className={mip ? "col-12 col-lg-9" : "col-12 col-lg-6"}
+								className={clsx(
+									mip ? "col-12 col-lg-9" : "col-12 col-lg-6",
+
+									// Align to bottom when editing if this is a trailing part of a group, looks better that way
+									editSettings.editing && !editing
+										? "d-flex align-items-end"
+										: undefined,
+								)}
 								style={{ marginTop: MARGIN }}
 							>
 								{editSettings.editing ? (

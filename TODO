@@ -6,6 +6,7 @@ custom awards
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
     - similar for editing award settings and any other seenShortNames
 - edit awards settings
+  - up/down broken for group/team awards
   - add award
   - docs
     - explain seasonFraction scaling
@@ -31,7 +32,6 @@ custom awards
     - StickyBottomButtons showing up under sticky column
     - multiple teams or multiple div/conf awards is ugly
       - maybe align bottom for ones on the same row somehow?
-      - maybe put all in same col
   - test
     - invalid statRange value, like if playoff size changed and a round is no longer valid
     - uses last season data when editing in preseason

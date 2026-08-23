@@ -11,7 +11,7 @@ import { RatingWithChange } from "../../components/RatingWithChange.tsx";
 import { StatWithChange } from "../../components/StatWithChange.tsx";
 import { useLocal } from "../../util/local.ts";
 import { getCol } from "../../../common/getCol.ts";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { isSport } from "../../../common/sportFunctions.ts";
 import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
 import {
@@ -402,118 +402,126 @@ const AwardRaces = ({
 					const editing =
 						editSettings.editing && editSettings.awards[i]?.editing;
 
+					// When editing, always start a new "group" (team awards for multiple teams, or conf/div groups) on a new row, cause it looks weird to start it in the second column
+					const newRow =
+						editing &&
+						editSettings.awards[i]?.editing &&
+						!editSettings.awards[i - 1]?.editing;
+
 					return (
-						<div
-							key={key}
-							className={mip ? "col-12 col-lg-9" : "col-12 col-lg-6"}
-							style={{ marginTop: MARGIN }}
-						>
-							{editSettings.editing ? (
-								<div>
-									{editSettings.awards[i]?.editing ? (
-										<EditSettings
-											canMoveDown={editSettings.awards.some((award, j) => {
-												// editing undefined check is for group conf/div where there may be other entries of the same editing award
-												return j > i && award.editing !== undefined;
-											})}
-											canMoveUp={i > 0}
-											move={(direction) => {
-												setEditSettings((oldState) => {
-													if (!oldState.awards) {
-														return oldState;
-													}
+						<Fragment key={key}>
+							{newRow ? <div className="w-100" /> : null}
+							<div
+								className={mip ? "col-12 col-lg-9" : "col-12 col-lg-6"}
+								style={{ marginTop: MARGIN }}
+							>
+								{editSettings.editing ? (
+									<div>
+										{editSettings.awards[i]?.editing ? (
+											<EditSettings
+												canMoveDown={editSettings.awards.some((award, j) => {
+													// editing undefined check is for group conf/div where there may be other entries of the same editing award
+													return j > i && award.editing !== undefined;
+												})}
+												canMoveUp={i > 0}
+												move={(direction) => {
+													setEditSettings((oldState) => {
+														if (!oldState.awards) {
+															return oldState;
+														}
 
-													const newAwards = [...oldState.awards];
+														const newAwards = [...oldState.awards];
 
-													const toMove = newAwards[i]!;
-													const otherIndex = i + direction;
-													newAwards[i] = newAwards[otherIndex]!;
-													newAwards[otherIndex] = toMove;
+														const toMove = newAwards[i]!;
+														const otherIndex = i + direction;
+														newAwards[i] = newAwards[otherIndex]!;
+														newAwards[otherIndex] = toMove;
 
-													return {
-														...oldState,
-														awards: newAwards,
-													};
-												});
-											}}
-											numGamesPlayoffSeries={numGamesPlayoffSeries}
-											playoffsByConf={playoffsByConf}
-											remove={() => {
-												setEditSettings((oldState) => {
-													if (!oldState.awards) {
-														return oldState;
-													}
+														return {
+															...oldState,
+															awards: newAwards,
+														};
+													});
+												}}
+												numGamesPlayoffSeries={numGamesPlayoffSeries}
+												playoffsByConf={playoffsByConf}
+												remove={() => {
+													setEditSettings((oldState) => {
+														if (!oldState.awards) {
+															return oldState;
+														}
 
-													let deletingUntilNextEditing = false;
+														let deletingUntilNextEditing = false;
 
-													return {
-														...oldState,
-														awards: oldState.awards.filter((row, j) => {
-															if (i === j) {
-																deletingUntilNextEditing = true;
-																return false;
-															}
-
-															if (deletingUntilNextEditing) {
-																if (row.editing) {
-																	deletingUntilNextEditing = false;
-																	return true;
+														return {
+															...oldState,
+															awards: oldState.awards.filter((row, j) => {
+																if (i === j) {
+																	deletingUntilNextEditing = true;
+																	return false;
 																}
-																return false;
-															}
 
-															return true;
-														}),
-													};
-												});
-											}}
-											setState={(state) => {
-												setEditSettings((oldState) => {
-													return oldState.awards
-														? {
-																...oldState,
-																awards: oldState.awards.map((award, j) => {
-																	return i === j
-																		? {
-																				raw: award.raw,
-																				editing: state,
-																			}
-																		: award;
-																}),
-															}
-														: {
-																editing: false,
-															};
-												});
-											}}
-											state={editSettings.awards[i].editing}
-										/>
-									) : null}
-								</div>
-							) : null}
-							{rows.length > 0 ? (
-								<DataTable
-									classNameWrapper="mb-1"
-									cols={cols}
-									defaultSort={[0, "asc"]}
-									defaultStickyCols={window.mobile ? 0 : 2}
-									hideAllControls
-									name={`AwardRaces${key}`}
-									rows={rows}
-									title={editing ? undefined : title}
-								/>
-							) : (
-								<>
-									{editing ? undefined : title}
-									<p>No candidates yet...</p>
-								</>
-							)}
-							{asterisk ? (
-								<div className="text-body-secondary">
-									* Exceptional QBs can win both MVP and {award.shortName}
-								</div>
-							) : null}
-						</div>
+																if (deletingUntilNextEditing) {
+																	if (row.editing) {
+																		deletingUntilNextEditing = false;
+																		return true;
+																	}
+																	return false;
+																}
+
+																return true;
+															}),
+														};
+													});
+												}}
+												setState={(state) => {
+													setEditSettings((oldState) => {
+														return oldState.awards
+															? {
+																	...oldState,
+																	awards: oldState.awards.map((award, j) => {
+																		return i === j
+																			? {
+																					raw: award.raw,
+																					editing: state,
+																				}
+																			: award;
+																	}),
+																}
+															: {
+																	editing: false,
+																};
+													});
+												}}
+												state={editSettings.awards[i].editing}
+											/>
+										) : null}
+									</div>
+								) : null}
+								{rows.length > 0 ? (
+									<DataTable
+										classNameWrapper="mb-1"
+										cols={cols}
+										defaultSort={[0, "asc"]}
+										defaultStickyCols={window.mobile ? 0 : 2}
+										hideAllControls
+										name={`AwardRaces${key}`}
+										rows={rows}
+										title={editing ? undefined : title}
+									/>
+								) : (
+									<>
+										{editing ? undefined : title}
+										<p>No candidates yet...</p>
+									</>
+								)}
+								{asterisk ? (
+									<div className="text-body-secondary">
+										* Exceptional QBs can win both MVP and {award.shortName}
+									</div>
+								) : null}
+							</div>
+						</Fragment>
 					);
 				})}
 			</div>

@@ -521,3 +521,28 @@ export const EditSettings = ({
 		</div>
 	);
 };
+
+export type EditingStateRoot = {
+	raw: InputAward;
+	editing: EditingState | undefined;
+};
+
+// When deleting/moving an award, we need to move them by "group" (team awards and conf/div grouping)
+export const groupAwards = (awards: EditingStateRoot[]) => {
+	const grouped: EditingStateRoot[][] = [];
+	let currentGroup: EditingStateRoot[] = [];
+	for (const award of awards) {
+		if (currentGroup.length == 0 || award.editing === undefined) {
+			currentGroup.push(award);
+		} else if (currentGroup.length > 0) {
+			grouped.push(currentGroup);
+			currentGroup = [award];
+		}
+	}
+
+	if (currentGroup.length > 0) {
+		grouped.push(currentGroup);
+	}
+
+	return grouped;
+};

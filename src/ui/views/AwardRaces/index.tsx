@@ -18,7 +18,8 @@ import {
 	awardsToEditingState,
 	editingStateToAward,
 	EditSettings,
-	type EditingState,
+	groupAwards,
+	type EditingStateRoot,
 } from "./EditSettings.tsx";
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { showNotification } from "../../util/showNotification.ts";
@@ -251,11 +252,11 @@ const AwardRaces = ({
 	const [editSettings, setEditSettings] = useState<
 		| {
 				editing: false;
-				awards?: { raw: InputAward; editing: EditingState | undefined }[];
+				awards?: EditingStateRoot[];
 		  }
 		| {
 				editing: true;
-				awards: { raw: InputAward; editing: EditingState | undefined }[];
+				awards: EditingStateRoot[];
 		  }
 	>({
 		editing: false,
@@ -364,7 +365,7 @@ const AwardRaces = ({
 
 			<div className="row" style={{ marginTop: -MARGIN }}>
 				{actualAwardCandidates.map((award, i) => {
-					const { group, mip, rookie, stats } = award;
+					const { mip, rookie, stats } = award;
 
 					const asterisk =
 						isSport("football") &&
@@ -397,7 +398,11 @@ const AwardRaces = ({
 							divs={divs}
 						/>
 					);
-					const key = `${award.shortName}-${group === undefined ? "" : group.type === "conf" ? group.cid : group.type === "div" ? group.did : `${group.tids[0]}-${group.tids[1]}`}`;
+					const key = JSON.stringify([
+						award.shortName,
+						award.group,
+						award.numTeams ? award.rank : undefined,
+					]);
 
 					const editing =
 						editSettings.editing && editSettings.awards[i]?.editing;
@@ -430,16 +435,21 @@ const AwardRaces = ({
 															return oldState;
 														}
 
-														const newAwards = [...oldState.awards];
-
-														const toMove = newAwards[i]!;
-														const otherIndex = i + direction;
-														newAwards[i] = newAwards[otherIndex]!;
-														newAwards[otherIndex] = toMove;
+														const grouped = groupAwards(oldState.awards);
+														const toMoveIndex = grouped.findIndex(
+															(group) => group[0]?.raw === award,
+														);
+														const toMove = grouped[toMoveIndex];
+														const otherIndex = toMoveIndex + direction;
+														if (!toMove || !grouped[otherIndex]) {
+															return oldState;
+														}
+														grouped[toMoveIndex] = grouped[otherIndex];
+														grouped[otherIndex] = toMove;
 
 														return {
 															...oldState,
-															awards: newAwards,
+															awards: grouped.flat(),
 														};
 													});
 												}}
@@ -451,26 +461,15 @@ const AwardRaces = ({
 															return oldState;
 														}
 
-														let deletingUntilNextEditing = false;
+														const grouped = groupAwards(oldState.awards).filter(
+															(group) => {
+																return group[0]?.raw !== award;
+															},
+														);
 
 														return {
 															...oldState,
-															awards: oldState.awards.filter((row, j) => {
-																if (i === j) {
-																	deletingUntilNextEditing = true;
-																	return false;
-																}
-
-																if (deletingUntilNextEditing) {
-																	if (row.editing) {
-																		deletingUntilNextEditing = false;
-																		return true;
-																	}
-																	return false;
-																}
-
-																return true;
-															}),
+															awards: grouped.flat(),
 														};
 													});
 												}}

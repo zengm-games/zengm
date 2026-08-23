@@ -890,6 +890,14 @@ export const menuItems: (MenuItemLink | MenuItemHeader)[] = [
 			},
 			{
 				type: "link",
+				active: (pageID) => pageID === "awardSettings",
+				league: true,
+				commandPalette: true,
+				path: ["award_settings"],
+				text: "Award Settings",
+			},
+			{
+				type: "link",
 				active: (pageID) => pageID === "dangerZone",
 				league: true,
 				commandPalette: true,

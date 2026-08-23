@@ -3,7 +3,6 @@ import type { UpdateEvents, ViewInput } from "../../common/types.ts";
 import { idb } from "../db/index.ts";
 import { getAwardCandidates } from "../core/awards/getAwardCandidates.ts";
 import { groupByUnique } from "../../common/utils.ts";
-import { season } from "../core/index.ts";
 
 const updateAwardRaces = async (
 	inputs: ViewInput<"awardRaces">,
@@ -15,7 +14,6 @@ const updateAwardRaces = async (
 		(inputs.season === g.get("season") &&
 			(updateEvents.includes("gameSim") ||
 				updateEvents.includes("playerMovement"))) ||
-		inputs.edit !== state.edit ||
 		inputs.season !== state.season
 	) {
 		const awardCandidates = await getAwardCandidates(inputs.season);
@@ -33,9 +31,6 @@ const updateAwardRaces = async (
 			awardCandidates,
 			confs: g.get("confs", inputs.season),
 			divs: g.get("divs", inputs.season),
-			edit: inputs.edit,
-			numGamesPlayoffSeries: g.get("numGamesPlayoffSeries", inputs.season),
-			playoffsByConf: await season.getPlayoffsByConf(inputs.season),
 			season: inputs.season,
 			teams: groupByUnique(teams, "tid"),
 		};

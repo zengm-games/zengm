@@ -241,13 +241,22 @@ export const MoreLinks = (
 		links = godMode
 			? [
 					{
+						url: ["award_settings"],
+						name: "Award Settings",
+					},
+					{
 						url:
 							season == undefined ? ["edit_awards"] : ["edit_awards", season],
 						name: "Edit Awards",
 						className: "god-mode",
 					},
 				]
-			: [];
+			: [
+					{
+						url: ["award_settings"],
+						name: "Award Settings",
+					},
+				];
 	} else if (props.type === "playerRatings") {
 		const { season } = props;
 

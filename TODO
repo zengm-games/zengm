@@ -25,6 +25,9 @@ custom awards
     - opoyFormula: don't allow if MIP, MVP and maybe other stuff
   - opoyFormula in FBGM only
   - make sure to delete formulaByPos if empty
+  - link to award settings
+    - from award races
+    - from league settings
   - ui nits
     - formatting of team awards for byPos - maybe use pos instead of rank?
     - help icon for byPos, UI stats

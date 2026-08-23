@@ -4,11 +4,6 @@ import { getCols } from "../../../common/getCols.ts";
 import { DataTable } from "../../components/DataTable/index.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import type { View } from "../../../common/types.ts";
-import { PLAYER } from "../../../common/constants.ts";
-import { wrappedPlayerNameLabels } from "../../components/PlayerNameLabels.tsx";
-import type { DataTableRow } from "../../components/DataTable/index.tsx";
-import { RatingWithChange } from "../../components/RatingWithChange.tsx";
-import { StatWithChange } from "../../components/StatWithChange.tsx";
 import { useLocal } from "../../util/local.ts";
 import { getCol } from "../../../common/getCol.ts";
 import { Fragment, useEffect, useState } from "react";
@@ -26,10 +21,9 @@ import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import { formatPlayerAwardName } from "../../../common/awards.ts";
 import clsx from "clsx";
+import { getRows, type InputAward } from "../AwardRaces.tsx";
 
 const MARGIN = 14;
-
-export type InputAward = View<"awardRaces">["awardCandidates"][number];
 
 const Title = ({
 	asterisk,
@@ -62,167 +56,7 @@ const Title = ({
 	);
 };
 
-const getRows = ({
-	award,
-	challengeNoRatings,
-	currentSeason,
-	season,
-	teams,
-	userTid,
-}: {
-	award: InputAward;
-	challengeNoRatings: boolean;
-	currentSeason: number;
-	userTid: number;
-} & Pick<View<"awardRaces">, "season" | "teams">) => {
-	const { mip, rookie, players, stats } = award;
-
-	const rows: DataTableRow[] = players.map((p, j) => {
-		const ps = p.currentStats;
-		const pr = p.ratings.findLast((row) => row.season === season);
-
-		const pos = pr?.pos ?? "?";
-		const abbrev = ps?.abbrev;
-		const tid = ps?.tid;
-		const t = teams[tid];
-
-		let recordOrPick = null;
-		if (rookie) {
-			if (p.draft.round > 0) {
-				recordOrPick = `${p.draft.round}-${p.draft.pick}`;
-				if (p.draft.year !== season - 1) {
-					recordOrPick += ` (${p.draft.year})`;
-				}
-			}
-		} else {
-			if (t) {
-				recordOrPick = helpers.formatRecord(t.seasonAttrs);
-			}
-		}
-
-		const data: DataTableRow["data"] = [
-			j + 1,
-			wrappedPlayerNameLabels({
-				injury: season === currentSeason ? p.injury : undefined,
-				jerseyNumber: ps ? ps.jerseyNumber : undefined,
-				pid: p.pid,
-				season,
-				skills: pr ? pr.skills : [],
-				defaultWatch: p.watch,
-				firstName: p.firstName,
-				firstNameShort: p.firstNameShort,
-				lastName: p.lastName,
-			}),
-			pos,
-			p.age,
-			<>
-				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`, season])}>
-					{abbrev}
-				</a>
-			</>,
-			recordOrPick,
-		];
-
-		const showRatings = !challengeNoRatings || p.tid === PLAYER.RETIRED;
-
-		if (mip) {
-			data.push(
-				pr && showRatings ? (
-					<RatingWithChange change={pr.dovr}>{pr.ovr}</RatingWithChange>
-				) : null,
-			);
-
-			const ps2 = p.stats.findLast((row) => {
-				if (row.season !== season - 1) {
-					return false;
-				}
-
-				if (award.statRange === undefined && ps.playoffs !== false) {
-					return false;
-				}
-				if (award.statRange === "playoffs" && ps.playoffs !== true) {
-					return false;
-				}
-				if (award.statRange === "combined" && ps.playoffs !== "combined") {
-					return false;
-				}
-
-				return true;
-			});
-
-			const comparePlayersRange =
-				award.statRange === "playoffs"
-					? "p"
-					: award.statRange === "combined"
-						? "c"
-						: "r";
-
-			data.push(
-				...stats.map((stat) => {
-					if (!ps && !ps2) {
-						return null;
-					}
-
-					if (!ps2 || stat === "score" || stat === "keyStats") {
-						return helpers.roundStat(ps[stat], stat);
-					}
-
-					return (
-						<StatWithChange change={ps[stat] - ps2[stat]} stat={stat}>
-							{ps[stat]}
-						</StatWithChange>
-					);
-				}),
-				<a
-					href={helpers.leagueUrl([
-						"compare_players",
-						`${p.pid}-${season - 1}-${comparePlayersRange},${p.pid}-${season}-${comparePlayersRange}`,
-					])}
-				>
-					Compare
-				</a>,
-			);
-		} else {
-			data.push(pr && showRatings ? pr.ovr : null);
-			const statsRow = stats.map((stat) => {
-				if (p.opoyOverride && stat === "score") {
-					// Hide score from UI if opoyOverride because this player was put at #1 due to a different formula (opoyFormula)
-					return {
-						value: null,
-						sortValue: Infinity,
-					};
-				}
-
-				return ps
-					? helpers.roundStat(
-							p.statOverrides ? p.statOverrides[stat] : ps[stat],
-							stat,
-						)
-					: null;
-			});
-			data.push(...statsRow);
-		}
-
-		return {
-			key: p.pid,
-			metadata: {
-				type: "player",
-				pid: p.pid,
-				season,
-				playoffs: "regularSeason",
-			},
-			data,
-			classNames: {
-				"table-danger": p.hof,
-				"table-info": tid === userTid,
-			},
-		};
-	});
-
-	return rows;
-};
-
-const AwardRaces = ({
+const AwardSettings = ({
 	awardCandidates,
 	confs,
 	divs,
@@ -231,17 +65,9 @@ const AwardRaces = ({
 	playoffsByConf,
 	season,
 	teams,
-}: View<"awardRaces">) => {
+}: View<"awardSettings">) => {
 	useTitleBar({
-		title: "Award Races",
-		jumpTo: true,
-		jumpToSeason: season,
-		dropdownView: "award_races",
-		dropdownFields: edit
-			? {}
-			: {
-					seasons: season,
-				},
+		title: "Award Settings",
 	});
 
 	const {
@@ -570,4 +396,4 @@ const AwardRaces = ({
 	);
 };
 
-export default AwardRaces;
+export default AwardSettings;

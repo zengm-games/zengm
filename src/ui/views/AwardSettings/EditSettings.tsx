@@ -3,7 +3,7 @@ import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import { TEAM_AWARD_INFO } from "../../../common/constants.ts";
 import { helpers } from "../../util/helpers.ts";
-import type { InputAward } from "./index.tsx";
+import type { InputAward } from "../AwardRaces.tsx";
 import type {
 	AwardInfoCommon,
 	AwardSettingIndividual,

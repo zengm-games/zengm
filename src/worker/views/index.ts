@@ -10,6 +10,7 @@ export { default as allStarThree } from "./allStarThree.ts";
 export { default as autoExpand } from "./autoExpand.ts";
 export { default as autoRelocate } from "./autoRelocate.ts";
 export { default as awardRaces } from "./awardRaces.ts";
+export { default as awardSettings } from "./awardSettings.ts";
 export { default as awardsRecords } from "./awardsRecords.ts";
 export { default as colleges } from "./colleges.ts";
 export { default as comparePlayers } from "./comparePlayers.ts";

@@ -448,8 +448,8 @@ const advStats = async () => {
 			season: g.get("season"),
 			statOverridesByMatchup: undefined,
 		});
-		const allLeagueTeams = realizedAwards[0]?.award;
-		if (allLeagueTeams && allLeagueTeams.numTeams !== undefined) {
+		const allLeagueTeams = realizedAwards[0]?.[0];
+		if (allLeagueTeams?.numTeams !== undefined) {
 			const playersByPid = groupByUnique(players, "pid");
 
 			for (let i = 0; i < 2; i++) {

@@ -649,6 +649,10 @@ const awardSettingTeamSchema = awardInfoTeamSchema
 		group: z.enum(["conf", "div"]).optional(),
 	});
 
+export const awardSettingsSchema = z.array(
+	z.union([awardSettingIndividualSchema, awardSettingTeamSchema]),
+);
+
 export type AwardInfoCommon = z.infer<typeof awardInfoCommonSchema>;
 export type AwardInfoIndividual = z.infer<typeof awardInfoIndividualSchema>;
 type AwardInfoIndividualCommon = z.infer<
@@ -660,6 +664,7 @@ export type AwardSettingIndividual = z.infer<
 	typeof awardSettingIndividualSchema
 >;
 export type AwardSettingTeam = z.infer<typeof awardSettingTeamSchema>;
+export type AwardSettings = z.infer<typeof awardSettingsSchema>;
 
 export type GameAttributesLeague = {
 	aiJerseyRetirement: boolean;
@@ -692,7 +697,7 @@ export type GameAttributesLeague = {
 	autoRelocateGeo: "naFirst" | "naOnly" | "any";
 	autoRelocateRealign: boolean;
 	autoRelocateRebrand: boolean;
-	awards: (AwardSettingIndividual | AwardSettingTeam)[];
+	awards: AwardSettings;
 	brotherRate: number;
 	budget: boolean;
 	challengeNoDraftPicks: boolean;

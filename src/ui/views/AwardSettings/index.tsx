@@ -1,6 +1,6 @@
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
-import type { View } from "../../../common/types.ts";
+import { awardSettingsSchema, type View } from "../../../common/types.ts";
 import { Fragment, useEffect, useId, useState } from "react";
 import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
 import {
@@ -22,6 +22,7 @@ import {
 	GAME_ACRONYM,
 	LEAGUE_DATABASE_VERSION,
 } from "../../../common/constants.ts";
+import { ImportFileButton } from "../../components/ImportFileButton.tsx";
 
 const MARGIN = 14;
 
@@ -261,34 +262,63 @@ const AwardSettings = ({
 			</form>
 
 			<StickyBottomButtons>
-				<div className="btn-group">
-					<button type="button" className="btn btn-secondary">
-						Import
-					</button>
-					<button
-						type="button"
-						className="btn btn-secondary"
-						onClick={() => {
-							const awards = awardsStateToAwards(awardsState);
-							if (awards) {
-								downloadFile(
-									`${GAME_ACRONYM}_award_settings.json`,
-									JSON.stringify(
-										{
-											version: LEAGUE_DATABASE_VERSION,
-											gameAttributes: { awards },
-										},
-										undefined,
-										2,
-									),
-									"application/json",
+				<ImportFileButton
+					accept=".json,.gz,application/json,application/gzip"
+					withFile={async (file) => {
+						try {
+							const { basicInfo } = await toWorker(
+								"leagueFileUpload",
+								"initialCheck",
+								{
+									file,
+								},
+							);
+
+							if (!basicInfo.gameAttributes) {
+								throw new Error("League file does not contain any settings.");
+							}
+							if (!basicInfo.gameAttributes.awards) {
+								throw new Error(
+									"League file does not contain any award settings.",
 								);
 							}
-						}}
-					>
-						Export
-					</button>
-				</div>
+
+							const result = awardSettingsSchema.safeParse(
+								basicInfo.gameAttributes.awards,
+							);
+
+							console.log(basicInfo.gameAttributes.awards, result);
+						} catch (error) {
+							showNotification({
+								type: "error",
+								text: error.message,
+							});
+						}
+					}}
+				/>
+				<button
+					type="button"
+					className="btn btn-secondary mx-2"
+					onClick={() => {
+						const awards = awardsStateToAwards(awardsState);
+						if (awards) {
+							downloadFile(
+								`${GAME_ACRONYM}_award_settings.json`,
+								JSON.stringify(
+									{
+										version: LEAGUE_DATABASE_VERSION,
+										gameAttributes: { awards },
+									},
+									undefined,
+									2,
+								),
+								"application/json",
+							);
+						}
+					}}
+				>
+					Export
+				</button>
 				<ActionButton
 					form={formId}
 					type="submit"

@@ -12,8 +12,8 @@ custom awards
     - min/max functions
       - also add to GOAT formula/season
   - import awards
-    - use ImportFileButton
     - use zod schemas to validate
+      - can zod validate other form constraints, like shortName uniqueness?
   - validation
     - playoff series statRange cannot be:
       - a team award

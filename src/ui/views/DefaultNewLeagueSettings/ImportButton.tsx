@@ -1,7 +1,7 @@
 import { toWorker } from "../../util/toWorker.ts";
 import { ImportFileButton } from "../../components/ImportFileButton.tsx";
 
-const ImportButton = ({
+export const ImportButton = ({
 	onBeforeImport,
 	onError,
 	onImport,
@@ -36,5 +36,3 @@ const ImportButton = ({
 		}}
 	/>
 );
-
-export default ImportButton;

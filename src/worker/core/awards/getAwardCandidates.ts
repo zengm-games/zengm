@@ -161,9 +161,8 @@ export const getAwardCandidates = async (season: number) => {
 		stats: string[];
 	};
 
-	const awardCandidates: Output[] = realizedAwards.flat().flatMap(
-		// @ts-expect-error
-		(award) => {
+	const awardCandidates: Output[][] = realizedAwards.map((group) =>
+		group.flatMap((award) => {
 			const showStats = awardCandidateStats[award.showStats];
 			if (!showStats) {
 				throw new Error("Invalid showStats");
@@ -173,7 +172,7 @@ export const getAwardCandidates = async (season: number) => {
 
 			const numTeams = award.numTeams;
 			if (numTeams !== undefined) {
-				return award.winner.map((winner, i) => {
+				return award.winner.map((winner, i): Output => {
 					return {
 						...award,
 						numTeams,
@@ -191,7 +190,7 @@ export const getAwardCandidates = async (season: number) => {
 				players: augmentPlayers(award, award.winner),
 				stats,
 			};
-		},
+		}),
 	);
 
 	return awardCandidates;

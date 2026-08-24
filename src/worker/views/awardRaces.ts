@@ -16,7 +16,7 @@ const updateAwardRaces = async (
 				updateEvents.includes("playerMovement"))) ||
 		inputs.season !== state.season
 	) {
-		const awardCandidates = await getAwardCandidates(inputs.season);
+		const awardCandidates = (await getAwardCandidates(inputs.season)).flat();
 
 		const teams = await idb.getCopies.teamsPlus(
 			{

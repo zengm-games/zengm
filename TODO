@@ -10,6 +10,7 @@ custom awards
     - editing state should come from worker
     - use group in getAwardCandidates
     - useBlocker
+    - DRY table JSX with AwardRaces
   - add award
   - docs
     - explain seasonFraction scaling

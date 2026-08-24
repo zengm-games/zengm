@@ -1799,8 +1799,8 @@ const getAutoPos = (ratings: any) => {
 	return player.pos(boundedRatings);
 };
 
-const getAwardCandidates2 = (season: number) => {
-	return getAwardCandidates(season);
+const getAwardCandidates2 = async (season: number) => {
+	return (await getAwardCandidates(season)).flat();
 };
 
 const getBornLoc = async (pid: number) => {

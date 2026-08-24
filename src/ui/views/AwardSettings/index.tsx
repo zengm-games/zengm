@@ -1,7 +1,7 @@
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import type { View } from "../../../common/types.ts";
-import { Fragment, useState } from "react";
+import { Fragment, useId, useState } from "react";
 import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
 import {
 	awardsToEditingState,
@@ -37,10 +37,9 @@ const AwardSettings = ({
 	const [awardsState, setAwardsState] = useState(() =>
 		awardsToEditingState(awardCandidates),
 	);
-
 	const [saving, setSaving] = useState(false);
-
 	const { setDirty } = useBlocker();
+	const formId = useId();
 
 	const DEFAULT_CLASSES = "col-12 col-lg-6";
 
@@ -48,7 +47,66 @@ const AwardSettings = ({
 		<>
 			<MoreLinks type="awards" page="award_settings" season={season} />
 
-			<div className="row" style={{ marginTop: -MARGIN }}>
+			<form
+				id={formId}
+				className="row"
+				style={{ marginTop: -MARGIN }}
+				onSubmit={async (event) => {
+					event.preventDefault();
+
+					setSaving(true);
+					const awards = [];
+					const errorMessages: string[] = [];
+
+					const seenShortNames = new Set();
+					for (const { editing } of awardsState) {
+						if (editing === undefined) {
+							continue;
+						}
+
+						if (seenShortNames.has(editing.shortName)) {
+							errorMessages.push(
+								`Duplicate abbrev ${editing.shortName} - award abbrevs must be unique`,
+							);
+						}
+						seenShortNames.add(editing.shortName);
+
+						try {
+							awards.push(editingStateToAward(editing));
+						} catch (error) {
+							errorMessages.push(`${editing.shortName}: ${error.message}`);
+						}
+					}
+
+					if (errorMessages.length > 0) {
+						showNotification({
+							type: "error",
+							text: (
+								<>
+									{errorMessages.map((errorMessage, i) => {
+										return <p key={i}>{errorMessage}</p>;
+									})}
+								</>
+							),
+						});
+					} else {
+						await toWorker("main", "updateGameAttributes", {
+							awards,
+						});
+
+						// Do this rather than realtimeUpdate in case the number of awards has changed, like from changing the group setting
+						const newAwards = await toWorker(
+							"main",
+							"getAwardCandidates",
+							season,
+						);
+						setAwardsState(awardsToEditingState(newAwards));
+						setDirty(false);
+					}
+
+					setSaving(false);
+				}}
+			>
 				{awardsState.flatMap(({ awards, editing }, i) => {
 					return awards.map((award, j) => {
 						const key = getAwardKey(award);
@@ -168,67 +226,16 @@ const AwardSettings = ({
 						Add award
 					</button>
 				</div>
-			</div>
+			</form>
 
 			<StickyBottomButtons>
 				<ActionButton
+					form={formId}
+					type="submit"
 					className="ms-auto"
 					variant="primary"
 					processing={saving}
 					processingText="Saving"
-					onClick={async () => {
-						setSaving(true);
-						const awards = [];
-						const errorMessages: string[] = [];
-
-						const seenShortNames = new Set();
-						for (const { editing } of awardsState) {
-							if (editing === undefined) {
-								continue;
-							}
-
-							if (seenShortNames.has(editing.shortName)) {
-								errorMessages.push(
-									`Duplicate abbrev ${editing.shortName} - award abbrevs must be unique`,
-								);
-							}
-							seenShortNames.add(editing.shortName);
-
-							try {
-								awards.push(editingStateToAward(editing));
-							} catch (error) {
-								errorMessages.push(`${editing.shortName}: ${error.message}`);
-							}
-						}
-
-						if (errorMessages.length > 0) {
-							showNotification({
-								type: "error",
-								text: (
-									<>
-										{errorMessages.map((errorMessage, i) => {
-											return <p key={i}>{errorMessage}</p>;
-										})}
-									</>
-								),
-							});
-						} else {
-							await toWorker("main", "updateGameAttributes", {
-								awards,
-							});
-
-							// Do this rather than realtimeUpdate in case the number of awards has changed, like from changing the group setting
-							const newAwards = await toWorker(
-								"main",
-								"getAwardCandidates",
-								season,
-							);
-							setAwardsState(awardsToEditingState(newAwards));
-							setDirty(false);
-						}
-
-						setSaving(false);
-					}}
 				>
 					Save settings
 				</ActionButton>

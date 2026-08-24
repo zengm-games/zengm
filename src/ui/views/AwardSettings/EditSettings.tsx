@@ -341,6 +341,7 @@ export const EditSettings = ({
 					/>
 					{TEAM_AWARD_INFO.byPos ? (
 						<button
+							type="button"
 							className="btn btn-secondary text-nowrap"
 							title="By position"
 						>
@@ -477,6 +478,7 @@ export const EditSettings = ({
 					</div>
 				)}
 				<button
+					type="button"
 					className="ms-auto btn btn-secondary"
 					disabled={!canMoveUp}
 					onClick={() => {
@@ -489,6 +491,7 @@ export const EditSettings = ({
 					/>
 				</button>
 				<button
+					type="button"
 					className="btn btn-secondary"
 					disabled={!canMoveDown}
 					onClick={() => {
@@ -500,7 +503,7 @@ export const EditSettings = ({
 						className="glyphicon glyphicon-arrow-down"
 					/>
 				</button>
-				<button className="btn btn-danger" onClick={remove}>
+				<button type="button" className="btn btn-danger" onClick={remove}>
 					Delete
 				</button>
 			</div>

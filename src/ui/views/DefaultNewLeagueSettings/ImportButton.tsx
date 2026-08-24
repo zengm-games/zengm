@@ -1,8 +1,6 @@
 import { toWorker } from "../../util/toWorker.ts";
-import { resetFileInput } from "../../util/resetFileInput.ts";
-import { IMPORT_FILE_STYLE } from "../Settings/RowsEditor.tsx";
+import { ImportFileButton } from "../../components/ImportFileButton.tsx";
 
-// https://stackoverflow.com/a/35200633/786644
 const ImportButton = ({
 	onBeforeImport,
 	onError,
@@ -12,49 +10,31 @@ const ImportButton = ({
 	onError: (errorMessage: string) => void;
 	onImport: (settings: any) => void;
 }) => (
-	<button
-		className="btn btn-light-bordered"
-		style={{ position: "relative", overflow: "hidden" }}
-		onClick={() => {}}
-	>
-		Import
-		<input
-			className="cursor-pointer"
-			type="file"
-			accept=".json,.gz,application/json,application/gzip"
-			style={IMPORT_FILE_STYLE}
-			onClick={resetFileInput}
-			onChange={async (event) => {
-				if (!event.target.files) {
-					return;
-				}
-				const file = event.target.files[0];
-				if (!file) {
-					return;
-				}
+	<ImportFileButton
+		accept=".json,.gz,application/json,application/gzip"
+		variant="light-bordered"
+		withFile={async (file) => {
+			onBeforeImport();
 
-				onBeforeImport();
+			try {
+				const { basicInfo } = await toWorker(
+					"leagueFileUpload",
+					"initialCheck",
+					{
+						file,
+					},
+				);
 
-				try {
-					const { basicInfo } = await toWorker(
-						"leagueFileUpload",
-						"initialCheck",
-						{
-							file,
-						},
-					);
-
-					if (basicInfo.gameAttributes) {
-						onImport(basicInfo.gameAttributes);
-					} else {
-						onError("League file does not contain any settings.");
-					}
-				} catch (error) {
-					onError(error.message);
+				if (basicInfo.gameAttributes) {
+					onImport(basicInfo.gameAttributes);
+				} else {
+					onError("League file does not contain any settings.");
 				}
-			}}
-		/>
-	</button>
+			} catch (error) {
+				onError(error.message);
+			}
+		}}
+	/>
 );
 
 export default ImportButton;

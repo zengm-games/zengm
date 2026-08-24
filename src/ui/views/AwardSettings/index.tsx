@@ -261,32 +261,34 @@ const AwardSettings = ({
 			</form>
 
 			<StickyBottomButtons>
-				<button type="button" className="btn btn-secondary">
-					Import
-				</button>
-				<button
-					type="button"
-					className="btn btn-secondary mx-2"
-					onClick={() => {
-						const awards = awardsStateToAwards(awardsState);
-						if (awards) {
-							downloadFile(
-								`${GAME_ACRONYM}_award_settings.json`,
-								JSON.stringify(
-									{
-										version: LEAGUE_DATABASE_VERSION,
-										gameAttributes: { awards },
-									},
-									undefined,
-									2,
-								),
-								"application/json",
-							);
-						}
-					}}
-				>
-					Export
-				</button>
+				<div className="btn-group">
+					<button type="button" className="btn btn-secondary">
+						Import
+					</button>
+					<button
+						type="button"
+						className="btn btn-secondary"
+						onClick={() => {
+							const awards = awardsStateToAwards(awardsState);
+							if (awards) {
+								downloadFile(
+									`${GAME_ACRONYM}_award_settings.json`,
+									JSON.stringify(
+										{
+											version: LEAGUE_DATABASE_VERSION,
+											gameAttributes: { awards },
+										},
+										undefined,
+										2,
+									),
+									"application/json",
+								);
+							}
+						}}
+					>
+						Export
+					</button>
+				</div>
 				<ActionButton
 					form={formId}
 					type="submit"

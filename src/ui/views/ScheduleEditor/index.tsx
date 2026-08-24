@@ -26,7 +26,7 @@ import { confirm } from "../../util/confirm.tsx";
 import { csvFormatRows, csvParse } from "d3-dsv";
 import { downloadFile } from "../../util/downloadFile.ts";
 import { resetFileInput } from "../../util/resetFileInput.ts";
-import { IMPORT_FILE_STYLE } from "../Settings/RowsEditor.tsx";
+import { IMPORT_FILE_STYLE } from "../../components/ImportFileButton.tsx";
 
 type Schedule = View<"scheduleEditor">["schedule"];
 
@@ -1172,6 +1172,7 @@ const ScheduleEditor = ({
 								Export schedule to CSV
 							</Dropdown.Item>
 							<Dropdown.Item
+								// Like <ImportFileButton>
 								as="div"
 								style={{ position: "relative", overflow: "hidden" }}
 							>

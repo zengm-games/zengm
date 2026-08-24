@@ -13,7 +13,6 @@ import {
 	prune,
 } from "./PlayerBioInfo.tsx";
 import PlayerBioInfoSortButton from "./PlayerBioInfoSortButton.tsx";
-import { IMPORT_FILE_STYLE } from "./RowsEditor.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import { Modal } from "../../components/Modal.tsx";
 import { orderBy } from "../../../common/utils.ts";
@@ -22,8 +21,8 @@ import {
 	WEBSITE_ROOT,
 } from "../../../common/constants.ts";
 import { downloadFile } from "../../util/downloadFile.ts";
-import { resetFileInput } from "../../util/resetFileInput.ts";
 import { CountryFlag } from "../../components/CountryFlag.tsx";
+import { ImportFileButton } from "../../components/ImportFileButton.tsx";
 
 export const smallColStyle = {
 	marginLeft: 10,
@@ -54,7 +53,6 @@ export const PlayerBioInfoRowButton = ({
 	);
 };
 
-// https://stackoverflow.com/a/35200633/786644
 const ImportButton = ({
 	defaults,
 	setErrorMessage,
@@ -64,54 +62,36 @@ const ImportButton = ({
 	setErrorMessage: (errorMessage?: string) => void;
 	setInfoState: (injuries: PlayerBioInfoState) => void;
 }) => (
-	<button
-		className="btn btn-light-bordered"
-		style={{ position: "relative", overflow: "hidden" }}
-		onClick={() => {}}
-	>
-		Import
-		<input
-			className="cursor-pointer"
-			type="file"
-			accept=".json,.gz,application/json,application/gzip"
-			style={IMPORT_FILE_STYLE}
-			onClick={resetFileInput}
-			onChange={async (event) => {
-				if (!event.target.files) {
-					return;
-				}
-				const file = event.target.files[0];
-				if (!file) {
-					return;
-				}
+	<ImportFileButton
+		accept=".json,.gz,application/json,application/gzip"
+		variant="light-bordered"
+		withFile={async (file) => {
+			setErrorMessage();
 
-				setErrorMessage();
+			try {
+				const { basicInfo } = await toWorker(
+					"leagueFileUpload",
+					"initialCheck",
+					{
+						file,
+					},
+				);
 
-				try {
-					const { basicInfo } = await toWorker(
-						"leagueFileUpload",
-						"initialCheck",
-						{
-							file,
-						},
+				if (basicInfo.gameAttributes) {
+					setInfoState(
+						formatPlayerBioInfoState(
+							basicInfo.gameAttributes.playerBioInfo,
+							defaults,
+						),
 					);
-
-					if (basicInfo.gameAttributes) {
-						setInfoState(
-							formatPlayerBioInfoState(
-								basicInfo.gameAttributes.playerBioInfo,
-								defaults,
-							),
-						);
-					} else {
-						setErrorMessage("League file does not contain any settings.");
-					}
-				} catch (error) {
-					setErrorMessage(error.message);
+				} else {
+					setErrorMessage("League file does not contain any settings.");
 				}
-			}}
-		/>
-	</button>
+			} catch (error) {
+				setErrorMessage(error.message);
+			}
+		}}
+	/>
 );
 
 const ExportButton = ({

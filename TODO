@@ -12,6 +12,7 @@ custom awards
     - min/max functions
       - also add to GOAT formula/season
   - import awards
+    - use ImportFileButton
     - use zod schemas to validate
   - validation
     - playoff series statRange cannot be:
@@ -98,6 +99,8 @@ custom awards
   - edit award settings for past seasons
   - some way to set award settings in default new league settings
   - pick and choose which awards to import, and option to not overwrite all
+
+default new league settings import should handle gameAttribute with history (take latest value)
 
 make GOAT lab use stats with derived variables, similar to awards
 

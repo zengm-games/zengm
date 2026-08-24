@@ -1,13 +1,8 @@
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { helpers } from "../../util/helpers.ts";
-import { getCols } from "../../../common/getCols.ts";
-import { DataTable } from "../../components/DataTable/index.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import type { View } from "../../../common/types.ts";
-import { useLocal } from "../../util/local.ts";
-import { getCol } from "../../../common/getCol.ts";
 import { Fragment, useEffect, useState } from "react";
-import { isSport } from "../../../common/sportFunctions.ts";
 import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
 import {
 	awardsToEditingState,
@@ -19,42 +14,10 @@ import {
 import { realtimeUpdate } from "../../util/realtimeUpdate.ts";
 import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
-import { formatPlayerAwardName } from "../../../common/awards.ts";
 import clsx from "clsx";
-import { getRows, type InputAward } from "../AwardRaces.tsx";
+import { AwardRaceTable, getAwardKey } from "../AwardRaces.tsx";
 
 const MARGIN = 14;
-
-const Title = ({
-	asterisk,
-	award,
-	confs,
-	divs,
-}: {
-	asterisk: boolean;
-	award: InputAward;
-} & Pick<View<"awardRaces">, "confs" | "divs">) => {
-	const group = award.group;
-	return (
-		<div>
-			<h2>
-				{formatPlayerAwardName({
-					name: award.name,
-					numTeams: award.numTeams,
-					rank: award.rank ?? 1,
-				})}
-				{asterisk ? "*" : null}
-			</h2>
-			{group && group.type !== "playoffSeries" ? (
-				<h3>
-					{group.type === "conf"
-						? confs[group.cid]?.name
-						: divs[group.did]?.name}
-				</h3>
-			) : null}
-		</div>
-	);
-};
 
 const AwardSettings = ({
 	awardCandidates,
@@ -68,12 +31,6 @@ const AwardSettings = ({
 	useTitleBar({
 		title: "Award Settings",
 	});
-
-	const {
-		challengeNoRatings,
-		season: currentSeason,
-		userTid,
-	} = useLocal(["challengeNoRatings", "season", "userTid"]);
 
 	const [editSettings, setEditSettings] = useState<
 		| {
@@ -98,9 +55,7 @@ const AwardSettings = ({
 
 	const [saving, setSaving] = useState(false);
 
-	const globalCols = getCols(["#", "Name", "Pos", "Age", "Team"]);
-
-	const saveSettings = (redirect: boolean) => async () => {
+	const saveSettings = async () => {
 		if (!editSettings.editing) {
 			setSaving(false);
 			return;
@@ -150,19 +105,12 @@ const AwardSettings = ({
 		setSaving(false);
 
 		if (errorMessages.length === 0) {
-			if (redirect) {
-				await realtimeUpdate([], helpers.leagueUrl(["award_races"]));
-				setEditSettings({
-					editing: false,
-				});
-			} else {
-				// Do this rather than realtimeUpdate in case the number of awards has changed, like from changing the group setting
-				const newAwards = await toWorker("main", "getAwardCandidates", season);
-				setEditSettings({
-					editing: true,
-					awards: awardsToEditingState(newAwards),
-				});
-			}
+			// Do this rather than realtimeUpdate in case the number of awards has changed, like from changing the group setting
+			const newAwards = await toWorker("main", "getAwardCandidates", season);
+			setEditSettings({
+				editing: true,
+				awards: awardsToEditingState(newAwards),
+			});
 		}
 	};
 
@@ -176,44 +124,7 @@ const AwardSettings = ({
 
 			<div className="row" style={{ marginTop: -MARGIN }}>
 				{actualAwardCandidates.map((award, i) => {
-					const { mip, rookie, stats } = award;
-
-					const asterisk =
-						isSport("football") &&
-						award.numTeams === undefined &&
-						award.opoyFormula !== undefined;
-
-					const cols = [
-						...globalCols,
-						...getCols([rookie ? "Pick" : "Record", "Ovr"]),
-						...getCols(stats.map((stat) => `stat:${stat}`)),
-					];
-					if (mip) {
-						cols.push(getCol("Compare"));
-					}
-
-					const rows = getRows({
-						award,
-						challengeNoRatings,
-						currentSeason,
-						season,
-						teams,
-						userTid,
-					});
-
-					const title = (
-						<Title
-							asterisk={asterisk}
-							award={award}
-							confs={confs}
-							divs={divs}
-						/>
-					);
-					const key = JSON.stringify([
-						award.shortName,
-						award.group,
-						award.numTeams ? award.rank : undefined,
-					]);
+					const key = getAwardKey(award);
 
 					const editing =
 						editSettings.editing && editSettings.awards[i]?.editing;
@@ -229,7 +140,7 @@ const AwardSettings = ({
 							{newRow ? <div className="w-100" /> : null}
 							<div
 								className={clsx(
-									mip ? "col-12 col-lg-9" : "col-12 col-lg-6",
+									award.mip ? "col-12 col-lg-9" : "col-12 col-lg-6",
 
 									// Align to bottom when editing if this is a trailing part of a group, looks better that way
 									editSettings.editing && !editing
@@ -315,28 +226,11 @@ const AwardSettings = ({
 										) : null}
 									</div>
 								) : null}
-								{rows.length > 0 ? (
-									<DataTable
-										classNameWrapper="mb-1"
-										cols={cols}
-										defaultSort={[0, "asc"]}
-										defaultStickyCols={window.mobile ? 0 : 2}
-										hideAllControls
-										name={`AwardRaces${key}`}
-										rows={rows}
-										title={editing ? undefined : title}
-									/>
-								) : (
-									<>
-										{editing ? undefined : title}
-										<p>No candidates yet...</p>
-									</>
-								)}
-								{asterisk ? (
-									<div className="text-body-secondary">
-										* Exceptional QBs can win both MVP and {award.shortName}
-									</div>
-								) : null}
+								<AwardRaceTable
+									confs={confs}
+									divs={divs}
+									rowsInfo={{ award, season, teams }}
+								/>
 							</div>
 						</Fragment>
 					);
@@ -362,7 +256,9 @@ const AwardSettings = ({
 				<button
 					className="btn btn-primary me-2"
 					disabled={saving}
-					onClick={saveSettings(false)}
+					onClick={() => {
+						saveSettings();
+					}}
 				>
 					Save settings
 				</button>

@@ -51,7 +51,7 @@ const Title = ({
 	);
 };
 
-export const getRows = ({
+const getRows = ({
 	award,
 	challengeNoRatings,
 	currentSeason,
@@ -211,6 +211,93 @@ export const getRows = ({
 	return rows;
 };
 
+type RowsInfo = Pick<
+	Parameters<typeof getRows>[0],
+	"award" | "season" | "teams"
+>;
+
+export const getAwardKey = (award: RowsInfo["award"]) => {
+	return JSON.stringify([
+		award.shortName,
+		award.group,
+		award.numTeams ? award.rank : undefined,
+	]);
+};
+
+export const AwardRaceTable = ({
+	confs,
+	divs,
+	rowsInfo: { award, season, teams },
+}: {
+	rowsInfo: RowsInfo;
+} & Pick<View<"awardRaces">, "confs" | "divs">) => {
+	const { mip, rookie, stats } = award;
+
+	const asterisk =
+		isSport("football") &&
+		award.numTeams === undefined &&
+		award.opoyFormula !== undefined;
+
+	const cols = getCols([
+		"#",
+		"Name",
+		"Pos",
+		"Age",
+		"Team",
+		rookie ? "Pick" : "Record",
+		"Ovr",
+		...stats.map((stat) => `stat:${stat}`),
+	]);
+	if (mip) {
+		cols.push(getCol("Compare"));
+	}
+
+	const title = (
+		<Title asterisk={asterisk} award={award} confs={confs} divs={divs} />
+	);
+
+	const {
+		challengeNoRatings,
+		season: currentSeason,
+		userTid,
+	} = useLocal(["challengeNoRatings", "season", "userTid"]);
+
+	const rows = getRows({
+		award,
+		challengeNoRatings,
+		currentSeason,
+		season,
+		teams,
+		userTid,
+	});
+
+	return (
+		<>
+			{rows.length > 0 ? (
+				<DataTable
+					classNameWrapper="mb-1"
+					cols={cols}
+					defaultSort={[0, "asc"]}
+					defaultStickyCols={window.mobile ? 0 : 2}
+					hideAllControls
+					name={`AwardRaces${getAwardKey(award)}`}
+					rows={rows}
+					title={title}
+				/>
+			) : (
+				<>
+					<p>No candidates yet...</p>
+				</>
+			)}
+			{asterisk ? (
+				<div className="text-body-secondary">
+					* Exceptional QBs can win both MVP and {award.shortName}
+				</div>
+			) : null}
+		</>
+	);
+};
+
 const AwardRaces = ({
 	awardCandidates,
 	confs,
@@ -228,86 +315,27 @@ const AwardRaces = ({
 		},
 	});
 
-	const {
-		challengeNoRatings,
-		season: currentSeason,
-		userTid,
-	} = useLocal(["challengeNoRatings", "season", "userTid"]);
-
-	const globalCols = getCols(["#", "Name", "Pos", "Age", "Team"]);
-
 	return (
 		<>
 			<MoreLinks type="awards" page="award_races" season={season} />
 
 			<div className="row" style={{ marginTop: -MARGIN }}>
 				{awardCandidates.map((award, i) => {
-					const { mip, rookie, stats } = award;
-
-					const asterisk =
-						isSport("football") &&
-						award.numTeams === undefined &&
-						award.opoyFormula !== undefined;
-
-					const cols = [
-						...globalCols,
-						...getCols([rookie ? "Pick" : "Record", "Ovr"]),
-						...getCols(stats.map((stat) => `stat:${stat}`)),
-					];
-					if (mip) {
-						cols.push(getCol("Compare"));
-					}
-
-					const rows = getRows({
-						award,
-						challengeNoRatings,
-						currentSeason,
-						season,
-						teams,
-						userTid,
-					});
-
-					const title = (
-						<Title
-							asterisk={asterisk}
-							award={award}
-							confs={confs}
-							divs={divs}
-						/>
-					);
-					const key = JSON.stringify([
-						award.shortName,
-						award.group,
-						award.numTeams ? award.rank : undefined,
-					]);
+					const key = getAwardKey(award);
 
 					return (
 						<Fragment key={key}>
 							<div
-								className={clsx(mip ? "col-12 col-lg-9" : "col-12 col-lg-6")}
+								className={clsx(
+									award.mip ? "col-12 col-lg-9" : "col-12 col-lg-6",
+								)}
 								style={{ marginTop: MARGIN }}
 							>
-								{rows.length > 0 ? (
-									<DataTable
-										classNameWrapper="mb-1"
-										cols={cols}
-										defaultSort={[0, "asc"]}
-										defaultStickyCols={window.mobile ? 0 : 2}
-										hideAllControls
-										name={`AwardRaces${key}`}
-										rows={rows}
-										title={title}
-									/>
-								) : (
-									<>
-										<p>No candidates yet...</p>
-									</>
-								)}
-								{asterisk ? (
-									<div className="text-body-secondary">
-										* Exceptional QBs can win both MVP and {award.shortName}
-									</div>
-								) : null}
+								<AwardRaceTable
+									confs={confs}
+									divs={divs}
+									rowsInfo={{ award, season, teams }}
+								/>
 							</div>
 						</Fragment>
 					);

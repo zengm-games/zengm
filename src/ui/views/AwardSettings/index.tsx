@@ -1,7 +1,7 @@
 import useTitleBar from "../../hooks/useTitleBar.tsx";
 import { MoreLinks } from "../../components/MoreLinks.tsx";
 import type { View } from "../../../common/types.ts";
-import { Fragment, useId, useState } from "react";
+import { Fragment, useEffect, useId, useState } from "react";
 import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
 import {
 	awardsToEditingState,
@@ -19,6 +19,8 @@ import { formatTeamNumber } from "../../../common/awards.ts";
 import { helpers } from "../../util/helpers.ts";
 
 const MARGIN = 14;
+
+const getAwardId = (index: number) => `award-${index}`;
 
 const AwardSettings = ({
 	awardCandidates,
@@ -40,6 +42,17 @@ const AwardSettings = ({
 	const [saving, setSaving] = useState(false);
 	const { setDirty } = useBlocker();
 	const formId = useId();
+
+	const [scrollToAwardId, setScrollToAwardId] = useState<string | undefined>();
+	useEffect(() => {
+		if (scrollToAwardId !== undefined) {
+			document
+				.getElementById(scrollToAwardId)
+				?.scrollIntoView({ behavior: "smooth" });
+
+			setScrollToAwardId(undefined);
+		}
+	}, [scrollToAwardId]);
 
 	const DEFAULT_CLASSES = "col-12 col-lg-6";
 
@@ -107,7 +120,7 @@ const AwardSettings = ({
 					setSaving(false);
 				}}
 			>
-				{awardsState.flatMap(({ awards, editing }, i) => {
+				{awardsState.map(({ awards, editing }, i) => {
 					return awards.map((award, j) => {
 						const key = getAwardKey(award);
 
@@ -134,13 +147,17 @@ const AwardSettings = ({
 							<Fragment key={key}>
 								{newRow ? <div className="w-100" /> : null}
 								<div
+									id={showEditSettings ? getAwardId(i) : undefined}
 									className={clsx(
 										award.mip ? "col-12 col-lg-9" : DEFAULT_CLASSES,
 
 										// Align to bottom when editing if this is a trailing part of a group, looks better that way
 										!showEditSettings ? "d-flex align-items-end" : undefined,
 									)}
-									style={{ marginTop: MARGIN }}
+									style={{
+										marginTop: MARGIN,
+										scrollMarginTop: showEditSettings ? 60 : undefined,
+									}}
 								>
 									{showEditSettings ? (
 										<div>
@@ -156,6 +173,8 @@ const AwardSettings = ({
 														}
 														oldState[i] = oldState[otherIndex];
 														oldState[otherIndex] = toMove;
+
+														setScrollToAwardId(getAwardId(otherIndex));
 
 														return [...oldState];
 													});

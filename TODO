@@ -7,8 +7,9 @@ custom awards
     - similar for editing award settings and any other seenShortNames
 - edit awards settings
   - would this make more sense as a dedicated page? getting a bit complicated...
-    - think about editing award winners too
-    - also think about potentially editing past award settings
+    - editing state should come from worker
+    - use group in getAwardCandidates
+    - useBlocker
   - add award
   - docs
     - explain seasonFraction scaling

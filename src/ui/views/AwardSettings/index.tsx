@@ -60,7 +60,6 @@ const AwardSettings = ({
 	awardCandidates,
 	confs,
 	divs,
-	edit,
 	numGamesPlayoffSeries,
 	playoffsByConf,
 	season,
@@ -79,7 +78,6 @@ const AwardSettings = ({
 	const [editSettings, setEditSettings] = useState<
 		| {
 				editing: false;
-				awards?: EditingStateRoot[];
 		  }
 		| {
 				editing: true;
@@ -90,13 +88,13 @@ const AwardSettings = ({
 	});
 
 	useEffect(() => {
-		if (edit && !editSettings.editing) {
+		if (!editSettings.editing) {
 			setEditSettings((state) => ({
 				editing: true,
-				awards: state.awards ?? awardsToEditingState(awardCandidates),
+				awards: awardsToEditingState(awardCandidates),
 			}));
 		}
-	}, [awardCandidates, edit, editSettings.editing]);
+	}, [awardCandidates, editSettings.editing]);
 
 	const [saving, setSaving] = useState(false);
 
@@ -131,7 +129,6 @@ const AwardSettings = ({
 				errorMessages.push(`${editing.shortName}: ${error.message}`);
 			}
 		}
-		console.log(awards);
 
 		if (errorMessages.length > 0) {
 			showNotification({
@@ -175,20 +172,7 @@ const AwardSettings = ({
 
 	return (
 		<>
-			<MoreLinks type="awards" page="award_races" season={season} />
-
-			{!editSettings.editing ? (
-				<div className="mb-3">
-					<button
-						className="btn btn-secondary"
-						onClick={() => {
-							realtimeUpdate([], helpers.leagueUrl(["award_races", "edit"]));
-						}}
-					>
-						Edit award settings
-					</button>
-				</div>
-			) : null}
+			<MoreLinks type="awards" page="award_settings" season={season} />
 
 			<div className="row" style={{ marginTop: -MARGIN }}>
 				{actualAwardCandidates.map((award, i) => {
@@ -265,7 +249,7 @@ const AwardSettings = ({
 												canMoveUp={i > 0}
 												move={(direction) => {
 													setEditSettings((oldState) => {
-														if (!oldState.awards) {
+														if (!oldState.editing) {
 															return oldState;
 														}
 
@@ -291,7 +275,7 @@ const AwardSettings = ({
 												playoffsByConf={playoffsByConf}
 												remove={() => {
 													setEditSettings((oldState) => {
-														if (!oldState.awards) {
+														if (!oldState.editing) {
 															return oldState;
 														}
 
@@ -309,7 +293,7 @@ const AwardSettings = ({
 												}}
 												setState={(state) => {
 													setEditSettings((oldState) => {
-														return oldState.awards
+														return oldState.editing
 															? {
 																	...oldState,
 																	awards: oldState.awards.map((award, j) => {
@@ -359,39 +343,30 @@ const AwardSettings = ({
 				})}
 			</div>
 
-			{editSettings.editing ? (
-				<StickyBottomButtons>
-					<button
-						className="btn btn-secondary ms-auto me-2"
-						disabled={saving}
-						onClick={async () => {
-							await realtimeUpdate([], helpers.leagueUrl(["award_races"]));
-							setEditSettings((oldState) => {
-								return {
-									...oldState,
-									editing: false,
-								};
-							});
-						}}
-					>
-						Cancel
-					</button>
-					<button
-						className="btn btn-primary me-2"
-						disabled={saving}
-						onClick={saveSettings(false)}
-					>
-						Save and continue editing
-					</button>
-					<button
-						className="btn btn-primary me-2"
-						disabled={saving}
-						onClick={saveSettings(true)}
-					>
-						Save and finish editing
-					</button>
-				</StickyBottomButtons>
-			) : null}
+			<StickyBottomButtons>
+				<button
+					className="btn btn-secondary ms-auto me-2"
+					disabled={saving}
+					onClick={async () => {
+						await realtimeUpdate([], helpers.leagueUrl(["award_races"]));
+						setEditSettings((oldState) => {
+							return {
+								...oldState,
+								editing: false,
+							};
+						});
+					}}
+				>
+					Cancel
+				</button>
+				<button
+					className="btn btn-primary me-2"
+					disabled={saving}
+					onClick={saveSettings(false)}
+				>
+					Save settings
+				</button>
+			</StickyBottomButtons>
 		</>
 	);
 };

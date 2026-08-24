@@ -238,25 +238,24 @@ export const MoreLinks = (
 	} else if (props.type == "awards") {
 		const { season } = props;
 
-		links = godMode
-			? [
-					{
-						url: ["award_settings"],
-						name: "Award Settings",
-					},
-					{
-						url:
-							season == undefined ? ["edit_awards"] : ["edit_awards", season],
-						name: "Edit Awards",
-						className: "god-mode",
-					},
-				]
-			: [
-					{
-						url: ["award_settings"],
-						name: "Award Settings",
-					},
-				];
+		links = [
+			{
+				url: ["award_races"],
+				name: "Award Races",
+			},
+			{
+				url: ["award_settings"],
+				name: "Award Settings",
+			},
+		];
+
+		if (godMode) {
+			links.push({
+				url: season == undefined ? ["edit_awards"] : ["edit_awards", season],
+				name: "Edit Awards",
+				className: "god-mode",
+			});
+		}
 	} else if (props.type === "playerRatings") {
 		const { season } = props;
 

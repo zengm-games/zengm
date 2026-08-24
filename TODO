@@ -6,8 +6,6 @@ custom awards
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
     - similar for editing award settings and any other seenShortNames
 - edit awards settings
-  - would this make more sense as a dedicated page? getting a bit complicated...
-    - DRY table JSX with AwardRaces
   - add award
   - docs
     - explain seasonFraction scaling

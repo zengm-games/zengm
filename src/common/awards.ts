@@ -2,6 +2,9 @@ import { helpers } from "./helpers.ts";
 import { bySport } from "./sportFunctions.ts";
 import type { Award2, PlayerAwardBuiltIn } from "./types.ts";
 
+export const formatTeamNumber = (rank: number) =>
+	`${helpers.ordinal(rank)} Team`;
+
 export const formatPlayerAwardName = (
 	// This is like PlayerAward but with only the required field specified so it can be used elsewhere easily
 	award:
@@ -30,7 +33,7 @@ export const formatPlayerAwardName = (
 			return `${prefixWithSpace}${award.name} Team`;
 		}
 
-		const prefixAndRank = `${prefixWithSpace}${helpers.ordinal(award.rank)} Team`;
+		const prefixAndRank = `${prefixWithSpace}${formatTeamNumber(award.rank)}`;
 		if (hideTeamName) {
 			return prefixAndRank;
 		}

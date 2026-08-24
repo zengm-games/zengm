@@ -13,6 +13,8 @@ import { toWorker } from "../../util/toWorker.ts";
 import clsx from "clsx";
 import { AwardRaceTable, getAwardKey } from "../AwardRaces.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
+import { ActionButton } from "../../components/ActionButton.tsx";
+import { formatTeamNumber } from "../../../common/awards.ts";
 
 const MARGIN = 14;
 
@@ -37,58 +39,6 @@ const AwardSettings = ({
 
 	const { setDirty } = useBlocker();
 
-	const saveSettings = async () => {
-		setSaving(true);
-		const awards = [];
-		const errorMessages: string[] = [];
-
-		const seenShortNames = new Set();
-		for (const { editing } of awardsState) {
-			if (editing === undefined) {
-				continue;
-			}
-
-			if (seenShortNames.has(editing.shortName)) {
-				errorMessages.push(
-					`Duplicate abbrev ${editing.shortName} - award abbrevs must be unique`,
-				);
-			}
-			seenShortNames.add(editing.shortName);
-
-			try {
-				awards.push(editingStateToAward(editing));
-			} catch (error) {
-				errorMessages.push(`${editing.shortName}: ${error.message}`);
-			}
-		}
-
-		if (errorMessages.length > 0) {
-			showNotification({
-				type: "error",
-				text: (
-					<>
-						{errorMessages.map((errorMessage, i) => {
-							return <p key={i}>{errorMessage}</p>;
-						})}
-					</>
-				),
-			});
-		} else {
-			await toWorker("main", "updateGameAttributes", {
-				awards,
-			});
-		}
-
-		setSaving(false);
-
-		if (errorMessages.length === 0) {
-			// Do this rather than realtimeUpdate in case the number of awards has changed, like from changing the group setting
-			const newAwards = await toWorker("main", "getAwardCandidates", season);
-			setAwardsState(awardsToEditingState(newAwards));
-			setDirty(false);
-		}
-	};
-
 	return (
 		<>
 			<MoreLinks type="awards" page="award_settings" season={season} />
@@ -102,6 +52,20 @@ const AwardSettings = ({
 
 						// When editing, always start a new "group" (team awards for multiple teams, or conf/div groups) on a new row, cause it looks weird to start it in the second column
 						const newRow = showEditSettings && awards.length > 1;
+
+						const titleParts = [];
+						if (award.group && award.group.type !== "playoffSeries") {
+							titleParts.push(
+								award.group.type === "conf"
+									? (confs[award.group.cid]?.name ?? "Unknown conf")
+									: (divs[award.group.did]?.name ?? "Unknown div"),
+							);
+						}
+						if (award.numTeams !== undefined && award.numTeams > 1) {
+							titleParts.push(formatTeamNumber(award.rank));
+						}
+						const title =
+							titleParts.length > 0 ? <h4>{titleParts.join(", ")}</h4> : "";
 
 						return (
 							<Fragment key={key}>
@@ -161,6 +125,7 @@ const AwardSettings = ({
 										confs={confs}
 										divs={divs}
 										rowsInfo={{ award, season, teams }}
+										titleOverride={title}
 									/>
 								</div>
 							</Fragment>
@@ -170,15 +135,67 @@ const AwardSettings = ({
 			</div>
 
 			<StickyBottomButtons>
-				<button
-					className="btn btn-primary ms-auto"
-					disabled={saving}
-					onClick={() => {
-						saveSettings();
+				<ActionButton
+					className="ms-auto"
+					variant="primary"
+					processing={saving}
+					processingText="Saving"
+					onClick={async () => {
+						setSaving(true);
+						const awards = [];
+						const errorMessages: string[] = [];
+
+						const seenShortNames = new Set();
+						for (const { editing } of awardsState) {
+							if (editing === undefined) {
+								continue;
+							}
+
+							if (seenShortNames.has(editing.shortName)) {
+								errorMessages.push(
+									`Duplicate abbrev ${editing.shortName} - award abbrevs must be unique`,
+								);
+							}
+							seenShortNames.add(editing.shortName);
+
+							try {
+								awards.push(editingStateToAward(editing));
+							} catch (error) {
+								errorMessages.push(`${editing.shortName}: ${error.message}`);
+							}
+						}
+
+						if (errorMessages.length > 0) {
+							showNotification({
+								type: "error",
+								text: (
+									<>
+										{errorMessages.map((errorMessage, i) => {
+											return <p key={i}>{errorMessage}</p>;
+										})}
+									</>
+								),
+							});
+						} else {
+							await toWorker("main", "updateGameAttributes", {
+								awards,
+							});
+
+							// Do this rather than realtimeUpdate in case the number of awards has changed, like from changing the group setting
+							const newAwards = await toWorker(
+								"main",
+								"getAwardCandidates",
+								season,
+							);
+							setAwardsState(awardsToEditingState(newAwards));
+							setDirty(false);
+						}
+
+						setSaving(false);
 					}}
 				>
 					Save settings
-				</button>
+				</ActionButton>
 			</StickyBottomButtons>
 		</>
 	);

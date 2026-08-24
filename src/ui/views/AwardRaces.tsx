@@ -11,7 +11,7 @@ import { RatingWithChange } from "../components/RatingWithChange.tsx";
 import { StatWithChange } from "../components/StatWithChange.tsx";
 import { useLocal } from "../util/local.ts";
 import { getCol } from "../../common/getCol.ts";
-import { Fragment } from "react";
+import { Fragment, type ReactNode } from "react";
 import { isSport } from "../../common/sportFunctions.ts";
 import { formatPlayerAwardName } from "../../common/awards.ts";
 import clsx from "clsx";
@@ -228,8 +228,10 @@ export const AwardRaceTable = ({
 	confs,
 	divs,
 	rowsInfo: { award, season, teams },
+	titleOverride,
 }: {
 	rowsInfo: RowsInfo;
+	titleOverride?: ReactNode;
 } & Pick<View<"awardRaces">, "confs" | "divs">) => {
 	const { mip, rookie, stats } = award;
 
@@ -252,7 +254,7 @@ export const AwardRaceTable = ({
 		cols.push(getCol("Compare"));
 	}
 
-	const title = (
+	const title = titleOverride ?? (
 		<Title asterisk={asterisk} award={award} confs={confs} divs={divs} />
 	);
 

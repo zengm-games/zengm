@@ -13,6 +13,7 @@ custom awards
       - also add to GOAT formula/season
   - import/export awards
     - ideally pick and choose on import
+    - use zod schemas to validate
   - validation
     - playoff series statRange cannot be:
       - a team award

@@ -74,8 +74,8 @@ import {
 	type League,
 	type View,
 	type NonEmptyArray,
-	RealPlayerPhotosSchema,
-	RealTeamInfoSchema,
+	realPlayerPhotosSchema,
+	realTeamInfoSchema,
 } from "../../common/types.ts";
 import { getScore } from "../core/player/checkJerseyNumberRetirement.ts";
 import type { NewLeagueTeam } from "../../ui/views/NewLeague/types.ts";
@@ -4215,7 +4215,7 @@ const updateOptions = async (
 			throw new Error("Invalid JSON in real player photos");
 		}
 
-		const result = RealPlayerPhotosSchema.safeParse(parsedJson);
+		const result = realPlayerPhotosSchema.safeParse(parsedJson);
 		if (result.success) {
 			realPlayerPhotos = result.data;
 		} else {
@@ -4233,7 +4233,7 @@ const updateOptions = async (
 			throw new Error("Invalid JSON in real team info");
 		}
 
-		const result = RealTeamInfoSchema.safeParse(parsedJson);
+		const result = realTeamInfoSchema.safeParse(parsedJson);
 		if (result.success) {
 			realTeamInfo = result.data;
 		} else {

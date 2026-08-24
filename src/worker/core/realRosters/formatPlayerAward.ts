@@ -41,15 +41,11 @@ export const formatPlayerAward = (
 
 	const extra: {
 		numTeams?: number;
-		mvp?: true;
-		roy?: true;
+		actAs?: "mvp" | "roy";
 	} = {};
 	if (info.numTeams === undefined) {
-		if (info.mvp) {
-			extra.mvp = true;
-		}
-		if (info.roy) {
-			extra.roy = true;
+		if (info.actAs !== undefined) {
+			extra.actAs = info.actAs;
 		}
 	} else {
 		extra.numTeams = info.numTeams;

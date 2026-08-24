@@ -28,7 +28,6 @@ custom awards
     - formatting of team awards for byPos - maybe use pos instead of rank?
     - help icon for byPos, UI stats
     - explain how achievements work
-    - StickyBottomButtons showing up under sticky column
     - when moving up/down, scroll should follow the one you clicked
   - test
     - invalid statRange value, like if playoff size changed and a round is no longer valid

@@ -7,7 +7,6 @@ import {
 	awardsToEditingState,
 	editingStateToAward,
 	EditSettings,
-	groupAwards,
 } from "./EditSettings.tsx";
 import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
@@ -91,98 +90,83 @@ const AwardSettings = ({
 			<MoreLinks type="awards" page="award_settings" season={season} />
 
 			<div className="row" style={{ marginTop: -MARGIN }}>
-				{awardsState.map(({ raw: award, editing }, i) => {
-					const key = getAwardKey(award);
+				{awardsState.flatMap(({ awards, editing }, i) => {
+					return awards.map((award, j) => {
+						const key = getAwardKey(award);
 
-					// When editing, always start a new "group" (team awards for multiple teams, or conf/div groups) on a new row, cause it looks weird to start it in the second column
-					const newRow = editing && !awardsState[i - 1]?.editing;
+						const showEditSettings = j === 0;
 
-					return (
-						<Fragment key={key}>
-							{newRow ? <div className="w-100" /> : null}
-							<div
-								className={clsx(
-									award.mip ? "col-12 col-lg-9" : "col-12 col-lg-6",
+						// When editing, always start a new "group" (team awards for multiple teams, or conf/div groups) on a new row, cause it looks weird to start it in the second column
+						const newRow = showEditSettings && awards.length > 1;
 
-									// Align to bottom when editing if this is a trailing part of a group, looks better that way
-									!editing ? "d-flex align-items-end" : undefined,
-								)}
-								style={{ marginTop: MARGIN }}
-							>
-								{editing ? (
-									<div>
-										<EditSettings
-											canMoveDown={awardsState.some((award, j) => {
-												// editing undefined check is for group conf/div where there may be other entries of the same editing award
-												return j > i && award.editing !== undefined;
-											})}
-											canMoveUp={i > 0}
-											move={(direction) => {
-												setAwardsState((oldState) => {
-													const grouped = groupAwards(oldState);
-													const toMoveIndex = grouped.findIndex(
-														(group) => group[0]?.raw === award,
-													);
-													const toMove = grouped[toMoveIndex];
-													const otherIndex = toMoveIndex + direction;
-													if (!toMove || !grouped[otherIndex]) {
-														return oldState;
-													}
-													grouped[toMoveIndex] = grouped[otherIndex];
-													grouped[otherIndex] = toMove;
+						return (
+							<Fragment key={key}>
+								{newRow ? <div className="w-100" /> : null}
+								<div
+									className={clsx(
+										award.mip ? "col-12 col-lg-9" : "col-12 col-lg-6",
 
-													return {
-														...oldState,
-														awards: grouped.flat(),
-													};
-												});
-											}}
-											numGamesPlayoffSeries={numGamesPlayoffSeries}
-											playoffsByConf={playoffsByConf}
-											remove={() => {
-												setAwardsState((oldState) => {
-													const grouped = groupAwards(oldState).filter(
-														(group) => {
-															return group[0]?.raw !== award;
-														},
-													);
+										// Align to bottom when editing if this is a trailing part of a group, looks better that way
+										!showEditSettings ? "d-flex align-items-end" : undefined,
+									)}
+									style={{ marginTop: MARGIN }}
+								>
+									{showEditSettings ? (
+										<div>
+											<EditSettings
+												canMoveDown={i < awardsState.length - 1}
+												canMoveUp={i > 0}
+												move={(direction) => {
+													setAwardsState((oldState) => {
+														const toMove = oldState[i];
+														const otherIndex = i + direction;
+														if (!toMove || !oldState[otherIndex]) {
+															return oldState;
+														}
+														oldState[i] = oldState[otherIndex];
+														oldState[otherIndex] = toMove;
 
-													return {
-														...oldState,
-														awards: grouped.flat(),
-													};
-												});
-											}}
-											setState={(state) => {
-												setAwardsState((oldState) => {
-													return oldState.map((award, j) => {
-														return i === j
-															? {
-																	raw: award.raw,
-																	editing: state,
-																}
-															: award;
+														return [...oldState];
 													});
-												});
-											}}
-											state={editing}
-										/>
-									</div>
-								) : null}
-								<AwardRaceTable
-									confs={confs}
-									divs={divs}
-									rowsInfo={{ award, season, teams }}
-								/>
-							</div>
-						</Fragment>
-					);
+												}}
+												numGamesPlayoffSeries={numGamesPlayoffSeries}
+												playoffsByConf={playoffsByConf}
+												remove={() => {
+													setAwardsState((oldState) => {
+														return oldState.filter((row, k) => i !== k);
+													});
+												}}
+												setState={(state) => {
+													setAwardsState((oldState) => {
+														return oldState.map((row, k) => {
+															return i === k
+																? {
+																		awards: row.awards,
+																		editing: state,
+																	}
+																: row;
+														});
+													});
+												}}
+												state={editing}
+											/>
+										</div>
+									) : null}
+									<AwardRaceTable
+										confs={confs}
+										divs={divs}
+										rowsInfo={{ award, season, teams }}
+									/>
+								</div>
+							</Fragment>
+						);
+					});
 				})}
 			</div>
 
 			<StickyBottomButtons>
 				<button
-					className="btn btn-primary me-2"
+					className="btn btn-primary ms-auto"
 					disabled={saving}
 					onClick={() => {
 						saveSettings();

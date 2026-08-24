@@ -1800,7 +1800,7 @@ const getAutoPos = (ratings: any) => {
 };
 
 const getAwardCandidates2 = async (season: number) => {
-	return (await getAwardCandidates(season)).flat();
+	return await getAwardCandidates(season);
 };
 
 const getBornLoc = async (pid: number) => {

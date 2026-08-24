@@ -50,26 +50,15 @@ const awardToEditingState = (award: InputAward) => {
 	};
 };
 
-export const awardsToEditingState = (awards: InputAward[]) => {
-	const output = [];
-	const seenShortNames = new Set();
-	for (const award of awards) {
-		if (seenShortNames.has(award.shortName)) {
-			output.push({
-				raw: award,
-				editing: undefined,
-			});
-			continue;
-		}
-		seenShortNames.add(award.shortName);
-
-		output.push({
-			raw: award,
-			editing: awardToEditingState(award),
+export const awardsToEditingState = (groups: InputAward[][]) => {
+	return groups
+		.filter((awards) => awards.length > 0)
+		.map((awards) => {
+			return {
+				awards,
+				editing: awardToEditingState(awards[0]!),
+			};
 		});
-	}
-
-	return output;
 };
 
 export type EditingState = ReturnType<typeof awardToEditingState>;
@@ -520,29 +509,4 @@ export const EditSettings = ({
 			) : null}
 		</div>
 	);
-};
-
-export type EditingStateRoot = {
-	raw: InputAward;
-	editing: EditingState | undefined;
-};
-
-// When deleting/moving an award, we need to move them by "group" (team awards and conf/div grouping)
-export const groupAwards = (awards: EditingStateRoot[]) => {
-	const grouped: EditingStateRoot[][] = [];
-	let currentGroup: EditingStateRoot[] = [];
-	for (const award of awards) {
-		if (currentGroup.length == 0 || award.editing === undefined) {
-			currentGroup.push(award);
-		} else if (currentGroup.length > 0) {
-			grouped.push(currentGroup);
-			currentGroup = [award];
-		}
-	}
-
-	if (currentGroup.length > 0) {
-		grouped.push(currentGroup);
-	}
-
-	return grouped;
 };

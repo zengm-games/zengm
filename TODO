@@ -11,8 +11,7 @@ custom awards
       - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
     - min/max functions
       - also add to GOAT formula/season
-  - import/export awards
-    - ideally pick and choose on import
+  - import awards
     - use zod schemas to validate
   - validation
     - playoff series statRange cannot be:
@@ -98,6 +97,7 @@ custom awards
   - make All-Star teams use the same formula as the default All-League teams - not that hard, look ad advStats.football using all-leauge team
   - edit award settings for past seasons
   - some way to set award settings in default new league settings
+  - pick and choose which awards to import, and option to not overwrite all
 
 make GOAT lab use stats with derived variables, similar to awards
 

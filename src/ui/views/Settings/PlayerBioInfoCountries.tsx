@@ -17,7 +17,10 @@ import { IMPORT_FILE_STYLE } from "./RowsEditor.tsx";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
 import { Modal } from "../../components/Modal.tsx";
 import { orderBy } from "../../../common/utils.ts";
-import { WEBSITE_ROOT } from "../../../common/constants.ts";
+import {
+	LEAGUE_DATABASE_VERSION,
+	WEBSITE_ROOT,
+} from "../../../common/constants.ts";
 import { downloadFile } from "../../util/downloadFile.ts";
 import { resetFileInput } from "../../util/resetFileInput.ts";
 import { CountryFlag } from "../../components/CountryFlag.tsx";
@@ -128,7 +131,10 @@ const ExportButton = ({
 				downloadFile(
 					"playerBioInfo.json",
 					JSON.stringify(
-						{ gameAttributes: { playerBioInfo: pruned } },
+						{
+							version: LEAGUE_DATABASE_VERSION,
+							gameAttributes: { playerBioInfo: pruned },
+						},
 						undefined,
 						2,
 					),

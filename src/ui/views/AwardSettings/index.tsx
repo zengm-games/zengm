@@ -17,10 +17,58 @@ import { useBlocker } from "../../hooks/useBlocker.ts";
 import { ActionButton } from "../../components/ActionButton.tsx";
 import { formatTeamNumber } from "../../../common/awards.ts";
 import { helpers } from "../../util/helpers.ts";
+import { downloadFile } from "../../util/downloadFile.ts";
+import {
+	GAME_ACRONYM,
+	LEAGUE_DATABASE_VERSION,
+} from "../../../common/constants.ts";
 
 const MARGIN = 14;
 
 const getAwardId = (index: number) => `award-${index}`;
+
+const awardsStateToAwards = (
+	awardsState: ReturnType<typeof awardsToEditingState>,
+) => {
+	const awards = [];
+	const errorMessages: string[] = [];
+
+	const seenShortNames = new Set();
+	for (const { editing } of awardsState) {
+		if (editing === undefined) {
+			continue;
+		}
+
+		if (seenShortNames.has(editing.shortName)) {
+			errorMessages.push(
+				`Duplicate abbrev ${editing.shortName} - award abbrevs must be unique`,
+			);
+		}
+		seenShortNames.add(editing.shortName);
+
+		try {
+			awards.push(editingStateToAward(editing));
+		} catch (error) {
+			errorMessages.push(`${editing.shortName}: ${error.message}`);
+		}
+	}
+
+	if (errorMessages.length > 0) {
+		showNotification({
+			type: "error",
+			text: (
+				<>
+					{errorMessages.map((errorMessage, i) => {
+						return <p key={i}>{errorMessage}</p>;
+					})}
+				</>
+			),
+		});
+		return;
+	}
+
+	return awards;
+};
 
 const AwardSettings = ({
 	awardCandidates,
@@ -66,43 +114,9 @@ const AwardSettings = ({
 				style={{ marginTop: -MARGIN }}
 				onSubmit={async (event) => {
 					event.preventDefault();
-
 					setSaving(true);
-					const awards = [];
-					const errorMessages: string[] = [];
-
-					const seenShortNames = new Set();
-					for (const { editing } of awardsState) {
-						if (editing === undefined) {
-							continue;
-						}
-
-						if (seenShortNames.has(editing.shortName)) {
-							errorMessages.push(
-								`Duplicate abbrev ${editing.shortName} - award abbrevs must be unique`,
-							);
-						}
-						seenShortNames.add(editing.shortName);
-
-						try {
-							awards.push(editingStateToAward(editing));
-						} catch (error) {
-							errorMessages.push(`${editing.shortName}: ${error.message}`);
-						}
-					}
-
-					if (errorMessages.length > 0) {
-						showNotification({
-							type: "error",
-							text: (
-								<>
-									{errorMessages.map((errorMessage, i) => {
-										return <p key={i}>{errorMessage}</p>;
-									})}
-								</>
-							),
-						});
-					} else {
+					const awards = awardsStateToAwards(awardsState);
+					if (awards) {
 						await toWorker("main", "updateGameAttributes", {
 							awards,
 						});
@@ -116,7 +130,6 @@ const AwardSettings = ({
 						setAwardsState(awardsToEditingState(newAwards));
 						setDirty(false);
 					}
-
 					setSaving(false);
 				}}
 			>
@@ -248,6 +261,32 @@ const AwardSettings = ({
 			</form>
 
 			<StickyBottomButtons>
+				<button type="button" className="btn btn-secondary">
+					Import
+				</button>
+				<button
+					type="button"
+					className="btn btn-secondary mx-2"
+					onClick={() => {
+						const awards = awardsStateToAwards(awardsState);
+						if (awards) {
+							downloadFile(
+								`${GAME_ACRONYM}_award_settings.json`,
+								JSON.stringify(
+									{
+										version: LEAGUE_DATABASE_VERSION,
+										gameAttributes: { awards },
+									},
+									undefined,
+									2,
+								),
+								"application/json",
+							);
+						}
+					}}
+				>
+					Export
+				</button>
 				<ActionButton
 					form={formId}
 					type="submit"

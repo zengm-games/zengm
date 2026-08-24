@@ -7,7 +7,6 @@ custom awards
     - similar for editing award settings and any other seenShortNames
 - edit awards settings
   - would this make more sense as a dedicated page? getting a bit complicated...
-    - useBlocker
     - DRY table JSX with AwardRaces
   - add award
   - docs
@@ -26,8 +25,8 @@ custom awards
   - opoyFormula in FBGM only
   - make sure to delete formulaByPos if empty
   - link to award settings
-    - from award races
     - from league settings
+    - hide in tools menu?
   - ui nits
     - formatting of team awards for byPos - maybe use pos instead of rank?
     - help icon for byPos, UI stats

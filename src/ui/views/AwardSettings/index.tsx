@@ -12,6 +12,7 @@ import { showNotification } from "../../util/showNotification.ts";
 import { toWorker } from "../../util/toWorker.ts";
 import clsx from "clsx";
 import { AwardRaceTable, getAwardKey } from "../AwardRaces.tsx";
+import { useBlocker } from "../../hooks/useBlocker.ts";
 
 const MARGIN = 14;
 
@@ -33,6 +34,8 @@ const AwardSettings = ({
 	);
 
 	const [saving, setSaving] = useState(false);
+
+	const { setDirty } = useBlocker();
 
 	const saveSettings = async () => {
 		setSaving(true);
@@ -82,6 +85,7 @@ const AwardSettings = ({
 			// Do this rather than realtimeUpdate in case the number of awards has changed, like from changing the group setting
 			const newAwards = await toWorker("main", "getAwardCandidates", season);
 			setAwardsState(awardsToEditingState(newAwards));
+			setDirty(false);
 		}
 	};
 
@@ -137,6 +141,7 @@ const AwardSettings = ({
 													});
 												}}
 												setState={(state) => {
+													setDirty(true);
 													setAwardsState((oldState) => {
 														return oldState.map((row, k) => {
 															return i === k

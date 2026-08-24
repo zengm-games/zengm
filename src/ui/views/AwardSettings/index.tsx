@@ -5,6 +5,7 @@ import { Fragment, useState } from "react";
 import { StickyBottomButtons } from "../../components/StickyBottomButtons.tsx";
 import {
 	awardsToEditingState,
+	awardToEditingState,
 	editingStateToAward,
 	EditSettings,
 } from "./EditSettings.tsx";
@@ -15,11 +16,13 @@ import { AwardRaceTable, getAwardKey } from "../AwardRaces.tsx";
 import { useBlocker } from "../../hooks/useBlocker.ts";
 import { ActionButton } from "../../components/ActionButton.tsx";
 import { formatTeamNumber } from "../../../common/awards.ts";
+import { helpers } from "../../util/helpers.ts";
 
 const MARGIN = 14;
 
 const AwardSettings = ({
 	awardCandidates,
+	baseNewAward,
 	confs,
 	divs,
 	numGamesPlayoffSeries,
@@ -38,6 +41,8 @@ const AwardSettings = ({
 	const [saving, setSaving] = useState(false);
 
 	const { setDirty } = useBlocker();
+
+	const DEFAULT_CLASSES = "col-12 col-lg-6";
 
 	return (
 		<>
@@ -72,7 +77,7 @@ const AwardSettings = ({
 								{newRow ? <div className="w-100" /> : null}
 								<div
 									className={clsx(
-										award.mip ? "col-12 col-lg-9" : "col-12 col-lg-6",
+										award.mip ? "col-12 col-lg-9" : DEFAULT_CLASSES,
 
 										// Align to bottom when editing if this is a trailing part of a group, looks better that way
 										!showEditSettings ? "d-flex align-items-end" : undefined,
@@ -132,6 +137,37 @@ const AwardSettings = ({
 						);
 					});
 				})}
+				<div className={DEFAULT_CLASSES} style={{ marginTop: MARGIN }}>
+					<button
+						className="btn btn-secondary btn-lg"
+						type="button"
+						onClick={() => {
+							setAwardsState((oldState) => {
+								const newAward = helpers.deepCopy(baseNewAward);
+								const existingShortNames = new Set(
+									oldState.map((row) => row.editing.shortName),
+								);
+								if (existingShortNames.has(newAward.shortName)) {
+									let i = 2;
+									const initialShortName = newAward.shortName;
+									while (existingShortNames.has(newAward.shortName)) {
+										newAward.shortName = `${initialShortName}${i}`;
+										i += 1;
+									}
+								}
+								return [
+									...oldState,
+									{
+										awards: [newAward],
+										editing: awardToEditingState(newAward),
+									},
+								];
+							});
+						}}
+					>
+						Add award
+					</button>
+				</div>
 			</div>
 
 			<StickyBottomButtons>

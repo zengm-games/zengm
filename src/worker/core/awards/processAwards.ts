@@ -650,6 +650,7 @@ export const processAwards = async ({
 						const winner = chunk(
 							sortedPlayers
 								.slice(0, numTeams * TEAM_AWARD_INFO.numPlayersPerTeam)
+								.filter((p) => p.currentStats[statRange])
 								.map((p) => {
 									const tid = p.currentStats[statRange]?.tid;
 									if (tid === undefined) {
@@ -742,8 +743,6 @@ export const processAwards = async ({
 			}
 		}
 	}
-
-	console.log("realizedAwards", realizedAwards);
 
 	return { players, realizedAwards };
 };

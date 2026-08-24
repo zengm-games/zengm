@@ -6,7 +6,6 @@ custom awards
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
     - similar for editing award settings and any other seenShortNames
 - edit awards settings
-  - add award
   - docs
     - explain seasonFraction scaling
       - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
@@ -29,8 +28,7 @@ custom awards
     - formatting of team awards for byPos - maybe use pos instead of rank?
     - help icon for byPos, UI stats
     - explain how achievements work
-    - pressing enter in field should submit form
-      - "continue editing" one
+    - pressing enter in field should submit form (save and update UI)
     - StickyBottomButtons showing up under sticky column
     - when moving up/down, scroll should follow the one you clicked
   - test

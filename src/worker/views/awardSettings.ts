@@ -6,6 +6,7 @@ import { groupByUnique } from "../../common/utils.ts";
 import { actualPhase } from "../util/actualPhase.ts";
 import { PHASE } from "../../common/constants.ts";
 import getPlayoffsByConf from "../core/season/getPlayoffsByConf.ts";
+import { defaultAwards } from "../../common/defaultGameAttributes.ts";
 
 const updateAwardSettings = async (
 	inputs: unknown,
@@ -30,8 +31,21 @@ const updateAwardSettings = async (
 			"noCopyCache",
 		);
 
+		const mvp = defaultAwards.mvp;
+		const baseNewAward: (typeof awardCandidates)[number][number] = {
+			shortName: "NEW",
+			name: "New Award",
+			formula: mvp.formula,
+			showStats: mvp.showStats,
+			numTeams: undefined,
+			players: [],
+			stats: [],
+			winner: [],
+		};
+
 		return {
 			awardCandidates,
+			baseNewAward,
 			confs: g.get("confs", season),
 			divs: g.get("divs", season),
 			numGamesPlayoffSeries: g.get("numGamesPlayoffSeries", season),

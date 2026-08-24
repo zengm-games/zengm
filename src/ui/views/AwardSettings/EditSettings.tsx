@@ -10,7 +10,7 @@ import type {
 	AwardSettingTeam,
 } from "../../../common/types.ts";
 
-const awardToEditingState = (award: InputAward) => {
+export const awardToEditingState = (award: InputAward) => {
 	const group =
 		!award.group || award.group?.type === "playoffSeries"
 			? "league"

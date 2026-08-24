@@ -288,7 +288,8 @@ export const AwardRaceTable = ({
 				/>
 			) : (
 				<>
-					<p>No candidates yet...</p>
+					{title}
+					<p className="mt-2">No candidates yet...</p>
 				</>
 			)}
 			{asterisk ? (

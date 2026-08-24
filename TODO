@@ -7,7 +7,6 @@ custom awards
     - similar for editing award settings and any other seenShortNames
 - edit awards settings
   - would this make more sense as a dedicated page? getting a bit complicated...
-    - editing state should come from worker
     - use group in getAwardCandidates
     - useBlocker
     - DRY table JSX with AwardRaces
@@ -105,7 +104,8 @@ custom awards
   - rethink awards column on player profile - something like FMVP-5 is a bit silly, and SFMVP maybe is always silly
   - edit conf/div abbrevs, and test usage in award name prefixes
   - make All-Star teams use the same formula as the default All-League teams - not that hard, look ad advStats.football using all-leauge team
-  - edit award settings for past seasons, from award races page
+  - edit award settings for past seasons
+  - some way to set award settings in default new league settings
 
 make GOAT lab use stats with derived variables, similar to awards
 

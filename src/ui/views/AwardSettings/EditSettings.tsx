@@ -112,6 +112,18 @@ export const editingStateToAward = (state: EditingState, index: number) => {
 			...common,
 			numTeams,
 		};
+
+		if (state.formulaByPos) {
+			const entries = Object.entries(state.formulaByPos).filter(
+				(entry) => entry[1].trim() !== "",
+			);
+			if (entries.length > 0) {
+				award.formulaByPos = {};
+				for (const [pos, formula] of entries) {
+					award.formulaByPos[pos] = formula;
+				}
+			}
+		}
 	}
 
 	if (state.group === "conf" || state.group === "div") {

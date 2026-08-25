@@ -63,9 +63,7 @@ export const awardsToEditingState = (groups: InputAward[][]) => {
 
 export type EditingState = ReturnType<typeof awardToEditingState>;
 
-export const editingStateToAward = (
-	state: EditingState,
-): AwardSettingIndividual | AwardSettingTeam => {
+export const editingStateToAward = (state: EditingState) => {
 	const common: Omit<AwardInfoCommon, "group"> = {
 		shortName: state.shortName,
 		name: state.name,
@@ -84,6 +82,8 @@ export const editingStateToAward = (
 		common.statRange = state.statRange;
 	}
 
+	const errorMessages: string[] = [];
+
 	let award: AwardSettingIndividual | AwardSettingTeam;
 	if (state.type === "individual") {
 		award = {
@@ -98,10 +98,13 @@ export const editingStateToAward = (
 			award.opoyFormula = state.opoyFormula;
 		}
 	} else {
-		const numTeams = Number.parseInt(state.numTeams);
+		let numTeams = Number.parseInt(state.numTeams);
 		if (Number.isNaN(numTeams) || numTeams < 1) {
 			// Annoying to encode this in zod due to the union of team and individual awards
-			throw new Error(`${common.shortName}: numTeams must be an integer >= 1`);
+			errorMessages.push(
+				`${common.shortName}: numTeams must be an integer >= 1`,
+			);
+			numTeams = 1;
 		}
 
 		award = {
@@ -114,7 +117,10 @@ export const editingStateToAward = (
 		award.group = state.group;
 	}
 
-	return award;
+	return {
+		award,
+		errorMessages: errorMessages.length > 0 ? errorMessages : undefined,
+	};
 };
 
 export const EditSettings = ({

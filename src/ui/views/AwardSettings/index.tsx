@@ -31,29 +31,43 @@ const getAwardId = (index: number) => `award-${index}`;
 const awardsStateToAwards = (
 	awardsState: ReturnType<typeof awardsToEditingState>,
 ) => {
-	let errorMessages;
-	try {
-		const awards = awardsState.map((row) => editingStateToAward(row.editing));
-		const result = awardSettingsSchema.safeParse(awards);
-		if (result.success) {
+	// Combine error messages from editingStateToAward and awardSettingsSchema
+	const errorMessages = [];
+	const awards: ReturnType<typeof editingStateToAward>["award"][] = [];
+	for (const { editing } of awardsState) {
+		const { award, errorMessages: errorMessagesTemp } =
+			editingStateToAward(editing);
+		awards.push(award);
+		if (errorMessagesTemp) {
+			errorMessages.push(...errorMessagesTemp);
+		}
+	}
+
+	const result = awardSettingsSchema.safeParse(awards);
+	if (result.success) {
+		if (errorMessages.length === 0) {
 			return result.data;
 		}
-
-		errorMessages = result.error.issues.map((error) => {
-			console.log(error);
-			const index = error.path[0] as any;
-			const shortName = awards[index]?.shortName;
-			return `${shortName !== undefined ? `${shortName}: ` : ""}${error.message}`;
-		});
-	} catch (error) {
-		errorMessages = [error.message];
+	} else {
+		errorMessages.push(
+			...result.error.issues.map((error) => {
+				const index = error.path[0] as any;
+				const shortName = awards[index]?.shortName;
+				let output = shortName !== undefined ? `${shortName}: ` : "";
+				output += error.message;
+				return output;
+			}),
+		);
 	}
+
+	// Some error messages can be repeated, like if there are multiple duplicate abbrevs
+	const uniqueErrorMessages = Array.from(new Set(errorMessages));
 
 	showNotification({
 		type: "error",
 		text: (
 			<>
-				{errorMessages.map((errorMessage, i) => {
+				{uniqueErrorMessages.map((errorMessage, i) => {
 					return <p key={i}>{errorMessage}</p>;
 				})}
 			</>

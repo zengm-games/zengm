@@ -438,7 +438,9 @@ export const EditSettings = ({
 
 						return (
 							<label key={pos} className="mt-2 d-flex align-items-center gap-3">
-								<span>{pos}</span>
+								<span className="text-end" style={{ minWidth: 47 }}>
+									{pos}
+								</span>
 								<input
 									className="form-control"
 									type="text"

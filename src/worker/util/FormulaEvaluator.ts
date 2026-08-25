@@ -197,6 +197,7 @@ const shuntingYard = (string: string) => {
 class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 	private symbols: Set<Symbols[number]>;
 	private tokens: (string | number)[];
+	public usedSymbols = new Set<Symbols[number]>();
 
 	constructor(equation: string, symbols: Symbols) {
 		this.symbols = new Set(symbols);
@@ -214,6 +215,7 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 
 		for (const token of tokens) {
 			if (this.symbols.has(token)) {
+				this.usedSymbols.add(token);
 				processed.push(token);
 			} else if (
 				operators[token] !== undefined ||

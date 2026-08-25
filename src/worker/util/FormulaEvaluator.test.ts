@@ -55,3 +55,16 @@ describe("min/max", () => {
 		assert.equal(formulaEvaluator.evaluate({ "2pp": 4 }), 9);
 	});
 });
+
+test("usedSymbols", () => {
+	const formulaEvaluator = new FormulaEvaluator("a+b+c+4+min(1,2)", [
+		"a",
+		"b",
+		"c",
+		"d",
+	]);
+	assert.deepStrictEqual(
+		formulaEvaluator.usedSymbols,
+		new Set(["a", "b", "c"]),
+	);
+});

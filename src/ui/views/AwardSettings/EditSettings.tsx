@@ -100,7 +100,8 @@ export const editingStateToAward = (
 	} else {
 		const numTeams = Number.parseInt(state.numTeams);
 		if (Number.isNaN(numTeams) || numTeams < 1) {
-			throw new Error("numTeams must be an integer >= 1");
+			// Annoying to encode this in zod due to the union of team and individual awards
+			throw new Error(`${common.shortName}: numTeams must be an integer >= 1`);
 		}
 
 		award = {

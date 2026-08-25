@@ -31,17 +31,23 @@ const getAwardId = (index: number) => `award-${index}`;
 const awardsStateToAwards = (
 	awardsState: ReturnType<typeof awardsToEditingState>,
 ) => {
-	const awards = awardsState.map((row) => editingStateToAward(row.editing));
-	const result = awardSettingsSchema.safeParse(awards);
-	if (result.success) {
-		return result.data;
-	}
+	let errorMessages;
+	try {
+		const awards = awardsState.map((row) => editingStateToAward(row.editing));
+		const result = awardSettingsSchema.safeParse(awards);
+		if (result.success) {
+			return result.data;
+		}
 
-	const errorMessages = result.error.issues.map((error) => {
-		const index = error.path[0] as any;
-		const shortName = awards[index]?.shortName;
-		return `${shortName !== undefined ? `${shortName}: ` : ""}${error.message}`;
-	});
+		errorMessages = result.error.issues.map((error) => {
+			console.log(error);
+			const index = error.path[0] as any;
+			const shortName = awards[index]?.shortName;
+			return `${shortName !== undefined ? `${shortName}: ` : ""}${error.message}`;
+		});
+	} catch (error) {
+		errorMessages = [error.message];
+	}
 
 	showNotification({
 		type: "error",

@@ -595,7 +595,7 @@ const awardInfoIndividualCommonSchema = z.object({
 });
 
 const awardInfoTeamCommonSchema = z.object({
-	numTeams: z.number(),
+	numTeams: z.number().gte(1),
 });
 
 const awardInfoIndividualSchema = awardInfoCommonSchema

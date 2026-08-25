@@ -11,13 +11,9 @@ custom awards
       - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
     - min/max functions
       - also add to GOAT formula/season
-  - import awards
-    - use zod schemas to validate
-      - can zod validate other form constraints, like shortName uniqueness?
-      - can this be used on form submission?
-        - shortName
-        - numTeams must be an integer >= 1
   - validation
+    - can be zod or non-zod, depending on which is easier
+    - would be nice to allow editingStateToAward to return multiple errors rather than throwing (or at least one error per call of editingStateToAward) and to then run zod on any which pass editingStateToAward, so all errors could be shown at once
     - playoff series statRange cannot be:
       - a team award
       - MIP
@@ -29,7 +25,7 @@ custom awards
     - from league settings
     - hide in tools menu?
   - ui nits
-    - formatting of team awards for byPos - maybe use pos instead of rank?
+    - award races/settings formatting of team awards for byPos - maybe use pos instead of rank?
     - help icon for byPos, UI stats
     - explain how achievements work
   - test

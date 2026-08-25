@@ -11,13 +11,10 @@ custom awards
       - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
     - min/max functions
       - also add to GOAT formula/season
-  - validation
-    - can be zod or non-zod, depending on which is easier
-    - validate formula, formulaByPos, and opoyFormula should be valid formulas
-      - can we make evaluate never throw? maybe run with all 0 values in constructor first
-    - opoyFormula: don't allow if MIP, MVP and maybe other stuff
   - opoyFormula in FBGM only
-  - make sure to delete formulaByPos if empty
+    - zod: don't allow if MIP, MVP, or team
+  - formulaByPos
+    - make sure to delete when saving if empty
   - link to award settings
     - from league settings
     - hide in tools menu?

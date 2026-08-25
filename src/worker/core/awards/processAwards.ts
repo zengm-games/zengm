@@ -242,9 +242,11 @@ export const processAwards = async ({
 				try {
 					formulaEvaluator = new FormulaEvaluator(formula, symbols);
 				} catch (error) {
+					const posPart = award.formulaByPos?.[p.pos] ? `${p.pos} ` : "";
+
 					errorMessages ??= [];
 					errorMessages.push(
-						`${award.shortName} formula (${award.formula}): ${error.message}`,
+						`${award.shortName} ${posPart}formula (${award.formula}): ${error.message}`,
 					);
 
 					// At least render something

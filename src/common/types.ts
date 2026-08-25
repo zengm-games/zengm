@@ -657,12 +657,22 @@ export const awardSettingsSchema = z
 		for (const [i, award] of awards.entries()) {
 			const { shortName } = award;
 
-			if (seen.has(shortName)) {
+			const addIssue = (message: string) => {
 				ctx.addIssue({
 					code: "custom",
-					path: [i, "shortName"],
-					message: `Duplicate abbrev - award abbrevs must be unique`,
+					path: [i],
+					message,
 				});
+			};
+
+			if (seen.has(shortName)) {
+				addIssue("Duplicate abbrev - award abbrevs must be unique");
+			}
+			if (award.numTeams !== undefined && typeof award.statRange === "number") {
+				addIssue("Playoff series awards cannot be individual awards");
+			}
+			if (award.mip && typeof award.statRange === "number") {
+				addIssue("Playoff series awards cannot be Most Improved Player awards");
 			}
 
 			seen.add(shortName);

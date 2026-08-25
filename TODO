@@ -6,6 +6,7 @@ custom awards
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
     - similar for editing award settings and any other seenShortNames
 - edit awards settings
+  - after playoffs, make sure award settings is using g not awards
   - docs
     - explain seasonFraction scaling
       - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
@@ -13,9 +14,7 @@ custom awards
       - also add to GOAT formula/season
   - validation
     - can be zod or non-zod, depending on which is easier
-    - playoff series statRange cannot be:
-      - a team award
-      - MIP
+    - team MIP?
     - validate formula, formulaByPos, and opoyFormula should be valid formulas
     - opoyFormula: don't allow if MIP, MVP and maybe other stuff
   - opoyFormula in FBGM only

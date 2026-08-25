@@ -15,6 +15,7 @@ custom awards
     - zod: don't allow if MIP, MVP, or team
   - formulaByPos
     - need to know which pos to show
+      - is it just POSITIONS - NOT_REAL_POSITIONS? what about DH though...
   - link to award settings
     - from league settings
     - hide in tools menu?

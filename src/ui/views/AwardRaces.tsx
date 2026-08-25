@@ -73,7 +73,6 @@ const getRows = ({
 		const ps = p.currentStats;
 		const pr = p.ratings.findLast((row) => row.season === season);
 
-		const pos = pr?.pos ?? "?";
 		const abbrev = ps?.abbrev;
 		const tid = ps?.tid;
 		const t = teams[tid];
@@ -105,7 +104,7 @@ const getRows = ({
 				firstNameShort: p.firstNameShort,
 				lastName: p.lastName,
 			}),
-			pos,
+			p.pos,
 			p.age,
 			<>
 				<a href={helpers.leagueUrl(["roster", `${abbrev}_${tid}`, season])}>

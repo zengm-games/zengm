@@ -480,6 +480,7 @@ export const EditSettings = ({
 							<input
 								className="form-control"
 								onChange={changeHandler("numTeams")}
+								type="number"
 								value={state.numTeams}
 							/>
 						</label>

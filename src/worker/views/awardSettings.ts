@@ -20,7 +20,7 @@ const updateAwardSettings = async (
 	) {
 		const season =
 			actualPhase() === PHASE.PRESEASON ? g.get("season") - 1 : g.get("season");
-		const awardCandidates = await getAwardCandidates(season);
+		const awardCandidates = await getAwardCandidates(season, true);
 
 		const teams = await idb.getCopies.teamsPlus(
 			{

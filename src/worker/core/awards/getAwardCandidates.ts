@@ -63,8 +63,13 @@ const persistedAwardsToAwardSetting = (persistedAwards: Awards2) => {
 	return { awards, statOverridesByMatchup };
 };
 
-const getAwards = async (season: number) => {
-	const persistedAwards = await idb.getCopy.awards({ season });
+const getAwards = async (
+	season: number,
+	forceUseGameAttributes: boolean | undefined,
+) => {
+	const persistedAwards = forceUseGameAttributes
+		? undefined
+		: await idb.getCopy.awards({ season });
 
 	let awards;
 	let statOverridesByMatchup;
@@ -83,8 +88,14 @@ const getAwards = async (season: number) => {
 	};
 };
 
-export const getAwardCandidates = async (season: number) => {
-	const { awards, statOverridesByMatchup } = await getAwards(season);
+export const getAwardCandidates = async (
+	season: number,
+	forceUseGameAttributes?: boolean,
+) => {
+	const { awards, statOverridesByMatchup } = await getAwards(
+		season,
+		forceUseGameAttributes,
+	);
 
 	const { realizedAwards, players } = await processAwards({
 		awards,

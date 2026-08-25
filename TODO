@@ -13,7 +13,6 @@ custom awards
       - also add to GOAT formula/season
   - validation
     - can be zod or non-zod, depending on which is easier
-    - would be nice to allow editingStateToAward to return multiple errors rather than throwing (or at least one error per call of editingStateToAward) and to then run zod on any which pass editingStateToAward, so all errors could be shown at once
     - playoff series statRange cannot be:
       - a team award
       - MIP

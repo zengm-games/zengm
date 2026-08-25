@@ -63,7 +63,7 @@ export const awardsToEditingState = (groups: InputAward[][]) => {
 
 export type EditingState = ReturnType<typeof awardToEditingState>;
 
-export const editingStateToAward = (state: EditingState) => {
+export const editingStateToAward = (state: EditingState, index: number) => {
 	const common: Omit<AwardInfoCommon, "group"> = {
 		shortName: state.shortName,
 		name: state.name,
@@ -82,7 +82,7 @@ export const editingStateToAward = (state: EditingState) => {
 		common.statRange = state.statRange;
 	}
 
-	const errorMessages: string[] = [];
+	const errorMessages: { index: number; message: string }[] = [];
 
 	let award: AwardSettingIndividual | AwardSettingTeam;
 	if (state.type === "individual") {
@@ -100,10 +100,11 @@ export const editingStateToAward = (state: EditingState) => {
 	} else {
 		let numTeams = Number.parseInt(state.numTeams);
 		if (Number.isNaN(numTeams) || numTeams < 1) {
-			// Annoying to encode this in zod due to the union of team and individual awards
-			errorMessages.push(
-				`${common.shortName}: numTeams must be an integer >= 1`,
-			);
+			// Annoying to encode this in awardSettingTeamSchema due to the union of team and individual awards. Could be done in awardSettingsSchema superRefine, but then we need to change the other schemas to explicitly allow NaN which is a bit weird. So maybe this is better?
+			errorMessages.push({
+				index,
+				message: "numTeams must be an integer >= 1",
+			});
 			numTeams = 1;
 		}
 

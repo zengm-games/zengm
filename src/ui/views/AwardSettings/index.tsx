@@ -23,6 +23,7 @@ import {
 	LEAGUE_DATABASE_VERSION,
 } from "../../../common/constants.ts";
 import { ImportFileButton } from "../../components/ImportFileButton.tsx";
+import { orderBy } from "../../../common/utils.ts";
 
 const MARGIN = 14;
 
@@ -34,9 +35,11 @@ const awardsStateToAwards = (
 	// Combine error messages from editingStateToAward and awardSettingsSchema
 	const errorMessages = [];
 	const awards: ReturnType<typeof editingStateToAward>["award"][] = [];
-	for (const { editing } of awardsState) {
-		const { award, errorMessages: errorMessagesTemp } =
-			editingStateToAward(editing);
+	for (const [index, { editing }] of awardsState.entries()) {
+		const { award, errorMessages: errorMessagesTemp } = editingStateToAward(
+			editing,
+			index,
+		);
 		awards.push(award);
 		if (errorMessagesTemp) {
 			errorMessages.push(...errorMessagesTemp);
@@ -52,16 +55,26 @@ const awardsStateToAwards = (
 		errorMessages.push(
 			...result.error.issues.map((error) => {
 				const index = error.path[0] as any;
-				const shortName = awards[index]?.shortName;
-				let output = shortName !== undefined ? `${shortName}: ` : "";
-				output += error.message;
-				return output;
+				return {
+					index,
+					message: error.message,
+				};
 			}),
 		);
 	}
 
 	// Some error messages can be repeated, like if there are multiple duplicate abbrevs
-	const uniqueErrorMessages = Array.from(new Set(errorMessages));
+	// Also sort in order of index (how they are displayed in UI)
+	const uniqueErrorMessages = Array.from(
+		new Set(
+			orderBy(errorMessages, "index", "asc").map(({ index, message }) => {
+				const shortName = awards[index]?.shortName;
+				let output = shortName !== undefined ? `${shortName}: ` : "";
+				output += message;
+				return output;
+			}),
+		),
+	);
 
 	showNotification({
 		type: "error",

@@ -349,9 +349,25 @@ export const processAwards = async ({
 					{ season },
 					"noCopyCache",
 				);
-				const roundSeries = playoffSeries?.series.at(baseAward.statRange);
-				if (!roundSeries) {
-					// Show placeholder award if no series
+				const roundSeries = playoffSeries?.series.at(baseAward.statRange) ?? [];
+				expandedAwards = roundSeries
+					.map((series, i) => {
+						if (!series.away) {
+							return;
+						}
+
+						return {
+							...baseAward,
+							group: {
+								type: "playoffSeries",
+								tids: [series.home.tid, series.away.tid],
+							} as const,
+						};
+					})
+					.filter((award) => award !== undefined);
+
+				// Show placeholder award if no series
+				if (expandedAwards.length === 0) {
 					expandedAwards = [
 						{
 							...baseAward,
@@ -361,22 +377,6 @@ export const processAwards = async ({
 							},
 						},
 					];
-				} else {
-					expandedAwards = roundSeries
-						.map((series, i) => {
-							if (!series.away) {
-								return;
-							}
-
-							return {
-								...baseAward,
-								group: {
-									type: "playoffSeries",
-									tids: [series.home.tid, series.away.tid],
-								} as const,
-							};
-						})
-						.filter((award) => award !== undefined);
 				}
 			} else {
 				expandedAwards = [omit(baseAward, ["group"])];

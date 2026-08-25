@@ -183,7 +183,9 @@ const AwardSettings = ({
 										award.mip ? "col-12 col-lg-9" : DEFAULT_CLASSES,
 
 										// Align to bottom when editing if this is a trailing part of a group, looks better that way
-										!showEditSettings ? "d-flex align-items-end" : undefined,
+										!showEditSettings
+											? "d-flex flex-column justify-content-end"
+											: undefined,
 									)}
 									style={{
 										marginTop: MARGIN,

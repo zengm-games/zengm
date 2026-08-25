@@ -97,7 +97,7 @@ export const getAwardCandidates = async (
 		forceUseGameAttributes,
 	);
 
-	const { realizedAwards, players } = await processAwards({
+	const { errorMessages, realizedAwards, players } = await processAwards({
 		awards,
 		numPlayersPerIndividualAward: 10,
 		season,
@@ -204,5 +204,5 @@ export const getAwardCandidates = async (
 		}),
 	);
 
-	return awardCandidates;
+	return { awardCandidates, errorMessages };
 };

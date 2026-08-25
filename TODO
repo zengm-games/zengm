@@ -13,8 +13,8 @@ custom awards
       - also add to GOAT formula/season
   - validation
     - can be zod or non-zod, depending on which is easier
-    - team MIP?
     - validate formula, formulaByPos, and opoyFormula should be valid formulas
+      - can we make evaluate never throw? maybe run with all 0 values in constructor first
     - opoyFormula: don't allow if MIP, MVP and maybe other stuff
   - opoyFormula in FBGM only
   - make sure to delete formulaByPos if empty

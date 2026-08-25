@@ -217,6 +217,8 @@ export const processAwards = async ({
 		FormulaEvaluator<string[]>["evaluate"]
 	> = {};
 
+	let errorMessages: string[] | undefined;
+
 	for (const p of players) {
 		for (const award of awards) {
 			const formula = award.formulaByPos?.[p.pos] ?? award.formula;
@@ -231,22 +233,35 @@ export const processAwards = async ({
 			}
 
 			if (!formulaEvaluators[formula]) {
-				const formulaEvaluator = new FormulaEvaluator(
-					formula,
+				const symbols =
 					typeof statRange === "number"
 						? PLAYOFF_SERIES_AWARD_STATS_ALL
-						: AWARD_STATS_ALL,
-				);
+						: AWARD_STATS_ALL;
+
+				let formulaEvaluator;
+				try {
+					formulaEvaluator = new FormulaEvaluator(formula, symbols);
+				} catch (error) {
+					errorMessages ??= [];
+					errorMessages.push(
+						`${award.shortName} formula (${award.formula}): ${error.message}`,
+					);
+
+					// At least render something
+					formulaEvaluator = new FormulaEvaluator("0", symbols);
+				}
+
 				formulaEvaluators[formula] =
 					formulaEvaluator.evaluate.bind(formulaEvaluator);
 			}
 			const evaluate = formulaEvaluators[formula];
 
 			const currentStats = p.currentStats[award.statRange ?? "regularSeason"];
-			const currentScore = currentStats ? evaluate(currentStats) : -Infinity;
+			const currentScore =
+				currentStats && evaluate ? evaluate(currentStats) : -Infinity;
 
 			// For MIP, compare score to last season and max of all previous seasons
-			if (award.mip) {
+			if (award.mip && evaluate) {
 				const statRange = award.statRange ?? "regularSeason";
 				if (typeof statRange === "number") {
 					throw new Error("mip not supported for playoff series award");
@@ -709,34 +724,44 @@ export const processAwards = async ({
 					const opoy = playersByPid[opoyWinner.pid];
 					if (mvp?.pos === "QB" && opoy) {
 						// MVP is a QB - if that QB is a significantly better offensive player (by opoyFormula) than the initial OPOY, then bump them to the top of the list
-						const formulaEvaluator = new FormulaEvaluator(
-							opoyAward.opoyFormula,
-							opoyPlayoffSeries
-								? PLAYOFF_SERIES_AWARD_STATS_ALL
-								: AWARD_STATS_ALL,
-						);
+						let formulaEvaluator;
+						try {
+							formulaEvaluator = new FormulaEvaluator(
+								opoyAward.opoyFormula,
+								opoyPlayoffSeries
+									? PLAYOFF_SERIES_AWARD_STATS_ALL
+									: AWARD_STATS_ALL,
+							);
+						} catch (error) {
+							errorMessages ??= [];
+							errorMessages.push(
+								`${opoyAward.shortName} OPOY formula (${opoyAward.formula}): ${error.message}`,
+							);
+						}
 
-						const mvpCurrentStats =
-							mvp.currentStats[mvpAward.statRange ?? "regularSeason"];
-						const mvpScore = mvpCurrentStats
-							? formulaEvaluator.evaluate(mvpCurrentStats)
-							: undefined;
+						if (formulaEvaluator) {
+							const mvpCurrentStats =
+								mvp.currentStats[mvpAward.statRange ?? "regularSeason"];
+							const mvpScore = mvpCurrentStats
+								? formulaEvaluator.evaluate(mvpCurrentStats)
+								: undefined;
 
-						const opoyCurrentStats =
-							opoy.currentStats[opoyAward.statRange ?? "regularSeason"];
-						const opoyScore = opoyCurrentStats
-							? formulaEvaluator.evaluate(opoyCurrentStats)
-							: undefined;
+							const opoyCurrentStats =
+								opoy.currentStats[opoyAward.statRange ?? "regularSeason"];
+							const opoyScore = opoyCurrentStats
+								? formulaEvaluator.evaluate(opoyCurrentStats)
+								: undefined;
 
-						if (
-							mvpScore !== undefined &&
-							opoyScore !== undefined &&
-							mvpScore / opoyScore > 1.2
-						) {
-							opoyAward.winner = [
-								{ ...mvpWinner, opoyOverride: true as const },
-								...opoyAward.winner,
-							].slice(0, numPlayersPerIndividualAward);
+							if (
+								mvpScore !== undefined &&
+								opoyScore !== undefined &&
+								mvpScore / opoyScore > 1.2
+							) {
+								opoyAward.winner = [
+									{ ...mvpWinner, opoyOverride: true as const },
+									...opoyAward.winner,
+								].slice(0, numPlayersPerIndividualAward);
+							}
 						}
 					}
 				}
@@ -744,5 +769,5 @@ export const processAwards = async ({
 		}
 	}
 
-	return { players, realizedAwards };
+	return { errorMessages, players, realizedAwards };
 };

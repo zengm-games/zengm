@@ -29,6 +29,19 @@ const MARGIN = 14;
 
 const getAwardId = (index: number) => `award-${index}`;
 
+const showErrorMessages = (errorMessages: string[]) => {
+	showNotification({
+		type: "error",
+		text: (
+			<>
+				{errorMessages.map((errorMessage, i) => {
+					return <p key={i}>{errorMessage}</p>;
+				})}
+			</>
+		),
+	});
+};
+
 const awardsStateToAwards = (
 	awardsState: ReturnType<typeof awardsToEditingState>,
 ) => {
@@ -76,16 +89,7 @@ const awardsStateToAwards = (
 		),
 	);
 
-	showNotification({
-		type: "error",
-		text: (
-			<>
-				{uniqueErrorMessages.map((errorMessage, i) => {
-					return <p key={i}>{errorMessage}</p>;
-				})}
-			</>
-		),
-	});
+	showErrorMessages(uniqueErrorMessages);
 };
 
 const AwardSettings = ({
@@ -93,6 +97,7 @@ const AwardSettings = ({
 	baseNewAward,
 	confs,
 	divs,
+	errorMessages,
 	numGamesPlayoffSeries,
 	playoffsByConf,
 	season,
@@ -120,6 +125,14 @@ const AwardSettings = ({
 		}
 	}, [scrollToAwardId]);
 
+	useEffect(() => {
+		if (errorMessages) {
+			showErrorMessages(errorMessages);
+		}
+		// In theory new errorMessages could come later, but they'd probably be caught by getAwardCandidates below
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
 	const DEFAULT_CLASSES = "col-12 col-lg-6";
 
 	return (
@@ -145,7 +158,10 @@ const AwardSettings = ({
 							"getAwardCandidates",
 							season,
 						);
-						setAwardsState(awardsToEditingState(newAwards));
+						if (newAwards.errorMessages) {
+							showErrorMessages(newAwards.errorMessages);
+						}
+						setAwardsState(awardsToEditingState(newAwards.awardCandidates));
 						setDirty(false);
 					}
 					setSaving(false);

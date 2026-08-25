@@ -21,7 +21,7 @@ const MARGIN = 14;
 
 export type InputAward = Awaited<
 	ReturnType<typeof getAwardCandidates>
->[number][number];
+>["awardCandidates"][number][number];
 
 const Title = ({
 	asterisk,

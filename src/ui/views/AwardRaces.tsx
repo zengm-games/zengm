@@ -15,10 +15,13 @@ import { Fragment, type ReactNode } from "react";
 import { isSport } from "../../common/sportFunctions.ts";
 import { formatPlayerAwardName } from "../../common/awards.ts";
 import clsx from "clsx";
+import type { getAwardCandidates } from "../../worker/core/awards/getAwardCandidates.ts";
 
 const MARGIN = 14;
 
-export type InputAward = View<"awardRaces">["awardCandidates"][number];
+export type InputAward = Awaited<
+	ReturnType<typeof getAwardCandidates>
+>[number][number];
 
 const Title = ({
 	asterisk,

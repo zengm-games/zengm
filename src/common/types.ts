@@ -649,9 +649,25 @@ const awardSettingTeamSchema = awardInfoTeamSchema
 		group: z.enum(["conf", "div"]).optional(),
 	});
 
-export const awardSettingsSchema = z.array(
-	z.union([awardSettingIndividualSchema, awardSettingTeamSchema]),
-);
+export const awardSettingsSchema = z
+	.array(z.union([awardSettingIndividualSchema, awardSettingTeamSchema]))
+	.superRefine((awards, ctx) => {
+		const seen = new Set<string>();
+
+		for (const [i, award] of awards.entries()) {
+			const { shortName } = award;
+
+			if (seen.has(shortName)) {
+				ctx.addIssue({
+					code: "custom",
+					path: [i, "shortName"],
+					message: `Duplicate abbrev - award abbrevs must be unique`,
+				});
+			}
+
+			seen.add(shortName);
+		}
+	});
 
 export type AwardInfoCommon = z.infer<typeof awardInfoCommonSchema>;
 export type AwardInfoIndividual = z.infer<typeof awardInfoIndividualSchema>;

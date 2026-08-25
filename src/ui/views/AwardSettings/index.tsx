@@ -31,44 +31,28 @@ const getAwardId = (index: number) => `award-${index}`;
 const awardsStateToAwards = (
 	awardsState: ReturnType<typeof awardsToEditingState>,
 ) => {
-	const awards = [];
-	const errorMessages: string[] = [];
-
-	const seenShortNames = new Set();
-	for (const { editing } of awardsState) {
-		if (editing === undefined) {
-			continue;
-		}
-
-		if (seenShortNames.has(editing.shortName)) {
-			errorMessages.push(
-				`Duplicate abbrev ${editing.shortName} - award abbrevs must be unique`,
-			);
-		}
-		seenShortNames.add(editing.shortName);
-
-		try {
-			awards.push(editingStateToAward(editing));
-		} catch (error) {
-			errorMessages.push(`${editing.shortName}: ${error.message}`);
-		}
+	const awards = awardsState.map((row) => editingStateToAward(row.editing));
+	const result = awardSettingsSchema.safeParse(awards);
+	if (result.success) {
+		return result.data;
 	}
 
-	if (errorMessages.length > 0) {
-		showNotification({
-			type: "error",
-			text: (
-				<>
-					{errorMessages.map((errorMessage, i) => {
-						return <p key={i}>{errorMessage}</p>;
-					})}
-				</>
-			),
-		});
-		return;
-	}
+	const errorMessages = result.error.issues.map((error) => {
+		const index = error.path[0] as any;
+		const shortName = awards[index]?.shortName;
+		return `${shortName !== undefined ? `${shortName}: ` : ""}${error.message}`;
+	});
 
-	return awards;
+	showNotification({
+		type: "error",
+		text: (
+			<>
+				{errorMessages.map((errorMessage, i) => {
+					return <p key={i}>{errorMessage}</p>;
+				})}
+			</>
+		),
+	});
 };
 
 const AwardSettings = ({

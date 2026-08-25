@@ -14,6 +14,9 @@ custom awards
   - import awards
     - use zod schemas to validate
       - can zod validate other form constraints, like shortName uniqueness?
+      - can this be used on form submission?
+        - shortName
+        - numTeams must be an integer >= 1
   - validation
     - playoff series statRange cannot be:
       - a team award

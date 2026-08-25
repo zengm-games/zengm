@@ -86,6 +86,7 @@ custom awards
     - make sure to apply in editingStateToAward
 - later
   - only fetch needed variables from playersPlus when evaluating award formula
+    - see FormulaEvaluator.usedSymbols
     - also consider showStats for Award Races
   - conditional stat-based awards that are not awarded every season, like triple crown or 40/40
   - clutch player award

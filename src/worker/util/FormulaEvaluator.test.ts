@@ -33,20 +33,14 @@ describe("min/max", () => {
 	});
 
 	test("not enough parameters", () => {
-		const formulaEvaluator = new FormulaEvaluator("min(x)", ["x"]);
 		assert.throws(() => {
-			formulaEvaluator.evaluate({ x: 5 });
+			new FormulaEvaluator("min(x)", ["x"]);
 		}, "min/max requires exactly two parameters");
 	});
 
 	test("too many parameters", () => {
-		const formulaEvaluator = new FormulaEvaluator("min(x, y, z)", [
-			"x",
-			"y",
-			"z",
-		]);
 		assert.throws(() => {
-			formulaEvaluator.evaluate({ x: 5, y: 6, z: 7 });
+			new FormulaEvaluator("min(x, y, z)", ["x", "y", "z"]);
 		}, "min/max requires exactly two parameters");
 	});
 

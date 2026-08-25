@@ -208,6 +208,13 @@ class FormulaEvaluator<Symbols extends ReadonlyArray<string>> {
 		if (this.tokens.length === 0) {
 			throw new Error("Formula cannot be empty");
 		}
+
+		// Test with dummy values for symbols, to hopefully ensure that this.evaluate never throws
+		const dummyValues: Record<string, number> = {};
+		for (const symbol of this.usedSymbols) {
+			dummyValues[symbol] = 0;
+		}
+		this.evaluate(dummyValues);
 	}
 
 	private partiallyEvaluate(tokens: string[]) {

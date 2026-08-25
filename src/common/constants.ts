@@ -571,9 +571,20 @@ export const SKILLS = bySport<Record<string, string>>({
 	},
 });
 
+// These positions can never be a player's main position
 export const NOT_REAL_POSITIONS = new Set(
 	bySport({
 		baseball: ["DH"],
+		basketball: [],
+		football: ["KR", "PR"],
+		hockey: [],
+	}),
+);
+
+// ...but getPosByGpF can return DH, so that can show up as a player's position some places, including awards
+export const NOT_REAL_POSITIONS_AWARDS = new Set(
+	bySport({
+		baseball: [],
 		basketball: [],
 		football: ["KR", "PR"],
 		hockey: [],

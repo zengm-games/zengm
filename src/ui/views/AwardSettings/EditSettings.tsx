@@ -1,7 +1,11 @@
 import { useId, type ChangeEvent, type ReactNode } from "react";
 import { bySport, isSport } from "../../../common/sportFunctions.ts";
 import { HelpPopover } from "../../components/HelpPopover.tsx";
-import { TEAM_AWARD_INFO } from "../../../common/constants.ts";
+import {
+	NOT_REAL_POSITIONS_AWARDS,
+	POSITIONS,
+	TEAM_AWARD_INFO,
+} from "../../../common/constants.ts";
 import { helpers } from "../../util/helpers.ts";
 import type { InputAward } from "../AwardRaces.tsx";
 import type {
@@ -9,6 +13,7 @@ import type {
 	AwardSettingIndividual,
 	AwardSettingTeam,
 } from "../../../common/types.ts";
+import { Dropdown, DropdownButton } from "react-bootstrap";
 
 export const awardToEditingState = (award: InputAward) => {
 	const group =
@@ -20,7 +25,8 @@ export const awardToEditingState = (award: InputAward) => {
 		shortName: award.shortName,
 		name: award.name,
 		formula: award.formula,
-		formulaByPos: award.formulaByPos ? { ...award.formulaByPos } : undefined,
+		formulaByPos: award.formulaByPos ? { ...award.formulaByPos } : {},
+		showByPos: !!award.formulaByPos,
 		statRange: award.statRange ?? "regularSeason",
 		showStats: award.showStats,
 		group,
@@ -112,22 +118,22 @@ export const editingStateToAward = (state: EditingState, index: number) => {
 			...common,
 			numTeams,
 		};
-
-		if (state.formulaByPos) {
-			const entries = Object.entries(state.formulaByPos).filter(
-				(entry) => entry[1].trim() !== "",
-			);
-			if (entries.length > 0) {
-				award.formulaByPos = {};
-				for (const [pos, formula] of entries) {
-					award.formulaByPos[pos] = formula;
-				}
-			}
-		}
 	}
 
 	if (state.group === "conf" || state.group === "div") {
 		award.group = state.group;
+	}
+
+	if (state.showByPos) {
+		const entries = Object.entries(state.formulaByPos).filter(
+			(entry) => entry[1].trim() !== "",
+		);
+		if (entries.length > 0) {
+			award.formulaByPos = {};
+			for (const [pos, formula] of entries) {
+				award.formulaByPos[pos] = formula;
+			}
+		}
 	}
 
 	return {
@@ -364,12 +370,109 @@ export const EditSettings = ({
 							type="button"
 							className="btn btn-secondary text-nowrap"
 							title="By position"
+							onClick={() => {
+								setState({
+									...state,
+									showByPos: !state.showByPos,
+								});
+							}}
 						>
 							By pos
 						</button>
 					) : null}
 				</div>
 			</label>
+			{state.showByPos ? (
+				<>
+					<div className="mt-2 d-flex align-items-center gap-2">
+						<DropdownButton
+							variant="secondary"
+							title="Add position-speicifc formula"
+						>
+							{POSITIONS.map((pos) => {
+								if (
+									NOT_REAL_POSITIONS_AWARDS.has(pos) ||
+									state.formulaByPos[pos] !== undefined
+								) {
+									return null;
+								}
+
+								return (
+									<Dropdown.Item
+										key={pos}
+										onClick={() => {
+											setState({
+												...state,
+												formulaByPos: {
+													...state.formulaByPos,
+													[pos]: "",
+												},
+											});
+										}}
+									>
+										{pos}
+									</Dropdown.Item>
+								);
+							})}
+						</DropdownButton>
+						<HelpPopover title="Position-specific formulas">
+							<p>
+								By default, the same formula is used for players at every
+								position.
+							</p>
+							<p>
+								If you want to override that formula for some positions, specify
+								them here.
+							</p>
+							<p>
+								For any other positions, or for any blank position-specific
+								formulas, the main formula will be used.
+							</p>
+						</HelpPopover>
+					</div>
+					{POSITIONS.map((pos) => {
+						const formula = state.formulaByPos[pos];
+						if (formula === undefined) {
+							return null;
+						}
+
+						return (
+							<label key={pos} className="mt-2 d-flex align-items-center gap-3">
+								<span>{pos}</span>
+								<input
+									className="form-control"
+									type="text"
+									value={formula}
+									onChange={(event) => {
+										setState({
+											...state,
+											formulaByPos: {
+												...state.formulaByPos,
+												[pos]: event.target.value,
+											},
+										});
+									}}
+								/>
+								<button
+									className="btn-close"
+									onClick={() => {
+										const formulaByPos = {
+											...state.formulaByPos,
+										};
+										delete formulaByPos[pos];
+										setState({
+											...state,
+											formulaByPos,
+										});
+									}}
+									title={`Delete ${pos} formula`}
+									type="button"
+								></button>
+							</label>
+						);
+					})}
+				</>
+			) : null}
 			<div className="mt-2 d-flex gap-3">
 				<label>
 					<div className="mb-1">Grouping</div>

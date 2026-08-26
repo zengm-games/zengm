@@ -6,18 +6,22 @@ custom awards
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
     - similar for editing award settings and any other seenShortNames
 - edit awards settings
+  - actions, like schedule editor
+    - import/export
+    - reset to default
+    - clear
   - docs
     - explain seasonFraction scaling
       - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
     - min/max functions
       - also add to GOAT formula/season
   - opoyFormula in FBGM only
-    - hide formula behind "act as"
-    - zod: don't allow if MIP, MVP, or team
+    - zod: don't allow if MIP, actAs MVP/ROY, or team
   - link to award settings
     - from league settings
     - hide in tools menu?
   - ui nits
+    - player stats not updating as sim progresses
     - award races/settings formatting of team awards for byPos - maybe use pos instead of rank?
     - help icon for byPos, UI stats
     - explain how achievements work

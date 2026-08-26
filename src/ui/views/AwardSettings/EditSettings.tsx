@@ -15,6 +15,9 @@ import type {
 } from "../../../common/types.ts";
 import { Dropdown, DropdownButton } from "react-bootstrap";
 
+const SUPPORT_OPOY_STUFF = isSport("football");
+const OPOY_FORMULA_NAME = "OPOY (including QB)";
+
 export const awardToEditingState = (award: InputAward) => {
 	const group =
 		!award.group || award.group?.type === "playoffSeries"
@@ -35,13 +38,15 @@ export const awardToEditingState = (award: InputAward) => {
 		rookie: !!award.rookie,
 	} as const;
 
-	type ActAs = "mvp" | "roy" | "none";
+	type ActAs = "mvp" | "roy" | "opoy" | "none";
 
 	if (award.numTeams === undefined) {
 		return {
 			...common,
 			type: "individual" as const,
-			actAs: award.actAs ?? ("none" as ActAs),
+			actAs:
+				award.actAs ??
+				((award.opoyFormula !== undefined ? "opoy" : "none") as ActAs),
 			opoyFormula: award.opoyFormula ?? "",
 			numTeams: "1",
 		};
@@ -96,11 +101,11 @@ export const editingStateToAward = (state: EditingState, index: number) => {
 			...common,
 		};
 
-		if (state.actAs !== "none") {
+		if (state.actAs !== "none" && state.actAs !== "opoy") {
 			award.actAs = state.actAs;
 		}
 
-		if (state.opoyFormula !== "") {
+		if (state.actAs === "opoy" && state.opoyFormula !== "") {
 			award.opoyFormula = state.opoyFormula;
 		}
 	} else {
@@ -264,6 +269,10 @@ export const EditSettings = ({
 		},
 	];
 
+	if (SUPPORT_OPOY_STUFF) {
+		actAss.push({ key: "opoy", text: "OPOY" });
+	}
+
 	const flags: {
 		key: "bench" | "mip" | "rookie";
 		text: string;
@@ -313,6 +322,7 @@ export const EditSettings = ({
 	];
 
 	const actAsId = useId();
+	const opoyId = useId();
 
 	const changeHandler =
 		<Key extends keyof EditingState>(
@@ -510,7 +520,7 @@ export const EditSettings = ({
 					</select>
 				</label>
 				<label>
-					<div className="mb-1">UI stats</div>
+					<div className="mb-1 text-nowrap">UI stats</div>
 					<select
 						className="form-select"
 						onChange={changeHandler("showStats")}
@@ -571,11 +581,19 @@ export const EditSettings = ({
 							<p>
 								MVP: shows up on Draft History, draft class frivolities, and the
 								Hall of Fame page.
-								{isSport("football")
+								{SUPPORT_OPOY_STUFF
 									? " In FBGM it also is used if you enable the OPOY formula for an award (see below)."
 									: null}
 							</p>
 							<p>ROY: shows up on the Draft History page.</p>
+							{SUPPORT_OPOY_STUFF ? (
+								<>
+									<p>
+										OPOY: This enables "OPOY mode", see the help icon by "
+										{OPOY_FORMULA_NAME}" for more info.
+									</p>
+								</>
+							) : null}
 						</HelpPopover>
 						<select
 							id={actAsId}
@@ -633,8 +651,42 @@ export const EditSettings = ({
 					Delete
 				</button>
 			</div>
-			{state.type === "individual" && isSport("football") ? (
-				<div className="mt-2">OPOY formula stuff</div>
+			{SUPPORT_OPOY_STUFF &&
+			state.type === "individual" &&
+			state.actAs === "opoy" ? (
+				<div className="mt-2 d-flex align-items-center">
+					<label className="flex-shrink-0" htmlFor={opoyId}>
+						{OPOY_FORMULA_NAME}
+					</label>
+					<HelpPopover title="OPOY" className="ms-2">
+						<p>
+							The intended use case of "OPOY mode" is for you to write a normal
+							formula that doesn't include QB stats (such as just rushing and
+							receiving stats), and then in this special "{OPOY_FORMULA_NAME}"
+							field, enter an alternative formula that also includes passing
+							stats. Then, if a QB wins MVP, the "{OPOY_FORMULA_NAME}" formula
+							will be applied to the MVP and and the OPOY leader, and if the
+							MVP's score is 20% higher, the MVP will win OPOY too.
+						</p>
+						<p>
+							I apologize that the OPOY stuff is complicated. OPOY is a weird
+							award since usually the MVP is an offensive player, so OPOY should
+							arguably always be the same player in those cases, but then it's
+							kind of a redundant award. The method described above lets you use
+							OPOY to mean "best non-QB offensive player, unless the QB had an
+							exceptional season", which I think at least makes some sense.
+							Great QBs will win MVPs, and rarely may even win OPOY too. Great
+							RB/WR/TE will win OPOYs, and rarely may even win MVP too.
+						</p>
+					</HelpPopover>
+					<input
+						className="form-control ms-3"
+						id={opoyId}
+						type="text"
+						value={state.opoyFormula}
+						onChange={changeHandler("opoyFormula")}
+					/>
+				</div>
 			) : null}
 		</div>
 	);

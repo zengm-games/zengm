@@ -325,7 +325,7 @@ const AwardRaces = ({
 			<MoreLinks type="awards" page="award_races" season={season} />
 
 			<div className="row" style={{ marginTop: -MARGIN }}>
-				{awardCandidates.map((award, i) => {
+				{awardCandidates.map((award) => {
 					const key = getAwardKey(award);
 
 					return (

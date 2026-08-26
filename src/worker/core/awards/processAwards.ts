@@ -682,6 +682,11 @@ export const processAwards = async ({
 							TEAM_AWARD_INFO.numPlayersPerTeam,
 						);
 
+						// Add dummy teams
+						while (winner.length < numTeams) {
+							winner.push([]);
+						}
+
 						return {
 							...award,
 							numTeams,

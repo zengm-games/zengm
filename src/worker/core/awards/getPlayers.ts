@@ -283,6 +283,18 @@ const getPlayoffSeriesStats = async (
 	return rowsByPid;
 };
 
+const fixMax = (currentStats: Partial<Record<StatRange, CurrentStats>>) => {
+	for (const stats of Object.values(currentStats)) {
+		if (stats) {
+			for (const [key, value] of Object.entries(stats)) {
+				if (key.endsWith("Max") && Array.isArray(value)) {
+					stats[key] = value[0];
+				}
+			}
+		}
+	}
+};
+
 export const getPlayers = async (
 	season: number,
 	statRanges: Set<StatRange>,
@@ -395,6 +407,7 @@ export const getPlayers = async (
 				throw new Error("Should never happen");
 			}
 		}
+		fixMax(p.currentStats);
 
 		p.pos = (
 			p.ratings.findLast((row) => row.season === season) ?? last(p.ratings)

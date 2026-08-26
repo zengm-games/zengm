@@ -6,7 +6,6 @@ custom awards
   - if it was persisted in Awards2, could use in persistedAwardsToAwardSetting rather than shortName
     - similar for editing award settings and any other seenShortNames
 - edit awards settings
-  - fix Max variables
   - proofread docs
   - team records not updating when api is used to update awards/players
   - last season stats not working right if formula changed? is it using fixed order of award winners?
@@ -93,6 +92,7 @@ btn-close vs glyphicon-remove
 default new league settings import should handle gameAttribute with history (take latest value)
 
 make GOAT lab use stats with derived variables, similar to awards
+- fixMax, etc
 
 https://github.com/ata-core/ata-validator
 

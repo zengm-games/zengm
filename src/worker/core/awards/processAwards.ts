@@ -193,6 +193,23 @@ const filterPlayersForAward = (
 	return filteredPlayers;
 };
 
+// Show extra info if the error is about an invalid variable, when the variable would have been valid outside of a playoff series
+const getInvalidVariablesErrorMessageVariablesPart = (
+	error: Error,
+	playoffSeriesAward: boolean,
+) => {
+	if (error instanceof InvalidVariableError && playoffSeriesAward) {
+		const variables = error.invalidVariables;
+		const variablesThatWouldHaveBeenValid = variables.filter((variable) =>
+			AWARD_STATS_ALL.includes(variable),
+		);
+		if (variablesThatWouldHaveBeenValid.length > 0) {
+			return `. ${variables.length === 1 ? "This variable is" : "These variables are"} available only for regular season, playoffs, or combined stat ranges, not for playoff seasons${variables.length === variablesThatWouldHaveBeenValid.length ? "" : `: ${variablesThatWouldHaveBeenValid.join(", ")}`}.`;
+		}
+	}
+	return "";
+};
+
 export const processAwards = async ({
 	awards,
 	numPlayersPerIndividualAward,
@@ -235,10 +252,10 @@ export const processAwards = async ({
 			}
 
 			if (!formulaEvaluators[formula]) {
-				const symbols =
-					typeof statRange === "number"
-						? PLAYOFF_SERIES_AWARD_STATS_ALL
-						: AWARD_STATS_ALL;
+				const playoffSeries = typeof statRange === "number";
+				const symbols = playoffSeries
+					? PLAYOFF_SERIES_AWARD_STATS_ALL
+					: AWARD_STATS_ALL;
 
 				let formulaEvaluator;
 				try {
@@ -246,24 +263,9 @@ export const processAwards = async ({
 				} catch (error) {
 					const posPart = award.formulaByPos?.[p.pos] ? `${p.pos} ` : "";
 
-					// Show extra info if the error is about an invalid variable, when the variable would have been valid outside of a playoff series
-					let variablesPart = "";
-					if (
-						error instanceof InvalidVariableError &&
-						typeof statRange === "number"
-					) {
-						const variables = error.invalidVariables;
-						const variablesThatWouldHaveBeenValid = variables.filter(
-							(variable) => AWARD_STATS_ALL.includes(variable),
-						);
-						if (variablesThatWouldHaveBeenValid.length > 0) {
-							variablesPart = `. ${variables.length === 1 ? "This variable is" : "These variables are"} available only for regular season, playoffs, or combined stat ranges, not for playoff seasons${variables.length === variablesThatWouldHaveBeenValid.length ? "" : `: ${variablesThatWouldHaveBeenValid.join(", ")}`}.`;
-						}
-					}
-
 					errorMessages ??= [];
 					errorMessages.push(
-						`${award.shortName} ${posPart}formula (${award.formula}): ${error.message}${variablesPart}`,
+						`${award.shortName} ${posPart}formula (${award.formula}): ${error.message}${getInvalidVariablesErrorMessageVariablesPart(error, playoffSeries)}`,
 					);
 
 					// At least render something
@@ -738,28 +740,25 @@ export const processAwards = async ({
 				const mvpWinner = mvpAward.winner[0];
 				const opoyWinner = opoyAward.winner[0];
 
-				const mvpPlayoffSeries = typeof mvpAward.statRange === "number";
-				const opoyPlayoffSeries = typeof opoyAward.statRange === "number";
-
-				// Both must have winner and either both or neither must be a playoff series (for common stats in formula)
-				if (mvpWinner && opoyWinner && mvpPlayoffSeries === opoyPlayoffSeries) {
+				if (mvpWinner && opoyWinner) {
 					const playersByPid = groupByUnique(players, "pid");
 					const mvp = playersByPid[mvpWinner.pid];
 					const opoy = playersByPid[opoyWinner.pid];
 					if (mvp?.pos === "QB" && opoy) {
 						// MVP is a QB - if that QB is a significantly better offensive player (by opoyFormula) than the initial OPOY, then bump them to the top of the list
 						let formulaEvaluator;
+						const playoffSeries = typeof opoyAward.statRange === "number";
 						try {
 							formulaEvaluator = new FormulaEvaluator(
 								opoyAward.opoyFormula,
-								opoyPlayoffSeries
+								playoffSeries
 									? PLAYOFF_SERIES_AWARD_STATS_ALL
 									: AWARD_STATS_ALL,
 							);
 						} catch (error) {
 							errorMessages ??= [];
 							errorMessages.push(
-								`${opoyAward.shortName} OPOY formula (${opoyAward.formula}): ${error.message}`,
+								`${opoyAward.shortName} OPOY formula (${opoyAward.formula}): ${error.message}${getInvalidVariablesErrorMessageVariablesPart(error, playoffSeries)}`,
 							);
 						}
 

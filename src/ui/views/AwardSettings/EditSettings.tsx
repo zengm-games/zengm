@@ -150,6 +150,7 @@ export const editingStateToAward = (state: EditingState, index: number) => {
 export const EditSettings = ({
 	canMoveDown,
 	canMoveUp,
+	disabled,
 	move,
 	numGamesPlayoffSeries,
 	playoffsByConf,
@@ -159,6 +160,7 @@ export const EditSettings = ({
 }: {
 	canMoveDown: boolean;
 	canMoveUp: boolean;
+	disabled: boolean;
 	move: (direction: -1 | 1) => void;
 	numGamesPlayoffSeries: number[];
 	playoffsByConf: number | false;
@@ -351,6 +353,7 @@ export const EditSettings = ({
 					<div className="mb-1">Name</div>
 					<input
 						className="form-control"
+						disabled={disabled}
 						type="text"
 						value={state.name}
 						onChange={changeHandler("name")}
@@ -360,6 +363,7 @@ export const EditSettings = ({
 					<div className="mb-1">Abbrev</div>
 					<input
 						className="form-control"
+						disabled={disabled}
 						type="text"
 						value={state.shortName}
 						onChange={changeHandler("shortName")}
@@ -371,6 +375,7 @@ export const EditSettings = ({
 				<div className="input-group">
 					<input
 						className="form-control"
+						disabled={disabled}
 						type="text"
 						value={state.formula}
 						onChange={changeHandler("formula")}
@@ -379,6 +384,7 @@ export const EditSettings = ({
 						<button
 							type="button"
 							className="btn btn-secondary text-nowrap"
+							disabled={disabled}
 							title="By position"
 							onClick={() => {
 								setState({
@@ -396,6 +402,7 @@ export const EditSettings = ({
 				<>
 					<div className="mt-2 d-flex align-items-center gap-2">
 						<DropdownButton
+							disabled={disabled}
 							variant="secondary"
 							title="Add position-speicifc formula"
 						>
@@ -453,6 +460,7 @@ export const EditSettings = ({
 								</span>
 								<input
 									className="form-control"
+									disabled={disabled}
 									type="text"
 									value={formula}
 									onChange={(event) => {
@@ -467,6 +475,7 @@ export const EditSettings = ({
 								/>
 								<button
 									className="btn-close"
+									disabled={disabled}
 									onClick={() => {
 										const formulaByPos = {
 											...state.formulaByPos,
@@ -490,6 +499,7 @@ export const EditSettings = ({
 					<div className="mb-1">Grouping</div>
 					<select
 						className="form-select"
+						disabled={disabled}
 						onChange={changeHandler("group")}
 						value={state.group}
 					>
@@ -504,6 +514,7 @@ export const EditSettings = ({
 					<div className="mb-1">Range</div>
 					<select
 						className="form-select"
+						disabled={disabled}
 						onChange={changeHandler("statRange", (value) => {
 							const newStatRange = (
 								value.startsWith("-") ? Number.parseInt(value) : value
@@ -523,6 +534,7 @@ export const EditSettings = ({
 					<div className="mb-1 text-nowrap">UI stats</div>
 					<select
 						className="form-select"
+						disabled={disabled}
 						onChange={changeHandler("showStats")}
 						value={state.showStats}
 					>
@@ -539,6 +551,7 @@ export const EditSettings = ({
 							<div key={key} className="form-check">
 								<input
 									className="form-check-input"
+									disabled={disabled}
 									id={id}
 									type="checkbox"
 									checked={state[key]}
@@ -559,6 +572,7 @@ export const EditSettings = ({
 				<div>
 					<select
 						className="form-select"
+						disabled={disabled}
 						onChange={changeHandler("type")}
 						value={state.type}
 					>
@@ -598,6 +612,7 @@ export const EditSettings = ({
 						<select
 							id={actAsId}
 							className="form-select"
+							disabled={disabled}
 							onChange={changeHandler("actAs")}
 							value={state.actAs}
 						>
@@ -614,6 +629,7 @@ export const EditSettings = ({
 							<div className="mb-1"># teams</div>
 							<input
 								className="form-control"
+								disabled={disabled}
 								onChange={changeHandler("numTeams")}
 								type="number"
 								value={state.numTeams}
@@ -624,7 +640,7 @@ export const EditSettings = ({
 				<button
 					type="button"
 					className="ms-auto btn btn-secondary"
-					disabled={!canMoveUp}
+					disabled={disabled || !canMoveUp}
 					onClick={() => {
 						move(-1);
 					}}
@@ -637,7 +653,7 @@ export const EditSettings = ({
 				<button
 					type="button"
 					className="btn btn-secondary"
-					disabled={!canMoveDown}
+					disabled={disabled || !canMoveDown}
 					onClick={() => {
 						move(1);
 					}}
@@ -647,7 +663,12 @@ export const EditSettings = ({
 						className="glyphicon glyphicon-arrow-down"
 					/>
 				</button>
-				<button type="button" className="btn btn-danger" onClick={remove}>
+				<button
+					type="button"
+					className="btn btn-danger"
+					disabled={disabled}
+					onClick={remove}
+				>
 					Delete
 				</button>
 			</div>
@@ -681,6 +702,7 @@ export const EditSettings = ({
 					</HelpPopover>
 					<input
 						className="form-control ms-3"
+						disabled={disabled}
 						id={opoyId}
 						type="text"
 						value={state.opoyFormula}

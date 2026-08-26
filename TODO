@@ -31,10 +31,11 @@ custom awards
   - historyAll, teamRecords, awardRecords
     - test with changing awards
     - test with div/conf awards (should show in separate columns)
-- ability to add/edit/delete manual awards for player, maybe in player editor
 - UI to update
   - awards editor (winners)
   - GOAT formula
+    - award:shortName
+    - keep compatibility with old ones by translating to shortName https://www.reddit.com/r/BasketballGM/comments/oey0m6/collection_of_some_goat_lab_formulas/
 - make sure hashAward accounts for everything
 - upgrade
   - test
@@ -59,6 +60,7 @@ custom awards
   - player awards
   - conf/div abbrev
 - blog
+  - apologize for lack of replies and other updates
   - roy changes
     - edge cases
       - new league with no stats
@@ -95,6 +97,7 @@ custom awards
   - edit award settings for past seasons
   - some way to set award settings in default new league settings
   - pick and choose which awards to import, and option to not overwrite all
+  - ability to add/edit/delete manual awards for player, maybe in player editor
 
 btn-close vs glyphicon-remove
 

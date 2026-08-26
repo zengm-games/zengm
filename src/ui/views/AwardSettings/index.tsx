@@ -125,7 +125,7 @@ const AwardSettings = ({
 	const [awardsState, setAwardsState] = useState(() =>
 		awardsToEditingState(awardCandidates),
 	);
-	const [saving, setSaving] = useState(false);
+	const [working, setWorking] = useState(false);
 	const { setDirty } = useBlocker();
 	const formId = useId();
 
@@ -160,7 +160,7 @@ const AwardSettings = ({
 				style={{ marginTop: -MARGIN }}
 				onSubmit={async (event) => {
 					event.preventDefault();
-					setSaving(true);
+					setWorking(true);
 					const awards = awardsStateToAwards(awardsState);
 					if (awards) {
 						await toWorker("main", "updateGameAttributes", {
@@ -178,7 +178,7 @@ const AwardSettings = ({
 						setAwardsState(awardsToEditingState(newAwards.awardCandidates));
 						setDirty(false);
 					}
-					setSaving(false);
+					setWorking(false);
 				}}
 			>
 				{awardsState.map(({ awards, editing }, i) => {
@@ -227,6 +227,7 @@ const AwardSettings = ({
 											<EditSettings
 												canMoveDown={i < awardsState.length - 1}
 												canMoveUp={i > 0}
+												disabled={working}
 												move={(direction) => {
 													setAwardsState((oldState) => {
 														const toMove = oldState[i];
@@ -280,6 +281,7 @@ const AwardSettings = ({
 				<div className={DEFAULT_CLASSES} style={{ marginTop: MARGIN }}>
 					<button
 						className="btn btn-secondary btn-lg"
+						disabled={working}
 						type="button"
 						onClick={() => {
 							setAwardsState((oldState) => {
@@ -312,21 +314,37 @@ const AwardSettings = ({
 
 			<StickyBottomButtons>
 				<Dropdown>
-					<Dropdown.Toggle variant="secondary" disabled={saving}>
+					<Dropdown.Toggle variant="secondary" disabled={working}>
 						Actions
 					</Dropdown.Toggle>
 					<Dropdown.Menu>
 						<Dropdown.Item
 							onClick={async () => {
-								const newAwards = await toWorker("main", "getAwardCandidates", {
-									type: "default",
-									season,
-								});
-								if (newAwards.errorMessages) {
-									showErrorMessages(newAwards.errorMessages);
+								setWorking(true);
+								try {
+									const newAwards = await toWorker(
+										"main",
+										"getAwardCandidates",
+										{
+											type: "default",
+											season,
+										},
+									);
+									if (newAwards.errorMessages) {
+										showErrorMessages(newAwards.errorMessages);
+									}
+									setAwardsState(
+										awardsToEditingState(newAwards.awardCandidates),
+									);
+									setDirty(true);
+								} catch (error) {
+									showNotification({
+										type: "error",
+										text: error.message,
+									});
+								} finally {
+									setWorking(false);
 								}
-								setAwardsState(awardsToEditingState(newAwards.awardCandidates));
-								setDirty(true);
 							}}
 						>
 							Reset to default
@@ -378,6 +396,7 @@ const AwardSettings = ({
 										return;
 									}
 
+									setWorking(true);
 									try {
 										const { basicInfo } = await toWorker(
 											"leagueFileUpload",
@@ -426,6 +445,8 @@ const AwardSettings = ({
 											type: "error",
 											text: error.message,
 										});
+									} finally {
+										setWorking(false);
 									}
 								}}
 							/>
@@ -437,7 +458,7 @@ const AwardSettings = ({
 					type="submit"
 					className="ms-auto"
 					variant="primary"
-					processing={saving}
+					processing={working}
 					processingText="Saving"
 				>
 					Save settings

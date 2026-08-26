@@ -7,16 +7,8 @@ custom awards
     - similar for editing award settings and any other seenShortNames
 - edit awards settings
   - fix Max variables
-  - wsFraction -> teamWs?
   - distinguish between saving and processing, and actionbutton should switch between disabled and processing
-  - docs
-    - formula
-      - all variables
-      - explain seasonFraction scaling
-        - When evaluating awards during the season in BBGM, most stats are either per-game or percentages, meaning they are of similar magnitude during the season and at the end of the season. But cumulative stats like VORP and WS keep growing throughout the season. So during the season, we should scale them so they look like season totals.
-      - min/max functions
-        - also add to GOAT formula/season
-    - explain how achievements work
+  - proofread docs
   - team records not updating when api is used to update awards/players
   - last season stats not working right if formula changed? is it using fixed order of award winners?
   - link to award settings

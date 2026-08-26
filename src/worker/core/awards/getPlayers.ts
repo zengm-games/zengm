@@ -61,7 +61,7 @@ if (isSport("basketball")) {
 
 const SKIP_BY_SPORT = new Set(
 	bySport({
-		baseball: ["keyStatsShort", "poSo", "pos"],
+		baseball: ["keyStatsShort", "min", "poSo", "pos"],
 		basketball: [],
 		football: ["min"],
 		hockey: ["gMin", "keyStatsWithGoalieGP", "gW", "gL", "gT", "gOTL"],

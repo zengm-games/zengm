@@ -16,6 +16,7 @@ import DeleteAccountForm from "./DeleteAccountForm.tsx";
 import { getScript } from "../../util/getScript.ts";
 import { confirm } from "../../util/confirm.tsx";
 import { fetchWrapper } from "../../../common/fetchWrapper.ts";
+import { TEXT_MAX_WIDTH } from "../AwardSettings/Documentation.tsx";
 
 const StripeButton = ({ email }: { email: string }) => {
 	const [handler, setHandler] = useState<StripeCheckoutHandler | undefined>();
@@ -232,7 +233,7 @@ const Account = ({
 			<>
 				<h2>ZenGM Gold</h2>
 
-				<div style={{ maxWidth: 648 }}>
+				<div style={TEXT_MAX_WIDTH}>
 					<p>
 						{GAME_NAME} is completely free. There will never be any{" "}
 						<a href="http://en.wikipedia.org/wiki/Freemium" target="_blank">
@@ -312,7 +313,7 @@ const Account = ({
 
 					<h2 className="mt-5">Delete Account</h2>
 
-					<div style={{ maxWidth: 648 }}>
+					<div style={TEXT_MAX_WIDTH}>
 						<DeleteAccountForm
 							username={username}
 							showGoldActive={showGoldActive}

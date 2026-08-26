@@ -8,6 +8,7 @@ custom awards
 - edit awards settings
   - fix Max variables
   - wsFraction -> teamWs?
+  - distinguish between saving and processing, and actionbutton should switch between disabled and processing
   - docs
     - formula
       - all variables

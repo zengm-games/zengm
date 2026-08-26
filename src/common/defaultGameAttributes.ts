@@ -169,7 +169,8 @@ export const defaultAwards = {
 		basketball: {
 			shortName: "ALL",
 			name: "All-League",
-			formula: "ewa / 22 + vorp / 32 + wsFraction / 10 + seasonFraction * winp",
+			formula:
+				"ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
 			showStats: "offense",
 			numTeams: 3,
 		},
@@ -287,7 +288,10 @@ export const defaultAwards = {
 		basketball: {
 			shortName: "MVP",
 			name: "Most Valuable Player",
-			formula: "ewa / 22 + vorp / 32 + wsFraction / 10 + seasonFraction * winp",
+
+			// Max is to handle negative teamWs. Min is to handle the case that a team has very low WS, don't let anybody have a crazy high fracWS
+			formula:
+				"ewa / 22 + vorp / 32 + min(ws/max(teamWs,ws),0.8) / 10 + seasonFraction * winp",
 			showStats: "offense",
 			actAs: "mvp",
 		},

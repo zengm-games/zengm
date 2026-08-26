@@ -48,7 +48,7 @@ export const AWARD_STATS_ALL = [
 	"winp",
 ];
 if (isSport("basketball")) {
-	AWARD_STATS_ALL.push("wsFraction");
+	AWARD_STATS_ALL.push("teamWs");
 }
 
 const PLAYOFF_SERIES_AWARD_STATS_RAW = player.stats.raw.filter(
@@ -441,13 +441,7 @@ export const getPlayers = async (
 						continue;
 					}
 
-					currentStats.wsFraction = Math.min(
-						// Inner max is to handle negative totalWS
-						currentStats.ws / Math.max(totalWS[currentStats.tid]!, 1),
-
-						// In the rare case that a team has very low or even negative WS, don't let anybody have a crazy high fracWS
-						0.8,
-					);
+					currentStats.teamWs = totalWS[currentStats.tid] ?? 0;
 				}
 			}
 		}

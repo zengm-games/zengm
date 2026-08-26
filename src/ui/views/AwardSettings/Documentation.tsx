@@ -15,7 +15,11 @@ const myGetCol = (stat: string) => {
 	if (stat === "winp") {
 		return "Team winning percentage";
 	}
-	if (stat === "wsFraction") {
+	if (stat === "teamWs") {
+		return "Team total WS";
+	}
+	if (stat === "won") {
+		return "Games won this series";
 	}
 
 	try {
